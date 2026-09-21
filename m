@@ -2,85 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F03AC982E6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 18:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D949C982EE
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 18:49:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CDE2F40E2B;
-	Mon, 21 Sep 2026 20:00:33 +0200 (CEST)
-Received: from mail-vk1-f227.google.com (mail-vk1-f227.google.com
- [209.85.221.227])
- by mails.dpdk.org (Postfix) with ESMTP id 778414067D
- for <dev@dpdk.org>; Mon, 21 Sep 2026 20:00:32 +0200 (CEST)
-Received: by mail-vk1-f227.google.com with SMTP id
- 71dfb90a1353d-5c847805338so1360888e0c.2
- for <dev@dpdk.org>; Mon, 21 Sep 2026 11:00:32 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 96203410DF;
+	Mon, 21 Sep 2026 20:49:57 +0200 (CEST)
+Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com
+ [209.85.214.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 78B974067D
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 20:49:56 +0200 (CEST)
+Received: by mail-pl1-f225.google.com with SMTP id
+ d9443c01a7336-2dd665f341aso15892805ad.2
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 11:49:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790013631; x=1790618431;
+ d=1e100.net; s=20260707; t=1790016595; x=1790621395;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=s80iG80cTmWP5VrCzeXItAcFf0b2YKO1jHjvq4/lN0Q=;
- b=w8tWvALWLx3yLjtJOcn5yGLuv1T0Po3+VbaV1I9jCvE45plCk3wqb0pQ4KoomlnhUV
- NasCCBIIvS3agExpgpn0Gny8/VY4OVEioiFZ6Cib+JhgrMiE5f7Q6An//p+stueQTvQT
- 2aNWdePxPWvjO1f31hjczK6MD96FVJNXN5+rZhnKeTsemoX2YHOLRZ00TORgjvka8M75
- ++eQ5ne6wRR2u2ytGoQ9HqrGAnR/oSP9/O9Db0J/10FkDj57xda96wI57kimPNbq4oRF
- R8+Vk6zdzfiav6O18xzcB7bfg8xdZcptm1nXcqZq3hdbWozx5Oy+O5zjx14GKhIxoONU
- nP0g==
-X-Gm-Message-State: AFuF++n58io1Z0DFeHvKGlg9ug5izXtqlcADDXRU0VZQODgEiBAFRucL
- ChCcf8sHS1IOaezitbGkpr60csxO8BLg7fkwNH4DEGZYYKInavkJL5no2J59G2Nmk6zxieLuvrM
- VHVKoURsy/326IiweIZeu3wG3B9zWiJEKfaQZOIx9t+oySmlZKIyFrcxI1kjfnodsu5G2oRkvbo
- lfzFk2ibNFKDYOki+HP/RnXzsQdUS7oIhqbGI8RFD9d2yI/TjRtNGyqAmvc8kCM0qaW1NwUTrWm
- GMhDQ==
-X-Gm-Gg: AYBFou2VVYhiI1M3YyukQ8K7xbHvtP93jPKU43ohAFCSMOZqtddR8VGCoCvUy8rAl2e
- IqaA5gEEmgUkaczeg0UZHYHnekEjj3LWIuMK8VYdKAc1SiwfjfMJL7IhqbFXSl+OLq0y/vGq3X6
- LAnh6diOzxeSGngXKs/Cnffri1YwHRc65q/3UqjwY6A745pwDZzIwtvN1Artq138bB4kKScLjRR
- Sfav6DCITNADJSkkQ95UqW24UetmNiyQ4OQT37WJDCai6dFqOkVcg/GqL/OtpqR+O5UlUCMMuJd
- HaSMaOHq36mAB1d89nKvWCrMTgZxxkZMBbQk5/QnG+ooL+k3MPXbJ/cFv0QUuyEA4Ia2YdOK9wL
- hJrwJHW4Rs+9+0gsh+wPbunJ1pkQRnC4wia4vMEHJmB1RXClDqSEILMlrnDh9TiDIcJ2rL1c3aw
- /MbTdz/gtwh9x8tR3BgSld4OfYY0ARAczSzwTIPMUkzqFakA==
-X-Received: by 2002:a05:6122:8f8b:b0:5c9:a60c:2732 with SMTP id
- 71dfb90a1353d-5c9b58e9e3dmr5844304e0c.10.1790013630924; 
- Mon, 21 Sep 2026 11:00:30 -0700 (PDT)
+ bh=YuvDH1UL3MEvnhrwPxNi9Vpru1rrUsBrTbSXjBMXlMs=;
+ b=xfCxp0/2XqJrOnh90xTasjoDkFgP1YaNJpKExPTnlFJJ/eiwBeXrAzcYnr0cH7Exn1
+ aaV31T7nt0AwuyL2ooIzQHy8o8kQTIgF9HlEk5CnKVWIFEgWx4I8Tz+iDlv4qtr6neAP
+ re/xytg9HCmqBS5KYSd7Up/rE5ovBdx5zwRZ/Jen7r0ILFsxtnH9m8bTlQMcCvCZ7AMq
+ R5cPq0ZUURf4YaZjIqpu6v5mw4InPb7BhTUJcuhT3C2fT0B4z59zHocEWRTlrIuk6oVj
+ wQBWzj+C7cIBj3rEjCC/czN1yj0nF7dDjl4XoyW5sEF4a4fIA/VekCZUhtmBBFLSNiKo
+ AJRA==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBywZzvKngAfGYvfa3pbhB9PhN7u4t8dBzzlmTL/zsFdGQwE0an9+AtH2qZF7/wl4v+V8oM=@dpdk.org
+X-Gm-Message-State: AFuF++mYLW6tREwO0O7L4N6t5SiQnh0r/tXQUx4olKlzKSqPEvPr4wFQ
+ Idxlrlnce1bnvukKsDb1JZehN0EzRA9KMw3iL2MMR7lzfvwnxSsspK41vRfN/z/OBhR8Hd/Km8f
+ s7Dhex8x5NO5mNXMPEpZ5OgYHHiKNCU1/9XUlzyrZQDC98gC0GOcMHJNnrxsSJshteW6eWU+OAS
+ adbVpsc0Fq3JO4U26i6jqsrjxEcAnfpDmbrDJ3xCdo792KMjLBKYtHEl+l3dytsYFqqGMJwbydw
+ euGoA==
+X-Gm-Gg: AYBFou3mC0Qsgxmfq3Kupkly45EhJwOSg4veiFZQp1grOPIwI+ZJsnAvpoVlfq01h+Y
+ fVBaAsFg3+g49BeqqcWaMPNsYYiQHhMJSySZ3STXzPHASOAi32WHnlDytlIFt+d1pMW7ZN73zYG
+ hvydnSsoQObEXfkWrqicao2UP2tEaF68cdAv9H3xTgmeZOXuSyzTz2hhRHfmhBwNjENVQrio5LL
+ k7Gse0CTHjTedlkxywTp4F04K23nzR+aWd/vgVMXMRR51dDOp/gYF7CfVJHHmFwoeGOXzgHyENf
+ P9cRoqicS/BJ8KkYnfXLUc/AyVaSCfVXU+GhUk8rvHHB6Hf9C3bShk/9wagAmgUW2d6chTuZkmD
+ rbZeetbO4qu1pxl94LcO7zzc0WtoOU+amgOpsfNCG32+hHrWZPihHMys6g5uT6egdJ0qrtxc0u3
+ PRe03FxBoBNecAlyZ5ksJn45qSYhjNX+JeCD/N6WBQOEw=
+X-Received: by 2002:a17:903:2443:b0:2d9:484:861d with SMTP id
+ d9443c01a7336-2ddb1af6da8mr163330445ad.10.1790016595288; 
+ Mon, 21 Sep 2026 11:49:55 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-125.dlp.protect.broadcom.com. [144.49.247.125])
+ (address-144-49-247-22.dlp.protect.broadcom.com. [144.49.247.22])
  by smtp-relay.gmail.com with ESMTPS id
- 71dfb90a1353d-5c9e1e6e541sm142520e0c.6.2026.09.21.11.00.30
+ d9443c01a7336-2df231a531asm2821865ad.43.2026.09.21.11.49.54
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 21 Sep 2026 11:00:30 -0700 (PDT)
+ Mon, 21 Sep 2026 11:49:55 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-ej1-f69.google.com with SMTP id
- a640c23a62f3a-c29959eb71fso324633566b.1
- for <dev@dpdk.org>; Mon, 21 Sep 2026 11:00:30 -0700 (PDT)
+Received: by mail-ed1-f69.google.com with SMTP id
+ 4fb4d7f45d1cf-6a6735afb87so3218088a12.2
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 11:49:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1790013629; x=1790618429; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1790016593; x=1790621393; darn=dpdk.org;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=s80iG80cTmWP5VrCzeXItAcFf0b2YKO1jHjvq4/lN0Q=;
- b=PJAUEQ7WH3Obk1dToUcJIkM1CRVwRmvh3MVp98Q92oFWJ00AlnON9ZWdeVWjQ7pvjJ
- BcnduEeBfy6/TPHT0palkab0l4fAmNh0VlwYXg9lepsfgtVtHC+CIuTNND8Czqbur4Jn
- NB1Yaf0UI75AoU2HhIGWXWyummWDOrTFX+wLA=
-X-Received: by 2002:a05:6402:4389:b0:6aa:1da6:3579 with SMTP id
- 4fb4d7f45d1cf-6aa545f28ecmr7963041a12.5.1790013629343; 
- Mon, 21 Sep 2026 11:00:29 -0700 (PDT)
-X-Received: by 2002:a05:6402:4389:b0:6aa:1da6:3579 with SMTP id
- 4fb4d7f45d1cf-6aa545f28ecmr7963019a12.5.1790013628892; Mon, 21 Sep 2026
- 11:00:28 -0700 (PDT)
+ :content-type; bh=YuvDH1UL3MEvnhrwPxNi9Vpru1rrUsBrTbSXjBMXlMs=;
+ b=Kb7OryhtoBXWp0Rzj9GMM7bGdIiRIefjs/t7ItU8ziJbcdtQPx6sR7RCsJZlpjDW51
+ OpRKdcTtIuKEqLtWHsdWSvWwZ7fSFKswc0b864Rx6Pv1hAXxIDZZHfPDZA8L7qhsVJDl
+ kTtV8OkMVOM9K5bYRnjoSmpyYSC4/c+7LD8LQ=
+X-Forwarded-Encrypted: i=1;
+ AKwUvBztCLJDrAaI8QI4EdKqvV2b/uIo0FCGnnMZV4xIeQokI11LU9Yn91zKR6Cgq3i5ugx67WE=@dpdk.org
+X-Received: by 2002:a05:6402:3908:b0:6a9:ae3a:9c9d with SMTP id
+ 4fb4d7f45d1cf-6aa531b797emr8640518a12.29.1790016593149; 
+ Mon, 21 Sep 2026 11:49:53 -0700 (PDT)
+X-Received: by 2002:a05:6402:3908:b0:6a9:ae3a:9c9d with SMTP id
+ 4fb4d7f45d1cf-6aa531b797emr8640508a12.29.1790016592713; Mon, 21 Sep 2026
+ 11:49:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260915085043.430856-1-Evgeny.Sokolov@infotecs.ru>
-In-Reply-To: <20260915085043.430856-1-Evgeny.Sokolov@infotecs.ru>
+References: <20260915085125.430901-1-Evgeny.Sokolov@infotecs.ru>
+In-Reply-To: <20260915085125.430901-1-Evgeny.Sokolov@infotecs.ru>
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Mon, 21 Sep 2026 14:00:11 -0400
-X-Gm-Features: AcwNN1WhO6ca4xXSamCY9IhQh-U6DXRHHOkhNOX-ixyN4WtP4vrjI4Razi2N0NA
-Message-ID: <CA+BST0mo4f5kR3MKr4W9CJSee6T+GmZ0pSe+58oRBdDzOz8byQ@mail.gmail.com>
-Subject: Re: [PATCH] net/bnxt: check return code of bnxt_hwrm_vnic_rss_cfg in
- flow create
+Date: Mon, 21 Sep 2026 14:49:35 -0400
+X-Gm-Features: AcwNN1VXt1Lpklvm7WoydSWoTvcoCA1FTn7SzzpScud2Dsyazp1Act3PkksHrgw
+Message-ID: <CA+BST0=M0jBQs5brUhvg+7ZJvHiefv03syVc5rQ3GW9rugKbsg@mail.gmail.com>
+Subject: Re: [PATCH] net/bnxt: check TSID retrieval failure
 To: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
-Cc: dev@dpdk.org, stable@dpdk.org
+Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org, 
+ shuanglin.wang@broadcom.com
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="00000000000089c539065c02063a"
+ micalg=sha-256; boundary="0000000000003134fa065c02b757"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -94,132 +98,110 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000089c539065c02063a
-Content-Type: multipart/alternative; boundary="0000000000007e6996065c02067f"
+--0000000000003134fa065c02b757
+Content-Type: multipart/alternative; boundary="00000000000026c4f1065c02b7d1"
 
---0000000000007e6996065c02067f
+--00000000000026c4f1065c02b7d1
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 15, 2026 at 4:50=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
+On Tue, Sep 15, 2026 at 4:51=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
 tecs.ru>
 wrote:
 
 > From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 >
-> The return value of bnxt_hwrm_vnic_rss_cfg() was not checked in
-> bnxt_flow.c. As a result, RSS configuration failures could be
-> silently ignored and the flow setup could continue with an
-> incorrect VNIC configuration.
+> Check the return value of bnxt_ulp_cntxt_tsid_get() and log an
+> error when TSID retrieval fails.
 >
-> Check the return status and propagate the error to the caller.
->
-> Fixes: adc0f81c655 ("net/bnxt: support RSS action")
-> Cc: stable@dpdk.org
+> Found by InfoTeCS on behalf of Linux Verification Center (linuxtesting.or=
+g)
+> with SVACE.
 >
 > Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 > ---
->  drivers/net/bnxt/bnxt_flow.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+>  drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> diff --git a/drivers/net/bnxt/bnxt_flow.c b/drivers/net/bnxt/bnxt_flow.c
-> index a2e590540b..63cfa3a045 100644
-> --- a/drivers/net/bnxt/bnxt_flow.c
-> +++ b/drivers/net/bnxt/bnxt_flow.c
-> @@ -1631,7 +1631,16 @@ bnxt_validate_and_parse_flow(struct rte_eth_dev
-> *dev,
->                                                rss->key,
->                                                rss->key_len);
->                         }
-> -                       bnxt_hwrm_vnic_rss_cfg(bp, vnic);
-> +                       rc =3D bnxt_hwrm_vnic_rss_cfg(bp, vnic);
-> +                       if (rc) {
-> +                               rte_flow_error_set(error,
-> +                                                  -rc,
-> +
-> RTE_FLOW_ERROR_TYPE_ACTION,
-> +                                                  act,
-> +                                                  "VNIC RSS configure
-> failed");
-> +                               rc =3D -rte_errno;
-> +                               goto ret;
-> +                       }
->                 } else {
->                         PMD_DRV_LOG_LINE(DEBUG, "No RSS config required")=
-;
->                 }
+> diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+> b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+> index fa98b2bca9..d5ce4c3c18 100644
+> --- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+> +++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+> @@ -309,6 +309,8 @@ ulp_tfc_tbl_scope_deinit(struct bnxt *bp)
+>                 return;
 >
-Acked-by:  Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-
+>         rc =3D bnxt_ulp_cntxt_tsid_get(bp->ulp_ctx, &tsid);
+> +       if (unlikely(rc))
+> +               BNXT_DRV_DBG(ERR, "Failed to get the table scope\n");
+>
+>         rc =3D bnxt_ulp_cntxt_fid_get(bp->ulp_ctx, &fid);
+>         if (rc)
 > --
+
+ Acked-by:  Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+
+>
 > 2.30.2
 >
 >
 
---0000000000007e6996065c02067f
+--00000000000026c4f1065c02b7d1
 Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 
-PGRpdiBkaXI9Imx0ciI+PGRpdiBkaXI9Imx0ciI+PGJyPjwvZGl2Pjxicj48ZGl2IGNsYXNzPSJn
-bWFpbF9xdW90ZSBnbWFpbF9xdW90ZV9jb250YWluZXIiPjxkaXYgZGlyPSJsdHIiIGNsYXNzPSJn
-bWFpbF9hdHRyIj5PbiBUdWUsIFNlcCAxNSwgMjAyNiBhdCA0OjUw4oCvQU0gRXZnZW55IFNva29s
-b3YgJmx0OzxhIGhyZWY9Im1haWx0bzpFdmdlbnkuU29rb2xvdkBpbmZvdGVjcy5ydSI+RXZnZW55
-LlNva29sb3ZAaW5mb3RlY3MucnU8L2E+Jmd0OyB3cm90ZTo8YnI+PC9kaXY+PGJsb2NrcXVvdGUg
-Y2xhc3M9ImdtYWlsX3F1b3RlIiBzdHlsZT0ibWFyZ2luOjBweCAwcHggMHB4IDAuOGV4O2JvcmRl
-ci1sZWZ0OjFweCBzb2xpZCByZ2IoMjA0LDIwNCwyMDQpO3BhZGRpbmctbGVmdDoxZXgiPkZyb206
-IFNva29sb3YgRXZnZW55ICZsdDs8YSBocmVmPSJtYWlsdG86RXZnZW55LlNva29sb3ZAaW5mb3Rl
-Y3MucnUiIHRhcmdldD0iX2JsYW5rIj5FdmdlbnkuU29rb2xvdkBpbmZvdGVjcy5ydTwvYT4mZ3Q7
-PGJyPg0KPGJyPg0KVGhlIHJldHVybiB2YWx1ZSBvZiBibnh0X2h3cm1fdm5pY19yc3NfY2ZnKCkg
-d2FzIG5vdCBjaGVja2VkIGluPGJyPg0KYm54dF9mbG93LmMuIEFzIGEgcmVzdWx0LCBSU1MgY29u
-ZmlndXJhdGlvbiBmYWlsdXJlcyBjb3VsZCBiZTxicj4NCnNpbGVudGx5IGlnbm9yZWQgYW5kIHRo
-ZSBmbG93IHNldHVwIGNvdWxkIGNvbnRpbnVlIHdpdGggYW48YnI+DQppbmNvcnJlY3QgVk5JQyBj
-b25maWd1cmF0aW9uLjxicj4NCjxicj4NCkNoZWNrIHRoZSByZXR1cm4gc3RhdHVzIGFuZCBwcm9w
-YWdhdGUgdGhlIGVycm9yIHRvIHRoZSBjYWxsZXIuPGJyPg0KPGJyPg0KRml4ZXM6IGFkYzBmODFj
-NjU1ICgmcXVvdDtuZXQvYm54dDogc3VwcG9ydCBSU1MgYWN0aW9uJnF1b3Q7KTxicj4NCkNjOiA8
-YSBocmVmPSJtYWlsdG86c3RhYmxlQGRwZGsub3JnIiB0YXJnZXQ9Il9ibGFuayI+c3RhYmxlQGRw
-ZGsub3JnPC9hPjxicj4NCjxicj4NClNpZ25lZC1vZmYtYnk6IFNva29sb3YgRXZnZW55ICZsdDs8
-YSBocmVmPSJtYWlsdG86RXZnZW55LlNva29sb3ZAaW5mb3RlY3MucnUiIHRhcmdldD0iX2JsYW5r
-Ij5FdmdlbnkuU29rb2xvdkBpbmZvdGVjcy5ydTwvYT4mZ3Q7PGJyPg0KLS0tPGJyPg0KwqBkcml2
-ZXJzL25ldC9ibnh0L2JueHRfZmxvdy5jIHwgMTEgKysrKysrKysrKy08YnI+DQrCoDEgZmlsZSBj
-aGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pPGJyPg0KPGJyPg0KZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvbmV0L2JueHQvYm54dF9mbG93LmMgYi9kcml2ZXJzL25ldC9ibnh0L2Ju
-eHRfZmxvdy5jPGJyPg0KaW5kZXggYTJlNTkwNTQwYi4uNjNjZmEzYTA0NSAxMDA2NDQ8YnI+DQot
-LS0gYS9kcml2ZXJzL25ldC9ibnh0L2JueHRfZmxvdy5jPGJyPg0KKysrIGIvZHJpdmVycy9uZXQv
-Ym54dC9ibnh0X2Zsb3cuYzxicj4NCkBAIC0xNjMxLDcgKzE2MzEsMTYgQEAgYm54dF92YWxpZGF0
-ZV9hbmRfcGFyc2VfZmxvdyhzdHJ1Y3QgcnRlX2V0aF9kZXYgKmRldiw8YnI+DQrCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoHJzcy0mZ3Q7a2V5LDxicj4NCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcnNzLSZndDtrZXlfbGVuKTs8YnI+
-DQrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9PGJyPg0KLcKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgYm54dF9od3JtX3ZuaWNfcnNzX2NmZyhicCwgdm5pYyk7
-PGJyPg0KK8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcmMgPSBibnh0X2h3cm1f
-dm5pY19yc3NfY2ZnKGJwLCB2bmljKTs8YnI+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqBpZiAocmMpIHs8YnI+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqBydGVfZmxvd19lcnJvcl9zZXQoZXJyb3IsPGJyPg0KK8KgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIC1yYyw8YnI+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgUlRFX0ZMT1dfRVJST1JfVFlQRV9B
-Q1RJT04sPGJyPg0KK8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGFjdCw8YnI+DQorwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgJnF1b3Q7Vk5JQyBSU1MgY29uZmlndXJlIGZhaWxlZCZxdW90Oyk7PGJyPg0KK8KgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcmMgPSAtcnRlX2Vycm5vOzxi
-cj4NCivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGdvdG8g
-cmV0Ozxicj4NCivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoH08YnI+DQrCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCB9IGVsc2Ugezxicj4NCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIFBNRF9EUlZfTE9HX0xJTkUoREVCVUcsICZxdW90O05vIFJTUyBjb25maWcg
-cmVxdWlyZWQmcXVvdDspOzxicj4NCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIH08YnI+PC9ibG9j
-a3F1b3RlPjxkaXY+PHNwYW4gc3R5bGU9ImZvbnQtZmFtaWx5OkNhbGlicmk7Zm9udC1zaXplOjEx
-cHQ7YmFja2dyb3VuZC1jb2xvcjp0cmFuc3BhcmVudCI+QWNrZWQtYnk6wqDCoEtpc2hvcmUNClBh
-ZG1hbmFiaGEgJmx0OzxhIGhyZWY9Im1haWx0bzpraXNob3JlLnBhZG1hbmFiaGFAYnJvYWRjb20u
-Y29tIj5raXNob3JlLnBhZG1hbmFiaGFAYnJvYWRjb20uY29tPC9hPiZndDs8L3NwYW4+wqA8L2Rp
-dj48YmxvY2txdW90ZSBjbGFzcz0iZ21haWxfcXVvdGUiIHN0eWxlPSJtYXJnaW46MHB4IDBweCAw
-cHggMC44ZXg7Ym9yZGVyLWxlZnQ6MXB4IHNvbGlkIHJnYigyMDQsMjA0LDIwNCk7cGFkZGluZy1s
-ZWZ0OjFleCI+DQotLSA8YnI+DQoyLjMwLjI8YnI+DQo8YnI+DQo8L2Jsb2NrcXVvdGU+PC9kaXY+
-PC9kaXY+DQo=
---0000000000007e6996065c02067f--
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Sep 15,=
+ 2026 at 4:51=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
+v@infotecs.ru">Evgeny.Sokolov@infotecs.ru</a>&gt; wrote:<br></div><blockquo=
+te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
+solid rgb(204,204,204);padding-left:1ex">From: Sokolov Evgeny &lt;<a href=
+=3D"mailto:Evgeny.Sokolov@infotecs.ru" target=3D"_blank">Evgeny.Sokolov@inf=
+otecs.ru</a>&gt;<br>
+<br>
+Check the return value of bnxt_ulp_cntxt_tsid_get() and log an<br>
+error when TSID retrieval fails.<br>
+<br>
+Found by InfoTeCS on behalf of Linux Verification Center (<a href=3D"http:/=
+/linuxtesting.org" rel=3D"noreferrer" target=3D"_blank">linuxtesting.org</a=
+>) with SVACE.<br>
+<br>
+Signed-off-by: Sokolov Evgeny &lt;<a href=3D"mailto:Evgeny.Sokolov@infotecs=
+.ru" target=3D"_blank">Evgeny.Sokolov@infotecs.ru</a>&gt;<br>
+---<br>
+=C2=A0drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c | 2 ++<br>
+=C2=A01 file changed, 2 insertions(+)<br>
+<br>
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_u=
+lp/bnxt_ulp_tfc.c<br>
+index fa98b2bca9..d5ce4c3c18 100644<br>
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c<br>
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c<br>
+@@ -309,6 +309,8 @@ ulp_tfc_tbl_scope_deinit(struct bnxt *bp)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return;<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 rc =3D bnxt_ulp_cntxt_tsid_get(bp-&gt;ulp_ctx, =
+&amp;tsid);<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0if (unlikely(rc))<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0BNXT_DRV_DBG(ERR, &=
+quot;Failed to get the table scope\n&quot;);<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 rc =3D bnxt_ulp_cntxt_fid_get(bp-&gt;ulp_ctx, &=
+amp;fid);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (rc)<br>
+--</blockquote><div>=C2=A0<span style=3D"font-family:Calibri;font-size:11pt=
+;background-color:transparent">Acked-by:=C2=A0=C2=A0Kishore
+Padmanabha &lt;<a href=3D"mailto:kishore.padmanabha@broadcom.com">kishore.p=
+admanabha@broadcom.com</a>&gt;</span></div><blockquote class=3D"gmail_quote=
+" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
+padding-left:1ex"> <br>
+2.30.2<br>
+<br>
+</blockquote></div></div>
 
---00000000000089c539065c02063a
+--00000000000026c4f1065c02b7d1--
+
+--0000000000003134fa065c02b757
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -313,13 +295,13 @@ W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
 6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
 YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
 YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCC5nC5ALFWfI7d0pTgU5s1VBjDo6Y9vf+sh5pqP05JjZjAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExODAwMjlaMFwGCSqG
+oIHHMC8GCSqGSIb3DQEJBDEiBCDQnh4RBTrmv8UxIr5s+OdUH8WwJVGmM3hm707RgkWObzAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExODQ5NTNaMFwGCSqG
 SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQC0HGvBEVwB
-ugZtUTp4ej7ZEh7BGUDNtWl2iDM4KkKIOg6wRSsKu6EHe0C//w96HmXbulshj86cUsq/bvHU7Ao1
-xV8Wv1NXBcT9CKkqltZ8blueo4ih2W41rO6dtvgW4VCxscNPNnt8Kr5WR+I2ZWWkftlW8J7ZkkZh
-/TtMeczDta+PSLXC6OJpOHpYsqaa74RDMi3UvYo20gPFP0J2M/5/Ep0tvsJ/BpHEBZmXe7vsZdqo
-LX6GYZtLPEaB81c+S80n/VRnT2hVHbGnuvKIgzq9KFqAaZV+Z6f6WqUmHRjC0/xxBdCVuovKkOAU
-KxrGiFXZDgOrwWBQ41n597GTjGJU
---00000000000089c539065c02063a--
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAWmTXS6RY8
+4hm/L58QWUib/P8khEG7qibYJr7PyygjzidfqhKGLfeJ4i8bIdv6MB8O6dA5RR4+aNOI2br2y961
+7TMVKKi95qIzm2+mQxrFZLjDjWD2K+obhtVLYQN1fL6gn8jAmZ3+W4c+8Z/6XL5bwbCO5+Jt+pC7
+p8TQcSXtDhXeiZRYGe4SmF0sZR8VWYB06SF4O1CaByJTfROorKs7oanuSIGCb+XvJ4kL93QYrotp
+OMx5zyOIuGf9jwGaXYg1Z3/gZlWwuC8n4VeNx2JxVW+R9J2LFrynx0l9rFkMUZFQXo/WuewrzYhW
+Pcsjh9ZyD01AX5Im+51hjLIn8XT+
+--0000000000003134fa065c02b757--
