@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 143B5C982ED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 15:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F978C982ED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 15:57:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 63C0742E50;
-	Mon, 21 Sep 2026 17:55:17 +0200 (CEST)
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id A0CB342E4E
- for <dev@dpdk.org>; Mon, 21 Sep 2026 17:55:15 +0200 (CEST)
-Received: by mail-pz2-f12.google.com with SMTP id
- 41be03b00d2f7-cc4aa0f1a94so2208802a12.2
- for <dev@dpdk.org>; Mon, 21 Sep 2026 08:55:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 66F5242DCD;
+	Mon, 21 Sep 2026 17:57:54 +0200 (CEST)
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
+ [74.125.227.141])
+ by mails.dpdk.org (Postfix) with ESMTP id 3E12342D76
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 17:57:53 +0200 (CEST)
+Received: by mail-pj2-f13.google.com with SMTP id
+ d9443c01a7336-2d747eefae4so9688935ad.0
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 08:57:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790006115;
- x=1790610915; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790006272;
+ x=1790611072; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=wYkyHA5JzAP1x8JPOVMc0yVmsj4gQwIBwVOerpmXfBU=;
- b=R4b8M7wb6i0yixuvP+J0sLO65wCXqc0cZ3bnzKFuQsqgoJKmI5X/25Mq8JEm/zid9T
- yFcoi3Gh4oHbNSJUULcP/ALcFVjNY1uZskJeZvfGiKNIOL1iOeP6FMs5ikTFdYGCWm3s
- dhCoJ2aAexsSTfuIuixA8ss1fnjP+lFxQ5A3fJAlaVpKOVgelsc5M6U2s3bob/cjXQPb
- ONTPouuDvBeICvuVav+esOIoB6G6YTricvIRiTfN5Jw+rQHRjPw+JlyxBdFJ9Zu9NQpL
- 5tRPkilOhCCE++noLwfexoE9lwG/yuNoCvwhcZkuOllbg1h1tfNuzLcoljAHMMn14Kuu
- uU6g==
+ bh=H2Nkpct/47ZKDvPqyUgO8opF3TlUFYhz4O/rS8lwxUY=;
+ b=TIovmNzHfFOwR9bgy6EB4U7hhlE4kkqh0nwkaps5Jvs04VTYbbuvZzeRPJtySGkD1a
+ I3DswMSLZ/Zx7cl64ZXRdlZxoaNXMbkM1xDM1a/2OZaVxXdqCkw5z3D4Dsc959FsUbAI
+ J6E1OYg59IXE9PhyHK0IhTo4fFe0wKiRJmLfq/obbDjjpRMnB0KagJHv9Uwk6SmvRBxI
+ e6rqBWCG2WFNvCqAj6/3YOCDiIKRmk9ajJmARAU8TKJQKuyeEqWZ06uoNYPq5n+CFwZV
+ Yy6NfBzZA87tgOLJi9CQ2wSCzUgEZzhayCzkXSZINcQkYy1P+0tnPo3HF+F+M18cNPGq
+ I3TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790006115; x=1790610915;
+ d=1e100.net; s=20260707; t=1790006272; x=1790611072;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=wYkyHA5JzAP1x8JPOVMc0yVmsj4gQwIBwVOerpmXfBU=;
- b=N6GWXFq3RJGolqT5NwRHlH4XieZmYaYQUXWTzNGeJ9huYZ02H/wFRsCSeM9oUOQS6d
- txwum++zy+qmwDEneYTDkWOc49OPVVenP/J8sqfDxlQHqbUwpLNhskWhp4Et1y5yorY9
- xLYuY5S+hKYsMzfRcrHe+OVUdyp05YRm2eiASRwUqEjXCXHV0H7RKvvYWrdylHQTO4XZ
- /cisBgBeGQs0Rn/fdWRS2aiHigqLYj2wrAad76Eiw3X1vLAz6NvWWkA5lv59QfuBHgLk
- w4YhpBs5qkQYPWnO+QqObUPdctsMJQzaHKmZRRLqJDI/X4fD3UYjXoMUAeaCeu7EwOmM
- cMwg==
-X-Gm-Message-State: AFuF++lylSEfSX9MrgJ/gZ28CixR+agOMsxnHTzIxiUaPBkwpO6UsD3c
- /uPkulYi5LcHUx6ebG+Qs5P/MyoQp6ucFNWFW5Bq/RzxQ2cLr1OOBa5Ruhx6wOK8ITM=
-X-Gm-Gg: AYBFou1gLgTA/eiY969U3YRBNar3qA+OZYhjzJMPZ0QQFYoRj+ed3dA83duqwgjx5DD
- 0u6UuO25MHRE+rSDx5IUa8k7tlrkEblgljC2hTr1M++xXryv0r0ModbhesULRbImfzQXMw89oKh
- fYnTwliN/a04y3hs4Z3uYwkOOUrMmzdjqeU6MICEogD5isCyOc32NHV75XkdaOsLLYC/PhOqstA
- E36xGbCptgE3LHqT5PCgdciXvPCz/W2L5AInKdLeoQ39Z2e9+s8Q/+3xj/e+rB4q5iZuRioCzzn
- V3c6SAPz9/kqSZxOcVWWl5Ms39BLy2uqju7ziiPJC9DvJkgVACcni5svtTulqXv4MZEAax82pzg
- vHVixPNAJ4XM9wBoUGm99IvVnsWmCCa3CpnohJiV/r6Hp7sTrPVXhYHHXm5TZj1jf7w1iCIAWBr
- UhKTf/1F3/0UAkJRRiEwekg0OaCyQvLMte8UXUPgfrAtGLvQTrZwGUYgYjbi7VfzeIK+K9iYR5l
- p79t5HhJrKKAoFfL3722cfIu/jp4sn4DMtHXhIQ
-X-Received: by 2002:a17:90b:4d91:b0:39e:6c69:34db with SMTP id
- 98e67ed59e1d1-39e6c6936e9mr9620593a91.63.1790006114645; 
- Mon, 21 Sep 2026 08:55:14 -0700 (PDT)
+ bh=H2Nkpct/47ZKDvPqyUgO8opF3TlUFYhz4O/rS8lwxUY=;
+ b=x7fnON85cEqzpKuAKhuh5QnNdDvHhHXqzYr33i2LCBVHGpI3ajy08DDmJf48QzIbFb
+ lxtd5dscqcOaKb0qaENkybpAuCgD2hpjzzICc2at1xXBYT6sDS+vyIZItZQXPvbywn0r
+ n0sHIaFAEtseQVuGXLYWik0pdcvm+15Z53xfXOvm3VTzxjtgrQ/y1UL2C6fVJsAnJHec
+ v9KwjxSHwRH1Bjrp6PeqgIsVXdvYCt1ovhdzjylhzQAsUt+5Dxq3orjo79//F2f/Dy7c
+ HfysekK5Eq3Y0lNo9tgLVy9dKF5eKpddGcPphvb6HBzlzIXWzCL1rPauSbnG97j/oOqi
+ Ac/w==
+X-Gm-Message-State: AFuF++l/8Zz8Sa8UZHNt8ERZ/I1yLjknJ/wGiedKKN2k2sQfDxrmYoDm
+ aorqprqe1fXKXko3iOo1Bs29U2OWNRn+MRyVDgtLAY8Rh0QTCr8TLEdnS7s0yRcsxtk=
+X-Gm-Gg: AYBFou3mHy4HN/+RUfHRaQgVEcy+O6PRH3uk7nxG39a2WQbq+rU4Ik2b4DVw6+y46LH
+ OoQZ0Bg1+ZTHm1anU4y1uOLll2WgG6V6sMdO77PWI4dyQPxuOO3KTAdhrni3pqTAMDgVIXkD7jR
+ DjhUWCDD+2QM4I5iXMhzGRiaGDAc8oix2cHI1KBHYc7avBw5skqSDgC/wlu0p1hzJ7mLE8sy604
+ 6qct4ZcZ3hdkpWK/GyeqEHRCeuBH5DWo50mlSnvyjF/X+hFekZ7RZ3tHMiF+h3lfeWymTFz1rIf
+ zLAxyB1gq6F6azM2MKdJbOv41CwD4bptzwRaoP9WKrzTaddxgU/SIbRHNEb1cSGHGkT2+Y4OxCF
+ E6FLzxbXRLo5tyZ0KNZodVvm1HDXYmYz4O3X6vAWmw+cgcH60pPKpHaKPhO+9AH40VUpr1vV58f
+ 1e4wMkmFMoAL81em4KlehEJjMiQ4TnIELAmHp3zTlL3PfNf5pfJJcBZkx0ViOjepLFhXZ28Pv8Y
+ FIxsDjPOq29iz2nF0lSWsNmx/xRoigyifh3m6v/
+X-Received: by 2002:a17:90b:3908:b0:3a0:2900:f55e with SMTP id
+ 98e67ed59e1d1-3a066b27b25mr36316a91.29.1790006272151; 
+ Mon, 21 Sep 2026 08:57:52 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a063c1994esm735465a91.17.2026.09.21.08.55.13
+ 98e67ed59e1d1-3a063f33101sm739922a91.2.2026.09.21.08.57.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Sep 2026 08:55:14 -0700 (PDT)
-Date: Mon, 21 Sep 2026 08:50:50 -0700
+ Mon, 21 Sep 2026 08:57:51 -0700 (PDT)
+Date: Mon, 21 Sep 2026 08:57:49 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Cc: dev@dpdk.org, kishore.padmanabha@broadcom.com, Chenna Arnoori
- <chenna.arnoori@broadcom.com>, stable@dpdk.org
-Subject: Re: [PATCH v2 4/5] net/bnxt: fix bounds in MAC pool index and flow
- parsing
-Message-ID: <20260921085050.4ec87519@phoenix.local>
-In-Reply-To: <20260921022420.1034071-5-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260918032752.763408-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260921022420.1034071-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260921022420.1034071-5-Mohammad-Shuab.Siddique@broadcom.com>
+To: Marat Khalili <qm2k21@gmail.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v2] examples/rpcapd: demo version of packet capture daemon
+Message-ID: <20260921085749.0966b507@phoenix.local>
+In-Reply-To: <2801d980-791c-4552-a9cd-4ad705ebb196@gmail.com>
+References: <20260908210832.1556291-1-stephen@networkplumber.org>
+ <20260920190007.1128720-1-stephen@networkplumber.org>
+ <2801d980-791c-4552-a9cd-4ad705ebb196@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,54 +84,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 20 Sep 2026 20:24:19 -0600
-Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com> wrote:
+On Mon, 21 Sep 2026 10:51:39 +0100
+Marat Khalili <qm2k21@gmail.com> wrote:
 
-> From: Chenna Arnoori <chenna.arnoori@broadcom.com>
+> Very cool example, demonstrating many advanced DPDK features at once. In 
+> this regard, it really excels.
 > 
-> Two independent out-of-bounds issues in the driver:
+> It could be however useful as a debug tool, and in this case having to 
+> deal with a secondary process is a hassle. Could we have this feature in 
+> dpdk-testpmd, instead or as well?
+
+No. There is dpdk-extcap which is better tool.
+Testpmd doesn't need more bloat and opening a socket in testpmd would
+also expose more attack surface
+
 > 
-> - bnxt_mac_addr_add_op() indexed bp->vnic_info[pool] with a
->   caller-supplied pool before validating it against bp->max_vnics, and
->   before checking bp->vnic_info was even allocated yet (it is NULL
->   until the port is started). The existing "if (!vnic)" check was
->   always false, since vnic held the address of an array element and
->   is never NULL. Reorder to check dev_started/vnic_info first, then
->   bounds-check pool against max_vnics before indexing.
-> 
-> - bnxt_flow_non_void_item()/bnxt_flow_non_void_action() looped
->   unconditionally until a non-VOID item/action was found, walking off
->   the end of a pattern/actions array that lacked a terminating END
->   item. Bound the skip loop and stop advancing once the limit is hit.
-> 
-> Fixes: 51fafb89a9a0 ("net/bnxt: get rid of ff pools and use VNIC info array")
-> Fixes: 5c1171c97216 ("net/bnxt: refactor filter/flow")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Chenna Arnoori <chenna.arnoori@broadcom.com>
-> Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-> ---
-
-
-
-
-[PATCH v2 4/5] net/bnxt: fix bounds in MAC pool index and flow
-parsing
-
-Warning: the bounded VOID skip does not bound the walk. The outer
-loops in bnxt_filter_type_check() and
-bnxt_validate_and_parse_flow_type() run while type != END. After 256
-VOIDs the helper returns a VOID item, and the loop calls it again at
-item + 1. A pattern without END is still walked off the end, and
-non-VOID items are never counted. The rte_flow API requires the END
-terminator. Drop this half of the patch.
-
-The added "if (!cur) return NULL" paths return a value that no
-caller checks.
-
-Warning: in bnxt_mac_addr_add_op() the pool bounds check comes after
-the dev_started early return. An invalid pool added while the port
-is stopped returns 0, is recorded in mac_pool_sel, and then fails
-later in bnxt_restore_mac_filters() at dev_start. Validate pool
-against bp->max_vnics before the dev_started test. The
-bp->vnic_info == NULL test after dev_started is dead code.
+> Otherwise, having seen the demonstration, I do not have many comments, 
+> except for a couple nits below.
