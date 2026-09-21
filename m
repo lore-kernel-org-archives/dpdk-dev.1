@@ -2,89 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE11CC982ED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 19:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8461BC982EE
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 19:11:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A2C5040E2B;
-	Mon, 21 Sep 2026 21:03:29 +0200 (CEST)
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com
- [209.85.214.225])
- by mails.dpdk.org (Postfix) with ESMTP id F17354067D
- for <dev@dpdk.org>; Mon, 21 Sep 2026 21:03:27 +0200 (CEST)
-Received: by mail-pl1-f225.google.com with SMTP id
- d9443c01a7336-2dd1dcdcf95so1768655ad.1
- for <dev@dpdk.org>; Mon, 21 Sep 2026 12:03:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BE93D42DF0;
+	Mon, 21 Sep 2026 21:11:54 +0200 (CEST)
+Received: from mail-pg1-f228.google.com (mail-pg1-f228.google.com
+ [209.85.215.228])
+ by mails.dpdk.org (Postfix) with ESMTP id 5909140E2B
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 21:11:53 +0200 (CEST)
+Received: by mail-pg1-f228.google.com with SMTP id
+ 41be03b00d2f7-cc4b5bdd578so162615a12.2
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:11:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790017407; x=1790622207;
+ d=1e100.net; s=20260707; t=1790017912; x=1790622712;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=SlUMyQdvFSYeCUpmQTDDLLwG2OfDvgdhzFNhd9/eOsk=;
- b=sNgHYycYX8uc57/iwDeNGoklSlVrdPE/oyDaI+FdNDm0DLrwlH1nFUQA/GdPs+I6Dt
- rfrD1AiFF8meTyC04BfDIzd4nDWIu0U/0IXD96FQkAGcw1TswVjqAVoLEdKSiQbkht2O
- Pz5FtfGUTunYcYRL91jkEuPq4m85JQZephODb/ZLryb9ligRhAyGd+vpdIn3j89WMcUC
- JQ58bsV+pXBhQOA3CGgXgp8brBjW1DtCkpv539NiVsLy7WGkBFbISw94TxA3AysVPFR0
- KImVET5gXWaYgw58SWiVQROGdlTKTt0ed+YgA5yUUNUTaxonszotaKmA6vUOa00KJLOo
- kG0Q==
+ bh=ehn1HSCDl1QKsieoCeU8PbiQs466EhQNhvK3inSzcaM=;
+ b=JNe+CwUiSbhj4Nf5jN4I/NFbe1tEtT1+KzPdeZpcfat2q9sSzSytq4ZTEmVy+RYQU5
+ U0+NUEWNHBF/FX4WtEQdD28CgZYGpmy/wD/JT7cFIUU8lVtql+oCdiFYOckZmUGab3U2
+ MDCzCN2tzAtUQjyTs4f1QCASb/l5k0/pR2RVOMXW2ENdfzCUzwHgfN+ekvWZu+49F9k6
+ WY+tc8U+w/aawHSVHLD/nGNntWRIvhuk5vxVdPKzquppATVN+OFlYJoCDleqTzvyUbbt
+ P/vouTuDO90hjUe2gafpsvEFcDCMOauoevnb/xXzAPZ8NERIWtVVScZZ45pazPL6kVS3
+ qDfQ==
 X-Forwarded-Encrypted: i=1;
- AKwUvBxtVrJZ1Jpe6HrxuGy+ALZxqpdkDJer6YZnfK1HJLmwIkZarLFD4J7d4X3nfltveovzzTc=@dpdk.org
-X-Gm-Message-State: AFuF++ne3TpiLSSzOeU2iS41WILZb90C72FYNQ9GpV9sU6TWCVB19u8K
- bllXrUxuh6MIj/ZYmpZe8N2H2VLgWC0HPovjUKhNtDKU4l6WnnGIWnAI9I9OAbCn33nznYa56n7
- RGQNBpqvRDheYeag2PSVHp4bRF3DPyhmyOThzqWn5alDvXAfB0TrZKnFIBYotrVrrokyiGErc63
- 29/DfCGPIp4EQgF8C7ZonkApA58ZIyutBOa0U0bdReV0+qB0LeYrsvnoXm57Kg4ryTMw2KHlsQc
- Sjjzw==
-X-Gm-Gg: AYBFou3Mgi4cDkEZWEeiRNdcNT/BM9y8RwbyW+cOC9snD4hfkM2+r6n42mfQeSVdr1O
- Dj1HFeG9bSKmwAo8JixQISsno6vZD8W2RxOOKZ/gNH7LyA+b+7KWtPYl5icAn+Vieohr0fwDze/
- LkVIsFljsaPl3Wki2SiZJ8JPhCCzvL/k5WWvOOql7NzeIslhi3lqHaVo4jAe04QdAC9UT9Lj6jf
- HBNOT7dyoe2O9VhJvl48T0Gp8V1a+MGeFjc2+MLjqDwArLMD1z/FL1FajjmolL+lrUAScpNMqfP
- gPfTzHlxe7+oO6FMbVc+0Rh39iImUlrkRPrwAIQZWSmeZgztKr201RYZOL/78M4qEf7FyW7X4kg
- HbuZOniBEXSCUgek3Huc7mZgKxySNreI9acuSRFxkTv+YKxD/UcIa/yIQZvc3vDAe8iM7ENdgSp
- TGP5HSK8jzmB5oFZ3Ih5c5PTy+h8HjUnlE/T9nTAWGqhI=
-X-Received: by 2002:a17:902:db12:b0:2d8:d4cf:fe49 with SMTP id
- d9443c01a7336-2df598074e1mr4211465ad.15.1790017406451; 
- Mon, 21 Sep 2026 12:03:26 -0700 (PDT)
+ AKwUvBzOdqLQpBdMScNkSNpFNhmkEj/t/bLtkSWawKiKh7UmbdU5r8EQE5xtOhce+idObiQd+Vw=@dpdk.org
+X-Gm-Message-State: AFuF++nc7ziw9r8isywzJSQ5g8CkvNArRfs41Xs422hxwcZXhRO4kkVh
+ 5F8tPKDRhzcjfDM/GZgskJABCQrQuS1EyzRTRIqVJqIaAJdhRrx78GayVLvbXIWV50Z+Isg337o
+ m/fKSK0CWM4AB+uniW1ccIeDaR0+FIONsTnZH+C7WQT9VRUqGn98vssZBlmYWENg3wdIcQCtv6G
+ n1CTqMtmjwHGCo5pB23A743H6EbePXD/VxS2LlwYjI+xhBLxkkNNaBrOc29U2DkyziQPjho0j1e
+ h5S9w==
+X-Gm-Gg: AYBFou3WTmUgreZMqt9h+REqeZG679VjPvar0IXoQp3kKZ9WSq8/C/OjHE73XCs+qDH
+ pPYdBerQCQclWvkSB/enNB1/gC7+qHBTZYJ/TUhcU8V7Y4rQF/Sy7zuJlZm/CsG7mpHZikU7gX/
+ za3Cl9kzAVEd7nJNb99JLqMGNtaitNN8aLDPkYa0LEGDH7aLJC3to7vJPBG0CXxXKvBuSEcuroX
+ g3RcfLFpolDy3QDi+KbICsMa8ygkNTojtYh+GBZkAQyIKYniSQifpro0MlmQZLCb0pavBkcuWYm
+ 7W8Q/vaLS/KUzAa2+42n7DE5m6GrlPgOaFSXsmJKxLTRyzGdqaAO4HHhAOWoPX+9c7KheNIKbh4
+ LyERM7X2dHaKbeLpxzDEOEvlUMpptgoDx9fjL34rylkj/01B2zwQrHPayXmL0swHGYq43yvFZaX
+ Tlt0/9X+gna6cAFndMU4z0zBBxHdjQQrGyJu9t0tme8jo=
+X-Received: by 2002:a05:6a20:3946:b0:3dd:85a8:cace with SMTP id
+ adf61e73a8af0-3dd8c4ab5d2mr17498972637.37.1790017911988; 
+ Mon, 21 Sep 2026 12:11:51 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-29.dlp.protect.broadcom.com. [144.49.247.29])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-2ddc17a914csm3019045ad.18.2026.09.21.12.03.25
+ 41be03b00d2f7-cc72a285b65sm4168735a12.0.2026.09.21.12.11.51
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 21 Sep 2026 12:03:26 -0700 (PDT)
+ Mon, 21 Sep 2026 12:11:51 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-ed1-f70.google.com with SMTP id
- 4fb4d7f45d1cf-6a98570af94so215074a12.1
- for <dev@dpdk.org>; Mon, 21 Sep 2026 12:03:25 -0700 (PDT)
+Received: by mail-ej1-f69.google.com with SMTP id
+ a640c23a62f3a-c29466736e3so355485466b.2
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:11:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1790017404; x=1790622204; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1790017910; x=1790622710; darn=dpdk.org;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=SlUMyQdvFSYeCUpmQTDDLLwG2OfDvgdhzFNhd9/eOsk=;
- b=V0KtdDV1ipbmzG61w2QfyOyzsRKQji5b+0BKgmGGSFOdI1R2dSGq070XGdI3JbbXcv
- gNCj+exBISPf1c1VPROLaZaY3qDWBJJ1VFhrFDew3IVlKZ5WwgGZULH+GdU1SsAO9EVS
- K8fJYUA8oufROf20QcQsENOmLfHmaJPBJBPk8=
+ :content-type; bh=ehn1HSCDl1QKsieoCeU8PbiQs466EhQNhvK3inSzcaM=;
+ b=P/uPEXmxKarFBaIfsHGFClyNGkZU+W9a0UyBv53gUh1zX5enZEkWlKNAb5yRBvpFkC
+ Lj9Nke5exYpyIirO69uEVmhIKkfAez5+iL0d9MO66IYLiApSrbvINzS2LlYzCnYBujvh
+ 674tBlUp4t5eno3CnFUPVKM53abdRsYGckmVQ=
 X-Forwarded-Encrypted: i=1;
- AKwUvBxWcVkg74dz4WNWxeQ09gtzlscAMAq+SmzG1q24HbXsWfElj6LzpJui7ok67gTHJDEfmPU=@dpdk.org
-X-Received: by 2002:a05:6402:1854:b0:6aa:90cb:c8cb with SMTP id
- 4fb4d7f45d1cf-6aa9fef4d26mr314604a12.11.1790017404307; 
- Mon, 21 Sep 2026 12:03:24 -0700 (PDT)
-X-Received: by 2002:a05:6402:1854:b0:6aa:90cb:c8cb with SMTP id
- 4fb4d7f45d1cf-6aa9fef4d26mr314592a12.11.1790017403850; Mon, 21 Sep 2026
- 12:03:23 -0700 (PDT)
+ AKwUvBzl5WuYJEKfN+KKQE031pbz1psHlPdhtzmTvhvKS7jCQo/l4uqNB+eiHNUqX2wgALp8E9o=@dpdk.org
+X-Received: by 2002:a05:6402:551a:b0:6a6:32fa:cae with SMTP id
+ 4fb4d7f45d1cf-6aa56514857mr9209176a12.19.1790017909852; 
+ Mon, 21 Sep 2026 12:11:49 -0700 (PDT)
+X-Received: by 2002:a05:6402:551a:b0:6a6:32fa:cae with SMTP id
+ 4fb4d7f45d1cf-6aa56514857mr9209159a12.19.1790017909274; Mon, 21 Sep 2026
+ 12:11:49 -0700 (PDT)
 MIME-Version: 1.0
 References: <20260915085502.430947-1-Evgeny.Sokolov@infotecs.ru>
 In-Reply-To: <20260915085502.430947-1-Evgeny.Sokolov@infotecs.ru>
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Mon, 21 Sep 2026 15:03:04 -0400
-X-Gm-Features: AcwNN1U4jVFIYyyRLFE9pUDx3pLR0ZIp5pJ5UkRla8KlAG6Hz5qg8Lt7-x_GRJM
-Message-ID: <CA+BST0motX=TGzzKRmn69kpZ8B0fFmpKW0uwCWPKYzXLK6tfcw@mail.gmail.com>
+Date: Mon, 21 Sep 2026 15:11:31 -0400
+X-Gm-Features: AcwNN1WilBzHIkw7zvNicxilpU7lsgCv42MDSBOT8zgBYCwictYbR04I_s8qPdI
+Message-ID: <CA+BST0=OBrW4vHGRDOMo4YKb4jeMGDd3PVwfD=mE=CY6451Scg@mail.gmail.com>
 Subject: Re: [PATCH] net/bnxt: prevent overflow in alarm timeout calculation
 To: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
 Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org, 
  kalesh-anakkur.purayil@broadcom.com, somnath.kotur@broadcom.com
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="0000000000008a9df7065c02e755"
+ micalg=sha-256; boundary="000000000000ad22fe065c0305a7"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,12 +98,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000008a9df7065c02e755
-Content-Type: multipart/alternative; boundary="0000000000007fbe41065c02e713"
+--000000000000ad22fe065c0305a7
+Content-Type: multipart/alternative; boundary="0000000000009fe440065c03050a"
 
---0000000000007fbe41065c02e713
+--0000000000009fe440065c03050a
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+
+This change is already added as part of
+https://git.dpdk.org/next/dpdk-next-net-brcm/commit/?id=3Dc2b39669f47956d01=
+5d490dfa6e405d4272c08d2
 
 On Tue, Sep 15, 2026 at 4:55=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
 tecs.ru>
@@ -160,26 +164,25 @@ wrote:
 >         bp->flags |=3D BNXT_FLAG_FW_HEALTH_CHECK_SCHEDULED;
 >
 > --
-
-Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-
->
 > 2.30.2
 >
 >
 
---0000000000007fbe41065c02e713
+--0000000000009fe440065c03050a
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Sep 15,=
- 2026 at 4:55=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
-v@infotecs.ru">Evgeny.Sokolov@infotecs.ru</a>&gt; wrote:<br></div><blockquo=
-te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
-solid rgb(204,204,204);padding-left:1ex">From: Sokolov Evgeny &lt;<a href=
-=3D"mailto:Evgeny.Sokolov@infotecs.ru" target=3D"_blank">Evgeny.Sokolov@inf=
-otecs.ru</a>&gt;<br>
+<div dir=3D"ltr"><div>This change is already=C2=A0added as part of=C2=A0<a =
+href=3D"https://git.dpdk.org/next/dpdk-next-net-brcm/commit/?id=3Dc2b39669f=
+47956d015d490dfa6e405d4272c08d2">https://git.dpdk.org/next/dpdk-next-net-br=
+cm/commit/?id=3Dc2b39669f47956d015d490dfa6e405d4272c08d2</a></div><br><div =
+class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail=
+_attr">On Tue, Sep 15, 2026 at 4:55=E2=80=AFAM Evgeny Sokolov &lt;<a href=
+=3D"mailto:Evgeny.Sokolov@infotecs.ru">Evgeny.Sokolov@infotecs.ru</a>&gt; w=
+rote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0p=
+x 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">From: Soko=
+lov Evgeny &lt;<a href=3D"mailto:Evgeny.Sokolov@infotecs.ru" target=3D"_bla=
+nk">Evgeny.Sokolov@infotecs.ru</a>&gt;<br>
 <br>
 The alarm timeout is calculated by multiplying wait_msec by<br>
 US_PER_MS before passing the value to rte_eal_alarm_set().<br>
@@ -241,19 +244,14 @@ _freq,<br>
 =C2=A0 =C2=A0 =C2=A0 =C2=A0 bp-&gt;flags |=3D BNXT_FLAG_FW_HEALTH_CHECK_SCH=
 EDULED;<br>
 <br>
---</blockquote><div><span style=3D"font-family:Calibri;font-size:11pt;backg=
-round-color:transparent">Acked-by: Kishore
-Padmanabha &lt;<a href=3D"mailto:kishore.padmanabha@broadcom.com">kishore.p=
-admanabha@broadcom.com</a>&gt;</span></div><blockquote class=3D"gmail_quote=
-" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
-padding-left:1ex"> <br>
+-- <br>
 2.30.2<br>
 <br>
 </blockquote></div></div>
 
---0000000000007fbe41065c02e713--
+--0000000000009fe440065c03050a--
 
---0000000000008a9df7065c02e755
+--000000000000ad22fe065c0305a7
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -347,13 +345,13 @@ W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
 6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
 YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
 YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCCE0oROa6xhmLLV7qrvGGg2qPSpVrTMon/jfR6os8cLTDAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExOTAzMjRaMFwGCSqG
+oIHHMC8GCSqGSIb3DQEJBDEiBCC9Y0EEDh2eb6bIVxE1kBlI1BRl6YY5xeOh1P/YCEUlkjAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExOTExNTBaMFwGCSqG
 SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQB2fFsl3x1D
-8HJVTH0XvmnM+gu/lH+LCbF9RrWAZXVvVBlxHqqiu9I7p97HsXFATnkVBxW93PpKQOgR4Lrfi147
-XREV/4zjsGvY++p6Vz/zf6vq2VLXi6Jk16nzWITsZvB2HwbJJJOj6zOpuqSwtIP6s98X4f4BHzQh
-wNBk4HA+L42NCZl4Cv+weoaQ8KfNS3Dr0DRlwtm2FlgjzNwaEzl5WR4ctu7/C5T9AvXUAheJQlRu
-5AIw0rV4IXpDyZJmoHzIhzNPsFVp7+D4rq/OXYhVe7B77724JdSh+Vs7bszapqTxzlkopBekwDzG
-WysAKWwVrA4mqxq1hTrde1x44hXa
---0000000000008a9df7065c02e755--
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCG2HLxnQj8
+oIjp2aUakmNNA3AaJvQ/YjMWwAakTfazkixxGLbNJQTtu5bD23vcZx2U7at9C3CWibb0Q3SNNBPO
+W5nqxpK2WNEF0w/8nrlVCjYUhfWOtTsbDJzay3ZNvYTmOfe/Q2PNG17O0LP5PMG3iFMTUdG8JX74
+r7Bly+mrgu0PD/Cpe9padHDAsblYR8xEKQ4pzPDlleB5AFmuk1YsSpdCBV9+MiH7nSZX50CoXGtZ
+bsHzUU0Ev/FGo3BuIhFl28U2SeNNCsYgix1RI+3cBARlKxC8IHMook2NyJgcOI7A5rMv078NpY1t
+iqwzHz2+HhkRg9IAeB89hYDNUbiv
+--000000000000ad22fe065c0305a7--
