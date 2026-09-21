@@ -2,88 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2422C982ED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 02:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18435C982DA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 02:21:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B664410FA;
-	Mon, 21 Sep 2026 04:21:28 +0200 (CEST)
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com
- [209.85.214.225])
- by mails.dpdk.org (Postfix) with ESMTP id E778A40E35
- for <dev@dpdk.org>; Mon, 21 Sep 2026 04:21:24 +0200 (CEST)
-Received: by mail-pl1-f225.google.com with SMTP id
- d9443c01a7336-2d7200b2e15so12503225ad.3
- for <dev@dpdk.org>; Sun, 20 Sep 2026 19:21:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 47620410DC;
+	Mon, 21 Sep 2026 04:21:30 +0200 (CEST)
+Received: from mail-pj1-f97.google.com (mail-pj1-f97.google.com
+ [209.85.216.97]) by mails.dpdk.org (Postfix) with ESMTP id 04F5B40ED0
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 04:21:26 +0200 (CEST)
+Received: by mail-pj1-f97.google.com with SMTP id
+ 98e67ed59e1d1-39de1f85ca2so680092a91.1
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 19:21:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789957284; x=1790562084;
+ d=1e100.net; s=20260707; t=1789957285; x=1790562085;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=gw8sqpoQ2chdKdyOrZFB06HR77u46UftjvFe7TMNwRY=;
- b=ePEWPKk6L5Rkhs0JfWItUYDvx3DQt57VFIl6OGCtR91B51DL8d+C8VTA7ciIncQ+uZ
- /et5KVcSs0LNUbJ4DQXP22nww1zuoPAPYsiP9WkbToVseoXVfBA+SWVPQ36DSXNF7ggN
- boYts7aJxr+lCz3tYSoArG1/Lz1kxFvjsFFPjx7iyHmt+ufNP2nZ9YX15BPq7P3eRBI2
- gZBaRm66T+Jq2Nwy+ISl+bRvVXkzGS5ElmKgyUdIZB8foazaFAcTQ/Xl7N1c/n3kqDJU
- nsUeCmT0Q/KYzKVJycAY/bYjbshTHR+aY56it2lDzOxWyOCQEcwlIfAgWeR0Is09NKDD
- 8JAA==
-X-Gm-Message-State: AFuF++kc72VSCX7SeZHDuIeYdgmFFlp1nAA5Vg7kwQxgEDFnfc2cvCMd
- f9xWllZoeaLCeeVQDu0r70TW6gQXQzI1h4rWJgy59MzUrSkNigqm5GxMuJWPj3MRq2YXakpX5/H
- kj10q3NVAuRR+UnQDd8jThZCUVKUVvLAl9sKAnhCw0rylPxQL+7RyTaj4ntgQfXTObx42q9Aaex
- lmF+8grrK/H+hyqJMVEGXpXuWBCJZ9Rlh0JWWkn+rdO2ejE5qR8kp7J6LWxd0QmuafIGoqLMc3y
- 72uxgEVMnc5
-X-Gm-Gg: AYBFou3pJz8/1fnafosAU45IcJo6Bre4VcoC0GS+ioo3PvW1TQf4Lh8JmWTxgloBWG4
- 38iwHnfEmxeS+g0oxwcsI8a5iUtULTSRtAdqNQDPTWe0D9h4BuJAS63+J7h9oPPZ3P6b7nntptm
- EY7qKd7N16DbFUR1vAAwnIkrdjwg9uSS/fZOrIal9zz41qqvnmf+D1vFKG1GEuNGaelGyJ9wvXt
- wB+B7PD42siSSoH95jcOBmKYYcNRlKWmMHGeEo4MckkD18bIe1Yv8IiynRAaBlsNoddvMJYjADT
- f5HbNIGgfUV0RXURZ0WNncdAfnFks1YN9HX8CeNTYmP1FIqfQWrS6lhT1ZR05pUwRvtbr0GMjwz
- bNUMxSEzOJ+1KGkVmaWLMQMXzOqKdEfaoCnNTyGUgGOyazYrutlL78whcVuTwKi1n7rtZyY67ZU
- 3a6JruOiRrdr+eCzftT6NNi63tP0TRFjjGbeFxh02JXXBAy4kNsg==
-X-Received: by 2002:a17:90b:280a:b0:39e:2530:2102 with SMTP id
- 98e67ed59e1d1-39e54f4221amr22676796a91.11.1789957283807; 
- Sun, 20 Sep 2026 19:21:23 -0700 (PDT)
+ bh=dcTe+vAfC8bALPPPldwYdD09ACNUHl4MWrEO77q7sOg=;
+ b=G+U4+mNmBrYNG4iKVFr9stG/PqQrym3AObZ78PLl+EJdvtqn4C4aAiVVFsGcXJclC8
+ xRaq/oGZreXHTufrKQP08RZrBaJDfTzZ5HabyMrMHtRFAJoB3kePyTMUeR6XLxDnNsSj
+ n45pKnIL3VQcThKCJf944yRotwCK55WZJcLuRVCaO44yKNXBHiu42oqAYghl0RxusFHf
+ d/h5i+dt79LG2Lldk3DWI1kZNDfGhb/n6ZBqku5DoWxX4euR7oKXzNbEqEfV19nlR7fM
+ EDGZ8C71TPKbC03fXBj/kqQf0D35nMx4+tD+TyDWAQEX5YEmjuwYqHpbTvqs2IlHTgPt
+ FS1A==
+X-Gm-Message-State: AFuF++kOG+zmwM0vZdkfHuPDcyicnCOiZRdCfc/Kxtvj8RLIb5h8/pvz
+ 4mARcpEucdGPYKSC0s23AkM3iPX0+gxC/bw99d501X4dkrSQn/6gSSUKma6fBungCDL5IZP+qGd
+ J/BuZJxhHl77U0amp3VRAdLzBLsYuPP2HRRM9xrxeq0Kv6lBr5k79y9T8qERoCqztkRk/IxSTZt
+ p4qliRhhEjExUw9zzIXePkCA123BhhETXwdA0W8xM/w2hdf95Zh874AarZ2DaQEQ7w2RHwI+8yf
+ mqsAwvZE3wG
+X-Gm-Gg: AYBFou23VREFtofhICqguU9Atwf3JjSBwpVZHVKNUeGbnkUbijc+JRgZ+DE2py7JvXM
+ mGuPBZVE8pUisrYXBfwrZINGwaFys91JBZfeRygxOcXjLYnDP/cqynL9GiptdOLeLVG3rUUlZ9E
+ KYq6Cgwotpyw7v5oDEuYil5U3wEwBn4zZBrHLT9hjnyNo5nuW9Q0vleEJ1JPlsAIMAzXmacVKSC
+ MyPf4xTKnXYdLfarefyvfoM1OrkO6Gg4th+o2dTGEgSFq5D1De9o4N1CAV0ogShK3N+a/WD6RGY
+ RCi6/Ml5TWe7NnLa7y1cCDLgY5oEO1kcgsdi3/05v5wRrIg/RREa9SrXbdv2ThNahGHffLdkz06
+ bLfff93thU0Bl+DsPXPeX7UomYQ+mVLfJni2scnbDO104z1MdH6N334t10TgV8Cy6r/YKn/3GJa
+ VDxy2M5UEfnqkkuFQgbvl9J0htpST7h4tBR05uxxKG84j4y8nuZQ==
+X-Received: by 2002:a17:90b:2b8e:b0:39d:f024:c7ee with SMTP id
+ 98e67ed59e1d1-39e5500a842mr14415501a91.25.1789957285073; 
+ Sun, 20 Sep 2026 19:21:25 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-16.dlp.protect.broadcom.com. [144.49.247.16])
+ (address-144-49-247-25.dlp.protect.broadcom.com. [144.49.247.25])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-39e5550046dsm1066482a91.3.2026.09.20.19.21.23
+ 98e67ed59e1d1-3a049c5697csm1019253a91.7.2026.09.20.19.21.24
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Sun, 20 Sep 2026 19:21:23 -0700 (PDT)
+ Sun, 20 Sep 2026 19:21:25 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pj1-f70.google.com with SMTP id
- 98e67ed59e1d1-39de4a68f7cso4589803a91.1
- for <dev@dpdk.org>; Sun, 20 Sep 2026 19:21:23 -0700 (PDT)
+Received: by mail-pg1-f200.google.com with SMTP id
+ 41be03b00d2f7-cc21bc2923fso2297949a12.2
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 19:21:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1789957282; x=1790562082; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1789957283; x=1790562083; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=gw8sqpoQ2chdKdyOrZFB06HR77u46UftjvFe7TMNwRY=;
- b=BOroLJXhQmcDDwG4pEqJgBxCuQCKmz/HoKN3YgQFbfPYyF0Z8P+iBWRfGX/XI/rK9w
- 52cPEjpQ7sWkkL7K+Mexctp9o+o8FoRdsmp4myqm31HfRvmhdLXDhCeQsZxpp8/rMULj
- PvzLkhinYwiaFCcm/5Cl8MCZ2vQVWgN7Zz6ww=
-X-Received: by 2002:a17:90b:5587:b0:3a0:309d:5549 with SMTP id
- 98e67ed59e1d1-3a04b116fcamr1854458a91.8.1789957282117; 
+ bh=dcTe+vAfC8bALPPPldwYdD09ACNUHl4MWrEO77q7sOg=;
+ b=dLL3SoyW/ctZOc69C6m8SlusI1tC9j8sj1RzI4MZXMqcq7eyBMa4+aFS+gEKgRZHTg
+ PnslOXwHZyXFApeFCnjcosF+wdhthGVt0sjwGF+J8wyjtgicWT2/X9rSqoCQ0H8/MTy6
+ 3oPlb9SDwX0gOUrN5xjijyokVVUi/0UqMaZ7I=
+X-Received: by 2002:a17:90b:554b:b0:39e:6c6a:4b64 with SMTP id
+ 98e67ed59e1d1-39e6c6a5438mr7243522a91.46.1789957283251; 
+ Sun, 20 Sep 2026 19:21:23 -0700 (PDT)
+X-Received: by 2002:a17:90b:554b:b0:39e:6c6a:4b64 with SMTP id
+ 98e67ed59e1d1-39e6c6a5438mr7243497a91.46.1789957282657; 
  Sun, 20 Sep 2026 19:21:22 -0700 (PDT)
-X-Received: by 2002:a17:90b:5587:b0:3a0:309d:5549 with SMTP id
- 98e67ed59e1d1-3a04b116fcamr1854430a91.8.1789957281486; 
- Sun, 20 Sep 2026 19:21:21 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-144d53968afsm16587294c88.0.2026.09.20.19.21.20
+ a92af1059eb24-144d53968afsm16587294c88.0.2026.09.20.19.21.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 20 Sep 2026 19:21:21 -0700 (PDT)
+ Sun, 20 Sep 2026 19:21:22 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com,
- Chenna Arnoori <chenna.arnoori@broadcom.com>, stable@dpdk.org,
+Cc: kishore.padmanabha@broadcom.com, stable@dpdk.org,
  Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH v2 4/5] net/bnxt: fix bounds in MAC pool index and flow parsing
-Date: Sun, 20 Sep 2026 20:24:19 -0600
-Message-ID: <20260921022420.1034071-5-Mohammad-Shuab.Siddique@broadcom.com>
+Subject: [PATCH v2 5/5] net/bnxt: fix TPA agg Rx descriptor and VNIC query
+ bounds
+Date: Sun, 20 Sep 2026 20:24:20 -0600
+Message-ID: <20260921022420.1034071-6-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260921022420.1034071-1-Mohammad-Shuab.Siddique@broadcom.com>
 References: <20260918032752.763408-1-Mohammad-Shuab.Siddique@broadcom.com>
@@ -104,137 +103,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Chenna Arnoori <chenna.arnoori@broadcom.com>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-Two independent out-of-bounds issues in the driver:
+Three independent out-of-bounds issues:
 
-- bnxt_mac_addr_add_op() indexed bp->vnic_info[pool] with a
-  caller-supplied pool before validating it against bp->max_vnics, and
-  before checking bp->vnic_info was even allocated yet (it is NULL
-  until the port is started). The existing "if (!vnic)" check was
-  always false, since vnic held the address of an array element and
-  is never NULL. Reorder to check dev_started/vnic_info first, then
-  bounds-check pool against max_vnics before indexing.
+- bnxt_rx_pkt() incremented tpa_info->agg_count and indexed
+  tpa_info->agg_arr[] with only an RTE_ASSERT (compiled out in release
+  builds) guarding the array bound, allowing an out-of-bounds write if
+  firmware sent more aggregation segments than TPA_MAX_NUM_SEGS.
 
-- bnxt_flow_non_void_item()/bnxt_flow_non_void_action() looped
-  unconditionally until a non-VOID item/action was found, walking off
-  the end of a pattern/actions array that lacked a terminating END
-  item. Bound the skip loop and stop advancing once the limit is hit.
+- bnxt_rx_descriptor_status_op() used the firmware-supplied completion
+  opaque value directly as an rx_buf_ring[] index without masking it to
+  the ring size first.
 
-Fixes: 51fafb89a9a0 ("net/bnxt: get rid of ff pools and use VNIC info array")
-Fixes: 5c1171c97216 ("net/bnxt: refactor filter/flow")
+- bnxt_hwrm_func_vf_vnic_query() returned the firmware-reported
+  vnic_id_cnt unclamped; a value exceeding bp->pf->total_vnics would
+  cause the caller to iterate past the end of its VNIC ID buffer.
+
+Fixes: b150a7e7ee66 ("net/bnxt: support LRO on Thor adapters")
+Fixes: 0fe613bb87b2 ("net/bnxt: support Rx descriptor status")
+Fixes: cbcd375d37d2 ("net/bnxt: fix HWRM macros and locking")
 Cc: stable@dpdk.org
 
-Signed-off-by: Chenna Arnoori <chenna.arnoori@broadcom.com>
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_ethdev.c | 16 ++++++++++------
- drivers/net/bnxt/bnxt_flow.c   | 28 ++++++++++++++++++++--------
- 2 files changed, 30 insertions(+), 14 deletions(-)
+ drivers/net/bnxt/bnxt_ethdev.c |  3 ++-
+ drivers/net/bnxt/bnxt_hwrm.c   |  3 ++-
+ drivers/net/bnxt/bnxt_rxr.c    | 10 +++++++++-
+ 3 files changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index 27cf67c04f..db9b49238a 100644
+index db9b49238a..d21ebac0c2 100644
 --- a/drivers/net/bnxt/bnxt_ethdev.c
 +++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -2113,7 +2113,7 @@ static int bnxt_mac_addr_add_op(struct rte_eth_dev *eth_dev,
- 				uint32_t index, uint32_t pool)
- {
- 	struct bnxt *bp = eth_dev->data->dev_private;
--	struct bnxt_vnic_info *vnic = &bp->vnic_info[pool];
-+	struct bnxt_vnic_info *vnic;
- 	int rc = 0;
- 
- 	rc = is_bnxt_in_error(bp);
-@@ -2125,15 +2125,19 @@ static int bnxt_mac_addr_add_op(struct rte_eth_dev *eth_dev,
- 		return -ENOTSUP;
+@@ -3631,7 +3631,8 @@ bnxt_rx_descriptor_status_op(void *rx_queue, uint16_t offset)
+ 		case CMPL_BASE_TYPE_RX_L2:
+ 		case CMPL_BASE_TYPE_RX_L2_V2:
+ 			if (desc == offset) {
+-				cons = rxcmp->opaque;
++				cons = RING_IDX(rxr->rx_ring_struct,
++						 rxcmp->opaque);
+ 				if (rxr->rx_buf_ring[cons])
+ 					return RTE_ETH_RX_DESC_DONE;
+ 				else
+diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
+index 0143da8789..aae50c1fea 100644
+--- a/drivers/net/bnxt/bnxt_hwrm.c
++++ b/drivers/net/bnxt/bnxt_hwrm.c
+@@ -6242,7 +6242,8 @@ static int bnxt_hwrm_func_vf_vnic_query(struct bnxt *bp, uint16_t vf,
  	}
+ 	rc = bnxt_hwrm_send_message(bp, &req, sizeof(req), BNXT_USE_CHIMP_MB);
+ 	HWRM_CHECK_RESULT();
+-	rc = rte_le_to_cpu_32(resp->vnic_id_cnt);
++	rc = RTE_MIN(rte_le_to_cpu_32(resp->vnic_id_cnt),
++		     (uint32_t)bp->pf->total_vnics);
  
--	if (!vnic) {
--		PMD_DRV_LOG_LINE(ERR, "VNIC not found for pool %d!", pool);
--		return -EINVAL;
--	}
--
- 	/* Filter settings will get applied when port is started */
- 	if (!eth_dev->data->dev_started)
- 		return 0;
+ 	HWRM_UNLOCK();
  
-+	if (bp->vnic_info == NULL)
-+		return 0;
-+
-+	if (pool >= bp->max_vnics) {
-+		PMD_DRV_LOG_LINE(ERR, "Pool %u exceeds VNIC count %u!", pool, bp->max_vnics);
-+		return -EINVAL;
-+	}
-+	vnic = &bp->vnic_info[pool];
-+
- 	rc = bnxt_add_mac_filter(bp, vnic, mac_addr, index, pool);
- 
- 	return rc;
-diff --git a/drivers/net/bnxt/bnxt_flow.c b/drivers/net/bnxt/bnxt_flow.c
-index a2e590540b..14d52e1818 100644
---- a/drivers/net/bnxt/bnxt_flow.c
-+++ b/drivers/net/bnxt/bnxt_flow.c
-@@ -58,24 +58,36 @@ bnxt_flow_args_validate(const struct rte_flow_attr *attr,
- 	return 0;
- }
- 
-+#define BNXT_MAX_FLOW_ITEMS 256
-+
- static const struct rte_flow_item *
- bnxt_flow_non_void_item(const struct rte_flow_item *cur)
- {
--	while (1) {
--		if (cur->type != RTE_FLOW_ITEM_TYPE_VOID)
--			return cur;
-+	int i = 0;
-+
-+	if (!cur)
-+		return NULL;
-+
-+	while (cur->type == RTE_FLOW_ITEM_TYPE_VOID && i < BNXT_MAX_FLOW_ITEMS) {
- 		cur++;
-+		i++;
- 	}
-+	return cur;
- }
- 
- static const struct rte_flow_action *
- bnxt_flow_non_void_action(const struct rte_flow_action *cur)
- {
--	while (1) {
--		if (cur->type != RTE_FLOW_ACTION_TYPE_VOID)
--			return cur;
-+	int i = 0;
-+
-+	if (!cur)
-+		return NULL;
-+
-+	while (cur->type == RTE_FLOW_ACTION_TYPE_VOID && i < BNXT_MAX_FLOW_ITEMS) {
- 		cur++;
-+		i++;
- 	}
-+	return cur;
- }
- 
- static int
-@@ -109,7 +121,7 @@ bnxt_filter_type_check(const struct rte_flow_item pattern[],
- 			PMD_DRV_LOG_LINE(DEBUG, "Unknown Flow type");
- 			use_ntuple |= 0;
+diff --git a/drivers/net/bnxt/bnxt_rxr.c b/drivers/net/bnxt/bnxt_rxr.c
+index 87640eaa79..cd4e93bdb3 100644
+--- a/drivers/net/bnxt/bnxt_rxr.c
++++ b/drivers/net/bnxt/bnxt_rxr.c
+@@ -1164,7 +1164,15 @@ static int bnxt_rx_pkt(struct rte_mbuf **rx_pkt,
  		}
--		item++;
-+		item = bnxt_flow_non_void_item(item + 1);
- 	}
  
- 	if (has_vlan && use_ntuple) {
-@@ -680,7 +692,7 @@ bnxt_validate_and_parse_flow_type(const struct rte_flow_attr *attr,
- 		default:
- 			break;
- 		}
--		item++;
-+		item = bnxt_flow_non_void_item(item + 1);
- 	}
- 	filter->enables = en;
- 	filter->valid_flags = valid_flags;
+ 		tpa_info = &rxr->tpa_info[agg_id];
+-		RTE_ASSERT(tpa_info->agg_count < 16);
++		if (unlikely(tpa_info->agg_count >= TPA_MAX_NUM_SEGS)) {
++			PMD_DRV_LOG_LINE(ERR,
++					 "TPA abuf: agg_count %u exceeds max %u",
++					 tpa_info->agg_count, TPA_MAX_NUM_SEGS);
++			tpa_info->agg_count = 0;
++			bnxt_sched_ring_reset(rxq);
++			rc = -EINVAL;
++			goto next_rx;
++		}
+ 		tpa_info->agg_arr[tpa_info->agg_count++] = *rx_agg;
+ 		rc = -EINVAL; /* Continue w/o new mbuf */
+ 		goto next_rx;
 -- 
 2.47.3
 
