@@ -2,90 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1AFC982EE
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 19:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5370C982ED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 19:46:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6633140E2B;
-	Mon, 21 Sep 2026 21:42:07 +0200 (CEST)
-Received: from mail-qv1-f100.google.com (mail-qv1-f100.google.com
- [209.85.219.100])
- by mails.dpdk.org (Postfix) with ESMTP id AA29840B94
- for <dev@dpdk.org>; Mon, 21 Sep 2026 21:42:05 +0200 (CEST)
-Received: by mail-qv1-f100.google.com with SMTP id
- 6a1803df08f44-91041ee9230so6291316d6.2
- for <dev@dpdk.org>; Mon, 21 Sep 2026 12:42:05 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BBF6E40E2B;
+	Mon, 21 Sep 2026 21:46:01 +0200 (CEST)
+Received: from mail-vk1-f225.google.com (mail-vk1-f225.google.com
+ [209.85.221.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 8C28840B94
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 21:46:00 +0200 (CEST)
+Received: by mail-vk1-f225.google.com with SMTP id
+ 71dfb90a1353d-5c8386a01b0so406806e0c.0
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:46:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790019725; x=1790624525;
+ d=1e100.net; s=20260707; t=1790019960; x=1790624760;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=oiRdU9rEQP8DCLGHbzaHTmtnts0KC0SE1b1iT/u9NNQ=;
- b=VsFLOkC7K8kF0glvQAxjJColdRDD3lZJSIAyFAHsQmL8ZM0rveetCxTmEyh/xEgxMv
- z9UVVNLNQPyZAONq7tEgb+qMNLOZb8hBPv80z8iCgmeGu79aAY3XvdMYxTs1cEBS9Ya4
- lrWXN5VSfNJPqrA6WzX4gAH3Hy8iOpmPORZA990dUWxM3zyr0OFx1evqfbOXqmRJ642m
- zXur9Gh/7sluUrqUHmnaIR7z5Lx301cRWEovw56utfzez/CEvbltTPG+JZ8OM3lhVBO+
- f2IZHOwYvZtGiqdNkLfcSStQC7qDMCPc4G/I9cDXaTo/k4932qv4fNQZnV2bb9XbwVvR
- fniA==
+ bh=P6rla8ragAI3eqPMGHjqwaigyG5ECOzvwuFCXZR7BPM=;
+ b=EZ/jfEeTvauZunX/siyQw3NgAMmzBHG4oVXvhEkt1KVepzCUUSF3liz/zU52tr7EJc
+ IimUdtFsbRvG3c5DTbgMKrX2U6Eg661filTVOnimxpbPBI3E0ou4QO5BenxLw2YEzsNs
+ mKpsqWbi0Yvh1AZ2ZsH0YZHQbwupcAmJ0cScmL/BI3lNFqdnXihutYT+5jTxYyfoyBMw
+ epm88EROoLJLVMqsv2G8ke540uCyxSNrgH/3fVAV7jtf7EYi4wp6SBCp2e9Tb9M1SN3s
+ csnpLQZfSELxxeBh3U/ds1G16q7IgdXkelnPeYuSI30N3MmIdcSUuo5T252Kvgg7MNpA
+ dnAg==
 X-Forwarded-Encrypted: i=1;
- AKwUvBzRwoM+2R6MGFPSHATEumHgpGt8Pc4T42kDEt4iUzOPLY34pH1ahTnAMwqlWDmGALpUu30=@dpdk.org
-X-Gm-Message-State: AFuF++ln0xnICXcAGRxJU/MqS/cwtH1tnlkuIRPZYrG8+ijPJQzh410i
- dI9l0qw6BLKEguOrppk3gpExuIAeFKUKwh0IJwRdir/FNSJq1kpGPEfu0nWECaaeiZ4UM91FBHz
- LY+rxPj1o5bufav/svH20XV5FlQd3laFpoX/fwBiLqi3uEfhLC7DaOe+T4EKkByAYqnYUefIr9D
- Xl8gFoIV9TQW/bPdF5spH7ul7gZkutoVbgW5IOADriyrxhPcNjXp+OjegaKFTVjQblTspmqwbXB
- b3kHA==
-X-Gm-Gg: AYBFou3SsHo7L2VM8RtQ+TL1xXHY+YD0KsgwzEbPOczTT6Ehtwr7RBDKXF2UvFrJNkq
- CGFySgByLUgA9em5UcHNa3dIlpmeBRa01t75My4ReJnG5fnB/feVDac5FHKDoUtpddIz4u/jUhb
- 5uB36UqaT0VOXdev0QUNp2GxnFdRRl1nNmJunLJHGIDaF57Nm5gOvdv0HwlByXjd1qBTnV/HbHN
- rBn/WLJqDCgmu0UjoG/laCbKGMWZ/GOytEWnZHrebNJ17iDX4NQAm8GdO87hC2cmJyXqKKfEGkm
- M/cTIA463ILe/EJGQVhFd/vw2geL3uh2ZYAAoBz1u1nUuRXhT9MMTD4/LWvZnUK3IsXVzJpTZ0g
- GCeYEmLCMe9vHms5Dy++L3mULOtYfRmShzzrUa6zKzGzZxLw4UDXzWRcBE3E89DILP2cmGcvED8
- HYMx3tg6VJwSXO8eF6FTwUGZzPJyA/3C6CEqD77MO35r4=
-X-Received: by 2002:a05:6214:3a89:b0:912:6093:e642 with SMTP id
- 6a1803df08f44-913fc94834emr20546206d6.33.1790019724761; 
- Mon, 21 Sep 2026 12:42:04 -0700 (PDT)
+ AKwUvBwI7A3m6kW/TE1KawRCil7FUnsIK97yfThd3KFc955VyyZOPYqFmIu7MRsyRaNWPZCOiCY=@dpdk.org
+X-Gm-Message-State: AFuF++mAkcM/uOGAU9m/66Ya0Zim5v0zdg+rxEYvP4knOqXaxrhtIbpk
+ 4wP00bNFLni4u3JgFKcXkATlg2PsL4R9zGjVunL2gjmRSqo5nCOY1OVWKHLYZmMhBK3+/3LMKhD
+ sqyBq+Ow1EtpYw7PtIfjtb/B33kkrRLwCIuuoGqhdaq5LI7lgQtMoBD+xTBMuJMaTjJn00+tXL3
+ /43yyc6Dr6W6l2TefFz7N4fCB4/9T3CdZgjBzqk8yA4HQZUmpm3gtsUMWNRUwQoKWHzweRCeqNb
+ CAsxw==
+X-Gm-Gg: AYBFou2lZJLKmdIRFxX2Ul/ZKUGPY3N6yIpzMAUcs3WkoOv1qRYM+L8OpkaTE6qb+1g
+ GfauOA9bJyJAncpWogaQYCoA1BSoU1+PkEn48dydgA7zBjhVbL9VlLeZ0qDknLzpR8U6Pb+L2un
+ Sr4TnMrsf4fGD6DsSrl69laPUbiUDzigd8TPsmRF5yif7Hv9QlDZNoqKfXVLe75PD/w/hSF31zz
+ 2Dzp/rhG+H0FVRVdiP4+4qwCMhbWHLUaSZOnd1KunelI3i6I328xyKgrMjsKJwg+It5+04hfsX9
+ WZlxGubUDhBvw2D5ZuF5PIK7fnlBtQk/rmqg7estSkq6PJ3s/fIILQHnok+CrZ1lRU3g7JQuE1+
+ 9clKkOHn1kATfsae0OVMA94cG37w3DSr/VGCmHY7IfKSTLulbC9OxfW4Ry618MkR6jr/CGhxQRQ
+ Egp3Ht+Q7mfRrUau2oWRtvetFQMtvczFejQ0lFa7j3zCE=
+X-Received: by 2002:a05:6102:370e:b0:7aa:7769:34e with SMTP id
+ ada2fe7eead31-7aada714eebmr52036137.4.1790019959339; 
+ Mon, 21 Sep 2026 12:45:59 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-22.dlp.protect.broadcom.com. [144.49.247.22])
+ (address-144-49-247-29.dlp.protect.broadcom.com. [144.49.247.29])
  by smtp-relay.gmail.com with ESMTPS id
- 6a1803df08f44-91260bcc149sm633126d6.25.2026.09.21.12.42.04
+ 6a1803df08f44-91260bdf3fesm558846d6.28.2026.09.21.12.45.58
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 21 Sep 2026 12:42:04 -0700 (PDT)
+ Mon, 21 Sep 2026 12:45:59 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-ed1-f69.google.com with SMTP id
- 4fb4d7f45d1cf-6a98570af94so256828a12.1
- for <dev@dpdk.org>; Mon, 21 Sep 2026 12:42:04 -0700 (PDT)
+Received: by mail-ed1-f71.google.com with SMTP id
+ 4fb4d7f45d1cf-6a9caf60126so3839149a12.1
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:45:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1790019723; x=1790624523; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1790019957; x=1790624757; darn=dpdk.org;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=oiRdU9rEQP8DCLGHbzaHTmtnts0KC0SE1b1iT/u9NNQ=;
- b=Xp0kSJSEQHLqCTQDQ3jlrJB5ECLOxRiMpUuOaotRFfsIBVQPvddSWZWdbDFTIxCuP5
- dbU6lmTvCZI2V3mOHV23qMkzBlksAprF/HV7C8PDC4UBF7TuHu82+tkUiYWKilZUjD18
- F+3Lpycn06I/On4F0rwzH/6LMxN5tUJ0N8EKU=
+ :content-type; bh=P6rla8ragAI3eqPMGHjqwaigyG5ECOzvwuFCXZR7BPM=;
+ b=EXYoy3V/8pvfARK/uKVnCpwWG4TWKnldpCPYnzeQk7/Fxm6/kkEF5ZMhhcwV4o06Jl
+ rgXMZ4HOQjviPAAcYpkzf2Xi5TGkQBTq2arnws+Ci8B8eSxP4iCX+Hd56hq1RAtgh6F0
+ 06tE9OSpUd6D9FfaRJ6FfpEVxgp34e7vOzjw0=
 X-Forwarded-Encrypted: i=1;
- AKwUvBxho9DxmpgZicF+IRUrnpYP1G2Q+Ml0QfvfijXCVTu7Q9ovjks/w9FEriojlnQdlgR6Of0=@dpdk.org
-X-Received: by 2002:a05:6402:5606:b0:6a6:b2b9:7667 with SMTP id
- 4fb4d7f45d1cf-6aa9ff2bf95mr413620a12.20.1790019723156; 
- Mon, 21 Sep 2026 12:42:03 -0700 (PDT)
-X-Received: by 2002:a05:6402:5606:b0:6a6:b2b9:7667 with SMTP id
- 4fb4d7f45d1cf-6aa9ff2bf95mr413614a12.20.1790019722729; Mon, 21 Sep 2026
- 12:42:02 -0700 (PDT)
+ AKwUvBzv6xGBOmLdowiIso05yViaS3iVLvhEvCLAH49No77xwhR/2KTAPzF/E8qO1xI6j8XXhR4=@dpdk.org
+X-Received: by 2002:a05:6402:21d7:b0:6a9:b51c:9d49 with SMTP id
+ 4fb4d7f45d1cf-6aa545f2675mr8341174a12.10.1790019957635; 
+ Mon, 21 Sep 2026 12:45:57 -0700 (PDT)
+X-Received: by 2002:a05:6402:21d7:b0:6a9:b51c:9d49 with SMTP id
+ 4fb4d7f45d1cf-6aa545f2675mr8341153a12.10.1790019956813; Mon, 21 Sep 2026
+ 12:45:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260915091150.431471-1-Evgeny.Sokolov@infotecs.ru>
-In-Reply-To: <20260915091150.431471-1-Evgeny.Sokolov@infotecs.ru>
+References: <20260915094820.431638-1-Evgeny.Sokolov@infotecs.ru>
+In-Reply-To: <20260915094820.431638-1-Evgeny.Sokolov@infotecs.ru>
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Mon, 21 Sep 2026 15:41:44 -0400
-X-Gm-Features: AcwNN1VHAamUqBnVVGfU1vNjCr3eM46DP_DGjQk49YzqONskWNF4zVHdrbUNNtc
-Message-ID: <CA+BST0=1h4LWdoGmL-q3yfHZWPMvwBBGWhqd2dN2PhqHHaEwzw@mail.gmail.com>
-Subject: Re: [PATCH] net/bnxt/tf_ulp: use 64-bit shift in burst size
- calculation
+Date: Mon, 21 Sep 2026 15:45:38 -0400
+X-Gm-Features: AcwNN1UqdlyRU-xPKoHz0gxWgvXD4uf2kt-zo-YIom1IgeE-QGQ-aHaK8rjhKo4
+Message-ID: <CA+BST0n7m=_TAPAuw67Tg9Bf1b09WrwRO20FD2QJPj-36BgBhg@mail.gmail.com>
+Subject: Re: [PATCH] net/bnxt: use enum value for interface type check
 To: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
-Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org, 
- stuart.schacher@broadcom.com
+Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="000000000000c16796065c0371b9"
+ micalg=sha-256; boundary="000000000000bc620e065c037f2a"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,46 +97,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000c16796065c0371b9
-Content-Type: multipart/alternative; boundary="000000000000b7091b065c03711d"
+--000000000000bc620e065c037f2a
+Content-Type: multipart/alternative; boundary="000000000000aad584065c037f57"
 
---000000000000b7091b065c03711d
+--000000000000aad584065c037f57
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 15, 2026 at 5:11=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
+On Tue, Sep 15, 2026 at 5:48=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
 tecs.ru>
 wrote:
 
 > From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 >
-> Use 1ULL instead of 1 in the left shift operation when
-> calculating the burst size mantissa.
+> Use BNXT_ULP_INTF_TYPE_INVALID when checking the interface type
+> returned by ulp_port_db_port_type_get().
 >
-> This avoids undefined behavior when the shift count exceeds
-> the width of a 32-bit integer.
+> Comparing the enum value explicitly makes the code clearer and
+> avoids relying on the numeric value of the invalid interface type.
+>
+> Found by InfoTeCS on behalf of Linux Verification Center (linuxtesting.or=
+g)
+> with SVACE.
 >
 > Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
-> Cc: stable@dpdk.org
 > ---
->  drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c | 2 +-
+>  drivers/net/bnxt/tf_ulp/ulp_rte_parser.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
-> b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
-> index 7f6a84e699..88a2f30521 100644
-> --- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
-> +++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
-> @@ -155,7 +155,7 @@ bnxt_ulp_flow_mtr_xbs_calc(int64_t xbs, uint16_t *reg=
-)
->          *   =3D round(xbs*2^(8-e) - 2^7)
->          *
->          */
-> -       m =3D xbs / (1 << (e - 8)) - (1 << 7);
-> +       m =3D xbs / (1ULL << (e - 8)) - (1ULL << 7);
->         *reg =3D ((m & 0x7F) << 5) | (e & 0x1F);
->         *reg =3D rte_cpu_to_be_16(*reg);
->  }
+> diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
+> b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
+> index 26823858b5..442a795430 100644
+> --- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
+> +++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
+> @@ -3108,7 +3108,7 @@ ulp_rte_port_act_handler(const struct
+> rte_flow_action *act_item,
+>
+>         /* Get the intf type */
+>         intf_type =3D ulp_port_db_port_type_get(param->ulp_ctx, ifindex);
+> -       if (!intf_type) {
+> +       if (intf_type =3D=3D BNXT_ULP_INTF_TYPE_INVALID) {
+>                 BNXT_DRV_DBG(ERR, "Invalid port type\n");
+>                 return BNXT_TF_RC_ERROR;
+>         }
 > --
 
 Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
@@ -148,52 +149,54 @@ Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 >
 >
 
---000000000000b7091b065c03711d
+--000000000000aad584065c037f57
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
 mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Sep 15,=
- 2026 at 5:11=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
+ 2026 at 5:48=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
 v@infotecs.ru">Evgeny.Sokolov@infotecs.ru</a>&gt; wrote:<br></div><blockquo=
 te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
 solid rgb(204,204,204);padding-left:1ex">From: Sokolov Evgeny &lt;<a href=
 =3D"mailto:Evgeny.Sokolov@infotecs.ru" target=3D"_blank">Evgeny.Sokolov@inf=
 otecs.ru</a>&gt;<br>
 <br>
-Use 1ULL instead of 1 in the left shift operation when<br>
-calculating the burst size mantissa.<br>
+Use BNXT_ULP_INTF_TYPE_INVALID when checking the interface type<br>
+returned by ulp_port_db_port_type_get().<br>
 <br>
-This avoids undefined behavior when the shift count exceeds<br>
-the width of a 32-bit integer.<br>
+Comparing the enum value explicitly makes the code clearer and<br>
+avoids relying on the numeric value of the invalid interface type.<br>
+<br>
+Found by InfoTeCS on behalf of Linux Verification Center (<a href=3D"http:/=
+/linuxtesting.org" rel=3D"noreferrer" target=3D"_blank">linuxtesting.org</a=
+>) with SVACE.<br>
 <br>
 Signed-off-by: Sokolov Evgeny &lt;<a href=3D"mailto:Evgeny.Sokolov@infotecs=
 .ru" target=3D"_blank">Evgeny.Sokolov@infotecs.ru</a>&gt;<br>
-Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
-><br>
 ---<br>
-=C2=A0drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c | 2 +-<br>
+=C2=A0drivers/net/bnxt/tf_ulp/ulp_rte_parser.c | 2 +-<br>
 =C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
 <br>
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c b/drivers/net/bnxt/tf=
-_ulp/bnxt_ulp_meter.c<br>
-index 7f6a84e699..88a2f30521 100644<br>
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c<br>
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c<br>
-@@ -155,7 +155,7 @@ bnxt_ulp_flow_mtr_xbs_calc(int64_t xbs, uint16_t *reg)<=
-br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*=C2=A0 =C2=A0=3D round(xbs*2^(8-e) - 2^7=
-)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*/<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0m =3D xbs / (1 &lt;&lt; (e - 8)) - (1 &lt;&lt; =
-7);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0m =3D xbs / (1ULL &lt;&lt; (e - 8)) - (1ULL &lt=
-;&lt; 7);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 *reg =3D ((m &amp; 0x7F) &lt;&lt; 5) | (e &amp;=
- 0x1F);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 *reg =3D rte_cpu_to_be_16(*reg);<br>
-=C2=A0}<br>
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c b/drivers/net/bnxt/tf=
+_ulp/ulp_rte_parser.c<br>
+index 26823858b5..442a795430 100644<br>
+--- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c<br>
++++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c<br>
+@@ -3108,7 +3108,7 @@ ulp_rte_port_act_handler(const struct rte_flow_action=
+ *act_item,<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Get the intf type */<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 intf_type =3D ulp_port_db_port_type_get(param-&=
+gt;ulp_ctx, ifindex);<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0if (!intf_type) {<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0if (intf_type =3D=3D BNXT_ULP_INTF_TYPE_INVALID=
+) {<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 BNXT_DRV_DBG(ERR, &=
+quot;Invalid port type\n&quot;);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return BNXT_TF_RC_E=
+RROR;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
 --</blockquote><div><span style=3D"font-family:Calibri;font-size:11pt;backg=
 round-color:transparent">Acked-by:=C2=A0Kishore
 Padmanabha &lt;<a href=3D"mailto:kishore.padmanabha@broadcom.com">kishore.p=
@@ -204,9 +207,9 @@ _quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204=
 <br>
 </blockquote></div></div>
 
---000000000000b7091b065c03711d--
+--000000000000aad584065c037f57--
 
---000000000000c16796065c0371b9
+--000000000000bc620e065c037f2a
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -300,13 +303,13 @@ W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
 6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
 YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
 YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCCIL9nFfFN9SW4msfApHwy63WhP+6dcz4u1AODk+G/54TAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExOTQyMDNaMFwGCSqG
+oIHHMC8GCSqGSIb3DQEJBDEiBCBCmm6cgq3/D62C9YWp6wTetAaXbqyNRtORbWZc/hAJOzAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExOTQ1NTdaMFwGCSqG
 SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQByZatlA5A5
-CyXOSKyJheS17fxVmpr5HMQrU31EWk+3dw/QfHl4LhnO8JEuvgoYbaVGAbnsP9tsd6CkDuJLI1AY
-A6wbKSkxrKwt5/qnXB3smGxd7uq0hgDnciVRgYwFVDBtbaujCFlQFafDycdpXjxTKUwPzYB0Lqnv
-Z663ZpkAt1VMGdwrSkFCm2SZOx1YEDQ58iax/dq5zeJd9ALfNokhSPd4lyQnmn+7BCvi9ynYiSig
-d9gWnMDPojIoOBlw56A28/eDscnPkE3bx3eEU10jzZIPHilMFfXN+1K0/uBlvVIpHKhpW/Bh+uZq
-R5KEzN4+xuLMINNz3CLVuahKvsno
---000000000000c16796065c0371b9--
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBXywoiw7PP
+sQud8RHiPfn+pgIvAf+OcdserIs8LLhCzssK4SiK6U4G7ER8r64pxCeOBKLkjs0SRsxQvCc+b4CZ
+WmNb6wJ7pOSIsON4DBztc31exO4NihdbWUucL685/zlCpAx46d5cGx9VqlsqW+xOZE8xcL6aI4k7
+zdn4UynZ5iy9L/E72A8aFsD0GbCApSlPJmXWm6MigqkfERbRtnJGWuVr+w6sTsVYWkjluKGVoEbg
+DlAPasizbqVo7z3/5s/MKH5mG+nA+7yJWF7v15vwAqFLJxQlt14YorAUW4S6hvl226zlkEA1pgsF
+vm2D+zpRAIbJd2lp2D42IY5m1Wfr
+--000000000000bc620e065c037f2a--
