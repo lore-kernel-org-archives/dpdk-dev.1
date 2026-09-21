@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B94C982E6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 15:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D67B8C982E6
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 15:54:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 30CE242D9D;
-	Mon, 21 Sep 2026 17:54:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3472542831;
+	Mon, 21 Sep 2026 17:54:50 +0200 (CEST)
 Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 2E08342D99
- for <dev@dpdk.org>; Mon, 21 Sep 2026 17:54:44 +0200 (CEST)
+ [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id C489F427E8
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 17:54:48 +0200 (CEST)
 Received: by mail-pz2-f12.google.com with SMTP id
- 41be03b00d2f7-cc1cea34f01so2746548a12.1
- for <dev@dpdk.org>; Mon, 21 Sep 2026 08:54:44 -0700 (PDT)
+ 41be03b00d2f7-cc4c3304833so2213420a12.3
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 08:54:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790006083;
- x=1790610883; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790006088;
+ x=1790610888; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=K2sViMjbhYVDqt6iiI0/hoXnGvFifwWPrvF7NvI93/g=;
- b=01neIPLAIgXqXL7DxwTUbUeHWU450296pXlDacZ+CtRs1y6NMdVTS1z93thBHN6qvH
- Zh48vx/Dhqxu4mi7tqFJJDSPZ3SDU9SeESWZ47UpR4J0ZLUonJR4ClFsag33+mYYpX7O
- wcVWjcL5b9xph5J4DkI6nnZH9H1pPBq7vO9zWcwwutTNdM0YsLoOfAPDhVAe6qwaRZ4a
- WYPKNcumyOtc2EKwO8FnONsiqBy3i57/YcTL28NnitfZeKuuGe8BXvuxX3qC+EzGBPsQ
- qcngXujb86TAY/sTHbp46PZfhuZ3oE5RaYjx04P7Y2KNdIhXy1ZYbAFFhakhilLCpvMc
- P1sA==
+ bh=AQu3sug953Gs/0oqOS+e8nMzNSNZIYblqjbK3bcPRRc=;
+ b=n8B+RFZPehe8mI0jwhOPL6PIssCul3+02jo6cm6wCr7K2fWjAtNlfomu8SXtnXhvU4
+ bciPvy7LLl+knn7kc4/ECD3x8aAEcmHz9YabGEvDbwXI5SzYSHjYFNdBuVatqCzRL0aZ
+ gV7pV9XH3+TxC+Y7FDEXEaxfLBz3wyp8fTiYGAWGhS6PzSkEukzQKofBZC7X4eThsn1b
+ 5c1xKUzoh0bQaLM2i+RnVraS+TXYNjQR9y1UUzxzIl+CkfnIdTLYXchxy/r6HYONyWqZ
+ NYYc1XSnFDTfCNbAEkwnr540leSo57MCuezBXQBAdpfPX2TaMrQ0A+4TxH6IDU4vJP5F
+ XsrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790006083; x=1790610883;
+ d=1e100.net; s=20260707; t=1790006088; x=1790610888;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=K2sViMjbhYVDqt6iiI0/hoXnGvFifwWPrvF7NvI93/g=;
- b=eKFPfBF4LUXpgz7I61XQrreTeGyb+p3EsYmp/d5m5wvhj358UyPn5MO7uQSp7LI3vG
- m2fLENbzWesWvOFXShyIvT9JwIWCEX196KKzpjQiZ3/KZ4wMBfRGSskk0mzbPIXYzRh0
- Qf1MJ+iNtFr00GFMWBOsyWmhuSBlrceMPmhJTA5cinr/niFNveQX9XBts/D7uTf8T/PF
- u1JkRDDZpQEq8ytY4qdyjgHpPjUyEByzEo5kKDkGpHRRiUF7doqJBdvE5ZUklYz2Lb3y
- ecPY8G1a6WoLwvmDN6LnuuSpySFkMJvFkXH8Jo3cSs4tsr1qmtSbFs7VU9XWQhh+frBW
- X5nw==
-X-Gm-Message-State: AFuF++n0jkdzW4FKtCG7Lk8iOa9Z4YO+oPHnm8e6H3anheHrU4Vai0qi
- odsR+1CvBNE9FLYrVwD2c/fwxDx0G46sdT9tiLgM7XWZg5TcO6awIsrYpZ+73sfyladcl9QrH6o
- HEMZW
-X-Gm-Gg: AYBFou07kdYW3jmFYvcSX9Oj55etwgmOyPrF6y4TgVwl926BbAxrlQ4pn3Ht/528+fB
- tP5E1E0DhBAIVeH+x1+cpFVYw401kFV8nyXRE7GYCzyxGpDXU6SHU82lZ4FDAi2F9SAM8mgy2OC
- OSWvEMAx4j6fzxJu8DFbasYN2d+ipsKWDY7hD1QA0d+MS4IKWoF2QMBbNZ5qmDJeMv6DmQQnsd4
- IOULCe+05ucEFWlH0HfVgX+hWUxGpTPig65igj7aJfYxrGl2CSIqL9VnbhwjVkLA/Iu7+DAfWHn
- 9M4RVg7bIxzrklhvyE6wJroGl6XSC9nMTQY7Lk4u6L9iKUKGsPTVsj8uK9xUAOGhJMnwH2eQhiD
- X/Tx2tgS/rMT3tcsp8zc/mLrdiotNPhh+Q0QlDFM1QzLL99gr2khd+deeyRCDBwqA8oKN9Fm8Re
- ij8NCxxiIMtUhz3cR0R87gyfmSAb1vKYFBZIJjM+YNRM2Uh4vGvRbvhcpA8vGoe+SKL5zYmr5cf
- IgYnGux7966IUB6w9aMmgK4+pCJ1EHu+EsIaTyxI/vYCeePDbgB
-X-Received: by 2002:a17:90b:37cb:b0:39e:6c69:9b9a with SMTP id
- 98e67ed59e1d1-39e6c69b2eamr11627205a91.63.1790006083147; 
- Mon, 21 Sep 2026 08:54:43 -0700 (PDT)
+ bh=AQu3sug953Gs/0oqOS+e8nMzNSNZIYblqjbK3bcPRRc=;
+ b=MtGnKRQam7jm93bnCE6KtM9PW6x0ydKkVj57wjmslwvf9NOD5u7MoRdg8gJM/DCL/H
+ sbNJ+vGo9PLheaVMR8Y5u9o4z/QVTNqB48Ncs6xEMeZM/O3It5mmDyS6QomtJkLIC4dm
+ 159P7dC76IRKhlr7KaLGKILD+5QpAxD2b5lyqUE8SJhn5cyLy/MPFVFj+yCR4rVQG+c1
+ VFU7XKieN1lWq3DaEOB1O9Wvew7PneVlNOyVqVv7/iTu9Wx8z75tX0kOncm1/btnE83L
+ u4htjNdmY9Dc5tzNEuGyhchhzgLVV01owdpb81NOVIcA1IOxM1vNNnTcBnDAfs6AlyrB
+ uURw==
+X-Gm-Message-State: AFuF++n0sSNo4leIHh6/ZSEucs9ha+s96WbIujvE/UiWdg+lfpTDzTF9
+ 31h/dXCIZCPbUgpOTtQ7uX/QcUnmvgjbtSzQcbaNFPstML6N3T3WEemT5KNSSCr1SCM=
+X-Gm-Gg: AYBFou2BjQ7y2K/xqjyzfEr0Ofl3YsIF4cLBB432RuzHotFy0LWMa3f5TwlHo/t7Hv+
+ IGlrC2ia8jEpUeuXHhVxqCJdnvL5PqBvyK2N83JvkJvAHbjsggaeIXjs8/GLUtMqPg3G+g8j1sc
+ pHSbv0MeVvUxzKQQkGUR+2tNKO2+gKKKdjBAIhooy8fcbavM3N7/GJBci6TFG5J8/BPp4CGS1vR
+ lmDxjENISeJjYzVizt4TLHnu2EhOSU2Bsrb39s+PTpGDJK8NWZTxdz7P240zgzJQN9fnJ6URW/w
+ XbA5yyHJckGQ7IzQLyPOOo44DWvviTf88izX6YI4HLaF0fs7HGweAH9j3Wi5hmwyxweph980Taz
+ heDjTlm4PgWt0jMfpKLRIeNWItw0CcNK6A/YxCiorFYK8bA4Z2nRDFBuYRl1g1694MfLAn2hvEO
+ VMCLGEFFAsPMQ87kffbB7j/XJV/s/T8ovFKmo3XCUnZ5reuC6BarCNm7o5dqiJdeuj1GR1qgJby
+ BEnskJhhlVeOlSgHzYlqmVyXbrK86xsmWhStNd0
+X-Received: by 2002:a17:90b:1845:b0:3a0:42a9:9c7c with SMTP id
+ 98e67ed59e1d1-3a042a9a00fmr5079806a91.39.1790006087854; 
+ Mon, 21 Sep 2026 08:54:47 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a063c1994esm735465a91.17.2026.09.21.08.54.42
+ 98e67ed59e1d1-3a063c1994esm735465a91.17.2026.09.21.08.54.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Sep 2026 08:54:42 -0700 (PDT)
-Date: Mon, 21 Sep 2026 08:48:44 -0700
+ Mon, 21 Sep 2026 08:54:47 -0700 (PDT)
+Date: Mon, 21 Sep 2026 08:47:27 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Cc: dev@dpdk.org, kishore.padmanabha@broadcom.com, stable@dpdk.org
-Subject: Re: [PATCH v2 3/5] net/bnxt: fix use-after-free in VNIC filter cleanup
-Message-ID: <20260921084844.769fe915@phoenix.local>
-In-Reply-To: <20260921022002.1033815-4-Mohammad-Shuab.Siddique@broadcom.com>
+Cc: dev@dpdk.org, kishore.padmanabha@broadcom.com, Joseph Wong
+ <joseph.wong@broadcom.com>, stable@dpdk.org
+Subject: Re: [PATCH v2 2/5] net/bnxt: fix bounds on firmware-reported
+ resource counts
+Message-ID: <20260921084727.6d55953f@phoenix.local>
+In-Reply-To: <20260921022002.1033815-3-Mohammad-Shuab.Siddique@broadcom.com>
 References: <20260918032726.763384-1-Mohammad-Shuab.Siddique@broadcom.com>
  <20260921022002.1033815-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260921022002.1033815-4-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260921022002.1033815-3-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,38 +85,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 20 Sep 2026 20:20:00 -0600
+On Sun, 20 Sep 2026 20:19:59 -0600
 Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com> wrote:
 
-> From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+> From: Joseph Wong <joseph.wong@broadcom.com>
 > 
-> STAILQ_FOREACH()'s own advance step dereferences the current node's
-> next field after the loop body runs. The loop body here frees that
-> same node (bnxt_free_filter()) before the macro dereferences it on
-> the next iteration, so the filter list walk in
-> bnxt_clear_hwrm_vnic_filters() reads freed memory to find the
-> following entry.
+> When parsing max_ring_grps and max_l2_ctx values from firmware, clamp
+> values if they exceed a 16-bit value. max_hw_ring_grps is received as
+> 32-bit in __bnxt_hwrm_func_qcaps() (the func_qcaps response) but cast
+> to 16-bit when used; add the clamp there and, as defense-in-depth,
+> also in bnxt_hwrm_func_resc_qcaps() in case that response's field ever
+> widens. max_l2_ctx is 16-bit in both responses, but its post-read
+> addition with max_rx_em_flows can overflow a 16-bit sum; widen the
+> addition to 32-bit and clamp the result.
 > 
-> Walk the list with STAILQ_FIRST()/STAILQ_REMOVE_HEAD() instead,
-> removing each filter from the list before freeing it so nothing is
-> dereferenced after being freed.
-> 
-> Fixes: 20ef524432dd ("net/bnxt: set L2 filters")
+> Fixes: 2691827e82c0 ("net/bnxt: add HWRM VNIC alloc")
+> Fixes: 80bf6811fa0f ("net/bnxt: fix L2 context calculation for Thor")
 > Cc: stable@dpdk.org
 > 
+> Signed-off-by: Joseph Wong <joseph.wong@broadcom.com>
 > Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 > ---
 
-You could also use STAILQ_FOREACH_SAFE() instead.
+Better  AI review flagged:
 
-AI flagged:
 
-[PATCH v2 3/5] net/bnxt: fix use-after-free in VNIC filter cleanup
 
-Warning: the commit message misdescribes the bug. bnxt_free_filter()
-frees nothing; filters live in bp->filter_info[]. It memsets the
-entry and inserts it on free_filter_list, leaving next == NULL. The
-old STAILQ_FOREACH therefore stopped after the first filter. The
-remaining filters were never cleared in HW and stayed on
-vnic->filter. The code change is correct. Retitle, e.g. "fix VNIC
-filter list walk", and describe the leaked filters.
+[PATCH v2 2/5] net/bnxt: fix bounds on firmware-reported resource
+counts
+
+Warning: in bnxt_hwrm_func_resc_qcaps(), resp->max_hw_ring_grps is
+uint16_t in hwrm_func_resource_qcaps_output but is read with
+rte_le_to_cpu_32(). On little endian the new clamp is dead code. On
+big endian the 32-bit swap of a 16-bit field yields value << 16,
+which the clamp turns into 65535. The fix is rte_le_to_cpu_16(); the
+"in case the field ever widens" clamp should go.
