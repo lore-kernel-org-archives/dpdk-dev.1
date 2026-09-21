@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D67B8C982E6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 15:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A681CC982FA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 15:55:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3472542831;
-	Mon, 21 Sep 2026 17:54:50 +0200 (CEST)
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id C489F427E8
- for <dev@dpdk.org>; Mon, 21 Sep 2026 17:54:48 +0200 (CEST)
-Received: by mail-pz2-f12.google.com with SMTP id
- 41be03b00d2f7-cc4c3304833so2213420a12.3
- for <dev@dpdk.org>; Mon, 21 Sep 2026 08:54:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6B77842DD4;
+	Mon, 21 Sep 2026 17:54:54 +0200 (CEST)
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
+ [74.125.227.140])
+ by mails.dpdk.org (Postfix) with ESMTP id 3D91A42D91
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 17:54:53 +0200 (CEST)
+Received: by mail-pj2-f12.google.com with SMTP id
+ 98e67ed59e1d1-396ccb65437so2432266a91.3
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 08:54:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790006088;
- x=1790610888; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790006092;
+ x=1790610892; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=AQu3sug953Gs/0oqOS+e8nMzNSNZIYblqjbK3bcPRRc=;
- b=n8B+RFZPehe8mI0jwhOPL6PIssCul3+02jo6cm6wCr7K2fWjAtNlfomu8SXtnXhvU4
- bciPvy7LLl+knn7kc4/ECD3x8aAEcmHz9YabGEvDbwXI5SzYSHjYFNdBuVatqCzRL0aZ
- gV7pV9XH3+TxC+Y7FDEXEaxfLBz3wyp8fTiYGAWGhS6PzSkEukzQKofBZC7X4eThsn1b
- 5c1xKUzoh0bQaLM2i+RnVraS+TXYNjQR9y1UUzxzIl+CkfnIdTLYXchxy/r6HYONyWqZ
- NYYc1XSnFDTfCNbAEkwnr540leSo57MCuezBXQBAdpfPX2TaMrQ0A+4TxH6IDU4vJP5F
- XsrQ==
+ bh=CgtFIlpdW8es0utWghAX8VSaxtXo1AZwF38QcXhvIzY=;
+ b=jv0OV1Vu2t00RgoGbQKxMAiGjYACLU+jxAT/tYCYeFGdg5XKVtGo25RdSU5q63EWn5
+ UN82N9pu4olVmSlC4h7i1cNW/Ed1eoFtyrJVNgzQmAVonzKc9pJxblgz16AbYbZbKdkk
+ 390YyZFKO59l9u2CnBiczbVBw/YkrAp80L/m79Z8bPtKStesFr0CfBuljthRWaaMaqBR
+ O6oUsq+oRD6emUNuWt16cL2xNSRKV4r9/D2jZV3DE51HgKrFFwAcMFMXXeK5HhzybL7n
+ 7Qhpf13E9eVitzAkg+Cpb/d6isbPaWYxnp0ACteGVCfdIFaj6OIn1cAJZ8+H/MDcAX0X
+ AwQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790006088; x=1790610888;
+ d=1e100.net; s=20260707; t=1790006092; x=1790610892;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=AQu3sug953Gs/0oqOS+e8nMzNSNZIYblqjbK3bcPRRc=;
- b=MtGnKRQam7jm93bnCE6KtM9PW6x0ydKkVj57wjmslwvf9NOD5u7MoRdg8gJM/DCL/H
- sbNJ+vGo9PLheaVMR8Y5u9o4z/QVTNqB48Ncs6xEMeZM/O3It5mmDyS6QomtJkLIC4dm
- 159P7dC76IRKhlr7KaLGKILD+5QpAxD2b5lyqUE8SJhn5cyLy/MPFVFj+yCR4rVQG+c1
- VFU7XKieN1lWq3DaEOB1O9Wvew7PneVlNOyVqVv7/iTu9Wx8z75tX0kOncm1/btnE83L
- u4htjNdmY9Dc5tzNEuGyhchhzgLVV01owdpb81NOVIcA1IOxM1vNNnTcBnDAfs6AlyrB
- uURw==
-X-Gm-Message-State: AFuF++n0sSNo4leIHh6/ZSEucs9ha+s96WbIujvE/UiWdg+lfpTDzTF9
- 31h/dXCIZCPbUgpOTtQ7uX/QcUnmvgjbtSzQcbaNFPstML6N3T3WEemT5KNSSCr1SCM=
-X-Gm-Gg: AYBFou2BjQ7y2K/xqjyzfEr0Ofl3YsIF4cLBB432RuzHotFy0LWMa3f5TwlHo/t7Hv+
- IGlrC2ia8jEpUeuXHhVxqCJdnvL5PqBvyK2N83JvkJvAHbjsggaeIXjs8/GLUtMqPg3G+g8j1sc
- pHSbv0MeVvUxzKQQkGUR+2tNKO2+gKKKdjBAIhooy8fcbavM3N7/GJBci6TFG5J8/BPp4CGS1vR
- lmDxjENISeJjYzVizt4TLHnu2EhOSU2Bsrb39s+PTpGDJK8NWZTxdz7P240zgzJQN9fnJ6URW/w
- XbA5yyHJckGQ7IzQLyPOOo44DWvviTf88izX6YI4HLaF0fs7HGweAH9j3Wi5hmwyxweph980Taz
- heDjTlm4PgWt0jMfpKLRIeNWItw0CcNK6A/YxCiorFYK8bA4Z2nRDFBuYRl1g1694MfLAn2hvEO
- VMCLGEFFAsPMQ87kffbB7j/XJV/s/T8ovFKmo3XCUnZ5reuC6BarCNm7o5dqiJdeuj1GR1qgJby
- BEnskJhhlVeOlSgHzYlqmVyXbrK86xsmWhStNd0
-X-Received: by 2002:a17:90b:1845:b0:3a0:42a9:9c7c with SMTP id
- 98e67ed59e1d1-3a042a9a00fmr5079806a91.39.1790006087854; 
- Mon, 21 Sep 2026 08:54:47 -0700 (PDT)
+ bh=CgtFIlpdW8es0utWghAX8VSaxtXo1AZwF38QcXhvIzY=;
+ b=sSDrhwvsuyY9zLNCqOgNwYayInWrlhfoR4ribdiS+2QRIIT/hQ9ZZwZjP9l3GhbWti
+ ExvmDaFJXokml79gwfQffqXeeIy4LQqglwI3UVa7w2rjwCTtt5dNxX3PDnGdT8pcHfUV
+ vjw5tuoJjWwY2bSSxYKZt+hVpbHrq/B6eYQwbPS4JSopEHZIK3WVVcavGhLzkTcSM4BD
+ 9eF18olyy4o4rF54W7Ez9FAdhmaRdnrMIc5DPOIFdTmlpmUWLSxhebvYLkU4Q5XNRTIK
+ grKpthVHrTxYc78gi1ufRKJVMVQpgZEKYMMr26GSBztdlsqGQJOVKFMawEr+QTsauWuE
+ HvZA==
+X-Gm-Message-State: AFuF++mN0HVBmExYBZOQ0q4udKZZL3jarq1oj4Cwx5NoXcrlJE+xylXN
+ OT+g98VEmYz0Uh1DV8TbRdamWvilxOh4mN9Fg2+V9jddBLiY7R3ERrSZbKNQbCXQrCgZHjiyoUu
+ cvUrR
+X-Gm-Gg: AYBFou2VtjjDQ52B7TZeOw/dfhaPz9CX7dXDjzCZ2JrJ8nKGNALuzAVpH8G6aNMECQi
+ PAo3bJy6kvkkg6xRuJRdLsAeB5fc4TMMS0QUAbgrhfzbsGJXoDOTkqDsluu1xcobSQQcz2nj8lT
+ T3WCqx4p8nHnDo6XKxSWZB3Xgt4PK8CVfz24TNWsl9cxW23ywuewwaKcEjmhV7YvLRr19z5zd6g
+ pfZ0DToMSX5Dwedzq/ki/vIgOlxyaIG2Nm7EuBSZt6gKjMlD5pfCv2gtIRJUjdzC1V8+AHIPmDe
+ B+7cLFp3CYZJ6wfORKrzKh9QVgzvfcs0MRtFtFpiRTsr/cOtW4/HUj9OUkM93z9uSqzC96BxlSp
+ RYwMOwuAA3s02mdVVvw79NURS+kMUPW4w9VNYlkNSwC6sVWH0RMjxl97BZNh/fflgrLG+wfoaJv
+ RbFUk0dbtUHL63lb7Lb8gkNkrKUz3lK0nrOORmvuBmWGqT5F6NXeX6u8jmGTiw+7AMjctWsBtUz
+ HppSzIfuH187/z+XzQnrykNZMba4DBI4UHXZAVO
+X-Received: by 2002:a17:90b:2681:b0:39e:6c6a:4b75 with SMTP id
+ 98e67ed59e1d1-39e6c6a54cbmr10815654a91.63.1790006092292; 
+ Mon, 21 Sep 2026 08:54:52 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a063c1994esm735465a91.17.2026.09.21.08.54.46
+ 98e67ed59e1d1-3a063c1994esm735465a91.17.2026.09.21.08.54.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Sep 2026 08:54:47 -0700 (PDT)
-Date: Mon, 21 Sep 2026 08:47:27 -0700
+ Mon, 21 Sep 2026 08:54:51 -0700 (PDT)
+Date: Mon, 21 Sep 2026 08:52:50 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Cc: dev@dpdk.org, kishore.padmanabha@broadcom.com, Joseph Wong
- <joseph.wong@broadcom.com>, stable@dpdk.org
-Subject: Re: [PATCH v2 2/5] net/bnxt: fix bounds on firmware-reported
- resource counts
-Message-ID: <20260921084727.6d55953f@phoenix.local>
-In-Reply-To: <20260921022002.1033815-3-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260918032726.763384-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260921022002.1033815-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260921022002.1033815-3-Mohammad-Shuab.Siddique@broadcom.com>
+Cc: dev@dpdk.org, kishore.padmanabha@broadcom.com, Keegan Freyhof
+ <keegan.freyhof@broadcom.com>
+Subject: Re: [PATCH v2] net/bnxt: add support for queue size of 16384
+Message-ID: <20260921085250.46018e60@phoenix.local>
+In-Reply-To: <20260921025903.1034720-1-Mohammad-Shuab.Siddique@broadcom.com>
+References: <20260918032825.763449-1-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260921025903.1034720-1-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,38 +85,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 20 Sep 2026 20:19:59 -0600
+On Sun, 20 Sep 2026 20:59:03 -0600
 Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com> wrote:
 
-> From: Joseph Wong <joseph.wong@broadcom.com>
+> From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 > 
-> When parsing max_ring_grps and max_l2_ctx values from firmware, clamp
-> values if they exceed a 16-bit value. max_hw_ring_grps is received as
-> 32-bit in __bnxt_hwrm_func_qcaps() (the func_qcaps response) but cast
-> to 16-bit when used; add the clamp there and, as defense-in-depth,
-> also in bnxt_hwrm_func_resc_qcaps() in case that response's field ever
-> widens. max_l2_ctx is 16-bit in both responses, but its post-read
-> addition with max_rx_em_flows can overflow a 16-bit sum; widen the
-> addition to 32-bit and clamp the result.
+> The driver only supported queue sizes up to 4096 for Tx and 8192 for
+> Rx. Raise both to 16384. The completion ring for a Rx ring is sized
+> at 2x the Rx ring size, further multiplied by 4 when the aggregation
+> ring is in use (8x total), so at 16384 it can reach 131072, above
+> uint16_t range - widen the ring index/counter variables touched by
+> that path to uint32_t.
 > 
-> Fixes: 2691827e82c0 ("net/bnxt: add HWRM VNIC alloc")
-> Fixes: 80bf6811fa0f ("net/bnxt: fix L2 context calculation for Thor")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Joseph Wong <joseph.wong@broadcom.com>
+> Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
 > Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 > ---
+[PATCH v2] net/bnxt: add support for queue size of 16384
 
-Better  AI review flagged:
+Warning: the change of BNXT_MAX_MTU and BNXT_NUM_VLANS to UL is
+unrelated to queue size and is not described. It changes the type of
+BNXT_MAX_PKT_LEN to unsigned long. Drop it, or split it out with a
+reason.
 
-
-
-[PATCH v2 2/5] net/bnxt: fix bounds on firmware-reported resource
-counts
-
-Warning: in bnxt_hwrm_func_resc_qcaps(), resp->max_hw_ring_grps is
-uint16_t in hwrm_func_resource_qcaps_output but is read with
-rte_le_to_cpu_32(). On little endian the new clamp is dead code. On
-big endian the 32-bit swap of a 16-bit field yields value << 16,
-which the clamp turns into 65535. The fix is rte_le_to_cpu_16(); the
-"in case the field ever widens" clamp should go.
+Warning: MAX_CP_DESC_CNT is bumped to 32K and gains a comment saying
+it is unused and the real worst case is 131072. If it is unused,
+delete it.
