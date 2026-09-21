@@ -2,86 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 497ECC982EA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 03:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F83C982DA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 03:03:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 53931410DC;
-	Mon, 21 Sep 2026 05:03:13 +0200 (CEST)
-Received: from mail-ot1-f100.google.com (mail-ot1-f100.google.com
- [209.85.210.100])
- by mails.dpdk.org (Postfix) with ESMTP id E70B540E25
- for <dev@dpdk.org>; Mon, 21 Sep 2026 05:03:10 +0200 (CEST)
-Received: by mail-ot1-f100.google.com with SMTP id
- 46e09a7af769-7f4f824de5dso258573a34.2
- for <dev@dpdk.org>; Sun, 20 Sep 2026 20:03:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6097A410ED;
+	Mon, 21 Sep 2026 05:03:42 +0200 (CEST)
+Received: from mail-pl1-f228.google.com (mail-pl1-f228.google.com
+ [209.85.214.228])
+ by mails.dpdk.org (Postfix) with ESMTP id 8652040EE1
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 05:03:39 +0200 (CEST)
+Received: by mail-pl1-f228.google.com with SMTP id
+ d9443c01a7336-2dd68a16955so32902535ad.0
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 20:03:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789959790; x=1790564590;
+ d=1e100.net; s=20260707; t=1789959819; x=1790564619;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=5oy+3ucYiOoKMDL/XyjABZEm19+WlJ0F5HC3+NOlEG8=;
- b=YtR3PQ6UimE9V18clhRR7tWIM/cHhzOImDeoofT2f6yfauIAOqJVQGAePaaiiSIJld
- 238D8GC5WM0noMkwF2QVgtwk+H+6UotYgX+O4V9FSqtGVNbWOS8ON2/RMZ6eTZDbp1O6
- 1jUivB5Z8py9iriMeSI9wWhrTg6S3WP0r09z3ZzZVK2pNzN3Zjnq/kgd96IZf+tBL7TT
- w0pAtmNTJPWnN3J9LkGefyrCW84OMQ5bRkN+1osDs3c4WwuLKNImqrPnnRBv3PIPdhwU
- 3W5diG2Pa9dubuZzk9u/V/p0xMwcnwNcho85pdYVdBSBLEQtji9XAk8vNlQM7TVefgZV
- 4hSw==
-X-Gm-Message-State: AFuF++maxRfFCEaSMIQOrdblaz69+rv7hswYALT1gtdDvim/fElVU7ec
- d7dGD016uczv8sEhigLSvmQCGruMXIBAvVLH/NzZ6nC9KsU3aaytFVyx6F8IIL475MtILYW1JLy
- 3D5VNwPjOs9tA6ut6gYavv3AaU4i7VN/jhsy6w6Kbj4rfP7+2pAykoqLMIcmWF2ZkKx/gbZpvZd
- O7yki/qes/y1INZtUJ6TINbe4iZr31QZXceq3bXHICqZ0hBeZBEzm8VuzgARfykA4EgoOUOcMkk
- kovU9lSyyLj
-X-Gm-Gg: AYBFou0T+6sRvdy9r+SURO2ZVTt0ixuAA2oPCX+wOJe/UdM4rPA3U9DVY/F9K+gjFFR
- Vdp6dsCv/fQ0ufA0Ul2ES/zy0E5vVdHZ+baAvOCFwl2Qm+hEQcxCWQ+fbPDI+LMAcET/X0OdgGJ
- jcRZOxQnZncCaSDIR8Zn3uyrfnf6fEu5+Y9S5i/JxomKktXanQebLGiBZoZ5GTUAd3tbTFIll6r
- yCTp1x/DNjCuXolG9BNjtzMaZ8m+MAnJ/VnUC3iUrnkhAfNvQQEIF+pqLnI8OknEiHMXX2JBCsX
- UfVIL2qBtwt5ErGydnsM7XPCaA68fAbCWmeC5qCVqKcDMXNHgAP/fTxAB/EgTdLSzsc2Mto5flU
- u59ylbH0/Ta0cMSyhLWQZjsZWNKIDYmk8zzr/eYg8W4OoDV4GRBJIb1k2AemXAeihqu3dKdR8VA
- j3vMjKOrkJG6haVHqJjgrV4h3F67AJyjmmlgm6lbICx2H+88iW7J0G
-X-Received: by 2002:a05:6830:6415:b0:7fa:ab72:9e04 with SMTP id
- 46e09a7af769-80de41f6f9cmr10358331a34.28.1789959789919; 
- Sun, 20 Sep 2026 20:03:09 -0700 (PDT)
+ bh=XUjyjfqKhU3IZol4rcvGDaXmLeIFjeDxXCQXsRtzmTk=;
+ b=wsHhX+qp/XnM3hpwyzeNGHKYvx2/E9zI2mpNPDZJKMIYuHkujFchz1kM+3xvto/zEc
+ CIsTKqE5gE66MiCTByLOsOi18pRF1Tct0Ul78oszVGo4syspeckC3fC+B+i1OB39k1BR
+ v4t7zEnhAWElrW3yo/MkiNvM80Z4lngFuj44Udo8wiUBDZ92U/aPoY3SYKi+oSvN6KNU
+ 73oWhX8J7iZK/8XKgES6I73IXcIC656QrHs1rrWuxvueSMiCS6w2b2njeJWaG4gutysC
+ 26qV7MluFPVV/7llBTofx0C8TlRRRAwF+grZYvKGGirehDdJ4PcACM3wo6nbNF8wPcPP
+ ZMlw==
+X-Gm-Message-State: AFuF++nWnvPD4mC8MrBEdKswJRZ17acmH+8xRp079CU8DlyWE/BIuwFD
+ coneBB2dLSWr8jKQomQcTmoQjeELlxa/rzEzleQwoCbbOn2+6KlAs5z0Ao6e3ma+tgI3C+RP1FM
+ iHCfF95Q0BzCRDGNJQRv0w87OJoUcUbBUi8lvIFq7Gf9r5nEvbGfCC2rlc39a9VDMc3xQaK9BNP
+ C0Me10rTXyrY2SkWZ5LsdObvEJ31yRA6E4DdZfjyOEwhD6WjLIRa5OXp45Cq1anW4KjuWhAdqbY
+ 1mOUBGYIM73
+X-Gm-Gg: AYBFou0twR2/SGjLVvLEF0tTzAXHsWiWf6ugNCkWsmjhAwWcN7v/C1/FZ+GqDq25Cjt
+ JPU8CL/iM0fNHj/4VAtxoXPnzQ7KyvJEZ+7OGx4j4e8/v0rNCKW1qQFdS/IeAIy7JgCOvWnIWHG
+ 26aaAMGgQPErsiiWKaIIboOy+T+4sloeqtmzpejKydFYlFEgJuBRyep9pPwwJKMrR9UgrPGBOyM
+ vPlQYXJwFj6gT063eajQonrUqW9bPEXFvTPQqAp+OU9+QnlbL0ue6UI+zDP7JQZK6vqXg5779us
+ 1ZZp9yQXZUfJxlui4Qta0kIEPgCg8o8NkJ33yATuCfIpJn4i4b0mMh2ss5gnq8+1W4hG+ML1PoG
+ WyssDIuGBKAu32aXcOfJ3iN2m5/vHD6OR74l0PMVd/6nC9NubrErQqU/4gudE3x0c73u4Qn50hZ
+ dY6KqN9srUc6epu8AkTBeRAkDxIbZwJ7JIB1QeLPptTSKHjvQIEw==
+X-Received: by 2002:a17:90b:2890:b0:39e:3dad:684f with SMTP id
+ 98e67ed59e1d1-39e5546c89dmr9759376a91.4.1789959818721; 
+ Sun, 20 Sep 2026 20:03:38 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-125.dlp.protect.broadcom.com. [144.49.247.125])
+ (address-144-49-247-16.dlp.protect.broadcom.com. [144.49.247.16])
  by smtp-relay.gmail.com with ESMTPS id
- 46e09a7af769-8107b12c278sm3632421a34.1.2026.09.20.20.03.09
+ 98e67ed59e1d1-3a023bdd4d3sm3916107a91.1.2026.09.20.20.03.38
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Sun, 20 Sep 2026 20:03:09 -0700 (PDT)
+ Sun, 20 Sep 2026 20:03:38 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pj1-f69.google.com with SMTP id
- 98e67ed59e1d1-38e1118e4abso4717037a91.0
- for <dev@dpdk.org>; Sun, 20 Sep 2026 20:03:09 -0700 (PDT)
+Received: by mail-pg1-f197.google.com with SMTP id
+ 41be03b00d2f7-cb48f41343aso3196269a12.1
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 20:03:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1789959788; x=1790564588; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1789959817; x=1790564617; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=5oy+3ucYiOoKMDL/XyjABZEm19+WlJ0F5HC3+NOlEG8=;
- b=NHiWEqiLZfVwTTyTvYma9tVDyehr4PYeiRnOAk0tCHyUNne2sNQshld5zx7gUJHh8Y
- omsfeGHMwXhx5TTJYUMZwipFfXwCsFFumxA+bs30mtseC9WR4suL/c0GB2T3HtAzzW/9
- yc7XeqyqFw/jeRwsYYNfidUqBeqcJlKDChZKc=
-X-Received: by 2002:a17:90b:17c1:b0:39d:f2a1:3a with SMTP id
- 98e67ed59e1d1-39e54c19b62mr15208676a91.15.1789959788147; 
- Sun, 20 Sep 2026 20:03:08 -0700 (PDT)
-X-Received: by 2002:a17:90b:17c1:b0:39d:f2a1:3a with SMTP id
- 98e67ed59e1d1-39e54c19b62mr15208639a91.15.1789959787547; 
- Sun, 20 Sep 2026 20:03:07 -0700 (PDT)
+ bh=XUjyjfqKhU3IZol4rcvGDaXmLeIFjeDxXCQXsRtzmTk=;
+ b=Fhx8HAU/3OMfsAuB4KN7rjyyNkVm2O9hvd+cXJs+B0y9hRGarasY5LQghPsndyw+3+
+ MDee+xIodUKD2aEnF8KVnjXdZO+F6tkcdIEXN3NB8JUexwO2xg1Sjjv1jlyTbyh1AFit
+ yNGKQ32pRMtSOxjbtsvuAY3bzijPDf9DAKleA=
+X-Received: by 2002:a17:90b:37cf:b0:3a0:25f0:d89d with SMTP id
+ 98e67ed59e1d1-3a025f0ddd3mr5052648a91.52.1789959816873; 
+ Sun, 20 Sep 2026 20:03:36 -0700 (PDT)
+X-Received: by 2002:a17:90b:37cf:b0:3a0:25f0:d89d with SMTP id
+ 98e67ed59e1d1-3a025f0ddd3mr5052622a91.52.1789959816180; 
+ Sun, 20 Sep 2026 20:03:36 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-144d55f299fsm28621856c88.15.2026.09.20.20.03.06
+ 5a478bee46e88-33c32f17dbdsm16245314eec.1.2026.09.20.20.03.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 20 Sep 2026 20:03:07 -0700 (PDT)
+ Sun, 20 Sep 2026 20:03:35 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com, Joseph Wong <joseph.wong@broadcom.com>,
- stable@dpdk.org, Farah Smith <farah.smith@broadcom.com>,
+Cc: kishore.padmanabha@broadcom.com, stable@dpdk.org,
  Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH] net/bnxt: fix NVRAM directory integer overflow
-Date: Sun, 20 Sep 2026 21:06:11 -0600
-Message-ID: <20260921030611.1034818-1-Mohammad-Shuab.Siddique@broadcom.com>
+Subject: [PATCH] net/bnxt: fix bounds in RSS queue match and ctx initializer
+Date: Sun, 20 Sep 2026 21:06:40 -0600
+Message-ID: <20260921030640.1034836-1-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -99,72 +98,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Joseph Wong <joseph.wong@broadcom.com>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-Add bounds checking in bnxt_get_nvram_directory() to prevent a length
-underflow when subtracting 2 from the input length, and an integer
-overflow when calculating the required buffer length. Also enforce
-firmware-supplied upper bounds on the directory entry count and entry
-length, guarding against an undersized DMA buffer if firmware reports
-implausible values, and use 64-bit arithmetic for the buffer size
-calculation. The two returned values are each written back as a
-single byte, so their upper bounds are UINT8_MAX, not larger values
-that would let a firmware-reported value above 255 pass validation
-and then silently truncate on the byte store.
+Two independent out-of-bounds issues:
 
-Fixes: 19e6af01bb36 ("net/bnxt: support get/set EEPROM")
+- match_vnic_rss_cfg() indexed bp->rx_queues[] with firmware/
+  application-supplied RSS queue IDs without validating them against
+  bp->rx_nr_rings first, and dereferenced the resulting (possibly
+  NULL) queue pointer unconditionally.
+
+- bnxt_init_ctx_initializer() computed ctxm->init_offset from a
+  firmware-supplied byte offset without checking it against the
+  context entry's own size, allowing an out-of-range init offset to
+  be used later when initializing backing-store entries.
+
+Fixes: adc0f81c6552 ("net/bnxt: support RSS action")
+Fixes: fe2f715ca580 ("net/bnxt: support backing store v2")
 Cc: stable@dpdk.org
 
-Signed-off-by: Joseph Wong <joseph.wong@broadcom.com>
-Signed-off-by: Farah Smith <farah.smith@broadcom.com>
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_hwrm.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/net/bnxt/bnxt_flow.c | 13 +++++++++++++
+ drivers/net/bnxt/bnxt_hwrm.c | 14 +++++++++++---
+ 2 files changed, 24 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/net/bnxt/bnxt_flow.c b/drivers/net/bnxt/bnxt_flow.c
+index a2e590540b..12d21c4853 100644
+--- a/drivers/net/bnxt/bnxt_flow.c
++++ b/drivers/net/bnxt/bnxt_flow.c
+@@ -968,10 +968,23 @@ static int match_vnic_rss_cfg(struct bnxt *bp,
+ {
+ 	unsigned int match = 0, i;
+ 
++	if (rss->queue_num > bp->rx_nr_rings)
++		return -EINVAL;
++
+ 	if (vnic->rx_queue_cnt != rss->queue_num)
+ 		return -EINVAL;
+ 
+ 	for (i = 0; i < rss->queue_num; i++) {
++		if (rss->queue[i] >= bp->rx_nr_rings) {
++			PMD_DRV_LOG_LINE(ERR, "Queue ID %u for RSS exceeds ring count %u",
++					 rss->queue[i], bp->rx_nr_rings);
++			return -EINVAL;
++		}
++		if (!bp->rx_queues[rss->queue[i]]) {
++			PMD_DRV_LOG_LINE(ERR, "Queue ID %u for RSS is not configured",
++					 rss->queue[i]);
++			return -EINVAL;
++		}
+ 		if (!bp->rx_queues[rss->queue[i]]->vnic->rx_queue_cnt &&
+ 		    !bp->rx_queues[rss->queue[i]]->rx_started)
+ 			return -EINVAL;
 diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index 1615b36aae..bb55de9905 100644
+index 1615b36aae..8d2253160f 100644
 --- a/drivers/net/bnxt/bnxt_hwrm.c
 +++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -6049,6 +6049,9 @@ int bnxt_hwrm_nvm_get_dir_info(struct bnxt *bp, uint32_t *entries,
- 	return rc;
+@@ -6770,10 +6770,18 @@ static void bnxt_init_ctx_initializer(struct bnxt_ctx_mem *ctxm,
+ {
+ 	ctxm->init_value = init_val;
+ 	ctxm->init_offset = BNXT_CTX_INIT_INVALID_OFFSET;
+-	if (init_mask_set)
+-		ctxm->init_offset = init_offset * 4;
+-	else
++	if (init_mask_set) {
++		ctxm->init_offset = (uint16_t)(init_offset * 4);
++		if (ctxm->init_offset >= ctxm->entry_size) {
++			PMD_DRV_LOG_LINE(WARNING,
++					 "ctx type 0x%x: init_offset %u >= entry_size %u, disabling init",
++					 ctxm->type, ctxm->init_offset, ctxm->entry_size);
++			ctxm->init_value = 0;
++			ctxm->init_offset = BNXT_CTX_INIT_INVALID_OFFSET;
++		}
++	} else {
+ 		ctxm->init_value = 0;
++	}
  }
  
-+#define BNXT_MAX_DIR_ENTRIES   UINT8_MAX
-+#define BNXT_MAX_ENTRY_LENGTH  UINT8_MAX
-+
- int bnxt_get_nvram_directory(struct bnxt *bp, uint32_t len, uint8_t *data)
- {
- 	int rc;
-@@ -6060,16 +6063,27 @@ int bnxt_get_nvram_directory(struct bnxt *bp, uint32_t len, uint8_t *data)
- 	struct hwrm_nvm_get_dir_entries_input req = {0};
- 	struct hwrm_nvm_get_dir_entries_output *resp = bp->hwrm_cmd_resp_addr;
- 
-+	if (len < 2)
-+		return -EINVAL;
-+
- 	rc = bnxt_hwrm_nvm_get_dir_info(bp, &dir_entries, &entry_length);
- 	if (rc != 0)
- 		return rc;
- 
-+	if (dir_entries == 0 || dir_entries > BNXT_MAX_DIR_ENTRIES ||
-+	    entry_length == 0 || entry_length > BNXT_MAX_ENTRY_LENGTH) {
-+		PMD_DRV_LOG_LINE(ERR,
-+			"Invalid dir info: entries=%u length=%u",
-+			dir_entries, entry_length);
-+		return -EINVAL;
-+	}
-+
- 	*data++ = dir_entries;
- 	*data++ = entry_length;
- 	len -= 2;
- 	memset(data, 0xff, len);
- 
--	buflen = dir_entries * entry_length;
-+	buflen = (size_t)dir_entries * entry_length;
- 	buf = rte_malloc("nvm_dir", buflen, 0);
- 	if (buf == NULL)
- 		return -ENOMEM;
+ static int bnxt_alloc_all_ctx_pg_info(struct bnxt *bp)
 -- 
 2.47.3
 
