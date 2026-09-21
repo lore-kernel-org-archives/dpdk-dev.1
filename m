@@ -2,88 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C36E1C982EE
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 19:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A57DDC982ED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 19:38:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DF8BE40E2B;
-	Mon, 21 Sep 2026 21:32:00 +0200 (CEST)
-Received: from mail-yw1-f225.google.com (mail-yw1-f225.google.com
- [209.85.128.225])
- by mails.dpdk.org (Postfix) with ESMTP id 6A15A40B94
- for <dev@dpdk.org>; Mon, 21 Sep 2026 21:31:59 +0200 (CEST)
-Received: by mail-yw1-f225.google.com with SMTP id
- 00721157ae682-8828138cc95so871817b3.1
- for <dev@dpdk.org>; Mon, 21 Sep 2026 12:31:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6A05140E2B;
+	Mon, 21 Sep 2026 21:38:25 +0200 (CEST)
+Received: from mail-pj1-f100.google.com (mail-pj1-f100.google.com
+ [209.85.216.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 9109140B94
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 21:38:24 +0200 (CEST)
+Received: by mail-pj1-f100.google.com with SMTP id
+ 98e67ed59e1d1-38ec1402b05so802118a91.2
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:38:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790019118; x=1790623918;
+ d=1e100.net; s=20260707; t=1790019503; x=1790624303;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=tENoRYkC3SA9/FIWn2M7PvV1n3Q1XIdNxAlbGKtj6Zg=;
- b=G1gxMr+6+y8m2Esy9Ed83a0yY9+hnNhJQctPpLdHuZ9mkmhOOwygD7eb7LtontvpoM
- NMyCklDha0maXgY4kGbj3c2PRRTe0wr1uGayPxoHU5DvyjEe7jUW0WTi5yuvDvMUh9iv
- Op3zTXWGcnUi7Y7qy2ZUW/vXLwdBXamP9Vwj9Yi3TvcSsQxJNZKrox0wLz+UTvHGfwXv
- epkhBiOvwutB+4rhDBrS9Ks3cWmXcU8ZCLjLtUpSnkNbx5IqsYfwGtrbQemu2TGQN5b3
- mupa3IAvtRlc8H+4bNQuqO1NlNC7HEUQVhXWE2zP64pPfwJM4qdiVAFtdPrPEq6e4s97
- MOzQ==
+ bh=uU0jjVAlVCgthjs/7vbXL6Y/sIyhN2RPsil/Kb2+p9I=;
+ b=TY4eQCJpolIw8nZrzrWWefu2RZm6v1ls9FE4MF0S/wRtEO/rMQmyPGf2EOV7X9Lan3
+ cycfm8+Eg5VnnmxieypDeLqdLIKgkPvNJttG9KwdrHCAhT6mS/QxCht7Dik7Nnmb60I1
+ ZtIfvKtv7Edebz4qPubVzATkwo4o7DALS1dkp0NU9jVrSsTf7EebaLXyeelGgoJkqiFP
+ 0pHvxvvLQBZZ6UF1dbNlO2huGrm5uxtuWD9eRvflDDzQPijNDGvH2IRuUIAiGNoxRoGM
+ nv9yaQEiHDoXs38jKKOdq5RNsD4haX/8volAztBASZA5Wac27vLuv5Xt8YP0MIyIsmiT
+ dW8A==
 X-Forwarded-Encrypted: i=1;
- AKwUvBy8dySdCaPMgCG/b3mdJjCfnMzLgZQHWasscjKlL+ev0O9zjdJcv6XpegQdAvwuBzDy1wE=@dpdk.org
-X-Gm-Message-State: AFuF++lqG0f9Y3ikFgDOqyEH4ksR+cCykZN1AUmv1YbEQ19aMoi6QKdI
- GpPfjTbZcgLzjsKQHNJmIkey2t9UCNuNP7H1A7WiNIOwv6ACCz5Gpus/pHg1zif4zmAaepwE7oN
- FOJzpnNRBi/wadEQmLs0Dkw9TRwiA8rCjEJBgJwjJgYS0hknnl9+ndrQ9MmXLmKFVKmtiqVKQcJ
- VhEW84nmN5UQt4kA6LG5Yk76d6fy7JesuwXNWf4PYUBazMx6J97TirDAv5sBr89CXtRuUwDvJll
- Z8r1g==
-X-Gm-Gg: AYBFou3GUbOfeCSmn0u5OZvF8xzZUDxil+d4tg6qp/tZEfil3Fuw4dIgxkmYmdhp55g
- 9f2vbtd3w7DGqEnb5VVD4JLTV7YuxwCNIZfzX/4Kk+NvgFzmL3c+yn4ycFhUTOREggYxd676pae
- pU82r3WDvq+FX/YtrIIztxSve5VMp3MzUrU6WtuLWGJmVcm1ni1OocB414Wyx/bnI2dXFzs+hYP
- M96ezkBB1R3Xk18D7wqKVlAg+KWn/4s/OvrYbgaSNufqofIZZGVhS+ERwNM3xe1phC0c2Hgo7Ju
- xdf9Xa+I9ZJHJTHEVPvQxKimYO4xSfcXvGKk42nn0TvvrpX2IbHEHIfAkFjHlY3mb81jeroLW0o
- tzTcQRKvqYd2vxkCrQBoVcPYWYyOvTaRWZOx1bOlYwZD7dNhBb5rvGMVoDmTuYOWph//PAQN96b
- 68JzZKW0bmIG3JYjqpgl+WQJAt2PB2CG/AmE9/AgSRVwxdsg==
-X-Received: by 2002:a05:690c:38b:b0:873:5c7b:c0fb with SMTP id
- 00721157ae682-89736265037mr43305187b3.51.1790019118247; 
- Mon, 21 Sep 2026 12:31:58 -0700 (PDT)
+ AKwUvBzDhiKS9ZwoquDjRmE6qFscK5BVG65VBiubqqqeF9O7ns04WeRpZPEyq5lHOGadjslV2xs=@dpdk.org
+X-Gm-Message-State: AFuF++mvoHoYlNvpWb3pxrp/5UUZSrtK0xBI2KofUoGNUFliqK9kfjhq
+ j6frkntz+P28z+8ZdF9+lV3xTK1CEha60tujlpKmZEXHsHyIg5sH0f6mjN47nMryfE+8TrILKXH
+ dPPPnaRxqAo8147e2aRdBcZoNSQ5YDX21cp8FYOwwSzsxoyyc0iC7YCS0FqcJ1YZR/6JDW1Z7hQ
+ rwLBezO8Gem2+j98ajCXwKJIzAQepVHuIbMhYV1LbF0xH0XJ5ZEXL7IkiNWJY5iXLBYxEU1DIMj
+ hcuDA==
+X-Gm-Gg: AYBFou2JsCBuE1ohKcFFmZ0Kh3THjbRmGqMUzMTiWOfMiA7iTZbOXaaNH+TWTO9xYH7
+ L/MPciPAPTrRmF4Iwf2Xvu4g7SG0cir6HeGb4geMiHQLRqroTUanAZS6Pmlacwv1WUhXgclT6ak
+ kAcltQlom12uJhehuDg/fkrEvmhv4FzRVQ1kTs14LOW1lnDTtO/ocVIwCpWulB/YRfg5NdgD1iy
+ Fdp6Dvg7mxYgeBgeO7xOs8rkIfluaG2mLVsBZq+9ddk+x1UIw5ewCeNLYRvYDIfZJGhWl+02v3V
+ GA+/8w1rXCxlsvE+58QL+HBonI2N5RqAz64W6kEw2nnEYRJr1hxSHlFAawAt9q/jPCKP5S7J0mH
+ h+FGnH/6Dfx3q2i9TEEProysgZgDZy6R1PLHo1F1wN3WfdpdQoOWqHpyE3eRW+KAeMIUkpl70Pv
+ sXO1YztTF6GT4/Q4NzPQSLowD4N6Jm7lveaFfIPXj3VAw=
+X-Received: by 2002:a17:90b:17cc:b0:39e:135e:130e with SMTP id
+ 98e67ed59e1d1-39e54af6a0emr17475073a91.3.1790019502761; 
+ Mon, 21 Sep 2026 12:38:22 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-125.dlp.protect.broadcom.com. [144.49.247.125])
+ (address-144-49-247-29.dlp.protect.broadcom.com. [144.49.247.29])
  by smtp-relay.gmail.com with ESMTPS id
- 00721157ae682-8a240faa232sm27857b3.27.2026.09.21.12.31.57
+ 98e67ed59e1d1-3a06947ce13sm124280a91.0.2026.09.21.12.38.22
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 21 Sep 2026 12:31:58 -0700 (PDT)
+ Mon, 21 Sep 2026 12:38:22 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-ed1-f69.google.com with SMTP id
- 4fb4d7f45d1cf-6a9b4e3987aso4122533a12.3
- for <dev@dpdk.org>; Mon, 21 Sep 2026 12:31:57 -0700 (PDT)
+Received: by mail-ed1-f71.google.com with SMTP id
+ 4fb4d7f45d1cf-6a178080182so4495304a12.2
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:38:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1790019116; x=1790623916; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1790019500; x=1790624300; darn=dpdk.org;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=tENoRYkC3SA9/FIWn2M7PvV1n3Q1XIdNxAlbGKtj6Zg=;
- b=ZoKCi0zbduwzPPZTyCYhuTg1ffX1LmEGY6FNBh2JR4bsdWsC2WO/U716JElWNtt8tM
- GJvVJ2lVCG4Xvvbs/HvaGiGNgREHHIcMjTGSw+bB4x6nwfxr6vFDD10Zpl2qPN0YUqFu
- eSvIAkDM5JaCrTjpJIyRKND49Ok6nbQtvRd9g=
+ :content-type; bh=uU0jjVAlVCgthjs/7vbXL6Y/sIyhN2RPsil/Kb2+p9I=;
+ b=DsXMMWBt6nZF3jGYKyKY4IEHtD950KWjLmSLZO4eq8+NODy8ED8epd888HUbPROKE1
+ 7MRzfG6Em2UahWqTGu9NxahuEMF8U+G9Y/P9okzi1KXp2OkyvsxSA01RLYIjxJjtNz6Z
+ rcX4uB25ynxssijTDCt99TQWzusNA4RvtCoew=
 X-Forwarded-Encrypted: i=1;
- AKwUvBx/vhJRI7xHGz6sjrD062s99XpwFNQBNDZezNXI7Pwp1KHBWLHFPdTXAEoEOCnChO3Jmng=@dpdk.org
-X-Received: by 2002:a05:6402:44da:b0:6a7:f2d5:dfcc with SMTP id
- 4fb4d7f45d1cf-6aa5797a6cfmr8506928a12.36.1790019116699; 
- Mon, 21 Sep 2026 12:31:56 -0700 (PDT)
-X-Received: by 2002:a05:6402:44da:b0:6a7:f2d5:dfcc with SMTP id
- 4fb4d7f45d1cf-6aa5797a6cfmr8506912a12.36.1790019116205; Mon, 21 Sep 2026
- 12:31:56 -0700 (PDT)
+ AKwUvBz/xegG1qNJSJM8OQfhjteovwric2usMK9jaa8PwZX0NiVwTc7HcJ2E9JmYCreLsZyWKww=@dpdk.org
+X-Received: by 2002:a05:6402:4549:b0:6a9:aa8b:2e30 with SMTP id
+ 4fb4d7f45d1cf-6aa53cd7134mr7700070a12.33.1790019500527; 
+ Mon, 21 Sep 2026 12:38:20 -0700 (PDT)
+X-Received: by 2002:a05:6402:4549:b0:6a9:aa8b:2e30 with SMTP id
+ 4fb4d7f45d1cf-6aa53cd7134mr7700057a12.33.1790019500131; Mon, 21 Sep 2026
+ 12:38:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260915090715.431258-1-Evgeny.Sokolov@infotecs.ru>
-In-Reply-To: <20260915090715.431258-1-Evgeny.Sokolov@infotecs.ru>
+References: <20260915090919.431388-1-Evgeny.Sokolov@infotecs.ru>
+In-Reply-To: <20260915090919.431388-1-Evgeny.Sokolov@infotecs.ru>
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Mon, 21 Sep 2026 15:31:38 -0400
-X-Gm-Features: AcwNN1WdMXdDQw1Rp9vvzLw2ggy_jvCd0b5zVuCdUFLpPchSyR2HtgqyogoxzHk
-Message-ID: <CA+BST0mr39pHcvZnybXGMetR4NBmXYY_vLqfSqKCLU+Ugd7hRw@mail.gmail.com>
-Subject: Re: [PATCH] net/bnxt: remove redundant VNIC NULL check
+Date: Mon, 21 Sep 2026 15:38:01 -0400
+X-Gm-Features: AcwNN1VcAApSDFy7qHhC1fWcXo-JuakKYXyLXT3_D8pyNlnpHaVJ6yGqeUp6MI0
+Message-ID: <CA+BST0m5oORRg67AJ=M2LJtcSKZasvA7dbSiFcYGFUQgCU7PYQ@mail.gmail.com>
+Subject: Re: [PATCH] net/bnxt: simplify NVGRE pointer validation
 To: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
 Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="0000000000009b9109065c034d5e"
+ micalg=sha-256; boundary="0000000000007cb92f065c0364f1"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,53 +97,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000009b9109065c034d5e
-Content-Type: multipart/alternative; boundary="000000000000902f43065c034d7a"
+--0000000000007cb92f065c0364f1
+Content-Type: multipart/alternative; boundary="00000000000072809c065c03647f"
 
---000000000000902f43065c034d7a
+--00000000000072809c065c03647f
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 15, 2026 at 5:07=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
+On Tue, Sep 15, 2026 at 5:09=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
 tecs.ru>
 wrote:
 
 > From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 >
-> Since commit 51fafb89a9a ("net/bnxt: get rid of ff pools and use
-> VNIC info array"), VNIC objects are obtained from the VNIC info
-> array.
+> Previous validation guarantees that nvgre_spec and nvgre_mask are
+> both non-NULL when this code is reached.
 >
-> The address of an array element cannot be NULL, making the NULL
-> check redundant.
->
-> Remove the dead code.
->
-> Found by InfoTeCS on behalf of Linux Verification Center (linuxtesting.or=
-g)
-> with SVACE.
+> Remove the redundant condition and execute the enclosed code
+> directly.
 >
 > Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
+> Cc: stable@dpdk.org
 > ---
->  drivers/net/bnxt/bnxt_rxq.c | 5 -----
->  1 file changed, 5 deletions(-)
+>  drivers/net/bnxt/bnxt_flow.c | 36 +++++++++++++++++-------------------
+>  1 file changed, 17 insertions(+), 19 deletions(-)
 >
-> diff --git a/drivers/net/bnxt/bnxt_rxq.c b/drivers/net/bnxt/bnxt_rxq.c
-> index 023cb0e174..b7e16c8a14 100644
-> --- a/drivers/net/bnxt/bnxt_rxq.c
-> +++ b/drivers/net/bnxt/bnxt_rxq.c
-> @@ -131,11 +131,6 @@ int bnxt_mq_rx_configure(struct bnxt *bp)
+> diff --git a/drivers/net/bnxt/bnxt_flow.c b/drivers/net/bnxt/bnxt_flow.c
+> index a2e590540b..4a38c036de 100644
+> --- a/drivers/net/bnxt/bnxt_flow.c
+> +++ b/drivers/net/bnxt/bnxt_flow.c
+> @@ -632,26 +632,24 @@ bnxt_validate_and_parse_flow_type(const struct
+> rte_flow_attr *attr,
+>                                 return -rte_errno;
+>                         }
 >
->         for (i =3D 0; i < pools; i++) {
->                 vnic =3D &bp->vnic_info[i];
-> -               if (!vnic) {
-> -                       PMD_DRV_LOG_LINE(ERR, "VNIC alloc failed");
-> -                       rc =3D -ENOMEM;
-> -                       goto err_out;
-> -               }
->                 vnic->flags |=3D BNXT_VNIC_INFO_BCAST;
->                 bp->nr_vnics++;
+> -                       if (nvgre_spec && nvgre_mask) {
+> -                               tni_masked =3D
+> -                                       !!memcmp(nvgre_mask->tni, tni_mas=
+k,
+> -                                                RTE_DIM(tni_mask));
+> -                               if (tni_masked) {
+> -                                       rte_flow_error_set
+> -                                               (error,
+> -                                                EINVAL,
+> -                                                RTE_FLOW_ERROR_TYPE_ITEM=
+,
+> -                                                item,
+> -                                                "Invalid TNI mask");
+> -                                       return -rte_errno;
+> -                               }
+> -                               rte_memcpy(((uint8_t *)&tenant_id_be + 1)=
+,
+> -                                          nvgre_spec->tni, 3);
+> -                               filter->vni =3D
+> -                                       rte_be_to_cpu_32(tenant_id_be);
+> -                               filter->tunnel_type =3D
+> -
+> CFA_NTUPLE_FILTER_ALLOC_REQ_TUNNEL_TYPE_NVGRE;
+> +                       tni_masked =3D
+> +                               !!memcmp(nvgre_mask->tni, tni_mask,
+> +                                        RTE_DIM(tni_mask));
+> +                       if (tni_masked) {
+> +                               rte_flow_error_set
+> +                                       (error,
+> +                                        EINVAL,
+> +                                        RTE_FLOW_ERROR_TYPE_ITEM,
+> +                                        item,
+> +                                        "Invalid TNI mask");
+> +                               return -rte_errno;
+>                         }
+> +                       rte_memcpy(((uint8_t *)&tenant_id_be + 1),
+> +                                  nvgre_spec->tni, 3);
+> +                       filter->vni =3D
+> +                               rte_be_to_cpu_32(tenant_id_be);
+> +                       filter->tunnel_type =3D
+> +                        CFA_NTUPLE_FILTER_ALLOC_REQ_TUNNEL_TYPE_NVGRE;
+>                         break;
 >
+>                 case RTE_FLOW_ITEM_TYPE_GRE:
 > --
 
 Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
@@ -153,73 +184,102 @@ Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 >
 >
 
---000000000000902f43065c034d7a
+--00000000000072809c065c03647f
 Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Sep 15,=
- 2026 at 5:07=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
-v@infotecs.ru">Evgeny.Sokolov@infotecs.ru</a>&gt; wrote:<br></div><blockquo=
-te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
-solid rgb(204,204,204);padding-left:1ex">From: Sokolov Evgeny &lt;<a href=
-=3D"mailto:Evgeny.Sokolov@infotecs.ru" target=3D"_blank">Evgeny.Sokolov@inf=
-otecs.ru</a>&gt;<br>
-<br>
-Since commit 51fafb89a9a (&quot;net/bnxt: get rid of ff pools and use<br>
-VNIC info array&quot;), VNIC objects are obtained from the VNIC info<br>
-array.<br>
-<br>
-The address of an array element cannot be NULL, making the NULL<br>
-check redundant.<br>
-<br>
-Remove the dead code.<br>
-<br>
-Found by InfoTeCS on behalf of Linux Verification Center (<a href=3D"http:/=
-/linuxtesting.org" rel=3D"noreferrer" target=3D"_blank">linuxtesting.org</a=
->) with SVACE.<br>
-<br>
-Signed-off-by: Sokolov Evgeny &lt;<a href=3D"mailto:Evgeny.Sokolov@infotecs=
-.ru" target=3D"_blank">Evgeny.Sokolov@infotecs.ru</a>&gt;<br>
----<br>
-=C2=A0drivers/net/bnxt/bnxt_rxq.c | 5 -----<br>
-=C2=A01 file changed, 5 deletions(-)<br>
-<br>
-diff --git a/drivers/net/bnxt/bnxt_rxq.c b/drivers/net/bnxt/bnxt_rxq.c<br>
-index 023cb0e174..b7e16c8a14 100644<br>
---- a/drivers/net/bnxt/bnxt_rxq.c<br>
-+++ b/drivers/net/bnxt/bnxt_rxq.c<br>
-@@ -131,11 +131,6 @@ int bnxt_mq_rx_configure(struct bnxt *bp)<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 for (i =3D 0; i &lt; pools; i++) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 vnic =3D &amp;bp-&g=
-t;vnic_info[i];<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!vnic) {<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0PMD_DRV_LOG_LINE(ERR, &quot;VNIC alloc failed&quot;);<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0rc =3D -ENOMEM;<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0goto err_out;<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 vnic-&gt;flags |=3D=
- BNXT_VNIC_INFO_BCAST;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 bp-&gt;nr_vnics++;<=
-br>
-<br>
---</blockquote><div><span style=3D"font-family:Calibri;font-size:11pt;backg=
-round-color:transparent">Acked-by:=C2=A0Kishore
-Padmanabha &lt;<a href=3D"mailto:kishore.padmanabha@broadcom.com">kishore.p=
-admanabha@broadcom.com</a>&gt;</span>=C2=A0</div><blockquote class=3D"gmail=
-_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204=
-,204);padding-left:1ex"> <br>
-2.30.2<br>
-<br>
-</blockquote></div></div>
+PGRpdiBkaXI9Imx0ciI+PGRpdiBkaXI9Imx0ciI+PGJyPjwvZGl2Pjxicj48ZGl2IGNsYXNzPSJn
+bWFpbF9xdW90ZSBnbWFpbF9xdW90ZV9jb250YWluZXIiPjxkaXYgZGlyPSJsdHIiIGNsYXNzPSJn
+bWFpbF9hdHRyIj5PbiBUdWUsIFNlcCAxNSwgMjAyNiBhdCA1OjA54oCvQU0gRXZnZW55IFNva29s
+b3YgJmx0OzxhIGhyZWY9Im1haWx0bzpFdmdlbnkuU29rb2xvdkBpbmZvdGVjcy5ydSI+RXZnZW55
+LlNva29sb3ZAaW5mb3RlY3MucnU8L2E+Jmd0OyB3cm90ZTo8YnI+PC9kaXY+PGJsb2NrcXVvdGUg
+Y2xhc3M9ImdtYWlsX3F1b3RlIiBzdHlsZT0ibWFyZ2luOjBweCAwcHggMHB4IDAuOGV4O2JvcmRl
+ci1sZWZ0OjFweCBzb2xpZCByZ2IoMjA0LDIwNCwyMDQpO3BhZGRpbmctbGVmdDoxZXgiPkZyb206
+IFNva29sb3YgRXZnZW55ICZsdDs8YSBocmVmPSJtYWlsdG86RXZnZW55LlNva29sb3ZAaW5mb3Rl
+Y3MucnUiIHRhcmdldD0iX2JsYW5rIj5FdmdlbnkuU29rb2xvdkBpbmZvdGVjcy5ydTwvYT4mZ3Q7
+PGJyPg0KPGJyPg0KUHJldmlvdXMgdmFsaWRhdGlvbiBndWFyYW50ZWVzIHRoYXQgbnZncmVfc3Bl
+YyBhbmQgbnZncmVfbWFzayBhcmU8YnI+DQpib3RoIG5vbi1OVUxMIHdoZW4gdGhpcyBjb2RlIGlz
+IHJlYWNoZWQuPGJyPg0KPGJyPg0KUmVtb3ZlIHRoZSByZWR1bmRhbnQgY29uZGl0aW9uIGFuZCBl
+eGVjdXRlIHRoZSBlbmNsb3NlZCBjb2RlPGJyPg0KZGlyZWN0bHkuPGJyPg0KPGJyPg0KU2lnbmVk
+LW9mZi1ieTogU29rb2xvdiBFdmdlbnkgJmx0OzxhIGhyZWY9Im1haWx0bzpFdmdlbnkuU29rb2xv
+dkBpbmZvdGVjcy5ydSIgdGFyZ2V0PSJfYmxhbmsiPkV2Z2VueS5Tb2tvbG92QGluZm90ZWNzLnJ1
+PC9hPiZndDs8YnI+DQpDYzogPGEgaHJlZj0ibWFpbHRvOnN0YWJsZUBkcGRrLm9yZyIgdGFyZ2V0
+PSJfYmxhbmsiPnN0YWJsZUBkcGRrLm9yZzwvYT48YnI+DQotLS08YnI+DQrCoGRyaXZlcnMvbmV0
+L2JueHQvYm54dF9mbG93LmMgfCAzNiArKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0t
+LS08YnI+DQrCoDEgZmlsZSBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlvbnMo
+LSk8YnI+DQo8YnI+DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvYm54dC9ibnh0X2Zsb3cuYyBi
+L2RyaXZlcnMvbmV0L2JueHQvYm54dF9mbG93LmM8YnI+DQppbmRleCBhMmU1OTA1NDBiLi40YTM4
+YzAzNmRlIDEwMDY0NDxicj4NCi0tLSBhL2RyaXZlcnMvbmV0L2JueHQvYm54dF9mbG93LmM8YnI+
+DQorKysgYi9kcml2ZXJzL25ldC9ibnh0L2JueHRfZmxvdy5jPGJyPg0KQEAgLTYzMiwyNiArNjMy
+LDI0IEBAIGJueHRfdmFsaWRhdGVfYW5kX3BhcnNlX2Zsb3dfdHlwZShjb25zdCBzdHJ1Y3QgcnRl
+X2Zsb3dfYXR0ciAqYXR0ciw8YnI+DQrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCByZXR1cm4gLXJ0ZV9lcnJubzs8YnI+DQrCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCB9PGJyPg0KPGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgaWYgKG52Z3JlX3NwZWMgJmFtcDsmYW1wOyBudmdyZV9tYXNrKSB7PGJyPg0KLcKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgdG5pX21hc2tlZCA9
+PGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgISFtZW1jbXAobnZncmVfbWFzay0mZ3Q7dG5pLCB0bmlfbWFzayw8YnI+DQotwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgUlRFX0RJTSh0bmlfbWFzaykpOzxicj4NCi3CoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGlmICh0bmlfbWFza2VkKSB7PGJyPg0KLcKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcnRl
+X2Zsb3dfZXJyb3Jfc2V0PGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKGVycm9yLDxicj4NCi3CoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCBFSU5WQUwsPGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFJURV9GTE9XX0VSUk9SX1RZUEVf
+SVRFTSw8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgaXRlbSw8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgJnF1
+b3Q7SW52YWxpZCBUTkkgbWFzayZxdW90Oyk7PGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcmV0dXJuIC1ydGVfZXJybm87PGJy
+Pg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgfTxicj4N
+Ci3CoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHJ0ZV9tZW1j
+cHkoKCh1aW50OF90ICopJmFtcDt0ZW5hbnRfaWRfYmUgKyAxKSw8YnI+DQotwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgbnZncmVf
+c3BlYy0mZ3Q7dG5pLCAzKTs8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqBmaWx0ZXItJmd0O3ZuaSA9PGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcnRlX2JlX3RvX2NwdV8zMih0
+ZW5hbnRfaWRfYmUpOzxicj4NCi3CoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoGZpbHRlci0mZ3Q7dHVubmVsX3R5cGUgPTxicj4NCi3CoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBDRkFfTlRVUExFX0ZJTFRFUl9BTExPQ19S
+RVFfVFVOTkVMX1RZUEVfTlZHUkU7PGJyPg0KK8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgdG5pX21hc2tlZCA9PGJyPg0KK8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgISFtZW1jbXAobnZncmVfbWFzay0mZ3Q7dG5pLCB0bmlfbWFzayw8YnI+
+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgUlRFX0RJTSh0bmlfbWFzaykpOzxicj4NCivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoGlmICh0bmlfbWFza2VkKSB7PGJyPg0KK8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcnRlX2Zsb3dfZXJyb3Jfc2V0PGJyPg0KK8KgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKGVycm9y
+LDxicj4NCivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCBFSU5WQUwsPGJyPg0KK8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFJURV9GTE9XX0VSUk9SX1RZUEVfSVRFTSw8YnI+
+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgaXRlbSw8YnI+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgJnF1b3Q7SW52YWxpZCBUTkkgbWFzayZxdW90Oyk7PGJyPg0K
+K8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcmV0dXJuIC1y
+dGVfZXJybm87PGJyPg0KwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgfTxicj4N
+CivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHJ0ZV9tZW1jcHkoKCh1aW50OF90
+ICopJmFtcDt0ZW5hbnRfaWRfYmUgKyAxKSw8YnI+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgbnZncmVfc3BlYy0mZ3Q7dG5pLCAzKTs8YnI+DQor
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBmaWx0ZXItJmd0O3ZuaSA9PGJyPg0K
+K8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcnRlX2JlX3Rv
+X2NwdV8zMih0ZW5hbnRfaWRfYmUpOzxicj4NCivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoGZpbHRlci0mZ3Q7dHVubmVsX3R5cGUgPTxicj4NCivCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCBDRkFfTlRVUExFX0ZJTFRFUl9BTExPQ19SRVFfVFVOTkVMX1RZUEVf
+TlZHUkU7PGJyPg0KwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJlYWs7PGJy
+Pg0KPGJyPg0KwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgY2FzZSBSVEVfRkxPV19JVEVNX1RZUEVf
+R1JFOjxicj4NCi0tPC9ibG9ja3F1b3RlPjxkaXY+PHNwYW4gc3R5bGU9ImZvbnQtZmFtaWx5OkNh
+bGlicmk7Zm9udC1zaXplOjExcHQ7YmFja2dyb3VuZC1jb2xvcjp0cmFuc3BhcmVudCI+QWNrZWQt
+Ynk6wqBLaXNob3JlDQpQYWRtYW5hYmhhICZsdDs8YSBocmVmPSJtYWlsdG86a2lzaG9yZS5wYWRt
+YW5hYmhhQGJyb2FkY29tLmNvbSI+a2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTwvYT4m
+Z3Q7PC9zcGFuPsKgPC9kaXY+PGJsb2NrcXVvdGUgY2xhc3M9ImdtYWlsX3F1b3RlIiBzdHlsZT0i
+bWFyZ2luOjBweCAwcHggMHB4IDAuOGV4O2JvcmRlci1sZWZ0OjFweCBzb2xpZCByZ2IoMjA0LDIw
+NCwyMDQpO3BhZGRpbmctbGVmdDoxZXgiPiA8YnI+DQoyLjMwLjI8YnI+DQo8YnI+DQo8L2Jsb2Nr
+cXVvdGU+PC9kaXY+PC9kaXY+DQo=
+--00000000000072809c065c03647f--
 
---000000000000902f43065c034d7a--
-
---0000000000009b9109065c034d5e
+--0000000000007cb92f065c0364f1
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -313,13 +373,13 @@ W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
 6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
 YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
 YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCC+50w2B7DHFs1minE7UHpY6ElUNU4APy/5kvZy0JqopzAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExOTMxNTZaMFwGCSqG
+oIHHMC8GCSqGSIb3DQEJBDEiBCBNIWI1OPh/C4wuE3qXr2QwJfeOmB57oepbrQh3bqTUwzAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExOTM4MjBaMFwGCSqG
 SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCd9si6coB5
-Iphcshob5hO6XjBCCnKy2Viq2G/PPi98e3XQ0cyR0ADA3OpjMgU2BtsgdMqft4fmLrFSfLNCjeax
-lj6ze593LVXylzLuxqSEPz8HgfFceSU1qYWGjwWK4qqAk5kEA7Sf+cThTjfBgLJOOfL20l4Xtogq
-zQVhUTKzeXo5O4D8w1eg2HA2FgM7jw7dexheJ9rXEjKAcqVrOeu8XvpiOYgEenRR4a+GmNHfrkKQ
-PPmVkcZv4ieVZgS5AUTjocSqZK725dfeppdtSufc+EQrFsrG40hTCkH6cFMGCNvtXQ0XCar5+vAI
-mkmwve/WUxtmdXBy2yRGa48r1x4h
---0000000000009b9109065c034d5e--
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBPVws/oJYc
+R4/l9tx4dZsqgLUT/oTeWZ5wrzzmOnuluIsWyqQpmYMza9/00TvQaiHfFYlH1Swq8Cmn/fjK5sN+
+K1FwLGVGzN6LBzVth+IPmWVkzzDd6uWLlKHeS8NrtdQD+hyk/2Ic55cQgTZYZEmZSaAwQP10xRjp
+gvcEaLQuxtDoFfM0+SC7b3W+0W9jPQYrPm6QSJpNmTi0MVInKXRdBjBAJzHHGe3iwGRuD1dQkqFd
+AUlr47+nHqpZglboEXpZN3uaMnGS6LPGsWEpggqUUXlHHrpcTewTX4/k4NiCN8orpIKFCBce4mcC
+HRIw+RD7JunXOlfDVqv1ZOyLrwZE
+--0000000000007cb92f065c0364f1--
