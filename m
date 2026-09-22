@@ -2,74 +2,91 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C53AAC982E6
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 00:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2DFC982F1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 06:02:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 91EBE402B6;
-	Tue, 22 Sep 2026 02:36:42 +0200 (CEST)
-Received: from mail-pj2-f42.google.com (mail-pj2-f42.google.com
- [74.125.227.170])
- by mails.dpdk.org (Postfix) with ESMTP id AB0AE402B0
- for <dev@dpdk.org>; Tue, 22 Sep 2026 02:36:41 +0200 (CEST)
-Received: by mail-pj2-f42.google.com with SMTP id
- 98e67ed59e1d1-39b350c69b4so3122570a91.2
- for <dev@dpdk.org>; Mon, 21 Sep 2026 17:36:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4AD12402D6;
+	Tue, 22 Sep 2026 08:02:53 +0200 (CEST)
+Received: from mail-oo2-f40.google.com (mail-oo2-f40.google.com
+ [74.125.231.168])
+ by mails.dpdk.org (Postfix) with ESMTP id 3FCBF4026C
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 08:02:52 +0200 (CEST)
+Received: by mail-oo2-f40.google.com with SMTP id
+ 006d021491bc7-6c72bd8a017so2337100eaf.3
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 23:02:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790056971; cv=none;
+ d=google.com; s=arc-20260327;
+ b=k8JK8Qi41p7MVqvu5JdlW78k0iukVuGWS5O8Kh/E6bgrtIOEHOuUKO+pQKsg0Zc6GJ
+ Bip19gGKEEr0c1u518jlYe32i6kGTC9NphaUW4CrSn6R1a9b5L0gu+kSyGgXsBlTKLey
+ wgAak5PTo1rIouQGRCta1NXq0MeI8dH+/xSFH9+0Gb68qFk7Fu4rQ0CbFgqJSqgaj8Gs
+ U3h1cdjfgy3vIYw8F0RB6U0DtrjUp6KLjnQKEqwTYA2u7VOKgvmQxPa/DuXpr+e9HGme
+ hPREMGQDrozL3z6JHFVZPjWgccyFQylKuiTkUcm/GoHmlksBTVm+YaplXwQI0i/eI0wx
+ irdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=5hKMmCmPWD5/QjKTav5GyGZNAcfabKi3S8qsdijkmYA=;
+ fh=gpg6MfolvWiJyB9/XSLzB05SqCK9tXDNrddjKndCcoU=;
+ b=Q/UW20elWM5qzZArshG9IzQkWrZ/p2e95b56Q2bFju/EyP2M1XEWs6YBDVk+cKlti6
+ kiJPx6UsPvFG9xkdbUJk3RhqEIvJK7u1ZsmCs+WpNyqIvvZlSjSMDYRTHAphQ7DH4t0v
+ T6SSYiyOqcLUykyxzmTg88qMNYkuvmTfOunyz4yXKdRb8kzZyB4E/M6PPVz+h1WyZgHK
+ 9hsMRo8vvtm2U+UBcBzq2DuVXMAiw6KQzDhWNPMtaiYV7Hu3Ty4bSZvlSUFkDTqSXmug
+ P5Rn4+zgDuBY8EoY7I4kC+lNi+sg2/dbwSlu+RoTEXEEM+Sc8h8r6v62tDQY/B/tosvk
+ cLQA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790037400;
- x=1790642200; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ d=gmail.com; s=20251104; t=1790056971; x=1790661771; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=PlhSxomtV+pknIOaCNLDkLqN+VLxQLyJoriCyrjPWuA=;
- b=qtSgErAX2IBT1ZdRxuqtP4gM2vHn3FHvVBPoyQSKGPzwBXvYi8rG4/rzcZSWEhEuX4
- V8S6YK68/R8w0hZPpKX93xLOFYQVu03J6w5z7FzskkDfhyft+vuD+SU87ouhX9gihvOH
- nz7hynrrvSjVpRXwNP0l0/oD3uXjDTjCGgs8B+1xM6AuLGcc9b+ByND5PdEp/puzigew
- L58KsTlx9f/cPZzQPQbGBHFn1FFXNBULq0sdXLQq3jOuH/oADUjOZfRXn/gNMDZX1SSa
- hcFAwVmV2WYm2mtzB0L1NfiU99xCy0eHP8qpHVk9MKRzBD/Zb+r7IGoN+OjMzAk0JQs5
- Msqg==
+ bh=5hKMmCmPWD5/QjKTav5GyGZNAcfabKi3S8qsdijkmYA=;
+ b=N895XD2jprVTRLCmBXeWgMf67gEqC0W96mefDDwY3aMo8SXxS496mFBaRe6yDqi6Qy
+ PT2jFzsbUcQEz56cm+N4JbN76Qqa7nUYwTEqoZzlF4rRboIAX6iVrHZ2xBS798SRDQM3
+ Gft5ZEP5D7E+Pue/a6WVOHHn5ZB0vQ+nmzpf5z8CmGkRBgtUDD4vDBs1oDj6doS8WE/E
+ vK8GOo6bECyOPFy9YsjWg2BoBvTKrJ7G6lRaMeWpUfX/2WrmbXkgyr0sUJxvw8rkWszh
+ HHE1rpLqLHusrVwgIn7j0KB0nKE3lWNMYpikdFYdfI2N9ndAqX/OROImaAPsj0UMu1BF
+ w+xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790037400; x=1790642200;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ d=1e100.net; s=20260707; t=1790056971; x=1790661771;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=PlhSxomtV+pknIOaCNLDkLqN+VLxQLyJoriCyrjPWuA=;
- b=OcjN/A1fr95zv9tWE5kOFxaudnNSMNGhjonIGvzDUUpMNSUXKsEjwhJ+DSL3k1ABLD
- OXQC0t8mMPQhx2zPM8EculnTEaX3Qpg1Za3mn6DXLLcrHRt783OKzAr6iJMJ7nX7h8q8
- KsEOettUSDPkL5znIELModW1zRgsmZLfFWrYpqiW0213cYRETmLlcTrIyPWPJjel/qsc
- LkZkkos/oYiLwzRt/dSGz7lLXd8wlzTHFWMQ41FwvGFeKCRgnJHN4Ul5ROhltCy+a2JO
- USHlnS1V4IGtJgFtdooIyGugv+bzvo08VtRFIPObglLq+/LAn/1UTKDUOqOeh8VWgg0B
- VM8g==
-X-Gm-Message-State: AFuF++m5lLgPLlO7n/6trF8aNqRpf0Dn+4VioCsViHmUxhALP9QtBPZJ
- UKUwFgHn8naPEltM5u9jM6WdanNq1DDWluyPxVAvkAntxfdebveIFSIzvzNa0vx5hN8=
-X-Gm-Gg: AYBFou1YA036djVR+Uh9HsCEVw7SaqX+My9NmajBVsmGSJ6OvijxZUAIbt0hxB3IkFk
- VRdISMFK4vNWn/N8Dyv8zx2HqILbyUzgOhOYWabwugKyU+J0X+rffYIjtALYLoF5ca5bqdTH7LL
- DYnUAu03N0QI8PbgV9o+QVGLo/u92Z6z+H+inmHZfoSbwyGAEc97gh4ViwQfJy1aSRtp9uQs2G7
- ariJt97dLscegX3zzjprAVNxQXqG7Hkp9NCQNShTQMezKRSGCsS5kr0MfgGSu/IYLkt/IIGiIW/
- JEjr+izMuu9k4FTxJwgdEHTqHhtoFUoxJjGTzRfUvVrdP9V51igd3zZ0UuA2qpeDCAijqLEq1Vw
- 4CfqRxPigiTdXHip7oS0SnrLpiQz5WK1pvjFhLIDc2r7CU69LtLNuwIvBIJ6Dj937TsnFnMxexh
- 8XxV1C2PnF/2L4F2W0V8qXYenUdBPgI2lEG6uQ6GW/aiXjQ7oGX2oTSstphUbnm/Yy4Gw1HGdOR
- 1lBdPqbci9jC3d8rv/yFgrILa3SYUihBA4nvf3X
-X-Received: by 2002:a17:90a:d64f:b0:39e:4c80:44b9 with SMTP id
- 98e67ed59e1d1-39e54dccbb8mr19047830a91.28.1790037400572; 
- Mon, 21 Sep 2026 17:36:40 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a06e5751f2sm143093a91.9.2026.09.21.17.36.40
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Sep 2026 17:36:40 -0700 (PDT)
-Date: Mon, 21 Sep 2026 17:36:38 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Joshua Washington <joshwash@google.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 00/14] Introduce RTE_DIV_ROUND_UP
-Message-ID: <20260921173638.0e3cbea5@phoenix.local>
-In-Reply-To: <20260813172241.964736-1-joshwash@google.com>
-References: <20260812223017.2980190-1-joshwash@google.com>
- <20260813172241.964736-1-joshwash@google.com>
+ bh=5hKMmCmPWD5/QjKTav5GyGZNAcfabKi3S8qsdijkmYA=;
+ b=FIOoOQ5tjTXERzijIJlHMn8fMrRr/qq1LJtGTi0nvXUSoLIDanIw7WuYvSM1x7JP1T
+ M2or8YBdkltj523vRfJS5xWjr3b1grr8BzWwyQMUXGjjvRSDTgRU6hAnQtx3xwRWyM/W
+ qP84usUyLerr9F0iUI1UMrp4oCwra0xxJSjftftlFPXeglCkZviyTqpM7NgyTxwH9BwR
+ S59lXNR2Db0+s68lNMU3J7wNhmZqvDxyJnDpnl2inYeHFi3lLm4bqFV/2/fjmUbVTHz6
+ OssKnpYv06TJWvZsmqZYuCZOcJ5qJJwZ1xm9lry5rbJFIHRSAtUhU1NWYkfIg2gfSNSV
+ anLw==
+X-Gm-Message-State: AFuF++lvLv9ja7x3tByxl4OKQfdEFX2NLTosQezRh5s46FHhqxr50fph
+ WZFHGMf29zhdSeFdC9n6J3QgHlPpjQzDJcUCSs+vu8K1vP1n9JRpJGmNh1f/GQ52WTqn8KeO1az
+ nlil0GMkkMtIYcDRGlS2DCssNkJ77b4s=
+X-Gm-Gg: AYBFou0dk9Q0G6jm/WrNgqQkqgjwWH532SU2uSWf1s/uzbYsdCz0B9q0Ss0J5vVa30h
+ t7bjl3dBC556WxA/AGGJtq9G/2mL4J+JyJ9Pns8R2Ny981c0rY9to46psh+F9WMtED6q3Kj+jLu
+ nky2scW+/8/qQEo1E05dRsfm+bB5Fa/qdj5JqhYaX+Ap7RzyTU0jyKLoKTZ3oa6hP+oxzMjPZ+E
+ 420iUymGMIXxaAqBU0WZ0qBqggFzN/9ByU1THlz0uSgfyTJxbztZrIpy+GmEHDo4mcyFLKLfu+C
+ tpyZpGsPFgrPNandLOISnJ0C5GR8PUCBxtZoRObfE4SeoL4vkBxc5lcU
+X-Received: by 2002:a05:6820:1606:b0:6b7:83d6:2927 with SMTP id
+ 006d021491bc7-6ca9c654831mr12098159eaf.42.1790056971243; Mon, 21 Sep 2026
+ 23:02:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260909160637.3607104-1-rtice@cisco.com>
+ <20260909160637.3607104-2-rtice@cisco.com>
+In-Reply-To: <20260909160637.3607104-2-rtice@cisco.com>
+From: Nithin Dabilpuram <nithind1988@gmail.com>
+Date: Tue, 22 Sep 2026 11:32:39 +0530
+X-Gm-Features: AcwNN1UmxoWGP6BhiiYV4XOYjTw7RyDYo_KUjP-720WO9FgKxCDeca7QKc3ugXE
+Message-ID: <CAMuDWKRJLZLLq5XLGNmysd7=GiNCOvGh+u=p510RqDNktOdbVg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] drivers: fix CN20K mbuf size truncation
+To: Randy L Tice <rtice@cisco.com>
+Cc: dev@dpdk.org, stable@dpdk.org, thomas@monjalon.net, 
+ pbhagavatula@marvell.com, sthotton@marvell.com, ndabilpuram@marvell.com, 
+ kirankumark@marvell.com, skori@marvell.com, skoteshwar@marvell.com, 
+ hkalra@marvell.com, rbhansali@marvell.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,47 +100,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 13 Aug 2026 10:22:25 -0700
-Joshua Washington <joshwash@google.com> wrote:
+Acked-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
 
-> Numerous drivers independently define the DIV_ROUND_UP macro, using the
-> same definition. Attempt to commonize by introducing RTE_DIV_ROUND_UP to
-> rte_common.h and replacing usages of DIV_ROUND_UP with RTE_DIV_ROUND_UP.
-
-
-Looks ok, predates use of AI review, so ran it manually.
-
-The biggest issue reported is tat changing base/ code here
-is problematic. You can do it a base/ wrapper header but
-not directly at call sites.
-
-Tested: applies cleanly to main, builds with -Werror on x86/gcc for all
-touched drivers, and no DIV_ROUND_UP users remain.
-
-Patch 1:
-
-    Needs a test in app/test/test_common.c (exact, remainder, n=0, d=1).
-    Needs a release notes entry.
-    Doxygen should document the params and the caveats: d evaluated twice,
-    unsigned only, and n + d - 1 can wrap (RTE_DIV_ROUND_UP(UINT32_MAX, 2)
-    on uint32_t is 0). Consider ((n) / (d) + ((n) % (d) != 0)) instead.
-    DIV_CEIL in app/test/test_compressdev.c and
-    app/test-compress-perf/comp_perf_test_common.c could be converted too.
-
-Base code (qede, cxgbe, ena):
-Please don't edit call sites under base/. That code is synced from
-vendor trees (ena-com is shared with Linux and FreeBSD) and this will
-conflict on the next update. Do what i40e/ice/idpf did: keep
-#define DIV_ROUND_UP(n, d) RTE_DIV_ROUND_UP(n, d)
-in the osdep/platform header and leave base/ alone.
-
-Minor:
-
-    qede, nfp: drop the rewraps; the original lines fit in 100 columns.
-    hinic: the "X must be nonnegative" comment is lost; move it to the
-    rte_common.h doxygen.
-    ena: leaves a double blank line in ena_plat_dpdk.h.
-    13/14: subject should be "net/nfp:", not "drivers:".
-
-The osdep-only patches (i40e, idpf, ice, hns3, bnx2x, ifpga, procinfo)
-look fine.
+On Wed, Sep 9, 2026 at 9:37=E2=80=AFPM Randy L Tice <rtice@cisco.com> wrote=
+:
+>
+> CN20K inline security receive paths recover the packet mbuf by
+> subtracting sizeof(struct rte_mbuf) from a pointer stored in
+> completion metadata.
+>
+> The size is currently kept in a uint8_t local variable before
+> that subtraction. This truncates the value when the mbuf structure
+> grows beyond 255 bytes, and can recover the wrong mbuf address.
+>
+> Use a uint32_t local value for the mbuf byte size so larger mbuf
+> layouts are handled correctly.
+>
+> Fixes: 5856f23129bb ("net/cnxk: support CN20K inline IPsec Rx")
+> Fixes: edd0d5f3c299 ("event/cnxk: support CN20K inline IPsec Rx")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Randy L Tice <rtice@cisco.com>
+> ---
+>  .mailmap                          | 1 +
+>  drivers/event/cnxk/cn20k_worker.h | 4 ++--
+>  drivers/net/cnxk/cn20k_rx.h       | 4 ++--
+>  3 files changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/.mailmap b/.mailmap
+> index fcb3d1bb3f..2a8b54ea23 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1379,6 +1379,7 @@ Rakesh Kudurumalla <rkudurumalla@marvell.com> <rkud=
+urumalla@caviumnetworks.com>
+>  Ralf Hoffmann <ralf.hoffmann@allegro-packets.com>
+>  Rami Rosen <ramirose@gmail.com> <rami.rosen@intel.com>
+>  Rami Rosen <ramirose@gmail.com> <roszenrami@gmail.com>
+> +Randy L Tice <rtice@cisco.com>
+>  Randy Schacher <stuart.schacher@broadcom.com>
+>  Rani Sharoni <ranish@nvidia.com>
+>  Ranjit Menon <ranjit.menon@intel.com>
+> diff --git a/drivers/event/cnxk/cn20k_worker.h b/drivers/event/cnxk/cn20k=
+_worker.h
+> index 6442113e09..5723a6eabb 100644
+> --- a/drivers/event/cnxk/cn20k_worker.h
+> +++ b/drivers/event/cnxk/cn20k_worker.h
+> @@ -48,7 +48,7 @@ cn20k_process_vwqe(uintptr_t vwqe, uint16_t port_id, co=
+nst uint32_t flags, struc
+>  {
+>         uint64_t mbuf_init =3D 0x100010000ULL | RTE_PKTMBUF_HEADROOM;
+>         struct cnxk_timesync_info *tstamp =3D ws->tstamp[port_id];
+> -       uint8_t m_sz =3D sizeof(struct rte_mbuf);
+> +       const uint32_t m_sz =3D sizeof(struct rte_mbuf);
+>         void *lookup_mem =3D ws->lookup_mem;
+>         uint64_t meta_aura =3D 0, laddr =3D 0;
+>         uintptr_t lbase =3D ws->lmt_base;
+> @@ -165,7 +165,7 @@ cn20k_process_vwqe(uintptr_t vwqe, uint16_t port_id, =
+const uint32_t flags, struc
+>  static __rte_always_inline void
+>  cn20k_sso_hws_post_process(struct cn20k_sso_hws *ws, uint64_t *u64, cons=
+t uint32_t flags)
+>  {
+> -       uint8_t m_sz =3D sizeof(struct rte_mbuf);
+> +       const uint32_t m_sz =3D sizeof(struct rte_mbuf);
+>         uintptr_t sa_base =3D 0;
+>
+>         u64[0] =3D (u64[0] & (0x3ull << 32)) << 6 | (u64[0] & (0x3FFull <=
+< 36)) << 4 |
+> diff --git a/drivers/net/cnxk/cn20k_rx.h b/drivers/net/cnxk/cn20k_rx.h
+> index f8fa6de2b9..b544868c03 100644
+> --- a/drivers/net/cnxk/cn20k_rx.h
+> +++ b/drivers/net/cnxk/cn20k_rx.h
+> @@ -702,7 +702,7 @@ cn20k_nix_recv_pkts(void *rx_queue, struct rte_mbuf *=
+*rx_pkts, uint16_t pkts, co
+>         uint64_t mbuf_init =3D rxq->mbuf_initializer;
+>         const void *lookup_mem =3D rxq->lookup_mem;
+>         const uint64_t data_off =3D rxq->data_off;
+> -       uint8_t m_sz =3D sizeof(struct rte_mbuf);
+> +       const uint32_t m_sz =3D sizeof(struct rte_mbuf);
+>         const uint64_t wdata =3D rxq->wdata;
+>         const uint32_t qmask =3D rxq->qmask;
+>         const uintptr_t desc =3D rxq->desc;
+> @@ -815,7 +815,7 @@ cn20k_nix_flush_recv_pkts(void *rx_queue, struct rte_=
+mbuf **rx_pkts, uint16_t pk
+>         uint64_t mbuf_init =3D rxq->mbuf_initializer;
+>         const void *lookup_mem =3D rxq->lookup_mem;
+>         const uint64_t data_off =3D rxq->data_off;
+> -       uint8_t m_sz =3D sizeof(struct rte_mbuf);
+> +       const uint32_t m_sz =3D sizeof(struct rte_mbuf);
+>         const uint64_t wdata =3D rxq->wdata;
+>         const uint32_t qmask =3D rxq->qmask;
+>         const uintptr_t desc =3D rxq->desc;
+> --
+> 2.35.6
+>
