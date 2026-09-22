@@ -2,156 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 471AEC98302
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 19:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A73C98302
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 21:31:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1DE9740281;
-	Tue, 22 Sep 2026 21:46:57 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id B277440041
- for <dev@dpdk.org>; Tue, 22 Sep 2026 21:46:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790106415; x=1821642415;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=Sh3+kTod8iWzwF2QWRKqwZ2yBf2PCWzO4xK9U97rip4=;
- b=CM4vycdc3CyRtUb9TfCMlQUhrPA5weHzcZRc6UuyMjCRrKRPgTAhsVwi
- XYKwpq+qB1Gq7Jwa+pCSOGCfGmMvFXOGp0KoeRwGq0FXKtR219Hl1VLq8
- tPdddWWi3Xz7Ehw1d9IPDAc/T03Z05z1ZpeZohSgBclONKKRG/rN+TrKL
- wStfmaEeRg0fayQBS5l6YcO+gqndNmShRIEVLmp9DtjbcL3SGPy+2PGn7
- VHxA8OS38/F4A4GWGxWnKA+xg2PcM3O1mcm42FMpvbv1bEBCLZdRYKS6x
- I2qmobvK9knulI1NOzmabgqbJg28S4jNTwdJpTzJtiNur4IGnBrDVNGMG w==;
-X-CSE-ConnectionGUID: J9MY+PjSSk6rXc/M7ppS8Q==
-X-CSE-MsgGUID: ZyatJhm6TQ+TgKq8+/y6wA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11913"; a="101407878"
-X-IronPort-AV: E=Sophos;i="6.27,117,1787036400"; d="scan'208";a="101407878"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Sep 2026 12:46:54 -0700
-X-CSE-ConnectionGUID: /jDP26uIRYObcVfeBooLMQ==
-X-CSE-MsgGUID: I1xW6feJSNKD+jTc9yOrpQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,117,1787036400"; d="scan'208";a="301191302"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Sep 2026 12:46:53 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 22 Sep 2026 12:46:53 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Tue, 22 Sep 2026 12:46:53 -0700
-Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.0) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 22 Sep 2026 12:46:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PZ8KZV8GDrEqdBTa4/QU3XzODR8AQWiHM9TR7RmJkXYIQwDLaLKhUQB/Tx3Y24e+e3gLreBIWPNzCV7RJtSXSTICkCa+hzUQ9L5wvJeoCq4skU0FJIjyjObY61O0NWLzpa/A6zbG5cA2Hqshcp3hDqO4lBDt0UfvWn8bGwHyVQTRdU6IYSIfo631kCD8jpnJG4/A+wVSVUkMU+WGxUag8x0ayNui40K0hfb2JybXR9dWusF/THGO900Ve2Q93iQHmamWGKnabWZA5e/BcgzYE2r9edV2Ep+IaaA7k5gao2B0Betw/Kwl8BKekSPjoS9qzSP79/vJh4XNp2v19s9obA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xkPEwNQ2k1bDbheHSTS/alTtlKFMliWsXWPxrYmLLPI=;
- b=OO1x/7Zv5JfyS0uP0IgvRxxfk1AfO6Q9eQ417e0UNotcquTJlhHNz58piUDyfBG8q2D3Lpl3YW9I/DDRiKaR8YrCYquGZ86N7OKRkjIhcD9Viuz1qRLM403yOLOw02RUSV7eWOuPCUWA1zeJdQwYAqcGrxR9gvUCYU/SElP5xQz/Ak9JeILlRdregr/opBUwN0wZDqSMfOtqjvJQ5vTK5tmNi0/iMQtIwW0rbxjaT9CtdJ9lFYZJ7b0mZxHv0iCA6A5799MJc0LvS1maea/meLrHvsHzjXa6FKLJ7e3E/rYCKj5cq02XFx+9jcFxHoadFLwuj7Qh1SrzpKPskeizvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL0PR11MB2993.namprd11.prod.outlook.com (2603:10b6:208:75::28)
- by MW4PR11MB5872.namprd11.prod.outlook.com (2603:10b6:303:169::14)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.16; Tue, 22 Sep
- 2026 19:46:44 +0000
-Received: from BL0PR11MB2993.namprd11.prod.outlook.com
- ([fe80::5877:2021:3cf1:1046]) by BL0PR11MB2993.namprd11.prod.outlook.com
- ([fe80::5877:2021:3cf1:1046%6]) with mapi id 15.21.0451.012; Tue, 22 Sep 2026
- 19:46:44 +0000
-Message-ID: <30a4f88e-72c3-48bc-91cc-2f9ff7dfa108@intel.com>
-Date: Tue, 22 Sep 2026 20:46:40 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] fib, rib: fix name prefixes
-To: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
-CC: Anurag Mandal <anurag.mandal@intel.com>, =?UTF-8?Q?Morten_Br=C3=B8rup?=
- <mb@smartsharesystems.com>
-References: <20260921215733.404686-1-stephen@networkplumber.org>
- <20260922155249.3115271-1-stephen@networkplumber.org>
- <20260922155249.3115271-4-stephen@networkplumber.org>
-Content-Language: en-US
-From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
-In-Reply-To: <20260922155249.3115271-4-stephen@networkplumber.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: DU7PR01CA0021.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:50f::9) To BL0PR11MB2993.namprd11.prod.outlook.com
- (2603:10b6:208:75::28)
+	by mails.dpdk.org (Postfix) with ESMTP id 8661640281;
+	Tue, 22 Sep 2026 23:31:36 +0200 (CEST)
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
+ [74.125.227.171])
+ by mails.dpdk.org (Postfix) with ESMTP id AEAC340041
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 23:31:34 +0200 (CEST)
+Received: by mail-pj2-f43.google.com with SMTP id
+ 98e67ed59e1d1-396ccd4f99dso245948a91.2
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 14:31:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790112693;
+ x=1790717493; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=Iy+kmd+wTDI8ZX3VoXDquvp9YnJ1yTNcbElo+NoNbCE=;
+ b=cRzM3HkezkNu3L2KQAy318Ccgp/BYxmL9Ckhcv/iErkGbZcghSF/bDosCWz6o1Jkjo
+ KRUX+2w1mCfbwimuYoaefWwauAPTsD5X1elPCq7i4SDm5VWgOSHmtwFUqoOqPPjmBg6z
+ aALvO4SndaW05ky85x1A2vmfzbky/W5GGhVqUn326OtKp3BKEwCos/VOGzqPslKskcSI
+ h5FHNG688V15uxnDzRq/JTR9LP5i+7kDbgLfu/24UvPkRsSBSspz0f68DO0BImqQNPLs
+ yBujCiKB7tFdHy6gjcpyjlh/5+x5G7ILZukxVsOn/vsrR+1sF504JyBndPMg0GPKUU69
+ 7VAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790112693; x=1790717493;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=Iy+kmd+wTDI8ZX3VoXDquvp9YnJ1yTNcbElo+NoNbCE=;
+ b=Pmkg0tnLm+wmuqIpyCHtETqD+i7KV6DV8cy5P9fMUeSF4uj96WkZYgZZ2WRuszal7q
+ B491ZFCmmdWNAfaJ9ye+tht3tFk/+PD52KbE0RJULa/+usEkSMlSLWpfmMuZvQwCqZZi
+ QqT6/Z0F4SYbCI36Z8geGgeXY4f/o9QKMfvr4bbptat8wJsVTSaUg7sH4ZOgrm8NasR+
+ yF234r/q0ezX/H2A1U1o5bZrDaqPYFKXj/ogfX3XcIiPPbNiZ1l8PWGalt9neuYB/EA6
+ FgF95YyfCjHaWUEH2bIXVocKcPDjUXCpgytDowBqN3s8Jl/UTVXVJt9Ckpu+//XL4X7G
+ lGLQ==
+X-Gm-Message-State: AFuF++kf2wopsr8QKCWvQmxtRrtZDh88okWRtNLMUUw1lknDqWhjPL8+
+ +gWU8+qFZtCevtAwPf0d4E3MGKmJUszSM/yZSv9Z0NmckJuYkvmPAsmtDzrooznYF0t0k8685j/
+ yHWaDxMI=
+X-Gm-Gg: AYBFou00V0FpJQxUSDuv9zT9heNcbdzLqQW2B0AUAho1+ijkOJJs8QAxbdveR6pBiLw
+ e7so2GuvJ8LWrndgKW61fP/iMfxg+dGPZYlPzZ5mx1JFnrv58RKGgOrICHziRBmmwo7j52Voc1v
+ lxQK4Eb/oty/DInDFQbfOVD8q8bC+N+sHjhl11O3T9tVTnGHH/331eu9tfnFnauxiGa6qZJmx9U
+ 88q6JFvdP1vye4Q0LahXUDn+jmUdANVaMvrwzAxMK8OarJDokCzxf1hvTJG15iaAjZljyFUKmxR
+ GApl7KKaozUDPchRY2j2ErKcXQiFovZdKHYoSU4gJZ93lbK66W6kpiHwxUZ7H/Re/Eu3ZXlswou
+ 0y9981MkOj2HiAiU+kcOvcobXFBjVD/Xg1GAdDcfYiJZmOKsALZdyuE2/ri9fXY1Hek12qavzVp
+ kLjWZHcFR+aq7kWp9+9yXVIiNkAyAC3JO9u+qhj4IXOnL7Eetnx/5rFNTKteqoy7mB1JsgnJ+/V
+ qV3NPBs4OH4Y6dGm0BbamOlr4Gw48asJcqDiA==
+X-Received: by 2002:a17:90b:3985:b0:39e:21a7:5dff with SMTP id
+ 98e67ed59e1d1-3a07e4f3154mr603953a91.11.1790112692935; 
+ Tue, 22 Sep 2026 14:31:32 -0700 (PDT)
+Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 41be03b00d2f7-cc75f3f2d0esm133577a12.22.2026.09.22.14.31.31
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 22 Sep 2026 14:31:32 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Reshma Pattan <reshma.pattan@intel.com>
+Subject: [PATCH v3] examples/rpcapd: demo version of packet capture daemon
+Date: Tue, 22 Sep 2026 14:31:10 -0700
+Message-ID: <20260922213130.90138-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260908210832.1556291-1-stephen@networkplumber.org>
+References: <20260908210832.1556291-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL0PR11MB2993:EE_|MW4PR11MB5872:EE_
-X-MS-Office365-Filtering-Correlation-Id: bcc99a9a-345e-43d6-c505-08df18e23ae7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|23010399003|376014|366016|10067099003|56012099006|11063799006|4143699003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: b53uHvGjiDd5GB6Rw1KZzsnBcNOzaJouj+u36EeIlzL0tJFKSEC+2YmpDha4YoUGvSpoLK85It8QlH+WNjJmdrXdodxaxq12i3TyxEy8tSXD669oYXHVGZv/mwoyyGDmL8rjsssOWVeS7eFCnR+YdKA6bijqbdG3ZeW5YWdG6ODlrHjwxaREDZ+uE9LHkgftyPWUShw9Zz2rw1vJNGfDGhFd+ya+AetpJgNmo3cL8iK/AqleK6xAy9rsQdHaRPhPvZ9ZCFd/g/FZ1Qy5VXOEnvp9N8ekjnb/sfm9wpiQeoKuUPZln3YUeOomO99ts6asOOGUSBagDdhWXCo4duFE5dgSQLf+9pcXzNXY8d+3+80gHiNdbJOF1UqJsBsXzgjU6URmcNmna50lnioyz9yeogH4B8oSX4W2XlOo4Dk0/cMTYtRKz1BcPCQN71iecJQH9HD3Z2OqrjOO8b82C/JSfgUBptC2rP1WpLjAE78TisGnlvk/uwf6jAaFewN5oXwQFazbLMxaFHbIv1bxI1birnKmyPgfFUsDFNUPExwwscGWcW8tA1rWb8xXK0QPeY5rN0vMnW0BIlJjIH5VKRrXnScnlUd3el4UVXJxOkrzbMe4VX9dsQQYSlXVp4sasX6ZAeqk47b+Ny7G/hL8Vb+Qq25mqLBLwP3IjB1w6fFeoUg=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BL0PR11MB2993.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(23010399003)(376014)(366016)(10067099003)(56012099006)(11063799006)(4143699003)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dVZXdjM3MTZIMnNEZm5ZY0xBMWljb0JXaHVHZElENWJoeVdYWWx5aUtMZlVW?=
- =?utf-8?B?MVZxbVVrdElvNnhSL3F6RktUUUZwS3ZwdGlSZldlRENJWXZEL3hwMHBuUVNJ?=
- =?utf-8?B?eDZNZmQwcTA4Y2lSaHViZlRLUDg0TUlSMmpZMU44cXk2dDRDem9WcW5PbEJQ?=
- =?utf-8?B?L0t1TUI5c2dWR1lsME1nVUlpdjA5S2pMSEo0VTlUQzlvNjk3UTZMaHVqTHp4?=
- =?utf-8?B?RTZzN09HWnJLQjV1VnM3aHptZGZ3VVNHSVdBMmlxMmp3MHlISnIwQ1BLRVJw?=
- =?utf-8?B?RTNicVkrUWN1VGc1ajdraUdLZmwzMFZ4dkd3SlFvb2UvcU9ZcGtuTlBvS1Na?=
- =?utf-8?B?TlZuelFPVkdrQm8vL042amdaL3EyWTZoQVBTaW5qUTRFYXIvUHVzeUphSTE2?=
- =?utf-8?B?cHI2TTJibisrMWZtWndFK0t0cWZaam1Uenh2TEZTU2dVajU2akM1cENxY2N3?=
- =?utf-8?B?OW94ZXJYTXZYaU5HU2x6dkl5MVlGZEZsbjNoRDFXUmhod3NremNpQWRlQVFm?=
- =?utf-8?B?N2NRZzhPdWUvd0FrNWlFc2dNQnlDNisrdzJIYVVqb0pwMFkrWkpESjQ5T1hn?=
- =?utf-8?B?MkFUeWF1RWE2SS9FYnljYnpmbkl3SHl2Qlh5UzQ2OXVLQ0RkblBpV2NNT1J1?=
- =?utf-8?B?V2dCOVpXT3J5Y3BWUW1XU1BjUlBORTNHL1cwTWlhdnQxbjZLNlNwcTNmKzJp?=
- =?utf-8?B?Q3ZWNDZGdURLNUczWTdrV21pZDBOSTU2UXBvdkN3VFZkTngyOU9XQXBNcFdp?=
- =?utf-8?B?d21CTTBvYzZUN0NiV3N1ck5tMUY2aU9aaVFmOWp6OFNuL2NRUm1idzE5a3lt?=
- =?utf-8?B?NGNBanZiZVdCWXpBcVVYeWNBYStTNVBMdFIrRVN1czdNNkhKMEg1aDkvcWkr?=
- =?utf-8?B?TU5qV0N5ejJXb1RDUDlPVWxHa1dYbmVzZXpHdjFCbkxpbUd2VzZTZjFvaU9x?=
- =?utf-8?B?ZTVGWlVCK294VGVWekV1WnNhSVRhYy9yK2g3VEhDRGxoQzJvYktkVC81YWd6?=
- =?utf-8?B?ajkxYUdLaTlhSW13Z3ZodTROWnVjeGR4Tm1yOE5YRjRLVllzQ2VRTVozb25L?=
- =?utf-8?B?WmFmcEVKOWtCMUszWjVQdEhJNFMrRWVYQlhsa1dSSzNacEVCbldHeC9RUm9q?=
- =?utf-8?B?Q1ZYd3pOV0Z1WHZsUnRlVjJNWVI2S0x6d1g3RTlDTm5oQ3BVNlVGdUpaeFVX?=
- =?utf-8?B?K3hIb05oSmhLVmw5bnV3SVFFR1lPSWVwVWZnUnhDM0JMT1pZcWcwcUFLSGpL?=
- =?utf-8?B?Y2FJcHd2UExGVHppajYzdWtEcElkQVdNOXZyNWk1bGF2WlAvL0ZUY0ZXcFFE?=
- =?utf-8?B?NkRxREZ1a1Q1d2hnKzJWbjBFVitLMG9OcGtndUFZUzRYRTl5R29wOU5zdUwv?=
- =?utf-8?B?Z1pIOXBGRTdMQ0piYjgzWldoa0orSlF2VlFlbkwzeERCODZsYlRHeTQ3eEFR?=
- =?utf-8?B?c3RFY09jeGtFT0R0dkxvRHJ2ZktWY2J6NWdLbVREWFBodXRLUUdvUXJqdjRC?=
- =?utf-8?B?WkthMFd2QUUzSGYzOFZLTStPMVBoTktqTXJyYjcxV1JFL2hMZ0hoVVpYTmFo?=
- =?utf-8?B?T2FGYVJ4T0U4d01ZSFdvZFhOUDM5ZnVhbm1UTHJtNkRMOWU0bTgxdlZTTDVr?=
- =?utf-8?B?MlV4L0pJWVZrRW1wY0MxbmdCQnk0L0RnTlNtRGtYMFIzR0k4ZHpYVXEwZjVU?=
- =?utf-8?B?T0grZktEdmhmM0ZNSTdEdmhpdGsyTG5VSEZtV2FQY210TGtET09sc2hZaFh6?=
- =?utf-8?B?a2NDNnBhZWRXQzFlbGtNWUxucUdTSVNVbHc0Q3Nlekg2eTVTbDc2Ynh0bFpC?=
- =?utf-8?B?NW5MMGhoS2ppaS9WWThiVHVXZ1QvQkM5clNteWM2QjBIdm5vMVFpekVBdFR4?=
- =?utf-8?B?bkVhQlFRNytnOTNSaTdKVm5TYUxlZkcrb2xKVkxMM1Z0YUo2WnBBTzBUMllG?=
- =?utf-8?B?OVlmelViOVBRSUVwcTExZ0pHay84WXFGdUVvNjNXTlg1ZzdRTG9TemVidEdG?=
- =?utf-8?B?R0FiRkJreXRkY1M4azljWW15Tmc1NDlVZCtnZUJDUWxGbkpaMUE0VW9RaDBH?=
- =?utf-8?B?ZG9FeTRNbEJ6QlRMU0VsaEV5cCsxcEZUSjlxSFJYd0VwSkQ4ckxrRUVxOGtl?=
- =?utf-8?B?NXFJNzFkQWYvbUpaVzhTdVkzWGgzaVV3Y2lQOSt3d0hDeU1peit1Z0JPMkpa?=
- =?utf-8?B?RjRPRTJnQkVDaTNGZGtMaVhELy9Za09ycEpET3AwOENuY1dEM08xQ29TY1Rj?=
- =?utf-8?B?Q0JXUjlnaEZTaE1FQUlIK3M4cWN1bUd1TnJEOUVaQlVNcExOQzBhNWNaN1Ev?=
- =?utf-8?B?dERYcXFZc1BKcW1VYXdRdWNvdFFCYUNTbkVNVjRyREVIc3lja0NubW5qZ1dt?=
- =?utf-8?Q?LARpmOnEuomUwuYs=3D?=
-X-Exchange-RoutingPolicyChecked: tIoj/jGtrfXeNJfQT7kUxJRWgJG8TREdrMqY7jLPyhk5fXy4sWShldBkZBZD6dXwmM9bfNLe7KqsC3Go7uJOX3nolgJluNo72v8s/tAbwISyPZL04H+4suF9Lyx5qQlPbaUwJLdkZCmljEQJiX0vMn2o2Xsg4Pz0yiRbvdCjaBfHlLVft5R8xkWYxPqnr2B7IhMHHu3S6/XOg4qdBXLj/PFFSkXN5PyHuwOa47ZD0MPrkWv7PvVUrhN3hBs+xm7PU5w3lBWDoZmUvWHr5ux7XJOd86tE/TUnIEf6QLnEr+8mWUAEl4ckZcG/fLj+y0oqAK3EpKtYdNnxpeJ2mSE34w==
-X-MS-Exchange-CrossTenant-Network-Message-Id: bcc99a9a-345e-43d6-c505-08df18e23ae7
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR11MB2993.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2026 19:46:44.1018 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hMUWyxJHb9iKyiQWKN9W33bzCLkPaNJJuIq43wO+WSoL5ge/P1x0EB+HtIFU73DEQtw4ktPuysmzzNE+QFSZCZPdRPUYpQXGPkMFsTRike0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB5872
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -165,252 +84,1899 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+This example adds RPCAP support over localhost TCP
+integrated with DPDK. It uses a secondary process that allows
+connections from using tcpdump defacto protocol rpcap.
 
-On 9/22/2026 4:52 PM, Stephen Hemminger wrote:
-> From: Anurag Mandal <anurag.mandal@intel.com>
->
-> The RIB library named the mempool holding its nodes "MP_<name>".
-> That prefix is the one the mempool library itself prepends to
-> the backing memzone, so the memzone ended up named
-> "MP_MP_<name>" which is improper.
->
-> The FIB library passed its own name unchanged to the underlying
-> RIB and did not add a prefix to the RIB name.
->
-> This patch names each object after its owner.
-> The node mempool of a RIB is now "RIB_<name>" or "RIB6_<name>",
-> and the RIB owned by a FIB is now "FIB_<name>" or "FIB6_<name>".
->
-> A mempool name is limited to RTE_MEMPOOL_NAMESIZE, which is
-> shorter than RTE_RIB_NAMESIZE.
-> The name was passed down silently and an oversized one surfaced
-> as an opaque rte_mempool_create() failure, so check the derived
-> name up front and return ENAMETOOLONG instead.
-> As the prefixes above are added on top of the name, the maximum
-> length of a name is limited to the following:
-> RIB : 53 characters
-> RIB6: 52 characters
-> FIB : 49 characters
-> FIB6: 47 characters
->
-> Bugzilla ID: 1981 1982
-> Fixes: 5a5793a5ffa2 ("rib: add RIB library")
-> Fixes: f7e861e21c46 ("rib: support IPv6")
-> Fixes: 39e927248416 ("fib: add FIB library")
-> Fixes: 40d41a8a7b34 ("fib: support IPv6")
->
-> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
-> Acked-by: Morten Brørup <mb@smartsharesystems.com>
-> [stephen: recomputed the name length limits for 64 byte memzone
->   names, dropped the now unneeded test, example and node renames]
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->   doc/guides/rel_notes/release_26_11.rst | 15 +++++++++++++++
->   lib/fib/rte_fib.c                      | 16 +++++++++++++---
->   lib/fib/rte_fib6.c                     | 16 +++++++++++++---
->   lib/rib/rte_rib.c                      | 14 ++++++++++++--
->   lib/rib/rte_rib6.c                     | 14 ++++++++++++--
->   5 files changed, 65 insertions(+), 10 deletions(-)
->
-> diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-> index 99847e9745..31de764a9d 100644
-> --- a/doc/guides/rel_notes/release_26_11.rst
-> +++ b/doc/guides/rel_notes/release_26_11.rst
-> @@ -123,6 +123,21 @@ API Changes
->     * ``rte_tel_data_add_dict_uint_hex``
->     * ``rte_telemetry_register_cmd_arg``
->   
-> +* rib: The node mempool created by ``rte_rib_create()`` and ``rte_rib6_create()``
-> +  is now named ``RIB_<name>`` and ``RIB6_<name>`` instead of ``MP_<name>``.
-> +
-> +* fib: The RIB created by ``rte_fib_create()`` and ``rte_fib6_create()``
-> +  is now named ``FIB_<name>`` and ``FIB6_<name>``.
-> +
-> +* rib, fib: The name of a RIB, RIB6, FIB or FIB6 is used to derive the name of
-> +  its node mempool, which is bounded by ``RTE_MEMPOOL_NAMESIZE``.
-> +  As the prefixes above are added on top of the name,
-> +  the maximum length of a name is the following:
-> +
-> +  * RIB  - 53 characters.
-> +  * RIB6 - 52 characters.
-> +  * FIB  - 49 characters.
-> +  * FIB6 - 47 characters.
->   
->   ABI Changes
->   -----------
-> diff --git a/lib/fib/rte_fib.c b/lib/fib/rte_fib.c
-> index 184210f380..7a587820ad 100644
-> --- a/lib/fib/rte_fib.c
-> +++ b/lib/fib/rte_fib.c
-> @@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib_tailq)
->   #define FIB_RETURN_IF_TRUE(cond, retval)
->   #endif
->   
-> +/* Prefix used for the memory objects owned by a FIB. */
-> +#define FIB_MEM_PREFIX		"FIB_"
-> +
->   struct rte_fib {
->   	char			name[RTE_FIB_NAMESIZE];
->   	enum rte_fib_type	type;	/**< Type of FIB struct */
-> @@ -173,14 +176,21 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
->   	rib_conf.ext_sz = conf->rib_ext_sz;
->   	rib_conf.max_nodes = conf->max_routes * 2;
->   
-> -	rib = rte_rib_create(name, socket_id, &rib_conf);
-> +	/* Add FIB Prefix to its mempool name */
-> +	ret = snprintf(mem_name, sizeof(mem_name), FIB_MEM_PREFIX "%s", name);
-> +	if (ret < 0 || ret >= (int)sizeof(mem_name)) {
-> +		FIB_LOG(ERR, "FIB name %s is too long", name);
-> +		rte_errno = ENAMETOOLONG;
-> +		return NULL;
-> +	}
-> +
-> +	rib = rte_rib_create(mem_name, socket_id, &rib_conf);
->   	if (rib == NULL) {
->   		FIB_LOG(ERR,
-> -			"Can not allocate RIB %s", name);
-> +			"Can not allocate RIB for FIB: %s", mem_name);
->   		return NULL;
->   	}
->   
-> -	snprintf(mem_name, sizeof(mem_name), "FIB_%s", name);
->   	fib_list = RTE_TAILQ_CAST(rte_fib_tailq.head, rte_fib_list);
->   
->   	rte_mcfg_tailq_write_lock();
-> diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
-> index 770becdb61..1a31ab09aa 100644
-> --- a/lib/fib/rte_fib6.c
-> +++ b/lib/fib/rte_fib6.c
-> @@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib6_tailq)
->   #define FIB6_RETURN_IF_TRUE(cond, retval)
->   #endif
->   
-> +/* Prefix used for the memory objects owned by a FIB6. */
-> +#define FIB6_MEM_PREFIX		"FIB6_"
-> +
->   struct rte_fib6 {
->   	char			name[RTE_FIB6_NAMESIZE];
->   	enum rte_fib6_type	type;	/**< Type of FIB struct */
-> @@ -172,14 +175,21 @@ rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
->   	rib_conf.ext_sz = conf->rib_ext_sz;
->   	rib_conf.max_nodes = conf->max_routes * 2;
->   
-> -	rib = rte_rib6_create(name, socket_id, &rib_conf);
-> +	/* Add FIB6 Prefix to its mempool name */
-> +	ret = snprintf(mem_name, sizeof(mem_name), FIB6_MEM_PREFIX "%s", name);
-> +	if (ret < 0 || ret >= (int)sizeof(mem_name)) {
-> +		FIB_LOG(ERR, "FIB6 name %s is too long", name);
-> +		rte_errno = ENAMETOOLONG;
-> +		return NULL;
-> +	}
-> +
-> +	rib = rte_rib6_create(mem_name, socket_id, &rib_conf);
->   	if (rib == NULL) {
->   		FIB_LOG(ERR,
-> -			"Can not allocate RIB %s", name);
-> +			"Can not allocate RIB6 for FIB6 %s", mem_name);
->   		return NULL;
->   	}
->   
-> -	snprintf(mem_name, sizeof(mem_name), "FIB6_%s", name);
->   	fib_list = RTE_TAILQ_CAST(rte_fib6_tailq.head, rte_fib6_list);
->   
->   	rte_mcfg_tailq_write_lock();
-> diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
-> index 046db131ca..55802f0060 100644
-> --- a/lib/rib/rte_rib.c
-> +++ b/lib/rib/rte_rib.c
-> @@ -32,6 +32,8 @@ EAL_REGISTER_TAILQ(rte_rib_tailq)
->   #define RIB_MAXDEPTH		32
->   /* Maximum length of a RIB name. */
->   #define RTE_RIB_NAMESIZE	64
-> +/* Prefix used for the memory objects owned by a RIB. */
-> +#define RIB_MEM_PREFIX		"RIB_"
->   
->   struct rte_rib_node {
->   	struct rte_rib_node	*left;
-> @@ -417,6 +419,7 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
->   	struct rte_tailq_entry *te;
->   	struct rte_rib_list *rib_list;
->   	struct rte_mempool *node_pool;
-> +	int ret;
->   
->   	/* Check user arguments. */
->   	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
-> @@ -424,7 +427,15 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
->   		return NULL;
->   	}
->   
-> -	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
-> +	/* Add RIB Prefix to its node mempool name */
-> +	ret = snprintf(mem_name, sizeof(mem_name), RIB_MEM_PREFIX "%s", name);
-> +	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
-> +		RIB_LOG(ERR, "RIB name %s is too long, limit is %zu characters",
-> +			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB_MEM_PREFIX));
-> +		rte_errno = ENAMETOOLONG;
-> +		return NULL;
-> +	}
-> +
->   	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
->   		sizeof(struct rte_rib_node) + conf->ext_sz, 0, 0,
->   		NULL, NULL, NULL, NULL, socket_id, 0);
-> @@ -435,7 +446,6 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
->   		return NULL;
->   	}
->   
-> -	snprintf(mem_name, sizeof(mem_name), "RIB_%s", name);
->   	rib_list = RTE_TAILQ_CAST(rte_rib_tailq.head, rte_rib_list);
->   
->   	rte_mcfg_tailq_write_lock();
-> diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
-> index 918ddbdfd3..7d9a0ba36f 100644
-> --- a/lib/rib/rte_rib6.c
-> +++ b/lib/rib/rte_rib6.c
-> @@ -24,6 +24,8 @@
->   #define RTE_RIB_VALID_NODE	1
->   /* Maximum length of a RIB6 name. */
->   #define RTE_RIB6_NAMESIZE	64
-> +/* Prefix used for the memory objects owned by a RIB6. */
-> +#define RIB6_MEM_PREFIX		"RIB6_"
->   
->   TAILQ_HEAD(rte_rib6_list, rte_tailq_entry);
->   static struct rte_tailq_elem rte_rib6_tailq = {
-> @@ -480,6 +482,7 @@ rte_rib6_create(const char *name, int socket_id,
->   	struct rte_tailq_entry *te;
->   	struct rte_rib6_list *rib6_list;
->   	struct rte_mempool *node_pool;
-> +	int ret;
->   
->   	/* Check user arguments. */
->   	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
-> @@ -487,7 +490,15 @@ rte_rib6_create(const char *name, int socket_id,
->   		return NULL;
->   	}
->   
-> -	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
-> +	/* Add RIB6 Prefix to its node mempool name */
-> +	ret = snprintf(mem_name, sizeof(mem_name), RIB6_MEM_PREFIX "%s", name);
-> +	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
-> +		RIB_LOG(ERR, "RIB6 name %s is too long, limit is %zu characters",
-> +			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB6_MEM_PREFIX));
-> +		rte_errno = ENAMETOOLONG;
-> +		return NULL;
-> +	}
-> +
->   	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
->   		sizeof(struct rte_rib6_node) + conf->ext_sz, 0, 0,
->   		NULL, NULL, NULL, NULL, socket_id, 0);
-> @@ -498,7 +509,6 @@ rte_rib6_create(const char *name, int socket_id,
->   		return NULL;
->   	}
->   
-> -	snprintf(mem_name, sizeof(mem_name), "RIB6_%s", name);
->   	rib6_list = RTE_TAILQ_CAST(rte_rib6_tailq.head, rte_rib6_list);
->   
->   	rte_mcfg_tailq_write_lock();
+See: doc/guides/sample_app_ug/rpcapd.rst for more info
 
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+
+v3 - rebase to force retest
+
+ MAINTAINERS                            |    2 +
+ doc/guides/rel_notes/release_26_11.rst |    4 +
+ doc/guides/sample_app_ug/index.rst     |    1 +
+ doc/guides/sample_app_ug/rpcapd.rst    |  216 ++++
+ examples/meson.build                   |    1 +
+ examples/rpcapd/main.c                 | 1430 ++++++++++++++++++++++++
+ examples/rpcapd/meson.build            |   19 +
+ examples/rpcapd/rpcap-protocol.h       |  127 +++
+ 8 files changed, 1800 insertions(+)
+ create mode 100644 doc/guides/sample_app_ug/rpcapd.rst
+ create mode 100644 examples/rpcapd/main.c
+ create mode 100644 examples/rpcapd/meson.build
+ create mode 100644 examples/rpcapd/rpcap-protocol.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8c50c52933..1eca09646d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1724,6 +1724,8 @@ F: app/pdump/
+ F: doc/guides/tools/pdump.rst
+ F: app/dumpcap/
+ F: doc/guides/tools/dumpcap.rst
++F: examples/rpcapd/
++F: doc/guides/sample_app_ug/rpcapd.rst
+ 
+ 
+ Packet Framework
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index f5d10d3de4..ac57c19e2f 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -65,6 +65,10 @@ New Features
+ 
+   * Added VF support on AMD Solarflare X45xx adapters.
+ 
++* **Added an example of tcpdump remote pcap daemon.**
++
++  Added an example that implements rpcap to allow live capture in tcpdump.
++
+ 
+ Removed Items
+ -------------
+diff --git a/doc/guides/sample_app_ug/index.rst b/doc/guides/sample_app_ug/index.rst
+index f12623bb66..61ed870318 100644
+--- a/doc/guides/sample_app_ug/index.rst
++++ b/doc/guides/sample_app_ug/index.rst
+@@ -31,6 +31,7 @@ Sample Applications User Guides
+     l3_forward_graph
+     l3_forward_power_man
+     link_status_intr
++    rpcapd
+     server_node_efd
+     service_cores
+     multi_process
+diff --git a/doc/guides/sample_app_ug/rpcapd.rst b/doc/guides/sample_app_ug/rpcapd.rst
+new file mode 100644
+index 0000000000..6afbfa216c
+--- /dev/null
++++ b/doc/guides/sample_app_ug/rpcapd.rst
+@@ -0,0 +1,216 @@
++..  SPDX-License-Identifier: BSD-3-Clause
++    Copyright(c) 2026 Stephen Hemminger
++
++.. _rpcapd_app:
++
++dpdk-rpcapd Sample Application
++==============================
++
++The ``dpdk-rpcapd`` sample application is a Data Plane Development Kit
++(DPDK) implementation of the remote packet capture daemon protocol
++(``rpcap``) used by libpcap.  It runs as a DPDK secondary process and
++allows libpcap-aware tools such as ``tcpdump`` and Wireshark to capture
++packets from a DPDK primary process live, without writing to an
++intermediate file.
++
++The ``dpdk-rpcapd`` tool implements a subset of the protocol spoken by
++the libpcap project's ``rpcapd``.
++See
++https://github.com/the-tcpdump-group/libpcap/tree/master/rpcapd for the
++reference implementation.
++Clients connect to ``dpdk-rpcapd`` using a ``rpcap://`` URL,
++request the list of available interfaces(which are the ports of the DPDK primary),
++open one, and stream packets from it.
++
++The intended workflow is one-step capture: start the primary, start
++``dpdk-rpcapd``, and point a familiar tool at it.  No intermediate files,
++no separate post-processing step.
++
++.. warning::
++
++   ``dpdk-rpcapd`` listens on an unauthenticated, unencrypted TCP port
++   (default 2002, bound to ``127.0.0.1``).  Any local user able to
++   reach the port can list DPDK ports and capture all traffic flowing
++   through them.  This is a sample application intended for
++   development, debugging, and demonstration use only.  **Do not run
++   ``dpdk-rpcapd`` on a production system.**
++
++   The default bind address is ``127.0.0.1`` so the listener is not
++   reachable from other hosts.  An operator may override this with
++   ``--bind <addr>`` but should expect that the resulting deployment
++   exposes captured traffic to anyone who can reach that address; do
++   not do this on an untrusted network.
++
++
++.. note::
++
++   * ``dpdk-rpcapd`` is experimental and provided for demonstration purposes only.
++     It may change or be removed without notice, and it is not intended to be relied upon.
++
++
++Running the Application
++-----------------------
++
++The application has a small set of command-line options:
++
++*   ``-p <port>``, ``--port <port>``
++
++    TCP port to listen on.  Default is 2002, the IANA-assigned rpcap
++    port.
++
++*   ``-b <addr>``, ``--bind <addr>``
++
++    Numeric IPv4 or IPv6 address to bind the listener to.  Default is
++    ``127.0.0.1`` (loopback only).  Setting any other address exposes
++    captured traffic to the network and should not be done on untrusted
++    networks.
++
++*   ``-4``
++
++    Use only IPv4; an IPv6 argument to ``-b`` is rejected.
++
++*   ``-N <ring_size>``
++
++    Size of the per-session capture ring in packets.  Default is 2048.
++    Rounded up to a power of two if necessary.
++
++*   ``-D``, ``--debug``
++
++    Increase log verbosity.  By default only notices, warnings and
++    errors are printed.  A single ``-D`` adds session-level messages
++    (client connected, capture started and stopped); ``-DD`` adds
++    per-request protocol detail.
++
++*   ``--debug-file <file>``
++
++    Append log output to ``<file>`` instead of writing it to standard
++    error.
++
++*   ``--lcore <core>``
++
++    CPU core to run on.  By default the daemon runs as an ordinary
++    process on any non-isolated CPU.
++
++*   ``--file-prefix <prefix>``
++
++    EAL file prefix of the primary process to attach to.  Needed when
++    the primary was started with a non-default prefix.
++
++*   ``--version``
++
++    Print the version and exit.
++
++*   ``-h``, ``--help``
++
++    Print usage and exit.
++
++EAL options are supplied automatically; the application runs as a
++secondary process and does not need EAL options on its command line for
++typical use.
++
++
++Client Setup
++------------
++
++Most Linux distributions ship libpcap built without ``rpcap`` support
++because the libpcap project leaves ``--enable-remote`` off by default.
++To use ``dpdk-rpcapd`` from ``tcpdump`` or Wireshark on Linux, libpcap
++must be rebuilt with remote support enabled.  Approximate steps:
++
++.. code-block:: console
++
++    wget https://www.tcpdump.org/release/libpcap-1.10.7.tar.xz
++    tar xf libpcap-1.10.7.tar.xz
++    cd libpcap-1.10.7
++    ./configure --enable-remote
++    make
++    sudo make install
++
++Only the client side of ``rpcap`` is used for ``dpdk-rpcapd``.
++Do not run libpcap's version of ``rpcapd``.
++
++``tcpdump`` rebuilt against this libpcap can be used as a client without
++further changes.  Wireshark on Windows and macOS ships with rpcap support
++enabled by default.
++
++
++Example
++-------
++
++Start a primary application with the packet capture framework
++initialized.  ``dpdk-testpmd`` is the simplest:
++
++.. code-block:: console
++
++    sudo ./<build_dir>/app/dpdk-testpmd --vdev=net_tap0 -- -i
++
++In another window, start ``dpdk-rpcapd``:
++
++.. code-block:: console
++
++    sudo ./<build_dir>/examples/dpdk-rpcapd
++    RPCAPD: open_listen_socket(): listening on 127.0.0.1 port 2002
++
++In a third window, list available interfaces using a libpcap-based
++``tcpdump`` rebuilt with remote support:
++
++.. code-block:: console
++
++    sudo /usr/local/sbin/tcpdump --list-remote-interfaces=rpcap://localhost:2002/
++    rpcap://localhost:2002/net_tap0  Network adapter 'DPDK port' on remote node localhost
++
++Capture live from a port:
++
++.. code-block:: console
++
++    sudo /usr/local/sbin/tcpdump -i rpcap://localhost:2002/net_tap0 -nn -c 20
++
++Or save to a file readable by any pcap consumer:
++
++.. code-block:: console
++
++    sudo /usr/local/sbin/tcpdump -i rpcap://localhost:2002/net_tap0 -w /tmp/capture.pcap
++
++
++Limitations
++-----------
++
++The following limitations apply to this initial version of
++``dpdk-rpcapd`` and are expected to be addressed in subsequent patches:
++
++*   **Single client.** Only one client may be connected at a time.
++    Subsequent clients are queued by the listening socket but not
++    serviced until the first disconnects.  Multi-client support
++    requires an event-driven main loop (planned).
++
++*   **No authentication.** ``AUTH`` requests are acknowledged with an
++    empty reply (libpcap "version 0, null auth" semantics).  This
++    sample application does not implement password authentication.
++
++*   **TCP transport only; not for production use.** The rpcap protocol
++    over TCP is unauthenticated and unencrypted; any client that can
++    reach the listening port has full access to captured traffic.
++    Binding to ``127.0.0.1`` by default mitigates remote exposure but
++    does not address local users on a shared host.  See the warning at
++    the top of this document.
++
++*   **Microsecond timestamp resolution.** The rpcap protocol carries
++    timestamps at microsecond resolution.
++
++*   **Original length of truncated packets is not reported.** The
++    capture framework in the primary process copies only the snaplen
++    worth of bytes and does not carry the original frame length across
++    to the secondary, so a truncated packet is reported to the client
++    with its on-the-wire length equal to its captured length.  A frame
++    longer than the snaplen therefore appears to the client as a short
++    frame rather than as a truncated long one.
++
++
++See Also
++--------
++
++*   :doc:`../tools/dumpcap` -- file-based capture writing pcapng
++    output.
++
++*   The libpcap project's ``rpcapd`` reference implementation:
++    https://github.com/the-tcpdump-group/libpcap/tree/master/rpcapd
+diff --git a/examples/meson.build b/examples/meson.build
+index 25d9c88457..24b6184353 100644
+--- a/examples/meson.build
++++ b/examples/meson.build
+@@ -45,6 +45,7 @@ all_examples = [
+         'ptpclient',
+         'qos_meter',
+         'qos_sched',
++        'rpcapd',
+         'rxtx_callbacks',
+         'server_node_efd/efd_node',
+         'server_node_efd/efd_server',
+diff --git a/examples/rpcapd/main.c b/examples/rpcapd/main.c
+new file mode 100644
+index 0000000000..530543ce7e
+--- /dev/null
++++ b/examples/rpcapd/main.c
+@@ -0,0 +1,1430 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Stephen Hemminger
++ *
++ * Demonstration server for the rpcap protocol for DPDK.
++ * This allows a libpcap client (e.g. Wireshark or tcpdump)
++ * to use "rpcap://host[:port]/portname" as capture device.
++ *
++ * Based on the DPDK dumpcap application and on rpcapd from libpcap:
++ *   https://github.com/the-tcpdump-group/libpcap/tree/master/rpcapd
++ *
++ * Only the bits of the RPCAP protocol that are needed for an
++ * unauthenticated, passive-mode capture session are implemented.
++ * Configuration files, active mode, sampling and concurrent clients
++ * are intentionally omitted to keep the example small.
++ *
++ * A capture filter may be sent with the start-capture request:
++ * the client compiles it, so it arrives as cBPF which is converted to
++ * DPDK BPF and handed to pdump.  Filters cannot be changed once the
++ * capture is running; see the UPDATEFILTER handling.
++ */
++
++#include <arpa/inet.h>
++#include <errno.h>
++#include <getopt.h>
++#include <netinet/in.h>
++#include <netdb.h>
++#include <poll.h>
++#include <signal.h>
++#include <stdbool.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/socket.h>
++#include <sys/time.h>
++#include <sys/types.h>
++#include <sys/uio.h>
++#include <unistd.h>
++
++#include <pcap/pcap.h>
++
++#include <rte_alarm.h>
++#include <rte_bpf.h>
++#include <rte_common.h>
++#include <rte_debug.h>
++#include <rte_eal.h>
++#include <rte_errno.h>
++#include <rte_ethdev.h>
++#include <rte_lcore.h>
++#include <rte_log.h>
++#include <rte_malloc.h>
++#include <rte_mbuf.h>
++#include <rte_mempool.h>
++#include <rte_pdump.h>
++#include <rte_stdatomic.h>
++#include <rte_ring.h>
++#include <rte_version.h>
++
++#include "rpcap-protocol.h"
++
++#define BURST_SIZE                    32
++#define MBUF_CACHE_SIZE               32
++#define DEFAULT_RING_SIZE             2048
++#define MAX_RING_SIZE                 (1U << 20)
++#define DEFAULT_SNAPLEN               RTE_MBUF_DEFAULT_DATAROOM
++#define PRIMARY_MONITOR_INTERVAL_US   (500 * 1000)
++#define SLEEP_THRESHOLD		      100
++#define SLEEP_US		      100
++
++#define DATA_ACCEPT_TIMEOUT_MS        10000
++#define POLL_INTERVAL_MS              500
++
++#define MAX_FILTER_INSNS              4096
++
++#define RTE_LOGTYPE_RPCAPD RTE_LOGTYPE_USER1
++#define RPCAPD_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, RPCAPD, "%s(): ", __func__, __VA_ARGS__)
++
++/* Per-client capture session state. */
++struct session {
++	int      data_fd;
++	uint16_t port;				/* DPDK ethdev port being captured */
++	char     name[RTE_ETH_NAME_MAX_LEN];
++	uint32_t snaplen;
++	uint32_t npkt;				/* packet sequence for rpcap_pkthdr */
++	uint32_t pdump_flags;			/* RTE_PDUMP_FLAG_* in use */
++	bool     opened;			/* OPEN_REQ has selected a port */
++	bool     capture_on;
++	bool     promisc_set;			/* we enabled promiscuous mode */
++	struct rte_ring    *ring;
++	struct rte_mempool *mp;
++	struct rte_bpf_prm *prm;		/* capture filter, NULL if none */
++};
++
++/* Command-line options */
++static uint16_t listen_port = RPCAP_DEFAULT_NETPORT;
++static uint32_t ring_size = DEFAULT_RING_SIZE;
++static const char *lcore_arg;
++static const char *file_prefix;
++static const char *bind_arg;		/* -b argument, resolved after option parsing */
++static const char *debug_file;		/* --debug-file argument */
++static bool ipv4_only;			/* -4: restrict to IPv4 */
++static unsigned int debug_log;		/* -D count: raise RPCAPD log verbosity */
++
++static struct sockaddr_storage listen_addr;
++static socklen_t               listen_addrlen;
++
++static void stop_capture(struct session *s);
++
++static void
++set_sockaddr_port(struct sockaddr_storage *ss, uint16_t port)
++{
++	if (ss->ss_family == AF_INET6)
++		((struct sockaddr_in6 *)ss)->sin6_port = htons(port);
++	else
++		((struct sockaddr_in *)ss)->sin_port = htons(port);
++}
++
++static uint16_t
++get_sockaddr_port(const struct sockaddr_storage *ss)
++{
++	if (ss->ss_family == AF_INET6)
++		return ntohs(((const struct sockaddr_in6 *)ss)->sin6_port);
++	return ntohs(((const struct sockaddr_in *)ss)->sin_port);
++}
++
++static bool
++is_loopback(const struct sockaddr_storage *ss)
++{
++	if (ss->ss_family == AF_INET) {
++		const struct sockaddr_in *sin = (const void *)ss;
++
++		return (ntohl(sin->sin_addr.s_addr) >> 24) == 127;
++	}
++	if (ss->ss_family == AF_INET6) {
++		const struct sockaddr_in6 *sin6 = (const void *)ss;
++
++		return IN6_IS_ADDR_LOOPBACK(&sin6->sin6_addr);
++	}
++	return false;
++}
++
++static void
++parse_bind_addr(const char *str, int family)
++{
++	struct addrinfo hints = {
++		.ai_family   = family,
++		.ai_socktype = SOCK_STREAM,
++		.ai_flags    = AI_NUMERICHOST | AI_PASSIVE,
++	};
++	struct addrinfo *res;
++	int rc;
++
++	rc = getaddrinfo(str, NULL, &hints, &res);
++	if (rc != 0)
++		rte_exit(EXIT_FAILURE, "Invalid bind address '%s': %s\n",
++			 str, gai_strerror(rc));
++	memcpy(&listen_addr, res->ai_addr, res->ai_addrlen);
++	listen_addrlen = res->ai_addrlen;
++	freeaddrinfo(res);
++}
++
++static RTE_ATOMIC(bool) quit_signal;
++
++static void
++signal_handler(int sig __rte_unused)
++{
++	rte_atomic_store_explicit(&quit_signal, true, rte_memory_order_relaxed);
++}
++
++/*
++ * Wait for fd to become readable, in POLL_INTERVAL_MS slices so that a
++ * quit signal (from SIGINT/SIGTERM or from the primary process dying)
++ * is noticed while blocked.  timeout_ms < 0 waits indefinitely.
++ *
++ * Returns 1 when readable, 0 on timeout, -1 on error or quit.
++ */
++static int
++wait_readable(int fd, int timeout_ms)
++{
++	struct pollfd pfd = { .fd = fd, .events = POLLIN };
++
++	while (!rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed)) {
++		int wait_ms = POLL_INTERVAL_MS;
++		int rc;
++
++		if (timeout_ms >= 0) {
++			if (timeout_ms == 0)
++				return 0;
++			if (timeout_ms < wait_ms)
++				wait_ms = timeout_ms;
++			timeout_ms -= wait_ms;
++		}
++
++		rc = poll(&pfd, 1, wait_ms);
++		if (rc < 0) {
++			if (errno == EINTR)
++				continue;
++			RPCAPD_LOG(ERR, "poll failed: %s", strerror(errno));
++			return -1;
++		}
++		if (rc > 0)
++			return 1;
++	}
++	return -1;
++}
++
++/* accept() with a timeout, so a stalled client cannot wedge the daemon. */
++static int
++accept_timeout(int listen_fd, int timeout_ms)
++{
++	int fd;
++
++	switch (wait_readable(listen_fd, timeout_ms)) {
++	case 1:
++		break;
++	case 0:
++		RPCAPD_LOG(ERR, "timed out waiting for data connection");
++		return -1;
++	default:
++		return -1;
++	}
++
++	fd = accept(listen_fd, NULL, NULL);
++	if (fd < 0)
++		RPCAPD_LOG(ERR, "accept: %s", strerror(errno));
++	return fd;
++}
++
++/* Read exactly len bytes; return 0 on success, -1 on error or EOF. */
++static int
++recv_full(int fd, void *buf, size_t len)
++{
++	uint8_t *p = buf;
++
++	while (len > 0) {
++		ssize_t n;
++
++		/* Wait with a timeout rather than blocking in recv(), so a
++		 * quit signal or a dead primary is acted on promptly.
++		 */
++		if (wait_readable(fd, -1) != 1)
++			return -1;
++
++		n = recv(fd, p, len, 0);
++		if (n < 0 && errno == EINTR)
++			continue;
++
++		if (n <= 0)
++			return -1;
++
++		p += n;
++		len -= n;
++	}
++	return 0;
++}
++
++/*
++ * Send all of iov, resending the remainder if sendmsg() reports a short
++ * count (possible when the connection breaks or a signal arrives after
++ * some bytes were copied).  Consumes iov, so pass a scratch copy.
++ */
++static int
++send_iov_full(int fd, struct iovec *iov, int iovcnt, int flags)
++{
++	struct msghdr msg = {
++		.msg_iov    = iov,
++		.msg_iovlen = iovcnt,
++	};
++
++	while (msg.msg_iovlen > 0) {
++		ssize_t n = sendmsg(fd, &msg, flags | MSG_NOSIGNAL);
++
++		if (n < 0) {
++			if (errno == EINTR)
++				continue;
++			return -1;
++		}
++		if (n == 0)
++			return -1;
++
++		/* Drop whole iovecs that were fully sent, then trim the
++		 * partially sent one.
++		 */
++		while (msg.msg_iovlen > 0 && (size_t)n >= msg.msg_iov->iov_len) {
++			n -= msg.msg_iov->iov_len;
++			msg.msg_iov++;
++			msg.msg_iovlen--;
++		}
++		if (n > 0) {
++			msg.msg_iov->iov_base = (char *)msg.msg_iov->iov_base + n;
++			msg.msg_iov->iov_len -= n;
++		}
++	}
++	return 0;
++}
++
++static int
++rpcap_send_msg(int fd, uint8_t type, uint16_t value, const void *payload, uint32_t plen)
++{
++	struct rpcap_header hdr = {
++		.ver = RPCAP_VERSION,
++		.type = type,
++		.value = htons(value),
++		.plen = htonl(plen),
++	};
++	struct iovec iov[2] = {
++		{ .iov_base = &hdr,                        .iov_len = sizeof(hdr) },
++		{ .iov_base = (void *)(uintptr_t)payload,  .iov_len = plen },
++	};
++
++	return send_iov_full(fd, iov, plen > 0 ? 2 : 1, 0);
++}
++
++static int
++rpcap_send_error(int fd, uint16_t errcode, const char *msg)
++{
++	RPCAPD_LOG(WARNING, "sending error to client: %s", msg);
++	return rpcap_send_msg(fd, RPCAP_MSG_ERROR, errcode, msg, strlen(msg));
++}
++
++static int
++rpcap_recv_header(int fd, struct rpcap_header *hdr)
++{
++	if (recv_full(fd, hdr, sizeof(*hdr)) < 0)
++		return -1;
++	hdr->value = ntohs(hdr->value);
++	hdr->plen = ntohl(hdr->plen);
++	return 0;
++}
++
++/* Throw away plen bytes of payload we don't care about. */
++static int
++rpcap_discard(int fd, uint32_t plen)
++{
++	uint8_t buf[256];
++
++	while (plen > 0) {
++		size_t chunk = plen > sizeof(buf) ? sizeof(buf) : plen;
++
++		if (recv_full(fd, buf, chunk) < 0)
++			return -1;
++		plen -= chunk;
++	}
++	return 0;
++}
++
++/* Build and send the list of available DPDK ports. */
++static int
++handle_findallif(int fd)
++{
++	uint8_t *buf = NULL;
++	size_t buflen = 0;
++	uint16_t nif = 0;
++	uint16_t p;
++	int rc;
++
++	RTE_ETH_FOREACH_DEV(p) {
++		static const char desc[] = "DPDK port";
++		char name[RTE_ETH_NAME_MAX_LEN];
++		size_t namelen, desclen, entry;
++		uint8_t *nb;
++
++		if (rte_eth_dev_get_name_by_port(p, name) < 0) {
++			RPCAPD_LOG(DEBUG, "can not find name for port %u", p);
++			continue;
++		}
++
++		RPCAPD_LOG(DEBUG, "findallif: port %u -> '%s'", p, name);
++		namelen = strlen(name);
++		desclen = strlen(desc);
++		entry = sizeof(struct rpcap_findalldevs_if) + namelen + desclen;
++
++		nb = realloc(buf, buflen + entry);
++		if (nb == NULL) {
++			RPCAPD_LOG(ERR, "out of memory in findallif");
++			free(buf);
++			return rpcap_send_error(fd, 0, "out of memory");
++		}
++		buf = nb;
++
++		struct rpcap_findalldevs_if iface = {
++			.namelen = htons(namelen),
++			.desclen = htons(desclen),
++			.flags = htonl(PCAP_IF_UP | PCAP_IF_RUNNING),
++		};
++		memcpy(buf + buflen, &iface, sizeof(iface));
++		memcpy(buf + buflen + sizeof(iface), name, namelen);
++		memcpy(buf + buflen + sizeof(iface) + namelen, desc, desclen);
++		buflen += entry;
++		nif++;
++	}
++
++	RPCAPD_LOG(DEBUG, "findallif: %u interface(s)", nif);
++	rc = rpcap_send_msg(fd, RPCAP_MSG_FINDALLIF_REPLY, nif, buf, buflen);
++	free(buf);
++	return rc;
++}
++
++/* OPEN_REQ: payload is the interface name (no NUL). */
++static int
++handle_open(int fd, uint32_t plen, struct session *s)
++{
++	struct rpcap_openreply reply = {
++		.linktype = htonl(DLT_EN10MB),
++	};
++	uint16_t port;
++
++	/* Unconditionally, not just when capture_on: a failed UPDATEFILTER
++	 * leaves the ring, mempool and data connection live with the capture
++	 * already disabled, and those must not survive into a new session.
++	 */
++	stop_capture(s);
++
++	if (plen >= sizeof(s->name)) {
++		rpcap_discard(fd, plen);
++		return rpcap_send_error(fd, 0, "interface name too long");
++	}
++	if (recv_full(fd, s->name, plen) < 0)
++		return -1;
++	s->name[plen] = '\0';
++
++	if (rte_eth_dev_get_port_by_name(s->name, &port) < 0) {
++		RPCAPD_LOG(WARNING, "open: no such port '%s'", s->name);
++		/* s->name has already been overwritten; make sure a later
++		 * STARTCAP cannot capture the previously opened port.
++		 */
++		s->opened = false;
++		return rpcap_send_error(fd, 0, "unknown interface");
++	}
++	s->port = port;
++	s->opened = true;
++
++	RPCAPD_LOG(DEBUG, "open: '%s' -> dpdk port %u", s->name, port);
++	return rpcap_send_msg(fd, RPCAP_MSG_OPEN_REPLY, 0, &reply, sizeof(reply));
++}
++
++/* Open an ephemeral TCP listening socket; return fd, set *port_out. */
++static int
++open_data_listener(uint16_t *port_out)
++{
++	struct sockaddr_storage addr = listen_addr;
++	socklen_t alen;
++	int fd;
++
++	set_sockaddr_port(&addr, 0);
++
++	fd = socket(addr.ss_family, SOCK_STREAM, 0);
++	if (fd < 0) {
++		RPCAPD_LOG(ERR, "data socket: %s", strerror(errno));
++		return -1;
++	}
++
++	alen = listen_addrlen;
++	if (bind(fd, (struct sockaddr *)&addr, alen) < 0 ||
++	    listen(fd, 1) < 0 ||
++	    getsockname(fd, (struct sockaddr *)&addr, &alen) < 0) {
++		RPCAPD_LOG(ERR, "data port bind/listen: %s", strerror(errno));
++		close(fd);
++		return -1;
++	}
++	*port_out = get_sockaddr_port(&addr);
++	return fd;
++}
++
++static struct rte_ring *
++create_capture_ring(uint16_t port)
++{
++	char name[RTE_RING_NAMESIZE];
++
++	snprintf(name, sizeof(name), "rpcapd_r_%u_%d", port, getpid());
++	return rte_ring_create(name, ring_size, rte_socket_id(), 0);
++}
++
++static struct rte_mempool *
++create_capture_mempool(uint16_t port, uint32_t snaplen)
++{
++	char name[RTE_MEMPOOL_NAMESIZE];
++	uint32_t mbuf_size = RTE_PKTMBUF_HEADROOM + snaplen;
++
++	snprintf(name, sizeof(name), "rpcapd_p_%u_%d", port, getpid());
++	return rte_pktmbuf_pool_create(name, ring_size * 2, MBUF_CACHE_SIZE, 0,
++				       mbuf_size, rte_socket_id());
++}
++
++/*
++ * Read the optional capture filter that follows a start-capture request,
++ * and convert it for pdump. Client passes cBPF.
++ */
++static int
++read_filter(int fd, uint32_t plen, struct session *s)
++{
++	struct rpcap_filterbpf_insn winsn;
++	struct rpcap_filter filter;
++	struct bpf_program bf;
++	struct bpf_insn *insns;
++	uint32_t i, nitems;
++
++	if (plen == 0)
++		return 0;		/* no filter: capture everything */
++
++	if (plen < sizeof(filter)) {
++		if (rpcap_discard(fd, plen) < 0)
++			return -1;
++		return rpcap_send_error(fd, 0, "short filter header") < 0 ? -1 : 1;
++	}
++
++	if (recv_full(fd, &filter, sizeof(filter)) < 0)
++		return -1;
++	plen -= sizeof(filter);
++
++	if (ntohs(filter.filtertype) != RPCAP_UPDATEFILTER_BPF) {
++		if (rpcap_discard(fd, plen) < 0)
++			return -1;
++		return rpcap_send_error(fd, 0, "unsupported filter type") < 0 ? -1 : 1;
++	}
++
++	/* nitems is client-supplied; bound it before trusting the length. */
++	nitems = ntohl(filter.nitems);
++	if (nitems == 0)
++		return rpcap_discard(fd, plen) < 0 ? -1 : 0;
++
++	if (nitems > MAX_FILTER_INSNS || plen < nitems * sizeof(winsn)) {
++		if (rpcap_discard(fd, plen) < 0)
++			return -1;
++		return rpcap_send_error(fd, 0, "bad filter length") < 0 ? -1 : 1;
++	}
++
++	insns = calloc(nitems, sizeof(*insns));
++	if (insns == NULL) {
++		if (rpcap_discard(fd, plen) < 0)
++			return -1;
++		return rpcap_send_error(fd, 0, "out of memory") < 0 ? -1 : 1;
++	}
++
++	for (i = 0; i < nitems; i++) {
++		if (recv_full(fd, &winsn, sizeof(winsn)) < 0) {
++			free(insns);
++			return -1;
++		}
++		insns[i].code = ntohs(winsn.code);
++		insns[i].jt   = winsn.jt;
++		insns[i].jf   = winsn.jf;
++		insns[i].k    = ntohl(winsn.k);
++	}
++	plen -= nitems * sizeof(winsn);
++
++	/* Anything after the instructions is padding we do not need. */
++	if (rpcap_discard(fd, plen) < 0) {
++		free(insns);
++		return -1;
++	}
++
++	bf.bf_len = nitems;
++	bf.bf_insns = insns;
++
++	/* Reject a malformed program here */
++	if (!bpf_validate(bf.bf_insns, bf.bf_len)) {
++		free(insns);
++		return rpcap_send_error(fd, 0, "invalid filter program") < 0 ? -1 : 1;
++	}
++
++	/* A filter recorded by an earlier UPDATEFILTER may still be here;
++	 * it is about to be replaced, so do not leak it.
++	 */
++	rte_free(s->prm);
++	s->prm = rte_bpf_convert(&bf);
++	free(insns);
++	if (s->prm == NULL) {
++		RPCAPD_LOG(ERR, "rte_bpf_convert failed: %s",
++			rte_strerror(rte_errno));
++		return rpcap_send_error(fd, 0, "cannot convert filter") < 0 ? -1 : 1;
++	}
++
++	RPCAPD_LOG(DEBUG, "capture filter: %u instructions", nitems);
++	return 0;
++}
++
++/* Tear down anything that handle_startcap brought up.  Safe to call
++ * after partial setup as well as after a successful capture.
++ */
++static void
++stop_capture(struct session *s)
++{
++	struct rte_mbuf *pkts[BURST_SIZE];
++	unsigned int n;
++
++	if (s->capture_on) {
++		rte_pdump_disable(s->port, RTE_PDUMP_ALL_QUEUES, s->pdump_flags);
++		RPCAPD_LOG(INFO, "capture stopped on %s (%u packets)",
++			s->name, s->npkt);
++	}
++	s->capture_on = false;
++
++	if (s->promisc_set) {
++		rte_eth_promiscuous_disable(s->port);
++		s->promisc_set = false;
++	}
++
++	if (s->ring != NULL) {
++		while ((n = rte_ring_sc_dequeue_burst(s->ring, (void **)pkts,
++						      BURST_SIZE, NULL)) > 0)
++			rte_pktmbuf_free_bulk(pkts, n);
++		rte_ring_free(s->ring);
++		s->ring = NULL;
++	}
++	if (s->mp != NULL) {
++		rte_mempool_free(s->mp);
++		s->mp = NULL;
++	}
++
++	/* Only safe once pdump is disabled */
++	rte_free(s->prm);
++	s->prm = NULL;
++	if (s->data_fd >= 0) {
++		close(s->data_fd);
++		s->data_fd = -1;
++	}
++}
++
++/*
++ * STARTCAP_REQ: open the data connection and arm the pdump callback.
++ * We use passive mode with the server-allocated data port:
++ *   - the server picks an ephemeral port and listens on it
++ *   - the server returns that port in startcapreply.portdata
++ *   - the client connects back to that port for the packet stream
++ */
++static int
++handle_startcap(int fd, uint32_t plen, struct session *s)
++{
++	struct rpcap_startcapreq req;
++	uint16_t data_port;
++	uint16_t flags;
++	struct rte_bpf_prm *recorded;
++	int data_listen;
++	int data_fd;
++	int ret;
++
++	recorded = s->prm;
++	s->prm = NULL;
++	stop_capture(s);
++	s->prm = recorded;
++
++	if (!s->opened) {
++		rpcap_discard(fd, plen);
++		return rpcap_send_error(fd, 0, "no interface open");
++	}
++
++	if (plen < sizeof(req)) {
++		rpcap_discard(fd, plen);
++		return rpcap_send_error(fd, 0, "short startcap request");
++	}
++	if (recv_full(fd, &req, sizeof(req)) < 0)
++		return -1;
++
++	flags = ntohs(req.flags);
++	if (flags & RPCAP_STARTCAPREQ_FLAG_DGRAM) {
++		rpcap_discard(fd, plen - sizeof(req));
++		return rpcap_send_error(fd, 0, "UDP data transfer not supported");
++	}
++
++	ret = read_filter(fd, plen - sizeof(req), s);
++	if (ret != 0)
++		return ret < 0 ? -1 : 0;	/* error already reported to client */
++
++	/* Direction flags map onto pdump's RX/TX selection; neither (or both)
++	 * means capture in both directions.
++	 */
++	s->pdump_flags = RTE_PDUMP_FLAG_RXTX;
++	if ((flags & (RPCAP_STARTCAPREQ_FLAG_INBOUND |
++		      RPCAP_STARTCAPREQ_FLAG_OUTBOUND)) ==
++	    RPCAP_STARTCAPREQ_FLAG_INBOUND)
++		s->pdump_flags = RTE_PDUMP_FLAG_RX;
++	else if ((flags & (RPCAP_STARTCAPREQ_FLAG_INBOUND |
++			   RPCAP_STARTCAPREQ_FLAG_OUTBOUND)) ==
++		 RPCAP_STARTCAPREQ_FLAG_OUTBOUND)
++		s->pdump_flags = RTE_PDUMP_FLAG_TX;
++
++	s->snaplen = ntohl(req.snaplen);
++	if (s->snaplen == 0 || s->snaplen > DEFAULT_SNAPLEN)
++		s->snaplen = DEFAULT_SNAPLEN;
++
++	s->ring = create_capture_ring(s->port);
++	s->mp = create_capture_mempool(s->port, s->snaplen);
++	if (s->ring == NULL || s->mp == NULL) {
++		RPCAPD_LOG(ERR, "ring/mempool alloc failed: %s",
++			rte_strerror(rte_errno));
++		stop_capture(s);
++		return rpcap_send_error(fd, 0, "DPDK alloc failed");
++	}
++
++	data_listen = open_data_listener(&data_port);
++	if (data_listen < 0) {
++		stop_capture(s);
++		return rpcap_send_error(fd, 0, "data port setup failed");
++	}
++
++	/* Leave the port alone if it is already promiscuous: it belongs to
++	 * the primary process, and stop_capture() must not turn off
++	 * something this daemon did not turn on.
++	 */
++	if ((flags & RPCAP_STARTCAPREQ_FLAG_PROMISC) &&
++	    rte_eth_promiscuous_get(s->port) != 1) {
++		if (rte_eth_promiscuous_enable(s->port) == 0)
++			s->promisc_set = true;
++		else
++			RPCAPD_LOG(NOTICE, "cannot enable promiscuous mode on %s",
++				s->name);
++	}
++
++	/* Arm pdump before replying. */
++	if (rte_pdump_enable_bpf(s->port, RTE_PDUMP_ALL_QUEUES, s->pdump_flags,
++				 s->snaplen, s->ring, s->mp, s->prm) < 0) {
++		RPCAPD_LOG(ERR, "rte_pdump_enable_bpf port %u failed: %s",
++			s->port, rte_strerror(rte_errno));
++		close(data_listen);
++		stop_capture(s);
++		return rpcap_send_error(fd, 0, "cannot enable capture");
++	}
++	s->capture_on = true;
++	s->npkt = 0;
++
++	struct rpcap_startcapreply reply = {
++		.bufsize = htonl(s->snaplen * BURST_SIZE),
++		.portdata = htons(data_port),
++	};
++	if (rpcap_send_msg(fd, RPCAP_MSG_STARTCAP_REPLY, 0, &reply, sizeof(reply)) < 0) {
++		close(data_listen);
++		stop_capture(s);
++		return -1;
++	}
++
++	RPCAPD_LOG(DEBUG, "awaiting connection");
++
++	data_fd = accept_timeout(data_listen, DATA_ACCEPT_TIMEOUT_MS);
++	close(data_listen);
++	if (data_fd < 0) {
++		stop_capture(s);
++		return -1;
++	}
++
++	s->data_fd = data_fd;
++
++	RPCAPD_LOG(INFO,
++		"capture started on %s (snaplen %u, data port %u)",
++		s->name, s->snaplen, data_port);
++	return 0;
++}
++
++/*
++ * UPDATEFILTER_REQ: replace the capture filter.
++ *
++ * pdump takes its filter when the callback is armed and offers no way
++ * to replace it, so this disables and re-enables the callback with the
++ * new program.  Packets already in the ring are kept; only the brief
++ * gap between disable and enable is lost.  Refusing the request is not
++ * an option: libpcap sends UPDATEFILTER right after STARTCAP when the
++ * client was opened with PCAP_OPENFLAG_NOCAPTURE_RPCAP and aborts the
++ * capture if it fails, and Wireshark sets that flag by default.
++ *
++ * Before the capture starts this just records the filter for the
++ * eventual STARTCAP.
++ */
++static int
++handle_updatefilter(int fd, uint32_t plen, struct session *s)
++{
++	struct rte_bpf_prm *old = s->prm;
++	int ret;
++
++	s->prm = NULL;
++	ret = read_filter(fd, plen, s);
++	if (ret != 0) {
++		/* Malformed request: keep running with the old filter. */
++		rte_free(s->prm);
++		s->prm = old;
++		return ret < 0 ? -1 : 0;	/* error already reported */
++	}
++
++	if (!s->capture_on) {
++		rte_free(old);
++		return rpcap_send_msg(fd, RPCAP_MSG_UPDATEFILTER_REPLY, 0, NULL, 0);
++	}
++
++	rte_pdump_disable(s->port, RTE_PDUMP_ALL_QUEUES, s->pdump_flags);
++	s->capture_on = false;
++
++	if (rte_pdump_enable_bpf(s->port, RTE_PDUMP_ALL_QUEUES, s->pdump_flags,
++				 s->snaplen, s->ring, s->mp, s->prm) < 0) {
++		RPCAPD_LOG(ERR, "rte_pdump_enable_bpf port %u failed: %s",
++			s->port, rte_strerror(rte_errno));
++		rte_free(old);
++		/* The capture cannot be resumed, so do not leave the ring,
++		 * mempool and data connection behind: the client has been
++		 * told the capture is over, and a session that is neither
++		 * capturing nor torn down has no way back.
++		 */
++		stop_capture(s);
++		return rpcap_send_error(fd, 0, "cannot apply filter");
++	}
++	s->capture_on = true;
++
++	/* Safe now that the old program is no longer referenced. */
++	rte_free(old);
++
++	RPCAPD_LOG(DEBUG, "capture filter updated on %s", s->name);
++	return rpcap_send_msg(fd, RPCAP_MSG_UPDATEFILTER_REPLY, 0, NULL, 0);
++}
++
++/*
++ * Pull a burst from the ring, frame each packet into an RPCAP_MSG_PACKET
++ * message, and send it on the data connection.  MSG_MORE corks the
++ * socket until the ring drains, so a backlog coalesces into full
++ * segments instead of flushing every BURST_SIZE packets.
++ */
++static ssize_t
++process_ring(struct session *s, unsigned int *avail)
++{
++	struct rte_mbuf *pkts[BURST_SIZE];
++	unsigned int i, n;
++	ssize_t written = 0;
++	struct timeval tv;
++
++	n = rte_ring_sc_dequeue_burst(s->ring, (void **)pkts, BURST_SIZE, avail);
++	if (n == 0)
++		return 0;
++
++	/* One timestamp for the whole burst */
++	gettimeofday(&tv, NULL);
++
++	for (i = 0; i < n; i++) {
++		struct rte_mbuf *m = pkts[i];
++		/* Sized from the same bound that clamps caplen below, so the
++		 * two cannot drift apart.
++		 */
++		uint8_t buf[DEFAULT_SNAPLEN];
++		uint32_t pktlen = rte_pktmbuf_pkt_len(m);
++		uint32_t caplen = pktlen < s->snaplen ? pktlen : s->snaplen;
++		const void *data;
++
++		s->npkt++;
++
++		struct rpcap_header hdr = {
++			.ver = RPCAP_VERSION,
++			.type = RPCAP_MSG_PACKET,
++			.plen = htonl(sizeof(struct rpcap_pkthdr) + caplen),
++		};
++
++		/*
++		 * pdump copies at most the snaplen into the capture mempool
++		 * and rte_pktmbuf_copy() counts only what it copied, so
++		 * pktlen is already clamped: a truncated packet is reported
++		 * with len == caplen.  The original wire length does not
++		 * reach this process.  See the Limitations section of
++		 * doc/guides/sample_app_ug/rpcapd.rst.
++		 */
++		struct rpcap_pkthdr pkthdr = {
++			.timestamp_sec = htonl((uint32_t)tv.tv_sec),
++			.timestamp_usec = htonl((uint32_t)tv.tv_usec),
++			.caplen = htonl(caplen),
++			.len = htonl(pktlen),
++			.npkt = htonl(s->npkt),
++		};
++
++		data = rte_pktmbuf_read(m, 0, caplen, buf);
++
++		struct iovec iov[3] = {
++			{ .iov_base = &hdr,                       .iov_len = sizeof(hdr) },
++			{ .iov_base = &pkthdr,                    .iov_len = sizeof(pkthdr) },
++			{ .iov_base = (void *)(uintptr_t)data,    .iov_len = caplen },
++		};
++
++		/* more to come in this burst, or still queued in the ring */
++		bool more = (i + 1 < n) || (*avail > 0);
++
++		if (send_iov_full(s->data_fd, iov, 3, more ? MSG_MORE : 0) < 0) {
++			if (errno == EPIPE || errno == ECONNRESET)
++				RPCAPD_LOG(DEBUG, "data connection closed by client");
++			else
++				RPCAPD_LOG(NOTICE, "send on data connection failed: %s",
++					   strerror(errno));
++			goto error;
++		}
++		rte_pktmbuf_free(m);
++		written += sizeof(hdr) + sizeof(pkthdr) + caplen;
++	}
++
++	return written;
++
++error:
++	rte_pktmbuf_free_bulk(pkts + i, n - i);
++	return -1;
++}
++
++/* Poll the control socket while idle.
++ * Returns 0 to keep capturing, 1 if a control message (typically
++ * ENDCAP) is pending, or -1 if the client has gone away.
++ */
++static int
++check_socket_status(int ctrl_fd)
++{
++	struct pollfd pfd = { .fd = ctrl_fd, .events = POLLIN };
++
++	if (poll(&pfd, 1, 0) < 0) {
++		if (errno == EINTR)
++			return 0;
++		RPCAPD_LOG(ERR, "poll failed: %s", strerror(errno));
++		return -1;
++	}
++	if (pfd.revents & (POLLERR | POLLHUP | POLLNVAL)) {
++		RPCAPD_LOG(DEBUG, "client closed control connection");
++		return -1;
++	}
++	if (pfd.revents & POLLIN)
++		return 1;
++	return 0;
++}
++
++/*
++ * Stay in the capture loop until either:
++ *   - a control message arrives (typically ENDCAP),
++ *   - the data connection breaks, or
++ *   - a quit signal is delivered.
++ *
++ * Returns 0 if the session should continue (the caller reads the
++ * pending control message), -1 if the client is gone.
++ *
++ * The control socket is polled once per iteration, not just when the
++ * ring runs dry.  A client that sends a request mid-capture blocks
++ * waiting for the reply without draining the data socket, so under
++ * sustained traffic a poll that only happens while idle never runs and
++ * both ends wedge once the socket buffers fill.
++ */
++static int
++capture_loop(int ctrl_fd, struct session *s)
++{
++	unsigned int empty_count = 0;
++
++	while (!rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed)) {
++		ssize_t written;
++		unsigned int avail = 0;
++
++		switch (check_socket_status(ctrl_fd)) {
++		case 1:
++			/* control message pending, let caller service it */
++			return 0;
++		case 0:
++			break;
++		default:
++			/* client is gone */
++			return -1;
++		}
++
++		written = process_ring(s, &avail);
++		if (written < 0) {
++			/* process_ring has already logged the reason */
++			return -1;
++		}
++
++		if (written > 0) {
++			/* are there more packets? */
++			empty_count = (avail == 0);
++			continue;
++		}
++
++		if (empty_count < SLEEP_THRESHOLD) {
++			/* spin a few times before checking */
++			++empty_count;
++			rte_pause();
++			continue;
++		}
++
++		/* ring has been empty for a while: stop spinning */
++		rte_delay_us_sleep(SLEEP_US);
++	}
++	return 0;
++}
++
++static int
++handle_endcap(int fd, uint32_t plen, struct session *s)
++{
++	if (rpcap_discard(fd, plen) < 0)
++		return -1;
++	stop_capture(s);
++	return rpcap_send_msg(fd, RPCAP_MSG_ENDCAP_REPLY, 0, NULL, 0);
++}
++
++static int
++handle_stats(int fd, uint32_t plen, const struct session *s)
++{
++	struct rte_eth_stats es = { 0 };
++
++	if (rpcap_discard(fd, plen) < 0)
++		return -1;
++
++	if (s->capture_on)
++		rte_eth_stats_get(s->port, &es);
++
++	struct rpcap_stats reply = {
++		.ifrecv   = htonl((uint32_t)es.ipackets),
++		.ifdrop   = htonl((uint32_t)es.ierrors),
++		.krnldrop = 0,
++		.svrcapt  = htonl(s->npkt),
++	};
++	return rpcap_send_msg(fd, RPCAP_MSG_STATS_REPLY, 0, &reply, sizeof(reply));
++}
++
++/* Service a single client until it disconnects. */
++static void
++handle_client(int ctrl_fd)
++{
++	struct sockaddr_storage peer;
++	socklen_t plen = sizeof(peer);
++	char host[NI_MAXHOST] = "?";
++	struct session s = { .data_fd = -1 };
++
++	if (getpeername(ctrl_fd, (struct sockaddr *)&peer, &plen) == 0)
++		getnameinfo((struct sockaddr *)&peer, plen,
++			    host, sizeof(host), NULL, 0, NI_NUMERICHOST);
++	RPCAPD_LOG(INFO, "client %s connected", host);
++
++	while (!rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed)) {
++		struct rpcap_header hdr;
++
++		/* Drain the ring whenever a capture is running */
++		if (s.capture_on && capture_loop(ctrl_fd, &s) < 0)
++			goto done;
++
++		if (rpcap_recv_header(ctrl_fd, &hdr) < 0)
++			break;
++
++		/* Only version 0 is spoken here */
++		if (hdr.ver != RPCAP_VERSION) {
++			RPCAPD_LOG(WARNING, "unsupported protocol version %u",
++				hdr.ver);
++			if (rpcap_discard(ctrl_fd, hdr.plen) < 0 ||
++			    rpcap_send_error(ctrl_fd, PCAP_ERR_WRONGVER,
++					     "unsupported protocol version") < 0)
++				goto done;
++			continue;
++		}
++
++		switch (hdr.type) {
++		case RPCAP_MSG_AUTH_REQ:
++			/* No auth: discard credentials, ack with empty reply.
++			 * libpcap treats a zero-length AUTH_REPLY as "version
++			 * 0 only, same byte order".
++			 */
++			if (rpcap_discard(ctrl_fd, hdr.plen) < 0 ||
++			    rpcap_send_msg(ctrl_fd, RPCAP_MSG_AUTH_REPLY, 0, NULL, 0) < 0)
++				goto done;
++			break;
++		case RPCAP_MSG_FINDALLIF_REQ:
++			if (rpcap_discard(ctrl_fd, hdr.plen) < 0 || handle_findallif(ctrl_fd) < 0)
++				goto done;
++			break;
++		case RPCAP_MSG_OPEN_REQ:
++			if (handle_open(ctrl_fd, hdr.plen, &s) < 0)
++				goto done;
++			break;
++		case RPCAP_MSG_STARTCAP_REQ:
++			if (handle_startcap(ctrl_fd, hdr.plen, &s) < 0)
++				goto done;
++			break;
++		case RPCAP_MSG_UPDATEFILTER_REQ:
++			if (handle_updatefilter(ctrl_fd, hdr.plen, &s) < 0)
++				goto done;
++			break;
++		case RPCAP_MSG_ENDCAP_REQ:
++			if (handle_endcap(ctrl_fd, hdr.plen, &s) < 0)
++				goto done;
++			break;
++		case RPCAP_MSG_STATS_REQ:
++			if (handle_stats(ctrl_fd, hdr.plen, &s) < 0)
++				goto done;
++			break;
++		case RPCAP_MSG_CLOSE:
++			rpcap_discard(ctrl_fd, hdr.plen);
++			goto done;
++		default:
++			RPCAPD_LOG(WARNING, "unsupported request type 0x%02x", hdr.type);
++			if (rpcap_discard(ctrl_fd, hdr.plen) < 0 ||
++			    rpcap_send_error(ctrl_fd, 0, "unsupported request") < 0)
++				goto done;
++			break;
++		}
++	}
++done:
++	stop_capture(&s);
++	close(ctrl_fd);
++	RPCAPD_LOG(INFO, "client %s disconnected", host);
++}
++
++static int
++open_listen_socket(uint16_t port)
++{
++	struct sockaddr_storage addr = listen_addr;
++	char host[NI_MAXHOST];
++	int fd, one = 1;
++
++	set_sockaddr_port(&addr, port);
++
++	fd = socket(addr.ss_family, SOCK_STREAM, 0);
++	if (fd < 0)
++		rte_exit(EXIT_FAILURE, "socket: %s\n", strerror(errno));
++	setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
++
++	if (bind(fd, (struct sockaddr *)&addr, listen_addrlen) < 0)
++		rte_exit(EXIT_FAILURE, "bind(%u): %s\n", port, strerror(errno));
++
++	int err = getnameinfo((struct sockaddr *)&listen_addr, listen_addrlen,
++			      host, sizeof(host), NULL, 0, NI_NUMERICHOST);
++	if (err != 0)
++		rte_exit(EXIT_FAILURE, "Listen address lookup failed: %s\n",
++			 gai_strerror(err));
++
++	RPCAPD_LOG(NOTICE, "listening on %s port %u", host, listen_port);
++
++	if (!is_loopback(&listen_addr))
++		RPCAPD_LOG(WARNING,
++			"non-loopback address %s; "
++			"rpcap is unauthenticated and unencrypted, captured traffic is exposed to the network",
++			host);
++
++	if (listen(fd, 1) < 0)
++		rte_exit(EXIT_FAILURE, "listen: %s\n", strerror(errno));
++
++	return fd;
++}
++
++static void
++usage(FILE *f, const char *progname)
++{
++	fprintf(f, "Usage: %s [options]\n", progname);
++	fprintf(f,
++		"  -p, --port <port>     listen port (default %u)\n"
++		"  -b, --bind <addr>     bind address (default 127.0.0.1)\n"
++		"  -4                    use only IPv4 (reject IPv6 bind addresses)\n"
++		"  -N <ring size>        ring size in packets (default %u)\n"
++		"  -D, --debug           increase log verbosity (-D info, -DD debug)\n"
++		"      --debug-file <f>  redirect log output to file <f> (append mode)\n"
++		"      --version         print version and exit\n"
++		"  -h, --help            print this help and exit\n"
++		"      --lcore=<core>    CPU core to run on (default: any)\n"
++		"      --file-prefix=<p> prefix to use for multi-process\n"
++		"\n"
++		"WARNING: rpcap is unauthenticated and unencrypted.  Binding to\n"
++		"any non-loopback address exposes captured traffic to the\n"
++		"network.  Sample application; not for production use.\n",
++		RPCAP_DEFAULT_NETPORT, DEFAULT_RING_SIZE);
++}
++
++static void
++print_version(void)
++{
++	printf("rpcapd, a remote packet capture daemon (DPDK pdump backend)\n"
++	       "Built against %s\n", rte_version());
++}
++
++static void
++parse_opts(int argc, char **argv)
++{
++	enum {
++		OPT_LONG_ONLY = 0x100,
++		OPT_DEBUG_FILE,
++		OPT_VERSION,
++	};
++	static const struct option long_options[] = {
++		{ "port",        required_argument, NULL, 'p' },
++		{ "bind",        required_argument, NULL, 'b' },
++		{ "debug",       no_argument,       NULL, 'D' },
++		{ "help",        no_argument,       NULL, 'h' },
++		{ "version",     no_argument,       NULL, OPT_VERSION },
++		{ "debug-file",  required_argument, NULL, OPT_DEBUG_FILE },
++		{ "file-prefix", required_argument, NULL, 0 },
++		{ "lcore",       required_argument, NULL, 0 },
++		{ NULL, 0, NULL, 0 },
++	};
++	int option_index, c;
++
++	while ((c = getopt_long(argc, argv, "hD4p:b:N:",
++				long_options, &option_index)) != -1) {
++		switch (c) {
++		case 'p': {
++			unsigned long u = strtoul(optarg, NULL, 0);
++
++			if (u == 0 || u > UINT16_MAX)
++				rte_exit(EXIT_FAILURE, "Invalid port: %s\n", optarg);
++			listen_port = (uint16_t)u;
++			break;
++		}
++		case 'b':
++			bind_arg = optarg;
++			break;
++		case '4':
++			ipv4_only = true;
++			break;
++		case 'N': {
++			unsigned long u = strtoul(optarg, NULL, 0);
++
++			/* Check the full value before narrowing it: an upper
++			 * bound is needed anyway because rte_align32pow2()
++			 * wraps to zero above 2^31, and that failure would
++			 * otherwise only surface in rte_ring_create() on the
++			 * first capture.
++			 */
++			if (u < 64 || u > MAX_RING_SIZE)
++				rte_exit(EXIT_FAILURE,
++					 "Ring size must be between 64 and %u\n",
++					 MAX_RING_SIZE);
++			ring_size = (uint32_t)u;
++			/* rte_ring_create() requires a power of two. */
++			if (!rte_is_power_of_2(ring_size)) {
++				ring_size = rte_align32pow2(ring_size);
++				RPCAPD_LOG(NOTICE, "ring size rounded up to %u",
++					ring_size);
++			}
++			break;
++		}
++		case 'D':
++			debug_log++;
++			break;
++		case 'h':
++			usage(stdout, argv[0]);
++			exit(0);
++		case OPT_VERSION:
++			print_version();
++			exit(0);
++		case OPT_DEBUG_FILE:
++			debug_file = optarg;
++			break;
++		case 0: {
++			const char *longopt = long_options[option_index].name;
++
++			if (!strcmp(longopt, "lcore")) {
++				lcore_arg = optarg;
++				break;
++			} else if (!strcmp(longopt, "file-prefix")) {
++				file_prefix = optarg;
++				break;
++			}
++		}
++			/* fallthrough */
++		default:
++			usage(stderr, argv[0]);
++			exit(EXIT_FAILURE);
++		}
++	}
++
++	/* Resolve the bind address now that -4 has been seen. */
++	parse_bind_addr(bind_arg ? bind_arg : "127.0.0.1",
++			ipv4_only ? AF_INET : AF_UNSPEC);
++}
++
++/*
++ * Periodic check that the DPDK primary process is still alive.
++ * If it dies our shared-memory state (rings, mempools, pdump) becomes
++ * unsafe to touch, so we set quit_signal and let the main loop tear
++ * down cleanly on its next iteration.  The callback runs on the EAL
++ * interrupt thread; quit_signal is atomic so the read in the main
++ * loop is well-defined.
++ */
++static void
++monitor_primary(void *arg __rte_unused)
++{
++	if (rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed))
++		return;
++
++	if (rte_eal_primary_proc_alive(NULL)) {
++		rte_eal_alarm_set(PRIMARY_MONITOR_INTERVAL_US, monitor_primary, NULL);
++		return;
++	}
++
++	RPCAPD_LOG(NOTICE, "primary process exited, shutting down");
++	rte_atomic_store_explicit(&quit_signal, true, rte_memory_order_relaxed);
++}
++
++static void
++enable_primary_monitor(void)
++{
++	if (rte_eal_alarm_set(PRIMARY_MONITOR_INTERVAL_US, monitor_primary, NULL) < 0)
++		RPCAPD_LOG(WARNING, "failed to install primary process monitor");
++}
++
++static void
++disable_primary_monitor(void)
++{
++	rte_eal_alarm_cancel(monitor_primary, NULL);
++}
++
++/*
++ * Bring up EAL as a secondary process so that pdump can attach to a
++ * running primary DPDK application.  Mirrors dumpcap's approach: the
++ * RPCAP user sees a small set of options (port, ring size) rather
++ * than the full DPDK EAL command line.
++ */
++static int
++dpdk_init(void)
++{
++	static const char * const args[] = {
++		"rpcapd",
++		"--proc-type", "secondary",
++		"--log-level", "info",        /* EAL stays quiet */
++	};
++	int eal_argc = RTE_DIM(args);
++	rte_cpuset_t cpuset = { };
++	char **eal_argv;
++	unsigned int i;
++
++	if (file_prefix != NULL)
++		eal_argc += 2;
++
++	if (lcore_arg != NULL)
++		eal_argc += 2;
++
++	eal_argv = calloc(eal_argc + 1, sizeof(char *));
++	if (eal_argv == NULL)
++		return -1;
++
++	for (i = 0; i < RTE_DIM(args); i++) {
++		eal_argv[i] = strdup(args[i]);
++		if (eal_argv[i] == NULL)
++			return -1;
++	}
++
++	if (file_prefix != NULL && *file_prefix != '\0') {
++		eal_argv[i++] = strdup("--file-prefix");
++		eal_argv[i++] = strdup(file_prefix);
++		if (eal_argv[i - 1] == NULL || eal_argv[i - 2] == NULL)
++			return -1;
++	}
++
++	if (lcore_arg != NULL) {
++		eal_argv[i++] = strdup("--lcores");
++		eal_argv[i++] = strdup(lcore_arg);
++		if (eal_argv[i - 1] == NULL || eal_argv[i - 2] == NULL)
++			return -1;
++	}
++	eal_argc = i;
++
++	/*
++	 * Need to get the original cpuset, before EAL init changes
++	 * the affinity of this thread (main lcore).
++	 */
++	if (lcore_arg == NULL &&
++	    rte_thread_get_affinity_by_id(rte_thread_self(), &cpuset) != 0)
++		rte_panic("rte_thread_getaffinity failed\n");
++
++	if (rte_eal_init(eal_argc, eal_argv) < 0)
++		rte_exit(EXIT_FAILURE, "EAL init failed: is the primary process running?\n");
++
++	/*
++	 * If no lcore argument was specified,
++	 * then run this program as a normal process
++	 * which can be scheduled on any non-isolated CPU.
++	 */
++	if (lcore_arg == NULL &&
++	    rte_thread_set_affinity_by_id(rte_thread_self(), &cpuset) != 0)
++		RPCAPD_LOG(INFO, "Can not restore original CPU affinity");
++
++	if (rte_pdump_init() < 0)
++		rte_exit(EXIT_FAILURE, "rte_pdump_init failed\n");
++
++	return 0;
++}
++
++int
++main(int argc, char **argv)
++{
++	struct sigaction action = {
++		.sa_handler = signal_handler,
++	};
++	int srv_fd;
++
++	parse_opts(argc, argv);
++
++	/*
++	 * Redirect log output before EAL init so EAL's own messages are
++	 * captured too.  The FILE handle is intentionally never closed:
++	 * the kernel reclaims it at process exit.
++	 */
++	if (debug_file != NULL) {
++		FILE *fp = fopen(debug_file, "a");
++
++		if (fp == NULL)
++			rte_exit(EXIT_FAILURE, "Cannot open debug file '%s': %s\n",
++				 debug_file, strerror(errno));
++		setvbuf(fp, NULL, _IOLBF, 0);
++		rte_openlog_stream(fp);
++	}
++
++	if (dpdk_init() < 0)
++		rte_exit(EXIT_FAILURE, "EAL init failure\n");
++
++	/* Default to NOTICE: only things the operator needs to see.
++	 * Each -D steps down one level, to INFO then DEBUG.
++	 */
++	rte_log_set_level(RTE_LOGTYPE_RPCAPD,
++			  debug_log >= 2 ? RTE_LOG_DEBUG :
++			  debug_log == 1 ? RTE_LOG_INFO : RTE_LOG_NOTICE);
++
++	if (rte_eth_dev_count_avail() == 0)
++		rte_exit(EXIT_FAILURE, "No Ethernet ports found\n");
++
++	sigaction(SIGTERM, &action, NULL);
++	sigaction(SIGINT, &action, NULL);
++
++	/* If peer closes, this detected in next recv() */
++	signal(SIGPIPE, SIG_IGN);
++
++	srv_fd = open_listen_socket(listen_port);
++
++	enable_primary_monitor();
++
++	while (!rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed)) {
++		int cfd = accept_timeout(srv_fd, -1);
++
++		if (cfd < 0) {
++			if (errno == EINTR)
++				continue;
++			break;
++		}
++		handle_client(cfd);
++	}
++
++	disable_primary_monitor();
++	RPCAPD_LOG(NOTICE, "shutting down");
++	close(srv_fd);
++	rte_pdump_uninit();
++	return rte_eal_cleanup() ? EXIT_FAILURE : 0;
++}
+diff --git a/examples/rpcapd/meson.build b/examples/rpcapd/meson.build
+new file mode 100644
+index 0000000000..320b262666
+--- /dev/null
++++ b/examples/rpcapd/meson.build
+@@ -0,0 +1,19 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 Stephen Hemminger
++
++# since it relies on primary/secondary process
++# this example is Linux only
++if not is_linux
++    build = false
++    subdir_done()
++endif
++
++if not dpdk_conf.has('RTE_HAS_LIBPCAP')
++    build = false
++    reason = 'missing dependency, "libpcap"'
++    subdir_done()
++endif
++
++sources = files('main.c')
++ext_deps += pcap_dep
++deps += ['ethdev', 'pdump', 'bpf']
+diff --git a/examples/rpcapd/rpcap-protocol.h b/examples/rpcapd/rpcap-protocol.h
+new file mode 100644
+index 0000000000..b381271de7
+--- /dev/null
++++ b/examples/rpcapd/rpcap-protocol.h
+@@ -0,0 +1,127 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Stephen Hemminger
++ *
++ * On-the-wire RPCAP protocol definitions, transcribed from libpcap's
++ * rpcap-protocol.h.  See:
++ *   https://github.com/the-tcpdump-group/libpcap/blob/master/rpcap-protocol.h
++ *
++ * Only the subset needed by the DPDK rpcapd example is included here.  All
++ * multi-byte fields in the structures below are big-endian on the wire.
++ */
++
++#ifndef _RPCAP_PROTOCOL_H_
++#define _RPCAP_PROTOCOL_H_
++
++#include <stdint.h>
++
++#define RPCAP_VERSION              0
++#define RPCAP_DEFAULT_NETPORT      2002
++
++/* Message types */
++#define RPCAP_MSG_ERROR            0x01
++#define RPCAP_MSG_FINDALLIF_REQ    0x02
++#define RPCAP_MSG_OPEN_REQ         0x03
++#define RPCAP_MSG_STARTCAP_REQ     0x04
++#define RPCAP_MSG_UPDATEFILTER_REQ 0x05
++#define RPCAP_MSG_CLOSE            0x06
++#define RPCAP_MSG_PACKET           0x07
++#define RPCAP_MSG_AUTH_REQ         0x08
++#define RPCAP_MSG_STATS_REQ        0x09
++#define RPCAP_MSG_ENDCAP_REQ       0x0a
++#define RPCAP_MSG_IS_REPLY         0x80
++
++#define RPCAP_MSG_FINDALLIF_REPLY    (RPCAP_MSG_FINDALLIF_REQ    | RPCAP_MSG_IS_REPLY)
++#define RPCAP_MSG_OPEN_REPLY         (RPCAP_MSG_OPEN_REQ         | RPCAP_MSG_IS_REPLY)
++#define RPCAP_MSG_STARTCAP_REPLY     (RPCAP_MSG_STARTCAP_REQ     | RPCAP_MSG_IS_REPLY)
++#define RPCAP_MSG_UPDATEFILTER_REPLY (RPCAP_MSG_UPDATEFILTER_REQ | RPCAP_MSG_IS_REPLY)
++#define RPCAP_MSG_AUTH_REPLY         (RPCAP_MSG_AUTH_REQ         | RPCAP_MSG_IS_REPLY)
++#define RPCAP_MSG_ENDCAP_REPLY       (RPCAP_MSG_ENDCAP_REQ       | RPCAP_MSG_IS_REPLY)
++#define RPCAP_MSG_STATS_REPLY	     (RPCAP_MSG_STATS_REQ	 | RPCAP_MSG_IS_REPLY)
++
++/* Error codes carried in the 'value' field of RPCAP_MSG_ERROR */
++#define PCAP_ERR_WRONGVER          17
++
++/* Filter encoding: the filter is a BPF/NPF program */
++#define RPCAP_UPDATEFILTER_BPF     1
++
++/* Flags in rpcap_startcapreq.flags */
++#define RPCAP_STARTCAPREQ_FLAG_PROMISC     0x00000001	/* promiscuous mode */
++#define RPCAP_STARTCAPREQ_FLAG_DGRAM       0x00000002	/* use UDP for data */
++#define RPCAP_STARTCAPREQ_FLAG_SERVEROPEN  0x00000004	/* server connects out */
++#define RPCAP_STARTCAPREQ_FLAG_INBOUND     0x00000008	/* capture inbound only */
++#define RPCAP_STARTCAPREQ_FLAG_OUTBOUND    0x00000010	/* capture outbound only */
++
++/* Subset of pcap interface flags (pcap.h) */
++#define PCAP_IF_UP                 0x00000002
++#define PCAP_IF_RUNNING            0x00000004
++
++/* DLT_EN10MB - ethernet, the only link type we report */
++#define DLT_EN10MB                 1
++
++struct rpcap_header {
++	uint8_t  ver;
++	uint8_t  type;
++	uint16_t value;
++	uint32_t plen;
++};
++
++struct rpcap_findalldevs_if {
++	uint16_t namelen;
++	uint16_t desclen;
++	uint32_t flags;
++	uint16_t naddr;
++	uint16_t dummy;
++};
++
++struct rpcap_openreply {
++	int32_t  linktype;
++	int32_t  tzoff;
++};
++
++struct rpcap_startcapreq {
++	uint32_t snaplen;
++	uint32_t read_timeout;
++	uint16_t flags;
++	uint16_t portdata;
++};
++
++struct rpcap_startcapreply {
++	int32_t  bufsize;
++	uint16_t portdata;
++	uint16_t dummy;
++};
++
++/*
++ * A filter, sent either after rpcap_startcapreq or in an
++ * RPCAP_MSG_UPDATEFILTER_REQ, followed by nitems instructions.
++ */
++struct rpcap_filter {
++	uint16_t filtertype;
++	uint16_t dummy;
++	uint32_t nitems;
++};
++
++/* One cBPF instruction, repeated nitems times after rpcap_filter. */
++struct rpcap_filterbpf_insn {
++	uint16_t code;
++	uint8_t  jt;
++	uint8_t  jf;
++	int32_t  k;
++};
++
++struct rpcap_stats {
++	uint32_t ifrecv;
++	uint32_t ifdrop;
++	uint32_t krnldrop;
++	uint32_t svrcapt;
++};
++
++struct rpcap_pkthdr {
++	uint32_t timestamp_sec;
++	uint32_t timestamp_usec;
++	uint32_t caplen;
++	uint32_t len;
++	uint32_t npkt;
++};
++
++#endif /* _RPCAP_PROTOCOL_H_ */
 -- 
-Regards,
-Vladimir
+2.53.0
 
