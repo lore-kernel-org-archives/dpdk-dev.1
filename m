@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02103C982FA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 12:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADB8C982FA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 12:55:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 36F8042E9D;
-	Tue, 22 Sep 2026 14:54:56 +0200 (CEST)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
- by mails.dpdk.org (Postfix) with ESMTP id A207642E9D;
+	by mails.dpdk.org (Postfix) with ESMTP id 5B98042EBC;
+	Tue, 22 Sep 2026 14:54:57 +0200 (CEST)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+ by mails.dpdk.org (Postfix) with ESMTP id 28AA542EB1;
  Tue, 22 Sep 2026 14:54:52 +0200 (CEST)
-X-QQ-mid: esmtpsz17t1790081690t05639a3d
-X-QQ-Originating-IP: f52ODL1JbO2i4l62EX2ZSWFlJ2XEBCoRr0JBR7Joh4M=
+X-QQ-mid: esmtpsz17t1790081685t4040d081
+X-QQ-Originating-IP: fDghcfuvQlai88tE6CmcLD8oYngEN23MF8hdxUaeeE4=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.205.193.132])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 22 Sep 2026 20:54:48 +0800 (CST)
+ id ; Tue, 22 Sep 2026 20:54:43 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12285168624646359826
-EX-QQ-RecipientCnt: 4
+X-BIZMAIL-ID: 14474844564764944958
+EX-QQ-RecipientCnt: 5
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v4 11/16] net/txgbe: fix DAC hot-plug on 40G NIC with
- auto-negotiation
-Date: Tue, 22 Sep 2026 20:37:44 +0800
-Message-ID: <902546CF27148B4C+20260922125414.3638-12-zaiyuwang@trustnetic.com>
+ Jiawen Wu <jiawenwu@trustnetic.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: [PATCH v4 09/16] net/txgbe: add offload support for tunnel type UDP
+Date: Tue, 22 Sep 2026 20:37:42 +0800
+Message-ID: <9E9C9CB291795F51+20260922125414.3638-10-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20260922125414.3638-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -35,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OKK2DAMrOULSVgDEy6YS5yDvSW+RZzEM88Q2o7P8w93RP0w1F+1APlzj
- ojfsl0sRfMK383fHhKLJjiw+JeI/UJJmnZQJCq7pR1beY8mHO3gl/7huqQywh2Ek3Hw5HWW
- 1s4ouGLlnd0xFhtu2Lx9N7MAoyouYrNdvpal/UF8n1l5hhVyPqqqDvms8dOILl69n1ptYBi
- 6FOe9f89KZGSTt9ToPPSE8jzU18pUx3RLOIid6XY/WtVzvYaCED7cBLiIB341iFDt8zx+qz
- gUDJUj3Lb6Rd6ZyU68QZBbFmqV/x11Rk4PBMpy5IEm8NCxQHqS8klVNHnR6Ds7o8DF94pfx
- HDH6trKL99Qya/hiL2T30mZYQ5KfdDmU8ahLa95O3LdnsnVNOSOjmVcC+hZOyojXkdKIR00
- jebv/Baypg9p0lLZm+A4+KTQgOziQDO9wSS/SKCyPJueCCLO6kcwJ6Uale2AAJ0tom0exkx
- u46wHAdpiICs2AWopvMV5RCho+ZKARVq54p1oEKIRim1BP/2B4Cdvsm+6Ii9kWu14q3mg/p
- 3VbTKjBrGx/l71d9EoNIAmUvaf66G3a8wdN2JWviBghN0JmQnzIrm2MLJnj5+6A3ZrfQftT
- eGmnYcLplE3VPZ09l5Q4f/ERaBaLf64c/k26/Lz0iywmxbyuLllUAdHuwRB3KhWsDwnUrX4
- ZXOhoB8eJGZSWyOHv0BNOVkpEvJdCsqX0z+kHAkDnMPwZn3oJA63wBq1Jxakvg6OxbBC+sK
- c/GnZ8KR1lCW7xkj1ay6wiOIkikuvN4E2stThIKksISCousFhJ6+aP2zaUaFbYTOy03fQFj
- hIrQA8Dayeh6W6BUqumy7zJYnFrE6vcJP/xHS9KDUigXWOK1qz7tYovugY5reP+TgAd08Nb
- imbNnYicgK9w+gn2xxerIBHfVyMcPdd+rMOCnG6WMSCU768M8oUoSEa1iUyi2TupyJwFyr5
- 1Zn9L+CpY0aBjBstXM0PaCAiyGp8eYTpxHCgAJD+DonpJVScmC3u5m3lKR+Hsb/buqXG53V
- 5EMxhcLa2k0fzDXY8F2ShPHsfgQHTv9252+R6t8of6D7drw61Infnnp+tEu5xjQxe5sxbxL
- TJLHTUSQDBDb37PQsiEQI8=
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
+X-QQ-XMAILINFO: MUSna4nE7xDosEfC6OnPayAdMsOApYUM3CL8IJ+lG22c10Pey1qllZ4l
+ o+HPwo7m9XIqhBPhGcKfkAhkbMP4M35O9/KdoUnzHaTlTo9RRNyyHBtyRvq/k7H8voCRvGY
+ sPbux53ohB53kHKz/5qs652/IGvOqsOn6QQpBuUzH541iQIYn3l8yIK/578Fq5whaItoIqI
+ YW2nsGXnjzF+IMCXG6Ct0U3J5yEdsRfsGcfQ6x8/+RRnjrReYVHAYQou1eLYdxIxzbJjhtP
+ b3ttUeDMW5Wyp7AhggjgIWR58TtK+jkpr6HJ8moOSmNHvJlvmT+615BChXxyfgvwm4wnfOX
+ 6yxEQA6s6jVF1ovDiYnzlS1vapr9ZDo6kD4O7KucRanzhkHGy5aLx7W+IiwDC7Nges/TnCn
+ ERK2nxR9imk0PjH9w1OOrnWHA7Zamp2FPYelcE0hU+y80qo7GkO6uVl1AE2VYqVyyrbaugT
+ bHgK2ikxNlhRqh/tw7mtGZZxYEZEZYKZod7FSbfU6x4tnhajQxu0jpslRDNiz5XEWNc1MMk
+ PQbbAFjT6gJxa3jqd7HzTbVVYnNkjRD2Rc92V+scIE77KiFaqKbBSuZ/QItTMY9USAm3Dup
+ kFWNJRTFrKH+2I+tpAjqYZ2NDkS6DQt2OTEa1wKusyFEqIMUA4n1XstwDl2mJ3+n7Oikk0P
+ XzPczKQB+QpYUeAaYIxgk2R8rHV6WUMWiLhL2lj9rdiQBWn8YIxgF4OUPb+wx5X0fr7FiFf
+ fkUPkJRnGbxOmnXAiMCrnmS77zDkjHd0SWZopK8M0wlkyIHZ+c80Ak/e49hlOlQxClaNzi7
+ fiN3xOnLGw680zn/Q17rCV8LYpqclu76anao0xISOtDLZyPsKNliFBxtpbINA8sOFapzHnW
+ ue1Kvlyl7wp+usHAZUVdv2EJnbIJOY/o6J/7lHHoxSGG5Ya+5FLCP3KqHkUch3Hv6zEGr42
+ UDrgbShAWTv+y9PLxUQLdPPR8L9E7KtzhzRkJWPIY5iYSI8MHZV4IDV0GBSGHXOhxgzM9yh
+ 6IfZ4tmT9KkLUqe/wcOZbHY1bU4MtLIEHB4hN/4pmwS5GWzcLMBxD+kEgLq5g62/bGAhBV+
+ 0JG4QWKD08TyqQkXcaqNa0=
+X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,102 +66,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hot-plugging a DAC cable while an Amber-Lite 40G port is running
-does not bring the link up. Two problems are in the way.
+The non-standard RTE_MBUF_F_TX_TUNNEL_UDP tunnel type (UDP
+encapsulation carrying either VXLAN or GENEVE) is not handled:
+txgbe_set_xmit_ctx() falls into the "unknown tunnel type" case and
+txgbe_get_tun_len() cannot compute the tunnel length, so tunneled
+packets are sent with a wrong descriptor or dropped.
 
-First, the 40G NIC never delivers the GPIO interrupt for module
-insertion or removal, so txgbe_dev_detect_sfp() is not called and the
-new module is never identified (the 25G part is not affected). Poll
-the module-present level every 2 seconds instead. The poll skips the
-identify step while the level is unchanged, and only re-arms itself
-while the port is started, so that it cannot survive txgbe_dev_stop().
+Resolve RTE_MBUF_F_TX_TUNNEL_UDP by parsing the UDP destination
+port in a local variable instead of rewriting the mbuf: the
+application still owns the mbuf and may re-transmit it (cloned or
+multicast paths), so a second pass would otherwise see the resolved
+VXLAN/GENEVE type instead of UDP. The outer_l2_len/outer_l3_len
+used for the offset are application supplied and not validated by
+the driver, so check the rte_pktmbuf_read() result and fall back to
+a zero tunnel length on a short or mis-annotated packet. Use
+RTE_GENEVE_DEFAULT_PORT for the GENEVE destination port.
 
-Second, when the port is started with no module plugged in,
-txgbe_set_link_to_amlite() times out and leaves hw->link_valid false.
-The xpcs path of txgbe_setup_phy_link_aml40() never restores it, so
-txgbe_e56_check_phy_link() and txgbe_check_mac_link_aml40() keep
-forcing the link down even once AN73 has brought it up. Restore
-link_valid on the xpcs path, as the non-xpcs path already does.
-
-Fixes: a2d92608d3b0 ("net/txgbe: add GPIO configuration")
-Fixes: f7cfc21e9f75 ("net/txgbe: fix link stability for 40G NIC")
+Fixes: ca46fcd753b1 ("net/txgbe: support Tx with hardware offload")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml40.c |  7 +++++++
- drivers/net/txgbe/txgbe_ethdev.c     | 19 ++++++++++++++++++-
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ drivers/net/txgbe/txgbe_rxtx.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index d812adac69..2d3b32839c 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -177,6 +177,13 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
- 		rte_spinlock_lock(&hw->phy_lock);
- 		txgbe_e56_set_phy_link_mode(hw, speed, autoneg_wait_to_complete);
- 		rte_spinlock_unlock(&hw->phy_lock);
-+		/* Restore link_valid, as the non-xpcs path below does. An
-+		 * earlier txgbe_set_link_to_amlite() timeout, for example when
-+		 * the port was started with no module plugged in, left it
-+		 * false, which keeps the check_phy_link and check_mac_link
-+		 * gates forcing the link down even after AN73 brings it up.
-+		 */
-+		hw->link_valid = true;
- 		return status;
- 	}
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index a295666f9d..ad90df5f69 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -21,6 +21,7 @@
+ #include <rte_debug.h>
+ #include <rte_ethdev.h>
+ #include <ethdev_driver.h>
++#include <rte_geneve.h>
+ #include <rte_security_driver.h>
+ #include <rte_memzone.h>
+ #include <rte_atomic.h>
+@@ -419,6 +420,7 @@ txgbe_set_xmit_ctx(struct txgbe_tx_queue *txq,
+ 			break;
+ 		case RTE_MBUF_F_TX_TUNNEL_VXLAN:
+ 		case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
++		case RTE_MBUF_F_TX_TUNNEL_UDP:
+ 		case RTE_MBUF_F_TX_TUNNEL_GENEVE:
+ 			tunnel_seed |= TXGBE_TXD_ETYPE_UDP;
+ 			break;
+@@ -593,6 +595,7 @@ tx_desc_ol_flags_to_ptype(uint64_t oflags)
+ 	switch (oflags & RTE_MBUF_F_TX_TUNNEL_MASK) {
+ 	case RTE_MBUF_F_TX_TUNNEL_VXLAN:
+ 	case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
++	case RTE_MBUF_F_TX_TUNNEL_UDP:
+ 		ptype |= RTE_PTYPE_TUNNEL_GRENAT;
+ 		break;
+ 	case RTE_MBUF_F_TX_TUNNEL_GRE:
+@@ -713,9 +716,32 @@ txgbe_get_tun_len(struct rte_mbuf *mbuf)
+ 	const struct txgbe_genevehdr *gh;
+ 	const struct txgbe_grehdr *grh;
+ 	struct txgbe_grehdr grehdr;
++	struct txgbe_udphdr udphdr;
++	const struct txgbe_udphdr *uh;
++	uint64_t tun_type;
+ 	uint8_t tun_len;
  
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index e7f8234146..cd7b40dbdb 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -2029,6 +2029,11 @@ txgbe_dev_start(struct rte_eth_dev *dev)
- 	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
- 		rte_eal_alarm_set(hw->bp_event_interval, txgbe_dev_e56_check_bp_event, dev);
- 		rte_eal_alarm_set(1000 * 1000 * 2, txgbe_dev_check_aml_temp_event, dev);
-+		/* The 40G NIC does not deliver a GPIO interrupt on module
-+		 * insertion or removal, so poll the module-present level.
-+		 */
-+		if (hw->mac.type == txgbe_mac_aml40 && !txgbe_is_backplane(hw))
-+			rte_eal_alarm_set(2000 * 1000, txgbe_dev_detect_sfp, dev);
- 	}
- 
- 	if (tm_conf->root && !tm_conf->committed)
-@@ -3115,7 +3120,7 @@ txgbe_dev_detect_sfp(void *param)
- 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
- 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
- 	u32 value = 0;
--	s32 err;
-+	s32 err = 0;
- 
- 	if (hw->mac.type == txgbe_mac_aml40) {
- 		value = rd32(hw, TXGBE_GPIOEXT);
-@@ -3123,6 +3128,11 @@ txgbe_dev_detect_sfp(void *param)
- 			err = TXGBE_ERR_SFP_NOT_PRESENT;
- 			goto out;
- 		}
-+		/* The level is unchanged since the last poll, so the cached
-+		 * module type is still valid and identify can be skipped.
-+		 */
-+		if (hw->phy.sfp_type != txgbe_sfp_type_not_present)
-+			goto rearm;
- 	}
- 
- 	if (hw->mac.type == txgbe_mac_aml) {
-@@ -3161,6 +3171,13 @@ txgbe_dev_detect_sfp(void *param)
- 		}
- 		txgbe_dev_link_update(dev, 0);
- 	}
-+
-+rearm:
-+	if (hw->mac.type == txgbe_mac_aml40 && !txgbe_is_backplane(hw) &&
-+	    dev->data->dev_started) {
-+		rte_eal_alarm_cancel(txgbe_dev_detect_sfp, dev);
-+		rte_eal_alarm_set(2000 * 1000, txgbe_dev_detect_sfp, dev);
+-	switch (mbuf->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
++	/* Resolve the UDP tunnel to its inner type without rewriting the
++	 * mbuf: the application still owns it and may re-transmit it.
++	 */
++	tun_type = mbuf->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK;
++	if (tun_type == RTE_MBUF_F_TX_TUNNEL_UDP) {
++		uh = rte_pktmbuf_read(mbuf,
++				      mbuf->outer_l2_len + mbuf->outer_l3_len,
++				      sizeof(udphdr), &udphdr);
++		if (uh == NULL) {
++			/* The outer offsets are application supplied and may
++			 * point past the end of the packet.
++			 */
++			return 0;
++		}
++		tun_type = (uh->dest ==
++			    rte_cpu_to_be_16(RTE_GENEVE_DEFAULT_PORT)) ?
++			   RTE_MBUF_F_TX_TUNNEL_GENEVE :
++			   RTE_MBUF_F_TX_TUNNEL_VXLAN;
 +	}
- }
- 
- static void
++
++	switch (tun_type) {
+ 	case RTE_MBUF_F_TX_TUNNEL_IPIP:
+ 		tun_len = 0;
+ 		break;
 -- 
 2.55.0.windows.2
 
