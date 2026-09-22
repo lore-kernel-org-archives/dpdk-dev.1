@@ -2,49 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D47C982FF
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 11:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE7DC982FF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 12:33:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC391427E1;
-	Tue, 22 Sep 2026 13:36:27 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id B62CC402B0;
- Tue, 22 Sep 2026 13:36:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790076986; x=1821612986;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=fBfFwuaXIp9nzQaRR119aolUNEdgQmlOlzyO/fvabP0=;
- b=kX7gM79K9SS+SxqcM/gpHWUDjt3dsWUhi33sWqRNcuaiHiOA8EhRKOfy
- 2SfJQ08au4OfzzafIMqFUbIS2i95wjWE423+L3cn0ggOmfX7ZhbX2JUwH
- /6ViYnIX6tGi4AM5zJdJSl2NIPFf3bFJL1huCj45Ujsw3iG+BNyxGTdLs
- Oulyrpnx1xdCuhhY5T5GtjaWLwOTpYHs/8gXi2cWah/Q963dtSW+BZVRy
- 5cZ2b0mMo+UpvnhxVz3umEeIlA9wZQXr+YKtPLuHK8pV/iq48YrdsbQQw
- Of7UAbeWVdg16h7J+5TtjqrUThj/cL/zuTVI9nzhxJGnZRur54VPWfFYj w==;
-X-CSE-ConnectionGUID: 6KVVz05PSZSbLasl+TyfEg==
-X-CSE-MsgGUID: tX1Sm8O1Q7+EHL4WpkMWVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11912"; a="90538975"
-X-IronPort-AV: E=Sophos;i="6.27,116,1787036400"; d="scan'208";a="90538975"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Sep 2026 04:36:24 -0700
-X-CSE-ConnectionGUID: 0HVpF9z2SVaz8pJqBD0nJg==
-X-CSE-MsgGUID: /+dvyhyUTCSkNg/CX9KaDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,116,1787036400"; d="scan'208";a="269612041"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa009.fm.intel.com with ESMTP; 22 Sep 2026 04:36:22 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH] net/ring: remove internal devarg
-Date: Tue, 22 Sep 2026 12:36:14 +0100
-Message-ID: <20260922113614.2952557-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.53.0
+	by mails.dpdk.org (Postfix) with ESMTP id 28D53402B6;
+	Tue, 22 Sep 2026 14:33:06 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 6810A402B0
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 14:33:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1790080383;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=E/pSIiavPwC+S6oTvhx4DZyWC1maBBoWq7kLoVEghuo=;
+ b=YppCeVVnIh7/oN/IeuV6JqyafmIwMS2LuKDsyJ6Nob3rs+avOwPSGfm0f7dbvNPZv3KI16
+ p3/aPIXgXeCGPDWQ9GZXm8rs2xMl1K9n9CJt4Fs82LYGTx70LUYEF2j95xRnMrRLcxNl89
+ Nz9MB7OaAVbG9Zk2+zyKCz8+nYv0yzU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-370-Ay6SgY8UM4WIHVL9iLVwFg-1; Tue, 22 Sep 2026 08:33:01 -0400
+X-MC-Unique: Ay6SgY8UM4WIHVL9iLVwFg-1
+X-Mimecast-MFC-AGG-ID: Ay6SgY8UM4WIHVL9iLVwFg_1790080380
+Received: by mail-wm1-f71.google.com with SMTP id
+ 5b1f17b1804b1-49cd83ca361so45802525e9.1
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 05:33:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790080380; x=1790685180;
+ h=content-type:mime-version:user-agent:message-id:date:references
+ :in-reply-to:subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to:content-type;
+ bh=E/pSIiavPwC+S6oTvhx4DZyWC1maBBoWq7kLoVEghuo=;
+ b=MB5xfZkP7jo4HQAF39izKLfNzEdQPuYldnJrM5CTh5zAy5wZOWfGLTvoXTN7lGEnG2
+ NWU3dmfFfvbbCfiu3Wi/+964uo0lNQAZ4gX4nqi+9s5h7d0FEShpxDp0DgIk8bGPXahC
+ OVVkHZQnI305o4v5boWTTjgEqmMlxQrBb0anCONX1dLQZ4IrCB5DzOxh454EXl82lmeu
+ CrTIfgx1/hRu2GMZ7lTu8dq4kKvP2ckgB0E3FryAopXV2rk0r4tYXObiB+APwaHFbat8
+ ybOulgOzcRxZUXpp82OZjCfYSjDdQfenD8lTN6vgo6dmkeSTjKm3vXnXNKLk9g23uX+y
+ p8oQ==
+X-Gm-Message-State: AFuF++kGu7e2JCf6Nw1LumS+d7Y2JoRGyZiTObUzqzQucQtdIgVpkm+A
+ vAmlKMVp5aQ1ySPz+31+IEjjrOvbaTozI0sG5x7Ksb4B5mKIjGh/XMm1a/4AL22VSgmlN7lEFr8
+ pkdq8j8ami6hffsuFipssOxct/RrteXcX+Vy6ufznGxCSvyGHPQzU9m4b+gXl+tZ0nmfIKksMUK
+ a/WxqezGBFXpffJkQ3OmCa5oObH4A=
+X-Gm-Gg: AYBFou1fEZ6FCX8TZ4d64TsKQjyWwClNHP1IUmo4gykxc4eYLbJSCs3UXvdOBdJxc1+
+ xulHpmsr//xqsJlHMoNIMBQfHHT3xiPRJY28I+iv0g7e5goL2KrKggPNDWBS9ztLUKoQYn4o+SQ
+ TXPZscC6dA/xu3A2svpawpZ4COGO+HD8W8/wNiPioZlUHxj/WLDi6j0RvvKc5W6CiFp67XXHWYG
+ QLsvvzcyv0divcqQyneN9JXjLMdlXULEM4zi3QmIABSOKRX72KlqcOF7d7/aCQBt1Jm9QdyHH5Z
+ dL4pH29OtSg5dNSliHFFtKHeqQRYeIke7j2KiAKxDIJXq4pe5Jut0A+ubS6lh6lQSjxBcYyL0PP
+ DTuv1j1zV/LIsBipmcXyuwqxkzkq5
+X-Received: by 2002:a05:600c:3f07:b0:49c:ee01:8c53 with SMTP id
+ 5b1f17b1804b1-49fc56713c5mr217532825e9.2.1790080380582; 
+ Tue, 22 Sep 2026 05:33:00 -0700 (PDT)
+X-Received: by 2002:a05:600c:3f07:b0:49c:ee01:8c53 with SMTP id
+ 5b1f17b1804b1-49fc56713c5mr217532255e9.2.1790080379989; 
+ Tue, 22 Sep 2026 05:32:59 -0700 (PDT)
+Received: from aconole-thinkpadt14gen4.rmtusnh.csb ([216.212.25.12])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-48862775412sm4934135f8f.10.2026.09.22.05.32.58
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 22 Sep 2026 05:32:59 -0700 (PDT)
+From: Aaron Conole <aconole@redhat.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 18/18] doc: recommend secure random for unpredictable
+ values
+In-Reply-To: <20260915192207.3926217-19-stephen@networkplumber.org> (Stephen
+ Hemminger's message of "Tue, 15 Sep 2026 12:21:16 -0700")
+References: <20260915192207.3926217-1-stephen@networkplumber.org>
+ <20260915192207.3926217-19-stephen@networkplumber.org>
+Date: Tue, 22 Sep 2026 08:32:57 -0400
+Message-ID: <f7t1palcvpi.fsf@aconole-thinkpadt14gen4.rmtusnh.csb>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: pOibbJRn39KJixPV8LgUbG0oRToL805r9o3HyJLufyI_1790080380
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,239 +92,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The devarg "internal" was used to pass a pointer to the creation
-function to reuse set parameters. However, this meant it could also be
-used as a devarg on the commandline leading to incorrect behaviour.
-Redesign the passing of the args parameters to use a per-thread global
-instead. The wrapper function sets the global to a valid value before
-calling the main creation function, skipping passing a devarg, before
-resetting the pointer back to NULL when the function returns.
+Stephen Hemminger <stephen@networkplumber.org> writes:
 
-Bugzilla ID: 1687
-Fixes: 96cb19521147 ("net/ring: use EAL APIs in PMD specific API")
-Cc: stable@dpdk.org
+> The AI review checks say not to generate keys, IVs and nonces with
+> rte_rand(), but do not say what to use instead. Name
+> rte_random_bytes() as the replacement, and extend the rule to the
+> other values which must not be predictable.
+>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- drivers/net/ring/rte_eth_ring.c | 144 ++++++++++++--------------------
- 1 file changed, 53 insertions(+), 91 deletions(-)
+LGTM,
 
-diff --git a/drivers/net/ring/rte_eth_ring.c b/drivers/net/ring/rte_eth_ring.c
-index b639544eab..d5530bcfec 100644
---- a/drivers/net/ring/rte_eth_ring.c
-+++ b/drivers/net/ring/rte_eth_ring.c
-@@ -11,6 +11,7 @@
- #include <rte_malloc.h>
- #include <rte_memcpy.h>
- #include <rte_os_shim.h>
-+#include <rte_per_lcore.h>
- #include <rte_string_fns.h>
- #include <bus_vdev_driver.h>
- #include <rte_kvargs.h>
-@@ -20,12 +21,9 @@
- #define ETH_RING_ACTION_CREATE		"CREATE"
- #define ETH_RING_ACTION_ATTACH		"ATTACH"
- #define ETH_RING_ACTION_MAX_LEN		8 /* CREATE | ACTION */
--#define ETH_RING_INTERNAL_ARG		"internal"
--#define ETH_RING_INTERNAL_ARG_MAX_LEN	19 /* "0x..16chars..\0" */
- 
- static const char *valid_arguments[] = {
- 	ETH_RING_NUMA_NODE_ACTION_ARG,
--	ETH_RING_INTERNAL_ARG,
- 	NULL
- };
- 
-@@ -35,9 +33,11 @@ struct ring_internal_args {
- 	struct rte_ring * const *tx_queues;
- 	const unsigned int nb_tx_queues;
- 	const unsigned int numa_node;
--	void *addr; /* self addr for sanity check */
- };
- 
-+/* rte_eth_from_rings() stashes a pointer to its on-stack args here  */
-+static RTE_DEFINE_PER_LCORE(struct ring_internal_args *, eth_ring_internal_args);
-+
- enum dev_action {
- 	DEV_CREATE,
- 	DEV_ATTACH
-@@ -474,9 +474,7 @@ rte_eth_from_rings(const char *name, struct rte_ring *const rx_queues[],
- 		.tx_queues = tx_queues,
- 		.nb_tx_queues = nb_tx_queues,
- 		.numa_node = numa_node,
--		.addr = &args,
- 	};
--	char args_str[32];
- 	char ring_name[RTE_RING_NAMESIZE];
- 	uint16_t port_id = RTE_MAX_ETHPORTS;
- 	int ret;
-@@ -495,16 +493,16 @@ rte_eth_from_rings(const char *name, struct rte_ring *const rx_queues[],
- 		return -1;
- 	}
- 
--	snprintf(args_str, sizeof(args_str), "%s=%p",
--		 ETH_RING_INTERNAL_ARG, &args);
--
- 	ret = snprintf(ring_name, sizeof(ring_name), "net_ring_%s", name);
- 	if (ret >= (int)sizeof(ring_name)) {
- 		rte_errno = ENAMETOOLONG;
- 		return -1;
- 	}
- 
--	ret = rte_vdev_init(ring_name, args_str);
-+	/* mark this thread's pending request; consumed and cleared by probe */
-+	RTE_PER_LCORE(eth_ring_internal_args) = &args;
-+	ret = rte_vdev_init(ring_name, NULL);
-+	RTE_PER_LCORE(eth_ring_internal_args) = NULL;
- 	if (ret) {
- 		rte_errno = EINVAL;
- 		return -1;
-@@ -649,36 +647,6 @@ static int parse_kvlist(const char *key __rte_unused,
- 	return ret;
- }
- 
--static int
--parse_internal_args(const char *key __rte_unused, const char *value,
--		void *data)
--{
--	struct ring_internal_args **internal_args = data;
--	void *args;
--	int ret, n;
--
--	/* make sure 'value' is valid pointer length */
--	if (strnlen(value, ETH_RING_INTERNAL_ARG_MAX_LEN) >=
--			ETH_RING_INTERNAL_ARG_MAX_LEN) {
--		PMD_LOG(ERR, "Error parsing internal args, argument is too long");
--		return -1;
--	}
--
--	ret = sscanf(value, "%p%n", &args, &n);
--	if (ret == 0 || (size_t)n != strlen(value)) {
--		PMD_LOG(ERR, "Error parsing internal args");
--
--		return -1;
--	}
--
--	*internal_args = args;
--
--	if ((*internal_args)->addr != args)
--		return -1;
--
--	return 0;
--}
--
- static int
- rte_pmd_ring_probe(struct rte_vdev_device *dev)
- {
-@@ -711,6 +679,20 @@ rte_pmd_ring_probe(struct rte_vdev_device *dev)
- 		return 0;
- 	}
- 
-+	/* set only by rte_eth_from_rings(), never derived from user devargs */
-+	internal_args = RTE_PER_LCORE(eth_ring_internal_args);
-+	if (internal_args != NULL) {
-+		ret = do_eth_dev_ring_create(name, dev,
-+			internal_args->rx_queues,
-+			internal_args->nb_rx_queues,
-+			internal_args->tx_queues,
-+			internal_args->nb_tx_queues,
-+			internal_args->numa_node,
-+			DEV_ATTACH,
-+			&eth_dev);
-+		return ret >= 0 ? 0 : ret;
-+	}
-+
- 	if (params == NULL || params[0] == '\0') {
- 		ret = eth_dev_ring_create(name, dev, rte_socket_id(), DEV_CREATE,
- 				&eth_dev);
-@@ -739,57 +721,37 @@ rte_pmd_ring_probe(struct rte_vdev_device *dev)
- 			return ret;
- 		}
- 
--		if (rte_kvargs_count(kvlist, ETH_RING_INTERNAL_ARG) == 1) {
--			ret = rte_kvargs_process(kvlist, ETH_RING_INTERNAL_ARG,
--						 parse_internal_args,
--						 &internal_args);
--			if (ret < 0)
--				goto out_free;
--
--			ret = do_eth_dev_ring_create(name, dev,
--				internal_args->rx_queues,
--				internal_args->nb_rx_queues,
--				internal_args->tx_queues,
--				internal_args->nb_tx_queues,
--				internal_args->numa_node,
--				DEV_ATTACH,
--				&eth_dev);
--			if (ret >= 0)
--				ret = 0;
--		} else {
--			ret = rte_kvargs_count(kvlist, ETH_RING_NUMA_NODE_ACTION_ARG);
--			info = rte_zmalloc("struct node_action_list",
--					   sizeof(struct node_action_list) +
--					   (sizeof(struct node_action_pair) * ret),
--					   0);
--			if (!info)
--				goto out_free;
--
--			info->total = ret;
--			info->list = (struct node_action_pair *)(info + 1);
--
--			ret = rte_kvargs_process(kvlist, ETH_RING_NUMA_NODE_ACTION_ARG,
--						 parse_kvlist, info);
--
--			if (ret < 0)
--				goto out_free;
--
--			for (info->count = 0; info->count < info->total; info->count++) {
--				ret = eth_dev_ring_create(info->list[info->count].name,
--							  dev,
--							  info->list[info->count].node,
--							  info->list[info->count].action,
--							  &eth_dev);
--				if ((ret == -1) &&
--				    (info->list[info->count].action == DEV_CREATE)) {
--					PMD_LOG(INFO,
--						"Attach to pmd_ring for %s",
--						name);
--					ret = eth_dev_ring_create(name, dev,
--							info->list[info->count].node,
--							DEV_ATTACH,
--							&eth_dev);
--				}
-+		ret = rte_kvargs_count(kvlist, ETH_RING_NUMA_NODE_ACTION_ARG);
-+		info = rte_zmalloc("struct node_action_list",
-+				   sizeof(struct node_action_list) +
-+				   (sizeof(struct node_action_pair) * ret),
-+				   0);
-+		if (!info)
-+			goto out_free;
-+
-+		info->total = ret;
-+		info->list = (struct node_action_pair *)(info + 1);
-+
-+		ret = rte_kvargs_process(kvlist, ETH_RING_NUMA_NODE_ACTION_ARG,
-+					 parse_kvlist, info);
-+
-+		if (ret < 0)
-+			goto out_free;
-+
-+		for (info->count = 0; info->count < info->total; info->count++) {
-+			ret = eth_dev_ring_create(info->list[info->count].name,
-+						  dev,
-+						  info->list[info->count].node,
-+						  info->list[info->count].action,
-+						  &eth_dev);
-+			if (ret == -1 && info->list[info->count].action == DEV_CREATE) {
-+				PMD_LOG(INFO,
-+					"Attach to pmd_ring for %s",
-+					name);
-+				ret = eth_dev_ring_create(name, dev,
-+						info->list[info->count].node,
-+						DEV_ATTACH,
-+						&eth_dev);
- 			}
- 		}
- 	}
--- 
-2.53.0
+Acked-by: Aaron Conole <aconole@redhat.com>
 
