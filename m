@@ -2,76 +2,145 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CBBC982FA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 13:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06851C98302
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 13:54:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1E8EB402B8;
-	Tue, 22 Sep 2026 15:54:41 +0200 (CEST)
-Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
- [74.125.227.171])
- by mails.dpdk.org (Postfix) with ESMTP id 16D29400D5
- for <dev@dpdk.org>; Tue, 22 Sep 2026 15:54:40 +0200 (CEST)
-Received: by mail-pj2-f43.google.com with SMTP id
- 98e67ed59e1d1-39b9184fa80so3796107a91.2
- for <dev@dpdk.org>; Tue, 22 Sep 2026 06:54:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790085279;
- x=1790690079; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=5uCafkbQtDcRZ6nnnXXz32JzVIZr5So0GPwdlXRO5dw=;
- b=bUrQDaexgH9MjLYw9Kggms2yq4NASfqgYIbzNteeudCe/5ZELxLP7sxhTfnzoQeYco
- ToF2b1xI7FE1C0oSa2ZV+iE5Mp7aBdu0uLaHLEQO9dPLJim6He7q+YzAytMKbjMLKod0
- oY7G8tnAzRqCrQZsp82PM6SqBSrOVqIhN5lADSEsdgiiP/CCkRs0InwjAfaU14qAiHB9
- 6989nOeJxOq4lnzODEOA7ZN0f/Kabl6o4i7ghPxlZE702mJOYdospSDwHkNqEO58UmVB
- DmeQoH7+AfaXUVZSIVBN39Bnxp7PSAQkAKydFt2zPAmRBGBme3Sbc14P8gtGe/NWCSCf
- stqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790085279; x=1790690079;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=5uCafkbQtDcRZ6nnnXXz32JzVIZr5So0GPwdlXRO5dw=;
- b=R1ggYVtynLonhPQC3geIjBC8gYylX4VRYryaPQ0of3T/nfXyeNhv8PGdDeEcBKEEK+
- nWuKq4EYdnTL7WsAhPenVd7ImRZg1dC/+ElE2OU855I30pDO6oJMZV/ovj0id8LA92v2
- vv4BVvgnEVukc5ssHOo6GHqixJPkM6OeKfL+onOrT8WyQ9gNRQREIfufjlkxJx4lKvU8
- mju+PSAsd4FXFnBv8a8DMxxQ+FHow1Ajd0fu5aQMNQ314DQwApcr/XMlGkxzrpxG652h
- Ptm/OykUuKsfvAG3RoN6iDeaoKuX8IveXfW8tfGDW/fFfeInTY20uJeZSXzOM/2kmURX
- yfTQ==
-X-Forwarded-Encrypted: i=1;
- AKwUvByXT5mczxJMmwcYH7HxchcYGx/67Zy3EK6hC3ULZiSwWj0MJHR4KMXuOi0sZ1UK5KMpAlU=@dpdk.org
-X-Gm-Message-State: AFuF++lk5DO/z+JlG/uJBEk6FzAN5hPSkny3Ux2s6k/noiPmoND2WMHj
- FsfS0SLZ6q9Rq6bFZ4liNVwnzrfivQZ/Xosgw7vUVJFWzDKOqnqS5otnLcPXvCIOdM6LlUZlTBl
- 08dr0
-X-Gm-Gg: AYBFou3rGD4fWwYWdOPitS+sjOFATmcisLbhNsM4d1BpcUcPTZbrJtIXttvraK03hmP
- eZhUed0hYMaQwuEPhm7YLXqColYp/Km6IDkfDx0Ci3jf9ilcOcrtcrsozyQJIGcMi3gYpA495ky
- 6tXO7h8AuE/FHuz1El5s95zv/ggZ49opDgNw4y+fbQObO1nOd+SyaO87PivjDZZdlq+0W+wsfEh
- EuC47Iud1cqsy8tzx5uQv/KmPITUht++W5tXxE7BczrliWFlHBJ+vJAbZx4fUj5792O0B6KaKTi
- MLBycqDIT36CCA9o8GhsX/UO4OW/QuI42mqL3Y3rCK8vwDVGRN6bCRk/y8qXDlSMW7N70fVm8ZV
- zv+XeEb5bh8z8WrKtbHIz99F3JbYdzzIPy4/0EGec7Md0KnChMFjlogBm0KibNNkJPprCMtVG+W
- a4saEZ2q8nN3rcSqgswQ7aey8wXdCLne9rJ0mI81ukKDyfFlCGreDic08+/vhLM+EsjG7wYxJTN
- D8fhhulbgUfBsCfasQUodLfbJkw9cn5gfTXLOJx
-X-Received: by 2002:a17:90b:264c:b0:39e:6c68:1552 with SMTP id
- 98e67ed59e1d1-3a07320e566mr1130857a91.26.1790085278989; 
- Tue, 22 Sep 2026 06:54:38 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a06e26e70asm4545951a91.1.2026.09.22.06.54.38
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 22 Sep 2026 06:54:38 -0700 (PDT)
-Date: Tue, 22 Sep 2026 06:54:37 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Nam Tran <hoangnamtran18122005@gmail.com>
-Cc: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>, dev@dpdk.org
-Subject: Re: [PATCH] mbuf: avoid temporary array for bulk free
-Message-ID: <20260922065437.2e3f5c15@phoenix.local>
-In-Reply-To: <20260922012856.30090-1-hoangnamtran18122005@gmail.com>
-References: <20260922012856.30090-1-hoangnamtran18122005@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 14D7042DA7;
+	Tue, 22 Sep 2026 15:54:47 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id C47E9402B0
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 15:54:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1790085286; x=1821621286;
+ h=from:to:cc:subject:date:message-id:mime-version;
+ bh=KQnQlkRf2mnKjrX2pSrZ/5SNqY13anpfG9NTrFl9J8g=;
+ b=O8gMCri+Ez/3Hn8GU7YGAz7oaoenJq2eEjMUZprlNoOj4hWhTle9IqAV
+ Qxk+iykxOPPpgG3Ak29JZcAeu3OffJxBzdTpx0/58YqCYH39PxGx1S5o1
+ rmQDmOqI7wKTxNP2vE73pTKdZZWAD51zkMiAvdM6xA5J/eUI5nDxB65te
+ cw9YivmDQbrdkTF99PqkHzRyABvc5xCMGRwpJAtXqGdIYBqiNnU4x/bFE
+ 5gQd466g7Qdn65SPnTEexhG0LwoL3pAz1DtyTQVoc1aiX6rYQNd9yEAaS
+ e/Uqgb5DlHhCbZZ71mRki2bP89lRe+VQ3fWp3Q4rOLy+NDnLPO5unYgn0 g==;
+X-CSE-ConnectionGUID: IG8FhpJHSCuUfn8+4nsb0w==
+X-CSE-MsgGUID: nKo1cmo0SQeSxgFZzh/Aag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11913"; a="93192601"
+X-IronPort-AV: E=Sophos;i="6.27,116,1787036400"; d="scan'208,217";a="93192601"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Sep 2026 06:54:45 -0700
+X-CSE-ConnectionGUID: D23oEm5tTSmf+8TA7z8UkA==
+X-CSE-MsgGUID: lAZgHUhkQh6rjkN6BWfREQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,116,1787036400"; 
+ d="scan'208,217";a="277916948"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Sep 2026 06:54:45 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Tue, 22 Sep 2026 06:54:44 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Tue, 22 Sep 2026 06:54:44 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.41)
+ by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Tue, 22 Sep 2026 06:54:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ddvpwf4uI+I5iOHde2fHFa9Mc85vBBgZrMXnYB3+kMcqZvChztMxR8xqfeoF5W53ObG81oRUesQmrqEhjYhHqS6bT0I3USUbNHimWd+hupxp/ARv1Cm2wcTgucn5C5ZpYnz0Ad5/D3IqppHrg9R9YcV1vmXe+UDVzQmdwa1RxwVC9Fjz3jk2knLKUPA1y72nK/bjE36ofpO4l8MRhF9F8QIs0qy+mbm2b45Z0pnpqibhwsNq9pj0CNTgfpR3UhHk9qbuBn9cTYeMDZlc78ntD3+mBiveJd2MYeIWE5CHAWz2XkNA1MuCxQwPNn4QHu/Kg0c3tuhWXw9hTFd/hHXOnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kjcXmdEEMr6KINXlJMr23eiq9TbEAQvPvr/YAHIBu74=;
+ b=knf6HfchmKa8Q/DfW1dvZ9EAZ/jKf9IcCG2mj6vgmaRLp/PMIIyyOuNMdizFrOS5yPChWGvOBZKxfxIcOJtiTWdKOusA8tb8T96cwaoTGYyx7vRUXr8cW/ilw7sC7vXI7H2NJ8z2imun1uj7D+KIpI5JYnyB0wk6vrou6i4J1QhG06d8Kt+2BO4aj3tFU1S4OrFsKdiSvOhP4hPozMV2ZJj7+9r4cN60lM0BDZBmJGjWr1CzmiibLJZZtPCwLO0QqayCde94SYpvFKPBWtY4PUs7FGSOySUbeo63nNmb/7qTEb9YLcyo9tzWep/6CLy3enlBrP7/SBjqj7vyD44ipg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DS3PR11MB9646.namprd11.prod.outlook.com (2603:10b6:8:38f::18)
+ by IA0PR11MB7840.namprd11.prod.outlook.com (2603:10b6:208:403::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.13; Tue, 22 Sep
+ 2026 13:54:41 +0000
+Received: from DS3PR11MB9646.namprd11.prod.outlook.com
+ ([fe80::d32a:8f92:25b:9bcd]) by DS3PR11MB9646.namprd11.prod.outlook.com
+ ([fe80::d32a:8f92:25b:9bcd%5]) with mapi id 15.21.0451.014; Tue, 22 Sep 2026
+ 13:54:41 +0000
+From: "Mcnamara, John" <john.mcnamara@intel.com>
+To: "dev@dpdk.org" <dev@dpdk.org>
+CC: Thomas Monjalon <thomas@monjalon.net>, David Marchand
+ <david.marchand@redhat.com>
+Subject: DPDK Release Status Meeting 2026-09-22
+Thread-Topic: DPDK Release Status Meeting 2026-09-22
+Thread-Index: AQHdSpnGI7RgY1gXBUG8RMeXMQouTQ==
+Date: Tue, 22 Sep 2026 13:54:41 +0000
+Message-ID: <DS3PR11MB9646BA5CDF1DE0C0BB456719FC832@DS3PR11MB9646.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS3PR11MB9646:EE_|IA0PR11MB7840:EE_
+x-ms-office365-filtering-correlation-id: 770d4cc8-a083-4370-c439-08df18b10cce
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|23010399003|366016|1800799024|38070700021|56012099006|11063799006|10067099003|18002099003|8096899003;
+x-microsoft-antispam-message-info: tjChkBcL6syNL6a4sBdg2ifgdBekUlSynuRNczMMVeOBAEEGMR75rad+OzEGjJEIWS64jmKjyOFCqVMj4RYlP4T0UmnqqGstUM1ExI2LlW1V4iryDgEgx6ErVD47gJOdWMXVa4+F0PDRK26Ve34vrGirC7pG5ZT+zVdTai0W1/p6Kdv3CUDiC7HmgsTkW1LkbreXoAfA8hfhBB1eftXGmEp1mErPTqTbr0GBPDt2q5yBzpKj6nusbYIwfYlEzDozWkuoMpCfzl66M3LvAARL4l0K2zZ4aVPIUeSlJpAvXgAR10whWLx7R7EWRvyo6XXW4HSwm0kut1EKSBci2Jpqp2rKSeP7bSc7CRAa07WKF37z0k9U2tukhF9WLowVlZ2Ibjf5BEeFb9SjWzCRe6KCQe81gDe08bQaegVBhO+DktH6DBcYf7CceAw8dvU/CpwXH8dvEACNSDimZLvUmKuY9ZrQ/DHsQPNl+Jkubx1T0/x5bzAhX/A9zaPEl6xAIcUdksMJBV0dzd1ho+6RZxzCIQ34noOxxHHsZ3WAyxIux8JGLgfkkkD1SbjTgKxSh0vsRDhsBE2sO0zYYEdoJgFYI+JFhVtNKT3nMfjJe6MrDgsbCx3f0zSK5J8XNFPCs9ILNzVIK/tAx0lGt26CwrjW3/IW8J+UJU7XlvCQaUFc6Xg=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS3PR11MB9646.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(23010399003)(366016)(1800799024)(38070700021)(56012099006)(11063799006)(10067099003)(18002099003)(8096899003);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?z6f2TsoJW6mG29ajYnpaVqkH0AK2+LRifLOQV9aFw6rPxql0Q8+urukfyg?=
+ =?iso-8859-1?Q?yLs9E8rr6jDf4Zz6hSRaitdMSH6kJjpgJZldF48rEImkvmjNNA9jyDgEKt?=
+ =?iso-8859-1?Q?0fkrqTq+9Ry3FMnhdZ63eshDaqjkWv7dDxTzq9DOCqrW9Z00HhE/DCJT53?=
+ =?iso-8859-1?Q?GctqxDMDN75KvOo+eAVPw5KYEx9ZaypWZdpARjAnU9i8jBV7OMFZjRgPuH?=
+ =?iso-8859-1?Q?fv3G0+mzXKV9Dr9aeOIDmODkAccMWmN0TpLB4yjUeC9R9nfNYL1HFeAWw+?=
+ =?iso-8859-1?Q?sazQq3loa/QpjlrGeZVu5udt8+MMUx7VpRQcEhoOQnvUkKHabACsSV/S+i?=
+ =?iso-8859-1?Q?2gKM+I2PC8NXldwxnhW0WKPHen0rL1WJCJKWFx6/JsVje1BCQkZ6kMFC2L?=
+ =?iso-8859-1?Q?uQFbPpKVKCSBDeIhHgmLRXg99mZYQEVsJd7J+RtgIX17l38gMMxcDeNOwj?=
+ =?iso-8859-1?Q?dXUVnUrpPgdff7vFlmrT1yDyUXYACxvKmekZO1RQ+HDj6vBIE8PqT29fhS?=
+ =?iso-8859-1?Q?T2FgnlafkFI4TpqoTu6tKd6F25b35Scn1TmYcocnoM0tnUZbHv4S8haf75?=
+ =?iso-8859-1?Q?GGw3V4ARlfX0gBx0aClOfUuxQsA75IXXJzv0ocDtpXmeF1xByDg1qO/nSU?=
+ =?iso-8859-1?Q?2F0FcYWatCNNNGBSjSXJZQ3Y24KM2fa5HvQFC9hauCxXu9pPJcVppKpgM7?=
+ =?iso-8859-1?Q?n/3Pdec7AR04pNbthWayJNdJZPC2pCKx8TLOCQtgBhAOF62ewLUupwNbPy?=
+ =?iso-8859-1?Q?aqq+52RclWnAwqz/td+3axSIIcZLem8ioval5K1la9ECHV5WhDM6UdKvd0?=
+ =?iso-8859-1?Q?gkHmNyt/8TnOzFAjujhD/G9mlkAO5rMWQB6K1ytaurFuHpq9d5wQaNBMMb?=
+ =?iso-8859-1?Q?AD6fACFMaEryLjXPIH6sXby3ZXEk1We+NlB3jf+mqBP640fxsQxK9g4v4k?=
+ =?iso-8859-1?Q?mAUdztrMnhC42KGf3DEk/npJNLTtonIrhMV2bGmN/stx+upHsSRV/I2639?=
+ =?iso-8859-1?Q?6zZZ3mC3NGHhVHPBTMbU7nREM2r1Cl5PbVX5TeGevHhQjWXrEc+hV6DRh8?=
+ =?iso-8859-1?Q?/zPks3oAS16CPC3hz3Qv9JOcudqYhbB60wULo+yv/GvefRhuHdGXlozJ7t?=
+ =?iso-8859-1?Q?+wNv8PJhnf4nbK6vmeY05A2oRIdAem6BU4bUQNA9wZ9TVYPVLNhN9F8OB1?=
+ =?iso-8859-1?Q?m8qEp1CeVOx5iCM7lkO0kxDAI5OKYS3SPxB+/DZ1sMO8tMW1Bo/mIcdx+s?=
+ =?iso-8859-1?Q?koAccKw2IuBLS+4kvLq92Cf9BnDzCpe7u2zWAYMrNlxZkc8Zc8owTpmi9l?=
+ =?iso-8859-1?Q?0PaNvmSsfT5pAdLorlQZMPBV1zUwx3HWFnI6hLuZDTdZjvKDUEmmi/N53d?=
+ =?iso-8859-1?Q?j/Tr/kbJO/jCQ6wg0kBkaviIZMXWZilTa/OolY2kGwj5IGkyhNgPqqvCtr?=
+ =?iso-8859-1?Q?Vi8Yc7dcd5QTeQSUx40WS8Qc4BKMHmuvz0GcK1Du+jYzEZIB74uxYYUr1l?=
+ =?iso-8859-1?Q?BJjh6TjdfGASA3PSSf6UFOpZdk3iUG6a6yt0bLVMeVhPIjm0aOw/0iaGa9?=
+ =?iso-8859-1?Q?75BKKFCIWcf8mhwWzJ9FLZyimUxJ0/nHE/NgUUP8ogXqNiu0/mEkXJxa72?=
+ =?iso-8859-1?Q?v54KZ16f8Bvuoj52k7IXKNcD24di8dJ/de/zA9HGxBz1zevld6l4bX2R0K?=
+ =?iso-8859-1?Q?6nnzQfy5OeHQZ8+oPuuaXAYVbsEKYTourNkBRVtFMfkfUP8/3sZCp8zJ0R?=
+ =?iso-8859-1?Q?PdAn2xizE6GxHmcWUW5glJGOZos76H21ATUmPhqACxqE3/JuoRiNgDFR5E?=
+ =?iso-8859-1?Q?hkwaWWYNpw=3D=3D?=
+Content-Type: multipart/alternative;
+ boundary="_000_DS3PR11MB9646BA5CDF1DE0C0BB456719FC832DS3PR11MB9646namp_"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Exchange-RoutingPolicyChecked: PYbZPzI3jlMD+a9N+jUED16JFWpapxQsvV5qxj4uLFZye9ayw1N/zIgn6xsIbGtk8nE+3vLrmkeaYf2ubp+tGeHbLc6dAn7CC8t5WbxQrtDD/QrVy/LgkAMq8aDeJHoOEYCljzvI7yY+T/TXfh9qrUGS2QPVipwnfGhXG8V++t4sZdnz96tWbLh9AN6KSh71tGybP4tbsK3fHHx/tgxL7++55Q/grhMv/2gabdKnbMXLvTdoDv758YgOXDhedEamxbfjHO27ZWiVdo6J9YrEpnk4M0NzuzTVeLHTBYc0Dv4TeRSfBqrlbOym7XjqJ/+451ND8KoaaGywQGX0n6tNfA==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS3PR11MB9646.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 770d4cc8-a083-4370-c439-08df18b10cce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2026 13:54:41.2591 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GzIdxInTnOot4QOfSYVfhz3ym7VD/KLsiOyR7TgQlCXdu/ZW0gi3IQZyap94UwVrfz5sjqs54F4TvD5w+kcc/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7840
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,74 +154,567 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 21 Sep 2026 21:28:56 -0400
-Nam Tran <hoangnamtran18122005@gmail.com> wrote:
+--_000_DS3PR11MB9646BA5CDF1DE0C0BB456719FC832DS3PR11MB9646namp_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-> rte_pktmbuf_free_bulk() currently stages freeable mbufs in a
-> temporary array before returning them to their mempool. For flat
-> packet arrays, this requires copying pointers even though the
-> original array already contains contiguous freeable mbufs.
-> 
-> Track contiguous same-pool runs in the input array and pass them
-> directly to rte_mbuf_raw_free_bulk(). Flush a run when encountering
-> a NULL mbuf, an mbuf retained by reference counting, or a pool
-> change. Preserve the existing array-based implementation as the
-> fallback for chained packets.
-> 
-> On an ARM64 Linux test environment, same-binary A/B measurements
-> using rte_rdtsc showed lower median timer ticks per call for flat
-> bulk frees:
-> 
->   burst  32:  2.05 ->  1.50
->   burst  64:  5.16 ->  4.52
->   burst 128: 11.16 ->  6.90
->   burst 256: 26.46 -> 19.73
-> 
-> This corresponds to reductions of approximately 12% to 38% across
-> the tested burst sizes.
-> 
-> Add coverage for NULL entries, mixed mempools, and shared mbufs.
-> 
-> Signed-off-by: Nam Tran <hoangnamtran18122005@gmail.com>
-> ---
+Release status meeting minutes 2026-09-22
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-More detailed AI review (Claude Opus 5)
+Agenda:
+- Release Dates
+- Subtrees
+- Roadmaps
+- LTS
+- Defects
+- Opens
 
-Subject: Re: [PATCH] mbuf: avoid temporary array for bulk free
+Participants:
+- Broadcom
+- Intel
+- Marvell
+- Nvidia
+- Red Hat
+- Stephen Hemminger
 
-Warning:
+Release Dates
+-------------
 
-lib/mbuf/rte_mbuf.c: runs are unbounded. The old code flushed at
-RTE_PKTMBUF_FREE_PENDING_SZ (64). Now a same-pool run can be the whole
-burst, and rte_mempool_do_generic_put() sends any n > cache->size / 2
-straight to rte_mempool_ops_enqueue_bulk(), bypassing the per-lcore
-cache. With a 256 entry cache, a 256 burst that previously went into
-the cache in 64 entry chunks now hits the ring every time. That is
-cheap on a single lcore, which is what the benchmark measured, but is
-shared ring traffic with multiple lcores, and hands back cold objects
-instead of keeping hot ones in cache. Cap run_count at
-RTE_PKTMBUF_FREE_PENDING_SZ and flush when reached.
+The following are the proposed working dates for 26.11:
 
-Benchmark: rte_rdtsc() on arm64 reads the generic timer (cntvct_el0)
-unless built with PMU support; a delta of ~0.5 ticks per call is at
-the resolution limit. Please state the timer frequency, the mempool
-cache size used, the number of lcores, and include x86 results. The
-test pools in test_mbuf.c have no cache, so they do not exercise the
-cache path at all.
+| Date             | Milestone        | Description                     |
+|------------------|------------------|---------------------------------|
+| 31 August 2026   | RFC/v1 patches   | Proposal deadline               |
+| 02 October 2026  | 26.11-rc1        | API freeze                      |
+| 23 October 2026  | 26.11-rc2        | PMD features freeze             |
+| 30 October 2026  | 26.11-rc3        | Builtin apps features freeze    |
+| 06 November 2026 | 26.11-rc4        | Documentation ready             |
+| 18 November 2026 | 26.11.0          | Release                         |
 
-Info:
 
-The flush sequence is open coded four times, and
-rte_mbuf_raw_free_bulk() is __rte_always_inline, so the function body
-grows accordingly. A small static helper or restructuring the loop so
-NULL, not-freed, and pool-change share one flush point would be
-cleaner.
 
-Tests: add a case that mixes flat and chained packets in one array
-(flat run pending when the chain is hit, then flat after it), and one
-with an indirect (cloned) mbuf in the flat path. Current tests do not
-cover the transition into __rte_pktmbuf_free_bulk_fallback() with a
-non-empty run, which is the new logic most likely to break.
+See https://core.dpdk.org/roadmap/
 
-Nit: the blank line added after "m = mbufs[idx];" in the fallback is
-unrelated churn.
+
+Subtrees
+--------
+
+- next-net
+  - 185 patches pending.
+  - 19 due for review.
+
+- next-net-intel
+  - 82 applied, ready for main.
+  - 23 patches in review/waiting.
+
+- next-net-mlx
+  - No update.
+
+- next-broadcom
+  - 10-12 patches pending.
+
+- next-net-mvl
+  - No update.
+
+- next-eventdev
+  - No update.
+
+- next-virtio
+  - Starting to apply patches.
+
+- next-crypto
+  - 26 patches in the backlog.
+  - Starting the merge this week.
+
+- next-dts
+  - No update.
+
+- main
+  - Merging up next-net (and then the next level trees)
+
+
+Other
+-----
+  - None.
+
+LTS
+---
+
+See also: https://core.dpdk.org/roadmap/#stable
+
+LTS versions ongoing/released:
+
+- 25.11.3 - Available.
+- 24.11.7 - Available.
+- 23.11.8 - In progress.
+
+Older releases:
+- 20.11.10 - Will only be updated with CVE and critical fixes.
+- 19.11.14 - Will only be updated with CVE and critical fixes.
+
+- Distros
+  - Debian 13 contains DPDK v24.11
+  - Ubuntu 25.04 contains DPDK v24.11
+  - Ubuntu 24.04 LTS contains DPDK v23.11
+  - RHEL 9 contains DPDK 24.11
+
+Defects
+-------
+
+- Bugzilla links, 'Bugs',  added for hosted projects
+  - https://www.dpdk.org/hosted-projects/
+
+
+
+DPDK Release Status Meetings
+----------------------------
+
+The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
+the
+status of the main tree and sub-trees, and for project managers to track
+progress or milestone dates.
+
+The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
+.jit.si/DPDK
+
+You don't need an invite to join the meeting but if you want a calendar rem=
+inder just
+send an email to "John McNamara <john.mcnamara@intel.com>" for the invite.
+
+
+
+--_000_DS3PR11MB9646BA5CDF1DE0C0BB456719FC832DS3PR11MB9646namp_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div style=3D"font-family: &quot;Courier New&quot;, monospace; font-size: 1=
+1pt; color: rgb(0, 0, 0);">
+Release status meeting minutes 2026-09-22</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Agenda:</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Release Dates</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Subtrees</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Roadmaps</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- LTS</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Defects</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Opens</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Participants:</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Broadcom</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Intel</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Marvell</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Nvidia</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Red Hat</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Stephen Hemminger</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Release Dates</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+-------------</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+The following are the proposed working dates for 26.11:</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| Date &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Milestone &nbsp; &nbsp; =
+&nbsp; &nbsp;| Description &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;=
+ &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+|------------------|------------------|---------------------------------|</=
+div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 31 August 2026 &nbsp; | RFC/v1 patches &nbsp; | Proposal deadline &nbsp; =
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 02 October 2026 &nbsp;| 26.11-rc1 &nbsp; &nbsp; &nbsp; &nbsp;| API freeze=
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbs=
+p;|</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 23 October 2026 &nbsp;| 26.11-rc2 &nbsp; &nbsp; &nbsp; &nbsp;| PMD featur=
+es freeze &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 30 October 2026 &nbsp;| 26.11-rc3 &nbsp; &nbsp; &nbsp; &nbsp;| Builtin ap=
+ps features freeze &nbsp; &nbsp;|</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 06 November 2026 | 26.11-rc4 &nbsp; &nbsp; &nbsp; &nbsp;| Documentation r=
+eady &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 18 November 2026 | 26.11.0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Release &n=
+bsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =
+&nbsp; |</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+See https://core.dpdk.org/roadmap/</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Subtrees</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+--------</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 185 patches pending.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 19 due for review.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net-intel</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 82 applied, ready for main.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 23 patches in review/waiting.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net-mlx</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-broadcom</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 10-12 patches pending.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net-mvl</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-eventdev</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-virtio</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Starting to apply patches.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-crypto</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 26 patches in the backlog.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Starting the merge this week.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-dts</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- main</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Merging up next-net (and then the next level trees)</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Other</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+-----</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - None.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+LTS</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+---</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+See also: https://core.dpdk.org/roadmap/#stable</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+LTS versions ongoing/released:</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- 25.11.3 - Available.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- 24.11.7 - Available.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- 23.11.8 - In progress.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Older releases:</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- 20.11.10 - Will only be updated with CVE and critical fixes.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- 19.11.14 - Will only be updated with CVE and critical fixes.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Distros</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Debian 13 contains DPDK v24.11</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Ubuntu 25.04 contains DPDK v24.11</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Ubuntu 24.04 LTS contains DPDK v23.11</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - RHEL 9 contains DPDK 24.11</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Defects</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+-------</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Bugzilla links, 'Bugs', &nbsp;added for hosted projects</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - https://www.dpdk.org/hosted-projects/</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+DPDK Release Status Meetings</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+----------------------------</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
+the</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+status of the main tree and sub-trees, and for project managers to track</d=
+iv>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+progress or milestone dates.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
+.jit.si/DPDK</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+You don't need an invite to join the meeting but if you want a calendar rem=
+inder just</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+send an email to &quot;John McNamara &lt;john.mcnamara@intel.com&gt;&quot; =
+for the invite.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+</body>
+</html>
+
+--_000_DS3PR11MB9646BA5CDF1DE0C0BB456719FC832DS3PR11MB9646namp_--
