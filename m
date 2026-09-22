@@ -2,144 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66357C982FA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 16:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECA8C982FA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 18:14:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9B01042D26;
-	Tue, 22 Sep 2026 18:41:51 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 7F99042796
- for <dev@dpdk.org>; Tue, 22 Sep 2026 18:41:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790095310; x=1821631310;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=MtYZy6bSMhQpu6IUOCDz4PFpjTPL0ODhlrmc+pwdmnU=;
- b=HM1zxbuWQptwHBKO/yORIKzCx/dSvV/V6hN64fl/a+KnIHqBJVn2/ezT
- BJq2wnilCClxLeUALNrR2w9NnMj2hXyCHwL9k82RODCR7iYr9My6OJJoi
- AOIkEe9O+jzuAm1dyCNIAgePBSyV4eBPyzrtJjsF7L7GoI3zA4Ass8faF
- 6DIydC5ywPX87tSP6Zjqnh9MhBUGaOqf1lGD4eeltW2OuAS7wGH5DRajD
- k67RnLy/1NkLP7xVcE4VQApFy5+pfoVyw1YrFDK0LDA17hqeH4GfLSsot
- q11BUI8EDkJGUIgiwPOh+3m5AS+aREKexfv8xzFxyEBIOF0pY5qtTkhL1 Q==;
-X-CSE-ConnectionGUID: +ME1FifXRe6DNvyRmFhrgA==
-X-CSE-MsgGUID: LS2IeMsbTIKePUW4j8AOVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11913"; a="102071784"
-X-IronPort-AV: E=Sophos;i="6.27,116,1787036400"; d="scan'208";a="102071784"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Sep 2026 09:41:49 -0700
-X-CSE-ConnectionGUID: 9kCQJlnjT6Sisms+01iP1g==
-X-CSE-MsgGUID: u2vLUrjbRIGgIi7NdDVkbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,116,1787036400"; d="scan'208";a="272685062"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Sep 2026 09:41:48 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 22 Sep 2026 09:41:48 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Tue, 22 Sep 2026 09:41:48 -0700
-Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.38) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 22 Sep 2026 09:41:48 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hZSZO1O/Pw4FVxZsU6zvmRyOMlpYt7ILoZcD7r4vlJ+NJZfPZInE/6qrk/5+QAkgIngEv/GYnWkVnFIdFRdMOme7WcwKNVbv/z0xe/QD16KhHUG+llBZ+Fb4mhMM5yERCXCNvmsGoQ6WHNr010aMkl/q2fEA+6pN2mz+rZv46uEVORkvySk/+fdCbjJY0BO3Wj/3f+W+k5I0MebL9+FfoP8ryNbd+TWKXDprn8ZX2oHGCpZla844UONChwN/oWiTJCCygDdVHQryOTgq1YJC0sEU3hCx9KRTo4ECNmgQdckMEzt2+QLWT0akLEkdnQSFlXvhp6QXf7ZWs48Xzy8GSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Rhj5pSFA4F4EMpVVtzZ1Z+fXVYbAPRUjgwB04pjexKI=;
- b=dKXdFghZVd55a7h/izM6YNnz9LNRwHCD2SVEwW1S29u8dTTM7aTh6W3Qbdu+mSBsnh0+ypvMNuuGnF3MYYaqCVLKMXqk5TRu7v6VickFRUh1zNf9yIpKB8tdlPHEqbg9lqb05o3spU9q3uGJtUZi9ErmjbLSH2ocyqq3JNBYBI0JH+S1lFRiRnWQoPs8JIyetut0qnuzdTPIZBnMEfcOSxHnfm5T/eWHfwYSvYriu6nGerJSq7lCPxGLok85g6qGztRlb8/ZAAQCX6pTHYTRb/Q2qnEV5jz0RzhzYg4AiZhlOhBw/13fXk4vn5bHOWEwKfb9X2ztSyEP+YUkJ+EYDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by SA3PR11MB7534.namprd11.prod.outlook.com (2603:10b6:806:305::21)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.16; Tue, 22 Sep
- 2026 16:41:42 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0428.011; Tue, 22 Sep 2026
- 16:41:42 +0000
-Date: Tue, 22 Sep 2026 17:41:37 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, Stephen Hemminger <stephen@networkplumber.org>, "Thomas
- Monjalon" <thomas@monjalon.net>
-Subject: Re: [PATCH v2 00/17] drivers: replace strncpy with strlcpy
-Message-ID: <arKvweESua0SewSt@bricha3-mobl1.ger.corp.intel.com>
-References: <20260623165150.765443-1-bruce.richardson@intel.com>
- <20260624103658.792750-1-bruce.richardson@intel.com>
- <CAJFAV8wTO-xdChto3Tzs2ci1QThtLingNDE_i0bjREhiOORjsQ@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAJFAV8wTO-xdChto3Tzs2ci1QThtLingNDE_i0bjREhiOORjsQ@mail.gmail.com>
-X-ClientProxiedBy: DU7P250CA0028.EURP250.PROD.OUTLOOK.COM
- (2603:10a6:10:54f::33) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+	by mails.dpdk.org (Postfix) with ESMTP id 0F56C410FD;
+	Tue, 22 Sep 2026 20:14:12 +0200 (CEST)
+Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com
+ [74.125.228.43]) by mails.dpdk.org (Postfix) with ESMTP id 4C43540609
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 20:14:11 +0200 (CEST)
+Received: by mail-pz2-f43.google.com with SMTP id
+ 41be03b00d2f7-cc1cea4bfb6so115940a12.3
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 11:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790100850;
+ x=1790705650; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=BA+uX4d8xI008+862nblDXv5sMBJqODODZqA1od5oJY=;
+ b=L3GH87CSc5NoOlchyHAdkpU9OYqa3FQ153VEyT6v6t6ppv8DdnCkboasFXUW1ReuTH
+ S2owoM7857I/BijZOL9HNMamNcHLFkTl5laiEX2eEiSx2Q4gIyrBZWsX393z0aM2NaWC
+ 6PGT1a0kz7RDnTFwr+1HcRqVV335LH/s8Ko7rWK8NbK142cHq+heOIVn1/gdpLCwR+jJ
+ I0G7kJIrrLJlYIRWeQspNRjc0jYnNhs1FDZhO2IBD0TlvgM0nvb/j1/hvDLspaq5UCiN
+ Tq75SJBny/1pJ+i+ayiAmmKYQU7DiMmTArpe1+M28hFHtH91/7lc2nWwzp0iJ5s8bvfN
+ Kocg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790100850; x=1790705650;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=BA+uX4d8xI008+862nblDXv5sMBJqODODZqA1od5oJY=;
+ b=yCCjW2Mz4qY5IZdqldKrL1pz9cwQdMvBvVAcFl36lWQ9TectSEdm7KJClLf6BQEBWG
+ 0jthOKJYoc5AlUo4avYREuAZhySWFxFlQg1QxQ/ZVKxmnWiLXqUNCHJp9VOD+Uq0m+v/
+ StkNUlyxzOsPbK0qQV2coou2q0LrJO2aT+7tmARXgJusJqkP1SKPywObrqjLnJuMf+GC
+ t1xJrmvno1fL7V5oTESTgFiMbz2NV3q7J06EckdSWh8l+B58bBaajs/iyk7TPCozza0j
+ T3bY1S4OAnThphRa4i9IPSIdUFINXQ9jzfZISLbQ6kv0jC9ki1tKRVHwrbUfS/8qv/aN
+ HQTA==
+X-Gm-Message-State: AFuF++lj6P8VTU5kbiW32aIw6ghZWhaRUxp5yOl5oI/5zPVRmCUdWDWV
+ IMC5hsMrfF/EmSC1SR713kxiKNnGzV34AkE2YsLKgYQficH/YK41bayrMKf5Y/bSWJYxqFrxe1m
+ lOqT/
+X-Gm-Gg: AYBFou0FOK5IdNi3zrrSQQgtlnL+/PGuH9zms+U6h4SMcPKU80vxBd0YHn2fXM2YLQ7
+ 1CrMJdabekIfUNSuZqM3YtUVGIlASuWNEUW9eqcrbndgnBNKPUALPajrPt4Np/r+8/iF3o3uF1E
+ gPhax28mN9OCKEgSjVahOE4TOukQwQ9J0x0DlNEdI+4Cyei0xDSudf5X1jcn1qaUeAWE3Yq5fyo
+ 3POdt5QDLDj6KBphPMVIvQFhBqu5zBJGVIsEXscWbtZUT2J5KTShyFhPMza2Shqeln2LL4h9FQh
+ a6iDbGtgJ02VGgvLcsabJatD/7rV491mIfOUjFhjADX4OHkAb5cpVlY+Sjpk4QNH4aAsWMJfEl3
+ Wz4h/T/IH96aqeyiDJfuJLx4i5RCSvuN9L0LoifLd9Mop/AbhrGg/cxk6olv3hMOSLAKcyCXNYQ
+ 42TojXLW7x/ZvyZYqezviTkGI5Rqk0lZ/XGxiCqR07m2foQd28aZ2AoapndT838wj4SwqxYwU5i
+ rvWKps0t2p3d2OWtoEQvB+ZQgXy1UP3TMGbdbcd
+X-Received: by 2002:a17:902:ce08:b0:2dd:ad73:c982 with SMTP id
+ d9443c01a7336-2df69d583b9mr1993405ad.26.1790100850133; 
+ Tue, 22 Sep 2026 11:14:10 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2df6a516410sm27415ad.12.2026.09.22.11.14.09
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 22 Sep 2026 11:14:09 -0700 (PDT)
+Date: Tue, 22 Sep 2026 11:14:08 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Maxime Leroy <maxime@leroys.fr>
+Subject: Re: [PATCH] net: revert add IPv6 traffic class and flow label fields
+Message-ID: <20260922111408.3b2c7bcf@phoenix.local>
+In-Reply-To: <20260922163640.1144749-1-mb@smartsharesystems.com>
+References: <20260922163640.1144749-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|SA3PR11MB7534:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4f1ca96-07ba-4f51-a542-08df18c861b8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|366016|23010399003|1800799024|10067099003|56012099006|6133799003|18002099003|22082099003|11063799006|4143699003;
-X-Microsoft-Antispam-Message-Info: va8JIaIcJUZQ+FQmbMs+/fDK6NJ6CbKxdsXp/Ut/eHOgBjdZLiC8/N5YkTu87IjXPe0+Jk0SSsbhwUtU0Y+MR/ntOrC7+MZnZ44h4x0xls+rKupMS5Q3lyFKPxxdhPWgF7K57q94h2FJidUkshaPVVx+IbMVU41ol0sJiPkneq6JZDuoiQY56lz9vQeNIPcBY4o1hfGebOG6pusvyefjuF7R4y4n2u/gZGzRt0hNon9MKwaYNMgiVtnRTlVGzxJzJdJHpVekn14H7Ph8RZ7GU+JG4/dpQhyc/GDw5nPWtwNyBPfnRvXNHGw1erHFAVzbp6O11gkmkKqBPjg4gq0uR+elwiu7URdH1uVOpYnoUU9vFkDEJLNHMymZBiYlhSoqRRFRLosCMC+P+IubZmiz+x8N4Wjf79D1j7E3dWVHESbQHGzt3GivyJJhr5O8Li9qwa+Lhzs3PxyOAJTV7oCre32gk3cVeQwQTrsli6OPcy/N1c/dJ9rb+1etyW4Lt4D6KmYG4VlUGKdc2+/M6uBR2qOuGO1Kx+ExL9j5SMVjdYvB26L02D7f6NmLfcQTCjTIoGvQFGe3g/VmRgDwdQBPYEkvOGS+LKsrh64mrZ1hOVB9SkeWkBLw5UY9xIGlBKHEXYyjxMc06jAATd2NAIkEJ/PKqOKVtp++v9+7HC6JEZk=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(10067099003)(56012099006)(6133799003)(18002099003)(22082099003)(11063799006)(4143699003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VaZhLL90i2ErhP3mgJBG6maH5t0gojp/wSNg21tV/TLHxGM3E97LTBr+ZAUA?=
- =?us-ascii?Q?9QE4S+k09WU/yfi6yOJtnQqdMAlFQaz/oyaSf8x6vkha4K6raPbexLAA8Rsm?=
- =?us-ascii?Q?19E1FgszWHgHP7KlZatYvjplWSKIcaKk6vJfCD91AMnFzwmpF4z4wqoXsm3X?=
- =?us-ascii?Q?Mw4ZgOmgO+ACI6gRS7i/quPldr5UYVICJC/OjmoqVzLthpf9a49sdsviSL2t?=
- =?us-ascii?Q?WDPOqa2PyD91BjiXa6UZb1JRaBGW23TiPn7A3T9lzqq/ZXyEfAO6ICJy8gdC?=
- =?us-ascii?Q?zs8nMHrCw4+DzNu2Pb9MPPO7uPXtG2EIzklxxvCjdeMthxm+Ddte3KYIAHTX?=
- =?us-ascii?Q?zYiYUxKez1Gv2c4ZODVYjKVkRKkOlQLmkwDKMRXcvhJz+ITp0XBAUgjKM+El?=
- =?us-ascii?Q?Ig2xlbj5+foSG9fXzKDyrkCuXZE7JmW9IxEKoGPoIuTn0kYoNhPf2NDHvW1d?=
- =?us-ascii?Q?RMfJESMrFVHo2CLwC3APBMozzzAC4BzqTSskUpJO5gNEQPcQ64obz8cEPYUv?=
- =?us-ascii?Q?dlfBD8as8HnfW1a4zJQt+qJ4vvIYyobqEHcQl0JQth6kT8eylLdqbO95fVK/?=
- =?us-ascii?Q?Xgn4jHKVC8RDPAqBYEu9gWpjJyv5U0XdSdGyT0suLWZaWrB/fQYHlaPPVIcl?=
- =?us-ascii?Q?dWYmIcq/HzjP2SfX8pyRlpsUJPaN0WKMwBxGcaITu0qEKERPcEBtGhxg8nZ7?=
- =?us-ascii?Q?oI6mYcIRmPJvGw7zCeaI6AFf7dvWTV6qCVRmuQ7kOcn25tSJLbypkz/zrU2f?=
- =?us-ascii?Q?d04OkFS3qUJ1mNXmJKB9CE8jWlNE4BBMN4kJfjzb0YBvCLMg2aS6NO6ZeGE8?=
- =?us-ascii?Q?NJMcN9+Q4qhs7yxKIqh3/c3NKMnWPBpbBvpJE2cb4o9pj3KuIBE+PghkcZ9N?=
- =?us-ascii?Q?6TGEkuQfOLQ4e6xbEdu4pLSzH1N67rxjJO8o0CMrddt5FVt6e0Zmo63V8/Z1?=
- =?us-ascii?Q?9WUw1RqPMJ7STAeghwVpGkCmf6e4+dY1jK/bE3YVBvZoGnBI2VVPzN72LcAx?=
- =?us-ascii?Q?vCsXlD3/5Dzr7qLoaLgNM5fJgJrQ51rMlzI1DUTHvxRPPCTZwUYcvW+er6jK?=
- =?us-ascii?Q?Df+SRqhEIW8Fwp84D52PCxL8SWIGvv5TKLqe875gM1t6O71FeNmV+FU4fQV+?=
- =?us-ascii?Q?m4L51EJDazgulQ0/qaqZN/3X03EJcKJm/XMDYYu/aggbcDMDv4j6X/ZNFuis?=
- =?us-ascii?Q?TLlU3p3HHh8Ay+Dp10gi+Orup/CfLogo0MILP+vLHScx2S1j2xcFCyzoljXk?=
- =?us-ascii?Q?zp58g9DO5r5tuxpZBBoADaTcczkvgCnZNaw2Edt+v2ZOYOEWPpqIHEes5lp8?=
- =?us-ascii?Q?81tnYxjuCwNTicWgmV9ATclCvjfFKOGHnLH3B+w92VzNIdL5Hv1TJCHswBw/?=
- =?us-ascii?Q?Q+HYZT4Tq35mbdsWC9JkY/flj3C76S8FMtoTwdEMeKJD2wcxRZ9zp13vrKxz?=
- =?us-ascii?Q?FluohGsptnxH10zT4rR2vYdE+SjV+ZPZHvyqx1SVfVBudidqwZAdgs4cabiL?=
- =?us-ascii?Q?VoLNu+Naa33RcXvtllO6WBPAGS5lOl+xxjtURFnlNCifAEB4nHBvCmrnYHCK?=
- =?us-ascii?Q?D/3Ug2yUVaempudkRthyI82ABTW7Sh4Q2fgWfvSAon4kXB+hECp7YKYH+FbD?=
- =?us-ascii?Q?H+QkGcsGKrDy/8xnvGVFT79mh1g24qmKch1bMr66mjWtfX7Z/1FN7FLxRjPt?=
- =?us-ascii?Q?0UWgBwU3FOZhPcoCReFJGmprR3fpTTuJoilR2viax84lPSzCG55rdNZ6RriM?=
- =?us-ascii?Q?UVWanQT6NXScSy3N7Pe6GGD/11Ulp2w=3D?=
-X-Exchange-RoutingPolicyChecked: laW3LHL+OqUU6ZsQvijvULFBUbmO6vxBzUT9eQQ+/lbRd4saaC1tJIYmlvuJyh4GuzedY3xjmRIHjtJ1pQefdwWMeORNMpU9UlLoXmfZsbDhpvnNldmXobjhi9/6lVA3MPfFrSeaR9upDcwtEfCFTsww5hyiTnPDPWLJcUJsj/MU26rZ+BrgFGeutFOAKRwjS7zYpinkOSnsLMvsth69lNv6xPYcmW/okT7cDtSx0pBMlMl0KMG9ZUjSju+VqFgxDpVssDKtWcYnmekN4qPBjWqBqK9pkPeJAJFpBO8n62ABAgv3eEuzZr4FFpjegR7v4xHbw3wZ/qJjvEOMagRaYg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4f1ca96-07ba-4f51-a542-08df18c861b8
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2026 16:41:42.4781 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TdtIczNI03TEctcAen7fpGlOW8HDG4JrG6hypXAgUXH5UoXfWUYb4Giw/4VUfsUoamEDfoOJompsEDj8iBewiimFP+Wppl85cJlo6BQWrvo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7534
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -153,85 +82,121 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Sep 22, 2026 at 06:13:08PM +0200, David Marchand wrote:
-> On Wed, 24 Jun 2026 at 12:37, Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
-> >
-> > Many uses of strncpy in DPDK drivers can be directly replaced by
-> > a call to strlcpy instead, which is safer in that it always null-
-> > terminates the string. This AI assisted patchset makes those
-> > simple replacements, adjusting lengths as appropriate.
-> >
-> > After this set, there are still a number of drivers with strncpy calls
-> > in them, but those are not simple strncpy->strlcpy replacements, so
-> > left for later rework.
-> >
-> > v2:
-> > * fix incorrect commit ids for fixlines.
-> > * fix build errors due to missing rte_string_fns.h header include
-> >
-> > Bruce Richardson (17):
-> >   common/cnxk: replace strncpy with strlcpy
-> >   common/mlx5: replace strncpy with strlcpy
-> >   crypto/mvsam: replace strncpy with strlcpy
-> >   crypto/scheduler: replace strncpy with strlcpy
-> >   event/cnxk: replace strncpy with strlcpy
-> >   net/ark: replace strncpy with strlcpy
-> >   net/bnx2x: replace strncpy with strlcpy
-> >   net/cnxk: replace strncpy with strlcpy
-> >   net/dpaa: replace strncpy with strlcpy
-> >   net/ionic: replace strncpy with strlcpy
-> >   net/mlx4: replace strncpy with strlcpy
-> >   net/mlx5: replace strncpy with strlcpy
-> >   net/nfp: replace strncpy with strlcpy
-> >   net/qede: replace strncpy with strlcpy
-> >   net/softnic: replace strncpy with strlcpy
-> >   net/vhost: replace strncpy with strlcpy
-> >   net/virtio: replace strncpy with strlcpy
-> >
-> >  drivers/common/cnxk/roc_model.c                   | 8 ++++----
-> >  drivers/common/mlx5/linux/mlx5_common_os.c        | 2 +-
-> >  drivers/crypto/mvsam/rte_mrvl_pmd.c               | 2 +-
-> >  drivers/crypto/scheduler/scheduler_pmd.c          | 8 ++++----
-> >  drivers/event/cnxk/cnxk_eventdev_stats.c          | 2 +-
-> >  drivers/net/ark/ark_ethdev.c                      | 2 +-
-> >  drivers/net/bnx2x/bnx2x.c                         | 2 +-
-> >  drivers/net/bnx2x/bnx2x_vfpf.c                    | 2 +-
-> >  drivers/net/cnxk/cnxk_eswitch.c                   | 4 ++--
-> >  drivers/net/cnxk/cnxk_rep_msg.c                   | 2 +-
-> >  drivers/net/dpaa/dpaa_ethdev.c                    | 2 +-
-> >  drivers/net/ionic/ionic_main.c                    | 4 ++--
-> >  drivers/net/mlx4/mlx4_ethdev.c                    | 2 +-
-> >  drivers/net/mlx5/mlx5.c                           | 8 ++++----
-> >  drivers/net/mlx5/windows/mlx5_ethdev_os.c         | 2 +-
-> >  drivers/net/nfp/nfpcore/nfp_resource.c            | 2 +-
-> >  drivers/net/qede/qede_ethdev.c                    | 2 +-
-> >  drivers/net/softnic/conn.c                        | 6 ++++--
-> >  drivers/net/vhost/rte_eth_vhost.c                 | 2 +-
-> >  drivers/net/virtio/virtio_user/vhost_kernel_tap.c | 2 +-
-> >  20 files changed, 34 insertions(+), 32 deletions(-)
-> 
-> Series applied.
-> 
-> Thanks for the cleanup Bruce.
-> 
-> Even if the transition is not finished, it is probably worth updating
-> checkpatches.sh to avoid new strncpy additions now.
-> 
-This should be already covered by kernel checkpatch.pl script we wrap, so I
-don't believe we need to add anything:
+On Tue, 22 Sep 2026 16:36:40 +0000
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-  cat /tmp/test_strncpy.patch | devtools/checkpatches.sh -q 2>&1
+> IPv6 header when the field crosses a byte border.
+>=20
+> Let's consider a simplified struct for illustration:
+>=20
+> struct example {
+> 	union {
+> 		rte_be32_t vtc_flow;
+> 		struct {
+> 			uint32_t version:4;
+> 			uint32_t ds:6;
+> 			uint32_t after:22;
+> 			uint32_t after:22;
+> 			uint32_t ds:6;
+> 			uint32_t version:4;
+> 		};
+> 	};
+> };
+>=20
+> struct example e;
+> e.vtc_flow =3D 0x00000000;
+> e.ds =3D 0x3F; // binary: 111111
+>=20
+> With big endian:
+> Value of e: 0000 111111 0000000000000000000000 =3D 0F C0 00 00
+> Memory at e's location: 0F C0 00 00
+> As expected!
+>=20
+> With little endian:
+> Memory at e's location: 00 00 C0 0F
+> The reason being that the bytes are filled with bits starting with the
+> LSB, so when crossing a byte border, the "ds" field doesn't continue at
+> the following bits, i.e. the MSB of the next byte, but at the four LSB
+> of the next byte.
+>=20
+> This wrapping cannot even be fixed by having separate, dedicated structs
+> for each field (with each their own "before" and "after" filler fields)
+> in the vtc_flow union.
+>=20
+> There is a GCC attribute to fix this, but nothing similar is offered by
+> Clang or MSVC:
+> __attribute__((scalar_storage_order("big-endian")))
+>=20
+> Bugzilla ID: 1679
+> Fixes: cba27998dc81 ("net: add IPv6 traffic class and flow label fields")
+> Cc: stable@dpdk.org
+>=20
+> Reported-by: Maxime Leroy <maxime@leroys.fr>
+> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> ---
 
-  ### [PATCH] test: check strncpy detection
+Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
 
-  WARNING:COMMIT_MESSAGE: Missing commit description - Add an appropriate one
+Long form AI review. This may need addressing before merge.
 
-  WARNING:STRNCPY: Prefer strscpy, strscpy_pad, or __nonstring over strncpy - see: https://github.com/KSPP/linux/issues/90
-  #20: FILE: ...
+The revert is correct and complete. cba27998dc81 only touched
+rte_ip6.h, there are no in-tree users of the removed fields, and the
+struct layout is unchanged so there is no ABI impact.
 
+Keeping Cc: stable is right. The fields shipped in 24.11 and 25.11
+but access the wrong bits on every little endian target, so any
+direct user is already broken and a build failure is the better
+outcome. Please add a note for the stable release notes pointing to
+vtc_flow and the RTE_IPV6_HDR_*_MASK macros. Code that byte swaps
+vtc_flow in place before using the fields does work on little endian
+today and will stop compiling.
 
-If we replace the checkpatches.sh script with Stephen's python version, we
-can probably get a better error message more relevant for userspace.
+The commit message needs rework before this goes in.
 
-/Bruce
+The example struct does not compile: after, ds and version are each
+declared twice with no #if between the two orderings. Since it is
+the justification for the revert, either fix it or drop it and show
+the actual result.
+
+The root cause is understated. It is not only ds crossing a byte
+boundary; every field is wrong on little endian, including version.
+A uint32_t bitfield is allocated against the host order value of
+the word, while vtc_flow holds network order. The little endian
+layout is only correct after byte swapping vtc_flow.
+
+On x86_64 with the removed layout:
+
+  header bytes 6b 91 23 45 (ver 6, DSCP EF, ECT(1), fl 0x12345)
+    -> version=3D4 ds=3D0x14 ecn=3D2 flow_label=3D0x3916b
+  version =3D 6  -> bytes 00 00 00 60
+  ds =3D 0x3f    -> bytes 00 00 c0 0f
+
+Suggested wording:
+
+  On little endian, a 32-bit bitfield is allocated from the least
+  significant bit of the host order word, but vtc_flow is stored in
+  network order. All four fields therefore read and write the wrong
+  bits. For example, setting version to 6 writes 0x60 into the last
+  byte of the word.
+
+  ds and flow_label are not contiguous in memory on little endian,
+  so no reordering of bitfields can express them.
+
+For reference, neither Linux nor FreeBSD tries this. Linux uses a u8
+bitfield only for version and the upper nibble of traffic class,
+then flow_lbl[3], with big endian masks (IPV6_FLOWINFO_MASK,
+IPV6_FLOWLABEL_MASK) for the rest. FreeBSD has no bitfields: a raw
+ip6_flow word, the ip6_vfc byte for version, and per byte order
+masks. DPDK already has the equivalent in rte_ipv6_check_version()
+and RTE_IPV6_HDR_*_MASK, so nothing is lost.
+
+Release note: "defect bitfields" reads oddly and gives no migration
+path. Suggest:
+
+  * net: Removed ``version``, ``ds``, ``ecn`` and ``flow_label``
+    bitfields from ``struct rte_ipv6_hdr``. They accessed the wrong
+    bits on little endian. Use ``vtc_flow`` with the
+    ``RTE_IPV6_HDR_*_MASK`` and ``RTE_IPV6_HDR_*_SHIFT`` macros.
+
+Minor: "Reverted the patch introducing them." should be imperative,
+"Revert the patch that introduced them."
