@@ -2,71 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3B1C98302
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 19:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A70CC98302
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 19:42:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BF1A442EAE;
-	Tue, 22 Sep 2026 21:41:51 +0200 (CEST)
-Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
- [74.125.227.171])
- by mails.dpdk.org (Postfix) with ESMTP id 894B842EAC
- for <dev@dpdk.org>; Tue, 22 Sep 2026 21:41:47 +0200 (CEST)
-Received: by mail-pj2-f43.google.com with SMTP id
- 98e67ed59e1d1-396ccd4f99dso200348a91.2
- for <dev@dpdk.org>; Tue, 22 Sep 2026 12:41:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BEC1D42EAC;
+	Tue, 22 Sep 2026 21:41:52 +0200 (CEST)
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
+ [74.125.227.141])
+ by mails.dpdk.org (Postfix) with ESMTP id CB33142EB9
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 21:41:48 +0200 (CEST)
+Received: by mail-pj2-f13.google.com with SMTP id
+ 98e67ed59e1d1-39b31b4281eso192120a91.2
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 12:41:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790106107;
- x=1790710907; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790106108;
+ x=1790710908; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=U9h6Ms4aW7XkWOL3AAI2C3brvZRL5yXmwumWG1h5CMU=;
- b=FlcRy9BBpomDjHfuxKJxuTCiR6NmzfkLQzkr0vGl0iECQL930f2+uhnkOQJZREnyGW
- D9hnxLpaAEmOD9B5mcUMKZilafndE3WcR88DXWWxNLmCh8VYG4EiW27/dDrUfsG5AYah
- z51u+JigAtpkVDc4cSIZj+HfsqDzqDjjS38KP4fvz8aIVh0NYlFXsQAEHiB+IQSyKzCU
- 4QGZ+ThpStYE+3YmPDmwvy5zNCZZXQ4aWVujWjga9vzmo+VLtDKNBD14p2VVdwC+NxSt
- 3lxkBniFO+cpFYRZfWhQ2Oc6QXdifMaxqp5KwQGtamZLoJsLdSZrHB2t4w+GyOFp6m8r
- +YhQ==
+ bh=N7Mt+JtKrvTHA7QJdvyUav78aGodTuJSvSASY3sszps=;
+ b=UCzlpgYWdfNwtH2bWNwCqDmN4253WwnMfQ4/LsL5uSQ3JaUGByJArgbScp87U7TCwo
+ 3Xz8qlCvxSz/3svuZypevKbQ12f+Vo0gET/4en+HS9yrHVVB68cUi2rY8cbq0/JomPs2
+ DtWowXjzgoDq/bOzSkFpqNl6r9YKwmLiogkSILBXeJKqJf40yd7sCI/qld05DOd5X/D1
+ ZZKR0vv8iYcuXRZ/NtnVwezv3kSNoakK+kPAz0UhmUNpt6ak/AF4UrlcX8Oum3hjuwvK
+ oCtpY9yW4U2E1UJx4iC4Tl3YnVhJSfrfRqAt6sLdVDpN1HxYXBANBv3piXyj5CbdrStJ
+ jHtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790106107; x=1790710907;
+ d=1e100.net; s=20260707; t=1790106108; x=1790710908;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=U9h6Ms4aW7XkWOL3AAI2C3brvZRL5yXmwumWG1h5CMU=;
- b=xxAqXyW3wL5vsgexMBHn8v0q1uG5bY3qbA22p8Gf40cI4bg97UHfyjoQyXo8sHENrR
- zLD9CxyNwBVSo7Rn+JyaI78GlfpmI7Zg2maeBmgJgLKk6uYiFf+Py/wwcml8pcZNtVYR
- vRF7c0fB/FUEuRKVcF9GHlJW+aoC7BSMVRr03D7RUegXwijjtvu+QVuXtYhIlRzMvpcT
- xG5IVhq4/yatvn/or+MgkApcj6o2e15L3BrtFxvqiBSpxkJsG6/XWJ32bfqfUJNgcqg4
- znk+x8RGTtNOcyngintVgceFTrOfWEq6QlT04lsycuIAehAy9M0AHEMBOHBuuPa7hpWL
- t7bw==
-X-Gm-Message-State: AFuF++nKvIW0R5D0mABoYOxahtqs17wkpX7cMV2+zgJBkL1c8s4KSo7j
- VJk+RXo+jXScBjkzMU77AoXUvr04AhcEgw8u4fBf0sawqnI5tDixi0mtXIfnnHborul/uSYOmgK
- Iojqckd0=
-X-Gm-Gg: AYBFou3MUqTh5zUZsrV2haZz3RaWOh+gE/8XdNms/F0l1CUWkeLWmwqzis8SzSLpuJ7
- ZeRyKClpRckd9x8bYEaLsjs62x5aaqy7c3wTw99xt8epCiIWYeaLqKm/nqe5x0IGLWwcAjRE777
- JW7lajreB+bs3gnFY/Fw4LzHF/is9XC8FrlacekN1j/bFfjNvVrViPXz0sLbf1my4qhmhpUlmYQ
- L7aFUMKz//2yVG5gvLoJGolwyDd5hD7bj014rZd0LpIcrlWBntRTGYU9b/dj1RgrYE+2u5xv56N
- BdK6GWvEiI7xDesakc+LSDCSic1qjwLNBB2cia5ilc+60PET02UtbuANiq33Me1XUuImMHiZzM0
- uv511ZJmsamjk2rV+Rv7hrBoI29cpREFycpUJOdjhGhE7RM1vKuFNTzj4+ipgh1GPD95gOOIR+R
- DpGMyOT8uax02HhQ5hy2TSeHm+i3KJamP6MJLhK0VJbZTdADQXhSCGrjvVqEahC7WJAJeFFBUVM
- ORgDYS4MP/qLUUhEJZhqpZQLdzT7+BXUiNSM9hicEFplbFu
-X-Received: by 2002:a17:90b:3dc3:b0:39e:4c81:6c96 with SMTP id
- 98e67ed59e1d1-3a07e56914bmr436108a91.28.1790106105554; 
- Tue, 22 Sep 2026 12:41:45 -0700 (PDT)
+ bh=N7Mt+JtKrvTHA7QJdvyUav78aGodTuJSvSASY3sszps=;
+ b=WBdSYISLenHMlYUUZxdN8RVAgzGXrqoZXsncdk26jfbIBHdTNqweuF2F+FON+3VNR9
+ RNm8aV1yshv0w5LgBIisT6ntybHh+3xnDY4SyC4I6BWbUBoZx40QCVYl/sBOzFV7ogMP
+ ViFjU1oQsLa0Dfe3EMGttIt3xAQlmJ04o1LcdpyBe6id9P9+iTVL/TJnx23jgRIcgEgz
+ 5vEgISReN3lZDSp8zeI54ixVbwksoIsS5vC3FT81cddS361Q/RLbpmQuIEFB0SmlqzBX
+ WRG/QKZFzIDgZWfs/Wc6vewlrkxpZRsuUBRSq/kxIDwa/F9IF4z48vyPq7CADt+S7+Op
+ 2uMg==
+X-Gm-Message-State: AFuF++k9+iDTu5IPS3VcmavRDTxN43A4v+6hd+NtF1QTL8kPOYGlx+1K
+ y2+AvJ/LhDU/qxP+WOwHBsyx4nk8fJLccRidpDnOOcder+7FTz47YjCyZx4z73mo8YwItFxUP2x
+ m6nn+Zow=
+X-Gm-Gg: AYBFou3v9lhVlHpXT9su7RTyLaZ+R6Ex8p0M41mUTj3gedjcuWnLoGSv/EQb9XIWMB3
+ n/p7G8731QiLZZjtFTUzJ8qVEs/YmDetTJ8PUYJ+WbiScWX9uOciPZDrmBt2bULNP9F6kFaMS6x
+ +zov0C9b903h5Bf//RG7rANplukf9a8IAFuCpQm+GZp3hHPKbzgd8BUy1IJSy5rL5W2YTFJhROx
+ ZATovhAiSCzU9HRuzX9gZZz7dkoEWd7SXQINKfXKNxizphmXj0f9r3NrTXHCNVETyutf1V7MRO6
+ ttn5CgVFEL23J/PjjuuQB3NVH2w6MUomJbtjnk2bk0WcD78SSZFjoYii1R6i4OgQ/7/0xvJOc0V
+ 7bPQ9lm1yYOTWbQwAi2NyVW1rnw4np83Za4Okt2+23FCehi13A54CgEY6O6Y2qBWZuRpuff3Ohz
+ V+DI6B7j4J8JPY8qXb3FxM4Y9grnuDQarG7WVoZ7UNnIfcZ3y6Ugkd1hsV6KmydiIkrXfkCYfJ4
+ sjhf81ISMookfRGWaYFv7jejGWIRjstWODz2Gz4Yo7pm5aU
+X-Received: by 2002:a17:90b:2d05:b0:3a0:2900:f56c with SMTP id
+ 98e67ed59e1d1-3a07e705245mr379499a91.57.1790106107791; 
+ Tue, 22 Sep 2026 12:41:47 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a07ddf1cf3sm814881a91.9.2026.09.22.12.41.44
+ 98e67ed59e1d1-3a07ddf1cf3sm814881a91.9.2026.09.22.12.41.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 22 Sep 2026 12:41:45 -0700 (PDT)
+ Tue, 22 Sep 2026 12:41:46 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Arthur Chan <arthur.chan@adalogics.com>,
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Aaron Conole <aconole@redhat.com>, Thomas Monjalon <thomas@monjalon.net>,
  Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>,
- Jakub Grajciar <jgrajcia@cisco.com>, Ferruh Yigit <ferruh.yigit@amd.com>
-Subject: [PATCH 4/7] net/memif: validate control channel requests
-Date: Tue, 22 Sep 2026 12:40:55 -0700
-Message-ID: <20260922194138.508919-5-stephen@networkplumber.org>
+ Jakub Grajciar <jgrajcia@cisco.com>
+Subject: [PATCH 6/7] net/memif: add server/client connectivity test
+Date: Tue, 22 Sep 2026 12:40:57 -0700
+Message-ID: <20260922194138.508919-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260922194138.508919-1-stephen@networkplumber.org>
 References: <20260922194138.508919-1-stephen@networkplumber.org>
@@ -85,287 +85,233 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The server can not trust the connecting client, validate
-connection requests before acting on them.
+Add a black box test that launches a memif server and client as two
+separate testpmd processes connected over a shared socket, and checks
+that traffic flows in both directions with no descriptor validation
+errors. This exercises the peer request validation over a real
+connection without depending on any internal driver API, and provides
+the two-instance harness that an adversarial (fuzzing) peer can be
+driven from later.
 
-Check the file passed with region request to make sure that the
-claimed region size is backed by the file. Mapping beyond the end
-of a file succeeds and only faults on access, so a client that
-overstates the size can otherwise fault the server with SIGBUS.
-This also underpins the data path descriptor checks, which bound
-each descriptor against the region size.
+Both instances forward what they receive, so the client to server and
+server to client rings both carry traffic and the descriptors the
+client writes are validated on both paths. The client seeds the first
+burst with "start tx_first", which has to be issued as a command since
+--tx-first can not be combined with interactive mode.
 
-Warn when the region is not sealed against shrinking, but do not
-reject it. Requiring a seal would disconnect conforming clients:
-VPP's hugepage backed regions can not be sealed, and a memfd
-created without MFD_ALLOW_SEALING can not be distinguished from
-one whose owner chose not to seal.
+The test is run from the CI alongside test-null.sh. It skips (exit 77)
+when the memif driver was not built, as in the CI jobs restricted with
+-Denable_drivers=net/null, and when fewer than four cores are online
+since the two primary processes need two cores each.
 
-For an add ring request: require rings to be added in order exactly
-once so the ring counts can not exceed the number of configured
-queues, bound the ring size to the advertised maximum, reject
-unsupported private headers, and check that the referenced region
-exists and that the ring plus its descriptor table fits inside that
-region at a naturally aligned offset.
-
-A passed file descriptor is also closed when the message that
-carried it does not take one. Only add region and add ring consume
-an fd, so without this a client could attach one to any other
-message type and exhaust the file descriptors of the server.
-
-Bugzilla ID: 2011
-Bugzilla ID: 2012
-Bugzilla ID: 2013
-Bugzilla ID: 2019
-Fixes: 09c7e63a71f9 ("net/memif: introduce memory interface PMD")
-Cc: stable@dpdk.org
-
-Reported-by: Arthur Chan <arthur.chan@adalogics.com>
+Bugzilla ID: 2016
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Tested-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
 ---
- drivers/net/memif/memif_socket.c | 129 ++++++++++++++++++++++++++-----
- 1 file changed, 108 insertions(+), 21 deletions(-)
+ .ci/linux-build.sh     |   1 +
+ MAINTAINERS            |   1 +
+ devtools/test-memif.sh | 169 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 171 insertions(+)
+ create mode 100755 devtools/test-memif.sh
 
-diff --git a/drivers/net/memif/memif_socket.c b/drivers/net/memif/memif_socket.c
-index 898ad75fa6..8231a936e5 100644
---- a/drivers/net/memif/memif_socket.c
-+++ b/drivers/net/memif/memif_socket.c
-@@ -7,6 +7,7 @@
- #include <unistd.h>
- #include <sys/types.h>
- #include <sys/socket.h>
-+#include <sys/stat.h>
- #include <sys/ioctl.h>
- #include <errno.h>
+diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
+index e0b914a142..605265d7b6 100755
+--- a/.ci/linux-build.sh
++++ b/.ci/linux-build.sh
+@@ -178,6 +178,7 @@ if [ -z "$cross_file" ]; then
+     failed=
+     configure_coredump
+     devtools/test-null.sh || failed="true"
++    devtools/test-memif.sh || [ $? = 77 ] || failed="true"
+     catch_coredump
+     catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
+     check_traces
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 56e20d993d..f8b117c57f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1165,6 +1165,7 @@ M: Jakub Grajciar <jgrajcia@cisco.com>
+ F: drivers/net/memif/
+ F: doc/guides/nics/memif.rst
+ F: doc/guides/nics/features/memif.ini
++F: devtools/test-memif.sh
  
-@@ -262,6 +263,8 @@ memif_msg_receive_add_region(struct rte_eth_dev *dev, memif_msg_t *msg,
- 	struct pmd_process_private *proc_private = dev->process_private;
- 	memif_msg_add_region_t *ar = &msg->add_region;
- 	struct memif_region *r;
-+	struct stat st;
-+	int seals;
  
- 	if (fd < 0) {
- 		memif_msg_enq_disconnect(pmd->cc, "Missing region fd", 0);
-@@ -272,13 +275,32 @@ memif_msg_receive_add_region(struct rte_eth_dev *dev, memif_msg_t *msg,
- 			ar->index != proc_private->regions_num ||
- 			proc_private->regions[ar->index] != NULL) {
- 		memif_msg_enq_disconnect(pmd->cc, "Invalid region index", 0);
--		return -1;
-+		goto error;
-+	}
+ Crypto Drivers
+diff --git a/devtools/test-memif.sh b/devtools/test-memif.sh
+new file mode 100755
+index 0000000000..065ba08347
+--- /dev/null
++++ b/devtools/test-memif.sh
+@@ -0,0 +1,169 @@
++#! /bin/sh -e
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright 2026 Stephen Hemminger
 +
-+	/* The client is not trusted to describe the region it shares. */
-+	if (ar->size == 0 || fstat(fd, &st) < 0 || (uint64_t)st.st_size < ar->size) {
-+		memif_msg_enq_disconnect(pmd->cc, "Invalid region size", 0);
-+		goto error;
- 	}
- 
-+	/*
-+	 * Prefer regions sealed against shrinking so the peer can not truncate
-+	 * the file after connect and fault the server. Sealing is not supported
-+	 * on all fd types (for example hugetlbfs).
-+	 */
-+	seals = fcntl(fd, F_GET_SEALS);
-+	if (seals < 0)
-+		MIF_LOG(INFO, "Port %u region %u fd does not support sealing",
-+			dev->data->port_id, ar->index);
-+	else if ((seals & F_SEAL_SHRINK) == 0)
-+		MIF_LOG(NOTICE, "Port %u region %u fd is not sealed against shrinking",
-+			dev->data->port_id, ar->index);
++# Run a memif server and client testpmd pair over a shared socket and
++# check that traffic flows in both directions without descriptor errors.
++# This is the black box connectivity and regression baseline for the
++# memif peer request validation; adversarial (fuzz) peers can be added
++# as a separate driver against the same two-instance setup.
 +
- 	r = rte_zmalloc("region", sizeof(struct memif_region), 0);
- 	if (r == NULL) {
- 		memif_msg_enq_disconnect(pmd->cc, "Failed to alloc memif region.", 0);
--		return -ENOMEM;
-+		goto error;
- 	}
- 
- 	r->fd = fd;
-@@ -289,46 +311,92 @@ memif_msg_receive_add_region(struct rte_eth_dev *dev, memif_msg_t *msg,
- 	proc_private->regions_num++;
- 
- 	return 0;
-+error:
-+	close(fd);
-+	return -1;
- }
- 
- static int
- memif_msg_receive_add_ring(struct rte_eth_dev *dev, memif_msg_t *msg, int fd)
- {
- 	struct pmd_internals *pmd = dev->data->dev_private;
-+	struct pmd_process_private *proc_private = dev->process_private;
- 	memif_msg_add_ring_t *ar = &msg->add_ring;
-+	const struct memif_region *r;
- 	struct memif_queue *mq;
-+	uint64_t ring_size;
- 
- 	if (fd < 0) {
- 		memif_msg_enq_disconnect(pmd->cc, "Missing interrupt fd", 0);
- 		return -1;
- 	}
- 
--	/* check if we have enough queues */
-+	/* rings must be added in order, exactly once */
- 	if (ar->flags & MEMIF_MSG_ADD_RING_FLAG_C2S) {
--		if (ar->index >= pmd->cfg.num_c2s_rings) {
-+		if (ar->index >= pmd->cfg.num_c2s_rings ||
-+				ar->index != pmd->run.num_c2s_rings) {
- 			memif_msg_enq_disconnect(pmd->cc, "Invalid ring index", 0);
--			return -1;
-+			goto error;
- 		}
--		pmd->run.num_c2s_rings++;
- 	} else {
--		if (ar->index >= pmd->cfg.num_s2c_rings) {
-+		if (ar->index >= pmd->cfg.num_s2c_rings ||
-+				ar->index != pmd->run.num_s2c_rings) {
- 			memif_msg_enq_disconnect(pmd->cc, "Invalid ring index", 0);
--			return -1;
-+			goto error;
- 		}
--		pmd->run.num_s2c_rings++;
-+	}
++build=${1:-build} # first argument can be the build directory
++testpmd=$1 # or first argument can be the testpmd path
++srvcores=${2:-0-1} # cores for the server instance
++clicores=${3:-2-3} # cores for the client instance
++eal_options=$4
++testpmd_options=$5
 +
-+	if (ar->log2_ring_size > ETH_MEMIF_MAX_LOG2_RING_SIZE) {
-+		memif_msg_enq_disconnect(pmd->cc, "Invalid ring size", 0);
-+		goto error;
-+	}
++[ -f "$testpmd" ] && build=$(dirname $(dirname $testpmd))
++[ -f "$testpmd" ] || testpmd=$build/app/dpdk-testpmd
++[ -f "$testpmd" ] || testpmd=$build/app/testpmd
++if [ ! -f "$testpmd" ] ; then
++	echo 'ERROR: testpmd cannot be found' >&2
++	exit 1
++fi
 +
-+	/* private headers are not supported */
-+	if (ar->private_hdr_size != 0) {
-+		memif_msg_enq_disconnect(pmd->cc, "Unsupported private header", 0);
-+		goto error;
-+	}
++if ldd $testpmd | grep -q librte_ ; then
++	export LD_LIBRARY_PATH=$build/lib:$LD_LIBRARY_PATH
++	libs="-d $build/drivers"
++else
++	libs=
++fi
 +
-+	if (ar->region >= proc_private->regions_num ||
-+			proc_private->regions[ar->region] == NULL) {
-+		memif_msg_enq_disconnect(pmd->cc, "Invalid region index", 0);
-+		goto error;
-+	}
++# Skip (do not fail) where the driver was not built, for example a
++# build restricted with -Denable_drivers.
++config=$build/rte_build_config.h
++if [ -f "$config" ] && ! grep -q '^#define RTE_NET_MEMIF ' $config ; then
++	echo 'SKIP: memif driver is not built' >&2
++	exit 77 # automake convention for a skipped test
++fi
 +
-+	/*
-+	 * The ring and its descriptors must lie inside the region.
-+	 * Require natural alignment of the ring for atomic load/store.
-+	 * Existing DPDK and VPP put it on cache line boundary.
-+	 */
-+	r = proc_private->regions[ar->region];
-+	ring_size = sizeof(memif_ring_t) +
-+		sizeof(memif_desc_t) * ((uint64_t)1 << ar->log2_ring_size);
-+	if ((ar->offset & (sizeof(uint64_t) - 1)) != 0 ||
-+			ar->offset + ring_size > r->region_size) {
-+		memif_msg_enq_disconnect(pmd->cc, "Invalid ring offset", 0);
-+		goto error;
- 	}
- 
- 	mq = (ar->flags & MEMIF_MSG_ADD_RING_FLAG_C2S) ?
- 	    dev->data->rx_queues[ar->index] : dev->data->tx_queues[ar->index];
- 
-+	/* Takes ownership of the fd, so nothing to close after this point. */
- 	if (rte_intr_fd_set(mq->intr_handle, fd))
--		return -1;
-+		goto error;
++# The server and client run as two separate primary processes, needing
++# two cores each. Skip (do not fail) where there are not enough cores.
++# Use nproc rather than getconf, it respects the affinity mask.
++ncpus=$(nproc 2>/dev/null || echo 1)
++if [ "$ncpus" -lt 4 ] ; then
++	echo "SKIP: memif test needs 4 cores, only $ncpus online" >&2
++	exit 77
++fi
 +
-+	if (ar->flags & MEMIF_MSG_ADD_RING_FLAG_C2S)
-+		pmd->run.num_c2s_rings++;
-+	else
-+		pmd->run.num_s2c_rings++;
- 
- 	mq->log2_ring_size = ar->log2_ring_size;
- 	mq->region = ar->region;
- 	mq->ring_offset = ar->offset;
- 
- 	return 0;
-+error:
-+	close(fd);
-+	return -1;
- }
- 
- static int
-@@ -658,17 +726,11 @@ memif_msg_receive(struct memif_control_channel *cc)
- 		return -1;
- 
- 	size = recvmsg(rte_intr_fd_get(cc->intr_handle), &mh, 0);
--	if (size != sizeof(memif_msg_t)) {
--		MIF_LOG(DEBUG, "Invalid message size = %zd", size);
--		if (size > 0)
--			/* 0 means end-of-file, negative size means error,
--			 * don't send further disconnect message in such cases.
--			 */
--			memif_msg_enq_disconnect(cc, "Invalid message size", 0);
--		return -1;
--	}
--	MIF_LOG(DEBUG, "Received msg type: %u.", msg.type);
- 
-+	/*
-+	 * Collect any passed fd first; a short message can still carry one,
-+	 * and it has to be closed on every path out of this function.
-+	 */
- 	cmsg = CMSG_FIRSTHDR(&mh);
- 	while (cmsg) {
- 		if (cmsg->cmsg_level == SOL_SOCKET) {
-@@ -680,10 +742,23 @@ memif_msg_receive(struct memif_control_channel *cc)
- 		cmsg = CMSG_NXTHDR(&mh, cmsg);
- 	}
- 
-+	if (size != sizeof(memif_msg_t)) {
-+		MIF_LOG(DEBUG, "Invalid message size = %zd", size);
-+		if (size > 0)
-+			/* 0 means end-of-file, negative size means error,
-+			 * don't send further disconnect message in such cases.
-+			 */
-+			memif_msg_enq_disconnect(cc, "Invalid message size", 0);
-+		ret = -1;
-+		goto exit;
-+	}
-+	MIF_LOG(DEBUG, "Received msg type: %u.", msg.type);
++# Per run temporary socket and logs, cleaned up on exit.
++rundir=$(mktemp -d)
++sock=$rundir/memif.sock
++srvlog=$rundir/server.log
++clilog=$rundir/client.log
++srvpid=
 +
- 	if (cc->dev == NULL && msg.type != MEMIF_MSG_TYPE_INIT) {
- 		MIF_LOG(DEBUG, "Unexpected message.");
- 		memif_msg_enq_disconnect(cc, "Unexpected message", 0);
--		return -1;
-+		ret = -1;
-+		goto exit;
- 	}
- 
- 	/* get device from hash data */
-@@ -736,7 +811,9 @@ memif_msg_receive(struct memif_control_channel *cc)
- 			goto exit;
- 		break;
- 	case MEMIF_MSG_TYPE_ADD_REGION:
-+		/* The handler owns the fd from here, on success and on error. */
- 		ret = memif_msg_receive_add_region(cc->dev, &msg, afd);
-+		afd = -1;
- 		if (ret < 0)
- 			goto exit;
- 		ret = memif_msg_enq_ack(cc->dev);
-@@ -744,7 +821,9 @@ memif_msg_receive(struct memif_control_channel *cc)
- 			goto exit;
- 		break;
- 	case MEMIF_MSG_TYPE_ADD_RING:
-+		/* The handler owns the fd from here, on success and on error. */
- 		ret = memif_msg_receive_add_ring(cc->dev, &msg, afd);
-+		afd = -1;
- 		if (ret < 0)
- 			goto exit;
- 		ret = memif_msg_enq_ack(cc->dev);
-@@ -774,6 +853,14 @@ memif_msg_receive(struct memif_control_channel *cc)
- 	}
- 
-  exit:
-+	/*
-+	 * A peer can attach an fd to any message, but only add region and
-+	 * add ring take one. Close the rest, otherwise a client could
-+	 * exhaust the file descriptors of the server.
-+	 */
-+	if (afd >= 0)
-+		close(afd);
++cleanup()
++{
++	[ -n "$srvpid" ] && kill $srvpid 2>/dev/null || true
++	rm -rf $rundir
++}
++trap cleanup EXIT
 +
- 	return ret;
- }
- 
++common="--no-huge -m 64 --in-memory --file-prefix"
++
++# Use a pathname (non abstract) socket so its creation can be waited on
++# and so it is removed with the run directory on exit.
++vdev_srv="net_memif0,role=server,socket-abstract=no,socket=$sock"
++vdev_cli="net_memif0,role=client,socket-abstract=no,socket=$sock"
++
++# Both sides forward what they receive back to the peer, so that the
++# client to server (C2S) and server to client (S2C) rings both carry
++# traffic; descriptors supplied by the client are validated on both.
++# The server starts first, it listens on the socket.
++$testpmd $common memif_srv -l $srvcores $libs \
++	--vdev=$vdev_srv $eal_options -- \
++	--no-mlockall --total-num-mbufs=8192 \
++	--forward-mode=macswap --auto-start --stats-period 1 \
++	$testpmd_options > $srvlog 2>&1 &
++srvpid=$!
++
++# Wait for the server to create the listening socket (up to ~5s).
++tries=0
++while [ ! -S "$sock" ] ; do
++	tries=$((tries + 1))
++	if [ $tries -gt 50 ] ; then
++		echo 'ERROR: server socket not created' >&2
++		cat $srvlog >&2
++		exit 1
++	fi
++	sleep 0.1 2>/dev/null || sleep 1
++done
++
++# The client seeds the first burst with "start tx_first" and then
++# forwards what comes back, so the packets keep going round. It is
++# interactive (-i, not -ia) so that the burst is sent by that command
++# rather than by an auto-start with nothing to forward yet. Keep going
++# on a non-zero exit so that the logs below are still reported.
++clistatus=0
++(echo 'start tx_first' && sleep 3 && echo stop) | \
++$testpmd $common memif_cli -l $clicores $libs \
++	--vdev=$vdev_cli $eal_options -- \
++	--no-mlockall --total-num-mbufs=8192 \
++	--forward-mode=io --stats-period 1 \
++	$testpmd_options -i > $clilog 2>&1 || clistatus=$?
++
++# Let the server drain and print a final stats block, then stop it.
++sleep 1
++kill $srvpid 2>/dev/null || true
++wait $srvpid 2>/dev/null || true
++srvpid=
++
++fail=0
++
++if [ $clistatus -ne 0 ] ; then
++	echo "ERROR: client exited with status $clistatus" >&2
++	fail=1
++fi
++
++# testpmd prints a periodic statistics block per port and a final forward
++# statistics block. Match any line showing a non-zero count rather than
++# the last one, so that the result does not depend on when each instance
++# happened to be stopped.
++nonzero()
++{
++	grep "$2" "$1" | grep -q "$2"'[[:space:]]*[^0[:space:]]'
++}
++
++# Both rings must carry traffic: the client drives the client to server
++# ring and the server sends the same packets back over server to client.
++check_nonzero() # log pattern description
++{
++	if ! nonzero "$1" "$2" ; then
++		echo "ERROR: $3" >&2
++		fail=1
++	fi
++}
++
++check_nonzero $clilog 'TX-packets: ' 'client did not transmit any packet'
++check_nonzero $srvlog 'RX-packets: ' 'server did not receive any packet'
++check_nonzero $srvlog 'TX-packets: ' 'server did not transmit any packet'
++check_nonzero $clilog 'RX-packets: ' 'client did not receive any packet'
++
++# A conforming peer must not trip descriptor validation: no rx/tx errors
++# and no "bad descriptor" log line on either side.
++for log in $srvlog $clilog ; do
++	if nonzero $log 'RX-errors: ' ; then
++		echo "ERROR: RX-errors reported in $log" >&2
++		fail=1
++	fi
++	if nonzero $log 'TX-errors: ' ; then
++		echo "ERROR: TX-errors reported in $log" >&2
++		fail=1
++	fi
++	if grep -q 'bad descriptor' $log ; then
++		echo "ERROR: descriptor validation rejected a valid request in $log" >&2
++		fail=1
++	fi
++done
++
++if [ $fail -ne 0 ] ; then
++	echo '--- server log ---' >&2
++	cat $srvlog >&2
++	echo '--- client log ---' >&2
++	cat $clilog >&2
++	exit 1
++fi
++
++echo 'memif server/client forwarding: OK'
 -- 
 2.53.0
 
