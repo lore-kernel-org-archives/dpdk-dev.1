@@ -2,30 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE8DC982FF
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 12:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B39C982FF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 12:55:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F12CE42E54;
-	Tue, 22 Sep 2026 14:54:41 +0200 (CEST)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
- by mails.dpdk.org (Postfix) with ESMTP id 1470442E69;
- Tue, 22 Sep 2026 14:54:39 +0200 (CEST)
-X-QQ-mid: esmtpsz17t1790081676t47e3b47c
-X-QQ-Originating-IP: 01wTrWlkdg0FqecrXL7633WuaznMfwBMzYpsoxB4O3U=
+	by mails.dpdk.org (Postfix) with ESMTP id 152F542E53;
+	Tue, 22 Sep 2026 14:54:43 +0200 (CEST)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 704A142E53;
+ Tue, 22 Sep 2026 14:54:36 +0200 (CEST)
+X-QQ-mid: esmtpsz17t1790081671te006aba1
+X-QQ-Originating-IP: BRp+Y4WtquIPJ9Zijq3ouA57x5IFxWsxuk3QD4wIjc0=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.205.193.132])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 22 Sep 2026 20:54:35 +0800 (CST)
+ id ; Tue, 22 Sep 2026 20:54:30 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16189831480884725209
+X-BIZMAIL-ID: 16167748069125121500
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v4 06/16] net/txgbe: set i2c sda hold time
-Date: Tue, 22 Sep 2026 20:37:39 +0800
-Message-ID: <38C6E30036B5FD3E+20260922125414.3638-7-zaiyuwang@trustnetic.com>
+Subject: [PATCH v4 04/16] net/txgbe: fix incorrect link state in 10G forced
+ mode
+Date: Tue, 22 Sep 2026 20:37:37 +0800
+Message-ID: <9BAD54888E221146+20260922125414.3638-5-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20260922125414.3638-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -34,23 +35,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: M1v+UkG2MoDhUOM1kQN44eFHpOGctj1j3njQZi7KfRWPwIcDVL4SUTYF
- FEQnh4JdHyOmZuL4y5FzgLkU1uirqntbT0+jPs4355hjPAibFMCL7adfCcRMPik5Xa6aLfw
- FWsdlssoDhrm1suMVfPqF118HYh1pn0W/D04eQQf37UxwR6hsGA8okqpigvPqQVihkmFux0
- x1vQPjOZPuZ2QJXqrLClvcy+LVeywJh6FVL2YQW3Q3SQwth9+Pzbyeg4PDWwGulzEPw7KXP
- QCqD4bo9cXryrJ4J74NRfS5m+pylrGbGckD5/Qx+qjnf1/ZRvYvjNEWHBWXfQLIbNX3tgvN
- frxw6AUJoVPu8DJNn7Tb4HJKE7gmIhGeMOBSd4lMu37WmXHXDuwlqUpJs0wffSLtIcgKlNi
- Vpm2UGrsQrTVT/fPjvMzNB+CrfESZ9ldM6cHblm6L/gnRLf4xYMkTkaieZntOYFfwmcTLKf
- 7pogcE9OGcg/wa1g2VUbrakf/Ujw7EKNKPUThvh0QOg0OmYRizkxIx1M80CA+V7PfUejPPx
- +ZASssYWFGlheXlB10Axxnhu3vvvgKDSOBoo8DDH8Crm6ySMYuYw76JpfN47nuiWU+7tYZe
- WjyNtly2niFGq/XuIYvgbt7/zO+UHo9URMnih9/tI6RBT34L2o6gWRadj9+JvUZW6IwuNhX
- 4grfDHkQAnqbdWWKPuULmnIbboKO5LoWhCbJ+/SF++rHs0GSaQcyJOBb+VJEkGW+z2W/2wX
- G5LsitOAk8PHbGj3wu58pyEysctpF0N6jffMpNlmTJmrZiUDU3Zt1kf8d0vapTAaa0M1Wm1
- DLxS6zuRYwJtXtKivWT0asjzu5Pjgj4I3WxrU/N9BmP11ZJfE8zJeRi5zAHAWhJm34O0aD5
- rjePaODrFvLraSsA+M0Mu9P24KGqeweAJlCU9iTG9wn8c5zOnylUifBo8NaZErhz3Ohf7Rh
- w0WDFPVhL41iqa6ckKF0/bksQD+cMy4uSKIvuAzNqY9lQRdMX98KyaBz4Nx8T8zxBDaq/nq
- OSU009iNgnRnIOwbC+U/SqAyQn168IZSLSFeL8LNnPo16qMI0wGS/wiFKEYGG8/qTSy0+EX
- cV68AuetJ/UW/oXX+C0SumuMcX+Ioj5nA==
+X-QQ-XMAILINFO: NU60Kbs86PFj8gVUN8O7R98ejKkeRSu64hg00HlYbanaFcgbCK01X8cK
+ KVMH8UDDO6bfC1N5NUNcs+6Xljbe6IpB6k0KRxk8dyWCRLYf+qC+9ipubqOQx4bC1Hc5MqL
+ lF+sFntYOZ+e62mNoaQG7pkRlLFSbmiHV+UVcmMuwG4pgUMSWmsE/2l0pd6EEKFm6M1Clta
+ Tr5ch63MgndBharoVuhYqm00bz1TOM0KbV64oU0URHNVxCQ6PecuF5s7FJSg9yvkPb2PNeo
+ /Vp6Lc7Uv/HXeO6HYP5o32TOIt4q/+gxH3svgMClAls7Tl2MSuF6AGn5hm0jTtkyT4tg9IW
+ v/hQqfACS7APqikSPUisRmuTVfJzTikELnS2ukS1fPzT8AmQzTd5MAEZ+rot8FPRxy3+l95
+ iVxJqd1yPjmbj3/r+kLuf7SKhleMzJ4yfDfAI7kYpjQPurCJrzbSpAVHK/NOaKe+yKTSHkU
+ z8RMmrVQYQrongdkYsNUSMKezKTYa4PhhOrDUBf8YFgtC4MeZdLDRJkLoK3wkNmiBtdK7xa
+ trbriuIMGCXRY0U/N8fnuTeoN0zjVWgt2NowZDsXv2Zz34cnoTwQRwMGqT0AdoaGkyg7yEt
+ ft2Wfe5fjpDkEmz5oQS5AMktbkX0RvvZycHNHghUqu0PwjdRGmIOAyZsT1iOggzFS+IIEn9
+ aTdnsXUPkCXJwkXD7tsZa9F3indFErTi3LaArA0zFUIuGCRP8UTuueP/ynvC/1Tho68U6s9
+ s9aOtjlaltyz8GJYAWqDt/LDkJ4OfCMfe1/luO8JUj9W5PTt3HMXSZAGW1LwmyNQdVNqyAT
+ K+AnW3wPglHyL222wkh1BVBrZOiqQuanAF/i+dLqnj1DzP3de+xswLxeF2qgZOyLCU3DrZP
+ +nRUxEY0XgN+ok42eY+RkeDVH88p4p3PNnREneeNYedIiR0Meflvzw87GdHhQdXEj5/ozdF
+ VT7NbOSNHzhhiqIvKk9KjOxQhdzunRT95RhomDj3sOX/5o6SJfsN1eEtCImf2MKfNj+/UtX
+ ll9nkFJUniHTwR5z9oEjr57Fve5L5HjCS+ucc287w97/4RZyWg8XPBUfbU3q67z8oNcV/W2
+ g==
 X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
@@ -66,49 +67,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The data_in_hold_time measured on the oscilloscope does not meet the
-hardware requirement, which can corrupt SFP EEPROM reads over I2C.
+When an AML40 port is configured in 10G forced mode (auto_neg=0),
+the hardware can link up but the driver keeps reporting link down
+after a peer link failure: link_valid is cleared on timeout but
+never restored when the peer recovers, so the link stays down until
+the port is restarted.
 
-Set the I2C SDA hold time to 100 (0x64) I2C clock periods for both
-RX and TX in txgbe_i2c_start().
+Restore hw->link_valid = true in the success path of
+txgbe_setup_phy_link_aml40(), symmetric to the 40G path. Handle
+TXGBE_ERR_PHY_INIT_NOT_DONE before the timeout split and leave
+link_valid untouched, matching the 25G path in
+txgbe_setup_phy_link_aml(); the alarm retry then attempts the
+setup again.
 
-Fixes: 00970f6398c8 ("net/txgbe: fix reading SFP module SFF-8472 data")
+Fixes: f7cfc21e9f75 ("net/txgbe: fix link stability for 40G NIC")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_phy.c  | 3 +++
- drivers/net/txgbe/base/txgbe_regs.h | 3 +++
- 2 files changed, 6 insertions(+)
+ drivers/net/txgbe/base/txgbe_aml40.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
-index 2fbe50e242..8b653f0aeb 100644
---- a/drivers/net/txgbe/base/txgbe_phy.c
-+++ b/drivers/net/txgbe/base/txgbe_phy.c
-@@ -1334,6 +1334,9 @@ static void txgbe_i2c_start(struct txgbe_hw *hw, u8 dev_addr)
- 	wr32(hw, TXGBE_I2CSCLTMOUT, 0xFFFFFF);
- 	wr32(hw, TXGBE_I2CSDATMOUT, 0xFFFFFF);
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index 7476759d4d..5fa7c6a243 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -202,9 +202,18 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
  
-+	wr32m(hw, TXGBE_I2C_SDA_HOLD,
-+		TXGBE_I2C_SDA_RX_HOLD | TXGBE_I2C_SDA_TX_HOLD, 0x640064);
+ 	rte_spinlock_lock(&hw->phy_lock);
+ 	ret_status = txgbe_set_link_to_amlite(hw, speed);
++	rte_spinlock_unlock(&hw->phy_lock);
 +
- 	wr32(hw, TXGBE_I2CICM, 0);
- 	wr32(hw, TXGBE_I2CENA, 1);
- }
-diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
-index bf46a80862..b0042dc0d6 100644
---- a/drivers/net/txgbe/base/txgbe_regs.h
-+++ b/drivers/net/txgbe/base/txgbe_regs.h
-@@ -1610,6 +1610,9 @@ enum txgbe_5tuple_protocol {
- #define   TXGBE_I2CSTAT_MST          ((1U << 5))
- #define TXGBE_I2CSCLTMOUT            0x0149AC
- #define TXGBE_I2CSDATMOUT            0x0149B0 /*I2C SDA Stuck at Low Timeout*/
-+#define TXGBE_I2C_SDA_HOLD              0x1497C /* SDA hold time length reg */
-+#define TXGBE_I2C_SDA_RX_HOLD           0xff0000 /* SDA rx hold time length reg */
-+#define TXGBE_I2C_SDA_TX_HOLD           0xffff /* SDA tx hold time length reg */
++	/* The PHY did not come out of reset; leave link_valid alone and
++	 * let the retry in the alarm handler attempt the setup again.
++	 */
++	if (ret_status == TXGBE_ERR_PHY_INIT_NOT_DONE)
++		goto out;
++
+ 	if (ret_status == TXGBE_ERR_TIMEOUT)
+ 		hw->link_valid = false;
+-	rte_spinlock_unlock(&hw->phy_lock);
++	else
++		hw->link_valid = true;
  
- /* port cfg Registers */
- #define TXGBE_PORTSTAT                  0x014404
+ 	for (i = 0; i < 4; i++) {
+ 		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
 -- 
 2.55.0.windows.2
 
