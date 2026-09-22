@@ -2,80 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E29C982F1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 07:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD28C982FA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Sep 2026 07:50:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6CD254026C;
-	Tue, 22 Sep 2026 09:38:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7ED4E4026C;
+	Tue, 22 Sep 2026 09:50:54 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D6CA0400D6
- for <dev@dpdk.org>; Tue, 22 Sep 2026 09:38:20 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A01C8400D6
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 09:50:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790062700;
+ s=mimecast20190719; t=1790063451;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=Ev5LtYOXfI6qMEq+5xMx3ia7kBJa03ZEiSfHQUh9eTw=;
- b=MPMs2Wq7C4Ikyx2Z9GQuWiQiwMTaIPvvxOWe38dDR5MIzvkzt/CKcmPTpRgwgtt7LLz7PA
- zeUkOqaArIXVNB2A50AY7ymy0CwSXteNlseoDb3K0COwfdmRRzQSLjpz5l38sSJgjnANlN
- HW4ZncUx4iJ4pFyZ0i9kQ2OfjzAkJsI=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=Ll+uoMKRGtFPgjotH+Dmo8VC3/iiuBt0/QiEydGWKUQ=;
+ b=EoptyJwpuevR5rJrrlCaG2pXFGy0P9pyg5MGiGM4MNof+vOkfSxfs44kbMRgg/VwET1NZh
+ T50ECnbPOSU60BVqYImS+F3lVXPdnJ1jxpOxdPedTbM02rotxVM2ufNAN2PcvKuNG3x1uu
+ ZS1J18VNFq5hotXRJYDbA7kp7+c1HZ0=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-183-Fm92LGvPPz6ye-0rH3ORiQ-1; Tue, 22 Sep 2026 03:38:18 -0400
-X-MC-Unique: Fm92LGvPPz6ye-0rH3ORiQ-1
-X-Mimecast-MFC-AGG-ID: Fm92LGvPPz6ye-0rH3ORiQ_1790062697
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-3a58d16b9abso17956551fa.3
- for <dev@dpdk.org>; Tue, 22 Sep 2026 00:38:18 -0700 (PDT)
+ us-mta-141-AraAiFR2PVipLtkUG--Pfw-1; Tue, 22 Sep 2026 03:50:50 -0400
+X-MC-Unique: AraAiFR2PVipLtkUG--Pfw-1
+X-Mimecast-MFC-AGG-ID: AraAiFR2PVipLtkUG--Pfw_1790063449
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-5b8b53dbb3eso2192438e87.3
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 00:50:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790062697; x=1790667497;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=Ev5LtYOXfI6qMEq+5xMx3ia7kBJa03ZEiSfHQUh9eTw=;
- b=redYkIReVsvOL1mPT0BEjrqGFQCDrhmRHWxQUjvTp0IHmsackKO+5WlTHaQQDjoOSc
- JusYkVEyd2vXHNs07P14lHE8XexwqZIuprOPo1Xrpz4QA01b8jhyIpi7l+UHPs8SHzVi
- TJAC1RgMKW1swc7cBB5WHKClGZqR+KVqJzTU2/vREeZAuRrERNdOajDGyNxvK4Jug8PN
- vB6Y/7K7+ZrzWxEjXQZwoECfHJXp22AXArAU0t+dosdJac82+Dng5GaxhaxK2F2c9ix6
- oCrz1J0IorhcQjn1uU4A6kORg78K2BaiW+4yrdrE3A/PpsCMvnPBpVbvDBoPZcVg4QLE
- odJA==
-X-Gm-Message-State: AFuF++nkMSimArsvwkUi6Zz7q/U6k363GY/dlfLXYyrFp+nD4Y1v7hXW
- IzEXL5jrZcr/7atzsN4VO3SZ2XeTsm+g/rHQtfBIDv6tqQH6hRnh2iRHJfgrydDAJ8fZeQa0nDF
- 5fNd0QMgAXRkx2034gn4S47HbMRuCPJXMmh5vZ6xtLXKjNIgX+JRXzyrf8vyG6cb907EfR4dDzV
- SfELMpNqeFPyeMCT5xhcI=
-X-Gm-Gg: AYBFou0gzvAXeEMp4y5ZnyVVv0r+UAc+q9kWX2hSquBWxUS2zcS/xGciXFjV59pto+F
- Htuzks1axAvvxO4YNmqdJQYU78Im98oxxuIqUGq7puVPYy5AwN2Ibsio0Wqq9GMzEE+rrmKUqch
- tkr0TqrIzfYsX6Mu7sjgCjQpviLYLC7i/g8mvjiJDY2VgObjfGby1O7uT20q4yLPyQEjN2/QNs3
- 7OcMof1OwdNhAUqoY3d4OfMAKHeR60kIB0P5z3bnXDQ5rLj
-X-Received: by 2002:a05:651c:222a:b0:3a3:a3:3560 with SMTP id
- 38308e7fff4ca-3a5fbeb4f1dmr32363551fa.6.1790062695034; 
- Tue, 22 Sep 2026 00:38:15 -0700 (PDT)
-X-Received: by 2002:a05:651c:222a:b0:3a3:a3:3560 with SMTP id
- 38308e7fff4ca-3a5fbeb4f1dmr32362391fa.6.1790062692593; Tue, 22 Sep 2026
- 00:38:12 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1790063449; x=1790668249;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=Ll+uoMKRGtFPgjotH+Dmo8VC3/iiuBt0/QiEydGWKUQ=;
+ b=tX/wlEMmKpFJ+F+4+rWMjWBIzUomC/W39Nzep1e5LGaET2v0fwsPrKlHaLNYWXImKc
+ AxZqvKPmFnPnnTDirPX68GFtTHtsNaMxzjFEqKK3CrvXs6GkDa9FlcNilKtUv/jzx6GC
+ 6Y3gqrq35zE/2d9JNTEtGuXG3j8WoxKyP7edxcZuP4Sdu8uRLeJH9awrN4/2mwto9VHf
+ wlnb7FQc88U6aZWzT8Go1TNlC3cOvjssXWZnOSDjPz+i3PxaJoB7jpGCgyWNplQMF7aZ
+ jrqllIt2m+MpA/319iinKtzAxVmQptMK1SjeYFM73xU/2dMRTdFD8Xc0NWp+YRPmUbgd
+ jZoQ==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBxlhMzF2XHRh9qw6Nk9WyqNArhcwkGeqmEQ+uiuztP4nW3GzUaeaAQKImhf1ussXGd4jFw=@dpdk.org
+X-Gm-Message-State: AFuF++k7XlfyvpyBf2jVcDSorFAMjERR9iV9H0BE2bc59QwSvz3nLtib
+ grmDrQDCR8GELZyslYkgZLjFlWSBj+67y7czQOsGipw06e/Z5uV8j6E/6ok1jRIKkfqK2/Z4slQ
+ 9rhj4yrTib8lB2eQ42MHNu7MVdfqLm6e3MAkbjANv7g3yql0YBHo43V7fqMafH4PdDmrd/UBOUc
+ BkDcjQjk2uOzlbpEGP2DU=
+X-Gm-Gg: AYBFou0wESBRzTzez72NUGcHZ5h3PI/vKCffryfEe/aMFAeimzDd702zWMaWXPnAjrh
+ Nkmr2FyXMuFE/GtttoQoioFTCdqIOp03Zsr1zdpd/9kqHXb2Q6hOaljdGgvT83ADDSEfuQGac1W
+ 3WPaFJWa4K7zEaifo27qIDrC7RIT8Z/J/b3xwBKOOIKX5cTzV6AO+fnz3oGsIHl6AikZqklIbwZ
+ qqb7xbFPSaXbxWzfdzoSYX7dNLuyxLVgWLYLV2zanXVHxsM
+X-Received: by 2002:a05:6512:1394:b0:5b8:afd2:c17b with SMTP id
+ 2adb3069b0e04-5b8c181f5c9mr4191615e87.11.1790063448780; 
+ Tue, 22 Sep 2026 00:50:48 -0700 (PDT)
+X-Received: by 2002:a05:6512:1394:b0:5b8:afd2:c17b with SMTP id
+ 2adb3069b0e04-5b8c181f5c9mr4191599e87.11.1790063448346; Tue, 22 Sep 2026
+ 00:50:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260717093006.229370-1-david.marchand@redhat.com>
- <20260921114737.2334589-1-david.marchand@redhat.com>
- <20260921114737.2334589-10-david.marchand@redhat.com>
- <20260921093951.61ffe6b7@phoenix.local>
-In-Reply-To: <20260921093951.61ffe6b7@phoenix.local>
+References: <20260921030811.1034869-1-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260921091932.39fa0013@phoenix.local>
+In-Reply-To: <20260921091932.39fa0013@phoenix.local>
 From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 22 Sep 2026 09:38:00 +0200
-X-Gm-Features: AcwNN1X0cuEDCWK4USUI4SmMUf5WvyBEIW3cproc1w8wCflWMdbuEhrExtMpjq0
-Message-ID: <CAJFAV8yOrg=ETbVF0FsG6jJRkGrvTRbONR=L+krER0nvtUm-5w@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] ci: run reference binaries against current ABI
+Date: Tue, 22 Sep 2026 09:50:36 +0200
+X-Gm-Features: AclHuK_VoLnzOLDBERjsTe3rC_LAV5C-5LQleRQlmDzPAWMowvV2X9T_3JPeg0M
+Message-ID: <CAJFAV8y=YSgqdt+gtXn37VYZagnMzMCaRg+VQZbmjfQ974vW7w@mail.gmail.com>
+Subject: Re: [PATCH] net/bnxt: remove VMDq support
 To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, 
- Aaron Conole <aconole@redhat.com>
+Cc: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
+ dev@dpdk.org, 
+ kishore.padmanabha@broadcom.com, Keegan Freyhof <keegan.freyhof@broadcom.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -Roo-fq6eUziwa6LSqIYSpGL6b36_std6pnpFidGSHE_1790062697
+X-Mimecast-MFC-PROC-ID: a_-lm0zASs5mZAMLusGxFOmlENcGXUw3TtBkhu44wgc_1790063449
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,76 +87,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-T24gTW9uLCAyMSBTZXB0IDIwMjYgYXQgMTg6NDAsIFN0ZXBoZW4gSGVtbWluZ2VyDQo8c3RlcGhl
-bkBuZXR3b3JrcGx1bWJlci5vcmc+IHdyb3RlOg0KPiBQYXRjaCA5LzkgKGNpOiBydW4gcmVmZXJl
-bmNlIGJpbmFyaWVzIGFnYWluc3QgY3VycmVudCBBQkkpDQo+IEVycm9yczoNCj4gLSBUaGUgbmV3
-IERQREtfVEVTVF9TS0lQIGNvbXB1dGF0aW9uIGluIC5jaS9saW51eC1idWlsZC5zaCBuZXZlcg0K
-PiAgIHNraXBzIGFueXRoaW5nLCBkZWZlYXRpbmcgdGhlIG1lY2hhbmlzbSB0aGUgY29tbWl0IG1l
-c3NhZ2Ugc2F5cw0KPiAgIGl0IGFkZHMgKCJXZSBtYXkgbmVlZCB0byBza2lwIHVuaXQgdGVzdHMg
-dGhhdCB3ZXJlIGFkZGVkIHNpbmNlDQo+ICAgdGhlIHJlZmVyZW5jZSIpOg0KPg0KPiAgICAgICBE
-UERLX1RFU1RfU0tJUD0kKGdyZXAgLXZ4RmYgcmVmZXJlbmNlL3Rlc3RzLnR4dCBidWlsZC90ZXN0
-cy50eHQgfA0KPiAgICAgICAgICAgICAgICAgICAgICAgIHNlZCAtbiAncyxEUERLOi4qIC8gLCxw
-JyB8IHRyICdcbicgJywnKQ0KPg0KPiAgIFRoZSBzZWQgcGF0dGVybiBhc3N1bWVzIGEgIkRQREs6
-PHN1aXRlPiAvIDx0ZXN0PiIgZm9ybWF0LCBidXQNCj4gICBgbWVzb24gdGVzdCAtLWxpc3QgLS1z
-dWl0ZSBmYXN0LXRlc3RzYCBuZXZlciBwcm9kdWNlcyB0aGF0LiBJDQo+ICAgYnVpbHQgdGhlIHRy
-ZWUgYW5kIHJhbiB0aGUgZXhhY3QgY29tbWFuZDsgd2l0aCBtZXNvbiAxLjEyLjAgdGhlDQo+ICAg
-b3V0cHV0IGlzICJmYXN0LXRlc3RzIC0gRFBESzphY2xfYXV0b3Rlc3QiIChkYXNoLCBubyBzbGFz
-aCkuIEkNCj4gICBhbHNvIGNoZWNrZWQgbWVzb24gMC41Ny4yIChEUERLJ3Mgc3RhdGVkIG1pbmlt
-dW0pOiB3aXRoIGEgc2luZ2xlDQo+ICAgLS1zdWl0ZSBmaWx0ZXIsIGdldF9wcmV0dHlfc3VpdGUo
-KSB0YWtlcyB0aGUgYGVsc2VgIGJyYW5jaCBhbmQNCj4gICByZXR1cm5zIHRoZSBiYXJlIHRlc3Qg
-bmFtZSBvbmx5ICgiYWNsX2F1dG90ZXN0Iiwgbm8gcHJlZml4IGF0DQo+ICAgYWxsKS4gTmVpdGhl
-ciBmb3JtYXQgY29udGFpbnMgIiAvICIsIHNvIHRoZSBzZWQgc3Vic3RpdHV0aW9uDQo+ICAgbmV2
-ZXIgZmlyZXMgYW5kIERQREtfVEVTVF9TS0lQIGlzIGFsd2F5cyBlbXB0eSwgcmVnYXJkbGVzcyBv
-Zg0KPiAgIG1lc29uIHZlcnNpb24uDQoNCkxldCdzIGhhdmUgQUkgcmVwbHkgdG8gQUkuDQoNCiAg
-VGhlIGZvcm1hdCBjaGFuZ2UgaGFwcGVuZWQgYmV0d2VlbiBtZXNvbiAxLjkuMCBhbmQgMS4xMC4w
-Og0KICDilIzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilKzi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilKzilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilJANCiAg4pSCIE1lc29u
-IFZlcnNpb24g4pSCICAgICAgICBPdXRwdXQgRm9ybWF0ICAgICAgICDilIIgU2VkIFBhdHRlcm4g
-TWF0Y2hlcz8NCuKUgg0KICDilJzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilLzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilLzilIDilIDilIDilIDi
-lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilKQN
-CiAg4pSCIOKJpCAxLjkuMCAgICAgICDilIIgRFBESzpmYXN0LXRlc3RzIC8gdGVzdF9uYW1lIOKU
-giDinIUgWWVzDQrilIINCiAg4pSc4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pS84pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pS84pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSk
-DQogIOKUgiDiiaUgMS4xMC4wICAgICAg4pSCIGZhc3QtdGVzdHMgLSBEUERLOnRlc3RfbmFtZSDi
-lIIg4p2MIE5vDQrilIINCiAg4pSU4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pS04pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pS04pSA4pSA4pSA4pSA
-4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSY
-DQogIFRoZSBzZWQgcGF0dGVybiBpbiAuY2kvbGludXgtYnVpbGQuc2g6MjU1Og0KICBzZWQgLW4g
-J3MsRFBESzouKiAvICwscCcNCg0KICBUaGlzIHBhdHRlcm4gbG9va3MgZm9yIERQREs6Li4uc29t
-ZXRoaW5nLi4uIC8gIHdoaWNoOg0KICAtIFdvcmtzIHdpdGggbWVzb24g4omkIDEuOS4wIChmb3Jt
-YXQ6IERQREs6ZmFzdC10ZXN0cyAvIGFjbF9hdXRvdGVzdCkNCiAgLSBGYWlscyB3aXRoIG1lc29u
-IOKJpSAxLjEwLjAgKGZvcm1hdDogZmFzdC10ZXN0cyAtIERQREs6YWNsX2F1dG90ZXN0DQrigJQg
-bm8gIiAvICIpDQoNCiAgV2hlcmUgdGhlIEFJIHdhcyB3cm9uZzogVGhlIGNsYWltIGFib3V0IG1l
-c29uIDAuNTcuMiBwcm9kdWNpbmcgYmFyZQ0KbmFtZXMgaXMgaW5jb3JyZWN0LiBEUERLIGRlZmlu
-ZXMgNiB0ZXN0IHN1aXRlcywgc28gbGVuKHNlbGYuc3VpdGVzKSA+DQoxIGlzIGFsd2F5cyB0cnVl
-LCBhbmQgdGhlICJwcmV0dHkiIGZvcm1hdCBpcyBhbHdheXMgdXNlZCByZWdhcmRsZXNzIG9mDQp3
-aGljaCAtLXN1aXRlIGlzIHF1ZXJpZWQuDQoNCiAgQ3VycmVudCBzdGF0dXM6IFlvdXIgc3lzdGVt
-IGhhcyBtZXNvbiAxLjcuMiwgd2hpY2ggdXNlcyB0aGUgb2xkDQpmb3JtYXQgYW5kIHdvcmtzLiBV
-YnVudHUgMjIuMDQgaW4gQ0kgbGlrZWx5IGhhcyBtZXNvbiB+MC42MS54LTEueA0Kd2hpY2ggd291
-bGQgYWxzbyB3b3JrLiBCdXQgdGhlIHNjcmlwdCB3aWxsIGJyZWFrIG9uY2UgQ0kgZW52aXJvbm1l
-bnRzDQp1cGdyYWRlIHRvIG1lc29uIDEuMTAuMCsuDQoNCiAgQm90dG9tIGxpbmU6IFRoZSBjb25j
-ZXJuIGlzIHZhbGlkIGZvciBmdXR1cmUtcHJvb2ZpbmcsIGJ1dCB0aGUNCnNldmVyaXR5IGlzIG92
-ZXJzdGF0ZWQg4oCUIGl0IGRvZXNuJ3QgIm5ldmVyIHdvcmsiLCBpdCB3b3JrcyB3aXRoIG9sZGVy
-DQptZXNvbiBidXQgd2lsbCBicmVhayB3aXRoIG1lc29uIOKJpSAxLjEwLjAuDQoNCg0KPiAgIENv
-bnNlcXVlbmNlOiBvbmNlIHRoaXMgbGFuZHMsIGFueSBmdXR1cmUgc2VyaWVzIHRoYXQgYWRkcyBh
-IG5ldw0KPiAgIGZhc3QtdGVzdHMgdW5pdCB0ZXN0IHdpbGwgZmFpbCBDSSB3aGVuIEFCSV9DSEVD
-S1MgYW5kIFJVTl9URVNUUw0KPiAgIGFyZSBib3RoIGVuYWJsZWQgLS0gdGhlIG5ldyB0ZXN0IG5h
-bWUgaXMgbm90IGZpbHRlcmVkIG91dCwgbWVzb24NCj4gICB0ZXN0IGludm9rZXMgaXQgKERQREtf
-VEVTVD08bmFtZT4pIGFnYWluc3QgdGhlIG9sZCByZWZlcmVuY2UNCj4gICBkcGRrLXRlc3QgYmlu
-YXJ5LCB3aGljaCBkb2VzIG5vdCBpbXBsZW1lbnQgaXQsIHRoZSBjb21tYW5kIGV4aXRzDQo+ICAg
-bm9uLXplcm8gaW50byBmYWlsZWQ9InRydWUiLCBhbmQgdGhlIHRyYWlsaW5nDQo+ICAgYFsgIiRm
-YWlsZWQiICE9ICJ0cnVlIiBdYCBmYWlscyB0aGUgYC1lYCBzY3JpcHQuIFRoaXMgaXMgZXhhY3Rs
-eQ0KPiAgIHRoZSBzY2VuYXJpbyB0aGUgRFBES19URVNUX1NLSVAgbG9naWMgd2FzIGFkZGVkIHRv
-IHByZXZlbnQuDQo+DQo+IEluZm86DQo+IC0gVGhlIGNvbW1pdCBtZXNzYWdlIHNheXMgImFkZCBh
-IEFCSV9TS0lQX1RFU1RTIGVudmlyb25tZW50DQo+ICAgdmFyaWFibGUgaW4gcHJlcGFyYXRpb24s
-IiBidXQgdGhlIGNvZGUgaW1wbGVtZW50cyBEUERLX1RFU1RfU0tJUC4NCj4gICBQb3NzaWJseSBh
-IHJlYmFzZS9yZW5hbWUgYXJ0aWZhY3Qgd29ydGggc3F1YXNoaW5nIGJlZm9yZSBtZXJnZS4NCj4N
-Cg0KQWggeWVzLCBmb3Jnb3QgdG8gcmVtb3ZlLg0KDQoNCi0tIA0KRGF2aWQgTWFyY2hhbmQNCg==
+On Mon, 21 Sept 2026 at 18:21, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> On Sun, 20 Sep 2026 21:08:11 -0600
+> Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com> wrote:
+>
+> > From: Keegan Freyhof <keegan.freyhof@broadcom.com>
+> >
+> > Remove support for the VMDq feature from the driver: the multi-pool
+> > Rx-queue configuration path in bnxt_mq_rx_configure(), the VMDQ VLAN
+> > pool wiring in the L2 filter alloc path, and the max_vmdq_pools/
+> > vmdq_queue_num reporting in dev_info (now always reported as 0).
+> >
+> > Preserved two pieces of logic that live in the same
+> > function/switch statement but are not VMDq-pool-specific: the
+> > RTE_ETH_MQ_RX_RSS pools=rx_cosq_cnt case and the
+> > per-non-default-VNIC skip_filter_allocation guard in
+> > bnxt_mq_rx_configure(), both used by the plain multi-COS RSS path.
+> > Also kept the RTE_ETH_VMDQ_ACCEPT_HASH_UC/BROADCAST/MULTICAST ->
+> > l2_rx_mask flag mapping in rte_pmd_bnxt_set_vf_rxmode(): despite the
+> > name, those bits are the standard DPDK VF-rxmode API used regardless
+> > of hardware VMDq pool support, not a VMDq-pool-specific control.
+> >
+> > Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
+> > Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+> > ---
+>
+> [PATCH] net/bnxt: remove VMDq support
+>
+> Warning: mq_mode validation is lost. Before, VMDq, DCB and DCB_RSS
+> modes hit the default case and returned -EINVAL. Now any mode other
+> than NONE or RSS silently configures a single pool and succeeds.
+> Reject every other mq_mode explicitly in bnxt_mq_rx_configure() or
+> dev_configure.
+
+mq_mode should be validated in ethdev now, in next-net.
+93b017ff2ffa ("ethdev: check VMDq availability")
+
+Is there something missing?
+
+-- 
+David Marchand
 
