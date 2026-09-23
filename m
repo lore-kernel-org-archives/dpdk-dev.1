@@ -2,78 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E86CC98302
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 16:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF663C98302
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 16:52:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5776B42E81;
-	Wed, 23 Sep 2026 18:48:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CB14B42E81;
+	Wed, 23 Sep 2026 18:52:22 +0200 (CEST)
 Received: from fhigh-b2-smtp.messagingengine.com
  (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
- by mails.dpdk.org (Postfix) with ESMTP id 7C5F44027C;
- Wed, 23 Sep 2026 18:48:37 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.stl.internal (Postfix) with ESMTP id A1EAE7A0132;
- Wed, 23 Sep 2026 12:48:36 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Wed, 23 Sep 2026 12:48:36 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 610F24027C
+ for <dev@dpdk.org>; Wed, 23 Sep 2026 18:52:21 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id B8FC07A0108;
+ Wed, 23 Sep 2026 12:52:20 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Wed, 23 Sep 2026 12:52:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1790182116;
- x=1790268516; bh=u3gHa4NKuEgKp23OMcbCwd9tQ8GxDfAqZ9VvdfPBsfM=; b=
- ZC3K9YO4N9/1oBVpEbDpC3psGkUsisA2TmeUmG7USjOgtR8mYOdnR9qGgOmpOQsc
- ADhz68MsYFkZEi4v8felFjy+KgE2yMl/FVmuYIscqeinQRciPx5UJPCvbPZFpCOw
- usVm/TKC2qgoa1qVBSKGwO0BOh/aVoGKVn33N7iIjUZeOkCxK2UrekCFWAtBj3mi
- U2VVkpIyvVydofvJui93NbYf+r4eUmqp4hkexkPTfBd6hwM9PUXFEt1PUkQmOmY/
- xYwurfVNoQRHXQaRXwXJoeDjrjYyp6b2uXl3hyXoiB1EW8DWPfHsLNtFztMKcy9x
- eulcW8HJaMdRcx1kjaRWYQ==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1790182340;
+ x=1790268740; bh=g03bDsHZeAnvkULdbDFHvsbkAZgT5/b7wHsRBQs/MNI=; b=
+ tSOWP1fALoFr1zUqtS6EZhWAhp3Kub+yzZPzYNsAsCV17MJkzrV04Tpgd8LJSq9G
+ oN9cGZOj6uIL9GmoAH2uwVCmQWqsR6JArsBZ8RUXEzBkE9TppNILYdSyun4VrxHN
+ 7o44SF6i011dlP7flWb93DMOE4EjTkSOOfk3cYdSblAQn65cXLzDdKlVn1WUEDNs
+ JzOjcI/oCrdrylL0erjO/2RxKDVg/bUMbd9STtJ3I6705ENP+LncaJjEoM13wgR6
+ 4+GHuYhztOJIpCIpMiYml5gbxcw3XB7QgpUXZjIszyq4Lg7GHr+iDNSlBVA/tepc
+ K8mlimqFiyL53RTAl/kPPw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1790182116; x=
- 1790268516; bh=u3gHa4NKuEgKp23OMcbCwd9tQ8GxDfAqZ9VvdfPBsfM=; b=h
- 9FIIaK1kUs7168ySvUQ3yOIi2EWzfR6AK5bX2tOyP/h7/hXsEoBjMjcjlimSF4v4
- QJENy/1es8+r6JIgHpba0vpn2KUxWHGuZcSR/xINzEkt2ka/uzIU3FY5TS6R8Z09
- RVJk07M9h4FCnDuV1jcxhFTKm83ucT2MTl2YzmP0F225w6cqa8UQ5m7FahbOlLZ1
- sqSTDqMERkEvE1HETggV8DPuqUoTCHPIO54vlRE3XJNgqTMVdLP2JMMxOZVoABul
- bJcSdbC/zPTNKwR2BaMCWMXTLF75CYRdbf35v+lm1O88S3It7E3vfAUUgd7HtWbX
- o/nDUN8PLJ8kd7fLMiHTA==
-X-ME-Sender: <xms:5AK0aikzlEdNAMB_9E2JgIyUVShgKCr1IsNj_HinNUyxaM1MlmnkCQ>
- <xme:5AK0alTscqarWVs0Wz3nD3FWS3FQWzypi5OH8vs1hUgpiRpof1Qfjp2uEZchQ9TrN
- FzrjBtmbIiaqpka_vCc7XkngzarImw90PdM7CF5pnFt73q-xVJ1vpw>
-X-ME-Received: <xmr:5AK0akIrnVyiw8hZyRp9p-9Eh3-a84JD6d6VCBqf87YEPO5pn_sIdIkLAKACoYjFA-pZgZbtg7wz2d2L3Jg7avs>
-X-ME-Proxy-Cause: dmFkZTEtIFm2FOjF5FB6QAECFx9k3e9i8Fwyj844pgZsKvJGqnhjj4XbiC1BqGHyFHjYap
- 3t8o5BTMSv32iSz7H9yR75QzqpFBaQVpmoW0CiRoHIOadiRaMDmQOweDSByh2wHp5SbTQY
- Uiy3mFE4TG/Ml1GFTJdlKXMZ5ZGAElfVZ3yEDjwvMcUMSYjk0hGFerixb/IX6kMx+e6mIs
- xev958xXaxw0ZcmaLPCNOhy0jPd1RDphImhBvsXcqQY74keXFpuhMIaAZlynUMPUQSNcTn
- C5U2hiusg661bOhtV8uHB1SEUctzOtvR0bzEc0/FMZb1DdE1PjYG0KEnSooqdHsZymfDJB
- fEgWQDBqimppn5o7wtSluH0yChmcB1aehGZd1XF1J5L1LZktKe5WLdtAEM/nYL1opLZzgW
- jokGSyx28DndYwHeHayeBZuBPhQKTnMOQNboC7GY1pPTlcARwMJjQBVGgit3ir/MeZZfaz
- ycbYiP+mO2grnoapHdsjNa/iEH65VnzsZw6ZvUCLuPMFZonjbdTV7L4+httMO/hA35r2MT
- Di23L8YMHye9tdz2zKKeVNXGUYMgyu0GBz8n14ymWt5SQEu2rhVyzfhBT2g4hBrKAFYaD8
- jv6bxa66Xwmcq0yAXo6vkp4ry7Mlu/VcPHSDiMVudCchorNHZKisSuj32VeQ
-X-ME-Proxy: <xmx:5AK0arCdzdu2x0jg8vccHVwSlfZXuRbDTAUW7L7eRlubCGqqBM_31Q>
- <xmx:5AK0atDWivNudHi50Dz9trVl_sM3rMl7sX84xJe6fIDxgQ_ldZ05rw>
- <xmx:5AK0atCAfVzMji21f0zEaW8zfkAtnvT4cS_n8shOdFGmWrT8iv5d3Q>
- <xmx:5AK0aop1AHgJ5NQWdVeowMSPRcxhfxuMuBkWiyJVk9tZiQZg6052UA>
- <xmx:5AK0ao3Vr_60ofI2u1PlmuBso2jw7HiEI9EieAz_bVTRCWAoE_egiaTy>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1790182340; x=
+ 1790268740; bh=g03bDsHZeAnvkULdbDFHvsbkAZgT5/b7wHsRBQs/MNI=; b=V
+ EtVUUNOPTbSxVDYwFKJdr/PClMe7+L6XvFyIgfDnR42tXL/3/dIMQEo9i1h3oOzU
+ SJKLuw2DGohvSByoOpYxd8N4Dsb1TuEVzDv/6huVo+nyIwEmNr7mSQSd2xj/kEeA
+ JgNmwUWsN1U/Zdqxp3358HAn8/4N+xEHfedqQKwAMsLQ3MlXHQdLwCy11ZEvr3LW
+ NFWZPNcZRb1QeSO79jzPUYWr4/Io8zvlXkZtB7+Z/g+yOglkMzP/zRp65ksYqesw
+ ohJ1TEJsMZmFNTK1Ues9OL3P+VfhsM4Hdy0vYyJyF1209QFpc1YpIAB/SS9rzqsu
+ GsZkez3lLDJsE4XA111lA==
+X-ME-Sender: <xms:wwO0akoqxEgVA_vfi1wekfibZMyuMq75TSsA9Ct6u81N7IpdFr5wIw>
+ <xme:wwO0aonF9bcSIq55bAtF9fiaUOyV8hfwy08JqC8HRKC_fnf4vecpTgA-_5L8RhyKG
+ FyZLDQmyXFGTBhx0BogNdL7rwhFON5VXW0CgG8A5q-h-b-RyqUU_Oj6>
+X-ME-Received: <xmr:wwO0arhy2wIfwUVdoA9VIJafviAIhBHeHbidIqLqKYt4NmlyV9bWx9DxV6bSaNGYPG9qMvZBVH7ZFW2xtKVQP0Y>
+X-ME-Proxy-Cause: dmFkZTE9cj5qesljt4oa7EuOXGksk2g1Q/eoWl4WZzXKOozYmrd3wKWqcnZT8eY5T4VQtk
+ JGtN8ui2MBfsDd8Oss0HvNF3pe0KTJwXxBb55OWSC4+R5nTSY+MoTP6lt3xIUfpzkx1LoN
+ 3UUZSHIfaqAncIlTDDO7XX/9OdqOxFdTzAm4OEn7YzoJu2CgdpWelGV3j+ncs3Atm9iJzT
+ UBXpj3LuBYqKjk1piTHyYhKAfzrVQ3D1Z4t98V4zdwTJucUolkmY440ltkcZyxUO+ndHEZ
+ iIoExDuJ+VNVUbRYoD0vOHQ38pyJI9rz5ppDbIQ8aVjumFoAL7/x57OP+6myurmtRLgTMi
+ tJKxp4aJmgzE6b8OZbQOQ7xkWis3OptWytZLrm/IQ8yUwZLEiFdsmD6Grg0cGHljotIF0k
+ h6noaozK43mv13afvoFRj6s63Ldll2Bu9PduW30IgvacWz12mPD/8MGT20ghpGsFazZKcc
+ 0Zo390EwIAguZE/xaGYPdLg/eMPL2xhsXoVfktOkomTUuOR6jJrRFMtrH6NMkqjo9QbknU
+ 9o4Q7eLD/43o5DhurPBGLe2C/xS+FYW1JZcNPfLK+U9eRe5bUsnRzh+ZxtI3L9CWv0FFrG
+ tJq7xTQxCHAzyMLjvDfAsXXhfUYYiCkkLl8z9MLWCfH44OTQFx1COUGLZzxQ
+X-ME-Proxy: <xmx:wwO0ageD5PpzPkDjBrf-pZaUU7oP82w5wra5Mwitga39XDFbnuohXQ>
+ <xmx:wwO0ariDZeEV_cwWJTqo6Mw8glah5YutJKqP_xIYsfm7RuGnU5yZtQ>
+ <xmx:wwO0aow0ppD3cZbtSzS6AsJMMlAkvOHwUWdMV6XodaKDn0hPwDPkKQ>
+ <xmx:wwO0anNGOlJk8mlAntRUZsGdoNvGsQynS1P6brb-Y6d6m_zQphBsNQ>
+ <xmx:xAO0aun1fioLmF-0p06l8aSwv2No4fCZSllhC2Fvk1DMQJwSWGB6A-kg>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 23 Sep 2026 12:48:35 -0400 (EDT)
+ 23 Sep 2026 12:52:19 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Yonghao Li <cruselee1@live.cn>
-Cc: dev@dpdk.org, konstantin.ananyev@huawei.com, stable@dpdk.org,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: Re: [PATCH] eal/x86: fix LZCNT CPU feature bit
-Date: Wed, 23 Sep 2026 18:48:33 +0200
-Message-ID: <vdxtIy_6RCmB6PVFi6O4VA@monjalon.net>
-In-Reply-To: <apU1JV-ays2oJDgZ@bricha3-mobl1.ger.corp.intel.com>
-References: <OSZPR01MB8612B5D71DC37D3A5F2D428DE0AC2@OSZPR01MB8612.jpnprd01.prod.outlook.com>
- <apU1JV-ays2oJDgZ@bricha3-mobl1.ger.corp.intel.com>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Vipin Varghese <vipin.varghese@amd.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: Re: [PATCH v4] eal/x86: fix memcpy alignment mask definition
+Date: Wed, 23 Sep 2026 18:52:17 +0200
+Message-ID: <AsJq5ADXSsikHxOP9jPwbg@monjalon.net>
+In-Reply-To: <71bcbf4789914a059ccfd11758d72bb7@huawei.com>
+References: <20260904092028.856816-1-mb@smartsharesystems.com>
+ <20260904113433.857609-1-mb@smartsharesystems.com>
+ <71bcbf4789914a059ccfd11758d72bb7@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -88,25 +92,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-31/08/2026 10:02, Bruce Richardson:
-> On Fri, Aug 28, 2026 at 09:32:52PM +0100, Yonghao Li wrote:
-> > --- a/lib/eal/x86/rte_cpuflags.c
-> > +++ b/lib/eal/x86/rte_cpuflags.c
-> > @@ -137,7 +137,7 @@ struct feature_entry rte_cpu_feature_table[] = {
-> >  	FEAT_DEF(AVX512VP2INTERSECT, 0x00000007, 0, RTE_REG_EDX,  8)
-> >  
-> >  	FEAT_DEF(LAHF_SAHF, 0x80000001, 0, RTE_REG_ECX,  0)
-> > -	FEAT_DEF(LZCNT, 0x80000001, 0, RTE_REG_ECX,  4)
-> > +	FEAT_DEF(LZCNT, 0x80000001, 0, RTE_REG_ECX,  5)
-> >  	FEAT_DEF(MONITORX, 0x80000001, 0, RTE_REG_ECX,  29)
-> >  
-> 
-> Confirmed by checking Table 21-90 in the Intel SDM Vol 1 docs. Thanks for
-> catching this.
-> 
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> > An alignment mask (ALIGNMENT_MASK) is temporarily defined for internal
+> > purposes, but it is publicly exposed when including the header file,
+> > potentially colliding with existing definitions with the same name.
+> > Fixed this potential issue by adding the RTE_MEMCPY_ prefix to the
+> > definition.
+> >=20
+> > Furthermore, the superfluous function declaration at the top of the file
+> > was removed, and its description was moved to the function definition,
+> > to improve search results with source code browsers.
+> >=20
+> > Also, changed "!(addrs & MASK)" to "(addrs & MASK) =3D=3D 0" to follow =
+DPDK
+> > coding style.
+> >=20
+> > None of these changes should have any practical effect.
+> >=20
+> > Fixes: f5472703c0bd ("eal: optimize aligned memcpy on x86")
+> >=20
+> > Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
 Applied, thanks.
-
 
 
