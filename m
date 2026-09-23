@@ -2,57 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE31C982FE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 01:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8A9C982FE
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 01:07:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5BD9402AC;
-	Wed, 23 Sep 2026 03:07:46 +0200 (CEST)
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200])
- by mails.dpdk.org (Postfix) with ESMTP id 3D4A240041
- for <dev@dpdk.org>; Wed, 23 Sep 2026 03:07:45 +0200 (CEST)
-Received: by mail-pl1-f200.google.com with SMTP id
- d9443c01a7336-2db87f759c5so4188445ad.1
- for <dev@dpdk.org>; Tue, 22 Sep 2026 18:07:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D6D0040DD2;
+	Wed, 23 Sep 2026 03:07:48 +0200 (CEST)
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197])
+ by mails.dpdk.org (Postfix) with ESMTP id AFF5740041
+ for <dev@dpdk.org>; Wed, 23 Sep 2026 03:07:46 +0200 (CEST)
+Received: by mail-pl1-f197.google.com with SMTP id
+ d9443c01a7336-2cfa4e4684bso7207685ad.2
+ for <dev@dpdk.org>; Tue, 22 Sep 2026 18:07:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1790125664; x=1790730464; darn=dpdk.org;
+ d=google.com; s=20251104; t=1790125666; x=1790730466; darn=dpdk.org;
  h=content-type:cc:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=2UAdzpRdA6FBK1ALzcdw9FbUnPhTdpdIkcvHwpWsBq0=;
- b=VfhRwKbcz9ghCJv7aLcYxs37u3udvnCdbEGBTHq1RvoNXr3FbeRfOmgLhfvubCTk1c
- r5iihh7Kms0tWBsHw1vx5fiyFobPwZz+vPmu0j/JuzBMVE4HE6FPSVzeKEZ/K/lqhdsb
- xj6AAiOrp+0uoKnDjc42dTD0dMAj+r7AHnlih6tLTy+tLb+IHvEVzidcOjxRkjjN4MaB
- 0J75NaKC2tHh42YFXXcK+54TbtaABs4Wr1/hS+SBAx5qM07PnZFfTVXZ02Ak+/hQWCbb
- 24/Wh97UKxoHeUTc/NtwY6k9tgH6Rx3UMCDCsTmZrIsyHdDH6ds1r6Ab+SqUmg7/y9iu
- XAVg==
+ :content-type; bh=14c8MNpjoTxwMW/+6J7ydau2TveV/ISeaxyDTbXtOtQ=;
+ b=YskcX9em9jvOCClU1tAQmmOXis3xGRDDRdvEbL202x2yAruITLwQYZnvhlucRq/Iap
+ UnkrJ/RBKDgtEOIxnp+1y0E0KTXetW5T8YI3gpdllutbdAs/vLb4h1OLZSzvdBZudr6g
+ dz0GFHtpT+UOErAzrR+CwdzaqipqTAfhXyWwg7EFvUEugiRWDe/KAGq/VSnFql5uJLOL
+ Rujbf7fNua6rTWbWcZQl4Jpd1lcdZ3gfwzrUW53ySAZg5DXPfm0ATYYYPatVLX/kdDfp
+ WnXTzOxE+ni3s+tQ1lruM58CjcnVCMaZ42qeLX2SPJW5fFOo+5opY7FG7Da22u6Y9FQ4
+ jrQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790125664; x=1790730464;
+ d=1e100.net; s=20260707; t=1790125666; x=1790730466;
  h=content-type:cc:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=2UAdzpRdA6FBK1ALzcdw9FbUnPhTdpdIkcvHwpWsBq0=;
- b=zKh40m4SS8jcKunSk899ZRi1b0GUOJVrGzeZDLioAbQPw9KpCc9Qsz2QRuTLfHjAeD
- BSyFDt3MTnMQrTG7tYBTAyYtPUrmrjhaK97igz/5iPspqFc1SMoAdoU8utyzYrmgbgH7
- nnU3+4MMIJTLzYi7tabWPnIGbldpGPb669mdtnGfEf50a5696PeS0PM/K0wzzhM982z9
- q7fZUy81CBttBTWdvsUd7eDO4uqXSipPujJZg7+/6PKDsCgmlLYxVkJocljwElgjQIG1
- 5I1zJ9MwGfvFm+eHdtFsmK+sXvPDsGJMu1zhJ6KTzFelvTLTJn0hPSGLLtN9ht18xtRz
- Sqzw==
-X-Gm-Message-State: AFuF++nmotHtdY0dwiHVKXV+eGr7X6s771TOLdO49btKsw0LEWb63tC8
- Q2RMhdQMKXd4P17LxF3lYvw2QVwdyI+MoP1i2VJfU9riib5RP/UFPgvCYgOP8fUzVIonnWv8707
- edrcXUmseDnkVdEPyD8Nsw0FqphpiRJFeED8mjFrwVXa3JDHcRDu216RGOatS3/60rVKXPN7mUB
- x2vqHSh8kiJS3u+B43HsC/jwRglalGM+eW5A==
-X-Received: from plar12.prod.google.com ([2002:a17:902:c7cc:b0:2dd:5ae:3a51])
+ bh=14c8MNpjoTxwMW/+6J7ydau2TveV/ISeaxyDTbXtOtQ=;
+ b=Y+4KASbDCeNVFi8B8prNGi8lxxEMY/WWfAQWfurZODCPOzTGhnYNISfSImrnGpG6KZ
+ M3Y6F7K+j/TOLdCGF5jDeRtMRv/QpYniHpJGCtB9pI09KyqVt+T/5F54MOW9Xpb9OXdT
+ r9IyV+ywT/UrqOKsb4/Z8h6xvfzbmbUzs3IbqsGSRj5R8Bv2YznwhDtdgKsE01GsjUBo
+ HJYO3dwdM+9FmKtB08HK8yA/zSp9xxLhuZ2wayKxQRiWWS0oQc0BLGqo+oUzQtRCA54i
+ QlxLK9A8AOixhX5tVml2Fktz5/HH3X4LiHbNVUuQCFhBHLTnjkXb7aIx9TeSEip+cTXa
+ jZeQ==
+X-Gm-Message-State: AFuF++nzQYpdV1cJPbsc/Esa6d3vYOVw+n3WYWYi3QxNodsQJceLRqYF
+ rjAHwq1ZuAgkF1jwPux+f7XAIhzjyyzqWwQRiyTgHbouBUOtNKGSHCZdvDR1X23kbCblvUJZ+OI
+ 0/StKtbbetSc8UUG3rLDSu60jbWRCdhAcj/S2Y6yso00V6eoSv7F1MJLKYq6NLFDxZR7Yc0CIrG
+ 8Eooq99YASjt29v9U7DfMdNwZ7ka6tdfcttQ==
+X-Received: from plad12.prod.google.com ([2002:a17:902:e14c:b0:2df:69be:94b6])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:2b0c:b0:2dd:c100:b2d3 with SMTP id
- d9443c01a7336-2df69e1de2emr8571485ad.62.1790125663422; 
- Tue, 22 Sep 2026 18:07:43 -0700 (PDT)
-Date: Tue, 22 Sep 2026 18:07:23 -0700
-In-Reply-To: <20260812223017.2980190-1-joshwash@google.com>
+ 2002:a17:903:1112:b0:2dd:c100:313d with SMTP id
+ d9443c01a7336-2df69df7524mr8950365ad.57.1790125665351; 
+ Tue, 22 Sep 2026 18:07:45 -0700 (PDT)
+Date: Tue, 22 Sep 2026 18:07:24 -0700
+In-Reply-To: <20260923010742.2468145-1-joshwash@google.com>
 Mime-Version: 1.0
 References: <20260812223017.2980190-1-joshwash@google.com>
+ <20260923010742.2468145-1-joshwash@google.com>
 X-Mailer: git-send-email 2.55.0.1082.g2b9226bbc0-goog
-Message-ID: <20260923010742.2468145-1-joshwash@google.com>
-Subject: [PATCH v3 00/16] Introduce RTE_DIV_ROUND_UP
+Message-ID: <20260923010742.2468145-2-joshwash@google.com>
+Subject: [PATCH v3 01/16] eal: introduce division round up macro
 From: Joshua Washington <joshwash@google.com>
 Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
 Content-Type: text/plain; charset="UTF-8"
@@ -69,78 +70,91 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Numerous components independently define the DIV_ROUND_UP macro, using
-the same definition. Attempt to commonize by introducing
-RTE_DIV_ROUND_UP to rte_common.h and replacing usages of DIV_ROUND_UP
-with RTE_DIV_ROUND_UP. Similarly, replace DIV_CEIL, which is
-functionally identical, to RTE_DIV_ROUND_UP.
+A number of drivers define the DIV_ROUND_UP macro -- add it to
+rte_common.h so that other code looking to use that functionality
+doesn't have to re-define it.
 
+Signed-off-by: Joshua Washington <joshwash@google.com>
+---
 Changes in v3:
-  - eal: Add unit tests in app/test/test_common.c.
-  - eal: Add release notes entry for RTE_DIV_ROUND_UP.
-  - eal: Expand Doxygen documentation with parameters and caveats
+  - Add unit tests in app/test/test_common.c.
+  - Add release notes entry.
+  - Enhance Doxygen documentation to document parameters and caveats
     (divisor evaluation, non-negative inputs, wraparound).
-  - base code (qede, cxgbe, ena): Keep DIV_ROUND_UP macro in osdep/platform
-    headers and avoid modifying call sites under base/.
-  - nfp: Change commit subject prefix from "drivers:" to "net/nfp:".
-  - qede, nfp: Drop unnecessary line rewraps.
-  - ena: Remove extraneous blank line in ena_plat_dpdk.h.
-  - app: Convert DIV_CEIL in app/test and app/test-compress-perf to
-    RTE_DIV_ROUND_UP.
-
 Changes in v2:
-  - Split single patch into series.
+  - Split out patches replacing usages
+---
+ app/test/test_common.c                 | 10 ++++++++++
+ doc/guides/rel_notes/release_26_11.rst |  5 +++++
+ lib/eal/include/rte_common.h           | 18 ++++++++++++++++++
+ 3 files changed, 33 insertions(+)
 
-Joshua Washington (16):
-  eal: introduce division round up macro
-  net/i40e: use common division round up macro
-  net/idpf: use common division round up macro
-  net/ice: use common division round up macro
-  net/qede: use common division round up macro
-  net/rnp: use common division round up macro
-  net/hns3: use common division round up macro
-  net/hinic: use common division round up macro
-  net/bnx2x: use common division round up macro
-  net/cxgbe: use common division round up macro
-  net/ena: use common division round up macro
-  raw/ifpga/base: use common division round up macro
-  net/nfp: use common division round up macro
-  app/procinfo: use common division round up macro
-  app/test: use common division round up macro
-  app/test-compress-perf: use common division round up macro
-
- app/proc-info/main.c                           |  3 +--
- app/test-compress-perf/comp_perf_test_common.c | 13 +++++--------
- app/test/test_common.c                         | 10 ++++++++++
- app/test/test_compressdev.c                    |  4 +---
- doc/guides/rel_notes/release_26_11.rst         |  5 +++++
- drivers/common/nfp/nfp_platform.h              |  2 --
- drivers/net/bnx2x/bnx2x.c                      |  4 ++--
- drivers/net/bnx2x/bnx2x.h                      | 11 ++++-------
- drivers/net/cxgbe/cxgbe_compat.h               |  2 +-
- drivers/net/cxgbe/cxgbe_filter.c               |  6 +++---
- drivers/net/cxgbe/cxgbe_ofld.h                 |  4 ++--
- drivers/net/cxgbe/sge.c                        | 14 +++++++-------
- drivers/net/ena/base/ena_plat_dpdk.h           |  2 +-
- drivers/net/hinic/base/hinic_compat.h          |  5 +----
- drivers/net/hns3/hns3_ethdev.h                 |  2 --
- drivers/net/hns3/hns3_fdir.c                   |  2 +-
- drivers/net/hns3/hns3_regs.c                   |  8 ++++----
- drivers/net/hns3/hns3_rss.c                    |  8 ++++----
- drivers/net/intel/i40e/base/i40e_osdep.h       |  3 +--
- drivers/net/intel/ice/base/ice_osdep.h         |  3 +--
- drivers/net/intel/idpf/base/idpf_osdep.h       |  3 +--
- drivers/net/nfp/nfdk/nfp_nfdk.h                |  2 +-
- drivers/net/nfp/nfdk/nfp_nfdk_dp.c             |  2 +-
- drivers/net/nfp/nfpcore/nfp_nsp.c              |  2 +-
- drivers/net/qede/base/bcm_osal.h               |  1 -
- drivers/net/qede/qede_debug.c                  | 16 ++++++++--------
- drivers/net/rnp/base/rnp_osdep.h               |  5 ++---
- drivers/net/rnp/rnp_rxtx.c                     |  2 +-
- drivers/raw/ifpga/base/opae_osdep.h            |  3 +--
- lib/eal/include/rte_common.h                   | 18 ++++++++++++++++++
- 30 files changed, 88 insertions(+), 77 deletions(-)
-
+diff --git a/app/test/test_common.c b/app/test/test_common.c
+index 3e1c7df0c1..bce2776ea6 100644
+--- a/app/test/test_common.c
++++ b/app/test/test_common.c
+@@ -47,6 +47,16 @@ test_macros(int __rte_unused unused_parm)
+ 		"RTE_MAX");
+ 	RTE_TEST_ASSERT_EQUAL(RTE_MIN(SMALLER, BIGGER), SMALLER,
+ 		"RTE_MIN");
++	RTE_TEST_ASSERT_EQUAL(RTE_DIV_ROUND_UP(10, 5), 2,
++		"RTE_DIV_ROUND_UP exact");
++	RTE_TEST_ASSERT_EQUAL(RTE_DIV_ROUND_UP(11, 5), 3,
++		"RTE_DIV_ROUND_UP remainder");
++	RTE_TEST_ASSERT_EQUAL(RTE_DIV_ROUND_UP(0, 5), 0,
++		"RTE_DIV_ROUND_UP n=0");
++	RTE_TEST_ASSERT_EQUAL(RTE_DIV_ROUND_UP(0, 1), 0,
++		"RTE_DIV_ROUND_UP n=0, d=1");
++	RTE_TEST_ASSERT_EQUAL(RTE_DIV_ROUND_UP(5, 1), 5,
++		"RTE_DIV_ROUND_UP d=1");
+ 
+ 	RTE_TEST_ASSERT_EQUAL(RTE_PTR_ADD(arr + 1, sizeof(arr[0])), &arr[2],
+ 		"RTE_PTR_ADD(expr, x)");
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc86295d..7720fd9f96 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -55,6 +55,11 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Added division round up macro.**
++
++  Added the ``RTE_DIV_ROUND_UP`` macro in ``rte_common.h`` to divide dividend
++  by divisor, rounding up to the nearest integer.
++
+ 
+ Removed Items
+ -------------
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 79d2a0ab93..9707f7e255 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -717,6 +717,24 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
+ 		(ceil - (v)) > ((v) - floor) ? floor : ceil;	\
+ 	})
+ 
++/**
++ * Macro to divide dividend @p n by divisor @p d, rounding up if @p d does not divide @p n.
++ *
++ * @param n
++ *   Dividend. Must be a non-negative integer to round correctly.
++ * @param d
++ *   Divisor. Must be a positive integer. Evaluated twice.
++ * @return
++ *   Result of dividing @p n by @p d, rounded up.
++ *
++ * @note The divisor @p d is evaluated twice. Arguments must not have side effects.
++ * @note Both @p n and @p d must be non-negative to round correctly.
++ * @note The sum @c (n) + (d) - 1 can wrap around if @p n is close to the maximum
++ *       representable value of its type (e.g. RTE_DIV_ROUND_UP(UINT32_MAX, 2)
++ *       on uint32_t wraps to 0).
++ */
++#define RTE_DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
++
+ /**
+  * Checks if a pointer is aligned to a given power-of-two value
+  *
 -- 
 2.55.0.1082.g2b9226bbc0-goog
 
