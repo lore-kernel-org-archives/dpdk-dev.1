@@ -2,62 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F55C98302
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 01:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E4DC98302
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 03:25:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E271442EFA;
-	Wed, 23 Sep 2026 03:08:15 +0200 (CEST)
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200])
- by mails.dpdk.org (Postfix) with ESMTP id EE08142EF1
- for <dev@dpdk.org>; Wed, 23 Sep 2026 03:08:14 +0200 (CEST)
-Received: by mail-pl1-f200.google.com with SMTP id
- d9443c01a7336-2cfc52ddc55so3877595ad.3
- for <dev@dpdk.org>; Tue, 22 Sep 2026 18:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1790125694; x=1790730494; darn=dpdk.org;
- h=content-type:cc:from:subject:message-id:references:mime-version
- :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=nmwEE/xj/VmxDwwNUkGVxqZis4hpuVyMCR3Opi1DKfM=;
- b=v1E1wT9N/4w9UDBcZdG7sDBLs+pruma4lSGM9Wl/vdfOVTEH4iqYfvOpD7Murfvgeu
- Dq823ewTirGqnU6ScyF87fRjc5tiOSA6OPD+2wWXpgSjMMXZLqogdSxwGsXguoJydjTa
- 3p7WGd4+Ghy6CUNrmN4ltyMaMnKkXbbRk6KOshhc+7Qretu/+GX57Ni+AJzvxev5QmxP
- KVI2ZlPiWNR3kDNmZ/0A+0RCoug4gZlm/kd/dqWZ/FXkYF8avGpCeb+6IcvgcpNiXYHs
- YWViyPezMlJEEf5OtAai2tz/uShRUvTuTiXYyMQtAQf8XokWyCEUvlDJj1eOdsbNQT2f
- JIsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790125694; x=1790730494;
- h=content-type:cc:from:subject:message-id:references:mime-version
- :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=nmwEE/xj/VmxDwwNUkGVxqZis4hpuVyMCR3Opi1DKfM=;
- b=Ym3OufOPQsMMOkc9etkzVy2neKDeulgsiw/nmChWFn77DufSzXn95yrr9lmRd3s81V
- AEf0Fn3nas4pf5P4OtbOT5taM+e5M6J6eVuM/t5Av/lYdKgdKasNK/7gL36+4dfmm5ky
- VA5vR86kLuSMhWxFJ4W7jNrP4XzHrPpvMoWWKqeItH6rrpouO13vMfZXtmz3cajUGgFm
- 3Ayf9RSzgNgcUCL4BerJKVjTmkGIBcGUqs37autETZuWWt2CIqX4TQ5juipaEE4RiSlM
- wtmeB+10TLG8SPPPlZgqj8nTEr8GBiXqAcwR2foTIj6ZK8wDSIwckLQqfDgi3OviBaG1
- s8ow==
-X-Gm-Message-State: AFuF++mV3IAdwnFMG95WS4MqKkyMMkFKSDi3mwGAy0GgcNdUEgU5m14+
- Z/m954HUNu0ngLP1v6PWuAjBRFtrZh+mka4Ge05Rn/YBszr1gpq0/oGgIVB9BEGBRLViP1dr0dI
- APbASkHGeX9lV6waFV3pnfeTr1kV/bzXgDP9MvBoswWBQd9SQfK/HkB5nXu+RSFvGgJVs6GifBU
- bFWzMmeef5lZg4ZK9sTO0k8RPLU3FB6bAWig==
-X-Received: from plei10.prod.google.com ([2002:a17:902:e48a:b0:2df:48dd:9e68])
- (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:e80f:b0:2db:5052:fd6f with SMTP id
- d9443c01a7336-2df69d5751amr10181545ad.17.1790125693595; 
- Tue, 22 Sep 2026 18:08:13 -0700 (PDT)
-Date: Tue, 22 Sep 2026 18:07:39 -0700
-In-Reply-To: <20260923010742.2468145-1-joshwash@google.com>
-Mime-Version: 1.0
-References: <20260812223017.2980190-1-joshwash@google.com>
- <20260923010742.2468145-1-joshwash@google.com>
-X-Mailer: git-send-email 2.55.0.1082.g2b9226bbc0-goog
-Message-ID: <20260923010742.2468145-17-joshwash@google.com>
-Subject: [PATCH v3 16/16] app/test-compress-perf: use common division round up
- macro
-From: Joshua Washington <joshwash@google.com>
-Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 7B62740DD2;
+	Wed, 23 Sep 2026 05:25:31 +0200 (CEST)
+Received: from fout-b2-smtp.messagingengine.com
+ (fout-b2-smtp.messagingengine.com [202.12.124.145])
+ by mails.dpdk.org (Postfix) with ESMTP id C30544067B
+ for <dev@dpdk.org>; Wed, 23 Sep 2026 05:25:29 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.stl.internal (Postfix) with ESMTP id 081A31D000D0;
+ Tue, 22 Sep 2026 23:25:29 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Tue, 22 Sep 2026 23:25:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to; s=fm1; t=1790133928; x=1790220328; bh=f95ZHwJfX9gxXHztQMB0Z
+ dKJgNc8rEwX5Vtb72/VMXA=; b=Thk3hIl7gckBiE5WjbxlGYb1ZguIPqiy5Rz6l
+ qsFG2ZRuatY1xfm4v1LrM6UngCO3bLGWns2BRY96PzwFIG/bJEzTxDcDuGTO3qZN
+ IFe9UC+HptlCYpX2Qh1S+tjiQmzhwkjT9mS4HnzhRUrZz0BauIljSX4gOqAdbIps
+ RLiK1XKj3HYo+tByl6me1EBIBMd9rMFonppXMb7biGr8nYSYx1YrnWbbqGzQmCZY
+ zCb3PUaRe4ss48Ku5aGPJlA16vxvyl566U2LGfnfHcrNMk9UxPZ9dXqAw8p4KEQp
+ +tedUav4Ygg1he1vjPcD6rYbYtZ58SlwCfy0qLOnzAy1WDJMg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:content-transfer-encoding:content-type
+ :date:date:feedback-id:feedback-id:from:from:in-reply-to
+ :message-id:mime-version:reply-to:subject:subject:to:to
+ :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+ 1790133928; x=1790220328; bh=f95ZHwJfX9gxXHztQMB0ZdKJgNc8rEwX5Vt
+ b72/VMXA=; b=HvMDlyqGKIg4q9lIBiVHgfb/2NHGhivk8h/eTPu+UPXUg/0lg5N
+ 328vMnxoWPhgh/TKomR4l8u4DRjlB0pB40kYrLGMnr2o99XAibakUOeFPe19UlYs
+ Jn0c1wJEdoxUiAaBTCnv4cOyZ0cDLrg42vnaFo2dPaaYLaDtfHNsABMY0aoLWx+p
+ 1e0r+Zm7pI1Le/C9rZH8FpDzCUA4gRPSLa2HzoJAPwvh8IBDqjWEUpiM00MC7/EH
+ 92yjE9mEmmOxOtDrXk82Twrr+Yo3SO+matG973N6Us6eeGp2Bkv6qkMtKoIdyFH+
+ D6teDS8gHQlj6PfcUYxAUF8mCnPEbGnajnw==
+X-ME-Sender: <xms:qEazancy4DfUVAgzB9I2Y5uz4Sd5A_kteOlVRD3DeIrfcrwsMV1vlw>
+ <xme:qEazajH4HWIR5vnxJxVbBB6ELqcrWmn4_MexyPKw8w9GycU-2OVdyW4qlZJ65QPBe
+ LbRfN1kYUlG43OuJwWEayzdQIW7KHSrg9PfaAPrw24hjx_XtqWohQ>
+X-ME-Received: <xmr:qEazarl_mwexjdBgZ_3G3Y5jIJDnwl2iYMNZswI3kl0-1QpSacwF1ArBFuUsuj5dADjhM-UnoJMxr_WWXKhNhYOrtdPu>
+X-ME-Proxy-Cause: dmFkZTEzceUtGKk6d6Iklh55/dBP+TdeeswinIkyiVk+zELCaeeUQ2CA1oAY7mYG+GS9eQ
+ eZfS8Mge8SEGdYOLBZ3rtETruMpBEHNb2KRM/p8FYxbs+/LY/5xm1zZoUtGuk/62vCr77x
+ vChDHDz1/lVaSOpR8tivoTxp28x5o7jr5Mac91eISw3weEANpzIoJFmSJeY3OOSRdo+ZMc
+ DU/V04Ij9D6tUDwBWDDsemuEvHqIbPabcNsx918oq/thcmZqjiXUk1gljANGfY6gHqNsKS
+ RhcKP0M29UwCkC6bdHLR1C9fP2Dt4bV6q+68n2kgztmPdULIRCqHnUs39y8clGgb1prcjB
+ wAgcFEYrdf3FMxBwR9LW7O4RjSrYI9tDqFHdcDsJaSk88jjkpKekHxaQO40vB+DJecbk8m
+ zttvJroMsqdyfpzHb4f7wsDrzRbfvxbAGORMQ1G5BTjjRUx+FnrqbV27hKSTcnoxXNAGXw
+ 1njAIq5UbvJqPayhzMc/CUu50cMfnyI/x+vWLxhtPcdYOXLxSkI3tA4gFx/+PVoSe3fluP
+ wHVqYrLjQdbrJbZjNt7KmMljER+i7ByfEASswO8hDwjPkGOzKjzot6xNX7Gpu+oKXVbeSy
+ H0yy/qqV7mmvwNTlpXroNlMajmrX6LBHwdBZogmqg8fuhYFbcW3xmdz/WVPw
+X-ME-Proxy: <xmx:qEazalysIcUqC4FybqVH6yqn8jGgW6PbookfP13Znl9e2ccjDOG2zg>
+ <xmx:qEazanR2I1k0GWEazH_qMajEQKcBu45k90Ft2LYsSGxr9QKEe7Myew>
+ <xmx:qEazaoso6wONmFTPGffggaw-qPBPdllk06HssdjEw_IcFuB9h7W-jQ>
+ <xmx:qEazapsa1nyQamg235haQ8t3Aax7zfn63j473FQG7lEPwaF6dicoeQ>
+ <xmx:qEazas9mbKIuBwD9Mo1mb1KpVlHtQsH7_c5IQoVo4CFGSI1cSMtfL6p8>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA for <dev@dpdk.org>; 
+ Tue, 22 Sep 2026 23:25:28 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Subject: [PATCH 0/3] improve NIC features matrix
+Date: Wed, 23 Sep 2026 05:20:48 +0200
+Message-ID: <20260923032502.770744-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.55.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -71,61 +81,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The RTE_DIV_ROUND_UP in rte_common.h makes DIV_CEIL redundant.
+The style of the features matrices is a bit improved.
+The table header cannot be sticky
+without losing header highlight on hover.
+So instead of adding header stickiness,
+the table size of networking drivers matrix
+is reduced by removing some rows.
 
-Signed-off-by: Joshua Washington <joshwash@google.com>
----
-Changes in v3:
-  - New patch converting DIV_CEIL in comp_perf_test_common.c.
----
- app/test-compress-perf/comp_perf_test_common.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+Thomas Monjalon (3):
+  doc: move CSS of overview matrices
+  doc: improve style of overview matrices
+  doc: simplify NIC feature matrices
 
-diff --git a/app/test-compress-perf/comp_perf_test_common.c b/app/test-compress-perf/comp_perf_test_common.c
-index 78487196ad..3f70c222c4 100644
---- a/app/test-compress-perf/comp_perf_test_common.c
-+++ b/app/test-compress-perf/comp_perf_test_common.c
-@@ -14,9 +14,6 @@
- #include "comp_perf_test_common.h"
- #include "comp_perf_test_verify.h"
- 
--
--#define DIV_CEIL(a, b)  ((a) / (b) + ((a) % (b) != 0))
--
- struct cperf_buffer_info {
- 	uint16_t total_segments;
- 	uint16_t segment_sz;
-@@ -238,8 +235,8 @@ comp_perf_allocate_memory(struct comp_test_data *test_data,
- 		 * Number of segments for input and output
- 		 * (compression and decompression)
- 		 */
--		test_data->total_segs = DIV_CEIL(test_data->input_data_sz,
--						 test_data->seg_sz);
-+		test_data->total_segs = RTE_DIV_ROUND_UP(test_data->input_data_sz,
-+							 test_data->seg_sz);
- 	} else {
- 		/*
- 		 * When application does decompression only, input data is
-@@ -292,8 +289,8 @@ comp_perf_allocate_memory(struct comp_test_data *test_data,
- 		return -1;
- 	}
- 
--	mem->total_bufs = DIV_CEIL(test_data->total_segs,
--				   test_data->max_sgl_segs);
-+	mem->total_bufs = RTE_DIV_ROUND_UP(test_data->total_segs,
-+					   test_data->max_sgl_segs);
- 
- 	snprintf(pool_name, sizeof(pool_name), "op_pool_%u_qp_%u",
- 			mem->dev_id, mem->qp_id);
-@@ -557,7 +554,7 @@ prepare_bufs(struct comp_test_data *test_data, struct cperf_mem_resources *mem)
- void
- print_test_dynamics(const struct comp_test_data *test_data)
- {
--	uint32_t opt_total_segs = DIV_CEIL(buffer_info.input_data_sz,
-+	uint32_t opt_total_segs = RTE_DIV_ROUND_UP(buffer_info.input_data_sz,
- 			MAX_SEG_SIZE);
- 
- 	if (buffer_info.total_buffs > 1) {
+ doc/guides/conf.py                     | 73 +--------------------
+ doc/guides/custom.css                  | 91 ++++++++++++++++++++++----
+ doc/guides/nics/features.rst           | 87 ++++++------------------
+ doc/guides/nics/features/af_xdp.ini    |  2 -
+ doc/guides/nics/features/afpacket.ini  |  2 -
+ doc/guides/nics/features/ark.ini       |  2 -
+ doc/guides/nics/features/atlantic.ini  |  5 +-
+ doc/guides/nics/features/avp.ini       |  2 -
+ doc/guides/nics/features/axgbe.ini     |  2 -
+ doc/guides/nics/features/bnx2x.ini     |  3 -
+ doc/guides/nics/features/bnxt.ini      | 10 +--
+ doc/guides/nics/features/cnxk.ini      |  9 +--
+ doc/guides/nics/features/cnxk_vec.ini  |  9 +--
+ doc/guides/nics/features/cnxk_vf.ini   |  9 +--
+ doc/guides/nics/features/cpfl.ini      |  2 -
+ doc/guides/nics/features/cxgbe.ini     |  3 -
+ doc/guides/nics/features/cxgbevf.ini   |  3 -
+ doc/guides/nics/features/default.ini   | 11 +---
+ doc/guides/nics/features/dpaa.ini      |  3 -
+ doc/guides/nics/features/dpaa2.ini     |  3 -
+ doc/guides/nics/features/e1000.ini     |  5 +-
+ doc/guides/nics/features/ena.ini       |  4 --
+ doc/guides/nics/features/enetc.ini     |  3 -
+ doc/guides/nics/features/enetc4.ini    |  3 -
+ doc/guides/nics/features/enetc4_vf.ini |  3 -
+ doc/guides/nics/features/enetfec.ini   |  2 -
+ doc/guides/nics/features/enic.ini      |  3 -
+ doc/guides/nics/features/failsafe.ini  |  6 +-
+ doc/guides/nics/features/fm10k.ini     |  5 +-
+ doc/guides/nics/features/fm10k_vf.ini  |  2 -
+ doc/guides/nics/features/gve.ini       |  3 -
+ doc/guides/nics/features/hinic.ini     |  2 -
+ doc/guides/nics/features/hinic3.ini    |  5 +-
+ doc/guides/nics/features/hns3.ini      |  8 +--
+ doc/guides/nics/features/hns3_vf.ini   |  8 +--
+ doc/guides/nics/features/i40e.ini      |  8 +--
+ doc/guides/nics/features/iavf.ini      |  8 +--
+ doc/guides/nics/features/ice.ini       |  5 +-
+ doc/guides/nics/features/ice_dcf.ini   |  1 -
+ doc/guides/nics/features/idpf.ini      |  2 -
+ doc/guides/nics/features/igb.ini       |  5 +-
+ doc/guides/nics/features/igb_vf.ini    |  5 +-
+ doc/guides/nics/features/igc.ini       |  5 +-
+ doc/guides/nics/features/ionic.ini     |  6 +-
+ doc/guides/nics/features/ipn3ke.ini    |  8 +--
+ doc/guides/nics/features/ixgbe.ini     |  5 +-
+ doc/guides/nics/features/ixgbe_vf.ini  |  5 +-
+ doc/guides/nics/features/mana.ini      |  3 -
+ doc/guides/nics/features/memif.ini     |  3 -
+ doc/guides/nics/features/mlx4.ini      |  3 -
+ doc/guides/nics/features/mlx5.ini      |  7 +-
+ doc/guides/nics/features/mvneta.ini    |  3 -
+ doc/guides/nics/features/mvpp2.ini     |  3 -
+ doc/guides/nics/features/nbl.ini       |  1 -
+ doc/guides/nics/features/netvsc.ini    |  3 -
+ doc/guides/nics/features/nfb.ini       |  3 -
+ doc/guides/nics/features/nfp.ini       |  3 -
+ doc/guides/nics/features/ngbe.ini      |  5 +-
+ doc/guides/nics/features/ngbe_vf.ini   |  5 +-
+ doc/guides/nics/features/ntnic.ini     |  2 -
+ doc/guides/nics/features/octeon_ep.ini |  3 -
+ doc/guides/nics/features/octeontx.ini  |  3 -
+ doc/guides/nics/features/pcap.ini      |  3 -
+ doc/guides/nics/features/pfe.ini       |  3 -
+ doc/guides/nics/features/qede.ini      |  3 -
+ doc/guides/nics/features/qede_vf.ini   |  3 -
+ doc/guides/nics/features/r8169.ini     |  2 -
+ doc/guides/nics/features/rnp.ini       |  2 -
+ doc/guides/nics/features/sfc.ini       |  8 +--
+ doc/guides/nics/features/sxe2.ini      |  5 +-
+ doc/guides/nics/features/tap.ini       |  3 -
+ doc/guides/nics/features/thunderx.ini  |  3 -
+ doc/guides/nics/features/txgbe.ini     |  5 +-
+ doc/guides/nics/features/txgbe_vf.ini  |  5 +-
+ doc/guides/nics/features/vhost.ini     |  2 -
+ doc/guides/nics/features/virtio.ini    |  3 -
+ doc/guides/nics/features/vmxnet3.ini   |  3 -
+ doc/guides/nics/features/xsc.ini       |  2 -
+ doc/guides/nics/features/zxdh.ini      |  2 -
+ 79 files changed, 139 insertions(+), 424 deletions(-)
+
 -- 
-2.55.0.1082.g2b9226bbc0-goog
+2.55.0
 
