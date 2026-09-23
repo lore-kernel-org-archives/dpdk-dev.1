@@ -2,90 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE8DC98304
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 22:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 078D4C98304
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 22:47:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 32F7E4027C;
-	Thu, 24 Sep 2026 00:43:57 +0200 (CEST)
-Received: from mail-dy1-f228.google.com (mail-dy1-f228.google.com
- [74.125.82.228]) by mails.dpdk.org (Postfix) with ESMTP id 616F640276
- for <dev@dpdk.org>; Thu, 24 Sep 2026 00:43:56 +0200 (CEST)
-Received: by mail-dy1-f228.google.com with SMTP id
- 5a478bee46e88-3336cc33cf4so1204128eec.1
- for <dev@dpdk.org>; Wed, 23 Sep 2026 15:43:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B62EC4027C;
+	Thu, 24 Sep 2026 00:47:18 +0200 (CEST)
+Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com
+ [209.85.214.225])
+ by mails.dpdk.org (Postfix) with ESMTP id B84AD40276
+ for <dev@dpdk.org>; Thu, 24 Sep 2026 00:47:17 +0200 (CEST)
+Received: by mail-pl1-f225.google.com with SMTP id
+ d9443c01a7336-2d715f4a587so6824965ad.2
+ for <dev@dpdk.org>; Wed, 23 Sep 2026 15:47:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790203435; x=1790808235;
+ d=1e100.net; s=20260707; t=1790203636; x=1790808436;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=6lHqaF3/ZJ+5Wd8WekDMhT6lYSaMTHZ7G6CHeTNscD8=;
- b=lHvba/wMOFW0uvnj7KR+B2kt1TbBBnlL9QlF834iPCmPabzlNuExDKvmFNqGfedmp2
- x+pjLHhU5c4eSLwMFn9fQ8EUNTLOVDWwj09Y8YEEN8ICh3C+xQQDmFBTFbct+fQE7ZdQ
- nhPMBn9PRWWN3ziIOWFVHibKImWIW8ulZesOD+8HDMEfrl8uxCh1NUrgf7C83B+q0Xe7
- 7eT++xaDzdye4YFnx2rKqBFIbgKMYCZeFtpZPTHVq7oGoF7wxoklEY8mSMhsxb/OJGzD
- ztT1SNUESnI3fh68LFQwqJS5fOLxuAVCZTyHHSQ6RP23c5Oo6dLhfbbTH9ZuMt8jnUqP
- TuUQ==
-X-Forwarded-Encrypted: i=1;
- AKwUvBxp0twBtCJ/OZENzw1AGiJDwR3Yxv50XJEnew+FkdWoSP4vxREyIqELd48BUOFL4QGyJY0=@dpdk.org
-X-Gm-Message-State: AFuF++ncSftqfuJwG16hTbgn4hJHSLbpgncAUypTjA05228IKWIg8w08
- aMYjDUpA+6NXRZ0ZKnBNsLqOwlXQr2FIMTnMoGDNQmVTebVHyr5z0J4GDaa1MCb6QQITL2+6//+
- XRfWegK2yxxGSFbg9IfJtfwd1A2IMQJxu6ps1ym7ohYqANEPU3OdSc7dDFrPX+SZCz31PcU6Lw6
- eVgjGVX61eZKQpRh4pQyMGnTkxJHn3fukSLvYTIWpjutphA4+qb0X91R/OpLHXQQDY3QjZK1UET
- AzVqp+Mpvfy
-X-Gm-Gg: AYBFou0DyFlatgBrUyCHZhjOqat198t92f+VbK4T2AfLyKCOZeGwK5IPXTexZtkOTCA
- MUlV6ORWHim3tiExBwoE+V/hoJBdxrFxqD2a+TiYaVpDR6MyrDy1rZ88WLw6gN9YIUhVqSI/qTr
- /LBqCmkTeG+GhgVNrCBKKPfqpR9g23qzrKzdTkRIXGEIIk6fiRevHdlYlDNmRJarQ1uVfSKg1Tr
- aKTvzEk9S058mPYLnKYU2W/PtjGqqFiiQUKnf4/bg++IWgyt8yB2FRzlukDk2v/3Ea5yYUb+wzn
- 9S+uPgSCnRjLsaqU/HsKH2TcPVoKjnGNqO2sffPxHY02K+ItHHH08zrMNkTXKe300NHQg5LF4E0
- H1nClF8jOV4E3BIgU6+st6XgB3pyRgk6wMBwpGObu0ShiMXPFTo3XiSioIdTLw2pn7aUn00usqM
- z3FBBBQsC2BloztUIeMA3O7UEPsnYc4ZBBfA3uiHaJcdNjbRSUHg==
-X-Received: by 2002:a05:693c:621a:b0:33c:e61:e201 with SMTP id
- 5a478bee46e88-34002edee42mr483867eec.22.1790203434744; 
- Wed, 23 Sep 2026 15:43:54 -0700 (PDT)
+ bh=jxAmPeDiYCNLZ1cfCqTnoPRpPulU+X5iE1uMUgxRvh0=;
+ b=Th9USmgjvpwRfHGkh69rMJjia3mbgFwSSneMJHEIqSoeVGBb3BAFAI2Nhm3wWoEHXB
+ KED9LV4ApDu9TKfLjl4lXoyWvReArRvizmo7pjOlpvEIXQ/pM6TH5pe0tzM96lHJcIWb
+ VGBi9uLPQmKN6Gb5Fhj1Mn19/LaRIWYeUsx6fE0EoMFomQO/1j3vL2nC/zX+K67wnM3z
+ Tn64jpnBClXLGsHT1eayuqsXQ5HLoJKzjMBKRIzvq+P2p7NVLKALGOVrzyd1yl1k3nqj
+ +V9gqSxyqIVMk4YlPcbHgrllYz9jhTf4QhidcfEF7w7KyDYr5MB3cqz05QSC6iPjx4yV
+ P2lg==
+X-Gm-Message-State: AFuF++lYLQ1SISHpTEPLHdyOLRCXRreO3s4Li5pl1TwYFoUsaxXdTMuG
+ TFb/PHaXFszbkLofg+MUNWFehKB+RaSpEcyywpwX2pR4JvXGiIbhghAzAlPRPPb5rRjC500hqqz
+ HL+QtTgKf0QnoFkr0Tg4gNLBROqFXJyizLXne90+OQEeaq97xL++w2zDnwX5WqOP0OSAIIGJXZB
+ Cqcc5o4A8e9I24WVih2eBIxZB98Hhkop6gDi3Q/tr5IIo5s/bi0nM8jfB0WvAUPBjwEse/VqHmx
+ Y3r1RgJjM3C
+X-Gm-Gg: AYBFou05ieMlkopfeG8VFdGLlLGOIr51mPYKJ3kEiKfuV9vtjYsg/gFRhkTCt2gbD5s
+ 257MCFn1k18tOOd0+ZDjDTGedpSSqw4r8q4gjh21qkZJUoj2gB4fleNBXW9QVq+9awc77tg/MaI
+ 2LgIAEqo3lg2sHkrVmQqNrEO/VNWFme6Bjqt+0oAt4bmh5e4rKumA+zGEJ/2hulftc1AKvT9xfP
+ ACo9+SgwT/uJ3eJuQkiUH9BZqXrVpraUMTwx0LvA3YRSI4qc0tkr2HAIKgbF7Xa3udD0CNegscU
+ 3c6FBdAuHtkIfzamxs/woB9Vv40Nd4jCuf16KDcam6bmNIpVkCSGegxo6p/V2QBfyWmuZvxMpeg
+ gkYzewcB4pBEPflJaa6XA0eBqUZpt8HJvMsuIvjws7ZDrFDqZOky+U8J3JN80bfu4ZTqKqjLQxD
+ VwCkXUjXTqauX4iTdgwwrWACHqgzHIb683bcwtUwPURHKV/dU2qQ==
+X-Received: by 2002:a17:90b:3c0e:b0:39e:4c81:6c95 with SMTP id
+ 98e67ed59e1d1-3a098dbb040mr482967a91.27.1790203636515; 
+ Wed, 23 Sep 2026 15:47:16 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-22.dlp.protect.broadcom.com. [144.49.247.22])
  by smtp-relay.gmail.com with ESMTPS id
- 5a478bee46e88-33e96357306sm35434eec.10.2026.09.23.15.43.54
+ 98e67ed59e1d1-3a0973973d9sm378540a91.7.2026.09.23.15.47.16
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 23 Sep 2026 15:43:54 -0700 (PDT)
+ Wed, 23 Sep 2026 15:47:16 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pg1-f198.google.com with SMTP id
- 41be03b00d2f7-ca8aee88725so1002290a12.3
- for <dev@dpdk.org>; Wed, 23 Sep 2026 15:43:53 -0700 (PDT)
+Received: by mail-pg1-f197.google.com with SMTP id
+ 41be03b00d2f7-cbe77d6864dso1389327a12.2
+ for <dev@dpdk.org>; Wed, 23 Sep 2026 15:47:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1790203433; x=1790808233; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1790203635; x=1790808435; darn=dpdk.org;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=6lHqaF3/ZJ+5Wd8WekDMhT6lYSaMTHZ7G6CHeTNscD8=;
- b=aDlPnWijdiLhg9NfdGlbB1QQHx19IT0nvKXPe6qsNRKFggOyZQtpO6AbpMfnzqt1P7
- hoplWHtYK0lX2e6DkQW2mBUxDJhMzgKBf0d6VwxSw2OCNswQ2ovrdBefwxJewRPepeqj
- 4pYmG6J46wun5x+4L/n1oDIpb3iIW6jDKSW5Y=
-X-Forwarded-Encrypted: i=1;
- AKwUvBzY1rzqKknwIg563ou0kFxjIgL8HX/EyfEa6agfuFBA4cRYKg8tpd+vEQ6r3RCNEShVSKs=@dpdk.org
-X-Received: by 2002:a05:6a21:3301:b0:3dd:a197:cf2a with SMTP id
- adf61e73a8af0-3de0e9211e2mr566513637.78.1790203432711; 
- Wed, 23 Sep 2026 15:43:52 -0700 (PDT)
-X-Received: by 2002:a05:6a21:3301:b0:3dd:a197:cf2a with SMTP id
- adf61e73a8af0-3de0e9211e2mr566493637.78.1790203432220; Wed, 23 Sep 2026
- 15:43:52 -0700 (PDT)
+ :content-type; bh=jxAmPeDiYCNLZ1cfCqTnoPRpPulU+X5iE1uMUgxRvh0=;
+ b=LpzZm7EKne5sQoyZ6B2gZLeP3exs5NbYJcGCcBBoqYhXeDVuFFx8ev8hYvrocmcBmE
+ nJM5IHRWqKNakVOzO0JugOa8/bNgGthB++Rp8hIC6Yy/mSpJyEd18mGunbhPJTxWJpN1
+ X3Sp1to6PUM4ZxMLNKGtrnYuI0hBadBOK9Pds=
+X-Received: by 2002:a05:6a20:3d1e:b0:3da:f21a:23ca with SMTP id
+ adf61e73a8af0-3de0e73318emr548769637.22.1790203634911; 
+ Wed, 23 Sep 2026 15:47:14 -0700 (PDT)
+X-Received: by 2002:a05:6a20:3d1e:b0:3da:f21a:23ca with SMTP id
+ adf61e73a8af0-3de0e73318emr548758637.22.1790203634545; Wed, 23 Sep 2026
+ 15:47:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260921030811.1034869-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260921091932.39fa0013@phoenix.local>
- <CAJFAV8y=YSgqdt+gtXn37VYZagnMzMCaRg+VQZbmjfQ974vW7w@mail.gmail.com>
-In-Reply-To: <CAJFAV8y=YSgqdt+gtXn37VYZagnMzMCaRg+VQZbmjfQ974vW7w@mail.gmail.com>
+References: <20260918032825.763449-1-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260921025903.1034720-1-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260921085250.46018e60@phoenix.local>
+In-Reply-To: <20260921085250.46018e60@phoenix.local>
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Date: Wed, 23 Sep 2026 16:43:13 -0600
-X-Gm-Features: AclHuK9ud8cv4kWNxfevjXwk_gobu8bVWaKtxFDE6maIxV5kixqTcli3eiUFVvE
-Message-ID: <CAPTrkjHZgh_ASCsyjh9B=LbUQaGvXGWCJSVHWJmYr+PZavHucQ@mail.gmail.com>
-Subject: Re: [PATCH] net/bnxt: remove VMDq support
-To: David Marchand <david.marchand@redhat.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org, 
- kishore.padmanabha@broadcom.com, Keegan Freyhof <keegan.freyhof@broadcom.com>
+Date: Wed, 23 Sep 2026 16:46:35 -0600
+X-Gm-Features: AclHuK8En1H1ggnCXNQU-6ZtvMRT_Afq15ZVMqW2w5bLDTdx7ZEktPen4cqcAlA
+Message-ID: <CAPTrkjG05N9z06ix1d-yKJnJAGbAiEGfXq=4yji0V-2pAD2nrA@mail.gmail.com>
+Subject: Re: [PATCH v2] net/bnxt: add support for queue size of 16384
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, kishore.padmanabha@broadcom.com, 
+ Keegan Freyhof <keegan.freyhof@broadcom.com>
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="000000000000b3d09d065c2e377d"
+ micalg=sha-256; boundary="000000000000c17a28065c2e4375"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,147 +96,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000b3d09d065c2e377d
-Content-Type: multipart/alternative; boundary="000000000000a75c45065c2e37ea"
+--000000000000c17a28065c2e4375
+Content-Type: multipart/alternative; boundary="000000000000b69811065c2e43f2"
 
---000000000000a75c45065c2e37ea
+--000000000000b69811065c2e43f2
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-I will restore the explicit rejection in v2.
+Hi Stephen,
 
-On Tue, Sep 22, 2026 at 1:50=E2=80=AFAM David Marchand <david.marchand@redh=
-at.com>
-wrote:
+Agreed. Since it gates nothing, I will delete it rather than document a
+no-op constant.
 
-> On Mon, 21 Sept 2026 at 18:21, Stephen Hemminger
-> <stephen@networkplumber.org> wrote:
+On Mon, Sep 21, 2026 at 9:54=E2=80=AFAM Stephen Hemminger <
+stephen@networkplumber.org> wrote:
+
+> On Sun, 20 Sep 2026 20:59:03 -0600
+> Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com> wrote:
+>
+> > From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 > >
-> > On Sun, 20 Sep 2026 21:08:11 -0600
-> > Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com> wrote:
+> > The driver only supported queue sizes up to 4096 for Tx and 8192 for
+> > Rx. Raise both to 16384. The completion ring for a Rx ring is sized
+> > at 2x the Rx ring size, further multiplied by 4 when the aggregation
+> > ring is in use (8x total), so at 16384 it can reach 131072, above
+> > uint16_t range - widen the ring index/counter variables touched by
+> > that path to uint32_t.
 > >
-> > > From: Keegan Freyhof <keegan.freyhof@broadcom.com>
-> > >
-> > > Remove support for the VMDq feature from the driver: the multi-pool
-> > > Rx-queue configuration path in bnxt_mq_rx_configure(), the VMDQ VLAN
-> > > pool wiring in the L2 filter alloc path, and the max_vmdq_pools/
-> > > vmdq_queue_num reporting in dev_info (now always reported as 0).
-> > >
-> > > Preserved two pieces of logic that live in the same
-> > > function/switch statement but are not VMDq-pool-specific: the
-> > > RTE_ETH_MQ_RX_RSS pools=3Drx_cosq_cnt case and the
-> > > per-non-default-VNIC skip_filter_allocation guard in
-> > > bnxt_mq_rx_configure(), both used by the plain multi-COS RSS path.
-> > > Also kept the RTE_ETH_VMDQ_ACCEPT_HASH_UC/BROADCAST/MULTICAST ->
-> > > l2_rx_mask flag mapping in rte_pmd_bnxt_set_vf_rxmode(): despite the
-> > > name, those bits are the standard DPDK VF-rxmode API used regardless
-> > > of hardware VMDq pool support, not a VMDq-pool-specific control.
-> > >
-> > > Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
-> > > Signed-off-by: Mohammad Shuab Siddique <
+> > Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
+> > Signed-off-by: Mohammad Shuab Siddique <
 > mohammad-shuab.siddique@broadcom.com>
-> > > ---
-> >
-> > [PATCH] net/bnxt: remove VMDq support
-> >
-> > Warning: mq_mode validation is lost. Before, VMDq, DCB and DCB_RSS
-> > modes hit the default case and returned -EINVAL. Now any mode other
-> > than NONE or RSS silently configures a single pool and succeeds.
-> > Reject every other mq_mode explicitly in bnxt_mq_rx_configure() or
-> > dev_configure.
+> > ---
+> [PATCH v2] net/bnxt: add support for queue size of 16384
 >
-> mq_mode should be validated in ethdev now, in next-net.
-> 93b017ff2ffa ("ethdev: check VMDq availability")
+> Warning: the change of BNXT_MAX_MTU and BNXT_NUM_VLANS to UL is
+> unrelated to queue size and is not described. It changes the type of
+> BNXT_MAX_PKT_LEN to unsigned long. Drop it, or split it out with a
+> reason.
 >
-> Is there something missing?
+> Warning: MAX_CP_DESC_CNT is bumped to 32K and gains a comment saying
+> it is unused and the real worst case is 131072. If it is unused,
+> delete it.
 >
-> --
-> David Marchand
->
->
+
 
 --=20
+Regards,
 Shuab
 
---000000000000a75c45065c2e37ea
+--000000000000b69811065c2e43f2
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr"><div dir=3D"ltr"><div class=3D"gmail_default" style=3D"fon=
-t-family:&quot;trebuchet ms&quot;,sans-serif">I will restore the explicit r=
-ejection in v2.=C2=A0=C2=A0</div></div><br><div class=3D"gmail_quote gmail_=
-quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Sep 22, 2026=
- at 1:50=E2=80=AFAM David Marchand &lt;<a href=3D"mailto:david.marchand@red=
-hat.com">david.marchand@redhat.com</a>&gt; wrote:<br></div><blockquote clas=
-s=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid r=
-gb(204,204,204);padding-left:1ex">On Mon, 21 Sept 2026 at 18:21, Stephen He=
-mminger<br>
-&lt;<a href=3D"mailto:stephen@networkplumber.org" target=3D"_blank">stephen=
-@networkplumber.org</a>&gt; wrote:<br>
-&gt;<br>
-&gt; On Sun, 20 Sep 2026 21:08:11 -0600<br>
-&gt; Mohammad Shuab Siddique &lt;<a href=3D"mailto:mohammad-shuab.siddique@=
-broadcom.com" target=3D"_blank">mohammad-shuab.siddique@broadcom.com</a>&gt=
-; wrote:<br>
-&gt;<br>
-&gt; &gt; From: Keegan Freyhof &lt;<a href=3D"mailto:keegan.freyhof@broadco=
-m.com" target=3D"_blank">keegan.freyhof@broadcom.com</a>&gt;<br>
-&gt; &gt;<br>
-&gt; &gt; Remove support for the VMDq feature from the driver: the multi-po=
-ol<br>
-&gt; &gt; Rx-queue configuration path in bnxt_mq_rx_configure(), the VMDQ V=
-LAN<br>
-&gt; &gt; pool wiring in the L2 filter alloc path, and the max_vmdq_pools/<=
-br>
-&gt; &gt; vmdq_queue_num reporting in dev_info (now always reported as 0).<=
-br>
-&gt; &gt;<br>
-&gt; &gt; Preserved two pieces of logic that live in the same<br>
-&gt; &gt; function/switch statement but are not VMDq-pool-specific: the<br>
-&gt; &gt; RTE_ETH_MQ_RX_RSS pools=3Drx_cosq_cnt case and the<br>
-&gt; &gt; per-non-default-VNIC skip_filter_allocation guard in<br>
-&gt; &gt; bnxt_mq_rx_configure(), both used by the plain multi-COS RSS path=
-.<br>
-&gt; &gt; Also kept the RTE_ETH_VMDQ_ACCEPT_HASH_UC/BROADCAST/MULTICAST -&g=
-t;<br>
-&gt; &gt; l2_rx_mask flag mapping in rte_pmd_bnxt_set_vf_rxmode(): despite =
-the<br>
-&gt; &gt; name, those bits are the standard DPDK VF-rxmode API used regardl=
-ess<br>
-&gt; &gt; of hardware VMDq pool support, not a VMDq-pool-specific control.<=
-br>
-&gt; &gt;<br>
-&gt; &gt; Signed-off-by: Keegan Freyhof &lt;<a href=3D"mailto:keegan.freyho=
-f@broadcom.com" target=3D"_blank">keegan.freyhof@broadcom.com</a>&gt;<br>
-&gt; &gt; Signed-off-by: Mohammad Shuab Siddique &lt;<a href=3D"mailto:moha=
-mmad-shuab.siddique@broadcom.com" target=3D"_blank">mohammad-shuab.siddique=
-@broadcom.com</a>&gt;<br>
-&gt; &gt; ---<br>
-&gt;<br>
-&gt; [PATCH] net/bnxt: remove VMDq support<br>
-&gt;<br>
-&gt; Warning: mq_mode validation is lost. Before, VMDq, DCB and DCB_RSS<br>
-&gt; modes hit the default case and returned -EINVAL. Now any mode other<br=
+<div dir=3D"ltr">Hi Stephen,<br><br>Agreed. Since it gates nothing, I will =
+delete it rather than document a no-op constant.<br></div><br><div class=3D=
+"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">O=
+n Mon, Sep 21, 2026 at 9:54=E2=80=AFAM Stephen Hemminger &lt;<a href=3D"mai=
+lto:stephen@networkplumber.org">stephen@networkplumber.org</a>&gt; wrote:<b=
+r></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex=
+;border-left:1px solid rgb(204,204,204);padding-left:1ex">On Sun, 20 Sep 20=
+26 20:59:03 -0600<br>
+Mohammad Shuab Siddique &lt;<a href=3D"mailto:mohammad-shuab.siddique@broad=
+com.com" target=3D"_blank">mohammad-shuab.siddique@broadcom.com</a>&gt; wro=
+te:<br>
+<br>
+&gt; From: Mohammad Shuab Siddique &lt;<a href=3D"mailto:mohammad-shuab.sid=
+dique@broadcom.com" target=3D"_blank">mohammad-shuab.siddique@broadcom.com<=
+/a>&gt;<br>
+&gt; <br>
+&gt; The driver only supported queue sizes up to 4096 for Tx and 8192 for<b=
+r>
+&gt; Rx. Raise both to 16384. The completion ring for a Rx ring is sized<br=
 >
-&gt; than NONE or RSS silently configures a single pool and succeeds.<br>
-&gt; Reject every other mq_mode explicitly in bnxt_mq_rx_configure() or<br>
-&gt; dev_configure.<br>
+&gt; at 2x the Rx ring size, further multiplied by 4 when the aggregation<b=
+r>
+&gt; ring is in use (8x total), so at 16384 it can reach 131072, above<br>
+&gt; uint16_t range - widen the ring index/counter variables touched by<br>
+&gt; that path to uint32_t.<br>
+&gt; <br>
+&gt; Signed-off-by: Keegan Freyhof &lt;<a href=3D"mailto:keegan.freyhof@bro=
+adcom.com" target=3D"_blank">keegan.freyhof@broadcom.com</a>&gt;<br>
+&gt; Signed-off-by: Mohammad Shuab Siddique &lt;<a href=3D"mailto:mohammad-=
+shuab.siddique@broadcom.com" target=3D"_blank">mohammad-shuab.siddique@broa=
+dcom.com</a>&gt;<br>
+&gt; ---<br>
+[PATCH v2] net/bnxt: add support for queue size of 16384<br>
 <br>
-mq_mode should be validated in ethdev now, in next-net.<br>
-93b017ff2ffa (&quot;ethdev: check VMDq availability&quot;)<br>
+Warning: the change of BNXT_MAX_MTU and BNXT_NUM_VLANS to UL is<br>
+unrelated to queue size and is not described. It changes the type of<br>
+BNXT_MAX_PKT_LEN to unsigned long. Drop it, or split it out with a<br>
+reason.<br>
 <br>
-Is there something missing?<br>
-<br>
--- <br>
-David Marchand<br>
-<br>
+Warning: MAX_CP_DESC_CNT is bumped to 32K and gains a comment saying<br>
+it is unused and the real worst case is 131072. If it is unused,<br>
+delete it.<br>
 </blockquote></div><div><br clear=3D"all"></div><div><br></div><span class=
 =3D"gmail_signature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_s=
-ignature"><div dir=3D"ltr"><div>Shuab</div></div></div></div>
+ignature"><div dir=3D"ltr">Regards,<div>Shuab</div></div></div>
 
---000000000000a75c45065c2e37ea--
+--000000000000b69811065c2e43f2--
 
---000000000000b3d09d065c2e377d
+--000000000000c17a28065c2e4375
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -333,13 +290,13 @@ kJEu6e8wkjO/YXT72+3ZYPY5zpDa/3tOieHfS3O4SHnwF/DIkFkCpZY6aLo/8RKZ5oBrVsDvId32
 aMer3EvJtSphZOrdROgWDn8WjzxCsIpMFMZox9Q8O6F4litYD1lzorw6hhL/2kQpHRibT2M7xzs3
 X09O7RJTuMkxggJXMIICUwIBATBiMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWdu
 IG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAyMDIzAgx7eq0jUAis
-qJ3pe3swDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIPZ58APQ3FldyapwIPOkpQWu
-HHaCrsgEQaRAjV99zpg+MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8X
-DTI2MDkyMzIyNDM1M1owXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQMEASowCwYJYIZIAWUDBAEW
+qJ3pe3swDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIK81o+w4TWRD3lGvF4amELY4
+4Dc8UdfhBbjwn3xzKC1NMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8X
+DTI2MDkyMzIyNDcxNVowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQMEASowCwYJYIZIAWUDBAEW
 MAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJYIZIAWUDBAIBMA0GCSqG
-SIb3DQEBAQUABIIBAIZ4NGLb6dfc9zY/WuyGDvPQ8epZmvdVKmayt99xzVEobJO11m/cAoWFa+1T
-nW/h703A/X71UMIjNRupedNxIYrmNg2NXaB5gyUQI15IyYRn3yEUbSJWk8/uDyOjvcU7jhMj0kn0
-coPipm8JKl8rZrPT+cXcKBjORPJLk0TadYFYxAaOSnoEmewvkCpx9GPYBsmY+GIieyFiIhxeGOhf
-V+7ZTX7mDH4t+H6GmDDLRxVN17sQlBM5Q1MT3C6sC4PC27nJ/hFBiRq/rzb0CRS8xM87eShIUCwe
-Vs1rh25+esJGNcNkVHIj51VhPQYZEJBQjkIvYj/jtornh4dg//UFwuA=
---000000000000b3d09d065c2e377d--
+SIb3DQEBAQUABIIBABHwibiUIiHgCzJjDN0M0KFNqROBIec3ht+WNviNdWHmBvyKWVRfR/1N4lcj
+nWwo5oPJNl326R6gc8hlkXAttdTfyNsGOmgFDASkKGAHeyp5MM9PYEQTH5bVBgKe9BwKyhIgFBrj
+hx44sMVHDr6g+kN3/TFsGuan2TJHWV6JOF/QawfVhOega3SWfuXrjrZ2CRZj2k7vkBktbUyYJ2Ew
+haQpdfMgPBB9PLA94L3tCvfHi32uSQCzO443DmZeHFc17q+Pw2UB9h8Qjr9e1asRzMAvPpyXBvdn
+tyZEAXTy6VNoRyn0pk3D3qooFJ9VsIkYPCtljWNpNCDa38ubTg3U338=
+--000000000000c17a28065c2e4375--
