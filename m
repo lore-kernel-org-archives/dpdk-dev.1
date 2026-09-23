@@ -2,73 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E883C9830B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 18:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D94FBC98304
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 18:39:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0359B402DB;
-	Wed, 23 Sep 2026 20:39:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E051B402DB;
+	Wed, 23 Sep 2026 20:39:36 +0200 (CEST)
 Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
- [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id B6B154027C
- for <dev@dpdk.org>; Wed, 23 Sep 2026 20:39:14 +0200 (CEST)
+ [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id 5A3D2402DB
+ for <dev@dpdk.org>; Wed, 23 Sep 2026 20:39:35 +0200 (CEST)
 Received: by mail-pz2-f42.google.com with SMTP id
- 41be03b00d2f7-cc1cea4ae2dso623736a12.3
- for <dev@dpdk.org>; Wed, 23 Sep 2026 11:39:14 -0700 (PDT)
+ 41be03b00d2f7-cc50bcf87b2so674904a12.1
+ for <dev@dpdk.org>; Wed, 23 Sep 2026 11:39:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790188753;
- x=1790793553; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790188774;
+ x=1790793574; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=1jLI650VvjuCg7UeZszb/eJ3kcO7rfo/BGaTB5okzQ0=;
- b=We20N8E70xvdfe61I/mvkdchFAj/MK7JMv3tgkdPiHNCreKRFcEfijtzAIuYa0IKO7
- 3Hnsy8Qa8EAmxIf/BAzkEHjfUHnIKcGXTjZI4qybu9fjceP4u22xOExPzzv4ozO/+5Xa
- imFkekd2+0FgCKUJ2SNhZNMcHfilKVS3O1ATDRAtAInRFCtb0OABF6iJ247wKxC/UEOc
- RbmlPZnt7YNmrHkUeFHXW3dNWWiC+V9YrUkQ7iJu1c1bRT0skWeSqj87Rt3U+2EWfZdq
- bZH499kBroTxm8IwgbxTWeHwsuKZjAGHEeh06nA8hvq1xPUWAg5lSgZi+QDgaHLJco7B
- +4WA==
+ bh=G5A05HQnuvtfhf3QIIHTovwO3sW86vkwBmQs4791UkQ=;
+ b=BV37WGh+0vX8tWptZraRZi+loNlvVOo4jb/J9ccKmbKvsixW84cjsdIRjCP+6sEmmQ
+ CznJJ0sYg7VGLbJ/P3u6moIoUHO4zh6t7eGWM9Pzq35jxIcwPqUg+IDUd9fbplW7ymQ5
+ 7rme5rZrbtC2lb7tM+qY1cUJVviuxWcM6T1Rwx5Q7MVfZZO3zFHNsc3mTMLkDFOrGzFZ
+ Tpqv4KIqmhA44e1lhDmeJ9dlS1WODCon/6KbuqsW0exb/I1zxgC65WL69ho27OJTP7qG
+ xo8l76ajrIzI8f1PV/mPQjnSwHXaznRZzTCOp8lurW+r9W7HFaL9AIjLr+8Yowaxjm+g
+ 4o5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790188753; x=1790793553;
+ d=1e100.net; s=20260707; t=1790188774; x=1790793574;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=1jLI650VvjuCg7UeZszb/eJ3kcO7rfo/BGaTB5okzQ0=;
- b=vug7GbMdlsNwgmJVFpcDw/l8E/u2iDp7PTCGzcWVarSOLcqteGj+5a3UoreeYSkqDl
- rp1jg76aLEZSNR0Ks6AjEcEcmTTrDrUmyn0u97dEgNqFT769Vw9eCfHLoVy5+XcT8q4Z
- ESHeuJr2jam4XTEWpvgT/tDjHRPMQEEvsL6Ua7M+xTxb5N86z1JE7OMNwcEmK8cHIlID
- lApc5QwLwvMQP3uSL4E0TnL5FrCljL3HRt3wQ7SdmA7V/LLS2t+PbY+FBz8iR3sonS3O
- rZ70G+2y8PteYp1iLS9WfJh7TwGYjL/K0AiaqfQNJVQjYCqZYDFJhTuNLjqMCy9wnLr0
- gEwQ==
+ bh=G5A05HQnuvtfhf3QIIHTovwO3sW86vkwBmQs4791UkQ=;
+ b=e4OwTqpm3ScZRV9apL4F1iV8tT8oGIkQaU3OGVtiervGLGNVBtiyLQTxarDxLrFkaQ
+ Payf5835Zt9hLEcSyXqtn5BNYCuP1/TKDVZpgQannc0rvYcYb3n37ZInUalPknk0+EUr
+ l/lXJSyS1n+rOcAV1tGCkW24EXW57HcrL6sJNRFzrCCpse/rL1SoujkxmI5rSs87V7jJ
+ 7JwQPqkdD2iVmBk8ytrLqh9Q0hBFk78pNd8ELfMgPRjlAn6d/MdFLGQmloXyhKMTcPKt
+ tLFY/Yx5wtkn25Vvb+jEoC4r7zP42aUdXFV6HvOZnblPO/jdUtNrYvYci7nGXqnoU8o1
+ A1zg==
 X-Forwarded-Encrypted: i=1;
- AKwUvBzi2QbfZL7HuOz861IBSNvSHvfbECLKuAm4OCvSknrxDz+RiCi4BcMfQq1jO1vaNVxwLyc=@dpdk.org
-X-Gm-Message-State: AFuF++kEv8zyvfpZymzyQLIivCh22qSOGAFtdcIg1sFv6u/En9TVgIqH
- E/7VLRjy70GJBqshe5Jqb+z4WC3BqGBGb3XGMGKpCF5GlFuDsUxJOBDQvctdedXiOcM=
-X-Gm-Gg: AYBFou0Jwj+sNnHnMGFKOgiHB0pDgWOSiZ4cLSU3Qbw+xHc8B1GHCpnCE0MwUKniAhk
- K6cffK+0pxSZsl7CKWvNS0bMRVpnDB+jaTegbv4d36tl2Nsi65rz+PaNHGDNP/GcV72smDb6t94
- /YjurlxeEdOCFf++p0pIx0Bvz4RE3TYQ7blyBh+f2h37+EjTQLNGUH4itFASpzWTQvuyY4bbz0J
- WlamdIgxV0YM/vZ0c6Fn0ln+vFViEVs3ZJhzwslea2Ju2hEg/JE+3kuG/eYaCpFgjSaOroPgfND
- ctGF4mAiM1ecaTtbWY/2OJv56RHppbkJ3NyKwgDlwAQK/+//5f5436t5qiPUClDPzhZ3kvHkjh0
- 9RXc06vaMypxNppHuUGmlTgw4sZ9ebpuv+2Fjz62R+/NpU8LCzaZnt5fNUu9oHcrUgTM3/kp9w9
- 7/OyKhIve6mV/lYoSA9gg+EBK0xQVRYlWNeC6x3Y/vpJ4dfyxD6HcUUI8QzijI9BuuFMaATA9Xa
- ABQeJrfNAZ65bzcxJGCsX2QmNSx+GspXrrbZhJc
-X-Received: by 2002:a17:90b:3c07:b0:39e:4c7e:f03f with SMTP id
- 98e67ed59e1d1-3a098b936bamr32592a91.28.1790188753433; 
- Wed, 23 Sep 2026 11:39:13 -0700 (PDT)
+ AKwUvByvJBJsaO8CMPw6IiD+7fSkZOD0OoC0VHz7bxaQpu9P/QtAUDYJtOFZdmQAQDBLEsSTA8Q=@dpdk.org
+X-Gm-Message-State: AFuF++kGGt3K62HnYkr6OQaQGAxkUFE5RkvjIvPv0RJn+pxQdv/3tOLF
+ 7pXtT2fyKkopEyNxtO/tNrM3OvCuaxr4hTlp9ywCeAVpNoGoGYPbehIgGCVeKfnPgC0=
+X-Gm-Gg: AYBFou2w9DlA+Qi90lWP72De7I8N8HJzNrujdguTT5BjJ88gNWKNue77GsxBn0p4QSw
+ ZHEvjsMygMm6sF1RRydtsFllxTm+/5g2e9YQxlyVVncOXioDQrC020rXiJG9cmBjPV349X1qAqc
+ Tmc3kmnvZ1rrIx2Xmeh6/M2z4u0NRADeCzwxq44XQ92F/zF8lQ8fLFpqE7f4AZD48wAXGdmUwaq
+ fESsbM2ai/Gbfa/Nmdu+8f6cTOXqUDXSX4fGVBNdt9/ad2sIaPCe7gEA7wPHGYHVljM8tfqtu0p
+ lS7cFT4yybVbjS6Pyre2Mp0R8ZJFXTRTzNlPXEqO7sshHOr32y5hwRC4qlZrM+Kdhma3h4JqUaa
+ UOjCgr/xUyVLPGFNco4Awy3UGq45dZF8eksItDhEruxaLmslbCZgBIeWoO34FSrVKzaQUbCSqbY
+ kQkUMzVfMBnXN6PbEGOBdlrP6HMzzk9cZlFV4aJrZgzzy2hyBkDcKckRlfvDDnhtP5u0KKa+Lit
+ 62jeesQdIzDm10Lh28fuHnwazqZ4t0dnRokVj9a
+X-Received: by 2002:a05:6a21:6a0d:b0:3d3:adbf:7782 with SMTP id
+ adf61e73a8af0-3de0e75ebabmr91181637.23.1790188774375; 
+ Wed, 23 Sep 2026 11:39:34 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a0972b22c3sm408583a91.1.2026.09.23.11.39.12
+ d2e1a72fcca58-87d1dad42fcsm1760701b3a.35.2026.09.23.11.39.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 23 Sep 2026 11:39:13 -0700 (PDT)
-Date: Wed, 23 Sep 2026 11:39:10 -0700
+ Wed, 23 Sep 2026 11:39:34 -0700 (PDT)
+Date: Wed, 23 Sep 2026 11:30:36 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: <ykanaujia@marvell.com>
 Cc: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, <dev@dpdk.org>
-Subject: Re: [PATCH 2/2] drivers: add support for async RTE FLOW APIs
-Message-ID: <20260923113910.7c6bb91c@phoenix.local>
-In-Reply-To: <20260715084545.301064-1-ykanaujia@marvell.com>
-References: <20260715084545.301064-1-ykanaujia@marvell.com>
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
+ <dev@dpdk.org>, Satheesh Paul <psatheesh@marvell.com>
+Subject: Re: [PATCH 1/2] common/cnxk: support aggregator enqueue profiles
+Message-ID: <20260923113036.140e0a8f@phoenix.local>
+In-Reply-To: <20260715084340.300442-1-ykanaujia@marvell.com>
+References: <20260715084340.300442-1-ykanaujia@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -85,36 +86,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 15 Jul 2026 14:15:20 +0530
+On Wed, 15 Jul 2026 14:13:39 +0530
 <ykanaujia@marvell.com> wrote:
 
-> From: Yashaswini Kanaujia <ykanaujia@marvell.com>
+> From: Satheesh Paul <psatheesh@marvell.com>
 >=20
-> added support for asynchronous rte_flow APIs
-> for cn10k device
+> Support for flow aggregator enqueue profiles.
 >=20
-> Signed-off-by: Yashaswini Kanaujia <ykanaujia@marvell.com>
+> Signed-off-by: Satheesh Paul <psatheesh@marvell.com>
 > ---
+=20
+This was merged to main without sufficient review.
 
-AI review found issues with the patch.
+AI review sees:
 
 
-  f58b114027 "net/cnxk: support async flow API" =E2=80=94 the code is genui=
-nely
-  well-written; I found no memory-safety defects. Bounds on nb_items/nb_act=
-ions are
-  enforced at template creation with comments naming the fixed-size stack a=
-rrays
-  they protect, template indices and queue_id are checked at every entry po=
-int,
-  refcounts prevent destroy-while-in-use, and create_by_index is a delibera=
-te
-  ENOTSUP stub rather than an unfinished path.
+  16f07d871f "common/cnxk: support aggregator enqueue profiles" =E2=80=94 t=
+wo real bugs:
 
-  The problems are process ones: the message says "for cn10k device" but th=
-e patch
-  also wires up cn20k; ~3200 lines as a single commit with a 2-line message=
-; no=20
-  release notes and no cnxk.ini feature-flag update for a new user-visible =
-feature;
-  and a stray blank line removed at cn20k_ethdev.c:8.
+  1. roc_nix.c:533 =E2=80=94 the new goto tm_conf_fini is the first error p=
+ath placed after
+  nix->dev.drv_inited =3D true (line=C2=A0526). It tears the device fully d=
+own but never
+  clears the flag, so a later roc_nix_dev_init on the same nix hits the ear=
+ly if=20
+  (nix->dev.drv_inited) return 0; at line 463 and reports success on a dead=
+ device.
+  Fix: move the cn20k call above the assignment, or clear the flag in the e=
+rror
+  path. (The nix_list TAILQ entry is also leaked, but that's pre-existing o=
+n every
+  failure path =E2=80=94 not this patch's regression.)
+  2. roc_nix.c:605 =E2=80=94 struct nix_af_rx_flow_vec_ctrl_write_rsp is us=
+ed but defined=20
+  nowhere in the tree. It compiles only because it's a pointer to an incomp=
+lete
+  type that's never dereferenced. The M() entry at roc_mbox.h:362 declares =
+the
+  response as msg_rsp; the variable should be struct msg_rsp *.
+
+  Plus: if (rc) goto exit; immediately before exit: is a no-op; static (non=
+-const)
+  arrays defined in roc_nix_flow_vec.h; 2021 copyright on a new file; one-l=
+ine
+  commit message for a new mbox message and HW config path.
+
+  I checked and cleared the things that looked suspicious here: mbox ID 0x8=
+034 is
+  unused, both bitfield unions total exactly 64 bits, every constant fits i=
+ts
+  field, and memcpy sizes match the request array dimensions.
