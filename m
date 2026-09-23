@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 155FAC9830B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 20:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AFEC9830B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Sep 2026 20:54:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 157674027C;
-	Wed, 23 Sep 2026 22:11:54 +0200 (CEST)
-Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
- [74.125.227.171])
- by mails.dpdk.org (Postfix) with ESMTP id 71A1F40276
- for <dev@dpdk.org>; Wed, 23 Sep 2026 22:11:53 +0200 (CEST)
-Received: by mail-pj2-f43.google.com with SMTP id
- 98e67ed59e1d1-396ccda24a3so824915a91.0
- for <dev@dpdk.org>; Wed, 23 Sep 2026 13:11:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DAA3B4027C;
+	Wed, 23 Sep 2026 22:54:35 +0200 (CEST)
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
+ [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 6750B40276
+ for <dev@dpdk.org>; Wed, 23 Sep 2026 22:54:33 +0200 (CEST)
+Received: by mail-pz2-f12.google.com with SMTP id
+ d2e1a72fcca58-85469d20963so752080b3a.1
+ for <dev@dpdk.org>; Wed, 23 Sep 2026 13:54:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790194312;
- x=1790799112; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790196872;
+ x=1790801672; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=z8AnCrSUHAXycPmnyB5FkbGPCNhMdXxk9yaMQLNsj1I=;
- b=k3Jjt31Vu76jOTp45N6ECHXw+w8AI/C/Y9UABHk6XR2hFsTH/oUGgwuW7Z2Vq9o1I5
- m4Mo4gi9+WRBWn24P5HQD7Ha3W4Bcck1xgXbxxjgQl/zR1SWOW9AnKlhs9/TqRTptqHm
- +1cJXi5jR665XO0tegEntvxoM+/lkTipdh2mIbgAW11V+OEoSHBHxgG2BGSQS7TGh6D0
- we0DrE99oLjmzcLBVr0rVMyUEyto98vw5pK5ZsIUM4pc25IAXF0ZOwV5dREdDO+Vxoz3
- PcjUPJS3mrKYIqlKWSo2EQoFm8rfrdAcdpHtu2z60XQcQQ4IDRmIj+LQAeU0hrQ2961H
- AZYA==
+ bh=VU9YYPiUfXK2kYzxFx006uf8BBORQa4JkSz/QMwwY74=;
+ b=MyMNIA/tXtWdWd38G60pkxJAEcIyyXGngpt+Dajwj9ul6V9IM7mlay5q5KtT9kQ1nS
+ rwMRSsnM/CvJvf/VPkujfMjO03v4hvy8m+dRTBmKEd89FLlHPk4HvsSfmsC6zkZIV6wL
+ 2Oosrb2dDNlmAR5DdBFZ2rwsRT4HRBe7qfUikHZnlYMX0KMJYxBTiMbUKYRjbtEOdW8Q
+ KvmKXwNo/PblGU4hrK64WgVMJe1HFohN3QoRcFt6sEYrgWWKI6FbfWYMWCvtTH/Dr11G
+ SG5xJ3Wwb/BMuW0LrWyIU3nGEnYO9mJV/VAn8aprp0GKcDsU+lG8Z9/Lq9aNYMPXhT4H
+ Hqsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790194312; x=1790799112;
+ d=1e100.net; s=20260707; t=1790196872; x=1790801672;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=z8AnCrSUHAXycPmnyB5FkbGPCNhMdXxk9yaMQLNsj1I=;
- b=HQVtqmyY/oQrBS4mgJjqq6BpvTZVrvLZf9QVvMecs6W7gTQ/d3wLyIG29JQ/BHr1Cr
- LlRpLmP2uZD4zVHfFv8dzzRCova52Ia1IiQL7xX3srhidkNL/+15Vj2LQcMjuZAnLFpP
- J2TeRd7faqC3/S2JlQyQ8JtQPTuZgIFKbhed+AZqGAmJT+QgFHcZ5SICuHx+zzhhWeLo
- LF/q1bwn+4tPHuw0Luyo9ZNvRBbOYd9asTuhQKsEK0lWYMgXcabkZl662zC03Xgzvb5N
- 3JFcliCwbUPBwWmjRpetEC7mgEFFeifIqiuzD6kxAK/C6rTef6N3GWarvl3AYyxLBVVV
- yY0Q==
-X-Gm-Message-State: AFuF++lyGWWGBzBZm9d5S41amV0KA9/F9BmboCUUt1ZGgP2DpTgC6Xmt
- ZLIOCW50KGW3FacLlx4qcI5bWS2N719IUZ0Kd5AU2pHY/VUDN6cudX6M8EltByxpeDs=
-X-Gm-Gg: AYBFou3XHz1MkeNEwObobxQ/A0NQgMIcWs9tuWS9pLg5DItL9WxM9dlq33xx7b+0lQt
- twsflGFu8bO+1ButgLiraH/slGKTdIQMc3rXOAIKL7DhfMcwLTxBU8Bc1S1uH+5OfDOC5b3m5H5
- zNh3iiBkyoV8RbGF3CF9Oamq24UJ9YV7qFqwKkOGK029f2LI+nSxw70dQhni6SMRz67jFSOTh3x
- fJQN7cTOY5W1vZ+oK/hWj6fu4AhjQbKNNICoQRnPXkdu4ow052ywZkeygMGObj0jxP6yIJyuowo
- iL/sb+3jPx26A37t6+A7+TNeoo14fdCvOirm/jY+ZYe+FV6sQjjkdcSTABFGg9zotK8EEQ1b4DG
- 7vUdK0zhvZvkB9rlSbStA85AXQ++WTlIUo1Zg+L1jpcD+qDdFyKryxAJtTNR/AUrvG4dUIIv+c7
- l21alp7iP6p3KF/Va8OUmMvCLCyi3YHptqAG9Z/v/lzcRc3/3GWo2+APovLds+aTyX5P2C4ZEoi
- ZhV6HQHv+LRvXatyNTkqKnS8bBoImDUDDi4au9d
-X-Received: by 2002:a17:90b:4c0d:b0:36d:9e0b:3801 with SMTP id
- 98e67ed59e1d1-3a0985baa7dmr210619a91.8.1790194312323; 
- Wed, 23 Sep 2026 13:11:52 -0700 (PDT)
+ bh=VU9YYPiUfXK2kYzxFx006uf8BBORQa4JkSz/QMwwY74=;
+ b=fOOBfTrZAZ/ZIZALtU1w1j0fVjo4g/8uOTU2t1QtQsxmqYiM/aZSNaQRRivYEUxzua
+ ZEfO5bnmwmIncxbbzQykpL8Lf2Qq0Z1xSfpHEmwNorKb7tVziD6Vyf36/X8VU/UPNnkW
+ 2IQtUiOFre7y+yNfvwtAJICPsjGOO88Jm8yvyzCDPK5kF3fZIHYHPdPWBajI90Ij3kTy
+ bWyO5izSKZQsjtv4JxYiJLax3lNOMNpZzweHqWYmi2PrG11xcRUVgP4Twv1EEw0JcaQt
+ T2nxM66gqwaKdBiLXfBR33/weAKvXn3zgBp6fFwk5nK2kWBAmp8gdjPKSaDd7jU2tcU1
+ jXZw==
+X-Gm-Message-State: AFuF++kdSJIT2CWCiVSGGXUiknpiswNILh8VE9ju9VCYkZj4sVbLGdBA
+ MZjCSZQbYx/dT/8UQck8Fb/52mbI1u6Ltn+0pIj2x1BRWuW1ozzDGNVlgZQh7T+kIYI=
+X-Gm-Gg: AYBFou3InYF24uiBXL5VVPIRG/1h2pbRzw53mRraT1LNAL5YX7t6F0p1wsWq5bCGrEC
+ BxaWKfSrV6NuErKaYuzAqRgkHowb1tIQdhPfn0DHgiy+u+tTDTS1bC1L/Pv/zn+Uv6BIWFCmig+
+ GmVbvG3gnJxUnkDEhPgVIDwDdStB+tVT1zhVA46ab8sB6VkGkViF19GGZKenJ5g3/QJer+5HoGG
+ hYds1TTQDueXlBpsD32rbOf12EwRi0UtYyMrkARgl3FzXizGZJItB/gZCtBUCilz3ntCBp51iPF
+ f33nUZYweoSfpjCwt+2t6tnVDYC3NBTqTz6bYYply747s2rSjZf2+FgnY7UDvElfZ9jpBPcxfFX
+ 5KUvZGZwIg2CizD/SA+F87jq2IQVUgntIER1jBzKnlRp+vsbA8kjj0coPfx87qymeCdnTOtdhWM
+ dT+D2SIxq6XPTfPwhwySXebJ1Y+IiBziTD+y3uhT8ifJYBBy6PSBysBs/Mq6J5U+vmilw8gi2mN
+ DgxbIg65GW9tQ7IoMdSnzsbAU0+75FtnVzAbJtai1TNtHnK02Q=
+X-Received: by 2002:a05:6a00:21ce:b0:874:708d:b637 with SMTP id
+ d2e1a72fcca58-87e9d8da5eamr265535b3a.35.1790196872330; 
+ Wed, 23 Sep 2026 13:54:32 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a0974ec5d0sm694671a91.4.2026.09.23.13.11.51
+ d2e1a72fcca58-87d1dff9769sm1852839b3a.46.2026.09.23.13.54.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 23 Sep 2026 13:11:52 -0700 (PDT)
-Date: Wed, 23 Sep 2026 13:11:49 -0700
+ Wed, 23 Sep 2026 13:54:32 -0700 (PDT)
+Date: Wed, 23 Sep 2026 13:54:30 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Thomas Monjalon <thomas@monjalon.net>
 Cc: dev@dpdk.org, Aaron Conole <aconole@redhat.com>, Anatoly Burakov
  <anatoly.burakov@intel.com>
 Subject: Re: [RFC] devtools: rewrite doc vs code check in Python
-Message-ID: <20260923131149.72f449d3@phoenix.local>
+Message-ID: <20260923135430.7e16c673@phoenix.local>
 In-Reply-To: <1ZOSY-tgQCqc-X4cyeVRVQ@monjalon.net>
 References: <20260923184207.626576-1-stephen@networkplumber.org>
  <1ZOSY-tgQCqc-X4cyeVRVQ@monjalon.net>
@@ -110,13 +109,14 @@ Thomas Monjalon <thomas@monjalon.net> wrote:
 > 
 > My concern is how easy it is to maintain for all contributors
 > having to insert their rules and exceptions?
-
-The result doesn't have to be nothing. I would rather not keep track
-of exceptions in the script.
-
+> 
 > It is replacing less 200 lines with more than 1000 lines
 > so it looks a lot more complex.
 > It is probably fully generated by AI?
 > Can we make it simpler?
+> 
+> 
 
-I will look into it, should be table driven and more split up.
+The other suggestion would be to git rid of the .ini file method
+of generating this feature matrix in doc and just have python script
+generate it.  Prefer a single source of truth, less work
