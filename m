@@ -2,47 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71193C9830E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 16:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCBCC9830E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 16:13:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2B7D94027B;
-	Thu, 24 Sep 2026 18:13:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5DCB742FEF;
+	Thu, 24 Sep 2026 18:13:52 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id AEDC140144
- for <dev@dpdk.org>; Thu, 24 Sep 2026 18:13:46 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5132442FFB
+ for <dev@dpdk.org>; Thu, 24 Sep 2026 18:13:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790266427; x=1821802427;
+ t=1790266431; x=1821802431;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=WpghRxuj6xghiLwoaXo8dvWrXY1B5Ymzu/aB4wmgeN4=;
- b=TOEbQ8WrRU2glxfaaeKrIZUViFDm5BYku5/VyJBD4vINrm3IYCo1TeP7
- AxlyVIIzfYw7k8hGml2KzfcXbkOXSFn7TVxbIgfS/9DuhKPYPvG+UvE9a
- b8pOX9qPq8pAWjo/7qvPLnH+e2YsqtxAlDC1jdRYzJHGa4KdiyGCANg+3
- 8Fgst0wE4XfZQEU6G3obgYY4Jbfn8XRDVgjQLcVqBssbnLOuFfong9mLm
- cUbyk8C+7t7zqYXS+BSeaGbWizlwl1KpFVCliDR1PVvyHUSLhesCy+Mok
- FQRWA6f9vn4GiWJ5BG5I7FaiC3lirSDWUSp9flkgkao7WUNtiMoll985S A==;
-X-CSE-ConnectionGUID: 9HNBvk+HQmewnGFvLbLLng==
-X-CSE-MsgGUID: gFu5ZUPES466qqWNLSOXdg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11915"; a="90000602"
-X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="90000602"
+ bh=uJ0tr5OXImXw0j95bV3wHqpZypG6DZkD9duNFwyiePQ=;
+ b=jGsnZNTo5MYAfBt0pHXep0Antvx3RiGIO3ZbkDCVeNlGjR0dIhxynL/T
+ aZXjCygEBNtv/45BjqLTMa1kVGvKvlDawz628k4S3R9wlW08W4eKXRMSS
+ RRiVZdioEu8EFJp+i6sMrWVlFiAwxoj33KxX1Gg/U7hF0hYNkhjPDgfxn
+ hVWdwZa3/HHTrcCHNdaEEhRdmk8T7X2nN6e6FT1hVqLBgmtviI7+LSFE2
+ dpMLTAhHsVsadFuafIX8i0HlOxNnEWgDjfHmjFrWFDWDYwwWF4IbDyUMJ
+ byxV1HcvryaDK0B09asT1mDfEKk9aJgJvyNr8SBjPf8H6dXa5DoKBaNfT A==;
+X-CSE-ConnectionGUID: BRuQX/17S4ONUbKDG8Obog==
+X-CSE-MsgGUID: Vl3mJhDCSS6tlHEhwJjh+w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11915"; a="90000614"
+X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="90000614"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Sep 2026 09:13:46 -0700
-X-CSE-ConnectionGUID: UZeUJrrjRBugql7ZtNaAaQ==
-X-CSE-MsgGUID: XR54JQqQTAOYK2fU+uMvLw==
+ 24 Sep 2026 09:13:48 -0700
+X-CSE-ConnectionGUID: 6jU+DUv/QHa2j03vgSm6Ag==
+X-CSE-MsgGUID: 3Hrc5b4eQlSld3WkLg073A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="277829955"
+X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="277829964"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa005.jf.intel.com with ESMTP; 24 Sep 2026 09:13:45 -0700
+ by orviesa005.jf.intel.com with ESMTP; 24 Sep 2026 09:13:47 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Subject: [PATCH v18 00/29] Support VFIO cdev API in DPDK
-Date: Thu, 24 Sep 2026 17:13:07 +0100
-Message-ID: <cover.1790266165.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+Subject: [PATCH v18 02/29] vfio: make all functions internal
+Date: Thu, 24 Sep 2026 17:13:09 +0100
+Message-ID: <0ded973aa7860cb14121beae94ead86811f35094.1790266166.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1763141462.git.anatoly.burakov@intel.com>
-References: <cover.1763141462.git.anatoly.burakov@intel.com>
+In-Reply-To: <cover.1790266165.git.anatoly.burakov@intel.com>
+ <cover.1790266165.git.anatoly.burakov@intel.com>
+References: 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,281 +60,640 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset introduces a major refactor of the VFIO subsystem in DPDK to
-support character device (cdev) interface introduced in Linux kernel, as well as
-make the API more streamlined and useful. The goal is to simplify device
-management, improve compatibility, make the code readable, and clarify API.
+The VFIO API is an externally exported API because the original intent was
+to offer DMA mapping facilities to applications. However, practical usage
+of this API seems to be centered around drivers, so keeping this API
+exported to applications only creates needless API/ABI stability surface
+that has no added value.
 
-The following sections outline the key issues addressed by this patchset and the
-corresponding changes introduced.
+Make the entire VFIO API internal-only and visible only to drivers.
 
-1. Only group mode is supported
-===============================
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ doc/api/doxy-api-index.md              |  3 +-
+ doc/guides/rel_notes/deprecation.rst   |  6 ----
+ doc/guides/rel_notes/release_26_11.rst |  8 +++++
+ lib/eal/freebsd/eal.c                  | 30 ++++++++--------
+ lib/eal/include/meson.build            |  2 +-
+ lib/eal/include/rte_vfio.h             | 47 ++++++++++++++++++++++----
+ lib/eal/linux/eal_vfio.c               | 32 +++++++++---------
+ lib/eal/windows/eal.c                  |  4 +--
+ 8 files changed, 84 insertions(+), 48 deletions(-)
 
-Since kernel version 4.14.327 (LTS), VFIO supports the new character device
-(cdev)-based way of working with VFIO devices (otherwise known as IOMMUFD). This
-is a device-centric mode and does away with all the complexity regarding groups
-and IOMMU types, delegating it all to the kernel, and exposes a much simpler
-interface to userspace. The old group-based implementation will still be around,
-and will need to be kept in DPDK for compatibility reasons.
-
-To enable this, VFIO is heavily refactored, so that the code can support both
-modes while relying on (mostly) common infrastructure.
-
-Additionally, new `vfio_get_mode` API is added for those cases that need
-some introspection into VFIO's internals, with two modes: group (old-style),
-and cdev (the new mode).
-
-Historically, no-IOMMU mode was technically a variant of group mode, the
-distinction is largely irrelevant to the user, as all usages of noiommu checks
-in our codebase are for deciding whether to use IOVA or PA, not anything to do
-with managing groups. However, now that upcoming kernel versions will support
-no-IOMMU for both group, cdev compatibility, and full cdev paths, a new
-`vfio_get_iommu_mode` is also added, with two modes: safe (full IOMMU backing),
-and unsafe (no-IOMMU mode). The naming is chosen explicitly to emphasize that
-using no-IOMMU mode is not ideal.
-
-2. Custom container assignment API does not map to cdev mode
-============================================================
-
-The existing `rte_vfio_device_setup/release` model is fundamentally incompatible
-with cdev mode, because for custom container cases, the expected flow is that
-the user binds the IOMMU group (and thus, implicitly, the device itself) to a
-specific container using `rte_vfio_container_group_bind`, whereas this step is
-not needed for cdev as the device fd is assigned to the container straight away.
-
-Therefore, what we do instead is introduce a new API for container device
-assignment which, semantically, will assign a device to specified container, so
-that when it is mapped using `rte_pci_map_device`, the appropriate container is
-selected. Under the hood though, we essentially transition to getting device fd
-straight away at assign stage, so that by the time the PCI bus attempts to map
-the device, it is already mapped and we just return an fd. There is no
-"unassign" API because `release_device` already performs that function.
-
-Because the API is now unified around device assignment, the old group-specific
-API's can be removed and, where appropriate, reimplemented using new API. There
-were other users of VFIO which relied on group API but only for convenience
-purposes; no actual VFIO functionality depended on those API's.
-
-List of removed API's:
-
-* `rte_vfio_get_group_fd`
-* `rte_vfio_clear_group`
-* `rte_vfio_container_group_bind` (replaced by container assign API)
-* `rte_vfio_container_group_unbind`
-* `rte_vfio_noiommu_is_enabled` (replaced by new mode API)
-
-3. The API responsibilities aren't clear and bleed into each other
-==================================================================
-
-Some API's do multiple things at once. In particular:
-
-* `rte_vfio_get_device_info` will setup the device
-* `rte_vfio_setup_device` will get device info
-
-These API's have been adjusted to do one thing only.
-
-4. The API does not need to be public
-=====================================
-
-The initial idea for exposing VFIO API was to enable userspace applications to
-directly map memory for DMA, but it turns out that in practice only drivers use
-this API. Therefore, the entire VFIO API is made internal, driver-only, and is
-renamed from `rte_vfio` to `dev_vfio`.
-
-v18:
-- Adjusted pre-refactor VFIO cleanup to not rely on per-config enabled flag
-- Moved loaded module detection from EAL into VFIO
-- Added API to check for specific VFIO modules being loaded
-- Removed VFIO stubs from non-Linux code by removing PCI bus dependency on VFIO
-- Reworked vhost DMA capability check
-- Renamed "IOMMU mode" and "safe/unsafe" terminology to IOVA VA/PA
-- Fixed typo in FSLMC bus IOVA mode selection
-
-v17:
-- Support multiple devices per group in NBL
-
-v16:
-- Fixed an unused variable compile error due to typo
-- Fixed code for patch 19 being accidentally added into patch 21
-- Included the NBL fix[1] in the patchset to enable CI testing
-
-[1] https://patches.dpdk.org/project/dpdk/patch/75e8e3b8ff4d0647e2a5216dcde0d93f3856e821.1787820465.git.anatoly.burakov@intel.com/
-
-v15:
-- Fixed resource leak in group mode deduplication path
-- On account of kernel 7.3 supporting no-IOMMU mode in kernel version 7.3,
-  split the "VFIO mode" model into two distinct axis: group/cdev, and IOMMU mode
-
-v14:
-- Hardened the transitional patches against attempting to use VFIO without
-  having done initialization
-- Fixed a bunch of typos, moved a few hunks around to where they belong, and
-  added a more release note entries
-
-v13:
-- Addressed feedback from Stephen's AI review:
-  - Added strdup-based deduplication for group mode to avoid leaking fd's when
-    container assignment API is used
-  - Added more documentation about cdev mode to Linux GSG
-  - Fixed comments and log levels in a couple of places
-- Renamed the API from `rte_vfio_*` to `dev_vfio_*` on account of it no longer
-  being a publicly visible API
-- Moved `dev_vfio.h` into driver SDK headers
-- Decoupled VFIO internals from FSLMC and EAL
-- Added proper teardown for VFIO subsystem on cleanup
-
-v12:
-- Addressed feedback from Stephen's AI review:
-  - Add release notes updates to patch 2 and 20
-  - Fix ENXIO typos
-  - Added a new init step after memory init to enable DMA mapping for cdev
-
-v11:
-- Addressed feedback from Stephen's AI review:
-  - Use CONTAINER_INITIALIZER for reset
-  - Set container fd to -1 in CONTAINER_INITIALIZER
-  - Fixed double close()
-  - Moved VFIO init to earlier in init sequence to account for
-    bus drivers needing no-IOMMU mode status
-  - Fixed missing ops set for cdev mode, and missing ops reset
-  - Fixed fd leak on failed attach in cdev
-
-v10:
-- Added a patch that renames confusing error labels
-- Fixed compiler warning about unused variable
-
-v9:
-- Moved erroneous rte_errno-related comments to later in the patchset
-- Moved removal of vDPA group fd API's to their respective patches
-- Fixed typo in errno comments (ENXIO vs ENOXIO)
-- Fixed corruption of group config in secondary process (v8 AI review)
-
-v8:
-- Rebase
-- Fixed build errors due to variable shadowing
-- Removed duplicate fd check as kernel does not provide a way to distinguish
-  between device fd's
-
-v7:
-- Rebase
-- Added removal of deprecation notices
-- Fixed implicit numeric comparison in patch 12
-
-v6:
-- Fixed missing header include in vfio cdev file
-
-v5:
-- Added back missing uapi patch
-
-v4:
-- Fixed issues with documenting rte_vfio_mode enum
-- Separated deprecation notices into a separate patchset
-
-v3:
-- Make API removal cleaner
-- Fix `get_group_num` usages to align with new API
-- Fix issues with function exports
-- Fix issues with `setup_device` returning old-style values in some cases
-
-v2:
-- Make the entire API internal
-- More aggressive API pruning, complete removal of group API
-- Fixed a bug in group mode where device could not be used
-- Better documentation and deprecation notice patches
-- Moved doc patches to beginning of patchset
-
-Anatoly Burakov (29):
-  uapi: update to v6.17 and add iommufd.h
-  vfio: make all functions internal
-  bus/fslmc: decouple from EAL VFIO
-  vfio: decouple EAL from VFIO internals
-  vhost: check DMA capability only once
-  vfio: do proper teardown on VFIO cleanup
-  eal: move kernel module check function into VFIO
-  vfio: remove modname parameter from init
-  vfio: add module check API
-  bus/pci: decouple PCI bus driver from VFIO
-  vfio: rename API to reflect internal status
-  bus/pci: rename mismatching error labels
-  vfio: split get device info from setup
-  vfio: add container device assignment API
-  net/nbl: do not use VFIO group bind API
-  net/ntnic: use container device assignment API
-  vdpa/ifc: use container device assignment API
-  vdpa/nfp: use container device assignment API
-  vdpa/sfc: use container device assignment API
-  vdpa/mlx5: remove group-related API
-  vhost: remove group-related API from driver
-  vfio: remove group-based API
-  vfio: cleanup and refactor
-  bus/pci: use the new VFIO IOVA mode API
-  bus/fslmc: use the new VFIO IOVA mode API
-  net/hinic3: use the new VFIO IOVA mode API
-  net/ntnic: use the new VFIO IOVA mode API
-  vfio: remove no-IOMMU check API
-  vfio: introduce cdev mode
-
- config/arm/meson.build                    |    1 +
- config/meson.build                        |    1 +
- doc/api/doxy-api-index.md                 |    3 +-
- doc/guides/linux_gsg/linux_drivers.rst    |   30 +
- doc/guides/prog_guide/vhost_lib.rst       |    4 -
- doc/guides/rel_notes/deprecation.rst      |   10 -
- doc/guides/rel_notes/release_26_11.rst    |   16 +
- drivers/bus/cdx/cdx.c                     |    6 +-
- drivers/bus/cdx/cdx_vfio.c                |   37 +-
- drivers/bus/fslmc/fslmc_bus.c             |   12 +-
- drivers/bus/fslmc/fslmc_vfio.c            |   66 +-
- drivers/bus/fslmc/meson.build             |    1 -
- drivers/bus/pci/bsd/pci.c                 |   24 +
- drivers/bus/pci/linux/pci.c               |   59 +-
- drivers/bus/pci/linux/pci_vfio.c          |   84 +-
- drivers/bus/pci/pci_common.c              |   64 +-
- drivers/bus/pci/private.h                 |  132 +
- drivers/bus/pci/windows/pci.c             |   24 +
- drivers/bus/platform/platform.c           |   17 +-
- drivers/crypto/bcmfs/bcmfs_vfio.c         |   20 +-
- drivers/net/hinic3/base/hinic3_hwdev.c    |    5 +-
- drivers/net/nbl/nbl_common/nbl_userdev.c  |   73 +-
- drivers/net/nbl/nbl_common/nbl_userdev.h  |    1 +
- drivers/net/nbl/nbl_include/nbl_include.h |    1 +
- drivers/net/ntnic/ntnic_ethdev.c          |    4 +-
- drivers/net/ntnic/ntnic_vfio.c            |   48 +-
- drivers/vdpa/ifc/ifcvf_vdpa.c             |   54 +-
- drivers/vdpa/mlx5/mlx5_vdpa.c             |    1 -
- drivers/vdpa/nfp/nfp_vdpa.c               |   53 +-
- drivers/vdpa/sfc/sfc_vdpa.c               |   47 +-
- drivers/vdpa/sfc/sfc_vdpa.h               |    2 -
- drivers/vdpa/sfc/sfc_vdpa_hw.c            |   12 +-
- kernel/linux/uapi/linux/iommufd.h         | 1292 ++++++++++
- kernel/linux/uapi/linux/vduse.h           |    2 +-
- kernel/linux/uapi/linux/vfio.h            |   12 +-
- kernel/linux/uapi/version                 |    2 +-
- lib/eal/common/eal_private.h              |   14 -
- lib/eal/freebsd/eal.c                     |  128 -
- lib/eal/include/dev_vfio.h                |  500 ++++
- lib/eal/include/meson.build               |    2 +-
- lib/eal/include/rte_vfio.h                |  338 ---
- lib/eal/linux/eal.c                       |   62 +-
- lib/eal/linux/eal_vfio.c                  | 2764 +++++++++------------
- lib/eal/linux/eal_vfio.h                  |  188 +-
- lib/eal/linux/eal_vfio_cdev.c             |  420 ++++
- lib/eal/linux/eal_vfio_group.c            |  951 +++++++
- lib/eal/linux/eal_vfio_mp_sync.c          |  118 +-
- lib/eal/linux/meson.build                 |    2 +
- lib/eal/windows/eal.c                     |   23 -
- lib/vhost/socket.c                        |    6 +-
- lib/vhost/vdpa_driver.h                   |    3 -
- lib/vhost/vhost.h                         |    1 +
- lib/vhost/vhost_user.c                    |   16 +-
- 53 files changed, 5284 insertions(+), 2472 deletions(-)
- create mode 100644 kernel/linux/uapi/linux/iommufd.h
- create mode 100644 lib/eal/include/dev_vfio.h
- delete mode 100644 lib/eal/include/rte_vfio.h
- create mode 100644 lib/eal/linux/eal_vfio_cdev.c
- create mode 100644 lib/eal/linux/eal_vfio_group.c
-
+diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
+index 16827a602b5..62390f7be30 100644
+--- a/doc/api/doxy-api-index.md
++++ b/doc/api/doxy-api-index.md
+@@ -37,8 +37,7 @@ The public API headers are grouped by topics:
+   [latency](@ref rte_latencystats.h),
+   [devargs](@ref rte_devargs.h),
+   [PCI](@ref rte_pci.h),
+-  [vdev](@ref rte_bus_vdev.h),
+-  [vfio](@ref rte_vfio.h)
++  [vdev](@ref rte_bus_vdev.h)
+ 
+ - **device specific**:
+   [softnic](@ref rte_eth_softnic.h),
+diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
+index 81e90a699c1..f44f01a6e31 100644
+--- a/doc/guides/rel_notes/deprecation.rst
++++ b/doc/guides/rel_notes/deprecation.rst
+@@ -29,12 +29,6 @@ Deprecation Notices
+   Use the ``-S <service-corelist>`` parameter instead
+   to specify the cores to be used for background services in DPDK.
+ 
+-* eal: The entire VFIO API (``rte_vfio_*``) will be made internal only,
+-  and will only be available to EAL and drivers.
+-  Group-based API (``rte_vfio_*_group_*``) will be removed
+-  and replaced with unified container device assignment API.
+-  This change will be made in 26.11 release.
+-
+ * vdpa: The vDPA driver API will no longer offer ``get_vfio_group_fd``
+   as part of its internal API. All drivers will be adjusted
+   to use the new unified VFIO container device assignment API.
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index e7921048a6b..a308742461e 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -391,6 +391,10 @@ API Changes
+     and ``rte_eth_err_handle_mode``
+   * all remaining ``rte_flow`` item, action and async operation structures
+ 
++* vfio: The entire VFIO API (``rte_vfio_*``) was made internal.
++  These functions are now available only to EAL and drivers,
++  and are no longer part of the public API.
++
+ 
+ ABI Changes
+ -----------
+@@ -407,6 +411,10 @@ ABI Changes
+    Also, make sure to start the actual text at the margin.
+    =======================================================
+ 
++* vfio: The entire VFIO API (``rte_vfio_*``) was made internal.
++  These functions are now available only to EAL and drivers,
++  and are no longer part of the public ABI.
++
+ 
+ Known Issues
+ ------------
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index 8b1ba5b99ba..0fe54a9dd7c 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -819,7 +819,7 @@ rte_eal_vfio_get_vf_token(__rte_unused rte_uuid_t vf_token)
+ {
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_setup_device)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_setup_device)
+ int rte_vfio_setup_device(__rte_unused const char *sysfs_base,
+ 		      __rte_unused const char *dev_addr,
+ 		      __rte_unused int *vfio_dev_fd,
+@@ -829,7 +829,7 @@ int rte_vfio_setup_device(__rte_unused const char *sysfs_base,
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_release_device)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_release_device)
+ int rte_vfio_release_device(__rte_unused const char *sysfs_base,
+ 			__rte_unused const char *dev_addr,
+ 			__rte_unused int fd)
+@@ -838,33 +838,33 @@ int rte_vfio_release_device(__rte_unused const char *sysfs_base,
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_enable)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_enable)
+ int rte_vfio_enable(__rte_unused const char *modname)
+ {
+ 	rte_errno = ENOTSUP;
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_is_enabled)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_is_enabled)
+ int rte_vfio_is_enabled(__rte_unused const char *modname)
+ {
+ 	return 0;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_noiommu_is_enabled)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_noiommu_is_enabled)
+ int rte_vfio_noiommu_is_enabled(void)
+ {
+ 	return 0;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_clear_group)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_clear_group)
+ int rte_vfio_clear_group(__rte_unused int vfio_group_fd)
+ {
+ 	rte_errno = ENOTSUP;
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_get_group_num)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_group_num)
+ int
+ rte_vfio_get_group_num(__rte_unused const char *sysfs_base,
+ 		       __rte_unused const char *dev_addr,
+@@ -874,7 +874,7 @@ rte_vfio_get_group_num(__rte_unused const char *sysfs_base,
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_get_container_fd)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_container_fd)
+ int
+ rte_vfio_get_container_fd(void)
+ {
+@@ -882,7 +882,7 @@ rte_vfio_get_container_fd(void)
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_get_group_fd)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_group_fd)
+ int
+ rte_vfio_get_group_fd(__rte_unused int iommu_group_num)
+ {
+@@ -890,7 +890,7 @@ rte_vfio_get_group_fd(__rte_unused int iommu_group_num)
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_create)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_create)
+ int
+ rte_vfio_container_create(void)
+ {
+@@ -898,7 +898,7 @@ rte_vfio_container_create(void)
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_destroy)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_destroy)
+ int
+ rte_vfio_container_destroy(__rte_unused int container_fd)
+ {
+@@ -906,7 +906,7 @@ rte_vfio_container_destroy(__rte_unused int container_fd)
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_group_bind)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_group_bind)
+ int
+ rte_vfio_container_group_bind(__rte_unused int container_fd,
+ 		__rte_unused int iommu_group_num)
+@@ -915,7 +915,7 @@ rte_vfio_container_group_bind(__rte_unused int container_fd,
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_group_unbind)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_group_unbind)
+ int
+ rte_vfio_container_group_unbind(__rte_unused int container_fd,
+ 		__rte_unused int iommu_group_num)
+@@ -924,7 +924,7 @@ rte_vfio_container_group_unbind(__rte_unused int container_fd,
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_dma_map)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_dma_map)
+ int
+ rte_vfio_container_dma_map(__rte_unused int container_fd,
+ 			__rte_unused uint64_t vaddr,
+@@ -935,7 +935,7 @@ rte_vfio_container_dma_map(__rte_unused int container_fd,
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_dma_unmap)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_dma_unmap)
+ int
+ rte_vfio_container_dma_unmap(__rte_unused int container_fd,
+ 			__rte_unused uint64_t vaddr,
+diff --git a/lib/eal/include/meson.build b/lib/eal/include/meson.build
+index aef5824e5f6..92821439182 100644
+--- a/lib/eal/include/meson.build
++++ b/lib/eal/include/meson.build
+@@ -55,12 +55,12 @@ headers += files(
+         'rte_trace_point_register.h',
+         'rte_uuid.h',
+         'rte_version.h',
+-        'rte_vfio.h',
+ )
+ 
+ driver_sdk_headers = files(
+         'bus_driver.h',
+         'dev_driver.h',
++        'rte_vfio.h',
+ )
+ 
+ # special case install the generic headers, since they go in a subdir
+diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
+index d1e8bce56bb..0ddeb08f94a 100644
+--- a/lib/eal/include/rte_vfio.h
++++ b/lib/eal/include/rte_vfio.h
+@@ -7,7 +7,11 @@
+ 
+ /**
+  * @file
+- * RTE VFIO. This library provides various VFIO related utility functions.
++ * @internal
++ *
++ * RTE VFIO internal API.
++ *
++ * This library provides VFIO related utility functions for use by drivers.
+  */
+ 
+ #include <stdbool.h>
+@@ -36,6 +40,7 @@ struct vfio_device_info;
+ #define RTE_VFIO_DEFAULT_CONTAINER_FD (-1)
+ 
+ /**
++ * @internal
+  * Setup vfio_cfg for the device identified by its address.
+  * It discovers the configured I/O MMU groups or sets a new one for the device.
+  * If a new groups is assigned, the DMA mapping is performed.
+@@ -60,10 +65,12 @@ struct vfio_device_info;
+  *   <0 on failure.
+  *   >1 if the device cannot be managed this way.
+  */
++__rte_internal
+ int rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
+ 		int *vfio_dev_fd, struct vfio_device_info *device_info);
+ 
+ /**
++ * @internal
+  * Release a device mapped to a VFIO-managed I/O MMU group.
+  *
+  * This function is only relevant to linux and will return
+@@ -82,9 +89,11 @@ int rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
+  *   0 on success.
+  *   <0 on failure.
+  */
++__rte_internal
+ int rte_vfio_release_device(const char *sysfs_base, const char *dev_addr, int fd);
+ 
+ /**
++ * @internal
+  * Enable a VFIO-related kmod.
+  *
+  * This function is only relevant to linux and will return
+@@ -97,9 +106,11 @@ int rte_vfio_release_device(const char *sysfs_base, const char *dev_addr, int fd
+  *   0 on success.
+  *   <0 on failure.
+  */
++__rte_internal
+ int rte_vfio_enable(const char *modname);
+ 
+ /**
++ * @internal
+  * Check whether a VFIO-related kmod is enabled.
+  *
+  * This function is only relevant to Linux.
+@@ -111,9 +122,11 @@ int rte_vfio_enable(const char *modname);
+  *   1 if true.
+  *   0 otherwise.
+  */
++__rte_internal
+ int rte_vfio_is_enabled(const char *modname);
+ 
+ /**
++ * @internal
+  * Whether VFIO NOIOMMU mode is enabled.
+  *
+  * This function is only relevant to Linux.
+@@ -123,10 +136,12 @@ int rte_vfio_is_enabled(const char *modname);
+  *   0 if false.
+  *   <0 for errors.
+  */
++__rte_internal
+ int rte_vfio_noiommu_is_enabled(void);
+ 
+ /**
+- * Remove group fd from internal VFIO group fd array/
++ * @internal
++ * Remove group fd from internal VFIO group fd array.
+  *
+  * This function is only relevant to linux and will return
+  * an error on BSD.
+@@ -138,11 +153,13 @@ int rte_vfio_noiommu_is_enabled(void);
+  *   0 on success.
+  *   <0 on failure.
+  */
++__rte_internal
+ int
+ rte_vfio_clear_group(int vfio_group_fd);
+ 
+ /**
+- * Parse IOMMU group number for a device
++ * @internal
++ * Parse IOMMU group number for a device.
+  *
+  * This function is only relevant to linux and will return
+  * an error on BSD.
+@@ -161,12 +178,14 @@ rte_vfio_clear_group(int vfio_group_fd);
+  *   0 for non-existent group or VFIO
+  *  <0 for errors
+  */
++__rte_internal
+ int
+ rte_vfio_get_group_num(const char *sysfs_base,
+ 		      const char *dev_addr, int *iommu_group_num);
+ 
+ /**
+- * Get device information
++ * @internal
++ * Get device information.
+  *
+  * This function is only relevant to Linux and will return an error on BSD.
+  *
+@@ -186,12 +205,13 @@ rte_vfio_get_group_num(const char *sysfs_base,
+  *   0 on success.
+  *  <0 on failure.
+  */
+-__rte_experimental
++__rte_internal
+ int
+ rte_vfio_get_device_info(const char *sysfs_base, const char *dev_addr,
+ 		int *vfio_dev_fd, struct vfio_device_info *device_info);
+ 
+ /**
++ * @internal
+  * Get the default VFIO container fd
+  *
+  * This function is only relevant to linux and will return
+@@ -201,11 +221,13 @@ rte_vfio_get_device_info(const char *sysfs_base, const char *dev_addr,
+  *  > 0 default container fd
+  *  < 0 if VFIO is not enabled or not supported
+  */
++__rte_internal
+ int
+ rte_vfio_get_container_fd(void);
+ 
+ /**
+- * Open VFIO group fd or get an existing one
++ * @internal
++ * Open VFIO group fd or get an existing one.
+  *
+  * This function is only relevant to linux and will return
+  * an error on BSD.
+@@ -217,10 +239,12 @@ rte_vfio_get_container_fd(void);
+  *  > 0 group fd
+  *  < 0 for errors
+  */
++__rte_internal
+ int
+ rte_vfio_get_group_fd(int iommu_group_num);
+ 
+ /**
++ * @internal
+  * Create a new container for device binding.
+  *
+  * @note Any newly allocated DPDK memory will not be mapped into these
+@@ -235,10 +259,12 @@ rte_vfio_get_group_fd(int iommu_group_num);
+  *   the container fd if successful
+  *   <0 if failed
+  */
++__rte_internal
+ int
+ rte_vfio_container_create(void);
+ 
+ /**
++ * @internal
+  * Destroy the container, unbind all vfio groups within it.
+  *
+  * @param container_fd
+@@ -248,10 +274,12 @@ rte_vfio_container_create(void);
+  *    0 if successful
+  *   <0 if failed
+  */
++__rte_internal
+ int
+ rte_vfio_container_destroy(int container_fd);
+ 
+ /**
++ * @internal
+  * Bind a IOMMU group to a container.
+  *
+  * @param container_fd
+@@ -264,10 +292,12 @@ rte_vfio_container_destroy(int container_fd);
+  *   group fd if successful
+  *   <0 if failed
+  */
++__rte_internal
+ int
+ rte_vfio_container_group_bind(int container_fd, int iommu_group_num);
+ 
+ /**
++ * @internal
+  * Unbind a IOMMU group from a container.
+  *
+  * @param container_fd
+@@ -280,10 +310,12 @@ rte_vfio_container_group_bind(int container_fd, int iommu_group_num);
+  *    0 if successful
+  *   <0 if failed
+  */
++__rte_internal
+ int
+ rte_vfio_container_group_unbind(int container_fd, int iommu_group_num);
+ 
+ /**
++ * @internal
+  * Perform DMA mapping for devices in a container.
+  *
+  * @param container_fd
+@@ -303,11 +335,13 @@ rte_vfio_container_group_unbind(int container_fd, int iommu_group_num);
+  *    0 if successful
+  *   <0 if failed
+  */
++__rte_internal
+ int
+ rte_vfio_container_dma_map(int container_fd, uint64_t vaddr,
+ 		uint64_t iova, uint64_t len);
+ 
+ /**
++ * @internal
+  * Perform DMA unmapping for devices in a container.
+  *
+  * @param container_fd
+@@ -327,6 +361,7 @@ rte_vfio_container_dma_map(int container_fd, uint64_t vaddr,
+  *    0 if successful
+  *   <0 if failed
+  */
++__rte_internal
+ int
+ rte_vfio_container_dma_unmap(int container_fd, uint64_t vaddr,
+ 		uint64_t iova, uint64_t len);
+diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
+index f1050ffa60a..33fa04feaf7 100644
+--- a/lib/eal/linux/eal_vfio.c
++++ b/lib/eal/linux/eal_vfio.c
+@@ -532,7 +532,7 @@ get_vfio_cfg_by_container_fd(int container_fd)
+ 	return NULL;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_get_group_fd)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_group_fd)
+ int
+ rte_vfio_get_group_fd(int iommu_group_num)
+ {
+@@ -731,7 +731,7 @@ vfio_sync_default_container(void)
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_clear_group)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_clear_group)
+ int
+ rte_vfio_clear_group(int vfio_group_fd)
+ {
+@@ -755,7 +755,7 @@ rte_vfio_clear_group(int vfio_group_fd)
+ 	return 0;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_setup_device)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_setup_device)
+ int
+ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
+ 		int *vfio_dev_fd, struct vfio_device_info *device_info)
+@@ -1009,7 +1009,7 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
+ 	return 0;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_release_device)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_release_device)
+ int
+ rte_vfio_release_device(const char *sysfs_base, const char *dev_addr,
+ 		    int vfio_dev_fd)
+@@ -1098,7 +1098,7 @@ rte_vfio_release_device(const char *sysfs_base, const char *dev_addr,
+ 	return ret;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_enable)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_enable)
+ int
+ rte_vfio_enable(const char *modname)
+ {
+@@ -1175,7 +1175,7 @@ rte_vfio_enable(const char *modname)
+ 	return 0;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_is_enabled)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_is_enabled)
+ int
+ rte_vfio_is_enabled(const char *modname)
+ {
+@@ -1215,7 +1215,7 @@ vfio_set_iommu_type(int vfio_container_fd)
+ 	return NULL;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_vfio_get_device_info, 24.03)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_device_info)
+ int
+ rte_vfio_get_device_info(const char *sysfs_base, const char *dev_addr,
+ 		int *vfio_dev_fd, struct vfio_device_info *device_info)
+@@ -1349,7 +1349,7 @@ vfio_open_container_fd(bool mp_request)
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_get_container_fd)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_container_fd)
+ int
+ rte_vfio_get_container_fd(void)
+ {
+@@ -1363,7 +1363,7 @@ rte_vfio_get_container_fd(void)
+ 	return default_vfio_cfg->vfio_container_fd;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_get_group_num)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_group_num)
+ int
+ rte_vfio_get_group_num(const char *sysfs_base,
+ 		const char *dev_addr, int *iommu_group_num)
+@@ -2034,7 +2034,7 @@ container_dma_unmap(struct vfio_config *vfio_cfg, uint64_t vaddr, uint64_t iova,
+ 	return ret;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_noiommu_is_enabled)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_noiommu_is_enabled)
+ int
+ rte_vfio_noiommu_is_enabled(void)
+ {
+@@ -2067,7 +2067,7 @@ rte_vfio_noiommu_is_enabled(void)
+ 	return c == 'Y';
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_create)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_create)
+ int
+ rte_vfio_container_create(void)
+ {
+@@ -2094,7 +2094,7 @@ rte_vfio_container_create(void)
+ 	return vfio_cfgs[i].vfio_container_fd;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_destroy)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_destroy)
+ int
+ rte_vfio_container_destroy(int container_fd)
+ {
+@@ -2120,7 +2120,7 @@ rte_vfio_container_destroy(int container_fd)
+ 	return 0;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_group_bind)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_group_bind)
+ int
+ rte_vfio_container_group_bind(int container_fd, int iommu_group_num)
+ {
+@@ -2135,7 +2135,7 @@ rte_vfio_container_group_bind(int container_fd, int iommu_group_num)
+ 	return vfio_get_group_fd(vfio_cfg, iommu_group_num);
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_group_unbind)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_group_unbind)
+ int
+ rte_vfio_container_group_unbind(int container_fd, int iommu_group_num)
+ {
+@@ -2176,7 +2176,7 @@ rte_vfio_container_group_unbind(int container_fd, int iommu_group_num)
+ 	return 0;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_dma_map)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_dma_map)
+ int
+ rte_vfio_container_dma_map(int container_fd, uint64_t vaddr, uint64_t iova,
+ 		uint64_t len)
+@@ -2197,7 +2197,7 @@ rte_vfio_container_dma_map(int container_fd, uint64_t vaddr, uint64_t iova,
+ 	return container_dma_map(vfio_cfg, vaddr, iova, len);
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_dma_unmap)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_dma_unmap)
+ int
+ rte_vfio_container_dma_unmap(int container_fd, uint64_t vaddr, uint64_t iova,
+ 		uint64_t len)
+diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
+index 6dacae72353..de7a89a8291 100644
+--- a/lib/eal/windows/eal.c
++++ b/lib/eal/windows/eal.c
+@@ -453,7 +453,7 @@ eal_asprintf(char **buffer, const char *format, ...)
+ 	return ret;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_dma_map)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_dma_map)
+ int
+ rte_vfio_container_dma_map(__rte_unused int container_fd,
+ 			__rte_unused uint64_t vaddr,
+@@ -464,7 +464,7 @@ rte_vfio_container_dma_map(__rte_unused int container_fd,
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_SYMBOL(rte_vfio_container_dma_unmap)
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_dma_unmap)
+ int
+ rte_vfio_container_dma_unmap(__rte_unused int container_fd,
+ 			__rte_unused uint64_t vaddr,
 -- 
 2.52.0
 
