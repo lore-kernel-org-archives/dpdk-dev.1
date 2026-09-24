@@ -2,81 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB3DC98310
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 08:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0ADC9830E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 08:42:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3431F4026F;
-	Thu, 24 Sep 2026 10:36:48 +0200 (CEST)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id 4A313400D7
- for <dev@dpdk.org>; Thu, 24 Sep 2026 10:36:46 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id A897BEC009F;
- Thu, 24 Sep 2026 04:36:45 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Thu, 24 Sep 2026 04:36:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1790239005;
- x=1790325405; bh=uGxAyfiBgEcMX9ZSmKNgmwf+ltva95Jjl3f68DP1CHE=; b=
- nlP3i861hRXYHfNbI5lsIRES6LSeYcnEwN7TPzpoHOPdcPmHss09yNZNRJiuM9Ak
- ewkw7mCwr+n3YNGArbb0EJu0GRghp2RZZqn8mlVFj4TbOyTNCvvzwZA3Bqr02Zxl
- YiBGT20ASBE9b2YcOQn7VkB2JIDxauBXVeLkzNWThX/5JMWVJSi2KdihZc1bI9tN
- Aeb6VKARA3ai//hkWITigj5/wiZ/Lx39bBvjK51UTMyl4Sr5eeTQawaHHAiKefyx
- panUM1zrqsUyphli6cPr7cLD6V4H06ZjjkMi5+OthofyPDH0LRplIndIVLWZwrOW
- Yohti1urtYXo80tzM4VDBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1790239005; x=
- 1790325405; bh=uGxAyfiBgEcMX9ZSmKNgmwf+ltva95Jjl3f68DP1CHE=; b=P
- A6Fp/XZfPbVd13m/k3nAUhSpMPv1MtaihSD/Sa56WW8u79QY4HowTEmgbo0JCXkj
- XT790PC+YvMAKsDZy3swdAwYgAFlhlzlFO0vC9dbM83yoEQewkf2HT9snxWnYlc2
- a3VsAyefLcsKo17h/xXSYREon/0B1a6Yd+RSR9cXD4MP/HWHcrVOxpnwNFasx+zF
- D/UV1wAY4OJ/lfHjXkDEHOwuJfmY3msGPCKTiD+esb0iF8wggJId9zHn4BW/O2oI
- /FpSyzELQRe/cAFzS6uCEx9YCE9RoJersxLT9FrFdh38Nc67boNVQjv5n+mxnZiU
- wnKYcl7umpQ/z1kOaCIyA==
-X-ME-Sender: <xms:HeG0amBL44Pde49vrponfaDzDPhmw7e_as9AVvpwb4yDZw8jOhpP8g>
- <xme:HeG0ar-llWg0cZcAthqBonF7w7b9_XOdnsKntsWw7JcEGKyMGi0UFbP9hhGZbse_R
- gS-I7CNffDswNvEfK42mfnreRRyWCsWw7Lqw4yv02xXCwkDQ6albu8>
-X-ME-Received: <xmr:HeG0atE_oPAPtNIskiTyZGrvHQOhgPyRVjLl9qf5-IVdDWGgkcckdJMlyCNTraVVRgOQWZ5kfcGrfS94fL2xasQ>
-X-ME-Proxy-Cause: dmFkZTGOArH3pF6N/Mm1HwqKAZV1Ni5AxT+F6HJURbQ5ve37UQIgNmX4f+Pq8x6+M5Y2HM
- XIczj4dcBODT04wKPA3MzgmVY8v774flZRwd5K+78aA6qPWKC+yG+8VkOjJs/hWURh8nMX
- iIoTI2WcSlRO7tQy6Kua2pNpqN3Juw2ywQd0HPuW+mikKo88gljTYk+iZuzxSd7OmmhG5V
- aPs9Oad6NtsVRlP1YOHdbWBHQE9Msgi+Fn2bmlr4j+XrgN41CNWox1uZOtee5/6flqrcWS
- jIctncpE9GbRrKjYvCKHG5EabAhPXecrzcM0+GBpG0quSFLON5p6tt7Z1fKngpY7HN0Ys0
- Bo1rspKU87XVzLcElXAVI09EbV+z7mXaJEoN+xWvZmikpzMI8UqNVF6ah11aoG8bbGXeUX
- 7NHZRa4ISnLe2dGa7pXODzfqeR9jdEtQ1A2VKRTz+IBAPopUzUhyuZP332f2CtsD6Z0Bvn
- 5GtNC21tWIXd4nwRo5fjQvLE6lXkgO2e34/mrkdRVuiYrd2WApNK8iMfKWXEKuJWAvK0g8
- CVdOD0PRvs06bU0Rt2KhiyW1QH9wQOCXEK+BhbNuyRE6hdNFVKXk+g4OvUYnOxF/wGYQnT
- RwvF1aCy3iPLpbm1660CyDWqnb8t7wanS1Cgc8YOV4KRsK03a3KeQQKZl51g
-X-ME-Proxy: <xmx:HeG0apPYaZtYm8CCaQJEes1hp4q_ygUbXimVDBBuSqNolaNz3ELsXg>
- <xmx:HeG0anfbOwkVhV6Uug6NGN7a7k11ON1scltcj6lTl-ahJr1y6h2UTw>
- <xmx:HeG0auuF_r6LmYiO6EWq3i39_oNYKguMGepl33yIkbmjzRQ1djjyDw>
- <xmx:HeG0agnkaXL_URNpdd0f9WFo-m92wfy9_1V6IU271538ASMjonk-VQ>
- <xmx:HeG0amtwsof5xLbr3AkbxE_y4HY4Ywfp2BPe86_ajnuc2zUMgBEurszN>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 24 Sep 2026 04:36:44 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Aaron Conole <aconole@redhat.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: Re: [RFC] devtools: rewrite doc vs code check in Python
-Date: Thu, 24 Sep 2026 10:36:42 +0200
-Message-ID: <IyiA4StYRHSdTGPuf2hfGQ@monjalon.net>
-In-Reply-To: <arTSOhHVEOKr7U06@bricha3-mobl1.ger.corp.intel.com>
-References: <20260923184207.626576-1-stephen@networkplumber.org>
- <20260923135430.7e16c673@phoenix.local>
- <arTSOhHVEOKr7U06@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A65B44026F;
+	Thu, 24 Sep 2026 10:42:56 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 504254026F
+ for <dev@dpdk.org>; Thu, 24 Sep 2026 10:42:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1790239374; x=1821775374;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=2oKMxq5jBYlvYEqc3LFTXGmESSBxGXur5n7QEzGjNEo=;
+ b=SbUqHIwwWK41Pxn1qnEUAuSJ8UBe6T8+bkwH9ZsjROlvUWglz1/vCm06
+ LTYACy57O3QzWaj06NpF1HfJtJxGzK+cWCCqVFR6wMNBnRtTcMSbPvULV
+ GbRfvMrXKdZY3kijiyB+suoYOYTeaMVDy7tvOhX+Im+3V+cJF6MwFwYHH
+ BG8X1a5nynoswW8RqlqlRhcmhYnPTJoxcG2Rh3T7vVFOPJOhpSH9wdhuA
+ A1mDyc1uxkMbx1avH0HNM16CEuH7UBBYdaN0/LdnU1wJJmE4GHc1N1pqJ
+ VVED3BxkKIlHL9BRJinzfwn/+4s3m/4oZjLY4/hj5wnO2dn9mTEgj7ZY5 Q==;
+X-CSE-ConnectionGUID: xeBUBihfSsumjvUFWiL1OQ==
+X-CSE-MsgGUID: 4dogh/rVQIWv4Vwjh/ohmw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11914"; a="91022290"
+X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="91022290"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Sep 2026 01:42:37 -0700
+X-CSE-ConnectionGUID: 9cNAhbzxT2mQAKyOn0lMLQ==
+X-CSE-MsgGUID: QCorFCX3R927Ab81qIFZ3Q==
+X-ExtLoop1: 1
+Received: from silpixa00401177.ir.intel.com (HELO vm-icx177..)
+ ([10.20.224.214])
+ by fmviesa003.fm.intel.com with ESMTP; 24 Sep 2026 01:42:36 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH] net/iavf: fix reset race condition
+Date: Thu, 24 Sep 2026 08:41:52 +0000
+Message-ID: <20260924084152.11089-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,52 +57,196 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-24/09/2026 09:33, Bruce Richardson:
-> On Wed, Sep 23, 2026 at 01:54:30PM -0700, Stephen Hemminger wrote:
-> > On Wed, 23 Sep 2026 21:19:45 +0200
-> > Thomas Monjalon <thomas@monjalon.net> wrote:
-> > 
-> > > 23/09/2026 20:42, Stephen Hemminger:
-> > > > The existing check-doc-vs-code.sh only compares rte_flow items and
-> > > > actions, and only for drivers whose directory matches the ini name,
-> > > > so none of the drivers under net/intel are checked.
-> > > > 
-> > > > Replace it and parse-flow-support.sh with a Python script covering
-> > > > the whole NIC feature matrix:  
-> > > [...]
-> > > >  devtools/check-doc-vs-code.py          | 1132 ++++++++++++++++++++++++
-> > > >  devtools/check-doc-vs-code.sh          |   84 --
-> > > >  devtools/parse-flow-support.sh         |   92 --
-> > > >  doc/guides/contributing/new_driver.rst |    4 +-
-> > > >  doc/guides/contributing/patches.rst    |   27 +
-> > > >  doc/guides/nics/features.rst           |    5 +
-> > > >  8 files changed, 1169 insertions(+), 180 deletions(-)
-> > > >  create mode 100755 devtools/check-doc-vs-code.py
-> > > >  delete mode 100755 devtools/check-doc-vs-code.sh
-> > > >  delete mode 100755 devtools/parse-flow-support.sh  
-> > > 
-> > > Thanks for working on it.
-> > > 
-> > > My concern is how easy it is to maintain for all contributors
-> > > having to insert their rules and exceptions?
-> > > 
-> > > It is replacing less 200 lines with more than 1000 lines
-> > > so it looks a lot more complex.
-> > > It is probably fully generated by AI?
-> > > Can we make it simpler?
-> > > 
-> > > 
-> > 
-> > The other suggestion would be to git rid of the .ini file method
-> > of generating this feature matrix in doc and just have python script
-> > generate it.  Prefer a single source of truth, less work
-> 
-> +1, I was just going to suggest that when I saw the discussion on this
-> script.
-> In case of autogeneration, for cases like "partial" support, we can have a
-> well-defined comment tag or similar in the code to mark it.
+iavf_handle_hw_reset() can be called concurrently from the iavf-event
+thread handling RTE_ETH_EVENT_INTR_RESET and from any thread calling
+rte_pmd_iavf_reinit() (VF-initiated reset), with no synchronisation
+between the two. Make in_reset_recovery atomic and use it as a guard
+so only one reset runs at a time.
 
-I agree with this direction.
+Fixes: 28a1a72eac26 ("net/iavf: add VF initiated reset")
 
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+---
+ drivers/net/intel/iavf/iavf.h        |  4 +--
+ drivers/net/intel/iavf/iavf_ethdev.c | 39 ++++++++++++++++++----------
+ drivers/net/intel/iavf/iavf_rxtx.c   |  2 +-
+ drivers/net/intel/iavf/iavf_vchnl.c  |  3 ++-
+ 4 files changed, 30 insertions(+), 18 deletions(-)
 
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index f16f66a3e9..35e96f881a 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -295,7 +295,7 @@ struct iavf_info {
+ 
+ 	struct rte_eth_dev *eth_dev;
+ 
+-	bool in_reset_recovery;
++	RTE_ATOMIC(bool) in_reset_recovery;
+ 	bool reset_pending;
+ 	bool pf_reset_in_progress;
+ 	bool start_pending;
+@@ -534,7 +534,7 @@ int iavf_flow_sub_check(struct iavf_adapter *adapter,
+ 			struct iavf_fsub_conf *filter);
+ void iavf_dev_watchdog_enable(struct iavf_adapter *adapter);
+ void iavf_dev_watchdog_disable(struct iavf_adapter *adapter);
+-void iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset);
++int iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset);
+ void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change);
+ bool is_iavf_supported(struct rte_eth_dev *dev);
+ void iavf_hash_uninit(struct iavf_adapter *ad);
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index a8daa507bb..b323a39e55 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -767,7 +767,8 @@ iavf_dev_configure(struct rte_eth_dev *dev)
+ 	 * recovery, in which case the reset handler restores them once at the
+ 	 * end (avoiding a double restore).
+ 	 */
+-	if (reset_done && !vf->in_reset_recovery) {
++	if (reset_done && !rte_atomic_load_explicit(&vf->in_reset_recovery,
++			rte_memory_order_relaxed)) {
+ 		ret = iavf_post_reset_reconfig(dev);
+ 		if (ret)
+ 			return ret;
+@@ -3095,7 +3096,8 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
+ 	adapter->tpid = RTE_ETHER_TYPE_VLAN; /* VLAN TPID set to 0x8100 by default */
+ 	rte_spinlock_init(&adapter->phc_sync_lock);
+ 
+-	if (!vf->in_reset_recovery && iavf_dev_event_handler_init())
++	if (!rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed) &&
++	    iavf_dev_event_handler_init())
+ 		goto init_vf_err;
+ 
+ 	if (iavf_init_vf(eth_dev) != 0) {
+@@ -3342,7 +3344,7 @@ iavf_dev_uninit(struct rte_eth_dev *dev)
+ 
+ 	iavf_dev_close(dev);
+ 
+-	if (!vf->in_reset_recovery)
++	if (!rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed))
+ 		iavf_dev_event_handler_fini();
+ 
+ 	return 0;
+@@ -3463,11 +3465,12 @@ iavf_post_reset_reconfig(struct rte_eth_dev *dev)
+ /*
+  * Handle hardware reset
+  */
+-void
++int
+ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ {
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
+ 	struct iavf_adapter *adapter = dev->data->dev_private;
++	bool expected = false;
+ 	int ret;
+ 	bool restart_device = false;
+ 
+@@ -3475,13 +3478,21 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ 		restart_device = dev->data->dev_started;
+ 	} else {
+ 		if (!dev->data->dev_started)
+-			return;
++			return 0;
+ 
+ 		if (!iavf_is_reset_detected(adapter))
+ 			PMD_DRV_LOG(WARNING, "VFR not observed; recovering anyway");
+ 	}
+ 
+-	vf->in_reset_recovery = true;
++	/* serialize against a concurrent reset from another thread */
++	if (!rte_atomic_compare_exchange_strong_explicit(&vf->in_reset_recovery,
++			&expected, true, rte_memory_order_acquire,
++			rte_memory_order_acquire)) {
++		PMD_DRV_LOG(INFO, "Reset already in progress on port %u, skipping",
++				dev->data->port_id);
++		return -EBUSY;
++	}
++
+ 	vf->pf_reset_in_progress = !vf_initiated_reset;
+ 	vf->start_pending = false;
+ 	iavf_set_no_poll(adapter, false);
+@@ -3533,11 +3544,11 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ 	if (vf->post_reset_cb != NULL)
+ 		vf->post_reset_cb(dev->data->port_id, ret, vf->post_reset_cb_arg);
+ 
+-	vf->in_reset_recovery = false;
++	rte_atomic_store_explicit(&vf->in_reset_recovery, false, rte_memory_order_release);
+ 	vf->pf_reset_in_progress = false;
+ 	iavf_set_no_poll(adapter, false);
+ 
+-	return;
++	return ret;
+ }
+ 
+ RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_iavf_reinit, 25.11)
+@@ -3568,9 +3579,7 @@ rte_pmd_iavf_reinit(uint16_t port)
+ 		return -EINVAL;
+ 	}
+ 
+-	iavf_handle_hw_reset(dev, true);
+-
+-	return 0;
++	return iavf_handle_hw_reset(dev, true);
+ }
+ 
+ static int
+@@ -3593,7 +3602,7 @@ iavf_validate_reset_cb(uint16_t port, void *cb, void *cb_arg)
+ 	}
+ 
+ 	vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
+-	if (vf->in_reset_recovery) {
++	if (rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed)) {
+ 		PMD_DRV_LOG(ERR, "Cannot modify reset cb on port %u, VF is resetting.", port);
+ 		return -EBUSY;
+ 	}
+@@ -3652,7 +3661,8 @@ iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change)
+ 	bool no_poll;
+ 
+ 	no_poll = (link_change & !vf->link_up) ||
+-		vf->vf_reset || vf->in_reset_recovery;
++		vf->vf_reset ||
++		rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed);
+ 
+ 	rte_atomic_store_explicit(&adapter->no_poll, no_poll,
+ 				  rte_memory_order_release);
+@@ -3734,7 +3744,8 @@ iavf_resume_pending_start(struct rte_eth_dev *dev)
+ 	if (!vf->start_pending)
+ 		return;
+ 
+-	if (vf->vf_reset || vf->in_reset_recovery)
++	if (vf->vf_reset || rte_atomic_load_explicit(&vf->in_reset_recovery,
++			rte_memory_order_relaxed))
+ 		return;
+ 
+ 	/*
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index fc47a2cf1a..84b931e78a 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -1106,7 +1106,7 @@ iavf_stop_queues(struct rte_eth_dev *dev)
+ 	int ret;
+ 
+ 	/* adminq will be disabled when vf is resetting. */
+-	if (vf->in_reset_recovery) {
++	if (rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed)) {
+ 		iavf_reset_queues(dev);
+ 		return;
+ 	}
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index 604399125f..6c054acf80 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -260,7 +260,8 @@ iavf_handle_link_change_event(struct rte_eth_dev *dev,
+ 	 * (link is down or a VF reset is in progress); the watchdog drives
+ 	 * auto-reset recovery, so it must remain armed in those cases.
+ 	 */
+-	if (vf->link_up && !vf->vf_reset && !vf->in_reset_recovery)
++	if (vf->link_up && !vf->vf_reset &&
++	    !rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed))
+ 		iavf_dev_watchdog_disable(adapter);
+ 	else
+ 		iavf_dev_watchdog_enable(adapter);
+-- 
+2.43.0
 
