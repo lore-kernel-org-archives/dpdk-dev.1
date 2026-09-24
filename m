@@ -2,76 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A99C98318
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 15:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 277E4C9830E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 15:51:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C61664027B;
-	Thu, 24 Sep 2026 17:44:15 +0200 (CEST)
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
- [74.125.227.140])
- by mails.dpdk.org (Postfix) with ESMTP id B0A4940144
- for <dev@dpdk.org>; Thu, 24 Sep 2026 17:44:14 +0200 (CEST)
-Received: by mail-pj2-f12.google.com with SMTP id
- 98e67ed59e1d1-39d654f02baso6435a91.3
- for <dev@dpdk.org>; Thu, 24 Sep 2026 08:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790264654;
- x=1790869454; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=jhqruIiyXiqqUP1aD9287iWNo8noBfTdCrRsSlBnVc4=;
- b=zAn3rzMJXw7gfDyB13olX4UK+axF642McyecY1hDwN/050Dt6sZ5znsPaZosHXu6r6
- qczuROcFV+Nl9yRRJDLzuQSwdWQ7vA1XLWMcl0qAMPk/nerN+B6Q4FPEJGKG9NIwMGlE
- pl6ftCBBTPbWJI76vqDQbxGxBeFcl1fu2vn6htsaW8gaYd0DYYHiNJ8fx97n75wvJbzk
- OZfx76z+Mn7+Wbexm/6PkHV8SEZWQ972sTsomts8mZ8s+5+V9Qb6EE9gZ5IiG7CfmxAr
- O9MwU7MAgHft/I05KgmMt2yLeK28lQmdQTwixHstVSN45e68XxH6i3b875OOzE46tIXr
- 3FLg==
+	by mails.dpdk.org (Postfix) with ESMTP id 57B954027B;
+	Thu, 24 Sep 2026 17:51:13 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 58B4840144
+ for <dev@dpdk.org>; Thu, 24 Sep 2026 17:51:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1790265071;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=BNkWVmnMCD0YX9fmSKFE4qlHNOsHfQJWbzqfmJ2Prfo=;
+ b=dEcn+PEE5kWhe0LApAZ85N0hQX6JMvVBhznu9JpkW7V/BunUm1fWrSPMrBfpNZAHqHolCP
+ 15Aw191F6yjfk0AqqCoqxjKDVjRlfLRqoxHgf/gaFnfFQ4RI25MOlSH0eal5QW9YNIOGsT
+ SOLzYcc1/mRrpksmC6uzjuFWFzt9V/Q=
+Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com
+ [74.125.82.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-653-ISHNQvChN1mb9Nvt25Fo6g-1; Thu, 24 Sep 2026 11:51:10 -0400
+X-MC-Unique: ISHNQvChN1mb9Nvt25Fo6g-1
+X-Mimecast-MFC-AGG-ID: ISHNQvChN1mb9Nvt25Fo6g_1790265069
+Received: by mail-dy1-f200.google.com with SMTP id
+ 5a478bee46e88-32b8c2b30c4so3633566eec.1
+ for <dev@dpdk.org>; Thu, 24 Sep 2026 08:51:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790264654; x=1790869454;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=jhqruIiyXiqqUP1aD9287iWNo8noBfTdCrRsSlBnVc4=;
- b=tuQ0qCwOVrWJ4wgUgjrwc02rD5YPWDmPPZPumq/pwtuXRsOOvvDibKwcsLFhlRnVVA
- dqUanxghwotj9uqUUoUWk2RDIClaNUGJ6u+M2f0ISN4i3M+6Yo8D99RJbUYzsjuzW7Of
- ZO6vp2psPeuT/pLyJlrYRNxwZQiH4ImWWhruK5Thj3yU5rJUoo18463TlLCtcjLVghcf
- muwuTPxkiDnFox7JjIrCKVsSs71ORi7BYBJm/yfHrTWmLktc153BHRgWJIm0Fiu3ngLd
- c+sJnVAAkcO6PXN3OSeIUb9oNZechStXOf/9YzIo58zogSTPoLonFue83u0826uK5tAE
- NL+w==
-X-Gm-Message-State: AFuF++mmrHm7JazhL6HliaMeZVqy8pvWoSHneR2VLFS6htRznF5jrAGg
- FyQA5uKkFkDqELuc/3UdD6gm8JtF1qplj4kdL5SsiSv1T4bRUQhqwKfWV1NpCy/nO56h9WNO0Cb
- mKYh46ZU=
-X-Gm-Gg: AYBFou3hl+WuZlaTy2WCkBMhYMWjLxKn47CT3CwAQ80nhQjblwW0Z+fKsTBKeyGpFYP
- ppztbUOUNH1IKXIYaKbAmgISTt35+QHApErVJ6m+DCqVC6P5H9dK1RiKw9YDqXUUz/9pluuRLdN
- Ksshon+SB1chvoe8+NRtsMuws5h2yeGbICtNZb7eLsKMLwR/JFuZWyMi5/HJkhIIQHJ63KP0Q40
- EwwF8BzMm8f2wHW0bhBmJiEfwC55fYZZko11q8z4CYD8oslx7u6OY++a/AZSkXr0OtY8VVPtCQw
- Xa0r0xyjugsyRohNwyQ4rGyOrYOXM1R62riijrWg132kvCb07NvqUuusyIoAHWOa1NlNd+MDZ2b
- yXMQl3VKvG7aQ22bZrf7qeClSqq7arzvjBKpb5m7AyMuOTW4bikuE4E1e0OSO2B0R8vTIwQGDYu
- 4xt6e3JjRBi3Ut1hjiAZt9nu2z+YIjffREab9es7ZRQKu37BQ0kGbFYI/KuReA5uqprT8tIZcqZ
- IgPERPZx2nLzBuOn9rFuMLTvdj5LEw6NDHnDkyl
-X-Received: by 2002:a17:90b:1c09:b0:3a0:ace4:d2a8 with SMTP id
- 98e67ed59e1d1-3a0ace4d6e7mr640908a91.17.1790264653554; 
- Thu, 24 Sep 2026 08:44:13 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a09773e7c3sm5381674a91.17.2026.09.24.08.44.13
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 24 Sep 2026 08:44:13 -0700 (PDT)
-Date: Thu, 24 Sep 2026 08:44:08 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>, Jakub Grajciar
- <jgrajcia@cisco.com>
-Subject: Re: [PATCH 7/7] doc: clarify memif secret is not access control
-Message-ID: <20260924084408.6ba7e868@phoenix.local>
-In-Reply-To: <20260922194138.508919-8-stephen@networkplumber.org>
-References: <20260922194138.508919-1-stephen@networkplumber.org>
- <20260922194138.508919-8-stephen@networkplumber.org>
+ d=1e100.net; s=20260707; t=1790265069; x=1790869869;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=BNkWVmnMCD0YX9fmSKFE4qlHNOsHfQJWbzqfmJ2Prfo=;
+ b=Xu6ydIcUMKDyQZwn4un0O5qbxiwm4IbzJCIr5Q7+QEVIKk9FWXgyglyiRNKKebtY/Y
+ VfUuZODZeKtgXYTpgL3oPkJGHYjAcbJXAD43pKBkhaofedrfP/IViHmVh4WNEEEpLZZt
+ 12sR0yjCf72qGz336YOGlSYW17ytmoz7RaU2a+MsqbMjivNv2iOECRwVByB7r9XVbcfL
+ JWI9wYf8/zDfIv5iRdKC76zDI/wSUJd5rkeA9LFELneIJiE+0kw3/q5MJcSXYw2y9aX1
+ iG0m0f3Wx8a+G3n/3nuelgny8qmlHxE4si3VGOWJ0MP40wa6p70AtagexkEGcExz+8Al
+ 247g==
+X-Forwarded-Encrypted: i=1;
+ AKwUvByg2dmnm72CW2LqXSgNuqzYEbwQenUEkSK+2NrOrrKwg9mIV+0m6GfKXKDVXvWLhXxiMf4=@dpdk.org
+X-Gm-Message-State: AFuF++kEpZTetqm4Kjd8y2+djgnict2DAJbq3Wa1J1R/SVvToIibiQK2
+ JwF3qtodg0KufhtDqTSmdX/dl+81rzASJolrXpaeTlyiDUM3lj7EE5DR/L8zE85cTRwIlRMtOlU
+ Wr/Gic6BIOcpSoi9DuU1Az56OLkLIOKuSCLvWHbgDJf9suDmRGKlXCtvu2uTi7Hm5+9pSmWmbhE
+ a9CLxyumMLpTq5FFU2B7Q=
+X-Gm-Gg: AYBFou2d3k65BnWj2pz9PD27yQ8S49LpJDhJZuLEZs6hJTL4PBDypP3t4ZWWeAf7LlC
+ 6grWZ4RSFrtNnvODG9LGOXQDEb81Mo4fQKZjbzm0VTk93QDNC6Hiy3ckmzM5r/+UUmiQniQS4d4
+ ZBPBLYw7e7tFtZx5owcehUdFqTKOqO41MGeZOs9S3Gnu5pSUwn43t+NBbx2cbvEeSw6jpY68XTy
+ 2STFCUfFFKRoKheKIqDbG0/LCfhY2pOEHsRgRxj8XvUB8VEN2C8bhWYVMrjFMSvYWbbxAJc2SEU
+ /v1mMXtQxJ9vTJCWTmd+xUDfPB4ohm0c8Na823g+cN0=
+X-Received: by 2002:a05:7022:3c0c:b0:143:73bc:bed3 with SMTP id
+ a92af1059eb24-14504011dcemr1939949c88.42.1790265068838; 
+ Thu, 24 Sep 2026 08:51:08 -0700 (PDT)
+X-Received: by 2002:a05:7022:3c0c:b0:143:73bc:bed3 with SMTP id
+ a92af1059eb24-14504011dcemr1939919c88.42.1790265068211; Thu, 24 Sep 2026
+ 08:51:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260924101504.810315-1-eperezma@redhat.com>
+ <20260924101504.810315-2-eperezma@redhat.com>
+ <20260924083845.4d854df3@phoenix.local>
+In-Reply-To: <20260924083845.4d854df3@phoenix.local>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Date: Thu, 24 Sep 2026 17:50:56 +0200
+X-Gm-Features: AclHuK-xLExJyPSxyaDS18HKvtEo_I50rKo7XXOxqgiPeFzsB12u2xq6SGFZlhM
+Message-ID: <CAO55csxMp51tJqjMLdbQUAXcTT_V7_iadUU0AB+aXwiDc30X0Q@mail.gmail.com>
+Subject: Re: [PATCH 1/9] uapi: import VDUSE and VFIO header from v7.3-rc3
+ kernel
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, dev@dpdk.org, 
+ chenbox@nvidia.com, Yongji Xie <xieyongji@bytedance.com>, mst@redhat.com, 
+ jasowangio@gmail.com, david.marchand@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: _Vyq-29svvqmUQyj0hAeDbT0cO20xLWgXYzWZr0BU0U_1790265069
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/alternative; boundary="00000000000071e827065c3c91de"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,23 +90,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 22 Sep 2026 12:40:58 -0700
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+--00000000000071e827065c3c91de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> The secret option was described as a security option, which invites
-> using it as one. It is sent in cleartext in the connection request,
-> and when passed as a device argument it is visible to other local
-> users in the process arguments.
-> 
-> Describe it as what it is, a check against connecting mismatched
-> interfaces, and document what actually restricts access to an
-> interface. By default the control socket is in the abstract
-> namespace and has no filesystem entry to own or permission. Only
-> with socket-abstract=no do file permissions and the owner-uid and
-> owner-gid options apply.
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> Tested-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
-> ---
+On Thu, Sep 24, 2026 at 5:38=E2=80=AFPM Stephen Hemminger <
+stephen@networkplumber.org> wrote:
 
-Recheck-request: aws-unit-testing
+> On Thu, 24 Sep 2026 12:14:56 +0200
+> Eugenio P=C3=A9rez <eperezma@redhat.com> wrote:
+>
+> > This header will be used by the Vhost library.
+> >
+> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > ---
+>
+> Best to avoid using headers from pre-release kernel versions.
+
+
+Yes, that's the plan.
+I asked Eugenio to share it early so that we can review and test the
+series. It will not be merged with -rc headers.
+
+Thanks,
+Maxime
+
+--00000000000071e827065c3c91de
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Sep 24,=
+ 2026 at 5:38=E2=80=AFPM Stephen Hemminger &lt;<a href=3D"mailto:stephen@ne=
+tworkplumber.org">stephen@networkplumber.org</a>&gt; wrote:<br></div><block=
+quote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1=
+px solid rgb(204,204,204);padding-left:1ex">On Thu, 24 Sep 2026 12:14:56 +0=
+200<br>
+Eugenio P=C3=A9rez &lt;<a href=3D"mailto:eperezma@redhat.com" target=3D"_bl=
+ank">eperezma@redhat.com</a>&gt; wrote:<br>
+<br>
+&gt; This header will be used by the Vhost library.<br>
+&gt; <br>
+&gt; Signed-off-by: Eugenio P=C3=A9rez &lt;<a href=3D"mailto:eperezma@redha=
+t.com" target=3D"_blank">eperezma@redhat.com</a>&gt;<br>
+&gt; ---<br>
+<br>
+Best to avoid using headers from pre-release kernel versions.</blockquote><=
+div><br></div><div>Yes, that&#39;s the plan.</div><div>I asked Eugenio to s=
+hare it early so that we can review and test the series. It will not be mer=
+ged with -rc headers.</div><div><br></div><div>Thanks,</div><div>Maxime=C2=
+=A0</div></div></div>
+
+--00000000000071e827065c3c91de--
+
