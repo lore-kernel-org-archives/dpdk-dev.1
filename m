@@ -2,48 +2,156 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0ADC9830E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 08:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35675C98311
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 09:34:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A65B44026F;
-	Thu, 24 Sep 2026 10:42:56 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id 504254026F
- for <dev@dpdk.org>; Thu, 24 Sep 2026 10:42:54 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 118DD4026E;
+	Thu, 24 Sep 2026 11:34:24 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 56EC0400D7;
+ Thu, 24 Sep 2026 11:34:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790239374; x=1821775374;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=2oKMxq5jBYlvYEqc3LFTXGmESSBxGXur5n7QEzGjNEo=;
- b=SbUqHIwwWK41Pxn1qnEUAuSJ8UBe6T8+bkwH9ZsjROlvUWglz1/vCm06
- LTYACy57O3QzWaj06NpF1HfJtJxGzK+cWCCqVFR6wMNBnRtTcMSbPvULV
- GbRfvMrXKdZY3kijiyB+suoYOYTeaMVDy7tvOhX+Im+3V+cJF6MwFwYHH
- BG8X1a5nynoswW8RqlqlRhcmhYnPTJoxcG2Rh3T7vVFOPJOhpSH9wdhuA
- A1mDyc1uxkMbx1avH0HNM16CEuH7UBBYdaN0/LdnU1wJJmE4GHc1N1pqJ
- VVED3BxkKIlHL9BRJinzfwn/+4s3m/4oZjLY4/hj5wnO2dn9mTEgj7ZY5 Q==;
-X-CSE-ConnectionGUID: xeBUBihfSsumjvUFWiL1OQ==
-X-CSE-MsgGUID: 4dogh/rVQIWv4Vwjh/ohmw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11914"; a="91022290"
-X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="91022290"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Sep 2026 01:42:37 -0700
-X-CSE-ConnectionGUID: 9cNAhbzxT2mQAKyOn0lMLQ==
-X-CSE-MsgGUID: QCorFCX3R927Ab81qIFZ3Q==
+ t=1790242461; x=1821778461;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=dsKYu9iLP89DsxY9TlPZNQhoQraulHmcFRBCbMofKhc=;
+ b=eSrv+0pG1147r19/qLKnqZAIMo6caSmEsmFKACfMPJqR+7k6rg88xseN
+ uWnp4AspsA+j+RrqjOdzQOqBpBDKCI0Gm5TONisjXqtlJNsiLyOoDflvo
+ pyGOt2vTlLWBmbq4VaeE60lUYWrcFp34hByaWaXBnKxKZ78t5IANG10QO
+ 4ZDRgw40ppZMenUP7mU/aGrnT+yeObHntv8v3cgaTCgflcy4V5ugUUXHO
+ iHlF6nLsUbfZJ5hwVjLx0GKd/GYr1Ev4Q06WQ11tMdD8QQ6vW1X+eWcJB
+ jZipfxMk1cclfwz8G6iT0YwqZAI9s5/etE6Td5UGBC9DIWlsceW9+AK9m g==;
+X-CSE-ConnectionGUID: 8OtRjPWAScqJPIjchIVlDA==
+X-CSE-MsgGUID: +cXDIBvtSVSm+c/3HGHJ4w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11914"; a="90234368"
+X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="90234368"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Sep 2026 02:34:19 -0700
+X-CSE-ConnectionGUID: 47hdEp0bS0u5tsGecbKxGg==
+X-CSE-MsgGUID: Q18ukvGUTwO9Gy8Yjq1wYw==
 X-ExtLoop1: 1
-Received: from silpixa00401177.ir.intel.com (HELO vm-icx177..)
- ([10.20.224.214])
- by fmviesa003.fm.intel.com with ESMTP; 24 Sep 2026 01:42:36 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH] net/iavf: fix reset race condition
-Date: Thu, 24 Sep 2026 08:41:52 +0000
-Message-ID: <20260924084152.11089-1-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.43.0
+X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="274093369"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Sep 2026 02:34:19 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Thu, 24 Sep 2026 02:34:19 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Thu, 24 Sep 2026 02:34:19 -0700
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.49) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Thu, 24 Sep 2026 02:34:18 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fYXEBdW0lUn/Md+SxZ+ZbwommUGQuOhR5HHPtsHxGE09xVUMTd5HpGPAZMJZ79/DC/+YZgeojRZWkXIj8+4IZA5nCHA85c7xk/OqKO7TdfEy3MAAGqwyYerjkKE0poLQ9Gw+2+CvoRn+TI3CXlLurX6CVNbeVoRC+KuLW8pZZPrg4afJhnc1/8GRj7vy1wQfVvq33QqmK8/pllcmNqAUFNWvXCEjK3BorFd7AsyfrE29X+YAmv1Vlrwv1gFjm5JCjqIuWJm/WdoU04bPT9CRnvR5noAx0inQkzSWY/Mdfw7l/JzKoyjMpnvHo11BOMxexHesDRp7COp/cJxM3ziMTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TGJYO6LYa2qf/6w9WPUQ6OplBX1vshXDLOdyziTtP7E=;
+ b=sDlGZcRCwbhDQaKxoQyvaVyVQ7/15oZVBAGJjoLF+2Aw6eGmTiH2rfLFAYHQRUtcv41mnw/59YrzmsW1VKddAYnkVVofeF3gfmNCres8fh/2vkiN41XSQ5W34b3NHPw4AA5ZT0PzpGWy7cNvMOZim1+y8Asj0k3aFqrl6wDgIZteFtj1KEtwBZck9Xy2lSb8oEutO/T5AUPwtfiDJ9cLIL8/d64Ii3FDIcGF7dHATW+Chm7eE4lGnO8djnYji1IdSLf4BW00iTGOfsQiMl74OPUWuyqrQlqCS061k0ATikD0wbwEXa/OJulfRProXT/euimhv/iBROdKA5OV8AkMYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ CH3PR11MB7771.namprd11.prod.outlook.com (2603:10b6:610:125::6) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.451.18; Thu, 24 Sep 2026 09:34:11 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.21.0451.014; Thu, 24 Sep 2026
+ 09:34:10 +0000
+Message-ID: <c86e9c8e-7dc9-412f-a1ea-cbbeaead8bea@intel.com>
+Date: Thu, 24 Sep 2026 11:34:04 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/ixgbe: fix spurious MACsec event on E610
+To: Sandeep Penigalapati <sandeep.penigalapati@intel.com>, <dev@dpdk.org>
+CC: Vladimir Medvedkin <vladimir.medvedkin@intel.com>, Piotr Kwapulinski
+ <piotr.kwapulinski@intel.com>, Jedrzej Jagielski
+ <jedrzej.jagielski@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>,
+ <stable@dpdk.org>
+References: <20260923112519.10600-1-sandeep.penigalapati@intel.com>
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Content-Language: en-US
+In-Reply-To: <20260923112519.10600-1-sandeep.penigalapati@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PA7P264CA0273.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:373::12) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|CH3PR11MB7771:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2828440e-1445-42c8-6806-08df1a1efcf2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|366016|23010399003|376014|10067099003|56012099006|18002099003|22082099003|11063799006;
+X-Microsoft-Antispam-Message-Info: 4rAHcsvlHM6frNv8c3iVrcPmt74dyvCpB6yABnUOK8CRqLHIcAMUeae+4kfjpe/TGMi8XdHF2sHxfuk19f97xPb3CAJRMmTkS31UNASHNdRaTXuZkBSyYzrBRotk+bXqxl1Xo33S06Bq2fZvG7cWvTyym3xDHObnG6xKgM53Xg+nrwYur2tlr5v0u56K2X9nI+SqdKqmip1qqpinVS0VeJAbda+5jSDCeeH22zPTJ78bKefjYzghsmd/wnaVs5/RmEX0RB3jdRk5OpDUQIda+ijxdZ6YHeVFf0qR1y7obIgtBrSIW7fnR3CRdVyxjY9enKMKXmyHTzFLICg8bbHK+IePkS0FnKUu+nbQ7x0dOFz3Dopo5LYoxiMGv2ny23+aMsqRuw5YZIdnFe3jgwS0cbXFlVJVUEE6o/g+Q/7DFdU0uOW2QtomOEcCuh1VR1zZMqKARk8njZAKQEuomCZ0gF9JKPczpavVCV6vDPbjy+VzS56rMRkI4Zu86YsYrsyuTGDuEBUHQ1Uicxc9B7AG7PoaUi88NsOJ8heHQqFj5Z9+cbsRmqhqfs5wSdUpYD4lmdsxUe2GKL4bCwRRLoTbyxGNFIUMAWtblkhvZuVUe7wdvxchSHxywaJJYOyaLqadMuuikcCN77FzkO6j7pg5q+sHGocr6Q93P49lLnrY9og=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(10067099003)(56012099006)(18002099003)(22082099003)(11063799006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UjVTUXJvM2ZESHRid3NPQ2tDOXJPOERVZjQ1bkthcEprWWlHYmVGYWRXdlpS?=
+ =?utf-8?B?ME9EQUdEeDNyVWtMRDBqQ0JXRllQQjRBdVc5NTB0WG9tT2lTQUpqTTFBWDl3?=
+ =?utf-8?B?Tm55WGNKczdJeGhBU2w0eWpqa1hsemdlMHRxZ0Y0Q25ZMGVFU0dPNHQzZm40?=
+ =?utf-8?B?V2hXL3ZPU2xMNDFPbGRrUndhamFEV3U0NnNKc2JpZmVxcEtMMEwzZGRMZk1Z?=
+ =?utf-8?B?K2JqNmxPWCtvR0tJRjlTT0gzRWJpU0xJc24yZkZzaURDSUljZ2hLdklSd09h?=
+ =?utf-8?B?TG11SXM3K0N5bUpqUDgwVEFFTGxxTUM5dVlUUkxJNXYxTEZiZmpiN2F6QkR6?=
+ =?utf-8?B?SW9vUlpGMUFzcG5HWWtCVTg0dVRTaDM5a2drVnA0NDNIdG5RQnlZZTdZZit3?=
+ =?utf-8?B?TjRsNjlNaWI1T3JNNkVkWjg4dUVGSWIxMnZweE5VRVI3anA2R09WS2FDcEh3?=
+ =?utf-8?B?QWN5cmtCSXArVWZDMlJ5bUVidlJSbVhJUXRHanBkUkw3bkZCNitjQ2JzSmFa?=
+ =?utf-8?B?bXFjZkpkM2dqZkFBbmNzWVErYmdlSjEvaTk3eVQvcTV2QUwrMmt0cDkvZjVs?=
+ =?utf-8?B?NzNpb1AwaFFoOXVqbSs2K2lDT2U5UjFEdjNQU1RLWmZVZFlrUlRGTlRNN0Z6?=
+ =?utf-8?B?ZFJJZkVFc2dNbk9ER2xvRnQ3U3cyS0RBa3lIVE53bVJqY1g0aDhyRUpxeVQ0?=
+ =?utf-8?B?STNtMUloTmJBQVpkVWJwWGg0N2RVM3JON2t2SjFZME9LZTYzS2RYcmxRV0VJ?=
+ =?utf-8?B?WDNxRGJ5Rm1yOHpRNEU3UUkzblZ0OTBwU2M5YmZFQWZXZzg0N3MyYjY3cDJi?=
+ =?utf-8?B?YkpFVXdmOVFrSmowdEZYZm9NTExQa3gxMHNwbmtDUDlLYUg0YTBMNGlaUC8r?=
+ =?utf-8?B?ZVIyYXc3TVlVM0RRc014azY1T0F5WGNmS3hQazhwMjJEWm5KQnk0bGR3anVN?=
+ =?utf-8?B?SjZib0JyRDRUWnEvb2YySGNGM0tNaDFCZHRONEtKZ0twQVhsRXVFcWQ4NHJw?=
+ =?utf-8?B?WDFpcmlzZStuZ3VSaGJJMWZyTld1eDN4aWRIWFJTdEt2WHVzYmVjV0owUDBB?=
+ =?utf-8?B?ZTFxd1lZbjJlSVNYSGdHdjVodWRKOFNFQlNRREdQcnphYlV5N0EvSXlveUM1?=
+ =?utf-8?B?bWx1TlBCMUx6b2NHNUtBL2hKSDdGMGN2QitKakZ6SDhtaHJPNW8yQTJ1U3Ji?=
+ =?utf-8?B?MXVPcitweTl2M1NsQzBvQ2lMUkRHZWViUW1jaFZVbml5WENSRXpnR3AxYVFF?=
+ =?utf-8?B?NUhldU5iUkdoK1FsYi9ycW9wTEhIT2cwbTk4WEhxS0dqcWNwQlhMQXUzWGRn?=
+ =?utf-8?B?ZjcxQ1RyV296VVA4UW45QjlTZTdXMFBuOXFkWHJOMEF4SmFRNnBxM1FEME1i?=
+ =?utf-8?B?WmFhL09ZRDd2YUYrc3JqY2tldDFiWlptbFV4bUxQdmdmQjVhdTkrc1lqU3Ju?=
+ =?utf-8?B?L05qUXFtNUNhdk5wbVBVSUdhZHdqWlFSZzAwSEFzempTYzhYN01wTXI3QTZu?=
+ =?utf-8?B?cXM2ajRXQ3lFTGUyVmFVYmF5SEFrYy9LTzhMc1AvTU90SWpoT0FwK21VRmN4?=
+ =?utf-8?B?VXRBek9LYnVDRGhzbWlMNWRrUktjNXVCNDBxNVFiNmozZm1qVDdyS2RENVVG?=
+ =?utf-8?B?Yy91WFNOcFlQMWpLRndsUFFKSXh3ZFFyRlZXZ1BUZVZ1MDNyVE9KSHdtQndx?=
+ =?utf-8?B?c1o1WDd2TkdaNTI2Q25sSENlV1NGcXMzM1BlbWFsS1gwaTM1MGNkZGJSYS9o?=
+ =?utf-8?B?eHE2WlFWWk5DRXBiaHh5ZUNlQ1IwbjdVdE5GSGwvQXBlZ2Z1dFJWcDVycHVZ?=
+ =?utf-8?B?czdpenNhZ2RXWnJZY2JmMXNhaTRQa3FmS2wrNnEvU2JZY2FZNkxxR2ViQVBY?=
+ =?utf-8?B?WmRBbHRqTjBnVWVtdkpUL0hrTzZCQVI5MlBXTmZ5U0xWaE10T2FtMERwMjZN?=
+ =?utf-8?B?TndtdHdRbzlQUkNEYlVUWU9KU1R4UnVVNFkxc0JQU0M5c1JZUUx6UVFwS2Z1?=
+ =?utf-8?B?eE1xT3lWWTF5Q2t2ZHV2aGlUdjc3RGUyY0doWWVkdlFEWVZoL3BsenZYSkJ3?=
+ =?utf-8?B?Y2FHRVptTXNkT1lvczFGMWVLbXVmYVNWbWV6OXhaV0ViSkhQUWU4dzNDTEFV?=
+ =?utf-8?B?UCthMWdhSC9pVjVRSG1UdkpnVXd2NGtWNkNRYTBoRUZGdGJIY0JOSEgwZ2xQ?=
+ =?utf-8?B?UlBCQ29BREVGMVV5OUU2NHRwRytoNjZoa2xaekJFSnVLV0pKRGR0VlEyQ3hU?=
+ =?utf-8?B?R3ljZE4zOERqRkxYdlRrTGhJUGYrVDQxWjYvR3krRnNtUGZXQW0wdXgvdkZw?=
+ =?utf-8?B?djBOZlEvYW5ZY3A0V0VMUUtCV3k4NUQ5YVFDWWFGZDBBNEZPZEJyai92VnFo?=
+ =?utf-8?Q?l6kknQk8eBcVab4Y=3D?=
+X-Exchange-RoutingPolicyChecked: 2C4ADUR1BLrubJkXGVhIc24zqJsV7wO59FIjy+PlOIoElqQM4k5jsXUSDAJCf+hqMeIv11i9/DC4SjmCf+d3s9qZ+sjD0BMYYMq3PQAVewoh+Ua3z0xyV86lixwSwU2KhW3SQY17ByT5Z13kTyfr8tZnIhcLBgO6uSWmgsw6IsJhWkxHg4B4ozmci1HEeF4Hlyuwrj0zOr6eHuELU0sE22BHtmNblAbVVrQQvjIg4b9+P3hNU1YYOtNh7pAV9XktTJLzmsF/eOMS68YAzedtnRIfQ/TWb4I8sGzwgVxRUFs8QpOh5Km5GdcxjOecoky4Qz8biVLYxF0dMhbRRx4Z6g==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2828440e-1445-42c8-6806-08df1a1efcf2
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 09:34:10.7573 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fWgBBIyunTmtuUyaFRHWLUWcCzf8q0r+WZ8fsUTR+8ujtiTae8On8SxlfHBCQs2dtOm/TcGOxjxGpR3ay/Q28Ix4ItD9x2ZVo0DDOSlCnRA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7771
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,196 +165,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-iavf_handle_hw_reset() can be called concurrently from the iavf-event
-thread handling RTE_ETH_EVENT_INTR_RESET and from any thread calling
-rte_pmd_iavf_reinit() (VF-initiated reset), with no synchronisation
-between the two. Make in_reset_recovery atomic and use it as a guard
-so only one reset runs at a time.
+On 9/23/2026 1:25 PM, Sandeep Penigalapati wrote:
+> On 82599 and X5xx, EICR bit 0x00200000 is the MACsec PN-threshold cause
+> (IXGBE_EICR_LINKSEC). On E610 the very same bit is redefined as the
+> asynchronous firmware event cause (IXGBE_EICR_FW_EVENT). The interrupt
+> handler decoded this bit unconditionally as LINKSEC and raised
+> RTE_ETH_EVENT_MACSEC.
+> 
+> As E610 does not support MACsec, every firmware event (for example a
+> link change) was reported to the application as a spurious MACsec event.
+> In addition, the firmware events posted on the Admin Command Interface
+> (ACI) receive queue were never drained, so the cause was not cleared.
+> 
+> Decode the bit per MAC type: on E610 treat it as a firmware event and
+> drain the ACI receive queue until empty; keep the MACsec handling for
+> the other MAC types. Link changes continue to be handled through the
+> existing IXGBE_EICR_LSC path.
+> 
+> Fixes: 316637762a5f ("net/ixgbe/base: enable E610 device")
+> Cc: stable@dpdk.org
+> Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+> ---
 
-Fixes: 28a1a72eac26 ("net/iavf: add VF initiated reset")
+Reviewed-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
----
- drivers/net/intel/iavf/iavf.h        |  4 +--
- drivers/net/intel/iavf/iavf_ethdev.c | 39 ++++++++++++++++++----------
- drivers/net/intel/iavf/iavf_rxtx.c   |  2 +-
- drivers/net/intel/iavf/iavf_vchnl.c  |  3 ++-
- 4 files changed, 30 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index f16f66a3e9..35e96f881a 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -295,7 +295,7 @@ struct iavf_info {
- 
- 	struct rte_eth_dev *eth_dev;
- 
--	bool in_reset_recovery;
-+	RTE_ATOMIC(bool) in_reset_recovery;
- 	bool reset_pending;
- 	bool pf_reset_in_progress;
- 	bool start_pending;
-@@ -534,7 +534,7 @@ int iavf_flow_sub_check(struct iavf_adapter *adapter,
- 			struct iavf_fsub_conf *filter);
- void iavf_dev_watchdog_enable(struct iavf_adapter *adapter);
- void iavf_dev_watchdog_disable(struct iavf_adapter *adapter);
--void iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset);
-+int iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset);
- void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change);
- bool is_iavf_supported(struct rte_eth_dev *dev);
- void iavf_hash_uninit(struct iavf_adapter *ad);
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index a8daa507bb..b323a39e55 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -767,7 +767,8 @@ iavf_dev_configure(struct rte_eth_dev *dev)
- 	 * recovery, in which case the reset handler restores them once at the
- 	 * end (avoiding a double restore).
- 	 */
--	if (reset_done && !vf->in_reset_recovery) {
-+	if (reset_done && !rte_atomic_load_explicit(&vf->in_reset_recovery,
-+			rte_memory_order_relaxed)) {
- 		ret = iavf_post_reset_reconfig(dev);
- 		if (ret)
- 			return ret;
-@@ -3095,7 +3096,8 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
- 	adapter->tpid = RTE_ETHER_TYPE_VLAN; /* VLAN TPID set to 0x8100 by default */
- 	rte_spinlock_init(&adapter->phc_sync_lock);
- 
--	if (!vf->in_reset_recovery && iavf_dev_event_handler_init())
-+	if (!rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed) &&
-+	    iavf_dev_event_handler_init())
- 		goto init_vf_err;
- 
- 	if (iavf_init_vf(eth_dev) != 0) {
-@@ -3342,7 +3344,7 @@ iavf_dev_uninit(struct rte_eth_dev *dev)
- 
- 	iavf_dev_close(dev);
- 
--	if (!vf->in_reset_recovery)
-+	if (!rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed))
- 		iavf_dev_event_handler_fini();
- 
- 	return 0;
-@@ -3463,11 +3465,12 @@ iavf_post_reset_reconfig(struct rte_eth_dev *dev)
- /*
-  * Handle hardware reset
-  */
--void
-+int
- iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
- 	struct iavf_adapter *adapter = dev->data->dev_private;
-+	bool expected = false;
- 	int ret;
- 	bool restart_device = false;
- 
-@@ -3475,13 +3478,21 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
- 		restart_device = dev->data->dev_started;
- 	} else {
- 		if (!dev->data->dev_started)
--			return;
-+			return 0;
- 
- 		if (!iavf_is_reset_detected(adapter))
- 			PMD_DRV_LOG(WARNING, "VFR not observed; recovering anyway");
- 	}
- 
--	vf->in_reset_recovery = true;
-+	/* serialize against a concurrent reset from another thread */
-+	if (!rte_atomic_compare_exchange_strong_explicit(&vf->in_reset_recovery,
-+			&expected, true, rte_memory_order_acquire,
-+			rte_memory_order_acquire)) {
-+		PMD_DRV_LOG(INFO, "Reset already in progress on port %u, skipping",
-+				dev->data->port_id);
-+		return -EBUSY;
-+	}
-+
- 	vf->pf_reset_in_progress = !vf_initiated_reset;
- 	vf->start_pending = false;
- 	iavf_set_no_poll(adapter, false);
-@@ -3533,11 +3544,11 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
- 	if (vf->post_reset_cb != NULL)
- 		vf->post_reset_cb(dev->data->port_id, ret, vf->post_reset_cb_arg);
- 
--	vf->in_reset_recovery = false;
-+	rte_atomic_store_explicit(&vf->in_reset_recovery, false, rte_memory_order_release);
- 	vf->pf_reset_in_progress = false;
- 	iavf_set_no_poll(adapter, false);
- 
--	return;
-+	return ret;
- }
- 
- RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_iavf_reinit, 25.11)
-@@ -3568,9 +3579,7 @@ rte_pmd_iavf_reinit(uint16_t port)
- 		return -EINVAL;
- 	}
- 
--	iavf_handle_hw_reset(dev, true);
--
--	return 0;
-+	return iavf_handle_hw_reset(dev, true);
- }
- 
- static int
-@@ -3593,7 +3602,7 @@ iavf_validate_reset_cb(uint16_t port, void *cb, void *cb_arg)
- 	}
- 
- 	vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
--	if (vf->in_reset_recovery) {
-+	if (rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed)) {
- 		PMD_DRV_LOG(ERR, "Cannot modify reset cb on port %u, VF is resetting.", port);
- 		return -EBUSY;
- 	}
-@@ -3652,7 +3661,8 @@ iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change)
- 	bool no_poll;
- 
- 	no_poll = (link_change & !vf->link_up) ||
--		vf->vf_reset || vf->in_reset_recovery;
-+		vf->vf_reset ||
-+		rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed);
- 
- 	rte_atomic_store_explicit(&adapter->no_poll, no_poll,
- 				  rte_memory_order_release);
-@@ -3734,7 +3744,8 @@ iavf_resume_pending_start(struct rte_eth_dev *dev)
- 	if (!vf->start_pending)
- 		return;
- 
--	if (vf->vf_reset || vf->in_reset_recovery)
-+	if (vf->vf_reset || rte_atomic_load_explicit(&vf->in_reset_recovery,
-+			rte_memory_order_relaxed))
- 		return;
- 
- 	/*
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index fc47a2cf1a..84b931e78a 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -1106,7 +1106,7 @@ iavf_stop_queues(struct rte_eth_dev *dev)
- 	int ret;
- 
- 	/* adminq will be disabled when vf is resetting. */
--	if (vf->in_reset_recovery) {
-+	if (rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed)) {
- 		iavf_reset_queues(dev);
- 		return;
- 	}
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 604399125f..6c054acf80 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -260,7 +260,8 @@ iavf_handle_link_change_event(struct rte_eth_dev *dev,
- 	 * (link is down or a VF reset is in progress); the watchdog drives
- 	 * auto-reset recovery, so it must remain armed in those cases.
- 	 */
--	if (vf->link_up && !vf->vf_reset && !vf->in_reset_recovery)
-+	if (vf->link_up && !vf->vf_reset &&
-+	    !rte_atomic_load_explicit(&vf->in_reset_recovery, rte_memory_order_relaxed))
- 		iavf_dev_watchdog_disable(adapter);
- 	else
- 		iavf_dev_watchdog_enable(adapter);
 -- 
-2.43.0
-
+Thanks,
+Anatoly
