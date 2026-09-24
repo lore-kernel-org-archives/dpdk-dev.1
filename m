@@ -2,45 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D2EC98318
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 16:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B77BC98318
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 16:17:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A493243336;
-	Thu, 24 Sep 2026 18:14:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0E24143320;
+	Thu, 24 Sep 2026 18:14:30 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 592CF43314
+ by mails.dpdk.org (Postfix) with ESMTP id E395E43314
  for <dev@dpdk.org>; Thu, 24 Sep 2026 18:14:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1790266465; x=1821802465;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=uYMZXRo7PhFBLFYbXcWnzLIhAM3KninLRf4NxDx/CvI=;
- b=IjbMIskE4klnHlxt2nKwNi05GxlTx3GfMh2IyHydOd+UQd9DQ83zjL3r
- tqx3jzxpDcbs6ScSbyKo+2M1I6yORdr45pIwBC+4Wj7wTNoBFBtOJrg+I
- JdMSObY+cVCrOvULIzSp9bx/r6jtx+REkOYiumRTQ9cw4ZUkqKx+/dVEK
- DjjGfAiEl+G/h9we96uP502xtfdv68zddOt9b7ul1Yxa8GwpcO+sXLxf/
- xo33WvhW2Jap0dquzzLAcTK/PJ5rZQCKDMFwR45e4XOaFlbKQBlSjLb/j
- IZLz7d1SFUqZbc1uHgW1bP0knGmb6VQpxzQ1ngIDf6qwPqVstPHiGqYoE A==;
-X-CSE-ConnectionGUID: BkRj40/AQWaX4AMi3NAGXA==
-X-CSE-MsgGUID: YB02KosbTTOyFiKKcJZtMQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11915"; a="90000772"
-X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="90000772"
+ bh=9EHGJ6dEmJaM2ZqbMOqo896N/dgG6OlUFJ2+sgTQsH4=;
+ b=lUm29c9D4P8UAKNqsrCZMPlnklZUuV/ae+59dgnn4qk+LTN4QYtVLXQ6
+ Vo/5Ulcx7+yOefcYE0c1Iv/GdpdywcpQdQMR5G9qPSdTlF9cnm8KuL8sU
+ i7wayzlO8AXEFCvKAlp1GeyGRIlNbpvxvIriIg4HqGRaH5wxryV39r7XI
+ bO9qYC1OFf2JKU7MoGa84rFusBBYzAcgA8AD5SPlgVfkSgBgTcdRObMAJ
+ wcE4xxbMlI+0CgvHfLKvYUvqMtvD4rgyBgeco3hJQTADNr/gFDOnWLyXK
+ 9tqyDpF/GxhPdCNXg+gJJBiHjyzi3xikU0ksqtM+kIlA5p6e5bKhcyHk7 A==;
+X-CSE-ConnectionGUID: UfBXHBHbSWakh1qitLnHHw==
+X-CSE-MsgGUID: gSC9ezSXTfim+R/Mb0c4kg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11915"; a="90000774"
+X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="90000774"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Sep 2026 09:14:24 -0700
-X-CSE-ConnectionGUID: YkY/UJVUSYinvsfycGBy+Q==
-X-CSE-MsgGUID: tLsC6G0NTLSt7X9SGX6Cng==
+ 24 Sep 2026 09:14:25 -0700
+X-CSE-ConnectionGUID: uKoK7BfGS+OPpns/7LWnsA==
+X-CSE-MsgGUID: zHlDjUMLRVKNXut9RdMm1w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="277830122"
+X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="277830124"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa005.jf.intel.com with ESMTP; 24 Sep 2026 09:14:23 -0700
+ by orviesa005.jf.intel.com with ESMTP; 24 Sep 2026 09:14:24 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Christian Koue Muf <ckm@napatech.com>,
- Serhii Iliushyk <sil-plv@napatech.com>
-Subject: [PATCH v18 27/29] net/ntnic: use the new VFIO IOVA mode API
-Date: Thu, 24 Sep 2026 17:13:34 +0100
-Message-ID: <2ed4de7d8ce11b21a6b47bbe313cb505445fd519.1790266167.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v18 28/29] vfio: remove no-IOMMU check API
+Date: Thu, 24 Sep 2026 17:13:35 +0100
+Message-ID: <b14218e2a7545d3b3e7d74122cffe198deab28c5.1790266167.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1790266165.git.anatoly.burakov@intel.com>
  <cover.1790266165.git.anatoly.burakov@intel.com>
@@ -60,26 +59,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use new VFIO IOVA mode API to query no-IOMMU status.
+The `dev_vfio_noiommu_is_enabled()` check has now been replaced by the new
+IOVA mode API, so remove it.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/ntnic/ntnic_ethdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/eal/include/dev_vfio.h | 14 --------------
+ lib/eal/linux/eal_vfio.c   |  7 -------
+ 2 files changed, 21 deletions(-)
 
-diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
-index d79c4fc1d54..e0d84705f53 100644
---- a/drivers/net/ntnic/ntnic_ethdev.c
-+++ b/drivers/net/ntnic/ntnic_ethdev.c
-@@ -2729,7 +2729,7 @@ nthw_pci_probe(struct rte_pci_driver *pci_drv, struct rte_pci_device *pci_dev)
- 			(pci_dev->device.devargs->data ? pci_dev->device.devargs->data : "NULL"));
- 	}
+diff --git a/lib/eal/include/dev_vfio.h b/lib/eal/include/dev_vfio.h
+index bca5bb36a6b..2f693ff761d 100644
+--- a/lib/eal/include/dev_vfio.h
++++ b/lib/eal/include/dev_vfio.h
+@@ -227,20 +227,6 @@ __rte_internal
+ enum dev_vfio_iova_mode
+ dev_vfio_get_iova_mode(void);
  
--	const int n_rte_vfio_no_io_mmu_enabled = dev_vfio_noiommu_is_enabled();
-+	const int n_rte_vfio_no_io_mmu_enabled = dev_vfio_get_iova_mode() == DEV_VFIO_IOVA_MODE_PA;
- 	NT_LOG(DBG, NTNIC, "vfio_no_iommu_enabled=%d", n_rte_vfio_no_io_mmu_enabled);
+-/**
+- * @internal
+- * Check if VFIO NOIOMMU mode is enabled.
+- *
+- * This function is only relevant on Linux.
+- *
+- * @return
+- *   1 if enabled.
+- *   0 if not enabled or not supported.
+- */
+-__rte_internal
+-int
+-dev_vfio_noiommu_is_enabled(void);
+-
+ /**
+  * @internal
+  * Parse IOMMU group number for a device.
+diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
+index e0cf806bbf8..57981270841 100644
+--- a/lib/eal/linux/eal_vfio.c
++++ b/lib/eal/linux/eal_vfio.c
+@@ -1452,13 +1452,6 @@ container_dma_unmap(struct vfio_container *cfg, uint64_t vaddr, uint64_t iova,
+ 	return ret;
+ }
  
- 	if (n_rte_vfio_no_io_mmu_enabled) {
+-RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_noiommu_is_enabled)
+-int
+-dev_vfio_noiommu_is_enabled(void)
+-{
+-	return vfio_global_cfg.iova_mode == DEV_VFIO_IOVA_MODE_PA;
+-}
+-
+ RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_container_create)
+ int
+ dev_vfio_container_create(void)
 -- 
 2.52.0
 
