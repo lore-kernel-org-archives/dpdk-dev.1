@@ -2,121 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D64C98310
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 06:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27358C98310
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 07:33:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D82D42EE5;
-	Thu, 24 Sep 2026 08:53:40 +0200 (CEST)
-Received: from DUZPR83CU001.outbound.protection.outlook.com
- (mail-northeuropeazon11012069.outbound.protection.outlook.com [52.101.66.69])
- by mails.dpdk.org (Postfix) with ESMTP id 4EE1942EE3
- for <dev@dpdk.org>; Thu, 24 Sep 2026 08:53:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3579342F02;
+	Thu, 24 Sep 2026 09:33:25 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTP id A2A4C42EE5
+ for <dev@dpdk.org>; Thu, 24 Sep 2026 09:33:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1790235203; x=1821771203;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=bmUQkn38ezJ7yvAze6ZzCxFuLanhPi6LhrZuvxXNblY=;
+ b=gwejkSwG40nJ9/qPU/DCHkrDdnvAY0btSQ4bgMp92ULrg1Ga29oMpZKz
+ EXlCGZqlFp/i63Hz5PP6Alu18nznk9eB6zyyt6lby5uDvnH5ZpxG/zi8s
+ uIf9VZsry8Lsxgdc9+OQ6S1H8qhrDqnkwq8US8Ah+IlkFk1rgF8lWtdzx
+ XN2oe20dg31Oj/JPLCJMEeyokVGLMFdzxCrAjOjfbZSYBaxsXbuz4lSRY
+ U3FjA8yWd7Ttb39RQHH64d/9KGVfqggf6kDftinnphGVL66OVxEDIzArp
+ zCkTwDav+cNN5/+a/h5SN7/ZROrQ2jTx90vgk8X7rM+N7BQOahnTFvGCm Q==;
+X-CSE-ConnectionGUID: gZ5O0Y3eSkWAbDLk4sF8rw==
+X-CSE-MsgGUID: FTv4IEJmTPeyqqoTwwEqnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11914"; a="112784380"
+X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="112784380"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Sep 2026 00:33:22 -0700
+X-CSE-ConnectionGUID: pV9SXo8tRJaGPLnetOG/SA==
+X-CSE-MsgGUID: LJvaPF1OT467mrFkEbNTNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="311850704"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Sep 2026 00:33:22 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Thu, 24 Sep 2026 00:33:22 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Thu, 24 Sep 2026 00:33:22 -0700
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.69) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Thu, 24 Sep 2026 00:33:22 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xJ2bo+u2vgX0Fc3U39910aJZAOphpzWF6nwKzqzvf/cvEg49k8F4fQl1JFk6KaZege8dWVEVTSNZIC3HSyKe8LYzliGuRqsZ3zHUdKE/x4U8/waPv5bsF6lT5i7GPci01dPw7EqKEF3RKN9lGeRp7kSSg+bVI3A33kFOjtPmQz331cBu8BNMJCa62y4UrgP2MMoKd1EUylMsSpIYDpuvr1DrFwghwOJTs/PUV4QmKwvVNp+sZGEtdgeZqbo/6zyjZ2nd9P1zpmTtoxntgkWIIBSufOgl5sCRNF0bW+rANtdFq52LMETGdOyI3KqZjiqW8Sy/rie/DyVwNUCJeJwKIw==
+ b=RK5sO1TAS8GwRjOG4D0aoM7ibAjYl5k+AUecKYsNsHNxYSy6BbJK1h/KdolxalcPGUjCW2hDOu3qpqoOcM3fToxHq9rQ3EKbpHGSFkHV28c5n3HBJojgvLliJBvJR5ysye3CrjnC/H1eKSY/ragaI79TUDYsDhHdu/0Ipv5krMJVIBX9AFRmQoEoYGs7OTDzFNS8PbXs24K8J3C6Y3njEu5/DlM6pNZcZGhhmsCiyioCH4dSPI0zO3Ihj3XztoGADgPF7vbX/6A+cjwV5cNmHT/lU/JfwMjJEvr8WOCPkWDVOT+UpxnFq6P7svUcnZ+GNpFJVn/a/d7NZzzr1bAhYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mFpcVTN6fkDGSQJFaEUOhFM/Ptr6ZjIkrkWvTM80LVI=;
- b=UyztQSIQBLbt0x4+HweIwngD0hCIZ6wXccQDswoUXUNDj4312E5UAabHlgrf0K5ewTf4M0+wkDmcqlYj6xZt/xNqstny2ovgwhiFBJRqxYlaMXYW2kFdbhG/Aslkv3MH3/qlwiWpAWaJuG2nEyfqZLAIwKvuhheMoIM/Lj6dP+0k81l7yuw3cnFpT/272rx82DLY9mB3mPfBU4Pt+xhFgD1MmDmxFwNnTDHLVbin5vBxYGXTB4PUdGnjVEVGWR6rCNOKjNrng6+aYxHnIgw9uvQOszvSlWnA5vPxrgMwhz/dNmvE3oFaJSUgKs0LSzd8KcLRbLEYHn0YXQcEoedVMA==
+ bh=FrlzdsVyctnO4B+HgiK5S9ydpnsy9Zsxt2Vk6ZIOkbY=;
+ b=bLmPewDpx147eWyYnb6XKm+t3gPg0tqxVMtVkraLpPiWrrD1jSCOPqMKe61AeJrSfhsDduFrkTqB6dM9g2zSxK5L2+lXleoQ/C0AIlaRHukd+T1mbaUlyeXv0IT+VwgJt2ivud8hvZSAtp6giikgB4N8WkYNkAtUD5H50Wf6kQUhpOz8HKxWfpyHEHVrvlincgSX3jrvf9l3zfqFqY2xzdPmWFZGGRGqFy5nehr0a6YaHJ284F6MWGZKno+0PHjR8IVyYsKfBjs1PoZIQ2aYcGHMxXpINBenZSTNu7oU2CtIip5WgUTQc+5GTuBsbqTS9acuThhGajm1l19nBVMTfg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mFpcVTN6fkDGSQJFaEUOhFM/Ptr6ZjIkrkWvTM80LVI=;
- b=arNBlorHG2kOWUIO59Rj/I5iYCeaIPOU9NPErB9+sNFxco0UCUUe/IpU/EPdCKJKFFPNslgwb0Ib9ooMUr7p8ob6ggZ2GNQ69VgS1ed31C9zukmbbiXX0UrJpk+jlddwN+tmtK1pg60YOnWujdP9eGUgEQ5PRBRT+svgCZddOG7FvN+4VWKGUdhSZK0NgB5YdmdnaWMTcG6/mOVt+9u0vWNi+FRvACBVEHjTUOc8yoZNDCN0eU5HxLRw7jBcGbyYa2iEkZvnW5XmkHYLvgxJoWNFOvMH4GHXGrKiWf/GiKPKZLz9+t08cHW5TRRVmPy12qRuDcK0VId7YYsmVYScgw==
-Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
- (2603:10a6:150:212::14) by PAXPR04MB9155.eurprd04.prod.outlook.com
- (2603:10a6:102:22e::15) with Microsoft SMTP Server (version=TLS1_2,
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BY1PR11MB8080.namprd11.prod.outlook.com (2603:10b6:a03:528::22)
+ by IA1PR11MB7854.namprd11.prod.outlook.com (2603:10b6:208:3f6::5)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Thu, 24 Sep
- 2026 06:53:37 +0000
-Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
- ([fe80::9985:c5d3:961:2003]) by GV1PR04MB10750.eurprd04.prod.outlook.com
- ([fe80::9985:c5d3:961:2003%6]) with mapi id 15.21.0451.014; Thu, 24 Sep 2026
- 06:53:37 +0000
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
-To: David Marchand <david.marchand@redhat.com>, Prashant Gupta
- <prashant.gupta_3@nxp.com>
-CC: dev <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>
-Subject: Re: [RFC v2 00/16] Device unplug and bus cleanup refactoring for NXP
-Thread-Topic: [RFC v2 00/16] Device unplug and bus cleanup refactoring for NXP
-Thread-Index: AQHdRnkV4h4BGBSaLU+wNQggEE8r4rbdVAsAgAABvWg=
-Date: Thu, 24 Sep 2026 06:53:37 +0000
-Message-ID: <GV1PR04MB107503D0622CCC88D2F5B62A389812@GV1PR04MB10750.eurprd04.prod.outlook.com>
-References: <20260723135400.3621271-1-david.marchand@redhat.com>
- <20260917074917.595603-1-david.marchand@redhat.com>
- <CAJFAV8z4mrPq5CPKOeBE1nS1-_Bkxkfy6_EziBYb4Uo+mj-dyg@mail.gmail.com>
-In-Reply-To: <CAJFAV8z4mrPq5CPKOeBE1nS1-_Bkxkfy6_EziBYb4Uo+mj-dyg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-Mentions: prashant.gupta_3@nxp.com
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Enabled=True;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SiteId=686ea1d3-bc2b-4c6f-a92c-d99c5c301635;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SetDate=2026-09-24T06:53:35.484Z;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Name=NXP
- Confidential; MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_ContentBits=1;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Method=Standard; 
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: GV1PR04MB10750:EE_|PAXPR04MB9155:EE_
-x-ms-office365-filtering-correlation-id: e0e1425b-baca-40df-0e89-08df1a088f34
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|19092799006|366016|23010399003|376014|4143699003|10067099003|56012099006|11063799006|8096899003|18002099003|22082099003|38070700021;
-x-microsoft-antispam-message-info: SDDnl3iSFsyXUpSSi0D1NDB+675xRrZTO2LBZ2/Vv4CH8nXtNKzkqu/c1PtYFyhfLmgWA5VY7Uf98XTt2BsMk/UwoXftFTlu42FhbqXkQHtX09Ml39e2OtnW4N9LO5DujtVyrKlh3H4znEUAxrHi8WnhBnUXGvdfLAYlhn9FtpM2KojLWF0gn+xBvwELgMPygUumX+/tzrg51WguZS78io6qwAmk7xhF9HdoDKbBfWnqq3D3gjwMs6QKBLqj3GCeVgV3CQZOdWXsJgzylL9I9K4j18MVV1YlCSLDaEMYeeh25uRonLwfVdExeJkQy9MeORwRecWmLUEjCMvz6W/h0BW2tJQ5cFfVY/AjUFJGXtEYfUIJdrfw4uG2rQEOLnR8sVK3/ibtAznIRPiDjQokBESDWcqUw9PDBA93V8l4koLar8TGi7yLVYgyIM9G15/CLw43LFJ14Ku6q9UYxe9sRGV2NxyGzX1ZkiGqA3nPhwV+/IcYGka0Wl9NxihhD6s12JT/BignrKHoOMAZtt9VoZwEYlNCD/9kWWjmYQB7DSZt3hWVWdDVLl138BCBBYyDL11hKlNfeQpHk0JXxbbJIpxSKCk6BEVuDRAnw4sW7pwrFzSjCxDlwqkHsvqAEy0VPy5vv++FxbY45BN8mj3GY5aH4AHZ38UOVx450z0irp6C70tEgkvrstmRY0oVPpbwYinsn1iKtc9eihDFQ1owPZ5iT6qANTnmtW+57ZInGAU=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:GV1PR04MB10750.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(19092799006)(366016)(23010399003)(376014)(4143699003)(10067099003)(56012099006)(11063799006)(8096899003)(18002099003)(22082099003)(38070700021);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?ZRYj8a94CdB3XzS2FSQo0iXbsO1czxsGYkTZmfPBtgw2qzY/+45rldbBu2?=
- =?iso-8859-1?Q?4cAYGeDHTIbPuPjw3hYyD2QdHqSuvsOdMpkuPsVG9BES9oVJyu8KtGmToS?=
- =?iso-8859-1?Q?2skVITWgfr+0/bUxjd3ALMbc8Bq+CDP7cbZPXxcR8WgR8tFIZD9smxOnGe?=
- =?iso-8859-1?Q?tS0Pu3i7LnOMdjts7IgxsuUe78bzirHIdA0SZczT1jvVyVhQii0v1NSLye?=
- =?iso-8859-1?Q?vvIVEcCBQ2NxzvubPJNg6/w/lJbHv0CnIGibOmNdM2GOWW4h4lLkyot6Uy?=
- =?iso-8859-1?Q?xrvQWzK+on/TKgsacdoPjh9KC92iYfv4LzU2zSTSV7f1oc17sGbMkSEKRH?=
- =?iso-8859-1?Q?nNqhzHop/XoUlfy7S86LX7XIX676xYEZVd2bB1fsW1uKzP0lmLecqMeAVU?=
- =?iso-8859-1?Q?0P8rJPUv8TQe5B4ALv1JbC6y0cRd2S/zqCJ9vcHgCSg5Ts7OUgVn34JVhN?=
- =?iso-8859-1?Q?Zl25OoGFkAC5pey0vE3nyqKdm46xIh4bmzgF74/ivjRa/uGjddeDHWjHaP?=
- =?iso-8859-1?Q?JeP1coxftVmT3bZi3/VwwxcFIUvn8OdFqurtzTBlPv2SUoF8C/pxduIgji?=
- =?iso-8859-1?Q?lRC/kXm5FMMhpiWs9fAOYNAgO2NDaHb99wR6kt2cXGX1Pyx+Iz5iR3fmZp?=
- =?iso-8859-1?Q?vSzmgdxXcdPuFfm11joBktysHbm+qhgabDx0SCAcpkNEjrZydCAGScIpew?=
- =?iso-8859-1?Q?8432ULj7YWGzlDz7MlhJJ+/6FnDx8YVuFQR+8lfCvc97Refjo+F4eYAy06?=
- =?iso-8859-1?Q?2teGVFnh1bng8RvnF+Pj10lqog9lmQ64lVrz0a6iUdv8R9eoLftn0zMl+b?=
- =?iso-8859-1?Q?bqCD4hSSPZhhWfSDVVz/qj61q50zkALQP+taj8cd59sByWLyraD5CBzUNp?=
- =?iso-8859-1?Q?cl1ZbA7b2ANlzK4fwXPfsatQGl4dCxDK6IDazYBvkrTQF1OuXolNq6+hEm?=
- =?iso-8859-1?Q?52z78uX/BCB0Xwp8uTqB5fuqhBagmTNQY97dZ/y9Amwg0f/bVU/Qs+rlgs?=
- =?iso-8859-1?Q?yICGCCEX9JIVz2ZM94vNxkn77WjsfvzGTh678Nwk9CtfFcR06Z9U3TKQgo?=
- =?iso-8859-1?Q?388Ch9mOlsqNRC3QVjWD0cigft6h2FS6y5d3ywR5E4Kwz7YM53sWb9GGct?=
- =?iso-8859-1?Q?o2ZeRy26qpVRZxqbsBTW+djLd/enviBKH6zgdYRKsrmyUGUBFnGNB0KYra?=
- =?iso-8859-1?Q?6SE6/qBTbtgtF7m0Uo2jc5BAni6DmeuQI2iXaZ2wjkap3J/iFunKpEAm6f?=
- =?iso-8859-1?Q?cxHHa+TZnyzXmk9j+LjSYohZY3EgRMwZGHS9y2pyGBEqYVtEhTL+nqffag?=
- =?iso-8859-1?Q?FKYzkkC1oXDfr5YP0QGsrBjkZwSm7XL8WpdZ39OjWI8TpIu0UTvsP+dhsT?=
- =?iso-8859-1?Q?cDVogkIq3DuWLTBGCl1DvLZgcxf6TgID/64Cg2qiUKeoGLmZ3gXEveLcFG?=
- =?iso-8859-1?Q?MMwG8Qd10boqJETU68rUP0HNxOSe/DEkzoKiOD6cpkBfZtnvbC79FVg/MW?=
- =?iso-8859-1?Q?kzDKzScGn94lHetJRW/emyWIqdzPLr5uac27ZgCH9Ln7NrwBv1HjuviTbk?=
- =?iso-8859-1?Q?swIpEjpF91BxCWhUHJT6498W3xXf/Sch5Bd7LoeVprtbMcXDd/F9KEwZ++?=
- =?iso-8859-1?Q?g+CDLfxPg9wzD1/zcZLKysVcQGr1KqXP2IKjwlglHLjiOhaHtWGsj8kuek?=
- =?iso-8859-1?Q?jBj/av3sVNNx/lFl7XMkkPJHwMC1j1qnB+wvRckbknDc1L/bpw1l2z4Txx?=
- =?iso-8859-1?Q?2OrD3ufYjHN1ibJSzEo+AeDlCr/NIrE2Dvz4++d2Kk9BCGZ2fwGlS8HdFE?=
- =?iso-8859-1?Q?/ZcIOJ3SSQ=3D=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_GV1PR04MB107503D0622CCC88D2F5B62A389812GV1PR04MB10750eu_"
+ 2026 07:33:20 +0000
+Received: from BY1PR11MB8080.namprd11.prod.outlook.com
+ ([fe80::2753:b476:2b06:9c3b]) by BY1PR11MB8080.namprd11.prod.outlook.com
+ ([fe80::2753:b476:2b06:9c3b%5]) with mapi id 15.21.0451.014; Thu, 24 Sep 2026
+ 07:33:20 +0000
+Date: Thu, 24 Sep 2026 08:33:14 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: Thomas Monjalon <thomas@monjalon.net>, <dev@dpdk.org>, Aaron Conole
+ <aconole@redhat.com>, Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: Re: [RFC] devtools: rewrite doc vs code check in Python
+Message-ID: <arTSOhHVEOKr7U06@bricha3-mobl1.ger.corp.intel.com>
+References: <20260923184207.626576-1-stephen@networkplumber.org>
+ <1ZOSY-tgQCqc-X4cyeVRVQ@monjalon.net>
+ <20260923135430.7e16c673@phoenix.local>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260923135430.7e16c673@phoenix.local>
+X-ClientProxiedBy: DU2PR04CA0078.eurprd04.prod.outlook.com
+ (2603:10a6:10:232::23) To BY1PR11MB8080.namprd11.prod.outlook.com
+ (2603:10b6:a03:528::22)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY1PR11MB8080:EE_|IA1PR11MB7854:EE_
+X-MS-Office365-Filtering-Correlation-Id: b23160b7-bea0-4015-427e-08df1a0e1b43
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|366016|376014|1800799024|6133799003|10067099003|56012099006|4143699003|22082099003|18002099003|11063799006;
+X-Microsoft-Antispam-Message-Info: n5bWUphVdQAS0z83qv6CUOzv9aJXbm8mxIUxpeK8k6GyMuzf5fMEIyNti0MPSrQ8iKpXepvIR/8GSHSsFgAswyCKYpvRBxDaQJ4poIt8rsTYXz/PAMkSdFB/N6qNJsrIzGn6s7nuMJpfgiJGpykE/kC7qYb4cOoYGTcNK8G+VHVjNT4jJBIbiXhfuJnAlw70x31bhrH5SSuJAktfKxCQIaq9AI/wXYxE5xL/RA1CuHhBqkwluRAqB/ywXyAZMRJruJGnI7N74ckpk1PR+PoFmwStw0dGXxY4gm25VAzuo69ztG9J1oujH5FxGy/FoJ+cCW89GLIjmNeobF7izAOMVEvb0ueo0sCLmsnsb1Zyg3mCRRotuWZk1J1kMjM8Z3d6SC0t5h9vimIcXEt/3EtoOgYMtXFl4TUWowM1AP+gsRmOm1Ic2eYfy9xKDC9sYRVI3CIl7pwbr7iw96W/5iOpl6CrgRy/eHbHZzypMVge+BEHdCJtJFFkWWWIamUgkn6eeolvy57+z7NPvcw12Gz/AQ3eDkHbZeQMOyK2oxjeQ7aaWYxJhQC7ln2B97O4Q1zO1K3J5gX+lm1PhLTHlKl/sT2z7B0UfeNuWpMUIRdBS9LrrVS2Dga1/isNaV3wctFD/X/ZP0GiWjkhP0D7UxDchsPJbfKeWJRyv/b7kbWzhqE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:BY1PR11MB8080.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(366016)(376014)(1800799024)(6133799003)(10067099003)(56012099006)(4143699003)(22082099003)(18002099003)(11063799006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KXzt51TNx9c6aR4zDc3Aog2puwyLpK1xBSHX55xjXTMJkn+n+sapHAA/iybs?=
+ =?us-ascii?Q?ISa8x7t/F5yKKLSKIOtbJ2Gk+p2Ys02GTtnDktee7mJEVoBYyAXXNWP9ocpR?=
+ =?us-ascii?Q?2A9vyg2aBZMHb7UUWnSit+La/AiTtXVjGtW5r2wiOhqO4oo37MrH02lwPLlm?=
+ =?us-ascii?Q?64jG6oo2Zrm/rjhp8aOChbzai1u55NRAHttsgB4PC0A5my3y5VmuKKwBxOt7?=
+ =?us-ascii?Q?zTSXSwtousmkx+PxqOfTI6S8wM3M8KzylQOiDMbweopqEN4gMs8yyw4/pKjv?=
+ =?us-ascii?Q?RQXDNqmJOdL++ikeTx55iwkx0Cdyb6fSC+verho5vO2HEg7Tk+/4fyjgLGqT?=
+ =?us-ascii?Q?wFkQHqfs1JcSACOvU0D7vOAQjn3L7VkPvbOOxleXF3dIBvQ+FL0ItOenA/2s?=
+ =?us-ascii?Q?0ay6Q7LMyPzQrwGFZI6Kpfh+Z6hw90/7fXZcFdAtL+vJNcYNZIS5+xwPG5Ul?=
+ =?us-ascii?Q?VE5zEnDKdqsXaqykECQyKe9nzSwz377idsgBItAusb0MC1s/F+ccgpiOVHMV?=
+ =?us-ascii?Q?6g3AsK90fIR7f2z92DDnDaeqrWQThdGFZjVFD8l5J9tsNc3JfK3XmLsA/IZK?=
+ =?us-ascii?Q?oYmLkLGVHm9UEb2tc443Wol2k+LBieU9EcG2zcFioyz04vLMrrbSNL0/7DCi?=
+ =?us-ascii?Q?bz3LGyZGEnHcJF0cPJ9cHdzISNxybiODdC4Mya6dO4cOpdUiZw5sy2vuYj1p?=
+ =?us-ascii?Q?wlnAyosA7tBRYRY9tf4QJaA9s+H+px1KrBd2FvTAwEZ6iksPIsCX6Sf179J8?=
+ =?us-ascii?Q?kV0oR/vHB+MyqCTEYL8ObB9cc+1S7KiXd/1szEDTQl0vKEBwnrdPY0iRTqDK?=
+ =?us-ascii?Q?9HC/wlHV+Rz/sIRy9bGHB+xFNWaC3/icIrjUvJR3sqHXstJ0EPLXnbRHa0Bt?=
+ =?us-ascii?Q?5ZJ55/o1rHMh/taDCAx2Vg5+HMo++GEGLieZa7EhQEQC/yVsg/FQ2oDLqU7Q?=
+ =?us-ascii?Q?eAhbevfU3IOt+PWg5qh5LKRswdmXmyHWlfOxHXBduspBkeJk/kRG71zNq4xU?=
+ =?us-ascii?Q?36wlUrZrkK5S0ARlWeRiYaFCY+F9PX1GubsnpKWinOvJEkgYjVx1Sp6+y6iL?=
+ =?us-ascii?Q?YEnj2keNyN4s8ODiUd+q1zBgntirdkhuQ/MA3FMhMwzuOTcdO++jArzwX2xD?=
+ =?us-ascii?Q?28tLZTgrCcpW3oDDKSMgzPfCrxOijjD4FNwAf65Tl0WiKtgog2LhjOWr95sH?=
+ =?us-ascii?Q?ob1/v0W2uXoeUeLMUsH6k7UxYRCi3BULBdwUhIEAnZq72k0CPp9aBZZKaPK9?=
+ =?us-ascii?Q?RTL/Idoik8e6yg/+q3Dtmf1j4s33UfpIPGRaWkVQJsSrosByMQeBiACICaJj?=
+ =?us-ascii?Q?GzzRRJnUDVJpDSwugWIOSDkp14/f+AyXAcGq6S3cmbwoauxmCNNt2wE0D9zL?=
+ =?us-ascii?Q?HRrERm3m2Q0XyxIzSrMSdN4dSrhJdOEYBSKD82Cj6Q/IxewUju5JpVeTpx13?=
+ =?us-ascii?Q?YvpdIaHU6sQjhda5dU8rooP6NQ8//jsQLXxm//l5/zXWCWYiZnxo23RXNfxW?=
+ =?us-ascii?Q?zyTbb7V9t2O08Jw9EFH5f0+fGgqJC9HaD2LAN+Lvrn9F2LPHWzftBaODDNMc?=
+ =?us-ascii?Q?9MxE4wv9ScXtR/+H6wh9kJXuNGTWfAXfOEc2WBXPn/czYWFcuT7mWvEvflzn?=
+ =?us-ascii?Q?h3pARS9aBL9ImgXdcEeF1tEdmHyI1etrQo2TeeI/S/1JjgzlUPH1/HZIlXCo?=
+ =?us-ascii?Q?6r2Eej/JS59u7nCgZv50cZU7bUgyW7IgpO5Gk5S1+fq9LPhWrHUqdmMWrAht?=
+ =?us-ascii?Q?NiLKyTeD5kET1JmnaOn20yGn0/VzJTU=3D?=
+X-Exchange-RoutingPolicyChecked: CbO+eiRVU336HTVoMg4hPVRKmLtZUP7oZgabEfevTr1faf+ZAvlNykn+ujH6XpnRTP89PZdFfPsvWt3FA8XIITPhh4nI2HuMhF3ydYoNXRrlglaEUjnkqwzuV8hOj9sk0xYgJZwpmpWjrzvwHlFCrzZyFQyEUJ5AWOMBuahJCtA0h698R+yso0ZzwNqWW+iBcp9a6WHBXKDqq5FGg0W3Gf4YOMawsOaqGGb/N6HDMvsDtF9Zeht8ipIlkh6tbj9XLsTPI/1D9Wl4r2WyC+q02bR4esyh2N0IRl7ldfsIAnGXjkJST+n7f4zLIu+hpIPoVm1/qVcUvrvb6piOV/vGrg==
+X-MS-Exchange-CrossTenant-Network-Message-Id: b23160b7-bea0-4015-427e-08df1a0e1b43
+X-MS-Exchange-CrossTenant-AuthSource: BY1PR11MB8080.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB10750.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0e1425b-baca-40df-0e89-08df1a088f34
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2026 06:53:37.4191 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0S0bL3pGZx1CtcXFmnAUPHtqPMI51oxQLnjGaSBMjX47RjJFPNAns2wGAhSiUd0pw2WvTWlm5fK3wyLiwikFUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9155
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 07:33:20.2322 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eAjgk2l7vUfZGrPYFr32b+FVO04CFUY7Dmv9pgeTQaHny7abheVKs3I0OIlRk+6DgcRvbNNsvSyWZjdKdlcv+Fp9Q3B/SdoN3j6KkWTrOTc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7854
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -130,156 +153,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_GV1PR04MB107503D0622CCC88D2F5B62A389812GV1PR04MB10750eu_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 23, 2026 at 01:54:30PM -0700, Stephen Hemminger wrote:
+> On Wed, 23 Sep 2026 21:19:45 +0200
+> Thomas Monjalon <thomas@monjalon.net> wrote:
+> 
+> > 23/09/2026 20:42, Stephen Hemminger:
+> > > The existing check-doc-vs-code.sh only compares rte_flow items and
+> > > actions, and only for drivers whose directory matches the ini name,
+> > > so none of the drivers under net/intel are checked.
+> > > 
+> > > Replace it and parse-flow-support.sh with a Python script covering
+> > > the whole NIC feature matrix:  
+> > [...]
+> > >  devtools/check-doc-vs-code.py          | 1132 ++++++++++++++++++++++++
+> > >  devtools/check-doc-vs-code.sh          |   84 --
+> > >  devtools/parse-flow-support.sh         |   92 --
+> > >  doc/guides/contributing/new_driver.rst |    4 +-
+> > >  doc/guides/contributing/patches.rst    |   27 +
+> > >  doc/guides/nics/features.rst           |    5 +
+> > >  8 files changed, 1169 insertions(+), 180 deletions(-)
+> > >  create mode 100755 devtools/check-doc-vs-code.py
+> > >  delete mode 100755 devtools/check-doc-vs-code.sh
+> > >  delete mode 100755 devtools/parse-flow-support.sh  
+> > 
+> > Thanks for working on it.
+> > 
+> > My concern is how easy it is to maintain for all contributors
+> > having to insert their rules and exceptions?
+> > 
+> > It is replacing less 200 lines with more than 1000 lines
+> > so it looks a lot more complex.
+> > It is probably fully generated by AI?
+> > Can we make it simpler?
+> > 
+> > 
+> 
+> The other suggestion would be to git rid of the .ini file method
+> of generating this feature matrix in doc and just have python script
+> generate it.  Prefer a single source of truth, less work
 
++1, I was just going to suggest that when I saw the discussion on this
+script.
+In case of autogeneration, for cases like "partial" support, we can have a
+well-defined comment tag or similar in the code to mark it.
 
-
-
-________________________________
-From: David Marchand <david.marchand@redhat.com>
-Sent: Thursday, September 24, 2026 9:46 AM
-To: Hemant Agrawal <hemant.agrawal@nxp.com>
-Cc: dev <dev@dpdk.org>; Thomas Monjalon <thomas@monjalon.net>
-Subject: Re: [RFC v2 00/16] Device unplug and bus cleanup refactoring for N=
-XP
-
-Hello Hemant,
-
-On Thu, 17 Sept 2026 at 09:49, David Marchand <david.marchand@redhat.com> w=
-rote:
-> This is a followup to the refactoring started in 26.07.
->
-> I took some time with my best AI friend to cleanup DPAA and FSLMC bus
-> drivers.
->
-> Like the last time, only compilation has been checked.
-> I have no hardware to test runtime.
->
-> One thing that could be broken is either the order of devices
-> initialisation, or bugs in the device filtering that I tried to
-> simplify.
->
-> I went with the approach of splitting the device list between
-> internal bus object (that I called "control" devices, maybe a better
-> name can be found), and normal bus device object for which DPDK has a
-> driver.
->
-> I think it is worth testing and fixing, as it will make the two NXP
-> bus drivers similar to other bus drivers (but keep the special IO devices
-> handling internal to the FSLMC bus for example).
-
-Could I get a round of tests? Or should I just sent a non RFC series?
-
-I see potential conflicts with other series coming from NXP.
-I think it is worth getting this cleanup in, to limit the number of
-special cases for those two bus drivers when compared to other buses.
-
-++ @Prashant Gupta<mailto:prashant.gupta_3@nxp.com>
-Please confirm your test report on this updated series.
-
---
-David Marchand
-
-
-NXP Confidential
-
---_000_GV1PR04MB107503D0622CCC88D2F5B62A389812GV1PR04MB10750eu_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div id=3D"appendonsend"></div>
-<div><br>
-</div>
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<hr style=3D"display: inline-block; width: 98%;">
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<b>From:</b> David Marchand &lt;david.marchand@redhat.com&gt;<br>
-<b>Sent:</b> Thursday, September 24, 2026 9:46 AM<br>
-<b>To:</b> Hemant Agrawal &lt;hemant.agrawal@nxp.com&gt;<br>
-<b>Cc:</b> dev &lt;dev@dpdk.org&gt;; Thomas Monjalon &lt;thomas@monjalon.ne=
-t&gt;<br>
-<b>Subject:</b> Re: [RFC v2 00/16] Device unplug and bus cleanup refactorin=
-g for NXP
-</div>
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-size: 11pt;">Hello Hemant,<br>
-<br>
-On Thu, 17 Sept 2026 at 09:49, David Marchand &lt;david.marchand@redhat.com=
-&gt; wrote:<br>
-&gt; This is a followup to the refactoring started in 26.07.<br>
-&gt;<br>
-&gt; I took some time with my best AI friend to cleanup DPAA and FSLMC bus<=
-br>
-&gt; drivers.<br>
-&gt;<br>
-&gt; Like the last time, only compilation has been checked.<br>
-&gt; I have no hardware to test runtime.<br>
-&gt;<br>
-&gt; One thing that could be broken is either the order of devices<br>
-&gt; initialisation, or bugs in the device filtering that I tried to<br>
-&gt; simplify.<br>
-&gt;<br>
-&gt; I went with the approach of splitting the device list between<br>
-&gt; internal bus object (that I called &quot;control&quot; devices, maybe =
-a better<br>
-&gt; name can be found), and normal bus device object for which DPDK has a<=
-br>
-&gt; driver.<br>
-&gt;<br>
-&gt; I think it is worth testing and fixing, as it will make the two NXP<br=
->
-&gt; bus drivers similar to other bus drivers (but keep the special IO devi=
-ces<br>
-&gt; handling internal to the FSLMC bus for example).<br>
-<br>
-Could I get a round of tests? Or should I just sent a non RFC series?<br>
-<br>
-I see potential conflicts with other series coming from NXP.<br>
-I think it is worth getting this cleanup in, to limit the number of<br>
-special cases for those two bus drivers when compared to other buses.<br>
-<br>
-<span style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService,=
- Calibri, Helvetica, sans-serif; color: rgb(0, 0, 0);">++
-<a href=3D"mailto:prashant.gupta_3@nxp.com" id=3D"OWAAM226322" class=3D"tWK=
-Ou mention ms-bgc-nlr ms-fcl-b">
-@Prashant Gupta</a>&nbsp;</span></div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Please confirm your test report on this updated series.</div>
-<div style=3D"font-size: 11pt;"><br>
---<br>
-David Marchand<br>
-<br>
-</div>
-<div><br>
-<div style=3D"font-family: Calibri; text-align: center; color: rgb(0, 0, 0)=
-; margin-left: 5pt; font-size: 10pt;">
-NXP Confidential</div>
-</div>
-</body>
-</html>
-
---_000_GV1PR04MB107503D0622CCC88D2F5B62A389812GV1PR04MB10750eu_--
+/Bruce
