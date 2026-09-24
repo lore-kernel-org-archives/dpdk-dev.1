@@ -2,52 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1341CC98314
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 13:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C5FC98317
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 13:25:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9B7C742FE7;
-	Thu, 24 Sep 2026 15:14:44 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 81AEB42FC7
- for <dev@dpdk.org>; Thu, 24 Sep 2026 15:14:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790255681; x=1821791681;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=6FUP/INhAw8f97KGntyGLTOvaDJmpw+0KoobLZ9v4pg=;
- b=Ks81KZazybH7vK+hs0OHoNAOLMNFFe7FnaxMhjIoJDxskvXRu6gJr0aY
- CBWQHAJFUtQZL7QA2GQBXs6CgQv2BpHy086oX3kD7XTSYP8mAPhuhqj08
- 7K86IyvIDffqL7VSDM662E/t6SVQQpyHBwlSbR292aVoqFd/W5jfhqHVJ
- 1Pt2t1DVFkgktp8XRsmu+14UdKrL7x7sBV3uSEar1MOs9s8LsMme4EvSY
- Z0wQhxvuZTF//4eS6zlGWWTduL0P/Zrzmb9gxRIgnuwUAgk3bCCVr2s7V
- P+fsL37tSpb5NnEjFaQHA8oE3bZZq5LSzGZv1uEcO8wvJ0E/ppE//BVg2 A==;
-X-CSE-ConnectionGUID: LUrhCR2aSxeg5EW+lZHhYw==
-X-CSE-MsgGUID: OHwS9vNCR0upbH06E2HVvA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11914"; a="93915429"
-X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="93915429"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Sep 2026 06:14:41 -0700
-X-CSE-ConnectionGUID: GGNo0H65QaysHgX13a27xg==
-X-CSE-MsgGUID: NBkaDt0CSL2OInWVzBOeXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="273518540"
-Received: from silpixa00401177.ir.intel.com (HELO vm-icx177..)
- ([10.20.224.214])
- by fmviesa007.fm.intel.com with ESMTP; 24 Sep 2026 06:14:39 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH 6/6] net/i40e: derive Rx/Tx offload capabilities from path
- masks
-Date: Thu, 24 Sep 2026 13:13:46 +0000
-Message-ID: <20260924131346.100156-7-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260924131346.100156-1-ciara.loftus@intel.com>
-References: <20260924131346.100156-1-ciara.loftus@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2603A40144;
+	Thu, 24 Sep 2026 15:25:23 +0200 (CEST)
+Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
+ [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id F046A400D7
+ for <dev@dpdk.org>; Thu, 24 Sep 2026 15:25:21 +0200 (CEST)
+Received: by mail-pz2-f42.google.com with SMTP id
+ 41be03b00d2f7-cc433d52421so910718a12.3
+ for <dev@dpdk.org>; Thu, 24 Sep 2026 06:25:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790256321; cv=none;
+ d=google.com; s=arc-20260327;
+ b=Gada9KjyCvsJQzhqK+fJcDgri/D7+JS0MqsPB6eIxZNtzpxk/0yq1UhN7vbcj9K+Ga
+ 3h313FF4xJxjXhmEhx8qScHQ0f4/JiVobTkFBtjX+ZYwz14IFYlPzZZy99Mlh9X9goui
+ 7OXEwoYG05uC4/t4hzNcYJWJeIjze1PTiaRTwAihzGYZ0CwhQm1p7LfkFYCyMaau/v99
+ BpaH4ZIl4GhiXT3ylVYIPixwcDh9910HmqzwIbinv1W3Q7iaAw5zI6XYOXMgjUVxQK4W
+ CPIqyLXdmT7bzy29KYO/mm8WG29h9nUBcJZBUUfVYOaBLFUrIclR9GpkJNr0BprVLUMS
+ in2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:to:subject:message-id:date:from
+ :mime-version:dkim-signature;
+ bh=/pXppbMupf2SH6AXAdK50hRXMdwXr6JN6PXU+kTmZ3c=;
+ fh=eUqWHLlhrxpykrabbQYbmT5B5FclN6p18glcXqrZikU=;
+ b=IJ8y3O3qQcLELtDFBGkOni7/VUYoF4AD6QIdUq9csmr6XJ3jkXaOwf8/F2QgJ40opm
+ KflnAmrPSZi8z+X2FK8WQFjVYC2RORVE4+zIMOlE/BRlH/sqZg57Y3CWGwpzqx/mvRf0
+ dyYRWRGwACFDeoa1Ya7TYTNtuNSdRB46TeOYNXNRe59WQhFHY1XIQ/sdbadK5LbvQaAD
+ kX2gqZPmSYDLmk3d/NOyb8kH2HZLrqR3tc9REgaSQMRlCclTIBRDp+z4GysMyZxdpAaM
+ SeNwbJ6rvQb0mPydJ803SFyZlWmBz7C5YHemN/YIsw8KuTW9m93TnuwpV9KV8JO32cxD
+ 6YPA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1790256321; x=1790861121; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:to:subject:message-id:date
+ :from:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=/pXppbMupf2SH6AXAdK50hRXMdwXr6JN6PXU+kTmZ3c=;
+ b=PW6mFfJrirOBEuHuYyDA0IinWemyu6mM57C0pXb0EKVw0wlTi+CClgCPjM/BtAHAo3
+ bKg73P0s8BsUZ+iNMap921Yznw5DE3l+RtP/YH8bZEcB58EzQMGZHmZvbYCgJ0AHC2n0
+ D+yZTHw00em+Tm3Pd7j2LSV4nw6fpTwXf8WXs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790256321; x=1790861121;
+ h=content-transfer-encoding:content-type:to:subject:message-id:date
+ :from:mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=/pXppbMupf2SH6AXAdK50hRXMdwXr6JN6PXU+kTmZ3c=;
+ b=sGw5vlWQmz4nzY9tAuO5NViOpQEbDWXh56d+9jUGCBv4Wkb/Of89pRgOt1MrQJOI/J
+ Rozl9CtrOexSZoLINShdBjP2MHIQT6jdDe9180h6P+jJ3m4/3np7atAyw1grPbNQuQab
+ 1g7huRCJGUDGgk7N0zzfQomYnAyxJ4z0h55feg1RZ0wMODrIYaM3NpmhO8UoFVAubB24
+ MpKFX5SVvjh/+btN3jVrWYQxdivmW/nSdqqUDN88jcRRspZA1VndwnM7JuiQAqUt6d1y
+ rsXj/Y70IJHJ7FSIjYbiIJlpQNlDi79KGRvLZP0Otk0NFEcxIHeZqZ/4GswPUc/4tUQx
+ jYkQ==
+X-Gm-Message-State: AFuF++k3VotVJyJ/Waurq4uexI77B7a6hTxDspgkxzyMN4Xm938vnz/i
+ OgAtiIPM1N/HhBwv2C9YkJ8UqVK+d6TIJkARyrZQF/RDDSDnMVo7P9R9/Xjx4qbwn1x7zXIZOnG
+ N5XgiTsJ68k65Jd1K09iRvA6FwQIGSwLH8meUiB/xGNPFEejc0US1vaGMwg==
+X-Gm-Gg: AYBFou01javpM8WY9zRmZD5fH2GT4Bgr/qUa8jvLoCpunR3OF3OaqGMbR6jEEyMDBk3
+ jSN/bLQXSV5Cvo3Kv3DZ6PSMRcS6FeDsK2F7uo2yBxmp6nqlmdvAZrsVctfTgi+LgEGLuy3BCmO
+ uNG7CEg5I816hw0mwjzqTjGUG7CCWFGj2Bpx84GaAUmwVvzM5iAkjPJDAT+tePSO8u9PVU9zD2K
+ dEhHhPTi5d83DVzzPcUCTqt1SurOT6Arqsz8iS7/Bi7YSg0BdAA88sUa2051JAu4Lc8qveo7t76
+ aaXbakKYBJSlNdmWgXuCFHajSczOfd0mhUKuU8gjoZdgDng1IfnTjFa5UmIhihn5NGA50BonvpQ
+ GcKk/GF8DoGLb6A==
+X-Received: by 2002:a17:903:3202:b0:2da:e967:7953 with SMTP id
+ d9443c01a7336-2df7dd7661fmr22664225ad.12.1790256320440; Thu, 24 Sep 2026
+ 06:25:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Dillon Ladd <dladd@iol.unh.edu>
+Date: Thu, 24 Sep 2026 09:24:43 -0400
+X-Gm-Features: AclHuK89MgVv7A5iyEzxVm3Tdv6PkdmmWi77RCOcRJlYs4R4gkEb5KRweHxt7NE
+Message-ID: <CAJA6v3ydDkqLPXtc3JLDgp0V-+o-_9CbZjV-x2gfEgRU8yFn9Q@mail.gmail.com>
+Subject: September 24, 2026 DTS Working Group Meeting Notes
+To: dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,66 +88,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Rx and Tx offload capability masks duplicated the offload lists already
-maintained for tracking the offloads enabled on the various scalar and
-vector Rx and Tx paths. Instead of defining explicit lists for the offload
-capabilities masks, instead derive the capabilities from the path masks.
+Attendees
+################################################
+Dillon Ladd, UNH-IOL
+Koushik Bhargav Nimoji, UNH-IOL
 
-A benefit of this is that if an offload is ever added to a path, it is
-automatically reflected in the advertised capabilities too, instead of
-relying on the capabilities masks in dev_info being kept manually in sync.
-Some overlap will be present when masking the masks but it is kept because
-relying on one path's offload mask always being a superset of another's is
-fragile.
+General Discussions
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Thomas merged the code coverage patch to main
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
----
- drivers/net/intel/i40e/i40e_ethdev.c | 29 +++-------------------------
- 1 file changed, 3 insertions(+), 26 deletions(-)
+Patch Discussions
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Andrew put together a list of patches ranked by priority for review:
 
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-index defdff0378f..5d6102cae7b 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.c
-+++ b/drivers/net/intel/i40e/i40e_ethdev.c
-@@ -3865,35 +3865,12 @@ i40e_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->max_mtu = dev_info->max_rx_pktlen - I40E_ETH_OVERHEAD;
- 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
- 	dev_info->rx_queue_offload_capa = 0;
--	dev_info->rx_offload_capa =
--		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
--		RTE_ETH_RX_OFFLOAD_QINQ_STRIP |
--		RTE_ETH_RX_OFFLOAD_IPV4_CKSUM |
--		RTE_ETH_RX_OFFLOAD_UDP_CKSUM |
--		RTE_ETH_RX_OFFLOAD_TCP_CKSUM |
--		RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM |
--		RTE_ETH_RX_OFFLOAD_KEEP_CRC |
--		RTE_ETH_RX_OFFLOAD_SCATTER |
--		RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
--		RTE_ETH_RX_OFFLOAD_VLAN_FILTER |
--		RTE_ETH_RX_OFFLOAD_RSS_HASH;
-+	dev_info->rx_offload_capa = I40E_RX_SCALAR_OFFLOADS | I40E_RX_VECTOR_OFFLOADS;
- 
- 	dev_info->tx_queue_offload_capa = RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
- 	dev_info->tx_offload_capa =
--		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |
--		RTE_ETH_TX_OFFLOAD_QINQ_INSERT |
--		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
--		RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
--		RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
--		RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |
--		RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |
--		RTE_ETH_TX_OFFLOAD_TCP_TSO |
--		RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO |
--		RTE_ETH_TX_OFFLOAD_GRE_TNL_TSO |
--		RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO |
--		RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO |
--		RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
--		dev_info->tx_queue_offload_capa;
-+		(I40E_TX_SCALAR_OFFLOADS | I40E_TX_VECTOR_OFFLOADS) &
-+		~RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM;
- 	if (hw->mac.type == I40E_MAC_X722) {
- 		dev_info->tx_offload_capa |=
- 			RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM;
--- 
-2.43.0
+DTS Framework:
+---------------------------------------------------------------------------=
+-----
+1. DTS: Rebase from Dean (API updates)
+https://patches.dpdk.org/project/dpdk/list/?series=3D39153
+Andrew has made adjustments from Luca=E2=80=99s feedback, pending review.
+2. [RFC] dts: resolve trex driver binding issue
+https://patches.dpdk.org/project/dpdk/patch/20260811185509.1650102-1-knimoj=
+i@iol.unh.edu/
+Prioritize review, sizable change of DTS and it would be helpful for
+Koushik to have feedback sooner opposed to later.
 
+New Suites:
+---------------------------------------------------------------------------=
+-----
+3. [v3,3/3] dts: add verify coverage for cryptodev testing
+https://patches.dpdk.org/project/dpdk/list/?series=3D38682
+Pending Review
+4. [v2] dts: add pvp multi paths vhost performance testsuite
+https://patches.dpdk.org/project/dpdk/patch/20260908144707.862960-1-knimoji=
+@iol.unh.edu/
+Pending Review
+5. [v1] dts: add pvp multi paths virtio performance testsuite
+https://patches.dpdk.org/project/dpdk/patch/20260903201155.817724-1-knimoji=
+@iol.unh.edu/
+Pending Review
+6. [v3] dts: add ipgre test suite
+https://patchwork.dpdk.org/project/dpdk/patch/20260914200019.958925-1-abail=
+ey@iol.unh.edu/
+Pending review
+
+Test Suite Extensions:
+---------------------------------------------------------------------------=
+-----
+7. [v1] dts: refactor cryptodev throughput test suite
+https://patchwork.dpdk.org/project/dpdk/patch/20260827172208.139769-1-abail=
+ey@iol.unh.edu/
+Pending Review
+8. [v1] dts: update configuration for performance test
+https://patchwork.dpdk.org/project/dpdk/patch/20260805153658.345207-1-abail=
+ey@iol.unh.edu/
+Pending review
+9. [v1] dts: add PVVP case to virtio suite
+https://patches.dpdk.org/project/dpdk/patch/20260811171235.519323-1-abailey=
+@iol.unh.edu/
+Pending Review
+10. [v7] dts: refactor flow suite with generator pattern
+https://patches.dpdk.org/project/dpdk/patch/20260811170433.517663-1-abailey=
+@iol.unh.edu/
+Pending Review
+
+Bug fixes:
+---------------------------------------------------------------------------=
+-----
+11. [RFC] dts: restore unbinded ports to initial state
+https://patches.dpdk.org/project/dpdk/patch/20260812194428.296334-1-knimoji=
+@iol.unh.edu/
+Pending Review
+12. [v1] dts: remove crypto test type
+https://patches.dpdk.org/project/dpdk/patch/20260806164505.642928-1-abailey=
+@iol.unh.edu/
+Pending Review
+13. dts: update verbose output regex for VXLAN packets
+https://patches.dpdk.org/project/dpdk/list/?series=3D38925
+Pending Review
+
+26.11 DTS Roadmap
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Finalized roadmap is out:
+https://mails.dpdk.org/archives/dev/2026-September/345096.html
+
+Any other business
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Next Meeting: October 8th, 2026
+
+--=20
+Dillon Ladd
+Technical Manager, Open Source
+21 Madbury Rd., Ste. 100, Durham, NH 03824
+dladd@iol.unh.edu
+https://www.iol.unh.edu
