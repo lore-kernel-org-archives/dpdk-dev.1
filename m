@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F325C98318
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 16:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6892AC98318
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Sep 2026 16:14:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7AE4C43250;
-	Thu, 24 Sep 2026 18:13:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6E16E43007;
+	Thu, 24 Sep 2026 18:13:57 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id C5C1642FED
- for <dev@dpdk.org>; Thu, 24 Sep 2026 18:13:51 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5882342FED
+ for <dev@dpdk.org>; Thu, 24 Sep 2026 18:13:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790266432; x=1821802432;
+ t=1790266433; x=1821802433;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=IgKfxXvly4WL4GTdQxusKWSlQNrsWZFFkIarLqSGUbk=;
- b=lqa/FMG7DN45oSScOxJ2pk52HjK033tZ+rZ+AemqLPBABrPaY/NJNAuP
- vv37Jt9cV4ajHq2yR7d6FcFUj/KCjxPdwKcYilzd5O1fWQAVhg6j9RPOi
- La1UvDi9VsVWtYKz6hOZ4fxCiEQ/tiNRufS/ERn9Jth4rYSqLQD9yvooj
- sE3nqaR1pczc9zDe9IWwiDU6bO/XdGID96eA2Ct/qrYdJE7ug3a1B6aSG
- WVIKaQ/jlkFZzfFnKPgH2A4LRJ+nCphCf5xIYqPzo5ydKaP1+yxW95QuB
- xhWi/d2eF9jZFLn1MPNcjbIvZOsag68Aq+pBoSz9WFbOPYErlOeRWh21d w==;
-X-CSE-ConnectionGUID: HfXIkSuoQ5+RJ/Bor34Z+A==
-X-CSE-MsgGUID: xN1Y3GKoQAaNVp6r8DM9ow==
-X-IronPort-AV: E=McAfee;i="6800,10657,11915"; a="90000621"
-X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="90000621"
+ bh=jpEoOWWe5OhIbqd2AhyUL+r1n4qUnA/lIB9EDkijTFk=;
+ b=BwbUROTRXkNqJo6N+1b1c1oqlp3UgSHy0nXoeT1YbmzYtKHxSEVlisK2
+ Da8qJfm0W11R8iICtUGAl+OoPg9voIggAEBqEtPVV2RF0vW7bgWIjOLZ9
+ it7La3Ui54YgRpb2lFbSDPUOi+7YB0IAJM8Y2CFz7wTlXfuau2y2012dw
+ o4+BK9GQDHkXbgd2JZloftTH86Vuy2o2GJ6NGYXRXjkmNGtOcAfruYT/8
+ F0pteLe3xaw+rZAgr+4pb2Ky8/05vnnfLebaclNMXfa5xdvLs6loA7qFu
+ FGgEt1z2uIAzB6h1ugQDi6raGV4qNWg+vQKG1K+C3ut3aSrFekCk06ddk A==;
+X-CSE-ConnectionGUID: dmFRDRyBQU6/ohUH4HZ2mQ==
+X-CSE-MsgGUID: mRO/KA1jRduIqRUS5NzsFw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11915"; a="90000623"
+X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="90000623"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Sep 2026 09:13:51 -0700
-X-CSE-ConnectionGUID: QYKosyl1QSaaQkttzsnJYQ==
-X-CSE-MsgGUID: FhwN6F5pTTqWRyS9Mlr+ZA==
+ 24 Sep 2026 09:13:52 -0700
+X-CSE-ConnectionGUID: E7ev3zPARNuTmdClXoyURw==
+X-CSE-MsgGUID: BKcrnVzdSDS2W7aAxKAhiA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="277829973"
+X-IronPort-AV: E=Sophos;i="6.27,120,1787036400"; d="scan'208";a="277829976"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa005.jf.intel.com with ESMTP; 24 Sep 2026 09:13:50 -0700
+ by orviesa005.jf.intel.com with ESMTP; 24 Sep 2026 09:13:52 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-Subject: [PATCH v18 04/29] vfio: decouple EAL from VFIO internals
-Date: Thu, 24 Sep 2026 17:13:11 +0100
-Message-ID: <b06b7c190f2c8b4123ad9ff909cbb8f74f06e126.1790266166.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+Subject: [PATCH v18 05/29] vhost: check DMA capability only once
+Date: Thu, 24 Sep 2026 17:13:12 +0100
+Message-ID: <166a75f92f9272cc97cd5cb34056c44b2f3dfcff.1790266166.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1790266165.git.anatoly.burakov@intel.com>
  <cover.1790266165.git.anatoly.burakov@intel.com>
@@ -60,111 +60,103 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, the multiprocess cleanup for VFIO is called via an internal-only
-API, and this is the only thing `eal_vfio.h` is used for in EAL. In order
-to make `eal_vfio.h` truly VFIO-internal, export a cleanup function from
-`rte_vfio` API instead, and call that. This allows us to remove all EAL
-references to `eal_vfio.h` in non-VFIO related files.
+Currently, vhost async copy feature will check if VFIO supports DMA mapping
+on every attempt to add/remove memory region or set memory table. This is
+not necessary, so instead check this once at new vhost connection, and
+store that value for future use.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- lib/eal/freebsd/eal.c      | 6 ++++++
- lib/eal/include/rte_vfio.h | 9 +++++++++
- lib/eal/linux/eal.c        | 3 +--
- lib/eal/linux/eal_vfio.c   | 7 +++++++
- lib/eal/windows/eal.c      | 6 ++++++
- 5 files changed, 29 insertions(+), 2 deletions(-)
+ lib/vhost/socket.c     |  5 ++++-
+ lib/vhost/vhost.h      |  1 +
+ lib/vhost/vhost_user.c | 10 +++++-----
+ 3 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index 0fe54a9dd7c..991ca450640 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -845,6 +845,12 @@ int rte_vfio_enable(__rte_unused const char *modname)
- 	return -1;
- }
+diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
+index 0943b3e9bb6..a8f58c95e83 100644
+--- a/lib/vhost/socket.c
++++ b/lib/vhost/socket.c
+@@ -17,6 +17,7 @@
+ #include <eal_export.h>
+ #include <rte_thread.h>
+ #include <rte_log.h>
++#include <rte_vfio.h>
  
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_cleanup)
-+void
-+rte_vfio_cleanup(void)
-+{
-+}
-+
- RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_is_enabled)
- int rte_vfio_is_enabled(__rte_unused const char *modname)
- {
-diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
-index 0ddeb08f94a..e76181c83cc 100644
---- a/lib/eal/include/rte_vfio.h
-+++ b/lib/eal/include/rte_vfio.h
-@@ -109,6 +109,15 @@ int rte_vfio_release_device(const char *sysfs_base, const char *dev_addr, int fd
- __rte_internal
- int rte_vfio_enable(const char *modname);
+ #include "fd_man.h"
+ #include "vduse.h"
+@@ -242,8 +243,10 @@ vhost_user_add_connection(int fd, struct vhost_user_socket *vsocket)
+ 	if (vsocket->async_copy) {
+ 		dev = get_device(vid);
  
-+/**
-+ * @internal
-+ * Cleanup VFIO resources.
-+ *
-+ * This function is only relevant to Linux.
-+ */
-+__rte_internal
-+void rte_vfio_cleanup(void);
-+
- /**
-  * @internal
-  * Check whether a VFIO-related kmod is enabled.
-diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index fc2e9b8c0e8..5577bab24a2 100644
---- a/lib/eal/linux/eal.c
-+++ b/lib/eal/linux/eal.c
-@@ -54,7 +54,6 @@
- #include "eal_memcfg.h"
- #include "eal_trace.h"
- #include "eal_options.h"
--#include "eal_vfio.h"
- #include "hotplug_mp.h"
- #include "log_internal.h"
+-		if (dev)
++		if (dev != NULL) {
+ 			dev->async_copy = 1;
++			dev->dma_map_available = rte_vfio_is_enabled("vfio");
++		}
+ 	}
  
-@@ -986,7 +985,7 @@ rte_eal_cleanup(void)
+ 	VHOST_CONFIG_LOG(vsocket->path, INFO, "new device, handle is %d", vid);
+diff --git a/lib/vhost/vhost.h b/lib/vhost/vhost.h
+index bb4708aed5e..75736eed3b5 100644
+--- a/lib/vhost/vhost.h
++++ b/lib/vhost/vhost.h
+@@ -499,6 +499,7 @@ struct __rte_cache_aligned virtio_net {
+ 	RTE_ATOMIC(int16_t)	broadcast_rarp;
+ 	uint32_t		nr_vring;
+ 	int			async_copy;
++	bool			dma_map_available;
  
- 	rte_service_finalize();
- 	eal_bus_cleanup();
--	vfio_mp_sync_cleanup();
-+	rte_vfio_cleanup();
- 	rte_mp_channel_cleanup();
- 	rte_eal_alarm_cleanup();
- 	rte_trace_save();
-diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index 33fa04feaf7..6c77076bc3e 100644
---- a/lib/eal/linux/eal_vfio.c
-+++ b/lib/eal/linux/eal_vfio.c
-@@ -2217,3 +2217,10 @@ rte_vfio_container_dma_unmap(int container_fd, uint64_t vaddr, uint64_t iova,
+ 	int			extbuf;
+ 	int			linearbuf;
+diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
+index 020c993b299..2d91722fcc0 100644
+--- a/lib/vhost/vhost_user.c
++++ b/lib/vhost/vhost_user.c
+@@ -267,7 +267,7 @@ free_all_mem_regions(struct virtio_net *dev)
+ 	if (!dev || !dev->mem)
+ 		return;
  
- 	return container_dma_unmap(vfio_cfg, vaddr, iova, len);
- }
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_cleanup)
-+void
-+rte_vfio_cleanup(void)
-+{
-+	vfio_mp_sync_cleanup();
-+}
-diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
-index de7a89a8291..b8771d4d858 100644
---- a/lib/eal/windows/eal.c
-+++ b/lib/eal/windows/eal.c
-@@ -152,6 +152,12 @@ rte_eal_cleanup(void)
- 	return 0;
- }
+-	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
++	if (dev->async_copy && dev->dma_map_available)
+ 		async_dma_map(dev, false);
  
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_cleanup)
-+void
-+rte_vfio_cleanup(void)
-+{
-+}
-+
- /* Launch threads, called at application init(). */
- RTE_EXPORT_SYMBOL(rte_eal_init)
- int
+ 	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
+@@ -1564,7 +1564,7 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
+ 		dev->mem->nregions++;
+ 	}
+ 
+-	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
++	if (dev->async_copy && dev->dma_map_available)
+ 		async_dma_map(dev, true);
+ 
+ 	if (vhost_user_postcopy_register(dev, main_fd, ctx) < 0)
+@@ -1750,7 +1750,7 @@ vhost_user_add_mem_reg(struct virtio_net **pdev,
+ 
+ 	dev->mem->nregions++;
+ 
+-	if (dev->async_copy && rte_vfio_is_enabled("vfio")) {
++	if (dev->async_copy && dev->dma_map_available) {
+ 		if (async_dma_map_region(dev, reg, true) < 0)
+ 			goto free_new_region_no_dma;
+ 	}
+@@ -1791,7 +1791,7 @@ vhost_user_add_mem_reg(struct virtio_net **pdev,
+ 	return RTE_VHOST_MSG_RESULT_OK;
+ 
+ free_new_region:
+-	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
++	if (dev->async_copy && dev->dma_map_available)
+ 		async_dma_map_region(dev, reg, false);
+ free_new_region_no_dma:
+ 	remove_guest_pages(dev, reg);
+@@ -1827,7 +1827,7 @@ vhost_user_rem_mem_reg(struct virtio_net **pdev,
+ 		if (region->userspace_addr == current_region->guest_user_addr
+ 			&& region->guest_phys_addr == current_region->guest_phys_addr
+ 			&& region->memory_size == current_region->size) {
+-			if (dev->async_copy && rte_vfio_is_enabled("vfio"))
++			if (dev->async_copy && dev->dma_map_available)
+ 				async_dma_map_region(dev, current_region, false);
+ 			if (dev->features & (1ULL << VIRTIO_F_IOMMU_PLATFORM))
+ 				vhost_user_iotlb_cache_remove(dev,
 -- 
 2.52.0
 
