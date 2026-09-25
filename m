@@ -2,79 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC88C98321
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Sep 2026 16:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39371C98321
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Sep 2026 18:59:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A7BDE402AD;
-	Fri, 25 Sep 2026 18:32:20 +0200 (CEST)
-Received: from fhigh-a6-smtp.messagingengine.com
- (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
- by mails.dpdk.org (Postfix) with ESMTP id 6D38640294
- for <dev@dpdk.org>; Fri, 25 Sep 2026 18:32:19 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 88A0B14000C1;
- Fri, 25 Sep 2026 12:32:18 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Fri, 25 Sep 2026 12:32:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1790353938;
- x=1790440338; bh=UWlJ6OOLMnnO3/+3UoZQrNITlYISWeGnM25Pef0JTWE=; b=
- W7fluyHO2hLMtbnp8aHc4o0mIOE/48qqvqrbak8w30VamP1YGPYM1VvFDwpEycrs
- Kd+i4kE66bR+5y07cvoEdaDwaZ5ALl+eeIN1TR+7lM/A7euQhNbmT3+2byyDlk4+
- C5D5LUEsupQIp6xdwqdiluvGFL60CLjFZEvwLZOfZLz2LjLx/NYxEcyEeoXUxm9T
- xd7O2TAiSXY+wIh5sVytQrrm5U0lyOAl8Y7IU4JDuBA7JW78GBbg1lzFyBNYZEWl
- YnuXCD6phU119bxYxMCbBeNjp4IHllwtaQq+LhEezwgrNynMKQXBgrX2Uw1Zv93W
- 1iKmCa9EywiWNGwc5RS4bA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1790353938; x=
- 1790440338; bh=UWlJ6OOLMnnO3/+3UoZQrNITlYISWeGnM25Pef0JTWE=; b=t
- J+va/e47kXMTZD28fMrfVGHWeRK+ytNRJ9GTzy/cRuRkfhRQcpDBT7DHMWfVehP/
- w9YULWWYLoAYvF5825vV4Upfba+0A8YCorbMuOux4x4xYvZ/fINmi03sszWJouUa
- q0HuqSZAb6U+0Fv3t9h8icDP7QgLuZS1m+0cybVaqJ7EqdZYc2hrsK9D0s0E5JkW
- +71ct/mgKzYCY13GKEpSxEm1S7GQvKRxr/FlkTz5UbiF34vUTHErFrtYvBxJha48
- 0g+nL+PFN905kt6j0rqhTb9ewNY3PeA0Yedzqq2J6B+DLTN4IX9ib4WPv7YE6UqZ
- EvNVSkN10OSwAoyDlV21A==
-X-ME-Sender: <xms:EqK2akj1R5KEncBQOkotUuBjXJagL5HKI6zDQumuqE0K7HwE-RwfFw>
- <xme:EqK2ahUL-hr5seCegfD5sSfE-E5l4SdtYyzqRRsCWIf2k91Xt2T7FM_BzeRITgzDu
- RBf9V0zmYhJ4oiS_v0QFs5dVN7UlupIeykfkkVZptq40CbchjuOMyU>
-X-ME-Received: <xmr:EqK2arNIXGvN_PK-5ImFN0Zbu44YEYgv1gVxqN-bJP6bjIsDB3T0Uxdwm-Sy_fCFqvW87lZDtvPSG8ZcgKDZwLs>
-X-ME-Proxy-Cause: dmFkZTGKZCY6CP4bdpjy5f4BzyUSKitNi1Ne4sRCr9q5o+HzemqdpImbKNZXxY231TFfa6
- 1pBCsgKhDEt/UpsIgC3UBa8U7I0b/DlLACS2R8Ntifplcett02shslDJ9X+6v8MSa5PAQN
- B6PEByVx8VpG4SclgQGQKSPYxPtO6DpoaU0PWoFznVwbxC/pDQv1CeGfKqSWOMjOk0QZ0A
- B0dUnMCgFhEqCUic6STLyA8Q7axmodUYZy4wJpdU/UF5O5ogBvIWVjspzXbwjbseaNf4VM
- qARKVWbyDJEHmP2OzfpDXRTWevOyYwl3egXgginfxHxMkf6IoySKQih+MJq0IMUfr+S+Nd
- Dif4LK2buUP59vKZ7Ge92OIy/9zv9nMHozpHgMWUcI69IS50uBRlcpOKWgpto6qAguWpLY
- b2mhXiWWCEQsd8Sbp8x1uhqfPCaPYpCjMUVB5QkfDnL4jt2IP+Jm2ggSW6cdMMD4s5Ky0b
- P9/RaJk3MbUI2eRuO6XiefofO67KwwtqSYt1KvIJD1y4gB8vnfrM8oeW3XO1/rHxNfODK9
- 5aE2KrUA6Opuwp3HuJ/cUHeWXzz3+jtS+Psz0NErS0PMkfbFfpNUGmeIRgTnP/w00Airhm
- J7IV51rgN2+WCfycTfxMLSUYGMWY/HI0vnHXn42hkfkL+1x7wrZp2FurKDQw
-X-ME-Proxy: <xmx:EqK2ata9cZBVdemmslC-46ZH9GtFFtfVPsPxv-1dIXe7d_US-G4OTw>
- <xmx:EqK2anogwnoB55xQMk9z2EOIpcgnQgwxW-8pzzkn3JIIU7oEpXxd-A>
- <xmx:EqK2apbzF1OCnzzC41ZAIqFCaOQqZpyEn0wufWPsBB0NBRqnKL_Tqg>
- <xmx:EqK2anT2tPKE690emwKye0C_0nK-mA2GeMPwTq2tA2BgOu5uoD-2yA>
- <xmx:EqK2akq-0xIrtI2neyRRSEZyIozmCFaBl-o86lI74gHYBdYTAVfUGNqL>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Sep 2026 12:32:17 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: "Ji, Kai" <kai.ji@intel.com>, Akhil Goyal <gakhil@marvell.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [EXTERNAL] [PATCH v7] examples: add Wycheproof validation app
-Date: Fri, 25 Sep 2026 18:32:14 +0200
-Message-ID: <Uoji51ajRt-6kVG_ZXgD_Q@monjalon.net>
-In-Reply-To: <CO6PR18MB4484077A45CBFCF6CB562E20D8812@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <20260923105003.2811322-1-kai.ji@intel.com>
- <LV2PR11MB6045AC38B49432A2FEA9C20281812@LV2PR11MB6045.namprd11.prod.outlook.com>
- <CO6PR18MB4484077A45CBFCF6CB562E20D8812@CO6PR18MB4484.namprd18.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A2B7A4026A;
+	Fri, 25 Sep 2026 20:59:57 +0200 (CEST)
+Received: from mail-dy2-f12.google.com (mail-dy2-f12.google.com
+ [74.125.229.12]) by mails.dpdk.org (Postfix) with ESMTP id B1FB9400D7
+ for <dev@dpdk.org>; Fri, 25 Sep 2026 20:59:55 +0200 (CEST)
+Received: by mail-dy2-f12.google.com with SMTP id
+ 5a478bee46e88-33be7dfcfc1so1612835eec.1
+ for <dev@dpdk.org>; Fri, 25 Sep 2026 11:59:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1790362794; x=1790967594; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:in-reply-to:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=uID2DhlXtSj/7MdCh96y3I1N1E8V8q3aJVFO0p6PjxY=;
+ b=hrjV7Hvw5easYkky1ag2x2esAeaEnPO8E1n53DXTkYBL0WFsunN/slxYtOa9htnHox
+ iHJqc5DGuxrJr/MsuFqd0H2c0iUcNLFt8Hu1FxazILqEbEOTYUlVPFN/dJ2AVSpV/8W8
+ e+tgbZlxzshdf4kWWfI1QCs0mhfyixSsa5TfuNY/FGwkJ1NW6TuI9o6Xavgv5L47RoX/
+ B2WffVBP/+04NLafRtidj7fYJPNOVUjdj6avhcKzWHKLIXZTxtf+EYnyLuawq6S/q4Vv
+ fBjXw/Az56XdTjQMz62jK0s8gVPof7cnJRU3ey/YE2yv9LAAxeD6oJLeojNLAkGDysjc
+ cb4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790362794; x=1790967594;
+ h=content-transfer-encoding:content-type:in-reply-to:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=uID2DhlXtSj/7MdCh96y3I1N1E8V8q3aJVFO0p6PjxY=;
+ b=PCxqyzqc0tYUC4eQB4WcBYAwORb6BYJHpN0QYBTF5SbHcDmFecxKmPpBnubjhz4WU8
+ jJ6w5aB3+DUFz4wEp1O5tq/FY8ITSSpC0Unc0gGh7+krJCl79O7+0EBG+HIFaTW6qXMI
+ W0rZko72DaPs54Ya9xWuUHMQ5hHNw00dyilrWbzPvDGs74yy+IA3xsdGmna5lg1+sMPi
+ UrlrG0SogVDwcmSH6T9DQ/6pTQGfBlFW1a5JTcdyqZlBa95DPZgNpoC2zVaQvZXzSlAv
+ ra/MlcfoOhv726S2QQH4zdj3WmKIYjKpeg+eK489HpSSLZQ3M3SbIJ9hchTaVxI+bPE1
+ noMg==
+X-Gm-Message-State: AFuF++nEs5OYTYLGvLANvkdwCODIaCYAmV1I7illd9rL4FirAyLeJZnX
+ hwVTZUCDJno5KcFVqYXZZYyjfZ4+8kIFrDYlYtWl7WQADHbUUUyRdJOY
+X-Gm-Gg: AYBFou2X/+vneqO0KP2VxopIS3cZI2tuu0x1IFEefjs2He34ux6xohK84ffsbuqCE2N
+ lvn3zKBcq6h+w1mFxNzqNB4EDhNTZeHyGSinnkqptbvxUmOffg6I1Xgs2rbpXCBasL4AHD5hS+C
+ irsxetP3bX2UV5YJ2JrfbNshfUo/7cUd1TdFyqn0wC7otNxtLHbii2RyBynkFe5hydp04He2Y2d
+ 1NEuBJXQA9ahc0iW+7hD3AnZWsji9AhIbyoauVhEbzCNoQ/fkrzuAa17cHoCpnEDSyD5zdJo/oS
+ HkFuFi0hcgl1z9kkEP1ru4WM64efTgdHJXbGCeou0l4mv/k3UBj72f3aRpQwV44UqeUYRyzbROJ
+ qeHTYB9D7E/5REvJfknZwklWqBhPMAhFoz4QwH36AOdOc49TVH31p9UdWEu8BILpGiAwiZKVzIA
+ Mf+anqpXgu4uGm6B2fBaKNJNC9urK/SPEeSJOmckl6SE4s5U/r6mbFNCuXLSMWdRnKy5azAXylc
+ PuEX5LLMC4cyCqO
+X-Received: by 2002:a05:7301:f05:b0:341:67fc:98df with SMTP id
+ 5a478bee46e88-342705b233amr982535eec.12.1790362794345; 
+ Fri, 25 Sep 2026 11:59:54 -0700 (PDT)
+Received: from [192.168.1.112] (mail.forbuysw.info. [66.175.223.235])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-34144172d8asm7937842eec.5.2026.09.25.11.59.51
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Fri, 25 Sep 2026 11:59:53 -0700 (PDT)
+Message-ID: <757938af-4936-44e7-9de4-8904d34c5e41@gmail.com>
+Date: Sat, 26 Sep 2026 02:59:50 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/ixgbe: fix repeated Rx packet buffer shrink for FDIR
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, stable@dpdk.org
+References: <20260916135827.116145-1-zhtfdev@gmail.com>
+ <a46db9e8-1513-4e19-b029-2d55e28d42b4@intel.com>
+ <b653e89e-d67d-40c6-afea-61d3fc5b1c3e@intel.com>
+Content-Language: en-US
+From: Zhang Tengfei <zhtfdev@gmail.com>
+In-Reply-To: <b653e89e-d67d-40c6-afea-61d3fc5b1c3e@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,26 +86,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-24/09/2026 20:00, Akhil Goyal:
-> > Wycheproof differs somewhat from the existing cryptodev test vectors in that it is
-> > an externally maintained collection of JSON test suites covering a large number of
-> > edge cases and negative tests. The intended usage model is to load the upstream
-> > vector files at runtime rather than embedding them in the DPDK tree.
-> > I think the existing examples/fips_validation application follows a similar
-> > approach, consuming external CAVP/ACVP vector files rather than integrating
-> > them into dpdk-test. This patch follows that precedent, with the goal of providing
-> > file-driven conformance validation as a standalone example application.
-> > I agree that the documentation can be improved. At minimum, the .rst should
-> > describe where the Wycheproof vectors can be obtained and reference the
-> > applicable upstream license, as the current example command may give the
-> > impression that the vector files are included in the DPDK source tree when they
-> > are not.
+On 9/25/26 18:05, Burakov, Anatoly wrote:
+> On 9/25/2026 11:47 AM, Burakov, Anatoly wrote:
+>> A general comment: instead of reducing/bringing things back and 
 > 
-> Ok, so in that case did you consider integrating this app into fips_validation app..
-> May be we could rename fips_validation to crypto_validation and internally have 2 modes - 
-> Fips and Wycheproof? Like what we have for examples/multi_process?
+> I asked an AI to implement a fix based on this, and here's what it came 
+> up with, it is roughly what I would like to see instead (obviously, 
+> please review/rework as appropriate e.g. to properly support VMDq as well):
+> 
 
-I like this proposal.
+Hi Anatoly, Bruce,
 
+Thanks for the review. Agreed, keeping the FDIR mode after the last rule 
+is gone
+is wrong (a later rule with another mode fails with "Conflict with
+existing fdir mode"). I'll drop the flag and do v2 along the lines of
+the draft: RXPBSIZE(0) computed from the default size on enable,
+restored on disable, and FDIR disabled on the configure error path and
+when the first rule fails after FDIR was just enabled.
 
+Unless you object, I plan to:
+
+1. Use hw->mac.rx_pb_size as the default size (512 on 82599, 384 on
+    X540/X550/E610) instead of saving RXPBSIZE at init.
+
+2. Leave VMDq out: ixgbe_fdir_configure() rejects all DCB mq modes, and
+    the non-DCB VMDq/SR-IOV paths don't write RXPBSIZE, so PB0 is the
+    only buffer whenever FDIR can be enabled.
+
+3. Not address the fact that FDIR enable/disable from the flow API
+    changes RXPBSIZE/FDIRCTRL while Rx is enabled if the port is
+    started. Enabling on the first rule already works this way today;
+    restoring the buffer on the last rule removal adds the disable side.
+    dev_start only touches these registers with Rx disabled.
+
+I'll send v2 rebased on next-net-intel in the next few days.
+
+Thanks
 
