@@ -2,77 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39371C98321
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Sep 2026 18:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 359C9C98321
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Sep 2026 19:31:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A2B7A4026A;
-	Fri, 25 Sep 2026 20:59:57 +0200 (CEST)
-Received: from mail-dy2-f12.google.com (mail-dy2-f12.google.com
- [74.125.229.12]) by mails.dpdk.org (Postfix) with ESMTP id B1FB9400D7
- for <dev@dpdk.org>; Fri, 25 Sep 2026 20:59:55 +0200 (CEST)
-Received: by mail-dy2-f12.google.com with SMTP id
- 5a478bee46e88-33be7dfcfc1so1612835eec.1
- for <dev@dpdk.org>; Fri, 25 Sep 2026 11:59:55 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F0818400D7;
+	Fri, 25 Sep 2026 21:31:11 +0200 (CEST)
+Received: from alln-iport-2.cisco.com (alln-iport-2.cisco.com [173.37.142.89])
+ by mails.dpdk.org (Postfix) with ESMTP id 04031400D7
+ for <dev@dpdk.org>; Fri, 25 Sep 2026 21:31:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1790362794; x=1790967594; darn=dpdk.org;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=uID2DhlXtSj/7MdCh96y3I1N1E8V8q3aJVFO0p6PjxY=;
- b=hrjV7Hvw5easYkky1ag2x2esAeaEnPO8E1n53DXTkYBL0WFsunN/slxYtOa9htnHox
- iHJqc5DGuxrJr/MsuFqd0H2c0iUcNLFt8Hu1FxazILqEbEOTYUlVPFN/dJ2AVSpV/8W8
- e+tgbZlxzshdf4kWWfI1QCs0mhfyixSsa5TfuNY/FGwkJ1NW6TuI9o6Xavgv5L47RoX/
- B2WffVBP/+04NLafRtidj7fYJPNOVUjdj6avhcKzWHKLIXZTxtf+EYnyLuawq6S/q4Vv
- fBjXw/Az56XdTjQMz62jK0s8gVPof7cnJRU3ey/YE2yv9LAAxeD6oJLeojNLAkGDysjc
- cb4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790362794; x=1790967594;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=uID2DhlXtSj/7MdCh96y3I1N1E8V8q3aJVFO0p6PjxY=;
- b=PCxqyzqc0tYUC4eQB4WcBYAwORb6BYJHpN0QYBTF5SbHcDmFecxKmPpBnubjhz4WU8
- jJ6w5aB3+DUFz4wEp1O5tq/FY8ITSSpC0Unc0gGh7+krJCl79O7+0EBG+HIFaTW6qXMI
- W0rZko72DaPs54Ya9xWuUHMQ5hHNw00dyilrWbzPvDGs74yy+IA3xsdGmna5lg1+sMPi
- UrlrG0SogVDwcmSH6T9DQ/6pTQGfBlFW1a5JTcdyqZlBa95DPZgNpoC2zVaQvZXzSlAv
- ra/MlcfoOhv726S2QQH4zdj3WmKIYjKpeg+eK489HpSSLZQ3M3SbIJ9hchTaVxI+bPE1
- noMg==
-X-Gm-Message-State: AFuF++nEs5OYTYLGvLANvkdwCODIaCYAmV1I7illd9rL4FirAyLeJZnX
- hwVTZUCDJno5KcFVqYXZZYyjfZ4+8kIFrDYlYtWl7WQADHbUUUyRdJOY
-X-Gm-Gg: AYBFou2X/+vneqO0KP2VxopIS3cZI2tuu0x1IFEefjs2He34ux6xohK84ffsbuqCE2N
- lvn3zKBcq6h+w1mFxNzqNB4EDhNTZeHyGSinnkqptbvxUmOffg6I1Xgs2rbpXCBasL4AHD5hS+C
- irsxetP3bX2UV5YJ2JrfbNshfUo/7cUd1TdFyqn0wC7otNxtLHbii2RyBynkFe5hydp04He2Y2d
- 1NEuBJXQA9ahc0iW+7hD3AnZWsji9AhIbyoauVhEbzCNoQ/fkrzuAa17cHoCpnEDSyD5zdJo/oS
- HkFuFi0hcgl1z9kkEP1ru4WM64efTgdHJXbGCeou0l4mv/k3UBj72f3aRpQwV44UqeUYRyzbROJ
- qeHTYB9D7E/5REvJfknZwklWqBhPMAhFoz4QwH36AOdOc49TVH31p9UdWEu8BILpGiAwiZKVzIA
- Mf+anqpXgu4uGm6B2fBaKNJNC9urK/SPEeSJOmckl6SE4s5U/r6mbFNCuXLSMWdRnKy5azAXylc
- PuEX5LLMC4cyCqO
-X-Received: by 2002:a05:7301:f05:b0:341:67fc:98df with SMTP id
- 5a478bee46e88-342705b233amr982535eec.12.1790362794345; 
- Fri, 25 Sep 2026 11:59:54 -0700 (PDT)
-Received: from [192.168.1.112] (mail.forbuysw.info. [66.175.223.235])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-34144172d8asm7937842eec.5.2026.09.25.11.59.51
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Fri, 25 Sep 2026 11:59:53 -0700 (PDT)
-Message-ID: <757938af-4936-44e7-9de4-8904d34c5e41@gmail.com>
-Date: Sat, 26 Sep 2026 02:59:50 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/ixgbe: fix repeated Rx packet buffer shrink for FDIR
-To: "Burakov, Anatoly" <anatoly.burakov@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ d=cisco.com; i=@cisco.com; l=1922; q=dns/txt;
+ s=iport01; t=1790364671; x=1791574271;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:content-transfer-encoding:mime-version;
+ bh=YF7DdFfdBvmovhKn4zxL1ALDv+A3hHctcAilW9bJObM=;
+ b=OOjMHk6t/2CHdFvG6/wxdbd7nwCDymTCxZgW/HkyJ7JyzDcpyIGSFvfT
+ MyReQFjKIufl/hJnY7fRamdWUxBb8Tb8d2V/sCihLiac4/rPSZzHfsFUR
+ LolVpt5EOtQiH9l0lItRgkRBoFsbCGcOmgIJeSNDhPKo5ia8Cp4kRvZYT
+ WcsRP3je0ic9r+GwtyyajPmuKtwlpi8CwMqbp/FkkbmFU4nRXPNQPXFLw
+ ajPqInYMDn1ta0vhpyBGfCBFIbcT2BDvDaee19MesAJND83iayrTU9h8d
+ B88Dtczh1zV3eXxu0nv2wQ0uUOGC2cAM80aKklHLiZ+7V+zBG8CVjb28+ Q==;
+X-CSE-ConnectionGUID: 7dhJnrKVRhGPiLH2GrscRQ==
+X-CSE-MsgGUID: p1pSdh+CQNOProWLHHc70g==
+X-IPAS-Result: =?us-ascii?q?A0A6AADVyrZq/4wQJK1aHQEBAQEJARIBBQUBgXwIAQsBg?=
+ =?us-ascii?q?0thQkmEV4gbiVieHYF+DwEBAQ83GgQBAYUBAgICjgkCJjQJDgECBAMCAwEBA?=
+ =?us-ascii?q?QEBAQEBAQEBAQoBAQUBAQECAQcFgQ4Thk8NkBMCAQMjDwFGECUCJgICRhCDG?=
+ =?us-ascii?q?wGCdAPBG3qBMoEB3kiBdBWBCi4BiF4BgXGECIR8JxUGgUlEgUeDN4QtY4MOg?=
+ =?us-ascii?q?moEgxwSgyeRcwmBQRwDWSwBVRMXCwcFYYEFA4EGbjIdgSM+Fy9YGwYFgR2BC?=
+ =?us-ascii?q?QQTghkjGTZ6gQlegSspYAEQF4EHggcCglSCAQIBSUMOB0VTCSVBChJHJiIIE?=
+ =?us-ascii?q?gkBExowC4EhOEEJKAttPTcVGQQ9kSAegl4HATBegSaBGDeTNYNZr1mEKIwil?=
+ =?us-ascii?q?VQzhVulFJkIqUOBaDyBWU0jFYMiCUoZD5FGhy7FZSg1PwcCBw8CkXQBJgeBT?=
+ =?us-ascii?q?wEB?=
+IronPort-Data: A9a23:K0x6IaxBhIjKIu1Wz2d6t+dYxyrEfRIJ4+MujC+fZmUNrF6WrkUBx
+ jFKUWHQb/+CZmekc9hxOoqz9UJSu5PXz9U1QVE+/1hgHilAwSbn6Xt1DatR0we6dJCroJdPt
+ p1GAjX4BJlqCCKa/lHyYuCJQUBUjcmgXqD7BPPPJhd/TAplTDZJoR94kobVuKYw6TSCK13L4
+ 4yaT/H3Ygf/hWYlaD9MscpvlTs21BjMkGJA1rABTagjUG/2zxE9EJ8ZLKetGHr0KqE8NvK6X
+ evK0Iai9Wrf+Ro3Yvv9+losWhRXKlJ6FVHmZkt+A8BOsDAbzsAB+vpT2M4nVKtio27hc+adZ
+ zl6ncfYpQ8BZsUgkQmGOvVSO3kW0aZuoNcrLZUj2CCe5xWuTpfi/xlhJB46Pa8e4MVJO2Fhz
+ f08CGoidAuIvdvjldpXSsE07igiBMDvOIVavjRryivUSK59B5vCWK7No9Rf2V/chOgXQq2YP
+ JRfMGQpNUiYC/FMEg9/5JYWhvupjXTXeDxDo1XTrq0yi4TW5FwsiOG2aIKKJ7RmQ+1Nx16jq
+ mKF1F3fJSkAM+O76RqOrSqj07qncSTTHdh6+KeD3vJnnnWf3mAQThoMWjOTq+OkgUP4QdNUK
+ 0UO9jEpq4Az8lCmSp/2WBjQiHuOlgUZUsBMCO0z8gyW27HI7gOCQGMDS1Z8hMcOvcsyQ3kuk
+ 1SOhd6sXWcpu7yOQnXb/bCRxd+vBRUowaY5TXdsZWM4DxPL+enfUjqnog5fLZOI
+IronPort-HdrOrdr: A9a23:6T36qKktAnFN1czLGuXUPivgdvrpDfIM3DAbv31ZSRFFG/FwWf
+ rDoB19726QtN9xYgBDpTnuAse9qB/nn6KdpLNwAV7AZniDhILXFuBfBOLZqlWKJ8S9zJ8/6U
+ 4KScdD4bPLYGRSvILd/BSyFcomzZ2s9aClgvqb8lJWJDsaDJ2JK2xCe3+m+oocfnghOaYE
+X-Talos-CUID: 9a23:UxLSVGMY+X+2+O5DByVn1kgOOf4fclLlzVPweWCiEm1TcejA
+X-Talos-MUID: =?us-ascii?q?9a23=3A53chQA0QcChNEZWT7fEW3toYSzUj+/22M0wN0r4?=
+ =?us-ascii?q?/ne68LytPHxe9h2vvTdpy?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.27,123,1787011200"; d="scan'208";a="850130075"
+Received: from alln-l-core-03.cisco.com ([173.36.16.140])
+ by alln-iport-2.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
+ 25 Sep 2026 19:31:09 +0000
+Received: from rtp-orb-10405.cisco.com (rtp-orb-10405.cisco.com [64.100.22.53])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by alln-l-core-03.cisco.com (Postfix) with ESMTPS id 55AFF18000426;
+ Fri, 25 Sep 2026 19:31:09 +0000 (GMT)
+From: Randy L Tice <rtice@cisco.com>
+To: dev@dpdk.org
+Cc: Morten =?utf-8?q?Br=C3=B8rup?= <mb@smartsharesystems.com>,
  Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, stable@dpdk.org
-References: <20260916135827.116145-1-zhtfdev@gmail.com>
- <a46db9e8-1513-4e19-b029-2d55e28d42b4@intel.com>
- <b653e89e-d67d-40c6-afea-61d3fc5b1c3e@intel.com>
-Content-Language: en-US
-From: Zhang Tengfei <zhtfdev@gmail.com>
-In-Reply-To: <b653e89e-d67d-40c6-afea-61d3fc5b1c3e@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2 0/1] mbuf: add optional dynfield3 storage
+Date: Fri, 25 Sep 2026 15:31:08 -0400
+Message-Id: <179036466858.2.13982499480648014088.v2-0000-cover-letter.patch@cisco.com>
+In-Reply-To: <179027866735.2.6802580807293251703.0000-cover-letter.patch@cisco.com>
+References: <179027866735.2.6802580807293251703.0000-cover-letter.patch@cisco.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+X-Outbound-Client-TLS: ANONYMOUS; rtp-orb-10405.cisco.com [64.100.22.53];
+ TLSv1.2; ECDHE-RSA-AES256-GCM-SHA384; 256
+X-Outbound-SMTP-Client: 64.100.22.53, rtp-orb-10405.cisco.com
+X-Outbound-Node: alln-l-core-03.cisco.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,41 +89,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 9/25/26 18:05, Burakov, Anatoly wrote:
-> On 9/25/2026 11:47 AM, Burakov, Anatoly wrote:
->> A general comment: instead of reducing/bringing things back and 
-> 
-> I asked an AI to implement a fix based on this, and here's what it came 
-> up with, it is roughly what I would like to see instead (obviously, 
-> please review/rework as appropriate e.g. to properly support VMDq as well):
-> 
+This version updates the dynfield3 proposal based on review feedback from
+Morten.
 
-Hi Anatoly, Bruce,
+The optional area is now configured by byte size instead of pointer count,
+so the configured value is independent of 32-bit or 64-bit builds.  The
+storage is represented as uint64_t elements, and the configured size must
+be a multiple of sizeof(uint64_t) and reserve a multiple of the cache line
+size.
 
-Thanks for the review. Agreed, keeping the FDIR mode after the last rule 
-is gone
-is wrong (a later rule with another mode fails with "Conflict with
-existing fdir mode"). I'll drop the flag and do v2 along the lines of
-the draft: RXPBSIZE(0) computed from the default size on enable,
-restored on disable, and FDIR disabled on the configure error path and
-when the first rule fails after FDIR was just enabled.
+The extra area remains part of the dynamic mbuf field allocator.  To
+preserve the historical behavior expected for dynamic fields while still
+supporting per-mbuf private metadata use cases, copying this area is
+controlled by a separate build option.  The default does not copy dynfield3
+in the generic mbuf copy/clone path; users that want the existing copied
+dynamic-field semantics can opt in with mbuf_dynfield3_copy.
 
-Unless you object, I plan to:
+This version does not add a per-field isolate registration flag.  The
+immediate use case needs a configured per-mbuf metadata area whose contents
+remain local to each mbuf by default, matching the downstream storage this
+replaces.  Keeping dynfield3 allocator-backed preserves the dynamic-field
+extension model, while the build-time copy option lets deployments opt in
+to copied dynamic-field semantics without imposing that behavior on private
+metadata users.
 
-1. Use hw->mac.rx_pb_size as the default size (512 on 82599, 384 on
-    X540/X550/E610) instead of saving RXPBSIZE at init.
+Validation:
+- devtools/check-git-log.sh -n1
+- devtools/checkpatches.sh -n1
+- default generic-all build
+- build with mbuf_dynfield3_size=128 and mbuf_dynfield3_copy=true
+- mbuf_autotest with default and enabled builds
 
-2. Leave VMDq out: ixgbe_fdir_configure() rejects all DCB mq modes, and
-    the non-DCB VMDq/SR-IOV paths don't write RXPBSIZE, so PB0 is the
-    only buffer whenever FDIR can be enabled.
+Randy Tice (1):
+  mbuf: add optional dynfield3 storage
 
-3. Not address the fact that FDIR enable/disable from the flow API
-    changes RXPBSIZE/FDIRCTRL while Rx is enabled if the port is
-    started. Enabling on the first rule already works this way today;
-    restoring the buffer on the last rule removal adds the disable side.
-    dev_start only touches these registers with Rx disabled.
+ app/test/test_mbuf.c                   |  5 +++--
+ config/meson.build                     | 16 ++++++++++++++++
+ doc/guides/rel_notes/release_26_11.rst | 15 +++++++++++++++
+ lib/mbuf/rte_mbuf.h                    |  6 ++++++
+ lib/mbuf/rte_mbuf_core.h               | 17 +++++++++++++++++
+ lib/mbuf/rte_mbuf_dyn.c                |  3 +++
+ meson_options.txt                      |  4 ++++
+ 7 files changed, 64 insertions(+), 2 deletions(-)
 
-I'll send v2 rebased on next-net-intel in the next few days.
-
-Thanks
-
+-- 
+2.35.6
