@@ -2,100 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D22D1C98328
-	for <dpdk-dev@archiver.kernel.org>; Sat, 26 Sep 2026 09:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91121C9833D
+	for <dpdk-dev@archiver.kernel.org>; Sat, 26 Sep 2026 14:38:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3ADFC4060F;
-	Sat, 26 Sep 2026 11:34:20 +0200 (CEST)
-Received: from mx16.kaspersky-labs.com (mx16.kaspersky-labs.com [5.79.125.27])
- by mails.dpdk.org (Postfix) with ESMTP id 0271440294;
- Fri, 25 Sep 2026 15:17:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
- s=mail202505; t=1790342239;
- bh=oaYkmYOLshtuCEPbWxRMcE8cZHAH1n3eY31W9dFECQs=;
- h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
- b=IwA2qLz8HPvrexJAEepQuAyVm5LPRYYOn749vnYnkn5OE0vfT1P3p3TdPXAvEqOhZ
- UmbcpNaNaPbqr+HZy2cluzfzQS/JZcfPM4mNpCgUNDFPH4bDg3OWQdpt1xOn/AADbH
- n/W26bVVyFDaveKuzHN8rzrSVUm1r7C9yhY4ms1Wc0mAP1vWUos8NKpufGDnXinRTi
- wsAhzqlERZDIJQ3QgmCgsawt/lInW0WTys+KP5XyQbuGaAsVHz/PkBNSYYdpvt4UsM
- FI4/FWYeBkmAjyr2yvsZ4Zgki3qO62grLkuaantwY7fOoNdei1kZ9zmekrnzHRB+1Z
- cybQj4teyH1Xg==
-Received: from relay16.kaspersky-labs.com (localhost [127.0.0.1])
- by relay16.kaspersky-labs.com (Postfix) with ESMTP id D0CC3C0C27E;
- Fri, 25 Sep 2026 16:17:19 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.208])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (Client CN "mail-hq2.kaspersky.com",
- Issuer "Kaspersky MailRelays CA G3" (verified OK))
- by mailhub16.kaspersky-labs.com (Postfix) with ESMTPS id A4C48C0B316;
- Fri, 25 Sep 2026 16:17:19 +0300 (MSK)
-Received: from konyukhov.avp.ru (10.16.104.193) by HQMAILSRV1.avp.ru
- (10.64.57.51) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Fri, 25 Sep
- 2026 16:17:18 +0300
-From: Konyukhov Aleksandr <Alexander.Konyukhov@kaspersky.com>
-To: Kai Ji <kai.ji@intel.com>, Pablo de Lara <pablo.de.lara.guarch@intel.com>, 
- Radu Nicolau <radu.nicolau@intel.com>, Fan Zhang <fanzhang.oss@gmail.com>, 
- Declan Doherty <declan.doherty@intel.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, <pkaligineedi@google.com>, Konyukhov
- Aleksandr <Alexander.Konyukhov@kaspersky.com>, <roy.fan.zhang@intel.com>
-Subject: [PATCH] crypto/ipsec_mb: fix Null ptr dereference in
- set_mb_job_params()
-Date: Fri, 25 Sep 2026 16:17:14 +0300
-Message-ID: <20260925131714.3895601-1-Alexander.Konyukhov@kaspersky.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 4D6DE402A4;
+	Sat, 26 Sep 2026 16:38:17 +0200 (CEST)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+ by mails.dpdk.org (Postfix) with ESMTP id 8FD2D4028B
+ for <dev@dpdk.org>; Sat, 26 Sep 2026 16:38:15 +0200 (CEST)
+Received: from ar (unknown [42.86.133.105])
+ by APP-03 (Coremail) with SMTP id rQCowACXokDT2LdqfO_UCA--.57825S2;
+ Sat, 26 Sep 2026 22:38:13 +0800 (CST)
+From: Sun Yuechi <sunyuechi@iscas.ac.cn>
+To: Daniel Gregory <code@danielg0.com>,
+ Daniel Gregory <daniel.gregory@bytedance.com>
+Cc: dev@dpdk.org,
+ =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>,
+ Punit Agrawal <punit.agrawal@bytedance.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [RFC PATCH] eal/riscv: add support for zawrs extension
+Date: Sat, 26 Sep 2026 07:38:11 -0700
+Message-ID: <20260926143811.334693-1-sunyuechi@iscas.ac.cn>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20240502144149.66446-1-daniel.gregory@bytedance.com>
+References: <20240502144149.66446-1-daniel.gregory@bytedance.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.16.104.193]
-X-ClientProxiedBy: HQMAILSRV2.avp.ru (10.64.57.52) To HQMAILSRV1.avp.ru
- (10.64.57.51)
-X-KSE-ServerInfo: HQMAILSRV1.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/25/2026 13:02:39
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 206250 [Sep 25 2026]
-X-KSE-AntiSpam-Info: Version: 6.1.1.27
-X-KSE-AntiSpam-Info: Envelope from: Alexander.Konyukhov@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 125 0.3.125
- 408a76d0ab6a6a06c054d212c38932c1e9d7db86
-X-KSE-AntiSpam-Info: {diag_burst_silent}
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: kaspersky.com:5.0.1,7.1.1; 127.0.0.199:7.1.2;
- d41d8cd98f00b204e9800998ecf8427e.com:7.1.1; konyukhov.avp.ru:5.0.1,7.1.1
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions_lk}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/25/2026 13:05:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/25/2026 11:50:00 AM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310,
- bases: 2026/09/25 12:47:00 #28626221
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
-X-Mailman-Approved-At: Sat, 26 Sep 2026 11:34:16 +0200
+X-CM-TRANSID: rQCowACXokDT2LdqfO_UCA--.57825S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruFyfWF1UGF4rKw4DXF4kXrb_yoWDKFXE9F
+ 95K3srKwn8AFW0qrs2kr4rCrZI9rWvgryUWr4qqr12vFn7ZanrXwn5Crn5Xw4rJay8Arna
+ 9rWSvrZay3W29jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+ 9fnUUIcSsGvfJTRUUUb2xYjsxI4VWkCwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
+ 6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+ 8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
+ cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z2
+ 80aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAK
+ zVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx
+ 8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAI
+ w28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
+ 4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxG
+ rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
+ CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2
+ z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU4oUDDUUUU
+X-Originating-IP: [42.86.133.105]
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAMCAmq30-IAXgABss
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -109,37 +60,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In function set_mb_job_params pmd_aesni_mb.c:1742 check
-(cipher_mode == IMB_CIPHER_NULL && oop)
-is not enath to garanteed job->dst != 0, which in turn could lead to
-NULL ptr dereference.
+Hi Daniel,
 
-Add new check for (sgl == 0) to be shure that job->dst
-was set in pmd_aesni_mb.c:1610
+This RFC has been sitting for a while. I tested it on an RVA23 board
+(SpacemiT K3, Zawrs present) and it works: over a 200 ms wait, wrs.nto
+woke up 53 times vs 14.6M spins with pause, hand-off latency is the same,
+and the lock/ring/atomic autotests pass.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+To move it forward it needs:
 
-Fixes: 03944ff5e3df ("crypto/ipsec_mb: support null auth/cipher for aesni_mb")
-Cc: roy.fan.zhang@intel.com
+- rebase
+- build-time detection via __riscv_zawrs, like the V extension in
+  config/riscv/meson.build, instead of the manual meson flag; this also
+  answers Stanisław's question about extension detection
+- int memorder -> rte_memory_order memorder
+- RTE_WAIT_UNTIL_MASKED: the alignment assert is inverted (!= 0 -> == 0)
+- do a plain load before taking the reservation; always starting with
+  lr costs ~10% on the uncontended MP/MC ring path (ring_perf_autotest)
+- release notes and a note in cross_build_dpdk_for_riscv.rst
 
-Signed-off-by: Konyukhov Aleksandr <Alexander.Konyukhov@kaspersky.com>
----
- drivers/crypto/ipsec_mb/pmd_aesni_mb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If you are still interested, please send a v2 within a month (a short
+window only because the patch has been idle for over two years; if you
+need more time, just say so). Otherwise I will send a v2 with these
+changes, keeping your authorship.
 
-diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-index 05dc1a039f..57d8925a87 100644
---- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-+++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-@@ -1738,7 +1738,7 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- 		job->msg_len_to_cipher_in_bytes = op->sym->cipher.data.length;
- 	}
- 
--	if (cipher_mode == IMB_CIPHER_NULL && oop) {
-+	if (cipher_mode == IMB_CIPHER_NULL && oop && !sgl) {
- 		memcpy(job->dst + job->cipher_start_src_offset_in_bytes,
- 			job->src + job->cipher_start_src_offset_in_bytes,
- 			job->msg_len_to_cipher_in_bytes);
--- 
-2.55.0.windows.2
+Thanks,
+Sun Yuechi
 
