@@ -2,82 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5450ECA5FA6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 19:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46491CA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 23:13:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 76002402F0;
-	Mon, 28 Sep 2026 21:50:02 +0200 (CEST)
-Received: from mail-qv2-f42.google.com (mail-qv2-f42.google.com
- [74.125.230.170])
- by mails.dpdk.org (Postfix) with ESMTP id 83CAF402ED
- for <dev@dpdk.org>; Mon, 28 Sep 2026 21:50:01 +0200 (CEST)
-Received: by mail-qv2-f42.google.com with SMTP id
- 6a1803df08f44-9144083bddaso34779456d6.3
- for <dev@dpdk.org>; Mon, 28 Sep 2026 12:50:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790625000; cv=none;
- d=google.com; s=arc-20260327;
- b=gsv1TOGkFPkFXnNEYaxLu607ws/mG3fjb0B77fmnCs3s2jOq5XjjvC5tgoGmEa/86Z
- B317m1Es4r/VOVPXwBL9s37E2X6nyHmdTfF2wVxEYPvotXPHqq4XwEJwQ+TElsC+L7/r
- r92iS+qRK4NJxzH80/otSELI0j6Z0v+JPuByqBD7/1Sqx9yLbQChBKBqvbtAF2gD5H5s
- XYCorF0OeonnOaxyCuJ8Hn+NLXjMpoJayBT3OHf5GQfVqPbTOr5AESiG5SGnRAfZQIsK
- Q6ARzea178+e3dVYZbkuNgN5qyQocizuiInHq66scGowx64uXOmG6hks8c/y+WvbppxK
- q4uA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=hPcAdugdFqLlVDOTOAhFCHOHM/ZUbgfmNuXpGYpChQM=;
- fh=qyuuzndXukfeez3OyMxQvZAFJoasiBgnDAdKPalV9JE=;
- b=dalgPeZ8HCK0dbLJ1jZOUSGXm/ul1807OR+nEGHrnhe46OOCl1wbwK0NmvOMNp0Qr6
- qoBJ+1BnXgiuCnuQ/fGSep/KXMZWI5hxskmAkp8Wr1/GEbmiD6KItM+c4txcJMSTvoDe
- yrr03VGlitcJu+6wteT0K3ZPg+kAUi3AJ7qWtDR8pUlmDvkR+qnc1nsMas+hHw2fhmCV
- W4JHxtrTPf2KjAq82sxyLVjJLG3uWxxbpFsgDVfqwDSWaeY2xSuLWir9F02ZDJB11Yln
- ZyxOW2l8NZHFasSwPUY2POONvdCRN9rRFlMJdk5ddSQ7xCCyDAP+ZQyC04UCVnAMoMlP
- otGQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 352BC402DD;
+	Tue, 29 Sep 2026 01:12:59 +0200 (CEST)
+Received: from mail-dl2-f12.google.com (mail-dl2-f12.google.com
+ [74.125.229.140])
+ by mails.dpdk.org (Postfix) with ESMTP id 545FA40285
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 01:12:58 +0200 (CEST)
+Received: by mail-dl2-f12.google.com with SMTP id
+ a92af1059eb24-142dd046b87so2578077c88.2
+ for <dev@dpdk.org>; Mon, 28 Sep 2026 16:12:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1790625000; x=1791229800; darn=dpdk.org;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=hPcAdugdFqLlVDOTOAhFCHOHM/ZUbgfmNuXpGYpChQM=;
- b=XpGyAm8s8MfWJAYVJbBQtr9Z0Tj6f3jGkiYpU9T/aL3dr2/KiMQgmHgxCoXh29uVvC
- 5hyshbcZQbYUTr2iz7w2/SWVU6UEtLiGm97FxliiP5xNALJeznWi8dn77JPgRS/+kf5c
- Nn65HubuyFqPVkU8TEQz+FpFXp+Mk+zG9pT3Y=
+ d=gmail.com; s=20251104; t=1790637177; x=1791241977; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:in-reply-to:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=6CbNFoB/3xkm6D9Bvg/uYdEBY3A5diTl5HhDJexWk4I=;
+ b=VBS+loRaEiwDM2sVMsRTnXLFGdfVayQgisdNO5HwgcqwRq6ljzi4UTZuhhpG0zhTbn
+ HN0YG1AaKVSv0Z4/I26kz4iwzkHqF74dbq5JN23LtfxeTczszooSxlHQZGz/7omQBguy
+ RUrtJOl5YwXS32I783AvgTb8gTAGqvP+xSPF5l2TIkDj8Sniwaq1cJJR794dQMK+Og47
+ PdfwxS9kdXwR13rC7fbV67bu5ioMvCSk0JvRKUe2DH2UE/kaPAT2GWijb0pQ1iD+qxAL
+ sdbgJkKIhKfRp5TWl7KD1uTyADPiwnkGBt19uSXUdpGm+7wpCgPlDvTUIEpJSBumwNT5
+ EGFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790625000; x=1791229800;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=hPcAdugdFqLlVDOTOAhFCHOHM/ZUbgfmNuXpGYpChQM=;
- b=aFVpxiJ4YSu2r6Ext7VqYx7d5AkVb0pPGfD9rnNoPk77G16T+dV3mWtm2H6Hqd55tB
- XE8+toCiOdj01rz9X9HvsWpU34Bf/ZFFbwvXkBisN5UtjWLk6tkkED9dgggOgsOkkEKP
- iLLeFDmugIp+b37/BGG5ZWhcKWL9WCpvc0PvNZ0DDrGkkZGDU+xEiowvG8shzCdvC98B
- vDq/j0tjsDQ0zaWxBNXPnwErIvBCLZ8cmXbwQWLjAZ4K328fzHAfnXrxSqG/p6h4GZzb
- HQiU1KUyBaxc22OGYjq1vjKY+6KDgmk3q+zH+K4EH3rD/NV6cTJz6B8E5vQkywzo/x/P
- 6CPg==
-X-Gm-Message-State: AFuF++l5/WJBprTCRZtF5meQFPRce+6eA8K7/asvlJidx40v5IGhzLkE
- kSNDgQmiKq4Stl7prjdJe2udLVdiYFG6zduRlkULsrrVwvaMacqBL994C+r218c5seuOGTLuVZj
- HkHQVC5n5ftC0W/oGJsftMLEFnu26YYVOW4j5NIiRRtzBRNBYDjmJWN0=
-X-Gm-Gg: AYBFou2Hv6oQESidnTVztq90qvegnDpH7wWuQRIhyNHhuvdTat+CdoFyMon5LdLjGh/
- UW1HcprAbxr+GxlJzybGXhjErpUVquVbQ3j824yqh7hEvQjw2hPk+oqu+DPtc76mmZ/Qwrw0mCM
- z7ytm65HCMLBhn23dGz3YN588YfR9lvjhzxeA640j3ktqJVNQCoHVbyxL++LT1fJBL7vnNX6k8B
- W5TmX1teSWQtlLpNRXIxR0vdzirYX0GPksFoUj7BCJDD8/5l13JAZ9fPw/lTc8H+qoT/otHaTk/
- JsXfUFopwL3dI5WXws7PMogDvPsh0R0BzP5EHboTa4PDD5WOYEdfDI96nKm3Usu4Eku/3w==
-X-Received: by 2002:a05:6214:763:b0:914:5769:dcee with SMTP id
- 6a1803df08f44-9145769e533mr118649766d6.17.1790624999757; Mon, 28 Sep 2026
- 12:49:59 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1790637177; x=1791241977;
+ h=content-transfer-encoding:content-type:in-reply-to:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=6CbNFoB/3xkm6D9Bvg/uYdEBY3A5diTl5HhDJexWk4I=;
+ b=W1yc1/k3Ddkp4j9yuc9Fr8W3wEzA/gnNGPxqvJ4Npm9PGRWpPpoKmoKaGm0MbikAIt
+ tTx+g4uG1vDljeBFG2CpaEOAU3WjoKBD7OGkq11mBFzgke4RSROVRLfYkwBY2tN57Emi
+ esY0xsPqKsmaBoC0taSVytCrHM1BoqmuVfBw2pVj6muwU5EFQHnlunMbNe0bWq8Bd3L2
+ k9ewNrthznNJ/W+VMW4NFGAyv8DwF4fqMJgKfRO6MA/MG+PRKdcVibMSG/hTOEuZJDRg
+ EqzbMPRLkXzekoQaToSAcnGvEhY+Jc1cMZqqD5lc9v95SUR1vqapiIv4ppzMpvWcnjar
+ eDRQ==
+X-Gm-Message-State: AFuF++kl9/7nx9179ZGnQbnc3jC73vpQQlw42HH9QlKJaUbTAsgb2wg0
+ 9a5117WxRQzvNosndZuuP3bbYPEtubKjEGI5ty6APOh54ck/hU5ArHFya7BRpN9I
+X-Gm-Gg: AYBFou1gTSq2gcXyURHSSF5IjvFhafvQV97ZcXg9aTB8jshdfg1mN60qnVPreWkE404
+ hgSfrwZ0WGveE2AA91nLuQhMn5Yxi4ZpnNcIzTNIFq0M77XgYhUVPk/jorVdw9Y58TU6NgOlgSP
+ s+cFeJnVKEZkPxXHaSgEJK9CdURxY6MyG6qGIXQPXR1qHS0kdUxWLD3NyiwJSbFJ7aE28KYIYhp
+ 6Hdk2a9x2ixp5C5/7Qt8ofga+fuH4ybDpnikyYhj/IKoDh0uT7QSfYg5g5/gpBzOs5xm5zbiNCX
+ J3YEL0Rs3rNXWUdDNL4z2xfa11F/bGffh1+gbtqXWjLOqkX/oKToaBbo8lvtDI0Lu3eni+AWYiE
+ kTlbNyvXNetR0f72V9vDW/tY5hJedwimf+QIbxTxBk6wpzC4qjzdkj5QbZ2okMgkppMj8d7V170
+ FnXw9FZWbrdqFDe+IebmfXFyU6s7ix6+Ha02BcffJl+CGwl7WMz01CsCqVnFFKahjTuOz1K07a1
+ ifKybKeoMmVCbirdqTH6weYp150
+X-Received: by 2002:a05:701b:2710:b0:147:a81:611d with SMTP id
+ a92af1059eb24-1470a816963mr11003096c88.9.1790637176926; 
+ Mon, 28 Sep 2026 16:12:56 -0700 (PDT)
+Received: from [192.168.10.104] (mail.forbuysw.info. [66.175.223.235])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-146bb6551d9sm19478685c88.9.2026.09.28.16.12.54
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Mon, 28 Sep 2026 16:12:56 -0700 (PDT)
+Message-ID: <c846b990-8b40-488b-95f3-c151aa9c6b9e@gmail.com>
+Date: Tue, 29 Sep 2026 07:12:52 +0800
 MIME-Version: 1.0
-References: <20260327180232.443820-1-abailey@iol.unh.edu>
- <20260928192246.254752-1-abailey@iol.unh.edu>
-In-Reply-To: <20260928192246.254752-1-abailey@iol.unh.edu>
-From: Andrew Bailey <abailey@iol.unh.edu>
-Date: Mon, 28 Sep 2026 15:49:48 -0400
-X-Gm-Features: AclHuK_5DcU4qMPbxQICPFSKY_95gwxsfMFO86VFIKDDwHJINkwCSPGRG3QOco0
-Message-ID: <CABJ3N2Uhp2g+AuaVE6zR6vxS4Xn-L2XQPyU7_ebKhPEaqogz8Q@mail.gmail.com>
-Subject: Re: [PATCH v5] dts: add ipgre test suite
-To: dev@dpdk.org, luca.vizzarro@arm.com, patrickrobb1997@gmail.com
-Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu
-Content-Type: multipart/alternative; boundary="000000000000096aad065c905fd8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mailmap: update contributor name
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Thomas Monjalon <thomas@monjalon.net>
+Cc: dev@dpdk.org
+References: <20260927035949.36887-1-zhtfdev@gmail.com>
+ <9RwQnWvjTRWvUBMvuRMoiA@monjalon.net>
+ <98CBD80474FA8B44BF855DF32C47DC35F65A81@smartserver.smartshare.dk>
+Content-Language: en-US
+From: Zhang Tengfei <zhtfdev@gmail.com>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65A81@smartserver.smartshare.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,17 +86,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000096aad065c905fd8
-Content-Type: text/plain; charset="UTF-8"
+On 9/28/26 22:33, Morten Brørup wrote:
+>> From: Thomas Monjalon [mailto:thomas@monjalon.net]
+>> Sent: Monday, 28 September 2026 16.22
+>>
+>> Hello,
+>>
+>> 27/09/2026 05:59, Zhang Tengfei:
+>>> Use "Zhang Tengfei" as the primary name. Both addresses belong to me
+>>
+>> In DPDK we try to always have the first name first.
+> 
+> "first name" -> "given name"
+> 
+>> I assume Zhang is your family name?
+>>
+>>
+> 
+Hi Thomas,Morten,
 
-Recheck-request: loongson-unit-loongarch-abi2
+Yes, Zhang is my family name. In Chinese the family name comes first.
+To avoid ambiguity, I'd like to use "ZHANG Tengfei" (family name in
+capitals). Would that be OK? If so, I'll send a v2 of the mailmap patch.
 
---000000000000096aad065c905fd8
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Recheck-request:=C2=A0<span style=3D"color:rgb(51,51,51);f=
-ont-family:&quot;Helvetica Neue&quot;,Helvetica,Arial,sans-serif;font-size:=
-14px">loongson-unit-loongarch-abi2</span></div>
-
---000000000000096aad065c905fd8--
+Thanks,
+ZHANG Tengfei
