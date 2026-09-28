@@ -2,74 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A1BCA5FA2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 18:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45239CA5FA3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 19:15:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8297840E37;
-	Mon, 28 Sep 2026 20:30:46 +0200 (CEST)
-Received: from mail-pz2-f38.google.com (mail-pz2-f38.google.com
- [74.125.228.38]) by mails.dpdk.org (Postfix) with ESMTP id 564B140275
- for <dev@dpdk.org>; Mon, 28 Sep 2026 20:30:44 +0200 (CEST)
-Received: by mail-pz2-f38.google.com with SMTP id
- d2e1a72fcca58-88206fc44c6so1862458b3a.2
- for <dev@dpdk.org>; Mon, 28 Sep 2026 11:30:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E8935402F0;
+	Mon, 28 Sep 2026 21:15:15 +0200 (CEST)
+Received: from mail-qk2-f32.google.com (mail-qk2-f32.google.com
+ [74.125.230.224])
+ by mails.dpdk.org (Postfix) with ESMTP id 81FE140275
+ for <dev@dpdk.org>; Mon, 28 Sep 2026 21:15:14 +0200 (CEST)
+Received: by mail-qk2-f32.google.com with SMTP id
+ d75a77b69052e-533342a38ebso23654871cf.0
+ for <dev@dpdk.org>; Mon, 28 Sep 2026 12:15:14 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790622914; cv=none;
+ d=google.com; s=arc-20260327;
+ b=jq7mk2RysRUyw8S7oiN9XRWyZ1x2V/XtXj2joEMdqC4K7jZ2LD0SmHSCzJRFRNB7HT
+ GL2jgqbdSo2hcH0YEF8774jzJKqS1My5JUb7SDaoYnjznVuey746axSUUNFP8Z2py6zV
+ v9Lh4h3SP2SGch9tokxuOloM9HRYGEtBpHtkr0RywHK3gC2bYQHPimlPCsplTp50KTiT
+ fIL6mimSXPB3HrHjbKcQ+7p4kJE/vUscTqD+wCRjDF+Ka8b4sdz/lor5tLtv80hiKiW1
+ PscaUz8mSSS1NjxoXVk4SDgbBxYokuc3GMjKOzq2h/fC1cvRtC8EONdos6+hCqZh8jMv
+ j6RA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=U9K7+FCJ2i8OGsA5q6XcYrv55OlxLGaLhYRvsCRMHg0=;
+ fh=sagiv8UuYNg0qHRSkdxniOuKu2ydRxcsBLpQxNb1vYM=;
+ b=UgdCveDWBus6ENCfF8pSKCi7R3/5R+g4SjjhDsH54htN1w2FfVC4xoSDPlt+kAPlzO
+ f6ozTNYs+XifJRlkhVx2uyHMmXS5mDFdHzx3YSnrHFJJwg56/HiWjnqExsDVDi7awh5D
+ zvka0eSu8NPLaLD/DO3zPD9K8/IghJqaLo8hYYeQ8gGduf0MAizw+jpZgHWbqaOdRzi7
+ v3vcwQg8U0WKR1ikcND/uBLeCfGcxDAo0CnkFYr1MjE0wiJeqn5ejmlg/hIRGrE0/VBa
+ rc3c3P/g9uU/olEQLLW3VE9wzDXuBLSt+G2GUzdksgfrLxfRvmtvyGEK917QET7k21Bp
+ qtMA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790620243;
- x=1791225043; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=dbvCDjRwoqYcwF0ZNJGPz/53o6NlOrt/TKoXwvw/ohQ=;
- b=vxYECvbN8vcwTGbL/s6zRXz+ASJWMGG1BTKzk86EQa2bt18NORGHxxAujisKRzQ299
- Pg8uFWqF81BX/Ej5eg7Sz56NltyHCkM3kifhoPOPKTEFEcOZXIbLOy6UgRgobzxYBpda
- oAS+aYJ64d2U4PAf8W3gRJL+BWuTigYWX2RDm0KQRpKDlwFsSszNVWmqWcbYVoX/p9iq
- HdDycbwlYU9ryUZUen79+Lq1YS5oT8y4nO36poIpSjH2KXTuP98UTzoW/AhEv+PO3xjl
- Pfyp8ikudAATVWCrYlT5r3KrXnMIREOeMfBmCpBdhfvQgNPIO4pHx6tVtTpFGCGGuyYf
- tzvA==
+ d=iol.unh.edu; s=unh-iol; t=1790622914; x=1791227714; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=U9K7+FCJ2i8OGsA5q6XcYrv55OlxLGaLhYRvsCRMHg0=;
+ b=Ebg8Yb0Bad2ozWHkKLfirrdObudhdGKacu7Y1LuPKouhcIO/CR2RsZdVAQ8fwlmvyF
+ 0uCLl0bOkHy5LocS6HtZBNkPEKmH7huC08XGWCrfEshpfpu7rZNPAqPsqLc/xwVDgJ+R
+ 1P22CBBjyUukwADlSkzVzoMmaQp9yjBK3YVQk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790620243; x=1791225043;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=dbvCDjRwoqYcwF0ZNJGPz/53o6NlOrt/TKoXwvw/ohQ=;
- b=auyHJ30Pb7IWHEEGhJoPmAcK6WxZOE1bdQ0CW9cq8VSPDTGha0T9EMX8DTyHd+Fuyk
- U7FUjQtIZQx/C+n143opZlv4tPwzfr5ha2GZ6zKnsHH2NV461vtRX+pPWt/nvk3yNpFc
- a2anXs3OFAgQJEvvWtBQ6wh99F7ok8Tzb023qW7WnrOuL0RgQ++Y0qnxYZnT5kBrbpzz
- EHMtcWC9SCv29Tazlo6ySMpseiYzqHj1TcGiT+9JgNIrMe8mYss7uovPYfobeEFEiJCz
- 5+u9oBwG3r8mcz3dJKtd5B4jBEjI06e72b3M9iddY3oeAftESNRKejagW6Wgze1214NC
- 0pDg==
-X-Gm-Message-State: AFuF++kTZyhY6nTr/PXYgIExH79YiDUucqqZy1ND77QMfj2XYOUftDan
- mOZty7W//6pOolWiCBUYydhp565x76TFc9Tk0g79rjtlWdHg+A/0v58RBpZXBFCcPTM=
-X-Gm-Gg: AYBFou2iEHQk8/6jZVi6zFP6uRZRPsQDRgJNA+dtEGTKDlafpgu87KKvfvJei2LKMVG
- OfRHFEG/vUymYFHkfCBCsxtDo8L4w8Bj6Ahk8IMxDokQgD6gEXCuf8gz0UELksxDk341g5js0pc
- wr3te5LGAy+rE6EeIqPJCu6n5eHSaWitkcXcN6iV4wIYH8kN8giea6jrkgTWEuhkB5njMzNHxRD
- mrQeNls2E9Hhf+CHkB6/5VRkfPZ2KEvHQTXOSBUiGqdrFGbxFZHB++X7PIzPpLcnhqq3BKKn8ZO
- nGLe23IeV8ghaj8YTGPtO1WpGM78UMXn0+ZmD0RIg13eWQwaHtdu0pd3BdFt2fg3YDAvYkLDSQe
- dCd4LxHatM+X0nvDFG9Ph2F+5h9gie9c4RIEw2CXU9E+0y62pdF7yimgzIONA4vhXqKNKABpin1
- en3ZBpalT1eEfsGYuQFxdtJtZiwceH5F2pIGXhRxw2jI8G6wiyYjisTIsO26XK6TUZ6YqlHhrd2
- ircjdrkqEfo///wAjTOwsWoXCcBllba84ENbi4F
-X-Received: by 2002:a05:6a00:2e11:b0:882:157d:95d2 with SMTP id
- d2e1a72fcca58-882157da507mr4768467b3a.8.1790620243009; 
- Mon, 28 Sep 2026 11:30:43 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8825ecac8absm2336512b3a.56.2026.09.28.11.30.42
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 28 Sep 2026 11:30:42 -0700 (PDT)
-Date: Mon, 28 Sep 2026 11:30:41 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Leon Yu <leon.yu@nebula-matrix.com>, Sam
- Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v1 1/1] net/nbl: allow MTU change when port is started
-Message-ID: <20260928113041.0f5e5f4d@phoenix.local>
-In-Reply-To: <20260928083616.118559-2-dimon.zhao@nebula-matrix.com>
-References: <20260928083616.118559-1-dimon.zhao@nebula-matrix.com>
- <20260928083616.118559-2-dimon.zhao@nebula-matrix.com>
+ d=1e100.net; s=20260707; t=1790622914; x=1791227714;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=U9K7+FCJ2i8OGsA5q6XcYrv55OlxLGaLhYRvsCRMHg0=;
+ b=0fzBAzqPrSoLt/JbqC5+HnInebC6INlRv0IA/bgK+hjLQ8pk01+RcSBSX4m6jL1tnF
+ VuWFWNetQ1/7hExPdLrm95wzI++WgoOYK7Q2cqhvwkoCd35TZwWMeftoUjz5ZhKtKDhu
+ XtnSy+b1PlLc65VSje2FwJ2fPkk1vhyvMnhjZ5TQnYaLkCggiGaXk7dffmiBRspi2IHX
+ XaKHqJHRvJQudc+KOGz8IlgZ/plgeS4Wy5Dh4wpCaHcC41ufVR/lI1ZSPUHjUpgfQ/R7
+ KWcfctfsobVbMVj5+kp9iJ4r6JAs4rRBv0Ghj4FOD3nCZjX+5z1L+D14z5K5SCdMbIvZ
+ WdgQ==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBwhZ51Cpta8CrXNpBfo4YDQtkNG0NQehKMgHoQtIViWQFms+1UeMySJCHfkM+MMdpFZMYc=@dpdk.org
+X-Gm-Message-State: AFuF++mKoIE217/NBiTjBBOsrbLAWFD4kBF2+5MgJljG5lFfofpPbbU1
+ rA0zwiwQ5/Fh79FuQbZY/JFgDyQyJpVCGSae/Xl0lAMfHT1kJDWMyg7HC92vpKZCH1uMzppPhsc
+ BdiNRkCFgT+RY9DbXJCIwJADnCTR3+dOHffz2MZbeWw==
+X-Gm-Gg: AYBFou3oV/A58Gz3YjeRUmuAuRi5K6H36Zg/pkhWKD8pp1Xyy5xO4j38QEaf4Y+lvaM
+ SvozHaFk6gv8vN1G8hAAW37UoxiDJGvZH+h90z0HS5V611JycuoNN0WJC89jzr8UoeL6Qyfee6H
+ iDsbUTyhNntfNOOid+U7Yitl/L+Itawc8Glk48YuzXTajoeRGR5l5ITgzZ118W83wrnEwZLqaHY
+ ECXJJE5zy+dsqqo2yX3gT8U5+f5aSYFra49FSnGgKsIJOf4x69wmotZlWYEvWYJ3QscPEi24zDo
+ bawt8pryYVYXdCmXnoCOjWl4EdxeT23pG1xU6UBkuU6KR+QS65bF0a/xjXQK/WouPYzKZQ==
+X-Received: by 2002:a05:622a:1653:b0:532:c459:7b8f with SMTP id
+ d75a77b69052e-5330b67bf9cmr223672891cf.30.1790622913479; Mon, 28 Sep 2026
+ 12:15:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260901185957.453730-1-knimoji@iol.unh.edu>
+ <20260908144707.862960-1-knimoji@iol.unh.edu>
+In-Reply-To: <20260908144707.862960-1-knimoji@iol.unh.edu>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Mon, 28 Sep 2026 15:15:02 -0400
+X-Gm-Features: AclHuK9JDU5Wj34cj_xwxCVuRq5pquJV8gnJiS68NIAkEsOSxYbZAS-ipekwGAw
+Message-ID: <CABJ3N2W3cmY28N3UW7c8uNpKJcAKPtTwifWhGy8PnX8dSHnRdQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dts: add pvp multi paths vhost performance testsuite
+To: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, patrickrobb1997@gmail.com, dev@dpdk.org, 
+ dladd@iol.unh.edu, lylavoie@iol.unh.edu
+Content-Type: multipart/alternative; boundary="000000000000af59f3065c8fe25a"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,95 +94,272 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 28 Sep 2026 01:36:16 -0700
-Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
+--000000000000af59f3065c8fe25a
+Content-Type: text/plain; charset="UTF-8"
 
-> Remove the dev_started check in nbl_mtu_set() to allow MTU
-> configuration while the port is started.
-> 
-> Fixes: 75cdda36a4c5 ("net/nbl: support MTU update")
-> Cc: stable@dpdk.org
-> Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-> ---
+>
+>
+> +
+> +class Config(BaseConfig):
+> +    """Performance test metrics."""
+> +
+> +    test_parameters: list[dict[str, int | float]] = [
+> +        {"frame_size": 64, "num_descriptors": 1024, "expected_mpps":
+> 1.00},
+> +        {"frame_size": 128, "num_descriptors": 1024, "expected_mpps":
+> 1.00},
+> +        {"frame_size": 256, "num_descriptors": 1024, "expected_mpps":
+> 1.00},
+> +        {"frame_size": 512, "num_descriptors": 1024, "expected_mpps":
+> 1.00},
+> +        {"frame_size": 1024, "num_descriptors": 1024, "expected_mpps":
+> 1.00},
+> +        {"frame_size": 1518, "num_descriptors": 1024, "expected_mpps":
+> 1.00},
+> +    ]
+> +    delta_tolerance: float = 0.05
+> +
 
-I don't think this is safe. AI explains in more wordy detail
 
-Review: [PATCH v1 1/1] net/nbl: allow MTU change when port is started
+This test suite needs an example in tests_config.example.yaml for
+configuration.
+Also, Test suites that are new to next-dts need an accompanying doc file in
+doc/api/dts.
 
-The PMD Rx buffers survive a live MTU change. nbl_res_alloc_rx_bufs()
-and nbl_fill_rx_ring() post every descriptor with the full mbuf data
-room, not an MTU-derived length, and nbl_res_txrx_recv_pkts() always
-chains on num_buffers from the Rx extension header. In-flight
-descriptors cannot be overrun by a larger MTU; oversize frames get
-chained. What the patch drops without replacement is the scatter
-contract with the application, and nothing shows the hardware side
-of the MTU change is safe with queues running.
 
-Error
------
+>
 
-nbl_dev.c: nbl_mtu_set()
++
+> +@requires_link_topology(LinkTopology.TWO_LINKS)
+> +class TestPvpMultiPathsVhostSingleCorePerformance(TestSuite):
+> +    """pvp multi paths vhost single core performance test suite."""
+> +
+> +    config: Config
+> +
+> +    def set_up_suite(self):
+> +        """Assign test parameters."""
+> +        self.test_parameters = self.config.test_parameters
+> +        self.delta_tolerance = self.config.delta_tolerance
+>
 
-With the dev_started check gone, a running port accepts an MTU whose
-frame no longer fits in one Rx buffer. scattered_rx is computed only
-in nbl_res_alloc_rx_bufs() at dev_start. An application started with
-MTU 1500, 2K mbufs and no RTE_ETH_RX_OFFLOAD_SCATTER can call
-rte_eth_dev_set_mtu(port, 9000); the call succeeds, scattered_rx
-stays 0, and the Rx burst starts returning multi-segment mbufs the
-application never agreed to handle.
+nit: Missing (-> None) in method signature
 
-Replace the removed check with the one ixgbe_dev_mtu_set() uses:
-refuse, on a started port, a frame size that needs scatter when
-scatter is not already in use. NBL_ETH_OVERHEAD already covers two
-VLAN tags, but the Rx extension header occupies the start of the
-first buffer and must be counted, as nbl_res_alloc_rx_bufs() does:
 
-	if (dev_data->dev_started && !dev_data->scattered_rx &&
-	    frame_size + <rx exthdr len> >
-	    dev_data->min_rx_buf_size - RTE_PKTMBUF_HEADROOM)
-		return -EINVAL;
+> +
+> +    def set_up_test_case(self):
+> +        """Delete stale vhost-user Unix domain socket files."""
+> +        self._ctx.sut_node.main_session.send_command("rm -rf
+> /tmp/vhost-net*", privileged=True)
+> +
+>
 
-Warning
--------
+nit: Missing (-> None) in signature
 
-Commit message
 
-The PMD does not program MTU itself. nbl_disp_chan_set_mtu_req()
-sends NBL_CHAN_MSG_MTU_SET to the kernel driver over the mailbox,
-and the Rx queues are not quiesced around it. 75cdda36a4c5 blocked
-this on a started port deliberately. The message needs to state what
-MTU_SET changes in hardware (ingress length check only, or anything
-in queue context), that frames in DMA while the limit changes are
-handled, and that it was tested with the MTU raised and lowered
-under traffic.
+> +    def _transmit(
+> +        self, vhost: TestPmd, virtio: TestPmd, frame_size: int,
+> repetitions: int = 1
+> +    ) -> float:
+> +        """Transmit packets using testpmd instances and compute average
+> MPPS.
+> +
+> +        Args:
+> +            vhost: the running vhost testpmd shell.
+> +            virtio: the running virtio testpmd shell.
+> +            frame_size: The size of the frame to transmit.
+> +            repetitions: The number of times to rerun the transmission.
+> +
+> +        Returns:
+> +            The MPPS (millions of packets per second) forwarded by the
+> SUT.
+> +        """
+> +        assert repetitions > 0, "Invalid number of repetitions given."
+>
 
-Fixes: / Cc: stable@dpdk.org
+nit: Error message should include why this number of repetitions are invalid
 
-Returning -EBUSY on a started port is documented behaviour of
-rte_eth_dev_set_mtu(), so the old code was not a bug. This adds a
-capability. Drop both tags; changing MTU semantics in the 25.11 LTS
-is not a backport.
 
-nbl_dev.c: nbl_mtu_set(), unchanged context
+> +    def _create_and_transmit(
+> +        self,
+> +        ring_format: int,
+> +        in_order: int,
+> +        buffers: int,
+> +        vectorized: int,
+> +        extra_args: TestPmdParamsDict,
+> +    ) -> None:
+> +        """Create testpmd instances with specified params and send
+> traffic."""
+>
 
-	dev_data->dev_conf.rxmode.mtu = frame_size;
+Missing "Args:" tag
 
-rxmode.mtu is an L3 MTU; this stores mtu + NBL_ETH_OVERHEAD. The
-value is returned by rte_eth_dev_conf_get(), so a conf_get then
-rte_eth_dev_configure() round trip grows the MTU by 26 bytes each
-cycle until max_mtu validation fails. It is also written before
-set_mtu and not restored on failure. ethdev updates data->mtu on
-success; delete the assignment. This one is a real bug: send it as
-a separate patch ahead of this one, with Fixes: 75cdda36a4c5 and
-Cc: stable@dpdk.org.
 
-Info
-----
+> +            with (
+> +                TestPmd(**vhost_params) as vhost,
+> +                TestPmd(**virtio_params) as virtio,
+> +            ):
+> +                vhost.set_forward_mode(SimpleForwardingModes.mac)
+> +                virtio.set_forward_mode(SimpleForwardingModes.io)
+> +                vhost.set_portlist([0, 2, 1])
+> +
+> +                params["measured_mpps"] = round(
+> +                    self._transmit(vhost, virtio, frame_size,
+> repetitions=5), 3
+> +                )
+> +                params["performance_delta"] = round(
+> +                    (float(params["measured_mpps"]) -
+> float(params["expected_mpps"]))
+> +                    / float(params["expected_mpps"]),
+> +                    3,
+> +                )
 
-Configured MTU never reaches hardware (pre-existing)
++                params["pass"] = float(params["performance_delta"]) >=
+> -self.delta_tolerance
 
-rte_eth_dev_configure() sets data->mtu from rxmode.mtu without
-calling mtu_set, and nbl_dev_port_start()/nbl_dev_txrx_start() never
-call disp_ops->set_mtu. An MTU requested at configure time takes
-effect only if the application also calls rte_eth_dev_set_mtu().
-dev_start should push data->mtu to hardware. Separate patch.
+
+This allows for a division by zero exception if the user supplies an
+expected mpps of zero.
+
+Other than these small things, the patch looks good.
+
+Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
+
+--000000000000af59f3065c8fe25a
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div class=3D"gmail_quote gmail_quote_container"><blockquo=
+te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
+solid rgb(204,204,204);padding-left:1ex"><br>
++<br>
++class Config(BaseConfig):<br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;Performance test metrics.&quot;&quot;&quot=
+;<br>
++<br>
++=C2=A0 =C2=A0 test_parameters: list[dict[str, int | float]] =3D [<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 64, &quot;num_descrip=
+tors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 128, &quot;num_descri=
+ptors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 256, &quot;num_descri=
+ptors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 512, &quot;num_descri=
+ptors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 1024, &quot;num_descr=
+iptors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 1518, &quot;num_descr=
+iptors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 ]<br>
++=C2=A0 =C2=A0 delta_tolerance: float =3D 0.05<br>
++</blockquote><div><br>This test suite needs an example in tests_config.exa=
+mple.yaml for configuration.<br>Also, Test suites that are new to next-dts =
+need an accompanying doc file in doc/api/dts.<br>=C2=A0</div><blockquote cl=
+ass=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid=
+ rgb(204,204,204);padding-left:1ex"><span style=3D"background-color:transpa=
+rent">=C2=A0</span></blockquote><blockquote class=3D"gmail_quote" style=3D"=
+margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-lef=
+t:1ex">
++<br>
++@requires_link_topology(LinkTopology.TWO_LINKS)<br>
++class TestPvpMultiPathsVhostSingleCorePerformance(TestSuite):<br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;pvp multi paths vhost single core performa=
+nce test suite.&quot;&quot;&quot;<br>
++<br>
++=C2=A0 =C2=A0 config: Config<br>
++<br>
++=C2=A0 =C2=A0 def set_up_suite(self):<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Assign test parameters.&quot=
+;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.test_parameters =3D self.config.test_para=
+meters<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.delta_tolerance =3D self.config.delta_tol=
+erance<br></blockquote><div><br>nit: Missing (-&gt; None) in method signatu=
+re<br>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px=
+ 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
++<br>
++=C2=A0 =C2=A0 def set_up_test_case(self):<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Delete stale vhost-user Unix=
+ domain socket files.&quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._ctx.sut_node.main_session.send_command(&=
+quot;rm -rf /tmp/vhost-net*&quot;, privileged=3DTrue)<br>
++<br></blockquote><div><br>nit: Missing (-&gt; None) in signature<br>=C2=A0=
+</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;b=
+order-left:1px solid rgb(204,204,204);padding-left:1ex">
++=C2=A0 =C2=A0 def _transmit(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self, vhost: TestPmd, virtio: TestPmd, frame_s=
+ize: int, repetitions: int =3D 1<br>
++=C2=A0 =C2=A0 ) -&gt; float:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Transmit packets using testp=
+md instances and compute average MPPS.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Args:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 vhost: the running vhost testpmd=
+ shell.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 virtio: the running virtio testp=
+md shell.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 frame_size: The size of the fram=
+e to transmit.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 repetitions: The number of times=
+ to rerun the transmission.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Returns:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 The MPPS (millions of packets pe=
+r second) forwarded by the SUT.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 assert repetitions &gt; 0, &quot;Invalid numbe=
+r of repetitions given.&quot;<br></blockquote><div>=C2=A0</div><div>nit: Er=
+ror message should include why this number of repetitions=C2=A0are invalid<=
+br>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0p=
+x 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
++=C2=A0 =C2=A0 def _create_and_transmit(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 ring_format: int,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 in_order: int,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 buffers: int,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 vectorized: int,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 extra_args: TestPmdParamsDict,<br>
++=C2=A0 =C2=A0 ) -&gt; None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Create testpmd instances wit=
+h specified params and send traffic.&quot;&quot;&quot;<br></blockquote><div=
+><br>Missing &quot;Args:&quot; tag<br>=C2=A0</div><blockquote class=3D"gmai=
+l_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,20=
+4,204);padding-left:1ex">
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 with (<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 TestPmd(**vhost_pa=
+rams) as vhost,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 TestPmd(**virtio_p=
+arams) as virtio,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ):<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 vhost.set_forward_=
+mode(SimpleForwardingModes.mac)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 virtio.set_forward=
+_mode(SimpleForwardingModes.io)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 vhost.set_portlist=
+([0, 2, 1])<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 params[&quot;measu=
+red_mpps&quot;] =3D round(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self=
+._transmit(vhost, virtio, frame_size, repetitions=3D5), 3<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 params[&quot;perfo=
+rmance_delta&quot;] =3D round(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 (flo=
+at(params[&quot;measured_mpps&quot;]) - float(params[&quot;expected_mpps&qu=
+ot;]))<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 / fl=
+oat(params[&quot;expected_mpps&quot;]),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 3,<b=
+r>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )</blockquote><blo=
+ckquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left=
+:1px solid rgb(204,204,204);padding-left:1ex">
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 params[&quot;pass&=
+quot;] =3D float(params[&quot;performance_delta&quot;]) &gt;=3D -self.delta=
+_tolerance</blockquote><div><br>This allows for a division by zero exceptio=
+n if the user supplies an expected mpps of zero.=C2=A0<br><br>Other than th=
+ese small things, the patch looks good.<br><br>Reviewed-by: Andrew Bailey &=
+lt;<a href=3D"mailto:abailey@iol.unh.edu">abailey@iol.unh.edu</a>&gt;<br><b=
+r></div></div></div>
+
+--000000000000af59f3065c8fe25a--
