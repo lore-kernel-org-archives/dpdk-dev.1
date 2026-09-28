@@ -2,76 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23ADCA5FA3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 18:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9218CA5FA2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 18:24:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D88B402F0;
-	Mon, 28 Sep 2026 20:23:44 +0200 (CEST)
-Received: from mail-pz2-f39.google.com (mail-pz2-f39.google.com
- [74.125.228.39]) by mails.dpdk.org (Postfix) with ESMTP id 6333040275
- for <dev@dpdk.org>; Mon, 28 Sep 2026 20:23:43 +0200 (CEST)
-Received: by mail-pz2-f39.google.com with SMTP id
- 41be03b00d2f7-cc78dd54610so1141426a12.1
- for <dev@dpdk.org>; Mon, 28 Sep 2026 11:23:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3D15F40DDA;
+	Mon, 28 Sep 2026 20:24:24 +0200 (CEST)
+Received: from mail-qv2-f42.google.com (mail-qv2-f42.google.com
+ [74.125.230.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 9A05F402F0
+ for <dev@dpdk.org>; Mon, 28 Sep 2026 20:24:22 +0200 (CEST)
+Received: by mail-qv2-f42.google.com with SMTP id
+ 6a1803df08f44-916304a1fadso1405876d6.1
+ for <dev@dpdk.org>; Mon, 28 Sep 2026 11:24:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790619822;
- x=1791224622; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=ByAJupeDfYsMvyifdOVCMtndZRoZ71J8dSSz5TUbsrs=;
- b=zFFPyE9MXJROTzo2aD/ytqa63tjEZ1qtTJAaY96QHV0bKFuIDN9tg/vDqL+4wt6FfS
- 9qsl0QelM7AmKNTy02y7rZMI7GxNLzqxl0Hxa4DMSbueG5a9Rwv1pqtmyyJZnyvGJIcp
- 9u2x3P5yCo01ui3ZIkSp+LY0iJbNq04Bc/xPtuvynRF8NKiO0HKJqjb0pvAWz/dSiqZ6
- IqawZd9qI3CRgmiP7ORiQfsCa2UoFq8Co6aohKdwQt4zZ1foSqHIQZhIxnl7nDaP2JMW
- e+jfJFrhiPnegK++unZ88zs64Kf4r2/RhDtB+ucdgCtCcUvR2aIsrA6WznL0a4h3si4X
- jHFg==
+ d=iol.unh.edu; s=unh-iol; t=1790619862; x=1791224662; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=qGd2VOvEk0xoZ0+8LOc1U0nT+XMtlZ2JsuLJxQSWJwE=;
+ b=bCSLT8/c4IeWttlru/GaOyEOsbWX+Hkn3HmI78GGqtJ7Yv1cTPt/OUtcq5c2bHbuVl
+ /cr2+w1J6jIX4avz9/ddS7CvKqXFKkZ7v51LtMjbKoZUmtelWxrS5jRWX61YA2se5oRu
+ NmWz2+epVQU3l2uf5NDbPAL8ETGKJX11dzBms=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790619822; x=1791224622;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=ByAJupeDfYsMvyifdOVCMtndZRoZ71J8dSSz5TUbsrs=;
- b=W/oitsgTmLu1rhwSwgRTvXTE6qxT2wqRhRJniWkgrLnrW8Bi8kox3eDgGpjvAY+l6I
- Szd4w3vV4J3U6z6cc168ubiT9kGsl0zWroqwu99ridBG4PxDnFhlul8u1qOs12ceNB0h
- /C7jGQuTTBG4YA68OUFrSJQ7t0IOa0EFMq4QP4DXRNoUfWCdanmZUoczSydcrLpeo1YI
- spwHCS8w5ifBHs/3L/xMuJU9BraTlyqN4KgMdvmp8oqvjU+RcrId/6fnqAVXFrwFPdOe
- vz7SqVw++SCs9tQsSu/mcci8cC8CNoY6RewNNdh5cln5QyEwwz3K0yWP5m6wxiWk2z1k
- W9Ug==
-X-Forwarded-Encrypted: i=1;
- AKwUvBzoD8hwwsGhMEHo+BhLYWsvaiLe2RxFHljKSqjbLkwN95OyqlBMp7AC6NSD91Wl+gfaCMM=@dpdk.org
-X-Gm-Message-State: AFuF++ka8HttW5aPzZ/cvtd9zwRU0IixrOGkABxiz7MuD/gvzD8s4p6j
- n4U9LAXeGMLhDpSblU2viJRjc8jkBZfUhLmHckGXjbuXITBXqe8JHZy52lnE7laRJfol+CtUAM4
- v9cdLTCs=
-X-Gm-Gg: AYBFou2lZmGNRB/ebJrzZnw2k9JgBVFNabOEQMTvuO6ETVxqpSfMeqgiTYXbK3VgO3V
- YMEJQlAUPiwuUSN63dMlkTCVE5nX8WQyA/ZejNm1EKWTFIqCccGUE4T4dmy5ELDavrgxPs6SQo3
- 3F23kWHvIMIpiT8T9cs40T4RJBPZBAiYk6Z1ED356tjOPcTc5QjCeaXCkVi/uhkKAA95XdsNvFR
- rt7m+8YL4zWbvTvvNA0B4l0hS9PHjEFk09wLgt7eL4QrM7YREkFW0R2Od55rD8eOwRpTIDYSA9A
- 8W68CNtzOfrSPlArwb8xGWm30MucPTIJtNRMN2Z2xflDjs0J2sYlfqgmN8vgWEDenJTeHXBs7ef
- JZS11xLON0q7QEQpG7ejlX2N04ZgdweqLHUGVbhWaB9omlJV4ZkP/+GKSH5W78Aubdav30TQSf+
- JUP9bomygdBi8CC7WKIGGgit4fox0koIALOWtH6OLYWQ03OSAe2xpH2zP5yX587Z0rdfXNbZkJe
- /rR6IoTm/w7qskqvgb+6g60a5nmupQSDwmSXE7e8CP9vy9TXoE=
-X-Received: by 2002:a05:6a21:7104:b0:3dd:85a8:cacc with SMTP id
- adf61e73a8af0-3de0e79886amr12039524637.35.1790619814558; 
- Mon, 28 Sep 2026 11:23:34 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ d=1e100.net; s=20260707; t=1790619862; x=1791224662;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=qGd2VOvEk0xoZ0+8LOc1U0nT+XMtlZ2JsuLJxQSWJwE=;
+ b=GZxOJxY/ZCi/FoT1fjPgS2IJ6Af7HdDqNc1FfiuIbSRu1zxlRm6Qhph7+I/mse0L+O
+ 4pY16fvKWhvaS/yAVVwSpgZ7SNHu2QhbXo+YlKZKtUo9XfhXmLcggBKpoujRIiUSslVT
+ N8srM2GtLeN4uTrjPZOAB77WbkibiZMN6NZTOw7hNFRp2Xraz7pDBsxdWpei6307hrzD
+ 6uDpy21a0+6kYBt3uaIa7ZYyIa88qhtg0YAcBt7Ex9UO7xqnpwTybDrZMFCYEOsh0Stc
+ jjnf+0tq7Hql1mqxeg11ke17dvzo5vanZfPiNwUGKChy/G4Pchk8rvPIjrL72A4t2oX2
+ dvsQ==
+X-Gm-Message-State: AFuF++l93UmXyrzY7k8wiGYrwsZ9JdC7Z3O2Yiw45c8YkDJeTxq8Kcbo
+ fpP2q25LRJAAAanVgvmFN75dpz1kUsMjZ+P06bP+zjH8g5pjWAuJC1vKaHWSIsP3WdhNqlD9rsr
+ sD/GzqbcvTd/ToMAPxuBLFlLgwVD48s6eJYIG/twDduAGGCLQKaY3HV34ncYVK9jYvfBEzsYwUd
+ XKwvcapjB90Y7yXHAqt4265hpmhCU=
+X-Gm-Gg: AYBFou2ydAr/I068dL6xVhmS1lgqyNs00g5NR2dz+yVhOJJSdaIgXazgdSrmslkO7IX
+ 72L0x3hUdyq0GC14/o1Vsunw3nFZ7dpYJkrqcOQ+sOr5SRxAqMU2Qbr/R6f/aQoxva1b3wqfKhx
+ nPNtYRt4f56R+jGiyd3bCtnyUY0Iur6bPpeCXnZ/0TbE6h6u79ukodCBb4Lii9pbFZJ4LxBvgw9
+ /RDK/PWhCjlS9eGCRkrSvKOtTXM+bcRjFlGmvmZdFgtTEaJoNMZ4d/6ahzNUAewcwW78ly02wuN
+ HgnOlfBkhKXGTuo2TRedB9bwVN9G/42ZZuowGtyBzQPsfly/XQank9NRVfKp+93bhFaVWzDdWFl
+ 6oVjyk7lvOFhygAFZPckiiCS+AenPGp/qY2G/E2hhRYSTYn+NHw1Nv6fWsQaAg/7h/UqORxjGel
+ G42RcmY5hR7Ap/bY2kBsaRXOojQz6dwHme80+o7dSPbO5EZWJ51moKtgn/GGb6cmIMe/Wx78Eob
+ pAX7lz2Zw7uc9ldZPBt
+X-Received: by 2002:a05:6214:450f:b0:917:863d:1c39 with SMTP id
+ 6a1803df08f44-9178645935emr2288366d6.14.1790619861768; 
+ Mon, 28 Sep 2026 11:24:21 -0700 (PDT)
+Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cc7879438a0sm5037413a12.22.2026.09.28.11.23.34
+ 6a1803df08f44-91430dcba2dsm86077216d6.18.2026.09.28.11.24.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 28 Sep 2026 11:23:34 -0700 (PDT)
-Date: Mon, 28 Sep 2026 11:23:32 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Hemant Agrawal <hemant.agrawal@nxp.com>
-Cc: thomas@monjalon.net, dev@dpdk.org
-Subject: Re: [PATCH v16 00/23] NXP DPAA driver enhancements and fixes
-Message-ID: <20260928112332.29633a34@phoenix.local>
-In-Reply-To: <20260928065849.126909-1-hemant.agrawal@nxp.com>
-References: <20260901101926.1574209-1-hemant.agrawal@nxp.com>
- <20260928065849.126909-1-hemant.agrawal@nxp.com>
+ Mon, 28 Sep 2026 11:24:21 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: dev@dpdk.org,
+	luca.vizzarro@arm.com,
+	patrickrobb1997@gmail.com
+Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v4] dts: add ipgre test suite
+Date: Mon, 28 Sep 2026 14:24:11 -0400
+Message-ID: <20260928182411.231797-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260327180232.443820-1-abailey@iol.unh.edu>
+References: <20260327180232.443820-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,252 +82,388 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 28 Sep 2026 12:28:26 +0530
-Hemant Agrawal <hemant.agrawal@nxp.com> wrote:
+Port over the IP GRE test suite from old DTS to next DTS. This test
+suite covers GRE tunneling and checksum offload verification using this
+protocol.
 
-> This series collects a set of fixes and enhancements for the NXP DPAA
-> bus, mempool, dma, crypto and net drivers targeting 26.11.
-> 
-> It includes memory-leak and resource-cleanup fixes on the device
-> remove/close paths, more robust frame queue and congestion-group
-> shutdown, secondary-process safety guards, BPID and cgrid lifecycle
-> 
-> It includes memory-leak and resource-cleanup fixes on the device
-> remove/close paths, more robust frame queue and congestion-group
-> shutdown, secondary-process safety guards, BPID and cgrid lifecycle
-> handling, and several new features: offline (O/H) port device support,
-> enhanced virtual storage profile (VSP) port support, fmcless Rx queue
-> configuration via devargs, Rx/Tx taildrop threshold devargs, non
-> fmX-macY shared Ethernet naming, and DMA scatter-gather and
-> errata-workaround devargs. Documentation and release notes are updated
-> accordingly.
-> 
-> v16:
-> * rebased on main
+Bugzilla ID: 1480
 
-More AI review feedback.
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ doc/api/dts/tests.TestSuite_ip_gre.rst |   8 +
+ dts/api/testpmd/__init__.py            |  23 ++
+ dts/tests/TestSuite_ip_gre.py          | 313 +++++++++++++++++++++++++
+ 3 files changed, 344 insertions(+)
+ create mode 100644 doc/api/dts/tests.TestSuite_ip_gre.rst
+ create mode 100644 dts/tests/TestSuite_ip_gre.py
 
-Subject: Re: [PATCH v16 00/23] NXP DPAA driver updates
+diff --git a/doc/api/dts/tests.TestSuite_ip_gre.rst b/doc/api/dts/tests.TestSuite_ip_gre.rst
+new file mode 100644
+index 0000000000..e8ce01dc0b
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_ip_gre.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++ip_gre Test Suite
++=================
++
++.. automodule:: tests.TestSuite_ip_gre
++   :members:
++   :show-inheritance:
+diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
+index 7118f9470f..0466777b5f 100644
+--- a/dts/api/testpmd/__init__.py
++++ b/dts/api/testpmd/__init__.py
+@@ -957,6 +957,29 @@ def set_flow_control(
+                     f"Testpmd failed to set the {flow_ctrl} in port {port}."
+                 )
+ 
++    def set_csum_parse_tunnel(self, port: int, on: bool, verify: bool = True) -> None:
++        """Set parse tunnel on or off in testpmd for a given port.
++
++        Args:
++            port: The ID of the requested port
++            on: set parse tunnel on if `on` is :data:`True`, otherwise off
++            verify: if :data:`True`, the output of the command is scanned to verify that
++                parse tunnel was set successfully
++
++        Raises:
++            InteractiveCommandExecutionError: If `verify` is :data:`True` and the command
++                fails to execute.
++
++        """
++        output = self.send_command(f"csum parse-tunnel {'on' if on else 'off'} {port}")
++        if verify and f"Parse tunnel is {'on' if on else 'off'}" not in output:
++            self._logger.debug(
++                f"Testpmd failed to set csum parse-tunnel {'on' if on else 'off'} in port {port}"
++            )
++            raise InteractiveCommandExecutionError(
++                f"Testpmd failed to set csum parse-tunnel {'on' if on else 'off'} in port {port}"
++            )
++
+     def show_port_flow_info(self, port: int) -> TestPmdPortFlowCtrl | None:
+         """Show port info flow.
+ 
+diff --git a/dts/tests/TestSuite_ip_gre.py b/dts/tests/TestSuite_ip_gre.py
+new file mode 100644
+index 0000000000..984f48a0be
+--- /dev/null
++++ b/dts/tests/TestSuite_ip_gre.py
+@@ -0,0 +1,313 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 University of New Hampshire
++
++"""DPDK IP GRE test suite."""
++
++from scapy.layers.inet import GRE, IP, TCP, UDP
++from scapy.layers.inet6 import IPv6
++from scapy.layers.l2 import Dot1Q, Ether
++from scapy.layers.sctp import SCTP
++from scapy.packet import Packet
++
++from api.capabilities import (
++    NicCapability,
++    requires_nic_capability,
++)
++from api.packet import send_packet_and_capture
++from api.test import verify
++from api.testpmd import TestPmd
++from api.testpmd.config import SimpleForwardingModes
++from api.testpmd.types import (
++    ChecksumOffloadOptions,
++    PacketOffloadFlag,
++    RtePTypes,
++    TestPmdVerbosePacket,
++)
++from framework.test_suite import TestSuite, func_test
++
++SRC_ID = "00:00:10:00:00:00"
++
++
++class TestIpGre(TestSuite):
++    """IP GRE test suite."""
++
++    def _check_for_matching_packet(
++        self, output: list[TestPmdVerbosePacket], flags: RtePTypes
++    ) -> bool:
++        """Returns :data:`True` if the packet in verbose output contains all specified flags."""
++        for packet in output:
++            if packet.src_mac == SRC_ID and flags & (packet.hw_ptype | packet.sw_ptype) != flags:
++                return False
++            elif packet.src_mac == SRC_ID:
++                return True
++
++        return False
++
++    def _send_packet_and_verify_flags(
++        self, expected_flag: RtePTypes, packet: Packet, testpmd: TestPmd
++    ) -> None:
++        """Sends a packet to the DUT and verifies the verbose ptype flags."""
++        send_packet_and_capture(packet=packet)
++        verbose_output = testpmd.extract_verbose_output(testpmd.stop(verify=True))
++        valid = self._check_for_matching_packet(output=verbose_output, flags=expected_flag)
++        verify(valid, f"Packet type flag did not match the expected flag: {expected_flag}.")
++
++    def _setup_session(
++        self, testpmd: TestPmd, expected_and_packets: tuple[list[RtePTypes], list[Packet]]
++    ) -> None:
++        """Sets the forwarding and verbose mode of each test case interactive shell session."""
++        testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
++        testpmd.set_verbose(level=1)
++        expected_flags, packet_list = expected_and_packets
++
++        for expected_flag, packet in zip(expected_flags, packet_list):
++            testpmd.start(verify=True)
++            self._send_packet_and_verify_flags(
++                expected_flag=expected_flag, packet=packet, testpmd=testpmd
++            )
++
++    def _send_packet_and_verify_checksum(
++        self, packet: Packet, good_L4: bool, good_L3: bool, testpmd: TestPmd
++    ) -> None:
++        """Send packet and verify verbose output matches expected output."""
++        testpmd.start()
++        send_packet_and_capture(packet=packet)
++        verbose_output = testpmd.extract_verbose_output(testpmd.stop())
++        correct_L3_cksum = correct_L4 = None
++        for testpmd_packet in verbose_output:
++            if testpmd_packet.src_mac == SRC_ID:
++                correct_L3_cksum = (
++                    PacketOffloadFlag.RTE_MBUF_F_RX_IP_CKSUM_GOOD in testpmd_packet.ol_flags
++                )
++                correct_L4 = (
++                    PacketOffloadFlag.RTE_MBUF_F_RX_L4_CKSUM_GOOD in testpmd_packet.ol_flags
++                )
++        verify(
++            correct_L3_cksum is not None and correct_L4 is not None,
++            "Test packet was dropped when it should have been received.",
++        )
++        verify(correct_L4 == good_L4, "Layer 4 checksum flag did not match expected checksum flag.")
++        verify(
++            correct_L3_cksum == good_L3,
++            "Layer 3 checksum flag did not match expected checksum flag.",
++        )
++
++    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
++    @func_test
++    def gre_ip4_pkt_detect(self) -> None:
++        """GRE IP4 packet send and detect.
++
++        Steps:
++            * Craft packets using GRE tunneling.
++            * Send them to the testpmd application.
++
++        Verify:
++            * All packets were received.
++        """
++        packets = [
++            Ether(src=SRC_ID) / IP() / GRE() / IP() / UDP(),
++            Ether(src=SRC_ID) / IP() / GRE() / IP() / TCP(),
++            Ether(src=SRC_ID) / IP() / GRE() / IP() / SCTP(),
++            Ether(src=SRC_ID) / Dot1Q() / IP() / GRE() / IP() / UDP(),
++            Ether(src=SRC_ID) / Dot1Q() / IP() / GRE() / IP() / TCP(),
++            Ether(src=SRC_ID) / Dot1Q() / IP() / GRE() / IP() / SCTP(),
++        ]
++        flags = [
++            RtePTypes.L2_ETHER
++            | RtePTypes.L3_IPV4
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_UDP,
++            RtePTypes.L2_ETHER
++            | RtePTypes.L3_IPV4
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_TCP,
++            RtePTypes.L2_ETHER
++            | RtePTypes.L3_IPV4
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_SCTP,
++            RtePTypes.L2_ETHER_QINQ
++            | RtePTypes.L3_IPV4
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_UDP,
++            RtePTypes.L2_ETHER_QINQ
++            | RtePTypes.L3_IPV4
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_TCP,
++            RtePTypes.L2_ETHER_QINQ
++            | RtePTypes.L3_IPV4
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_SCTP,
++        ]
++        with TestPmd() as testpmd:
++            testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
++            self._setup_session(testpmd=testpmd, expected_and_packets=(flags, packets))
++
++    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
++    @func_test
++    def gre_ip6_outer_ip4_inner_pkt_detect(self) -> None:
++        """GRE IPv6 outer and IPv4 inner send and detect.
++
++        Steps:
++            * Craft packets using GRE tunneling.
++            * Send them to the testpmd application.
++
++        Verify:
++            * All packets were received.
++        """
++        packets = [
++            Ether(src=SRC_ID) / IPv6() / GRE() / IP() / UDP(),
++            Ether(src=SRC_ID) / IPv6() / GRE() / IP() / TCP(),
++            Ether(src=SRC_ID) / IPv6() / GRE() / IP() / SCTP(),
++            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IP() / UDP(),
++            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IP() / TCP(),
++            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IP() / SCTP(),
++        ]
++        flags = [
++            RtePTypes.L2_ETHER
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_UDP,
++            RtePTypes.L2_ETHER
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_TCP,
++            RtePTypes.L2_ETHER
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_SCTP,
++            RtePTypes.L2_ETHER_QINQ
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_UDP,
++            RtePTypes.L2_ETHER_QINQ
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_TCP,
++            RtePTypes.L2_ETHER_QINQ
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV4
++            | RtePTypes.INNER_L4_SCTP,
++        ]
++        with TestPmd() as testpmd:
++            testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
++            self._setup_session(testpmd=testpmd, expected_and_packets=(flags, packets))
++
++    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
++    @func_test
++    def gre_ip6_outer_ip6_inner_pkt_detect(self) -> None:
++        """GRE IPv6 outer and inner send and detect.
++
++        Steps:
++            * Craft packets using GRE tunneling.
++            * Send them to the testpmd application.
++
++        Verify:
++            * All packets were received.
++        """
++        packets = [
++            Ether(src=SRC_ID) / IPv6() / GRE() / IPv6() / UDP(),
++            Ether(src=SRC_ID) / IPv6() / GRE() / IPv6() / TCP(),
++            Ether(src=SRC_ID) / IPv6() / GRE() / IPv6() / SCTP(),
++            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IPv6() / UDP(),
++            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IPv6() / TCP(),
++            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IPv6() / SCTP(),
++        ]
++        flags = [
++            RtePTypes.L2_ETHER
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV6
++            | RtePTypes.INNER_L4_UDP,
++            RtePTypes.L2_ETHER
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV6
++            | RtePTypes.INNER_L4_TCP,
++            RtePTypes.L2_ETHER
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV6
++            | RtePTypes.INNER_L4_SCTP,
++            RtePTypes.L2_ETHER_QINQ
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV6
++            | RtePTypes.INNER_L4_UDP,
++            RtePTypes.L2_ETHER_QINQ
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV6
++            | RtePTypes.INNER_L4_TCP,
++            RtePTypes.L2_ETHER_QINQ
++            | RtePTypes.L3_IPV6
++            | RtePTypes.TUNNEL_GRE
++            | RtePTypes.INNER_L3_IPV6
++            | RtePTypes.INNER_L4_SCTP,
++        ]
++        with TestPmd() as testpmd:
++            testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
++            self._setup_session(testpmd=testpmd, expected_and_packets=(flags, packets))
++
++    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_OUTER_IPV4_CKSUM)
++    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_IPV4_CKSUM)
++    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_TCP_CKSUM)
++    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_UDP_CKSUM)
++    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_SCTP_CKSUM)
++    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
++    @func_test
++    def gre_checksum_offload(self) -> None:
++        """GRE checksum offload test.
++
++        Steps:
++            * Craft packets using GRE tunneling.
++            * Alter checksum of each packet.
++            * Send packets to the testpmd application.
++
++        Verify:
++            * All packets were received with the expected checksum flags.
++        """
++        packets = [
++            Ether(src=SRC_ID) / IP(chksum=0x0) / GRE() / IP() / TCP(),
++            Ether(src=SRC_ID) / IP() / GRE() / IP() / TCP(chksum=0x0),
++            Ether(src=SRC_ID) / IP() / GRE() / IP() / UDP(chksum=0xFFFF),
++            Ether(src=SRC_ID) / IP() / GRE() / IP() / SCTP(chksum=0x0),
++        ]
++        good_l4_l3 = [
++            (False, True),
++            (False, True),
++            (False, True),
++            (False, True),
++        ]
++        with TestPmd() as testpmd:
++            testpmd.set_forward_mode(SimpleForwardingModes.csum)
++            testpmd.set_verbose(1)
++            testpmd.csum_set_hw(
++                layers=ChecksumOffloadOptions.ip
++                | ChecksumOffloadOptions.udp
++                | ChecksumOffloadOptions.sctp
++                | ChecksumOffloadOptions.outer_ip
++                | ChecksumOffloadOptions.tcp,
++                port_id=0,
++            )
++            testpmd.set_csum_parse_tunnel(port=0, on=True)
++            testpmd.start_all_ports()
++            testpmd.start()
++            for i in range(len(packets)):
++                self._send_packet_and_verify_checksum(
++                    packets[i],
++                    good_l4_l3[i][0],
++                    good_l4_l3[i][1],
++                    testpmd,
++                )
+-- 
+2.55.0
 
-v16 applies cleanly to main (edd57b2).  Every commit builds with
--Dwerror=true: gcc 13.3 on x86, covering bus/dpaa, common/dpaax,
-mempool/dpaa, net/dpaa, crypto/dpaa_sec, dma/dpaa and event/dpaa.
-dma/dpaa was also built with RTE_DMA_DPAA_ERRATA_ERR050757 defined.
-Not built for arm64.
-
-The v14 errors are fixed: bman_release_fast() no longer publishes
-stack bytes, and dpaa_ol_remove() no longer double frees dev_private.
-Also resolved: fmbm_tfrc is exposed and the BMI static_assert is exact,
-the unused VSP fields are gone, dma/dpaa rejects secondary probe, and
-check_fd() is race free.  The taildrop getenv() fallback is now
-justified in the commit message; dropping that item.
-
-What remains blocking: the O/H port in patch 21 cannot be enabled or
-configured as submitted, and the new mempool destructor in patch 13
-frees EAL memory at process exit.
-
-Errors
-------
-
-Patch 13/23: drivers: release DPAA bpid on driver destructor
-
-  dpaa_mpool_finish() is an RTE_FINI destructor that does
-
-      rte_free(rte_dpaa_bpid_info);
-
-  The commit message says the destructor must not touch bman_pool
-  because EAL memory may already be gone, and then frees EAL memory.
-  rte_eal_cleanup() calls rte_eal_memory_detach() before returning
-  ("after this point, any DPDK pointers will become dangling").  Any
-  application that calls rte_eal_cleanup() before exit, testpmd
-  included, will rte_free() unmapped memory in this destructor.
-
-  It is also wrong in a secondary.  There rte_dpaa_bpid_info is not a
-  local allocation; the Rx path installs the primary's shared array:
-
-      rte_dpaa_bpid_info = fq->bp_array;   /* dpaa_rxtx.c:924, :1449 */
-
-  A secondary that exits frees the primary's live BPID table.
-
-  Releasing the BPIDs from the static flag table is fine.  Drop the
-  rte_free() from the destructor.
-
-Patch 21/23: drivers: add offline (O/H) port device support
-
-  drv_oldev can never be enabled.  dpaa_bus_parse_bus_args() does
-
-      RTE_EAL_DEVARGS_FOREACH("dpaa", devargs)
-
-  but the bus is registered as RTE_REGISTER_BUS(dpaa_bus, ...), so its
-  name is "dpaa_bus".  rte_devargs_next() compares against
-  da->bus->name, never matches, and oldev_enabled stays 0.  The dpaa.rst
-  example "bus=dpaa,drv_oldev=1" is worse: rte_devargs_layers_parse()
-  fails with "Could not find bus" and EAL init aborts.
-
-  Even with that fixed, drv_bh_port cannot reach the device.  The OL
-  block in dpaa_create_device_list() never sets dev->device.devargs,
-  unlike the ETH, SEC and QDMA blocks, which use
-  rte_bus_find_devargs().  A lookup would not match anyway:
-  rte_dpaa_bus_parse() only accepts fmX-macY, fmX-ohY, fmX-onicY and
-  dpaa_sec-N, and the device is named "oldev1".  So
-  dpaa_ol_get_bh_port_name() always returns 0, and
-  dpaa_ol_tx_queue_setup() fails with -EINVAL once Rx is set up.
-
-  This needs to be tested end to end.
-
-Warnings
---------
-
-Patch 05/23: bus/dpaa: scan max BPID from DTS
-
-  bman_pool_max = start + count is taken from fsl,bpid-range without a
-  bound.  bman_create_portal() does
-
-      u8 bpid = 0;
-      while (bpid < bman_pool_max) {
-              bm_isr_bscn_mask(p, bpid, 0);
-              bpid++;
-      }
-
-  A value above 255 never terminates.  A value above 64 writes past
-  BM_REG_SCN(1); bm_isr_bscn_mask() only covers bpid 0..63, and struct
-  bman_depletion is 64 bits.  Clamp to 64 and reject count == 0.
-
-Patch 08/23: drivers: add DPAA cgrid cleanup support
-
-  The CGR created for a queue whose FQ init fails is still leaked.
-  dpaa_rx_queue_init() and dpaa_tx_queue_init() call qman_create_cgr()
-  and then qman_init_fq().  If qman_init_fq() fails they return an
-  error, and nb_rx_cgr / nb_tx_cgr is only incremented on success.
-  The error path then skips qman_delete_cgr() for that entry, and
-  rte_free(cgr_rx) leaves it linked on cgr_cbs.  That is the same
-  dangling pointer this patch sets out to fix.  Count the CGR when
-  qman_create_cgr() succeeds, or delete it in the helper on failure.
-
-  qman_pending_fq_by_cgrid() returns -ERANGE ("none left") whenever the
-  CGR byte count is zero.  A scheduled FQ with CGE set and a matching
-  cgid is a member whether or not it holds frames.  So an empty stale
-  FQ survives, and its CGRID is deleted and released while still
-  referenced, contrary to the rule stated in the commit message.
-  Close is not a fast path; scan unconditionally there.
-
-Patch 09/23: bus/dpaa: improve FQ shutdown with channel validation
-
-  The commit message describes things not in the diff.  The
-  pool-channel-range parsing is added here, not "in an earlier patch".
-  Nothing here cleans up CGRID or other queue parameters on shutdown.
-  The base code has no portal affinity check for pool channels to
-  remove.
-
-  The FQRN drain loop is unbounded:
-
-      do {
-              qm_dqrr_drain_nomatch(&p->p);
-              found_fqrn = qm_mr_drain(&p->p, FQRN);
-              cpu_relax();
-      } while (!found_fqrn);
-
-  With QM_SDQCR_CHANNELS_DEDICATED the portal only dequeues its own
-  channel.  If the FQ is scheduled on another portal's dedicated
-  channel, FQRN never arrives and this spins forever.  That is
-  pre-existing, but patch 08 now calls qman_shutdown_fq_by_fqid()
-  (qp == NULL, so the caller's affine portal) on stale FQs left by a
-  previous run.  Push-mode Rx queues are exactly FQs on another
-  portal's dedicated channel.  Return -EBUSY when a dedicated channel
-  is not p->config->channel, or bound the loop.
-
-Patch 14/23: dma/dpaa: add devargs for SG and errata workaround
-
-  RTE_PMD_REGISTER_PARAM_STRING() is invoked with an #ifdef inside its
-  argument list.  Directives inside macro arguments are undefined
-  behaviour (C11 6.10.3p11).  GCC accepts it; other compilers need
-  not.  Build the string with a separate macro defined under the
-  #ifdef.
-
-Patch 20/23: net/dpaa: enhance VSP port support
-
-  dpaa_eth_rx_queue_setup() now writes
-
-      dpaa_intf->vsp[vsp_id].vsp_bp[0] = DPAA_MEMPOOL_TO_POOL_INFO(mp);
-
-  before any bound check.  dpaa_port_vsp_update() then reads
-  vsp[vsp_id].vsp_handle; only dpaa_port_vsp_configure() checks
-  vsp_id < DPAA_VSP_PROFILE_MAX_NUM.  vsp_id comes from the FMC
-  direct_relative_profile_id.  The check in update was also loosened
-  from vsp_id >= num_profiles to vsp_id >= base_profile_id +
-  num_profiles, both of which come from the DTS vsp-window.  Check
-  against DPAA_VSP_PROFILE_MAX_NUM before first use.
-
-  The commit message covers the ONIC port type and the cleanup
-  signature.  It does not mention several other changes:
-
-  - struct dpaa_if_vsp replaces the per-profile arrays.
-  - dpaa_eth_dev_stop() changes for ONIC.
-  - dpaa_port_vsp_update() now returns -EINVAL where it returned 0.
-  - The same-bpid shortcut is removed, so every Rx queue setup frees
-    and reconfigures the VSP.
-
-Patch 21/23: drivers: add offline (O/H) port device support
-
-  dpaa_ol_tx_queue_setup() silently skips ASK_CTRL_SET_DPDK_INFO when
-  Rx has not been set up yet:
-
-      if (dpaa_intf->bp_info == NULL || dpaa_intf->rx_queues == NULL)
-              return 0;
-
-  testpmd start_port() sets up Tx queues before Rx, so on first start
-  the kernel is never told the FQs.  ethdev does not order queue
-  setup.  Issue the ioctl from dev_start, where both are known.
-
-  dpaa_ol_probe() has no process-type handling.  A secondary runs
-  dpaa_oldev_init(), creating dynamic FQs and issuing ioctls against
-  state the primary owns.  Either attach with
-  rte_eth_dev_attach_secondary() or reject the secondary as patch 06
-  does for dma/dpaa.  As written, the secondary branch in
-  dpaa_ol_remove() is unreachable.
-
-Info
-----
-
-Patch 05/23: "if (!bman_ip_rev)" is dead now that the else branch
-  sets BMAN_REV21.
-
-Patch 07/23: The stated motivation is push-mode Rx queue shutdown, but
-  nothing in the series shuts down a net/dpaa Rx queue by descriptor.
-  The only callers of qman_shutdown_fq(fq) are dpaa_sec and oldev.
-
-Patch 08/23: __rte_internal appears twice on
-  qman_pending_fq_by_cgrid().  RTE_EXPORT_INTERNAL_SYMBOL(
-  qman_release_fqid_range) is added here, but its first user outside
-  the bus is patch 22.
-
-Patch 12/23: dpaa_port_fmc_port_parse() parses the name before the
-  OH check, which does not use the result.  It logs DPAA_PMD_ERR for
-  any port name without "MAC/" or "OFFLINE/", although the caller
-  treats that as "not this port".  It also logs DPAA_PMD_INFO for
-  every port on every probe.  Both should be DEBUG.
-
-Patch 13/23: RTE_PRIORITY_104 is a driver-local define in the RTE_
-  namespace.
-
-Patch 21/23:
-  - rte_pmd_dpaa_ol_*() and ask_set_fq_info() return the raw ioctl()
-    result (-1) on failure, mixed with -ENODEV from check_fd().
-    Return -errno.
-  - rte_dpaa_bus_oldev_enabled() is exported and has no users.
-  - dpaa_ol_devops can be const.
-  - The meson.build copyright changes to 2018-2021 in a 2026 patch.
-  - rte_pmd_dpaa_oldev.h is not in doc/api/doxy-api-index.md and has
-    no extern "C" guard.
-
-Patch 23/23:
-  - The FMCLESS default Rx queue count change in patch 16
-    (rte_lcore_count() to DPAA_MAX_NUM_PCD_QUEUES) is user visible and
-    not in the release notes.
-  - The new rte_pmd_dpaa_ol_* API is not listed.
-  - Five top-level entries for one driver family; fold them into one
-    "Updated NXP DPAA drivers" entry with sub-bullets.
-
-Pre-existing, not introduced here: in dpaa_dev_init() the "FMC
-initializes failed" path does goto free_rx with ret still 0, so probe
-succeeds with no Rx queues.
