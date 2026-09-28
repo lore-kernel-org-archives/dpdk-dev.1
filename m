@@ -2,55 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D528C9833F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 13:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 976CDCA5FA2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 13:30:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A934240E24;
-	Mon, 28 Sep 2026 15:29:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B59CD40E16;
+	Mon, 28 Sep 2026 15:29:46 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 1063F40E0C
- for <dev@dpdk.org>; Mon, 28 Sep 2026 15:29:39 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 081C440E0B
+ for <dev@dpdk.org>; Mon, 28 Sep 2026 15:29:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790602179;
+ s=mimecast20190719; t=1790602185;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=0r8ejS4tG8C41E+9uw2ruExFAivAAe/qJ+kPLlxUNY4=;
- b=HkXXQslfuSIKkDmG42jhsuR378tY9kNwFfuRBNWBStrcGUe9hyA2HLHeJ70SEcolp4T8ZA
- DPKbn7+z7wewSHCNzYdutdUlerL6c0eZi/D+DqQP3NOpy/0CgiYYY//ZTYkOUSjIaMOcxd
- CcngkbAVjllZTEz8ToW4czfO9oGj+HU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ bh=KKKedQNbLzFQY54pyB+WLWGMUa6NWbf2GWQHND1l7Ys=;
+ b=V5rp4Cn7A3aPznLzHsLrSAgmxEXkvI+eJ7vUxH/Np0UdwR0Y2keXUGekI+Xvbz/++kncnF
+ fNzCZCANBVGbwQoTlDbGfz/0Qj1Nb71KCkBgNBV/WxV+8JUwx5/vykzr+vovb535hAxHj7
+ J2vjzPKLSXRx9I93ZlVin/NUXUTObGI=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-191-izSU_1UbO2iQMEe40h-URA-1; Mon,
- 28 Sep 2026 09:29:36 -0400
-X-MC-Unique: izSU_1UbO2iQMEe40h-URA-1
-X-Mimecast-MFC-AGG-ID: izSU_1UbO2iQMEe40h-URA_1790602175
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-100-m6NIg6EoO8Go7xQRuOEvOQ-1; Mon,
+ 28 Sep 2026 09:29:42 -0400
+X-MC-Unique: m6NIg6EoO8Go7xQRuOEvOQ-1
+X-Mimecast-MFC-AGG-ID: m6NIg6EoO8Go7xQRuOEvOQ_1790602181
 Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 1A8621800A36; Mon, 28 Sep 2026 13:29:35 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 26D6C189F8E7; Mon, 28 Sep 2026 13:29:38 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.44.48.15])
  by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 45F05767; Mon, 28 Sep 2026 13:29:31 +0000 (UTC)
+ id A53AB418; Mon, 28 Sep 2026 13:29:35 +0000 (UTC)
 From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
 To: Maxime Coquelin <maxime.coquelin@redhat.com>
 Cc: dev@dpdk.org, mst@redhat.com, Yongji Xie <xieyongji@bytedance.com>,
  jasowangio@gmail.com, chenbox@nvidia.com, david.marchand@redhat.com
-Subject: [PATCH v2 05/11] vhost: add virtqueues groups support to VDUSE
-Date: Mon, 28 Sep 2026 15:29:07 +0200
-Message-ID: <20260928132913.1376278-6-eperezma@redhat.com>
+Subject: [PATCH v2 06/11] vhost: add ASID support to VDUSE IOTLB operations
+Date: Mon, 28 Sep 2026 15:29:08 +0200
+Message-ID: <20260928132913.1376278-7-eperezma@redhat.com>
 In-Reply-To: <20260928132913.1376278-1-eperezma@redhat.com>
 References: <20260928132913.1376278-1-eperezma@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 5kMkP6UFKg1U55tdyPDkYlNBtGLY_FBlynfvcpAiaO4_1790602175
+X-Mimecast-MFC-PROC-ID: Pk2Ss8xbxaoiXEJOzXPN75nWrjWizEstw9iuwh_oxz4_1790602181
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -69,135 +69,87 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 
-VDUSE API version 1 introduces the notion of virtqueue
-groups, which once supported, enables the support of
-multiple addresses spaces.
-
-For VDUSE networking devices, we need two groups, one for
-the datapath queues, and one for the control queue.
+Make use of the newly introduced address space ID when
+calling Vhost IOTLB API.
 
 Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
 ---
- lib/vhost/vduse.c | 52 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 50 insertions(+), 2 deletions(-)
+ lib/vhost/vduse.c | 39 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 33 insertions(+), 6 deletions(-)
 
 diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
-index ceef207ad2df..8c031168bf77 100644
+index 8c031168bf77..2d3d8a536773 100644
 --- a/lib/vhost/vduse.c
 +++ b/lib/vhost/vduse.c
-@@ -38,12 +38,24 @@ static const char * const vduse_reqs_str[] = {
- 	"VDUSE_GET_VQ_STATE",
- 	"VDUSE_SET_STATUS",
- 	"VDUSE_UPDATE_IOTLB",
-+	"VDUSE_SET_VQ_GROUP_ASID",
- };
- 
- #define vduse_req_id_to_str(id) \
- 	(id < RTE_DIM(vduse_reqs_str) ? \
- 	vduse_reqs_str[id] : "Unknown")
- 
-+static uint64_t vduse_vq_to_group(struct virtio_net *dev, struct vhost_virtqueue *vq)
-+{
-+	if (dev->vduse_api_ver < 1)
-+		return 0;
-+
-+	if (vq == dev->cvq)
-+		return 1;
-+
-+	return 0;
-+}
-+
+@@ -71,7 +71,7 @@ vduse_iotlb_remove_notify(uint64_t addr, uint64_t offset, uint64_t size)
  static int
- vduse_inject_irq(struct virtio_net *dev, struct vhost_virtqueue *vq)
+ vduse_iotlb_miss(struct virtio_net *dev, int asid, uint64_t iova, uint8_t perm __rte_unused)
  {
-@@ -271,6 +283,7 @@ vduse_vring_cleanup(struct virtio_net *dev, unsigned int index)
- 	vq->size = 0;
- 	vq->last_used_idx = 0;
- 	vq->last_avail_idx = 0;
-+	vq->asid = 0;
- }
+-	struct vduse_iotlb_entry entry;
++	struct vduse_iotlb_entry_v2 entry = {};
+ 	uint64_t size, page_size;
+ 	struct stat stat;
+ 	void *mmap_addr;
+@@ -79,8 +79,13 @@ vduse_iotlb_miss(struct virtio_net *dev, int asid, uint64_t iova, uint8_t perm _
  
- /*
-@@ -410,6 +423,7 @@ vduse_events_handler(int fd, void *arg, int *close __rte_unused)
- 	struct vduse_dev_response resp;
- 	struct vhost_virtqueue *vq;
- 	uint8_t old_status = dev->status;
-+	uint32_t i;
- 	int ret;
+ 	entry.start = iova;
+ 	entry.last = iova + 1;
++	entry.asid = asid;
  
- 	memset(&resp, 0, sizeof(resp));
-@@ -450,6 +464,34 @@ vduse_events_handler(int fd, void *arg, int *close __rte_unused)
- 				req.iova.last - req.iova.start + 1);
+-	ret = ioctl(dev->vduse_dev_fd, VDUSE_IOTLB_GET_FD, &entry);
++	if (dev->vduse_api_ver < 1) {
++		ret = ioctl(dev->vduse_dev_fd, VDUSE_IOTLB_GET_FD, &entry);
++	} else {
++		ret = ioctl(dev->vduse_dev_fd, VDUSE_IOTLB_GET_FD2, &entry);
++	}
+ 	if (ret < 0) {
+ 		VHOST_CONFIG_LOG(dev->ifname, ERR, "Failed to get IOTLB entry for 0x%" PRIx64,
+ 				iova);
+@@ -90,6 +95,7 @@ vduse_iotlb_miss(struct virtio_net *dev, int asid, uint64_t iova, uint8_t perm _
+ 	fd = ret;
+ 
+ 	VHOST_CONFIG_LOG(dev->ifname, DEBUG, "New IOTLB entry:");
++	VHOST_CONFIG_LOG(dev->ifname, DEBUG, "\tASID: %d", entry.asid);
+ 	VHOST_CONFIG_LOG(dev->ifname, DEBUG, "\tIOVA: %" PRIx64 " - %" PRIx64,
+ 			(uint64_t)entry.start, (uint64_t)entry.last);
+ 	VHOST_CONFIG_LOG(dev->ifname, DEBUG, "\toffset: %" PRIx64, (uint64_t)entry.offset);
+@@ -458,10 +464,31 @@ vduse_events_handler(int fd, void *arg, int *close __rte_unused)
  		resp.result = VDUSE_REQ_RESULT_OK;
  		break;
-+	case VDUSE_SET_VQ_GROUP_ASID:
-+		if (dev->vduse_api_ver < 1) {
-+			resp.result = VDUSE_REQ_RESULT_FAILED;
-+			break;
-+		}
+ 	case VDUSE_UPDATE_IOTLB:
+-		VHOST_CONFIG_LOG(dev->ifname, INFO, "\tIOVA range: %" PRIx64 " - %" PRIx64,
+-				(uint64_t)req.iova.start, (uint64_t)req.iova.last);
+-		vhost_user_iotlb_cache_remove(dev, 0, req.iova.start,
+-				req.iova.last - req.iova.start + 1);
++		{
++			uint64_t start, last;
++			uint32_t asid;
 +
-+		if (req.vq_group_asid.asid >= RTE_DIM(dev->iotlb)) {
-+			VHOST_CONFIG_LOG(dev->ifname, ERR,
-+				"Invalid ASID %u for group %u",
-+				req.vq_group_asid.asid, req.vq_group_asid.group);
-+			resp.result = VDUSE_REQ_RESULT_FAILED;
-+			break;
-+		}
-+
-+		VHOST_CONFIG_LOG(dev->ifname, INFO, "\tAssigning ASID %d to group %d",
-+				req.vq_group_asid.asid, req.vq_group_asid.group);
-+
-+		for (i = 0; i < dev->nr_vring; i++) {
-+			vq = dev->virtqueue[i];
-+
-+			if (vduse_vq_to_group(dev, vq) == req.vq_group_asid.group) {
-+				vq->asid = req.vq_group_asid.asid;
-+				VHOST_CONFIG_LOG(dev->ifname, INFO, "\t\tVQ %d gets ASID %d",
-+						i, req.vq_group_asid.asid);
++			if (dev->vduse_api_ver < 1) {
++				start = req.iova.start;
++				last = req.iova.last;
++				asid = 0;
++			} else {
++				start = req.iova_v2.start;
++				last = req.iova_v2.last;
++				asid = req.iova_v2.asid;
 +			}
-+		}
-+		resp.result = VDUSE_REQ_RESULT_OK;
-+		break;
- 	default:
- 		resp.result = VDUSE_REQ_RESULT_FAILED;
- 		break;
-@@ -760,6 +802,10 @@ vduse_device_create(const char *path, bool compliant_ol_flags, bool extbuf, bool
- 		dev_config->features = features;
- 		dev_config->vq_num = total_queues;
- 		dev_config->vq_align = rte_mem_page_size();
-+		if (ver >= 1) {
-+			dev_config->ngroups = 2;
-+			dev_config->nas = 2;
-+		}
- 		dev_config->config_size = sizeof(struct virtio_net_config);
- 		memcpy(dev_config->config, &vnet_config, sizeof(vnet_config));
- 
-@@ -848,11 +894,15 @@ vduse_device_create(const char *path, bool compliant_ol_flags, bool extbuf, bool
- 		vq = dev->virtqueue[i];
- 		vq->reconnect_log = &dev->reconnect_log->vring[i];
- 
-+		if (i == max_queue_pairs * 2)
-+			dev->cvq = vq;
 +
- 		if (reconnect)
- 			continue;
- 
- 		vq_cfg.index = i;
- 		vq_cfg.max_size = 1024;
-+		vq_cfg.group = vduse_vq_to_group(dev, vq);
- 
- 		ret = ioctl(dev->vduse_dev_fd, VDUSE_VQ_SETUP, &vq_cfg);
- 		if (ret) {
-@@ -861,8 +911,6 @@ vduse_device_create(const char *path, bool compliant_ol_flags, bool extbuf, bool
- 		}
- 	}
- 
--	dev->cvq = dev->virtqueue[max_queue_pairs * 2];
--
- 	ret = fdset_add(vduse.fdset, dev->vduse_dev_fd, vduse_events_handler, NULL, dev);
- 	if (ret) {
- 		VHOST_CONFIG_LOG(name, ERR, "Failed to add fd %d to vduse fdset",
++			if (asid >= RTE_DIM(dev->iotlb)) {
++				VHOST_CONFIG_LOG(dev->ifname, ERR,
++					"Invalid ASID %u in IOTLB update", asid);
++				resp.result = VDUSE_REQ_RESULT_FAILED;
++				break;
++			}
++
++			VHOST_CONFIG_LOG(dev->ifname, INFO, "\t(ASID %d) IOVA range: %" PRIx64 " - %" PRIx64,
++				asid, start, last);
++			vhost_user_iotlb_cache_remove(dev, asid, start, last - start + 1);
++		}
+ 		resp.result = VDUSE_REQ_RESULT_OK;
+ 		break;
+ 	case VDUSE_SET_VQ_GROUP_ASID:
 -- 
 2.55.0
 
