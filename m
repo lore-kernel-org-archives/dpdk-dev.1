@@ -2,55 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9925CA5FA2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 13:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C302ECA5FA2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 13:29:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00EAA4064A;
-	Mon, 28 Sep 2026 15:29:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0099540DD2;
+	Mon, 28 Sep 2026 15:29:35 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id E42FF40275
- for <dev@dpdk.org>; Mon, 28 Sep 2026 15:29:25 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 2C98240BA6
+ for <dev@dpdk.org>; Mon, 28 Sep 2026 15:29:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790602165;
+ s=mimecast20190719; t=1790602174;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=GDZvADbsXnCli1BQHivb7sHp4i/vCLUkKlc4NQV4bq8=;
- b=ewboEjpjXvIoG7C3wC8CGE5GYQuw3G9MuCKhEo7njp8r+VKjueQ6Y5UussJbAUP6qHcY5H
- MWK4bymFnf937gB+lA6PbNfyuLcgOUpAmsiYg62YfLBXcBr8Pt621Xz6mqZumYq3waG/VV
- x14co51eU5a204m4E5iMeg+4OOq9vW8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=TpkZSzMkklPsaEych4POtZw/J3+UkpO9YzELCqss1U0=;
+ b=AtTVKjQvW+Q840mVEUWNvi27J7ja44EZ8CYGtjX7d1L2xfsKWtlfYD4gd/fK+w6EG3YYvG
+ cdB7xfbWdSYyb+CSaqNLRaveA9Zaz6s+7rAvdFvGmymbTzkCf6zQPJtGP3awahyrtIFHaN
+ ZBNcIf2amyiJw8Top+OzeGlVssakbXg=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-211-MQQIVKFUPLSPg7McoanBmg-1; Mon,
- 28 Sep 2026 09:29:23 -0400
-X-MC-Unique: MQQIVKFUPLSPg7McoanBmg-1
-X-Mimecast-MFC-AGG-ID: MQQIVKFUPLSPg7McoanBmg_1790602162
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-364-WIw4iJDhP_ep26DYidjNMA-1; Mon,
+ 28 Sep 2026 09:29:29 -0400
+X-MC-Unique: WIw4iJDhP_ep26DYidjNMA-1
+X-Mimecast-MFC-AGG-ID: WIw4iJDhP_ep26DYidjNMA_1790602168
 Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id F10AA184A081; Mon, 28 Sep 2026 13:29:18 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id E6D2F187A5F1; Mon, 28 Sep 2026 13:29:21 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.44.48.15])
  by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id BCC2876A; Mon, 28 Sep 2026 13:29:15 +0000 (UTC)
+ id 7660776B; Mon, 28 Sep 2026 13:29:19 +0000 (UTC)
 From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
 To: Maxime Coquelin <maxime.coquelin@redhat.com>
 Cc: dev@dpdk.org, mst@redhat.com, Yongji Xie <xieyongji@bytedance.com>,
  jasowangio@gmail.com, chenbox@nvidia.com, david.marchand@redhat.com
-Subject: [PATCH v2 00/11] Add vduse live migration features
-Date: Mon, 28 Sep 2026 15:29:02 +0200
-Message-ID: <20260928132913.1376278-1-eperezma@redhat.com>
+Subject: [PATCH v2 01/11] build: define __counted_by as empty on unsupported
+ compilers
+Date: Mon, 28 Sep 2026 15:29:03 +0200
+Message-ID: <20260928132913.1376278-2-eperezma@redhat.com>
+In-Reply-To: <20260928132913.1376278-1-eperezma@redhat.com>
+References: <20260928132913.1376278-1-eperezma@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: qiFba8-Q2b0BOIQOPTL-RDfACuuLTJiyuHbvAaWuedw_1790602162
+X-Mimecast-MFC-PROC-ID: Vx6HyYm0XSuNkIcRfqb9xEwl7dhx4xO-wmYblGp_TVU_1790602168
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,91 +68,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series introduces features to the VDUSE (vDPA Device in Userspace) driver
-to support Live Migration.
+__counted_by is a GCC 14 / Clang 18 extension used in imported kernel
+uapi headers. Older compilers reject it with an error. Define it as an
+empty function-like macro when the compiler does not support it.
 
-Currently, DPDK does not support VDUSE devices live migration because the
-driver lacks a mechanism to suspend the device and quiesce the rings to
-initiate the switchover.  This series implements the suspend operation to
-address this limitation.
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+---
+ config/meson.build | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Furthermore, enabling Live Migration for devices with control virtqueue
-requires two additional features.  Both of them are included in this series.
-
-* Address Spaces ID (ASID) support: This allows QEMU to isolate and intercept
-  the device's CVQ. By doing so, QEMU is able to migrate the device status
-  transparently, without requiring the device to support state save and
-  restore.
-* QUEUE_READY: This allows QEMU to control when the dataplane virtqueues are
-  enabled.  This ensures the dataplane is started after the device
-  configuration has been fully restored via the CVQ.
-
-It also enables the VIRTIO_NET_F_STATUS feature.  This allows the device to
-signal the driver that it needs to send gratuitous ARP with
-VIRTIO_NET_S_ANNOUNCE, reducing the Live Migration downtime.
-
-Note that kernel headers are update to v7.3-rc3, not a stable version.  This
-would allow to ack the patches while the kernel uapi is published in 7.3.
-
-v2:
-* Add -D__counted_by(X)= if the compiler does not support it. It is
-  pulled by the kernel headers.
-
-PATCH v1:
-* Move to VDUSE_SET_FEATURES ioctl instead of config space field.
-* Add a few bounds control.
-* Update kernel headers to v7.3-rc3.
-
-RFC v4:
-* Sync headers with Linux's latest existing and proposed UAPI.  Both
-  files constants and new ioctl VDUSE_SET_FEATURES.
-* Check for more error conditions and clarified some error messages in
-  ready message processing.
-* Add relevant release notes.
-* Fix cosmetic whitespaces & checkpath errors.
-* Fix error path of vhost_user_iotlb_init and vhost_user_iotlb_init_one.
-* Fix commits author.
-
-RFC v3:
-* Replace incorrect '%lx' DEBUG print format specifier with PRIx64
-
-RFC v2:
-* Following latest comments on kernel series about VDUSE features, not checking
-  API version but only check if VDUSE_GET_FEATURES success.
-* Move the start and last declarations in the braces as gcc 8 does not like
-  them interleaved with statements. Actually, I think the move was a mistake in
-  the first version.
-  https://mails.dpdk.org/archives/test-report/2026-February/958175.html
-
-Eugenio Pérez (5):
-  build: define __counted_by as empty on unsupported compilers
-  uapi: import VDUSE and VFIO header from v7.3-rc3 kernel
-  vhost: Support VDUSE QUEUE_READY feature
-  vhost: Support vduse suspend feature
-  doc: add release notes for VDUSE live migration support
-
-Maxime Coquelin (6):
-  vhost: introduce ASID support
-  vhost: add VDUSE API version negotiation
-  vhost: add virtqueues groups support to VDUSE
-  vhost: add ASID support to VDUSE IOTLB operations
-  vhost: claim VDUSE support for API version 1
-  vhost: add net status feature to VDUSE
-
- config/meson.build                     |   6 +
- doc/guides/rel_notes/release_26_07.rst |   8 +
- kernel/linux/uapi/linux/vduse.h        | 115 +++++++++++-
- kernel/linux/uapi/linux/vfio.h         |  91 +++++++++-
- kernel/linux/uapi/version              |   2 +-
- lib/vhost/iotlb.c                      | 233 +++++++++++++++---------
- lib/vhost/iotlb.h                      |  14 +-
- lib/vhost/vduse.c                      | 239 +++++++++++++++++++++++--
- lib/vhost/vduse.h                      |   3 +-
- lib/vhost/vhost.c                      |  16 +-
- lib/vhost/vhost.h                      |  16 +-
- lib/vhost/vhost_user.c                 |  13 +-
- 12 files changed, 614 insertions(+), 142 deletions(-)
-
+diff --git a/config/meson.build b/config/meson.build
+index 344f68822be3..9777713ea434 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -474,6 +474,12 @@ dpdk_arch_headers += files('rte_config.h')
+ # specify -D_GNU_SOURCE unconditionally
+ add_project_arguments('-D_GNU_SOURCE', language: 'c')
+ 
++# define __counted_by as empty on compilers that don't support it
++if not cc.compiles('struct s { int n; int a[] __counted_by(n); };',
++        name : '__counted_by support')
++    add_project_arguments('-D__counted_by(a)=', language : 'c')
++endif
++
+ # specify -D__BSD_VISIBLE for FreeBSD
+ if is_freebsd
+     add_project_arguments('-D__BSD_VISIBLE', language: 'c')
 -- 
 2.55.0
 
