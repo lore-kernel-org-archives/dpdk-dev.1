@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E077C9832F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 06:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFFECC9833E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 06:59:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D64B440A7D;
-	Mon, 28 Sep 2026 08:59:07 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 555E240269;
- Mon, 28 Sep 2026 08:58:54 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2CFD92001AB;
+	by mails.dpdk.org (Postfix) with ESMTP id B6D7440B90;
+	Mon, 28 Sep 2026 08:59:08 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id D414C40269
+ for <dev@dpdk.org>; Mon, 28 Sep 2026 08:58:54 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B503E1A01DD;
  Mon, 28 Sep 2026 08:58:54 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EAF212001AA;
- Mon, 28 Sep 2026 08:58:53 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 55C901A01DE;
+ Mon, 28 Sep 2026 08:58:54 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 067BF18000BE;
- Mon, 28 Sep 2026 14:58:52 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 679EC1800226;
+ Mon, 28 Sep 2026 14:58:53 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: stable@dpdk.org,
-	Prashant Gupta <prashant.gupta_3@nxp.com>
-Subject: [PATCH v16 03/23] bus/dpaa: fix FQD dest wq channel decoding
-Date: Mon, 28 Sep 2026 12:28:29 +0530
-Message-Id: <20260928065849.126909-4-hemant.agrawal@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH v16 04/23] bus/dpaa: refine fman naming
+Date: Mon, 28 Sep 2026 12:28:30 +0530
+Message-Id: <20260928065849.126909-5-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260928065849.126909-1-hemant.agrawal@nxp.com>
 References: <20260901101926.1574209-1-hemant.agrawal@nxp.com>
@@ -50,118 +49,506 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
+From: Jun Yang <jun.yang@nxp.com>
 
-qman_shutdown_fq() decoded the FQD dest_wq field as:
+Rename ccsr_map to memac_map in __fman_if struct for clarity,
+as it maps the MEMAC register space not generic CCSR.
+Rename bmi_map to rx_bmi_map to distinguish from TX BMI.
 
-	channel = dest_wq & 0x7;
-	wq      = dest_wq >> 3;
-
-but in the hardware descriptor the work queue is bits 2:0 and the
-channel is bits 15:3. The old code therefore extracted a 0-7 value as
-the channel and the real channel as the work queue. qman_shutdown_fq()
-compares the channel against the pool-channel range to decide how to
-drain the queue, and that comparison can never succeed with a 0-7
-value, so pool-channel FQs were not drained correctly on shutdown.
-
-Fixes: c47ff048b99a ("bus/dpaa: add QMAN driver core routines")
-Cc: stable@dpdk.org
-
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman.c | 14 ++------------
- drivers/bus/dpaa/base/qbman/qman.h | 23 ++++++++++++++++++++++-
- 2 files changed, 24 insertions(+), 13 deletions(-)
+ drivers/bus/dpaa/base/fman/fman.c    |  14 ++--
+ drivers/bus/dpaa/base/fman/fman_hw.c | 104 +++++++++++++--------------
+ drivers/bus/dpaa/include/fman.h      |   4 +-
+ 3 files changed, 61 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index d289df2d33..931d487de4 100644
---- a/drivers/bus/dpaa/base/qbman/qman.c
-+++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -2707,14 +2707,6 @@ int qman_delete_cgr(struct qman_cgr *cgr)
- 	return ret;
- }
- 
--#define GENMASK(h, l) \
--	(((~0U) >> (sizeof(unsigned int) * 8 - ((h) - (l) + 1))) << (l))
--
--/* 'fqid' is a 24-bit field in every h/w descriptor */
--#define QM_FQID_MASK    GENMASK(23, 0)
--#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
--#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
--
- static int
- _qm_mr_consume_and_match_verb(struct qm_portal *p, int v)
- {
-@@ -2801,7 +2793,6 @@ qman_shutdown_fq(u32 fqid)
- 	u32 res;
- 	u8 state;
- 	u32 channel, wq;
--	u16 dest_wq;
- 
- 	DPAA_BUS_DEBUG("In shutdown for queue = %x", fqid);
- 	p = get_affine_portal();
-@@ -2831,9 +2822,8 @@ qman_shutdown_fq(u32 fqid)
- 	}
- 
- 	/* Need to store these since the MCR gets reused */
--	dest_wq = be16_to_cpu(mcr->queryfq.fqd.dest_wq);
--	channel = dest_wq & 0x7;
--	wq = dest_wq >> 3;
-+	channel = qm_fqd_get_chan(&mcr->queryfq.fqd);
-+	wq = qm_fqd_get_wq(&mcr->queryfq.fqd);
- 
- 	switch (state) {
- 	case QM_MCR_NP_STATE_TEN_SCHED:
-diff --git a/drivers/bus/dpaa/base/qbman/qman.h b/drivers/bus/dpaa/base/qbman/qman.h
-index 43a16d1e3b..bd97689a91 100644
---- a/drivers/bus/dpaa/base/qbman/qman.h
-+++ b/drivers/bus/dpaa/base/qbman/qman.h
-@@ -1,12 +1,15 @@
+diff --git a/drivers/bus/dpaa/base/fman/fman.c b/drivers/bus/dpaa/base/fman/fman.c
+index 55311235f5..55f466d751 100644
+--- a/drivers/bus/dpaa/base/fman/fman.c
++++ b/drivers/bus/dpaa/base/fman/fman.c
+@@ -1,7 +1,7 @@
  /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
   *
-  * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017 NXP
-+ * Copyright 2017,2026 NXP
+  * Copyright 2010-2016 Freescale Semiconductor Inc.
+- * Copyright 2017-2024 NXP
++ * Copyright 2017-2026 NXP
   *
   */
  
- #include "qman_priv.h"
+@@ -465,9 +465,9 @@ fman_if_init(const struct device_node *dpa_node, int fd)
+ 			 mname, regs_addr);
+ 		goto err;
+ 	}
+-	__if->ccsr_map = mmap(NULL, __if->regs_size,
++	__if->memac_map = mmap(NULL, __if->regs_size,
+ 		PROT_READ | PROT_WRITE, MAP_SHARED, fd, phys_addr);
+-	if (__if->ccsr_map == MAP_FAILED) {
++	if (__if->memac_map == MAP_FAILED) {
+ 		FMAN_ERR(-errno, "mmap(0x%"PRIx64")", phys_addr);
+ 		goto err;
+ 	}
+@@ -599,9 +599,9 @@ fman_if_init(const struct device_node *dpa_node, int fd)
+ 		goto err;
+ 	}
  
-+#define GENMASK(h, l) \
-+	(((~0U) >> (sizeof(u32) * 8 - ((h) - (l) + 1))) << (l))
-+
- /***************************/
- /* Portal register assists */
- /***************************/
-@@ -42,6 +45,14 @@
- #define QM_CL_RR0		0x3900
- #define QM_CL_RR1		0x3940
+-	__if->bmi_map = mmap(NULL, __if->regs_size,
++	__if->rx_bmi_map = mmap(NULL, __if->regs_size,
+ 		PROT_READ | PROT_WRITE, MAP_SHARED, fd, phys_addr);
+-	if (__if->bmi_map == MAP_FAILED) {
++	if (__if->rx_bmi_map == MAP_FAILED) {
+ 		FMAN_ERR(-errno, "mmap(0x%"PRIx64")", phys_addr);
+ 		goto err;
+ 	}
+@@ -1167,13 +1167,13 @@ fman_finish(void)
+ 		}
  
-+#define QM_FQD_CHAN_OFF                3
-+#define QM_FQD_WQ_MASK         GENMASK(2, 0)
-+/* 'fqid' is a 24-bit field in every h/w descriptor */
-+#define QM_FQID_MASK    GENMASK(23, 0)
-+
-+#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
-+#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
-+
- /* BTW, the drivers (and h/w programming model) already obtain the required
-  * synchronisation for portal accesses via lwsync(), hwsync(), and
-  * data-dependencies. Use of barrier()s or other order-preserving primitives
-@@ -911,3 +922,13 @@ static inline void __qm_isr_write(struct qm_portal *portal, enum qm_isr_reg n,
- 	__qm_out(&portal->addr, QM_REG_ISR + (n << 2), val);
- #endif
+ 		/* disable Rx and Tx */
+-		regs = __if->ccsr_map;
++		regs = __if->memac_map;
+ 		cfg = in_be32(&regs->command_config);
+ 		out_be32(&regs->command_config,
+ 			cfg & (~(MEMAC_RX_ENABLE | MEMAC_TX_ENABLE)));
+ 
+ 		/* release the mapping */
+-		_errno = munmap(__if->ccsr_map, __if->regs_size);
++		_errno = munmap(__if->memac_map, __if->regs_size);
+ 		if (unlikely(_errno < 0))
+ 			FMAN_ERR(_errno, "munmap() = (%s)", strerror(errno));
+ 		DPAA_BUS_INFO("Tearing down %s", __if->node_path);
+diff --git a/drivers/bus/dpaa/base/fman/fman_hw.c b/drivers/bus/dpaa/base/fman/fman_hw.c
+index cbb0491d70..731ba6aa25 100644
+--- a/drivers/bus/dpaa/base/fman/fman_hw.c
++++ b/drivers/bus/dpaa/base/fman/fman_hw.c
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+- * Copyright 2017,2020,2022-2023 NXP
++ * Copyright 2017,2020,2022-2023,2026 NXP
+  *
+  */
+ 
+@@ -39,7 +39,7 @@ fman_if_set_mcast_filter_table(struct fman_if *p)
+ 	void *hashtable_ctrl;
+ 	uint32_t i;
+ 
+-	hashtable_ctrl = &((struct memac_regs *)__if->ccsr_map)->hashtable_ctrl;
++	hashtable_ctrl = &((struct memac_regs *)__if->memac_map)->hashtable_ctrl;
+ 	for (i = 0; i < 64; i++)
+ 		out_be32(hashtable_ctrl, i|HASH_CTRL_MCAST_EN);
  }
-+
-+static inline int qm_fqd_get_chan(const struct qm_fqd *fqd)
-+{
-+	return be16_to_cpu(fqd->dest_wq) >> QM_FQD_CHAN_OFF;
-+}
-+
-+static inline int qm_fqd_get_wq(const struct qm_fqd *fqd)
-+{
-+	return be16_to_cpu(fqd->dest_wq) & QM_FQD_WQ_MASK;
-+}
+@@ -51,7 +51,7 @@ fman_if_reset_mcast_filter_table(struct fman_if *p)
+ 	void *hashtable_ctrl;
+ 	uint32_t i;
+ 
+-	hashtable_ctrl = &((struct memac_regs *)__if->ccsr_map)->hashtable_ctrl;
++	hashtable_ctrl = &((struct memac_regs *)__if->memac_map)->hashtable_ctrl;
+ 	for (i = 0; i < 64; i++)
+ 		out_be32(hashtable_ctrl, i & ~HASH_CTRL_MCAST_EN);
+ }
+@@ -101,7 +101,7 @@ fman_if_add_hash_mac_addr(struct fman_if *p, uint8_t *eth)
+ 	hash = get_mac_hash_code(eth_addr) & HASH_CTRL_ADDR_MASK;
+ 	hash = hash | HASH_CTRL_MCAST_EN;
+ 
+-	hashtable_ctrl = &((struct memac_regs *)__if->ccsr_map)->hashtable_ctrl;
++	hashtable_ctrl = &((struct memac_regs *)__if->memac_map)->hashtable_ctrl;
+ 	out_be32(hashtable_ctrl, hash);
+ 
+ 	return 0;
+@@ -112,7 +112,7 @@ fman_if_get_primary_mac_addr(struct fman_if *p, uint8_t *eth)
+ {
+ 	struct __fman_if *__if = container_of(p, struct __fman_if, __if);
+ 	void *mac_reg =
+-		&((struct memac_regs *)__if->ccsr_map)->mac_addr0.mac_addr_l;
++		&((struct memac_regs *)__if->memac_map)->mac_addr0.mac_addr_l;
+ 	u32 val = in_be32(mac_reg);
+ 	int i;
+ 
+@@ -130,7 +130,7 @@ fman_if_get_primary_mac_addr(struct fman_if *p, uint8_t *eth)
+ 	eth[2] = (val & 0x00ff0000) >> 16;
+ 	eth[3] = (val & 0xff000000) >> 24;
+ 
+-	mac_reg =  &((struct memac_regs *)__if->ccsr_map)->mac_addr0.mac_addr_u;
++	mac_reg =  &((struct memac_regs *)__if->memac_map)->mac_addr0.mac_addr_u;
+ 	val = in_be32(mac_reg);
+ 
+ 	eth[4] = (val & 0x000000ff) >> 0;
+@@ -151,16 +151,16 @@ fman_if_clear_mac_addr(struct fman_if *p, uint8_t addr_num)
+ 		return;
+ 
+ 	if (addr_num) {
+-		reg = &((struct memac_regs *)m->ccsr_map)->
++		reg = &((struct memac_regs *)m->memac_map)->
+ 				mac_addr[addr_num-1].mac_addr_l;
+ 		out_be32(reg, 0x0);
+-		reg = &((struct memac_regs *)m->ccsr_map)->
++		reg = &((struct memac_regs *)m->memac_map)->
+ 					mac_addr[addr_num-1].mac_addr_u;
+ 		out_be32(reg, 0x0);
+ 	} else {
+-		reg = &((struct memac_regs *)m->ccsr_map)->mac_addr0.mac_addr_l;
++		reg = &((struct memac_regs *)m->memac_map)->mac_addr0.mac_addr_l;
+ 		out_be32(reg, 0x0);
+-		reg = &((struct memac_regs *)m->ccsr_map)->mac_addr0.mac_addr_u;
++		reg = &((struct memac_regs *)m->memac_map)->mac_addr0.mac_addr_u;
+ 		out_be32(reg, 0x0);
+ 	}
+ }
+@@ -180,10 +180,10 @@ fman_if_add_mac_addr(struct fman_if *p, uint8_t *eth, uint8_t addr_num)
+ 	memcpy(&m->__if.mac_addr, eth, ETHER_ADDR_LEN);
+ 
+ 	if (addr_num)
+-		reg = &((struct memac_regs *)m->ccsr_map)->
++		reg = &((struct memac_regs *)m->memac_map)->
+ 					mac_addr[addr_num-1].mac_addr_l;
+ 	else
+-		reg = &((struct memac_regs *)m->ccsr_map)->mac_addr0.mac_addr_l;
++		reg = &((struct memac_regs *)m->memac_map)->mac_addr0.mac_addr_l;
+ 
+ 	val = (m->__if.mac_addr.addr_bytes[0] |
+ 	       (m->__if.mac_addr.addr_bytes[1] << 8) |
+@@ -192,10 +192,10 @@ fman_if_add_mac_addr(struct fman_if *p, uint8_t *eth, uint8_t addr_num)
+ 	out_be32(reg, val);
+ 
+ 	if (addr_num)
+-		reg = &((struct memac_regs *)m->ccsr_map)->
++		reg = &((struct memac_regs *)m->memac_map)->
+ 					mac_addr[addr_num-1].mac_addr_u;
+ 	else
+-		reg = &((struct memac_regs *)m->ccsr_map)->mac_addr0.mac_addr_u;
++		reg = &((struct memac_regs *)m->memac_map)->mac_addr0.mac_addr_u;
+ 
+ 	val = ((m->__if.mac_addr.addr_bytes[4] << 0) |
+ 	       (m->__if.mac_addr.addr_bytes[5] << 8));
+@@ -214,7 +214,7 @@ fman_if_set_rx_ignore_pause_frames(struct fman_if *p, bool enable)
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+ 	/* Set Rx Ignore Pause Frames */
+-	cmdcfg = &((struct memac_regs *)__if->ccsr_map)->command_config;
++	cmdcfg = &((struct memac_regs *)__if->memac_map)->command_config;
+ 	if (enable)
+ 		value = in_be32(cmdcfg) | CMD_CFG_PAUSE_IGNORE;
+ 	else
+@@ -232,7 +232,7 @@ fman_if_conf_max_frame_len(struct fman_if *p, unsigned int max_frame_len)
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+ 	/* Set Max frame length */
+-	maxfrm = &((struct memac_regs *)__if->ccsr_map)->maxfrm;
++	maxfrm = &((struct memac_regs *)__if->memac_map)->maxfrm;
+ 	out_be32(maxfrm, (MAXFRM_RX_MASK & max_frame_len));
+ }
+ 
+@@ -240,7 +240,7 @@ void
+ fman_if_stats_get(struct fman_if *p, struct rte_eth_stats *stats)
+ {
+ 	struct __fman_if *m = container_of(p, struct __fman_if, __if);
+-	struct memac_regs *regs = m->ccsr_map;
++	struct memac_regs *regs = m->memac_map;
+ 
+ 	/* read recved packet count */
+ 	stats->ipackets = (u64)in_be32(&regs->rfrm_l) |
+@@ -263,7 +263,7 @@ void
+ fman_if_stats_get_all(struct fman_if *p, uint64_t *value, int n)
+ {
+ 	struct __fman_if *m = container_of(p, struct __fman_if, __if);
+-	struct memac_regs *regs = m->ccsr_map;
++	struct memac_regs *regs = m->memac_map;
+ 	int i;
+ 	uint64_t base_offset = offsetof(struct memac_regs, reoct_l);
+ 
+@@ -278,7 +278,7 @@ void
+ fman_if_stats_reset(struct fman_if *p)
+ {
+ 	struct __fman_if *m = container_of(p, struct __fman_if, __if);
+-	struct memac_regs *regs = m->ccsr_map;
++	struct memac_regs *regs = m->memac_map;
+ 	uint32_t tmp;
+ 
+ 	tmp = in_be32(&regs->statn_config);
+@@ -295,7 +295,7 @@ void
+ fman_if_bmi_stats_enable(struct fman_if *p)
+ {
+ 	struct __fman_if *m = container_of(p, struct __fman_if, __if);
+-	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->bmi_map;
++	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->rx_bmi_map;
+ 	uint32_t tmp;
+ 
+ 	tmp = in_be32(&regs->fmbm_rstc);
+@@ -309,7 +309,7 @@ void
+ fman_if_bmi_stats_disable(struct fman_if *p)
+ {
+ 	struct __fman_if *m = container_of(p, struct __fman_if, __if);
+-	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->bmi_map;
++	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->rx_bmi_map;
+ 	uint32_t tmp;
+ 
+ 	tmp = in_be32(&regs->fmbm_rstc);
+@@ -323,7 +323,7 @@ void
+ fman_if_bmi_stats_get_all(struct fman_if *p, uint64_t *value)
+ {
+ 	struct __fman_if *m = container_of(p, struct __fman_if, __if);
+-	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->bmi_map;
++	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->rx_bmi_map;
+ 	int i = 0;
+ 
+ 	value[i++] = (u32)in_be32(&regs->fmbm_rfrc);
+@@ -340,7 +340,7 @@ void
+ fman_if_bmi_stats_reset(struct fman_if *p)
+ {
+ 	struct __fman_if *m = container_of(p, struct __fman_if, __if);
+-	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->bmi_map;
++	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->rx_bmi_map;
+ 
+ 	out_be32(&regs->fmbm_rfrc, 0);
+ 	out_be32(&regs->fmbm_rfbc, 0);
+@@ -361,7 +361,7 @@ fman_if_promiscuous_enable(struct fman_if *p)
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+ 	/* Enable Rx promiscuous mode */
+-	cmdcfg = &((struct memac_regs *)__if->ccsr_map)->command_config;
++	cmdcfg = &((struct memac_regs *)__if->memac_map)->command_config;
+ 	out_be32(cmdcfg, in_be32(cmdcfg) | CMD_CFG_PROMIS_EN);
+ }
+ 
+@@ -374,7 +374,7 @@ fman_if_promiscuous_disable(struct fman_if *p)
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+ 	/* Disable Rx promiscuous mode */
+-	cmdcfg = &((struct memac_regs *)__if->ccsr_map)->command_config;
++	cmdcfg = &((struct memac_regs *)__if->memac_map)->command_config;
+ 	out_be32(cmdcfg, in_be32(cmdcfg) & (~CMD_CFG_PROMIS_EN));
+ }
+ 
+@@ -386,7 +386,7 @@ fman_if_enable_rx(struct fman_if *p)
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+ 	/* enable Rx and Tx */
+-	out_be32(__if->ccsr_map + 8, in_be32(__if->ccsr_map + 8) | 3);
++	out_be32(__if->memac_map + 8, in_be32(__if->memac_map + 8) | 3);
+ }
+ 
+ void
+@@ -397,7 +397,7 @@ fman_if_disable_rx(struct fman_if *p)
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+ 	/* only disable Rx, not Tx */
+-	out_be32(__if->ccsr_map + 8, in_be32(__if->ccsr_map + 8) & ~(u32)2);
++	out_be32(__if->memac_map + 8, in_be32(__if->memac_map + 8) & ~(u32)2);
+ }
+ 
+ int
+@@ -408,7 +408,7 @@ fman_if_get_rx_status(struct fman_if *p)
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+ 	/* return true if RX bit is set */
+-	return !!(in_be32(__if->ccsr_map + 8) & (u32)2);
++	return !!(in_be32(__if->memac_map + 8) & (u32)2);
+ }
+ 
+ void
+@@ -421,11 +421,11 @@ fman_if_loopback_enable(struct fman_if *p)
+ 	/* Enable loopback mode */
+ 	if ((__if->__if.is_memac) && (__if->__if.is_rgmii)) {
+ 		unsigned int *ifmode =
+-			&((struct memac_regs *)__if->ccsr_map)->if_mode;
++			&((struct memac_regs *)__if->memac_map)->if_mode;
+ 		out_be32(ifmode, in_be32(ifmode) | IF_MODE_RLP);
+ 	} else{
+ 		unsigned int *cmdcfg =
+-			&((struct memac_regs *)__if->ccsr_map)->command_config;
++			&((struct memac_regs *)__if->memac_map)->command_config;
+ 		out_be32(cmdcfg, in_be32(cmdcfg) | CMD_CFG_LOOPBACK_EN);
+ 	}
+ }
+@@ -439,11 +439,11 @@ fman_if_loopback_disable(struct fman_if *p)
+ 	/* Disable loopback mode */
+ 	if ((__if->__if.is_memac) && (__if->__if.is_rgmii)) {
+ 		unsigned int *ifmode =
+-			&((struct memac_regs *)__if->ccsr_map)->if_mode;
++			&((struct memac_regs *)__if->memac_map)->if_mode;
+ 		out_be32(ifmode, in_be32(ifmode) & ~IF_MODE_RLP);
+ 	} else {
+ 		unsigned int *cmdcfg =
+-			&((struct memac_regs *)__if->ccsr_map)->command_config;
++			&((struct memac_regs *)__if->memac_map)->command_config;
+ 		out_be32(cmdcfg, in_be32(cmdcfg) & ~CMD_CFG_LOOPBACK_EN);
+ 	}
+ }
+@@ -461,11 +461,11 @@ fman_if_set_bp(struct fman_if *fm_if, unsigned num __always_unused,
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+ 	fmbm_ebmpi =
+-	       in_be32(&((struct rx_bmi_regs *)__if->bmi_map)->fmbm_ebmpi[0]);
++	       in_be32(&((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_ebmpi[0]);
+ 	fmbm_ebmpi = ebmpi_val_ace | (fmbm_ebmpi & ebmpi_mask) | (bpid << 16) |
+ 		     (bufsize);
+ 
+-	out_be32(&((struct rx_bmi_regs *)__if->bmi_map)->fmbm_ebmpi[0],
++	out_be32(&((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_ebmpi[0],
+ 		 fmbm_ebmpi);
+ }
+ 
+@@ -477,7 +477,7 @@ fman_if_get_fc_threshold(struct fman_if *fm_if)
+ 
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+-	fmbm_mpd = &((struct rx_bmi_regs *)__if->bmi_map)->fmbm_mpd;
++	fmbm_mpd = &((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_mpd;
+ 	return in_be32(fmbm_mpd);
+ }
+ 
+@@ -490,7 +490,7 @@ fman_if_set_fc_threshold(struct fman_if *fm_if, u32 high_water,
+ 
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+-	fmbm_mpd = &((struct rx_bmi_regs *)__if->bmi_map)->fmbm_mpd;
++	fmbm_mpd = &((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_mpd;
+ 	out_be32(fmbm_mpd, FMAN_ENABLE_BPOOL_DEPLETION);
+ 	return bm_pool_set_hw_threshold(bpid, low_water, high_water);
+ 
+@@ -503,7 +503,7 @@ fman_if_get_fc_quanta(struct fman_if *fm_if)
+ 
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+-	return in_be32(&((struct memac_regs *)__if->ccsr_map)->pause_quanta[0]);
++	return in_be32(&((struct memac_regs *)__if->memac_map)->pause_quanta[0]);
+ }
+ 
+ int
+@@ -513,7 +513,7 @@ fman_if_set_fc_quanta(struct fman_if *fm_if, u16 pause_quanta)
+ 
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+-	out_be32(&((struct memac_regs *)__if->ccsr_map)->pause_quanta[0],
++	out_be32(&((struct memac_regs *)__if->memac_map)->pause_quanta[0],
+ 		 pause_quanta);
+ 	return 0;
+ }
+@@ -528,7 +528,7 @@ fman_if_get_fdoff(struct fman_if *fm_if)
+ 
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+-	fmbm_rebm = in_be32(&((struct rx_bmi_regs *)__if->bmi_map)->fmbm_rebm);
++	fmbm_rebm = in_be32(&((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_rebm);
+ 
+ 	fdoff = (fmbm_rebm >> FMAN_SP_EXT_BUF_MARG_START_SHIFT) & 0x1ff;
+ 
+@@ -543,7 +543,7 @@ fman_if_set_err_fqid(struct fman_if *fm_if, uint32_t err_fqid)
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+ 	unsigned int *fmbm_refqid =
+-			&((struct rx_bmi_regs *)__if->bmi_map)->fmbm_refqid;
++			&((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_refqid;
+ 	out_be32(fmbm_refqid, err_fqid);
+ }
+ 
+@@ -559,7 +559,7 @@ fman_if_get_ic_params(struct fman_if *fm_if, struct fman_if_ic_params *icp)
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+ 	unsigned int *fmbm_ricp =
+-		&((struct rx_bmi_regs *)__if->bmi_map)->fmbm_ricp;
++		&((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_ricp;
+ 	val = in_be32(fmbm_ricp);
+ 
+ 	icp->iceof = (val & iceof_mask) >> 12;
+@@ -586,7 +586,7 @@ fman_if_set_ic_params(struct fman_if *fm_if,
+ 	val |= (icp->icsz >> 4) & icsz_mask;
+ 
+ 	unsigned int *fmbm_ricp =
+-		&((struct rx_bmi_regs *)__if->bmi_map)->fmbm_ricp;
++		&((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_ricp;
+ 	out_be32(fmbm_ricp, val);
+ 
+ 	unsigned int *fmbm_ticp =
+@@ -608,7 +608,7 @@ fman_if_set_fdoff(struct fman_if *fm_if, uint32_t fd_offset)
+ 
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+-	fmbm_rebm = &((struct rx_bmi_regs *)__if->bmi_map)->fmbm_rebm;
++	fmbm_rebm = &((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_rebm;
+ 
+ 	out_be32(fmbm_rebm, (in_be32(fmbm_rebm) & ~fmbm_mask) | val);
+ }
+@@ -621,7 +621,7 @@ fman_if_set_maxfrm(struct fman_if *fm_if, uint16_t max_frm)
+ 
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+-	reg_maxfrm = &((struct memac_regs *)__if->ccsr_map)->maxfrm;
++	reg_maxfrm = &((struct memac_regs *)__if->memac_map)->maxfrm;
+ 
+ 	out_be32(reg_maxfrm, (in_be32(reg_maxfrm) & 0xFFFF0000) | max_frm);
+ }
+@@ -634,7 +634,7 @@ fman_if_get_maxfrm(struct fman_if *fm_if)
+ 
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+-	reg_maxfrm = &((struct memac_regs *)__if->ccsr_map)->maxfrm;
++	reg_maxfrm = &((struct memac_regs *)__if->memac_map)->maxfrm;
+ 
+ 	return (in_be32(reg_maxfrm) | 0x0000FFFF);
+ }
+@@ -655,7 +655,7 @@ fman_if_get_sg_enable(struct fman_if *fm_if)
+ 
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+-	fmbm_rebm = in_be32(&((struct rx_bmi_regs *)__if->bmi_map)->fmbm_rebm);
++	fmbm_rebm = in_be32(&((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_rebm);
+ 
+ 	return (fmbm_rebm & FMAN_SP_SG_DISABLE) ? 0 : 1;
+ }
+@@ -675,7 +675,7 @@ fman_if_set_sg(struct fman_if *fm_if, int enable)
+ 
+ 	assert(fman_ccsr_map_fd != -1);
+ 
+-	fmbm_rebm = &((struct rx_bmi_regs *)__if->bmi_map)->fmbm_rebm;
++	fmbm_rebm = &((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_rebm;
+ 
+ 	out_be32(fmbm_rebm, (in_be32(fmbm_rebm) & ~fmbm_mask) | val);
+ }
+@@ -699,14 +699,14 @@ fman_if_discard_rx_errors(struct fman_if *fm_if)
+ 	struct __fman_if *__if = container_of(fm_if, struct __fman_if, __if);
+ 	unsigned int *fmbm_rfsdm, *fmbm_rfsem;
+ 
+-	fmbm_rfsem = &((struct rx_bmi_regs *)__if->bmi_map)->fmbm_rfsem;
++	fmbm_rfsem = &((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_rfsem;
+ 	out_be32(fmbm_rfsem, 0);
+ 
+ 	/* Configure the discard mask to discard the error packets which have
+ 	 * DMA errors, Frame size error, Header error etc. The mask 0x010EE3F0
+ 	 * is to configured discard all the errors which come in the FD[STATUS]
+ 	 */
+-	fmbm_rfsdm = &((struct rx_bmi_regs *)__if->bmi_map)->fmbm_rfsdm;
++	fmbm_rfsdm = &((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_rfsdm;
+ 	out_be32(fmbm_rfsdm, 0x010EE3F0);
+ }
+ 
+@@ -718,9 +718,9 @@ fman_if_receive_rx_errors(struct fman_if *fm_if,
+ 	unsigned int *fmbm_rcfg, *fmbm_rfsdm, *fmbm_rfsem;
+ 	unsigned int val;
+ 
+-	fmbm_rcfg = &((struct rx_bmi_regs *)__if->bmi_map)->fmbm_rcfg;
+-	fmbm_rfsdm = &((struct rx_bmi_regs *)__if->bmi_map)->fmbm_rfsdm;
+-	fmbm_rfsem = &((struct rx_bmi_regs *)__if->bmi_map)->fmbm_rfsem;
++	fmbm_rcfg = &((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_rcfg;
++	fmbm_rfsdm = &((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_rfsdm;
++	fmbm_rfsem = &((struct rx_bmi_regs *)__if->rx_bmi_map)->fmbm_rfsem;
+ 
+ 	val = in_be32(fmbm_rcfg);
+ 	out_be32(fmbm_rcfg, val | BMI_PORT_CFG_FDOVR);
+diff --git a/drivers/bus/dpaa/include/fman.h b/drivers/bus/dpaa/include/fman.h
+index 6e3abf1b50..d949b38b8d 100644
+--- a/drivers/bus/dpaa/include/fman.h
++++ b/drivers/bus/dpaa/include/fman.h
+@@ -462,8 +462,8 @@ struct __fman_if {
+ 	char node_name[IF_NAME_MAX_LEN];
+ 	char node_path[PATH_MAX];
+ 	uint64_t regs_size;
+-	void *ccsr_map;
+-	void *bmi_map;
++	void *memac_map;
++	void *rx_bmi_map;
+ 	void *tx_bmi_map;
+ 	void *qmi_map;
+ };
 -- 
 2.25.1
 
