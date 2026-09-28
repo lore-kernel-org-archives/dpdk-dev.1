@@ -2,34 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6B9C9833E
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 07:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F19C0C9833E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Sep 2026 07:00:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D897040E24;
-	Mon, 28 Sep 2026 08:59:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DDB0B40E31;
+	Mon, 28 Sep 2026 08:59:23 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id F3D3D406FF
- for <dev@dpdk.org>; Mon, 28 Sep 2026 08:58:58 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 79FC0406FF
+ for <dev@dpdk.org>; Mon, 28 Sep 2026 08:58:59 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D58192001BB;
- Mon, 28 Sep 2026 08:58:58 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 58B302001BA;
+ Mon, 28 Sep 2026 08:58:59 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9FC0B2001AB;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ECDAE2001AA;
  Mon, 28 Sep 2026 08:58:58 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1A6FE18000BE;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 70E4D18000BA;
  Mon, 28 Sep 2026 14:58:58 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v16 18/23] bus/dpaa: optimize DPAA multi-entry buffer pool
- operations
-Date: Mon, 28 Sep 2026 12:28:44 +0530
-Message-Id: <20260928065849.126909-19-hemant.agrawal@nxp.com>
+Subject: [PATCH v16 19/23] bus/dpaa: improve log macro usages
+Date: Mon, 28 Sep 2026 12:28:45 +0530
+Message-Id: <20260928065849.126909-20-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260928065849.126909-1-hemant.agrawal@nxp.com>
 References: <20260901101926.1574209-1-hemant.agrawal@nxp.com>
@@ -50,244 +48,382 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+Replace DPAA_BUS_LOG(LEVEL, ...) calls with shorthand macros
+(DPAA_BUS_INFO, DPAA_BUS_ERR, DPAA_BUS_WARN, DPAA_BUS_DEBUG) for
+consistency across the driver.
 
-Replace the hardcoded buffer acquire count of 8 with the FSL_BM_BURST_MAX
-constant when acquiring buffers from the buffer pool.
-
-Add a big-endian hardware buffer descriptor overlay (struct bm_hw_buf_desc)
-to the bm_buffer union so a release or acquire entry can be built and
-parsed through one 8-byte access instead of separate 16-bit and 32-bit
-address halves. The bm_buffer_set64_to_be() helper writes the whole
-descriptor in a single store, which also clears the reserved byte and the
-bpid field so no uninitialised stack content is published to the hardware
-ring, and bm_buffer_get64_from_be() reads the address back.
-
-The MAX_U48, HI16_OF_U48, LO32_OF_U48 and U48_BY_HI16_LO32 helper macros
-move from bman.c to fsl_bman.h so the new accessors can use them, and the
-standalone bman_hw_extract_addr() helper is dropped in favour of
-bm_buffer_get64_from_be().
-
-When publishing to the release ring, entry 0 is written on its own
-precisely because copying it would trip the ring valid bit; entries
-1..n-1 are the ones copied into the ring in a single memcpy:
-
-	r->bufs[0].opaque = bm_bufs[0].opaque;
-	if (num > 1)
-		memcpy(&r->bufs[1], &bm_bufs[1],
-			sizeof(struct bm_buffer) * (num - 1));
-
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/bman.c  | 52 ++++++++---------------------
- drivers/bus/dpaa/include/fsl_bman.h | 51 +++++++++++++++++++++++-----
- 2 files changed, 56 insertions(+), 47 deletions(-)
+ drivers/bus/dpaa/base/fman/fman.c         |  9 ++-
+ drivers/bus/dpaa/base/fman/netcfg_layer.c |  8 +--
+ drivers/bus/dpaa/dpaa_bus.c               | 86 +++++++++++------------
+ drivers/bus/dpaa/rte_dpaa_logs.h          |  2 +
+ 4 files changed, 51 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/bman.c b/drivers/bus/dpaa/base/qbman/bman.c
-index 0ae1160973..80061b31e4 100644
---- a/drivers/bus/dpaa/base/qbman/bman.c
-+++ b/drivers/bus/dpaa/base/qbman/bman.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-  *
-  * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017, 2024 NXP
-+ * Copyright 2017, 2024-2026 NXP
-  *
+diff --git a/drivers/bus/dpaa/base/fman/fman.c b/drivers/bus/dpaa/base/fman/fman.c
+index 55f466d751..67f77265ca 100644
+--- a/drivers/bus/dpaa/base/fman/fman.c
++++ b/drivers/bus/dpaa/base/fman/fman.c
+@@ -119,7 +119,7 @@ _fman_init(const struct device_node *fman_node, int fd)
+ 	ip_rev_1 = in_be32((uint8_t *)fman->ccsr_vir + FMAN_IP_REV_1);
+ 	fman->ip_rev = ip_rev_1 >> FMAN_IP_REV_1_MAJOR_SHIFT;
+ 	fman->ip_rev &=	FMAN_IP_REV_1_MAJOR_MASK;
+-	DPAA_BUS_LOG(NOTICE, "FMan version is 0x%02x", fman->ip_rev);
++	DPAA_BUS_INFO("FMan version is 0x%02x", fman->ip_rev);
+ 
+ 	if (fman->ip_rev >= FMAN_V3) {
+ 		/*
+@@ -795,8 +795,7 @@ fman_if_init(const struct device_node *dpa_node, int fd)
+ 	fman_if_vsp_init(__if);
+ 
+ 	/* Parsing of the network interface is complete, add it to the list */
+-	DPAA_BUS_LOG(DEBUG, "Found %s, Tx Channel = %x, FMAN = %x,"
+-		    "Port ID = %x",
++	DPAA_BUS_DEBUG("Found %s, Tx Channel = %x, FMAN = %x, Port ID = %x",
+ 		    dname, __if->__if.tx_channel_id, __if->__if.fman->idx,
+ 		    __if->__if.mac_idx);
+ 
+@@ -1109,14 +1108,14 @@ fman_init(void)
+ 
+ 	fd = open(FMAN_DEVICE_PATH, O_RDWR);
+ 	if (unlikely(fd < 0)) {
+-		DPAA_BUS_LOG(ERR, "Unable to open %s: %s", FMAN_DEVICE_PATH, strerror(errno));
++		DPAA_BUS_ERR("Unable to open %s: %s", FMAN_DEVICE_PATH, strerror(errno));
+ 		return fd;
+ 	}
+ 	fman_ccsr_map_fd = fd;
+ 
+ 	parent_node = of_find_compatible_node(NULL, NULL, "fsl,dpaa");
+ 	if (!parent_node) {
+-		DPAA_BUS_LOG(ERR, "Unable to find fsl,dpaa node");
++		DPAA_BUS_ERR("Unable to find fsl,dpaa node");
+ 		return -ENODEV;
+ 	}
+ 
+diff --git a/drivers/bus/dpaa/base/fman/netcfg_layer.c b/drivers/bus/dpaa/base/fman/netcfg_layer.c
+index e4afa28131..9bc4447dd0 100644
+--- a/drivers/bus/dpaa/base/fman/netcfg_layer.c
++++ b/drivers/bus/dpaa/base/fman/netcfg_layer.c
+@@ -95,7 +95,7 @@ netcfg_acquire(void)
+ 	/* Initialise the Fman driver */
+ 	_errno = fman_init();
+ 	if (_errno) {
+-		DPAA_BUS_LOG(ERR, "FMAN driver init failed (%d)", errno);
++		DPAA_BUS_ERR("FMAN driver init failed (%d)", errno);
+ 		close(skfd);
+ 		skfd = -1;
+ 		return NULL;
+@@ -106,7 +106,7 @@ netcfg_acquire(void)
+ 		num_ports++;
+ 
+ 	if (!num_ports) {
+-		DPAA_BUS_LOG(ERR, "FMAN ports not available");
++		DPAA_BUS_ERR("FMAN ports not available");
+ 		return NULL;
+ 	}
+ 	/* Allocate space for all enabled mac ports */
+@@ -115,7 +115,7 @@ netcfg_acquire(void)
+ 
+ 	netcfg = rte_calloc(NULL, 1, size, 0);
+ 	if (unlikely(netcfg == NULL)) {
+-		DPAA_BUS_LOG(ERR, "Unable to allocat mem for netcfg");
++		DPAA_BUS_ERR("Unable to allocate mem for netcfg");
+ 		goto error;
+ 	}
+ 
+@@ -131,7 +131,7 @@ netcfg_acquire(void)
+ 	}
+ 
+ 	if (!num_cfg_ports) {
+-		DPAA_BUS_LOG(ERR, "No FMAN ports found");
++		DPAA_BUS_ERR("No FMAN ports found");
+ 		goto error;
+ 	} else if (num_ports != num_cfg_ports)
+ 		netcfg->num_ethports = num_cfg_ports;
+diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
+index 368c8eeb98..6fa12a32fe 100644
+--- a/drivers/bus/dpaa/dpaa_bus.c
++++ b/drivers/bus/dpaa/dpaa_bus.c
+@@ -54,6 +54,9 @@
+ /* At present we allow up to 4 push mode queues as default - as each of
+  * this queue need dedicated portal and we are short of portals.
   */
- #include <rte_memcpy.h>
-@@ -17,20 +17,6 @@
- #define IRQNAME		"BMan portal %d"
- #define MAX_IRQNAME	16	/* big enough for "BMan portal %d" */
- 
--
--#define MAX_U16 UINT16_MAX
--#define MAX_U32 UINT32_MAX
--#ifndef BIT_SIZE
--#define BIT_SIZE(t) (sizeof(t) * 8)
--#endif
--#define MAX_U48 \
--	((((uint64_t)MAX_U16) << BIT_SIZE(uint32_t)) | MAX_U32)
--#define HI16_OF_U48(x) \
--	(((x) >> BIT_SIZE(rte_be32_t)) & MAX_U16)
--#define LO32_OF_U48(x) ((x) & MAX_U32)
--#define U48_BY_HI16_LO32(hi, lo) \
--	(((hi) << BIT_SIZE(uint32_t)) | (lo))
--
- struct bman_portal {
- 	struct bm_portal p;
- 	/* 2-element array. pools[0] is mask, pools[1] is snapshot. */
-@@ -281,7 +267,7 @@ bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
- 	struct bm_rcr_entry *r;
- 	uint8_t i, avail;
- 	uint64_t bpid = pool->params.bpid;
--	struct bm_hw_buf_desc bm_bufs[FSL_BM_BURST_MAX];
-+	struct bm_buffer bm_bufs[FSL_BM_BURST_MAX];
- 
- #ifdef RTE_LIBRTE_DPAA_HWDEBUG
- 	if (!num || (num > FSL_BM_BURST_MAX))
-@@ -298,19 +284,18 @@ bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
- 	if (unlikely(!r))
- 		return -EBUSY;
- 
-+	for (i = 0; i < num; i++)
-+		bm_buffer_set64_to_be(&bm_bufs[i], bufs[i]);
++#define DPAA_DEV_PATH1 "/sys/devices/platform/soc/soc:fsl,dpaa"
++#define DPAA_DEV_PATH2 "/sys/devices/platform/fsl,dpaa"
 +
-+	bm_bufs[0].be_desc.bpid = bpid;
- 	/*
- 	 * we can copy all but the first entry, as this can trigger badness
- 	 * with the valid-bit
+ #define DPAA_MAX_PUSH_MODE_QUEUE 8
+ #define DPAA_DEFAULT_PUSH_MODE_QUEUE 4
+ 
+@@ -210,7 +213,7 @@ dpaa_create_device_list(void)
+ 	for (i = 0; dpaa_netcfg && (i < dpaa_netcfg->num_ethports); i++) {
+ 		dev = calloc(1, sizeof(struct rte_dpaa_device));
+ 		if (!dev) {
+-			DPAA_BUS_LOG(ERR, "Failed to allocate ETH devices");
++			DPAA_BUS_ERR("Failed to allocate ETH devices");
+ 			ret = -ENOMEM;
+ 			goto cleanup;
+ 		}
+@@ -221,7 +224,7 @@ dpaa_create_device_list(void)
+ 		dev->intr_handle =
+ 			rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
+ 		if (dev->intr_handle == NULL) {
+-			DPAA_BUS_LOG(ERR, "Failed to allocate intr handle");
++			DPAA_BUS_ERR("Failed to allocate intr handle");
+ 			ret = -ENOMEM;
+ 			free(dev);
+ 			goto cleanup;
+@@ -265,7 +268,7 @@ dpaa_create_device_list(void)
  	 */
--	bm_bufs[0].bpid = bpid;
--	bm_bufs[0].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[0]));
--	bm_bufs[0].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[0]));
--	for (i = 1; i < num; i++) {
--		bm_bufs[i].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[i]));
--		bm_bufs[i].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[i]));
--	}
--
--	memcpy(r->bufs, bm_bufs, sizeof(struct bm_buffer) * num);
-+	r->bufs[0].opaque = bm_bufs[0].opaque;
-+	if (num > 1)
-+		memcpy(&r->bufs[1], &bm_bufs[1],
-+			sizeof(struct bm_buffer) * (num - 1));
  
- 	bm_rcr_pvb_commit(&p->p, BM_RCR_VERB_CMD_BPID_SINGLE |
- 		(num & BM_RCR_VERB_BUFCOUNT_MASK));
-@@ -368,16 +353,6 @@ __rte_unused bman_extract_addr(struct bm_buffer *buf)
- 	return buf->addr;
+ 	if (dpaa_sec_available()) {
+-		DPAA_BUS_LOG(INFO, "DPAA SEC devices are not available");
++		DPAA_BUS_INFO("DPAA SEC devices are not available");
+ 		goto qdma_dpaa;
+ 	}
+ 
+@@ -273,8 +276,8 @@ dpaa_create_device_list(void)
+ 	for (i = 0; i < RTE_LIBRTE_DPAA_MAX_CRYPTODEV; i++) {
+ 		dev = calloc(1, sizeof(struct rte_dpaa_device));
+ 		if (!dev) {
+-			DPAA_BUS_LOG(ERR, "Failed to allocate SEC devices");
+-			ret = -1;
++			DPAA_BUS_ERR("Failed to allocate SEC devices");
++			ret = -ENOMEM;
+ 			goto cleanup;
+ 		}
+ 
+@@ -282,7 +285,7 @@ dpaa_create_device_list(void)
+ 		dev->intr_handle =
+ 			rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
+ 		if (dev->intr_handle == NULL) {
+-			DPAA_BUS_LOG(ERR, "Failed to allocate intr handle");
++			DPAA_BUS_ERR("Failed to allocate intr handle");
+ 			ret = -ENOMEM;
+ 			free(dev);
+ 			goto cleanup;
+@@ -297,7 +300,7 @@ dpaa_create_device_list(void)
+ 		 */
+ 		memset(dev->name, 0, RTE_ETH_NAME_MAX_LEN);
+ 		sprintf(dev->name, "dpaa_sec-%d", i+1);
+-		DPAA_BUS_LOG(INFO, "%s cryptodev added", dev->name);
++		DPAA_BUS_INFO("%s cryptodev added", dev->name);
+ 		dev->device.name = dev->name;
+ 		dev->device.devargs = rte_bus_find_devargs(&rte_dpaa_bus, dev->name);
+ 		if (dev->device.devargs != NULL)
+@@ -313,8 +316,8 @@ dpaa_create_device_list(void)
+ 	for (i = 0; i < RTE_DPAA_QDMA_DEVICES; i++) {
+ 		dev = calloc(1, sizeof(struct rte_dpaa_device));
+ 		if (!dev) {
+-			DPAA_BUS_LOG(ERR, "Failed to allocate QDMA device");
+-			ret = -1;
++			DPAA_BUS_ERR("Failed to allocate QDMA device");
++			ret = -ENOMEM;
+ 			goto cleanup;
+ 		}
+ 
+@@ -323,7 +326,7 @@ dpaa_create_device_list(void)
+ 
+ 		memset(dev->name, 0, RTE_ETH_NAME_MAX_LEN);
+ 		sprintf(dev->name, "dpaa_qdma-%d", i+1);
+-		DPAA_BUS_LOG(INFO, "%s qdma device added", dev->name);
++		DPAA_BUS_INFO("%s qdma device added", dev->name);
+ 		dev->device.name = dev->name;
+ 		dev->device.devargs = rte_bus_find_devargs(&rte_dpaa_bus, dev->name);
+ 		if (dev->device.devargs != NULL)
+@@ -377,37 +380,35 @@ int rte_dpaa_portal_init(void *arg)
+ 	dpaa_seqn_dynfield_offset =
+ 		rte_mbuf_dynfield_register(&dpaa_seqn_dynfield_desc);
+ 	if (dpaa_seqn_dynfield_offset < 0) {
+-		DPAA_BUS_LOG(ERR, "Failed to register mbuf field for dpaa sequence number");
++		DPAA_BUS_ERR("Failed to register mbuf field for dpaa sequence number");
+ 		return -rte_errno;
+ 	}
+ 
+ 	/* Initialise bman thread portals */
+ 	ret = bman_thread_init();
+ 	if (ret) {
+-		DPAA_BUS_LOG(ERR, "bman_thread_init failed on core %u"
+-			     " (lcore=%u) with ret: %d", cpu, lcore, ret);
++		DPAA_BUS_ERR("Failed(%d) to init bman thread on cpu%d/lcore%d",
++			ret, cpu, lcore);
+ 		return ret;
+ 	}
+ 
+-	DPAA_BUS_LOG(DEBUG, "BMAN thread initialized - CPU=%d lcore=%d",
+-		     cpu, lcore);
++	DPAA_BUS_DEBUG("BMAN thread initialized - CPU=%d lcore=%d", cpu, lcore);
+ 
+ 	/* Initialise qman thread portals */
+ 	ret = qman_thread_init();
+ 	if (ret) {
+-		DPAA_BUS_LOG(ERR, "qman_thread_init failed on core %u"
+-			    " (lcore=%u) with ret: %d", cpu, lcore, ret);
++		DPAA_BUS_ERR("Failed(%d) to init qman thread on cpu%d/lcore%d",
++			ret, cpu, lcore);
+ 		bman_thread_finish();
+ 		return ret;
+ 	}
+ 
+-	DPAA_BUS_LOG(DEBUG, "QMAN thread initialized - CPU=%d lcore=%d",
+-		     cpu, lcore);
++	DPAA_BUS_DEBUG("QMAN thread initialized - CPU=%d lcore=%d", cpu, lcore);
+ 
+ 	DPAA_PER_LCORE_PORTAL = rte_malloc(NULL, sizeof(struct dpaa_portal),
+ 				    RTE_CACHE_LINE_SIZE);
+ 	if (!DPAA_PER_LCORE_PORTAL) {
+-		DPAA_BUS_LOG(ERR, "Unable to allocate memory");
++		DPAA_BUS_ERR("Unable to allocate memory");
+ 		bman_thread_finish();
+ 		qman_thread_finish();
+ 		return -ENOMEM;
+@@ -420,15 +421,15 @@ int rte_dpaa_portal_init(void *arg)
+ 	ret = pthread_setspecific(dpaa_portal_key,
+ 				  (void *)DPAA_PER_LCORE_PORTAL);
+ 	if (ret) {
+-		DPAA_BUS_LOG(ERR, "pthread_setspecific failed on core %u"
+-			     " (lcore=%u) with ret: %d", cpu, lcore, ret);
++		DPAA_BUS_ERR("Failed(%d) to set portal per thread on cpu%u/lcore%u",
++			ret, cpu, lcore);
+ 		dpaa_portal_finish(NULL);
+ 
+ 		return ret;
+ 	}
+ 	dpaa_portals[lcore] = DPAA_PER_LCORE_PORTAL;
+ 
+-	DPAA_BUS_LOG(DEBUG, "QMAN thread initialized");
++	DPAA_BUS_DEBUG("QMAN thread initialized");
+ 
+ 	return 0;
  }
+@@ -444,7 +445,7 @@ rte_dpaa_portal_fq_init(void *arg, struct qman_fq *fq)
+ 	if (unlikely(!DPAA_PER_LCORE_PORTAL)) {
+ 		ret = rte_dpaa_portal_init(arg);
+ 		if (ret < 0) {
+-			DPAA_BUS_LOG(ERR, "portal initialization failure");
++			DPAA_BUS_ERR("portal initialization failure");
+ 			return ret;
+ 		}
+ 	}
+@@ -452,7 +453,7 @@ rte_dpaa_portal_fq_init(void *arg, struct qman_fq *fq)
+ 	/* Initialise qman specific portals */
+ 	ret = fsl_qman_fq_portal_init(fq->qp);
+ 	if (ret) {
+-		DPAA_BUS_LOG(ERR, "Unable to init fq portal");
++		DPAA_BUS_ERR("Unable to init fq portal");
+ 		return -1;
+ 	}
  
--static inline uint64_t
--bman_hw_extract_addr(struct bm_hw_buf_desc *buf)
--{
--	uint64_t hi, lo;
--
--	hi = be16_to_cpu(buf->hi_addr);
--	lo = be32_to_cpu(buf->lo_addr);
--	return U48_BY_HI16_LO32(hi, lo);
--}
--
- RTE_EXPORT_INTERNAL_SYMBOL(bman_acquire_fast)
- int
- bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
-@@ -386,7 +361,7 @@ bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
- 	struct bm_mc_command *mcc;
- 	struct bm_mc_result *mcr;
- 	uint8_t i, rst;
--	struct bm_hw_buf_desc bm_bufs[FSL_BM_BURST_MAX];
-+	struct bm_buffer bm_bufs[FSL_BM_BURST_MAX];
+@@ -474,7 +475,7 @@ dpaa_portal_finish(void *arg)
+ 	struct dpaa_portal *dpaa_io_portal = (struct dpaa_portal *)arg;
  
- #ifdef RTE_LIBRTE_DPAA_HWDEBUG
- 	if (!num || (num > FSL_BM_BURST_MAX))
-@@ -405,11 +380,10 @@ bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
- 	if (unlikely(rst < 1 || rst > FSL_BM_BURST_MAX))
+ 	if (!dpaa_io_portal) {
+-		DPAA_BUS_LOG(DEBUG, "Portal already cleaned");
++		DPAA_BUS_DEBUG("Portal already cleaned");
+ 		return;
+ 	}
+ 
+@@ -612,24 +613,22 @@ rte_dpaa_bus_dev_build(void)
+ 	/* Load the device-tree driver */
+ 	ret = of_init();
+ 	if (ret) {
+-		DPAA_BUS_LOG(ERR, "of_init failed with ret: %d", ret);
+-		return -1;
++		DPAA_BUS_ERR("Failed(%d) to init device tree", ret);
++		return ret;
+ 	}
+ 
+ 	/* Get the interface configurations from device-tree */
+ 	dpaa_netcfg = netcfg_acquire();
+ 	if (!dpaa_netcfg) {
+-		DPAA_BUS_LOG(ERR,
+-			"netcfg failed: /dev/fsl_usdpaa device not available");
+-		DPAA_BUS_WARN(
+-			"Check if you are using USDPAA based device tree");
++		DPAA_BUS_ERR("netcfg failed: /dev/fsl_usdpaa device not available");
++		DPAA_BUS_WARN("Check if you are using USDPAA based device tree");
  		return -EINVAL;
+ 	}
  
--	rte_memcpy(bm_bufs, mcr->acquire.bufs,
--		sizeof(struct bm_buffer) * rst);
-+	rte_memcpy(bm_bufs, mcr->acquire.bufs, sizeof(struct bm_buffer) * rst);
+-	DPAA_BUS_LOG(NOTICE, "DPAA Bus Detected");
++	DPAA_BUS_NOTICE("DPAA Bus Detected");
  
- 	for (i = 0; i < rst; i++)
--		bufs[i] = bman_hw_extract_addr(&bm_bufs[i]);
-+		bufs[i] = bm_buffer_get64_from_be(&bm_bufs[i]);
+ 	if (!dpaa_netcfg->num_ethports) {
+-		DPAA_BUS_LOG(INFO, "NO DPDK mapped net interfaces available");
++		DPAA_BUS_INFO("NO DPDK mapped net interfaces available");
+ 		/* This is not an error */
+ 	}
  
- 	return rst;
- }
-diff --git a/drivers/bus/dpaa/include/fsl_bman.h b/drivers/bus/dpaa/include/fsl_bman.h
-index 9c949d1baa..d51dd27615 100644
---- a/drivers/bus/dpaa/include/fsl_bman.h
-+++ b/drivers/bus/dpaa/include/fsl_bman.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-  *
-  * Copyright 2008-2012 Freescale Semiconductor, Inc.
-- * Copyright 2024 NXP
-+ * Copyright 2024-2026 NXP
-  *
-  */
- 
-@@ -42,6 +42,13 @@ struct bm_mc_result;	/* MC result */
-  * pool id specific to this buffer is needed (BM_RCR_VERB_CMD_BPID_MULTI,
-  * BM_MCC_VERB_ACQUIRE), the 'bpid' field is used.
-  */
-+struct __rte_packed_begin bm_hw_buf_desc {
-+	uint8_t rsv;
-+	uint8_t bpid;
-+	rte_be16_t hi; /* High 16-bits of 48-bit address */
-+	rte_be32_t lo; /* Low 32-bits of 48-bit address */
-+} __rte_packed_end;
-+
- struct __rte_aligned(8) bm_buffer {
- 	union {
- 		struct {
-@@ -66,17 +73,11 @@ struct __rte_aligned(8) bm_buffer {
- 			u64 __notaddress:16;
+@@ -637,11 +636,11 @@ rte_dpaa_bus_dev_build(void)
+ 	dump_netcfg(dpaa_netcfg, stdout);
  #endif
- 		};
-+		struct bm_hw_buf_desc be_desc;
- 		u64 opaque;
- 	};
- };
  
--struct __rte_packed_begin bm_hw_buf_desc {
--	uint8_t rsv;
--	uint8_t bpid;
--	rte_be16_t hi_addr; /* High 16-bits of 48-bit address */
--	rte_be32_t lo_addr; /* Low 32-bits of 48-bit address */
--} __rte_packed_end;
--
- static inline u64 bm_buffer_get64(const struct bm_buffer *buf)
- {
- 	return buf->addr;
-@@ -87,6 +88,17 @@ static inline dma_addr_t bm_buf_addr(const struct bm_buffer *buf)
- 	return (dma_addr_t)buf->addr;
+-	DPAA_BUS_LOG(DEBUG, "Number of ethernet devices = %d",
+-		     dpaa_netcfg->num_ethports);
++	DPAA_BUS_DEBUG("Number of ethernet devices = %d",
++			     dpaa_netcfg->num_ethports);
+ 	ret = dpaa_create_device_list();
+ 	if (ret) {
+-		DPAA_BUS_LOG(ERR, "Unable to create device list. (%d)", ret);
++		DPAA_BUS_ERR("Unable to create device list. (%d)", ret);
+ 		return ret;
+ 	}
+ 	return 0;
+@@ -667,8 +666,6 @@ static int rte_dpaa_setup_intr(struct rte_intr_handle *intr_handle)
+ 	return 0;
  }
  
-+#ifndef BIT_SIZE
-+#define BIT_SIZE(t) (sizeof(t) * 8)
-+#endif
-+#define MAX_U48 \
-+	((((uint64_t)UINT16_MAX) << BIT_SIZE(uint32_t)) | UINT32_MAX)
-+#define HI16_OF_U48(x) \
-+	(((x) >> BIT_SIZE(uint32_t)) & UINT16_MAX)
-+#define LO32_OF_U48(x) ((x) & UINT32_MAX)
-+#define U48_BY_HI16_LO32(hi, lo) \
-+	(((uint64_t)(hi) << BIT_SIZE(uint32_t)) | (lo))
-+
- #define bm_buffer_set64(buf, v) \
- 	do { \
- 		struct bm_buffer *__buf931 = (buf); \
-@@ -94,6 +106,29 @@ static inline dma_addr_t bm_buf_addr(const struct bm_buffer *buf)
- 		__buf931->lo = lower_32_bits(v); \
- 	} while (0)
+-#define DPAA_DEV_PATH1 "/sys/devices/platform/soc/soc:fsl,dpaa"
+-#define DPAA_DEV_PATH2 "/sys/devices/platform/fsl,dpaa"
  
-+/*
-+ * Write the whole 8-byte descriptor in one store. Besides the 48-bit
-+ * address this clears the reserved byte and the bpid field, so no
-+ * uninitialized stack content can be published to the hardware ring.
-+ * Callers that need a bpid must set it after this macro.
-+ */
-+#define bm_buffer_set64_to_be(buf, v) \
-+	do { \
-+		struct bm_buffer *__buf931 = (buf); \
-+		\
-+		__buf931->opaque = cpu_to_be64((uint64_t)(v) & MAX_U48); \
-+	} while (0)
-+
-+#define bm_buffer_get64_from_be(buf) \
-+	({ \
-+		uint64_t hi, lo; \
-+		struct bm_buffer *__buf931 = (buf); \
-+		\
-+		hi = be16_to_cpu(__buf931->be_desc.hi); \
-+		lo = be32_to_cpu(__buf931->be_desc.lo); \
-+		U48_BY_HI16_LO32(hi, lo); \
-+	})
-+
- #define FSL_BM_BURST_MAX 8
+ static int
+ rte_dpaa_bus_scan(void)
+@@ -684,7 +681,7 @@ rte_dpaa_bus_scan(void)
  
- /* See 1.5.3.5.4: "Release Command" */
+ 	if ((access(DPAA_DEV_PATH1, F_OK) != 0) &&
+ 	    (access(DPAA_DEV_PATH2, F_OK) != 0)) {
+-		DPAA_BUS_LOG(DEBUG, "DPAA Bus not present. Skipping.");
++		DPAA_BUS_DEBUG("DPAA Bus not present. Skipping.");
+ 		return 0;
+ 	}
+ 
+@@ -698,7 +695,7 @@ rte_dpaa_bus_scan(void)
+ 	 */
+ 	ret = pthread_key_create(&dpaa_portal_key, dpaa_portal_finish);
+ 	if (ret) {
+-		DPAA_BUS_LOG(DEBUG, "Unable to create pthread key. (%d)", ret);
++		DPAA_BUS_DEBUG("Unable to create pthread key. (%d)", ret);
+ 		dpaa_clean_device_list();
+ 		return ret;
+ 	}
+@@ -715,12 +712,11 @@ rte_dpaa_bus_scan(void)
+ 		dpaa_bus.svr_ver = 0;
+ 	}
+ 	if (dpaa_bus.svr_ver == SVR_LS1046A_FAMILY) {
+-		DPAA_BUS_LOG(INFO, "This is LS1046A family SoC.");
++		DPAA_BUS_INFO("This is LS1046A family SoC.");
+ 	} else if (dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
+-		DPAA_BUS_LOG(INFO, "This is LS1043A family SoC.");
++		DPAA_BUS_INFO("This is LS1043A family SoC.");
+ 	} else {
+-		DPAA_BUS_LOG(WARNING,
+-			"This is Unknown(%08x) DPAA1 family SoC.",
++		DPAA_BUS_WARN("This is Unknown(%08x) DPAA1 family SoC.",
+ 			dpaa_bus.svr_ver);
+ 	}
+ 
+diff --git a/drivers/bus/dpaa/rte_dpaa_logs.h b/drivers/bus/dpaa/rte_dpaa_logs.h
+index 235c617edd..c6a225e5f7 100644
+--- a/drivers/bus/dpaa/rte_dpaa_logs.h
++++ b/drivers/bus/dpaa/rte_dpaa_logs.h
+@@ -30,6 +30,8 @@ extern int dpaa_logtype_bus;
+ 
+ #define BUS_INIT_FUNC_TRACE() DPAA_BUS_DEBUG(" >>")
+ 
++#define DPAA_BUS_NOTICE(fmt, ...) \
++	DPAA_BUS_LOG(NOTICE, fmt, ## __VA_ARGS__)
+ #define DPAA_BUS_INFO(fmt, ...) \
+ 	DPAA_BUS_LOG(INFO, fmt, ## __VA_ARGS__)
+ #define DPAA_BUS_ERR(fmt, ...) \
 -- 
 2.25.1
 
