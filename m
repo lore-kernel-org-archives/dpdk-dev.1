@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFB6CA5FA7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B612BCA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:39:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 203B642E9E;
-	Tue, 29 Sep 2026 18:38:41 +0200 (CEST)
-Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com
- [74.125.228.41]) by mails.dpdk.org (Postfix) with ESMTP id 8E94A42E6F
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:21 +0200 (CEST)
-Received: by mail-pz2-f41.google.com with SMTP id
- d2e1a72fcca58-8631d0023daso2278330b3a.2
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 242E242EA7;
+	Tue, 29 Sep 2026 18:38:42 +0200 (CEST)
+Received: from mail-pz2-f38.google.com (mail-pz2-f38.google.com
+ [74.125.228.38]) by mails.dpdk.org (Postfix) with ESMTP id 4B96642E5B
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:22 +0200 (CEST)
+Received: by mail-pz2-f38.google.com with SMTP id
+ d2e1a72fcca58-882c2bcef77so1771652b3a.3
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699901;
  x=1791304701; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=T/WAQD5oaNv4lxfHcblbwU4iJfnsR7jKB5NaEQ4aPGI=;
- b=q+DqVwO8ghkC27fKIz/jGsGrj9Z1o/A7bsv48mR1Y2rvSvsOTj/mh/VgZI3LrQCZkg
- J1PjHU0L1dYOkZDkj5qHlTlJ1Lw9on3c5f5IXGznzGKET2v/lW3EoiTDHjvarIqniII4
- SHyxvuDbsYg0dHiWkLACo7B3+rqYV+pOGOCZvq/F2bLoWAcuF1UZIdB3zyQOJQgVN+M8
- qYteXI1eEZaL7Lt/NJzZjRO+0AgAeAPeBEUX1AaNQfXwcCxV1Ug01mSVBaQghctI4sr+
- 3eARn98RV/EWe+PvbAyPVFM5Mb8+8XKn+b2JQaBtpDCTytfIT1mv345T7LoXjhs3Gndw
- M7fg==
+ bh=74LFEaJWlcn4DQMWy05I+ZzfEepgvRkcxN04NLTnYIY=;
+ b=Da280f8gQBvd+ibd/FmC+UePxbsLGH3YdfHptHRfgLibmWc3WyBLDS+QDbzhwYRLb8
+ D9bT7tSThdccv25IUbVjr1i638vHS+LArFoTWkf7j3if/XyoDO8FvipYDmLkQ0hKkfMA
+ 5DlY+jekHA8g5mkXtogESnkuk9vKeyncJbMj9kq/P4pP2r2yZHa9UqtxAF5geo4QgDNC
+ FcCkvAa+Qm2/NA2N9IySIW5mHYFHmhKBIedaprWeHJLK4BFKk179C4zRnUQ8mpeHOe60
+ w7W6nFouYV2UtI/nXWHv21sNfWSNNlnl2DF7ndBcwYqNnBA75ux+BlYO5nxpXI5tYRxc
+ gcOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20260707; t=1790699901; x=1791304701;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=T/WAQD5oaNv4lxfHcblbwU4iJfnsR7jKB5NaEQ4aPGI=;
- b=Z4aSJ2mYHH8Nsbr+33diaSjJ7N7nmgGhZF1gZaVP37ebQVCWyxwWFRqMAkU6fZIrsB
- z7UFCkG7QmQfF3nCKcTGmHg7hOUoHZKDeRDEK19m0TILNkSTGLn7+9VK0im5/hwg8W8L
- 9K24OS9syGAVTa8TMj1S1lVZsyUcnInZiXyu9YCFdQgczYfyccLvqqtuNDWTQgeF9AWc
- fFze2+i1V/BQ8J4Zk6V8gnJI3E26h/aCSevysvOxGWSHBAGVA4Jkq/Bo4QwHbnuY/C4M
- FtdRpevoJgcpXXEqdQvHJZyAVqAz59AswpV0it5mb0hNX1YdsWzk8BbDSWZ49U8yEKI5
- vVdw==
-X-Gm-Message-State: AFuF++lRg8wSsPZb92y7tS11WtPKAf67I+VwE4mwY8+IMmTt0QO+wAwz
- c1A4+39xVKObTQFcclXy253SCVNwclCxdVr5WeV5PvCQfPLqDKnIXvCVpKh4ZKp3KceZGTCmCit
- /vC8HPNo=
-X-Gm-Gg: AYBFou0/+wb9BJZC05i42+4EU+htxDa/N6rPy0vWjTanqgUl94v3X9T+Ytf08eHfs3I
- 7h2/QGRuacw7LwdIQ6PImg5iOLj07QSHuHC4pY6isx6cygr9omd7foW9fPx+TSwSSASMBncuaQz
- MEJ8ynuuXlmDcwrlq3IJnrAH7r67gg8A8NZJTUQqD6cld4aSrfE4y5pzMAFZeiY1HqJAIThf5+C
- HiD1xy0VUECHcwNq5ZpBoQs3tsiVbzNFLOK9vOsUDWLFILqqAd2Zh2PRadONP70nB0BCFg7CuRb
- t9g5Rjncw6iCdDVzRWiM7+2HfUfxmvw/vrt5IUdtkatu9KrkYjhvuI4ahaTMzgXfHhZ3MeG0As7
- 5IPMnDagWhrTAf7tJAzqOGo4DXMzW3aOiWZ6ZgQwrMj+bM8wcJt9vQLuRa1tZxsYPofhq4ON+7K
- QPSfqCvjrfTEY6DoIJQ6dpW0yS6/W+OyBrp+KIaPbNnxjVmcvJxOeD03S1Xf61WYeBMOM0S4Byh
- woABZsJXHBqya+OCZcs0RkYIgH/n5gFdky2YxDRlvQP2yuJ
-X-Received: by 2002:a05:6a00:368c:b0:882:94ab:20ec with SMTP id
- d2e1a72fcca58-88294ab313fmr6512272b3a.25.1790699900674; 
- Tue, 29 Sep 2026 09:38:20 -0700 (PDT)
+ bh=74LFEaJWlcn4DQMWy05I+ZzfEepgvRkcxN04NLTnYIY=;
+ b=ECMuQMdWL7Go7a8ak20eWLPH4wWZM1eus/Zvvr4xa9w4X156ZeTHYgLmUrOTCFr9UQ
+ Hk4qYFPRQj6I9TNNZPnIfl93Mx1UdWr54hj6TXxMQZkQDjz9VndxqL4ScMKx0ODR/Eic
+ HHclqqb9bbmlKQK4zs9QT7r/c43U+k5UiykHLpe7q/ctJoZP9uRCgLOqGkB895wEEiIh
+ b94g8DRBJISnMATA/T6tDdBRoPTs7T2IoDFMQRph4VD3uSxnJHg8Q1+eANe1KAu3wzE7
+ hu2le1/qjrjSI5jUAsMjIGipbv5epbGrWocry+OoOuRgcAzITofGrFyCDxAfEngAYJmF
+ 4Fyg==
+X-Gm-Message-State: AFuF++kpjmrcuQ9Wh7NHFFilVMAv7/jyd/FLMn/ZlzdUj+I95ThPiE4P
+ jUtQRZu4OHQDqcxcDgpk3ANZNdsXDIu2Y+5xLC74KysyemLM+NjsftfaEGE78p4b9hcNjWcsx3n
+ ky46ZyDA=
+X-Gm-Gg: AYBFou3Wb/tHY36MMURMh64KHFZYaYiOuEoeFDabrW3hdGYERaqUGD9sikzhZqKd3HO
+ nT/+7vaqFEnyQfIo6FPd+eZzp7Wo8gCrfa67kf1oL7JRrju69BUT881k0qyfmVb98P5iagIGVdw
+ jddAp4/eLs5QxHop05W+SyU56awACEFg5wMF4VjOL0a4fEZ2q5CgW+7mtqHyNcLDyYAZ+teOEWk
+ Mh61wIkQMbYtEruZFlV6Rqnt+ah0LUBlkfvns2H7+bFs6+YdtvUQP2pzEAJfywdJobwfvmAfsva
+ LHo88VKIwVsmxLiNoDSJ3i3sbGfoufdkrnjg+7fdnX5Xh3wn0aiJB+sVCQkPyetTY7nFZVZd6Dy
+ YiDED6BI9Vupnt8dtR/JNfNj8vueEen1Oc6tbxy3JDajI2G9AnzSMwzNb0YSiHXtnmXOh56x0tF
+ xXwKvI0UsqS2IXgVmxpi2sj59oDf7DWTKZkNSJhYYtBPagLTj7rpqlOltvVc4xS+iBlZGFu1T0a
+ O+gRk7roSKieAAuc0fivv02ZNFzD/jPEFCJrQ==
+X-Received: by 2002:a05:6a00:4c09:b0:882:7bed:3b3b with SMTP id
+ d2e1a72fcca58-8827bfcb1a6mr6334514b3a.36.1790699901480; 
+ Tue, 29 Sep 2026 09:38:21 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
  d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:38:20 -0700 (PDT)
+ Tue, 29 Sep 2026 09:38:21 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 14/61] net/pcap: use kvargs numeric helpers
-Date: Tue, 29 Sep 2026 09:36:17 -0700
-Message-ID: <20260929163800.1108305-15-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 15/61] net/ring: use kvargs numeric helpers
+Date: Tue, 29 Sep 2026 09:36:18 -0700
+Message-ID: <20260929163800.1108305-16-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929163800.1108305-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -82,113 +83,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The open coded conversion is correct, but the same checks are now
-available from kvargs.
+The node number is stored in an unsigned int but converted with
+strtol(), so a negative value such as "node:-1:CREATE" was accepted and
+wrapped around.
 
-process_bool_flag() duplicated what rte_kvargs_handle_bool() does, so
-drop it and use the helper for phy_mac, infinite_rx and eof. The
-process_opt() form newly enables the bare "infinite_rx" spelling: the
-value == NULL branch of process_bool_flag() was dead, since
-rte_kvargs_process() rejects a missing value before the handler runs.
-The usual words such as "on" and "true" are now accepted as well,
-while an empty "infinite_rx=" is rejected rather than taken as true.
+The value is also passed to strdup() without being checked for NULL, so
+a key given with no value crashes. Check it first, and report an
+allocation failure as such instead of reusing the empty parameter
+message.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 51 ++++++++--------------------------
- 1 file changed, 12 insertions(+), 39 deletions(-)
+ drivers/net/ring/rte_eth_ring.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index b1f3718c8a..df3a480f97 100644
---- a/drivers/net/pcap/pcap_ethdev.c
-+++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -1584,46 +1584,19 @@ open_tx_iface(const char *key, const char *value, void *extra_args)
- 	return open_iface(key, value, extra_args);
- }
+diff --git a/drivers/net/ring/rte_eth_ring.c b/drivers/net/ring/rte_eth_ring.c
+index 4cbdbe3085..a8d118bbe2 100644
+--- a/drivers/net/ring/rte_eth_ring.c
++++ b/drivers/net/ring/rte_eth_ring.c
+@@ -2,6 +2,7 @@
+  * Copyright(c) 2010-2015 Intel Corporation
+  */
  
--static int
--process_bool_flag(const char *key, const char *value, void *extra_args)
--{
--	bool *flag = extra_args;
--
--	if (value == NULL || *value == '\0') {
--		*flag = true; /* default with no additional argument */
--	} else if (strcmp(value, "0") == 0) {
--		*flag = false;
--	} else if (strcmp(value, "1") == 0) {
--		*flag = true;
--	} else {
--		PMD_LOG(ERR, "Invalid '%s' value '%s'", key, value);
--		return -1;
--	}
--	return 0;
--}
--
- static int
- process_snapshot_len(const char *key, const char *value, void *extra_args)
++#include <limits.h>
+ #include <stdlib.h>
+ 
+ #include <eal_export.h>
+@@ -579,21 +580,25 @@ static int parse_kvlist(const char *key __rte_unused,
+ 			const char *value, void *data)
  {
--	uint32_t *snaplen = extra_args;
--	unsigned long val;
--	char *endptr;
+ 	struct node_action_list *info = data;
++	uint64_t node_val;
+ 	int ret;
+-	char *name;
++	char *name = NULL;
+ 	char *action;
+ 	char *node;
+-	char *end;
 -
--	if (value == NULL || *value == '\0') {
--		PMD_LOG(ERR, "Argument '%s' requires a value", key);
--		return -1;
--	}
-+	uint64_t val;
+-	name = strdup(value);
  
--	errno = 0;
--	val = strtoul(value, &endptr, 10);
--	if (errno != 0 || *endptr != '\0' ||
--	    val < RTE_ETHER_HDR_LEN ||
--	    val > ETH_PCAP_MAXIMUM_SNAPLEN) {
--		PMD_LOG(ERR, "Invalid '%s' value '%s'", key, value);
-+	if (rte_kvargs_to_uint(value, RTE_ETHER_HDR_LEN,
-+			       ETH_PCAP_MAXIMUM_SNAPLEN, &val) < 0) {
-+		PMD_LOG(ERR, "Invalid '%s' value '%s'", key,
-+			value == NULL ? "" : value);
- 		return -1;
+ 	ret = -EINVAL;
+ 
+-	if (!name) {
++	if (value == NULL) {
+ 		PMD_LOG(WARNING, "command line parameter is empty for ring pmd!");
+ 		goto out;
  	}
  
--	*snaplen = (uint32_t)val;
-+	*(uint32_t *)extra_args = val;
- 	return 0;
- }
++	name = strdup(value);
++	if (!name) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
+ 	node = strchr(name, ':');
+ 	if (!node) {
+ 		PMD_LOG(WARNING, "could not parse node value from %s",
+@@ -625,14 +630,12 @@ static int parse_kvlist(const char *key __rte_unused,
+ 	else
+ 		goto out;
  
-@@ -1932,8 +1905,8 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
+-	errno = 0;
+-	info->list[info->count].node = strtol(node, &end, 10);
+-
+-	if ((errno != 0) || (*end != '\0')) {
++	if (rte_kvargs_to_uint(node, 0, UINT_MAX, &node_val) < 0) {
+ 		PMD_LOG(WARNING,
+ 			"node value %s is unparseable as a number", node);
+ 		goto out;
+ 	}
++	info->list[info->count].node = node_val;
  
- 		dumpers.queue[0] = pcaps.queue[0];
- 
--		ret = rte_kvargs_process(kvlist, ETH_PCAP_PHY_MAC_ARG,
--					 &process_bool_flag, &pcaps.phy_mac);
-+		ret = rte_kvargs_process_opt(kvlist, ETH_PCAP_PHY_MAC_ARG,
-+					 rte_kvargs_handle_bool, &pcaps.phy_mac);
- 		if (ret < 0)
- 			goto free_kvlist;
- 
-@@ -1971,9 +1944,9 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
- 				ETH_PCAP_INFINITE_RX_ARG);
- 
- 		if (infinite_rx_arg_cnt == 1) {
--			ret = rte_kvargs_process(kvlist,
-+			ret = rte_kvargs_process_opt(kvlist,
- 					ETH_PCAP_INFINITE_RX_ARG,
--					 &process_bool_flag,
-+					 rte_kvargs_handle_bool,
- 					 &devargs_all.infinite_rx);
- 			if (ret < 0)
- 				goto free_kvlist;
-@@ -1991,8 +1964,8 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
- 		 * Check whether to signal EOF via link status change.
- 		 */
- 		if (rte_kvargs_count(kvlist, ETH_PCAP_EOF_ARG) == 1) {
--			ret = rte_kvargs_process(kvlist, ETH_PCAP_EOF_ARG,
--						 &process_bool_flag,
-+			ret = rte_kvargs_process_opt(kvlist, ETH_PCAP_EOF_ARG,
-+						 rte_kvargs_handle_bool,
- 						 &devargs_all.eof);
- 			if (ret < 0)
- 				goto free_kvlist;
+ 	strlcpy(info->list[info->count].name, name,
+ 		sizeof(info->list[info->count].name));
 -- 
 2.53.0
 
