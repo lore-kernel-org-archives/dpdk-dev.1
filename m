@@ -2,39 +2,106 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DA4CA5FA1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 07:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7E0CA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 07:47:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4A44840E19;
-	Tue, 29 Sep 2026 09:36:21 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id D8BDC4013F;
- Tue, 29 Sep 2026 09:36:19 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A5F15201FB;
- Tue, 29 Sep 2026 09:36:19 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Tue, 29 Sep 2026 09:36:19 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org,
-	Thomas Monjalon <thomas@monjalon.net>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- stable@dpdk.org, Maxime Leroy <maxime@leroys.fr>,
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2] net: revert add IPv6 traffic class and flow label fields
-Date: Tue, 29 Sep 2026 07:36:01 +0000
-Message-ID: <20260929073601.2971197-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260922163640.1144749-1-mb@smartsharesystems.com>
-References: <20260922163640.1144749-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F329540276;
+	Tue, 29 Sep 2026 09:47:22 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E0FFA4013F
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:47:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1790668040;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=JYWgb6vjyEfSlzEKPcMHx6ackpxOx7XqaQH5oAZJxWg=;
+ b=doN0fnHYswQZ0qHXVamkZWF+B2QO1xh3lwPgRUWXKzoYoPYyAAA1KQWMHhXkrKSWyyulEW
+ CbWHFsbxeo6pNCIi+zW2FUqqADIBcxM3Ql8rsHuKQqniTjcFU3C33XuTPthOvSk+xm3W15
+ BSm/jsTX0erdhcgVjMStv/++ToygW0M=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-582-1SKM7VveNIKJCGHJEKkqEg-1; Tue,
+ 29 Sep 2026 03:47:17 -0400
+X-MC-Unique: 1SKM7VveNIKJCGHJEKkqEg-1
+X-Mimecast-MFC-AGG-ID: 1SKM7VveNIKJCGHJEKkqEg_1790668036
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id E5B7C1935D0B; Tue, 29 Sep 2026 07:47:02 +0000 (UTC)
+Received: from [100.90.45.206] (headnet04.pony-001.prod.iad2.dc.redhat.com
+ [10.2.32.116])
+ by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 4939576A; Tue, 29 Sep 2026 07:45:37 +0000 (UTC)
+Message-ID: <d1508b1a-f845-4795-bd54-e476ddd2519c@redhat.com>
+Date: Tue, 29 Sep 2026 09:45:32 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 29 Sep 2026 07:36:19.0236 (UTC)
- FILETIME=[37BF1E40:01DD4FE5]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] vhost: decouple guest pages population from async
+ datapath
+To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
+Cc: bruce.richardson@intel.com, Chenbo Xia <chenbox@nvidia.com>
+References: <20260723153111.3943368-1-david.marchand@redhat.com>
+ <20260904074649.1979166-1-david.marchand@redhat.com>
+ <20260904074649.1979166-2-david.marchand@redhat.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ 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
+ Mwqu3GQ=
+In-Reply-To: <20260904074649.1979166-2-david.marchand@redhat.com>
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: LXZ5wALBsxNipASQ4yB-42xpjuafZ9NVweL_oUaMgg4_1790668036
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,82 +115,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The IPv6 header bitfields "version", "ds", "ecn", and "flow_label"
-are not organized correctly on little endian architectures.
-On little endian, a 32-bit bitfield is allocated from the least
-significant bit of the host order word, but "vtc_flow" is stored in
-network order. All four fields therefore read and write the wrong
-bits. For example, setting "version" to 6 writes 0x60 into the last
-byte of the word.
 
-"ds" and "flow_label" are not contiguous in memory on little endian,
-so no reordering of bitfields can express them.
 
-Reverted the patch introducing these bitfields.
+On 9/4/26 9:46 AM, David Marchand wrote:
+> The vhost crypto zero-copy feature relies on the
+> RTE_VHOST_USER_ASYNC_COPY flag to enable guest page tracking
+> (guest_pages array population and MAP_POPULATE during mmap).
+> 
+> Introduce a RTE_VHOST_USER_MAP_POPULATE flag that maps to
+> RTE_VHOST_USER_ASYNC_COPY at this point in time.
+> 
+> Adjust vhost_crypto example and remove the unnecessary
+> ALLOW_EXPERIMENTAL_API flag as this example does not use any
+> experimental APIs.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
+>   doc/guides/prog_guide/vhost_lib.rst | 9 +++++++++
+>   examples/vhost_crypto/Makefile      | 1 -
+>   examples/vhost_crypto/main.c        | 2 +-
+>   examples/vhost_crypto/meson.build   | 1 -
+>   lib/vhost/rte_vhost.h               | 1 +
+>   lib/vhost/socket.c                  | 9 +++++++++
+>   lib/vhost/vhost.h                   | 1 +
+>   lib/vhost/vhost_user.c              | 4 ++--
+>   8 files changed, 23 insertions(+), 5 deletions(-)
+> 
+Sounds reasonable to keep the same value as RTE_VHOST_USER_ASYNC_COPY to
+not break compatibility for existing Vhsot-crypto applications.
 
-PS: There is a GCC attribute to fix this, but nothing similar is
-offered by Clang or MSVC:
-__attribute__((scalar_storage_order("big-endian")))
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
-Bugzilla ID: 1679
-Fixes: cba27998dc81 ("net: add IPv6 traffic class and flow label fields")
-Cc: stable@dpdk.org
-
-Reported-by: Maxime Leroy <maxime@leroys.fr>
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
-Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
----
-v2: Updated commit message and release notes. (AI advanced model)
----
- doc/guides/rel_notes/release_26_11.rst |  5 +++++
- lib/net/rte_ip6.h                      | 18 +-----------------
- 2 files changed, 6 insertions(+), 17 deletions(-)
-
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 4b3e5d995c..52ccc8f787 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -79,6 +79,11 @@ Removed Items
-     ``rte_rib6_is_equal``
-   * table: ``RTE_LPM_IPV6_ADDR_SIZE``
- 
-+  * net: Removed ``version``, ``ds``, ``ecn`` and ``flow_label``
-+    bitfields from ``struct rte_ipv6_hdr``. They accessed the wrong
-+    bits on little endian. Use ``vtc_flow`` with the
-+    ``RTE_IPV6_HDR_*_MASK`` and ``RTE_IPV6_HDR_*_SHIFT`` macros.
-+
- 
- API Changes
- -----------
-diff --git a/lib/net/rte_ip6.h b/lib/net/rte_ip6.h
-index d1abf1f5d5..25be328955 100644
---- a/lib/net/rte_ip6.h
-+++ b/lib/net/rte_ip6.h
-@@ -467,23 +467,7 @@ rte_ether_mcast_from_ipv6(struct rte_ether_addr *mac, const struct rte_ipv6_addr
-  * IPv6 Header
-  */
- struct __rte_aligned(2) __rte_packed_begin rte_ipv6_hdr {
--	union {
--		rte_be32_t vtc_flow;        /**< IP version, traffic class & flow label. */
--		__extension__
--		struct {
--#if RTE_BYTE_ORDER == RTE_LITTLE_ENDIAN
--			uint32_t flow_label:20; /**< Flow label */
--			uint32_t ecn:2;         /**< ECN */
--			uint32_t ds:6;          /**< Differentiated services */
--			uint32_t version:4;     /**< Version */
--#elif RTE_BYTE_ORDER == RTE_BIG_ENDIAN
--			uint32_t version:4;     /**< Version */
--			uint32_t ds:6;          /**< Differentiated services */
--			uint32_t ecn:2;         /**< ECN */
--			uint32_t flow_label:20; /**< Flow label */
--#endif
--		};
--	};
-+	rte_be32_t vtc_flow;	/**< IP version, traffic class & flow label. */
- 	rte_be16_t payload_len;	/**< IP payload size, including ext. headers */
- 	uint8_t  proto;		/**< Protocol, next header. */
- 	uint8_t  hop_limits;	/**< Hop limits. */
--- 
-2.43.0
+Thanks,
+Maxime
 
