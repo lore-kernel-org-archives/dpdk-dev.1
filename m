@@ -2,153 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5F9CA5FA7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC64CA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:38:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ABF7F40A7A;
-	Tue, 29 Sep 2026 18:36:03 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 2A56F4026E
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:36:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790699761; x=1822235761;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=Zy5h7lVtQZyr/Fxv3QAMEFsVm6LSocff1BYD48TQLaM=;
- b=FNyVhDqYKEtcszMlxFqwgzotyQdOgGne0TqAk02zDPe/z41ACUqMzbkx
- rfG83KBshdx4EeEn3jdOI9TR65r2do8mgjJpkNPAltqZKcD9B2t9t53//
- vdkQWal6Gc2wOIcs6Jq+/Pr/n0rXIAEa5D84kmLIIkEspKTNJhSj7DZLp
- tKkTIP84qUnmi6KiuDJiLtMEkib2gM5rO5PXGhRjQZZ4VGlVQ7SQErjTD
- j/B9L6e4F6IlGKoNf416PsH0Dub6vDG65rbOXnqiOMcN3iFGu3Oye3b3z
- p2cw3Bl0GpqeRjVtcHlfo2BeJazlSgQQGs7nRvC4jwC3KS2bLZqTdXabi w==;
-X-CSE-ConnectionGUID: gHvIKsoARbmlQIn5oMtHsg==
-X-CSE-MsgGUID: DDBqDRRNTGyvhrAMHvXCtg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11920"; a="90286791"
-X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; d="scan'208";a="90286791"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Sep 2026 09:36:00 -0700
-X-CSE-ConnectionGUID: WT+JlNupSoG/gCxbJO8R0A==
-X-CSE-MsgGUID: MKpGejxATHGpolRL4JDpeg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; d="scan'208";a="273197981"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Sep 2026 09:36:00 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 29 Sep 2026 09:35:59 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Tue, 29 Sep 2026 09:35:59 -0700
-Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.43) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 29 Sep 2026 09:35:59 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lez30+6J9QPnfHXmBgNdrcW52eIWC+smCTR3gTMGFDnTB6Ilu1Z1qzpy84x/oMXhtk370xD0wNi5g+vmtuluuGoXxhsClrzSPvhWQS1GnZ7d+uIvIkwaJV4/6u55joqf0h5vlzEvHUsuzCDR0D4rm1WVsF63jJmEp6KmNoIZtnLo/vp31ux00Pb9WJgHtxU9olybuLyI4iuJ4vO6q3Qb1sxcHTj7BXlyNCz63cXPf4vC2iV4SLYvEfChs8YIScw09UOEpIBkC64MrI4FzgbXgjQSw4QkEEvwchWNn49SsGFgRpZz6aT3RcqH6mTRhm+cYrpA9kQoBfNT1vj/GzzrGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Zy5h7lVtQZyr/Fxv3QAMEFsVm6LSocff1BYD48TQLaM=;
- b=V7BtEG+O2u70c6OCcpJPoIvvE9NKxu7tsacjzrTa6HkErnRmNw75pvEOyY9XMBMGkzqskvjVtw/v8wf4OZTnaD4Gbybiyxp8axu5NJaWC7H0snw/g9Oiq8gKq4uKMRHETzGb5upoHRtAQU1LjUrp8Q+HA38uV0/SHF566YpZO10W6/Siq4VSYVUgvuN/F0K7i++oF6heeGzHXunQeSg89ryd3AaYqZ1cQSbhbnATY4z1wwDtxTx21Gio8mnLOmTffsyjByuw2bixNOQJxgnIr7dvECElbe6xkkafZg5blANv7k5BURPsXVMG9yS5o4cCfnQd6319FyHD3a9/1UnPXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
- CY8PR11MB7135.namprd11.prod.outlook.com (2603:10b6:930:61::9) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.451.24; Tue, 29 Sep 2026 16:35:57 +0000
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa]) by DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa%3]) with mapi id 15.21.0451.026; Tue, 29 Sep 2026
- 16:35:57 +0000
-Message-ID: <a69c273f-8ad3-4435-9acf-ce768e1d1789@intel.com>
-Date: Tue, 29 Sep 2026 17:35:53 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] test/crypto: add ML-KEM support
-To: Pratik Senapati <psenapati@marvell.com>, <dev@dpdk.org>
-CC: <gakhil@marvell.com>, <gmuthukrishn@marvell.com>, <kai.ji@intel.com>
-References: <20260929105909.1305576-1-psenapati@marvell.com>
- <20260929122059.1344615-1-psenapati@marvell.com>
-Content-Language: en-US
-From: Radu Nicolau <radu.nicolau@intel.com>
-In-Reply-To: <20260929122059.1344615-1-psenapati@marvell.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: DB8PR04CA0002.eurprd04.prod.outlook.com
- (2603:10a6:10:110::12) To DM8PR11MB5653.namprd11.prod.outlook.com
- (2603:10b6:8:25::8)
+	by mails.dpdk.org (Postfix) with ESMTP id 0A30840ED8;
+	Tue, 29 Sep 2026 18:38:11 +0200 (CEST)
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
+ [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 6E75A4026E
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:09 +0200 (CEST)
+Received: by mail-pz2-f12.google.com with SMTP id
+ d2e1a72fcca58-86212a185dcso3089874b3a.1
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699888;
+ x=1791304688; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=2JfFoZDjteG8oTLDfEBm/xFWa/ZJ0ljD0K0rpxOMG4U=;
+ b=kCUETlBg/Oo6Qlg3zcIIEJfbCuTCpRk6lW1CRLLNjHxLhdegbvXEOu/e5bQVwjfJex
+ J47GVLqIbKJj3u2CVUAEscd5U1vA2J8hnFcfhNKbig6ZNgmFfpYev0ifoYlJFLf60Wyx
+ N/LW2ou9oLqRvXwwqydFhxKPKvPUX4d7DF6A+MDttRjiJm/qDONF2VLKWC4gZ2OVYxjC
+ iQLefAOwC/hFIbSQ7aVP8vjOYRpUnDiAltsOuwIDhF610GrsnoikJwKv7LmslLmfIZYW
+ 6dhd6p25Kh9UFK+simprPW71nbpCCUNc9LZk8Ue8G+HqE7sfDs2K0B7mMU5NXCcwknCx
+ +qWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790699888; x=1791304688;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=2JfFoZDjteG8oTLDfEBm/xFWa/ZJ0ljD0K0rpxOMG4U=;
+ b=AwIvIhM8OTrB/IJrIdZsqDBoD7GVl49msqrP4KGgj6Cx+C1JTiQr1t2flKYNLknyyy
+ Wj8KIhMR9qtpiMz6CByYqIkbuAInEv7+X6ymQLKZX7KObnJAHTFwYhzaGToBitGIhRHc
+ pqW6ADd8JDGP2idmupTO1qY6qDDEb0Ow3yQPkAfGPscNApeKhpS3oQi5wOD4eu6T6OQH
+ Lsz1RP+LOgQPqq2Fa4DGHrxT6lRYzuBgInz+ui395mPmg/chGRyQLV0PJTTuZlC3AR1r
+ j/lWRn3YO6VC9n3a0O2UKR9aOFjdf4IeAVxJy82oJPJEIFk+LFdEyxvLK9spJZU3mNrh
+ 2yZQ==
+X-Gm-Message-State: AFuF++l9YEuyJpe1W2CnxroGIBUVTmNenfhXLu2zJa5Yj/R51I0BDMsf
+ 0ZjeEk/MBblHfIL+qEuyzTua2Qg83oSoES4Kt2OU4gOJ5Tj8zWPeDcA0hsw3f1WO9RwgfHFV/yi
+ LK2in6fE=
+X-Gm-Gg: AYBFou3iQu4gqw6LjL+HSunvq+Y6hbDxgzqSTz+5qhmxs5ymr3bPT538XJ6N0FI/in0
+ 1EEgw7HTRk5Rvg16QOU79Ka/0Uj666LNAY2Zv2n7KwKdASHnBTch+bBrBDs+/6GOJ18sbxi/Xjw
+ ACa74U54RS6yUhrcKYMLs3tNu2d5iqGRJEFrxpe5tYEu9DQabdevINRiYe35Cf2V1Kr3PsmIg7q
+ fDeRz0iZg+mHPZ5rtIO2lAOR5u/1eiZR/boPh1U6sHEejq3VxAx7He0nQTw2SY1kP2/RdHPc24i
+ kUQNr3L10YNXiR9+/rkwUx4dUV+o1pRsBCVZEyy3FSLxV+S8In7tWYa+ZM9Y/VaNIuKTZa0CrgN
+ zBJ08ZIGQlQfsdUAX8Thg/Dl7xMui4akjBHo88cBglcDPQTuvtMFs6KyPvxIdC3AA8mS6qQe4M/
+ DlZJpsPLDW2K7J5JnCYNdsl29ZCzvXlVXM7to7T7hdluQEtezMBK8ii602RJEUinG4vtSVK9x2i
+ JM5YaKMhGqVCKAvLeRFXm7LQ5NaHU9YrDIvaA==
+X-Received: by 2002:a05:6a21:2d93:b0:3dd:a197:edef with SMTP id
+ adf61e73a8af0-3de0e92114cmr15365235637.62.1790699888457; 
+ Tue, 29 Sep 2026 09:38:08 -0700 (PDT)
+Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.07
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 29 Sep 2026 09:38:07 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 00/61] kvargs: add numeric conversion helpers
+Date: Tue, 29 Sep 2026 09:36:03 -0700
+Message-ID: <20260929163800.1108305-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260914054912.755403-1-stephen@networkplumber.org>
+References: <20260914054912.755403-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|CY8PR11MB7135:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85997464-c462-4606-81d2-08df1e47bcc7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|23010399003|1800799024|376014|10067099003|11063799006|4143699003|56012099006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: te676gYHoyCnBS1Y1j9dJXONpPoypH5hxKa4i7XWSgw2TAfsxmQ9CUp9KKTfCOwq1ohBT8AZn62yjZYpup21/ZiQuSnUe8K20uwSGDAO4GIdLpPKCADepg/CRMhM5A1FMvqujy+OUcP9h1Vl2AJ3UlZqQ7Q/c4i+l25Lp/mWXpoT4wEGP8CLwXMv6R6mIFDfNp2nFRJP58WeFYsMMWNrMIt6bQtgvjhBdwPBXSO2p4D6SmVQoI0O3+LTryW6zwJbtJPLet8rIBo6xyjnvZPNgNaGOfr38itOHgdRgdi4PdQAVCAaSGmbxQd+IA5oRQGt3IUejHfY3pBy+yq5lo1+INE/FapW8ryBhwXMTUfBwdaV3+0rBeyP4sgJaadU2Q32Ie/nk1SKCbLBXjZI5cmHjvxk6HHYwGbvfCr982fYTwHIcks4AxoRGTyj7oUhkxyMhxzhl2I6Qj49y83DR4L2+UHnydpRzeX7QhdqZ/EmQZq7D5kSQu+qVzWNr6ejP/UvlG1gIqzzhTPhNps8knkY3cI9z5D82UdVyI5VrVluzIkA7YKXgeDPwf4Yux0oNNUUCNYwnBLMrBlq3qMcmVFIAJFIa8u9MsIDgjdODx13LUt/qjk+gded+hB06Xw8m1IeRB8grDmriwZmmHQbj17Kp4r1IxCaDUBQkJ2Ftz1ZZsE=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(23010399003)(1800799024)(376014)(10067099003)(11063799006)(4143699003)(56012099006)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c0JkRUNRb2dQcGY2T0hmeDRxNzFtWExpY0lFK1lHWHYwOUwvcEZTaEFxZUFB?=
- =?utf-8?B?dDlpOGh6Q1NZM0tSWG9QTHVKVlBpdDN4SDg1b1hWb1dyUEJlN1lyOUlsMGVa?=
- =?utf-8?B?ejQ5Yyt0c1c0M3NYUmtrbXBsVXliZzRlVFAyZGdFVTd6eU5zV0xnR3J6aWJG?=
- =?utf-8?B?S1owc1BFQmRyeWFwRzZwQ2RYb3hwVHMwSzBZa2RHOGs5Tk40Y1RTdXV1M3hE?=
- =?utf-8?B?UWVLMmsrUk5MR25ZcjM3OGdMMEQ2YkdjczdCSG5OOFhPY2VqRTZPT1gwWUpW?=
- =?utf-8?B?MTZLRE44aFdKdDA4YklsSWREaUlKd05EejhFamNZWWFhUVZsTUV6VnlwMlZ0?=
- =?utf-8?B?RUxYMWVMNHBZNFQxbitzK1JpSHhyQjdoRTV6MjlGTnZsdW93RlFrNTN5RUs5?=
- =?utf-8?B?aUZFcTRTaVk3aTFhbHRjL1JzQ0Y1ODlRY2VZOS96bklZalcxMHpUSEl3QkJQ?=
- =?utf-8?B?eDZjY08rWjBMazJOM2xVbWRRU2pBa2VnZXVOelFpR2c2NmcyaDBWZlQ4ZzYr?=
- =?utf-8?B?dVVOcWJHWHh0QTJUOVVNL1FEdE5scCt2a3RhUjVObzNkMkdJbnQwNmRkMUcv?=
- =?utf-8?B?UkFCdkhEWlZjbUZvVzQ4d0ZzUld0WERjemVLL212RytxOGRKaTFLK1p2ZXdS?=
- =?utf-8?B?dU1GeGEyTkhHT2NJNUczSCtoZWY0VVRmdFlJQVZGTFJrNUVBdTRKbmtNZVRp?=
- =?utf-8?B?Mk93d1ZLTjN2ZWdqbHBXdklXakZqb3N4ajZMaFVhR3psM1ZuNFpETkRSMFl2?=
- =?utf-8?B?eHZiNkFlZTVjSFY3bG1NUTgxN2F2RUVOcTBSNHhsSzJqeEJsRjRGTW9KaGc3?=
- =?utf-8?B?Q1pwM2ZoblNjS2FTQ1dibXFoYy9JOWMwMjNVVlpRbCtGanRkOTQrSHM5ODJa?=
- =?utf-8?B?YVQ3Qk5YUDQyTVkrV1dFTU5aSXQzWUJLL1d0RmZ6T3k2cSs5VlNKNUR6ak5R?=
- =?utf-8?B?NVM4ZmYybzNFeGQ2dXppSFk4V21kS3lBVUs2U2FCNEZONmRZMHU2cng1ZzdD?=
- =?utf-8?B?WEhaN2pMQjMxZVNmOHFtemsvdW9vdUdhaG41U3phUVBZcnV3QmlNR2JDSlhP?=
- =?utf-8?B?N3pvMWFwWFVpK2Q0SUNUYzMvazFEd3V4eGRVWnpNdkRoa3pSRFZ3S0JRb0lk?=
- =?utf-8?B?VDNCN1lyWFAySGJvZEZOWEN3REhDeEhFVEgrS3JGTmZtdngzeUlhdk1qemln?=
- =?utf-8?B?OUprQ1Z4Y1BnR2JEVlg1NDdnOEZuckQxaWhYOEZHNU5mVWRmaVJmT0c3RThT?=
- =?utf-8?B?V21odUpaNXVJa0hTYVd5NDhERkR3WmU4OUtoSUFiTy9qZExtT1lIbWw2N1Fv?=
- =?utf-8?B?QmEwcU43bW9jWTBwZ1ZYZmJmazZHSDdreGxTRTc3R1ZDaDE2ZmkxYjFaY3A5?=
- =?utf-8?B?SVpadW94YUJKbHlNUEhVMERGN2p6QmorV3Z0azBzTzJuQmN5ZHp1eFZ1eHEr?=
- =?utf-8?B?bG12MEtsdDJJN2NpMnJ6TEEyc3JwcW9vYXA4VzFSa3F2NGwydkg0QWxpNk84?=
- =?utf-8?B?dHRpL3lCR3NzdklrRCtzZktKMnlJOUlUcm8rOEZLelRTenZ2cUp1d0hKTXhl?=
- =?utf-8?B?OEVrRHN3T1E0T3ZlanhLRXpsc05wOU55K3lma1dQZ3NXK05OTS8vdGE4OXJS?=
- =?utf-8?B?RUI1amtyTS82RVdWeW5RVXdvNWpSbUEvd3puYnNmd1gwQmVvQ0EvU2lVUExF?=
- =?utf-8?B?MHlTenRuZytEeWhYcWFETkxCRzQyU1JpV09UelZXaWlmeThMRFF3QXBMMjJl?=
- =?utf-8?B?UFZ3b21LRG4rUEJRaU1JK2lCdDlXQis2anJOUzV1eU9zNEJlbjQ2Q1pINEtN?=
- =?utf-8?B?Wi9JR0paVWRTeEhrdVQ1YVhYSG01ZGFNdU1BcW04UzFhTDBhNU9ZZnFhM1VK?=
- =?utf-8?B?V1R0dU9SUmIzc1pFRVdpR3E1azl5cDEvZGxRQUxraUUyMFNkYWtnbmw5empm?=
- =?utf-8?B?Rml5eGdhVE5hRzQ3djg1SVpxbGtQSEMyUlJQbEpEcjBoNXZHSE5pWHM0OTNs?=
- =?utf-8?B?aGV2bml5MGJYNjlSRkdHMnltcW93bFNBL1NmSElPcWM3cFVhb09FSG9kY3Qz?=
- =?utf-8?B?bmkrNTFWU1JFUDFqOFFjdVAxUERKdnFmRytMcnJRS1VKMXoyWFJsSVRlNjZl?=
- =?utf-8?B?dmo2MmluNXZIdmY3YS9aMy96Snl3SXRJT1A0YXhaakg0K0VvOEsxNnI0QXE4?=
- =?utf-8?B?WmpWWHB0RW9UTXBub3lZM2dMUWo5YXZseDZKZ3BtemYydkZ1dU9HeW4yaG9t?=
- =?utf-8?B?S3FONlFqaE1HQVBUc0RoU3Z3TzdWa1A3S1YzVzkrVHRPdXMrNGFmaEp1VGRC?=
- =?utf-8?B?cjgzeFJ5UDRqckZsL2RxQ0NQYjFKdGdESnB0cS9FZEd6d1p3YnlFQT09?=
-X-Exchange-RoutingPolicyChecked: 2b3mQiVdkWxBNGZSj4X/X2m2+tKnHKr6psg40CnClTHl8fdFkF7QaZVpU9ofYkEG2jG0i5VjD8mm/jsxmfm0qiFcMTD40Z6gmwkpTcGcz4Zcfgx69fXHtPaAEuiBZhqPIqKE5n9Pivo5HBw6waoMKTlODnhsTLMUfPCrw7TIZZqVbBwlbFpiFbhhOC47wtOEbyiDj4N1ZoBjZubkIP4q/zxt6iJknDtp12CM9nIY5VfnHJSHyxfNS1E4DyUamc48O1EOqSUjOsI5oAQt/tJ3so+yxK4BM2p/kR5pcEWE8NeFAMEW5sJTAIcOJaLRZDJ4a9rl6J7VhBDirwzkrDRJ8A==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85997464-c462-4606-81d2-08df1e47bcc7
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2026 16:35:57.3149 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w1sgXYaOaJsXkaTi6xf4e8Neubab2alw/qP4D8ozn7WLG0tFU9RI8GZwLDMLxHvUVctrXfRoOSO3TnNrsOfq7w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7135
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -162,21 +81,206 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Almost every driver parses numeric device arguments with its own
+code, and most get some part of it wrong: atoi() does not detect
+invalid input, errno is checked without being cleared, the end
+pointer is ignored, the value is truncated before it is range
+checked, or base 0 turns a leading zero into octal.
 
-On 29-Sep-26 1:20 PM, Pratik Senapati wrote:
-> Extend ML-KEM Support in Test to include ML-KEM768
-> and ML-KEM1024 test vectors for
-> deterministic encapsuluation and
-> deterministic decapsulation.
->
-> Signed-off-by: Pratik Senapati <psenapati@marvell.com>
-> ---
+This series adds range checked converters and ready made
+rte_kvargs_process() handlers to librte_kvargs, then converts the drivers.
 
-There are still missing tests vector variants, see below:
+Library (patches 1 to 3)
+------------------------
 
-   0) TestCase mlkem_512_encap: passed
-   1) TestCase mlkem_512_encap (deterministic): passed
-   2) TestCase mlkem_768_encap (deterministic): passed
-   3) TestCase mlkem_1024_encap (deterministic): passed
-  + TestCase [ 1] : test_mlkem_encap succeeded
+  rte_kvargs_to_uint/to_int/to_hex     convert with an explicit range
+
+  rte_kvargs_handle_u8/u16/u32/u64     store into a typed variable
+  rte_kvargs_handle_i8/i16/i32/i64
+  rte_kvargs_handle_uint/int/long/ulong/size
+
+  rte_kvargs_handle_bool               1/y/yes/on/true and negatives,
+                                       bare key means true
+  rte_kvargs_handle_socket_id          -1 (SOCKET_ID_ANY) through
+                                       RTE_MAX_NUMA_NODES - 1
+  rte_kvargs_handle_hex32/hex64        bare hex mask, 0x optional
+
+Values are decimal or 0x hexadecimal, no octal, no negative value for
+an unsigned type, no trailing garbage.
+The handlers log key, value, and expected range on failure.
+Unit tests cover all of them.
+
+The new api's are marked experimental for 26.11.
+
+Drivers (patches 5 to 60)
+-------------------------
+
+52 drivers converted. Local handlers that only did a range checked
+store are deleted, 40 of them.
+
+The af_xdp conversion (patch 17) goes further than the rest.
+With some changes to types, like queue and indexes converted
+to uint16_t, the local handlers can be replaced by helpers.
+Likewise boolean flags can be bool instead of int.
+
+There are some cases not covered easily by kvargs helpers
+including ranges and other parsing.
+
+Behaviour changes
+-----------------
+
+  - malformed, out of range and wrapped values now fail probe with a
+    message instead of being silently misread
+  - a leading zero is decimal, not octal
+  - boolean arguments accept on/off/yes/no/true/false and reject
+    anything else, including numbers other than 0 and 1
+  - socket IDs are checked at both ends (dlb2 accepted
+    RTE_MAX_NUMA_NODES, turbo_sw and bbdev_null accepted negatives)
+  - the four bare hex masks (ice hw_debug_mask, hns3 dev_caps_mask,
+    cxgbe filtermode/filtermask, ark Pkt_dir) keep their syntax
+
+v2 - rebase and fixup af_xdp
+
+Stephen Hemminger (61):
+  kvargs: add numeric conversion helpers
+  kvargs: add a socket ID handler
+  kvargs: add hexadecimal conversion helpers
+  eal: validate memory size arguments
+  net/null: use kvargs numeric helpers
+  net/vhost: use kvargs numeric helpers
+  vdpa/ifc: use kvargs numeric helpers
+  net/softnic: use kvargs numeric helpers
+  dma/skeleton: use kvargs numeric helpers
+  raw/skeleton: use kvargs numeric helpers
+  baseband/null: use kvargs numeric helpers
+  net/memif: use kvargs numeric helpers
+  net/af_packet: use kvargs numeric helpers
+  net/pcap: use kvargs numeric helpers
+  net/ring: use kvargs numeric helpers
+  net/af_xdp: use kvargs numeric helpers
+  net/ark: use kvargs numeric helpers
+  net/failsafe: use kvargs numeric helpers
+  net/virtio: use kvargs numeric helpers
+  net/bonding: use kvargs numeric helpers
+  net/ena: use kvargs numeric helpers
+  net/netvsc: use kvargs numeric helpers
+  net/ice: use kvargs numeric helpers
+  net/iavf: use kvargs numeric helpers
+  net/i40e: use kvargs numeric helpers
+  net/idpf: use kvargs numeric helpers
+  net/cpfl: use kvargs numeric helpers
+  net/ixgbe: use kvargs numeric helpers
+  net/txgbe: use kvargs numeric helpers
+  net/octeontx: use kvargs numeric helpers
+  net/octeon_ep: use kvargs numeric helpers
+  net/qede: use kvargs numeric helpers
+  net/nfb: use kvargs numeric helpers
+  net/thunderx: use kvargs numeric helpers
+  net/i40e: propagate VF queue number parse errors
+  net/cnxk: use kvargs numeric helpers
+  net/xsc: use kvargs numeric helpers
+  net/hns3: use kvargs numeric helpers
+  net/enetc: use kvargs numeric helpers
+  event/dlb2: use kvargs numeric helpers
+  net/nfp: use kvargs numeric helpers
+  drivers/crypto: use kvargs numeric helpers
+  event/sw: use kvargs numeric helpers
+  net/bnxt: use kvargs numeric helpers
+  net/bnxt: propagate devargs parsing errors
+  net/mlx4: use kvargs numeric helpers
+  net/sfc: use kvargs numeric helpers
+  crypto/mvsam: use kvargs numeric helpers
+  ml/cnxk: use kvargs numeric helpers in cn10k
+  ml/cnxk: use kvargs numeric helpers in mvtvm
+  event/opdl: use kvargs numeric helpers
+  mempool/cnxk: use kvargs numeric helpers
+  event/octeontx: use kvargs numeric helpers
+  baseband/turbo_sw: use kvargs numeric helpers
+  baseband/la12xx: use kvargs numeric helpers
+  dma/hisi_acc: use kvargs numeric helpers
+  crypto/virtio: use kvargs numeric helpers
+  net/ice: use kvargs hex helper for debug mask
+  net/hns3: use kvargs hex helper for capability mask
+  net/cxgbe: use kvargs numeric helpers
+  doc: note kvargs devargs conversion in release notes
+
+ app/test/test_kvargs.c                        | 297 +++++++++
+ doc/guides/eventdevs/dlb2.rst                 |   4 +-
+ doc/guides/nics/null.rst                      |   2 +-
+ doc/guides/prog_guide/devargs.rst             |  18 +
+ doc/guides/rel_notes/release_26_11.rst        |  44 ++
+ drivers/baseband/la12xx/bbdev_la12xx.c        |  60 +-
+ drivers/baseband/null/bbdev_null.c            |  29 +-
+ .../baseband/turbo_sw/bbdev_turbo_software.c  |  29 +-
+ drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c   |  15 +-
+ drivers/crypto/dpaa_sec/dpaa_sec.c            |  17 +-
+ drivers/crypto/mvsam/rte_mrvl_pmd.c           |  22 +-
+ drivers/crypto/virtio/virtio_user_cryptodev.c |  21 +-
+ drivers/dma/hisi_acc/hisi_acc_dmadev.c        |   5 +-
+ drivers/dma/skeleton/skeleton_dmadev.c        |  23 +-
+ drivers/event/dlb2/dlb2.c                     | 127 +---
+ drivers/event/octeontx/ssovf_evdev.c          |  25 +-
+ drivers/event/opdl/opdl_evdev.c               |  49 +-
+ drivers/event/sw/sw_evdev.c                   |  56 +-
+ drivers/mempool/cnxk/cnxk_mempool.c           |  37 +-
+ drivers/ml/cnxk/cn10k_ml_dev.c                |  74 +--
+ drivers/ml/cnxk/cn10k_ml_dev.h                |   8 +-
+ drivers/ml/cnxk/cn10k_ml_ops.c                |   2 +-
+ drivers/ml/cnxk/mvtvm_ml_dev.c                |  47 +-
+ drivers/ml/cnxk/mvtvm_ml_dev.h                |   2 +-
+ drivers/net/af_packet/rte_eth_af_packet.c     |  72 +--
+ drivers/net/af_xdp/rte_eth_af_xdp.c           | 431 ++++++-------
+ drivers/net/ark/ark_ethdev.c                  |   4 +-
+ drivers/net/bnxt/bnxt_ethdev.c                | 148 ++---
+ drivers/net/bonding/eth_bond_private.h        |   8 -
+ drivers/net/bonding/rte_eth_bond_args.c       |  71 +--
+ drivers/net/bonding/rte_eth_bond_pmd.c        |   8 +-
+ drivers/net/cnxk/cnxk_ethdev_devargs.c        | 283 +++------
+ drivers/net/cxgbe/cxgbe_main.c                |  38 +-
+ drivers/net/ena/ena_ethdev.c                  |  45 +-
+ drivers/net/enetc/enetc4_vf.c                 |  22 +-
+ drivers/net/failsafe/failsafe_args.c          |  20 +-
+ drivers/net/hns3/hns3_common.c                |  23 +-
+ drivers/net/hns3/hns3_common.h                |   3 -
+ drivers/net/intel/cpfl/cpfl_ethdev.c          |  26 +-
+ drivers/net/intel/i40e/i40e_ethdev.c          |  57 +-
+ drivers/net/intel/iavf/iavf.h                 |   6 +-
+ drivers/net/intel/iavf/iavf_ethdev.c          |  55 +-
+ drivers/net/intel/ice/ice_ethdev.c            | 123 +---
+ drivers/net/intel/ice/ice_ethdev.h            |  10 +-
+ drivers/net/intel/idpf/idpf_ethdev.c          |  26 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  40 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   4 +-
+ drivers/net/memif/rte_eth_memif.c             |  73 ++-
+ drivers/net/mlx4/mlx4.c                       |  33 +-
+ drivers/net/netvsc/hn_ethdev.c                |   6 +-
+ drivers/net/nfb/nfb_ethdev.c                  |  13 +-
+ drivers/net/nfp/nfp_ethdev.c                  |  36 +-
+ drivers/net/null/rte_eth_null.c               |  78 +--
+ drivers/net/octeon_ep/otx_ep_ethdev.c         |  16 +-
+ drivers/net/octeontx/octeontx_ethdev.c        |  18 +-
+ drivers/net/pcap/pcap_ethdev.c                |  51 +-
+ drivers/net/qede/qede_ethdev.c                |  55 +-
+ drivers/net/ring/rte_eth_ring.c               |  21 +-
+ drivers/net/sfc/sfc.c                         |   2 +-
+ drivers/net/sfc/sfc_kvargs.c                  |  19 -
+ drivers/net/sfc/sfc_kvargs.h                  |   2 -
+ drivers/net/sfc/sfc_port.c                    |   2 +-
+ drivers/net/softnic/rte_eth_softnic.c         |  30 +-
+ .../net/softnic/rte_eth_softnic_internals.h   |   3 +-
+ drivers/net/thunderx/nicvf_ethdev.c           |  13 +-
+ drivers/net/txgbe/txgbe_ethdev.c              |  97 ++-
+ drivers/net/vhost/rte_eth_vhost.c             |  69 +--
+ drivers/net/virtio/virtio_ethdev.c            |  36 +-
+ drivers/net/virtio/virtio_user_ethdev.c       |  59 +-
+ drivers/net/xsc/xsc_dev.c                     |  50 +-
+ drivers/raw/skeleton/skeleton_rawdev.c        |  20 +-
+ drivers/vdpa/ifc/ifcvf_vdpa.c                 |  29 +-
+ lib/eal/common/eal_common_options.c           |  27 +-
+ lib/kvargs/rte_kvargs.c                       | 564 ++++++++++++++++++
+ lib/kvargs/rte_kvargs.h                       | 257 ++++++++
+ 75 files changed, 2191 insertions(+), 2024 deletions(-)
+
+-- 
+2.53.0
 
