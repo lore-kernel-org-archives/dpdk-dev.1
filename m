@@ -2,36 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB8DCA5FA1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 03:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7DBCA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 04:39:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 58DD140E2B;
-	Tue, 29 Sep 2026 05:52:52 +0200 (CEST)
-Received: from out28-146.mail.aliyun.com (out28-146.mail.aliyun.com
- [115.124.28.146])
- by mails.dpdk.org (Postfix) with ESMTP id 5402540E1F;
- Tue, 29 Sep 2026 05:52:49 +0200 (CEST)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07902521|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_regular_dialog|0.0021618-0.00108671-0.996751;
- FP=10121512566554891476|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033037006180; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DS; RN=5; RT=5; SR=0; TI=SMTPD_---.jQwErir_1790653965; 
-Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.jQwErir_1790653965 cluster:ay29) by smtp.aliyun-inc.com;
- Tue, 29 Sep 2026 11:52:45 +0800
-From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-To: dev@dpdk.org
-Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>, stable@dpdk.org,
- Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v2 1/1] net/nbl: fix incorrect MTU stored in rxmode
-Date: Mon, 28 Sep 2026 20:52:35 -0700
-Message-Id: <20260929035236.126778-2-dimon.zhao@nebula-matrix.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260929035236.126778-1-dimon.zhao@nebula-matrix.com>
-References: <20260929035236.126778-1-dimon.zhao@nebula-matrix.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3AF5240697;
+	Tue, 29 Sep 2026 06:39:25 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 0695840276
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 06:39:24 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C086A201FB;
+ Tue, 29 Sep 2026 06:39:23 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v2] mbuf: avoid temporary array for bulk free
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Tue, 29 Sep 2026 06:39:21 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A84@smartserver.smartshare.dk>
+In-Reply-To: <20260929002527.7-1-hoangnamtran18122005@gmail.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2] mbuf: avoid temporary array for bulk free
+Thread-Index: Ad1PqQ6Z78FG8ggGQPO0D2VQBXMa5QAItSYg
+References: <20260922012856.30090-1-hoangnamtran18122005@gmail.com>
+ <20260929002527.7-1-hoangnamtran18122005@gmail.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Nam Tran" <hoangnamtran18122005@gmail.com>
+Cc: <dev@dpdk.org>,
+	<stephen@networkplumber.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -45,43 +48,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The ethdev layer already updates dev->data->mtu on success.
-After rte_eth_dev_configure(), dev_conf.rxmode.mtu becomes stale
-and should not be modified by mtu_set.
-
-Additionally, the original code assigned frame_size (MTU + overhead)
-instead of MTU, confusing frame length with MTU.
-
-Fixes: 75cdda36a4c5 ("net/nbl: support MTU update")
-Cc: stable@dpdk.org
-
-Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
----
- drivers/net/nbl/nbl_dev/nbl_dev.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index 320f26619f..e41732ccd3 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -757,16 +757,14 @@ int nbl_mtu_set(struct rte_eth_dev *eth_dev, uint16_t mtu)
- 	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
- 	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
- 	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
--	uint32_t frame_size = mtu + NBL_ETH_OVERHEAD;
- 	int ret;
- 
--	/* mtu setting is forbidden if port is start */
-+	/* mtu setting is forbidden if port is started */
- 	if (dev_data->dev_started) {
- 		NBL_LOG(ERR, "port %d must be stopped before configuration", dev_data->port_id);
- 		return -EBUSY;
- 	}
- 
--	dev_data->dev_conf.rxmode.mtu = frame_size;
- 	ret = disp_ops->set_mtu(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), dev_mgt->net_dev->vsi_id, mtu);
- 	if (ret)
- 		return ret;
--- 
-2.34.1
-
+PiB2MjoNCg0KPiAtIENhcCBzYW1lLXBvb2wgcnVucyBhdCA2NCB0byByZXRhaW4gbWVtcG9vbC1j
+YWNoZSBiZWhhdmlvci4NCg0KTkFLIQ0KV2h5IHdvdWxkIHlvdSBkbyB0aGF0Pw0KDQo+IC0gTW92
+ZSB0aGUgc2FuaXR5IGNoZWNrIGFmdGVyIHRoZSBjaGFpbmVkLXBhY2tldCBmYWxsYmFjayBkZWNp
+c2lvbi4NCj4gLSBBZGQgbWl4ZWQgZmxhdC9jaGFpbmVkIGFuZCBpbmRpcmVjdC1tYnVmIHJlZ3Jl
+c3Npb24gY2FzZXMuDQo+IC0gUmVtb3ZlIHRoZSBlYXJsaWVyIHRpbWluZyBjbGFpbTsgdGhlIGNh
+cHBlZCB2ZXJzaW9uIGhhcyBub3QgeWV0DQo+ICAgYmVlbiBiZW5jaG1hcmtlZCBvbiB4ODYgb3Ig
+d2l0aCBhIGNhY2hlZCBtZW1wb29sLg0KPiANCj4gKwkJcnVuX2NvdW50Kys7DQo+ICsJCWlmIChy
+dW5fY291bnQgPT0gUlRFX1BLVE1CVUZfRlJFRV9QRU5ESU5HX1NaKSB7DQo+ICsJCQlydGVfbWJ1
+Zl9yYXdfZnJlZV9idWxrKHJ1bl9wb29sLA0KPiArCQkJCQkmbWJ1ZnNbcnVuX3N0YXJ0XSwgcnVu
+X2NvdW50KTsNCj4gKwkJCXJ1bl9jb3VudCA9IDA7DQo+ICsJCX0NCg0KTkFLIHRvIHRoaXMgcGFy
+dC4NCkZsdXNoaW5nIGEgbGFyZ2UgYnVsayBpbiBzbWFsbGVyIGJ1bGtzIG9mIDY0IG1idWZzIGlz
+IG5vdCBuZWNlc3NhcnksIGFuZCBtYXkgcmVkdWNlIHBlcmZvcm1hbmNlLg0KDQo=
