@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E130ECA5FAC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 13:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F523CA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 13:07:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 22F2942D27;
-	Tue, 29 Sep 2026 15:06:32 +0200 (CEST)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
- by mails.dpdk.org (Postfix) with ESMTP id 1BF22427B5;
- Tue, 29 Sep 2026 15:06:28 +0200 (CEST)
-X-QQ-mid: zesmtpgz9t1790687186t724134ae
-X-QQ-Originating-IP: A4JzTABgdZqlEICFcf2+qAJvk3W4qBsUEMiAtPTZIqs=
+	by mails.dpdk.org (Postfix) with ESMTP id BEAB942D76;
+	Tue, 29 Sep 2026 15:06:35 +0200 (CEST)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+ by mails.dpdk.org (Postfix) with ESMTP id AF5D542D0B;
+ Tue, 29 Sep 2026 15:06:32 +0200 (CEST)
+X-QQ-mid: zesmtpgz9t1790687188tf1467788
+X-QQ-Originating-IP: E7wQa8ADTFg53IW8LHKab+0EGebdBm9QApa/SGwF36E=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.227.112.38])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 29 Sep 2026 21:06:24 +0800 (CST)
+ id ; Tue, 29 Sep 2026 21:06:27 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9704685281509654492
+X-BIZMAIL-ID: 923559327680793506
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v6 05/15] net/txgbe: do not force reconfig on link retry
-Date: Tue, 29 Sep 2026 21:04:36 +0800
-Message-ID: <742FEFBEC6DF963F+20260929130611.4871-6-zaiyuwang@trustnetic.com>
+Subject: [PATCH v6 06/15] net/txgbe: set i2c sda hold time
+Date: Tue, 29 Sep 2026 21:04:37 +0800
+Message-ID: <2D2AE43BFDF868BE+20260929130611.4871-7-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20260929130611.4871-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OHRR8J/xMhi9NNIIqoUA3nxNXvV7/UiRNHeBJrofC45wieGD7tXA8Ef7
- 8R+zVKJNTo3RCJGQNmuy9IbVW0LsSY4u/dAWvBeTzGKeS+bKMRZDkX42uYHoppJpCaPqoBz
- wE/dqjP8YxMRA6dRewby7GH0+SN6s2xi95wsMkuLA4bDhWAYmwmuV3wQRCFRpHOJPJ3eKnl
- W8yyTFFFbjNBjB6AwSLHwAtJXHuZ8QoupxGtupXhDRabYy45ei5XBGdcMUMWBXJV+ynyLgj
- zACMogsKwmpwunyaP9akU8zXB3ChPNY3X//SlnrBxKX1suhMq3L/gj5GghRcUJLPnQfd0Ba
- 1+OXrRl4hTBZ4qC0yaAAitrbmdfjSKG6o6sXNtGJlNLAa4tWPpSKhh2OmblXmIFCI/I1fek
- yQ3nFaillPP6t7gEjxb57rqSgBTQpwA36uo+7gP/GYwImLuxAaezmheVuX7ui14rxN34Kf9
- IaDNuYwcjtTS/IEQuMCGV+5L78xXe6WoZhbwMTuS8h9LB/cW5BNjsfIRMfXqk/U1Yrh50eR
- 91ODrcQTRATyxS5cRziaDlv/dJL20WS1TT994yu5tyaQ6o4XPIBfV6NXTgOhB1UWpB/WjYw
- dwSy8TjVbPWTZHrIkEzc3TDtt8N4P/oTRYYtKW/qIJ0XnqGjO5XOBXZdGhVLemjVpP6u7cO
- FPg0YRIw/Lu3483aLCrQ/8KjXSGiONLfydQ0Oe7T8Md09phqJha6IsZIDna0EYtUc8KzOXD
- 0QjjOjIJ0Qyr5A52MMrNC5a8JNVyGuzpGhwWq/N9UiMfJkJ9jXG568PjQhZ5dwRgI8amFeB
- pdnBMQoyAeezpiUg67oJ5uY4xXAb/DE6zEprhduKC6MEJNRD1hEe/ZhjHWj2CkktzjjE3+r
- kjpgMUguGPI5Tipi97bFbUshLwmC2xYjSn4jcg3d4K3NZ8XnCfHCMLg06im2Ce46Ztq9hIE
- NgJnP8SWWmqLzBStsBYo6QCImjmKFr+eGGIoQwXq8qHw0MJXHNkdpD26V+kAHKLViJ3a+YF
- s9jwFYkPiH/WnR1nqoL62zJ5TlEupFHYh9l1pA6hlUJo/vm6gabrMeYPU34ud27wMF6WnbU
- ZJQOPhlRtqmEbaU3PyEpV+oRfp9uZW/RH8ymeQpSvBU+nVb8LMlkotVIMPGs/BO8A==
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
+X-QQ-XMAILINFO: Mo478EnjNuQn3lufJPWV/BC+1OxkN7pgmI5bwCbjeyV2HTcprkAphKII
+ XlXAESaLrel0Flv/0k8HvvKOQRUTBslafCYPjXhcwLwy1fzgjHs8Dg6ZEq/dFlawQ/QAgN+
+ NdHqPAF+y7QIf0/RBO/wV2H50uxoTf4dzSjcg4BwYyKlBsbBQUeAHbVASXcjdpnsxPQkcnm
+ /ZLO5z0q6v+oopZgMM/9rGURwbriCqAWnHr9uY1ktlDLmKrjiGaAGd+UYvpB5x4or3S1sh6
+ IaH1oNs5QJ2yKAUtuNoa/8R6odryPSA2/Z6rXqgSUhSGUQtZScLo+WRpr8GU2foVYn8Xs3q
+ Y4UyZjmR5y9eTVLK28QMfwuv2xLyZ94NHSZGKNWQ9u84t+gll19PVz0Y0xv4w5dJaivGcUC
+ r93vO4FM5cV8RApZE7W/46XEMay2PFMVt+Qzv5KjqzVuWplQYDGi+nDMgKdLzgIX2akjC9S
+ uBTePxHPwpO3Wo5N146C9ag3kI4jkPzhPXCxoAKh27TffU/j2zP2W5YDFoTgzPsvROWN3RX
+ XEZ2tb+ypDZTxD9fHq9/iO0O+DNZHXtl+tr9PSwJ6ME6haXji+B1MgQ54gy6DbBUmQzrErJ
+ jwJ8ED8EuJmcWuIYFV3MON+2gtdwleFWZI72eiHPYbcO8bCQbRRL4l6GY2QGUa5bHUGelHw
+ 3YtCWB566d3MvSLM3sIJD3EmZeNN/ySra7BJFZgGe+w9yRYcuJ0GUYWyU3iXlovsgUy/XAL
+ DPrlqbJWASX7vuYDspQ+qd3VtKy2BpMj1ogybNdL7ZArp6NVzVvZxZoqHZ6BvbCYoFJgW6P
+ VI/DeGvmjNLvLu3xuI9FU79lE9RTdWVhlWC58HBD9tOmCo28uHwBTZAC2o/H25ne2AEM8GZ
+ JfLZCmtHfYUn7o+SnJdJfRnkUN4npxeokW7BE/VchjhdkQyhKedu1eG1gRGCzM/51uPAWlD
+ 2+gimDaR4XrCAjc5uKlXM8v2DwrhrQRgRxZw7gwzLRoY/gtZ939GttX2FQrgJxrmVgm7Kyg
+ KL2b8R13obqKJ+UYXGeVypi3gICPnS7eIYsgDP+0glNNfFWqPD67OGeQ3ZRQtQn2rrh0Cab
+ RR6Iou2AbdhLXgUR2zKBSBLIu/3hqLHWvprlnjc02UV83g0ySZppRi6LtSVvOf9QQ==
+X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,37 +66,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The link alarm retry calls mac.setup_link() with
-autoneg_wait_to_complete = true. On the AN73/xpcs path, setup_link
-skips reconfiguration when the link is already up and AN is done
-only if the flag is false. With true, a retry that arrives after the
-link is up still runs set_phy_link_mode() and resets the established
-AN73 link, which then drops and never recovers (e.g. after DAC
-hot-plug).
+The data_in_hold_time measured on the oscilloscope does not meet the
+hardware requirement, which can corrupt SFP EEPROM reads over I2C.
 
-Pass false from the retry path instead.
+Set the I2C SDA hold time to 100 (0x64) I2C clock periods for both
+RX and TX in txgbe_i2c_start().
 
-Fixes: 6104fd11086e ("net/txgbe: fix link stability for 25G NIC")
+Fixes: 00970f6398c8 ("net/txgbe: fix reading SFP module SFF-8472 data")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_ethdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/txgbe/base/txgbe_phy.c  | 3 +++
+ drivers/net/txgbe/base/txgbe_regs.h | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 2f59b0794f..a5ef0b3e54 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -3237,7 +3237,7 @@ txgbe_dev_setup_link_alarm_handler_aml(void *param)
- 		return;
- 	}
+diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
+index 2fbe50e242..8b653f0aeb 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.c
++++ b/drivers/net/txgbe/base/txgbe_phy.c
+@@ -1334,6 +1334,9 @@ static void txgbe_i2c_start(struct txgbe_hw *hw, u8 dev_addr)
+ 	wr32(hw, TXGBE_I2CSCLTMOUT, 0xFFFFFF);
+ 	wr32(hw, TXGBE_I2CSDATMOUT, 0xFFFFFF);
  
--	hw->mac.setup_link(hw, speed, true);
-+	hw->mac.setup_link(hw, speed, false);
++	wr32m(hw, TXGBE_I2C_SDA_HOLD,
++		TXGBE_I2C_SDA_RX_HOLD | TXGBE_I2C_SDA_TX_HOLD, 0x640064);
++
+ 	wr32(hw, TXGBE_I2CICM, 0);
+ 	wr32(hw, TXGBE_I2CENA, 1);
+ }
+diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
+index bf46a80862..b0042dc0d6 100644
+--- a/drivers/net/txgbe/base/txgbe_regs.h
++++ b/drivers/net/txgbe/base/txgbe_regs.h
+@@ -1610,6 +1610,9 @@ enum txgbe_5tuple_protocol {
+ #define   TXGBE_I2CSTAT_MST          ((1U << 5))
+ #define TXGBE_I2CSCLTMOUT            0x0149AC
+ #define TXGBE_I2CSDATMOUT            0x0149B0 /*I2C SDA Stuck at Low Timeout*/
++#define TXGBE_I2C_SDA_HOLD              0x1497C /* SDA hold time length reg */
++#define TXGBE_I2C_SDA_RX_HOLD           0xff0000 /* SDA rx hold time length reg */
++#define TXGBE_I2C_SDA_TX_HOLD           0xffff /* SDA tx hold time length reg */
  
- 	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
- 	bool link_up = false;
+ /* port cfg Registers */
+ #define TXGBE_PORTSTAT                  0x014404
 -- 
 2.55.0.windows.2
 
