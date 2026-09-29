@@ -2,90 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2BCCA5FAB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 00:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B491CA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 00:19:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C90124027C;
-	Tue, 29 Sep 2026 02:18:59 +0200 (CEST)
-Received: from mail-yx1-f97.google.com (mail-yx1-f97.google.com
- [74.125.224.97]) by mails.dpdk.org (Postfix) with ESMTP id 898FC40276
- for <dev@dpdk.org>; Tue, 29 Sep 2026 02:18:57 +0200 (CEST)
-Received: by mail-yx1-f97.google.com with SMTP id
- 956f58d0204a3-671454dbcaaso288537d50.0
- for <dev@dpdk.org>; Mon, 28 Sep 2026 17:18:57 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4A02840E2B;
+	Tue, 29 Sep 2026 02:19:18 +0200 (CEST)
+Received: from mail-ua1-f98.google.com (mail-ua1-f98.google.com
+ [209.85.222.98]) by mails.dpdk.org (Postfix) with ESMTP id 8800E40276
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 02:19:16 +0200 (CEST)
+Received: by mail-ua1-f98.google.com with SMTP id
+ a1e0cc1a2514c-97ea365dd5cso448304241.2
+ for <dev@dpdk.org>; Mon, 28 Sep 2026 17:19:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790641137; x=1791245937;
+ d=1e100.net; s=20260707; t=1790641156; x=1791245956;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=P3wkS1QGh1d3ttV0mLmdV1AsVNkdKRvrlOKHjbJdiME=;
- b=M+VySUp5DtP+VpTWosL7ryswW7B1IcG6aJiRfBse0FsK67miQ6kSLGRCKOMEFVFbE9
- RYCqvBlmlVSaU6yY8m+g92HgW069qFJzg5yGSc+qavgye4WnZh6PTCv0t218vfRxzgCn
- 5P9ClTwWUkftqgThND20Ya72BTIJFysg6N8Un44ZpAebTEzCCm8fSVnsF0L6ZR0RysnS
- 1XR0GrVgZG+p8w4d9kcUYSXSOGZtw6/PEBw5c6b3iCxHZYUsdQGljzkSKULcZYBLPlL7
- ammHkd9bU5F8xmcD4HOmMK0ZjPNt7RWtfDifvVTBb59dLozAC0wKOYmcygbTbZNLXdDe
- sK8w==
-X-Gm-Message-State: AFq9FYJw8M840DjORFQqUl/i3051H4mfk0/qtkZ3qWoPlrzB12UiV+PZ
- 3YTj+h8QhuaBO/xI2PxwJM4zatpC2gaMiSNfjWKTsmbiv5y4ljzM9nyk0usiiwmaRYlkeRuvGgk
- OyG579ZrPe+02yTb0yyGydopED8HIyyymIHB6pNUAK/2vOGL4S/dzFu5HHJok6RBQa7mKUfi0xk
- T7NtPi2fCyhpwOboY8z4USjYkO0tnC158JQyVq9TLLTdQvTYLie42nsYVaeONiEH8zxLlLUq0TR
- aF0EI6l9u0G
-X-Gm-Gg: AYBFou0qgxHEXRCpnAw25eW3qdtLYl573LTCI7zPvLeTSWWOC5tPlybFbKiyU43rnaV
- AmhLKLaChQY01PJHQVKVijHah3fqnhxEbeQqISV3JeMrDnyaFkr4i1qV7x9Doku189UfVrBM+F/
- AfmvSZ+8mIxbWDVAEnIFM5VbBxw6tqWpatbKng/T57Wa/WLsvwjL5y6VbVU6jiGhadZN83hCwH6
- w0Q+RKQK8WxzpUazEqbSdUlnovrblP407Y2Hyivn6MO8zPHdbnPSTSR7n43XZFyq/x/81Z6/5HK
- 4X5qi0jxXxlrUschNTkclQmAzPXES5iowAGFahJcjPiWwcQ1Up97tTIwucQKupY5mnTf0TxKt8i
- Rckq5YXj5c6KaK4kDDJDHwvJdRyqlaCgQOaHjnVVb1Vj3/SW4q6p4FniLCv7qbcNH7/hNayFhfm
- rtAXiPykDPDV6ic7x4GL+XX/vWqCVbclz7kRCYNjJOhEz8+DP+eA==
-X-Received: by 2002:a05:690e:440b:b0:671:70ea:46d3 with SMTP id
- 956f58d0204a3-672ed9da9b1mr4047290d50.106.1790641136654; 
- Mon, 28 Sep 2026 17:18:56 -0700 (PDT)
+ bh=Q8qyYW/8kpax8oTjxPBDTE8X32GLYKm5i7FrYPuBlP4=;
+ b=k8BSepNIyFM9F8zd1hTQbwnwWyEoRyTVQBw+ssFSFR2BeEyLkDRShVrz+PBgxiDVoB
+ LEmOFA2VO91M4oehyi9rFZlrgdX+bCvHWJTseyVYhzdqCx3irscSdq0L3dQTc9YFFwRb
+ EWeMvsB6WjfR0H3CCkB3pk1poNHexZhpVfnR7cdtJiD334oxwViGg39DRKWIDbQh2Suw
+ w/vCflowhKUAC7e9KdmWkq9v2S/4+nU5/XfZzMXxBSc5iih2RYTPaIps2mi6qQkvFTYs
+ k8Ltfd1PgZVrTgaTeWWeuWRKI2g7Og85lWL+UkoQR0lkA5uSFF5iDSe8r9PHo3tdH6QL
+ Nshg==
+X-Gm-Message-State: AFq9FYIRM8czPc8psDvzkntcB7+B5GaKF3K5w9HlFWfB7GtYxF9iIFwx
+ thkfhivIHxfvQU2LWUrLmOW3XKT0d4Gg8MtnlTsvA4zp0u72PLYGiqTvAjpbLaNUoNUU54UMv3n
+ tIiOiKDTIkQam/koRs7J39EmW+c1W6fZAZA5xowaS8B3aStqs8UNk1aIAJhsTKGvEf0W2sY6Pbh
+ EcTm/Fj6Yl13Imr3IMRz8ulF95Cf0x/roIcv43HqTkzBjyt/k1921XE5KJ0yFBJAw4EKPPdzqmt
+ n9br5hXv3z1
+X-Gm-Gg: AYBFou3Fzy0yL3G2TygcCW5supA+cZYe5EPQaiP4lCY/xfUY5YORBTmvTCFUt+9nbPx
+ 5aDnvn58TeVwrbjnsL+7P1+Lbc6dqHAwghglOiYB6cnbgougRoQiM4z4y+bOfNIRBvs7cvB0syR
+ EMzWlQDv+JGWi/I2y/aZ1i6J4KV3zHnQZX08frmLaR75sqelgUgVK4btYMqEzzM/qYC36tuExS2
+ dpRkXIenWo1FIm5m7cBQDR+m7Z7loZhMK7vv4eeBymZCnmUlvDBHBUx/aAGCX0DJsfV3nljq1z/
+ hdgfmoPpwG6u2zPQek9RIxEA2YcaOLYs3RnkQ84eX4rr9ergPo/1Sw/hMxSo4mPMVACVK57W+o4
+ ivx2HP4Aq5RxEyUJzlJIv10sfp//eihCOlJwbjqUAoD9/o4BRWDBJSLoLDSdFMs58eraCd15/8+
+ pvFP9zzSnpMHCOy+Rph6g9UwKOCiaXLMGX2gNwxgthgMDbDqgcKQ==
+X-Received: by 2002:a05:6102:a4b:b0:7b4:b196:f641 with SMTP id
+ ada2fe7eead31-7b4b196ffa7mr1722863137.37.1790641155487; 
+ Mon, 28 Sep 2026 17:19:15 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-25.dlp.protect.broadcom.com. [144.49.247.25])
  by smtp-relay.gmail.com with ESMTPS id
- 956f58d0204a3-6756534a9b1sm54707d50.15.2026.09.28.17.18.56
+ 71dfb90a1353d-5cde6e39962sm1775830e0c.7.2026.09.28.17.19.15
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 28 Sep 2026 17:18:56 -0700 (PDT)
+ Mon, 28 Sep 2026 17:19:15 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qv1-f72.google.com with SMTP id
- 6a1803df08f44-915b4976f5fso29481816d6.2
- for <dev@dpdk.org>; Mon, 28 Sep 2026 17:18:56 -0700 (PDT)
+Received: by mail-qv1-f70.google.com with SMTP id
+ 6a1803df08f44-91786abb5abso4264936d6.3
+ for <dev@dpdk.org>; Mon, 28 Sep 2026 17:19:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1790641135; x=1791245935; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1790641155; x=1791245955; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=P3wkS1QGh1d3ttV0mLmdV1AsVNkdKRvrlOKHjbJdiME=;
- b=INkZAwBZdmhfEnsQxhJZJa+LKwcfL6tASU+vi2A64n4pi5YQGOG5eGGgn7cofq+eF9
- Hy0/Ec4c5URYpi7oJVOQVhhm+EXeC2eMP/V7P7bfila/ORacH/7ZVGivgvMCgrDvBR6y
- /P1dSdMm2xwwOUZReo+y5VlvjgYhkO4ZgPdx4=
-X-Received: by 2002:ad4:5748:0:b0:914:4c70:f513 with SMTP id
- 6a1803df08f44-9144c70f8eemr151404476d6.2.1790641135644; 
- Mon, 28 Sep 2026 17:18:55 -0700 (PDT)
-X-Received: by 2002:ad4:5748:0:b0:914:4c70:f513 with SMTP id
- 6a1803df08f44-9144c70f8eemr151404096d6.2.1790641135036; 
- Mon, 28 Sep 2026 17:18:55 -0700 (PDT)
+ bh=Q8qyYW/8kpax8oTjxPBDTE8X32GLYKm5i7FrYPuBlP4=;
+ b=VRqXW3gdUsLdKow+YvoULfkOfDZZnlIcD9Kt4sZ5lO+af1OpDX4t5/ZdmnFyCMV9WG
+ RuAZO3Mi4bIXehdivcCzhMgyAS5RyI7ggLAyTl6VET6F8egDuK0MBnKVG9fl4ZTpHUpd
+ aKXIHaJfl0BpJTYvkWqTeU3tkdPJ0QCqs7A8E=
+X-Received: by 2002:a05:6214:5b82:b0:914:3ef6:ec19 with SMTP id
+ 6a1803df08f44-9143ef6fda4mr206714426d6.6.1790641154543; 
+ Mon, 28 Sep 2026 17:19:14 -0700 (PDT)
+X-Received: by 2002:a05:6214:5b82:b0:914:3ef6:ec19 with SMTP id
+ 6a1803df08f44-9143ef6fda4mr206714076d6.6.1790641153985; 
+ Mon, 28 Sep 2026 17:19:13 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91430e281a8sm91735706d6.33.2026.09.28.17.18.52
+ 6a1803df08f44-91430e9f7b0sm91315306d6.43.2026.09.28.17.19.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 28 Sep 2026 17:18:53 -0700 (PDT)
+ Mon, 28 Sep 2026 17:19:12 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com,
- Keegan Freyhof <keegan.freyhof@broadcom.com>,
  Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH v2] net/bnxt: remove VMDq support
-Date: Mon, 28 Sep 2026 18:21:53 -0600
-Message-ID: <20260929002153.1208331-1-Mohammad-Shuab.Siddique@broadcom.com>
+Subject: [PATCH v3] net/bnxt: add Tx DMA error stat counter
+Date: Mon, 28 Sep 2026 18:22:13 -0600
+Message-ID: <20260929002213.1208351-1-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260921030811.1034869-1-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260921030811.1034869-1-Mohammad-Shuab.Siddique@broadcom.com>
+In-Reply-To: <20260918032812.763436-1-Mohammad-Shuab.Siddique@broadcom.com>
+References: <20260918032812.763436-1-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
@@ -102,244 +101,284 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Keegan Freyhof <keegan.freyhof@broadcom.com>
+From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 
-Remove support for the VMDq feature from the driver: the multi-pool
-Rx-queue configuration path in bnxt_mq_rx_configure(), the VMDQ VLAN
-pool wiring in the L2 filter alloc path, and the max_vmdq_pools/
-vmdq_queue_num reporting in dev_info (now always reported as 0).
+Hardware already reports an invalid/bad DMA address on a Tx BD via
+the TX_CMPL_ERRORS_DMA_ERROR bit in the Tx completion record, but the
+driver never inspected it, so a bad mbuf->buf_iova on Tx completed
+silently with no visibility.
 
-bnxt_mq_rx_configure() validates dev_conf->rxmode.mq_mode explicitly:
-RTE_ETH_MQ_RX_NONE and RTE_ETH_MQ_RX_RSS are handled (the latter via
-the existing rx_cosq_cnt-based pool count for multi-COS RSS), and any
-other mode is rejected with -EINVAL rather than falling through.
+Check the bit in bnxt_handle_tx_cp() and in the AVX2/SSE/NEON vector
+Tx-completion handlers, and count occurrences in a new per-queue
+tx_dma_err counter. The counter is folded into the standard oerrors
+stat and also exposed as a named xstat (tx_dma_err_cmpl) for
+finer-grained visibility. The xstat name reflects what is actually
+counted: one increment per Tx completion record that carries the
+error bit, not one per packet -- a coalesced Tx completion can cover
+several packets. The xstat itself is also a port-level sum across
+queues, not a per-queue value, even though the underlying counter
+field is per-queue.
 
-The per-non-default-VNIC skip_filter_allocation guard in the same
-function, and the RTE_ETH_VMDQ_ACCEPT_HASH_UC/BROADCAST/MULTICAST ->
-l2_rx_mask flag mapping in rte_pmd_bnxt_set_vf_rxmode(), are both
-unrelated to VMDq pools and kept as-is: the former is used by the
-plain multi-COS RSS path, and the latter -- despite the name -- is
-the standard DPDK VF-rxmode API used regardless of hardware VMDq
-pool support.
+tx_dma_err has a single writer (the lcore polling that Tx queue's
+completions) and is read from other threads via xstats, so the
+increment stores the new value with rte_atomic_store_explicit()
+after a relaxed load, rather than rte_atomic_fetch_add_explicit():
+with only one writer there is nothing to race against for the
+read-modify-write itself, so the stronger fetch_add (a locked RMW on
+most architectures) is unneeded on this per-packet path; the atomic
+store still ensures other threads never observe a torn value.
 
-Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
+v3:
+* Renamed the xstat from tx_dma_err_pkts to tx_dma_err_cmpl, and
+  reworded the release note from "per-queue" to "port-level" to match
+  what bnxt_dev_xstats_get_op() actually returns. Stephen Hemminger
+  pointed out both: the xstat counts completions, not packets (a
+  coalesced completion covers several packets, so "_pkts" overstates
+  granularity), and the value summed across queues is exposed as one
+  port-wide xstat, not one per queue.
+* Added the DMA-error check to the NEON vector Tx-completion handler
+  (bnxt_handle_tx_cp_vec() in bnxt_rxtx_vec_neon.c), matching the
+  AVX2/SSE handlers already covered -- also per Stephen Hemminger.
+* Switched the increment from rte_atomic_fetch_add_explicit() to a
+  relaxed load + rte_atomic_store_explicit(): tx_dma_err has a single
+  writer (the lcore polling that queue's completions), so the
+  stronger fetch_add (a locked read-modify-write on most
+  architectures) was unneeded on this per-packet path.
+* Changed bnxt_stats_reset_op()'s tx_dma_err reset from a direct `= 0`
+  assignment (v2) to rte_atomic_store_explicit(..., 0, ...), matching
+  the atomic store now used for the increment and for the other reset
+  site (bnxt_dev_xstats_reset_op()).
 v2:
-* Explicitly reject any dev_conf->rxmode.mq_mode value
-  bnxt_mq_rx_configure() doesn't handle, instead of silently falling
-  through. Stephen Hemminger noted this validation was lost along
-  with VMDq support's own mq_mode switch cases.
+* Added a release notes entry documenting the new xstat, per
+  reviewer request.
+* NOTE: apply this patch before "net/bnxt: add support for queue size
+  of 16384" -- both add a bullet under the same "Updated bnxt driver"
+  release-notes heading, and the latter's context assumes this one's
+  bullet is already present.
 
- doc/guides/nics/features/bnxt.ini |  1 -
- drivers/net/bnxt/bnxt_ethdev.c    | 27 ++------------
- drivers/net/bnxt/bnxt_hwrm.c      | 17 ---------
- drivers/net/bnxt/bnxt_rxq.c       | 58 +++++++------------------------
- drivers/net/bnxt/rte_pmd_bnxt.c   |  1 -
- 5 files changed, 14 insertions(+), 90 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst |  6 ++++++
+ drivers/net/bnxt/bnxt_rxtx_vec_avx2.c  |  8 ++++++++
+ drivers/net/bnxt/bnxt_rxtx_vec_neon.c  |  8 ++++++++
+ drivers/net/bnxt/bnxt_rxtx_vec_sse.c   |  8 ++++++++
+ drivers/net/bnxt/bnxt_stats.c          | 26 ++++++++++++++++++++++++++
+ drivers/net/bnxt/bnxt_stats.h          |  3 +++
+ drivers/net/bnxt/bnxt_txq.h            |  1 +
+ drivers/net/bnxt/bnxt_txr.c            |  8 ++++++++
+ 8 files changed, 68 insertions(+)
 
-diff --git a/doc/guides/nics/features/bnxt.ini b/doc/guides/nics/features/bnxt.ini
-index f632de135a..447cb178b5 100644
---- a/doc/guides/nics/features/bnxt.ini
-+++ b/doc/guides/nics/features/bnxt.ini
-@@ -26,7 +26,6 @@ RSS hash             = Y
- RSS key update       = Y
- RSS reta update      = Y
- Inner RSS            = Y
--VMDq                 = Y
- SR-IOV               = Y
- VLAN filter          = Y
- Flow control         = Y
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index 4d4349457c..afb00cda43 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -1169,7 +1169,6 @@ static int bnxt_dev_info_get_op(struct rte_eth_dev *eth_dev,
- {
- 	struct rte_pci_device *pdev = RTE_CLASS_TO_BUS_DEVICE(eth_dev, *pdev);
- 	struct bnxt *bp = eth_dev->data->dev_private;
--	uint16_t max_vnics, i, j, vpool, vrxq;
- 	unsigned int max_rx_rings;
- 	int rc;
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index dec96ccbc7..7ab289adf1 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -74,6 +74,12 @@ New Features
+     ``xdp_meta_rx_ts_valid_mask``.
+   * Added ``read_clock`` operation to query the PTP hardware clock.
  
-@@ -1191,7 +1190,6 @@ static int bnxt_dev_info_get_op(struct rte_eth_dev *eth_dev,
- 	dev_info->max_tx_queues = max_rx_rings;
- 	dev_info->reta_size = bnxt_rss_hash_tbl_size(bp);
- 	dev_info->hash_key_size = HW_HASH_KEY_SIZE;
--	max_vnics = bp->max_vnics;
++* **Updated bnxt driver.**
++
++  * Added a ``tx_dma_err_cmpl`` xstat to report Tx completions that the
++    device flagged with a DMA error. This is a port-level counter, and
++    is also folded into the standard ``oerrors`` counter.
++
+ * **Updated Intel iavf driver.**
  
- 	/* MTU specifics */
- 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
-@@ -1254,29 +1252,8 @@ static int bnxt_dev_info_get_op(struct rte_eth_dev *eth_dev,
- 	 * TODO: default_rxconf, default_txconf, rx_desc_lim, and tx_desc_lim
- 	 *       need further investigation.
- 	 */
--
--	/* VMDq resources */
--	vpool = 64; /* RTE_ETH_64_POOLS */
--	vrxq = 128; /* RTE_ETH_VMDQ_DCB_NUM_QUEUES */
--	for (i = 0; i < 4; vpool >>= 1, i++) {
--		if (max_vnics > vpool) {
--			for (j = 0; j < 5; vrxq >>= 1, j++) {
--				if (dev_info->max_rx_queues > vrxq) {
--					if (vpool > vrxq)
--						vpool = vrxq;
--					goto found;
--				}
--			}
--			/* Not enough resources to support VMDq */
--			break;
--		}
--	}
--	/* Not enough resources to support VMDq */
--	vpool = 0;
--	vrxq = 0;
--found:
--	dev_info->max_vmdq_pools = vpool;
--	dev_info->vmdq_queue_num = vrxq;
-+	dev_info->max_vmdq_pools = 0;
-+	dev_info->vmdq_queue_num = 0;
+   * Runtime Rx/Tx queue setup is now automatically disabled
+diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
+index 50b3602839..b22bb16fa0 100644
+--- a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
++++ b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
+@@ -743,6 +743,14 @@ bnxt_handle_tx_cp_vec(struct bnxt_tx_queue *txq)
+ 		if (!bnxt_cpr_cmp_valid(txcmp, raw_cons, ring_mask + 1))
+ 			break;
  
- 	dev_info->vmdq_pool_base = 0;
- 	dev_info->vmdq_queue_base = 0;
-diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index 1615b36aae..beb1fa1390 100644
---- a/drivers/net/bnxt/bnxt_hwrm.c
-+++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -892,24 +892,7 @@ int bnxt_hwrm_set_l2_filter(struct bnxt *bp,
- 	int rc = 0;
- 	struct hwrm_cfa_l2_filter_alloc_input req = {.req_type = 0 };
- 	struct hwrm_cfa_l2_filter_alloc_output *resp = bp->hwrm_cmd_resp_addr;
--	struct rte_eth_conf *dev_conf = &bp->eth_dev->data->dev_conf;
--	const struct rte_eth_vmdq_rx_conf *conf =
--		    &dev_conf->rx_adv_conf.vmdq_rx_conf;
- 	uint32_t enables = 0;
--	uint16_t j = dst_id - 1;
--
--	//TODO: Is there a better way to add VLANs to each VNIC in case of VMDQ
--	if ((dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_VMDQ_FLAG) &&
--	    conf->pool_map[j].pools & (1UL << j)) {
--		PMD_DRV_LOG_LINE(DEBUG,
--			"Add vlan %u to vmdq pool %u",
--			conf->pool_map[j].vlan_id, j);
--
--		filter->l2_ivlan = conf->pool_map[j].vlan_id;
--		filter->enables |=
--			HWRM_CFA_L2_FILTER_ALLOC_INPUT_ENABLES_L2_IVLAN |
--			HWRM_CFA_L2_FILTER_ALLOC_INPUT_ENABLES_L2_IVLAN_MASK;
--	}
++		uint16_t errors_v = rte_le_to_cpu_16(txcmp->errors_v);
++
++		if (unlikely(errors_v & TX_CMPL_ERRORS_DMA_ERROR))
++			rte_atomic_store_explicit(&txq->tx_dma_err,
++				rte_atomic_load_explicit(&txq->tx_dma_err,
++							 rte_memory_order_relaxed) + 1,
++				rte_memory_order_relaxed);
++
+ 		nb_tx_pkts += txcmp->opaque;
+ 		raw_cons = NEXT_RAW_CMP(raw_cons);
+ 	} while (nb_tx_pkts < ring_mask);
+diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_neon.c b/drivers/net/bnxt/bnxt_rxtx_vec_neon.c
+index 03f39280e5..086ba43363 100644
+--- a/drivers/net/bnxt/bnxt_rxtx_vec_neon.c
++++ b/drivers/net/bnxt/bnxt_rxtx_vec_neon.c
+@@ -355,6 +355,14 @@ bnxt_handle_tx_cp_vec(struct bnxt_tx_queue *txq)
+ 		if (!bnxt_cpr_cmp_valid(txcmp, raw_cons, ring_mask + 1))
+ 			break;
  
- 	if (filter->fw_l2_filter_id != UINT64_MAX)
- 		bnxt_hwrm_clear_l2_filter(bp, filter);
-diff --git a/drivers/net/bnxt/bnxt_rxq.c b/drivers/net/bnxt/bnxt_rxq.c
-index ea3cdffbc0..b0a1e1a714 100644
---- a/drivers/net/bnxt/bnxt_rxq.c
-+++ b/drivers/net/bnxt/bnxt_rxq.c
-@@ -76,50 +76,25 @@ int bnxt_mq_rx_configure(struct bnxt *bp)
- {
- 	struct rte_eth_conf *dev_conf = &bp->eth_dev->data->dev_conf;
- 	struct rte_eth_rss_conf *rss = &bp->rss_conf;
--	const struct rte_eth_vmdq_rx_conf *conf =
--		    &dev_conf->rx_adv_conf.vmdq_rx_conf;
- 	unsigned int i, j, nb_q_per_grp = 1, ring_idx = 0;
- 	int start_grp_id, end_grp_id = 1, rc = 0;
- 	struct bnxt_vnic_info *vnic;
- 	struct bnxt_filter_info *filter;
--	enum rte_eth_nb_pools pools = 1, max_pools = 0;
-+	enum rte_eth_nb_pools pools = 1;
- 	struct bnxt_rx_queue *rxq;
++		uint16_t errors_v = rte_le_to_cpu_16(txcmp->errors_v);
++
++		if (unlikely(errors_v & TX_CMPL_ERRORS_DMA_ERROR))
++			rte_atomic_store_explicit(&txq->tx_dma_err,
++				rte_atomic_load_explicit(&txq->tx_dma_err,
++							 rte_memory_order_relaxed) + 1,
++				rte_memory_order_relaxed);
++
+ 		if (likely(CMP_TYPE(txcmp) == TX_CMPL_TYPE_TX_L2))
+ 			nb_tx_pkts += txcmp->opaque;
+ 		else
+diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_sse.c b/drivers/net/bnxt/bnxt_rxtx_vec_sse.c
+index 7d455b6f56..4024a80b51 100644
+--- a/drivers/net/bnxt/bnxt_rxtx_vec_sse.c
++++ b/drivers/net/bnxt/bnxt_rxtx_vec_sse.c
+@@ -577,6 +577,14 @@ bnxt_handle_tx_cp_vec(struct bnxt_tx_queue *txq)
+ 		if (!bnxt_cpr_cmp_valid(txcmp, raw_cons, ring_mask + 1))
+ 			break;
  
- 	bp->nr_vnics = 0;
++		uint16_t errors_v = rte_le_to_cpu_16(txcmp->errors_v);
++
++		if (unlikely(errors_v & TX_CMPL_ERRORS_DMA_ERROR))
++			rte_atomic_store_explicit(&txq->tx_dma_err,
++				rte_atomic_load_explicit(&txq->tx_dma_err,
++							 rte_memory_order_relaxed) + 1,
++				rte_memory_order_relaxed);
++
+ 		if (likely(CMP_TYPE(txcmp) == TX_CMPL_TYPE_TX_L2))
+ 			nb_tx_pkts += txcmp->opaque;
+ 		else
+diff --git a/drivers/net/bnxt/bnxt_stats.c b/drivers/net/bnxt/bnxt_stats.c
+index 37b33f0505..8f7c867ff5 100644
+--- a/drivers/net/bnxt/bnxt_stats.c
++++ b/drivers/net/bnxt/bnxt_stats.c
+@@ -685,6 +685,8 @@ static int bnxt_stats_get_ext(struct rte_eth_dev *eth_dev,
  
- 	/* Multi-queue mode */
--	if (dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_VMDQ_DCB_RSS) {
--		/* VMDq ONLY, VMDq+RSS, VMDq+DCB, VMDq+DCB+RSS */
--
--		switch (dev_conf->rxmode.mq_mode) {
--		case RTE_ETH_MQ_RX_VMDQ_RSS:
--		case RTE_ETH_MQ_RX_VMDQ_ONLY:
--		case RTE_ETH_MQ_RX_VMDQ_DCB_RSS:
--			/* FALLTHROUGH */
--			/* ETH_8/64_POOLs */
--			pools = conf->nb_queue_pools;
--			/* For each pool, allocate MACVLAN CFA rule & VNIC */
--			max_pools = RTE_MIN(bp->max_vnics,
--					    RTE_MIN(bp->max_l2_ctx,
--					    RTE_MIN(bp->max_rsscos_ctx,
--						    RTE_ETH_64_POOLS)));
--			PMD_DRV_LOG_LINE(DEBUG,
--				    "pools = %u max_pools = %u",
--				    pools, max_pools);
--			if (pools > max_pools)
--				pools = max_pools;
--			break;
--		case RTE_ETH_MQ_RX_RSS:
--			pools = bp->rx_cosq_cnt ? bp->rx_cosq_cnt : 1;
--			break;
--		default:
--			PMD_DRV_LOG_LINE(ERR, "Unsupported mq_mod %d",
--				dev_conf->rxmode.mq_mode);
--			rc = -EINVAL;
--			goto err_out;
--		}
--	} else if (!dev_conf->rxmode.mq_mode) {
-+	switch (dev_conf->rxmode.mq_mode) {
-+	case RTE_ETH_MQ_RX_NONE:
-+	case RTE_ETH_MQ_RX_RSS:
- 		pools = bp->rx_cosq_cnt ? bp->rx_cosq_cnt : pools;
-+		break;
-+	default:
-+		PMD_DRV_LOG_LINE(ERR, "Unsupported mq_mode %d",
-+				 dev_conf->rxmode.mq_mode);
-+		return -EINVAL;
+ 		bnxt_stats->oerrors += rte_atomic_load_explicit(&txq->tx_mbuf_drop,
+ 							     rte_memory_order_relaxed);
++		bnxt_stats->oerrors += rte_atomic_load_explicit(&txq->tx_dma_err,
++							     rte_memory_order_relaxed);
+ 
+ 		if (!txq->tx_started)
+ 			continue;
+@@ -758,6 +760,9 @@ int bnxt_stats_get_op(struct rte_eth_dev *eth_dev,
+ 		bnxt_stats->oerrors +=
+ 				rte_atomic_load_explicit(&txq->tx_mbuf_drop,
+ 							 rte_memory_order_relaxed);
++		bnxt_stats->oerrors +=
++				rte_atomic_load_explicit(&txq->tx_dma_err,
++							 rte_memory_order_relaxed);
  	}
  
- 	pools = RTE_MIN(pools, bp->rx_cp_nr_rings);
-@@ -141,19 +116,13 @@ int bnxt_mq_rx_configure(struct bnxt *bp)
- 				    "rxq[%d] = %p vnic[%d] = %p",
- 				    ring_idx, rxq, i, vnic);
- 		}
--		if (i == 0) {
--			if (dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_VMDQ_DCB) {
--				bp->eth_dev->data->promiscuous = 1;
--				vnic->flags |= BNXT_VNIC_INFO_PROMISC;
--			}
-+		if (i == 0)
- 			vnic->func_default = true;
--		}
- 		vnic->start_grp_id = start_grp_id;
- 		vnic->end_grp_id = end_grp_id;
+ 	return rc;
+@@ -808,6 +813,8 @@ int bnxt_stats_reset_op(struct rte_eth_dev *eth_dev)
+ 		struct bnxt_tx_queue *txq = bp->tx_queues[i];
  
- 		if (i) {
--			if (dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_VMDQ_DCB ||
--			    !(dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_RSS))
-+			if (!(dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_RSS))
- 				vnic->rss_dflt_cr = true;
- 			goto skip_filter_allocation;
- 		}
-@@ -165,10 +134,7 @@ int bnxt_mq_rx_configure(struct bnxt *bp)
- 		}
- 		filter->mac_index = 0;
- 		filter->flags |= HWRM_CFA_L2_FILTER_ALLOC_INPUT_FLAGS_OUTERMOST;
--		/*
--		 * TODO: Configure & associate CFA rule for
--		 * each VNIC for each VMDq with MACVLAN, MACVLAN+TC
--		 */
+ 		txq->tx_mbuf_drop = 0;
++		rte_atomic_store_explicit(&txq->tx_dma_err, 0,
++					  rte_memory_order_relaxed);
+ 	}
+ 
+ 	bnxt_clear_prev_stat(bp);
+@@ -911,6 +918,7 @@ int bnxt_dev_xstats_get_op(struct rte_eth_dev *eth_dev,
+ 		RTE_DIM(bnxt_tx_stats_strings) + sz +
+ 		RTE_DIM(bnxt_rx_ext_stats_strings) +
+ 		RTE_DIM(bnxt_tx_ext_stats_strings) +
++		BNXT_NUM_SW_XSTATS +
+ 		bnxt_flow_stats_cnt(bp);
+ 
+ 	if (n < stat_count || xstats == NULL)
+@@ -1033,6 +1041,14 @@ int bnxt_dev_xstats_get_op(struct rte_eth_dev *eth_dev,
+ 		count++;
+ 	}
+ 
++	xstats[count].id = count;
++	xstats[count].value = 0;
++	for (i = 0; i < bp->tx_cp_nr_rings; i++)
++		xstats[count].value +=
++			rte_atomic_load_explicit(&bp->tx_queues[i]->tx_dma_err,
++						 rte_memory_order_relaxed);
++	count++;
 +
- 		STAILQ_INSERT_TAIL(&vnic->filter, filter, next);
+ 	if (bp->fw_cap & BNXT_FW_CAP_ADV_FLOW_COUNTERS &&
+ 	    bp->fw_cap & BNXT_FW_CAP_ADV_FLOW_MGMT &&
+ 	    BNXT_FLOW_XSTATS_EN(bp)) {
+@@ -1112,6 +1128,7 @@ int bnxt_dev_xstats_get_names_op(struct rte_eth_dev *eth_dev,
+ 				sz +
+ 				RTE_DIM(bnxt_rx_ext_stats_strings) +
+ 				RTE_DIM(bnxt_tx_ext_stats_strings) +
++				BNXT_NUM_SW_XSTATS +
+ 				bnxt_flow_stats_cnt(bp);
  
- skip_filter_allocation:
-diff --git a/drivers/net/bnxt/rte_pmd_bnxt.c b/drivers/net/bnxt/rte_pmd_bnxt.c
-index 4974e390e7..a0ce89fca9 100644
---- a/drivers/net/bnxt/rte_pmd_bnxt.c
-+++ b/drivers/net/bnxt/rte_pmd_bnxt.c
-@@ -435,7 +435,6 @@ int rte_pmd_bnxt_set_vf_rxmode(uint16_t port, uint16_t vf,
+ 	if (xstats_names == NULL || size < stat_cnt)
+@@ -1165,6 +1182,10 @@ int bnxt_dev_xstats_get_names_op(struct rte_eth_dev *eth_dev,
+ 		count++;
+ 	}
+ 
++	strlcpy(xstats_names[count].name, "tx_dma_err_cmpl",
++		sizeof(xstats_names[count].name));
++	count++;
++
+ 	if (bp->fw_cap & BNXT_FW_CAP_ADV_FLOW_COUNTERS &&
+ 	    bp->fw_cap & BNXT_FW_CAP_ADV_FLOW_MGMT &&
+ 	    BNXT_FLOW_XSTATS_EN(bp)) {
+@@ -1190,6 +1211,7 @@ int bnxt_dev_xstats_get_names_op(struct rte_eth_dev *eth_dev,
+ int bnxt_dev_xstats_reset_op(struct rte_eth_dev *eth_dev)
+ {
+ 	struct bnxt *bp = eth_dev->data->dev_private;
++	unsigned int i;
+ 	int ret;
+ 
+ 	ret = is_bnxt_in_error(bp);
+@@ -1202,6 +1224,10 @@ int bnxt_dev_xstats_reset_op(struct rte_eth_dev *eth_dev)
  		return -ENOTSUP;
  	}
  
--	/* Is this really the correct mapping?  VFd seems to think it is. */
- 	if (rx_mask & RTE_ETH_VMDQ_ACCEPT_HASH_UC)
- 		flag |= BNXT_VNIC_INFO_PROMISC;
++	for (i = 0; i < bp->tx_cp_nr_rings; i++)
++		rte_atomic_store_explicit(&bp->tx_queues[i]->tx_dma_err, 0,
++					  rte_memory_order_relaxed);
++
+ 	ret = bnxt_hwrm_port_clr_stats(bp);
+ 	if (ret != 0)
+ 		PMD_DRV_LOG_LINE(ERR, "Failed to reset xstats: %s",
+diff --git a/drivers/net/bnxt/bnxt_stats.h b/drivers/net/bnxt/bnxt_stats.h
+index c0508e773a..534b9af5e8 100644
+--- a/drivers/net/bnxt/bnxt_stats.h
++++ b/drivers/net/bnxt/bnxt_stats.h
+@@ -8,6 +8,9 @@
+ 
+ #include <ethdev_driver.h>
+ 
++/* Number of software (non-HWRM) xstats appended after the FW-reported ones. */
++#define BNXT_NUM_SW_XSTATS		1
++
+ void bnxt_free_stats(struct bnxt *bp);
+ int bnxt_stats_get_op(struct rte_eth_dev *eth_dev,
+ 			   struct rte_eth_stats *bnxt_stats, struct eth_queue_stats *qstats);
+diff --git a/drivers/net/bnxt/bnxt_txq.h b/drivers/net/bnxt/bnxt_txq.h
+index ac8af91c57..525f841789 100644
+--- a/drivers/net/bnxt/bnxt_txq.h
++++ b/drivers/net/bnxt/bnxt_txq.h
+@@ -36,6 +36,7 @@ struct bnxt_tx_queue {
+ 	struct rte_mbuf **free;
+ 	uint64_t offloads;
+ 	RTE_ATOMIC(uint64_t)	tx_mbuf_drop;
++	RTE_ATOMIC(uint64_t)	tx_dma_err;
+ };
+ 
+ void bnxt_free_txq_stats(struct bnxt_tx_queue *txq);
+diff --git a/drivers/net/bnxt/bnxt_txr.c b/drivers/net/bnxt/bnxt_txr.c
+index 36188346f1..64ff42b38e 100644
+--- a/drivers/net/bnxt/bnxt_txr.c
++++ b/drivers/net/bnxt/bnxt_txr.c
+@@ -782,6 +782,14 @@ static int bnxt_handle_tx_cp(struct bnxt_tx_queue *txq)
+ 		if (!bnxt_cpr_cmp_valid(txcmp, raw_cons, ring_mask + 1))
+ 			break;
+ 
++		uint16_t errors_v = rte_le_to_cpu_16(txcmp->errors_v);
++
++		if (unlikely(errors_v & TX_CMPL_ERRORS_DMA_ERROR))
++			rte_atomic_store_explicit(&txq->tx_dma_err,
++				rte_atomic_load_explicit(&txq->tx_dma_err,
++							 rte_memory_order_relaxed) + 1,
++				rte_memory_order_relaxed);
++
+ 		if (CMP_TYPE(txcmp) == CMPL_BASE_TYPE_TX_L2_COAL) {
+ 			struct tx_cmpl_coal *txcmp_c = (struct tx_cmpl_coal *)txcmp;
  
 -- 
 2.47.3
