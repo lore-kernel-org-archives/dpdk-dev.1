@@ -2,105 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 623B3CA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 13:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60064CA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 13:12:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9295841148;
-	Tue, 29 Sep 2026 15:12:18 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3397E40693
- for <dev@dpdk.org>; Tue, 29 Sep 2026 15:12:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790687536;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=qU41NfPHnWm8KZxJ8loqzuhH/4k7xAcLBPBfyFfOqzQ=;
- b=AzJDyidqfJ1haLAMWh+pjcb15IpEgtsbrdv24MraIZS6tu0XDGvAMtqN+hjtr96hb2wrKK
- xu+0rPAcNJofjYOtXl4Ki6IRvGC3xrleuV4Ml8y9BJlhDJfy0m3MaKz681Pwf8JUJ50fRx
- s+7HSCIGe9PNaXkpHJ33CSpelCX+W14=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-151-uN3t92lTO_enZyrLFbQuYQ-1; Tue,
- 29 Sep 2026 09:12:13 -0400
-X-MC-Unique: uN3t92lTO_enZyrLFbQuYQ-1
-X-Mimecast-MFC-AGG-ID: uN3t92lTO_enZyrLFbQuYQ_1790687532
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 327641801330; Tue, 29 Sep 2026 13:12:12 +0000 (UTC)
-Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
- [10.2.32.117])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 559821800348; Tue, 29 Sep 2026 13:12:09 +0000 (UTC)
-Message-ID: <7a312821-44bf-42e1-9b72-ed3920757a3b@redhat.com>
-Date: Tue, 29 Sep 2026 15:12:06 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id B04DD427BD;
+	Tue, 29 Sep 2026 15:12:38 +0200 (CEST)
+Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net
+ [178.154.239.82])
+ by mails.dpdk.org (Postfix) with ESMTP id C622341148
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 15:12:37 +0200 (CEST)
+Received: from mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net
+ (mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net
+ [IPv6:2a02:6b8:c1f:1197:0:640:2e60:0])
+ by forward502a.mail.yandex.net (postfix) with ESMTPS id 353E0847A5;
+ Tue, 29 Sep 2026 16:12:36 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net (smtp)
+ with ESMTPSA id XCiQWa3d5Sw0-FoRIa1FV; 
+ Tue, 29 Sep 2026 16:12:35 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+ t=1790687555; bh=4oirgfLuyQmTp3qKOuTA7TESaJSp57XntEhVDrsOt0k=;
+ h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+ b=MKBKgpjjUWtD75yEFqD5PyjMU4DGs6Fd8SutUf82bCbZTUs0HQrI/gV6FP1KAtpIU
+ RO87vpczvlflmCFf8LGi6kOjq8yVYnuKZRi5qo7IUQGyWscPXncUdOf6myKwBSVuno
+ qVxIkTPxJ8M+ndiUKQnwHSVm/moh9v/cn3RA1NJo=
+Authentication-Results: mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net;
+ dkim=pass header.i=@yandex.ru
+Message-ID: <4b426d5e-d141-486a-b9e1-acd85c260507@yandex.ru>
+Date: Tue, 29 Sep 2026 14:12:32 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/9] vhost: claim VDUSE support for API version 1
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
-Cc: mst@redhat.com, david.marchand@redhat.com, dev@dpdk.org,
- Yongji Xie <xieyongji@bytedance.com>, chenbox@nvidia.com,
- Bruce Richardson <bruce.richardson@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>, jasowangio@gmail.com
-References: <20260929105339.1554051-1-eperezma@redhat.com>
- <20260929105339.1554051-7-eperezma@redhat.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20260929105339.1554051-7-eperezma@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: QxX3uscTfn7ryN5xo1gNbeXLcPel3_Eyv5qidpRDh9M_1790687532
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
+Subject: Re: [PATCH v3 1/1] mbuf: add optional no-copy dynamic field storage
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Randy L Tice <rtice@cisco.com>, dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Harman Kalra <hkalra@marvell.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+References: <179036466858.2.13982499480648014088.v2-0000-cover-letter.patch@cisco.com>
+ <179061941387.2.17741463412422386825.v3-0000-cover-letter.patch@cisco.com>
+ <179061941387.2.13690688541375502570.v3-0001-mbuf-add-optional-no-copy-dynamic-field-storage.patch@cisco.com>
+ <3732a4ac-a585-4bb6-b08a-2b3dab6b782a@yandex.ru>
+ <98CBD80474FA8B44BF855DF32C47DC35F65A87@smartserver.smartshare.dk>
+Content-Language: en-US, ru
+From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65A87@smartserver.smartshare.dk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -118,32 +63,54 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 9/29/26 12:53 PM, Eugenio Pérez wrote:
-> From: Maxime Coquelin <maxime.coquelin@redhat.com>
-> 
-> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
-> ---
->   lib/vhost/vduse.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
-> index 2d3d8a536773..4950a5da01dd 100644
-> --- a/lib/vhost/vduse.c
-> +++ b/lib/vhost/vduse.c
-> @@ -25,7 +25,7 @@
->   #include "vhost.h"
->   #include "virtio_net_ctrl.h"
->   
-> -#define VHOST_VDUSE_API_VERSION 0ULL
-> +#define VHOST_VDUSE_API_VERSION 1ULL
->   #define VDUSE_CTRL_PATH "/dev/vduse/control"
->   
->   struct vduse {
+29.09.2026 13:44, Morten Brørup пишет:
+>> From: Konstantin Ananyev [mailto:konstantin.v.ananyev@yandex.ru]
+>> Sent: Tuesday, 29 September 2026 14.00
+>>
+>> 28.09.2026 19:16, Randy L Tice пишет:
+>>> From: Randy L Tice <rtice@cisco.com>
+>>> Date: Thu, 03 Sep 2026 09:13:28 -0400
+>>>
+>>> Add build-time support for optional cache-line-aligned dynamic-field
+>>> storage at the end of struct rte_mbuf.
+>>>
+>>> The mbuf_dynfield3_size Meson option sets RTE_MBUF_DYNFIELD3_SIZE in
+>>> rte_build_config.h. A non-zero value enables the extra area and grows
+>>> every mbuf by the configured amount.
+>> I am strongly opposed to that patch.
+>> Inside mbuf we already do have priv_size that allows user to store
+>> his/her specific
+>> data straight after rte_mbuf in adjacent manner.
+>> It worked well so far for many use-cases (including VPP) and I don't
+>> see any
+>> reason why this is not enough.
+>>   From other side - making size of core rte_mbuf configurable at run-
+>> time,
+>> will affect DPDK ABI stability in a negative way.
+>> Fro my perspective it is much plausible in terms of ABI stability and
+>> predictability
+>> to have just one fixed layout for the mbuf.
+>> Konstantin
+> The private data area (priv_size) is independent per mbuf pool, and selected at run-time when creating each pool. As Randy explained in the RFC, this is unavailable for mbuf pools created by other components.
 
-FWIW:
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+I think it should be trivial to enforce minimal priv_size across all 
+mbuf pools what will be obeyed by different components
+(as long as they do use rte_pktmbuf_pool_create() and friends):
+1) introduce new EAL parameter 'mbuf-min-priv-size' or so (keep default 
+as zero)
+2) make rte_pktmbuf_pool_create_by_ops() and 
+rte_pktmbuf_pool_create_extbuf() to check that input paramter 
+'priv_size' GE then value specified by EAL parameter, if so then return 
+an error.
 
-Thanks,
-Maxime
+>
+> Mbuf dynamic fields are shared across all mbuf pools, and serves the need with an existing API. So I am strongly in favor of using the mbuf dynamic fields API for this.
+>
+> I agree with Konstantin that it would be optimal if the size of the added dynfields area was run-time configurable (as an EAL startup parameter).
+> However, such a modification to the mbuf library would also require that the performance cost in the dataplane is negligible. We don't want to compromise on mbuf performance for applications not using this new feature.
+>
+> Randy,
+> Could you please explore such an approach?
+>
+> -Morten
 
