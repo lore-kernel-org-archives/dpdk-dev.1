@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C63A6CA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 13:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E934CA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 13:08:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A7D842DC1;
-	Tue, 29 Sep 2026 15:06:50 +0200 (CEST)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
- by mails.dpdk.org (Postfix) with ESMTP id 1188742DCD
- for <dev@dpdk.org>; Tue, 29 Sep 2026 15:06:46 +0200 (CEST)
-X-QQ-mid: zesmtpgz9t1790687202t115e4385
-X-QQ-Originating-IP: 5cKUqGKovAUN+yhj7OlA/DCa6mTjXyCwqhE1wFVcvdw=
+	by mails.dpdk.org (Postfix) with ESMTP id 2488E42D83;
+	Tue, 29 Sep 2026 15:06:53 +0200 (CEST)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+ by mails.dpdk.org (Postfix) with ESMTP id D01EE42B71;
+ Tue, 29 Sep 2026 15:06:49 +0200 (CEST)
+X-QQ-mid: zesmtpgz9t1790687207td82b9edb
+X-QQ-Originating-IP: cXENzt2dhy0Nkq9b6JHdo4zV8zDnNgoJjpEaPi3xlBY=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.227.112.38])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 29 Sep 2026 21:06:41 +0800 (CST)
+ id ; Tue, 29 Sep 2026 21:06:45 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 745310876189187396
-EX-QQ-RecipientCnt: 3
+X-BIZMAIL-ID: 5624223669863406352
+EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v6 12/15] net/txgbe: add pre2 FFE tap and backplane capability
- devargs
-Date: Tue, 29 Sep 2026 21:04:43 +0800
-Message-ID: <4BF3B56D06B968B6+20260929130611.4871-13-zaiyuwang@trustnetic.com>
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
+ Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH v6 14/15] net/txgbe: fix CR/KR link training and recovery
+Date: Tue, 29 Sep 2026 21:04:45 +0800
+Message-ID: <5C13026B834E0D23+20260929130611.4871-15-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20260929130611.4871-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,25 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NJ8/SpgTWw4zvGut1jmXZ3PxfzxmxazAkgeVPAqHvBpS7fpXI0Z7eXQ9
- S4tzK17a4KfWJ0mN0oV0rj+1KLIDXxPVOyv+zM43mGrl1IU1xt973PHijpiFdgMswcVEG3z
- CbZkB1xqW2PWP07zIxHvyB2nUWjTCocv5MKJ0+2pTYaSHEyFEtBQ8GYLZS3GJajvq+HqwVk
- ANl+yhlhkfJXGREkxmlZtYMPpYIzK+NyA0swkMlwlbsyAgBfiZo1su0zD6IxZa249ydAGKf
- ab6xC7MLyl7K/phL7c4BKsjbBxuwVRFQXCvTzNzRGBtAA/tqHW+jB16fO4i5Tbsutq+1/Sx
- 9XrTSTOA/D97V8zv6mHPPMZvfhpxx5uo5CAgWmYzJefNXXlgsrL24ZRvkdBgLxyxEU5z3Mq
- ahmwoOySeTChJb0nX1p7l1WnbNy6W34cZNKvc15ZjeGJ+SpIY2hn22j0AbhGdb0deGYN8/x
- fcYHITAzoMpIQXUgiI1SATuf6RPKZY1wJ+OSt03poT9TkZZuWhztzpLl9dANQ/FBBVgg0Rw
- 9lqI9qD9q2fCrtUcUZpzOmpbuh2WTHVnyjfiuupgOWX1rhhVlnG556wMJrpPCEoE+OdwUh5
- UjAz4ohwSGe5hGU0GO6iIfKoxHW2372h2yuW4GakXK1gNeFl7YmikMOgcgOlPtDm86u/7xI
- gJGKxgLV8ESMWMpm9ZD7TeTHU2UyWY33/UikkwxqJq1RyoBpTzPdQnsZk4KbGiNu1uHH+E6
- eMtrKXI4AUtOXcXysjR3oLG4UYRR7t0QyvKv9MPcOY9GLkdjrkjIp/KQ6tAnZoQRKpkI2b9
- F2RCrEVlrrM8BsUrb6OkQCfjil9ohNEpWDHP9/7bLHQ5oLs43vNFVGM/4RxT0mThFMPZGdD
- LdOxKgG+W7oapBVFBDhS3U/NNchsdT+88JrU+F3U0o2jzkv1gP/eZI5qVOsBaPTssR2NsFk
- 4Wm65wNhVFfvvHpynrk1QnDIa9YZl6EgDF0tan64LwSqLEl0Ri/Wog/Fa+iuS3C5F5mCPWY
- lhYSJ5dlX3YuR7NnJzXzgDYmeDUIJQOyjpQEfCl0uwipbA39bedqcGEg+gdxQWIKbf5Ufds
- UWp5XsHslDBjdCDWr7E5GdvDhYOnlOnGqu2/A11X7KT
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
+X-QQ-XMAILINFO: MZduptyySRk9V9KN4rWKDhR9L9xA4TznewvVV0BfVi7z5C5GZh8PLlNi
+ zjTJSAzpkzNghgLX0moZozGO0PYfTWcFvRfCKFclXj5QPy7d/5ZAtEU0nKD2FGAbsSP0xYB
+ ePak59y+fxEJg0k5qX7j0nVjbsC53lDlDzNSFEG+c3pbJT8QVf41YwlL+8vpxGkfDNf4yQA
+ sv1A58CQ/bNTzlKWjNj1aKVJSlGf3/ew0PqAN8rPGIJjIVaoPNiZDceeXABGQTKFsdtjlRk
+ Ka9Og4wnOOSJ10mmkUFo9xnbifr1iP3oYppL/U2tW03reLQxx3o7NVO7Bk68OTvPDBJ5VCP
+ EEiHW5RckntBHPt6VlBLYToShTEsq+NWTK08c1E4Ak2NCmE8EaZwDeslFDEyQNQEpVitrmG
+ gsw1TggdRIs1+YXCGbHm46rjFyJGsYz2jJ8kdCa1B5ffmvcm4hEhWghT1IG1KGWjoDZGbsl
+ RhfK7LrFW/x2rh2k3IVKknjOFso6pmnKuoLyWWGv7z1UfivjkGYeSmzkvhtVD3o/of45vCz
+ 8/ghNlAbBBQP9wQKN8+US6VlBpZ1eHx3Hc4EtqriUg7F/AiqIMwpugdGWWLBQiwWwVTxcHQ
+ EbHFKr8sA6DT+Hl7qprJuEEpRmrsZF9j+us9FR5VRdKLFIEA9eiulmpXOPh0jFh9Hu8fC4f
+ VjRRf5mjVIcxGV3HUnHL6ZUyq+c+4Vwogf5mHn2YmazFm1NbpI1iC7DmfmRiDl6+xXEf0o6
+ GkFOBNUiO59e5PQ9L0sCcTOVefELAt1bWmCecvDcrIYU1DV3xAqsLm6Xqv/oQQvV9MX7/vE
+ jCUQT/OWB1v1OyzhupSRwrxTNrGV1ZakigHY0y5nN9kbScD7R22kCbNwUlszoeTEUjoQEk9
+ 8ZBc/2dDiX+bEOtMDgWSVLkQq18BNJaHXbcW7JcBF+FRGJhpvhaBC1PlJEKVlUNP0yq1rTR
+ zKqc3PEoCAvAeDSXun4oow5bOcP3UN33vSvKMRkfbaJJqqkymCuvy/tpzLL5q0qyXHMBVbw
+ zzMH7/PO6ECAhNB08pNUglJ0zdk6MsRTKi4K9oPc/UtRWl/P4X9zvD6qLvbsaYWLkfaU13o
+ Bj7cEAUK1o1awUjEzQguzrKxBGGRl+94HhFB5WvASM6KZ6lphDhfQSUIoTgezsjVKuasNen
+ xzUUiaqd/CMyufx0R0Q8n/fNKpFseMcJSlxqKIiVcb6NzSI=
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,201 +67,472 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Amber-Lite E56 PHY has per-MAC FFE defaults that differ from the
-Sapphire defaults. In particular, the second pre-cursor tap defaults
-to zero, but callers need a devarg to override it when ffe_set is
-enabled.
+Backplane CR/KR link training on the E56 PHY is unreliable and does
+not recover after a link event: the completion poll can block for a
+second on a condition that never triggers, the page exchange is only
+run once and its result is assumed to stay valid, and the FFE init
+mode and calibration ordering are also wrong.
 
-Add ffe_pre2 for the E56 second pre-cursor tap, and bp_capa for the
-40G backplane advertisement selection. The latter supports the
-existing default of both KR4 and CR4, or either capability alone.
+- Poll the AN FSM (0x78010, value 0x9) for CL72 completion with a
+  1 ms step and a 400 ms budget, replacing the ephy 0x163c mask-0xe
+  poll that tested the wrong condition; the per-lane TX-FFE dumps
+  move into txgbe_e56_get_txffe(), called once AN completes.
+- Re-run the page exchange on every AN next-page interrupt (1 ms
+  step, 50-count round, explicit next-page handshake, -ETIMEDOUT on
+  expiry) and only enter training after it succeeds; the inline
+  exchange in the AN73 flow is removed and a CL72 failure no longer
+  aborts the flow, so every link event re-runs the exchange instead
+  of assuming the previous one is still valid.
+- Initialize the FFE init mode bits in cfg_40g()/cfg_10g(), run
+  txgbe_e56_set_rxs_ufine_le_max() after the RXS osc init, and write
+  0x78001 = 0x7 in the AN programming sequence.
+- Clear hw->bp_link_mode in txgbe_set_link_to_sfi() so a port that
+  trained on the backplane does not keep a stale backplane mode after
+  switching to SFI.
+- Avoid register reads that are only used by disabled BP debug logs,
+  and drop a leftover debug line in the watchdog.
+
+Fixes: 234ce0d1fa9d ("net/txgbe: fix link stability for Amber-Lite backplane mode")
+Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- doc/guides/nics/txgbe.rst              | 18 +++++++++++++++---
- doc/guides/rel_notes/release_26_11.rst |  8 ++++++++
- drivers/net/txgbe/base/txgbe_type.h    |  6 +++++-
- drivers/net/txgbe/txgbe_ethdev.c       | 23 +++++++++++++++++++----
- 4 files changed, 47 insertions(+), 8 deletions(-)
+ drivers/net/txgbe/base/txgbe_e56.c    |   3 +
+ drivers/net/txgbe/base/txgbe_e56.h    |   1 +
+ drivers/net/txgbe/base/txgbe_e56_bp.c | 173 ++++++++++++++++----------
+ drivers/net/txgbe/base/txgbe_e56_bp.h |   2 +
+ drivers/net/txgbe/base/txgbe_osdep.h  |  12 +-
+ drivers/net/txgbe/base/txgbe_phy.c    |   3 +
+ drivers/net/txgbe/txgbe_ethdev.c      |  24 +++-
+ 7 files changed, 146 insertions(+), 72 deletions(-)
 
-diff --git a/doc/guides/nics/txgbe.rst b/doc/guides/nics/txgbe.rst
-index 90c55141f1..61766cc4ac 100644
---- a/doc/guides/nics/txgbe.rst
-+++ b/doc/guides/nics/txgbe.rst
-@@ -132,17 +132,23 @@ Please note that following ``devargs`` are only set for backplane NICs.
-   If disabled, the FFE parameters will not take effect. Otherwise, set 1
-   for SFI mode, set 2 for KR mode, set 3 for KX4 mode, set 4 for KX mode.
+diff --git a/drivers/net/txgbe/base/txgbe_e56.c b/drivers/net/txgbe/base/txgbe_e56.c
+index 2711863f2c..8e986daf96 100644
+--- a/drivers/net/txgbe/base/txgbe_e56.c
++++ b/drivers/net/txgbe/base/txgbe_e56.c
+@@ -551,6 +551,7 @@ u32 txgbe_e56_cfg_40g(struct txgbe_hw *hw)
  
--- ``ffe_main`` (default **27**)
-+- ``ffe_main`` (default **42** on the 25G Amber-Lite, **43** on the 40G
-+  Amber-Lite, **27** otherwise)
+ 	addr  = E56PHY_FETX_FFE_TRAIN_CFG_0_ADDR;
+ 	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_0, 0x2);
+ 	set_fields_e56(&rdata, E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_2, 0x2);
+ 	wr32_ephy(hw, addr, rdata);
  
-   PHY parameter used for user debugging. Setting other values to
-   take effect requires setting the ``ffe_set``.
+@@ -1377,6 +1378,8 @@ txgbe_e56_cfg_10g(struct txgbe_hw *hw)
  
--- ``ffe_pre`` (default **8**)
-+- ``ffe_pre`` (default **3** on Amber-Lite, **8** otherwise)
+ 	addr = E56PHY_FETX_FFE_TRAIN_CFG_0_ADDR;
+ 	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_0,
++		       0x2);
+ 	set_fields_e56(&rdata, E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_2,
+ 		       0x2);
+ 	wr32_ephy(hw, addr, rdata);
+diff --git a/drivers/net/txgbe/base/txgbe_e56.h b/drivers/net/txgbe/base/txgbe_e56.h
+index fe9a83ae01..32d95b61b9 100644
+--- a/drivers/net/txgbe/base/txgbe_e56.h
++++ b/drivers/net/txgbe/base/txgbe_e56.h
+@@ -435,6 +435,7 @@ typedef union {
+ #define E56PHY_KRT_TFSM_CFGKRT_TFSM_HOLDOFF_TIMER_X256K 23, 16
  
-   PHY parameter used for user debugging. Setting other values to
-   take effect requires setting the ``ffe_set``.
+ #define E56PHY_FETX_FFE_TRAIN_CFG_0_ADDR   (E56PHY_PMD_BASE_ADDR + 0x2BC)
++#define E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_0 1, 0
+ #define E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_2 9, 8
+ #define E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_3 13, 12
  
--- ``ffe_post`` (default **44**)
-+- ``ffe_pre2`` (default **0**)
+diff --git a/drivers/net/txgbe/base/txgbe_e56_bp.c b/drivers/net/txgbe/base/txgbe_e56_bp.c
+index 760101a05e..8597e42dfd 100644
+--- a/drivers/net/txgbe/base/txgbe_e56_bp.c
++++ b/drivers/net/txgbe/base/txgbe_e56_bp.c
+@@ -813,6 +813,7 @@ static int txgbe_e56_phy_rxs_calib_adapt_seq(struct txgbe_hw *hw,
+ 		status |= txgbe_e56_ctle_bypass_seq(hw, bp_link_mode);
+ 
+ 	status |= txgbe_e56_rxs_osc_init_for_temp_track_range(hw, bp_link_mode);
++	txgbe_e56_set_rxs_ufine_le_max(hw, bp_link_mode);
+ 
+ 	/* Wait an fsm_rx_sts 25G */
+ 	BP_LOG("Wait CTRL_FSM_RX_STAT[0]::ctrl_fsm_rx0_st to be ready ...\n");
+@@ -2121,6 +2122,7 @@ int txgbe_e56_set_phy_link_mode(struct txgbe_hw *hw,
+ 	set_fields_e56(&rdata, 12, 12, 0x1);
+ 	wr32_epcs(hw, 0x070000, rdata);
+ 	wr32_epcs(hw, 0x078002, 0x0000);
++	wr32_epcs(hw, 0x78001, 0x7);
+ 	/* pcs case fec en to work around first */
+ 	wr32_epcs(hw, 0x100ab, 1);
+ 
+@@ -2350,24 +2352,35 @@ static int chk_bkp_ability(struct txgbe_hw *hw,
+ 	return 0;
+ }
+ 
+-static int txgbe_e56_exchange_page(struct txgbe_hw *hw)
++#define AN_PAGE_EXCHANGE_TIMEOUT_MS 200
++int txgbe_e56_exchange_page(struct txgbe_hw *hw)
+ {
+ 	struct txgbe_backplane_ability local_ability = {0}, lp_ability = {0};
+ 	u32 an_int, base_page = 0;
+-	int count = 0;
++	int count = 0, count2 = 0;
+ 
+ 	an_int = rd32_epcs(hw, 0x78002);
+-	/* 500ms timeout */
+ 	if (!(an_int & VR_AN_INTR_PG_RCV))
+ 		return -EINVAL;
+ 
+-	for (count = 0; count < 500; count++) {
++	/* 50ms timeout */
++	for (count = 0; count < 50; count++) {
+ 		u32 fsm = rd32_epcs(hw, 0x78010);
+-		u32 rdata = rd32_epcs(hw, 0x78002);
++		u32 next_page = 0;
++		u32 rdata;
 +
-+  PHY parameter used for user debugging, only for the Amber-Lite E56 PHY.
-+  Setting other values to take effect requires setting the ``ffe_set``.
-+
-+- ``ffe_post`` (default **17** on Amber-Lite, **44** otherwise)
++		count2++;
++		if (count2 >= AN_PAGE_EXCHANGE_TIMEOUT_MS) {
++			BP_LOG("Wait for next page timeout after %d ms\n",
++			       count2);
++			return -ETIMEDOUT;
++		}
  
-   PHY parameter used for user debugging. Setting other values to
-   take effect requires setting the ``ffe_set``.
-@@ -177,6 +183,12 @@ Please note that following ``devargs`` are only set for Amber-Lite NICs.
-   In this mode, the hardware merges and writes back a group of RX descriptors
-   together to reduce memory access times, which helps improve performance.
- 
-+- ``bp_capa`` (default **0**)
-+
-+  Backplane capability selection for the 40G NIC. Set 0 for both
-+  40GBASE-KR4 and 40GBASE-CR4, set 1 for 40GBASE-KR4 only, set 2 for
-+  40GBASE-CR4 only.
-+
- Driver compilation and testing
- ------------------------------
- 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index dec96ccbc7..53da0dc66c 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -134,6 +134,14 @@ New Features
-   * Changed the set of per-queue xstats counters.
- 
- 
-+* **Updated Wangxun txgbe driver.**
-+
-+  * Added the ``ffe_pre2`` device argument to tune the second pre-cursor
-+    tap of the Amber-Lite E56 PHY (requires ``ffe_set``).
-+  * Added the ``bp_capa`` device argument to select the advertised
-+    backplane capability on the 40G NIC
-+    (0 for 40GBASE-KR4 + 40GBASE-CR4, 1 for KR4 only, 2 for CR4 only).
-+
- Removed Items
- -------------
- 
-diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index 4ed4737043..f56cd70c6f 100644
---- a/drivers/net/txgbe/base/txgbe_type.h
-+++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -741,7 +741,7 @@ struct txgbe_phy_info {
- 	u16 ffe_set;
- 	u32 ffe_main;
- 	u32 ffe_pre;
--	u32 ffe_pre2;
-+	u32 ffe_pre2; /* only for the Amber-Lite E56 PHY */
- 	u32 ffe_post;
- 	u16 fec_mode;
- 	u16 bp_capa;
-@@ -754,12 +754,14 @@ struct txgbe_phy_info {
- #define TXGBE_DEVARG_FFE_SET		"ffe_set"
- #define TXGBE_DEVARG_FFE_MAIN		"ffe_main"
- #define TXGBE_DEVARG_FFE_PRE		"ffe_pre"
-+#define TXGBE_DEVARG_FFE_PRE2		"ffe_pre2"
- #define TXGBE_DEVARG_FFE_POST		"ffe_post"
- #define TXGBE_DEVARG_FDIR_PBALLOC	"pkt-filter-size"
- #define TXGBE_DEVARG_FDIR_DROP_QUEUE	"pkt-filter-drop-queue"
- #define TXGBE_DEVARG_TX_HEAD_WB		"tx_headwb"
- #define TXGBE_DEVARG_TX_HEAD_WB_SIZE	"tx_headwb_size"
- #define TXGBE_DEVARG_RX_DESC_MERGE	"rx_desc_merge"
-+#define TXGBE_DEVARG_BP_CAPA		"bp_capa"
- 
- static const char * const txgbe_valid_arguments[] = {
- 	TXGBE_DEVARG_BP_AUTO,
-@@ -769,12 +771,14 @@ static const char * const txgbe_valid_arguments[] = {
- 	TXGBE_DEVARG_FFE_SET,
- 	TXGBE_DEVARG_FFE_MAIN,
- 	TXGBE_DEVARG_FFE_PRE,
-+	TXGBE_DEVARG_FFE_PRE2,
- 	TXGBE_DEVARG_FFE_POST,
- 	TXGBE_DEVARG_FDIR_PBALLOC,
- 	TXGBE_DEVARG_FDIR_DROP_QUEUE,
- 	TXGBE_DEVARG_TX_HEAD_WB,
- 	TXGBE_DEVARG_TX_HEAD_WB_SIZE,
- 	TXGBE_DEVARG_RX_DESC_MERGE,
-+	TXGBE_DEVARG_BP_CAPA,
- 	NULL
- };
- 
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index db773a1b9a..cd54b696b4 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -492,13 +492,20 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
- 	u16 tx_headwb = 1;
- 	u16 tx_headwb_size = 16;
- 	u16 rx_desc_merge = 1;
-+	u16 bp_capa = 0;
- 
--	/* The 40G NIC holds one FFE byte per lane, so the E56 PHY defaults
--	 * below are later replicated over the four lanes.
-+	/* The E56 PHY needs its own FFE defaults, as the ones above only
-+	 * apply to the Sapphire PHY.
- 	 */
--	if (hw->mac.type == txgbe_mac_aml40) {
-+	if (hw->mac.type == txgbe_mac_aml) {
-+		ffe_main = S25G_TX_FFE_CFG_DAC_MAIN;
-+		ffe_pre = S25G_TX_FFE_CFG_DAC_PRE1;
-+		ffe_pre2 = S25G_TX_FFE_CFG_DAC_PRE2;
-+		ffe_post = S25G_TX_FFE_CFG_DAC_POST;
-+	} else if (hw->mac.type == txgbe_mac_aml40) {
- 		ffe_main = S40G_TX_FFE_CFG_MAIN & 0xFF;
- 		ffe_pre = S40G_TX_FFE_CFG_PRE1 & 0xFF;
-+		ffe_pre2 = S40G_TX_FFE_CFG_PRE2 & 0xFF;
- 		ffe_post = S40G_TX_FFE_CFG_POST & 0xFF;
+ 		BP_LOG("-----count----- %d - fsm: %x\n", count, fsm);
+-		BP_LOG("read 78002 data %0x and clear pacv\n", rdata);
++		rdata = rd32_epcs(hw, 0x78002);
++		/* clear an pacv int */
+ 		an_int = rdata;
++		BP_LOG("read 78002 data %0x and clear pacv\n", rdata);
+ 		set_fields_e56(&rdata, 2, 2, 0x0);
+ 		wr32_epcs(hw, 0x78002, rdata);
+ 		if (an_int & VR_AN_INTR_PG_RCV) {
+@@ -2382,31 +2395,87 @@ static int txgbe_e56_exchange_page(struct txgbe_hw *hw)
+ 					wr32_epcs(hw, 0x70016, 0x2001);
+ 					BP_LOG("write 70016 0x%0x\n",
+ 					       0x2001);
++					next_page = 1;
++					count = 0; /* reset count to wait next page */
++				} else {
++					next_page = 0;
+ 				}
+ 				base_page = 1;
+ 			}
+ 		}
+-		if ((fsm & 0x8) == 0x8) {
+-			hw->fsm = 0x8;
+-			goto check_ability;
++		if (!next_page) {
++			if ((fsm & 0x8) == 0x8) {
++				hw->fsm = 0x8;
++				goto check_ability;
++			}
+ 		}
+-		usec_delay(100);
++		usec_delay(1000);
  	}
  
-@@ -523,6 +530,8 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
- 			   &txgbe_handle_devarg, &ffe_main);
- 	rte_kvargs_process(kvlist, TXGBE_DEVARG_FFE_PRE,
- 			   &txgbe_handle_devarg, &ffe_pre);
-+	rte_kvargs_process(kvlist, TXGBE_DEVARG_FFE_PRE2,
-+			   &txgbe_handle_devarg, &ffe_pre2);
- 	rte_kvargs_process(kvlist, TXGBE_DEVARG_FFE_POST,
- 			   &txgbe_handle_devarg, &ffe_post);
- 	rte_kvargs_process(kvlist, TXGBE_DEVARG_FDIR_PBALLOC,
-@@ -535,6 +544,8 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
- 			   &txgbe_handle_devarg, &tx_headwb_size);
- 	rte_kvargs_process(kvlist, TXGBE_DEVARG_RX_DESC_MERGE,
- 			   &txgbe_handle_devarg, &rx_desc_merge);
-+	rte_kvargs_process(kvlist, TXGBE_DEVARG_BP_CAPA,
-+			   &txgbe_handle_devarg, &bp_capa);
- 	rte_kvargs_free(kvlist);
+ check_ability:
++	if (count == 50) {
++		BP_LOG("Wait for next page timeout\n");
++		return -ETIMEDOUT;
++	}
++	BP_LOG("AN exchange page done in %d ms\n", count2);
+ 	return chk_bkp_ability(hw, local_ability, lp_ability);
+ }
  
- null:
-@@ -548,7 +559,9 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
- 	hw->phy.ffe_set = ffe_set;
- 	hw->phy.ffe_main = ffe_main;
- 	hw->phy.ffe_pre = ffe_pre;
-+	hw->phy.ffe_pre2 = ffe_pre2;
- 	hw->phy.ffe_post = ffe_post;
-+	hw->phy.bp_capa = bp_capa;
++void txgbe_e56_get_txffe(struct txgbe_hw *hw)
++{
++	if (!rte_log_can_log(RTE_LOGTYPE_TXGBE_BP, RTE_LOG_DEBUG))
++		return;
++
++	/* 21. read txffe to check kr training status */
++	u32 rdata = 0, pmd_ctrl = 0, lane_idx = 0, lane_num = 0, txffe = 0;
++
++	switch (hw->bp_link_mode) {
++	case 10:
++		lane_num = 1;
++		break;
++	case 40:
++		lane_num = 4;
++		break;
++	case 25:
++		lane_num = 1;
++		break;
++	default:
++		BP_LOG("%s %d :Invalid speed\n", __func__, __LINE__);
++		return;
++	}
++
++	BP_LOG("%dG phy kr training check.... fsm: %x\n",
++	       hw->bp_link_mode, rd32_epcs(hw, 0x78010));
++	rdata = rd32_ephy(hw, 0x163c) & GENMASK(lane_num, 1);
++	pmd_ctrl = rd32_ephy(hw, 0x1644);
++	BP_LOG("KR TRAINNING CHECK = %x. pmd_ctrl:%lx-%lx-%lx-%lx\n",
++	       rdata,
++	       FIELD_GET_M(GENMASK(3, 0), pmd_ctrl),
++	       FIELD_GET_M(GENMASK(7, 4), pmd_ctrl),
++	       FIELD_GET_M(GENMASK(11, 8), pmd_ctrl),
++	       FIELD_GET_M(GENMASK(15, 12), pmd_ctrl));
++	BP_LOG("before: %x-%x-%x-%x\n",
++	       rd32_ephy(hw, 0x141c), rd32_ephy(hw, 0x1420),
++	       rd32_ephy(hw, 0x1424), rd32_ephy(hw, 0x1428));
++	for (lane_idx = 0; lane_idx < lane_num; lane_idx++) {
++		txffe = rd32_ephy(hw, 0x828 + lane_idx * 0x100);
++		BP_LOG("after[%x]: %lx-%lx-%lx-%lx\n", lane_idx,
++		       FIELD_GET_M(GENMASK(6, 0), txffe),
++		       FIELD_GET_M(GENMASK(21, 16), txffe),
++		       FIELD_GET_M(GENMASK(29, 24), txffe),
++		       FIELD_GET_M(GENMASK(13, 8), txffe));
++	}
++}
++
+ static int txgbe_e56_cl72_training(struct txgbe_hw *hw)
+ {
+ 	u32 bylinkmode = hw->bp_link_mode;
+ 	u8 bypass_ctle = hw->bypass_ctle;
+ 	int status = 0, temp_data = 0;
+-	u32 lane_num = 0, lane_idx = 0;
+-	u32 __rte_unused pmd_ctrl = 0, txffe = 0;
++	u32 lane_num = 0;
++	u32 __rte_unused pmd_ctrl = 0;
+ 	int ret = 0;
+ 	u32 rdata;
+-
+ 	u8 pll_en_cfg = 0;
+ 	u8 pmd_mode = 0;
  
- 	/* The 40G PHY expects one FFE byte per lane. */
- 	if (hw->mac.type == txgbe_mac_aml40) {
-@@ -6481,12 +6494,14 @@ RTE_PMD_REGISTER_PARAM_STRING(net_txgbe,
- 			      TXGBE_DEVARG_FFE_SET "=<0-4>"
- 			      TXGBE_DEVARG_FFE_MAIN "=<uint16>"
- 			      TXGBE_DEVARG_FFE_PRE "=<uint16>"
-+			      TXGBE_DEVARG_FFE_PRE2 "=<uint16>"
- 			      TXGBE_DEVARG_FFE_POST "=<uint16>"
- 			      TXGBE_DEVARG_FDIR_PBALLOC "=<0|1|2>"
- 			      TXGBE_DEVARG_FDIR_DROP_QUEUE "=<uint8>"
- 			      TXGBE_DEVARG_TX_HEAD_WB "=<0|1>"
- 			      TXGBE_DEVARG_TX_HEAD_WB_SIZE "=<1|16>"
--			      TXGBE_DEVARG_RX_DESC_MERGE "=<0|1>");
-+			      TXGBE_DEVARG_RX_DESC_MERGE "=<0|1>"
-+			      TXGBE_DEVARG_BP_CAPA "=<0|1|2>");
+@@ -2436,6 +2505,7 @@ static int txgbe_e56_cl72_training(struct txgbe_hw *hw)
  
- RTE_LOG_REGISTER_SUFFIX(txgbe_logtype_init, init, NOTICE);
- RTE_LOG_REGISTER_SUFFIX(txgbe_logtype_driver, driver, NOTICE);
+ 	BP_LOG("2.3 Wait %dG KR phy mode init ....\n", bylinkmode);
+ 	status = txgbe_set_phy_link_mode(hw, bylinkmode);
++	ret |= status;
+ 
+ 	/* 13. set phy an status to 1 - AN_CFG[0]: 4-7 lane0-lane3 */
+ 	rdata = rd32_ephy(hw, 0x1434);
+@@ -2462,51 +2532,49 @@ static int txgbe_e56_cl72_training(struct txgbe_hw *hw)
+ 
+ 	/* 18 */
+ 	/* 19. rxs calibration and adaptation sequence */
+-	BP_LOG("2.4 Wait %dG RXS.... fsm: %x\n",
+-	       bylinkmode, rd32_epcs(hw, 0x78010));
++	BP_LOG("2.4 Wait %dG RXS.... fsm: %x, an_int: %x\n",
++	       bylinkmode, rd32_epcs(hw, 0x78010),
++	       rd32_epcs(hw, 0x78002));
+ 	status = txgbe_e56_phy_rxs_calib_adapt_seq(hw, bylinkmode, bypass_ctle);
+ 	ret |= status;
+ 	/* 20 */
+-	BP_LOG("2.5 Wait %dG phy calibration.... fsm: %x\n",
+-	       bylinkmode, rd32_epcs(hw, 0x78010));
+-	txgbe_e56_set_rxs_ufine_le_max(hw, bylinkmode);
++	BP_LOG("2.5 Wait %dG phy calibration.... fsm: %x, an_int: %x\n",
++	       bylinkmode, rd32_epcs(hw, 0x78010),
++	       rd32_epcs(hw, 0x78002));
+ 	status = txgbe_e56_get_temp(hw, &temp_data);
++	ret |= status;
+ 	if (bylinkmode == 40)
+ 		status = txgbe_temp_track_seq_40g(hw, TXGBE_LINK_SPEED_40GB_FULL);
+ 	else
+ 		status = txgbe_e56_rxs_post_cdr_lock_temp_track_seq(hw, bylinkmode);
++
++	ret |= status;
+ 	/* 21 */
+-	BP_LOG("2.6 Wait %dG phy kr training check.... fsm: %x\n",
+-	       bylinkmode, rd32_epcs(hw, 0x78010));
+-	status = kr_read_poll(rd32_ephy, rdata,
+-				  ((rdata & 0xe) & GENMASK(lane_num, 1)) ==
+-				  (0xe & GENMASK(lane_num, 1)), 100,
+-				   10000, hw, 0x163c);
++	BP_LOG("2.6 Wait %dG phy kr fsm check : %x, an_int: %x\n",
++	       bylinkmode, rd32_epcs(hw, 0x78010),
++	       rd32_epcs(hw, 0x78002));
++	status = kr_read_poll(rd32_epcs, rdata,
++			      (rdata & 0x9) == 0x9, 1000,
++			      400, hw, 0x78010);
+ 	pmd_ctrl = rd32_ephy(hw, 0x1644);
+-	BP_LOG("KR TRAINING CHECK = %x, %s. pmd_ctrl:%lx-%lx-%lx-%lx\n",
++	BP_LOG("KR FSM CHECK = %x, %s. pmd_ctrl:%lx-%lx-%lx-%lx\n",
+ 	       rdata, status ? "FAILED" : "SUCCESS",
+ 	       FIELD_GET_M(GENMASK(3, 0), pmd_ctrl),
+ 	       FIELD_GET_M(GENMASK(7, 4), pmd_ctrl),
+ 	       FIELD_GET_M(GENMASK(11, 8), pmd_ctrl),
+ 	       FIELD_GET_M(GENMASK(15, 12), pmd_ctrl));
+ 	ret |= status;
+-	BP_LOG("before: %x-%x-%x-%x\n",
+-	       rd32_ephy(hw, 0x141c), rd32_ephy(hw, 0x1420),
+-	       rd32_ephy(hw, 0x1424), rd32_ephy(hw, 0x1428));
+-
+-	for (lane_idx = 0; lane_idx < lane_num; lane_idx++) {
+-		txffe = rd32_ephy(hw, 0x828 + lane_idx * 0x100);
+-		BP_LOG("after[%x]: %lx-%lx-%lx-%lx\n", lane_idx,
+-		       FIELD_GET_M(GENMASK(6, 0), txffe),
+-		       FIELD_GET_M(GENMASK(21, 16), txffe),
+-		       FIELD_GET_M(GENMASK(29, 24), txffe),
+-		       FIELD_GET_M(GENMASK(13, 8), txffe));
+-	}
+ 
+ 	/* 22 */
+-	BP_LOG("2.7 Wait %dG phy Rx adc.... fsm:%x\n",
+-	       bylinkmode, rd32_epcs(hw, 0x78010));
++	BP_LOG("2.7 Wait %dG phy Rx adc.... fsm:%x, an_int: %x\n",
++	       bylinkmode, rd32_epcs(hw, 0x78010),
++	       rd32_epcs(hw, 0x78002));
+ 	status = txgbe_e56_rxs_adc_adapt_seq(hw, bypass_ctle);
++	ret |= status;
++
++	BP_LOG("2.8 ===end ret : %d.... fsm:%x, an_int: %x\n",
++	       ret, rd32_epcs(hw, 0x78010),
++	       rd32_epcs(hw, 0x78002));
+ 
+ 	return ret;
+ }
+@@ -2516,27 +2584,7 @@ int txgbe_handle_e56_bkp_an73_flow(struct txgbe_hw *hw)
+ 	int status = 0;
+ 	u32 rdata;
+ 
+-	BP_LOG("2.1 Wait page changed ....\n");
+-	status = txgbe_e56_exchange_page(hw);
+-	if (status) {
+-		BP_LOG("Exchange page failed\n");
+-		return status;
+-	}
+-
+-	BP_LOG("2.2 Wait page changed ..done..\n");
+-	wr32_epcs(hw, 0x100ab, 0);
+-	if (AN_TRAINING_MODE) {
+-		rdata = rd32_epcs(hw, 0x70000);
+-		BP_LOG("read 0x70000 data %0x\n", rdata);
+-		wr32_epcs(hw, 0x70000, 0);
+-		BP_LOG("write 0x70000 0x%0x\n", 0);
+-	}
+-
+-	rdata = rd32_epcs(hw, 0x78002);
+-	BP_LOG("read 78002 data %0x and clear page int\n", rdata);
+-	set_fields_e56(&rdata, 2, 2, 0x0);
+-	wr32_epcs(hw, 0x78002, rdata);
+-
++	/* 10  RXS_DISABLE - TXS_DISABLE - CMS_DISABLE */
+ 	/* dis phy tx/rx lane */
+ 	rdata = rd32_ephy(hw, 0x1400);
+ 	set_fields_e56(&rdata, 19, 16, 0x0);
+@@ -2582,11 +2630,6 @@ int txgbe_handle_e56_bkp_an73_flow(struct txgbe_hw *hw)
+ 	}
+ 
+ 	status = txgbe_e56_cl72_training(hw);
+-	if (status) {
+-		BP_LOG("CL72 training failed, status = %d\n", status);
+-		return status;
+-	}
+-
+ 	rdata = rd32_ephy(hw, E56PHY_RXS_IDLE_DETECT_1_ADDR);
+ 	set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MAX, 0x28);
+ 	set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MIN, 0xa);
+diff --git a/drivers/net/txgbe/base/txgbe_e56_bp.h b/drivers/net/txgbe/base/txgbe_e56_bp.h
+index 8089e5b971..f667a052ec 100644
+--- a/drivers/net/txgbe/base/txgbe_e56_bp.h
++++ b/drivers/net/txgbe/base/txgbe_e56_bp.h
+@@ -279,4 +279,6 @@ typedef union {
+ int txgbe_e56_set_phy_link_mode(struct txgbe_hw *hw,
+ 				u32 speed, u32 need_restart);
+ int txgbe_handle_e56_bkp_an73_flow(struct txgbe_hw *hw);
++int txgbe_e56_exchange_page(struct txgbe_hw *hw);
++void txgbe_e56_get_txffe(struct txgbe_hw *hw);
+ #endif
+diff --git a/drivers/net/txgbe/base/txgbe_osdep.h b/drivers/net/txgbe/base/txgbe_osdep.h
+index da069e94f6..83fee14d12 100644
+--- a/drivers/net/txgbe/base/txgbe_osdep.h
++++ b/drivers/net/txgbe/base/txgbe_osdep.h
+@@ -31,10 +31,14 @@
+ extern int txgbe_logtype_bp;
+ #define RTE_LOGTYPE_TXGBE_BP txgbe_logtype_bp
+ #define BP_LOG(fmt, ...) \
+-	RTE_LOG(DEBUG, TXGBE_BP, \
+-		"[%"PRIu64".%"PRIu64"]%s(%d): " fmt, \
+-		usec_stamp() / 1000000, usec_stamp() % 1000000, \
+-		__func__, __LINE__, ## __VA_ARGS__)
++	do { \
++		if (rte_log_can_log(RTE_LOGTYPE_TXGBE_BP, RTE_LOG_DEBUG)) \
++			RTE_LOG(DEBUG, TXGBE_BP, \
++				"[%"PRIu64".%"PRIu64"]%s(%d): " fmt, \
++				usec_stamp() / 1000000, \
++				usec_stamp() % 1000000, \
++				__func__, __LINE__, ## __VA_ARGS__); \
++	} while (0)
+ 
+ #define ASSERT(x) do {			\
+ 	if (!(x))			\
+diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
+index 8b653f0aeb..10df23afae 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.c
++++ b/drivers/net/txgbe/base/txgbe_phy.c
+@@ -1947,6 +1947,9 @@ txgbe_set_link_to_sfi(struct txgbe_hw *hw,
+ 	s32 err = 0;
+ 	u32 value = 0;
+ 
++	/* Switching to SFI mode clears backplane link mode. */
++	hw->bp_link_mode = 0;
++
+ 	/* Set the module link speed */
+ 	hw->mac.set_rate_select_speed(hw, speed);
+ 	/* 1. Wait xpcs power-up good */
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index 999a8e9316..973c70c282 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -2984,6 +2984,7 @@ void txgbe_dev_e56_check_bp_event(void *param)
+ 	u32 __rte_unused an_int = 0;
+ 	int ret = 0;
+ 	bool need_link_update = false;
++	bool exchange_done = false;
+ 
+ 	if (!hw)
+ 		return;
+@@ -3009,7 +3010,7 @@ void txgbe_dev_e56_check_bp_event(void *param)
+ 		}
+ 	}
+ 
+-	if (!(txgbe_xpcs_an_enabled(hw)))
++	if (!txgbe_xpcs_an_enabled(hw))
+ 		return;
+ 
+ 	if (!hw->devarg.auto_neg)
+@@ -3029,6 +3030,7 @@ void txgbe_dev_e56_check_bp_event(void *param)
+ 		need_link_update = true;
+ 		value &= ~VR_AN_INTR_CMPLT;
+ 		wr32_epcs(hw, VR_AN_INTR, value);
++		txgbe_e56_get_txffe(hw);
+ 	}
+ 
+ 	if (value & VR_AN_INTR_LINK) {
+@@ -3046,7 +3048,21 @@ void txgbe_dev_e56_check_bp_event(void *param)
+ 	}
+ 
+ 	if (value & VR_AN_INTR_PG_RCV) {
+-		BP_LOG("%d Enter training\n", hw->port_id);
++		BP_LOG("%d 2.1 *** Wait page changed ....\n", hw->port_id);
++		ret = txgbe_e56_exchange_page(hw);
++		if (ret) {
++			BP_LOG("%d 2.2 *** Exchange page failed\n", hw->port_id);
++			goto an_status;
++		} else {
++			BP_LOG("%d 2.2 *** Wait page changed ..done..\n",
++			       hw->port_id);
++			wr32_epcs(hw, 0x100ab, 0);
++			exchange_done = true;
++		}
++	}
++
++	if (exchange_done) {
++		BP_LOG("%d 2.2.2 *** Enter training\n", hw->port_id);
+ 		ret = txgbe_handle_e56_bkp_an73_flow(hw);
+ 		if (!AN_TRAINING_MODE) {
+ 			fsm = rd32_epcs(hw, 0x78010);
+@@ -3767,8 +3783,10 @@ txgbe_dev_interrupt_get_status(struct rte_eth_dev *dev,
+ 	if (eicr & TXGBE_ICRMISC_LSC)
+ 		intr->flags |= TXGBE_FLAG_NEED_LINK_UPDATE;
+ 
+-	if (eicr & TXGBE_ICRMISC_ANDONE)
++	if (eicr & TXGBE_ICRMISC_ANDONE) {
++		PMD_DRV_LOG(DEBUG, "an int eicr=0x%08x", eicr);
+ 		intr->flags |= TXGBE_FLAG_NEED_AN_CONFIG;
++	}
+ 
+ 	if (eicr & TXGBE_ICRMISC_VFMBX)
+ 		intr->flags |= TXGBE_FLAG_MAILBOX;
 -- 
 2.55.0.windows.2
 
