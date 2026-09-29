@@ -2,78 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5D6CA5FA1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 07:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC73C9832A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 07:26:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6FD1040276;
-	Tue, 29 Sep 2026 09:24:05 +0200 (CEST)
-Received: from fhigh-a4-smtp.messagingengine.com
- (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
- by mails.dpdk.org (Postfix) with ESMTP id 104274013F;
- Tue, 29 Sep 2026 09:24:04 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 674E91400091;
- Tue, 29 Sep 2026 03:24:03 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Tue, 29 Sep 2026 03:24:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1790666643;
- x=1790753043; bh=4r5lrD+KW3yVN+lFJAEsDkmZHlRSMvq4a2a2kLt3iNQ=; b=
- qRF/q4fq/EColcnO9dW3AyWLYr1yRMino/sG7QuiOuwZxfedQecn0R5svRO3VIwR
- L3ddxL2HQQYUft/YtV1yNeMqbTTvNk4v5vwpnxPrnOQzZeZ2QpdSoY3VkNWv5PCN
- I+rroDyG1jI43nvOSsN7Ow/IAPBqN3t8vJNIlOUuoX1kmrdlhD+wbUEKRCjVdlJ/
- VFO3gD3dreLHCgxIvSbxzESqKfobspPUeLrfEcHTrSEMT7CCMCV8MuBqQ9Tqv5gd
- i1pQ9fRo49QR0G+8JJpcIP3ZxIDoZn5kFZLfdab5LILIGLqqgrONLviPdXIfPyJQ
- gh5Qcj7SmmO+IkQyPmXxJQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1790666643; x=
- 1790753043; bh=4r5lrD+KW3yVN+lFJAEsDkmZHlRSMvq4a2a2kLt3iNQ=; b=b
- i9Enr2qgUx/Q7f3Zy/YuGzPZh6lnVWEY270fwoYJzeRDlBOR3cLLO1if4wqXv6pu
- 02NFdTZ6N8tZwnSK82X4WmK24qYVS7W9IAmeYO0sdPuyWEQ4ClxyQFyLjGjJshxr
- lT4KR43BHf7X3oHXkjhkhrNnN5eD49r/2xAUOHmSra/SBziz9FAu9WuzKH02G0Q2
- lyaA9PfDZX7SV0iHz2wM6bQD6T5lOlu5ifRbwI8QQZFuWl8RHq92w4Rc9UPiy2QN
- 9GGaJPAuFrQVuL3H4t0FTSA0021gq6U5lKRv8VCMs6XHJ+k2x32rEdLH0Q7Q/bEo
- NKxa31GzokbhCmA3ftyjg==
-X-ME-Sender: <xms:kme7asFgeRUmH6SGlrqxV7MA7PHZmfbCXObWCeibg9QG5iNX0p8zpA>
- <xme:kme7alcZGczOy4xeu5CHlUfkzFEoXChZCZrzgXQdVNsjuxarvoLLE0GwxL1ThHKut
- GwvMZ6nI7oOYsj6LZeJ-daXk1sY8Dazx4PFeLXkYt6Ilo3hrb7wKw0>
-X-ME-Received: <xmr:kme7auH9eq8heDaGqFY4bQs6MpnGCpNtB_hIiGSPst48eqp4aNZFDCW0DJqJn_EUqC-KjmvRF6H25fZnNP8q2zI>
-X-ME-Proxy-Cause: dmFkZTFp9i5N5e3uXwHseFCRUiW9B+YvMPeo8ygR88CZOnVps2JOAAlUVLiHSr67RMwXcX
- gduy9Aj1mcr6ISIa9lRptzZDoKVge5lqapSs4SWlCN9x+wX/bxu/X+9TmufufUO0zRPd6N
- emqpMwWNhLLuIdF/9joHXVVaoN5ddHOCi490329SXNTFVfDwL7BMs8+0GpXCjhdryUPYeW
- EE4rzaan2Q96gZRS4D0UW6TzANlQUXw5C0XVR6I1f3D+zaAvk9wWiKA/k83hPcAgcrr9qS
- T9JgumQ1kGEN6vEMjmFVzyXcZu7AKxpeyWHGnPXTYimVdluGyVfiVMh0nVKMhXbgZ/xIV3
- +QiLfaek1Ts+3UpFF9VV9z0FTGJ6iNW7dPsOmnKa1o3ooMgCHOgHN1M+OuMHi9DbSpucwX
- R1KK25EfRwpp/1dbUQBPGSrQ9anhgzodPcY9KtfrIWbS6jncPZVlUaNXCdG1Xe158JwHPn
- bMa7YVi1/lcrZ1qQhelCQtwQF4615SwShXOVXU1HS7xTOE4/C+do3fcpLWwVpcAgtiOX4h
- 0h9c7VbsHMk3DIqs4C4UdCDs3bVo+PElFAcUz5qP/WWdqaEil/nC0KXzCUaC2QVhMW/1Ly
- QwlP7AUl5UN/1i5Oc98LL+K20T4Sjel2wx43B9Hr2VNiX/7seeIbZ7mfIDSw
-X-ME-Proxy: <xmx:kme7amX_EMQRgHVWNErOnG3onGnwlBLqL1MlvHr_CutaEAQBGJMSZg>
- <xmx:kme7atKJtzW0p8EM_GjoaTCF_N6alFdsN-mvf5B4B5fiUgGBId2HCQ>
- <xmx:kme7am9osMeT6qUT2gnjEjPQVxEjj2eNFdTkKCQekd_OrhXxmmZmCg>
- <xmx:kme7agJnhblVm7zAQjcQoDmHGJ7PNopCrMpN-lxGC0yh_xSjUuSaTA>
- <xmx:k2e7amBmpCraSM0hPReZ9Uj6jvdAWDB-F8BHk_uVv_UtPKYKDU5CkgiC>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Sep 2026 03:24:02 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, david.marchand@redhat.com, stable@dpdk.org
-Subject: Re: [PATCH v2] eal: fix C++ builds when stdatomics is set
-Date: Tue, 29 Sep 2026 09:23:58 +0200
-Message-ID: <a5GjADT1SeiSQyFkuYrYMQ@monjalon.net>
-In-Reply-To: <20260925124958.44356-1-bruce.richardson@intel.com>
-References: <20260924141246.4037433-1-bruce.richardson@intel.com>
- <20260925124958.44356-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id EA09240276;
+	Tue, 29 Sep 2026 09:26:54 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 905FE4013F
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:26:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1790666813;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=NW+V3OTxkuVzVPmum/CZMYrqP3vlEXgP8/UPWrkWUKI=;
+ b=f5cXQFo+V2J5Q2XjtR2aSoX4Tyle5KvFFRLR0wS814RfK1JUbesqtamKnn4KPGYx7L39ll
+ Nq3vuRJXZWY+d6tBbLCfTsCGFk+B4a8I34I9xDlmHpjp2auZkgPHCQZKLkKPvSyZeYi5Ik
+ E1+8REVshYtDeznNlXaIXz2vPu66K6c=
+Received: from mail-dl1-f72.google.com (mail-dl1-f72.google.com
+ [74.125.82.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-228-pATNU7NENOSPjrJMZ_VOmQ-1; Tue, 29 Sep 2026 03:26:51 -0400
+X-MC-Unique: pATNU7NENOSPjrJMZ_VOmQ-1
+X-Mimecast-MFC-AGG-ID: pATNU7NENOSPjrJMZ_VOmQ_1790666810
+Received: by mail-dl1-f72.google.com with SMTP id
+ a92af1059eb24-1431ba79941so3768637c88.1
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 00:26:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790666810; x=1791271610;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=NW+V3OTxkuVzVPmum/CZMYrqP3vlEXgP8/UPWrkWUKI=;
+ b=0GrVvIfnxoO2Vq5Arq2M1mMNa+ujuOwzhxaufRuldh2rqmoIdwQKp2R+vGgAhVXKSX
+ +acC3jzFRGDYp/IALDabdOFZxqgac4LswH1806ZxfkN8roPpYlex0QGMMe7TBjqz1ogN
+ wqBmvHzBKP/vFNVacBmOobNOkpDYSdxPzrP6XcNYOILLIe7K+VBZiGJEmLfkn9egKwze
+ xR1xRQ/3COlzHbwhiRr4Cn2f9AOilso+14CLC1uC7jsWRtjOCQT5Ero2/YOxJFoZJi9m
+ EGnMvbrOP6isyagEMqCtW7oYghI0khXZu1w2CWnD4+1V7ESy0UVPO1Cuz+nBs5MSmme8
+ EI3A==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBw2OzLRI3WhHHpQrDDL3BxoqvuMzrxHg8uufS45sZvsWc6Bw+2x0JXrHfp2xgP8xsYeU7E=@dpdk.org
+X-Gm-Message-State: AFuF++lPrlZ613BwUAIsU8T9URfvgY+Qq9FITiGVUAvsm2jCGH7YxbwH
+ Ncv/p3aKjmpDhiJzMGbBFqvATZLaRL0a2wxxhCoa5117hrrco+rgnrRiChVeVpuhB3Twmo1zM1u
+ L6vhekCnRVeXSbsx4PO3QjA8qdcHPmlm1p92VtkkSNaE4isRGqg0Q4O8uil8SAIFhf8emkqrSlX
+ GKaQz4NOGiYTSpsGe6m2g=
+X-Gm-Gg: AYBFou0RC6RH8Do081X69N3ev3yWI8vqcvKxaA5XF2x69iegFPUh/howW6m4xfzCJiO
+ S4lfCIP6AanBF4hafIIple+cnu63kU0V3BfObu/wtKnyEjaNUlm/1bjhRdnBO9mGPAsSIfCCT3k
+ JztV7VreaX4FfeNa7FNnK1D6KZf/ethy0LQYuQqWqhLv+ZibsmadCs/lKysBiopLBF1F4zdePrE
+ WJkZUqggEY6Bur5Kffx97EUFfh9zruJGzgvnTctzPwJU+5v/eay9WSQd4mdfBXdNhRJT8CEmVTv
+ QqAsufaHjjmjSLpQNO6F5JJkDtPeE59Rc1l0GVK+vXw=
+X-Received: by 2002:a05:701b:231c:b0:148:bbae:ad2b with SMTP id
+ a92af1059eb24-148bbaec1a9mr9517686c88.11.1790666810075; 
+ Tue, 29 Sep 2026 00:26:50 -0700 (PDT)
+X-Received: by 2002:a05:701b:231c:b0:148:bbae:ad2b with SMTP id
+ a92af1059eb24-148bbaec1a9mr9517642c88.11.1790666809417; Tue, 29 Sep 2026
+ 00:26:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+References: <20260928132913.1376278-1-eperezma@redhat.com>
+ <20260928132913.1376278-2-eperezma@redhat.com>
+ <20260928164205.103049f3@phoenix.local>
+In-Reply-To: <20260928164205.103049f3@phoenix.local>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Date: Tue, 29 Sep 2026 09:26:37 +0200
+X-Gm-Features: AclHuK9BO1jvrOoNOywxQtuokzmm0XZw5CUGWH-uWtGSgRcuOw1CCKfZKrNppGs
+Message-ID: <CAO55csy_q82L+d42AmO_ded6TKWc_L3UK-pGmwKA2MhfbXYbbw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/11] build: define __counted_by as empty on
+ unsupported compilers
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, dev@dpdk.org, 
+ mst@redhat.com, Yongji Xie <xieyongji@bytedance.com>, jasowangio@gmail.com, 
+ chenbox@nvidia.com, david.marchand@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: A25_-89ufm0m4U-K1Hkyak7WhwGRoN0Q5MewWijFoGc_1790666810
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/alternative; boundary="000000000000163cde065c9a1b4d"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,41 +90,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-25/09/2026 14:49, Bruce Richardson:
-> When the DPDK build is configured to use stdatomics rather than compiler
-> builtin atomics, the C++ chkincs builds were failing
->=20
-> In file included from buildtools/chkincs/staging/generic/rte_atomic.h:18,
->                  from /home/morten/upstreaming/dpdk-stack-std/lib/eal/x86=
-/include/rte_atomic.h:12,
->                  from buildtools/chkincs/chkincs-cpp.p/rte_atomic.cpp:1:
-> buildtools/chkincs/staging/rte_stdatomic.h:30:9: error: =E2=80=98memory_o=
-rder=E2=80=99 does not name a type
->    30 | typedef memory_order rte_memory_order;
->       |         ^~~~~~~~~~~~
->=20
-> The cause is differences in atomics in C (C11) and C++ (e.g. C++17 as
-> supported by current GCC). As explained by AI analysis:
->=20
->    _Atomic(T) is a C11 feature. In C++ mode, GCC 15 does not support it
->    as a type specifier, and <stdatomic.h> in C++17 doesn't expose
->    memory_order in the global namespace (that's only in C++23). DPDK
->    headers also use _Atomic in anonymous unions and under extern "C",
->    which are incompatible with C++'s std::atomic<T> mapping.
->=20
-> To fix this in a resilient manner we need to go from two blocks in
-> rte_atomic.h to three. We have the existing non-standard/builtin
-> atomics path, but the standard atomic path now needs to be split into C
-> compatible and C++ compatible blocks. This fixes the build issues with
-> C++ while keeping existing C builds unchanged.
->=20
-> Bugzilla ID: 1985
-> Fixes: 5c381a3587d1 ("eal: provide stdatomic API")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+--000000000000163cde065c9a1b4d
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks.
+On Tue, Sep 29, 2026 at 1:42=E2=80=AFAM Stephen Hemminger <
+stephen@networkplumber.org> wrote:
 
+> On Mon, 28 Sep 2026 15:29:03 +0200
+> Eugenio P=C3=A9rez <eperezma@redhat.com> wrote:
+>
+> > __counted_by is a GCC 14 / Clang 18 extension used in imported kernel
+> > uapi headers. Older compilers reject it with an error. Define it as an
+> > empty function-like macro when the compiler does not support it.
+> >
+> > Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+> > ---
+>
+> NAK
+>
+> Missing Signed-Of-By and the right way to handle counted_by is to
+> introduce and a new macro in rte_common.h (aka __rte_counted_by).
+> There are lots of places in DPDK that could use it.
+>
+> If the problem is in vhost, then get it from stddef.h
+>
+>
+To me the solution is to import stddef.h, I have not tried but it is quite
+small and self-contained.
 
+Regards,
+Maxime
+
+--000000000000163cde065c9a1b4d
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Sep 29,=
+ 2026 at 1:42=E2=80=AFAM Stephen Hemminger &lt;<a href=3D"mailto:stephen@ne=
+tworkplumber.org">stephen@networkplumber.org</a>&gt; wrote:<br></div><block=
+quote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1=
+px solid rgb(204,204,204);padding-left:1ex">On Mon, 28 Sep 2026 15:29:03 +0=
+200<br>
+Eugenio P=C3=A9rez &lt;<a href=3D"mailto:eperezma@redhat.com" target=3D"_bl=
+ank">eperezma@redhat.com</a>&gt; wrote:<br>
+<br>
+&gt; __counted_by is a GCC 14 / Clang 18 extension used in imported kernel<=
+br>
+&gt; uapi headers. Older compilers reject it with an error. Define it as an=
+<br>
+&gt; empty function-like macro when the compiler does not support it.<br>
+&gt; <br>
+&gt; Co-Authored-By: Claude Sonnet 4.6 &lt;<a href=3D"mailto:noreply@anthro=
+pic.com" target=3D"_blank">noreply@anthropic.com</a>&gt;<br>
+&gt; ---<br>
+<br>
+NAK<br>
+<br>
+Missing Signed-Of-By and the right way to handle counted_by is to<br>
+introduce and a new macro in rte_common.h (aka __rte_counted_by).<br>
+There are lots of places in DPDK that could use it.<br>
+<br>
+If the problem is in vhost, then get it from stddef.h<br>
+<br></blockquote><div><br></div><div>To me the solution is to import stddef=
+.h, I have not tried but it is quite small and self-contained.</div><div><b=
+r></div><div>Regards,</div><div>Maxime=C2=A0</div></div></div>
+
+--000000000000163cde065c9a1b4d--
 
