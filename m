@@ -2,75 +2,152 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D21C9832A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 271C9C9832A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:12:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 503EF40E0A;
-	Tue, 29 Sep 2026 18:06:02 +0200 (CEST)
-Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
- [74.125.227.171])
- by mails.dpdk.org (Postfix) with ESMTP id EAFB94026E
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:06:00 +0200 (CEST)
-Received: by mail-pj2-f43.google.com with SMTP id
- 98e67ed59e1d1-396ccb652d7so3084675a91.0
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790697960;
- x=1791302760; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=nGRXurcTyXyKE4JL8WlYap+yLyxbKxLfoeMcZR3FZlE=;
- b=c9vVMga72fBGsbC0Vy7Qgmnc5w8QBPcN+Q5ta8wB6pGsj7G0APaetRbhFux9L4f/UN
- hJZpew0KRoFOzdR5xEI4bWnE6219cAT5tEGK8q4pmH/KkfLW3AH8NZ4W3jgZJR0Hm2+N
- tl3LWWvEbbvR3jSCZpAyu+HCPgSHZi2wJaHuZZNsrYQ6ktUduuIe7PqMS2+c2wdd2A7D
- 5ywXgPQXy2g0FC+vQLHwd6Kai28Pi9baEDFzApm6aznhP60lPE/f9AkJddb1qkQdR6xy
- HQJrcoEq04M3+I+gKe1HepRk3EtbZ5sH4QEqCwuGA9+tdwWvIYjLUbgP6Rog++1kNQ7r
- Iogg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790697960; x=1791302760;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=nGRXurcTyXyKE4JL8WlYap+yLyxbKxLfoeMcZR3FZlE=;
- b=bJJ1Rwl5vbcSUe5skYIDI1oE2Hxm4th9UBrytgYCux1Bvtag6oIWcHbpvJ+zxZPHhJ
- 3+ejomy9IkEceCaEha5ryc9tXXFTNXsX4HBC5aTKVI48syekeb69V2m5zdOrcVBYW0em
- mDSDlHbucLlo0/AEaWWhqa9wmAMMHhhmIsBeKLcelssY6AJyUlV6cDhdUgSB+4JUjkzV
- YvpO+FcAdAc/xr8tiNODwD6an84RuPRkuISK9TzOFZTjtGeNDR0RDIpYv34EGI4YIUlY
- A1wKuT+kW+DcIKw6tAg1oA6D4/im7Bx60yD0ztsGAptqsUX1Cwnh8mlQ8fWCTaCOCNge
- hSVg==
-X-Gm-Message-State: AFq9FYKsOLI7m1T1Z8hBg7LmdqWNOsJRmqt1BcfGhBTltmFPiU/t9a0R
- cHKh4CqAT/r0d38mLPXqecdyxO9KTSgdlpnoQP9d0JKZmE772j1NUGOqnBd2r4YGd5RDCRuu+D5
- gvEq79/0=
-X-Gm-Gg: AYBFou1t5ahJhNWXl2j+RWT03xr3Cf5aHF5jyMm8YoEylSL9tqK4bb9Sxl2bCIrdmq1
- yiV5Urm4izDztDLGhR3cFRs2DSbr9IBEv3OeYPuEJCtHpg9Kzdet6eeNzxHAttJsaWpxFQufGuO
- RQHCw6j/Fp0KsBu25JK7HafZQA2FUuXNZDGfL+JltUAhPbhsnksccTKQsKsYEmnXUIegXnxWxkP
- KE36d/y8azWAFVQmyW8fIIgH04pNUMcIeL6Dg8MJEX2EbQzDMsr01Oi9lylGDJ6m9mBVAmgzKzo
- TaMizdNk/JWZtTStp4feK5t2OfQK+3QmsZNjahxSkXzeatwibcSox2KC4gc0qQeeWuJRM2fMLgI
- wgDJpqzVdttsAW/jeePmTJyKrUD2ZyyeOSHlcUBkRVR/yOMq6XfMM1AdSlvliO9xALUuHo1/hxp
- oXNbV4PM4B9h9/mqnOSzwpPE50hG8rzk/EMrHu6xVNFxgIvu+FF8S3vNlXgtMgBzcB+gUTr57+H
- jZOq0xWpufkv+h1wwVViyfNndFMtx9mYboZTd6Z
-X-Received: by 2002:a17:90b:48d0:b0:3a4:b9de:87a1 with SMTP id
- 98e67ed59e1d1-3a4b9de9765mr311052a91.45.1790697959737; 
- Tue, 29 Sep 2026 09:05:59 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a4986e964asm6516212a91.15.2026.09.29.09.05.59
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:05:59 -0700 (PDT)
-Date: Tue, 29 Sep 2026 09:05:56 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v6 00/15] Wangxun fixes and new features
-Message-ID: <20260929090556.7878a2d0@phoenix.local>
-In-Reply-To: <EEDC8610526E7CAD+20260929130611.4871-1-zaiyuwang@trustnetic.com>
-References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
- <EEDC8610526E7CAD+20260929130611.4871-1-zaiyuwang@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1AE0C40E0A;
+	Tue, 29 Sep 2026 18:12:08 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id AB06B4026E
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:12:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1790698326; x=1822234326;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:mime-version;
+ bh=/jcVRLcw2O+Dg63BjC1F6LzPgP80FNeFD7Tdnh61Z0M=;
+ b=SdXccByKzzgWjUmdFx6+xIBQMOW/X8oJv7YHfAvcsvcWIqTB+Al06EVo
+ If2EmavUzN0i7BlfoXazFnpxWFqZ6qtSuMpqWSeIAKBfdMFP/+Oc1ONZW
+ eVBB2mdypQB0P15UXbuyyP4Rl7DFEFOWVilI7Fv2UhVJiEx9+8MPWeGhe
+ WOkgJJN9kgol73otXFYJUt2uRxQKVWLhLrszAeFM7IMM9nACA4juM0cDp
+ pPWScAovJSmj1yN4yoh392VG3P6WITP9h+sL58GMidSpEt30zzLsmyzjx
+ nTNOdUvCD8Ejl0UpmUFmRjZdSvP4CEf2bVH9XGaWsaUXCi3TXemxTVIzz Q==;
+X-CSE-ConnectionGUID: zJgW8v9pTpSkHx1bHPdaLw==
+X-CSE-MsgGUID: YGZ0/YQvTP+N0g9mcFHeyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11920"; a="93912079"
+X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; d="scan'208,217";a="93912079"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Sep 2026 09:12:05 -0700
+X-CSE-ConnectionGUID: l+6P9kgZTWux4rFusHf1hw==
+X-CSE-MsgGUID: xe1kbjCGT0iqDP4SSxOGNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; 
+ d="scan'208,217";a="304918479"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Sep 2026 09:12:06 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Tue, 29 Sep 2026 09:12:04 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Tue, 29 Sep 2026 09:12:04 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.68) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Tue, 29 Sep 2026 09:12:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ThcLrQIpa+Qx7s99Btw+kBTFDFbTl1t9yyd3LPaMJ5RnJkqOmZYdkznk5qKjPuiP2sChuC4eq4MnEysBE0MqZRlh8E1W7iVDhJJm+tsQ1Fa1zlkZ2AyjQan9gEZ81Um6XNqGNcWP74e7bVhB6OuA21qZ3vIAGiGCqtmpUKSBHQKnYuggQfd/vi1Atga5Rm2AYbpmsgtLL7Shfq0K8XvBgut8HdYSmsddAo1Cfm/H6MMWlgBpGWdcMpq00f+Mm5bUuZI2LX+TnR+vmuOO++3ewXUECp7z2THsowE7id6ePJerA/c6GOXmhwr+FDMoqgTzFmX0/gC1+9FchZ/wStw3FA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/jcVRLcw2O+Dg63BjC1F6LzPgP80FNeFD7Tdnh61Z0M=;
+ b=DpLEKsb8CE16mZP17H36U8BDK0S6stYLtOBLlD0hbpqzZOICxWIsmpXLto8gTGUASv0Tc2T8mY49FyMvkF70cw/3eJQaxeann1eywNzByF5NsJ7xR/hEY830L+w7589FS8jj3Q7j/LflvTEepu8cJoYBa2I3t4q7WCaVSU3X5GEMlSQfoN9HqaRgo9NOnO8Er/2jUCUrDF0/M4B26yZU8I1DUOSHuwc4tHEpS+004VNrDj3WOljvaqjbM+h0rb/ZF6bEf43VIH1n9GNEPrlQegsraVr4bsKBau03Rpw5fXGO4nTVsnVv4zgFIYe3dZosnxwAQAiVNLHSPexoFNNchA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from LV2PR11MB6045.namprd11.prod.outlook.com (2603:10b6:408:17b::20)
+ by PH0PR11MB7167.namprd11.prod.outlook.com (2603:10b6:510:1e9::8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Tue, 29 Sep
+ 2026 16:12:02 +0000
+Received: from LV2PR11MB6045.namprd11.prod.outlook.com
+ ([fe80::1f72:3d49:b6ba:91ae]) by LV2PR11MB6045.namprd11.prod.outlook.com
+ ([fe80::1f72:3d49:b6ba:91ae%6]) with mapi id 15.21.0451.022; Tue, 29 Sep 2026
+ 16:12:01 +0000
+From: "Ji, Kai" <kai.ji@intel.com>
+To: Thomas Monjalon <thomas@monjalon.net>, Akhil Goyal <gakhil@marvell.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [EXTERNAL] [PATCH v7] examples: add Wycheproof validation app
+Thread-Topic: [EXTERNAL] [PATCH v7] examples: add Wycheproof validation app
+Thread-Index: AQHdS2ztqX5wS6X2YkaTStj9V6UhG7bdzPeAgAAFXkyAADPpgIABeb8AgAZBjgc=
+Date: Tue, 29 Sep 2026 16:12:01 +0000
+Message-ID: <LV2PR11MB604567127AA4D4D950804D13818C2@LV2PR11MB6045.namprd11.prod.outlook.com>
+References: <20260923105003.2811322-1-kai.ji@intel.com>
+ <LV2PR11MB6045AC38B49432A2FEA9C20281812@LV2PR11MB6045.namprd11.prod.outlook.com>
+ <CO6PR18MB4484077A45CBFCF6CB562E20D8812@CO6PR18MB4484.namprd18.prod.outlook.com>
+ <Uoji51ajRt-6kVG_ZXgD_Q@monjalon.net>
+In-Reply-To: <Uoji51ajRt-6kVG_ZXgD_Q@monjalon.net>
+Accept-Language: en-GB, en-US, en-IE
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV2PR11MB6045:EE_|PH0PR11MB7167:EE_
+x-ms-office365-filtering-correlation-id: 570aaf57-ce9b-4ab0-d23b-08df1e44655d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|23010399003|10070799003|376014|1800799024|366016|42112799006|10067099003|11063799006|56012099006|18002099003|22082099003|4143699003|8096899003|38070700021;
+x-microsoft-antispam-message-info: c/hdpZRqs2r76GcRE/oj8FzPj9O1acgfv8VqMnC4ecF7R+ipJERr3R5AC9ntngY3eRb9FFMgn6b83WHBMbwvnzhhxNwNlAWYSZJdrmOEH9M7+cD3pgddrL6nyIXU4P4ULs1AB1YDySV4eAcvi/W1MiJ24yCPvDdOTjzT9DqcN2qtPmrBptfz/L1MOKoR9Vz6ypCjdkx0qN1CUJJHbWxUaUGrCCygo1R4bHnL5F9zW3jLg0BBAu9aduRlk6L5YdQfQaJAe3seOlDA9bkgNvHGIaZpEvHDQE6CogJK3WYR0nUyJHpJqA6KroYh9tAR+4cgvzCKuuE0cadOAdeopxNsRd4/WhVfucdcsMEqL/TmQ5bjhf0Tnhnh1iXLpmfr5ZKZdmHvZf7iUN4KWW/Pas3LUENhopbG2EuQOuMJXEA7bxUctXGsnixTnlCTAXVCCxGwqbUh9UVcNVLxwyBHNuhcc1X/y4AK5rxsG27B0chSpuoycl6JMPjRDSot4izwawLfaSxdumWAua6M0DwgHSqDrCOPWtkOOIxDZf7OFymp04zr5d6J6JTtdXIN6cFiYP4P+HfXsRWd/rXcb56C+reTIbhWXYMrQbfsaNe/uk0aAthNHx9znP5juwuBBgSinvAhPqT2PQsi+Iw5iDvcDTvZrRAebvFwVN9Q34LW4OEDoCVCxNOVFTWULL2jZX6tlkH4cr4HxVHG85KjBhaE1MiEtledFsuL8m5FzQtATqX201Q=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:LV2PR11MB6045.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(10070799003)(376014)(1800799024)(366016)(42112799006)(10067099003)(11063799006)(56012099006)(18002099003)(22082099003)(4143699003)(8096899003)(38070700021);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 2
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?PmgRTyRI0PE4XSdiBKJPBpSkKau2rR5mm26C8KQYCFOeCJBuBViZWP0I68?=
+ =?iso-8859-1?Q?cqS4nhh25Pr9Pgtqb3wTScfhCX1SfGM7bykC0c26x6OZVAAYmTCcd9ANNH?=
+ =?iso-8859-1?Q?6vYOlFoEbfCa+hdIpwmABNNBY+TOXX5JuJqfi7We6oOGPi32lONCkSUIAu?=
+ =?iso-8859-1?Q?Dfh+IKFS5VVfhTxvfysG6VxbBCFpEcq6rREjY6lw7tYi1Do5kVMi1PzPn1?=
+ =?iso-8859-1?Q?p37xfnhQGdeveDeVuvFBiwn2blRYTdERq9lF/4OXbv+5of25lrWQhEQMDe?=
+ =?iso-8859-1?Q?LRUso+qyPvNJNxm3YJMNlCTbM3iTQHsTHCAcdmyF31tN550GbHDeHiu4g1?=
+ =?iso-8859-1?Q?S5iAJZiDmXpFA+VvUt+ldlJY6SrSGIQpbu4ZT1o3J6gEj8U/GJJWyvLduF?=
+ =?iso-8859-1?Q?yzNHJ1opdSQs4gAZVzSOQ7504udMGbICB1dS24gGSG/Zw4/5o7wzUkZeJD?=
+ =?iso-8859-1?Q?n3WqGkQsWDe0Fa7cMBqJWUFF74ROh2MrrwTvueJXvcXhkCdwpBjxqUAzNN?=
+ =?iso-8859-1?Q?1ekWdJgKGBw1ziofRVAkm314LKlc4Ref1Br5AdMhBDrFYOGWoPeQyyxjKx?=
+ =?iso-8859-1?Q?B2YhVIEJpUA+kGXz72s/90A+8Kwkm82gnPBm8RD0ILUdsKehYHYsd0Gv8u?=
+ =?iso-8859-1?Q?59FgfUIxT9LGtZ77TGQp0zD2xhrTM+Big9QVTKbdwLMwwb24Q/bPxjhqYL?=
+ =?iso-8859-1?Q?LhQt5DUF/75sGQxQ4PtVjEHnmsbjZXLN5HYMLN9eWbDqa08xrC/x92Jq1R?=
+ =?iso-8859-1?Q?PK6Jxf4B91eeefCc2jIssgZh16r7DMlOeUmP3FSDBhau4nwPs35+Z4XVNM?=
+ =?iso-8859-1?Q?bmag4wh9NpOO1YYyQtw3OHxYgdtUt/0/hgFWvvyDc+p/DcSWyPgXDnllvm?=
+ =?iso-8859-1?Q?uqMGCoX2NW5OXvFy53gPkm3PEM9QOAX3JGVipOxiLtMKIWPJmkBBxkXZqU?=
+ =?iso-8859-1?Q?JV73nX5XZUX4/511touXvuZp7hqRfIKbWxVuMrzb7ntn9CWDIGiB/MoZCz?=
+ =?iso-8859-1?Q?FPo/QQq/2FbJwsHBK+IQFTNw6MbNSO5FSIZneCNIqynsHqPO+qfDvXvN5R?=
+ =?iso-8859-1?Q?8VNgBkHvSq1N6vd3sPaUQrZr3BJ/VkQAogIjCbZKAuk+/7BijPgsvSBsnQ?=
+ =?iso-8859-1?Q?mtkAHcV1Y2PEe2q7+Z78Re9I04tKP3uMznVwmc6iBKAYKeOqxfaXr8o2ui?=
+ =?iso-8859-1?Q?OwJdXc/hJCqs3Ufj3w+s+8n4iEI3jGLga3ijNc+4q7m4GYuzT3XCN1mpjg?=
+ =?iso-8859-1?Q?foJ4hMWxK3B7xK0gwHn9w6Nm6KFIr3b/Fb1C48PZ2CLwgoxo085NyBka/9?=
+ =?iso-8859-1?Q?Gtx7M5Jj0TiKgxkZlZoqoaUsbbHHCwKNJhkhX9KPLn5vRz2KRV/A9cINRl?=
+ =?iso-8859-1?Q?IEjNS7ydmgbk1zFjp30krZfuraQOl5uAeFWH/KwajXOHRFEbKD0KIpB5To?=
+ =?iso-8859-1?Q?eWNjTnBUkgjHF0g71flkxLVz8CLeAtFo8K+EAOOf14GalwQl7myMXWi9hI?=
+ =?iso-8859-1?Q?8Wivho4fVPqF5W6d/XOx6nedWunB2gQrhxOT2ve6CcVOrTkCbLdsRxNhrv?=
+ =?iso-8859-1?Q?Zwt6v+h6vn8do4LvjiXL0EWu92lH3hD9o7H+bbHbcBrpwNwqzrFy31n1LE?=
+ =?iso-8859-1?Q?EF+QLiJkA6yXtKdHmPzIt1UqW3XGA7qMhGyG2cpeS3Yro4lt0/irIWG5rm?=
+ =?iso-8859-1?Q?Lxe2pXRmkWIEW9l7sVpb716tm4FdPkcQyC87+4ldcUpN75FMPzUjd1kQw8?=
+ =?iso-8859-1?Q?WvTQ+jmle9Bkl3ZeJDUHWem2XMb42kt2N+oT4qXVCJqCQhJ/GCspnwigXT?=
+ =?iso-8859-1?Q?rcaQQAsE5K6G4HvGgQf/ZogCbUy4xyVCFRDuQOhZ6f1/2n5nhMPs93An4z?=
+ =?iso-8859-1?Q?Yn?=
+x-ms-exchange-antispam-messagedata-1: IrPdRFixj8Yb8w==
+Content-Type: multipart/alternative;
+ boundary="_000_LV2PR11MB604567127AA4D4D950804D13818C2LV2PR11MB6045namp_"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Exchange-RoutingPolicyChecked: CBn9C+/DqcQVcvT5Fd089nDREFADp8u/BNyhDiNtd67E76BXkVFDivCaxDwSu8+tss3zRl3SwtBMFjzKj4CUIp3FVrkmSI4adzpPrASSd/Fpqj6MpCAXtp1wVyHq+6N97eAYwxWnRllnH9VvudgNTUK13B8g596JWf9h3dxFn4dClWubecjinPZ87WFzv/nng+Y/H5V5H6xrbiBAsSCqBCQSIPhQ8ZpvBPHp6gZP6xkGrqOXdK/nivb/Fvmc1bFXUmdjQ6oXn574IJkupMwQAa7uY93+2M46z+u5Vtd5kanqtGCwHN861/VjWeBkcFlP/GX7EFfwbAjN9fzLunnPxA==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR11MB6045.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 570aaf57-ce9b-4ab0-d23b-08df1e44655d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2026 16:12:01.6752 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZxZmVIGxLOk2JbxcXpmucFY8+mFfP8d6lNvp9x32etPXwTLLf+HelydgXy2gp/FeU/aDRONVQjuCWuwAen0N5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7167
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,162 +161,187 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 29 Sep 2026 21:04:31 +0800
-Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
+--_000_LV2PR11MB604567127AA4D4D950804D13818C2LV2PR11MB6045namp_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-> This series addresses link-related issues on Wangxun Amber-lite 25G/40G NICs
-> (CR/KR training, hot-plug, 10G link state).
-> 
-> ---
-> v6:
->  - fix the apply failure.
-> ---
-> v5:
->  - drop the UDP tunnel patch: the generic UDP tunnel flag covers any UDP
->    tunnel, so the tunnel type cannot be resolved from the destination port.
->  - P02: advertise 10G, 25G, and 40G from the requested speed mask instead
->         of the device ID, so the 25G and 40G parts advertise 10G by
->         default as well.
->  - P07: keep the patch limited to decoding the 10G link speed from PORTSTAT;
->         the AML40 default 10G|40G advertisement change is now in P02.
->  - P09: gate the SFP detection alarm and the AN73 watchdog on a new per-port
->         flag that dev_stop clears before the first cancel.
->         cancel SFP detection before the watchdog.
->  - P10: re-arm the 40G module poll only while the SFP/AN73 alarm flag is set.
->  - P12: treat the ffe_pre2 and bp_capa devargs as a feature rather than a fix;
->         drop the Fixes tags and stable Cc, and document the 25G/40G Amber-Lite
->         FFE defaults.
->  - P14: bound the AN page exchange, propagate its timeout to the watchdog h
->         andler, and avoid register reads used only by disabled BP debug logs.
->  - P15: stop clearing the auto_neg devarg when a 10G-only DAC disables AN;
->         derive the effective AN73 state from the current module capabilities
->         instead. Classify 40G active cables through the optical path, unify
->         DAC checks on txgbe_is_dac_cable().
-> 
-> Not handled in this revision:
-> 
->  - P12: bp_capa is not range-checked. Devarg validation will be added in a
->         separate change so all txgbe devargs can be handled consistently.
->  - P14: the AN page exchange still busy-waits on the alarm thread and can
->         delay handling for other ports. A later change will decouple negotiation
->         from the alarm callback and run per-port negotiations in parallel.
-> ---
-> 
-> 
-> Zaiyu Wang (15):
->   net/txgbe: fix failure to configure 10G on dual-speed DAC
->   net/txgbe: use the requested speed in E56 AN setup
->   net/txgbe: fix e56 PHY configuration error
->   net/txgbe: fix incorrect link state in 10G forced mode
->   net/txgbe: do not force reconfig on link retry
->   net/txgbe: set i2c sda hold time
->   net/txgbe: fix link speed display info for 10G mode
->   net/txgbe: remove stale outer UDP checksum offload flag
->   net/txgbe: fix SFP hot-plug when auto-negotiation is on
->   net/txgbe: fix DAC hot-plug on 40G NIC with auto-negotiation
->   net/txgbe: fix 40G FFE tuning applied to first lane only
->   net/txgbe: add pre2 FFE tap and backplane capability devargs
->   net/txgbe: add devarg to turn off Tx laser for 40G NIC
->   net/txgbe: fix CR/KR link training and recovery
->   net/txgbe: align link capabilities and DAC classification
-> 
->  doc/guides/nics/txgbe.rst              |  25 +++-
->  doc/guides/rel_notes/release_26_11.rst |  11 ++
->  drivers/net/txgbe/base/txgbe_aml.c     |   4 +-
->  drivers/net/txgbe/base/txgbe_aml40.c   |  92 ++++++++++--
->  drivers/net/txgbe/base/txgbe_e56.c     |  14 +-
->  drivers/net/txgbe/base/txgbe_e56.h     |   6 +
->  drivers/net/txgbe/base/txgbe_e56_bp.c  | 196 +++++++++++++++----------
->  drivers/net/txgbe/base/txgbe_e56_bp.h  |   4 +-
->  drivers/net/txgbe/base/txgbe_hw.c      |  33 +++++
->  drivers/net/txgbe/base/txgbe_osdep.h   |  12 +-
->  drivers/net/txgbe/base/txgbe_phy.c     |  25 +++-
->  drivers/net/txgbe/base/txgbe_phy.h     |   7 +
->  drivers/net/txgbe/base/txgbe_regs.h    |   3 +
->  drivers/net/txgbe/base/txgbe_type.h    |  17 ++-
->  drivers/net/txgbe/txgbe_ethdev.c       | 178 ++++++++++++++++++++--
->  drivers/net/txgbe/txgbe_ethdev.h       |   2 +
->  drivers/net/txgbe/txgbe_rxtx.c         |   1 -
->  17 files changed, 502 insertions(+), 128 deletions(-)
+I agree that a single validation framework would make cryptodev validation =
+easier to discover, document, and maintain, and could eventually allow some=
+ common setup and reporting infrastructure to be shared.
+That said, the overlap between the two applications is primarily at the cry=
+ptodev API level. Their core purposes are quite different. The FIPS validat=
+ion application is focused on CAVP/ACVP workflows, including request/respon=
+se processing and conformance testing, whereas Wycheproof is built around e=
+xternally maintained JSON test suites with valid/invalid/acceptable result =
+classifications and different requirements for asymmetric devices.
+While there may be opportunities for code reuse in the future, merging them=
+ today would likely introduce additional dispatcher and lifecycle complexit=
+y with limited immediate benefit. It could also blur the distinction betwee=
+n Wycheproof robustness testing and FIPS conformance validation.
+My preference would be to keep them as separate applications for now and re=
+visit consolidation if we identify a meaningful amount of shared infrastruc=
+ture.
+Regards,
 
-Looks OK to me, AI did find a couple typos that you should fix:
+Kai
 
 
-Reviewed the whole v6 series applied on top of main.  All 15 patches apply
-cleanly, net/txgbe builds with no new warnings, and I found no correctness
-bugs.  Three Info-level nits below, all in 14/15.
+________________________________
+From: Thomas Monjalon <thomas@monjalon.net>
+Sent: Friday, September 25, 2026 17:32
+To: Ji, Kai <kai.ji@intel.com>; Akhil Goyal <gakhil@marvell.com>
+Cc: dev@dpdk.org <dev@dpdk.org>
+Subject: Re: [EXTERNAL] [PATCH v7] examples: add Wycheproof validation app
 
-14/15 net/txgbe: fix CR/KR link training and recovery
+24/09/2026 20:00, Akhil Goyal:
+> > Wycheproof differs somewhat from the existing cryptodev test vectors in=
+ that it is
+> > an externally maintained collection of JSON test suites covering a larg=
+e number of
+> > edge cases and negative tests. The intended usage model is to load the =
+upstream
+> > vector files at runtime rather than embedding them in the DPDK tree.
+> > I think the existing examples/fips_validation application follows a sim=
+ilar
+> > approach, consuming external CAVP/ACVP vector files rather than integra=
+ting
+> > them into dpdk-test. This patch follows that precedent, with the goal o=
+f providing
+> > file-driven conformance validation as a standalone example application.
+> > I agree that the documentation can be improved. At minimum, the .rst sh=
+ould
+> > describe where the Wycheproof vectors can be obtained and reference the
+> > applicable upstream license, as the current example command may give th=
+e
+> > impression that the vector files are included in the DPDK source tree w=
+hen they
+> > are not.
+>
+> Ok, so in that case did you consider integrating this app into fips_valid=
+ation app..
+> May be we could rename fips_validation to crypto_validation and internall=
+y have 2 modes -
+> Fips and Wycheproof? Like what we have for examples/multi_process?
 
-A typo regression in a log string the patch rewrites:
+I like this proposal.
 
-	BP_LOG("KR TRAINNING CHECK = %x. pmd_ctrl:%lx-%lx-%lx-%lx\n",
 
-"TRAINNING" should be "TRAINING".  The line it replaces spelled it
-correctly ("KR TRAINING CHECK = %x, %s. ..."), so this loses the old string
-for anyone grepping logs.  checkpatch flags it as TYPO_SPELLING.
 
-Declarations after a statement in the new txgbe_e56_get_txffe():
 
-	if (!rte_log_can_log(RTE_LOGTYPE_TXGBE_BP, RTE_LOG_DEBUG))
-		return;
+--_000_LV2PR11MB604567127AA4D4D950804D13818C2LV2PR11MB6045namp_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-	/* 21. read txffe to check kr training status */
-	u32 rdata = 0, pmd_ctrl = 0, lane_idx = 0, lane_num = 0, txffe = 0;
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+line-height: 20px; margin: 1em 0px; font-family: &quot;IntelOne Text&quot;;=
+ font-size: 10pt; color: rgb(0, 0, 0);">
+I agree that a single validation framework would make cryptodev validation =
+easier to discover, document, and maintain, and could eventually allow some=
+ common setup and reporting infrastructure to be shared.</div>
+<div class=3D"elementToProof" style=3D"line-height: 20px; margin-top: 1em; =
+margin-bottom: 1em; font-family: &quot;IntelOne Text&quot;; font-size: 10pt=
+; color: rgb(0, 0, 0);">
+That said, the overlap between the two applications is primarily at the cry=
+ptodev API level. Their core purposes are quite different. The FIPS validat=
+ion application is focused on CAVP/ACVP workflows, including request/respon=
+se processing and conformance testing,
+ whereas Wycheproof is built around externally maintained JSON test suites =
+with valid/invalid/acceptable result classifications and different requirem=
+ents for asymmetric devices.</div>
+<div class=3D"elementToProof" style=3D"line-height: 20px; margin-top: 1em; =
+margin-bottom: 1em; font-family: &quot;IntelOne Text&quot;; font-size: 10pt=
+; color: rgb(0, 0, 0);">
+While there may be opportunities for code reuse in the future, merging them=
+ today would likely introduce additional dispatcher and lifecycle complexit=
+y with limited immediate benefit. It could also blur the distinction betwee=
+n Wycheproof robustness testing
+ and FIPS conformance validation.</div>
+<div class=3D"elementToProof" style=3D"line-height: 20px; margin-top: 1em; =
+margin-bottom: 1em; font-family: &quot;IntelOne Text&quot;; font-size: 10pt=
+; color: rgb(0, 0, 0);">
+My preference would be to keep them as separate applications for now and re=
+visit consolidation if we identify a meaningful amount of shared infrastruc=
+ture.</div>
+<div class=3D"elementToProof" style=3D"line-height: 20px; margin-top: 1em; =
+margin-bottom: 1em; font-family: &quot;IntelOne Text&quot;; font-size: 10pt=
+; color: rgb(0, 0, 0);">
+Regards,</div>
+<div class=3D"elementToProof" style=3D"line-height: 20px; margin-top: 1em; =
+margin-bottom: 1em; font-family: &quot;IntelOne Text&quot;; font-size: 10pt=
+; color: rgb(0, 0, 0);">
+<br>
+Kai</div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+margin: 0px 0px 16px; font-family: &quot;IntelOne Text&quot;; font-size: 10=
+pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<hr style=3D"display: inline-block; width: 98%;">
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<b>From:</b> Thomas Monjalon &lt;thomas@monjalon.net&gt;<br>
+<b>Sent:</b> Friday, September 25, 2026 17:32<br>
+<b>To:</b> Ji, Kai &lt;kai.ji@intel.com&gt;; Akhil Goyal &lt;gakhil@marvell=
+.com&gt;<br>
+<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
+<b>Subject:</b> Re: [EXTERNAL] [PATCH v7] examples: add Wycheproof validati=
+on app
+</div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-size: 11pt;">24/09/2026 20:00, Akhil Goyal:<br>
+&gt; &gt; Wycheproof differs somewhat from the existing cryptodev test vect=
+ors in that it is<br>
+&gt; &gt; an externally maintained collection of JSON test suites covering =
+a large number of<br>
+&gt; &gt; edge cases and negative tests. The intended usage model is to loa=
+d the upstream<br>
+&gt; &gt; vector files at runtime rather than embedding them in the DPDK tr=
+ee.<br>
+&gt; &gt; I think the existing examples/fips_validation application follows=
+ a similar<br>
+&gt; &gt; approach, consuming external CAVP/ACVP vector files rather than i=
+ntegrating<br>
+&gt; &gt; them into dpdk-test. This patch follows that precedent, with the =
+goal of providing<br>
+&gt; &gt; file-driven conformance validation as a standalone example applic=
+ation.<br>
+&gt; &gt; I agree that the documentation can be improved. At minimum, the .=
+rst should<br>
+&gt; &gt; describe where the Wycheproof vectors can be obtained and referen=
+ce the<br>
+&gt; &gt; applicable upstream license, as the current example command may g=
+ive the<br>
+&gt; &gt; impression that the vector files are included in the DPDK source =
+tree when they<br>
+&gt; &gt; are not.<br>
+&gt;<br>
+&gt; Ok, so in that case did you consider integrating this app into fips_va=
+lidation app..<br>
+&gt; May be we could rename fips_validation to crypto_validation and intern=
+ally have 2 modes -<br>
+&gt; Fips and Wycheproof? Like what we have for examples/multi_process?<br>
+<br>
+I like this proposal.<br>
+<br>
+<br>
+<br>
+</div>
+</body>
+</html>
 
-This compiles, but the rest of txgbe_e56_bp.c declares at the top of the
-block.  Hoisting the declaration above the early return would match the
-file.
-
-Stale comment on the page-exchange loop:
-
-	/* 50ms timeout */
-	for (count = 0; count < 50; count++) {
-
-count is reset to 0 each time a next page arrives, so the loop is really
-bounded by count2 against AN_PAGE_EXCHANGE_TIMEOUT_MS (200).  The comment
-describes the per-round budget, not the loop bound.
-
-Review-Result: CLEAN
-
----
-Notes on things that looked suspicious but check out, recorded so they do
-not get re-reviewed:
-
-- 02/15: the "readers fall back to get_link_capabilities() when the field
-  is zero" claim in the commit message is accurate -- both readers do
-  "speed = hw->phy.autoneg_advertised; if (!speed) ...get_link_capabilities()".
-
-- 06/15: wr32m(hw, TXGBE_I2C_SDA_HOLD, ..., 0x640064) against masks
-  0xff0000 / 0xffff places 0x64 correctly in both the RX and TX fields.
-
-- 08/15: no remaining RTE_MBUF_F_TX_OUTER_UDP_CKSUM reference anywhere in
-  the driver, so dropping it from TXGBE_TX_OFFLOAD_MASK is complete.
-
-- 11/15: moving txgbe_parse_devargs() after txgbe_init_shared_code() is
-  safe -- the latter only sets the MAC type and the ops tables and reads no
-  devarg.  The four-lane FFE value reaches the register whole through
-  wr32_ephy(), so widening the fields to u32 is what makes the replication
-  work.
-
-- 14/15: removing the "if (status) return status;" after
-  txgbe_e56_cl72_training() does not swallow the error -- status is not
-  reassigned through the idle-detect writes and is still returned, and the
-  caller checks ret.  The commit message says the non-abort is deliberate.
-
-- 15/15: txgbe_xpcs_an_enabled() calling get_link_capabilities() does not
-  recurse (no capability function calls back into it), and the
-  !hw->devarg.auto_neg early return keeps the 25G path's unconditional
-  *autoneg = true from re-enabling AN against the devarg.
-
-- 09/15 and 14/15 are the two patches checkpatch rejects, both on false
-  positives: "no space after cast" on RTE_ATOMIC(uint32_t), and
-  COMPLEX_MACRO on "#define ...CFG_0 1, 0", which is the bitfield-pair
-  convention used throughout the e56 headers.
-
-One design point worth a second opinion rather than a fix: in 10/15,
-txgbe_dev_detect_sfp() re-arms itself at the "rearm:" label, which the two
-sfp_an_alarm_enabled == 0 early returns deliberately skip.  That is how the
-poll stops on dev_stop, and it is correct, but it does make that gate the
-only thing terminating the 2-second poll that 40G hot-plug detection now
-depends on.
+--_000_LV2PR11MB604567127AA4D4D950804D13818C2LV2PR11MB6045namp_--
