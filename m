@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B94C9CA5FA7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF56CA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:43:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2576542F47;
+	by mails.dpdk.org (Postfix) with ESMTP id E700E42F53;
 	Tue, 29 Sep 2026 18:40:02 +0200 (CEST)
-Received: from mail-pz2-f30.google.com (mail-pz2-f30.google.com
- [74.125.228.30]) by mails.dpdk.org (Postfix) with ESMTP id F174142ECA
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:49 +0200 (CEST)
-Received: by mail-pz2-f30.google.com with SMTP id
- d2e1a72fcca58-880fcd3790bso1520382b3a.1
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:49 -0700 (PDT)
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com
+ [209.85.210.173])
+ by mails.dpdk.org (Postfix) with ESMTP id CAAA242ECF
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:50 +0200 (CEST)
+Received: by mail-pf1-f173.google.com with SMTP id
+ d2e1a72fcca58-881269371acso485464b3a.0
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699929;
- x=1791304729; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699930;
+ x=1791304730; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=Lzm/dmYqNqHPPxQWj3YR9m9ikkEgENVXL3UArn/GNTM=;
- b=hTrijj7DmR0LVOWp9NcKKt9OiKi/m9bqV/5m81drvBFYSR2ix2GWW+uSRzkyo+BCJc
- Hxu9Sb/7PjOTobtmL1uzubWNw6uaUxq4Uwx1vAjcWdNxtjq0DR2Uq9WQT6pzCoSklzel
- tRdy9CHvTO4zVm0WHNIFGrE9E13Dpk/F9GmWTnjb9j+l3qYCfVL4de7cnhK053/870n6
- MQ+FI4lheZ3Nm1qQC6QFJ3RN2sb0tNqQ1dpUJtBTWlanzDKMxra+yCwh/PG7OZ58hBqe
- pH68eOS/dTlO8PoEUuSriafVwExCY0WnvP7/EZ/Ab+2nmONruS055R3wohsDTscFq2HA
- cBXA==
+ bh=bbZqzIiZcVBdPox3SPCPOWClMD5C53lVc1duTCzSSgk=;
+ b=Y87H1YcSTqkueAUbgDzSheoE7qdaI21RSfGNnwV4rsneH/6uad7LjejMD+bVSM4SK4
+ pS/k9YAASDY3FZ/B2S7iYOsdBnBw5GngA8Is0KELUk5v8LDCX6CHeMvpiBWwaE/aBecJ
+ BRS2/ab4eqJXFrxQ6DCQfGuG/Pz6GGBULX5xTg/eSMv6cbORsIzfgnnz6bWf2I1EdILT
+ 3f6BPWZ9b62d6tCYEXLOIo/VxL/MamS2ked8nJzjAcO/WbdsfTIKSEITvQYxnZjx2MzY
+ 4mh3hrA+FVQX0gVr8GnX99FytaXmuS48rdZWAu5uutefldz3TSjuNQzc0Hg+HNCGG+P7
+ pN5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790699929; x=1791304729;
+ d=1e100.net; s=20260707; t=1790699930; x=1791304730;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=Lzm/dmYqNqHPPxQWj3YR9m9ikkEgENVXL3UArn/GNTM=;
- b=YxIljxZuhFVI21pUFUtj1/FEceycsLTH8or1X4mLOzEE5Lieg1vDylc3GbwiZs4kDS
- goDJycfdhKY0dqFzW8PUUrX5eW6fE8As1YvYEAQ6QS9/oTfqTlyor7G2tJYJqfbw1FNh
- PItAwC3RzGnzxe94Xb6YjpU6mX0f1wgIq9KUND/XNdkv82yWErHnb+4zNISwq/bzzLJL
- 7hLHsJ/XU/sbqf0XUpOH6Sf9J95YH5JWAW2WR9q4SEUYuaYvxtAScD4Pi5ji7U2lCayr
- /BLvWWUs8igqntVAEi6OYleSiTkERo4YSrBRTzKeJ2wWrgdxQmo3X4iVpK6va679ZHPF
- f32w==
-X-Gm-Message-State: AFuF++k6BCOmNiKyWNAZvlnLn58zmnyI2ZDb+R3X4uRcJ7oTQPrdhee/
- FbaZ+g/0xbHQxZLu2U7/+kIdXrrBVZ3Gn2kjT6iqQQ0km5Hn86HGV3skkVMjkOMnH2E8jm7uRsR
- o9+YcxN4=
-X-Gm-Gg: AYBFou1G3tI1DizhCV989TQ7TLaHK93hLcywDR1dDlE2+7n2tzYZOxmzD6NZqlicPOh
- qpzq0mYeQnF4rX8mnsvn9qgE+b7fVFviapC/Rk0PhKHRDOWTHeJ/ZSYmwYJQmbXs6heP6XfklxD
- ReZLP96vxndjhoiM1L4TPqeKaDXaZx+7SequFglJYXL0x9UZbTfppuM16GqdYM0eSncnwN2FlIE
- IfhsOXSIA0+GZkGJbW79ENcXHVr6/Lo9SUIhkkjfXpFHkughq0FlMi9tSt451t8XFVhhMZfP4SW
- gyKfoD8zDcBBf5E2RMVmK23grDvizCWPC5bdPkewFuAjGGldVr3txBbXYf56swrS99bu++kBhJ7
- 9nTSU91j8PHLBOs5AlO3kQVA9xyuByrpVOTG5ENZs/cp3pMUjl6BhoAfRtzfWZS4jV6vWwcEWB2
- 2++4xisnwNNIrwblvIziRKqkFTFwNLqoBd2c2uSx63I/3MZWClOg8FbTTzUEKCWju/K8zZOKTKG
- C3BHbnTZDJhZYbY0JEqUEINa6mV2Xgpg/GHusA=
-X-Received: by 2002:a05:6a00:a243:b0:878:34e7:9a40 with SMTP id
- d2e1a72fcca58-87e9c166fc6mr14510879b3a.57.1790699929127; 
+ bh=bbZqzIiZcVBdPox3SPCPOWClMD5C53lVc1duTCzSSgk=;
+ b=No/SbzGtcQRq/auug6hByQeNAnwGR46rwqW3JXWnZGUOkQIAiFL4/y5oIuiLeyYyd7
+ xQun/LfJzKgGTc+8jzUQTJ6hGh5GEaJmG/Wj/B9+8e2tQy6My9Np+YCuBBRJ6M11kemz
+ C6ZL+cAtpJUjih5U2mJFXOvKdyxSCH+6WSlN2RtvbsrGOVNQOdpl0dvQEaZ3CXv7Ppb5
+ 6p2cKZ6BBwI9KMuXORr+L8UMv3EstLfHdXieu/6dWMqRxiDIF4nc7rcjIWjzTgw/Q/r0
+ HvzC2rK1ULJHWFIGYL32yb+lRKF/HKDkUtshXfC8CQqiWbEarZLqnoiJFrs2xK43joJ/
+ stig==
+X-Gm-Message-State: AFuF++l9aGvpLRXJu4Vxwdr6KvKJ0/CbDTj/wcDZrmC/YFsPJVVaAKB7
+ ZZTdJGcynU98jDB/+vmal7D9Rug683gTiM9eCUAGPU0lSfXh7nCw6t/BHjw80gm/R3s/HPkdxaD
+ lFlHRId4=
+X-Gm-Gg: AYBFou2QJwJ9JH/4gUtdoZGLZWbJW4uQZLPGOkoLfwsZAL6xz/gW9zB6xljEuVnUqhZ
+ qicCq5yMC7nalZ4BYnnx3pnPNlEK8AAVDzWTVfcSa3Fhd4JeKgpPt56SDhl1dpXa1TIzvnf/5Yb
+ iJhXbjkNWM42OXP1U70OxCdfj/wJBJpPWSb37b0AO5BcWcWEYyfpw3y24uTV1Qnv/29k96yWSvv
+ 647/BX/na0/N/5b8NIF3tIHYW4A15pNAZ7dY0RwGJuUu0lzysm1yc5ZmGiiTgS+rMGjOUk7eCgD
+ 7jWjyd3rCDpC2jH7UKZuhw4kJTuUUQLVVFX42FOfFzryF0IzMzDDYbjKZE3pnoXpMemav57uBmq
+ fE7I1RSszePCGiSAMst0pNO7luVgBb13Y5wkTcW3Z48OorZnfkcQEma2kl5N/GqUk2nHiIerrMe
+ Bj1YDrqsakSvkAkYJgm34N0XkAKtvntv5hHuyyePSnIkidxNoq7mEJ9Fp1F9lGuQmB4VzPBsSt0
+ HZ3xuzotq0dcRjAHllf/TtEM/dzHDpsIJ9o+A==
+X-Received: by 2002:a05:6a00:7097:b0:87d:fc55:c995 with SMTP id
+ d2e1a72fcca58-88563259606mr1747318b3a.50.1790699929937; 
  Tue, 29 Sep 2026 09:38:49 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.48
+ d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:38:48 -0700 (PDT)
+ Tue, 29 Sep 2026 09:38:49 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Matan Azrad <matan@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>
-Subject: [PATCH v2 46/61] net/mlx4: use kvargs numeric helpers
-Date: Tue, 29 Sep 2026 09:36:49 -0700
-Message-ID: <20260929163800.1108305-47-stephen@networkplumber.org>
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v2 47/61] net/sfc: use kvargs numeric helpers
+Date: Tue, 29 Sep 2026 09:36:50 -0700
+Message-ID: <20260929163800.1108305-48-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929163800.1108305-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -84,109 +84,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-mlx4_arg_parse() checks errno without clearing it first, so a stale
-value left by earlier code rejects a valid argument, while a malformed
-value such as "abc" sets no errno at all and is silently taken as zero.
-The end pointer is never checked, so "1junk" is accepted.
+sfc_kvarg_long_handler() only checked that strtol() consumed at least one
+character, so trailing garbage such as "5abc" was accepted, and errno was
+never checked, so an out of range value was silently taken as LONG_MAX or
+LONG_MIN.
 
-Base 0 was used, so a leading zero silently selected octal.
-
-The PCI_SLOT_NAME parser is left alone: it reads sysfs rather than a
-device argument.
-
-mr_ext_memseg_en is a boolean, so make the mlx4_conf field bool and
-parse it with rte_kvargs_handle_bool(). mlx4_arg_parse() serves several
-keys through a cast function pointer, so the boolean gets a call of its
-own and the generic loop skips it. The one bit field it is later copied
-into stays as it is.
+It did nothing beyond that conversion, so drop it and use the new
+rte_kvargs_handle_long(). The callers keep their long variables and their
+own range checks.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/mlx4/mlx4.c | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+ drivers/net/sfc/sfc.c        |  2 +-
+ drivers/net/sfc/sfc_kvargs.c | 19 -------------------
+ drivers/net/sfc/sfc_kvargs.h |  2 --
+ drivers/net/sfc/sfc_port.c   |  2 +-
+ 4 files changed, 2 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/net/mlx4/mlx4.c b/drivers/net/mlx4/mlx4.c
-index 28f1116891..1e64230e35 100644
---- a/drivers/net/mlx4/mlx4.c
-+++ b/drivers/net/mlx4/mlx4.c
-@@ -70,7 +70,7 @@ struct mlx4_conf {
- 		uint32_t present; /**< Bit-field for existing ports. */
- 		uint32_t enabled; /**< Bit-field for user-enabled ports. */
- 	} ports;
--	int mr_ext_memseg_en;
-+	bool mr_ext_memseg_en;
- 	/** Whether memseg should be extended for MR creation. */
- };
+diff --git a/drivers/net/sfc/sfc.c b/drivers/net/sfc/sfc.c
+index 39cd8d519a..3d460cc222 100644
+--- a/drivers/net/sfc/sfc.c
++++ b/drivers/net/sfc/sfc.c
+@@ -1213,7 +1213,7 @@ sfc_kvarg_rxd_wait_timeout_ns(struct sfc_adapter *sa)
+ 	value = SFC_RXD_WAIT_TIMEOUT_NS_DEF;
  
-@@ -532,12 +532,10 @@ mlx4_ibv_device_to_pci_addr(const struct ibv_device *device,
- static int
- mlx4_arg_parse(const char *key, const char *val, struct mlx4_conf *conf)
- {
--	unsigned long tmp;
-+	uint64_t tmp;
+ 	rc = sfc_kvargs_process(sa, SFC_KVARG_RXD_WAIT_TIMEOUT_NS,
+-				sfc_kvarg_long_handler, &value);
++				rte_kvargs_handle_long, &value);
+ 	if (rc != 0)
+ 		return rc;
  
--	errno = 0;
--	tmp = strtoul(val, NULL, 0);
--	if (errno) {
--		rte_errno = errno;
-+	if (rte_kvargs_to_uint(val, 0, UINT32_MAX, &tmp) < 0) {
-+		rte_errno = EINVAL;
- 		WARN("%s: \"%s\" is not a valid integer", key, val);
- 		return -rte_errno;
- 	}
-@@ -545,18 +543,16 @@ mlx4_arg_parse(const char *key, const char *val, struct mlx4_conf *conf)
- 		uint32_t ports = rte_log2_u32(conf->ports.present + 1);
+diff --git a/drivers/net/sfc/sfc_kvargs.c b/drivers/net/sfc/sfc_kvargs.c
+index eb36fa98ca..d67f822dd2 100644
+--- a/drivers/net/sfc/sfc_kvargs.c
++++ b/drivers/net/sfc/sfc_kvargs.c
+@@ -107,25 +107,6 @@ sfc_kvarg_bool_handler(__rte_unused const char *key,
+ 	return 0;
+ }
  
- 		if (tmp >= ports) {
--			ERROR("port index %lu outside range [0,%" PRIu32 ")",
--			      tmp, ports);
-+			ERROR("port index %u outside range [0,%u)",
-+			      (unsigned int)tmp, ports);
- 			return -EINVAL;
- 		}
- 		if (!(conf->ports.present & (1 << tmp))) {
- 			rte_errno = EINVAL;
--			ERROR("invalid port index %lu", tmp);
-+			ERROR("invalid port index %u", (unsigned int)tmp);
- 			return -rte_errno;
- 		}
- 		conf->ports.enabled |= 1 << tmp;
--	} else if (strcmp(MLX4_MR_EXT_MEMSEG_EN_KVARG, key) == 0) {
--		conf->mr_ext_memseg_en = !!tmp;
- 	} else {
- 		rte_errno = EINVAL;
- 		WARN("%s: unknown parameter", key);
-@@ -590,8 +586,21 @@ mlx4_args(struct rte_devargs *devargs, struct mlx4_conf *conf)
- 		ERROR("failed to parse kvargs");
- 		return -rte_errno;
- 	}
-+	/*
-+	 * mr_ext_memseg_en is a boolean and has a handler of its own; the
-+	 * loop below covers the arguments which mlx4_arg_parse() handles.
-+	 */
-+	ret = rte_kvargs_process_opt(kvlist, MLX4_MR_EXT_MEMSEG_EN_KVARG,
-+				     rte_kvargs_handle_bool,
-+				     &conf->mr_ext_memseg_en);
-+	if (ret != 0)
-+		goto free_kvlist;
-+
- 	/* Process parameters. */
- 	for (i = 0; pmd_mlx4_init_params[i]; ++i) {
-+		if (strcmp(pmd_mlx4_init_params[i],
-+			   MLX4_MR_EXT_MEMSEG_EN_KVARG) == 0)
-+			continue;
- 		arg_count = rte_kvargs_count(kvlist, pmd_mlx4_init_params[i]);
- 		while (arg_count-- > 0) {
- 			ret = rte_kvargs_process(kvlist,
-@@ -783,7 +792,7 @@ mlx4_pci_probe(struct rte_pci_driver *pci_drv, struct rte_pci_device *pci_dev)
- 	struct rte_eth_dev *prev_dev = NULL;
- 	struct mlx4_conf conf = {
- 		.ports.present = 0,
--		.mr_ext_memseg_en = 1,
-+		.mr_ext_memseg_en = true,
- 	};
- 	unsigned int vf;
- 	int i;
+-int
+-sfc_kvarg_long_handler(__rte_unused const char *key,
+-		       const char *value_str, void *opaque)
+-{
+-	long value;
+-	char *endptr;
+-
+-	if (!opaque)
+-		return -EINVAL;
+-
+-	value = strtol(value_str, &endptr, 0);
+-	if (endptr == value_str)
+-		return -EINVAL;
+-
+-	*(long *)opaque = value;
+-
+-	return 0;
+-}
+-
+ int
+ sfc_kvarg_string_handler(__rte_unused const char *key,
+ 			 const char *value_str, void *opaque)
+diff --git a/drivers/net/sfc/sfc_kvargs.h b/drivers/net/sfc/sfc_kvargs.h
+index 4dcc61e973..99de772d2d 100644
+--- a/drivers/net/sfc/sfc_kvargs.h
++++ b/drivers/net/sfc/sfc_kvargs.h
+@@ -88,8 +88,6 @@ int sfc_kvargs_process_opt(struct sfc_adapter *sa, const char *key_match,
+ 
+ int sfc_kvarg_bool_handler(const char *key, const char *value_str,
+ 			   void *opaque);
+-int sfc_kvarg_long_handler(const char *key, const char *value_str,
+-			   void *opaque);
+ int sfc_kvarg_string_handler(const char *key, const char *value_str,
+ 			     void *opaque);
+ 
+diff --git a/drivers/net/sfc/sfc_port.c b/drivers/net/sfc/sfc_port.c
+index 33b53f7ac8..d0652b612b 100644
+--- a/drivers/net/sfc/sfc_port.c
++++ b/drivers/net/sfc/sfc_port.c
+@@ -488,7 +488,7 @@ sfc_port_attach(struct sfc_adapter *sa)
+ 	kvarg_stats_update_period_ms = SFC_MAC_STATS_UPDATE_PERIOD_MS_DEF;
+ 
+ 	rc = sfc_kvargs_process(sa, SFC_KVARG_STATS_UPDATE_PERIOD_MS,
+-				sfc_kvarg_long_handler,
++				rte_kvargs_handle_long,
+ 				&kvarg_stats_update_period_ms);
+ 	if ((rc == 0) &&
+ 	    ((kvarg_stats_update_period_ms < 0) ||
 -- 
 2.53.0
 
