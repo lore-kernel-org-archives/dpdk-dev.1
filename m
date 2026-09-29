@@ -2,42 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7972FC9832A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 07:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5D6CA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 07:24:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6559040276;
-	Tue, 29 Sep 2026 09:15:32 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 5E9DF4013F
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:15:31 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 25977201FB;
- Tue, 29 Sep 2026 09:15:31 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 6FD1040276;
+	Tue, 29 Sep 2026 09:24:05 +0200 (CEST)
+Received: from fhigh-a4-smtp.messagingengine.com
+ (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+ by mails.dpdk.org (Postfix) with ESMTP id 104274013F;
+ Tue, 29 Sep 2026 09:24:04 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 674E91400091;
+ Tue, 29 Sep 2026 03:24:03 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Tue, 29 Sep 2026 03:24:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1790666643;
+ x=1790753043; bh=4r5lrD+KW3yVN+lFJAEsDkmZHlRSMvq4a2a2kLt3iNQ=; b=
+ qRF/q4fq/EColcnO9dW3AyWLYr1yRMino/sG7QuiOuwZxfedQecn0R5svRO3VIwR
+ L3ddxL2HQQYUft/YtV1yNeMqbTTvNk4v5vwpnxPrnOQzZeZ2QpdSoY3VkNWv5PCN
+ I+rroDyG1jI43nvOSsN7Ow/IAPBqN3t8vJNIlOUuoX1kmrdlhD+wbUEKRCjVdlJ/
+ VFO3gD3dreLHCgxIvSbxzESqKfobspPUeLrfEcHTrSEMT7CCMCV8MuBqQ9Tqv5gd
+ i1pQ9fRo49QR0G+8JJpcIP3ZxIDoZn5kFZLfdab5LILIGLqqgrONLviPdXIfPyJQ
+ gh5Qcj7SmmO+IkQyPmXxJQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1790666643; x=
+ 1790753043; bh=4r5lrD+KW3yVN+lFJAEsDkmZHlRSMvq4a2a2kLt3iNQ=; b=b
+ i9Enr2qgUx/Q7f3Zy/YuGzPZh6lnVWEY270fwoYJzeRDlBOR3cLLO1if4wqXv6pu
+ 02NFdTZ6N8tZwnSK82X4WmK24qYVS7W9IAmeYO0sdPuyWEQ4ClxyQFyLjGjJshxr
+ lT4KR43BHf7X3oHXkjhkhrNnN5eD49r/2xAUOHmSra/SBziz9FAu9WuzKH02G0Q2
+ lyaA9PfDZX7SV0iHz2wM6bQD6T5lOlu5ifRbwI8QQZFuWl8RHq92w4Rc9UPiy2QN
+ 9GGaJPAuFrQVuL3H4t0FTSA0021gq6U5lKRv8VCMs6XHJ+k2x32rEdLH0Q7Q/bEo
+ NKxa31GzokbhCmA3ftyjg==
+X-ME-Sender: <xms:kme7asFgeRUmH6SGlrqxV7MA7PHZmfbCXObWCeibg9QG5iNX0p8zpA>
+ <xme:kme7alcZGczOy4xeu5CHlUfkzFEoXChZCZrzgXQdVNsjuxarvoLLE0GwxL1ThHKut
+ GwvMZ6nI7oOYsj6LZeJ-daXk1sY8Dazx4PFeLXkYt6Ilo3hrb7wKw0>
+X-ME-Received: <xmr:kme7auH9eq8heDaGqFY4bQs6MpnGCpNtB_hIiGSPst48eqp4aNZFDCW0DJqJn_EUqC-KjmvRF6H25fZnNP8q2zI>
+X-ME-Proxy-Cause: dmFkZTFp9i5N5e3uXwHseFCRUiW9B+YvMPeo8ygR88CZOnVps2JOAAlUVLiHSr67RMwXcX
+ gduy9Aj1mcr6ISIa9lRptzZDoKVge5lqapSs4SWlCN9x+wX/bxu/X+9TmufufUO0zRPd6N
+ emqpMwWNhLLuIdF/9joHXVVaoN5ddHOCi490329SXNTFVfDwL7BMs8+0GpXCjhdryUPYeW
+ EE4rzaan2Q96gZRS4D0UW6TzANlQUXw5C0XVR6I1f3D+zaAvk9wWiKA/k83hPcAgcrr9qS
+ T9JgumQ1kGEN6vEMjmFVzyXcZu7AKxpeyWHGnPXTYimVdluGyVfiVMh0nVKMhXbgZ/xIV3
+ +QiLfaek1Ts+3UpFF9VV9z0FTGJ6iNW7dPsOmnKa1o3ooMgCHOgHN1M+OuMHi9DbSpucwX
+ R1KK25EfRwpp/1dbUQBPGSrQ9anhgzodPcY9KtfrIWbS6jncPZVlUaNXCdG1Xe158JwHPn
+ bMa7YVi1/lcrZ1qQhelCQtwQF4615SwShXOVXU1HS7xTOE4/C+do3fcpLWwVpcAgtiOX4h
+ 0h9c7VbsHMk3DIqs4C4UdCDs3bVo+PElFAcUz5qP/WWdqaEil/nC0KXzCUaC2QVhMW/1Ly
+ QwlP7AUl5UN/1i5Oc98LL+K20T4Sjel2wx43B9Hr2VNiX/7seeIbZ7mfIDSw
+X-ME-Proxy: <xmx:kme7amX_EMQRgHVWNErOnG3onGnwlBLqL1MlvHr_CutaEAQBGJMSZg>
+ <xmx:kme7atKJtzW0p8EM_GjoaTCF_N6alFdsN-mvf5B4B5fiUgGBId2HCQ>
+ <xmx:kme7am9osMeT6qUT2gnjEjPQVxEjj2eNFdTkKCQekd_OrhXxmmZmCg>
+ <xmx:kme7agJnhblVm7zAQjcQoDmHGJ7PNopCrMpN-lxGC0yh_xSjUuSaTA>
+ <xmx:k2e7amBmpCraSM0hPReZ9Uj6jvdAWDB-F8BHk_uVv_UtPKYKDU5CkgiC>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 29 Sep 2026 03:24:02 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, david.marchand@redhat.com, stable@dpdk.org
+Subject: Re: [PATCH v2] eal: fix C++ builds when stdatomics is set
+Date: Tue, 29 Sep 2026 09:23:58 +0200
+Message-ID: <a5GjADT1SeiSQyFkuYrYMQ@monjalon.net>
+In-Reply-To: <20260925124958.44356-1-bruce.richardson@intel.com>
+References: <20260924141246.4037433-1-bruce.richardson@intel.com>
+ <20260925124958.44356-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v3 1/1] mbuf: add optional no-copy dynamic field storage
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 29 Sep 2026 09:15:28 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A85@smartserver.smartshare.dk>
-In-Reply-To: <179061941387.2.13690688541375502570.v3-0001-mbuf-add-optional-no-copy-dynamic-field-storage.patch@cisco.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v3 1/1] mbuf: add optional no-copy dynamic field storage
-Thread-Index: Ad1PdY6uF3j+gB3jTKCgIJowS5sduwAarEQQ
-References: <179036466858.2.13982499480648014088.v2-0000-cover-letter.patch@cisco.com>
- <179061941387.2.17741463412422386825.v3-0000-cover-letter.patch@cisco.com>
- <179061941387.2.13690688541375502570.v3-0001-mbuf-add-optional-no-copy-dynamic-field-storage.patch@cisco.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Randy L Tice" <rtice@cisco.com>,
-	<dev@dpdk.org>
-Cc: "Bruce Richardson" <bruce.richardson@intel.com>,
- "Harman Kalra" <hkalra@marvell.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,68 +87,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-WWVzLCB0aGlzIGlzIHRoZSBzb2x1dGlvbiBJIHdhcyBsb29raW5nIGZvci4gVGhhbmsgeW91Lg0K
-DQpOaXRwaWNraW5nLi4uDQoNCkNvdWxkIHlvdSB1c2Ugd2l0aCBhIG1vcmUgbWVhbmluZ2Z1bCBu
-YW1lIHRoYW4gZHluZmllbGQzLCBlLmcuIGR5bmZpZWxkX25jIG9yIGR5bmZpZWxkX25vX2NvcHku
-DQoNCkEgZmV3IG1pbm9yIGNsYXJpZmljYXRpb25zIHN1Z2dlc3RlZCBpbmxpbmUgYmVsb3cuDQoN
-CldpdGggb3Igd2l0aG91dCBzdWdnZXN0ZWQgY2hhbmdlcywNClJldmlld2VkLWJ5OiBNb3J0ZW4g
-QnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KDQoNCj4gLS0tIGEvZG9jL2d1aWRl
-cy9wcm9nX2d1aWRlL21idWZfbGliLnJzdA0KPiArKysgYi9kb2MvZ3VpZGVzL3Byb2dfZ3VpZGUv
-bWJ1Zl9saWIucnN0DQo+IEBAIC0yMzQsNiArMjM0LDE1IEBAIFRoZSBkeW5hbWljIGZpZWxkcyBh
-bmQgZmxhZ3MgYXJlIG1hbmFnZWQgd2l0aCB0aGUNCj4gZnVuY3Rpb25zIGBgcnRlX21idWZfZHlu
-KmBgLg0KPiANCj4gIEl0IGlzIG5vdCBwb3NzaWJsZSB0byB1bnJlZ2lzdGVyIGZpZWxkcyBvciBm
-bGFncy4NCj4gDQo+ICtUaGUgYnVpbGQgb3B0aW9uIGBgbWJ1Zl9keW5maWVsZDNfc2l6ZWBgIGNh
-biBhZGQgZXh0cmEgY2FjaGUtbGluZS0NCj4gYWxpZ25lZA0KPiArZHluYW1pYyBmaWVsZCBzdG9y
-YWdlIHRvIGBgc3RydWN0IHJ0ZV9tYnVmYGAuICBUaGlzIGluY3JlYXNlcyBldmVyeQ0KPiBtYnVm
-IGJ5DQoNCiJpbmNyZWFzZXMgZXZlcnkgbWJ1ZiIgLT4gImluY3JlYXNlcyB0aGUgc2l6ZSBvZiBl
-dmVyeSBtYnVmIg0KDQo+ICt0aGUgY29uZmlndXJlZCBhbW91bnQgYW5kIGNoYW5nZXMgdGhlIG1i
-dWYgbGF5b3V0LCBzbyBhcHBsaWNhdGlvbnMgYW5kDQo+ICtzZWNvbmRhcnkgcHJvY2Vzc2VzIG11
-c3QgYmUgYnVpbHQgd2l0aCB0aGUgc2FtZSB2YWx1ZSBhcyB0aGUgcHJpbWFyeQ0KPiBwcm9jZXNz
-Lg0KPiArVGhlIG9wdGlvbiBkZWZhdWx0cyB0byBgYDBgYC4gIFRoZSBleHRyYSBzdG9yYWdlIGlz
-IHJlc2VydmVkIGZvcg0KPiBkeW5hbWljDQo+ICtmaWVsZHMgcmVnaXN0ZXJlZCB3aXRoIGBgUlRF
-X01CVUZfRFlORklFTERfRl9OT19DT1BZYGAuICBUaGVzZSBmaWVsZHMNCj4gYXJlIG5vdA0KPiAr
-Y29waWVkIGJ5IG1idWYgY29weSBhbmQgY2xvbmUgb3BlcmF0aW9ucy4gIER5bmFtaWMgZmllbGRz
-IHJlZ2lzdGVyZWQNCj4gd2l0aG91dA0KPiArdGhpcyBmbGFnIGNvbnRpbnVlIHRvIHVzZSB0aGUg
-ZXhpc3RpbmcgY29waWVkIGR5bmFtaWMtZmllbGQgc3RvcmFnZS4NCj4gKw0KPiAgLi4gX2RpcmVj
-dF9pbmRpcmVjdF9idWZmZXI6DQo+IA0KPiAgRGlyZWN0IGFuZCBJbmRpcmVjdCBCdWZmZXJzDQo+
-IGRpZmYgLS1naXQgYS9kb2MvZ3VpZGVzL3JlbF9ub3Rlcy9yZWxlYXNlXzI2XzExLnJzdA0KPiBi
-L2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMTEucnN0DQo+IGluZGV4IGRlYzk2Y2Ni
-YzcuLmNmZjY4ZDcwMzQgMTAwNjQ0DQo+IC0tLSBhL2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVh
-c2VfMjZfMTEucnN0DQo+ICsrKyBiL2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMTEu
-cnN0DQo+IEBAIC02MCw2ICs2MCwyMiBAQCBOZXcgRmVhdHVyZXMNCj4gICAgQWRkZWQgdGhlIGV4
-cGVyaW1lbnRhbCBgYHJ0ZV9jcHVfc29ja2V0X2lkKClgYCBmdW5jdGlvbg0KPiAgICB0byBtYXAg
-YW4gT1MgbG9naWNhbCBDUFUgSUQgdG8gdGhlIE5VTUEgc29ja2V0IGNvbnRhaW5pbmcgdGhhdCBD
-UFUuDQo+IA0KPiArKiAqKkFkZGVkIG9wdGlvbmFsIGV4dHJhIG1idWYgZHluYW1pYyBmaWVsZCBz
-dG9yYWdlLioqDQo+ICsNCj4gKyAgQWRkZWQgYGBtYnVmX2R5bmZpZWxkM19zaXplYGAgYnVpbGQg
-b3B0aW9uIHRvIGVuYWJsZSBhDQo+ICsgIGNhY2hlLWxpbmUtYWxpZ25lZCBgYGR5bmZpZWxkM2Bg
-IGFyZWEgaW4gYGBzdHJ1Y3QgcnRlX21idWZgYC4NCj4gKyAgVGhlIGNvbmZpZ3VyZWQgc2l6ZSBp
-cyBkZWZpbmVkIGFzIGBgUlRFX01CVUZfRFlORklFTEQzX1NJWkVgYA0KPiArICBpbiBgYHJ0ZV9i
-dWlsZF9jb25maWcuaGBgLg0KPiArICBUaGUgZXh0cmEgc3RvcmFnZSBpcyByZXNlcnZlZCBmb3Ig
-ZHluYW1pYyBmaWVsZHMgcmVnaXN0ZXJlZCB3aXRoDQo+ICsgIGBgUlRFX01CVUZfRFlORklFTERf
-Rl9OT19DT1BZYGAuDQo+ICsgIFRoZXNlIGZpZWxkcyBhcmUgbm90IGNvcGllZCBieSBnZW5lcmlj
-IG1idWYgY29weSBhbmQgY2xvbmUNCj4gb3BlcmF0aW9ucy4NCj4gKyAgRHluYW1pYyBmaWVsZHMg
-cmVnaXN0ZXJlZCB3aXRob3V0IHRoaXMgZmxhZyBjb250aW51ZSB0byB1c2UgdGhlDQo+IGV4aXN0
-aW5nDQo+ICsgIGNvcGllZCBkeW5hbWljLWZpZWxkIHN0b3JhZ2UuDQo+ICsgIEFwcGxpY2F0aW9u
-cyBhbmQgc2Vjb25kYXJ5IHByb2Nlc3NlcyBtdXN0IGJlIGJ1aWx0IHdpdGggdGhlIHNhbWUNCj4g
-KyAgbm9uLXplcm8gdmFsdWUgYXMgdGhlIHByaW1hcnkgcHJvY2Vzcy4NCg0KIndpdGggdGhlIHNh
-bWUgbm9uLXplcm8gdmFsdWUiIC0+IndpdGggdGhlIHNhbWUgdmFsdWUiDQoNCg0KPiAtLS0gYS9t
-ZXNvbl9vcHRpb25zLnR4dA0KPiArKysgYi9tZXNvbl9vcHRpb25zLnR4dA0KPiBAQCAtNDQsNiAr
-NDQsOCBAQCBvcHRpb24oJ21heF9udW1hX25vZGVzJywgdHlwZTogJ3N0cmluZycsIHZhbHVlOg0K
-PiAnZGVmYXVsdCcsIGRlc2NyaXB0aW9uOg0KPiAgICAgICAgICdTZXQgdGhlIGhpZ2hlc3QgTlVN
-QSBub2RlIHN1cHBvcnRlZCBieSBFQUw7ICJkZWZhdWx0IiBpcw0KPiBkaWZmZXJlbnQgcGVyLWFy
-Y2gsICJkZXRlY3QiIGRldGVjdHMgdGhlIGhpZ2hlc3QgTlVNQSBub2RlIG9uIHRoZSBidWlsZA0K
-PiBtYWNoaW5lLicpDQo+ICBvcHRpb24oJ2VuYWJsZV9pb3ZhX2FzX3BhJywgdHlwZTogJ2Jvb2xl
-YW4nLCB2YWx1ZTogdHJ1ZSwgZGVzY3JpcHRpb246DQo+ICAgICAgICAgJ1N1cHBvcnQgdGhlIHVz
-ZSBvZiBwaHlzaWNhbCBhZGRyZXNzZXMgZm9yIElPIGFkZHJlc3Nlcywgc3VjaA0KPiBhcyB1c2Vk
-IGJ5IFVJTyBvciBWRklPIGluIG5vLUlPTU1VIG1vZGUuIFdoZW4gZGlzYWJsZWQsIERQREsgY2Fu
-IG9ubHkNCj4gcnVuIHdpdGggSU9NTVUgc3VwcG9ydCBmb3IgYWRkcmVzcyBtYXBwaW5ncywgYnV0
-IHdpbGwgaGF2ZSBtb3JlIHNwYWNlDQo+IGF2YWlsYWJsZSBpbiB0aGUgbWJ1ZiBzdHJ1Y3R1cmUu
-JykNCj4gK29wdGlvbignbWJ1Zl9keW5maWVsZDNfc2l6ZScsIHR5cGU6ICdpbnRlZ2VyJywgbWlu
-OiAwLCB2YWx1ZTogMCwNCj4gZGVzY3JpcHRpb246DQo+ICsgICAgICAgJ1NpemUgb2Ygb3B0aW9u
-YWwgZXh0cmEgbWJ1ZiBkeW5hbWljIGZpZWxkIGFyZWEsIGluIGJ5dGVzLicpDQoNClRoZSBkZXNj
-cmlwdGlvbiBvZiB0aGlzIG9wdGlvbiBzaG91bGQgbWVudGlvbiB0aGF0IHRoZSBhcmVhIGlzIGZv
-ciBtYnVmIGR5bmFtaWMgZmllbGRzIHdpdGggdGhlIG5vLWNvcHkgcHJvcGVydHkuDQoNCj4gIG9w
-dGlvbignbWJ1Zl9yZWZjbnRfYXRvbWljJywgdHlwZTogJ2Jvb2xlYW4nLCB2YWx1ZTogdHJ1ZSwN
-Cj4gZGVzY3JpcHRpb246DQo+ICAgICAgICAgJ0F0b21pY2FsbHkgYWNjZXNzIHRoZSBtYnVmIHJl
-ZmNudC4nKQ0KPiAgb3B0aW9uKCdwbGF0Zm9ybScsIHR5cGU6ICdzdHJpbmcnLCB2YWx1ZTogJ25h
-dGl2ZScsIGRlc2NyaXB0aW9uOg0KPiAtLQ0KPiAyLjM1LjYNCg0K
+25/09/2026 14:49, Bruce Richardson:
+> When the DPDK build is configured to use stdatomics rather than compiler
+> builtin atomics, the C++ chkincs builds were failing
+>=20
+> In file included from buildtools/chkincs/staging/generic/rte_atomic.h:18,
+>                  from /home/morten/upstreaming/dpdk-stack-std/lib/eal/x86=
+/include/rte_atomic.h:12,
+>                  from buildtools/chkincs/chkincs-cpp.p/rte_atomic.cpp:1:
+> buildtools/chkincs/staging/rte_stdatomic.h:30:9: error: =E2=80=98memory_o=
+rder=E2=80=99 does not name a type
+>    30 | typedef memory_order rte_memory_order;
+>       |         ^~~~~~~~~~~~
+>=20
+> The cause is differences in atomics in C (C11) and C++ (e.g. C++17 as
+> supported by current GCC). As explained by AI analysis:
+>=20
+>    _Atomic(T) is a C11 feature. In C++ mode, GCC 15 does not support it
+>    as a type specifier, and <stdatomic.h> in C++17 doesn't expose
+>    memory_order in the global namespace (that's only in C++23). DPDK
+>    headers also use _Atomic in anonymous unions and under extern "C",
+>    which are incompatible with C++'s std::atomic<T> mapping.
+>=20
+> To fix this in a resilient manner we need to go from two blocks in
+> rte_atomic.h to three. We have the existing non-standard/builtin
+> atomics path, but the standard atomic path now needs to be split into C
+> compatible and C++ compatible blocks. This fixes the build issues with
+> C++ while keeping existing C builds unchanged.
+>=20
+> Bugzilla ID: 1985
+> Fixes: 5c381a3587d1 ("eal: provide stdatomic API")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+
+Applied, thanks.
+
+
+
