@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F93CA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE837CA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:45:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D0F0842F91;
-	Tue, 29 Sep 2026 18:40:36 +0200 (CEST)
-Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
- [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id 3D40842E15
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:59 +0200 (CEST)
-Received: by mail-pz2-f42.google.com with SMTP id
- d2e1a72fcca58-86e6d007703so2064892b3a.0
+	by mails.dpdk.org (Postfix) with ESMTP id BA3E442FA3;
+	Tue, 29 Sep 2026 18:40:37 +0200 (CEST)
+Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com
+ [74.125.228.41]) by mails.dpdk.org (Postfix) with ESMTP id 04CD642E15
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:39:00 +0200 (CEST)
+Received: by mail-pz2-f41.google.com with SMTP id
+ d2e1a72fcca58-85f0fc1fd8eso2201973b3a.1
  for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699938;
- x=1791304738; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699939;
+ x=1791304739; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=E7LdRaVIiOnMmTXoirBvKNaSBDsLcUf7FAS5HHnsk00=;
- b=iJ+e5ZGqSWgSnu2nXevTSUux1bsE/Vy5ZJ91Z7jYwRwNFblrP4BZHNY6NqpLonYjWa
- 91ENe9YA2UQgUgB/uB39f/XzevDLIxbZw/nhcJ7Dg4rFfBaJmodWltmt7UK7y/BBSdIT
- jWBViUzJ8SZK3kgPVQbZ6YdeCHZbhcjdtxiWntHhTcJCz2is6p9CTPLaSwExraTJu+fv
- rpgPPDklKzzXbajGsGMvMZplMTMOPKBDdAMDJXzOo4sWhR+Z6RqLHerqnRmBtzxPXvOS
- qcfRIq6uH/hH98+G8TnF1IiaHzFlxVrOo14HWP3rb0CT6E1NP8TI+SD6YRJRo88Bl87h
- ph/g==
+ bh=sDLiUUnbKLszE9aUjcjOZPUklL30BkbCGxMAPtpFsmg=;
+ b=cKLUUCNtky3BIkRzHDvmbXIIhijRcicYJsOBgox/g46KPjfHbmcga/zjmeUZUgOBAG
+ aobcubhpx8FKr2LWSGaheXgMvKZetPcrZStr0fpnfXI9ZWz19NdtXx8CfdQuzk0EB/Hp
+ lB8+59SW836aScucwU/lqB2ednpxdO6rcOAWxeAp1bVxc5NrhmemOR3o+H0M2y7Iu95v
+ FybJrj65vKvuKYHjroD3lhV0XWU9YnO9MiJB8qpl5p3hZHwvzRjWvzzeUWQfnJ2lDN6y
+ c4gZWWPlBuohB9F+nX3eN3K/rm7qBl1A+eH5ot2LtppiYRwypfgbssHS2wmUOYAombbF
+ wVUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790699938; x=1791304738;
+ d=1e100.net; s=20260707; t=1790699939; x=1791304739;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=E7LdRaVIiOnMmTXoirBvKNaSBDsLcUf7FAS5HHnsk00=;
- b=QWMpv6/a/KBlpMDrTn00Pk1etuE3FymfFj3jiBCpLMpliffdVCx02aHpSal/AB4fyu
- 7zSLTCT4mdBmtNST1o9GfKh/Pa48CAfWooC+GrUQHHux+PVaZKUKq2Le115hvwnJvTKQ
- bzE4TGerHP8VWA7lBxK98AzN4GHyu2paQYfEjqlysLh6HjLEBa1P9zirVcWlQbIqvS4m
- Zn5IJH1HhOYYlnh38Luif3VeE3b9YEnuVTK/b/u/9RLzL7TpfKVQ1dzIVn/rKYrJFXXX
- gfjKjZV7Kspe2QBEXXkJyj6ibNnrJlx1Wq0sTF+9Xaexm8sL1ks0A9SaUBwEmDcwXCSx
- Cnag==
-X-Gm-Message-State: AFuF++kjkV195vKaCjWTqSP0mf3JduWM3nZwqNzZCkpuhlBWPc4yBdaW
- lM2uxSrNMqqCpeYmpU16zUEuedpJXIj6Q7MhjmjKoZSpKGUckHMQapQzPmTDPbk8uJq4Y2GGJho
- VIJmuf69dhg==
-X-Gm-Gg: AYBFou03JDe+eKlmmFzM6spcsr0ojPm283gpBWFeGwTLZ+syO/9EkWPzZTP66dmwBcO
- rSPsiEtRki7Z/CQhvqp4A67cTe9yIVc0rnWRtXyXzv1JpFvWTJyUNqc4aPLNA3r8kxI+UJPIH5i
- GWl/HoiS2OAR8martkrbsnr/AH4eeMGJDXvAWXwIuwar+ykuveNMgs37+bb1kFJ2SeC/7tW3G8s
- JTjHfErTZ+m13aCuZQxbUEV4xVs+37xmnURVkOsbGSCfrcM189MSOaMJ3rrR9C0TTXLskuUjqBd
- WjiImxWRm/cro8+BhDsSvY0cTIVqlllr7wLS+1+OK7aHrbP5z8CbV6VeBjN/ybBeV5CRZaZlrEQ
- 8mQjt8Z+vq3x3KiE5+96rAPcH6myf57aOrgyccdZ7R8YWI6SSsDGUiCgX+OqdW/uKlxB2YBTgzj
- 0yooIV8PT87f2Gk2KQM11cuZsyjzIMdpSuQRHAdwFjfOLzLZf1JoEYbSEzkV1LZcN4KAFQKtAZ8
- yd3aWmY1GqlFJdYpN06NdwQykDkp3c2UOvVan49lQA+iFUL
-X-Received: by 2002:a05:6a00:c4cd:b0:880:6b49:2051 with SMTP id
- d2e1a72fcca58-8806b49257emr6367984b3a.35.1790699938342; 
- Tue, 29 Sep 2026 09:38:58 -0700 (PDT)
+ bh=sDLiUUnbKLszE9aUjcjOZPUklL30BkbCGxMAPtpFsmg=;
+ b=Z1GkB2YwL94aek88PNSuQ82Pi4I5X+pSuXjlDDQ++55nRv2BL+ylYq630UHQE6tZZq
+ 8mvnSS5h2zcuiP/0uqmnEGXpmWewR2ZCCe5n7UeWC6JPlUdiD23peY9GCZ/rsEAPMI0Z
+ uD6kD+9xjmRCFgk31/k1Nar/Ooo8u3zGAm9l5FvLewv7rdeGfx2g2RLnTM/A2svS47j3
+ /j/tMWpLebnya2QFQdaP3oKrxzR9s/Ybp7oJCECE+22mPw4sCVrlxeDtJ5s6pXTpnu5q
+ /YpnYWd6iV8TxYPBLksfM/a2s/R7GlQ6uHW4ymAVBWb42WD0b4R0W8INr5iPXpdasSda
+ Xt9A==
+X-Gm-Message-State: AFuF++lD1Cp4bcis9cWv03SeUbPAaPUxHNnhCtdvrtYLaIpPKQ446YOQ
+ wAPzZhiS/tD48+jmeY8rtXSa89gVu75/3HCq2fCUdloMcIa5+Nw0wEbigtCN1Tb9gUsuRe00gi3
+ 7G5gVwTrf4w==
+X-Gm-Gg: AYBFou2d/7sD56fUepPs46p2MaA88048iETn/mqQ38bOmuO2wn1vQ+E7clxrL5DEU/y
+ 6YFJatDJoQ5BT9gkS/NbcUqge95Q5dN4Fu3zjyr4bZzM0HVMMHsKRm7QgeVJ9MbG8aokOAxXHkl
+ KGli5lFsHr4lD6VP5b9+71xLW7ShyxcrmDjRAIUhDtX2wtk6LQc6IKzPA2NCOjhEidsDp+16kT7
+ IuN5FlcYcILSUTowuGnFIe+hVBoQOECuC88iB6Ihr9uat5u36m6xjTtIeYa4j0aUjlW/J6qD5Q1
+ 6HJvsGM9RF5XFQLNaeies0Tz9ZLIUMxQ84eJOugIj9EtbzFjafJBXn1+erjFT9bSDmO3zIo4E4d
+ qt3OcJgZMgNPtTws1u0nX4XlJ7BpvPggPYgeb8+CJa+dVrWSGw6Z4LWX15x765tXNXQwEDqJYaw
+ tX6Mew18a5+50/8DCDIXYI6v/tyk9KHxou8hAPgRxPkyeVBGnDjbLyxq9rhFe7jbjZVVnCgeCXC
+ CjZKRKgY1gMxokWH7ePsUsmlcMaGhW+rMC81r21Beux3O/v
+X-Received: by 2002:a05:6a21:328b:b0:3dd:ebf7:a21e with SMTP id
+ adf61e73a8af0-3de0e7f02ffmr16363847637.35.1790699939133; 
+ Tue, 29 Sep 2026 09:38:59 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.57
+ d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:38:57 -0700 (PDT)
+ Tue, 29 Sep 2026 09:38:58 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jay Zhou <jianjay.zhou@huawei.com>
-Subject: [PATCH v2 57/61] crypto/virtio: use kvargs numeric helpers
-Date: Tue, 29 Sep 2026 09:37:00 -0700
-Message-ID: <20260929163800.1108305-58-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v2 58/61] net/ice: use kvargs hex helper for debug mask
+Date: Tue, 29 Sep 2026 09:37:01 -0700
+Message-ID: <20260929163800.1108305-59-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929163800.1108305-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -83,62 +84,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-get_integer_arg() never checks the end pointer and returns -errno, so a
-malformed value such as "abc" leaves errno untouched, converts to zero
-and is reported as success. It also used base 0, so a leading zero
-silently selected octal.
+parse_u64() checks errno but not the end pointer, so "hw_debug_mask=junk"
+is silently accepted as zero, and a trailing-garbage value such as
+"0x80zz" is taken as 0x80.
+
+The value is documented as a hexadecimal mask, so use
+rte_kvargs_handle_hex64(), which reads it as hexadecimal with or without
+a 0x prefix and validates the whole string. The documented form
+"hw_debug_mask=0x80" is unchanged, and so is a bare "80".
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/crypto/virtio/virtio_user_cryptodev.c | 21 ++-----------------
- 1 file changed, 2 insertions(+), 19 deletions(-)
+ drivers/net/intel/ice/ice_ethdev.c | 21 +--------------------
+ 1 file changed, 1 insertion(+), 20 deletions(-)
 
-diff --git a/drivers/crypto/virtio/virtio_user_cryptodev.c b/drivers/crypto/virtio/virtio_user_cryptodev.c
-index 4daa188e1d..9844debeaf 100644
---- a/drivers/crypto/virtio/virtio_user_cryptodev.c
-+++ b/drivers/crypto/virtio/virtio_user_cryptodev.c
-@@ -345,23 +345,6 @@ get_string_arg(const char *key __rte_unused,
- 	return 0;
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index 4c3db27812..a1ed6b5b6f 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -2144,25 +2144,6 @@ ice_base_queue_get(struct ice_pf *pf)
+ 	}
  }
  
 -static int
--get_integer_arg(const char *key __rte_unused,
--		const char *value, void *extra_args)
+-parse_u64(const char *key, const char *value, void *args)
 -{
--	uint64_t integer = 0;
--	if (!value || !extra_args)
--		return -EINVAL;
+-	u64 *num = (u64 *)args;
+-	u64 tmp;
+-
 -	errno = 0;
--	integer = strtoull(value, NULL, 0);
--	/* extra_args keeps default value, it should be replaced
--	 * only in case of successful parsing of the 'value' arg
--	 */
--	if (errno == 0)
--		*(uint64_t *)extra_args = integer;
--	return -errno;
+-	tmp = strtoull(value, NULL, 16);
+-	if (errno) {
+-		PMD_DRV_LOG(WARNING, "%s: \"%s\" is not a valid u64",
+-			    key, value);
+-		return -1;
+-	}
+-
+-	*num = tmp;
+-
+-	return 0;
 -}
 -
- static struct rte_cryptodev *
- virtio_user_cryptodev_alloc(struct rte_vdev_device *vdev)
+ static int
+ parse_tx_sched_levels(const char *key, const char *value, void *args)
  {
-@@ -432,7 +415,7 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
+@@ -2427,7 +2408,7 @@ static int ice_parse_devargs(struct rte_eth_dev *dev)
+ 		goto bail;
  
- 	if (rte_kvargs_count(kvlist, VIRTIO_USER_ARG_QUEUES_NUM) == 1) {
- 		if (rte_kvargs_process(kvlist, VIRTIO_USER_ARG_QUEUES_NUM,
--					&get_integer_arg, &queues) < 0) {
-+					rte_kvargs_handle_u64, &queues) < 0) {
- 			PMD_INIT_LOG(ERR, "error to parse %s",
- 					VIRTIO_USER_ARG_QUEUES_NUM);
- 			goto end;
-@@ -441,7 +424,7 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
+ 	ret = rte_kvargs_process(kvlist, ICE_HW_DEBUG_MASK_ARG,
+-				 &parse_u64, &ad->hw.debug_mask);
++				 rte_kvargs_handle_hex64, &ad->hw.debug_mask);
+ 	if (ret)
+ 		goto bail;
  
- 	if (rte_kvargs_count(kvlist, VIRTIO_USER_ARG_QUEUE_SIZE) == 1) {
- 		if (rte_kvargs_process(kvlist, VIRTIO_USER_ARG_QUEUE_SIZE,
--					&get_integer_arg, &queue_size) < 0) {
-+					rte_kvargs_handle_u64, &queue_size) < 0) {
- 			PMD_INIT_LOG(ERR, "error to parse %s",
- 					VIRTIO_USER_ARG_QUEUE_SIZE);
- 			goto end;
 -- 
 2.53.0
 
