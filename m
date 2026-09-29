@@ -2,46 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76399CA5FA1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 07:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7972FC9832A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 07:15:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9C880410CF;
-	Tue, 29 Sep 2026 09:08:18 +0200 (CEST)
-Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net
- [178.154.239.81])
- by mails.dpdk.org (Postfix) with ESMTP id 0F4324013F
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:08:13 +0200 (CEST)
-Received: from mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net
- (mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net
- [IPv6:2a02:6b8:c15:290e:0:640:f317:0])
- by forward501a.mail.yandex.net (postfix) with ESMTPS id D3936823A3;
- Tue, 29 Sep 2026 10:08:12 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net (smtp)
- with ESMTPSA id a7cWxixi4iE0-CuuxhF7t; 
- Tue, 29 Sep 2026 10:08:12 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1790665692; bh=p5bR0UJ73tEFxzW2VFg6DX7eBI4y8g7zJOoF7bAhfoc=;
- h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
- b=srcsllALrEu1fVXhHMyapkoSQ4afnSWw0CZ+3kiLJKt1UGQVb0PWclrGtoWmia0hR
- ozYb3NLH5WjIHYFmoUSlkH3IcxzRjweei0KWrV9Lc08tZMKm/fJaGVWepnv96fHEIa
- gDWvY0yUJ8+zJqc9nUVBdh1yuUAlbJx1DMlyBc6I=
-Authentication-Results: mail-nwsmtp-smtp-production-main-94.vla.yp-c.yandex.net;
- dkim=pass header.i=@yandex.ru
-From: Roman Khromenok <roma55592@yandex.ru>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v3 6/6] test: add ethdev module EEPROM decoding tests
-Date: Tue, 29 Sep 2026 09:07:34 +0200
-Message-ID: <20260929070734.1106134-7-roma55592@yandex.ru>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260929070734.1106134-1-roma55592@yandex.ru>
-References: <20260927112041.775972-1-roma55592@yandex.ru>
- <20260929070734.1106134-1-roma55592@yandex.ru>
+	by mails.dpdk.org (Postfix) with ESMTP id 6559040276;
+	Tue, 29 Sep 2026 09:15:32 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 5E9DF4013F
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:15:31 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 25977201FB;
+ Tue, 29 Sep 2026 09:15:31 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v3 1/1] mbuf: add optional no-copy dynamic field storage
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Tue, 29 Sep 2026 09:15:28 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A85@smartserver.smartshare.dk>
+In-Reply-To: <179061941387.2.13690688541375502570.v3-0001-mbuf-add-optional-no-copy-dynamic-field-storage.patch@cisco.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v3 1/1] mbuf: add optional no-copy dynamic field storage
+Thread-Index: Ad1PdY6uF3j+gB3jTKCgIJowS5sduwAarEQQ
+References: <179036466858.2.13982499480648014088.v2-0000-cover-letter.patch@cisco.com>
+ <179061941387.2.17741463412422386825.v3-0000-cover-letter.patch@cisco.com>
+ <179061941387.2.13690688541375502570.v3-0001-mbuf-add-optional-no-copy-dynamic-field-storage.patch@cisco.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Randy L Tice" <rtice@cisco.com>,
+	<dev@dpdk.org>
+Cc: "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Harman Kalra" <hkalra@marvell.com>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,380 +51,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add unit tests for rte_eth_module_eeprom_parse().
-
-The tests decode SFF-8079, SFF-8472 and SFF-8636 EEPROM images
-built in the test and check the identification and diagnostic fields.
-They also check that:
-- the SFF-8472 diagnostics are skipped when page A2h is not complete,
-- the SFF-8472 external calibration is applied when the data
-  is not 4-byte aligned,
-- the SFF-8636 thresholds are decoded only when page 03h is provided.
-Invalid parameters, too short data and unknown module types
-must be rejected without invoking the callback.
-
-Signed-off-by: Roman Khromenok <roma55592@yandex.ru>
----
-v3: add SFF-8636 page 03h and unaligned external calibration cases,
-    rename test to ethdev_module_eeprom_autotest
-
- app/test/meson.build                 |   1 +
- app/test/test_ethdev_module_eeprom.c | 334 +++++++++++++++++++++++++++
- 2 files changed, 335 insertions(+)
- create mode 100644 app/test/test_ethdev_module_eeprom.c
-
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 9dcdb069e8..c6a808d63d 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -74,6 +74,7 @@ source_file_deps = {
-     'test_errno.c': [],
-     'test_ethdev_api.c': ['ethdev'],
-     'test_ethdev_link.c': ['ethdev'],
-+    'test_ethdev_module_eeprom.c': ['ethdev'],
-     'test_event_crypto_adapter.c': ['cryptodev', 'eventdev', 'bus_vdev'],
-     'test_event_dma_adapter.c': ['dmadev', 'eventdev', 'bus_vdev'],
-     'test_event_eth_rx_adapter.c': ['ethdev', 'eventdev', 'bus_vdev'],
-diff --git a/app/test/test_ethdev_module_eeprom.c b/app/test/test_ethdev_module_eeprom.c
-new file mode 100644
-index 0000000000..d76bdc0060
---- /dev/null
-+++ b/app/test/test_ethdev_module_eeprom.c
-@@ -0,0 +1,334 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Roman Khromenok
-+ */
-+
-+#include <errno.h>
-+#include <stdalign.h>
-+#include <stdio.h>
-+#include <string.h>
-+
-+#include <rte_common.h>
-+#include <rte_ethdev.h>
-+#include <rte_string_fns.h>
-+
-+#include "test.h"
-+
-+#define MAX_FIELDS 128
-+#define MAX_NAME_LEN 64
-+#define MAX_VALUE_LEN 128
-+
-+struct decoded_fields {
-+	unsigned int count;
-+	struct {
-+		char name[MAX_NAME_LEN];
-+		char value[MAX_VALUE_LEN];
-+	} field[MAX_FIELDS];
-+};
-+
-+static struct decoded_fields fields;
-+
-+static void
-+collect_field(const char *name, const char *value, void *arg)
-+{
-+	struct decoded_fields *f = arg;
-+
-+	if (f->count >= MAX_FIELDS)
-+		return;
-+	strlcpy(f->field[f->count].name, name, MAX_NAME_LEN);
-+	strlcpy(f->field[f->count].value, value, MAX_VALUE_LEN);
-+	f->count++;
-+}
-+
-+static const char *
-+find_field(const char *name)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < fields.count; i++)
-+		if (strcmp(fields.field[i].name, name) == 0)
-+			return fields.field[i].value;
-+	return NULL;
-+}
-+
-+static int
-+parse(uint32_t type, const uint8_t *data, uint32_t length)
-+{
-+	memset(&fields, 0, sizeof(fields));
-+	return rte_eth_module_eeprom_parse(type, data, length, collect_field, &fields);
-+}
-+
-+#define CHECK_FIELD(name, expected) do { \
-+	const char *value = find_field(name); \
-+	TEST_ASSERT_NOT_NULL(value, "Field \"%s\" not found", name); \
-+	TEST_ASSERT(strcmp(value, expected) == 0, \
-+		"Field \"%s\": expected \"%s\", got \"%s\"", name, expected, value); \
-+} while (0)
-+
-+#define CHECK_NO_FIELD(name) \
-+	TEST_ASSERT_NULL(find_field(name), "Unexpected field \"%s\"", name)
-+
-+static void
-+put_u16(uint8_t *data, unsigned int offset, uint16_t value)
-+{
-+	data[offset] = value >> 8;
-+	data[offset + 1] = value & 0xff;
-+}
-+
-+/* SFP+ 10GBASE-LR module, SFF-8472 layout: page A0h then page A2h */
-+static void
-+fill_sfp(uint8_t *data)
-+{
-+	uint8_t *a2 = data + RTE_ETH_MODULE_SFF_8079_LEN;
-+
-+	memset(data, 0, RTE_ETH_MODULE_SFF_8472_LEN);
-+	data[0] = 0x03;		/* identifier: SFP */
-+	data[1] = 0x04;		/* extended identifier */
-+	data[2] = 0x07;		/* connector: LC */
-+	data[3] = 0x20;		/* 10G Base-LR */
-+	data[11] = 0x06;	/* encoding: 64B/66B */
-+	data[12] = 103;		/* nominal bit rate, units of 100 MBd */
-+	memcpy(&data[20], "STARRY          ", 16);
-+	data[37] = 0x00;
-+	data[38] = 0x1b;
-+	data[39] = 0x21;
-+	memcpy(&data[40], "SFP-10G-LR-20   ", 16);
-+	memcpy(&data[56], "A   ", 4);
-+	memcpy(&data[68], "2024082600001   ", 16);
-+	memcpy(&data[84], "240902  ", 8);
-+	/* diagnostics implemented, internally calibrated, average RX power */
-+	data[92] = 0x68;
-+
-+	put_u16(a2, 96, 0x2940);	/* temperature: 41.25 C */
-+	put_u16(a2, 98, 33205);		/* voltage: 3.3205 V */
-+	put_u16(a2, 100, 19790);	/* TX bias: 39.580 mA */
-+	put_u16(a2, 102, 7754);		/* TX power: 0.7754 mW */
-+	put_u16(a2, 104, 6724);		/* RX power: 0.6724 mW */
-+}
-+
-+/* QSFP28 module, SFF-8636 layout: lower page then upper page 00h */
-+static void
-+fill_qsfp(uint8_t *data)
-+{
-+	memset(data, 0, RTE_ETH_MODULE_SFF_8636_LEN);
-+	data[0] = 0x11;		/* identifier: QSFP28 */
-+	put_u16(data, 22, 0x3040);	/* temperature: 48.25 C */
-+	put_u16(data, 26, 32638);	/* voltage: 3.2638 V */
-+	put_u16(data, 34, 1);		/* channel 1 RX power: 0.0001 mW */
-+	put_u16(data, 42, 21525);	/* channel 1 TX bias: 43.050 mA */
-+	put_u16(data, 50, 12763);	/* channel 1 TX power: 1.2763 mW */
-+
-+	data[128] = 0x11;	/* identifier: QSFP28 */
-+	data[130] = 0x07;	/* connector: LC */
-+	memcpy(&data[148], "FINISAR CORP.   ", 16);
-+	data[165] = 0x00;
-+	data[166] = 0x90;
-+	data[167] = 0x65;
-+	memcpy(&data[168], "FTLC1157RGPL6-FB", 16);
-+	memcpy(&data[184], "A0", 2);
-+	memcpy(&data[196], "X24A15P         ", 16);
-+	memcpy(&data[212], "190826  ", 8);
-+	data[220] = 0x08;	/* average RX power */
-+}
-+
-+static int
-+check_sfp_identity(void)
-+{
-+	CHECK_FIELD("Identifier", "0x03 (SFP)");
-+	CHECK_FIELD("Connector", "0x07 (LC)");
-+	CHECK_FIELD("Vendor name", "STARRY");
-+	CHECK_FIELD("Vendor OUI", "00:1b:21");
-+	CHECK_FIELD("Vendor PN", "SFP-10G-LR-20");
-+	CHECK_FIELD("Vendor rev", "A");
-+	CHECK_FIELD("Vendor SN", "2024082600001");
-+	CHECK_FIELD("Date code", "240902");
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_module_eeprom_sfp_8079(void)
-+{
-+	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
-+
-+	fill_sfp(data);
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8079, data, RTE_ETH_MODULE_SFF_8079_LEN),
-+		"Failed to parse SFF-8079 data");
-+	TEST_ASSERT_SUCCESS(check_sfp_identity(), "Wrong SFF-8079 base information");
-+	CHECK_NO_FIELD("Optical diagnostics support");
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_module_eeprom_sfp_8472(void)
-+{
-+	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
-+
-+	fill_sfp(data);
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+		"Failed to parse SFF-8472 data");
-+	TEST_ASSERT_SUCCESS(check_sfp_identity(), "Wrong SFF-8472 base information");
-+	CHECK_FIELD("Optical diagnostics support", "Yes");
-+	CHECK_FIELD("Laser bias current", "39.580 mA");
-+	CHECK_FIELD("Laser output power", "0.7754 mW / -1.10 dBm");
-+	CHECK_FIELD("Receiver signal average optical power", "0.6724 mW / -1.72 dBm");
-+	CHECK_FIELD("Module temperature", "41.25 degrees C / 106.25 degrees F");
-+	CHECK_FIELD("Module voltage", "3.3205 V");
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_module_eeprom_sfp_8472_short(void)
-+{
-+	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
-+	const uint32_t lengths[] = {
-+		RTE_ETH_MODULE_SFF_8079_LEN,
-+		RTE_ETH_MODULE_SFF_8472_LEN - 1,
-+	};
-+	unsigned int i;
-+
-+	fill_sfp(data);
-+	for (i = 0; i < RTE_DIM(lengths); i++) {
-+		TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, lengths[i]),
-+			"Failed to parse SFF-8472 data of %u bytes", lengths[i]);
-+		TEST_ASSERT_SUCCESS(check_sfp_identity(),
-+			"Wrong SFF-8472 base information from %u bytes", lengths[i]);
-+		/* page A2h is not complete, diagnostics must be skipped */
-+		CHECK_NO_FIELD("Optical diagnostics support");
-+		CHECK_NO_FIELD("Laser bias current");
-+	}
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_module_eeprom_qsfp_8636(void)
-+{
-+	uint8_t data[RTE_ETH_MODULE_SFF_8636_LEN];
-+
-+	fill_qsfp(data);
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+		"Failed to parse SFF-8636 data");
-+	CHECK_FIELD("Identifier", "0x11 (QSFP28)");
-+	CHECK_FIELD("Connector", "0x07 (LC)");
-+	CHECK_FIELD("Vendor name", "FINISAR CORP.");
-+	CHECK_FIELD("Vendor OUI", "00:90:65");
-+	CHECK_FIELD("Vendor PN", "FTLC1157RGPL6-FB");
-+	CHECK_FIELD("Vendor rev", "A0");
-+	CHECK_FIELD("Vendor SN", "X24A15P");
-+	CHECK_FIELD("Module temperature", "48.25 degrees C / 118.85 degrees F");
-+	CHECK_FIELD("Module voltage", "3.2638 V");
-+	/* page 03h is not provided */
-+	CHECK_FIELD("Alarm/warning flags implemented", "No");
-+	CHECK_FIELD("Laser tx bias current (Channel 1)", "43.050 mA");
-+	CHECK_FIELD("Transmit avg optical power (Channel 1)", "1.2763 mW / 1.06 dBm");
-+	CHECK_FIELD("Rcvr signal avg optical power(Channel 1)", "0.0001 mW / -40.00 dBm");
-+	CHECK_NO_FIELD("Module temperature high alarm threshold");
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_module_eeprom_qsfp_8636_thresholds(void)
-+{
-+	uint8_t data[RTE_ETH_MODULE_SFF_8636_MAX_LEN];
-+
-+	memset(data, 0, sizeof(data));
-+	/* paging is supported (flat memory bit is clear), page 03h is at 0x200 */
-+	fill_qsfp(data);
-+	put_u16(data, 0x200, 0x5000);	/* temperature high alarm: 80 C */
-+
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+		"Failed to parse SFF-8636 data with page 03h");
-+	CHECK_FIELD("Vendor name", "FINISAR CORP.");
-+	CHECK_FIELD("Alarm/warning flags implemented", "Yes");
-+	CHECK_FIELD("Module temperature high alarm threshold",
-+		"80.00 degrees C / 176.00 degrees F");
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_module_eeprom_sfp_8472_ext_cal_unaligned(void)
-+{
-+	/* the SFF-8472 calibration floats must be readable from any address */
-+	uint8_t alignas(8) buf[RTE_ETH_MODULE_SFF_8472_LEN + 1];
-+	uint8_t *data = buf + 1;
-+	uint8_t *a2 = data + RTE_ETH_MODULE_SFF_8079_LEN;
-+	const uint8_t two[4] = { 0x40, 0x00, 0x00, 0x00 };	/* 2.0f big endian */
-+
-+	fill_sfp(data);
-+	/* diagnostics implemented, externally calibrated, average RX power */
-+	data[92] = 0x58;
-+	/* unit slopes, zero offsets, RX power multiplied by RX_PWR(1) */
-+	a2[76] = 1;	/* TX bias slope */
-+	a2[80] = 1;	/* TX power slope */
-+	a2[84] = 1;	/* temperature slope */
-+	a2[88] = 1;	/* voltage slope */
-+	memcpy(&a2[68], two, sizeof(two));
-+
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, RTE_ETH_MODULE_SFF_8472_LEN),
-+		"Failed to parse externally calibrated SFF-8472 data");
-+	CHECK_FIELD("Laser bias current", "39.580 mA");
-+	CHECK_FIELD("Receiver signal average optical power", "1.3448 mW / 1.29 dBm");
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_module_eeprom_invalid(void)
-+{
-+	uint8_t data[RTE_ETH_MODULE_SFF_8636_MAX_LEN] = {0};
-+	const uint32_t types[] = {
-+		RTE_ETH_MODULE_SFF_8079,
-+		RTE_ETH_MODULE_SFF_8472,
-+		RTE_ETH_MODULE_SFF_8436,
-+		RTE_ETH_MODULE_SFF_8636,
-+	};
-+	unsigned int i;
-+	int ret;
-+
-+	/* all supported types require at least one full page */
-+	for (i = 0; i < RTE_DIM(types); i++) {
-+		ret = parse(types[i], data, 255);
-+		TEST_ASSERT_EQUAL(ret, -EINVAL,
-+			"Type %u with 255 bytes: expected %d, got %d", types[i], -EINVAL, ret);
-+		TEST_ASSERT_EQUAL(fields.count, 0,
-+			"Type %u with 255 bytes: callback called %u times",
-+			types[i], fields.count);
-+	}
-+
-+	ret = parse(0, data, sizeof(data));
-+	TEST_ASSERT_EQUAL(ret, -ENOTSUP, "Type 0: expected %d, got %d", -ENOTSUP, ret);
-+	ret = parse(RTE_ETH_MODULE_SFF_8436 + 1, data, sizeof(data));
-+	TEST_ASSERT_EQUAL(ret, -ENOTSUP, "Unknown type: expected %d, got %d", -ENOTSUP, ret);
-+	TEST_ASSERT_EQUAL(fields.count, 0, "Unknown type: callback called %u times",
-+		fields.count);
-+
-+	ret = rte_eth_module_eeprom_parse(RTE_ETH_MODULE_SFF_8079, NULL,
-+		RTE_ETH_MODULE_SFF_8079_LEN, collect_field, &fields);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL data: expected %d, got %d", -EINVAL, ret);
-+	ret = rte_eth_module_eeprom_parse(RTE_ETH_MODULE_SFF_8079, data,
-+		RTE_ETH_MODULE_SFF_8079_LEN, NULL, NULL);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL callback: expected %d, got %d", -EINVAL, ret);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static struct unit_test_suite module_eeprom_testsuite = {
-+	.suite_name = "ethdev module EEPROM decoding",
-+	.setup = NULL,
-+	.teardown = NULL,
-+	.unit_test_cases = {
-+		TEST_CASE(test_module_eeprom_sfp_8079),
-+		TEST_CASE(test_module_eeprom_sfp_8472),
-+		TEST_CASE(test_module_eeprom_sfp_8472_short),
-+		TEST_CASE(test_module_eeprom_sfp_8472_ext_cal_unaligned),
-+		TEST_CASE(test_module_eeprom_qsfp_8636),
-+		TEST_CASE(test_module_eeprom_qsfp_8636_thresholds),
-+		TEST_CASE(test_module_eeprom_invalid),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static int
-+test_module_eeprom(void)
-+{
-+	return unit_test_suite_runner(&module_eeprom_testsuite);
-+}
-+
-+REGISTER_FAST_TEST(ethdev_module_eeprom_autotest, NOHUGE_OK, ASAN_OK, test_module_eeprom);
--- 
-2.47.3
-
+WWVzLCB0aGlzIGlzIHRoZSBzb2x1dGlvbiBJIHdhcyBsb29raW5nIGZvci4gVGhhbmsgeW91Lg0K
+DQpOaXRwaWNraW5nLi4uDQoNCkNvdWxkIHlvdSB1c2Ugd2l0aCBhIG1vcmUgbWVhbmluZ2Z1bCBu
+YW1lIHRoYW4gZHluZmllbGQzLCBlLmcuIGR5bmZpZWxkX25jIG9yIGR5bmZpZWxkX25vX2NvcHku
+DQoNCkEgZmV3IG1pbm9yIGNsYXJpZmljYXRpb25zIHN1Z2dlc3RlZCBpbmxpbmUgYmVsb3cuDQoN
+CldpdGggb3Igd2l0aG91dCBzdWdnZXN0ZWQgY2hhbmdlcywNClJldmlld2VkLWJ5OiBNb3J0ZW4g
+QnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KDQoNCj4gLS0tIGEvZG9jL2d1aWRl
+cy9wcm9nX2d1aWRlL21idWZfbGliLnJzdA0KPiArKysgYi9kb2MvZ3VpZGVzL3Byb2dfZ3VpZGUv
+bWJ1Zl9saWIucnN0DQo+IEBAIC0yMzQsNiArMjM0LDE1IEBAIFRoZSBkeW5hbWljIGZpZWxkcyBh
+bmQgZmxhZ3MgYXJlIG1hbmFnZWQgd2l0aCB0aGUNCj4gZnVuY3Rpb25zIGBgcnRlX21idWZfZHlu
+KmBgLg0KPiANCj4gIEl0IGlzIG5vdCBwb3NzaWJsZSB0byB1bnJlZ2lzdGVyIGZpZWxkcyBvciBm
+bGFncy4NCj4gDQo+ICtUaGUgYnVpbGQgb3B0aW9uIGBgbWJ1Zl9keW5maWVsZDNfc2l6ZWBgIGNh
+biBhZGQgZXh0cmEgY2FjaGUtbGluZS0NCj4gYWxpZ25lZA0KPiArZHluYW1pYyBmaWVsZCBzdG9y
+YWdlIHRvIGBgc3RydWN0IHJ0ZV9tYnVmYGAuICBUaGlzIGluY3JlYXNlcyBldmVyeQ0KPiBtYnVm
+IGJ5DQoNCiJpbmNyZWFzZXMgZXZlcnkgbWJ1ZiIgLT4gImluY3JlYXNlcyB0aGUgc2l6ZSBvZiBl
+dmVyeSBtYnVmIg0KDQo+ICt0aGUgY29uZmlndXJlZCBhbW91bnQgYW5kIGNoYW5nZXMgdGhlIG1i
+dWYgbGF5b3V0LCBzbyBhcHBsaWNhdGlvbnMgYW5kDQo+ICtzZWNvbmRhcnkgcHJvY2Vzc2VzIG11
+c3QgYmUgYnVpbHQgd2l0aCB0aGUgc2FtZSB2YWx1ZSBhcyB0aGUgcHJpbWFyeQ0KPiBwcm9jZXNz
+Lg0KPiArVGhlIG9wdGlvbiBkZWZhdWx0cyB0byBgYDBgYC4gIFRoZSBleHRyYSBzdG9yYWdlIGlz
+IHJlc2VydmVkIGZvcg0KPiBkeW5hbWljDQo+ICtmaWVsZHMgcmVnaXN0ZXJlZCB3aXRoIGBgUlRF
+X01CVUZfRFlORklFTERfRl9OT19DT1BZYGAuICBUaGVzZSBmaWVsZHMNCj4gYXJlIG5vdA0KPiAr
+Y29waWVkIGJ5IG1idWYgY29weSBhbmQgY2xvbmUgb3BlcmF0aW9ucy4gIER5bmFtaWMgZmllbGRz
+IHJlZ2lzdGVyZWQNCj4gd2l0aG91dA0KPiArdGhpcyBmbGFnIGNvbnRpbnVlIHRvIHVzZSB0aGUg
+ZXhpc3RpbmcgY29waWVkIGR5bmFtaWMtZmllbGQgc3RvcmFnZS4NCj4gKw0KPiAgLi4gX2RpcmVj
+dF9pbmRpcmVjdF9idWZmZXI6DQo+IA0KPiAgRGlyZWN0IGFuZCBJbmRpcmVjdCBCdWZmZXJzDQo+
+IGRpZmYgLS1naXQgYS9kb2MvZ3VpZGVzL3JlbF9ub3Rlcy9yZWxlYXNlXzI2XzExLnJzdA0KPiBi
+L2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMTEucnN0DQo+IGluZGV4IGRlYzk2Y2Ni
+YzcuLmNmZjY4ZDcwMzQgMTAwNjQ0DQo+IC0tLSBhL2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVh
+c2VfMjZfMTEucnN0DQo+ICsrKyBiL2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMTEu
+cnN0DQo+IEBAIC02MCw2ICs2MCwyMiBAQCBOZXcgRmVhdHVyZXMNCj4gICAgQWRkZWQgdGhlIGV4
+cGVyaW1lbnRhbCBgYHJ0ZV9jcHVfc29ja2V0X2lkKClgYCBmdW5jdGlvbg0KPiAgICB0byBtYXAg
+YW4gT1MgbG9naWNhbCBDUFUgSUQgdG8gdGhlIE5VTUEgc29ja2V0IGNvbnRhaW5pbmcgdGhhdCBD
+UFUuDQo+IA0KPiArKiAqKkFkZGVkIG9wdGlvbmFsIGV4dHJhIG1idWYgZHluYW1pYyBmaWVsZCBz
+dG9yYWdlLioqDQo+ICsNCj4gKyAgQWRkZWQgYGBtYnVmX2R5bmZpZWxkM19zaXplYGAgYnVpbGQg
+b3B0aW9uIHRvIGVuYWJsZSBhDQo+ICsgIGNhY2hlLWxpbmUtYWxpZ25lZCBgYGR5bmZpZWxkM2Bg
+IGFyZWEgaW4gYGBzdHJ1Y3QgcnRlX21idWZgYC4NCj4gKyAgVGhlIGNvbmZpZ3VyZWQgc2l6ZSBp
+cyBkZWZpbmVkIGFzIGBgUlRFX01CVUZfRFlORklFTEQzX1NJWkVgYA0KPiArICBpbiBgYHJ0ZV9i
+dWlsZF9jb25maWcuaGBgLg0KPiArICBUaGUgZXh0cmEgc3RvcmFnZSBpcyByZXNlcnZlZCBmb3Ig
+ZHluYW1pYyBmaWVsZHMgcmVnaXN0ZXJlZCB3aXRoDQo+ICsgIGBgUlRFX01CVUZfRFlORklFTERf
+Rl9OT19DT1BZYGAuDQo+ICsgIFRoZXNlIGZpZWxkcyBhcmUgbm90IGNvcGllZCBieSBnZW5lcmlj
+IG1idWYgY29weSBhbmQgY2xvbmUNCj4gb3BlcmF0aW9ucy4NCj4gKyAgRHluYW1pYyBmaWVsZHMg
+cmVnaXN0ZXJlZCB3aXRob3V0IHRoaXMgZmxhZyBjb250aW51ZSB0byB1c2UgdGhlDQo+IGV4aXN0
+aW5nDQo+ICsgIGNvcGllZCBkeW5hbWljLWZpZWxkIHN0b3JhZ2UuDQo+ICsgIEFwcGxpY2F0aW9u
+cyBhbmQgc2Vjb25kYXJ5IHByb2Nlc3NlcyBtdXN0IGJlIGJ1aWx0IHdpdGggdGhlIHNhbWUNCj4g
+KyAgbm9uLXplcm8gdmFsdWUgYXMgdGhlIHByaW1hcnkgcHJvY2Vzcy4NCg0KIndpdGggdGhlIHNh
+bWUgbm9uLXplcm8gdmFsdWUiIC0+IndpdGggdGhlIHNhbWUgdmFsdWUiDQoNCg0KPiAtLS0gYS9t
+ZXNvbl9vcHRpb25zLnR4dA0KPiArKysgYi9tZXNvbl9vcHRpb25zLnR4dA0KPiBAQCAtNDQsNiAr
+NDQsOCBAQCBvcHRpb24oJ21heF9udW1hX25vZGVzJywgdHlwZTogJ3N0cmluZycsIHZhbHVlOg0K
+PiAnZGVmYXVsdCcsIGRlc2NyaXB0aW9uOg0KPiAgICAgICAgICdTZXQgdGhlIGhpZ2hlc3QgTlVN
+QSBub2RlIHN1cHBvcnRlZCBieSBFQUw7ICJkZWZhdWx0IiBpcw0KPiBkaWZmZXJlbnQgcGVyLWFy
+Y2gsICJkZXRlY3QiIGRldGVjdHMgdGhlIGhpZ2hlc3QgTlVNQSBub2RlIG9uIHRoZSBidWlsZA0K
+PiBtYWNoaW5lLicpDQo+ICBvcHRpb24oJ2VuYWJsZV9pb3ZhX2FzX3BhJywgdHlwZTogJ2Jvb2xl
+YW4nLCB2YWx1ZTogdHJ1ZSwgZGVzY3JpcHRpb246DQo+ICAgICAgICAgJ1N1cHBvcnQgdGhlIHVz
+ZSBvZiBwaHlzaWNhbCBhZGRyZXNzZXMgZm9yIElPIGFkZHJlc3Nlcywgc3VjaA0KPiBhcyB1c2Vk
+IGJ5IFVJTyBvciBWRklPIGluIG5vLUlPTU1VIG1vZGUuIFdoZW4gZGlzYWJsZWQsIERQREsgY2Fu
+IG9ubHkNCj4gcnVuIHdpdGggSU9NTVUgc3VwcG9ydCBmb3IgYWRkcmVzcyBtYXBwaW5ncywgYnV0
+IHdpbGwgaGF2ZSBtb3JlIHNwYWNlDQo+IGF2YWlsYWJsZSBpbiB0aGUgbWJ1ZiBzdHJ1Y3R1cmUu
+JykNCj4gK29wdGlvbignbWJ1Zl9keW5maWVsZDNfc2l6ZScsIHR5cGU6ICdpbnRlZ2VyJywgbWlu
+OiAwLCB2YWx1ZTogMCwNCj4gZGVzY3JpcHRpb246DQo+ICsgICAgICAgJ1NpemUgb2Ygb3B0aW9u
+YWwgZXh0cmEgbWJ1ZiBkeW5hbWljIGZpZWxkIGFyZWEsIGluIGJ5dGVzLicpDQoNClRoZSBkZXNj
+cmlwdGlvbiBvZiB0aGlzIG9wdGlvbiBzaG91bGQgbWVudGlvbiB0aGF0IHRoZSBhcmVhIGlzIGZv
+ciBtYnVmIGR5bmFtaWMgZmllbGRzIHdpdGggdGhlIG5vLWNvcHkgcHJvcGVydHkuDQoNCj4gIG9w
+dGlvbignbWJ1Zl9yZWZjbnRfYXRvbWljJywgdHlwZTogJ2Jvb2xlYW4nLCB2YWx1ZTogdHJ1ZSwN
+Cj4gZGVzY3JpcHRpb246DQo+ICAgICAgICAgJ0F0b21pY2FsbHkgYWNjZXNzIHRoZSBtYnVmIHJl
+ZmNudC4nKQ0KPiAgb3B0aW9uKCdwbGF0Zm9ybScsIHR5cGU6ICdzdHJpbmcnLCB2YWx1ZTogJ25h
+dGl2ZScsIGRlc2NyaXB0aW9uOg0KPiAtLQ0KPiAyLjM1LjYNCg0K
