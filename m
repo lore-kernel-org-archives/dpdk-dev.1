@@ -2,34 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B811CA5FA1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 02:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA5FCA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 03:52:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 18FEB40E44;
-	Tue, 29 Sep 2026 04:49:26 +0200 (CEST)
-Received: from out28-146.mail.aliyun.com (out28-146.mail.aliyun.com
- [115.124.28.146])
- by mails.dpdk.org (Postfix) with ESMTP id D560140276;
- Tue, 29 Sep 2026 04:49:20 +0200 (CEST)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.08256809|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_regular_dialog|0.00233695-0.00128377-0.996379;
- FP=10121802837625672916|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033037071049; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DS; RN=5; RT=5; SR=0; TI=SMTPD_---.jQov9CJ_1790650156; 
+	by mails.dpdk.org (Postfix) with ESMTP id 7441440697;
+	Tue, 29 Sep 2026 05:52:49 +0200 (CEST)
+Received: from out28-125.mail.aliyun.com (out28-125.mail.aliyun.com
+ [115.124.28.125])
+ by mails.dpdk.org (Postfix) with ESMTP id EF9A740285
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 05:52:47 +0200 (CEST)
+X-Alimail-AntiSpam: AC=CONTINUE; BC=0.2070967|-1; CH=green; DM=|CONTINUE|false|;
+ DS=CONTINUE|ham_system_inform|0.00681427-0.00390991-0.989276;
+ FP=9491005054426554072|0|0|0|0|-1|-1|-1; HT=maildocker-contentspam033037031241;
+ MF=dimon.zhao@nebula-matrix.com; NM=1; PH=DS; RN=2; RT=2; SR=0;
+ TI=SMTPD_---.jQwErbc_1790653958; 
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.jQov9CJ_1790650156 cluster:ay29) by smtp.aliyun-inc.com;
- Tue, 29 Sep 2026 10:49:16 +0800
+ fp:SMTPD_---.jQwErbc_1790653958 cluster:ay29) by smtp.aliyun-inc.com;
+ Tue, 29 Sep 2026 11:52:44 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dev@dpdk.org
-Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>, stable@dpdk.org,
- Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v1 1/1] net/nbl: fix incorrect MTU stored in rxmode
-Date: Mon, 28 Sep 2026 19:49:00 -0700
-Message-Id: <20260929024901.125398-2-dimon.zhao@nebula-matrix.com>
+Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+Subject: [PATCH v2 0/1] fix incorrect MTU stored in rxmode
+Date: Mon, 28 Sep 2026 20:52:34 -0700
+Message-Id: <20260929035236.126778-1-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260929024901.125398-1-dimon.zhao@nebula-matrix.com>
-References: <20260929024901.125398-1-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -45,38 +41,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The ethdev layer already updates data->mtu on success, so the
-assignment is unnecessary. Remove it.
+The ethdev layer already updates dev->data->mtu on success.
+After rte_eth_dev_configure(), dev_conf.rxmode.mtu becomes stale
+and should not be modified by mtu_set.
 
-Fixes: 75cdda36a4c5 ("net/nbl: support MTU update")
-Cc: stable@dpdk.org
+Additionally, the original code assigned frame_size (MTU + overhead)
+instead of MTU, confusing frame length with MTU.
 
-Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
----
- drivers/net/nbl/nbl_dev/nbl_dev.c | 3 ---
- 1 file changed, 3 deletions(-)
+Dimon Zhao (1):
+  net/nbl: fix incorrect MTU stored in rxmode
 
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index 320f26619f..bf9e2f4e69 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -757,16 +757,13 @@ int nbl_mtu_set(struct rte_eth_dev *eth_dev, uint16_t mtu)
- 	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
- 	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
- 	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
--	uint32_t frame_size = mtu + NBL_ETH_OVERHEAD;
- 	int ret;
- 
--	/* mtu setting is forbidden if port is start */
- 	if (dev_data->dev_started) {
- 		NBL_LOG(ERR, "port %d must be stopped before configuration", dev_data->port_id);
- 		return -EBUSY;
- 	}
- 
--	dev_data->dev_conf.rxmode.mtu = frame_size;
- 	ret = disp_ops->set_mtu(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), dev_mgt->net_dev->vsi_id, mtu);
- 	if (ret)
- 		return ret;
+ drivers/net/nbl/nbl_dev/nbl_dev.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
 -- 
 2.34.1
 
