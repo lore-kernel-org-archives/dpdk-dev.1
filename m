@@ -2,69 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B093CA5FA7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E2ACA5FA7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:44:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BB97142E52;
-	Tue, 29 Sep 2026 18:40:32 +0200 (CEST)
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com
- [209.85.210.179])
- by mails.dpdk.org (Postfix) with ESMTP id 1247A42EAE
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:45 +0200 (CEST)
-Received: by mail-pf1-f179.google.com with SMTP id
- d2e1a72fcca58-86aecf49833so504855b3a.0
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C4EC142EDD;
+	Tue, 29 Sep 2026 18:40:33 +0200 (CEST)
+Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com
+ [74.125.228.41]) by mails.dpdk.org (Postfix) with ESMTP id 0421642EAF
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:46 +0200 (CEST)
+Received: by mail-pz2-f41.google.com with SMTP id
+ d2e1a72fcca58-85469d249c6so2784719b3a.1
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699924;
- x=1791304724; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699925;
+ x=1791304725; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=uDZhFynSfhLkAONLVWqGEFej7fbq4RxVGv328oBJaMA=;
- b=Mwp34YMIYb265idVVzq23bPkNlDOkuIoCxKGOdt4MUGTKPT/QDbvAq09H8BDQK5YFR
- t+aAZi82r+PBDMOcj6q52193HpBmF4j21NydjZBrxnjIrf7qie0AwuhsqS/ThyB9pxE2
- xbvvDVpjo6NHuBLf14oiYGHxjs/7XMeRI36fDuUNKWdHJ8OAOb5H3eJiu41twE8jSxXt
- ZcTdBvZCzMMmqWiUOnQT0S5MzJwIKWTjuxFt7EbSMYiYuein/7CGTz2geUJv2uAkSlHl
- +7IBvTztq8cKwiYP0U4uVObJI4xPEfvqNvK5VDhhISeqHw5Uo/PVW2JJoZpkBj02V4tv
- H1YA==
+ bh=D574+uCnceRAP6vSmKiTiGViZJS779f1qW3F9bdMGlo=;
+ b=fTy1wtDm+ZiMNPgWKYNctsdo6s53bM7MXS51FLrm9vfa850EYCbMHP8rgdEX2IV1dO
+ OX2aENdJMz6dXmF5VFdseWqrlhbwXWHvak5UOLFA67R73A4s1yetp4bS7rDTBCr06HKX
+ jUxbdu6l/uLocCQe4iDQ+5tIUT762+gNbK14weln36WNBGoQSSlLDh9aUKHWymqqFSV0
+ H6/XkcSNklsqEP3umTttsE63w8GRxT1gTVW4kQKAs8PsIaq+Bhib2HeaQqd5EBaYBUxA
+ wGcyKS7uLhERs0FmgeYHr3Z3Gft2qnk5InOwictgywI5VcoNHZLjx4vJCWPAbCCfG42y
+ 2Uyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790699924; x=1791304724;
+ d=1e100.net; s=20260707; t=1790699925; x=1791304725;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=uDZhFynSfhLkAONLVWqGEFej7fbq4RxVGv328oBJaMA=;
- b=PjwkM9vVvsI8RCPZ2MYyUTjALMJwww778opiUDEpAkYZjeTDLHrC0QKEiYOKjo4L2y
- X8yYX6ZhTNp/ayj7ebc9WtMV8HnXixEgkRA3AH3/cxWWeewWqL1+W4VJWv/Yu3/t9dX0
- 55nvmciTMavDAWo5XUJJphMpiAjaPrf5V7RA672Tb2suUEVhW9wy9F6kIfynaemGGF0a
- yNSehe4ap8YkPIGWq4lyt+uZKi/7/l6Q7yMBLpL+uxMsERWa6/edfhng3r/qXm2w3DPl
- 4Jfs950OD2XFyBGzZA8FZxvuqblt4qDwNtezgC7TOrbd1SN0nQtk/oQhWLKAOLQShAzB
- Zj2Q==
-X-Gm-Message-State: AFuF++m0BzedVh7AwDWBR5QzxEn+cbOwhgUGxiV86knZSAYDYSeBRU6G
- 1d+XE0Bl/NmdCys/WtrgGKsiuAjRtRelJiUTtzJWO1y7YpmGNRxfA3VeyawdWHstOLUOtuMrRut
- jLD1GVjI=
-X-Gm-Gg: AYBFou0SKMBx8imbuG2jFVeokUFcIHhT7GT4XW2iaQTpZugCbak//VROkN5enctMmUV
- zc0//S53+wcmZFZ/2iR8E+m2RVg9Z/yb16GLnUXgGuqtzVQZk3WaO/x+4PNx89nfTVv+hmYv628
- 8gwFWCdJmUicGS5LfA/4lgmPTogpGC+7lWm54teqHAumiqUl7+s1uSMAhFdWwanVk+83E2T0Bfk
- Wh+2fptjFmyn2iMWIwKzlPh0YHGt/JoEq+XUMQgBR5mr7z+AIDpIEi6WEW1VAPrQ1LGAhs+iFkg
- kI3xj8B8oxYrevBXCUfzkaa8SUtP5OncMsJOWYp9hstmlrddvUUutuRA9Iyda6j/2aEGLlGdMsI
- uC6xxMndhPdR3QjjGCThWoCgAsoHctOcTVFTC7ZvVpFMRcPI5cijF2U5GtZ3hhMme1GOdn7ILj9
- v9nfiNLPlzD03ONr9HlrROoDH7o/ovjNtGwUNiaSIP5TvGAxRHqpDXZxebxOZbxqACS0V5KR+Q6
- dvfgAR2D2Y8QVctLd6rI+8dKI0WQEn6Uh4f1g==
-X-Received: by 2002:a05:6a00:ad8a:b0:882:be9:b76c with SMTP id
- d2e1a72fcca58-8855e8996cbmr1848171b3a.3.1790699924088; 
+ bh=D574+uCnceRAP6vSmKiTiGViZJS779f1qW3F9bdMGlo=;
+ b=gXooigyjVohA2qvTm0x9dDct3c60jAmokwydQinTEsMydsPwk0lpIGZFfDeyVV7ZPw
+ IfxyBxz7CYfvHIxnJnSRQ2k0bB/SeKSorXsaaGqfh/QT24g8iViRFxqNxgEikZSTV+FR
+ Q5u/e7qYfyCAemfmMD7GBl0Z7Jvwc5NmYJ0caHdUXMIJdxsML/ZHDUQTTpFX/CNMeTBx
+ HYU0ihtrsw5eikEFElF3mgeYvWBkjOB2oeN0BYTEKrnQWwvw1GIhCs+WAggGIAdiGeOy
+ lk/sMX9IticfW7tHyd0pxk5HFfoBU5S2WzLTbciBKzBaUhs9BZg6NKvVtNaSTUEb1wnM
+ MBFw==
+X-Gm-Message-State: AFuF++nv2Md+WKehXEi3rhSRr8oP4VKBO6dugV7C49loDADrT37zJ3PK
+ iL0a4zQXSPIKe+0Silt88fakLvk6dbTxVZZtELRNGIcEOB/QsC8a2+4xti4Bw2WOA18xaCOg5s4
+ 3xf0MJA4=
+X-Gm-Gg: AYBFou2wuxLdy2huhuPFYycAE5oWkv4m48YuDPLyFR8lzJMoEzXJ42L0eCO1c2wm+sZ
+ 3TPl0vqZao4hWt625P7SJYv7VHMeFHZYEeoYIf/bPMAzw1LSENYpzMyllWpJiWw8mlVMD391uiS
+ gdX5VGiIRsozSaqRADeR2mHhKYoL2rorqzJjcEj7wI69b2ayX/QgPpTxTAo0m8pia8TkMJxvbWS
+ aEjgx14AdkvYiXIGrO6gNFcpNAy4NgUcUWK0blpypk838JHrgnyl6/PxnzLGArQLfRV7ZoBxPEF
+ bRSEyJcEB3ngF5bzBb122IDmGN52Mu5R5v6ioI9AzcstV8LHIgpMZYEwIqm/42poXK5K0A0PbzG
+ VTFddmJai+DOyuqNzJ6x2uj2AykKsZ5CNepCZN2Vl7yIYwJjPXxZEMnbWsM7tUWzG1L9PvjgbWZ
+ ifH9nlemnQhprlc7Ug8EQWA2mgr0I8jnoIJFNkhiMlS7Pn92gpVWt7WbbarLoUWLDTofEZ+yOoA
+ LGYTk/QkCz1be4PT2ahNv8PaLDoYQmED3lb8g==
+X-Received: by 2002:a05:6a00:13a9:b0:882:956c:58e2 with SMTP id
+ d2e1a72fcca58-882956c77b4mr7298677b3a.17.1790699924998; 
  Tue, 29 Sep 2026 09:38:44 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.43
+ d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:38:43 -0700 (PDT)
+ Tue, 29 Sep 2026 09:38:44 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Tirthendu Sarkar <tirthendu.sarkar@intel.com>
-Subject: [PATCH v2 40/61] event/dlb2: use kvargs numeric helpers
-Date: Tue, 29 Sep 2026 09:36:43 -0700
-Message-ID: <20260929163800.1108305-41-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 41/61] net/nfp: use kvargs numeric helpers
+Date: Tue, 29 Sep 2026 09:36:44 -0700
+Message-ID: <20260929163800.1108305-42-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929163800.1108305-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -84,257 +82,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-dlb2_string_to_int() returns -errno on failure, but errno is only
-meaningful when strtol() actually failed; on a plain parse failure it
-returns -0, that is success, with an uninitialised result. The end
-pointer is also only checked after the errno test, so "abc" reaches the
-range check with a value of zero.
+nfp_devarg_handle_int() infers overflow from the result being ULONG_MAX
+rather than checking errno, so the literal value 18446744073709551615 is
+rejected while a genuine overflow of any other value is not detected.
 
-All thirteen dlb2 devargs handlers go through this one function, so
-converting it covers them all.
+Both users of it parse a boolean, so use rte_kvargs_handle_bool() and
+drop the local handler along with the open coded 0/1 check. The
+documented "=0" and "=1" forms still work, and the usual spellings such
+as "on" and "true" are now accepted as well.
 
-set_numa_node() is replaced by rte_kvargs_handle_socket_id(). It used
-"> RTE_MAX_NUMA_NODES", which is off by one and accepted a socket id one
-past the end of the range, so that value is now rejected. The helper
-also rejects a negative socket id other than -1, which is SOCKET_ID_ANY.
-
-The four boolean arguments use rte_kvargs_handle_bool() and their local
-handlers go away: vector_opts_enable, default_ldb_port_allocation,
-enable_cq_weight and use_default_hl.
-
-Beware that this changes what the first three accept. They only ever
-tested for a leading 'y' or 'Y', so "=1" meant false, and any typo
-silently meant false as well. They now take the usual boolean
-spellings, "=1" means true, and anything else is rejected. The
-documented "=<y/Y>" form still works; the examples are updated to the
-more usual "=<0|1>". use_default_hl already treated '0' and 'n' as
-false and everything else as true, so only the rejection of garbage
-is new there.
+The boolean uses rte_kvargs_process_opt(), so that a bare key with no
+value enables the option.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/eventdevs/dlb2.rst |   4 +-
- drivers/event/dlb2/dlb2.c     | 127 ++++------------------------------
- 2 files changed, 14 insertions(+), 117 deletions(-)
+ drivers/net/nfp/nfp_ethdev.c | 36 ++----------------------------------
+ 1 file changed, 2 insertions(+), 34 deletions(-)
 
-diff --git a/doc/guides/eventdevs/dlb2.rst b/doc/guides/eventdevs/dlb2.rst
-index 06841ba312..0966746f4e 100644
---- a/doc/guides/eventdevs/dlb2.rst
-+++ b/doc/guides/eventdevs/dlb2.rst
-@@ -380,7 +380,7 @@ follows
+diff --git a/drivers/net/nfp/nfp_ethdev.c b/drivers/net/nfp/nfp_ethdev.c
+index 2f7ce812e4..2ad1f12e5b 100644
+--- a/drivers/net/nfp/nfp_ethdev.c
++++ b/drivers/net/nfp/nfp_ethdev.c
+@@ -48,28 +48,6 @@ struct nfp_net_init {
+ 	struct nfp_net_hw_priv *hw_priv;
+ };
  
-     .. code-block:: console
- 
--       --allow ea:00.0,vector_opts_enabled=<y/Y>
-+       --allow ea:00.0,vector_opts_enabled=<0|1>
- 
- Maximum CQ Depth
- ~~~~~~~~~~~~~~~~
-@@ -459,7 +459,7 @@ Example command to enable QE Weight feature:
- 
-     .. code-block:: console
- 
--       --allow ea:00.0,enable_cq_weight=<y/Y>
-+       --allow ea:00.0,enable_cq_weight=<0|1>
- 
- Credit Handling Scenario Improvements
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-diff --git a/drivers/event/dlb2/dlb2.c b/drivers/event/dlb2/dlb2.c
-index 084875f1c8..b3eceab094 100644
---- a/drivers/event/dlb2/dlb2.c
-+++ b/drivers/event/dlb2/dlb2.c
-@@ -288,24 +288,15 @@ dlb2_hw_query_resources(struct dlb2_eventdev *dlb2)
- 	return 0;
- }
- 
--#define DLB2_BASE_10 10
+-static int
+-nfp_devarg_handle_int(const char *key,
+-		const char *value,
+-		void *extra_args)
+-{
+-	char *end_ptr;
+-	uint64_t *num = extra_args;
+-
+-	if (value == NULL)
+-		return -EPERM;
+-
+-	*num = strtoul(value, &end_ptr, 10);
+-	if (*num == ULONG_MAX) {
+-		PMD_DRV_LOG(ERR, "%s: '%s' is not a valid param.", key, value);
+-		return -ERANGE;
+-	} else if (value == end_ptr) {
+-		return -EPERM;
+-	}
+-
+-	return 0;
+-}
 -
  static int
- dlb2_string_to_int(int *result, const char *str)
+ nfp_devarg_parse_bool_para(struct rte_kvargs *kvlist,
+ 		const char *key_match,
+@@ -77,7 +55,6 @@ nfp_devarg_parse_bool_para(struct rte_kvargs *kvlist,
  {
--	long ret;
--	char *endptr;
-+	int64_t ret;
+ 	int ret;
+ 	uint32_t count;
+-	uint64_t value;
  
--	if (str == NULL || result == NULL)
-+	if (result == NULL)
+ 	count = rte_kvargs_count(kvlist, key_match);
+ 	if (count == 0)
+@@ -88,20 +65,11 @@ nfp_devarg_parse_bool_para(struct rte_kvargs *kvlist,
+ 		return -EINVAL;
+ 	}
+ 
+-	ret = rte_kvargs_process(kvlist, key_match, &nfp_devarg_handle_int, &value);
++	ret = rte_kvargs_process_opt(kvlist, key_match, rte_kvargs_handle_bool,
++			value_ret);
+ 	if (ret != 0)
  		return -EINVAL;
  
--	errno = 0;
--	ret = strtol(str, &endptr, DLB2_BASE_10);
--	if (errno)
--		return -errno;
+-	if (value == 1) {
+-		*value_ret = true;
+-	} else if (value == 0) {
+-		*value_ret = false;
+-	} else {
+-		PMD_DRV_LOG(ERR, "The param does not work, the format is %s=0/1.",
+-				key_match);
+-		return -EINVAL;
+-	}
 -
--	/* long int and int may be different width for some architectures */
--	if (ret < INT_MIN || ret > INT_MAX || endptr == str)
-+	if (rte_kvargs_to_int(str, INT_MIN, INT_MAX, &ret) < 0)
- 		return -EINVAL;
- 
- 	*result = ret;
-@@ -329,22 +320,6 @@ set_producer_coremask(const char *key __rte_unused,
  	return 0;
  }
  
--static int
--set_numa_node(const char *key __rte_unused, const char *value, void *opaque)
--{
--	int *socket_id = opaque;
--	int ret;
--
--	ret = dlb2_string_to_int(socket_id, value);
--	if (ret < 0)
--		return ret;
--
--	if (*socket_id > RTE_MAX_NUMA_NODES)
--		return -EINVAL;
--	return 0;
--}
--
--
- static int
- set_max_cq_depth(const char *key __rte_unused,
- 		 const char *value,
-@@ -667,84 +642,6 @@ set_default_depth_thresh(const char *key __rte_unused,
- 	return 0;
- }
- 
--static int
--set_vector_opts_enab(const char *key __rte_unused,
--	const char *value,
--	void *opaque)
--{
--	bool *dlb2_vector_opts_enabled = opaque;
--
--	if (value == NULL || opaque == NULL) {
--		DLB2_LOG_ERR("NULL pointer");
--		return -EINVAL;
--	}
--
--	if ((*value == 'y') || (*value == 'Y'))
--		*dlb2_vector_opts_enabled = true;
--	else
--		*dlb2_vector_opts_enabled = false;
--
--	return 0;
--}
--
--static int
--set_default_ldb_port_allocation(const char *key __rte_unused,
--		      const char *value,
--		      void *opaque)
--{
--	bool *default_ldb_port_allocation = opaque;
--
--	if (value == NULL || opaque == NULL) {
--		DLB2_LOG_ERR("NULL pointer");
--		return -EINVAL;
--	}
--
--	if ((*value == 'y') || (*value == 'Y'))
--		*default_ldb_port_allocation = true;
--	else
--		*default_ldb_port_allocation = false;
--
--	return 0;
--}
--
--static int
--set_enable_cq_weight(const char *key __rte_unused,
--		      const char *value,
--		      void *opaque)
--{
--	bool *enable_cq_weight = opaque;
--
--	if (value == NULL || opaque == NULL) {
--		DLB2_LOG_ERR("NULL pointer");
--		return -EINVAL;
--	}
--
--	if ((*value == 'y') || (*value == 'Y'))
--		*enable_cq_weight = true;
--	else
--		*enable_cq_weight = false;
--
--	return 0;
--}
--
--static int set_hl_override(const char *key __rte_unused, const char *value,
--			   void *opaque)
--{
--	bool *default_hl = opaque;
--
--	if (value == NULL || opaque == NULL) {
--		DLB2_LOG_ERR("NULL pointer");
--		return -EINVAL;
--	}
--
--	if ((*value == 'n') || (*value == 'N') || (*value == '0'))
--		*default_hl = false;
--	else
--		*default_hl = true;
--
--	return 0;
--}
--
- static int set_hl_entries(const char *key __rte_unused, const char *value,
- 			  void *opaque)
- {
-@@ -5223,7 +5120,7 @@ dlb2_parse_params(const char *params,
- 				      name);
- 		} else {
- 			int ret = rte_kvargs_process(kvlist, NUMA_NODE_ARG,
--						     set_numa_node,
-+						     rte_kvargs_handle_socket_id,
- 						     &dlb2_args->socket_id);
- 			if (ret != 0) {
- 				DLB2_LOG_ERR("%s: Error parsing numa node parameter",
-@@ -5335,9 +5232,9 @@ dlb2_parse_params(const char *params,
- 				return ret;
- 			}
- 
--			ret = rte_kvargs_process(kvlist,
-+			ret = rte_kvargs_process_opt(kvlist,
- 					DLB2_VECTOR_OPTS_ENAB_ARG,
--					set_vector_opts_enab,
-+					rte_kvargs_handle_bool,
- 					&dlb2_args->vector_opts_enabled);
- 			if (ret != 0) {
- 				DLB2_LOG_ERR("%s: Error parsing vector opts enabled",
-@@ -5403,9 +5300,9 @@ dlb2_parse_params(const char *params,
- 				return ret;
- 			}
- 
--			ret = rte_kvargs_process(kvlist,
-+			ret = rte_kvargs_process_opt(kvlist,
- 						 DLB2_DEFAULT_LDB_PORT_ALLOCATION_ARG,
--						 set_default_ldb_port_allocation,
-+						 rte_kvargs_handle_bool,
- 						 &dlb2_args->default_ldb_port_allocation);
- 			if (ret != 0) {
- 				DLB2_LOG_ERR("%s: Error parsing ldb default port allocation arg",
-@@ -5414,9 +5311,9 @@ dlb2_parse_params(const char *params,
- 				return ret;
- 			}
- 
--			ret = rte_kvargs_process(kvlist,
-+			ret = rte_kvargs_process_opt(kvlist,
- 						 DLB2_ENABLE_CQ_WEIGHT_ARG,
--						 set_enable_cq_weight,
-+						 rte_kvargs_handle_bool,
- 						 &dlb2_args->enable_cq_weight);
- 			if (ret != 0) {
- 				DLB2_LOG_ERR("%s: Error parsing enable_cq_weight arg",
-@@ -5427,8 +5324,8 @@ dlb2_parse_params(const char *params,
- 			if (version == DLB2_HW_V2 && dlb2_args->enable_cq_weight)
- 				DLB2_LOG_INFO("Ignoring 'enable_cq_weight=y'. Only supported for 2.5 HW onwards");
- 
--			ret = rte_kvargs_process(kvlist, DLB2_USE_DEFAULT_HL,
--						 set_hl_override,
-+			ret = rte_kvargs_process_opt(kvlist, DLB2_USE_DEFAULT_HL,
-+						 rte_kvargs_handle_bool,
- 						 &dlb2_args->use_default_hl);
- 			if (ret != 0) {
- 				DLB2_LOG_ERR("%s: Error parsing hl_override arg",
 -- 
 2.53.0
 
