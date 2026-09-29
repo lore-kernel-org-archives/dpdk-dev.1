@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA989CA5FA7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7E1CA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:40:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 63A7E42EB6;
-	Tue, 29 Sep 2026 18:38:46 +0200 (CEST)
-Received: from mail-pz2-f38.google.com (mail-pz2-f38.google.com
- [74.125.228.38]) by mails.dpdk.org (Postfix) with ESMTP id DADBD42E7A
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:25 +0200 (CEST)
-Received: by mail-pz2-f38.google.com with SMTP id
- d2e1a72fcca58-881d9da69b1so990772b3a.0
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 716E742EBD;
+	Tue, 29 Sep 2026 18:38:47 +0200 (CEST)
+Received: from mail-pz2-f37.google.com (mail-pz2-f37.google.com
+ [74.125.228.37]) by mails.dpdk.org (Postfix) with ESMTP id B300D42E76
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:26 +0200 (CEST)
+Received: by mail-pz2-f37.google.com with SMTP id
+ 41be03b00d2f7-cc7cadbe09dso315736a12.2
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699905;
- x=1791304705; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699906;
+ x=1791304706; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=ntlk6dRu/YasPaPpxJ41Z2HuVVycpvoalb/aDaQgxdo=;
- b=zqFviyAWzOPADax1IBuEjxjJelMW79v6kFmmRhAaf4Rl05qIuQOYkz/jdymwlNQ95A
- LRBHkX54iOx4+fLvTBCGp+j0YvJA5HHOqAljCj1bao1q4ZSHgNa4JRxHxelQHdtc2epc
- oOhHQsvz40kI/GBUS7jP6AHVvNvtTZd79ybaP4NoFkXrW5cc7ISevjPMffxV1onN29SD
- lxbnX7sj0tZE/36Uu++ZWowrCoSO6nBOJa+a9NivMYKr/PqZoeT4mQ4fdkFuUqFFEbAB
- fCz8msc8wW4Bh1DQ97tihD73LsVT8MeYahjWKME6ryw5dlVondHuPf3N/Ny+B29DkYJ3
- 2UOQ==
+ bh=uwbTdXrZHHRu5UJRxMdJUVQEUJTKofE3eTpof2vH2Bo=;
+ b=geFaAqc4zXKUrXTBLyJuDjt7oH8Y6er79XBHrJfcs1JsyGkQBAGgyP/OnEHK/HviQT
+ FXc/mxgBaNcI4wAsZlL9eM8QV5/ExkebS/bW5jyllHt4UPZqpoC702nS1BW6cPY58M7O
+ ZDsipPG1izZ/3OFOBmAaf097KaqinBZnjctWD/KZj7KP5VjZ4zZjlHSRumh6hpivpEUA
+ mRqyPMY868JaAbRnRFyhjQDhdXQfh4a6ppCkL1mB6AFv0rzofTk9GHY6DrY1dg8TyBHz
+ POGIuWwS/pSOUXwD1QkvGOJODWc+lQwjNio7GHI9TiIHGBWpT91yoMEyX6jETNk/Dofu
+ hkvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790699905; x=1791304705;
+ d=1e100.net; s=20260707; t=1790699906; x=1791304706;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=ntlk6dRu/YasPaPpxJ41Z2HuVVycpvoalb/aDaQgxdo=;
- b=hJpac0B8xS2IwVqg2s/A6MeH7lo05/ZJpW4rbRFzXMbdKGqzOu0MASJGPpNVYh1jOj
- O5EkrQUbrOSn0e9bvB8BW4CEXSSS6ztEnYEYb7cL/biyT+KX77engXeftjQg8xypY6uB
- RKPETJeLDJSiYZENAQVMyQGPmNJOF0eY26Le8vGrR/c+Q60SdcSIcO9c3jaG2yXNcFNS
- T+MeDn1KRbEAerJi0yZfULxCr69Whsj6VACVmwz8PJUtdAxcSSpsNU259OaqfxMTIAZx
- 2VFsfE7yh1PpOnWtWHgH8HtuWHvi1ekmSCEoD3Ffk570pIRB9rIYvqOPrMmn4b7Mu1wa
- m1kg==
-X-Gm-Message-State: AFuF++mOQZ0Q500otIBcBH80zVcxrzJC6wBzUcxWrZKfV7AEmsYGs4Ha
- oEnWSN2moKYFdUJKTtufrYTyJ9StdSnIt5E8QGAEyUORvZpmBL2zHGNwOH7NJLc4NAVrgQo/aMy
- iZ3LXzCw=
-X-Gm-Gg: AYBFou2zUPFoSa8FgXR2KjHmo3Rmk+zoUrBPtma9UnKjNIszymZVPvebgXqXsrthvct
- tGh3Y6twY1UtycTFygWy0gFBcQ1mAT1EPUZ86CC5Y0CCQqfbj7QzGzN1oLjwIjCZKv9WzjePo+M
- diTMm2kX0sviq/cAtHFiGLTU0EFYfkcmZ9hvOvXmyPDr3I1ZY9GgZwhecvTzOMaW/rDCbGxVGae
- Kj9t/7Xat7LMjCuwqJQuc2upnVy/GNiVdN36T5E9JdjKl3pGxrw6PshmbOPUF3fnqGtq4OqM19y
- cYdn7CnhUUp5TQnieylQr1uvrLzNj+v74rAVIZA6e1Hy1BJTXpi1g6dxoFPTDgmpMGpziRBK9D2
- jPrHRiF4adAwloUq6eK7sK7ZK2YshJni3XCwPJbJGKxOGVYlVoMX/EevWwwITPlRUkIsr4vEmu4
- Hj2KIwnemBt69c9TmNG3yott6o4jQOEMwPxY9AbThwpqiXAz5RoRY37NcizbqUQajDDtv7YDIq7
- hxbXvFrTdBeGnsbEb1N5c+gDFhOMzS53sAEDg==
-X-Received: by 2002:a05:6a00:9283:b0:883:904e:da56 with SMTP id
- d2e1a72fcca58-883905e238amr6135251b3a.36.1790699904971; 
- Tue, 29 Sep 2026 09:38:24 -0700 (PDT)
+ bh=uwbTdXrZHHRu5UJRxMdJUVQEUJTKofE3eTpof2vH2Bo=;
+ b=uWhBYBTgXtYxq+lxUZsjTZaJ9wYqcEJ0KIlGP67eCQOVqEqzSOiWboLRM8BzjrO4H2
+ Uv9zMx6+/dJ+3bgMlWXIUkw5G9vFWtPaT2TH5q+w4Syc84q7CY9VuPm/ko/OAOKLyZch
+ aALkx5ZTk4SKhxBIvGsnUmQjTkUxPq/s79GpjJ5vP3S3f7Vk9JJO+1xjLw9AHJJeZOzE
+ D2jSt+EXbEDje9zl9MbQi/HcSUd5xLtaY4G4EYnFj8EXUTCAebPRnioOmV3M6UunEhs+
+ 54H3OeM6WmVdhSkEUi73rykAaOz9DBIVgS9SFhmM92Ob+aa/bnQjDm+xeaqnxg7cOq2G
+ xNsg==
+X-Gm-Message-State: AFuF++nKEvg/nFNGObcD7zoB0MY0dzOVLWsFy0xMFlPvTPN3+spIMaib
+ vpDn1JB0uKIK20PQKJoskw45ecBrZjL5N6SMLWn+VN+6WLtDa0K9UI1PAZLLiKUZBSVccqvBzDD
+ N2/W1ix4=
+X-Gm-Gg: AYBFou0OiJDLPmnJvzRzVnX3XWYbY643LCGSuvtQFstcsoTDa+HWpM6xGZv5G1NawoI
+ spk0ZIoXYioJg0OomNaKHwEWYtsU7PQL02aHXtBBKpRhnOZV0Ds+KjJbGlrJPUaEvtJogZHzN+j
+ jHkgCEQzP+R3/9k5CHViT/nXcTFQFndpXQwu3CVuc2sdAtAX3RcaeyTk7aNfWIZyXWLFfojMpKu
+ nQJYPIcE0t5PR5qYzOlgH5loHs/lUdeFMedMdxtRkX7yNWo+zyhVvHSLjFc4L2jdZRKUCHMWFV+
+ Xw77yaJ7dCHIE3n0rmUIYLEqjQh+OHVlrL43tdm3r5yqEYGz/pwoHniBUCps6yUoW4k4/gmgU7v
+ 5gCRun5LnEOXTHgiLUXiUG3yG3fQEmQp7ccnBsHBCgpvZgsHl+z07jvnLMbcVruoxQimvxkTPDN
+ DB8BFjBet5E4selSl6jzce3KbKwSpEoBjCPspHRMvSCtMTTC6ggyFURg4A9KMfvv0q9S4wwvrJK
+ I57MpmuN3aeZgZ6F5a/UczdcRP60sbN4Up1EQ==
+X-Received: by 2002:a05:6a20:6f87:b0:3dd:a197:cf2c with SMTP id
+ adf61e73a8af0-3de0e942b83mr17275335637.80.1790699905824; 
+ Tue, 29 Sep 2026 09:38:25 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.24
+ d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:38:24 -0700 (PDT)
+ Tue, 29 Sep 2026 09:38:25 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [PATCH v2 19/61] net/virtio: use kvargs numeric helpers
-Date: Tue, 29 Sep 2026 09:36:22 -0700
-Message-ID: <20260929163800.1108305-20-stephen@networkplumber.org>
+ Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>
+Subject: [PATCH v2 20/61] net/bonding: use kvargs numeric helpers
+Date: Tue, 29 Sep 2026 09:36:23 -0700
+Message-ID: <20260929163800.1108305-21-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929163800.1108305-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -84,258 +83,209 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-get_integer_arg() checks only errno, so "queues=foo" was silently taken
-as zero, and since the store is skipped on failure but zero is returned,
-the argument was accepted while leaving the default in place. It also
-uses base 0, so a leading zero selects octal.
+The mode, socket id and time_ms parsers all assign the strtol() result
+before checking the end pointer and errno, and the mode parser truncates
+into a uint8_t so "mode=257" aliases onto mode 1.
 
-link_speed_handler() checks neither errno nor the end pointer before
-validating the result against the speed capabilities.
+parse_port_id() has the same unchecked pattern, and did not bound the
+result before using it, relying on rte_eth_dev_is_valid_port() to catch
+out of range values.
 
-The boolean arguments become bool and use rte_kvargs_handle_bool():
-server, cq, packed_vq, vectorized, mrg_rxbuf and in_order for
-virtio_user, and vectorized for virtio. They are passed by value into
-virtio_user_dev_init(), whose parameters stay int.
+The socket id parser cast to int8_t when testing for SOCKET_ID_ANY, so
+any value whose low byte is 0xff, such as 255 or -257, was accepted as
+SOCKET_ID_ANY.
 
-vectorized_check_handler() treated anything other than "1" as false, so
-"vectorized=y" silently disabled it and a typo did the same. It is now
-a boolean like the rest: the usual spellings work, a bare key enables
-the option, and anything else is rejected instead of being read as
-false.
+Drop the stray errno reset in the agg mode parser, which only does
+string comparisons.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/virtio/virtio_ethdev.c      | 36 ++++++---------
- drivers/net/virtio/virtio_user_ethdev.c | 59 +++++++++----------------
- 2 files changed, 34 insertions(+), 61 deletions(-)
+ drivers/net/bonding/eth_bond_private.h  |  8 ---
+ drivers/net/bonding/rte_eth_bond_args.c | 71 ++++---------------------
+ drivers/net/bonding/rte_eth_bond_pmd.c  |  8 +--
+ 3 files changed, 14 insertions(+), 73 deletions(-)
 
-diff --git a/drivers/net/virtio/virtio_ethdev.c b/drivers/net/virtio/virtio_ethdev.c
-index a6fe4f3023..556e4bfede 100644
---- a/drivers/net/virtio/virtio_ethdev.c
-+++ b/drivers/net/virtio/virtio_ethdev.c
-@@ -47,7 +47,7 @@ static int virtio_dev_allmulticast_disable(struct rte_eth_dev *dev);
- static uint32_t virtio_dev_speed_capa_get(uint32_t speed);
- static int virtio_dev_devargs_parse(struct rte_devargs *devargs,
- 	uint32_t *speed,
--	int *vectorized);
-+	bool *vectorized);
- static int virtio_dev_info_get(struct rte_eth_dev *dev,
- 				struct rte_eth_dev_info *dev_info);
- static int virtio_dev_link_update(struct rte_eth_dev *dev,
-@@ -2029,7 +2029,7 @@ eth_virtio_dev_init(struct rte_eth_dev *eth_dev)
- {
- 	struct virtio_hw *hw = eth_dev->data->dev_private;
- 	uint32_t speed = RTE_ETH_SPEED_NUM_UNKNOWN;
--	int vectorized = 0;
-+	bool vectorized = false;
- 	int ret;
+diff --git a/drivers/net/bonding/eth_bond_private.h b/drivers/net/bonding/eth_bond_private.h
+index 378bbba4e6..9a2fb7167e 100644
+--- a/drivers/net/bonding/eth_bond_private.h
++++ b/drivers/net/bonding/eth_bond_private.h
+@@ -298,10 +298,6 @@ int
+ bond_ethdev_parse_member_agg_mode_kvarg(const char *key __rte_unused,
+ 		const char *value, void *extra_args);
  
- 	if (sizeof(struct virtio_net_hdr_hash_report) > RTE_PKTMBUF_HEADROOM) {
-@@ -2128,20 +2128,6 @@ virtio_dev_speed_capa_get(uint32_t speed)
+-int
+-bond_ethdev_parse_socket_id_kvarg(const char *key,
+-		const char *value, void *extra_args);
+-
+ int
+ bond_ethdev_parse_primary_member_port_id_kvarg(const char *key,
+ 		const char *value, void *extra_args);
+@@ -314,10 +310,6 @@ int
+ bond_ethdev_parse_bond_mac_addr_kvarg(const char *key,
+ 		const char *value, void *extra_args);
+ 
+-int
+-bond_ethdev_parse_time_ms_kvarg(const char *key,
+-		const char *value, void *extra_args);
+-
+ void
+ bond_tlb_disable(struct bond_dev_private *internals);
+ 
+diff --git a/drivers/net/bonding/rte_eth_bond_args.c b/drivers/net/bonding/rte_eth_bond_args.c
+index 823ed80f07..25602b3b47 100644
+--- a/drivers/net/bonding/rte_eth_bond_args.c
++++ b/drivers/net/bonding/rte_eth_bond_args.c
+@@ -91,13 +91,13 @@ parse_port_id(const char *port_str)
+ 		/* try parsing as device name, virtual devices */
+ 		port_id = find_port_id_by_dev_name(port_str);
+ 		if (port_id < 0) {
+-			char *end;
+-			errno = 0;
++			uint64_t val;
+ 
+ 			/* try parsing as port id */
+-			port_id = strtol(port_str, &end, 10);
+-			if (*end != 0 || errno != 0)
++			if (rte_kvargs_to_uint(port_str, 0, RTE_MAX_ETHPORTS - 1, &val) < 0)
+ 				return -1;
++
++			port_id = val;
+ 		}
+ 	}
+ 
+@@ -136,19 +136,17 @@ int
+ bond_ethdev_parse_member_mode_kvarg(const char *key __rte_unused,
+ 		const char *value, void *extra_args)
+ {
+-	uint8_t *mode;
+-	char *endptr;
++	uint8_t *mode = extra_args;
++	uint64_t val;
+ 
+-	if (value == NULL || extra_args == NULL)
++	if (extra_args == NULL)
+ 		return -1;
+ 
+-	mode = extra_args;
+-
+-	errno = 0;
+-	*mode = strtol(value, &endptr, 10);
+-	if (*endptr != 0 || errno != 0)
++	if (rte_kvargs_to_uint(value, 0, UINT8_MAX, &val) < 0)
+ 		return -1;
+ 
++	*mode = val;
++
+ 	/* validate mode value */
+ 	switch (*mode) {
+ 	case BONDING_MODE_ROUND_ROBIN:
+@@ -176,7 +174,6 @@ bond_ethdev_parse_member_agg_mode_kvarg(const char *key __rte_unused,
+ 
+ 	agg_mode = extra_args;
+ 
+-	errno = 0;
+ 	if (strncmp(value, "stable", 6) == 0)
+ 		*agg_mode = AGG_STABLE;
+ 
+@@ -197,35 +194,6 @@ bond_ethdev_parse_member_agg_mode_kvarg(const char *key __rte_unused,
  	}
  }
  
--static int vectorized_check_handler(__rte_unused const char *key,
--		const char *value, void *ret_val)
+-int
+-bond_ethdev_parse_socket_id_kvarg(const char *key __rte_unused,
+-		const char *value, void *extra_args)
 -{
--	if (value == NULL || ret_val == NULL)
--		return -EINVAL;
+-	long socket_id;
+-	char *endptr;
 -
--	if (strcmp(value, "1") == 0)
--		*(int *)ret_val = 1;
--	else
--		*(int *)ret_val = 0;
+-	if (value == NULL || extra_args == NULL)
+-		return -1;
+-
+-	errno = 0;
+-	socket_id = strtol(value, &endptr, 10);
+-	if (*endptr != 0 || errno != 0)
+-		return -1;
+-
+-	/* SOCKET_ID_ANY also consider a valid socket id */
+-	if ((int8_t)socket_id == SOCKET_ID_ANY) {
+-		*(int *)extra_args = SOCKET_ID_ANY;
+-		return 0;
+-	}
+-
+-	/* validate socket id value */
+-	if (socket_id >= 0 && socket_id < RTE_MAX_NUMA_NODES) {
+-		*(int *)extra_args = (int)socket_id;
+-		return 0;
+-	}
+-	return -1;
+-}
+-
+ int
+ bond_ethdev_parse_primary_member_port_id_kvarg(const char *key __rte_unused,
+ 		const char *value, void *extra_args)
+@@ -278,22 +246,3 @@ bond_ethdev_parse_bond_mac_addr_kvarg(const char *key __rte_unused,
+ 	return rte_ether_unformat_addr(value, extra_args);
+ }
+ 
+-int
+-bond_ethdev_parse_time_ms_kvarg(const char *key __rte_unused,
+-		const char *value, void *extra_args)
+-{
+-	uint32_t time_ms;
+-	char *endptr;
+-
+-	if (value == NULL || extra_args == NULL)
+-		return -1;
+-
+-	errno = 0;
+-	time_ms = (uint32_t)strtol(value, &endptr, 10);
+-	if (*endptr != 0 || errno != 0)
+-		return -1;
+-
+-	*(uint32_t *)extra_args = time_ms;
 -
 -	return 0;
 -}
--
- #define VIRTIO_ARG_SPEED      "speed"
- #define VIRTIO_ARG_VECTORIZED "vectorized"
+diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
+index 6a4f997b5a..766dfd9459 100644
+--- a/drivers/net/bonding/rte_eth_bond_pmd.c
++++ b/drivers/net/bonding/rte_eth_bond_pmd.c
+@@ -3869,7 +3869,7 @@ bond_probe(struct rte_vdev_device *dev)
+ 	arg_count = rte_kvargs_count(kvlist, PMD_BOND_SOCKET_ID_KVARG);
+ 	if (arg_count == 1) {
+ 		if (rte_kvargs_process(kvlist, PMD_BOND_SOCKET_ID_KVARG,
+-				&bond_ethdev_parse_socket_id_kvarg, &socket_id)
++				rte_kvargs_handle_socket_id, &socket_id)
+ 				!= 0) {
+ 			RTE_BOND_LOG(ERR, "Invalid socket Id specified for "
+ 					"bonding device %s", name);
+@@ -4207,7 +4207,7 @@ bond_ethdev_configure(struct rte_eth_dev *dev)
  
-@@ -2149,21 +2135,25 @@ static int
- link_speed_handler(const char *key __rte_unused,
- 		const char *value, void *ret_val)
- {
--	uint32_t val;
--	if (!value || !ret_val)
-+	uint64_t val;
-+
-+	if (ret_val == NULL)
-+		return -EINVAL;
-+
-+	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &val) < 0)
- 		return -EINVAL;
--	val = strtoul(value, NULL, 0);
-+
- 	/* validate input */
- 	if (virtio_dev_speed_capa_get(val) == 0)
- 		return -EINVAL;
--	*(uint32_t *)ret_val = val;
+ 		if (rte_kvargs_process(kvlist,
+ 				       PMD_BOND_LSC_POLL_PERIOD_KVARG,
+-				       &bond_ethdev_parse_time_ms_kvarg,
++				       rte_kvargs_handle_u32,
+ 				       &lsc_poll_interval_ms) < 0) {
+ 			RTE_BOND_LOG(INFO,
+ 				     "Invalid lsc polling interval value specified for bonding"
+@@ -4236,7 +4236,7 @@ bond_ethdev_configure(struct rte_eth_dev *dev)
  
-+	*(uint32_t *)ret_val = val;
- 	return 0;
- }
+ 		if (rte_kvargs_process(kvlist,
+ 				       PMD_BOND_LINK_UP_PROP_DELAY_KVARG,
+-				       &bond_ethdev_parse_time_ms_kvarg,
++				       rte_kvargs_handle_u32,
+ 				       &link_up_delay_ms) < 0) {
+ 			RTE_BOND_LOG(INFO,
+ 				     "Invalid link up propagation delay value specified for"
+@@ -4266,7 +4266,7 @@ bond_ethdev_configure(struct rte_eth_dev *dev)
  
- 
- static int
--virtio_dev_devargs_parse(struct rte_devargs *devargs, uint32_t *speed, int *vectorized)
-+virtio_dev_devargs_parse(struct rte_devargs *devargs, uint32_t *speed, bool *vectorized)
- {
- 	struct rte_kvargs *kvlist;
- 	int ret = 0;
-@@ -2190,9 +2180,9 @@ virtio_dev_devargs_parse(struct rte_devargs *devargs, uint32_t *speed, int *vect
- 
- 	if (vectorized &&
- 		rte_kvargs_count(kvlist, VIRTIO_ARG_VECTORIZED) == 1) {
--		ret = rte_kvargs_process(kvlist,
-+		ret = rte_kvargs_process_opt(kvlist,
- 				VIRTIO_ARG_VECTORIZED,
--				vectorized_check_handler, vectorized);
-+				rte_kvargs_handle_bool, vectorized);
- 		if (ret < 0) {
- 			PMD_INIT_LOG(ERR, "Failed to parse %s",
- 					VIRTIO_ARG_VECTORIZED);
-diff --git a/drivers/net/virtio/virtio_user_ethdev.c b/drivers/net/virtio/virtio_user_ethdev.c
-index 747dddeb2e..4925924211 100644
---- a/drivers/net/virtio/virtio_user_ethdev.c
-+++ b/drivers/net/virtio/virtio_user_ethdev.c
-@@ -387,23 +387,6 @@ get_string_arg(const char *key __rte_unused,
- 	return 0;
- }
- 
--static int
--get_integer_arg(const char *key __rte_unused,
--		const char *value, void *extra_args)
--{
--	uint64_t integer = 0;
--	if (!value || !extra_args)
--		return -EINVAL;
--	errno = 0;
--	integer = strtoull(value, NULL, 0);
--	/* extra_args keeps default value, it should be replaced
--	 * only in case of successful parsing of the 'value' arg
--	 */
--	if (errno == 0)
--		*(uint64_t *)extra_args = integer;
--	return -errno;
--}
--
- static uint32_t
- vdpa_dynamic_major_num(void)
- {
-@@ -508,13 +491,13 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
- 	struct virtio_user_dev *dev;
- 	enum virtio_user_backend_type backend_type = VIRTIO_USER_BACKEND_UNKNOWN;
- 	uint64_t queues = VIRTIO_USER_DEF_Q_NUM;
--	uint64_t cq = VIRTIO_USER_DEF_CQ_EN;
-+	bool cq = VIRTIO_USER_DEF_CQ_EN;
- 	uint64_t queue_size = VIRTIO_USER_DEF_Q_SZ;
--	uint64_t server_mode = VIRTIO_USER_DEF_SERVER_MODE;
--	uint64_t mrg_rxbuf = 1;
--	uint64_t in_order = 1;
--	uint64_t packed_vq = 0;
--	uint64_t vectorized = 0;
-+	bool server_mode = VIRTIO_USER_DEF_SERVER_MODE;
-+	bool mrg_rxbuf = true;
-+	bool in_order = true;
-+	bool packed_vq = false;
-+	bool vectorized = false;
- 	char *path = NULL;
- 	char *ifname = NULL;
- 	char *mac_addr = NULL;
-@@ -602,7 +585,7 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
- 
- 	if (rte_kvargs_count(kvlist, VIRTIO_USER_ARG_QUEUE_SIZE) == 1) {
- 		if (rte_kvargs_process(kvlist, VIRTIO_USER_ARG_QUEUE_SIZE,
--				       &get_integer_arg, &queue_size) < 0) {
-+				       rte_kvargs_handle_u64, &queue_size) < 0) {
- 			PMD_INIT_LOG(ERR, "error to parse %s",
- 				     VIRTIO_USER_ARG_QUEUE_SIZE);
- 			goto end;
-@@ -611,7 +594,7 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
- 
- 	if (rte_kvargs_count(kvlist, VIRTIO_USER_ARG_QUEUES_NUM) == 1) {
- 		if (rte_kvargs_process(kvlist, VIRTIO_USER_ARG_QUEUES_NUM,
--				       &get_integer_arg, &queues) < 0) {
-+				       rte_kvargs_handle_u64, &queues) < 0) {
- 			PMD_INIT_LOG(ERR, "error to parse %s",
- 				     VIRTIO_USER_ARG_QUEUES_NUM);
- 			goto end;
-@@ -619,8 +602,8 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
- 	}
- 
- 	if (rte_kvargs_count(kvlist, VIRTIO_USER_ARG_SERVER_MODE) == 1) {
--		if (rte_kvargs_process(kvlist, VIRTIO_USER_ARG_SERVER_MODE,
--				       &get_integer_arg, &server_mode) < 0) {
-+		if (rte_kvargs_process_opt(kvlist, VIRTIO_USER_ARG_SERVER_MODE,
-+				       rte_kvargs_handle_bool, &server_mode) < 0) {
- 			PMD_INIT_LOG(ERR, "error to parse %s",
- 				     VIRTIO_USER_ARG_SERVER_MODE);
- 			goto end;
-@@ -628,8 +611,8 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
- 	}
- 
- 	if (rte_kvargs_count(kvlist, VIRTIO_USER_ARG_CQ_NUM) == 1) {
--		if (rte_kvargs_process(kvlist, VIRTIO_USER_ARG_CQ_NUM,
--				       &get_integer_arg, &cq) < 0) {
-+		if (rte_kvargs_process_opt(kvlist, VIRTIO_USER_ARG_CQ_NUM,
-+				       rte_kvargs_handle_bool, &cq) < 0) {
- 			PMD_INIT_LOG(ERR, "error to parse %s",
- 				     VIRTIO_USER_ARG_CQ_NUM);
- 			goto end;
-@@ -637,8 +620,8 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
- 	}
- 
- 	if (rte_kvargs_count(kvlist, VIRTIO_USER_ARG_PACKED_VQ) == 1) {
--		if (rte_kvargs_process(kvlist, VIRTIO_USER_ARG_PACKED_VQ,
--				       &get_integer_arg, &packed_vq) < 0) {
-+		if (rte_kvargs_process_opt(kvlist, VIRTIO_USER_ARG_PACKED_VQ,
-+				       rte_kvargs_handle_bool, &packed_vq) < 0) {
- 			PMD_INIT_LOG(ERR, "error to parse %s",
- 				     VIRTIO_USER_ARG_PACKED_VQ);
- 			goto end;
-@@ -646,8 +629,8 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
- 	}
- 
- 	if (rte_kvargs_count(kvlist, VIRTIO_USER_ARG_VECTORIZED) == 1) {
--		if (rte_kvargs_process(kvlist, VIRTIO_USER_ARG_VECTORIZED,
--				       &get_integer_arg, &vectorized) < 0) {
-+		if (rte_kvargs_process_opt(kvlist, VIRTIO_USER_ARG_VECTORIZED,
-+				       rte_kvargs_handle_bool, &vectorized) < 0) {
- 			PMD_INIT_LOG(ERR, "error to parse %s",
- 				     VIRTIO_USER_ARG_VECTORIZED);
- 			goto end;
-@@ -655,8 +638,8 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
- 	}
- 
- 	if (rte_kvargs_count(kvlist, VIRTIO_USER_ARG_MRG_RXBUF) == 1) {
--		if (rte_kvargs_process(kvlist, VIRTIO_USER_ARG_MRG_RXBUF,
--				       &get_integer_arg, &mrg_rxbuf) < 0) {
-+		if (rte_kvargs_process_opt(kvlist, VIRTIO_USER_ARG_MRG_RXBUF,
-+				       rte_kvargs_handle_bool, &mrg_rxbuf) < 0) {
- 			PMD_INIT_LOG(ERR, "error to parse %s",
- 				     VIRTIO_USER_ARG_MRG_RXBUF);
- 			goto end;
-@@ -664,8 +647,8 @@ virtio_user_pmd_probe(struct rte_vdev_device *vdev)
- 	}
- 
- 	if (rte_kvargs_count(kvlist, VIRTIO_USER_ARG_IN_ORDER) == 1) {
--		if (rte_kvargs_process(kvlist, VIRTIO_USER_ARG_IN_ORDER,
--				       &get_integer_arg, &in_order) < 0) {
-+		if (rte_kvargs_process_opt(kvlist, VIRTIO_USER_ARG_IN_ORDER,
-+				       rte_kvargs_handle_bool, &in_order) < 0) {
- 			PMD_INIT_LOG(ERR, "error to parse %s",
- 				     VIRTIO_USER_ARG_IN_ORDER);
- 			goto end;
-@@ -816,7 +799,7 @@ RTE_PMD_REGISTER_ALIAS(net_virtio_user, virtio_user);
- RTE_PMD_REGISTER_PARAM_STRING(net_virtio_user,
- 	"path=<path> "
- 	"mac=<mac addr> "
--	"cq=<int> "
-+	"cq=<0|1> "
- 	"queue_size=<int> "
- 	"queues=<int> "
- 	"iface=<string> "
+ 		if (rte_kvargs_process(kvlist,
+ 				       PMD_BOND_LINK_DOWN_PROP_DELAY_KVARG,
+-				       &bond_ethdev_parse_time_ms_kvarg,
++				       rte_kvargs_handle_u32,
+ 				       &link_down_delay_ms) < 0) {
+ 			RTE_BOND_LOG(INFO,
+ 				     "Invalid link down propagation delay value specified for"
 -- 
 2.53.0
 
