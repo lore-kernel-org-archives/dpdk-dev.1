@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FF9CA5FA7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 19:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFA3CA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 19:29:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 340F5402A2;
-	Tue, 29 Sep 2026 21:26:35 +0200 (CEST)
-Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net
- [37.230.175.128])
- by mails.dpdk.org (Postfix) with ESMTP id EF1D440290
- for <dev@dpdk.org>; Tue, 29 Sep 2026 21:26:33 +0200 (CEST)
-Received: from mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net
- (mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net
- [IPv6:2a02:6b8:c24:2310:0:640:2452:0])
- by forward500b.mail.yandex.net (postfix) with ESMTPS id 3F5D6C013D;
- Tue, 29 Sep 2026 22:26:33 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net (smtp)
- with ESMTPSA id UQo4mt1nEuQ0-YJyaMQns; 
- Tue, 29 Sep 2026 22:26:32 +0300
+	by mails.dpdk.org (Postfix) with ESMTP id CDA5C42EB5;
+	Tue, 29 Sep 2026 21:29:32 +0200 (CEST)
+Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net
+ [178.154.239.82])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E75940290
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 21:28:46 +0200 (CEST)
+Received: from mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net
+ (mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net
+ [IPv6:2a02:6b8:c1f:2080:0:640:6a29:0])
+ by forward502a.mail.yandex.net (postfix) with ESMTPS id 4DB6284E33;
+ Tue, 29 Sep 2026 22:28:45 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net (smtp)
+ with ESMTPSA id fSoxDx6dliE0-OczYw3l9; 
+ Tue, 29 Sep 2026 22:28:44 +0300
 X-Yandex-Fwd: 1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1790709992; bh=XrxIUqqvQ0sqUgI/VyK8LAi3KoKy669e9b1gIx1LCmk=;
+ t=1790710124; bh=p/Xtpd8qQ1V1Zly4ioEVqE/8khycMAOg2z9Rx1viGTI=;
  h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
- b=p+0sE9XbkACQ4hT5cRXEYf3/fAFuE0VmzbNhsmvtFXWjDWZSia5ZWfijwkBboteKV
- VCvUeF1SpleNeOMqFKAvaxCg02azSklBd+uy6WHP0LBi2HjLDQ07Q+2gFz6Am0bLO3
- N7LhCsNEos7Nz0mLDZBuNRleosmBBDiFyZKQGp5U=
-Authentication-Results: mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net;
+ b=wQ3ChePxAoZHHow6Bun8w7RExsPQ1tlvyZi+N3k0m6gjZASZaNZ9vciz0Mpd07NL9
+ a0pxE3iJHGHRdk13YpDFLq/7ghiR4Kze84xjUIgGXIDSbkp/PqseH+7qUus7NLTGe5
+ n7Ux7fLltpb6bN2wOvDhczybozrfz459zhn5ykRs=
+Authentication-Results: mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net;
  dkim=pass header.i=@yandex.ru
-Message-ID: <34d8b67c-dd88-4417-8836-983aa3e6cc72@yandex.ru>
-Date: Tue, 29 Sep 2026 20:26:29 +0100
+Message-ID: <8e825e66-51ed-4461-9b41-3cf506b2bf1e@yandex.ru>
+Date: Tue, 29 Sep 2026 20:28:41 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 1/1] mbuf: add optional no-copy dynamic field storage
@@ -48,9 +48,11 @@ References: <179036466858.2.13982499480648014088.v2-0000-cover-letter.patch@cisc
  <98CBD80474FA8B44BF855DF32C47DC35F65A88@smartserver.smartshare.dk>
  <89369203-bdf0-4b15-899b-c529b402ff85@yandex.ru>
  <PH0PR11MB761617C6B4A1F1A1AC81BDD8A98C2@PH0PR11MB7616.namprd11.prod.outlook.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65A8A@smartserver.smartshare.dk>
+ <PH0PR11MB76160CF554EA21C1032EC552A98C2@PH0PR11MB7616.namprd11.prod.outlook.com>
 Content-Language: en-US, ru
 From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-In-Reply-To: <PH0PR11MB761617C6B4A1F1A1AC81BDD8A98C2@PH0PR11MB7616.namprd11.prod.outlook.com>
+In-Reply-To: <PH0PR11MB76160CF554EA21C1032EC552A98C2@PH0PR11MB7616.namprd11.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -68,99 +70,180 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-Hi Randy.
+
+> Konstantin,
+> Does this path work for you?
+Yes, it does.
+I just replied to your previous mail, probably our mails collided.
+Konstantin
+
+> -rt
+>
+> *From: *Morten Brørup <mb@smartsharesystems.com>
+> *Date: *Tuesday, September 29, 2026 at 11:20 AM
+> *To: *Randy Tice (rtice) <rtice@cisco.com>; Konstantin Ananyev 
+> <konstantin.v.ananyev@yandex.ru>; dev@dpdk.org <dev@dpdk.org>
+> *Cc: *Bruce Richardson <bruce.richardson@intel.com>; Harman Kalra 
+> <hkalra@marvell.com>; Stephen Hemminger <stephen@networkplumber.org>
+> *Subject: *RE: [PATCH v3 1/1] mbuf: add optional no-copy dynamic field 
+> storage
+>
+> Randy,
+>
+> This is very close to what I suggested you explore.
+>
+> But one piece is missing:
+>
+> Registering fields in this metadata area should be managed through the 
+> dynamic mbuf fields API.
+>
+> Without a central registry, only one module can use the new metadata 
+> area; it cannot be used by multiple modules without coordination.
+>
+> And instead of rolling your own registry of fields in the metadata 
+> area, just reuse the dynamic mbuf fields machinery.
+>
+> I agree with your proposed mbuf layout.
+>
+> There will be a performance cost for accessing the mbuf private data: 
+> rte_mbuf_to_priv() will change from adding a simple constant offset 
+> (sizeof(struct rte_mbuf)) to adding the value of a global variable 
+> holding the offset, reflecting the startup-time configured metadata 
+> area size.
+>
+> The global variable will be hot in the cache when working on mbuf 
+> bursts, so I think this performance cost will be insignificant.
+>
+> Venlig hilsen / Kind regards,
+>
+> -Morten Brørup
+>
+> *From:* Randy Tice (rtice) [mailto:rtice@cisco.com]
+> *Sent:* Tuesday, 29 September 2026 16.45
+> *To:* Konstantin Ananyev; Morten Brørup; dev@dpdk.org
+> *Cc:* Bruce Richardson; Harman Kalra; Stephen Hemminger
+> *Subject:* Re: [PATCH v3 1/1] mbuf: add optional no-copy dynamic field 
+> storage
+>
 >   Hi all,
 >
 >   Thanks for the discussion. We are now where I had hoped we’d get to 
 > during
+>
 >   RFC but we are here.
 >
->   Konstantin, I understand your concern about making sizeof(struct 
-> rte_mbuf)
+> Konstantin, I understand your concern about making sizeof(struct rte_mbuf)
+>
 >   depend on a build-time option. That can create different mbuf 
 > layouts between
+>
 >   DPDK builds that otherwise present the same ABI/version, which is 
 > not a good
+>
 >   property for a core public structure.
 >
 >   After thinking through this again, I think the current patch may be 
 > trying too
+>
 >   hard to make this a dynamic-field allocator feature. The actual 
 > requirement is
+>
 >   simpler: a fixed global per-mbuf metadata area that is present in every
+>
 >   pktmbuf object, separate from ordinary application private data, and not
+>
 >   copied by mbuf copy/clone helpers.
 >
 >   The mbuf structure change would look roughly like this:
 >
 >    struct rte_mbuf {
->           ...
->           uint32_t dynfield1[9]; /**< Reserved for dynamic fields. */
+>
+> ...
+>
+> uint32_t dynfield1[9]; /**< Reserved for dynamic fields. */
+>
 >   +
->   +       alignas(RTE_CACHE_LINE_SIZE)
->   +       uint8_t metadata[];
->   +       /**< Optional cache-line-aligned per-mbuf metadata area. */
+>
+>   + alignas(RTE_CACHE_LINE_SIZE)
+>
+>   + uint8_t metadata[];
+>
+>   + /**< Optional cache-line-aligned per-mbuf metadata area. */
+>
 >    };
 >
 >   Since this is a flexible array member, it does not change sizeof(struct
->   rte_mbuf). The object layout would become:
+>
+> rte_mbuf). The object layout would become:
 >
 >   struct rte_mbuf fixed header
+>
 >   global per-mbuf metadata area
->   application private data
+>
+> application private data
+>
 >   packet data buffer
 >
 >   With that layout, this could be sized at EAL init time rather than 
 > by a build
+>
 >   option, for example:
 >
->   --mbuf-metadata-size=256
+> --mbuf-metadata-size=256
 >
-Yes, that new proposal looks good to me.
-One extra thing: I would like to repeat Morten there:
-we probably do need similar mechanism for register/unregister/query that
-dynamic metadata layout, as we have for mbuf dynfields now.
-Might be we can extend existing mbuf_dynfield API?
-or might be we can add a new API specific for this new metadata?
-Right now I don't have strong opinion here.
-Konstantin
-> That avoids creating different DPDK builds with different mbuf struct 
-> sizes or
->   different build-time ABI expectations. The configured size would be 
+>   That avoids creating different DPDK builds with different mbuf 
+> struct sizes or
+>
+> different build-time ABI expectations. The configured size would be 
 > part of
+>
 >   the process/runtime configuration instead of requiring applications,
->   libraries, and package providers to agree on a compile-time define.
+>
+> libraries, and package providers to agree on a compile-time define.
 >
 >   The official mbuf helpers would account for this area before ordinary
->   priv_size, so application private data remains available and does 
-> not overlap
+>
+> priv_size, so application private data remains available and does not 
+> overlap
+>
 >   with the global metadata area.
 >
 >   This would also avoid changing the existing dynamic-field allocator 
 > and copy
->   semantics. The area would not be part of the dynamic-field registry; 
+>
+> semantics. The area would not be part of the dynamic-field registry; 
 > it would
+>
 >   be explicit per-mbuf metadata storage for applications that deliberately
+>
 >   enable it.
 >
 >   That seems to address the main concerns:
 >
 >   - sizeof(struct rte_mbuf) remains fixed for ABI purposes.
+>
 >   - the metadata area is globally present across pktmbuf pools when 
 > enabled.
+>
 >   - ordinary priv_size remains separate and available.
+>
 >   - dynamic-field allocator/copy behavior remains unchanged.
+>
 >   - users that do not enable the EAL option pay no extra per-mbuf 
 > storage cost.
+>
 >   - applications do not need to be built against a different mbuf-size 
 > define.
 >
 >   If this direction is acceptable, I can take a look at what it means in
+>
 >   practice for EAL configuration, mbuf layout helpers, pool 
 > constructors, and
+>
 >   places that currently do direct object-layout math.
 >
 >   Thanks,
+>
 >   -rt
 >
 > *From: *Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
@@ -174,12 +257,12 @@ Konstantin
 >
 >
 >
-> >> From: Konstantin Ananyev [mailto:konstantin.v.ananyev@yandex.ru 
+> >> From: Konstantin Ananyev [_mailto:konstantin.v.ananyev@yandex.ru_ 
 > <mailto:konstantin.v.ananyev@yandex.ru>]
 > >> Sent: Tuesday, 29 September 2026 15.13
 > >>
 > >> 29.09.2026 13:44, Morten Brørup пишет:
-> >>>> From: Konstantin Ananyev [mailto:konstantin.v.ananyev@yandex.ru 
+> >>>> From: Konstantin Ananyev [_mailto:konstantin.v.ananyev@yandex.ru_ 
 > <mailto:konstantin.v.ananyev@yandex.ru>]
 > >>>> Sent: Tuesday, 29 September 2026 14.00
 > >>>>
