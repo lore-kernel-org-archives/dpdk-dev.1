@@ -2,101 +2,107 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C97C7CA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 12:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B75CA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 12:56:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A7A9427BD;
-	Tue, 29 Sep 2026 14:51:57 +0200 (CEST)
-Received: from SA9PR02CU001.outbound.protection.outlook.com
- (mail-southcentralusazon11013010.outbound.protection.outlook.com
- [40.93.196.10]) by mails.dpdk.org (Postfix) with ESMTP id BFE0342793
- for <dev@dpdk.org>; Tue, 29 Sep 2026 14:51:51 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H7wyyiptfn788uGFw3872YE8bORfYgGfYX+c6sfxWK3JGLGFy1QbV5d/EuebpYjvMWu5eIXajo/CnZv74eTq7ZhejJuhW/epa6uxO2eVqLNZ2IOdWokzBrhlWCnMFsggK1nGUHBVS5ozn/VVYMLN3JnSaW5uQ4P4dp/WBOfC68NUX6Gzuqmmi7lWBXMqj0FBaVAuv7NuczoFfEnfoOL0dQtWJNsAGvnF3tXQd67roNuioYaPNh4MUYZ1i88lsn9K4Y+MaHJ16TX+EGwI7lOdwYeV/CnCyRjv0K5BhlJgpwPQ5U8AS6p9HphutKZEaUH3BVGmZOBRGfcMFN2rJ4Y35g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fcFOK9y2YP+y80tCxXVZ4AKRQDo84g5hp2enHMNBt58=;
- b=X3nfKgkn6MHYEeeaggXKS/W5ep7w1FLPZkMO4Wbka/nIDue2nm378O6KfnUStA+UYKrZ4273N7ZNsEjj1GxKzz/Fa/c899JZyJUHX8oH+WzxcutSXfhgtHzKoIYUzfkpLPOoFbX9k8NNcxOXktcGPtw3xFyma8mV+Su9aB3kl5MHisF/Vgywq4UtRZUESLkgzfQAtaRDXa6pMyTtqx/ifgLbZgQ2Yf2RETp4wPxR8jPtNi0CHXpp1njFOiZHzO1twR5qIqbFq3CQmKspe+AlFbaJN98tlHX440t24MyjEnZzIJEbv2lAzYJszpsmRbIEahp85Jb+B/WijSG//VsYPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fcFOK9y2YP+y80tCxXVZ4AKRQDo84g5hp2enHMNBt58=;
- b=cj5R6EQtaVQcqwtdLhiqBWbEdK3sWBEsKGvB6s1PY5Uir+ki9fNMBYdtlQ/CewlH5j4vAJYCKR6mLJcv/QxxRQox0hhRyDozgbYbQ45ywv00gamG4Su/q5YfNxk34ozarkcitHzdGcyuT0iqfkzSKThSLuzFaLCKMLtxDu1fRvnUQmsmURgHEnykWMBye8Dpzte2HOUVge8OO6D9icKIv1gS1lRhPt7lpINfT2AYA18H7eMN2KAlN++jzfXf1k8QP9Zwk8CFQc8kyntZEEd5dwL6ml3AQ5oz+EPm62uWpql8TCvdPwWBZ42PfiWhOPxiaLaSnAW2/7KyS/zBH7CIwQ==
-Received: from DS1PR06CA0002.namprd06.prod.outlook.com (2603:10b6:8:458::8) by
- LV8PR12MB9232.namprd12.prod.outlook.com (2603:10b6:408:182::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Tue, 29 Sep
- 2026 12:51:45 +0000
-Received: from DS2PEPF000061C5.namprd02.prod.outlook.com
- (2603:10b6:8:458:cafe::88) by DS1PR06CA0002.outlook.office365.com
- (2603:10b6:8:458::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.14 via Frontend Transport; Tue,
- 29 Sep 2026 12:51:45 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DS2PEPF000061C5.mail.protection.outlook.com (10.167.23.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.472.14 via Frontend Transport; Tue, 29 Sep 2026 12:51:44 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Tue, 29 Sep
- 2026 05:51:21 -0700
-Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Tue, 29 Sep
- 2026 05:51:18 -0700
-From: Raslan Darawsheh <rasland@nvidia.com>
-To: <dev@dpdk.org>
-CC: David Marchand <david.marchand@redhat.com>, Dariusz Sosnowski
- <dsosnowski@nvidia.com>
-Subject: Re: [PATCH v9 5/5] net/mlx5: accept more unicast MAC addresses
-Date: Tue, 29 Sep 2026 15:50:53 +0300
-Message-ID: <20260929125054.85048-4-rasland@nvidia.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260924063836.355745-5-david.marchand@redhat.com>
-References: <20260924063836.355745-5-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E281A4278C;
+	Tue, 29 Sep 2026 14:56:36 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E27624275D
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 14:56:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1790686594;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=LmWZ/3kB5MMppiT88qfuMjZ+VnxttQvvzRK/rYQFVSc=;
+ b=JSngpqGPmmjYtjAnlxdrryI6jmJWFU6mmeYbVa4Uj9HJCxmglXuDFLwkKLUlIi3qN/W51/
+ 1ngQV/uThmD4RvKPeeH3nEIkQcjuqUt+/uFKzBie3kadK0QImLv2qJSMoce4s9+CGckyi7
+ 5am5auKwy7CCS6fddAV/nFAv7m4zTxc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-355-YwGUpQ3YOjuQmPXviYQzHQ-1; Tue,
+ 29 Sep 2026 08:56:31 -0400
+X-MC-Unique: YwGUpQ3YOjuQmPXviYQzHQ-1
+X-Mimecast-MFC-AGG-ID: YwGUpQ3YOjuQmPXviYQzHQ_1790686590
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 03148195D01D; Tue, 29 Sep 2026 12:56:30 +0000 (UTC)
+Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
+ [10.2.32.117])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 8CCFC1956095; Tue, 29 Sep 2026 12:56:27 +0000 (UTC)
+Message-ID: <a8772446-bf37-4091-8a28-95851c5986aa@redhat.com>
+Date: Tue, 29 Sep 2026 14:56:25 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/9] vhost: add ASID support to VDUSE IOTLB operations
+To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
+Cc: mst@redhat.com, david.marchand@redhat.com, dev@dpdk.org,
+ Yongji Xie <xieyongji@bytedance.com>, chenbox@nvidia.com,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, jasowangio@gmail.com
+References: <20260929105339.1554051-1-eperezma@redhat.com>
+ <20260929105339.1554051-6-eperezma@redhat.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ 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
+ Mwqu3GQ=
+In-Reply-To: <20260929105339.1554051-6-eperezma@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: ASAwWWPkfo6vTfqsV9CxJgT0yBEgWWTNCJ5t_5yXBV8_1790686590
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.126.231.37]
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF000061C5:EE_|LV8PR12MB9232:EE_
-X-MS-Office365-Filtering-Correlation-Id: 443ba369-0103-4c78-d68c-08df1e286adc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700016|23010399003|82310400026|376014|1800799024|11063799006|56012099006|10067099003|22082099003|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info: 5GByeBgFVbQZ44i/y7uShLtK7+526AWQlJeoCRzmnHm2mLzZ/FJT1ulynsqlbU91HQ8ISoqX+A5ieh8z/53lSEGpejwPd9tToozN/7O2yBOuyVPRrpyCeLf7u0mQZHi6pyHlccKjkW9e1MyHBSxZ6X2DQCJXf7iags99Z/Y4Pd6Bk9iLA47MO192vaKtQY/295eQNUGNyBalh6lldKtY408oKO7QswlLcfeAU1mmjNesEGlQdVakzHgiUpBV3tOX6nMlPY+PBN5KDfDtHbMJt2mhR3gE2FS2YJgzu+W5S75/8Psbq72T1H+nIyUt9EgBgmXfNa0iBrQ5NTLWKTq6rpkCdr5vDnJ/D6linokO2FWksNpAn5fx8as9agv4GSVvBd9+9N7lLHY3+KKOn5RtaNdsowZTCkwqpqT4bbROmwH2z8MNQ1KDquEORsKJKFiChWKKicqc80nadTq2vWCfWVfvH7uHeUlBMcfh7EHuK/T2T44eM17301mLZ8esYznnSRJLI5heEs5xXRBnJjJbaCQWctQVLxO+EfNGmglar9biL1wCBe0h6f+ZxvyjYl9hUzEC/i6CZAbv+T1Q6B3FE83ALJyN27bCdmfOxyy7Z1TZmqg8LF2+KBaaDYCN7cTgQMBTfAtWYobB3ZMzCDiHLdE+lye08a24YTT9FSzn8SiKbCsJijN2PdcIdc0irXTN04wgmi717SRb9TcLZJt7Tg==
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700016)(23010399003)(82310400026)(376014)(1800799024)(11063799006)(56012099006)(10067099003)(22082099003)(18002099003)(6133799003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 7KkZQEDjcnW+Am3jD/WOj2qNt30n3MmQi+6h3/2M4RqcOyUeJOkpflyu2Ei35QA+P5kR64YYg08H4AXWlxH5e8MvtrXg8lvZhpI+S/6nZiguQZ/XlMpFYnF2FOCzfpReGz/Qdyg/nnGKDvuffyR5yqnIHuiR4kE73kLsQSw7FkSHu6i3YKmEVbjyMoBO1rE5x0DoFs6u/9WtLrnIWO/Nyl00tX6jRXnj5LDliz7sa2jIDLa8vxDhqPreXyaSTAa6vvfRM4ZoniyDdUcQpUXSr/u14WerGjModZpDmGrH3lK8MYYqWjGnWhW0Wy9Y9nlhHA/WzmlcEBPvync8cLrXrLko0s9XmJTfEHY+nEf7MhIwnWGgNsU11sskmAt1G4FqTMQtF7FnsRg+69RsnoddwZF9rm/pXwTCtPlB6FDC4rSnFmAncNvpcWsV8nLP/mTd
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2026 12:51:44.8851 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 443ba369-0103-4c78-d68c-08df1e286adc
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS2PEPF000061C5.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9232
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -110,50 +116,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Raslan Darawsheh <rasland@nvidia.com>
 
-I'll squash the following fixup into this patch during merge, to handle
-non-DevX devices (where mlx5_os_capabilities_prepare() would otherwise
-return before max_uc_mac_addrs/max_mc_mac_addrs/max_mac_addrs get set,
-leaving them at 0):
 
-diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
-index 9180e9aa20..7c2c35c945 100644
---- a/drivers/net/mlx5/linux/mlx5_os.c
-+++ b/drivers/net/mlx5/linux/mlx5_os.c
-@@ -325,6 +325,16 @@ mlx5_os_capabilities_prepare(struct mlx5_dev_ctx_shared *sh)
- 	DRV_LOG(WARNING,
- 		"Tunnel offloading disabled due to old OFED/rdma-core version");
- #endif
-+	if (hca_attr->log_max_current_uc_list > 0)
-+		sh->dev_cap.max_uc_mac_addrs = RTE_BIT32(hca_attr->log_max_current_uc_list);
-+	else
-+		sh->dev_cap.max_uc_mac_addrs = MLX5_MAX_UC_MAC_ADDRESSES;
-+	if (hca_attr->log_max_current_mc_list > 0)
-+		sh->dev_cap.max_mc_mac_addrs = RTE_BIT32(hca_attr->log_max_current_mc_list);
-+	else
-+		sh->dev_cap.max_mc_mac_addrs = MLX5_MAX_MC_MAC_ADDRESSES;
-+	sh->dev_cap.max_mac_addrs =
-+		sh->dev_cap.max_uc_mac_addrs + sh->dev_cap.max_mc_mac_addrs;
- 	if (!sh->cdev->config.devx)
- 		return 0;
- 	/* Check capabilities for Packet Pacing. */
-@@ -389,16 +399,6 @@ mlx5_os_capabilities_prepare(struct mlx5_dev_ctx_shared *sh)
- 	sh->dev_cap.esw_info.regc_mask = 0;
- #endif
- 	sh->dev_cap.esw_info.is_set = 1;
--	if (hca_attr->log_max_current_uc_list > 0)
--		sh->dev_cap.max_uc_mac_addrs = RTE_BIT32(hca_attr->log_max_current_uc_list);
--	else
--		sh->dev_cap.max_uc_mac_addrs = MLX5_MAX_UC_MAC_ADDRESSES;
--	if (hca_attr->log_max_current_mc_list > 0)
--		sh->dev_cap.max_mc_mac_addrs = RTE_BIT32(hca_attr->log_max_current_mc_list);
--	else
--		sh->dev_cap.max_mc_mac_addrs = MLX5_MAX_MC_MAC_ADDRESSES;
--	sh->dev_cap.max_mac_addrs =
--		sh->dev_cap.max_uc_mac_addrs + sh->dev_cap.max_mc_mac_addrs;
- 	return 0;
- }
+On 9/29/26 12:53 PM, Eugenio Pérez wrote:
+> From: Maxime Coquelin <maxime.coquelin@redhat.com>
+> 
+> Make use of the newly introduced address space ID when
+> calling Vhost IOTLB API.
+> 
+> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
+> ---
+>   lib/vhost/vduse.c | 39 +++++++++++++++++++++++++++++++++------
+>   1 file changed, 33 insertions(+), 6 deletions(-)
+> 
+
+FWIW:Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
 Thanks,
-Raslan
+Maxime
+
