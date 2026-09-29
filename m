@@ -2,151 +2,152 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 271C9C9832A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5F9CA5FA7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:36:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1AE0C40E0A;
-	Tue, 29 Sep 2026 18:12:08 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id AB06B4026E
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:12:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id ABF7F40A7A;
+	Tue, 29 Sep 2026 18:36:03 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 2A56F4026E
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:36:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790698326; x=1822234326;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:mime-version;
- bh=/jcVRLcw2O+Dg63BjC1F6LzPgP80FNeFD7Tdnh61Z0M=;
- b=SdXccByKzzgWjUmdFx6+xIBQMOW/X8oJv7YHfAvcsvcWIqTB+Al06EVo
- If2EmavUzN0i7BlfoXazFnpxWFqZ6qtSuMpqWSeIAKBfdMFP/+Oc1ONZW
- eVBB2mdypQB0P15UXbuyyP4Rl7DFEFOWVilI7Fv2UhVJiEx9+8MPWeGhe
- WOkgJJN9kgol73otXFYJUt2uRxQKVWLhLrszAeFM7IMM9nACA4juM0cDp
- pPWScAovJSmj1yN4yoh392VG3P6WITP9h+sL58GMidSpEt30zzLsmyzjx
- nTNOdUvCD8Ejl0UpmUFmRjZdSvP4CEf2bVH9XGaWsaUXCi3TXemxTVIzz Q==;
-X-CSE-ConnectionGUID: zJgW8v9pTpSkHx1bHPdaLw==
-X-CSE-MsgGUID: YGZ0/YQvTP+N0g9mcFHeyg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11920"; a="93912079"
-X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; d="scan'208,217";a="93912079"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Sep 2026 09:12:05 -0700
-X-CSE-ConnectionGUID: l+6P9kgZTWux4rFusHf1hw==
-X-CSE-MsgGUID: xe1kbjCGT0iqDP4SSxOGNA==
+ t=1790699761; x=1822235761;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=Zy5h7lVtQZyr/Fxv3QAMEFsVm6LSocff1BYD48TQLaM=;
+ b=FNyVhDqYKEtcszMlxFqwgzotyQdOgGne0TqAk02zDPe/z41ACUqMzbkx
+ rfG83KBshdx4EeEn3jdOI9TR65r2do8mgjJpkNPAltqZKcD9B2t9t53//
+ vdkQWal6Gc2wOIcs6Jq+/Pr/n0rXIAEa5D84kmLIIkEspKTNJhSj7DZLp
+ tKkTIP84qUnmi6KiuDJiLtMEkib2gM5rO5PXGhRjQZZ4VGlVQ7SQErjTD
+ j/B9L6e4F6IlGKoNf416PsH0Dub6vDG65rbOXnqiOMcN3iFGu3Oye3b3z
+ p2cw3Bl0GpqeRjVtcHlfo2BeJazlSgQQGs7nRvC4jwC3KS2bLZqTdXabi w==;
+X-CSE-ConnectionGUID: gHvIKsoARbmlQIn5oMtHsg==
+X-CSE-MsgGUID: DDBqDRRNTGyvhrAMHvXCtg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11920"; a="90286791"
+X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; d="scan'208";a="90286791"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Sep 2026 09:36:00 -0700
+X-CSE-ConnectionGUID: WT+JlNupSoG/gCxbJO8R0A==
+X-CSE-MsgGUID: MKpGejxATHGpolRL4JDpeg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; 
- d="scan'208,217";a="304918479"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Sep 2026 09:12:06 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; d="scan'208";a="273197981"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Sep 2026 09:36:00 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 29 Sep 2026 09:12:04 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ 15.2.2562.46; Tue, 29 Sep 2026 09:35:59 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Tue, 29 Sep 2026 09:12:04 -0700
-Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.68) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ 15.2.2562.46 via Frontend Transport; Tue, 29 Sep 2026 09:35:59 -0700
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.43) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 29 Sep 2026 09:12:04 -0700
+ 15.2.2562.46; Tue, 29 Sep 2026 09:35:59 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ThcLrQIpa+Qx7s99Btw+kBTFDFbTl1t9yyd3LPaMJ5RnJkqOmZYdkznk5qKjPuiP2sChuC4eq4MnEysBE0MqZRlh8E1W7iVDhJJm+tsQ1Fa1zlkZ2AyjQan9gEZ81Um6XNqGNcWP74e7bVhB6OuA21qZ3vIAGiGCqtmpUKSBHQKnYuggQfd/vi1Atga5Rm2AYbpmsgtLL7Shfq0K8XvBgut8HdYSmsddAo1Cfm/H6MMWlgBpGWdcMpq00f+Mm5bUuZI2LX+TnR+vmuOO++3ewXUECp7z2THsowE7id6ePJerA/c6GOXmhwr+FDMoqgTzFmX0/gC1+9FchZ/wStw3FA==
+ b=Lez30+6J9QPnfHXmBgNdrcW52eIWC+smCTR3gTMGFDnTB6Ilu1Z1qzpy84x/oMXhtk370xD0wNi5g+vmtuluuGoXxhsClrzSPvhWQS1GnZ7d+uIvIkwaJV4/6u55joqf0h5vlzEvHUsuzCDR0D4rm1WVsF63jJmEp6KmNoIZtnLo/vp31ux00Pb9WJgHtxU9olybuLyI4iuJ4vO6q3Qb1sxcHTj7BXlyNCz63cXPf4vC2iV4SLYvEfChs8YIScw09UOEpIBkC64MrI4FzgbXgjQSw4QkEEvwchWNn49SsGFgRpZz6aT3RcqH6mTRhm+cYrpA9kQoBfNT1vj/GzzrGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/jcVRLcw2O+Dg63BjC1F6LzPgP80FNeFD7Tdnh61Z0M=;
- b=DpLEKsb8CE16mZP17H36U8BDK0S6stYLtOBLlD0hbpqzZOICxWIsmpXLto8gTGUASv0Tc2T8mY49FyMvkF70cw/3eJQaxeann1eywNzByF5NsJ7xR/hEY830L+w7589FS8jj3Q7j/LflvTEepu8cJoYBa2I3t4q7WCaVSU3X5GEMlSQfoN9HqaRgo9NOnO8Er/2jUCUrDF0/M4B26yZU8I1DUOSHuwc4tHEpS+004VNrDj3WOljvaqjbM+h0rb/ZF6bEf43VIH1n9GNEPrlQegsraVr4bsKBau03Rpw5fXGO4nTVsnVv4zgFIYe3dZosnxwAQAiVNLHSPexoFNNchA==
+ bh=Zy5h7lVtQZyr/Fxv3QAMEFsVm6LSocff1BYD48TQLaM=;
+ b=V7BtEG+O2u70c6OCcpJPoIvvE9NKxu7tsacjzrTa6HkErnRmNw75pvEOyY9XMBMGkzqskvjVtw/v8wf4OZTnaD4Gbybiyxp8axu5NJaWC7H0snw/g9Oiq8gKq4uKMRHETzGb5upoHRtAQU1LjUrp8Q+HA38uV0/SHF566YpZO10W6/Siq4VSYVUgvuN/F0K7i++oF6heeGzHXunQeSg89ryd3AaYqZ1cQSbhbnATY4z1wwDtxTx21Gio8mnLOmTffsyjByuw2bixNOQJxgnIr7dvECElbe6xkkafZg5blANv7k5BURPsXVMG9yS5o4cCfnQd6319FyHD3a9/1UnPXQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Received: from LV2PR11MB6045.namprd11.prod.outlook.com (2603:10b6:408:17b::20)
- by PH0PR11MB7167.namprd11.prod.outlook.com (2603:10b6:510:1e9::8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Tue, 29 Sep
- 2026 16:12:02 +0000
-Received: from LV2PR11MB6045.namprd11.prod.outlook.com
- ([fe80::1f72:3d49:b6ba:91ae]) by LV2PR11MB6045.namprd11.prod.outlook.com
- ([fe80::1f72:3d49:b6ba:91ae%6]) with mapi id 15.21.0451.022; Tue, 29 Sep 2026
- 16:12:01 +0000
-From: "Ji, Kai" <kai.ji@intel.com>
-To: Thomas Monjalon <thomas@monjalon.net>, Akhil Goyal <gakhil@marvell.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [EXTERNAL] [PATCH v7] examples: add Wycheproof validation app
-Thread-Topic: [EXTERNAL] [PATCH v7] examples: add Wycheproof validation app
-Thread-Index: AQHdS2ztqX5wS6X2YkaTStj9V6UhG7bdzPeAgAAFXkyAADPpgIABeb8AgAZBjgc=
-Date: Tue, 29 Sep 2026 16:12:01 +0000
-Message-ID: <LV2PR11MB604567127AA4D4D950804D13818C2@LV2PR11MB6045.namprd11.prod.outlook.com>
-References: <20260923105003.2811322-1-kai.ji@intel.com>
- <LV2PR11MB6045AC38B49432A2FEA9C20281812@LV2PR11MB6045.namprd11.prod.outlook.com>
- <CO6PR18MB4484077A45CBFCF6CB562E20D8812@CO6PR18MB4484.namprd18.prod.outlook.com>
- <Uoji51ajRt-6kVG_ZXgD_Q@monjalon.net>
-In-Reply-To: <Uoji51ajRt-6kVG_ZXgD_Q@monjalon.net>
-Accept-Language: en-GB, en-US, en-IE
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV2PR11MB6045:EE_|PH0PR11MB7167:EE_
-x-ms-office365-filtering-correlation-id: 570aaf57-ce9b-4ab0-d23b-08df1e44655d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|23010399003|10070799003|376014|1800799024|366016|42112799006|10067099003|11063799006|56012099006|18002099003|22082099003|4143699003|8096899003|38070700021;
-x-microsoft-antispam-message-info: c/hdpZRqs2r76GcRE/oj8FzPj9O1acgfv8VqMnC4ecF7R+ipJERr3R5AC9ntngY3eRb9FFMgn6b83WHBMbwvnzhhxNwNlAWYSZJdrmOEH9M7+cD3pgddrL6nyIXU4P4ULs1AB1YDySV4eAcvi/W1MiJ24yCPvDdOTjzT9DqcN2qtPmrBptfz/L1MOKoR9Vz6ypCjdkx0qN1CUJJHbWxUaUGrCCygo1R4bHnL5F9zW3jLg0BBAu9aduRlk6L5YdQfQaJAe3seOlDA9bkgNvHGIaZpEvHDQE6CogJK3WYR0nUyJHpJqA6KroYh9tAR+4cgvzCKuuE0cadOAdeopxNsRd4/WhVfucdcsMEqL/TmQ5bjhf0Tnhnh1iXLpmfr5ZKZdmHvZf7iUN4KWW/Pas3LUENhopbG2EuQOuMJXEA7bxUctXGsnixTnlCTAXVCCxGwqbUh9UVcNVLxwyBHNuhcc1X/y4AK5rxsG27B0chSpuoycl6JMPjRDSot4izwawLfaSxdumWAua6M0DwgHSqDrCOPWtkOOIxDZf7OFymp04zr5d6J6JTtdXIN6cFiYP4P+HfXsRWd/rXcb56C+reTIbhWXYMrQbfsaNe/uk0aAthNHx9znP5juwuBBgSinvAhPqT2PQsi+Iw5iDvcDTvZrRAebvFwVN9Q34LW4OEDoCVCxNOVFTWULL2jZX6tlkH4cr4HxVHG85KjBhaE1MiEtledFsuL8m5FzQtATqX201Q=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:LV2PR11MB6045.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(10070799003)(376014)(1800799024)(366016)(42112799006)(10067099003)(11063799006)(56012099006)(18002099003)(22082099003)(4143699003)(8096899003)(38070700021);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 2
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?PmgRTyRI0PE4XSdiBKJPBpSkKau2rR5mm26C8KQYCFOeCJBuBViZWP0I68?=
- =?iso-8859-1?Q?cqS4nhh25Pr9Pgtqb3wTScfhCX1SfGM7bykC0c26x6OZVAAYmTCcd9ANNH?=
- =?iso-8859-1?Q?6vYOlFoEbfCa+hdIpwmABNNBY+TOXX5JuJqfi7We6oOGPi32lONCkSUIAu?=
- =?iso-8859-1?Q?Dfh+IKFS5VVfhTxvfysG6VxbBCFpEcq6rREjY6lw7tYi1Do5kVMi1PzPn1?=
- =?iso-8859-1?Q?p37xfnhQGdeveDeVuvFBiwn2blRYTdERq9lF/4OXbv+5of25lrWQhEQMDe?=
- =?iso-8859-1?Q?LRUso+qyPvNJNxm3YJMNlCTbM3iTQHsTHCAcdmyF31tN550GbHDeHiu4g1?=
- =?iso-8859-1?Q?S5iAJZiDmXpFA+VvUt+ldlJY6SrSGIQpbu4ZT1o3J6gEj8U/GJJWyvLduF?=
- =?iso-8859-1?Q?yzNHJ1opdSQs4gAZVzSOQ7504udMGbICB1dS24gGSG/Zw4/5o7wzUkZeJD?=
- =?iso-8859-1?Q?n3WqGkQsWDe0Fa7cMBqJWUFF74ROh2MrrwTvueJXvcXhkCdwpBjxqUAzNN?=
- =?iso-8859-1?Q?1ekWdJgKGBw1ziofRVAkm314LKlc4Ref1Br5AdMhBDrFYOGWoPeQyyxjKx?=
- =?iso-8859-1?Q?B2YhVIEJpUA+kGXz72s/90A+8Kwkm82gnPBm8RD0ILUdsKehYHYsd0Gv8u?=
- =?iso-8859-1?Q?59FgfUIxT9LGtZ77TGQp0zD2xhrTM+Big9QVTKbdwLMwwb24Q/bPxjhqYL?=
- =?iso-8859-1?Q?LhQt5DUF/75sGQxQ4PtVjEHnmsbjZXLN5HYMLN9eWbDqa08xrC/x92Jq1R?=
- =?iso-8859-1?Q?PK6Jxf4B91eeefCc2jIssgZh16r7DMlOeUmP3FSDBhau4nwPs35+Z4XVNM?=
- =?iso-8859-1?Q?bmag4wh9NpOO1YYyQtw3OHxYgdtUt/0/hgFWvvyDc+p/DcSWyPgXDnllvm?=
- =?iso-8859-1?Q?uqMGCoX2NW5OXvFy53gPkm3PEM9QOAX3JGVipOxiLtMKIWPJmkBBxkXZqU?=
- =?iso-8859-1?Q?JV73nX5XZUX4/511touXvuZp7hqRfIKbWxVuMrzb7ntn9CWDIGiB/MoZCz?=
- =?iso-8859-1?Q?FPo/QQq/2FbJwsHBK+IQFTNw6MbNSO5FSIZneCNIqynsHqPO+qfDvXvN5R?=
- =?iso-8859-1?Q?8VNgBkHvSq1N6vd3sPaUQrZr3BJ/VkQAogIjCbZKAuk+/7BijPgsvSBsnQ?=
- =?iso-8859-1?Q?mtkAHcV1Y2PEe2q7+Z78Re9I04tKP3uMznVwmc6iBKAYKeOqxfaXr8o2ui?=
- =?iso-8859-1?Q?OwJdXc/hJCqs3Ufj3w+s+8n4iEI3jGLga3ijNc+4q7m4GYuzT3XCN1mpjg?=
- =?iso-8859-1?Q?foJ4hMWxK3B7xK0gwHn9w6Nm6KFIr3b/Fb1C48PZ2CLwgoxo085NyBka/9?=
- =?iso-8859-1?Q?Gtx7M5Jj0TiKgxkZlZoqoaUsbbHHCwKNJhkhX9KPLn5vRz2KRV/A9cINRl?=
- =?iso-8859-1?Q?IEjNS7ydmgbk1zFjp30krZfuraQOl5uAeFWH/KwajXOHRFEbKD0KIpB5To?=
- =?iso-8859-1?Q?eWNjTnBUkgjHF0g71flkxLVz8CLeAtFo8K+EAOOf14GalwQl7myMXWi9hI?=
- =?iso-8859-1?Q?8Wivho4fVPqF5W6d/XOx6nedWunB2gQrhxOT2ve6CcVOrTkCbLdsRxNhrv?=
- =?iso-8859-1?Q?Zwt6v+h6vn8do4LvjiXL0EWu92lH3hD9o7H+bbHbcBrpwNwqzrFy31n1LE?=
- =?iso-8859-1?Q?EF+QLiJkA6yXtKdHmPzIt1UqW3XGA7qMhGyG2cpeS3Yro4lt0/irIWG5rm?=
- =?iso-8859-1?Q?Lxe2pXRmkWIEW9l7sVpb716tm4FdPkcQyC87+4ldcUpN75FMPzUjd1kQw8?=
- =?iso-8859-1?Q?WvTQ+jmle9Bkl3ZeJDUHWem2XMb42kt2N+oT4qXVCJqCQhJ/GCspnwigXT?=
- =?iso-8859-1?Q?rcaQQAsE5K6G4HvGgQf/ZogCbUy4xyVCFRDuQOhZ6f1/2n5nhMPs93An4z?=
- =?iso-8859-1?Q?Yn?=
-x-ms-exchange-antispam-messagedata-1: IrPdRFixj8Yb8w==
-Content-Type: multipart/alternative;
- boundary="_000_LV2PR11MB604567127AA4D4D950804D13818C2LV2PR11MB6045namp_"
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
+ CY8PR11MB7135.namprd11.prod.outlook.com (2603:10b6:930:61::9) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.451.24; Tue, 29 Sep 2026 16:35:57 +0000
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::74e3:c0eb:29ee:fffa]) by DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::74e3:c0eb:29ee:fffa%3]) with mapi id 15.21.0451.026; Tue, 29 Sep 2026
+ 16:35:57 +0000
+Message-ID: <a69c273f-8ad3-4435-9acf-ce768e1d1789@intel.com>
+Date: Tue, 29 Sep 2026 17:35:53 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] test/crypto: add ML-KEM support
+To: Pratik Senapati <psenapati@marvell.com>, <dev@dpdk.org>
+CC: <gakhil@marvell.com>, <gmuthukrishn@marvell.com>, <kai.ji@intel.com>
+References: <20260929105909.1305576-1-psenapati@marvell.com>
+ <20260929122059.1344615-1-psenapati@marvell.com>
+Content-Language: en-US
+From: Radu Nicolau <radu.nicolau@intel.com>
+In-Reply-To: <20260929122059.1344615-1-psenapati@marvell.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: DB8PR04CA0002.eurprd04.prod.outlook.com
+ (2603:10a6:10:110::12) To DM8PR11MB5653.namprd11.prod.outlook.com
+ (2603:10b6:8:25::8)
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: CBn9C+/DqcQVcvT5Fd089nDREFADp8u/BNyhDiNtd67E76BXkVFDivCaxDwSu8+tss3zRl3SwtBMFjzKj4CUIp3FVrkmSI4adzpPrASSd/Fpqj6MpCAXtp1wVyHq+6N97eAYwxWnRllnH9VvudgNTUK13B8g596JWf9h3dxFn4dClWubecjinPZ87WFzv/nng+Y/H5V5H6xrbiBAsSCqBCQSIPhQ8ZpvBPHp6gZP6xkGrqOXdK/nivb/Fvmc1bFXUmdjQ6oXn574IJkupMwQAa7uY93+2M46z+u5Vtd5kanqtGCwHN861/VjWeBkcFlP/GX7EFfwbAjN9fzLunnPxA==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|CY8PR11MB7135:EE_
+X-MS-Office365-Filtering-Correlation-Id: 85997464-c462-4606-81d2-08df1e47bcc7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|23010399003|1800799024|376014|10067099003|11063799006|4143699003|56012099006|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: te676gYHoyCnBS1Y1j9dJXONpPoypH5hxKa4i7XWSgw2TAfsxmQ9CUp9KKTfCOwq1ohBT8AZn62yjZYpup21/ZiQuSnUe8K20uwSGDAO4GIdLpPKCADepg/CRMhM5A1FMvqujy+OUcP9h1Vl2AJ3UlZqQ7Q/c4i+l25Lp/mWXpoT4wEGP8CLwXMv6R6mIFDfNp2nFRJP58WeFYsMMWNrMIt6bQtgvjhBdwPBXSO2p4D6SmVQoI0O3+LTryW6zwJbtJPLet8rIBo6xyjnvZPNgNaGOfr38itOHgdRgdi4PdQAVCAaSGmbxQd+IA5oRQGt3IUejHfY3pBy+yq5lo1+INE/FapW8ryBhwXMTUfBwdaV3+0rBeyP4sgJaadU2Q32Ie/nk1SKCbLBXjZI5cmHjvxk6HHYwGbvfCr982fYTwHIcks4AxoRGTyj7oUhkxyMhxzhl2I6Qj49y83DR4L2+UHnydpRzeX7QhdqZ/EmQZq7D5kSQu+qVzWNr6ejP/UvlG1gIqzzhTPhNps8knkY3cI9z5D82UdVyI5VrVluzIkA7YKXgeDPwf4Yux0oNNUUCNYwnBLMrBlq3qMcmVFIAJFIa8u9MsIDgjdODx13LUt/qjk+gded+hB06Xw8m1IeRB8grDmriwZmmHQbj17Kp4r1IxCaDUBQkJ2Ftz1ZZsE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(23010399003)(1800799024)(376014)(10067099003)(11063799006)(4143699003)(56012099006)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c0JkRUNRb2dQcGY2T0hmeDRxNzFtWExpY0lFK1lHWHYwOUwvcEZTaEFxZUFB?=
+ =?utf-8?B?dDlpOGh6Q1NZM0tSWG9QTHVKVlBpdDN4SDg1b1hWb1dyUEJlN1lyOUlsMGVa?=
+ =?utf-8?B?ejQ5Yyt0c1c0M3NYUmtrbXBsVXliZzRlVFAyZGdFVTd6eU5zV0xnR3J6aWJG?=
+ =?utf-8?B?S1owc1BFQmRyeWFwRzZwQ2RYb3hwVHMwSzBZa2RHOGs5Tk40Y1RTdXV1M3hE?=
+ =?utf-8?B?UWVLMmsrUk5MR25ZcjM3OGdMMEQ2YkdjczdCSG5OOFhPY2VqRTZPT1gwWUpW?=
+ =?utf-8?B?MTZLRE44aFdKdDA4YklsSWREaUlKd05EejhFamNZWWFhUVZsTUV6VnlwMlZ0?=
+ =?utf-8?B?RUxYMWVMNHBZNFQxbitzK1JpSHhyQjdoRTV6MjlGTnZsdW93RlFrNTN5RUs5?=
+ =?utf-8?B?aUZFcTRTaVk3aTFhbHRjL1JzQ0Y1ODlRY2VZOS96bklZalcxMHpUSEl3QkJQ?=
+ =?utf-8?B?eDZjY08rWjBMazJOM2xVbWRRU2pBa2VnZXVOelFpR2c2NmcyaDBWZlQ4ZzYr?=
+ =?utf-8?B?dVVOcWJHWHh0QTJUOVVNL1FEdE5scCt2a3RhUjVObzNkMkdJbnQwNmRkMUcv?=
+ =?utf-8?B?UkFCdkhEWlZjbUZvVzQ4d0ZzUld0WERjemVLL212RytxOGRKaTFLK1p2ZXdS?=
+ =?utf-8?B?dU1GeGEyTkhHT2NJNUczSCtoZWY0VVRmdFlJQVZGTFJrNUVBdTRKbmtNZVRp?=
+ =?utf-8?B?Mk93d1ZLTjN2ZWdqbHBXdklXakZqb3N4ajZMaFVhR3psM1ZuNFpETkRSMFl2?=
+ =?utf-8?B?eHZiNkFlZTVjSFY3bG1NUTgxN2F2RUVOcTBSNHhsSzJqeEJsRjRGTW9KaGc3?=
+ =?utf-8?B?Q1pwM2ZoblNjS2FTQ1dibXFoYy9JOWMwMjNVVlpRbCtGanRkOTQrSHM5ODJa?=
+ =?utf-8?B?YVQ3Qk5YUDQyTVkrV1dFTU5aSXQzWUJLL1d0RmZ6T3k2cSs5VlNKNUR6ak5R?=
+ =?utf-8?B?NVM4ZmYybzNFeGQ2dXppSFk4V21kS3lBVUs2U2FCNEZONmRZMHU2cng1ZzdD?=
+ =?utf-8?B?WEhaN2pMQjMxZVNmOHFtemsvdW9vdUdhaG41U3phUVBZcnV3QmlNR2JDSlhP?=
+ =?utf-8?B?N3pvMWFwWFVpK2Q0SUNUYzMvazFEd3V4eGRVWnpNdkRoa3pSRFZ3S0JRb0lk?=
+ =?utf-8?B?VDNCN1lyWFAySGJvZEZOWEN3REhDeEhFVEgrS3JGTmZtdngzeUlhdk1qemln?=
+ =?utf-8?B?OUprQ1Z4Y1BnR2JEVlg1NDdnOEZuckQxaWhYOEZHNU5mVWRmaVJmT0c3RThT?=
+ =?utf-8?B?V21odUpaNXVJa0hTYVd5NDhERkR3WmU4OUtoSUFiTy9qZExtT1lIbWw2N1Fv?=
+ =?utf-8?B?QmEwcU43bW9jWTBwZ1ZYZmJmazZHSDdreGxTRTc3R1ZDaDE2ZmkxYjFaY3A5?=
+ =?utf-8?B?SVpadW94YUJKbHlNUEhVMERGN2p6QmorV3Z0azBzTzJuQmN5ZHp1eFZ1eHEr?=
+ =?utf-8?B?bG12MEtsdDJJN2NpMnJ6TEEyc3JwcW9vYXA4VzFSa3F2NGwydkg0QWxpNk84?=
+ =?utf-8?B?dHRpL3lCR3NzdklrRCtzZktKMnlJOUlUcm8rOEZLelRTenZ2cUp1d0hKTXhl?=
+ =?utf-8?B?OEVrRHN3T1E0T3ZlanhLRXpsc05wOU55K3lma1dQZ3NXK05OTS8vdGE4OXJS?=
+ =?utf-8?B?RUI1amtyTS82RVdWeW5RVXdvNWpSbUEvd3puYnNmd1gwQmVvQ0EvU2lVUExF?=
+ =?utf-8?B?MHlTenRuZytEeWhYcWFETkxCRzQyU1JpV09UelZXaWlmeThMRFF3QXBMMjJl?=
+ =?utf-8?B?UFZ3b21LRG4rUEJRaU1JK2lCdDlXQis2anJOUzV1eU9zNEJlbjQ2Q1pINEtN?=
+ =?utf-8?B?Wi9JR0paVWRTeEhrdVQ1YVhYSG01ZGFNdU1BcW04UzFhTDBhNU9ZZnFhM1VK?=
+ =?utf-8?B?V1R0dU9SUmIzc1pFRVdpR3E1azl5cDEvZGxRQUxraUUyMFNkYWtnbmw5empm?=
+ =?utf-8?B?Rml5eGdhVE5hRzQ3djg1SVpxbGtQSEMyUlJQbEpEcjBoNXZHSE5pWHM0OTNs?=
+ =?utf-8?B?aGV2bml5MGJYNjlSRkdHMnltcW93bFNBL1NmSElPcWM3cFVhb09FSG9kY3Qz?=
+ =?utf-8?B?bmkrNTFWU1JFUDFqOFFjdVAxUERKdnFmRytMcnJRS1VKMXoyWFJsSVRlNjZl?=
+ =?utf-8?B?dmo2MmluNXZIdmY3YS9aMy96Snl3SXRJT1A0YXhaakg0K0VvOEsxNnI0QXE4?=
+ =?utf-8?B?WmpWWHB0RW9UTXBub3lZM2dMUWo5YXZseDZKZ3BtemYydkZ1dU9HeW4yaG9t?=
+ =?utf-8?B?S3FONlFqaE1HQVBUc0RoU3Z3TzdWa1A3S1YzVzkrVHRPdXMrNGFmaEp1VGRC?=
+ =?utf-8?B?cjgzeFJ5UDRqckZsL2RxQ0NQYjFKdGdESnB0cS9FZEd6d1p3YnlFQT09?=
+X-Exchange-RoutingPolicyChecked: 2b3mQiVdkWxBNGZSj4X/X2m2+tKnHKr6psg40CnClTHl8fdFkF7QaZVpU9ofYkEG2jG0i5VjD8mm/jsxmfm0qiFcMTD40Z6gmwkpTcGcz4Zcfgx69fXHtPaAEuiBZhqPIqKE5n9Pivo5HBw6waoMKTlODnhsTLMUfPCrw7TIZZqVbBwlbFpiFbhhOC47wtOEbyiDj4N1ZoBjZubkIP4q/zxt6iJknDtp12CM9nIY5VfnHJSHyxfNS1E4DyUamc48O1EOqSUjOsI5oAQt/tJ3so+yxK4BM2p/kR5pcEWE8NeFAMEW5sJTAIcOJaLRZDJ4a9rl6J7VhBDirwzkrDRJ8A==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85997464-c462-4606-81d2-08df1e47bcc7
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR11MB6045.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 570aaf57-ce9b-4ab0-d23b-08df1e44655d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2026 16:12:01.6752 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZxZmVIGxLOk2JbxcXpmucFY8+mFfP8d6lNvp9x32etPXwTLLf+HelydgXy2gp/FeU/aDRONVQjuCWuwAen0N5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7167
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2026 16:35:57.3149 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w1sgXYaOaJsXkaTi6xf4e8Neubab2alw/qP4D8ozn7WLG0tFU9RI8GZwLDMLxHvUVctrXfRoOSO3TnNrsOfq7w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7135
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -161,187 +162,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_LV2PR11MB604567127AA4D4D950804D13818C2LV2PR11MB6045namp_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 
-I agree that a single validation framework would make cryptodev validation =
-easier to discover, document, and maintain, and could eventually allow some=
- common setup and reporting infrastructure to be shared.
-That said, the overlap between the two applications is primarily at the cry=
-ptodev API level. Their core purposes are quite different. The FIPS validat=
-ion application is focused on CAVP/ACVP workflows, including request/respon=
-se processing and conformance testing, whereas Wycheproof is built around e=
-xternally maintained JSON test suites with valid/invalid/acceptable result =
-classifications and different requirements for asymmetric devices.
-While there may be opportunities for code reuse in the future, merging them=
- today would likely introduce additional dispatcher and lifecycle complexit=
-y with limited immediate benefit. It could also blur the distinction betwee=
-n Wycheproof robustness testing and FIPS conformance validation.
-My preference would be to keep them as separate applications for now and re=
-visit consolidation if we identify a meaningful amount of shared infrastruc=
-ture.
-Regards,
-
-Kai
-
-
-________________________________
-From: Thomas Monjalon <thomas@monjalon.net>
-Sent: Friday, September 25, 2026 17:32
-To: Ji, Kai <kai.ji@intel.com>; Akhil Goyal <gakhil@marvell.com>
-Cc: dev@dpdk.org <dev@dpdk.org>
-Subject: Re: [EXTERNAL] [PATCH v7] examples: add Wycheproof validation app
-
-24/09/2026 20:00, Akhil Goyal:
-> > Wycheproof differs somewhat from the existing cryptodev test vectors in=
- that it is
-> > an externally maintained collection of JSON test suites covering a larg=
-e number of
-> > edge cases and negative tests. The intended usage model is to load the =
-upstream
-> > vector files at runtime rather than embedding them in the DPDK tree.
-> > I think the existing examples/fips_validation application follows a sim=
-ilar
-> > approach, consuming external CAVP/ACVP vector files rather than integra=
-ting
-> > them into dpdk-test. This patch follows that precedent, with the goal o=
-f providing
-> > file-driven conformance validation as a standalone example application.
-> > I agree that the documentation can be improved. At minimum, the .rst sh=
-ould
-> > describe where the Wycheproof vectors can be obtained and reference the
-> > applicable upstream license, as the current example command may give th=
-e
-> > impression that the vector files are included in the DPDK source tree w=
-hen they
-> > are not.
+On 29-Sep-26 1:20 PM, Pratik Senapati wrote:
+> Extend ML-KEM Support in Test to include ML-KEM768
+> and ML-KEM1024 test vectors for
+> deterministic encapsuluation and
+> deterministic decapsulation.
 >
-> Ok, so in that case did you consider integrating this app into fips_valid=
-ation app..
-> May be we could rename fips_validation to crypto_validation and internall=
-y have 2 modes -
-> Fips and Wycheproof? Like what we have for examples/multi_process?
+> Signed-off-by: Pratik Senapati <psenapati@marvell.com>
+> ---
 
-I like this proposal.
+There are still missing tests vector variants, see below:
 
+   0) TestCase mlkem_512_encap: passed
+   1) TestCase mlkem_512_encap (deterministic): passed
+   2) TestCase mlkem_768_encap (deterministic): passed
+   3) TestCase mlkem_1024_encap (deterministic): passed
+  + TestCase [ 1] : test_mlkem_encap succeeded
 
-
-
---_000_LV2PR11MB604567127AA4D4D950804D13818C2LV2PR11MB6045namp_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
-line-height: 20px; margin: 1em 0px; font-family: &quot;IntelOne Text&quot;;=
- font-size: 10pt; color: rgb(0, 0, 0);">
-I agree that a single validation framework would make cryptodev validation =
-easier to discover, document, and maintain, and could eventually allow some=
- common setup and reporting infrastructure to be shared.</div>
-<div class=3D"elementToProof" style=3D"line-height: 20px; margin-top: 1em; =
-margin-bottom: 1em; font-family: &quot;IntelOne Text&quot;; font-size: 10pt=
-; color: rgb(0, 0, 0);">
-That said, the overlap between the two applications is primarily at the cry=
-ptodev API level. Their core purposes are quite different. The FIPS validat=
-ion application is focused on CAVP/ACVP workflows, including request/respon=
-se processing and conformance testing,
- whereas Wycheproof is built around externally maintained JSON test suites =
-with valid/invalid/acceptable result classifications and different requirem=
-ents for asymmetric devices.</div>
-<div class=3D"elementToProof" style=3D"line-height: 20px; margin-top: 1em; =
-margin-bottom: 1em; font-family: &quot;IntelOne Text&quot;; font-size: 10pt=
-; color: rgb(0, 0, 0);">
-While there may be opportunities for code reuse in the future, merging them=
- today would likely introduce additional dispatcher and lifecycle complexit=
-y with limited immediate benefit. It could also blur the distinction betwee=
-n Wycheproof robustness testing
- and FIPS conformance validation.</div>
-<div class=3D"elementToProof" style=3D"line-height: 20px; margin-top: 1em; =
-margin-bottom: 1em; font-family: &quot;IntelOne Text&quot;; font-size: 10pt=
-; color: rgb(0, 0, 0);">
-My preference would be to keep them as separate applications for now and re=
-visit consolidation if we identify a meaningful amount of shared infrastruc=
-ture.</div>
-<div class=3D"elementToProof" style=3D"line-height: 20px; margin-top: 1em; =
-margin-bottom: 1em; font-family: &quot;IntelOne Text&quot;; font-size: 10pt=
-; color: rgb(0, 0, 0);">
-Regards,</div>
-<div class=3D"elementToProof" style=3D"line-height: 20px; margin-top: 1em; =
-margin-bottom: 1em; font-family: &quot;IntelOne Text&quot;; font-size: 10pt=
-; color: rgb(0, 0, 0);">
-<br>
-Kai</div>
-<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
-margin: 0px 0px 16px; font-family: &quot;IntelOne Text&quot;; font-size: 10=
-pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<hr style=3D"display: inline-block; width: 98%;">
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<b>From:</b> Thomas Monjalon &lt;thomas@monjalon.net&gt;<br>
-<b>Sent:</b> Friday, September 25, 2026 17:32<br>
-<b>To:</b> Ji, Kai &lt;kai.ji@intel.com&gt;; Akhil Goyal &lt;gakhil@marvell=
-.com&gt;<br>
-<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
-<b>Subject:</b> Re: [EXTERNAL] [PATCH v7] examples: add Wycheproof validati=
-on app
-</div>
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-size: 11pt;">24/09/2026 20:00, Akhil Goyal:<br>
-&gt; &gt; Wycheproof differs somewhat from the existing cryptodev test vect=
-ors in that it is<br>
-&gt; &gt; an externally maintained collection of JSON test suites covering =
-a large number of<br>
-&gt; &gt; edge cases and negative tests. The intended usage model is to loa=
-d the upstream<br>
-&gt; &gt; vector files at runtime rather than embedding them in the DPDK tr=
-ee.<br>
-&gt; &gt; I think the existing examples/fips_validation application follows=
- a similar<br>
-&gt; &gt; approach, consuming external CAVP/ACVP vector files rather than i=
-ntegrating<br>
-&gt; &gt; them into dpdk-test. This patch follows that precedent, with the =
-goal of providing<br>
-&gt; &gt; file-driven conformance validation as a standalone example applic=
-ation.<br>
-&gt; &gt; I agree that the documentation can be improved. At minimum, the .=
-rst should<br>
-&gt; &gt; describe where the Wycheproof vectors can be obtained and referen=
-ce the<br>
-&gt; &gt; applicable upstream license, as the current example command may g=
-ive the<br>
-&gt; &gt; impression that the vector files are included in the DPDK source =
-tree when they<br>
-&gt; &gt; are not.<br>
-&gt;<br>
-&gt; Ok, so in that case did you consider integrating this app into fips_va=
-lidation app..<br>
-&gt; May be we could rename fips_validation to crypto_validation and intern=
-ally have 2 modes -<br>
-&gt; Fips and Wycheproof? Like what we have for examples/multi_process?<br>
-<br>
-I like this proposal.<br>
-<br>
-<br>
-<br>
-</div>
-</body>
-</html>
-
---_000_LV2PR11MB604567127AA4D4D950804D13818C2LV2PR11MB6045namp_--
