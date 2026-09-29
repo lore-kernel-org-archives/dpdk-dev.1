@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC64CA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E99CA5FA7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:38:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A30840ED8;
-	Tue, 29 Sep 2026 18:38:11 +0200 (CEST)
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 6E75A4026E
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:09 +0200 (CEST)
-Received: by mail-pz2-f12.google.com with SMTP id
- d2e1a72fcca58-86212a185dcso3089874b3a.1
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id ED53342670;
+	Tue, 29 Sep 2026 18:38:14 +0200 (CEST)
+Received: from mail-pz2-f40.google.com (mail-pz2-f40.google.com
+ [74.125.228.40]) by mails.dpdk.org (Postfix) with ESMTP id B3CB04026E
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:10 +0200 (CEST)
+Received: by mail-pz2-f40.google.com with SMTP id
+ d2e1a72fcca58-8804c1728f9so3495563b3a.3
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699888;
- x=1791304688; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699890;
+ x=1791304690; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=2JfFoZDjteG8oTLDfEBm/xFWa/ZJ0ljD0K0rpxOMG4U=;
- b=kCUETlBg/Oo6Qlg3zcIIEJfbCuTCpRk6lW1CRLLNjHxLhdegbvXEOu/e5bQVwjfJex
- J47GVLqIbKJj3u2CVUAEscd5U1vA2J8hnFcfhNKbig6ZNgmFfpYev0ifoYlJFLf60Wyx
- N/LW2ou9oLqRvXwwqydFhxKPKvPUX4d7DF6A+MDttRjiJm/qDONF2VLKWC4gZ2OVYxjC
- iQLefAOwC/hFIbSQ7aVP8vjOYRpUnDiAltsOuwIDhF610GrsnoikJwKv7LmslLmfIZYW
- 6dhd6p25Kh9UFK+simprPW71nbpCCUNc9LZk8Ue8G+HqE7sfDs2K0B7mMU5NXCcwknCx
- +qWg==
+ bh=kb6K5t/Fuo8MJ9Qn1TpVfzVR0A05N9nZmWNjHopBdFk=;
+ b=UuZD3Py53qTDeHeJXtjMGCeeIB+B5qILbI0xvZv2zX6SpGULSG5x9Xhcc5l/op3v+h
+ ZMOfDC31SJ9RXqWthmw4vp2qvT2snnWVAyWSz14NMm9aSSBPMFg9ltqNCu8MHHBYIaZf
+ akB1UQlFCXeZiiflgRsxb29Y/2KV+ccVrbPCebn4Ew5IvvE+/farK3iCGfJ/s5lwgUfQ
+ F23Pby7KhR+3zIhHiH+998hfdKPl2l1Rwy7hMVhegugymxOleEyR6BjCahdKuvRVENUk
+ aM8jEiNrFRbbMdZge9gBDgWHDy2W+iBBqEYM0dAphVuuk3bFHOFHdr/hMYBhelF50QpJ
+ cRag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790699888; x=1791304688;
+ d=1e100.net; s=20260707; t=1790699890; x=1791304690;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=2JfFoZDjteG8oTLDfEBm/xFWa/ZJ0ljD0K0rpxOMG4U=;
- b=AwIvIhM8OTrB/IJrIdZsqDBoD7GVl49msqrP4KGgj6Cx+C1JTiQr1t2flKYNLknyyy
- Wj8KIhMR9qtpiMz6CByYqIkbuAInEv7+X6ymQLKZX7KObnJAHTFwYhzaGToBitGIhRHc
- pqW6ADd8JDGP2idmupTO1qY6qDDEb0Ow3yQPkAfGPscNApeKhpS3oQi5wOD4eu6T6OQH
- Lsz1RP+LOgQPqq2Fa4DGHrxT6lRYzuBgInz+ui395mPmg/chGRyQLV0PJTTuZlC3AR1r
- j/lWRn3YO6VC9n3a0O2UKR9aOFjdf4IeAVxJy82oJPJEIFk+LFdEyxvLK9spJZU3mNrh
- 2yZQ==
-X-Gm-Message-State: AFuF++l9YEuyJpe1W2CnxroGIBUVTmNenfhXLu2zJa5Yj/R51I0BDMsf
- 0ZjeEk/MBblHfIL+qEuyzTua2Qg83oSoES4Kt2OU4gOJ5Tj8zWPeDcA0hsw3f1WO9RwgfHFV/yi
- LK2in6fE=
-X-Gm-Gg: AYBFou3iQu4gqw6LjL+HSunvq+Y6hbDxgzqSTz+5qhmxs5ymr3bPT538XJ6N0FI/in0
- 1EEgw7HTRk5Rvg16QOU79Ka/0Uj666LNAY2Zv2n7KwKdASHnBTch+bBrBDs+/6GOJ18sbxi/Xjw
- ACa74U54RS6yUhrcKYMLs3tNu2d5iqGRJEFrxpe5tYEu9DQabdevINRiYe35Cf2V1Kr3PsmIg7q
- fDeRz0iZg+mHPZ5rtIO2lAOR5u/1eiZR/boPh1U6sHEejq3VxAx7He0nQTw2SY1kP2/RdHPc24i
- kUQNr3L10YNXiR9+/rkwUx4dUV+o1pRsBCVZEyy3FSLxV+S8In7tWYa+ZM9Y/VaNIuKTZa0CrgN
- zBJ08ZIGQlQfsdUAX8Thg/Dl7xMui4akjBHo88cBglcDPQTuvtMFs6KyPvxIdC3AA8mS6qQe4M/
- DlZJpsPLDW2K7J5JnCYNdsl29ZCzvXlVXM7to7T7hdluQEtezMBK8ii602RJEUinG4vtSVK9x2i
- JM5YaKMhGqVCKAvLeRFXm7LQ5NaHU9YrDIvaA==
-X-Received: by 2002:a05:6a21:2d93:b0:3dd:a197:edef with SMTP id
- adf61e73a8af0-3de0e92114cmr15365235637.62.1790699888457; 
- Tue, 29 Sep 2026 09:38:08 -0700 (PDT)
+ bh=kb6K5t/Fuo8MJ9Qn1TpVfzVR0A05N9nZmWNjHopBdFk=;
+ b=w/0lxffgCTAH+p1wWCod6PQfKZpbI7nwaqQ2B59wAU+HOQ8VcquIT2RlxRiDkt72R7
+ SDxMQVq+QhXCuNlusYozEkpp7tZAA4I13oadXzV75DUdOQUDvTj70cbT78MlKbqXIMbk
+ jq897ajbqqWkUe12d5qMWWxiwOa+0fK6w+q8uB9tFtqQRe/dH+y275CqRuGvW2+OjtwI
+ F7C+kFYXS7dVKGKgjm0dU7KKDUFRe72KSWtGMKHY/kwtUsVL7V2QekvIyQMmNIV4VLLk
+ ga9wvLzmIZ55YXRw1HNr19aNvphh9xAe6lP9V8yvV5fEb2WWUGlvTlLpGlbwALd9JJDw
+ Xmeg==
+X-Gm-Message-State: AFuF++l5dFiwztfyDyQb24BmxuIqWyzUZUrR94eyuhcGyIXHhlb8z8pf
+ m7BoPWDzI2qweajJjjLULN4p9Y2Wv6MpSdVaVHLGCvl+/TJVoTP/aFK9GLbBJ0Pna2UrZjQJk3U
+ H6FjUbOc=
+X-Gm-Gg: AYBFou1uZyiJUonUeCIeA4lE+Abybmp9ojv4+0hrgao/3AlRE1/iEWBE+kkcVb+coaQ
+ ZTkgWBpKqT+7Ed38AF1OV4h+6PA5b43myUJVM36A2ri4CbqQhCE6GWlnZ1O3ZbL15t0CJL/bLRy
+ uZO/FgoNxdAHWtNLLtrq3RcWVYpHq+eXDmb2CdMQigpl5YbIAe1ZLYvx3RRtgzfGY1BPR8m+g3y
+ MYTJvpHYjj4vxmuyU+w13ILD1JhoxN6IGi89T/dYdXEWlY8Fe1jtoCkn4ilwaoIeOeFyADutOoQ
+ 3USyrvl9/RIMHifnUyXNged70KFLsPwkyPH+z9UAECTTzIzg4FoeO/orjsq8YM98J/ba5+fHOzI
+ /z0m//afR87wiFF0rIffHffC/VIlz1EHELBvbSpA5E9Rjcd5FfkbLeg7YpJdPuCald8q/HYGozs
+ EJcV92MC4g/yJXv6dOWmei87vgS9SP2CU0RDB5f9PGV0I/j6+OKtRXwUWYolCTydD9ezolv9/L7
+ 2h5HYFXVacMJaktKfxgZHzqLy/m0xj9OzlGmg==
+X-Received: by 2002:a05:6a00:35c9:b0:870:c2db:da2c with SMTP id
+ d2e1a72fcca58-87e99e3fa8cmr12934399b3a.25.1790699889358; 
+ Tue, 29 Sep 2026 09:38:09 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.07
+ d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:38:07 -0700 (PDT)
+ Tue, 29 Sep 2026 09:38:08 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 00/61] kvargs: add numeric conversion helpers
-Date: Tue, 29 Sep 2026 09:36:03 -0700
-Message-ID: <20260929163800.1108305-1-stephen@networkplumber.org>
+Subject: [PATCH v2 01/61] kvargs: add numeric conversion helpers
+Date: Tue, 29 Sep 2026 09:36:04 -0700
+Message-ID: <20260929163800.1108305-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260914054912.755403-1-stephen@networkplumber.org>
+In-Reply-To: <20260929163800.1108305-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
+ <20260929163800.1108305-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,206 +82,1030 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Almost every driver parses numeric device arguments with its own
-code, and most get some part of it wrong: atoi() does not detect
-invalid input, errno is checked without being cleared, the end
-pointer is ignored, the value is truncated before it is range
-checked, or base 0 turns a leading zero into octal.
+Drivers which take numeric values in devargs each open code the
+conversion from string to integer, and often get it wrong.
+A survey of the tree finds at least fifteen separate
+implementations of "parse an unsigned integer devarg", of which two are
+exported from lib/ and byte for byte identical to each other.
 
-This series adds range checked converters and ready made
-rte_kvargs_process() handlers to librte_kvargs, then converts the drivers.
+The recurring bugs are:
 
-Library (patches 1 to 3)
-------------------------
+  - atoi() is used, so overflow is undefined and nothing is validated;
+  - errno is checked without being reset first, so an unrelated earlier
+    failure rejects a valid value;
+  - errno is checked but endptr is not, so "foo" is silently accepted
+    as zero;
+  - endptr is checked but errno is not, so an overflowing value is
+    accepted as ULLONG_MAX;
+  - the result is stored into a narrower type with no range check, so
+    nb_desc=65537 silently becomes 1;
+  - strtoul() is used for an unsigned target, so a leading '-' is
+    accepted and wrapped around, and dev_caps_mask=-1 enables
+    everything;
+  - the value is dereferenced without checking for NULL, so a key given
+    with no value segfaults;
+  - base 0 is passed, so a leading zero unexpectedly selects octal.
 
-  rte_kvargs_to_uint/to_int/to_hex     convert with an explicit range
+Add a set of helpers matching arg_handler_t, so they can be passed
+straight to rte_kvargs_process(), covering the integer types drivers
+actually store into. Each validates the whole string and only writes
+the target on success, so a caller supplied default survives a bad
+argument.
 
-  rte_kvargs_handle_u8/u16/u32/u64     store into a typed variable
-  rte_kvargs_handle_i8/i16/i32/i64
-  rte_kvargs_handle_uint/int/long/ulong/size
+Add rte_kvargs_handle_bool for on/off style arguments. It accepts the
+word forms which only sfc supports today, and treats a key given
+without a value as true.
 
-  rte_kvargs_handle_bool               1/y/yes/on/true and negatives,
-                                       bare key means true
-  rte_kvargs_handle_socket_id          -1 (SOCKET_ID_ANY) through
-                                       RTE_MAX_NUMA_NODES - 1
-  rte_kvargs_handle_hex32/hex64        bare hex mask, 0x optional
+Where a driver needs a range narrower than the target type, expose the
+underlying rte_kvargs_to_uint and rte_kvargs_to_int.
 
-Values are decimal or 0x hexadecimal, no octal, no negative value for
-an unsigned type, no trailing garbage.
-The handlers log key, value, and expected range on failure.
-Unit tests cover all of them.
+Octal is deliberately not supported: no driver documents it, and
+reading "010" as eight has been a recurring surprise.
 
-The new api's are marked experimental for 26.11.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ app/test/test_kvargs.c                 | 221 +++++++++++++
+ doc/guides/prog_guide/devargs.rst      |  18 +
+ doc/guides/rel_notes/release_26_11.rst |  20 ++
+ lib/kvargs/rte_kvargs.c                | 441 +++++++++++++++++++++++++
+ lib/kvargs/rte_kvargs.h                | 186 +++++++++++
+ 5 files changed, 886 insertions(+)
 
-Drivers (patches 5 to 60)
--------------------------
-
-52 drivers converted. Local handlers that only did a range checked
-store are deleted, 40 of them.
-
-The af_xdp conversion (patch 17) goes further than the rest.
-With some changes to types, like queue and indexes converted
-to uint16_t, the local handlers can be replaced by helpers.
-Likewise boolean flags can be bool instead of int.
-
-There are some cases not covered easily by kvargs helpers
-including ranges and other parsing.
-
-Behaviour changes
------------------
-
-  - malformed, out of range and wrapped values now fail probe with a
-    message instead of being silently misread
-  - a leading zero is decimal, not octal
-  - boolean arguments accept on/off/yes/no/true/false and reject
-    anything else, including numbers other than 0 and 1
-  - socket IDs are checked at both ends (dlb2 accepted
-    RTE_MAX_NUMA_NODES, turbo_sw and bbdev_null accepted negatives)
-  - the four bare hex masks (ice hw_debug_mask, hns3 dev_caps_mask,
-    cxgbe filtermode/filtermask, ark Pkt_dir) keep their syntax
-
-v2 - rebase and fixup af_xdp
-
-Stephen Hemminger (61):
-  kvargs: add numeric conversion helpers
-  kvargs: add a socket ID handler
-  kvargs: add hexadecimal conversion helpers
-  eal: validate memory size arguments
-  net/null: use kvargs numeric helpers
-  net/vhost: use kvargs numeric helpers
-  vdpa/ifc: use kvargs numeric helpers
-  net/softnic: use kvargs numeric helpers
-  dma/skeleton: use kvargs numeric helpers
-  raw/skeleton: use kvargs numeric helpers
-  baseband/null: use kvargs numeric helpers
-  net/memif: use kvargs numeric helpers
-  net/af_packet: use kvargs numeric helpers
-  net/pcap: use kvargs numeric helpers
-  net/ring: use kvargs numeric helpers
-  net/af_xdp: use kvargs numeric helpers
-  net/ark: use kvargs numeric helpers
-  net/failsafe: use kvargs numeric helpers
-  net/virtio: use kvargs numeric helpers
-  net/bonding: use kvargs numeric helpers
-  net/ena: use kvargs numeric helpers
-  net/netvsc: use kvargs numeric helpers
-  net/ice: use kvargs numeric helpers
-  net/iavf: use kvargs numeric helpers
-  net/i40e: use kvargs numeric helpers
-  net/idpf: use kvargs numeric helpers
-  net/cpfl: use kvargs numeric helpers
-  net/ixgbe: use kvargs numeric helpers
-  net/txgbe: use kvargs numeric helpers
-  net/octeontx: use kvargs numeric helpers
-  net/octeon_ep: use kvargs numeric helpers
-  net/qede: use kvargs numeric helpers
-  net/nfb: use kvargs numeric helpers
-  net/thunderx: use kvargs numeric helpers
-  net/i40e: propagate VF queue number parse errors
-  net/cnxk: use kvargs numeric helpers
-  net/xsc: use kvargs numeric helpers
-  net/hns3: use kvargs numeric helpers
-  net/enetc: use kvargs numeric helpers
-  event/dlb2: use kvargs numeric helpers
-  net/nfp: use kvargs numeric helpers
-  drivers/crypto: use kvargs numeric helpers
-  event/sw: use kvargs numeric helpers
-  net/bnxt: use kvargs numeric helpers
-  net/bnxt: propagate devargs parsing errors
-  net/mlx4: use kvargs numeric helpers
-  net/sfc: use kvargs numeric helpers
-  crypto/mvsam: use kvargs numeric helpers
-  ml/cnxk: use kvargs numeric helpers in cn10k
-  ml/cnxk: use kvargs numeric helpers in mvtvm
-  event/opdl: use kvargs numeric helpers
-  mempool/cnxk: use kvargs numeric helpers
-  event/octeontx: use kvargs numeric helpers
-  baseband/turbo_sw: use kvargs numeric helpers
-  baseband/la12xx: use kvargs numeric helpers
-  dma/hisi_acc: use kvargs numeric helpers
-  crypto/virtio: use kvargs numeric helpers
-  net/ice: use kvargs hex helper for debug mask
-  net/hns3: use kvargs hex helper for capability mask
-  net/cxgbe: use kvargs numeric helpers
-  doc: note kvargs devargs conversion in release notes
-
- app/test/test_kvargs.c                        | 297 +++++++++
- doc/guides/eventdevs/dlb2.rst                 |   4 +-
- doc/guides/nics/null.rst                      |   2 +-
- doc/guides/prog_guide/devargs.rst             |  18 +
- doc/guides/rel_notes/release_26_11.rst        |  44 ++
- drivers/baseband/la12xx/bbdev_la12xx.c        |  60 +-
- drivers/baseband/null/bbdev_null.c            |  29 +-
- .../baseband/turbo_sw/bbdev_turbo_software.c  |  29 +-
- drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c   |  15 +-
- drivers/crypto/dpaa_sec/dpaa_sec.c            |  17 +-
- drivers/crypto/mvsam/rte_mrvl_pmd.c           |  22 +-
- drivers/crypto/virtio/virtio_user_cryptodev.c |  21 +-
- drivers/dma/hisi_acc/hisi_acc_dmadev.c        |   5 +-
- drivers/dma/skeleton/skeleton_dmadev.c        |  23 +-
- drivers/event/dlb2/dlb2.c                     | 127 +---
- drivers/event/octeontx/ssovf_evdev.c          |  25 +-
- drivers/event/opdl/opdl_evdev.c               |  49 +-
- drivers/event/sw/sw_evdev.c                   |  56 +-
- drivers/mempool/cnxk/cnxk_mempool.c           |  37 +-
- drivers/ml/cnxk/cn10k_ml_dev.c                |  74 +--
- drivers/ml/cnxk/cn10k_ml_dev.h                |   8 +-
- drivers/ml/cnxk/cn10k_ml_ops.c                |   2 +-
- drivers/ml/cnxk/mvtvm_ml_dev.c                |  47 +-
- drivers/ml/cnxk/mvtvm_ml_dev.h                |   2 +-
- drivers/net/af_packet/rte_eth_af_packet.c     |  72 +--
- drivers/net/af_xdp/rte_eth_af_xdp.c           | 431 ++++++-------
- drivers/net/ark/ark_ethdev.c                  |   4 +-
- drivers/net/bnxt/bnxt_ethdev.c                | 148 ++---
- drivers/net/bonding/eth_bond_private.h        |   8 -
- drivers/net/bonding/rte_eth_bond_args.c       |  71 +--
- drivers/net/bonding/rte_eth_bond_pmd.c        |   8 +-
- drivers/net/cnxk/cnxk_ethdev_devargs.c        | 283 +++------
- drivers/net/cxgbe/cxgbe_main.c                |  38 +-
- drivers/net/ena/ena_ethdev.c                  |  45 +-
- drivers/net/enetc/enetc4_vf.c                 |  22 +-
- drivers/net/failsafe/failsafe_args.c          |  20 +-
- drivers/net/hns3/hns3_common.c                |  23 +-
- drivers/net/hns3/hns3_common.h                |   3 -
- drivers/net/intel/cpfl/cpfl_ethdev.c          |  26 +-
- drivers/net/intel/i40e/i40e_ethdev.c          |  57 +-
- drivers/net/intel/iavf/iavf.h                 |   6 +-
- drivers/net/intel/iavf/iavf_ethdev.c          |  55 +-
- drivers/net/intel/ice/ice_ethdev.c            | 123 +---
- drivers/net/intel/ice/ice_ethdev.h            |  10 +-
- drivers/net/intel/idpf/idpf_ethdev.c          |  26 +-
- drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  40 +-
- drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   4 +-
- drivers/net/memif/rte_eth_memif.c             |  73 ++-
- drivers/net/mlx4/mlx4.c                       |  33 +-
- drivers/net/netvsc/hn_ethdev.c                |   6 +-
- drivers/net/nfb/nfb_ethdev.c                  |  13 +-
- drivers/net/nfp/nfp_ethdev.c                  |  36 +-
- drivers/net/null/rte_eth_null.c               |  78 +--
- drivers/net/octeon_ep/otx_ep_ethdev.c         |  16 +-
- drivers/net/octeontx/octeontx_ethdev.c        |  18 +-
- drivers/net/pcap/pcap_ethdev.c                |  51 +-
- drivers/net/qede/qede_ethdev.c                |  55 +-
- drivers/net/ring/rte_eth_ring.c               |  21 +-
- drivers/net/sfc/sfc.c                         |   2 +-
- drivers/net/sfc/sfc_kvargs.c                  |  19 -
- drivers/net/sfc/sfc_kvargs.h                  |   2 -
- drivers/net/sfc/sfc_port.c                    |   2 +-
- drivers/net/softnic/rte_eth_softnic.c         |  30 +-
- .../net/softnic/rte_eth_softnic_internals.h   |   3 +-
- drivers/net/thunderx/nicvf_ethdev.c           |  13 +-
- drivers/net/txgbe/txgbe_ethdev.c              |  97 ++-
- drivers/net/vhost/rte_eth_vhost.c             |  69 +--
- drivers/net/virtio/virtio_ethdev.c            |  36 +-
- drivers/net/virtio/virtio_user_ethdev.c       |  59 +-
- drivers/net/xsc/xsc_dev.c                     |  50 +-
- drivers/raw/skeleton/skeleton_rawdev.c        |  20 +-
- drivers/vdpa/ifc/ifcvf_vdpa.c                 |  29 +-
- lib/eal/common/eal_common_options.c           |  27 +-
- lib/kvargs/rte_kvargs.c                       | 564 ++++++++++++++++++
- lib/kvargs/rte_kvargs.h                       | 257 ++++++++
- 75 files changed, 2191 insertions(+), 2024 deletions(-)
-
+diff --git a/app/test/test_kvargs.c b/app/test/test_kvargs.c
+index a14b75948a..b74dfd6acb 100644
+--- a/app/test/test_kvargs.c
++++ b/app/test/test_kvargs.c
+@@ -2,6 +2,8 @@
+  * Copyright 2014 6WIND S.A.
+  */
+ 
++#include <errno.h>
++#include <stdint.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
+@@ -328,6 +330,221 @@ static int test_invalid_kvargs(void)
+ 	return -1;
+ }
+ 
++/* Check the numeric conversion helpers on a value passed through kvargs. */
++static int
++handle_one(arg_handler_t handler, const char *value, void *opaque)
++{
++	struct rte_kvargs *kvlist;
++	char args[128];
++	int ret;
++
++	if (value != NULL)
++		snprintf(args, sizeof(args), "k=%s", value);
++	else
++		snprintf(args, sizeof(args), "k");
++
++	kvlist = rte_kvargs_parse(args, NULL);
++	if (kvlist == NULL)
++		return -1;
++
++	ret = rte_kvargs_process_opt(kvlist, "k", handler, opaque);
++	rte_kvargs_free(kvlist);
++
++	/* rte_kvargs_process_opt() flattens the handler error to -1. */
++	return ret;
++}
++
++/* A handler must accept a good value, and leave the target alone otherwise. */
++#define CHECK_GOOD(handler, type, str, expected) do { \
++	type v = (type)0x5a; \
++	TEST_ASSERT_SUCCESS(handle_one(handler, str, &v), \
++			    "%s rejected \"%s\"", #handler, str); \
++	TEST_ASSERT_EQUAL(v, (type)(expected), \
++			  "%s(\"%s\") gave the wrong value", #handler, str); \
++} while (0)
++
++#define CHECK_BAD(handler, type, str) do { \
++	type v = (type)0x5a; \
++	TEST_ASSERT_FAIL(handle_one(handler, str, &v), \
++			 "%s accepted \"%s\"", #handler, str); \
++	TEST_ASSERT_EQUAL(v, (type)0x5a, \
++			  "%s clobbered the target on \"%s\"", #handler, str); \
++} while (0)
++
++static int
++test_handle_unsigned(void)
++{
++	CHECK_GOOD(rte_kvargs_handle_u8, uint8_t, "0", 0);
++	CHECK_GOOD(rte_kvargs_handle_u8, uint8_t, "255", 255);
++	CHECK_GOOD(rte_kvargs_handle_u8, uint8_t, "0xff", 255);
++	CHECK_GOOD(rte_kvargs_handle_u8, uint8_t, "0XFF", 255);
++	CHECK_GOOD(rte_kvargs_handle_u8, uint8_t, "+7", 7);
++	/* A leading zero must not select octal. */
++	CHECK_GOOD(rte_kvargs_handle_u8, uint8_t, "010", 10);
++	CHECK_BAD(rte_kvargs_handle_u8, uint8_t, "256");
++	CHECK_BAD(rte_kvargs_handle_u8, uint8_t, "-1");
++
++	CHECK_GOOD(rte_kvargs_handle_u16, uint16_t, "65535", 65535);
++	CHECK_BAD(rte_kvargs_handle_u16, uint16_t, "65536");
++
++	CHECK_GOOD(rte_kvargs_handle_u32, uint32_t, "4294967295", UINT32_MAX);
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "4294967296");
++
++	CHECK_GOOD(rte_kvargs_handle_u64, uint64_t, "18446744073709551615",
++		   UINT64_MAX);
++	CHECK_GOOD(rte_kvargs_handle_u64, uint64_t, "0xffffffffffffffff",
++		   UINT64_MAX);
++	CHECK_BAD(rte_kvargs_handle_u64, uint64_t, "18446744073709551616");
++
++	CHECK_GOOD(rte_kvargs_handle_uint, unsigned int, "42", 42);
++	CHECK_GOOD(rte_kvargs_handle_size, size_t, "42", 42);
++
++	/* Malformed values, rejected for every width. */
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "");
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "abc");
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "12abc");
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "12 34");
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "0x");
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "0x0x10");
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "0X0X10");
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "--1");
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "+-1");
++	/* strtoull() would skip the space and negate what follows. */
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "+ 1");
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "- 1");
++	CHECK_BAD(rte_kvargs_handle_u32, uint32_t, "+ -1");
++	/* Trailing white space is fine, though. */
++	CHECK_GOOD(rte_kvargs_handle_u32, uint32_t, " 12 ", 12);
++
++	/* A key with no value at all. */
++	{
++		uint32_t v = 0x5a;
++
++		TEST_ASSERT_FAIL(handle_one(rte_kvargs_handle_u32, NULL, &v),
++				 "u32 accepted a key with no value");
++		TEST_ASSERT_EQUAL(v, 0x5aU, "target clobbered");
++	}
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_handle_signed(void)
++{
++	CHECK_GOOD(rte_kvargs_handle_i8, int8_t, "-128", -128);
++	CHECK_GOOD(rte_kvargs_handle_i8, int8_t, "127", 127);
++	CHECK_BAD(rte_kvargs_handle_i8, int8_t, "-129");
++	CHECK_BAD(rte_kvargs_handle_i8, int8_t, "128");
++
++	CHECK_GOOD(rte_kvargs_handle_i16, int16_t, "-32768", -32768);
++	CHECK_BAD(rte_kvargs_handle_i16, int16_t, "32768");
++
++	CHECK_GOOD(rte_kvargs_handle_i32, int32_t, "-2147483648", INT32_MIN);
++	CHECK_BAD(rte_kvargs_handle_i32, int32_t, "2147483648");
++
++	/* INT64_MIN has a magnitude one past INT64_MAX. */
++	CHECK_GOOD(rte_kvargs_handle_i64, int64_t, "-9223372036854775808",
++		   INT64_MIN);
++	CHECK_GOOD(rte_kvargs_handle_i64, int64_t, "9223372036854775807",
++		   INT64_MAX);
++	CHECK_BAD(rte_kvargs_handle_i64, int64_t, "9223372036854775808");
++	CHECK_BAD(rte_kvargs_handle_i64, int64_t, "-9223372036854775809");
++
++	/* A sign in front of a hex value. */
++	CHECK_GOOD(rte_kvargs_handle_i32, int32_t, "-0x10", -16);
++	CHECK_BAD(rte_kvargs_handle_i32, int32_t, "-0x0x10");
++
++	CHECK_GOOD(rte_kvargs_handle_int, int, "-1", -1);
++	CHECK_GOOD(rte_kvargs_handle_int, int, "+1", 1);
++	CHECK_BAD(rte_kvargs_handle_int, int, "");
++	CHECK_BAD(rte_kvargs_handle_int, int, "1x");
++	CHECK_BAD(rte_kvargs_handle_int, int, "-");
++	CHECK_BAD(rte_kvargs_handle_int, int, "- 1");
++	CHECK_BAD(rte_kvargs_handle_int, int, "--1");
++
++	CHECK_GOOD(rte_kvargs_handle_long, long, "-1", -1);
++	CHECK_GOOD(rte_kvargs_handle_long, long, "+1", 1);
++	CHECK_BAD(rte_kvargs_handle_long, long, "");
++	CHECK_BAD(rte_kvargs_handle_long, long, "1x");
++
++	CHECK_GOOD(rte_kvargs_handle_ulong, unsigned long, "1", 1);
++	CHECK_GOOD(rte_kvargs_handle_ulong, unsigned long, "0x10", 16);
++	CHECK_BAD(rte_kvargs_handle_ulong, unsigned long, "-1");
++	CHECK_BAD(rte_kvargs_handle_ulong, unsigned long, "1x");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_handle_bool(void)
++{
++	static const char * const yes[] = {
++		"1", "y", "Y", "yes", "YES", "on", "On", "true", "TRUE",
++	};
++	static const char * const no[] = {
++		"0", "n", "N", "no", "NO", "off", "Off", "false", "FALSE",
++	};
++	unsigned int i;
++	bool v;
++
++	for (i = 0; i < RTE_DIM(yes); i++) {
++		v = false;
++		TEST_ASSERT_SUCCESS(handle_one(rte_kvargs_handle_bool, yes[i], &v),
++				    "bool rejected \"%s\"", yes[i]);
++		TEST_ASSERT(v, "\"%s\" should be true", yes[i]);
++	}
++
++	for (i = 0; i < RTE_DIM(no); i++) {
++		v = true;
++		TEST_ASSERT_SUCCESS(handle_one(rte_kvargs_handle_bool, no[i], &v),
++				    "bool rejected \"%s\"", no[i]);
++		TEST_ASSERT(!v, "\"%s\" should be false", no[i]);
++	}
++
++	/* A bare key is enough to enable the option. */
++	v = false;
++	TEST_ASSERT_SUCCESS(handle_one(rte_kvargs_handle_bool, NULL, &v),
++			    "bool rejected a key with no value");
++	TEST_ASSERT(v, "a key with no value should be true");
++
++	/* But a blank value is not a missing one. */
++	CHECK_BAD(rte_kvargs_handle_bool, bool, "");
++	CHECK_BAD(rte_kvargs_handle_bool, bool, "2");
++	CHECK_BAD(rte_kvargs_handle_bool, bool, "yep");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_kvargs_to_range(void)
++{
++	uint64_t u = 0x5a;
++	int64_t s = 0x5a;
++
++	TEST_ASSERT_SUCCESS(rte_kvargs_to_uint("10", 0, 10, &u), "10 in [0,10]");
++	TEST_ASSERT_EQUAL(u, 10U, "wrong value");
++
++	TEST_ASSERT_EQUAL(rte_kvargs_to_uint("11", 0, 10, &u), -ERANGE,
++			  "11 should be out of [0,10]");
++	TEST_ASSERT_EQUAL(u, 10U, "target clobbered on range error");
++
++	TEST_ASSERT_EQUAL(rte_kvargs_to_uint("0", 1, 10, &u), -ERANGE,
++			  "0 should be out of [1,10]");
++	TEST_ASSERT_EQUAL(rte_kvargs_to_uint(NULL, 0, 10, &u), -EINVAL,
++			  "NULL should be rejected");
++	TEST_ASSERT_EQUAL(rte_kvargs_to_uint("x", 0, 10, &u), -EINVAL,
++			  "\"x\" should be rejected");
++	TEST_ASSERT_EQUAL(rte_kvargs_to_uint("5", 0, 10, NULL), -EINVAL,
++			  "a NULL result should be rejected");
++
++	TEST_ASSERT_SUCCESS(rte_kvargs_to_int("-5", -10, 10, &s), "-5 in [-10,10]");
++	TEST_ASSERT_EQUAL(s, -5, "wrong value");
++	TEST_ASSERT_EQUAL(rte_kvargs_to_int("-11", -10, 10, &s), -ERANGE,
++			  "-11 should be out of [-10,10]");
++
++	return TEST_SUCCESS;
++}
++
+ static struct unit_test_suite kvargs_test_suite  = {
+ 	.suite_name = "Kvargs Unit Test Suite",
+ 	.setup = NULL,
+@@ -354,6 +571,10 @@ static struct unit_test_suite kvargs_test_suite  = {
+ 		TEST_CASE(test_parse_empty_elements),
+ 		TEST_CASE(test_parse_with_only_key),
+ 		TEST_CASE(test_invalid_kvargs),
++		TEST_CASE(test_handle_unsigned),
++		TEST_CASE(test_handle_signed),
++		TEST_CASE(test_handle_bool),
++		TEST_CASE(test_kvargs_to_range),
+ 		TEST_CASES_END() /**< NULL terminate unit test array */
+ 	}
+ };
+diff --git a/doc/guides/prog_guide/devargs.rst b/doc/guides/prog_guide/devargs.rst
+index c8a7224aa0..b73ad20cf6 100644
+--- a/doc/guides/prog_guide/devargs.rst
++++ b/doc/guides/prog_guide/devargs.rst
+@@ -248,6 +248,24 @@ PMD drivers can parse devargs using the kvargs library:
+        return 0;
+    }
+ 
++Rather than writing a handler for each numeric argument, use the
++conversion handlers provided by kvargs, which do the range checking:
++
++.. code-block:: c
++
++   uint16_t queues = 1;
++   bool scalar = false;
++
++   rte_kvargs_process(kvlist, "queues", rte_kvargs_handle_u16, &queues);
++   rte_kvargs_process_opt(kvlist, "scalar", rte_kvargs_handle_bool, &scalar);
++
++Boolean arguments accept ``1``, ``y``, ``yes``, ``on`` and ``true``,
++case insensitively, and their negative counterparts. A bare ``scalar``
++with no value means true, but reaches the handler only through
++rte_kvargs_process_opt(); rte_kvargs_process() rejects a missing value
++first. An empty ``scalar=`` is rejected, since that is what an unset
++shell variable expands to.
++
+ For Ethernet devices, use ``rte_eth_devargs_parse()``
+ to parse standard Ethernet arguments like representors:
+ 
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index e027c7a27f..5cfe3d4265 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -138,6 +138,26 @@ New Features
+   Added ``rte_bbdev_queue_stats_get()`` function to retrieve statistics
+   for a specific queue, complementing the existing device-level statistics API.
+ 
++* **Added numeric conversion helpers to kvargs.**
++
++  Added a set of ``arg_handler_t`` compatible helpers which convert a device
++  argument value into a numeric variable, so that drivers no longer need to
++  open code the conversion and its validation:
++
++  * ``rte_kvargs_handle_u8``, ``rte_kvargs_handle_u16``,
++    ``rte_kvargs_handle_u32``, ``rte_kvargs_handle_u64``,
++    ``rte_kvargs_handle_uint``, ``rte_kvargs_handle_ulong``
++    and ``rte_kvargs_handle_size``
++  * ``rte_kvargs_handle_i8``, ``rte_kvargs_handle_i16``,
++    ``rte_kvargs_handle_i32``, ``rte_kvargs_handle_i64``,
++    ``rte_kvargs_handle_int`` and ``rte_kvargs_handle_long``
++  * ``rte_kvargs_handle_bool``, accepting ``1``, ``y``, ``yes``, ``on``,
++    ``true`` and their negative counterparts. A bare ``key`` means true;
++    an empty ``key=`` is rejected.
++
++  Added ``rte_kvargs_to_uint`` and ``rte_kvargs_to_int`` for the cases where
++  a driver needs a narrower range than the target type allows.
++
+ 
+ Removed Items
+ -------------
+diff --git a/lib/kvargs/rte_kvargs.c b/lib/kvargs/rte_kvargs.c
+index 4e3198b33f..3b961a19a8 100644
+--- a/lib/kvargs/rte_kvargs.c
++++ b/lib/kvargs/rte_kvargs.c
+@@ -3,15 +3,28 @@
+  * Copyright(c) 2014 6WIND S.A.
+  */
+ 
++#include <ctype.h>
++#include <errno.h>
++#include <inttypes.h>
++#include <limits.h>
+ #include <string.h>
+ #include <stdlib.h>
+ #include <stdbool.h>
++#include <stdint.h>
+ 
+ #include <eal_export.h>
++#include <rte_common.h>
++#include <rte_log.h>
+ #include <rte_os_shim.h>
+ 
+ #include "rte_kvargs.h"
+ 
++RTE_LOG_REGISTER_DEFAULT(kvargs_logtype, INFO);
++#define RTE_LOGTYPE_KVARGS kvargs_logtype
++
++#define KVARGS_LOG(level, ...) \
++	RTE_LOG_LINE(level, KVARGS, __VA_ARGS__)
++
+ /*
+  * Receive a string with a list of arguments following the pattern
+  * key=value,key=value,... and insert them into the list.
+@@ -309,3 +322,431 @@ rte_kvargs_parse_delim(const char *args, const char * const valid_keys[],
+ 	free(copy);
+ 	return kvlist;
+ }
++
++/*
++ * Determine the base of a numeric value and skip over its prefix.
++ *
++ * Only decimal and 0x/0X hexadecimal are recognized. Octal is deliberately
++ * not supported: no driver documents it, and silently reading "010" as eight
++ * has been a recurring source of surprise.
++ *
++ * Returns the base, and advances *str past the "0x" prefix if there is one.
++ * Returns 0 if what follows the prefix is a second one: strtoull() would
++ * strip that itself, making "0x0x10" sixteen rather than the garbage it is.
++ */
++static int
++kvargs_get_base(const char **str)
++{
++	const char *s = *str;
++
++	if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X') &&
++	    isxdigit((unsigned char)s[2])) {
++		s += 2;
++		if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
++			return 0;
++		*str = s;
++		return 16;
++	}
++
++	return 10;
++}
++
++/* Skip trailing white space, and tell whether anything else is left. */
++static bool
++kvargs_at_end(const char *str)
++{
++	while (isspace((unsigned char)*str))
++		str++;
++
++	return *str == '\0';
++}
++
++/*
++ * Consume an optional sign, and report whether it was negative.
++ *
++ * strtoull() skips white space and a sign of its own, and negates on '-',
++ * so the sign has to be taken away from it: it is handled here and anything
++ * that follows must be a digit or an 0x prefix. That rejects "+-1" and
++ * "- 1", which strtoull() would otherwise accept.
++ */
++static bool
++kvargs_get_sign(const char **str)
++{
++	const char *s = *str;
++	bool negative;
++
++	while (isspace((unsigned char)*s))
++		s++;
++
++	negative = (*s == '-');
++	if (*s == '-' || *s == '+')
++		s++;
++
++	*str = s;
++	return negative;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_to_uint, 26.11)
++int
++rte_kvargs_to_uint(const char *value, uint64_t min, uint64_t max,
++		   uint64_t *result)
++{
++	const char *str = value;
++	unsigned long long val;
++	char *endptr;
++	int base;
++
++	if (str == NULL || result == NULL)
++		return -EINVAL;
++
++	/* "-1" would otherwise be silently wrapped around to UINT64_MAX. */
++	if (kvargs_get_sign(&str))
++		return -EINVAL;
++
++	base = kvargs_get_base(&str);
++	if (base == 0)
++		return -EINVAL;	/* doubled 0x prefix */
++
++	/* Nothing may sit between the sign and the digits. */
++	if (!isxdigit((unsigned char)*str))
++		return -EINVAL;
++
++	errno = 0;
++	val = strtoull(str, &endptr, base);
++	if (endptr == str)
++		return -EINVAL;	/* no digits in this base */
++	if (errno == ERANGE)
++		return -ERANGE;
++	if (errno != 0)
++		return -EINVAL;
++	if (!kvargs_at_end(endptr))
++		return -EINVAL;	/* trailing garbage */
++
++	if (val < min || val > max)
++		return -ERANGE;
++
++	*result = val;
++	return 0;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_to_int, 26.11)
++int
++rte_kvargs_to_int(const char *value, int64_t min, int64_t max, int64_t *result)
++{
++	const char *str = value;
++	unsigned long long mag;
++	char *endptr;
++	bool negative;
++	int64_t val;
++	int base;
++
++	if (str == NULL || result == NULL)
++		return -EINVAL;
++
++	negative = kvargs_get_sign(&str);
++	base = kvargs_get_base(&str);
++	if (base == 0)
++		return -EINVAL;	/* doubled 0x prefix */
++
++	/* Nothing may sit between the sign and the digits. */
++	if (!isxdigit((unsigned char)*str))
++		return -EINVAL;
++
++	/*
++	 * The sign is consumed above, so that the 0x prefix can be found
++	 * behind it, and the magnitude is parsed unsigned. Letting strtoll()
++	 * do the whole job instead would reject INT64_MIN, whose magnitude is
++	 * one past INT64_MAX.
++	 */
++	errno = 0;
++	mag = strtoull(str, &endptr, base);
++	if (endptr == str)
++		return -EINVAL;
++	if (errno == ERANGE)
++		return -ERANGE;
++	if (errno != 0)
++		return -EINVAL;
++	if (!kvargs_at_end(endptr))
++		return -EINVAL;
++
++	if (negative) {
++		if (mag > (unsigned long long)INT64_MAX + 1)
++			return -ERANGE;
++		/* Negate in unsigned space; -INT64_MIN would overflow. */
++		val = (int64_t)(-(uint64_t)mag);
++	} else {
++		if (mag > INT64_MAX)
++			return -ERANGE;
++		val = (int64_t)mag;
++	}
++
++	if (val < min || val > max)
++		return -ERANGE;
++
++	*result = val;
++	return 0;
++}
++
++/*
++ * The typed handlers below share this shape: convert with a range matching
++ * the target type, then store. The target is written only on success, so a
++ * caller-supplied default survives a bad argument.
++ */
++static int
++kvargs_store_uint(const char *key, const char *value, void *opaque,
++		  uint64_t max, uint64_t *val)
++{
++	int ret;
++
++	if (opaque == NULL)
++		return -EINVAL;
++
++	ret = rte_kvargs_to_uint(value, 0, max, val);
++	if (ret < 0)
++		KVARGS_LOG(ERR, "invalid value \"%s\" for key \"%s\", expected 0..%" PRIu64,
++			   value != NULL ? value : "", key != NULL ? key : "", max);
++
++	return ret;
++}
++
++static int
++kvargs_store_int(const char *key, const char *value, void *opaque,
++		 int64_t min, int64_t max, int64_t *val)
++{
++	int ret;
++
++	if (opaque == NULL)
++		return -EINVAL;
++
++	ret = rte_kvargs_to_int(value, min, max, val);
++	if (ret < 0)
++		KVARGS_LOG(ERR,
++			   "invalid value \"%s\" for key \"%s\", expected %" PRId64 "..%" PRId64,
++			   value != NULL ? value : "", key != NULL ? key : "",
++			   min, max);
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_u8, 26.11)
++int
++rte_kvargs_handle_u8(const char *key, const char *value, void *opaque)
++{
++	uint64_t val;
++	int ret;
++
++	ret = kvargs_store_uint(key, value, opaque, UINT8_MAX, &val);
++	if (ret == 0)
++		*(uint8_t *)opaque = (uint8_t)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_u16, 26.11)
++int
++rte_kvargs_handle_u16(const char *key, const char *value, void *opaque)
++{
++	uint64_t val;
++	int ret;
++
++	ret = kvargs_store_uint(key, value, opaque, UINT16_MAX, &val);
++	if (ret == 0)
++		*(uint16_t *)opaque = (uint16_t)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_u32, 26.11)
++int
++rte_kvargs_handle_u32(const char *key, const char *value, void *opaque)
++{
++	uint64_t val;
++	int ret;
++
++	ret = kvargs_store_uint(key, value, opaque, UINT32_MAX, &val);
++	if (ret == 0)
++		*(uint32_t *)opaque = (uint32_t)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_u64, 26.11)
++int
++rte_kvargs_handle_u64(const char *key, const char *value, void *opaque)
++{
++	uint64_t val;
++	int ret;
++
++	ret = kvargs_store_uint(key, value, opaque, UINT64_MAX, &val);
++	if (ret == 0)
++		*(uint64_t *)opaque = (uint64_t)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_uint, 26.11)
++int
++rte_kvargs_handle_uint(const char *key, const char *value, void *opaque)
++{
++	uint64_t val;
++	int ret;
++
++	ret = kvargs_store_uint(key, value, opaque, UINT_MAX, &val);
++	if (ret == 0)
++		*(unsigned int *)opaque = (unsigned int)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_size, 26.11)
++int
++rte_kvargs_handle_size(const char *key, const char *value, void *opaque)
++{
++	uint64_t val;
++	int ret;
++
++	ret = kvargs_store_uint(key, value, opaque, SIZE_MAX, &val);
++	if (ret == 0)
++		*(size_t *)opaque = (size_t)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_i8, 26.11)
++int
++rte_kvargs_handle_i8(const char *key, const char *value, void *opaque)
++{
++	int64_t val;
++	int ret;
++
++	ret = kvargs_store_int(key, value, opaque, INT8_MIN, INT8_MAX, &val);
++	if (ret == 0)
++		*(int8_t *)opaque = (int8_t)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_i16, 26.11)
++int
++rte_kvargs_handle_i16(const char *key, const char *value, void *opaque)
++{
++	int64_t val;
++	int ret;
++
++	ret = kvargs_store_int(key, value, opaque, INT16_MIN, INT16_MAX, &val);
++	if (ret == 0)
++		*(int16_t *)opaque = (int16_t)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_i32, 26.11)
++int
++rte_kvargs_handle_i32(const char *key, const char *value, void *opaque)
++{
++	int64_t val;
++	int ret;
++
++	ret = kvargs_store_int(key, value, opaque, INT32_MIN, INT32_MAX, &val);
++	if (ret == 0)
++		*(int32_t *)opaque = (int32_t)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_i64, 26.11)
++int
++rte_kvargs_handle_i64(const char *key, const char *value, void *opaque)
++{
++	int64_t val;
++	int ret;
++
++	ret = kvargs_store_int(key, value, opaque, INT64_MIN, INT64_MAX, &val);
++	if (ret == 0)
++		*(int64_t *)opaque = (int64_t)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_int, 26.11)
++int
++rte_kvargs_handle_int(const char *key, const char *value, void *opaque)
++{
++	int64_t val;
++	int ret;
++
++	ret = kvargs_store_int(key, value, opaque, INT_MIN, INT_MAX, &val);
++	if (ret == 0)
++		*(int *)opaque = (int)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_long, 26.11)
++int
++rte_kvargs_handle_long(const char *key, const char *value, void *opaque)
++{
++	int64_t val;
++	int ret;
++
++	ret = kvargs_store_int(key, value, opaque, LONG_MIN, LONG_MAX, &val);
++	if (ret == 0)
++		*(long *)opaque = (long)val;
++
++	return ret;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_ulong, 26.11)
++int
++rte_kvargs_handle_ulong(const char *key, const char *value, void *opaque)
++{
++	uint64_t val;
++	int ret;
++
++	ret = kvargs_store_uint(key, value, opaque, ULONG_MAX, &val);
++	if (ret == 0)
++		*(unsigned long *)opaque = (unsigned long)val;
++
++	return ret;
++}
++
++static const char * const kvargs_true[] = { "1", "y", "yes", "on", "true" };
++static const char * const kvargs_false[] = { "0", "n", "no", "off", "false" };
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_kvargs_handle_bool, 26.11)
++int
++rte_kvargs_handle_bool(const char *key, const char *value, void *opaque)
++{
++	unsigned int i;
++
++	if (opaque == NULL)
++		return -EINVAL;
++
++	/* A bare key means true; only rte_kvargs_process_opt() allows it.
++	 * An empty value is a blank value, not a missing one, so it is
++	 * rejected below.
++	 */
++	if (value == NULL) {
++		*(bool *)opaque = true;
++		return 0;
++	}
++
++	for (i = 0; i < RTE_DIM(kvargs_true); i++) {
++		if (strcasecmp(value, kvargs_true[i]) == 0) {
++			*(bool *)opaque = true;
++			return 0;
++		}
++	}
++
++	for (i = 0; i < RTE_DIM(kvargs_false); i++) {
++		if (strcasecmp(value, kvargs_false[i]) == 0) {
++			*(bool *)opaque = false;
++			return 0;
++		}
++	}
++
++	KVARGS_LOG(ERR, "invalid value \"%s\" for key \"%s\", expected a boolean",
++		   value, key != NULL ? key : "");
++
++	return -EINVAL;
++}
+diff --git a/lib/kvargs/rte_kvargs.h b/lib/kvargs/rte_kvargs.h
+index 73fa1e621b..118cf3c79b 100644
+--- a/lib/kvargs/rte_kvargs.h
++++ b/lib/kvargs/rte_kvargs.h
+@@ -21,6 +21,10 @@
+  * ethernet devices at initialization for arguments parsing.
+  */
+ 
++#include <stdint.h>
++
++#include <rte_compat.h>
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -230,6 +234,188 @@ int rte_kvargs_process_opt(const struct rte_kvargs *kvlist,
+ unsigned rte_kvargs_count(const struct rte_kvargs *kvlist,
+ 	const char *key_match);
+ 
++/**
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * Handlers to convert a key/value pair into a numeric type.
++ *
++ * The functions below all match the ``arg_handler_t`` prototype, so they can
++ * be passed directly to rte_kvargs_process():
++ *
++ * @code
++ *   uint16_t nb_desc = DEFAULT_NB_DESC;
++ *
++ *   ret = rte_kvargs_process(kvlist, "nb_desc",
++ *                            rte_kvargs_handle_u16, &nb_desc);
++ * @endcode
++ *
++ * The value string is accepted only if it represents the whole number, that
++ * is:
++ *
++ * - it is not NULL and not empty;
++ * - it is decimal, or hexadecimal with a ``0x`` or ``0X`` prefix;
++ * - it has no trailing characters other than white space;
++ * - it does not overflow the target type.
++ *
++ * A leading ``+`` or ``-`` sign is accepted. The unsigned handlers reject a
++ * negative value rather than wrapping it around, which is what strtoul()
++ * would otherwise do.
++ *
++ * Note that a leading zero does @b not select octal, so ``010`` is ten and
++ * not eight.
++ *
++ * @param key
++ *   The key, used for error reporting only. May be NULL.
++ * @param value
++ *   The value to convert.
++ * @param opaque
++ *   Pointer to the variable to store the result into. The pointed-to type
++ *   must match the handler: for example rte_kvargs_handle_u16() requires a
++ *   ``uint16_t *``. On error the variable is left unmodified.
++ *
++ * @return
++ *   - 0 on success.
++ *   - -EINVAL if the value is missing or malformed, or if @p opaque is NULL.
++ *   - -ERANGE if the value does not fit in the target type.
++ */
++__rte_experimental
++int rte_kvargs_handle_u8(const char *key, const char *value, void *opaque);
++
++/** Convert a value to uint16_t. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_u16(const char *key, const char *value, void *opaque);
++
++/** Convert a value to uint32_t. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_u32(const char *key, const char *value, void *opaque);
++
++/** Convert a value to uint64_t. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_u64(const char *key, const char *value, void *opaque);
++
++/** Convert a value to int8_t. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_i8(const char *key, const char *value, void *opaque);
++
++/** Convert a value to int16_t. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_i16(const char *key, const char *value, void *opaque);
++
++/** Convert a value to int32_t. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_i32(const char *key, const char *value, void *opaque);
++
++/** Convert a value to int64_t. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_i64(const char *key, const char *value, void *opaque);
++
++/** Convert a value to unsigned int. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_uint(const char *key, const char *value, void *opaque);
++
++/** Convert a value to int. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_int(const char *key, const char *value, void *opaque);
++
++/** Convert a value to long. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_long(const char *key, const char *value, void *opaque);
++
++/** Convert a value to unsigned long. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_ulong(const char *key, const char *value, void *opaque);
++
++/** Convert a value to size_t. See rte_kvargs_handle_u8(). */
++__rte_experimental
++int rte_kvargs_handle_size(const char *key, const char *value, void *opaque);
++
++/**
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * Convert a key/value pair to a boolean.
++ *
++ * Accepts, case insensitively, ``1``, ``y``, ``yes``, ``on`` and ``true``
++ * for true; ``0``, ``n``, ``no``, ``off`` and ``false`` for false.
++ *
++ * A key given without a value, as in ``key``, is treated as true. Use
++ * rte_kvargs_process_opt() rather than rte_kvargs_process() to support
++ * that form, since the latter rejects a missing value before the handler
++ * is called. An empty value, as in ``key=``, is rejected.
++ *
++ * @param key
++ *   The key, used for error reporting only. May be NULL.
++ * @param value
++ *   The value to convert. NULL means true.
++ * @param opaque
++ *   Pointer to a ``bool`` to store the result into. On error it is left
++ *   unmodified.
++ *
++ * @return
++ *   - 0 on success.
++ *   - -EINVAL if the value is malformed or if @p opaque is NULL.
++ */
++__rte_experimental
++int rte_kvargs_handle_bool(const char *key, const char *value, void *opaque);
++
++/**
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * Convert a string to an unsigned integer, checking it against a range.
++ *
++ * This is the underlying conversion used by the rte_kvargs_handle_*()
++ * unsigned handlers. It is meant for drivers which need a range narrower
++ * than the target type, or which parse a value obtained from
++ * rte_kvargs_get() rather than from a handler.
++ *
++ * @param value
++ *   The string to convert. Must be non-NULL and non-empty. See
++ *   rte_kvargs_handle_u8() for the accepted syntax.
++ * @param min
++ *   Smallest acceptable value, inclusive.
++ * @param max
++ *   Largest acceptable value, inclusive.
++ * @param result
++ *   Where to store the converted value. Left unmodified on error.
++ *
++ * @return
++ *   - 0 on success.
++ *   - -EINVAL if the value is missing or malformed, or if @p result is NULL.
++ *   - -ERANGE if the value is outside [@p min, @p max].
++ */
++__rte_experimental
++int rte_kvargs_to_uint(const char *value, uint64_t min, uint64_t max,
++	uint64_t *result);
++
++/**
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * Convert a string to a signed integer, checking it against a range.
++ *
++ * This is the signed counterpart of rte_kvargs_to_uint().
++ *
++ * @param value
++ *   The string to convert. Must be non-NULL and non-empty. See
++ *   rte_kvargs_handle_u8() for the accepted syntax.
++ * @param min
++ *   Smallest acceptable value, inclusive.
++ * @param max
++ *   Largest acceptable value, inclusive.
++ * @param result
++ *   Where to store the converted value. Left unmodified on error.
++ *
++ * @return
++ *   - 0 on success.
++ *   - -EINVAL if the value is missing or malformed, or if @p result is NULL.
++ *   - -ERANGE if the value is outside [@p min, @p max].
++ */
++__rte_experimental
++int rte_kvargs_to_int(const char *value, int64_t min, int64_t max,
++	int64_t *result);
++
+ #ifdef __cplusplus
+ }
+ #endif
 -- 
 2.53.0
 
