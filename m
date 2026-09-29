@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE4CCA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 14:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E63CA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 14:05:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1FFE942E12;
-	Tue, 29 Sep 2026 16:04:24 +0200 (CEST)
-Received: from mail-pz2-f40.google.com (mail-pz2-f40.google.com
- [74.125.228.40]) by mails.dpdk.org (Postfix) with ESMTP id E386842DCE
- for <dev@dpdk.org>; Tue, 29 Sep 2026 16:04:17 +0200 (CEST)
-Received: by mail-pz2-f40.google.com with SMTP id
- 41be03b00d2f7-cc750a1482fso2325166a12.2
- for <dev@dpdk.org>; Tue, 29 Sep 2026 07:04:17 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2EF0D42E4A;
+	Tue, 29 Sep 2026 16:04:25 +0200 (CEST)
+Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com
+ [74.125.228.43]) by mails.dpdk.org (Postfix) with ESMTP id 08CA342DF0
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 16:04:19 +0200 (CEST)
+Received: by mail-pz2-f43.google.com with SMTP id
+ d2e1a72fcca58-86b90133ae8so2012955b3a.1
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 07:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790690657;
- x=1791295457; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790690658;
+ x=1791295458; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=hi7rFXmUbl9tv4KQ/uNQDbyoKh870YdIdaGQzFAUSso=;
- b=QL5KLgROJqigWEoefXEzgSpbZP54ibvgzaMuvnmIrzZZbii0NQjM6xd3Vr+mrkGxQ1
- u20GcCE6TPjMTRWQvJiVam+0sjJHWPNCEEY9NpdHjFY3YsJAPTObCCLgE38HRWFF55eh
- X4iGwu9D9Jrif9JkwZyeqA2zY7rdI5QskOZ9sOTEGwyhSMpjUPM4ckT0HyPTENHtEgtZ
- Uaxm98pztCxBuFvTPVy1uHH61L+YypsznEXDGIAh7n+BawoFnKAnTcm49n23VB6mC370
- YN3Jpva6bSZxKkM+yJNOaS/H8+yOlDkD5bzrC1pITY7G44V8uPdDwN32m2TlWHxIhjAj
- atYQ==
+ bh=TpQ6k867EL4e3/O3XVIooK46T2H3XhHHVg03JJEA84k=;
+ b=gLPPvMsvDMLTVm1POImnX3IkyEGK3cu1R+5ZXfobozdnrq2rToCX1JVkDHUjRuP+8d
+ MAo5L/gwC5i7FiDdxX6Bb6AVVjLLdX0z2LcLpEfnjnynkEx4/kvq6ojMR3e/zexl2McF
+ vrG1cBOsiXBxQ0HqVGwqRpEiQR4bGQp3EALQx1PaQP6clm5V8Usg1yoi+0ga1W33ZdIF
+ URQx8YsOD3I/h1lnN/P8cuMrAEUfdmL90JdJvgWjLz3CDJYG4fROuU+yGtDYiWLTLMW0
+ dcID2Dce9cpeGxUKmiFi2kTfkEIgYxZlG46Uy0j/85sO93qz9YCGhGeYCTdnGSMFjg7W
+ V6gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790690657; x=1791295457;
+ d=1e100.net; s=20260707; t=1790690658; x=1791295458;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=hi7rFXmUbl9tv4KQ/uNQDbyoKh870YdIdaGQzFAUSso=;
- b=mOGf7/J4ba5dpc4y7+/SW0Lg9xQXQbcqlim9YNCEqn5VucHFXZOUHRcZASqUniTekJ
- 3GAyJdWbHYhISEHdH1qG8aabxIYvebEtNd1/6UKEzxe38hILlhIGQRko+ihpmRgo9hgD
- jO/RIFeKYcVxA+w0ARZqB6pB5wa9qQKyN2VI7ZfoShX0bXiRvGfh7/YOW9547CnX4HFP
- xenPsuXIi23z4nKl1D2NN5w2nB6zmN8fA+nNVjeS1rtsca0DHmfDslhoOQou1jFCJe/v
- yuVNHOaz7/t/MduB2cLNs4F3niP+CB9V2pHaEEAPULeJl4zdk4KJYsq/1OcX8WOTY63a
- SS8g==
-X-Gm-Message-State: AFuF++mkFwMnKr8tMqqFL05v8ldL56LYpNHh5lJf/x0JhSduLXvLchkn
- E8wXwusuG5Z7ftY2em64f8waTEZdHnIPkA6zZv70Y/P4xAuC15f4tw6UIdPGJGpvyrr8/cMqE25
- YS+raxJY=
-X-Gm-Gg: AYBFou0Fi+8k/tYAHN58D/+GJNUsOqkDcKdmKi6AUYv0Mg392y9UyWI+OyokAFtJXVP
- tTYwCBwYXyWzphssJs/iTFJy6ZINceW4QyBNQjDdzmu+swZYL7juAtYTurByTbm1H1FdtDvlbcR
- lbWn9WaxFYv7T4GVVyw5lkKn56Q9ehkshY5SnyWOIUa19z0KRVnyLPrGK3btTGRuuc2cjkwBd+s
- 94wFqdjil3IcIzz4EpH6E7SihDPdbSj4McKqmaXhqrqjcvoEnzJs1xHgxTFudPVC5In2aEfOYsL
- aJ8Uoxquv+B50pbaKCtVrX+EbNqUEKoWmh4w0FW8XdQlVOqygiq4TZ3sJvYxoGaCiFypyyKM/Ew
- /y+axKTMSh4q1feEpSgn9pwpuKH9H5LMwLtsKV5DJxAFLXqhMy0tm38H3thTBlLUNzKj+FsvugT
- gCMc6fzLfAMbXip5Rybz/ssngMbpyWnYtqaai/ZPugkh25+P9J7/2SZRSfxs/HZF6VlIp/ZvdQI
- iVDh6aek6beJlLNN2VC+blIrmj6DOnD7ZG2rg==
-X-Received: by 2002:a05:6a20:4308:b0:3de:7119:9bb2 with SMTP id
- adf61e73a8af0-3de7119a46fmr5126745637.20.1790690657040; 
- Tue, 29 Sep 2026 07:04:17 -0700 (PDT)
+ bh=TpQ6k867EL4e3/O3XVIooK46T2H3XhHHVg03JJEA84k=;
+ b=PxwZ6vmFku6MNe4tql+fg23nIGFjwkcEJs1lOc3N9qqhb5Su3BTtp9ByI+FeSuozDr
+ f5+/RbenllhHmhZZtBpqQZBbL5yGretZMnYYqjxylsjzDALUNlvOkE/B6B4PzpKhcjg+
+ h22k6FOh1scBtb6tb/GLLYXM7dulSimZF2Asxw5ukwMV5ArpjQJpNgUayg0H5v0x5QXm
+ c1PbG3lV3xT+tNmAys7ARhlH9l4kpFdpLbXMFAM3I9RzrC69fEyGwa0ny4YAXWNfd2xL
+ npCKjclp3UOC7WH28qXmZg8JCBHErrQvO2LDU/2I0zPgWpQm1tyFc0DVraZF1HursClm
+ wA/A==
+X-Gm-Message-State: AFuF++mGt/Hvjgi/5pr7/9lT0gaTVD3mC8E9GfU7vjbeliSb+LRw1nYt
+ n7O3LrH6x1zhpDbC7gZ7dZeAcPdHzaJt9r+acXVdux3545S8Ez2idVsU1XZ8N5pFIcuM06bPbwf
+ SjRH/BRI=
+X-Gm-Gg: AYBFou0QQfd4WCyXa7qqcD36lD9dnZWhxdVVkvceW26l5PFKgcphd8eslOK99aZLdbY
+ 2JhmW5bd/nFKx0d2J0LzQ+HnM7Tq17cH3590qP9clyVayl6qnMHPUijh01EzsyNyGlihFuyQsVv
+ n30o32pb6SRAMoc1Y9LzysN2oRZOzYqcoSrBrc6zW/XeTfG/2EfwvDY/L2yFYQb3qHduGbbxOL5
+ lvt5rF37C5FR7FdyNsib31cQ/+KfPBNWNPKBC/whplBdIyJVcRuSDZP8ucY6zocEiRy9URinQQ8
+ c9woRhOUy0uDkvlBm8wGYef4QNb1h1nSXtO52cLL33a/ICza2sl1QRyW0pAl7YJpNxQLlJH59yi
+ 11R5rQQUlDF2mvJs7vI5c/GOCCx/iprMkgGxztKfH8MQ7LVypd2FMTpH9uBitzTz8ZdeYf8Jdxk
+ Y2es0QmbkhzyaPqRNGvHWhefMtRmefmntpVy0z6OUGv3JuF3kf89n6GGgXZXJmTPsjB437WE159
+ +Nf+sAEwzYTwsQULrNn9CCmdgBQmo2ADnRQCw==
+X-Received: by 2002:a05:6a00:4515:b0:881:e737:8213 with SMTP id
+ d2e1a72fcca58-881e737874cmr6813129b3a.7.1790690658038; 
+ Tue, 29 Sep 2026 07:04:18 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-885e1066470sm998330b3a.18.2026.09.29.07.04.16
+ d2e1a72fcca58-885e1066470sm998330b3a.18.2026.09.29.07.04.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 07:04:16 -0700 (PDT)
+ Tue, 29 Sep 2026 07:04:17 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Gaetan Rivet <grive@u256.net>
-Subject: [PATCH v9 05/25] net/failsafe: convert to stdatomic
-Date: Tue, 29 Sep 2026 07:01:51 -0700
-Message-ID: <20260929140409.234453-6-stephen@networkplumber.org>
+ Hyong Youb Kim <hyonkim@cisco.com>, John Daley <johndale@cisco.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v9 06/25] net/enic: do not use deprecated rte_atomic64
+Date: Tue, 29 Sep 2026 07:01:52 -0700
+Message-ID: <20260929140409.234453-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929140409.234453-1-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
@@ -83,162 +85,202 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The functions rte_atomic64 are deprecated, convert this
-code to use stdatomic for reference count. Use the memory
-order implied by naming P/V.
-
-No need for initialization since refcnt is in space
-allocated with rte_zmalloc().
+The rte_atomic64 datatype and functions are deprecated.
+This driver was only using it for error statistics where atomic
+is not necessary. The DPDK PMD model is that statistics do
+not have to be exact in face of contention.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Hyong Youb Kim <hyonkim@cisco.com>
 ---
- drivers/net/failsafe/failsafe_ops.c     | 16 +++++---------
- drivers/net/failsafe/failsafe_private.h | 29 ++++++++++++++-----------
- drivers/net/failsafe/failsafe_rxtx.c    |  2 +-
- 3 files changed, 23 insertions(+), 24 deletions(-)
+ drivers/net/enic/enic.h               |  6 +++---
+ drivers/net/enic/enic_compat.h        |  1 -
+ drivers/net/enic/enic_main.c          | 21 +++++----------------
+ drivers/net/enic/enic_rxtx.c          | 14 ++++++--------
+ drivers/net/enic/enic_rxtx_vec_avx2.c |  4 ++--
+ 5 files changed, 16 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/net/failsafe/failsafe_ops.c b/drivers/net/failsafe/failsafe_ops.c
-index ddc8808ebe..8761cb07c3 100644
---- a/drivers/net/failsafe/failsafe_ops.c
-+++ b/drivers/net/failsafe/failsafe_ops.c
-@@ -11,7 +11,7 @@
- #endif
+diff --git a/drivers/net/enic/enic.h b/drivers/net/enic/enic.h
+index 87f6b35fcd..0a8d4a29ca 100644
+--- a/drivers/net/enic/enic.h
++++ b/drivers/net/enic/enic.h
+@@ -59,9 +59,9 @@
+ #define ENICPMD_RXQ_INTR_OFFSET 1
  
- #include <rte_debug.h>
+ struct enic_soft_stats {
+-	rte_atomic64_t rx_nombuf;
+-	rte_atomic64_t rx_packet_errors;
+-	rte_atomic64_t tx_oversized;
++	uint64_t rx_nombuf;
++	uint64_t rx_packet_errors;
++	uint64_t tx_oversized;
+ };
+ 
+ struct enic_memzone_entry {
+diff --git a/drivers/net/enic/enic_compat.h b/drivers/net/enic/enic_compat.h
+index 7cff6831b9..3ce4299e81 100644
+--- a/drivers/net/enic/enic_compat.h
++++ b/drivers/net/enic/enic_compat.h
+@@ -9,7 +9,6 @@
+ #include <stdio.h>
+ #include <unistd.h>
+ 
 -#include <rte_atomic.h>
-+#include <rte_stdatomic.h>
- #include <ethdev_driver.h>
  #include <rte_malloc.h>
- #include <rte_flow.h>
-@@ -438,16 +438,14 @@ fs_rx_queue_setup(struct rte_eth_dev *dev,
- 		fs_rx_queue_release(dev, rx_queue_id);
- 		dev->data->rx_queues[rx_queue_id] = NULL;
+ #include <rte_log.h>
+ #include <rte_io.h>
+diff --git a/drivers/net/enic/enic_main.c b/drivers/net/enic/enic_main.c
+index 2a1a65d8da..0c7f085d66 100644
+--- a/drivers/net/enic/enic_main.c
++++ b/drivers/net/enic/enic_main.c
+@@ -83,18 +83,8 @@ static void enic_log_q_error(struct enic *enic)
+ static void enic_clear_soft_stats(struct enic *enic)
+ {
+ 	struct enic_soft_stats *soft_stats = &enic->soft_stats;
+-	rte_atomic64_clear(&soft_stats->rx_nombuf);
+-	rte_atomic64_clear(&soft_stats->rx_packet_errors);
+-	rte_atomic64_clear(&soft_stats->tx_oversized);
+-}
+ 
+-static void enic_init_soft_stats(struct enic *enic)
+-{
+-	struct enic_soft_stats *soft_stats = &enic->soft_stats;
+-	rte_atomic64_init(&soft_stats->rx_nombuf);
+-	rte_atomic64_init(&soft_stats->rx_packet_errors);
+-	rte_atomic64_init(&soft_stats->tx_oversized);
+-	enic_clear_soft_stats(enic);
++	memset(soft_stats, 0, sizeof(*soft_stats));
+ }
+ 
+ int enic_dev_stats_clear(struct enic *enic)
+@@ -132,7 +122,7 @@ int enic_dev_stats_get(struct enic *enic, struct rte_eth_stats *r_stats,
+ 	 * counted in ibytes even though truncated packets are dropped
+ 	 * which can make ibytes be slightly higher than it should be.
+ 	 */
+-	rx_packet_errors = rte_atomic64_read(&soft_stats->rx_packet_errors);
++	rx_packet_errors = soft_stats->rx_packet_errors;
+ 	rx_truncated = rx_packet_errors - stats->rx.rx_errors;
+ 
+ 	r_stats->ipackets = stats->rx.rx_frames_ok - rx_truncated;
+@@ -142,12 +132,11 @@ int enic_dev_stats_get(struct enic *enic, struct rte_eth_stats *r_stats,
+ 	r_stats->obytes = stats->tx.tx_bytes_ok;
+ 
+ 	r_stats->ierrors = stats->rx.rx_errors + stats->rx.rx_drop;
+-	r_stats->oerrors = stats->tx.tx_errors
+-			   + rte_atomic64_read(&soft_stats->tx_oversized);
++	r_stats->oerrors = stats->tx.tx_errors + soft_stats->tx_oversized;
+ 
+ 	r_stats->imissed = stats->rx.rx_no_bufs + rx_truncated;
+ 
+-	r_stats->rx_nombuf = rte_atomic64_read(&soft_stats->rx_nombuf);
++	r_stats->rx_nombuf = soft_stats->rx_nombuf;
+ 	return 0;
+ }
+ 
+@@ -1313,7 +1302,7 @@ int enic_setup_finish(struct enic *enic)
+ 	int err;
+ 
+ 	ENICPMD_FUNC_TRACE();
+-	enic_init_soft_stats(enic);
++	enic_clear_soft_stats(enic);
+ 
+ 	/*
+ 	 * Enable admin channel so we can perform certain devcmds
+diff --git a/drivers/net/enic/enic_rxtx.c b/drivers/net/enic/enic_rxtx.c
+index 549a153332..c87d947b93 100644
+--- a/drivers/net/enic/enic_rxtx.c
++++ b/drivers/net/enic/enic_rxtx.c
+@@ -112,7 +112,7 @@ enic_recv_pkts_common(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		/* allocate a new mbuf */
+ 		nmb = rte_mbuf_raw_alloc(rq->mp);
+ 		if (nmb == NULL) {
+-			rte_atomic64_inc(&enic->soft_stats.rx_nombuf);
++			++enic->soft_stats.rx_nombuf;
+ 			break;
+ 		}
+ 
+@@ -185,7 +185,7 @@ enic_recv_pkts_common(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		}
+ 		if (unlikely(packet_error)) {
+ 			rte_pktmbuf_free(first_seg);
+-			rte_atomic64_inc(&enic->soft_stats.rx_packet_errors);
++			++enic->soft_stats.rx_packet_errors;
+ 			continue;
+ 		}
+ 
+@@ -303,7 +303,7 @@ enic_noscatter_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		if (unlikely(cqd->bytes_written_flags &
+ 			     CQ_ENET_RQ_DESC_FLAGS_TRUNCATED)) {
+ 			rte_pktmbuf_free(*rxmb++);
+-			rte_atomic64_inc(&enic->soft_stats.rx_packet_errors);
++			++enic->soft_stats.rx_packet_errors;
+ 			cqd++;
+ 			continue;
+ 		}
+@@ -505,14 +505,12 @@ uint16_t enic_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	uint8_t offload_mode;
+ 	uint16_t header_len;
+ 	uint64_t tso;
+-	rte_atomic64_t *tx_oversized;
+ 
+ 	enic_cleanup_wq(enic, wq);
+ 	wq_desc_avail = vnic_wq_desc_avail(wq);
+ 	head_idx = wq->head_idx;
+ 	desc_count = wq->ring.desc_count;
+ 	ol_flags_mask = RTE_MBUF_F_TX_VLAN | RTE_MBUF_F_TX_IP_CKSUM | RTE_MBUF_F_TX_L4_MASK;
+-	tx_oversized = &enic->soft_stats.tx_oversized;
+ 
+ 	nb_pkts = RTE_MIN(nb_pkts, ENIC_TX_XMIT_MAX);
+ 
+@@ -527,7 +525,7 @@ uint16_t enic_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 		/* drop packet if it's too big to send */
+ 		if (unlikely(!tso && pkt_len > ENIC_TX_MAX_PKT_SIZE)) {
+ 			rte_pktmbuf_free(tx_pkt);
+-			rte_atomic64_inc(tx_oversized);
++			++enic->soft_stats.tx_oversized;
+ 			continue;
+ 		}
+ 
+@@ -558,7 +556,7 @@ uint16_t enic_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			if (unlikely(header_len == 0 || ((tx_pkt->tso_segsz +
+ 			    header_len) > ENIC_TX_MAX_PKT_SIZE))) {
+ 				rte_pktmbuf_free(tx_pkt);
+-				rte_atomic64_inc(tx_oversized);
++				++enic->soft_stats.tx_oversized;
+ 				continue;
+ 			}
+ 
+@@ -681,7 +679,7 @@ static void enqueue_simple_pkts(struct rte_mbuf **pkts,
+ 		 */
+ 		if (unlikely(p->pkt_len > ENIC_TX_MAX_PKT_SIZE)) {
+ 			desc->length = ENIC_TX_MAX_PKT_SIZE;
+-			rte_atomic64_inc(&enic->soft_stats.tx_oversized);
++			++enic->soft_stats.tx_oversized;
+ 		}
+ 		desc++;
  	}
--	rxq = rte_zmalloc(NULL,
--			  sizeof(*rxq) +
--			  sizeof(rte_atomic64_t) * PRIV(dev)->subs_tail,
-+	rxq = rte_zmalloc("ethdev RX queue",
-+			  sizeof(*rxq) + sizeof(*rxq->refcnt) * PRIV(dev)->subs_tail,
- 			  RTE_CACHE_LINE_SIZE);
- 	if (rxq == NULL) {
- 		fs_unlock(dev, 0);
- 		return -ENOMEM;
- 	}
--	FOREACH_SUBDEV(sdev, i, dev)
--		rte_atomic64_init(&rxq->refcnt[i]);
-+
- 	rxq->qid = rx_queue_id;
- 	rxq->socket_id = socket_id;
- 	rxq->info.mp = mb_pool;
-@@ -616,15 +614,13 @@ fs_tx_queue_setup(struct rte_eth_dev *dev,
- 		dev->data->tx_queues[tx_queue_id] = NULL;
- 	}
- 	txq = rte_zmalloc("ethdev TX queue",
--			  sizeof(*txq) +
--			  sizeof(rte_atomic64_t) * PRIV(dev)->subs_tail,
-+			  sizeof(*txq) + sizeof(*txq->refcnt) * PRIV(dev)->subs_tail,
- 			  RTE_CACHE_LINE_SIZE);
- 	if (txq == NULL) {
- 		fs_unlock(dev, 0);
- 		return -ENOMEM;
- 	}
--	FOREACH_SUBDEV(sdev, i, dev)
--		rte_atomic64_init(&txq->refcnt[i]);
-+
- 	txq->qid = tx_queue_id;
- 	txq->socket_id = socket_id;
- 	txq->info.conf = *tx_conf;
-diff --git a/drivers/net/failsafe/failsafe_private.h b/drivers/net/failsafe/failsafe_private.h
-index babea6016e..aae091e792 100644
---- a/drivers/net/failsafe/failsafe_private.h
-+++ b/drivers/net/failsafe/failsafe_private.h
-@@ -10,7 +10,7 @@
- #include <sys/queue.h>
- #include <pthread.h>
- 
--#include <rte_atomic.h>
-+#include <rte_stdatomic.h>
- #include <dev_driver.h>
- #include <ethdev_driver.h>
- #include <rte_devargs.h>
-@@ -75,7 +75,7 @@ struct rxq {
- 	int event_fd;
- 	unsigned int enable_events:1;
- 	struct rte_eth_rxq_info info;
--	rte_atomic64_t refcnt[];
-+	RTE_ATOMIC(uint64_t) refcnt[];
- };
- 
- struct txq {
-@@ -83,7 +83,7 @@ struct txq {
- 	uint16_t qid;
- 	unsigned int socket_id;
- 	struct rte_eth_txq_info info;
--	rte_atomic64_t refcnt[];
-+	RTE_ATOMIC(uint64_t) refcnt[];
- };
- 
- struct rte_flow {
-@@ -320,33 +320,36 @@ extern int failsafe_mac_from_arg;
-  */
- 
- /**
-- * a: (rte_atomic64_t)
-+ * a: RTE_ATOMIC(uint64_t)
-  */
- #define FS_ATOMIC_P(a) \
--	rte_atomic64_set(&(a), 1)
-+	rte_atomic_exchange_explicit(&(a), 1, rte_memory_order_acquire)
- 
- /**
-- * a: (rte_atomic64_t)
-+ * a: RTE_ATOMIC(uint64_t)
-  */
- #define FS_ATOMIC_V(a) \
--	rte_atomic64_set(&(a), 0)
-+	rte_atomic_store_explicit(&(a), 0, rte_memory_order_release)
- 
- /**
-  * s: (struct sub_device *)
-  * i: uint16_t qid
-  */
- #define FS_ATOMIC_RX(s, i) \
--	rte_atomic64_read( \
--	 &((struct rxq *) \
--	 (fs_dev(s)->data->rx_queues[i]))->refcnt[(s)->sid])
-+	rte_atomic_load_explicit( \
-+		&((struct rxq *) \
-+		  (fs_dev(s)->data->rx_queues[i]))->refcnt[(s)->sid], \
-+		rte_memory_order_seq_cst)
-+
- /**
-  * s: (struct sub_device *)
-  * i: uint16_t qid
-  */
- #define FS_ATOMIC_TX(s, i) \
--	rte_atomic64_read( \
--	 &((struct txq *) \
--	 (fs_dev(s)->data->tx_queues[i]))->refcnt[(s)->sid])
-+	rte_atomic_load_explicit( \
-+		&((struct txq *) \
-+		  (fs_dev(s)->data->tx_queues[i]))->refcnt[(s)->sid], \
-+		rte_memory_order_seq_cst)
- 
- #ifdef RTE_EXEC_ENV_FREEBSD
- #define FS_THREADID_TYPE void*
-diff --git a/drivers/net/failsafe/failsafe_rxtx.c b/drivers/net/failsafe/failsafe_rxtx.c
-index fe67293299..500483bda3 100644
---- a/drivers/net/failsafe/failsafe_rxtx.c
-+++ b/drivers/net/failsafe/failsafe_rxtx.c
-@@ -3,7 +3,7 @@
-  * Copyright 2017 Mellanox Technologies, Ltd
-  */
- 
--#include <rte_atomic.h>
-+#include <rte_stdatomic.h>
- #include <rte_debug.h>
- #include <rte_mbuf.h>
- #include <ethdev_driver.h>
+diff --git a/drivers/net/enic/enic_rxtx_vec_avx2.c b/drivers/net/enic/enic_rxtx_vec_avx2.c
+index 600efff270..53589ab788 100644
+--- a/drivers/net/enic/enic_rxtx_vec_avx2.c
++++ b/drivers/net/enic/enic_rxtx_vec_avx2.c
+@@ -81,7 +81,7 @@ enic_noscatter_vec_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		if (unlikely(cqd->bytes_written_flags &
+ 			     CQ_ENET_RQ_DESC_FLAGS_TRUNCATED)) {
+ 			rte_pktmbuf_free(*rxmb++);
+-			rte_atomic64_inc(&enic->soft_stats.rx_packet_errors);
++			++enic->soft_stats.rx_packet_errors;
+ 		} else {
+ 			*rx++ = rx_one(cqd, *rxmb++, enic);
+ 		}
+@@ -761,7 +761,7 @@ enic_noscatter_vec_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		if (unlikely(cqd->bytes_written_flags &
+ 			     CQ_ENET_RQ_DESC_FLAGS_TRUNCATED)) {
+ 			rte_pktmbuf_free(*rxmb++);
+-			rte_atomic64_inc(&enic->soft_stats.rx_packet_errors);
++			++enic->soft_stats.rx_packet_errors;
+ 		} else {
+ 			*rx++ = rx_one(cqd, *rxmb++, enic);
+ 		}
 -- 
 2.53.0
 
