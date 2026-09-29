@@ -2,53 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B756CA5FA1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 07:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E58BCC9832A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 07:54:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B06940276;
-	Tue, 29 Sep 2026 09:54:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 19D9E40E19;
+	Tue, 29 Sep 2026 09:54:45 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D93F84013F
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:54:16 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4639A4013F
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:54:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790668456;
+ s=mimecast20190719; t=1790668483;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=KPk0yha8BgWmS3R12M4Io9frn1wFXhnNf0RLOWBmQFI=;
- b=hqfAzcfbHpOkmID4Sg7EkewqP/tVu/X8LA1PGN7JJPp6fKxKHKvnFljqjnTla6ABA4HbZr
- zKMBRtKNV4qk+H90BEKAt5TJXhUsJ3XCms4CCug3hgVR70SDszftUuqPdmqqA2s1IJ5eb+
- tKQXAfrlux5OZ8mJg5SIvL2r2ElO3YU=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=I8P+oSx0It3bx4M6clyHRT9tXyWqv+OL8PepkPBhXjc=;
+ b=csmGn1LHAwmPAn2vphDzbiY9Bj/O/ehXYMwj7shdyarNF3KFGsI/jEYI9aqCFrnav8kCgI
+ eQTDN4ENcXVwyIz31i7pde45nLOyAeHIdSWfBKi/MMOfz+DzUHKru36cv7e28XQmiIbADM
+ o9aoJ+unmDzqJRRo5/LfoXMo9yxVQfI=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-621-LqPkr81wPHei0ugaky0O1Q-1; Tue,
- 29 Sep 2026 03:54:13 -0400
-X-MC-Unique: LqPkr81wPHei0ugaky0O1Q-1
-X-Mimecast-MFC-AGG-ID: LqPkr81wPHei0ugaky0O1Q_1790668452
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-433--ZIoupAYOaiYqgaXlwtwiA-1; Tue,
+ 29 Sep 2026 03:54:40 -0400
+X-MC-Unique: -ZIoupAYOaiYqgaXlwtwiA-1
+X-Mimecast-MFC-AGG-ID: -ZIoupAYOaiYqgaXlwtwiA_1790668479
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 8B8AB19541BC; Tue, 29 Sep 2026 07:54:12 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 6723D1855886; Tue, 29 Sep 2026 07:54:39 +0000 (UTC)
 Received: from [100.90.45.206] (headnet04.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.116])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3052430000E4; Tue, 29 Sep 2026 07:54:10 +0000 (UTC)
-Message-ID: <d613f597-4929-4a57-b57b-b42dce8b8b2d@redhat.com>
-Date: Tue, 29 Sep 2026 09:54:07 +0200
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id EB9D21956045; Tue, 29 Sep 2026 07:54:37 +0000 (UTC)
+Message-ID: <25ec0dd9-c2f4-4006-bf56-c9d07d649aad@redhat.com>
+Date: Tue, 29 Sep 2026 09:54:35 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] examples/vhost: stop using async datapath
+Subject: Re: [PATCH v2 3/6] examples/vdpa: remove dependency on PCI library
 To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
-Cc: bruce.richardson@intel.com, Chenbo Xia <chenbox@nvidia.com>
+Cc: bruce.richardson@intel.com, Chenbo Xia <chenbox@nvidia.com>,
+ Adrian Moreno <amorenoz@redhat.com>
 References: <20260723153111.3943368-1-david.marchand@redhat.com>
  <20260904074649.1979166-1-david.marchand@redhat.com>
- <20260904074649.1979166-3-david.marchand@redhat.com>
+ <20260904074649.1979166-4-david.marchand@redhat.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -93,10 +94,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20260904074649.1979166-3-david.marchand@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20260904074649.1979166-4-david.marchand@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: WSM_0PWKuzj0bYMZIEl-1UOY8OE4J5k3vyVhGQzR9Lg_1790668452
+X-Mimecast-MFC-PROC-ID: hhDBeWaEFjxfKV-gW6rN1Kt8n45GtwvmFuIHBJ23hj4_1790668479
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -117,21 +118,29 @@ Errors-To: dev-bounces@dpdk.org
 
 
 On 9/4/26 9:46 AM, David Marchand wrote:
-> Stop using vhost async as this feature will be removed in a next commit.
-> Thanks to this, we can drop use of experimental api.
+> This is some forgotten unneeded header include from a previous
+> refactoring.
+> 
+> Fixes: 38f8ab0bbc8d ("vhost: make vDPA framework bus agnostic")
 > 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
 > ---
-> Changes since RFC:
-> - dropped vhost_crypto changes (now handled in patch 1),
+>   examples/vdpa/main.c | 1 -
+>   1 file changed, 1 deletion(-)
 > 
-> ---
->   examples/vhost/Makefile    |   2 -
->   examples/vhost/main.c      | 436 +------------------------------------
->   examples/vhost/main.h      |  21 +-
->   examples/vhost/meson.build |   2 -
->   4 files changed, 12 insertions(+), 449 deletions(-)
-> 
+> diff --git a/examples/vdpa/main.c b/examples/vdpa/main.c
+> index ac6da79b05..79bfe7022a 100644
+> --- a/examples/vdpa/main.c
+> +++ b/examples/vdpa/main.c
+> @@ -13,7 +13,6 @@
+>   #include <rte_malloc.h>
+>   #include <rte_vhost.h>
+>   #include <rte_vdpa.h>
+> -#include <rte_pci.h>
+>   #include <rte_string_fns.h>
+>   
+>   #include <cmdline_socket.h>
+
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
 Thanks,
