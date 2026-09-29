@@ -2,48 +2,105 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 288A5CA5FAC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 12:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E98CFCA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 12:09:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EBB0E40BA5;
-	Tue, 29 Sep 2026 14:00:04 +0200 (CEST)
-Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net
- [178.154.239.82])
- by mails.dpdk.org (Postfix) with ESMTP id 385AF4013F
- for <dev@dpdk.org>; Tue, 29 Sep 2026 14:00:03 +0200 (CEST)
-Received: from mail-nwsmtp-smtp-production-main-76.iva.yp-c.yandex.net
- (mail-nwsmtp-smtp-production-main-76.iva.yp-c.yandex.net
- [IPv6:2a02:6b8:c0c:91a0:0:640:24f1:0])
- by forward502a.mail.yandex.net (postfix) with ESMTPS id 8D43584B5B;
- Tue, 29 Sep 2026 15:00:02 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-76.iva.yp-c.yandex.net (smtp)
- with ESMTPSA id wxgLNIoiEiE0-KnLk7XnD; 
- Tue, 29 Sep 2026 15:00:01 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1790683201; bh=SpYDz+8XX+VFNHiV4g7Gas9bdT3GsR6vL+3N53rxRVU=;
- h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
- b=HQW2r91qQTWUb78vfN10FovoTKLiKSpRESLJwMdCJkCybEgKv8XFl+c80fsnaLhNP
- kuPeZtUbcS85q40fHj8LIB1A9WEYQq4oC6KoCL9kKxtijGAUwK7/HkNwP8Fzg2ar5F
- FOUm8TRpndRUP5u0VUQ2pW/wm23b1oen/KyYFZSY=
-Authentication-Results: mail-nwsmtp-smtp-production-main-76.iva.yp-c.yandex.net;
- dkim=pass header.i=@yandex.ru
-Message-ID: <3732a4ac-a585-4bb6-b08a-2b3dab6b782a@yandex.ru>
-Date: Tue, 29 Sep 2026 12:59:58 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id F09BB4026E;
+	Tue, 29 Sep 2026 14:09:11 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 8699E4013F
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 14:09:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1790683750;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=XI5x7jfmj2N282R8rTl//3gkxhD8E+o2XfHP3m1mwxk=;
+ b=VYlbJsjmmmEdfebXgqbTXLT+1wz3XQZswU2ZTuKd6kqo0UDfJNJst3mDfUe9p88njGLZ2s
+ PzQ5mHwVKc+inEsc/dyplzDdzhJPEvsbD/hbeidA+GDI0Lv8u8m7VizPHp89v7a6QZ2X6n
+ 3S+YNBg1fHqvFLZF085Qwcg42YaLAmA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-aRWyLS-yPcO5umXQdjRlqQ-1; Tue,
+ 29 Sep 2026 08:09:05 -0400
+X-MC-Unique: aRWyLS-yPcO5umXQdjRlqQ-1
+X-Mimecast-MFC-AGG-ID: aRWyLS-yPcO5umXQdjRlqQ_1790683744
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 2851A1955DC5; Tue, 29 Sep 2026 12:09:04 +0000 (UTC)
+Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
+ [10.2.32.117])
+ by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 8B8FF767; Tue, 29 Sep 2026 12:08:50 +0000 (UTC)
+Message-ID: <ac45eab0-33d0-4a6d-baa6-df2cf7678174@redhat.com>
+Date: Tue, 29 Sep 2026 14:08:48 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] mbuf: add optional no-copy dynamic field storage
-To: Randy L Tice <rtice@cisco.com>, dev@dpdk.org
-Cc: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
+Subject: Re: [PATCH v3 2/9] vhost: introduce ASID support
+To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
+Cc: mst@redhat.com, david.marchand@redhat.com, dev@dpdk.org,
+ Yongji Xie <xieyongji@bytedance.com>, chenbox@nvidia.com,
  Bruce Richardson <bruce.richardson@intel.com>,
- Harman Kalra <hkalra@marvell.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-References: <179036466858.2.13982499480648014088.v2-0000-cover-letter.patch@cisco.com>
- <179061941387.2.17741463412422386825.v3-0000-cover-letter.patch@cisco.com>
- <179061941387.2.13690688541375502570.v3-0001-mbuf-add-optional-no-copy-dynamic-field-storage.patch@cisco.com>
-Content-Language: en-US, ru
-From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-In-Reply-To: <179061941387.2.13690688541375502570.v3-0001-mbuf-add-optional-no-copy-dynamic-field-storage.patch@cisco.com>
+ Stephen Hemminger <stephen@networkplumber.org>, jasowangio@gmail.com
+References: <20260929105339.1554051-1-eperezma@redhat.com>
+ <20260929105339.1554051-3-eperezma@redhat.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ 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
+ Mwqu3GQ=
+In-Reply-To: <20260929105339.1554051-3-eperezma@redhat.com>
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 4bcOMPYEcGWxdUHMpvnIG7nCCmoP6wefEKXJlwMw-g0_1790683744
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,469 +118,28 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-28.09.2026 19:16, Randy L Tice пишет:
-> From: Randy L Tice <rtice@cisco.com>
-> Date: Thu, 03 Sep 2026 09:13:28 -0400
->
-> Add build-time support for optional cache-line-aligned dynamic-field
-> storage at the end of struct rte_mbuf.
->
-> The mbuf_dynfield3_size Meson option sets RTE_MBUF_DYNFIELD3_SIZE in
-> rte_build_config.h. A non-zero value enables the extra area and grows
-> every mbuf by the configured amount.
-I am strongly opposed to that patch.
-Inside mbuf we already do have priv_size that allows user to store 
-his/her specific
-data straight after rte_mbuf in adjacent manner.
-It worked well so far for many use-cases (including VPP) and I don't see any
-reason why this is not enough.
- From other side - making size of core rte_mbuf configurable at run-time,
-will affect DPDK ABI stability in a negative way.
-Fro my perspective it is much plausible in terms of ABI stability and 
-predictability
-to have just one fixed layout for the mbuf.
-Konstantin
-> When enabled, dynfield3 is reserved for dynamic fields registered with
-> RTE_MBUF_DYNFIELD_F_NO_COPY. Such fields are allocated from dynfield3
-> and are not copied by the generic mbuf dynamic-field copy helper used by
-> mbuf copy and clone operations. Dynamic fields registered without this
-> flag continue to use the existing copied dynamic-field storage and are
-> prevented from overlapping dynfield3.
->
-> Disable the octeontx mempool driver when the option is enabled because
-> it requires sizeof(struct rte_mbuf) to remain at most 128 bytes.
->
-> Signed-off-by: Randy L Tice <rtice@cisco.com>
+On 9/29/26 12:53 PM, Eugenio Pérez wrote:
+> From: Maxime Coquelin <maxime.coquelin@redhat.com>
+> 
+> Set all ASID = 0 as it is the default when not set explicitly.
+> 
+> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
 > ---
->   app/test/test_mbuf.c                   | 72 ++++++++++++++++++++++++--
->   config/meson.build                     |  5 ++
->   devtools/test-meson-builds.sh          |  3 ++
->   doc/guides/prog_guide/mbuf_lib.rst     |  9 ++++
->   doc/guides/rel_notes/release_26_11.rst | 17 +++++-
->   drivers/mempool/octeontx/meson.build   |  5 ++
->   lib/mbuf/rte_mbuf_core.h               |  6 +++
->   lib/mbuf/rte_mbuf_dyn.c                | 54 ++++++++++++++++---
->   lib/mbuf/rte_mbuf_dyn.h                | 11 +++-
->   meson_options.txt                      |  2 +
->   10 files changed, 172 insertions(+), 12 deletions(-)
->
-> diff --git a/app/test/test_mbuf.c b/app/test/test_mbuf.c
-> index db23259745..c03878bd96 100644
-> --- a/app/test/test_mbuf.c
-> +++ b/app/test/test_mbuf.c
-> @@ -2569,7 +2569,7 @@ test_mbuf_dyn(struct rte_mempool *pktmbuf_pool)
->   	};
->   	const struct rte_mbuf_dynfield dynfield_fail_big = {
->   		.name = "test-dynfield-fail-big",
-> -		.size = 256,
-> +		.size = sizeof(struct rte_mbuf),
->   		.align = 1,
->   		.flags = 0,
->   	};
-> @@ -2583,8 +2583,28 @@ test_mbuf_dyn(struct rte_mempool *pktmbuf_pool)
->   		.name = "test-dynfield",
->   		.size = sizeof(uint8_t),
->   		.align = alignof(uint8_t),
-> -		.flags = 1,
-> +		.flags = RTE_MBUF_DYNFIELD_F_NO_COPY << 1,
-> +	};
-> +#if RTE_MBUF_DYNFIELD3_SIZE > 0
-> +	const struct rte_mbuf_dynfield dynfield3_no_copy = {
-> +		.name = "test-dynfield3-no-copy",
-> +		.size = sizeof(uint64_t),
-> +		.align = alignof(uint64_t),
-> +		.flags = RTE_MBUF_DYNFIELD_F_NO_COPY,
-> +	};
-> +	const struct rte_mbuf_dynfield dynfield_no_copy_bad_offset = {
-> +		.name = "test-dynfield-no-copy-bad-offset",
-> +		.size = sizeof(uint64_t),
-> +		.align = alignof(uint64_t),
-> +		.flags = RTE_MBUF_DYNFIELD_F_NO_COPY,
-> +	};
-> +	const struct rte_mbuf_dynfield dynfield_copy_bad_offset = {
-> +		.name = "test-dynfield-copy-bad-offset",
-> +		.size = 2 * sizeof(uint64_t),
-> +		.align = alignof(uint64_t),
-> +		.flags = 0,
->   	};
-> +#endif
->   	const struct rte_mbuf_dynflag dynflag_fail_flag = {
->   		.name = "test-dynflag",
->   		.flags = 1,
-> @@ -2602,7 +2622,11 @@ test_mbuf_dyn(struct rte_mempool *pktmbuf_pool)
->   		.flags = 0,
->   	};
->   	struct rte_mbuf *m = NULL;
-> +	struct rte_mbuf *mc = NULL;
->   	int offset, offset2, offset3;
-> +#if RTE_MBUF_DYNFIELD3_SIZE > 0
-> +	int dynfield3_no_copy_offset;
-> +#endif
->   	int flag, flag2, flag3;
->   	int ret;
->   
-> @@ -2654,6 +2678,29 @@ test_mbuf_dyn(struct rte_mempool *pktmbuf_pool)
->   	if (ret != -1)
->   		GOTO_FAIL("dynamic field creation should fail (invalid flag)");
->   
-> +#if RTE_MBUF_DYNFIELD3_SIZE > 0
-> +	dynfield3_no_copy_offset = rte_mbuf_dynfield_register_offset(&dynfield3_no_copy,
-> +			offsetof(struct rte_mbuf, dynfield3));
-> +	if (dynfield3_no_copy_offset != offsetof(struct rte_mbuf, dynfield3))
-> +		GOTO_FAIL("failed to register no-copy dynfield3 field, offset=%d: %s",
-> +			dynfield3_no_copy_offset, strerror(errno));
-> +
-> +	ret = rte_mbuf_dynfield_register_offset(&dynfield_no_copy_bad_offset,
-> +			offsetof(struct rte_mbuf, dynfield1[0]));
-> +	if (ret != -1)
-> +		GOTO_FAIL("no-copy dynamic field creation should fail outside dynfield3");
-> +
-> +	ret = rte_mbuf_dynfield_register_offset(&dynfield_copy_bad_offset,
-> +			offsetof(struct rte_mbuf, dynfield3));
-> +	if (ret != -1)
-> +		GOTO_FAIL("copied dynamic field creation should fail in dynfield3");
-> +
-> +	ret = rte_mbuf_dynfield_register_offset(&dynfield_copy_bad_offset,
-> +			offsetof(struct rte_mbuf, dynfield3) - sizeof(uint64_t));
-> +	if (ret != -1)
-> +		GOTO_FAIL("copied dynamic field creation should fail when straddling dynfield3");
-> +#endif
-> +
->   	ret = rte_mbuf_dynflag_register(&dynflag_fail_flag);
->   	if (ret != -1)
->   		GOTO_FAIL("dynamic flag creation should fail (invalid flag)");
-> @@ -2693,13 +2740,29 @@ test_mbuf_dyn(struct rte_mempool *pktmbuf_pool)
->   	if (*RTE_MBUF_DYNFIELD(m, offset2, uint16_t *) != 1000)
->   		GOTO_FAIL("failed to read dynamic field");
->   
-> +#if RTE_MBUF_DYNFIELD3_SIZE > 0
-> +	*RTE_MBUF_DYNFIELD(m, dynfield3_no_copy_offset, uint64_t *) =
-> +		UINT64_C(0x8877665544332211);
-> +	mc = rte_pktmbuf_alloc(pktmbuf_pool);
-> +	if (mc == NULL)
-> +		GOTO_FAIL("Cannot allocate mbuf for dynamic field copy test");
-> +	*RTE_MBUF_DYNFIELD(mc, dynfield3_no_copy_offset, uint64_t *) =
-> +		UINT64_C(0xa5a5a5a5a5a5a5a5);
-> +	rte_mbuf_dynfield_copy(mc, m);
-> +	if (*RTE_MBUF_DYNFIELD(mc, dynfield3_no_copy_offset, uint64_t *) !=
-> +			UINT64_C(0xa5a5a5a5a5a5a5a5))
-> +		GOTO_FAIL("copied no-copy dynfield3 dynamic field");
-> +#endif
-> +
->   	/* set a dynamic flag */
->   	m->ol_flags |= (1ULL << flag);
->   
->   	rte_mbuf_dyn_dump(stdout);
-> +	rte_pktmbuf_free(mc);
->   	rte_pktmbuf_free(m);
->   	return 0;
->   fail:
-> +	rte_pktmbuf_free(mc);
->   	rte_pktmbuf_free(m);
->   	return -1;
->   }
-> @@ -2776,8 +2839,9 @@ test_mbuf(void)
->   	struct rte_mempool *pktmbuf_pool = NULL;
->   	struct rte_mempool *pktmbuf_pool2 = NULL;
->   
-> -
-> -	RTE_BUILD_BUG_ON(sizeof(struct rte_mbuf) != RTE_CACHE_LINE_MIN_SIZE * 2);
-> +	RTE_BUILD_BUG_ON(sizeof(struct rte_mbuf) !=
-> +		RTE_CACHE_LINE_MIN_SIZE * 2 +
-> +		RTE_MBUF_DYNFIELD3_SIZE);
->   
->   	/* create pktmbuf pool if it does not exist */
->   	pktmbuf_pool = rte_pktmbuf_pool_create("test_pktmbuf_pool",
-> diff --git a/config/meson.build b/config/meson.build
-> index 344f68822b..a6bd25b9ac 100644
-> --- a/config/meson.build
-> +++ b/config/meson.build
-> @@ -384,6 +384,8 @@ dpdk_conf.set('RTE_LIBEAL_USE_HPET', get_option('use_hpet'))
->   dpdk_conf.set('RTE_ENABLE_STDATOMIC', get_option('enable_stdatomic'))
->   dpdk_conf.set('RTE_ENABLE_TRACE_FP', get_option('enable_trace_fp'))
->   dpdk_conf.set('RTE_PKTMBUF_HEADROOM', get_option('pkt_mbuf_headroom'))
-> +mbuf_dynfield3_size = get_option('mbuf_dynfield3_size')
-> +dpdk_conf.set('RTE_MBUF_DYNFIELD3_SIZE', mbuf_dynfield3_size)
->   # values which have defaults which may be overridden
->   dpdk_conf.set('RTE_MAX_VFIO_GROUPS', 64)
->   dpdk_conf.set('RTE_DRIVER_MEMPOOL_BUCKET_SIZE_KB', 64)
-> @@ -395,6 +397,9 @@ dpdk_conf.set10('RTE_IOVA_IN_MBUF', get_option('enable_iova_as_pa'))
->   
->   compile_time_cpuflags = []
->   subdir(arch_subdir)
-> +if mbuf_dynfield3_size % dpdk_conf.get('RTE_CACHE_LINE_SIZE') != 0
-> +    error('mbuf_dynfield3_size must be a multiple of RTE_CACHE_LINE_SIZE')
-> +endif
->   dpdk_conf.set('RTE_COMPILE_TIME_CPUFLAGS', ','.join(compile_time_cpuflags))
->   
->   # apply cross-specific options
-> diff --git a/devtools/test-meson-builds.sh b/devtools/test-meson-builds.sh
-> index 11e4be3f88..23115def8c 100755
-> --- a/devtools/test-meson-builds.sh
-> +++ b/devtools/test-meson-builds.sh
-> @@ -259,6 +259,9 @@ fi
->   build build-x86-generic cc skipABI --buildtype=debug -Dcheck_includes=true \
->   	-Dlibdir=lib -Dcpu_instruction_set=$generic_isa $use_shared
->   
-> +build build-mbuf-dynfield3 cc skipABI --buildtype=debug \
-> +	-Dmbuf_dynfield3_size=256 $use_shared
-> +
->   # 32-bit with default compiler
->   if check_cc_flags '-m32' ; then
->   	target_override='i386-pc-linux-gnu'
-> diff --git a/doc/guides/prog_guide/mbuf_lib.rst b/doc/guides/prog_guide/mbuf_lib.rst
-> index cf64add109..ca0efb99c1 100644
-> --- a/doc/guides/prog_guide/mbuf_lib.rst
-> +++ b/doc/guides/prog_guide/mbuf_lib.rst
-> @@ -234,6 +234,15 @@ The dynamic fields and flags are managed with the functions ``rte_mbuf_dyn*``.
->   
->   It is not possible to unregister fields or flags.
->   
-> +The build option ``mbuf_dynfield3_size`` can add extra cache-line-aligned
-> +dynamic field storage to ``struct rte_mbuf``.  This increases every mbuf by
-> +the configured amount and changes the mbuf layout, so applications and
-> +secondary processes must be built with the same value as the primary process.
-> +The option defaults to ``0``.  The extra storage is reserved for dynamic
-> +fields registered with ``RTE_MBUF_DYNFIELD_F_NO_COPY``.  These fields are not
-> +copied by mbuf copy and clone operations.  Dynamic fields registered without
-> +this flag continue to use the existing copied dynamic-field storage.
-> +
->   .. _direct_indirect_buffer:
->   
->   Direct and Indirect Buffers
-> diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-> index dec96ccbc7..cff68d7034 100644
-> --- a/doc/guides/rel_notes/release_26_11.rst
-> +++ b/doc/guides/rel_notes/release_26_11.rst
-> @@ -60,6 +60,22 @@ New Features
->     Added the experimental ``rte_cpu_socket_id()`` function
->     to map an OS logical CPU ID to the NUMA socket containing that CPU.
->   
-> +* **Added optional extra mbuf dynamic field storage.**
-> +
-> +  Added ``mbuf_dynfield3_size`` build option to enable a
-> +  cache-line-aligned ``dynfield3`` area in ``struct rte_mbuf``.
-> +  The configured size is defined as ``RTE_MBUF_DYNFIELD3_SIZE``
-> +  in ``rte_build_config.h``.
-> +  The extra storage is reserved for dynamic fields registered with
-> +  ``RTE_MBUF_DYNFIELD_F_NO_COPY``.
-> +  These fields are not copied by generic mbuf copy and clone operations.
-> +  Dynamic fields registered without this flag continue to use the existing
-> +  copied dynamic-field storage.
-> +  Applications and secondary processes must be built with the same
-> +  non-zero value as the primary process.
-> +  The ``mempool/octeontx`` driver is disabled when this option is
-> +  enabled because it requires a fixed 128-byte mbuf header.
-> +
->   * **Added TPID support to VLAN tag insertion.**
->   
->     Added ``rte_vlan_insert_tpid()`` to the net library.
-> @@ -338,7 +354,6 @@ Known Issues
->      Also, make sure to start the actual text at the margin.
->      =======================================================
->   
-> -
->   Tested Platforms
->   ----------------
->   
-> diff --git a/drivers/mempool/octeontx/meson.build b/drivers/mempool/octeontx/meson.build
-> index 3ccecac75d..01aece94be 100644
-> --- a/drivers/mempool/octeontx/meson.build
-> +++ b/drivers/mempool/octeontx/meson.build
-> @@ -6,6 +6,11 @@ if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
->       reason = 'only supported on 64-bit Linux'
->       subdir_done()
->   endif
-> +if get_option('mbuf_dynfield3_size') != 0
-> +    build = false
-> +    reason = 'requires sizeof(struct rte_mbuf) <= 128'
-> +    subdir_done()
-> +endif
->   
->   sources = files(
->           'octeontx_fpavf.c',
-> diff --git a/lib/mbuf/rte_mbuf_core.h b/lib/mbuf/rte_mbuf_core.h
-> index 98b0bd9ca7..b4f204b268 100644
-> --- a/lib/mbuf/rte_mbuf_core.h
-> +++ b/lib/mbuf/rte_mbuf_core.h
-> @@ -686,6 +686,12 @@ struct __rte_cache_aligned rte_mbuf {
->   	uint16_t timesync;
->   
->   	uint32_t dynfield1[9]; /**< Reserved for dynamic fields. */
-> +
-> +#if RTE_MBUF_DYNFIELD3_SIZE > 0
-> +	alignas(RTE_CACHE_LINE_SIZE)
-> +	uint64_t dynfield3[RTE_MBUF_DYNFIELD3_SIZE / sizeof(uint64_t)];
-> +	/**< Reserved cache-line-aligned space for dynamic fields. */
-> +#endif /* RTE_MBUF_DYNFIELD3_SIZE > 0 */
->   };
->   
->   /**
-> diff --git a/lib/mbuf/rte_mbuf_dyn.c b/lib/mbuf/rte_mbuf_dyn.c
-> index 5987c9dee8..7cecbc9ee6 100644
-> --- a/lib/mbuf/rte_mbuf_dyn.c
-> +++ b/lib/mbuf/rte_mbuf_dyn.c
-> @@ -3,6 +3,7 @@
->    */
->   
->   #include <stdalign.h>
-> +#include <stddef.h>
->   #include <sys/queue.h>
->   #include <stdint.h>
->   #include <limits.h>
-> @@ -51,7 +52,7 @@ struct mbuf_dyn_shm {
->   	 * The value is the size of the biggest aligned element that
->   	 * can fit in the zone.
->   	 */
-> -	uint8_t free_space[sizeof(struct rte_mbuf)];
-> +	uint16_t free_space[sizeof(struct rte_mbuf)];
->   	/** Bitfield of available flags. */
->   	uint64_t free_flags;
->   };
-> @@ -135,6 +136,9 @@ init_shared_mem(void)
->   #if !RTE_IOVA_IN_MBUF
->   		mark_free(dynfield2);
->   #endif
-> +#if RTE_MBUF_DYNFIELD3_SIZE > 0
-> +		mark_free(dynfield3);
-> +#endif
->   
->   		/* init free_flags */
->   		for (mask = RTE_MBUF_F_FIRST_FREE; mask <= RTE_MBUF_F_LAST_FREE; mask <<= 1)
-> @@ -147,11 +151,48 @@ init_shared_mem(void)
->   }
->   
->   /* check if this offset can be used */
-> +static bool
-> +dynfield_in_dynfield3(size_t offset, size_t size)
-> +{
-> +#if RTE_MBUF_DYNFIELD3_SIZE > 0
-> +	size_t dynfield3_offset = offsetof(struct rte_mbuf, dynfield3);
-> +
-> +	return offset >= dynfield3_offset &&
-> +		size <= sizeof(((struct rte_mbuf *)0)->dynfield3) &&
-> +		offset - dynfield3_offset <= sizeof(((struct rte_mbuf *)0)->dynfield3) - size;
-> +#else
-> +	RTE_SET_USED(offset);
-> +	RTE_SET_USED(size);
-> +	return false;
-> +#endif
-> +}
-> +
-> +static bool
-> +dynfield_overlaps_dynfield3(size_t offset, size_t size)
-> +{
-> +#if RTE_MBUF_DYNFIELD3_SIZE > 0
-> +	size_t dynfield3_offset = offsetof(struct rte_mbuf, dynfield3);
-> +	size_t dynfield3_end = dynfield3_offset + sizeof(((struct rte_mbuf *)0)->dynfield3);
-> +
-> +	return offset < dynfield3_end && offset + size > dynfield3_offset;
-> +#else
-> +	RTE_SET_USED(offset);
-> +	RTE_SET_USED(size);
-> +	return false;
-> +#endif
-> +}
-> +
->   static int
-> -check_offset(size_t offset, size_t size, size_t align)
-> +check_offset(size_t offset, size_t size, size_t align, unsigned int flags)
->   {
->   	size_t i;
->   
-> +	if ((flags & RTE_MBUF_DYNFIELD_F_NO_COPY) != 0 &&
-> +			!dynfield_in_dynfield3(offset, size))
-> +		return -1;
-> +	if ((flags & RTE_MBUF_DYNFIELD_F_NO_COPY) == 0 &&
-> +			dynfield_overlaps_dynfield3(offset, size))
-> +		return -1;
->   	if ((offset & (align - 1)) != 0)
->   		return -1;
->   	if (offset + size > sizeof(struct rte_mbuf))
-> @@ -268,7 +309,7 @@ __rte_mbuf_dynfield_register_offset(const struct rte_mbuf_dynfield *params,
->   		     offset < sizeof(struct rte_mbuf);
->   		     offset++) {
->   			if (check_offset(offset, params->size,
-> -						params->align) == 0 &&
-> +						params->align, params->flags) == 0 &&
->   					shm->free_space[offset] < best_zone) {
->   				best_zone = shm->free_space[offset];
->   				req = offset;
-> @@ -279,7 +320,8 @@ __rte_mbuf_dynfield_register_offset(const struct rte_mbuf_dynfield *params,
->   			return -1;
->   		}
->   	} else {
-> -		if (check_offset(req, params->size, params->align) < 0) {
-> +		if (check_offset(req, params->size, params->align,
-> +				params->flags) < 0) {
->   			rte_errno = EBUSY;
->   			return -1;
->   		}
-> @@ -342,7 +384,7 @@ rte_mbuf_dynfield_register_offset(const struct rte_mbuf_dynfield *params,
->   		rte_errno = EINVAL;
->   		return -1;
->   	}
-> -	if (params->flags != 0) {
-> +	if ((params->flags & ~RTE_MBUF_DYNFIELD_F_NO_COPY) != 0) {
->   		rte_errno = EINVAL;
->   		return -1;
->   	}
-> @@ -573,7 +615,7 @@ void rte_mbuf_dyn_dump(FILE *out)
->   	for (i = 0; i < sizeof(struct rte_mbuf); i++) {
->   		if ((i % 8) == 0)
->   			fprintf(out, "  %4.4zx: ", i);
-> -		fprintf(out, "%2.2x%s", shm->free_space[i],
-> +		fprintf(out, "%4.4x%s", shm->free_space[i],
->   			(i % 8 != 7) ? " " : "\n");
->   	}
->   	fprintf(out, "Free bit in mbuf->ol_flags (0 = occupied, 1 = free):\n");
-> diff --git a/lib/mbuf/rte_mbuf_dyn.h b/lib/mbuf/rte_mbuf_dyn.h
-> index 20ce505bb4..d9a46b3c33 100644
-> --- a/lib/mbuf/rte_mbuf_dyn.h
-> +++ b/lib/mbuf/rte_mbuf_dyn.h
-> @@ -69,6 +69,7 @@
->   #include <stdio.h>
->   #include <stdint.h>
->   
-> +#include <rte_bitops.h>
->   #include <rte_stdatomic.h>
->   
->   #ifdef __cplusplus
-> @@ -80,6 +81,14 @@ extern "C" {
->    */
->   #define RTE_MBUF_DYN_NAMESIZE 64
->   
-> +/**
-> + * Do not copy this dynamic field during mbuf clone or copy.
-> + *
-> + * Fields using this flag are allocated from the optional dynfield3 area
-> + * configured by the mbuf_dynfield3_size build option.
-> + */
-> +#define RTE_MBUF_DYNFIELD_F_NO_COPY RTE_BIT32(0)
-> +
->   /**
->    * Structure describing the parameters of a mbuf dynamic field.
->    */
-> @@ -87,7 +96,7 @@ struct rte_mbuf_dynfield {
->   	char name[RTE_MBUF_DYN_NAMESIZE]; /**< Name of the field. */
->   	size_t size;        /**< The number of bytes to reserve. */
->   	size_t align;       /**< The alignment constraint (power of 2). */
-> -	unsigned int flags; /**< Reserved for future use, must be 0. */
-> +	unsigned int flags; /**< Dynamic field flags. */
->   };
->   
->   /**
-> diff --git a/meson_options.txt b/meson_options.txt
-> index e28d24054c..1248498a3d 100644
-> --- a/meson_options.txt
-> +++ b/meson_options.txt
-> @@ -44,6 +44,8 @@ option('max_numa_nodes', type: 'string', value: 'default', description:
->          'Set the highest NUMA node supported by EAL; "default" is different per-arch, "detect" detects the highest NUMA node on the build machine.')
->   option('enable_iova_as_pa', type: 'boolean', value: true, description:
->          'Support the use of physical addresses for IO addresses, such as used by UIO or VFIO in no-IOMMU mode. When disabled, DPDK can only run with IOMMU support for address mappings, but will have more space available in the mbuf structure.')
-> +option('mbuf_dynfield3_size', type: 'integer', min: 0, value: 0, description:
-> +       'Size of optional extra mbuf dynamic field area, in bytes.')
->   option('mbuf_refcnt_atomic', type: 'boolean', value: true, description:
->          'Atomically access the mbuf refcnt.')
->   option('platform', type: 'string', value: 'native', description:
+>   lib/vhost/iotlb.c      | 233 +++++++++++++++++++++++++----------------
+>   lib/vhost/iotlb.h      |  14 +--
+>   lib/vhost/vduse.c      |   9 +-
+>   lib/vhost/vhost.c      |  16 +--
+>   lib/vhost/vhost.h      |  13 +--
+>   lib/vhost/vhost_user.c |  13 +--
+>   6 files changed, 177 insertions(+), 121 deletions(-)
+> 
+
+I was the original author, so more reviews would be welcome.
+FWIW:
+
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+
+Thanks,
+Maxime
 
