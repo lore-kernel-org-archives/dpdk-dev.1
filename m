@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD22CA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EC2CA5FA7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:44:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F58442F7F;
-	Tue, 29 Sep 2026 18:40:06 +0200 (CEST)
-Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com
- [74.125.228.41]) by mails.dpdk.org (Postfix) with ESMTP id 169C542EDB
+	by mails.dpdk.org (Postfix) with ESMTP id 2572842F83;
+	Tue, 29 Sep 2026 18:40:07 +0200 (CEST)
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
+ [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id D980142EEC
  for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:54 +0200 (CEST)
-Received: by mail-pz2-f41.google.com with SMTP id
- d2e1a72fcca58-8692a856865so2165427b3a.2
+Received: by mail-pz2-f12.google.com with SMTP id
+ d2e1a72fcca58-85469d249c6so2784819b3a.1
  for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699933;
- x=1791304733; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699934;
+ x=1791304734; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=GmLj1TBmKjo6H4+D/THjReCXdEKXZEv6GGqdUp47dfo=;
- b=zSVyTAJiS6MtLIduzcXaZ9+Y0JG+QAZUOTt2rgWI8kg6GZogcyttgJJanVIPJlYBbp
- kZq32rKTz0R7vW6t4es55zVFI/AW+WTGAAdnF4dfjTP9DdzrN4pgpUKR0r0WWgb4PcFE
- tRFeodPVGOErUEzkBLS42g3dLD3ZPzY5tBT2g6UrITeMX9gv/kRkH1JodNz3eiI/2A7r
- CC+CPzr15G41w3R9/8W+YFaxbzCoGOP9uS+7QpbzRptwwqILJv9bNwR/TJmgQJwNPgnn
- lUJgb9sGhxx+hhJJQa1BtTwQUrxCCOxS1I/IIoVKbuPTMKOR+YN+in7OTbhoZ1iyuOE2
- BVtA==
+ bh=CyBLBRZcKgl9mKeeNzJ3BAmbcm8OmCNXEsoJesWQlkI=;
+ b=RYKZ2HaW9CQatDrw4qD4l5SZc3gx5ligO7QO+UYc5Gm3l0qaReq8soyj4W/unhhk8k
+ EOLqo+2gzzVQ9Ukn/Uc8In4nFHk2hgWyW/GTdWNBc7lK8+ybvFMEovfTs+MLKNYzXygl
+ 2BoxA0jsmUTottJCECHqEZTt64HFcSdyqcLX5MHOYdhE1TcgBEBWawJvVFD1ZPWgI8cR
+ KOdqpR+IiCFRkWQ2bpBJmo+AObFM/n3H7pOH7l252DY8mslsykZ2fHQ2Cd3K9wxoiegL
+ 4fnKBvdpOCG6OZigQldaQxZzD013F67FVZzoWFTerjr1N5wDXN+mgduiHgiSQy5DuENr
+ qr1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790699933; x=1791304733;
+ d=1e100.net; s=20260707; t=1790699934; x=1791304734;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=GmLj1TBmKjo6H4+D/THjReCXdEKXZEv6GGqdUp47dfo=;
- b=kHMwmgpRohpAs4M3eRya6d0CeZ8nKRq3hKdcLsthS2hn9ffd2wWRdi1uRuqKGSWvo1
- 06o4OabsyjC23C4SLghGlnfzvuZL/gM1tpYiI9Ch4T5i9/jAwdB/umsFTSjzK4rfnrKF
- ljIDgTQCjF8IM5pPZGxA7Cs3JW2nBmdEt3NCn56CgvG07AHNz/0Qn1Ai1o7j4zWgdTYC
- jO+OMKSEub2fhU5W/SzEOIFlX6WLfFxb7EvrAFOG+v7McSYDUupazfZ6luuHH/SXjmwi
- oYyJub8xygQJrDLQn1ly1aNy90IwnnDx0TSF7DXBO7rMwZJcSS9qX31WP/mpBlS7jset
- 6PfA==
-X-Gm-Message-State: AFuF++k5H0FUNIiN4iZWsOQ9TQcJpKWp5ef2w1JqBGhKYWFhdpanBVJr
- 9nIRiDaP5I0Q0oUwWCi+dJEYYy1jUEpbeEGeOlU0O9GRVy87Bk4etghVnOLZ0Jjk3cO8mLDxwUP
- YviYZ3HQ=
-X-Gm-Gg: AYBFou0Zf54c6FufXQS9/qrK27+PeO6kdZHNOMhSxNfvJDa3uloMAuyg0TU6vmoutoI
- JNc4jwTOUGTD5m7ryQ5pOVa1NZkswq3fmqcHSgfPXSWzqGYAXQQdhhCRZx3x+yPty4xVv+a8nVa
- Qqtk6S+ulQEapeqEGgNYHNN81xmF5ECWaF/1VRaK9s8+obSYDCa1sgMepMwD6436pxN1p5qZgW5
- 2CI7ce92+y37u4CT9t4D7yuP3CibEMdRouDSIy4Mmtvd7dWoq36ZQtOSFHKf6fEBCYRGkIWzfE4
- 22yxiDsw7BvGn0+cnNnv7kgRZmQeOrToTNiISo9Dsj2CuYYaAtVomDY4NaQhTr0V5nyTgh3b2JG
- grs8TIypuPDv73AJ2bRB3YTlh7lMXja+bg/MbrFU1tBhdtLDrT9MCaYgitWIvsnaLCMXwXb5zys
- /fa/NjHvMFTeA0zmxHVTLfiAzZRiOnoXmEFbQHdFnq7sDHazqtXFfwCGk6IgaTe3QkZ40B8afoY
- ASjGF/t378/2/J9/zuEU9v3ZtuYeaBus6rUug==
-X-Received: by 2002:a05:6a00:4519:b0:871:41fa:d1c6 with SMTP id
- d2e1a72fcca58-87e98998abdmr13013602b3a.3.1790699933201; 
- Tue, 29 Sep 2026 09:38:53 -0700 (PDT)
+ bh=CyBLBRZcKgl9mKeeNzJ3BAmbcm8OmCNXEsoJesWQlkI=;
+ b=0S4eOkhHAPw4LP3AjcJjjFlgEHUbeBEBpzimVF2hdXQ4NTbD9yvsluSOkONgLPCKPD
+ yKVw116EIwP8BYRq29dfF17PJ26uertB5uJOhmruizsyO+WrxtG6N64KE98Ng2FHjGea
+ /ThEMs9Vu8ems9OLQZGoGn03pN2wZJepvTsLRFC/aQ7chFIebw1EIDgubnh37h19qwXw
+ VH1D3MBiOPvYzs7318HFAxBfckvFbnN+IzFG4HlIn9fRiIb4WniiOQagpU/RXdl8GB62
+ PToKLMapMjDsVRiqaBXhpIo7HPr0246MKJuy+bHeD9x4KvmDosAU9pw4xtHGGQagUkgb
+ dOew==
+X-Gm-Message-State: AFuF++kGZIxtgKgNAIdS6YoVReiWEbN0+ToqTgdJbhNog5N369oDPFj/
+ dR9lGiTdUl7fdg/Zt49lcqMXI07TAIgwLZkUkZLy8OoNa1OXAdQqiEzZdbCQGTB0aDZZ6jfA+a+
+ mlsVjOn8wTA==
+X-Gm-Gg: AYBFou2Jic0eEOQ3dSjsBFJGg3PPIDPaeEgn/HhbEIgXMbIZqCeRTy/dFaqdTMm8s2e
+ CT0D4LELaujNS8hlMpEftzQYx0ewx8ccqxbmlLN5W4zmktCEVV0+7DlZYgFhu0bWvtiYdzKsHEc
+ 7DwyJRKMKbuXMqi6H5RELTzfCoRbJYpopu3bLyJYm8Rkp+0pyFsCsm+Pejo+YULYUfAp2WCKMp4
+ 1jgkpB5yOJb2TguoQmW/44a2j52TBWb1931/rUXMEQSoZEfXPz93YMw3nLd2X8fbfOxNg8r4Czs
+ p5H3T7ZlEk5og8RxDsbIi8Q4+NUXIlgnRpiFhpu68r9/A4PLHFrN1f5y87tyPqdPIHgiyxNkp7G
+ nXNiDIQN2WJaSsT9bBeq4fKapmQL8vUF3av7ndg9hWdgR5nY0jtQ9tRivaMkG4jwstcERIcCaJs
+ StpFd2NIzPIqkaHlK2rNh1peOzXf4f/72CZvPceHNPLh6VdwHjFfK/gDhHlKBOqSoPZp1TFK02C
+ DN2HygI6YPV0FdTmBJrF3GPxpDJXg38FiTzhw==
+X-Received: by 2002:a05:6a21:468a:b0:3de:53ba:4081 with SMTP id
+ adf61e73a8af0-3de53ba4234mr6618513637.47.1790699934056; 
+ Tue, 29 Sep 2026 09:38:54 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.52
+ d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:38:52 -0700 (PDT)
+ Tue, 29 Sep 2026 09:38:53 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Liang Ma <liangma@bytedance.com>, Peter Mccarthy <peter.mccarthy@intel.com>
-Subject: [PATCH v2 51/61] event/opdl: use kvargs numeric helpers
-Date: Tue, 29 Sep 2026 09:36:54 -0700
-Message-ID: <20260929163800.1108305-52-stephen@networkplumber.org>
+ Ashwin Sekhar T K <asekhar@marvell.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>,
+ Nawal Kishor <nkishor@marvell.com>
+Subject: [PATCH v2 52/61] mempool/cnxk: use kvargs numeric helpers
+Date: Tue, 29 Sep 2026 09:36:55 -0700
+Message-ID: <20260929163800.1108305-53-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929163800.1108305-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -83,121 +85,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-All three handlers use atoi(), which cannot report an error, so a
-malformed value is silently taken as zero. Zero is within the accepted
-range for each of these arguments, so a typo was accepted and quietly
-applied rather than rejected.
+Both handlers use atoi(), which cannot report an error, so a malformed
+value is silently taken as zero. For max_pools that then gets clamped up
+to the minimum, and for halo_ena zero is a valid setting, so neither was
+rejected.
 
-The booleans use rte_kvargs_process_opt(), so that a bare key with no
-value enables the option.
+Since the handlers can now fail, propagate the rte_kvargs_process()
+return value instead of discarding it.
+
+halo_ena is a boolean, so drop its handler and use
+rte_kvargs_handle_bool() on a bool. That also removes the store through
+a uint8_t pointer into what the caller declared as a wider variable,
+which only worked because the local was zeroed first and the host is
+little endian. A bare "halo_ena" now enables it, and the usual
+spellings are accepted.
+
+Bugzilla ID: 2044
+Fixes: 45abbfc836b1 ("mempool/cnxk: support HALO in mempool")
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/event/opdl/opdl_evdev.c | 49 ++++++---------------------------
- 1 file changed, 9 insertions(+), 40 deletions(-)
+ drivers/mempool/cnxk/cnxk_mempool.c | 37 +++++++++++++----------------
+ 1 file changed, 16 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/event/opdl/opdl_evdev.c b/drivers/event/opdl/opdl_evdev.c
-index ffa65ef930..4650d3eca8 100644
---- a/drivers/event/opdl/opdl_evdev.c
-+++ b/drivers/event/opdl/opdl_evdev.c
-@@ -3,6 +3,7 @@
+diff --git a/drivers/mempool/cnxk/cnxk_mempool.c b/drivers/mempool/cnxk/cnxk_mempool.c
+index 6939fccff4..e5f1b9491b 100644
+--- a/drivers/mempool/cnxk/cnxk_mempool.c
++++ b/drivers/mempool/cnxk/cnxk_mempool.c
+@@ -2,6 +2,7 @@
+  * Copyright(C) 2021 Marvell.
   */
  
- #include <inttypes.h>
-+#include <stdbool.h>
- #include <stdlib.h>
- #include <string.h>
++#include <limits.h>
+ #include <rte_atomic.h>
+ #include <bus_pci_driver.h>
+ #include <rte_common.h>
+@@ -34,10 +35,14 @@ npa_aura_size_to_u32(uint8_t val)
+ static int
+ parse_max_pools_handler(const char *key, const char *value, void *extra_args)
+ {
++	uint64_t val;
++
+ 	RTE_SET_USED(key);
+-	uint32_t val;
  
-@@ -580,38 +581,6 @@ opdl_close(struct rte_eventdev *dev)
+-	val = rte_align32pow2(atoi(value));
++	if (rte_kvargs_to_uint(value, 0, INT_MAX, &val) < 0)
++		return -EINVAL;
++
++	val = rte_align32pow2(val);
+ 	if (val < npa_aura_size_to_u32(NPA_AURA_SZ_128))
+ 		val = 128;
+ 	if (val > npa_aura_size_to_u32(NPA_AURA_SZ_1M))
+@@ -47,27 +52,14 @@ parse_max_pools_handler(const char *key, const char *value, void *extra_args)
  	return 0;
  }
  
 -static int
--assign_numa_node(const char *key __rte_unused, const char *value, void *opaque)
+-parse_halo_ena_handler(const char *key, const char *value, void *extra_args)
 -{
--	int *socket_id = opaque;
--	*socket_id = atoi(value);
--	if (*socket_id >= RTE_MAX_NUMA_NODES)
--		return -1;
--	return 0;
--}
+-	RTE_SET_USED(key);
+-	uint8_t val;
 -
--static int
--set_do_validation(const char *key __rte_unused, const char *value, void *opaque)
--{
--	int *do_val = opaque;
--	*do_val = atoi(value);
--	if (*do_val != 0)
--		*do_val = 1;
+-	val = atoi(value);
+-	if (val != 0 && val != 1)
+-		return -EINVAL;
 -
--	return 0;
--}
--static int
--set_do_test(const char *key __rte_unused, const char *value, void *opaque)
--{
--	int *do_test = opaque;
--
--	*do_test = atoi(value);
--
--	if (*do_test != 0)
--		*do_test = 1;
+-	*(uint8_t *)extra_args = val;
 -	return 0;
 -}
 -
  static int
- opdl_probe(struct rte_vdev_device *vdev)
+ cnxk_mempool_plt_parse_devargs(struct rte_pci_device *pci_dev)
  {
-@@ -650,8 +619,8 @@ opdl_probe(struct rte_vdev_device *vdev)
- 	struct rte_eventdev *dev;
- 	struct opdl_evdev *opdl;
- 	int socket_id = rte_socket_id();
--	int do_validation = 0;
--	int do_test = 0;
-+	bool do_validation = false;
-+	bool do_test = false;
- 	int str_len;
- 	int test_result = 0;
+ 	uint32_t max_pools = npa_aura_size_to_u32(NPA_AURA_SZ_128);
+ 	struct rte_devargs *devargs = pci_dev->device.devargs;
+ 	struct rte_kvargs *kvlist;
+-	uint32_t halo_ena = 0;
++	bool halo_ena = false;
++	int ret;
  
-@@ -666,7 +635,7 @@ opdl_probe(struct rte_vdev_device *vdev)
- 					name);
- 		} else {
- 			int ret = rte_kvargs_process(kvlist, NUMA_NODE_ARG,
--					assign_numa_node, &socket_id);
-+					rte_kvargs_handle_socket_id, &socket_id);
- 			if (ret != 0) {
- 				PMD_DRV_LOG(ERR,
- 						"%s: Error parsing numa node parameter",
-@@ -676,8 +645,8 @@ opdl_probe(struct rte_vdev_device *vdev)
- 				return ret;
- 			}
+ 	if (devargs == NULL)
+ 		goto null_devargs;
+@@ -75,12 +67,15 @@ cnxk_mempool_plt_parse_devargs(struct rte_pci_device *pci_dev)
+ 	if (kvlist == NULL)
+ 		goto exit;
  
--			ret = rte_kvargs_process(kvlist, DO_VALIDATION_ARG,
--					set_do_validation, &do_validation);
-+			ret = rte_kvargs_process_opt(kvlist, DO_VALIDATION_ARG,
-+					rte_kvargs_handle_bool, &do_validation);
- 			if (ret != 0) {
- 				PMD_DRV_LOG(ERR,
- 					"%s: Error parsing do validation parameter",
-@@ -686,8 +655,8 @@ opdl_probe(struct rte_vdev_device *vdev)
- 				return ret;
- 			}
+-	rte_kvargs_process(kvlist, CNXK_NPA_MAX_POOLS_PARAM,
+-			   &parse_max_pools_handler, &max_pools);
+-	rte_kvargs_process(kvlist, CNXK_NPA_HALO_ENA_PARAM,
+-			   &parse_halo_ena_handler, &halo_ena);
++	ret = rte_kvargs_process(kvlist, CNXK_NPA_MAX_POOLS_PARAM,
++				 &parse_max_pools_handler, &max_pools);
++	ret |= rte_kvargs_process_opt(kvlist, CNXK_NPA_HALO_ENA_PARAM,
++				      rte_kvargs_handle_bool, &halo_ena);
+ 	rte_kvargs_free(kvlist);
  
--			ret = rte_kvargs_process(kvlist, DO_TEST_ARG,
--					set_do_test, &do_test);
-+			ret = rte_kvargs_process_opt(kvlist, DO_TEST_ARG,
-+					rte_kvargs_handle_bool, &do_test);
- 			if (ret != 0) {
- 				PMD_DRV_LOG(ERR,
- 					"%s: Error parsing do test parameter",
-@@ -734,7 +703,7 @@ opdl_probe(struct rte_vdev_device *vdev)
- 	str_len = strlen(name);
- 	memcpy(opdl->service_name, name, str_len);
- 
--	if (do_test == 1)
-+	if (do_test)
- 		test_result =  opdl_selftest();
- 
- done:
++	if (ret != 0)
++		goto exit;
++
+ null_devargs:
+ 	roc_idev_npa_maxpools_set(max_pools);
+ 	roc_idev_npa_halo_ena_set(halo_ena);
 -- 
 2.53.0
 
