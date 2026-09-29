@@ -2,55 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE34CA5FA1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 12:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A79DCA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 12:29:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61D5540ECF;
-	Tue, 29 Sep 2026 14:13:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CB95B4026E;
+	Tue, 29 Sep 2026 14:29:00 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id EDEA24026E
- for <dev@dpdk.org>; Tue, 29 Sep 2026 14:13:32 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id D84904013F
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 14:28:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790684012;
+ s=mimecast20190719; t=1790684938;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=Rl+S27n0DHn1fSBy6ixfZkqHrsu52NtrqujrlEumTVU=;
- b=G3KV++pjASN9Rf1EYAIwPbsjmbRvuROmP2R7oM/7ZlvNAToZ08ErxgrmCvsByNBJBGhJts
- RnN8iVpKoTyGas4FVVKr1hd8gafZhVWvR+uK6S16dKRYBvaKAV6o0ch4B3G2nnaK9H0qh7
- 9E5MKQDF6lmxtA3V2eldNxEXoktu/3Y=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=7qAjgefg/WrTQjo8M7cCzZ4vvmeSvvhJwpbCA6vboyY=;
+ b=csupzlqDMWtHlMlQKD9uIuITOnwZCL79HY3svDqmizKupp0SjGMilY2gl3FujGAda569qc
+ 9pqHHcr6tAC7qbsoG75kB9J9z8vPBPocS5Yu7z55TMJsoq6KYox3WMSGfkTDXgffaP5cMe
+ c3FNWxODxswIKTmjSrwY7aXyjyb601s=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-163-7g92LL1aNQuyRAiczgvhGQ-1; Tue,
- 29 Sep 2026 08:13:28 -0400
-X-MC-Unique: 7g92LL1aNQuyRAiczgvhGQ-1
-X-Mimecast-MFC-AGG-ID: 7g92LL1aNQuyRAiczgvhGQ_1790684006
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-478-XNm706nYNkmP5Ws9Z_M16w-1; Tue,
+ 29 Sep 2026 08:28:53 -0400
+X-MC-Unique: XNm706nYNkmP5Ws9Z_M16w-1
+X-Mimecast-MFC-AGG-ID: XNm706nYNkmP5Ws9Z_M16w_1790684932
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 8969718052C5; Tue, 29 Sep 2026 12:13:26 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 64939196F766; Tue, 29 Sep 2026 12:28:33 +0000 (UTC)
 Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.117])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 1DB2E418; Tue, 29 Sep 2026 12:13:23 +0000 (UTC)
-Message-ID: <634e71e8-dcbf-42e6-beb5-1ad59fbbd332@redhat.com>
-Date: Tue, 29 Sep 2026 14:13:22 +0200
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D4E351800345; Tue, 29 Sep 2026 12:28:30 +0000 (UTC)
+Message-ID: <d153f0f4-150b-45d8-ad01-1964d8c92c55@redhat.com>
+Date: Tue, 29 Sep 2026 14:28:28 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 9/9] vhost: Support vduse suspend feature
+Subject: Re: [PATCH v3 3/9] vhost: add VDUSE API version negotiation
 To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
 Cc: mst@redhat.com, david.marchand@redhat.com, dev@dpdk.org,
  Yongji Xie <xieyongji@bytedance.com>, chenbox@nvidia.com,
  Bruce Richardson <bruce.richardson@intel.com>,
  Stephen Hemminger <stephen@networkplumber.org>, jasowangio@gmail.com
 References: <20260929105339.1554051-1-eperezma@redhat.com>
- <20260929105339.1554051-10-eperezma@redhat.com>
+ <20260929105339.1554051-4-eperezma@redhat.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -95,10 +95,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20260929105339.1554051-10-eperezma@redhat.com>
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+In-Reply-To: <20260929105339.1554051-4-eperezma@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: jufaqd1f2Pm8qf0kne_03g4noNl4Pzo_Qi_uYDfrigc_1790684006
+X-Mimecast-MFC-PROC-ID: n9qS4iZSeIG8QBuNFn3Ul7LNTw4uTcS2YH2deLJrknI_1790684932
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -119,27 +119,24 @@ Errors-To: dev-bounces@dpdk.org
 
 
 On 9/29/26 12:53 PM, Eugenio Pérez wrote:
-> Add support for the VDUSE_F_SUSPEND feature.
+> From: Maxime Coquelin <maxime.coquelin@redhat.com>
 > 
-> The suspend feature allows the driver to stop the device from processing
-> the virtqueues.  This ensures that the virtqueue state can be fetched
-> reliably in a live migration.
+> As preliminary step to support new VDUSE API version
+> introducing ASID support, this patch adds API version
+> negotiation to keep compatibility with older kernels.
 > 
+> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 > Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
 > ---
->   lib/vhost/vduse.c | 42 +++++++++++++++++++++++++++++++++++++++++-
+>   lib/vhost/vduse.c | 14 ++++++++++++--
 >   lib/vhost/vhost.h |  1 +
->   2 files changed, 42 insertions(+), 1 deletion(-)
+>   2 files changed, 13 insertions(+), 2 deletions(-)
 > 
-> diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
-> index bcbd9fcd6d52..cdff4df84a84 100644
-> --- a/lib/vhost/vduse.c
-> +++ b/lib/vhost/vduse.c
-> @@ -46,7 +46,8 @@ static const char * const vduse_reqs_str[] = {
 
-"VDUSE_SUSPEND" entry is missing in this array.
 
-With above comment addressed, feel free to add:
-
+FWIW:
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+
+Thanks,
+Maxime
 
