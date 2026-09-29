@@ -2,35 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C598CA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 10:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D53CA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 10:46:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 632DB4275D;
-	Tue, 29 Sep 2026 12:45:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5B8A34278D;
+	Tue, 29 Sep 2026 12:45:45 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 66EA240F35
+ by mails.dpdk.org (Postfix) with ESMTP id B589140E7C
  for <dev@dpdk.org>; Tue, 29 Sep 2026 12:45:26 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 46EE92000DA;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 97E6D2000DD;
  Tue, 29 Sep 2026 12:45:26 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 10E8C2000B0;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 61F1F2000D4;
  Tue, 29 Sep 2026 12:45:26 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7DDE21800068;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D954C18000BE;
  Tue, 29 Sep 2026 18:45:25 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: Gagandeep Singh <g.singh@nxp.com>,
-	Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v17 09/23] bus/dpaa: improve FQ shutdown with channel
- validation
-Date: Tue, 29 Sep 2026 16:15:05 +0530
-Message-Id: <20260929104519.1770698-10-hemant.agrawal@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH v17 10/23] drivers: add BMI Tx statistics
+Date: Tue, 29 Sep 2026 16:15:06 +0530
+Message-Id: <20260929104519.1770698-11-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260929104519.1770698-1-hemant.agrawal@nxp.com>
 References: <20260928065849.126909-1-hemant.agrawal@nxp.com>
@@ -53,297 +51,315 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-Replace the hardcoded pool channel range check with DTS-derived pool
-channel start/end values (dpaa_get_qm_channel_pool() and the new
-dpaa_get_qm_channel_pool_num()).
+Add support for BMI (Buffer Manager Interface) Tx statistics
+counters. Extend fman to read Tx BMI registers and expose
+them through the xstats interface.
 
-Remove the old portal affinity check for pool-channel FQs. The portal's
-dedicated channel (p->config->channel) never equals a pool channel, so
-that check could never pass. Any portal can subscribe to any pool
-channel via SDQCR, so simply program SDQCR to drain the FQ's channel
-and restore the portal SDQCR unconditionally afterwards for both
-dedicated and pool channels.
-
-Read the pool-channel-range property from the device tree, validate it
-has two items, and store the pool channel start and count. Warn if the
-configured pool channel differs from the default.
-
-Use the channel information obtained from DTS (parsed in an earlier
-patch) to select the correct portal when shutting down push-mode Rx
-queues. Previously the channel was hardcoded, causing incorrect portal
-access on multi-block DPAA setups. Also clean up CGRID and other queue
-parameters on shutdown.
-
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman.c        | 96 ++++++++++++++---------
- drivers/bus/dpaa/base/qbman/qman_driver.c | 29 ++++++-
- drivers/bus/dpaa/dpaa_bus_base_symbols.c  |  1 +
- drivers/bus/dpaa/include/fsl_qman.h       | 11 ++-
- 4 files changed, 95 insertions(+), 42 deletions(-)
+ drivers/bus/dpaa/base/fman/fman_hw.c | 98 +++++++++++++++++++++-------
+ drivers/bus/dpaa/include/fman.h      | 28 ++++++++
+ drivers/net/dpaa/dpaa_ethdev.c       | 33 ++++++++--
+ drivers/net/dpaa/dpaa_ethdev.h       | 11 +++-
+ 4 files changed, 142 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index 434b3ca338..b248a05115 100644
---- a/drivers/bus/dpaa/base/qbman/qman.c
-+++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -2791,8 +2791,9 @@ qman_shutdown_fq(struct qman_fq *fq)
- 	struct qm_mc_result *mcr;
- 	int orl_empty, drain = 0, ret = 0;
- 	u32 res, fqid = fq->fqid;
-+	u32 loop;
- 	u8 state;
--	u32 channel, wq;
-+	u16 channel;
+diff --git a/drivers/bus/dpaa/base/fman/fman_hw.c b/drivers/bus/dpaa/base/fman/fman_hw.c
+index 731ba6aa25..3aa502c6e1 100644
+--- a/drivers/bus/dpaa/base/fman/fman_hw.c
++++ b/drivers/bus/dpaa/base/fman/fman_hw.c
+@@ -296,13 +296,24 @@ fman_if_bmi_stats_enable(struct fman_if *p)
+ {
+ 	struct __fman_if *m = container_of(p, struct __fman_if, __if);
+ 	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->rx_bmi_map;
++	struct tx_bmi_regs *tx_regs = (struct tx_bmi_regs *)m->tx_bmi_map;
+ 	uint32_t tmp;
  
- 	DPAA_BUS_DEBUG("In shutdown for queue = %x", fqid);
- 	if (!p)
-@@ -2806,9 +2807,10 @@ qman_shutdown_fq(struct qman_fq *fq)
- 		ret = -ETIMEDOUT;
- 		goto out;
- 	}
+-	tmp = in_be32(&regs->fmbm_rstc);
++	if (regs) {
++		tmp = in_be32(&regs->fmbm_rstc);
+ 
+-	tmp |= FMAN_BMI_COUNTERS_EN;
++		tmp |= FMAN_BMI_COUNTERS_EN;
+ 
+-	out_be32(&regs->fmbm_rstc, tmp);
++		out_be32(&regs->fmbm_rstc, tmp);
++	}
 +
- 	state = mcr->queryfq_np.state & QM_MCR_NP_STATE_MASK;
- 	if (state == QM_MCR_NP_STATE_OOS) {
--		DPAA_BUS_ERR("Already in OOS");
-+		DPAA_BUS_DEBUG("fqid(0x%x) Already in OOS", fqid);
- 		goto out; /* Already OOS, no need to do anymore checks */
- 	}
- 
-@@ -2824,7 +2826,6 @@ qman_shutdown_fq(struct qman_fq *fq)
- 
- 	/* Need to store these since the MCR gets reused */
- 	channel = qm_fqd_get_chan(&mcr->queryfq.fqd);
--	wq = qm_fqd_get_wq(&mcr->queryfq.fqd);
- 
- 	switch (state) {
- 	case QM_MCR_NP_STATE_TEN_SCHED:
-@@ -2843,10 +2844,9 @@ qman_shutdown_fq(struct qman_fq *fq)
- 		}
- 		res = mcr->result; /* Make a copy as we reuse MCR below */
- 
--		if (res == QM_MCR_RESULT_OK)
-+		if (res == QM_MCR_RESULT_OK) {
- 			drain_mr_fqrni(&p->p);
--
--		if (res == QM_MCR_RESULT_PENDING) {
-+		} else if (res == QM_MCR_RESULT_PENDING) {
- 			/*
- 			 * Need to wait for the FQRN in the message ring, which
- 			 * will only occur once the FQ has been drained.  In
-@@ -2858,47 +2858,73 @@ qman_shutdown_fq(struct qman_fq *fq)
- 			/* Flag that we need to drain FQ */
- 			drain = 1;
- 
--			__maybe_unused u16 dequeue_wq = 0;
--			if (channel >= qm_channel_pool1 &&
--				channel < (u16)(qm_channel_pool1 + 15)) {
--				/* Pool channel, enable the bit in the portal */
--				dequeue_wq = (channel -
--						qm_channel_pool1 + 1) << 4 | wq;
--			} else if (channel < qm_channel_pool1) {
--				/* Dedicated channel */
--				dequeue_wq = wq;
--			} else {
--				DPAA_BUS_ERR("Can't recover FQ 0x%x, ch: 0x%x",
--					fqid, channel);
--				ret = -EBUSY;
--				goto out;
--			}
--			/* Set the sdqcr to drain this channel */
--			if (channel < qm_channel_pool1)
-+			const u16 pool_ch_start = dpaa_get_qm_channel_pool();
-+			const u16 pool_ch_end = pool_ch_start +
-+					dpaa_get_qm_channel_pool_num();
-+			if (channel >= pool_ch_start && channel < pool_ch_end) {
-+				/*
-+				 * Pool channel: subscribe this portal to it so
-+				 * the hardware can deliver frames and the FQ
-+				 * retires.  p->config->channel is the portal's
-+				 * dedicated channel and never equals a pool
-+				 * channel, so the old affinity check always
-+				 * failed.  Any portal can subscribe to any pool
-+				 * channel via SDQCR.
-+				 */
- 				qm_dqrr_sdqcr_set(&p->p,
- 						  QM_SDQCR_TYPE_ACTIVE |
--						  QM_SDQCR_CHANNELS_DEDICATED);
--			else
-+						  QM_SDQCR_CHANNELS_POOL_CONV(channel));
-+			} else if (channel < pool_ch_start) {
-+				/*
-+				 * Dedicated channel. QM_SDQCR_CHANNELS_DEDICATED
-+				 * only dequeues this portal's own channel, so if
-+				 * the FQ is scheduled on another portal's
-+				 * dedicated channel the FQRN would never arrive
-+				 * and the drain loop below would spin forever.
-+				 * Push-mode Rx queues are exactly such FQs.
-+				 */
-+				if (channel != p->config->channel) {
-+					DPAA_BUS_ERR("FQ 0x%x on portal channel 0x%x, not ours(0x%x)",
-+						fqid, channel,
-+						p->config->channel);
-+					ret = -EBUSY;
-+					goto out;
-+				}
- 				qm_dqrr_sdqcr_set(&p->p,
- 						  QM_SDQCR_TYPE_ACTIVE |
--						  QM_SDQCR_CHANNELS_POOL_CONV
--						  (channel));
--			do {
-+						  QM_SDQCR_CHANNELS_DEDICATED);
-+			} else {
-+				/* Channel is in DCP portal range (e.g. FM0); not drainable here */
-+				DPAA_BUS_ERR("DCP portal channel 0x%x for FQ 0x%x",
-+					channel, fqid);
-+				ret = -EBUSY;
-+				goto out;
-+			}
++	if (tx_regs) {
++		tmp = in_be32(&tx_regs->fmbm_tstc);
 +
-+			for (loop = 0; loop < QMAN_FQRN_WAIT_MAX; loop++) {
- 				/* Keep draining DQRR while checking the MR*/
- 				qm_dqrr_drain_nomatch(&p->p);
- 				/* Process message ring too */
--				found_fqrn = qm_mr_drain(&p->p,
--							FQRN);
-+				found_fqrn = qm_mr_drain(&p->p, FQRN);
-+				if (found_fqrn)
-+					break;
- 				cpu_relax();
--			} while (!found_fqrn);
--			/* Restore SDQCR */
--			qm_dqrr_sdqcr_set(&p->p,
--					p->sdqcr);
-+			}
++		tmp |= FMAN_BMI_COUNTERS_EN;
 +
-+			/* Restore portal SDQCR for both dedicated and pool channels */
-+			qm_dqrr_sdqcr_set(&p->p, p->sdqcr);
-+
-+			if (!found_fqrn) {
-+				DPAA_BUS_ERR("FQ 0x%x retire did not complete",
-+					fqid);
-+				ret = -EBUSY;
-+				goto out;
-+			}
- 		}
- 		if (res != QM_MCR_RESULT_OK &&
- 		    res != QM_MCR_RESULT_PENDING) {
- 			DPAA_BUS_ERR("retire_fq failed: FQ 0x%x, res=0x%x",
--				      fqid, res);
-+				fqid, res);
- 			ret = -EIO;
- 			goto out;
- 		}
-diff --git a/drivers/bus/dpaa/base/qbman/qman_driver.c b/drivers/bus/dpaa/base/qbman/qman_driver.c
-index bbe2640c52..ea85e4fd27 100644
---- a/drivers/bus/dpaa/base/qbman/qman_driver.c
-+++ b/drivers/bus/dpaa/base/qbman/qman_driver.c
-@@ -17,9 +17,10 @@
-  * where CCSR isn't available).
-  */
- u16 qman_ip_rev;
--u16 qm_channel_pool1 = QMAN_CHANNEL_POOL1;
--u16 qm_channel_caam = QMAN_CHANNEL_CAAM;
--u16 qm_channel_pme = QMAN_CHANNEL_PME;
-+static u16 qm_channel_pool1 = QMAN_CHANNEL_POOL1;
-+static u16 qm_channel_caam = QMAN_CHANNEL_CAAM;
-+static u16 qm_channel_pme = QMAN_CHANNEL_PME;
-+static u16 qm_channel_pool_num;
- 
- /* Ccsr map address to access ccsrbased register */
- static void *qman_ccsr_map;
-@@ -63,6 +64,11 @@ u16 dpaa_get_qm_channel_pool(void)
- 	return qm_channel_pool1;
++		out_be32(&tx_regs->fmbm_tstc, tmp);
++	}
  }
  
-+u16 dpaa_get_qm_channel_pool_num(void)
-+{
-+	return qm_channel_pool_num;
-+}
-+
- static int fsl_qman_portal_init(uint32_t index, int is_shared)
+ void
+@@ -310,13 +321,24 @@ fman_if_bmi_stats_disable(struct fman_if *p)
  {
- 	struct qman_portal *portal;
-@@ -273,7 +279,7 @@ int qman_global_init(void)
- 	uint64_t phys_addr;
- 	uint64_t regs_size;
- 	const u32 *clk;
--
-+	u16 pool_channel;
- 	static int done;
+ 	struct __fman_if *m = container_of(p, struct __fman_if, __if);
+ 	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->rx_bmi_map;
++	struct tx_bmi_regs *tx_regs = (struct tx_bmi_regs *)m->tx_bmi_map;
+ 	uint32_t tmp;
  
- 	if (done)
-@@ -334,6 +340,21 @@ int qman_global_init(void)
- 		return -EINVAL;
- 	}
+-	tmp = in_be32(&regs->fmbm_rstc);
++	if (regs) {
++		tmp = in_be32(&regs->fmbm_rstc);
  
-+	if (lenp != sizeof(rte_be32_t) * 2) {
-+		pr_err("pool-channel-range should have 2 items.\n");
-+		return -EINVAL;
+-	tmp &= ~FMAN_BMI_COUNTERS_EN;
++		tmp &= ~FMAN_BMI_COUNTERS_EN;
+ 
+-	out_be32(&regs->fmbm_rstc, tmp);
++		out_be32(&regs->fmbm_rstc, tmp);
 +	}
-+	pool_channel = rte_be_to_cpu_32(chanid[0]);
-+	qm_channel_pool_num = rte_be_to_cpu_32(chanid[1]);
 +
-+	if (pool_channel != qm_channel_pool1) {
-+		pr_warn("Pool channel(0x%04x) configured != default(0x%04x)\n",
-+			pool_channel, qm_channel_pool1);
++	if (tx_regs) {
++		tmp = in_be32(&tx_regs->fmbm_tstc);
++
++		tmp &= ~FMAN_BMI_COUNTERS_EN;
++
++		out_be32(&tx_regs->fmbm_tstc, tmp);
 +	}
-+	qm_channel_pool1 = pool_channel;
-+	pr_debug("Pool channel starts from 0x%04x, number=%d, lenp:%zu\n",
-+		qm_channel_pool1, qm_channel_pool_num, lenp);
-+
- 	/* get ccsr base */
- 	dt_node = of_find_compatible_node(NULL, NULL, "fsl,qman");
- 	if (!dt_node) {
-diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-index b1e5d445e3..b806b44d29 100644
---- a/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-+++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-@@ -61,6 +61,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_enable)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_disable)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_ioctl_version_number)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_link_status)
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_qm_channel_pool_num)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_update_link_status)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_update_link_speed)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_restart_link_autoneg)
-diff --git a/drivers/bus/dpaa/include/fsl_qman.h b/drivers/bus/dpaa/include/fsl_qman.h
-index 871cafb832..132f946825 100644
---- a/drivers/bus/dpaa/include/fsl_qman.h
-+++ b/drivers/bus/dpaa/include/fsl_qman.h
-@@ -35,9 +35,6 @@ extern "C" {
- #define QMAN_CHANNEL_POOL1_REV3 0x401
- #define QMAN_CHANNEL_CAAM_REV3 0x840
- #define QMAN_CHANNEL_PME_REV3 0x860
--extern u16 qm_channel_pool1;
--extern u16 qm_channel_caam;
--extern u16 qm_channel_pme;
- enum qm_dc_portal {
- 	qm_dc_portal_fman0 = 0,
- 	qm_dc_portal_fman1 = 1,
-@@ -51,6 +48,9 @@ u16 dpaa_get_qm_channel_caam(void);
- __rte_internal
- u16 dpaa_get_qm_channel_pool(void);
+ }
  
-+__rte_internal
-+u16 dpaa_get_qm_channel_pool_num(void);
+ void
+@@ -324,16 +346,37 @@ fman_if_bmi_stats_get_all(struct fman_if *p, uint64_t *value)
+ {
+ 	struct __fman_if *m = container_of(p, struct __fman_if, __if);
+ 	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->rx_bmi_map;
++	struct tx_bmi_regs *tx_regs = (struct tx_bmi_regs *)m->tx_bmi_map;
 +
- /* Portal processing (interrupt) sources */
- #define QM_PIRQ_CCSCI	0x00200000	/* CEETM Congestion State Change */
- #define QM_PIRQ_CSCI	0x00100000	/* Congestion State Change */
-@@ -1279,6 +1279,11 @@ struct qman_cgr {
- /* Maximum FQID value: frame queue IDs are 24 bits wide. */
- #define QMAN_MAX_FQID			0x00FFFFFFu
+ 	int i = 0;
  
-+/* Polling bound while waiting for an FQ retirement notification. A retire
-+ * that has not been reported by then is not going to complete on this portal.
+-	value[i++] = (u32)in_be32(&regs->fmbm_rfrc);
+-	value[i++] = (u32)in_be32(&regs->fmbm_rfbc);
+-	value[i++] = (u32)in_be32(&regs->fmbm_rlfc);
+-	value[i++] = (u32)in_be32(&regs->fmbm_rffc);
+-	value[i++] = (u32)in_be32(&regs->fmbm_rfdc);
+-	value[i++] = (u32)in_be32(&regs->fmbm_rfldec);
+-	value[i++] = (u32)in_be32(&regs->fmbm_rodc);
+-	value[i++] = (u32)in_be32(&regs->fmbm_rbdc);
++	/* Report zero for register blocks that are not mapped for this port
++	 * type, the caller expects a fixed number of values in a fixed order.
++	 */
++	if (regs) {
++		value[i++] = (u32)in_be32(&regs->fmbm_rfrc);
++		value[i++] = (u32)in_be32(&regs->fmbm_rfbc);
++		value[i++] = (u32)in_be32(&regs->fmbm_rlfc);
++		value[i++] = (u32)in_be32(&regs->fmbm_rffc);
++		value[i++] = (u32)in_be32(&regs->fmbm_rfdc);
++		value[i++] = (u32)in_be32(&regs->fmbm_rfldec);
++		value[i++] = (u32)in_be32(&regs->fmbm_rodc);
++		value[i++] = (u32)in_be32(&regs->fmbm_rbdc);
++	} else {
++		while (i < (int)FMAN_IF_BMI_RX_STATS_COUNT)
++			value[i++] = 0;
++	}
++
++	if (tx_regs) {
++		value[i++] = (u32)in_be32(&tx_regs->fmbm_tfrc);
++		value[i++] = (u32)in_be32(&tx_regs->fmbm_tfdc);
++		value[i++] = (u32)in_be32(&tx_regs->fmbm_tfledc);
++		value[i++] = (u32)in_be32(&tx_regs->fmbm_tfufdc);
++		value[i++] = (u32)in_be32(&tx_regs->fmbm_tbdc);
++	} else {
++		while (i < (int)FMAN_IF_BMI_STATS_COUNT)
++			value[i++] = 0;
++	}
+ }
+ 
+ void
+@@ -341,15 +384,26 @@ fman_if_bmi_stats_reset(struct fman_if *p)
+ {
+ 	struct __fman_if *m = container_of(p, struct __fman_if, __if);
+ 	struct rx_bmi_regs *regs = (struct rx_bmi_regs *)m->rx_bmi_map;
++	struct tx_bmi_regs *tx_regs = (struct tx_bmi_regs *)m->tx_bmi_map;
++
++	if (regs) {
++		out_be32(&regs->fmbm_rfrc, 0);
++		out_be32(&regs->fmbm_rfbc, 0);
++		out_be32(&regs->fmbm_rlfc, 0);
++		out_be32(&regs->fmbm_rffc, 0);
++		out_be32(&regs->fmbm_rfdc, 0);
++		out_be32(&regs->fmbm_rfldec, 0);
++		out_be32(&regs->fmbm_rodc, 0);
++		out_be32(&regs->fmbm_rbdc, 0);
++	}
+ 
+-	out_be32(&regs->fmbm_rfrc, 0);
+-	out_be32(&regs->fmbm_rfbc, 0);
+-	out_be32(&regs->fmbm_rlfc, 0);
+-	out_be32(&regs->fmbm_rffc, 0);
+-	out_be32(&regs->fmbm_rfdc, 0);
+-	out_be32(&regs->fmbm_rfldec, 0);
+-	out_be32(&regs->fmbm_rodc, 0);
+-	out_be32(&regs->fmbm_rbdc, 0);
++	if (tx_regs) {
++		out_be32(&tx_regs->fmbm_tfrc, 0);
++		out_be32(&tx_regs->fmbm_tfdc, 0);
++		out_be32(&tx_regs->fmbm_tfledc, 0);
++		out_be32(&tx_regs->fmbm_tfufdc, 0);
++		out_be32(&tx_regs->fmbm_tbdc, 0);
++	}
+ }
+ 
+ void
+diff --git a/drivers/bus/dpaa/include/fman.h b/drivers/bus/dpaa/include/fman.h
+index d949b38b8d..f642faf3b3 100644
+--- a/drivers/bus/dpaa/include/fman.h
++++ b/drivers/bus/dpaa/include/fman.h
+@@ -306,6 +306,13 @@ struct tx_bmi_regs {
+ 	uint32_t fmbm_tfene;		/**< Tx Frame Enqueue Next Engine*/
+ 	uint32_t fmbm_trlmts;		/**< Tx Rate Limiter Scale*/
+ 	uint32_t fmbm_trlmt;		/**< Tx Rate Limiter*/
++	uint32_t reserved0034[0x73];	/**< (0x034 - 0x1FF) */
++	uint32_t fmbm_tstc;		/**< Tx Statistics Counters*/
++	uint32_t fmbm_tfrc;		/**< Tx Frame Counter*/
++	uint32_t fmbm_tfdc;		/**< Tx Frames Discard Counter*/
++	uint32_t fmbm_tfledc;		/**< Tx Frames Length Error Discard Counter*/
++	uint32_t fmbm_tfufdc;		/**< Tx Frames Unsupported Format Discard Counter*/
++	uint32_t fmbm_tbdc;		/**< Tx Buffers Deallocate Counter*/
+ };
+ 
+ /* Description FM RTC timer alarm */
+@@ -468,6 +475,27 @@ struct __fman_if {
+ 	void *qmi_map;
+ };
+ 
++#define MEMMAC_REG_OFFSET(reg) offsetof(struct memac_regs, reg)
++#define BMI_RX_REG_OFFSET(reg) offsetof(struct rx_bmi_regs, reg)
++#define BMI_TX_REG_OFFSET(reg) offsetof(struct tx_bmi_regs, reg)
++
++#define FMAN_IF_BMI_RX_STAT_OFFSET_START BMI_RX_REG_OFFSET(fmbm_rfrc)
++#define FMAN_IF_BMI_RX_STAT_OFFSET_END BMI_RX_REG_OFFSET(fmbm_rbdc)
++#define FMAN_IF_BMI_TX_STAT_OFFSET_START BMI_TX_REG_OFFSET(fmbm_tfrc)
++#define FMAN_IF_BMI_TX_STAT_OFFSET_END BMI_TX_REG_OFFSET(fmbm_tbdc)
++
++/* Number of BMI counters in each contiguous register window. Derived from
++ * the window bounds above so they cannot drift from the register layout.
 + */
-+#define QMAN_FQRN_WAIT_MAX		10000000u
++#define FMAN_IF_BMI_RX_STATS_COUNT \
++	((FMAN_IF_BMI_RX_STAT_OFFSET_END - \
++	  FMAN_IF_BMI_RX_STAT_OFFSET_START) / sizeof(uint32_t) + 1)
++#define FMAN_IF_BMI_TX_STATS_COUNT \
++	((FMAN_IF_BMI_TX_STAT_OFFSET_END - \
++	  FMAN_IF_BMI_TX_STAT_OFFSET_START) / sizeof(uint32_t) + 1)
++#define FMAN_IF_BMI_STATS_COUNT \
++	(FMAN_IF_BMI_RX_STATS_COUNT + FMAN_IF_BMI_TX_STATS_COUNT)
 +
- /* Flags to qman_create_fq() */
- #define QMAN_FQ_FLAG_NO_ENQUEUE      0x00000001 /* can't enqueue */
- #define QMAN_FQ_FLAG_NO_MODIFY       0x00000002 /* can only enqueue */
+ /* And this is the base list node that the interfaces are added to. (See
+  * fman_if_enable_all_rx() below for an example of its use.)
+  */
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 4454f8b364..cc88313040 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -146,8 +146,33 @@ static const struct rte_dpaa_xstats_name_off dpaa_xstats_strings[] = {
+ 		offsetof(struct dpaa_if_rx_bmi_stats, fmbm_rodc)},
+ 	{"rx_buf_deallocate",
+ 		offsetof(struct dpaa_if_rx_bmi_stats, fmbm_rbdc)},
++	{"tx_frame_counter",
++		offsetof(struct dpaa_if_tx_bmi_stats, fmbm_tfrc)},
++	{"tx_bad_frames_count",
++		offsetof(struct dpaa_if_tx_bmi_stats, fmbm_tfdc)},
++	{"tx_frame_length_discard",
++		offsetof(struct dpaa_if_tx_bmi_stats, fmbm_tfledc)},
++	{"tx_frames_unsupported_format",
++		offsetof(struct dpaa_if_tx_bmi_stats, fmbm_tfufdc)},
++	{"tx_buf_deallocate",
++		offsetof(struct dpaa_if_tx_bmi_stats, fmbm_tbdc)},
+ };
+ 
++/* Number of BMI entries at the tail of dpaa_xstats_strings[].
++ * Must equal RTE_DIM(dpaa_xstats_strings) - number_of_non_bmi_entries.
++ */
++#define DPAA_MAC_XSTATS_COUNT   13
++#define DPAA_BMI_XSTATS_COUNT   (RTE_DIM(dpaa_xstats_strings) - DPAA_MAC_XSTATS_COUNT)
++static_assert(sizeof(struct dpaa_if_rx_bmi_stats) / sizeof(uint32_t)
++		+ sizeof(struct dpaa_if_tx_bmi_stats) / sizeof(uint32_t)
++		== DPAA_BMI_XSTATS_COUNT,
++		"DPAA_BMI_XSTATS_COUNT out of sync with BMI stats structs");
++/* Every BMI counter read by fman_if_bmi_stats_get_all() must have a name
++ * entry above, and vice versa.
++ */
++static_assert(FMAN_IF_BMI_STATS_COUNT == DPAA_BMI_XSTATS_COUNT,
++		"DPAA_BMI_XSTATS_COUNT out of sync with BMI register windows");
++
+ static struct rte_dpaa_driver rte_dpaa_pmd;
+ int dpaa_valid_dev;
+ struct rte_mempool *dpaa_tx_sg_pool;
+@@ -912,7 +937,7 @@ dpaa_dev_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
+ {
+ 	unsigned int i = 0, j, num = RTE_DIM(dpaa_xstats_strings);
+ 	uint64_t values[sizeof(struct dpaa_if_stats) / 8];
+-	unsigned int bmi_count = sizeof(struct dpaa_if_rx_bmi_stats) / 4;
++	unsigned int bmi_count = DPAA_BMI_XSTATS_COUNT;
+ 
+ 	if (n < num)
+ 		return num;
+@@ -923,7 +948,7 @@ dpaa_dev_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
+ 	fman_if_stats_get_all(dev->process_private, values,
+ 			      sizeof(struct dpaa_if_stats) / 8);
+ 
+-	for (i = 0; i < num - (bmi_count - 1); i++) {
++	for (i = 0; i < num - bmi_count; i++) {
+ 		xstats[i].id = i;
+ 		xstats[i].value = values[dpaa_xstats_strings[i].offset / 8];
+ 	}
+@@ -961,7 +986,7 @@ dpaa_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
+ {
+ 	unsigned int i, j, stat_cnt = RTE_DIM(dpaa_xstats_strings);
+ 	uint64_t values_copy[sizeof(struct dpaa_if_stats) / 8];
+-	unsigned int bmi_count = sizeof(struct dpaa_if_rx_bmi_stats) / 4;
++	unsigned int bmi_count = DPAA_BMI_XSTATS_COUNT;
+ 
+ 	if (!ids) {
+ 		if (n < stat_cnt)
+@@ -973,7 +998,7 @@ dpaa_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
+ 		fman_if_stats_get_all(dev->process_private, values_copy,
+ 				      sizeof(struct dpaa_if_stats) / 8);
+ 
+-		for (i = 0; i < stat_cnt - (bmi_count - 1); i++)
++		for (i = 0; i < stat_cnt - bmi_count; i++)
+ 			values[i] =
+ 				values_copy[dpaa_xstats_strings[i].offset / 8];
+ 
+diff --git a/drivers/net/dpaa/dpaa_ethdev.h b/drivers/net/dpaa/dpaa_ethdev.h
+index f400030a5c..d342d98f23 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.h
++++ b/drivers/net/dpaa/dpaa_ethdev.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+  *   Copyright (c) 2014-2016 Freescale Semiconductor, Inc. All rights reserved.
+- *   Copyright 2017-2024 NXP
++ *   Copyright 2017-2026 NXP
+  *
+  */
+ #ifndef __DPAA_ETHDEV_H__
+@@ -234,7 +234,6 @@ dpaa_rx_cb_atomic(void *event,
+ 		  void **bufs);
+ 
+ struct dpaa_if_rx_bmi_stats {
+-	uint32_t fmbm_rstc;		/**< Rx Statistics Counters*/
+ 	uint32_t fmbm_rfrc;		/**< Rx Frame Counter*/
+ 	uint32_t fmbm_rfbc;		/**< Rx Bad Frames Counter*/
+ 	uint32_t fmbm_rlfc;		/**< Rx Large Frames Counter*/
+@@ -245,6 +244,14 @@ struct dpaa_if_rx_bmi_stats {
+ 	uint32_t fmbm_rbdc;		/**< Rx Buffers Deallocate Counter*/
+ };
+ 
++struct dpaa_if_tx_bmi_stats {
++	uint32_t fmbm_tfrc;		/**< Tx Frame Counter*/
++	uint32_t fmbm_tfdc;		/**< Tx Frames Discard Counter*/
++	uint32_t fmbm_tfledc;	/**< Tx Frames Length Error Discard*/
++	uint32_t fmbm_tfufdc;	/**< Tx Frames Unsupported Format*/
++	uint32_t fmbm_tbdc;		/**< Tx Buffers Deallocate Counter */
++};
++
+ int
+ dpaa_tx_conf_queue_init(struct qman_fq *fq);
+ 
 -- 
 2.25.1
 
