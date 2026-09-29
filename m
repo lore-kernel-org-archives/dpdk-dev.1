@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 465F5CA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 14:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B1CC9832A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 14:06:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ADBD142E78;
-	Tue, 29 Sep 2026 16:04:39 +0200 (CEST)
-Received: from mail-pz2-f38.google.com (mail-pz2-f38.google.com
- [74.125.228.38]) by mails.dpdk.org (Postfix) with ESMTP id 7F32242E10
- for <dev@dpdk.org>; Tue, 29 Sep 2026 16:04:27 +0200 (CEST)
-Received: by mail-pz2-f38.google.com with SMTP id
- d2e1a72fcca58-88272e1d069so1850809b3a.1
- for <dev@dpdk.org>; Tue, 29 Sep 2026 07:04:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 90F2242E7C;
+	Tue, 29 Sep 2026 16:04:40 +0200 (CEST)
+Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
+ [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id 77FF542E57
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 16:04:28 +0200 (CEST)
+Received: by mail-pz2-f42.google.com with SMTP id
+ d2e1a72fcca58-86efece610cso2110745b3a.0
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 07:04:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790690667;
  x=1791295467; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=AP/DG4gQxGiyMGY/lzP1xkCcRepcdaetSXQ/5AwhtS0=;
- b=ssPGupJcQ+cOfT2rEBz1069rHgmI/OMfNWDqJK11vlfeOeI696aEg9YiHovljb6Xz1
- DOYa4eha8y847+m7pnkYHuc6SnDIHaxAq9sOxswbqxfasyZAEbWYWpQuzI2iZoFxzU7Q
- 86gTfE3c0HfrrNSvMoFYKhfTBLzYJFHZfULPbNySoYwrIIykMIF3behiUl5ynsfP+hdw
- gAGx2BDDBrjZhngo+Sgkmp6WKJW/gmZ1za1QuSRz+GgfiPBlUXn2O2vTv36c7rKLw98M
- hAu5Z4e5QdbT4Vb/8ej5fd96JoUWSh1/XsGCr+ddlaePopI0qbMVJtTMJ/sQEA7js3A0
- bdnA==
+ bh=dgOfGdIrUWElVZ8RERrHIa5tu6DvybwadqOzpvd1HHM=;
+ b=xNO9E5/QHOf/2nPP67AYd3m/M6yiIVd/WjE8VCcbhH5gptbpKGIeozrnj4yKdJ6IWC
+ OQ82evJt7xFOMA6k2NF1tvpj/7HqxXuzcRMK4J4K/WcXGJZLgQ/lucEjEV5mJb+Df5Nh
+ hXuaD+NsoBcZz3dF/NoHlUHF9BB58O+eTl81OwkYaTfnoqdHGvVy2fcqMbWB7CKsR24m
+ vl2GEPBRoWdBnbgJuqhOjyWPIvQQkNHLd4iihVTVm461JAt7U7yCJQVPW9ZTSLmDEBiz
+ u3EQyELtto36UedyCw48I4lOayPSrFOCkMyNfIqMYqBa4l62jzemtAKIXubqubFnv7ZS
+ 6xSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20260707; t=1790690667; x=1791295467;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=AP/DG4gQxGiyMGY/lzP1xkCcRepcdaetSXQ/5AwhtS0=;
- b=mAWIr9FBgRe4HqZ4YOzjpnv2VmUK0YgGSqazDjs17QVAJ49CTd2qRIJLJAmiP/kxHy
- G13Ew4IdZQge0C3rT8VkpX7YcFWIx60mV9Xzgt30kw9nOx64YMiP5GPwDdOBZXnw1PY6
- Wu+HOPUTTnoUR2VaIN6or0ergY5M0yTMpuI1CQ7SNvA6m1d8oeo4KESam6ZjRcTRp0Nw
- cMI6mrQUw62fZE42j6bUxljPN6yC2C2lXFhw099r84U0WkgbsXd/NqG82HGyJylJU4SY
- 7CPi598kazO51BJv9vLIDSDWzMOM5HSK1g6dc5WAOz9uOnqXL6efqOjwa1ZUFabO2ymJ
- i/8w==
-X-Gm-Message-State: AFuF++kyLeivWF6dpJ8V08t7KjphlGc/aXf4PPB5ty6GDbSAYruYnd5J
- 9BI4bMkNxqp6FCMrZFAURh7EzWAjr5ndLV9BwdEnCpIvzDhK7VzsxEWNI3tefJNmf7WPLy3wzWr
- C+0rUTTs=
-X-Gm-Gg: AYBFou0c7sikc03pbXxrHx29xb6Ih1QWzQ97hJeXl8q67Z7rLHscKEGnP8Qy0JrM+NB
- Jk5OQYv/BvcqxwJ1gyDiV1cvE45pcnU/kpr2bGAENnLNa7b1YfZj4sZdlavEGDBmMxwJjbKyj7z
- X//sLU5gsAQZGpL3JNrIR5Jf579iLYI1H/rDSBfw7YMTZ/Hk25s5tAScy9UGjOd3D+ETz8UUgpn
- fypxXN8hnGct9sypzsmirF6oRm1XUuzWQBqhsfcc3nXme+9DKa81dd+r5302XbcaoHbTIQnVv5A
- Vio0FNJdRYWyt5HYZtzTEVxL9h+IMXQPr7H1UscYTy1ThIGG+f8Tu0uRA6uzYi3pWwpAJNC8ztn
- vS/MQM1pMLa/OFtEXuZ5zAuDBJin6UBs1dOLGsATqWWEuBVB7YTDHEZYPdQtneQMuvw7yBYlY1+
- F9DCOOouqIngFCm6aiXM9L2XOm1LxSGV4VOR297TgWctUyZmr3hoNNekux4bOjdeuLgWDdTiSP9
- xgq9Wgao5yDME2O57O7Jhax2oXsxzIxH+ZkEXhhZcXSG5aO
-X-Received: by 2002:a05:6a00:909c:b0:881:b008:12dc with SMTP id
- d2e1a72fcca58-881b00817f8mr7978233b3a.51.1790690666445; 
- Tue, 29 Sep 2026 07:04:26 -0700 (PDT)
+ bh=dgOfGdIrUWElVZ8RERrHIa5tu6DvybwadqOzpvd1HHM=;
+ b=fbafEetY26u/BrNpxw4RWxM4GpaBCV/YjkWuX3Kefl7U/Mf4WYLUFRQ4nLuMzY4J04
+ Shs8LDMbRrvUjuImckLRrT8OotMkd1oB7CtDD0nZqJ2dfqBWTVZkvj76Fw1vaobDY68w
+ meHyMBpDUeS4h2jC2J0L1ZSWBiolLJghpZj/kKKDZG9X8bz0xnOVyFWCtgdQzqCkjdys
+ pXiEIxJcfvJAFSIwJQhHSYP22LhQ9dz/m+hkPus9mkxBUHhb5LuX+9H0Sj60fhE91vnw
+ g8dbjqtadCr8JV+7B3Sa7YGCjfE2+mGaz1TflFBG6CnL4176HiBKo4+2nx1+hoqVdRpN
+ iTBA==
+X-Gm-Message-State: AFuF++l1fm4KqKVkIMM0YXDG8q/8uyWKvaMYklUBAHdMVyLleM4vKi9C
+ oUJqgecAjnIREyqQdhuodZfXWAVYe35xMh33Ws//CkPEQDUGrAdDBQkRsdEliQEox9uMLlaGBr5
+ AFAHc+IY=
+X-Gm-Gg: AYBFou0IRM9pIOmpNcuWLTI04mVTWc3GR9weN03d9dQ7Hf4qBm02hcZdDqyPiFaVe7m
+ RFTBnTBnwqcIHVhkpB2p+H/4wC/8H78VbH7MryGVkQlVLh/QtBDeaWHjQFfWI+tB8d51a+iGNfF
+ 3MuksXCYaoix7vCdD/5yVPxMaGCrfFkLpsQbCN+T7wM2O2M7u/fcbrMMK4BVH39ggWt4hZ03Pst
+ p5zUe9kES5FiLl39wMvXZhfl0Bk7vx0WOHTlpAUq9GbSuf+EOTWHVnM3w5YM9oD+oYzSJPHcpEv
+ 3QnSK2wuvVO04hsFHzxz8EFpjxPPbmBykw2b5i+03UhxpcYU2FZ/MwDaNpMZeOersxNbNygUL+D
+ 0y7GEurZxh8YFdmz9ZcJ9v3bcSilxXUU9DwalspebVr848AOtwQ+pXApVQDPftOqhOGLp/+NFVB
+ Q6qxWU916NoJ5A/EVuB/JkoSy3FUXPkbKkvMHd8Clpv9Hyka+6cs3hZMI3Y6IJ762suEuTBB4M1
+ h5kmskSvDtqFMBnqJpQ9YmpW7jDI0aI4NQ9aQ==
+X-Received: by 2002:a05:6a00:b70f:b0:87c:47ec:f3c with SMTP id
+ d2e1a72fcca58-87e9dfaf9a6mr11114646b3a.47.1790690667473; 
+ Tue, 29 Sep 2026 07:04:27 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-885e1066470sm998330b3a.18.2026.09.29.07.04.25
+ d2e1a72fcca58-885e1066470sm998330b3a.18.2026.09.29.07.04.26
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 07:04:25 -0700 (PDT)
+ Tue, 29 Sep 2026 07:04:26 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
-Subject: [PATCH v9 14/25] net/netvsc: replace rte_atomic32 with stdatomic
-Date: Tue, 29 Sep 2026 07:02:00 -0700
-Message-ID: <20260929140409.234453-15-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v9 15/25] event/sw: convert from rte_atomic32 to stdatomic
+Date: Tue, 29 Sep 2026 07:02:01 -0700
+Message-ID: <20260929140409.234453-16-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929140409.234453-1-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
@@ -83,165 +82,118 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Change the rndis transaction id and buffer usage to use
-stdatomic functions.
-
-It also removes rte_smp_wmb() and relies on the release
-ordering of compare-exchange.
+Use stdatomic to keep track of inflights.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Reviewed-by: Long Li <longli@microsoft.com>
 ---
- drivers/net/netvsc/hn_rndis.c | 28 +++++++++++++++++++---------
- drivers/net/netvsc/hn_rxtx.c  | 12 +++++++-----
- drivers/net/netvsc/hn_var.h   |  6 +++---
- 3 files changed, 29 insertions(+), 17 deletions(-)
+ drivers/event/sw/sw_evdev.c        |  8 +++++---
+ drivers/event/sw/sw_evdev.h        |  4 ++--
+ drivers/event/sw/sw_evdev_worker.c | 16 +++++++++++-----
+ 3 files changed, 18 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/netvsc/hn_rndis.c b/drivers/net/netvsc/hn_rndis.c
-index 7c54eebcef..4e13d7c38f 100644
---- a/drivers/net/netvsc/hn_rndis.c
-+++ b/drivers/net/netvsc/hn_rndis.c
-@@ -17,7 +17,7 @@
- #include <rte_string_fns.h>
- #include <rte_memzone.h>
- #include <rte_malloc.h>
--#include <rte_atomic.h>
-+#include <rte_stdatomic.h>
- #include <rte_alarm.h>
- #include <rte_branch_prediction.h>
- #include <rte_ether.h>
-@@ -59,7 +59,8 @@ hn_rndis_rid(struct hn_data *hv)
- 	uint32_t rid;
- 
- 	do {
--		rid = rte_atomic32_add_return(&hv->rndis_req_id, 1);
-+		rid = rte_atomic_fetch_add_explicit(&hv->rndis_req_id, 1,
-+						    rte_memory_order_seq_cst) + 1;
- 	} while (rid == 0);
- 
- 	return rid;
-@@ -357,12 +358,14 @@ void hn_rndis_receive_response(struct hn_data *hv,
- 	memcpy(hv->rndis_resp, data, len);
- 
- 	/* make sure response copied before update */
--	rte_smp_wmb();
--
--	if (rte_atomic32_cmpset(&hv->rndis_pending, hdr->rid, 0) == 0) {
-+	uint32_t expected = hdr->rid;
-+	if (!rte_atomic_compare_exchange_strong_explicit(&hv->rndis_pending,
-+							 &expected, 0,
-+							 rte_memory_order_release,
-+							 rte_memory_order_relaxed)) {
- 		PMD_DRV_LOG(NOTICE,
- 			    "received id %#x pending id %#x",
--			    hdr->rid, (uint32_t)hv->rndis_pending);
-+			    hdr->rid, expected);
- 	}
- }
- 
-@@ -388,8 +391,11 @@ static int hn_rndis_exec1(struct hn_data *hv,
- 		return -EINVAL;
+diff --git a/drivers/event/sw/sw_evdev.c b/drivers/event/sw/sw_evdev.c
+index 3ad82e94ac..a2f760a98d 100644
+--- a/drivers/event/sw/sw_evdev.c
++++ b/drivers/event/sw/sw_evdev.c
+@@ -153,7 +153,9 @@ sw_port_setup(struct rte_eventdev *dev, uint8_t port_id,
+ 		 * the sum to no leak credits
+ 		 */
+ 		int possible_inflights = p->inflight_credits + p->inflights;
+-		rte_atomic32_sub(&sw->inflights, possible_inflights);
++		rte_atomic_fetch_sub_explicit(&sw->inflights,
++					      possible_inflights,
++					      rte_memory_order_release);
  	}
  
-+	uint32_t expected = 0;
- 	if (comp != NULL &&
--	    rte_atomic32_cmpset(&hv->rndis_pending, 0, rid) == 0) {
-+	    !rte_atomic_compare_exchange_strong_explicit(
-+		    &hv->rndis_pending, &expected, rid,
-+		    rte_memory_order_acquire, rte_memory_order_relaxed)) {
- 		PMD_DRV_LOG(ERR,
- 			    "Request already pending");
- 		return -EBUSY;
-@@ -405,7 +411,8 @@ static int hn_rndis_exec1(struct hn_data *hv,
- 		time_t start = time(NULL);
+ 	*p = (struct sw_port){0}; /* zero entire structure */
+@@ -512,7 +514,7 @@ sw_dev_configure(const struct rte_eventdev *dev)
+ 	sw->qid_count = conf->nb_event_queues;
+ 	sw->port_count = conf->nb_event_ports;
+ 	sw->nb_events_limit = conf->nb_events_limit;
+-	rte_atomic32_set(&sw->inflights, 0);
++	sw->inflights = 0;
  
- 		/* Poll primary channel until response received */
--		while (hv->rndis_pending == rid) {
-+		while (rte_atomic_load_explicit(&hv->rndis_pending,
-+						rte_memory_order_acquire) == rid) {
- 			if (hv->closed)
- 				return -ENETDOWN;
+ 	/* Number of chunks sized for worst-case spread of events across IQs */
+ 	num_chunks = ((SW_INFLIGHT_EVENTS_TOTAL/SW_EVS_PER_Q_CHUNK)+1) +
+@@ -633,7 +635,7 @@ sw_dump(struct rte_eventdev *dev, FILE *f)
+ 	fprintf(f, "\tsched cq/qid call: %"PRIu64"\n", sw->sched_cq_qid_called);
+ 	fprintf(f, "\tsched no IQ enq: %"PRIu64"\n", sw->sched_no_iq_enqueues);
+ 	fprintf(f, "\tsched no CQ enq: %"PRIu64"\n", sw->sched_no_cq_enqueues);
+-	uint32_t inflights = rte_atomic32_read(&sw->inflights);
++	uint32_t inflights = rte_atomic_load_explicit(&sw->inflights, rte_memory_order_relaxed);
+ 	uint32_t credits = sw->nb_events_limit - inflights;
+ 	fprintf(f, "\tinflight %d, credits: %d\n", inflights, credits);
  
-@@ -413,7 +420,10 @@ static int hn_rndis_exec1(struct hn_data *hv,
- 				PMD_DRV_LOG(ERR,
- 					    "RNDIS response timed out");
- 
--				rte_atomic32_cmpset(&hv->rndis_pending, rid, 0);
-+				expected = rid;
-+				rte_atomic_compare_exchange_strong_explicit(
-+					&hv->rndis_pending, &expected, 0,
-+					rte_memory_order_release, rte_memory_order_relaxed);
- 				return -ETIMEDOUT;
- 			}
- 
-diff --git a/drivers/net/netvsc/hn_rxtx.c b/drivers/net/netvsc/hn_rxtx.c
-index 0d770d1b25..6f536610f2 100644
---- a/drivers/net/netvsc/hn_rxtx.c
-+++ b/drivers/net/netvsc/hn_rxtx.c
-@@ -17,7 +17,7 @@
- #include <rte_string_fns.h>
- #include <rte_memzone.h>
- #include <rte_malloc.h>
+diff --git a/drivers/event/sw/sw_evdev.h b/drivers/event/sw/sw_evdev.h
+index c159be21be..5e49b08030 100644
+--- a/drivers/event/sw/sw_evdev.h
++++ b/drivers/event/sw/sw_evdev.h
+@@ -8,7 +8,7 @@
+ #include "sw_evdev_log.h"
+ #include <rte_eventdev.h>
+ #include <eventdev_pmd_vdev.h>
 -#include <rte_atomic.h>
 +#include <rte_stdatomic.h>
- #include <rte_bitmap.h>
- #include <rte_branch_prediction.h>
- #include <rte_ether.h>
-@@ -558,7 +558,8 @@ static void hn_rx_buf_free_cb(void *buf __rte_unused, void *opaque)
- 	struct hn_rx_queue *rxq = rxb->rxq;
- 	struct hn_data *hv = rxq->hv;
  
--	rte_atomic32_dec(&rxq->rxbuf_outstanding);
-+	rte_atomic_fetch_sub_explicit(&rxq->rxbuf_outstanding, 1,
-+				      rte_memory_order_release);
- 	hn_nvs_ack_rxbuf(hv, rxb->chan, rxb->xactid);
- }
+ #define SW_DEFAULT_CREDIT_QUANTA 32
+ #define SW_DEFAULT_SCHED_QUANTA 128
+@@ -233,7 +233,7 @@ struct sw_evdev {
+ 	/* Contains all ports - load balanced and directed */
+ 	alignas(RTE_CACHE_LINE_SIZE) struct sw_port ports[SW_PORTS_MAX];
  
-@@ -602,8 +603,8 @@ static void hn_rxpkt(struct hn_rx_queue *rxq, struct hn_rx_bufinfo *rxb,
- 	 * some space available in receive area for later packets.
- 	 */
- 	if (hv->rx_extmbuf_enable && dlen > hv->rx_copybreak &&
--	    (uint32_t)rte_atomic32_read(&rxq->rxbuf_outstanding) <
--			hv->rxbuf_section_cnt / 2) {
-+	    rte_atomic_load_explicit(&rxq->rxbuf_outstanding,
-+				     rte_memory_order_relaxed) < hv->rxbuf_section_cnt / 2) {
- 		struct rte_mbuf_ext_shared_info *shinfo;
- 		const void *rxbuf;
- 		rte_iova_t iova;
-@@ -619,7 +620,8 @@ static void hn_rxpkt(struct hn_rx_queue *rxq, struct hn_rx_bufinfo *rxb,
+-	alignas(RTE_CACHE_LINE_SIZE) rte_atomic32_t inflights;
++	alignas(RTE_CACHE_LINE_SIZE) RTE_ATOMIC(uint32_t) inflights;
  
- 		/* shinfo is already set to 1 by the caller */
- 		if (rte_mbuf_ext_refcnt_update(shinfo, 1) == 2)
--			rte_atomic32_inc(&rxq->rxbuf_outstanding);
-+			rte_atomic_fetch_add_explicit(&rxq->rxbuf_outstanding, 1,
-+						      rte_memory_order_acquire);
+ 	/*
+ 	 * max events in this instance. Cached here for performance.
+diff --git a/drivers/event/sw/sw_evdev_worker.c b/drivers/event/sw/sw_evdev_worker.c
+index 4215726513..0755def367 100644
+--- a/drivers/event/sw/sw_evdev_worker.c
++++ b/drivers/event/sw/sw_evdev_worker.c
+@@ -56,7 +56,7 @@ sw_event_enqueue_burst(void *port, const struct rte_event ev[], uint16_t num)
+ 	uint8_t new_ops[PORT_ENQUEUE_MAX_BURST_SIZE];
+ 	struct sw_port *p = port;
+ 	struct sw_evdev *sw = (void *)p->sw;
+-	uint32_t sw_inflights = rte_atomic32_read(&sw->inflights);
++	uint32_t sw_inflights = rte_atomic_load_explicit(&sw->inflights, rte_memory_order_relaxed);
+ 	uint32_t credit_update_quanta = sw->credit_update_quanta;
+ 	int new = 0;
  
- 		rte_pktmbuf_attach_extbuf(m, data, iova,
- 					  dlen + headroom, shinfo);
-diff --git a/drivers/net/netvsc/hn_var.h b/drivers/net/netvsc/hn_var.h
-index 574b909c82..d7124a7df9 100644
---- a/drivers/net/netvsc/hn_var.h
-+++ b/drivers/net/netvsc/hn_var.h
-@@ -85,7 +85,7 @@ struct hn_rx_queue {
+@@ -74,8 +74,10 @@ sw_event_enqueue_burst(void *port, const struct rte_event ev[], uint16_t num)
+ 		if (sw_inflights + credit_update_quanta > sw->nb_events_limit)
+ 			return 0;
  
- 	void *event_buf;
- 	struct hn_rx_bufinfo *rxbuf_info;
--	rte_atomic32_t  rxbuf_outstanding;
-+	RTE_ATOMIC(uint32_t) rxbuf_outstanding;
- };
+-		rte_atomic32_add(&sw->inflights, credit_update_quanta);
+-		p->inflight_credits += (credit_update_quanta);
++		rte_atomic_fetch_add_explicit(&sw->inflights,
++					      credit_update_quanta,
++					      rte_memory_order_acquire);
++		p->inflight_credits += credit_update_quanta;
  
+ 		/* If there are fewer inflight credits than new events, limit
+ 		 * the number of enqueued events.
+@@ -124,7 +126,9 @@ sw_event_enqueue_burst(void *port, const struct rte_event ev[], uint16_t num)
  
-@@ -167,8 +167,8 @@ struct hn_data {
- 	uint32_t	rndis_agg_pkts;
- 	uint32_t	rndis_agg_align;
+ 	/* Replenish credits if enough releases are performed */
+ 	if (p->inflight_credits >= credit_update_quanta * 2) {
+-		rte_atomic32_sub(&sw->inflights, credit_update_quanta);
++		rte_atomic_fetch_sub_explicit(&sw->inflights,
++					      credit_update_quanta,
++					      rte_memory_order_release);
+ 		p->inflight_credits -= credit_update_quanta;
+ 	}
  
--	volatile uint32_t  rndis_pending;
--	rte_atomic32_t	rndis_req_id;
-+	RTE_ATOMIC(uint32_t) rndis_pending;
-+	RTE_ATOMIC(uint32_t) rndis_req_id;
- 	uint8_t		rndis_resp[256];
+@@ -150,7 +154,9 @@ sw_event_dequeue_burst(void *port, struct rte_event *ev, uint16_t num,
  
- 	uint32_t	rss_hash;
+ 		/* Replenish credits if enough releases are performed */
+ 		if (p->inflight_credits >= credit_update_quanta * 2) {
+-			rte_atomic32_sub(&sw->inflights, credit_update_quanta);
++			rte_atomic_fetch_sub_explicit(&sw->inflights,
++						      credit_update_quanta,
++						      rte_memory_order_release);
+ 			p->inflight_credits -= credit_update_quanta;
+ 		}
+ 	}
 -- 
 2.53.0
 
