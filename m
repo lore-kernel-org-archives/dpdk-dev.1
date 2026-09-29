@@ -2,107 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9E7C9832A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 14:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13BCCCA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 14:36:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF03240E24;
-	Tue, 29 Sep 2026 16:25:19 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6B37440E22
- for <dev@dpdk.org>; Tue, 29 Sep 2026 16:25:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790691917;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=ZvbaqgonKhYwlasX61/ZcrRoN1SZT2XULtC86CV1D8A=;
- b=aDAuKHoahOacMCsnFGX+BM+h1o/wKfQtNBObMp9afmkb20cEQgs1IQ5ZV4ma0M0Oe6nEpw
- c39mGnOArZLuWLJeUr46knzqn91PlkIqcaBGhX015c1QiDAcII2fQQe8KxWVHiiZTRzDhL
- XcjciqH/M9OJBD/r45DsxHSS2Jfo2LY=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-53-2ExuRaiMPQ6kKujcgqtzZA-1; Tue,
- 29 Sep 2026 10:25:15 -0400
-X-MC-Unique: 2ExuRaiMPQ6kKujcgqtzZA-1
-X-Mimecast-MFC-AGG-ID: 2ExuRaiMPQ6kKujcgqtzZA_1790691913
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 82D9518052E5; Tue, 29 Sep 2026 14:25:13 +0000 (UTC)
-Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
- [10.2.32.117])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 0FA3E195604D; Tue, 29 Sep 2026 14:25:10 +0000 (UTC)
-Message-ID: <ebce8bc2-209d-45f4-aafb-3049e92595d0@redhat.com>
-Date: Tue, 29 Sep 2026 16:25:08 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 2E2E740E22;
+	Tue, 29 Sep 2026 16:36:06 +0200 (CEST)
+Received: from mail-pj2-f39.google.com (mail-pj2-f39.google.com
+ [74.125.227.167])
+ by mails.dpdk.org (Postfix) with ESMTP id AA23240E0A
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 16:36:03 +0200 (CEST)
+Received: by mail-pj2-f39.google.com with SMTP id
+ 98e67ed59e1d1-3a49b6bb21eso721267a91.3
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 07:36:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790692563;
+ x=1791297363; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=HxNion8QGx4/gSRAxd1MYeFuYHTug7N9xMKsgGpkJl4=;
+ b=r7lRFcASWnMzokV0piGmfVpQa9DaGhrdPgtPe98ytY8vbP0hhlnSt8SVEn2Hx3wI4U
+ Cv1WLlkiGEQiV5PoW+yijP9mamd63jh4wW40BAydTy98l0gP/ClcOnrPK0aTkZRgKDPA
+ rgoYd3ic775VeKFYKMag3I6j382iV2NprnAGgxUxp9vLR6YhaEIocQKetVltJc6SZoeJ
+ M/AQGTAbHOGmYJD/Bnd/omW+M4u8Ev/p3HyJrrU42ByEoNZ+KCc7E6wBqZ6C1X3zrvgG
+ MTU2zkwOCRD6q2PHKtsHEt68sfzuQeqWyt21kPXv2SAN9enWx/NcnDvJcBwoIEIZ3skD
+ nW8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790692563; x=1791297363;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=HxNion8QGx4/gSRAxd1MYeFuYHTug7N9xMKsgGpkJl4=;
+ b=ySIpWsc3uL/3IeZnKybHGa28+hy4y2DxTtmJDMZ2OVSvULBBBFSvGHSp7ix2ON0+nv
+ RNZHcFsqiG5urg+OAOVsyyoQVDVWC0aPXOoMmcs9WbRIfrrrRUFsVg32dXM/g6kkY3ht
+ 8v+JUsJDXOBCQ7NWjHFJT0EYlU//DsNXPCG+V5hDOdSiMmslmYJi3EUGa+vUKo/d/PwQ
+ vB2yGT9A8ut7ES+IgoYOatscp8FLslC2ax9ocpizdoVAlLyllsxBUiS64WtEMKvilbNi
+ sa3Kg4b0fHC8YNfTBLdWTYmO+pV/vWrSIbfxMqe86vxY82iJRULcdIByRBDMV0BOcKAf
+ DC7g==
+X-Gm-Message-State: AFq9FYIZXOTV1gpsosbfT2CRp3lanVyO/Q/pZBMrNyNuUYEXjsj3TSui
+ X96pTXjGW4ue463R4cxX/Y3DNvRB9KqRyL3rNvAPCFTh50/oauf2kBfiibqe5mCWEGA=
+X-Gm-Gg: AYBFou2BuRId7eWc4tUcIlQmcf27UvYm1WZlKk58sQ7dsOGavhnVkS+73nTPuSwNmwW
+ i23eKIVbLA8aK/YtEzB35XRywFOwis2Sw/wiLOqRfrjoNr0H6YoxrAijmlY35dmzcU+lOvjVpoM
+ pWAj+B4r+JUFaBs4DGfJccWqL0rZ5Mkj1NkxuJIqSKxqTsXrNyhYnbPo6FNRUc0ehoSEgbp31SX
+ Xj2Xuxt21ns1eVU6yb3Gmg2BkCaTjVl6M+hn/EXqj+E54BCd8PmHXvzNReUQj45UoJesgBvMWsA
+ yGjiPqmbDzJu4jMZ6M+O32hPkRsvSjWX1nVG2FFRrc/MxDz7OQ0Owa5YRFZeu/cqmwdvrTA9V6X
+ 3bnPIAtN0Inbg6sDYTVEDgblvH5Nr9L2Fop29pM/Y2mxfPpE/wfRsyaluQO/gXYx8ItdsmGa+UN
+ ebHdAPsnelxUfzyHfij6GevKRhLRG0VLfdQNCrGwQmatsH16YT++2f/2szCpV9SK+NzpSHZj/7w
+ Opch1yGVLhuyvUjlBdSXzioPYr5WqKxBDsNtRaPDuVhV3euwbYLCKaR7xs7JA==
+X-Received: by 2002:a17:90b:3908:b0:3a0:c20b:2fdf with SMTP id
+ 98e67ed59e1d1-3a0c20b3132mr8126753a91.17.1790692561565; 
+ Tue, 29 Sep 2026 07:36:01 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3a4b86052ecsm307407a91.4.2026.09.29.07.36.00
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 29 Sep 2026 07:36:00 -0700 (PDT)
+Date: Tue, 29 Sep 2026 07:35:57 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 0/3] improve NIC features matrix
+Message-ID: <20260929073557.1a12df02@phoenix.local>
+In-Reply-To: <20260923032502.770744-1-thomas@monjalon.net>
+References: <20260923032502.770744-1-thomas@monjalon.net>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/9] vhost: Support VDUSE QUEUE_READY feature
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
-Cc: mst@redhat.com, david.marchand@redhat.com, dev@dpdk.org,
- Yongji Xie <xieyongji@bytedance.com>, chenbox@nvidia.com,
- Bruce Richardson <bruce.richardson@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>, jasowangio@gmail.com
-References: <20260929105339.1554051-1-eperezma@redhat.com>
- <20260929105339.1554051-9-eperezma@redhat.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20260929105339.1554051-9-eperezma@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ouE-fcYY29B8_ZlW-rmjsSOFhFvE2I5iF-xzQW1vtwI_1790691913
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -116,26 +82,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Wed, 23 Sep 2026 05:20:48 +0200
+Thomas Monjalon <thomas@monjalon.net> wrote:
 
-
-On 9/29/26 12:53 PM, Eugenio Pérez wrote:
-> Add support for the VDUSE_F_QUEUE_READY feature.
+> The style of the features matrices is a bit improved.
+> The table header cannot be sticky
+> without losing header highlight on hover.
+> So instead of adding header stickiness,
+> the table size of networking drivers matrix
+> is reduced by removing some rows.
 > 
-> In VDUSE, the dataplane is enabled only after control virtqueue so the
-> device is fully configured in the destination of a live migration before
-> the dataplane starts.  This message signals the VDUSE device when the
-> dataplane queues should be enabled.
-> 
-> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
-> ---
->   lib/vhost/vduse.c | 86 +++++++++++++++++++++++++++++++++++++++++++++--
->   lib/vhost/vhost.h |  1 +
->   2 files changed, 85 insertions(+), 2 deletions(-)
-> 
-
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-
-Thanks,
-Maxime
+> Thomas Monjalon (3):
+>   doc: move CSS of overview matrices
+>   doc: improve style of overview matrices
+>   doc: simplify NIC feature matrices
 
 
+Applied to next-net.
+Hopefully, the whole ini file to matrix process can be automated but
+that is bigger effort.
