@@ -2,74 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 447A0C9832A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 13:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D75EACA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 13:42:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E71042708;
-	Tue, 29 Sep 2026 15:38:22 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 9672040ED1
- for <dev@dpdk.org>; Tue, 29 Sep 2026 15:38:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790689100;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=4nnLShCVVxjrb/FNXn/wfT2kzVNNxRHBUNKRBG2MRmk=;
- b=I2wsubV5LijinRPdfAAKiaW/DYX3Pke5xg1fBsl8rs6DdLc8ggVMEvVmLfGLlLYlM65gPF
- PSZL81UXPb4AIu/UC0QaDoRFRRCgdCMDdliksvmhUI49WT45ypoo20QTJgu0QuD0ZSsOmB
- 4qv/mL6tX5pAdXZWlI5WM+g2XTtMpw4=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-164-KWwZhvitMg20Of_46eI5JQ-1; Tue, 29 Sep 2026 09:38:19 -0400
-X-MC-Unique: KWwZhvitMg20Of_46eI5JQ-1
-X-Mimecast-MFC-AGG-ID: KWwZhvitMg20Of_46eI5JQ_1790689098
-Received: by mail-pf1-f198.google.com with SMTP id
- d2e1a72fcca58-880fc450073so4347774b3a.0
- for <dev@dpdk.org>; Tue, 29 Sep 2026 06:38:18 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0CFF840E36;
+	Tue, 29 Sep 2026 15:42:13 +0200 (CEST)
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
+ [74.125.227.140])
+ by mails.dpdk.org (Postfix) with ESMTP id C738A4026E
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 15:42:11 +0200 (CEST)
+Received: by mail-pj2-f12.google.com with SMTP id
+ d9443c01a7336-2d747eb79f7so18952325ad.1
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 06:42:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790689331;
+ x=1791294131; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=gb0xXD5HQJ7EWH6/lH1A3uLCev6TlRqVxt7i6xuZh3Y=;
+ b=V2ZHR1/enBuqQ2SVJ3+PEGuS4EeDmkxqC2DYB2mXDB7e8seFsB5d1UXYEicgCjOfx2
+ l2YPompHZnQP8xdZCY2U4i1d9jo9klfN/DU+qql/T20YpyFpSBnGQzAi088waZkDoSgm
+ xiFnAVr/39Eq/1S8tEclPm/Gtual+463/pf7oM/9/rer1LUA1xEOVzPw9gGgTl9rqxhQ
+ +8+2rYRvi5WBccieFIUarKKTR0ZWP2pP10d/1r3siXTTZLCbgDxQmX1Eom/N3xOlQ0+E
+ saCQjeHGVC5WUyxtjq9zB71Oc/g6dtBMJz2FB2/pI7jNfAkMJOEfWt4t7zja2u2moJqU
+ ngWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790689096; x=1791293896;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=4nnLShCVVxjrb/FNXn/wfT2kzVNNxRHBUNKRBG2MRmk=;
- b=RJ6O5vCI+XoQ+al8uYFMG1qw8WMa8+SaOPO6LQzgYbzGCfPMSjuHs1gnOEu9p9Fg3s
- Ruz7OD4pFOjqzP1/fXHVsCfppgLcLciKYLOvvyRCz9JL4YkcNlVrr0WkJRKx3sdIkwgI
- 318d9/JenwOv+kz299aaw5jNaD5xQTebhap328JLshvu9jtvwiSKp+cAIutGyQY2BBse
- ZsAOYt2vioo7EaMaSSTjjPWSurip5CLcrTvL28EpD5IPvu9ZCfKeIh1QlnvNR5IrYIvI
- 3FQzZ90aSdsFHXVyWZtVvGVoU36+u8PB0ynDlVcJ46xhK3S56p7PJOJcTqgAYbfSli7Z
- 2Pdg==
-X-Gm-Message-State: AFuF++mXpHHDQvC8dyFn6E2oVDfqYREXPqhnwJUTN2Rh0LvhK2oqPr4d
- qR+NueHYE2Mo3CkYTVqMUzsrh5q1mjFg6iIVROSIwIf9XtrX1gb9DvpN9SXziGdlIHN62IhMYaa
- 07T2tLzjmSKCRAmgsrHbHIk6f4npo6IzEnBONrZcqO1+Upb+/Ofct1hEzV2k7tFkynJmk5w6Bog
- yGh0t3dIDIRYQSTiqZEsCaMdPqAJE=
-X-Gm-Gg: AYBFou0qUnE92I6tZgP+z8g8kzCtpLzcR3oA3eynESitiIxGLuzEv9kQa4UftJoJpWL
- yRKj54/aCB4pPbR/BN8Wt0JoQx7LdEpsL0jb/ujgps9QxW9XDpM8zolZmTSEGobbb1ZuHEZymAf
- faTS1pwbiERP1QO0z6NjjmZM/aLv0qZ/t0tZgY9Pa8AAjhu7yPCdUOjWQuPbxwlNDjUR4L0yXgG
- Lu5+2vHb6i9JbkwzycEnkKx0o9/RTQ/lFxZ66hFUNMtyGHE
-X-Received: by 2002:a05:6a00:178c:b0:881:233c:46d4 with SMTP id
- d2e1a72fcca58-881233c5c1amr7964356b3a.43.1790689096116; 
- Tue, 29 Sep 2026 06:38:16 -0700 (PDT)
-X-Received: by 2002:a05:6a00:178c:b0:881:233c:46d4 with SMTP id
- d2e1a72fcca58-881233c5c1amr7964335b3a.43.1790689095620; Tue, 29 Sep 2026
- 06:38:15 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1790689331; x=1791294131;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=gb0xXD5HQJ7EWH6/lH1A3uLCev6TlRqVxt7i6xuZh3Y=;
+ b=k0QjiVRRz+IeCw/Z8fdYGVd0q5RBtc6f3oxF6kDxTgmDQnreWBkR/6NfaHmcqEAKTl
+ fk7rsoUMGC8ElIsQZlTb+DKY+k0y/5hTSpGEbJVLC8m2Jo3VLwdA+mo8qXRiNFCHaL7z
+ 2EZ5DFht6wnfLccyWvTGsxw3CEOedyyo+FgkG4jhOBV7s7gjnCsh1LyDAlCTLSgcqNHB
+ zB/Bs2HwakGHkz9O+s+qpC6n3P6hcxW2druy+6i9o7ezwqXPJI1NPa6TUcUFaERo3TUR
+ 0c/n82uoy84M1Ff21mcN/mVd+HOwB/cQ34mJmMLokZTc8cEkJBJ0pbChDNA7n+L2aK3M
+ pVAg==
+X-Gm-Message-State: AFq9FYL+sj4d9xkpaK3kqTtFCZN/PsOypCcIL4C5ew+Woe216LKsr2rN
+ kK/gVfnb8Fv5gXmn3dYl9PwaE533yaFNVB6F/OBfD8yDzlvpWxoDTRj2XFuQIjxIz8s=
+X-Gm-Gg: AYBFou3IabZQa7SZTgIUBHbRyegPzSUcYztc80h2wTGZztHjYoeAsGrbhpeDctM3Bd2
+ fHkS79jeDLn9kkolB0xEbNQH4+uSrf/RVPNFbGKzVpicCqWlbD3p27Kw1iG0LFnkxWqnv+/HCKC
+ JeTFpzbhFVhCgzx6j4ZyGzwAjBIahpgcEGNlz4eWcxKl00ZD4z913RIDn3UR0Fgs7Yue6EW0EMZ
+ VHBF7SP4kw1GD0ybaPLSLD0cCEAv8pTDm5nLRxL3hVUCY7UaTAvLgR763eOqn8mPioZJR5fPMKK
+ sXRt28o37aO+2nj7vIa68jXgEfS+GryeIizQ4u7V3R0nntZRJtvNOWXJEK/EDMnqWxO7rOEHKsi
+ 9lCzGZmHrmpIgF6XpFMYQwt8XZBe/dQR7RCxrLPXl1gw/j7Zc2Alo9/XPqgx25UwDyX6v99/G6z
+ 2zzbkJZf/LbP6b0Cv7BvMienPORkryQhsE178BkFsD3IjzzBz1KlZp00zDafrgWfzSkTd495ikv
+ Ax8lc/aiFfQNIsrymDJfi34WTN+R/45+pYUCDUy
+X-Received: by 2002:a17:902:f544:b0:2df:5967:8eb4 with SMTP id
+ d9443c01a7336-2df7deb8dacmr129946375ad.41.1790689330906; 
+ Tue, 29 Sep 2026 06:42:10 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2e2d4c56efasm4468585ad.18.2026.09.29.06.42.10
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 29 Sep 2026 06:42:10 -0700 (PDT)
+Date: Tue, 29 Sep 2026 06:42:08 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>, Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>, Thomas
+ Monjalon <thomas@monjalon.net>, Ravi Kerur <rkerur@brocade.com>
+Subject: Re: [PATCH v2] eal: fail initialization if TSC frequency is zero
+Message-ID: <20260929064208.6c7453bb@phoenix.local>
+In-Reply-To: <art5SCrwPVJ8JkKQ@bricha3-mobl1.ger.corp.intel.com>
+References: <20260927195440.89193-1-stephen@networkplumber.org>
+ <20260928231637.733450-1-stephen@networkplumber.org>
+ <art5SCrwPVJ8JkKQ@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
-References: <20260717093006.229370-1-david.marchand@redhat.com>
- <20260922094026.2636265-1-david.marchand@redhat.com>
-In-Reply-To: <20260922094026.2636265-1-david.marchand@redhat.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 29 Sep 2026 15:38:01 +0200
-X-Gm-Features: AclHuK-ekE2gkRS_ghArAjIBh9uaRYM3ynPXwXEzpdPoiv2PqaWGlNLoWiSk3No
-Message-ID: <CAJFAV8zLTbnr-EYzxGSh-ty1wRmeO3vBSHXVdS5dk7-CJNEHBg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/9] Limit usage of internal API in tests
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: WKIggsd7uwceyNl9sEvlj-nEVRQSYURhSrksLwYPB0U_1790689098
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,84 +85,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 22 Sept 2026 at 11:40, David Marchand <david.marchand@redhat.com> wrote:
->
-> We had a few bug reports related to internal (and experimental) symbols
-> issues during 26.07 development.
-> See for example https://bugs.dpdk.org/show_bug.cgi?id=1957 or more
-> recently https://bugs.dpdk.org/show_bug.cgi?id=1967.
->
-> To catch such issues earlier in the CI, this series proposes to run
-> the unit tests through meson with the ABI reference unit test binary
-> against the current ABI libraries and drivers.
->
-> For this to work, some unit tests must be skipped (since meson may
-> invoke the ABI reference code with tests that were unknown at the time).
->
-> A few unit tests were directly dereferencing internal structures and are
-> reworked so they use public APIs.
->
-> Additionally, unit tests were allowed to use any internal API which has
-> hidden a few issues (like a public API backed by internal symbols in the
-> hash library).
-> So disable the global ALLLOW_INTERNAL_API and move it to code explicitly
-> requiring internal API, with the hope it will push us to have better API.
->
->
-> --
-> David Marchand
->
-> Changes since v3:
-> - fixed support of newer meson version in last patch,
->
-> Changes since v2:
-> - automated tests list generation in last patch,
->
-> Changes since v1:
-> - rebased,
-> - dropped patch 1 on bbdev,
-> - dropped dependency on net/ring in devargs test,
-> - removed hacks from last patch, flushed excluded tests list,
->   added test-null.sh check,
->
-> David Marchand (9):
->   bbdev: add per-queue statistics API
->   hash: fix GFNI stubs export
->   test: uninline helper for forking
->   test/bonding: get MAC address with public API
->   test/devargs: rely on net null driver
->   test/vdev: find device with public API
->   test: limit internal API usage
->   ci: make ABI reference generation faster
->   ci: run reference binaries against current ABI
->
->  .ci/linux-build.sh                     |  44 ++++-
->  MAINTAINERS                            |   1 +
->  app/test-bbdev/test_bbdev_perf.c       |  38 +---
->  app/test/meson.build                   |   7 +-
->  app/test/process.c                     | 231 +++++++++++++++++++++++++
->  app/test/process.h                     | 228 +-----------------------
->  app/test/test_devargs.c                |  21 +--
->  app/test/test_external_mem.c           |   2 +
->  app/test/test_link_bonding.c           |  35 ++--
->  app/test/test_malloc.c                 |   2 +
->  app/test/test_mempool.c                |   2 +
->  app/test/test_pdump.c                  |   3 +
->  app/test/test_pdump.h                  |   3 +
->  app/test/test_vdev.c                   |  85 ++-------
->  app/test/virtual_pmd.c                 |   2 +
->  devtools/test-meson-builds.sh          |   5 +-
->  doc/guides/rel_notes/release_26_11.rst |   5 +
->  lib/bbdev/rte_bbdev.c                  |  20 +++
->  lib/bbdev/rte_bbdev.h                  |  20 +++
->  lib/hash/rte_thash_gfni.c              |   4 +-
->  lib/hash/rte_thash_gfni.h              |   2 -
->  21 files changed, 393 insertions(+), 367 deletions(-)
->  create mode 100644 app/test/process.c
+On Tue, 29 Sep 2026 09:39:36 +0100
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-Series applied, thanks for the reviews.
+> On Mon, Sep 28, 2026 at 04:15:58PM -0700, Stephen Hemminger wrote:
+> > Many parts of DPDK will fail with divide by zero and
+> > other errors if the initialization logic ever TSC hz was ever
+> > determined to be zero. This might happen on a broken get_tsc_freq_arch()
+> > or bad emulation in QEMU.
+> > 
+> > If TSC hz is zero, log the error and propagate back to
+> > fail rte_eal_init().
+> > 
+> > This fix doesn't need to go to stable since it is a purely
+> > theoretical problem; we aren't getting divide by zero reports
+> > from users.
+> >   
+> 
+> How was this discovered? Is there a coverity issue id, or was it just AI
+> discovered?
 
+It was part of review of pcapng timestamp calculation.
+Kind of funny, AI spotted overflow (which I verified) in the code which
+it had previously helped write.  Then it was asking it self,
+"what if TSC was 0". I didn't see how this could happen unless QEMU
+had some broken CPU emulation.
 
--- 
-David Marchand
+To me it seemed best to fail fast and die in a safer manner.
+
 
