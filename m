@@ -2,70 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EC2CA5FA7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E11CA5FA7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:44:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2572842F83;
-	Tue, 29 Sep 2026 18:40:07 +0200 (CEST)
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id D980142EEC
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:54 +0200 (CEST)
-Received: by mail-pz2-f12.google.com with SMTP id
- d2e1a72fcca58-85469d249c6so2784819b3a.1
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:54 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1CE6B42F8B;
+	Tue, 29 Sep 2026 18:40:08 +0200 (CEST)
+Received: from mail-pz2-f40.google.com (mail-pz2-f40.google.com
+ [74.125.228.40]) by mails.dpdk.org (Postfix) with ESMTP id A991042EEF
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:55 +0200 (CEST)
+Received: by mail-pz2-f40.google.com with SMTP id
+ d2e1a72fcca58-8805988a200so2865503b3a.3
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699934;
- x=1791304734; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699935;
+ x=1791304735; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=CyBLBRZcKgl9mKeeNzJ3BAmbcm8OmCNXEsoJesWQlkI=;
- b=RYKZ2HaW9CQatDrw4qD4l5SZc3gx5ligO7QO+UYc5Gm3l0qaReq8soyj4W/unhhk8k
- EOLqo+2gzzVQ9Ukn/Uc8In4nFHk2hgWyW/GTdWNBc7lK8+ybvFMEovfTs+MLKNYzXygl
- 2BoxA0jsmUTottJCECHqEZTt64HFcSdyqcLX5MHOYdhE1TcgBEBWawJvVFD1ZPWgI8cR
- KOdqpR+IiCFRkWQ2bpBJmo+AObFM/n3H7pOH7l252DY8mslsykZ2fHQ2Cd3K9wxoiegL
- 4fnKBvdpOCG6OZigQldaQxZzD013F67FVZzoWFTerjr1N5wDXN+mgduiHgiSQy5DuENr
- qr1w==
+ bh=guZ8S4azmX4NrZUpbSMHrMvCp0ZPWqAiivaQCxy68pQ=;
+ b=RBsoIGC4+gfXynFnm96Fiw3ohgVuSufVRPB+PrbJgGhD5wuU5uwCGAd04wlyfwFSAh
+ XKRsUvm9tbkpO5IijD7vrh92V1oMg+9f1sMr/vVvMgDX8qSX8ART4Hfx/n+OlvNAoiEU
+ sAJEO8011mSJa2L22eA37PuGaU7nsinq54Ua196QI22/XU9wV5VHFaAtPZYs+jnwBAvW
+ z+VqveC4tqjy09Oj72D89DssD2zAve5MraQo36MZJ/S/8uhFla2VMwrzmwcfD2p5u9NQ
+ WBaNHhZMcTszFK2Fz3h7Ln5gSJk2yx0LuRKDNzzNaHQaEeUEIwXcneFiua/neJOShGpn
+ fHSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790699934; x=1791304734;
+ d=1e100.net; s=20260707; t=1790699935; x=1791304735;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=CyBLBRZcKgl9mKeeNzJ3BAmbcm8OmCNXEsoJesWQlkI=;
- b=0S4eOkhHAPw4LP3AjcJjjFlgEHUbeBEBpzimVF2hdXQ4NTbD9yvsluSOkONgLPCKPD
- yKVw116EIwP8BYRq29dfF17PJ26uertB5uJOhmruizsyO+WrxtG6N64KE98Ng2FHjGea
- /ThEMs9Vu8ems9OLQZGoGn03pN2wZJepvTsLRFC/aQ7chFIebw1EIDgubnh37h19qwXw
- VH1D3MBiOPvYzs7318HFAxBfckvFbnN+IzFG4HlIn9fRiIb4WniiOQagpU/RXdl8GB62
- PToKLMapMjDsVRiqaBXhpIo7HPr0246MKJuy+bHeD9x4KvmDosAU9pw4xtHGGQagUkgb
- dOew==
-X-Gm-Message-State: AFuF++kGZIxtgKgNAIdS6YoVReiWEbN0+ToqTgdJbhNog5N369oDPFj/
- dR9lGiTdUl7fdg/Zt49lcqMXI07TAIgwLZkUkZLy8OoNa1OXAdQqiEzZdbCQGTB0aDZZ6jfA+a+
- mlsVjOn8wTA==
-X-Gm-Gg: AYBFou2Jic0eEOQ3dSjsBFJGg3PPIDPaeEgn/HhbEIgXMbIZqCeRTy/dFaqdTMm8s2e
- CT0D4LELaujNS8hlMpEftzQYx0ewx8ccqxbmlLN5W4zmktCEVV0+7DlZYgFhu0bWvtiYdzKsHEc
- 7DwyJRKMKbuXMqi6H5RELTzfCoRbJYpopu3bLyJYm8Rkp+0pyFsCsm+Pejo+YULYUfAp2WCKMp4
- 1jgkpB5yOJb2TguoQmW/44a2j52TBWb1931/rUXMEQSoZEfXPz93YMw3nLd2X8fbfOxNg8r4Czs
- p5H3T7ZlEk5og8RxDsbIi8Q4+NUXIlgnRpiFhpu68r9/A4PLHFrN1f5y87tyPqdPIHgiyxNkp7G
- nXNiDIQN2WJaSsT9bBeq4fKapmQL8vUF3av7ndg9hWdgR5nY0jtQ9tRivaMkG4jwstcERIcCaJs
- StpFd2NIzPIqkaHlK2rNh1peOzXf4f/72CZvPceHNPLh6VdwHjFfK/gDhHlKBOqSoPZp1TFK02C
- DN2HygI6YPV0FdTmBJrF3GPxpDJXg38FiTzhw==
-X-Received: by 2002:a05:6a21:468a:b0:3de:53ba:4081 with SMTP id
- adf61e73a8af0-3de53ba4234mr6618513637.47.1790699934056; 
+ bh=guZ8S4azmX4NrZUpbSMHrMvCp0ZPWqAiivaQCxy68pQ=;
+ b=l92t57IaB1G2+q4PaTjLngixREkHBX8xvfnwKUgNtTu2zi9H5zpef44mI6CrhokZxy
+ wrJ1RnCHrgVCmKshjg73xHe2higq339jAJ0AMGutq1YGIQYX1pI9ZLZeJD3ig71FiOaV
+ psbbOf91ag57F0R0BZFH15GveN34DvJPbyBDT0SFs5kOsiHeKcWyr632bAagp6I9DIT0
+ ohmmiiHyuYQk5RbP3CbCOxqoxXEmZlKrpubo8STWTG1UzhT35XAPkuGi6IC7pWKYT1jx
+ 262ZuHyEw5UDaHZYUxOZlI7eahQALnp7VAxyEEzJ1qWU5GPxzGQsY2z+Wtf708UqaZFS
+ 9jSg==
+X-Gm-Message-State: AFuF++nMpSRpQE6URrJcfLfMYKooVkqDSO8h4IhqFf+aBsHm4n4MEjr6
+ hz0NzodVUr4iXsEj0WMErqTGZ0J9e6SQGPqIFMoc6Sg0gy8QMWLLhx7ZHS8T2WTdyFvTm32BYAE
+ 2G2aQ58c=
+X-Gm-Gg: AYBFou1x+1vHGzqqJWmKtX3RA/bC95Q/bwLdfweCUzBBwTkRrL49PB+jmFnQUsv0SMs
+ nGZPaolqjg6qgokXGrXF/KVU25js55Mevs9YynRiPRCLLRuuU5Qx6mjkeUYyldQB7ySfvaKzpcg
+ s8YhVfOLOEZlghmGqeBlnOy+G+WhAXxkeTbmOfsJ1RYlQkt4Ua2dc6jF0uuH0Rma8eRuJaEYgai
+ qVSRJlHZWsI0qPkqpYIPR9hRlFhILrDp9kCJzn93Dv17EAGVujsLjxjfYpthAMS/S5TulM17Kv4
+ t1R7AqKsBsj6p4KkeyeHKa4pjLI/XeiN+5H913XJJbzM+Ls6Z191rimS2TC++M9G3/K22taHIy/
+ akZlMdexTIJHIE6h2Wui1QMuoJe9Hz4rl5i8Wlqpvo44+RZHOJbvjEs1cvJ26JVNCh4smtOAT1C
+ 5wjGKSrmRZKMWH0N+TN77iZUrKx2IWsCqL6JD4DzvobAeoD2Scyi8JDdV5wv9Yzq4TQjEPAsfLn
+ j6KSHFBmebMMRyvcCvHijUS0obyxgekeUrzQg==
+X-Received: by 2002:a05:6a00:b48:b0:881:552b:15bf with SMTP id
+ d2e1a72fcca58-881552b1841mr8860483b3a.19.1790699934867; 
  Tue, 29 Sep 2026 09:38:54 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.53
+ d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:38:53 -0700 (PDT)
+ Tue, 29 Sep 2026 09:38:54 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Ashwin Sekhar T K <asekhar@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>,
- Nawal Kishor <nkishor@marvell.com>
-Subject: [PATCH v2 52/61] mempool/cnxk: use kvargs numeric helpers
-Date: Tue, 29 Sep 2026 09:36:55 -0700
-Message-ID: <20260929163800.1108305-53-stephen@networkplumber.org>
+ Jerin Jacob <jerinj@marvell.com>
+Subject: [PATCH v2 53/61] event/octeontx: use kvargs numeric helpers
+Date: Tue, 29 Sep 2026 09:36:56 -0700
+Message-ID: <20260929163800.1108305-54-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929163800.1108305-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -85,108 +83,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Both handlers use atoi(), which cannot report an error, so a malformed
-value is silently taken as zero. For max_pools that then gets clamped up
-to the minimum, and for halo_ena zero is a valid setting, so neither was
-rejected.
+ssovf_parsekv() open coded the errno, end pointer and range checks, and
+the value it parsed was only ever used as a boolean.
 
-Since the handlers can now fail, propagate the rte_kvargs_process()
-return value instead of discarding it.
+Use rte_kvargs_handle_bool() and make the flag a bool to match. The
+documented "=1" form still works, and the usual spellings such as "on"
+and "true" are now accepted as well.
 
-halo_ena is a boolean, so drop its handler and use
-rte_kvargs_handle_bool() on a bool. That also removes the store through
-a uint8_t pointer into what the caller declared as a wider variable,
-which only worked because the local was zeroed first and the host is
-little endian. A bare "halo_ena" now enables it, and the usual
-spellings are accepted.
-
-Bugzilla ID: 2044
-Fixes: 45abbfc836b1 ("mempool/cnxk: support HALO in mempool")
+The boolean uses rte_kvargs_process_opt(), so that a bare key with no
+value enables the option.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/mempool/cnxk/cnxk_mempool.c | 37 +++++++++++++----------------
- 1 file changed, 16 insertions(+), 21 deletions(-)
+ drivers/event/octeontx/ssovf_evdev.c | 25 ++++---------------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/mempool/cnxk/cnxk_mempool.c b/drivers/mempool/cnxk/cnxk_mempool.c
-index 6939fccff4..e5f1b9491b 100644
---- a/drivers/mempool/cnxk/cnxk_mempool.c
-+++ b/drivers/mempool/cnxk/cnxk_mempool.c
-@@ -2,6 +2,7 @@
-  * Copyright(C) 2021 Marvell.
+diff --git a/drivers/event/octeontx/ssovf_evdev.c b/drivers/event/octeontx/ssovf_evdev.c
+index 957fcab04e..4a56d91bf2 100644
+--- a/drivers/event/octeontx/ssovf_evdev.c
++++ b/drivers/event/octeontx/ssovf_evdev.c
+@@ -3,6 +3,7 @@
   */
  
-+#include <limits.h>
- #include <rte_atomic.h>
- #include <bus_pci_driver.h>
- #include <rte_common.h>
-@@ -34,10 +35,14 @@ npa_aura_size_to_u32(uint8_t val)
- static int
- parse_max_pools_handler(const char *key, const char *value, void *extra_args)
- {
-+	uint64_t val;
-+
- 	RTE_SET_USED(key);
--	uint32_t val;
+ #include <inttypes.h>
++#include <stdbool.h>
+ #include <stdlib.h>
  
--	val = rte_align32pow2(atoi(value));
-+	if (rte_kvargs_to_uint(value, 0, INT_MAX, &val) < 0)
-+		return -EINVAL;
-+
-+	val = rte_align32pow2(val);
- 	if (val < npa_aura_size_to_u32(NPA_AURA_SZ_128))
- 		val = 128;
- 	if (val > npa_aura_size_to_u32(NPA_AURA_SZ_1M))
-@@ -47,27 +52,14 @@ parse_max_pools_handler(const char *key, const char *value, void *extra_args)
+ #include <rte_common.h>
+@@ -23,7 +24,7 @@
+ #include "timvf_evdev.h"
+ #include "otx_cryptodev_hw_access.h"
+ 
+-static uint8_t timvf_enable_stats;
++static bool timvf_enable_stats;
+ 
+ RTE_LOG_REGISTER_DEFAULT(otx_logtype_ssovf, NOTICE);
+ 
+@@ -716,24 +717,6 @@ ssovf_close(struct rte_eventdev *dev)
  	return 0;
  }
  
 -static int
--parse_halo_ena_handler(const char *key, const char *value, void *extra_args)
+-ssovf_parsekv(const char *key, const char *value, void *opaque)
 -{
--	RTE_SET_USED(key);
--	uint8_t val;
+-	uint8_t *flag = opaque;
+-	uint64_t v;
+-	char *end;
 -
--	val = atoi(value);
--	if (val != 0 && val != 1)
+-	errno = 0;
+-	v = strtoul(value, &end, 0);
+-	if ((errno != 0) || (value == end) || *end != '\0' || v > 1) {
+-		ssovf_log_err("invalid %s value %s", key, value);
 -		return -EINVAL;
+-	}
 -
--	*(uint8_t *)extra_args = val;
+-	*flag = !!v;
 -	return 0;
 -}
 -
  static int
- cnxk_mempool_plt_parse_devargs(struct rte_pci_device *pci_dev)
- {
- 	uint32_t max_pools = npa_aura_size_to_u32(NPA_AURA_SZ_128);
- 	struct rte_devargs *devargs = pci_dev->device.devargs;
- 	struct rte_kvargs *kvlist;
--	uint32_t halo_ena = 0;
-+	bool halo_ena = false;
-+	int ret;
- 
- 	if (devargs == NULL)
- 		goto null_devargs;
-@@ -75,12 +67,15 @@ cnxk_mempool_plt_parse_devargs(struct rte_pci_device *pci_dev)
- 	if (kvlist == NULL)
- 		goto exit;
- 
--	rte_kvargs_process(kvlist, CNXK_NPA_MAX_POOLS_PARAM,
--			   &parse_max_pools_handler, &max_pools);
--	rte_kvargs_process(kvlist, CNXK_NPA_HALO_ENA_PARAM,
--			   &parse_halo_ena_handler, &halo_ena);
-+	ret = rte_kvargs_process(kvlist, CNXK_NPA_MAX_POOLS_PARAM,
-+				 &parse_max_pools_handler, &max_pools);
-+	ret |= rte_kvargs_process_opt(kvlist, CNXK_NPA_HALO_ENA_PARAM,
-+				      rte_kvargs_handle_bool, &halo_ena);
- 	rte_kvargs_free(kvlist);
- 
-+	if (ret != 0)
-+		goto exit;
-+
- null_devargs:
- 	roc_idev_npa_maxpools_set(max_pools);
- 	roc_idev_npa_halo_ena_set(halo_ena);
+ ssovf_timvf_caps_get(const struct rte_eventdev *dev, uint64_t flags,
+ 		     uint32_t *caps, const struct event_timer_adapter_ops **ops)
+@@ -879,8 +862,8 @@ ssovf_vdev_probe(struct rte_vdev_device *vdev)
+ 				"Ignoring unsupported params supplied '%s'",
+ 				name);
+ 		} else {
+-			ret = rte_kvargs_process(kvlist, TIMVF_ENABLE_STATS_ARG,
+-						 ssovf_parsekv,
++			ret = rte_kvargs_process_opt(kvlist, TIMVF_ENABLE_STATS_ARG,
++						     rte_kvargs_handle_bool,
+ 						 &timvf_enable_stats);
+ 			if (ret != 0) {
+ 				ssovf_log_err("%s: Error in timvf stats", name);
 -- 
 2.53.0
 
