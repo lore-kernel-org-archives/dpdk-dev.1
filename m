@@ -2,50 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 767F6CA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 14:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 243EBC9832A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 14:21:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B422942D27;
-	Tue, 29 Sep 2026 16:16:06 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id A002642D27
- for <dev@dpdk.org>; Tue, 29 Sep 2026 16:16:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790691365; x=1822227365;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=cU/IAPvmjYn2ZR7mJaANXMggSXEeNMwHc7n6eqlBn18=;
- b=iJ90aGYQbQfD82J5NxsDHaNXpqqAW88LmbNVkApTWaFPSIIWzo81Jc9s
- WDnx/KyXjWbSpdfE7m3Qm5TTfJb0iYWlQYRoIainj+F/RerEnoPzidt7G
- cnIcnKk0MzpExs0k3GmKnWHlkZvDqWudcyoDY+KmxdemVt1tCUBEvqNNM
- QYh9kfE6Xjcmre8Be+yyfKC8tB5kqMbM6ExyiCzIulLeowmtihOscG4/B
- rvz8MeR58//waocUasYTKH4b7vPDHMlEgHnb8DMModNUEVgkcPAYQyoWb
- dao3qS1yCA+POy2+j9D9C/pVSp9eEIaKCAGTWiiXEH7ThZ8ClPCnelfQr Q==;
-X-CSE-ConnectionGUID: 1gLnCxuJQqycX0VP2f3bOw==
-X-CSE-MsgGUID: W26I7ii5RB6P3sa/IXskiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11919"; a="101936277"
-X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; d="scan'208";a="101936277"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Sep 2026 07:16:04 -0700
-X-CSE-ConnectionGUID: HOrhLfr1RpGwuYTa42B+cQ==
-X-CSE-MsgGUID: 7NX5y+cfTqKm97oPgIYXgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; d="scan'208";a="304882077"
-Received: from silpixa00401842.ir.intel.com ([10.20.225.198])
- by orviesa002.jf.intel.com with ESMTP; 29 Sep 2026 07:16:03 -0700
-From: Pablo de Lara <pablo.de.lara.guarch@intel.com>
-To: thomas@monjalon.net,
-	kai.ji@intel.com
-Cc: dev@dpdk.org,
-	Pablo de Lara <pablo.de.lara.guarch@intel.com>
-Subject: [PATCH] maintainers: update for IPSEC MB and ISA-L drivers
-Date: Tue, 29 Sep 2026 14:15:55 +0000
-Message-ID: <20260929141600.3867376-1-pablo.de.lara.guarch@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5E616427CF;
+	Tue, 29 Sep 2026 16:21:23 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 631B140E0A
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 16:21:22 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 255242000F9;
+ Tue, 29 Sep 2026 16:21:22 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E31D62000F3;
+ Tue, 29 Sep 2026 16:21:21 +0200 (CEST)
+Received: from lsv031405.swis.in-blr01.nxp.com
+ (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id ADC6918000BA;
+ Tue, 29 Sep 2026 22:21:20 +0800 (+08)
+From: Prashant Gupta <prashant.gupta_3@nxp.com>
+To: stephen@networkplumber.org,
+	dev@dpdk.org
+Subject: [PATCH v5-S1 0/5] dpaa2: bus, DMA and mempool base fixes
+Date: Tue, 29 Sep 2026 19:51:12 +0530
+Message-ID: <20260929142117.3109066-1-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260922092158.2340839-1-prashant.gupta_3@nxp.com>
+References: <20260922092158.2340839-1-prashant.gupta_3@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,34 +46,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove myself from IPSEC MB and ISA-L PMD maintainership,
-as I will no longer be working at Intel or directly with DPDK.
+This series is the first of four that upstream the missing NXP dpaa2
+driver changes. It collects the foundational bus/fslmc, dma/dpaa2 and
+mempool/dpaa2 fixes that the later series build on:
 
-Signed-off-by: Pablo de Lara <pablo.de.lara.guarch@intel.com>
----
- MAINTAINERS | 2 --
- 1 file changed, 2 deletions(-)
+- defer fslmc bus initialization to probe; reduce probe-time logging
+  and skip ignored devices during DPRC population,
+- fix a GCC -Warray-bounds warning and an SG FD double-put in the
+  dpaa2 QDMA dequeue path,
+- validate the FLE pool IOVA mapping at vchan setup and free the pool
+  on failure,
+- resolve the mempool ops index locally in secondary processes by
+  scanning rte_mempool_ops_table, removing the need for IPC.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 186cc82b39..1ae0ffaf18 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1223,7 +1223,6 @@ F: doc/guides/cryptodevs/features/qat.ini
- 
- IPsec MB
- M: Kai Ji <kai.ji@intel.com>
--M: Pablo de Lara <pablo.de.lara.guarch@intel.com>
- F: drivers/crypto/ipsec_mb/
- F: doc/guides/cryptodevs/aesni_gcm.rst
- F: doc/guides/cryptodevs/aesni_mb.rst
-@@ -1334,7 +1333,6 @@ F: drivers/compress/qat/
- F: drivers/common/qat/
- 
- ISA-L
--M: Pablo de Lara <pablo.de.lara.guarch@intel.com>
- F: drivers/compress/isal/
- F: doc/guides/compressdevs/isal.rst
- F: doc/guides/compressdevs/features/isal.ini
+Every commit builds cleanly (including the aarch64 DPAA cross build with
+-Werror) and the series is bisectable.
+
+Gagandeep Singh (1):
+  dma/dpaa2: validate FLE pool IOVA mapping at vchan setup
+
+Hemant Agrawal (1):
+  bus/fslmc: reduce probe-time logging and skip ignored devices
+
+Jun Yang (2):
+  mempool/dpaa2: look up ops index locally in secondary
+  dma/dpaa2: fix array-bounds warning and SG FD double-put
+
+Prashant Gupta (1):
+  bus/fslmc: defer bus initialization to probe
+
+ drivers/bus/fslmc/fslmc_bus.c            | 92 ++++++++++++++++++--------------
+ drivers/bus/fslmc/fslmc_vfio.c           |  3 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dprc.c |  4 ++
+ drivers/dma/dpaa2/dpaa2_qdma.c           | 46 ++++++++++++----
+ drivers/mempool/dpaa2/dpaa2_hw_mempool.c | 25 +++++++--
+ 5 files changed, 113 insertions(+), 57 deletions(-)
+
 -- 
 2.43.0
-
