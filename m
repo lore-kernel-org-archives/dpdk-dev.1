@@ -2,106 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E58BCC9832A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 07:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BFFCA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 08:06:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 19D9E40E19;
-	Tue, 29 Sep 2026 09:54:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BF4FE40E68;
+	Tue, 29 Sep 2026 10:06:52 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 4639A4013F
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:54:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B82DE4013F
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 10:06:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790668483;
+ s=mimecast20190719; t=1790669210;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=I8P+oSx0It3bx4M6clyHRT9tXyWqv+OL8PepkPBhXjc=;
- b=csmGn1LHAwmPAn2vphDzbiY9Bj/O/ehXYMwj7shdyarNF3KFGsI/jEYI9aqCFrnav8kCgI
- eQTDN4ENcXVwyIz31i7pde45nLOyAeHIdSWfBKi/MMOfz+DzUHKru36cv7e28XQmiIbADM
- o9aoJ+unmDzqJRRo5/LfoXMo9yxVQfI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-433--ZIoupAYOaiYqgaXlwtwiA-1; Tue,
- 29 Sep 2026 03:54:40 -0400
-X-MC-Unique: -ZIoupAYOaiYqgaXlwtwiA-1
-X-Mimecast-MFC-AGG-ID: -ZIoupAYOaiYqgaXlwtwiA_1790668479
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 6723D1855886; Tue, 29 Sep 2026 07:54:39 +0000 (UTC)
-Received: from [100.90.45.206] (headnet04.pony-001.prod.iad2.dc.redhat.com
- [10.2.32.116])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id EB9D21956045; Tue, 29 Sep 2026 07:54:37 +0000 (UTC)
-Message-ID: <25ec0dd9-c2f4-4006-bf56-c9d07d649aad@redhat.com>
-Date: Tue, 29 Sep 2026 09:54:35 +0200
+ in-reply-to:in-reply-to:references:references;
+ bh=2XrZUN6oPU1QjDBRaw1bD+WAhcIu2OdAxQo46CuWmyE=;
+ b=J12S1f+YOWmRtZ9uV9ywXWYjV53XUNe3QLoJ40LMiF9+hj6T3PRp5cItoe9sgYUljseXTH
+ VwjktPeiSa4nbBHQwY10KUZr9JNjUS92VuidonJukH2BnnqAuAJYNzTBd73hcfjMjhNXKY
+ 76s9hIbOVOx+KrvVTNF7NXH/PulNSRE=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-bCj3DENHPAGuGtcqQ8Cu_A-1; Tue, 29 Sep 2026 04:06:48 -0400
+X-MC-Unique: bCj3DENHPAGuGtcqQ8Cu_A-1
+X-Mimecast-MFC-AGG-ID: bCj3DENHPAGuGtcqQ8Cu_A_1790669207
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-3a59db0a722so17611411fa.0
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 01:06:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790669207; x=1791274007;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=2XrZUN6oPU1QjDBRaw1bD+WAhcIu2OdAxQo46CuWmyE=;
+ b=SvFlD6P4HPaEGShgVCQ7Gt81SWNK4YyP8usvl8waua3AoakCwMckFFiqdRPJsxwjTG
+ OWk0bfNw4UOd3jIaG684qr3xW0YBsZBigV2vxnpsPNFSBrDipF5lwo/Omf3920sCO8mT
+ ZRjXdnrv817YpIGOCUKzlM7ZI38swqRv3IekxOYGEmlRATaqPSQasMybIRwmqWSZUI9h
+ CwfrfD6FZXYzjPXxh4N5pGHSMc7YKOEp2b6z+SAyiD7xV06BGdc8Vm4/Y8R5jL5a6CgB
+ JwTuK7hsPZJvhmZl4/2RScyYQgxE5CHmos5W83YnTKZo0R5Uaem64cvEqL1643zz6AmJ
+ ifvw==
+X-Gm-Message-State: AFq9FYIZk4/gnN0qdhF8BsRTWeazsQOZN1gwBvoqcC/6hHy6TuDG/pnP
+ 4Jp60OXc1T8aaqTv7gFlTQ//bEHbWhIe5Nz7KAj09lj/7HmvD863Cu4JxN7IcacN0hrSV3Ikd3S
+ jDuXN+kVI02mPbJQ6N63A3WYHcHNkNvH3/Vw18Z1a8LjypZF67DyvTaa4xX7y7Cjr5Ti3uwEIxS
+ AmzTnwTEe7l0WEeVwzZgUuYO7YyO0=
+X-Gm-Gg: AYBFou2IUxkyRPnTOFNFc8coF3Yj8cItW+bAZydi+NHGIOJFB2MK2BQ9mfzV/5Sg4wa
+ a5ftkCz6f+GOShNotkubo/hi2GZ4etYq61qlcaXsCemEft78kxzN1g5XsKyFPilNoBhQ2Mk0pcY
+ QLcVIsRG86VPgx+QJN5Y+J07L+BoSNleV+ehMTIuufcXAY2solevT5Gl9rq3KYu+cCq7WekgdX7
+ NH8Tsc8vvxQAhl22kDMjym4N08tvcmAg1yBQv8p1faKF1mm
+X-Received: by 2002:a05:651c:b23:b0:3a5:e027:1b49 with SMTP id
+ 38308e7fff4ca-3a64c71fe9bmr29035691fa.2.1790669207040; 
+ Tue, 29 Sep 2026 01:06:47 -0700 (PDT)
+X-Received: by 2002:a05:651c:b23:b0:3a5:e027:1b49 with SMTP id
+ 38308e7fff4ca-3a64c71fe9bmr29035601fa.2.1790669206528; Tue, 29 Sep 2026
+ 01:06:46 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] examples/vdpa: remove dependency on PCI library
-To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
-Cc: bruce.richardson@intel.com, Chenbo Xia <chenbox@nvidia.com>,
- Adrian Moreno <amorenoz@redhat.com>
-References: <20260723153111.3943368-1-david.marchand@redhat.com>
- <20260904074649.1979166-1-david.marchand@redhat.com>
- <20260904074649.1979166-4-david.marchand@redhat.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20260904074649.1979166-4-david.marchand@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20260521042043.1590536-1-stephen@networkplumber.org>
+ <20260917201119.2168234-1-stephen@networkplumber.org>
+ <20260917201119.2168234-6-stephen@networkplumber.org>
+In-Reply-To: <20260917201119.2168234-6-stephen@networkplumber.org>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 29 Sep 2026 10:06:33 +0200
+X-Gm-Features: AclHuK-oNE5Dj1_YuAbhd3tv8zXy-uo_YTqIBQPBzVSc2jLvpw6qZdB35MNeOHA
+Message-ID: <CAJFAV8yVHjfNzah3rcpcrd+_-LJHDrR9FfZ4H+x_XdTLjDVjpw@mail.gmail.com>
+Subject: Re: [PATCH v8 05/25] net/failsafe: convert to stdatomic
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Gaetan Rivet <grive@u256.net>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: hhDBeWaEFjxfKV-gW6rN1Kt8n45GtwvmFuIHBJ23hj4_1790668479
+X-Mimecast-MFC-PROC-ID: YL7njRCBAYGg0WmDA9LD0751-tD6lJymZG85s6Y2OOs_1790669207
 X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -115,34 +84,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Thu, 17 Sept 2026 at 22:12, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+> @@ -440,14 +440,13 @@ fs_rx_queue_setup(struct rte_eth_dev *dev,
+>         }
+>         rxq = rte_zmalloc(NULL,
+>                           sizeof(*rxq) +
+> -                         sizeof(rte_atomic64_t) * PRIV(dev)->subs_tail,
+> +                         sizeof(*rxq->refcnt) * PRIV(dev)->subs_tail,
+>                           RTE_CACHE_LINE_SIZE);
+>         if (rxq == NULL) {
+>                 fs_unlock(dev, 0);
+>                 return -ENOMEM;
+>         }
+> -       FOREACH_SUBDEV(sdev, i, dev)
+> -               rte_atomic64_init(&rxq->refcnt[i]);
+> +
+>         rxq->qid = rx_queue_id;
+>         rxq->socket_id = socket_id;
+>         rxq->info.mp = mb_pool;
+> @@ -617,14 +616,13 @@ fs_tx_queue_setup(struct rte_eth_dev *dev,
+>         }
+>         txq = rte_zmalloc("ethdev TX queue",
+>                           sizeof(*txq) +
+> -                         sizeof(rte_atomic64_t) * PRIV(dev)->subs_tail,
+> +                         sizeof(uint64_t) * PRIV(dev)->subs_tail,
+
+sizeof(*txq->refcnt) for consistency.
 
 
-On 9/4/26 9:46 AM, David Marchand wrote:
-> This is some forgotten unneeded header include from a previous
-> refactoring.
-> 
-> Fixes: 38f8ab0bbc8d ("vhost: make vDPA framework bus agnostic")
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
->   examples/vdpa/main.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/examples/vdpa/main.c b/examples/vdpa/main.c
-> index ac6da79b05..79bfe7022a 100644
-> --- a/examples/vdpa/main.c
-> +++ b/examples/vdpa/main.c
-> @@ -13,7 +13,6 @@
->   #include <rte_malloc.h>
->   #include <rte_vhost.h>
->   #include <rte_vdpa.h>
-> -#include <rte_pci.h>
->   #include <rte_string_fns.h>
->   
->   #include <cmdline_socket.h>
+>                           RTE_CACHE_LINE_SIZE);
+>         if (txq == NULL) {
+>                 fs_unlock(dev, 0);
+>                 return -ENOMEM;
+>         }
+> -       FOREACH_SUBDEV(sdev, i, dev)
+> -               rte_atomic64_init(&txq->refcnt[i]);
+> +
+>         txq->qid = tx_queue_id;
+>         txq->socket_id = socket_id;
+>         txq->info.conf = *tx_conf;
 
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
-Thanks,
-Maxime
+-- 
+David Marchand
 
