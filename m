@@ -2,53 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16236CA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 11:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CFCCA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 11:21:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3AC3240E68;
-	Tue, 29 Sep 2026 13:21:35 +0200 (CEST)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
- by mails.dpdk.org (Postfix) with ESMTP id E73734013F
- for <dev@dpdk.org>; Tue, 29 Sep 2026 13:21:32 +0200 (CEST)
-X-QQ-mid: zesmtpgz6t1790680886tf3508e3b
-X-QQ-Originating-IP: MuUTLiV5Q75qZLcDpe5YCflFOlKG6+qz9tT9VmvdGVA=
+	by mails.dpdk.org (Postfix) with ESMTP id 70333410F6;
+	Tue, 29 Sep 2026 13:21:46 +0200 (CEST)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+ by mails.dpdk.org (Postfix) with ESMTP id 08513410EE;
+ Tue, 29 Sep 2026 13:21:43 +0200 (CEST)
+X-QQ-mid: zesmtpgz6t1790680901t1b1dcc1e
+X-QQ-Originating-IP: m5nIuUuyfVXxRKxRThzkA0nIVhNRhHxb8WEaxU618Po=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.227.112.38])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 29 Sep 2026 19:21:22 +0800 (CST)
+ id ; Tue, 29 Sep 2026 19:21:39 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16074123532844746939
-EX-QQ-RecipientCnt: 2
+X-BIZMAIL-ID: 2599805801455733379
+EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Subject: [PATCH v5 00/15] Wangxun fixes and new features
-Date: Tue, 29 Sep 2026 19:18:00 +0800
-Message-ID: <C050BF433795AFDA+20260929112119.4516-1-zaiyuwang@trustnetic.com>
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
+ Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH v5 04/15] net/txgbe: fix incorrect link state in 10G forced
+ mode
+Date: Tue, 29 Sep 2026 19:18:04 +0800
+Message-ID: <EFC11E34B0BF5B2F+20260929112119.4516-5-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
-In-Reply-To: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
+In-Reply-To: <20260929112119.4516-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
+ <20260929112119.4516-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NHu6THI/J1zczXY83YvtA1+ww3jzv5t2x8UAuVPdIuEz7YHQ7DbJsZF8
- DIPyQ4Ordtu6NotKi9CbK0R+i/LFxpfal3iXo2zdP8MmIb6+1NC9cnRCcQ2x2WOXMzfVoPt
- AthK5W989HYH70YyF0hwriIBNM2VyoK+AM6kMdJ06UcBOQyNk8Oy4XB3262APDLkVQ3N66A
- QhmKtY7NVvy3OkEDc/xjrJ8DiRdRaxbutOfnaq/cP4i2LRQ1l1n8xANUQKdFfnO7l9vX9ft
- JYyR5QL/fQeXloBnRD8lqkLBRLNvxs4NXHzCa0aszZEZ6+ucl0Ito1tTpdFO26qFD4smm/m
- Vy8QGeFf4KLoynyN168cwX0xSDZz/E2bNtqQ4x8lf4KfLSclps1Mx/J2YYNzztx/AerttgX
- H/sO7gBfv5amQCH9EA0fH7BFw/MTLgH4/DEbAMGtAANz9eRWhktlq1mOF8NFaoXkO6QUJgW
- mjTXVTRR/OpNJ0RW5ex5gsSuYJmU7aPoeWqgOzMQSLsKjKN1xvnTb8wG64OoNyV7bguFcay
- uLeZXvc5sivhKN13q/og5c3Y/6Z5hFLKIa6ALXVylkIhD+BfqzdE4MkFdoqMoRK+bYsbaLv
- +gQ27gFM6s5znBOprkg7WW7dVBHDLTN15Ahuqx5yX2Y7A++ki9YPVwD06KokzUAKUj5kzrl
- zSx5vB3hi0JPuAMWJw7BgDppyezaUi/IDpYkMuINsmL1HjGiObZv/I567ne71MHuVIVxACC
- JYM5E3Gu5dbctVBg/jITnVmbMWfT+N9Sg60wxNbC3CJN5pSp+73oFAx9NNAt2NCk0Zq4DVF
- ZliiHVXUFeqIwjv6J/8FUwB9qdsOlS+Nc3nafl2tbXI/Vz0gqMOb8Gpr9H9XzSdy1xdNpPi
- TnVVqXNSf83j82mup2BpE+i4Wz3TLa7Ub738FUqyreIIZqnUbZpru0CPxm2Cx1eoxU/nIsG
- h2+IgXoVB6Tb5+DV6kb5X5eZW/T/7jjVMkJ4MUG5FIGhQUUWbEyreusSvJEJe6UwgQXkl0h
- Nigc2XWiJJ9r0gGTJ0Fc9SXKaQ/BU=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
+X-QQ-XMAILINFO: NqlQHeD3iZu/sFPJceHmHU2JXyqOgYUyIAN53NtXAFmFjXPV3GnN2o6g
+ sRItF2om4dO2IVIjJJYKmrBapib2Srz2h4zFqhdgDOwMjtmPCLGdEf6oMP/oHo+Ah8LNP5t
+ EE1bgEu09uW+D0+WKmUbGApwZOKq74SM1X1V3wbLltsM4NMsVszVLl5RlAIdMAdS+Y8gCRI
+ T6arZWlhCLwai4dK93sGgayEXWnSXbBXsTBXUXuV4DuFV3CGTpn7+6yZ0awxhvIL8e/JYe3
+ MxmjU+hNT7C08eshSDBs6BarREGizhYjGVvgvuRrdRqe1jtVSrsovYHmYB6dNEGSUiim4NB
+ pjxQf/tGx2K9C9MRwyw45h2vjtgaXMuvhXoN5/M5VMtuHTO9e+JX+qzvqgXb3ABwF55AKbW
+ Qil2xCx75YDNCQcp/D4lbWYHFddbZcXGbxXYdjzc5zoL97+f/FLXRW4CFEB+fu3Ot/xMkW6
+ 8JzX2IOTOzXNbSPMlmvBfE/2a9BnNuzoy2y2fXhgvi0ytMj73IEpQHWQti7/26VZhixizHl
+ PJp/5Nj7KgUwNYCi2racx9hDBoaHdcADy2YJmrg8ysrxrYgm2XYhcxTxK7LfOwjVITlfOAF
+ BQUQfEcFMH8cRdp3IgLOZIzCjDQWXDNq35uadv36LzXc5D9wml1AEQVfnJDvFBVOUnUB4/9
+ LJaFMRT/fYhJubgOZ+rCMQE/YSryjetVfvqakpcUGHU1x3h+wZP4xuAuCybEx1I4uZ+QA6Y
+ fmkGygGZkcc+jMRc2F6UC1eylCqkuXp7mIRK+tzOWmQS7PP4D7RZfnLJHO6F0Dn18Tmr+7L
+ +o+vtyT9DVQm+I0m4gHp606g6R0R+Sf4+Bea2itv20yqK8zMPAQ4AjLCD7gNNwuWFpaT4eq
+ jV24CacyiIMdi77xHMyJOcXr3Y6QzgOu9iQZF8hXiVoboMbbFCI+ww8wrLv5ycwarr4Ohmj
+ A4AEDZ2cmUME+Eu/Ubvp8Lzfd9sTH+FLHSGIPaDOQgLLreN76z5c7kgXoC91urjP9la11zs
+ ZvKNYNtQZCz8KwPkvJDkfa+xa3Rg7YHIS4Ls1Who8F2Qr1txWjU44TTpBeAIs=
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -63,78 +66,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series addresses link-related issues on Wangxun Amber-lite 25G/40G NICs
-(CR/KR training, hot-plug, 10G link state).
+When an AML40 port is configured in 10G forced mode (auto_neg=0),
+the hardware can link up but the driver keeps reporting link down
+after a peer link failure: link_valid is cleared on timeout but
+never restored when the peer recovers, so the link stays down until
+the port is restarted.
 
+Restore hw->link_valid = true in the success path of
+txgbe_setup_phy_link_aml40(), symmetric to the 40G path. Handle
+TXGBE_ERR_PHY_INIT_NOT_DONE before the timeout split and leave
+link_valid untouched, matching the 25G path in
+txgbe_setup_phy_link_aml(); the alarm retry then attempts the
+setup again.
+
+Fixes: f7cfc21e9f75 ("net/txgbe: fix link stability for 40G NIC")
+Cc: stable@dpdk.org
+
+Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
-v5:
- - drop the UDP tunnel patch: the generic UDP tunnel flag covers any UDP
-   tunnel, so the tunnel type cannot be resolved from the destination port.
- - P02: advertise 10G, 25G, and 40G from the requested speed mask instead
-        of the device ID, so the 25G and 40G parts advertise 10G by
-        default as well.
- - P07: keep the patch limited to decoding the 10G link speed from PORTSTAT;
-        the AML40 default 10G|40G advertisement change is now in P02.
- - P09: gate the SFP detection alarm and the AN73 watchdog on a new per-port
-        flag that dev_stop clears before the first cancel.
-        cancel SFP detection before the watchdog.
- - P10: re-arm the 40G module poll only while the SFP/AN73 alarm flag is set.
- - P12: treat the ffe_pre2 and bp_capa devargs as a feature rather than a fix;
-        drop the Fixes tags and stable Cc, and document the 25G/40G Amber-Lite
-        FFE defaults.
- - P14: bound the AN page exchange, propagate its timeout to the watchdog h
-        andler, and avoid register reads used only by disabled BP debug logs.
- - P15: stop clearing the auto_neg devarg when a 10G-only DAC disables AN;
-        derive the effective AN73 state from the current module capabilities
-        instead. Classify 40G active cables through the optical path, unify
-        DAC checks on txgbe_is_dac_cable().
+ drivers/net/txgbe/base/txgbe_aml40.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Not handled in this revision:
-
- - P12: bp_capa is not range-checked. Devarg validation will be added in a
-        separate change so all txgbe devargs can be handled consistently.
- - P14: the AN page exchange still busy-waits on the alarm thread and can
-        delay handling for other ports. A later change will decouple negotiation
-        from the alarm callback and run per-port negotiations in parallel.
----
-
-
-Zaiyu Wang (15):
-  net/txgbe: fix failure to configure 10G on dual-speed DAC
-  net/txgbe: use the requested speed in E56 AN setup
-  net/txgbe: fix e56 PHY configuration error
-  net/txgbe: fix incorrect link state in 10G forced mode
-  net/txgbe: do not force reconfig on link retry
-  net/txgbe: set i2c sda hold time
-  net/txgbe: fix link speed display info for 10G mode
-  net/txgbe: remove stale outer UDP checksum offload flag
-  net/txgbe: fix SFP hot-plug when auto-negotiation is on
-  net/txgbe: fix DAC hot-plug on 40G NIC with auto-negotiation
-  net/txgbe: fix 40G FFE tuning applied to first lane only
-  net/txgbe: add pre2 FFE tap and backplane capability devargs
-  net/txgbe: add devarg to turn off Tx laser for 40G NIC
-  net/txgbe: fix CR/KR link training and recovery
-  net/txgbe: align link capabilities and DAC classification
-
- doc/guides/nics/txgbe.rst              |  25 +++-
- doc/guides/rel_notes/release_26_11.rst |  11 ++
- drivers/net/txgbe/base/txgbe_aml.c     |   4 +-
- drivers/net/txgbe/base/txgbe_aml40.c   |  92 ++++++++++--
- drivers/net/txgbe/base/txgbe_e56.c     |  14 +-
- drivers/net/txgbe/base/txgbe_e56.h     |   6 +
- drivers/net/txgbe/base/txgbe_e56_bp.c  | 196 +++++++++++++++----------
- drivers/net/txgbe/base/txgbe_e56_bp.h  |   4 +-
- drivers/net/txgbe/base/txgbe_hw.c      |  33 +++++
- drivers/net/txgbe/base/txgbe_osdep.h   |  12 +-
- drivers/net/txgbe/base/txgbe_phy.c     |  25 +++-
- drivers/net/txgbe/base/txgbe_phy.h     |   7 +
- drivers/net/txgbe/base/txgbe_regs.h    |   3 +
- drivers/net/txgbe/base/txgbe_type.h    |  17 ++-
- drivers/net/txgbe/txgbe_ethdev.c       | 178 ++++++++++++++++++++--
- drivers/net/txgbe/txgbe_ethdev.h       |   2 +
- drivers/net/txgbe/txgbe_rxtx.c         |   1 -
- 17 files changed, 502 insertions(+), 128 deletions(-)
-
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index 7476759d4d..5fa7c6a243 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -202,9 +202,18 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
+ 
+ 	rte_spinlock_lock(&hw->phy_lock);
+ 	ret_status = txgbe_set_link_to_amlite(hw, speed);
++	rte_spinlock_unlock(&hw->phy_lock);
++
++	/* The PHY did not come out of reset; leave link_valid alone and
++	 * let the retry in the alarm handler attempt the setup again.
++	 */
++	if (ret_status == TXGBE_ERR_PHY_INIT_NOT_DONE)
++		goto out;
++
+ 	if (ret_status == TXGBE_ERR_TIMEOUT)
+ 		hw->link_valid = false;
+-	rte_spinlock_unlock(&hw->phy_lock);
++	else
++		hw->link_valid = true;
+ 
+ 	for (i = 0; i < 4; i++) {
+ 		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
 -- 
 2.55.0.windows.2
 
