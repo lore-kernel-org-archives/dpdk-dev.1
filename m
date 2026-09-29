@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC6BCA5FA7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00BFCCA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:41:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 693C942ED1;
-	Tue, 29 Sep 2026 18:39:29 +0200 (CEST)
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 95D944026E
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:36 +0200 (CEST)
-Received: by mail-pz2-f12.google.com with SMTP id
- d2e1a72fcca58-86b90133ae8so2136212b3a.1
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 861A242EA6;
+	Tue, 29 Sep 2026 18:39:28 +0200 (CEST)
+Received: from mail-pz2-f38.google.com (mail-pz2-f38.google.com
+ [74.125.228.38]) by mails.dpdk.org (Postfix) with ESMTP id D337642E49
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:35 +0200 (CEST)
+Received: by mail-pz2-f38.google.com with SMTP id
+ d2e1a72fcca58-88582e2153eso764491b3a.2
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699916;
- x=1791304716; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699915;
+ x=1791304715; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=DYRTEvEe46WC0C+AwHz4YjSYwURJM+70ApF8Le7oqy8=;
- b=VnaziLOmJupNGkdDZ/HrSJ4Ez1mWRC4hah6WTIkAtZiBQ/PbflxCuApEAXYkMk/9Za
- faDt3UcpeLRvOK3QZ72tgoe6AzUSQrIfKp6aXnsAlY4pEAs45PhEPFkIoDf7VgWi9LEk
- s3izRizDC6Pinx0mfiN7hI30mvc5rp5Or4FWtBch/Dsnn7dUccBFo7JNhH0l4C1WZN6n
- UldYegGfaCkhbTGf7m9MgBKD3FsdtZiZLGr6J2HXTseTHdNYQlaXhtDJR1ICiBuKOnkh
- 2LlVKaYWFGEChuHcpxMz9qYOlPnh52mpW7K07YCH+UN2df+EX+jia/AT11N5cVXadhtq
- VdwA==
+ bh=apwhLJ32drFL8qKYRVIJOeVb/PYvyotSN8GvkDwERmw=;
+ b=Np1DpN4GyKoVg4OMC7Gep3tewDl/SZF7oapF17O2Ewaj71qfSSLgTlt+1Uv74kkqLO
+ KDkCoWSEl03w6qoP1AgSWzbnjY9u3hGRhtwOdmOWlOVW2b+fYoHtPusdKOeZPHJ6OYUL
+ HvhkZBWOP1SyKh3R/8ne48fV3kjurA7qSR1GCkk1iZ28G50w5X2ywLI6M6dMxwZrnRAv
+ b7XQtejVxewBMYGvcQSnluZXiJXY5QPYLrbkCYf58wpGC9tvZoP5HO9Sm/mgI1UZEFKZ
+ 7vDvkiF5X+Xq2NmVBzQDX8/I9BdINaHOmP2fQvTwqttwLrqTr5cGzyd/Y3spmI/oDPww
+ RMXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790699916; x=1791304716;
+ d=1e100.net; s=20260707; t=1790699915; x=1791304715;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=DYRTEvEe46WC0C+AwHz4YjSYwURJM+70ApF8Le7oqy8=;
- b=l5d4qZULj7Ae4hR8OYfa4sNDiwZEEoRswN1g6KBTBiak0pLuxrtWwPajBXTwx50NjV
- IfwVn2r/mMszvcUK/DjcuUAimaG+qwHHphomfblcQh8u4n8PeF2fJM6NHVGJcIZFbDE2
- r0CwEgmvOamWq/RFn4gQWk8sru3Jjur9xsm2ztxpj1EWqHj1Pn3Txmey8X3ad/UxaL7/
- NiN/gL2j/VQkE+t8BnSb+r66LiWzj6Sq5c3KY9waEUE0YuADkEcWrpK0atpk6WgEqcmJ
- JiFzUKzLyFxa/V5EI0H4RsInDXvPDDuc7iJqpPeILDFYjzBV+jQIfcuh+488EMroi9a0
- opqw==
-X-Gm-Message-State: AFuF++lk20UHsMNE/RclKkXiJz0G1cKEnOTEbaV/QRNAZmDwXo5gSbOr
- JxU5Bupv5XH53wKpUYOUFYjebX0DJva0ood1RuDYi9X07vWeRI0TI0kTIqSNU9veOI0TFdq5ThM
- YJOU57Tk=
-X-Gm-Gg: AYBFou0bK9yyaj9tLEpziDvgoETujszpbDArQbCJpjV65/L+2hZu1rsbIN8CwaKsL11
- vFXEGar2DiIWDvMhts4wpqLIyenm+xW5+3VGSCLtJgrrcqtLDIRFDTiL+dIGxZTiIq+JyvW7X2F
- 9MBiAv10xJTWrUDggRDVFS7zbzjDUOeXlIpiNg9Rgr8uxHOifrjzAYNsBhNmLY+FI5IYlupAU0h
- p4VYc1fhshWBFXb8DnLr9YdqTAkVptSqEXVCfBEgN3v8f7i9rJfGrGrj2zouCvqOi5eych82Kkp
- PzdYcsPkZgtrWY8dVr7Ai6WuloJCUB9lYbBnFhFJB6uJRmO9hG4NuoP3c9+647pLparXuOS21mj
- XDKEIn45c8pEzP5fL0TSlXOJaINvwgHf70zEZ7xHB/wEVRQ6FxZh7jMdwT+hts/NR99YXWz4Q6z
- rCrTPBhnx8YBuy1oBSJjldJGR5F1RXZs12SPu6OyK/P7tV3/E0Yzszzq3/NdYsDoBB/ctzF71Y7
- jLd1sVz9lRYax4tiWNcMjxTxU3j/HWeGMqEyw==
-X-Received: by 2002:a05:6a00:2290:b0:881:a443:499b with SMTP id
- d2e1a72fcca58-881a4435b94mr7591121b3a.9.1790699915782; 
- Tue, 29 Sep 2026 09:38:35 -0700 (PDT)
+ bh=apwhLJ32drFL8qKYRVIJOeVb/PYvyotSN8GvkDwERmw=;
+ b=BtACz1hgL64Kw2yOj+W7rFeM0UsH+oFGGICtGUYNoXq495VtSjfO9YQl8FsuK1X1G2
+ QHqLHfMzlJqB9nz9s3CzJ493/E1h4g1/Gg/XqoiVia8a0US+cDCqhxDxSI7Bi9ur7xLV
+ Vlu9qaZBpLiUzRQElE7GWm7dvYtuOpsFT/R6U8TrcAtpSWQy/OO1Ok5IkcPX7l2UbExZ
+ QJ3IeQCUCuPKKGjbRjWoNrgqbritrOq84tPohM2BpcZJRXVMZPiJLmUXL2ONczvq3lyL
+ UAi6ztAkdCx0UFJjnb/ioxoRGIjpmhDivhYhqzSox/K+HHq41oCfZh4ywnLceAyz7x7M
+ 1NTA==
+X-Gm-Message-State: AFuF++kn3rFAvsRb81RHPqmmGR3vm84QdAliaXFqGj+tySnT7mjvvkkl
+ vcaHE+S0ojg5Xsae6GoSmiK3RyGncVIop/EK5Tf/vukuttKl71RyCloB9avr8z9vV8qB+0GkTf8
+ p7ZbcYoE=
+X-Gm-Gg: AYBFou3BlJ560qVzd0uRNIaba9HIiL3ehuRDwinzap4lGWT6Xrs7CftRZ0iUKEHN4mu
+ K7p5W/VUIJWybSTzOR6uHHMKb83QvEy3SGSO4xCQ9ZGS2ltPU8F19kGF0ZKrXvb6ibUEjFiN7UX
+ dZBHbGSVYKNKZe0qzUXjv2WeNNNIF/9JytGlkoT1SjWYFsgJAE3Or8KLt3rrX4cRZMZCREVGbzw
+ P/BhtJ3LfgPPflBBJcjT/tctKd42Gzc1SAFUe6pTpsh97TNJbJIcyluuUxv4kDUbUQwZ+nClfq3
+ 3ZRWL5niXd34T9m7XSY62s5M7g1jklIHQ7bGvxZL/rOqcvi0f2AV0l09Lf6BSoSu1X2KOwsLKbt
+ fXwO31Y5+kfOhDgFcBBbrvUqI4B2f48pJz+xUC1mE8K6AOm/YqX1w2mrVsp0cNDMENjQHQQiDcB
+ axpW9t62OnFHnofZ2ky4IbtsGZ8rPsU+jPr7rXITAptAaNWhh8a45YgMDaRP47d4iKDQVyWZJzC
+ 9LOw+UDrKUzEw3DEG1mQJC0/tMOrN4p8wliyA==
+X-Received: by 2002:a05:6a00:414b:b0:878:34d7:6a30 with SMTP id
+ d2e1a72fcca58-87e9ea6226bmr12486300b3a.36.1790699914948; 
+ Tue, 29 Sep 2026 09:38:34 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.35
+ d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:38:35 -0700 (PDT)
+ Tue, 29 Sep 2026 09:38:34 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Vamsi Attunuru <vattunuru@marvell.com>
-Subject: [PATCH v2 31/61] net/octeon_ep: use kvargs numeric helpers
-Date: Tue, 29 Sep 2026 09:36:34 -0700
-Message-ID: <20260929163800.1108305-32-stephen@networkplumber.org>
+ Harman Kalra <hkalra@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
+ Santosh Shukla <santosh.shukla@caviumnetworks.com>
+Subject: [PATCH v2 30/61] net/octeontx: use kvargs numeric helpers
+Date: Tue, 29 Sep 2026 09:36:33 -0700
+Message-ID: <20260929163800.1108305-31-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929163800.1108305-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -83,62 +84,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-parse_flag() uses atoi(), which cannot report an error, so a malformed
-value is silently taken as zero. The result was only ever used as a
-boolean, so use rte_kvargs_handle_bool() and drop the local handler.
+parse_integer_arg() uses atoi(), which cannot report an error, so a
+malformed value such as "abc" becomes zero and the negative check never
+fires.
 
-This also accepts the usual spellings such as "on" and "true" in
-addition to 0 and 1.
+It also stores through an int pointer, while the caller passes
+&params->nr_port, which is a uint8_t and the only member of a
+struct octeontx_vdev_init_params on the stack. Parsing nr_port
+therefore wrote three bytes past the field.
 
-The boolean uses rte_kvargs_process_opt(), so that a bare key with no
-value enables the option.
+Use rte_kvargs_handle_u8(), which both validates the value and matches
+the width of the field.
+
+Bugzilla ID: 2036
+Fixes: f7be70e5130e ("net/octeontx: add net device probe and remove")
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/octeon_ep/otx_ep_ethdev.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+ drivers/net/octeontx/octeontx_ethdev.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
 
-diff --git a/drivers/net/octeon_ep/otx_ep_ethdev.c b/drivers/net/octeon_ep/otx_ep_ethdev.c
-index 85b3c09155..3d6521d084 100644
---- a/drivers/net/octeon_ep/otx_ep_ethdev.c
-+++ b/drivers/net/octeon_ep/otx_ep_ethdev.c
-@@ -29,21 +29,11 @@ static const struct rte_eth_desc_lim otx_ep_tx_desc_lim = {
- 	.nb_align	= OTX_EP_TXD_ALIGN,
- };
+diff --git a/drivers/net/octeontx/octeontx_ethdev.c b/drivers/net/octeontx/octeontx_ethdev.c
+index e4dca30d9d..d2ad9a7d04 100644
+--- a/drivers/net/octeontx/octeontx_ethdev.c
++++ b/drivers/net/octeontx/octeontx_ethdev.c
+@@ -65,22 +65,6 @@ RTE_LOG_REGISTER_SUFFIX(otx_net_logtype_mbox, mbox, NOTICE);
+ RTE_LOG_REGISTER_SUFFIX(otx_net_logtype_init, init, NOTICE);
+ RTE_LOG_REGISTER_SUFFIX(otx_net_logtype_driver, driver, NOTICE);
  
+-/* Parse integer from integer argument */
 -static int
--parse_flag(const char *key, const char *value, void *extra_args)
+-parse_integer_arg(const char *key __rte_unused,
+-		const char *value, void *extra_args)
 -{
--	RTE_SET_USED(key);
+-	int *i = (int *)extra_args;
 -
--	*(uint8_t *)extra_args = atoi(value);
+-	*i = atoi(value);
+-	if (*i < 0) {
+-		octeontx_log_err("argument has to be positive.");
+-		return -1;
+-	}
 -
 -	return 0;
 -}
 -
  static int
- otx_ethdev_parse_devargs(struct rte_devargs *devargs, struct otx_ep_device *otx_epvf)
- {
- 	struct rte_kvargs *kvlist;
--	uint8_t ism_enable = 0;
-+	bool ism_enable = false;
+ octeontx_parse_vdev_init_params(struct octeontx_vdev_init_params *params,
+ 				struct rte_vdev_device *dev)
+@@ -106,7 +90,7 @@ octeontx_parse_vdev_init_params(struct octeontx_vdev_init_params *params,
  
- 	if (devargs == NULL)
- 		goto null_devargs;
-@@ -52,11 +42,11 @@ otx_ethdev_parse_devargs(struct rte_devargs *devargs, struct otx_ep_device *otx_
- 	if (kvlist == NULL)
- 		goto exit;
- 
--	rte_kvargs_process(kvlist, OTX_ISM_ENABLE, &parse_flag, &ism_enable);
-+	rte_kvargs_process_opt(kvlist, OTX_ISM_ENABLE, rte_kvargs_handle_bool, &ism_enable);
- 	rte_kvargs_free(kvlist);
- 
- null_devargs:
--	otx_epvf->ism_ena = !!ism_enable;
-+	otx_epvf->ism_ena = ism_enable;
- 
- 	return 0;
- 
+ 		ret = rte_kvargs_process(kvlist,
+ 					OCTEONTX_VDEV_NR_PORT_ARG,
+-					&parse_integer_arg,
++					rte_kvargs_handle_u8,
+ 					&params->nr_port);
+ 		if (ret < 0)
+ 			goto free_kvlist;
 -- 
 2.53.0
 
