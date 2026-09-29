@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF56CA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5802CA5FA7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:43:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E700E42F53;
-	Tue, 29 Sep 2026 18:40:02 +0200 (CEST)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com
- [209.85.210.173])
- by mails.dpdk.org (Postfix) with ESMTP id CAAA242ECF
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:50 +0200 (CEST)
-Received: by mail-pf1-f173.google.com with SMTP id
- d2e1a72fcca58-881269371acso485464b3a.0
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A9F5842F5F;
+	Tue, 29 Sep 2026 18:40:03 +0200 (CEST)
+Received: from mail-pz2-f38.google.com (mail-pz2-f38.google.com
+ [74.125.228.38]) by mails.dpdk.org (Postfix) with ESMTP id 95BEF42ED6
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:51 +0200 (CEST)
+Received: by mail-pz2-f38.google.com with SMTP id
+ d2e1a72fcca58-881d9da69b1so990915b3a.0
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699930;
- x=1791304730; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699931;
+ x=1791304731; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=bbZqzIiZcVBdPox3SPCPOWClMD5C53lVc1duTCzSSgk=;
- b=Y87H1YcSTqkueAUbgDzSheoE7qdaI21RSfGNnwV4rsneH/6uad7LjejMD+bVSM4SK4
- pS/k9YAASDY3FZ/B2S7iYOsdBnBw5GngA8Is0KELUk5v8LDCX6CHeMvpiBWwaE/aBecJ
- BRS2/ab4eqJXFrxQ6DCQfGuG/Pz6GGBULX5xTg/eSMv6cbORsIzfgnnz6bWf2I1EdILT
- 3f6BPWZ9b62d6tCYEXLOIo/VxL/MamS2ked8nJzjAcO/WbdsfTIKSEITvQYxnZjx2MzY
- 4mh3hrA+FVQX0gVr8GnX99FytaXmuS48rdZWAu5uutefldz3TSjuNQzc0Hg+HNCGG+P7
- pN5g==
+ bh=zjQxHwWra9VECMTF5QrFVGN7ypRQxN+ubNghPHmRiqc=;
+ b=wso7e7kIKLZOMOzXnJ4cGgOFK/xyEGEInoUOKxU+mBjxubqI9iSyexj8hADn7UJ7V4
+ PJJd/ST1NUHaMYqndWGeygnu0XO4qIw30XdGigSbwiE0L5Jz1Z9Qs17RSwTXlINeooXX
+ 1oNK1chkoqBdBF1HX7eJavUcjRz8OIU3/xYxLNeNyjJMCgxtQ8ZznM9YtjgorUWGPndc
+ o0sdVSwMJEDV3M4HuWqTDAJTscUCbTSYuW3bBaupQrfr2O0zwGLltjT5Qagm5TT/QYNI
+ IOa1XWqgCdS73o2oMcX9UcBnr128H9kNiiOv8NUQXAlsNvv5vBINctmOmPYhsdArSafa
+ 6UxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790699930; x=1791304730;
+ d=1e100.net; s=20260707; t=1790699931; x=1791304731;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=bbZqzIiZcVBdPox3SPCPOWClMD5C53lVc1duTCzSSgk=;
- b=No/SbzGtcQRq/auug6hByQeNAnwGR46rwqW3JXWnZGUOkQIAiFL4/y5oIuiLeyYyd7
- xQun/LfJzKgGTc+8jzUQTJ6hGh5GEaJmG/Wj/B9+8e2tQy6My9Np+YCuBBRJ6M11kemz
- C6ZL+cAtpJUjih5U2mJFXOvKdyxSCH+6WSlN2RtvbsrGOVNQOdpl0dvQEaZ3CXv7Ppb5
- 6p2cKZ6BBwI9KMuXORr+L8UMv3EstLfHdXieu/6dWMqRxiDIF4nc7rcjIWjzTgw/Q/r0
- HvzC2rK1ULJHWFIGYL32yb+lRKF/HKDkUtshXfC8CQqiWbEarZLqnoiJFrs2xK43joJ/
- stig==
-X-Gm-Message-State: AFuF++l9aGvpLRXJu4Vxwdr6KvKJ0/CbDTj/wcDZrmC/YFsPJVVaAKB7
- ZZTdJGcynU98jDB/+vmal7D9Rug683gTiM9eCUAGPU0lSfXh7nCw6t/BHjw80gm/R3s/HPkdxaD
- lFlHRId4=
-X-Gm-Gg: AYBFou2QJwJ9JH/4gUtdoZGLZWbJW4uQZLPGOkoLfwsZAL6xz/gW9zB6xljEuVnUqhZ
- qicCq5yMC7nalZ4BYnnx3pnPNlEK8AAVDzWTVfcSa3Fhd4JeKgpPt56SDhl1dpXa1TIzvnf/5Yb
- iJhXbjkNWM42OXP1U70OxCdfj/wJBJpPWSb37b0AO5BcWcWEYyfpw3y24uTV1Qnv/29k96yWSvv
- 647/BX/na0/N/5b8NIF3tIHYW4A15pNAZ7dY0RwGJuUu0lzysm1yc5ZmGiiTgS+rMGjOUk7eCgD
- 7jWjyd3rCDpC2jH7UKZuhw4kJTuUUQLVVFX42FOfFzryF0IzMzDDYbjKZE3pnoXpMemav57uBmq
- fE7I1RSszePCGiSAMst0pNO7luVgBb13Y5wkTcW3Z48OorZnfkcQEma2kl5N/GqUk2nHiIerrMe
- Bj1YDrqsakSvkAkYJgm34N0XkAKtvntv5hHuyyePSnIkidxNoq7mEJ9Fp1F9lGuQmB4VzPBsSt0
- HZ3xuzotq0dcRjAHllf/TtEM/dzHDpsIJ9o+A==
-X-Received: by 2002:a05:6a00:7097:b0:87d:fc55:c995 with SMTP id
- d2e1a72fcca58-88563259606mr1747318b3a.50.1790699929937; 
- Tue, 29 Sep 2026 09:38:49 -0700 (PDT)
+ bh=zjQxHwWra9VECMTF5QrFVGN7ypRQxN+ubNghPHmRiqc=;
+ b=YtJXssp/d+WOHJI9VJaTL+zZxjRvgkQe8gACuRP0aHSS5yEem+Gss0Oxgi9KOWfVtg
+ /Gi+tG+D1bVhlLOlwwU8L3k5bbvmbO+TTgTRp/lA9rSZEfdHU4PnCVTnfCJoa7Ta/Z4K
+ SrAo3kXXSaEi8kluvcnoCaH4hORqcHBhs1ysEOtV58jW0H/Mu/uKmQYNuYEzYQa0S22M
+ mqN/qcxadE6+LhNaVZRDnx1xvyYnnD6W+at3OD5eWAexDdCruCbImP5f+4J0TVSi6aq5
+ YQ1JNYY0M0SKH6vb97UbOJL8wHRlUaZ/e6YiDfzDtMd0fSxQAZ99t5TJC0WP8h6R290E
+ KB9w==
+X-Gm-Message-State: AFuF++lpKL3VNt/1obnJqcMDvn9ArxYS8IKyaLNP0ZdCz0tw5uSw7Lu9
+ Wp2tT7seV//TDL3mLhYIYbrgWGtUZbRx1yl5Tg/LpW2p7WJSYzFHPBssV6XgJ9+HeJEfktNaqDj
+ 1glIpesU=
+X-Gm-Gg: AYBFou3wRlF2EzXBAva/dTCz3vq9r9cJ+YdttIISymvG/k1SLgF6nrqoX4RwMW0cbna
+ w09UlfPMNuVGFz682NArsrx2Yn+7EoQB/Vr11AiTIN6szjuyoYSGbS4rMsYCn+wm+NH0scMK8Gn
+ 2zFs37YM3RE8fEpBNvCe1U0ZxwhXAq0uArlAQatE2REld/CLtOcZr4Nb5g21U4n+w77IKeQ14cc
+ WuUY4BAgLzjm9gXp7qzanU6aQO8zp8MDpnqIZ+z8K/NJRM9g704XscEj8VrEbCa/Lr3/sTZyVmj
+ H+VHPDtDFomWveU0uh6nsbrB5+5aGyIMQtIsFML2tl1/HwMtpBLWU1pC33RAHLZMVF95aZwjpIT
+ 7mrYUbOnvASoxHOGy5nP0+39yBYIIgXdLQ6g53oRcEC0vLXKcnvSmfbysl8AkyX51wyLMu2BNH3
+ 4i75pVQkGnrybzjZqjoV52Kttcug+gq8OjC4ydoWdvRPI4omJwwUZjUxM8oBDcmt57Uu/ayYOT5
+ qH1VMKGQINVswLtryTa0Qo53FyGU/gB9iyiTIzSMDV6ox9r
+X-Received: by 2002:a05:6a00:84d:b0:878:3658:23dc with SMTP id
+ d2e1a72fcca58-87e9cb1da4bmr15243768b3a.53.1790699930726; 
+ Tue, 29 Sep 2026 09:38:50 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.49
+ d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:38:49 -0700 (PDT)
+ Tue, 29 Sep 2026 09:38:50 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v2 47/61] net/sfc: use kvargs numeric helpers
-Date: Tue, 29 Sep 2026 09:36:50 -0700
-Message-ID: <20260929163800.1108305-48-stephen@networkplumber.org>
+ Michael Shamis <michaelsh@marvell.com>, Liron Himi <lironh@marvell.com>
+Subject: [PATCH v2 48/61] crypto/mvsam: use kvargs numeric helpers
+Date: Tue, 29 Sep 2026 09:36:51 -0700
+Message-ID: <20260929163800.1108305-49-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929163800.1108305-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -84,92 +83,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-sfc_kvarg_long_handler() only checked that strtol() consumed at least one
-character, so trailing garbage such as "5abc" was accepted, and errno was
-never checked, so an out of range value was silently taken as LONG_MAX or
-LONG_MIN.
-
-It did nothing beyond that conversion, so drop it and use the new
-rte_kvargs_handle_long(). The callers keep their long variables and their
-own range checks.
+parse_integer_arg() uses atoi(), which cannot report an error, so a
+malformed value such as "abc" becomes zero and the negative check never
+fires.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/sfc/sfc.c        |  2 +-
- drivers/net/sfc/sfc_kvargs.c | 19 -------------------
- drivers/net/sfc/sfc_kvargs.h |  2 --
- drivers/net/sfc/sfc_port.c   |  2 +-
- 4 files changed, 2 insertions(+), 23 deletions(-)
+ drivers/crypto/mvsam/rte_mrvl_pmd.c | 22 +++-------------------
+ 1 file changed, 3 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/net/sfc/sfc.c b/drivers/net/sfc/sfc.c
-index 39cd8d519a..3d460cc222 100644
---- a/drivers/net/sfc/sfc.c
-+++ b/drivers/net/sfc/sfc.c
-@@ -1213,7 +1213,7 @@ sfc_kvarg_rxd_wait_timeout_ns(struct sfc_adapter *sa)
- 	value = SFC_RXD_WAIT_TIMEOUT_NS_DEF;
- 
- 	rc = sfc_kvargs_process(sa, SFC_KVARG_RXD_WAIT_TIMEOUT_NS,
--				sfc_kvarg_long_handler, &value);
-+				rte_kvargs_handle_long, &value);
- 	if (rc != 0)
- 		return rc;
- 
-diff --git a/drivers/net/sfc/sfc_kvargs.c b/drivers/net/sfc/sfc_kvargs.c
-index eb36fa98ca..d67f822dd2 100644
---- a/drivers/net/sfc/sfc_kvargs.c
-+++ b/drivers/net/sfc/sfc_kvargs.c
-@@ -107,25 +107,6 @@ sfc_kvarg_bool_handler(__rte_unused const char *key,
- 	return 0;
+diff --git a/drivers/crypto/mvsam/rte_mrvl_pmd.c b/drivers/crypto/mvsam/rte_mrvl_pmd.c
+index 65a63c9d62..4ac9e209df 100644
+--- a/drivers/crypto/mvsam/rte_mrvl_pmd.c
++++ b/drivers/crypto/mvsam/rte_mrvl_pmd.c
+@@ -1117,22 +1117,6 @@ cryptodev_mrvl_crypto_create(const char *name,
+ 	return ret;
  }
  
--int
--sfc_kvarg_long_handler(__rte_unused const char *key,
--		       const char *value_str, void *opaque)
+-/** Parse integer from integer argument */
+-static int
+-parse_integer_arg(const char *key __rte_unused,
+-		const char *value, void *extra_args)
 -{
--	long value;
--	char *endptr;
+-	int *i = (int *) extra_args;
 -
--	if (!opaque)
+-	*i = atoi(value);
+-	if (*i < 0) {
+-		MRVL_LOG(ERR, "Argument has to be positive!");
 -		return -EINVAL;
--
--	value = strtol(value_str, &endptr, 0);
--	if (endptr == value_str)
--		return -EINVAL;
--
--	*(long *)opaque = value;
+-	}
 -
 -	return 0;
 -}
 -
- int
- sfc_kvarg_string_handler(__rte_unused const char *key,
- 			 const char *value_str, void *opaque)
-diff --git a/drivers/net/sfc/sfc_kvargs.h b/drivers/net/sfc/sfc_kvargs.h
-index 4dcc61e973..99de772d2d 100644
---- a/drivers/net/sfc/sfc_kvargs.h
-+++ b/drivers/net/sfc/sfc_kvargs.h
-@@ -88,8 +88,6 @@ int sfc_kvargs_process_opt(struct sfc_adapter *sa, const char *key_match,
+ /** Parse name */
+ static int
+ parse_name_arg(const char *key __rte_unused,
+@@ -1170,14 +1154,14 @@ mrvl_pmd_parse_input_args(struct mrvl_pmd_init_params *params,
+ 		/* Common VDEV parameters */
+ 		ret = rte_kvargs_process(kvlist,
+ 					 RTE_CRYPTODEV_PMD_MAX_NB_QP_ARG,
+-					 &parse_integer_arg,
++					 rte_kvargs_handle_uint,
+ 					 &params->common.max_nb_queue_pairs);
+ 		if (ret < 0)
+ 			goto free_kvlist;
  
- int sfc_kvarg_bool_handler(const char *key, const char *value_str,
- 			   void *opaque);
--int sfc_kvarg_long_handler(const char *key, const char *value_str,
--			   void *opaque);
- int sfc_kvarg_string_handler(const char *key, const char *value_str,
- 			     void *opaque);
+ 		ret = rte_kvargs_process(kvlist,
+ 					 RTE_CRYPTODEV_PMD_SOCKET_ID_ARG,
+-					 &parse_integer_arg,
++					 rte_kvargs_handle_socket_id,
+ 					 &params->common.socket_id);
+ 		if (ret < 0)
+ 			goto free_kvlist;
+@@ -1191,7 +1175,7 @@ mrvl_pmd_parse_input_args(struct mrvl_pmd_init_params *params,
  
-diff --git a/drivers/net/sfc/sfc_port.c b/drivers/net/sfc/sfc_port.c
-index 33b53f7ac8..d0652b612b 100644
---- a/drivers/net/sfc/sfc_port.c
-+++ b/drivers/net/sfc/sfc_port.c
-@@ -488,7 +488,7 @@ sfc_port_attach(struct sfc_adapter *sa)
- 	kvarg_stats_update_period_ms = SFC_MAC_STATS_UPDATE_PERIOD_MS_DEF;
- 
- 	rc = sfc_kvargs_process(sa, SFC_KVARG_STATS_UPDATE_PERIOD_MS,
--				sfc_kvarg_long_handler,
-+				rte_kvargs_handle_long,
- 				&kvarg_stats_update_period_ms);
- 	if ((rc == 0) &&
- 	    ((kvarg_stats_update_period_ms < 0) ||
+ 		ret = rte_kvargs_process(kvlist,
+ 					 MRVL_PMD_MAX_NB_SESS_ARG,
+-					 &parse_integer_arg,
++					 rte_kvargs_handle_u32,
+ 					 &params->max_nb_sessions);
+ 		if (ret < 0)
+ 			goto free_kvlist;
 -- 
 2.53.0
 
