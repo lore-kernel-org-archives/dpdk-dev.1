@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13544CA5FA7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1666CA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 16:41:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E6CF42EE0;
-	Tue, 29 Sep 2026 18:38:55 +0200 (CEST)
-Received: from mail-pz2-f39.google.com (mail-pz2-f39.google.com
- [74.125.228.39]) by mails.dpdk.org (Postfix) with ESMTP id 173484026E
- for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:34 +0200 (CEST)
-Received: by mail-pz2-f39.google.com with SMTP id
- d2e1a72fcca58-88098db8dcdso1901431b3a.3
- for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9863942E65;
+	Tue, 29 Sep 2026 18:39:26 +0200 (CEST)
+Received: from mail-pz2-f38.google.com (mail-pz2-f38.google.com
+ [74.125.228.38]) by mails.dpdk.org (Postfix) with ESMTP id 9098E4026E
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 18:38:30 +0200 (CEST)
+Received: by mail-pz2-f38.google.com with SMTP id
+ d2e1a72fcca58-88582e2153eso764443b3a.2
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 09:38:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699913;
- x=1791304713; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790699910;
+ x=1791304710; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=M1o8gPflkDU8DXzzEjH8SP5MGbwx7fJoSMidiZTGq1I=;
- b=hQnxP40Qg94fzZjzs1FDRINvwSd5yfsq0WfWjcALm4SvZtNGVvcZaGFdShkVuZDo13
- KW5apn2LWWkcbUScFMijpzSWjyOOa1et7McYwQQ5jPppdTy6oe3+nuxkxWshd9g6eS2r
- UCjSB0AKUXjipOedNEWo5z6h+20RaLpvMzxhXeRbVSmx7KnqQg9wb07ysUfBVmtIIOEe
- BwUzU53kkB+TT00KrxX6Z5FVMlIJF2Ii2T/u4OoXwuyfPqFWfRzD1xxlZ7eC3pYFzwS/
- 4RFWw3JhTxoSpoGjFJlJFSyIGtGSRDK/num8bDDOFRbK2O4FpSeOJ1yXy2KwEBcK/CRT
- MUIA==
+ bh=sOJAsh+fNZvoVQ/e8BMhJYDNnd2sqRiLjcUR7J9vnHk=;
+ b=vMYz5u8iXi6yWgiqzJypz4YsUvGoAV6a5U7BOT+Zf3NUK5rbq527/3/fdxW5aq+2LM
+ +5pKM0D0G+IPUNadIRXKnFA2QjOBerf1X7shjsrlpd3BZOd5MaBuJ07TDTx2qpJERbAM
+ 2MDwHfOSrKYvPD6k0mr33566zmhdIFZGzOwy79YA/Y01G9/NK06qxKNj4+lhIlmKztKw
+ 9JFV2zziJrEs3nwPKkYzau1Mttd/S0wjj7IEwOEOM0qqBT+06mBOx2/qSRRE2oN7XCXx
+ v2U2T8TheVE+vWKDVXFWL/sNQJWnnDBymKZE9prnhm4KNJLgDZjrFzAzRsoyuMh9QG+0
+ Ye5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790699913; x=1791304713;
+ d=1e100.net; s=20260707; t=1790699910; x=1791304710;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=M1o8gPflkDU8DXzzEjH8SP5MGbwx7fJoSMidiZTGq1I=;
- b=g5SCw8WM+zV6/M5KVsfWr3DrqYcnwSnPktZK5DmQTcd5vvBoipkTrGhz5TmR3FYEpV
- 6Z5aoyWLRyWWuKw4WoYfO9sylPNUgb4IgoBKbQpU5YhlSK8qAu1gKzs2oVnU47nUly3h
- YLP3lp1guoQZxnKjF7dQrq2j7rcQWZMXBu9N1Nq2CSwZvnWXNoEdvBvZW2mIOXrmtTz6
- WqUkSBh27SlfayM0w1TUJZSNU4gTD2WRv1uCYfQIAD7cwYAflBJVVUXkU6dv+ceHLWCI
- 4wy6KBcUvyrxOGiBjddS+kvNgGApYbsNtMHNO9SQObV03G0EKcwxrj72C5aExRLkJVhw
- txIA==
-X-Gm-Message-State: AFuF++m6DnkzSlZVRXPyIN8+yVzpv2faHgF6PArSnM1q3+wQGbQ7qFHj
- v3wx3Q5BVlmmc5YP0XvInsgV1wAE84oDDvbOFMU+vELczliyxfsMESOfmmRBaTRpLcWRl3gvt9J
- uRufnMT8=
-X-Gm-Gg: AYBFou0tE4cNokHf/fM7pQtrFFksFIpGrOPXQFbU6Gr+F3kyf6HPcswYXPCbC89PpSq
- UsoP2TtNX8P0NDezj52R1BnZckAzsrZtBYRrooGfpjwi9zz/B+nChVESiF+M7zYsafewUSO0XAI
- MwVqcG/4DG2UcUyLQXQ+qV1MVJFwgbD6oCPTk463kghOrnkiqhX4erY82VF1N1XBLiqpyqmHt4P
- b7aeKhoJtSqK6FWkRm+PnbItn9IyQY0UCJ86ey/cyrEMKNE/N02PLanReaPZw8hsAMshidX+TNb
- fjgvQZlB6EwWSDxZQfp1vqxfpJyFGz5L4f3PrCKLAt+x3PNkAxOdLsm63LWZnaKWqNcej7aR/zq
- O1nVE09hNP62RynmOVSRbtwpbJy+e72g7C7m9nCMS0AtCwwDI8czRCdzZM7W055qmbF30iggJ93
- bEEthM0MvN9JXzUtCy/1s9NRqac+ntx0PQJwtANqcptSVfrhiWCEnMrSQHGbMwdtTVaQCRsBGMY
- nKYxjh6i9B7g9IHqvRVHI9wWjMMs+9sPdbYKb+VNrof8gv1
-X-Received: by 2002:a05:6a00:bb05:b0:878:38af:1970 with SMTP id
- d2e1a72fcca58-87e9e77ea65mr13140544b3a.60.1790699913184; 
- Tue, 29 Sep 2026 09:38:33 -0700 (PDT)
+ bh=sOJAsh+fNZvoVQ/e8BMhJYDNnd2sqRiLjcUR7J9vnHk=;
+ b=f7gEtTkPnBbJj8/f83uXg6KFsAPVPn9cyGGOCFaNdU9EVcrDIkkTJp9s4kPDT0yyWj
+ ePpTdLiJTqx2Rrwbbw7mv49qZR7FgwsdURfjjYZkSHokyAK+GluHHYij8S4coeY23Q+s
+ 1vwH7FgW6xekHGHZJZ/VGIJQBZxdHWZZVNT23WcGrGeDX6gZEclNPIAqVTCoS8zQqTIV
+ EZ9PVimO5emMedIHPi1EOkMNmWqK03GUGVt4YCyO7rJnxjeHchhKaqXj7JdSJZSueeRZ
+ UPwIpQTPTxQrYqYHKZLWDjnahfHvKdv1FmC2aCIgdLUdoRKOMos5F0er+fw4fl/80Zla
+ A9Jw==
+X-Gm-Message-State: AFuF++nLCtkfn9dOUmOQF59IObnqObIAjkRRXrVcz1YJCSmTfqjDVjxG
+ KQH9FQATP255QVkZ6F2qDUGDTmVIOERUo17lQNOl1ao/bkCGwIvjqzrD7sMWqhLjaclR4waVHJ+
+ 7gGYZ4Io=
+X-Gm-Gg: AYBFou0F9mxRdJZNo4iwp7HuXCYjtaWn77ZOSxOjQ4Q5Y0L9LWTPhR5yirBeUw9lg1n
+ PpHNSSrpUTNdUfhm5M5qDTTYWnnobTQJQVm30duSZcuMNs+gz1UTApWWgJZzgHeGy5Y7bnEWp45
+ Btjs8Z7tiC87hHmn9IFTfpwIMWXxSwPa/wqJC7VreHmWp+vnrYKKiTPn61FrLg0GD6QvjzstvJj
+ 0opaH+LAUz11WxODckw3TaCgum8qvMfiWgylNKhGUOdE6XQSwhzgvuqbplL9P6xZQNuKvf2lkrd
+ AylehOZZZ2/Ak+ukzmEyGVZRTHfBO4iMxDPKrNOqMtEj4I6Brxh0VLf/oBVeFz6xOq9yuZsWNpq
+ 8+k3ESR8nHAcxGrowhM+EzJi8Ew8572BpeD8Mbay7BK8Thm+MYvhyT81NNp3Pch0AeYJGiflqAD
+ KOM1UewNl8DX0qEoN6T9O5QzjFyjSDVVJS4QLKqagUJRI2Y08b7VYxPqjc21NEYrSNj0MSrBN9Y
+ TvinuEqr+o3PhSWCNA7Ihmy5rLmFZInTiPrQg==
+X-Received: by 2002:a05:6a00:3409:b0:874:478a:f7e1 with SMTP id
+ d2e1a72fcca58-87e9d1f8f79mr13083287b3a.25.1790699909757; 
+ Tue, 29 Sep 2026 09:38:29 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.32
+ d2e1a72fcca58-8868ba02d02sm232392b3a.21.2026.09.29.09.38.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Sep 2026 09:38:32 -0700 (PDT)
+ Tue, 29 Sep 2026 09:38:29 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v2 28/61] net/ixgbe: use kvargs numeric helpers
-Date: Tue, 29 Sep 2026 09:36:31 -0700
-Message-ID: <20260929163800.1108305-29-stephen@networkplumber.org>
+Subject: [PATCH v2 24/61] net/iavf: use kvargs numeric helpers
+Date: Tue, 29 Sep 2026 09:36:27 -0700
+Message-ID: <20260929163800.1108305-25-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260929163800.1108305-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -84,133 +83,171 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-devarg_handle_int() truncates the strtoul() result into a uint16_t and
-then infers overflow from the truncated value being USHRT_MAX, so a
-value such as "65536" is silently accepted as zero. It also never
-checked the end pointer, and read errno without clearing it first.
+parse_u16() ignores the end pointer, so "8junk" is accepted, and assigns
+a u64 into a u16 without a range check, so "65536" wraps to zero. Zero
+is still rejected, as it is the unset marker for quanta_size.
 
-fiber_sdp3_no_tx_disable and pflink_fullchk are booleans, so make the
-fields bool and parse them with rte_kvargs_handle_bool() straight into
-the adapter, which also removes the temporary and the "== 1" dance. A
-bare key now enables the option, and the usual spellings are accepted.
+parse_bool() checks neither errno nor the end pointer.
+
+iavf_parse_watchdog_period() uses atoi(), which cannot report an error
+at all, so a malformed value becomes zero and the negative check never
+fires.
+
+no-poll-on-link-down, auto_reset and enable_lldp are booleans, so make
+the fields bool and use rte_kvargs_handle_bool(). That is every caller
+of the local parse_bool(), so it goes away too. A bare key now enables
+the option, and the usual spellings are accepted.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/intel/ixgbe/ixgbe_ethdev.c | 40 ++++++--------------------
- drivers/net/intel/ixgbe/ixgbe_ethdev.h |  4 +--
- 2 files changed, 11 insertions(+), 33 deletions(-)
+ drivers/net/intel/iavf/iavf.h        |  6 +--
+ drivers/net/intel/iavf/iavf_ethdev.c | 55 +++++++++-------------------
+ 2 files changed, 20 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 284df77023..e05c9a8d1f 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -353,8 +353,6 @@ static int ixgbe_dev_udp_tunnel_port_del(struct rte_eth_dev *dev,
- static int ixgbe_filter_restore(struct rte_eth_dev *dev);
- static void ixgbe_l2_tunnel_conf(struct rte_eth_dev *dev);
- static int ixgbe_wait_for_link_up(struct ixgbe_hw *hw);
--static int devarg_handle_int(__rte_unused const char *key, const char *value,
--			     void *extra_args);
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index eb7cf2b58d..8f31fbabbf 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -324,10 +324,10 @@ struct iavf_devargs {
+ 	uint8_t proto_xtr[IAVF_MAX_QUEUE_NUM];
+ 	uint16_t quanta_size;
+ 	uint32_t watchdog_period;
+-	int auto_reset;
+-	int no_poll_on_link_down;
++	bool auto_reset;
++	bool no_poll_on_link_down;
+ 	uint64_t mbuf_check;
+-	int enable_lldp;
++	bool enable_lldp;
+ };
  
- /*
-  * Define VF Stats MACRO for Non "cleared on read" register
-@@ -989,7 +987,6 @@ ixgbe_parse_devargs(struct ixgbe_adapter *adapter,
- 		      struct rte_devargs *devargs)
+ struct iavf_security_ctx;
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index a8abe0154c..27d6f73b94 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -3,6 +3,7 @@
+  */
+ 
+ #include <ctype.h>
++#include <limits.h>
+ #include <sys/queue.h>
+ #include <stdalign.h>
+ #include <stdio.h>
+@@ -13,6 +14,7 @@
+ #include <stdarg.h>
+ #include <inttypes.h>
+ #include <rte_byteorder.h>
++#include <rte_kvargs.h>
+ #include <rte_common.h>
+ #include <rte_os_shim.h>
+ 
+@@ -2401,11 +2403,10 @@ static int
+ parse_u16(__rte_unused const char *key, const char *value, void *args)
  {
- 	struct rte_kvargs *kvlist;
--	uint16_t sdp3_no_tx_disable;
- 	enum rte_eth_fdir_pballoc_type pballoc;
- 	int ret = 0;
+ 	u16 *num = (u16 *)args;
+-	u16 tmp;
++	uint64_t tmp;
  
-@@ -1000,11 +997,10 @@ ixgbe_parse_devargs(struct ixgbe_adapter *adapter,
- 	if (kvlist == NULL)
- 		return 0;
- 
--	if (rte_kvargs_count(kvlist, IXGBE_DEVARG_FIBER_SDP3_NOT_TX_DISABLE) == 1 &&
--	    rte_kvargs_process(kvlist, IXGBE_DEVARG_FIBER_SDP3_NOT_TX_DISABLE,
--			       devarg_handle_int, &sdp3_no_tx_disable) == 0 &&
--	    sdp3_no_tx_disable == 1)
--		adapter->sdp3_no_tx_disable = 1;
-+	if (rte_kvargs_count(kvlist, IXGBE_DEVARG_FIBER_SDP3_NOT_TX_DISABLE) == 1)
-+		(void)rte_kvargs_process_opt(kvlist, IXGBE_DEVARG_FIBER_SDP3_NOT_TX_DISABLE,
-+					     rte_kvargs_handle_bool,
-+					     &adapter->sdp3_no_tx_disable);
- 
- 	if (rte_kvargs_count(kvlist, IXGBE_DEVARG_FDIR_BUFFER_SIZE) != 0) {
- 		if (rte_kvargs_process(kvlist, IXGBE_DEVARG_FDIR_BUFFER_SIZE,
-@@ -1499,28 +1495,11 @@ generate_random_mac_addr(struct rte_ether_addr *mac_addr)
- 	memcpy(&mac_addr->addr_bytes[3], &random, 3);
+-	errno = 0;
+-	tmp = strtoull(value, NULL, 10);
+-	if (errno || !tmp) {
++	/* zero is not accepted, it is the "unset" marker for this argument */
++	if (rte_kvargs_to_uint(value, 1, UINT16_MAX, &tmp) < 0) {
+ 		PMD_DRV_LOG(WARNING, "%s: \"%s\" is not a valid u16",
+ 			    key, value);
+ 		return -1;
+@@ -2416,35 +2417,13 @@ parse_u16(__rte_unused const char *key, const char *value, void *args)
+ 	return 0;
  }
  
 -static int
--devarg_handle_int(__rte_unused const char *key, const char *value,
--		  void *extra_args)
+-parse_bool(const char *key, const char *value, void *args)
 -{
--	uint16_t *n = extra_args;
+-	int *i = (int *)args;
+-	char *end;
+-	int num;
 -
--	if (value == NULL || extra_args == NULL)
--		return -EINVAL;
+-	num = strtoul(value, &end, 10);
 -
--	*n = (uint16_t)strtoul(value, NULL, 0);
--	if (*n == USHRT_MAX && errno == ERANGE)
+-	if (num != 0 && num != 1) {
+-		PMD_DRV_LOG(WARNING, "invalid value:\"%s\" for key:\"%s\", "
+-			"value must be 0 or 1",
+-			value, key);
 -		return -1;
+-	}
 -
+-	*i = num;
 -	return 0;
 -}
 -
- static void
- ixgbevf_parse_devargs(struct ixgbe_adapter *adapter,
- 		      struct rte_devargs *devargs)
+ static int
+ iavf_parse_watchdog_period(__rte_unused const char *key, const char *value, void *args)
  {
- 	struct rte_kvargs *kvlist;
--	uint16_t pflink_fullchk;
+ 	int *num = (int *)args;
+-	int tmp;
++	uint64_t tmp;
  
- 	if (devargs == NULL)
- 		return;
-@@ -1529,11 +1508,10 @@ ixgbevf_parse_devargs(struct ixgbe_adapter *adapter,
- 	if (kvlist == NULL)
- 		return;
+-	errno = 0;
+-	tmp = atoi(value);
+-	if (tmp < 0) {
++	if (rte_kvargs_to_uint(value, 0, INT_MAX, &tmp) < 0) {
+ 		PMD_DRV_LOG(WARNING, "%s: \"%s\" is not greater than or equal to zero",
+ 				key, value);
+ 		return -1;
+@@ -2515,8 +2494,8 @@ static int iavf_parse_devargs(struct rte_eth_dev *dev)
+ 	int ret;
+ 	int watchdog_period = -1;
  
--	if (rte_kvargs_count(kvlist, IXGBEVF_DEVARG_PFLINK_FULLCHK) == 1 &&
--	    rte_kvargs_process(kvlist, IXGBEVF_DEVARG_PFLINK_FULLCHK,
--			       devarg_handle_int, &pflink_fullchk) == 0 &&
--	    pflink_fullchk == 1)
--		adapter->pflink_fullchk = 1;
-+	if (rte_kvargs_count(kvlist, IXGBEVF_DEVARG_PFLINK_FULLCHK) == 1)
-+		(void)rte_kvargs_process_opt(kvlist, IXGBEVF_DEVARG_PFLINK_FULLCHK,
-+					     rte_kvargs_handle_bool,
-+					     &adapter->pflink_fullchk);
+-	ad->devargs.auto_reset = 1;
+-	ad->devargs.no_poll_on_link_down = 1;
++	ad->devargs.auto_reset = true;
++	ad->devargs.no_poll_on_link_down = true;
  
- 	rte_kvargs_free(kvlist);
- }
-@@ -4181,7 +4159,7 @@ ixgbevf_check_link(struct ixgbe_hw *hw, ixgbe_link_speed *speed,
- 		*speed = IXGBE_LINK_SPEED_UNKNOWN;
+ 	if (!devargs)
+ 		return 0;
+@@ -2550,8 +2529,8 @@ static int iavf_parse_devargs(struct rte_eth_dev *dev)
+ 	else
+ 		ad->devargs.watchdog_period = watchdog_period;
+ 
+-	ret = rte_kvargs_process(kvlist, IAVF_NO_POLL_ON_LINK_DOWN_ARG,
+-				 &parse_bool, &ad->devargs.no_poll_on_link_down);
++	ret = rte_kvargs_process_opt(kvlist, IAVF_NO_POLL_ON_LINK_DOWN_ARG,
++				 rte_kvargs_handle_bool, &ad->devargs.no_poll_on_link_down);
+ 	if (ret)
+ 		goto bail;
+ 
+@@ -2568,15 +2547,15 @@ static int iavf_parse_devargs(struct rte_eth_dev *dev)
+ 	if (ret)
+ 		goto bail;
+ 
+-	ret = rte_kvargs_process(kvlist, IAVF_ENABLE_AUTO_RESET_ARG,
+-				 &parse_bool, &ad->devargs.auto_reset);
++	ret = rte_kvargs_process_opt(kvlist, IAVF_ENABLE_AUTO_RESET_ARG,
++				 rte_kvargs_handle_bool, &ad->devargs.auto_reset);
+ 	if (ret)
+ 		goto bail;
+ 
+-	if (ad->devargs.auto_reset != 0 && ad->devargs.no_poll_on_link_down == 0) {
++	if (ad->devargs.auto_reset && !ad->devargs.no_poll_on_link_down) {
+ 		PMD_INIT_LOG(WARNING,
+ 			"no-poll-on-link-down=0 is incompatible with auto_reset=1, ignoring");
+-		ad->devargs.no_poll_on_link_down = 1;
++		ad->devargs.no_poll_on_link_down = true;
  	}
  
--	if (wait_to_complete == 0 && adapter->pflink_fullchk == 0) {
-+	if (wait_to_complete == 0 && !adapter->pflink_fullchk) {
- 		if (*speed == IXGBE_LINK_SPEED_UNKNOWN)
- 			mac->get_link_status = true;
- 		else
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index 0efef29a5d..fff9a07943 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -490,13 +490,13 @@ struct ixgbe_adapter {
- 	uint8_t rss_reta_updated;
+ 	if (rte_kvargs_count(kvlist, IAVF_ENABLE_PTYPE_LLDP_ARG) > 0) {
+@@ -2586,8 +2565,8 @@ static int iavf_parse_devargs(struct rte_eth_dev *dev)
+ 		goto bail;
+ 	}
  
- 	/* Used for limiting SDP3 TX_DISABLE checks */
--	uint8_t sdp3_no_tx_disable;
-+	bool sdp3_no_tx_disable;
- 	uint16_t max_vfs;
+-	ret = rte_kvargs_process(kvlist, IAVF_ENABLE_LLDP_ARG,
+-				 &parse_bool, &ad->devargs.enable_lldp);
++	ret = rte_kvargs_process_opt(kvlist, IAVF_ENABLE_LLDP_ARG,
++				 rte_kvargs_handle_bool, &ad->devargs.enable_lldp);
+ 	if (ret)
+ 		goto bail;
  
- 	/* Used for VF link sync with PF's physical and logical (by checking
- 	 * mailbox status) link status.
- 	 */
--	uint8_t pflink_fullchk;
-+	bool pflink_fullchk;
- 	uint8_t mac_ctrl_frame_fwd;
- 	RTE_ATOMIC(bool) link_thread_running;
- 	rte_thread_t link_thread_tid;
 -- 
 2.53.0
 
