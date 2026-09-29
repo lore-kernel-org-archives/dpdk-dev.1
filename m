@@ -2,105 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B75CA5FA1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 12:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D26FCA5FA1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Sep 2026 12:59:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E281A4278C;
-	Tue, 29 Sep 2026 14:56:36 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id E27624275D
- for <dev@dpdk.org>; Tue, 29 Sep 2026 14:56:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790686594;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=LmWZ/3kB5MMppiT88qfuMjZ+VnxttQvvzRK/rYQFVSc=;
- b=JSngpqGPmmjYtjAnlxdrryI6jmJWFU6mmeYbVa4Uj9HJCxmglXuDFLwkKLUlIi3qN/W51/
- 1ngQV/uThmD4RvKPeeH3nEIkQcjuqUt+/uFKzBie3kadK0QImLv2qJSMoce4s9+CGckyi7
- 5am5auKwy7CCS6fddAV/nFAv7m4zTxc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-355-YwGUpQ3YOjuQmPXviYQzHQ-1; Tue,
- 29 Sep 2026 08:56:31 -0400
-X-MC-Unique: YwGUpQ3YOjuQmPXviYQzHQ-1
-X-Mimecast-MFC-AGG-ID: YwGUpQ3YOjuQmPXviYQzHQ_1790686590
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 03148195D01D; Tue, 29 Sep 2026 12:56:30 +0000 (UTC)
-Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
- [10.2.32.117])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 8CCFC1956095; Tue, 29 Sep 2026 12:56:27 +0000 (UTC)
-Message-ID: <a8772446-bf37-4091-8a28-95851c5986aa@redhat.com>
-Date: Tue, 29 Sep 2026 14:56:25 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 6FAC14278C;
+	Tue, 29 Sep 2026 14:59:43 +0200 (CEST)
+Received: from forward500d.mail.yandex.net (forward500d.mail.yandex.net
+ [31.44.14.16]) by mails.dpdk.org (Postfix) with ESMTP id 4C1E8402F2
+ for <dev@dpdk.org>; Tue, 29 Sep 2026 14:59:42 +0200 (CEST)
+Received: from mail-nwsmtp-smtp-production-main-88.klg.yp-c.yandex.net
+ (mail-nwsmtp-smtp-production-main-88.klg.yp-c.yandex.net
+ [IPv6:2a02:6b8:c43:d788:0:640:6e4d:0])
+ by forward500d.mail.yandex.net (postfix) with ESMTPS id 8043C87E8B;
+ Tue, 29 Sep 2026 15:59:40 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-88.klg.yp-c.yandex.net (smtp)
+ with ESMTPSA id cxhA975cP8c0-FlhkORZD; 
+ Tue, 29 Sep 2026 15:59:39 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+ t=1790686779; bh=16Tai4KyD1xvaMUCiSBDDmgKPnx6dqvLynHa536Nq7E=;
+ h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+ b=iaGSUXcEz+C6YX8JatXQ+g9hbgxUjtm053G73CSKStxugVL2C36vxvZR1mrgcwdGX
+ ywxvuBtBWC+EDrRqotRcOXmiNZ+Ztp4zUOS/Mz66sklX7UM2QhLMYjOjdCPn6j/s0X
+ qX+iHz8h5uqc8JjhjORUD8C469Jz4tUK4ZZ4ODZo=
+Authentication-Results: mail-nwsmtp-smtp-production-main-88.klg.yp-c.yandex.net;
+ dkim=pass header.i=@yandex.ru
+Message-ID: <0dd7b03d-0574-40eb-a129-28d07529af02@yandex.ru>
+Date: Tue, 29 Sep 2026 13:59:38 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/9] vhost: add ASID support to VDUSE IOTLB operations
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
-Cc: mst@redhat.com, david.marchand@redhat.com, dev@dpdk.org,
- Yongji Xie <xieyongji@bytedance.com>, chenbox@nvidia.com,
- Bruce Richardson <bruce.richardson@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>, jasowangio@gmail.com
-References: <20260929105339.1554051-1-eperezma@redhat.com>
- <20260929105339.1554051-6-eperezma@redhat.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20260929105339.1554051-6-eperezma@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ASAwWWPkfo6vTfqsV9CxJgT0yBEgWWTNCJ5t_5yXBV8_1790686590
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
+Subject: Re: [PATCH] mailmap: remove obsolete email addresses
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org
+References: <20260929124437.87637-1-konstantin.v.ananyev@yandex.ru>
+ <CAJFAV8z5pdJ-dFLp8OsFTHD+S+6ty75QwuQUpfhNDT+-_0bx+A@mail.gmail.com>
+Content-Language: en-US, ru
+From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+In-Reply-To: <CAJFAV8z5pdJ-dFLp8OsFTHD+S+6ty75QwuQUpfhNDT+-_0bx+A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -118,21 +56,20 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 9/29/26 12:53 PM, Eugenio Pérez wrote:
-> From: Maxime Coquelin <maxime.coquelin@redhat.com>
-> 
-> Make use of the newly introduced address space ID when
-> calling Vhost IOTLB API.
-> 
-> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
-> ---
->   lib/vhost/vduse.c | 39 +++++++++++++++++++++++++++++++++------
->   1 file changed, 33 insertions(+), 6 deletions(-)
-> 
-
-FWIW:Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-
-Thanks,
-Maxime
+29.09.2026 13:51, David Marchand пишет:
+> On Tue, 29 Sept 2026 at 14:45, <konstantin.v.ananyev@yandex.ru> wrote:
+>> From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+>>
+>> Remove email addresses that are either already obsolete,
+>> or will become obsolete in the nearest future.
+>>
+>> Signed-off-by: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+> You should leave them here.
+> The mailmap entry is used by get-maintainers.sh to find your up to
+> date contact address.
+>
+> If you were involved in some (buggy) commit with your mail at @intel
+> or @huawei, you don't want to expect the blame right ? ;-)
+>
+ok :)
 
