@@ -2,50 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C4EACA5FAB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 04:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E59CCA5FAB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 06:24:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 656CA40DD6;
-	Wed, 30 Sep 2026 06:46:56 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 7D2A240A7A;
- Wed, 30 Sep 2026 06:46:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790743615; x=1822279615;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=eJYwx4xbHTMI0aKdm41TaQ6+Aw/Fd4ClcsOVxAxgG3E=;
- b=gP/IQ1P1p1T9ndQezJtnk+5JL5itiDNc+u6QLUsOOVv7Cre/NBrFDogm
- pYqVBbp4HFfck0tnX2rdxBU5NseK/2mjSqXkHXTX0/en8TA58bpDIF7tP
- FlIBGgzmK7K4Q+U9nDU07uLwfbfEcUHwjMXdhl9TTcSPc182YzHQXdwJo
- cWYoqst5SE4kjNWysPT1YsPWQdzNDU0ZBcWGrKZ8MZaSNAmbV1x218E4r
- MxbH7zf5V29XA3hz7Cv8T5pYQj9dZKKMVm+8CuRIdNPyFH7EP1Z/PAuKO
- fNFmwYIqxAHb1aY6NOakuZQgOxiNrQeMQ8soP1PaAhE0sbXtMebO0IW2v Q==;
-X-CSE-ConnectionGUID: Y2vl4FhrQym3it4H5r/BWg==
-X-CSE-MsgGUID: vxuTMP/USJSMMhVlD2JgIA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11920"; a="90373170"
-X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; d="scan'208";a="90373170"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Sep 2026 21:46:53 -0700
-X-CSE-ConnectionGUID: fVY1jhZFT+KBuiz33n8zOw==
-X-CSE-MsgGUID: u4eKdgdgQey4rR+z/fu98Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,130,1787036400"; d="scan'208";a="274770246"
-Received: from npg-npf-wlpr-srv19.iind.intel.com ([10.190.212.201])
- by fmviesa010.fm.intel.com with ESMTP; 29 Sep 2026 21:46:51 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Cc: stable@dpdk.org
-Subject: [PATCH] net/idpf: fix Tx payload corruption in split queue
-Date: Wed, 30 Sep 2026 10:16:30 +0530
-Message-Id: <20260930044630.250936-1-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id ABAC240DD6;
+	Wed, 30 Sep 2026 08:24:42 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 6069340612
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 08:24:41 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0D30B200196;
+ Wed, 30 Sep 2026 08:24:41 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C8C09200181;
+ Wed, 30 Sep 2026 08:24:40 +0200 (CEST)
+Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
+ [92.120.146.12])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 021191800068;
+ Wed, 30 Sep 2026 14:24:39 +0800 (+08)
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
+To: stephen@networkplumber.org,
+	thomas@monjalon.net,
+	dev@dpdk.org
+Subject: [PATCH v18 00/24] NXP DPAA driver enhancements and fixes
+Date: Wed, 30 Sep 2026 11:54:13 +0530
+Message-Id: <20260930062437.3019096-1-hemant.agrawal@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260929104519.1770698-1-hemant.agrawal@nxp.com>
+References: <20260929104519.1770698-1-hemant.agrawal@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,183 +47,142 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Observed on ACC while running NVMe traffic tests: under sustained
-high-throughput split-queue Tx, payload bytes on the wire did not
-match what the application submitted, while headers and checksums
-looked valid.
+This series collects a set of fixes and enhancements for the NXP DPAA
+bus, mempool, dma, crypto and net drivers targeting 26.11.
 
-The RS-completion path was freeing mbufs by walking sw_ring[] slots
-between first_id and the EOP sw_id. sw_ring[] slots get reclaimed
-by RE and reused by subsequent submits well before RS lands, so the
-walker was freeing mbufs still in flight for later packets, whose
-buffers then got recycled and overwritten mid-DMA.
+It includes memory-leak and resource-cleanup fixes on the device
+remove/close paths, more robust frame queue and congestion-group
+shutdown, secondary-process safety guards, BPID and cgrid lifecycle
+handling, and several new features: offline (O/H) port device support,
+enhanced virtual storage profile (VSP) port support, fmcless Rx queue
+configuration via devargs, Rx/Tx taildrop threshold devargs, non
+fmX-macY shared Ethernet naming, and DMA scatter-gather and
+errata-workaround devargs. Documentation and release notes are updated
+accordingly.
 
-Fix by tracking completion ownership in a shadow ring indexed by a
-software-defined compl_tag stamped on the EOP descriptor and echoed
-back by HW on RS. sw_ring[].mbuf and .first_id are no longer touched
-on the Tx completion path.
+v18:
+* Dropped the "net/dpaa: fix device remove" patch. It papered over the
+  symptom in rte_dpaa_remove() instead of fixing the cause, and was
+  replaced by the two fixes now at the head of the series.
+* net/dpaa: fix the double dpaa_eth_dev_close() call and the eth_dev
+  dereference before the NULL check in rte_dpaa_remove().
+* net/dpaa: unwind rte_dpaa_probe() through cleanup labels so the Tx SG
+  mempool failure path closes the device and releases the port instead of
+  leaking the port, the queue arrays and the QMan FQID/CGRID ranges.
 
-Fixes: 96cc9b6ea60c ("net/idpf: fix multi-segment mbuf leak in split Tx path")
-Cc: stable@dpdk.org
+v17:
+* bus/dpaa: clamp the BPID range read from the DTS to the 64 pools the
+  depletion mask and SCN registers can describe, reject an empty range,
+  and drop a dead bman_ip_rev check.
+* drivers: delete the congestion group in dpaa_rx_queue_init() and
+  dpaa_tx_queue_init() when the following qman_init_fq() fails, which
+  the caller's error path could not do.
+* drivers: scan for a frame queue still attached to a congestion group
+  unconditionally; an idle member reports a zero CGR byte count, so the
+  old shortcut could release a CGRID that was still referenced.
+* bus/dpaa: reject a frame queue on another portal's dedicated channel
+  and bound the FQ retirement wait, which previously could spin forever.
+* net/dpaa: bound the VSP ID against DPAA_VSP_PROFILE_MAX_NUM before
+  first use, and expand the VSP commit message to cover all its changes.
+* net/dpaa: parse the FMC port name only where the result is used, and
+  demote the per-port probe logs from ERR/INFO to DEBUG.
+* dma/dpaa: move the #ifdef out of the RTE_PMD_REGISTER_PARAM_STRING()
+  argument list, which is undefined behaviour.
+* drivers: return -errno rather than a raw -1 from the offline port
+  control-device ioctls, issue the FQ-info ioctl from dev_start() rather
+  than tx_queue_setup() since ethdev does not order queue setup, reject
+  offline port probe in a secondary process, make the ops table const,
+  and add the extern "C" guard to the installed header.
+* drivers: do not rte_free() the DPAA BPID info array from the RTE_FINI
+  destructor; rte_eal_cleanup() has already detached EAL memory, and in
+  a secondary the array belongs to the primary.
+* bus/dpaa: make drv_oldev usable; the bus devargs were matched against
+  the wrong bus name and the offline port devargs were never parsed.
+* doc: fold the five NXP DPAA release note entries into one
+  "Updated NXP DPAA drivers" entry with sub-bullets.
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
- drivers/net/intel/common/tx.h             |  7 +++
- drivers/net/intel/idpf/idpf_common_rxtx.c | 72 +++++++++++++++--------
- 2 files changed, 55 insertions(+), 24 deletions(-)
+v16:
+* rebased on main
 
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index 2a63cd4330..dbf28b5500 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -262,6 +262,13 @@ struct ci_tx_queue {
- 				uint16_t sw_nb_desc;
- 				uint16_t sw_tail;
- 				uint16_t rs_compl_count;
-+				/* Split-Tx completion tracking: shadow ring indexed by a
-+				 * rolling compl_tag decouples RS-completion mbuf lifetime
-+				 * from sw_ring[] slot reuse. sized next_pow2(nb_tx_desc).
-+				 */
-+				struct rte_mbuf **tx_pending_pkts;
-+				uint16_t tx_pending_mask;
-+				uint16_t tx_next_compl_tag;
- 		};
- 	};
- };
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index 649b5d1f99..281c99a216 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -233,6 +233,23 @@ idpf_qc_split_tx_descq_reset(struct ci_tx_queue *txq)
- 	txq->rs_compl_count = 0;
- 	txq->tx_next_dd = txq->tx_rs_thresh - 1;
- 	txq->tx_next_rs = txq->tx_rs_thresh - 1;
-+
-+	if (txq->tx_pending_pkts == NULL) {
-+		uint32_t pending_sz = rte_align32pow2(txq->nb_tx_desc);
-+
-+		txq->tx_pending_pkts = rte_zmalloc_socket("idpf_tx_pending",
-+			sizeof(struct rte_mbuf *) * pending_sz,
-+			RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
-+		if (txq->tx_pending_pkts == NULL) {
-+			DRV_LOG(ERR, "Failed to alloc idpf tx_pending shadow ring");
-+			return;
-+		}
-+		txq->tx_pending_mask = (uint16_t)(pending_sz - 1);
-+	} else {
-+		for (i = 0; i <= txq->tx_pending_mask; i++)
-+			txq->tx_pending_pkts[i] = NULL;
-+	}
-+	txq->tx_next_compl_tag = 0;
- }
- 
- RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_split_tx_complq_reset)
-@@ -387,6 +404,17 @@ idpf_qc_tx_queue_release(void *txq)
- 		rte_free(q->complq);
- 	}
- 
-+	if (q->tx_pending_pkts != NULL) {
-+		uint32_t i;
-+
-+		for (i = 0; i <= q->tx_pending_mask; i++) {
-+			if (q->tx_pending_pkts[i] != NULL)
-+				rte_pktmbuf_free(q->tx_pending_pkts[i]);
-+		}
-+		rte_free(q->tx_pending_pkts);
-+		q->tx_pending_pkts = NULL;
-+	}
-+
- 	ci_txq_release_all_mbufs(q, false);
- 	rte_free(q->rs_last_id);
- 	rte_free(q->sw_ring);
-@@ -787,7 +815,6 @@ idpf_split_tx_free(struct idpf_complq *cq)
- 	volatile struct idpf_splitq_tx_compl_desc *compl_ring = cq->compl_ring;
- 	volatile struct idpf_splitq_tx_compl_desc *txd;
- 	uint16_t next = cq->tx_tail;
--	struct ci_tx_entry *txe;
- 	struct ci_tx_queue *txq;
- 	uint16_t gen, qid, q_head;
- 	uint16_t nb_desc_clean;
-@@ -824,26 +851,20 @@ idpf_split_tx_free(struct idpf_complq *cq)
- 		txq->nb_tx_free += nb_desc_clean;
- 		txq->last_desc_cleaned = q_head;
- 		break;
--	case IDPF_TXD_COMPLT_RS:
--		/* Walk from first segment to EOP, freeing each segment. */
--		txe = &txq->sw_ring[q_head];
--		if (txe->mbuf != NULL) {
--			uint16_t first = txe->first_id;
--			uint16_t idx = first;
--			uint16_t end = (q_head + 1 == txq->sw_nb_desc) ?
--					0 : q_head + 1;
--
--			do {
--				txe = &txq->sw_ring[idx];
--				if (txe->mbuf != NULL) {
--					rte_pktmbuf_free_seg(txe->mbuf);
--					txe->mbuf = NULL;
--				}
--				idx = (idx + 1 == txq->sw_nb_desc) ?
--					0 : idx + 1;
--			} while (idx != end);
-+	case IDPF_TXD_COMPLT_RS: {
-+		/* Shadow ring indexed by the software-defined compl_tag is
-+		 * the sole source of truth for RS-time mbuf ownership; free
-+		 * the whole multi-seg chain via mbuf->next in one call.
-+		 */
-+		uint16_t tag = q_head & txq->tx_pending_mask;
-+		struct rte_mbuf *pkt = txq->tx_pending_pkts[tag];
-+
-+		if (pkt != NULL) {
-+			rte_pktmbuf_free(pkt);
-+			txq->tx_pending_pkts[tag] = NULL;
- 		}
- 		break;
-+	}
- 	default:
- 		TX_LOG(ERR, "unknown completion type.");
- 		return;
-@@ -991,7 +1012,7 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				tx_id = 0;
- 		}
- 
--		uint16_t first_sw_id = sw_id;
-+		uint16_t tag = txq->tx_next_compl_tag++ & txq->tx_pending_mask;
- 
- 		do {
- 			uint16_t slen = tx_pkt->data_len;
-@@ -1010,7 +1031,7 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				txd->qw1.cmd_dtype = cmd_dtype |
- 					IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
- 				txd->qw1.rxr_bufsize = CI_MAX_DATA_PER_TXD;
--				txd->qw1.compl_tag = sw_id;
-+				txd->qw1.compl_tag = 0;
- 
- 				buf_dma_addr += CI_MAX_DATA_PER_TXD;
- 				slen -= CI_MAX_DATA_PER_TXD;
-@@ -1031,7 +1052,7 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			txd->qw1.cmd_dtype = cmd_dtype |
- 				IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
- 			txd->qw1.rxr_bufsize = slen;
--			txd->qw1.compl_tag = sw_id;
-+			txd->qw1.compl_tag = 0;
- 			tx_id++;
- 			if (tx_id == txq->nb_tx_desc)
- 				tx_id = 0;
-@@ -1043,8 +1064,11 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		/* fill the last descriptor with End of Packet (EOP) bit */
- 		txd->qw1.cmd_dtype |= IDPF_TXD_FLEX_FLOW_CMD_EOP;
- 
--		/* Record first sw_id at EOP so completion can walk forward. */
--		sw_ring[txd->qw1.compl_tag].first_id = first_sw_id;
-+		/* Stamp EOP with the rolling compl_tag; RS uses it to look up
-+		 * the packet-head mbuf in the shadow ring.
-+		 */
-+		txd->qw1.compl_tag = tag;
-+		txq->tx_pending_pkts[tag] = tx_pkts[nb_tx];
- 
- 		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
- 		txq->rs_compl_count += nb_used;
+v15:
+* Rebased on latest next-net
+* Addressed AI review comments
+
+v14:
+* Dropped the ORP queue create and destructor patch.
+
+v13:
+* Addressed mailing-list review feedback on the previous revision.
+* Dropped the Tx port rate limiting patch.
+
+Gagandeep Singh (2):
+  dma/dpaa: add devargs for SG and errata workaround
+  drivers: add offline (O/H) port device support
+
+Hemant Agrawal (8):
+  net/dpaa: fix double close and null deref on remove
+  net/dpaa: fix resource leak on probe failure
+  net/dpaa: fix free port resources on close
+  net/dpaa: optimize FM deconfig
+  net/dpaa: support Rx/Tx taildrop threshold devarg
+  net/dpaa: support non fmX-macY type of shared Ethernet name
+  bus/dpaa: improve log macro usages
+  doc: update release notes with NXP DPAA changes
+
+Jun Yang (11):
+  bus/dpaa: refine fman naming
+  bus/dpaa: scan max BPID from DTS
+  drivers: shutdown DPAA FQ by fq descriptor
+  drivers: add DPAA cgrid cleanup support
+  bus/dpaa: improve FQ shutdown with channel validation
+  drivers: add BMI Tx statistics
+  net/dpaa: optimize FMC MAC type parsing
+  drivers: release DPAA bpid on driver destructor
+  net/dpaa: support fmcless rxq number as devargs
+  bus/dpaa: optimize DPAA multi-entry buffer pool operations
+  crypto/dpaa_sec: improve crypto fq resource handling
+
+Prashant Gupta (2):
+  bus/dpaa: fix FQD dest wq channel decoding
+  drivers: add process-type guards for secondary process
+
+Vanshika Shukla (1):
+  net/dpaa: enhance VSP port support
+
+ doc/guides/dmadevs/dpaa.rst               |  30 +-
+ doc/guides/nics/dpaa.rst                  |  35 +-
+ doc/guides/rel_notes/release_26_11.rst    |  21 +
+ drivers/bus/dpaa/base/fman/fman.c         |  42 +-
+ drivers/bus/dpaa/base/fman/fman_hw.c      | 202 ++++--
+ drivers/bus/dpaa/base/fman/netcfg_layer.c |   8 +-
+ drivers/bus/dpaa/base/qbman/bman.c        |  60 +-
+ drivers/bus/dpaa/base/qbman/bman_driver.c |  65 +-
+ drivers/bus/dpaa/base/qbman/qman.c        | 168 +++--
+ drivers/bus/dpaa/base/qbman/qman.h        |  23 +-
+ drivers/bus/dpaa/base/qbman/qman_driver.c |  29 +-
+ drivers/bus/dpaa/bus_dpaa_driver.h        |  11 +-
+ drivers/bus/dpaa/dpaa_bus.c               | 189 +++--
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c  |   4 +
+ drivers/bus/dpaa/include/fman.h           |  36 +-
+ drivers/bus/dpaa/include/fsl_bman.h       |  59 +-
+ drivers/bus/dpaa/include/fsl_qman.h       |  42 +-
+ drivers/bus/dpaa/rte_dpaa_logs.h          |   2 +
+ drivers/crypto/dpaa_sec/dpaa_sec.c        | 117 ++-
+ drivers/dma/dpaa/dpaa_qdma.c              | 120 ++-
+ drivers/mempool/dpaa/dpaa_mempool.c       |  68 +-
+ drivers/mempool/dpaa/dpaa_mempool.h       |   2 +-
+ drivers/net/dpaa/dpaa_ethdev.c            | 441 +++++++++--
+ drivers/net/dpaa/dpaa_ethdev.h            |  23 +-
+ drivers/net/dpaa/dpaa_flow.c              | 134 ++--
+ drivers/net/dpaa/dpaa_flow.h              |   7 +-
+ drivers/net/dpaa/dpaa_fmc.c               |  91 ++-
+ drivers/net/dpaa/dpaa_oldev.c             | 845 ++++++++++++++++++++++
+ drivers/net/dpaa/meson.build              |  11 +-
+ drivers/net/dpaa/rte_pmd_dpaa_oldev.h     | 158 ++++
+ 30 files changed, 2543 insertions(+), 500 deletions(-)
+ create mode 100644 drivers/net/dpaa/dpaa_oldev.c
+ create mode 100644 drivers/net/dpaa/rte_pmd_dpaa_oldev.h
+
 -- 
-2.34.1
+2.25.1
 
