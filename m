@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 338E2CA5FB1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 07:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E995CA5FBB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 07:08:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 96F0F427BB;
-	Wed, 30 Sep 2026 09:08:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B9269427D0;
+	Wed, 30 Sep 2026 09:08:18 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id C2B0340DD6;
- Wed, 30 Sep 2026 09:08:14 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1F82E40DD6
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 09:08:15 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A353C200193;
- Wed, 30 Sep 2026 09:08:14 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 032822001E3;
+ Wed, 30 Sep 2026 09:08:15 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6CF61200181;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C17C2200181;
  Wed, 30 Sep 2026 09:08:14 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 843201800226;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id E16731800229;
  Wed, 30 Sep 2026 15:08:13 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org,
 	gakhil@marvell.com
-Cc: hemant.agrawal@nxp.com, stable@dpdk.org, Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v2 2/6] crypto/dpaa2_sec: fix FLE pool leak on sec FD build
- failure
-Date: Wed, 30 Sep 2026 12:38:05 +0530
-Message-Id: <20260930070809.1929564-3-g.singh@nxp.com>
+Cc: hemant.agrawal@nxp.com,
+	Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v2 3/6] crypto/dpaa2_sec: increase ivsize range for AES-CTR
+Date: Wed, 30 Sep 2026 12:38:06 +0530
+Message-Id: <20260930070809.1929564-4-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260930070809.1929564-1-g.singh@nxp.com>
 References: <20260810112951.2879825-1-g.singh@nxp.com>
@@ -49,49 +49,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When build_sec_fd fails at index loop inside the enqueue burst loops,
-the previously built FD entries (indices 0..loop-1) were never freed.
-The cleanup loop iterated in the wrong direction, starting at the
-failed index and going up to frames_to_send, which are entries that
-were never built. This caused silent FLE pool exhaustion, after which
-every subsequent build_sec_fd returned -ENOMEM, enqueue_burst
-returned 0 indefinitely, and the crypto-perf test hung.
+Widen the AES-CTR IV size range from the fixed 16-byte value to
+[12, 16] with a 4-byte increment. This allows 96-bit IVs (the
+standard NIST SP 800-38A recommendation) in addition to 128-bit
+IVs, aligning with common usage and test-vector expectations.
 
-Fix both dpaa2_sec_enqueue_burst and dpaa2_sec_enqueue_burst_ordered
-by clamping frames_to_send to loop + 1 and iterating from 0 to
-free all allocated FLE buffers including the failed entry.
+The change applies to both dpaa2_sec_capabilities and
+dpaa2_pdcp_capabilities.
 
-Fixes: 623326dded3a ("crypto/dpaa2_sec: introduce poll mode driver")
-Cc: stable@dpdk.org
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-index 2a015a3d82..15152cc5a1 100644
---- a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-+++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-@@ -1550,6 +1550,9 @@ dpaa2_sec_enqueue_burst(void *qp, struct rte_crypto_op **ops,
- 			ret = build_sec_fd(*ops, &fd_arr[loop], bpid, dpaa2_qp);
- 			if (ret) {
- 				DPAA2_SEC_DP_DEBUG("FD build failed");
-+				frames_to_send = loop + 1;
-+				for (loop = 0; loop < frames_to_send; loop++)
-+					free_fle(&fd_arr[loop], dpaa2_qp);
- 				goto skip_tx;
- 			}
- 			ops++;
-@@ -1909,6 +1912,9 @@ dpaa2_sec_enqueue_burst_ordered(void *qp, struct rte_crypto_op **ops,
- 			ret = build_sec_fd(*ops, &fd_arr[loop], bpid, dpaa2_qp);
- 			if (ret) {
- 				DPAA2_SEC_DP_DEBUG("FD build failed");
-+				frames_to_send = loop + 1;
-+				for (loop = 0; loop < frames_to_send; loop++)
-+					free_fle(&fd_arr[loop], dpaa2_qp);
- 				goto skip_tx;
- 			}
- 			ops++;
+diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h b/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
+index ff32f3d860..b9a6440f78 100644
+--- a/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
++++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
+@@ -625,9 +625,9 @@ static const struct rte_cryptodev_capabilities dpaa2_sec_capabilities[] = {
+ 					.increment = 8
+ 				},
+ 				.iv_size = {
+-					.min = 16,
++					.min = 12,
+ 					.max = 16,
+-					.increment = 0
++					.increment = 4
+ 				},
+ 			}, }
+ 		}, }
+@@ -824,9 +824,9 @@ static const struct rte_cryptodev_capabilities dpaa2_pdcp_capabilities[] = {
+ 					.increment = 8
+ 				},
+ 				.iv_size = {
+-					.min = 16,
++					.min = 12,
+ 					.max = 16,
+-					.increment = 0
++					.increment = 4
+ 				}
+ 			}, }
+ 		}, }
 -- 
 2.25.1
 
