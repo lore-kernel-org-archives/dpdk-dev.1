@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A21CA5FC4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A189BCA5FC5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:46:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D871542EDD;
-	Thu,  1 Oct 2026 00:44:11 +0200 (CEST)
-Received: from mail-pj2-f38.google.com (mail-pj2-f38.google.com
- [74.125.227.166])
- by mails.dpdk.org (Postfix) with ESMTP id AB38242EC8
- for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:09 +0200 (CEST)
-Received: by mail-pj2-f38.google.com with SMTP id
- 98e67ed59e1d1-3a4b4770191so1081276a91.2
- for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CC2F042EE0;
+	Thu,  1 Oct 2026 00:44:12 +0200 (CEST)
+Received: from mail-pj2-f40.google.com (mail-pj2-f40.google.com
+ [74.125.227.168])
+ by mails.dpdk.org (Postfix) with ESMTP id 7F7DD42ECF
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:10 +0200 (CEST)
+Received: by mail-pj2-f40.google.com with SMTP id
+ 98e67ed59e1d1-3a0f64df6a6so2435715a91.3
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808249;
- x=1791413049; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808250;
+ x=1791413050; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=xEhPQipE6WkfEDs7UQ7+L4Om3PdAtIx3HyVXJT2X/So=;
- b=USp60KPPJ4ET2AbMZEjxCSGRP9QctJ6t3JA+jQwQRSWdsLa2lqR0h/nE5TqD+EP+MH
- jiaP0v+bzMrViYVw3YStGblGioy52rLxZuJqtqNDaCeyM32bZ8UFyZzJOvif1FC0ZVk6
- 4AVO78lcpCuNrJUy3gCCedKfOFqfvLU0Va18aZO2u9RCA3FvdAfkR+TNHzSUnaU0wSyF
- koKrLbrGsesSOsQyTjnvBfk0VQQdPaUq85VRouPbiO8RBOK/K8GYFrve0Mcoi/amr/gI
- wFhFPb6pRCvKJTgMcmwWU0ldaljMKHyjWrvMzzUyw4g/p6GZIU/o28+eJqfFXDfBarxL
- NCkQ==
+ bh=sOJAsh+fNZvoVQ/e8BMhJYDNnd2sqRiLjcUR7J9vnHk=;
+ b=dQPmwWpAkpqMZ9H6BNOu2pbgBDMBhxWorNXg8ei99ceoucn+8CCXc4G+flCua5jFLA
+ Tgb+wJnDhJiK2NfQpFtKBp0Yruoz7L/2qJ6++PAEPgDKfRrTbGm8DyFclom2fBGAD1qq
+ j2z35hZ3/CuWH/U35Q606ls1KcSYOLsOzKBWjr2bD1Y29mhlgdfA/YsxXyvPfJrAg1o/
+ GQ5zc9+97kuA9NHdSy2u4sxl5apxvcidwjwVasfRw1Tu/mw9wNEaFDjG0gUJ6b9SUbuT
+ My1+lPN9K6Ns9oIaYp1icLMEwC0HVc5tqDAUwMEzimPrG5EBXhMo57BNoqGRPffdbnAq
+ UbZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790808249; x=1791413049;
+ d=1e100.net; s=20260707; t=1790808250; x=1791413050;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=xEhPQipE6WkfEDs7UQ7+L4Om3PdAtIx3HyVXJT2X/So=;
- b=o4N83gHCsdsII2174IZeeGKdbFXvvhxnUHARbh0FMGX5MA1p4BrKousfRunPop3xs8
- wbUT23q9puCC3cfmwD9MFykrVY6YroSNME9qLx86MV6rm7iBkTRsvVYqPpNwM+azNzeh
- MhRkdqPKILaBT+X9Tj0EIHj48NiPYLpP3PBO8j5fGyDIoDt6FB0aQa8ckCg6QXBzBMZl
- PxEfoFi9+qu7MNXBNDCARl2CDqDrjA80AM7m6zyGEovVzgOUoLBW1TtDFlu8R7VVRG4P
- gVnRiTBRub/CavB39AvK0TMSfDEMYHqC4hHru+UmM5YEL8D5l+f3TxA4f+1mFHRs+dkV
- SBJA==
-X-Gm-Message-State: AFq9FYJmCNdMhPD/hhVg0qkZMxDzOQTdn7rj570gKhTLtKTLMHd7NPBQ
- eEMjAsbwD2tOKuyMxaRmekcy1QxumhGnW8QjLXi2x48GKZpKjPs8Tu7UuRpescFKovREcX0me21
- EEEI8OAA=
-X-Gm-Gg: AYBFou0mYcDQqM/XeyX1XO0l+UUPOpR/Zc5IgWrxPKNx2brN2P6+A0EpK1XOLX4jG4M
- VPKOQvziiRwXAb/gr6aSEfjiJFXZ1sf0w+58Nj2JWbLCQdXnB7FhMcBRnV5N2ly2/TUUKlGB/3Y
- kSKS9cjaOFjywx1EZK7QBCAayzEUZ/85EUCIfi6fomrIDPNM1L5MezR02A2ACghQSQ8QBlyuTu5
- pJWP9vxq7Tk59ifJ5UQtFujw2HPYEHZJiok6mM+ipC2q6fsyafDSvGDzrNsWyoPwufcTeCcZnaO
- VMRr0pTHsUV9Zqt8gOw19ZD1wDPUE5pIcdLuroFIuVnINdfBIaJLBJh9CJAtiO6bLxlv84ehIa/
- z8RJldi4jeSLiy/LVcYM1lP02CnVpxAodbBkYDlCEBL8Pg1T8jvchJI0IHl759T+rh5owCgdUSA
- 3ZNvZ2kJKOAoEA4GSxtKVih2uyTKcdBNCAEKV/KCJj/4sh2YGhW6l1wFXWri6omu3/6KojqbAlH
- raqfFkBkecUkTAPETglcT7V+b+sxfRATscNIaM=
-X-Received: by 2002:a17:90a:e7c9:b0:3a4:85c4:68fc with SMTP id
- 98e67ed59e1d1-3a4d1545a03mr2556008a91.29.1790808248776; 
- Wed, 30 Sep 2026 15:44:08 -0700 (PDT)
+ bh=sOJAsh+fNZvoVQ/e8BMhJYDNnd2sqRiLjcUR7J9vnHk=;
+ b=RA1Z1V7GSROXvxtQqNfJqLum/dC1GBZItuMWfrAbg2B3+3/5zM8PA/P0uWWOfGPBvy
+ AK2HXAfhagsYYq2yjLRYOXnZJ+Y+xGDdvatSiszDBLjjx26OfC3Sq63lkBilydrls3by
+ gMk7Q8W7oJG9wyr6TsjVvg8PHK1Ksk23YMWqcar7CBfD/HRQweCexR+4YJyVGzjK3I1h
+ 3Mxu3T65U5T1CbRJvLTlYSA8IyCxLzV/hLSbNkCizOC8YlFLdKH7Sc2x+K2KSrAp2VUE
+ SLtJlDRsZJmkqmEqzoTCgTVJ+wMsmBb4R0o6nWNzK6MndiV7X7PBjLLDm1CDnpY0W7hW
+ 12tg==
+X-Gm-Message-State: AFq9FYJ8PFIjpuF2ByCMw4nH+yd8zBGig2NrTXM1BVxDNOEdoorL9WNQ
+ 1c8u9s5eMx+UWSLZQg2PRVk/2uie/L1VUC53558ZKLXHKuhPPEW55/S/k05ckea8EXmdw3GYAN/
+ SNOGA858=
+X-Gm-Gg: AYBFou1mdBHZlzDb+nk5+oxZv2pB0McINr1FWRAzDaO7I00T8ibPSGWuS1Nwb3AdkqV
+ hpM1wIJ8IDT7LNcKA/Uhiwt7U8PkqnVGcaYko72M6Ve4uSxneuVqg94gVNIA/grj3tuAhjkBEG3
+ inriYEKaOuOES2EleElDELgj1nrFrglmyfBfgvbrL08jZHbVyJuXd9BzFFBHuSP0hqAAuzR9Qwo
+ R3ivcckBd9LNCJ2n2FsUGsg5NdnfG0jfDWsYlNMWwSF6DHdz4xYbkgUTyzYM77TIlMR3Ldjr6ad
+ 0FefobtNRjlzgJsT7ZmNPq9eUr6qGJrnHK57jKhYvJ8ynCFL7ZJN8Zs/X5Q7uQ/V16D6tHzKvXJ
+ 3t3dvcLOfqbERUOxN1W4jX46JKpAifBi1d58haG4vM5TTNeGv7BCnl8sLcvhzOpQSiTWtbq6z2m
+ cfkaLN7GNRxZU0kru6hXZGYcUUs8PKVgqT9DSLNbYE93jOvaSWM4oZJn7xXPkvfGE55xfiywudC
+ LUgXpZPNqbNt9C+MRksvc9vg9forNAs4wtXmN0=
+X-Received: by 2002:a17:90b:3ccb:b0:39e:6a80:b796 with SMTP id
+ 98e67ed59e1d1-3a4d18c4d32mr2528977a91.38.1790808249604; 
+ Wed, 30 Sep 2026 15:44:09 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.08
+ 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Sep 2026 15:44:08 -0700 (PDT)
+ Wed, 30 Sep 2026 15:44:09 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Qi Zhang <qi.z.zhang@intel.com>, Ke Zhang <ke1x.zhang@intel.com>,
- Kevin Liu <kevinx.liu@intel.com>
-Subject: [PATCH v3 24/65] net/ice: use kvargs numeric helpers
-Date: Wed, 30 Sep 2026 15:40:42 -0700
-Message-ID: <20260930224340.58580-25-stephen@networkplumber.org>
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v3 25/65] net/iavf: use kvargs numeric helpers
+Date: Wed, 30 Sep 2026 15:40:43 -0700
+Message-ID: <20260930224340.58580-26-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260930224340.58580-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -87,298 +84,171 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-parse_u32() open codes the errno, end pointer and range checks that the
-helper does.
+parse_u16() ignores the end pointer, so "8junk" is accepted, and assigns
+a u64 into a u16 without a range check, so "65536" wraps to zero. Zero
+is still rejected, as it is the unset marker for quanta_size.
 
-parse_tx_sched_levels() assigns before validating and uses base 0, so a
-leading zero silently selects octal.
+parse_bool() checks neither errno nor the end pointer.
 
-handle_field_offs_arg() converts with atoi(), which reports no error,
-and stores the result through a uint8_t pointer while the caller passes
-&xtr_field_offs, which is an int. Only one byte of a four byte field
-was written. Convert with rte_kvargs_to_int() and store through an int
-pointer instead. The range starts at zero, which keeps the old isdigit()
-rejection of a negative value: -1 is used internally to mean that no
-extraction field is configured.
+iavf_parse_watchdog_period() uses atoi(), which cannot report an error
+at all, so a malformed value becomes zero and the negative check never
+fires.
 
-The debug_mask parser is converted separately, later in this series,
-since it needs the hexadecimal handler rather than a decimal one.
-
-parse_bool() stored an int through the pointer it was given, but three
-of its five callers pass the address of a uint8_t field in struct
-ice_devargs: default_mac_disable, ddp_load_sched and source_prune.
-Each of those parsed four bytes over a one byte field and corrupted
-whatever followed it. default_mac_disable is the worst of the three,
-since it is immediately followed by proto_xtr[ICE_MAX_QUEUE_NUM], which
-ice_parse_devargs() has just initialized when the argument is parsed.
-
-All five arguments are booleans, so make the fields bool and use
-rte_kvargs_handle_bool(), which removes the mismatch along with the
-hand written parser. A bare key such as "safe-mode-support" now enables
+no-poll-on-link-down, auto_reset and enable_lldp are booleans, so make
+the fields bool and use rte_kvargs_handle_bool(). That is every caller
+of the local parse_bool(), so it goes away too. A bare key now enables
 the option, and the usual spellings are accepted.
-
-Bugzilla ID: 2037
-Bugzilla ID: 2038
-Fixes: 66214b547c65 ("net/ice: add option to disable default MAC")
-Fixes: df539aaf35cb ("net/ice: refactor flex descriptor protocol field extraction")
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/intel/ice/ice_ethdev.c | 102 +++++++++--------------------
- drivers/net/intel/ice/ice_ethdev.h |  10 +--
- 2 files changed, 36 insertions(+), 76 deletions(-)
+ drivers/net/intel/iavf/iavf.h        |  6 +--
+ drivers/net/intel/iavf/iavf_ethdev.c | 55 +++++++++-------------------
+ 2 files changed, 20 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index dfee07c457..4c3db27812 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -8,6 +8,7 @@
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index eb7cf2b58d..8f31fbabbf 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -324,10 +324,10 @@ struct iavf_devargs {
+ 	uint8_t proto_xtr[IAVF_MAX_QUEUE_NUM];
+ 	uint16_t quanta_size;
+ 	uint32_t watchdog_period;
+-	int auto_reset;
+-	int no_poll_on_link_down;
++	bool auto_reset;
++	bool no_poll_on_link_down;
+ 	uint64_t mbuf_check;
+-	int enable_lldp;
++	bool enable_lldp;
+ };
+ 
+ struct iavf_security_ctx;
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index a8abe0154c..27d6f73b94 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -3,6 +3,7 @@
+  */
  
  #include <ctype.h>
- #include <fcntl.h>
 +#include <limits.h>
+ #include <sys/queue.h>
+ #include <stdalign.h>
  #include <stdio.h>
- #include <sys/types.h>
- #include <sys/stat.h>
-@@ -15,6 +16,7 @@
- #include <math.h>
- 
- #include <rte_tailq.h>
+@@ -13,6 +14,7 @@
+ #include <stdarg.h>
+ #include <inttypes.h>
+ #include <rte_byteorder.h>
 +#include <rte_kvargs.h>
+ #include <rte_common.h>
  #include <rte_os_shim.h>
  
- #include "eal_firmware.h"
-@@ -738,18 +740,20 @@ handle_proto_xtr_arg(__rte_unused const char *key, const char *value,
- }
- 
- static int
--handle_field_offs_arg(__rte_unused const char *key, const char *value,
--				void *offs_args)
-+handle_field_offs_arg(const char *key, const char *value, void *offs_args)
+@@ -2401,11 +2403,10 @@ static int
+ parse_u16(__rte_unused const char *key, const char *value, void *args)
  {
--	uint8_t *offset = offs_args;
-+	int64_t offset;
+ 	u16 *num = (u16 *)args;
+-	u16 tmp;
++	uint64_t tmp;
  
--	if (value == NULL || offs_args == NULL)
-+	if (offs_args == NULL)
- 		return -EINVAL;
- 
--	if (!isdigit(*value))
--		return -1;
-+	/* A negative offset is reserved: -1 means no field is configured. */
-+	if (rte_kvargs_to_int(value, 0, INT_MAX, &offset) < 0) {
-+		PMD_DRV_LOG(ERR, "Invalid %s, must be a positive offset", key);
-+		return -EINVAL;
-+	}
- 
--	*offset = atoi(value);
-+	*(int *)offs_args = offset;
- 
+-	errno = 0;
+-	tmp = strtoull(value, NULL, 10);
+-	if (errno || !tmp) {
++	/* zero is not accepted, it is the "unset" marker for this argument */
++	if (rte_kvargs_to_uint(value, 1, UINT16_MAX, &tmp) < 0) {
+ 		PMD_DRV_LOG(WARNING, "%s: \"%s\" is not a valid u16",
+ 			    key, value);
+ 		return -1;
+@@ -2416,35 +2417,13 @@ parse_u16(__rte_unused const char *key, const char *value, void *args)
  	return 0;
- }
-@@ -1089,7 +1093,7 @@ ice_init_mac_address(struct rte_eth_dev *dev)
- 		return -ENOMEM;
- 	}
- 	/* store it to dev data */
--	if (ad->devargs.default_mac_disable != 1)
-+	if (!ad->devargs.default_mac_disable)
- 		rte_ether_addr_copy((struct rte_ether_addr *)hw->port_info[0].mac.perm_addr,
- 			&dev->data->mac_addrs[0]);
- 	return 0;
-@@ -1119,7 +1123,7 @@ ice_add_mac_filter(struct ice_vsi *vsi, struct rte_ether_addr *mac_addr)
- 	struct ice_adapter *ad = (struct ice_adapter *)hw->back;
- 	int ret = 0;
- 
--	if (ad->devargs.default_mac_disable == 1 && rte_is_same_ether_addr(mac_addr,
-+	if (ad->devargs.default_mac_disable && rte_is_same_ether_addr(mac_addr,
- 			(struct rte_ether_addr *)hw->port_info[0].mac.perm_addr)) {
- 		PMD_DRV_LOG(ERR, "This Default MAC filter is disabled.");
- 		return 0;
-@@ -1769,7 +1773,7 @@ ice_setup_vsi(struct ice_pf *pf, enum ice_vsi_type type)
- 		 */
- 		vsi_ctx.info.sw_id = hw->port_info->sw_id;
- 		/* Source Prune */
--		if (ad->devargs.source_prune != 1) {
-+		if (!ad->devargs.source_prune) {
- 			/* Disable source prune to support VRRP
- 			 * when source-prune devarg is not set
- 			 */
-@@ -2140,25 +2144,6 @@ ice_base_queue_get(struct ice_pf *pf)
- 	}
  }
  
 -static int
 -parse_bool(const char *key, const char *value, void *args)
 -{
--	int *i = args;
+-	int *i = (int *)args;
+-	char *end;
+-	int num;
 -
--	if (value == NULL || value[0] == '\0') {
--		PMD_DRV_LOG(WARNING, "key:\"%s\", requires a value, which must be 0 or 1", key);
--		return -1;
--	}
--	if (value[1] != '\0' || (value[0] != '0' && value[0] != '1')) {
--		PMD_DRV_LOG(WARNING, "invalid value:\"%s\" for key:\"%s\", value must be 0 or 1",
+-	num = strtoul(value, &end, 10);
+-
+-	if (num != 0 && num != 1) {
+-		PMD_DRV_LOG(WARNING, "invalid value:\"%s\" for key:\"%s\", "
+-			"value must be 0 or 1",
 -			value, key);
 -		return -1;
 -	}
 -
--	*i = (value[0] == '1');
+-	*i = num;
 -	return 0;
 -}
 -
  static int
- parse_u64(const char *key, const char *value, void *args)
+ iavf_parse_watchdog_period(__rte_unused const char *key, const char *value, void *args)
  {
-@@ -2178,45 +2163,19 @@ parse_u64(const char *key, const char *value, void *args)
- 	return 0;
- }
- 
--static int
--parse_u32(const char *key, const char *value, void *args)
--{
--	uint32_t *num = args;
--	unsigned long tmp;
--	char *endptr;
--
--	errno = 0;
--	tmp = strtoul(value, &endptr, 0);
--	if (errno != 0 || endptr == value || *endptr != '\0') {
--		PMD_DRV_LOG(WARNING, "%s: \"%s\" is not a valid u32", key, value);
--		return -1;
--	}
--	if (tmp > UINT32_MAX) {
--		PMD_DRV_LOG(WARNING, "%s: value \"%s\" is out of range", key, value);
--		return -1;
--	}
--
--	*num = (uint32_t)tmp;
--
--	return 0;
--}
--
- static int
- parse_tx_sched_levels(const char *key, const char *value, void *args)
- {
- 	uint8_t *num = args;
--	long tmp;
--	char *endptr;
+ 	int *num = (int *)args;
+-	int tmp;
 +	uint64_t tmp;
  
 -	errno = 0;
--	tmp = strtol(value, &endptr, 0);
- 	/* the value needs two stage validation, since the actual number of available
- 	 * levels is not known at this point. Initially just validate that it is in
- 	 * the correct range, between 3 and 8. Later validation will check that the
- 	 * available layers on a particular port is higher than the value specified here.
- 	 */
--	if (errno || *endptr != '\0' ||
--			tmp < (ICE_VSI_LAYER_OFFSET - 1) || tmp >= ICE_TM_MAX_LAYERS) {
-+	if (rte_kvargs_to_uint(value, ICE_VSI_LAYER_OFFSET - 1,
-+			       ICE_TM_MAX_LAYERS - 1, &tmp) < 0) {
- 		PMD_DRV_LOG(WARNING, "%s: Invalid value \"%s\", should be in range [%d, %d]",
- 			    key, value, ICE_VSI_LAYER_OFFSET - 1, ICE_TM_MAX_LAYERS - 1);
+-	tmp = atoi(value);
+-	if (tmp < 0) {
++	if (rte_kvargs_to_uint(value, 0, INT_MAX, &tmp) < 0) {
+ 		PMD_DRV_LOG(WARNING, "%s: \"%s\" is not greater than or equal to zero",
+ 				key, value);
  		return -1;
-@@ -2457,13 +2416,13 @@ static int ice_parse_devargs(struct rte_eth_dev *dev)
+@@ -2515,8 +2494,8 @@ static int iavf_parse_devargs(struct rte_eth_dev *dev)
+ 	int ret;
+ 	int watchdog_period = -1;
+ 
+-	ad->devargs.auto_reset = 1;
+-	ad->devargs.no_poll_on_link_down = 1;
++	ad->devargs.auto_reset = true;
++	ad->devargs.no_poll_on_link_down = true;
+ 
+ 	if (!devargs)
+ 		return 0;
+@@ -2550,8 +2529,8 @@ static int iavf_parse_devargs(struct rte_eth_dev *dev)
+ 	else
+ 		ad->devargs.watchdog_period = watchdog_period;
+ 
+-	ret = rte_kvargs_process(kvlist, IAVF_NO_POLL_ON_LINK_DOWN_ARG,
+-				 &parse_bool, &ad->devargs.no_poll_on_link_down);
++	ret = rte_kvargs_process_opt(kvlist, IAVF_NO_POLL_ON_LINK_DOWN_ARG,
++				 rte_kvargs_handle_bool, &ad->devargs.no_poll_on_link_down);
  	if (ret)
  		goto bail;
  
--	ret = rte_kvargs_process(kvlist, ICE_SAFE_MODE_SUPPORT_ARG,
--				 &parse_bool, &ad->devargs.safe_mode_support);
-+	ret = rte_kvargs_process_opt(kvlist, ICE_SAFE_MODE_SUPPORT_ARG,
-+				 rte_kvargs_handle_bool, &ad->devargs.safe_mode_support);
+@@ -2568,15 +2547,15 @@ static int iavf_parse_devargs(struct rte_eth_dev *dev)
  	if (ret)
  		goto bail;
  
--	ret = rte_kvargs_process(kvlist, ICE_DEFAULT_MAC_DISABLE,
--				&parse_bool, &ad->devargs.default_mac_disable);
-+	ret = rte_kvargs_process_opt(kvlist, ICE_DEFAULT_MAC_DISABLE,
-+				rte_kvargs_handle_bool, &ad->devargs.default_mac_disable);
+-	ret = rte_kvargs_process(kvlist, IAVF_ENABLE_AUTO_RESET_ARG,
+-				 &parse_bool, &ad->devargs.auto_reset);
++	ret = rte_kvargs_process_opt(kvlist, IAVF_ENABLE_AUTO_RESET_ARG,
++				 rte_kvargs_handle_bool, &ad->devargs.auto_reset);
  	if (ret)
  		goto bail;
  
-@@ -2482,8 +2441,8 @@ static int ice_parse_devargs(struct rte_eth_dev *dev)
- 	if (ret)
- 		goto bail;
- 
--	ret = rte_kvargs_process(kvlist, ICE_RX_LOW_LATENCY_ARG,
--				 &parse_bool, &ad->devargs.rx_low_latency);
-+	ret = rte_kvargs_process_opt(kvlist, ICE_RX_LOW_LATENCY_ARG,
-+				 rte_kvargs_handle_bool, &ad->devargs.rx_low_latency);
- 	if (ret)
- 		goto bail;
- 
-@@ -2492,8 +2451,8 @@ static int ice_parse_devargs(struct rte_eth_dev *dev)
- 	if (ret)
- 		goto bail;
- 
--	ret = rte_kvargs_process(kvlist, ICE_DDP_LOAD_SCHED_ARG,
--				 &parse_bool, &ad->devargs.ddp_load_sched);
-+	ret = rte_kvargs_process_opt(kvlist, ICE_DDP_LOAD_SCHED_ARG,
-+				 rte_kvargs_handle_bool, &ad->devargs.ddp_load_sched);
- 	if (ret)
- 		goto bail;
- 
-@@ -2503,12 +2462,12 @@ static int ice_parse_devargs(struct rte_eth_dev *dev)
- 		goto bail;
- 
- 	ret = rte_kvargs_process(kvlist, ICE_RL_BURST_SIZE_ARG,
--				 &parse_u32, &ad->devargs.rl_burst_size);
-+				 rte_kvargs_handle_u32, &ad->devargs.rl_burst_size);
- 	if (ret)
- 		goto bail;
- 
--	ret = rte_kvargs_process(kvlist, ICE_SOURCE_PRUNE_ARG,
--				 &parse_bool, &ad->devargs.source_prune);
-+	ret = rte_kvargs_process_opt(kvlist, ICE_SOURCE_PRUNE_ARG,
-+				 rte_kvargs_handle_bool, &ad->devargs.source_prune);
- 	if (ret)
- 		goto bail;
- 
-@@ -2762,7 +2721,7 @@ ice_dev_init(struct rte_eth_dev *dev)
+-	if (ad->devargs.auto_reset != 0 && ad->devargs.no_poll_on_link_down == 0) {
++	if (ad->devargs.auto_reset && !ad->devargs.no_poll_on_link_down) {
+ 		PMD_INIT_LOG(WARNING,
+ 			"no-poll-on-link-down=0 is incompatible with auto_reset=1, ignoring");
+-		ad->devargs.no_poll_on_link_down = 1;
++		ad->devargs.no_poll_on_link_down = true;
  	}
  
- 	if (ret) {
--		if (ad->devargs.safe_mode_support == 0) {
-+		if (!ad->devargs.safe_mode_support) {
- 			PMD_INIT_LOG(ERR, "Failed to load the DDP package,"
- 					"Use safe-mode-support=1 to enter Safe Mode");
- 			goto err_init_fw;
-@@ -4313,7 +4272,8 @@ __vsi_queues_bind_intr(struct ice_vsi *vsi, uint16_t msix_vect,
- {
- 	struct ice_hw *hw = ICE_VSI_TO_HW(vsi);
- 	uint32_t val, val_tx;
--	int rx_low_latency, i;
-+	bool rx_low_latency;
-+	int i;
+ 	if (rte_kvargs_count(kvlist, IAVF_ENABLE_PTYPE_LLDP_ARG) > 0) {
+@@ -2586,8 +2565,8 @@ static int iavf_parse_devargs(struct rte_eth_dev *dev)
+ 		goto bail;
+ 	}
  
- 	rx_low_latency = vsi->adapter->devargs.rx_low_latency;
- 	for (i = 0; i < nb_queue; i++) {
-diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index e39757e842..39583cff38 100644
---- a/drivers/net/intel/ice/ice_ethdev.h
-+++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -627,16 +627,16 @@ struct ice_pf {
-  * Cache devargs parse result.
-  */
- struct ice_devargs {
--	int rx_low_latency;
--	int safe_mode_support;
-+	bool rx_low_latency;
-+	bool safe_mode_support;
- 	uint8_t proto_xtr_dflt;
--	uint8_t default_mac_disable;
-+	bool default_mac_disable;
- 	uint8_t proto_xtr[ICE_MAX_QUEUE_NUM];
- 	uint8_t pin_idx;
- 	uint8_t pps_out_ena;
--	uint8_t ddp_load_sched;
-+	bool ddp_load_sched;
- 	uint8_t tm_exposed_levels;
--	uint8_t source_prune;
-+	bool source_prune;
- 	uint32_t rl_burst_size;
- 	int link_state_on_close;
- 	int xtr_field_offs;
+-	ret = rte_kvargs_process(kvlist, IAVF_ENABLE_LLDP_ARG,
+-				 &parse_bool, &ad->devargs.enable_lldp);
++	ret = rte_kvargs_process_opt(kvlist, IAVF_ENABLE_LLDP_ARG,
++				 rte_kvargs_handle_bool, &ad->devargs.enable_lldp);
+ 	if (ret)
+ 		goto bail;
+ 
 -- 
 2.53.0
 
