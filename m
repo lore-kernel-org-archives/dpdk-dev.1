@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CBFCA5FAD
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 01:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC3BCA5FA5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 01:07:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3935C402A2;
-	Wed, 30 Sep 2026 03:01:18 +0200 (CEST)
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com
- [113.46.200.225])
- by mails.dpdk.org (Postfix) with ESMTP id 59542400EF
- for <dev@dpdk.org>; Wed, 30 Sep 2026 03:01:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3A318402A2;
+	Wed, 30 Sep 2026 03:07:44 +0200 (CEST)
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
+ [113.46.200.223])
+ by mails.dpdk.org (Postfix) with ESMTP id 171B3400EF
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 03:07:43 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=zjVCmGLC3RSpiCZ6l3P+R3tVrN0x4aiWSA5A6xG52uE=;
- b=K4fBAAEwejE5JKOGVoEGxp1V4UMCzOFMJwxfefW5CLxWSxCHcJi51etEH/DnwTw9x/pweiA/Y
- Pt793A6tLOycEfz3PYppOh4PnJjgFLa00vrG66fppC8oOA2Yy9A0eqqGp9Ye7AU3uSBRXidcxrL
- /L4JgTXNWZPf/t8eU4v9bSc=
-Received: from mail.maildlp.com (unknown [172.19.163.214])
- by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4hvbyn2xrtz1K96s;
- Wed, 30 Sep 2026 08:49:05 +0800 (CST)
+ bh=37ELJdDe8djxRjXHMmrYUmPuF/p4PaD1Rg9bspWnPJ4=;
+ b=mYM67amJOHpI+cuEY016duo1y3glV8kQS1hDqegenXhsPHW0psjVCPO19ar15gDHP7bHA7vyo
+ M701SOCKmNuUlLTCZs2VJ3nLEmuxHJwmK6+T7iOv68G3jtyju2hLhCUG27VkivXiX/xWhf21Zug
+ fTt4qZNnfknPFAJsI7kKHq8=
+Received: from mail.maildlp.com (unknown [172.19.163.127])
+ by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4hvc6D0z4SzmV8H;
+ Wed, 30 Sep 2026 08:55:32 +0800 (CST)
 Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id 106294057C;
- Wed, 30 Sep 2026 09:01:15 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id C814440572;
+ Wed, 30 Sep 2026 09:07:40 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Wed, 30 Sep 2026 09:01:14 +0800
-Message-ID: <28baf281-2eb8-4b8f-935d-abae4af539c8@huawei.com>
-Date: Wed, 30 Sep 2026 09:01:14 +0800
+ 15.2.2562.45; Wed, 30 Sep 2026 09:07:40 +0800
+Message-ID: <bb64c4f2-e7a9-4d6f-ae4e-343637e04851@huawei.com>
+Date: Wed, 30 Sep 2026 09:07:40 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/61] kvargs: add a socket ID handler
+Subject: Re: [PATCH v2 03/61] kvargs: add hexadecimal conversion helpers
 To: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
  <20260929163800.1108305-1-stephen@networkplumber.org>
- <20260929163800.1108305-3-stephen@networkplumber.org>
+ <20260929163800.1108305-4-stephen@networkplumber.org>
 Content-Language: en-US
 From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260929163800.1108305-3-stephen@networkplumber.org>
+In-Reply-To: <20260929163800.1108305-4-stephen@networkplumber.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.161]
@@ -60,36 +60,35 @@ Errors-To: dev-bounces@dpdk.org
 Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
 On 9/30/2026 12:36 AM, Stephen Hemminger wrote:
-> Device arguments naming a NUMA socket are common, and every driver that
-> takes one open codes the same range check against RTE_MAX_NUMA_NODES.
-> They do not agree on what the range is: dlb2 accepts RTE_MAX_NUMA_NODES
-> itself, and turbo_sw and bbdev_null check only the upper bound, so a
-> negative socket id is taken as valid.
+> Several device arguments are documented as a bare hexadecimal mask, with
+> no 0x prefix, such as the ice hw_debug_mask, the cxgbe filtermode
+> and filtermask, the hns3 dev_caps_mask and the ark Pkt_dir. Each
+> open codes strtoull() with base 16, and each gets the validation
+> wrong in a familiar way. ice checks errno but not the end pointer,
+> cxgbe checks errno without clearing it first, and hns3 checks
+> nothing at all, so dev_caps_mask=junk is silently taken as zero.
 > 
-> Add a handler for these:
+> The existing helpers cannot be used for these. They read base 16 only
+> when the value carries an explicit 0x prefix, so a documented bare mask
+> containing a letter, such as "ff", would be rejected outright, while one
+> which happens to be all digits, such as "10", would be reread as decimal
+> and change from sixteen to ten.
 > 
->     rte_kvargs_handle_socket_id
+> The second case is the dangerous one: it silently changes the meaning of
+> a working command line instead of rejecting it, which is the one kind of
+> breakage the rest of this series is careful to avoid.
 > 
-> It stores through an int and accepts -1, which is SOCKET_ID_ANY, through
-> RTE_MAX_NUMA_NODES - 1.
+> Add rte_kvargs_handle_hex32() and rte_kvargs_handle_hex64(), which are
+> the same as rte_kvargs_handle_u32() and rte_kvargs_handle_u64() except
+> that the value is always read as hexadecimal, whether or not it carries
+> a 0x prefix. Expose the underlying rte_kvargs_to_hex() for a mask
+> narrower than the target type.
 > 
-> The bound is the compile time maximum rather than the sockets present on
-> the running system, which is what the open coded checks used. Validating
-> against rte_socket_count() would also make kvargs depend on EAL, which
-> depends on kvargs in turn.
+> A sign is rejected, as it is for the unsigned handlers, so a mask cannot
+> be given as -1.
 > 
-> SOCKET_ID_ANY is spelled as a literal -1 rather than included from
-> rte_memory.h for the same reason. The value is part of the ABI.
-> 
-> No handler is added for lcore ids. There is no caller for one: the
-> drivers that take a core argument either parse a list, as crypto/scheduler
-> does with its coremask, or dispatch many keys through one shared handler,
-> as mlx5 does with service_core. One can be added when a user appears.
-> 
-> Nor is one added for queue ids or queue counts. Those look similar but
-> are not: some drivers count from one and others from zero, and the useful
-> bound is nearly always a hardware limit well below
-> RTE_MAX_QUEUES_PER_PORT, which rte_kvargs_to_uint() already covers.
+> Only the 32 and 64 bit widths are added, since those are the only ones
+> any caller needs; the family can be extended on demand.
 > 
 > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
