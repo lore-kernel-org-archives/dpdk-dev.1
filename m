@@ -2,69 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B58CA5FC5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B42CA5FC5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:45:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A82C442E7D;
-	Thu,  1 Oct 2026 00:44:00 +0200 (CEST)
-Received: from mail-pj2-f38.google.com (mail-pj2-f38.google.com
- [74.125.227.166])
- by mails.dpdk.org (Postfix) with ESMTP id B941142E6D
- for <dev@dpdk.org>; Thu,  1 Oct 2026 00:43:57 +0200 (CEST)
-Received: by mail-pj2-f38.google.com with SMTP id
- 98e67ed59e1d1-3a4eda6744bso526517a91.1
- for <dev@dpdk.org>; Wed, 30 Sep 2026 15:43:57 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id ADF1A42E84;
+	Thu,  1 Oct 2026 00:44:01 +0200 (CEST)
+Received: from mail-pz2-f37.google.com (mail-pz2-f37.google.com
+ [74.125.228.37]) by mails.dpdk.org (Postfix) with ESMTP id 9CF204281D
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 00:43:58 +0200 (CEST)
+Received: by mail-pz2-f37.google.com with SMTP id
+ 41be03b00d2f7-cc7c9c2df74so617656a12.0
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 15:43:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808237;
- x=1791413037; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808238;
+ x=1791413038; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=g4ItmOeCrAFTzfYIHgcSk8XhV2lDKXWbaowKe1xzTwY=;
- b=Ad7pozU7HLL0x/QnKra8xRnejkZom6xnnnYf1Vlin7JixgwdDDKrPds6TDd4qI2vZv
- E0Q0+xTlEGD5j2xNgd3n+xApWer0FeSJ517f5oGpfymZUCws1Bd8cORr5fFjeroae3bO
- BC0TdJoaSQFoT2WiiZH4KV/iaKJUfZEMJQnhST3Tp8AiTKcBlV4bINYwJ16uKaFcbvzl
- Ab7a5+Sypj6nyKX+ZjFdOi3m8sERWs5RKyP29te9bmSiPD7L68SRDXv4A2w5vgHq/kWN
- t5Irl62Qdt0bYZdSs42XgciZt800BVWHQOptVMC86MJY/Vf9xr1JbYnNNxFlEkGDku4u
- VDSA==
+ bh=PrEZfaecDPORdNJRFdIxJezVZoP6c/QkHrOt5m5TcKk=;
+ b=mg2U/MOWgBJCVoeWC5CQIDWnB5WoeosgKszS6JCFrEPtR5mLfSVxFDomgsdpPbYssI
+ 2xMO+Scqo9YFVU3T00GrznoysPLuyWfOlmARQ3fAihL0elubRGn1+6XaaNQCVXclEhKQ
+ DlYAfmn3R+d3w917dP25Z3p5Blbp6z9ciPbR/4qERYRvSikSlpwWgcIpwaardMdn7qLB
+ rZ8uZLMK6MbDAZ2LsaRhEJp54+FNAOrS1dBXis6h16jO/9HTpfhmTenDyZ2J1O1msBen
+ SUxEzIwTgsPjj1zEwgCg7zb2DBcjOjN2e1aacBwbRwYLkd8V0lQqXcYfhWCsQXKP+86S
+ UIZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790808237; x=1791413037;
+ d=1e100.net; s=20260707; t=1790808238; x=1791413038;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=g4ItmOeCrAFTzfYIHgcSk8XhV2lDKXWbaowKe1xzTwY=;
- b=ysv3MHAf4wjIq4gpFB1mJQ4ciMrV7A2zl2XVgSC51ZHc8Rd5I3wsQ1idhRaaC7J749
- 8ZWnaXFitOfmvNpqQ93CLOQJVS99XokeuommRwXgeiXHtl2Vlo4Elm75vdpgqChH8h4k
- yVFodsytEnBZTmsVcv5cd6Zodq/yJUVh1+ZhGDRc8rb/oFpy5VB1ZCynPzFcIBtMiTqY
- /FFz/xg0s4g8SB3h87VbcfkAmRIKthgK54x/AHd2ZGdsemCIHlw5JRL+ztYY/7BiL0f9
- Rcfri7675VaoC4/aO3aYZmYQSdlsp382OzY9X8IbRfk4vK37Du6oklhl7QnwBdoId3yN
- YwjQ==
-X-Gm-Message-State: AFq9FYJiXJCBr4iiPtoqfIwZHV6osFYesJe8fVgkIEEgQK/oxJ2tMB9J
- P0flzArzcBweXeZ9m1jqQI+HWrl+5DDVZ0IjOPugzIfRqGjtph/9zq8XFQnbMVdTJXY79TQieji
- au79S9xI=
-X-Gm-Gg: AYBFou2UDDXCltaGMImT3IdP/xS/jTx8MrrAnICIfDowbd43lPG/7cHLdWra7ZTm8PF
- qi3imq4fXfq5IBXbX9cEOY+nzdanHKKxiA+S9yyMe0J70lLNGbjc6ejaWby+mqsiZtjuDN/ImY4
- WGue7QbQp4g0rxZ0Vxpe13F+ztZpaMhogrKi07XYzW9sPMFG7e1PSwn7za5aAHSi/avnGGHXIjh
- PfGgi0HvbWo30sfMNmwqCckV1S7Ru8tZJC7eHaud6SL/W+/56Thd80U2e0tOXUBn9a/NWxZ0mpO
- SrbG9htY0ou19qHDdJRAUBsvIXsvlss8l54CRf8u3TBIMx3AjJ9yuQ628wuVmYVJTqlLd1HESvx
- rLHr0ywMLrNdWB0Hzg5q/juNWOrOdSExwZjavAbA0WVfhvp2m26rUsTps1kXmrHba3EdBTiBfhx
- TTuzAEcLAHHTu0If5zIlAweQLqdaMsQzoeZoi37loa2OFaB3WFGJfCO5ewerL5dSYrsP2RuKWQ5
- qsuAylMX3zfRGtpETfP7dhipjCp3m4BLRLqQA==
-X-Received: by 2002:a17:90b:2f10:b0:3a0:7cbf:b8d2 with SMTP id
- 98e67ed59e1d1-3a4d15008c6mr2391525a91.10.1790808236760; 
- Wed, 30 Sep 2026 15:43:56 -0700 (PDT)
+ bh=PrEZfaecDPORdNJRFdIxJezVZoP6c/QkHrOt5m5TcKk=;
+ b=F9YKD2iLrUIuMDaGWblEJKG841+jpewQcSoiT2Fj4ZIdna7EUYbcUv8UpWuUbzHP3c
+ 0lGxOs0ap3dR0P1CeuI7wgfBZ4zpiJOF0r4Nawg0u2xd97fslBglBAdOhaScL4lWF/kS
+ WHZRXEiUKK5g1owtZI/nmyvX7FrG0h7oBn5lKkuCPM6WHSwVnb8Uh7IMTaFMeKnmcTk1
+ SnPRhPEMQegf03vJzZPOfpJVOWh39rUJeV8aPT0eplc+DdARjLHkCDOli4oHsqUnfmzm
+ BEm/sxdsxQA9fbz/OPfLISOzlMQCd2gFOywFzyCb98B463Up+65RqbaIUY6xi4+ZPVmF
+ gl4A==
+X-Gm-Message-State: AFq9FYIXSVtbvAq/XR6demaChXiP17UmtZKF/0kLpfbBOGfldBNaXaJp
+ /nuJ/JDyuUhIC0Hg19FiW/RwFpm3oQkobjKCG314sI/snlAqtbZA6ElI6tAouN8n1oZfRhXQnuI
+ 1Fh+Oc1Q=
+X-Gm-Gg: AYBFou3meqdkQvG1w8rRjKXSDC/qVcMJv2OMYCZFZzsq3L/jwUEsBDeYK3f9zrjKCkA
+ 6h50Fr77YWQ25/5xYmkyYxFx+iDzUbevSI9EafSOd8VLSnSS6KgRP4S6Rk2lmnh/Bg6dTLs56aE
+ lxnXx+zkgunzPb6yjRuqOOr4IMiRTTlbP0++FeIBE4q0nBg2hBgda2wGq6j/q1wC1pZjO+7YXml
+ LTA7JqaRRzK+OjTDitPqt3/kKSrHj2beTW2ghZTCGMcIP19zh2983Z1lPIMOSrBMtM7qpiYFi/s
+ 3dm/EHHn+0L7XCTxtCD1wPzoEKkVZPwPF1HTiP7wUALyLvVDUpGCldoIq7QFaL3B1ExNnV/wg0C
+ nJ4fo3w4hLXRIwXsxv+CQwdqBm+WlOm/y28xs9SoltlScCHc2vyMLKRI5Ysr8NjbcupuJXk7dMf
+ 2DSFfexqzqUdD8NLSXR1cso0qlMp2JnODtMyZliP+b8hHJJ4Azs5O3lKn2H4pLa4RY/8JOqP3Da
+ JhyhfJBeI4PxGZ1FmjLK3vqUrJn8swYoH/Zsg==
+X-Received: by 2002:a17:90b:1e49:b0:3a0:aaed:b254 with SMTP id
+ 98e67ed59e1d1-3a4f2afcd3fmr498346a91.5.1790808237658; 
+ Wed, 30 Sep 2026 15:43:57 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
  98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.43.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Sep 2026 15:43:56 -0700 (PDT)
+ Wed, 30 Sep 2026 15:43:57 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jakub Grajciar <jgrajcia@cisco.com>
-Subject: [PATCH v3 13/65] net/memif: use kvargs numeric helpers
-Date: Wed, 30 Sep 2026 15:40:31 -0700
-Message-ID: <20260930224340.58580-14-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 14/65] net/af_packet: use kvargs numeric helpers
+Date: Wed, 30 Sep 2026 15:40:32 -0700
+Message-ID: <20260930224340.58580-15-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260930224340.58580-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -84,157 +82,149 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-memif_set_id() dereferences the value without checking it for NULL, so
-"net_memif,id" with no value crashes. It then ignores the result of the
-conversion entirely, with a comment noting that zero is a valid id, so
-"id=foo" silently selects interface zero.
+The open coded parse_uint() is correct, but the same checks are now
+available from kvargs. Use them, and express the lower bound as part of
+the range rather than as a separate test after each call.
 
-memif_set_bs() and memif_set_rs() check neither errno nor the end
-pointer, so a malformed value is taken as zero and rejected with a
-misleading message, while an overflowing one wraps into range.
+qdisc_bypass is a boolean, so parse it with rte_kvargs_handle_bool()
+into a bool. A bare "qdisc_bypass" with no value now enables it, which
+the manual pair loop here supports without any further change.
 
-memif_set_owner() is nearly correct but does not reset errno before
-strtoul(), and rejects UINT32_MAX which is a valid uid.
+Note that the qdisc_bypass parameter of rte_pmd_init_internals() stays
+an unsigned int: its address is passed to setsockopt(), which expects a
+four byte int.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/memif/rte_eth_memif.c | 73 ++++++++++++++-----------------
- 1 file changed, 34 insertions(+), 39 deletions(-)
+ drivers/net/af_packet/rte_eth_af_packet.c | 72 +++++------------------
+ 1 file changed, 16 insertions(+), 56 deletions(-)
 
-diff --git a/drivers/net/memif/rte_eth_memif.c b/drivers/net/memif/rte_eth_memif.c
-index 1c8dc1d5ec..212947c833 100644
---- a/drivers/net/memif/rte_eth_memif.c
-+++ b/drivers/net/memif/rte_eth_memif.c
-@@ -1807,45 +1807,42 @@ memif_set_zc(const char *key __rte_unused, const char *value, void *extra_args)
- 	return 0;
- }
+diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
+index a93df97023..18153d9e7e 100644
+--- a/drivers/net/af_packet/rte_eth_af_packet.c
++++ b/drivers/net/af_packet/rte_eth_af_packet.c
+@@ -15,7 +15,6 @@
+ #include <rte_kvargs.h>
+ #include <bus_vdev_driver.h>
  
--static int
--memif_set_id(const char *key __rte_unused, const char *value, void *extra_args)
--{
--	memif_interface_id_t *id = (memif_interface_id_t *)extra_args;
--
--	/* even if parsing fails, 0 is a valid id */
--	*id = strtoul(value, NULL, 10);
--	return 0;
--}
--
+-#include <ctype.h>
+ #include <errno.h>
+ #include <limits.h>
+ #include <linux/if_ether.h>
+@@ -1156,36 +1155,17 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ /* Parse an unsigned integer device argument. */
  static int
- memif_set_bs(const char *key __rte_unused, const char *value, void *extra_args)
+ parse_uint(const char *key, const char *value,
+-	   unsigned int *out, unsigned long limit)
++	   unsigned int *out, unsigned long min, unsigned long max)
  {
--	unsigned long tmp;
--	uint16_t *pkt_buffer_size = (uint16_t *)extra_args;
-+	uint64_t tmp;
-+	int ret;
- 
--	tmp = strtoul(value, NULL, 10);
--	if (tmp == 0 || tmp > 0xFFFF) {
--		MIF_LOG(ERR, "Invalid buffer size: %s.", value);
-+	if (extra_args == NULL)
- 		return -EINVAL;
-+
-+	ret = rte_kvargs_to_uint(value, 1, UINT16_MAX, &tmp);
-+	if (ret < 0) {
-+		MIF_LOG(ERR, "Invalid buffer size: %s.", value);
-+		return ret;
- 	}
--	*pkt_buffer_size = tmp;
-+
-+	*(uint16_t *)extra_args = tmp;
- 	return 0;
- }
- 
- static int
- memif_set_rs(const char *key __rte_unused, const char *value, void *extra_args)
- {
--	unsigned long tmp;
--	memif_log2_ring_size_t *log2_ring_size =
--	    (memif_log2_ring_size_t *)extra_args;
-+	uint64_t tmp;
-+	int ret;
- 
--	tmp = strtoul(value, NULL, 10);
--	if (tmp == 0 || tmp > ETH_MEMIF_MAX_LOG2_RING_SIZE) {
-+	if (extra_args == NULL)
-+		return -EINVAL;
-+
-+	ret = rte_kvargs_to_uint(value, 1, ETH_MEMIF_MAX_LOG2_RING_SIZE, &tmp);
-+	if (ret < 0) {
- 		MIF_LOG(ERR, "Invalid ring size: %s (max %u).",
- 			value, ETH_MEMIF_MAX_LOG2_RING_SIZE);
--		return -EINVAL;
-+		return ret;
- 	}
--	*log2_ring_size = tmp;
-+
-+	*(memif_log2_ring_size_t *)extra_args = tmp;
- 	return 0;
- }
- 
-@@ -1917,21 +1914,19 @@ memif_set_owner(const char *key, const char *value, void *extra_args)
- 	RTE_ASSERT(sizeof(uid_t) == sizeof(uint32_t));
- 	RTE_ASSERT(sizeof(gid_t) == sizeof(uint32_t));
- 
 -	unsigned long val;
--	char *end = NULL;
--	uint32_t *id = (uint32_t *)extra_args;
+-	char *endptr;
 +	uint64_t val;
-+	int ret;
  
--	val = strtoul(value, &end, 10);
--	if (*value == '\0' || *end != '\0') {
--		MIF_LOG(ERR, "Failed to parse %s: %s.", key, value);
-+	if (extra_args == NULL)
- 		return -EINVAL;
+-	if (value == NULL) {
+-		PMD_LOG(ERR, "no value for argument \"%s\"", key);
+-		return -1;
 -	}
--	if (val >= UINT32_MAX) {
--		MIF_LOG(ERR, "Invalid %s: %s.", key, value);
--		return -ERANGE;
-+
-+	ret = rte_kvargs_to_uint(value, 0, UINT32_MAX, &val);
-+	if (ret < 0) {
-+		MIF_LOG(ERR, "Failed to parse %s: %s.", key, value);
-+		return ret;
+-
+-	/* Skip leading whitespace so a leading sign can be detected. */
+-	while (isspace((unsigned char)*value))
+-		value++;
+-
+-	/* strtoul() silently accepts and negates a leading '-'. */
+-	if (*value == '\0' || *value == '-') {
+-		PMD_LOG(ERR, "invalid value \"%s\" for argument \"%s\"",
+-			value, key);
+-		return -1;
+-	}
+-
+-	errno = 0;
+-	val = strtoul(value, &endptr, 10);
+-	if (errno != 0 || *endptr != '\0' || val > limit) {
++	if (rte_kvargs_to_uint(value, min, max, &val) < 0) {
+ 		PMD_LOG(ERR, "invalid value \"%s\" for argument \"%s\"",
+-			value, key);
++			value == NULL ? "" : value, key);
+ 		return -1;
  	}
  
--	*id = val;
-+	*(uint32_t *)extra_args = val;
+-	*out = (unsigned int)val;
++	*out = val;
  	return 0;
  }
  
-@@ -2032,15 +2027,15 @@ rte_pmd_memif_probe(struct rte_vdev_device *vdev)
- 		if (ret < 0)
- 			goto exit;
- 		ret = rte_kvargs_process(kvlist, ETH_MEMIF_ID_ARG,
--					 &memif_set_id, &id);
-+					 rte_kvargs_handle_u32, &id);
- 		if (ret < 0)
- 			goto exit;
- 		ret = rte_kvargs_process(kvlist, ETH_MEMIF_PKT_BUFFER_SIZE_ARG,
--					 &memif_set_bs, &pkt_buffer_size);
-+					 memif_set_bs, &pkt_buffer_size);
- 		if (ret < 0)
- 			goto exit;
- 		ret = rte_kvargs_process(kvlist, ETH_MEMIF_RING_SIZE_ARG,
--					 &memif_set_rs, &log2_ring_size);
-+					 memif_set_rs, &log2_ring_size);
- 		if (ret < 0)
- 			goto exit;
- 		ret = rte_kvargs_process(kvlist, ETH_MEMIF_SOCKET_ARG,
-@@ -2053,11 +2048,11 @@ rte_pmd_memif_probe(struct rte_vdev_device *vdev)
- 		if (ret < 0)
- 			goto exit;
- 		ret = rte_kvargs_process(kvlist, ETH_MEMIF_OWNER_UID_ARG,
--					 &memif_set_owner, &owner_uid);
-+					 memif_set_owner, &owner_uid);
- 		if (ret < 0)
- 			goto exit;
- 		ret = rte_kvargs_process(kvlist, ETH_MEMIF_OWNER_GID_ARG,
--					 &memif_set_owner, &owner_gid);
-+					 memif_set_owner, &owner_gid);
- 		if (ret < 0)
- 			goto exit;
- 		ret = rte_kvargs_process(kvlist, ETH_MEMIF_MAC_ARG,
+@@ -1204,7 +1184,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 	unsigned int framesize = DFLT_FRAME_SIZE;
+ 	unsigned int framecount = DFLT_FRAME_COUNT;
+ 	unsigned int qpairs = 1;
+-	unsigned int qdisc_bypass = 1;
++	bool qdisc_bypass = true;
+ 	const char *fanout_mode = NULL;
+ 
+ 	/* do some parameter checking */
+@@ -1219,52 +1199,32 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 	for (k_idx = 0; k_idx < kvlist->count; k_idx++) {
+ 		pair = &kvlist->pairs[k_idx];
+ 		if (strstr(pair->key, ETH_AF_PACKET_NUM_Q_ARG) != NULL) {
+-			if (parse_uint(pair->key, pair->value,
+-				       &qpairs, RTE_MAX_QUEUES_PER_PORT) < 0)
++			if (parse_uint(pair->key, pair->value, &qpairs,
++				       1, RTE_MAX_QUEUES_PER_PORT) < 0)
+ 				return -1;
+-			if (qpairs < 1) {
+-				PMD_LOG(ERR,
+-					"%s: invalid qpairs value",
+-					name);
+-				return -1;
+-			}
+ 			continue;
+ 		}
+ 		if (strstr(pair->key, ETH_AF_PACKET_BLOCKSIZE_ARG) != NULL) {
+-			if (parse_uint(pair->key, pair->value, &blocksize, UINT_MAX) < 0)
++			if (parse_uint(pair->key, pair->value, &blocksize,
++				       1, UINT_MAX) < 0)
+ 				return -1;
+-			if (!blocksize) {
+-				PMD_LOG(ERR,
+-					"%s: invalid blocksize value",
+-					name);
+-				return -1;
+-			}
+ 			continue;
+ 		}
+ 		if (strstr(pair->key, ETH_AF_PACKET_FRAMESIZE_ARG) != NULL) {
+-			if (parse_uint(pair->key, pair->value, &framesize, UINT_MAX) < 0)
++			if (parse_uint(pair->key, pair->value, &framesize,
++				       1, UINT_MAX) < 0)
+ 				return -1;
+-			if (!framesize) {
+-				PMD_LOG(ERR,
+-					"%s: invalid framesize value",
+-					name);
+-				return -1;
+-			}
+ 			continue;
+ 		}
+ 		if (strstr(pair->key, ETH_AF_PACKET_FRAMECOUNT_ARG) != NULL) {
+-			if (parse_uint(pair->key, pair->value, &framecount, UINT_MAX) < 0)
++			if (parse_uint(pair->key, pair->value, &framecount,
++				       1, UINT_MAX) < 0)
+ 				return -1;
+-			if (!framecount) {
+-				PMD_LOG(ERR,
+-					"%s: invalid framecount value",
+-					name);
+-				return -1;
+-			}
+ 			continue;
+ 		}
+ 		if (strstr(pair->key, ETH_AF_PACKET_QDISC_BYPASS_ARG) != NULL) {
+-			if (parse_uint(pair->key, pair->value, &qdisc_bypass, 1) < 0)
++			if (rte_kvargs_handle_bool(pair->key, pair->value,
++						   &qdisc_bypass) < 0)
+ 				return -1;
+ 			continue;
+ 		}
 -- 
 2.53.0
 
