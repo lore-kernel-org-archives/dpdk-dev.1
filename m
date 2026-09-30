@@ -2,53 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E77CA5FB1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 10:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81555CA5FBA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 10:20:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3838840BA0;
-	Wed, 30 Sep 2026 12:20:53 +0200 (CEST)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
- by mails.dpdk.org (Postfix) with ESMTP id B8A4A40278
- for <dev@dpdk.org>; Wed, 30 Sep 2026 12:20:51 +0200 (CEST)
-X-QQ-mid: zesmtpgz3t1790763647t36c9e054
-X-QQ-Originating-IP: auUQsuXNhFHg9vZROZj2nrFogpi1oNAKeBJQ5xV0YbU=
+	by mails.dpdk.org (Postfix) with ESMTP id 4E6C841109;
+	Wed, 30 Sep 2026 12:20:55 +0200 (CEST)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+ by mails.dpdk.org (Postfix) with ESMTP id 2C1BA40278;
+ Wed, 30 Sep 2026 12:20:52 +0200 (CEST)
+X-QQ-mid: zesmtpgz3t1790763650tfb147497
+X-QQ-Originating-IP: SIDteIH9pfYoNfdZZOTa/JZhYCVesT2MhKmWBQnkq4Y=
 Received: from DSK-zaiyuwang.trustnetic.com ( [60.186.241.247])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 30 Sep 2026 18:20:43 +0800 (CST)
+ id ; Wed, 30 Sep 2026 18:20:48 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4852022028234559461
-EX-QQ-RecipientCnt: 2
+X-BIZMAIL-ID: 9634341227819843059
+EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Subject: [PATCH v7 00/15] Wangxun fixes and new features
-Date: Wed, 30 Sep 2026 18:17:47 +0800
-Message-ID: <481A5713EEB8C431+20260930102042.2214-1-zaiyuwang@trustnetic.com>
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
+ Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH v7 01/15] net/txgbe: fix failure to configure 10G on
+ dual-speed DAC
+Date: Wed, 30 Sep 2026 18:17:48 +0800
+Message-ID: <8E3E2DAA2EF61450+20260930102042.2214-2-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
-In-Reply-To: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
+In-Reply-To: <20260930102042.2214-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
+ <20260930102042.2214-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OL/6RyBS/f6QMMvIyVbMUOrmR1s+b7OiPjuP2YlclCzsnCAcwQ4g8RxT
- /edB6tz2kv/pRSfkWDnnX/wvOFX+6ivikgM0Vnwtk4TIPfLuTtenG43fszsRnug7n716Juk
- 9T3H4/LSFO9jXEm5PnutpffbTMeM2/FxiI5USJwCWoddoj4Q4p2Gq5St9iU05EPGyKIHigi
- AEVaQEkQp2Pcd3iR0u3cPYmZIeGdjYYBpnNO0EcYV6wl8k+6QTTtCZLg/txefnP/afPhseB
- 0506AaqtzsmUlPH+Wc9PQl6eZwb27aGw6DLzyvZtiu+qVIT23aDv5JG3XjHAfYKSq8bCIuk
- a2jmqc2L1JQg750OXllA49KYw0NhL7LVFzSk3ofShd67crqCMt+H2/GGrbtIn8Tc4epq2sY
- /uol3+FYdiXPzOJR/7Zqq7YGVyrQ50mnnIYk96xQTZmZDg6q1z/2MFXNv9+lLipkFSRISxW
- qUQ2gdXcUsfEDxCJz9xTyyV5eJ6MsNQHIgIDuwEInZm+9n1lcRsx4WUCOW802qfNp4udrBs
- o8Foq9nUxs/1d6yPryxPMasyVg2K0jDQpN9phDIfO7Bud7dyBEpNRQflMOjgwQMH/159q2A
- 8knekfk1v5oVnmVEZEVBOpcTcN84FZpQEXq1DxBJfD4lWC8BYfDjEbKv5zj0+9qUIRd6STi
- DFgsthC+ngcT1uwULYD6t8dogNfDHz1Slcc2xAOm2XK0WXGAOnIaHNIENHnsH2Yn0eq8PW3
- hDMdKa4eCFLUpF0jaVn+CsIFRSoYHg9hC4C/cnKLCMEda0LTZQmGPK34l0DrxaesQpocEyH
- kVfr/nGVqBoACsaGsjHvmVOD/G2l38Z8xu2EEJ0VT+oTi09Bhq/MN40ctLW5maYZjGWdYVM
- 2HWklgEFWmfBl1LW+Y3QQdwmpsiCVamFYXdIme+v0OitMPI7xGeEflROVJfZuAwncB2BOWJ
- rYhZBRtpVEec/RQe/6ZTbAVagFd5rfM8nYywjtyCpB1B/10sQvs6Uk8AXeGHJhK+Ksy5Uf0
- MoXAHh7Yq5Tvq2tIY+rwN9BGS15uZJVWbYo6BRYaT6hk6r7izT
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+X-QQ-XMAILINFO: NWth7vBa++Gd3WzN8N215hTi3iy6s6pMiUEazXIHvrvviU27Bg/ZHIrU
+ mTFF9pcgZP5NhKvgNPGTV80bF4uAzrOHHBjg0KtxYiacEjlB4SStWb++zPkQC9iQ4OzoNlX
+ TbQaM9oRrKOBkgTUnyURoSaCK7pk3gfK4m74CgXybrLte+S3LoxyeXhokVO8nkcr/olYrgy
+ 3HsEnypwXYliqWJ/HBpD3a7xrBpqmkvvXckipxi22On7d1Coovsz+srnR01P7C3Gy+16Pv9
+ uUqpAASdwvpa2Tl8ComxTvJJ4wKcQc6UnyQg5/HNRD+0XHhPPvo2Qvb5fbHF/GQ6ZsiB+H7
+ c9qZEcX3JzRMpgYCoKc+CBeD7uqgFCe3boDMvYYwDl0+q4BGrK7T+i0iWTBQTd4fNlb3Wnd
+ gJ7/9ap/pg5+1H+tUZ+PgwytqGKeYercB5UB6gblR3u1VK8PwdutRN8NmdWevyOk7f1ZoBU
+ 0E9JMz4EXfXonLyF35Kk3EvJWlWkU9PGRENipCtullaUiAbA1OWLe9BlBXT1pqBASkkkzFz
+ H6MPrhkcBNq/XgzlY3rYaFERYnQ8mf+8yjN4ew9zmhmbpqiNcNTird7fOU+PbpahrFOpqPY
+ Df7XaRrW3O33xJMe30UpDhdj9EInQjnEA964cBDYiEnvAt3RHqTxQim9Rea711T2xojMpKe
+ udVh19D061lqIzWXgKG4rK22ToQ9oQySBOABJcXLFOtByt7lG4jHR7CjF4ect5vWq3wn6jw
+ fAPF7nrtwT/2U0buztcr3ImnmlwOLgevo0kfZ6C6N544yrhD1UEcRrO0HLNxBYCSUe6MxV7
+ sIsOTimeREHXWyQBLWdApRzWmqfu5qE+Nogqo/p/HKXB6gQQa4Ulx/rr6YSpGJAwobL9E3G
+ d/gYcEMDeebAvkVG9zK6oc7yvnMVZwlP2PgMDhcngcZSXKG1nmDueZWgreKXi/6B74oJkea
+ lv0+cdJohcEzlEDK9nDvfeoQbnKKh2bBr80c1PGacJP9S4q7fz8IWArzkKk0ozalg4PsZRj
+ /ynHQI27bPgSR7TI+7gUshwkNRWQpIjs7NUGejWYScIwdguGNfBTX4S/vlsXAf/g4nscxky
+ w==
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -63,85 +67,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series addresses link-related issues on Wangxun Amber-lite 25G/40G NICs
-(CR/KR training, hot-plug, 10G link state).
+Setting "port config speed 10000" on a 10G/40G dual-speed DAC cable
+fails with LINK_SETUP_ERR, and the AN base page always advertises
+only 40G.
 
+Two checks independently blocked 10G:
+
+1. allowed_speeds in dev_start was restricted to 40G, so the user
+   request was rejected before reaching setup_link.
+2. get_link_capabilities_aml40() returned only 40G for all DAC
+   cables, so the link_capabilities mask in setup_phy_link_aml40()
+   stripped any 10G bit from the caller speed.
+
+Remove both restrictions so 10G flows through from user
+configuration to the AN base page advertisement. On DAC cables the
+capability is read from hw->phy.fiber_suppport_speed, which reflects
+the actual SFP module.
+
+Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
+Cc: stable@dpdk.org
+
+Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
-v7:
- - P14: fix a TRAINING log-string typo.
-        move the variable declarations in txgbe_e56_get_txffe().
-        clarify the comment of page-exchange timeout budget.
----
-v6:
-  - fix the apply failure.
----
-v5:
- - drop the UDP tunnel patch: the generic UDP tunnel flag covers any UDP
-   tunnel, so the tunnel type cannot be resolved from the destination port.
- - P02: advertise 10G, 25G, and 40G from the requested speed mask instead
-        of the device ID, so the 25G and 40G parts advertise 10G by
-        default as well.
- - P07: keep the patch limited to decoding the 10G link speed from PORTSTAT;
-        the AML40 default 10G|40G advertisement change is now in P02.
- - P09: gate the SFP detection alarm and the AN73 watchdog on a new per-port
-        flag that dev_stop clears before the first cancel.
-        cancel SFP detection before the watchdog.
- - P10: re-arm the 40G module poll only while the SFP/AN73 alarm flag is set.
- - P12: treat the ffe_pre2 and bp_capa devargs as a feature rather than a fix;
-        drop the Fixes tags and stable Cc, and document the 25G/40G Amber-Lite
-        FFE defaults.
- - P14: bound the AN page exchange, propagate its timeout to the watchdog h
-        andler, and avoid register reads used only by disabled BP debug logs.
- - P15: stop clearing the auto_neg devarg when a 10G-only DAC disables AN;
-        derive the effective AN73 state from the current module capabilities
-        instead. Classify 40G active cables through the optical path, unify
-        DAC checks on txgbe_is_dac_cable().
+ drivers/net/txgbe/base/txgbe_aml40.c | 15 +++++++++++----
+ drivers/net/txgbe/txgbe_ethdev.c     |  2 +-
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
-Not handled in this revision:
-
- - P12: bp_capa is not range-checked. Devarg validation will be added in a
-        separate change so all txgbe devargs can be handled consistently.
- - P14: the AN page exchange still busy-waits on the alarm thread and can
-        delay handling for other ports. A later change will decouple negotiation
-        from the alarm callback and run per-port negotiations in parallel.
----
-
-Zaiyu Wang (15):
-  net/txgbe: fix failure to configure 10G on dual-speed DAC
-  net/txgbe: use the requested speed in E56 AN setup
-  net/txgbe: fix e56 PHY configuration error
-  net/txgbe: fix incorrect link state in 10G forced mode
-  net/txgbe: do not force reconfig on link retry
-  net/txgbe: set i2c sda hold time
-  net/txgbe: fix link speed display info for 10G mode
-  net/txgbe: remove stale outer UDP checksum offload flag
-  net/txgbe: fix SFP hot-plug when auto-negotiation is on
-  net/txgbe: fix DAC hot-plug on 40G NIC with auto-negotiation
-  net/txgbe: fix 40G FFE tuning applied to first lane only
-  net/txgbe: add pre2 FFE tap and backplane capability devargs
-  net/txgbe: add devarg to turn off Tx laser for 40G NIC
-  net/txgbe: fix CR/KR link training and recovery
-  net/txgbe: align link capabilities and DAC classification
-
- doc/guides/nics/txgbe.rst              |  25 +++-
- doc/guides/rel_notes/release_26_11.rst |  11 ++
- drivers/net/txgbe/base/txgbe_aml.c     |   4 +-
- drivers/net/txgbe/base/txgbe_aml40.c   |  92 ++++++++++--
- drivers/net/txgbe/base/txgbe_e56.c     |  14 +-
- drivers/net/txgbe/base/txgbe_e56.h     |   6 +
- drivers/net/txgbe/base/txgbe_e56_bp.c  | 196 +++++++++++++++----------
- drivers/net/txgbe/base/txgbe_e56_bp.h  |   4 +-
- drivers/net/txgbe/base/txgbe_hw.c      |  33 +++++
- drivers/net/txgbe/base/txgbe_osdep.h   |  12 +-
- drivers/net/txgbe/base/txgbe_phy.c     |  25 +++-
- drivers/net/txgbe/base/txgbe_phy.h     |   7 +
- drivers/net/txgbe/base/txgbe_regs.h    |   3 +
- drivers/net/txgbe/base/txgbe_type.h    |  17 ++-
- drivers/net/txgbe/txgbe_ethdev.c       | 178 ++++++++++++++++++++--
- drivers/net/txgbe/txgbe_ethdev.h       |   2 +
- drivers/net/txgbe/txgbe_rxtx.c         |   1 -
- 17 files changed, 502 insertions(+), 128 deletions(-)
-
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index 1098efe5e6..7c72b53f64 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -98,11 +98,12 @@ s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
+ {
+ 	if (hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core0 ||
+ 	    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1) {
+-		*speed = TXGBE_LINK_SPEED_40GB_FULL;
+-		*autoneg = true;
++		*speed = hw->phy.fiber_suppport_speed;
++		*autoneg = hw->devarg.auto_neg;
+ 	} else if (txgbe_is_backplane(hw)) {
+-		*speed = TXGBE_LINK_SPEED_40GB_FULL;
+-		*autoneg = true;
++		*speed = TXGBE_LINK_SPEED_40GB_FULL |
++			 TXGBE_LINK_SPEED_10GB_FULL;
++		*autoneg = hw->devarg.auto_neg;
+ 	} else {
+ 		/*
+ 		 * Temporary workaround: set speed to 40G even if sfp not present
+@@ -176,6 +177,12 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
+ 		return status;
+ 	}
+ 
++	/* setup the highest link when no autoneg */
++	if (speed & TXGBE_LINK_SPEED_40GB_FULL)
++		speed = TXGBE_LINK_SPEED_40GB_FULL;
++	else if (speed & TXGBE_LINK_SPEED_10GB_FULL)
++		speed = TXGBE_LINK_SPEED_10GB_FULL;
++
+ 	if (txgbe_is_backplane(hw) || txgbe_is_dac_cable(hw) ||
+ 	    hw->phy.ffe_set) {
+ 		rte_spinlock_lock(&hw->phy_lock);
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index 0734a1c63c..d4c635dc2f 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -1848,7 +1848,7 @@ txgbe_dev_start(struct rte_eth_dev *dev)
+ 		goto error;
+ 
+ 	if (hw->mac.type == txgbe_mac_aml40)
+-		allowed_speeds = RTE_ETH_LINK_SPEED_40G;
++		allowed_speeds = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_40G;
+ 	else if (hw->mac.type == txgbe_mac_aml)
+ 		allowed_speeds = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_25G;
+ 	else
 -- 
 2.55.0.windows.2
 
