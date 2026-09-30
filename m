@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DF8CA5FC4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCAFCA5FC5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:45:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B3AE142E95;
-	Thu,  1 Oct 2026 00:44:02 +0200 (CEST)
-Received: from mail-pj2-f42.google.com (mail-pj2-f42.google.com
- [74.125.227.170])
- by mails.dpdk.org (Postfix) with ESMTP id 5A9DD42E5A
- for <dev@dpdk.org>; Thu,  1 Oct 2026 00:43:59 +0200 (CEST)
-Received: by mail-pj2-f42.google.com with SMTP id
- 98e67ed59e1d1-396ccb65437so3506098a91.3
- for <dev@dpdk.org>; Wed, 30 Sep 2026 15:43:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 95C1C42E9D;
+	Thu,  1 Oct 2026 00:44:03 +0200 (CEST)
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
+ [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 8371F42E7F
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:00 +0200 (CEST)
+Received: by mail-pz2-f12.google.com with SMTP id
+ 41be03b00d2f7-cc1cea4bfd1so2521227a12.0
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808238;
- x=1791413038; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808240;
+ x=1791413040; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=T/WAQD5oaNv4lxfHcblbwU4iJfnsR7jKB5NaEQ4aPGI=;
- b=bK3NbTotFXWtdINBVP5w2wGuZPha75Tmy9M5IW74hCWhfsL16HERDj9rR+IwJFTxgK
- AvAq5OqoQu7OL+DG05gLZ9bSmAa12Jsyo5ULduP2br/vBNcFw7O8g2Dece7yoTcVFAw3
- wNAWCMQEAzve3E/7gbBDdkwfAjJk38RHH/w7ldFaDBh2UHQI/Fz8UCttnX6T36DTIGE/
- mYYtkgcUxUdSPJ4io2PyXLYbvf6A4youMx7MLpPcv2nQ9i+PMDjnjlOTm8O7RevQ8137
- 8WZSsYzzzGoJxTrAo3NtaOpcKk9fxSOlv/acprrDWPemO+/bxC816U2tcvLxl1hen6WV
- tG+Q==
+ bh=FFWaxUUfTczKQ+rav4H8G3MqbY/GD73mmnSjp9ERsnM=;
+ b=W+Whyizpaw6ogn/7YIl9+X5LRdTnjfis+mTu+8WALnHY4h3RGiZ2miNahqji4GlKqo
+ 7uH21t+gIw9dp5VP7Sd5dAwF3Ws2YIMNhw1WW9m778fkAPXOrt1CyBMiZd/CKPQneIc2
+ SUrICJt7CozFFHdSfpb/x0v7WUePR8jZFur4ySw/8GzJn+nK0YjQg4UKY3mIQHYi/ZLL
+ 1z8aXoNBEiaJHilU/A6Z7ojRovrjEKbIoZAFAIUnRmJBLHmMq09kRiKIjAOckptX4Xo6
+ haqmJ0BB5ysj8d1y5tabklFvDXT4NkHCCbt1nj9v6SVWwl4b99kUDJNh+1fIMLMFOFt+
+ viag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790808238; x=1791413038;
+ d=1e100.net; s=20260707; t=1790808240; x=1791413040;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=T/WAQD5oaNv4lxfHcblbwU4iJfnsR7jKB5NaEQ4aPGI=;
- b=tDH1HcDrXnS1yHAP0KBZsIELjivmrZAV2VPmihkFC5hAU/gw/X2mIY5ZzgeMX9SLXj
- Gg1PMO4UBbl+9yW4HpoZqcBVpNTUiC4Ehz+Zu4VYFThKZXevegxeTHa+FxhQCtxQWE4d
- t0MBM7cQ3rRuTIypBikWBOPPUQA3tqvJyvKH5Hs5OpQuxbAG0aRrF9lEaRYhTu0JQB8r
- cBmkvRkofZ1qgUfDWHljo/kfMEWk33YMEcGiPdPWGQNQhBx8h54nCs2qH7kGGrMLJyFs
- H7mzWaLhSg51eGwiakN4sDr8fh4GaUlUkvp3sT1vrAtTJq1O1Lerq/7/OLmnVUg17Yn3
- oGrA==
-X-Gm-Message-State: AFq9FYJOfENvV+YGSF1QJd8TYxHTFLXbh96GjrR7dRUhx4Vr0VeOtyfz
- YS3fpWsUEFNAUfjP0z5QWE8YIWB8iukGlnQobBPs9NHZGa9vyjvSMm3GH/NcGBSkeLf1DifQp/I
- XzXAYDf0=
-X-Gm-Gg: AYBFou0Zr+g+WEoWLJAu7YS44VwP5PuEXT/L7/GhLbhXaOxrEb+tQK5U7YbLNc2EYjA
- SEOo3Uoox0h6wlo9287sIG7QDmEQl3cP0zmTRpG+5AdsocDecHmtyAYT9GfpypnU9+ahEOKYUsk
- dc6FfHekJSBLh76fSdg6wb5b32suI3oA1M8IqiH+8heIlK9YOaJpcUK07Om+uznkNpYNyKiCMB1
- 3F3ls92pj6a7KMiBWS3KPBDW6UOhUdx6NY5o9Y9XjRsedifVSk8Ne9vbSP2h7Ct9gjJPXXz4ewm
- +9JHzlagHgikrAZgTq9nN2LoeqZ7yGUCUHGfZBQ/0f+NeTboUxiv/jJi234IX4mxT1KLn8QddKb
- GlUI0OOtqzS5KlKut2zAMcn8PPkqWUpnU96akpOi6WCImV+4NYSr2aPnwP6Cxt/wv7cm1rL9xLj
- jgsYT8FlUQFSTv9c6EfYQtC93zlRxqRuvT7bBq1/SRSrwlrLRr1KBsyrh4pYGyIAiG31LPdP1tI
- 5JWw523Jn3NYP7T6obE5IkygjZfDucey+r0XA==
-X-Received: by 2002:a17:90b:2687:b0:3a4:b8f2:7686 with SMTP id
- 98e67ed59e1d1-3a4d197e470mr1881338a91.12.1790808238434; 
- Wed, 30 Sep 2026 15:43:58 -0700 (PDT)
+ bh=FFWaxUUfTczKQ+rav4H8G3MqbY/GD73mmnSjp9ERsnM=;
+ b=g/ruopKsaFublRD9zLBysUdRRrW91d7i4xCYY8j627p456welBQH7suZ9xkgEZwuXD
+ l/ANrw5inv7QlvkDAu2csradA9/kbYDfUDG/fyPiLj06Mcmt0tCPysiw59yjChvoJllO
+ TLRTZYevV87R8e9x7nnLL0fKn9L4c2VWZT0ArTHmO2WvSqNUcj4gkZPRJHTr9VUvuz6p
+ Q1bt2JPeMZqsX1XkNhfzpC6iZ8/3nMekFeTcOOQHEL8+XO/8FcRFEYd7uKm9UCP8AuLO
+ 8qvbonaqPh5bhV/1QBTJ2UEGYA5o3CCuMij7GL2bkYBTgDnSod5wRemzH5u1a0a+5Twz
+ qBFw==
+X-Gm-Message-State: AFq9FYL53hBd6pIMRursZywRZluhPBx/Y1ts8amLcNyQoCA6OZS7WIBM
+ jR7xE2FgYs1Y6FslEQV1Tm3wTdAmvykdbQq1ioI4r/oDhLA6DD+cpxxybdzDfoG4pms/ljPeNs0
+ H722DyGY=
+X-Gm-Gg: AYBFou1lwt5Eon0qIaEWcWVTrpYeEu4Q0QqKvFqSeRM+0hbWm80UW8KokyZTPtDrmAb
+ e3z5SV+0eCn4k0geCcavpbmuejoyvzi7EYODdGW67NKUaBfeCKc1tMiwpeccO7SGgjJ/7IjyO0i
+ vv6e9E2TgAVDZLZ4l54YRfYpUPkroXmzygda1QnPkmmT8fOiW79yzydWHj/RkMNyB0YZ6MOo+Mf
+ NgSdHSHlk9+ayW/jY5qXvBuDW4wU+grhilYbokrjA+Mt247YXERS7Tufu6GkAQ4tgLgBQiYEELT
+ F0/Slk7SHAga+UrYY5VPPsoDtEXsgTYXK1IKVNz5vJm6QrlFgcO+HRobInmP+GwFId8+lAPTvvn
+ S5ZatPJ19Q8yQF8P6wof9CeX2gKNRMpheaOiaXzn/T/RwLF8LMGld+94PiYuAOS/gzi6Sf8C9HN
+ X84XxJTyxkn/9kLAzLsqV7s11VzvzW7bZbG71SrmlOXFJmEWkrgFw6SgIxqwPUCI6msVdQ+TYvY
+ ic4zeN0MRsqZPhTd+D+Su08GtvYy7ahKYCSGb5rr6GIMabI
+X-Received: by 2002:a17:90b:3c8e:b0:39e:3554:4d0e with SMTP id
+ 98e67ed59e1d1-3a4d0f07ee7mr993726a91.1.1790808239245; 
+ Wed, 30 Sep 2026 15:43:59 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.43.57
+ 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.43.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
  Wed, 30 Sep 2026 15:43:58 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 15/65] net/pcap: use kvargs numeric helpers
-Date: Wed, 30 Sep 2026 15:40:33 -0700
-Message-ID: <20260930224340.58580-16-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v3 16/65] net/ring: use kvargs numeric helpers
+Date: Wed, 30 Sep 2026 15:40:34 -0700
+Message-ID: <20260930224340.58580-17-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260930224340.58580-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -83,113 +83,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The open coded conversion is correct, but the same checks are now
-available from kvargs.
+The node number was converted with strtol() and checked only for
+trailing garbage, so any value in range was taken. A socket id above
+RTE_MAX_NUMA_NODES was accepted and failed later in the allocation.
 
-process_bool_flag() duplicated what rte_kvargs_handle_bool() does, so
-drop it and use the helper for phy_mac, infinite_rx and eof. The
-process_opt() form newly enables the bare "infinite_rx" spelling: the
-value == NULL branch of process_bool_flag() was dead, since
-rte_kvargs_process() rejects a missing value before the handler runs.
-The usual words such as "on" and "true" are now accepted as well,
-while an empty "infinite_rx=" is rejected rather than taken as true.
+Convert with rte_kvargs_to_int() over the same range as
+rte_kvargs_handle_socket_id(), so -1 keeps meaning SOCKET_ID_ANY and
+anything above the last socket is rejected where it is parsed. The
+handler cannot be used directly since the value is one field of
+"name:node:action" rather than the whole devarg.
+
+Report a strdup() failure as -ENOMEM instead of reusing the empty
+parameter message.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 51 ++++++++--------------------------
- 1 file changed, 12 insertions(+), 39 deletions(-)
+ drivers/net/ring/rte_eth_ring.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index b1f3718c8a..df3a480f97 100644
---- a/drivers/net/pcap/pcap_ethdev.c
-+++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -1584,46 +1584,19 @@ open_tx_iface(const char *key, const char *value, void *extra_args)
- 	return open_iface(key, value, extra_args);
- }
- 
--static int
--process_bool_flag(const char *key, const char *value, void *extra_args)
--{
--	bool *flag = extra_args;
--
--	if (value == NULL || *value == '\0') {
--		*flag = true; /* default with no additional argument */
--	} else if (strcmp(value, "0") == 0) {
--		*flag = false;
--	} else if (strcmp(value, "1") == 0) {
--		*flag = true;
--	} else {
--		PMD_LOG(ERR, "Invalid '%s' value '%s'", key, value);
--		return -1;
--	}
--	return 0;
--}
--
- static int
- process_snapshot_len(const char *key, const char *value, void *extra_args)
+diff --git a/drivers/net/ring/rte_eth_ring.c b/drivers/net/ring/rte_eth_ring.c
+index 533a4c1b6b..a2ac704a8d 100644
+--- a/drivers/net/ring/rte_eth_ring.c
++++ b/drivers/net/ring/rte_eth_ring.c
+@@ -579,21 +579,25 @@ static int parse_kvlist(const char *key __rte_unused,
+ 			const char *value, void *data)
  {
--	uint32_t *snaplen = extra_args;
--	unsigned long val;
--	char *endptr;
+ 	struct node_action_list *info = data;
++	int64_t socket_val;
+ 	int ret;
+-	char *name;
++	char *name = NULL;
+ 	char *action;
+ 	char *node;
+-	char *end;
 -
--	if (value == NULL || *value == '\0') {
--		PMD_LOG(ERR, "Argument '%s' requires a value", key);
--		return -1;
--	}
-+	uint64_t val;
+-	name = strdup(value);
  
--	errno = 0;
--	val = strtoul(value, &endptr, 10);
--	if (errno != 0 || *endptr != '\0' ||
--	    val < RTE_ETHER_HDR_LEN ||
--	    val > ETH_PCAP_MAXIMUM_SNAPLEN) {
--		PMD_LOG(ERR, "Invalid '%s' value '%s'", key, value);
-+	if (rte_kvargs_to_uint(value, RTE_ETHER_HDR_LEN,
-+			       ETH_PCAP_MAXIMUM_SNAPLEN, &val) < 0) {
-+		PMD_LOG(ERR, "Invalid '%s' value '%s'", key,
-+			value == NULL ? "" : value);
- 		return -1;
+ 	ret = -EINVAL;
+ 
+-	if (!name) {
++	if (value == NULL) {
+ 		PMD_LOG(WARNING, "command line parameter is empty for ring pmd!");
+ 		goto out;
  	}
  
--	*snaplen = (uint32_t)val;
-+	*(uint32_t *)extra_args = val;
- 	return 0;
- }
++	name = strdup(value);
++	if (!name) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
+ 	node = strchr(name, ':');
+ 	if (!node) {
+ 		PMD_LOG(WARNING, "could not parse node value from %s",
+@@ -625,14 +629,13 @@ static int parse_kvlist(const char *key __rte_unused,
+ 	else
+ 		goto out;
  
-@@ -1932,8 +1905,8 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
+-	errno = 0;
+-	info->list[info->count].socket_id = strtol(node, &end, 10);
+-
+-	if ((errno != 0) || (*end != '\0')) {
++	/* -1 is SOCKET_ID_ANY, the range rte_kvargs_handle_socket_id() takes. */
++	if (rte_kvargs_to_int(node, -1, RTE_MAX_NUMA_NODES - 1, &socket_val) < 0) {
+ 		PMD_LOG(WARNING,
+-			"node value %s is unparseable as a number", node);
++			"node value %s is not a valid socket id", node);
+ 		goto out;
+ 	}
++	info->list[info->count].socket_id = socket_val;
  
- 		dumpers.queue[0] = pcaps.queue[0];
- 
--		ret = rte_kvargs_process(kvlist, ETH_PCAP_PHY_MAC_ARG,
--					 &process_bool_flag, &pcaps.phy_mac);
-+		ret = rte_kvargs_process_opt(kvlist, ETH_PCAP_PHY_MAC_ARG,
-+					 rte_kvargs_handle_bool, &pcaps.phy_mac);
- 		if (ret < 0)
- 			goto free_kvlist;
- 
-@@ -1971,9 +1944,9 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
- 				ETH_PCAP_INFINITE_RX_ARG);
- 
- 		if (infinite_rx_arg_cnt == 1) {
--			ret = rte_kvargs_process(kvlist,
-+			ret = rte_kvargs_process_opt(kvlist,
- 					ETH_PCAP_INFINITE_RX_ARG,
--					 &process_bool_flag,
-+					 rte_kvargs_handle_bool,
- 					 &devargs_all.infinite_rx);
- 			if (ret < 0)
- 				goto free_kvlist;
-@@ -1991,8 +1964,8 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
- 		 * Check whether to signal EOF via link status change.
- 		 */
- 		if (rte_kvargs_count(kvlist, ETH_PCAP_EOF_ARG) == 1) {
--			ret = rte_kvargs_process(kvlist, ETH_PCAP_EOF_ARG,
--						 &process_bool_flag,
-+			ret = rte_kvargs_process_opt(kvlist, ETH_PCAP_EOF_ARG,
-+						 rte_kvargs_handle_bool,
- 						 &devargs_all.eof);
- 			if (ret < 0)
- 				goto free_kvlist;
+ 	strlcpy(info->list[info->count].name, name,
+ 		sizeof(info->list[info->count].name));
 -- 
 2.53.0
 
