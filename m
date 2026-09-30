@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3634ECA5FB1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 06:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A43CA5FB1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 06:25:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D37F427BC;
-	Wed, 30 Sep 2026 08:24:46 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 36AC340612;
+	by mails.dpdk.org (Postfix) with ESMTP id 60608427B9;
+	Wed, 30 Sep 2026 08:24:56 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 8E2AA40612;
  Wed, 30 Sep 2026 08:24:42 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 14EAE200193;
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 712FA1A01C6;
  Wed, 30 Sep 2026 08:24:42 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D272B200197;
- Wed, 30 Sep 2026 08:24:41 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 38DEB1A019D;
+ Wed, 30 Sep 2026 08:24:42 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0300A18000BF;
- Wed, 30 Sep 2026 14:24:40 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 53CAB18000BA;
+ Wed, 30 Sep 2026 14:24:41 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: stable@dpdk.org
-Subject: [PATCH v18 03/24] net/dpaa: fix free port resources on close
-Date: Wed, 30 Sep 2026 11:54:16 +0530
-Message-Id: <20260930062437.3019096-4-hemant.agrawal@nxp.com>
+Cc: stable@dpdk.org,
+	Prashant Gupta <prashant.gupta_3@nxp.com>
+Subject: [PATCH v18 04/24] bus/dpaa: fix FQD dest wq channel decoding
+Date: Wed, 30 Sep 2026 11:54:17 +0530
+Message-Id: <20260930062437.3019096-5-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260930062437.3019096-1-hemant.agrawal@nxp.com>
 References: <20260929104519.1770698-1-hemant.agrawal@nxp.com>
@@ -49,67 +50,118 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-dpaa_intf->tx_conf_queues is allocated unconditionally for every port
-in dpaa_dev_init():
+From: Prashant Gupta <prashant.gupta_3@nxp.com>
 
-but it is never released. It is a driver private allocation, so
-rte_eth_dev_release_port() does not free it either. The memory is
-therefore leaked on every device close and on every probe failure that
-happens after the allocation.
+qman_shutdown_fq() decoded the FQD dest_wq field as:
 
-dpaa_eth_dev_close() returned early for offline (O/H) and ONIC ports,
-before the common cleanup that frees the queue and congestion-group
-memory allocated at probe. Added support to clean that path as well.
+	channel = dest_wq & 0x7;
+	wq      = dest_wq >> 3;
 
-Fixes: 58e0420f72f8 ("net/dpaa: support Tx confirmation to enable PTP")
+but in the hardware descriptor the work queue is bits 2:0 and the
+channel is bits 15:3. The old code therefore extracted a 0-7 value as
+the channel and the real channel as the work queue. qman_shutdown_fq()
+compares the channel against the pool-channel range to decide how to
+drain the queue, and that comparison can never succeed with a 0-7
+value, so pool-channel FQs were not drained correctly on shutdown.
+
+Fixes: c47ff048b99a ("bus/dpaa: add QMAN driver core routines")
 Cc: stable@dpdk.org
 
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/bus/dpaa/base/qbman/qman.c | 14 ++------------
+ drivers/bus/dpaa/base/qbman/qman.h | 23 ++++++++++++++++++++++-
+ 2 files changed, 24 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index a8f5a93db4..31fa2b673b 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -537,7 +537,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 
- 	if (fif->mac_type == fman_offline_internal ||
- 	    fif->mac_type == fman_onic)
--		return 0;
-+		goto clean_1;
- 
- 	/* Reset link to autoneg */
- 	if (link->link_status && !link->link_autoneg) {
-@@ -562,7 +562,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 				dev->data->name, ret);
- 		}
- 	}
--
-+clean_1:
- 	/* release configuration memory */
- 	rte_free(dpaa_intf->fc_conf);
- 
-@@ -624,6 +624,9 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 		}
- 	}
- 
-+	rte_free(dpaa_intf->tx_conf_queues);
-+	dpaa_intf->tx_conf_queues = NULL;
-+
+diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
+index d289df2d33..931d487de4 100644
+--- a/drivers/bus/dpaa/base/qbman/qman.c
++++ b/drivers/bus/dpaa/base/qbman/qman.c
+@@ -2707,14 +2707,6 @@ int qman_delete_cgr(struct qman_cgr *cgr)
  	return ret;
  }
  
-@@ -2499,6 +2502,8 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 	return 0;
+-#define GENMASK(h, l) \
+-	(((~0U) >> (sizeof(unsigned int) * 8 - ((h) - (l) + 1))) << (l))
+-
+-/* 'fqid' is a 24-bit field in every h/w descriptor */
+-#define QM_FQID_MASK    GENMASK(23, 0)
+-#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
+-#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
+-
+ static int
+ _qm_mr_consume_and_match_verb(struct qm_portal *p, int v)
+ {
+@@ -2801,7 +2793,6 @@ qman_shutdown_fq(u32 fqid)
+ 	u32 res;
+ 	u8 state;
+ 	u32 channel, wq;
+-	u16 dest_wq;
  
- free_tx:
-+	rte_free(dpaa_intf->tx_conf_queues);
-+	dpaa_intf->tx_conf_queues = NULL;
- 	rte_free(dpaa_intf->tx_queues);
- 	dpaa_intf->tx_queues = NULL;
- 	dpaa_intf->nb_tx_queues = 0;
+ 	DPAA_BUS_DEBUG("In shutdown for queue = %x", fqid);
+ 	p = get_affine_portal();
+@@ -2831,9 +2822,8 @@ qman_shutdown_fq(u32 fqid)
+ 	}
+ 
+ 	/* Need to store these since the MCR gets reused */
+-	dest_wq = be16_to_cpu(mcr->queryfq.fqd.dest_wq);
+-	channel = dest_wq & 0x7;
+-	wq = dest_wq >> 3;
++	channel = qm_fqd_get_chan(&mcr->queryfq.fqd);
++	wq = qm_fqd_get_wq(&mcr->queryfq.fqd);
+ 
+ 	switch (state) {
+ 	case QM_MCR_NP_STATE_TEN_SCHED:
+diff --git a/drivers/bus/dpaa/base/qbman/qman.h b/drivers/bus/dpaa/base/qbman/qman.h
+index 43a16d1e3b..bd97689a91 100644
+--- a/drivers/bus/dpaa/base/qbman/qman.h
++++ b/drivers/bus/dpaa/base/qbman/qman.h
+@@ -1,12 +1,15 @@
+ /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
+  *
+  * Copyright 2008-2016 Freescale Semiconductor Inc.
+- * Copyright 2017 NXP
++ * Copyright 2017,2026 NXP
+  *
+  */
+ 
+ #include "qman_priv.h"
+ 
++#define GENMASK(h, l) \
++	(((~0U) >> (sizeof(u32) * 8 - ((h) - (l) + 1))) << (l))
++
+ /***************************/
+ /* Portal register assists */
+ /***************************/
+@@ -42,6 +45,14 @@
+ #define QM_CL_RR0		0x3900
+ #define QM_CL_RR1		0x3940
+ 
++#define QM_FQD_CHAN_OFF                3
++#define QM_FQD_WQ_MASK         GENMASK(2, 0)
++/* 'fqid' is a 24-bit field in every h/w descriptor */
++#define QM_FQID_MASK    GENMASK(23, 0)
++
++#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
++#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
++
+ /* BTW, the drivers (and h/w programming model) already obtain the required
+  * synchronisation for portal accesses via lwsync(), hwsync(), and
+  * data-dependencies. Use of barrier()s or other order-preserving primitives
+@@ -911,3 +922,13 @@ static inline void __qm_isr_write(struct qm_portal *portal, enum qm_isr_reg n,
+ 	__qm_out(&portal->addr, QM_REG_ISR + (n << 2), val);
+ #endif
+ }
++
++static inline int qm_fqd_get_chan(const struct qm_fqd *fqd)
++{
++	return be16_to_cpu(fqd->dest_wq) >> QM_FQD_CHAN_OFF;
++}
++
++static inline int qm_fqd_get_wq(const struct qm_fqd *fqd)
++{
++	return be16_to_cpu(fqd->dest_wq) & QM_FQD_WQ_MASK;
++}
 -- 
 2.25.1
 
