@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1E9CA5FC5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07353CA5FC4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:46:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CAEB842EB9;
-	Thu,  1 Oct 2026 00:44:08 +0200 (CEST)
-Received: from mail-pj2-f39.google.com (mail-pj2-f39.google.com
- [74.125.227.167])
- by mails.dpdk.org (Postfix) with ESMTP id 0194242EC1
+	by mails.dpdk.org (Postfix) with ESMTP id 0142342ED2;
+	Thu,  1 Oct 2026 00:44:10 +0200 (CEST)
+Received: from mail-pj2-f40.google.com (mail-pj2-f40.google.com
+ [74.125.227.168])
+ by mails.dpdk.org (Postfix) with ESMTP id B95C542EA4
  for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:07 +0200 (CEST)
-Received: by mail-pj2-f39.google.com with SMTP id
- 98e67ed59e1d1-3a49b6bb21eso1913849a91.3
- for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:06 -0700 (PDT)
+Received: by mail-pj2-f40.google.com with SMTP id
+ 98e67ed59e1d1-3a0f64df6a6so2435697a91.3
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808246;
- x=1791413046; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808247;
+ x=1791413047; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=uwbTdXrZHHRu5UJRxMdJUVQEUJTKofE3eTpof2vH2Bo=;
- b=jxX7pFHWCr5pjpUsqhCOjyh1BwKqyuR6pquxqf2VxtS1LGjw43vxWkvu8Qio4vBAvs
- 6sNYz21xoaRj5imkiLyTaVww8ZKFIab9g8Tl0kk7R/QKB3vIlKt2w5GkvjCwVlDi3Nn5
- QU0nTC8j2KnfckTMecYAvCZCqWR99ZhDd3XUr00LjtqzL1wuPpLoEGaBMnwY59M9dtjx
- X0XixrIvE++oa2+wrXb++/Ymlh31GZ324KuR+Phokfxhl9+QWLMDi6qu/dXyRorUutZn
- c6245oPVZkSVve76bSMf+/GXwXU6MnKF2FrNA5VxyOJpISifhX999FVgUCAIqFZSa05q
- 0y3g==
+ bh=U3y2XabNe+O9HCLZu+RfaW6FjpssBvDv7RiWwnse9es=;
+ b=oRydmKapZ1w4UotE65KT01XZH9x9pwA3buDWXjeM0nHEH2LTIVSaCoStMktd5BkE27
+ ETYPj8YCvkFTeEtM62UnDiHsqB2bR1pbJm+nCFRQAsIwEw8VC7N74GgR+i3bV33+uVnb
+ IaDUJdBMtLhJwbxm3r4a28imH1a55tRan+k7ZD64/YyHEawE6bi+OMUOA5EHM9A4/TFS
+ ZaNroDg9EKdHmbuKTtDhHHqu33tmAWDAQhD8SjZcR2gDfzFSiWkf/ARj/UWfOAbyv31l
+ hnqTsndvemOUjRRlbCxPAOtWe4Um4mWgo1bgvGv/oPcs1yJvIYIKQLd/I4k2uDu05qvT
+ f4TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790808246; x=1791413046;
+ d=1e100.net; s=20260707; t=1790808247; x=1791413047;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=uwbTdXrZHHRu5UJRxMdJUVQEUJTKofE3eTpof2vH2Bo=;
- b=pBsWZRsBNaNJpfDm+o32bTxkY5sXGIquO6IVbgW4LqrT/TuYjoq4w6zfW1JCE08sWW
- V0K9daluISWbv9CcicgZENZM/4thVUz1J9NP/5p9rBc6mIrpbHh7OO4qPW0TiyRP8eT8
- 8q3mf937eyJrhQFNJVGKl5y2nRjEFTLnD9kI5RLnrpzR5VlZLFj7kou5TLqXfoR3clZ6
- SY6/4bKK2FtG14CImqT5D6Y3gsVHGNdH5cQPWN7hnz3wBNQtXs1/Cv83AppzgNnzg3jZ
- mgu7mzomfz4olhS0APJsK27vGjgDYZDljj19ItaMgH5qG20GWvEJIZYDmjCcKCVg5TY0
- U+bw==
-X-Gm-Message-State: AFq9FYIks8+TsX8ye+V0F9A4t/suGqr83SfdA8K7ETuIRH/gTYvlJ+lN
- 92K+1w0fyZMLWpJH2F/eAjWveqx4yQe5cDA9NItm8TugEiARgLPLvRR7mlMkiD1udRx13P4qUSg
- PRhQX
-X-Gm-Gg: AYBFou0jPl5Ar0G5Q84ZUddpcsY92sBfyIVpCPAIdFLMkQYSJP0x8k0XIAEmHnIMKHf
- JSAOFGyyjeG9aNT/tXYAODAepeTwYY+j8P1fI8iEu8quiR08/NVEijdBHBBvfe9MzRyaphsopKc
- rczv46TT0MATRo11GHVSN5er3tbSsKUR05kZepl8C92VeucK4ZHPE/2C3xAu/t3ci60OunYUPAK
- hIgm2JiGkHFuBmh7l8Mlmpbi3Ai4kf2s0sKpGB7HySjPHIBgxruZhGBdRlbo5yNhIZQ1pZ4p+sr
- pjWvmV2GYWQlbPzfJi96NKkUkXhWCKl+o9S2t272euCuiG2wO+q9fkGZ85AroRS8SgIolLipNRh
- J23yjdoJZBmynvLvDXqOWazcUHKNtxMSC4fTCDTFHa7+SM0EURjXrDlQOsSQuuq+c+0Lyx6Kttj
- h3xSZkJvWgVWn7ToLw4XRlSDR/Zp3HNjK8WyBDDqIG8A8OtrIoArQJIsQ/fFqcx5jF0Sm1Nzvns
- u0W/n/WU2Zsg+/kx+5os+GV1HOXu/nZYD/KJWo=
-X-Received: by 2002:a17:90b:3ec2:b0:3a0:b40d:827 with SMTP id
- 98e67ed59e1d1-3a4d059c0b5mr1794289a91.0.1790808245993; 
- Wed, 30 Sep 2026 15:44:05 -0700 (PDT)
+ bh=U3y2XabNe+O9HCLZu+RfaW6FjpssBvDv7RiWwnse9es=;
+ b=JKJFmy3ikTfwuSfd7nqJ5/oaG2eR4rMKBRO233si8sgVl7D6zgIj5+OgCBVJU/U//9
+ KDIhxtFRKlSQ/4k9a5LcBEQpAu17iLNTxqqgj0uOCDKNl6olOa1K1RKiycOaGcrzeHdP
+ zCqoelSAx9iIdEkKv2y4jPG4ql+G/sfIwAPMRE1TEXju8JFqVcAuSc1wzAMVAXbTmJKv
+ NZWRC/vrsG3rBwWl0IRMSgINezlvTTFL4qW0mApOYPxX1bjlOe8h5UZCY3RV7I8cX9UR
+ VYntc3ZSn7tmHmC996qfzzLo5mAkWwcuCdMOUcSv7lUtHKFHekbkJk/mLPQ6x99XBAKC
+ IlKg==
+X-Gm-Message-State: AFq9FYJBllXAOys+46MZm5ZN5dSYEYFb7Uuk19OVxajtgRb5h0s9sOdg
+ 1Y1uHwZGN5hIs7/5gfY5NM+VYET6V5//Bscvcu9V9xm3ct57OeNzkuMGzRr1e1k7f5JU2sfZhvx
+ 58mdK1ns=
+X-Gm-Gg: AYBFou3nptwKJ0ZEVLTxpVjBZ833GldnGVQaUVI2DqIonHvgG3N9UnYJe/y02jCgXbf
+ kjW5wBN0Q8FWutScavn5Nl3ZMDiJ2Y5q9gQQoxo1B9KIXCXuhqT9eSLKZZXGwl8OmweeTshjeaS
+ 5nCcbXPoYyV8SSmMu0vboTskO3ns7yuXIonbZI7UbJiKm9cQ6U9vFM8MuelXyaKDN9+NRGWyAJA
+ m6XBsn9yKeK/L1GOX2YhEkeYwHWccEvBFMTGx7mbqyqaoXH/u43j5uYFLCDvd+IaUEnv3lGHiOa
+ p3W/vd6LcShbNfHoXrogF6LrZeogUj2PwbrK4AZkQzVk/rCzlcFD24OVnTZcVEU0Qj/vM/XGeaJ
+ ISaDgEfELOaLkpQ5bCHkBeGIwIZPhB4VUW5qxBJr5S5CYF0N5ymEBaUe61q37jUD6zMifBuZabu
+ /jJy1rxUHH2AkxeiVCuB0+Kp4KFZlsJnoJyWwvbXDwm0nTKZk39TkIuI9hlr2wgMfzzYio4KQtO
+ LF0RRGM5tbuw06q3cOxV/hdyZJi12nVDwkSdQ==
+X-Received: by 2002:a17:90b:2c88:b0:3a0:2ffd:1a51 with SMTP id
+ 98e67ed59e1d1-3a4d1543f55mr2135264a91.10.1790808246837; 
+ Wed, 30 Sep 2026 15:44:06 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.05
+ 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Sep 2026 15:44:05 -0700 (PDT)
+ Wed, 30 Sep 2026 15:44:06 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>
-Subject: [PATCH v3 21/65] net/bonding: use kvargs numeric helpers
-Date: Wed, 30 Sep 2026 15:40:39 -0700
-Message-ID: <20260930224340.58580-22-stephen@networkplumber.org>
+ Shai Brandes <shaibran@amazon.com>, Evgeny Schemeilin <evgenys@amazon.com>,
+ Amit Bernstein <amitbern@amazon.com>, Wajeeh Atrash <atrwajee@amazon.com>
+Subject: [PATCH v3 22/65] net/ena: use kvargs numeric helpers
+Date: Wed, 30 Sep 2026 15:40:40 -0700
+Message-ID: <20260930224340.58580-23-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260930224340.58580-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -84,209 +85,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The mode, socket id and time_ms parsers all assign the strtol() result
-before checking the end pointer and errno, and the mode parser truncates
-into a uint8_t so "mode=257" aliases onto mode 1.
+ena_process_uint_devarg() only checks that strtoull() consumed at least
+one character, so trailing garbage such as "8junk" is accepted, and a
+negative value is silently wrapped to a huge unsigned value.
 
-parse_port_id() has the same unchecked pattern, and did not bound the
-result before using it, relying on rte_eth_dev_is_valid_port() to catch
-out of range values.
+ena_process_llq_policy_devarg() ignores the end pointer entirely, so any
+unparsable value becomes zero and disables the LLQ policy rather than
+being rejected.
 
-The socket id parser cast to int8_t when testing for SOCKET_ID_ANY, so
-any value whose low byte is 0xff, such as 255 or -257, was accepted as
-SOCKET_ID_ANY.
-
-Drop the stray errno reset in the agg mode parser, which only does
-string comparisons.
+ena_process_bool_devarg() only served enable_frag_bypass, and did
+nothing beyond accepting "0" or "1" and storing into a bool, so drop it
+and point rte_kvargs_handle_bool() at the field. A bare
+"enable_frag_bypass" now enables it, along with the usual spellings.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/bonding/eth_bond_private.h  |  8 ---
- drivers/net/bonding/rte_eth_bond_args.c | 71 ++++---------------------
- drivers/net/bonding/rte_eth_bond_pmd.c  |  8 +--
- 3 files changed, 14 insertions(+), 73 deletions(-)
+ drivers/net/ena/ena_ethdev.c | 45 +++++-------------------------------
+ 1 file changed, 6 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/net/bonding/eth_bond_private.h b/drivers/net/bonding/eth_bond_private.h
-index 378bbba4e6..9a2fb7167e 100644
---- a/drivers/net/bonding/eth_bond_private.h
-+++ b/drivers/net/bonding/eth_bond_private.h
-@@ -298,10 +298,6 @@ int
- bond_ethdev_parse_member_agg_mode_kvarg(const char *key __rte_unused,
- 		const char *value, void *extra_args);
+diff --git a/drivers/net/ena/ena_ethdev.c b/drivers/net/ena/ena_ethdev.c
+index ae48afcfdc..732f5f6f34 100644
+--- a/drivers/net/ena/ena_ethdev.c
++++ b/drivers/net/ena/ena_ethdev.c
+@@ -48,8 +48,6 @@
  
--int
--bond_ethdev_parse_socket_id_kvarg(const char *key,
--		const char *value, void *extra_args);
+ #define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
+ 
+-#define DECIMAL_BASE 10
 -
- int
- bond_ethdev_parse_primary_member_port_id_kvarg(const char *key,
- 		const char *value, void *extra_args);
-@@ -314,10 +310,6 @@ int
- bond_ethdev_parse_bond_mac_addr_kvarg(const char *key,
- 		const char *value, void *extra_args);
+ #define MAX_WIDE_LLQ_DEPTH_UNSUPPORTED 0
  
--int
--bond_ethdev_parse_time_ms_kvarg(const char *key,
--		const char *value, void *extra_args);
--
- void
- bond_tlb_disable(struct bond_dev_private *internals);
- 
-diff --git a/drivers/net/bonding/rte_eth_bond_args.c b/drivers/net/bonding/rte_eth_bond_args.c
-index 823ed80f07..25602b3b47 100644
---- a/drivers/net/bonding/rte_eth_bond_args.c
-+++ b/drivers/net/bonding/rte_eth_bond_args.c
-@@ -91,13 +91,13 @@ parse_port_id(const char *port_str)
- 		/* try parsing as device name, virtual devices */
- 		port_id = find_port_id_by_dev_name(port_str);
- 		if (port_id < 0) {
--			char *end;
--			errno = 0;
-+			uint64_t val;
- 
- 			/* try parsing as port id */
--			port_id = strtol(port_str, &end, 10);
--			if (*end != 0 || errno != 0)
-+			if (rte_kvargs_to_uint(port_str, 0, RTE_MAX_ETHPORTS - 1, &val) < 0)
- 				return -1;
-+
-+			port_id = val;
- 		}
- 	}
- 
-@@ -136,19 +136,17 @@ int
- bond_ethdev_parse_member_mode_kvarg(const char *key __rte_unused,
- 		const char *value, void *extra_args)
+ #define ENA_TS_OFFSET_UNSET -1
+@@ -321,9 +319,6 @@ static int ena_xstats_get_by_id(struct rte_eth_dev *dev,
+ static int ena_process_llq_policy_devarg(const char *key,
+ 			const char *value,
+ 			void *opaque);
+-static int ena_process_bool_devarg(const char *key,
+-				   const char *value,
+-				   void *opaque);
+ static int ena_parse_devargs(struct ena_adapter *adapter,
+ 			     struct rte_devargs *devargs);
+ static void ena_copy_customer_metrics(struct ena_adapter *adapter,
+@@ -3832,11 +3827,9 @@ static int ena_process_uint_devarg(const char *key,
+ 				  void *opaque)
  {
--	uint8_t *mode;
--	char *endptr;
-+	uint8_t *mode = extra_args;
-+	uint64_t val;
+ 	struct ena_adapter *adapter = opaque;
+-	char *str_end;
+ 	uint64_t uint64_value;
  
--	if (value == NULL || extra_args == NULL)
-+	if (extra_args == NULL)
- 		return -1;
+-	uint64_value = strtoull(value, &str_end, DECIMAL_BASE);
+-	if (value == str_end) {
++	if (rte_kvargs_to_uint(value, 0, UINT64_MAX, &uint64_value) < 0) {
+ 		PMD_INIT_LOG_LINE(ERR,
+ 			"Invalid value for key '%s'. Only uint values are accepted.",
+ 			key);
+@@ -3881,17 +3874,15 @@ static int ena_process_uint_devarg(const char *key,
+ static int ena_process_llq_policy_devarg(const char *key, const char *value, void *opaque)
+ {
+ 	struct ena_adapter *adapter = opaque;
+-	uint32_t policy;
++	uint64_t policy;
  
--	mode = extra_args;
--
--	errno = 0;
--	*mode = strtol(value, &endptr, 10);
--	if (*endptr != 0 || errno != 0)
-+	if (rte_kvargs_to_uint(value, 0, UINT8_MAX, &val) < 0)
- 		return -1;
- 
-+	*mode = val;
-+
- 	/* validate mode value */
- 	switch (*mode) {
- 	case BONDING_MODE_ROUND_ROBIN:
-@@ -176,7 +174,6 @@ bond_ethdev_parse_member_agg_mode_kvarg(const char *key __rte_unused,
- 
- 	agg_mode = extra_args;
- 
--	errno = 0;
- 	if (strncmp(value, "stable", 6) == 0)
- 		*agg_mode = AGG_STABLE;
- 
-@@ -197,35 +194,6 @@ bond_ethdev_parse_member_agg_mode_kvarg(const char *key __rte_unused,
+-	policy = strtoul(value, NULL, DECIMAL_BASE);
+-	if (policy < ENA_LLQ_POLICY_LAST) {
+-		adapter->llq_header_policy = policy;
+-	} else {
++	if (rte_kvargs_to_uint(value, 0, ENA_LLQ_POLICY_LAST - 1, &policy) < 0) {
+ 		PMD_INIT_LOG_LINE(ERR,
+ 			"Invalid value: '%s' for key '%s'. valid [0-3]",
+ 			value, key);
+ 		return -EINVAL;
  	}
++	adapter->llq_header_policy = policy;
+ 	PMD_INIT_LOG_LINE(INFO,
+ 		"LLQ policy is %u [0 - disabled, 1 - device recommended, 2 - normal, 3 - large]",
+ 		adapter->llq_header_policy);
+@@ -3899,30 +3890,6 @@ static int ena_process_llq_policy_devarg(const char *key, const char *value, voi
+ 	return 0;
  }
  
--int
--bond_ethdev_parse_socket_id_kvarg(const char *key __rte_unused,
--		const char *value, void *extra_args)
+-static int ena_process_bool_devarg(const char *key, const char *value, void *opaque)
 -{
--	long socket_id;
--	char *endptr;
+-	struct ena_adapter *adapter = opaque;
+-	bool bool_value;
 -
--	if (value == NULL || extra_args == NULL)
--		return -1;
--
--	errno = 0;
--	socket_id = strtol(value, &endptr, 10);
--	if (*endptr != 0 || errno != 0)
--		return -1;
--
--	/* SOCKET_ID_ANY also consider a valid socket id */
--	if ((int8_t)socket_id == SOCKET_ID_ANY) {
--		*(int *)extra_args = SOCKET_ID_ANY;
--		return 0;
+-	/* Parse the value. */
+-	if (strcmp(value, "1") == 0) {
+-		bool_value = true;
+-	} else if (strcmp(value, "0") == 0) {
+-		bool_value = false;
+-	} else {
+-		PMD_INIT_LOG_LINE(ERR,
+-			"Invalid value: '%s' for key '%s'. Accepted: '0' or '1'",
+-			value, key);
+-		return -EINVAL;
 -	}
 -
--	/* validate socket id value */
--	if (socket_id >= 0 && socket_id < RTE_MAX_NUMA_NODES) {
--		*(int *)extra_args = (int)socket_id;
--		return 0;
--	}
--	return -1;
--}
--
- int
- bond_ethdev_parse_primary_member_port_id_kvarg(const char *key __rte_unused,
- 		const char *value, void *extra_args)
-@@ -278,22 +246,3 @@ bond_ethdev_parse_bond_mac_addr_kvarg(const char *key __rte_unused,
- 	return rte_ether_unformat_addr(value, extra_args);
- }
- 
--int
--bond_ethdev_parse_time_ms_kvarg(const char *key __rte_unused,
--		const char *value, void *extra_args)
--{
--	uint32_t time_ms;
--	char *endptr;
--
--	if (value == NULL || extra_args == NULL)
--		return -1;
--
--	errno = 0;
--	time_ms = (uint32_t)strtol(value, &endptr, 10);
--	if (*endptr != 0 || errno != 0)
--		return -1;
--
--	*(uint32_t *)extra_args = time_ms;
+-	/* Now, assign it to the proper adapter field. */
+-	if (strcmp(key, ENA_DEVARG_ENABLE_FRAG_BYPASS) == 0)
+-		adapter->enable_frag_bypass = bool_value;
 -
 -	return 0;
 -}
-diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
-index 6a4f997b5a..766dfd9459 100644
---- a/drivers/net/bonding/rte_eth_bond_pmd.c
-+++ b/drivers/net/bonding/rte_eth_bond_pmd.c
-@@ -3869,7 +3869,7 @@ bond_probe(struct rte_vdev_device *dev)
- 	arg_count = rte_kvargs_count(kvlist, PMD_BOND_SOCKET_ID_KVARG);
- 	if (arg_count == 1) {
- 		if (rte_kvargs_process(kvlist, PMD_BOND_SOCKET_ID_KVARG,
--				&bond_ethdev_parse_socket_id_kvarg, &socket_id)
-+				rte_kvargs_handle_socket_id, &socket_id)
- 				!= 0) {
- 			RTE_BOND_LOG(ERR, "Invalid socket Id specified for "
- 					"bonding device %s", name);
-@@ -4207,7 +4207,7 @@ bond_ethdev_configure(struct rte_eth_dev *dev)
+-
+ static int ena_parse_devargs(struct ena_adapter *adapter, struct rte_devargs *devargs)
+ {
+ 	static const char * const allowed_args[] = {
+@@ -3956,8 +3923,8 @@ static int ena_parse_devargs(struct ena_adapter *adapter, struct rte_devargs *de
+ 		ena_process_uint_devarg, adapter);
+ 	if (rc != 0)
+ 		goto exit;
+-	rc = rte_kvargs_process(kvlist, ENA_DEVARG_ENABLE_FRAG_BYPASS,
+-		ena_process_bool_devarg, adapter);
++	rc = rte_kvargs_process_opt(kvlist, ENA_DEVARG_ENABLE_FRAG_BYPASS,
++		rte_kvargs_handle_bool, &adapter->enable_frag_bypass);
+ 	if (rc != 0)
+ 		goto exit;
  
- 		if (rte_kvargs_process(kvlist,
- 				       PMD_BOND_LSC_POLL_PERIOD_KVARG,
--				       &bond_ethdev_parse_time_ms_kvarg,
-+				       rte_kvargs_handle_u32,
- 				       &lsc_poll_interval_ms) < 0) {
- 			RTE_BOND_LOG(INFO,
- 				     "Invalid lsc polling interval value specified for bonding"
-@@ -4236,7 +4236,7 @@ bond_ethdev_configure(struct rte_eth_dev *dev)
- 
- 		if (rte_kvargs_process(kvlist,
- 				       PMD_BOND_LINK_UP_PROP_DELAY_KVARG,
--				       &bond_ethdev_parse_time_ms_kvarg,
-+				       rte_kvargs_handle_u32,
- 				       &link_up_delay_ms) < 0) {
- 			RTE_BOND_LOG(INFO,
- 				     "Invalid link up propagation delay value specified for"
-@@ -4266,7 +4266,7 @@ bond_ethdev_configure(struct rte_eth_dev *dev)
- 
- 		if (rte_kvargs_process(kvlist,
- 				       PMD_BOND_LINK_DOWN_PROP_DELAY_KVARG,
--				       &bond_ethdev_parse_time_ms_kvarg,
-+				       rte_kvargs_handle_u32,
- 				       &link_down_delay_ms) < 0) {
- 			RTE_BOND_LOG(INFO,
- 				     "Invalid link down propagation delay value specified for"
 -- 
 2.53.0
 
