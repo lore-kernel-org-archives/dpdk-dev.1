@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C7BCA5FB1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 06:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD2ACA5FAB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 06:25:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5F48242E0B;
-	Wed, 30 Sep 2026 08:25:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6978842E10;
+	Wed, 30 Sep 2026 08:25:22 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 4D05A40A7A
+ by mails.dpdk.org (Postfix) with ESMTP id A048240A7A
  for <dev@dpdk.org>; Wed, 30 Sep 2026 08:24:45 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 31D55200196;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 838842001F0;
  Wed, 30 Sep 2026 08:24:45 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F05A32001F0;
- Wed, 30 Sep 2026 08:24:44 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4D8D320019A;
+ Wed, 30 Sep 2026 08:24:45 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 735001800068;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C4D81180006C;
  Wed, 30 Sep 2026 14:24:44 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v18 13/24] net/dpaa: optimize FMC MAC type parsing
-Date: Wed, 30 Sep 2026 11:54:26 +0530
-Message-Id: <20260930062437.3019096-14-hemant.agrawal@nxp.com>
+Subject: [PATCH v18 14/24] drivers: release DPAA bpid on driver destructor
+Date: Wed, 30 Sep 2026 11:54:27 +0530
+Message-Id: <20260930062437.3019096-15-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260930062437.3019096-1-hemant.agrawal@nxp.com>
 References: <20260929104519.1770698-1-hemant.agrawal@nxp.com>
@@ -51,144 +51,227 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-For ls104xa, MAC9 and MAC10's type could be either of 10G/2.5G/1G
-up to serdes configuration, MAC index should be identified by
-port name instead of parsing MAC type and port number.
+A BPID allocated by dpaa_mbuf_create_pool() is only returned to the
+kernel allocator from dpaa_mbuf_free_pool(). An application that exits
+without calling rte_mempool_free() therefore leaks the BPID, and the ID
+stays reserved until the board is rebooted.
+
+Track the allocated BPIDs and the flags they were created with in a
+static per-BPID table, and add a driver destructor that releases any
+BPID still marked in use at process exit. The destructor cannot touch
+the bman_pool object because it lives in EAL memory that may already be
+gone, so bman_free_bpid() is added to release the ID from the flags
+alone.
+
+The rte_dpaa_bpid_info array is shared hugepage memory referenced by
+every Rx queue through fq->bp_array, including in secondary processes,
+so it must not be freed when the last local mempool is released. Free it
+from the destructor instead, once, at process teardown, and only clear
+the per-BPID mp and bp pointers in dpaa_mbuf_free_pool(). Free the
+correct pointer there as well: bp_info rather than mp->pool_data, which
+is the same allocation but was being dereferenced after the free.
+
+Allocate bp_info with rte_zmalloc() so no uninitialised field is left
+behind, and use FSL_BM_BURST_MAX instead of the open-coded 8 for the
+hardware bulk acquire size.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/net/dpaa/dpaa_fmc.c | 91 +++++++++++++++++++++++++------------
- 1 file changed, 63 insertions(+), 28 deletions(-)
+ drivers/bus/dpaa/base/qbman/bman.c       |  8 +++
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c |  1 +
+ drivers/bus/dpaa/include/fsl_bman.h      |  3 ++
+ drivers/mempool/dpaa/dpaa_mempool.c      | 68 +++++++++++++++++++++---
+ drivers/mempool/dpaa/dpaa_mempool.h      |  2 +-
+ 5 files changed, 74 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/dpaa/dpaa_fmc.c b/drivers/net/dpaa/dpaa_fmc.c
-index 7dc42f6e23..c8a50bb31d 100644
---- a/drivers/net/dpaa/dpaa_fmc.c
-+++ b/drivers/net/dpaa/dpaa_fmc.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2017-2023 NXP
-+ * Copyright 2017-2026 NXP
-  */
+diff --git a/drivers/bus/dpaa/base/qbman/bman.c b/drivers/bus/dpaa/base/qbman/bman.c
+index ee4232d0a0..0ae1160973 100644
+--- a/drivers/bus/dpaa/base/qbman/bman.c
++++ b/drivers/bus/dpaa/base/qbman/bman.c
+@@ -251,6 +251,14 @@ void bman_free_pool(struct bman_pool *pool)
+ 	kfree(pool);
+ }
  
- /* System headers */
-@@ -204,6 +204,44 @@ struct fmc_model_t {
- 
- struct fmc_model_t *g_fmc_model;
- 
-+#define FMC_PORT_NAME_MAC "MAC/"
-+#define FMC_PORT_NAME_OFFLINE "OFFLINE/"
-+
-+static int
-+dpaa_port_fmc_get_idx_from_name(const char *name)
++void bman_free_bpid(u8 bpid, u32 flags)
 +{
-+	const char *found;
-+	char *endptr;
-+	int idx_str_start = -1, idx;
-+
-+	found = strstr(name, FMC_PORT_NAME_MAC);
-+	if (!found) {
-+		found = strstr(name, FMC_PORT_NAME_OFFLINE);
-+		if (found)
-+			idx_str_start = strlen(FMC_PORT_NAME_OFFLINE);
-+	} else {
-+		idx_str_start = strlen(FMC_PORT_NAME_MAC);
-+	}
-+
-+	if (!found) {
-+		/* Not a port name this driver recognises. The caller treats a
-+		 * negative return as "not this port", so this is not an error.
-+		 */
-+		DPAA_PMD_DEBUG("Not a MAC or offline fmc port name: %s", name);
-+		return -EINVAL;
-+	}
-+
-+	idx = (int)strtol(&found[idx_str_start], &endptr, 10);
-+	if (endptr == &found[idx_str_start] || (*endptr != '\0' && *endptr != '/')) {
-+		DPAA_PMD_DEBUG("No index in fmc port name: %s", name);
-+		return -EINVAL;
-+	}
-+
-+	DPAA_PMD_DEBUG("MAC index of %s is %d", name, idx);
-+
-+	return idx;
++	if (flags & BMAN_POOL_FLAG_THRESH)
++		bm_pool_set(bpid, zero_thresholds);
++	if (flags & BMAN_POOL_FLAG_DYNAMIC_BPID)
++		bman_release_bpid(bpid);
 +}
 +
- static int
- dpaa_port_fmc_port_parse(struct fman_if *fif,
- 	const struct fmc_model_t *fmc_model,
-@@ -211,48 +249,45 @@ dpaa_port_fmc_port_parse(struct fman_if *fif,
+ const struct bman_pool_params *bman_get_params(const struct bman_pool *pool)
  {
- 	int current_port = fmc_model->apply_order[apply_idx].index;
- 	const fmc_port *pport = &fmc_model->port[current_port];
--	uint32_t num;
-+	int num;
+ 	return &pool->params;
+diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
+index b806b44d29..7a9b08e68c 100644
+--- a/drivers/bus/dpaa/dpaa_bus_base_symbols.c
++++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
+@@ -44,6 +44,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(fman_if_receive_rx_errors)
+ RTE_EXPORT_INTERNAL_SYMBOL(netcfg_acquire)
+ RTE_EXPORT_INTERNAL_SYMBOL(netcfg_release)
+ RTE_EXPORT_INTERNAL_SYMBOL(bman_new_pool)
++RTE_EXPORT_INTERNAL_SYMBOL(bman_free_bpid)
+ RTE_EXPORT_INTERNAL_SYMBOL(bman_free_pool)
+ RTE_EXPORT_INTERNAL_SYMBOL(bman_get_params)
+ RTE_EXPORT_INTERNAL_SYMBOL(bman_release)
+diff --git a/drivers/bus/dpaa/include/fsl_bman.h b/drivers/bus/dpaa/include/fsl_bman.h
+index 639e0edc96..88e4df503f 100644
+--- a/drivers/bus/dpaa/include/fsl_bman.h
++++ b/drivers/bus/dpaa/include/fsl_bman.h
+@@ -292,6 +292,9 @@ struct bman_pool *bman_new_pool(const struct bman_pool_params *params);
+ __rte_internal
+ void bman_free_pool(struct bman_pool *pool);
  
-+	/* Offline and ONIC ports are matched on the port number from the FMC
-+	 * model, so no name parsing is needed for them.
-+	 */
- 	if (pport->type == e_FM_PORT_TYPE_OH_OFFLINE_PARSING &&
- 	    pport->number == fif->mac_idx &&
- 	    (fif->mac_type == fman_offline_internal ||
- 	     fif->mac_type == fman_onic))
- 		return current_port;
- 
--	if (fif->mac_type == fman_mac_1g) {
--		if (pport->type != e_FM_PORT_TYPE_RX)
--			return -ENODEV;
--		num = pport->number + DPAA_1G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
--
-+	if (fif->mac_type == fman_mac_1g &&
-+			pport->type != e_FM_PORT_TYPE_RX)
- 		return -ENODEV;
--	}
--
--	if (fif->mac_type == fman_mac_2_5g) {
--		if (pport->type != e_FM_PORT_TYPE_RX_2_5G)
--			return -ENODEV;
--		num = pport->number + DPAA_2_5G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
- 
-+	if (fif->mac_type == fman_mac_2_5g &&
-+			pport->type != e_FM_PORT_TYPE_RX_2_5G)
- 		return -ENODEV;
--	}
--
--	if (fif->mac_type == fman_mac_10g) {
--		if (pport->type != e_FM_PORT_TYPE_RX_10G)
--			return -ENODEV;
--		num = pport->number + DPAA_10G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
- 
-+	if (fif->mac_type == fman_mac_10g &&
-+			pport->type != e_FM_PORT_TYPE_RX_10G)
- 		return -ENODEV;
++__rte_internal
++void bman_free_bpid(u8 bpid, u32 flags);
 +
-+	if (fif->mac_type != fman_mac_1g &&
-+			fif->mac_type != fman_mac_2_5g &&
-+			fif->mac_type != fman_mac_10g) {
-+		DPAA_PMD_ERR("Unknown mac_type(%d) for port %s",
-+			     fif->mac_type, pport->name);
-+		return -EINVAL;
+ /**
+  * bman_get_params - Returns a pool object's parameters.
+  * @pool: the pool object
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
+index 2f8555a026..2e9453a873 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.c
++++ b/drivers/mempool/dpaa/dpaa_mempool.c
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+- *   Copyright 2017,2019,2023-2025 NXP
++ *   Copyright 2017,2019,2023-2026 NXP
+  *
+  */
+ 
+@@ -25,10 +25,24 @@
+ #include <rte_eal.h>
+ #include <rte_malloc.h>
+ #include <rte_ring.h>
++#include <rte_common.h>
+ 
+ #include <dpaa_mempool.h>
+ #include <dpaax_iova_table.h>
+ 
++struct dpaa_bpid_flag {
++	uint32_t flags;
++	bool used;
++};
++
++/* Referenced from the destructor to release the BPIDs allocated by this
++ * process. The destructor cannot touch the bman_pool object because it lives
++ * in EAL memory that rte_eal_cleanup() may already have detached, so the ID
++ * is released from the recorded flags alone. This table is process-local
++ * static storage and therefore still valid at that point.
++ */
++static struct dpaa_bpid_flag s_dpaa_bpid_allocated_flag[DPAA_MAX_BPOOLS];
++
+ #define FMAN_ERRATA_BOUNDARY ((uint64_t)4096)
+ #define FMAN_ERRATA_BOUNDARY_MASK (~(FMAN_ERRATA_BOUNDARY - 1))
+ 
+@@ -50,7 +64,7 @@ static int
+ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ {
+ 	struct bman_pool *bp;
+-	struct bm_buffer bufs[8];
++	struct bm_buffer bufs[FSL_BM_BURST_MAX];
+ 	struct dpaa_bp_info *bp_info;
+ 	uint8_t bpid;
+ 	int num_bufs = 0, ret = 0;
+@@ -83,8 +97,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 		 * then in 1s for the remainder.
+ 		 */
+ 		if (ret != 1)
+-			ret = bman_acquire(bp, bufs, 8, 0);
+-		if (ret < 8)
++			ret = bman_acquire(bp, bufs, FSL_BM_BURST_MAX, 0);
++		if (ret < FSL_BM_BURST_MAX)
+ 			ret = bman_acquire(bp, bufs, 1, 0);
+ 		if (ret > 0)
+ 			num_bufs += ret;
+@@ -115,7 +129,7 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 	rte_dpaa_bpid_info[bpid].ptov_off = 0;
+ 	rte_dpaa_bpid_info[bpid].flags = 0;
+ 
+-	bp_info = rte_malloc(NULL,
++	bp_info = rte_zmalloc(NULL,
+ 			     sizeof(struct dpaa_bp_info),
+ 			     RTE_CACHE_LINE_SIZE);
+ 	if (!bp_info) {
+@@ -127,6 +141,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 	rte_memcpy(bp_info, (void *)&rte_dpaa_bpid_info[bpid],
+ 		   sizeof(struct dpaa_bp_info));
+ 	mp->pool_data = (void *)bp_info;
++	s_dpaa_bpid_allocated_flag[bpid].flags = params.flags;
++	s_dpaa_bpid_allocated_flag[bpid].used = true;
+ 
+ 	DPAA_MEMPOOL_INFO("BMAN pool created for bpid =%d", bpid);
+ 	return 0;
+@@ -143,10 +159,26 @@ dpaa_mbuf_free_pool(struct rte_mempool *mp)
+ 		bman_free_pool(bp_info->bp);
+ 		DPAA_MEMPOOL_INFO("BMAN pool freed for bpid =%d",
+ 				  bp_info->bpid);
+-		rte_free(mp->pool_data);
+-		bp_info->bp = NULL;
++		if (rte_dpaa_bpid_info != NULL) {
++			rte_dpaa_bpid_info[bp_info->bpid].mp = NULL;
++			rte_dpaa_bpid_info[bp_info->bpid].bp = NULL;
++		}
++		s_dpaa_bpid_allocated_flag[bp_info->bpid].used = false;
++		rte_free(bp_info);
+ 		mp->pool_data = NULL;
  	}
- 
--	DPAA_PMD_ERR("Invalid MAC(mac_idx=%d) type(%d)",
--		fif->mac_idx, fif->mac_type);
-+	num = dpaa_port_fmc_get_idx_from_name(pport->name);
-+	if (num < 0)
-+		return num;
 +
-+	if (fif->mac_idx == num)
-+		return current_port;
- 
--	return -EINVAL;
-+	return -ENODEV;
++	/* rte_dpaa_bpid_info is not freed here, and not from the driver
++	 * destructor either. It is shared (hugepage) memory referenced by
++	 * every Rx queue via fq->bp_array, including in secondary processes:
++	 * in a secondary the pointer is not even a local allocation, the Rx
++	 * path installs the primary's array (see dpaa_rxtx.c). Releasing it
++	 * when the last local mempool goes away would leave those references
++	 * dangling, and a destructor cannot release it either because
++	 * rte_eal_cleanup() detaches EAL memory before the destructors run.
++	 * The array is a fixed-size per-process table, so it is simply left
++	 * to the process teardown.
++	 */
  }
  
  static int
+@@ -481,4 +513,26 @@ static const struct rte_mempool_ops dpaa_mpool_ops = {
+ 	.populate = dpaa_populate,
+ };
+ 
++#define RTE_PRIORITY_104 104
++
++RTE_FINI_PRIO(dpaa_mpool_finish, RTE_PRIORITY_104)
++{
++	uint16_t bpid;
++
++	for (bpid = 0; bpid < DPAA_MAX_BPOOLS; bpid++) {
++		if (s_dpaa_bpid_allocated_flag[bpid].used) {
++			bman_free_bpid(bpid, s_dpaa_bpid_allocated_flag[bpid].flags);
++			s_dpaa_bpid_allocated_flag[bpid].used = false;
++		}
++	}
++
++	/* rte_dpaa_bpid_info is deliberately not freed here. It is EAL memory,
++	 * and rte_eal_cleanup() has already called rte_eal_memory_detach() by
++	 * the time the destructors run, so rte_free() would operate on an
++	 * unmapped mapping. In a secondary it is not even a local allocation:
++	 * the Rx path installs the primary's array (see dpaa_rxtx.c), so
++	 * freeing it would release the primary's live BPID table.
++	 */
++}
++
+ RTE_MEMPOOL_REGISTER_OPS(dpaa_mpool_ops);
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.h b/drivers/mempool/dpaa/dpaa_mempool.h
+index 865b533b8f..ca34747711 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.h
++++ b/drivers/mempool/dpaa/dpaa_mempool.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+- *   Copyright 2017,2019,2024 -2025 NXP
++ *   Copyright 2017,2019,2024 -2026 NXP
+  *
+  */
+ #ifndef __DPAA_MEMPOOL_H__
 -- 
 2.25.1
 
