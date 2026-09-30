@@ -2,77 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7E8CA5FC7
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 15:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 764D1CA5FC7
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 16:06:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D62A440E50;
-	Wed, 30 Sep 2026 17:38:32 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 15D40402D9
- for <dev@dpdk.org>; Wed, 30 Sep 2026 17:38:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790782711;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=xVwJoHYojN35A8ybZ9//JM0/HnmcMNGEYBxseaomWYA=;
- b=IjlI9T+oH4PK+1ZDZdPNrqIXrm919TCSSQKO6linVz3Eh7VV7Z+7YkYlUVSAq/FfFUsE4d
- o2iP7+ceHk/rarigk4PwWgSWBU4q+A1Xw21NfpoEfoPCslngDlQGh2eBi51A52k7J8Snei
- 1AGXtqSrQolIrABvBHa24JBQPGpYX1I=
-Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com
- [74.125.82.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-26-tKxoyllNPtu82j1SxzdwDQ-1; Wed, 30 Sep 2026 11:38:30 -0400
-X-MC-Unique: tKxoyllNPtu82j1SxzdwDQ-1
-X-Mimecast-MFC-AGG-ID: tKxoyllNPtu82j1SxzdwDQ_1790782709
-Received: by mail-dy1-f198.google.com with SMTP id
- 5a478bee46e88-33713e5e6daso7972900eec.0
- for <dev@dpdk.org>; Wed, 30 Sep 2026 08:38:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6FF1F402DF;
+	Wed, 30 Sep 2026 18:06:42 +0200 (CEST)
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
+ [74.125.227.141])
+ by mails.dpdk.org (Postfix) with ESMTP id 674E9402D9
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 18:06:41 +0200 (CEST)
+Received: by mail-pj2-f13.google.com with SMTP id
+ d9443c01a7336-2d747eefae4so13998325ad.0
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 09:06:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790784400;
+ x=1791389200; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=Ngj880J40dTd5FKM/lxwlHvczsb57G35urdx2QzIxkY=;
+ b=wVgMWTMPm+l8OIQsyecoRIEQPPTlwv2KWIqJYrZnJU0fbWFcj24PHAZaY4wU4PjO5A
+ YscmmEa1UODYszluL3c5HTU9lxDGCc+O7tmlGX+m++O8thp2PQtMBFJ4EHLF6ySENJIy
+ +HRRaznr2AdhKOtUARAUYiHzXCOAoG9YODn5ZwJiVGsnhbVVYHLCrEGDAhPlK67cgHYE
+ e8AfR2/xxRNhRNwHi8eC4arCbqU/4UT4ip9VUZTyHoPFYJq20FpeGUdwvMLq+Y4q/Q8m
+ dkIhzQ6/ZgT2loOxihBOiW4nWQZgHMgtGbmd2VUlpNmnw7aU4bJHvTBPpU2MVf+qtZaE
+ WNMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790782709; x=1791387509;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=xVwJoHYojN35A8ybZ9//JM0/HnmcMNGEYBxseaomWYA=;
- b=z590FfHYa0+7z9ru4Y7pOBDDiI5Bg6SStRJ6HcqDZuh9lELvl1mnVjAbp/EG82pPug
- kWULitjP94P+/+Jw4mOCdWixMKvmuX4llg6Ivruty20hFJDCO41kziFALvJ6nsixChZd
- MG7nPzlDhDNtOtXfqikJ3yrETp6E1RSqVO+PD7G9nlGbnWSr2Cu5U0Gn/vC/KBsYasdh
- txJaoIlzcW5P9sNHaqhSw4Jkdhf2ICgjFTl69hZPIPkXgt8RDE6kmxLQAg9YHwh6aIg6
- 5S3YBRPTMT1q+TSThz67U2Q4jJzC5QmqNhDOJvS17pEA1tB9mlL2iv1A+oAvZLyhAcAG
- E5pg==
-X-Gm-Message-State: AFuF++kaTd8MtONvKLaX0j0jNYyp0oIQdLZINXqGTCGrQ3cin1pb0hKY
- fSZpSPy+UIjr+VA06m6c8P7EUkv9mHYHtdX1QktkkEDavZSsS0Q1K97KAxtw31pBzolV1WgqtnE
- jexcmXoWmXnKxNR3hT2GAdIvurWPtbgG2zZKznlG5wLXYMS1nLOsvlNlKh+fKfSvdA8mV2EQbY7
- ZJyxzR5T5CZQdRuK9wnVQ=
-X-Gm-Gg: AYBFou3Bn8Kx7kfpZLEp6jmykKlrAPbXOYLgox3skBRR1kZXAcA3f8AX6riq+Ctl6vf
- 5w+uZVZJwiKiUf3t9++lzDCM2EXfPanvXlh2GMPVj1lbUWzSLWlRk8onKMQVMaTnTjrV12mGGLf
- QsLu3Dt9NqOKo0CPWyay8klNl6LtI2pW/aSz/HPWzgE+HjIaiwPRg60wBg/aW0tQ1of7wWlGAdb
- qDrq/uDQTYjsCSRLmWK48AN5B1MMPAfQaTTj40BaVI115hehb32BA2s5k2MeOmHGpM8OA1I8Zzg
- r9e0RBdM68ODdDHFvqbNGg7G7NF5HOAChyweUKCvooI=
-X-Received: by 2002:a05:7022:61b:b0:13d:974:a2c6 with SMTP id
- a92af1059eb24-14d3204e745mr2523381c88.7.1790782708523; 
- Wed, 30 Sep 2026 08:38:28 -0700 (PDT)
-X-Received: by 2002:a05:7022:61b:b0:13d:974:a2c6 with SMTP id
- a92af1059eb24-14d3204e745mr2523335c88.7.1790782707937; Wed, 30 Sep 2026
- 08:38:27 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1790784400; x=1791389200;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=Ngj880J40dTd5FKM/lxwlHvczsb57G35urdx2QzIxkY=;
+ b=JcSGlPJtDPyGpB9wqsj9sf39fV2HifZrs5mrdzIn8kTB7Td++ynOVyiAILwWad9KcP
+ poXzReq975MsLGXkrIfmHTXbb5kHi1kQ8TGMz+yqoJIYfjwQLTF4NqAslxSwDu2fObAH
+ HZw2rk0OywW2Pd2wrHhpLnzITUXCPcBntJKgbMB3S94yFc4dBq5ZOi5mjzFDEMF8j+BP
+ DKdDrBCgLtlfA6wY8csMN+7EC7GhPAQe0ajb0yAJ7sWS8raFhaCZG71TwYj3BuoDdVct
+ 126gbtbpXTIrINeXiyRIj5T8Al/Xe8iPjg7RDLito+LeJ6Lq89y9gV8OumPqDFl1G3VK
+ nWJQ==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBxMNjEDgvcxMGlpgG6Qp/jbFAU5bimyQg82iE2g/dT6T0UhXW+30m09BmyEWOWh9ql6VlM=@dpdk.org
+X-Gm-Message-State: AFq9FYJylWVhkaHtedqhjOHGK/ARUClN2ydXhGlqOU/Py5vzV7wQN9lU
+ tCnCXnjpjeyWtDUxIVAQJeQTbBakQnjIjqS0mbYFjqPcqXOIL+AeSuyQ1HidHfC34v0=
+X-Gm-Gg: AYBFou0qJ1hdY5+Lc9YcJazu1JzlMkZYsBKOdUX1WRcj9dkiknTltkLmy1rC2Xp9nQ0
+ qwqpx/qAm/xHdZCGOBpVYTuwf+FtorDizurMHnxEY3HYKelQGFHi58piQ/ewUZX6MHNj1CqOKzQ
+ Xi4pNqEsIuEAbN0MSnTlUMVqj8OtfP1Pgss/kBHX7MYm55J/pLuK0pViUk2+jOzwG3AOuPnkm4b
+ P28PQAloR52FCv+6FXIeB0gKIjJtI5C8+2DIO/UAED8aR1geg0mX9btbgyGzjWpZMb7kpdiSKEZ
+ Bkty9z9YRVuacIB9Wbgnw7MkP/qBj7mrGzt9ldfBThup8Lm9uT7xNEurUrPha2g2mHWYMfKRYZd
+ xJrYVtDJJ6KelbB/hLGdO1qcUNW6fouZGDpwvJWcFCfmS5UADtYZ5J2W+j+lEMgVgmxcR5kGOq1
+ NelZFFTIBsUzRatowKUy6BlmUfXeY5IhdIxNTU5ptH24vM8mH6dmotBnOl0WuuXChZ7Y3IY/BxZ
+ 2PZc+zyfzVe0CGvw2AOhHJjyXPr43YaLBO/V5PF7A==
+X-Received: by 2002:a17:903:2407:b0:2df:9489:83f7 with SMTP id
+ d9443c01a7336-2e3004226bbmr21205ad.40.1790784400030; 
+ Wed, 30 Sep 2026 09:06:40 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2e2e5bac8dfsm10203895ad.32.2026.09.30.09.06.39
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 30 Sep 2026 09:06:39 -0700 (PDT)
+Date: Wed, 30 Sep 2026 09:06:37 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Hemant Agrawal <hemant.agrawal@nxp.com>
+Cc: thomas@monjalon.net, dev@dpdk.org
+Subject: Re: [PATCH v18 00/24] NXP DPAA driver enhancements and fixes
+Message-ID: <20260930090637.1125cc72@phoenix.local>
+In-Reply-To: <20260930062437.3019096-1-hemant.agrawal@nxp.com>
+References: <20260929104519.1770698-1-hemant.agrawal@nxp.com>
+ <20260930062437.3019096-1-hemant.agrawal@nxp.com>
 MIME-Version: 1.0
-References: <20260930095800.551314-1-maxime.coquelin@redhat.com>
- <20260930095800.551314-3-maxime.coquelin@redhat.com>
- <20260930082724.06b79bb6@phoenix.local>
-In-Reply-To: <20260930082724.06b79bb6@phoenix.local>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Wed, 30 Sep 2026 17:38:15 +0200
-X-Gm-Features: AclHuK_9uQTOGH3dPihh5Uc_g4pjSXZhuxLBVZaoWhWw-m409gfYUx5OwhvRfbw
-Message-ID: <CAO55csygHRtugFxNyDHc_EEyfZJooGjyGEDwVHKxjwGY2CxxSA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] uapi: update headers to v6.19
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, eperezma@redhat.com, david.marchand@redhat.com, 
- thomas@monjalon.net
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 6euw5Xk7D0zDaUT9lFOl84uUWlUJO5l3haffjqNucsw_1790782709
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/alternative; boundary="0000000000002d4985065cb5174b"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,62 +85,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000002d4985065cb5174b
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Wed, 30 Sep 2026 11:54:13 +0530
+Hemant Agrawal <hemant.agrawal@nxp.com> wrote:
 
-On Wed, Sep 30, 2026 at 5:27=E2=80=AFPM Stephen Hemminger <
-stephen@networkplumber.org> wrote:
+> This series collects a set of fixes and enhancements for the NXP DPAA
+> bus, mempool, dma, crypto and net drivers targeting 26.11.
+> 
+> It includes memory-leak and resource-cleanup fixes on the device
+> remove/close paths, more robust frame queue and congestion-group
+> shutdown, secondary-process safety guards, BPID and cgrid lifecycle
+> handling, and several new features: offline (O/H) port device support,
+> enhanced virtual storage profile (VSP) port support, fmcless Rx queue
+> configuration via devargs, Rx/Tx taildrop threshold devargs, non
+> fmX-macY shared Ethernet naming, and DMA scatter-gather and
+> errata-workaround devargs. Documentation and release notes are updated
+> accordingly.
+> 
+> v18:
+> * Dropped the "net/dpaa: fix device remove" patch. It papered over the
+>   symptom in rte_dpaa_remove() instead of fixing the cause, and was
+>   replaced by the two fixes now at the head of the series.
+> * net/dpaa: fix the double dpaa_eth_dev_close() call and the eth_dev
+>   dereference before the NULL check in rte_dpaa_remove().
+> * net/dpaa: unwind rte_dpaa_probe() through cleanup labels so the Tx SG
+>   mempool failure path closes the device and releases the port instead of
+>   leaking the port, the queue arrays and the QMan FQID/CGRID ranges.
 
-> On Wed, 30 Sep 2026 11:58:00 +0200
-> Maxime Coquelin <maxime.coquelin@redhat.com> wrote:
->
-> > diff --git a/kernel/linux/uapi/linux/vfio.h
-> b/kernel/linux/uapi/linux/vfio.h
-> > index 79bf8c0cc5..720edfee7a 100644
-> > --- a/kernel/linux/uapi/linux/vfio.h
-> > +++ b/kernel/linux/uapi/linux/vfio.h
-> > @@ -14,6 +14,7 @@
-> >
-> >  #include <linux/types.h>
-> >  #include <linux/ioctl.h>
-> > +#include <linux/stddef.h>
-> >
->
-> Just add sanitized stddef.h into kernel/linux/uapi/linux
->
->
-See my reply on patch 1 where I explain why it does not work.
 
---0000000000002d4985065cb5174b
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Sep 30,=
- 2026 at 5:27=E2=80=AFPM Stephen Hemminger &lt;<a href=3D"mailto:stephen@ne=
-tworkplumber.org">stephen@networkplumber.org</a>&gt; wrote:<br></div><block=
-quote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1=
-px solid rgb(204,204,204);padding-left:1ex">On Wed, 30 Sep 2026 11:58:00 +0=
-200<br>
-Maxime Coquelin &lt;<a href=3D"mailto:maxime.coquelin@redhat.com" target=3D=
-"_blank">maxime.coquelin@redhat.com</a>&gt; wrote:<br>
-<br>
-&gt; diff --git a/kernel/linux/uapi/linux/vfio.h b/kernel/linux/uapi/linux/=
-vfio.h<br>
-&gt; index 79bf8c0cc5..720edfee7a 100644<br>
-&gt; --- a/kernel/linux/uapi/linux/vfio.h<br>
-&gt; +++ b/kernel/linux/uapi/linux/vfio.h<br>
-&gt; @@ -14,6 +14,7 @@<br>
-&gt;=C2=A0 <br>
-&gt;=C2=A0 #include &lt;linux/types.h&gt;<br>
-&gt;=C2=A0 #include &lt;linux/ioctl.h&gt;<br>
-&gt; +#include &lt;linux/stddef.h&gt;<br>
-&gt;=C2=A0 <br>
-<br>
-Just add sanitized stddef.h into kernel/linux/uapi/linux<br>
-<br></blockquote><div><br></div><div>See my reply on patch 1 where I explai=
-n why it does not work.=C2=A0</div></div></div>
-
---0000000000002d4985065cb5174b--
-
+Much better but still see some leftovers in AI review.
