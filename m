@@ -2,70 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EF1CA5FC4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90858CA5FC5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:50:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 134BB4327E;
-	Thu,  1 Oct 2026 00:44:51 +0200 (CEST)
-Received: from mail-pj2-f38.google.com (mail-pj2-f38.google.com
- [74.125.227.166])
- by mails.dpdk.org (Postfix) with ESMTP id AA74242FFD
- for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:46 +0200 (CEST)
-Received: by mail-pj2-f38.google.com with SMTP id
- 98e67ed59e1d1-3a4c0da0145so807914a91.0
- for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1AE114328B;
+	Thu,  1 Oct 2026 00:44:52 +0200 (CEST)
+Received: from mail-pz2-f32.google.com (mail-pz2-f32.google.com
+ [74.125.228.32]) by mails.dpdk.org (Postfix) with ESMTP id 87D8F43265
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:47 +0200 (CEST)
+Received: by mail-pz2-f32.google.com with SMTP id
+ 41be03b00d2f7-cc4d04d73b8so2306948a12.1
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808286;
- x=1791413086; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808287;
+ x=1791413087; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=0lI3virqKF8YH11Zm1z5LNn3RKes4noW2zwn1rG7R2Y=;
- b=iAGL9pL/qkaJMzLX43US8sI1SFzMnzCmCHumNH3QHXYQoiHhm/vZL+6UFgxWrUwPAN
- 2yx7ximLNViSZRpQ6B1G1+XW8IYI3oKIrnG5TlBWNls9SuMW5r/GmRq4VwDQj87SUa8B
- pHOPikHELmjWlvgcB4TQBuvGkA+8UtA+e3yT8T1QIfRPvfpEOwmV5n+yIhwuSxd7rHmq
- r8LYIc1s8Zd0U02GnK9dD9iFQfwsrtfC3OTdBVgdwQI7zOXUAHJYt+zCBuSzBgnyl/gQ
- kzf92W2ulIzYH7X79yMImDzoFuHRNiU282p4tNxjl2gBh+iuWXzgyIXDOdA20TBiztFL
- 0xfw==
+ bh=daIJXiSoXKhz8lpZgwqv/Nqoyvo7VuJEdsUWf0MAOQg=;
+ b=ZU47P3e+c7YGy2tj6NFGoL6QpOrUGzv7JGg2TTfwtrYHqw0hrB2hvZ/Fv3BMXFlwKl
+ 9/3TIq7yTrxMh2Fu2RnsEvHQ5ZKM/iTiROlR1FX2BWjlXpts1GlFXV8Vmh708QKkJ9+G
+ vn/5xgnlENq36RV1v4sRfl+wcaEkPxPFCk4r8vC4t/Qru2ugE92DdlPWHk5cnDwr+cE6
+ JcgK9qOTwt2EFSweM43viKLrVBrte2OCMWQobKr3Ka2aQe2k9fdg44NUS23acmimGFFW
+ yBvi4U7IcYdrquUbeTnZfbBlEi6dsWjLqSndlMA0by+VgaRa42w2R3o+YsUR7yadCqx9
+ 99iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790808286; x=1791413086;
+ d=1e100.net; s=20260707; t=1790808287; x=1791413087;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=0lI3virqKF8YH11Zm1z5LNn3RKes4noW2zwn1rG7R2Y=;
- b=ngmgxwJtvGRsUPKHrKh8ZIwlKRnVaUAz99mmu/HwhaX1EluNuJR5nFsewqyTht0Aw8
- 6kxx9vGhTK3nDb5Io9PtkhfqZUz9ZaU9ylzG/1b2Wgg5AQlAjISPUIM1mBmro7RODOt1
- cIzqTO7BCauTy1sqcn1ZXNZKfHi+UpN84xtwSOM8CCEXb6w2icGi3Md7Y25LD8ZF/gfm
- EPizfmTGg5sTlSx9Uq8JQoTgJu7ihm+WrNEbV8XtoE/7DJF7Osc8YssVC2vzbMNYs7Et
- mu3NKCuZJORXf5sBtaJ1YoFdEr3bfzRFX5jcIB/uU+cKTpWeRURTREtCWygkGNuIld8a
- OJqQ==
-X-Gm-Message-State: AFq9FYJ1N4tKjWwduVnGlALJLK/vNJ9Lo5cEPESH0p5m6kCjSdOI/F93
- 0GfbO5L2IuDCKRT6FisP550L2rb91Dk+TKuo2Di7EzLqZgz3YldpcR1/rPLHuo3lBkj+FDqbZUu
- xAdi/fWk=
-X-Gm-Gg: AYBFou3VPaWJ4PVf3ShXlmDT3SHkrQdy6Clj1S092L8AISaWDwVD8ZrYXOrOLnGrH/p
- uir0q2c1fwoTU97JX9PV8XH3D2WR4MLG6NG/pVURogtWAmJYPqL/JHOvaexHNO4c8AbLtfMwWLA
- 1mlWeWUtS9O9ni4lSnxw/6VBtWAYVA3YjGBJkJelavaSDHKI3uvdg5IheAgeVf5S3JeQiaopLch
- tRTEXDzoG7jqtpl6xvwn7IW1C1nINSO72a+m3GpI2UH2ny7e7NMND+oEmLGIQ93MkGtWkmo3Mkx
- lgs38uGycywHkoSmNzntUdf1TnavO0mcd6xJTAB13H0D4kMFrtAPqVn9P016pEB8d3Rt036+yLI
- G0h1briB7b9yGrBpu4XCyNDOFPlTdrda5GaxKWJGpU9YKIT7s12DkgStYjdip2p1/MMmh54HFke
- xaT3zKtJW74c7EwNfhvzaZhnbPlRA8uhX9IpHTKFfNbTf9fgtlg53DxhrFPq1mTnGD0J9XDXSHc
- UDuu2M6wO+HupUyZfYJZaLnY6ImjYgvb5Szeg==
-X-Received: by 2002:a17:90b:3ec2:b0:3a0:afc9:a51a with SMTP id
- 98e67ed59e1d1-3a4d15064dcmr2270895a91.12.1790808285823; 
- Wed, 30 Sep 2026 15:44:45 -0700 (PDT)
+ bh=daIJXiSoXKhz8lpZgwqv/Nqoyvo7VuJEdsUWf0MAOQg=;
+ b=F4SChbxzSKPzOfCXhrOhquQez/Lp5AQoyuTo32U6hc4lk+4IFq41cZKOtK1n3RbpQ9
+ IuFOhFZ8SztqE+Sup69eOT5QFKhNDxJFk6sLOfIts7wrVED3/hH7BdFGyhNmvx8t0FvH
+ EoVxbiqrVOJmUBHIvgeTl3ctgWIF9xCTP8Lp8xPcEPCDOas+JyYSfjLKzIi62WV5d0AX
+ 7GYSc9TNt4oO1WYRurRzaP6+pBOTFelAFMwQWN0NuBROVq1WA5ecSGh4a0o1wamlvu4e
+ GuNQ5zW2pOpExjw8Cb1yvSB1C/+g3KiXAao8YlSjqE7CeLEannu0bgEFe7GCV/aM2Vld
+ pmNw==
+X-Gm-Message-State: AFq9FYKHHzzEdodIePAznBTs0VWUJQANZ65uf/ea0eeVWL8RDe7D7bMp
+ 9pKAiQ5pox9ylnefcKwBiBzHzRh5YPwBdWDg9XLlmlj0hA4ev4FrrcxyfsJirHFl9clu4fDjs4i
+ orai1G3I=
+X-Gm-Gg: AYBFou0LAyGRwnm8vaqVTNulbIlGQMWsARbi4Ay2wDcBTweDtbYfXgwc0CUBIviKYUi
+ f+MpJ1R1NDydikzmttW4ssPNcUk8Z4+vyIHV+T1NOrSgI5Uh2k1mB5dXhzLSOat70qbIo08tP/9
+ F6DijQGg8KW2FDLs0as0hN2lM/D5AfPZzVSfbI10Nyuqkqp/zsGKGG1b9wBZLXfl2L+2P9jzFty
+ awRJKQ6NBFsTChPNx05KZ5SCAN5Q7smWqqGiwxCHQdLiO9ZORA/5Lfn86HlcRUpLm5LxrEiHVB7
+ 6dFP20sp0p1xM7xiCVYpFyeVvQKtRQWV7ST3KnkERg639YuoWNvT0nQVMgafOI1uCyL5FfeVJIm
+ 5LTAHHvFjxIDt8HT9/KnBJ/9DjKTsd6H3Ue/eb3/Tpmc2RPLr7EwndPyY7yb0OOe4F7zNdz1cRq
+ 9AIRp7HfYS15NPRuPm/hw5+pkicF0lX5o2oWYJO51zDiKMhNuclxMFviYuexouvfb1iz0H6q6xI
+ wNZ1qazbK0OtKJ0CGsNk09xoUUIeBltUzDMVg==
+X-Received: by 2002:a17:90b:2888:b0:3a2:b465:fb8a with SMTP id
+ 98e67ed59e1d1-3a4d1ddc911mr2719362a91.67.1790808286664; 
+ Wed, 30 Sep 2026 15:44:46 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.45
+ 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Sep 2026 15:44:45 -0700 (PDT)
+ Wed, 30 Sep 2026 15:44:46 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Xingui Yang <yangxingui@huawei.com>,
- Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v3 60/65] net/hns3: use kvargs hex helper for capability mask
-Date: Wed, 30 Sep 2026 15:41:18 -0700
-Message-ID: <20260930224340.58580-61-stephen@networkplumber.org>
+ Potnuri Bharat Teja <bharat@chelsio.com>
+Subject: [PATCH v3 61/65] net/cxgbe: use kvargs numeric helpers
+Date: Wed, 30 Sep 2026 15:41:19 -0700
+Message-ID: <20260930224340.58580-62-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260930224340.58580-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -85,82 +83,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-hns3_parse_dev_caps_mask() does no validation whatsoever: strtoull() is
-called with neither errno cleared nor the end pointer checked, so
-"dev_caps_mask=junk" is silently taken as zero and "dev_caps_mask=-1"
-wraps around to enable every capability.
+check_devargs_handler() is a single handler shared by all five device
+arguments, which dispatches on the key to decide how to parse the value.
 
-The value is documented as a hexadecimal mask, so use
-rte_kvargs_handle_hex64(), which reads it as hexadecimal with or without
-a 0x prefix. The documented form "dev_caps_mask=0xF" is unchanged, and
-so is a bare "F".
+The dispatch is done with strncmp(key, NAME, strlen(key)), which compares
+only as many bytes as the key given by the user is long, so a short key
+matches a longer name by prefix. That is harmless today because
+rte_kvargs_process() has already selected the pairs by exact key, but it
+means the handler cannot tell which argument it was called for except by
+accident.
 
-Note that hns3_parse_devargs() discards the rte_kvargs_process() return
-value for every argument it parses, so a malformed mask is now reported
-but still leaves the default of zero in place rather than failing probe.
-Propagating those errors is a behaviour change per argument and is left
-for a separate patch.
+The filtermode and filtermask branch checks errno without clearing it
+first, so a stale ERANGE from unrelated earlier code rejects a valid
+mask. The boolean branch tests only for "1" and silently ignores
+anything else, so "keep_ovlan=yes" leaves the default in place without
+complaint.
 
-HNS3_CONVERT_TO_HEXADECIMAL loses its last user here, and
-HNS3_CONVERT_TO_DECIMAL lost its own earlier in this series, so remove
-both.
+Pass the handler to cxgbe_get_devargs() instead of having one handler
+work out what it was called for: rte_kvargs_handle_hex32() for the two
+masks, which are documented as hexadecimal, and rte_kvargs_handle_bool()
+for the three flags.
+
+The masks are still read as hexadecimal with or without a 0x prefix, so
+"filtermode=44" is unchanged. The flags now also accept "y", "yes",
+"on" and "true" as well as "1", and a value which is not a boolean at
+all is rejected rather than ignored.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/hns3/hns3_common.c | 18 +-----------------
- drivers/net/hns3/hns3_common.h |  3 ---
- 2 files changed, 1 insertion(+), 20 deletions(-)
+ drivers/net/cxgbe/cxgbe_main.c | 38 ++++++----------------------------
+ 1 file changed, 6 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/net/hns3/hns3_common.c b/drivers/net/hns3/hns3_common.c
-index c21740ba5e..35cc3fca40 100644
---- a/drivers/net/hns3/hns3_common.c
-+++ b/drivers/net/hns3/hns3_common.c
-@@ -205,22 +205,6 @@ hns3_get_io_hint_func_name(uint32_t hint)
+diff --git a/drivers/net/cxgbe/cxgbe_main.c b/drivers/net/cxgbe/cxgbe_main.c
+index 2ed21f2d66..e0eefae6c1 100644
+--- a/drivers/net/cxgbe/cxgbe_main.c
++++ b/drivers/net/cxgbe/cxgbe_main.c
+@@ -744,36 +744,8 @@ void cxgbe_print_port_info(struct adapter *adap)
  	}
  }
  
--static int
--hns3_parse_dev_caps_mask(const char *key, const char *value, void *extra_args)
+-static int check_devargs_handler(const char *key, const char *value, void *p)
 -{
--	uint64_t val;
+-	if (!strncmp(key, CXGBE_DEVARG_CMN_KEEP_OVLAN, strlen(key)) ||
+-	    !strncmp(key, CXGBE_DEVARG_CMN_TX_MODE_LATENCY, strlen(key)) ||
+-	    !strncmp(key, CXGBE_DEVARG_VF_FORCE_LINK_UP, strlen(key))) {
+-		if (!strncmp(value, "1", 1)) {
+-			bool *dst_val = (bool *)p;
 -
--	RTE_SET_USED(key);
+-			*dst_val = true;
+-		}
+-	}
 -
--	if (value == NULL || extra_args == NULL)
--		return 0;
+-	if (!strncmp(key, CXGBE_DEVARG_PF_FILTER_MODE, strlen(key)) ||
+-	    !strncmp(key, CXGBE_DEVARG_PF_FILTER_MASK, strlen(key))) {
+-		u32 *dst_val = (u32 *)p;
+-		char *endptr = NULL;
+-		u32 arg_val;
 -
--	val = strtoull(value, NULL, HNS3_CONVERT_TO_HEXADECIMAL);
--	*(uint64_t *)extra_args = val;
+-		arg_val = strtoul(value, &endptr, 16);
+-		if (errno || endptr == value)
+-			return -EINVAL;
+-
+-		*dst_val = arg_val;
+-	}
 -
 -	return 0;
 -}
 -
- static int
- hns3_parse_mbx_time_limit(const char *key, const char *value, void *extra_args)
+ static int cxgbe_get_devargs(struct rte_devargs *devargs, const char *key,
+-			     void *p)
++			     arg_handler_t handler, void *p)
  {
-@@ -341,7 +325,7 @@ hns3_parse_devargs(struct rte_eth_dev *dev)
- 	(void)rte_kvargs_process(kvlist, HNS3_DEVARG_TX_FUNC_HINT,
- 			   &hns3_parse_io_hint_func, &tx_func_hint);
- 	(void)rte_kvargs_process(kvlist, HNS3_DEVARG_DEV_CAPS_MASK,
--			   &hns3_parse_dev_caps_mask, &dev_caps_mask);
-+			   rte_kvargs_handle_hex64, &dev_caps_mask);
- 	(void)rte_kvargs_process(kvlist, HNS3_DEVARG_MBX_TIME_LIMIT_MS,
- 			   &hns3_parse_mbx_time_limit, &mbx_time_limit_ms);
- 	if (!hns->is_vf) {
-diff --git a/drivers/net/hns3/hns3_common.h b/drivers/net/hns3/hns3_common.h
-index 7b3f96b01a..967cde9e39 100644
---- a/drivers/net/hns3/hns3_common.h
-+++ b/drivers/net/hns3/hns3_common.h
-@@ -9,9 +9,6 @@
+ 	struct rte_kvargs *kvlist;
+ 	int ret = 0;
+@@ -788,7 +760,7 @@ static int cxgbe_get_devargs(struct rte_devargs *devargs, const char *key,
+ 	if (!rte_kvargs_count(kvlist, key))
+ 		goto out;
  
- #include "hns3_ethdev.h"
+-	ret = rte_kvargs_process(kvlist, key, check_devargs_handler, p);
++	ret = rte_kvargs_process(kvlist, key, handler, p);
  
--#define HNS3_CONVERT_TO_DECIMAL 10
--#define HNS3_CONVERT_TO_HEXADECIMAL 16
--
- enum {
- 	HNS3_IO_FUNC_HINT_NONE = 0,
- 	HNS3_IO_FUNC_HINT_VEC,
+ out:
+ 	rte_kvargs_free(kvlist);
+@@ -807,7 +779,8 @@ static void cxgbe_get_devargs_int(struct adapter *adap, bool *dst,
+ 	if (!pdev)
+ 		return;
+ 
+-	ret = cxgbe_get_devargs(pdev->device.devargs, key, &devarg_value);
++	ret = cxgbe_get_devargs(pdev->device.devargs, key,
++				rte_kvargs_handle_bool, &devarg_value);
+ 	if (ret)
+ 		return;
+ 
+@@ -825,7 +798,8 @@ static void cxgbe_get_devargs_u32(struct adapter *adap, u32 *dst,
+ 	if (!pdev)
+ 		return;
+ 
+-	ret = cxgbe_get_devargs(pdev->device.devargs, key, &devarg_value);
++	ret = cxgbe_get_devargs(pdev->device.devargs, key,
++				rte_kvargs_handle_hex32, &devarg_value);
+ 	if (ret)
+ 		return;
+ 
 -- 
 2.53.0
 
