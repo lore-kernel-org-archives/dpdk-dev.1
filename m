@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A49DCA5FC5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 184E1CA5FC5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:49:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 02B3E42FD1;
+	by mails.dpdk.org (Postfix) with ESMTP id F1E5F43254;
 	Thu,  1 Oct 2026 00:44:45 +0200 (CEST)
-Received: from mail-pj2-f42.google.com (mail-pj2-f42.google.com
- [74.125.227.170])
- by mails.dpdk.org (Postfix) with ESMTP id 1B85F42FED
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
+ [74.125.227.140])
+ by mails.dpdk.org (Postfix) with ESMTP id E7AAE42FF5
  for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:41 +0200 (CEST)
-Received: by mail-pj2-f42.google.com with SMTP id
- 98e67ed59e1d1-39d654f02baso2715348a91.3
+Received: by mail-pj2-f12.google.com with SMTP id
+ 98e67ed59e1d1-396ccc02279so3391564a91.1
  for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808280;
- x=1791413080; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808281;
+ x=1791413081; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=guZ8S4azmX4NrZUpbSMHrMvCp0ZPWqAiivaQCxy68pQ=;
- b=xirfUV++UOaBoRd2RMr76XxFqpgqDJA2rkzm6G9bLwj3EHV/0WJWGrNIsDOeWytfxT
- g1ph92gdnv05zYZBajnP/DBGr2eLrQMz41fQziuqim8pGMagU/ZUwrriPllepZ3p4iru
- Bmpf/BZFm+KtxYBkvU7QfaT1nw/gqmBDRdrQhNuSRGhmeGt9pIZ4fsvL37AQPQSQMmnC
- yzQbIWeiVSZhQeB7gq/UESo1DkkKb3yAPbuNdV1m56z1WY9a/O8IiB3PWpqzzuDw9JE9
- bcDXzuMHJyph0hDpmMssdPYB9gif1JB9aGqMmbbNOENftbdoH1ZjIODQh8eRZzPw1S6m
- rodA==
+ bh=+3qyCdqIWL/PVCNyHFpXdONh3fm8Sb5qZOA0FHeH9Lk=;
+ b=Y1gNywjS4eDSDbpiNNiezDoAAzNG3+T9c0gf3vC23O7cZHLzTtcfYHVvS9XFdC7pMT
+ BkqlVNhgVMUCj7WSVXNSAerkU6aMAOaRb3daVEzDE+oC/ECIJm2bGQ7DPKmSmCc/Z47x
+ /W7+JSkTLFeneVDGdVMj7+MmEReTA5DWKRHGUonNAHbshYAtZx5bMuK5ao8i6/XzcQPr
+ DP0fRrVhgHURnWFkFeJwJYpcKIb0UQWmt46p/qycztr0Am2APGgpOOkp6nz56ChnWvCD
+ a9W3Lk48atXjaGIqX+Dl7l+6sFS0wn/HFLZKv5uKLV7DmkCHdiQmsrd5kax99KATqcYC
+ hhDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790808280; x=1791413080;
+ d=1e100.net; s=20260707; t=1790808281; x=1791413081;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=guZ8S4azmX4NrZUpbSMHrMvCp0ZPWqAiivaQCxy68pQ=;
- b=OVcx7TxzcVBbjPYZn9tP8AW69ssxaO3JfkruFvA4iFjF76t88WoLyRmQ/AMaDfRR7D
- Mt/HZgsLkZZ4re0rAUFvEDzjqRKzQ+wht4yxmaLn9yfYfosoUIOmKhG/XgoQpIS42Bqn
- Ohpj9sZ2Qx4362nyCkNaPkf2hL2m/7nGe7NUz/WBWipi4ewI7YOAU9GsCqwbCW4P5EQh
- lam3bjyEKEkhRwN1JUlzee9adBW2vmTjVsqw10VBhXQ0HHd8/7zGZofRd06yeJbaCEcO
- /iM6wLXy99npWpIk5H+TQ/docbVNX8GsTLet3m2UlWSQmUlafyAlW3WJaIcDdpjMRNmV
- YsRg==
-X-Gm-Message-State: AFq9FYLa9FGz4T/3Do9ENdEKEKxz0GZNlVWpEITn+m+3ydi/a5uVEjLx
- NChy/XRJBHfW3U4LTRW/mMNZdDjeK1yQ5TTIdPlvgFl5n+HabeBPDhGtvc6Dt0mnvRSxuKwnE9O
- RjyLTeg4=
-X-Gm-Gg: AYBFou3lIbFgJfVRt0RvrLWNOFKDZZrRFKUfL5zxXHWaF/ry3+cfmyy3y7X9lBNA1WC
- QG+o1wCkyK9U6C3ACcwP5Fayr8z6Sygec7Z6qqYpGhMYUZGHfhAapsUEw1lrpSTALF3lVYUvws4
- 8YKh1iEPnBR82e2NvZIZ4i7GXsXqcHkwrkqlghhGth1UJ0rx1wjmCsdydAx3zvY8EqRFRUbwyTq
- OFFXOr1wUFzkun72BGVnNrR+hnIJItX2Gq6VT3G74X4qWlK0acW1ccjZtD1+q5sLy7K8U93bxul
- S9NSFHsI6WYUnPgebw8DMCnTseE77cp0/GlYr5EUFL3R0nbR+a+hIuRjo6bm/rh7Q+p//sl1Ark
- uCYZGBLDHM4Ad+l+YocJR2iMJNskpyIZX4RwrDV4SbvpsU/ImFi1zZvKW1l2JxBwdbB7lmOkhRU
- /Kwf/fjlmZnBt/Amm66idBHnFJ9001LuT53jGejr/6jmjAzM5wP9xKjpF8E//0mcMbGkkUn89Jn
- 1iDzEOjUGlgFHJ2qtUQH9NsTfeYlSGKWH7lB4KVTSyQN7bs
-X-Received: by 2002:a17:90b:3c89:b0:3a0:e1f7:9b04 with SMTP id
- 98e67ed59e1d1-3a4d197a32dmr2237254a91.12.1790808280214; 
- Wed, 30 Sep 2026 15:44:40 -0700 (PDT)
+ bh=+3qyCdqIWL/PVCNyHFpXdONh3fm8Sb5qZOA0FHeH9Lk=;
+ b=J2bRHuaplxGQ3YxEQPa7rQUqb772t1dzPlwQDnCRnpDLxS7GA+U05yMCvr2ea2yWyY
+ wl1LTJ/C6tMRunIS83Kr1N0hCGXMI4OL1s2F+Mz8SBG+GxZ7xU5S1Dyl08EmSz03OhyA
+ 6RmOpdTYt3X4xZL/Uv6Urtyio9x2j7KJ6bBErWqlDFqS0SoWhT+WdKOwoy7LtHKvG0Ar
+ rbS235B/jJDNCOaffzykkXvg4qNYT2WpYiUKZbSCkYTkMD10Qv86kM5UWQPygoexNTkw
+ 1Rdz+pvtQ1n1cRXRKlIUnpEym7P86u5U+ZNf4QFHA119fJ+8YvX6zWQLntp4BHGt4rfS
+ 6qeA==
+X-Gm-Message-State: AFq9FYKdf3uz2UcmM2/s1nHzCpYWQpJpABcml5SW1T70i3xPpnswihmC
+ 80E4iKtWjNYy8rSNHtbOU7WX53uwEeF3L0GqOzMcUmVK/C3rvSkGdDMDRNAzVUGu5C7thgaMFkW
+ mgI2IzZM=
+X-Gm-Gg: AYBFou2TcVxs4pnLw9FptlPJRXqYiNJZwOnOsnApVKBeBgjeWjuyfuKuybS45mUi+s6
+ ZHPNUXeLnhMEIX4rqJAG9XDmtj0fU3HXDwXZyy1EgmjVxdXxx51uFUBpvEYtvnPK6vmR8iGfF/o
+ aPbyO2LMAR4IQpi+GMKMsGskXD6tZcnOuOvJzFDVuCA3K4PHtyWB9oziw9VgCEBA3Dy+O63LfL6
+ /4s5oMfufVCOR74/MTwrPWHyKrMwJI93hx4d1mZcUFbEm1FnyobwyQAHUzYdzPRmPpostS27MyK
+ 9JWmRtJ/MGSAagZMUlikzbEYpB98+jcRYP4j5Yn8l8FMmy6Ndvyc+sAmpnAcUWm83p/1pf0dnvU
+ Z5CxRy5kT+aaa9W8ptjun/Qp5l7A1QW50bDakO4/Qdj7c1WG/sRPdil21F5ejcridG80Z994gqh
+ lldIgBiIOlQKIBymMx0f8hYsq9+bwYA0k6D9EZRHy1t2SG1RyLTi7OnROzq8lQyPBHOlsPshyXh
+ 1BTzYMze1cPOgC0AAkzC+CwcYmwONYB+FxIGA==
+X-Received: by 2002:a17:90b:254b:b0:3a4:97ea:f0fd with SMTP id
+ 98e67ed59e1d1-3a4d18f7844mr2195575a91.54.1790808281055; 
+ Wed, 30 Sep 2026 15:44:41 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.39
+ 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Sep 2026 15:44:39 -0700 (PDT)
+ Wed, 30 Sep 2026 15:44:40 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jerin Jacob <jerinj@marvell.com>
-Subject: [PATCH v3 54/65] event/octeontx: use kvargs numeric helpers
-Date: Wed, 30 Sep 2026 15:41:12 -0700
-Message-ID: <20260930224340.58580-55-stephen@networkplumber.org>
+ Nicolas Chautru <nicolas.chautru@intel.com>
+Subject: [PATCH v3 55/65] baseband/turbo_sw: use kvargs numeric helpers
+Date: Wed, 30 Sep 2026 15:41:13 -0700
+Message-ID: <20260930224340.58580-56-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260930224340.58580-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -84,78 +84,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-ssovf_parsekv() open coded the errno, end pointer and range checks, and
-the value it parsed was only ever used as a boolean.
+parse_u16_arg() never checked the end pointer, so a value such as "8junk"
+was accepted, and it used base 0, so a leading zero silently selected
+octal.
 
-Use rte_kvargs_handle_bool() and make the flag a bool to match. The
-documented "=1" form still works, and the usual spellings such as "on"
-and "true" are now accepted as well.
+It was also used for both device arguments, but only queues_num is a
+uint16_t; socket_id is an int, so parsing it wrote two bytes into a four
+byte object and left the rest uninitialised.
 
-The boolean uses rte_kvargs_process_opt(), so that a bare key with no
-value enables the option.
+The handler did nothing beyond a range checked store, so drop it and pass
+rte_kvargs_handle_u16() and rte_kvargs_handle_socket_id() directly, each
+matching the width of the field it fills.
+
+The open coded range check only tested the upper bound, so a negative
+socket id such as -5 was accepted and used. The helper checks both ends,
+accepting -1, which is SOCKET_ID_ANY, through RTE_MAX_NUMA_NODES - 1, so
+the check is now redundant and is removed.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/event/octeontx/ssovf_evdev.c | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
+ .../baseband/turbo_sw/bbdev_turbo_software.c  | 29 ++-----------------
+ 1 file changed, 2 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/event/octeontx/ssovf_evdev.c b/drivers/event/octeontx/ssovf_evdev.c
-index 957fcab04e..4a56d91bf2 100644
---- a/drivers/event/octeontx/ssovf_evdev.c
-+++ b/drivers/event/octeontx/ssovf_evdev.c
-@@ -3,6 +3,7 @@
-  */
- 
- #include <inttypes.h>
-+#include <stdbool.h>
- #include <stdlib.h>
- 
- #include <rte_common.h>
-@@ -23,7 +24,7 @@
- #include "timvf_evdev.h"
- #include "otx_cryptodev_hw_access.h"
- 
--static uint8_t timvf_enable_stats;
-+static bool timvf_enable_stats;
- 
- RTE_LOG_REGISTER_DEFAULT(otx_logtype_ssovf, NOTICE);
- 
-@@ -716,24 +717,6 @@ ssovf_close(struct rte_eventdev *dev)
- 	return 0;
+diff --git a/drivers/baseband/turbo_sw/bbdev_turbo_software.c b/drivers/baseband/turbo_sw/bbdev_turbo_software.c
+index 2cab495294..d6801d9123 100644
+--- a/drivers/baseband/turbo_sw/bbdev_turbo_software.c
++++ b/drivers/baseband/turbo_sw/bbdev_turbo_software.c
+@@ -1835,25 +1835,6 @@ dequeue_enc_ops(struct rte_bbdev_queue_data *q_data,
+ 	return nb_dequeued;
  }
  
--static int
--ssovf_parsekv(const char *key, const char *value, void *opaque)
+-/* Parse 16bit integer from string argument */
+-static inline int
+-parse_u16_arg(const char *key, const char *value, void *extra_args)
 -{
--	uint8_t *flag = opaque;
--	uint64_t v;
--	char *end;
+-	uint16_t *u16 = extra_args;
+-	unsigned int long result;
 -
--	errno = 0;
--	v = strtoul(value, &end, 0);
--	if ((errno != 0) || (value == end) || *end != '\0' || v > 1) {
--		ssovf_log_err("invalid %s value %s", key, value);
+-	if ((value == NULL) || (extra_args == NULL))
 -		return -EINVAL;
+-	errno = 0;
+-	result = strtoul(value, NULL, 0);
+-	if ((result >= (1 << 16)) || (errno != 0)) {
+-		rte_bbdev_log(ERR, "Invalid value %lu for %s", result, key);
+-		return -ERANGE;
 -	}
--
--	*flag = !!v;
+-	*u16 = (uint16_t)result;
 -	return 0;
 -}
 -
+ /* Parse parameters used to create device */
  static int
- ssovf_timvf_caps_get(const struct rte_eventdev *dev, uint64_t flags,
- 		     uint32_t *caps, const struct event_timer_adapter_ops **ops)
-@@ -879,8 +862,8 @@ ssovf_vdev_probe(struct rte_vdev_device *vdev)
- 				"Ignoring unsupported params supplied '%s'",
- 				name);
- 		} else {
--			ret = rte_kvargs_process(kvlist, TIMVF_ENABLE_STATS_ARG,
--						 ssovf_parsekv,
-+			ret = rte_kvargs_process_opt(kvlist, TIMVF_ENABLE_STATS_ARG,
-+						     rte_kvargs_handle_bool,
- 						 &timvf_enable_stats);
- 			if (ret != 0) {
- 				ssovf_log_err("%s: Error in timvf stats", name);
+ parse_turbo_sw_params(struct turbo_sw_params *params, const char *input_args)
+@@ -1869,20 +1850,14 @@ parse_turbo_sw_params(struct turbo_sw_params *params, const char *input_args)
+ 			return -EFAULT;
+ 
+ 		ret = rte_kvargs_process(kvlist, turbo_sw_valid_params[0],
+-					&parse_u16_arg, &params->queues_num);
++					rte_kvargs_handle_u16, &params->queues_num);
+ 		if (ret < 0)
+ 			goto exit;
+ 
+ 		ret = rte_kvargs_process(kvlist, turbo_sw_valid_params[1],
+-					&parse_u16_arg, &params->socket_id);
++					rte_kvargs_handle_socket_id, &params->socket_id);
+ 		if (ret < 0)
+ 			goto exit;
+-
+-		if (params->socket_id >= RTE_MAX_NUMA_NODES) {
+-			rte_bbdev_log(ERR, "Invalid socket, must be < %u",
+-					RTE_MAX_NUMA_NODES);
+-			goto exit;
+-		}
+ 	}
+ 
+ exit:
 -- 
 2.53.0
 
