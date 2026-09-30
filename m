@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD96CA5FC5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 305A1CA5FC5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:48:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6133D42F99;
-	Thu,  1 Oct 2026 00:44:33 +0200 (CEST)
-Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
- [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id D14B942F81
- for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:30 +0200 (CEST)
-Received: by mail-pz2-f42.google.com with SMTP id
- 41be03b00d2f7-cc797656e36so2027058a12.3
- for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 52B7942F9F;
+	Thu,  1 Oct 2026 00:44:34 +0200 (CEST)
+Received: from mail-pj2-f38.google.com (mail-pj2-f38.google.com
+ [74.125.227.166])
+ by mails.dpdk.org (Postfix) with ESMTP id BA80D42EB3
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:31 +0200 (CEST)
+Received: by mail-pj2-f38.google.com with SMTP id
+ 98e67ed59e1d1-3a4c6bfce73so897350a91.1
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808270;
- x=1791413070; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808271;
+ x=1791413071; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=8pg9kEP/PlSLwqZBqgULj4i9AdBbVQ8PpmHj052Vtpk=;
- b=0FVK9cqVZ/uoa2Daqv60NZYA8ELyRnoGMp+M52WiwaBIgkQEcywCsFtdf1WIs27IzV
- eNW/p9fVsDtCvBE+dZR2nQsijMQqWVuFLL5jgQsWsgxJMtZlgSt16+5mMp9uwRpQIye8
- TFxt92uUZOEKVLJ7EKRoHm+mAKFJ+tDfligRzJlS3AQfMbjQAaz37WHhScm5a/bVEmEf
- wYgwLTgcdb16CR1Q6QVdcZX5n+MjHJw5Gi5MbzO74GZtvG6BniLawdjaXti1uup65E15
- wZf2LQ7KDJxHr08qNQv5P7AR9WwT5GvIIBFg+0Rqib4DY3EzN+X+jxanDGZYAYXnN7vt
- CoMg==
+ bh=OttYL0eGBE7W1xRZGhSU3OmXBVsH4U97tW1E93FYGVo=;
+ b=jOTEeOTys1wNxQl/uhiW2zyklL3aYq3ydWlT7jD7QuYHxjJpzswpS/pqtQdXuGT+hT
+ 4X1+0tk3s0nAPGA7WNxQb63mTrLIBmrHa997pVKa10oxigEEHTmviOD55ssh3Dokzpx6
+ Dp+TEJrAMNkdop1ftTycqFMLwQlUBq7wTMHUPwM876waIDPwywzhyBp/Wiji28AIsdBo
+ KWE6+4dbJPvqmExnsGt9AWQ3bNcSbNqZjj7GB/wdwaw/m7mRIWjPW4LOiPyOTFEkVXS6
+ BhLDlb6TX+kvRKfHPEuCPPiVx/B1WU5TU6eZiLDtxAAuB9uqllAqgJwFxpQASR7kuS9Y
+ XjVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790808270; x=1791413070;
+ d=1e100.net; s=20260707; t=1790808271; x=1791413071;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=8pg9kEP/PlSLwqZBqgULj4i9AdBbVQ8PpmHj052Vtpk=;
- b=Tao0OtXUM5q+0dAxLI5dfZPEMFSlbsh/sYX+1s4f4M9fgNPs4B+0SAQ8b0ez7M4f1o
- 0t+qCWOa85KrgKr74unKvDKnXcds7zXdVdwB1/8/UXikfb6OjaFtZ9HL2zGmi6SyO6Cu
- 7SQ+4xRBpKKEkknb5A52leewnpuB2LDhinbaGuVKYXXmU5naaMjQMaTH4YNsL7mt3uoY
- W3+jrn4ZHPds5UNvARimyZFHkdRvsT4oFtkyfOEHuZDkLEJmsvdO1LuIKRZqYgkPS4Sf
- AFxXDdEKPGcPiaEnOatKVc3f9BJoadmD5HKGgS0KrgC53re9y6Th3skIDvIvXSj0EGiO
- 6vvg==
-X-Gm-Message-State: AFq9FYL9aHspOH8hT+OJ9gBPVjA83tPRdbFYtrA6OmoRx+ykqv93ufsi
- 1nH6YjljOJndjedTPv2HVMM+D4fxE/bY/onJBjjzm2Aq/vXr3/hyZoPs32ChikPwxCnKy0S5HOv
- pu5f2iJk=
-X-Gm-Gg: AYBFou2x/qGeG4kq4r5KLuZEhHu/FzQmMVFChHGzwTIHbm01Rk923ywcuqya4G69dfj
- 0yYnJQ2LSmwxKYOmLyEvP5+CoLOAjokZ51N33mPzcwriKuVKPzzAV8jxtI1eqlxOkYz7kzsNPku
- EWXhp6NiceDPDrfBB5K8YqdysTCucI8Yrw31lXZFmoGpVuAMMz6NA2bNdMD+d3F6LvRq9/zKeo9
- m4Scp9e4cx5av84ouA0+SFEnSzP3zXQaOk7aaCXEZQcI9cZXTHmdJAcq/DWuXmLAu9IGOsRGNCx
- b8g3qqSe1yYaBqjpOK66apU2WXxQNgQsZVnR5CTlKGoqe5drvWgj7nmkBturBLoYuTqxwHV1gxY
- RaYK+MbuSLXvUZ7YFRKoeRJ2TccpO+F8cAd4HKyM1rr5wlISzZ7fz9VDL2zglcEN222Q9V/09au
- nuhaiHvlYfsQOenx6Ys4JgMq6OocrFWpkhFqnjENMXGd4Il0A1kHYd8KbSZnodt0lUC1ZoZ33wW
- ZFadK1zjIGZvXNw7e7/O9iqYUaZs2MHo723n9Q=
-X-Received: by 2002:a17:903:2303:b0:2df:98a2:a2e2 with SMTP id
- d9443c01a7336-2e2e4b48e3fmr21554485ad.30.1790808269903; 
- Wed, 30 Sep 2026 15:44:29 -0700 (PDT)
+ bh=OttYL0eGBE7W1xRZGhSU3OmXBVsH4U97tW1E93FYGVo=;
+ b=l17TDo/gsHz52wxAE8X6VogRIcLovTdWmaT07YxD0ylEjVJ7oMh6L215xZPsYmqgo+
+ XngsoXoFyXms99NEycU2jIib3sjT/owV8uZB292GXBf/2RZt3HdzC035zC9S484P4ARd
+ vWGhjkQu1E0EnqWu1uxghl/2R8/oOxdltVZqzcA/gnKxFdFZ333kHVIN59sHjjDIywj0
+ l4ZLkUMvye67v0xYkX+aftXE8HzCb/FI+XBfk6X16LEDRNmha7aiU8ZsR29+ba73MHsc
+ 17cvDJl93DqJTlI6oIYoc74iQrDLUanG8hb0PrsJ5QgNmdJbX/FFgr6Z6LARBgzzBoLJ
+ uWnw==
+X-Gm-Message-State: AFq9FYIwlgK5aXHPC6+07VdGpeu/lprh7zx8w3YfHYlXf6gmIU2sE6kJ
+ k8Y5XtXyuBBjDv0xvhLRHQiS1xuKOS3N6rJLzX1tLH7t5UQ9T1lCbOUm4E7GGa3htiepJIBCUVt
+ OvJApcpo=
+X-Gm-Gg: AYBFou3d/ZgM8MBO77ISwLKs6/P5e1JNst8rTy9Ly448zOF4dd0C9kaePbH9tZokM4i
+ AqdMQKDyvKwTRozT9pmkcN1leJYn+hmK66+9GhESGzincxEuRkYSFlf1u9ZVfF8G8c4mhUk8SDl
+ 6pqZXqisd0YppPU87DvkZsvBDu9Bku3NE/NKqN7sKjKetNfJI4ZFzqyb+aE6xO8/leXBQIvIYmx
+ qETYoODm/qNffi4Nd9/mRfQ0jqB9XMNXuA0Hum3ZOxKTAd7iXkWU6JNiPI4WxGec8m4w27SKZaB
+ Qe6zPE5k2vK63XCqh3g4DZVUnBq3SyHpmrhCPWwBwk5gwirkrscnVbM587LEHbnJW6cjns8Dmhq
+ uPrHGxBVi9NttPFOM7baxwc0XmOu+usL+LkjCHfgYZizjlcMb0VD2pN2KiaoqszLO6WZuRIa/Ku
+ syZWSalzRQJVYDMJC9vyg3eogxwPcZXWSM9errvdUlxgDXZqy08AZk8CTAOw/oZ7G6eeUl7FCzQ
+ KfPSGVCtqC1Xh/9yMw/aOjwbrnxv15/kh8DyjcdM5A2JZAE
+X-Received: by 2002:a17:90b:584d:b0:398:b1eb:136c with SMTP id
+ 98e67ed59e1d1-3a4f776e08cmr441874a91.9.1790808270814; 
+ Wed, 30 Sep 2026 15:44:30 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.29
+ 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Sep 2026 15:44:29 -0700 (PDT)
+ Wed, 30 Sep 2026 15:44:30 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Gagandeep Singh <g.singh@nxp.com>, Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: [PATCH v3 43/65] drivers/crypto: use kvargs numeric helpers
-Date: Wed, 30 Sep 2026 15:41:01 -0700
-Message-ID: <20260930224340.58580-44-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 44/65] event/sw: use kvargs numeric helpers
+Date: Wed, 30 Sep 2026 15:41:02 -0700
+Message-ID: <20260930224340.58580-45-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260930224340.58580-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -83,83 +83,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The dump mode handlers use atoi(), which cannot report an error, so a
-malformed value is silently taken as zero, which disables dumping
-entirely rather than being rejected.
+All six handlers use atoi(), which cannot report an error, so a
+malformed value is silently taken as zero. Since zero is within the
+accepted range for every one of these arguments, a typo such as
+"sched_quanta=abc" was accepted and quietly applied as zero.
 
-Out of range values keep being clamped to the full dump level, as
-before.
+The lower bound is now part of the conversion, so the separate negative
+checks are no longer needed.
+
+refill_once is a boolean, so drop set_refill_once() and use
+rte_kvargs_handle_bool(). The registered parameter string said
+"=<int>", which was never true, and now says "=<0|1>". A bare
+"refill_once" enables it, and the usual spellings are accepted.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 15 ++++++++++++---
- drivers/crypto/dpaa_sec/dpaa_sec.c          | 17 +++++++++++++----
- 2 files changed, 25 insertions(+), 7 deletions(-)
+ drivers/event/sw/sw_evdev.c | 56 ++++++++++++++++---------------------
+ 1 file changed, 24 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-index 3d980d096f..93e92af6a7 100644
---- a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-+++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-@@ -4342,13 +4342,22 @@ check_devargs_handler(const char *key, const char *value,
- 	if (!strcmp(key, "drv_strict_order")) {
- 		priv->en_loose_ordered = false;
- 	} else if (!strcmp(key, "drv_dump_mode")) {
--		dpaa2_sec_dp_dump = atoi(value);
--		if (dpaa2_sec_dp_dump > DPAA2_SEC_DP_FULL_DUMP) {
-+		uint64_t val;
-+
-+		if (rte_kvargs_to_uint(value, 0, UINT8_MAX, &val) < 0) {
-+			DPAA2_SEC_WARN("WARN: invalid value \"%s\" for \"%s\"",
-+				       value, key);
-+			return -EINVAL;
-+		}
-+
-+		if (val > DPAA2_SEC_DP_FULL_DUMP) {
- 			DPAA2_SEC_WARN("WARN: DPAA2_SEC_DP_DUMP_LEVEL is not "
- 				      "supported, changing to FULL error"
- 				      " prints");
--			dpaa2_sec_dp_dump = DPAA2_SEC_DP_FULL_DUMP;
-+			val = DPAA2_SEC_DP_FULL_DUMP;
- 		}
-+
-+		dpaa2_sec_dp_dump = val;
- 	} else
- 		return -1;
- 
-diff --git a/drivers/crypto/dpaa_sec/dpaa_sec.c b/drivers/crypto/dpaa_sec/dpaa_sec.c
-index c53ee70853..3feb752bcd 100644
---- a/drivers/crypto/dpaa_sec/dpaa_sec.c
-+++ b/drivers/crypto/dpaa_sec/dpaa_sec.c
-@@ -3625,16 +3625,25 @@ dpaa_sec_uninit(struct rte_cryptodev *dev)
- }
- 
- static int
--check_devargs_handler(__rte_unused const char *key, const char *value,
-+check_devargs_handler(const char *key, const char *value,
- 		      __rte_unused void *opaque)
- {
--	dpaa_sec_dp_dump = atoi(value);
--	if (dpaa_sec_dp_dump > DPAA_SEC_DP_FULL_DUMP) {
-+	uint64_t val;
-+
-+	if (rte_kvargs_to_uint(value, 0, UINT8_MAX, &val) < 0) {
-+		DPAA_SEC_WARN("WARN: invalid value \"%s\" for \"%s\"",
-+			      value, key);
-+		return -EINVAL;
-+	}
-+
-+	if (val > DPAA_SEC_DP_FULL_DUMP) {
- 		DPAA_SEC_WARN("WARN: DPAA_SEC_DP_DUMP_LEVEL is not "
- 			      "supported, changing to FULL error prints");
--		dpaa_sec_dp_dump = DPAA_SEC_DP_FULL_DUMP;
-+		val = DPAA_SEC_DP_FULL_DUMP;
- 	}
- 
-+	dpaa_sec_dp_dump = val;
-+
+diff --git a/drivers/event/sw/sw_evdev.c b/drivers/event/sw/sw_evdev.c
+index 3ad82e94ac..fa9fe3e4c2 100644
+--- a/drivers/event/sw/sw_evdev.c
++++ b/drivers/event/sw/sw_evdev.c
+@@ -872,23 +872,16 @@ sw_close(struct rte_eventdev *dev)
  	return 0;
  }
  
+-static int
+-assign_numa_node(const char *key __rte_unused, const char *value, void *opaque)
+-{
+-	int *socket_id = opaque;
+-	*socket_id = atoi(value);
+-	if (*socket_id >= RTE_MAX_NUMA_NODES)
+-		return -1;
+-	return 0;
+-}
+-
+ static int
+ set_sched_quanta(const char *key __rte_unused, const char *value, void *opaque)
+ {
+ 	int *quanta = opaque;
+-	*quanta = atoi(value);
+-	if (*quanta < 0 || *quanta >= 4096)
++	uint64_t val;
++
++	if (rte_kvargs_to_uint(value, 0, 4095, &val) < 0)
+ 		return -1;
++
++	*quanta = val;
+ 	return 0;
+ }
+ 
+@@ -896,9 +889,12 @@ static int
+ set_credit_quanta(const char *key __rte_unused, const char *value, void *opaque)
+ {
+ 	int *credit = opaque;
+-	*credit = atoi(value);
+-	if (*credit < 0 || *credit >= 128)
++	uint64_t val;
++
++	if (rte_kvargs_to_uint(value, 0, 127, &val) < 0)
+ 		return -1;
++
++	*credit = val;
+ 	return 0;
+ }
+ 
+@@ -906,9 +902,12 @@ static int
+ set_deq_burst_sz(const char *key __rte_unused, const char *value, void *opaque)
+ {
+ 	int *deq_burst_sz = opaque;
+-	*deq_burst_sz = atoi(value);
+-	if (*deq_burst_sz < 0 || *deq_burst_sz > SCHED_DEQUEUE_MAX_BURST_SIZE)
++	uint64_t val;
++
++	if (rte_kvargs_to_uint(value, 0, SCHED_DEQUEUE_MAX_BURST_SIZE, &val) < 0)
+ 		return -1;
++
++	*deq_burst_sz = val;
+ 	return 0;
+ }
+ 
+@@ -916,19 +915,12 @@ static int
+ set_min_burst_sz(const char *key __rte_unused, const char *value, void *opaque)
+ {
+ 	int *min_burst_sz = opaque;
+-	*min_burst_sz = atoi(value);
+-	if (*min_burst_sz < 0 || *min_burst_sz > SCHED_DEQUEUE_MAX_BURST_SIZE)
+-		return -1;
+-	return 0;
+-}
++	uint64_t val;
+ 
+-static int
+-set_refill_once(const char *key __rte_unused, const char *value, void *opaque)
+-{
+-	int *refill_once_per_call = opaque;
+-	*refill_once_per_call = atoi(value);
+-	if (*refill_once_per_call < 0 || *refill_once_per_call > 1)
++	if (rte_kvargs_to_uint(value, 0, SCHED_DEQUEUE_MAX_BURST_SIZE, &val) < 0)
+ 		return -1;
++
++	*min_burst_sz = val;
+ 	return 0;
+ }
+ 
+@@ -991,7 +983,7 @@ sw_probe(struct rte_vdev_device *vdev)
+ 	int credit_quanta = SW_DEFAULT_CREDIT_QUANTA;
+ 	int min_burst_size = 1;
+ 	int deq_burst_size = SCHED_DEQUEUE_DEFAULT_BURST_SIZE;
+-	int refill_once = 0;
++	bool refill_once = false;
+ 
+ 	name = rte_vdev_device_name(vdev);
+ 	params = rte_vdev_device_args(vdev);
+@@ -1004,7 +996,7 @@ sw_probe(struct rte_vdev_device *vdev)
+ 				name);
+ 		} else {
+ 			int ret = rte_kvargs_process(kvlist, NUMA_NODE_ARG,
+-					assign_numa_node, &socket_id);
++					rte_kvargs_handle_socket_id, &socket_id);
+ 			if (ret != 0) {
+ 				SW_LOG_ERR(
+ 					"%s: Error parsing numa node parameter",
+@@ -1053,8 +1045,8 @@ sw_probe(struct rte_vdev_device *vdev)
+ 				return ret;
+ 			}
+ 
+-			ret = rte_kvargs_process(kvlist, REFIL_ONCE_ARG,
+-					set_refill_once, &refill_once);
++			ret = rte_kvargs_process_opt(kvlist, REFIL_ONCE_ARG,
++					rte_kvargs_handle_bool, &refill_once);
+ 			if (ret != 0) {
+ 				SW_LOG_ERR(
+ 					"%s: Error parsing refill once per call switch",
+@@ -1146,5 +1138,5 @@ RTE_PMD_REGISTER_VDEV(EVENTDEV_NAME_SW_PMD, evdev_sw_pmd_drv);
+ RTE_PMD_REGISTER_PARAM_STRING(event_sw, NUMA_NODE_ARG "=<int> "
+ 		SCHED_QUANTA_ARG "=<int>" CREDIT_QUANTA_ARG "=<int>"
+ 		MIN_BURST_SIZE_ARG "=<int>" DEQ_BURST_SIZE_ARG "=<int>"
+-		REFIL_ONCE_ARG "=<int>");
++		REFIL_ONCE_ARG "=<0|1>");
+ RTE_LOG_REGISTER_DEFAULT(eventdev_sw_log_level, NOTICE);
 -- 
 2.53.0
 
