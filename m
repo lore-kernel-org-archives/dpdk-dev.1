@@ -2,75 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25174CA5FC4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 09:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6EECA5FB1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 10:00:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0481540695;
-	Wed, 30 Sep 2026 11:18:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E0C0040A7A;
+	Wed, 30 Sep 2026 12:00:17 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id BD88240278
- for <dev@dpdk.org>; Wed, 30 Sep 2026 11:17:58 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 4306440278
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 12:00:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790759877;
+ s=mimecast20190719; t=1790762415;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=vmbLqlxMhGJopPBld5bEJnBaRLudkzUc8IQt1SbZXeA=;
- b=CboPg9bNjB+w5isPaXZO/exaV84BYU1Wizn+3gaqRBvyqlnHwvBmz41yTNPnGC3oMWqFHF
- 960v2/6euXwKZuD/HcIIC6rABLFzH46zGU7Q5bKcIwv9/2g5efcSLZL5QW83bDPHshT022
- Lt/HX+OhZZxQnKvCN3hbeWdkA1OuYO0=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-377-AYdL-OAVM9G68n17GjNsWw-1; Wed, 30 Sep 2026 05:17:56 -0400
-X-MC-Unique: AYdL-OAVM9G68n17GjNsWw-1
-X-Mimecast-MFC-AGG-ID: AYdL-OAVM9G68n17GjNsWw_1790759875
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5ba3ac62146so463892e87.0
- for <dev@dpdk.org>; Wed, 30 Sep 2026 02:17:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790759874; x=1791364674;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=vmbLqlxMhGJopPBld5bEJnBaRLudkzUc8IQt1SbZXeA=;
- b=kdck7jffqi+eFEDj/i1JGtqntkg+J2qG7XjG8wf92CMg1TX01CBiijWJo1/dx4ZFfU
- n9lORESu3wM6KupkL3d5S1ZfUjETq3oHx/ZRGZ1TR2LvQ1LXWJqHTF0hnxVqRC1QLHWZ
- OglNhHGyMuxZv4s/5oaGt6EHDPLErSqAuFYWCFo1IXw9lerUvpj7hYE/j+L/3gVYFmfD
- UOeaaS0fruR8QbYIWBuZnjAuE0ZCYxhXob1hm7DKV75EpoA3CMfqqO0vR/271uUAytn8
- 6bqBsY3E8IDg41OibzmnWiGkJic2nJuZzciu/kNgySxR0w/Q4yFhOI3k9BgcCp7RQvtm
- N+8Q==
-X-Gm-Message-State: AFq9FYIp4pqGF0PwveejV0tcjRzUF4GqVbINAf3mh2SqbEClCOFBY8ZE
- jJtPPSaY4ZIbAGR+kQ/9wUFTLtoZvDzeSDePlESMLe+uy7KAXr9hcPpO6cIPyB+qlCaqMBpPeFB
- L1WDbqcq/ac8XDkKV+ZRVICynJbbjBo2tIg9JrI/DrS/FkRaOi2bAmo02zZLCZ1GAMWD+Vt1Btq
- zf5ZJVwCjfumRUcEIuIsg=
-X-Gm-Gg: AYBFou1y8fbPymMaYOrbWnAU/XwqKqO2Tira7sBQR4h9FxRxmN5l1NzkOqJEJyT8RKY
- 3mn560Gna/4rJYICvS1KqZHEQH7ZjrHTqplooAB7tna6/GssZN9N0U781og4fimdKRNef++3iAW
- JrixMOh4uzgtl/m3RxkMuVoEiuwEcnN1EmYLzO3WeEvlsTnVrztBKOkK4V82lnlZ1dgLa+x4Lcw
- 5lbdk9iPAeTNIpA+1hgabwVd/z5AlcHt6KqwvlEWD0oWpPv
-X-Received: by 2002:a05:6512:2508:b0:5b7:f75a:ea68 with SMTP id
- 2adb3069b0e04-5ba405dc9c1mr312840e87.35.1790759874457; 
- Wed, 30 Sep 2026 02:17:54 -0700 (PDT)
-X-Received: by 2002:a05:6512:2508:b0:5b7:f75a:ea68 with SMTP id
- 2adb3069b0e04-5ba405dc9c1mr312836e87.35.1790759873986; Wed, 30 Sep 2026
- 02:17:53 -0700 (PDT)
+ content-transfer-encoding:content-transfer-encoding;
+ bh=SAmyA3g/RGmNLprMXeIhSO/jfP6vOqQzZvqhtXFbxi4=;
+ b=H7MfgKeHjA0SFVj2rUzaVrBTMdeyeLbL98TqoHpVwu/2AWD/kwbC5I6ACHZjGT/1UsBKrx
+ 6jta0LJb5wYbeUTKNZRSZez9JagFTwEJ3k+9ivbdGsxa/K1gCAJstKvqYfkf2uTYmRrcR9
+ ohkRPKsC7b3nxAEcNSs6zmbOwggcklE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-Q7HQxc0rO5uwaOUctnDalQ-1; Wed,
+ 30 Sep 2026 06:00:14 -0400
+X-MC-Unique: Q7HQxc0rO5uwaOUctnDalQ-1
+X-Mimecast-MFC-AGG-ID: Q7HQxc0rO5uwaOUctnDalQ_1790762413
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C48FA180883E; Wed, 30 Sep 2026 10:00:12 +0000 (UTC)
+Received: from max-p1 (headnet04.pony-001.prod.iad2.dc.redhat.com
+ [10.2.32.116])
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id C969D30000E8; Wed, 30 Sep 2026 10:00:10 +0000 (UTC)
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+To: dev@dpdk.org, eperezma@redhat.com, david.marchand@redhat.com,
+ thomas@monjalon.net, stephen@networkplumber.org
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: [PATCH 0/2] uapi: introduce compatibility define of old compilers
+Date: Wed, 30 Sep 2026 11:57:58 +0200
+Message-ID: <20260930095800.551314-1-maxime.coquelin@redhat.com>
 MIME-Version: 1.0
-References: <20260930084908.72055-1-david.marchand@redhat.com>
- <arzN7PorjHs67ucG@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <arzN7PorjHs67ucG@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 30 Sep 2026 11:17:42 +0200
-X-Gm-Features: AclHuK-o1BAWiY-9fG5K1RiuFv-O5CkKdCCl3qlI3Yt7t9WeeSWV-Xqca6SdUL8
-Message-ID: <CAJFAV8x_PrV7c3sp43yn5zCJpje8VuL7RwBh__n2-GTwm=_bbg@mail.gmail.com>
-Subject: Re: [PATCH] hash: fix GFNI helpers for building with -O0
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>, 
- Bruce Richardson <bruce.richardson@intel.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: lmTFjQlPGyX29uWGAK56u2erlHI56_Xt2tNa7iHAw2I_1790759875
+X-Mimecast-MFC-PROC-ID: 0vr5mSwUbS4i8iFHOEeH6oX_WH8Sd704gH3-POwRQSE_1790762413
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,26 +65,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 30 Sept 2026 at 10:53, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> On Wed, Sep 30, 2026 at 10:49:08AM +0200, David Marchand wrote:
-> > Similarly to commit da31ef54c865 ("hash: fix GFNI stubs export"),
-> > fix "internal" helpers used by public inline helpers by removing the
-> > incorrect __rte_internal annotation.
-> >
-> > The issue is usually not seen as those helpers get inlined under
-> > standard compiler optimization level, but it becomes visible when
-> > building with -O0.
-> >
-> > Fixes: 4fd8c4cb0de1 ("hash: add new Toeplitz hash implementation")
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+This series introduces a compatibility define for __counted_by
+attribute, which is not defined by old compilers. We define is
+as empty if the compiler don't provide it.
 
-Applied, thanks.
+The second patch updates the UAPI headers to v6.19, in which vfio.h
+introduces the use of this attribute.
 
+Maxime Coquelin (2):
+  config: add compatibility for old compilers with new UAPI headers
+  uapi: update headers to v6.19
+
+ config/rte_config.h             |  9 ++++++++
+ kernel/linux/uapi/linux/vduse.h |  2 +-
+ kernel/linux/uapi/linux/vfio.h  | 40 ++++++++++++++++++++++++++++++++-
+ kernel/linux/uapi/version       |  2 +-
+ 4 files changed, 50 insertions(+), 3 deletions(-)
 
 -- 
-David Marchand
+2.55.0
 
