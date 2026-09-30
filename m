@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95D9CA5FB1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 10:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35B2CA5FBA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 10:22:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E7C8E42E62;
-	Wed, 30 Sep 2026 12:21:16 +0200 (CEST)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
- by mails.dpdk.org (Postfix) with ESMTP id C015842E62;
- Wed, 30 Sep 2026 12:21:13 +0200 (CEST)
-X-QQ-mid: zesmtpgz3t1790763669tbfedc7d7
-X-QQ-Originating-IP: 9A5U6F1QuI2hpZvdXwBYdukbAGEaLWwE2k5bXZtfyWs=
+	by mails.dpdk.org (Postfix) with ESMTP id 1298042E15;
+	Wed, 30 Sep 2026 12:21:22 +0200 (CEST)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+ by mails.dpdk.org (Postfix) with ESMTP id 7E9E742E0B;
+ Wed, 30 Sep 2026 12:21:14 +0200 (CEST)
+X-QQ-mid: zesmtpgz3t1790763671t4e58e492
+X-QQ-Originating-IP: RcvVUeuC23qx86BHTcWlasYuk70NzgZh9Dor+nLJvbc=
 Received: from DSK-zaiyuwang.trustnetic.com ( [60.186.241.247])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 30 Sep 2026 18:21:08 +0800 (CST)
+ id ; Wed, 30 Sep 2026 18:21:10 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1072247120453609239
+X-BIZMAIL-ID: 15969267804438367471
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v7 10/15] net/txgbe: fix DAC hot-plug on 40G NIC with
- auto-negotiation
-Date: Wed, 30 Sep 2026 18:17:57 +0800
-Message-ID: <C4BB8907786A5435+20260930102042.2214-11-zaiyuwang@trustnetic.com>
+Subject: [PATCH v7 11/15] net/txgbe: fix 40G FFE tuning applied to first lane
+ only
+Date: Wed, 30 Sep 2026 18:17:58 +0800
+Message-ID: <818BAFA2899C2666+20260930102042.2214-12-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20260930102042.2214-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -35,24 +35,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MPeDaT9v3nTZyuowjDNlUX+oO10EQ1DsCk7mse7WSRTpCyu5/KcgIldU
- rKHh02HW3SN4U1RAnX9ztyiLJs+TiskjGoiDhZ36jrWJkQ6IhlNKhGDQ7QwKESManY+MElq
- dlOffwqtpn+tz5qfnuGbo+tPkb0VfoJqmCKd7B0sQJJbQYd1Jky1Sr29vRdpk6fe484hw9F
- e71jrDhKaKGBt7EAfS4sIIYAD0JARAT0yl6BC/bvdEQH33/xJb19wqEk/vHCrOVPH4DGhmv
- WQpoXTjsNF7bSmkoLvAz/wktKXl21QAKpXTJzQoh8X0n1SQWZ1gw/bD59G3I1m68V3HLkOY
- zB9tj8GPzJDDJdHAxn/UKb7mAkTj/nCVaHfLwuTn8Is9N8zzP2BQutbNc8323nRFL8nYMKZ
- 5fYQ1Ick97Vz369EsKvOIyV5Ec5vCFPQZIuoK7Gp0ekPcDL0XlqbTK0ycPQCGKglei9znMv
- NFkjynV0tWx5eEFWxTXXS6JNvp0r7xnXRjilMIJDqwA60g3rdVZ/bGLRBaz/41VdMsOe0Gf
- iXX7w+5mPlraGDkRQiZwFWwYyV9SXSvyd83D0QFOnURssgJC8CteHauW9hin+P8yKedQBU+
- YAZVs6H4OqIKWMbulOOdJ74U/ecadALHT6CwYByXv3JedNR2vq7ICnRtm961ZlHMrZ7jTTF
- ydIlGgfn6olLDNrMF6OFHyK/dkaWgSydR/7PC4AM4aajlkYw5Wu/6xWF1ID8xwwSQkLTFet
- au3rwzkLHPydwjTnc1Dps0jZ8uiRP8ChhxgXSrsq0UR0MLt2IJTT0WKNkQtnMQBU7cipY5c
- juNIuCytEXGnNSCF61QuhBpBCJbDhVdxO3FQS//ZR6k8lEPWXCkBJvmKu989fc+6G7hWOHQ
- N4xjpxZsv7DRgLLloa43b9eZ4YeaJZo9Jmy6lYPIHoh6CqDTMobSYEIWpkMgEyUnEdnfTmE
- dDl9l4w8iv/UdJYostp+8umTpnYvXa1n2BioBFkEzEFjl4wLVMMfO59+lA+GLdoUAESJJyi
- tcD/gSUXUNum4u5eGky8K1Mw1y7suKcnhIDvG65FZbWRPC0cLmLT65BzwyuTkDB8VpTlJSu
- Kz+glDgy/s5O0VDM0Uyc/5vH5693vh3ztUne0+s3W2D
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
+X-QQ-XMAILINFO: NcDjtfrfg8HtfBHku+zvdcLTgpmzSL+/pf9VBCUMAbXxDsqawiK69tJS
+ TEoLLm3SqyywTZvlt2QZJ4ERHjQteWV477xW73Wa8E36qBQadoystc56CmyKXJMD7g/CUTA
+ CaxqrHVg+GrLq9bLqOPQT3z/jtWP7fo0QmMhOV5uubCIJoAG/U5Dn7TO+ZSWLGQtXRHnW5m
+ lp1lLIvHTm/0LB8psT2b2Chus4WlxCQwYCUfbWokg5nQj+y/z5nouCaLNteri04dU2uqLVJ
+ uthYHAJaWCegGIjsLLV7kuKLxVvnJRUhnWnLItcCnnkE+BzDsSNkZ2/CactAyJbehpMpJmU
+ NkpUQYr5fqdeyMxZORnlR+9+UMSA/xgF/Hxa2Ze1LD9dlyaUhBV6KULA3NCqk4X2ZNgzAdD
+ pEAEJkKYjnbPuPIW4e8gMrLL18bbEDgEYt2IMI3qnharZgxxwcFl1xSXxw+yN610Gmfh4Di
+ I95Web+LeWxJf4NwC4KQcazbdqM4nT9ZNC+rJsW4gvqgfqcpkjk/+vFmGA4uGqhqZfKgItX
+ P7Tpw6tSaE3/lIJxxlXSnfrLLFMXp2fqVSKTH8YTifmYVceO7EGOKkRndSiqSa/hLCRUSMJ
+ 9vFs42Y4xsTUO6KLVbk4kQw0Kv8EOTHaegtEqp6tnI6I1DmfF8/4JZGlYIXtzJ6YV3NHj48
+ 9qJgdEMsElgx8xNYYE1wHCz8eZeN29R53M13JXMJnfGaWaFUdZg8ZgzpsqV3j9jGhnL9udN
+ Sko4O4TSOQmW6AA4gms4v5ikGCCjy541jRAumtJrNea4oURgAupntWBPwtUZ+NSRmLaeTSq
+ WhZWxKVjfBdps3oKarIg1FLtztQe/2t5oPVE8pXKyKDDCwPq+DOQBJ0vekBzV5iewoIrwi/
+ g2o2di1RoX2+bVTHSMRauc1eQUHGc1K9sUoXqDCWntanFj19cvryE0SUVZ2y6cc35SQrHWO
+ Z2ehhlT2MAFBpe468H3CjqqSgWNewbpnT7GaYQv8YTgZW5oIXnLPbklSRNpIMa2JTlWIhy4
+ ezN6pUFYKACAfWX63RTzuLggJV+c8e7iOEuqmgHndEgp8qY5CerxtK9PBxvGAsrSaDfHwn4
+ SHbvHAm48FFW8ICiM4fsLdZOMMRZeOZ6A==
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,104 +67,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hot-plugging a DAC cable while an Amber-Lite 40G port is running
-does not bring the link up. Two problems are in the way.
+On the 40G NIC, an FFE value only reaches the first of the four
+lanes: the E56 PHY holds one FFE byte per lane, but the tuned taps
+were written as a single byte value, so the other three lanes keep
+their default equalizer setting and the received signal on them can
+be degraded.
 
-First, the 40G NIC never delivers the GPIO interrupt for module
-insertion or removal, so txgbe_dev_detect_sfp() is not called and the
-new module is never identified (the 25G part is not affected). Poll
-the module-present level every 2 seconds instead. The poll skips the
-identify step while the level is unchanged, and only re-arms itself
-while the SFP/AN73 alarm gate is set, so that it cannot survive
-txgbe_dev_stop().
+Use the E56 PHY FFE defaults on the 40G NIC and replicate each tap
+value over the four lanes. The FFE fields grow to 32 bits to hold
+the replicated value, and the devargs are parsed after the shared
+code init so the MAC type is known when the 40G defaults are picked.
 
-Second, when the port is started with no module plugged in,
-txgbe_set_link_to_amlite() times out and leaves hw->link_valid false.
-The xpcs path of txgbe_setup_phy_link_aml40() never restores it, so
-txgbe_e56_check_phy_link() and txgbe_check_mac_link_aml40() keep
-forcing the link down even once AN73 has brought it up. Restore
-link_valid on the xpcs path, as the non-xpcs path already does.
-
-Fixes: a2d92608d3b0 ("net/txgbe: add GPIO configuration")
-Fixes: f7cfc21e9f75 ("net/txgbe: fix link stability for 40G NIC")
+Fixes: 6104fd11086e ("net/txgbe: fix link stability for 25G NIC")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml40.c |  7 +++++++
- drivers/net/txgbe/txgbe_ethdev.c     | 20 +++++++++++++++++++-
- 2 files changed, 26 insertions(+), 1 deletion(-)
+ drivers/net/txgbe/base/txgbe_e56.h  |  5 +++++
+ drivers/net/txgbe/base/txgbe_type.h |  8 ++++----
+ drivers/net/txgbe/txgbe_ethdev.c    | 22 +++++++++++++++++++++-
+ 3 files changed, 30 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index d812adac69..2d3b32839c 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -177,6 +177,13 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
- 		rte_spinlock_lock(&hw->phy_lock);
- 		txgbe_e56_set_phy_link_mode(hw, speed, autoneg_wait_to_complete);
- 		rte_spinlock_unlock(&hw->phy_lock);
-+		/* Restore link_valid, as the non-xpcs path below does. An
-+		 * earlier txgbe_set_link_to_amlite() timeout, for example when
-+		 * the port was started with no module plugged in, left it
-+		 * false, which keeps the check_phy_link and check_mac_link
-+		 * gates forcing the link down even after AN73 brings it up.
-+		 */
-+		hw->link_valid = true;
- 		return status;
- 	}
+diff --git a/drivers/net/txgbe/base/txgbe_e56.h b/drivers/net/txgbe/base/txgbe_e56.h
+index 1922a2eb92..fe9a83ae01 100644
+--- a/drivers/net/txgbe/base/txgbe_e56.h
++++ b/drivers/net/txgbe/base/txgbe_e56.h
+@@ -1714,6 +1714,11 @@ typedef union {
+ #define S40G_TX_FFE_CFG_PRE2        0x0
+ #define S40G_TX_FFE_CFG_POST        0x11111111
  
++/* The 40G PHY holds one FFE byte per lane, so a user supplied value has to
++ * be replicated over the four lanes.
++ */
++#define S40G_TX_FFE_4LANE(v)        ((u32)((v) & 0xFF) * 0x01010101u)
++
+ #define BYPASS_CTLE_TAG             0x0
+ 
+ #define S10G_PHY_RX_CTLE_TAPWT_WEIGHT1      0x1
+diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
+index f9b5cbe61a..4ed4737043 100644
+--- a/drivers/net/txgbe/base/txgbe_type.h
++++ b/drivers/net/txgbe/base/txgbe_type.h
+@@ -739,10 +739,10 @@ struct txgbe_phy_info {
+ 
+ 	/* Some features need tri-state capability */
+ 	u16 ffe_set;
+-	u16 ffe_main;
+-	u16 ffe_pre;
+-	u16 ffe_pre2;
+-	u16 ffe_post;
++	u32 ffe_main;
++	u32 ffe_pre;
++	u32 ffe_pre2;
++	u32 ffe_post;
+ 	u16 fec_mode;
+ 	u16 bp_capa;
+ };
 diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 83ef9d8bfc..222c82694e 100644
+index 222c82694e..db773a1b9a 100644
 --- a/drivers/net/txgbe/txgbe_ethdev.c
 +++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -1984,6 +1984,11 @@ txgbe_dev_start(struct rte_eth_dev *dev)
- 	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
- 		rte_eal_alarm_set(hw->bp_event_interval, txgbe_dev_e56_check_bp_event, dev);
- 		rte_eal_alarm_set(1000 * 1000 * 2, txgbe_dev_check_aml_temp_event, dev);
-+		/* The 40G NIC does not deliver a GPIO interrupt on module
-+		 * insertion or removal, so poll the module-present level.
-+		 */
-+		if (hw->mac.type == txgbe_mac_aml40 && !txgbe_is_backplane(hw))
-+			rte_eal_alarm_set(2000 * 1000, txgbe_dev_detect_sfp, dev);
- 	}
+@@ -483,6 +483,7 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
+ 	u16 ffe_set = 0;
+ 	u16 ffe_main = 27;
+ 	u16 ffe_pre = 8;
++	u16 ffe_pre2 = 0;
+ 	u16 ffe_post = 44;
+ 	/* FDIR args */
+ 	u16 pballoc = 0;
+@@ -492,6 +493,15 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
+ 	u16 tx_headwb_size = 16;
+ 	u16 rx_desc_merge = 1;
  
- 	if (tm_conf->root && !tm_conf->committed)
-@@ -3068,7 +3073,7 @@ txgbe_dev_detect_sfp(void *param)
- 	struct txgbe_adapter *adapter = TXGBE_DEV_ADAPTER(dev);
- 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
- 	u32 value = 0;
--	s32 err;
-+	s32 err = 0;
- 
- 	if (rte_atomic_load_explicit(&adapter->sfp_an_alarm_enabled,
- 				     rte_memory_order_acquire) == 0)
-@@ -3080,6 +3085,11 @@ txgbe_dev_detect_sfp(void *param)
- 			err = TXGBE_ERR_SFP_NOT_PRESENT;
- 			goto out;
- 		}
-+		/* The level is unchanged since the last poll, so the cached
-+		 * module type is still valid and identify can be skipped.
-+		 */
-+		if (hw->phy.sfp_type != txgbe_sfp_type_not_present)
-+			goto rearm;
- 	}
- 
- 	if (hw->mac.type == txgbe_mac_aml) {
-@@ -3123,6 +3133,14 @@ txgbe_dev_detect_sfp(void *param)
- 		}
- 		txgbe_dev_link_update(dev, 0);
- 	}
-+
-+rearm:
-+	if (hw->mac.type == txgbe_mac_aml40 && !txgbe_is_backplane(hw) &&
-+	    rte_atomic_load_explicit(&adapter->sfp_an_alarm_enabled,
-+				     rte_memory_order_acquire) != 0) {
-+		rte_eal_alarm_cancel(txgbe_dev_detect_sfp, dev);
-+		rte_eal_alarm_set(2000 * 1000, txgbe_dev_detect_sfp, dev);
++	/* The 40G NIC holds one FFE byte per lane, so the E56 PHY defaults
++	 * below are later replicated over the four lanes.
++	 */
++	if (hw->mac.type == txgbe_mac_aml40) {
++		ffe_main = S40G_TX_FFE_CFG_MAIN & 0xFF;
++		ffe_pre = S40G_TX_FFE_CFG_PRE1 & 0xFF;
++		ffe_post = S40G_TX_FFE_CFG_POST & 0xFF;
 +	}
- }
++
+ 	if (devargs == NULL)
+ 		goto null;
  
- static void
+@@ -540,6 +550,14 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
+ 	hw->phy.ffe_pre = ffe_pre;
+ 	hw->phy.ffe_post = ffe_post;
+ 
++	/* The 40G PHY expects one FFE byte per lane. */
++	if (hw->mac.type == txgbe_mac_aml40) {
++		hw->phy.ffe_main = S40G_TX_FFE_4LANE(ffe_main);
++		hw->phy.ffe_pre = S40G_TX_FFE_4LANE(ffe_pre);
++		hw->phy.ffe_pre2 = S40G_TX_FFE_4LANE(ffe_pre2);
++		hw->phy.ffe_post = S40G_TX_FFE_4LANE(ffe_post);
++	}
++
+ 	fdir_conf->pballoc = pballoc;
+ 	fdir_conf->drop_queue = drop_queue;
+ }
+@@ -642,7 +660,6 @@ eth_txgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
+ 	hw->isb_dma = TMZ_PADDR(mz);
+ 	hw->isb_mem = TMZ_VADDR(mz);
+ 
+-	txgbe_parse_devargs(eth_dev);
+ 	/* Initialize the shared code (base driver) */
+ 	err = txgbe_init_shared_code(hw);
+ 	if (err != 0) {
+@@ -650,6 +667,9 @@ eth_txgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
+ 		return -EIO;
+ 	}
+ 
++	/* Parsing the devargs requires a known MAC type. */
++	txgbe_parse_devargs(eth_dev);
++
+ 	if (hw->mac.type == txgbe_mac_aml)
+ 		txgbe_override_mac_ops(hw);
+ 
 -- 
 2.55.0.windows.2
 
