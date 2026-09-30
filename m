@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D05CA5FC5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23ACFCA5FC4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:43:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AD74B40289;
-	Thu,  1 Oct 2026 00:43:45 +0200 (CEST)
-Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
- [74.125.227.171])
- by mails.dpdk.org (Postfix) with ESMTP id CE43540262
- for <dev@dpdk.org>; Thu,  1 Oct 2026 00:43:43 +0200 (CEST)
-Received: by mail-pj2-f43.google.com with SMTP id
- 98e67ed59e1d1-39dacf053eeso3027759a91.2
- for <dev@dpdk.org>; Wed, 30 Sep 2026 15:43:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A731840698;
+	Thu,  1 Oct 2026 00:43:46 +0200 (CEST)
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
+ [74.125.227.141])
+ by mails.dpdk.org (Postfix) with ESMTP id 465EB40262
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 00:43:44 +0200 (CEST)
+Received: by mail-pj2-f13.google.com with SMTP id
+ 98e67ed59e1d1-39d654f02baso2715194a91.3
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 15:43:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808223;
  x=1791413023; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=RIHe/f6XVxz9U4zvUk6v8zpa/j89Hk+WP/nib2/jfbE=;
- b=EViMuTLmR3krXuGzswvBGEDRvaT7MAKxrsGZDbaUvz1oa4zn4OHNPj7zCRcDTBFOMC
- GPTYdDV6J8Jzu/vMBsR/pDhAw5ju6DSd0D7+WvVrws/lSKnsy5aaAuXdxEZxb7rbLTKZ
- KoMBPmcyavqDhRIiIGjZfP0smywAPNjQLPsnO2zaDCFpEetFTYaC6AamSu2gAQJFzzXy
- VMmv38mPMADTCnJWO1H6K+d4wZlXT56pVdF4RIXYLu16C7RFuURHfwYNWmjHH6vTg9Sj
- FaDSCmAUcl/G5CAV1F1bI/JINYduftn3mXSCNgCZFdjEPn0vMXBSZq7JkhMVaA43J6nN
- yYqg==
+ bh=SA50A96/p4OO7aHTJSbvsWJn/oyAEuKyCXtBJOtvf3c=;
+ b=M6Cc4voHWzqtA/KTbClXbeTCHmXANA71OFElmEVjcdaHM2X3TDXxeeuza+a0lD9FVO
+ 3wZoOXbiwWB+8BB6M/4Fg+2l8bw0HEUAl6gik5VWIzjO+dQYN4qp6w/XAsVbB4Plp9Wl
+ NjC5c0YhqwR29d5YFqY+krZhBXNGp73IPataZs27Mm8WBhNGrhesOyxOMqA5BY1nIR16
+ oMp+L+W9+Nwb6XyA6OSVMOR3X1UJYulZ135GmblzCEt2qWO46r/6I/MNu79uupt3KKlN
+ QD/y0F3b6Sw4nQec30fbWQpeOOyltN91lesZoKxbs/lO/74WfxBcM8pEASOfOFG+LUV7
+ ODEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20260707; t=1790808223; x=1791413023;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=RIHe/f6XVxz9U4zvUk6v8zpa/j89Hk+WP/nib2/jfbE=;
- b=GBUMDGe95tudJmHEzrVzt+1SlMkMDfUYrGU4dDm6qAHQb1v8nw6QEHMl0eIaQxs48s
- WvxwTGghAI3kCeKl4w18CRuEL0OpEplWayZBs+FYssBvtAWrDS0Ep91bkrR2UAQIgfE3
- lPC+xm2ahsfx/2uZ+byGR1NC+poDg4TiQMKDvMA/E33MuZCC/EmdN/LLHhtb7x5ambXp
- 5/n5yVNT2xJgQY3Rg8v6tsPBmiq6Su1eVS43z+no6VJWKreeElFG0WnAin+6aUNtGXIm
- vvEnf+QCK/ggf9o0Mccq8zjDaw4q4UP1tsry8lQ1tjUKNxH0W9rjJUuGbUqXc4qWu+1Q
- EyPA==
-X-Gm-Message-State: AFq9FYLYbJEfSvO6j62TiSZJRNGreww6iFbar3NT5dMJaALjPfMrW7An
- wSmrjkArCJlOmGYKC0UHDt2qFijYdR7SZRlQvGv596n4fq0Ssg22vS3oEDCKmxiGxAuaiUy+Y2S
- t3CylaxI=
-X-Gm-Gg: AYBFou3+Kyop7Yrp8GgtUdGwyk/xfXDBgbrui1q4CjaIpg8ppSbo5vCystNQZvUjZbr
- hXB8rGGE9Yt1q8YXKBWNyCtmqo0H6PfZt6oH0cLmFQ8GfvSyGlReTR5drmLrkU+p2W8HN6KZQlx
- wI7OCTanYBWfrdYmCWzhemzGie/P2bmAee+xbFyCJZRQs0/B7VK3yDycNKiujcLj72+1e/c5GkZ
- hhrS6kQ262GZ4XHfsW1+IXngf6T+HLCZjC92bWuLCYkHL9qwFqQxaQWTWdh7sCRI/bxbr5RKU5O
- itVbNc2dTbQ/7DAmP4YITwBVqOtXo1wKrR4GCxurC63t2sk6L3/CUo0bDWu9EcELFmtCLguZCsr
- QUffKO3/JDbbwkgB4Pkhh4vKmGcmxM9396t1zjYRC7Ou8ShFNgv100HwZpDX+nwUxfTXrebKLXP
- kR4eZYw42oenSzuEOfKa5x5xbfoCLY7dnw4opcHC3c+n8vF4mpzqanDqFYAQVjZFE/NOVCWh/HE
- fJtG2rtNqk3LRBxyx3MFsqlwjBPd/Da4xNHuABLHEVSDa9B
-X-Received: by 2002:a17:90b:28d0:b0:3a4:fe48:d412 with SMTP id
- 98e67ed59e1d1-3a4fe48e5eamr82727a91.30.1790808222580; 
- Wed, 30 Sep 2026 15:43:42 -0700 (PDT)
+ bh=SA50A96/p4OO7aHTJSbvsWJn/oyAEuKyCXtBJOtvf3c=;
+ b=B0DGDsF8XQfVJVCp9uPGjVxhoa/1Ou0LLY0T0OOUVgf9f8EKQFKVX8pYPUXU0jzwzI
+ R7VM2zAkKPDURj5FWbOOQhnA2nrk6zJhArZPPXL2YZNkI2SGYavEEEu9E+Xwa6aFK3MD
+ dKQGfjAbHegmmZby5HKeiPtKpKWl9xS+t9EUfvcd1TZHhHSa4iQMglE5wmCMXBHQlo0s
+ 9nQFki1Nz0+DJYsTw4UMHrPCCztJnM8SBg8NBdLm7JSUFy9xIQcjE8AiDirfPKLc9BCZ
+ oDY2bTsIk7dlcmhhHLDcOdjkRMJ83XuzzuOJ5pYqTKOtcSsmpfssrNKTvIXhRdJ1Rili
+ cE2w==
+X-Gm-Message-State: AFq9FYJv54hQm5DtOhjRb6hQE0mMLdjhW3eUABKf2OZUBcp1tmScOWwr
+ 34SAKbqoTtUuqiQFVnLOE1v5/5Y8Gm9kZ1Zku8ykuDfciNjEyQDv13lFLNr/ovkbpK2efJwaGkV
+ iTaxO7ls=
+X-Gm-Gg: AYBFou3HAwkp+88FnCwlNPJCZnTSy1x286Q9qYKoZlEYXAdUrMJnvoCNuKS0mQgzXSW
+ 9sYFfXxP1fBDPAK9BkQ5UuMSNbMkDEkZozrtyiUGtuDAEwAPwA7dRZjGWkb4Cu9djfyNUi7Riub
+ GoLu1kfV4V2zuvRU7UTlP9knm26KUWwTRzppG075G709DYXyLY4gIvIKY4SCLA7Kdh3AEntTfJu
+ SOQI3O0wlB2ZJ1pHJdTV2Uxyn+AlH3SiuHys2u+zNjvLta4BS213p6Bo/O46CVgAXdQH4n2QawP
+ KWItaTM2UpuEqsE9TdHxO7LpHGUZRPqRUJQ0KuQHecTbSAmS2a0RVxvLFhUbXHGAZV5UbrHtJK0
+ 7L5w+ziMZVy+hfr1kqonmTlOAg1MXiuAPpadtUP1cT01Jc71uDVsGxScDAXQmAMLrRS12hTWQNT
+ wgbSy1YaV/rAVTMuPinGBPbFWKZl6+ADI8C7ht3IrOyJCImdRXCxf190BiWmf+gb8enk+NFe3EV
+ pJ7lnnnhptyOVy/vcxdngfDr8qe9HhCts2Acw==
+X-Received: by 2002:a17:90b:2787:b0:3a2:b4bb:91ca with SMTP id
+ 98e67ed59e1d1-3a4d11df88fmr2395076a91.1.1790808223393; 
+ Wed, 30 Sep 2026 15:43:43 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.43.41
+ 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.43.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Sep 2026 15:43:42 -0700 (PDT)
+ Wed, 30 Sep 2026 15:43:43 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 00/65] kvargs: add numeric conversion helpers
-Date: Wed, 30 Sep 2026 15:40:18 -0700
-Message-ID: <20260930224340.58580-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v3 01/65] net/ring: make numa node signed
+Date: Wed, 30 Sep 2026 15:40:19 -0700
+Message-ID: <20260930224340.58580-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260914054912.755403-1-stephen@networkplumber.org>
+In-Reply-To: <20260930224340.58580-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
+ <20260930224340.58580-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,226 +84,228 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Almost every driver parses numeric device arguments with its own
-code, and most get some part of it wrong: atoi() does not detect
-invalid input, errno is checked without being cleared, the end
-pointer is ignored, the value is truncated before it is range
-checked, or base 0 turns a leading zero into octal.
+rte_eth_from_rings() takes a numa node (socket) but used unsigned
+where int should have been used to allow for SOCKET_ID_ANY.
+The only usage is in call rte_malloc routines with socket
+and those functions expect int.
 
-This series adds range checked converters and ready made
-rte_kvargs_process() handlers to librte_kvargs, then converts the drivers.
+Change the parameter to int socket_id and carry that through the two
+internal create functions. The devargs path keeps working as before:
+"nodeaction=name:-1:CREATE" was already accepted, since strtol()
+returned -1 into an unsigned int which became SOCKET_ID_ANY again at
+the allocation.
 
-Patch 1 is a type fix to drivers/net/ring so that it can
-use helper for socket id.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ doc/guides/rel_notes/release_26_11.rst |  6 ++++
+ drivers/net/ring/rte_eth_ring.c        | 38 +++++++++++++-------------
+ drivers/net/ring/rte_eth_ring.h        | 11 ++++----
+ 3 files changed, 31 insertions(+), 24 deletions(-)
 
-Library (patches 2 to 4)
-------------------------
-
-  rte_kvargs_to_uint/to_int/to_hex     convert with an explicit range
-
-  rte_kvargs_handle_u8/u16/u32/u64     store into a typed variable
-  rte_kvargs_handle_i8/i16/i32/i64
-  rte_kvargs_handle_uint/int/long/ulong/size
-
-  rte_kvargs_handle_bool               1/y/yes/on/true and negatives,
-                                       bare key means true
-  rte_kvargs_handle_socket_id          -1 (SOCKET_ID_ANY) through
-                                       RTE_MAX_NUMA_NODES - 1
-  rte_kvargs_handle_hex32/hex64        bare hex mask, 0x optional
-  rte_kvargs_handle_urange/irange      caller supplied bounds
-
-Values are decimal or 0x hexadecimal, no octal, no negative value for
-an unsigned type, no trailing garbage.
-The handlers log key, value, and expected range on failure.
-Unit tests cover all of them.
-
-The new api's are marked experimental for 26.11.
-
-Drivers (patches 6 to 61)
--------------------------
-
-52 drivers converted. Local handlers that only did a range checked
-store are deleted, 40 of them.
-
-The af_xdp conversion (patch 17) goes further than the rest.
-With some changes to types, like queue and indexes converted
-to uint16_t, the local handlers can be replaced by helpers.
-Likewise boolean flags can be bool instead of int.
-
-There are some cases not covered easily by kvargs helpers, where the
-driver parses a list, or does more with the value than store it.
-
-Range handlers (patches 63 to 65)
----------------------------------
-
-An argument whose range is narrower than its type still needed a local
-handler, about 25 of them, and 22 of those rejected a bad value without
-logging anything. The new handlers take the bounds from the caller, so
-these report like the typed ones do.
-
-event/sw and net/cnxk are converted, 9 more handlers deleted.
-
-Behaviour changes
------------------
-
-  - malformed, out of range and wrapped values now fail probe with a
-    message instead of being silently misread
-  - a leading zero is decimal, not octal
-  - boolean arguments accept on/off/yes/no/true/false and reject
-    anything else, including numbers other than 0 and 1
-  - socket IDs are checked at both ends (dlb2 accepted
-    RTE_MAX_NUMA_NODES, turbo_sw and bbdev_null accepted negatives)
-  - the four bare hex masks (ice hw_debug_mask, hns3 dev_caps_mask,
-    cxgbe filtermode/filtermask, ark Pkt_dir) keep their syntax
-
-v3 - add range helper
-   - declutter the AI generated comments
-
-Stephen Hemminger (65):
-  net/ring: make numa node signed
-  kvargs: add numeric conversion helpers
-  kvargs: add a socket ID handler
-  kvargs: add hexadecimal conversion helpers
-  eal: validate memory size arguments
-  net/null: use kvargs numeric helpers
-  net/vhost: use kvargs numeric helpers
-  vdpa/ifc: use kvargs numeric helpers
-  net/softnic: use kvargs numeric helpers
-  dma/skeleton: use kvargs numeric helpers
-  raw/skeleton: use kvargs numeric helpers
-  baseband/null: use kvargs numeric helpers
-  net/memif: use kvargs numeric helpers
-  net/af_packet: use kvargs numeric helpers
-  net/pcap: use kvargs numeric helpers
-  net/ring: use kvargs numeric helpers
-  net/af_xdp: use kvargs numeric helpers
-  net/ark: use kvargs numeric helpers
-  net/failsafe: use kvargs numeric helpers
-  net/virtio: use kvargs numeric helpers
-  net/bonding: use kvargs numeric helpers
-  net/ena: use kvargs numeric helpers
-  net/netvsc: use kvargs numeric helpers
-  net/ice: use kvargs numeric helpers
-  net/iavf: use kvargs numeric helpers
-  net/i40e: use kvargs numeric helpers
-  net/idpf: use kvargs numeric helpers
-  net/cpfl: use kvargs numeric helpers
-  net/ixgbe: use kvargs numeric helpers
-  net/txgbe: use kvargs numeric helpers
-  net/octeontx: use kvargs numeric helpers
-  net/octeon_ep: use kvargs numeric helpers
-  net/qede: use kvargs numeric helpers
-  net/nfb: use kvargs numeric helpers
-  net/thunderx: use kvargs numeric helpers
-  net/i40e: propagate VF queue number parse errors
-  net/cnxk: use kvargs numeric helpers
-  net/xsc: use kvargs numeric helpers
-  net/hns3: use kvargs numeric helpers
-  net/enetc: use kvargs numeric helpers
-  event/dlb2: use kvargs numeric helpers
-  net/nfp: use kvargs numeric helpers
-  drivers/crypto: use kvargs numeric helpers
-  event/sw: use kvargs numeric helpers
-  net/bnxt: use kvargs numeric helpers
-  net/bnxt: propagate devargs parsing errors
-  net/mlx4: use kvargs numeric helpers
-  net/sfc: use kvargs numeric helpers
-  crypto/mvsam: use kvargs numeric helpers
-  ml/cnxk: use kvargs numeric helpers in cn10k
-  ml/cnxk: use kvargs numeric helpers in mvtvm
-  event/opdl: use kvargs numeric helpers
-  mempool/cnxk: use kvargs numeric helpers
-  event/octeontx: use kvargs numeric helpers
-  baseband/turbo_sw: use kvargs numeric helpers
-  baseband/la12xx: use kvargs numeric helpers
-  dma/hisi_acc: use kvargs numeric helpers
-  crypto/virtio: use kvargs numeric helpers
-  net/ice: use kvargs hex helper for debug mask
-  net/hns3: use kvargs hex helper for capability mask
-  net/cxgbe: use kvargs numeric helpers
-  kvargs: add range conversion handlers
-  event/sw: use kvargs range handlers
-  net/cnxk: use kvargs range handlers
-  doc: note kvargs devargs conversion in release notes
-
- app/test/test_kvargs.c                        | 340 ++++++++++
- doc/guides/eventdevs/dlb2.rst                 |   4 +-
- doc/guides/nics/null.rst                      |   2 +-
- doc/guides/prog_guide/devargs.rst             |  18 +
- doc/guides/rel_notes/release_26_11.rst        |  57 ++
- drivers/baseband/la12xx/bbdev_la12xx.c        |  60 +-
- drivers/baseband/null/bbdev_null.c            |  29 +-
- .../baseband/turbo_sw/bbdev_turbo_software.c  |  29 +-
- drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c   |  15 +-
- drivers/crypto/dpaa_sec/dpaa_sec.c            |  17 +-
- drivers/crypto/mvsam/rte_mrvl_pmd.c           |  22 +-
- drivers/crypto/virtio/virtio_user_cryptodev.c |  21 +-
- drivers/dma/hisi_acc/hisi_acc_dmadev.c        |   5 +-
- drivers/dma/skeleton/skeleton_dmadev.c        |  23 +-
- drivers/event/dlb2/dlb2.c                     | 127 +---
- drivers/event/octeontx/ssovf_evdev.c          |  25 +-
- drivers/event/opdl/opdl_evdev.c               |  49 +-
- drivers/event/sw/sw_evdev.c                   | 107 +---
- drivers/mempool/cnxk/cnxk_mempool.c           |  37 +-
- drivers/ml/cnxk/cn10k_ml_dev.c                |  74 +--
- drivers/ml/cnxk/cn10k_ml_dev.h                |   8 +-
- drivers/ml/cnxk/cn10k_ml_ops.c                |   2 +-
- drivers/ml/cnxk/mvtvm_ml_dev.c                |  47 +-
- drivers/ml/cnxk/mvtvm_ml_dev.h                |   2 +-
- drivers/net/af_packet/rte_eth_af_packet.c     |  72 +--
- drivers/net/af_xdp/rte_eth_af_xdp.c           | 431 ++++++-------
- drivers/net/ark/ark_ethdev.c                  |   4 +-
- drivers/net/bnxt/bnxt_ethdev.c                | 148 ++---
- drivers/net/bonding/eth_bond_private.h        |   8 -
- drivers/net/bonding/rte_eth_bond_args.c       |  71 +-
- drivers/net/bonding/rte_eth_bond_pmd.c        |   8 +-
- drivers/net/cnxk/cnxk_ethdev_devargs.c        | 353 +++-------
- drivers/net/cxgbe/cxgbe_main.c                |  38 +-
- drivers/net/ena/ena_ethdev.c                  |  45 +-
- drivers/net/enetc/enetc4_vf.c                 |  22 +-
- drivers/net/failsafe/failsafe_args.c          |  20 +-
- drivers/net/hns3/hns3_common.c                |  23 +-
- drivers/net/hns3/hns3_common.h                |   3 -
- drivers/net/intel/cpfl/cpfl_ethdev.c          |  26 +-
- drivers/net/intel/i40e/i40e_ethdev.c          |  57 +-
- drivers/net/intel/iavf/iavf.h                 |   6 +-
- drivers/net/intel/iavf/iavf_ethdev.c          |  55 +-
- drivers/net/intel/ice/ice_ethdev.c            | 123 +---
- drivers/net/intel/ice/ice_ethdev.h            |  10 +-
- drivers/net/intel/idpf/idpf_ethdev.c          |  26 +-
- drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  40 +-
- drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   4 +-
- drivers/net/memif/rte_eth_memif.c             |  73 +--
- drivers/net/mlx4/mlx4.c                       |  33 +-
- drivers/net/netvsc/hn_ethdev.c                |   6 +-
- drivers/net/nfb/nfb_ethdev.c                  |  13 +-
- drivers/net/nfp/nfp_ethdev.c                  |  36 +-
- drivers/net/null/rte_eth_null.c               |  78 +--
- drivers/net/octeon_ep/otx_ep_ethdev.c         |  16 +-
- drivers/net/octeontx/octeontx_ethdev.c        |  18 +-
- drivers/net/pcap/pcap_ethdev.c                |  51 +-
- drivers/net/qede/qede_ethdev.c                |  55 +-
- drivers/net/ring/rte_eth_ring.c               |  59 +-
- drivers/net/ring/rte_eth_ring.h               |  11 +-
- drivers/net/sfc/sfc.c                         |   2 +-
- drivers/net/sfc/sfc_kvargs.c                  |  19 -
- drivers/net/sfc/sfc_kvargs.h                  |   2 -
- drivers/net/sfc/sfc_port.c                    |   2 +-
- drivers/net/softnic/rte_eth_softnic.c         |  30 +-
- .../net/softnic/rte_eth_softnic_internals.h   |   3 +-
- drivers/net/thunderx/nicvf_ethdev.c           |  13 +-
- drivers/net/txgbe/txgbe_ethdev.c              |  97 ++-
- drivers/net/vhost/rte_eth_vhost.c             |  69 +-
- drivers/net/virtio/virtio_ethdev.c            |  36 +-
- drivers/net/virtio/virtio_user_ethdev.c       |  59 +-
- drivers/net/xsc/xsc_dev.c                     |  50 +-
- drivers/raw/skeleton/skeleton_rawdev.c        |  20 +-
- drivers/vdpa/ifc/ifcvf_vdpa.c                 |  29 +-
- lib/eal/common/eal_common_options.c           |  27 +-
- lib/kvargs/rte_kvargs.c                       | 604 ++++++++++++++++++
- lib/kvargs/rte_kvargs.h                       | 314 +++++++++
- 76 files changed, 2371 insertions(+), 2167 deletions(-)
-
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index e027c7a27f..58b0e588ce 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -206,6 +206,12 @@ API Changes
+    Also, make sure to start the actual text at the margin.
+    =======================================================
+ 
++* net/ring: The last parameter of ``rte_eth_from_rings`` changed from
++  ``const unsigned numa_node`` to ``int socket_id``, so that
++  ``SOCKET_ID_ANY`` can be passed as it can everywhere else a socket is
++  given. The value was already used as a signed socket id by the memory
++  and ring allocations underneath.
++
+ * ethdev: Updated VMDq related API.
+ 
+   * At port configuration time, the number of VMDq pools advertised by a driver
+diff --git a/drivers/net/ring/rte_eth_ring.c b/drivers/net/ring/rte_eth_ring.c
+index 4cbdbe3085..533a4c1b6b 100644
+--- a/drivers/net/ring/rte_eth_ring.c
++++ b/drivers/net/ring/rte_eth_ring.c
+@@ -32,7 +32,7 @@ struct ring_internal_args {
+ 	const unsigned int nb_rx_queues;
+ 	struct rte_ring * const *tx_queues;
+ 	const unsigned int nb_tx_queues;
+-	const unsigned int numa_node;
++	int socket_id;
+ };
+ 
+ /* rte_eth_from_rings() stashes a pointer to its on-stack args here */
+@@ -361,7 +361,7 @@ do_eth_dev_ring_create(const char *name,
+ 		const unsigned int nb_rx_queues,
+ 		struct rte_ring *const tx_queues[],
+ 		const unsigned int nb_tx_queues,
+-		const unsigned int numa_node, enum dev_action action,
++		int socket_id, enum dev_action action,
+ 		struct rte_eth_dev **eth_dev_p)
+ {
+ 	struct rte_eth_dev_data *data = NULL;
+@@ -371,24 +371,24 @@ do_eth_dev_ring_create(const char *name,
+ 	void **tx_queues_local = NULL;
+ 	unsigned int i;
+ 
+-	PMD_LOG(INFO, "Creating rings-backed ethdev on numa socket %u",
+-			numa_node);
++	PMD_LOG(INFO, "Creating rings-backed ethdev on numa socket %d",
++			socket_id);
+ 
+ 	rx_queues_local = rte_calloc_socket(name, nb_rx_queues,
+-					    sizeof(void *), 0, numa_node);
++					    sizeof(void *), 0, socket_id);
+ 	if (rx_queues_local == NULL) {
+ 		rte_errno = ENOMEM;
+ 		goto error;
+ 	}
+ 
+ 	tx_queues_local = rte_calloc_socket(name, nb_tx_queues,
+-					    sizeof(void *), 0, numa_node);
++					    sizeof(void *), 0, socket_id);
+ 	if (tx_queues_local == NULL) {
+ 		rte_errno = ENOMEM;
+ 		goto error;
+ 	}
+ 
+-	internals = rte_zmalloc_socket(name, sizeof(*internals), 0, numa_node);
++	internals = rte_zmalloc_socket(name, sizeof(*internals), 0, socket_id);
+ 	if (internals == NULL) {
+ 		rte_errno = ENOMEM;
+ 		goto error;
+@@ -404,7 +404,7 @@ do_eth_dev_ring_create(const char *name,
+ 	/* now put it all together
+ 	 * - store EAL device in eth_dev,
+ 	 * - store queue data in internals,
+-	 * - store numa_node info in eth_dev_data
++	 * - store socket id info in eth_dev_data
+ 	 * - point eth_dev_data to internals
+ 	 * - and point eth_dev structure to new eth_dev_data structure
+ 	 */
+@@ -439,7 +439,7 @@ do_eth_dev_ring_create(const char *name,
+ 	data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
+ 
+ 	eth_dev->dev_ops = &ops;
+-	data->numa_node = numa_node;
++	data->numa_node = socket_id;
+ 
+ 	/* finally assign rx and tx ops */
+ 	eth_dev->rx_pkt_burst = eth_ring_rx;
+@@ -464,14 +464,14 @@ rte_eth_from_rings(const char *name, struct rte_ring *const rx_queues[],
+ 		const unsigned int nb_rx_queues,
+ 		struct rte_ring *const tx_queues[],
+ 		const unsigned int nb_tx_queues,
+-		const unsigned int numa_node)
++		int socket_id)
+ {
+ 	struct ring_internal_args args = {
+ 		.rx_queues = rx_queues,
+ 		.nb_rx_queues = nb_rx_queues,
+ 		.tx_queues = tx_queues,
+ 		.nb_tx_queues = nb_tx_queues,
+-		.numa_node = numa_node,
++		.socket_id = socket_id,
+ 	};
+ 	char ring_name[RTE_RING_NAMESIZE];
+ 	uint16_t port_id = RTE_MAX_ETHPORTS;
+@@ -526,7 +526,7 @@ rte_eth_from_ring(struct rte_ring *r)
+ static int
+ eth_dev_ring_create(const char *name,
+ 		struct rte_vdev_device *vdev,
+-		const unsigned int numa_node,
++		int socket_id,
+ 		enum dev_action action, struct rte_eth_dev **eth_dev)
+ {
+ 	/* rx and tx are so-called from point of view of first port.
+@@ -549,7 +549,7 @@ eth_dev_ring_create(const char *name,
+ 		}
+ 
+ 		rxtx[i] = (action == DEV_CREATE) ?
+-				rte_ring_create(rng_name, 1024, numa_node,
++				rte_ring_create(rng_name, 1024, socket_id,
+ 						RING_F_SP_ENQ|RING_F_SC_DEQ) :
+ 				rte_ring_lookup(rng_name);
+ 		if (rxtx[i] == NULL)
+@@ -557,7 +557,7 @@ eth_dev_ring_create(const char *name,
+ 	}
+ 
+ 	if (do_eth_dev_ring_create(name, vdev, rxtx, num_rings, rxtx, num_rings,
+-		numa_node, action, eth_dev) < 0)
++		socket_id, action, eth_dev) < 0)
+ 		return -1;
+ 
+ 	return 0;
+@@ -565,7 +565,7 @@ eth_dev_ring_create(const char *name,
+ 
+ struct node_action_pair {
+ 	char name[ETH_RING_ACTION_MAX_LEN];
+-	unsigned int node;
++	int socket_id;
+ 	enum dev_action action;
+ };
+ 
+@@ -626,7 +626,7 @@ static int parse_kvlist(const char *key __rte_unused,
+ 		goto out;
+ 
+ 	errno = 0;
+-	info->list[info->count].node = strtol(node, &end, 10);
++	info->list[info->count].socket_id = strtol(node, &end, 10);
+ 
+ 	if ((errno != 0) || (*end != '\0')) {
+ 		PMD_LOG(WARNING,
+@@ -686,7 +686,7 @@ rte_pmd_ring_probe(struct rte_vdev_device *dev)
+ 			internal_args->nb_rx_queues,
+ 			internal_args->tx_queues,
+ 			internal_args->nb_tx_queues,
+-			internal_args->numa_node,
++			internal_args->socket_id,
+ 			DEV_ATTACH,
+ 			&eth_dev);
+ 		return ret >= 0 ? 0 : ret;
+@@ -740,7 +740,7 @@ rte_pmd_ring_probe(struct rte_vdev_device *dev)
+ 		for (info->count = 0; info->count < info->total; info->count++) {
+ 			ret = eth_dev_ring_create(info->list[info->count].name,
+ 						  dev,
+-						  info->list[info->count].node,
++						  info->list[info->count].socket_id,
+ 						  info->list[info->count].action,
+ 						  &eth_dev);
+ 			if (ret == -1 && info->list[info->count].action == DEV_CREATE) {
+@@ -748,7 +748,7 @@ rte_pmd_ring_probe(struct rte_vdev_device *dev)
+ 					"Attach to pmd_ring for %s",
+ 					name);
+ 				ret = eth_dev_ring_create(name, dev,
+-						info->list[info->count].node,
++						info->list[info->count].socket_id,
+ 						DEV_ATTACH,
+ 						&eth_dev);
+ 			}
+diff --git a/drivers/net/ring/rte_eth_ring.h b/drivers/net/ring/rte_eth_ring.h
+index 98292c7b33..dfbfce9f2f 100644
+--- a/drivers/net/ring/rte_eth_ring.h
++++ b/drivers/net/ring/rte_eth_ring.h
+@@ -24,17 +24,18 @@ extern "C" {
+  *    pointer to array of rte_rings to be used as TX queues
+  * @param nb_tx_queues
+  *    number of elements in the tx_queues array
+- * @param numa_node
+- *    the numa node on which the memory for this port is to be allocated
++ * @param socket_id
++ *    the NUMA socket on which the memory for this port is to be allocated,
++ *    or SOCKET_ID_ANY
+  * @return
+  *    the port number of the newly created the ethdev or -1 on error.
+  */
+ int rte_eth_from_rings(const char *name,
+ 		struct rte_ring * const rx_queues[],
+-		const unsigned nb_rx_queues,
++		const unsigned int nb_rx_queues,
+ 		struct rte_ring *const tx_queues[],
+-		const unsigned nb_tx_queues,
+-		const unsigned numa_node);
++		const unsigned int nb_tx_queues,
++		int socket_id);
+ 
+ /**
+  * Create a new ethdev port from a ring
 -- 
 2.53.0
 
