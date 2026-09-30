@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB074CA5FC5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD96CA5FC5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:48:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5303142F89;
-	Thu,  1 Oct 2026 00:44:32 +0200 (CEST)
-Received: from mail-pj2-f38.google.com (mail-pj2-f38.google.com
- [74.125.227.166])
- by mails.dpdk.org (Postfix) with ESMTP id F32CF42F7F
- for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:29 +0200 (CEST)
-Received: by mail-pj2-f38.google.com with SMTP id
- 98e67ed59e1d1-3a4c0da0145so807842a91.0
- for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6133D42F99;
+	Thu,  1 Oct 2026 00:44:33 +0200 (CEST)
+Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
+ [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id D14B942F81
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:30 +0200 (CEST)
+Received: by mail-pz2-f42.google.com with SMTP id
+ 41be03b00d2f7-cc797656e36so2027058a12.3
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808269;
- x=1791413069; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808270;
+ x=1791413070; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=D574+uCnceRAP6vSmKiTiGViZJS779f1qW3F9bdMGlo=;
- b=KsZSC4T6+6EbYim5SHPhajexjVX6aps3MPDcGmoKM/OJKMfI5LMEhM7FbJ8JdDf/B3
- Y7hAIShoT3aeqqBwt6DQx1MVuu+7LNESHCVr09skyV2Q/Llz35NxDgClplPA0MDQzkMZ
- w+zvShQOf00GdFhJVJJMWBpUop8K70zPsyZDHgpCkFE+hpSXlzRLkTNlMTFrdUunumSe
- mPki3EczjFAW/2pcSneCWXqcWsrVc2UBcLb9SR8jJI4gQ7DGbyAWq3oef3JnqB0u8I3D
- mzZ1YgE1tFk1FA4Pd+UdtvM6mNNuWU1ZMlKVl86ZvvSEnOfz92eWmjSHAaV08O98wNNG
- GdGw==
+ bh=8pg9kEP/PlSLwqZBqgULj4i9AdBbVQ8PpmHj052Vtpk=;
+ b=0FVK9cqVZ/uoa2Daqv60NZYA8ELyRnoGMp+M52WiwaBIgkQEcywCsFtdf1WIs27IzV
+ eNW/p9fVsDtCvBE+dZR2nQsijMQqWVuFLL5jgQsWsgxJMtZlgSt16+5mMp9uwRpQIye8
+ TFxt92uUZOEKVLJ7EKRoHm+mAKFJ+tDfligRzJlS3AQfMbjQAaz37WHhScm5a/bVEmEf
+ wYgwLTgcdb16CR1Q6QVdcZX5n+MjHJw5Gi5MbzO74GZtvG6BniLawdjaXti1uup65E15
+ wZf2LQ7KDJxHr08qNQv5P7AR9WwT5GvIIBFg+0Rqib4DY3EzN+X+jxanDGZYAYXnN7vt
+ CoMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790808269; x=1791413069;
+ d=1e100.net; s=20260707; t=1790808270; x=1791413070;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=D574+uCnceRAP6vSmKiTiGViZJS779f1qW3F9bdMGlo=;
- b=P5bCGBXk3mrGl5mnJGTwKuLhO/uGhyj5aG8UQ796uU+LHOV9GyuBaJH2SA4wG3apAm
- J2++GYxQs13Vvyv/KCUxkKhgMgBUC/m3xDgG3w0HI9u4v3kAh9xFvlZzQGvPrA2SlF2j
- NI9cdJ45riQAN2ycJI6MpOiHNm0Ixf5HHWbCI9PECvJmQMFZ7BK1tliquwnH18onjbC8
- sKTbPsybDxHEeiDpObW6GQQP971eFX5OJtAwF+UgcCV47nQe2mC5g93aDHWQm/LJWC82
- Vd1vyk2wFTjdto0wXtANz4tDqaIUXGob3omCezGYBzXBJ0LKebpintwxVj8oo4BTGIfJ
- qWGQ==
-X-Gm-Message-State: AFq9FYLCWXk9aX8pw0UskkoXxPNXixjpfH7zW8Y5G3ZOb2VnsFugLWTZ
- yi2aZivTix8czwASLJj3OlaCJgyX04VWzU/UFlzYZ+eJ17a9FRkR79FvQdGRUUbSIYYRKR5RpMR
- h9qx9mK0=
-X-Gm-Gg: AYBFou2rgKQ8Cuvnxcfmh9TBqwtL/qP8bTjo3ipk8aoPFoM5dv0R5AayL+DoSncDb6O
- soIIG3SmqdOqyt98qCEsDrcAPgdVkcpG9uDFCT08FaV+jo8F8tPcDl5s9lpoPHuwZUNBJxDgZAw
- 1ybbzxbbkx9jGJAFFdi9ImeElSgOldj78a4AR0/W8y4H7nSrf0eFWbmLteeZ/WONqMmBVkujnTn
- eGGSbCegCv5Lgr0V2+cx8E9sZ7gMvkCfYXrBrdO2XMmjpMoGHfq1CMgSgujjM3jCQhoqet4+8lf
- ESqJ8fsoM+5kRD/MM/144B1id1lMvvwmlV9Wg1Jx5Gie0Wr6BvzLTffkgf7bNP7Ga+smhApbCEA
- mDkWH6PRh7utwoPL3rsyFAiLZKnNXQaS6RlJgOXZlsqnq1Gcj54+6vBDhjCPMlNKFGmXR3MykAa
- dof2XLJ9gLXui5RZFjHYgW0a2yUlS5Aaa5rgdcfdFB/S9NYP5s6lCZPuEkYnwYr158So2YDbMKE
- OQHwRyAhtSkN0IEjKg0mXNCL908NWIjphH9Dg==
-X-Received: by 2002:a17:90b:4cc4:b0:3a0:a515:c450 with SMTP id
- 98e67ed59e1d1-3a4d164ee7cmr2197957a91.27.1790808268990; 
- Wed, 30 Sep 2026 15:44:28 -0700 (PDT)
+ bh=8pg9kEP/PlSLwqZBqgULj4i9AdBbVQ8PpmHj052Vtpk=;
+ b=Tao0OtXUM5q+0dAxLI5dfZPEMFSlbsh/sYX+1s4f4M9fgNPs4B+0SAQ8b0ez7M4f1o
+ 0t+qCWOa85KrgKr74unKvDKnXcds7zXdVdwB1/8/UXikfb6OjaFtZ9HL2zGmi6SyO6Cu
+ 7SQ+4xRBpKKEkknb5A52leewnpuB2LDhinbaGuVKYXXmU5naaMjQMaTH4YNsL7mt3uoY
+ W3+jrn4ZHPds5UNvARimyZFHkdRvsT4oFtkyfOEHuZDkLEJmsvdO1LuIKRZqYgkPS4Sf
+ AFxXDdEKPGcPiaEnOatKVc3f9BJoadmD5HKGgS0KrgC53re9y6Th3skIDvIvXSj0EGiO
+ 6vvg==
+X-Gm-Message-State: AFq9FYL9aHspOH8hT+OJ9gBPVjA83tPRdbFYtrA6OmoRx+ykqv93ufsi
+ 1nH6YjljOJndjedTPv2HVMM+D4fxE/bY/onJBjjzm2Aq/vXr3/hyZoPs32ChikPwxCnKy0S5HOv
+ pu5f2iJk=
+X-Gm-Gg: AYBFou2x/qGeG4kq4r5KLuZEhHu/FzQmMVFChHGzwTIHbm01Rk923ywcuqya4G69dfj
+ 0yYnJQ2LSmwxKYOmLyEvP5+CoLOAjokZ51N33mPzcwriKuVKPzzAV8jxtI1eqlxOkYz7kzsNPku
+ EWXhp6NiceDPDrfBB5K8YqdysTCucI8Yrw31lXZFmoGpVuAMMz6NA2bNdMD+d3F6LvRq9/zKeo9
+ m4Scp9e4cx5av84ouA0+SFEnSzP3zXQaOk7aaCXEZQcI9cZXTHmdJAcq/DWuXmLAu9IGOsRGNCx
+ b8g3qqSe1yYaBqjpOK66apU2WXxQNgQsZVnR5CTlKGoqe5drvWgj7nmkBturBLoYuTqxwHV1gxY
+ RaYK+MbuSLXvUZ7YFRKoeRJ2TccpO+F8cAd4HKyM1rr5wlISzZ7fz9VDL2zglcEN222Q9V/09au
+ nuhaiHvlYfsQOenx6Ys4JgMq6OocrFWpkhFqnjENMXGd4Il0A1kHYd8KbSZnodt0lUC1ZoZ33wW
+ ZFadK1zjIGZvXNw7e7/O9iqYUaZs2MHo723n9Q=
+X-Received: by 2002:a17:903:2303:b0:2df:98a2:a2e2 with SMTP id
+ d9443c01a7336-2e2e4b48e3fmr21554485ad.30.1790808269903; 
+ Wed, 30 Sep 2026 15:44:29 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.28
+ 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Sep 2026 15:44:28 -0700 (PDT)
+ Wed, 30 Sep 2026 15:44:29 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 42/65] net/nfp: use kvargs numeric helpers
-Date: Wed, 30 Sep 2026 15:41:00 -0700
-Message-ID: <20260930224340.58580-43-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Gagandeep Singh <g.singh@nxp.com>, Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: [PATCH v3 43/65] drivers/crypto: use kvargs numeric helpers
+Date: Wed, 30 Sep 2026 15:41:01 -0700
+Message-ID: <20260930224340.58580-44-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260930224340.58580-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -83,84 +83,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-nfp_devarg_handle_int() infers overflow from the result being ULONG_MAX
-rather than checking errno, so the literal value 18446744073709551615 is
-rejected while a genuine overflow of any other value is not detected.
+The dump mode handlers use atoi(), which cannot report an error, so a
+malformed value is silently taken as zero, which disables dumping
+entirely rather than being rejected.
 
-Both users of it parse a boolean, so use rte_kvargs_handle_bool() and
-drop the local handler along with the open coded 0/1 check. The
-documented "=0" and "=1" forms still work, and the usual spellings such
-as "on" and "true" are now accepted as well.
-
-The boolean uses rte_kvargs_process_opt(), so that a bare key with no
-value enables the option.
+Out of range values keep being clamped to the full dump level, as
+before.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/nfp/nfp_ethdev.c | 36 ++----------------------------------
- 1 file changed, 2 insertions(+), 34 deletions(-)
+ drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 15 ++++++++++++---
+ drivers/crypto/dpaa_sec/dpaa_sec.c          | 17 +++++++++++++----
+ 2 files changed, 25 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/nfp/nfp_ethdev.c b/drivers/net/nfp/nfp_ethdev.c
-index 2f7ce812e4..2ad1f12e5b 100644
---- a/drivers/net/nfp/nfp_ethdev.c
-+++ b/drivers/net/nfp/nfp_ethdev.c
-@@ -48,28 +48,6 @@ struct nfp_net_init {
- 	struct nfp_net_hw_priv *hw_priv;
- };
+diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
+index 3d980d096f..93e92af6a7 100644
+--- a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
++++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
+@@ -4342,13 +4342,22 @@ check_devargs_handler(const char *key, const char *value,
+ 	if (!strcmp(key, "drv_strict_order")) {
+ 		priv->en_loose_ordered = false;
+ 	} else if (!strcmp(key, "drv_dump_mode")) {
+-		dpaa2_sec_dp_dump = atoi(value);
+-		if (dpaa2_sec_dp_dump > DPAA2_SEC_DP_FULL_DUMP) {
++		uint64_t val;
++
++		if (rte_kvargs_to_uint(value, 0, UINT8_MAX, &val) < 0) {
++			DPAA2_SEC_WARN("WARN: invalid value \"%s\" for \"%s\"",
++				       value, key);
++			return -EINVAL;
++		}
++
++		if (val > DPAA2_SEC_DP_FULL_DUMP) {
+ 			DPAA2_SEC_WARN("WARN: DPAA2_SEC_DP_DUMP_LEVEL is not "
+ 				      "supported, changing to FULL error"
+ 				      " prints");
+-			dpaa2_sec_dp_dump = DPAA2_SEC_DP_FULL_DUMP;
++			val = DPAA2_SEC_DP_FULL_DUMP;
+ 		}
++
++		dpaa2_sec_dp_dump = val;
+ 	} else
+ 		return -1;
  
--static int
--nfp_devarg_handle_int(const char *key,
--		const char *value,
--		void *extra_args)
--{
--	char *end_ptr;
--	uint64_t *num = extra_args;
--
--	if (value == NULL)
--		return -EPERM;
--
--	*num = strtoul(value, &end_ptr, 10);
--	if (*num == ULONG_MAX) {
--		PMD_DRV_LOG(ERR, "%s: '%s' is not a valid param.", key, value);
--		return -ERANGE;
--	} else if (value == end_ptr) {
--		return -EPERM;
--	}
--
--	return 0;
--}
--
+diff --git a/drivers/crypto/dpaa_sec/dpaa_sec.c b/drivers/crypto/dpaa_sec/dpaa_sec.c
+index c53ee70853..3feb752bcd 100644
+--- a/drivers/crypto/dpaa_sec/dpaa_sec.c
++++ b/drivers/crypto/dpaa_sec/dpaa_sec.c
+@@ -3625,16 +3625,25 @@ dpaa_sec_uninit(struct rte_cryptodev *dev)
+ }
+ 
  static int
- nfp_devarg_parse_bool_para(struct rte_kvargs *kvlist,
- 		const char *key_match,
-@@ -77,7 +55,6 @@ nfp_devarg_parse_bool_para(struct rte_kvargs *kvlist,
+-check_devargs_handler(__rte_unused const char *key, const char *value,
++check_devargs_handler(const char *key, const char *value,
+ 		      __rte_unused void *opaque)
  {
- 	int ret;
- 	uint32_t count;
--	uint64_t value;
- 
- 	count = rte_kvargs_count(kvlist, key_match);
- 	if (count == 0)
-@@ -88,20 +65,11 @@ nfp_devarg_parse_bool_para(struct rte_kvargs *kvlist,
- 		return -EINVAL;
+-	dpaa_sec_dp_dump = atoi(value);
+-	if (dpaa_sec_dp_dump > DPAA_SEC_DP_FULL_DUMP) {
++	uint64_t val;
++
++	if (rte_kvargs_to_uint(value, 0, UINT8_MAX, &val) < 0) {
++		DPAA_SEC_WARN("WARN: invalid value \"%s\" for \"%s\"",
++			      value, key);
++		return -EINVAL;
++	}
++
++	if (val > DPAA_SEC_DP_FULL_DUMP) {
+ 		DPAA_SEC_WARN("WARN: DPAA_SEC_DP_DUMP_LEVEL is not "
+ 			      "supported, changing to FULL error prints");
+-		dpaa_sec_dp_dump = DPAA_SEC_DP_FULL_DUMP;
++		val = DPAA_SEC_DP_FULL_DUMP;
  	}
  
--	ret = rte_kvargs_process(kvlist, key_match, &nfp_devarg_handle_int, &value);
-+	ret = rte_kvargs_process_opt(kvlist, key_match, rte_kvargs_handle_bool,
-+			value_ret);
- 	if (ret != 0)
- 		return -EINVAL;
- 
--	if (value == 1) {
--		*value_ret = true;
--	} else if (value == 0) {
--		*value_ret = false;
--	} else {
--		PMD_DRV_LOG(ERR, "The param does not work, the format is %s=0/1.",
--				key_match);
--		return -EINVAL;
--	}
--
++	dpaa_sec_dp_dump = val;
++
  	return 0;
  }
  
