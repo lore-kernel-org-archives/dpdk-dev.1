@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 879B6CA5FC4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA851CA5FC4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:47:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00F7742F33;
-	Thu,  1 Oct 2026 00:44:22 +0200 (CEST)
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
- [74.125.227.140])
- by mails.dpdk.org (Postfix) with ESMTP id 2AEDF42F1F
- for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:20 +0200 (CEST)
-Received: by mail-pj2-f12.google.com with SMTP id
- 98e67ed59e1d1-396ccdaea75so2119580a91.1
- for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 063FB42F41;
+	Thu,  1 Oct 2026 00:44:23 +0200 (CEST)
+Received: from mail-pj2-f39.google.com (mail-pj2-f39.google.com
+ [74.125.227.167])
+ by mails.dpdk.org (Postfix) with ESMTP id 38B2D42F35
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:22 +0200 (CEST)
+Received: by mail-pj2-f39.google.com with SMTP id
+ 98e67ed59e1d1-3a498cb99b3so1324339a91.0
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808259;
- x=1791413059; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808261;
+ x=1791413061; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=cKZnu1rTr7c/Ijov9F9quRvUzuktu9AMTFQRsUw4NS4=;
- b=0UB3jYcUiOBxU3BZBe6DLJw3Ni+wPta5TNwE7NFq65Cr0OMzrNOFvap+RqFb86thlN
- yOJyuxXWio4p5jRK1+8U2OtCHxwF6L6FhhY3PM1YA5qowxqlQgWhnn5wTL1MBGO32yn/
- Efn+7xs38fRwGOr2/9jZ1ehfwFJTkas5QcZPE6F5rK5Au2BEPv3rJVA9wIS6TwIiQJmp
- XD1srEhKFlZU6L+hDlH38FxqnfMbCSYYjKRrJQiFJ6XdQBU7StG1UBrNHrjhJkbzql6Q
- LeVltuui0WkQQj3CmtQL6Tw1xlbR7HWGq5aOOl5gcyFscRZ5vidm2r/WlMeNJv3eHDEP
- iYVQ==
+ bh=y6GnF29wGs5kq37uX8acSSEkksNimQ7Na4wWcXwJFLE=;
+ b=YsKyYPL7xs+tP9MZ8dHg4OwHZJGJAnxEAdSf3k2xFoFXWjkPPgjVkBnh1jfZ+8vyvk
+ yN2JlWWZprH+Ae5+EN67HAUrW+6yXIHhN/Ht1t+mN2ThjkgBjA2nzbEgzyPKRfKR/cVL
+ m53Km8tP5zpplseud2MuJts5WdD69a8Hew/i1JjbxC5gdNu8xoElIVJlTUileHMhXeGs
+ ag3LEGHoAHsjUuKDql+mdvt3/RKg1dt9xMGbHaHpkLszWznFXOklRct34srB9EQryJYd
+ n63vpjvJht7mLzbHpQ9GoVaDxk6ueTDhoElMzupJ+wIecxsYTD9CQ5U9f2WO03b79U4P
+ x6Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790808259; x=1791413059;
+ d=1e100.net; s=20260707; t=1790808261; x=1791413061;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=cKZnu1rTr7c/Ijov9F9quRvUzuktu9AMTFQRsUw4NS4=;
- b=QD0bfSS7cqMG/qwQvwm1fVEMnAS6MuizaZYE3v3dD2vyJUFjnwtV1d+KGYTssDpepP
- l9XKrTQ2JEnP2Q2xNbCt7tGWRNUtdibdMFtdD8t95ppGyqnHcxRMImBbSZ45FDOt1tJq
- Ot6Q3Uk8xRC9CAqKGImHkMlZUO/V5s7FAAbp/OkkRdh8xr+iccwd8XHS86rOIh26tvZd
- ka5pbhZXObUyWeUeUUgV/5dxF0g153StiS9RCPhab+6FuQxjiaVKDwyH7Ov9eiJkHyuY
- GxtpBXV1FP6Cr7tebouf2uGsqsJ2q0I2d1NlyMdixiw/o6sPPBHE3CH0jY4SwhA3X/SF
- v0jQ==
-X-Gm-Message-State: AFq9FYIQulAh++W8BN58Ht3MS02LRrp+vyZkBdV/8TtV4skCOoatK3a8
- 3YpauZXWFzcIF71Ow7qjd9Sr9cka53uHkN2mDfkM9umuA9JjZTu6SPyNkWA2WACE+0PcWe1iONV
- r1/qD/kA=
-X-Gm-Gg: AYBFou2mIoWxx+Jnd8Dbn/pu1tHnZ733775zBBz17tJmmU8fzwUpqtAQGEX0rRPiD8O
- rkMeLrrdQA8AtHPV6LzVHC48qxDNpRKF1b5UmSJ5IrPrcJlCgVRzOG/T/EqyXKlWAMdNUzh0HUL
- AmYyi3RP7lBnB5a7/j3KHvDbmSbCjT45D7nSpDAm0DoSOCwgGaZM5ObkqRXiN0+KvyjrNoGZToQ
- +iY+Hcp5OLl+wA/iCdB/BvTYuuA4iybyAgzZtX7dOm6QK4vxsA0w6YQbLtudYgu2i4I0iSX+gDa
- nyRYxmb4RZ3m/uefYAhZN23zcxBuQg9EpfvHx1M3LxveN1nknfaMgDiG9yxG+SZKjNX+K5ICqvf
- oYzvM9hBwP1ND1jP2rrKyv1PFLbFyU6puRoPDbcJqTdW3fMR+XaIr3VaUhngRmAzQNbIuZRKVVU
- /ER2FpJsGVGGRUlh6ngQ7za7sXNcdJPAfpjgMMwpvR8ii718fFJbLbhgXCpLp6KKx27HjrCK2I7
- pL0fNeu8puVRdcAnyt7VfJe3/KYI0C6Hfwn/Q==
-X-Received: by 2002:a17:90b:4ac3:b0:39e:6c68:fd8f with SMTP id
- 98e67ed59e1d1-3a4f318ff56mr502028a91.36.1790808259275; 
- Wed, 30 Sep 2026 15:44:19 -0700 (PDT)
+ bh=y6GnF29wGs5kq37uX8acSSEkksNimQ7Na4wWcXwJFLE=;
+ b=N1jb4lotZQGTAxyA/67OoZxrAF6ZuDMTXWjHSWL4QsjzRjJJmW647Rc/uMttKsC3yb
+ GaPZkDZzrFoOaxQiaZzoqDmSHhA6q1Kp3lxjOnob4R0sINJUJk5i2w6zo3YONWHbpQkI
+ xZlFWEG5LPrEvhGARi2ZZF3TgV80VnA99A/NyKdSHkDmndLksFtjHyEykzbVC4JjOrYA
+ t3CYIMXOxKNzNm6lr9tFM2FzWF7cKA2uciizdT1PiyzXRau36cNDmcxO++JRfL5lkYcg
+ hLPdRfJhfCjtYq3kMPeyOFGMjIUy4llHb4pgWDNOgJEiIV4cCJ8gHhF5IWMR/Fa5JRlb
+ GOSA==
+X-Gm-Message-State: AFq9FYIloZfqXOZ3ykVICZKehckBIXoKAgarrF9i7TbLk9xSqoh39HC6
+ 6KCHsrtCVqvXJ10TvWi/DY7GW7VllY5NUMWerYd6Gr7PTS6LEooOpTx6Uyx2QTj4sNywAnG2i0y
+ CAZEsthw=
+X-Gm-Gg: AYBFou1oCLod6cQSw0GXlHZaiMNJs/WNNTXjRLOQYUJoI7LvC+VqxzWENGRaeZFQcrI
+ YX9U50Dn6KlPfzo7H8JkKXfXSeHzqIaNFYani9Ya32EyK+a8PwIT5aUlPFRNmxGGB/tJ7Wx8Nc8
+ ZFTlxFOvt2/XMTDk75kylxTWltt5WMXipx5vWF6WPOt+dJq6PAGyIA8ZlYFoX2Rsu50kEazTnoU
+ jsxHhYXB8m3zDN+NMF7rinPoyqjX3e+5m01sQrvgha+QVEEzAYadqnIVtJYBwenQGlAA7cRqmWA
+ mwWngNVf3t4uuy7+PrScsoruYR5K7fqVdSpCq2fZi38Kt7FmSMdbPBToGI3ecB3YaIdMJqOVQmU
+ PtPIwP7fjVtV5tLViDWRmn1p2AiqeTIo8LEHR6m/Fr2T/nMQy1Lcz3ul0alFFkmlCtuc5Xuyl8H
+ RuQVKvawSKI7S3xXGBtWu3BDf0RG631V5AKWRII3FDQ/LKj0z/c4a0ELoPtwI0FMHtUT9EnEi4I
+ z26uAw7xvGdzU9MjKol4x43bpqRYHqyg9a8YG9YGDxMXeMs
+X-Received: by 2002:a17:90b:3ec2:b0:39e:423:bb8f with SMTP id
+ 98e67ed59e1d1-3a4d0f02bcemr1583310a91.1.1790808261261; 
+ Wed, 30 Sep 2026 15:44:21 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.18
+ 98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.19
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Sep 2026 15:44:18 -0700 (PDT)
+ Wed, 30 Sep 2026 15:44:20 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH v3 34/65] net/nfb: use kvargs numeric helpers
-Date: Wed, 30 Sep 2026 15:40:52 -0700
-Message-ID: <20260930224340.58580-35-stephen@networkplumber.org>
+ Jerin Jacob <jerinj@marvell.com>, Maciej Czekaj <mczekaj@marvell.com>
+Subject: [PATCH v3 35/65] net/thunderx: use kvargs numeric helpers
+Date: Wed, 30 Sep 2026 15:40:53 -0700
+Message-ID: <20260930224340.58580-36-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260930224340.58580-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -84,45 +84,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace the open coded isdigit(), errno and end pointer checks in
-nfb_eth_dev_create_for_ifc_by_port() with a range checked conversion.
-
-The "port >= LONG_MAX" test was redundant with the interface count
-check that follows it, since ifc_cnt is far below LONG_MAX.
+nicvf_parse_devargs() uses atoi() on the skip_data_bytes value, which
+cannot report an error, so a malformed value is silently taken as zero
+and the argument is quietly ignored rather than rejected.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/nfb/nfb_ethdev.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/net/thunderx/nicvf_ethdev.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index ba7c849a4b..f2ad831c08 100644
---- a/drivers/net/nfb/nfb_ethdev.c
-+++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -965,19 +965,14 @@ static int nfb_eth_dev_create_for_ifc_by_port(const char *key __rte_unused,
- 		const char *value, void *opaque)
- {
- 	int ret = -EINVAL;
--	char *end;
--	unsigned long port;
-+	uint64_t port;
- 	struct nfb_ifc_create_params *ifc_params = opaque;
+diff --git a/drivers/net/thunderx/nicvf_ethdev.c b/drivers/net/thunderx/nicvf_ethdev.c
+index 30d03f4db9..aa45bd96b1 100644
+--- a/drivers/net/thunderx/nicvf_ethdev.c
++++ b/drivers/net/thunderx/nicvf_ethdev.c
+@@ -3,6 +3,7 @@
+  */
  
--	if (value == NULL || strlen(value) == 0 || !isdigit(*value))
-+	if (ifc_params->map_info.ifc_cnt == 0)
- 		goto out;
+ #include <assert.h>
++#include <limits.h>
+ #include <stdio.h>
+ #include <stdbool.h>
+ #include <errno.h>
+@@ -2161,9 +2162,17 @@ nicvf_set_first_skip(struct rte_eth_dev *dev)
  
--	errno = 0;
--	port = strtoul(value, &end, 10);
--	if (errno != 0 || *end != '\0')
--		goto out;
--
--	if (port >= LONG_MAX || port >= (unsigned long)ifc_params->map_info.ifc_cnt)
-+	if (rte_kvargs_to_uint(value, 0, ifc_params->map_info.ifc_cnt - 1,
-+			       &port) < 0)
- 		goto out;
+ 	for (i = 0; i != kvlist->count; ++i) {
+ 		const struct rte_kvargs_pair *pair = &kvlist->pairs[i];
++		uint64_t val;
  
- 	ifc_params->ifc_info = &ifc_params->map_info.ifc[port];
+-		if (!strcmp(pair->key, SKIP_DATA_BYTES))
+-			bytes_to_skip = atoi(pair->value);
++		if (strcmp(pair->key, SKIP_DATA_BYTES))
++			continue;
++
++		if (rte_kvargs_to_uint(pair->value, 0, INT_MAX, &val) < 0) {
++			PMD_INIT_LOG(ERR, "skip_data_bytes is not a valid number");
++			ret = -EINVAL;
++			goto exit;
++		}
++		bytes_to_skip = val;
+ 	}
+ 
+ 	/*128 bytes amounts to one cache line*/
 -- 
 2.53.0
 
