@@ -2,150 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E2B1CA5FB1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 07:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F2ACA5FB1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 07:32:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8D02B41148;
-	Wed, 30 Sep 2026 09:31:57 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id 609A841109
- for <dev@dpdk.org>; Wed, 30 Sep 2026 09:31:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790753515; x=1822289515;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=3wdkrJFadLScmKgm4D+4zSfJAw4Or6vUmR0yWZ4bKVM=;
- b=Ru5wE+AjY/y2bHGtTVEKaG7H4sjSBspinrXQe8q3sWZiOr7O4Y6XgDWz
- tt9U8jcFKT1ww9lDE5yrPftBbqvxTZu+dBdtxGl2XcouWtD5l7i9lnzHd
- Z1bDzGkMUrFzF4/xpEmuWkp1a5jDKrWtKZokIS/J6fwcPeVX+S0ksh87c
- TQjwpFVBlgut5sxY3f3rvhzwx/ZnaitYFO8iEiBOS9ez7ddBl30sJjwu9
- 0w5SBhusBVYozj7L9kMklETHEL66BdD5aBqHDvWLV6dz2VCpYVo0HPOlm
- LNqpL6tdfYed84TlJO5yivEbmnPDVzT/Aw4iZ/5uCLG40OmnXyTQl4qS5 g==;
-X-CSE-ConnectionGUID: ELlu5eTJRAmrNNvJxrhhHw==
-X-CSE-MsgGUID: hTsfdCwwTZ+SPw4kjFqoKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11920"; a="101647186"
-X-IronPort-AV: E=Sophos;i="6.27,132,1787036400"; d="scan'208";a="101647186"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Sep 2026 00:31:54 -0700
-X-CSE-ConnectionGUID: gTRes/VfSuWdkUScVaLLqg==
-X-CSE-MsgGUID: 9XQTmkrIRO+N2JP7MwFplg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,132,1787036400"; d="scan'208";a="303542824"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Sep 2026 00:31:54 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 30 Sep 2026 00:31:53 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 30 Sep 2026 00:31:53 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Wed, 30 Sep 2026 00:31:53 -0700
-Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.66) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Wed, 30 Sep 2026 00:31:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JVLGsT8ByQqJjgEppKq3OQ8eGQRXtJtzpcEAVWncfQykSClHN3ZAltvOXlQZvraBq9N3DR6BtyEADT/tVh7bcw8xhlMGmBxYw/fwJM0zMOB6vpNCy+LEVMp77fmTsm2ZUM12lAERoaGzwWZMjpO1BvWC5iNTZ8p1dksA/Hm3dKypsJilJnv/eAd0hpgQl0wuNxvs0KJkGTLCCrxy0Z+GMzjZp98TYpsa81lDoys2J0+EafH8l9M4uH8M5pAWQ48dbTMSTtr04Z6fSYoHoDUGWlOAJYFbdi6qeScHJLI4cU9rAOPFHnQcpngx0OOvdKL2aULeO2dhUSYU8sWP1wYX0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CRv5J5w6xrxZrOfCKJq1y7bdYLr/EJ0xaDzUBPJrVp0=;
- b=KhA8tNuHE9DTWnh9S6ltN/Vk+dnjuGcktKwyKqrpMmH3LPXTXrYyQ25Otv7ifUisjuqpjjcBzna2ScQzkT1jBvQK1vHFkMA/sgtPBahJj9keVsRrtnTk/uBES0oFnMP7yCLEsie4BaWyw9ON2f5CKC8T6KBlicCDOkHCFfqtdoW4ntzMXqXOyW0ByJkumWTGuJZnPpwexgWUbxnpef9FBRCiYF+1e9R0wS05sLdLZi+ZHDF0LddrZQu9EyWSj5ZW88/4SXv9CXqfXqKxPPhvmW+QvgMWnW6hmLYByGNTaHMHUaMHCfcyHhhz/YAMf14eyRuaTojSYfF4OLdmC5H8AQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by DM3PPFAB6A6CF3C.namprd11.prod.outlook.com (2603:10b6:f:fc00::f44)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.25; Wed, 30 Sep
- 2026 07:31:37 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0451.014; Wed, 30 Sep 2026
- 07:31:37 +0000
-Date: Wed, 30 Sep 2026 08:31:31 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Joshua Washington <joshwash@google.com>
-CC: dev <dev@dpdk.org>, Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: [PATCH v3 02/16] net/i40e: use common division round up macro
-Message-ID: <ary607xzhLs-QpIV@bricha3-mobl1.ger.corp.intel.com>
-References: <20260812223017.2980190-1-joshwash@google.com>
- <20260923010742.2468145-1-joshwash@google.com>
- <20260923010742.2468145-3-joshwash@google.com>
- <arOACkkEd71gFm5u@bricha3-mobl1.ger.corp.intel.com>
- <arOBJjd_dnv1a5E-@bricha3-mobl1.ger.corp.intel.com>
- <CALuQH+VtGnhmPoq4KpLuphM_tmXs2zu42dVDP5=M0Hiqvx2FkA@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CALuQH+VtGnhmPoq4KpLuphM_tmXs2zu42dVDP5=M0Hiqvx2FkA@mail.gmail.com>
-X-ClientProxiedBy: DB9PR01CA0025.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:1d8::30) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+	by mails.dpdk.org (Postfix) with ESMTP id B72F6427A8;
+	Wed, 30 Sep 2026 09:32:38 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id B6E7441148
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 09:32:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1790753556;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=U26e56h3zT1Q/qlySrVJ/pbP6ZkHxHFu6kKNWCIwano=;
+ b=Dnr/No3pHZqdN9KPux0SeeGHOdGrZENgvNd6GZNMIvuZaJuOaP7lWPJvqGkbA02RU6V/ZU
+ XsrvZUt8Rwtq0phM3cWsuFpHhIwbWKJBy4OfuxxbaoKcvxdkueiWLoJpH7DvwmBCbyAroW
+ IFejQp76t7ZEUX5XVhbm/FnYQyTi/eI=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-649-c7qQNo0TPia-G-1l2eaJyQ-1; Wed, 30 Sep 2026 03:32:34 -0400
+X-MC-Unique: c7qQNo0TPia-G-1l2eaJyQ-1
+X-Mimecast-MFC-AGG-ID: c7qQNo0TPia-G-1l2eaJyQ_1790753553
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-3a77d27eb6cso755421fa.3
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 00:32:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790753553; x=1791358353;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=U26e56h3zT1Q/qlySrVJ/pbP6ZkHxHFu6kKNWCIwano=;
+ b=X8ZAQwlGj2IXp3EV1ghZH4CQmv8oaeDkFKheUI5RsHwOpj6dGKVM1gmHsyogDyCfeL
+ YbQBUSd5wQ7whzIz18Oy1JFJ3BhvZJvw7NL/gjY+EkJm5M8OoEXLrMOfbwdt+1Bz1Pmm
+ zCI1/BkqZ6S3icmT9vU2OAT0ZnTsPlrNFbiemSjL6AC+OTUyuGJRTIJ8K7PTQKUD9gXw
+ Zk4xCu3EKEAtlJK+nGSbe4f0oRMbbsKaoRMskER6anCbBi5AP0doEsNdii0gFjiUTajG
+ SUgAA98EZSi4lCoewy5BXNST74eBRxqsORvH6Ud8hA5QGBQVVXe/YemFVcJYdKjFx3OX
+ sTrw==
+X-Gm-Message-State: AFq9FYLzJ0AEHCMj0rVCx3RNmLXtDMZYm+MnAAitYFFxw0dKOMZzLqnU
+ ibuR9z84kV5oOZ7+EQo3nQY83bGxf0jSj7usnIK/0jmCROzN1JcnHvoFbgH/ApjDuYmU+hDeFRY
+ uOEQZyrRKnzSAIoWF7mR1nP3HamO4X9frKFfIjAfUcesR4JRXNPJ0YOYkrv655yz3vaoOpbrjRi
+ JIKjm25V2GDusOTzoNa5g=
+X-Gm-Gg: AYBFou3eTuIUXzZcDo6iYN7+SPd4fzXTXxoOWQdynyFHc2jXW4soDrG5Ml+PNoS2y5d
+ eX3ibIMFTl2Usz6XrF7taKGO8M5tW3TwqbnVp1DE+uz9ndeVNBsMknaF+GwaRVlwMPTg6VzDd6o
+ GhwJp//7/4Jadm9xgoXmxR5iAr3fV/nNYxlupzR8QwdLUZHRI+6KCdToeS+n70UjeAmdUWswnoY
+ iPb2rKWHNEWDF5m4MsHMuQH4KPK20qN+V3V0YG/obgaLeA5
+X-Received: by 2002:a05:651c:43cd:10b0:3a7:70a8:fcf4 with SMTP id
+ 38308e7fff4ca-3a77924394emr1299271fa.23.1790753552991; 
+ Wed, 30 Sep 2026 00:32:32 -0700 (PDT)
+X-Received: by 2002:a05:651c:43cd:10b0:3a7:70a8:fcf4 with SMTP id
+ 38308e7fff4ca-3a77924394emr1299181fa.23.1790753552466; Wed, 30 Sep 2026
+ 00:32:32 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|DM3PPFAB6A6CF3C:EE_
-X-MS-Office365-Filtering-Correlation-Id: a935262d-bcdb-452a-160a-08df1ec4dc55
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|376014|366016|1800799024|22082099003|18002099003|4143699003|10067099003|56012099006|11063799006;
-X-Microsoft-Antispam-Message-Info: C79rufiQzTEoVK78VJhOgIkn1JbTT60Ff0/pAMODE4ybO7TTg7LophCdDlcmHW9QQwhatV1mwq+c5NdfaR9XeTqCjR0CxWxxFD4jp9foh25FK2VbCIaxg/1+d75V18Vw3LqaCZ53uuV33Lyc6qkJm0jfV+GiTjoSGRB1MRmNa2tdRrMR8pXnIS5XEALY5fQOV44NGQnzQZKkS4RNbri8unvzH94DTgaQYUb4/aRtxjy0R8EoM6h761nnhOAZq2dX8saUYX8me8rOY1uavItOX//tZ9D9tIo/oT1egY2bsd5znAVm6qJU8XiXQF4PEQrhuR4N+5W14P+gJoDwi7AzqRClfNA5YUucQtfypYMpfwiKOB8XonYEhaDnf/7NL27I8oUgq9U3XI3zdEiv84A8fLEcfNM+UxKomgMaYs8WBlR2rkNGvD3OafzLCG+brYBaJywpo71fvg1pMN8ffp1Yai4cQNgkdm44GQzzXkni9qaq41UhACLqEShT2p7HW+53FlM9kpFdaFApEtJfWQgQH+QAsRcJgU3svK1exAAEN5rxjkblzRBHZ1+iloDa2SqhtuWJBWUhMcCfjccOoU6QBW7+0zSYIVqUEW2DBkn9Wudi87ttgQtBhAsXawabF/DUtz2kmDRq43agjKBGDIawLhSMLR4YbTzMMP0CzbRsCJ4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(22082099003)(18002099003)(4143699003)(10067099003)(56012099006)(11063799006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qUjCWHbAdrahX0cQo8MnldyUxakV5l6Tloar/2xl1thgGVzZhc+ZEF5A5BCc?=
- =?us-ascii?Q?MZBGKjMF8gotb8wEenIRKoBx5Xaw+zI7SdII4Mv4mYqOJhSP3eNKnCDmH2m2?=
- =?us-ascii?Q?g8X0JSf7b6lZjhcz08P0kSOVsib+dxjsYmw+wqDm9E9azGlN3JUzaLT1dVbT?=
- =?us-ascii?Q?wxAPte4dkXfup5AC+ehx33oyTeG7Pemer2KgwXOjie4gvwfwcM66CY8OwpIN?=
- =?us-ascii?Q?yhlpsC5zNojwYpc4qj/+BNnTYZbQlHB7AUuiwGNm2XJUAjNuh/LGW1UDbcjB?=
- =?us-ascii?Q?lTh6gfmPgh/QFEBPiTVbl0wB4P44F5hxYdVsdK+DJPCuyW0xdTr6KP5SQv0e?=
- =?us-ascii?Q?q20rRPBxnBUDOdhjiwtJV3VuZ3QE3V/7u1V70Jq6Ok4VGgh9Ar/8WqqUHgZj?=
- =?us-ascii?Q?61Ft7JhQz8aEx/iF3I/yc+4afAdmBS0Wj2jm/QYJ8yXvvzWk0ICRQGd1x0vN?=
- =?us-ascii?Q?ju9tMKnlgVk2GBWWhY7g5hldTNMfJDlfvsCJxebOiT3wbe4ZNBsNPP9mROyK?=
- =?us-ascii?Q?acn5eWyCtV2gcCSiu+ejdPAnLUO7gXbhw3cjhavWWbclZaOB4oXbQx6e9MTe?=
- =?us-ascii?Q?lTBO0sZmmL1MWJJ0Rc1UHmD9PT2XRsI/h5w8z0RfBejIp8V3HjCvR7rzrO25?=
- =?us-ascii?Q?ijnCg9TxsHI4slZJEc75PeuiA7NXl3CSEa4MQR6IIVWvej1OPik28wXEc2Ag?=
- =?us-ascii?Q?y2Cr249fLoc3IlBtEj+mqy6IXbUfOg419WP/4bAkUmhC5q8d2Ca5K50l3Z6P?=
- =?us-ascii?Q?D5YBL1a2+p6j2jXwriesYvw+1Yw5Ew5YxaOrYRk+9q40hM5WgyTT0Jm8B/VN?=
- =?us-ascii?Q?MrLlGl0LeZuOZ++vP/EWg75t9vFsvhxOMs52wkLj7E+M4ViZJyg2QGiD90SK?=
- =?us-ascii?Q?aHMhh963PjsSqjOzksqa/rBsctQ0hS8hDgkpFu9aLq/ktyQPtfLFMMN5oQ7s?=
- =?us-ascii?Q?3PejKovmNWokDSwvQbBUlg7xxwSlGxqyHleGFvtFBf7u5nEImpUpKueqTRPQ?=
- =?us-ascii?Q?nXskt1PCIFWdZwaO1yq4v5sk+R7L1/D3dSe4ON+0toRZBVtnTmIY7wL/c4UH?=
- =?us-ascii?Q?Ng5WUPim+mWufDa2y6aI++cqAZ57kauQny3/LPM0oA83QiGHTDN4g7yce/G4?=
- =?us-ascii?Q?rKPmGK4DQUMK7MVqfs9HT/54mEZk6zMvt7/h0fiBKgbRi7jw5Xj0k2TWTVQU?=
- =?us-ascii?Q?HvHuxEuDacTr6wcI/YA2pPRbDJ/TfTwVFJA/0Mmy1BOR4UTSzLja+NH7KQ7d?=
- =?us-ascii?Q?c/z+4bDcr9axYvAPrEqX+9Url6XfqIrIK4krzYzwjeZWrzTyMeQUUvx2ToUc?=
- =?us-ascii?Q?7vvUC1mVmsgKa4mnvw2D20vIClXJ1ZbTav1c/ayNoLLofuBsN09TaZrNg/JE?=
- =?us-ascii?Q?86+ewEvzmLYYyi9Qq/odDJDCFfQfljUSZ4lFSdHKoDfvp68pdld1tLIzv2yI?=
- =?us-ascii?Q?szz3k46qNYu9TQSgpSYS3zBY+yJlTSJCfWoZZVLa7Nz2t4N/vTg6CP3CLpzy?=
- =?us-ascii?Q?+OD+SLxPasfOQTUGIMLlpEmGVMIQ4xFKObOr4nLPOYjVqHYrQJmgRwu45wcC?=
- =?us-ascii?Q?T5ckg+iwguD7pPoxtVrWksJKruGalRbdckCpgbYlya1s+pLKZlTHEmqnIK0m?=
- =?us-ascii?Q?VDmJB6sWwofsq9VqItfkvFn4r6MgRu0n5NiRjoRucWpIfOBTYHAPKm0um6oQ?=
- =?us-ascii?Q?MNayCR16qoJh28lKI8rObNXomnoegSYzUWNgfBsIOv59i53EU6X19b6FJENJ?=
- =?us-ascii?Q?0RTyNYrw2bRJbsmGK1rt3h0hkzbhThg=3D?=
-X-Exchange-RoutingPolicyChecked: ozOljrIklD9VW+S7VswoIKNJdIC4Qlup9DsFUcTIyQdfiucR7RbQLryH4letyJTkJxJaqztSlVDF/KNnWjM6Qx2xz48uYgEclBXQfOu7WfTcmPaZyPGalFx1j7KKW+58G51DGEB0w1wUQ17BhWheF6kC3v+xwu80sFIgrVQHxutizgFoLZtsxEExOMerOpw00SBj+KpHScRYNpKOwS4qbOd/W+P6P5QOcpcOwRENff7MlG8pvJv4yPLsMx5YjAIINGN+5yR0R4v5AqWwESRusIMAzM6mLaM+GxaZkZ+P8waStNNbQUfIbWHEAZFrtTEQ+BT3epkOpYiH/EyQnFNlbw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: a935262d-bcdb-452a-160a-08df1ec4dc55
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2026 07:31:37.2301 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +ZN9uHTw0VoTa4HUKX8TYcYq+J0uoQeI591hql/Y1ABymnD15IO7tPmrDdVJXyYgo9onFEVIoQuA+ftxHfQkJNjJs3WCWZ+VkSVKKT2fMyM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFAB6A6CF3C
-X-OriginatorOrg: intel.com
+References: <20260717093006.229370-1-david.marchand@redhat.com>
+ <20260922094026.2636265-1-david.marchand@redhat.com>
+ <20260929125000.4800e8a2@phoenix.local>
+In-Reply-To: <20260929125000.4800e8a2@phoenix.local>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 30 Sep 2026 09:32:20 +0200
+X-Gm-Features: AclHuK-GE_rQIaJzTYaM_I71hj845yiu0bpbYlmW6CgkBPlXjbmqjiXkaoiPlIM
+Message-ID: <CAJFAV8w18N1em+Ua-zji555iD5izK7-ai9LugDmVZndEy9LsOw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/9] Limit usage of internal API in tests
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, bruce.richardson@intel.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: ErEQNRQkzDuOfGq-vUk5aLeEj6ldWH9iAwNemhcRCZo_1790753553
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -159,60 +87,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Sep 29, 2026 at 03:44:02PM -0700, Joshua Washington wrote:
-> 
->    On Wed, Sep 23, 2026, 00:35 Bruce Richardson
->    <[1]bruce.richardson@intel.com> wrote:
-> 
->      On Wed, Sep 23, 2026 at 08:30:18AM +0100, Bruce Richardson wrote:
->      > On Tue, Sep 22, 2026 at 06:07:25PM -0700, Joshua Washington wrote:
->      > > The RTE_DIV_ROUND_UP in rte_common.h makes DIV_ROUND_UP
->      redundant.
->      > >
->      > > Signed-off-by: Joshua Washington <[2]joshwash@google.com>
->      > > Reviewed-by: Stephen Hemminger <[3]stephen@networkplumber.org>
->      > Acked-by: Bruce Richardson <[4]bruce.richardson@intel.com>
->      > > ---
->      > >  drivers/net/intel/i40e/base/i40e_osdep.h | 3 +--
->      > >  1 file changed, 1 insertion(+), 2 deletions(-)
->      > >
->      FYI: Just a note for i40e and the other intel drivers: the osdep.h
->      files
->      have moved in the repo in next-net-intel tree, so this patch will
->      conflict
->      once those changes are merged to main. Therefore, I'd suggest not
->      merging
->      this till after the pull, and then adjusting the paths in the patch
->      on
->      apply for simplicity of merge.
->      Thanks,
->      /Bruce
->      > > diff --git a/drivers/net/intel/i40e/base/i40e_osdep.h
->      b/drivers/net/intel/i40e/base/i40e_osdep.h
->      > > index 9c5a94f055..93620f5c50 100644
->      > > --- a/drivers/net/intel/i40e/base/i40e_osdep.h
->      > > +++ b/drivers/net/intel/i40e/base/i40e_osdep.h
->      > > @@ -227,12 +227,11 @@ struct i40e_spinlock {
->      > >  #define i40e_memset(a, b, c, d) memset((a), (b), (c))
->      > >  #define i40e_memcpy(a, b, c, d) memcpy((a), (b), (c))
->      > >
->      > > -#define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
->      > >  #define DELAY(x) rte_delay_us_sleep(x)
->      > >  #define i40e_usec_delay(x) DELAY(x)
->      > >  #define i40e_msec_delay(x) DELAY(1000 * (x))
->      > >  #define udelay(x) DELAY(x)
->      > >  #define msleep(x) DELAY(1000*(x))
->      > > -#define usleep_range(min, max) msleep(DIV_ROUND_UP(min, 1000))
->      > > +#define usleep_range(min, max) msleep(RTE_DIV_ROUND_UP(min,
->      1000))
->      > >
->      > >  #endif /* _I40E_OSDEP_H_ */
->      > > --
->      > > 2.55.0.1082.g2b9226bbc0-goog
->      > >
-> 
->    Ah, I missed this. Thanks for the update. I will hold off on a v3 if it
->    is necessary until the main branch is updated.
-> 
-The next-net-intel tree has been pulled, so the move of the osdep files is
-completed now. Maybe respin this patch so it applies cleanly again?
+On Tue, 29 Sept 2026 at 21:50, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> On Tue, 22 Sep 2026 11:40:16 +0200
+> David Marchand <david.marchand@redhat.com> wrote:
+>
+> > We had a few bug reports related to internal (and experimental) symbols
+> > issues during 26.07 development.
+> > See for example https://bugs.dpdk.org/show_bug.cgi?id=3D1957 or more
+> > recently https://bugs.dpdk.org/show_bug.cgi?id=3D1967.
+> >
+> > To catch such issues earlier in the CI, this series proposes to run
+> > the unit tests through meson with the ABI reference unit test binary
+> > against the current ABI libraries and drivers.
+> >
+> > For this to work, some unit tests must be skipped (since meson may
+> > invoke the ABI reference code with tests that were unknown at the time)=
+.
+> >
+> > A few unit tests were directly dereferencing internal structures and ar=
+e
+> > reworked so they use public APIs.
+> >
+> > Additionally, unit tests were allowed to use any internal API which has
+> > hidden a few issues (like a public API backed by internal symbols in th=
+e
+> > hash library).
+> > So disable the global ALLLOW_INTERNAL_API and move it to code explicitl=
+y
+> > requiring internal API, with the hope it will push us to have better AP=
+I.
+>
+>
+> I think this causing breakage with minsize build. It is not correct to us=
+e
+> __rte_internal on inline helper functions in header file. I checked and o=
+nly
+> thash has that anti-pattern.
+>
+>
+> In file included from ../lib/hash/rte_thash_gfni.h:13,
+>                  from ../lib/hash/rte_thash.h:23,
+>                  from ../app/test/test_thash_perf.c:13:
+> In function =E2=80=98rte_thash_gfni=E2=80=99,
+>     inlined from =E2=80=98run_rss_calc=E2=80=99 at ../app/test/test_thash=
+_perf.c:58:13:
+> ../lib/hash/rte_thash_x86_gfni.h:181:27: error: call to =E2=80=98__rte_th=
+ash_gfni=E2=80=99 declared with attribute error: Symbol is not public ABI
+>   181 |         __m512i xor_acc =3D __rte_thash_gfni(m, tuple, NULL, len)=
+;
+>       |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> In function =E2=80=98rte_thash_gfni_bulk=E2=80=99,
+>     inlined from =E2=80=98run_rss_calc_bulk=E2=80=99 at ../app/test/test_=
+thash_perf.c:79:3,
+>     inlined from =E2=80=98run_thash_test=E2=80=99 at ../app/test/test_tha=
+sh_perf.c:122:13:
+> ../lib/hash/rte_thash_x86_gfni.h:213:27: error: call to =E2=80=98__rte_th=
+ash_gfni=E2=80=99 declared with attribute error: Symbol is not public ABI
+>   213 |                 xor_acc =3D __rte_thash_gfni(mtrx, tuple[i], tupl=
+e[i + 1], len);
+>       |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~~~~~~~
+>
+
+Indeed.
+
+I had disabled minsize builds some time (well, months) ago and forgot
+to re-enable them.
+I'll send a fix soon.
+
+
+--=20
+David Marchand
+
