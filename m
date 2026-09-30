@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7645CA5FC5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228E1CA5FC4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Sep 2026 22:48:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A601D42FC1;
-	Thu,  1 Oct 2026 00:44:36 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 08E2442FD7;
+	Thu,  1 Oct 2026 00:44:38 +0200 (CEST)
 Received: from mail-pj2-f40.google.com (mail-pj2-f40.google.com
  [74.125.227.168])
- by mails.dpdk.org (Postfix) with ESMTP id F119742F93
- for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:33 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8678742F5F
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 00:44:34 +0200 (CEST)
 Received: by mail-pj2-f40.google.com with SMTP id
- 98e67ed59e1d1-3a0d31bda43so3720125a91.1
- for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:33 -0700 (PDT)
+ 98e67ed59e1d1-3a0eeda3e03so2413179a91.1
+ for <dev@dpdk.org>; Wed, 30 Sep 2026 15:44:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808273;
- x=1791413073; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790808274;
+ x=1791413074; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=z77dx+/wuhXRMqTry3UqtMfEi2KvoL8zNkMtY74lkdE=;
- b=YcMIIUejKRzp6MQyOyBOE/OSS3yCtcKiztKBRQ2SJRmSdoKF0kk7EP37qgHxxxR3kf
- fDCNrUBBSxDvbSwphDXF5858c9pxXQ8XmSUftctsyla8CtpB80TobGdGweeczpPchwCu
- TPSpA543OZg4cjof8jm/hGED4OgjBMOKlfbFnWHYvSt8sroLfYlTA+tEAic90uat9hnh
- hXSowjOez5doFZPAtBDwwQneUYXu5fnLWR0wLZF0MPVqukJ7sE1KsSpJJXZakumK6qA7
- smPsYmr7qApjfcCu2hkx7bJ9SMdBSsML79Hf3QfX5ZfLVCjI9HuSa81RCzEaSrPU7qM8
- 3Sgg==
+ bh=Lzm/dmYqNqHPPxQWj3YR9m9ikkEgENVXL3UArn/GNTM=;
+ b=uCY2otZyH07vjttVU/TWyOGEh+1ZKooIhoFwgAR0Q2BzsUHx6guv/ZGZGbCasHu3ah
+ psf37leDBU9TUDBK/XtPVkMn5Bxhw2DfeHy8F2le2Jl7lE8hhXuEibFF++lKIXVzcAQk
+ 8ZZqqEhigoGja5MS+lCRSECsR0nYxJ9llkNEDniQ+wmO3ELY79C/oT8ul7hd//sxcnAI
+ ebLe7m/VFTTJL+HmcUxmcUVAOEbSRpOtFOQM8aNryolywgP/hsx/qY8WUNHMAVXRovX4
+ lr198BbI6Pr4y24I6D+Oc5w/pcNUfk77Q/ZvMun7xGMwlbbncgq4wYhHd3ULP8CEzXSm
+ HYFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790808273; x=1791413073;
+ d=1e100.net; s=20260707; t=1790808274; x=1791413074;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=z77dx+/wuhXRMqTry3UqtMfEi2KvoL8zNkMtY74lkdE=;
- b=JvwjVGR/ds6uX7px4JR7bEfV5lVQ6aOE9jZqoF2MZh+DggvVbmNz9Hrpl2dU5AU7iN
- nL4tVkNgfA0ji3tC3Ju7cmc/NPs8EjscXtsVgn9WnaVFspBHjSftZI0wI+g3rFMSPXtx
- 9zHVRjdQ/XmWbu0S+CSp4GJuc1CWQnzFpI8UdEH8l2Zl/pYNAiviq5x9XCFgGqb2nRyU
- IhqNFu7pr5bI5J4mr/XYuYkw3XF8fT+YzH7qN330tEpaEyXjzG0QWWH4kaR1VcUt4kVw
- IvtpfjD0Ab/xxSiKsFUBVSnJpHAWp1KhudSYMcXsAvDKivZ38LFGFkauaP9+sIm0MwjZ
- 5kQQ==
-X-Gm-Message-State: AFq9FYJdn8V+XzEaxS1g11uoD01wgo2LMQvmOUG6KZknY0kh7hIR4lyt
- HvcZbEfkZML0LsFwc/s3jslCab4kezqs1PkYvB1E64jmAuXX8HE3fruSgbyEffd/LZtKgc27ypK
- PXKnAfPM=
-X-Gm-Gg: AYBFou3ocDGAcWbXImlQbBDFSzs0etwkQB2ljbcUkE/xV3SMHKNLqcVCwzlGgByfxFr
- 04GyFCbZOf+LKEo0/FSFKF5ZQFPcMclztpBd166secifIyEy6nl6Iyb1EyQMfDJEq+nDEDvzGXB
- tpDxhWgfBVNs5EoiXS0iJNqVCsaUYC+Wojn1mOFSzSDUENFrQggSnC8Gvmr+HGSmoU6gki9SNx0
- Q/39DGQDc1dCLxq3UVhpQvXyHAZM0Ineh1LL2zRqHO6KHsLG1tYk/djR669lYB4UDA1218cmhbp
- vMrmn77WgUd7maknGodbO1ZLhOV2QOPbOYyerekf0mH7nZwVyCf3Z3NfhENCU0WQ0eQXSw2X85B
- aLBELrOwg2sDBLblr8QvoDTeKdnyo0/g7vBgMZBcCqd2Pkk9dbKvVwRrIigubBALcfNLQW+whkP
- c4QA3yMRWDzZNlo8iUMC+Ba9qQnsx/gclEYBaSQ63lPz25gZGVppvInQu8CMJDuGp1G1ktlET1M
- 7onMYWPCnys57t8+BmAf+wqIH2P9kaCWkIVNg==
-X-Received: by 2002:a17:90b:3b4b:b0:3a4:c18c:b8a5 with SMTP id
- 98e67ed59e1d1-3a4f6b4cc3cmr499657a91.58.1790808272698; 
- Wed, 30 Sep 2026 15:44:32 -0700 (PDT)
+ bh=Lzm/dmYqNqHPPxQWj3YR9m9ikkEgENVXL3UArn/GNTM=;
+ b=JvApVrJzRTeKR1E+UBmRN5HTbZiHXJhh5GTLS15znSz40+kIubfVPC/1ownYzVoE1X
+ j3YjCQRkOPNowKHylleOKtHYDVFZJDj/kAcMgxAx8IEUhRYHI6Zf7gmcQbOA+/sYuQO+
+ AERnivvIx6xIoPE1MYPuGUSpmSVQCP5IvlyIm0Kb/fGdfNd/bfeZWJtyNsU31H6lpHZW
+ 5efSvzq/uXrJ5LazS9LDte3K5H4X+7BDPMsY/y9B9/NL8vY1Ps0AIpW/bbgpRGpQ0ZAw
+ ZKxSifvJPIlW/rLBmJ02m78PrxzUxkaOg/+yqBLVCa1ShLNfeXAEZBwAW7jovvmIfunv
+ jr3w==
+X-Gm-Message-State: AFq9FYLCZE98xocKlTrW/MQQQrGmrqnud8+e/OEwXzARO0LmZSJ0y9iW
+ 4rFGbBKbp3snM9Waz8Ull1eySMPe4xEJA6a6bQbn2vsywsSvodHM3KgHiN8+0MZNvk1Xd/rPKCi
+ JbN1Hfbc=
+X-Gm-Gg: AYBFou3rq7C/yvi5LR7OUWdpnXO9jycQtb8tMOLf1CKGmk6ysgCjArOt/mqGCSE5qFJ
+ E8VDGvmydzQjBAW/8TKZBOTGyqpwjXnRac4byjRpqgjbFiY1WtDZbrc6d9HRwEnefUhhynJvZQr
+ fl7qo6DgUhwzC3WlWO2wK/uLxC1uApp5j4WEZvbUxN/PxbCDWxsx8y48MT0hFGg7p4tpPGbZ5Dc
+ JUOJlQycoGzkXiup1K3H2teCx07A+75Fp1Z9nTAew7yBqz9FdeeCrHPSk1kp98ki7r3g938qwKG
+ eqKb6BKj5shfW1aEPzn59yun5dJ65jun6oM09I0o4AhegRHv9OVgrP00FDhWJHo2ynwzh8uGmMW
+ 8A4yXBLkR/ZFoi4a+f8uxIcpZYDOnG7eLlzOit7eWb+agRo+ElnAiu0oSjR8lBDAWQbOJUxwk+g
+ JQMruWtNsQVPEAoQUmv3TxFSI3D90TtEriDbseC+00TwK7tVRyYkRogkiZJTxn7QmXYFEd+PJaS
+ RFnQ1kgBdgJ5CcsVMWGRt+9pGy+GGR4Sz2xsQ==
+X-Received: by 2002:a17:90b:50c5:b0:3a0:c717:2db with SMTP id
+ 98e67ed59e1d1-3a4d1534cb9mr1104868a91.27.1790808273650; 
+ Wed, 30 Sep 2026 15:44:33 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
  98e67ed59e1d1-3a4f4371383sm1258985a91.2.2026.09.30.15.44.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Sep 2026 15:44:32 -0700 (PDT)
+ Wed, 30 Sep 2026 15:44:33 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Lance Richardson <lance.richardson@broadcom.com>
-Subject: [PATCH v3 46/65] net/bnxt: propagate devargs parsing errors
-Date: Wed, 30 Sep 2026 15:41:04 -0700
-Message-ID: <20260930224340.58580-47-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Matan Azrad <matan@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+Subject: [PATCH v3 47/65] net/mlx4: use kvargs numeric helpers
+Date: Wed, 30 Sep 2026 15:41:05 -0700
+Message-ID: <20260930224340.58580-48-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260930224340.58580-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -86,112 +85,109 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-bnxt_parse_dev_args() placed the "err" label immediately after the last
-"goto err", in the middle of the fall-through path, so the jump skipped
-nothing. The seven handlers that follow it ran even when an earlier
-argument had already failed to parse, and their return values were
-discarded, so a bad value in any of them was ignored entirely.
+mlx4_arg_parse() checks errno without clearing it first, so a stale
+value left by earlier code rejects a valid argument, while a malformed
+value such as "abc" sets no errno at all and is silently taken as zero.
+The end pointer is never checked, so "1junk" is accepted.
 
-Move the label to just before the kvargs list is freed and check every
-handler, so that parsing stops at the first bad argument.
+Base 0 was used, so a leading zero silently selected octal.
 
-Fixes: 29ce7059e8e7 ("net/bnxt: check kvargs parsing")
-Cc: stable@dpdk.org
+The PCI_SLOT_NAME parser is left alone: it reads sysfs rather than a
+device argument.
+
+mr_ext_memseg_en is a boolean, so make the mlx4_conf field bool and
+parse it with rte_kvargs_handle_bool(). mlx4_arg_parse() serves several
+keys through a cast function pointer, so the boolean gets a call of its
+own and the generic loop skips it. The one bit field it is later copied
+into stays as it is.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/bnxt/bnxt_ethdev.c | 42 ++++++++++++++++++++++------------
- 1 file changed, 27 insertions(+), 15 deletions(-)
+ drivers/net/mlx4/mlx4.c | 33 +++++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index 2942482579..f09a1df44a 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -6359,57 +6359,69 @@ bnxt_parse_dev_args(struct bnxt *bp, struct rte_devargs *devargs)
- 	if (ret)
- 		goto err;
+diff --git a/drivers/net/mlx4/mlx4.c b/drivers/net/mlx4/mlx4.c
+index 28f1116891..1e64230e35 100644
+--- a/drivers/net/mlx4/mlx4.c
++++ b/drivers/net/mlx4/mlx4.c
+@@ -70,7 +70,7 @@ struct mlx4_conf {
+ 		uint32_t present; /**< Bit-field for existing ports. */
+ 		uint32_t enabled; /**< Bit-field for user-enabled ports. */
+ 	} ports;
+-	int mr_ext_memseg_en;
++	bool mr_ext_memseg_en;
+ 	/** Whether memseg should be extended for MR creation. */
+ };
  
--err:
- 	/*
- 	 * Handler for "mpc" devarg.
- 	 * Invoked as for ex: "-a 000:00:0d.0,mpc=1"
- 	 */
--	rte_kvargs_process(kvlist, BNXT_DEVARG_MPC,
--			   bnxt_parse_devarg_mpc, bp);
-+	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_MPC,
-+				 bnxt_parse_devarg_mpc, bp);
-+	if (ret)
-+		goto err;
+@@ -532,12 +532,10 @@ mlx4_ibv_device_to_pci_addr(const struct ibv_device *device,
+ static int
+ mlx4_arg_parse(const char *key, const char *val, struct mlx4_conf *conf)
+ {
+-	unsigned long tmp;
++	uint64_t tmp;
  
- 	/*
- 	 * Handler for "app-id" devarg.
- 	 * Invoked as for ex: "-a 000:00:0d.0,app-id=1"
- 	 */
--	rte_kvargs_process(kvlist, BNXT_DEVARG_APP_ID,
--			   bnxt_parse_devarg_app_id, bp);
-+	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_APP_ID,
-+				 bnxt_parse_devarg_app_id, bp);
-+	if (ret)
-+		goto err;
+-	errno = 0;
+-	tmp = strtoul(val, NULL, 0);
+-	if (errno) {
+-		rte_errno = errno;
++	if (rte_kvargs_to_uint(val, 0, UINT32_MAX, &tmp) < 0) {
++		rte_errno = EINVAL;
+ 		WARN("%s: \"%s\" is not a valid integer", key, val);
+ 		return -rte_errno;
+ 	}
+@@ -545,18 +543,16 @@ mlx4_arg_parse(const char *key, const char *val, struct mlx4_conf *conf)
+ 		uint32_t ports = rte_log2_u32(conf->ports.present + 1);
  
- 	/*
- 	 * Handler for "ieee-1588" devarg.
- 	 * Invoked as for ex: "-a 000:00:0d.0,ieee-1588=1"
- 	 */
--	rte_kvargs_process(kvlist, BNXT_DEVARG_IEEE_1588,
--			   bnxt_parse_devarg_ieee_1588, bp);
-+	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_IEEE_1588,
-+				 bnxt_parse_devarg_ieee_1588, bp);
-+	if (ret)
-+		goto err;
- 
- 	/*
- 	 * Handler for "cqe-mode" devarg.
- 	 * Invoked as for ex: "-a 000:00:0d.0,cqe-mode=1"
- 	 */
--	rte_kvargs_process(kvlist, BNXT_DEVARG_CQE_MODE,
--			   bnxt_parse_devarg_cqe_mode, bp);
-+	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_CQE_MODE,
-+				 bnxt_parse_devarg_cqe_mode, bp);
-+	if (ret)
-+		goto err;
- 
- 	/*
- 	 * Handler for "representor" devarg.
- 	 * Invoked as for ex: "-a 000:00:0d.0,representor=1"
- 	 */
--	rte_kvargs_process(kvlist, BNXT_DEVARG_REPRESENTOR,
--			   bnxt_parse_devarg_representor_mode, bp);
-+	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_REPRESENTOR,
-+				 bnxt_parse_devarg_representor_mode, bp);
-+	if (ret)
-+		goto err;
- 
- 	/*
- 	 * Handler for "scalar-mode" devarg.
- 	 * Invoked as for ex: "-a 000:00:0d.0,scalar-mode=1"
- 	 */
--	rte_kvargs_process(kvlist, BNXT_DEVARG_SCALAR_MODE,
--			   bnxt_parse_devarg_scalar_mode, bp);
-+	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_SCALAR_MODE,
-+				 bnxt_parse_devarg_scalar_mode, bp);
-+	if (ret)
-+		goto err;
- 
- 	/*
- 	 * Handler for "app-instance-id" devarg.
- 	 * Invoked as for ex: "-a 000:00:0d.0,app-instance-id=1"
- 	 * This argument is required for enabling truflow hot upgrade feature.
- 	 */
--	rte_kvargs_process(kvlist, BNXT_DEVARD_APP_INST_ID,
--			   bnxt_parse_devarg_app_instance_id, bp);
-+	ret = rte_kvargs_process(kvlist, BNXT_DEVARD_APP_INST_ID,
-+				 bnxt_parse_devarg_app_instance_id, bp);
- 
-+err:
- 	rte_kvargs_free(kvlist);
- 	return ret;
- }
+ 		if (tmp >= ports) {
+-			ERROR("port index %lu outside range [0,%" PRIu32 ")",
+-			      tmp, ports);
++			ERROR("port index %u outside range [0,%u)",
++			      (unsigned int)tmp, ports);
+ 			return -EINVAL;
+ 		}
+ 		if (!(conf->ports.present & (1 << tmp))) {
+ 			rte_errno = EINVAL;
+-			ERROR("invalid port index %lu", tmp);
++			ERROR("invalid port index %u", (unsigned int)tmp);
+ 			return -rte_errno;
+ 		}
+ 		conf->ports.enabled |= 1 << tmp;
+-	} else if (strcmp(MLX4_MR_EXT_MEMSEG_EN_KVARG, key) == 0) {
+-		conf->mr_ext_memseg_en = !!tmp;
+ 	} else {
+ 		rte_errno = EINVAL;
+ 		WARN("%s: unknown parameter", key);
+@@ -590,8 +586,21 @@ mlx4_args(struct rte_devargs *devargs, struct mlx4_conf *conf)
+ 		ERROR("failed to parse kvargs");
+ 		return -rte_errno;
+ 	}
++	/*
++	 * mr_ext_memseg_en is a boolean and has a handler of its own; the
++	 * loop below covers the arguments which mlx4_arg_parse() handles.
++	 */
++	ret = rte_kvargs_process_opt(kvlist, MLX4_MR_EXT_MEMSEG_EN_KVARG,
++				     rte_kvargs_handle_bool,
++				     &conf->mr_ext_memseg_en);
++	if (ret != 0)
++		goto free_kvlist;
++
+ 	/* Process parameters. */
+ 	for (i = 0; pmd_mlx4_init_params[i]; ++i) {
++		if (strcmp(pmd_mlx4_init_params[i],
++			   MLX4_MR_EXT_MEMSEG_EN_KVARG) == 0)
++			continue;
+ 		arg_count = rte_kvargs_count(kvlist, pmd_mlx4_init_params[i]);
+ 		while (arg_count-- > 0) {
+ 			ret = rte_kvargs_process(kvlist,
+@@ -783,7 +792,7 @@ mlx4_pci_probe(struct rte_pci_driver *pci_drv, struct rte_pci_device *pci_dev)
+ 	struct rte_eth_dev *prev_dev = NULL;
+ 	struct mlx4_conf conf = {
+ 		.ports.present = 0,
+-		.mr_ext_memseg_en = 1,
++		.mr_ext_memseg_en = true,
+ 	};
+ 	unsigned int vf;
+ 	int i;
 -- 
 2.53.0
 
