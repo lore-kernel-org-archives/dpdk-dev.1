@@ -2,77 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1546DCA5FCE
-	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 18:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8482CA5FD2
+	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 18:50:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3974640144;
-	Thu,  1 Oct 2026 20:50:27 +0200 (CEST)
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com
- [74.125.225.140])
- by mails.dpdk.org (Postfix) with ESMTP id C5DC9400D5
- for <dev@dpdk.org>; Thu,  1 Oct 2026 20:50:25 +0200 (CEST)
-Received: by mail-wm2-f12.google.com with SMTP id
- 5b1f17b1804b1-49ffe281cb1so36393365e9.1
- for <dev@dpdk.org>; Thu, 01 Oct 2026 11:50:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0CA1A40698;
+	Thu,  1 Oct 2026 20:50:38 +0200 (CEST)
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com
+ [74.125.225.141])
+ by mails.dpdk.org (Postfix) with ESMTP id 4ED0640698
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 20:50:37 +0200 (CEST)
+Received: by mail-wm2-f13.google.com with SMTP id
+ 5b1f17b1804b1-49ffbd83a92so45807365e9.0
+ for <dev@dpdk.org>; Thu, 01 Oct 2026 11:50:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1790880625; x=1791485425; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1790880637; x=1791485437; darn=dpdk.org;
  h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=A4K8st2FH8kLDIQgp/ClicLqJAa8dOo3qoi0RePgtKk=;
- b=LnvN7xSlqy4nVJqW9hL9Buh8WKZ52YKF3bVI3S/G/3vSPOCHRMLuhpeDnPoLe+noPh
- CXP2QzMOHnpP7fSWLaqj7hjDgrIiPLt3VaejimjfbQ+arCX0YUsGXWrv3NGvzbpy1fpF
- 1AC5K3xdQE95H68gaiwTu2q5HmLsqi3c8J8K/QGIZysTqdtOrJL8xkPkzKGZuPF3uQB5
- oDZSWSgFiOUKJJn+chVfEvjM/fPyIXqOeWUauBk5+P9Qh9VwALWkp9obJmdT9S8Dtz0y
- pjHYyUBBaLhOGHXQXxhCulRgBrUoA1JOfJ+LEhfmC2xnl0e5lfAU/yJuuWyHlfVzbCvG
- FRLw==
+ :content-language:references:to:subject:user-agent:mime-version:date
+ :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=juUgCgB6+H2DJxo6mwr7mbW8AN7r8F7Kvmfnq1Wa9bw=;
+ b=ZB7ahaAYxnpvEt65xr9Z6zMVq6oGyB/26PBoTuIcKuGxkbDY56dI1FCP087l0mt8tC
+ nBR1oIdD+qlixaJkMGFb/neGxshjOncS3JUVNIz4jwjkjBpqft6W2DoN2eu2RTUCVDHs
+ 3UEgAKlvGKfynvEYlnvLKSJjoAQN5AxwlJl9G5qv7THV+2GYXi6ZBBnfwZJynD7eTdUA
+ WmuDlSahwdafA6vpXuIG0Bij+njHsxvnES3AHocNVajCweF4fdzWrNG2fztESVl/xcvf
+ iH/MAF9qhuS6nGHcwT9JY8bOuoi1frD8EGajG7uc19b3wCXrSwjgY8qtAK62f4lvWUc8
+ b8xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790880625; x=1791485425;
+ d=1e100.net; s=20260707; t=1790880637; x=1791485437;
  h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :content-language:references:to:subject:user-agent:mime-version:date
+ :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=A4K8st2FH8kLDIQgp/ClicLqJAa8dOo3qoi0RePgtKk=;
- b=ThL39+0LTCrRsJLOsj1lkmHo/jSrCTNekG4xzxuw2WJVfniE4/7yLS+A8ivVYcUnaB
- YtV+iWztUMUCFhl1PhIgBqkd4iUm6KDFN18XVSFJXdW5yh9rS69kw4EiPFMlnKNLA528
- b7+c1vk+XQwrhXIcfRRjt4ZYBPjqgvS6gZoSqPKztynUP00vmJOQB42O8lmAVirTQYN5
- p39hbAlMmVKJLZHVPSZZk4zFWjR6NBtePTGRxP2ZXoz/V4koZtHY5GHGRgU2TqYfnyDn
- kWgExrxD61+/Ma8DK7eHZVctLa4q0sOFax7kVcTTmcylOME0rHzxF6MK9Xu4V9f3lWl3
- 8g7w==
+ bh=juUgCgB6+H2DJxo6mwr7mbW8AN7r8F7Kvmfnq1Wa9bw=;
+ b=EcU6xWH3hCx5bSGAYjOz4pnC5Q0nDYIbVQy8ry5LJNQoQ4lz22kejGD35sjJp15dAb
+ VSKpqVdtzCMQ0sxhAglOcJkFMhoFgnsfjn9cR4I9AYCm9zZY/AHdX9Tz6G8/LxAuH/KG
+ nAorHfMhdiUVDbGL9+X7mRjl5PAtcQ55htAFUgJoOY6nGEb+yepPQUpmdKC2VksZ66rj
+ lWb42Gm8qprPlC1Gs8SkOuZqTRZP4tURaHP7ISO0aueRrCyomOXo8D3cI/sawA7UHy0C
+ zVRURsv7QMMN34gMGOg8xQTCusrqY1cdKyf7SqcZkGjTNh8O+9DtlTnDtE8bDTY3WncS
+ rvYw==
 X-Forwarded-Encrypted: i=1;
- AKwUvBybuW70V+gDsTvUQ7YucCi3TZW0GPFRocKMN51O+Tq/W1NoPb3t1v+FWrTVPe2cg8Q90mM=@dpdk.org
-X-Gm-Message-State: AFuF++nJbPH1i71CkQtou0tiAEfMbgtdK+YUIVTcaj430SqqTh5YZe42
- RLt8Bi1rtDd1oRSdh5EnVv/23LC5EdDv/U+kF1EZCq/ru+WsGzdk50q4
-X-Gm-Gg: AYBFou0AoLLKre61nVrtyfsMCrsb604nQ67Abw9xIpYeEeYDKql07NkQVSmNkuPpEBi
- ICGzNNr0InMDMq2+7p3Zf1ESwAtDNkGqU5Ze2Nl/ExTGn2Uhu4vQjGPRVnCNtdtcxRhtLiNW8Ms
- t4x4P/6X5hv/DYQOfHSXAoVF0UYMygHcsjzizk/z7JF78W2sSgvcfFG99fzz/kvlmLVF3C4koQz
- +4I3Ob6zV6/2SSDhmkcHzmr3aA8ewhX68K5ezeLej84fZErGAVdYwA5HT5HB5CvK4hsvSdgSY9D
- I1M+rkykVs3bzxjdAtQRz49IVx48hqgfvsJeNOeNTtRJiOvlruigZuuNrWeies1H6cXKdDpejSf
- BxU6pvIp0B8WzNN1CF+ElzpDfdryBXCVdJuxyqWu00DzzrXXQT14kKpBJvIUpb+hMlMHTvHLNBu
- +W9UoywJDngfafPVqVPsN9nc46ujhAXA73DKEpp/21rfMTTObXVzglYaU1uiZOmtIkHDobD8KII
- ObFBw==
-X-Received: by 2002:a05:600c:4e43:b0:4a0:53e:b7d6 with SMTP id
- 5b1f17b1804b1-4a02759579amr9765205e9.16.1790880625103; 
- Thu, 01 Oct 2026 11:50:25 -0700 (PDT)
+ AKwUvBwJQLwtRVKLTpJ515LiZw8ZS0l7WaVgUBZjfYPeVhbMFsY09/zX5EPqixSgQG99DaEc8HU=@dpdk.org
+X-Gm-Message-State: AFuF++nXl+WR44JRvPTY+O4jFjI3HpF769SiCiiTNF589OnwKZ7Dsvg7
+ XSddX/Ovq9ObP7ZhGT9xVSqhkgOdQYWQD3ckEBqPATW/euMkzZ3BryUOCV58sZvibms=
+X-Gm-Gg: AYBFou28IQA4HFakAnxcwSJnDgFTV5k8/UI5u1fJGaY29mwnyh/R0jijyhJ1iZjPM5c
+ drH30jAWAz/qfLpMrwurtMEMJcJ1PbdufslqMtrJKHYhT9DEIKJOxdwVlIFqcwzGg0XuzOZLg7u
+ W8Gl3DaVSNochQNB49lrrdGpGJEjpc1pcUsGp1rE5hPmKy4u5XccuMEBO5a2CAz4Y4nm9k/kHNk
+ 93i3yoIZ1eADnbpaSWC19AZF/l7GwIF5fjjQw4sGbvxRtm+h9JE+qZWtN26JziKGK7WXExJzGAQ
+ VyZ2F1i5XNxOc+kMgyvQNfb36TSzrDPsfc1PTAYK7ni2SKyQ8TM+Di6ILID//MQjczjIIIcoHsE
+ 8zlUZ3QJnicKLphgX+wsz+tdosw2dKE0K7k569p89nw0JjERiOoCgHcmkNtoQ5HLqgN6quuNejM
+ Z70g027bwMIF4RncWw30olAHjWebPvg65h3TTNQBjoL4lKpUARQy/yFWoQA/OdCqtftC6d
+X-Received: by 2002:a05:600c:4e13:b0:49c:cee0:e7c1 with SMTP id
+ 5b1f17b1804b1-4a02757999cmr10049755e9.16.1790880636621; 
+ Thu, 01 Oct 2026 11:50:36 -0700 (PDT)
 Received: from [192.168.0.78] ([80.233.33.169])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-48b38104417sm187676f8f.27.2026.10.01.11.50.23
+ 5b1f17b1804b1-4a02783af28sm10064095e9.15.2026.10.01.11.50.35
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 01 Oct 2026 11:50:24 -0700 (PDT)
-Message-ID: <8b97c8a0-7135-4613-a012-6bde4529e089@gmail.com>
-Date: Thu, 1 Oct 2026 19:50:22 +0100
+ Thu, 01 Oct 2026 11:50:35 -0700 (PDT)
+Message-ID: <cb600b10-6403-499b-af19-3f69d103510e@gmail.com>
+Date: Thu, 1 Oct 2026 19:50:34 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] app/rpcapd: remote pcap daemon
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Thomas Monjalon <thomas@monjalon.net>,
- Reshma Pattan <reshma.pattan@intel.com>, dev@dpdk.org
+Subject: Re: [PATCH v4 0/4] add rpcap remote capture daemon
+To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
 References: <20260908210832.1556291-1-stephen@networkplumber.org>
  <20261001025853.319860-1-stephen@networkplumber.org>
- <20261001025853.319860-3-stephen@networkplumber.org>
-Content-Language: en-US, en-GB
+Content-Language: en-US
 From: Marat Khalili <qm2k21@gmail.com>
-In-Reply-To: <20261001025853.319860-3-stephen@networkplumber.org>
+In-Reply-To: <20261001025853.319860-1-stephen@networkplumber.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
@@ -88,39 +84,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Two non-critical nits inline.
+>    pcapng: add API to read back capture mbuf header
+Analysis with AI tells that there are some opportunities to make the 
+fast path of lib/pcapng both lighter and less .pcapng-centric to make 
+life of consumers that prefer other formats easier. It does not have to 
+(probably even shouldn't) be a part of the current patchset though.
+>    app/rpcapd: remote pcap daemon
+Ideally forwarding captured data could run in a separate thread with 
+minimum unnecessary syscalls, although it's hard to tell without 
+benchmarks how much current design is slowed down by them.
+>    app/rpcapd: add TLS support
+This patch simultaneously adds authentication, but it's only required 
+for non-loopback users. This is a common security vulnerability, not all 
+loopback users can be trusted. So if we care about authentication at 
+all, it should probably also be required for localhost users, at least 
+by default.
+>    app/rpcapd: add host list option
+>
+>   MAINTAINERS                            |   2 +
+>   app/meson.build                        |   1 +
+>   app/rpcapd/capture.c                   | 541 ++++++++++++++++
+>   app/rpcapd/filter.c                    | 164 +++++
+>   app/rpcapd/main.c                      | 840 +++++++++++++++++++++++++
+>   app/rpcapd/meson.build                 |  40 ++
+>   app/rpcapd/rpcap-protocol.h            | 146 +++++
+>   app/rpcapd/rpcapd.h                    | 122 ++++
+>   app/rpcapd/session.c                   | 292 +++++++++
+>   app/rpcapd/sock.c                      | 365 +++++++++++
+>   app/rpcapd/tls.c                       | 273 ++++++++
+>   app/test/test_pcapng.c                 | 133 ++++
+>   doc/guides/rel_notes/release_26_11.rst |  13 +
+>   doc/guides/tools/index.rst             |   1 +
+>   doc/guides/tools/rpcapd.rst            | 288 +++++++++
+>   lib/pcapng/rte_pcapng.c                |  40 ++
+>   lib/pcapng/rte_pcapng.h                |  46 ++
+>   17 files changed, 3307 insertions(+)
+>   create mode 100644 app/rpcapd/capture.c
+>   create mode 100644 app/rpcapd/filter.c
+>   create mode 100644 app/rpcapd/main.c
+>   create mode 100644 app/rpcapd/meson.build
+>   create mode 100644 app/rpcapd/rpcap-protocol.h
+>   create mode 100644 app/rpcapd/rpcapd.h
+>   create mode 100644 app/rpcapd/session.c
+>   create mode 100644 app/rpcapd/sock.c
+>   create mode 100644 app/rpcapd/tls.c
+>   create mode 100644 doc/guides/tools/rpcapd.rst
 
-On 01/10/2026 03:35, Stephen Hemminger wrote:
-> +static void
-> +parse_bind_addr(void)
-> +{
-> +	struct addrinfo hints = {
-> +		.ai_family   = bind_family,
-> +		.ai_socktype = SOCK_STREAM,
-> +		.ai_flags    = AI_NUMERICHOST | AI_PASSIVE,
-> +	};
-> +	struct addrinfo *res;
-> +	int rc;
-> +
-> +	/* Loopback by default; the wildcard address is not a safe default. */
-> +	if (bind_addr == NULL)
-> +		bind_addr = (bind_family == AF_INET6) ? "::1" : "127.0.0.1";
-When neither `bind_addr` nor `bind_family` are specified, can we bind to 
-all local addresses (127.0.0.1, ::1) that exist in the system? Or at 
-least to the first of them that exists, to improve the user experience 
-on IPv6-only systems a little?
-> +
-> +	rc = getaddrinfo(bind_addr, NULL, &hints, &res);
-> +	if (rc != 0)
-> +		rte_exit(EXIT_FAILURE, "Invalid bind address '%s': %s\n",
-> +			 bind_addr, gai_strerror(rc));
-> +	memcpy(&listen_addr, res->ai_addr, res->ai_addrlen);
-> +	listen_addrlen = res->ai_addrlen;
-> +	freeaddrinfo(res);
-> +}
-// ...
-> +/* Largest snaplen a client can be given. */
-> +#define DEFAULT_SNAPLEN		RTE_MBUF_DEFAULT_DATAROOM
+With or without addressing any of the comments above,
 
-The naming is not optimal, it's upper limit not default.
+Series-Acked-by: Marat Khalili <qm2k21@gmail.com>
 
