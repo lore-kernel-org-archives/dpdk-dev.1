@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8482CA5FD2
-	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 18:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 807B4CA5FCE
+	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 23:00:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CA1A40698;
-	Thu,  1 Oct 2026 20:50:38 +0200 (CEST)
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com
- [74.125.225.141])
- by mails.dpdk.org (Postfix) with ESMTP id 4ED0640698
- for <dev@dpdk.org>; Thu,  1 Oct 2026 20:50:37 +0200 (CEST)
-Received: by mail-wm2-f13.google.com with SMTP id
- 5b1f17b1804b1-49ffbd83a92so45807365e9.0
- for <dev@dpdk.org>; Thu, 01 Oct 2026 11:50:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5685140144;
+	Fri,  2 Oct 2026 01:00:53 +0200 (CEST)
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
+ [74.125.227.140])
+ by mails.dpdk.org (Postfix) with ESMTP id 2DA4C4003C
+ for <dev@dpdk.org>; Fri,  2 Oct 2026 01:00:51 +0200 (CEST)
+Received: by mail-pj2-f12.google.com with SMTP id
+ d9443c01a7336-2db18fe433fso33085105ad.2
+ for <dev@dpdk.org>; Thu, 01 Oct 2026 16:00:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1790880637; x=1791485437; darn=dpdk.org;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:to:subject:user-agent:mime-version:date
- :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=juUgCgB6+H2DJxo6mwr7mbW8AN7r8F7Kvmfnq1Wa9bw=;
- b=ZB7ahaAYxnpvEt65xr9Z6zMVq6oGyB/26PBoTuIcKuGxkbDY56dI1FCP087l0mt8tC
- nBR1oIdD+qlixaJkMGFb/neGxshjOncS3JUVNIz4jwjkjBpqft6W2DoN2eu2RTUCVDHs
- 3UEgAKlvGKfynvEYlnvLKSJjoAQN5AxwlJl9G5qv7THV+2GYXi6ZBBnfwZJynD7eTdUA
- WmuDlSahwdafA6vpXuIG0Bij+njHsxvnES3AHocNVajCweF4fdzWrNG2fztESVl/xcvf
- iH/MAF9qhuS6nGHcwT9JY8bOuoi1frD8EGajG7uc19b3wCXrSwjgY8qtAK62f4lvWUc8
- b8xw==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790895650;
+ x=1791500450; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=E2omEHFwGydRaxxAqoH1By/mnmS9zqjBAdFd2XwEHNQ=;
+ b=a/rYGy2fX3wTml26BVGQ8zYnhapgQjFaqf5Kw8Jr32Ebc0zr/1uiUAO9L2ieeCuIV/
+ e/0ZFZvU3FQktKprni1CfXxoYPo5t0Rvm2IaNwUEaR2yRp6222l1MwJPGRPl7aGVnnWI
+ BLDsl/BZ/TKYUdwjaNSZCCwu/Ez8rAzlrySPom1a//w0jnu7laxxVHS+xHnuxs8dcFVB
+ 0U8Tly59yx3LSBEQdkL0rhEWBF3zEUAOgBE94TFXKoKESvN7NWnKdVrlqTdlFxLdQdlB
+ U38G7lN+O18YaQl2WUVA4SLmZUyHoKGJjcgKDuS6vyU38FBuQA9/WUahQaPXqDCXi8gx
+ WDEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790880637; x=1791485437;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:to:subject:user-agent:mime-version:date
- :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=juUgCgB6+H2DJxo6mwr7mbW8AN7r8F7Kvmfnq1Wa9bw=;
- b=EcU6xWH3hCx5bSGAYjOz4pnC5Q0nDYIbVQy8ry5LJNQoQ4lz22kejGD35sjJp15dAb
- VSKpqVdtzCMQ0sxhAglOcJkFMhoFgnsfjn9cR4I9AYCm9zZY/AHdX9Tz6G8/LxAuH/KG
- nAorHfMhdiUVDbGL9+X7mRjl5PAtcQ55htAFUgJoOY6nGEb+yepPQUpmdKC2VksZ66rj
- lWb42Gm8qprPlC1Gs8SkOuZqTRZP4tURaHP7ISO0aueRrCyomOXo8D3cI/sawA7UHy0C
- zVRURsv7QMMN34gMGOg8xQTCusrqY1cdKyf7SqcZkGjTNh8O+9DtlTnDtE8bDTY3WncS
- rvYw==
-X-Forwarded-Encrypted: i=1;
- AKwUvBwJQLwtRVKLTpJ515LiZw8ZS0l7WaVgUBZjfYPeVhbMFsY09/zX5EPqixSgQG99DaEc8HU=@dpdk.org
-X-Gm-Message-State: AFuF++nXl+WR44JRvPTY+O4jFjI3HpF769SiCiiTNF589OnwKZ7Dsvg7
- XSddX/Ovq9ObP7ZhGT9xVSqhkgOdQYWQD3ckEBqPATW/euMkzZ3BryUOCV58sZvibms=
-X-Gm-Gg: AYBFou28IQA4HFakAnxcwSJnDgFTV5k8/UI5u1fJGaY29mwnyh/R0jijyhJ1iZjPM5c
- drH30jAWAz/qfLpMrwurtMEMJcJ1PbdufslqMtrJKHYhT9DEIKJOxdwVlIFqcwzGg0XuzOZLg7u
- W8Gl3DaVSNochQNB49lrrdGpGJEjpc1pcUsGp1rE5hPmKy4u5XccuMEBO5a2CAz4Y4nm9k/kHNk
- 93i3yoIZ1eADnbpaSWC19AZF/l7GwIF5fjjQw4sGbvxRtm+h9JE+qZWtN26JziKGK7WXExJzGAQ
- VyZ2F1i5XNxOc+kMgyvQNfb36TSzrDPsfc1PTAYK7ni2SKyQ8TM+Di6ILID//MQjczjIIIcoHsE
- 8zlUZ3QJnicKLphgX+wsz+tdosw2dKE0K7k569p89nw0JjERiOoCgHcmkNtoQ5HLqgN6quuNejM
- Z70g027bwMIF4RncWw30olAHjWebPvg65h3TTNQBjoL4lKpUARQy/yFWoQA/OdCqtftC6d
-X-Received: by 2002:a05:600c:4e13:b0:49c:cee0:e7c1 with SMTP id
- 5b1f17b1804b1-4a02757999cmr10049755e9.16.1790880636621; 
- Thu, 01 Oct 2026 11:50:36 -0700 (PDT)
-Received: from [192.168.0.78] ([80.233.33.169])
+ d=1e100.net; s=20260707; t=1790895650; x=1791500450;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=E2omEHFwGydRaxxAqoH1By/mnmS9zqjBAdFd2XwEHNQ=;
+ b=WAgG4erGkVii/TbotZNfMPbh615mYsnT3xo3uWCRgcazj2P2f2zNrbKoFy0vIlvzsi
+ 9q17rd4OUWREyoazDl0Z8V2X6DI0DiZCcZbunU45MOj/bNLx6YBA1rrcnubmxw6TMLfx
+ OBZYs6t8ROR8aSSOu1z7oroAqjpV85tkV8p/2AsCKW+RzWEplCaY1rIaVyp7V6Bb5E0T
+ dKN6k1yeGwa0BMNvXmTLYoDQxjlerbtAaFmoxN3yr0Xljs5K9kC6/ROlogmTPKewQeHs
+ begg3Z8ExQi726B0oUhJOSo/vAoMwxZEF92u5P0hby6tOCPTiR+0u0WcOni0DJW/JAHC
+ 4LUA==
+X-Gm-Message-State: AFq9FYISM68zLGBQFOW6JgE1kmMWeA9rk4Ama/ylzZujsHK5DOTSi11n
+ 0WPglnC3vAPFDFquyjuf5DX2LrwZRLCqPpwmj+NwE/YIQ34+jjGt3LMAZ/19T2oYT0s=
+X-Gm-Gg: AYBFou3YVUxTzsRG3usGqmj42bn3weaLE3wRj9E35Qyow6UrcfOF1HmrujqyqijDfJ1
+ llrJwH6VNeX16PTlD7aJl4qDXfKgxLfwUXOW21jIeGCmWiaLFbwssIM14Lus4kzB7iFx+S+fCor
+ 581LX/rFNxzWGBfQrhnZHemtKBLZxG23K82p0w4nmCRYzTnd9cENH0akSAlzuTLS9MlT28Yxl7O
+ IjnCkZBiSiLasSMvO+lkrhkxLIY/20I3QpLTCuPiqe5GLVQFE5L1TiolUMLc8AiTWMhRbf10sUU
+ rKbrqmPUdN4cEG45Wtq8zleO9ANB6ofyNx7f7XWlpb8HEczgdjNuR954JEAZ4a7j5v8yThaN68A
+ v5XC+XoLst3kwUWW2/1iLZbmbBslfH4QgXr3z8igi0f457WLvBg3SDWBQbXKb/nnRTTNXt9BzgN
+ ixkds7jAfChbWWVlD7yU1ODvg3utaQ81fmpX6MFJXumTT1jmcMSl1Jy4I4FYbEiDYPEcwksHPCQ
+ DyOVfyP6ehRIUcL3YIVlBtypSstSYreOW17KJpn
+X-Received: by 2002:a17:902:ec8c:b0:2dd:c100:b2c2 with SMTP id
+ d9443c01a7336-2e49b7f32c5mr7514555ad.45.1790895650543; 
+ Thu, 01 Oct 2026 16:00:50 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4a02783af28sm10064095e9.15.2026.10.01.11.50.35
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 01 Oct 2026 11:50:35 -0700 (PDT)
-Message-ID: <cb600b10-6403-499b-af19-3f69d103510e@gmail.com>
-Date: Thu, 1 Oct 2026 19:50:34 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+ d9443c01a7336-2e49e1f222asm1682175ad.3.2026.10.01.16.00.49
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 01 Oct 2026 16:00:49 -0700 (PDT)
+Date: Thu, 1 Oct 2026 16:00:46 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Marat Khalili <qm2k21@gmail.com>
+Cc: dev@dpdk.org
 Subject: Re: [PATCH v4 0/4] add rpcap remote capture daemon
-To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+Message-ID: <20261001160046.61827fec@phoenix.local>
+In-Reply-To: <cb600b10-6403-499b-af19-3f69d103510e@gmail.com>
 References: <20260908210832.1556291-1-stephen@networkplumber.org>
  <20261001025853.319860-1-stephen@networkplumber.org>
-Content-Language: en-US
-From: Marat Khalili <qm2k21@gmail.com>
-In-Reply-To: <20261001025853.319860-1-stephen@networkplumber.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <cb600b10-6403-499b-af19-3f69d103510e@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -84,53 +84,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
->    pcapng: add API to read back capture mbuf header
-Analysis with AI tells that there are some opportunities to make the 
-fast path of lib/pcapng both lighter and less .pcapng-centric to make 
-life of consumers that prefer other formats easier. It does not have to 
-(probably even shouldn't) be a part of the current patchset though.
->    app/rpcapd: remote pcap daemon
-Ideally forwarding captured data could run in a separate thread with 
-minimum unnecessary syscalls, although it's hard to tell without 
-benchmarks how much current design is slowed down by them.
->    app/rpcapd: add TLS support
-This patch simultaneously adds authentication, but it's only required 
-for non-loopback users. This is a common security vulnerability, not all 
-loopback users can be trusted. So if we care about authentication at 
-all, it should probably also be required for localhost users, at least 
-by default.
->    app/rpcapd: add host list option
->
->   MAINTAINERS                            |   2 +
->   app/meson.build                        |   1 +
->   app/rpcapd/capture.c                   | 541 ++++++++++++++++
->   app/rpcapd/filter.c                    | 164 +++++
->   app/rpcapd/main.c                      | 840 +++++++++++++++++++++++++
->   app/rpcapd/meson.build                 |  40 ++
->   app/rpcapd/rpcap-protocol.h            | 146 +++++
->   app/rpcapd/rpcapd.h                    | 122 ++++
->   app/rpcapd/session.c                   | 292 +++++++++
->   app/rpcapd/sock.c                      | 365 +++++++++++
->   app/rpcapd/tls.c                       | 273 ++++++++
->   app/test/test_pcapng.c                 | 133 ++++
->   doc/guides/rel_notes/release_26_11.rst |  13 +
->   doc/guides/tools/index.rst             |   1 +
->   doc/guides/tools/rpcapd.rst            | 288 +++++++++
->   lib/pcapng/rte_pcapng.c                |  40 ++
->   lib/pcapng/rte_pcapng.h                |  46 ++
->   17 files changed, 3307 insertions(+)
->   create mode 100644 app/rpcapd/capture.c
->   create mode 100644 app/rpcapd/filter.c
->   create mode 100644 app/rpcapd/main.c
->   create mode 100644 app/rpcapd/meson.build
->   create mode 100644 app/rpcapd/rpcap-protocol.h
->   create mode 100644 app/rpcapd/rpcapd.h
->   create mode 100644 app/rpcapd/session.c
->   create mode 100644 app/rpcapd/sock.c
->   create mode 100644 app/rpcapd/tls.c
->   create mode 100644 doc/guides/tools/rpcapd.rst
+On Thu, 1 Oct 2026 19:50:34 +0100
+Marat Khalili <qm2k21@gmail.com> wrote:
 
-With or without addressing any of the comments above,
+> >    pcapng: add API to read back capture mbuf header  
+> Analysis with AI tells that there are some opportunities to make the 
+> fast path of lib/pcapng both lighter and less .pcapng-centric to make 
+> life of consumers that prefer other formats easier. It does not have to 
+> (probably even shouldn't) be a part of the current patchset though.
 
-Series-Acked-by: Marat Khalili <qm2k21@gmail.com>
+Thought about that, and also looked at making rpcap another library
+but it ends up with DPDK reimplementing libpcap...
 
+The other option would be using dynamic fields. There already is timestamp,
+but there is none for "original packet length". 
+
+Third option is not using pdump callbacks at all and just having rpcap
+specific callbacks. That is what the Wireshark extcap does. That is where
+I think this will end up. Would like to not use pdump since it has
+so many design problems baked in.
+
+
+> >    app/rpcapd: remote pcap daemon  
+> Ideally forwarding captured data could run in a separate thread with 
+> minimum unnecessary syscalls, although it's hard to tell without 
+> benchmarks how much current design is slowed down by them.
+
+New version does use a data forwarding thread.
+It has to write to a socket, which it does with sendmsg.
+It could use liburing, to reduce syscalls further.
+
+> >    app/rpcapd: add TLS support  
+> This patch simultaneously adds authentication, but it's only required 
+> for non-loopback users. This is a common security vulnerability, not all 
+> loopback users can be trusted. So if we care about authentication at 
+> all, it should probably also be required for localhost users, at least 
+> by default.
+
+Good point, but do not want to add DPDK specific user data base.
+The problem is that TCP loopback has no way to identify who is on the
+other end. Unix domain sockets do, but libpcap doesn't support that.
+
+The real long term answer is having plugins in libpcap (Robin's proposal)
+and make this one of the plugins. But that will take longer to reach
+agreement on.
