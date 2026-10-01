@@ -2,32 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00825CA5FCE
-	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 07:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC4CCA5FC5
+	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 07:34:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 895A842E95;
-	Thu,  1 Oct 2026 09:33:23 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 78695427E9
- for <dev@dpdk.org>; Thu,  1 Oct 2026 09:33:20 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5AF041A010B;
- Thu,  1 Oct 2026 09:33:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6742F42EA1;
+	Thu,  1 Oct 2026 09:33:24 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 8C0CD42E60
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 09:33:21 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6F5AA2000F7;
+ Thu,  1 Oct 2026 09:33:21 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 25FFF1A00FB;
- Thu,  1 Oct 2026 09:33:20 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 37EBE2000AD;
+ Thu,  1 Oct 2026 09:33:21 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C1B7D18000BA;
- Thu,  1 Oct 2026 15:33:18 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D2C11180006C;
+ Thu,  1 Oct 2026 15:33:19 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v5-S2 07/13] net/dpaa2: set default flow miss action per device
-Date: Thu,  1 Oct 2026 13:03:01 +0530
-Message-ID: <20261001073307.1125305-8-prashant.gupta_3@nxp.com>
+Subject: [PATCH v5-S2 08/13] net/dpaa2: identify Rx mbuf hash information by
+ FLC
+Date: Thu,  1 Oct 2026 13:03:02 +0530
+Message-ID: <20261001073307.1125305-9-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261001073307.1125305-1-prashant.gupta_3@nxp.com>
 References: <20260922095528.2469885-1-prashant.gupta_3@nxp.com>
@@ -50,90 +51,166 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Gagandeep Singh <g.singh@nxp.com>
 
-The flow steering miss flow id was a file-scope global configured only
-via the DPAA2_FLOW_CONTROL_MISS_FLOW environment variable and defaulted
-to 0. Replace it with a per-device default_flow field in the private
-device structure, initialised to 0 at probe time, so that each device
-has its own independent miss-flow setting and the env variable override
-is no longer needed.
+For default RSS distribution, mbuf is marked with RTE_MBUF_F_RX_RSS_HASH
+and the hash value from the high word of FLC.
 
-The DPAA2_FLOW_CONTROL_MISS_FLOW environment variable is removed. Users
-who relied on it to redirect unmatched frames to a specific queue must
-now use the rte_flow API instead. A release-note entry for this removal
-should be added to doc/guides/rel_notes/release_26_11.rst.
+Configure the flow steering action with FLC enabled to align the stashing
+setting with the RSS configuration. The TC ID and flow ID are packed into
+the FLC for mbuf Rx scheduling. An Rx mbuf received from the FS table is
+marked with RTE_MBUF_F_RX_FDIR along with the TC and flow ID decoded from
+the FLC low word.
+
+Known limitations and follow-up items:
+
+RTE_MBUF_F_RX_FDIR_ID is set without also setting RTE_MBUF_F_RX_FDIR.
+Applications conforming to the DPDK mbuf flags contract test RX_FDIR
+before reading hash.fdir.hi, so the ID value is never visible to them.
+The dump helper in the debug Rx path (dpaa2_dev_rx_print_parser_result,
+patch 10) also gates on RX_FDIR and therefore never prints this field
+either. RX_FDIR must be set together with RX_FDIR_ID; this will be
+corrected in a follow-up.
+
+hash.fdir.hi carries the raw FLC low word as received from the hardware.
+This word encodes stash bits and the flow-mark bit in addition to the
+TC/flow-ID fields, so it is not a clean user-visible filter identifier.
+User-visible flow IDs should be delivered via
+RTE_FLOW_ACTION_TYPE_MARK into hash.fdir.hi with only the mark value.
+Masking out the non-ID bits will be addressed in a follow-up.
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.c |  2 ++
- drivers/net/dpaa2/dpaa2_ethdev.h |  2 ++
- drivers/net/dpaa2/dpaa2_flow.c   | 14 +-------------
- 3 files changed, 5 insertions(+), 13 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.h | 12 +++++++++
+ drivers/net/dpaa2/dpaa2_flow.c   | 42 ++++++++++++++++++++++++++++++++
+ drivers/net/dpaa2/dpaa2_rxtx.c   | 18 ++++++++++++--
+ 3 files changed, 70 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index d23c73b21d..70f271ec45 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -3543,6 +3543,8 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 	priv->dist_queues = attr.num_queues;
- 	priv->num_channels = attr.num_channels;
- 	priv->channel_inuse = 0;
-+	priv->default_flow = RTE_MIN(priv->fs_entries,
-+		priv->dist_queues) - 1;
- 	rte_spinlock_init(&priv->lpbk_qp_lock);
- 	rte_spinlock_init(&priv->meter_lock);
- 
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index e329111c0b..58a47cd1a2 100644
+index 58a47cd1a2..76a04c5858 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.h
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -436,6 +436,8 @@ struct dpaa2_dev_priv {
- 	uint8_t max_cgs;
- 	uint8_t cgid_in_use[MAX_RX_QUEUES];
- 	rte_spinlock_t meter_lock;
-+	/* Lowest priority FS flow id to receive flow steering miss frames. */
-+	uint16_t default_flow;
+@@ -282,6 +282,18 @@ enum dpaa2_ecpri_fafe_type {
+ /* ECPRI shares SP context with VXLAN*/
+ #define DPAA2_ECPRI_MSG_OFFSET DPAA2_VXLAN_VNI_OFFSET
  
- 	/* Current hash distribution size per RX TC, written by
- 	 * dpaa2_setup_flow_dist_size() and read by reta_query / reta_update.
++#define DPAA2_FS_FLC_FS_MARK_OFFSET \
++	(DPAA2_FLC_DATA_STASHING + DPAA2_FLC_STASHING_MAX_BIT_SIZE)
++
++#define DPAA2_FS_FLC_TC_OFFSET \
++	(DPAA2_FS_FLC_FS_MARK_OFFSET + DPAA2_FLC_STASHING_MAX_BIT_SIZE)
++
++#define DPAA2_FS_FLC_TC_BIT_SIZE (sizeof(uint8_t) * 8)
++#define DPAA2_FS_FLC_TC_MASK ((1 << DPAA2_FS_FLC_TC_BIT_SIZE) - 1)
++
++#define DPAA2_FS_FLC_FLOW_OFFSET \
++	(DPAA2_FS_FLC_TC_OFFSET + DPAA2_FS_FLC_TC_BIT_SIZE)
++
+ #define DPAA2_ECPRI_MAX_EXTRACT_NB 8
+ 
+ struct ipv4_sd_addr_extract_rule {
 diff --git a/drivers/net/dpaa2/dpaa2_flow.c b/drivers/net/dpaa2/dpaa2_flow.c
-index b2f1778de3..2e844121a8 100644
+index 2e844121a8..45660df31a 100644
 --- a/drivers/net/dpaa2/dpaa2_flow.c
 +++ b/drivers/net/dpaa2/dpaa2_flow.c
-@@ -24,7 +24,6 @@
- #include <dpaa2_pmd_logs.h>
+@@ -4383,6 +4383,13 @@ dpaa2_flow_verify_action(struct dpaa2_dev_priv *priv,
+ 		switch (actions[j].type) {
+ 		case RTE_FLOW_ACTION_TYPE_QUEUE:
+ 			dest_queue = actions[j].conf;
++			if (dest_queue->index >= MAX_RX_QUEUES ||
++				!priv->rx_vq[dest_queue->index]) {
++				DPAA2_PMD_ERR("Invalid FSQ index(%d)",
++					dest_queue->index);
++
++				return -EINVAL;
++			}
+ 			rxq = priv->rx_vq[dest_queue->index];
+ 			if (attr->group != rxq->tc_index) {
+ 				DPAA2_PMD_ERR("FSQ(%d.%d) not in TC[%d]",
+@@ -4445,6 +4452,7 @@ dpaa2_configure_flow_fs_action(struct dpaa2_dev_priv *priv,
+ 	struct dpaa2_dev_priv *dest_priv;
+ 	const struct rte_flow_action_queue *dest_queue;
+ 	struct dpaa2_queue *dest_q;
++	uint64_t flc = 0;
  
- static char *dpaa2_flow_control_log;
--static uint16_t dpaa2_flow_miss_flow_id; /* Default miss flow id is 0. */
- static int dpaa2_sp_loaded = -1;
+ 	memset(&flow->fs_action_cfg, 0,
+ 		sizeof(struct dpni_fs_action_cfg));
+@@ -4452,7 +4460,41 @@ dpaa2_configure_flow_fs_action(struct dpaa2_dev_priv *priv,
  
- enum dpaa2_flow_entry_size {
-@@ -4590,7 +4589,7 @@ dpaa2_configure_fs_rss_table(struct dpaa2_dev_priv *priv,
- 		return 0;
+ 	if (flow->action_type == RTE_FLOW_ACTION_TYPE_QUEUE) {
+ 		dest_queue = rte_action->conf;
++		if (dest_queue->index >= MAX_RX_QUEUES ||
++			!priv->rx_vq[dest_queue->index]) {
++			DPAA2_PMD_ERR("Invalid FSQ index(%d)",
++				dest_queue->index);
++
++			return -EINVAL;
++		}
+ 		dest_q = priv->rx_vq[dest_queue->index];
++		if (flow->tc_id != dest_q->tc_index) {
++			DPAA2_PMD_ERR("RXQ[%d](%d.%d) not in TC[%d]",
++				dest_queue->index,
++				dest_q->tc_index, dest_q->flow_id,
++				flow->tc_id);
++
++			return -EINVAL;
++		}
++		flow->fs_action_cfg.options =
++			DPNI_FS_OPT_SET_FLC | DPNI_FS_OPT_SET_STASH_CONTROL;
++
++		if (dest_q->data_stashing_off) {
++			dpaa2_flc_stashing_set(DPAA2_FLC_DATA_STASHING,
++				0, &flc);
++		} else {
++			dpaa2_flc_stashing_set(DPAA2_FLC_DATA_STASHING,
++				1, &flc);
++		}
++		if ((dpaa2_svr_family & 0xffff0000) != SVR_LX2160A) {
++			dpaa2_flc_stashing_set(DPAA2_FLC_ANNO_STASHING,
++				1, &flc);
++		}
++
++		flc |= ((uint64_t)1) << DPAA2_FS_FLC_FS_MARK_OFFSET;
++		flc |= ((uint64_t)dest_q->tc_index) << DPAA2_FS_FLC_TC_OFFSET;
++		flc |= ((uint64_t)dest_q->flow_id) << DPAA2_FS_FLC_FLOW_OFFSET;
++		flow->fs_action_cfg.flc = flc;
+ 		flow->fs_action_cfg.flow_id = dest_q->flow_id;
+ 	} else if (flow->action_type == RTE_FLOW_ACTION_TYPE_PORT_ID ||
+ 		   flow->action_type == RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT) {
+diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
+index c31d6556ad..7ba6a4563f 100644
+--- a/drivers/net/dpaa2/dpaa2_rxtx.c
++++ b/drivers/net/dpaa2/dpaa2_rxtx.c
+@@ -58,6 +58,7 @@ dpaa2_dev_rx_parse_new(struct rte_mbuf *m, const struct qbman_fd *fd,
+ 	uint16_t frc = DPAA2_GET_FD_FRC_PARSE_SUM(fd);
+ 	struct dpaa2_annot_hdr *annotation =
+ 			(struct dpaa2_annot_hdr *)hw_annot_addr;
++	uint32_t flc_lo, tc, flow;
  
- 	tc_cfg.enable = true;
--	tc_cfg.fs_miss_flow_id = dpaa2_flow_miss_flow_id;
-+	tc_cfg.fs_miss_flow_id = priv->default_flow;
- 	ret = dpni_set_rx_fs_dist(dpni, CMD_PRI_LOW,
- 			priv->token, &tc_cfg);
- 	if (ret < 0) {
-@@ -5224,17 +5223,6 @@ dpaa2_flow_create(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
- 	dpaa2_flow_control_log =
- 		getenv("DPAA2_FLOW_CONTROL_LOG");
+ 	if (unlikely(dpaa2_print_parser_result))
+ 		dpaa2_print_parse_result(annotation);
+@@ -118,8 +119,21 @@ dpaa2_dev_rx_parse_new(struct rte_mbuf *m, const struct qbman_fd *fd,
+ 	default:
+ 		m->packet_type = dpaa2_dev_rx_parse_slow(m, annotation);
+ 	}
+-	m->hash.rss = fd->simple.flc_hi;
+-	m->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
++	flc_lo = fd->simple.flc_lo;
++	if (flc_lo & (1 << DPAA2_FS_FLC_FS_MARK_OFFSET)) {
++		m->ol_flags |= RTE_MBUF_F_RX_FDIR;
++		tc = (flc_lo >> DPAA2_FS_FLC_TC_OFFSET) &
++			DPAA2_FS_FLC_TC_MASK;
++		flow = flc_lo >> DPAA2_FS_FLC_FLOW_OFFSET;
++		rte_mbuf_sched_set(m, flow, tc, 0);
++		DPAA2_PMD_DP_DEBUG("FS frame received from TC[%d]->flow%d",
++			tc, flow);
++	} else {
++		m->hash.rss = fd->simple.flc_hi;
++		m->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
++		DPAA2_PMD_DP_DEBUG("Hash frame received with RSS(%08x)",
++			m->hash.rss);
++	}
  
--	if (getenv("DPAA2_FLOW_CONTROL_MISS_FLOW")) {
--		dpaa2_flow_miss_flow_id =
--			(uint16_t)atoi(getenv("DPAA2_FLOW_CONTROL_MISS_FLOW"));
--		if (dpaa2_flow_miss_flow_id >= priv->dist_queues) {
--			DPAA2_PMD_ERR("Missed flow ID %d >= dist size(%d)",
--				      dpaa2_flow_miss_flow_id,
--				      priv->dist_queues);
--			return NULL;
--		}
--	}
--
- 	flow = rte_zmalloc(NULL, sizeof(struct dpaa2_dev_flow),
- 			   RTE_CACHE_LINE_SIZE);
- 	if (!flow) {
+ 	if (dpaa2_enable_ts[m->port]) {
+ 		*dpaa2_timestamp_dynfield(m) = annotation->word2;
 -- 
 2.43.0
 
