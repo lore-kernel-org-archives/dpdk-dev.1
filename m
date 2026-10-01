@@ -2,33 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E52CCA5FC5
-	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 07:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3C5CA5FC5
+	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 07:33:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A10042D2B;
-	Thu,  1 Oct 2026 09:33:16 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id F38D6402C3
- for <dev@dpdk.org>; Thu,  1 Oct 2026 09:33:14 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CC4BA1A0108;
- Thu,  1 Oct 2026 09:33:14 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 47D2342DBE;
+	Thu,  1 Oct 2026 09:33:17 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 15746427B3
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 09:33:16 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E15392000FF;
+ Thu,  1 Oct 2026 09:33:15 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 974521A00FB;
- Thu,  1 Oct 2026 09:33:14 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AA4352000F7;
+ Thu,  1 Oct 2026 09:33:15 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 14E0F18000BA;
- Thu,  1 Oct 2026 15:33:12 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 501941800068;
+ Thu,  1 Oct 2026 15:33:14 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>,
-	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v5-S2 02/13] net/dpaa2: set Tx confirmation on device init
-Date: Thu,  1 Oct 2026 13:02:56 +0530
-Message-ID: <20261001073307.1125305-3-prashant.gupta_3@nxp.com>
+Cc: Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v5-S2 03/13] net/dpaa2: support larger burst size
+Date: Thu,  1 Oct 2026 13:02:57 +0530
+Message-ID: <20261001073307.1125305-4-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261001073307.1125305-1-prashant.gupta_3@nxp.com>
 References: <20260922095528.2469885-1-prashant.gupta_3@nxp.com>
@@ -51,80 +50,144 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Gagandeep Singh <g.singh@nxp.com>
 
-Move TX confirmation mode setting from TXQ setup to device
-initialization because TXQ0 is not always set up by the user.
+Make burst size checks and MC command fields SoC-aware,
+enabling bursts larger than 64K on LX2160A with dpni version 8.7+.
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+The max_burst_size field in dpni_tx_shaping_cfg is widened to uint32_t
+and the MC command struct is updated to split the value across two
+16-bit fields using the new DPNI_BURST_LO/HI macros.
+
+Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.c | 40 ++++++++++++--------------------
- 1 file changed, 15 insertions(+), 25 deletions(-)
+ drivers/net/dpaa2/dpaa2_tm.c        | 16 +++++++++++-----
+ drivers/net/dpaa2/mc/dpni.c         | 11 +++++++++--
+ drivers/net/dpaa2/mc/fsl_dpni.h     |  8 ++++++--
+ drivers/net/dpaa2/mc/fsl_dpni_cmd.h |  3 ++-
+ 4 files changed, 28 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index f211357919..c95704d4ca 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -1153,7 +1153,6 @@ dpaa2_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 	struct dpni_queue tx_conf_cfg;
- 	struct dpni_queue tx_flow_cfg;
- 	uint8_t options = 0, flow_id;
--	uint8_t ceetm_ch_idx;
- 	uint16_t channel_id;
- 	struct dpni_queue_id qid;
- 	uint32_t tc_id;
-@@ -1174,30 +1173,6 @@ dpaa2_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 	memset(&tx_conf_cfg, 0, sizeof(struct dpni_queue));
- 	memset(&tx_flow_cfg, 0, sizeof(struct dpni_queue));
+diff --git a/drivers/net/dpaa2/dpaa2_tm.c b/drivers/net/dpaa2/dpaa2_tm.c
+index 36e815c356..3057f4d031 100644
+--- a/drivers/net/dpaa2/dpaa2_tm.c
++++ b/drivers/net/dpaa2/dpaa2_tm.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2020-2024 NXP
++ * Copyright 2020-2026 NXP
+  */
  
--	if (!tx_queue_id) {
--		for (ceetm_ch_idx = 0;
--			ceetm_ch_idx <= (priv->num_channels - 1);
--			ceetm_ch_idx++) {
--			/*Set tx-conf and error configuration*/
--			if (priv->flags & DPAA2_TX_CONF_ENABLE) {
--				ret = dpni_set_tx_confirmation_mode(dpni,
--						CMD_PRI_LOW, priv->token,
--						ceetm_ch_idx,
--						DPNI_CONF_AFFINE);
--			} else {
--				ret = dpni_set_tx_confirmation_mode(dpni,
--						CMD_PRI_LOW, priv->token,
--						ceetm_ch_idx,
--						DPNI_CONF_DISABLE);
--			}
--			if (ret) {
--				DPAA2_PMD_ERR("Error(%d) in tx conf setting",
--					ret);
--				return ret;
--			}
--		}
--	}
+ #include <rte_ethdev.h>
+@@ -10,14 +10,20 @@
+ #include "dpaa2_pmd_logs.h"
+ #include <dpaa2_hw_dpio.h>
+ 
+-#define DPAA2_BURST_MAX	(64 * 1024)
 -
- 	tc_id = tx_queue_id % priv->num_tx_tc;
- 	channel_id = (uint8_t)(tx_queue_id / priv->num_tx_tc) % priv->num_channels;
- 	flow_id = 0;
-@@ -3624,6 +3599,21 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 		goto init_err;
- 	}
+ #define DPAA2_SHAPER_MIN_RATE 0
+ #define DPAA2_SHAPER_MAX_RATE 107374182400ull
+ #define DPAA2_WEIGHT_MAX 24701
+ #define DPAA2_PKT_ADJUST_LEN_MIN 0
+ #define DPAA2_PKT_ADJUST_LEN_MAX 0x7ff
  
-+	for (i = 0; i < priv->num_channels; i++) {
-+		/*Set tx-conf and error configuration*/
-+		if (priv->flags & DPAA2_TX_CONF_ENABLE) {
-+			ret = dpni_set_tx_confirmation_mode(dpni_dev,
-+				CMD_PRI_LOW, priv->token, i, DPNI_CONF_AFFINE);
-+		} else {
-+			ret = dpni_set_tx_confirmation_mode(dpni_dev,
-+				CMD_PRI_LOW, priv->token, i, DPNI_CONF_DISABLE);
-+		}
-+		if (ret) {
-+			DPAA2_PMD_ERR("Error(%d) in tx conf setting", ret);
-+			goto init_err;
-+		}
-+	}
++static inline uint32_t dpaa2_get_burst_max(struct dpaa2_dev_priv *priv)
++{
++	if (dpaa2_dev_cmp_dpni_ver(priv, 8, 7) >= 0)
++		return (dpaa2_svr_family == SVR_LX2160A) ? 229375 : 0xF7FF;
 +
- 	/* Allocate memory for storing MAC addresses.
- 	 * Table of mac_filter_entries size is allocated so that RTE ether lib
- 	 * can add MAC entries when rte_eth_dev_mac_addr_add is called.
++	return 0xF7FF;
++}
++
+ int
+ dpaa2_tm_init(struct rte_eth_dev *dev)
+ {
+@@ -283,7 +289,7 @@ dpaa2_shaper_profile_add(struct rte_eth_dev *dev, uint32_t shaper_profile_id,
+ 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_RATE,
+ 				NULL, "committed rate is out of range\n");
+ 
+-	if (params->committed.size > DPAA2_BURST_MAX)
++	if (params->committed.size > dpaa2_get_burst_max(priv))
+ 		return -rte_tm_error_set(error, EINVAL,
+ 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_SIZE,
+ 				NULL, "committed size is out of range\n");
+@@ -293,7 +299,7 @@ dpaa2_shaper_profile_add(struct rte_eth_dev *dev, uint32_t shaper_profile_id,
+ 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_RATE,
+ 				NULL, "Peak rate is out of range\n");
+ 
+-	if (params->peak.size > DPAA2_BURST_MAX)
++	if (params->peak.size > dpaa2_get_burst_max(priv))
+ 		return -rte_tm_error_set(error, EINVAL,
+ 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_SIZE,
+ 				NULL, "Peak size is out of range\n");
+diff --git a/drivers/net/dpaa2/mc/dpni.c b/drivers/net/dpaa2/mc/dpni.c
+index d0a9fefd31..17275b7195 100644
+--- a/drivers/net/dpaa2/mc/dpni.c
++++ b/drivers/net/dpaa2/mc/dpni.c
+@@ -1106,6 +1106,7 @@ int dpni_set_tx_shaping(struct fsl_mc_io *mc_io,
+ {
+ 	struct dpni_cmd_set_tx_shaping *cmd_params;
+ 	struct mc_command cmd = { 0 };
++	uint32_t tx_cr_burst, tx_er_burst;
+ 	int coupled, lni_shaper;
+ 	uint8_t channel_id;
+ 	uint16_t oal;
+@@ -1115,10 +1116,16 @@ int dpni_set_tx_shaping(struct fsl_mc_io *mc_io,
+ 					  cmd_flags,
+ 					  token);
+ 	cmd_params = (struct dpni_cmd_set_tx_shaping *)cmd.params;
++	tx_cr_burst = tx_cr_shaper->max_burst_size;
++	tx_er_burst = tx_er_shaper->max_burst_size;
+ 	cmd_params->tx_cr_max_burst_size =
+-		cpu_to_le16(tx_cr_shaper->max_burst_size);
++		cpu_to_le16(DPNI_BURST_LO(tx_cr_burst));
+ 	cmd_params->tx_er_max_burst_size =
+-		cpu_to_le16(tx_er_shaper->max_burst_size);
++		cpu_to_le16(DPNI_BURST_LO(tx_er_burst));
++	cmd_params->tx_cr_max_burst_size_hi =
++		cpu_to_le16(DPNI_BURST_HI(tx_cr_burst));
++	cmd_params->tx_er_max_burst_size_hi =
++		cpu_to_le16(DPNI_BURST_HI(tx_er_burst));
+ 	cmd_params->tx_cr_rate_limit =
+ 		cpu_to_le32(tx_cr_shaper->rate_limit);
+ 	cmd_params->tx_er_rate_limit =
+diff --git a/drivers/net/dpaa2/mc/fsl_dpni.h b/drivers/net/dpaa2/mc/fsl_dpni.h
+index 42d633eaf8..8913b408e7 100644
+--- a/drivers/net/dpaa2/mc/fsl_dpni.h
++++ b/drivers/net/dpaa2/mc/fsl_dpni.h
+@@ -830,14 +830,18 @@ int dpni_get_link_state(struct fsl_mc_io *mc_io,
+ 			uint16_t token,
+ 			struct dpni_link_state *state);
+ 
++#define DPNI_BURST_LO(burst)	((burst) & GENMASK(15, 0))
++#define DPNI_BURST_HI(burst)	((burst) >> 16)
++
+ /**
+  * struct dpni_tx_shaping - Structure representing DPNI tx shaping configuration
+  * @rate_limit:		Rate in Mbits/s
+- * @max_burst_size:	Burst size in bytes (up to 64KB)
++ * @max_burst_size:	Burst size in bytes. Limits depend on the SoC (0x37FFF
++ *		for LX2160A, 0xF7FF for all others)
+  */
+ struct dpni_tx_shaping_cfg {
+ 	uint32_t rate_limit;
+-	uint16_t max_burst_size;
++	uint32_t max_burst_size;
+ };
+ 
+ /**
+diff --git a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
+index bb4939031b..6b396ca7cc 100644
+--- a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
++++ b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
+@@ -394,7 +394,8 @@ struct dpni_rsp_get_link_state {
+ struct dpni_cmd_set_tx_shaping {
+ 	uint16_t tx_cr_max_burst_size;
+ 	uint16_t tx_er_max_burst_size;
+-	uint32_t pad;
++	uint16_t tx_cr_max_burst_size_hi;
++	uint16_t tx_er_max_burst_size_hi;
+ 	uint32_t tx_cr_rate_limit;
+ 	uint32_t tx_er_rate_limit;
+ 	/* from LSB: coupled:1, lni_shaper: 1*/
 -- 
 2.43.0
 
