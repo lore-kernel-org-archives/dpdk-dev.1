@@ -2,157 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 963D3CA5FD4
-	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 16:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C84BCA5FD4
+	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 17:40:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 638FA40268;
-	Thu,  1 Oct 2026 18:11:09 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 18D4F400D5
- for <dev@dpdk.org>; Thu,  1 Oct 2026 18:11:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790871068; x=1822407068;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=JYHhnFKu7O3olC83DbxlLAY3jhpM3IPgSRXBvMNIaPk=;
- b=PjTIUERZ2xPbtdn+Ono3iOP+7RrvvAL3tOhdW5uAQ/en/ZovgSUZUnsD
- /F9c/c9SGlM7XK0v8qyw++C3D+3ugILm4JxAgjBT/D0M0/olmjxZDk3a3
- xT3148IKca2UZdBsDXn/eaZRsg/FKRWoVVVOBZbKS2IgFmOkT/zhE//TZ
- GMqe97p9S+t+1//JOLz0GdLbp+pNmF0JzQSsLSdPL9Wvx8tGmnoDFaPQL
- PAZTXZrpvhjRpbIVraG7hNti5M66s5cQgMNda0rPE60c3KfXsnO2mRo6I
- Av7mgcIWGyGibmf5a9EhTnZeEpHUAncBt08PZcyoz7LsSqTe3htcrfiiF w==;
-X-CSE-ConnectionGUID: ndGPP6sYRM6/kf68axqsSQ==
-X-CSE-MsgGUID: z6c2NIXiTT+kbl9Qdv0sfw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11922"; a="94118006"
-X-IronPort-AV: E=Sophos;i="6.27,134,1787036400"; d="scan'208";a="94118006"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Oct 2026 09:11:07 -0700
-X-CSE-ConnectionGUID: mrYqQVGARxyUxdt6eRBb7w==
-X-CSE-MsgGUID: lDk9BWq8QNuS5sbfxIhAPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,134,1787036400"; d="scan'208";a="276070480"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Oct 2026 09:11:07 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Thu, 1 Oct 2026 09:11:06 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Thu, 1 Oct 2026 09:11:06 -0700
-Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.37) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Thu, 1 Oct 2026 09:11:06 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y5cC4fpxcwts21B9RGnuJEPKN9Ko0SRd4AhuT3FZDdokp2e4sGvBmDx4qRaoCuaz6bRjdNCHaufZK4t+lMBjQejylctffcJt4Rq/rE6x3zlhpM91kkRcuHp5rQNPvnhkqWUTNqzcE86ZPV9TzX048xyx/DjEF2N3mrwxA31andxT+JvXoxKir7q4LlB5TMktvTkqRbyPQHszeyUt3vjV7hHBW3UXlnOU6wWUMS8nW2dFXI+aWLb5EyzGsBAxdKmo0xSoMk6/bqTzgHj6PjMGZF5Lr3nPov8ayo1v2mcNf1QJ2+JKmtCVOlakQcjR0/nfvWz8HkKWsROpZWjNY1K8Mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BYoKrEF1tt2yyyiPX8v1VXKIUswtzbhHbZrT4fzf55Y=;
- b=hqkii1E8TY1+RLT0Fi1uy8YDYRvoSBxcksNV8uXBv9wrL+BkAS7AtUR8vX5NLfIutd4Q9Cdg/OYWdpLBil/MequAUU4oU3uosAa7PIdTX5DkcnHCLb8ICaIVCublewLTPeTRRC4MwSxrCX4GCBzQ/62aenJ4NvP2xCYSNAQP/+Hs66+nd7yNWlT40ZyNw73lXsiKsCFEn8f7d5CBEkHJh6Ikd+FtN1VPD0X2CKQXjaKJZYDO811xzJhJ7AgmBpxdGuOZEDI8wA3Ic/pkdcCs07uTzh9ewhreuYgGtgeHkYNK6ctHn8XG2EEmA56jQ5aIyGV7e9e6UJh5U8PCRFjPnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
- SA3PR11MB662844.namprd11.prod.outlook.com (2603:10b6:806:538::23)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Thu, 1 Oct
- 2026 16:11:00 +0000
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa]) by DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa%3]) with mapi id 15.21.0472.016; Thu, 1 Oct 2026
- 16:11:00 +0000
-Message-ID: <9df33b27-970c-4f9a-a452-36ba6c6eb92b@intel.com>
-Date: Thu, 1 Oct 2026 17:10:56 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH v4 1/4] app/crypto-perf: support mldsa
- Sign-Iteration
-To: Pratik Senapati <psenapati@marvell.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: Akhil Goyal <gakhil@marvell.com>, Gowrishankar Muthukrishnan
- <gmuthukrishn@marvell.com>, "kai.ji@intel.com" <kai.ji@intel.com>
-References: <20260929105851.1305127-1-psenapati@marvell.com>
- <20260929122044.1344518-1-psenapati@marvell.com>
- <64d81a94-4578-4362-920d-a049e0207c68@intel.com>
- <LV8PR18MB6078F14394D1B1812C574D15BD8A2@LV8PR18MB6078.namprd18.prod.outlook.com>
-Content-Language: en-US
-From: Radu Nicolau <radu.nicolau@intel.com>
-In-Reply-To: <LV8PR18MB6078F14394D1B1812C574D15BD8A2@LV8PR18MB6078.namprd18.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0119.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bc::19) To DM8PR11MB5653.namprd11.prod.outlook.com
- (2603:10b6:8:25::8)
+	by mails.dpdk.org (Postfix) with ESMTP id 12123402BF;
+	Thu,  1 Oct 2026 19:40:55 +0200 (CEST)
+Received: from mail-pl1-f228.google.com (mail-pl1-f228.google.com
+ [209.85.214.228])
+ by mails.dpdk.org (Postfix) with ESMTP id 74D40400D5
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 19:40:53 +0200 (CEST)
+Received: by mail-pl1-f228.google.com with SMTP id
+ d9443c01a7336-2df8d686d10so18080975ad.3
+ for <dev@dpdk.org>; Thu, 01 Oct 2026 10:40:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1790876452; x=1791481252;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=Pbhbek7daXf8rnHrbEUvXf2XON2OOgZYLt3rbbIG50o=;
+ b=BZVT8hqn7yN30ni/RsI87kx+I/DHeTGspJ8qEQRBQNyRKl1neW9pWRYMHxWQwzy9kM
+ mW7CmQb417hltIU8W/CRjCreuAGLShmkt5ZmESn7ZmSblCdBUiH0Mpbaw6jtvcfCecYJ
+ P61PY4tez6LzcnLm7vODeCE/M0tYXQGHgmtn8I4jQMF80+zKuUH/zsBeFh3zywNWrO6k
+ EkEw2EF2fTfuRLk7mPnSNRC33EdVm0zFxfyWQs82TYjWUwefC/dtSv+ceiDAaCZati73
+ 85DjrZWdlT7yv9E5tLBO5z4P2HIKBYanX5/fLNAqttYefEGhepAv9Ibd2Ff3r5WiOExN
+ iVAA==
+X-Gm-Message-State: AFq9FYL3Sw2hV388yfWeN26kr3akX/g7PT27LBbiovuJIiO6lKVErZAD
+ kTnTYeTjT61TkdJjDGCzCSLOfdgfXT+6hHh6GmXUY9E93UFo7iVefdaY8rXdY56OqMKelh8b8mN
+ 2yfzVXKt2+m8wpZYhHEfWPGRo5bx8B2KQYYxuWqw99k0PPHIc1rV8o2DNf+8esOz2U35WON0/hG
+ XG477AqOYb1WTUhGlbTpzHAqwElZxlSb++IQwlWiyQcREgZDe1sebOCpZxiBqA2i+WpvZ2Uw==
+X-Gm-Gg: AYBFou1lshctjem3GwsfHaSTkfN+A9JSIFZluwofaIVhT+YMGcneYQe2xZGzzWgB09G
+ mmk0TtDakjPCde/y4Wjk4e/dvl2Li3bDn7QXE+4lHO3BO4WTN5wKT2mJT60E9gkfMhtdWl5SSPJ
+ 5k35OYD1mscUSn2Nxvt1dD+TZSdwSjXg7kZn0E0OqADjtvhfsxl7BGUHjdi8Nwzyh0vnA3X6bQ9
+ OE/a3OUJGnAkfy+WNaOxwYO8qWBvHcr7kAujU6Cfeo1f+hIBmugitR0BS/lSvef4xCKIqKu8GPA
+ 2/vkEcrmOR7TW9g5wWbiIUpXM6YJx34omzf8Eh+LWyfDhantHwq1C+eXx/ngaIR6jbekctw3RWZ
+ bKYoePNy3jIkkRpSqrCqh+VpkB+A4u7aHRAkPaIR+z+7i4xkCncb8qlQ3WiECM7JE0NUWm10sXL
+ 5K7s4K/mXGaNoFFSB1PWesqxrMXf17pimisxLGoA==
+X-Received: by 2002:a17:90b:224b:b0:3a0:9640:8028 with SMTP id
+ 98e67ed59e1d1-3a6ce96aa22mr300161a91.59.1790876452224; 
+ Thu, 01 Oct 2026 10:40:52 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
+ (address-144-49-247-125.dlp.protect.broadcom.com. [144.49.247.125])
+ by smtp-relay.gmail.com with ESMTPS id
+ 98e67ed59e1d1-3a4f46d3910sm1730352a91.5.2026.10.01.10.40.51
+ for <dev@dpdk.org>
+ (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+ Thu, 01 Oct 2026 10:40:52 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-ot1-f72.google.com with SMTP id
+ 46e09a7af769-815f2b1ecc3so2039065a34.2
+ for <dev@dpdk.org>; Thu, 01 Oct 2026 10:40:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=broadcom.com; s=google; t=1790876450; x=1791481250; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=Pbhbek7daXf8rnHrbEUvXf2XON2OOgZYLt3rbbIG50o=;
+ b=ItJul3E7nqiAwoo7tLoEWmwZL/oJmEupZ1YH9bBV6HX/nUfO1c20rDQxjR+VzVd49h
+ Q8gv/521MC98MDUeGZ3XuvtDjwZY5yhkG1/8IfA0XaR3WHfvcGpmaOHcX6toVVIU8gMr
+ dO2vbLLEpF+ai6SSL66C0w/4oi2qM/3RjTWLM=
+X-Received: by 2002:a05:6830:927:b0:820:f0ee:1fcf with SMTP id
+ 46e09a7af769-82285f5b852mr377047a34.29.1790876450423; 
+ Thu, 01 Oct 2026 10:40:50 -0700 (PDT)
+X-Received: by 2002:a05:6830:927:b0:820:f0ee:1fcf with SMTP id
+ 46e09a7af769-82285f5b852mr377017a34.29.1790876449742; 
+ Thu, 01 Oct 2026 10:40:49 -0700 (PDT)
+Received: from r740-105-132.dhcp.broadcom.net ([192.19.144.250])
+ by smtp.gmail.com with ESMTPSA id
+ 46e09a7af769-822768d21b0sm521509a34.1.2026.10.01.10.40.48
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 01 Oct 2026 10:40:48 -0700 (PDT)
+From: Manish Kurup <manish.kurup@broadcom.com>
+To: dev@dpdk.org
+Cc: kishore.padmanabha@broadcom.com, Farah Smith <farah.smith@broadcom.com>,
+ stable@dpdk.org
+Subject: [PATCH] net/bnxt: fix global table scope shutdown order
+Date: Thu,  1 Oct 2026 12:40:39 -0500
+Message-Id: <20261001174039.1155386-1-manish.kurup@broadcom.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|SA3PR11MB662844:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85bcc403-cd19-403d-2ce7-08df1fd69575
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|376014|366016|1800799024|22082099003|18002099003|11063799006|10067099003|56012099006|4143699003;
-X-Microsoft-Antispam-Message-Info: omxghzvDA+68ivWGUZAP21APLdAOMXuqRKRn4mMqKPSwszr+obrVz+nIFy5skEh3D33LOO4TEO4iGJpKPMCI8ZXJv5KWSCCe3aLZxqPLPdNSvcShO8RCrea5WEvQq5K2hvrQ5olt/1ZAiaak/W2Be+M8WuE4xiIZJsFPTEUXgxSUqp2NlQe+soPeXFb5xgjHefWyInsIjGL4zjTZnx97ksL0Ny2KQt9ZCFBR7DQHXOeLlC2+xy+gsb5+rmzNPS3uhmLMA9EASNG7ls5t72YIFsr1D4Ns8euSY/wBECw7Fmk+4jKM5ItWPxIYpCcPzfYHkch45wjHPTfPU9/6qA1ICB7e4ZpulVc9K1ovmm3TJ+3ZoeMQYWxBb425Y0yqineHotzjOrCupYByX6LPohAbcmUu0VNRQDTYhJDF7isyzYSxEMf++CaBxe691a8Tet5pdMer8uIMCQVIs7/IicJg6FgalxRE0tfb72t397X/8VvSkJpLuBKn7ILOiu1NztDBTenNezXNbPUgKgz8Fsf5FzYI2l3QB8dmP7cJa/+kP7Da067q6Oy3lkgFrMxzpJClwSX1Qm6vGq1ejOS9fBvNV2/5gmEtZhexpyxTieAftdxFbnw+IDA1tJ8vXBY7IGIUU3brUjfWicf7TjahM9BjUgg6Fi1cDZkDQQGnd8VOzfY=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(22082099003)(18002099003)(11063799006)(10067099003)(56012099006)(4143699003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NXVqM3VNQjN2bFQxQ1ZNRERaYmFYUFVGbG5GMFZlbDIrc3NTT0JOd2NucDBO?=
- =?utf-8?B?VnVOeXRyR3ViejU1VjUrMjhJOHNEb3N0Q0Q4Rm9ZRGlVbENCSE9VbUVwNE1G?=
- =?utf-8?B?cTA2Q0k4QW1ybGhCMzBhaC9SZzBvZjczNkM0YnlXemwvd2V0VlYyV3RGYjRX?=
- =?utf-8?B?MFhGdHNIYlVDQUU0Nzd4SDZCKzlpUGc3NjV0by90cWpyT3dVQ1kxcjQ0S3Mv?=
- =?utf-8?B?RnAyNm42Q203cUlFZHY0QUNkZDB6dlBvNFdRUWxtak9BdGU2ckVSS0xnbU8v?=
- =?utf-8?B?RFFndDRQMlBieGZTaFhmd0RpOEhlbDN5d0NCbnBwZlQ4SHVia0hOTlZNMVFh?=
- =?utf-8?B?N1NVcUIyV3I0SmZ1REgyc1ZZRWsrYlVHVHRuT3h6bmJlMWFuM3RERXFwYW52?=
- =?utf-8?B?UWNIaUt6dUdUWnBPamhiQVNpQ0s5WDI2SDhNUm5BbzNrcnNFZVIxZE1yUDVh?=
- =?utf-8?B?RHdmeERIVlRiRzQzWUpJY3RMNmZGNmNmS0NhVURhWEd3ZlEwbEx6bVlROTdX?=
- =?utf-8?B?MFV0aHJ3L0FhTTUxOHlpN2dPM0VwdXVQSFRORXZrcW81bnF2Z0FRcDNzWU1M?=
- =?utf-8?B?RHQzeVBBdTNsc3pvZ2xFeExqdTUyVGl6ODdQSkNma1hiSlVwbVR4cFArMVpD?=
- =?utf-8?B?cEFhWjZtU01STXhWZEpQdFoxSklOTFZUckNhbGJCYi9BTjlFMHVOMTBvNGJv?=
- =?utf-8?B?UlZ4Z1Q2UENnRktBdDhKL1RHcmJHcDZ1R3FnRWJYT0xPbk1wMi9aZGZDWjdC?=
- =?utf-8?B?bTNub2wzb3ZaNFNpdTJWOFJPYW5aK2EvRHRiN094UzBlMVVzaVdsd2NLVDJn?=
- =?utf-8?B?OTZMMG1kZm9ZaFFwRlRrNzBHUnpJYUNQWXREVE9wQ2tFbnF4Mml5WHVscWJQ?=
- =?utf-8?B?Wm1rR09PeDdlRFM3Nm8rVVlqdVhSY3Rlend2SHUvNG5aTzFvRzBMUmFHSElm?=
- =?utf-8?B?SVI4emdCV1VJR1EvTVhxa0JmaHNQblRCM05sb2JVanY0T05wK0RUc21Wb1NZ?=
- =?utf-8?B?RzZpVzlaNXVlMTRpMUN4cFlCWHVCc2VndFVKRVpmWi9MVVU3QmNoMmdhWXN5?=
- =?utf-8?B?cVNKc0prQ0RMUG9QemdRQi95eU1FTFZJUzZJVndDdENLQUJpS0F5bjUvUVA4?=
- =?utf-8?B?WXJKZ29CSFc2TXNLWHBDUm9ZTmUxTTNmMDYzSUQzaUJZMGpMSTFkeFF5bTAr?=
- =?utf-8?B?NXRGY2hFYk5PVzFYQXRqWnp3d1N5ei9GZTFaaHIwZlRtemFFdzR5cnVIMWVh?=
- =?utf-8?B?eFd2SlBZU2pzL0czM2w2cHd1THF0MlIyRjVxMEg3NUVrRUszdTE4VGViLzFx?=
- =?utf-8?B?MHBmdHVuRW50Sit1b25FT3F0M08vcTlZR3MxcW9kQklGbENoaEhJdnR2OXE5?=
- =?utf-8?B?VS8zamVFd3RLZWNxbXpQakk0cmR5MDgyd0NHMWMvLzVTVWw2WWJiZHRZUFhm?=
- =?utf-8?B?bGcyemhEaGFMQkpYcjlTQUI4emtFOFFPb3NOSzMrNDM0YUJpUjVPNjRMR0cx?=
- =?utf-8?B?UzJtcGVWR3NyTzVjWHB3em9VUmtGdDcyVC9EbWt0d1ZYTlErQ2ZDTFV6YUxi?=
- =?utf-8?B?ckNDeWkrUmsxcWxvamQyOS9wL3JYSnQ3a2VXVS94OVphd2o3R3hpQitCOEox?=
- =?utf-8?B?UjhJaG9pdzZ5R1gzSEk3TzhiUlZCbW5vSE5OdXdvSFlXQ00vWC9jenYxUW5m?=
- =?utf-8?B?SWJtRlhXT3ZsbWsyRUFaQXpQOWRSZit1S3RPOVVST1htVUtwNnFuemdkK3JC?=
- =?utf-8?B?alFnb1R2UEs3MGFwN0ZTL0JmaVYvQWNmbmVtRkVzK3VzWkJpWE91WW5OYTFG?=
- =?utf-8?B?TFhzdkhzSE1WTVo1NmhDV1pJaUE4c1VyUDhqOTdISzNub1lJc1EzMzllYVI1?=
- =?utf-8?B?VWx6S3QrNFhWTVlmTXFEVjhaOXVJYmo0dlJYVDJ2TERMa3cwSVNYRXZhUXFj?=
- =?utf-8?B?czN1UE5QWXhtVFJHYnFuYTlycWovR293LzV2WXFhRlp1eVZvaWt0R2NmckV6?=
- =?utf-8?B?ZUtYT0ZEZnlPVFdjeVB6ODFSQUpLMTRnRzJPRlFMTElNczR1TzYyVmZ4QW9O?=
- =?utf-8?B?MFQ2aU53ZnBSeVNrMGJvTXBiNElxcnBHWndEV3JvN2ZoczhmY0w0bEZ3Vm5S?=
- =?utf-8?B?Q0J6U1MrVDFldk1ObjRScGtBeGJHN3F4Sk51dnRsOUQ1ZlJKS05PYk9kNTJC?=
- =?utf-8?B?RzNXMDhMV2xjbEFaN1p2VjJBV2hReHR3dDVKQ09xRFo0dUoycXRoNGdkbVpX?=
- =?utf-8?B?WmF0ZDJxUmV6UDIwUEpTbmkxaWR4Q0RIby92NGNJUFdicUpDZ0lLZVhYMFVy?=
- =?utf-8?B?ZFh6MzJSY09ESUlCeE9FMUFNWUZPUk9GQ29xNDhoZEJVakNpR1B0UT09?=
-X-Exchange-RoutingPolicyChecked: SEnCtpm7tf6+YExd7T/Q66G8rvPG6D3FNX32L31+pePNAUjGrYEgkL1c00FeSU+fY6dqpeqLU850ut7F6r5Ss7zFis89feYnlNpbpNzOt7MdQbj/jZkMc6d5cKvg5Yl1ejEXQ1/DW2iCPjwu6NV7TEKwX3SwEjA+nTBNvQA6EcTVk5Dv/LG7dd74Jfcwq/2g3QY8jXE+P0Loc2iPyECEnyb4UXsk/CuLzsYKIiKGainB0LaU5D7PDsXbinRHA7Sd4fjqvt0m4WsBzVH8WnQKuOjKiBfyqIYk1uR2KbE53vx4Xv5t6P9uMoYmi3uFRcNxPqJg2Q0DN5ZrOIxPJA3oKA==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85bcc403-cd19-403d-2ce7-08df1fd69575
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2026 16:11:00.3875 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3FJpHF84J6vzdpHlQsmR2r5zFSQh85cQG14N+Fvr9a0gsgAkF7ewjPBNjNz9NEXxUhNMJrRmf4EYFx1h2HMNHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB662844
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -166,34 +95,311 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+From: Farah Smith <farah.smith@broadcom.com>
 
-On 01-Oct-26 3:58 PM, Pratik Senapati wrote:
->> Series-tested-by: Radu Nicolau <radu.nicolau@intel.com>
-> Hi,
->
-> I checked your patch-set, and my patch-set DOES NOT have the following patches:
->
-> - ML-DSA sign: non-deterministic, sha3_256, and ext-mu variants for 65 and 87 (6 cases)
-> - ML-KEM encap: non-deterministic (random message) variants for 768 and 1024 (2 cases)
->
-> My patchset doesn't have the above patches since it was out of scope for our requirements.
->
-> To conclude:
->
-> We can do the following:
-> - I can include your test-cases and add your sign-off.
-> - We can accept your patch-set and reject mine.
->
-> Please let me know what you'd like to do.
->
-> Thanks,
-> Pratik
-Hi,
+Track per-port table-scope teardown state (scope type and, for GLOBAL
+scope, a shared FID reference count) and clean up in the correct
+order on bnxt_en/DPDK shutdown.
 
-The best approach, which includes most of our work, will be:
-1. retain my patch for the test app, which covers more test cases.
-2. retain your patchset for the crypto-perf app, which has all the 
-variants that mine has, and in addition the sign iterations argument.
+Previously, unloading the L2 kernel driver with DPDK shutdown could
+crash because table-scope resources were torn down without properly
+tracking which FID was the last user of a GLOBAL scope. Fix this by
+introducing glb_tbl_scope_fid_cnt bookkeeping and freeing the per-port
+CPM before removing the FID from the scope, and only fully retiring
+shared GLOBAL-scope memory once the reference count reaches zero.
 
-Regards,
-Radu
+The teardown order was initially fid_rem -> mem_free, but that
+sequence was found to trigger PXP errors: fid_rem disables the scope
+in firmware, so any subsequent mem_free on that scope is operating on
+an already-disabled scope. Reordered to cpm_free -> fid_rem -> mem_free
+so the scope is only disabled and its memory released after this
+port's CPM is torn down, with fid_rem no longer preceding mem_free.
+
+Fixes: 23e0dc62d19e ("net/bnxt/tf_core: add global table scope")
+Cc: stable@dpdk.org
+
+Signed-off-by: Farah Smith <farah.smith@broadcom.com>
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
+---
+ drivers/net/bnxt/tf_ulp/bnxt_ulp.h     |   3 +
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c | 162 ++++++++++++++++++++++---
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.h |  23 ++++
+ 3 files changed, 172 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
+index afd883df2c..ba526e838d 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
+@@ -15,6 +15,7 @@
+ #include "rte_mtr.h"
+ 
+ #include "bnxt.h"
++#include "cfa_types.h"
+ #include "ulp_template_db_enum.h"
+ #include "ulp_tun.h"
+ #include "bnxt_tf_common.h"
+@@ -115,6 +116,8 @@ struct bnxt_ulp_vfr_rule_info {
+ 
+ struct bnxt_ulp_data {
+ 	uint32_t			tbl_scope_id;
++	enum cfa_scope_type		tbl_scope_type; /* for deinit */
++	uint16_t			glb_tbl_scope_fid_cnt; /* only for GLOBAL scope */
+ 	struct bnxt_ulp_mark_tbl	*mark_tbl;
+ 	uint32_t			dev_id; /* Hardware device id */
+ 	uint32_t			ref_cnt;
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+index d5ce4c3c18..dcd64fa598 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+@@ -111,6 +111,64 @@ bnxt_ulp_cntxt_tbl_scope_max_pools_set(struct bnxt_ulp_context *ulp_ctx,
+ 	return 0;
+ }
+ 
++int32_t
++bnxt_ulp_cntxt_tbl_scope_type_get(struct bnxt_ulp_context *ulp_ctx,
++				  enum cfa_scope_type *scope_type)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL || scope_type == NULL)
++		return -EINVAL;
++	*scope_type = ulp_ctx->cfg_data->tbl_scope_type;
++	return 0;
++}
++
++int32_t
++bnxt_ulp_cntxt_tbl_scope_type_set(struct bnxt_ulp_context *ulp_ctx,
++				  enum cfa_scope_type scope_type)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)
++		return -EINVAL;
++	ulp_ctx->cfg_data->tbl_scope_type = scope_type;
++	return 0;
++}
++
++uint16_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_get(struct bnxt_ulp_context *ulp_ctx)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)
++		return 0;
++	return ulp_ctx->cfg_data->glb_tbl_scope_fid_cnt;
++}
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_set(struct bnxt_ulp_context *ulp_ctx,
++					 uint16_t fid_cnt)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)
++		return -EINVAL;
++	ulp_ctx->cfg_data->glb_tbl_scope_fid_cnt = fid_cnt;
++	return 0;
++}
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_inc(struct bnxt_ulp_context *ulp_ctx)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)
++		return -EINVAL;
++	ulp_ctx->cfg_data->glb_tbl_scope_fid_cnt++;
++	return 0;
++}
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_dec(struct bnxt_ulp_context *ulp_ctx)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)
++		return -EINVAL;
++	if (ulp_ctx->cfg_data->glb_tbl_scope_fid_cnt == 0)
++		return -EINVAL;
++	ulp_ctx->cfg_data->glb_tbl_scope_fid_cnt--;
++	return 0;
++}
++
+ enum tfc_tbl_scope_bucket_factor
+ bnxt_ulp_cntxt_em_mulitplier_get(struct bnxt_ulp_context *ulp_ctx)
+ {
+@@ -299,39 +357,82 @@ ulp_tfc_dparms_init(struct bnxt *bp,
+ static void
+ ulp_tfc_tbl_scope_deinit(struct bnxt *bp)
+ {
+-	uint16_t fid = 0, fid_cnt = 0;
+-	struct tfc *tfcp;
++	uint16_t fid = 0;
++	uint16_t our_fid_cnt = 0;
++	struct tfc *tfcp = NULL;
+ 	uint8_t tsid = 0;
+ 	int32_t rc;
++	enum cfa_scope_type scope_type = CFA_SCOPE_TYPE_INVALID;
++	int32_t scope_rc;
++	bool have_scope = false;
+ 
+ 	tfcp = bnxt_ulp_cntxt_tfcp_get(bp->ulp_ctx);
+ 	if (tfcp == NULL)
+-		return;
++		goto cleanup;
+ 
+ 	rc = bnxt_ulp_cntxt_tsid_get(bp->ulp_ctx, &tsid);
+-	if (unlikely(rc))
+-		BNXT_DRV_DBG(ERR, "Failed to get the table scope\n");
++	if (rc) {
++		BNXT_DRV_DBG(ERR, "tsid_get failed rc=%d, skipping table-scope deinit", rc);
++		goto cleanup;
++	}
+ 
+ 	rc = bnxt_ulp_cntxt_fid_get(bp->ulp_ctx, &fid);
+-	if (rc)
++	if (rc) {
++		BNXT_DRV_DBG(ERR, "fid_get failed rc=%d, skipping table-scope deinit", rc);
++		goto cleanup;
++	}
++
++	have_scope = true;
++
++	if (bnxt_ulp_cntxt_acquire_fdb_lock(bp->ulp_ctx)) {
++		BNXT_DRV_DBG(ERR, "acquire_fdb_lock failed, proceeding with teardown using conservative fid_cnt");
++		our_fid_cnt = 1; /* Conservative: avoid invalidating shared scope in mem_free */
++	} else {
++		scope_rc = bnxt_ulp_cntxt_tbl_scope_type_get(bp->ulp_ctx, &scope_type);
++		if (scope_rc) {
++			BNXT_DRV_DBG(ERR,
++				     "tbl_scope_type_get failed rc=%d, proceeding with teardown using conservative fid_cnt",
++				     scope_rc);
++			our_fid_cnt = 1; /* avoid invalidating shared scope in mem_free */
++		} else if (scope_type == CFA_SCOPE_TYPE_GLOBAL) {
++			rc = bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_dec(bp->ulp_ctx);
++			if (rc) {
++				BNXT_DRV_DBG(WARNING,
++					     "glb_tbl_scope_fid_cnt dec failed (e.g. already 0), continuing teardown TSID:%d FID:%d",
++					     tsid, fid);
++				/* Pass 1 so mem_free won't treat as last FID & invalidate scope */
++				our_fid_cnt = 1;
++			} else {
++				our_fid_cnt = bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_get(bp->ulp_ctx);
++			}
++		} else {
++			our_fid_cnt = 0;
++		}
++		bnxt_ulp_cntxt_release_fdb_lock(bp->ulp_ctx);
++	}
++
++cleanup:
++	if (!have_scope)
+ 		return;
+ 
+-	rc = tfc_tbl_scope_fid_rem(tfcp, fid, tsid, &fid_cnt);
++	/* Free this port's CPM before mem_free; mem_free invalidates tsid scope state */
++	rc = tfc_tbl_scope_cpm_free(tfcp, tsid);
+ 	if (rc)
+-		BNXT_DRV_DBG(ERR, "Failed removing FID from TSID:%d FID:%d",
++		BNXT_DRV_DBG(ERR, "Failed Freeing CPM TSID:%d FID:%d",
+ 			     tsid, fid);
+ 	else
+-		BNXT_DRV_DBG(DEBUG, "Removed FID from TSID:%d FID:%d",
+-			     tsid, fid);
++		BNXT_DRV_DBG(DEBUG, "Freed CPM TSID:%d FID: %d", tsid, fid);
+ 
+-	rc = tfc_tbl_scope_cpm_free(tfcp, tsid);
++	rc = tfc_tbl_scope_fid_rem(tfcp, fid, tsid, NULL);
+ 	if (rc)
+-		BNXT_DRV_DBG(ERR, "Failed Freeing CPM TSID:%d FID:%d",
++		BNXT_DRV_DBG(ERR, "Failed removing FID from TSID:%d FID:%d",
+ 			     tsid, fid);
+ 	else
+-		BNXT_DRV_DBG(DEBUG, "Freed CPM TSID:%d FID: %d", tsid, fid);
++		BNXT_DRV_DBG(DEBUG, "Removed FID from TSID:%d FID:%d, remaining FID count:%d",
++			     tsid, fid, our_fid_cnt);
+ 
+-	rc = tfc_tbl_scope_mem_free(tfcp, fid, tsid, fid_cnt);
++	/* Still attempt mem_free and fid_rem to avoid FW/driver state divergence. */
++	rc = tfc_tbl_scope_mem_free(tfcp, fid, tsid, our_fid_cnt);
+ 	if (rc)
+ 		BNXT_DRV_DBG(ERR, "Failed freeing tscope mem TSID:%d FID:%d",
+ 			     tsid, fid);
+@@ -506,13 +607,42 @@ ulp_tfc_tbl_scope_init(struct bnxt *bp)
+ 	cparms.max_pools = max_pools;
+ 
+ 	rc = tfc_tbl_scope_cpm_alloc(tfcp, tsid, &cparms);
+-	if (rc)
++	if (rc) {
+ 		BNXT_DRV_DBG(ERR, "Failed to allocate CPM TSID:%d FID:%d\n",
+ 			     tsid, fid);
+-	else
++	} else {
+ 		BNXT_DRV_DBG(DEBUG, "Allocated CPM TSID:%d FID:%d\n", tsid, fid);
++		/* Inc before setting type so type==GLOBAL never without count incremented. */
++		if (bnxt_ulp_cntxt_acquire_fdb_lock(bp->ulp_ctx)) {
++			BNXT_DRV_DBG(ERR, "acquire_fdb_lock failed after CPM alloc, rolling back");
++			goto rollback;
++		}
++		if (scope_type == CFA_SCOPE_TYPE_GLOBAL) {
++			rc = bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_inc(bp->ulp_ctx);
++			if (rc) {
++				BNXT_DRV_DBG(ERR, "Failed to increment glb_tbl_scope_fid_cnt");
++				bnxt_ulp_cntxt_release_fdb_lock(bp->ulp_ctx);
++				return rc;
++			}
++		}
++		rc = bnxt_ulp_cntxt_tbl_scope_type_set(bp->ulp_ctx, scope_type);
++		bnxt_ulp_cntxt_release_fdb_lock(bp->ulp_ctx);
++	}
+ 
+ 	return rc;
++
++rollback:
++	/* Rollback: only FID in scope (glb_tbl_scope_fid_cnt_inc never ran). */
++	rc = tfc_tbl_scope_cpm_free(tfcp, tsid);
++	if (rc)
++		BNXT_DRV_DBG(INFO, "Rollback: cpm_free failed TSID:%d FID:%d rc=%d", tsid, fid, rc);
++	rc = tfc_tbl_scope_mem_free(tfcp, fid, tsid, 0);
++	if (rc)
++		BNXT_DRV_DBG(INFO, "Rollback: mem_free failed TSID:%d FID:%d rc=%d", tsid, fid, rc);
++	rc = tfc_tbl_scope_fid_rem(tfcp, fid, tsid, NULL);
++	if (rc)
++		BNXT_DRV_DBG(INFO, "Rollback: fid_rem failed TSID:%d FID:%d rc=%d", tsid, fid, rc);
++	return -1;
+ }
+ 
+ static int32_t
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.h
+index ab6608ac74..2b73043ab8 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.h
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.h
+@@ -7,6 +7,7 @@
+ #define _BNXT_ULP_TFC_H_
+ 
+ #include "bnxt.h"
++#include "cfa_types.h"
+ #include <inttypes.h>
+ 
+ bool
+@@ -24,6 +25,28 @@ bnxt_ulp_cntxt_tbl_scope_max_pools_get(struct bnxt_ulp_context *ulp_ctx);
+ int32_t
+ bnxt_ulp_cntxt_tbl_scope_max_pools_set(struct bnxt_ulp_context *ulp_ctx,
+ 				       uint32_t max);
++
++int32_t
++bnxt_ulp_cntxt_tbl_scope_type_get(struct bnxt_ulp_context *ulp_ctx,
++				  enum cfa_scope_type *scope_type);
++
++int32_t
++bnxt_ulp_cntxt_tbl_scope_type_set(struct bnxt_ulp_context *ulp_ctx,
++				  enum cfa_scope_type scope_type);
++
++uint16_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_get(struct bnxt_ulp_context *ulp_ctx);
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_set(struct bnxt_ulp_context *ulp_ctx,
++					 uint16_t fid_cnt);
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_inc(struct bnxt_ulp_context *ulp_ctx);
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_dec(struct bnxt_ulp_context *ulp_ctx);
++
+ enum tfc_tbl_scope_bucket_factor
+ bnxt_ulp_cntxt_em_mulitplier_get(struct bnxt_ulp_context *ulp_ctx);
+ 
+-- 
+2.31.1
+
