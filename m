@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9265ACA5FA5
-	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 07:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E52CCA5FC5
+	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 07:33:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 536D3402C3;
-	Thu,  1 Oct 2026 09:33:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A10042D2B;
+	Thu,  1 Oct 2026 09:33:16 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id BD267400D5;
- Thu,  1 Oct 2026 09:33:13 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id F38D6402C3
+ for <dev@dpdk.org>; Thu,  1 Oct 2026 09:33:14 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 92F0A1A006B;
- Thu,  1 Oct 2026 09:33:13 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CC4BA1A0108;
+ Thu,  1 Oct 2026 09:33:14 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C2891A0108;
- Thu,  1 Oct 2026 09:33:13 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 974521A00FB;
+ Thu,  1 Oct 2026 09:33:14 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D1D21180006C;
- Thu,  1 Oct 2026 15:33:11 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 14E0F18000BA;
+ Thu,  1 Oct 2026 15:33:12 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
-Cc: stable@dpdk.org,
-	Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: [PATCH v5-S2 01/13] net/dpaa2: fix integer overflow in CCSR region
- mapping
-Date: Thu,  1 Oct 2026 13:02:55 +0530
-Message-ID: <20261001073307.1125305-2-prashant.gupta_3@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>,
+	Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v5-S2 02/13] net/dpaa2: set Tx confirmation on device init
+Date: Thu,  1 Oct 2026 13:02:56 +0530
+Message-ID: <20261001073307.1125305-3-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261001073307.1125305-1-prashant.gupta_3@nxp.com>
 References: <20260922095528.2469885-1-prashant.gupta_3@nxp.com>
@@ -50,84 +49,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
+From: Gagandeep Singh <g.singh@nxp.com>
 
-In lsx_ccsr_map_region, PAGE_SIZE is a macro defined as
-sysconf(_SC_PAGESIZE), which returns a signed long and may be negative
-on error. The value was used directly in size_t comparisons and passed
-to mmap, causing an integer overflow (Coverity CID 49765682).
+Move TX confirmation mode setting from TXQ setup to device
+initialization because TXQ0 is not always set up by the user.
 
-The old round-down "len & PAGE_MASK" ignored the in-page offset: for a
-4096-byte or 6656-byte len on a 64K-page kernel the masked result is 0,
-and only the subsequent "if (len < PAGE_SIZE) len = PAGE_SIZE" saved it.
-That check did not account for offset + len crossing a page boundary.
-
-Fix by calling sysconf(_SC_PAGESIZE) explicitly into a signed long,
-checking for a non-positive return before use, computing page_mask from
-the verified value, and keeping map_len as a separate variable so that
-the final mmap size is always at least one page. The page-aligned start
-address and the back-pointer offset are both derived from the same
-page_mask, keeping the three values consistent.
-
-Coverity issue: 49765682
-Fixes: f023d059769f ("net/dpaa2: support recycle loopback port")
-Cc: stable@dpdk.org
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_recycle.c | 27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 40 ++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/net/dpaa2/dpaa2_recycle.c b/drivers/net/dpaa2/dpaa2_recycle.c
-index f78d12362e..f1a234deae 100644
---- a/drivers/net/dpaa2/dpaa2_recycle.c
-+++ b/drivers/net/dpaa2/dpaa2_recycle.c
-@@ -176,6 +176,9 @@ static void *lsx_ccsr_map_region(uint64_t addr, size_t len)
- 	void *tmp;
- 	uint64_t start;
- 	uint64_t offset;
-+	uint64_t page_mask;
-+	long page_size;
-+	size_t map_len;
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index f211357919..c95704d4ca 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -1153,7 +1153,6 @@ dpaa2_dev_tx_queue_setup(struct rte_eth_dev *dev,
+ 	struct dpni_queue tx_conf_cfg;
+ 	struct dpni_queue tx_flow_cfg;
+ 	uint8_t options = 0, flow_id;
+-	uint8_t ceetm_ch_idx;
+ 	uint16_t channel_id;
+ 	struct dpni_queue_id qid;
+ 	uint32_t tc_id;
+@@ -1174,30 +1173,6 @@ dpaa2_dev_tx_queue_setup(struct rte_eth_dev *dev,
+ 	memset(&tx_conf_cfg, 0, sizeof(struct dpni_queue));
+ 	memset(&tx_flow_cfg, 0, sizeof(struct dpni_queue));
  
- 	fd = open("/dev/mem", O_RDWR);
- 	if (fd < 0) {
-@@ -183,20 +186,28 @@ static void *lsx_ccsr_map_region(uint64_t addr, size_t len)
- 		return NULL;
+-	if (!tx_queue_id) {
+-		for (ceetm_ch_idx = 0;
+-			ceetm_ch_idx <= (priv->num_channels - 1);
+-			ceetm_ch_idx++) {
+-			/*Set tx-conf and error configuration*/
+-			if (priv->flags & DPAA2_TX_CONF_ENABLE) {
+-				ret = dpni_set_tx_confirmation_mode(dpni,
+-						CMD_PRI_LOW, priv->token,
+-						ceetm_ch_idx,
+-						DPNI_CONF_AFFINE);
+-			} else {
+-				ret = dpni_set_tx_confirmation_mode(dpni,
+-						CMD_PRI_LOW, priv->token,
+-						ceetm_ch_idx,
+-						DPNI_CONF_DISABLE);
+-			}
+-			if (ret) {
+-				DPAA2_PMD_ERR("Error(%d) in tx conf setting",
+-					ret);
+-				return ret;
+-			}
+-		}
+-	}
+-
+ 	tc_id = tx_queue_id % priv->num_tx_tc;
+ 	channel_id = (uint8_t)(tx_queue_id / priv->num_tx_tc) % priv->num_channels;
+ 	flow_id = 0;
+@@ -3624,6 +3599,21 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 		goto init_err;
  	}
  
--	start = addr & PAGE_MASK;
-+	page_size = sysconf(_SC_PAGESIZE);
-+	if (page_size <= 0) {
-+		close(fd);
-+		return NULL;
++	for (i = 0; i < priv->num_channels; i++) {
++		/*Set tx-conf and error configuration*/
++		if (priv->flags & DPAA2_TX_CONF_ENABLE) {
++			ret = dpni_set_tx_confirmation_mode(dpni_dev,
++				CMD_PRI_LOW, priv->token, i, DPNI_CONF_AFFINE);
++		} else {
++			ret = dpni_set_tx_confirmation_mode(dpni_dev,
++				CMD_PRI_LOW, priv->token, i, DPNI_CONF_DISABLE);
++		}
++		if (ret) {
++			DPAA2_PMD_ERR("Error(%d) in tx conf setting", ret);
++			goto init_err;
++		}
 +	}
-+	page_mask = ~((uint64_t)page_size - 1);
-+	start = addr & page_mask;
- 	offset = addr - start;
--	len = len & PAGE_MASK;
--	if (len < (size_t)PAGE_SIZE)
--		len = PAGE_SIZE;
-+	len = len & page_mask;
 +
-+	map_len = len;
-+	if (map_len < (size_t)page_size)
-+		map_len = (size_t)page_size;
- 
--	tmp = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, start);
-+	tmp = mmap(NULL, map_len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, start);
- 
- 	close(fd);
- 
--	if (tmp != MAP_FAILED)
--		return (uint8_t *)tmp + offset;
--	else
-+	if (tmp == MAP_FAILED)
- 		return NULL;
-+
-+	return (uint8_t *)tmp + offset;
- }
- 
- static const uint8_t ls_sd1_prot_idx_map[] = {
+ 	/* Allocate memory for storing MAC addresses.
+ 	 * Table of mac_filter_entries size is allocated so that RTE ether lib
+ 	 * can add MAC entries when rte_eth_dev_mac_addr_add is called.
 -- 
 2.43.0
 
