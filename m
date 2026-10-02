@@ -2,75 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 807B4CA5FCE
-	for <dpdk-dev@archiver.kernel.org>; Thu,  1 Oct 2026 23:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ECB8CA5FD4
+	for <dpdk-dev@archiver.kernel.org>; Fri,  2 Oct 2026 02:17:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5685140144;
-	Fri,  2 Oct 2026 01:00:53 +0200 (CEST)
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
- [74.125.227.140])
- by mails.dpdk.org (Postfix) with ESMTP id 2DA4C4003C
- for <dev@dpdk.org>; Fri,  2 Oct 2026 01:00:51 +0200 (CEST)
-Received: by mail-pj2-f12.google.com with SMTP id
- d9443c01a7336-2db18fe433fso33085105ad.2
- for <dev@dpdk.org>; Thu, 01 Oct 2026 16:00:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790895650;
- x=1791500450; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=E2omEHFwGydRaxxAqoH1By/mnmS9zqjBAdFd2XwEHNQ=;
- b=a/rYGy2fX3wTml26BVGQ8zYnhapgQjFaqf5Kw8Jr32Ebc0zr/1uiUAO9L2ieeCuIV/
- e/0ZFZvU3FQktKprni1CfXxoYPo5t0Rvm2IaNwUEaR2yRp6222l1MwJPGRPl7aGVnnWI
- BLDsl/BZ/TKYUdwjaNSZCCwu/Ez8rAzlrySPom1a//w0jnu7laxxVHS+xHnuxs8dcFVB
- 0U8Tly59yx3LSBEQdkL0rhEWBF3zEUAOgBE94TFXKoKESvN7NWnKdVrlqTdlFxLdQdlB
- U38G7lN+O18YaQl2WUVA4SLmZUyHoKGJjcgKDuS6vyU38FBuQA9/WUahQaPXqDCXi8gx
- WDEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790895650; x=1791500450;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=E2omEHFwGydRaxxAqoH1By/mnmS9zqjBAdFd2XwEHNQ=;
- b=WAgG4erGkVii/TbotZNfMPbh615mYsnT3xo3uWCRgcazj2P2f2zNrbKoFy0vIlvzsi
- 9q17rd4OUWREyoazDl0Z8V2X6DI0DiZCcZbunU45MOj/bNLx6YBA1rrcnubmxw6TMLfx
- OBZYs6t8ROR8aSSOu1z7oroAqjpV85tkV8p/2AsCKW+RzWEplCaY1rIaVyp7V6Bb5E0T
- dKN6k1yeGwa0BMNvXmTLYoDQxjlerbtAaFmoxN3yr0Xljs5K9kC6/ROlogmTPKewQeHs
- begg3Z8ExQi726B0oUhJOSo/vAoMwxZEF92u5P0hby6tOCPTiR+0u0WcOni0DJW/JAHC
- 4LUA==
-X-Gm-Message-State: AFq9FYISM68zLGBQFOW6JgE1kmMWeA9rk4Ama/ylzZujsHK5DOTSi11n
- 0WPglnC3vAPFDFquyjuf5DX2LrwZRLCqPpwmj+NwE/YIQ34+jjGt3LMAZ/19T2oYT0s=
-X-Gm-Gg: AYBFou3YVUxTzsRG3usGqmj42bn3weaLE3wRj9E35Qyow6UrcfOF1HmrujqyqijDfJ1
- llrJwH6VNeX16PTlD7aJl4qDXfKgxLfwUXOW21jIeGCmWiaLFbwssIM14Lus4kzB7iFx+S+fCor
- 581LX/rFNxzWGBfQrhnZHemtKBLZxG23K82p0w4nmCRYzTnd9cENH0akSAlzuTLS9MlT28Yxl7O
- IjnCkZBiSiLasSMvO+lkrhkxLIY/20I3QpLTCuPiqe5GLVQFE5L1TiolUMLc8AiTWMhRbf10sUU
- rKbrqmPUdN4cEG45Wtq8zleO9ANB6ofyNx7f7XWlpb8HEczgdjNuR954JEAZ4a7j5v8yThaN68A
- v5XC+XoLst3kwUWW2/1iLZbmbBslfH4QgXr3z8igi0f457WLvBg3SDWBQbXKb/nnRTTNXt9BzgN
- ixkds7jAfChbWWVlD7yU1ODvg3utaQ81fmpX6MFJXumTT1jmcMSl1Jy4I4FYbEiDYPEcwksHPCQ
- DyOVfyP6ehRIUcL3YIVlBtypSstSYreOW17KJpn
-X-Received: by 2002:a17:902:ec8c:b0:2dd:c100:b2c2 with SMTP id
- d9443c01a7336-2e49b7f32c5mr7514555ad.45.1790895650543; 
- Thu, 01 Oct 2026 16:00:50 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e49e1f222asm1682175ad.3.2026.10.01.16.00.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 01 Oct 2026 16:00:49 -0700 (PDT)
-Date: Thu, 1 Oct 2026 16:00:46 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <qm2k21@gmail.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v4 0/4] add rpcap remote capture daemon
-Message-ID: <20261001160046.61827fec@phoenix.local>
-In-Reply-To: <cb600b10-6403-499b-af19-3f69d103510e@gmail.com>
-References: <20260908210832.1556291-1-stephen@networkplumber.org>
- <20261001025853.319860-1-stephen@networkplumber.org>
- <cb600b10-6403-499b-af19-3f69d103510e@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1D3AA40144;
+	Fri,  2 Oct 2026 04:17:49 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id CE87A4003C;
+ Fri,  2 Oct 2026 04:17:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1790907469; x=1822443469;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=9lwumDliKMGIIYYyuPnO3ZDYiDD8NwUmQ4ucXgUiaNk=;
+ b=h2luqk2G6LwdCZ5Rv7j/jt0l+1jsaRnj6V5eB8XGVeYNwMRKdHbEMVBG
+ mGlLRQBkqlsLZBmlYAnOH3hTK+X6GkLwPz7uYY2VgmuyO96kai3q1uNKv
+ kmnncv8Asa0G2RdBdF6s77LPCA+lBBSCJ/0AiUlwxcPRxa8Hka6lNgb+I
+ VRCYv1WsYh9G3WXZad2jbLBhH2mdHFT9X9z7jERA6Bm2sQIf0VImO+Ia1
+ leAthEoCqjwuYRW1WuPie3yvMCvK4R/0mhDgHqa0Ueb60RKqiIYh0cnWH
+ sJ97kEkvUXZCdHhP2+8I6/fD5T2BGhXBaJ3XHrsvC8nFqrpNWbatYEHJ1 g==;
+X-CSE-ConnectionGUID: mlhR1jqOTkaU8uNMydKTpw==
+X-CSE-MsgGUID: A3+U4PSfRuKgG5ixLrVSEw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11922"; a="102201431"
+X-IronPort-AV: E=Sophos;i="6.27,135,1787036400"; d="scan'208";a="102201431"
+Received: from fmviesa012.fm.intel.com ([10.60.135.152])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Oct 2026 19:17:47 -0700
+X-CSE-ConnectionGUID: YIsM2h4GQ16Pde2LOByBJQ==
+X-CSE-MsgGUID: ESjqjZaQSEGVXip/oRMwYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,135,1787036400"; 
+   d="scan'208";a="174160"
+Received: from pae-14.iind.intel.com ([10.190.203.153])
+ by fmviesa012.fm.intel.com with ESMTP; 01 Oct 2026 19:17:44 -0700
+From: Anurag Mandal <anurag.mandal@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
+ Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
+Subject: [PATCH] net/ice: fix unchecked Tx time context allocation
+Date: Fri,  2 Oct 2026 02:19:37 +0000
+Message-Id: <20261002021937.391321-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,47 +59,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 1 Oct 2026 19:50:34 +0100
-Marat Khalili <qm2k21@gmail.com> wrote:
+ice_tx_queue_start() dereferences the Tx time queue
+context buffer returned by ice_malloc() without
+NULL check.
+On allocation failure, the E830 send-on-timestamp path
+therefore crashes instead of reporting "No Memory" error,
+and also the already allocated txq_elem buffer gets leaked.
 
-> >    pcapng: add API to read back capture mbuf header  
-> Analysis with AI tells that there are some opportunities to make the 
-> fast path of lib/pcapng both lighter and less .pcapng-centric to make 
-> life of consumers that prefer other formats easier. It does not have to 
-> (probably even shouldn't) be a part of the current patchset though.
+Added the necessary allocation failure check and freed
+txq_elem buffer in case of failure to avoid the memory leak.
 
-Thought about that, and also looked at making rpcap another library
-but it ends up with DPDK reimplementing libpcap...
+Fixes: 0b6ff09a1f19 ("net/intel: support Tx packet pacing for E830")
+Cc: stable@dpdk.org
 
-The other option would be using dynamic fields. There already is timestamp,
-but there is none for "original packet length". 
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+---
+ drivers/net/intel/ice/ice_rxtx.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Third option is not using pdump callbacks at all and just having rpcap
-specific callbacks. That is what the Wireshark extcap does. That is where
-I think this will end up. Would like to not use pdump since it has
-so many design problems baked in.
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index b333444cbf..873aca0100 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -898,6 +898,10 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ 		u8 ts_buf_len = ice_struct_size(ts_elem, txtimeqs, 1);
+ 
+ 		ts_elem = ice_malloc(hw, ts_buf_len);
++		if (!ts_elem) {
++			rte_free(txq_elem);
++			return -ENOMEM;
++		}
+ 		ice_setup_txtime_ctx(txq, &txtime_ctx, true);
+ 		ice_set_ctx(hw, (u8 *)&txtime_ctx,
+ 				ts_elem->txtimeqs[0].txtime_ctx,
+-- 
+2.34.1
 
-
-> >    app/rpcapd: remote pcap daemon  
-> Ideally forwarding captured data could run in a separate thread with 
-> minimum unnecessary syscalls, although it's hard to tell without 
-> benchmarks how much current design is slowed down by them.
-
-New version does use a data forwarding thread.
-It has to write to a socket, which it does with sendmsg.
-It could use liburing, to reduce syscalls further.
-
-> >    app/rpcapd: add TLS support  
-> This patch simultaneously adds authentication, but it's only required 
-> for non-loopback users. This is a common security vulnerability, not all 
-> loopback users can be trusted. So if we care about authentication at 
-> all, it should probably also be required for localhost users, at least 
-> by default.
-
-Good point, but do not want to add DPDK specific user data base.
-The problem is that TCP loopback has no way to identify who is on the
-other end. Unix domain sockets do, but libpcap doesn't support that.
-
-The real long term answer is having plugins in libpcap (Robin's proposal)
-and make this one of the plugins. But that will take longer to reach
-agreement on.
