@@ -2,153 +2,152 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EBCCA5FDD
-	for <dpdk-dev@archiver.kernel.org>; Fri,  2 Oct 2026 13:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8890BCA5FDD
+	for <dpdk-dev@archiver.kernel.org>; Fri,  2 Oct 2026 14:45:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E5BC40294;
-	Fri,  2 Oct 2026 15:13:51 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 7F8E14003C
- for <dev@dpdk.org>; Fri,  2 Oct 2026 15:13:49 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 69BFA4026C;
+	Fri,  2 Oct 2026 16:45:24 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id A848A4003C
+ for <dev@dpdk.org>; Fri,  2 Oct 2026 16:45:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1790946830; x=1822482830;
+ t=1790952323; x=1822488323;
  h=message-id:date:subject:to:references:from:in-reply-to:
  content-transfer-encoding:mime-version;
- bh=TslzK8iTT88HBtRqvTJoEvB/qqBg0mRusVXHOYYAGyg=;
- b=YxdQq41ej5jHcr8BuVm85i3HPuSawh7QqwXSxQijxMnVdM89zhN34XDq
- uOc6Dah20mXLgaxUWVq28XOEGpg2DPniWYcWGrszAcJd/nM3QMso74Xae
- 5LbhXAxn/d2foi9/wJmAltuuDzSgPnmYMiU+P4hbkQbZiqF1vc3ylAC3/
- EEiRUbrQlrcgbq+fIFVPM5G0O1ttulvveRJMk5oGn4rJSWGg8c9LtjEtL
- XosGzSBFt9qLfiT+zIWYkLXcBBBoIO9kL46vn9+dWnvCtuUPI1cYjRMRV
- vPq1VV7uOCoS32+xExYUtMCJjJM40eYwEAM91EcpW7n5MRJMjt5TOhvH1 A==;
-X-CSE-ConnectionGUID: a37ndpA8R9W7/oDPKFCZYQ==
-X-CSE-MsgGUID: 0TpjHWtdSi+/d2uoEnX93A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11923"; a="91812861"
-X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; d="scan'208";a="91812861"
+ bh=Pan/Imv9FIe+o8YpUKdoWBOmlVkegPN7SY82nHSou14=;
+ b=jvhDW81Dq1X+xMRn7m03shxHbyotvhnWFmYCIdDltM/VpUsglQLQEAVs
+ kdVCBRUPgL7Rw2vraox7LCNDmAu5DH+FI8ORCWLaJ0bexf3o7Oakb3Hbc
+ qNmonqMhgtWmLjULbZhuLvejojD60MMDCTYqoevGj57ygrruOLNBnSypn
+ ZOEHB7i3NVvqyZdyHFNMJcYsN0RgB8n07sF5IQPsWPGNuJ2hlGfKYQVyB
+ nbmGTICPkIYxBvZYacSK8nDLMAYo4I3K18mmWOXj602gdW66PdNoDjweo
+ UWtdpM9QG+VqnnKHYNDqOjp8LB0yey3oczJRLPME4DBfjK6wlOyoFPulO Q==;
+X-CSE-ConnectionGUID: HCC8MDxRRIauo97W1Xo7vg==
+X-CSE-MsgGUID: rs4MSomtTSuR9RSpdpLizQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11923"; a="91738675"
+X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; d="scan'208";a="91738675"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Oct 2026 06:13:49 -0700
-X-CSE-ConnectionGUID: 1GhjpcjZRJ6jfGm6t6UgKw==
-X-CSE-MsgGUID: InyZeQ6UQxOPS1aD/hw+fA==
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Oct 2026 07:45:21 -0700
+X-CSE-ConnectionGUID: D7QyMcKvROityrPTK0RuMw==
+X-CSE-MsgGUID: NqyRTSZESWOxcoifhy7erg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; d="scan'208";a="279497217"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; d="scan'208";a="279511893"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Oct 2026 06:13:49 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ 02 Oct 2026 07:45:21 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Fri, 2 Oct 2026 06:13:47 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ 15.2.2562.49; Fri, 2 Oct 2026 07:45:21 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Fri, 2 Oct 2026 06:13:47 -0700
-Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.8) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ 15.2.2562.49 via Frontend Transport; Fri, 2 Oct 2026 07:45:21 -0700
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.9) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Fri, 2 Oct 2026 06:13:47 -0700
+ 15.2.2562.49; Fri, 2 Oct 2026 07:45:20 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m8VsY9D9MX394dMzuqAiGUGkbpswz/2aiee7sifHfwfmqU3UXBlT4hmNLUP8oXJMd75dJK2PEFP+Rezi04q85l4BaiVeIjaklJYKd9JJeJTkfhYrZQbgbm/Z3J4Hidst2P/5pYoc4JoZ/kAhNn68k1SyWzprfQzRPzBUgdn/4ehdpxmayKx61BFJlyCgTj3Est95iFdh1UvI0i6Hrgf3zMhbKNSPKHBAs8Um61Is/WQpjki4qoa+jU7xyEM6qUryMGj+TZyShpHO++cEmcEMs9bkpeEjIFdO6zNuduhSFC1Dj5Cd+x1oK8rSwaZroYprr1W2eLbIfuktgZMFQPx+1A==
+ b=NO5h/z+Jdw/k9Q+43kfLjCZxgm7TTb09BW3Imd6fMDbgq3s5FAikHPk8GNINPhx0z+FnNy0FYpWA/88+kAJyh+RRE+XCqAYUaubZ0EcopjR67R3ekybvyHcsGSJdZyUQVh/l/IypWDjZ9jRxp6G+CjYIbDpPzHOvEcV63dPOlKQOrk8fdXQBlFOKuDJjIfzrQczEtIOs1asDLPA8E/9anM0ZuI4dB/aQHF1CcfDM5XSmRPLcco3/dtMM99RZWx0s4Iz52d0uFhDFqu3szSUIfq7aRMTYYa7C432nxelT3dTd1O0rs7010XUW+H1HIWELUhZAl9MkpK7gaaipn4IjZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IxTEPvLiceVGF6CmsB/sQyFkMgimS5KyYz+7LgB0eQY=;
- b=LyfZBcO16RwNCFTjIf9nzAYW/KPUL6F14JFqpuhRKBvVcZntPHcXt2Cy1z1RqWK23oC3aehKBFGIcucy5CV6Vs+sLaZ+yrXmqUR3S/ff7aPCyxcKqxKzdPdjnKuPvsh5oAaRHaOcO0NLCUi56r9dLDPspp6DpsASVx3ZgQ7/Nh/f6sHkoIefwqvo0tMThcBNkkk+xqvq2kksEYNLJVLZKyIiPoPI1+Q4FZz+MHy1qpcX23TycW7fjLfyYftFRCYEVqkbdL/sBe+tnAO75rMnjhJ6EISYPxygGrZ48tEb0Uu5j3a88XzcTUsqoC0Y6zfVe9UDjzzViXA3ziNxdew9kQ==
+ bh=lTcx9meX4y12HOEIt8HIbiYOUQkv3lwYdNUfgWGyQbQ=;
+ b=raWdPCXdUCJbzvb9sgBwwFrnkhSEvWvMxlqAjW9M//NTXE0amZ42GQDs0HFcUS4efaTHUsMH5Z/+Zvf8sOkestFqx/Re4Ph8du5gxboYO0rVBCcaeCq3f69LOChKG4zTw+RjucArPMJ4E7LF9fdOGWcfcHEmM1hxCaqskMK0CLM0xgPde8oEvBr9CNwH0SzBAS65kURJI9o/ULlDKVV2jkuOjCnVoC9GSnk1T7/JemwC70fWx5y6j26tt/FDYpsy8UTMhZcruukNbwTPWfQNzSszHO8ZBA8BpWy08hfN31GYACJvoXhCyrAcrXSBT/wcnqIM1F+zlC/nsv6b94LYtg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- IA1PR11MB7727.namprd11.prod.outlook.com (2603:10b6:208:3f1::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.16; Fri, 2 Oct
- 2026 13:13:44 +0000
+ SN7PR11MB7042.namprd11.prod.outlook.com (2603:10b6:806:299::5) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.472.18; Fri, 2 Oct 2026 14:45:18 +0000
 Received: from DM4PR11MB6502.namprd11.prod.outlook.com
  ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
  ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.21.0472.015; Fri, 2 Oct 2026
- 13:13:44 +0000
-Message-ID: <f6b770bb-9619-48b5-aa2c-b233ca16d6f3@intel.com>
-Date: Fri, 2 Oct 2026 15:13:38 +0200
+ 14:45:17 +0000
+Message-ID: <d8512459-29e6-4bf1-914c-d2d81b7a400e@intel.com>
+Date: Fri, 2 Oct 2026 16:45:12 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/19] net/intel/common: add flow engines infrastructure
-To: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>, <dev@dpdk.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-References: <63c3a0cb245f38af6da4d14547aaac9a4789c850.1789560944.git.anatoly.burakov@intel.com>
- <cabd590e-46ba-40fa-803d-fb0c559fd655@intel.com>
+Subject: Re: [PATCH v3 05/19] net/ixgbe: reimplement ethertype parser
+To: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>, <dev@dpdk.org>
+References: <e389782f585880877bd626cc0a05bac81e418393.1789560945.git.anatoly.burakov@intel.com>
+ <0baf24e4-ef72-4462-8804-6be86701a423@intel.com>
 From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
 Content-Language: en-US
-In-Reply-To: <cabd590e-46ba-40fa-803d-fb0c559fd655@intel.com>
+In-Reply-To: <0baf24e4-ef72-4462-8804-6be86701a423@intel.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PA7P264CA0160.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:36c::8) To DM4PR11MB6502.namprd11.prod.outlook.com
+X-ClientProxiedBy: DU2P250CA0022.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:10:231::27) To DM4PR11MB6502.namprd11.prod.outlook.com
  (2603:10b6:8:89::7)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|IA1PR11MB7727:EE_
-X-MS-Office365-Filtering-Correlation-Id: d798f230-b96f-4041-010d-08df2086fc41
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|SN7PR11MB7042:EE_
+X-MS-Office365-Filtering-Correlation-Id: a36ba4a8-0365-4f5e-fb0a-08df2093c6a9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|23010399003|376014|366016|10067099003|56012099006|11063799006|4143699003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: EVxbDex5vAnxW5eS7Xru3L9AYbWrEMeJk97UWwLJTO2mOpO5eJBiHvoK6w0lZRFVhLYj4/ZoEMhMv3tkS0ZoKUZE7ramyRCdRWEh8WrCgWNk6Qj5eIBy5zX3TfBTc1owoLwR0G63cfdOP3M/4U3ikOjYZ1D5iVmvdTGM3wrSgSe+ndRl1E0t7geA+5SP4xthAzrLJkGS4o7ohIHy88QYq6vRRLzSNiKIS7rvIQnuk11VUjQnC0DTQam8MtUnpCk7n+rkjvHuqEj27sk70N0NrjtyH+oRKldhryQSVHH8Jw69z23TEPj+dcMqvRMFxm+73k8HE/KPZkJ8Im4JDTyRG3fM8AjtMqvJ065+irQPEFqud8NL08BI31DYVsNT9r6EUHbCEPPyz/1IyPFRgvLXWZWwy59dHr6P97Ru2Le2PsUAgDOOvCf6IphFbSj7EkqcVBE9JkO+t2kyLJwugq1zgAKJZ2RWTm4w4g/MDLkmsq28KCRKWnZqYCu4QQtbMZXzCYg63ksloM6ov7blNjqBw28UOTQ/hVOPMdTpMyDHPVdo7oC+KzNSYygYeRpB/qwWP6fvkWn1xgXkSnioYa4/Fic9HCoikaxafG9/6Z4nmfQnVHAmLh/fJJpnPq7j5gZ1pxCnFEWu7mgIuPYlwtRYZxCZlBJ8VsjHzezpU3ZP4U8=
+ ARA:13230040|376014|1800799024|366016|23010399003|22082099003|18002099003|10067099003|4143699003|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info: 8cLbQBNFvr//mVGrdXAtm/ONcerUxXFjlJRy6zPn0fuzrNnh7DUAtIFlEpl4qoVWivD4yudQO3hfNbG7VtoB+PryDpQwHVHEZTP7L7Jmye+RD9ss5oPI1mbsVBdlf8cV1LToUp9ogHJmpqspKhfmdM8zybVlXwvfoo7mequbQzuwco5nlcWHr204kFlGhK5MuTI963+70UMoGMxm4uIwp4h554lvz1623z35+5kCmft/SKsKPlyEKFjqLP5l95z9m/ORyNvC4wabPIelJ8VinsrVrAbsTvgwCBphZoq4bVPywhghdUAAYbHVN+VkneQhe6ffvh4H2DHKMuQNVZfok6rMn1SN5YGV7aciLx1iuUkTJdX3g6JAJSM7w8WZZDSN8wK72gLrpTqcHVHHTKOy/LmRpN7kQCZBbkQVXKK+Jscxa45txY0OVl6o5otRfMuwDIr5/P6Fq8ys6nZhQvA3H4Ll8/nZmdswqVU3xf3qawZplPFmiMFA/5eWNXANurRDlhjk1Nkaw3WCpgdyOM2P7V6THcDyLAWcLEOkHDcPQ2spggqPSRZ5gC6Za4y0EDMhueug2ma4EFDUCmw12z7Z+DyZwfPjX/r/jxiZZcIMr/M8P3hvRV7u07F0aOm2YOjHpBANzs3i4wjhQRBozW8CO/viXjcXfSB9yZpEnDf68CQ=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(23010399003)(376014)(366016)(10067099003)(56012099006)(11063799006)(4143699003)(18002099003)(22082099003);
+ SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(22082099003)(18002099003)(10067099003)(4143699003)(56012099006)(11063799006);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cm8rdUl5TzF6YUxoelhHYXNac09meGJtcytiN09ObVRNQXMyb2d0SGZGdENz?=
- =?utf-8?B?dFp5ZFh4T3ZRK1RIMTdqb0FTMVlCcTIwTDU5ekhLSDF6elhTbHVQeXF2dFJv?=
- =?utf-8?B?M1ZkNUFMRGE4bWJDMzh4Q1RkV0xDYlFlUDZjUFJqQTVvenE1U1hMOVBEV002?=
- =?utf-8?B?clk1dFBDU1o0YlpBUkkveFB3VkNqMHplZUFBd285NkNhYUpOL3lZSmdKamJV?=
- =?utf-8?B?Tjh3NmxFbjNQZGJuc210ZmhQdUhTMG9FUTQyTXZpd0Z6WjZJSktMcjNDMExC?=
- =?utf-8?B?OFY2ak56UjZUV1hPRnkya2NsUGcxelRkNlBrK0YrclBQK01lcEU3K2txWWN6?=
- =?utf-8?B?RG9KaWNERFFPc1VxUmJDaEszRWNTcUllUWJGNEE5OEhRRmdkTkNmU3VNLzI4?=
- =?utf-8?B?TSt0V3FWWEJVQ05lM0Z1MVhyNFNjaERLQUoraHQ5dzRIMXpNTi93VVVrcFJR?=
- =?utf-8?B?RG9HOFdOUGN2SmFEV1NOMU95dmJLSlM1TlJFWmE4T3JDUXFNK21RVG5LVk1t?=
- =?utf-8?B?eGkvdGdONitjUS9LL2lyb2FxclYxYU5rV2FsZGo1WUgzbHFvRm1XOHVzRWJ5?=
- =?utf-8?B?bVV3MWRDTnhocjdoajdMVVVOZk51aHVNcGd5M3FRNXN6bDU2WGFEWEluZDZ5?=
- =?utf-8?B?UUJ2S0pXLzlyTnZRNlArRVZqTVZ0dlVCM2ZNcWpCaDhPTWd4MGtuVUVjbXhT?=
- =?utf-8?B?SktMbG1rRHNKUXIrTEJNejV0bDl5WWZhZjJRdXhXMHBmY0VsaEtBRS9EOHRm?=
- =?utf-8?B?WVgvMlhwQ05hbEkwR0IzcGtlU01Sd3ZiNkR2Q3B2TlZyY1BwM2xlL3pSeUh6?=
- =?utf-8?B?RzVsdXlmbFA2akp2NUtvMkdHZC9NR1JmK3pZN2JCNDJuZ1hqaFhWSUZOK0Rz?=
- =?utf-8?B?K3M5N1BCbkd5R2w3OHg3eHhkVlovYmNpSys1K0FJV2tTbkhSblM0U0R4R3Q5?=
- =?utf-8?B?VU9PZWpxZG1NSmlXMmRKZHB0dEZCQzF1Wlc4T1RaUkd5K2JLa1pyblZkazJw?=
- =?utf-8?B?Wm9KMEF3ZGRhNndBRjF4dGdLTHQ5eEJ0M0ZNVDhDeE9TVkhZTGtibzVISndN?=
- =?utf-8?B?dW5tOFNiZWVTQmVydzdnZVVIY3JHSE9QWWpRZHRxNEZuZHlLaE53UVRibnow?=
- =?utf-8?B?bnZWK3BHTmRaWU1WbE55VjRSeUh2ZjMxUHd5dFRLMkJONEtialBsZ1gvWW9v?=
- =?utf-8?B?WWJGNnczdFFxVlI3cFk4bUFEbjIwS3ZBQ2xEK3R1a0RER2NwUWZJSU5jajhs?=
- =?utf-8?B?S05QOWkvbVplLytjMkZzb3FidzUyZTNIcThwU1RFWEQwNnpLQ1hFeFRSUUNW?=
- =?utf-8?B?d2FILzdobkFNeUw3aUtKbFNpUWl0dGQyUVlOTGxNeVJEeXJNV2JoRGlwaHBS?=
- =?utf-8?B?U20vL2RLM1REWmpyelhvRE1CZkpNUTZqamhDTkFmZjJnSGhEWDl6TkNvU0JY?=
- =?utf-8?B?djFMSXllcUg3U2sxdnRyd0pLaElDdlVnVW9lWUdWb0syMEwrcThJMnZzcHA0?=
- =?utf-8?B?cEVVZ2Z4N2NuT0tsNXMxV3MrT2hXa1JzUUNDWlZJdlRZajBTaVJseU9tMy9y?=
- =?utf-8?B?a2V3MnV6V0Y2SkVsM0FiU3dhZVBWZ2RqQVlKYnBoLzJEZ1QrWUpxR2tOcUI0?=
- =?utf-8?B?WjEwcU5tbGFDZ0E1cVZjMDhaVEpKb0lBTmJxNWVlUDFsMk8wU3QrVUIvK0hv?=
- =?utf-8?B?UzdvaVJRQjJ2c29OQ3YyQ2lraW8wakVqUHNCZmtFTElMWE5uWVJud055RFBN?=
- =?utf-8?B?Wm1LUHU3L3d1VGdpcW9ETTZiUXp1VERxSkZvU1lDYnJBcU5ibEpUWnpQNnVl?=
- =?utf-8?B?VnlTY3hsME9nSldabjY3bkUvWit1eGEya0FtWERoVHdyTHYvc2VHNExtVFdC?=
- =?utf-8?B?ajJ6WFNmOHFaV0c3VXZYUGcyaVczV0kxZGdzd1JFNkJSbTVKakdBVWJJeDdU?=
- =?utf-8?B?anNReDRGVlArSThrYjVuSjNnUkNmUU9XTVpHV2JDWG1rc2k3UUxjUlpRUnY3?=
- =?utf-8?B?UmdMaTdiMC9uRUVDaDVuYy83MndEbWxUV1QrU1NoMmxVOFozd2Rnd2NtbVZH?=
- =?utf-8?B?L29tQ1o0SGdtZDVQVTd4WkR6ZGQvWXgvSGhyUy9CdjBpZWtTL21aclprcEhl?=
- =?utf-8?B?SzZTVFNxaDM3eUVhKzFlTHpuZU9ieFJGQ3BFQ1RUWmRTQ1N4VmZlZ2dLZUZT?=
- =?utf-8?B?UUd2L2pYNTRoZm9HbTU0OVJYQXBiQ2tHRmJienB5WXBFNFFRMTZxaC9MTThh?=
- =?utf-8?B?UjB0VmFveTVWRnc5SGtOR05mdGFYN3ZZM2xlbGRFeVVFbXR6Y3FMdWVNSGhJ?=
- =?utf-8?B?Mzl4aTFPTytXR3JCN2tYVHZ5WnB3L2NON201KzA2Wld4UzA5dVBlT0krYTY0?=
- =?utf-8?Q?CKDdBtsCnhFJpGS4=3D?=
-X-Exchange-RoutingPolicyChecked: O8nOZubes7qFXGdtXil0eUt5vx2eXDtjVu2AKMOG02RpdQ1FjsFQQd93b4VkAYYNLn9OLc2JXDAPpIy3FLDBVzVkz2hnYFxh/3AW5jrKMpMkJrCwOztx0OjCsQE0EA37MWRCAXWJPueMmODUDYJD3P0S1RksirFp9+3cXJKQcAjcyykfPw0q4Vk5/oegx8tza11ftpelF/00Q0dBeMF36kyzPIdmG2KUuidJF4tFovJOpp7LVY17qwspjO3T4ppoH0q+0DFW08aHom7WAtfdoIES3GwXNA93dBFzKkhefhJizvZ7L3xqkAdVC4KyM0/vjtB2NiOoFiy0o7tVtOEY0w==
-X-MS-Exchange-CrossTenant-Network-Message-Id: d798f230-b96f-4041-010d-08df2086fc41
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RFRMRVg3cGJleCtUa3RqcUtzVnI1MVdrdWR4aHFFSGdYT09HczFrQ0ZONnFr?=
+ =?utf-8?B?UWR3RngyMUl5Y1VqS05OMi9GakFFVzZxN243ejBtQWlFOW1CSzd1NWh3U015?=
+ =?utf-8?B?NDdPWWZkanp0eEFnZHFMck91L3lCWElIZm1UM0hNUDFaOHVzVlRZQnpTekxo?=
+ =?utf-8?B?bkxKd2szQjMrVWxZbXpka0tVYkNhTmwvQlBONjJWOUI3d3FrWmdoZy9tUFd2?=
+ =?utf-8?B?UlgyR0dPa2dtRUFoR3hGM3hDSlJOZTVYUTVUY3VIVFFtVS8ydDNNMFU1elIy?=
+ =?utf-8?B?MkxYOXJJNEtOSERkZ1MybnlVTXl5VElNdlRhNyt0U1hsOGIrYVJvVTAxMnRK?=
+ =?utf-8?B?aUdQSWhyYzJVTXJJcE1kV3pMVWZsQVR0akpuaWpXT0p0dzhBWGxhc3ZPQWdM?=
+ =?utf-8?B?V3FHVGhsUk9Kb1hNc09hcGlXWW5XcWYwYlN2cDc4NEE2aEtnaUd2VlB1UTlD?=
+ =?utf-8?B?clR6a2xtdlZDMG5qbVRzaHVSTzhKOEcvRmRuTlFhN3haUFp1NGQ4emRORlR1?=
+ =?utf-8?B?UkdpZC91b3dkbHBkRWF0SlhvbWxmT3hXMXNoYi9OTVJDVXoyRGJLSmQ2M3Z0?=
+ =?utf-8?B?MGM5elc5TzlIQ1NnQTMyMmVQdk5ZZTNjS0xMbFdJL3c2ekJybXZtemFaYTRE?=
+ =?utf-8?B?NTFMU1hZVnJMQVFQVGhjUTlXTkxheThuREFHNmo1WTZsOFRId0NUWENGS1pv?=
+ =?utf-8?B?RW93SkxJK0hVZzBkNy9FU0pNREtvTCtZVXJIZHphU2NnRlk1MUZKV1NSTTh4?=
+ =?utf-8?B?NFpFK3IvT2Ftd3h4czZTRkhIT21pTUdmZkl2cDVCZEJHblBMcWkyZllEM0Mz?=
+ =?utf-8?B?UFYxQXorOE8zb2VxUktFMm13bDcwcE9ZYWg0UUVYUlEwTTFoME54N3V0TUlN?=
+ =?utf-8?B?Q0xUbjU3ajdldmtsS3RQZEdKZlR1cTQybExxZ1krU2FLb1g1QmNpSU11Yi8w?=
+ =?utf-8?B?UTM1Rjc4ZHpJRFNBSHRYQmtIK0xNY3Fxd3FMSkpjVzcxZWd5UHlVT05sMEVp?=
+ =?utf-8?B?K3FFNGlzMHgwSjBpdndUWFVQVkJYVXZVMkdhVTFjVm9pRUwrSDNzOEU5L0o1?=
+ =?utf-8?B?b0tYai9rQ3hQZEpDV3FjVnVkeGh6cjhvYmJsNmpSTUJRcGJZdnRjY0R5M2o2?=
+ =?utf-8?B?NFBqblNkNWpFQnlKVjVwOUdkV3I0SWtuRXhQNlFhVTQ0UlpwWUI4M1R0U2E5?=
+ =?utf-8?B?VGIzTmZFRDJmSUErMCsrTTJMSnBFWFkwZGFzWDMzc0NrMXpBcHdiVlZDUkc3?=
+ =?utf-8?B?dForbWl4TFFOZUtDRjUrOW5WbVdNZXFpd1dtV2M2L2NuR2R1Qlh1aEQ1bmU3?=
+ =?utf-8?B?cmxNTklnOVlwMWExZW0zSWY3d2VyaGQzR3RadFhmVmRXUnNNTTh0OWZjaHQz?=
+ =?utf-8?B?V2ZpanRvZzh6aFdEN25GMUxvbFYvY0NZQmVxeGplZG81UVE1WEtGRHA4NUlX?=
+ =?utf-8?B?bWwrU1l0M250Vm5sLzZ3SGlMNGd2VjJTemc1dWk2cEpDTkh5U2NiWVhkRGNr?=
+ =?utf-8?B?dm9NMlBSVEZoT2kwSUVGMVN2TFAxbWVVU3AwUTVlUmllanNzTStmclEyOHpI?=
+ =?utf-8?B?dG5JWEhzV1d0NkcyTUpjclBWVHhDY3Z5K0czVnFUZlNYSFVPNkN3OEdVWHRX?=
+ =?utf-8?B?N1pQQUVVSlQvQlZBZ0Z5Tk5QWlgxNU9mK1ZuRjJ2ajRFOGpKNGdIS1VWQUpI?=
+ =?utf-8?B?bnU3M3R5bkxGcUlpU0phR0tvUEJ4SnNEOC9WamgvSHhoeTl4U0tOTUt5ckZQ?=
+ =?utf-8?B?UGc5QVlMZy95a1RLTkFYWDJEbEptU0ZKWlRHVGR3TUJYUGlrMWR4bkdpN1RK?=
+ =?utf-8?B?Si9ic0xRL1FOeURqRzMrNElMYjRONThJK09UbncrczYwZmJKVVhsQ0UvM0E2?=
+ =?utf-8?B?Z0RlZFJwcktUTUtDVzE5NEhwR0htcGFzbkkzaVNSbUJDcklzSTNPb3F4c3Rm?=
+ =?utf-8?B?bEx1ZHJSZytCNU5XU3ByUFNLVVUyeSt5Rzc1K3ZaUTNqT2pKdm8rNTBSVXhp?=
+ =?utf-8?B?YzVpMHZXSW40alJFZ29qWDZLTzJnZ0RwNlk3dWduWGJVM2V5bzVlWURJRHBi?=
+ =?utf-8?B?QnRvYXROaTUySzREcVZUOXVFc1BXdHpjRzNicFl1YWFyS1ZUdGp1QndNUllm?=
+ =?utf-8?B?UUxqOVlZWVdTQjBkYnAxUnNDeEIzY1J5ZGl5dkFaais3TDhnU3NiVUluU1lR?=
+ =?utf-8?B?TEg5aWM2akNkTTdaQmM0SFRTenBQMnV3RlVha1EwbDhCeXVYZnYrWGFRWTY5?=
+ =?utf-8?B?QmxrM0FBcTdFMVRpNXhuc3IrM0pxaTVxcklCOHJWZ0dSV0tHbmZRSlhTb2ha?=
+ =?utf-8?B?ZklWakZ1citQVE05OGRycG9zNGpKMjVVSGFCVDdoSlJIcm1tdERIZ1dMWldy?=
+ =?utf-8?Q?AOYLLcDWqNr2dz/o=3D?=
+X-Exchange-RoutingPolicyChecked: dhAa2hyJpjuMuc1hw0MZuUyuOT0lcsL2DscJNbNRGXDGrWkmbSEYpoBM3rleMB97B0STR1wluNjPCzI0FcN6vLJtyF8a7lW4z9IBxv9LnXHhxKwlvmbefwkOQReaXr15Ytzbod54ap8SRkcGOOn9mZY+N9Et1hNZc+qQoO4tKGNXKChuGN1emzbA11fR1J3N4IpcafPl1IB6340ADsIT30LtrjdVqurWrJP+3SzirMInULpRqX2jnpb+k63VWgzOLiIYAvh69np9lJjs/N+uOrU4L2XirYblRU/C3cF6BBwmFrI3JHmSovou9otxVH/8mjS/t0Dv1acUpoiydxLI2A==
+X-MS-Exchange-CrossTenant-Network-Message-Id: a36ba4a8-0365-4f5e-fb0a-08df2093c6a9
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2026 13:13:44.1813 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2026 14:45:17.7942 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WeMHB/1I2cYjBkQSsGKEm+3yMJZ9LujzvY3JhGRfPha504aXp02iDNkUKlly0MqflNKZoLKwKapWlmTnLnpuS+Nxn3e5BNQk71Z4ypulNY0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7727
+X-MS-Exchange-CrossTenant-UserPrincipalName: Gc+z8AMny0eF8V4eJYIlbAsVNpJze9DhgV1LhzDKaNAJ+s5rYjsa8DNzp6nLNDW7PP28m0OpsqITVIO7pNcJdLIU7ezd9LPwhLMUVfrGASE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7042
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -163,83 +162,158 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 9/19/2026 6:09 PM, Medvedkin, Vladimir wrote:
+On 9/19/2026 6:10 PM, Medvedkin, Vladimir wrote:
 > 
 > On 9/16/2026 1:18 PM, Anatoly Burakov wrote:
->> Current implementation of flow engines in various drivers have a few 
->> issues
->> that need to be corrected.
+>> Use the new flow graph API and the common parsing framework to implement
+>> flow parser for ethertype.
 >>
->> For one, some of the
-> seems like a missed word?
->> are fundamentally incompatible with secondary
->> processes, because the flow engine registration and creation will
->> allocate structures in shared memory but use process-local pointers to
->> point to flow engines and pattern tables.
+>> The old ethertype parser was accepting certain things that were later
+>> rejected by the actual ethertype installation code, in particular DROP
+>> action as well as dst MAC address filtering. This was removed from the
+>> graph parser.
 >>
->> For another, a lot of them are needlessly complicated and rely on a
->> separation between patterns and parsing that is hard to reason about and
->> maintain: they do not define memory ownership model, they do not 
->> define the
->> way in which we approach parameter and pattern parsing, and they
->> occasionally do weird things like passing around pointers-to-void- 
->> pointers
->> or even using pointers as integer values.
->>
->> Another common problem is extremely convoluted internal tracking, flow
->> installation, flow replay, and cleanup code. This infrastructure is 
->> usually
->> done in an ad-hoc manner that has a lot of boilerplate.
->>
->> These issues can be corrected, but because of how much code there is 
->> to the
->> current infrastructure and how tightly coupled it is, it would be 
->> easier to
->> just build new one from scratch, and gradually migrate all engines to use
->> it. This patch is intended as a first step towards that goal, and defines
->> both common data types to be used by all rte_flow parsers, as well as the
->> interaction model that is to be followed by all drivers.
->>
->> We define a set of structures that will represent:
->>
->> - Defined rte_flow parsing interaction model and code flow (ops struct)
->> - Defined memory allocation and ownership model for all engines
->> - Scratch space format for all engines (variably allocated typed struct)
->> - Flow rule format for all engines (variably allocated typed struct)
->> - Engine definitions that are compatible with secondary process model
->> - Implementations of common rte_flow operations
->> - Various supporting infrastructure for parser customization, e.g. hooks
->> - Support for using custom allocation (e.g. for mempool-based alloc)
->> - Support for replaying all flows to restore HW state
->> - Support for removing all flows without modifying HW state
->>
->> The design intent is heavily documented right inside the header and is to
->> be considered authoritative design document for how to build rte_flow
->> parsers for Intel Ethernet drivers going forward.
+>> The ethertype filter tracking table is used by the rte_flow ethertype
+>> engine, but it is also in use by other features, so the filter tracking
+>> is refactored to be properly shared between the engine and other features
+>> that write into the same table.
 >>
 >> Signed-off-by: Anatoly Burakov<anatoly.burakov@intel.com>
 >> ---
 
-<snip>
+Hi Vladimir!
 
->> +    /* allocate context */
->> +    ctx = (struct ci_flow_engine_ctx *)calloc(1,
->> +            RTE_MAX(engine->ctx_size, sizeof(struct 
->> ci_flow_engine_ctx)));
->> +    if (ctx == NULL) {
->> +        return rte_flow_error_set(error, ENOMEM,
->> +                RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
->> +                "Failed to allocate memory for rule engine context");
+> <snip>
+>> @@ -7198,8 +7177,11 @@ static int
+>>   ixgbe_timesync_enable(struct rte_eth_dev *dev)
+>>   {
+>>       struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data- 
+>> >dev_private);
+>> +    struct ixgbe_filter_info *filter_info =
+>> +        IXGBE_DEV_PRIVATE_TO_FILTER_INFO(dev->data->dev_private);
+>>       uint32_t tsync_ctl;
+>>       uint32_t tsauxc;
+>> +    uint32_t etqf;
+>>       struct timespec ts;
+>>       memset(&ts, 0, sizeof(struct timespec));
+>> @@ -7221,10 +7203,19 @@ ixgbe_timesync_enable(struct rte_eth_dev *dev)
+>>       ixgbe_start_timecounters(dev);
+>>       /* Enable L2 filtering of IEEE1588/802.1AS Ethernet frame types. */
+>> -    IXGBE_WRITE_REG(hw, IXGBE_ETQF(IXGBE_ETQF_FILTER_1588),
+>> -            (RTE_ETHER_TYPE_1588 |
+>> -             IXGBE_ETQF_FILTER_EN |
+>> -             IXGBE_ETQF_1588));
+>> +    etqf = RTE_ETHER_TYPE_1588 | IXGBE_ETQF_FILTER_EN | IXGBE_ETQF_1588;
+>> +    if (!filter_info->timesync_installed) {
+>> +        int idx = ixgbe_ethertype_table_add(&filter_info- 
+>> >ethertype_table,
+>> +                RTE_ETHER_TYPE_1588, etqf, 0);
+> if I understood this part correctly, from now Ethertype filters are no 
+> longer statically dedicated for predefined set of ethertypes (ref 
+> IXGBE_ETQF_FILTER_1588) and now are dynamically managed. It is probably 
+> worth to separate this to another commit, or at least mention about in 
+> commit message
+
+Yes, I'll separate it out.
+
+>> +
+>> +        if (idx < 0) {
+>> +            PMD_DRV_LOG(ERR, "no free ETQF slot for 1588 timestamping");
+>> +            return idx;
+>> +        }
+>> +        filter_info->timesync_idx = idx;
+>> +        filter_info->timesync_installed = true;
 >> +    }
->> +    ctx->dev_data = engine_conf->dev_data;
->> +    ctx->attr = attr;
->> +    ctx->pattern = pattern;
->> +    ctx->actions = actions;
->> +    flow->dev_data = engine_conf->dev_data;
+>> +    ixgbe_ethertype_filter_program(hw, filter_info->timesync_idx, 
+>> etqf, 0);
+> <snip>
+>> +
+>> +static int
+>> +ixgbe_flow_ethertype_register(struct ci_flow *flow, struct 
+>> rte_flow_error *error)
+>> +{
+>> +    struct ixgbe_ethertype_flow *ethertype_flow = (struct 
+>> ixgbe_ethertype_flow *)flow;
+>> +    struct ixgbe_filter_info *filter_info =
+>> +        IXGBE_DEV_PRIVATE_TO_FILTER_INFO(flow->dev_data->dev_private);
+>> +    int idx;
+>> +
+>> +    idx = ixgbe_ethertype_table_add(&filter_info->ethertype_table,
+>> +            ethertype_flow->ether_type, ethertype_flow->etqf,
+>> +            ethertype_flow->etqs);
+> 
+> nit: is it worth to check if idx is negative instead of handling only 2 
+> error codes?
 
-> it was set in ci_flow_alloc()
+Will fix.
 
-flow_alloc might not be called (e.g. for validate).
+> 
+>> +    if (idx == -EEXIST) {
+>> +        return rte_flow_error_set(error, EEXIST,
+>> +                RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+>> +                "Ethertype filter already exists");
+>> +    }
+>> +    if (idx == -ENOSPC) {
+>> +        return rte_flow_error_set(error, ENOSPC,
+>> +                RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+>> +                "Ethertype filters are full");
+>> +    }
+>> +    ethertype_flow->index = idx;
+>> +
+>> +    return 0;
+>> +}
+>> +
+> <snip>
+>> @@ -168,38 +180,29 @@ ixgbe_add_tx_flow_control_drop_filter(struct 
+>> rte_eth_dev *eth_dev)
+>>       struct ixgbe_filter_info *filter_info =
+>>           IXGBE_DEV_PRIVATE_TO_FILTER_INFO(eth_dev->data->dev_private);
+>>       uint16_t vf_num;
+>> +    uint32_t etqf, etqs;
+>>       int i;
+>> -    struct ixgbe_ethertype_filter ethertype_filter;
+>>       if (!hw->mac.ops.set_ethertype_anti_spoofing) {
+>>           PMD_DRV_LOG(INFO, "ether type anti-spoofing is not 
+>> supported.");
+>>           return;
+>>       }
+>> -    i = ixgbe_ethertype_filter_lookup(filter_info,
+>> -                      IXGBE_ETHERTYPE_FLOW_CTRL);
+>> -    if (i >= 0) {
+>> -        PMD_DRV_LOG(ERR, "A ether type filter entity for flow control 
+>> already exists!");
+>> -        return;
+>> -    }
+>> +    etqf = IXGBE_ETQF_FILTER_EN | IXGBE_ETQF_TX_ANTISPOOF |
+>> +            IXGBE_ETHERTYPE_FLOW_CTRL;
+>> +    etqs = 0;
+>> +    if (!filter_info->antispoof_installed) {
+>> +        int idx = ixgbe_ethertype_table_add(&filter_info- 
+>> >ethertype_table,
+>> +                IXGBE_ETHERTYPE_FLOW_CTRL, etqf, etqs);
+>> -    ethertype_filter.ethertype = IXGBE_ETHERTYPE_FLOW_CTRL;
+>> -    ethertype_filter.etqf = IXGBE_ETQF_FILTER_EN |
+>> -                IXGBE_ETQF_TX_ANTISPOOF |
+>> -                IXGBE_ETHERTYPE_FLOW_CTRL;
+>> -    ethertype_filter.etqs = 0;
+>> -    ethertype_filter.conf = TRUE;
+>> -    i = ixgbe_ethertype_filter_insert(filter_info,
+>> -                      &ethertype_filter);
+>> -    if (i < 0) {
+>> -        PMD_DRV_LOG(ERR, "Cannot find an unused ether type filter 
+>> entity for flow control.");
+>> -        return;
+>> +        if (idx < 0) {
+>> +            PMD_DRV_LOG(ERR, "no free ETQF slot for Tx anti-spoof 
+>> filter");
+> here and for ixgbe_timesync_enable(), what if 
+> ixgbe_ethertype_table_add() returns -EEXIST? It is better to add since 
+> ixgbe_ethertype_filter_lookup() was removed
+
+This should not be possible. If the entry is already installed, 
+antispoof_installed will be true. If it's false, then the only way in 
+which we could have the same filter already installed is through 
+rte_flow which would not produce such specific ETQF values.
 
 -- 
 Thanks,
