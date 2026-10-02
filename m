@@ -2,74 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8066CCA5FE3
-	for <dpdk-dev@archiver.kernel.org>; Sat,  3 Oct 2026 08:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C86CCA5FE3
+	for <dpdk-dev@archiver.kernel.org>; Sat,  3 Oct 2026 08:23:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 69116402DA;
-	Sat,  3 Oct 2026 10:23:40 +0200 (CEST)
-Received: from mail-qv2-f41.google.com (mail-qv2-f41.google.com
- [74.125.230.169])
- by mails.dpdk.org (Postfix) with ESMTP id 1427F4003C
- for <dev@dpdk.org>; Fri,  2 Oct 2026 22:09:30 +0200 (CEST)
-Received: by mail-qv2-f41.google.com with SMTP id
- 6a1803df08f44-91786d375bbso2388546d6.0
- for <dev@dpdk.org>; Fri, 02 Oct 2026 13:09:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 59AF84067B;
+	Sat,  3 Oct 2026 10:23:41 +0200 (CEST)
+Received: from mail-qv2-f24.google.com (mail-qv2-f24.google.com
+ [74.125.230.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 222F142E4C
+ for <dev@dpdk.org>; Fri,  2 Oct 2026 22:09:31 +0200 (CEST)
+Received: by mail-qv2-f24.google.com with SMTP id
+ 6a1803df08f44-9144f89ce90so3531936d6.0
+ for <dev@dpdk.org>; Fri, 02 Oct 2026 13:09:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1790971769; x=1791576569; darn=dpdk.org;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=l+e7+wtA8MFfCm2+cDHVNEZ+o3fc2+qQ7El4UTpa6Ss=;
- b=kmBzwPYT5ZWH6bPVx286htwYKRPjPfKTeukj5lDbuw9cvTDcNp+rA+UCNpj75FXRxj
- K5bfQCl4F8p2/A9/Ezlwr5YAIYn3in7L5YbaljPTR3dbdAJxCVAAaaGdgimvdo78M+vf
- E+tDhmsVq3x2Um13rnqgBQeK8uJ09u/9iTzq2ZAo9VSUcv7NZkOKRbga4SKVaewW9cKf
- 6A+PF8xX21zZG17dffSlhS3slDldtHFZ9XFNDDaBv9t78YKI+ipDPXVhzBh4U+JbGNfA
- VHnmdbwKt4K9jjXfxffyTw/BDPnEjKp1O3Y93C8t5B+lyEI1/W+jwGuSwx4TcfT1hQiB
- 6M8Q==
+ d=gmail.com; s=20251104; t=1790971770; x=1791576570; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+ :reply-to:content-type;
+ bh=SGT7XO08hMXbaTd9aaKTmO67lso3kyFmYtcRvSBAyG4=;
+ b=CHHWQhpBEmpP8mxN2DhM30qxJs3rtWlKPOOAWkeVlEKEJq2cJWH8ZyTX3dB/OfDa+b
+ sgqvWPhH3lKdJZT8Zkcqg3Cx/czKkL1S6hSZPYnMXtjCOEIn5CHc2X6hezRuCiICpdI+
+ xlk0XpLpj2mLHQwDCsJVi35yRX+Kt21JejrmNLW+L6v7m5MjFAZjY/FIf6ZMA7BVPOoD
+ ylclB4qji3ADeXXFOmMnQG3bxamMQxduXlny3eN3A0AH99qQsYTKIAgsVp/n/10XMN03
+ l2y7PrVnOageW4VeOSCtRygrB8VXY/i79DCQ/VyzMDQt3tS267U28nQDeCssY0mJLS9v
+ fnXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790971769; x=1791576569;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:to:from:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=l+e7+wtA8MFfCm2+cDHVNEZ+o3fc2+qQ7El4UTpa6Ss=;
- b=rPO5Sa8AjgBsoL1JdbM8oVla4wv5FSH7IGGaXw/Xy95XaeoKAXpB+b7EFyX5+lb14i
- jCeaCuPYMvk9eKHhEbfMbPVvVJcjdTO4i7mW6G9394U8zSn30gha/zRdQNRUXl6Y8K+D
- zhnCdRAziaHeosAghIbF469J3RrvagfBjaAb+/x9ak45Hz1Y0uoY9SQESEId1nK4pKA5
- 1UyCRaptYRUirIWT8FC8//sV2s33mB1faYhPcG/hHRaQFU+U3obIVgDPjkRGvaAKjon+
- kPUK+rFeFguQ6U1j9I1Alb5neynZkMML367sXERn9VVxp+s1wb6UjtXdVOT29lddI6Na
- na3g==
-X-Gm-Message-State: AFuF++mdxxoCVpcxjt0ULI0FcHjRT6B313n5LPjtq6HwaZ9DYc2sMlGb
- ddxYlKe/+I+hv4j8Lc0T056SDj+qtkXlxrlG0KSZ9I+/xyD9q0zxXRVgULmswhCe
-X-Gm-Gg: AYBFou0zuCe69CquOUBGiSOYq0vGV9r+beU966BhIk893Ep+w/xgi1/VUa9nXQRKtRN
- fjQsGP7qMSey8Xr9MM4fj+P9J/IZzJt0U8bmU2IrBFqmD92xZMzK+LbDwg8WO6dVbURymiucdw+
- ekM9oPqWFMokLbBBEslBctvJUuHMCdB9W4Drn/9UjVNj4EHNvJeyPerpQxGcOYpKrNSMw3qjh7N
- Y/ULkkN+BNRMnLuwGhUgPO1N4EPzGJzS1mXTZ9kGbDieT0XlC3dTpOFZ50iQTD3blBVtnr+zhZl
- HIyyfT9Qc+rxqMull6MQMdPMFcGW6Bi/RgsB4h1Zj2UbAS2B2TutZ1bUCv6RaEVqv8kd00f3NpN
- hGW4/Rhir75nsrmEQ4J2j9qqP17llPESbqbmRNdFtb0zIr4KS9v17wh5w3MC3kpI3K2OEXRj0Ms
- jqlXfK8A7JEyytGC2WbxHQ4vY+Ep0NqASleYc6g9yI6490UqA7DUcJCtgrQfzObPwTwVotOOYmT
- g==
-X-Received: by 2002:a05:620a:650a:b0:93e:5247:f61e with SMTP id
- af79cd13be357-93e5247fe8cmr35230885a.25.1790971769227; 
+ d=1e100.net; s=20260707; t=1790971770; x=1791576570;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to:content-type;
+ bh=SGT7XO08hMXbaTd9aaKTmO67lso3kyFmYtcRvSBAyG4=;
+ b=CTA/54KKPt0CWCVk70mDB2FkgooKlY0KLi9JGPKqMP4Dy60Xa+ZawmOC62lVVnx+dh
+ xsx2f9U0grUVZGr6qqWfqgbEubUaRI/Bh5oD77iDy301S8MVa5fHtNO2Bf3q1WPVAINT
+ Ri/wt3JrsCgwOg8h2SDvT7cd8/KWYW6ODcpftyU1TOYYY8uA7Xa1kpCQVM+gCiwBjpgW
+ 94v2AAjPLxZjVcIrpaklRPf3grlTGeUsI+l1MVqwx4+r0gxbN+7j4fVsBr8D5Kh/lLMw
+ WLerXT4NnWhL+OFzWLfaO0P9tngLVvLowcUT0qLZ2XVc7Gp2BM+8D0eFlAe1O5tlnSYi
+ Zj/w==
+X-Gm-Message-State: AFuF++kcRAouWDFHWfqxi5SAEaOx1fB+0Xk+lOw2vSbXLbjcT94oYB7u
+ UKsx6+Hnf0H0Tk4ULL56HQ7vLzYsAtAJpIH99xL3CQO/SRe2PGdvel64ibPnXLsa
+X-Gm-Gg: AYBFou0uOZHcwsw5/pN9d0W23bjrhbarYYsX7GmfcwDYcbaR9vCJvWyoxaTW5/cD+UY
+ vlB5xl0nPsPAl1+mCSiCMXo70sqstDOrxRCf6W7mPMRnnJfj8cw1cpSc99WqFjVtevmgX1FkiW7
+ 2BOepe3HxYNleAQ5BuuANSWDmUO8Lu0LC7f5p7aw35iwjXf2zETno34n6yQBSn0erxalT+WHt8A
+ p1awu/GEl4SRb95hZGZ+EXuViS9Ac4LHthtK1LmKifdPub1Y1ayQKAj6BkczI8UQ0z5/NKv5FMT
+ 3JPg5pPO0VckAQJEo1e+H4rvkaS16ULk+u3+tNx0GOYKjGtBd+J+qmzoVGU8BbIuygrI1/KfxfA
+ fhM39WVj9V5aX7EGSqfB/SUuw/h2bUAb3AJFq9rBO0kK+6ws1/czWCKtXtbNlpM7ml2TiKyDg4O
+ uU146VLpzsudTKraQmT4LXeqdsKyv506bKJN5IkhA0fciI25vAQvsWl1ZgHkumqEq7OFRSTsfYU
+ odLGwZzzekM
+X-Received: by 2002:a05:6214:1c0b:b0:914:3ef6:ec17 with SMTP id
+ 6a1803df08f44-917c005e602mr75854606d6.11.1790971769917; 
  Fri, 02 Oct 2026 13:09:29 -0700 (PDT)
 Received: from ubuntu-desktop.. ([137.99.252.104])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-917e0bc98fbsm27933156d6.29.2026.10.02.13.09.28
+ 6a1803df08f44-917e0bc98fbsm27933156d6.29.2026.10.02.13.09.29
  for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 02 Oct 2026 13:09:28 -0700 (PDT)
+ Fri, 02 Oct 2026 13:09:29 -0700 (PDT)
 From: Md Rayhanul Islam <r97yhan@gmail.com>
 To: dev@dpdk.org
-Subject: [RFC PATCH 1/2] eal/pci: add per-device DMA translation and
- synchronization
-Date: Fri,  2 Oct 2026 16:09:26 -0400
-Message-Id: <20261002200927.6235-2-r97yhan@gmail.com>
+Subject: [RFC PATCH 2/2] net/e1000: support non-coherent DMA
+Date: Fri,  2 Oct 2026 16:09:27 -0400
+Message-Id: <20261002200927.6235-3-r97yhan@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261002200927.6235-1-r97yhan@gmail.com>
 References: <20260918225045.177125-1-r97yhan@gmail.com>
  <20261002200927.6235-1-r97yhan@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Mailman-Approved-At: Sat, 03 Oct 2026 10:23:38 +0200
 X-BeenThere: dev@dpdk.org
@@ -85,601 +82,854 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some PCIe platforms, such as BCM2711, translate DMA addresses and are not
-cache coherent.  Both belong to the bridge above a device, so one offset
-applied to the whole process is wrong on a board with two controllers.
+On non-coherent systems the NIC reads stale descriptors and packet data.
+Seen on a BCM2711 Compute Module 4 with an Intel I210: transmits never
+completed and received data went to address zero.
 
-Read them per device.  The PCI bus walks the device's sysfs ancestry to
-its bridge, and a driver copies the result with rte_pci_get_dma_info().
-Addresses are translated where they are programmed into the hardware,
-with rte_pci_dma_iova(), so EAL IOVAs are untouched.  Properties this
-parser cannot express mark that one device unusable rather than failing
-the scan.
+Take the DMA context from the bus at probe, keep it in the shared adapter
+data so secondary processes see it, and install separate TX and RX bursts
+for such devices.  They translate every address against the device window
+and synchronize buffers and descriptors.  Both come from one inlined
+template with a constant flag, so the coherent datapath is unchanged.
 
-A driver must set RTE_PCI_DRV_DMA_NONCOHERENT before the bus hands it
-such a device.  Only bridges in the compatible table are read, so other
-platforms keep the behavior they have today.
+Four descriptors share a cache line.  Invalidate a line before writing
+into it, so cleaning it afterwards keeps the Done bits the NIC wrote on
+the neighbours; without that a burst loses about three packets of every
+sixteen.  Completion is the Done bit, never the head register, which
+advances when a descriptor is fetched rather than when its data has been
+read.  Receive descriptors are refilled a whole line at a time, and
+receive buffers are cleaned before handover and rejected unless they are
+direct, cache-line aligned and inside the window.
 
-Add rte_mem_sync_for_device() and rte_mem_sync_for_cpu(), named after
-dma_sync_single_for_{device,cpu}(), with explicit transfer directions,
-and rte_mem_dcache_line_size().  On arm64 they are DC CVAC and DC CIVAC
-loops closed with DSB SY, since the DPDK barriers are DMB and do not
-order cache maintenance.  EL0 cannot execute DC IVAC, so the CPU-side
-helper cleans as well as invalidates.
+The em driver, which shares net/e1000 with igb, does not set
+RTE_PCI_DRV_DMA_NONCOHERENT, so on non-coherent systems the PCI
+bus does not probe em devices; they fail cleanly instead of
+running with stale DMA.
+
+Tested between two Compute Module 4 boards with Intel I210s: testpmd
+txonly holds 1.42 Mpps at 1 GbE line rate, and a 512 MB transfer with
+DPDK at both ends arrives byte-identical.
 
 Signed-off-by: Md Rayhanul Islam <r97yhan@gmail.com>
 ---
- .mailmap                               |   1 +
- doc/guides/rel_notes/release_26_11.rst |  15 +++
- drivers/bus/pci/bus_pci_driver.h       |   2 +
- drivers/bus/pci/linux/pci.c            |   6 +
- drivers/bus/pci/linux/pci_dma_ranges.c | 168 +++++++++++++++++++++++++
- drivers/bus/pci/linux/pci_init.h       |   2 +
- drivers/bus/pci/meson.build            |   1 +
- drivers/bus/pci/pci_common.c           |  17 +++
- drivers/bus/pci/private.h              |   2 +
- drivers/bus/pci/rte_bus_pci.h          |  52 ++++++++
- lib/eal/include/meson.build            |   1 +
- lib/eal/include/rte_mem_sync.h         | 133 ++++++++++++++++++++
- 12 files changed, 400 insertions(+)
- create mode 100644 drivers/bus/pci/linux/pci_dma_ranges.c
- create mode 100644 lib/eal/include/rte_mem_sync.h
+ doc/guides/rel_notes/release_26_11.rst |   5 +
+ drivers/net/intel/e1000/e1000_ethdev.h |  19 ++
+ drivers/net/intel/e1000/igb_ethdev.c   |   9 +-
+ drivers/net/intel/e1000/igb_rxtx.c     | 409 +++++++++++++++++++++++--
+ 4 files changed, 415 insertions(+), 27 deletions(-)
 
-diff --git a/.mailmap b/.mailmap
-index 9e45cdce8f..9fd78db7e2 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1032,6 +1032,7 @@ Marek Mical <marekx.mical@intel.com>
- Marek Zalfresso-jundzillo <marekx.zalfresso-jundzillo@intel.com>
- Maria Lingemark <maria.lingemark@ericsson.com>
- Mario Carrillo <mario.alfredo.c.arevalo@intel.com>
-+Md Rayhanul Islam <r97yhan@gmail.com>
- Mário Kuka <kuka@cesnet.cz>
- Mariusz Drost <mariuszx.drost@intel.com>
- Mark Asselstine <mark.asselstine@windriver.com>
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 4b3e5d995c..a752c94bbf 100644
+index a752c94bbf..5883f0aeb8 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -55,6 +55,21 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
+@@ -70,6 +70,11 @@ New Features
+   between the CPU and a device whose DMA is not coherent with the caches,
+   with an explicit transfer direction.
  
-+* **Added per-device DMA properties to the PCI bus.**
++* **Updated e1000 driver.**
 +
-+  The Linux PCI bus reads the address translation and the cache coherency
-+  of the host bridge above a device from the device tree, and exposes them
-+  through ``rte_pci_get_dma_info()`` and ``rte_pci_dma_iova()``.  A driver
-+  must set ``RTE_PCI_DRV_DMA_NONCOHERENT`` before the bus gives it a device
-+  that needs either.  Devices behind a translating, non-coherent bridge,
-+  such as those on the Broadcom BCM2711, can now be used.
-+
-+* **Added cache maintenance helpers for non-coherent DMA.**
-+
-+  ``rte_mem_sync_for_device()`` and ``rte_mem_sync_for_cpu()`` hand a buffer
-+  between the CPU and a device whose DMA is not coherent with the caches,
-+  with an explicit transfer direction.
++  * Added non-coherent DMA support to ``igb``, through burst functions
++    selected at probe so that coherent platforms are unaffected.
 +
  
  Removed Items
  -------------
-diff --git a/drivers/bus/pci/bus_pci_driver.h b/drivers/bus/pci/bus_pci_driver.h
-index c04ebddf59..216e4beb20 100644
---- a/drivers/bus/pci/bus_pci_driver.h
-+++ b/drivers/bus/pci/bus_pci_driver.h
-@@ -140,6 +140,8 @@ struct rte_pci_driver {
- #define RTE_PCI_DRV_KEEP_MAPPED_RES 0x0020
- /** Device driver needs IOVA as VA and cannot work with IOVA as PA */
- #define RTE_PCI_DRV_NEED_IOVA_AS_VA 0x0040
-+/** Driver translates DMA addresses and maintains caches itself. */
-+#define RTE_PCI_DRV_DMA_NONCOHERENT 0x0080
+diff --git a/drivers/net/intel/e1000/e1000_ethdev.h b/drivers/net/intel/e1000/e1000_ethdev.h
+index 0907c7c259..979c661f09 100644
+--- a/drivers/net/intel/e1000/e1000_ethdev.h
++++ b/drivers/net/intel/e1000/e1000_ethdev.h
+@@ -11,6 +11,8 @@
+ #include <rte_flow.h>
+ #include <rte_time.h>
+ #include <rte_pci.h>
++#include <rte_bus_pci.h>
++#include <rte_mem_sync.h>
  
- /**
-  * Register a PCI driver.
-diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
-index 9aae0a5d14..55c989c55d 100644
---- a/drivers/bus/pci/linux/pci.c
-+++ b/drivers/bus/pci/linux/pci.c
-@@ -220,6 +220,8 @@ pci_scan_one(const char *dirname, const struct rte_pci_addr *addr)
- 	dev = &pdev->device;
- 	dev->addr = *addr;
+ #define E1000_INTEL_VENDOR_ID 0x8086
  
-+	pci_dt_read_dma_info(dev, dirname);
-+
- 	/* get vendor id */
- 	snprintf(filename, sizeof(filename), "%s/vendor", dirname);
- 	if (eal_parse_sysfs_value(filename, &tmp) < 0) {
-@@ -335,6 +337,7 @@ pci_scan_one(const char *dirname, const struct rte_pci_addr *addr)
- 				rte_bus_insert_device(&rte_pci_bus, &dev2->device, &dev->device);
- 			} else { /* already registered */
- 				if (!rte_dev_is_probed(&dev2->device)) {
-+					RTE_PCI_DEVICE_INTERNAL(dev2)->dma = pdev->dma;
- 					dev2->kdrv = dev->kdrv;
- 					dev2->max_vfs = dev->max_vfs;
- 					dev2->id = dev->id;
-@@ -591,6 +594,9 @@ pci_device_iova_mode(const struct rte_pci_driver *pdrv,
- {
- 	enum rte_iova_mode iova_mode = RTE_IOVA_DC;
+@@ -283,6 +285,8 @@ struct e1000_adapter {
+ 	struct e1000_vf_info    *vfdata;
+ 	struct e1000_filter_info filter;
+ 	bool stopped;
++	struct rte_pci_dma_info dma;	/**< DMA window of the bridge above. */
++	bool dma_active;		/**< translate and maintain caches. */
+ 	struct rte_timecounter  systime_tc;
+ 	struct rte_timecounter  rx_tstamp_tc;
+ 	struct rte_timecounter  tx_tstamp_tc;
+@@ -428,6 +432,21 @@ int eth_igb_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
  
-+	if (RTE_PCI_DEVICE_INTERNAL_CONST(pdev)->dma.size != 0)
-+		return RTE_IOVA_PA;
+ int eth_igb_tx_done_cleanup(void *txq, uint32_t free_cnt);
+ 
++int igb_dma_probe(struct rte_eth_dev *dev);
 +
- 	switch (pdev->kdrv) {
- 	case RTE_PCI_KDRV_VFIO: {
- 		static int is_vfio_noiommu_enabled = -1;
-diff --git a/drivers/bus/pci/linux/pci_dma_ranges.c b/drivers/bus/pci/linux/pci_dma_ranges.c
-new file mode 100644
-index 0000000000..da5edbd5cc
---- /dev/null
-+++ b/drivers/bus/pci/linux/pci_dma_ranges.c
-@@ -0,0 +1,168 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Md Rayhanul Islam
-+ */
++void igb_dma_set_burst(struct rte_eth_dev *dev);
 +
-+#include <errno.h>
++#if defined(RTE_ARCH_ARM64)
++uint16_t eth_igb_recv_pkts_nc(void *rxq, struct rte_mbuf **rx_pkts,
++		uint16_t nb_pkts);
++
++uint16_t eth_igb_recv_scattered_pkts_nc(void *rxq, struct rte_mbuf **rx_pkts,
++		uint16_t nb_pkts);
++
++uint16_t eth_igb_xmit_pkts_nc(void *txq, struct rte_mbuf **tx_pkts,
++		uint16_t nb_pkts);
++#endif
++
+ int eth_igb_rx_init(struct rte_eth_dev *dev);
+ 
+ void eth_igb_tx_init(struct rte_eth_dev *dev);
+diff --git a/drivers/net/intel/e1000/igb_ethdev.c b/drivers/net/intel/e1000/igb_ethdev.c
+index 524c030be6..287f2a0105 100644
+--- a/drivers/net/intel/e1000/igb_ethdev.c
++++ b/drivers/net/intel/e1000/igb_ethdev.c
+@@ -809,9 +809,15 @@ eth_igb_dev_init(struct rte_eth_dev *eth_dev)
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY){
+ 		if (eth_dev->data->scattered_rx)
+ 			eth_dev->rx_pkt_burst = &eth_igb_recv_scattered_pkts;
++		igb_dma_set_burst(eth_dev);
+ 		return 0;
+ 	}
+ 
++	error = igb_dma_probe(eth_dev);
++	if (error != 0)
++		return error;
++	igb_dma_set_burst(eth_dev);
++
+ 	rte_eth_copy_pci_info(eth_dev, pci_dev);
+ 
+ 	hw->hw_addr= (void *)pci_dev->mem_resource[0].addr;
+@@ -1097,7 +1103,8 @@ static int eth_igb_pci_remove(struct rte_pci_device *pci_dev)
+ 
+ static struct rte_pci_driver rte_igb_pmd = {
+ 	.id_table = pci_id_igb_map,
+-	.drv_flags = RTE_PCI_DRV_NEED_MAPPING | RTE_PCI_DRV_INTR_LSC,
++	.drv_flags = RTE_PCI_DRV_NEED_MAPPING | RTE_PCI_DRV_INTR_LSC |
++		RTE_PCI_DRV_DMA_NONCOHERENT,
+ 	.probe = eth_igb_pci_probe,
+ 	.remove = eth_igb_pci_remove,
+ };
+diff --git a/drivers/net/intel/e1000/igb_rxtx.c b/drivers/net/intel/e1000/igb_rxtx.c
+index 4fda5d57a0..3996f23b03 100644
+--- a/drivers/net/intel/e1000/igb_rxtx.c
++++ b/drivers/net/intel/e1000/igb_rxtx.c
+@@ -4,6 +4,10 @@
+ 
+ #include <sys/queue.h>
+ 
 +#include <limits.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
++#include <stdbool.h>
 +#include <unistd.h>
 +
-+#include <rte_byteorder.h>
-+#include <rte_common.h>
-+#include <rte_string_fns.h>
-+
-+#include "pci_init.h"
-+#include "private.h"
-+
-+static int
-+dt_read(const char *node, const char *name, void *buf, size_t size)
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -31,6 +35,9 @@
+ #include <rte_mbuf.h>
+ #include <rte_ether.h>
+ #include <ethdev_driver.h>
++#include <bus_pci_driver.h>
++#include <rte_bus_pci.h>
++#include <rte_mem_sync.h>
+ #include <rte_prefetch.h>
+ #include <rte_udp.h>
+ #include <rte_tcp.h>
+@@ -42,6 +49,107 @@
+ #include "base/e1000_api.h"
+ #include "e1000_ethdev.h"
+ 
++/*
++ * Non-coherent DMA: addresses go through the device's DMA window, and
++ * descriptors and buffers are synced around every handover.
++ */
++void
++igb_dma_set_burst(struct rte_eth_dev *dev)
 +{
-+	char path[PATH_MAX];
-+	size_t len;
-+	int ret;
-+	FILE *f;
++#if defined(RTE_ARCH_ARM64)
++	struct e1000_adapter *adapter = E1000_DEV_PRIVATE(dev->data->dev_private);
 +
-+	if (snprintf(path, sizeof(path), "%s/%s", node, name) >= (int)sizeof(path))
-+		return -ENAMETOOLONG;
-+	f = fopen(path, "rb");
-+	if (f == NULL)
-+		return -errno;
-+	len = fread(buf, 1, size, f);
-+	ret = ferror(f) ? -EIO : (int)len;
-+	if (ret >= 0 && fgetc(f) != EOF)
-+		ret = -E2BIG;
-+	fclose(f);
-+	return ret;
++	if (!adapter->dma_active)
++		return;
++	if (dev->rx_pkt_burst == eth_igb_recv_pkts)
++		dev->rx_pkt_burst = eth_igb_recv_pkts_nc;
++	else if (dev->rx_pkt_burst == eth_igb_recv_scattered_pkts)
++		dev->rx_pkt_burst = eth_igb_recv_scattered_pkts_nc;
++	if (dev->tx_pkt_burst == eth_igb_xmit_pkts)
++		dev->tx_pkt_burst = eth_igb_xmit_pkts_nc;
++#else
++	RTE_SET_USED(dev);
++#endif
 +}
 +
-+static bool
-+dt_is_known_bridge(const char *node)
++int
++igb_dma_probe(struct rte_eth_dev *dev)
 +{
-+	static const char * const compatible[] = { "brcm,bcm2711-pcie" };
-+	char buf[256];
-+	size_t pos, n, i;
-+	int len;
++	struct e1000_adapter *adapter = E1000_DEV_PRIVATE(dev->data->dev_private);
++	struct rte_pci_device *pci_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *pci_dev);
 +
-+	len = dt_read(node, "compatible", buf, sizeof(buf));
-+	if (len <= 0 || buf[len - 1] != '\0')
-+		return false;
-+	for (pos = 0; pos < (size_t)len; pos += n + 1) {
-+		n = strlen(buf + pos);
-+		for (i = 0; i < RTE_DIM(compatible); i++)
-+			if (strcmp(buf + pos, compatible[i]) == 0)
-+				return true;
++	rte_pci_get_dma_info(pci_dev, &adapter->dma);
++	adapter->dma_active = adapter->dma.noncoherent || adapter->dma.size != 0;
++	if (!adapter->dma_active)
++		return 0;
++	if (!rte_mem_sync_supported() || rte_mem_dcache_line_size() !=
++			4 * sizeof(union e1000_adv_rx_desc)) {
++		PMD_INIT_LOG(ERR, "%s: this DMA handling needs 64-byte cache lines",
++			dev->device->name);
++		return -ENOTSUP;
 +	}
-+	return false;
-+}
-+
-+static int
-+dt_cells(const char *node, const char *name)
-+{
-+	rte_be32_t value;
-+
-+	if (dt_read(node, name, &value, sizeof(value)) != sizeof(value))
-+		return -EINVAL;
-+	return rte_be_to_cpu_32(value);
-+}
-+
-+static uint64_t
-+dt_address(const rte_be32_t *cells, int n)
-+{
-+	uint64_t value = 0;
-+
-+	while (n-- > 0)
-+		value = (value << 32) | rte_be_to_cpu_32(*cells++);
-+	return value;
-+}
-+
-+/* One <pci-address> <parent-address> <size> entry in "dma-ranges". */
-+static int
-+dt_dma_window(const char *node, struct rte_pci_dma_info *info)
-+{
-+	char parent[PATH_MAX], *slash;
-+	rte_be32_t cells[7];
-+	int ac, len;
-+
-+	strlcpy(parent, node, sizeof(parent));
-+	slash = strrchr(parent, '/');
-+	if (slash == NULL || slash == parent)
-+		return -EINVAL;
-+	*slash = '\0';
-+
-+	ac = dt_cells(parent, "#address-cells");
-+	if ((ac != 1 && ac != 2) || dt_cells(node, "#address-cells") != 3 ||
-+			dt_cells(node, "#size-cells") != 2)
-+		return -ENOTSUP;
-+
-+	len = dt_read(node, "dma-ranges", cells, sizeof(cells));
-+	if (len < 0)
-+		return len;
-+	if (len != (3 + ac + 2) * (int)sizeof(cells[0]) ||
-+			(rte_be_to_cpu_32(cells[0]) & 0x03000000) != 0x02000000)
-+		return -ENOTSUP;
-+
-+	info->bus_base = dt_address(cells + 1, 2);
-+	info->cpu_base = dt_address(cells + 3, ac);
-+	info->size = dt_address(cells + 3 + ac, 2);
-+	if (info->size == 0 || info->size > UINT64_MAX - info->cpu_base ||
-+			info->size > UINT64_MAX - info->bus_base)
-+		return -EINVAL;
++	PMD_INIT_LOG(NOTICE, "%s: DMA is not cache coherent, maintaining %zu"
++		"-byte D-cache lines", dev->device->name,
++		rte_mem_dcache_line_size());
 +	return 0;
 +}
 +
-+/* The nearest ancestor that declares coherency decides it. */
-+static bool
-+dt_is_coherent(const char *node)
++static inline void
++igb_dma_sync_for_device(const volatile void *addr, size_t len,
++		enum rte_mem_sync_direction dir)
 +{
-+	char path[PATH_MAX], value;
-+	char *slash;
-+
-+	strlcpy(path, node, sizeof(path));
-+	for (;;) {
-+		if (dt_read(path, "dma-coherent", &value, sizeof(value)) >= 0)
-+			return true;
-+		if (dt_read(path, "dma-noncoherent", &value, sizeof(value)) >= 0)
-+			return false;
-+		slash = strrchr(path, '/');
-+		if (slash == NULL || slash == path)
-+			return false;
-+		*slash = '\0';
-+	}
++	if (len != 0)
++		rte_mem_sync_for_device((const void *)(uintptr_t)addr, len, dir);
 +}
 +
-+/*
-+ * Unparseable properties mark only this device unusable, so the scan of the
-+ * other devices is not affected.
-+ */
-+void
-+pci_dt_read_dma_info(struct rte_pci_device *dev, const char *dirname)
++static inline void
++igb_dma_sync_for_cpu(const volatile void *addr, size_t len)
 +{
-+	struct rte_pci_dma_info *info = &RTE_PCI_DEVICE_INTERNAL(dev)->dma;
-+	char node[PATH_MAX], path[PATH_MAX], of_node[PATH_MAX];
-+	char *slash;
-+	int ret;
++	if (len != 0)
++		rte_mem_sync_for_cpu((const void *)(uintptr_t)addr, len,
++				RTE_MEM_SYNC_FROM_DEVICE);
++}
 +
-+	memset(info, 0, sizeof(*info));
-+	if (realpath(dirname, node) == NULL)
++static inline void
++igb_rx_buf_sync_for_device(struct rte_mbuf *mb)
++{
++	igb_dma_sync_for_device((char *)mb->buf_addr + RTE_PKTMBUF_HEADROOM,
++			mb->buf_len - RTE_PKTMBUF_HEADROOM,
++			RTE_MEM_SYNC_FROM_DEVICE);
++}
++
++static inline bool
++igb_rx_buf_usable(const struct rte_pci_dma_info *dma, struct rte_mbuf *mb)
++{
++	size_t line = rte_mem_dcache_line_size();
++	uintptr_t addr = (uintptr_t)mb->buf_addr + RTE_PKTMBUF_HEADROOM;
++	size_t len;
++
++	if (!RTE_MBUF_DIRECT(mb) || RTE_MBUF_HAS_EXTBUF(mb) ||
++			mb->buf_len <= RTE_PKTMBUF_HEADROOM)
++		return false;
++	len = mb->buf_len - RTE_PKTMBUF_HEADROOM;
++	return (addr % line) == 0 && (len % line) == 0 &&
++		rte_pci_dma_iova(dma, rte_mbuf_data_iova_default(mb), len) !=
++			RTE_BAD_IOVA;
++}
++
++static inline void
++igb_dma_sync_ring(const volatile void *ring, size_t desc_size, uint16_t nb_desc,
++		uint16_t from, uint16_t to)
++{
++	if (from == to)
 +		return;
-+
-+	while ((slash = strrchr(node, '/')) != NULL && slash != node) {
-+		if (snprintf(path, sizeof(path), "%s/of_node", node) <
-+				(int)sizeof(path) &&
-+				realpath(path, of_node) != NULL &&
-+				dt_is_known_bridge(of_node)) {
-+			ret = dt_dma_window(of_node, info);
-+			if (ret < 0) {
-+				PCI_LOG(ERR, "%s: cannot use the DMA properties of %s",
-+					dev->name, of_node);
-+				info->unusable = true;
-+				return;
-+			}
-+			info->noncoherent = !dt_is_coherent(of_node);
-+			return;
-+		}
-+		*slash = '\0';
++	if (from < to) {
++		igb_dma_sync_for_device(RTE_PTR_ADD(ring, from * desc_size),
++				(to - from) * desc_size, RTE_MEM_SYNC_TO_DEVICE);
++	} else {
++		igb_dma_sync_for_device(RTE_PTR_ADD(ring, from * desc_size),
++				(nb_desc - from) * desc_size, RTE_MEM_SYNC_TO_DEVICE);
++		igb_dma_sync_for_device(ring, to * desc_size, RTE_MEM_SYNC_TO_DEVICE);
 +	}
 +}
-diff --git a/drivers/bus/pci/linux/pci_init.h b/drivers/bus/pci/linux/pci_init.h
-index 6949dd57d9..fcbf5cdfa2 100644
---- a/drivers/bus/pci/linux/pci_init.h
-+++ b/drivers/bus/pci/linux/pci_init.h
-@@ -73,4 +73,6 @@ int pci_vfio_unmap_resource(struct rte_pci_device *dev);
- 
- int pci_vfio_is_enabled(void);
- 
-+void pci_dt_read_dma_info(struct rte_pci_device *dev, const char *dirname);
 +
- #endif /* EAL_PCI_INIT_H_ */
-diff --git a/drivers/bus/pci/meson.build b/drivers/bus/pci/meson.build
-index fede114dc7..9e9b27ef4d 100644
---- a/drivers/bus/pci/meson.build
-+++ b/drivers/bus/pci/meson.build
-@@ -10,6 +10,7 @@ if is_linux
-     sources += files(
-             'pci_common_uio.c',
-             'linux/pci.c',
-+            'linux/pci_dma_ranges.c',
-             'linux/pci_uio.c',
-             'linux/pci_vfio.c',
-     )
-diff --git a/drivers/bus/pci/pci_common.c b/drivers/bus/pci/pci_common.c
-index dc8db80d3b..14efb46d23 100644
---- a/drivers/bus/pci/pci_common.c
-+++ b/drivers/bus/pci/pci_common.c
-@@ -142,6 +142,14 @@ pci_unmap_resource(void *requested_addr, size_t size)
- 		PCI_LOG(DEBUG, "  PCI memory unmapped at %p", requested_addr);
+ #ifdef RTE_LIBRTE_IEEE1588
+ #define IGB_TX_IEEE1588_TMST RTE_MBUF_F_TX_IEEE1588_TMST
+ #else
+@@ -88,6 +196,9 @@ enum igb_rxq_flags {
+  * Structure associated with each RX queue.
+  */
+ struct igb_rx_queue {
++	struct rte_pci_dma_info dma;    /**< translation window of the bridge. */
++	bool                   dma_active; /**< translate and maintain caches. */
++	uint16_t               dma_per_line; /**< descriptors in one cache line. */
+ 	struct rte_mempool  *mb_pool;   /**< mbuf pool to populate RX ring. */
+ 	volatile union e1000_adv_rx_desc *rx_ring; /**< RX ring virtual address. */
+ 	uint64_t            rx_ring_phys_addr; /**< RX ring DMA address. */
+@@ -98,6 +209,7 @@ struct igb_rx_queue {
+ 	struct rte_mbuf *pkt_last_seg;  /**< Last segment of current packet. */
+ 	uint16_t            nb_rx_desc; /**< number of RX descriptors. */
+ 	uint16_t            rx_tail;    /**< current value of RDT register. */
++	uint16_t            rx_unwritten; /**< first refill not written back. */
+ 	uint16_t            nb_rx_hold; /**< number of held free RX desc. */
+ 	uint16_t            rx_free_thresh; /**< max free RX desc to hold. */
+ 	uint16_t            queue_id;   /**< RX queue index. */
+@@ -163,6 +275,10 @@ struct igb_advctx_info {
+  * Structure associated with each TX queue.
+  */
+ struct igb_tx_queue {
++	struct rte_pci_dma_info dma;    /**< translation window of the bridge. */
++	bool                   dma_active; /**< translate and maintain caches. */
++	uint16_t               dma_per_line; /**< descriptors in one cache line. */
++	uint16_t               last_rs; /**< newest descriptor asking for status. */
+ 	volatile union e1000_adv_tx_desc *tx_ring; /**< TX ring address */
+ 	uint64_t               tx_ring_phys_addr; /**< TX ring DMA address. */
+ 	struct igb_tx_entry    *sw_ring; /**< virtual address of SW ring. */
+@@ -384,9 +500,97 @@ tx_desc_vlan_flags_to_cmdtype(uint64_t ol_flags)
+ 	return cmdtype;
  }
  
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_pci_get_dma_info)
-+void
-+rte_pci_get_dma_info(const struct rte_pci_device *dev,
-+		struct rte_pci_dma_info *info)
+-uint16_t
+-eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+-	       uint16_t nb_pkts)
++/*
++ * Refresh a descriptor line before writing it, so the clean that publishes it
++ * does not erase Done bits the NIC set on its neighbours.
++ */
++static inline void
++igb_tx_line_acquire(struct igb_tx_queue *txq, uint16_t desc)
 +{
-+	*info = RTE_PCI_DEVICE_INTERNAL_CONST(dev)->dma;
++	uint16_t line = desc & ~(uint16_t)(txq->dma_per_line - 1);
++
++	igb_dma_sync_for_cpu(&txq->tx_ring[line],
++			txq->dma_per_line * sizeof(*txq->tx_ring));
 +}
 +
- static bool
- pci_bus_match(const struct rte_driver *drv, const struct rte_device *dev)
- {
-@@ -186,6 +194,7 @@ pci_probe_device(struct rte_driver *drv, struct rte_device *dev)
- 	struct rte_pci_device *pci_dev = RTE_BUS_DEVICE(dev, *pci_dev);
- 	struct rte_pci_driver *pci_drv = RTE_BUS_DRIVER(drv, *pci_drv);
- 	struct rte_pci_addr *loc = &pci_dev->addr;
-+	const struct rte_pci_dma_info *dma;
- 	bool already_probed;
- 	int ret;
- 
-@@ -196,6 +205,14 @@ pci_probe_device(struct rte_driver *drv, struct rte_device *dev)
- 	if (pci_dev->device.numa_node < 0 && rte_socket_count() > 1)
- 		PCI_LOG(INFO, "Device %s is not NUMA-aware", pci_dev->name);
- 
-+	dma = &RTE_PCI_DEVICE_INTERNAL(pci_dev)->dma;
-+	if (dma->unusable || ((dma->noncoherent || dma->size != 0) &&
-+			!(pci_drv->drv_flags & RTE_PCI_DRV_DMA_NONCOHERENT))) {
-+		PCI_LOG(ERR, "%s: %s does not handle this device's DMA properties",
-+			pci_dev->name, pci_drv->driver.name);
-+		return -ENOTSUP;
-+	}
-+
- 	already_probed = (pci_dev->intr_handle != NULL);
- 	if (already_probed && !(pci_drv->drv_flags & RTE_PCI_DRV_PROBE_AGAIN)) {
- 		PCI_LOG(DEBUG, "Device %s is already probed", pci_dev->device.name);
-diff --git a/drivers/bus/pci/private.h b/drivers/bus/pci/private.h
-index 8103c32881..5a0286dbc0 100644
---- a/drivers/bus/pci/private.h
-+++ b/drivers/bus/pci/private.h
-@@ -13,6 +13,7 @@
- #include <rte_log.h>
- #include <rte_os_shim.h>
- #include <rte_pci.h>
-+#include <rte_bus_pci.h>
- 
- extern int pci_bus_logtype;
- #define RTE_LOGTYPE_PCI_BUS pci_bus_logtype
-@@ -41,6 +42,7 @@ struct rte_pci_region {
- 
- struct rte_pci_device_internal {
- 	struct rte_pci_device device;
-+	struct rte_pci_dma_info dma;
- 	/* PCI regions provided by e.g. VFIO. */
- 	struct rte_pci_region region[RTE_MAX_PCI_REGIONS];
- };
-diff --git a/drivers/bus/pci/rte_bus_pci.h b/drivers/bus/pci/rte_bus_pci.h
-index 19a7b15b99..1db4fdbdd8 100644
---- a/drivers/bus/pci/rte_bus_pci.h
-+++ b/drivers/bus/pci/rte_bus_pci.h
-@@ -172,6 +172,58 @@ __rte_internal
- int rte_pci_pasid_set_state(const struct rte_pci_device *dev,
- 		off_t offset, bool enable);
- 
-+/**
-+ * @internal
-+ * DMA properties of the host bridge above a device.  A zero size means
-+ * addresses are not translated.
-+ */
-+struct rte_pci_dma_info {
-+	uint64_t cpu_base;
-+	uint64_t bus_base;
-+	uint64_t size;
-+	bool noncoherent;
-+	bool unusable;		/**< properties the bus could not parse. */
-+};
-+
-+/**
-+ * @internal
-+ * Copy a device's DMA properties.  Drivers supporting secondary processes
-+ * keep the copy in shared data.
-+ *
-+ * @param dev
-+ *   The PCI device.
-+ * @param info
-+ *   Filled in with the bridge's DMA properties.
-+ */
-+__rte_internal
-+void rte_pci_get_dma_info(const struct rte_pci_device *dev,
-+		struct rte_pci_dma_info *info);
-+
-+/**
-+ * @internal
-+ * Translate an IOVA range into a device address.
-+ *
-+ * @return
-+ *   The device address, or RTE_BAD_IOVA if the range is outside the window.
-+ */
-+static inline rte_iova_t
-+rte_pci_dma_iova(const struct rte_pci_dma_info *info, rte_iova_t iova,
-+		size_t len)
-+{
-+	uint64_t offset;
-+
-+	if (iova == RTE_BAD_IOVA || len == 0)
-+		return RTE_BAD_IOVA;
-+	if (info->size == 0)
-+		return iova;
-+	if (iova < info->cpu_base)
-+		return RTE_BAD_IOVA;
-+	offset = iova - info->cpu_base;
-+	if (offset >= info->size || len > info->size - offset)
-+		return RTE_BAD_IOVA;
-+	return info->bus_base + offset;
-+}
-+
- /**
-  * Read PCI config space.
-  *
-diff --git a/lib/eal/include/meson.build b/lib/eal/include/meson.build
-index aef5824e5f..9eabd91773 100644
---- a/lib/eal/include/meson.build
-+++ b/lib/eal/include/meson.build
-@@ -32,6 +32,7 @@ headers += files(
-         'rte_lock_annotations.h',
-         'rte_malloc.h',
-         'rte_mcslock.h',
-+        'rte_mem_sync.h',
-         'rte_memory.h',
-         'rte_memzone.h',
-         'rte_pci_dev_feature_defs.h',
-diff --git a/lib/eal/include/rte_mem_sync.h b/lib/eal/include/rte_mem_sync.h
-new file mode 100644
-index 0000000000..6ac517f243
---- /dev/null
-+++ b/lib/eal/include/rte_mem_sync.h
-@@ -0,0 +1,133 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Md Rayhanul Islam
-+ */
-+
-+#ifndef RTE_MEM_SYNC_H
-+#define RTE_MEM_SYNC_H
-+
-+/**
-+ * @file
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Cache maintenance for devices whose DMA is not coherent with the CPU
-+ * caches, after dma_sync_single_for_{device,cpu}().  Ownership is per cache
-+ * line, and a sync does not wait for the transfer to complete.  Empty on
-+ * coherent platforms.
-+ */
-+
-+#include <stdbool.h>
-+#include <stddef.h>
-+#include <stdint.h>
-+
-+#include <rte_common.h>
-+#include <rte_compat.h>
-+
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
-+/** Transfer direction, as the device sees it. */
-+enum rte_mem_sync_direction {
-+	RTE_MEM_SYNC_TO_DEVICE,
-+	RTE_MEM_SYNC_FROM_DEVICE,
-+	RTE_MEM_SYNC_BIDIRECTIONAL,
-+};
-+
-+/** Size of a data cache line on this CPU. */
-+__rte_experimental
-+static inline size_t
-+rte_mem_dcache_line_size(void)
-+{
-+#ifdef RTE_ARCH_ARM64
-+	uint64_t ctr;
-+
-+	/* CTR_EL0.DminLine is log2 of the line size in words. */
-+	asm volatile("mrs %0, ctr_el0" : "=r" (ctr));
-+	return 4U << ((ctr >> 16) & 0xf);
-+#else
-+	return RTE_CACHE_LINE_SIZE;
-+#endif
-+}
-+
-+/** Whether this build implements the maintenance below. */
-+__rte_experimental
++/* Completion is in order, so Done on the last RS descriptor covers this one. */
 +static inline bool
-+rte_mem_sync_supported(void)
++igb_tx_desc_done(struct igb_tx_queue *txq, uint16_t desc, const bool nc)
 +{
-+#if defined(RTE_ARCH_ARM64) && defined(RTE_EXEC_ENV_LINUX)
-+	return true;
-+#else
-+	return false;
-+#endif
++	volatile uint32_t *status = &txq->tx_ring[desc].wb.status;
++
++	if (!nc)
++		return (*status & rte_cpu_to_le_32(E1000_TXD_STAT_DD)) != 0;
++
++	igb_dma_sync_for_cpu(status, sizeof(*status));
++	if (*status & rte_cpu_to_le_32(E1000_TXD_STAT_DD))
++		return true;
++
++	status = &txq->tx_ring[txq->last_rs].wb.status;
++	igb_dma_sync_for_cpu(status, sizeof(*status));
++	return (*status & rte_cpu_to_le_32(E1000_TXD_STAT_DD)) != 0;
 +}
 +
-+#if defined(RTE_ARCH_ARM64) && defined(RTE_EXEC_ENV_LINUX)
-+
-+/**
-+ * Hand [addr, addr + len) to the device.  EL0 cannot execute DC IVAC, so a
-+ * buffer the device writes is cleaned as well as invalidated.
-+ */
-+__rte_experimental
-+static inline void
-+rte_mem_sync_for_device(const void *addr, size_t len,
-+		enum rte_mem_sync_direction direction)
++static bool
++igb_tx_pkt_reachable(struct igb_tx_queue *txq, struct rte_mbuf *mb)
 +{
-+	uintptr_t p = (uintptr_t)addr & ~(uintptr_t)(RTE_CACHE_LINE_MIN_SIZE - 1);
-+	uintptr_t last = ((uintptr_t)addr + len - 1) &
-+			~(uintptr_t)(RTE_CACHE_LINE_MIN_SIZE - 1);
++	uint16_t n = 0, expected = mb->nb_segs;
 +
-+	if (len == 0)
-+		return;
-+	for (;;) {
-+		if (direction == RTE_MEM_SYNC_TO_DEVICE)
-+			asm volatile("dc cvac, %0" : : "r" (p) : "memory");
-+		else
-+			asm volatile("dc civac, %0" : : "r" (p) : "memory");
-+		if (p == last)
-+			break;
-+		p += RTE_CACHE_LINE_MIN_SIZE;
++	for (; mb != NULL && n < txq->nb_tx_desc; mb = mb->next, n++)
++		if (rte_pci_dma_iova(&txq->dma, rte_mbuf_data_iova(mb),
++				mb->data_len) == RTE_BAD_IOVA)
++			return false;
++	return mb == NULL && n == expected;
++}
++
++static inline uint16_t
++igb_rx_desc_per_line(struct igb_rx_queue *rxq)
++{
++	return rxq->dma_per_line;
++}
++
++static inline void
++igb_rx_write_range(struct igb_rx_queue *rxq, uint16_t from, uint16_t to)
++{
++	uint16_t i;
++
++	for (i = from; i < to; i++) {
++		volatile union e1000_adv_rx_desc *rxd = &rxq->rx_ring[i];
++		struct rte_mbuf *mb = rxq->sw_ring[i].mbuf;
++
++		igb_rx_buf_sync_for_device(mb);
++		rxd->read.hdr_addr = 0;
++		rxd->read.pkt_addr = rte_cpu_to_le_64(rte_pci_dma_iova(&rxq->dma,
++			rte_mbuf_data_iova_default(mb),
++			mb->buf_len - RTE_PKTMBUF_HEADROOM));
 +	}
-+	/* DMB does not order cache maintenance. */
-+	asm volatile("dsb sy" : : : "memory");
++	igb_dma_sync_for_device(&rxq->rx_ring[from],
++			(to - from) * sizeof(*rxq->rx_ring), RTE_MEM_SYNC_TO_DEVICE);
 +}
 +
-+/** Take [addr, addr + len) back from the device once the transfer is done. */
-+__rte_experimental
-+static inline void
-+rte_mem_sync_for_cpu(const void *addr, size_t len,
-+		enum rte_mem_sync_direction direction)
++/* Post whole descriptor lines; returns the first one not yet posted. */
++static inline uint16_t
++igb_rx_flush_refills(struct igb_rx_queue *rxq, uint16_t rx_id)
 +{
-+	if (direction != RTE_MEM_SYNC_TO_DEVICE)
-+		rte_mem_sync_for_device(addr, len, RTE_MEM_SYNC_FROM_DEVICE);
++	uint16_t mask = igb_rx_desc_per_line(rxq) - 1;
++	uint16_t start = rxq->rx_unwritten;
++	uint16_t end = rx_id & ~mask;
++
++	if (end == start)
++		return start;
++	if (end < start) {
++		igb_rx_write_range(rxq, start, rxq->nb_rx_desc);
++		start = 0;
++	}
++	if (end > start)
++		igb_rx_write_range(rxq, start, end);
++	rxq->rx_unwritten = end;
++	return end;
 +}
 +
-+#else
++static __rte_always_inline uint16_t
++igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts,
++	      const bool nc)
+ {
+ 	struct igb_tx_queue *txq;
+ 	struct igb_tx_entry *sw_ring;
+@@ -419,6 +623,10 @@ eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 
+ 	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
+ 		tx_pkt = *tx_pkts++;
++		if (nc && (tx_pkt->nb_segs == 0 ||
++				tx_pkt->nb_segs >= txq->nb_tx_desc ||
++				!igb_tx_pkt_reachable(txq, tx_pkt)))
++			break;
+ 		pkt_len = tx_pkt->pkt_len;
+ 
+ 		RTE_MBUF_PREFETCH_TO_FREE(txe->mbuf);
+@@ -508,7 +716,7 @@ eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 		/*
+ 		 * Check that this descriptor is free.
+ 		 */
+-		if (! (txr[tx_end].wb.status & E1000_TXD_STAT_DD)) {
++		if (!igb_tx_desc_done(txq, tx_end, nc)) {
+ 			if (nb_tx == 0)
+ 				return 0;
+ 			goto end_of_tx;
+@@ -595,6 +803,15 @@ eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			 */
+ 			slen = (uint16_t) m_seg->data_len;
+ 			buf_dma_addr = rte_mbuf_data_iova(m_seg);
++			if (nc) {
++				if ((tx_id & (txq->dma_per_line - 1)) == 0 ||
++						tx_id == txq->tx_tail)
++					igb_tx_line_acquire(txq, tx_id);
++				buf_dma_addr = rte_pci_dma_iova(&txq->dma,
++						buf_dma_addr, slen);
++				igb_dma_sync_for_device(rte_pktmbuf_mtod(m_seg, void *),
++						slen, RTE_MEM_SYNC_TO_DEVICE);
++			}
+ 			txd->read.buffer_addr =
+ 				rte_cpu_to_le_64(buf_dma_addr);
+ 			txd->read.cmd_type_len =
+@@ -613,10 +830,15 @@ eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 		 */
+ 		txd->read.cmd_type_len |=
+ 			rte_cpu_to_le_32(E1000_TXD_CMD_EOP | E1000_TXD_CMD_RS);
++		txq->last_rs = tx_last;
+ 	}
+  end_of_tx:
+ 	rte_wmb();
+ 
++	if (nc)
++		igb_dma_sync_ring(txq->tx_ring, sizeof(*txq->tx_ring),
++				txq->nb_tx_desc, txq->tx_tail, tx_id);
 +
-+__rte_experimental
-+static inline void
-+rte_mem_sync_for_device(const void *addr, size_t len,
-+		enum rte_mem_sync_direction direction)
+ 	/*
+ 	 * Set the Transmit Descriptor Tail (TDT).
+ 	 */
+@@ -629,6 +851,20 @@ eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	return nb_tx;
+ }
+ 
++uint16_t
++eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
 +{
-+	RTE_SET_USED(addr);
-+	RTE_SET_USED(len);
-+	RTE_SET_USED(direction);
++	return igb_xmit_pkts(tx_queue, tx_pkts, nb_pkts, false);
 +}
 +
-+__rte_experimental
-+static inline void
-+rte_mem_sync_for_cpu(const void *addr, size_t len,
-+		enum rte_mem_sync_direction direction)
++#if defined(RTE_ARCH_ARM64)
++uint16_t
++eth_igb_xmit_pkts_nc(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
 +{
-+	RTE_SET_USED(addr);
-+	RTE_SET_USED(len);
-+	RTE_SET_USED(direction);
-+}
-+
-+#endif /* RTE_ARCH_ARM64 && RTE_EXEC_ENV_LINUX */
-+
-+#ifdef __cplusplus
++	return igb_xmit_pkts(tx_queue, tx_pkts, nb_pkts, true);
 +}
 +#endif
 +
-+#endif /* RTE_MEM_SYNC_H */
+ /*********************************************************************
+  *
+  *  TX prep functions
+@@ -817,9 +1053,9 @@ rx_desc_error_to_pkt_flags(uint32_t rx_status)
+ 		E1000_RXD_ERR_CKSUM_BIT) & E1000_RXD_ERR_CKSUM_MSK];
+ }
+ 
+-uint16_t
+-eth_igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+-	       uint16_t nb_pkts)
++static __rte_always_inline uint16_t
++igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts,
++	      const bool nc)
+ {
+ 	struct igb_rx_queue *rxq;
+ 	volatile union e1000_adv_rx_desc *rx_ring;
+@@ -854,6 +1090,8 @@ eth_igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		 * using invalid descriptor fields when read from rxd.
+ 		 */
+ 		rxdp = &rx_ring[rx_id];
++		if (nc)
++			igb_dma_sync_for_cpu(rxdp, sizeof(*rxdp));
+ 		staterr = rxdp->wb.upper.status_error;
+ 		if (! (staterr & rte_cpu_to_le_32(E1000_RXD_STAT_DD)))
+ 			break;
+@@ -900,6 +1138,11 @@ eth_igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			break;
+ 		}
+ 
++		if (nc && !igb_rx_buf_usable(&rxq->dma, nmb)) {
++			rte_pktmbuf_free(nmb);
++			rte_eth_devices[rxq->port_id].data->rx_mbuf_alloc_failed++;
++			break;
++		}
+ 		nb_hold++;
+ 		rxe = &sw_ring[rx_id];
+ 		rx_id++;
+@@ -923,8 +1166,10 @@ eth_igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		rxe->mbuf = nmb;
+ 		dma_addr =
+ 			rte_cpu_to_le_64(rte_mbuf_data_iova_default(nmb));
+-		rxdp->read.hdr_addr = 0;
+-		rxdp->read.pkt_addr = dma_addr;
++		if (!nc) {	/* deferred to igb_rx_flush_refills() */
++			rxdp->read.hdr_addr = 0;
++			rxdp->read.pkt_addr = dma_addr;
++		}
+ 
+ 		/*
+ 		 * Initialize the returned mbuf.
+@@ -942,6 +1187,9 @@ eth_igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		pkt_len = (uint16_t) (rte_le_to_cpu_16(rxd.wb.upper.length) -
+ 				      rxq->crc_len);
+ 		rxm->data_off = RTE_PKTMBUF_HEADROOM;
++		if (nc)
++			igb_dma_sync_for_cpu((char *)rxm->buf_addr + rxm->data_off,
++					rte_le_to_cpu_16(rxd.wb.upper.length));
+ 		rte_packet_prefetch((char *)rxm->buf_addr + rxm->data_off);
+ 		rxm->nb_segs = 1;
+ 		rxm->next = NULL;
+@@ -993,18 +1241,39 @@ eth_igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			   (unsigned) rxq->port_id, (unsigned) rxq->queue_id,
+ 			   (unsigned) rx_id, (unsigned) nb_hold,
+ 			   (unsigned) nb_rx);
++		if (nc) {
++			uint16_t first = rxq->rx_unwritten;
++
++			rx_id = igb_rx_flush_refills(rxq, rx_id);
++			nb_hold -= (rx_id + rxq->nb_rx_desc - first) % rxq->nb_rx_desc;
++		} else {
++			nb_hold = 0;
++		}
+ 		rx_id = (uint16_t) ((rx_id == 0) ?
+ 				     (rxq->nb_rx_desc - 1) : (rx_id - 1));
+ 		E1000_PCI_REG_WRITE(rxq->rdt_reg_addr, rx_id);
+-		nb_hold = 0;
+ 	}
+ 	rxq->nb_rx_hold = nb_hold;
+ 	return nb_rx;
+ }
+ 
+ uint16_t
+-eth_igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+-			 uint16_t nb_pkts)
++eth_igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++{
++	return igb_recv_pkts(rx_queue, rx_pkts, nb_pkts, false);
++}
++
++#if defined(RTE_ARCH_ARM64)
++uint16_t
++eth_igb_recv_pkts_nc(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++{
++	return igb_recv_pkts(rx_queue, rx_pkts, nb_pkts, true);
++}
++#endif
++
++static __rte_always_inline uint16_t
++igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
++			uint16_t nb_pkts, const bool nc)
+ {
+ 	struct igb_rx_queue *rxq;
+ 	volatile union e1000_adv_rx_desc *rx_ring;
+@@ -1049,6 +1318,8 @@ eth_igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		 * using invalid descriptor fields when read from rxd.
+ 		 */
+ 		rxdp = &rx_ring[rx_id];
++		if (nc)
++			igb_dma_sync_for_cpu(rxdp, sizeof(*rxdp));
+ 		staterr = rxdp->wb.upper.status_error;
+ 		if (! (staterr & rte_cpu_to_le_32(E1000_RXD_STAT_DD)))
+ 			break;
+@@ -1091,6 +1362,11 @@ eth_igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			break;
+ 		}
+ 
++		if (nc && !igb_rx_buf_usable(&rxq->dma, nmb)) {
++			rte_pktmbuf_free(nmb);
++			rte_eth_devices[rxq->port_id].data->rx_mbuf_alloc_failed++;
++			break;
++		}
+ 		nb_hold++;
+ 		rxe = &sw_ring[rx_id];
+ 		rx_id++;
+@@ -1117,8 +1393,10 @@ eth_igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		rxm = rxe->mbuf;
+ 		rxe->mbuf = nmb;
+ 		dma = rte_cpu_to_le_64(rte_mbuf_data_iova_default(nmb));
+-		rxdp->read.pkt_addr = dma;
+-		rxdp->read.hdr_addr = 0;
++		if (!nc) {	/* deferred to igb_rx_flush_refills() */
++			rxdp->read.pkt_addr = dma;
++			rxdp->read.hdr_addr = 0;
++		}
+ 
+ 		/*
+ 		 * Set data length & data buffer address of mbuf.
+@@ -1126,6 +1404,9 @@ eth_igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		data_len = rte_le_to_cpu_16(rxd.wb.upper.length);
+ 		rxm->data_len = data_len;
+ 		rxm->data_off = RTE_PKTMBUF_HEADROOM;
++		if (nc)
++			igb_dma_sync_for_cpu((char *)rxm->buf_addr + rxm->data_off,
++					data_len);
+ 
+ 		/*
+ 		 * If this is the first buffer of the received packet,
+@@ -1255,15 +1536,38 @@ eth_igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			   (unsigned) rxq->port_id, (unsigned) rxq->queue_id,
+ 			   (unsigned) rx_id, (unsigned) nb_hold,
+ 			   (unsigned) nb_rx);
++		if (nc) {
++			uint16_t first = rxq->rx_unwritten;
++
++			rx_id = igb_rx_flush_refills(rxq, rx_id);
++			nb_hold -= (rx_id + rxq->nb_rx_desc - first) % rxq->nb_rx_desc;
++		} else {
++			nb_hold = 0;
++		}
+ 		rx_id = (uint16_t) ((rx_id == 0) ?
+ 				     (rxq->nb_rx_desc - 1) : (rx_id - 1));
+ 		E1000_PCI_REG_WRITE(rxq->rdt_reg_addr, rx_id);
+-		nb_hold = 0;
+ 	}
+ 	rxq->nb_rx_hold = nb_hold;
+ 	return nb_rx;
+ }
+ 
++uint16_t
++eth_igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
++			    uint16_t nb_pkts)
++{
++	return igb_recv_scattered_pkts(rx_queue, rx_pkts, nb_pkts, false);
++}
++
++#if defined(RTE_ARCH_ARM64)
++uint16_t
++eth_igb_recv_scattered_pkts_nc(void *rx_queue, struct rte_mbuf **rx_pkts,
++			       uint16_t nb_pkts)
++{
++	return igb_recv_scattered_pkts(rx_queue, rx_pkts, nb_pkts, true);
++}
++#endif
++
+ /*
+  * Maximum number of Ring Descriptors.
+  *
+@@ -1308,7 +1612,6 @@ static int
+ igb_tx_done_cleanup(struct igb_tx_queue *txq, uint32_t free_cnt)
+ {
+ 	struct igb_tx_entry *sw_ring;
+-	volatile union e1000_adv_tx_desc *txr;
+ 	uint16_t tx_first; /* First segment analyzed. */
+ 	uint16_t tx_id;    /* Current segment being processed. */
+ 	uint16_t tx_last;  /* Last segment in the current packet. */
+@@ -1319,7 +1622,6 @@ igb_tx_done_cleanup(struct igb_tx_queue *txq, uint32_t free_cnt)
+ 		return -ENODEV;
+ 
+ 	sw_ring = txq->sw_ring;
+-	txr = txq->tx_ring;
+ 
+ 	/* tx_tail is the last sent packet on the sw_ring. Goto the end
+ 	 * of that packet (the last segment in the packet chain) and
+@@ -1345,8 +1647,7 @@ igb_tx_done_cleanup(struct igb_tx_queue *txq, uint32_t free_cnt)
+ 		tx_last = sw_ring[tx_id].last_id;
+ 
+ 		if (sw_ring[tx_last].mbuf) {
+-			if (txr[tx_last].wb.status &
+-			    E1000_TXD_STAT_DD) {
++			if (igb_tx_desc_done(txq, tx_last, txq->dma_active)) {
+ 				/* Increment the number of packets
+ 				 * freed.
+ 				 */
+@@ -1466,6 +1767,10 @@ igb_reset_tx_queue(struct igb_tx_queue *txq, struct rte_eth_dev *dev)
+ 		txq->ctx_start = txq->queue_id * IGB_CTX_NUM;
+ 
+ 	igb_reset_tx_queue_stat(txq);
++	if (txq->dma_active)
++		igb_dma_sync_for_device(txq->tx_ring,
++				txq->nb_tx_desc * sizeof(*txq->tx_ring),
++				RTE_MEM_SYNC_TO_DEVICE);
+ }
+ 
+ uint64_t
+@@ -1573,9 +1878,21 @@ eth_igb_tx_queue_setup(struct rte_eth_dev *dev,
+ 	txq->reg_idx = (uint16_t)((RTE_ETH_DEV_SRIOV(dev).active == 0) ?
+ 		queue_idx : RTE_ETH_DEV_SRIOV(dev).def_pool_q_idx + queue_idx);
+ 	txq->port_id = dev->data->port_id;
++	txq->dma = E1000_DEV_PRIVATE(dev->data->dev_private)->dma;
++	txq->dma_active = E1000_DEV_PRIVATE(dev->data->dev_private)->dma_active;
++	txq->dma_per_line = 1;
++	if (txq->dma_active) {
++		txq->dma_per_line = rte_mem_dcache_line_size() /
++				sizeof(*txq->tx_ring);
++		txq->wthresh = 0;
++	}
+ 
+ 	txq->tdt_reg_addr = E1000_PCI_REG_ADDR(hw, E1000_TDT(txq->reg_idx));
+-	txq->tx_ring_phys_addr = tz->iova;
++	txq->tx_ring_phys_addr = rte_pci_dma_iova(&txq->dma, tz->iova, size);
++	if (txq->tx_ring_phys_addr == RTE_BAD_IOVA) {
++		igb_tx_queue_release(txq);
++		return -EINVAL;
++	}
+ 
+ 	txq->tx_ring = (union e1000_adv_tx_desc *) tz->addr;
+ 	/* Allocate software ring */
+@@ -1591,6 +1908,7 @@ eth_igb_tx_queue_setup(struct rte_eth_dev *dev,
+ 
+ 	igb_reset_tx_queue(txq, dev);
+ 	dev->tx_pkt_burst = eth_igb_xmit_pkts;
++	igb_dma_set_burst(dev);
+ 	dev->tx_pkt_prepare = &eth_igb_prep_pkts;
+ 	dev->data->tx_queues[queue_idx] = txq;
+ 	txq->offloads = offloads;
+@@ -1642,6 +1960,9 @@ igb_reset_rx_queue(struct igb_rx_queue *rxq)
+ 	}
+ 
+ 	rxq->rx_tail = 0;
++	rxq->rx_unwritten = 0;
++	if (rxq->dma_active)
++		rxq->nb_rx_hold = 0;
+ 	rxq->pkt_first_seg = NULL;
+ 	rxq->pkt_last_seg = NULL;
+ }
+@@ -1748,6 +2069,9 @@ eth_igb_rx_queue_setup(struct rte_eth_dev *dev,
+ 	rxq->reg_idx = (uint16_t)((RTE_ETH_DEV_SRIOV(dev).active == 0) ?
+ 		queue_idx : RTE_ETH_DEV_SRIOV(dev).def_pool_q_idx + queue_idx);
+ 	rxq->port_id = dev->data->port_id;
++	rxq->dma = E1000_DEV_PRIVATE(dev->data->dev_private)->dma;
++	rxq->dma_active = E1000_DEV_PRIVATE(dev->data->dev_private)->dma_active;
++	rxq->dma_per_line = 1;
+ 	if (dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC)
+ 		rxq->crc_len = RTE_ETHER_CRC_LEN;
+ 	else
+@@ -1769,8 +2093,20 @@ eth_igb_rx_queue_setup(struct rte_eth_dev *dev,
+ 	rxq->mz = rz;
+ 	rxq->rdt_reg_addr = E1000_PCI_REG_ADDR(hw, E1000_RDT(rxq->reg_idx));
+ 	rxq->rdh_reg_addr = E1000_PCI_REG_ADDR(hw, E1000_RDH(rxq->reg_idx));
+-	rxq->rx_ring_phys_addr = rz->iova;
++	rxq->rx_ring_phys_addr = rte_pci_dma_iova(&rxq->dma, rz->iova, size);
++	if (rxq->rx_ring_phys_addr == RTE_BAD_IOVA) {
++		igb_rx_queue_release(rxq);
++		return -EINVAL;
++	}
+ 	rxq->rx_ring = (union e1000_adv_rx_desc *) rz->addr;
++	if (rxq->dma_active) {
++		size_t line = rte_mem_dcache_line_size();
++		uint16_t per_line = line / sizeof(*rxq->rx_ring);
++
++		if (per_line > 1 && rxq->nb_rx_desc % per_line == 0 &&
++				((uintptr_t)rxq->rx_ring & (line - 1)) == 0)
++			rxq->dma_per_line = per_line;
++	}
+ 
+ 	/* Allocate software ring. */
+ 	rxq->sw_ring = rte_zmalloc("rxq->sw_ring",
+@@ -1800,8 +2136,11 @@ eth_igb_rx_queue_count(void *rx_queue)
+ 	rxq = rx_queue;
+ 	rxdp = &(rxq->rx_ring[rxq->rx_tail]);
+ 
+-	while ((desc < rxq->nb_rx_desc) &&
+-		(rxdp->wb.upper.status_error & E1000_RXD_STAT_DD)) {
++	while (desc < rxq->nb_rx_desc) {
++		if (rxq->dma_active)
++			igb_dma_sync_for_cpu(rxdp, sizeof(*rxdp));
++		if ((rxdp->wb.upper.status_error & E1000_RXD_STAT_DD) == 0)
++			break;
+ 		desc += IGB_RXQ_SCAN_INTERVAL;
+ 		rxdp += IGB_RXQ_SCAN_INTERVAL;
+ 		if (rxq->rx_tail + desc >= rxq->nb_rx_desc)
+@@ -1830,6 +2169,8 @@ eth_igb_rx_descriptor_status(void *rx_queue, uint16_t offset)
+ 		desc -= rxq->nb_rx_desc;
+ 
+ 	status = &rxq->rx_ring[desc].wb.upper.status_error;
++	if (rxq->dma_active)
++		igb_dma_sync_for_cpu(status, sizeof(*status));
+ 	if (*status & rte_cpu_to_le_32(E1000_RXD_STAT_DD))
+ 		return RTE_ETH_RX_DESC_DONE;
+ 
+@@ -1840,7 +2181,6 @@ int
+ eth_igb_tx_descriptor_status(void *tx_queue, uint16_t offset)
+ {
+ 	struct igb_tx_queue *txq = tx_queue;
+-	volatile uint32_t *status;
+ 	uint32_t desc;
+ 
+ 	if (unlikely(offset >= txq->nb_tx_desc))
+@@ -1850,8 +2190,7 @@ eth_igb_tx_descriptor_status(void *tx_queue, uint16_t offset)
+ 	if (desc >= txq->nb_tx_desc)
+ 		desc -= txq->nb_tx_desc;
+ 
+-	status = &txq->tx_ring[desc].wb.status;
+-	if (*status & rte_cpu_to_le_32(E1000_TXD_STAT_DD))
++	if (igb_tx_desc_done(txq, desc, txq->dma_active))
+ 		return RTE_ETH_TX_DESC_DONE;
+ 
+ 	return RTE_ETH_TX_DESC_FULL;
+@@ -2271,11 +2610,25 @@ igb_alloc_rx_queue_mbufs(struct igb_rx_queue *rxq)
+ 		}
+ 		dma_addr =
+ 			rte_cpu_to_le_64(rte_mbuf_data_iova_default(mbuf));
++		if (rxq->dma_active) {
++			if (!igb_rx_buf_usable(&rxq->dma, mbuf)) {
++				rte_pktmbuf_free(mbuf);
++				return -EINVAL;
++			}
++			dma_addr = rte_cpu_to_le_64(rte_pci_dma_iova(&rxq->dma,
++					rte_mbuf_data_iova_default(mbuf),
++					mbuf->buf_len - RTE_PKTMBUF_HEADROOM));
++			igb_rx_buf_sync_for_device(mbuf);
++		}
+ 		rxd = &rxq->rx_ring[i];
+ 		rxd->read.hdr_addr = 0;
+ 		rxd->read.pkt_addr = dma_addr;
+ 		rxe[i].mbuf = mbuf;
+ 	}
++	if (rxq->dma_active)
++		igb_dma_sync_for_device(rxq->rx_ring,
++				rxq->nb_rx_desc * sizeof(*rxq->rx_ring),
++				RTE_MEM_SYNC_TO_DEVICE);
+ 
+ 	return 0;
+ }
+@@ -2583,6 +2936,7 @@ eth_igb_rx_init(struct rte_eth_dev *dev)
+ 		E1000_WRITE_REG(hw, E1000_RDH(rxq->reg_idx), 0);
+ 		E1000_WRITE_REG(hw, E1000_RDT(rxq->reg_idx), rxq->nb_rx_desc - 1);
+ 	}
++	igb_dma_set_burst(dev);
+ 
+ 	return 0;
+ }
+@@ -2624,6 +2978,8 @@ eth_igb_tx_init(struct rte_eth_dev *dev)
+ 
+ 		/* Setup Transmit threshold registers. */
+ 		txdctl = E1000_READ_REG(hw, E1000_TXDCTL(txq->reg_idx));
++		if (txq->dma_active)
++			txdctl &= ~(0x1FU << 16);	/* the field is OR-ed below */
+ 		txdctl |= txq->pthresh & 0x1F;
+ 		txdctl |= ((txq->hthresh & 0x1F) << 8);
+ 		txdctl |= ((txq->wthresh & 0x1F) << 16);
+@@ -2793,6 +3149,7 @@ eth_igbvf_rx_init(struct rte_eth_dev *dev)
+ 		E1000_WRITE_REG(hw, E1000_RDH(i), 0);
+ 		E1000_WRITE_REG(hw, E1000_RDT(i), rxq->nb_rx_desc - 1);
+ 	}
++	igb_dma_set_burst(dev);
+ 
+ 	return 0;
+ }
 -- 
 2.34.1
 
