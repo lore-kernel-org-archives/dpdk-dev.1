@@ -2,76 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F144ECA5FC4
-	for <dpdk-dev@archiver.kernel.org>; Fri,  2 Oct 2026 10:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 571E6CA5FD4
+	for <dpdk-dev@archiver.kernel.org>; Fri,  2 Oct 2026 10:16:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3EE4840281;
-	Fri,  2 Oct 2026 12:00:14 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 926A341144;
+	Fri,  2 Oct 2026 12:16:09 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id E79A44003C
- for <dev@dpdk.org>; Fri,  2 Oct 2026 12:00:12 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CED5240281
+ for <dev@dpdk.org>; Fri,  2 Oct 2026 12:16:07 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1790935212;
+ s=mimecast20190719; t=1790936167;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=dP/jGeXMN8a3Wu3iw+iOQKnjhzsfPHZVSQyTgDpVFIw=;
- b=ZxQ3+N/yOVzwwcT2oLITpedb+X18ZDrZo4/36lySJ2QheRd1Yjkn+WPm/iRd5NIQeH4+JV
- Nrk1GG7hF5AzXEM2k81LpNe6YdzEE+hLVRBb7aXGzAIiIRW6DQMbrsj79+ZiS+m7jow6Px
- zCoxsMZKHFc8YDZpEhRV242gJqKP/jg=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-630-S9qfo51GNRmjCMiD-Qzotw-1; Fri, 02 Oct 2026 06:00:11 -0400
-X-MC-Unique: S9qfo51GNRmjCMiD-Qzotw-1
-X-Mimecast-MFC-AGG-ID: S9qfo51GNRmjCMiD-Qzotw_1790935210
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-3a782da8ce7so11405461fa.2
- for <dev@dpdk.org>; Fri, 02 Oct 2026 03:00:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790935209; x=1791540009;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=dP/jGeXMN8a3Wu3iw+iOQKnjhzsfPHZVSQyTgDpVFIw=;
- b=xzz1KQ8Mg8J4A0c/JC8dv+gnIPjF94b/4KpHOVqoYjuqz0cgdegtjslKqBI5PXHIUo
- hqqyGgKp6wWbl/yNgM1eonMeTUoRngx8rSJ5Te3M0vleRISD+IKvfrljqpDrT61mE+sj
- tdMe1Y2bskbzLG9OTtt6A8C481lzQ9vy/TFCYkDsgNFj4ZiGx3z2j6rokCm5ab1aKECY
- HChCMU5r/halFeA48+z8QCHgFcgr7rfDtBPWuzdWqdNXeA+y6Y86KQy6XddPAORNB/gh
- pe+Dps5MK1lKFVI+zatyhY9mBSDL/emylCYA5nVXt16XMVPtogrv1Azn96oUju5Q7R8Z
- HQzQ==
-X-Gm-Message-State: AFq9FYL6CWfSEqHadwV7HDfLykit0fwUC1855tw0SFrlDwQVAfS0xC30
- TkVNQ3P5A1xihnYpC+j0zq5HqgCnlyo/pAkB1ytQkwCTNqtTos5qYkfM35a0ba9fJ8PR+0Rbcrj
- kAJIxjmPCeRpiVqrHFn9/3HmfnIJ49OJpG7sLAqECwJCuGz67jfA5miGDqvaFF9/FisdJ5XOGwT
- 9bQ0FVjnJaJGh5j6TTE4w=
-X-Gm-Gg: AYBFou22nbh9c7GLgeX9aLT+f2fG72ugqN4Qw/KcySpXMEwqzUQEzFs0q/gWL2Zd5VU
- h4vs/FU/jEcR5A44x3zMhw8d4XmS9YT54FImC/a6UCLZQIFEt405tTR2RlgKThxWbYbJgqWSfNt
- 1mVdCacpwsUNf9BdT9evbODcKExScCKu476VGgV+VYYEyJeUCzzmPgC0w2MrUzy16TmHKK8hzyL
- EyEF87rKGZ/Y/Lbr4cuVLso17FNHo4YiUJXHFJ1eR5etbf6
-X-Received: by 2002:a05:651c:b0e:b0:3a9:6f1c:928b with SMTP id
- 38308e7fff4ca-3a96f1c94admr2135381fa.25.1790935208178; 
- Fri, 02 Oct 2026 03:00:08 -0700 (PDT)
-X-Received: by 2002:a05:651c:b0e:b0:3a9:6f1c:928b with SMTP id
- 38308e7fff4ca-3a96f1c94admr2134851fa.25.1790935206306; Fri, 02 Oct 2026
- 03:00:06 -0700 (PDT)
+ bh=FQOv1yjJAf8EtQq08Tl2WyQ2jePrPA4ukdwl97xV5Sg=;
+ b=Z0t6rafo+WIH3AFYOZ8mHR4Jqw24+9ZJd7IBJU+srC+SOQ9ot47e7ijo44Lk1cYx27QVN2
+ 29HUieVT0Iulnn+yCxe1+XCGcNSKpgBgf3OOPlWNcG7b7FK/Iv/nG46xuSECtj1faNSrgA
+ 7XN1bmAc+NsX4nVk69c9L/JI5JcfTzU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-500-LVrSkIWQPsiFyEk_9_n_jQ-1; Fri,
+ 02 Oct 2026 06:16:06 -0400
+X-MC-Unique: LVrSkIWQPsiFyEk_9_n_jQ-1
+X-Mimecast-MFC-AGG-ID: LVrSkIWQPsiFyEk_9_n_jQ_1790936165
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 35E671800759
+ for <dev@dpdk.org>; Fri,  2 Oct 2026 10:16:05 +0000 (UTC)
+Received: from ringo.home (headnet03.pony-001.prod.iad2.dc.redhat.com
+ [10.2.32.114])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 70E041800370; Fri,  2 Oct 2026 10:16:04 +0000 (UTC)
+From: Robin Jarry <rjarry@redhat.com>
+To: dev@dpdk.org
+Subject: [PATCH dpdk v2 0/2] rib: allow iteration to include the top-level
+ route
+Date: Fri,  2 Oct 2026 12:15:25 +0200
+Message-ID: <20261002101523.383527-5-rjarry@redhat.com>
+In-Reply-To: <20260518095900.29655-6-rjarry@redhat.com>
+References: <20260518095900.29655-6-rjarry@redhat.com>
 MIME-Version: 1.0
-References: <20260930095800.551314-1-maxime.coquelin@redhat.com>
- <20261001090558.1131763-1-david.marchand@redhat.com>
- <42IOfTxsQM-Md_-aO3EZGA@monjalon.net>
-In-Reply-To: <42IOfTxsQM-Md_-aO3EZGA@monjalon.net>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 2 Oct 2026 11:59:54 +0200
-X-Gm-Features: AclHuK_n3IqpiVYn_Mb0B3-0BLsIWK4MUZCMm8h0XdpVKDPMRvbIGm9HI1mwfEo
-Message-ID: <CAJFAV8w6ueUz1gRJdTbXabnvEPE0tEse8ykKZS5a_agegN-yow@mail.gmail.com>
-Subject: Re: [PATCH v2] uapi: update headers to v6.19
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, eperezma@redhat.com, maxime.coquelin@redhat.com, 
- stephen@networkplumber.org
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: amMoygARPsq_F_CBciXvmFpNDYWMcif8gPv48eS154s_1790935210
+X-Mimecast-MFC-PROC-ID: MqAjhTX0N9skNoABJE1TaaB-SwCbwmdX-Wt04anqCHM_1790936165
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,47 +68,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 2 Oct 2026 at 11:46, Thomas Monjalon <thomas@monjalon.net> wrote:
->
-> 01/10/2026 11:05, David Marchand:
-> > --- a/devtools/linux-uapi.sh
-> > +++ b/devtools/linux-uapi.sh
-> > @@ -13,6 +13,9 @@ file=""
-> >  check_headers=false
-> >  quiet=false
-> >
-> > +# Require unifdef
-> > +unifdef -h >/dev/null 2>&1 || { echo "This script requires unifdef."; exit 1; }
->
-> Do you need to send the message to stderr?
+rte_rib_get_nxt() and rte_rib6_get_nxt() use an untyped int parameter
+and anonymous enums for the traversal mode. The first patch gives these
+enums proper type names (rte_rib_nxt_mode, rte_rib6_nxt_mode) and
+renames the parameter from "flag" to "mode".
 
-Yes.
+The existing traversal modes (ALL and COVER) always skip the exact match
+top-level route. The second patch adds a RTE_RIB_GET_NXT_ALL_TOP mode
+(and its IPv6 counterpart) so that callers who need the full subtree
+including the root can get it without a separate rte_rib_lookup_exact()
+call.
 
+v2:
 
-> > --- a/drivers/net/nbl/nbl_common/nbl_userdev.c
-> > +++ b/drivers/net/nbl/nbl_common/nbl_userdev.c
-> > @@ -2,8 +2,9 @@
-> >   * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-> >   */
-> >
-> > -#include "nbl_userdev.h"
-> >  #include <uapi/linux/vfio.h>
-> > +
-> > +#include "nbl_userdev.h"
-> >  #include <rte_vfio.h>
->
-> This is tricky.
-> Is it documented that uAPI headers should be included first?
+* fixed rib6 unit test (0 -> &unspec)
+* added release notes entry
+* changed enum names (rte_rib*_nxt_mode -> rte_rib*_get_nxt_mode)
+* minor style nits
 
-https://doc.dpdk.org/guides/contributing/linux_uapi.html#header-inclusion-into-library-or-driver
+Robin Jarry (2):
+  rib: rename nxt flag parameter to mode
+  rib: add mode to include top-level route in traversal
 
-"""
-This inclusion must be done before any header external to DPDK is
-included, to prevent inclusion of the system uAPI header in any of
-those external headers.
-"""
-
+ app/test/test_rib.c                    | 16 ++++++++++++++++
+ app/test/test_rib6.c                   | 16 ++++++++++++++++
+ doc/guides/rel_notes/release_26_11.rst |  6 ++++++
+ lib/rib/rte_rib.c                      | 20 ++++++++++++++------
+ lib/rib/rte_rib.h                      | 19 ++++++++++++-------
+ lib/rib/rte_rib6.c                     | 20 ++++++++++++++------
+ lib/rib/rte_rib6.h                     | 20 +++++++++++++-------
+ 7 files changed, 91 insertions(+), 26 deletions(-)
 
 -- 
-David Marchand
+2.55.0
 
