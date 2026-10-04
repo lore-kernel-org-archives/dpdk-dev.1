@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0984CCA5FEF
-	for <dpdk-dev@archiver.kernel.org>; Sun,  4 Oct 2026 16:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD35CA5FEF
+	for <dpdk-dev@archiver.kernel.org>; Sun,  4 Oct 2026 16:15:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C7282402F2;
-	Sun,  4 Oct 2026 18:13:38 +0200 (CEST)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
- [209.85.214.177])
- by mails.dpdk.org (Postfix) with ESMTP id D561740285
- for <dev@dpdk.org>; Sun,  4 Oct 2026 18:13:36 +0200 (CEST)
-Received: by mail-pl1-f177.google.com with SMTP id
- d9443c01a7336-2caced6038eso3696725ad.0
- for <dev@dpdk.org>; Sun, 04 Oct 2026 09:13:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E85A74060A;
+	Sun,  4 Oct 2026 18:15:17 +0200 (CEST)
+Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
+ [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id A94C340285
+ for <dev@dpdk.org>; Sun,  4 Oct 2026 18:15:16 +0200 (CEST)
+Received: by mail-pz2-f42.google.com with SMTP id
+ 41be03b00d2f7-cc797656e44so291338a12.2
+ for <dev@dpdk.org>; Sun, 04 Oct 2026 09:15:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791130416;
- x=1791735216; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791130516;
+ x=1791735316; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=/jQR/9truhUhM/DrCQ+QEgHhVcLuzuNlHlaH13vfVoA=;
- b=E80JE3L6q9xB8PPQ1Nyxfa+OKQ4dMfCcundk+R82L+nP72sZbouHOiYdY5jQ85B3TH
- UNaAMk+If+D1/oDnTxdOLC71fgjToc3+DMInd46juflO7IQm8R1+DRDlNSfakU44aAly
- hcfMNvKHHoAKMfx3J9wlSAqLscQ4FF73a+BzEQ3bI/c6CQoAg4IpUf8YqBw+2KBXQQ+N
- s0BW0LHWNH0+qoqHCUKzUDtY3YGscN6QdSogWiGBSwhYLHGIDovkYbtSgqTRfymSkPF8
- d/hv+fx5djWYpezFykmAS3plFhsj5zwIAxf8W5qwKE95OPcHAqtGEdWQH4JBWAqN1mpJ
- 4V9Q==
+ bh=+2ZGKsQf4kmPWWDkJ1xWZQp2djBUIEmmJ5wraAeDY34=;
+ b=AIpxFMJXlzQ+dJF51CsWbgdKHOfcrzudtWrh0c7vGDb+KJE/OJfL28mhz7k3ACJqEM
+ TZlKcqd/BnZ45SM8PpiaufVLGR6X9bvKsAGKwzt2mllK15TvWs9NKdXTg/PVDSt3Yw0i
+ 0VKq7D5eaLj7b/dFQns1cROr8KoJIJBE6SS/N2526UQSyN2dHXIllybIIxek3aD0EzKl
+ tAnOhEyMMJuCx7yVZ5AlLPDnaE3xgOyhz9TOgrAPvC5/eSJLwIsA8dL9DSGxp5NLDJHP
+ XYdC43+4tnVoRV60Xcr0TFlC8+Ho+VKCM+cpKg/M5PT2ZC5/eBX/R2NWYlb2lZUHmWEb
+ u8pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791130416; x=1791735216;
+ d=1e100.net; s=20260707; t=1791130516; x=1791735316;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=/jQR/9truhUhM/DrCQ+QEgHhVcLuzuNlHlaH13vfVoA=;
- b=okS4Y2Hqc9Cqcq0rEItNPCgnTz1znzab9nFFl4tQw7ywH05P+y8LlJYe+KOXYHmfQz
- WDc9aFFcYZ1e2LWPkWG3Nvp/iJV6tphQ97I3z7dZneO3ZKuE1MpGmOg73leQfTn9BL2x
- hwwLM/Z503OTtcCK/x08lmEqvQ7Vb6hwGcABzpwKa9nORn8HctTH9fujrBr0WiHsRod6
- Fah+YWo1+xDkpjkK5neTPREnGThzRnP0sdMpwreGcNa+8RgOZg+Ov9enqvO7hLWR8Nj1
- Qq2d6S0drpJyfvzwhix7pNDluL87fyRyfm8u69U1IYotVbxFXyx7KEagH7lEEvueCV6e
- XEmg==
-X-Gm-Message-State: AFq9FYIKo9uGfwe1Y6CrzW2+8buyNXThg4XRydiC+7DgWTD0WkeSJ1Qc
- jWyoQbSEqkhsg7Pl1r+17K7RzHVHlv8LRNR2Z9Xcm3cfWUsCXdjzetvW92WEpF3Dp+4=
-X-Gm-Gg: AYBFou249gokf+34CxeEvwaoU9VuamYQKSlcHZ/qdRAo/7fHn93sQGJF2TQ6achIO/f
- tJDpZnY4eferhjlQy2Si+jl1D2C6/H+MyPn0YPU6iVlaOvn9yrt6HrhOviAKvj76FCWvh7UYMnD
- 4pWQp64/o2JWAWM1X4tcEp+sU9Ri5F1j28bkK2LwfB1bNPJrUH71VXAP4VJOUJG1wfDvyFtAuxc
- RHYx2RFz+FegNGVRjmdS6Xki5PKvPU1YzC8yiGwFtwSUa8ModrZpeDmSCCei4z/C14U4ljpA5xE
- fQVDyBG1/ira5TDfXh9EZ3RSHvwUOEjR9IB51yCbSnOx6OURMAh3jR8aFXaqIMA2S9T2XKsK4Nl
- O0lKXYDPe+zidEZgNK+2av1Hx+jckbgQ8Uz+T6i5E7V1ycyo827kAuRq4JG3OpXfHvPPg440cWZ
- U7ZCkyWgxqt8dcbWS6rmb4j90dtPu16x5G+bxSI8QO0yc1YWlj8bxM+Zdnsp2q/BudsZNE0Uejh
- j96//C1zNNVRlnz4sHp0npkYl4Ox8ZaR+hFJrxfrZFXJ50/G3Y=
-X-Received: by 2002:a17:903:4b50:b0:2d7:1cbd:9ceb with SMTP id
- d9443c01a7336-2e3000ece4amr75652485ad.12.1791130415875; 
- Sun, 04 Oct 2026 09:13:35 -0700 (PDT)
+ bh=+2ZGKsQf4kmPWWDkJ1xWZQp2djBUIEmmJ5wraAeDY34=;
+ b=Rg1CDvcc8ZhL7QNBxVjDD2Y8ROhfh6d+alruJxVkdfRGjO9eOzcZ0ZiXbMAkzB9/p6
+ HqmgsTJ8UoEnWznXXvw6vVtETMxqy2ECvV8RJfnYoV4NcbBcbL1i7yYlYU168YEpm0wr
+ pm1RblrNzoPm2KHRxN627ykncS5NCNwSenE9i4UCdfLhKyygt08pC6aXFRo5R+cjcIIm
+ CYx+W86GBUcoo6rCRSn7m7tOxhtxH3dSIaeGPOPbRJBEb0X20UJqyJQFjvmcx4OYPafr
+ bzmW8EZ9BhmJZS8sNoztPnccEiZRnDn4joaQVr682FLw9VjC8a6eq85ZLiiqyY40s5qA
+ aQcw==
+X-Gm-Message-State: AFq9FYJFMpVDQmkifeWWKV5aHI3LuutEjk7jbO+fSIyskJr1tQe7wWVD
+ bwn3SyQZ8PmVT827pg5Yqanhq+ZrDrOuEchFV93TsVmX5hsE3WpUXkLQ/8ciOSK3LD4=
+X-Gm-Gg: AYBFou2cCb5yKI4TK9/ZA2MA35TCWFrpJexMFNOgxtESKS6pMBYe9Cbu/jf73pOxGDy
+ M4yQ7uQrlIMfznohkF7KijfbMTMZ9ov1p2H7W66NNCWBpjYWxfgETjneWb4unbhYm0sRBQBNd1F
+ qs8a95hXPCRVjD2ZaSdRxG/W45Lh1lGWlC50H1r5HG2XJqISgDHoz/eQfdKlTqazEWF/rAbygq1
+ qSALmVdJZFByFwh70tt0e31TZIQRKmob6/rZmyDizLqhm6EGxXDtCo26cDkiYpFXGCFUyGdaUjE
+ I9KQHpyxVZ+TvgRT+Q6qHhu0TbB9rdaze6GClxgXOTm1nAVQ308i6tOldJrxdl7x2UhTtyhXzQy
+ U9IeHgWagA/UmidHES3/5WMeWdjyINMPteT6VJ8zMQd8Mxw2SkXo/X/oHSqGFeEKTBp+HVWyGOh
+ ayQpDAWgV95mcz5UxqXTO2uTLbZYXlIjBrNZS4rXvLucfmcf/u8M1imIA1QSY3M/GW6fU+BTBDB
+ nOJ9ZSRnVFwUE6kwOZ3HYlqcKokcY0VmuMmoyWZ
+X-Received: by 2002:a17:90b:544e:b0:3a5:de8:2c4f with SMTP id
+ 98e67ed59e1d1-3a6ce9856b2mr5628679a91.65.1791130515593; 
+ Sun, 04 Oct 2026 09:15:15 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e56defa166sm4642555ad.5.2026.10.04.09.13.34
+ 98e67ed59e1d1-3a78d660f29sm7101166a91.3.2026.10.04.09.15.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 04 Oct 2026 09:13:35 -0700 (PDT)
-Date: Sun, 4 Oct 2026 09:13:33 -0700
+ Sun, 04 Oct 2026 09:15:15 -0700 (PDT)
+Date: Sun, 4 Oct 2026 09:15:13 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Roman Khromenok <roma55592@yandex.ru>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>, Anatoly
- Burakov <anatoly.burakov@intel.com>, Vladimir Medvedkin
- <vladimir.medvedkin@intel.com>
+Cc: dev@dpdk.org
 Subject: Re: [PATCH 0/3] net/intel: make link state configurable on device
  start
-Message-ID: <20261004091333.6585bf1b@phoenix.local>
-In-Reply-To: <cover.1790970122.git.roma55592@yandex.ru>
+Message-ID: <20261004091513.54a16319@phoenix.local>
+In-Reply-To: <20261003215345.1774614-1-roma55592@yandex.ru>
 References: <cover.1790970122.git.roma55592@yandex.ru>
+ <20261003091832.2ee5b91c@phoenix.local>
+ <20261003215345.1774614-1-roma55592@yandex.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,24 +84,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri,  2 Oct 2026 21:43:35 +0200
+On Sat,  3 Oct 2026 23:53:45 +0200
 Roman Khromenok <roma55592@yandex.ru> wrote:
 
-> Starting a port always brings its link up, so the link partner sees
-> the port as soon as the application starts it. An application that
-> enables ports only after its own configuration is applied, such as
-> a firewall or a switch, cannot keep a disabled port dark: it can only
-> bring the link down right after rte_eth_dev_start(), and the link
-> partner may still see the link flap.
+> On Sat, 3 Oct 2026, Stephen Hemminger wrote:
+> > If you want something done better it must done at ethdev layer
+> > and you must coordinate across all existing devices.  
+> 
+> Thanks, understood. I withdraw this series.
+> 
+> The problem behind it: a firewall starts its ports at boot but must keep
+> the ports that are disabled in its configuration down, so that the link
+> partner never sees them. Today rte_eth_dev_start() brings the link up
+> on most drivers, and the application can only bring it down afterwards.
+> 
+> Would an RFC along these lines be acceptable?
+> - ethdev keeps the administrative link state (RFC 2863 ifAdminStatus)
+>   set by rte_eth_dev_set_link_down()/up(), including before the port
+>   is started;
+> - rte_eth_dev_start() honors it: drivers that support it keep the link
+>   down on start, and for the others ethdev calls dev_set_link_down()
+>   right after dev_start(), so the semantics are the same for all devices;
+> - a new feature in the features matrix to track driver support.
+> 
+> Or would you prefer a separate API for the administrative state instead
+> of changing the behavior of rte_eth_dev_set_link_down()?
+> 
+> Roman
 
-The point of start is to signal that the application is ready to
-send and receive packets. I would expect the normal startup sequence is:
+No. Application should not call device start until it expects
+to bring link up.
 
-  1. EAL init
-  2. Detect devices
-  3. Configure internal state
-  4. Configure devices.
-  5. Start devices
-
-A device should be dark from 2 to 5. No packets coming in or out
-and link is down.
+The RFC 2863 stuff is for layered devices where lower layers are
+separate from the upper ones (ie. tunnels, bonding, etc).
