@@ -2,45 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 182A3CA5FCE
-	for <dpdk-dev@archiver.kernel.org>; Sun,  4 Oct 2026 14:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D80BFCA5FE6
+	for <dpdk-dev@archiver.kernel.org>; Sun,  4 Oct 2026 14:20:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A5A74402DA;
-	Sun,  4 Oct 2026 16:18:58 +0200 (CEST)
-Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net
- [37.230.175.130])
- by mails.dpdk.org (Postfix) with ESMTP id 594E44027F;
- Sun,  4 Oct 2026 16:18:57 +0200 (CEST)
-Received: from mail-nwsmtp-smtp-production-main-57.sas.yp-c.yandex.net
- (mail-nwsmtp-smtp-production-main-57.sas.yp-c.yandex.net
- [IPv6:2a02:6b8:c1b:1f8c:0:640:9970:0])
- by forward502b.mail.yandex.net (postfix) with ESMTPS id C28DD80783;
- Sun, 04 Oct 2026 17:18:55 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-57.sas.yp-c.yandex.net (smtp)
- with ESMTPSA id qILgSBud94Y0-MNcvCaZD; 
- Sun, 04 Oct 2026 17:18:55 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1791123535; bh=ShokYRf4QYkYUrkFmTGzqYBasNDMvEyEj/fosnH8ixA=;
- h=From:Subject:In-Reply-To:Cc:Date:References:To:Message-ID;
- b=mQh0LXIHgbLeMA1wWMLWDEEbUOJtjm6fv+KR+mnaA/OWblWC+e/kQOIWlobue+FYs
- eIhsszepW3RiZQav0VnXbxC7ioZ6pbTZpM/KzsxnJoAlGxSZt8igdvujtYhk3c9Rps
- xEm0I9LSqA6h2OCq5HGQPy+WRBT7GvADrJTpVi+k=
-Authentication-Results: mail-nwsmtp-smtp-production-main-57.sas.yp-c.yandex.net;
- dkim=pass header.i=@yandex.ru
-Message-ID: <432e3f68-918a-450e-8091-36db82b3b041@yandex.ru>
-Date: Sun, 4 Oct 2026 15:18:52 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id E2475402F0;
+	Sun,  4 Oct 2026 16:20:45 +0200 (CEST)
+Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com
+ [209.85.214.226])
+ by mails.dpdk.org (Postfix) with ESMTP id 888AA402B5
+ for <dev@dpdk.org>; Sun,  4 Oct 2026 16:20:44 +0200 (CEST)
+Received: by mail-pl1-f226.google.com with SMTP id
+ d9443c01a7336-2e49851734cso1637445ad.3
+ for <dev@dpdk.org>; Sun, 04 Oct 2026 07:20:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791123643; x=1791728443;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=faezeUDYxEw1PaA7UNLmujirMwYH/XGUhQlMozdu7So=;
+ b=Jk88ZDeWnc/RPiHv/o3cgepctEElVKqgjBPbWHLrsjxC5/5NHV1v1BOu8VAbM9jhd8
+ TCujbB0c6HL8tajOBW3NdsdVN5j23V7CKSxBXYasiHcIERibqLzI6AImpDrNu3lpkUmf
+ W4bDNsmUogUV+NeO0QAXWm5SYHmWrSgBK+Ak0Jsf5C844EzFyg7732lrR7kwypI1/Y/j
+ fw0hM38jRftYTtKCXjVWsDa494xD9g2+gt7B5IMPeOiCb2a7v4v2rYCJG4HYrSUgL6DV
+ 7qPBPvuyOctXRkAkdh9/D3lmdokaBXecUpWwiCiC34Pydc+/NpEnvWd95IzgG3Fa6gp8
+ 6xFw==
+X-Gm-Message-State: AFq9FYJtjcek2P4f92LJx+6T1DShZbgYzHRTg3Iuq/WUDxbLmxA4C5i7
+ K+8z6gvjpY1QQG/f+tVljg2l5QDgdalujFjUE2ybHPqBjIQQS/DbpRrTyQ+9i4hRO1eaBUx+YxJ
+ jJOM+NV1DtoBI+geFCgdWaS5bwJhNK0VsBC4Y7knXrlYspI5Tw4KVJeF+g7Sx/J1Fn3zjNnLlEK
+ 5y67/2mbVNAQsTlBfMAJs17mxqsMTfYDhpEEWu6LPL0uPtNmIUbEk21G7+oGtTG+nLXxi6mQ==
+X-Gm-Gg: AYBFou0yRjMeaVPQC6fPa613LAdY9Y/TacVj5zIS/RL573GwaD/z+czIipfMIcV+YJ/
+ fuO3IPqqDhjQrGMfF7PNM7lVY7AbKnvLI5ohPFkQuBBuHhwLRUJa3rTRiSEcqn8texIiLD38S28
+ TeGYXJdc7hVAwtQvxjVJG7Xc4HzzJS+ZTcBCD3wGTz9A/Hrds6S7VrBIFFphksg5pYkiEon+gI0
+ 1Z//pYwBUGzq237vp1j65euYKbWnwVp1KknoeI+ddS1mMhdYT+x3N0/yLzMzoTzvR7KSdgCfvpG
+ KGQRWikk6YbUrpNfTbjn1+jA2+6blesBzqjQnz8bKFEUqGjdHL70dNnPdikoU2PoucWVzLL++pL
+ Jy/useLtyCmgD+pAHH/SwaG4rbsYh5UBbAIg3EVzcrRnup674uPglxvPGxM1TVj918T/n1uQXYA
+ 48QjE2cKrFXqLPrDjp3zFuiKtJttc+xNEzE5RHRg==
+X-Received: by 2002:a17:90b:37cf:b0:3a7:a9bc:729d with SMTP id
+ 98e67ed59e1d1-3a7a9bc9629mr1232584a91.0.1791123643200; 
+ Sun, 04 Oct 2026 07:20:43 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
+ (address-144-49-247-125.dlp.protect.broadcom.com. [144.49.247.125])
+ by smtp-relay.gmail.com with ESMTPS id
+ 98e67ed59e1d1-3a6dcda0f5csm1120756a91.1.2026.10.04.07.20.42
+ for <dev@dpdk.org>
+ (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+ Sun, 04 Oct 2026 07:20:43 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qv1-f71.google.com with SMTP id
+ 6a1803df08f44-9106fce784dso27777566d6.2
+ for <dev@dpdk.org>; Sun, 04 Oct 2026 07:20:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=broadcom.com; s=google; t=1791123641; x=1791728441; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=faezeUDYxEw1PaA7UNLmujirMwYH/XGUhQlMozdu7So=;
+ b=c1vshj58FIrGbrt3tZXyPMPcVV/hhYhjGYeuX4vReAPEjSkavc9PiDKmOs/fvJFKk5
+ JoSpx8aihgN+9/zXOjwepPBQaj8SxEkG9jmMwtfHO3dsQF3Fg+HeqpkP1Bm0cdcrt6iK
+ TzSt7BPSmarfFqpQlEuZ/sDu/nBooAayvyzDg=
+X-Received: by 2002:a05:622a:6098:b0:533:80c8:53ed with SMTP id
+ d75a77b69052e-533cba5b05cmr147916621cf.9.1791123641326; 
+ Sun, 04 Oct 2026 07:20:41 -0700 (PDT)
+X-Received: by 2002:a05:622a:6098:b0:533:80c8:53ed with SMTP id
+ d75a77b69052e-533cba5b05cmr147916021cf.9.1791123640625; 
+ Sun, 04 Oct 2026 07:20:40 -0700 (PDT)
+Received: from r740-105-132.dhcp.broadcom.net ([192.19.144.250])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-53398aa36e6sm74595541cf.15.2026.10.04.07.20.39
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 04 Oct 2026 07:20:40 -0700 (PDT)
+From: Manish Kurup <manish.kurup@broadcom.com>
+To: dev@dpdk.org
+Cc: kishore.padmanabha@broadcom.com, Farah Smith <farah.smith@broadcom.com>,
+ stable@dpdk.org
+Subject: [PATCH v2] net/bnxt: fix global table scope shutdown order
+Date: Sun,  4 Oct 2026 09:20:37 -0500
+Message-Id: <20261004142037.1583073-1-manish.kurup@broadcom.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20261001174039.1155386-1-manish.kurup@broadcom.com>
+References: <20261001174039.1155386-1-manish.kurup@broadcom.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: bruce.richardson@intel.com
-Cc: dev@dpdk.org, techboard@dpdk.org
-References: <20260820142439.3684311-3-bruce.richardson@intel.com>
-Subject: Re: [RFC PATCH 2/3] app/test-mempool-perf: add perf test logic
-Content-Language: en-US, ru
-From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-In-Reply-To: <20260820142439.3684311-3-bruce.richardson@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,208 +99,323 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Add the performance test logic to do performance measurements for the
-> mempool settings specified. Run-to-completion mode is assumed, and each
-> thread does allocs and frees in a randomized pattern.
-LGTM, in general, nice thing to have.
-Few thoughts and comments below.
+From: Farah Smith <farah.smith@broadcom.com>
 
-Some generic ones first:
-I don't think there is a real need for interactive mode.
-In fact, it is probably better to have it as part of our UT,
-instead of separate app.
-I do understand that there are a lot of testing parameters,
-but probably we can pass them va env variable as some other tests do.
+Track per-port table-scope teardown state (scope type and, for GLOBAL
+scope, a shared FID reference count) and clean up in the correct
+order on bnxt_en/DPDK shutdown.
 
->
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
->   app/test-mempool-perf/main.c <https://inbox.dpdk.org/dev/20260820142439.3684311-3-bruce.richardson@intel.com/#Z31app:test-mempool-perf:main.c>      | 248 +++++++++++++++++++++++++++++-
->   app/test-mempool-perf/meson.build <https://inbox.dpdk.org/dev/20260820142439.3684311-3-bruce.richardson@intel.com/#Z31app:test-mempool-perf:meson.build> |   2 +-
->   doc/guides/tools/mempoolperf.rst <https://inbox.dpdk.org/dev/20260820142439.3684311-3-bruce.richardson@intel.com/#Z31doc:guides:tools:mempoolperf.rst>  |  34 ++++
->   3 files changed, 282 insertions(+), 2 deletions(-)
->
-> diff 
-> <https://inbox.dpdk.org/dev/20260820142439.3684311-3-bruce.richardson@intel.com/#iZ31app:test-mempool-perf:main.c> 
-> --git a/app/test-mempool-perf/main.c b/app/test-mempool-perf/main.c 
-> index 877abc2170..471631f3db 100644 --- a/app/test-mempool-perf/main.c 
-> +++ b/app/test-mempool-perf/main.c @@ -9,9 +9,14 @@  #include <inttypes.h>
->
->   #include <rte_argparse.h>
-> +#include <rte_cycles.h>  #include <rte_eal.h>
-> +#include <rte_errno.h> +#include <rte_launch.h>  #include <rte_lcore.h>
-> +#include <rte_mbuf.h>  #include <rte_mempool.h>
-> +#include <rte_random.h>  #include <rte_string_fns.h>
->
->   #define DEFAULT_CACHE_SIZE          512
-> @@ -19,6 +24,11 @@  #define DEFAULT_BURST_SIZE          32
->   #define DEFAULT_NB_BUFS_PER_LCORE   1024
->
-> +/* match the element size used by rte_pktmbuf_pool_create with 
-> default dataroom */ +#define ELEM_SIZE (sizeof(struct rte_mbuf) + 
-> RTE_MBUF_DEFAULT_BUF_SIZE) +#define TEST_DURATION_SEC 5
-I think test duration and elem size needs to be configurable test 
-parameters too.
-> +#define RESHUFFLE_INTERVAL 100 +  struct test_config {
->   	char     mempool_type[RTE_MEMPOOL_NAMESIZE];
->   	uint32_t nb_bufs;
-> @@ -210,9 +220,238 @@ run_interactive_mode(void)  	return 0;
->   }
->
-> +struct worker_stats { + uint64_t get_success; + uint64_t get_fail; + 
-> uint64_t put_count; +} __rte_cache_aligned; + +static struct 
-> worker_stats lcore_stats[RTE_MAX_LCORE];  static bool summary_only;
-> +static RTE_ATOMIC(uint32_t) test_running; + +/* + * Shuffle delta[] 
-> (half +1, half -1) then rotate it so the running sum + * of held 
-> batches never goes negative. Works by finding the last index + * where 
-> the prefix sum reaches its minimum and rotating to start just + * 
-> after that point, which is guaranteed to keep all prefix sums >= 0. + 
-> */ +static void +shuffle_and_validate(int8_t *delta, int8_t *tmp, 
-> uint32_t rf) +{ + uint32_t i, j, rot; + int32_t running, min_val; + 
-> uint32_t min_idx; + + /* Fisher-Yates shuffle */ + for (i = rf - 1; i 
-> > 0; i--) { + j = (uint32_t)rte_rand_max(i + 1); + int8_t t = 
-> delta[i]; + delta[i] = delta[j]; + delta[j] = t; + } + + /* find last 
-> position where prefix sum reaches its minimum */ + running = 0; + 
-> min_val = 0; + min_idx = 0; + for (i = 0; i < rf; i++) { + running += 
-> delta[i]; + if (running <= min_val) { /* <= keeps the last occurrence 
-> */ + min_val = running; + min_idx = i; + } + } + + if (min_val >= 0) + 
-> return; /* already valid, no rotation needed */ + + rot = (min_idx + 
-> 1) % rf; + if (rot == 0) + return; + + /* apply rotation via tmp 
-> buffer */ + memcpy(tmp, delta + rot, (rf - rot) * sizeof(*tmp)); + 
-> memcpy(tmp + rf - rot, delta, rot * sizeof(*tmp)); + memcpy(delta, 
-> tmp, rf * sizeof(*tmp)); +} + +static void +access_object(void *obj) 
-> +{ + volatile uint64_t *p = (volatile uint64_t *)obj; + uint64_t acc = 
-> 0; + uint32_t i; + + for (i = 0; i < ELEM_SIZE / sizeof(uint64_t); 
-> i++) + acc += p[i]; + for (i = 0; i < RTE_CACHE_LINE_SIZE / 
-> sizeof(uint64_t); i++) + p[i] = acc; +}
-We can probably add here some sanity checking too, so this UT can
-be used not only to measure performance, but also to make sure that our
-mempool works correctly under heavy load.
-Something like that:
-free object contain some repdefine pattern (RTE_LCORE_MAX),
-when we do get() we check hat allocated objects contain given pattern
-and overwrite them with new one (let say current lcore id).
-Then before put() we re-check our pattern and overwrite it again with 
-(RTE_LCORE_MAX).
+Previously, unloading the L2 kernel driver with DPDK shutdown could
+crash because table-scope resources were torn down without properly
+tracking which FID was the last user of a GLOBAL scope. Fix this by
+introducing glb_tbl_scope_fid_cnt bookkeeping and freeing the per-port
+CPM before removing the FID from the scope, and only fully retiring
+shared GLOBAL-scope memory once the reference count reaches zero.
 
-> + +static int +worker_main(void *arg) +{ + struct rte_mempool *mp = 
-> arg; + unsigned int id = rte_lcore_id(); + struct worker_stats *stats 
-> = &lcore_stats[id]; + /* rf must be even so alloc count == free count; 
-> minimum 2 */ + uint32_t rf = RTE_MAX(2u, (cfg.rand_factor / 2) * 2); + 
-> uint32_t bs = cfg.burst_size; + uint32_t hold_count = 0; + uint32_t 
-> run = RESHUFFLE_INTERVAL; /* trigger shuffle on first entry */ + void 
-> **hold_objs; + int8_t *delta, *tmp; + uint32_t i, k; + + hold_objs = 
-> malloc(bs * (rf / 2) * sizeof(*hold_objs)); + delta = malloc(rf * 
-> sizeof(*delta)); + tmp = malloc(rf * sizeof(*tmp)); + if (hold_objs == 
-> NULL || delta == NULL || tmp == NULL) { + free(hold_objs); + 
-> free(delta); + free(tmp); + return -ENOMEM; + } + + /* +1 = alloc a 
-> burst, -1 = free a burst */ + for (i = 0; i < rf / 2; i++) delta[i] = 
-> +1; + for (i = rf / 2; i < rf; i++) delta[i] = -1; + + while 
-> (rte_atomic_load_explicit(&test_running, rte_memory_order_relaxed)) { 
-> + if (run >= RESHUFFLE_INTERVAL) { + shuffle_and_validate(delta, tmp, 
-> rf); + run = 0; + } + + for (i = 0; i < rf; i++) { + if (delta[i] > 0) 
-> { + if (rte_mempool_get_bulk(mp, + hold_objs + hold_count, bs) != 0) { 
-> + stats->get_fail++; + continue; + } + if (cfg.access_on_alloc) { + 
-> for (k = 0; k < bs; k++) + access_object(hold_objs[hold_count + k]); + 
-> } + hold_count += bs; + stats->get_success += bs; + } else { + 
-> hold_count -= bs; + rte_mempool_put_bulk(mp, hold_objs + hold_count, 
-> bs); + stats->put_count += bs; + } + } + run++; + } + + if (hold_count 
-> > 0) + rte_mempool_put_bulk(mp, hold_objs, hold_count); + + free(tmp); 
-> + free(delta); + free(hold_objs); + return 0; +}
-> -/* Used only in non-interactive mode to receive the --mempool-type 
-> string */ +static struct rte_mempool * +create_mempool(void) +{ + 
-> struct rte_mempool *mp; + int ret; + + mp = 
-> rte_mempool_create_empty("perf_pool", cfg.nb_bufs, ELEM_SIZE, + 
-> cfg.cache_size, 0, + rte_socket_id(), 0); + if (mp == NULL) { + 
-> fprintf(stderr, "Failed to create empty mempool: %s\n", + 
-> rte_strerror(rte_errno)); + return NULL; + } + + ret = 
-> rte_mempool_set_ops_byname(mp, cfg.mempool_type, NULL); + if (ret < 0) 
-> { + fprintf(stderr, "Failed to set ops '%s': %s\n", + 
-> cfg.mempool_type, rte_strerror(-ret)); + rte_mempool_free(mp); + 
-> return NULL; + } + + ret = rte_mempool_populate_default(mp); + if (ret 
-> < 0) { + fprintf(stderr, "Failed to populate mempool: %s\n", + 
-> rte_strerror(-ret)); + rte_mempool_free(mp); + return NULL; + } + + 
-> return mp; +} + +static void +print_results(double elapsed_secs) +{ + 
-> uint64_t total_get = 0, total_fail = 0; + unsigned int id; + + 
-> printf("\n%-8s %12s %12s %12s\n", + "lcore", "get (Mops/s)", 
-> "fail/burst", "put (Mops/s)"); + printf("%-8s %12s %12s %12s\n", + 
-> "------", "------------", "----------", "------------"); + + 
-> RTE_LCORE_FOREACH_WORKER(id) { + if (lcore_stats[id].get_success == 0 
-> && + lcore_stats[id].get_fail == 0) + continue; + if (!summary_only) + 
-> printf("%-8u %12.3f %12" PRIu64 " %12.3f\n", + id, + 
-> lcore_stats[id].get_success / elapsed_secs / 1e6, + 
-> lcore_stats[id].get_fail, + lcore_stats[id].put_count / elapsed_secs / 
-> 1e6); + total_get += lcore_stats[id].get_success; + total_fail += 
-> lcore_stats[id].get_fail; + } + + printf("%-8s %12.3f %12" PRIu64 
-> "\n\n", + "Total", + total_get / elapsed_secs / 1e6, + total_fail); +} 
-> + +static void +run_test(struct rte_mempool *mp) +{ + uint64_t start, 
-> end; + unsigned int id; + uint32_t launched = 0; + + 
-> memset(lcore_stats, 0, sizeof(lcore_stats)); + 
-> rte_atomic_store_explicit(&test_running, 1, rte_memory_order_release); 
-> + + RTE_LCORE_FOREACH_WORKER(id) { + if (launched >= cfg.nb_threads) + 
-> break; + rte_eal_remote_launch(worker_main, mp, id); + launched++; + } 
-> + + printf("Running test for %d seconds with %" PRIu32 " 
-> worker(s)...\n", + TEST_DURATION_SEC, launched); + + start = 
-> rte_get_timer_cycles(); + rte_delay_ms((uint32_t)(TEST_DURATION_SEC * 
-> 1000)); + + rte_atomic_store_explicit(&test_running, 0, 
-> rte_memory_order_release); + end = rte_get_timer_cycles(); + 
-> rte_eal_mp_wait_lcore(); + + double elapsed_s = (double)(end - start) 
-> / rte_get_timer_hz(); + print_results(elapsed_s); +} + +/* receives 
-> the --mempool-type string from argparse */  static const char *mempool_type_arg;
->
->   static int
-> @@ -325,6 +564,13 @@ main(int argc, char **argv)
->   	print_config();
->
-> + struct rte_mempool *mp = create_mempool(); + if (mp == NULL) + 
-> rte_exit(EXIT_FAILURE, "Failed to create mempool\n"); + + 
-> run_test(mp); + + rte_mempool_free(mp);  	rte_eal_cleanup();
->   	return 0;
->   }
-> diff 
-> <https://inbox.dpdk.org/dev/20260820142439.3684311-3-bruce.richardson@intel.com/#iZ31app:test-mempool-perf:meson.build> 
-> --git a/app/test-mempool-perf/meson.build 
-> b/app/test-mempool-perf/meson.build index 2d61ac62e9..37c6c14d56 
-> 100644 --- a/app/test-mempool-perf/meson.build +++ 
-> b/app/test-mempool-perf/meson.build @@ -1,7 +1,7 @@  # SPDX-License-Identifier: BSD-3-Clause
->   # Copyright(c) 2024 Intel Corporation
->
-> -deps += ['mempool', 'argparse'] +deps += ['mbuf', 'mempool', 'argparse']
->   sources = files(
->           'main.c',
-> diff 
-> <https://inbox.dpdk.org/dev/20260820142439.3684311-3-bruce.richardson@intel.com/#iZ31doc:guides:tools:mempoolperf.rst> 
-> --git a/doc/guides/tools/mempoolperf.rst 
-> b/doc/guides/tools/mempoolperf.rst index e0ad859a29..31bd6e660e 100644 
-> --- a/doc/guides/tools/mempoolperf.rst +++ 
-> b/doc/guides/tools/mempoolperf.rst @@ -8,6 +8,7 @@ The 
-> ``dpdk-test-mempool-perf`` tool measures the alloc/free throughput of 
-> DPDK m  Worker threads repeatedly allocate and free objects in configurable burst sizes following a randomised pattern,
->   exercising the pool under varying levels of occupancy.
->   Any mempool driver registered with the DPDK mempool ops table can be tested.
-> +Pool elements are sized to match ``rte_pktmbuf_pool_create()`` with 
-> default data room.
->
->   Running the Application
-> @@ -105,6 +106,39 @@ After configuration the tool prints an equivalent 
-> non-interactive command::  Append this output after the EAL options on subsequent runs to reproduce the exact same configuration without prompting.
->
->
-> +Test Output +----------- + +Each run lasts a fixed 5 seconds. +On 
-> completion, a results table is printed showing per-worker throughput 
-> and an aggregate total: + +.. code-block:: console + + lcore get 
-> (Mops/s) fail/burst put (Mops/s) + ------ ------------ ---------- 
-> ------------ + 1 23.871 0 23.871 + 2 24.012 0 24.012 + Total 47.883 0 
-> + +lcore + Worker lcore ID. + +get (Mops/s) + Successful allocation 
-> throughput in millions of operations per second. + +fail/burst + 
-> Number of allocation calls that failed because the pool had 
-> insufficient free objects. + A non-zero value indicates ``--nb-bufs`` 
-> is too small for the configured workload. + +put (Mops/s) + Free 
-> throughput in millions of operations per second. + Under a balanced 
-> workload this matches the get rate. + +The ``Total`` row shows 
-> aggregate get throughput and failure count across all workers; +it 
-> does not include a put rate. +With ``--summary``, only the ``Total`` 
-> row is printed. + +  Examples
->   --------
->
-> -- 2.53.0
+The teardown order was initially fid_rem -> mem_free, but that
+sequence was found to trigger PXP errors: fid_rem disables the scope
+in firmware, so any subsequent mem_free on that scope is operating on
+an already-disabled scope. Reordered to cpm_free -> fid_rem -> mem_free
+so the scope is only disabled and its memory released after this
+port's CPM is torn down. The relative order of fid_rem and mem_free
+is unchanged from before; the new step is cpm_free running first.
+
+Fixes: 23e0dc62d19e ("net/bnxt/tf_core: add global table scope")
+Cc: stable@dpdk.org
+
+Signed-off-by: Farah Smith <farah.smith@broadcom.com>
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
+---
+v2:
+* Fix a CPM leak: the glb_tbl_scope_fid_cnt_inc() failure path in
+  ulp_tfc_tbl_scope_init() returned directly instead of going through
+  the rollback path, leaking the CPM just allocated a few lines above.
+  Changed to "goto rollback", matching the existing rollback handling
+  used by the other failure path in the same function.
+* Fix an inaccurate claim in this commit message: the body previously
+  said "fid_rem no longer preceding mem_free", but fid_rem's position
+  relative to mem_free is unchanged from before this patch; only
+  cpm_free running first is new. Reworded for accuracy.
+
+ drivers/net/bnxt/tf_ulp/bnxt_ulp.h     |   3 +
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c | 162 ++++++++++++++++++++++---
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.h |  23 ++++
+ 3 files changed, 172 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
+index afd883df2c..ba526e838d 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
+@@ -15,6 +15,7 @@
+ #include "rte_mtr.h"
+ 
+ #include "bnxt.h"
++#include "cfa_types.h"
+ #include "ulp_template_db_enum.h"
+ #include "ulp_tun.h"
+ #include "bnxt_tf_common.h"
+@@ -115,6 +116,8 @@ struct bnxt_ulp_vfr_rule_info {
+ 
+ struct bnxt_ulp_data {
+ 	uint32_t			tbl_scope_id;
++	enum cfa_scope_type		tbl_scope_type; /* for deinit */
++	uint16_t			glb_tbl_scope_fid_cnt; /* only for GLOBAL scope */
+ 	struct bnxt_ulp_mark_tbl	*mark_tbl;
+ 	uint32_t			dev_id; /* Hardware device id */
+ 	uint32_t			ref_cnt;
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+index d5ce4c3c18..5ef15ef7e1 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+@@ -111,6 +111,64 @@ bnxt_ulp_cntxt_tbl_scope_max_pools_set(struct bnxt_ulp_context *ulp_ctx,
+ 	return 0;
+ }
+ 
++int32_t
++bnxt_ulp_cntxt_tbl_scope_type_get(struct bnxt_ulp_context *ulp_ctx,
++				  enum cfa_scope_type *scope_type)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL || scope_type == NULL)
++		return -EINVAL;
++	*scope_type = ulp_ctx->cfg_data->tbl_scope_type;
++	return 0;
++}
++
++int32_t
++bnxt_ulp_cntxt_tbl_scope_type_set(struct bnxt_ulp_context *ulp_ctx,
++				  enum cfa_scope_type scope_type)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)
++		return -EINVAL;
++	ulp_ctx->cfg_data->tbl_scope_type = scope_type;
++	return 0;
++}
++
++uint16_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_get(struct bnxt_ulp_context *ulp_ctx)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)
++		return 0;
++	return ulp_ctx->cfg_data->glb_tbl_scope_fid_cnt;
++}
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_set(struct bnxt_ulp_context *ulp_ctx,
++					 uint16_t fid_cnt)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)
++		return -EINVAL;
++	ulp_ctx->cfg_data->glb_tbl_scope_fid_cnt = fid_cnt;
++	return 0;
++}
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_inc(struct bnxt_ulp_context *ulp_ctx)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)
++		return -EINVAL;
++	ulp_ctx->cfg_data->glb_tbl_scope_fid_cnt++;
++	return 0;
++}
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_dec(struct bnxt_ulp_context *ulp_ctx)
++{
++	if (ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)
++		return -EINVAL;
++	if (ulp_ctx->cfg_data->glb_tbl_scope_fid_cnt == 0)
++		return -EINVAL;
++	ulp_ctx->cfg_data->glb_tbl_scope_fid_cnt--;
++	return 0;
++}
++
+ enum tfc_tbl_scope_bucket_factor
+ bnxt_ulp_cntxt_em_mulitplier_get(struct bnxt_ulp_context *ulp_ctx)
+ {
+@@ -299,39 +357,82 @@ ulp_tfc_dparms_init(struct bnxt *bp,
+ static void
+ ulp_tfc_tbl_scope_deinit(struct bnxt *bp)
+ {
+-	uint16_t fid = 0, fid_cnt = 0;
+-	struct tfc *tfcp;
++	uint16_t fid = 0;
++	uint16_t our_fid_cnt = 0;
++	struct tfc *tfcp = NULL;
+ 	uint8_t tsid = 0;
+ 	int32_t rc;
++	enum cfa_scope_type scope_type = CFA_SCOPE_TYPE_INVALID;
++	int32_t scope_rc;
++	bool have_scope = false;
+ 
+ 	tfcp = bnxt_ulp_cntxt_tfcp_get(bp->ulp_ctx);
+ 	if (tfcp == NULL)
+-		return;
++		goto cleanup;
+ 
+ 	rc = bnxt_ulp_cntxt_tsid_get(bp->ulp_ctx, &tsid);
+-	if (unlikely(rc))
+-		BNXT_DRV_DBG(ERR, "Failed to get the table scope\n");
++	if (rc) {
++		BNXT_DRV_DBG(ERR, "tsid_get failed rc=%d, skipping table-scope deinit", rc);
++		goto cleanup;
++	}
+ 
+ 	rc = bnxt_ulp_cntxt_fid_get(bp->ulp_ctx, &fid);
+-	if (rc)
++	if (rc) {
++		BNXT_DRV_DBG(ERR, "fid_get failed rc=%d, skipping table-scope deinit", rc);
++		goto cleanup;
++	}
++
++	have_scope = true;
++
++	if (bnxt_ulp_cntxt_acquire_fdb_lock(bp->ulp_ctx)) {
++		BNXT_DRV_DBG(ERR, "acquire_fdb_lock failed, proceeding with teardown using conservative fid_cnt");
++		our_fid_cnt = 1; /* Conservative: avoid invalidating shared scope in mem_free */
++	} else {
++		scope_rc = bnxt_ulp_cntxt_tbl_scope_type_get(bp->ulp_ctx, &scope_type);
++		if (scope_rc) {
++			BNXT_DRV_DBG(ERR,
++				     "tbl_scope_type_get failed rc=%d, proceeding with teardown using conservative fid_cnt",
++				     scope_rc);
++			our_fid_cnt = 1; /* avoid invalidating shared scope in mem_free */
++		} else if (scope_type == CFA_SCOPE_TYPE_GLOBAL) {
++			rc = bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_dec(bp->ulp_ctx);
++			if (rc) {
++				BNXT_DRV_DBG(WARNING,
++					     "glb_tbl_scope_fid_cnt dec failed (e.g. already 0), continuing teardown TSID:%d FID:%d",
++					     tsid, fid);
++				/* Pass 1 so mem_free won't treat as last FID & invalidate scope */
++				our_fid_cnt = 1;
++			} else {
++				our_fid_cnt = bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_get(bp->ulp_ctx);
++			}
++		} else {
++			our_fid_cnt = 0;
++		}
++		bnxt_ulp_cntxt_release_fdb_lock(bp->ulp_ctx);
++	}
++
++cleanup:
++	if (!have_scope)
+ 		return;
+ 
+-	rc = tfc_tbl_scope_fid_rem(tfcp, fid, tsid, &fid_cnt);
++	/* Free this port's CPM before mem_free; mem_free invalidates tsid scope state */
++	rc = tfc_tbl_scope_cpm_free(tfcp, tsid);
+ 	if (rc)
+-		BNXT_DRV_DBG(ERR, "Failed removing FID from TSID:%d FID:%d",
++		BNXT_DRV_DBG(ERR, "Failed Freeing CPM TSID:%d FID:%d",
+ 			     tsid, fid);
+ 	else
+-		BNXT_DRV_DBG(DEBUG, "Removed FID from TSID:%d FID:%d",
+-			     tsid, fid);
++		BNXT_DRV_DBG(DEBUG, "Freed CPM TSID:%d FID: %d", tsid, fid);
+ 
+-	rc = tfc_tbl_scope_cpm_free(tfcp, tsid);
++	rc = tfc_tbl_scope_fid_rem(tfcp, fid, tsid, NULL);
+ 	if (rc)
+-		BNXT_DRV_DBG(ERR, "Failed Freeing CPM TSID:%d FID:%d",
++		BNXT_DRV_DBG(ERR, "Failed removing FID from TSID:%d FID:%d",
+ 			     tsid, fid);
+ 	else
+-		BNXT_DRV_DBG(DEBUG, "Freed CPM TSID:%d FID: %d", tsid, fid);
++		BNXT_DRV_DBG(DEBUG, "Removed FID from TSID:%d FID:%d, remaining FID count:%d",
++			     tsid, fid, our_fid_cnt);
+ 
+-	rc = tfc_tbl_scope_mem_free(tfcp, fid, tsid, fid_cnt);
++	/* Still attempt mem_free and fid_rem to avoid FW/driver state divergence. */
++	rc = tfc_tbl_scope_mem_free(tfcp, fid, tsid, our_fid_cnt);
+ 	if (rc)
+ 		BNXT_DRV_DBG(ERR, "Failed freeing tscope mem TSID:%d FID:%d",
+ 			     tsid, fid);
+@@ -506,13 +607,42 @@ ulp_tfc_tbl_scope_init(struct bnxt *bp)
+ 	cparms.max_pools = max_pools;
+ 
+ 	rc = tfc_tbl_scope_cpm_alloc(tfcp, tsid, &cparms);
+-	if (rc)
++	if (rc) {
+ 		BNXT_DRV_DBG(ERR, "Failed to allocate CPM TSID:%d FID:%d\n",
+ 			     tsid, fid);
+-	else
++	} else {
+ 		BNXT_DRV_DBG(DEBUG, "Allocated CPM TSID:%d FID:%d\n", tsid, fid);
++		/* Inc before setting type so type==GLOBAL never without count incremented. */
++		if (bnxt_ulp_cntxt_acquire_fdb_lock(bp->ulp_ctx)) {
++			BNXT_DRV_DBG(ERR, "acquire_fdb_lock failed after CPM alloc, rolling back");
++			goto rollback;
++		}
++		if (scope_type == CFA_SCOPE_TYPE_GLOBAL) {
++			rc = bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_inc(bp->ulp_ctx);
++			if (rc) {
++				BNXT_DRV_DBG(ERR, "Failed to increment glb_tbl_scope_fid_cnt");
++				bnxt_ulp_cntxt_release_fdb_lock(bp->ulp_ctx);
++				goto rollback;
++			}
++		}
++		rc = bnxt_ulp_cntxt_tbl_scope_type_set(bp->ulp_ctx, scope_type);
++		bnxt_ulp_cntxt_release_fdb_lock(bp->ulp_ctx);
++	}
+ 
+ 	return rc;
++
++rollback:
++	/* Rollback: only FID in scope (glb_tbl_scope_fid_cnt_inc never ran). */
++	rc = tfc_tbl_scope_cpm_free(tfcp, tsid);
++	if (rc)
++		BNXT_DRV_DBG(INFO, "Rollback: cpm_free failed TSID:%d FID:%d rc=%d", tsid, fid, rc);
++	rc = tfc_tbl_scope_mem_free(tfcp, fid, tsid, 0);
++	if (rc)
++		BNXT_DRV_DBG(INFO, "Rollback: mem_free failed TSID:%d FID:%d rc=%d", tsid, fid, rc);
++	rc = tfc_tbl_scope_fid_rem(tfcp, fid, tsid, NULL);
++	if (rc)
++		BNXT_DRV_DBG(INFO, "Rollback: fid_rem failed TSID:%d FID:%d rc=%d", tsid, fid, rc);
++	return -1;
+ }
+ 
+ static int32_t
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.h
+index ab6608ac74..2b73043ab8 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.h
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.h
+@@ -7,6 +7,7 @@
+ #define _BNXT_ULP_TFC_H_
+ 
+ #include "bnxt.h"
++#include "cfa_types.h"
+ #include <inttypes.h>
+ 
+ bool
+@@ -24,6 +25,28 @@ bnxt_ulp_cntxt_tbl_scope_max_pools_get(struct bnxt_ulp_context *ulp_ctx);
+ int32_t
+ bnxt_ulp_cntxt_tbl_scope_max_pools_set(struct bnxt_ulp_context *ulp_ctx,
+ 				       uint32_t max);
++
++int32_t
++bnxt_ulp_cntxt_tbl_scope_type_get(struct bnxt_ulp_context *ulp_ctx,
++				  enum cfa_scope_type *scope_type);
++
++int32_t
++bnxt_ulp_cntxt_tbl_scope_type_set(struct bnxt_ulp_context *ulp_ctx,
++				  enum cfa_scope_type scope_type);
++
++uint16_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_get(struct bnxt_ulp_context *ulp_ctx);
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_set(struct bnxt_ulp_context *ulp_ctx,
++					 uint16_t fid_cnt);
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_inc(struct bnxt_ulp_context *ulp_ctx);
++
++int32_t
++bnxt_ulp_cntxt_glb_tbl_scope_fid_cnt_dec(struct bnxt_ulp_context *ulp_ctx);
++
+ enum tfc_tbl_scope_bucket_factor
+ bnxt_ulp_cntxt_em_mulitplier_get(struct bnxt_ulp_context *ulp_ctx);
+ 
+-- 
+2.31.1
+
