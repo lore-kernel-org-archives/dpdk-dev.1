@@ -2,57 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17592CA5FFC
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 19:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA39CA5FFC
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 19:40:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1339F40E03;
-	Mon,  5 Oct 2026 21:40:08 +0200 (CEST)
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200])
- by mails.dpdk.org (Postfix) with ESMTP id AAEAD40DD5
- for <dev@dpdk.org>; Mon,  5 Oct 2026 21:40:06 +0200 (CEST)
-Received: by mail-pl1-f200.google.com with SMTP id
- d9443c01a7336-2e2f3251e91so18047915ad.1
- for <dev@dpdk.org>; Mon, 05 Oct 2026 12:40:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id EE4FE40E17;
+	Mon,  5 Oct 2026 21:40:09 +0200 (CEST)
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197])
+ by mails.dpdk.org (Postfix) with ESMTP id AF23C40E0B
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 21:40:08 +0200 (CEST)
+Received: by mail-pl1-f197.google.com with SMTP id
+ d9443c01a7336-2df375fb9b2so21090985ad.2
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 12:40:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1791229206; x=1791834006; darn=dpdk.org;
+ d=google.com; s=20251104; t=1791229208; x=1791834008; darn=dpdk.org;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=NVr/pTCAm+E0JgNL+m+WZPYBTOTDChVTMOzLwFblwD4=;
- b=l2coNl5lDX77q4y2ZoYpmWRRspATYxPEd2md/7Btvhl/yU9UGSvS3H0ZomedGmbLJV
- BZhxpbbYXFOSs7SMCYtzooDUAU9fGEQgHS6Pa66R4JfKhjUdO0vyDQF0/t5GX46vfQj/
- CUqSdEBZMHp0+WAljXgG4qPW5F49ibxo7RZoAO+S6VAj+kgz2QeJnA4/Qrr6zSH+dJgE
- DMir/1BksoU7N1CbEmw9uxANxAdevn8A4M87XvSUsnR7F1z2bsk/0gl+0OBtEIOjnbrQ
- oOkkt0jrAk3lmNcII56H2TIWYfbMxbk2fA80CxZiosHy1AUx5LCNy1FTqnPgKcla+pm5
- dRjA==
+ :content-type; bh=Kms8pReotyMGgFtivMmWT9lPWVXWPO84ewrFKWYiKFM=;
+ b=G+/Lop8Wkygs8vhLikJ6k5XoFg62OWK3jwadQ7TeUfgFYnReIMRgXgLPMm0nm6ZW4W
+ 0q2Yux69OfsUQFj26wMDZ6Oi75aTIo7rf5bvfgMxrWFu5mexWS827lGh3pT83bXeQq9y
+ YttfpYCLT1AZsEtnk3hbLCK3BXRcrg1xatnL+fcdZVSDkSO+7c4Qi12SOSwyyMqfsm8i
+ 3vNZdlfNxRdqJpImG4ZBBHOeTLW2dvU7DmJHWZsQT0Y+OLZvgV9UrxiyhVw1R5UvXH5Q
+ 9JHJSmuq0X8h85PVPvOlDdnvqLacgio5d5YK8I2lZY33DY6mpt8YOF8XjqJBveer3x9V
+ bOBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791229206; x=1791834006;
+ d=1e100.net; s=20260707; t=1791229208; x=1791834008;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=NVr/pTCAm+E0JgNL+m+WZPYBTOTDChVTMOzLwFblwD4=;
- b=HFHceEckE7sJnxJHEAbGgKRWLOee1fY7ml0BDu6CAbVRX2rDJX16gcmkaWSOzr4xQl
- hiFufAnnicbxn1dGZy9ubDRhp8uFQJR8fVK66Uvl5xbJmaRmLWieJZJqXrsWofMti2e+
- N77rNjlhBiRyaRMNsM2c3x2IZmH7F9kOSziJe7LuyhSyhgBhwR335ztsCKa9SDVlzy/M
- HO4KnnpKZWTMYwGzW+hjYDIICJk2bNGpCnxESX+3ca1J2LstJIsKJ8TNouwcNpnXJQfO
- kGaXc0PZmhGu9MCW4EqZmTtZIClYnkzsqqcgfjQxaohhcOIRYUlxYfoSP4xqJsbgqBv5
- WAFg==
-X-Gm-Message-State: AFq9FYJzt4oFLENwhshHAb6bf5P8IcT8Hg8O/cALKRb8yO0Jc+qbgkdz
- Nm70PM0PFsqbkaetgf5k/aaeMRTMjrqTLILXfrKzSfuVNTcLqKHHfpxasx22uhcnlB/HXMwpWnb
- /oBb9aMilwEhzAw==
-X-Received: from plble11.prod.google.com ([2002:a17:902:fb0b:b0:2e3:1b6e:33bb])
+ bh=Kms8pReotyMGgFtivMmWT9lPWVXWPO84ewrFKWYiKFM=;
+ b=w4KwINZBP9u1w6vA35xatEgE9T4rIiPk4exHCC225jV0Pzm2W75YC/Rjnw44vIjeDX
+ 6slsiDi5o2sD7hJY/Ux0aDICnlXcNJzNcohE9hbwOB05wz4bzjoP4Gy2c5aYODswwFMa
+ PbYzGl2a0Sz1E/4ZYeRT4KGWzALDk3cft2IMMmL/JxWkWuqgLm+p3xwaIIGvN1SzwgcQ
+ kXAcQf9CNVlkP9uBZz9UIDo8hI68aDx5vzWrN49BxoQ9BOWViMbdk9mgaic8Ni6Q1cB1
+ aKfkMhbG9P2X3hkLDAwTt4c79GFZ3zP5GtVzSbq+9DFITSCc/HEmcfHd1Eh1jjwt7bCu
+ 6ZlA==
+X-Gm-Message-State: AFq9FYJ1xyVCTy1d4ZOsYHnWLiM972x1H47fqYDpHw6IoVKsHmdDz6ew
+ yJWm1d/NNngKVrbtKIy7VSPAbbVkdUAudSVPbhh9lwq4WMIHu+RLFCfs9BBMeQp7PcjstDVhXdv
+ 1UEGnGzzaqsUGNw==
+X-Received: from plhk15.prod.google.com ([2002:a17:902:d58f:b0:2e2:e23b:36c2])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:c950:b0:2dd:c100:4b81 with SMTP id
- d9443c01a7336-2e49b6dc966mr105943365ad.56.1791229205430; 
- Mon, 05 Oct 2026 12:40:05 -0700 (PDT)
-Date: Mon,  5 Oct 2026 12:39:34 -0700
+ 2002:a17:902:d4c5:b0:2df:90d4:1188 with SMTP id
+ d9443c01a7336-2e499f095e2mr108567985ad.7.1791229207484; 
+ Mon, 05 Oct 2026 12:40:07 -0700 (PDT)
+Date: Mon,  5 Oct 2026 12:39:35 -0700
 In-Reply-To: <20261005193943.1175072-1-joshwash@google.com>
 Mime-Version: 1.0
 References: <20261003025142.1930363-1-joshwash@google.com>
  <20261005193943.1175072-1-joshwash@google.com>
 X-Mailer: git-send-email 2.56.0.rc1.315.gc6ed9934b7-goog
-Message-ID: <20261005193943.1175072-4-joshwash@google.com>
-Subject: [PATCH v2 3/8] net/gve: split default queue counts into Tx and Rx
+Message-ID: <20261005193943.1175072-5-joshwash@google.com>
+Subject: [PATCH v2 4/8] net/gve: clean Tx queue directly in dqo
 From: Joshua Washington <joshwash@google.com>
 To: Joshua Washington <joshwash@google.com>
 Cc: dev@dpdk.org, Mark Blasko <blasko@google.com>
@@ -72,67 +72,78 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Mark Blasko <blasko@google.com>
 
-Replace default_num_queues with separate default_tx_num_queues and
-default_rx_num_queues fields in struct gve_priv. Update AdminQ device
-description and queue initialization logic to use the per-direction
-default queue counts.
+Each Tx completion queue in DPDK is mapped 1:1 to its Tx queue. Remove
+the compl_desc id lookup and txqs pointer array, and process descriptor
+and packet completions directly on the calling Tx queue.
 
 Signed-off-by: Mark Blasko <blasko@google.com>
 Signed-off-by: Joshua Washington <joshwash@google.com>
 ---
- drivers/net/gve/base/gve_adminq.c | 4 ++--
- drivers/net/gve/gve_ethdev.c      | 8 ++++----
- drivers/net/gve/gve_ethdev.h      | 3 ++-
- 3 files changed, 8 insertions(+), 7 deletions(-)
+ drivers/net/gve/gve_ethdev.h |  1 -
+ drivers/net/gve/gve_tx_dqo.c | 14 +++++---------
+ 2 files changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/gve/base/gve_adminq.c b/drivers/net/gve/base/gve_adminq.c
-index 74b9a0125c..4dd095880d 100644
---- a/drivers/net/gve/base/gve_adminq.c
-+++ b/drivers/net/gve/base/gve_adminq.c
-@@ -1083,8 +1083,8 @@ int gve_adminq_describe_device(struct gve_priv *priv)
- 	PMD_DRV_LOG(INFO, "MAC addr: " RTE_ETHER_ADDR_PRT_FMT,
- 		    RTE_ETHER_ADDR_BYTES(&priv->dev_addr));
- 	priv->tx_pages_per_qpl = be16_to_cpu(descriptor->tx_pages_per_qpl);
--
--	priv->default_num_queues = be16_to_cpu(descriptor->default_num_queues);
-+	priv->default_tx_num_queues = be16_to_cpu(descriptor->default_num_queues);
-+	priv->default_rx_num_queues = be16_to_cpu(descriptor->default_num_queues);
- 
- 	gve_enable_supported_features(priv, supported_features_mask,
- 				      dev_op_flow_steering, dev_op_modify_ring,
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index 9cfdd03b9d..3ba99fd74c 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -1652,10 +1652,10 @@ gve_init_priv(struct gve_priv *priv, bool skip_describe_device)
- 	priv->max_nb_txq = RTE_MIN(priv->max_nb_txq, priv->num_ntfy_blks / 2);
- 	priv->max_nb_rxq = RTE_MIN(priv->max_nb_rxq, priv->num_ntfy_blks / 2);
- 
--	if (priv->default_num_queues > 0) {
--		priv->max_nb_txq = RTE_MIN(priv->default_num_queues, priv->max_nb_txq);
--		priv->max_nb_rxq = RTE_MIN(priv->default_num_queues, priv->max_nb_rxq);
--	}
-+	if (priv->default_tx_num_queues > 0)
-+		priv->max_nb_txq = RTE_MIN(priv->default_tx_num_queues, priv->max_nb_txq);
-+	if (priv->default_rx_num_queues > 0)
-+		priv->max_nb_rxq = RTE_MIN(priv->default_rx_num_queues, priv->max_nb_rxq);
- 
- 	PMD_DRV_LOG(INFO, "Max TX queues %d, Max RX queues %d",
- 		    priv->max_nb_txq, priv->max_nb_rxq);
 diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index ef54b75c32..1a0ac87ed8 100644
+index 1a0ac87ed8..9d8939da33 100644
 --- a/drivers/net/gve/gve_ethdev.h
 +++ b/drivers/net/gve/gve_ethdev.h
-@@ -344,7 +344,8 @@ struct gve_priv {
+@@ -193,7 +193,6 @@ struct gve_tx_queue {
+ 	uint16_t sw_size;
+ 	uint8_t cur_gen_bit;
+ 	uint32_t last_desc_cleaned;
+-	void **txqs;
+ 	uint16_t re_cnt;
  
- 	uint64_t max_registered_pages;
- 	uint64_t num_registered_pages; /* num pages registered with NIC */
--	uint16_t default_num_queues; /* default num queues to set up */
-+	uint16_t default_tx_num_queues; /* default num tx queues to set up */
-+	uint16_t default_rx_num_queues; /* default num rx queues to set up */
- 	enum gve_queue_format queue_format; /* see enum gve_queue_format */
- 	uint8_t enable_rsc;
+ 	/* Only valid for DQO_RDA queue format */
+diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
+index fe8b883208..7dbe8db39d 100644
+--- a/drivers/net/gve/gve_tx_dqo.c
++++ b/drivers/net/gve/gve_tx_dqo.c
+@@ -55,7 +55,6 @@ gve_tx_clean_dqo(struct gve_tx_queue *txq)
+ {
+ 	struct gve_tx_compl_desc *compl_ring;
+ 	struct gve_tx_compl_desc *compl_desc;
+-	struct gve_tx_queue *aim_txq;
+ 	struct gve_tx_pkt *pkt;
+ 	uint16_t new_tx_head;
+ 	uint16_t compl_tag;
+@@ -70,15 +69,13 @@ gve_tx_clean_dqo(struct gve_tx_queue *txq)
  
+ 	rte_io_rmb();
+ 
+-	aim_txq = txq->txqs[compl_desc->id];
+-
+ 	switch (compl_desc->type) {
+ 	case GVE_COMPL_TYPE_DQO_DESC:
+ 		new_tx_head = rte_le_to_cpu_16(compl_desc->tx_head);
+-		aim_txq->nb_free +=
+-			(new_tx_head - aim_txq->last_desc_cleaned)
+-				& (aim_txq->nb_tx_desc - 1);
+-		aim_txq->last_desc_cleaned = new_tx_head;
++		txq->nb_free +=
++			(new_tx_head - txq->last_desc_cleaned)
++				& (txq->nb_tx_desc - 1);
++		txq->last_desc_cleaned = new_tx_head;
+ 		break;
+ 	case GVE_COMPL_TYPE_DQO_REINJECTION:
+ 		PMD_DRV_DP_LOG(DEBUG, "GVE_COMPL_TYPE_DQO_REINJECTION !!!");
+@@ -93,7 +90,7 @@ gve_tx_clean_dqo(struct gve_tx_queue *txq)
+ 		}
+ 
+ 		/* Free packet.*/
+-		pkt = &aim_txq->pkt_ring_dqo[compl_tag];
++		pkt = &txq->pkt_ring_dqo[compl_tag];
+ 		if (unlikely(!pkt->mbuf)) {
+ 			PMD_DRV_DP_LOG(ERR, "No outstanding packet for completion tag %d",
+ 				       compl_tag);
+@@ -534,7 +531,6 @@ gve_tx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
+ 	txq->compl_ring = (struct gve_tx_compl_desc *)mz->addr;
+ 	txq->compl_ring_phys_addr = mz->iova;
+ 	txq->compl_ring_mz = mz;
+-	txq->txqs = dev->data->tx_queues;
+ 
+ 	mz = rte_eth_dma_zone_reserve(dev, "txq_res", queue_id,
+ 				      sizeof(struct gve_queue_resources),
 -- 
 2.56.0.rc1.315.gc6ed9934b7-goog
 
