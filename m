@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81294CA5FF0
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 16:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC05CA5FF0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 16:55:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 95A7740DCF;
-	Mon,  5 Oct 2026 18:55:19 +0200 (CEST)
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
- [209.85.215.173])
- by mails.dpdk.org (Postfix) with ESMTP id E525840DF8
- for <dev@dpdk.org>; Mon,  5 Oct 2026 18:55:17 +0200 (CEST)
-Received: by mail-pg1-f173.google.com with SMTP id
- 41be03b00d2f7-cc4aa02a269so815599a12.2
- for <dev@dpdk.org>; Mon, 05 Oct 2026 09:55:17 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8630B40DDD;
+	Mon,  5 Oct 2026 18:55:22 +0200 (CEST)
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
+ [74.125.227.171])
+ by mails.dpdk.org (Postfix) with ESMTP id AA10140E17
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 18:55:18 +0200 (CEST)
+Received: by mail-pj2-f43.google.com with SMTP id
+ 98e67ed59e1d1-396ccb652d7so1219052a91.0
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 09:55:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791219317;
- x=1791824117; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791219318;
+ x=1791824118; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=lia0HfshUad93JbomqMsQrCLIPRMOMpCBna6maavrUs=;
- b=ciIOeBWsPreEe8Y8BBPHMdwILNM1ZbqqjH8nf1RcZffR+bcPo8BJlSo0Zlw7xPJ/MS
- GSQ8wg3MntPYwd9TWfiNzsSCabLi0Zygprf5IHb9U1Pxa5hEp/qpI+pKVYNGa5MxtJbS
- Q90PlSFuYwmAa1SCV8EAZiA1ekCjbs7xwilJkdfVK2Bm6JCTgtNVcBznQG38aFbZqdl3
- j+7evhJSX/WIPufZrbVerwgzzkXBNy3k++oOGKTjEo/2ondF8FlinsN3gGdRJvtO/yB3
- 5ydHCyg9WSr3Tmx60Elm+c2HSY8LwRNaheeedSilzUinnqQOhjU5IDOv4xJqrkgjbN0h
- OqKQ==
+ bh=XP5HD1p2O+FrgmKFpdAGaCRDciPD/RuM80bEZQNEZ5I=;
+ b=mTIItrTlcPKfmrtw5IohlnBYKr2v7jWpkCEuk3W/feBnnHzk31mYDoGfQhKBlZuQ/T
+ S5IlAFBK19YPVRO8kXb5TTl0n1E5sWRXt6uZZI2t8YiVynG8ff1feE81tH3qPQTex9WU
+ Jj93Xy0j+56DGef/EwP5Xey8yFGFAlZbcVGTaFr1LBRzRPubIKmYl+XuJ1cJPRAwwbEg
+ S5Gh+tQCIKBD0CNyGFPZa43PXDsyzo4L6p29s1u4Joza7t/HzEOO2Q3U/UZQgZLODIr2
+ RQrcVmQEnp4DzvocYu6knC1nK+HwcR5qeheQ3YJDaLD7L+tUDDfHbxpzApaaZwC2I7GY
+ iZgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791219317; x=1791824117;
+ d=1e100.net; s=20260707; t=1791219318; x=1791824118;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=lia0HfshUad93JbomqMsQrCLIPRMOMpCBna6maavrUs=;
- b=sLtT5LGk6JfI6L8F+pV3mqF5XHY8EJxuZKj/JJV1KanACgoYLOB+nbP3xojwmim+7F
- eEoDk1+vnDW2vATOGF3lcpwobqpGacotUM1lpdBLlnUBojvt1WYuaJjWpXboUOlejdG8
- 5fEnG0HmTVyXY3M7sIWewJhOf1PrhgIPAAvR5NItD5DzyzQiesuvgI2XyZFZ4wUQ326v
- FK+5fLTKtcFK9a0jicoCZBr8TohBJdYZeUZAUatmn7doDfbgk4YLUPl8WK4eLhLFakhz
- QWlGOygpfLAhEmyDscvOx7GIt8VsfgAU444ZWwI7Ar/Pe3WDWtc3YYnqdRORmaXWLWb+
- RKzw==
-X-Gm-Message-State: AFq9FYK/GpqTYA/lLu80n4kTEABb70FuW8owxIAOHIjrGeKbwSwBTlhC
- aNrlCo6J6skL9eA8Mdlygc/n3WyEsdhnCeInDCUJsO7vwhbRlGjL1QIZpfmOnO0k7azwUojTnDD
- 7PzrhnHU=
-X-Gm-Gg: AYBFou2fcLt4JzeGBVXaSUTAcw7dfLEsFfDdwVXWonxv5YTkJLCG2eWmuGkupO4Qsvs
- Q5CqU4d5zlrezeafNT0AS5CC9xSzv/modUAAXlHjzu91jYnYtHBIrezVAgYkRTxl8zaLwE9jRVY
- s/NBu/LvETorzG5Fv0yCY/KaTLn/qwOUmGMvE6tkfDB72XCKXP01psTACTMAPfW28MLF5T0P4N+
- pys35UrT+hDUMjlJqOyXtjKmR6wOo1QtUz59s5ISW6bSQ0HQ50OktT2iZzjOm1VlvvznA+jEkCn
- vRXVcvJt78d2ltX0n60TqAL9+FGQ42+GKCCFH6227LLlXYgqyLUgmD8HZvL+gqnENvt4uxu+kFS
- 7xT4BYxDG4CdDCEZmjdLCrvNSfR03KH8jLHGl4NVgtWZ16TloLt6o9bj4BioZqIBeseSjAYBKvP
- zTPf8QkfALaYOvjugjkw5MQHpz/Xyp/31UmnL3/xnqxzU1UK+//rX6E/c2M8736QtPd53EZ/sHn
- IuyQ6sFY1GgbvK0AVQv+1BHvPpfUNw0/tpGDw==
-X-Received: by 2002:a17:90b:390b:b0:3a7:db88:3491 with SMTP id
- 98e67ed59e1d1-3a7db883ccemr3810352a91.33.1791219317031; 
+ bh=XP5HD1p2O+FrgmKFpdAGaCRDciPD/RuM80bEZQNEZ5I=;
+ b=yGfSfss2B1qqrpy3jv8yNC5OBzpRouN3AH/HPPtO7EUmEF1rXLUJkIPMo7R6J1GbDR
+ ibbLckE3gEOp9Cou+q5iIwBMiW+0IQHwfk6Mng8pp0OrGX5Z6sREyXHGqswAeeFJM3es
+ 5rgx84clXVQ5hvokR9m+xLzJ05mRuoGedeZj65vPKycSGxFKjsCJH/tNtdhFw/CJBS6l
+ PIWc6UrY9rFoSJVqUkSKlZFKLbACMQZgu6k9c51gFvds5vKp4drHWbfwiBYMPIkuDK4+
+ rmzOgq/Z4H3kgiJ5t2v7pBA4rnJWgYKvUIpAcyQTV1J5UrSlo2FNrJsOZY0SMfYkoL70
+ S/Gg==
+X-Gm-Message-State: AFq9FYIRtKK1UzwLB+zUl5CBZQm359/3+/DnChfropWbgKD/P7JwJ2Nf
+ 8eggv0QAbNsM+Ud1FVuVgnAQsKl1sVLURUINPrg0uYWszWU4eOm++9Jmoq/Wf91JqBMbSbVseJj
+ VOaU6LUw=
+X-Gm-Gg: AYBFou3DpT3P0RjH4PZiszFinP8apm3WbJR+z2EMVPTa4SrNq04alaiT40psHEa7pFb
+ lHEm+4nD3nWtij6rP4L+zmMNojmsjK1J7+IxTjvOIAhC0aURJcg8O2gyfujNSy53Og2HROyYoDi
+ lkvq4kBYMxDVbEY4ae41Pf9lzGr67S/m+m/ATD9DvqdizfVudDmjQ4FEp8egekOswvs5LogG05R
+ jZ0y5rv5inhEd5hwnHO3+yilUBcB3k3xJq23ikg2rf+NkrTC4ijLLFpq9LwW+Ye4UAuflyyGSKu
+ GLfod/EAe/EgLRGgja9DvApO2GrSzkWDQjexgLUOKer/T/VJz3KiV3CPO5mtGu8CBQq/b6LxkQU
+ 03LpLx/HfgUujR90W+PjYeU6YT7hH2bdBxL5Pa6fVz/ocDV+YdxzvyWLfCkZ/3p94LHWsTpSIju
+ OVqC9hvPlbRaMjKjDmpIqx3B4v54PgIukWjYOQSuW7e8czGM5+fW92TyU8Ik3KD+wo/21FLX4NL
+ lK7zp1Gn9osj770v5v1rk9Zf2i6reBFgPrf4Q==
+X-Received: by 2002:a17:90b:5604:b0:3a5:133:ca5f with SMTP id
+ 98e67ed59e1d1-3a6ce82a386mr8496751a91.46.1791219317779; 
  Mon, 05 Oct 2026 09:55:17 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a8533aba95sm289414a91.2.2026.10.05.09.55.16
+ 98e67ed59e1d1-3a8533aba95sm289414a91.2.2026.10.05.09.55.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 05 Oct 2026 09:55:16 -0700 (PDT)
+ Mon, 05 Oct 2026 09:55:17 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 3/4] test/devargs: use unit test suite runner
-Date: Mon,  5 Oct 2026 09:53:49 -0700
-Message-ID: <20261005165512.334085-4-stephen@networkplumber.org>
+Subject: [PATCH 4/4] test/devargs: add tests for missing device arguments
+Date: Mon,  5 Oct 2026 09:53:50 -0700
+Message-ID: <20261005165512.334085-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261005165512.334085-1-stephen@networkplumber.org>
 References: <20261005165512.334085-1-stephen@networkplumber.org>
@@ -82,124 +82,134 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The devargs test ran its four subtests from a single function, so a
-failure reported only one overall result and later subtests were
-skipped once an earlier one failed.
+There was no coverage for a device string with no driver arguments,
+which is how Bugzilla 2049 went unnoticed: global device syntax with
+no driver layer left args NULL and drivers crashed passing it to
+rte_kvargs_parse().
 
-Convert to unit_test_suite_runner() so each subtest is a named case
-that runs and reports independently.
-
-Two subtests also recorded failure by assigning the parse return
-value to the result, which hid a failure when that value was 0.
-Use TEST_FAILED instead.
+Add a devargs case asserting args is non-NULL and empty for global
+syntax without a driver layer, and that it parses as kvargs the way a
+driver would use it.  Add a kvargs case for rte_kvargs_parse(NULL),
+which must give an empty list.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/test_devargs.c | 41 +++++++++++++++++++++--------------------
- 1 file changed, 21 insertions(+), 20 deletions(-)
+ app/test/test_devargs.c | 60 +++++++++++++++++++++++++++++++++++++++++
+ app/test/test_kvargs.c  | 16 +++++++++++
+ 2 files changed, 76 insertions(+)
 
 diff --git a/app/test/test_devargs.c b/app/test/test_devargs.c
-index 571f57500c..de0dd2364d 100644
+index de0dd2364d..693bf362d4 100644
 --- a/app/test/test_devargs.c
 +++ b/app/test/test_devargs.c
-@@ -179,14 +179,14 @@ test_invalid_devargs(void)
- 	struct rte_devargs da;
- 	uint32_t i;
- 	int ret;
--	int fail = 0;
-+	int fail = TEST_SUCCESS;
- 
- 	for (i = 0; i < RTE_DIM(list); i++) {
- 		ret = rte_devargs_parse(&da, list[i]);
- 		if (ret >= 0) {
- 			printf("rte_devargs_parse(%s) returned %d (but should not)\n",
- 			       list[i], ret);
--			fail = ret;
-+			fail = TEST_FAILED;
- 		}
- 		rte_devargs_reset(&da);
- 	}
-@@ -233,7 +233,7 @@ test_valid_devargs_parsing(void)
- 	struct rte_eth_devargs eth_da[RTE_MAX_ETHPORTS];
- 	uint32_t i;
- 	int ret;
--	int fail = 0;
-+	int fail = TEST_SUCCESS;
- 
- 	for (i = 0; i < RTE_DIM(list); i++) {
- 		memset(eth_da, 0, RTE_MAX_ETHPORTS * sizeof(*eth_da));
-@@ -241,7 +241,7 @@ test_valid_devargs_parsing(void)
- 		if (ret <= 0) {
- 			printf("rte_devargs_parse(%s) returned %d (but should not)\n",
- 			       list[i].devargs, ret);
--			fail = ret;
-+			fail = TEST_FAILED;
- 			break;
- 		}
- 
-@@ -249,7 +249,7 @@ test_valid_devargs_parsing(void)
- 		if (ret != list[i].devargs_count) {
- 			printf("Devargs returned count %d != expected count %d\n", ret,
- 			       list[i].devargs_count);
--			fail = -1;
-+			fail = TEST_FAILED;
- 			break;
- 		}
- 	}
-@@ -278,7 +278,7 @@ test_invalid_devargs_parsing(void)
- 	struct rte_eth_devargs eth_da[RTE_MAX_ETHPORTS];
- 	uint32_t i;
- 	int ret;
--	int fail = 0;
-+	int fail = TEST_SUCCESS;
- 
- 	for (i = 0; i < RTE_DIM(list); i++) {
- 		memset(eth_da, 0, RTE_MAX_ETHPORTS * sizeof(*eth_da));
-@@ -286,29 +286,30 @@ test_invalid_devargs_parsing(void)
- 		if (ret > 0) {
- 			printf("rte_devargs_parse(%s) returned %d (but should not)\n",
- 			       list[i], ret);
--			fail = ret;
-+			fail = TEST_FAILED;
- 			break;
- 		}
- 	}
+@@ -193,6 +193,65 @@ test_invalid_devargs(void)
  	return fail;
  }
  
-+static struct unit_test_suite devargs_test_suite = {
-+	.suite_name = "Devargs Unit Test Suite",
-+	.setup = NULL,
-+	.teardown = NULL,
-+	.unit_test_cases = {
-+		TEST_CASE(test_valid_devargs),
-+		TEST_CASE(test_invalid_devargs),
-+		TEST_CASE(test_valid_devargs_parsing),
-+		TEST_CASE(test_invalid_devargs_parsing),
-+		TEST_CASES_END() /**< NULL terminate unit test array */
-+	}
-+};
++/*
++ * Global device syntax without a driver layer must still leave args set,
++ * as the legacy syntax does.  Drivers pass it straight to
++ * rte_kvargs_parse(), which used to crash on NULL.
++ */
++static int
++test_devargs_no_driver_layer(void)
++{
++	static const char * const list[] = {
++		"bus=vdev,name=net_null0",
++		"bus=vdev,name=net_null0/class=eth",
++		"class=eth",
++	};
++	struct rte_kvargs *kvlist;
++	struct rte_devargs da;
++	uint32_t i;
++	int ret;
++	int fail = TEST_SUCCESS;
 +
- static int
- test_devargs(void)
- {
--	printf("== test valid case ==\n");
--	if (test_valid_devargs() < 0)
--		return -1;
--	printf("== test invalid case ==\n");
--	if (test_invalid_devargs() < 0)
--		return -1;
--	printf("== test devargs parsing valid case ==\n");
--	if (test_valid_devargs_parsing() < 0)
--		return -1;
--	printf("== test devargs parsing invalid case ==\n");
--	if (test_invalid_devargs_parsing() < 0)
--		return -1;
--	return 0;
-+	return unit_test_suite_runner(&devargs_test_suite);
++	if (rte_bus_find_by_name("vdev") == NULL ||
++	    rte_class_find_by_name("eth") == NULL) {
++		printf("vdev bus or eth class missing, skipping\n");
++		return TEST_SKIPPED;
++	}
++
++	for (i = 0; i < RTE_DIM(list); i++) {
++		memset(&da, 0, sizeof(da));
++		ret = rte_devargs_parse(&da, list[i]);
++		if (ret < 0) {
++			printf("rte_devargs_parse(%s) returned %d (but should not)\n",
++			       list[i], ret);
++			fail = TEST_FAILED;
++			goto cleanup;
++		}
++		if (da.args == NULL) {
++			printf("rte_devargs_parse(%s) left args NULL\n", list[i]);
++			fail = TEST_FAILED;
++			goto cleanup;
++		}
++		if (da.args[0] != '\0') {
++			printf("rte_devargs_parse(%s) args (%s) not empty\n",
++			       list[i], da.args);
++			fail = TEST_FAILED;
++			goto cleanup;
++		}
++		/* What a driver does with it. */
++		kvlist = rte_kvargs_parse(da.args, NULL);
++		if (kvlist == NULL) {
++			printf("rte_kvargs_parse(%s args) failed\n", list[i]);
++			fail = TEST_FAILED;
++			goto cleanup;
++		}
++		rte_kvargs_free(kvlist);
++cleanup:
++		rte_devargs_reset(&da);
++	}
++	return fail;
++}
++
+ struct devargs_parse_case {
+ 	const char *devargs;
+ 	uint8_t devargs_count;
+@@ -300,6 +359,7 @@ static struct unit_test_suite devargs_test_suite = {
+ 	.unit_test_cases = {
+ 		TEST_CASE(test_valid_devargs),
+ 		TEST_CASE(test_invalid_devargs),
++		TEST_CASE(test_devargs_no_driver_layer),
+ 		TEST_CASE(test_valid_devargs_parsing),
+ 		TEST_CASE(test_invalid_devargs_parsing),
+ 		TEST_CASES_END() /**< NULL terminate unit test array */
+diff --git a/app/test/test_kvargs.c b/app/test/test_kvargs.c
+index a14b75948a..5dd74bec49 100644
+--- a/app/test/test_kvargs.c
++++ b/app/test/test_kvargs.c
+@@ -328,6 +328,21 @@ static int test_invalid_kvargs(void)
+ 	return -1;
  }
  
- REGISTER_FAST_TEST(devargs_autotest, NOHUGE_OK, ASAN_OK, test_devargs);
++/* NULL means no arguments, and must give an empty list rather than crash. */
++static int
++test_parse_null_args(void)
++{
++	struct rte_kvargs *kvlist;
++
++	kvlist = rte_kvargs_parse(NULL, NULL);
++	TEST_ASSERT_NOT_NULL(kvlist, "rte_kvargs_parse(NULL) returned NULL");
++	TEST_ASSERT_EQUAL(kvlist->count, 0, "rte_kvargs_parse(NULL) count %u, not 0",
++			  kvlist->count);
++	rte_kvargs_free(kvlist);
++
++	return 0;
++}
++
+ static struct unit_test_suite kvargs_test_suite  = {
+ 	.suite_name = "Kvargs Unit Test Suite",
+ 	.setup = NULL,
+@@ -353,6 +368,7 @@ static struct unit_test_suite kvargs_test_suite  = {
+ 		TEST_CASE(test_parse_list_value),
+ 		TEST_CASE(test_parse_empty_elements),
+ 		TEST_CASE(test_parse_with_only_key),
++		TEST_CASE(test_parse_null_args),
+ 		TEST_CASE(test_invalid_kvargs),
+ 		TEST_CASES_END() /**< NULL terminate unit test array */
+ 	}
 -- 
 2.53.0
 
