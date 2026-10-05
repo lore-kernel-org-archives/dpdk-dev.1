@@ -2,81 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCBACA5FF5
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 20:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0BE3CA5FF5
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 20:26:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2FE9D40DD7;
-	Mon,  5 Oct 2026 22:25:45 +0200 (CEST)
-Received: from mail-pj1-f97.google.com (mail-pj1-f97.google.com
- [209.85.216.97]) by mails.dpdk.org (Postfix) with ESMTP id 1267A40DD7
- for <dev@dpdk.org>; Mon,  5 Oct 2026 22:25:44 +0200 (CEST)
-Received: by mail-pj1-f97.google.com with SMTP id
- 98e67ed59e1d1-3964dfb5b9aso569634a91.1
- for <dev@dpdk.org>; Mon, 05 Oct 2026 13:25:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B16A440E3E;
+	Mon,  5 Oct 2026 22:25:49 +0200 (CEST)
+Received: from mail-pj1-f99.google.com (mail-pj1-f99.google.com
+ [209.85.216.99]) by mails.dpdk.org (Postfix) with ESMTP id 5076940E45
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 22:25:48 +0200 (CEST)
+Received: by mail-pj1-f99.google.com with SMTP id
+ 98e67ed59e1d1-3a4a7eb86a4so282385a91.3
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 13:25:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791231943; x=1791836743;
+ d=1e100.net; s=20260707; t=1791231947; x=1791836747;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=JdmjfKMph/hqjD/XR4kG2bCozGtWGC4NCd+4NNThs9o=;
- b=VQs6Lpa5VwUFWr7PAFkqNA9jg5tpLUr1jbJqSuHde0cGK57+GTcNw9mXpul5cvZGfm
- +fhjsheIgijc55BC2ZjSaLAaKSWqrN1F2Do3mJj4Hi2RzMFPnB11oBPXJauEqAB+80p0
- 0XXJaSbe0QCjhuRbu3Sj2T9T/AyNNwwOKHSqHt9nBj2zROyiqrUX+EgbuhNkN9QHUdKV
- gLjcrx+vi4zjvd8SQqBm3L/vtPhWnzAOSBDfCjZLbYvn6iZpdAqhCGLGPgMxpOXKHKPF
- B2UVPQ7VgKOJtGdb0J37Ju3lqLb1U4N0kGOJdnvzswiRm25oLd5Mbn36i91OnFURtyxR
- 3Eqw==
-X-Gm-Message-State: AFq9FYJ3KMQjkTXvOEQMC06gbkvmCJRaUBl3QzjECfGrMLI9G/T3Y395
- lDeAKTFqdhd3PthPpzZjcnhQ0HRKtgIq3ePZfMVtAtT7Haoku9kcENuVyqjrEl6uvG4xHz5oVus
- E9Ng89DKzIO3obKFlHo2Z52bpDdrTHEC67iAhhYyhCcek8IFOT7H8VF0WOAJJo6E7QF7xFiogob
- PdZ3giSWJp9YjdIg/e58QVKxC2oVrI7CDY8Vh/8Vz+MxuWSW29JLh7dpRL1AM7Zb7hGmL1EA==
-X-Gm-Gg: AYBFou2wp82L0mpwoe4ALoTY91WF8iCe4dBZu4AiCjxhi/07yAuvX6m30zlU3GPkyIN
- zytEiwFKCQ0R9pq/91yqG4SDeQ9wL6yQvIakD511jzRDjx9BtJaDoBBpDYqLbYmAtTEcXxcow5r
- 5a1xPr6Sdf72ZQXZ8hI9fb61sGNapuZXLedsYspQ/PBIbrcjs4FrtONa44fYeZYXEXGe9KGiFgU
- N0ey+ibqsgAW9sHmKzaUeAt6R61mmXbMRXbsaDe4Hn3dsDR1S8MCtUQYv+j54SD/ukqgxvjZckc
- MDGfy7AC9uf1PI730c1FGKwo3S9MsazXNSymjIwbNBV0xoFGGde9hmCj5JUysvwg1dbfBllRAvP
- RGOzo1QD63g6bMT6EPOlsvvxmdmnqDbCcXwPCZIZTQFVD5fwWicfjUthFCS2SOXgMW7QxiQzj/9
- KGORquXR7PPfRcix5s0mneDoGcLYBjYTPq693ApA==
-X-Received: by 2002:a17:90b:3c44:b0:39e:6c6a:6577 with SMTP id
- 98e67ed59e1d1-3a6ced75f41mr9428802a91.58.1791231941415; 
- Mon, 05 Oct 2026 13:25:41 -0700 (PDT)
+ bh=RXh8xip+IptBqszd805e5592pRYj304XDLXWxZK/ZmQ=;
+ b=MeiN+bkCfzg3SbV2mVFs33CCy1V+g8bQ9g2BDIbPn4qRZ1zGpuKAxirCgTb4Ny8+PH
+ FVT3ACDMpfvHGjfgTQ1fNSbj+n8sKF08GMBCBIuqZt8XrfBjm4bDKp2MexhIZli3PDwN
+ ZyKh8ALNsSPHR0c7Jr3400gnODLmA3ma0IXX41fyB6bEukr7+Ss8XE+9M8iIYXAjYfxj
+ 89oT+SwE/aUBJGJ3iyHaqgYJmY/GNpjEUf47UNW7ZDGU9Kb66ujSUSvG2IUolHy9LeDd
+ 4GiNcHtO0UuU+fh0fQmH0EFiDGGyKOnMiWpF0SaSim2mvU/VpwKkxRQOOyxjiGPbmpTD
+ abZw==
+X-Gm-Message-State: AFq9FYK39XoTW/uJaObRPW+ZVg+HgZpAeq11wlgge7YBaYydHeu/ZVDb
+ QdCrnzxte7ey4+9m9PF/sk5MN4eO+ru6nLJLeshd5DCelOXQUmdTlNH8cENiAgjXbB/ZOGrEZIo
+ ymKtTmlmqFSagBzdRx0MEb7OOBzIK/goVqxAqkOYXhG3dbZlxnTfon88QuEGPtwODrgPrPkfSuo
+ svYSYgW33YJJBXKHOkF7ALpuopTid3TfRROFsJWHBKE186puEOVJUlsKSGh0W2RT4CqeoBUw==
+X-Gm-Gg: AYBFou1EsRqRcYEHuiuG3ql+0575LD4IO25ugHGljuxYKaPp87qtOfLrNmTono7LH5P
+ d5gwB4ud6776cVwlABuDZtGq48AGARCsNh2fzeKNuDN/buuk/ijNRHUdlTuCWaGOvWsDI6WThJO
+ zpQ/HxbPu3Xr3fvg5GJVDZ8Owv+K/An+WQiGdqkudJ0UzhcT9JvGsTqLib5A/NZ6cIZeYvO+put
+ tsS6oUhsfyZmiGeLRDPspezYPFIro89GbhFX5aN0rguQfR6X0ndUlp7tYOceeuqj563Ne5rQtwW
+ ZI3RkvZM3nA/ggK/qeaDysM12TiWqNPJZgZBs5/y7uOOO6onT97RjyUEpBinmTZPJGnKsjP5Htu
+ GYGS83625c2qts35KJrHzz8H5AtiaNzS1MSZnigwMhsJKRmYbd8JHvO22tYJx88nU5EDLQn4XjM
+ XhZkhfkRwWkf08jJypPLf4U+XyEADUEs+iWK4q+A==
+X-Received: by 2002:a17:90b:1e47:b0:3a4:c18c:b8a5 with SMTP id
+ 98e67ed59e1d1-3a6ce96a934mr9899605a91.58.1791231947144; 
+ Mon, 05 Oct 2026 13:25:47 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3a8532a3676sm311050a91.1.2026.10.05.13.25.41
+ 98e67ed59e1d1-3a842d0bfeasm211631a91.2.2026.10.05.13.25.45
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 05 Oct 2026 13:25:41 -0700 (PDT)
+ Mon, 05 Oct 2026 13:25:47 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qk1-f197.google.com with SMTP id
- af79cd13be357-93a3f673221so497160885a.0
- for <dev@dpdk.org>; Mon, 05 Oct 2026 13:25:40 -0700 (PDT)
+Received: by mail-qk1-f200.google.com with SMTP id
+ af79cd13be357-93e49a1d3b1so491235185a.2
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 13:25:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1791231940; x=1791836740; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1791231944; x=1791836744; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=JdmjfKMph/hqjD/XR4kG2bCozGtWGC4NCd+4NNThs9o=;
- b=AKyRld1QbM3zfBx0BrjhzwNs2sS/JTaAEY+D8jtuJxoqxP2kW7V+GVw8xr6PVe5YMP
- Tnq0um1VynJxOiKpZNaBPts9o5xYOcfPEB13VOJcqrdz9pmDbQZeutpyq/igLCeghIQd
- 855UQTg6yxeRw+GoAy3DobOKtS4tteoV2x1vc=
-X-Received: by 2002:a05:620a:72cb:20b0:93e:8542:4f4d with SMTP id
- af79cd13be357-93e85425a47mr173315485a.57.1791231940131; 
- Mon, 05 Oct 2026 13:25:40 -0700 (PDT)
-X-Received: by 2002:a05:620a:72cb:20b0:93e:8542:4f4d with SMTP id
- af79cd13be357-93e85425a47mr173310085a.57.1791231939323; 
- Mon, 05 Oct 2026 13:25:39 -0700 (PDT)
+ bh=RXh8xip+IptBqszd805e5592pRYj304XDLXWxZK/ZmQ=;
+ b=c6hJ69Lpy97zFlJNGObiGhE+KP21mTPoEhsjvWPaYHSht66ajsAUt38WuooHv0WW2W
+ T4+XQXwgHl3t6kQDgNv0JrHHgA6tCeWNupAmhxq1px+QSu8iUa4Hz8IW4vZKWZ/rrdRR
+ 1++IyIVEkWSR+s8xA9RZMG9prMFyKXdaBinfc=
+X-Received: by 2002:a05:620a:7006:b0:939:a1cc:f234 with SMTP id
+ af79cd13be357-93ce7a9ea26mr2107140885a.5.1791231944485; 
+ Mon, 05 Oct 2026 13:25:44 -0700 (PDT)
+X-Received: by 2002:a05:620a:7006:b0:939:a1cc:f234 with SMTP id
+ af79cd13be357-93ce7a9ea26mr2107135885a.5.1791231943807; 
+ Mon, 05 Oct 2026 13:25:43 -0700 (PDT)
 Received: from r740-105-132.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-93cca1a6c24sm961544585a.15.2026.10.05.13.25.38
+ af79cd13be357-93e7ec673a5sm175458385a.10.2026.10.05.13.25.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 05 Oct 2026 13:25:38 -0700 (PDT)
+ Mon, 05 Oct 2026 13:25:43 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com,
 	stable@dpdk.org
-Subject: [PATCH] net/bnxt: validate pool index in pool manager APIs
-Date: Mon,  5 Oct 2026 15:25:36 -0500
-Message-Id: <20261005202536.18083-1-manish.kurup@broadcom.com>
+Subject: [PATCH] net/bnxt: validate direction index in tpm tbl
+Date: Mon,  5 Oct 2026 15:25:39 -0500
+Message-Id: <20261005202539.18133-1-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -96,69 +96,47 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-Validate the pool index in the pool manager APIs so that it cannot go
-out of bounds when setting or getting data from the table-scope pool
-manager.
+Validate the direction index during OEM data message processing so
+that it cannot go out of bounds when setting or getting data from the
+table-scope instance manager. Add a boundary check for the direction
+input; the region input already had a bounds check.
 
 Fixes: 80317ff6adfd ("net/bnxt/tf_core: support Thor2")
 Cc: stable@dpdk.org
 
 Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 ---
- drivers/net/bnxt/hcapi/cfa_v3/tpm/cfa_tpm.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/net/bnxt/hcapi/cfa_v3/tim/cfa_tim.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/net/bnxt/hcapi/cfa_v3/tpm/cfa_tpm.c b/drivers/net/bnxt/hcapi/cfa_v3/tpm/cfa_tpm.c
-index 790b6c7e42..90d0206a15 100644
---- a/drivers/net/bnxt/hcapi/cfa_v3/tpm/cfa_tpm.c
-+++ b/drivers/net/bnxt/hcapi/cfa_v3/tpm/cfa_tpm.c
-@@ -6,6 +6,7 @@
- #define COMP_ID TPM
- 
- #include <errno.h>
-+#include <inttypes.h>
- #include <stddef.h>
- #include <stdint.h>
- #include <string.h>
-@@ -119,6 +120,12 @@ int cfa_tpm_free(void *tpm, uint16_t pool_id)
+diff --git a/drivers/net/bnxt/hcapi/cfa_v3/tim/cfa_tim.c b/drivers/net/bnxt/hcapi/cfa_v3/tim/cfa_tim.c
+index 72302ac73b..6abed2ed2c 100644
+--- a/drivers/net/bnxt/hcapi/cfa_v3/tim/cfa_tim.c
++++ b/drivers/net/bnxt/hcapi/cfa_v3/tim/cfa_tim.c
+@@ -83,6 +83,11 @@ int cfa_tim_tpm_inst_set(void *tim, uint8_t tsid, uint8_t region_id,
  		return -EINVAL;
  	}
  
-+	if (pool_id >= ctx->max_pools) {
-+		CFA_LOG_ERR("pool_id (%" PRIu16 ") out of range (max %" PRIu16 ")\n",
-+			    pool_id, ctx->max_pools);
++	if (dir < 0 || dir >= CFA_DIR_MAX) {
++		CFA_LOG_ERR("dir = %d\n", dir);
 +		return -EINVAL;
 +	}
 +
- 	if (ctx->fid_tbl[pool_id] != CFA_INVALID_FID) {
- 		CFA_LOG_ERR("A function (%d) is still using the pool (%d)\n",
- 			    ctx->fid_tbl[pool_id], pool_id);
-@@ -137,6 +144,12 @@ int cfa_tpm_fid_add(void *tpm, uint16_t pool_id, uint16_t fid)
+ 	if (!(CFA_CHECK_UPPER_BOUNDS(tsid, ctx->max_tsid - 1) &&
+ 	      CFA_CHECK_UPPER_BOUNDS(region_id, ctx->max_regions - 1))) {
+ 		CFA_LOG_ERR("tsid = %d, region_id = %d\n", tsid, region_id);
+@@ -105,6 +110,11 @@ int cfa_tim_tpm_inst_get(void *tim, uint8_t tsid, uint8_t region_id,
  		return -EINVAL;
  	}
  
-+	if (pool_id >= ctx->max_pools) {
-+		CFA_LOG_ERR("pool_id (%" PRIu16 ") out of range (max %" PRIu16 ")\n",
-+			    pool_id, ctx->max_pools);
++	if (dir < 0 || dir >= CFA_DIR_MAX) {
++		CFA_LOG_ERR("dir = %d\n", dir);
 +		return -EINVAL;
 +	}
 +
- 	if (!ba_inuse(ctx->pool_ba, pool_id)) {
- 		CFA_LOG_ERR("Pool id (%d) was not allocated\n", pool_id);
- 		return -EINVAL;
-@@ -163,6 +176,12 @@ int cfa_tpm_fid_rem(void *tpm, uint16_t pool_id, uint16_t fid)
- 		return -EINVAL;
- 	}
- 
-+	if (pool_id >= ctx->max_pools) {
-+		CFA_LOG_ERR("pool_id (%" PRIu16 ") out of range (max %" PRIu16 ")\n",
-+			    pool_id, ctx->max_pools);
-+		return -EINVAL;
-+	}
-+
- 	if (!ba_inuse(ctx->pool_ba, pool_id)) {
- 		CFA_LOG_ERR("Pool id (%d) was not allocated\n", pool_id);
- 		return -EINVAL;
+ 	if (!(CFA_CHECK_UPPER_BOUNDS(tsid, ctx->max_tsid - 1) &&
+ 	      CFA_CHECK_UPPER_BOUNDS(region_id, ctx->max_regions - 1))) {
+ 		CFA_LOG_ERR("tsid = %d, region_id = %d\n", tsid, region_id);
 -- 
 2.31.1
 
