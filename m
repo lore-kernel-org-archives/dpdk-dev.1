@@ -2,86 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2056CCA5FFC
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 15:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18104CA5FF0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 15:20:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D04F040DF5;
-	Mon,  5 Oct 2026 17:17:41 +0200 (CEST)
-Received: from mail-yw1-f225.google.com (mail-yw1-f225.google.com
- [209.85.128.225])
- by mails.dpdk.org (Postfix) with ESMTP id 4018040DDC
- for <dev@dpdk.org>; Mon,  5 Oct 2026 17:17:41 +0200 (CEST)
-Received: by mail-yw1-f225.google.com with SMTP id
- 00721157ae682-8ad98c3fb15so1025647b3.2
- for <dev@dpdk.org>; Mon, 05 Oct 2026 08:17:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791213460; x=1791818260;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=hRD6bqNgxFlJY0205fFLS1D7/w0QZ0MmiR9BfTSl3/4=;
- b=IkbpBooB+TMsdmBj3YIhTXXGTSDsIa6GGsamDKyLAiYv3LgaYLhTIz718ebQfsIv+P
- 3hwOEhBOswuQ7uDpOsU8cwSEfvRmgyK+F2XtwSEIHkc8qOqdnrntb/iJIqEHkVkGTI3c
- 0CFNk7VT5Ut9jWusMoSMmoRpUjD7XWEdZG6G2PWduJkAEtro5bsz3gU/3F3Tvdi5YZmC
- 66N7aPMvx06LpzFQyoGtM7cZW+Nqw49LAjx25YLJ54KjU3hFJVjqdAm7YHbKg33PXAPa
- mK38jqzN8HlZ/WaESotP52l6bONIblCqKzoyFqLZFpxnPFyBiX0TVNFi2D1u8rnyXiOy
- hVEw==
-X-Gm-Message-State: AFq9FYJhN4Pm+/HnOeiIW+CXCcoXY7hOPpPa13uHCMhzC/kYzfmj3CkG
- A3n06vn0XoiJ42KGLACMBlCOH/YWLXV5SZ2N+38czYbYXAn4apjIrA9wq9vOyqGpqCGFIxIBGI1
- ym8PTeejquTqZ0G55VGTFrRflmrB3l8Z1H4TM7qaJ8E5qlaGNtE6lBBSNcS+Hscpqp95ludciYF
- yXSR5gMUaPI0trP64oFPZFlMWE1OeE7HVXi2d7MGKXOLFWpEvdfCQLcTopZLF2xfvTUuS9PA==
-X-Gm-Gg: AYBFou0u8Pw0PmcQiQepU3qe7N3uf+ua0zhhnsYNXySooIJZ+dEFoK3+puFXF0lzgr2
- KDXG9mWD4hNNJ4PLU0jNyFE69Gwsz5gJS5VNOeNdAY796A9baVcBUiqnwgGzTnB5MEgIhlc7W7S
- gPp97W7ML4Wx6mCb/cZO24aFHoyxs0Q3muc8nWezP5qIO7sRSyh9mFnfKjs/eQmNPDmQmyJjtat
- L9aAmKI0R94Ylu8hZKlGgJllBvlVSXMpfwGhPDU33zNXaxYc8s9GL3LCuoNyM7WsL5pku0fx2sl
- lQb3mD4kOMR+m2HThm5p/fNe8Hjxi2i1LnMC/iHPAxwOkCIfR0Su2bgBeaUZiDl6haPw8MRn5Ct
- rnJ+Q8mdHXswvm+fqDjVn/e3688cE275oUWkbsX6+ieU8grRYTQNjM2gBC2UMt672LxUWC3VMSl
- hKcGh86sLDZbVVKOGPJyfB4T8qE51bkydpaeGFNg==
-X-Received: by 2002:a05:690e:189:b0:671:548e:f14c with SMTP id
- 956f58d0204a3-677abfffe41mr3286098d50.26.1791213460424; 
- Mon, 05 Oct 2026 08:17:40 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
- by smtp-relay.gmail.com with ESMTPS id
- 956f58d0204a3-677c1bd7c26sm1367679d50.34.2026.10.05.08.17.40
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 05 Oct 2026 08:17:40 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qk1-f198.google.com with SMTP id
- af79cd13be357-93caf6c528aso283930785a.0
- for <dev@dpdk.org>; Mon, 05 Oct 2026 08:17:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1791213460; x=1791818260; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=hRD6bqNgxFlJY0205fFLS1D7/w0QZ0MmiR9BfTSl3/4=;
- b=cLK9+AFxQ7C7fZHas1S8Cip6Q37hab2PCtGxZZXc9I75VgvVQ3YMJ8BHrFIl0y3XW+
- yMWrugF6CWcda0fN1jCQzyXsHX9+/cxXpFqdFiTg/qt2REvtsPyOTGYx6OollXp24Lre
- XPHyDeqR5BzGzzDvB5yVdi2jDj8dEE/oTwwjI=
-X-Received: by 2002:a05:620a:648a:b0:93c:64e5:f6c8 with SMTP id
- af79cd13be357-93cf17862efmr1780165585a.49.1791213459694; 
- Mon, 05 Oct 2026 08:17:39 -0700 (PDT)
-X-Received: by 2002:a05:620a:648a:b0:93c:64e5:f6c8 with SMTP id
- af79cd13be357-93cf17862efmr1780161085a.49.1791213459161; 
- Mon, 05 Oct 2026 08:17:39 -0700 (PDT)
-Received: from r740-105-132.dhcp.broadcom.net ([192.19.144.250])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-93e4e7b2cb2sm684060585a.17.2026.10.05.08.17.38
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 05 Oct 2026 08:17:38 -0700 (PDT)
-From: Manish Kurup <manish.kurup@broadcom.com>
-To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com,
- Shahaji Bhosle <shahaji.bhosle@broadcom.com>, stable@dpdk.org
-Subject: [PATCH] net/bnxt: fix ICMP v4/v6 L3 proto match
-Date: Mon,  5 Oct 2026 10:17:36 -0500
-Message-Id: <20261005151736.1706210-1-manish.kurup@broadcom.com>
-X-Mailer: git-send-email 2.31.1
+	by mails.dpdk.org (Postfix) with ESMTP id 4A58A40A7D;
+	Mon,  5 Oct 2026 17:20:32 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 7AD3940695;
+ Mon,  5 Oct 2026 17:20:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1791213630; x=1822749630;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=lNUJ1fjs8ioygT961+ozIPV1k19U937GZtLLxRbhwE8=;
+ b=D0cFVkLd/0DJYUrY32IhGUaDhP+c3iZ0bjav1k1x7LnP8+ZjAmtJn4A7
+ 9FTK/4um/VqfGTxiph1AypfbbUHqYgX/+g4RpCmH11QDw305Z9rBq4Jtd
+ I1N/KdOC6Cs7oAWcVIiuwLKsSr1SmjigkwkJnKTn3/S3icirSN/CaFmaA
+ O5qkXlzuTEMu2nCIaoprmJWkskKag/oFUpSxGX+3a/RshDeagClVC6btA
+ ntPD4Yi6rDqRA5Q1k9UQZg2oJ98R2ukrSqDApiMijGZj1b8av6hD4Gflv
+ pPP3HdNVdDvLz5IthcLEZsOLHbh1TDeVCqZeN6Qw14TL/+CibI64yQY5z Q==;
+X-CSE-ConnectionGUID: ZFwAVW/9Qm+9oxpihvIqNg==
+X-CSE-MsgGUID: 70eWeQMhRHWn7go/nrhddg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11926"; a="103255388"
+X-IronPort-AV: E=Sophos;i="6.27,142,1787036400"; d="scan'208";a="103255388"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Oct 2026 08:20:29 -0700
+X-CSE-ConnectionGUID: J0XB5XDvTL+SDbgk3muuWA==
+X-CSE-MsgGUID: dbV4+nW5ToWA4EHhLIha+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,142,1787036400"; d="scan'208";a="304795575"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Oct 2026 08:20:28 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Mon, 5 Oct 2026 08:20:28 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Mon, 5 Oct 2026 08:20:28 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.62)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Mon, 5 Oct 2026 08:20:28 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BCvxlz5UDsi54GV516ARM1UkyqGCUIghdSuXL+vxczeqVLeG3q3A0IrZaDL/WBdkBDHegRk1dr5SeFTjDRM++Ly5oBtzhusZf7a/Bin7OaBsitiKcmmmjR4MesVfCpsvs5axxtWAeXrGB6v+XvBuTKS/mCW6pRcyg2xzNNo1LMcdy43Ewr3AY8hO0WsQwW66KIQcCVYox77OfmJqMl8aSynlCBWboflXN9idYjZshW6lMTDTfMs3rODbwjOzMcmRkiR8q+wNe7LrlT8p+V6XWpzCAT4wqZmjUjmiupoAGZWvRMR1RHLVNjcZoFwDTOHr2d585DagBaCgGB0yXiyMWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bjTaS7L37D2of2OQWJ3AS2zODHQtngzsKQZxsY0FuCY=;
+ b=PoW5Q47yyTsmvKTYWmH6keEI5hG9jM6GFJsyYe2bAs5u6lZXYGW/h1ogtehjOgYdM7xpUfERwkfZoKaHmXc+ADsPhGskO8u+KZ9eRgwAqUwU4gXbOLquRqZ0aBTXFM2iaiZiRYBc4mLtugyuT9D1q+Kyzu4TKIs6eYCqq9GFM1AXQmWQRrDqqvovR/9YGmp8Zzmj9OuQTGMMw+ZYme55CNxgvNbkHJMbbVfQRHg+XFd/VPJjRSEYjc/4rlnQjmJ5yjecAChgi3yz+7Du/9d0GpMEu1dTXWGRlOYOm/opmj6BwxkRUd5xqaiNckTSg0GbWYxEXVuEgo8hOaSaEVEIKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by LV4PPF9BE730F55.namprd11.prod.outlook.com
+ (2603:10b6:40f:fc02::22a) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Mon, 5 Oct
+ 2026 15:20:19 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0451.014; Mon, 5 Oct 2026
+ 15:20:19 +0000
+Date: Mon, 5 Oct 2026 16:20:14 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: <dev@dpdk.org>
+CC: <anatoly.burakov@intel.com>, <stable@dpdk.org>
+Subject: Re: [PATCH] net/ice: remove unreachable DCF scheduler branch
+Message-ID: <asPALjjwfL70P0gj@bricha3-mobl1.ger.corp.intel.com>
+References: <20260914100350.53842-1-naa@amicon.ru>
+ <aqfX8267lXdvGhXd@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aqfX8267lXdvGhXd@bricha3-mobl1.ger.corp.intel.com>
+X-ClientProxiedBy: DU7P189CA0001.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:10:552::27) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|LV4PPF9BE730F55:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d18f016-6a31-435c-6ee8-08df22f42a74
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|23010399003|366016|1800799024|56012099006|11063799006|4143699003|10067099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: dvXJ66RnZVdoKLK9KyFORWaCNwzRJ23RWpvjqculYLHWSXk6wRr4uNlbT3ckd2IkJIlsYbXM3eH7DykNDGwGnFXeW+8gFlig20IpeSnYG3KA1e0VO7uglyxu0Wd3Zqivhmzs0jRPg1ULLdc+nWGr0BldmmNlvt9w2NIGeIRe0mg/lXtQfzMmzqaEHh0eFaCoXCK//cpx8+3qy+L3f7UZvNNwrGk2MwCPaDNPjtt45KOEdFfc7CEE/7rb0G0FpGViriAbtgXTspBRR6DHCBp2Z9tvy7S1DoUWZT07ChrVUgsDJ2E89wLPpvv9ONFbYyz//sHvyFUACCTbo7/f2S0e1a1+gd8JwJMAThH8iUHKr/NO9bnklzZJxl2t16Rn8B3+LmLOHPhLhdy1zin6RpW0/Gy/QQ707DtvRaKXfJHn1k7W7M0A10mZJf4izbBgl2Eup195M82wBcuzMTDrMXN2XC16gBLSE+6537TFVYo5ZgMmRA8LS96dKv/e7IUNAUiWUsBwDCPppR/mH7+AHDKuMPj3kz+Q+UZ4AVLW+YuyalSZVJxpGfIWBn+P5hg5pqmT+fXqHeF7bK3K8j6xtCoL4pC7NXHVmu4dD7YLwjPZs6nLbS4kObQDtqvSggsWMtqIOqcUbal57FAIMNKmtb/K48l4fdH9HXo56mYmKdWe7Gw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(23010399003)(366016)(1800799024)(56012099006)(11063799006)(4143699003)(10067099003)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KVeAUxyukgVR3sV8AZPLtY0usLjU5Hb/5+cxgD26hsrE6IyasqcbDSGvCbX1?=
+ =?us-ascii?Q?VXHNtpo1p9ZrBpsgQGIp6CfuoAIil21n5W0+DRbT+Fcyq5yrLvdz3Nc0PNVn?=
+ =?us-ascii?Q?TL/9iyS6wPc+TQ7d0xNZQuoPU7pBjIM74VrIMBKbbfHQGqGEkR9+bIrM+elY?=
+ =?us-ascii?Q?fvpaDhXynCvQ3hkmRxWEPs37VOH3MvbLBoMoCfMjHst/g1Wxn3ZB/ndsmmwN?=
+ =?us-ascii?Q?RbQhQTUhY6cTVlOm564GFIC43iSzeq6NuOetIv5TMlaR/gbOwHr3ox6Ge8t5?=
+ =?us-ascii?Q?goj9lezzq41YDBHOzxDe22QP9hJmEheTBDCfpfDDiW4ByVAykWDA3slNOLQz?=
+ =?us-ascii?Q?jijhxqNR4XxzaEQ5t1vBIGQlXCYf0Mog4fTIA/om3iPI+rSaDJnLDk4ynUl0?=
+ =?us-ascii?Q?64/4Y56F+l33/kGIiNnV5OUzM8VD8BU4ttllDG1/MzRRK5KdbYmOqtRa7Zks?=
+ =?us-ascii?Q?EKUN/CKb9yL5yeu5wg3EIAWOVpwcgxSPYZgOxFRJFvT4c+UUW5g9Lw8yJ46U?=
+ =?us-ascii?Q?JV+pnN/epL65xsIWBlHRomPMe0fwX1GWQCaV5QJ1oqLMCXhajBlXEEZ6dij+?=
+ =?us-ascii?Q?94alCe2ar6ktgsREZRNh8EkM8q8JCdyZO3wwPn8QL13Ot1O+/wpTVUH9svQX?=
+ =?us-ascii?Q?Id6Ebupi7uCSPvnEh8MGtymyeHCzTzXXoeeJOMJfHwAg/R+9PvF/xW1TGoyN?=
+ =?us-ascii?Q?1L8+2LW6b/OVbKtUFHLZUoz2PvXEtlqv5Ifq2qNvtAJDGheoppoqRo4UCEe7?=
+ =?us-ascii?Q?WS6b0lm0rfOrH6lS9fDrStNh/O6m7K9j5ywypBL+sWsJqg3xiZdTXXySeDEB?=
+ =?us-ascii?Q?NCTXxwMq52iwrfWGLlyTiM4w1WpXv+3DmtHF14Qig/MU5r/GMfvOPHK3Mp/p?=
+ =?us-ascii?Q?dBvzHtjMRdgfIoAkIh4z6Tfm0042Kig5mbAiPKmuMTgHKMKkkTagjXsL/cyD?=
+ =?us-ascii?Q?eXch3xzvjvtNE/Kky7/6ogSzsqCobAXAfN3bNKSeCDI2Uy8UQ4md/s7ulqgJ?=
+ =?us-ascii?Q?SBKnHzZzAPKZ5jRAojeHEQ4GGUGauwWxxxRkSKNOKACSQLojPVqcK7vzr7f1?=
+ =?us-ascii?Q?mLichjRB27KuLBv012i5qFwIdJxg5+VaBxlJBnIxODkrfaT0PAy2p55Dss32?=
+ =?us-ascii?Q?OJzElLLBWKgTJSlUlzIsVUJDgCRWcke4imRxWD8ulSBKPxRs/XIj3Jwab4yn?=
+ =?us-ascii?Q?n9ymBzc/MdcE1TCady4B7B0qIAw0FrymYSmpGDwEXd6vkhOEn+4M9etEGIOL?=
+ =?us-ascii?Q?iKua/xEBEse5pqSeBKJDLQ36Y6AaiPBSENAuVbFiePuDY9vMiShMM06MwXP0?=
+ =?us-ascii?Q?xvAL1Kd41D/eYnew8SG1HMTfFyKON5NcSNz9ZO+536FQW80SxdWFsiaTOTDd?=
+ =?us-ascii?Q?DWJGUUqJImRhv9HHoeNERtlxKVBU0ntNmRZTpEnnVa07CyAWPYVj0zDWot3B?=
+ =?us-ascii?Q?dL1ceNpn/etw+m9S7US3o01CO9DBJPftvxJUnpcRpZTufzpEMpFxeiQ2vkNb?=
+ =?us-ascii?Q?a0hTqPBr/s9CpUc8s/CJpvVeM72d5O4cBVP8H4vD0Ob9XR8ocZ5xHs2tapzj?=
+ =?us-ascii?Q?kBFTIkktPO8kAgX8Q/U1I8o0pHRg4c2FKRPxGpGnau8+MrPx4laoFuI+A8KG?=
+ =?us-ascii?Q?Q7OCmQqSjHQy3wGGhoc+PvE/0d8GD0T44jQ2eWO3c5Q0X2b2ewRbHolQVcgC?=
+ =?us-ascii?Q?L9qOBqLw3/fqd2dg5Xy1/Gldu/JKyk25W7gLRcuMJMVv3EVFmStvA3qEf4tP?=
+ =?us-ascii?Q?tbSiujGEFzPtdomOH1VDE8TSjiaT7ZQ=3D?=
+X-Exchange-RoutingPolicyChecked: u8LBRfHk6TwPoeO2iGiSLOGGmR2wEBTFOyAMX9E9ZY4vAtKxURkDeblKpMdjzK0yH+lZZgNrBWN5mYpFcB8WwvdkIX8RJabYRKLEE2GGrZNP8MH7aBE/6Ufg0SQJWSPLhLVWZNFp8AFp/EG3xy2IfAV43yt1ix4xileRhDgbtA6KYweKNE7r2lOl/GtqPTZNzRqLma724/QSoNcU5fsYgAV8BXL5nSq6r4LquOu6/MGWOL6Wopav2sfCutXHxz1DNYzHGYch012ar96o/GEX8+ICYBz8/16+721eZaOj9if0jbY6qDEGCWf0SR4PNKgIi27OjB0wG5NrxEezkd+NSg==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d18f016-6a31-435c-6ee8-08df22f42a74
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2026 15:20:19.1127 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0B1e90yg+2iVrgk+zv9YjQoIPJTkr3oLkRRiYgvTZ3xy42S/Q/T5Bhm6bbW1uM3URE5MlQ3BokU9uQEOpthhNbVkC/8xreYnbysH2ZYUCzs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV4PPF9BE730F55
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,112 +151,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
+On Mon, Sep 14, 2026 at 12:18:11PM +0100, Bruce Richardson wrote:
+> On Mon, Sep 14, 2026 at 01:03:50PM +0300, Artem Novikov wrote:
+> > Non-leaf node validation rejects any non-NULL WFQ weight mode before
+> > checking the SP priority count. Therefore the later else-if branch
+> > cannot be reached, because wfq_weight_mode is guaranteed to be NULL at
+> > that point.
+> > 
+> > Remove the dead branch to avoid keeping an impossible validation path in
+> > the DCF scheduler parameter checks.
+> > 
+> > Fixes: 3a6bfc37eaf4 ("net/ice: support QoS config VF bandwidth in DCF")
+> > Cc: stable@dpdk.org
+> > Cc: ting.xu@intel.com
+> > 
+> > Signed-off-by: Artem Novikov <naa@amicon.ru>
+> > ---
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Update the L3 protocol computed field for ICMPv4/ICMPv6 as well,
-for the case where the flow rule matches on the ICMP header but not
-on an explicit IP protocol field.
-
-Fixes: a4d4308ef105 ("net/bnxt: add ICMPv6 parser to ULP")
-Cc: stable@dpdk.org
-
-Signed-off-by: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
-Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
----
- drivers/net/bnxt/tf_ulp/ulp_rte_parser.c | 50 +++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-index 442a795430..fb1dc3f60a 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-@@ -1976,6 +1976,35 @@ ulp_rte_item_any_handler(const struct rte_flow_item *item __rte_unused,
- 	return BNXT_TF_RC_SUCCESS;
- }
- 
-+/* Function to handle the update of proto header based on field values */
-+static void
-+ulp_rte_icmp_proto_type_update(struct ulp_rte_parser_params *params,
-+			       enum bnxt_ulp_hdr_bit hdr_bit, uint8_t l3_proto)
-+{
-+	switch (hdr_bit) {
-+	case BNXT_ULP_HDR_BIT_I_ICMP:
-+		ULP_BITMAP_SET(params->hdr_bitmap.bits, hdr_bit);
-+		ULP_COMP_FLD_IDX_WR(params,
-+				    BNXT_ULP_CF_IDX_I_L3_FB_PROTO_ID,
-+				    1);
-+		ULP_COMP_FLD_IDX_WR(params,
-+				    BNXT_ULP_CF_IDX_I_L3_PROTO_ID,
-+				    l3_proto);
-+		break;
-+	case BNXT_ULP_HDR_BIT_O_ICMP:
-+		ULP_BITMAP_SET(params->hdr_bitmap.bits, hdr_bit);
-+		ULP_COMP_FLD_IDX_WR(params,
-+				    BNXT_ULP_CF_IDX_O_L3_FB_PROTO_ID,
-+				    1);
-+		ULP_COMP_FLD_IDX_WR(params,
-+				    BNXT_ULP_CF_IDX_O_L3_PROTO_ID,
-+				    l3_proto);
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
- /* Function to handle the parsing of RTE Flow item ICMP Header. */
- int32_t
- ulp_rte_icmp_hdr_handler(const struct rte_flow_item *item,
-@@ -1983,7 +2012,7 @@ ulp_rte_icmp_hdr_handler(const struct rte_flow_item *item,
- {
- 	const struct rte_flow_item_icmp *icmp_spec = item->spec;
- 	const struct rte_flow_item_icmp *icmp_mask = item->mask;
--	struct ulp_rte_hdr_bitmap *hdr_bitmap = &params->hdr_bitmap;
-+	enum bnxt_ulp_hdr_bit out_l4 = BNXT_ULP_HDR_BIT_O_ICMP;
- 	uint32_t idx = 0;
- 	uint32_t size;
- 
-@@ -2026,11 +2055,12 @@ ulp_rte_icmp_hdr_handler(const struct rte_flow_item *item,
- 			      ulp_deference_struct(icmp_mask, hdr.icmp_seq_nb),
- 			      ULP_PRSR_ACT_DEFAULT);
- 
--	/* Update the hdr_bitmap with ICMP */
- 	if (ULP_BITMAP_ISSET(params->cf_bitmap, BNXT_ULP_CF_BIT_IS_TUNNEL))
--		ULP_BITMAP_SET(hdr_bitmap->bits, BNXT_ULP_HDR_BIT_I_ICMP);
--	else
--		ULP_BITMAP_SET(hdr_bitmap->bits, BNXT_ULP_HDR_BIT_O_ICMP);
-+		out_l4 = BNXT_ULP_HDR_BIT_I_ICMP;
-+
-+	/* Update the hdr_bitmap with ICMP */
-+	ulp_rte_icmp_proto_type_update(params, out_l4, IPPROTO_ICMP);
-+
- 	return BNXT_TF_RC_SUCCESS;
- }
- 
-@@ -2042,6 +2072,7 @@ ulp_rte_icmp6_hdr_handler(const struct rte_flow_item *item,
- 	const struct rte_flow_item_icmp6 *icmp_spec = item->spec;
- 	const struct rte_flow_item_icmp6 *icmp_mask = item->mask;
- 	struct ulp_rte_hdr_bitmap *hdr_bitmap = &params->hdr_bitmap;
-+	enum bnxt_ulp_hdr_bit out_l4 = BNXT_ULP_HDR_BIT_O_ICMP;
- 	uint32_t idx = 0;
- 	uint32_t size;
- 
-@@ -2077,11 +2108,12 @@ ulp_rte_icmp6_hdr_handler(const struct rte_flow_item *item,
- 		return BNXT_TF_RC_ERROR;
- 	}
- 
--	/* Update the hdr_bitmap with ICMP */
- 	if (ULP_BITMAP_ISSET(params->cf_bitmap, BNXT_ULP_CF_BIT_IS_TUNNEL))
--		ULP_BITMAP_SET(hdr_bitmap->bits, BNXT_ULP_HDR_BIT_I_ICMP);
--	else
--		ULP_BITMAP_SET(hdr_bitmap->bits, BNXT_ULP_HDR_BIT_O_ICMP);
-+		out_l4 = BNXT_ULP_HDR_BIT_I_ICMP;
-+
-+	/* Update the hdr_bitmap with ICMP */
-+	ulp_rte_icmp_proto_type_update(params, out_l4, IPPROTO_ICMPV6);
-+
- 	return BNXT_TF_RC_SUCCESS;
- }
- 
--- 
-2.31.1
-
+Applied to dpdk-next-net-intel.
+Thanks,
+/Bruce
