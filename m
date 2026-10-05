@@ -2,147 +2,105 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA45CA5FF0
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 18:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D0ACA5FCE
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 19:07:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 01A3F402DD;
-	Mon,  5 Oct 2026 20:38:02 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 2095D402B5
- for <dev@dpdk.org>; Mon,  5 Oct 2026 20:37:59 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 695HNvn71191068; Mon, 5 Oct 2026 11:37:59 -0700
-Received: from ch4pr04cu002.outbound.protection.outlook.com
- (mail-northcentralusazon11023110.outbound.protection.outlook.com
- [40.107.201.110])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4h4983t9pq-1
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Mon, 05 Oct 2026 11:37:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KyBDo1xC1ovmJ1iIpFrqQKri4zuzib8ckQAJtaXHiCdJv73JvfoYqrlXwsuTPzJ5+n+MdCtAjryjNWSNnVjejV1npJ8rKgfN7dTkBehlcmbSF3WBvVLpr+7YYH0S5Tg2+Q6HdO0t0k6nBGrG7l9MCn8rZzjfbbh4vZP4Pqh7AFVEeFMZVYZ+HarWKDyBK0ndl5iInXVwNBC1CgFkZLWgd4mbXJVDkDmOCEwgX+LH62urGk8V9s2o0jc5jUlGjqbQHDHKa/7GevKS63GlstB0bdjcgM+PsRB+jx/iIYM6dX0uitGBNV7WpArgjknH7cE3e3KQneIHz7jTX9Bci/3Gyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lj9413jHceZDvN7ETVuVcd5NUibx5wIweoMUJj0lel4=;
- b=ZjgNVVzbLPbMXwJH1eePHCgwblJBN+C5dlsqeN0QwfrE2MAnLb6lMUlxfajVRqDTCEvy1hItDxa1B/adcTCkBdO+35Ptl0HMQvsTRFoG6K11kbJbmx3CPlUlTAHtKGzevDdcrWbMDbrY3lesqZv4wk5/LH47G8WJuDXoyaW08Nw/YyCOAj4NGlZMpgmaPoVGsp9jYHpHik7MCnr9KBtKR7aE26rcse//ebWedPAO5QPH09gyTBzF0KeZUXhsumBkBSpcHsl6y6A4zCcDJaAUqBE6wutYD50/t8LAPg2KdSNII+AvV+qDAzaIue57uOP7fPPzFL9SewZwVwAGzQfTlg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lj9413jHceZDvN7ETVuVcd5NUibx5wIweoMUJj0lel4=;
- b=J3Dg6eG6zuJ57Qkw4PpcrHl2zHO0ARpv4I+g+JSSRd61Y93NbwC+2v6GPO+j5vLbB7Qoimpf7ryAYVFseUmWTJIkB24OaWArOnsm9iJqARDDE/e+PK1fanyz5q1OcXqiu/ucleNE15wxjezhy6apojnoXtySW6IfdcyQkp5olnk=
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
- SA1PR18MB4790.namprd18.prod.outlook.com (2603:10b6:806:1dd::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Mon, 5 Oct
- 2026 18:37:55 +0000
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::a2df:a596:cfe:17]) by CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::a2df:a596:cfe:17%5]) with mapi id 15.21.0472.016; Mon, 5 Oct 2026
- 18:37:55 +0000
-From: Akhil Goyal <gakhil@marvell.com>
-To: Gagandeep Singh <g.singh@nxp.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>, Stephen Hemminger
- <stephen@networkplumber.org>
-Subject: RE: [EXTERNAL] [PATCH v2 5/6] crypto/dpaa2_sec: add support for env
- variables
-Thread-Topic: [EXTERNAL] [PATCH v2 5/6] crypto/dpaa2_sec: add support for env
- variables
-Thread-Index: AQHdUKp7sjPsjtqL+Uq7HIho6RyBULbvTtMA
-Date: Mon, 5 Oct 2026 18:37:55 +0000
-Message-ID: <CO6PR18MB4484B210020584C2AF24137ED8962@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <20260810112951.2879825-1-g.singh@nxp.com>
- <20260930070809.1929564-1-g.singh@nxp.com>
- <20260930070809.1929564-6-g.singh@nxp.com>
-In-Reply-To: <20260930070809.1929564-6-g.singh@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=marvell.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|SA1PR18MB4790:EE_
-x-ms-office365-filtering-correlation-id: 72ae8452-bcfd-47d2-1710-08df230fc576
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|23010399003|1800799024|366016|376014|10067099003|56012099006|4143699003|11063799006|6133799003|18002099003|22082099003|38070700021;
-x-microsoft-antispam-message-info: j+f7+z3eKHrzWziwFYLHpj22ZTxzMTUVtceP0ys0QfeIXN9Z4ipqJXppMwuRpe9lwN1ile7Sy8LLJ8N7JVBfWCcSoNMEjEBBZzaIO8QKTnwsf+t3iDNj3+ru0C22cDvQGGsoL4AJuLklpCJT2NqmKNlqIWGWR/1tDNalIpVTrHEM6PWwWn+TI8yOa0YKFyXEpS4GlvHYJ6CqzLVSLxvl5G37SU9o65eiJzRkbh7few0H8qHFcvYvV00YYyjQo65cP4hxZWmpgNLcb1CLQeGzo1Apst9O3K6MBPL7iWRtlbUfp8dUsRGZlyJRzwLtBQYKL67wRVPMKuWxudGf8UXf87kYn+qnlJXeTOYqFwF78mV6c+Po0Gu9aB6Mf/aTvoL725lyTUhKZdSueypVnbUvG7wosQ1Nw98wgYgrOVRghj4D/hxNwol/VusWW/G1NgKb8GJlUvXIfpMvr/6u9xaySxJiELveaLOnBFjyArjQ33tZL7PPiQ9t9rC3sidGO7yJrKCi2k1rrMnXpYZCaL91NczPkYfrjCyPBMdX/hmToQVpewRUvaTAcrYv4AIk+weEFszg+NQkiIMV3iUwhKW1SenSQDFUNG6+hB9Wrj08G+OB+/G2rDhTCA96oiVN4pWRvUk9fUmJPI7NKmlQtxORfM2OYQnsvJnQJelZoKPBvNcD9uq40KqMvW7wWXcJmwh0b6zBpBGcpu7sUuXmMUM4Wzo0zHqq62jGywbRirnSR9w=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(10067099003)(56012099006)(4143699003)(11063799006)(6133799003)(18002099003)(22082099003)(38070700021);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?6YJXDmHs7Jsb6+jJiOfawkc8Ipm8iv5orJtazMQICl4b2RznlPyIkr5wnq/q?=
- =?us-ascii?Q?34gt7WvS49QTZ7bFSY+fWDJLw1F+N7Z17VFh6frrCNnVW5xwpCzMNwHJwvy6?=
- =?us-ascii?Q?8FJrWsCRbhjxtAYEKrvUetgiKtFcEDmMpwYa0s6V4Ix8YkBxZgyRSnu6Oc8p?=
- =?us-ascii?Q?h7b+0IS1kky5T1q/yN80IsWjlQtntNoLsc1geHQZT6Q1B2fynUsztDQYDifz?=
- =?us-ascii?Q?vx7f983Bb4h54Q5DYX2ErqdKoTJI++GpaWT2WXTCCGMbXkSuHmapYQlA2W4a?=
- =?us-ascii?Q?yjc5V/t6qcFuXQWQZWVJ1FnxNJo6Vr2Q02P3L5Cm8LE3UTFKzCxx3LPY5QP+?=
- =?us-ascii?Q?lnNb3TakjxOtWA2Ojm4qSvyiVGRdrOpaEkC2v4GKeLIcavUUuE9gu9b6EkB+?=
- =?us-ascii?Q?sPZ9yZv7FhpH40IK+E9qIIxIBCkNJP9E6B2jF7ryxchU+qc9UmeYWFEAzo0p?=
- =?us-ascii?Q?wPay6v6tQzCfWegoqdxE/UcwEeDm+50wWZgByth3DvTh0oTGKlAkXFWUP4F6?=
- =?us-ascii?Q?+DQmKTIq6H9XLEIL6Q1afaidpDCpRsdaD37pFDBI1o/bylNCbJu30e2ITqJw?=
- =?us-ascii?Q?C6wb90YptlMi0DNUdCc8Hh82A5U0El2/KTtd0Ylv5bLZ/Yleb0Z2USiOQj8p?=
- =?us-ascii?Q?cbLa8OlPOAGZzNSRMvSgQHRtXvJqT6W5KRzY8Iltm7rGza0KdFauqFhDUesz?=
- =?us-ascii?Q?IR7g4nlQRpwTOYfmGd0F9B8fp1A0sD02QRVBTZtxR2PJTcHgqdX3fwxy/cfJ?=
- =?us-ascii?Q?5ws1lUelDYUnUYnuCFQlpCqKuVCdlYM641OXv1YZ3ssM3h+SOea/m2rKNb0Q?=
- =?us-ascii?Q?ILv02jPEfEiVpobZ6xQmwTonmotcpSnY2k1JKeRciItAGjUjzjY4oTno9t22?=
- =?us-ascii?Q?3mIHw3DJSNEjwXcNsq8k2sIcrCQm3E63uItNIkzatbeEtqe0kdbyrIpTeMsc?=
- =?us-ascii?Q?hp6x8MK3DFQAMK1mMezG8CcXa8Q9gP1UVtOmDwNRzq4joIOAwlCB57eOiver?=
- =?us-ascii?Q?+Yydto9rYsUO0BIzHtiQGJ2lZkPD3Fnc0V5FwcmLxX8as9Zpb7CrmsmE1Z/A?=
- =?us-ascii?Q?BcAA4ZmHagw6tRdVjFDUSTAZgdeGO0WXAQsOsXx8SHeqBSjEXOLBdQnyPmNa?=
- =?us-ascii?Q?t7toHxDrBCQ5CPFAUCXS7OkpPQPs4jrHBWAXnyxboFN7snEIhi26+PRzkXc2?=
- =?us-ascii?Q?jmRThAOgLGcIpmArU4VYf+YWSJrbIZ+/oYS1SaGTmXtPw3ieK95z/8QDNVY+?=
- =?us-ascii?Q?0FbQOCOkC4CM262EopxKaChPjRE/mWIqha6KqBJ2FTsvLTYT8+mp2tiX4OgK?=
- =?us-ascii?Q?MSj/0lGgHSNzpEpgCRo4P59yobNXqV3i8LZ7oNS/59jILF66aE/L+oBydeQp?=
- =?us-ascii?Q?TOT6K0eIhWk9Mze5G9WINwlYVjGc7QWMQDpADKl7iOu5Z8Gqod+yEwGKMlPy?=
- =?us-ascii?Q?EpNiHjYl7vay38JifDr7pxHQMO6YsPV4G+6g1qvBtdz1u+2VU8bynYmVsrw5?=
- =?us-ascii?Q?N7sCje4nvo1VMCwbQuC+0QIhIjTZwDaELcpepb9yO1TbJnioBFZ40ckeQLW3?=
- =?us-ascii?Q?gvTsow/omJ56LGEwqhks+fFC9QvguRsxKIdbGiKjMQCO55JlKYgDlLQuq+L+?=
- =?us-ascii?Q?ffxoSyM3n3tl8V8u82Zgun6aDvjC2R42LugBQ4kD65IwCIdpWW9lZDNBXuTi?=
- =?us-ascii?Q?+Yse2sZQrvqMlMxeEzgmmvqtrSvmmGcSRtY7QT6mYbi/R+wB?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 0280A402DD;
+	Mon,  5 Oct 2026 21:07:48 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 552EC402B5
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 21:07:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1791227265;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=GyHpWLbZsJDJGNimeM27JO6z/kjKs8RNbHR8hkO488M=;
+ b=fidg6pMNrBuGSUz/YAPUjF7gid+b3KFqYE+YIocdRgXEkOrpAYgYKi5BlQWnzseNhn9iQ1
+ oBa9aCMCTdCOfYibyBpKUHd0Tizdark2AOuGh2o/HFHg9ne+WcVfQWMVLTun8Oury84SkX
+ ieVvv9sHfx+bGVEZd0EpDFlvABzz6rk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-53-_imG1sNoNNCTJeSYGYotUw-1; Mon,
+ 05 Oct 2026 15:07:43 -0400
+X-MC-Unique: _imG1sNoNNCTJeSYGYotUw-1
+X-Mimecast-MFC-AGG-ID: _imG1sNoNNCTJeSYGYotUw_1791227262
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 59D8B1955F11; Mon,  5 Oct 2026 19:07:42 +0000 (UTC)
+Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
+ [10.2.32.117])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 16E8F19560AB; Mon,  5 Oct 2026 19:07:40 +0000 (UTC)
+Message-ID: <826523ae-5359-4f5d-a9d0-28bfa92823cd@redhat.com>
+Date: Mon, 5 Oct 2026 21:07:38 +0200
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: pNB1d9HMy/XahTB8+oNXWgmYTatj+qX3e0h04kurrZbnVMhg7ZUeFLxONsilDpGXi9qIDvhVZxbJM3RX4fR4Q1M3Kex6zz81ySiKo4SU3GfNK2MYtZiGnX3mMGUZ8xit6RhscFN6TrHQ3rdehTLSJK2ft8jOVkbb9rYpi3qqP9QLUbcq67GTQj3vMi2jjyjr+pja1jfZ9lzmsftOOafozLpm8xSDe+o1J0FSkUpYh11BjmjvMJR7OjnuBzXzg/k9jUYktugooRTyjI8cX20FGoS7DleEtLQokIgk9bhIkZ3vzZ0UQzln7wPPsGRARqz7ov9ivfqgeG9Bchm1T8UFkg==
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72ae8452-bcfd-47d2-1710-08df230fc576
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2026 18:37:55.3729 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: h2BPEw8GYe8HJjUJtUsdxSxxYP6VO2YHP4EgfK3sWcRr2VVv9W0vlazRE14bAU4qpzLQjFRJ5jrD/2qDSrYEmg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR18MB4790
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA1MDA3MyBTYWx0ZWRfX5hOKh7M0vkT1
- lv4WEAs0dE4u+Kz9EVJnZCmVnRf0QPTjCkPo1cgSh/liSAQaGA+7M7+2BWawjLlxaE5UjVZXoGS
- s7hV6fCgyKe+joYppGp6K7kuaPI5n9O0HWsFbVjM20Ng5fVh/jZorDa6/sTrHcZrK3qRYlOGKCK
- uJxJ06l3hbznbiAlVNEdl0Vsfh4sPUZu6FL2zywdo8KskYI1Boz4fjq9XyoB2ZU/BK/kG4XpgnN
- msCDDmmB4Z91iZBASCPfr4MxsxM/SwwEB+P2eP1XzzSAf2v4EFmNsNGWeXVEWR8me6mB52zoPnZ
- QyN/8yDQOA/mWm9UR4+qiXEHVLoswdk0X8plwyg9/Y0U8xNKnIRFUVWCW6zhPEmEZuGxsVnSMIk
- Ct9cLEPW6VYIXnVDFP0KRRsDaZ62gvpdYT1yQr9Tu7W6FD7jjUENUVEBT02Db/MkPfnZMyj6bT8
- YPJC5QQbJZErcyYBxVA==
-X-Proofpoint-GUID: bJnjmmL9ArPKuHCOIe551_9PDQCdUUcU
-X-Proofpoint-ORIG-GUID: bJnjmmL9ArPKuHCOIe551_9PDQCdUUcU
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA1MDA3MyBTYWx0ZWRfX25Y6QW39Y20R
- Wohd1AoV9nPv4eP0D8n3NTnIuFW+XVpfIx2WD16BUHN1UD3H/jlnH3hbHxOyL0Jg+QyqKZqwhhi
- H31/8X4BbfHNXP0MWJBDlHdI699qUgk=
-X-Authority-Analysis: v=2.4 cv=X+nHu2Te c=1 sm=1 tr=0 ts=6ac3ee86 cx=c_pps
- a=ALzLegKRD8J3iQ32fiysVg==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=660iZSQnnn4A:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=l0iWHRpgs5sLHlkKQ1IR:22 a=TtqV-g6YmW1Jfm2GSLaY:22 a=8AirrxEcAAAA:8
- a=23pgiVc5KISuIIKJ75EA:9 a=CjuIK1q_8ugA:10 a=ST-jHhOKWsTCqRlWije3:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-05_05,2026-10-05_01,2025-10-01_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/6] vhost: drop async datapath
+To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
+Cc: bruce.richardson@intel.com, Chenbo Xia <chenbox@nvidia.com>
+References: <20260723153111.3943368-1-david.marchand@redhat.com>
+ <20261002074440.2551536-1-david.marchand@redhat.com>
+ <20261002074440.2551536-5-david.marchand@redhat.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ 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
+ Mwqu3GQ=
+In-Reply-To: <20261002074440.2551536-5-david.marchand@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 5yvEwdNiexucCnm6gzI8fFLCZPemCDVXbcgwZkh9uEQ_1791227262
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -156,51 +114,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Allow driver configuration via environment variables as a fallback
-> when devargs are not provided. After processing devargs (or when
-> devargs are absent), check DRIVER_STRICT_ORDER and DRIVER_DUMP_MODE
-> environment variables to set en_loose_ordered and dpaa2_sec_dp_dump.
->=20
-> This lets users configure the driver without modifying EAL arguments,
-> useful in environments where command-line access is restricted.
->=20
-> Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
-> ---
->  doc/guides/cryptodevs/dpaa2_sec.rst         | 12 ++++++++-
->  drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 27 ++++++++++++++++++---
->  2 files changed, 34 insertions(+), 5 deletions(-)
->=20
-> diff --git a/doc/guides/cryptodevs/dpaa2_sec.rst
-> b/doc/guides/cryptodevs/dpaa2_sec.rst
-> index f95c6282bb..925d3371bf 100644
-> --- a/doc/guides/cryptodevs/dpaa2_sec.rst
-> +++ b/doc/guides/cryptodevs/dpaa2_sec.rst
-> @@ -1,5 +1,5 @@
->  ..  SPDX-License-Identifier: BSD-3-Clause
-> -    Copyright 2016 NXP
-> +    Copyright 2016,2026 NXP
->=20
->=20
->=20
-> @@ -188,9 +188,19 @@ along with other useful debugging information like
-> session, queue, descriptor
->  data.
->  e.g. ``fslmc:dpseci.1,drv_dump_mode=3D1``
->=20
-> +Alternatively, set the environment variable ``drv_dump_mode`` to the des=
-ired
-> +mode value. The environment variable is used as a fallback when the deva=
-rg is
-> +not provided, which is useful in production environments where modifying=
- EAL
-> +command-line arguments is not practical.
-> +e.g. ``export drv_dump_mode=3D1``
-> +
 
-I think Stephen has pointed out that this is bad precedent.
-DPDK has already a way to configure to avoid env variables.
-It is not clear why we need this?
-While there is a way to set env variable, but cannot change command line ar=
-gs?
-Is this a debug thing?
+
+On 10/2/26 9:44 AM, David Marchand wrote:
+> All the API related to this feature is experimental, allowing us by the
+> project policy to drop the feature in one go.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
+> Changes since v2:
+> - removed inflight async statistics,
+> 
+> Changes since v1:
+> - dropped dependency on PCI library,
+> 
+> Changes since RFC:
+> - kept mmap populate behavior for vhost_crypto,
+> 
+> ---
+>   doc/guides/prog_guide/vhost_lib.rst    |  151 +-
+>   doc/guides/rel_notes/release_26_11.rst |   20 +
+>   lib/vhost/meson.build                  |    3 +-
+>   lib/vhost/rte_vhost.h                  |    3 +-
+>   lib/vhost/rte_vhost_async.h            |  293 ---
+>   lib/vhost/socket.c                     |    9 -
+>   lib/vhost/vhost.c                      |  436 ----
+>   lib/vhost/vhost.h                      |  117 -
+>   lib/vhost/vhost_user.c                 |  111 -
+>   lib/vhost/virtio_net.c                 | 3275 +++++-------------------
+>   10 files changed, 687 insertions(+), 3731 deletions(-)
+>   delete mode 100644 lib/vhost/rte_vhost_async.h
+> 
+Great, looks good to me:
+
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+
+Thanks,
+Maxime
 
