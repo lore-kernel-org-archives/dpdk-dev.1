@@ -2,59 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F9CCA5FFC
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 18:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA45CA5FF0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 18:38:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 812FF409FA;
-	Mon,  5 Oct 2026 20:14:33 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 3810A40679
- for <dev@dpdk.org>; Mon,  5 Oct 2026 20:14:32 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 695HL1ju1164901; Mon, 5 Oct 2026 11:14:31 -0700
-Received: from co1pr03cu002.outbound.protection.outlook.com
- (mail-westus2azon11020133.outbound.protection.outlook.com [52.101.46.133])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4h49schwn9-1
+	by mails.dpdk.org (Postfix) with ESMTP id 01A3F402DD;
+	Mon,  5 Oct 2026 20:38:02 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 2095D402B5
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 20:37:59 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 695HNvn71191068; Mon, 5 Oct 2026 11:37:59 -0700
+Received: from ch4pr04cu002.outbound.protection.outlook.com
+ (mail-northcentralusazon11023110.outbound.protection.outlook.com
+ [40.107.201.110])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4h4983t9pq-1
  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Mon, 05 Oct 2026 11:14:31 -0700 (PDT)
+ Mon, 05 Oct 2026 11:37:58 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o+2nNYV6dZsyzVCtIQU7kd6D86ldLC3Cbv56EH8kAFQwB0w1ywyS8DA0uu/0TfU1uMe8HUSNa3GrqYA23OnY2wsxn24RisAyZrA6s58Q7/NYQp9Dsh1/1ffVgvhHWta8a4sr68g5pXtBD1mtmwlsGhuuTKBlQ9IyeJ2LnQ3rlo6IA2RkEaoK5DMxC5DVrZBQcGGqQ0rlWK7ldMUDp9Y5VCCU/vhHCUr50tkz6oMWethvzXyASidSinoNo6xAQCpUP8BYXkhJMO6VuB1Y2VWKv3ZXjfgnV5P97JELYQeTZrz0JOHYwrTPhgFlCmYEL6J/m4mc/80q7enZuGiTPKXUJQ==
+ b=KyBDo1xC1ovmJ1iIpFrqQKri4zuzib8ckQAJtaXHiCdJv73JvfoYqrlXwsuTPzJ5+n+MdCtAjryjNWSNnVjejV1npJ8rKgfN7dTkBehlcmbSF3WBvVLpr+7YYH0S5Tg2+Q6HdO0t0k6nBGrG7l9MCn8rZzjfbbh4vZP4Pqh7AFVEeFMZVYZ+HarWKDyBK0ndl5iInXVwNBC1CgFkZLWgd4mbXJVDkDmOCEwgX+LH62urGk8V9s2o0jc5jUlGjqbQHDHKa/7GevKS63GlstB0bdjcgM+PsRB+jx/iIYM6dX0uitGBNV7WpArgjknH7cE3e3KQneIHz7jTX9Bci/3Gyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U6iOpNCBNSOeCDiACaIVCurETgOtSvMgm4eX3/uoprs=;
- b=SSNqSdPRAJG8aKbSiCgzKXhposk/MdumiNjrJiwjxEvXaLbznXdFGW49dQ8TJV6tOnwOCV3ALsmMbyFHKrKffj6G3P0TBAp5QNgBuAW0sh6dARoiWSjXJZO9fBigqddkj7UxxJQVLKtlDLmimwq3ZkewgV+JCSk/FjJHy0IM0iriBX4LCRPCXsK+Zn5ZAzPGV1FtiNtQSld+mdCbLGgMTXt1WXGL5d/16ygHldgVdk3ApQ87mZhRPjolfukdtu3MKt7lFup2p1FdY0k4XJhlpqS9JKki/sFGLAc/rg9EamLC/viM6ctmiZs/53ihUnpAwaWwHvvZ8zE+wbXR5AKD0A==
+ bh=lj9413jHceZDvN7ETVuVcd5NUibx5wIweoMUJj0lel4=;
+ b=ZjgNVVzbLPbMXwJH1eePHCgwblJBN+C5dlsqeN0QwfrE2MAnLb6lMUlxfajVRqDTCEvy1hItDxa1B/adcTCkBdO+35Ptl0HMQvsTRFoG6K11kbJbmx3CPlUlTAHtKGzevDdcrWbMDbrY3lesqZv4wk5/LH47G8WJuDXoyaW08Nw/YyCOAj4NGlZMpgmaPoVGsp9jYHpHik7MCnr9KBtKR7aE26rcse//ebWedPAO5QPH09gyTBzF0KeZUXhsumBkBSpcHsl6y6A4zCcDJaAUqBE6wutYD50/t8LAPg2KdSNII+AvV+qDAzaIue57uOP7fPPzFL9SewZwVwAGzQfTlg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
  dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U6iOpNCBNSOeCDiACaIVCurETgOtSvMgm4eX3/uoprs=;
- b=TPDZCgpbcOeQJH7qd7opPxvl9Se5BMpjpJMb0n+apvYeLpJJOuh+cjqF5xUsHRa2xC8iFV93J8vuqMOGhnSB9aQsxfAXNPBmFp1Gq/TYxVqqNALlSChaYnjx7P2qhqEzJj0iKg5HXOYh7scmyGPGc1GyRtqrj0dMPqM0/Xq+5iE=
+ bh=lj9413jHceZDvN7ETVuVcd5NUibx5wIweoMUJj0lel4=;
+ b=J3Dg6eG6zuJ57Qkw4PpcrHl2zHO0ARpv4I+g+JSSRd61Y93NbwC+2v6GPO+j5vLbB7Qoimpf7ryAYVFseUmWTJIkB24OaWArOnsm9iJqARDDE/e+PK1fanyz5q1OcXqiu/ucleNE15wxjezhy6apojnoXtySW6IfdcyQkp5olnk=
 Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
- PH0PR18MB5143.namprd18.prod.outlook.com (2603:10b6:510:168::10) with
+ SA1PR18MB4790.namprd18.prod.outlook.com (2603:10b6:806:1dd::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.19; Mon, 5 Oct
- 2026 18:14:27 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Mon, 5 Oct
+ 2026 18:37:55 +0000
 Received: from CO6PR18MB4484.namprd18.prod.outlook.com
  ([fe80::a2df:a596:cfe:17]) by CO6PR18MB4484.namprd18.prod.outlook.com
  ([fe80::a2df:a596:cfe:17%5]) with mapi id 15.21.0472.016; Mon, 5 Oct 2026
- 18:14:27 +0000
+ 18:37:55 +0000
 From: Akhil Goyal <gakhil@marvell.com>
 To: Gagandeep Singh <g.singh@nxp.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>
-Subject: RE: [EXTERNAL] [PATCH v2 6/6] crypto/dpaa2_sec: support AES-GMAC
-Thread-Topic: [EXTERNAL] [PATCH v2 6/6] crypto/dpaa2_sec: support AES-GMAC
-Thread-Index: AQHdUKp7PWPcOQ06u0Sp2PBIUopjPLbvSMcw
-Date: Mon, 5 Oct 2026 18:14:27 +0000
-Message-ID: <CO6PR18MB4484EA4567BDD3882AC661F4D8962@CO6PR18MB4484.namprd18.prod.outlook.com>
+CC: "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>, Stephen Hemminger
+ <stephen@networkplumber.org>
+Subject: RE: [EXTERNAL] [PATCH v2 5/6] crypto/dpaa2_sec: add support for env
+ variables
+Thread-Topic: [EXTERNAL] [PATCH v2 5/6] crypto/dpaa2_sec: add support for env
+ variables
+Thread-Index: AQHdUKp7sjPsjtqL+Uq7HIho6RyBULbvTtMA
+Date: Mon, 5 Oct 2026 18:37:55 +0000
+Message-ID: <CO6PR18MB4484B210020584C2AF24137ED8962@CO6PR18MB4484.namprd18.prod.outlook.com>
 References: <20260810112951.2879825-1-g.singh@nxp.com>
  <20260930070809.1929564-1-g.singh@nxp.com>
- <20260930070809.1929564-7-g.singh@nxp.com>
-In-Reply-To: <20260930070809.1929564-7-g.singh@nxp.com>
+ <20260930070809.1929564-6-g.singh@nxp.com>
+In-Reply-To: <20260930070809.1929564-6-g.singh@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -62,80 +66,80 @@ X-MS-TNEF-Correlator:
 authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=marvell.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|PH0PR18MB5143:EE_
-x-ms-office365-filtering-correlation-id: 0815c9ca-de08-44a4-c8e0-08df230c7e2f
+x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|SA1PR18MB4790:EE_
+x-ms-office365-filtering-correlation-id: 72ae8452-bcfd-47d2-1710-08df230fc576
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|23010399003|366016|376014|1800799024|10067099003|56012099006|11063799006|4143699003|3023799007|6133799003|18002099003|22082099003|38070700021;
-x-microsoft-antispam-message-info: hzcyNBjzQ4HyL8AYtJHxDoqIWTG7J9fJx0MknUS91ui+UmYG3b/wScKOx9/gynlpLGRl7K7ERhPPXoXsIQoF8Oxq7N2rk1NmpmGiOXfQk/mMkIffG/q6xAOVw4Nd5oBB+O1JpUvmqMcZkpp/+vx0RskhS9Adfu7jjqyBEI0a9tmRI45mkXaSn55w8yfcX//bHghDexvtHyLH5wrfh2fdfLnrxL8kFtKsCJ7K/OxpvlVAy8Jk0oJ3gC+5ZoZuQzPqNZh3iK2AWeFtzNku/dDybTKWBrKBT3R5MGUkNWiimpXav9r7VdHHNI/16/0/9m79QpB6jufOBjSIW4RVlcymXa0L222sNUXcW9TNN2sTSuwMscv0wA7DUkXENYDw7R8mDICf3VWgcJf4iiAi4eD3OzYmbzPMdbTeose8yfIdcI9cUpr5eagUZz3JbTBtsVKHy2ny4d0qELX9KP2SQZVFSfr36cT5fBz4HhDQoWS+acUTL07Nc117dtcZrnewW+lCv8pwZuat9nt/+xEnI+B42AZh1qVe3VqgJ/0cFRK1rXXYp6JP0fg8jh9wPij30DAoAclboL1Zhb1cOjB+FhYe4ae8DlnNt6QUL90UsJKdL2xoL8hmNaHjeu7uB7Oy1y4t9YM+GVSOW+N+JEfDPoJ7m6gx8RisKLuuKQL7bL1xul02cNMH/d+5dpmBXaneUPK1NrfYkEoCa7yJ6il+AJDiyhV7tBlsIWBX9g+cJhyQOBs=
+ ARA:13230040|23010399003|1800799024|366016|376014|10067099003|56012099006|4143699003|11063799006|6133799003|18002099003|22082099003|38070700021;
+x-microsoft-antispam-message-info: j+f7+z3eKHrzWziwFYLHpj22ZTxzMTUVtceP0ys0QfeIXN9Z4ipqJXppMwuRpe9lwN1ile7Sy8LLJ8N7JVBfWCcSoNMEjEBBZzaIO8QKTnwsf+t3iDNj3+ru0C22cDvQGGsoL4AJuLklpCJT2NqmKNlqIWGWR/1tDNalIpVTrHEM6PWwWn+TI8yOa0YKFyXEpS4GlvHYJ6CqzLVSLxvl5G37SU9o65eiJzRkbh7few0H8qHFcvYvV00YYyjQo65cP4hxZWmpgNLcb1CLQeGzo1Apst9O3K6MBPL7iWRtlbUfp8dUsRGZlyJRzwLtBQYKL67wRVPMKuWxudGf8UXf87kYn+qnlJXeTOYqFwF78mV6c+Po0Gu9aB6Mf/aTvoL725lyTUhKZdSueypVnbUvG7wosQ1Nw98wgYgrOVRghj4D/hxNwol/VusWW/G1NgKb8GJlUvXIfpMvr/6u9xaySxJiELveaLOnBFjyArjQ33tZL7PPiQ9t9rC3sidGO7yJrKCi2k1rrMnXpYZCaL91NczPkYfrjCyPBMdX/hmToQVpewRUvaTAcrYv4AIk+weEFszg+NQkiIMV3iUwhKW1SenSQDFUNG6+hB9Wrj08G+OB+/G2rDhTCA96oiVN4pWRvUk9fUmJPI7NKmlQtxORfM2OYQnsvJnQJelZoKPBvNcD9uq40KqMvW7wWXcJmwh0b6zBpBGcpu7sUuXmMUM4Wzo0zHqq62jGywbRirnSR9w=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(366016)(376014)(1800799024)(10067099003)(56012099006)(11063799006)(4143699003)(3023799007)(6133799003)(18002099003)(22082099003)(38070700021);
+ SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(10067099003)(56012099006)(4143699003)(11063799006)(6133799003)(18002099003)(22082099003)(38070700021);
  DIR:OUT; SFP:1102; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Adm3TaE/sgnYV5Xfr8z4xNbegzxOtecCmUo/YvQJX4uPj031jA/VexFaoUJL?=
- =?us-ascii?Q?EsXecJipQMWTX591NLKNYcZTl9oh1DJ8y/WL3TtVRqkB769ZbMxyrcx3O0le?=
- =?us-ascii?Q?Rjswl+ndfL98eMrYrQ/gBPLTuWaGfGAAUQrv92NROfCQC1hWcgIjN/x/yvEP?=
- =?us-ascii?Q?CcRSRBuGyABcvr0Ny3faxH9H1pC3TFBwfnQKNxVW2GtVvDmJDZngD+xzmHfE?=
- =?us-ascii?Q?c5QVE+HaTmqgFbSMA4ZooGNwpewdZR3IaPASuC36QLmkZnsfrHIIOaSF4plF?=
- =?us-ascii?Q?qlY4LHl/5e+bfcBZfa2WTutK6ZI9VZfdCfK3eCMFEjsf4ziAW097wzQWdXQp?=
- =?us-ascii?Q?t6wjdk4KjHFJ0knQVGhZ+QcozszxaJHn7atsZjOLNu7e4X6BKgNx2v4o10eO?=
- =?us-ascii?Q?roA40vAWZnoJKTIVjJXbBNX8TZ9S0FvjM8BYbOQUo6Fd4KIPhssn2SBgpN/f?=
- =?us-ascii?Q?vvY3hNY/d+MkbHI4Pf2xDPwDLdZ0JqJPjM5y01QPONOmx1gXCb8WW1B+/zYF?=
- =?us-ascii?Q?lBbmcpmPNeFBVGzYzqUYX/4BoCm+t7RykupyFylPhFQLv/EH48bd6sNQ/qN1?=
- =?us-ascii?Q?ghuDjFUN7/vhXvV7SdF11511DgOeDRXVYd6pHD5r3wXNEcRR/47F60QxsE+i?=
- =?us-ascii?Q?xQwF3w4ESfg/zzHUMEdO1PlAS5cd0ou5Lavr7zGFv4r+y7DR1jAnDmKqQDnI?=
- =?us-ascii?Q?sJLDGbz/RyJwosnNmWGJGZKIKZtYOsf2FJz/gAS9ogc9J46kbxZzyrzRGH4v?=
- =?us-ascii?Q?khsp9qcGBHIe6tKmdw1vDTlyEmO5EvlM0YSIeYJ/FNc3Tz6jjIK5uxFzrrmL?=
- =?us-ascii?Q?JKU7hB5wYXoJ5q4j2EBjgaXea8umx3kp8WS5rbo7tN4H1Sw5wi/otCuNM3Kt?=
- =?us-ascii?Q?8P0QplMMgv2hn2MJsksHKy4T9Dc4RKt35M83X1aNt9F4PvlkcBH4PrNmw7M3?=
- =?us-ascii?Q?Vi1yQWmYLLexBIsXYAtCFczJPHQeXJhJZzgagN00kjP9s/YR6jQcze81RywC?=
- =?us-ascii?Q?DHCwR2llectqAcoEPJiokpAUPb2lrwDc7lxNatEgn8YA1nhvcsEZ7XO3cyOY?=
- =?us-ascii?Q?Gy6F9Tcjn5Po7WvVLs2LD2hBQk39mnEYsiHZROjKCBz2kQ3mt55LtYjG9Lhn?=
- =?us-ascii?Q?3bs/ll0co9UlPgjA2soc8DsavugR8yiLoA2U0LhYiDtD5RbzjQr/w2oc0L1k?=
- =?us-ascii?Q?CmFQtKJhc5qDBC4LVOtA78RIfUccpHCJ3mRU+PdIufm/A7QFArKI35VBSY05?=
- =?us-ascii?Q?xNfB3nzJ/MEqVfoPigDyYAKwp8lg8s1TuQSoBZ2xuhakN++LjuUoDOYeTUOZ?=
- =?us-ascii?Q?tc65Vc5aVzu+irPuDHRx9TaqJlLEx8wUDMSY0fy+hoLMRpiajmUgKgnq3pIr?=
- =?us-ascii?Q?gOkoFGE1fAdFqnfSJOvKwNQ/mW7EIC65wJ9mE/XTZYrV/W3s4IMf4rDzq9lf?=
- =?us-ascii?Q?LQ8b717Zz1NLC0w1Yh/Z0R2Rt7S/SuGD2ZkCcMvRWEdnegzroGJqyhgv+PBr?=
- =?us-ascii?Q?4uS3V8UIJpiHnHuiWF7NSnDoFdtJXnXsFAEcaG42tGrKuiPUSvGhXBo2c6OE?=
- =?us-ascii?Q?vhWQdamqYU6FmGmp9LiUK+V6QqFgjHCJS4U5OAfkFxaVFlD/qFdNmep5ctuY?=
- =?us-ascii?Q?ezs17NyXX8CWMaRwqVqpDnEcwH523TsK0xtMWUba+qjhu7hEzPTJo0cW0qNw?=
- =?us-ascii?Q?CYzTMJq4KW7YKGsvTT58bKorcFDTmNdKCLioHchOkq6HUhhp?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?6YJXDmHs7Jsb6+jJiOfawkc8Ipm8iv5orJtazMQICl4b2RznlPyIkr5wnq/q?=
+ =?us-ascii?Q?34gt7WvS49QTZ7bFSY+fWDJLw1F+N7Z17VFh6frrCNnVW5xwpCzMNwHJwvy6?=
+ =?us-ascii?Q?8FJrWsCRbhjxtAYEKrvUetgiKtFcEDmMpwYa0s6V4Ix8YkBxZgyRSnu6Oc8p?=
+ =?us-ascii?Q?h7b+0IS1kky5T1q/yN80IsWjlQtntNoLsc1geHQZT6Q1B2fynUsztDQYDifz?=
+ =?us-ascii?Q?vx7f983Bb4h54Q5DYX2ErqdKoTJI++GpaWT2WXTCCGMbXkSuHmapYQlA2W4a?=
+ =?us-ascii?Q?yjc5V/t6qcFuXQWQZWVJ1FnxNJo6Vr2Q02P3L5Cm8LE3UTFKzCxx3LPY5QP+?=
+ =?us-ascii?Q?lnNb3TakjxOtWA2Ojm4qSvyiVGRdrOpaEkC2v4GKeLIcavUUuE9gu9b6EkB+?=
+ =?us-ascii?Q?sPZ9yZv7FhpH40IK+E9qIIxIBCkNJP9E6B2jF7ryxchU+qc9UmeYWFEAzo0p?=
+ =?us-ascii?Q?wPay6v6tQzCfWegoqdxE/UcwEeDm+50wWZgByth3DvTh0oTGKlAkXFWUP4F6?=
+ =?us-ascii?Q?+DQmKTIq6H9XLEIL6Q1afaidpDCpRsdaD37pFDBI1o/bylNCbJu30e2ITqJw?=
+ =?us-ascii?Q?C6wb90YptlMi0DNUdCc8Hh82A5U0El2/KTtd0Ylv5bLZ/Yleb0Z2USiOQj8p?=
+ =?us-ascii?Q?cbLa8OlPOAGZzNSRMvSgQHRtXvJqT6W5KRzY8Iltm7rGza0KdFauqFhDUesz?=
+ =?us-ascii?Q?IR7g4nlQRpwTOYfmGd0F9B8fp1A0sD02QRVBTZtxR2PJTcHgqdX3fwxy/cfJ?=
+ =?us-ascii?Q?5ws1lUelDYUnUYnuCFQlpCqKuVCdlYM641OXv1YZ3ssM3h+SOea/m2rKNb0Q?=
+ =?us-ascii?Q?ILv02jPEfEiVpobZ6xQmwTonmotcpSnY2k1JKeRciItAGjUjzjY4oTno9t22?=
+ =?us-ascii?Q?3mIHw3DJSNEjwXcNsq8k2sIcrCQm3E63uItNIkzatbeEtqe0kdbyrIpTeMsc?=
+ =?us-ascii?Q?hp6x8MK3DFQAMK1mMezG8CcXa8Q9gP1UVtOmDwNRzq4joIOAwlCB57eOiver?=
+ =?us-ascii?Q?+Yydto9rYsUO0BIzHtiQGJ2lZkPD3Fnc0V5FwcmLxX8as9Zpb7CrmsmE1Z/A?=
+ =?us-ascii?Q?BcAA4ZmHagw6tRdVjFDUSTAZgdeGO0WXAQsOsXx8SHeqBSjEXOLBdQnyPmNa?=
+ =?us-ascii?Q?t7toHxDrBCQ5CPFAUCXS7OkpPQPs4jrHBWAXnyxboFN7snEIhi26+PRzkXc2?=
+ =?us-ascii?Q?jmRThAOgLGcIpmArU4VYf+YWSJrbIZ+/oYS1SaGTmXtPw3ieK95z/8QDNVY+?=
+ =?us-ascii?Q?0FbQOCOkC4CM262EopxKaChPjRE/mWIqha6KqBJ2FTsvLTYT8+mp2tiX4OgK?=
+ =?us-ascii?Q?MSj/0lGgHSNzpEpgCRo4P59yobNXqV3i8LZ7oNS/59jILF66aE/L+oBydeQp?=
+ =?us-ascii?Q?TOT6K0eIhWk9Mze5G9WINwlYVjGc7QWMQDpADKl7iOu5Z8Gqod+yEwGKMlPy?=
+ =?us-ascii?Q?EpNiHjYl7vay38JifDr7pxHQMO6YsPV4G+6g1qvBtdz1u+2VU8bynYmVsrw5?=
+ =?us-ascii?Q?N7sCje4nvo1VMCwbQuC+0QIhIjTZwDaELcpepb9yO1TbJnioBFZ40ckeQLW3?=
+ =?us-ascii?Q?gvTsow/omJ56LGEwqhks+fFC9QvguRsxKIdbGiKjMQCO55JlKYgDlLQuq+L+?=
+ =?us-ascii?Q?ffxoSyM3n3tl8V8u82Zgun6aDvjC2R42LugBQ4kD65IwCIdpWW9lZDNBXuTi?=
+ =?us-ascii?Q?+Yse2sZQrvqMlMxeEzgmmvqtrSvmmGcSRtY7QT6mYbi/R+wB?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: APOGDPS+vQQXBzWoDxUGuB/kG+ltOU6FRbiGVH+AloFL/Mz01pClK6/TAg/tk7lswHQqvMvsOdVWJTfJtADwJwKDxY+ffzxrc+FGfd6tBG1btJ0UdTtN6n9Dd0C1Rp6Rc5a0rPc0zVWmmAy0YJjptOvKO79ULup8lpHyfGXI7lkMjHAAijDoxIPEe5bEcdha46Vku14B+VT9bJg4LGgXAaglcdR1W8jXnEURRb1icRwPXaELdiFtHYZsJ8DpLsSbHtrf6V37winWC45BHjvGSV8pOi8ODpJF4gv6Gi+zZjwYZxt1m5sHal/pco8XcJ+m6MlySE8WRahiG1IMfyUZsw==
+X-Exchange-RoutingPolicyChecked: pNB1d9HMy/XahTB8+oNXWgmYTatj+qX3e0h04kurrZbnVMhg7ZUeFLxONsilDpGXi9qIDvhVZxbJM3RX4fR4Q1M3Kex6zz81ySiKo4SU3GfNK2MYtZiGnX3mMGUZ8xit6RhscFN6TrHQ3rdehTLSJK2ft8jOVkbb9rYpi3qqP9QLUbcq67GTQj3vMi2jjyjr+pja1jfZ9lzmsftOOafozLpm8xSDe+o1J0FSkUpYh11BjmjvMJR7OjnuBzXzg/k9jUYktugooRTyjI8cX20FGoS7DleEtLQokIgk9bhIkZ3vzZ0UQzln7wPPsGRARqz7ov9ivfqgeG9Bchm1T8UFkg==
 X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0815c9ca-de08-44a4-c8e0-08df230c7e2f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2026 18:14:27.2959 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72ae8452-bcfd-47d2-1710-08df230fc576
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2026 18:37:55.3729 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: droQfiQtcHjmwMwIFLWA+Va4CXT2rx2T9iarzfthcgQNYv6Sl3nlIAtcyMgRItTw6rYaNQfp0bKMRwkXcnjq2Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR18MB5143
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA1MDA3MSBTYWx0ZWRfX1hzf4h+DTcp6
- lgL5FU8oxNdtMo3rMGlX6n8vzYrmg+OCkH7M5CEHUoWD0+YPZIQPNjSEBCOtqKIRqLn1uDAHxP6
- rhvrafBhabfMjL0nfp3J4Sjln206eH1R+JYb7nwBT02A5mI6eVY9TWJEIOVFzeUMjhi2+wc7fpJ
- dzvfCuk4OEvosz9zpmd7A8hX5cuDBcMwgQCXPOmtcdMIxOnvdTb9wAHCQpfGPGH/xNsU1er6kou
- BJCqlCPoMsCKe9VQYfUbmr9EyoDMPYcFY61E6F1dNV7pbIdqoGoKvEdzgjPYr4PtHnkXxFsUi7w
- F5uwQWVQW/lOjo2aU7F5FXZWOUeRgp64cMQPGQDEw4OB7BUdtNW+yyrZdTFZwc2R9YUgBCt3IsQ
- 4IrdYa+PnUx95Gtj0vEtJSdtRL01u1PexN+R+pQ8iMn/44cFIFaXk8g7DEZIV/ASStDFdny6giI
- /0G/ybpYjQyXeGkYmmg==
-X-Proofpoint-ORIG-GUID: hZmrYgPV1iASyFtSp-TciPrVz2xKeOuz
-X-Authority-Analysis: v=2.4 cv=XZEcX455 c=1 sm=1 tr=0 ts=6ac3e907 cx=c_pps
- a=/64aUU06laRl6xO2iYKDkw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+X-MS-Exchange-CrossTenant-userprincipalname: h2BPEw8GYe8HJjUJtUsdxSxxYP6VO2YHP4EgfK3sWcRr2VVv9W0vlazRE14bAU4qpzLQjFRJ5jrD/2qDSrYEmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR18MB4790
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA1MDA3MyBTYWx0ZWRfX5hOKh7M0vkT1
+ lv4WEAs0dE4u+Kz9EVJnZCmVnRf0QPTjCkPo1cgSh/liSAQaGA+7M7+2BWawjLlxaE5UjVZXoGS
+ s7hV6fCgyKe+joYppGp6K7kuaPI5n9O0HWsFbVjM20Ng5fVh/jZorDa6/sTrHcZrK3qRYlOGKCK
+ uJxJ06l3hbznbiAlVNEdl0Vsfh4sPUZu6FL2zywdo8KskYI1Boz4fjq9XyoB2ZU/BK/kG4XpgnN
+ msCDDmmB4Z91iZBASCPfr4MxsxM/SwwEB+P2eP1XzzSAf2v4EFmNsNGWeXVEWR8me6mB52zoPnZ
+ QyN/8yDQOA/mWm9UR4+qiXEHVLoswdk0X8plwyg9/Y0U8xNKnIRFUVWCW6zhPEmEZuGxsVnSMIk
+ Ct9cLEPW6VYIXnVDFP0KRRsDaZ62gvpdYT1yQr9Tu7W6FD7jjUENUVEBT02Db/MkPfnZMyj6bT8
+ YPJC5QQbJZErcyYBxVA==
+X-Proofpoint-GUID: bJnjmmL9ArPKuHCOIe551_9PDQCdUUcU
+X-Proofpoint-ORIG-GUID: bJnjmmL9ArPKuHCOIe551_9PDQCdUUcU
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA1MDA3MyBTYWx0ZWRfX25Y6QW39Y20R
+ Wohd1AoV9nPv4eP0D8n3NTnIuFW+XVpfIx2WD16BUHN1UD3H/jlnH3hbHxOyL0Jg+QyqKZqwhhi
+ H31/8X4BbfHNXP0MWJBDlHdI699qUgk=
+X-Authority-Analysis: v=2.4 cv=X+nHu2Te c=1 sm=1 tr=0 ts=6ac3ee86 cx=c_pps
+ a=ALzLegKRD8J3iQ32fiysVg==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
  a=660iZSQnnn4A:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=l0iWHRpgs5sLHlkKQ1IR:22 a=qit2iCtTFQkLgVSMPQTB:22 a=8AirrxEcAAAA:8
- a=bctEG0ypv6W1IAfbjU4A:9 a=CjuIK1q_8ugA:10 a=ST-jHhOKWsTCqRlWije3:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA1MDA3MSBTYWx0ZWRfXyu/hDwZvxxCA
- mCDz6fgogojJ865+ZFSdnqdyRx+6/C6Jx8CGlZuYuDbs7nIs1wiOk3Gkhn76igbAALDTmqmkQDr
- kiO703TsoADLdx9N/gIb1mRd2RRPoNQ=
-X-Proofpoint-GUID: hZmrYgPV1iASyFtSp-TciPrVz2xKeOuz
+ a=l0iWHRpgs5sLHlkKQ1IR:22 a=TtqV-g6YmW1Jfm2GSLaY:22 a=8AirrxEcAAAA:8
+ a=23pgiVc5KISuIIKJ75EA:9 a=CjuIK1q_8ugA:10 a=ST-jHhOKWsTCqRlWije3:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-10-05_05,2026-10-05_01,2025-10-01_01
@@ -152,59 +156,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Add AES-GMAC (RTE_CRYPTO_AUTH_AES_GMAC) support to the dpaa2_sec
-> driver
-> for both symmetric auth-only and IPsec lookaside protocol paths.
+> Allow driver configuration via environment variables as a fallback
+> when devargs are not provided. After processing devargs (or when
+> devargs are absent), check DRIVER_STRICT_ORDER and DRIVER_DUMP_MODE
+> environment variables to set en_loose_ordered and dpaa2_sec_dp_dump.
 >=20
-> For the auth-only path, AES-GMAC uses the GCM shared descriptor
-> (cnstr_shdsc_gcm_encap/decap) with per-packet IV and data supplied
-> via sym_op->auth.{iv,data,digest}.
->=20
-> For the IPsec lookaside protocol path, AES-GMAC maps to
-> OP_PCL_IPSEC_AES_NULL_WITH_GMAC.  The SEC hardware protocol word
-> treats this as a cipher type, so the GMAC key and algtype are placed
-> in cipherdata rather than authdata.  This is handled in
-> dpaa2_sec_ipsec_proto_init() by overriding cipherdata with the auth
-> key and setting authdata algtype to HMAC_NULL.
->=20
-> Also add AES-GMAC to dpaa2_sec_capabilities[] as an AUTH xform.
+> This lets users configure the driver without modifying EAL arguments,
+> useful in environments where command-line access is restricted.
 >=20
 > Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 > ---
->  doc/guides/cryptodevs/dpaa2_sec.rst          |  1 +
->  doc/guides/cryptodevs/features/dpaa2_sec.ini |  3 ++
->  drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c  | 43 +++++++++++++++++++-
->  drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h    | 28 ++++++++++++-
->  4 files changed, 73 insertions(+), 2 deletions(-)
+>  doc/guides/cryptodevs/dpaa2_sec.rst         | 12 ++++++++-
+>  drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 27 ++++++++++++++++++---
+>  2 files changed, 34 insertions(+), 5 deletions(-)
 >=20
 > diff --git a/doc/guides/cryptodevs/dpaa2_sec.rst
 > b/doc/guides/cryptodevs/dpaa2_sec.rst
-> index 925d3371bf..d9a661c272 100644
+> index f95c6282bb..925d3371bf 100644
 > --- a/doc/guides/cryptodevs/dpaa2_sec.rst
 > +++ b/doc/guides/cryptodevs/dpaa2_sec.rst
-> @@ -125,6 +125,7 @@ Hash algorithms:
->  * ``RTE_CRYPTO_AUTH_MD5_HMAC``
->  * ``RTE_CRYPTO_AUTH_AES_XCBC_MAC``
->  * ``RTE_CRYPTO_AUTH_AES_CMAC``
-> +* ``RTE_CRYPTO_AUTH_AES_GMAC``
+> @@ -1,5 +1,5 @@
+>  ..  SPDX-License-Identifier: BSD-3-Clause
+> -    Copyright 2016 NXP
+> +    Copyright 2016,2026 NXP
 >=20
->  AEAD algorithms:
 >=20
-> diff --git a/doc/guides/cryptodevs/features/dpaa2_sec.ini
-> b/doc/guides/cryptodevs/features/dpaa2_sec.ini
-> index a280c7b51b..49434739f0 100644
-> --- a/doc/guides/cryptodevs/features/dpaa2_sec.ini
-> +++ b/doc/guides/cryptodevs/features/dpaa2_sec.ini
-> @@ -48,6 +48,9 @@ SHA384 HMAC  =3D Y
->  SHA512       =3D Y
->  SHA512 HMAC  =3D Y
->  SNOW3G UIA2  =3D Y
-> +AES GMAC (128) =3D Y
-> +AES GMAC (192) =3D Y
-> +AES GMAC (256) =3D Y
->  AES XCBC MAC =3D Y
->  ZUC EIA3     =3D Y
->  AES CMAC (128) =3D Y
-Please fix=20
-Warning generate_overview_table(): Unknown feature 'AES GMAC (128)' in 'dpa=
-a2_sec.ini'
+>=20
+> @@ -188,9 +188,19 @@ along with other useful debugging information like
+> session, queue, descriptor
+>  data.
+>  e.g. ``fslmc:dpseci.1,drv_dump_mode=3D1``
+>=20
+> +Alternatively, set the environment variable ``drv_dump_mode`` to the des=
+ired
+> +mode value. The environment variable is used as a fallback when the deva=
+rg is
+> +not provided, which is useful in production environments where modifying=
+ EAL
+> +command-line arguments is not practical.
+> +e.g. ``export drv_dump_mode=3D1``
+> +
+
+I think Stephen has pointed out that this is bad precedent.
+DPDK has already a way to configure to avoid env variables.
+It is not clear why we need this?
+While there is a way to set env variable, but cannot change command line ar=
+gs?
+Is this a debug thing?
+
