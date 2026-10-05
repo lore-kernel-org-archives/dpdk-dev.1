@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7517ACA5FCE
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 08:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1420CA5FCE
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 08:54:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 13E0740A72;
-	Mon,  5 Oct 2026 10:53:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2A1B040A7F;
+	Mon,  5 Oct 2026 10:53:46 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 8D7C8402B5;
- Mon,  5 Oct 2026 10:53:41 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 28C4B40290;
+ Mon,  5 Oct 2026 10:53:42 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 56A811A0086;
- Mon,  5 Oct 2026 10:53:41 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 097681A0088;
+ Mon,  5 Oct 2026 10:53:42 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 20BD31A0088;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C76C41A007E;
  Mon,  5 Oct 2026 10:53:41 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 8E0D2180022D;
- Mon,  5 Oct 2026 16:53:40 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 48FBF18000B1;
+ Mon,  5 Oct 2026 16:53:41 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v20 02/27] net/dpaa: fix probe success when FMC init fails
-Date: Mon,  5 Oct 2026 14:23:12 +0530
-Message-Id: <20261005085337.1069213-3-hemant.agrawal@nxp.com>
+Subject: [PATCH v20 04/27] net/dpaa: fix free port resources on close
+Date: Mon,  5 Oct 2026 14:23:14 +0530
+Message-Id: <20261005085337.1069213-5-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261005085337.1069213-1-hemant.agrawal@nxp.com>
 References: <20261001112430.251845-1-hemant.agrawal@nxp.com>
@@ -49,43 +49,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-dpaa_dev_init() jumped to the free_rx cleanup label without setting ret
-when dpaa_port_fmc_init() failed:
+dpaa_intf->tx_conf_queues is allocated unconditionally for every port
+in dpaa_dev_init():
 
-	if (num_rx_fqs < 0) {
-		DPAA_PMD_ERR("%s FMC initializes failed!", dpaa_intf->name);
-		goto free_rx;
-	}
+	dpaa_intf->tx_conf_queues = rte_zmalloc(NULL,
+		sizeof(struct qman_fq) * MAX_DPAA_CORES, MAX_CACHELINE);
 
-ret is still 0 from its initializer at that point, so free_rx returned
-success and the port was probed with no Rx queues at all. The adjacent
-"not configured by FMC" case already sets -ENODEV before the same goto.
+but it is never released. It is a driver private allocation, so
+rte_eth_dev_release_port() does not free it either. The memory is
+therefore leaked on every device close and on every probe failure that
+happens after the allocation.
 
-Propagate the error from dpaa_port_fmc_init() instead, and clear
-num_rx_fqs so the cleanup path does not use the negative count when
-releasing the CGRID range.
+dpaa_eth_dev_close() returned early for offline (O/H) and ONIC ports,
+before the common cleanup that frees the queue and congestion-group
+memory allocated at probe. Added support to clean that path as well.
 
-Fixes: f5fe3eed51d2 ("net/dpaa: support FMC parser for VSP")
+Fixes: 58e0420f72f8 ("net/dpaa: support Tx confirmation to enable PTP")
 Cc: stable@dpdk.org
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/dpaa/dpaa_ethdev.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index a5b02cc9a8..834476bd8a 100644
+index c1fa21c0f8..30a9a34a6d 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -2259,6 +2259,8 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 		if (num_rx_fqs < 0) {
- 			DPAA_PMD_ERR("%s FMC initializes failed!",
- 				dpaa_intf->name);
-+			ret = num_rx_fqs;
-+			num_rx_fqs = 0;
- 			goto free_rx;
+@@ -537,7 +537,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 
+ 	if (fif->mac_type == fman_offline_internal ||
+ 	    fif->mac_type == fman_onic)
+-		return 0;
++		goto clean_1;
+ 
+ 	/* Reset link to autoneg */
+ 	if (link->link_status && !link->link_autoneg) {
+@@ -562,7 +562,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 				dev->data->name, ret);
  		}
- 		if (!num_rx_fqs) {
+ 	}
+-
++clean_1:
+ 	/* release configuration memory */
+ 	rte_free(dpaa_intf->fc_conf);
+ 
+@@ -624,6 +624,9 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 		}
+ 	}
+ 
++	rte_free(dpaa_intf->tx_conf_queues);
++	dpaa_intf->tx_conf_queues = NULL;
++
+ 	return ret;
+ }
+ 
+@@ -2501,6 +2504,8 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 	return 0;
+ 
+ free_tx:
++	rte_free(dpaa_intf->tx_conf_queues);
++	dpaa_intf->tx_conf_queues = NULL;
+ 	rte_free(dpaa_intf->tx_queues);
+ 	dpaa_intf->tx_queues = NULL;
+ 	dpaa_intf->nb_tx_queues = 0;
 -- 
 2.25.1
 
