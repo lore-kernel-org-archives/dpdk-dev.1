@@ -2,97 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF39CA5FF5
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 21:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1372CCA5FF5
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 23:50:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B300D402DD;
-	Mon,  5 Oct 2026 23:38:49 +0200 (CEST)
-Received: from fhigh-a1-smtp.messagingengine.com
- (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
- by mails.dpdk.org (Postfix) with ESMTP id 59BD4402DA
- for <dev@dpdk.org>; Mon,  5 Oct 2026 23:38:48 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.phl.internal (Postfix) with ESMTP id AF5FD140018A
- for <dev@dpdk.org>; Mon,  5 Oct 2026 17:38:47 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Mon, 05 Oct 2026 17:38:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1791236327;
- x=1791322727; bh=ZtQTD7pQE9mfV/0e+beXTVS6fBBlsAVJgtgLfiGt/HA=; b=
- bb59XBCmn9jq7Woh+1GBw3wMoP8VBotD5t/+ySXS2SqiZmVBCKye9cCIn9HFpng6
- oFKo5EBmizg+OkaFwZxoejsygTZCd2V1iV/RFKYmX/gad3IJ32eviwnJtFBZ0k4D
- doUus6Mofg1hJWUhdYEBaS15zfvpla+SKzscnNE6uIqH4U4wrBhyzlaoEdiGgJG1
- oT0q9odiX3C/PdnYOELrRUMPy5krJa0oCItF4rPY8oEGxT7LY4gZ6JJ/BS6O9jbu
- 2JVsy+/RjE4ZjoCFiU2Ta9je231F0wCKdYoHrmgd6U7dTYQ5AKOspikVFRqJMx6l
- Zd2nprfY4zdKyX0D9lS+Ow==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791236327; x=
- 1791322727; bh=ZtQTD7pQE9mfV/0e+beXTVS6fBBlsAVJgtgLfiGt/HA=; b=u
- CeFICPXhgAqTAz/OlWwdNDoy4Lh1o50KrobegbUj++mDlh5qr+/M2zO9LgvZSS6z
- uJEkjuskjDNb3QUXwQQ27i9SB8GdzZIsU+WH+aLCbUEiH1NX7a97OiL8ERi/osg7
- JCYzc/ShtNwYqhc6N3CPKGbTMNakwu0CgdoXzSBzuk603ue0BEONkRwEBICINvMI
- guAtR5lSDYxrZ2dGA6zLeC5vN6mK0YyUkzI2N90OXCMIpRXFZQ4iCuVG2vBZ89V/
- JEDi0yfAYExV55ruG96tzm8QTcmx4twivf8xhV1yWuf7X8HVUElVJLBuCIwkV+bm
- 760sFctfGnnR62Mc3yNYw==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-09-30; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791236327; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:b9gdkxhALg88SfhwnpDlNsr5kHeS5kT0kVKb3QL4qzwqeoT
- 8jAoUR82uad1XlOM027Mr1gZdHifkqSBvW2LRb5gS+gypmqMGqTOpPx780Zjm7sm
- bYxH6shyruKfcA26gOB3uHZhatdm5D/xZutacIQd+iVrJRdjYgTv3+62bwJ4bdIA
- dSSisCFBXkz+sAs3OSNyeNZw8qdVpSsaCgWPwLbNn6+oClZsMPAk5MBqwA7XXBJK
- +9OnS2hULlGKZisMlG3M2BdZVGBEKqocfS7TN6HBAFjIQjF/YTZrd6UVdy8nb2DG
- IyK/0ukf7QzFPv4+3wuBDBoDprtfP00XTKr3gNw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-09-30; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:O+s4KREmi9ZEXSlgjrXyIk5AtOgv0DBFSi8nKKv44Pc=:ZtQTD7pQE9mfV/0e+beXTVS6fBBlsAVJgtgLfiGt/HA=;
-X-ME-Sender: <xms:5xjEapZ_8nP9s_aHdWIzwFSBHx1p6F1-0E9vula6frFdixeGLEITfA>
- <xme:5xjEaksCwYwXWap__txe4qyx-MlXVqpEkxb7zolQJLDqGcG_moB4Hj9uUjvuSRikc
- qneO7fJ_DVRZxUm51hyhtJcL7xKjSSYXd6HLODv2RujTHRWktaL91w>
-X-ME-Received: <xmr:5xjEarEO9liBL0KctCthwYxgq6P580kGTFORIvkPuD4T6o_tNcT8ItimaE3iyCDHPsVz2rfhD7bPXIasaHK-yWE>
-X-ME-Proxy-Cause: dmFkZTFy2WtW6KJJ0ULPOOWmq+mn2l0QGVjZtMtU0SeuypwtyXqc5n/p0SIQq/e6yWXB0l
- fMRMTrRTVR/zDizjjDj1Q8GS2d53FT0PWXWdXzBMT4htY2deP3sgm+hSRQsJXbe0ti15gm
- NXBVzRT72N5WQOTFAxer1IlGSdTEaeGvWbgj18AMDlIZ4AV0EM+bsWDi5T9Hhp/jpd9l4+
- obP3YAoLRk36mv+XOIVu3+ZmtnK+DPODyPTLAkKwXFKKXOXJq63WqqKtVDkTjGLU1as84F
- 6ionCiVgp1+62aEoLtMZqFFukhBmqN8BIrPECLwy9SWK4CCP7bf4U2x8/rCHsUCIl3lGM+
- DBuMF7Jpw/hcAnsbGs6CtoPN6RV29Blsfwb37xdUAjhhSzCg8S2RGe1YxUv5AMijf7MQfc
- zR4SnjU0+90+96AvG0fZ0bERjWAx1xkYgY4q2Q7DIabQtSOHmTequB8N6kCq1ngtkSHJ7G
- Ft7r9tteJLpojRLaZ+5kiMeqcxKVWKZOaNbzLKPv/VBLps75SvDoW6OUMcI12GOFYMe4aO
- ZB8CBskrcCmUzdZnjQb+7a6HXrJ2nd7SxfNFjHl+N4x+a7uwXZB8uAs75bgWwP+Fx7pwbH
- Vr/1xV4WxmmMwwikiDgqIMrFdn06zzz9h96nMxqPoQk6ycxCFx2RdC2Sh6+A
-X-ME-Proxy: <xmx:5xjEavw-9aw1_DMMhWOstkFyF1IFymdTD0YqHPknWiKk8VbwBZAMRw>
- <xmx:5xjEaqhB0MfPCDwSdHU2se0pQI_db9NNIxqYyN7B2gM523pvVwxdbA>
- <xmx:5xjEaixoU04wROqV3qkAoTNw6vEy7bmMh0BLerdRgCidoqftiVO_KQ>
- <xmx:5xjEalJeDOR-U2SI3cshcbvaclqMrKEsnjPRMPLmvfOy8rWUjP4SFg>
- <xmx:5xjEanG1rOQlsvLf0Oqnbc7gRpgK1G9dYaAyfscv5-GDhQowWyY8V4Ro>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 5 Oct 2026 17:38:46 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Zhang Tengfei <zhtfdev@gmail.com>
-Cc: techboard@dpdk.org, dev@dpdk.org
-Subject: Re: [PATCH] mailmap: update contributor name
-Date: Mon, 05 Oct 2026 23:38:44 +0200
-Message-ID: <8457YcUwRNKkP-77iOTCGQ@monjalon.net>
-In-Reply-To: <nLiq8zk4SyuCC_MjhReN_g@monjalon.net>
-References: <20260927035949.36887-1-zhtfdev@gmail.com>
- <c846b990-8b40-488b-95f3-c151aa9c6b9e@gmail.com>
- <nLiq8zk4SyuCC_MjhReN_g@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id E3F1E402DD;
+	Tue,  6 Oct 2026 01:50:44 +0200 (CEST)
+Received: from mail-pj1-f100.google.com (mail-pj1-f100.google.com
+ [209.85.216.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 69DB9402DA
+ for <dev@dpdk.org>; Tue,  6 Oct 2026 01:50:43 +0200 (CEST)
+Received: by mail-pj1-f100.google.com with SMTP id
+ 98e67ed59e1d1-3a80e169311so224978a91.1
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 16:50:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791244242; x=1791849042;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=ec3sqeQZYnX3M3GhEUIC3PoBSlGWOEHpwrukX7SzvZQ=;
+ b=aJ6UNFFmeEBLqMCut4HIaf3nw2YumHO3mzn6ZHxRZl4h5UdY7pWic+P2ahF1q6e89m
+ +/KOvPTD3TeAx19AjhHIiRO7tUwsDIl8be44efwsSNY4rVT8c37jeY1ozcep8mdzRmHm
+ sySVJqIVVwnTOJjdK6kXqvEyGOlY0jaZc1SHuvATrXVuEmzehyd0kQp91QCB3Z6BETJT
+ rIXSUS+1yZtlU5nD6J047lnN89T/syhpmd9CPCKO1AHcmtg1yQsiF0Tq3YmD95+/2Kjo
+ AqPrRiPnhIdnhu3zm8efoWTYlUSq7D//uXiznXxULb8/IEIkUbupmysXJhFKAci50RIz
+ G22w==
+X-Gm-Message-State: AFq9FYJCl112cEa4S7FdKLPdHgfx3v3oUN5Wgz/K3e85nMc8XmncjhAU
+ pu/3IhA7YAv/pemO8nH1IOHgGPWMMkr7ruSWaJBpSKGIfdb76p6a3seNoqrd9fJR4nitwUMukWb
+ 8yY8Lcfak00Q5aE/mXCBbSHRMqYxKZS26rXuE0d5tGCNHLudGdPA/q6ljWOHuO+mSqa4tn0Ct0Y
+ WP4ZhuDOo6qJdvMJTdZ8gcBgn36u72W8lLux1k+7S4dne1aI6v55eOzYdTHXsvydNYa62Okw==
+X-Gm-Gg: AYBFou0QQaGAYRpxfQtXrA8RZ3MG+ksC/IsFmGUna74zr5h9+EOU1pNn/iGz07OQmZI
+ bRpo8kjbqhtNv3QpFAKlXIBL3GPq9GaensYUNEkhjBu5CboQKLQKHj3ALhHMHvYR9lIfj84kKo0
+ cV9dSXmXXGVO+lPjonCh8fRUBzGyc9wk2BpyJDKwENotbcn/NzAWm5jyquMRxXN1XHOkzZyPpQh
+ D4EWKXrgi97OT+SO3UDP1ZvdvzHzdTNIaR9pVD2+LAfa143hCoVBur5acIfEUPMVrJfVfX9N3Z2
+ EfBo1tWQY1yO8QdlZod15we2cTgi+LGFpaDf9fV7GUCQsjfNJTYibfGEpi+BBdPtPgc9cusGf0D
+ lm59XrFBCCAyp1kJOkjRybOJIL+c77biD0pECiJQtGBzlVxfP7ibkZunI87tDZuc2H6lXh88yyA
+ tUTreDIV3A+01cyMEYytsf0R52Gm3z+a+IEjHVuQ==
+X-Received: by 2002:a17:90a:d2d0:b0:3a4:dbda:9934 with SMTP id
+ 98e67ed59e1d1-3a6ce983199mr4687394a91.63.1791244242236; 
+ Mon, 05 Oct 2026 16:50:42 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
+ (address-144-49-247-125.dlp.protect.broadcom.com. [144.49.247.125])
+ by smtp-relay.gmail.com with ESMTPS id
+ 98e67ed59e1d1-3a853e5e392sm490436a91.4.2026.10.05.16.50.41
+ for <dev@dpdk.org>
+ (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+ Mon, 05 Oct 2026 16:50:42 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qk1-f198.google.com with SMTP id
+ af79cd13be357-93cbacbb996so361103885a.2
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 16:50:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=broadcom.com; s=google; t=1791244241; x=1791849041; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=ec3sqeQZYnX3M3GhEUIC3PoBSlGWOEHpwrukX7SzvZQ=;
+ b=M2ruKZAG2zfx9x90PQgGrP6ky5IuqCnh1Q+11tw8NffZ3PoKSIFrm9rup857yDdD8f
+ aelMzmNOKW+8HAbMBli6PlJZuyZQDkrARR2jw8KH/63C4jwh525JY2eg2uDAP37TClDA
+ um8QFSbqNtdDif6+7aUxbnkOInftLFBOMgh80=
+X-Received: by 2002:a05:620a:43a5:b0:93a:13aa:1b9 with SMTP id
+ af79cd13be357-93cf16fcca5mr2129068785a.30.1791244241017; 
+ Mon, 05 Oct 2026 16:50:41 -0700 (PDT)
+X-Received: by 2002:a05:620a:43a5:b0:93a:13aa:1b9 with SMTP id
+ af79cd13be357-93cf16fcca5mr2129065785a.30.1791244240394; 
+ Mon, 05 Oct 2026 16:50:40 -0700 (PDT)
+Received: from r740-105-132.dhcp.broadcom.net ([192.19.144.250])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-93e457a4e20sm877944585a.40.2026.10.05.16.50.38
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 05 Oct 2026 16:50:39 -0700 (PDT)
+From: Manish Kurup <manish.kurup@broadcom.com>
+To: dev@dpdk.org
+Cc: kishore.padmanabha@broadcom.com, Joseph Wong <joseph.wong@broadcom.com>,
+ stable@dpdk.org
+Subject: [PATCH] net/bnxt: add bounds checks for FW-supplied IDs
+Date: Mon,  5 Oct 2026 18:50:34 -0500
+Message-Id: <20261005235034.26923-1-manish.kurup@broadcom.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -106,39 +95,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-29/09/2026 15:30, Thomas Monjalon:
-> 29/09/2026 01:12, Zhang Tengfei:
-> > On 9/28/26 22:33, Morten Br=C3=B8rup wrote:
-> > >> From: Thomas Monjalon [mailto:thomas@monjalon.net]
-> > >> Sent: Monday, 28 September 2026 16.22
-> > >>
-> > >> Hello,
-> > >>
-> > >> 27/09/2026 05:59, Zhang Tengfei:
-> > >>> Use "Zhang Tengfei" as the primary name. Both addresses belong to me
-> > >>
-> > >> In DPDK we try to always have the first name first.
-> > >=20
-> > > "first name" -> "given name"
-> > >=20
-> > >> I assume Zhang is your family name?
-> > >>
-> > >>
-> > >=20
-> > Hi Thomas,Morten,
-> >=20
-> > Yes, Zhang is my family name. In Chinese the family name comes first.
-> > To avoid ambiguity, I'd like to use "ZHANG Tengfei" (family name in
-> > capitals). Would that be OK? If so, I'll send a v2 of the mailmap patch.
->=20
-> It is a discussion we never had in the project.
-> It is being discussed in the Technical Board.
-> Please wait for a decision about how to proceed.
-> Sorry for the inconvenience
+From: Joseph Wong <joseph.wong@broadcom.com>
 
-The techboard has decided to allow any ordering as you wish.
-No need to have your family name in capitals.
-So this patch is accepted.
-Thank you for raising this issue.
+In ulp_port_db_port_update(), firmware supplies IDs (drv_func_id,
+vf_func_id, phy_port_id) which are used as array indices. Add
+strict bounds checking to prevent out of bounds memory accesses.
 
+Fixes: ad9eed0248ad ("net/bnxt: support flow template for Thor")
+Fixes: 1993b267dbcb ("net/bnxt: cleanup ULP parser and mapper")
+Fixes: ddaf0afae48a ("net/bnxt: refactor ULP mapper")
+Cc: stable@dpdk.org
+
+Signed-off-by: Joseph Wong <joseph.wong@broadcom.com>
+Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
+---
+ drivers/net/bnxt/tf_ulp/ulp_port_db.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_port_db.c b/drivers/net/bnxt/tf_ulp/ulp_port_db.c
+index 6907771725..aad66fd8ab 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_port_db.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_port_db.c
+@@ -159,6 +159,11 @@ int32_t	ulp_port_db_port_update(struct bnxt_ulp_context *ulp_ctxt,
+ 	intf->drv_func_id = bnxt_pmd_get_fw_func_id(port_id,
+ 						BNXT_ULP_INTF_TYPE_INVALID);
+ 
++	if (intf->drv_func_id >= BNXT_PORT_DB_MAX_FUNC) {
++		BNXT_DRV_DBG(ERR, "Invalid drv_func_id %d", intf->drv_func_id);
++		return -EINVAL;
++	}
++
+ 	func = &port_db->ulp_func_id_tbl[intf->drv_func_id];
+ 	if (!func->func_valid) {
+ 		func->func_svif = bnxt_pmd_get_svif(port_id, true,
+@@ -180,6 +185,11 @@ int32_t	ulp_port_db_port_update(struct bnxt_ulp_context *ulp_ctxt,
+ 		intf->vf_func_id =
+ 			bnxt_pmd_get_fw_func_id(port_id, BNXT_ULP_INTF_TYPE_VF_REP);
+ 
++		if (intf->vf_func_id >= BNXT_PORT_DB_MAX_FUNC) {
++			BNXT_DRV_DBG(ERR, "Invalid vf_func_id %d", intf->vf_func_id);
++			return -EINVAL;
++		}
++
+ 		func = &port_db->ulp_func_id_tbl[intf->vf_func_id];
+ 		func->func_svif =
+ 			bnxt_pmd_get_svif(port_id, true, BNXT_ULP_INTF_TYPE_VF_REP);
+@@ -206,6 +216,11 @@ int32_t	ulp_port_db_port_update(struct bnxt_ulp_context *ulp_ctxt,
+ 	bnxt_pmd_get_iface_mac(port_id, intf->type, func->func_mac,
+ 			   func->func_parent_mac);
+ 
++	if (func->phy_port_id >= port_db->phy_port_cnt) {
++		BNXT_DRV_DBG(ERR, "Invalid phy_port_id %d", func->phy_port_id);
++		return -EINVAL;
++	}
++
+ 	port_data = &port_db->phy_port_list[func->phy_port_id];
+ 	if (!port_data->port_valid) {
+ 		port_data->port_svif =
+-- 
+2.31.1
 
