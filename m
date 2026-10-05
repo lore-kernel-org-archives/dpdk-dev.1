@@ -2,53 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D0ACA5FCE
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 19:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B92CA5FCE
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 19:15:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0280A402DD;
-	Mon,  5 Oct 2026 21:07:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 191A0402DD;
+	Mon,  5 Oct 2026 21:15:01 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 552EC402B5
- for <dev@dpdk.org>; Mon,  5 Oct 2026 21:07:46 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3449E402B5
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 21:14:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791227265;
+ s=mimecast20190719; t=1791227698;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=GyHpWLbZsJDJGNimeM27JO6z/kjKs8RNbHR8hkO488M=;
- b=fidg6pMNrBuGSUz/YAPUjF7gid+b3KFqYE+YIocdRgXEkOrpAYgYKi5BlQWnzseNhn9iQ1
- oBa9aCMCTdCOfYibyBpKUHd0Tizdark2AOuGh2o/HFHg9ne+WcVfQWMVLTun8Oury84SkX
- ieVvv9sHfx+bGVEZd0EpDFlvABzz6rk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=IWbvKDXu7oGljov4oogXFPI4LHilqc7J+cbzbwJt970=;
+ b=Q4FE72rzn04CQJvRz1yeXHzsq6LeJT5L+2/j1nwEcXvE8CogOReG6wyKQmgdG4dioiTkt4
+ KmT1q53MPF3hQzdGxiFm2TPlCdc0rz7e/BLL3PSWVGswug6UlrK95Os0uwTIxcW8dMh5nG
+ ibnuRiguZ7cnXxfa8LCRXEXcm35DWqc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-53-_imG1sNoNNCTJeSYGYotUw-1; Mon,
- 05 Oct 2026 15:07:43 -0400
-X-MC-Unique: _imG1sNoNNCTJeSYGYotUw-1
-X-Mimecast-MFC-AGG-ID: _imG1sNoNNCTJeSYGYotUw_1791227262
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-577-xeM7PaKZOjO-JisxPsQYFw-1; Mon,
+ 05 Oct 2026 15:14:56 -0400
+X-MC-Unique: xeM7PaKZOjO-JisxPsQYFw-1
+X-Mimecast-MFC-AGG-ID: xeM7PaKZOjO-JisxPsQYFw_1791227695
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 59D8B1955F11; Mon,  5 Oct 2026 19:07:42 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id CA774180AD49; Mon,  5 Oct 2026 19:14:54 +0000 (UTC)
 Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.117])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 16E8F19560AB; Mon,  5 Oct 2026 19:07:40 +0000 (UTC)
-Message-ID: <826523ae-5359-4f5d-a9d0-28bfa92823cd@redhat.com>
-Date: Mon, 5 Oct 2026 21:07:38 +0200
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 412261956047; Mon,  5 Oct 2026 19:14:52 +0000 (UTC)
+Message-ID: <dddf39ba-94de-4062-8aae-d4bf2fe7c018@redhat.com>
+Date: Mon, 5 Oct 2026 21:14:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] vhost: drop async datapath
+Subject: Re: [PATCH v3 5/6] vhost: rename packed layout helpers for batches
 To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
 Cc: bruce.richardson@intel.com, Chenbo Xia <chenbox@nvidia.com>
 References: <20260723153111.3943368-1-david.marchand@redhat.com>
  <20261002074440.2551536-1-david.marchand@redhat.com>
- <20261002074440.2551536-5-david.marchand@redhat.com>
+ <20261002074440.2551536-6-david.marchand@redhat.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -93,10 +93,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20261002074440.2551536-5-david.marchand@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20261002074440.2551536-6-david.marchand@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 5yvEwdNiexucCnm6gzI8fFLCZPemCDVXbcgwZkh9uEQ_1791227262
+X-Mimecast-MFC-PROC-ID: DikFvZa2RkLfAGiOVLpuOybFUOoDywa0ShZW1tG9VPI_1791227695
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -117,38 +117,26 @@ Errors-To: dev-bounces@dpdk.org
 
 
 On 10/2/26 9:44 AM, David Marchand wrote:
-> All the API related to this feature is experimental, allowing us by the
-> project policy to drop the feature in one go.
+> Now that the async datapath has been removed, the _sync in function names
+> gives no useful information.
+> 
+> Besides, vhost_reserve_avail_batch_packed does not reserve anything and
+> its name is confusing, rename it following the other rx/tx split/packed
+> helpers convention.
 > 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
 > ---
 > Changes since v2:
-> - removed inflight async statistics,
-> 
-> Changes since v1:
-> - dropped dependency on PCI library,
-> 
-> Changes since RFC:
-> - kept mmap populate behavior for vhost_crypto,
+> - cleaned up indent,
 > 
 > ---
->   doc/guides/prog_guide/vhost_lib.rst    |  151 +-
->   doc/guides/rel_notes/release_26_11.rst |   20 +
->   lib/vhost/meson.build                  |    3 +-
->   lib/vhost/rte_vhost.h                  |    3 +-
->   lib/vhost/rte_vhost_async.h            |  293 ---
->   lib/vhost/socket.c                     |    9 -
->   lib/vhost/vhost.c                      |  436 ----
->   lib/vhost/vhost.h                      |  117 -
->   lib/vhost/vhost_user.c                 |  111 -
->   lib/vhost/virtio_net.c                 | 3275 +++++-------------------
->   10 files changed, 687 insertions(+), 3731 deletions(-)
->   delete mode 100644 lib/vhost/rte_vhost_async.h
+>   lib/vhost/virtio_net.c | 28 +++++++++-------------------
+>   1 file changed, 9 insertions(+), 19 deletions(-)
 > 
-Great, looks good to me:
 
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
 Thanks,
 Maxime
+
 
