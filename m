@@ -2,68 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978EBCA5FF0
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 16:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B72A8CA5FFC
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 16:55:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF2DF409FA;
-	Mon,  5 Oct 2026 18:55:16 +0200 (CEST)
-Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
- [74.125.227.171])
- by mails.dpdk.org (Postfix) with ESMTP id 9F1AA40374
- for <dev@dpdk.org>; Mon,  5 Oct 2026 18:55:15 +0200 (CEST)
-Received: by mail-pj2-f43.google.com with SMTP id
- 98e67ed59e1d1-39dacf053eeso945189a91.2
- for <dev@dpdk.org>; Mon, 05 Oct 2026 09:55:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CA5EE40DDE;
+	Mon,  5 Oct 2026 18:55:17 +0200 (CEST)
+Received: from mail-pz2-f39.google.com (mail-pz2-f39.google.com
+ [74.125.228.39]) by mails.dpdk.org (Postfix) with ESMTP id 6BBFE409FA
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 18:55:16 +0200 (CEST)
+Received: by mail-pz2-f39.google.com with SMTP id
+ 41be03b00d2f7-cc79a5bdf9fso450381a12.1
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 09:55:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791219314;
- x=1791824114; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=f7fGs1ZGdMimmoU8QKJxcvdnEPfad+h07OlOyssQ/xY=;
- b=kgGLqiHbLkLmXYsUcW7FRRtuhaPfFqAoGHEqVHYIKGBuCzS2Lo+tCdVSnyTLHzvfoG
- vjrBXb5Hobl5vpnOJt4V1JGihtXp2pYSNos/YCGs1rVdTqVJ6sfXLelV3bqohmQOwVtd
- LuOycuWjIiOHwXE7739RWWXrYn2uUipKkhNdnxonzO39Y3nEYc3xgHKRNsW60lsgFpMx
- /DrEAaHCJNZzHy91MOZ6E+ADf02FFwpWn1apyTQsa84sqV4f4oKm6dLfI4qVGlzx8jJh
- zyDpa6UWpmJgzkR6U0aCfmMsjYEy6Yhz8EjgompRDoZ/lcfoQlYH0i/dd1evn/WLV6fq
- 8ElA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791219314; x=1791824114;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791219315;
+ x=1791824115; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=f7fGs1ZGdMimmoU8QKJxcvdnEPfad+h07OlOyssQ/xY=;
- b=Iuli2JNkUjFhyt/BdibH3y/SQzf25jd/jrMyaGVoKp5pDG5I3brwi82szrsf0CUtcm
- x+38sb5rKh3zSotBhx1hOXlDVQyCWIbOzixHipOGSWb+F2b2SeVHabesgdC1TZ9aUmGE
- EZOBDJ1yd+1jjBWkcmNvDVAY1mFFrVS/v9HL2ocpfuUiCxvBtecoHqbrQKxU5I7uK6xT
- Fv2utO6scmmQfSl99OIuDxVki9HGKr0bVueqgRV276Pt7cSz0my+yqEsk60ZmJ9FtojN
- QnzBkplVQleowj+wyjZP20yFJgpetV3nl8k62gIqvG7hL/6TxIdnrbM/z/GpE6i1XZNs
- BETQ==
-X-Gm-Message-State: AFq9FYJ8TowYi2Kt288H8V2OXYGgn8bvP4fTV4q62yAiceI6FKj5EWrE
- tEKsvMoRn22ac29daY5w2O/Tlxwwn9RqpaE/Qg0OTWh9Ub9d7/yF7HlQUmbxjW7I569yHMrf9w5
- 2rx2T8R0=
-X-Gm-Gg: AYBFou0n98Vq8HtgGExLza/bQoIyaS7jMepEPBxzJ4BuXYw1qsFPT5ngwVn93+r96cl
- TTcPTgWfjWkgN0Rp8AyfZCvpgOKZaVn4OAEd1ueVnqe+4mhw7TfvD6Y2OIHxcpthYh4l58siAAD
- vb1tL536YVwdqIjfqGglj18dZ0zrT5mxKTgAwYxn4LeY26wfP8/soByfQ8/5XGgLBCU/FWgGMXV
- BFDAaCYk+BgjyUa4tpIAoSyOC4LeUyA0FY1FuAPKPJeopPqKQtT6DBJW7gb57MKnmf91zgCYcQC
- FEU6PH9C5ShjV3IZu1V+3hoG7xZVGYEAOBURnBA9+qkfK+TuHxikOWOgENoqx5gjUd7Xmh6eYvU
- vU5YSDEPRTFLjrP5jqZd53gNUQQtlGFI+xPk4w0J8z3/ve+RygZ2w6hUqQv7W/32hcgDBPU0fRg
- OcoQn6zQXVALix6xqHG9gZvYL3CSx6BjmtD+kt6u8U93OeXjiE3755AZbdafxd0gH5LQS/dzUQC
- RxZAqCDMFCyKXyyy1U9SOt7vd3R8VXyIhIebA==
-X-Received: by 2002:a17:90b:4a0a:b0:3a7:82ef:a8a9 with SMTP id
- 98e67ed59e1d1-3a782efb176mr5821157a91.26.1791219314486; 
- Mon, 05 Oct 2026 09:55:14 -0700 (PDT)
+ bh=ZJdNp3yrTyswcWeWZADxvPgqb+YxpmqlLRDOsLehh5k=;
+ b=Yk7Uxlg4rFw/wtxEoDKf+8Tyu/XI/Zd1GXWAULCA7TBhIWbqXeAv4IfTfl0+qj0wIa
+ 0bH1kgkqnSotu2lhbGGzyNxLeqL3TQ+MnfgYxIdWQbN5hDQcRxC2L/RUtxmq4p8njGsI
+ H9mH7LtxCwWpYRaWddOIab+bR3FVCQH3GOSzX4/sgz9nHPKDLVEkopVu6oYFpiOr40SP
+ ZyG1PJclvmDQVrnNr4ZFMhRo/BzwCgtf8C/u5ZaKgEz5rkEvPZY/jchHX6tVpxKuKENS
+ rhO9YSb2iA7qE01Gq91QRJfCihJVxpw/522IQnXSXwbSpSEz45q4ZuVOtRak1KSavckk
+ CCyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791219315; x=1791824115;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=ZJdNp3yrTyswcWeWZADxvPgqb+YxpmqlLRDOsLehh5k=;
+ b=nMermv56mb1BdRyY2QEcs4cUECRPcTfvEsQOj47MgjEOlr5N1thW17cVMmr9Iojs3j
+ B49KIzYzYYlXe943Wj2skKHVTzhX4hsaI5KS4eE6Ek9No7fzmNoa4BV/+K3fW981YdDW
+ A1FIDz5NjMGkdrQXBZFPrSHbALyQtG8y4E1pr+oto3uq30Y78RVKsBTDlUSzC74S2yS3
+ POGPyG+DchqxAPI/WTVzzCq7kJVmGK7HNJ3eb5iMCvp75XsPVZPufFMn/cL1KoOg9LgB
+ 8cuPY+TWJGRKm+m3IdkBs2MiTC+krYiN4lHGG8o3v2vp/0gzLwXQj10PPdovs4EqManf
+ FNuw==
+X-Gm-Message-State: AFq9FYLwRExa7Yqd+kuM7sxmYHGFRqt1sae8i23N5UnL1ohU0mQwUP8t
+ V5tlqDIWzvBrKZ4ReZuwCqsD8t0bFOJ6sYwBFbt/2pWMaAgf5IZjFQGrBccP0tGcNdqw8O+kgWh
+ JUXRGpxA=
+X-Gm-Gg: AYBFou17tFa7yDqcPcfwT2XERSxesoiFhUazsP53pBRgiwjXH7UJJOXs8LDG6+Z5d4Z
+ G7jAEhxaZoObUZnPMsWOKDlvbnJTOHhTk0AKFjhowIflCjfzpAhSlL2bdknbsx6XpS1eFI/p7E/
+ B72dSIkDukzLGc491uX7bemhG44jl/cMr57X3/UePnLW45bhhqq8pxqWQysj4YUuCYU/msSkalG
+ CpU+eWdL8JNqLwAZVJvD4OCOBTqnPbTrWzH3tfLleeStRm7wZM94Y5KXkWSNUY0EsHav8HkjH7C
+ Yf+vcAONTuJLzZGsxgonC52J4ySdk+dcBAynypMPLmRMBvnqPCn05jNsshZWZsUiv23j6cIFnT8
+ Wy2dAIwsW+hsMHhqp4RVcXD/zAxCojJAwOmtKUT0juFraaKMe1GlK6Y9xrsb3uX7e24j6p2Mc/C
+ ZL8zwkeY7EEuLx3BoDTTpHKy9hxLOiKvAtZAvpKsf9cwRdJ8muQq4p6eHfKu2fwES+FyAPItTC9
+ hocldaDUexgwdBsPU2pOQMpTm2QuTESLW1b0Q==
+X-Received: by 2002:a17:90b:5388:b0:3a0:cca0:4a8c with SMTP id
+ 98e67ed59e1d1-3a853cdacfamr117654a91.7.1791219315381; 
+ Mon, 05 Oct 2026 09:55:15 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a8533aba95sm289414a91.2.2026.10.05.09.55.13
+ 98e67ed59e1d1-3a8533aba95sm289414a91.2.2026.10.05.09.55.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 05 Oct 2026 09:55:14 -0700 (PDT)
+ Mon, 05 Oct 2026 09:55:15 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 0/4] fix crash on device args with no driver options
-Date: Mon,  5 Oct 2026 09:53:46 -0700
-Message-ID: <20261005165512.334085-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Gaetan Rivet <grive@u256.net>, Xueming Li <xuemingl@nvidia.com>
+Subject: [PATCH 1/4] devargs: fix NULL args with global device syntax
+Date: Mon,  5 Oct 2026 09:53:47 -0700
+Message-ID: <20261005165512.334085-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261005165512.334085-1-stephen@networkplumber.org>
+References: <20261005165512.334085-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -79,42 +82,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A device given in the global syntax with no driver layer, such as
-"bus=vdev,name=net_af_packet0", leaves devargs args NULL because
-drv_str shares a union with it and is never set.  The legacy syntax
-always sets args, to an empty string when there are no options, and
-drivers rely on that.  Passing the NULL to rte_kvargs_parse() crashes
-in strdup().
+A device given in the global syntax without a driver layer,
+e.g. "bus=vdev,name=net_af_packet0", leaves drv_str,
+and so args which shares its union, set to NULL.
+The legacy syntax always sets args, to an empty string when there
+are no options, and drivers rely on that.
+Passing NULL to rte_kvargs_parse() crashes in strdup().
 
-The first patch makes the global syntax match the legacy one by
-defaulting to an empty string.  The second hardens rte_kvargs_parse()
-so a NULL gives an empty list rather than a crash; NULL is not
-excluded by the API documentation, and an empty list is the sensible
-reading of "no arguments".
-
-The last two patches add the missing coverage.  There was no test for
-a device string without driver arguments, which is how this went
-unnoticed.  Converting the devargs test to the unit test suite runner
-comes first so the new case is reported on its own rather than
-short-circuiting the rest of the file.
-
-Verified both new tests fail without the fixes: the devargs case trips
-its args-NULL assertion, and the kvargs case faults in strdup().
+Default drv_str to an empty string when there is no driver layer.
 
 Bugzilla ID: 2049
+Fixes: b344eb5d941a ("devargs: parse global device syntax")
+Cc: stable@dpdk.org
 
-Stephen Hemminger (4):
-  devargs: fix NULL args with global device syntax
-  kvargs: harden rte_kvargs_parse
-  test/devargs: use unit test suite runner
-  test/devargs: add tests for missing device arguments
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/eal/common/eal_common_devargs.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- app/test/test_devargs.c             | 101 ++++++++++++++++++++++------
- app/test/test_kvargs.c              |  16 +++++
- lib/eal/common/eal_common_devargs.c |   4 ++
- lib/kvargs/rte_kvargs.c             |   6 +-
- 4 files changed, 106 insertions(+), 21 deletions(-)
-
+diff --git a/lib/eal/common/eal_common_devargs.c b/lib/eal/common/eal_common_devargs.c
+index c523429d67..8bbff9cd15 100644
+--- a/lib/eal/common/eal_common_devargs.c
++++ b/lib/eal/common/eal_common_devargs.c
+@@ -154,6 +154,10 @@ rte_devargs_layers_parse(struct rte_devargs *devargs,
+ 		}
+ 	}
+ 
++	/* No driver layer: match the legacy syntax, empty args. */
++	if (devargs->drv_str == NULL)
++		devargs->drv_str = "";
++
+ 	/* Resolve devargs name. */
+ 	if (devargs->bus != NULL && devargs->bus->devargs_parse != NULL)
+ 		ret = devargs->bus->devargs_parse(devargs);
 -- 
 2.53.0
 
