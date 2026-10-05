@@ -2,84 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A25CA5FF5
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 20:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DCFCA5FF5
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 20:25:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B75F40DDA;
-	Mon,  5 Oct 2026 22:25:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 38BFA40E0B;
+	Mon,  5 Oct 2026 22:25:28 +0200 (CEST)
 Received: from mail-pj1-f97.google.com (mail-pj1-f97.google.com
- [209.85.216.97]) by mails.dpdk.org (Postfix) with ESMTP id 1BFA340B99
- for <dev@dpdk.org>; Mon,  5 Oct 2026 22:25:22 +0200 (CEST)
+ [209.85.216.97]) by mails.dpdk.org (Postfix) with ESMTP id 501D0402DD
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 22:25:26 +0200 (CEST)
 Received: by mail-pj1-f97.google.com with SMTP id
- 98e67ed59e1d1-398b3c37877so255707a91.0
- for <dev@dpdk.org>; Mon, 05 Oct 2026 13:25:22 -0700 (PDT)
+ 98e67ed59e1d1-3a7d9d9b67bso136554a91.2
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 13:25:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791231921; x=1791836721;
- h=content-transfer-encoding:content-type:mime-version:message-id:date
- :subject:cc:to:from:dkim-signature:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=WQRuKrIFi6tZGGKaP2rwPTp7BxiXh7jGPk/QxEZ5Jaw=;
- b=YOKVbuRrsfdmIq1s9IN6fGarEF1msZ0FKFZB+ZAAUJuTjTqD3mAe8MOcGjasI7pZnZ
- 1+O0sPsCYWqJ2nncHY9CUp1Z4iW4IlhM6TMrnKIMUBys7ZEZ8QQRKzM+MbQnFzLLLS8Q
- lhjFIFywnRyi1bWFbknPbaN19YD7rmh4lLEwJUQliTIGMkOTA43uUnZRYcbDNR+ZddJk
- ddv4jLc1yupqVxP1hTU9GCoPcTk7TgaosVNPm3KBfJ6lNzCK5rVOPhDZwP5pbkJ2nju+
- pyMksM8oYo+lfiC/CvdErr2w0Y99nyezh8imRUQLyv3kgDzSELBxuTk6jkuTTqu+Nfr4
- P7Wg==
-X-Gm-Message-State: AFq9FYJrJp369gHBbPZ6JTnb1dEEhtHnoXQNbPkXDuVC+WvKzfz3kQaQ
- z2yRAF1OGbLXr0vrJe6oI6luDzSYGnNKYOXYaYZSUkaQ4GZytD9G/VfhpcKQY3lszmJX6/yBqRx
- 6QTQMdVaH0lrbM666Zd4POBxYe57/rxDg/J9aIAtYfI6UfIN7e6IUOAE9yudRht7u0Qqj/I5TjF
- 9nmlqV+mdHxsapB+/7xZTuVv0LaSxzFkNYeCiLd6m7CDIm4cLYo7SCX6hGcTK9uCRVjo2RaA==
-X-Gm-Gg: AYBFou0DdTH8fjw4UXspMHAOL9qrJ/Nhbgl4yEjLYxCa9NmQxkg590JE8FESXh6TAEE
- La+P3GpaJo0eIkg1zMQSGGFx4UtDrL2sRhFfiNLe4W0Ig7d1rsdJY0HRtCFDHfTrqGPQXpatJ7S
- HWMXmHCC1EZJfDLMPirQ46BhsQ3NBSr95aN0jKTxGd5SD9HZjLQ/3QT5CDUTIFzuXFl/HqjU0Xi
- Xnfx10o8Nt/j58pyZ0z/Bv8ZvI0hYP6UgZ1FLVIu/136rD+2eI2Ty4XeNWpu0X4qHUGKZZZof78
- 1AUGUcW9Q8MgZcy48uz0OgOfD0RIKGG3iPEuDwKurudsqBGssmjwCLJhIMQdgS16j/dIcZLmfIH
- yf5qeiwmqlNpLL9QtZfZo6jx9TSIADM5LB0E0oiOoDFv5kLgJyGclJN9czcpYjDIXCrpBRFL+vo
- nHpbvX0UBrG7QaDJRT+/EX9HYi5+MZX/Vo1is=
-X-Received: by 2002:a17:90b:388b:b0:3a6:fec5:c179 with SMTP id
- 98e67ed59e1d1-3a6fec5d128mr8125034a91.41.1791231920998; 
- Mon, 05 Oct 2026 13:25:20 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1791231925; x=1791836725;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=I0uWASKrhdLtR45kl0Qm48BfAmbkF9nGvXZAmn0KCkQ=;
+ b=Xzsj8MJleWhRp0j0IjWakEpzWRD+EqeVWt44HUfcE39NMnw+2rjD7O7BUr6aZLixey
+ xMLrEaYXqLLwe5kOkchJ0wXSmQuu+fIHQwyRuFY5N4Z80Nxs16UBy9uFQT1ggJ6BI+SY
+ S2tM/cWVBKtfFALvyXZm1qevIrZsv+FvYUR1+LvERNyfWbzIqQaG7kU1WN6ZVsvtlDk0
+ n2P8OV+zBCA+D/gKFM1jHVD+xtggtIlY7ISLikN++FzcGa+MmEZrKW20WTxLI4qP0hFM
+ UvUiL666XI9LeW4e3dB+dXvewmhLtIIjtbw4VhOm5z5IVjfASmD27P3kfwnnWuSgXk1U
+ xXOQ==
+X-Gm-Message-State: AFq9FYIdcRDCqp/pJFPeo/UK95v/dkL0CLkBYKZlmf6fb+A8UDZN83vW
+ nUZPJbdo6NFmMFTJYI6mP4vnV3FIrH0D+lEwDZw3sZoXWsT1VIT3eakO2GelfPWNtiL1qpW2qqg
+ t/ghPsNAkqSgxQflWadEvUN8G+JiWzB06WnYHG4mgHvvwTV/FGIKykeRLASbBsqlz1RpuaHEDDf
+ 0FSRht9se+hiMqIgcpgbkYL9n6bnpW4XefH70Kxk5pAwuAVKAxk4kBvuaz4/0BRR+aTkPk8g==
+X-Gm-Gg: AYBFou1a+hUzdTOlJnS0iVkZy4U3YdKKFxMFwFTfThst+3LNdeGbYyAGLlBwPyK8y8M
+ wRMkrp14frkk4WdtgIuUk92XIXiF/gw06IGSnnOEPS/Ll7VIkGSFwSN91w78YIu08NMe72r1H4f
+ sWryiiHwiPkvoy8lIosV6cEp1fbU+eCxbn8HQqM+GCQuXWyKuOYJ5i+LiUnIjG0OwzzvrGARAfw
+ kHibQg/BqnDOi0+BuETbm4RcG4x2ZF3QxuibL77NN7xZOFzYx2t0AXfOIfsCheQhv0CRxdgK6QR
+ hQqSbbdgPS4rBPjPK8JfdOON/W9u6pB1MMSp69MCd73LDLvJZ998GYpCJcAvAuFGnOe9ekrlZjo
+ abP2R7DOZEcRdqoIeAxmsbF0lS1+a/hFUabf6ZiSznLMob6o1uTQvaOiDfRobhWlNseYhWkBohi
+ YKdQBzBHbvlPBkYwgizUYZ7hjE+PEFEZh+kVM=
+X-Received: by 2002:a17:90b:288d:b0:3a8:1ffc:391b with SMTP id
+ 98e67ed59e1d1-3a81ffc3b58mr1272525a91.43.1791231924897; 
+ Mon, 05 Oct 2026 13:25:24 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-25.dlp.protect.broadcom.com. [144.49.247.25])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3a6dca3996fsm1615701a91.0.2026.10.05.13.25.20
+ 98e67ed59e1d1-3a85437d4c3sm300555a91.7.2026.10.05.13.25.24
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 05 Oct 2026 13:25:20 -0700 (PDT)
+ Mon, 05 Oct 2026 13:25:24 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
 Received: by mail-qt1-f199.google.com with SMTP id
- d75a77b69052e-53380b67cfdso47847601cf.1
- for <dev@dpdk.org>; Mon, 05 Oct 2026 13:25:20 -0700 (PDT)
+ d75a77b69052e-534f3fe0236so38702931cf.2
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 13:25:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1791231920; x=1791836720; darn=dpdk.org;
- h=content-transfer-encoding:content-type:mime-version:message-id:date
- :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=WQRuKrIFi6tZGGKaP2rwPTp7BxiXh7jGPk/QxEZ5Jaw=;
- b=fTE1RrOqfp8Q3tWn3RVhCcD+MgfEbvwcL9PmJS/IUuEITAhQAnvjRtOQlifdlgNyXl
- oJgWcWD2VYwLt0RyR8gh8d/ZdhhfXLHrwzLpxfDvshCpWuuh7RHsXHiCQrGetk1JR3j4
- q8xwov8m5YXlkP/j7ZDcB8ZfZ3sl2rIQaVtz0=
-X-Received: by 2002:ac8:5dd4:0:b0:535:25db:17b1 with SMTP id
- d75a77b69052e-53525db471cmr93274451cf.17.1791231919600; 
- Mon, 05 Oct 2026 13:25:19 -0700 (PDT)
-X-Received: by 2002:ac8:5dd4:0:b0:535:25db:17b1 with SMTP id
- d75a77b69052e-53525db471cmr93273621cf.17.1791231918705; 
- Mon, 05 Oct 2026 13:25:18 -0700 (PDT)
+ d=broadcom.com; s=google; t=1791231923; x=1791836723; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=I0uWASKrhdLtR45kl0Qm48BfAmbkF9nGvXZAmn0KCkQ=;
+ b=H63Y4no85h8M5FBCv0GQmyZArI2+Jt55HySZchIz+qbmVIfzKV4+gr7PFBduSj77GI
+ ruHS2jrGTGeXX6hZmFP5cW2VmTneCqumnR4r+jm0yiA8qtfyUhnd1SCmnlDC6KeHFURU
+ 6QhmaVig/XaIigx/t9fFCTCriUXgVmLJ8sOLc=
+X-Received: by 2002:a05:622a:44c:b0:535:33a0:520c with SMTP id
+ d75a77b69052e-53533a06c62mr59327501cf.3.1791231923350; 
+ Mon, 05 Oct 2026 13:25:23 -0700 (PDT)
+X-Received: by 2002:a05:622a:44c:b0:535:33a0:520c with SMTP id
+ d75a77b69052e-53533a06c62mr59326241cf.3.1791231921641; 
+ Mon, 05 Oct 2026 13:25:21 -0700 (PDT)
 Received: from r740-105-132.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-917e0c17b8esm94106166d6.43.2026.10.05.13.25.18
+ d75a77b69052e-5353d622a55sm8712831cf.23.2026.10.05.13.25.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 05 Oct 2026 13:25:18 -0700 (PDT)
+ Mon, 05 Oct 2026 13:25:21 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com, Joseph Wong <joseph.wong@broadcom.com>,
- stable@dpdk.org
-Subject: [PATCH] net/bnxt: fix bit allocator out of bounds read
-Date: Mon,  5 Oct 2026 15:25:15 -0500
-Message-Id: <20261005202515.17821-1-manish.kurup@broadcom.com>
+Cc: kishore.padmanabha@broadcom.com,
+	stable@dpdk.org
+Subject: [PATCH] net/bnxt: fix hash seeding and hot-upgrade lock handling
+Date: Mon,  5 Oct 2026 15:25:19 -0500
+Message-Id: <20261005202519.17873-1-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 X-BeenThere: dev@dpdk.org
@@ -95,65 +94,144 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Joseph Wong <joseph.wong@broadcom.com>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-In ulp_bit_alloc_list_alloc(), the loop condition could allow the
-index to reach bsize_64 before the bounds check ran (the do-while
-body reads blist->bdata[idx++] before the loop condition tests
-idx <= bsize_64), causing an out-of-bounds read one element past
-the array. Refactor the loop to check the bound before indexing.
+Seed the CRC32 hash used for TruFlow flow-offload table lookups
+with a per-table random value instead of computing an unkeyed
+CRC32 directly. An unkeyed hash lets an attacker who can influence
+flow-key contents craft inputs that collide in the same bucket,
+degrading flow insertion into worst-case behavior.
 
-Fixes: 0001cc58d362 ("net/bnxt: support generic hash table")
+Also track whether the ULP context lock was actually acquired
+during hot-upgrade failover cleanup, and only release it if so,
+instead of releasing unconditionally on every cleanup path. Releasing
+a lock that was never acquired corrupts the lock state and can lead
+to a use-after-free on a later acquire.
+
+Fixes: b14da6540294 ("net/bnxt/tf_ulp: use optimized CRC32 hash")
+Fixes: eeefaecba000 ("net/bnxt/tf_ulp: support hot upgrade")
 Cc: stable@dpdk.org
 
-Signed-off-by: Joseph Wong <joseph.wong@broadcom.com>
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
 ---
- .mailmap                               |  1 +
- drivers/net/bnxt/tf_ulp/ulp_gen_hash.c | 17 ++++++++---------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/net/bnxt/tf_ulp/ulp_gen_hash.c   | 22 +++++++++++++++-------
+ drivers/net/bnxt/tf_ulp/ulp_gen_hash.h   |  6 ++++++
+ drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c |  5 ++++-
+ 3 files changed, 25 insertions(+), 8 deletions(-)
 
-diff --git a/.mailmap b/.mailmap
-index 2e348c3bce..e013a7d6ba 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -813,6 +813,7 @@ Jonathan Tsai <jonathan1.tsai@intel.com>
- Joongi Kim <joongi@an.kaist.ac.kr>
- Jörg Thalheim <joerg@thalheim.io>
- Joseph Richard <joseph.richard@windriver.com>
-+Joseph Wong <joseph.wong@broadcom.com>
- Josh Soref <jsoref@gmail.com>
- Joshua Hay <joshua.a.hay@intel.com>
- Joshua Washington <joshwash@google.com>
 diff --git a/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c b/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c
-index 74cdd5c1da..d94b59286f 100644
+index 74cdd5c1da..215c8f39f8 100644
 --- a/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c
 +++ b/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c
-@@ -21,16 +21,15 @@ int32_t ulp_bit_alloc_list_alloc(struct bit_alloc_list *blist,
- 	uint32_t bsize_64 = blist->bsize / ULP_64B_IN_BYTES;
+@@ -6,6 +6,7 @@
+ #include <rte_bitops.h>
+ #include <rte_log.h>
+ #include <rte_malloc.h>
++#include <rte_random.h>
+ #include <rte_hash_crc.h>
  
- 	/* Iterate all numbers that have all 1's */
--	do {
--		bentry = blist->bdata[idx++];
--	} while (bentry == -1UL && idx <= bsize_64);
--
--	if (idx <= bsize_64) {
--		if (bentry)
-+	while (idx < bsize_64) {
-+		bentry = blist->bdata[idx];
-+		if (bentry != -1UL) {
- 			jdx = rte_clz64(~bentry);
--		*index = ((idx - 1) * ULP_INDEX_BITMAP_SIZE) + jdx;
--		ULP_INDEX_BITMAP_SET(blist->bdata[(idx - 1)], jdx);
--		return 0;
-+			*index = (idx * ULP_INDEX_BITMAP_SIZE) + jdx;
-+			ULP_INDEX_BITMAP_SET(blist->bdata[idx], jdx);
-+			return 0;
-+		}
-+		idx++;
+ #include "bnxt_tf_common.h"
+@@ -98,6 +99,12 @@ ulp_gen_hash_tbl_list_init(struct ulp_hash_create_params *cparams,
+ 		return -ENOMEM;
  	}
- 	jdx = (uint32_t)(bsize_64 * ULP_INDEX_BITMAP_SIZE);
- 	BNXT_DRV_DBG(ERR, "bit allocator is full reached max:%d\n", jdx);
+ 	*hash_table = hash_tbl;
++
++	/* Random per-table seed so the CRC hash cannot be predicted offline
++	 * from attacker-controlled flow match fields.
++	 */
++	hash_tbl->hash_seed = (uint32_t)rte_rand();
++
+ 	/* allocate the memory for the hash key table */
+ 	hash_tbl->num_key_entries = cparams->num_key_entries;
+ 	hash_tbl->key_tbl.data_size = cparams->key_size;
+@@ -204,31 +211,32 @@ ulp_gen_hash_tbl_list_key_search(struct ulp_gen_hash_tbl *hash_tbl,
+ 		return -EINVAL;
+ 	}
+ 
+-	/* calculate the hash */
++	/* calculate the hash, keyed with the table's random per-instance
++	 * seed so the bucket a key lands in cannot be predicted offline.
++	 */
+ 	switch (hash_tbl->key_tbl.data_size) {
+ 	case 1:
+ 		hash_id = rte_hash_crc_1byte(*entry->key_data,
+-					     ~0U);
++					     hash_tbl->hash_seed);
+ 		break;
+ 	case 2:
+ 		hash_id = rte_hash_crc_2byte(*((uint16_t *)entry->key_data),
+-					     ~0U);
++					     hash_tbl->hash_seed);
+ 		break;
+ 	case 4:
+ 		hash_id = rte_hash_crc_4byte(*((uint32_t *)entry->key_data),
+-					     ~0U);
++					     hash_tbl->hash_seed);
+ 		break;
+ 	case 8:
+ 		hash_id = rte_hash_crc_8byte(*((uint64_t *)entry->key_data),
+-					     ~0U);
++					     hash_tbl->hash_seed);
+ 		break;
+ 	default:
+ 		hash_id = rte_hash_crc(entry->key_data,
+ 				       hash_tbl->key_tbl.data_size,
+-				       ~0U);
++				       hash_tbl->hash_seed);
+ 		break;
+ 	}
+-	hash_id = (uint16_t)(((hash_id >> 16) & 0xffff) ^ (hash_id & 0xffff));
+ 	hash_id &= hash_tbl->hash_mask;
+ 	hash_id = hash_id * hash_tbl->hash_bkt_num;
+ 
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_gen_hash.h b/drivers/net/bnxt/tf_ulp/ulp_gen_hash.h
+index d3f3840cbe..3aabea07ac 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_gen_hash.h
++++ b/drivers/net/bnxt/tf_ulp/ulp_gen_hash.h
+@@ -57,6 +57,12 @@ struct ulp_gen_hash_tbl {
+ 	uint32_t			hash_bkt_num;
+ 	struct ulp_hash_bucket_entry	*hash_list;
+ 	uint32_t			hash_mask;
++	/* Per-table random seed for the CRC hash, set at init time so the
++	 * bucket a given key lands in cannot be predicted/targeted offline
++	 * by an attacker who controls flow match fields (hash-flooding
++	 * mitigation).
++	 */
++	uint32_t			hash_seed;
+ 
+ 	/* Bit allocator - to allocate key_res index */
+ 	struct bit_alloc_list		bit_list;
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c
+index be14b65804..694de307de 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c
+@@ -60,6 +60,7 @@ ulp_tfc_hot_upgrade_mgr_timer_cb(void *arg)
+ 	struct tfc *tfcp = NULL;
+ 	uint16_t fw_fid = 0;
+ 	int32_t rc = 0;
++	bool ctx_locked = false;
+ 
+ 	ulp_ctx = bnxt_ulp_cntxt_entry_acquire(arg);
+ 	if (ulp_ctx == NULL) {
+@@ -67,6 +68,7 @@ ulp_tfc_hot_upgrade_mgr_timer_cb(void *arg)
+ 				  ulp_tfc_hot_upgrade_mgr_timer_cb, arg);
+ 		return;
+ 	}
++	ctx_locked = true;
+ 
+ 	tfcp = bnxt_ulp_cntxt_tfcp_get(ulp_ctx);
+ 	if (unlikely(tfcp == NULL)) {
+@@ -120,7 +122,8 @@ ulp_tfc_hot_upgrade_mgr_timer_cb(void *arg)
+ 	}
+ 
+ cleanup:
+-	bnxt_ulp_cntxt_entry_release();
++	if (ctx_locked)
++		bnxt_ulp_cntxt_entry_release();
+ 	if (restart_timer)
+ 		rte_eal_alarm_set(US_PER_S * ULP_HOT_UPGRADE_TIMER_SEC,
+ 				  ulp_tfc_hot_upgrade_mgr_timer_cb, arg);
 -- 
 2.31.1
 
