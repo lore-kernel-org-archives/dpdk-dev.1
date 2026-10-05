@@ -2,52 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3605FCA5FFC
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 16:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9341DCA5FFE
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 16:42:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7B01B4111C;
-	Mon,  5 Oct 2026 18:39:11 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id B88E640E54
- for <dev@dpdk.org>; Mon,  5 Oct 2026 18:39:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791218348; x=1822754348;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=VUC7KFx4l9wV1xnHXqvtxmI3IorMff0R9ja1XEAp7a8=;
- b=cA3Lr+1hcZuQUbFkzj0hsyZx9Lz8P2q6on4cqopoZPVcuRGf/JJr2Kt5
- r/7MBM3ZHxjOlJEEWFCdq6Gz6damUMgB96MAn3eOCDPhVGu3FESnkvQg2
- wCvVrBSKyrW7NX3GnCwul6McdOpkf/B7icLt+YecEl1hFsMEAfpMeGyHa
- r7kNaxnJYbdE2HxUQeIa6n6/JPrHVexaRZobSTaN0aPek7BGOqznZqe+N
- 2V/e9a+mnvJLlr4Ji4HKyie+Amckrrfz8CvXAEhrHGPrrpOi/+LatjQDi
- 2mLk+prnPpYw8HEKznpwOqAg6NScYHB0FbFWHSm/5/rfBdl3jmO9hgzlJ Q==;
-X-CSE-ConnectionGUID: auaL3eiaSm2gkZoY8qjbVg==
-X-CSE-MsgGUID: xgkN8zCiRc+Q1DEsW2YSvA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11926"; a="90665376"
-X-IronPort-AV: E=Sophos;i="6.27,142,1787036400"; d="scan'208";a="90665376"
-Received: from fmviesa011.fm.intel.com ([10.60.135.151])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Oct 2026 09:39:07 -0700
-X-CSE-ConnectionGUID: wMwRo39MREmlcCTeishw8Q==
-X-CSE-MsgGUID: FLvvGIp4RxOtmfHS0ySlOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,142,1787036400"; 
-   d="scan'208";a="945858"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa011.fm.intel.com with ESMTP; 05 Oct 2026 09:39:06 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 24/24] net/i40e: advertise flow keep capability
-Date: Mon,  5 Oct 2026 17:38:19 +0100
-Message-ID: <e89ccbb4b65007a28e70e50b4dd8ed3b1ee0e2c2.1791218157.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1791218154.git.anatoly.burakov@intel.com>
- <cover.1791218154.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id 9C04340BA0;
+	Mon,  5 Oct 2026 18:41:15 +0200 (CEST)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
+ [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id 49AC940DD5
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 18:41:14 +0200 (CEST)
+Received: by mail-pj1-f52.google.com with SMTP id
+ 98e67ed59e1d1-3a7d7287703so1279097a91.2
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 09:41:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791218473;
+ x=1791823273; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=JEhfdJHQRcRNoWWtxMiEEt+mXe00ecKDUJIT9e838pY=;
+ b=DnRselX9693GyHgHK3MiOCD72KHROm28yjVOewLEcTLDpMzDeG/GHODwimCRuoB5iA
+ Wzq/Zy2ciWxEejVphkKuw0N958y1OT+XFCyWDt4Wz/PkdyZRkn6IWknes7CMswdww2h9
+ gi+jUxCriMIAMK5i+YIIIKeakDkt/nxOr6pZhrOLjybm1mToxvB9P+J+xTmFfifGdglQ
+ PV+WdrQWpd1Lnsq1Qz0FreSBRuKNwWbavSqWvYMK9WS4juBqToGqr4gMUbR+zCT+INxO
+ toCDPw3GywFENIGNidoBEbwsBAJpfhpJnDW92v15p2OA62BmHmzPXFAarxi73CihT/b+
+ JY5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791218473; x=1791823273;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=JEhfdJHQRcRNoWWtxMiEEt+mXe00ecKDUJIT9e838pY=;
+ b=wmANrZ5RJK0SCNFpLZ+bVZ+f7mmT6HO08YfbPT/Vf5IKNQqtByqycknqbNTw+wAYJr
+ /ENHsgmA47rsp09ECvNVpQnOJg6UeZI4U7LFXFBD8dE+FnkfPx2N8D2oxEDhWLZsUxYn
+ LgYdUwaa7oCCkuLiOJWRUPOW0gPM8/ASBeEO49OocK/YlHohk7PiqX3wgUx3M4MyqXza
+ FF5CN4890WN7jso283q+thsYXL7B8/0c/trets/uC6stVdS++MIx9HB7J6g3KvH2pQZ3
+ KAfuNH1BHAb0V7ccQkFTyUKVB+e73ouEddl3PMLSLQwykaWG1VN3qKBXAfv9Foblm3o7
+ 1Jgg==
+X-Gm-Message-State: AFq9FYIthKt2BOFP6CJY7hehVl7enFpV3uMfIDD/EfFRUsIGeuEXj+qs
+ T0d6CnHFVqIqzwhfzdNKOjY8yz+/DbJAryqogYokDouwEJoIlFfKjJJ7pWqi5jyWMWG/LDMzO9F
+ pJZBs
+X-Gm-Gg: AYBFou3ghNLBVX+o3uha7g6gRw98r+Q5ULAAxbt8ULRz1Ol8IOHWr1QiPD5NYTeqFMb
+ Fqs+D3YsZkeAM6kU8qvA4V/pqAGX7uc9k24+fenIrTqISbiY4pxnGPgQoUYn8cOmDGQL7N3BQv6
+ Moqy42wboDTP1chD7JXOANw8oDoD1OryWrAwm8Glpp5DIlobanPmTge6gafp6Q253JHC2g0lFu0
+ QBukshMxHqtDDPhfzpCkIeF0CYIdLckPjj2Mv5wDFkdNNhINd1Iqht08G0SyeZXor9PsvzK4leh
+ hvgsPObdSY+CJ8l+likny9prcQxpAIEpBQrzttruuW0hMpmwQKfIoKlO4uBTO6PXpbidtZE7wr0
+ 5pUEM3Y+QILjtTar+T0dSupDHAYW/K8GOUl3I4CVh8E7iZ0625EFN3sFmoMQRuTieVIj73K1MDu
+ NxkpGXwfnwj7vmlQh55pY1Mdfj+lB0/7vRT0pr810Rnz25TtrIs1oJNdtX5U+qLm8olj2F3UxJi
+ GF2LP4lP4H+d8XrjlEcWW5j0QzhZ8BL4duDkMG+
+X-Received: by 2002:a17:90b:4c4e:b0:3a0:7d60:450d with SMTP id
+ 98e67ed59e1d1-3a7873dfademr7027324a91.43.1791218473190; 
+ Mon, 05 Oct 2026 09:41:13 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3a853cb7cb3sm188973a91.11.2026.10.05.09.41.12
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 05 Oct 2026 09:41:12 -0700 (PDT)
+Date: Mon, 5 Oct 2026 09:41:11 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Frank Dressler <frank@dressler.pro>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
+Subject: Re: [PATCH v2] net/af_packet: add option to ignore outgoing packets
+Message-ID: <20261005094111.211ed2b6@phoenix.local>
+In-Reply-To: <20261005002809.1676723-1-frank@dressler.pro>
+References: <20261004042255.1517316-1-frank@dressler.pro>
+ <20261005002809.1676723-1-frank@dressler.pro>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,47 +83,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The i40e driver's rte_flow implementation has always endeavored to keep
-flows across device restart, however it never advertised this capability.
-Advertise it explicitly.
+On Mon,  5 Oct 2026 01:28:09 +0100
+Frank Dressler <frank@dressler.pro> wrote:
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
----
- doc/guides/rel_notes/release_26_11.rst | 5 +++++
- drivers/net/intel/i40e/i40e_ethdev.c   | 3 ++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+>  
+> +		if (ignore_outgoing) {
+> +#if defined(PACKET_IGNORE_OUTGOING)
+> +			rc = setsockopt(qsockfd, SOL_PACKET, PACKET_IGNORE_OUTGOING,
+> +					&ignore_outgoing, sizeof(ignore_outgoing));
+> +			if (rc == -1) {
+> +				PMD_LOG_ERRNO(ERR,
+> +					"%s: could not set PACKET_IGNORE_OUTGOING on AF_PACKET socket for %s",
+> +					name, pair->value);
+> +				goto error;
+> +			}
+> +#endif
+> +		}
+> +
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index f4d88938bc3..e9e9fdec9cd 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -109,6 +109,11 @@ New Features
-   * Advertised ``RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP`` capability,
-     as flow rules were already kept across device restart.
- 
-+* **Updated Intel i40e driver.**
-+
-+  * Advertised ``RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP`` capability,
-+    as flow rules were already kept across device restart.
-+
- * **Updated NXP DPAA2 ethernet driver.**
- 
-   * Added the inner IP header to the RSS hash so tunneled traffic is
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-index 932e8b2674f..226f4819c3a 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.c
-+++ b/drivers/net/intel/i40e/i40e_ethdev.c
-@@ -3631,7 +3631,8 @@ i40e_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->dev_capa =
- 		RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP |
- 		RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP;
--	dev_info->dev_capa &= ~RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP;
-+	/* rte_flow rules are kept across dev_stop/dev_start and replayed on start */
-+	dev_info->dev_capa |= RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP;
- 
- 	dev_info->hash_key_size = (I40E_PFQF_HKEY_MAX_INDEX + 1) *
- 						sizeof(uint32_t);
--- 
-2.52.0
-
+Since PACKET_IGNORE_OUTGOING has been in kernel uapi since 4.19 the #ifdef here is not needed.
