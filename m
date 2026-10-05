@@ -2,144 +2,153 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D79CA5FF0
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 14:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC86ECA5FFC
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 14:46:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B51C402EB;
-	Mon,  5 Oct 2026 16:30:43 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id E02484029D
- for <dev@dpdk.org>; Mon,  5 Oct 2026 16:30:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A36CF402EB;
+	Mon,  5 Oct 2026 16:46:28 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+ by mails.dpdk.org (Postfix) with ESMTP id DB7074029D
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 16:46:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791210643; x=1822746643;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=8tBKOr7zH+6jRK17pFxoy/L0cK9gUb2hG5WFUoYHay8=;
- b=Rz6z+mJAZjsiLz0w9ATgogE5GTUBvvYfeQvORUhPN4GSbQsOUGzIHzho
- GUJ6NsTrqNnxFy5sJgHrjEQURMrUmED+Yv6StFXVIV2vj/L5UfFuxUVgl
- r4+qSYuOaJoV1hN6FU/UKFesYKKJ+M5ssU3zDZ5HC5ewLKeB+bcvbe78I
- uLD5iwcUttrHvmslRi5Mwg+0ja0iQVG73chZYM6aNgU3lxnw5lhWFOFSs
- SikONAkvn01D53RTuNE0e/K1hKM95qtvWoFbu3rS+BxAXVSehSPrtE7zH
- Vjyn5CuhcgGsSS/ePQrWV3/3/Y18A+7LZ/LrBNvgQIuA2O4fzukfPnArN Q==;
-X-CSE-ConnectionGUID: UZyUVD6LQRWwyXJRFNXF8w==
-X-CSE-MsgGUID: i/r9PJUhTsqsJYdTa5C3Vw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11926"; a="94593025"
-X-IronPort-AV: E=Sophos;i="6.27,142,1787036400"; d="scan'208";a="94593025"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Oct 2026 07:30:41 -0700
-X-CSE-ConnectionGUID: m7nA6ggLRXK4bRI13Hsgcw==
-X-CSE-MsgGUID: N0S0tmb3QrO2ta5MqthfMg==
+ t=1791211587; x=1822747587;
+ h=message-id:date:subject:to:references:from:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=lsl6nUrWezzshSgAtu9jzzsn5WDhpB40y7A9CIOmt+4=;
+ b=Cp0P5jIgr3lrGpbZ2QrRaikgpFlbBjKcQRn4d08Ky95M+CgKHbZ6ppWy
+ 24K4BAcM6QVQRWrA5EFOYxN9si7Ug2yRiH/EWuYsDM/ZUX3cvcvvM4XZj
+ UIKNg+ZOqfTV4JcxAAicxdG/u27VK0SP9C8T0EVK5rYt3ZbnjqtAHU3W5
+ BKmoLHWoGePpzplnGDstrMktesyjI9/yk8wLCRb0CBpsmXTHjduHXyrBI
+ hE2LBpwrjYEUOaS+LC+m4X+xwA2MTz1ql3xCqtALEcutetibJUV2UHQmw
+ JdTlIdEmQfKLPni3sKLJLOvNCKmap2EyUkYKVtq3jsHJxbrk8l/Y3eB3J Q==;
+X-CSE-ConnectionGUID: OAPCy6scTfWXWBiTzaCaXA==
+X-CSE-MsgGUID: YWrevLeVQn+A4JlcjFht/A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11926"; a="91744873"
+X-IronPort-AV: E=Sophos;i="6.27,142,1787036400"; d="scan'208";a="91744873"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Oct 2026 07:46:25 -0700
+X-CSE-ConnectionGUID: bPUXJy2ATtSBR9egh3fIxg==
+X-CSE-MsgGUID: sXeQ7+JVSIC3WnlMyWj68w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,142,1787036400"; 
-   d="scan'208";a="60695"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Oct 2026 07:30:40 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Mon, 5 Oct 2026 07:30:39 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+X-IronPort-AV: E=Sophos;i="6.27,142,1787036400"; d="scan'208";a="280575441"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Oct 2026 07:46:25 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
  ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Mon, 5 Oct 2026 07:30:39 -0700
-Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.57) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ 15.2.2562.49; Mon, 5 Oct 2026 07:46:25 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Mon, 5 Oct 2026 07:30:39 -0700
+ 15.2.2562.49 via Frontend Transport; Mon, 5 Oct 2026 07:46:25 -0700
+Received: from BN8PR05CU002.outbound.protection.outlook.com (52.101.57.49) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Mon, 5 Oct 2026 07:46:24 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VSCPGtynQ/i9P2yRTBM+90/imWk9vt6ugR4UmKdhwYwcjuvVQJFULr3NpDF+UuPjrbAzZxAsnS7hV0uORlFRFdD7iq8asB/JeNVp7IHfNcNtXXO9U9Bv0xoFhZa3o0S6k+q7wVSIj7ha0PF5fCDPL8cGTWnL71vcKd5l+rt369y0cz15fItK291r34O+0yNrdEGlsZt4T8p+eIbMaZ/Nn/SNuf/PwBvs/ObY6f216o6URRU/Z4J6/Dl6nS/+2aDb4i/U3BD4M9doUi1QFcgQaCN+ZpwQtdIbKuT2MIaIAnFMfbH/DRTtgdw3wFkqzgFEZjRZSSAV3mztnc26WwdDLA==
+ b=uGwTw9zbttuluR2WfKGUWRm70hL9teTwan0NtX5m2nl/tefu3aOhGj6fH5TQa1Api1gHaSKwzShIy3SbPZTk+XSMAAWuPIEXHZJVvcITF8LHdQdTncVDValBEhWV4G6kJW6RJW7OPGlBLKk3YNaM71ox/UYBkF6BYK7KmzuOSuSqU0lqsJ8SW5+vrS78TlrGLwjHMRM9fC6hn6gvDxfAoghTLjm9NTDFeqCVVS0Xfp8HzDT5vn9EuC3CXw+usnN7M00mLkVpWS7FqZ6xiqcq5cr7L700pLgovwZFROXV9k9rKt+SR256wjtFJ3puhth+hh4guFzBg/GZORLglRr21g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4JWIHUEATpkEKFPFlrAh5EBbpLMGbjsvcWUTTlIjp5w=;
- b=nusg//vVP20e6qynOStDiq/ZpT3j9X5uWNaTSvSKe2FMBF13zucczGmvPTo24YnDpwwAhrf647bha85kmhMlXfRht65MEvTFZtAc6Hw8F0xBqkEx6ROB761RNVeB//ItiF6zCIxkt8Z9Ln/QqN4wPA89LCc5psoYRELQyq7kca3GlV2LgSR1yB4zIT3/tbMmG3BliQIgXqt3oZwzEzn9lBe0NX+SuZ0EN1rK0gVnKf3YrZJRTAYyR6G+FgJXGNWAz49bHljczJv0lSu0GIa3Hyc5DO8Ol63++3165PT+vLW2P7CJHhv+vbRGtCk3RzUuLI5zCZg9XJ3N5fcdxkp7+w==
+ bh=Nd0ZwDb2T5anV06cwVfP+bmOa2bLbUYfnlwBhLs93sA=;
+ b=EJQCz2DNvUn7Kt3oBC8BY/udez2P0BzygQYE4uRk0f9uk3lEhELL5eNif5M0toNptgvDKcw7kd2FsvoKbWxzDu4eB6kzcL6Fz9sgqxWkc2jL6EN3eOmWK81HoLDUD7j+nk5d2L6G/KLO5XV4eaD37OT/bKJjn5nuai0G5Z1HECUyZOmmM610htX6uAANq29V3TZukxo9xzK9KM6HyUqixTnfuGCUBbDmeVBe14zpLN/VwL1w4M7mLa0duKY/PZqnIhVyM11hp3C2uREBnfusVKng0pJjses0UJ2E17gsXlqpJboDOMboxDVTx+wSJSjfpAyzTk+2jiQBvc15NVewhA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by DM4PR11MB6068.namprd11.prod.outlook.com (2603:10b6:8:64::6) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.472.18; Mon, 5 Oct 2026 14:30:32 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0451.014; Mon, 5 Oct 2026
- 14:30:32 +0000
-Date: Mon, 5 Oct 2026 15:30:26 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
-CC: Adrian Schollmeyer <a.schollmeyer@syseleven.de>, <dev@dpdk.org>
-Subject: Re: [PATCH] build: fix cross compilation to x86_64
-Message-ID: <asO0gl6hB1s2MMtV@bricha3-mobl1.ger.corp.intel.com>
-References: <20261005125943.678879-1-a.schollmeyer@syseleven.de>
- <98CBD80474FA8B44BF855DF32C47DC35F65A97@smartserver.smartshare.dk>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ LVTPR11MB9909.namprd11.prod.outlook.com (2603:10b6:408:3c6::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.18; Mon, 5 Oct
+ 2026 14:46:16 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.21.0472.016; Mon, 5 Oct 2026
+ 14:46:16 +0000
+Message-ID: <14800b6d-5de7-4831-b887-b6b744ba4ec6@intel.com>
+Date: Mon, 5 Oct 2026 16:46:10 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 15/19] net/i40e: refactor FDIR engine infrastructure
+To: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>, <dev@dpdk.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+References: <fb21ee962d3321518e396810887c759e7fba27bc.1789560946.git.anatoly.burakov@intel.com>
+ <46e66110-5473-400e-abec-fc60e4f5f033@intel.com>
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Content-Language: en-US
+In-Reply-To: <46e66110-5473-400e-abec-fc60e4f5f033@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65A97@smartserver.smartshare.dk>
-X-ClientProxiedBy: DU7PR01CA0027.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:50e::14) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+X-ClientProxiedBy: DUZPR01CA0151.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4bd::13) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|DM4PR11MB6068:EE_
-X-MS-Office365-Filtering-Correlation-Id: a5fb5f64-090f-46c9-fbbc-08df22ed35ea
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|LVTPR11MB9909:EE_
+X-MS-Office365-Filtering-Correlation-Id: 03fbdf50-f7d7-4871-32d6-08df22ef68b2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|366016|1800799024|376014|10067099003|3023799007|6133799003|56012099006|4143699003|11063799006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: 42BhudLICUl1Py9UOGSxDqcTicR3cnNTxwNRyNMtJdG6tR6Ow3TosLqU6r7thZiJbUBjACN/nIpCEz6JFeUyu0c9x0xE+k2xGmeaEkIATp4sZrN3L96dDaFfND8V5PjsH9IXZHwuAvGRUlcLFgSYyRPUtibHdZIsqtFhyDMK/Zy+juusDXjYyqQf2ZBkRF+Tv/1aJMj0RnBNpa2vZDhTgWF6BShhAN8VQ0e3M1PypLLuPU4ezrgwtH+kjSzZPuWezpKEI5vE1HaBphKy6a6f0H+sRjr3WqK3+Iq+laLRGW+3etSeKxAnUIlSk5aL6PMi/6lyhwGkGSQ6FH8o0i4PTpxqkDx+dA5AbgTBiAej9TR3kScIYNusGW4bqAQHbDC1VSfKM17SR8jWDCJxhqxigw/NdHSIMMiM693BV0v8qCsIgRc99EQj95b5wO7X48ob6bPKglChWGs5QCVyWQss+pJM/FG/hhSRtVGgvlCX136RlrEqvMrwFr/zsc8qok5gqpBUhKrpKf/SKjTFpjTB/3RTzj4O0j3f1xHvEFNsv7udlY1sRqZpSymc661QHQVamkLQhjbg+88Evc1i8ohoBlU5snPjMDnsuBKDSxfrVio=
+ ARA:13230040|366016|376014|23010399003|1800799024|22082099003|18002099003|4143699003|6133799003|10067099003|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info: jW/hmpOoCIlI05kcLd3w+zaqbgrtlcTpf0QEWnECpxQ48UbqgRDmiqTS158YtSxLGoYZKUwoInnHZHNcBd7f9zQ/5wdc2Fm4o5z1ziO5TcM6K7NvFdrkRB0ciSfYIJMs/5qSnh472f8z1firZGqilk57ot8cArRqBofw8UEe4E10FZ4ip09fIzukU3SsgSr/6q6RuDOAX3+b0AcNhSE8i6qKmuwkzIv6oLka2/SZbcLNKuPtZwK9M81l8wT7IzCpnYs036SYtGsUddwU6UG6PF1KoAxrGv1K71zqQfFF7UDY+6Cs102NopSkC0AUdumqFesgYeaS0aLaZ2lrn/Jy53OPjHXZZHpR4IZogWPMlo3O6O1lwuOf44tz8/PF7prBP+eoNWkm5WQ/ZQjkAbT/plsNChwBGFo5py9wIy6wtmOnogxzd3CU6ZYCsyFP4yxKk1ZKVrBw0qBNA6swVMFLq2cBaTVK9LegD65D55i43sP5Jc0H0rqXiFxvKN4zJFJQ1zosu/B0e45C4Y2SU5Q7hFAmd9fn5H2MFAtMSKOUAof5CJI8TJ5EYSRH0I0pMifSmD78MhXomE6d2zE5f6HVVeLkQAzyAXpULDWDsGQ8aHbDtsCOb9emVKNPcfnZNkY3gYvW1z+Xlx+5Pp6imFj1lZBRdEuU8r2ogQetebATtSg=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(10067099003)(3023799007)(6133799003)(56012099006)(4143699003)(11063799006)(22082099003)(18002099003);
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(22082099003)(18002099003)(4143699003)(6133799003)(10067099003)(56012099006)(11063799006);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?7FSG9LSBLSAhKHeK4310fipjfosBoEYyiYLRXvmtbZVhQPsfwrJM1qShf1?=
- =?iso-8859-1?Q?i65uQ4A7vxFi5g8r0Wi2Z680fRXwtlT0iUXJEQ40ikiduhYcX4275AGxrO?=
- =?iso-8859-1?Q?QX5j+kt7uZEpJlvcZtUWJq4+rptNOqlfJus+f01YhQw8mNTfKS5B3mjlXO?=
- =?iso-8859-1?Q?z/k//2i0ZZIgULMxRDNTefl94zh3/1IBqtH4zjxUE4qoxDT8Z4THPYi+t+?=
- =?iso-8859-1?Q?S4w2Xj1CuIjcs+w+vjm1mwOOxk7FWX5aBdbFJ6ghSwH1mlPFOycIjbB/kZ?=
- =?iso-8859-1?Q?Xz94+kUPi7PzPlTh1Srp3G1qnj9LFbux5UIZSnCRF2MTgwybh+jMtAEbOy?=
- =?iso-8859-1?Q?a0qYOSUkGbpbBdtaTpbp6tiw4yzC68rk6hCCuENCAkQUZE1IGrPbWvkdd2?=
- =?iso-8859-1?Q?SBn5WgFv+OF3Iz5dLzwYjanoXOck2t7Rp4I2/MznPiM3KKU7IlQrUYIWai?=
- =?iso-8859-1?Q?s/yR1RG9C/aet8slBlF4fcFNLtjbsHO2I7ssDxReMmjiyQeGBVzUnPzrdw?=
- =?iso-8859-1?Q?DO1GDu1nQKy6da1xMg/JYo9IGfYEKLgF4/VryN+pO5dyjfIswuQwfua79y?=
- =?iso-8859-1?Q?B4uZc41Y5lTUjYaw6rezF4pki8Sjai6Gz5BVrTu9DOQ4zwdMUorbUpz3dl?=
- =?iso-8859-1?Q?rfY9J8PEs5wlgbb5is7D/ZqHdYP8C+u+LOBqTzWAdMYuCglahDQvXVHUSm?=
- =?iso-8859-1?Q?k2RNeDQyjOWGRPrJ1nzT4juSJvXWiSyhAS0jRk/LpUR2r10S95YPEEvlKM?=
- =?iso-8859-1?Q?Bcw7clupuJExMhq9+vPsjvZQYQG1R5cH+265MxNsAvgQJFExEoRQYh9IJe?=
- =?iso-8859-1?Q?RDoonlhQjs48/hWnOvIHK6VIFeDej5jXnL9a5IoQcV3NQiUkNCvBPUeDPb?=
- =?iso-8859-1?Q?niZ8TH30JeMhBLVw0T3oLVB7ofUqf0VO9GyI9BPvHgvV3uS9gpW/f7dmOq?=
- =?iso-8859-1?Q?3FWw7ttBSUigoCazm73Y59LeDfkvV0m0rckBbBy5xal4UHnABO7xfx3GTi?=
- =?iso-8859-1?Q?B6BAwWe8gw0SG32FLBxdPrbIiK1bAALUUowA6vlUMcWrwWg3c573YUY3ku?=
- =?iso-8859-1?Q?lN8ACauxB+caGttzMIHsgXlQczbliO2acx32S+bK6LegpkoEoQHtPX5e9C?=
- =?iso-8859-1?Q?OXm4IqHYQ2ZuX6aJ7i8HA8iuB/I96WvHF5FYso0sVjnwwktusyHRTF3xSU?=
- =?iso-8859-1?Q?wA38HjwizvjGuwpUdIfTC3lTOa8WMbM0JWwmV8NPObFEAMoU6AGB7hnLgz?=
- =?iso-8859-1?Q?RKHrjT08C72Es5VAfF9coOGj7uf+JcaMekd16airftqrWY43M3ZU1QBlXc?=
- =?iso-8859-1?Q?j6PlCeLbaGLzk+2xoU+NrkaiFqlXsCMbi0jeTRI8NP1XAwSup8beizKawL?=
- =?iso-8859-1?Q?IxfEprZU90bZKtykSzcH/8LypaK0eJXqUjlYcgIWk1jgwjl3baW3PtBcd/?=
- =?iso-8859-1?Q?+4gp3j/YP5+D6GI/xG6pKgGrsi2+Kn9t4EnNPHINiy/wbgOqBO6cQpdV3f?=
- =?iso-8859-1?Q?eHLK2Xu+Ujdn/fa2N9mrcb/lB63zD7LoqQShXlbwXdY38XyfTGITwNIt4y?=
- =?iso-8859-1?Q?ccakNhJhovdvDcX9qoR6I26TpAetQ4uRCIRTZ2EoxiqifUTTXsXCTUxwVx?=
- =?iso-8859-1?Q?skHPSIKJ52n78ytRXrZTIp58pn30oF3H2Gd1ThP5Z9RARrlK16DsNcrHxh?=
- =?iso-8859-1?Q?o0RgGEFV0rQk0rIlSqWM4/wFnnojfThPOZngaHj1eKtGZXX15EX3pqm/1R?=
- =?iso-8859-1?Q?Xs3efgDV/gBp2yxHQFWo/1rcIfl5uE7n666gXEXtcOpW6RcvhTYHSMQAfc?=
- =?iso-8859-1?Q?xgRfOspvWxd32c0tkVTRVjXtZXDVNoc=3D?=
-X-Exchange-RoutingPolicyChecked: nbgVxfyobte9cphJyrzFgeeMAFA8yw507fw98FypOJt/dihsp1wEwpd43URZF7gkH8ymGvuijpoHPSKJyao/8213cMlyJeCn8n7eensVV4QqvILFO5gwfWnhISESRbcpaYvehzUKuu2wwhS/hlHy4UH9Fkuu5coDEpOTvpKPA6qXafv1J6PS5YajSb7TQlgqAx/zCAIVtroWUiXt6NDlIRzt0fLNtprQ+D6UvCm2awyaZgsrvV6DU0RkoBOV/ETCHUkIt0cAfSfkm/TVk5kGm/m27U2VxLN1jb/iVxYql25m+utSDhq9AEh1Lp5wkX60+aw/jDGHpbtHz5vVm+r2nw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5fb5f64-090f-46c9-fbbc-08df22ed35ea
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SElOLzdIaEUrM0IwMG9FTU1OakdKcGJqQmZsdWp5aDBKRFplRHdDOSt4aUJh?=
+ =?utf-8?B?Mk90cWNyVm0rUG5icjdzd0VSRFhrbVRMUmwwbFVlcUMwd3BzR0ZPMWFCOFBo?=
+ =?utf-8?B?L1UzSjViVWYzM3F1SjJmbnI0anFMNGFsNVp5a0REcENFelByNGswU0ZOcER0?=
+ =?utf-8?B?S3RDc1FTUkdIeHJMMFkwSGI1eFVDVEpwMVFrQTNqNFFxWlprZE9UVW83WnpU?=
+ =?utf-8?B?WWZ6amw2OGFIcmdYenNVeGpOT1VjVVAxNytMUFlzbXNueVBFcnR5c3Q1UDMz?=
+ =?utf-8?B?di82Qkcvdll1UDZuaXVqQVA5SkFmajBOR3BwNDk4bElIcmNXNWswOHFncGZI?=
+ =?utf-8?B?aFBYaW5HclAyNHN4RGErYkt2YlN6UXpiMXV5QWV3YmFUVWtMWmV4ZUt4QkRU?=
+ =?utf-8?B?SFU5Tm1nZjJxUTNLOTNVRnc2UkU2WGhFaURRRkFFUFNkV1pxVDdVaGpOWFNh?=
+ =?utf-8?B?Qy9tUUFDVVVmWVZlaFpxRkUxZ0VzSVBPNlNFOGplaDEvZWgxNklaY2RxWVRo?=
+ =?utf-8?B?LzVHQXhLeGgyVE9MdzZpNVVNYk1NTFhaYWxaVXBTcnpBeXk2VWpiYy8xYjZ2?=
+ =?utf-8?B?c2JSenhvQ01sdzNVaUhzTXgrQnFYM1JUNWxHazhOU3RTM3pOQ3UyL25kcTJv?=
+ =?utf-8?B?NXFoMkJHenZPTUF5ZHRHR0V1N2hBWkorTlFrWE1SVHRVb0JqNmJ0WHl3dzZU?=
+ =?utf-8?B?SE0xb0RvVnhoRVFNUmtDVC8vR3BZRzdUejUvQkRCZml6OUQ2R1RQL1NvdXRJ?=
+ =?utf-8?B?cUU1dTN1ZlplSm1Yejc2aHAvd2lkc0pFbFIwVUNYYXM0WmcrenRLUXlrWDVa?=
+ =?utf-8?B?c09ka2FrQlE0T0cybWJ3TElSUEMvdGRoeFV0YzE5MWFCZy9aalRtQkkwODVn?=
+ =?utf-8?B?angyWUJPTmpQMUJzOHpJZGFwQnZIc3FWL3hZYXJxMGFsVU1kUitHT1BkY1dE?=
+ =?utf-8?B?SkZDVWNKZjhIeTFscUM1UWpWUGVoekQvTlRiTE5SMFdrSTdoVEFmc3NSUXVG?=
+ =?utf-8?B?cXZ2VmJ1M2FzeHJ5cGRKa2ZpT2ZoY3NEcTBDS2xZQXZGOTdEYzBCL1AyRGh0?=
+ =?utf-8?B?YXJrUXE0Mi9xdzJ2djVlVzYrQUlPS1N1QlozYWdjKzdscU0yM0NobHc4SS9B?=
+ =?utf-8?B?cU0xanRJbjVCQ25Qb1pWbHc1alJsYVRjTGEvRk5CV2kxTWREaEViWFdHSEx2?=
+ =?utf-8?B?VHNJTGovUWIzZGtSQWtMQUwrbXoydnZoTjhiaHIxc3JlUmh5WjBSaVRDcnYy?=
+ =?utf-8?B?QWpxMXk0WUJHOU9NcU9NNENwSHVrTWFqbGlIbnhJM3o2Vy9ZcFR1dXorMjBK?=
+ =?utf-8?B?MDFkMkk3M3lJVWxEa1RGWnBXbGh3Q2FsRlJoQjgyZTNkUVd3bHliN1RhUGVw?=
+ =?utf-8?B?L1MrUlcvYzFMQmF5NHUyd01IeS8vTyttYWN5UkRJRGVza2QxSm9VTHVnRS9w?=
+ =?utf-8?B?RjByR280Mkd5RXM2NkN4d2RRQUphbnZGVDgwR29TdFhPa0tzbjZrSTJXVHNh?=
+ =?utf-8?B?MmdJamczV1l0SVB5alprczEwNzkvdjlibHdRaWRJcmlFcjQrN3RnVXVFemgw?=
+ =?utf-8?B?NGVGbTVBRHFITUxDeHdURlgvVnhWd0FndmJ4d2tQV1pzREozNE8rUW1QQ0sz?=
+ =?utf-8?B?WmhwRExlOFlpRkRZajRpUk1VOVJUOEtCeDBLU1dUZVpodW1OK3dpOTMwZzJj?=
+ =?utf-8?B?SkozOFFyWUl0cHV4b3d0Wkt1bW5rMWRMdEw2amdBWmc1NmVMMklBTFgvaTJL?=
+ =?utf-8?B?RVM4L1liUXpOeU5DekwraXZ6TVdTVHIrbFcydjJxVnBQSTI4RWVGSEN3bk5o?=
+ =?utf-8?B?UGkyQ2lQR3NhQnc3QjFOQjRyOHpkTTNrcGEyNVhnT1pxQXdyZHpMeFRXWnc1?=
+ =?utf-8?B?NGdIZ2pRcHh1ZHNSekNxU3FvNS9EMDZITDFTYy9tVk5XK3Qzanl4Q2JDZTBW?=
+ =?utf-8?B?cWNtdXJsdGozY0haR1Nob1VPQ1p4YVlabExqL2FzMnYxWW1BVGg5ZlZDaldT?=
+ =?utf-8?B?TWJzaGt1UWp2bFJHeVBha3IvUW5zVUtSNnJQU2hoZFkwNnF3RjRJdnl6RkVF?=
+ =?utf-8?B?dDQ4L085M1o4NGVwbHEwMjJob25wZ2RzamRBNGpsd2Q2ajBxTWtPZlJTZmo3?=
+ =?utf-8?B?OEltY0lGL0F1dXhqaENENFBhcXcxQlBPai9QSlI2TXFNWHgvcjdTMTVyRzdV?=
+ =?utf-8?B?ajdxMWpiUDJvM1VNMHRRR0N5bmtDUElzNTVGT1ROL0pwVU1MbDVpS21oR0pY?=
+ =?utf-8?B?REhoeTR6RnU4TytrNWJmWGVYbXY0enJySjM2eXlwbGRpaE1YUVRPUENYZnAz?=
+ =?utf-8?B?VUFNZm5hVEt4OFhLeE1FNmVUaUJqbEp1SkVqUVJwMU9RMzNhSzBSTTlaTVdH?=
+ =?utf-8?Q?lGGj17twzJ5xUzEk=3D?=
+X-Exchange-RoutingPolicyChecked: dOEIhsy809YaoUO34hLmL8Yi9m6dPmULhrwxRwLV5TJ6CJs/dWhX6lkfr4mqZHsSPUaKwtY982IMCjv5sCz5qggpsE5ZH+JcQEf8uRg7Opz8E1FktzMazXljXoEo4xPMGKktIU92Gqw4Ag8mu3X1xm7ztwBEm/ZNUAURg3I1vupgblzbe2aAbvJ0kijqWzLasiPCYi2Cx4UTSYDpbYRaVcuG2D5fkcZf49QsvJKyL8E69nFVw3NyvcKci5WuNmLwb0fEDJz/hTPfzJVdXBroIWzI85n2xXYxTHyz241HVCWfyG1jtk0SvlJcans/4goJWF96C44qT2Cybon3ljaxlw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 03fbdf50-f7d7-4871-32d6-08df22ef68b2
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2026 14:30:32.1129 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2026 14:46:16.1152 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +8yIFy56tyGIN6ZCv2HTv1cokIOcipMctNupyha+P60tUo5f2Y7CHHbnvhf59eIRLZG2gc8/n6b5CRZNfD2Tk6lUXgCSF0JrraOOtJ+b8eE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6068
+X-MS-Exchange-CrossTenant-UserPrincipalName: purU0Jf4RIlqwKqG5+9f7XyG/cNY5mevdfskHVgidq1BnbohuO8LzIwsT/s9R4unOIbqRyO43l1AGq7p9ZzPiW54d02GiJMzPXk7hsXa3k0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LVTPR11MB9909
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -154,42 +163,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Oct 05, 2026 at 03:14:17PM +0200, Morten Br�rup wrote:
-> > If x86_64 is specified as target CPU instruction set (e.g. when
-> > cross-compiling *to* x86_64), the cpu_instruction_set may be set to
-> > x86_64, e.g. if it is derived from a Meson crossfile. However, while
-> > Meson uses "x86_64" as name for the x86_64 architecture, compiler
-> > options accept only "x86-64".
-> > 
-> > Introduce a conditional for handling this special case by changing
-> > cpu_instruction_set to the march-compatible value.
-> > 
-> > Signed-off-by: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
-> > ---
-> >  config/meson.build | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/config/meson.build b/config/meson.build
-> > index dcb84ebd13..238d6cae0c 100644
-> > --- a/config/meson.build
-> > +++ b/config/meson.build
-> > @@ -177,6 +177,11 @@ if not is_ms_compiler
-> >          machine_args += '-mtune=' + cpu_instruction_set
-> >          compiler_arch_support = cc.has_argument('-mcpu=' +
-> > cpu_instruction_set)
-> >      else
-> > +        # Meson uses x86_64, but compilers expect x86-64.
-> > +        # See https://mesonbuild.com/Reference-tables.html#cpu-
-> > families
-> > +        if cpu_instruction_set == 'x86_64'
-> > +            cpu_instruction_set = 'x86-64'
+On 9/19/2026 6:13 PM, Medvedkin, Vladimir wrote:
 > 
-> Not sure, but maybe: 'x86-64-v2'?
-> 
-> Ref:
-> https://www.phoronix.com/news/GCC-11-x86-64-Feature-Levels
-> 
-Yes, probably best to use that. We require SSE4 as a minimum instruction
-set for DPDK build.
+> On 9/16/2026 1:18 PM, Anatoly Burakov wrote:
+>> Currently, there are multiple problems with how i40e flow directory 
+>> feature
+>> is implemented, both in terms of how it works with rte_flow, and how it
+>> integrates with the PMD-specific packet template API.
+>>
+>> For one, these two subsystems, while using shared infrastructure, do not
+>> really interact or cooperate, and are built on top of special cases in 
+>> FDIR
+>> path. More specifically, the packet template code does not store its
+>> packet in the hash map, and has a different hashing scheme, yet it still
+>> registers itself in FDIR flow list, hash table, and hash map. This list
+>> is then used by `dev_start` to restore FDIR filters that user has
+>> inserted into the list. These filters, as written, cannot be reprogrammed
+>> that way because the information a filter restore function would need is
+>> lost on insert (the packet pointer is not added to the hash map).
+>>
+>> Another issue is that while rte_flow FDIR code does lazy FDIR init on 
+>> first
+>> added flow, the packet template API does not, even though it too 
+>> relies on
+>> the same hardware feature, nor does it ever do teardown on last FDIR 
+>> flow.
+>>
+>> Yet another issue is how the "filter restore" code itself is implemented,
+>> namely that currently it simply does not work. When doing filter restore,
+>> the driver will walk every FDIR filter stored in the TAILQ, and 
+>> attempt to
+>> program it. However, inside the program function, there is a 
+>> deduplication
+>> check (to see if flow being installed is already present in the flow hash
+>> table), which fails because the flows we are programming come from the 
+>> same
+>> list that is being checked for deduplication, which makes the entire 
+>> filter
+>> restore a no-op.
+>>
+>> The FDIR filter programming code itself also has a number of readability
+>> problems as well as being otherwise hard to use - SW bookkeeping,
+>> validation, and flow programming is interspersed within the code, and it
+>> is difficult to reason about what happens when the code is called from
+>> this or that context.
+>>
+>> So, this refactor does the following:
+>>
+>> - Reorganize FDIR internals to track packet templates and rte_flow FDIR
+>>    flows separately
+>> - Refactor FDIR init/teardown to always happen on first/last rule, so 
+>> that
+>>    whichever API happens to call FDIR first, the state is consistent
+> nit: it seems you've moved it to the next patch
 
-/Bruce
+
+
+>> - Rework the FDIR code to disentangle FDIR flow rule programming, Flex 
+>> PIT
+>>    checks, SW bookkeeping, etc. from each other
+>> - Remove both the rte_flow FDIR TAILQ and the hash map (filter array)
+>>    structure, because they are redundant (information about the flow is
+>>    already stored in the rte_flow flow list, and hash_map structure only
+>>    stored pointers to data we also have in that same list)
+>> - Fix FDIR filter restore to replay all configuration correctly, as 
+>> well as
+>>    re-init the FDIR queue enablement tracking
+>> - Rework the internal FDIR global state data structure to make a little
+>>    more sense by grouping things that belong together into structures
+>>
+>> Additionally, there was a delay mechanism at flow director rule program
+>> time, as when programming a rule we might not know if it's actually
+>> possible to install the rule, because space for the rules may come either
+>> from our own pool, or it may come from a pool that is shared with other
+>> VSI's. However, it only makes sense to wait on rule create (i.e. when 
+>> it is
+>> programmed into the hardware for the first time), but not when we are
+>> replaying or removing these rules. So, adjust the waiting mechanism to 
+>> only
+>> wait on FDIR rule creation.
+>>
+>> Signed-off-by: Anatoly Burakov<anatoly.burakov@intel.com>
+>> ---
+> <snip>
+>> @@ -3860,16 +3851,15 @@ i40e_flow_destroy(struct rte_eth_dev *dev,
+>>           ret = i40e_flow_destroy_tunnel_filter(pf,
+>>                     (struct i40e_tunnel_filter *)flow->rule);
+>>           break;
+>> -    case RTE_ETH_FILTER_FDIR:
+>> -        ret = i40e_flow_add_del_fdir_filter(dev,
+>> -                &((struct i40e_fdir_filter *)flow->rule)->fdir,
+>> -                0);
+>> +    case RTE_ETH_FILTER_FDIR: {
+>> +        struct i40e_fdir_filter *node = flow->rule;
+>> -        /* If the last flow is destroyed, disable fdir. */
+>> -        if (!ret && TAILQ_EMPTY(&pf->fdir.fdir_list)) {
+>> -            i40e_fdir_rx_proc_enable(dev, 0);
+>> -        }
+>> +        ret = i40e_fdir_filter_program(dev, node, 0, false);
+> previous implementation set wait_status depending on fdir_info- 
+>  >fdir_invalprio. Do we really need to wait here?
+
+We do not, and wait is false here. We used to set wait_status here 
+depending on fdir_info->fdir_invalprio, but in actuality we can avoid 
+waiting here (see commit message).
+
+-- 
+Thanks,
+Anatoly
