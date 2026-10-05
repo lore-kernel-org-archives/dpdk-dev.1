@@ -2,47 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B228CA5FE2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 07:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA1FCA5FCE
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 07:45:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9809740A4B;
-	Mon,  5 Oct 2026 09:04:51 +0200 (CEST)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id EED184028D
- for <dev@dpdk.org>; Mon,  5 Oct 2026 09:04:48 +0200 (CEST)
-Received: from ar (unknown [42.58.232.122])
- by APP-03 (Coremail) with SMTP id rQCowAD39TMPTMNqBrKoCQ--.960S2;
- Mon, 05 Oct 2026 15:04:47 +0800 (CST)
-From: Sun Yuechi <sunyuechi@iscas.ac.cn>
-To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Cc: dev@dpdk.org,
-	Sun Yuechi <sunyuechi@iscas.ac.cn>
-Subject: [PATCH 2/2] fib: gather entries at their own width with RVV
-Date: Mon,  5 Oct 2026 00:04:46 -0700
-Message-ID: <dda3bf6bcb76d01bc89a822a4dba5374b0bf40ae.1791183388.git.sunyuechi@iscas.ac.cn>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <cover.1791183388.git.sunyuechi@iscas.ac.cn>
-References: <cover.1791183388.git.sunyuechi@iscas.ac.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 378D4402B5;
+	Mon,  5 Oct 2026 09:45:09 +0200 (CEST)
+Received: from forward500d.mail.yandex.net (forward500d.mail.yandex.net
+ [31.44.14.16]) by mails.dpdk.org (Postfix) with ESMTP id E25A940290
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 09:45:07 +0200 (CEST)
+Received: from mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net
+ (mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net
+ [IPv6:2a02:6b8:c0c:891f:0:640:5a77:0])
+ by forward500d.mail.yandex.net (postfix) with ESMTPS id A02DA84D40;
+ Mon, 05 Oct 2026 10:45:06 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net (smtp)
+ with ESMTPSA id 4jFNhOriNa60-Ymiu14Xq; 
+ Mon, 05 Oct 2026 10:45:05 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+ t=1791186306; bh=0TVM0jpkqNDrZ705n7AzXz+Erl8SIM2GSHjMta7ERoE=;
+ h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+ b=ndN8P+v4oTyrN8oa4itEuuIQ2b30R5uVA8sPaSwUi73zvIYQsilG4Kwk6gm2V0T63
+ EvR3q/eNxuHyu4ZL9KqsYjQy6aX/wHJFq57hUorU0bWv1OyXk7pmC+FGMH6jLP/GnH
+ 15gBcw8rVP0IycTxXwNs6psf/TscyPGq1ndNGVhk=
+Authentication-Results: mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net;
+ dkim=pass header.i=@yandex.ru
+Message-ID: <8b945572-dd97-4040-ac1f-37dd14edba3d@yandex.ru>
+Date: Mon, 5 Oct 2026 08:45:03 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mbuf: avoid temporary array for bulk free
+To: Nam Tran <hoangnamtran18122005@gmail.com>, mb@smartsharesystems.com
+Cc: dev@dpdk.org, stephen@networkplumber.org
+References: <20260922012856.30090-1-hoangnamtran18122005@gmail.com>
+ <20260929002527.7-1-hoangnamtran18122005@gmail.com>
+Content-Language: en-US, ru
+From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+In-Reply-To: <20260929002527.7-1-hoangnamtran18122005@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAD39TMPTMNqBrKoCQ--.960S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3JF4rGry7KrW7Xr15ArWfGrg_yoW7Xw43pr
- W5Jayakr48ta17A34SqF13Ar1Y9r97Kr4ak3y8W3yrA343Cay7Cr9xJw1fZFZ8XF92ya4j
- yw4Dur18Zry7JrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUyl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
- 6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
- 0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
- 2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
- W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij64vI
- r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
- xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0xvE2Ix0
- cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
- AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
- 14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYDGYDUUUU
-X-Originating-IP: [42.58.232.122]
-X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiBwYLAmrDJO1OcQABsW
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,123 +54,239 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The lookup loaded 64-bit words and shifted the entry out of them. That
-takes LMUL=8 values whatever the next hop size, one register group more
-than there is, so a group was spilled inside the loop. Gather the
-entries at the size they are stored with instead.
 
-Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
----
- lib/fib/dir24_8_rvv.c | 85 ++++++++++++++++++++++++-------------------
- 1 file changed, 47 insertions(+), 38 deletions(-)
 
-diff --git a/lib/fib/dir24_8_rvv.c b/lib/fib/dir24_8_rvv.c
-index 9c14ca0481..9b784bb3c5 100644
---- a/lib/fib/dir24_8_rvv.c
-+++ b/lib/fib/dir24_8_rvv.c
-@@ -10,55 +10,64 @@
- #include "dir24_8.h"
- #include "dir24_8_rvv.h"
- 
--#define DECLARE_VECTOR_FN(SFX, NH_SZ) \
-+/* Byte offset of entry number idx, for each next hop size. */
-+#define OFS_1b(idx, vl) ((void)(vl), (idx))
-+#define OFS_2b(idx, vl) __riscv_vsll_vx_u32m4(idx, 1, vl)
-+#define OFS_4b(idx, vl) __riscv_vsll_vx_u32m4(idx, 2, vl)
-+#define OFS_8b(idx, vl) __riscv_vsll_vx_u32m4(idx, 3, vl)
-+
-+/* Entry without its low bit, as 32-bit tbl8 group number. */
-+#define GRP_1b(ent, vl) \
-+	__riscv_vzext_vf4_u32m4(__riscv_vsrl_vx_u8m1(ent, 1, vl), vl)
-+#define GRP_2b(ent, vl) \
-+	__riscv_vzext_vf2_u32m4(__riscv_vsrl_vx_u16m2(ent, 1, vl), vl)
-+#define GRP_4b(ent, vl) __riscv_vsrl_vx_u32m4(ent, 1, vl)
-+#define GRP_8b(ent, vl) __riscv_vnsrl_wx_u32m4(ent, 1, vl)
-+
-+/* Entry without its low bit, as 64-bit next hop. */
-+#define NH_1b(ent, vl) \
-+	__riscv_vzext_vf8_u64m8(__riscv_vsrl_vx_u8m1(ent, 1, vl), vl)
-+#define NH_2b(ent, vl) \
-+	__riscv_vzext_vf4_u64m8(__riscv_vsrl_vx_u16m2(ent, 1, vl), vl)
-+#define NH_4b(ent, vl) \
-+	__riscv_vzext_vf2_u64m8(__riscv_vsrl_vx_u32m4(ent, 1, vl), vl)
-+#define NH_8b(ent, vl) __riscv_vsrl_vx_u64m8(ent, 1, vl)
-+
-+/* Entries are gathered at their own width, with 32-bit byte offsets. */
-+#define DECLARE_VECTOR_FN(SFX, TYPE, BITS, LMUL) \
- void \
- rte_dir24_8_vec_lookup_bulk_##SFX(void *p, \
- 		const uint32_t *ips, uint64_t *next_hops, unsigned int n) \
- { \
--	const uint8_t  idx_bits = 3 - NH_SZ; \
--	const uint32_t idx_mask = (1u << (3 - NH_SZ)) - 1u; \
--	const uint64_t e_mask   = ~0ULL >> (64 - (8u << NH_SZ)); \
--	struct dir24_8_tbl *tbl = (struct dir24_8_tbl *)p; \
--	const uint64_t *tbl24   = tbl->tbl24; \
-+	const struct dir24_8_tbl *tbl = (const struct dir24_8_tbl *)p; \
-+	const TYPE *tbl24 = (const TYPE *)tbl->tbl24; \
-+	const TYPE *tbl8 = (const TYPE *)tbl->tbl8; \
- 	size_t vl; \
- 	for (unsigned int i = 0; i < n; i += vl) { \
- 		vl = __riscv_vsetvl_e32m4(n - i); \
- 		vuint32m4_t v_ips = __riscv_vle32_v_u32m4(&ips[i], vl); \
--		vuint64m8_t vtbl_word = __riscv_vluxei32_v_u64m8(tbl24, \
--				__riscv_vsll_vx_u32m4( \
--				__riscv_vsrl_vx_u32m4(v_ips, idx_bits + 8, vl), 3, vl), vl); \
--		vuint32m4_t v_tbl_index = __riscv_vsrl_vx_u32m4(v_ips, 8, vl); \
--		vuint32m4_t v_entry_idx = __riscv_vand_vx_u32m4(v_tbl_index, idx_mask, vl); \
--		vuint32m4_t v_shift     = __riscv_vsll_vx_u32m4(v_entry_idx, 3 + NH_SZ, vl); \
--		vuint64m8_t vtbl_entry  = __riscv_vand_vx_u64m8( \
--				__riscv_vsrl_vv_u64m8(vtbl_word, \
--					__riscv_vwcvtu_x_x_v_u64m8(v_shift, vl), vl), e_mask, vl); \
--		vbool8_t mask = __riscv_vmseq_vx_u64m8_b8( \
--				__riscv_vand_vx_u64m8(vtbl_entry, 1, vl), 1, vl); \
--		if (__riscv_vcpop_m_b8(mask, vl)) { \
--			const uint64_t *tbl8 = tbl->tbl8; \
--			v_tbl_index = __riscv_vadd_vv_u32m4_mu(mask, v_tbl_index, \
--					__riscv_vsll_vx_u32m4( \
--						__riscv_vnsrl_wx_u32m4(vtbl_entry, 1, vl), 8, vl), \
--						__riscv_vand_vx_u32m4(v_ips, 0xFF, vl), vl); \
--			vtbl_word = __riscv_vluxei32_v_u64m8_mu(mask, vtbl_word, tbl8, \
--					__riscv_vsll_vx_u32m4( \
--					__riscv_vsrl_vx_u32m4(v_tbl_index, idx_bits, vl), 3, vl), \
--						vl); \
--			v_entry_idx = __riscv_vand_vx_u32m4(v_tbl_index, idx_mask, vl); \
--			v_shift     = __riscv_vsll_vx_u32m4(v_entry_idx, 3 + NH_SZ, vl); \
--			vtbl_entry  = __riscv_vand_vx_u64m8( \
--					__riscv_vsrl_vv_u64m8(vtbl_word, \
--					__riscv_vwcvtu_x_x_v_u64m8(v_shift, vl), vl), e_mask, vl); \
-+		vuint##BITS##m##LMUL##_t v_ent = \
-+			__riscv_vluxei32_v_u##BITS##m##LMUL(tbl24, \
-+				OFS_##SFX(__riscv_vsrl_vx_u32m4(v_ips, 8, vl), \
-+					vl), vl); \
-+		vbool8_t mask = __riscv_vmsne_vx_u##BITS##m##LMUL##_b8( \
-+			__riscv_vand_vx_u##BITS##m##LMUL(v_ent, \
-+				DIR24_8_EXT_ENT, vl), 0, vl); \
-+		if (unlikely(__riscv_vfirst_m_b8(mask, vl) >= 0)) { \
-+			vuint32m4_t v_idx = __riscv_vadd_vv_u32m4( \
-+				__riscv_vsll_vx_u32m4(GRP_##SFX(v_ent, vl), \
-+					8, vl), \
-+				__riscv_vand_vx_u32m4(v_ips, 0xFF, vl), vl); \
-+			v_ent = __riscv_vluxei32_v_u##BITS##m##LMUL##_mu(mask, \
-+				v_ent, tbl8, OFS_##SFX(v_idx, vl), vl); \
- 		} \
--		__riscv_vse64_v_u64m8(&next_hops[i], \
--				__riscv_vsrl_vx_u64m8(vtbl_entry, 1, vl), vl); \
-+		__riscv_vse64_v_u64m8(&next_hops[i], NH_##SFX(v_ent, vl), vl); \
- 	} \
- }
- 
--DECLARE_VECTOR_FN(1b, 0)
--DECLARE_VECTOR_FN(2b, 1)
--DECLARE_VECTOR_FN(4b, 2)
--DECLARE_VECTOR_FN(8b, 3)
-+DECLARE_VECTOR_FN(1b, uint8_t, 8, 1)
-+DECLARE_VECTOR_FN(2b, uint16_t, 16, 2)
-+DECLARE_VECTOR_FN(4b, uint32_t, 32, 4)
-+DECLARE_VECTOR_FN(8b, uint64_t, 64, 8)
- 
- #endif
--- 
-2.56.0
+
+> rte_pktmbuf_free_bulk() currently stages freeable mbufs in a
+> temporary array before returning them to their mempool. For flat
+> packet arrays, this copies pointers even when the input array
+> already contains contiguous freeable mbufs.
+>
+> Track contiguous same-pool runs in the input array and pass them
+> directly to rte_mbuf_raw_free_bulk(). Flush at 64 entries to
+> preserve the existing mempool-cache behavior. Also flush on NULL
+> entries, retained mbufs, and pool changes. Keep the array-based
+> fallback for chained packets.
+>
+> Add coverage for NULL entries, mixed mempools, shared and indirect
+> mbufs, and a flat run followed by a chained packet.
+>
+> Signed-off-by: Nam Tran <hoangnamtran18122005@gmail.com>
+> Reviewed-by: Morten Brørup <mb@smartsharesystems.com>
+> ---
+> v2:
+> - Cap same-pool runs at 64 to retain mempool-cache behavior.
+> - Move the sanity check after the chained-packet fallback decision.
+> - Add mixed flat/chained and indirect-mbuf regression cases.
+> - Remove the earlier timing claim; the capped version has not yet
+>    been benchmarked on x86 or with a cached mempool.
+>
+> Tested: ARM64 Linux debug build and mbuf_autotest passed.
+>
+>   app/test/test_mbuf.c | 94 ++++++++++++++++++++++++++++++++++++++++++++
+>   lib/mbuf/rte_mbuf.c  | 74 ++++++++++++++++++++++++++++++++--
+>   2 files changed, 165 insertions(+), 3 deletions(-)
+>
+> diff --git a/app/test/test_mbuf.c b/app/test/test_mbuf.c
+> index db23259745..249e541173 100644
+> --- a/app/test/test_mbuf.c
+> +++ b/app/test/test_mbuf.c
+> @@ -833,6 +833,100 @@ test_pktmbuf_pool_bulk(void)
+>   		goto err;
+>   	}
+>   
+> +	printf("Test bulk free with NULL entries.\n");
+> +
+> +	ret = rte_pktmbuf_alloc_bulk(pool, mbufs, 4);
+> +	if (ret != 0)
+> +		goto err;
+> +
+> +	m = mbufs[1];
+> +	mbufs[1] = NULL;
+> +	rte_pktmbuf_free_bulk(mbufs, 4);
+> +	rte_pktmbuf_free(m);
+> +
+> +	if (!rte_mempool_full(pool)) {
+> +		printf("mempool not full after NULL-entry bulk free\n");
+> +		goto err;
+> +	}
+> +
+> +	printf("Test bulk free with multiple pools.\n");
+> +
+> +	for (i = 0; i < 4; i++) {
+> +		mbufs[i] = rte_pktmbuf_alloc((i & 1) ? pool2 : pool);
+> +		if (mbufs[i] == NULL)
+> +			goto err;
+> +	}
+> +
+> +	rte_pktmbuf_free_bulk(mbufs, 4);
+> +
+> +	if (!(rte_mempool_full(pool) && rte_mempool_full(pool2))) {
+> +		printf("mempools not full after mixed-pool bulk free\n");
+> +		goto err;
+> +	}
+> +
+> +	printf("Test bulk free with shared mbuf.\n");
+> +
+> +	ret = rte_pktmbuf_alloc_bulk(pool, mbufs, 4);
+> +	if (ret != 0)
+> +		goto err;
+> +
+> +	m = mbufs[1];
+> +	rte_mbuf_refcnt_update(m, 1);
+> +	rte_pktmbuf_free_bulk(mbufs, 4);
+> +
+> +	if (rte_mbuf_refcnt_read(m) != 1) {
+> +		printf("shared mbuf reference count incorrect\n");
+> +		goto err;
+> +	}
+> +
+> +	rte_pktmbuf_free(m);
+> +
+> +	if (!rte_mempool_full(pool)) {
+> +		printf("mempool not full after shared mbuf free\n");
+> +		goto err;
+> +	}
+> +
+> +	printf("Test bulk free of flat mbufs around a chain.\n");
+> +
+> +	ret = rte_pktmbuf_alloc_bulk(pool, mbufs, 5);
+> +	if (ret != 0)
+> +		goto err;
+> +
+> +	ret = rte_pktmbuf_chain(mbufs[1], mbufs[2]);
+> +	if (ret != 0)
+> +		goto err;
+> +	mbufs[2] = mbufs[3];
+> +	mbufs[3] = mbufs[4];
+> +	rte_pktmbuf_free_bulk(mbufs, 4);
+> +
+> +	if (!rte_mempool_full(pool)) {
+> +		printf("mempool not full after mixed flat and chain bulk free\n");
+> +		goto err;
+> +	}
+> +
+> +	printf("Test bulk free with an indirect mbuf.\n");
+> +
+> +	m = rte_pktmbuf_alloc(pool);
+> +	if (m == NULL)
+> +		goto err;
+> +	mbufs[0] = rte_pktmbuf_alloc(pool);
+> +	mbufs[1] = rte_pktmbuf_clone(m, pool);
+> +	mbufs[2] = rte_pktmbuf_alloc(pool);
+> +	if (mbufs[0] == NULL || mbufs[1] == NULL || mbufs[2] == NULL)
+> +		goto err;
+> +
+> +	rte_pktmbuf_free_bulk(mbufs, 3);
+> +	if (rte_mbuf_refcnt_read(m) != 1) {
+> +		printf("indirect mbuf reference count incorrect\n");
+> +		goto err;
+> +	}
+> +	rte_pktmbuf_free(m);
+> +
+> +	if (!rte_mempool_full(pool)) {
+> +		printf("mempool not full after indirect mbuf bulk free\n");
+> +		goto err;
+> +	}
+> +
+>   	printf("Test bulk free of single long chain.\n");
+>   
+>   	/* Bulk allocate all mbufs in the pool, in one go. */
+> diff --git a/lib/mbuf/rte_mbuf.c b/lib/mbuf/rte_mbuf.c
+> index 005bfaa573..99b2ea07cf 100644
+> --- a/lib/mbuf/rte_mbuf.c
+> +++ b/lib/mbuf/rte_mbuf.c
+> @@ -555,9 +555,8 @@ __rte_pktmbuf_free_seg_via_array(struct rte_mbuf *m,
+>    */
+>   #define RTE_PKTMBUF_FREE_PENDING_SZ 64
+>   
+> -/* Free a bulk of packet mbufs back into their original mempools. */
+> -RTE_EXPORT_SYMBOL(rte_pktmbuf_free_bulk)
+> -void rte_pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int count)
+> +static void
+> +__rte_pktmbuf_free_bulk_fallback(struct rte_mbuf **mbufs, unsigned int count)
+>   {
+>   	struct rte_mbuf *m, *m_next, *pending[RTE_PKTMBUF_FREE_PENDING_SZ];
+>   	unsigned int idx, nb_pending = 0;
+> @@ -582,6 +581,75 @@ void rte_pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int count)
+>   		rte_mbuf_raw_free_bulk(pending[0]->pool, pending, nb_pending);
+>   }
+>   
+> +/* Free a bulk of packet mbufs back into their original mempools. */
+> +RTE_EXPORT_SYMBOL(rte_pktmbuf_free_bulk)
+> +void rte_pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int count)
+> +{
+> +	struct rte_mempool *run_pool = NULL;
+> +	unsigned int run_start = 0;
+> +	unsigned int run_count = 0;
+> +	unsigned int idx;
+> +
+> +	for (idx = 0; idx < count; idx++) {
+> +		struct rte_mbuf *m = mbufs[idx];
+> +
+> +		if (unlikely(m == NULL)) {
+> +			if (run_count != 0) {
+> +				rte_mbuf_raw_free_bulk(run_pool,
+> +						&mbufs[run_start], run_count);
+> +				run_count = 0;
+here (and in other similar places), I think you also has to update 
+run_start also.
+BTW, I don't think you need both run_count and run_start.
+Knowing the run_count and idx is enough to deduce run_start (or 
+visa-versa).
+> +			}
+> +			continue;
+> +		}
+> +
+> +		/*
+> +		 * Preserve the generic path for chained packets. No mbuf in
+> +		 * this suffix has been modified yet.
+> +		 */
+> +		if (unlikely(m->next != NULL)) {
+> +			if (run_count != 0)
+> +				rte_mbuf_raw_free_bulk(run_pool,
+> +						&mbufs[run_start], run_count);
+> +
+> +			__rte_pktmbuf_free_bulk_fallback(&mbufs[idx],
+> +					count - idx);
+> +			return;
+> +		}
+> +
+> +		__rte_mbuf_sanity_check(m, 1);
+> +		m = rte_pktmbuf_prefree_seg(m);
+> +		if (unlikely(m == NULL)) {
+> +			if (run_count != 0) {
+> +				rte_mbuf_raw_free_bulk(run_pool,
+> +						&mbufs[run_start], run_count);
+> +				run_count = 0;
+> +			}
+> +			continue;
+> +		}
+> +
+> +		if (run_count != 0 && m->pool != run_pool) {
+> +			rte_mbuf_raw_free_bulk(run_pool,
+> +					&mbufs[run_start], run_count);
+> +			run_count = 0;
+> +		}
+> +
+> +		if (run_count == 0) {
+> +			run_pool = m->pool;
+> +			run_start = idx;
+> +		}
+> +
+> +		run_count++;
+> +		if (run_count == RTE_PKTMBUF_FREE_PENDING_SZ) {
+> +			rte_mbuf_raw_free_bulk(run_pool,
+> +					&mbufs[run_start], run_count);
+> +			run_count = 0;
+> +		}
+> +	}
+> +
+> +	if (run_count != 0)
+> +		rte_mbuf_raw_free_bulk(run_pool, &mbufs[run_start], run_count);
+> +}
+> +
+>   /* Creates a shallow copy of mbuf */
+>   RTE_EXPORT_SYMBOL(rte_pktmbuf_clone)
+>   struct rte_mbuf *
 
