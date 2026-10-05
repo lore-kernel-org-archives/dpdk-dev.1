@@ -2,45 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA1FCA5FCE
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 07:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0488CCA5FF0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 08:11:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 378D4402B5;
-	Mon,  5 Oct 2026 09:45:09 +0200 (CEST)
-Received: from forward500d.mail.yandex.net (forward500d.mail.yandex.net
- [31.44.14.16]) by mails.dpdk.org (Postfix) with ESMTP id E25A940290
- for <dev@dpdk.org>; Mon,  5 Oct 2026 09:45:07 +0200 (CEST)
-Received: from mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net
- (mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net
- [IPv6:2a02:6b8:c0c:891f:0:640:5a77:0])
- by forward500d.mail.yandex.net (postfix) with ESMTPS id A02DA84D40;
- Mon, 05 Oct 2026 10:45:06 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net (smtp)
- with ESMTPSA id 4jFNhOriNa60-Ymiu14Xq; 
- Mon, 05 Oct 2026 10:45:05 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1791186306; bh=0TVM0jpkqNDrZ705n7AzXz+Erl8SIM2GSHjMta7ERoE=;
- h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
- b=ndN8P+v4oTyrN8oa4itEuuIQ2b30R5uVA8sPaSwUi73zvIYQsilG4Kwk6gm2V0T63
- EvR3q/eNxuHyu4ZL9KqsYjQy6aX/wHJFq57hUorU0bWv1OyXk7pmC+FGMH6jLP/GnH
- 15gBcw8rVP0IycTxXwNs6psf/TscyPGq1ndNGVhk=
-Authentication-Results: mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net;
- dkim=pass header.i=@yandex.ru
-Message-ID: <8b945572-dd97-4040-ac1f-37dd14edba3d@yandex.ru>
-Date: Mon, 5 Oct 2026 08:45:03 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id D7CF2402B5;
+	Mon,  5 Oct 2026 10:11:37 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 7003540290
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 10:11:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1791187895;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=nXRq2cYbraD0vc9ZMNCq52B9gUcge5WR6usfSvnotnY=;
+ b=PQ4NoYxM7D7HSrfBg87+TZrLApTVcvu23VOoAqgum8sziPln0fPvAL3M6yykfiHcZBHwIw
+ xJY71/Guy0TwXAohm6D3UaKzYEjLCNt9paPRW/eFjSs+FszufUtFwz8Vqn8StaP/+ldF4X
+ Z9WyHz2DLka/mF2DLi40iHWCkh/C2h4=
+Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com
+ [74.125.82.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-674-k8op_URbMNGbFKNI3CFKfQ-1; Mon, 05 Oct 2026 04:11:33 -0400
+X-MC-Unique: k8op_URbMNGbFKNI3CFKfQ-1
+X-Mimecast-MFC-AGG-ID: k8op_URbMNGbFKNI3CFKfQ_1791187892
+Received: by mail-dy1-f200.google.com with SMTP id
+ 5a478bee46e88-33713e5e6daso1710485eec.0
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 01:11:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791187892; x=1791792692;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=nXRq2cYbraD0vc9ZMNCq52B9gUcge5WR6usfSvnotnY=;
+ b=LdAlgTOYhF/MVjoTkOu7sr1bUv2K0lhrZ35SNcO7g/0DZo+HynfowjuD6DZWfkCnjm
+ 5dSALlBMQTWhTACSka+rWhPqy2sCp+ixCIVrrCQUL5NSu3+meOLiaC128Y+u0ixyOyMg
+ nkRiBHxsl/MIRYUluMTfT//0CLzXzY94mOImqnjvRDw6F373w0PleedU+8xiJRsk2mZ9
+ zY9Ptj08N2wWK8H/fizq11k04duNgbOZb4oELOkf/Q0AOA2fMUdpujMVi7SjE/ZjIssk
+ nMySM7KN9QmPpPo+b8jQmzg8NQr0ciDYa2Q5pFbFAgCfRBwh2zpoRGdM0bVXc1FURW7U
+ zVhA==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBzvbzzcLxwSWK2WJJ0/GdNDZZdsiO/bHBr4l6EL+b3Fr0Wnf5YM7C/fuBYP5VIVhhwlVYM=@dpdk.org
+X-Gm-Message-State: AFuF++mE1T9jJqIftDi34WAg6xGB/4XXpKIEC5V1I/U5o0RxbCELoV+U
+ bZAzKVZQzexscLivLH9x6hYTykJWOJkXHkcN0kFuDGlihgTOMZXXiAk6wZvwzfMCABrdfPO5aUX
+ 7ZAhVPS0vdgvDvThQ5+Kw5bEB8QOSBhh+gVPulsFsxO7VG6Otzq3wg2t6bG0mryhncZPymVSBHF
+ lgXoOGmWgEEd4S4nGibDw=
+X-Gm-Gg: AYBFou3TcdxWU2PUpMvu3vqisBZixDw/Aw5Yzl0AOfbh/LulmVWv3XzHyy9HcnHc2mQ
+ 8m5yQNHfjfi5cHkAHdgEsston479xsqpqdC6+qY3PMGUH2zmTB2ygTqEeUrTJGDhprl8bBaeK2x
+ NHhUBSHR65on6QL4WHgep8R0aMVPweHEhl6C4q4aS8ENynxFLJOhG3y29TmbSS934NP3hOFNwPT
+ H1BVZyN5zpvIvjjeY0l2Lkg04ak5mvl+gX2pK8mWtRLONCpNY1H7HKkLA5pb5af5yp3XrWzkMQC
+ Y6VhWQlYOAbJc3ORXZczWaoELVLkDiZn4MYpoUGmbnI=
+X-Received: by 2002:a05:7022:e0d:b0:148:516e:516 with SMTP id
+ a92af1059eb24-14f5bff9781mr19872863c88.20.1791187891960; 
+ Mon, 05 Oct 2026 01:11:31 -0700 (PDT)
+X-Received: by 2002:a05:7022:e0d:b0:148:516e:516 with SMTP id
+ a92af1059eb24-14f5bff9781mr19872818c88.20.1791187891345; Mon, 05 Oct 2026
+ 01:11:31 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mbuf: avoid temporary array for bulk free
-To: Nam Tran <hoangnamtran18122005@gmail.com>, mb@smartsharesystems.com
-Cc: dev@dpdk.org, stephen@networkplumber.org
-References: <20260922012856.30090-1-hoangnamtran18122005@gmail.com>
- <20260929002527.7-1-hoangnamtran18122005@gmail.com>
-Content-Language: en-US, ru
-From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-In-Reply-To: <20260929002527.7-1-hoangnamtran18122005@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20260929105339.1554051-1-eperezma@redhat.com>
+ <CAJFAV8yowsh_zf2CLWpVepRKzctrORUQ0a+JaOo4oDews2ANsw@mail.gmail.com>
+In-Reply-To: <CAJFAV8yowsh_zf2CLWpVepRKzctrORUQ0a+JaOo4oDews2ANsw@mail.gmail.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Date: Mon, 5 Oct 2026 10:11:19 +0200
+X-Gm-Features: AclHuK_hbyd2JQo9MLYJiT7S79SCF_nVOaOGYu7dXNKyOtfve5kABJRvgSs-WSI
+Message-ID: <CAO55csy=hwbA3iy4=Wzyz40Frh6=Vtwc+mkj8csehM-NMmA1_A@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] Add vduse live migration features
+To: David Marchand <david.marchand@redhat.com>
+Cc: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, mst@redhat.com, 
+ dev@dpdk.org, Yongji Xie <xieyongji@bytedance.com>, chenbox@nvidia.com, 
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, jasowangio@gmail.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: jLBJ8QFGD_OwIPOkac4uFb_cs1RH_TCIxA1eDgYQUwE_1791187892
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/alternative; boundary="000000000000fd7086065d136d5a"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,239 +89,142 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+--000000000000fd7086065d136d5a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Oct 3, 2026 at 11:54=E2=80=AFAM David Marchand <david.marchand@redh=
+at.com>
+wrote:
+
+> On Tue, 29 Sept 2026 at 12:53, Eugenio P=C3=A9rez <eperezma@redhat.com> w=
+rote:
+> >
+> > This series introduces features to the VDUSE (vDPA Device in Userspace)
+> driver
+> > to support Live Migration.
+> >
+> > Currently, DPDK does not support VDUSE devices live migration because t=
+he
+> > driver lacks a mechanism to suspend the device and quiesce the rings to
+> > initiate the switchover.  This series implements the suspend operation =
+to
+> > address this limitation.
+> >
+> > Furthermore, enabling Live Migration for devices with control virtqueue
+> > requires two additional features.  Both of them are included in this
+> series.
+> >
+> > * Address Spaces ID (ASID) support: This allows QEMU to isolate and
+> intercept
+> >   the device's CVQ. By doing so, QEMU is able to migrate the device
+> status
+> >   transparently, without requiring the device to support state save and
+> >   restore.
+> > * QUEUE_READY: This allows QEMU to control when the dataplane virtqueue=
+s
+> are
+> >   enabled.  This ensures the dataplane is started after the device
+> >   configuration has been fully restored via the CVQ.
+> >
+> > It also enables the VIRTIO_NET_F_STATUS feature.  This allows the devic=
+e
+> to
+> > signal the driver that it needs to send gratuitous ARP with
+> > VIRTIO_NET_S_ANNOUNCE, reducing the Live Migration downtime.
+> >
+> > Note that kernel headers are update to v7.3-rc3, not a stable version.
+> This
+> > would allow to ack the patches while the kernel uapi is published in 7.=
+3.
+> >
+> > v3:
+> > * Include uapi/linux/stddef.h and revert the -D__counted_by from v2.
+>
+> FYI, the issue is now fixed in main.
+>
+
+And I just re-aligned the next-virtio branch to latest main.
+
+Thanks,
+Maxime
 
 
+>
+>
+> --
+> David Marchand
+>
+>
 
-> rte_pktmbuf_free_bulk() currently stages freeable mbufs in a
-> temporary array before returning them to their mempool. For flat
-> packet arrays, this copies pointers even when the input array
-> already contains contiguous freeable mbufs.
->
-> Track contiguous same-pool runs in the input array and pass them
-> directly to rte_mbuf_raw_free_bulk(). Flush at 64 entries to
-> preserve the existing mempool-cache behavior. Also flush on NULL
-> entries, retained mbufs, and pool changes. Keep the array-based
-> fallback for chained packets.
->
-> Add coverage for NULL entries, mixed mempools, shared and indirect
-> mbufs, and a flat run followed by a chained packet.
->
-> Signed-off-by: Nam Tran <hoangnamtran18122005@gmail.com>
-> Reviewed-by: Morten Brørup <mb@smartsharesystems.com>
-> ---
-> v2:
-> - Cap same-pool runs at 64 to retain mempool-cache behavior.
-> - Move the sanity check after the chained-packet fallback decision.
-> - Add mixed flat/chained and indirect-mbuf regression cases.
-> - Remove the earlier timing claim; the capped version has not yet
->    been benchmarked on x86 or with a cached mempool.
->
-> Tested: ARM64 Linux debug build and mbuf_autotest passed.
->
->   app/test/test_mbuf.c | 94 ++++++++++++++++++++++++++++++++++++++++++++
->   lib/mbuf/rte_mbuf.c  | 74 ++++++++++++++++++++++++++++++++--
->   2 files changed, 165 insertions(+), 3 deletions(-)
->
-> diff --git a/app/test/test_mbuf.c b/app/test/test_mbuf.c
-> index db23259745..249e541173 100644
-> --- a/app/test/test_mbuf.c
-> +++ b/app/test/test_mbuf.c
-> @@ -833,6 +833,100 @@ test_pktmbuf_pool_bulk(void)
->   		goto err;
->   	}
->   
-> +	printf("Test bulk free with NULL entries.\n");
-> +
-> +	ret = rte_pktmbuf_alloc_bulk(pool, mbufs, 4);
-> +	if (ret != 0)
-> +		goto err;
-> +
-> +	m = mbufs[1];
-> +	mbufs[1] = NULL;
-> +	rte_pktmbuf_free_bulk(mbufs, 4);
-> +	rte_pktmbuf_free(m);
-> +
-> +	if (!rte_mempool_full(pool)) {
-> +		printf("mempool not full after NULL-entry bulk free\n");
-> +		goto err;
-> +	}
-> +
-> +	printf("Test bulk free with multiple pools.\n");
-> +
-> +	for (i = 0; i < 4; i++) {
-> +		mbufs[i] = rte_pktmbuf_alloc((i & 1) ? pool2 : pool);
-> +		if (mbufs[i] == NULL)
-> +			goto err;
-> +	}
-> +
-> +	rte_pktmbuf_free_bulk(mbufs, 4);
-> +
-> +	if (!(rte_mempool_full(pool) && rte_mempool_full(pool2))) {
-> +		printf("mempools not full after mixed-pool bulk free\n");
-> +		goto err;
-> +	}
-> +
-> +	printf("Test bulk free with shared mbuf.\n");
-> +
-> +	ret = rte_pktmbuf_alloc_bulk(pool, mbufs, 4);
-> +	if (ret != 0)
-> +		goto err;
-> +
-> +	m = mbufs[1];
-> +	rte_mbuf_refcnt_update(m, 1);
-> +	rte_pktmbuf_free_bulk(mbufs, 4);
-> +
-> +	if (rte_mbuf_refcnt_read(m) != 1) {
-> +		printf("shared mbuf reference count incorrect\n");
-> +		goto err;
-> +	}
-> +
-> +	rte_pktmbuf_free(m);
-> +
-> +	if (!rte_mempool_full(pool)) {
-> +		printf("mempool not full after shared mbuf free\n");
-> +		goto err;
-> +	}
-> +
-> +	printf("Test bulk free of flat mbufs around a chain.\n");
-> +
-> +	ret = rte_pktmbuf_alloc_bulk(pool, mbufs, 5);
-> +	if (ret != 0)
-> +		goto err;
-> +
-> +	ret = rte_pktmbuf_chain(mbufs[1], mbufs[2]);
-> +	if (ret != 0)
-> +		goto err;
-> +	mbufs[2] = mbufs[3];
-> +	mbufs[3] = mbufs[4];
-> +	rte_pktmbuf_free_bulk(mbufs, 4);
-> +
-> +	if (!rte_mempool_full(pool)) {
-> +		printf("mempool not full after mixed flat and chain bulk free\n");
-> +		goto err;
-> +	}
-> +
-> +	printf("Test bulk free with an indirect mbuf.\n");
-> +
-> +	m = rte_pktmbuf_alloc(pool);
-> +	if (m == NULL)
-> +		goto err;
-> +	mbufs[0] = rte_pktmbuf_alloc(pool);
-> +	mbufs[1] = rte_pktmbuf_clone(m, pool);
-> +	mbufs[2] = rte_pktmbuf_alloc(pool);
-> +	if (mbufs[0] == NULL || mbufs[1] == NULL || mbufs[2] == NULL)
-> +		goto err;
-> +
-> +	rte_pktmbuf_free_bulk(mbufs, 3);
-> +	if (rte_mbuf_refcnt_read(m) != 1) {
-> +		printf("indirect mbuf reference count incorrect\n");
-> +		goto err;
-> +	}
-> +	rte_pktmbuf_free(m);
-> +
-> +	if (!rte_mempool_full(pool)) {
-> +		printf("mempool not full after indirect mbuf bulk free\n");
-> +		goto err;
-> +	}
-> +
->   	printf("Test bulk free of single long chain.\n");
->   
->   	/* Bulk allocate all mbufs in the pool, in one go. */
-> diff --git a/lib/mbuf/rte_mbuf.c b/lib/mbuf/rte_mbuf.c
-> index 005bfaa573..99b2ea07cf 100644
-> --- a/lib/mbuf/rte_mbuf.c
-> +++ b/lib/mbuf/rte_mbuf.c
-> @@ -555,9 +555,8 @@ __rte_pktmbuf_free_seg_via_array(struct rte_mbuf *m,
->    */
->   #define RTE_PKTMBUF_FREE_PENDING_SZ 64
->   
-> -/* Free a bulk of packet mbufs back into their original mempools. */
-> -RTE_EXPORT_SYMBOL(rte_pktmbuf_free_bulk)
-> -void rte_pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int count)
-> +static void
-> +__rte_pktmbuf_free_bulk_fallback(struct rte_mbuf **mbufs, unsigned int count)
->   {
->   	struct rte_mbuf *m, *m_next, *pending[RTE_PKTMBUF_FREE_PENDING_SZ];
->   	unsigned int idx, nb_pending = 0;
-> @@ -582,6 +581,75 @@ void rte_pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int count)
->   		rte_mbuf_raw_free_bulk(pending[0]->pool, pending, nb_pending);
->   }
->   
-> +/* Free a bulk of packet mbufs back into their original mempools. */
-> +RTE_EXPORT_SYMBOL(rte_pktmbuf_free_bulk)
-> +void rte_pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int count)
-> +{
-> +	struct rte_mempool *run_pool = NULL;
-> +	unsigned int run_start = 0;
-> +	unsigned int run_count = 0;
-> +	unsigned int idx;
-> +
-> +	for (idx = 0; idx < count; idx++) {
-> +		struct rte_mbuf *m = mbufs[idx];
-> +
-> +		if (unlikely(m == NULL)) {
-> +			if (run_count != 0) {
-> +				rte_mbuf_raw_free_bulk(run_pool,
-> +						&mbufs[run_start], run_count);
-> +				run_count = 0;
-here (and in other similar places), I think you also has to update 
-run_start also.
-BTW, I don't think you need both run_count and run_start.
-Knowing the run_count and idx is enough to deduce run_start (or 
-visa-versa).
-> +			}
-> +			continue;
-> +		}
-> +
-> +		/*
-> +		 * Preserve the generic path for chained packets. No mbuf in
-> +		 * this suffix has been modified yet.
-> +		 */
-> +		if (unlikely(m->next != NULL)) {
-> +			if (run_count != 0)
-> +				rte_mbuf_raw_free_bulk(run_pool,
-> +						&mbufs[run_start], run_count);
-> +
-> +			__rte_pktmbuf_free_bulk_fallback(&mbufs[idx],
-> +					count - idx);
-> +			return;
-> +		}
-> +
-> +		__rte_mbuf_sanity_check(m, 1);
-> +		m = rte_pktmbuf_prefree_seg(m);
-> +		if (unlikely(m == NULL)) {
-> +			if (run_count != 0) {
-> +				rte_mbuf_raw_free_bulk(run_pool,
-> +						&mbufs[run_start], run_count);
-> +				run_count = 0;
-> +			}
-> +			continue;
-> +		}
-> +
-> +		if (run_count != 0 && m->pool != run_pool) {
-> +			rte_mbuf_raw_free_bulk(run_pool,
-> +					&mbufs[run_start], run_count);
-> +			run_count = 0;
-> +		}
-> +
-> +		if (run_count == 0) {
-> +			run_pool = m->pool;
-> +			run_start = idx;
-> +		}
-> +
-> +		run_count++;
-> +		if (run_count == RTE_PKTMBUF_FREE_PENDING_SZ) {
-> +			rte_mbuf_raw_free_bulk(run_pool,
-> +					&mbufs[run_start], run_count);
-> +			run_count = 0;
-> +		}
-> +	}
-> +
-> +	if (run_count != 0)
-> +		rte_mbuf_raw_free_bulk(run_pool, &mbufs[run_start], run_count);
-> +}
-> +
->   /* Creates a shallow copy of mbuf */
->   RTE_EXPORT_SYMBOL(rte_pktmbuf_clone)
->   struct rte_mbuf *
+--000000000000fd7086065d136d5a
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Sat, Oct 3, =
+2026 at 11:54=E2=80=AFAM David Marchand &lt;<a href=3D"mailto:david.marchan=
+d@redhat.com">david.marchand@redhat.com</a>&gt; wrote:<br></div><blockquote=
+ class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px so=
+lid rgb(204,204,204);padding-left:1ex">On Tue, 29 Sept 2026 at 12:53, Eugen=
+io P=C3=A9rez &lt;<a href=3D"mailto:eperezma@redhat.com" target=3D"_blank">=
+eperezma@redhat.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; This series introduces features to the VDUSE (vDPA Device in Userspace=
+) driver<br>
+&gt; to support Live Migration.<br>
+&gt;<br>
+&gt; Currently, DPDK does not support VDUSE devices live migration because =
+the<br>
+&gt; driver lacks a mechanism to suspend the device and quiesce the rings t=
+o<br>
+&gt; initiate the switchover.=C2=A0 This series implements the suspend oper=
+ation to<br>
+&gt; address this limitation.<br>
+&gt;<br>
+&gt; Furthermore, enabling Live Migration for devices with control virtqueu=
+e<br>
+&gt; requires two additional features.=C2=A0 Both of them are included in t=
+his series.<br>
+&gt;<br>
+&gt; * Address Spaces ID (ASID) support: This allows QEMU to isolate and in=
+tercept<br>
+&gt;=C2=A0 =C2=A0the device&#39;s CVQ. By doing so, QEMU is able to migrate=
+ the device status<br>
+&gt;=C2=A0 =C2=A0transparently, without requiring the device to support sta=
+te save and<br>
+&gt;=C2=A0 =C2=A0restore.<br>
+&gt; * QUEUE_READY: This allows QEMU to control when the dataplane virtqueu=
+es are<br>
+&gt;=C2=A0 =C2=A0enabled.=C2=A0 This ensures the dataplane is started after=
+ the device<br>
+&gt;=C2=A0 =C2=A0configuration has been fully restored via the CVQ.<br>
+&gt;<br>
+&gt; It also enables the VIRTIO_NET_F_STATUS feature.=C2=A0 This allows the=
+ device to<br>
+&gt; signal the driver that it needs to send gratuitous ARP with<br>
+&gt; VIRTIO_NET_S_ANNOUNCE, reducing the Live Migration downtime.<br>
+&gt;<br>
+&gt; Note that kernel headers are update to v7.3-rc3, not a stable version.=
+=C2=A0 This<br>
+&gt; would allow to ack the patches while the kernel uapi is published in 7=
+.3.<br>
+&gt;<br>
+&gt; v3:<br>
+&gt; * Include uapi/linux/stddef.h and revert the -D__counted_by from v2.<b=
+r>
+<br>
+FYI, the issue is now fixed in main.<br></blockquote><div><br></div><div>An=
+d I just re-aligned the next-virtio branch to latest main.</div><div><br></=
+div><div>Thanks,</div><div>Maxime</div><div>=C2=A0</div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
+b(204,204,204);padding-left:1ex">
+<br>
+<br>
+-- <br>
+David Marchand<br>
+<br>
+</blockquote></div></div>
+
+--000000000000fd7086065d136d5a--
 
