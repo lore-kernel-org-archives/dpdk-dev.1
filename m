@@ -2,38 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17572CA5FCE
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 13:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78428CA5FCE
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 13:45:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 429BD4028D;
-	Mon,  5 Oct 2026 15:14:23 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id BCB604028C
- for <dev@dpdk.org>; Mon,  5 Oct 2026 15:14:21 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 84D17201E4;
- Mon,  5 Oct 2026 15:14:21 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 463224042C;
+	Mon,  5 Oct 2026 15:45:58 +0200 (CEST)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+ by mails.dpdk.org (Postfix) with ESMTP id CEE914029D
+ for <dev@dpdk.org>; Mon,  5 Oct 2026 15:45:56 +0200 (CEST)
+Received: from ar (unknown [42.58.232.122])
+ by APP-01 (Coremail) with SMTP id qwCowADnu+8SqsNqzTTwCQ--.6148S2;
+ Mon, 05 Oct 2026 21:45:55 +0800 (CST)
+From: Sun Yuechi <sunyuechi@iscas.ac.cn>
+To: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+Cc: dev@dpdk.org,
+	Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v2 19/33] test/barrier: test sequentially consistent fence
+ only
+Date: Mon,  5 Oct 2026 06:45:54 -0700
+Message-ID: <20261005134554.942505-1-sunyuechi@iscas.ac.cn>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <cb765588-e72c-4a85-a1f4-3dc3ae4c5820@yandex.ru>
+References: <cb765588-e72c-4a85-a1f4-3dc3ae4c5820@yandex.ru>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH] build: fix cross compilation to x86_64
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Mon, 5 Oct 2026 15:14:17 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A97@smartserver.smartshare.dk>
-In-Reply-To: <20261005125943.678879-1-a.schollmeyer@syseleven.de>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] build: fix cross compilation to x86_64
-Thread-Index: Ad1UyX6C13XCBjLBS3uQKSd19y5aNwAAYp9g
-References: <20261005125943.678879-1-a.schollmeyer@syseleven.de>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Adrian Schollmeyer" <a.schollmeyer@syseleven.de>,
- "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: qwCowADnu+8SqsNqzTTwCQ--.6148S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+ VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUU5A7k0a2IF6F4UM7kC6x804xWl14x267AK
+ xVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
+ A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j
+ 6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gc
+ CE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxI
+ r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87
+ Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IY
+ c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
+ 026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF
+ 0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
+ vE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+ 6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2_HUDUUUU
+X-Originating-IP: [42.58.232.122]
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAALAmrDmHwesAABsn
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,46 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> If x86_64 is specified as target CPU instruction set (e.g. when
-> cross-compiling *to* x86_64), the cpu_instruction_set may be set to
-> x86_64, e.g. if it is derived from a Meson crossfile. However, while
-> Meson uses "x86_64" as name for the x86_64 architecture, compiler
-> options accept only "x86-64".
->=20
-> Introduce a conditional for handling this special case by changing
-> cpu_instruction_set to the march-compatible value.
->=20
-> Signed-off-by: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
-> ---
->  config/meson.build | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/config/meson.build b/config/meson.build
-> index dcb84ebd13..238d6cae0c 100644
-> --- a/config/meson.build
-> +++ b/config/meson.build
-> @@ -177,6 +177,11 @@ if not is_ms_compiler
->          machine_args +=3D '-mtune=3D' + cpu_instruction_set
->          compiler_arch_support =3D cc.has_argument('-mcpu=3D' +
-> cpu_instruction_set)
->      else
-> +        # Meson uses x86_64, but compilers expect x86-64.
-> +        # See https://mesonbuild.com/Reference-tables.html#cpu-
-> families
-> +        if cpu_instruction_set =3D=3D 'x86_64'
-> +            cpu_instruction_set =3D 'x86-64'
+Passed on RISC-V as well.
 
-Not sure, but maybe: 'x86-64-v2'?
-
-Ref:
-https://www.phoronix.com/news/GCC-11-x86-64-Feature-Levels
-
-> +        endif
->          machine_args +=3D '-march=3D' + cpu_instruction_set
->          # arm manages generic/auto config in config/arm/meson.build
->          if cpu_instruction_set !=3D 'generic' and cpu_instruction_set =
-!=3D
-> 'auto'
-> --
-> 2.43.0
+Tested-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
+Acked-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
 
