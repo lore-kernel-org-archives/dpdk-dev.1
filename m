@@ -2,32 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE68CA5FFC
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 15:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B14CA5FED
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 15:10:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D52042707;
-	Tue,  6 Oct 2026 17:10:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1C7CC4275A;
+	Tue,  6 Oct 2026 17:10:20 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 663B1410FC
- for <dev@dpdk.org>; Tue,  6 Oct 2026 17:10:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7D2E54111B
+ for <dev@dpdk.org>; Tue,  6 Oct 2026 17:10:16 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 482FD1A0010;
- Tue,  6 Oct 2026 17:10:15 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5BC381A0013;
+ Tue,  6 Oct 2026 17:10:16 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1281B1A0005;
- Tue,  6 Oct 2026 17:10:15 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 26A151A0006;
+ Tue,  6 Oct 2026 17:10:16 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0C3B71800229;
- Tue,  6 Oct 2026 23:10:13 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1E795180022D;
+ Tue,  6 Oct 2026 23:10:14 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v6-S2 03/13] net/dpaa2: support larger burst size
-Date: Tue,  6 Oct 2026 20:39:59 +0530
-Message-ID: <20261006151009.3593348-4-prashant.gupta_3@nxp.com>
+Subject: [PATCH v6-S2 04/13] net/dpaa2: support MPLS and PPPoE flow
+ distribution
+Date: Tue,  6 Oct 2026 20:40:00 +0530
+Message-ID: <20261006151009.3593348-5-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261006151009.3593348-1-prashant.gupta_3@nxp.com>
 References: <20261001073307.1125305-1-prashant.gupta_3@nxp.com>
@@ -50,144 +51,282 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Gagandeep Singh <g.singh@nxp.com>
 
-Make burst size checks and MC command fields SoC-aware,
-enabling bursts larger than 64K on LX2160A with dpni version 8.7+.
+Add rte_flow pattern support for MPLS and PPPoE items in the dpaa2
+PMD flow engine.
 
-The max_burst_size field in dpni_tx_shaping_cfg is widened to uint32_t
-and the MC command struct is updated to split the value across two
-16-bit fields using the new DPNI_BURST_LO/HI macros.
+For a pattern with no spec/mask, the frame is identified by its Frame
+Attribute Flag (FAF_MPLS_FRAM / FAF_PPPOE_PPP_FRAM) for both the QoS
+and flow steering tables.  When a spec is present, the MPLS label
+(NH_FLD_MPLS_MPLSL_1) or the PPPoE session id (NH_FLD_PPPOE_SID) is
+added as a header extract rule for both tables.
 
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
+NH_FLD_MPLS_MPLSL_1 with DPKG_FULL_FIELD causes MC to extract the full
+4-byte MPLS LSE (label + TC + S + TTL).  The original code passed
+sizeof(label_tc_s) = 3, so the driver key profile recorded the field as
+3 bytes while MC placed 4 bytes in the key; any extract field added
+after MPLS was off by one byte, corrupting the key layout.
+
+Fix by passing the full struct rte_flow_item_mpls pointer (spec/mask)
+with sizeof(*mask) = 4, so the key profile width matches the 4-byte
+field that MC extracts.  The TTL byte has mask 0x00 in the default mask
+and is ignored for matching purposes.
+
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_tm.c        | 16 +++++++++++-----
- drivers/net/dpaa2/mc/dpni.c         | 11 +++++++++--
- drivers/net/dpaa2/mc/fsl_dpni.h     |  8 ++++++--
- drivers/net/dpaa2/mc/fsl_dpni_cmd.h |  3 ++-
- 4 files changed, 28 insertions(+), 10 deletions(-)
+ doc/guides/nics/features/dpaa2.ini |   2 +
+ drivers/net/dpaa2/dpaa2_flow.c     | 196 +++++++++++++++++++++++++++++
+ 2 files changed, 198 insertions(+)
 
-diff --git a/drivers/net/dpaa2/dpaa2_tm.c b/drivers/net/dpaa2/dpaa2_tm.c
-index 36e815c356..3057f4d031 100644
---- a/drivers/net/dpaa2/dpaa2_tm.c
-+++ b/drivers/net/dpaa2/dpaa2_tm.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2020-2024 NXP
-+ * Copyright 2020-2026 NXP
-  */
- 
- #include <rte_ethdev.h>
-@@ -10,14 +10,20 @@
- #include "dpaa2_pmd_logs.h"
- #include <dpaa2_hw_dpio.h>
- 
--#define DPAA2_BURST_MAX	(64 * 1024)
--
- #define DPAA2_SHAPER_MIN_RATE 0
- #define DPAA2_SHAPER_MAX_RATE 107374182400ull
- #define DPAA2_WEIGHT_MAX 24701
- #define DPAA2_PKT_ADJUST_LEN_MIN 0
- #define DPAA2_PKT_ADJUST_LEN_MAX 0x7ff
- 
-+static inline uint32_t dpaa2_get_burst_max(struct dpaa2_dev_priv *priv)
-+{
-+	if (dpaa2_dev_cmp_dpni_ver(priv, 8, 7) >= 0)
-+		return (dpaa2_svr_family == SVR_LX2160A) ? 229375 : 0xF7FF;
-+
-+	return 0xF7FF;
-+}
-+
- int
- dpaa2_tm_init(struct rte_eth_dev *dev)
- {
-@@ -283,7 +289,7 @@ dpaa2_shaper_profile_add(struct rte_eth_dev *dev, uint32_t shaper_profile_id,
- 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_RATE,
- 				NULL, "committed rate is out of range\n");
- 
--	if (params->committed.size > DPAA2_BURST_MAX)
-+	if (params->committed.size > dpaa2_get_burst_max(priv))
- 		return -rte_tm_error_set(error, EINVAL,
- 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_SIZE,
- 				NULL, "committed size is out of range\n");
-@@ -293,7 +299,7 @@ dpaa2_shaper_profile_add(struct rte_eth_dev *dev, uint32_t shaper_profile_id,
- 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_RATE,
- 				NULL, "Peak rate is out of range\n");
- 
--	if (params->peak.size > DPAA2_BURST_MAX)
-+	if (params->peak.size > dpaa2_get_burst_max(priv))
- 		return -rte_tm_error_set(error, EINVAL,
- 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_SIZE,
- 				NULL, "Peak size is out of range\n");
-diff --git a/drivers/net/dpaa2/mc/dpni.c b/drivers/net/dpaa2/mc/dpni.c
-index d0a9fefd31..17275b7195 100644
---- a/drivers/net/dpaa2/mc/dpni.c
-+++ b/drivers/net/dpaa2/mc/dpni.c
-@@ -1106,6 +1106,7 @@ int dpni_set_tx_shaping(struct fsl_mc_io *mc_io,
- {
- 	struct dpni_cmd_set_tx_shaping *cmd_params;
- 	struct mc_command cmd = { 0 };
-+	uint32_t tx_cr_burst, tx_er_burst;
- 	int coupled, lni_shaper;
- 	uint8_t channel_id;
- 	uint16_t oal;
-@@ -1115,10 +1116,16 @@ int dpni_set_tx_shaping(struct fsl_mc_io *mc_io,
- 					  cmd_flags,
- 					  token);
- 	cmd_params = (struct dpni_cmd_set_tx_shaping *)cmd.params;
-+	tx_cr_burst = tx_cr_shaper->max_burst_size;
-+	tx_er_burst = tx_er_shaper->max_burst_size;
- 	cmd_params->tx_cr_max_burst_size =
--		cpu_to_le16(tx_cr_shaper->max_burst_size);
-+		cpu_to_le16(DPNI_BURST_LO(tx_cr_burst));
- 	cmd_params->tx_er_max_burst_size =
--		cpu_to_le16(tx_er_shaper->max_burst_size);
-+		cpu_to_le16(DPNI_BURST_LO(tx_er_burst));
-+	cmd_params->tx_cr_max_burst_size_hi =
-+		cpu_to_le16(DPNI_BURST_HI(tx_cr_burst));
-+	cmd_params->tx_er_max_burst_size_hi =
-+		cpu_to_le16(DPNI_BURST_HI(tx_er_burst));
- 	cmd_params->tx_cr_rate_limit =
- 		cpu_to_le32(tx_cr_shaper->rate_limit);
- 	cmd_params->tx_er_rate_limit =
-diff --git a/drivers/net/dpaa2/mc/fsl_dpni.h b/drivers/net/dpaa2/mc/fsl_dpni.h
-index 42d633eaf8..8913b408e7 100644
---- a/drivers/net/dpaa2/mc/fsl_dpni.h
-+++ b/drivers/net/dpaa2/mc/fsl_dpni.h
-@@ -830,14 +830,18 @@ int dpni_get_link_state(struct fsl_mc_io *mc_io,
- 			uint16_t token,
- 			struct dpni_link_state *state);
- 
-+#define DPNI_BURST_LO(burst)	((burst) & GENMASK(15, 0))
-+#define DPNI_BURST_HI(burst)	((burst) >> 16)
-+
- /**
-  * struct dpni_tx_shaping - Structure representing DPNI tx shaping configuration
-  * @rate_limit:		Rate in Mbits/s
-- * @max_burst_size:	Burst size in bytes (up to 64KB)
-+ * @max_burst_size:	Burst size in bytes. Limits depend on the SoC (0x37FFF
-+ *		for LX2160A, 0xF7FF for all others)
-  */
- struct dpni_tx_shaping_cfg {
- 	uint32_t rate_limit;
--	uint16_t max_burst_size;
-+	uint32_t max_burst_size;
+diff --git a/doc/guides/nics/features/dpaa2.ini b/doc/guides/nics/features/dpaa2.ini
+index 4788afef8d..49faebcd06 100644
+--- a/doc/guides/nics/features/dpaa2.ini
++++ b/doc/guides/nics/features/dpaa2.ini
+@@ -43,6 +43,8 @@ gtp                  = Y
+ icmp                 = Y
+ ipv4                 = Y
+ ipv6                 = Y
++mpls                 = Y
++pppoes               = Y
+ raw                  = Y
+ sctp                 = Y
+ tcp                  = Y
+diff --git a/drivers/net/dpaa2/dpaa2_flow.c b/drivers/net/dpaa2/dpaa2_flow.c
+index 2e44bff766..1446b14bf2 100644
+--- a/drivers/net/dpaa2/dpaa2_flow.c
++++ b/drivers/net/dpaa2/dpaa2_flow.c
+@@ -80,6 +80,8 @@ enum rte_flow_item_type dpaa2_hp_supported_pattern_type[] = {
+ 	RTE_FLOW_ITEM_TYPE_GTP,
+ 	RTE_FLOW_ITEM_TYPE_ESP,
+ 	RTE_FLOW_ITEM_TYPE_AH,
++	RTE_FLOW_ITEM_TYPE_MPLS,
++	RTE_FLOW_ITEM_TYPE_PPPOES,
+ 	RTE_FLOW_ITEM_TYPE_RAW
  };
  
- /**
-diff --git a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
-index bb4939031b..6b396ca7cc 100644
---- a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
-+++ b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
-@@ -394,7 +394,8 @@ struct dpni_rsp_get_link_state {
- struct dpni_cmd_set_tx_shaping {
- 	uint16_t tx_cr_max_burst_size;
- 	uint16_t tx_er_max_burst_size;
--	uint32_t pad;
-+	uint16_t tx_cr_max_burst_size_hi;
-+	uint16_t tx_er_max_burst_size_hi;
- 	uint32_t tx_cr_rate_limit;
- 	uint32_t tx_er_rate_limit;
- 	/* from LSB: coupled:1, lni_shaper: 1*/
+@@ -180,8 +182,17 @@ static const struct rte_flow_item_gtp dpaa2_flow_item_gtp_mask = {
+ 	.teid = RTE_BE32(0xffffffff),
+ };
+ 
++static const struct rte_flow_item_mpls dpaa2_flow_item_mpls_mask = {
++	.label_tc_s = { 0xff, 0xff, 0xff },
++};
++
++static const struct rte_flow_item_pppoe dpaa2_flow_item_pppoe_mask = {
++	.session_id = RTE_BE16(0xffff),
++};
++
+ #endif
+ 
++
+ #define DPAA2_FLOW_DUMP printf
+ 
+ static inline void
+@@ -1764,6 +1775,14 @@ dpaa2_flow_extract_support(const uint8_t *mask_src,
+ 		mask_support = (const char *)&dpaa2_flow_item_gtp_mask;
+ 		size = sizeof(struct rte_flow_item_gtp);
+ 		break;
++	case RTE_FLOW_ITEM_TYPE_MPLS:
++		mask_support = (const char *)&dpaa2_flow_item_mpls_mask;
++		size = sizeof(struct rte_flow_item_mpls);
++		break;
++	case RTE_FLOW_ITEM_TYPE_PPPOES:
++		mask_support = (const char *)&dpaa2_flow_item_pppoe_mask;
++		size = sizeof(struct rte_flow_item_pppoe);
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -4041,6 +4060,163 @@ dpaa2_configure_flow_gtp(struct dpaa2_dev_flow *flow,
+ 	return 0;
+ }
+ 
++static int
++dpaa2_configure_flow_mpls(struct dpaa2_dev_flow *flow,
++	struct rte_eth_dev *dev,
++	const struct rte_flow_attr *attr,
++	const struct rte_dpaa2_flow_item *dpaa2_pattern,
++	const struct rte_flow_action actions[] __rte_unused,
++	struct rte_flow_error *error __rte_unused,
++	int *device_configured)
++{
++	int ret, local_cfg = 0;
++	uint32_t group;
++	const struct rte_flow_item_mpls *spec, *mask;
++	struct dpaa2_dev_priv *priv = dev->data->dev_private;
++	const struct rte_flow_item *pattern =
++		&dpaa2_pattern->generic_item;
++
++	group = attr->group;
++
++	/* Parse pattern list to get the matching parameters */
++	spec = pattern->spec;
++	mask = pattern->mask ?
++		pattern->mask : &dpaa2_flow_item_mpls_mask;
++
++	/* Get traffic class index and flow id to be configured */
++	flow->tc_id = group;
++	flow->tc_index = attr->priority;
++
++	if (dpaa2_pattern->in_tunnel) {
++		DPAA2_PMD_ERR("Tunnel-MPLS distribution not support");
++		return -ENOTSUP;
++	}
++
++	if (!spec) {
++		ret = dpaa2_flow_identify_by_faf(priv, flow,
++				FAF_MPLS_FRAM, DPAA2_FLOW_QOS_TYPE,
++				group, &local_cfg);
++		if (ret)
++			return ret;
++
++		ret = dpaa2_flow_identify_by_faf(priv, flow,
++				FAF_MPLS_FRAM, DPAA2_FLOW_FS_TYPE,
++				group, &local_cfg);
++		if (ret)
++			return ret;
++
++		(*device_configured) |= local_cfg;
++		return 0;
++	}
++
++	ret = dpaa2_flow_extract_support((const uint8_t *)mask,
++		RTE_FLOW_ITEM_TYPE_MPLS);
++	if (ret) {
++		DPAA2_PMD_WARN("Extract field(s) of MPLS not support.");
++		return ret;
++	}
++
++	if (!mask->label_tc_s[0] && !mask->label_tc_s[1] &&
++		!mask->label_tc_s[2])
++		return 0;
++
++	ret = dpaa2_flow_add_hdr_extract_rule(flow, NET_PROT_MPLS,
++			NH_FLD_MPLS_MPLSL_1, spec,
++			mask, sizeof(*mask),
++			priv, group, &local_cfg, DPAA2_FLOW_QOS_TYPE);
++	if (ret)
++		return ret;
++
++	ret = dpaa2_flow_add_hdr_extract_rule(flow, NET_PROT_MPLS,
++			NH_FLD_MPLS_MPLSL_1, spec,
++			mask, sizeof(*mask),
++			priv, group, &local_cfg, DPAA2_FLOW_FS_TYPE);
++	if (ret)
++		return ret;
++
++	(*device_configured) |= local_cfg;
++
++	return 0;
++}
++
++static int
++dpaa2_configure_flow_pppoe(struct dpaa2_dev_flow *flow,
++	struct rte_eth_dev *dev,
++	const struct rte_flow_attr *attr,
++	const struct rte_dpaa2_flow_item *dpaa2_pattern,
++	const struct rte_flow_action actions[] __rte_unused,
++	struct rte_flow_error *error __rte_unused,
++	int *device_configured)
++{
++	int ret, local_cfg = 0;
++	uint32_t group;
++	const struct rte_flow_item_pppoe *spec, *mask;
++	struct dpaa2_dev_priv *priv = dev->data->dev_private;
++	const struct rte_flow_item *pattern =
++		&dpaa2_pattern->generic_item;
++
++	group = attr->group;
++
++	/* Parse pattern list to get the matching parameters */
++	spec = pattern->spec;
++	mask = pattern->mask ?
++		pattern->mask : &dpaa2_flow_item_pppoe_mask;
++
++	/* Get traffic class index and flow id to be configured */
++	flow->tc_id = group;
++	flow->tc_index = attr->priority;
++
++	if (dpaa2_pattern->in_tunnel) {
++		DPAA2_PMD_ERR("Tunnel-PPPoE distribution not support");
++		return -ENOTSUP;
++	}
++
++	if (!spec) {
++		ret = dpaa2_flow_identify_by_faf(priv, flow,
++				FAF_PPPOE_PPP_FRAM, DPAA2_FLOW_QOS_TYPE,
++				group, &local_cfg);
++		if (ret)
++			return ret;
++
++		ret = dpaa2_flow_identify_by_faf(priv, flow,
++				FAF_PPPOE_PPP_FRAM, DPAA2_FLOW_FS_TYPE,
++				group, &local_cfg);
++		if (ret)
++			return ret;
++
++		(*device_configured) |= local_cfg;
++		return 0;
++	}
++
++	ret = dpaa2_flow_extract_support((const uint8_t *)mask,
++		RTE_FLOW_ITEM_TYPE_PPPOES);
++	if (ret) {
++		DPAA2_PMD_WARN("Extract field(s) of PPPoE not support.");
++		return ret;
++	}
++
++	if (!mask->session_id)
++		return 0;
++
++	ret = dpaa2_flow_add_hdr_extract_rule(flow, NET_PROT_PPPOE,
++			NH_FLD_PPPOE_SID, &spec->session_id,
++			&mask->session_id, sizeof(rte_be16_t),
++			priv, group, &local_cfg, DPAA2_FLOW_QOS_TYPE);
++	if (ret)
++		return ret;
++
++	ret = dpaa2_flow_add_hdr_extract_rule(flow, NET_PROT_PPPOE,
++			NH_FLD_PPPOE_SID, &spec->session_id,
++			&mask->session_id, sizeof(rte_be16_t),
++			priv, group, &local_cfg, DPAA2_FLOW_FS_TYPE);
++	if (ret)
++		return ret;
++
++	(*device_configured) |= local_cfg;
++
++	return 0;
++}
++
+ static int
+ dpaa2_configure_flow_raw(struct dpaa2_dev_flow *flow,
+ 	struct rte_eth_dev *dev,
+@@ -4712,6 +4888,26 @@ dpaa2_generic_flow_set(struct dpaa2_dev_flow *flow,
+ 				goto end_flow_set;
+ 			}
+ 			break;
++		case RTE_FLOW_ITEM_TYPE_MPLS:
++			ret = dpaa2_configure_flow_mpls(flow,
++					dev, attr, &dpaa2_pattern[i],
++					actions, error,
++					&is_keycfg_configured);
++			if (ret) {
++				DPAA2_PMD_ERR("MPLS flow config failed!");
++				goto end_flow_set;
++			}
++			break;
++		case RTE_FLOW_ITEM_TYPE_PPPOES:
++			ret = dpaa2_configure_flow_pppoe(flow,
++					dev, attr, &dpaa2_pattern[i],
++					actions, error,
++					&is_keycfg_configured);
++			if (ret) {
++				DPAA2_PMD_ERR("PPPoE flow config failed!");
++				goto end_flow_set;
++			}
++			break;
+ 		case RTE_FLOW_ITEM_TYPE_RAW:
+ 			ret = dpaa2_configure_flow_raw(flow, dev, attr,
+ 					&dpaa2_pattern[i],
 -- 
 2.43.0
 
