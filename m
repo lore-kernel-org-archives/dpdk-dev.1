@@ -2,53 +2,157 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72223CA5FF0
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 08:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85EFACA5FED
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 09:23:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 29A0940270;
-	Tue,  6 Oct 2026 10:21:05 +0200 (CEST)
-Received: from mx0a-003cac02.pphosted.com (mx0a-003cac02.pphosted.com
- [205.220.169.235])
- by mails.dpdk.org (Postfix) with ESMTP id A29004025F;
- Tue,  6 Oct 2026 10:21:03 +0200 (CEST)
-Received: from pps.filterd (m0314249.ppops.net [127.0.0.1])
- by mx0a-003cac02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 69662Xnk3870506; Tue, 6 Oct 2026 02:21:02 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com; h=
- cc:content-transfer-encoding:date:from:message-id:mime-version
- :subject:to; s=keysight-0815; bh=G+FIQ0CASVzyf+sTapgJE+ppu2AO4jO
- MrzUDohu0yOc=; b=s64woVIc+6y4/ezMLy0nOpBEnYNf66V0BYJWb/CCfy1W2Il
- hfDj/ODx8r9u7f0jMfgxwKJmULykS5u9M5R+iwxe5jFTD1TLbqZJXwnLxkgR7ztx
- 9zUat79C4BCTjaHTMQfDmWQSk3q2clEG5m89Yuqpg5oqrm/W5yqmIII/cQaa9O/w
- wTKVEuzFB2qSoFQbRjiteGzAAtIVaZHLy5KTkUZ6M+XfktOU+wfu7QI0EOCv5WAK
- IyboqOowC3vKkIJzZsJGd31o21g/afpL+FQ/EhPkqslxH++m1I8sBKyW9aL9e5Hw
- 1B61vDgfCA3EU/0dZ4OIjL4MdT5VksogA8wKGRg==
-Received: from smtp-us.ser.proofpoint.com (pmta-use.ser.proofpoint.com
- [3.215.31.156])
- by mx0a-003cac02.pphosted.com (PPS) with ESMTPS id 4h3hev3vhb-1
- (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT);
- Tue, 06 Oct 2026 02:21:02 -0600 (MDT)
-Received: from ppserconnector3.cos.dmz.keysight.com ([192.25.5.34])
- by cmsmtp with ESMTPSA
- id E0PnxkPbxyuTnE0Q1xJEj1; Tue, 06 Oct 2026 08:21:01 +0000
-X-Mailer: SER-9da617c0781f77b24d454c2ffca1e7acced358b813e950646219cc1f5ae32690
-X-Cloudmark-MID: E0PnxkPbxyuTnE0Q1xJEj1
-pfptstatus: 1568ac97-559f-432f-801f-22d134b402f7@pfpt
-X-Proofpoint-CID: 3612b050-454b-3384-9099-49ecf78b7412
-Received: from eda-dev1.buh.is.keysight.com ([10.38.132.129])
- by ppserconnector3.cos.dmz.keysight.com with ESMTP
- id E0Pzx70Lm7E8iE0Pzxwmp4; Tue, 06 Oct 2026 08:21:01 +0000
-ser_con_authuser: ??
-From: Dragos Tarcatu <dragos.tarcatu@keysight.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, konstantin.v.ananyev@yandex.ru,
- Dragos Tarcatu <dragos.tarcatu@keysight.com>, stable@dpdk.org
-Subject: [PATCH] eal/x86: check OS support for AVX and AVX512 state
-Date: Tue,  6 Oct 2026 08:20:56 +0000
-Message-Id: <20261006082056.46426-1-dragos.tarcatu@keysight.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 1727A40270;
+	Tue,  6 Oct 2026 11:23:26 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id F16AD4025F;
+ Tue,  6 Oct 2026 11:23:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1791278605; x=1822814605;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=Oc3SGAJ/B+2zDN4+JFqMMSpGuycNYMJJrnVI0chQrsE=;
+ b=mczoeKmXkm0Z/2FL6lWneB4Lz8dNftVSRWjk5pI2ALZ0qkFtAWv6yOUq
+ g8ShYxdW4BBqDVnFq2Y9PsNVsJws80Y8wh6iMwjNE4Ch+mQoQ9OJjMOFy
+ Hvqb3yNxMC1pqw9U7f/n270J/+h4oZOkiNh4QmCNpZUHAxd2aXD6zNvCz
+ 8RAGe5dwQDZNO4+49bmfphmlAEybHi3cnbfITRrK7JQ0JnMqBNlpVN87p
+ J5dp1jIBBOhVXMIQPZL4KaXo0FtAAdfvJ+1rz+gCms6ONtfa1lD/UH8Zf
+ 1cmy8ExphLYpa09C6t/odSJXehdr0NzqUq/NOyWignWJqTH9f2guFjp15 g==;
+X-CSE-ConnectionGUID: mhjulEWGTVe4yCmYOlOK5A==
+X-CSE-MsgGUID: vwQKsuwLQ0O7EoeRG4bx8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11926"; a="102482578"
+X-IronPort-AV: E=Sophos;i="6.27,143,1787036400"; d="scan'208";a="102482578"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Oct 2026 02:23:23 -0700
+X-CSE-ConnectionGUID: Ihxil416TPWejun+1kdGpg==
+X-CSE-MsgGUID: MS7HDLYnSaK5QtGKx4qnnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,143,1787036400"; d="scan'208";a="276626784"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Oct 2026 02:23:23 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Tue, 6 Oct 2026 02:23:21 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Tue, 6 Oct 2026 02:23:21 -0700
+Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.11) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Tue, 6 Oct 2026 02:23:21 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HMaLofMJ/5Oiz38EeeQpRdAsJzoPl//tWASGm/3y39kH2HJiK80rDDGGo2yuiXY4iR4ikDtk7kB4Hi+FnDfu1INJsajFNrUwQv9cD6wUIoheaIUuv4n+uTnqYxLeAskVHN1FEJoZ5FaTv23W/gwFWwEBYqZGrxrgSGeysGIH2wA+ohnCtc4Llvm5b/ZoX1SH5mO1Z0n9EOKWa/rsXZX4wshc6aQS5wJfnxF9z5Zb8Jw+lCT1QU+ZRH/DX8QQ2lVKbrWYlWnaCAYaFTXiLNN5ht5ZWmJgcODoA40l3rHn/Ic2pctTPfq6gqTpXCXt91ARBNyKpqgyKlzGsovlH/he6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Rql+TMsm39+8L3k/Zvm8tHQ4F0bAy37o8c1dl+m7HVk=;
+ b=oqGopssNCs6A3/lbRdm2iJKP85fTIzXQBZ208JHp5i3fcJv+tt9mvej2ucQWT5mVOqczNmQNNEyggLemNvE0U5qlWODdLlflBrMBJGPJMJ6nr8cL/F83dPuem/oSNUmn70Jh/6pUP4NQ1wR0ZGxlnT3F71id5W3QDWgR4xITkAXw92gLmaNA8QiLTX3AvM2HnO+H4L8Mh2ogfBtaHuv9btoVgO8QMLLncvX8ACftxQzlPgUrCQnDoLLphSWtq57p6C+E45C40G8he88/pwhngbaer4AAORtJDkEAeKvFm45xwz/VmrHfFb4js3kUx9NaEo3KlrvQ89ObGVBlBoXxtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ IA4PR11MB9251.namprd11.prod.outlook.com (2603:10b6:208:56f::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Tue, 6 Oct
+ 2026 09:23:12 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.21.0472.016; Tue, 6 Oct 2026
+ 09:23:12 +0000
+Message-ID: <9d10d4e1-c931-482a-b3ac-b8d2a2c37cd6@intel.com>
+Date: Tue, 6 Oct 2026 11:23:06 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net/ixgbe: fix repeated Rx packet buffer shrink for
+ FDIR
+To: Zhang Tengfei <zhtfdev@gmail.com>, <dev@dpdk.org>
+CC: <stable@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>, Dongdong Liu
+ <liudongdong3@huawei.com>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+References: <20260916135827.116145-1-zhtfdev@gmail.com>
+ <20260927042545.45152-1-zhtfdev@gmail.com>
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Content-Language: en-US
+In-Reply-To: <20260927042545.45152-1-zhtfdev@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU2PR04CA0289.eurprd04.prod.outlook.com
+ (2603:10a6:10:28c::24) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|IA4PR11MB9251:EE_
+X-MS-Office365-Filtering-Correlation-Id: 05d81bde-0789-4c93-cd9e-08df238b716c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|376014|1800799024|366016|6133799003|18002099003|22082099003|10067099003|4143699003|56012099006|5023799004|11063799006;
+X-Microsoft-Antispam-Message-Info: AyC9fFj36qu0yPZrfqzQz2z0RdOJ9MFQlCc57SHI6h411lv+JgsT8EQlvlNZwmCpu2moyWUnXjtY+D2uGB2igVcznqnCidyDQMHc1L/uqAA8Utv+98L7wH80PPqlsEZHzPj5Es0U5v+FkfUGc3rYBDmX7ASpGjwgIPyQU8ArqqdJdvRx5ucCPbyF5oNjxVr2ojhV4ivDasv3+8iugLw2OPYwGKMPNbKdShXpH0r3m2mI1NKYCDrnXMCJxh1kOQY9OCzrpdFE7UsbvBLiFDfwqeFrRpIc7RXRGrHHZC51SMEzc9WwV1THEICvbMGNGxisxotThU456Zizgg65qRucUmISyl5gbT/66CHm7bd4EM1o1ZPT1SIpQbP6OCYwSLZAeEO1ewvTwxF4yiNx6V6RV3v1ey1h58704JPLbJ60YeGtaYjZRRkul4hy5LmlB4OAK8N7GkLWinLCACZkeA5BgFfuCzlO5SKfdczOnLiW+nOJVlOgDSaJQ+4Q8IHZQIXyJK5zO5zKgOlLe1S4R7zWY3Ke2/4GOaD/rRg9JBSXJBAcKICzmg3UlHFWmfzZp9hglrhTyTvDuRit8Cz0n0CqaPmmVhqVhr4uhIzwyF5eG+ZvKwVlvU9Sq22xT122iG9N2osPhTiYDuImnLDRwfcGlZacjwnbXyya1/tFsSYM0L8=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(6133799003)(18002099003)(22082099003)(10067099003)(4143699003)(56012099006)(5023799004)(11063799006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cWJrY0xnUDJ0ZXc2dEN5U2VvWlh5Y3lFd1c4REI1Qk1YazE1MGtUbzJRMDJ6?=
+ =?utf-8?B?K0I2bVFoOVoydTROM1hWVjhEdWxTbUJsUW9zZE5sdGpkcldLZWJVL1dmYVJL?=
+ =?utf-8?B?SlRtV2wxR3Z5d0cyQU1sTGova0ZJdzliSW1rVmRudXZRN01DVFJZcnJYOGYx?=
+ =?utf-8?B?YjUzR1pNSytCQ0xvVk12d2dVb3B5dnBWZzNDUW8zYUNxNWx5Z3Rwd0FyUjc5?=
+ =?utf-8?B?U3RWZkJzR0xhYVdLRkVYN2g1dnRRMUZmNTdsazFOS3c5QVRCZWs5OVo4VDBQ?=
+ =?utf-8?B?NkZVUzZYNDhiQmRrTlZhOGZTY2gzLzkxUyt5WXFjUjcxWHZRVFJzTG5TWkF3?=
+ =?utf-8?B?R0JJdFZucitqU1VhaHFKbXlEczI3d1pVelpWVFFQUHR4T3NnWkRBZU5mWEpq?=
+ =?utf-8?B?YlYvWVU5Q3RVUDh3Ky80Rk1EblE1a05tbUFqNFlXVW9pNzY5L3MyMTkycnI1?=
+ =?utf-8?B?R2dSZnB3UnlWN1FOQmxVS09NaU8wc3hEQmhkTFg2NTdFZzRTRTh0cnVySW1L?=
+ =?utf-8?B?eWFlYkFTeGtLbU90UVFuQVQvOU5TUGhxYU1uSDUvY2g2ZkZrWDFoNTN4WDhI?=
+ =?utf-8?B?dlJwdit1VWRxbk8ya1h0amNiVVBjOWZGSGs4QzBSeUQ4eDJlV1Q4ZURGV0hH?=
+ =?utf-8?B?NW1UelBreW1zbkRaWXpTRGhTWXdwZ0N0aEN6dHBrNnlScU5NK29SdXk4blNx?=
+ =?utf-8?B?SUc1aWZkVjE1Sk5acnErWHlnN2NLMEhnRDZOK3J3SFRObVZuN3E3R1BycUlk?=
+ =?utf-8?B?S0hzeGx4OWFMejVuS1d0a203S3hWYmczR2drZjJ1U01DOWJUNWl6aXl0REIw?=
+ =?utf-8?B?K2xJUFViMndiL3hDWWYwVjNBTlBRWVpEVWpqMUNla2JYVElkZVp6N21DSnlX?=
+ =?utf-8?B?SGJ3K2k5SVZ6MGVsdUI1bkUxRHhuRWdxa1RiWUJ6TnUvdWtXaldDTkhQUCs2?=
+ =?utf-8?B?anZUT1l5L0RranJrSC9Xc2F3WU1ic1JWUk1GdWxYTVpldzJrc2F1QW90akJD?=
+ =?utf-8?B?N09EdEQyYUw4Qi9DNFdKVlRVOTJTa1JJTXZ5RjlxZjZYODdGL1BaOEtLSXJW?=
+ =?utf-8?B?QXVHbG5jNGVIcnNPUEJneWIrTDUyaTU0d0VJQUtheGpKVE9kWUhXdjBSakhZ?=
+ =?utf-8?B?a3ZFNVV4Y25IK3VWdStKUUJMa2xOditPTmxNc3F3WVBoUi93NU1wZitRWjAy?=
+ =?utf-8?B?RFV0WDNCTUQwRm5DeVI1S2NtM2E3Kzh5RzAvNWMyYnNtMkwrNy9IY2dleGdT?=
+ =?utf-8?B?RFpLZmRqOWFEam9Ub1pxK0FiUlpNcXFoOWQrVnhhaEdQV3BWRmpBZTFJZGFj?=
+ =?utf-8?B?N1JaSUpLbFdFcVVaUHdSWFBxUUFKbjlZTG1WN0srMWc3M014SG1iUmFEclVU?=
+ =?utf-8?B?MzVZdkNsN1ZtR3ZBdVlONWNuTXdtU1dnZlJDLzR5UGpqbjAzNzZoazl4cGIw?=
+ =?utf-8?B?T2d1STVnL1AvTnhMTkFUb2huMmJZS1VCWXluU09GOC9aQ1NFYm9vSkx4TUt5?=
+ =?utf-8?B?QUozMmVZYisxMWtsWk5VN1hGK2lyNTEzcmxkY2FVNkJiRUY2a3A1bS9QZDFH?=
+ =?utf-8?B?bDlNQWhVNEozQkltQU9tSDRZS3Y1ZEt2M1FtRXh6YUVLcDE4aTkzcFFKUTJ3?=
+ =?utf-8?B?eXQveDFBMXR1UWlESUdWL3dqL2Z3MFZ0aERwVlpLa0RHeGlCdGxSY3h6R053?=
+ =?utf-8?B?YXRNR2pBWHFFTGhOM3JoSVdxOFRZL2M4bEtwTFRxSkFaZ012SkdtbWFNSGdB?=
+ =?utf-8?B?cmw4UDZDekdNdVJ5MHlSZTFxOUdvV0VSb1YzQklFUDlWb0ZhczlTNXpsWFFi?=
+ =?utf-8?B?MTdwN0xrQ3ZPUXJLQ1E1TElWSUVyTVIvU2JMSXgza3JhYndXdEhxemgvN2dC?=
+ =?utf-8?B?YksxR1AxNXpiZVdHSXhia1dVQkxjb0Jlc3ltYXFETnY1RDJ0UGIzbklMZTFG?=
+ =?utf-8?B?end2bjUrMnlYS29MNVMva3RMTjVuTklIb1NUVDUzR1VJMzFPNUwzYU1aQm1s?=
+ =?utf-8?B?VzZoSXVvMlR6cEU3ZWovLys2bnFTZjZzb3JJVGF3Tnl3eGVwOUxnNDZ3S21a?=
+ =?utf-8?B?UzhWZFkrK3UvMUo3QWNhUkFkRWQ2NHpBcVhPQ2RXN29ETElqcXlUaVdCRVl4?=
+ =?utf-8?B?Qjg0NFk5T3dTWUtWdVBrR0ZrakhnRlV0S1pEWXQ4RzVsd2w5a0dicjZNU2V2?=
+ =?utf-8?B?cURUaFZQckVhQnQ5VEZjSXlnbHFtYmVrNUdBTjNUdUo2elpFVmNZWVk2WnBS?=
+ =?utf-8?B?TDhmQmZ0UkQ4Z2dUNWtoUDRMbzUra2VvYlJzNXVRRHM3aWJmZFJqQWVybE5q?=
+ =?utf-8?B?RHFnR21nbngyYmZLRmo5ZDMzQ1BSZmQ3SlE4UnFHMTlTeGQ2VjdkWWpnQmdv?=
+ =?utf-8?Q?FghXfg/Oe/vtKMt8=3D?=
+X-Exchange-RoutingPolicyChecked: CzYg8upedz/El5ZnObWdl3XsACEsSuarPp1WTzMfFub9O9IqVpkWzIqRAd6eqyODtnfFGneNqRLzehURkPWH5zkBh2+bC8WhhLD/U9SqWkHU4okU7uCgwAEMKSZBPRE9sGtI/TPGp63MgIRsevuuNOaYsRb7yhaP93cVzUO0RNf9fxkDlqTjSUTy7h/223bJejdeqAqahXRiYVHRL5/toiXdHfHTfOSWUMZfu/GFdD+TOUG0xmG269uhmRh0crx6A8+NmhtSw9EfFc4n8KvqjH88Z0mUitCFJ7hUlyvAFCA+AT+eeGOyH3/penhf7p1DxXYJoSXz15u2XMD+ycZJVQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05d81bde-0789-4c93-cd9e-08df238b716c
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2026 09:23:12.3300 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4JkmPhqNgYv934yYOQP7Zdal0I0RsVV3pC+IXvHiB+0/OKGx2N6K0iE4S+BRvQasXFyj91w2enT6tkds6mpHroEWmroyEVJ/HWDPvGyoyY4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9251
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,236 +166,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_cpu_get_flag_enabled() reads only the CPUID feature bits.
-CPUID tells what the CPU implements, not what the OS enables.
-If the OS does not enable the related state components in XCR0,
-the first AVX or AVX512 instruction raises #UD.
+On 9/27/2026 6:25 AM, Zhang Tengfei wrote:
+> Enabling Flow Director reduces RXPBSIZE(0) to reserve packet buffer
+> memory for the filter table. The new size was computed from the current
+> register value, and nothing restored it when FDIR state was reset. After
+> the last FDIR rule was removed, or when the first rule failed after FDIR
+> had been enabled, the next rule created enabled FDIR again and reduced
+> the buffer a second time.
+> 
+> Compute RXPBSIZE(0) from the default packet buffer size, and disable
+> FDIR and restore the buffer when the last rule is removed, on flush, and
+> on the enable error paths.
+> 
+> Fixes: 301abd26b118 ("net/ixgbe: reset flow state on clear paths")
+> Fixes: 5007ac13189d ("ethdev: remove deprecated Flow Director configuration")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
+> ---
 
-CPUID can report AVX512 while XCR0 has no AVX512 state. Old kernels
-without AVX512 state support leave XCR0 at 0x7. A kernel booted with
-clearcpuid=avx512f removes the AVX512 state from XCR0, but CPUID still
-reports AVX512F. Similarly, gather_data_sampling=force removes the AVX
-state.
+Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-On such a system, the rte_net_crc constructor selects the AVX512 code
-from CPUID alone. The dynamic loader runs this constructor before
-main(), so the application gets SIGILL before EAL can parse any
-argument.
-
-For the AVX-class and AVX512-class flags, also read XCR0 with XGETBV.
-Report the flag only when the OS has enabled the related state.
-Use XGETBV only when CPUID reports OSXSAVE, because the instruction
-faults otherwise.
-
-This change also affects rte_cpu_is_supported(). If DPDK is built for
-AVX512 and the OS does not enable AVX512 state, EAL can now stop with
-an error that names the missing flag. This is possible only if no
-AVX512 instruction executes before rte_eal_init(), for example in a
-constructor.
-
-Fixes: 3934bb741354 ("eal/x86: identify AVX512 CPU flag")
-Cc: stable@dpdk.org
-
-Signed-off-by: Dragos Tarcatu <dragos.tarcatu@keysight.com>
----
- lib/eal/include/generic/rte_cpuflags.h |   3 +
- lib/eal/x86/rte_cpuflags.c             | 102 ++++++++++++++++++++-----
- 2 files changed, 86 insertions(+), 19 deletions(-)
-
-diff --git a/lib/eal/include/generic/rte_cpuflags.h b/lib/eal/include/generic/rte_cpuflags.h
-index 26d5229b8e..af7eff6bb6 100644
---- a/lib/eal/include/generic/rte_cpuflags.h
-+++ b/lib/eal/include/generic/rte_cpuflags.h
-@@ -63,6 +63,9 @@ rte_cpu_get_flag_name(enum rte_cpu_flag_t feature);
- /**
-  * Function for checking a CPU flag availability
-  *
-+ * A flag is available only if the CPU implements the feature
-+ * and the OS enables the feature for use.
-+ *
-  * @param feature
-  *     CPU flag to query CPU for
-  * @return
-diff --git a/lib/eal/x86/rte_cpuflags.c b/lib/eal/x86/rte_cpuflags.c
-index 80b71a3ce0..925add6375 100644
---- a/lib/eal/x86/rte_cpuflags.c
-+++ b/lib/eal/x86/rte_cpuflags.c
-@@ -14,6 +14,23 @@
- #include "rte_cpuid.h"
- #include "rte_atomic.h"
- 
-+#ifdef RTE_TOOLCHAIN_MSVC
-+#include <immintrin.h>
-+#endif
-+
-+/*
-+ * XCR0 state components that the OS must enable before
-+ * the related instructions can execute without faulting.
-+ */
-+#define XSTATE_SSE      (UINT64_C(1) << 1)
-+#define XSTATE_YMM      (UINT64_C(1) << 2)
-+#define XSTATE_OPMASK   (UINT64_C(1) << 5)
-+#define XSTATE_ZMM_H256 (UINT64_C(1) << 6)
-+#define XSTATE_HI16_ZMM (UINT64_C(1) << 7)
-+
-+#define XSTATE_AVX    (XSTATE_SSE | XSTATE_YMM)
-+#define XSTATE_AVX512 (XSTATE_AVX | XSTATE_OPMASK | XSTATE_ZMM_H256 | XSTATE_HI16_ZMM)
-+
- /**
-  * Struct to hold a processor feature entry
-  */
-@@ -26,11 +43,19 @@ struct feature_entry {
- 	char name[CPU_FLAG_NAME_MAX_LEN];       /**< String for printing */
- 	bool has_value;
- 	bool value;
-+	uint64_t xstate;			/**< XCR0 bits the OS must enable */
- };
- 
- #define FEAT_DEF(name, leaf, subleaf, reg, bit) \
- 	[RTE_CPUFLAG_##name] = {leaf, subleaf, reg, bit, #name },
- 
-+/*
-+ * A VEX or EVEX encoded feature also needs OS support for its register state.
-+ * Use FEAT_DEF_XSTATE for such a feature, with the XCR0 bits that it needs.
-+ */
-+#define FEAT_DEF_XSTATE(name, leaf, subleaf, reg, bit, xs) \
-+	[RTE_CPUFLAG_##name] = {leaf, subleaf, reg, bit, #name, .xstate = xs },
-+
- struct feature_entry rte_cpu_feature_table[] = {
- 	FEAT_DEF(SSE3, 0x00000001, 0, RTE_REG_ECX,  0)
- 	FEAT_DEF(PCLMULQDQ, 0x00000001, 0, RTE_REG_ECX,  1)
-@@ -43,7 +68,7 @@ struct feature_entry rte_cpu_feature_table[] = {
- 	FEAT_DEF(TM2, 0x00000001, 0, RTE_REG_ECX,  8)
- 	FEAT_DEF(SSSE3, 0x00000001, 0, RTE_REG_ECX,  9)
- 	FEAT_DEF(CNXT_ID, 0x00000001, 0, RTE_REG_ECX, 10)
--	FEAT_DEF(FMA, 0x00000001, 0, RTE_REG_ECX, 12)
-+	FEAT_DEF_XSTATE(FMA, 0x00000001, 0, RTE_REG_ECX, 12, XSTATE_AVX)
- 	FEAT_DEF(CMPXCHG16B, 0x00000001, 0, RTE_REG_ECX, 13)
- 	FEAT_DEF(XTPR, 0x00000001, 0, RTE_REG_ECX, 14)
- 	FEAT_DEF(PDCM, 0x00000001, 0, RTE_REG_ECX, 15)
-@@ -58,8 +83,8 @@ struct feature_entry rte_cpu_feature_table[] = {
- 	FEAT_DEF(AES, 0x00000001, 0, RTE_REG_ECX, 25)
- 	FEAT_DEF(XSAVE, 0x00000001, 0, RTE_REG_ECX, 26)
- 	FEAT_DEF(OSXSAVE, 0x00000001, 0, RTE_REG_ECX, 27)
--	FEAT_DEF(AVX, 0x00000001, 0, RTE_REG_ECX, 28)
--	FEAT_DEF(F16C, 0x00000001, 0, RTE_REG_ECX, 29)
-+	FEAT_DEF_XSTATE(AVX, 0x00000001, 0, RTE_REG_ECX, 28, XSTATE_AVX)
-+	FEAT_DEF_XSTATE(F16C, 0x00000001, 0, RTE_REG_ECX, 29, XSTATE_AVX)
- 	FEAT_DEF(RDRAND, 0x00000001, 0, RTE_REG_ECX, 30)
- 	FEAT_DEF(HYPERVISOR, 0x00000001, 0, RTE_REG_ECX, 31)
- 
-@@ -107,34 +132,34 @@ struct feature_entry rte_cpu_feature_table[] = {
- 	FEAT_DEF(FSGSBASE, 0x00000007, 0, RTE_REG_EBX,  0)
- 	FEAT_DEF(BMI1, 0x00000007, 0, RTE_REG_EBX,  3)
- 	FEAT_DEF(HLE, 0x00000007, 0, RTE_REG_EBX,  4)
--	FEAT_DEF(AVX2, 0x00000007, 0, RTE_REG_EBX,  5)
-+	FEAT_DEF_XSTATE(AVX2, 0x00000007, 0, RTE_REG_EBX,  5, XSTATE_AVX)
- 	FEAT_DEF(SMEP, 0x00000007, 0, RTE_REG_EBX,  7)
- 	FEAT_DEF(BMI2, 0x00000007, 0, RTE_REG_EBX,  8)
- 	FEAT_DEF(ERMS, 0x00000007, 0, RTE_REG_EBX,  9)
- 	FEAT_DEF(INVPCID, 0x00000007, 0, RTE_REG_EBX, 10)
- 	FEAT_DEF(RTM, 0x00000007, 0, RTE_REG_EBX, 11)
--	FEAT_DEF(AVX512F, 0x00000007, 0, RTE_REG_EBX, 16)
--	FEAT_DEF(AVX512DQ, 0x00000007, 0, RTE_REG_EBX, 17)
-+	FEAT_DEF_XSTATE(AVX512F, 0x00000007, 0, RTE_REG_EBX, 16, XSTATE_AVX512)
-+	FEAT_DEF_XSTATE(AVX512DQ, 0x00000007, 0, RTE_REG_EBX, 17, XSTATE_AVX512)
- 	FEAT_DEF(RDSEED, 0x00000007, 0, RTE_REG_EBX, 18)
--	FEAT_DEF(AVX512IFMA, 0x00000007, 0, RTE_REG_EBX, 21)
--	FEAT_DEF(AVX512CD, 0x00000007, 0, RTE_REG_EBX, 28)
--	FEAT_DEF(AVX512BW, 0x00000007, 0, RTE_REG_EBX, 30)
--	FEAT_DEF(AVX512VL, 0x00000007, 0, RTE_REG_EBX, 31)
-+	FEAT_DEF_XSTATE(AVX512IFMA, 0x00000007, 0, RTE_REG_EBX, 21, XSTATE_AVX512)
-+	FEAT_DEF_XSTATE(AVX512CD, 0x00000007, 0, RTE_REG_EBX, 28, XSTATE_AVX512)
-+	FEAT_DEF_XSTATE(AVX512BW, 0x00000007, 0, RTE_REG_EBX, 30, XSTATE_AVX512)
-+	FEAT_DEF_XSTATE(AVX512VL, 0x00000007, 0, RTE_REG_EBX, 31, XSTATE_AVX512)
- 
--	FEAT_DEF(AVX512VBMI, 0x00000007, 0, RTE_REG_ECX,  1)
-+	FEAT_DEF_XSTATE(AVX512VBMI, 0x00000007, 0, RTE_REG_ECX,  1, XSTATE_AVX512)
- 	FEAT_DEF(WAITPKG, 0x00000007, 0, RTE_REG_ECX,  5)
--	FEAT_DEF(AVX512VBMI2, 0x00000007, 0, RTE_REG_ECX,  6)
-+	FEAT_DEF_XSTATE(AVX512VBMI2, 0x00000007, 0, RTE_REG_ECX,  6, XSTATE_AVX512)
- 	FEAT_DEF(GFNI, 0x00000007, 0, RTE_REG_ECX,  8)
--	FEAT_DEF(VAES, 0x00000007, 0, RTE_REG_ECX,  9)
--	FEAT_DEF(VPCLMULQDQ, 0x00000007, 0, RTE_REG_ECX, 10)
--	FEAT_DEF(AVX512VNNI, 0x00000007, 0, RTE_REG_ECX, 11)
--	FEAT_DEF(AVX512BITALG, 0x00000007, 0, RTE_REG_ECX, 12)
--	FEAT_DEF(AVX512VPOPCNTDQ, 0x00000007, 0, RTE_REG_ECX, 14)
-+	FEAT_DEF_XSTATE(VAES, 0x00000007, 0, RTE_REG_ECX,  9, XSTATE_AVX)
-+	FEAT_DEF_XSTATE(VPCLMULQDQ, 0x00000007, 0, RTE_REG_ECX, 10, XSTATE_AVX)
-+	FEAT_DEF_XSTATE(AVX512VNNI, 0x00000007, 0, RTE_REG_ECX, 11, XSTATE_AVX512)
-+	FEAT_DEF_XSTATE(AVX512BITALG, 0x00000007, 0, RTE_REG_ECX, 12, XSTATE_AVX512)
-+	FEAT_DEF_XSTATE(AVX512VPOPCNTDQ, 0x00000007, 0, RTE_REG_ECX, 14, XSTATE_AVX512)
- 	FEAT_DEF(CLDEMOTE, 0x00000007, 0, RTE_REG_ECX, 25)
- 	FEAT_DEF(MOVDIRI, 0x00000007, 0, RTE_REG_ECX, 27)
- 	FEAT_DEF(MOVDIR64B, 0x00000007, 0, RTE_REG_ECX, 28)
- 
--	FEAT_DEF(AVX512VP2INTERSECT, 0x00000007, 0, RTE_REG_EDX,  8)
-+	FEAT_DEF_XSTATE(AVX512VP2INTERSECT, 0x00000007, 0, RTE_REG_EDX,  8, XSTATE_AVX512)
- 
- 	FEAT_DEF(LAHF_SAHF, 0x80000001, 0, RTE_REG_ECX,  0)
- 	FEAT_DEF(LZCNT, 0x80000001, 0, RTE_REG_ECX,  5)
-@@ -149,6 +174,38 @@ struct feature_entry rte_cpu_feature_table[] = {
- 	FEAT_DEF(INVTSC, 0x80000007, 0, RTE_REG_EDX,  8)
- };
- 
-+static uint64_t
-+xcr0_read(void)
-+{
-+#ifdef RTE_TOOLCHAIN_MSVC
-+	return _xgetbv(0);
-+#else
-+	uint32_t eax, edx;
-+
-+	/* use the raw mnemonic: _xgetbv() would need -mxsave */
-+	asm volatile("xgetbv" : "=a" (eax), "=d" (edx) : "c" (0));
-+	return ((uint64_t)edx << 32) | eax;
-+#endif
-+}
-+
-+/*
-+ * CPUID reports what the CPU implements, not what the OS enables.
-+ * Check that the OS saves the register state that the feature uses.
-+ */
-+static bool
-+xstate_enabled(uint64_t xstate)
-+{
-+	/*
-+	 * XGETBV faults unless the OS has set CR4.OSXSAVE.
-+	 * The OSXSAVE entry must not have an xstate mask,
-+	 * else this call recurses without end.
-+	 */
-+	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_OSXSAVE) != 1)
-+		return false;
-+
-+	return (xcr0_read() & xstate) == xstate;
-+}
-+
- RTE_EXPORT_SYMBOL(rte_cpu_get_flag_enabled)
- int
- rte_cpu_get_flag_enabled(enum rte_cpu_flag_t feature)
-@@ -156,6 +213,7 @@ rte_cpu_get_flag_enabled(enum rte_cpu_flag_t feature)
- 	struct feature_entry *feat;
- 	cpuid_registers_t regs;
- 	unsigned int maxleaf;
-+	bool value;
- 
- 	if ((unsigned int)feature >= RTE_DIM(rte_cpu_feature_table))
- 		/* Flag does not match anything in the feature tables */
-@@ -185,7 +243,13 @@ rte_cpu_get_flag_enabled(enum rte_cpu_flag_t feature)
- #endif
- 
- 	/* check if the feature is enabled */
--	feat->value = (regs[feat->reg] >> feat->bit) & 1;
-+	value = (regs[feat->reg] >> feat->bit) & 1;
-+
-+	/* check if the OS enabled the register state for the feature */
-+	if (value && feat->xstate != 0)
-+		value = xstate_enabled(feat->xstate);
-+
-+	feat->value = value;
- out:
- 	rte_compiler_barrier();
- 	feat->has_value = true;
 -- 
-2.34.1
-
+Thanks,
+Anatoly
