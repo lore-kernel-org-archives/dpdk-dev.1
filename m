@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85699CA5FFF
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 09:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113D7CA5FF0
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 09:27:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3F3C40E4D;
-	Tue,  6 Oct 2026 11:27:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D80C040ED0;
+	Tue,  6 Oct 2026 11:27:17 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 80DE6402D9;
- Tue,  6 Oct 2026 11:27:09 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7606940B98
+ for <dev@dpdk.org>; Tue,  6 Oct 2026 11:27:10 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6700E2001B4;
- Tue,  6 Oct 2026 11:27:09 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 56AC120021E;
+ Tue,  6 Oct 2026 11:27:10 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3076C2001B5;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EC48E200185;
  Tue,  6 Oct 2026 11:27:09 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A7CF0180022C;
- Tue,  6 Oct 2026 17:27:08 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 65EBB1800226;
+ Tue,  6 Oct 2026 17:27:09 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: stable@dpdk.org
-Subject: [PATCH v21 06/27] bus/dpaa: accept QDMA device name in devargs
-Date: Tue,  6 Oct 2026 14:56:42 +0530
-Message-Id: <20261006092703.2138929-7-hemant.agrawal@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH v21 08/27] bus/dpaa: scan max BPID from DTS
+Date: Tue,  6 Oct 2026 14:56:44 +0530
+Message-Id: <20261006092703.2138929-9-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261006092703.2138929-1-hemant.agrawal@nxp.com>
 References: <20261005085337.1069213-1-hemant.agrawal@nxp.com>
@@ -49,46 +49,148 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_dpaa_bus_parse() recognises fmX-macY, fmX-ohY, fmX-onicY and
-dpaa_sec-N, but not the QDMA devices that dpaa_create_device_list()
-creates as "dpaa_qdma-%d". A QDMA name therefore falls through to the
-fm%u-mac%u sscanf(), which does not match, so the function returns
--EINVAL.
+From: Jun Yang <jun.yang@nxp.com>
 
-That makes the documented usage
+Calculate the maximum BPID dynamically from the device tree
+configuration instead of using a hardcoded value. This ensures
+correct operation across different DPAA hardware configurations.
 
-  -a dpaa_bus:dpaa_qdma-1,dpaa_dma_err_check=1
+Also update the default BMAN HW version for Layerscape devices.
 
-fail in rte_devargs_parse() with "failed to parse device" and abort EAL
-initialization, so no dma/dpaa devarg can be passed at all.
-
-Parse dpaa_qdma-N as well, bounding the index by the number of QDMA
-devices the bus creates.
-
-Fixes: a63c6426fdfd ("dma/dpaa: add option for error checks")
-Cc: stable@dpdk.org
-
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/bus/dpaa/dpaa_bus.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/bus/dpaa/base/qbman/bman_driver.c | 65 ++++++++++++++++-------
+ drivers/bus/dpaa/include/fsl_bman.h       |  5 ++
+ 2 files changed, 52 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 368c8eeb98..5442f8f893 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -521,6 +521,11 @@ rte_dpaa_bus_parse(const char *name, void *out)
- 				i < 1 || i > 4)
- 			return -EINVAL;
- 		max_name_len = sizeof("dpaa_sec-.") - 1;
-+	} else if (strncmp("dpaa_qdma", &name[delta], 9) == 0) {
-+		if (sscanf(&name[delta], "dpaa_qdma-%u", &i) != 1 ||
-+				i < 1 || i > RTE_DPAA_QDMA_DEVICES)
-+			return -EINVAL;
-+		max_name_len = sizeof("dpaa_qdma-.") - 1;
- 	} else if (strncmp("oh", &name[dev_delta], 2) == 0) {
- 		if (sscanf(&name[delta], "fm%u-oh%u", &i, &j) != 2 ||
- 				i >= 2 || j >= 16)
+diff --git a/drivers/bus/dpaa/base/qbman/bman_driver.c b/drivers/bus/dpaa/base/qbman/bman_driver.c
+index 71a2028383..9021d43688 100644
+--- a/drivers/bus/dpaa/base/qbman/bman_driver.c
++++ b/drivers/bus/dpaa/base/qbman/bman_driver.c
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
+  *
+  * Copyright 2008-2016 Freescale Semiconductor Inc.
+- * Copyright 2017 NXP
++ * Copyright 2017,2026 NXP
+  *
+  */
+ 
+@@ -17,7 +17,7 @@
+  * Global variables of the max portal/pool number this bman version supported
+  */
+ static u16 bman_ip_rev;
+-u16 bman_pool_max;
++u16 bman_pool_max = BMAN_MAX_POOLS;
+ static void *bman_ccsr_map;
+ 
+ /*****************/
+@@ -180,9 +180,16 @@ int bman_init_ccsr(const struct device_node *node)
+ 	return 0;
+ }
+ 
++#define BPID_RANGE_START_INDEX 0
++#define BPID_RANGE_COUNT_INDEX 1
++
+ int bman_global_init(void)
+ {
+ 	const struct device_node *dt_node;
++	const rte_be32_t *range;
++	uint32_t start = 0, count = 0;
++	int ret;
++	size_t len;
+ 	static int done;
+ 
+ 	if (done)
+@@ -198,7 +205,6 @@ int bman_global_init(void)
+ 	if (of_device_is_compatible(dt_node, "fsl,bman-portal-1.0") ||
+ 	    of_device_is_compatible(dt_node, "fsl,bman-portal-1.0.0")) {
+ 		bman_ip_rev = BMAN_REV10;
+-		bman_pool_max = 64;
+ 	} else if (of_device_is_compatible(dt_node, "fsl,bman-portal-2.0") ||
+ 		of_device_is_compatible(dt_node, "fsl,bman-portal-2.0.8")) {
+ 		bman_ip_rev = BMAN_REV20;
+@@ -208,26 +214,49 @@ int bman_global_init(void)
+ 		of_device_is_compatible(dt_node, "fsl,bman-portal-2.1.2") ||
+ 		of_device_is_compatible(dt_node, "fsl,bman-portal-2.1.3")) {
+ 		bman_ip_rev = BMAN_REV21;
+-		bman_pool_max = 64;
+ 	} else {
+-		pr_warn("unknown BMan version in portal node,default "
+-			"to rev1.0");
+-		bman_ip_rev = BMAN_REV10;
+-		bman_pool_max = 64;
++		pr_warn("unknown bman version in portal node, default to rev2.1.0");
++		bman_ip_rev = BMAN_REV21;
++	}
++
++	for_each_compatible_node(dt_node, NULL, "fsl,bpid-range") {
++		range = of_get_property(dt_node, "fsl,bpid-range", &len);
++		if (!range || len < (int)(2 * sizeof(rte_be32_t)))
++			continue;
++		start = rte_be_to_cpu_32(range[BPID_RANGE_START_INDEX]);
++		count = rte_be_to_cpu_32(range[BPID_RANGE_COUNT_INDEX]);
++		if (!count) {
++			pr_warn("Empty BPID range in DTS, using default pool max\n");
++			continue;
++		}
++		/* The depletion mask and the SCN registers only describe
++		 * BPID 0..BMAN_MAX_POOLS-1, and bman_create_portal() walks
++		 * this bound with a u8, so a larger value from the DTS would
++		 * write past the last SCN register and never terminate.
++		 */
++		if (start + count > BMAN_MAX_POOLS) {
++			pr_warn("BPID range %u+%u exceeds max %u, clamping\n",
++				start, count, BMAN_MAX_POOLS);
++			bman_pool_max = BMAN_MAX_POOLS;
++		} else {
++			bman_pool_max = start + count;
++		}
++		pr_info("Max BPID: %d, fixed BPID < %d", bman_pool_max, start);
++		break;
+ 	}
++	if (!count)
++		pr_warn("No BPID range found in DTS, using default pool max\n");
+ 
+-	if (!bman_ip_rev) {
+-		pr_err("Unknown bman portal version\n");
++	dt_node = of_find_compatible_node(NULL, NULL, "fsl,bman");
++	if (!dt_node) {
++		pr_err("No bman device node available");
+ 		return -ENODEV;
+ 	}
+-	{
+-		const struct device_node *dn = of_find_compatible_node(NULL,
+-							NULL, "fsl,bman");
+-		if (!dn)
+-			pr_err("No bman device node available");
+-
+-		if (bman_init_ccsr(dn))
+-			pr_err("BMan CCSR map failed.");
++
++	ret = bman_init_ccsr(dt_node);
++	if (ret) {
++		pr_err("Failed(%d) to init bman ccsr", ret);
++		return ret;
+ 	}
+ 
+ 	done = 1;
+diff --git a/drivers/bus/dpaa/include/fsl_bman.h b/drivers/bus/dpaa/include/fsl_bman.h
+index 2d24b89889..639e0edc96 100644
+--- a/drivers/bus/dpaa/include/fsl_bman.h
++++ b/drivers/bus/dpaa/include/fsl_bman.h
+@@ -21,6 +21,11 @@ struct bman_depletion {
+ 	u32 state[2];
+ };
+ 
++/* Number of buffer pools the depletion mask above, and the BMan portal SCN
++ * registers, can describe. BPIDs are limited to this range.
++ */
++#define BMAN_MAX_POOLS	64U
++
+ static inline void bman_depletion_init(struct bman_depletion *c)
+ {
+ 	c->state[0] = c->state[1] = 0;
 -- 
 2.25.1
 
