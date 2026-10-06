@@ -2,76 +2,155 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AE3CA6001
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 14:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E197CA5FED
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 14:21:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 10EE540262;
-	Tue,  6 Oct 2026 16:19:30 +0200 (CEST)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
- [209.85.214.172])
- by mails.dpdk.org (Postfix) with ESMTP id 4F6794025A
- for <dev@dpdk.org>; Tue,  6 Oct 2026 16:19:29 +0200 (CEST)
-Received: by mail-pl1-f172.google.com with SMTP id
- d9443c01a7336-2e2fd2603b0so6046665ad.3
- for <dev@dpdk.org>; Tue, 06 Oct 2026 07:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791296368;
- x=1791901168; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=dD03UbxmKxW4hBXEpQfM2ZxC6FDNPiMDAKlDYxaE2vs=;
- b=wf7hKKoZCZ0PYMYsqMZIV4sY5cVfhuuEWk0g2TkyOwySxudGsNCYHzAMrkZQzWp0l3
- nTrXYW9WMcigdGo95Y8eJxiUBDFQ7NzWYSdQZf4hqdNQFyPV/DgLszcsyuibiW3AxigV
- hL0/C2xOl26vIpmqLBRw/kdWltFIm+mq42Vf3ktBTcioBf9tnb8naYecVAQztteV+5zM
- VgHV+M7UbDJQSkIVpAKPVhi8FVCkqiokD6m/kaMyiFdOw1tCO/5FuDk6Gr7WdAzsR1yy
- Z53yr3+/+9R+Y2WB1VqmQxtmL9JFssQHJ7TrcSiNnF2siFLp/MG9ErsOnd2ZEVtQ1RvV
- Pn2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791296368; x=1791901168;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=dD03UbxmKxW4hBXEpQfM2ZxC6FDNPiMDAKlDYxaE2vs=;
- b=jnvd6OBJAEXl2NwlgG0dkAL9anjiVy57ostdTouhfScScwdlZCxKgnSmZFAMSxWYp0
- xg+ESCqvY/eSN1pDRm5bBJIuUIZF+Ooy2mopO4ZVQi+wHbu7Lfci0J957BI6Lq2zbYLX
- bJPO+NuFsOAr3vvfPSO6LJD5I+/PPOGGi3VW0P73MjmiTU8w5GxudivQU5DduyKb4IVE
- pr6SAUYIykkaNh5j5FsUu2KGz2VA4EyX5L5e20LWo1hBDEKckyifn/up2I5MM3wgmuQ/
- Zw4IVaUFlue/HbOWP7NYDHQcGNmMm60tfPejQYp5pzmSwHlOEQ3Z5T7ynY8fAz/V/vJD
- G6ag==
-X-Gm-Message-State: AFq9FYJvS3h7ZPj0Ro/h2zqffdEVYgIf3iXLico2MkSSJEIsNZOuNyKn
- Q1miY3sSZE0ldpeDRIsax12FukEvgLLKSLo6UTCh45E5m/D20W/hW/IHMQReU3KK/gNeC2SPxtK
- hjkcZYoI=
-X-Gm-Gg: AYBFou0bVIjikDaYuec7zstFlYu1r5/XAinZXJUoVsEq9/doqVG+7chfNSzBSATtEdA
- g/kNlRMMT2lAwndCsN2uzmSATko81clyf3BQf87ope71x4Ook7sv0qbYinFAw0LLGTUWYhF+p3+
- Lx4T9uncRqVWDebFQMbfq13r10CsNg5Q3rvmZInxsq/j2yBqH8555Y1Qb2DwpWLGXdF4o2LfDMF
- fjBdS/HC10PK5R+HTHmjStN0d5iOGR6wvZXGhGhIL5Tk91LAjTCfc/y1zuZM4sC/D0uL+CMxVu7
- Z2p7t5sL25VFT2J+5JCKnaamRZoaC5tLESAiEI3M8WRuxWME8hk9g45Mg1eQpqFTGaBAiiM1oLj
- BlZUHXwSG4g1xt/Mqhp5njq56U0FNcO+Kn/4QPVaH8MyW6mP/8XSS530rID+k6ybVCu+MwTT9Rc
- bHbW9V9kk8fYR0ycAHn2IdqtbJfS69mW57TKHul54GNS6pYudemkQZ0v5qZyKqBnCE+vLsX7KK2
- rcnBk7yoIZfu2Pzqv2IdE2qYkjxIf2FcupN4d3FuzVyOBDC8vk=
-X-Received: by 2002:a17:903:41c3:b0:2e3:1bb4:6121 with SMTP id
- d9443c01a7336-2e5dcda9a7bmr14207655ad.49.1791296367984; 
- Tue, 06 Oct 2026 07:19:27 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e5a55b65a7sm23658745ad.12.2026.10.06.07.19.27
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 06 Oct 2026 07:19:27 -0700 (PDT)
-Date: Tue, 6 Oct 2026 07:19:16 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Joshua Washington <joshwash@google.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 0/8] gve: precursor control plane changes before
- bare-metal support
-Message-ID: <20261006071900.1a1c7c0b@phoenix.local>
-In-Reply-To: <20261005193943.1175072-1-joshwash@google.com>
-References: <20261003025142.1930363-1-joshwash@google.com>
- <20261005193943.1175072-1-joshwash@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+	by mails.dpdk.org (Postfix) with ESMTP id A5FBE40E4C;
+	Tue,  6 Oct 2026 16:21:55 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 44A6B40262;
+ Tue,  6 Oct 2026 16:21:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1791296513; x=1822832513;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=ff8QijQa9EJStuZjgssE5t1SOpFpv7613fHJKrb0uBc=;
+ b=JEsSJVpWLSEoObDy0SQK/YDiBufH0A2AHb4kPMY4v1/P4NpLgdWq/GOH
+ uocxNI6YfdEtvVX68JGD8UHVyV/3ntB0nxwqCf3Bceg01O3CJG18DrKvN
+ iQLx4Yr2KxZY5tcX4TBTJ4PZCcyfbKXC4LZuq3q75Dz7LHG4AeWQoepKQ
+ MJyG0TgKFjrPfCaFj0UplEQ27PO0vlT0X7jk4y0RRr9xPXkIhNSn5k3lz
+ 4Bnbw6XQLdZhlqsnFT2zRgnfDmSaCZf0rHVQPgfVOwvjcnomtSBxmsMeE
+ fk5vFu2ZEZ74WmHXe7Lh0jdc+Mo4/F4FS9yhxjAIzjOV3d1O5XWCNa4Y1 Q==;
+X-CSE-ConnectionGUID: cmHINhWbQfGnp0ZuEkHmaw==
+X-CSE-MsgGUID: jyMIF7wEQkK5JDx+SkRYCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="38727"
+X-IronPort-AV: E=Sophos;i="6.27,143,1787036400"; 
+   d="scan'208";a="38727"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Oct 2026 07:21:52 -0700
+X-CSE-ConnectionGUID: ntczL6z+Rx6oAzzrkPipyA==
+X-CSE-MsgGUID: OD2sVxQqQj6ryoFmNDcjpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,143,1787036400"; d="scan'208";a="275810867"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Oct 2026 07:21:52 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Tue, 6 Oct 2026 07:21:52 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Tue, 6 Oct 2026 07:21:52 -0700
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.20) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Tue, 6 Oct 2026 07:21:51 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Dzi9HtiDK2+5A05tzcx4W18WcDX6YuQIJeHvj+sYW4WLx7kcUEWOiAg23DIod7OAYofGqSTSFm5+IRucjOo6ntdTVTIY/ZzQpYJ4vvWtI0QXoUOatieVHMH0q9ZbYMko0J1OpRw7wor0Z8pndefrtbz3cwhOY7F0RJddgHy1m41ZBiOH73AT+4Re7Vdw0w+SGd7lv02OznTsGWo2Lt+0Se7oaapqrk759Biz1Ljx1+idmZUhHDORC0pL3VfTSQjqYdsy7ijtNVYQTYiBGZTkq4tJdPbQbxYHriChfks1tlCOjRZQtixL+1juWsN4trhhIgxvvFFz9pVw+Snrp1G9aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=loz1nlUjxuqsQV4rv5rHJxRzdvvOgIkmdYouUXofigs=;
+ b=WAjEAryWoSr9NUv26nzAS8Hb7O8IHm1PRJXmIpfJpP+DWejV/fZdDQ5FYZiL0RBArAl144D0Rfw1QtNFflYRSsneI/l5xlqbJqnGL5PXLSRWLFPQiA2Yh1t5Nh3z+XejDYSVvY1ZNFV6JAh8EOQkyTw98cDdxwWVLzx/Yg0LxqzJdZGCh3yPHW+ywJJstKfDCjmeVVqn1txtyx44du7cqGUmT1ZwcSJWHIJfV25+wTqewBgNCWzhhdHSaNM0gqxmTBjQSLkhWQ1ShHLCKP4BXmHERd05HV/aQICYYLIqmOk2iq2RL1UOc2cqJ1246oPHdv4Ni6/xTBLsyN8765Ei8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ SA1PR11MB7085.namprd11.prod.outlook.com (2603:10b6:806:2ba::9) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.496.15; Tue, 6 Oct 2026 14:21:49 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.21.0472.016; Tue, 6 Oct 2026
+ 14:21:49 +0000
+Message-ID: <e01185dc-89d1-452e-b2d6-e75082befe55@intel.com>
+Date: Tue, 6 Oct 2026 16:21:43 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/ice: fix missing type casts for flex descriptors
+To: Omar Munchaev <omarmunchaev@gmail.com>, <dev@dpdk.org>
+CC: Omar Munchaev <omar.munchaev@gmail.com>, <stable@dpdk.org>, "Bruce
+ Richardson" <bruce.richardson@intel.com>
+References: <20260928172759.3369704-1-omar.munchaev@gmail.com>
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Content-Language: en-US
+In-Reply-To: <20260928172759.3369704-1-omar.munchaev@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU6P191CA0064.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:53e::24) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|SA1PR11MB7085:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec6ff3e5-f59b-425a-e601-08df23b52882
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|366016|376014|23010399003|11063799006|10067099003|56012099006|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: ZhRteOpg8wK+SQ+Ai97jZhR4v8WFhNAhTCjRF9cZwVQWVVWoxxAdCe7v1Z95gBTqqCHN3lSYh/m1QqPhGi1VwwnQTIkYc4Djwe/dXcZtIQwOKwdeOeScKtAADQ7H4rmLQW4lzD26ZdCcg6jLhzbhMxlTAIAXQjWRMzzm1wbu0QUDjv6aBlpmv1n2p/tPDvTDx0S/2+8d92JeRvXAWhC+zJw0yFu6b0h73AcCYOLGbBjpKFFW9aPve3LYHymtsMz8CiNq4K2fd6AqIdCkF2JVP7NfFRtAa7/FlUTwwd4or/YCIsnTYzN0T0JIWLAJ5PrZNyxhm7JJel+XT/1397dvqy4Jb2rmoMdP12gmZRJYuBfVLSiRol1Do8kew7mTeRddKrL5ubFenQnl1Fp0rLuKstSWB2/pnkLOgHmu6FbMAVzJy2ogx5xtYPIjxgQmjwOQLIzs6yELiewhPIGoKY8wpDzaDr6vkCDVwIrs+AzzBOrfXOtq5o+QkRjmqHgbd5leNRYALhFcY67jHnqs3dcXwUEczA3fMCa5lYqzVBc5NwLqZR/qnG2r04UbMQR9YdYOyoJYt/euF9oNjvjb6X7uLntvhtKMvZcg5iGFeuEvHoVx5+MPKP8+9f7hc4y13ad2orzE8DbQuZ3RIpkD8Q6tLditgJne1hS7T9N8sp4tBgE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(23010399003)(11063799006)(10067099003)(56012099006)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dXVTUjd1L2dEQ1laRU1LYXR3NHQ5RGZ0eTlTSVRQSldYSHQ4TFFxVVRtYmp6?=
+ =?utf-8?B?UXlOdjRVWXhKd2QxNnZzRmV2cnY1YWlOMFVQRllFVjdKMGt2TEZnVW1LODIy?=
+ =?utf-8?B?eHJtanZRU3czRzRiUTV4MUhuMHl3UjdIOHZUcjhZTVJ4L3R6dWtCcDZKUzV1?=
+ =?utf-8?B?MzhERUdid3J0dUVmdGYxeDFvK3ZwcW95L2RVMXFuQUdhWFNUSU1YblB6WTRX?=
+ =?utf-8?B?bWwyTys3YklvQWh4QWFXcTNsb0VvMWFMWEs3RG5admJkd1gyUUFrWVAyVkIy?=
+ =?utf-8?B?OWxwQkhLcWNHRGJsVEpWRXl6YStGdmNzWk1IV1BvelFvZS9RbXhub1V4L3Jq?=
+ =?utf-8?B?b0Rtb1FKSnRKZzJQbEI1aStmaXNBdU5FQXlNUVFlY2J2MUhuTmtkRm1wZ29r?=
+ =?utf-8?B?S1ZURkNPbmlNanM2TTNleDFHUkhocVdwWFIzbDB2L1RSOHVlNWFHNmhDOFR2?=
+ =?utf-8?B?THd5SElVWHhrM0VzdWc3bCthNS9tNzVrU2YrRlZ1OTk0ZGRjU1ZrRnNrYmU4?=
+ =?utf-8?B?S3loUlArU0hQdHI0a1lMVnJWSlBZRkFnSVI1VERwR0NKdkVWYXQxWHFrTkFW?=
+ =?utf-8?B?ck1vSGhybEVNSjFhTGs1c2Q2dDEvcWlDclJBRDdhUGNHS2ZnczgrbG1sRWJK?=
+ =?utf-8?B?Ym5iTzNsSEtqblhHWXl5V0VuMkkzc0VZM0w3SXRVcHMxUkFoRExVNkN6aGNG?=
+ =?utf-8?B?Zm9wZFV6YnQzV1BCTGlwSDNiaklYZ0owS0RXK1dzOUY5N0VEL1NlbzJWMG5s?=
+ =?utf-8?B?NUNaaVgrd3RvRTh4NlVUOEJiSHhQVEhESUk0SElkcHMvTnV3OStRL3dtVDE1?=
+ =?utf-8?B?ZXZyRzBCY2hlVG13ZExRdWlQRmZ5dWV2T0dvTTFpa09MNE1HU0h5Yk52THVz?=
+ =?utf-8?B?azVlWFpIUy9VVmYzM0NWTUF0MkhhVkVnYUZTOE55dUJRV2xWS0tOelBaKzk0?=
+ =?utf-8?B?a3daU3dmc0oySGRTd1dXZmFCS2FwQ0luTGlxL2RsSWVMc1JWcU9wSUZuSHlR?=
+ =?utf-8?B?Sjk4WU1Rd0Y3cEowRmliem1BTktPdzFyYm1ETnJVZnk1MkdWK1o3dGtUeGxB?=
+ =?utf-8?B?V3VEM05EWnlNRjFFd1ZMOE16SXZFclhCM3YraGlNa212bVpzMTBrNmkwRC93?=
+ =?utf-8?B?Ni9BVWJvdjVQTzlEaVdVS1dtSStNbGIxRDJEbDRON2YzYTZ6c0xtUGJJWlR1?=
+ =?utf-8?B?a1hHR01aYnBoaEhwRVQ3VjU0OEpIR3JxK0ZlOWlDM0JxUWRzeEIrdWs1ZXh4?=
+ =?utf-8?B?VHdRVVVjWFUrZW9GZ2FvN0htUktxM3JGSk9TaWxySm9NSHRKUStMcGlWQjZF?=
+ =?utf-8?B?SC9Qak5uYitjVTZYYjNDOWV3cEswdk1GZG15RWU3WEgxY2FkcFpZekc4YjBQ?=
+ =?utf-8?B?SjRkMmlvTE11RG95c3Npa2M2UkZkeC91eDh0V3BwSDhTS0hPY3NNdC8zRGFX?=
+ =?utf-8?B?SVNYa3JIbnZsblFzbkxMS0grUGJlbEZBR1g1M1RSWHhBZHhIdEY3dXZQK2tt?=
+ =?utf-8?B?OWFoamZoeWJXUS84U21NNElyM0liSkxQV2RVTExPaGhsNlpoS1lXK3dNMmJ3?=
+ =?utf-8?B?ZWJ4L3Y2NHZvNTBydVZXNDd3M2Q1Z1hEdHNlTG92enhzcUJHZE5ua2U0TmZo?=
+ =?utf-8?B?V1Y5UGtNUElYSXpVNTRRckdBS09NR2tacG5JMU5yUWVzTksrenFYN0lQbEFT?=
+ =?utf-8?B?N2l6TUdEeDJkTnpjNjladHJuaXU1QjBzckErMVNJYlo1dklNMzFpUzR3UFBJ?=
+ =?utf-8?B?NWVTUklKU21lR0d2NXNuZWdsYUF3RWQ5cjVhZzJ2enFqcEJOZWFCSHBkUXha?=
+ =?utf-8?B?T01oWjhFU1BINGQ3bHpwMkJTcmhOcGQreEhJVzhhMUlYYXdLR1NpelZtRmFE?=
+ =?utf-8?B?ak9uMjBQOEl2dW1FcDkwSVB2V0hxMDNZd1l0dkdJY011dzlSNmRUODRLWE9j?=
+ =?utf-8?B?K2ZiZm0zV0RsUXhDOSszb3hYTmZDbTMxNm1rcVAyR3BseHI2MUFPZ0kxb1Iw?=
+ =?utf-8?B?L01TRCtVUmhvajFZYk15cVB2dHRsUE90MGgvblNPQjE2L1ZZaWlNZk5FTzFu?=
+ =?utf-8?B?S01WYjdQVjh4THdQNGFJNEdIcFl3SHFvUFR4OEUzbTlQYnhjdHdlS1JEK3FJ?=
+ =?utf-8?B?SmdXcEEzTE1JeXpReGVTRGl2ZHpvUHNQRDlZNUtCcVE1OEVHa0t4S0FaMDlo?=
+ =?utf-8?B?M2UvNnFBYlBnL3VCMHM0QTRRTzN2YmkyZnRkWkc0QklibmptR2JnNjhKeGtG?=
+ =?utf-8?B?dW9yMkRzTjhOdmVpbWQ0Mkp2dHMreDBXenJwUXJCdWthTERHM0xiMis3S0ZL?=
+ =?utf-8?B?Sm9ZTUJ2cHd3WjZ1R1RoMUxqSHJiTngzQ2s0UU9zQWNUYThsRk1Yd0ZMcTBh?=
+ =?utf-8?Q?49KhTnYXocAhYp+Y=3D?=
+X-Exchange-RoutingPolicyChecked: obU/YmVeArrPHF4IQzI1EtT4uWpEWmm472VvV1M8gxzu5l6gWoxXSp904Pzo/y02w4bBSYF28EbBjwyBTsdlYg1bG1Lxvp9wEIKA/26gt0s+6OMPqvtYmuolglujlDYQuVx6swDBP+tZ+p9lDVWMxjYfa82Pa8qZwvd2vNUr7L5CuXZnwufU1of4x1ZjonkhTQcC1chTKm/GJsR+oUBqrkGSD8F+RVZX0zChjj91rWzMqOYTprVvzGw5gUxdDr2VhCVuQeSb5cuc7R8Bl9FTIEmKDA/iFM1SpdHl8NyT1FL3c0cLGwZxiDW81iz+Y1WNPSY3sX1946X6LAwhFMMAOw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec6ff3e5-f59b-425a-e601-08df23b52882
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2026 14:21:48.9163 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yJfJDEUArKiJKT+vGh+txLI4sZE3/bnBARUMWYP8YmKVFOwTJMlX+T6jQE2Il+0l+hXo8wR/uc0itWklLPcW4mWnagI6iI2j++bD1syul70=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7085
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,203 +164,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  5 Oct 2026 12:39:31 -0700
-Joshua Washington <joshwash@google.com> wrote:
-
-> This patch series includes a number of precursor changes to the GVE
-> ethdev driver layer in preparation for introducing support for a new
-> GVE Mailbox control plane (an alternative to the existing AdminQ control
-> plane).
+On 9/28/2026 7:27 PM, Omar Munchaev wrote:
+> When ice driver was ported to use the common Rx descriptor format,
+> some type casts were missed. Add them.
 > 
-> The most major change in this series is the introduction of a new
-> control_ops struct that will be used by both AQ and Mailbox for various
-> operations which may need to communicate with the device. There are also
-> some changes to how RSS and timestamping are handled in ethdev due to
-> slight feature differences between the control planes.
+> Fixes: e70342ba90a83 ("net/ice: use common Rx queue structure")
+> Cc: stable@dpdk.org
 > 
+> Signed-off-by: Omar Munchaev <omar.munchaev@gmail.com>
 > ---
 
-Lots of issues found with manual run of AI review.
+Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-Review: [PATCH v2 0/8] net/gve control ops rework
-
-Series summary
-
-Patches 1 and 6 add the query_rss op and NULL handling for "optional"
-ops, but no op table in this series sets query_rss and the only table
-fills every optional op. None of that code can run until the mailbox
-backend lands. The abstraction is easier to judge posted together with
-its second user.
-
-Errors
-
-[PATCH v2 1/8] net/gve: refactor ethdev for control ops interface
-
-1. Driver compatibility is no longer sent to the device after reset.
-
-   gve_verify_driver_compatibility() moved into
-   gve_adminq_get_device_properties(), which is skipped on reset:
-
-       if (skip_describe_device)
-           goto setup_device;
-       ...
-       err = priv->ctrl_ops->get_device_properties(priv);
-
-   Before this patch it ran right after gve_adminq_alloc() on every
-   gve_init_priv() call, including gve_dev_reset() ->
-   gve_init_priv(priv, true). Functional change in a refactor patch,
-   not mentioned in the commit message. Keep it on the path that runs
-   on reset, e.g. an AdminQ init_ctrl_plane op that does
-   gve_adminq_alloc() followed by the compatibility check.
-
-2. Function pointer table stored in shared memory.
-
-       priv->ctrl_ops = &gve_adminq_ops;
-
-   priv is dev->data->dev_private, shared with secondary processes, and
-   holds the primary's address of gve_adminq_ops. A secondary installs
-   dev_ops in gve_dev_init() and returns; gve_link_update() has no
-   process type check:
-
-       err = priv->ctrl_ops->report_link_speed(priv);
-
-   GVE has no LSC interrupt, so rte_eth_link_get() from a secondary on
-   a started port calls link_update and jumps through the primary's
-   address. That crashes whenever the driver is mapped at a different
-   address (shared build, PIE with ASLR). Same for read_clock, mtu_set,
-   RSS and flow ops. Before this patch the secondary called the AdminQ
-   functions directly. Keep the table process local: store a control
-   plane mode enum in priv and resolve the ops with an inline helper,
-   or keep the pointer in eth_dev->process_private and set it in both
-   primary and secondary init.
-
-[PATCH v2 6/8] net/gve: add RSS cache boolean flag
-
-3. One failed AdminQ RSS command locks out RSS configuration for the
-   life of the port.
-
-       err = gve_adminq_execute_cmd(priv, &cmd);
-       priv->rss_cache_dirty = true;
-       if (err == 0)
-           gve_update_priv_rss_config(priv, rss_config);
-
-   On error the flag stays set. gve_adminq_ops has no query_rss, so
-   gve_rss_update_cache() returns -ENOENT from gve_rss_hash_update(),
-   gve_rss_hash_conf_get(), gve_rss_reta_update() and
-   gve_rss_reta_query(), and gve_dev_configure() skips the RETA reset
-   for the new queue count. Only gve_update_priv_rss_config() clears
-   the flag, and it is reached only through configure_rss, which every
-   caller gates on gve_rss_update_cache(). gve_dev_reset() does not
-   recover: gve_init_priv() touches the flag only when query_rss is
-   set. The same lockout follows a successful command when
-   gve_update_priv_rss_config() fails with -ENOMEM; its return value
-   is ignored since patch 5.
-
-   Before this patch a failed AdminQ command left the cached config in
-   place. AdminQ has no query, so its cache is authoritative. Drop the
-   dirty write from gve_adminq_configure_rss(), leave it to a backend
-   that implements query_rss, and propagate the update result:
-
-       err = gve_adminq_execute_cmd(priv, &cmd);
-       if (err == 0)
-           err = gve_update_priv_rss_config(priv, rss_config);
-
-Warnings
-
-[PATCH v2 6/8] net/gve: add RSS cache boolean flag
-
-4. priv->rss_config is read before the cache is refreshed.
-
-   The commit message says the config must not be read while dirty,
-   but gve_rss_hash_update() checks priv->rss_config.key_size, copies
-   it into rss_conf->rss_key_len, and sizes the new table from the
-   cache before refreshing it:
-
-       rss_reta_size = priv->rss_config.indir ?
-               priv->rss_config.indir_size :
-               GVE_RSS_INDIR_SIZE;
-       err = gve_init_rss_config(&gve_rss_conf, rss_conf->rss_key_len,
-           rss_reta_size);
-       ...
-       err = gve_rss_update_cache(priv);
-
-   The later copy then takes its length from the pre-refresh cache and
-   its source from the post-refresh one:
-
-       memcpy(gve_rss_conf.indir, priv->rss_config.indir,
-           gve_rss_conf.indir_size * sizeof(*priv->rss_config.indir));
-
-   gve_dev_configure() likewise tests priv->rss_config.indir before
-   refreshing. Call gve_rss_update_cache() before the first
-   priv->rss_config access in both functions.
-
-[PATCH v2 7/8] net/gve: fix RSS config memory leak on close
-
-5. Wrong Fixes tag. priv->rss_config has been allocated by
-   gve_update_priv_rss_config() since RSS support was added and was
-   never freed, on close or on remove, before or after 7ba84453bacf.
-   Use:
-
-       Fixes: 63ef54569760 ("net/gve: support RSS configuration update")
-
-6. Stable fix sits behind six refactor patches. It applies to main on
-   its own; move it to the front of the series.
-
-[PATCH v2 8/8] net/gve: refactor timestamp support to clock read type
-
-7. RTE_ETH_RX_OFFLOAD_TIMESTAMP is now advertised when timestamp setup
-   failed.
-
-       -   if (!gve_is_gqi(priv) && priv->nic_ts_report_mz)
-       +   if (priv->clk_read_type != GVE_DEV_CLK_UNSUPPORTED)
-
-   gve_setup_nic_timestamp() leaves nic_ts_report_mz NULL when the
-   memzone reservation fails and frees it when the sync thread cannot
-   be created; clk_read_type stays GVE_DEV_CLK_CMD in both cases.
-   nic_ts_stale stays set, so the Rx path never stamps packets. Before
-   this patch rte_eth_dev_configure() rejected the offload in that
-   state. Keep the nic_ts_report_mz test, or set clk_read_type to
-   GVE_DEV_CLK_UNSUPPORTED on setup failure.
-
-Info
-
-[PATCH v2 1/8] net/gve: refactor ethdev for control ops interface
-
-8. The comment marks free_db_resources, setup_stats_report,
-   report_nic_timestamp and the page list ops optional, but only the
-   set_mtu caller checks for NULL. gve_teardown_device_resources()
-   calls free_db_resources unconditionally. Either check at each call
-   site or drop the "optional" claim until a backend omits them.
-
-[PATCH v2 6/8] net/gve: add RSS cache boolean flag
-
-9. Pre-existing, not introduced by this patch, but the lines are
-   re-indented here: gve_dev_configure() ignores the return of
-   gve_init_rss_config_from_priv(). If the key allocation fails,
-   update_reta_config.indir is uninitialized stack and
-   gve_generate_rss_reta() writes through it. If the indir allocation
-   fails, gve_init_rss_config() frees key without clearing it and
-   gve_free_rss_config() frees it again.
-
-10. Pre-existing: gve_update_priv_rss_config() assigns rte_realloc()
-    straight back to the pointer, leaking the old buffer on failure:
-
-        priv_config->key = rte_realloc(priv_config->key, key_bytes,
-            RTE_CACHE_LINE_SIZE);
-
-    Same for indir.
-
-[PATCH v2 7/8] net/gve: fix RSS config memory leak on close
-
-11. gve_teardown_device_resources() also runs on gve_dev_reset(). After
-    a reset key and indir are NULL but key_size, indir_size and
-    hash_types survive, so gve_rss_hash_conf_get() reports the old
-    rss_key_len and rss_hf. Zero priv->rss_config after freeing.
-
-[PATCH v2 8/8] net/gve: refactor timestamp support to clock read type
-
-12. The GVE_DEV_CLK_UNSUPPORTED check added to
-    gve_alloc_nic_ts_report() is dead: its only caller,
-    gve_setup_nic_timestamp(), already returns on that value.
-
-Review-Result: ERROR
+-- 
+Thanks,
+Anatoly
