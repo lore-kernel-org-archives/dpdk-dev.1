@@ -2,76 +2,152 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21ED6CA5FED
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 16:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E235BCA5FFF
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 18:22:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CECA34027B;
-	Tue,  6 Oct 2026 18:51:27 +0200 (CEST)
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com
- [209.85.215.176])
- by mails.dpdk.org (Postfix) with ESMTP id B183540151
- for <dev@dpdk.org>; Tue,  6 Oct 2026 18:51:26 +0200 (CEST)
-Received: by mail-pg1-f176.google.com with SMTP id
- 41be03b00d2f7-cc751eddf25so527910a12.3
- for <dev@dpdk.org>; Tue, 06 Oct 2026 09:51:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791305486;
- x=1791910286; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=C+cv3D0JIFAk/PaiY4Lk8L/XkLXnI8kiWdu8uc1/Y1M=;
- b=cnS/MaL0aOwrkf73ByBXyonTck6x1KM/IWtXjHeJVvGIDRWjKHv9g9XcaDVkx65vCA
- 37sKhXyQt6/8F4ibHeD2uBRKHI3CureTT2Ztgz/YukgXC+0bFx6rIWiQJ/4ZphNZPjcW
- IoMqTMdgOE/X5e/8NkuwhgMTuEV2kUpGlFc+56l0C3J8hZZih2ZTUsOxb1IdQLnZFqQ9
- 5p4dlYFIewCyFxHRHTuVvHyh5zpj+kRe0hLZWsOkRoveo1mDF3LEPB5v60uG1i02z6px
- LsZWY8/MwO+dRxx1qw+4oSEtykyx7au0xggw7gaHgpAgZAi4YZ950b4opcb1jj5MqsOx
- 5wIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791305486; x=1791910286;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=C+cv3D0JIFAk/PaiY4Lk8L/XkLXnI8kiWdu8uc1/Y1M=;
- b=UtfKfFfZySwwYB2FW+xpM1LNqEZ8vK1nosAIFRRot6CaTarKnRxWGTODA8MniT5+7N
- 3xlSUIHP1HBwV1i1Q5Vkmgm4vWU8/vPem0rj/SVM8BDBD8yHR2ksr0ie6sDKQJHXl7WO
- 1zAbwUyxuruScfaGUmgyraPVgPRY2h7nWcqFdySSXFDitUgx1IUK4ZUqmI75RQNbikt5
- Jo4q9vQ5oPCITiHfQ9rPYplUlH7X31ewfz9IMha1ok33+RVZprX4vxlChoE/fkRFHEfn
- 0UdvkIqaBWd6DyvhXThjQws3fRfT5AJjs8XjSRHZpUS/qG15FC/j01L61u8jL3TZ9gk9
- cMew==
-X-Gm-Message-State: AFq9FYLU0e5pU99WwthI61+C2uR/jP7T5C+Ae00sPRruHVmfaGmDr6uL
- mfHFwovGdxN5DhBv73Qc8jDKBHbYK96EUxj5CRyNsGdczedpy3Xd8ZfB+5ZU7RzoOq8=
-X-Gm-Gg: AYBFou0Cio6nwnLJEIMeKcHvuGEk9SAXh5fUu83kvUzbnUdQrUFAkV+gXFiwiNkdR7/
- YKKebEA8wprqojJUXNHoRsmZUEnpCBnju+k1tM3CACTjvckR0bIOMplHek1N2OcOwe1BbrarSha
- WoQ3KT7hr4rr9W/igDgKbZwWV9oTfqH5EJGIUr154H4S74j4HXP6J2DY16cTESFNSEpSQWn5tSY
- frf9HNaEjtIqVelGBsa3ZwiPt32eMPIGcjt7DOMQu8MYfakIu7bXlGuSTuDqTDh6qiGhdBhypTK
- ZPeHWQ+FeM5g2fXjkQb1Fx2OK/WL02MFHAe+dLy/KGnVGmKpui7LkVx3Kwe/bxpexDmwUMkwQj+
- 6KjaJEI7FhYhyToDdavf+HrzhamMVjaasd7+Ud93G0l6uLQ7N/bApaErNJYtA9CKU/PARL+NZZ8
- vYdUle58xwyCubKmg12vM2cTx5UdTZCvodWb0uD2hrPBp4pPGsk1BOnm0k8Bia0WQzXFGi9O0qa
- sZuNlJgYHqAliN2PTnCskcN2gRRRCZyVxDqqtyF
-X-Received: by 2002:a17:90a:2c9:b0:3a8:796e:ca18 with SMTP id
- 98e67ed59e1d1-3a8796ecbd4mr879917a91.59.1791305485227; 
- Tue, 06 Oct 2026 09:51:25 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a8543bf138sm5856953a91.15.2026.10.06.09.51.24
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 06 Oct 2026 09:51:25 -0700 (PDT)
-Date: Tue, 6 Oct 2026 09:51:23 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Randy L Tice <rtice@cisco.com>
-Cc: dev@dpdk.org, Morten =?UTF-8?B?QnLDuHJ1cA==?=
- <mb@smartsharesystems.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Harman Kalra <hkalra@marvell.com>
-Subject: Re: [PATCH v4 0/1] mbuf: add runtime metadata dynamic-field storage
-Message-ID: <20261006095123.3166b4dd@phoenix.local>
-In-Reply-To: <179130207755.4.10786861462241375385.v4-0000-cover-letter.patch@cisco.com>
-References: <179061941387.2.17741463412422386825.v3-0000-cover-letter.patch@cisco.com>
- <179130207755.4.10786861462241375385.v4-0000-cover-letter.patch@cisco.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E14724027B;
+	Tue,  6 Oct 2026 20:22:28 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 9B08D40151;
+ Tue,  6 Oct 2026 20:22:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1791310947; x=1822846947;
+ h=date:from:to:cc:subject:message-id:references:
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=SLbXJxc5iv+kwuPvnBIDrWVz2OtpggXv0CNwAm3oDpQ=;
+ b=YIkmfKGJ9SYn0vOuaSzkT9OwivmJp0pYh8XaL4VhTC7TtnLqvBDQmUzv
+ u7aU34h8ZQwKob3tIK9EtPKUXAt5sehU/KfDUtPXcWSEeIYbHmDk5kBif
+ 6lmyeUsRDI0QzNNBP3OOTF/9Jy2nSu58YH9zcgb3kcFzozCV5QYLfyZo0
+ OKI7W9CTy4hKIJQ6AAPHjhHXmQZ93UdSIrQO3LnRjGqD/D+qQTjnjmFLB
+ 08K4U/6i/9oFegrZENcVFm9IqoyqSJ4Viyri0LNqPhKr6J9sAA69dyqbk
+ w3cqM8ubOZYhXZ/AYtbaJwJU/ffT+K93z1dtec9J61sn3QP7zQe5DYSYB Q==;
+X-CSE-ConnectionGUID: 38Sh+QLtS7WoPJBFedGP1w==
+X-CSE-MsgGUID: MthRqY3gQFOs1tHRzKvDew==
+X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="95829006"
+X-IronPort-AV: E=Sophos;i="6.27,143,1787036400"; d="scan'208";a="95829006"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Oct 2026 11:22:25 -0700
+X-CSE-ConnectionGUID: Xx5tK799SSG0Z8Hqc3wxRA==
+X-CSE-MsgGUID: Jxb2P3cPT7Wq2P4IG6EezA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,143,1787036400"; d="scan'208";a="285145052"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Oct 2026 11:22:25 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Tue, 6 Oct 2026 11:22:25 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Tue, 6 Oct 2026 11:22:25 -0700
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.22) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Tue, 6 Oct 2026 11:22:25 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MKujpdE4FXTw7ZWZcDu13htzhgujuKxX4WUqW4ZuRHSaV/sANoNnd6tD5D1NvbP9ZdshXHuyMyQzNvMbb3bKPSTE9crF1VBYXhYUL0u0skvP8wz71R+cKSfV4K1r4ukc13fXU8ghi9SpBVbd2KSy31HhO+JUwzddqwwYPQfiyS61mxrTnaMUieNjLgQSS0h06rvYPJ5OvEyh3l0XPQ3v3z7zZ5fSb8BZUM7UoQA/WdOrt8Xv002cmeoPNtGnjK9aLEsYq/RaaxkSMbdf5Ci7cU5+0Wl6civ1wU1c3O9ZnnF/U8VFawVOwzgIXwZpWiTz7r7NVccyQ0P/RU6F6q54SA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uF2ptQWly+e0s848iMPTRwnHNGm85SYa+DHHYETAHZo=;
+ b=JxyFAHmJcwtahyktrI4UGe7EOb0ic2psSDNVGgMf3cwRX3BxcYjcNTkZRXJPPTub5B4TNXWaCy+xgqI7Oi4iNYRIffhjYp1dkJ12oB3qXyb0vIsxIkB4/EJRihQqPoy6v+Jw6QKfTr9p3Qa+/mMXN+1YmpZtw+eFiW6o1NVibYSMQ030yPmxxqSmKKcOBepaN8+VhiQ3UAa0Mf2PuWBaQNupwMBUcgQwTGGnGtk0LTSPJg5IryXYXE3jGOvkUZrAYAYrbBYiSDyPvNz+rC0aF4UYdLJXe8x6LaKtmLA5CheWIIjcNPQ4VL1tJGbd//znlQbYB8rA6QWv7v1vd4l+aQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by DM4PR11MB6216.namprd11.prod.outlook.com (2603:10b6:8:a8::7) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.451.23; Tue, 6 Oct 2026 18:22:21 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0451.014; Tue, 6 Oct 2026
+ 18:22:21 +0000
+Date: Tue, 6 Oct 2026 19:22:15 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Shaiq Wani <shaiq.wani@intel.com>
+CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>, <stable@dpdk.org>
+Subject: Re: [PATCH] net/idpf: fix Tx payload corruption in split queue
+Message-ID: <asU8V6Fbk9ar5YBl@bricha3-mobl1.ger.corp.intel.com>
+References: <20260930044630.250936-1-shaiq.wani@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260930044630.250936-1-shaiq.wani@intel.com>
+X-ClientProxiedBy: DUZPR01CA0335.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b8::19) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|DM4PR11MB6216:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2014fc83-b695-42a0-6393-08df23d6c2fd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|376014|366016|1800799024|10067099003|5023799004|56012099006|6133799003|11063799006|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: nmfVSuuUPVj29xr81dIjvJFuimqGhD7w6ElQnGeAmdk8/MJhS/qExF2O4wNKpYv0i4JQgwoOGCAlQ3xVqNxPEloYr2L91IJNTW7WgYbUrZfh+MDLZnLlkXG/1nn4i8uLD5uRQM+ezpT1ESD/5cSohYH8aTAEFdHR+hyAk1mtNWEwoQFbrB5w3L/PpIo4bkzh81gHuBJs+9eB28avAYG6oPdZjmmzkzEEZ56jTHW/72vmZqxJmzinQHAFeFrfXYhTyjq2jGQHdJzYzFKKzosOqGcJgGfLTf0dsFcXru/+5VWJpnIhdwef8J+dFByH6bcOZ2ze3JHk/4EFFPVSEYx9+h/sCW1vpL6mqWWNCBG8wh13uf79Ot6Nkmpy7dOc1zSV9h6Nlk9lSpCcFAwhX93cB2DfURNJjalpr3xlmgPpyZFZeLARhhB5b0OvUagkwQeCBf1j6+xFCP3cbtT9MwmTxUx2IQ74/Kre3QAlxza8DVyXRo2XH9KdW/om5L66CjbxBMOnAf9/bn+bIj9irQOlW/ftPZItdBmpfjYBMPKoakx8Fe+gIRxpPwSs/LCgd+QiiaGcW2OjtWuYN282QE0vHxA5IAJqQ3wFEnxL6ZTS457MFlUzphn80h2xUliMdx6ZxexsdfR5IzB8uNla6xuqfeXTvFg4xWF6P6ZZlzljXhY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(10067099003)(5023799004)(56012099006)(6133799003)(11063799006)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZVZYdjcxcCs2U2xRdWhPN3gzTUY4c1B3dFgvWTJQVnp5ZFpNUmIrM1oxMEZD?=
+ =?utf-8?B?allYTnVlUkxXdkZ0RVJPdjI3UC9oSmQxSDFUQ3Q1TDYwOHY0TE9FZUYwcStT?=
+ =?utf-8?B?KzFEWDlBUTJXL1RGN0JTeVFGSHZGOGJSRHJDNnc5TWdDWDdvSjRQQnJ4UHEx?=
+ =?utf-8?B?OVR6R1Y4RUFGakVhd2gxZzVSZ0w0K05SdmthVlFPVHc2NEdiUkJ3VkNEQ3dP?=
+ =?utf-8?B?WnNhKzdaYmtkQWlpVlRjMEwvYmdnbXJyQkNFVC9UTzdLR3hYV0srcmNZUnh6?=
+ =?utf-8?B?aFNKYWNUTjRBR0M3bEIrQWQyTHFDNkdYbVF1ak1DRFdNWXNQMnJkSE1VUm5H?=
+ =?utf-8?B?ZHlWaDJCWElyRjl3S3RxZmF2Mml1eHlQYmtiTFpuN0ttVGNFVHoyNXJrSzdC?=
+ =?utf-8?B?OXVHVEtvSHdrZm9pc28ySVdhK0RMYkc1QTg5OWVxNy80Mkp0ZmYrdDVOMGp3?=
+ =?utf-8?B?RGRyZkdOTHcvR2FQWmQ1aHJQR0tqcElwNlJYcDNlNnlJVjFpbGpsZXZCa25H?=
+ =?utf-8?B?Vi9XdndMK1pubEdmK3ZnNngzcGp2dU5wL3BEZVJKY1pxWDBTVzRTQzFyR1Yx?=
+ =?utf-8?B?TTVDLzljSitOVFdBYzNxRHpkNTFFU1RVbFZqSzNDNUVMd01wWWR0Nzl1WHBu?=
+ =?utf-8?B?WFN3SjhqdGdpRUMvS1R3V1F5aUowUkRLV3JYN3FPbFJIMWVFc0IwR0Y2Q0w1?=
+ =?utf-8?B?TngrNFlpemR0R0tsV3lkSnBLeGw5SFZmUXNvTFM5VlhPcE4zUFRyaStpWlhR?=
+ =?utf-8?B?SGJ3cFVtdkgvd1l6UjUzbEt6dmVHeHF2WlhtNE84RmVYYTRlbTFCbFE3bzhZ?=
+ =?utf-8?B?OVBPRWcyODZzS2k1UkFJbDlYb2svMGVNOVFSdGg5cjArV3BweGxvaHArZkhw?=
+ =?utf-8?B?NFFFamlCSXNtN3lRUUR5ajRnSDJqMHJ1Qm1teUoxdy9TemFMODREVURlM2E0?=
+ =?utf-8?B?YVk0b0JjODVQQnFVZ1hWM1ZZQzg3Q21VSXBCRXkxaXN0UmNXcXpmVnZ4blZJ?=
+ =?utf-8?B?MWRuUEtROVlOZnB4VVY0clhIaW9SeUg3OXYxS0N0OC9IWFlmalMwTTc5Y2hD?=
+ =?utf-8?B?SjZRTXphL0tMN21VdzhUQTN4K0tnMjFHKzN6VERkeThHQTYzalR5NjBGOVUv?=
+ =?utf-8?B?SFp4UEZRa0ltV1FQTWgrTENlS0F1MDFLcjJnK2dEVkNvZFkzb0RuelV4TkJa?=
+ =?utf-8?B?WG5ldnpjcHFMcGZrdGJ5S0wzMkdyNWZOcUhYSkp4YnJMMnQrWHc4YlJ3WHc5?=
+ =?utf-8?B?UjdKRVJHZzF4a3c1b0xYYlpSdFlmMmYrVEl5QWZ4VEw2Yk5uYyt3NHQ2WlhY?=
+ =?utf-8?B?Y3VKQWVKUXJtVjl0eW5qdDh1T0cxc3pzMEpRNmxyaWtFRzczRFFib1FwS3Fk?=
+ =?utf-8?B?aU84OWloSlZuRWFleGhaT09WRmJXaVpnRElBOUJ4emI1U1ZzZ1hWbDZTZmxY?=
+ =?utf-8?B?R0dnamw1MGpjY2ZWbkl0VlF1OU1yNW9rQTA4Qkp4eGNDdVhKUVN6WUNhUVU0?=
+ =?utf-8?B?Zkh4eDd5aTJLcUVEVVdNQ2tHcDZmNnd0Z3F0TzdrUEVXeFdCcjBFdXU4elNj?=
+ =?utf-8?B?cnFranhTbmRTTVN2eGNmRk05amdjSVo2WmFaUXZCZVVuQ2N4WGsyUk1uWjVV?=
+ =?utf-8?B?eE82MWxaVzdtb3p4SWpvWVU4djdCaVBabkRIdS81OENzWU5EQ3gwWkVDekFK?=
+ =?utf-8?B?MU1RSURwME1uK2lWa2JFWHdjOGNaMjBiSXVESy9EZEJlMmFHeDVOTExXV1di?=
+ =?utf-8?B?bUFSZnZYQlJUMXdKT3pRV3BIT2MvTm9sU3Q1WjI2ZVhnUUpSZ01JZ3BFYWlB?=
+ =?utf-8?B?K2JjWFQyWlYvQkZOZVowMHNVaGE1UXBZRDFncFpyYW5YdkgyM3RlNGZVN1lM?=
+ =?utf-8?B?TFpNeEJYWlE0V1hHdnI5YXhTeTNsOFN4RWVUR2ErVmY0ZFhSZmNLeTltWjVX?=
+ =?utf-8?B?Qm5xdWVlaUpTMUJUYlRHZUMrUUlVaFFmMnFPekdaZW0wRHcyR1Fua0FRZFln?=
+ =?utf-8?B?Z0VpamtaTERvaDNQbzNJMGlWMzgzRkVsaW1IbkpnejliZjdDK3NhUzl1bGlC?=
+ =?utf-8?B?ZmZONDY2QU1lNkFHeUxpUjBXR3NxVzFNUzM0dXBpeDV0VzZvemtkTEh0Q1Q4?=
+ =?utf-8?B?QVJrMG1wUWJ2NS9QUng4elFWZHpTOFhJN2pKcDNDSVErMkRXZE1Pdk91R0Rs?=
+ =?utf-8?B?U2dNQm1KWWF2M0c5d2JZcVBYbllzUzBQU09acTdtL3pQeWtBNkhTTFdmSDJo?=
+ =?utf-8?B?aEd6RFRGMGJaL0tWSWVRK1hkMW1qYTNncURmNnkrSVZPWGE5VFVIeU00TlUv?=
+ =?utf-8?B?UDNjeStMM3Q1QlZtUXY4UXp1K056NHdzTk9JVkhDaTdqa2ZTY2MyVURLekpm?=
+ =?utf-8?Q?izAkKWKYw4qWxSUc=3D?=
+X-Exchange-RoutingPolicyChecked: xFe5tdLuC4STkS/WamWA6KzmzTnJAMckzFw9EvbFayzXciKVVezA7TUfa1R7qXGsP9vPWFzRh4AkQEPsZ/oOE56zVZ8dlZLyRebpZnyQoDtA/aYNQqp9w7EdX7Vn8NncBSN5uMvnNQYcxloJAw/1iBjZ4FzGcpRo5JFxYzhjpKicFasThUpKeuNDo/0xZCkCht1ar4SFu8KtcVOITPd0YhsN1pHIHqq68oIMrzuZYfb5eDl0TeDthe5T8Mj0yIPx2JnY470ACj10NK2+zg4+Nnrjxg3UKhNkZFFtnUZX57DjZL/23fni9ONL3wyy3iBDBCUK3LASRYJhqRZIS118mw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2014fc83-b695-42a0-6393-08df23d6c2fd
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2026 18:22:21.4434 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jvq+GbJUssc6NcNbIcC7OpIAmcQIJLaSD4ETlxGG4xKB13KrWctleppA0zQzrOlKJxmjnBJp88MV7sMd+jRi5k6K2iY99O9WOk6pgYCkocU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6216
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,153 +161,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 06 Oct 2026 11:54:37 -0400
-Randy L Tice <rtice@cisco.com> wrote:
-
-> This revision changes direction from the v3 build-time dynfield3
-> layout.  It adds a runtime EAL-configured per-mbuf metadata area that is
-> placed after the fixed struct rte_mbuf header and before per-pool private
-> data.  This keeps sizeof(struct rte_mbuf) fixed while allowing deployments
-> that need globally consistent per-mbuf metadata to reserve that storage.
+On Wed, Sep 30, 2026 at 10:16:30AM +0530, Shaiq Wani wrote:
+> Observed on ACC while running NVMe traffic tests: under sustained
+> high-throughput split-queue Tx, payload bytes on the wire did not
+> match what the application submitted, while headers and checksums
+> looked valid.
 > 
-> The metadata area is still managed by the mbuf dynamic-field registry.
-> Fields registered with RTE_MBUF_DYNFIELD_F_METADATA are allocated from the
-> metadata area and are not copied by generic mbuf copy, clone, or attach
-> operations.  Fields registered without the flag continue to use the existing
-> copied mbuf dynamic-field storage and cannot overlap the metadata area.
+> The RS-completion path was freeing mbufs by walking sw_ring[] slots
+> between first_id and the EOP sw_id. sw_ring[] slots get reclaimed
+> by RE and reused by subsequent submits well before RS lands, so the
+> walker was freeing mbufs still in flight for later packets, whose
+> buffers then got recycled and overwritten mid-DMA.
 > 
-> The existing per-pool private data area does not provide a central layout
-> registry and is configured independently for each mbuf pool.  That makes it
-> hard for multiple libraries, drivers, or application modules to safely share
-> metadata without out-of-band coordination, especially when pools are created
-> by different components.
+> Fix by tracking completion ownership in a shadow ring indexed by a
+> software-defined compl_tag stamped on the EOP descriptor and echoed
+> back by HW on RS. sw_ring[].mbuf and .first_id are no longer touched
+> on the Tx completion path.
 > 
-> Mbuf object layout calculations that need to include the optional metadata
-> area now use rte_mbuf_size().  The primary process validates and publishes
-> the metadata size through the shared mem config; secondary processes may
-> omit the option, but if provided it must match the primary value.
+> Fixes: 96cc9b6ea60c ("net/idpf: fix multi-segment mbuf leak in split Tx path")
+> Cc: stable@dpdk.org
 > 
-> The octeontx mempool driver rejects allocation when mbuf metadata is
-> configured because the hardware mbuf header offset must remain 128 bytes.
+> Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
+> ---
+>  drivers/net/intel/common/tx.h             |  7 +++
+>  drivers/net/intel/idpf/idpf_common_rxtx.c | 72 +++++++++++++++--------
+>  2 files changed, 55 insertions(+), 24 deletions(-)
+> 
+The AI review linked from patchwork [1] flags some issues with this that
+are worth considering.
 
-I did a brief look at this and still not convinced about the exact use case.
-What is the problem this is trying to solve and why can't it be done
-by using existing API's.
+[1] https://mails.dpdk.org/archives/test-report/2026-September/1052807.html
 
-On a reviewer level, you need to break this up into:
-  - core mbuf changes
-  - per-driver patch to use those core mbuf changes
-  - example of usage
-  - documentation
-  - any review safe guards that future changes don't break this.
+Running an AI review locally with Claude also reports issues, and some of
+them seem quite serious. Can you review this feedback any fix any issues
+that are flagged, and let us know if any reports are false positives.
 
-The more detailed AI review focused on problems as well...
+/Bruce
 
+---
+Review: net/idpf: fix Tx payload corruption in split queue
 
-[PATCH v4 1/1] mbuf: add runtime metadata dynamic-field storage
+The stated fix (shadow ring keyed by compl_tag instead of walking sw_ring[]
+by first_id) is a sound idea, but the patch leaves sw_ring[].mbuf populated
+during transmit while no longer clearing it on completion. That creates a
+serious regression.
 
-Does not apply to current main: rte_mbuf_from_indirect() and
-rte_mbuf_to_priv() now have RTE_ASSERT lines. Needs rebase.
-Fixed up by hand for testing; builds with -Dwerror=true for the cnxk,
-bnxt, nfp, softnic and mempool drivers. mbuf_autotest passes with
-metadata size 0, 64, 256 and 65472.
+Error: double-free / use-after-free of Tx mbufs at queue stop/release (high
+confidence) idpf_dp_splitq_xmit_pkts() still writes txe->mbuf = tx_pkt; for
+every descriptor (idpf_common_rxtx.c:1048), exactly as before the patch.
+But the new IDPF_TXD_COMPLT_RS handler in idpf_split_tx_free() only frees
+via txq->tx_pending_pkts[tag] and never touches sw_ring[]/clears txe->mbuf
+anymore (idpf_common_rxtx.c:855-863) — previously this path did txe->mbuf =
+NULL; after freeing each segment.
 
-Error
+Consequently, once a packet's RS completion has been processed normally
+during Tx (freeing the mbuf chain through tx_pending_pkts), sw_ring[]
+retains a now-dangling pointer to the freed mbuf(s) with no code left to
+clear it. On the next queue stop/release:
 
-lib/mbuf/rte_mbuf_core.h: RTE_MARKER8 is not defined when building
-with MSVC (rte_common.h wraps the marker typedefs in
-#ifndef RTE_TOOLCHAIN_MSVC). The markers were removed from struct
-rte_mbuf for exactly this reason; this re-adds one and breaks the
-Windows MSVC build. The marker is also unnecessary: the metadata
-area starts at sizeof(struct rte_mbuf), so use that instead of
-offsetof(struct rte_mbuf, metadata) and drop the member.
+idpf_tx_queue_stop() (both idpf_rxtx.c:736 and cpfl_rxtx.c:1368) calls
+ci_txq_release_all_mbufs(txq, false) before idpf_qc_split_tx_descq_reset().
+That function walks sw_ring[last_desc_cleaned+1 .. tx_tail) and calls
+rte_pktmbuf_free_seg() on every non-NULL mbuf, i.e. on mbufs that have
+already been freed via tx_pending_pkts — a use-after-free/double-free on
+already-recycled mempool objects.  idpf_qc_tx_queue_release() is worse: it
+frees every live entry in tx_pending_pkts[] (idpf_common_rxtx.c:407-416)
+and then immediately calls ci_txq_release_all_mbufs(), which frees the very
+same still-in-flight (not-yet-RS-completed) mbufs again via their sw_ring[]
+entries — an unconditional double-free for any packet in flight at
+port-close/queue-release time.  This reintroduces memory corruption via a
+different path than the one the commit set out to fix, and is now
+deterministically triggered by a normal stop/close after any traffic,
+rather than only under the original race.
 
-lib/eal/common/eal_common_config.c: rte_mbuf_metadata_size is
-exported with RTE_EXPORT_SYMBOL and lands in DPDK_27 (stable).
-New API must be experimental. Same for rte_mbuf_metadata_size_get(),
-rte_mbuf_size() and RTE_MBUF_DYNFIELD_F_METADATA. Exporting a bare
-variable as stable ABI is worse than a function; it freezes the type
-and the symbol location.
+Suggested fix: pick one owner for Tx-mbuf lifetime. Either stop writing
+txe->mbuf in the split-queue xmit path (since tx_pending_pkts is now
+authoritative) and make ci_txq_release_all_mbufs()/reset aware that split
+queues must drain via tx_pending_pkts instead of sw_ring, or keep clearing
+txe->mbuf = NULL alongside the tx_pending_pkts free in the RS-completion
+handler so the two structures stay in sync.
 
-drivers/net/cnxk, drivers/event/cnxk: the hardware skip fields are
-narrow and roc_nix_rq_init() only checks 8-byte alignment, not range:
-  wqe_skip   2 bits, in 128B lines  -> rte_mbuf_size() <= 384
-  later_skip 6 bits, in 8B units    -> mbuf + meta + priv <= 504
-  first_skip 7 bits, in 8B units    -> mbuf + meta + priv
-                                       + headroom <= 1016
-With --mbuf-metadata-size=384, wqe_skip becomes 4 and is truncated to
-0. With metadata 256 and priv_size 128, later_skip is 512 and is
-truncated to 0. Hardware then writes the WQE/packet over the mbuf.
-The driver must reject configurations that do not fit, as was done
-for octeontx.
-
-Warning
-
-EAL defines and exports a symbol named rte_mbuf_*, and it is declared
-extern in both eal_private.h and rte_mbuf_core.h. Follow the existing
---mbuf-pool-ops-name pattern: EAL stores the value and provides a
-getter (rte_eal_mbuf_user_pool_ops() equivalent); mbuf owns any
-mbuf-named symbols.
-
-Fast path cost. rte_mbuf_size() turns a compile-time constant into a
-load of a global (through the GOT in shared builds) in
-rte_mbuf_to_priv(), rte_mbuf_from_indirect(), rte_mbuf_buf_addr() and
-rte_pktmbuf_detach(), all inline and used per packet. cnxk Rx vector
-paths now do vdupq_n_u64(rte_mbuf_size()) inside the burst loop, and
-the cn9k get_work asm needs an extra register load per event. The
-cnxk paths should cache the value in rxq/ws at setup like data_off.
-Need l3fwd or testpmd numbers with the option unset, on cnxk at
-least, before this goes in.
-
-lib/eal/common/eal_common_options.c: upper bound of UINT16_MAX is not
-justified. Beyond the cnxk limits above, examples/fips_validation
-DEF_MBUF_SEG_SIZE is UINT16_MAX - rte_mbuf_size() - headroom and
-wraps for large values. Cap the option at a small number of cache
-lines and document the limit.
-
-drivers/net/cnxk/cn10k_rx.h nix_cqe_xtract_mseg(): the rx_inj block
-was reindented one tab too deep; it is still inside the same if.
-Only the two wqe assignment lines need to change.
-
-Too much in one patch. Put the mbuf helpers first, then the
-conversions, then the feature:
-  1. mbuf: add rte_mbuf_size() returning sizeof(struct rte_mbuf),
-     no behaviour change
-  2. convert libs, apps and examples
-  3. convert drivers (one per driver family, so maintainers can ack)
-  4. add the EAL option, metadata dynfield flag, driver rejections
-     and docs
-Patches 1-3 are a no-op and can be reviewed and merged on their own.
-Patch 4 is then small enough to review for what it actually changes.
-It also makes it bisectable when a driver conversion is wrong.
-
-Many of the conversions open-code rte_mbuf_size() where an existing
-helper fits: RTE_PTR_ADD(m, rte_mbuf_size()) is rte_mbuf_to_priv(m),
-and mbuf + rte_mbuf_size() + priv_size is rte_mbuf_buf_addr(). Use
-the helpers so drivers stop depending on the layout directly.
-
-Info
-
-Unrelated whitespace churn: blank line removed in
-drivers/mempool/octeontx/meson.build, in the release notes Known
-Issues section, and in test_mbuf(). Drop these.
-
-lib/mbuf/rte_mbuf_dyn.c: the "check if this offset can be used"
-comment now sits above dynfield_in_metadata() instead of
-check_offset().
-
-drivers/mempool/octeontx: the check rejects every fpavf pool, not
-just pktmbuf pools. mp->private_data_size is known at alloc time, so
-the check could be limited to pools carrying
-rte_pktmbuf_pool_private. Not required since net/octeontx is the only
-user that cares.
-
-app/test/test_mbuf.c: with metadata configured, dynfield_fail_big
-(size 128) passes the size check and fails only because no free
-space exists, so the size limit path is no longer tested in the
-metadata run.
-
-Any out-of-tree code using (m + 1) or sizeof(struct rte_mbuf) to find
-private data silently breaks when a user adds this EAL option. That
-belongs in the API changes section of the release notes, not only
-under New Features.
+Error: shadow-ring allocation failure is silently swallowed (medium
+confidence) In idpf_qc_split_tx_descq_reset(), if rte_zmalloc_socket() for
+tx_pending_pkts fails, the function logs an error and returns, but it is
+void and none of its four call sites check for failure
+(idpf_common_rxtx.h:217). tx_pending_pkts stays NULL and tx_pending_mask
+stays uninitialized, yet idpf_dp_splitq_xmit_pkts() unconditionally does
+txq->tx_pending_pkts[tag] = tx_pkts[nb_tx];, which will
+NULL-pointer-dereference on the first transmit. This needs to propagate as
+a real error (change the function to return int, or fail queue setup/start)
+rather than only logging.
