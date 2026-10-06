@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A64CA6001
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 14:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AE3CA6001
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 14:19:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B683640262;
-	Tue,  6 Oct 2026 16:16:54 +0200 (CEST)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
- [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id 9B64C4025A
- for <dev@dpdk.org>; Tue,  6 Oct 2026 16:16:53 +0200 (CEST)
-Received: by mail-pj1-f54.google.com with SMTP id
- 98e67ed59e1d1-3a813079a55so399753a91.0
- for <dev@dpdk.org>; Tue, 06 Oct 2026 07:16:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 10EE540262;
+	Tue,  6 Oct 2026 16:19:30 +0200 (CEST)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 4F6794025A
+ for <dev@dpdk.org>; Tue,  6 Oct 2026 16:19:29 +0200 (CEST)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-2e2fd2603b0so6046665ad.3
+ for <dev@dpdk.org>; Tue, 06 Oct 2026 07:19:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791296212;
- x=1791901012; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791296368;
+ x=1791901168; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=NjDsFPfSvYOeNBcUez3kY1wkNI+TOyMV0LWnSw2wpXs=;
- b=sOWla1yzAuOX9LqawZrExiE8/4tMfFGF3mJ2RUxrqfSnQlEVgOHV2wFRjHEfDuXA3/
- 0RfvLMNb1uWiAcopc0NF6aD+KdY/KLbNk38c2+aF3RwyMftpNq/G6SldNzJdSu60Fbdu
- 8/O/0MdeChFHOP+MiAoDXILvHd+hLeTFY7sZyzrbaKLEg/U0rYT8FUwMCmCe8YQLbO/h
- vFv/DzpB6RtP7VImgi1u5oAAIXhwme2wWKiI2HJsZpNTot98p0M9mOu2nPgUJHpx6kZN
- r+xr1WzGzyDYLKSVd3mP8f2y2Ecf10H88jXC8wYkmcJDVaojdz9hmmUDxVYmET6rmHwb
- UTbw==
+ bh=dD03UbxmKxW4hBXEpQfM2ZxC6FDNPiMDAKlDYxaE2vs=;
+ b=wf7hKKoZCZ0PYMYsqMZIV4sY5cVfhuuEWk0g2TkyOwySxudGsNCYHzAMrkZQzWp0l3
+ nTrXYW9WMcigdGo95Y8eJxiUBDFQ7NzWYSdQZf4hqdNQFyPV/DgLszcsyuibiW3AxigV
+ hL0/C2xOl26vIpmqLBRw/kdWltFIm+mq42Vf3ktBTcioBf9tnb8naYecVAQztteV+5zM
+ VgHV+M7UbDJQSkIVpAKPVhi8FVCkqiokD6m/kaMyiFdOw1tCO/5FuDk6Gr7WdAzsR1yy
+ Z53yr3+/+9R+Y2WB1VqmQxtmL9JFssQHJ7TrcSiNnF2siFLp/MG9ErsOnd2ZEVtQ1RvV
+ Pn2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791296212; x=1791901012;
+ d=1e100.net; s=20260707; t=1791296368; x=1791901168;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=NjDsFPfSvYOeNBcUez3kY1wkNI+TOyMV0LWnSw2wpXs=;
- b=pki4PEISeaGGZ/2l5/32jQx9ANnJVEP8grL8Bb9iunsBi4fpvgdkPF3JxEQGDkwzhy
- Cd3rK1Akj0a3m0adrzaSmdGENdJHXIe1DM2g0AGn2WT0HqDUbYQSXRwRc97xRk0bCotu
- HIAbEe5Am2JUhW5O+AtkpKm3mjTZSAydck92hdj/ah9lH/fxjgvGK3zsm47BHILCtsMw
- IZ9/nnXSEPjPrU9ejvoPaGj0g1UyFNOjwknhfPgas3LHWqPXRDeyKFz030QcqgrFWMA5
- jwp0UAQCuuoZR7Di0EUCHX5PDa4QLdj8x1DcS6b8adZ9ihSU9YjDau2wwA+Xp8QfrC6b
- kRhQ==
-X-Gm-Message-State: AFq9FYKFilJ1AxHSdOGeRPSKz5JJW4rfNIIG6UX7atTmsHX56eGeV2kQ
- umF8wADO5jM/OvO9rxXaZ8lOlx6HrUfcbUS4njMPy0DAs1wmNT2OIrt8zXqzifJPPxo=
-X-Gm-Gg: AYBFou1sLvqOOo549dCnBEpr0DbQniu1gYfE5FyRy7yrwnPkYfeK+aFTWLrYznQvg35
- COoQtaVmLLbSqwecOekWV4DDaROzUnOrQLOEiEhc3JY/efhY6JWVsAPS1BkJeCCe0PWh8N22utm
- YuM20wSeoDcAqyNwtIaMeXzs8uQ5qaxVvHc/OXmc6P/AwG7/6Qrh6Ai8LGPSR7tSSHsKw1Qq9J6
- HuQ4BGFRyPLgmAVc6FUVc5wRd7pYaRV7yTXjcjRcJ8i8JyofPghJssVbSxsMdhImH3GtU8lc/ov
- 3eWBV6n8K4m16fnjYw1iT2WxbRUx88ADDvVi0wpkIEsoKKesCbHjk/AQuaNmwjNJNBllPGF3si3
- cz3cf+w4IyLvPEIe0ZxWdsAZx0aWg4JwXeOGFosHLmrBbHTkDgyYQmbMqQ6QLLO51rSXt2yZImR
- 7Y4sy4ZG3cR7ERXrDF1Ho8XcLimBQv8PU8kCWZ3qgnySKM/eW0GJckxF8uayn+3Lgbwyyj1OBfh
- +cjOjFZg8lv9Rw8B2nCgUiTKY/rUClm3K4z7Gmi
-X-Received: by 2002:a17:90a:2ce5:b0:3a8:786a:cfed with SMTP id
- 98e67ed59e1d1-3a8786ad5cbmr408973a91.37.1791296211991; 
- Tue, 06 Oct 2026 07:16:51 -0700 (PDT)
+ bh=dD03UbxmKxW4hBXEpQfM2ZxC6FDNPiMDAKlDYxaE2vs=;
+ b=jnvd6OBJAEXl2NwlgG0dkAL9anjiVy57ostdTouhfScScwdlZCxKgnSmZFAMSxWYp0
+ xg+ESCqvY/eSN1pDRm5bBJIuUIZF+Ooy2mopO4ZVQi+wHbu7Lfci0J957BI6Lq2zbYLX
+ bJPO+NuFsOAr3vvfPSO6LJD5I+/PPOGGi3VW0P73MjmiTU8w5GxudivQU5DduyKb4IVE
+ pr6SAUYIykkaNh5j5FsUu2KGz2VA4EyX5L5e20LWo1hBDEKckyifn/up2I5MM3wgmuQ/
+ Zw4IVaUFlue/HbOWP7NYDHQcGNmMm60tfPejQYp5pzmSwHlOEQ3Z5T7ynY8fAz/V/vJD
+ G6ag==
+X-Gm-Message-State: AFq9FYJvS3h7ZPj0Ro/h2zqffdEVYgIf3iXLico2MkSSJEIsNZOuNyKn
+ Q1miY3sSZE0ldpeDRIsax12FukEvgLLKSLo6UTCh45E5m/D20W/hW/IHMQReU3KK/gNeC2SPxtK
+ hjkcZYoI=
+X-Gm-Gg: AYBFou0bVIjikDaYuec7zstFlYu1r5/XAinZXJUoVsEq9/doqVG+7chfNSzBSATtEdA
+ g/kNlRMMT2lAwndCsN2uzmSATko81clyf3BQf87ope71x4Ook7sv0qbYinFAw0LLGTUWYhF+p3+
+ Lx4T9uncRqVWDebFQMbfq13r10CsNg5Q3rvmZInxsq/j2yBqH8555Y1Qb2DwpWLGXdF4o2LfDMF
+ fjBdS/HC10PK5R+HTHmjStN0d5iOGR6wvZXGhGhIL5Tk91LAjTCfc/y1zuZM4sC/D0uL+CMxVu7
+ Z2p7t5sL25VFT2J+5JCKnaamRZoaC5tLESAiEI3M8WRuxWME8hk9g45Mg1eQpqFTGaBAiiM1oLj
+ BlZUHXwSG4g1xt/Mqhp5njq56U0FNcO+Kn/4QPVaH8MyW6mP/8XSS530rID+k6ybVCu+MwTT9Rc
+ bHbW9V9kk8fYR0ycAHn2IdqtbJfS69mW57TKHul54GNS6pYudemkQZ0v5qZyKqBnCE+vLsX7KK2
+ rcnBk7yoIZfu2Pzqv2IdE2qYkjxIf2FcupN4d3FuzVyOBDC8vk=
+X-Received: by 2002:a17:903:41c3:b0:2e3:1bb4:6121 with SMTP id
+ d9443c01a7336-2e5dcda9a7bmr14207655ad.49.1791296367984; 
+ Tue, 06 Oct 2026 07:19:27 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a853e662a5sm5202061a91.4.2026.10.06.07.16.51
+ d9443c01a7336-2e5a55b65a7sm23658745ad.12.2026.10.06.07.19.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 06 Oct 2026 07:16:51 -0700 (PDT)
-Date: Tue, 6 Oct 2026 07:16:48 -0700
+ Tue, 06 Oct 2026 07:19:27 -0700 (PDT)
+Date: Tue, 6 Oct 2026 07:19:16 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: "Kumar, Rajesh" <rajesh3.kumar@intel.com>
-Cc: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>,
- <andrew.rybchenko@oktetlabs.ru>, <aman.deep.singh@intel.com>
-Subject: Re: [RFC PATCH v5 0/5] ethdev: add Tx timestamp slot APIs
-Message-ID: <20261006071648.4bb37e4f@phoenix.local>
-In-Reply-To: <7624cfc9-c624-43e2-a046-250d332abe7e@intel.com>
-References: <20260827122200.339388-2-rajesh3.kumar@intel.com>
- <20260908073206.1236372-1-rajesh3.kumar@intel.com>
- <11be03b9-2f3c-4665-9a89-3fce0dabeb33@intel.com>
- <7624cfc9-c624-43e2-a046-250d332abe7e@intel.com>
+To: Joshua Washington <joshwash@google.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v2 0/8] gve: precursor control plane changes before
+ bare-metal support
+Message-ID: <20261006071900.1a1c7c0b@phoenix.local>
+In-Reply-To: <20261005193943.1175072-1-joshwash@google.com>
+References: <20261003025142.1930363-1-joshwash@google.com>
+ <20261005193943.1175072-1-joshwash@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,294 +85,203 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 6 Oct 2026 15:58:29 +0530
-"Kumar, Rajesh" <rajesh3.kumar@intel.com> wrote:
+On Mon,  5 Oct 2026 12:39:31 -0700
+Joshua Washington <joshwash@google.com> wrote:
 
-> Hi Stephen,
-> I wanted to quickly check if you have any further comments or feedback 
-> on this v5 series?
-> If you are satisfied with the current changes, we can move forward to 
-> the next steps for this patch.
+> This patch series includes a number of precursor changes to the GVE
+> ethdev driver layer in preparation for introducing support for a new
+> GVE Mailbox control plane (an alternative to the existing AdminQ control
+> plane).
 > 
-> Regards,
+> The most major change in this series is the introduction of a new
+> control_ops struct that will be used by both AQ and Mailbox for various
+> operations which may need to communicate with the device. There are also
+> some changes to how RSS and timestamping are handled in ethdev due to
+> slight feature differences between the control planes.
 > 
-> Rajesh
-> 
-> On 21-09-2026
+> ---
 
-Lots of open issues from AI review.
-The biggest issue is that this overlaps with existing metering API
-and seems  specific to Intel NIC's. I strongly discourage API's that
-can only be used on one vendor NIC.
+Lots of issues found with manual run of AI review.
 
+Review: [PATCH v2 0/8] net/gve control ops rework
+
+Series summary
 
-Series: [RFC PATCH v5 0/5] ethdev: add Tx timestamp slot APIs
+Patches 1 and 6 add the query_rss op and NULL handling for "optional"
+ops, but no op table in this series sets query_rss and the only table
+fills every optional op. None of that code can run until the mailbox
+backend lands. The abstraction is easier to judge posted together with
+its second user.
 
-Applied to main 49bb9a5 (release_26_11.rst conflict only). Each
-commit builds with -Dwerror=true (net/intel/ice, test-pmd); no bisect
-issues.
+Errors
 
-Series-level:
+[PATCH v2 1/8] net/gve: refactor ethdev for control ops interface
 
-The main problem is in the ice implementation. Slot state is never
-cleaned up before a slot is handed out, so the read path can return
-a timestamp that belongs to an earlier packet as if it were the
-current one (patch 4, Error).
+1. Driver compatibility is no longer sent to the device after reset.
 
-The legacy static index and the slot allocator also overlap on ice.
+   gve_verify_driver_compatibility() moved into
+   gve_adminq_get_device_properties(), which is skipped on reset:
 
-On the API side, the caller has to set two separate mbuf flags for
-one action. The caps query returns -ENOTSUP on every PMD except ice,
-so it cannot be used to choose a mechanism as the doc says.
+       if (skip_describe_device)
+           goto setup_device;
+       ...
+       err = priv->ctrl_ops->get_device_properties(priv);
 
-The patch 1 commit message and the cover letter describe an
-unregister / "process-local reset" API that is not in this version.
+   Before this patch it ran right after gve_adminq_alloc() on every
+   gve_init_priv() call, including gve_dev_reset() ->
+   gve_init_priv(priv, true). Functional change in a refactor patch,
+   not mentioned in the commit message. Keep it on the path that runs
+   on reset, e.g. an AdminQ init_ctrl_plane op that does
+   gve_adminq_alloc() followed by the compatibility check.
 
+2. Function pointer table stored in shared memory.
 
-Patch 1/5 ethdev: add Tx timestamp slot management APIs
+       priv->ctrl_ops = &gve_adminq_ops;
 
-Warning:
+   priv is dev->data->dev_private, shared with secondary processes, and
+   holds the primary's address of gve_adminq_ops. A secondary installs
+   dev_ops in gve_dev_init() and returns; gve_link_update() has no
+   process type check:
 
-- The commit message says "Add APIs to register and unregister the
-  mbuf dynamic field", and the cover letter lists "process-local
-  reset". Only rte_eth_timesync_tx_slot_dynfield_register() exists.
+       err = priv->ctrl_ops->report_link_speed(priv);
 
-- rte_eth_timesync_tx_slot_dynfield_register() falls back to
-  rte_mbuf_dynfield_lookup() / rte_mbuf_dynflag_lookup() after a
-  registration failure. Register already returns the existing offset
-  when the name and params match, including in a secondary process.
-  The only extra case the lookup covers is EEXIST with different
-  params, and there it accepts a field of the wrong size or
-  alignment. It also returns -ENOTSUP for every failure, losing
-  rte_errno (ENOMEM, EEXIST). Drop both lookups and return
-  -rte_errno.
+   GVE has no LSC interrupt, so rte_eth_link_get() from a secondary on
+   a started port calls link_update and jumps through the primary's
+   address. That crashes whenever the driver is mapped at a different
+   address (shared build, PIE with ASLR). Same for read_clock, mtu_set,
+   RSS and flow ops. Before this patch the secondary called the AdminQ
+   functions directly. Keep the table process local: store a control
+   plane mode enum in priv and resolve the ops with an inline helper,
+   or keep the pointer in eth_dev->process_private and set it in both
+   primary and secondary init.
 
-- The register doc says "Must be called before the first
-  rte_pktmbuf_pool_create()". rte_mbuf_dyn.h says "The registration
-  can be done at any moment"; pool creation has no bearing on it.
-  The same wrong claim appears in the patch 3 note.
+[PATCH v2 6/8] net/gve: add RSS cache boolean flag
 
-- rte_eth_timesync_tx_slot_caps() returns -ENOTSUP for every in-tree
-  PMD except ice, including all PMDs that implement
-  timesync_read_tx_timestamp. Nothing ever reports
-  RTE_ETH_TIMESYNC_TX_SLOT_SINGLE_REG, so "Applications use this to
-  select the mechanism supported by the port" does not hold. Either
-  have ethdev report SINGLE_REG when timesync_tx_slot_get_caps is
-  NULL and timesync_read_tx_timestamp is set, or drop SINGLE_REG.
+3. One failed AdminQ RSS command locks out RSS configuration for the
+   life of the port.
 
-- rte_eth_timesync_tx_slot_stamp() sets the dynflag but not
-  RTE_MBUF_F_TX_IEEE1588_TMST. The patch 3 example has to set TMST
-  separately. If the application forgets it, ice takes the
-  "else if (ol_flags & RTE_MBUF_F_TX_IEEE1588_TMST)" path, no
-  timestamp is requested, and the slot read returns -EAGAIN forever.
-  stamp() should set both flags.
+       err = gve_adminq_execute_cmd(priv, &cmd);
+       priv->rss_cache_dirty = true;
+       if (err == 0)
+           gve_update_priv_rss_config(priv, rss_config);
 
-- The release note says the new APIs "support both shared-register
-  and slot-bank usage models through the rte_eth_timesync_tx_slot_*
-  interface family". The shared-register model is still served only
-  by rte_eth_timesync_read_tx_timestamp().
+   On error the flag stays set. gve_adminq_ops has no query_rss, so
+   gve_rss_update_cache() returns -ENOENT from gve_rss_hash_update(),
+   gve_rss_hash_conf_get(), gve_rss_reta_update() and
+   gve_rss_reta_query(), and gve_dev_configure() skips the RETA reset
+   for the new queue count. Only gve_update_priv_rss_config() clears
+   the flag, and it is reached only through configure_rss, which every
+   caller gates on gve_rss_update_cache(). gve_dev_reset() does not
+   recover: gve_init_priv() touches the flag only when query_rss is
+   set. The same lockout follows a successful command when
+   gve_update_priv_rss_config() fails with -ENOMEM; its return value
+   is ignored since patch 5.
 
-- There is no functional test. dynfield_register() and stamp() are
-  pure software and can be tested in app/test without hardware.
+   Before this patch a failed AdminQ command left the cached config in
+   place. AdminQ has no query, so its cache is authoritative. Drop the
+   dirty write from gve_adminq_configure_rss(), leave it to a backend
+   that implements query_rss, and propagate the update result:
 
-Info:
+       err = gve_adminq_execute_cmd(priv, &cmd);
+       if (err == 0)
+           err = gve_update_priv_rss_config(priv, rss_config);
 
-- The read and release doxygen says "is undefined behaviour - PMDs
-  should return -EINVAL"; pick one. Those two lines (rte_ethdev.h
-  5448, 5472) also use non-ASCII em-dashes. The release doc still
-  refers to "stamp_mbuf", the old function name.
+Warnings
 
-- Drop "This function does not make the PMD hardware lifecycle safe
-  by itself." It gives the reader nothing to act on (also in
-  patch 2).
+[PATCH v2 6/8] net/gve: add RSS cache boolean flag
 
-- The new wrappers have no trace points. The existing timesync calls
-  do, e.g. rte_eth_trace_timesync_read_tx_timestamp().
+4. priv->rss_config is read before the cache is refreshed.
 
-- Unrelated changes: a blank line removed before
-  rte_eth_add_rx_callback, and the log text reworded in
-  rte_eth_timesync_read_tx_timestamp().
+   The commit message says the config must not be read while dirty,
+   but gve_rss_hash_update() checks priv->rss_config.key_size, copies
+   it into rss_conf->rss_key_len, and sizes the new table from the
+   cache before refreshing it:
 
-- The definitions of alloc, release, dynfield_register and stamp put
-  the return type on the same line as the name. caps and read in the
-  same patch follow DPDK style.
+       rss_reta_size = priv->rss_config.indir ?
+               priv->rss_config.indir_size :
+               GVE_RSS_INDIR_SIZE;
+       err = gve_init_rss_config(&gve_rss_conf, rss_conf->rss_key_len,
+           rss_reta_size);
+       ...
+       err = gve_rss_update_cache(priv);
 
-- Nothing in the series sets raw_ns or
-  RTE_ETH_TIMESYNC_DUAL_DOMAIN_TIMESTAMP_RAW_VALID. Consider leaving
-  them out until a PMD produces them.
+   The later copy then takes its length from the pre-refresh cache and
+   its source from the post-refresh one:
 
-- The dynfield name "rte_eth_timesync_tx_slot" does not follow the
-  rte_<libname>_dynfield_<name> convention in rte_mbuf_dyn.h.
+       memcpy(gve_rss_conf.indir, priv->rss_config.indir,
+           gve_rss_conf.indir_size * sizeof(*priv->rss_config.indir));
 
+   gve_dev_configure() likewise tests priv->rss_config.indir before
+   refreshing. Call gve_rss_update_cache() before the first
+   priv->rss_config access in both functions.
 
-Patch 2/5 doc: describe ethdev timesync clock and Rx timestamp API
+[PATCH v2 7/8] net/gve: fix RSS config memory leak on close
 
-Info:
+5. Wrong Fixes tag. priv->rss_config has been allocated by
+   gve_update_priv_rss_config() since RSS support was added and was
+   never freed, on close or on remove, before or after 7ba84453bacf.
+   Use:
 
-- The commit message says the patch documents existing behaviour
-  only. The "must ensure no Tx timestamp operations are in flight
-  before disabling" requirement is new in patch 1; move it to
-  patch 3.
+       Fixes: 63ef54569760 ("net/gve: support RSS configuration update")
 
-- The flags argument of rte_eth_timesync_read_rx_timestamp() is not
-  explained. ice uses it as the Rx queue index.
+6. Stable fix sits behind six refactor patches. It applies to main on
+   its own; move it to the front of the series.
 
+[PATCH v2 8/8] net/gve: refactor timestamp support to clock read type
 
-Patch 3/5 doc: describe ethdev Tx timestamp slot API
+7. RTE_ETH_RX_OFFLOAD_TIMESTAMP is now advertised when timestamp setup
+   failed.
 
-Warning:
+       -   if (!gve_is_gqi(priv) && priv->nic_ts_report_mz)
+       +   if (priv->clk_read_type != GVE_DEV_CLK_UNSUPPORTED)
 
-- "* **Single Shared Register** (...):" and "* **Adjusted Domain**"
-  are term/description bullet lists. Use RST definition lists. The
-  same applies to the numbered "1. **Clock Control & Adjustment**:"
-  list in patch 2.
+   gve_setup_nic_timestamp() leaves nic_ts_report_mz NULL when the
+   memzone reservation fails and frees it when the sync thread cannot
+   be created; clk_read_type stays GVE_DEV_CLK_CMD in both cases.
+   nic_ts_stale stays set, so the Rx path never stamps packets. Before
+   this patch rte_eth_dev_configure() rejected the offload in that
+   state. Keep the nic_ts_report_mz test, or set clk_read_type to
+   GVE_DEV_CLK_UNSUPPORTED on setup failure.
 
-Info:
+Info
 
-- Indentation is inconsistent in the step 1 and step 4 code
-  examples.
+[PATCH v2 1/8] net/gve: refactor ethdev for control ops interface
 
-- Document how late a slot read may happen. ice extends a 32-bit ns
-  value against the current PHC time, so the result is only correct
-  within about 2.1 s of capture (see patch 4).
+8. The comment marks free_db_resources, setup_stats_report,
+   report_nic_timestamp and the page list ops optional, but only the
+   set_mtu caller checks for NULL. gve_teardown_device_resources()
+   calls free_db_resources unconditionally. Either check at each call
+   site or drop the "optional" claim until a backend omits them.
 
+[PATCH v2 6/8] net/gve: add RSS cache boolean flag
 
-Patch 4/5 net/ice: support per-packet Tx timestamp slots
+9. Pre-existing, not introduced by this patch, but the lines are
+   re-indented here: gve_dev_configure() ignores the return of
+   gve_init_rss_config_from_priv(). If the key allocation fails,
+   update_reta_config.indir is uninitialized stack and
+   gve_generate_rss_reta() writes through it. If the indir allocation
+   fails, gve_init_rss_config() frees key without clearing it and
+   gve_free_rss_config() frees it again.
 
-Error:
+10. Pre-existing: gve_update_priv_rss_config() assigns rte_realloc()
+    straight back to the pointer, leaking the old buffer on failure:
 
-- Stale timestamps are returned as valid.
+        priv_config->key = rte_realloc(priv_config->key, key_bytes,
+            RTE_CACHE_LINE_SIZE);
 
-  E810 has no ready register: ice_get_phy_tx_tstamp_ready_e810()
-  does "*tstamp_ready = 0xFFFFFFFFFFFFFFFF;". In
-  ice_ptp_read_tx_dual_timestamp() the ready-bit test therefore
-  never fires, and "if (ret || tstamp == 0)" is the only readiness
-  check.
+    Same for indir.
 
-  Nothing clears a slot before it is handed out.
-  ice_ptp_alloc_tx_slot() only sets the bitmap bit.
-  ice_timesync_enable() does not reset the PHY timestamp memory.
-  ice_timesync_disable() clears index 0 only:
-  "ice_clear_phy_tstamp(hw, lport, 0);".
+[PATCH v2 7/8] net/gve: fix RSS config memory leak on close
 
-  So a slot can still hold a value from a process that exited
-  without releasing it, or one the hardware wrote after the
-  application timed out and released the slot. The next owner reads
-  that value as its own, before its packet is even sent.
+11. gve_teardown_device_resources() also runs on gve_dev_reset(). After
+    a reset key and indir are NULL but key_size, indir_size and
+    hash_types survive, so gve_rss_hash_conf_get() reports the old
+    rss_key_len and rss_hf. Zero priv->rss_config after freeing.
 
-  On E822 and ETH56G, release does not touch the PHY at all
-  ("if (hw->phy_model == ICE_PHY_E810)"). A timestamp that arrives
-  after a timeout leaves the ready bit set for the next owner.
+[PATCH v2 8/8] net/gve: refactor timestamp support to clock read type
 
-  Fix: in timesync_enable, reset this PF's slot range in PHY memory
-  and clear ts_slot_bitmap. In alloc, discard any entry already
-  present in the chosen slot.
+12. The GVE_DEV_CLK_UNSUPPORTED check added to
+    gve_alloc_nic_ts_report() is dead: its only caller,
+    gve_setup_nic_timestamp(), already returns on that value.
 
-Warning:
-
-- The legacy index overlaps the allocator. ice_ptp_init_info() sets
-  "ad->ptp_tx_index = 0;" on E810, E830 and ETH56G, and base_slot on
-  E822. "slot = (uint8_t)rte_ctz64(free_in_range);" therefore hands
-  out the legacy slot first.
-
-  A TMST packet without the dynflag uses ad->ptp_tx_index and lands
-  in that same slot. On E810, ice_timesync_read_tx_timestamp() now
-  also clears that slot after reading it. Reserve the legacy bit in
-  ts_slot_bitmap at init.
-
-- "caps->max_slots = 64;" is unconditional, but the allocator limits
-  E822 to "64 / ppq" slots per PF. The debug log "all 64 timestamp
-  slots busy" is wrong on E822 for the same reason. Compute the
-  range once, store it in the adapter, and use it for caps, alloc,
-  read and release.
-
-- Read and release only check "slot_id > 63".
-
-  Releasing an unallocated or already-released slot clears a bit
-  that another thread may now own, and on E810 zeroes its PHY entry.
-  The ethdev header asks PMDs to return -EINVAL in that case.
-
-  On E822, reading a slot outside this PF's range reads another PF's
-  quad entry. Per the ice_clear_phy_tstamp_e822() comment, that read
-  auto-clears the entry, so this PF steals the other PF's timestamp.
-
-  Check the slot against the PF range and the bitmap.
-  rte_atomic_fetch_and_explicit() returns the old value for the
-  ownership test.
-
-- "if (ret) return -EAGAIN;" after ice_get_phy_tx_tstamp_ready() and
-  ice_read_phy_tstamp() turns sideband and register failures into
-  "retry". The caller then polls forever. Return -EIO.
-
-- ice_timesync_tx_slot_alloc() does not check ad->ptp_ena. With
-  timesync disabled, or with txpp_ena set (ice_timesync_enable()
-  returns 0 without enabling), alloc succeeds and read returns
-  -EAGAIN forever.
-
-- The E810 ice_clear_phy_tstamp() call added to the timeout branch
-  of ice_timesync_read_tx_timestamp() is unreachable. tstamp_ready
-  is all ones on E810, so
-  "!(tstamp_ready & BIT_ULL(ad->ptp_tx_index))" is never true. The
-  "clear ... after ... a timeout" fix claimed in the commit message
-  does not happen.
-
-- No release note entry under "Updated Intel ice driver".
-
-- ice_timesync_tx_slot_alloc() -> ice_get_next_tx_desc_idx() ->
-  ice_ptp_alloc_tx_slot() repeats the dev, slot_id and dual NULL
-  checks at every level, after ethdev has already validated them.
-  ice_get_next_tx_desc_idx is also misnamed; it allocates a slot,
-  not a descriptor index. Collapse the layers.
-
-Info:
-
-- get_context_desc() evaluates
-  "if (ol_flags & rte_eth_timesync_tx_slot_dynflag)" for every
-  packet in the scalar path, before the ice_calc_context_desc() == 0
-  early return. That is an exported-variable load (via the GOT in a
-  shared build) per packet. Move the lookup into the TMST branch.
-
-- Pre-existing: TSYN is in the "else if" after TSO, so TMST is
-  ignored on TSO packets. With slots, the allocated slot then stays
-  at -EAGAIN.
-
-- Pre-existing: the vector Tx paths, including the AVX2 and AVX512
-  ctx offload paths, never set CI_TX_CTX_DESC_TSYN.
-
-  Tx path selection does not consider ptp_ena, while Rx does
-  (ice_set_rx_function). caps still reports PER_PACKET, so a stamped
-  packet on a vector path never gets a timestamp.
-
-- Pre-existing: ice_tstamp_convert_32b_64b(hw, ad, 1, ...) writes the
-  shared ad->time_hw without synchronization. The slot read adds a
-  concurrent writer alongside the Rx path.
-
-- On E810 the legacy read now hits "Failed to read phy timestamp" at
-  ERR on every poll until the hardware writes the slot. ptpclient
-  and ieee1588fwd both poll in loops, so this floods the log. Log at
-  DEBUG and return -EAGAIN.
-
-- "(uint32_t)(uint16_t)idx" double cast. Magic 64 and 63 should be a
-  define. Missing space in "RTE_ATOMIC(uint64_t)ts_slot_bitmap;".
-
-
-Patch 5/5 app/testpmd: add Tx timestamp capabilities command
-
-Warning:
-
-- The "show" command calls rte_eth_timesync_tx_slot_alloc() and
-  release(). A show command should not change device state; on E810
-  the release zeroes a PHY entry. If a forwarding engine holds every
-  slot, the output is "Alloc test: failed (-28)". Drop the
-  round-trip.
-
-- testpmd_funcs.rst and the testpmd help text are not updated.
-
-- stamp, read and dynfield_register cannot be reached from testpmd.
-  ieee1588fwd is the natural place to use the slot API when the port
-  reports PER_PACKET.
-
-Info:
-
-- There is no port_id_is_invalid(res->port_id, ENABLED_WARN) check.
-  Print errors with strerror(-ret).
+Review-Result: ERROR
