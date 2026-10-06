@@ -2,62 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2756CCA5FFD
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 02:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E13CA5FFD
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 02:31:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 474EB40A6B;
-	Tue,  6 Oct 2026 04:31:02 +0200 (CEST)
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197])
- by mails.dpdk.org (Postfix) with ESMTP id 64DF5406BA
- for <dev@dpdk.org>; Tue,  6 Oct 2026 04:31:01 +0200 (CEST)
-Received: by mail-pl1-f197.google.com with SMTP id
- d9443c01a7336-2db8e9fe9c7so25890875ad.0
- for <dev@dpdk.org>; Mon, 05 Oct 2026 19:31:01 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1902640A76;
+	Tue,  6 Oct 2026 04:31:04 +0200 (CEST)
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200])
+ by mails.dpdk.org (Postfix) with ESMTP id 69F4A40E1D
+ for <dev@dpdk.org>; Tue,  6 Oct 2026 04:31:03 +0200 (CEST)
+Received: by mail-pg1-f200.google.com with SMTP id
+ 41be03b00d2f7-cb11535e6a1so1196762a12.0
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 19:31:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1791253860; x=1791858660; darn=dpdk.org;
+ d=google.com; s=20251104; t=1791253862; x=1791858662; darn=dpdk.org;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=7F8UqmrROLjIhSjJOvk5tzNTS7Pr1vFzt+TJPu7iN2A=;
- b=u2F8Q+9Ss/JAwHmGwhtwhVt8+rYut6ZIBUeD/tgDF7Ly3AQmN4UV63CAYuKmmuboZF
- 8vV6rZ9rQNC01qQp8zWdS2gLvggSushs0TVzvdcoQ9l6UVtvYPrZjDec/Nva4YSl0kT1
- mmJx7/vXO4W88ZZBvFgZGEpwUSHqmZppRz+00bGqGQWDUTfXOMcI/SLgNfLiqYnXPmKf
- T3FfwtEG52hjCiRChqpeNkPfggXN27jvT+LHMIc4DPk6EXhEKP+sScUIZyc/i5Yb5WRe
- Fz5hxOh5USCSyqdqvMn1b+0BJduAU2dab2o/0HD8dmzpMqcXGEqlAI+zp8KqlpDBCHlD
- JbFw==
+ :content-type; bh=Kn89D4l0KAhLS+bwNdh6s5K9giTFDQ/kyBCTBxPQjm4=;
+ b=Xxrnbqmm+MJgkZLGGtUYhdahpMRNiFpu3OZ95SXrbHUm/DWBuG8Bw+j2RsVcxm7aNA
+ /kjqwjyWMl0299bWwaMTqpjOo0R0ZxCtAHmr5KurhhlzKdZAJgPM3VAANb190ReSgWDd
+ nDWjcfJhoZ1AMStWsL5QP82OGPGpl7Gh8ZhucO0mQIGNzH8ggQ0n6gEpNU3PI1gGXAM6
+ J3AKiKWlUOMWrlu2syCFUXa6pKpUMmmnRsG7pqLWdISkXzvJSI4VCmNYDaafs12C9l0q
+ iAA8S82rd+dWVclMEV85cRJ9W+rwvqrUP6EOHQY2pr59CWC63KiL2Xe4zlhVBAEyDWgy
+ myUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791253860; x=1791858660;
+ d=1e100.net; s=20260707; t=1791253862; x=1791858662;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=7F8UqmrROLjIhSjJOvk5tzNTS7Pr1vFzt+TJPu7iN2A=;
- b=MyXenY1CZUU4eyivyC6mdCMi0fMNa2ImOuC6Tf4ELm1z3yn+jYS4CBQFmhgVaEygeK
- MfRX7To57MYlJscITS1B4PMj/2JSeSBNPhzouKxBbQzmNCzTu3kz3u8gSEOMjF3Rtk+Y
- 4O1NMKpr658QyXt0vv3Zbs4RDGnOUF8iaPP6DGWq6x4WbJeIG8NLhf66DDNplD/sxm7F
- PgL1Sn1aaFaqDY37Piqil3Fkc+6McjMg3Yq4yW2mC9KTtx/7M44Kpcf/a16abGEBzNrZ
- UHWZQ/WnGiEywS7qeb/TQ+zVDI1bF/xJ3kNg+a+i+JvgDrJFdvkqsxODQjS210h2zp72
- npIQ==
-X-Gm-Message-State: AFq9FYKcZbF5/zcff+ZtkKLqDPWT65UaaeVGeF4pEjK6XhpwootbiJ3j
- VwckWxWQAWTKMR1b1zn7jDrDr9VSipZ+aNajZtwF3A5zttidF8acJL0gOBk04ATyqqdt0r2c/op
- FViee3FrhqG3oiA==
-X-Received: from plgl2.prod.google.com ([2002:a17:902:f682:b0:2e2:bc36:1c75])
+ bh=Kn89D4l0KAhLS+bwNdh6s5K9giTFDQ/kyBCTBxPQjm4=;
+ b=lNYNrNLX1bCN0jcUSDeNmpNAI3AtEFEz/MjkT0CtAcXTV6fYqO5WIiRWu12cwS6vFL
+ HaOy2zYB/IRJzuC4909hPy6S9pgPCQ+a6451c3MEbBlTP1vsOZdd02h0ckw7FGMivvap
+ DMzwxxtLookbyO9V+Fg+9FR3WUu4LbVDE0AXoAHXtl2YDrO6E+yd08+kRoL6XCun/pUr
+ 1FesjTi61N+7T55Cu1ZSOB6Gg9WNS2UbpfjH07hmzjqHbs9/eoUrR+/8WrjHCe1MI9T+
+ KatZyXT9HAcZtr/WZ1OLnlPxva0cH0Tkzay6FiDZTDS1ID10K0f7+Ukk5FAfUHbaC1DJ
+ k3gQ==
+X-Gm-Message-State: AFuF++kLQc6PjhDx65JWCWqF+7PiXVEwoVn2vQlneO3uBZJxcSSZomPM
+ SJvK9IQXM2Ku810SV1vq4OGD/+zuoF3X6X1MI4VGIhtKvlQ0x7vSzAOQbYeUL8xQzgK/U1/eCKc
+ ERMnG12QUhVPXQQ==
+X-Received: from pgfd9-n2.prod.google.com
+ ([2002:a05:6a02:6549:20b0:cc4:aa77:305b])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:e812:b0:2e5:41dc:9ac2 with SMTP id
- d9443c01a7336-2e5dcd8f230mr579265ad.9.1791253860304; 
- Mon, 05 Oct 2026 19:31:00 -0700 (PDT)
-Date: Mon,  5 Oct 2026 19:30:39 -0700
+ 2002:a05:6a20:918c:b0:3d2:89db:1688 with SMTP id
+ adf61e73a8af0-3e124496078mr4724637.2.1791253862306; 
+ Mon, 05 Oct 2026 19:31:02 -0700 (PDT)
+Date: Mon,  5 Oct 2026 19:30:40 -0700
 In-Reply-To: <20261006023053.2572501-1-joshwash@google.com>
 Mime-Version: 1.0
 References: <20260923010742.2468145-1-joshwash@google.com>
  <20261006023053.2572501-1-joshwash@google.com>
 X-Mailer: git-send-email 2.56.0.rc1.315.gc6ed9934b7-goog
-Message-ID: <20261006023053.2572501-4-joshwash@google.com>
-Subject: [PATCH v4 03/15] net/idpf: use common division round up macro
+Message-ID: <20261006023053.2572501-5-joshwash@google.com>
+Subject: [PATCH v4 04/15] net/ice: use common division round up macro
 From: Joshua Washington <joshwash@google.com>
-To: Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>
+To: Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
 Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>, 
- Bruce Richardson <bruce.richardson@intel.com>,
  Stephen Hemminger <stephen@networkplumber.org>
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -79,28 +79,28 @@ Signed-off-by: Joshua Washington <joshwash@google.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/intel/idpf/idpf_osdep.h | 3 +--
+ drivers/net/intel/ice/ice_osdep.h | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/intel/idpf/idpf_osdep.h b/drivers/net/intel/idpf/idpf_osdep.h
-index 9c758fb3c0..7d99a23cf8 100644
---- a/drivers/net/intel/idpf/idpf_osdep.h
-+++ b/drivers/net/intel/idpf/idpf_osdep.h
-@@ -293,13 +293,12 @@ idpf_hweight32(u32 num)
+diff --git a/drivers/net/intel/ice/ice_osdep.h b/drivers/net/intel/ice/ice_osdep.h
+index 599bd4086b..f4ec8b8994 100644
+--- a/drivers/net/intel/ice/ice_osdep.h
++++ b/drivers/net/intel/ice/ice_osdep.h
+@@ -313,13 +313,12 @@ ice_hweight32(u32 num)
  	return bits;
  }
  
 -#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
  #define DELAY(x) rte_delay_us(x)
- #define idpf_usec_delay(x) rte_delay_us(x)
- #define idpf_msec_delay(x, y) rte_delay_us(1000 * (x))
+ #define ice_usec_delay(x, y) rte_delay_us(x)
+ #define ice_msec_delay(x, y) rte_delay_us(1000 * (x))
  #define udelay(x) DELAY(x)
  #define msleep(x) DELAY(1000 * (x))
 -#define usleep_range(min, max) msleep(DIV_ROUND_UP(min, 1000))
 +#define usleep_range(min, max) msleep(RTE_DIV_ROUND_UP(min, 1000))
  
- #ifndef IDPF_DBG_TRACE
- #define IDPF_DBG_TRACE	  BIT_ULL(0)
+ struct ice_list_entry {
+ 	LIST_ENTRY(ice_list_entry) next;
 -- 
 2.56.0.rc1.315.gc6ed9934b7-goog
 
