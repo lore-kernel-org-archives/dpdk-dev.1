@@ -2,39 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE6DCA5FFC
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 15:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AA2CA5FFC
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 15:10:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 62A9F42798;
-	Tue,  6 Oct 2026 17:10:21 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 3685642670
+	by mails.dpdk.org (Postfix) with ESMTP id 5D2B34279E;
+	Tue,  6 Oct 2026 17:10:22 +0200 (CEST)
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com
+ [209.85.216.51]) by mails.dpdk.org (Postfix) with ESMTP id C04B74113D
  for <dev@dpdk.org>; Tue,  6 Oct 2026 17:10:18 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 16C74200010;
- Tue,  6 Oct 2026 17:10:18 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ABF18200002;
- Tue,  6 Oct 2026 17:10:17 +0200 (CEST)
-Received: from lsv031405.swis.in-blr01.nxp.com
- (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 30B1F18000B1;
- Tue,  6 Oct 2026 23:10:16 +0800 (+08)
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
-To: stephen@networkplumber.org,
-	dev@dpdk.org
-Cc: Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v6-S2 05/13] net/dpaa2: support meter and policing
-Date: Tue,  6 Oct 2026 20:40:01 +0530
-Message-ID: <20261006151009.3593348-6-prashant.gupta_3@nxp.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261006151009.3593348-1-prashant.gupta_3@nxp.com>
-References: <20261001073307.1125305-1-prashant.gupta_3@nxp.com>
- <20261006151009.3593348-1-prashant.gupta_3@nxp.com>
+Received: by mail-pj1-f51.google.com with SMTP id
+ 98e67ed59e1d1-3a4b3ac8fb7so370205a91.0
+ for <dev@dpdk.org>; Tue, 06 Oct 2026 08:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791299418;
+ x=1791904218; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=kIFpvHQr+Q3xHwsiDcEcGiVlNsZHoLV+dOwjpOz8oWs=;
+ b=T9OxOyMgrgsvAgWfxJH0z90fPyXC232Nc74dbZu7n/4A5Wpzbf3ZNEmSgXmY+MhD+q
+ 4pSuOg1qdZPXYXyzx34EEArhyfMcp0z56529Ek0bIVb9bGOi/uh+kHMPu2E2+JaAEZ0g
+ CRyAU0VfGZPyLhHDHF8DkOu3ROdEENq1fcSmmTgj2u3sMm3Amn4zfBwlTIwOM8J03/CI
+ 72wLLklvjmpcRDIzmiDDa1+4lW4pZY1xLzDJjNXLQRwoCBQJj+t5wSAstBYvo/4nZtZ7
+ a3CuBCr5gFQ1BaeDhM5WdO+bbTEJHeuzEDJN/BjKZNdUXS4h9WJM2nuUJ6wu6NgkdH1F
+ fvmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791299418; x=1791904218;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=kIFpvHQr+Q3xHwsiDcEcGiVlNsZHoLV+dOwjpOz8oWs=;
+ b=c4TnvtRrDGxda1eR+aeBrfSljYRZQdjjp2aZ+PJCahinVNc8kA2wDbJtgTrmSTWdZF
+ sjvQnm8ZFgcHh1QjEIGBTc9Y9vjjw50jZ+TwrY0MQCm6T0wX6qqgerCIYGOFjah95vBB
+ 2z3ICGXSJZpVp2ZCQ0ezjYhVPCKYMGG0SY7ggTqXSNA4a3D2Yowu+VjugzNkkDbcviQn
+ 5LBKt9b7jYh+PGmTXJwXQhs2mN7iSzn2EqMs+4EXvV8w5KhvRB/9TTJQhILRBGZJVA5M
+ GPqzdQw0VVzS4112yiOoecnZvaZzx4uZnjOtl5fvZTy0OzMlbXbtq9wcdjeYXyHCsFZt
+ NEhg==
+X-Gm-Message-State: AFq9FYKfMBo6YkVa8QiOihzK9HTLO9kRLp6Oqu2yr8OdGwmZyDZwO+rq
+ GpwawwQbwgiPQzjuCjQ9Qvtsb+ovA6YqQwR0zQBHbQ4VhziEEsWOHrUi0VV+glZE0t4lCQeWxXE
+ 3AISd+58=
+X-Gm-Gg: AYBFou1VEG9maTXW9tXVQ76Xhc8az1oq0FU7W39/2SZpM7EN/X8serquBDqGm8tDQEl
+ 03sm/ANckiqUjljlXoDVQYa2iHDYenqq3tNcMAz23BR6uZEngMoL2+NRWxBzbmwbbA3MBsVF+CY
+ KzFrOzp2P0xS7LOk7ad6XHEgx3bgXQDq6e0YhKb76F+nSyVliUZxL9VOebKRV9Ba4N6b38EJvbz
+ k24IerkLU/hyaUc1FtkqxOoGUyQUjOyXx9cUgLEL9AKZ0zQwzGxuG4y5ozWXptEMjN4dnwdS3x/
+ sNEs92rVz4sfMdaqsyACt8/GywuUBueSkm2HEC5C38q10Zt5Zqi2c9JyjV+DoGjiK38O5wlfXVf
+ 94eo+pMJxmeWDPj9FfTftXKR9H7P3WHhG2uyUxKkDsXw3SR4/mIAd0UiptqU7ok5JE+FhF+CvWP
+ /iUJNpPWbJWb7ufHjHk++kuZ2sQH7COxtaappfIc8QhrYfxcxOJhl4qmgMkL9xsK1/5ZXO3ue8h
+ AgL9+cgN4KNWjTWOTNLU+8ys1agdq3OXDlj63i1
+X-Received: by 2002:a17:90b:1a82:b0:3a8:de1:db07 with SMTP id
+ 98e67ed59e1d1-3a8726c1d93mr1260169a91.5.1791299417343; 
+ Tue, 06 Oct 2026 08:10:17 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3a853cac663sm5454097a91.9.2026.10.06.08.10.16
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 06 Oct 2026 08:10:17 -0700 (PDT)
+Date: Tue, 6 Oct 2026 08:10:14 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Joshua Washington <joshwash@google.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v2 0/8] gve: precursor control plane changes before
+ bare-metal support
+Message-ID: <20261006081014.22ee1b01@phoenix.local>
+In-Reply-To: <20261005193943.1175072-1-joshwash@google.com>
+References: <20261003025142.1930363-1-joshwash@google.com>
+ <20261005193943.1175072-1-joshwash@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,975 +84,203 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Gagandeep Singh <g.singh@nxp.com>
+On Mon,  5 Oct 2026 12:39:31 -0700
+Joshua Washington <joshwash@google.com> wrote:
 
-Add support for the traffic metering and policing (rte_mtr) API.
-Meters map one-to-one to Rx TCs and are programmed via
-dpni_set_rx_tc_policing().
+> This patch series includes a number of precursor changes to the GVE
+> ethdev driver layer in preparation for introducing support for a new
+> GVE Mailbox control plane (an alternative to the existing AdminQ control
+> plane).
+> 
+> The most major change in this series is the introduction of a new
+> control_ops struct that will be used by both AQ and Mailbox for various
+> operations which may need to communicate with the device. There are also
+> some changes to how RSS and timestamping are handled in ethdev due to
+> slight feature differences between the control planes.
+> 
+> ---
 
-Additional corrections over the initial implementation --
-- byte-mode rates converted correctly: bytes/s / 125 = Kbps
-- packet-mode rates passed unchanged to firmware
-- hardware programmed at create/update; policing disabled at destroy
-- mtr_id validated against num_rx_tc before use
-- color_aware capability cleared (FD[DROPP] not handled)
-- duplicate-ID check and insertion both under meter_lock
-- removed misleading "Rate limitation" entry from features/dpaa2.ini
+Lots of issues found with manual run of AI review.
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
----
- doc/guides/nics/dpaa2.rst              |   1 +
- doc/guides/rel_notes/release_26_11.rst |   5 +
- drivers/net/dpaa2/dpaa2_ethdev.c       |   2 +
- drivers/net/dpaa2/dpaa2_ethdev.h       |  29 +
- drivers/net/dpaa2/dpaa2_meter.c        | 758 +++++++++++++++++++++++++
- drivers/net/dpaa2/mc/fsl_dpni.h        |  23 +-
- drivers/net/dpaa2/meson.build          |   1 +
- 7 files changed, 815 insertions(+), 4 deletions(-)
- create mode 100644 drivers/net/dpaa2/dpaa2_meter.c
+Review: [PATCH v2 0/8] net/gve control ops rework (bundle 2148)
 
-diff --git a/doc/guides/nics/dpaa2.rst b/doc/guides/nics/dpaa2.rst
-index ae8b32af2c..faee3a72a2 100644
---- a/doc/guides/nics/dpaa2.rst
-+++ b/doc/guides/nics/dpaa2.rst
-@@ -407,6 +407,7 @@ Features of the DPAA2 PMD are:
- - Link flow control
- - Scattered and gather for TX and RX
- - Rx queue interrupts
-+- Traffic metering and policing
- - :ref:`dpaa2_dptmapi`
- 
- 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index c8cc86295d..869f5a4adc 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -55,6 +55,11 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Updated NXP DPAA2 net driver.**
-+
-+  * Added Tx queue based flow control and confirmation queue handling.
-+  * Added software parser based packet dump for debugging.
-+  * Added support for traffic metering and policing (rte_mtr API).
- 
- Removed Items
- -------------
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index c95704d4ca..d23c73b21d 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -3320,6 +3320,7 @@ static struct eth_dev_ops dpaa2_ethdev_ops = {
- 	.rxq_info_get	      = dpaa2_rxq_info_get,
- 	.txq_info_get	      = dpaa2_txq_info_get,
- 	.tm_ops_get	      = dpaa2_tm_ops_get,
-+	.mtr_ops_get	      = dpaa2_mtr_ops_get,
- #if defined(RTE_LIBRTE_IEEE1588)
- 	.timesync_enable      = dpaa2_timesync_enable,
- 	.timesync_disable     = dpaa2_timesync_disable,
-@@ -3543,6 +3544,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 	priv->num_channels = attr.num_channels;
- 	priv->channel_inuse = 0;
- 	rte_spinlock_init(&priv->lpbk_qp_lock);
-+	rte_spinlock_init(&priv->meter_lock);
- 
- 	/* only if the custom CG is enabled */
- 	if (attr.options & DPNI_OPT_CUSTOM_CG)
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index 149954fb6b..e329111c0b 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.h
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -385,6 +385,30 @@ struct extract_s {
- 	uint8_t *tc_extract_param[MAX_TCS];
- };
- 
-+struct dpaa2_dev_meter_profile {
-+	LIST_ENTRY(dpaa2_dev_meter_profile) next;
-+	uint32_t profile_id;
-+	uint64_t cir;
-+	uint64_t cbs;
-+	uint64_t pir;
-+	uint64_t pbs;
-+	enum dpni_policer_mode mode;
-+	enum dpni_policer_unit policer_unit;
-+};
-+
-+struct dpaa2_dev_meter_policy {
-+	LIST_ENTRY(dpaa2_dev_meter_policy) next;
-+	uint32_t policy_id;
-+	bool red_drop;
-+};
-+
-+struct dpaa2_dev_meter {
-+	LIST_ENTRY(dpaa2_dev_meter) next;
-+	uint32_t meter_id;
-+	uint32_t profile_id;
-+	uint32_t policy_id;
-+};
-+
- struct dpaa2_dev_priv {
- 	void *hw;
- 	int32_t hw_id;
-@@ -411,6 +435,7 @@ struct dpaa2_dev_priv {
- 	uint8_t en_loose_ordered;
- 	uint8_t max_cgs;
- 	uint8_t cgid_in_use[MAX_RX_QUEUES];
-+	rte_spinlock_t meter_lock;
- 
- 	/* Current hash distribution size per RX TC, written by
- 	 * dpaa2_setup_flow_dist_size() and read by reta_query / reta_update.
-@@ -456,6 +481,9 @@ struct dpaa2_dev_priv {
- 
- 	struct dpaa2_dev_flow *curr;
- 	LIST_HEAD(, dpaa2_dev_flow) flows;
-+	LIST_HEAD(, dpaa2_dev_meter_profile) profiles;
-+	LIST_HEAD(, dpaa2_dev_meter_policy) policies;
-+	LIST_HEAD(, dpaa2_dev_meter) meters;
- 	LIST_HEAD(nodes, dpaa2_tm_node) nodes;
- 	LIST_HEAD(shaper_profiles, dpaa2_tm_shaper_profile) shaper_profiles;
- };
-@@ -548,6 +576,7 @@ int dpaa2_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
- 
- int dpaa2_dev_recycle_config(struct rte_eth_dev *eth_dev);
- int dpaa2_dev_recycle_deconfig(struct rte_eth_dev *eth_dev);
-+int dpaa2_mtr_ops_get(struct rte_eth_dev *dev, void *ops);
- int dpaa2_soft_parser_loaded(void);
- 
- void
-diff --git a/drivers/net/dpaa2/dpaa2_meter.c b/drivers/net/dpaa2/dpaa2_meter.c
-new file mode 100644
-index 0000000000..9ad796e8c5
---- /dev/null
-+++ b/drivers/net/dpaa2/dpaa2_meter.c
-@@ -0,0 +1,758 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2025-2026 NXP
-+ */
-+
-+#include <sys/queue.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <errno.h>
-+#include <stdint.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <stdarg.h>
-+#include <sys/mman.h>
-+
-+#include <rte_ethdev.h>
-+#include <rte_log.h>
-+#include <rte_malloc.h>
-+#include <rte_flow_driver.h>
-+#include <rte_tailq.h>
-+#include <rte_mtr.h>
-+#include <rte_mtr_driver.h>
-+
-+#include <fsl_dpni.h>
-+#include <fsl_dpkg.h>
-+
-+#include <dpaa2_ethdev.h>
-+#include <dpaa2_pmd_logs.h>
-+
-+static char s_err_msg[128];
-+
-+/*
-+ * color_aware mode is not yet implemented: the firmware color input from
-+ * FD[DROPP] is not read or acted upon.  Advertise only blind (non-aware)
-+ * trTCM variants until color-aware handling is added.
-+ */
-+static struct rte_mtr_capabilities s_dpaa2_mtr_capa = {
-+	.color_aware_trtcm_rfc2698_supported = false,
-+	.color_aware_trtcm_rfc4115_supported = false,
-+	.trtcm_rfc2698_byte_mode_supported = true,
-+	.trtcm_rfc2698_packet_mode_supported = true,
-+	.trtcm_rfc4115_byte_mode_supported = true,
-+	.trtcm_rfc4115_packet_mode_supported = true
-+};
-+
-+/*
-+ * Program the DPNI policing HW for the given TC.
-+ * profile->cir and profile->pir are stored in the rte_mtr units:
-+ *   byte mode:   bytes/s  -> convert to Kbps (divide by 125)
-+ *   packet mode: packets/s -> pass through unchanged
-+ * cbs/pbs are in bytes or packets and fit in uint32_t; the caller must
-+ * verify this before storing in the profile.
-+ */
-+static int
-+dpaa2_mtr_hw_program(struct rte_eth_dev *dev,
-+	uint32_t mtr_id,
-+	const struct dpaa2_dev_meter_profile *profile,
-+	const struct dpaa2_dev_meter_policy *policy)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct fsl_mc_io *dpni = priv->hw;
-+	struct dpni_rx_tc_policing_cfg cfg;
-+	int ret;
-+
-+	memset(&cfg, 0, sizeof(cfg));
-+	cfg.mode = profile->mode;
-+	cfg.units = profile->policer_unit;
-+	cfg.default_color = DPNI_POLICER_COLOR_GREEN;
-+
-+	if (policy->red_drop)
-+		cfg.options |= DPNI_POLICER_OPT_DISCARD_RED;
-+
-+	if (profile->policer_unit == DPNI_POLICER_UNIT_BYTES_L3) {
-+		/* rte_mtr rates are bytes/s; DPNI expects Kbps (1 Kbps = 125 B/s). */
-+		cfg.cir = (uint32_t)(profile->cir / 125);
-+		cfg.eir = (uint32_t)(profile->pir / 125);
-+	} else {
-+		/* Packet mode: rates are packets/s, passed directly. */
-+		cfg.cir = (uint32_t)profile->cir;
-+		cfg.eir = (uint32_t)profile->pir;
-+	}
-+	cfg.cbs = (uint32_t)profile->cbs;
-+	cfg.ebs = (uint32_t)profile->pbs;
-+
-+	ret = dpni_set_rx_tc_policing(dpni, CMD_PRI_LOW, priv->token,
-+				      (uint8_t)mtr_id, &cfg);
-+	if (ret) {
-+		DPAA2_PMD_ERR("TC[%u] policing set failed (%d)", mtr_id, ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+dpaa2_mtr_capabilities_get(struct rte_eth_dev *dev,
-+	struct rte_mtr_capabilities *capa,
-+	struct rte_mtr_error *error)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+
-+	if (capa == NULL) {
-+		return rte_mtr_error_set(error, EINVAL,
-+				RTE_MTR_ERROR_TYPE_MTR_PARAMS, NULL,
-+				"NULL input parameter");
-+	}
-+
-+	rte_spinlock_lock(&priv->meter_lock);
-+	s_dpaa2_mtr_capa.n_max = priv->num_rx_tc;
-+	s_dpaa2_mtr_capa.n_shared_max = priv->num_rx_tc;
-+	s_dpaa2_mtr_capa.meter_trtcm_rfc2698_n_max = priv->num_rx_tc;
-+	s_dpaa2_mtr_capa.meter_trtcm_rfc4115_n_max = priv->num_rx_tc;
-+	s_dpaa2_mtr_capa.meter_policy_n_max = priv->num_rx_tc;
-+	s_dpaa2_mtr_capa.shared_n_flows_per_mtr_max = priv->fs_entries;
-+	rte_spinlock_unlock(&priv->meter_lock);
-+
-+	*capa = s_dpaa2_mtr_capa;
-+
-+	return 0;
-+}
-+
-+static int
-+dpaa2_mtr_profile_add(struct rte_eth_dev *dev,
-+	uint32_t profile_id, struct rte_mtr_meter_profile *profile,
-+	struct rte_mtr_error *error)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_dev_meter_profile *dpaa2_profile;
-+	struct dpaa2_dev_meter_profile *curr;
-+	int ret = 0;
-+
-+	dpaa2_profile = rte_zmalloc(NULL,
-+		sizeof(struct dpaa2_dev_meter_profile), 0);
-+	if (dpaa2_profile == NULL) {
-+		return rte_mtr_error_set(error, ENOMEM,
-+				RTE_MTR_ERROR_TYPE_UNSPECIFIED, NULL,
-+				"Meter profile memory alloc failed!");
-+	}
-+	if (profile->alg == RTE_MTR_NONE) {
-+		dpaa2_profile->mode = DPNI_POLICER_MODE_PASS_THROUGH;
-+	} else if (profile->alg == RTE_MTR_TRTCM_RFC2698) {
-+		dpaa2_profile->mode = DPNI_POLICER_MODE_RFC_2698;
-+	} else if (profile->alg == RTE_MTR_TRTCM_RFC4115) {
-+		dpaa2_profile->mode = DPNI_POLICER_MODE_RFC_4115;
-+	} else {
-+		DPAA2_PMD_ERR("Policer profile alg(%d) not supported!",
-+			profile->alg);
-+		rte_mtr_error_set(error, ENOTSUP,
-+				RTE_MTR_ERROR_TYPE_METER_PROFILE, NULL,
-+				"Policer profile alg not supported!");
-+		ret = -ENOTSUP;
-+		goto err;
-+	}
-+
-+	if (profile->alg == RTE_MTR_TRTCM_RFC2698) {
-+		dpaa2_profile->cir = profile->trtcm_rfc2698.cir;
-+		dpaa2_profile->cbs = profile->trtcm_rfc2698.cbs;
-+		dpaa2_profile->pir = profile->trtcm_rfc2698.pir;
-+		dpaa2_profile->pbs = profile->trtcm_rfc2698.pbs;
-+	} else if (profile->alg == RTE_MTR_TRTCM_RFC4115) {
-+		dpaa2_profile->cir = profile->trtcm_rfc4115.cir;
-+		dpaa2_profile->cbs = profile->trtcm_rfc4115.cbs;
-+		dpaa2_profile->pir = profile->trtcm_rfc4115.eir;
-+		dpaa2_profile->pbs = profile->trtcm_rfc4115.ebs;
-+	}
-+
-+	/* Align with DPNI policy. */
-+	if (!profile->packet_mode)
-+		dpaa2_profile->policer_unit = DPNI_POLICER_UNIT_BYTES_L3;
-+	else
-+		dpaa2_profile->policer_unit = DPNI_POLICER_UNIT_FRAMES;
-+
-+	dpaa2_profile->profile_id = profile_id;
-+
-+	/* Check for duplicate ID and insert under lock to prevent TOCTOU. */
-+	rte_spinlock_lock(&priv->meter_lock);
-+	curr = LIST_FIRST(&priv->profiles);
-+	while (curr != NULL) {
-+		if (curr->profile_id == profile_id) {
-+			rte_spinlock_unlock(&priv->meter_lock);
-+			rte_mtr_error_set(error, EEXIST,
-+				RTE_MTR_ERROR_TYPE_METER_PROFILE_ID,
-+				NULL, "Meter profile ID already exists!");
-+			ret = -EEXIST;
-+			goto err;
-+		}
-+		curr = LIST_NEXT(curr, next);
-+	}
-+
-+	curr = LIST_FIRST(&priv->profiles);
-+	if (curr == NULL) {
-+		LIST_INSERT_HEAD(&priv->profiles, dpaa2_profile, next);
-+	} else {
-+		while (LIST_NEXT(curr, next) != NULL)
-+			curr = LIST_NEXT(curr, next);
-+		LIST_INSERT_AFTER(curr, dpaa2_profile, next);
-+	}
-+	rte_spinlock_unlock(&priv->meter_lock);
-+
-+err:
-+	if (ret != 0)
-+		rte_free(dpaa2_profile);
-+
-+	return ret;
-+}
-+
-+static int
-+dpaa2_mtr_policy_add(struct rte_eth_dev *dev,
-+	uint32_t policy_id, struct rte_mtr_meter_policy_params *policy,
-+	struct rte_mtr_error *error)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_dev_meter_policy *dpaa2_policy;
-+	struct dpaa2_dev_meter_policy *curr;
-+	const struct rte_flow_action *red_action;
-+	bool red_drop = false;
-+
-+	if (policy->actions[RTE_COLOR_GREEN] != NULL) {
-+		return rte_mtr_error_set(error, ENOTSUP,
-+				RTE_MTR_ERROR_TYPE_POLICER_ACTION_GREEN, NULL,
-+				"Meter green policy action not supported!");
-+	}
-+	if (policy->actions[RTE_COLOR_YELLOW] != NULL) {
-+		return rte_mtr_error_set(error, ENOTSUP,
-+				RTE_MTR_ERROR_TYPE_POLICER_ACTION_YELLOW, NULL,
-+				"Meter yellow policy action not supported!");
-+	}
-+
-+	red_action = policy->actions[RTE_COLOR_RED];
-+
-+	if (red_action != NULL) {
-+		if (red_action->type == RTE_FLOW_ACTION_TYPE_DROP) {
-+			red_drop = true;
-+		} else if (red_action->type != RTE_FLOW_ACTION_TYPE_PASSTHRU) {
-+			snprintf(s_err_msg, sizeof(s_err_msg),
-+				"Meter red policy action(%d) NOT supported!",
-+				red_action->type);
-+			return rte_mtr_error_set(error, ENOTSUP,
-+				RTE_MTR_ERROR_TYPE_POLICER_ACTION_RED, NULL,
-+				s_err_msg);
-+		}
-+	}
-+
-+	dpaa2_policy = rte_zmalloc(NULL,
-+		sizeof(struct dpaa2_dev_meter_policy), 0);
-+	if (dpaa2_policy == NULL) {
-+		return rte_mtr_error_set(error, ENOMEM,
-+				RTE_MTR_ERROR_TYPE_UNSPECIFIED, NULL,
-+				"Meter policy memory alloc failed!");
-+	}
-+
-+	dpaa2_policy->policy_id = policy_id;
-+	dpaa2_policy->red_drop = red_drop;
-+
-+	/* Check for duplicate ID and insert under lock to prevent TOCTOU. */
-+	rte_spinlock_lock(&priv->meter_lock);
-+	curr = LIST_FIRST(&priv->policies);
-+	while (curr != NULL) {
-+		if (curr->policy_id == policy_id) {
-+			rte_spinlock_unlock(&priv->meter_lock);
-+			rte_free(dpaa2_policy);
-+			return rte_mtr_error_set(error, EEXIST,
-+				RTE_MTR_ERROR_TYPE_METER_POLICY_ID,
-+				NULL, "Meter policy ID already exists!");
-+		}
-+		curr = LIST_NEXT(curr, next);
-+	}
-+
-+	curr = LIST_FIRST(&priv->policies);
-+	if (curr == NULL) {
-+		LIST_INSERT_HEAD(&priv->policies, dpaa2_policy, next);
-+	} else {
-+		while (LIST_NEXT(curr, next) != NULL)
-+			curr = LIST_NEXT(curr, next);
-+		LIST_INSERT_AFTER(curr, dpaa2_policy, next);
-+	}
-+	rte_spinlock_unlock(&priv->meter_lock);
-+
-+	return 0;
-+}
-+
-+static struct rte_flow_meter_profile *
-+dpaa2_mtr_profile_get(struct rte_eth_dev *dev,
-+	uint32_t meter_profile_id, struct rte_mtr_error *error)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_dev_meter_profile *dpaa2_profile;
-+
-+	RTE_SET_USED(error);
-+
-+	rte_spinlock_lock(&priv->meter_lock);
-+	dpaa2_profile = LIST_FIRST(&priv->profiles);
-+	while (dpaa2_profile != NULL) {
-+		if (dpaa2_profile->profile_id == meter_profile_id) {
-+			rte_spinlock_unlock(&priv->meter_lock);
-+			return (struct rte_flow_meter_profile *)dpaa2_profile;
-+		}
-+		dpaa2_profile = LIST_NEXT(dpaa2_profile, next);
-+	}
-+	rte_spinlock_unlock(&priv->meter_lock);
-+
-+	return NULL;
-+}
-+
-+static struct rte_flow_meter_policy *
-+dpaa2_mtr_policy_get(struct rte_eth_dev *dev,
-+	uint32_t policy_id, struct rte_mtr_error *error)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_dev_meter_policy *dpaa2_policy;
-+
-+	RTE_SET_USED(error);
-+
-+	rte_spinlock_lock(&priv->meter_lock);
-+	dpaa2_policy = LIST_FIRST(&priv->policies);
-+	while (dpaa2_policy != NULL) {
-+		if (dpaa2_policy->policy_id == policy_id) {
-+			rte_spinlock_unlock(&priv->meter_lock);
-+			return (struct rte_flow_meter_policy *)dpaa2_policy;
-+		}
-+		dpaa2_policy = LIST_NEXT(dpaa2_policy, next);
-+	}
-+	rte_spinlock_unlock(&priv->meter_lock);
-+
-+	return NULL;
-+}
-+
-+static int
-+dpaa2_mtr_profile_delete(struct rte_eth_dev *dev,
-+	uint32_t profile_id, struct rte_mtr_error *error)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_dev_meter_profile *dpaa2_profile = NULL, *curr;
-+	struct dpaa2_dev_meter *meter;
-+
-+	rte_spinlock_lock(&priv->meter_lock);
-+	curr = LIST_FIRST(&priv->profiles);
-+	while (curr != NULL) {
-+		if (curr->profile_id == profile_id) {
-+			dpaa2_profile = curr;
-+			break;
-+		}
-+		curr = LIST_NEXT(curr, next);
-+	}
-+	if (dpaa2_profile == NULL) {
-+		rte_spinlock_unlock(&priv->meter_lock);
-+		return rte_mtr_error_set(error, ENOENT,
-+			RTE_MTR_ERROR_TYPE_METER_PROFILE_ID,
-+			&profile_id, "Meter profile is invalid.");
-+	}
-+
-+	meter = LIST_FIRST(&priv->meters);
-+	while (meter != NULL) {
-+		if (meter->profile_id == profile_id) {
-+			rte_spinlock_unlock(&priv->meter_lock);
-+			return rte_mtr_error_set(error, EBUSY,
-+				RTE_MTR_ERROR_TYPE_METER_PROFILE_ID,
-+				&profile_id, "Meter profile is in use.");
-+		}
-+		meter = LIST_NEXT(meter, next);
-+	}
-+
-+	LIST_REMOVE(dpaa2_profile, next);
-+	rte_free(dpaa2_profile);
-+	rte_spinlock_unlock(&priv->meter_lock);
-+
-+	return 0;
-+}
-+
-+static int
-+dpaa2_mtr_policy_delete(struct rte_eth_dev *dev,
-+	uint32_t policy_id, struct rte_mtr_error *error)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_dev_meter_policy *dpaa2_policy = NULL, *curr;
-+	struct dpaa2_dev_meter *meter;
-+
-+	rte_spinlock_lock(&priv->meter_lock);
-+	curr = LIST_FIRST(&priv->policies);
-+	while (curr != NULL) {
-+		if (curr->policy_id == policy_id) {
-+			dpaa2_policy = curr;
-+			break;
-+		}
-+		curr = LIST_NEXT(curr, next);
-+	}
-+	if (dpaa2_policy == NULL) {
-+		rte_spinlock_unlock(&priv->meter_lock);
-+		return rte_mtr_error_set(error, ENOENT,
-+			RTE_MTR_ERROR_TYPE_METER_POLICY_ID,
-+			NULL, "Meter policy is invalid.");
-+	}
-+
-+	meter = LIST_FIRST(&priv->meters);
-+	while (meter != NULL) {
-+		if (meter->policy_id == policy_id) {
-+			rte_spinlock_unlock(&priv->meter_lock);
-+			return rte_mtr_error_set(error, EBUSY,
-+				RTE_MTR_ERROR_TYPE_METER_POLICY_ID,
-+				NULL, "Meter policy is in use.");
-+		}
-+		meter = LIST_NEXT(meter, next);
-+	}
-+
-+	LIST_REMOVE(dpaa2_policy, next);
-+	rte_free(dpaa2_policy);
-+	rte_spinlock_unlock(&priv->meter_lock);
-+
-+	return 0;
-+}
-+
-+static int
-+dpaa2_mtr_meter_create(struct rte_eth_dev *dev,
-+	uint32_t mtr_id, struct rte_mtr_params *params,
-+	int shared, struct rte_mtr_error *error)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_dev_meter_profile *profile;
-+	struct dpaa2_dev_meter_policy *policy;
-+	struct dpaa2_dev_meter *meter, *curr;
-+	uint32_t profile_id, policy_id;
-+	enum rte_mtr_error_type err_type = RTE_MTR_ERROR_TYPE_NONE;
-+	bool found = false;
-+	int ret = 0;
-+
-+	RTE_SET_USED(shared);
-+
-+	/* mtr_id maps 1:1 to an Rx TC; validate the range. */
-+	if (mtr_id >= priv->num_rx_tc) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"Meter ID(%u) >= num_rx_tc(%u)!", mtr_id,
-+			priv->num_rx_tc);
-+		return rte_mtr_error_set(error, EINVAL,
-+			RTE_MTR_ERROR_TYPE_MTR_ID, NULL, s_err_msg);
-+	}
-+
-+	profile_id = params->meter_profile_id;
-+	policy_id = params->meter_policy_id;
-+
-+	rte_spinlock_lock(&priv->meter_lock);
-+	profile = LIST_FIRST(&priv->profiles);
-+	while (profile != NULL) {
-+		if (profile->profile_id == profile_id) {
-+			found = true;
-+			break;
-+		}
-+		profile = LIST_NEXT(profile, next);
-+	}
-+	if (!found) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"Meter profile ID(%d) not exist!", profile_id);
-+		ret = ENOENT;
-+		err_type = RTE_MTR_ERROR_TYPE_METER_PROFILE_ID;
-+		goto quit;
-+	}
-+
-+	found = false;
-+	policy = LIST_FIRST(&priv->policies);
-+	while (policy != NULL) {
-+		if (policy->policy_id == policy_id) {
-+			found = true;
-+			break;
-+		}
-+		policy = LIST_NEXT(policy, next);
-+	}
-+	if (!found) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"Meter policy ID(%d) not exist!", policy_id);
-+		ret = ENOENT;
-+		err_type = RTE_MTR_ERROR_TYPE_METER_POLICY_ID;
-+		goto quit;
-+	}
-+
-+	meter = LIST_FIRST(&priv->meters);
-+	while (meter != NULL) {
-+		if (meter->meter_id == mtr_id) {
-+			snprintf(s_err_msg, sizeof(s_err_msg),
-+				"Meter ID(%d) exist!", mtr_id);
-+			ret = EEXIST;
-+			err_type = RTE_MTR_ERROR_TYPE_MTR_ID;
-+			goto quit;
-+		}
-+		meter = LIST_NEXT(meter, next);
-+	}
-+	meter = rte_zmalloc(NULL, sizeof(struct dpaa2_dev_meter), 0);
-+	if (meter == NULL) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"Meter memory alloc failed!");
-+		ret = ENOMEM;
-+		err_type = RTE_MTR_ERROR_TYPE_UNSPECIFIED;
-+		goto quit;
-+	}
-+	meter->meter_id = mtr_id;
-+	meter->profile_id = profile_id;
-+	meter->policy_id = policy_id;
-+
-+	rte_spinlock_unlock(&priv->meter_lock);
-+
-+	/* Program the hardware policing configuration for this TC. */
-+	ret = dpaa2_mtr_hw_program(dev, mtr_id, profile, policy);
-+	if (ret) {
-+		rte_free(meter);
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"TC[%u] HW policing set failed (%d)!", mtr_id, ret);
-+		return rte_mtr_error_set(error, -ret,
-+			RTE_MTR_ERROR_TYPE_UNSPECIFIED, NULL, s_err_msg);
-+	}
-+
-+	rte_spinlock_lock(&priv->meter_lock);
-+	curr = LIST_FIRST(&priv->meters);
-+	if (curr == NULL) {
-+		LIST_INSERT_HEAD(&priv->meters, meter, next);
-+	} else {
-+		while (LIST_NEXT(curr, next) != NULL)
-+			curr = LIST_NEXT(curr, next);
-+		LIST_INSERT_AFTER(curr, meter, next);
-+	}
-+
-+quit:
-+	rte_spinlock_unlock(&priv->meter_lock);
-+	if (ret != 0) {
-+		if (meter != NULL && ret == ENOMEM)
-+			rte_free(meter);
-+		return rte_mtr_error_set(error, ret, err_type, NULL, s_err_msg);
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+dpaa2_mtr_meter_destroy(struct rte_eth_dev *dev,
-+	uint32_t mtr_id, struct rte_mtr_error *error)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_dev_priv *priv_dev = dev->data->dev_private;
-+	struct fsl_mc_io *dpni = priv_dev->hw;
-+	struct dpaa2_dev_meter *meter;
-+	struct dpni_rx_tc_policing_cfg cfg;
-+	int ret;
-+
-+	rte_spinlock_lock(&priv->meter_lock);
-+	meter = LIST_FIRST(&priv->meters);
-+	while (meter != NULL) {
-+		if (meter->meter_id == mtr_id) {
-+			LIST_REMOVE(meter, next);
-+			rte_free(meter);
-+			rte_spinlock_unlock(&priv->meter_lock);
-+
-+			/* Disable policing for this TC. */
-+			memset(&cfg, 0, sizeof(cfg));
-+			cfg.mode = DPNI_POLICER_MODE_NONE;
-+			ret = dpni_set_rx_tc_policing(dpni, CMD_PRI_LOW,
-+						      priv->token,
-+						      (uint8_t)mtr_id, &cfg);
-+			if (ret)
-+				DPAA2_PMD_ERR("TC[%u] policing disable failed (%d)",
-+					mtr_id, ret);
-+
-+			return 0;
-+		}
-+		meter = LIST_NEXT(meter, next);
-+	}
-+	snprintf(s_err_msg, sizeof(s_err_msg),
-+		"Meter ID(%d) does not exist!", mtr_id);
-+	rte_spinlock_unlock(&priv->meter_lock);
-+	return rte_mtr_error_set(error, ENOENT,
-+		RTE_MTR_ERROR_TYPE_MTR_ID, NULL, s_err_msg);
-+}
-+
-+static int
-+dpaa2_mtr_meter_profile_update(struct rte_eth_dev *dev,
-+	uint32_t mtr_id, uint32_t profile_id,
-+	struct rte_mtr_error *error)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_dev_meter_profile *profile;
-+	struct dpaa2_dev_meter_policy *policy;
-+	struct dpaa2_dev_meter *meter;
-+	enum rte_mtr_error_type err_type = RTE_MTR_ERROR_TYPE_NONE;
-+	bool found = false;
-+	int ret = 0;
-+
-+	rte_spinlock_lock(&priv->meter_lock);
-+	meter = LIST_FIRST(&priv->meters);
-+	while (meter != NULL) {
-+		if (meter->meter_id == mtr_id) {
-+			found = true;
-+			break;
-+		}
-+		meter = LIST_NEXT(meter, next);
-+	}
-+	if (!found) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"Meter ID(%d) not found!", mtr_id);
-+		ret = ENOENT;
-+		err_type = RTE_MTR_ERROR_TYPE_MTR_ID;
-+		goto quit;
-+	}
-+
-+	found = false;
-+	profile = LIST_FIRST(&priv->profiles);
-+	while (profile != NULL) {
-+		if (profile->profile_id == profile_id) {
-+			found = true;
-+			break;
-+		}
-+		profile = LIST_NEXT(profile, next);
-+	}
-+	if (!found) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"Profile ID(%d) not found!", profile_id);
-+		ret = ENOENT;
-+		err_type = RTE_MTR_ERROR_TYPE_METER_PROFILE_ID;
-+		goto quit;
-+	}
-+
-+	/* Find the current policy so we can reprogram HW. */
-+	found = false;
-+	policy = LIST_FIRST(&priv->policies);
-+	while (policy != NULL) {
-+		if (policy->policy_id == meter->policy_id) {
-+			found = true;
-+			break;
-+		}
-+		policy = LIST_NEXT(policy, next);
-+	}
-+	if (!found) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"Current policy ID(%d) not found!", meter->policy_id);
-+		ret = ENOENT;
-+		err_type = RTE_MTR_ERROR_TYPE_METER_POLICY_ID;
-+		goto quit;
-+	}
-+
-+	meter->profile_id = profile_id;
-+
-+quit:
-+	rte_spinlock_unlock(&priv->meter_lock);
-+	if (ret != 0)
-+		return rte_mtr_error_set(error, ret, err_type, NULL, s_err_msg);
-+
-+	/* Reprogram hardware with the new profile. */
-+	ret = dpaa2_mtr_hw_program(dev, mtr_id, profile, policy);
-+	if (ret) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"TC[%u] HW reprogram failed (%d)!", mtr_id, ret);
-+		return rte_mtr_error_set(error, -ret,
-+			RTE_MTR_ERROR_TYPE_UNSPECIFIED, NULL, s_err_msg);
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+dpaa2_mtr_meter_policy_update(struct rte_eth_dev *dev,
-+	uint32_t mtr_id, uint32_t policy_id,
-+	struct rte_mtr_error *error)
-+{
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct dpaa2_dev_meter_policy *policy;
-+	struct dpaa2_dev_meter_profile *profile;
-+	struct dpaa2_dev_meter *meter;
-+	enum rte_mtr_error_type err_type = RTE_MTR_ERROR_TYPE_NONE;
-+	bool found = false;
-+	int ret = 0;
-+
-+	rte_spinlock_lock(&priv->meter_lock);
-+	meter = LIST_FIRST(&priv->meters);
-+	while (meter != NULL) {
-+		if (meter->meter_id == mtr_id) {
-+			found = true;
-+			break;
-+		}
-+		meter = LIST_NEXT(meter, next);
-+	}
-+	if (!found) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"Meter ID(%d) not found!", mtr_id);
-+		ret = ENOENT;
-+		err_type = RTE_MTR_ERROR_TYPE_MTR_ID;
-+		goto quit;
-+	}
-+
-+	found = false;
-+	policy = LIST_FIRST(&priv->policies);
-+	while (policy != NULL) {
-+		if (policy->policy_id == policy_id) {
-+			found = true;
-+			break;
-+		}
-+		policy = LIST_NEXT(policy, next);
-+	}
-+	if (!found) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"Policy ID(%d) not found!", policy_id);
-+		ret = ENOENT;
-+		err_type = RTE_MTR_ERROR_TYPE_METER_POLICY_ID;
-+		goto quit;
-+	}
-+
-+	/* Find the current profile so we can reprogram HW. */
-+	found = false;
-+	profile = LIST_FIRST(&priv->profiles);
-+	while (profile != NULL) {
-+		if (profile->profile_id == meter->profile_id) {
-+			found = true;
-+			break;
-+		}
-+		profile = LIST_NEXT(profile, next);
-+	}
-+	if (!found) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"Current profile ID(%d) not found!", meter->profile_id);
-+		ret = ENOENT;
-+		err_type = RTE_MTR_ERROR_TYPE_METER_PROFILE_ID;
-+		goto quit;
-+	}
-+
-+	meter->policy_id = policy_id;
-+
-+quit:
-+	rte_spinlock_unlock(&priv->meter_lock);
-+	if (ret != 0)
-+		return rte_mtr_error_set(error, ret, err_type, NULL, s_err_msg);
-+
-+	/* Reprogram hardware with the new policy. */
-+	ret = dpaa2_mtr_hw_program(dev, mtr_id, profile, policy);
-+	if (ret) {
-+		snprintf(s_err_msg, sizeof(s_err_msg),
-+			"TC[%u] HW reprogram failed (%d)!", mtr_id, ret);
-+		return rte_mtr_error_set(error, -ret,
-+			RTE_MTR_ERROR_TYPE_UNSPECIFIED, NULL, s_err_msg);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct rte_mtr_ops dpaa2_meter_ops = {
-+	.capabilities_get = dpaa2_mtr_capabilities_get,
-+	.meter_profile_add = dpaa2_mtr_profile_add,
-+	.meter_profile_delete = dpaa2_mtr_profile_delete,
-+	.meter_policy_add = dpaa2_mtr_policy_add,
-+	.meter_policy_delete = dpaa2_mtr_policy_delete,
-+	.meter_profile_get = dpaa2_mtr_profile_get,
-+	.meter_policy_get = dpaa2_mtr_policy_get,
-+	.create = dpaa2_mtr_meter_create,
-+	.destroy = dpaa2_mtr_meter_destroy,
-+	.meter_profile_update = dpaa2_mtr_meter_profile_update,
-+	.meter_policy_update = dpaa2_mtr_meter_policy_update,
-+};
-+
-+int
-+dpaa2_mtr_ops_get(struct rte_eth_dev *dev, void *ops)
-+{
-+	RTE_SET_USED(dev);
-+
-+	*(const void **)ops = &dpaa2_meter_ops;
-+	return 0;
-+}
-diff --git a/drivers/net/dpaa2/mc/fsl_dpni.h b/drivers/net/dpaa2/mc/fsl_dpni.h
-index 8913b408e7..d227025e01 100644
---- a/drivers/net/dpaa2/mc/fsl_dpni.h
-+++ b/drivers/net/dpaa2/mc/fsl_dpni.h
-@@ -1111,6 +1111,11 @@ int dpni_set_rx_tc_dist(struct fsl_mc_io *mc_io,
-  */
- #define DPNI_POLICER_OPT_DISCARD_RED	0x00000002
- 
-+/**
-+ * Do NOT reset counters generally for policer update
-+ */
-+#define DPNI_POLICER_OPT_DO_NOT_RESET_COUNTERS	0x00000004
-+
- /**
-  * enum dpni_policer_mode - selecting the policer mode
-  * @DPNI_POLICER_MODE_NONE: Policer is disabled
-@@ -1127,12 +1132,17 @@ enum dpni_policer_mode {
- 
- /**
-  * enum dpni_policer_unit - DPNI policer units
-- * @DPNI_POLICER_UNIT_BYTES: bytes units
-+ * @DPNI_POLICER_UNIT_BYTES_L3: bytes units (for each frame takes into account
-+ * FD length - L3 offset)
-  * @DPNI_POLICER_UNIT_FRAMES: frames units
-+ * @DPNI_POLICER_UNIT_BYTES_L2_WITHOUT_FCS: bytes units (for each frame takes
-+ * into account FD length - L2 offset, which means L2 size without the 4 bytes
-+ * for the FCS)
-  */
- enum dpni_policer_unit {
--	DPNI_POLICER_UNIT_BYTES = 0,
--	DPNI_POLICER_UNIT_FRAMES
-+	DPNI_POLICER_UNIT_BYTES_L3 = 0,
-+	DPNI_POLICER_UNIT_FRAMES,
-+	DPNI_POLICER_UNIT_BYTES_L2_WITHOUT_FCS,
- };
- 
- /**
-@@ -1173,13 +1183,18 @@ struct dpni_rx_tc_policing_cfg {
- 	uint32_t ebs;
- };
- 
--
- int dpni_set_rx_tc_policing(struct fsl_mc_io *mc_io,
- 			    uint32_t cmd_flags,
- 			    uint16_t token,
- 			    uint8_t tc_id,
- 			    const struct dpni_rx_tc_policing_cfg *cfg);
- 
-+int dpni_set_rx_tc_policing_v1(struct fsl_mc_io *mc_io,
-+			    uint32_t cmd_flags,
-+			    uint16_t token,
-+			    uint8_t tc_id,
-+			    const struct dpni_rx_tc_policing_cfg *cfg);
-+
- int dpni_get_rx_tc_policing(struct fsl_mc_io *mc_io,
- 			    uint32_t cmd_flags,
- 			    uint16_t token,
-diff --git a/drivers/net/dpaa2/meson.build b/drivers/net/dpaa2/meson.build
-index 4094ea02ba..808dad8112 100644
---- a/drivers/net/dpaa2/meson.build
-+++ b/drivers/net/dpaa2/meson.build
-@@ -11,6 +11,7 @@ sources = files(
-         'base/dpaa2_hw_dpni.c',
-         'base/dpaa2_tlu_hash.c',
-         'dpaa2_tm.c',
-+        'dpaa2_meter.c',
-         'dpaa2_mux.c',
-         'dpaa2_ethdev.c',
-         'dpaa2_flow.c',
--- 
-2.43.0
+Series summary
 
+Patches 1 and 6 add the query_rss op and NULL handling for "optional"
+ops, but no op table in this series sets query_rss and the only table
+fills every optional op. None of that code can run until the mailbox
+backend lands. The abstraction is easier to judge posted together with
+its second user.
+
+Errors
+
+[PATCH v2 1/8] net/gve: refactor ethdev for control ops interface
+
+1. Driver compatibility is no longer sent to the device after reset.
+
+   gve_verify_driver_compatibility() moved into
+   gve_adminq_get_device_properties(), which is skipped on reset:
+
+       if (skip_describe_device)
+           goto setup_device;
+       ...
+       err = priv->ctrl_ops->get_device_properties(priv);
+
+   Before this patch it ran right after gve_adminq_alloc() on every
+   gve_init_priv() call, including gve_dev_reset() ->
+   gve_init_priv(priv, true). Functional change in a refactor patch,
+   not mentioned in the commit message. Keep it on the path that runs
+   on reset, e.g. an AdminQ init_ctrl_plane op that does
+   gve_adminq_alloc() followed by the compatibility check.
+
+2. Function pointer table stored in shared memory.
+
+       priv->ctrl_ops = &gve_adminq_ops;
+
+   priv is dev->data->dev_private, shared with secondary processes, and
+   holds the primary's address of gve_adminq_ops. A secondary installs
+   dev_ops in gve_dev_init() and returns; gve_link_update() has no
+   process type check:
+
+       err = priv->ctrl_ops->report_link_speed(priv);
+
+   GVE has no LSC interrupt, so rte_eth_link_get() from a secondary on
+   a started port calls link_update and jumps through the primary's
+   address. That crashes whenever the driver is mapped at a different
+   address (shared build, PIE with ASLR). Same for read_clock, mtu_set,
+   RSS and flow ops. Before this patch the secondary called the AdminQ
+   functions directly. Keep the table process local: store a control
+   plane mode enum in priv and resolve the ops with an inline helper,
+   or keep the pointer in eth_dev->process_private and set it in both
+   primary and secondary init.
+
+[PATCH v2 6/8] net/gve: add RSS cache boolean flag
+
+3. One failed AdminQ RSS command locks out RSS configuration for the
+   life of the port.
+
+       err = gve_adminq_execute_cmd(priv, &cmd);
+       priv->rss_cache_dirty = true;
+       if (err == 0)
+           gve_update_priv_rss_config(priv, rss_config);
+
+   On error the flag stays set. gve_adminq_ops has no query_rss, so
+   gve_rss_update_cache() returns -ENOENT from gve_rss_hash_update(),
+   gve_rss_hash_conf_get(), gve_rss_reta_update() and
+   gve_rss_reta_query(), and gve_dev_configure() skips the RETA reset
+   for the new queue count. Only gve_update_priv_rss_config() clears
+   the flag, and it is reached only through configure_rss, which every
+   caller gates on gve_rss_update_cache(). gve_dev_reset() does not
+   recover: gve_init_priv() touches the flag only when query_rss is
+   set. The same lockout follows a successful command when
+   gve_update_priv_rss_config() fails with -ENOMEM; its return value
+   is ignored since patch 5.
+
+   Before this patch a failed AdminQ command left the cached config in
+   place. AdminQ has no query, so its cache is authoritative. Drop the
+   dirty write from gve_adminq_configure_rss(), leave it to a backend
+   that implements query_rss, and propagate the update result:
+
+       err = gve_adminq_execute_cmd(priv, &cmd);
+       if (err == 0)
+           err = gve_update_priv_rss_config(priv, rss_config);
+
+Warnings
+
+[PATCH v2 6/8] net/gve: add RSS cache boolean flag
+
+4. priv->rss_config is read before the cache is refreshed.
+
+   The commit message says the config must not be read while dirty,
+   but gve_rss_hash_update() checks priv->rss_config.key_size, copies
+   it into rss_conf->rss_key_len, and sizes the new table from the
+   cache before refreshing it:
+
+       rss_reta_size = priv->rss_config.indir ?
+               priv->rss_config.indir_size :
+               GVE_RSS_INDIR_SIZE;
+       err = gve_init_rss_config(&gve_rss_conf, rss_conf->rss_key_len,
+           rss_reta_size);
+       ...
+       err = gve_rss_update_cache(priv);
+
+   The later copy then takes its length from the pre-refresh cache and
+   its source from the post-refresh one:
+
+       memcpy(gve_rss_conf.indir, priv->rss_config.indir,
+           gve_rss_conf.indir_size * sizeof(*priv->rss_config.indir));
+
+   gve_dev_configure() likewise tests priv->rss_config.indir before
+   refreshing. Call gve_rss_update_cache() before the first
+   priv->rss_config access in both functions.
+
+[PATCH v2 7/8] net/gve: fix RSS config memory leak on close
+
+5. Wrong Fixes tag. priv->rss_config has been allocated by
+   gve_update_priv_rss_config() since RSS support was added and was
+   never freed, on close or on remove, before or after 7ba84453bacf.
+   Use:
+
+       Fixes: 63ef54569760 ("net/gve: support RSS configuration update")
+
+6. Stable fix sits behind six refactor patches. It applies to main on
+   its own; move it to the front of the series.
+
+[PATCH v2 8/8] net/gve: refactor timestamp support to clock read type
+
+7. RTE_ETH_RX_OFFLOAD_TIMESTAMP is now advertised when timestamp setup
+   failed.
+
+       -   if (!gve_is_gqi(priv) && priv->nic_ts_report_mz)
+       +   if (priv->clk_read_type != GVE_DEV_CLK_UNSUPPORTED)
+
+   gve_setup_nic_timestamp() leaves nic_ts_report_mz NULL when the
+   memzone reservation fails and frees it when the sync thread cannot
+   be created; clk_read_type stays GVE_DEV_CLK_CMD in both cases.
+   nic_ts_stale stays set, so the Rx path never stamps packets. Before
+   this patch rte_eth_dev_configure() rejected the offload in that
+   state. Keep the nic_ts_report_mz test, or set clk_read_type to
+   GVE_DEV_CLK_UNSUPPORTED on setup failure.
+
+Info
+
+[PATCH v2 1/8] net/gve: refactor ethdev for control ops interface
+
+8. The comment marks free_db_resources, setup_stats_report,
+   report_nic_timestamp and the page list ops optional, but only the
+   set_mtu caller checks for NULL. gve_teardown_device_resources()
+   calls free_db_resources unconditionally. Either check at each call
+   site or drop the "optional" claim until a backend omits them.
+
+[PATCH v2 6/8] net/gve: add RSS cache boolean flag
+
+9. Pre-existing, not introduced by this patch, but the lines are
+   re-indented here: gve_dev_configure() ignores the return of
+   gve_init_rss_config_from_priv(). If the key allocation fails,
+   update_reta_config.indir is uninitialized stack and
+   gve_generate_rss_reta() writes through it. If the indir allocation
+   fails, gve_init_rss_config() frees key without clearing it and
+   gve_free_rss_config() frees it again.
+
+10. Pre-existing: gve_update_priv_rss_config() assigns rte_realloc()
+    straight back to the pointer, leaking the old buffer on failure:
+
+        priv_config->key = rte_realloc(priv_config->key, key_bytes,
+            RTE_CACHE_LINE_SIZE);
+
+    Same for indir.
+
+[PATCH v2 7/8] net/gve: fix RSS config memory leak on close
+
+11. gve_teardown_device_resources() also runs on gve_dev_reset(). After
+    a reset key and indir are NULL but key_size, indir_size and
+    hash_types survive, so gve_rss_hash_conf_get() reports the old
+    rss_key_len and rss_hf. Zero priv->rss_config after freeing.
+
+[PATCH v2 8/8] net/gve: refactor timestamp support to clock read type
+
+12. The GVE_DEV_CLK_UNSUPPORTED check added to
+    gve_alloc_nic_ts_report() is dead: its only caller,
+    gve_setup_nic_timestamp(), already returns on that value.
+
+Review-Result: ERROR
