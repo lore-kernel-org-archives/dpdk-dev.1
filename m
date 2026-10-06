@@ -2,86 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0714ACA5FF0
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 Oct 2026 23:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F44CA5FF0
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 02:30:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 140E240E5E;
-	Tue,  6 Oct 2026 01:51:11 +0200 (CEST)
-Received: from mail-qk1-f225.google.com (mail-qk1-f225.google.com
- [209.85.222.225])
- by mails.dpdk.org (Postfix) with ESMTP id 9A16C402DD
- for <dev@dpdk.org>; Tue,  6 Oct 2026 01:51:09 +0200 (CEST)
-Received: by mail-qk1-f225.google.com with SMTP id
- af79cd13be357-930c0f9c1b1so3226685a.1
- for <dev@dpdk.org>; Mon, 05 Oct 2026 16:51:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791244269; x=1791849069;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=xLHU6z1nDHcmrU7RPMOhzAjXnwBla2gbd5DG81WVqHE=;
- b=FMqdj4EJ0Xoh82vz8S1S9t5WpuaL6GNbPKCipHRnKIn5/+qEZjn+vy5ebMbEbUQqXN
- W8+lzNpF+z9sHlvrHouyomYsblZY+UnIRB1+08kD1wqy9UQU+INedOsMWByEziormuCz
- dw1KzIgI66o5hoqnw2rGiSaT1xM/yAOBk86XJCorVQJ4hNUNzVlEQNjHGOiDOB6Ak7Ax
- XNbEyVOV4n9YLFV+IEOLgRMAEKSHTvkyZJrDrGlLqWthsbBr3PfbRWuBEze5UTvpETM6
- /foVEMI12c+GtZ4FKN+Lie35FjOiCtcSDUVbsDdSFH1aWxQt0cL4+8TnwbAeoycuwdrb
- b0OQ==
-X-Gm-Message-State: AFuF++lAdBJnrahT4wWISXnCPGOei3odOGEw16e9Vsmz3QXZ7JcZshF7
- bLKgzkQfn8pNsSrZz7JYvO2JhGV6K1CmyamRkEq2jdvlHh9Y4h3ibzhd7Tjy091b/W9wkyCCN1a
- rHPjrtb6Kh7ADMgPf4Hf3G7b/NAH3W53ldF2mzbdBwWE3AXlDjlD9ec/L1BvdmCEZkqF8QFg6BF
- QrGdZ+N9bWm71rU4q1lx8EMPwz0DCz0ffRnJJVqsGMymRHx+3+cppwysWMx34XsyN8dmyIgg==
-X-Gm-Gg: AYBFou1+5RDTtvqAxXxFQhYnidxukxu+sp1RIGPy4bsvw4/jnbncDHjYf/Bc4S4T9d3
- N3basZlYqMe1XfshLi6qDxk18F7JWGSa31L9LvHK3PJgEBdzGeQRNYRSAqr655KBSlAqeW902il
- OoMjGjvwT8e4YsEBykQNpprSJurDJihH6UYIENpLpeLSBAzAv16fv1BzBgRM7j8p2sLRMgk6R6Y
- m0BI5heAimyuj3AMPJhAUXP8rbojP0mcNO9N96CFou7neqNUIAAdt/NgGwqcqmp8hs5ynQ4T7oa
- YQYEIm3KJqL7OmqBIC1XVnvi6PvGsv50IEepy7kdiVAnWtIke6tqC9qdNVjXEX3EJ/ne7mevkX6
- bKeKDrTq1G1l6Q/VSua3hg0QlsXaK2EeZUt/dlUNizySbHGLh0dzBtYIwKbbtsX8GpnX4qXmn8X
- JTXxlRwjGkfJ/mgbRGTjk0KHB/WSaHt0aXMbcZfw==
-X-Received: by 2002:a05:620a:44c1:b0:93e:3824:4123 with SMTP id
- af79cd13be357-93e38244209mr2022452685a.65.1791244268701; 
- Mon, 05 Oct 2026 16:51:08 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
- by smtp-relay.gmail.com with ESMTPS id
- af79cd13be357-93cca32f5e4sm448347185a.10.2026.10.05.16.51.08
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 05 Oct 2026 16:51:08 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qk1-f197.google.com with SMTP id
- af79cd13be357-934963b2bc0so384325985a.3
- for <dev@dpdk.org>; Mon, 05 Oct 2026 16:51:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 468D3402E1;
+	Tue,  6 Oct 2026 04:30:57 +0200 (CEST)
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198])
+ by mails.dpdk.org (Postfix) with ESMTP id 03297402DD
+ for <dev@dpdk.org>; Tue,  6 Oct 2026 04:30:55 +0200 (CEST)
+Received: by mail-pl1-f198.google.com with SMTP id
+ d9443c01a7336-2e564adf782so20243285ad.2
+ for <dev@dpdk.org>; Mon, 05 Oct 2026 19:30:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1791244268; x=1791849068; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=xLHU6z1nDHcmrU7RPMOhzAjXnwBla2gbd5DG81WVqHE=;
- b=TdgZ6e/g7mcsFBTx4pY4hDz3yLGRkBsR9Hu2npX/jtYW6cgdFsnF+8KMeG2pcQ2BiZ
- xuSx8RZQBJoLyLTV4skAKBTHtox43t6PPWvrgJrIZPbumWO3lQ0QbEWyqjewSP6Amv4f
- GE1lVxa+GGcFImb7DYly7sIK6+99j4gXsqXhk=
-X-Received: by 2002:a05:620a:8004:b0:93e:74e5:2b1a with SMTP id
- af79cd13be357-93e74e552d7mr706457685a.10.1791244268027; 
- Mon, 05 Oct 2026 16:51:08 -0700 (PDT)
-X-Received: by 2002:a05:620a:8004:b0:93e:74e5:2b1a with SMTP id
- af79cd13be357-93e74e552d7mr706454085a.10.1791244267399; 
- Mon, 05 Oct 2026 16:51:07 -0700 (PDT)
-Received: from r740-105-132.dhcp.broadcom.net ([192.19.144.250])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-93cca27f50csm998041185a.34.2026.10.05.16.51.06
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 05 Oct 2026 16:51:07 -0700 (PDT)
-From: Manish Kurup <manish.kurup@broadcom.com>
-To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com,
- Shuanglin Wang <shuanglin.wang@broadcom.com>, stable@dpdk.org
-Subject: [PATCH] net/bnxt: fix completion metadata format type for Thor
-Date: Mon,  5 Oct 2026 18:51:04 -0500
-Message-Id: <20261005235104.27284-1-manish.kurup@broadcom.com>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+ d=google.com; s=20251104; t=1791253855; x=1791858655; darn=dpdk.org;
+ h=content-type:cc:from:subject:message-id:references:mime-version
+ :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=Z//l9/FjnD2eADhLDn6j62sfRPpnHjRL7wT31K1uvo8=;
+ b=WKVnNZvSltd6Beqw2L+3vl0/ymqWoFj2YmflOlIh11GDPc8+9uKhwPFeAREvHAraeP
+ k9FK7FKAvp1+g0pL0kxL6ASksLfA9HxNyfyxrq6LRMIwgGsjz0SdGXOVBI09mTp2dI2n
+ HYU42hAVJixQbEyCTGg8EExA91Z+hjPakVfqWJOqpDJXracOcjC1nXhTjNTZfkoK/6N3
+ 2cAHp7FUATDdIWiuGLTULgSHADakbuO+HKDvG8T8Jy+Ew3PYOCiV1Jhk4imx0RS4ejzy
+ o1T+i0UAZmNdoeg0zHx8HZCI3C79D9xmBhXKQK0y4I9blpZfXzOuSZPRjpdKKHcr/2vH
+ 2NRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791253855; x=1791858655;
+ h=content-type:cc:from:subject:message-id:references:mime-version
+ :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=Z//l9/FjnD2eADhLDn6j62sfRPpnHjRL7wT31K1uvo8=;
+ b=OeHPi1hjB+WrOh88KIWexp4cLTximE3dyEZvc54dWeo54QpKm0PA+GxtOSfk88GBZx
+ WxLq3RBFZIWliBs0iLQzOOT04+YB+fS1qtf0twTZ7eYZtFEIc7FxqG8ccCao0zprnmDa
+ W0GNG+t3K9WeXt3uonqu7fHWmRKqLKbqTXQWPrHTJYz4z4lqlcah0xeV0/5JFdyCM+ic
+ yMbdoQLK+469QGA2dVg+aXoRawJpJJ7iwjwwcAZrvUzveyxEmlJd+pAp7h1I1bxVcVG4
+ kZE3K7UfuvUn8hlIdiIBZR6FIcC7fEmnBv8NfOCiQJGf4uNDSUgRdDpeCBVUkKYBlpd5
+ OK5A==
+X-Gm-Message-State: AFq9FYKstCkv0jG/wlg0Rr06dnpqO62k+N6lg8ygcWMT0BGjH9ORUd4l
+ PCcQs5iPa6vRLgXNoNlWJc+WEFHcR9cGEpGivPaQiTo9jheaa5R8NMBAQC8RTQKLzQITooGf/9k
+ EFsJt8X7OPGyTfx7ptKh4TKB8jgqyeY1yfTPzZsBSKyXBsZWKKnjU6HJ4o6q86KnyOZ1O8MXMeN
+ Sf3ohgmXL34+a9wZR7dQQGq7L9O9rbiYuu/A==
+X-Received: from plic14.prod.google.com ([2002:a17:903:370e:b0:2e4:90ac:5fc4])
+ (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:f68d:b0:2e5:6ce9:dc7c with SMTP id
+ d9443c01a7336-2e56ce9deb9mr51347585ad.5.1791253854508; 
+ Mon, 05 Oct 2026 19:30:54 -0700 (PDT)
+Date: Mon,  5 Oct 2026 19:30:36 -0700
+In-Reply-To: <20260923010742.2468145-1-joshwash@google.com>
+Mime-Version: 1.0
+References: <20260923010742.2468145-1-joshwash@google.com>
+X-Mailer: git-send-email 2.56.0.rc1.315.gc6ed9934b7-goog
+Message-ID: <20261006023053.2572501-1-joshwash@google.com>
+Subject: [PATCH v4 00/15] Introduce RTE_DIV_ROUND_UP
+From: Joshua Washington <joshwash@google.com>
+Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,42 +69,83 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Shuanglin Wang <shuanglin.wang@broadcom.com>
+Numerous components independently define the DIV_ROUND_UP macro, using
+the same definition. Attempt to commonize by introducing
+RTE_DIV_ROUND_UP to rte_common.h and replacing usages of DIV_ROUND_UP
+with RTE_DIV_ROUND_UP. Similarly, replace DIV_CEIL, which is
+functionally identical, to RTE_DIV_ROUND_UP.
 
-For Thor, the default RX completion record metadata format should
-be set to Type 1 instead of Type 3. Using the wrong type causes the
-driver to misinterpret completion records.
+Changes in v4:
+  - eal: Fix merge conflict in release notes after rebase.
+  - various commits: add rte_common.h includes where missing to fix
+    compilation issues.
+  - opae: drop RTE_DIV_ROUND_UP change due to shered osdep file for RTE
+    and raw drivers.
 
-Fixes: 0c036a1485b9 ("net/bnxt/tf_ulp: optimize with inline and prediction")
-Cc: stable@dpdk.org
+Changes in v3:
+  - eal: Add unit tests in app/test/test_common.c.
+  - eal: Add release notes entry for RTE_DIV_ROUND_UP.
+  - eal: Expand Doxygen documentation with parameters and caveats
+    (divisor evaluation, non-negative inputs, wraparound).
+  - base code (qede, cxgbe, ena): Keep DIV_ROUND_UP macro in osdep/platform
+    headers and avoid modifying call sites under base/.
+  - nfp: Change commit subject prefix from "drivers:" to "net/nfp:".
+  - qede, nfp: Drop unnecessary line rewraps.
+  - ena: Remove extraneous blank line in ena_plat_dpdk.h.
+  - app: Convert DIV_CEIL in app/test and app/test-compress-perf to
+    RTE_DIV_ROUND_UP.
 
-Signed-off-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
-Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
----
- drivers/net/bnxt/tf_ulp/bnxt_ulp.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Changes in v2:
+  - Split single patch into series.
 
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp.c
-index a75da8aa19..70e5700833 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp.c
-@@ -480,10 +480,13 @@ bnxt_ulp_port_init(struct bnxt *bp)
- 	/* Make sure that custom header data is selected */
- 	if (dev_id > BNXT_ULP_DEVICE_ID_WH_PLUS) {
- 		struct bnxt_vnic_info *vnic = bp->vnic_info;
--		vnic->metadata_format = HWRM_VNIC_UPDATE_INPUT_METADATA_FORMAT_TYPE_3;
-+		if (dev_id == BNXT_ULP_DEVICE_ID_THOR2)
-+			vnic->metadata_format = HWRM_VNIC_UPDATE_INPUT_METADATA_FORMAT_TYPE_3;
-+		else
-+			vnic->metadata_format = HWRM_VNIC_UPDATE_INPUT_METADATA_FORMAT_TYPE_1;
- 		rc = bnxt_hwrm_vnic_update(bp,
--					vnic,
--					HWRM_VNIC_UPDATE_INPUT_ENABLES_METADATA_FORMAT_TYPE_VALID);
-+				vnic,
-+				HWRM_VNIC_UPDATE_INPUT_ENABLES_METADATA_FORMAT_TYPE_VALID);
- 		if (unlikely(rc)) {
- 			BNXT_DRV_DBG(ERR, "Failed to set metadata format\n");
- 			goto jump_to_error;
+Joshua Washington (15):
+  eal: introduce division round up macro
+  net/i40e: use common division round up macro
+  net/idpf: use common division round up macro
+  net/ice: use common division round up macro
+  net/qede: use common division round up macro
+  net/rnp: use common division round up macro
+  net/hns3: use common division round up macro
+  net/hinic: use common division round up macro
+  net/bnx2x: use common division round up macro
+  net/cxgbe: use common division round up macro
+  net/ena: use common division round up macro
+  net/nfp: use common division round up macro
+  app/procinfo: use common division round up macro
+  app/test: use common division round up macro
+  app/test-compress-perf: use common division round up macro
+
+ app/proc-info/main.c                           |  3 +--
+ app/test-compress-perf/comp_perf_test_common.c | 14 ++++++--------
+ app/test/test_common.c                         | 10 ++++++++++
+ app/test/test_compressdev.c                    |  5 ++---
+ doc/guides/rel_notes/release_26_11.rst         |  5 +++++
+ drivers/common/nfp/nfp_platform.h              |  2 --
+ drivers/net/bnx2x/bnx2x.c                      |  4 ++--
+ drivers/net/bnx2x/bnx2x.h                      | 12 +++++-------
+ drivers/net/cxgbe/cxgbe_compat.h               |  2 +-
+ drivers/net/cxgbe/cxgbe_filter.c               |  6 +++---
+ drivers/net/cxgbe/cxgbe_ofld.h                 |  4 ++--
+ drivers/net/cxgbe/sge.c                        | 14 +++++++-------
+ drivers/net/ena/base/ena_plat_dpdk.h           |  3 ++-
+ drivers/net/hinic/base/hinic_compat.h          |  5 +----
+ drivers/net/hns3/hns3_ethdev.h                 |  2 --
+ drivers/net/hns3/hns3_fdir.c                   |  3 ++-
+ drivers/net/hns3/hns3_regs.c                   |  9 +++++----
+ drivers/net/hns3/hns3_rss.c                    |  9 +++++----
+ drivers/net/intel/i40e/i40e_osdep.h            |  3 +--
+ drivers/net/intel/ice/ice_osdep.h              |  3 +--
+ drivers/net/intel/idpf/idpf_osdep.h            |  3 +--
+ drivers/net/nfp/nfdk/nfp_nfdk.h                |  3 ++-
+ drivers/net/nfp/nfdk/nfp_nfdk_dp.c             |  2 +-
+ drivers/net/nfp/nfpcore/nfp_nsp.c              |  2 +-
+ drivers/net/qede/base/bcm_osal.h               |  2 +-
+ drivers/net/qede/qede_debug.c                  | 16 ++++++++--------
+ drivers/net/rnp/base/rnp_osdep.h               |  5 ++---
+ drivers/net/rnp/rnp_rxtx.c                     |  2 +-
+ lib/eal/include/rte_common.h                   | 18 ++++++++++++++++++
+ 29 files changed, 96 insertions(+), 75 deletions(-)
+
 -- 
-2.31.1
+2.56.0.rc1.315.gc6ed9934b7-goog
 
