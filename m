@@ -2,144 +2,148 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 054CECA5FFC
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 11:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8551CA5FFC
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 11:42:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93A2A40E44;
-	Tue,  6 Oct 2026 13:00:49 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id E9865402A2;
- Tue,  6 Oct 2026 13:00:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A295B402B0;
+	Tue,  6 Oct 2026 13:42:19 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 42F38402A2;
+ Tue,  6 Oct 2026 13:42:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791284448; x=1822820448;
- h=date:from:to:cc:subject:message-id:references:
+ t=1791286937; x=1822822937;
+ h=from:to:cc:subject:date:message-id:references:
  in-reply-to:mime-version;
- bh=uw08W1qXhWLpbqB+g2dXjWPSAjBb4G40Y+b7f7GXJf4=;
- b=fl466VutAn5OzvE1enylC5clCOl6Ss753yXxWpnfhNgFrfuwJRhCWarG
- YYROy6xhPu9SEbr4LygH2704ddx4To60tLKFuuZF5g0bLUjjhm4VzA7rI
- kBiXHb2ExXausqwonWUtlkUJXoBxCYfVMBTtilRRnstIK7hSk080Z2RtJ
- Nd3FJ2atzHJ0G4UsVj3f2X0GAOwXlzsK2a6pCsh9Qs2YlJz/g/J+mJIwU
- zXu3j6cqDPnDW+yNaMEuVQ8KBqDlCjWupucojTOpLjRGymgK0thgB0XDU
- kzhKfM5xTIqa1cIApfporfz/6fXi77sL4nzTwya1mP2N/HQhVfPJa40hq w==;
-X-CSE-ConnectionGUID: m7hqPtOpRxCo3ToewO1A8g==
-X-CSE-MsgGUID: NyUFp5JKRtGaKHUIWZcpCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11926"; a="102547067"
-X-IronPort-AV: E=Sophos;i="6.27,143,1787036400"; d="scan'208";a="102547067"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Oct 2026 04:00:47 -0700
-X-CSE-ConnectionGUID: 0G7RU5jBT+6aKhUC7ty9QA==
-X-CSE-MsgGUID: /bqOetN8RU2XT6C6NltatQ==
+ bh=wLEdJVwNDm1Qv7pnHObdE8NLO+udKt2Ja11RWqj34po=;
+ b=DUWShS7RO9d1+V3QRymtQMbi4tqMnR5DKDRfnv3hXdfUikBxpy6cQ4sL
+ TN/T82j+QZWvNWZpjqA8jbvc3VW58Eggmimw5oH6ryKQ3q58G7Do4OXZH
+ Eg9yGkUOWxKOx7BKLDC/2HduwqMwXc6RElLpPFnB/Gvf0aEdA3eAXc2Mu
+ MZQv9eP2rDCAE4XXxn9n0D5fomIcWskY86DSoAQYwLWaWZBOacKiz32k8
+ bDWkc22oj3U7zkYtVSOdA5y8tWrkKL38Gx65OBCPxZINpC/KKJSoPxl1L
+ e/UtK6OV6yC4yL0g8HyO0/K4rZko+tJKnfHJXpLOMyxqMTI5dXCp6afQz Q==;
+X-CSE-ConnectionGUID: Cn+lAjoEQ6GuTVqbJgdW/w==
+X-CSE-MsgGUID: GH7eaihbQS62ZoqapQ0OEw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11926"; a="108346945"
+X-IronPort-AV: E=Sophos;i="6.27,143,1787036400"; 
+ d="scan'208,217";a="108346945"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Oct 2026 04:42:16 -0700
+X-CSE-ConnectionGUID: 7cXF/7EQSq+V54t/MXxAhg==
+X-CSE-MsgGUID: vY4TTMeATmykTTjma7d9/g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,143,1787036400"; d="scan'208";a="277232070"
+X-IronPort-AV: E=Sophos;i="6.27,143,1787036400"; 
+ d="scan'208,217";a="285231955"
 Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Oct 2026 04:00:47 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Oct 2026 04:42:15 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
  ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Tue, 6 Oct 2026 04:00:45 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ 15.2.2562.49; Tue, 6 Oct 2026 04:42:15 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Tue, 6 Oct 2026 04:00:45 -0700
-Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.16) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ 15.2.2562.49 via Frontend Transport; Tue, 6 Oct 2026 04:42:15 -0700
+Received: from CH4PR04CU002.outbound.protection.outlook.com (40.107.201.8) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Tue, 6 Oct 2026 04:00:45 -0700
+ 15.2.2562.49; Tue, 6 Oct 2026 04:42:15 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FZh471MAFE6PppfzA4uHO0gq5u5A9aZuegZF3kIxowkZdLeWSHtAgXDSbA+idmqC11ej/hYMtr/wJxFSjLpWCNpsWbAXRD4s7g2tlhd0Q+WedMVrrEImXvNPvXasNE0nKrDg9uga4MAiqcoOx8RffDWhRI0Psty6aUcXmCJ0d7eoRIm120UGsP75PsbE4BvXwRk3AJJfkC66UrpMLtDZ/W0tbP68palNX6NgY0cLc4q5Wdn0YExTgMpXbwb4ubB9Y3jRd9rshlG0nCdhfS1Wn+j1dP+5gwnNUP1ZdtKvn+/DzpfjlaTToETjvdtembmVEWwKkIILmbu/nShCmYyNOQ==
+ b=dLSHb02AMTwAc4kAHRgnDPe0T4BpiHvo3Oa0tfO0WYPbWBovVZN9dC/7F4ry/x5e4/SvVnAJVfNPS6m5aJwd74NjrAGxmrqxQ+6K7q9efoMM86uez8b5jeo/e6OhTrwk30E3n93Jxu13nZ3osRhyGgD6V9AzYy36QEx5USJIlI9Cps6AtW/knKc2esQyp2mUCXNycAtnFY7O+Kj4MQDTg2HdlBd1m28CS9a0shZSOA6zgys47bqd6bZHpbHzLcTKrpxXU5kCzFNOSYLhAjDo9yWC86+FaxbgZj1V9ZZ9zf5UvDQ1Ut8U3qkGSKd9R3JIAzpWiGZjH19j5bmfeVWv7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qlDFDUkKAxPjOVfODuXks67G+by2taAX8oLvyUxAkSQ=;
- b=QHXwUiHtT6HwQnTR02ec9/L/mDW1SR2sdzU9C7HGXbt16fC+GRRZnJc+78ZjJdzUXoRwgx1lmeaEHZZ4hH3W54jrPe43h9BplDhWd9Hk3687Q47B7XXVa2KTI7I+CcnT5dHzCzPGFTfyQLFlcD6QAW5krij4avbYGLtK8MgGTYbcIn+D9QWP++zrweEfBZyCpC/oNgG5hjyiL5ZtIvwDe9SwRJqEO5rVn08mRGwEeWA+ItlijPoopd6quZluvVbVRFe1tKGOoWTA5C5gtymyFlMnYRN6hzeS1Q4/O5nC4Z/O4auNGretf5liQO5IxuAhRAgXhDAJKEDv4gww0rpReQ==
+ bh=4l7DJyhD5mqWDYQ07qq712z6PHZuRklJttRCrmEGENA=;
+ b=V25E1MnODJpmqS+7S2PsLMR+DjNELUOi0sN6QM5a0eeFmJUhukKN0NZDqAAgoXNtMzaZaq2HUrA6jmJ0Uni5yPWSzDaZ+5kptWqLP14ji82fkY2BXTVcwUVL9i4/NUJ7GhT9bESnTKE/m9lWNM/6lB5I3l+t0wEm522M1CL3n4zDgYSIJWY9iGzw52PkwJ2m7zld8BTxpKGQlx6G90NaLL++E5EO712Hn9kkU/i4QPRQVsy3IlR8ldZQwA3VZWmT8OZnpZUlcTvu2Hh7xCc02hxCvLekXJwJh0gT4qXXiIT9StpiQ0LfFjMUI0GDhwnxJw8U5YC3qUnhTL6XfGPPbA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by SA0PR11MB4749.namprd11.prod.outlook.com (2603:10b6:806:9a::23)
+Received: from LV2PR11MB6045.namprd11.prod.outlook.com (2603:10b6:408:17b::20)
+ by BN9PR11MB5290.namprd11.prod.outlook.com (2603:10b6:408:137::5)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Tue, 6 Oct
- 2026 11:00:40 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0451.014; Tue, 6 Oct 2026
- 11:00:40 +0000
-Date: Tue, 6 Oct 2026 12:00:34 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-CC: Sandeep Penigalapati <sandeep.penigalapati@intel.com>, <dev@dpdk.org>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>, Jedrzej Jagielski
- <jedrzej.jagielski@intel.com>, Andrzej Wilczynski
- <andrzejx.wilczynski@intel.com>, <stable@dpdk.org>
-Subject: Re: [PATCH] net/ixgbe: fix VF link status for E610
-Message-ID: <asTU0sq4pqKkUthg@bricha3-mobl1.ger.corp.intel.com>
-References: <20260927175240.160260-1-sandeep.penigalapati@intel.com>
- <521f9c58-5da6-46c8-8064-2abf76585946@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <521f9c58-5da6-46c8-8064-2abf76585946@intel.com>
-X-ClientProxiedBy: DU7P194CA0027.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:10:553::7) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|SA0PR11MB4749:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67fcb56d-870f-4add-bf21-08df23990f37
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|23010399003|10067099003|56012099006|11063799006|18002099003|22082099003|4143699003;
-X-Microsoft-Antispam-Message-Info: He5kyXM371C740AnAQPss3dK0nGC8EtW9IeDUG6DTrsYRIGymA2q6kO50aah6TnTLGcFjPPaYbJHiYUDhVC4Qd9iPufUb2EBAzCUue+R1OujSysQ+H0gwUK4x+FnaTP6A1+HPZCDzATIUaZkdG/Nnh36JjdUCq2xEAJUQ0ohdOXSP2p3hrpbJILlBgP2e70ZQFEvKP4V8csqkNDsrJ5f1mNxz5xbHLQnlRJZhgGbytf8DoKWuZWwbvam5jTTsHITbSynFbU4OeaA3uiZVLtr2GxIUToWeGZJol/KsRI4uEUPV6a8gSU7j8p5E6HwYgBMW3wG8E65Xg/uhUTPFQllAS29rX93ddbqHjQ1r5z11Div6imQgVIOOd3Rn8OB9cWwFTsi1FGbZvd6Gz00R0InmKexR/vStyje97xUxE+jqxzvmHjqUeGBpvJ/5hqDhhDgqy6kx3NVtPOfNncMHLCmlgzuWDUmuVZvMfsE7ioMOuq54/JWzrhBZfspL8pp1bzOnSJhvO4QSisV+Ive51EpM0AZTl6vQAaRXJeUmB0BbGYtQ1X3wXmfCZPy/nlCP2UKPRB7czRkGVjtrP/ZtA5iT49thkxRmlGndukKt/S0FiNrzIhZiHSq2+xSc3NeV1JsI8vlMlzvg7JUeaxBUNvys65BCsfjxpSxcdAT6K6I2Sg=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(10067099003)(56012099006)(11063799006)(18002099003)(22082099003)(4143699003);
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.15; Tue, 6 Oct
+ 2026 11:42:12 +0000
+Received: from LV2PR11MB6045.namprd11.prod.outlook.com
+ ([fe80::1f72:3d49:b6ba:91ae]) by LV2PR11MB6045.namprd11.prod.outlook.com
+ ([fe80::1f72:3d49:b6ba:91ae%6]) with mapi id 15.21.0472.015; Tue, 6 Oct 2026
+ 11:42:12 +0000
+From: "Ji, Kai" <kai.ji@intel.com>
+To: "Nicolau, Radu" <radu.nicolau@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "Alexander.Konyukhov@kaspersky.com" <Alexander.Konyukhov@kaspersky.com>,
+ "stable@dpdk.org" <stable@dpdk.org>, "De Lara Guarch, Pablo"
+ <pablo.de.lara.guarch@intel.com>, Fan Zhang <fanzhang.oss@gmail.com>,
+ "Doherty, Declan" <declan.doherty@intel.com>
+Subject: Re: [PATCH] crypto: ipsec_mb fix OOP SGL for NULL cipher
+Thread-Topic: [PATCH] crypto: ipsec_mb fix OOP SGL for NULL cipher
+Thread-Index: AQHdVYDzcI5lH+8hg0uG+cVpb7MpJrbwZE+j
+Date: Tue, 6 Oct 2026 11:42:11 +0000
+Message-ID: <LV2PR11MB60454B9D75343634C26D473C81952@LV2PR11MB6045.namprd11.prod.outlook.com>
+References: <20261006105329.1630257-1-radu.nicolau@intel.com>
+In-Reply-To: <20261006105329.1630257-1-radu.nicolau@intel.com>
+Accept-Language: en-GB, en-US, en-IE
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV2PR11MB6045:EE_|BN9PR11MB5290:EE_
+x-ms-office365-filtering-correlation-id: aa5b2561-2c2f-4867-3320-08df239edc6a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|1800799024|42112799006|366016|376014|23010399003|38070700021|11063799006|8096899003|10067099003|56012099006|18002099003|22082099003;
+x-microsoft-antispam-message-info: 3E6PnXiuyW36VGC5GpegR947Pz2jUN+x4nDuEwJGUUYNxTltr0MzmFsqneZ5Mw6RatfCuGzRkntLTPVTtf8UKTEbkcmDun6PgtwPL5ewWw7ZZx+WI+fe4cF5l7tCB6cVrcrb6OXfn7R8+k6jiJFHo4ygWgJt5OlKgfX21abCfFhCETKMHCWAJx6ISQIu46GcwtTcuC4r/CVCOHMvEHZmLxngr+l9xrlE7Yx1JKIS1O8DDQFZ/SZjwNuL++svSk4ScO4VLNZQ+ALbcnB2U5hbdfSE1kKwgfwzUhllJHIOTFrvv8/Lg/dWcDaFgwgbwczrFNkkMBG+oolPV8VUQ1kYuD6tr/DpZ1VNZMhMXd4MAsU+FnQ0dJJupiBIqNY9gt6ghw7qL8Aey95Y+mesEbga0meZr8LdAvB/l9lfNapUkWZvzOJE+HAX+2S68u/GQDth+2L6qUwu0T1hdAYDsrvyTfYx7SDkIQ72tMHkzQ54ISN/J2J7N/nSJLzypupyrkD8of5UQiAZM9FJpqrZs4rG/JYQMMmGY/zhJegtmWKpGzWt0RgRnE7ip3WG8cK5wT2GvhZKbQz4VPj+Js+6XFCmYIUfUPe86iHRHLVTyVErRyN/fu+Ke08s9nOZcfaI8+IvHXPmI8+3NypLBUGR127S0TdLoM8yzchjWUiclu+luaUBuZc8Q0wdEQPPP+evHACewoQFnVtP7WF2DOXQiXxhzuWmq6E2dzUPUspbPpuyegk=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:LV2PR11MB6045.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(42112799006)(366016)(376014)(23010399003)(38070700021)(11063799006)(8096899003)(10067099003)(56012099006)(18002099003)(22082099003);
  DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?F3aKnccXN/eIo5z/XwUXE9uR7ZwRk6rN/ZLSR37wEDJZSUqCVYq/RRtEHqw3?=
- =?us-ascii?Q?SWM/Ltiif6emCTMff7E+pzXLcQJf7+XrZHRlNgC1qX7RilGfgREtQF0iq5NS?=
- =?us-ascii?Q?XhgUYWVYU0VljiVbKe+yBppHAzXFwVT4VGbuNTKAfJrLdAyn8xm4Kspurnnx?=
- =?us-ascii?Q?8NGnW2D9XcXjKGb4ZyWGpZYVaQpqQ1He7uXlheTCzaimqB8KMdGNSb4zWCE1?=
- =?us-ascii?Q?vK5Oob563OmzsQtestbnbi1XnTC8W0t3l9T8BDJFKAdKT/faLdIAVwcKNu9a?=
- =?us-ascii?Q?moum/mL6l9yMIOghTQCwmnal2VOXNZnyNPkKM+QaW1QZ2+FqRWG4d6tOXb4A?=
- =?us-ascii?Q?xtVkaDRJjI98W9g0wHDMNcXCiw5JGq88L2I+OXmUzIpDRUhAofYd9i+sGvYt?=
- =?us-ascii?Q?mQqlVHrrodfETDG5mzmW2Aln6jjkMZujQHNC45oYPnqIzkQ5RqVeSLdkmuzP?=
- =?us-ascii?Q?639JORJgCL2GWMG7uFQbnBn+ppNaHinLWkRZvR4Negk6JkQqTIni/idGqsys?=
- =?us-ascii?Q?AxmW8HIF1Lozr4HuhYNNqRZpo8KT910rsQC/R8hTYJGaWcEMXg+1xRmZcp3b?=
- =?us-ascii?Q?tn6QhOeYMFNZQzcYtffXjPMOZalfoWh1wfMG3Xic/EPrmaSiJi62E0YMqtbL?=
- =?us-ascii?Q?B7s93WRqO06/DFMqNuttGAek4zf1lw37EDk322Qesz5OVNsZnY0hoLHqXqI2?=
- =?us-ascii?Q?o/Xkg1nw/bzHEOECdAupEos+kX4E10SQQNA9hIdd9ER42tKGb5dj5mWBwZEw?=
- =?us-ascii?Q?YpemK27zqa8cAC/jPG/C3u55G4q4pSP5ldVtpHWsTsw189mipmbpqiaDPQ03?=
- =?us-ascii?Q?rMj/nK0cOwmt8t70XfiuqfzSu50jSjG4TJfmbl8hOPImUhQOVevM/nDbH0vs?=
- =?us-ascii?Q?lMWgdm6nMJamesQo7jbNrCQxxW9+H2bIElFeZVVsfJl5N9G5Uj/OexlnmaJJ?=
- =?us-ascii?Q?0SNQM3MjS0C9+GQiieDLV4tnDgYmiatrVcREu6I7omLeNX1NXrnK7nbL8Z4I?=
- =?us-ascii?Q?IKvVYOIuOBCjZATWl27czXCAK3WZYAkabELyvQsQDHBJQumaGQl1o8ScR0dn?=
- =?us-ascii?Q?2ZpM63tXUFJbl6DXzMbfuXhphRr4xE97ClqK+Vsmpl1kdbB9DuDzdnXuh9mI?=
- =?us-ascii?Q?4IshHVluNR5v6ztRow0HnQcvbR7GXH2nNH2/zuxFu2Hmh7EkRywAPw5XLZRG?=
- =?us-ascii?Q?655gnpcT3uU5Bcb/8CC1Rv/ytGJvmMsjcETwBK1CbD5cp/7ArmHlNUn7ujQR?=
- =?us-ascii?Q?dKj3r4n9HS9cFsNiOj154PjFiIuovFLTJvOYJBzMJIBMWIqzz/wjAj50C5S6?=
- =?us-ascii?Q?9UZmWHkyoo+wMEUFU25SNKQtC/97h9zFo0KZRPzs5pg/JBnwJx2U+c+88h9o?=
- =?us-ascii?Q?1f8sBuCo5OHpI8E6HciJF6U5bXniKjB688u4VF1eGUby1DMn9j2BkWts5Zxd?=
- =?us-ascii?Q?gwlPA8LI+afv3MVWj+akaUGCf6aYOuesgniWpc+uc5iAh0V8CjPVbThFq4hk?=
- =?us-ascii?Q?9XsltUN2xKLWM4GDl+2imq5rWi05cc9lz4/1+VbqYvn8z3ykrb8wshKsDsSq?=
- =?us-ascii?Q?a3m1ifylcmqg6wmXnYf/g4yFwXF3jNqZPwQ9flFlIWpy5mEMJ/qy8ulgvX9X?=
- =?us-ascii?Q?WE1ab8WAxZnqWJuh1ICJthQPaJHLDWS7+nXbVrYFdraHPVCiuaAEDaNluEcy?=
- =?us-ascii?Q?4RrwEWRlv3JSSckHRY1gg/SaLIbF3o3PwqYcKl3qR70P3KEe8moSvYKxfRN+?=
- =?us-ascii?Q?Ik5PeYwnDPidPErT8BPn4CzNLJxM5kk=3D?=
-X-Exchange-RoutingPolicyChecked: hAk/rTS9K5cxPVWqUTJACBOWcCARIwG6sf24ZYlJQwC2exrm7+tZg8BuuLiPbWKjf/nRzQ/LpCWyiydBJKlsH3Zy8LRob1hUcSLVrOTab80wXzEE9cq/NYHmguLVMDNQiWZ3SMVmJfCHEKVoNwLisX+xJT29YaXvQdfWYXkChynPOKiTFxQE18NIIdP87OEvjH7UdUZdIlxkSqeQqeuyVsnsRenL+wawgtb4fOZiHQUwHwTXSsxtDXZXDABsp98CtUzZbeuwcOJTWIlvgPamzygx+UE1G9LMDDpVp99j2XV5Jekn14cknksK7Ea5KBw/sIG6zpPlFr3LZp7vPyZtcw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67fcb56d-870f-4add-bf21-08df23990f37
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?BN1yqnBIWAFV/p8o860ZDZQhZepjn1qkJyePd1vnHiOiCth7Bb/KiqI2SW23?=
+ =?us-ascii?Q?OvvAIUrmG4DHTqrgr41cQWvDTGHXhAcMJu4pfPIXI9lYmv6psLJJr560Vmfr?=
+ =?us-ascii?Q?Q9bHf7E8jb3fghqmw2VCAvbIcxKv/FZfhSZltff6iqLPTJPHtkEQ6dg0SIpD?=
+ =?us-ascii?Q?hGzlblnTZ6G6AdbdJB6KQTQAWNlYa7zbePVd77vmRhvbEzuT6qlGWDU3Ra7t?=
+ =?us-ascii?Q?cgRHVf96/tuV+ZldIgVwETDiwBl4R7L0CBzJvyTK3XEFEHuZ2I5w4Vj8O2sF?=
+ =?us-ascii?Q?4sQVCVcInKlHpOFTY7JwGo7kFcUnOl3di5APYdHDS1Uml2hJAi+1WTgXhhDN?=
+ =?us-ascii?Q?FEAzpIZf+o0guJwzc+48GQ52GeHLkyPZgu01yESRXYcl1coYScnqkaFHykww?=
+ =?us-ascii?Q?imRiZ9ilvoKevTyWJn5ImLaoX48V89XW8Atl8Zs7TVegdHlcI85sLKBHiACP?=
+ =?us-ascii?Q?c5U8H/EOCii39A3nNZ+Hvt88//y0r00jlUKZRU4pGclScW5W7LhXE+tQ26Wj?=
+ =?us-ascii?Q?gBDxYn3fFzIflS5KEPE73X4n6I+NrN3orNxrOJtUviZwWPjmVxi5uG8EKbhd?=
+ =?us-ascii?Q?N6IhEOzE9LNBEaskATIgnX6Ne6bTJQ4XdRmRYaazqlcyRw6AOsJFmBtHkTOa?=
+ =?us-ascii?Q?qMOppU7dwAhvHQ5us81A2uJ+KILrG1+j0H5cqbx+wYyg3CTAoNflr6eup/kx?=
+ =?us-ascii?Q?1NZkuoce4goi9JP54GVKZE2kSh+SpItgFT9+RvRO/0N10+1QPxfk5yGi1dNY?=
+ =?us-ascii?Q?Gp6qO4degwW0ivAip3WKsA4HMsteXgfRnMj7C1kXbzz8u+aoo0ScmClK0Gh2?=
+ =?us-ascii?Q?KPKM9EDWPr+CAjHcnHzojsXPgnFSfoVpAQ0fTFkXILk8aZrU9oHv8iWlyejI?=
+ =?us-ascii?Q?DDJdBQXSfdVuDAwvDjvLaFh1FtrfSrRZ3953VcLXGnzYE9kV4ZSdpt2BhRRV?=
+ =?us-ascii?Q?ne/sZ0Ju1nCyBbX8eZX9B4ywDG7TWVJ95g5OEV6WYHK0ncT9hnCSK4s1g6hx?=
+ =?us-ascii?Q?6Q9xbCjDROJ7GOxLXFIDhj7Fnf692iksVK2J5EthiPd6oejBoMCahHXMgpZm?=
+ =?us-ascii?Q?Ji8K63QG1FUCZkzaaYkGTLbC8wa4RN1aqU8PtIyEoG2/9VzxfgfOFv6wB+MC?=
+ =?us-ascii?Q?3ooReqNXBQQnNvT3mFmvOuc7MVgHw9odyGLPR1vJN53jccPqFN0yh8sg9KPC?=
+ =?us-ascii?Q?arjuhOkqGujnZBEA3YM+u8IM1bEU3/u9Ho3u0KQ8/fHzM7MYjVNQbPF+xk6p?=
+ =?us-ascii?Q?kCZVk/74c1YDZM/szojHBQWbR4gX4QJA1Uu64a9GCrSzkvGG0XV7EbnjFvt2?=
+ =?us-ascii?Q?+c8CHXFpVAam/LjMEjDyEPWk0PMbheX7z/EqlTNi6gTrQkr+QeUgvtIzm+xv?=
+ =?us-ascii?Q?QoaBX663BdSGhkUcgeeWRcLbqRREfRyRIRuOb5PZDUsg4PuXGD1p8KLcZyoI?=
+ =?us-ascii?Q?zuF4OGIbkKV+c7EG4Hd5LesBUuGV4Mb4gJqxGbupxoXV3HS/C8Ml4hmGLOqR?=
+ =?us-ascii?Q?wfD8d2gYiVOamyLEq9BoXoEmG4joDFvmfTeTEnbRld/94Mf9hm0UolIO00mr?=
+ =?us-ascii?Q?qcMarjH3+mJGclwcOeLOfMfTK0zEEgEfdbT4D1eXPe2dCy42hJkuPAECiQDF?=
+ =?us-ascii?Q?rTFocRO4YYmwtCw7KnoK53hX3G/AVg4HuhjLhbXq0Cqganirw6Cc5OrjRsWw?=
+ =?us-ascii?Q?Mog2gfQ1TBdUtQzM/0q9+e8vBW9YWT5OecY6s+NZ0ZuoHmLT?=
+Content-Type: multipart/alternative;
+ boundary="_000_LV2PR11MB60454B9D75343634C26D473C81952LV2PR11MB6045namp_"
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: zulmAg7zo0fTUT5bLdrDO/BPTj9DB+q+QxDBkp/M0bClVxhzgesRbKOLdkI8QhCuJXZo33shgoqnMgOU5MCcBQf19ObWaPqtHWoiLdfgjcyW5GVcmCi6cuhNRzXisVJFCVuBmPHaoqDfnfoUxxmkTumPePIZKtWKRFYmXsSPi7wg6xWuVWuMRhLZN7EUE8WMEHRGKAs+Y2SyGz00Bpqp23phX/juHzuRGQN5CJAggV2FvLjGzfR1uv/W6TXfA/68e/sG6lDiEXqbNoXDSph5klSH16aA7DGdAcllM3agSk49mXJ09VYJy3dffLunXvxYL8NpuiDYN381dYLk+uuUZQ==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2026 11:00:40.4312 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /cbS3KRrWU5BXgxr53pP7DroPDQDz8che/Thocwkm9FSzquuoqHsx97H/xUFMyHV0DPSnEsVVfRhZCbH01pV1VQespKIBGCRxv8AGYjl/8s=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4749
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR11MB6045.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa5b2561-2c2f-4867-3320-08df239edc6a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Oct 2026 11:42:11.9146 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qU4eyIN2PW4I3jVDGJbg8g5hlgtcfYj6JtAlgDos3YwT73BsLLsRlp11Bm+iKlTgv3ldXvP8EHoBsLgzEG6TwQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5290
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -154,28 +158,140 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Oct 06, 2026 at 12:38:48PM +0200, Burakov, Anatoly wrote:
-> On 9/27/2026 7:52 PM, Sandeep Penigalapati wrote:
-> > E610 VFs report a wrong link speed (e.g. 10G while the PF is at 1G)
-> > because the speed is decoded from the VFLINKS register, which E610 does
-> > not use for VF link state.
-> > 
-> > Commit adbd71030575 ("net/ixgbe/base: fix link status for E610") added a
-> > mailbox operation to fetch the link state from the PF and bumped the VF
-> > mailbox API to 1.6, but the PMD never used it: ixgbevf_negotiate_api()
-> > caps the API at 1.3 and ixgbevf_check_link() reads VFLINKS instead of the
-> > base helper.
-> > 
-> > Negotiate the mailbox API up to 1.6 and query the PF for the link state
-> > on E610 VFs. Other MAC types are unchanged.
-> > 
-> > Fixes: adbd71030575 ("net/ixgbe/base: fix link status for E610")
-> > Cc: stable@dpdk.org
-> > Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-> > ---
-> 
-> Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> 
-Applied to dpdk-next-net-intel.
-thanks,
-/Bruce
+--_000_LV2PR11MB60454B9D75343634C26D473C81952LV2PR11MB6045namp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+Acked-by: Kai Ji <kai.ji@intel.com>
+
+________________________________
+From: Nicolau, Radu <radu.nicolau@intel.com>
+Sent: 06 October 2026 11:53
+To: dev@dpdk.org <dev@dpdk.org>
+Cc: Alexander.Konyukhov@kaspersky.com <Alexander.Konyukhov@kaspersky.com>; =
+Nicolau, Radu <radu.nicolau@intel.com>; stable@dpdk.org <stable@dpdk.org>; =
+Ji, Kai <kai.ji@intel.com>; De Lara Guarch, Pablo <pablo.de.lara.guarch@int=
+el.com>; Fan Zhang <fanzhang.oss@gmail.com>; Doherty, Declan <declan.dohert=
+y@intel.com>
+Subject: [PATCH] crypto: ipsec_mb fix OOP SGL for NULL cipher
+
+For the NULL cipher OOP SGL case should be handled
+by the linear buffer SGL path
+
+Fixes: 03944ff5e3df ("crypto/ipsec_mb: support null auth/cipher for aesni_m=
+b")
+Cc: stable@dpdk.org
+
+Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
+---
+ drivers/crypto/ipsec_mb/pmd_aesni_mb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_=
+mb/pmd_aesni_mb.c
+index ab65316978..90989c9a69 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
+@@ -2142,7 +2142,8 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *q=
+p,
+                 job->msg_len_to_cipher_in_bytes =3D op->sym->cipher.data.l=
+ength;
+         }
+
+-       if (cipher_mode =3D=3D IMB_CIPHER_NULL && oop) {
++       /* NULL cipher OOP SGL case handled by the linear buffer SGL code *=
+/
++       if (cipher_mode =3D=3D IMB_CIPHER_NULL && oop && !sgl) {
+                 memcpy(job->dst + job->cipher_start_src_offset_in_bytes,
+                         job->src + job->cipher_start_src_offset_in_bytes,
+                         job->msg_len_to_cipher_in_bytes);
+--
+2.52.0
+
+
+--_000_LV2PR11MB60454B9D75343634C26D473C81952LV2PR11MB6045namp_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: &quot;IntelOne Text&quo=
+t;; font-size: 10pt; color: rgb(0, 0, 0);">
+Acked-by: Kai Ji &lt;kai.ji@intel.com&gt;</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;IntelOne Text&quo=
+t;; font-size: 10pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Nicolau, Radu &lt;rad=
+u.nicolau@intel.com&gt;<br>
+<b>Sent:</b> 06 October 2026 11:53<br>
+<b>To:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
+<b>Cc:</b> Alexander.Konyukhov@kaspersky.com &lt;Alexander.Konyukhov@kasper=
+sky.com&gt;; Nicolau, Radu &lt;radu.nicolau@intel.com&gt;; stable@dpdk.org =
+&lt;stable@dpdk.org&gt;; Ji, Kai &lt;kai.ji@intel.com&gt;; De Lara Guarch, =
+Pablo &lt;pablo.de.lara.guarch@intel.com&gt;; Fan Zhang &lt;fanzhang.oss@gm=
+ail.com&gt;;
+ Doherty, Declan &lt;declan.doherty@intel.com&gt;<br>
+<b>Subject:</b> [PATCH] crypto: ipsec_mb fix OOP SGL for NULL cipher</font>
+<div>&nbsp;</div>
+</div>
+<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
+">
+<div class=3D"PlainText">For the NULL cipher OOP SGL case should be handled=
+<br>
+by the linear buffer SGL path<br>
+<br>
+Fixes: 03944ff5e3df (&quot;crypto/ipsec_mb: support null auth/cipher for ae=
+sni_mb&quot;)<br>
+Cc: stable@dpdk.org<br>
+<br>
+Signed-off-by: Radu Nicolau &lt;radu.nicolau@intel.com&gt;<br>
+---<br>
+&nbsp;drivers/crypto/ipsec_mb/pmd_aesni_mb.c | 3 ++-<br>
+&nbsp;1 file changed, 2 insertions(+), 1 deletion(-)<br>
+<br>
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_=
+mb/pmd_aesni_mb.c<br>
+index ab65316978..90989c9a69 100644<br>
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c<br>
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c<br>
+@@ -2142,7 +2142,8 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *q=
+p,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; job-&gt;msg_len_to_cipher_in_bytes =3D op-&gt;sym-&gt=
+;cipher.data.length;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (cipher_mode =3D=3D IMB_CIPHER_NUL=
+L &amp;&amp; oop) {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* NULL cipher OOP SGL case handled b=
+y the linear buffer SGL code */<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (cipher_mode =3D=3D IMB_CIPHER_NUL=
+L &amp;&amp; oop &amp;&amp; !sgl) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; memcpy(job-&gt;dst + job-&gt;cipher_start_src_offset_=
+in_bytes,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; job-&=
+gt;src + job-&gt;cipher_start_src_offset_in_bytes,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; job-&=
+gt;msg_len_to_cipher_in_bytes);<br>
+-- <br>
+2.52.0<br>
+<br>
+</div>
+</span></font></div>
+</body>
+</html>
+
+--_000_LV2PR11MB60454B9D75343634C26D473C81952LV2PR11MB6045namp_--
