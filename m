@@ -2,77 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCC9CA5FED
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 15:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A051CA5FED
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 15:19:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F2C241157;
-	Tue,  6 Oct 2026 17:18:40 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 9839A40270
- for <dev@dpdk.org>; Tue,  6 Oct 2026 11:05:51 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6968hk7H2928808; Tue, 6 Oct 2026 02:05:51 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=w
- jRpO7KQLCtI2MKKUMSiPM+OGfGRolh1+atcnIi45Og=; b=akFeMHAwEZOCFaDot
- dkn3EtqV5RarIkO/WO2hoLgrnPARZPiamg6lxin5OK41PPrjCD88HIFIJi6uEUEK
- gnzqqywEbaaL2VRFRY6dOMKUUvBy+S7SyctBfMdfLS05oszvOH8qBnl4wyTmOtJh
- KF1gMH3v/kzYmll83p2gV/55OUMxmIvuDNk6r+WOI3iCCr5vwEvzxJ3BjBfq6/c1
- zRLYO3ItLUfaetGkaa3PE0dp+jEYUPBW+4jm+YUZSaop/cK5vifoNPbXclef3tnS
- BtkTVf7YOP4Dm6FOi7CfBdZGZetPZqY0hZ0KDI0nYnLphpAAghakNYbTk0zvLi5p
- YYcRw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4h49scp51x-3
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 06 Oct 2026 02:05:50 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 6 Oct 2026 02:05:49 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 6 Oct 2026 02:05:49 -0700
-Received: from cavium-PowerEdge-T110-II.. (unknown [10.28.38.34])
- by maili.marvell.com (Postfix) with ESMTP id BF0333F7053;
- Tue,  6 Oct 2026 02:05:47 -0700 (PDT)
-From: Pratik Senapati <psenapati@marvell.com>
-To: <dev@dpdk.org>
-CC: <gakhil@marvell.com>, <gmuthukrishn@marvell.com>, <kai.ji@intel.com>
-Subject: [PATCH 4/4] app/crypto-perf: add ML-DSA sign support
-Date: Tue, 6 Oct 2026 14:35:38 +0530
-Message-ID: <20261006090538.1571812-4-psenapati@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261006090538.1571812-1-psenapati@marvell.com>
-References: <20260929105851.1305127-1-psenapati@marvell.com>
- <20261006090538.1571812-1-psenapati@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1299C427B2;
+	Tue,  6 Oct 2026 17:18:42 +0200 (CEST)
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
+ [209.85.210.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 03A5441153
+ for <dev@dpdk.org>; Tue,  6 Oct 2026 17:18:40 +0200 (CEST)
+Received: by mail-pf1-f171.google.com with SMTP id
+ d2e1a72fcca58-88aea027391so1531837b3a.0
+ for <dev@dpdk.org>; Tue, 06 Oct 2026 08:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1791299919; x=1791904719; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=XA/scDrnQfi3nkPp4ou+4MLoUz95J5xCAlIIDuAIJ70=;
+ b=AwIZH95aNo8P60Z3dAQHqJJ76QJGqZsJB+rGG64mAwjsaGzuvZyw4HVKQ6D2Pr64Ew
+ OalBTwecCSOE3YjT9cmtXW4UBg9Qu8nSO9nll0xSAe4GSvx0ivMlDC2w0BCys8lROmcS
+ jjyQzBGhJXM3BRyPkSlJUggaRkYtuMFmEwMKFmtBJPlOBiDED14TNMhwbpMX6TnjxPPg
+ EvswSl5yLQ6D7whjhTaROH5gBZ+PfQ6/YRhRPbVHIYC/+m9aYF+0MvfVnNrSCx7qLCMY
+ pOc8bRr+//ZaHg8nW7Y1w5qESIgWfhWBFtqAok41baBzxl48KGIQ+9hGz5rSWuHFz0d9
+ 29rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791299919; x=1791904719;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=XA/scDrnQfi3nkPp4ou+4MLoUz95J5xCAlIIDuAIJ70=;
+ b=FN6XR4ARjXvaJMF7+Ce96tqro5G2G1YC8gKoYP66cb+A1Te/PjmMEQR30zHSeb5uhF
+ aNLhBTNAW68XpWc6GR8NQkdho2bqL9X3pIQ7KEmU64hVKfWALrwm749k2MzFA9QEtOgH
+ At4t0hdEQzNed79sYyQcd3yTdKpydT6wwnjtwOMFlYi+r6nS+H5dhIYdbMWjE4C+7T71
+ 6FoNo/jUr6DeaxOF4yrAa9nu4DRLPgYZ0ZH463ClL+GMBh/6WgXn2gDR3JD39ewbzLSV
+ i18cjx8OBUqctI7AyGIjnXUYSiW31YaliEE0lwKDAP8NOa9/nkxyxzWe4HD4bC0Ot/5p
+ G3HQ==
+X-Gm-Message-State: AFuF++lvxK2QvMbw18wuSYszqfe9e1dq07Qfw/MqO0a1Fx3DrC53KB6M
+ Ia6mBr0hDxF3Yw+/RY67XzOeFw9E7dweNQxzIgp9r000Poj3oCGg8bG6T9RbiBlh
+X-Gm-Gg: AYBFou11pYsPT7JgZ7auluDsFyRO5uBbe4GNJQP1Q67qHnUt6buEcZcVmqGEDAMrRRX
+ Bfyt0unZnbeVwR9AkBiKdmZruCvf2VhT2wX3LhqEZo+E5JH/C+oziTvI/fDPhkXUISpdjkUTMgm
+ MYKcZ97W+qSFqrKydWJrYMfvYqkus/hN0ys5DgkEPesXfyCReq/jb+hdR20z2Qql0+sP1IQ9TJP
+ nhxv9053TfG5d9W39h2+M/Le08m/LCafmkv4Oef/5CwuZlfSCPVE8w1N64Qk/u0xyIhn50CgfJW
+ u3maPR0eeO3siUYeG7xbKBoR+f5DGXJCzGSUH/qRH/LT/appR2pyRY2nUjFctz0MrtOXGdxJkFP
+ BRitNCkqusx1N7tfMlh65YKJsbFAfxDeERrI3B41k3jcXkVlR0PvvX7kedWHl68Y+XGFGiEeCnE
+ GIQ7zkHA/lJe0ZdNmp0IMtiIdqVuyUyE4pcNA4kw2GXYbDrQxzonLbSC2vrXR2rrarQ9tyGmf9L
+ a1yJhTg0HKk
+X-Received: by 2002:a05:6a20:9c15:b0:3dd:a009:3186 with SMTP id
+ adf61e73a8af0-3e0d6cddee7mr9998334637.46.1791299918826; 
+ Tue, 06 Oct 2026 08:18:38 -0700 (PDT)
+Received: from gentoo ([49.204.144.166]) by smtp.gmail.com with ESMTPSA id
+ 41be03b00d2f7-cce6d9f86aesm2799142a12.18.2026.10.06.08.18.36
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 06 Oct 2026 08:18:37 -0700 (PDT)
+From: Shreesh Adiga <16567adigashreesh@gmail.com>
+To: Wathsala Vithanage <wathsala.vithanage@arm.com>
+Cc: dev@dpdk.org
+Subject: [PATCH] net/crc: make NEON CRC folding logic similar to x86 SSE
+Date: Tue,  6 Oct 2026 20:48:33 +0530
+Message-ID: <20261006151833.347561-1-16567adigashreesh@gmail.com>
+X-Mailer: git-send-email 2.55.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA2MDAzNSBTYWx0ZWRfX9DyHIkQfNgYi
- fkFZI8VTOEwrlCNsRLl9VgJZ80H5N2TAd5BseHTnAhzJcos5F4QaaIoqR4xyH6n7bPNgQc0+Wmg
- hUtQ6Sn1ehtPg8/hKus/SOLd07rjCn0iBYKPec9g4Z9aA1EZzJt+Et7gCJjkovdWbba8SDcVSkC
- 6Y8nfiNSo6/pONcu17GVCRHGDwsF0PAi93iHU/iSopHoWMUzvaQw/ipnP6o3/lnISHPGmoM6mt2
- nuNwDFOpvL00qmRienzmmhQWaSIUtNnFZt7BPP6+qJ8T3dn8BH72I3lthlg9ecNuQSywxk8UbjP
- teZ5Dwgi5c73JxE/Hel5B1iA0ApryLoercTYsh3eAH4p+ejGIMvDqqUj3L64KHijTuoXERJ72OS
- ZsOB/YAuDen9wItqYSZxZsAs9DHV+ojk08PkkSOn9WuIyk/qfxq6t9K/75CKQ+GqtjcISHIFNV3
- 9j/O/FGngESsxRaZB1A==
-X-Proofpoint-ORIG-GUID: pg8pg6bTgUsHXv1d4qS26L6KnMEu2hkj
-X-Authority-Analysis: v=2.4 cv=XZEcX455 c=1 sm=1 tr=0 ts=6ac4b9ee cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=I0XV8kyQNLjoSpTcVfAA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA2MDAzNSBTYWx0ZWRfX21EnIrmGOuLk
- Ok9mi8TpdQHhwAK9vyQmsAKzFhcWid1Moqo8g+CWOS9XgcfmjKlKo9Ai8hqxwjTsE20T7hplugJ
- VnO42q4b28MU1kTOUt2b21v/LxLXrFg=
-X-Proofpoint-GUID: pg8pg6bTgUsHXv1d4qS26L6KnMEu2hkj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-06_02,2026-10-05_01,2025-10-01_01
-X-Mailman-Approved-At: Tue, 06 Oct 2026 17:18:35 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,298 +76,159 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Extend ML-DSA sign iteration support to include
-ML-DSA65 and ML-DSA87 for 1, 5 and 10 sign iterations.
+This patch includes the following minor changes:
+1) Use TBL based shift left for variable len shift instead of using
+   vshift_bytes_left which adds a switch case for 16 len cases.
+2) Align the fold constants to use PMULL and PMULL2 instructions
+   instead of using cross lane operands which requires additional shift.
+3) Remove unnecessary static arrays used in crc32_reduce_64_to_32 by
+   adapting x86 SSE logic.
+4) Use x86 SSE logic for processing partial bytes sequence to avoid
+   using multiple variable len shifts which inserts switch case.
 
-Signed-off-by: Pratik Senapati <psenapati@marvell.com>
+Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
 ---
- app/test-crypto-perf/cperf_options_parsing.c |   3 +-
- app/test-crypto-perf/cperf_test_vectors.c    | 170 ++++++++++++++++++-
- app/test-crypto-perf/main.c                  |  28 ++-
- doc/guides/tools/cryptoperf.rst              |   5 +-
- 4 files changed, 185 insertions(+), 21 deletions(-)
+ lib/net/net_crc_neon.c | 71 +++++++++++++++++++++++++++---------------
+ 1 file changed, 46 insertions(+), 25 deletions(-)
 
-diff --git a/app/test-crypto-perf/cperf_options_parsing.c b/app/test-crypto-perf/cperf_options_parsing.c
-index 332e8746b2..bc7ccdcc9e 100644
---- a/app/test-crypto-perf/cperf_options_parsing.c
-+++ b/app/test-crypto-perf/cperf_options_parsing.c
-@@ -1820,8 +1820,7 @@ cperf_options_dump(struct cperf_options *opts)
- 		case CPERF_ASYM_MLDSA65:
- 		case CPERF_ASYM_MLDSA87:
- 			printf("# mldsa algorithm: %s\n", cperf_op_type_strs[opts->op_type]);
--			if (opts->op_type == CPERF_ASYM_MLDSA44 &&
--				opts->asym_op_type == RTE_CRYPTO_ASYM_OP_SIGN)
-+			if (opts->asym_op_type == RTE_CRYPTO_ASYM_OP_SIGN)
- 				printf("# mldsa sign iterations: %u\n", opts->mldsa_sign_iter);
- 			break;
- 		case CPERF_ASYM_MLKEM512:
-diff --git a/app/test-crypto-perf/cperf_test_vectors.c b/app/test-crypto-perf/cperf_test_vectors.c
-index b2ea9b203c..09e65476ea 100644
---- a/app/test-crypto-perf/cperf_test_vectors.c
-+++ b/app/test-crypto-perf/cperf_test_vectors.c
-@@ -8684,7 +8684,7 @@ static const uint8_t mldsa_65_pubkey_noseed[] = {
- };
+diff --git a/lib/net/net_crc_neon.c b/lib/net/net_crc_neon.c
+index d924aed25d..3833fcba6e 100644
+--- a/lib/net/net_crc_neon.c
++++ b/lib/net/net_crc_neon.c
+@@ -24,6 +24,31 @@ struct crc_pmull_ctx {
+ alignas(16) struct crc_pmull_ctx crc32_eth_pmull;
+ alignas(16) struct crc_pmull_ctx crc16_ccitt_pmull;
  
- static const uint8_t mldsa_65_message[] = {
--	0x60, 0xD4, 0x8C, 0xF2, 0x61, 0x6D, 0xB0, 0xB6,
-+	0x1C, 0x00, 0x00, 0x00, 0x61, 0x6D, 0xB0, 0xB6,
- 	0x0F, 0x54, 0x96, 0x5F, 0xDB, 0x21, 0x40, 0xB5,
- 	0x33, 0xA3, 0x85, 0xFE, 0xA3, 0xCC, 0x76, 0x5C,
- 	0x8C, 0xB0, 0xC0, 0x71, 0xE5, 0x6D, 0xFB, 0xDD,
-@@ -10645,6 +10645,48 @@ static const uint8_t mldsa_87_sign_dtrm[] = {
- 	0x28, 0x30, 0x3C,
- };
- 
-+static const uint8_t mldsa_65_message_1_iter[] = {
-+	0x13, 0xCD, 0x8C, 0x83, 0x61, 0x6D, 0xB0, 0xB6,
-+	0x0F, 0x54, 0x96, 0x5F, 0xDB, 0x21, 0x40, 0xB5,
-+	0x33, 0xA3, 0x85, 0xFE, 0xA3, 0xCC, 0x76, 0x5C,
-+	0x8C, 0xB0, 0xC0, 0x71, 0xE5, 0x6D, 0xFB, 0xDD,
++static const alignas(16) uint8_t crc_neon_shift_tab[32] = {
++	0xff, 0xfe, 0xfd, 0xfc, 0xfb, 0xfa, 0xf9, 0xf8,
++	0xf7, 0xf6, 0xf5, 0xf4, 0xf3, 0xf2, 0xf1, 0xf0,
++	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
++	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
 +};
 +
-+static const uint8_t mldsa_65_message_5_iter[] = {
-+	0xE3, 0xB3, 0xF1, 0x9F, 0x61, 0x6D, 0xB0, 0xB6,
-+	0x0F, 0x54, 0x96, 0x5F, 0xDB, 0x21, 0x40, 0xB5,
-+	0x33, 0xA3, 0x85, 0xFE, 0xA3, 0xCC, 0x76, 0x5C,
-+	0x8C, 0xB0, 0xC0, 0x71, 0xE5, 0x6D, 0xFB, 0xDD,
-+};
++/**
++ * Shifts left 128 bit register by specified number of bytes
++ *
++ * @param reg
++ *   128 bit value
++ * @param num
++ *   number of bytes to shift left reg by (0-16)
++ *
++ * @return
++ *   reg << (num * 8)
++ */
++static inline uint64x2_t
++neon_shift_left(uint64x2_t reg, const unsigned int num)
++{
++	uint8x16_t tbl = vld1q_u8(crc_neon_shift_tab + 16 - num);
++	return vreinterpretq_u64_u8(vqtbl1q_u8(vreinterpretq_u8_u64(reg), tbl));
++}
 +
-+static const uint8_t mldsa_65_message_10_iter[] = {
-+	0x83, 0x81, 0xBB, 0xD8, 0x61, 0x6D, 0xB0, 0xB6,
-+	0x0F, 0x54, 0x96, 0x5F, 0xDB, 0x21, 0x40, 0xB5,
-+	0x33, 0xA3, 0x85, 0xFE, 0xA3, 0xCC, 0x76, 0x5C,
-+	0x8C, 0xB0, 0xC0, 0x71, 0xE5, 0x6D, 0xFB, 0xDD,
-+};
-+
-+static const uint8_t mldsa_87_message_1_iter[] = {
-+	0x80, 0x1B, 0x53, 0xC5, 0xF4, 0xB3, 0xD4, 0x7F,
-+	0xD2, 0x7E, 0x02, 0xA5, 0x93, 0x80, 0x26, 0x90,
-+	0xB6, 0xE9, 0xC3, 0xBC, 0xB0, 0xB9, 0x03, 0xC1,
-+	0x36, 0xB4, 0x5B, 0xEF, 0xA5, 0x80, 0x50, 0xDD,
-+};
-+
-+static const uint8_t mldsa_87_message_5_iter[] = {
-+	0x50, 0x02, 0xB8, 0xE1, 0xF4, 0xB3, 0xD4, 0x7F,
-+	0xD2, 0x7E, 0x02, 0xA5, 0x93, 0x80, 0x26, 0x90,
-+	0xB6, 0xE9, 0xC3, 0xBC, 0xB0, 0xB9, 0x03, 0xC1,
-+	0x36, 0xB4, 0x5B, 0xEF, 0xA5, 0x80, 0x50, 0xDD,
-+};
-+
-+static const uint8_t mldsa_87_message_10_iter[] = {
-+	0xD2, 0xAD, 0x0A, 0xE5, 0xF4, 0xB3, 0xD4, 0x7F,
-+	0xD2, 0x7E, 0x02, 0xA5, 0x93, 0x80, 0x26, 0x90,
-+	0xB6, 0xE9, 0xC3, 0xBC, 0xB0, 0xB9, 0x03, 0xC1,
-+	0x36, 0xB4, 0x5B, 0xEF, 0xA5, 0x80, 0x50, 0xDD,
-+};
-+
- struct
- cperf_rsa_test_data rsa_qt_perf_data[4] = {
- 	{
-@@ -11222,6 +11264,48 @@ struct cperf_mldsa_test_data mldsa_sign_perf_data_1_iter[] = {
- 		},
- 		.sign_deterministic = true,
- 	},
-+	{
-+		.name = "mldsa_65_sign_1_iteration (deterministic)",
-+		.type = RTE_CRYPTO_ML_DSA_65,
-+		.privkey = {
-+			.data = mldsa_65_privkey_noseed,
-+			.length = sizeof(mldsa_65_privkey_noseed),
-+		},
-+		.pubkey = {
-+			.data = mldsa_65_pubkey_noseed,
-+			.length = sizeof(mldsa_65_pubkey_noseed),
-+		},
-+		.message = {
-+			.data = mldsa_65_message_1_iter,
-+			.length = sizeof(mldsa_65_message_1_iter),
-+		},
-+		.sign = {
-+			.data = mldsa_65_sign_dtrm,
-+			.length = sizeof(mldsa_65_sign_dtrm),
-+		},
-+		.sign_deterministic = true,
-+	},
-+	{
-+		.name = "mldsa_87_sign_1_iteration (deterministic)",
-+		.type = RTE_CRYPTO_ML_DSA_87,
-+		.privkey = {
-+			.data = mldsa_87_privkey_noseed,
-+			.length = sizeof(mldsa_87_privkey_noseed),
-+		},
-+		.pubkey = {
-+			.data = mldsa_87_pubkey_noseed,
-+			.length = sizeof(mldsa_87_pubkey_noseed),
-+		},
-+		.message = {
-+			.data = mldsa_87_message_1_iter,
-+			.length = sizeof(mldsa_87_message_1_iter),
-+		},
-+		.sign = {
-+			.data = mldsa_87_sign_dtrm,
-+			.length = sizeof(mldsa_87_sign_dtrm),
-+		},
-+		.sign_deterministic = true,
-+	},
- };
+ /**
+  * @brief Performs one folding round
+  *
+@@ -46,12 +71,12 @@ crcr32_folding_round(uint64x2_t data_block, uint64x2_t precomp,
+ 	uint64x2_t fold)
+ {
+ 	uint64x2_t tmp0 = vreinterpretq_u64_p128(vmull_p64(
+-			vgetq_lane_p64(vreinterpretq_p64_u64(fold), 1),
++			vgetq_lane_p64(vreinterpretq_p64_u64(fold), 0),
+ 			vgetq_lane_p64(vreinterpretq_p64_u64(precomp), 0)));
  
- struct cperf_mldsa_test_data mldsa_sign_perf_data_5_iter[] = {
-@@ -11246,6 +11330,48 @@ struct cperf_mldsa_test_data mldsa_sign_perf_data_5_iter[] = {
- 		},
- 		.sign_deterministic = true,
- 	},
-+	{
-+		.name = "mldsa_65_sign_5_iterations (deterministic)",
-+		.type = RTE_CRYPTO_ML_DSA_65,
-+		.privkey = {
-+			.data = mldsa_65_privkey_noseed,
-+			.length = sizeof(mldsa_65_privkey_noseed),
-+		},
-+		.pubkey = {
-+			.data = mldsa_65_pubkey_noseed,
-+			.length = sizeof(mldsa_65_pubkey_noseed),
-+		},
-+		.message = {
-+			.data = mldsa_65_message_5_iter,
-+			.length = sizeof(mldsa_65_message_5_iter),
-+		},
-+		.sign = {
-+			.data = mldsa_65_sign_dtrm,
-+			.length = sizeof(mldsa_65_sign_dtrm),
-+		},
-+		.sign_deterministic = true,
-+	},
-+	{
-+		.name = "mldsa_87_sign_5_iterations (deterministic)",
-+		.type = RTE_CRYPTO_ML_DSA_87,
-+		.privkey = {
-+			.data = mldsa_87_privkey_noseed,
-+			.length = sizeof(mldsa_87_privkey_noseed),
-+		},
-+		.pubkey = {
-+			.data = mldsa_87_pubkey_noseed,
-+			.length = sizeof(mldsa_87_pubkey_noseed),
-+		},
-+		.message = {
-+			.data = mldsa_87_message_5_iter,
-+			.length = sizeof(mldsa_87_message_5_iter),
-+		},
-+		.sign = {
-+			.data = mldsa_87_sign_dtrm,
-+			.length = sizeof(mldsa_87_sign_dtrm),
-+		},
-+		.sign_deterministic = true,
-+	},
- };
+-	uint64x2_t tmp1 = vreinterpretq_u64_p128(vmull_p64(
+-			vgetq_lane_p64(vreinterpretq_p64_u64(fold), 0),
+-			vgetq_lane_p64(vreinterpretq_p64_u64(precomp), 1)));
++	uint64x2_t tmp1 = vreinterpretq_u64_p128(vmull_high_p64(
++			vreinterpretq_p64_u64(fold),
++			vreinterpretq_p64_u64(precomp)));
  
- struct cperf_mldsa_test_data mldsa_sign_perf_data_10_iter[] = {
-@@ -11270,6 +11396,48 @@ struct cperf_mldsa_test_data mldsa_sign_perf_data_10_iter[] = {
- 		},
- 		.sign_deterministic = true,
- 	},
-+	{
-+		.name = "mldsa_65_sign_10_iterations (deterministic)",
-+		.type = RTE_CRYPTO_ML_DSA_65,
-+		.privkey = {
-+			.data = mldsa_65_privkey_noseed,
-+			.length = sizeof(mldsa_65_privkey_noseed),
-+		},
-+		.pubkey = {
-+			.data = mldsa_65_pubkey_noseed,
-+			.length = sizeof(mldsa_65_pubkey_noseed),
-+		},
-+		.message = {
-+			.data = mldsa_65_message_10_iter,
-+			.length = sizeof(mldsa_65_message_10_iter),
-+		},
-+		.sign = {
-+			.data = mldsa_65_sign_dtrm,
-+			.length = sizeof(mldsa_65_sign_dtrm),
-+		},
-+		.sign_deterministic = true,
-+	},
-+	{
-+		.name = "mldsa_87_sign_10_iterations (deterministic)",
-+		.type = RTE_CRYPTO_ML_DSA_87,
-+		.privkey = {
-+			.data = mldsa_87_privkey_noseed,
-+			.length = sizeof(mldsa_87_privkey_noseed),
-+		},
-+		.pubkey = {
-+			.data = mldsa_87_pubkey_noseed,
-+			.length = sizeof(mldsa_87_pubkey_noseed),
-+		},
-+		.message = {
-+			.data = mldsa_87_message_10_iter,
-+			.length = sizeof(mldsa_87_message_10_iter),
-+		},
-+		.sign = {
-+			.data = mldsa_87_sign_dtrm,
-+			.length = sizeof(mldsa_87_sign_dtrm),
-+		},
-+		.sign_deterministic = true,
-+	},
- };
+ 	return veorq_u64(tmp1, veorq_u64(data_block, tmp0));
+ }
+@@ -98,26 +123,19 @@ static inline uint32_t
+ crcr32_reduce_64_to_32(uint64x2_t data64,
+ 	uint64x2_t precomp)
+ {
+-	static alignas(16) uint32_t mask1[4] = {
+-		0xffffffff, 0xffffffff, 0x00000000, 0x00000000
+-	};
+-	static alignas(16) uint32_t mask2[4] = {
+-		0x00000000, 0xffffffff, 0xffffffff, 0xffffffff
+-	};
+ 	uint64x2_t tmp0, tmp1, tmp2;
  
- struct cperf_test_vector*
-diff --git a/app/test-crypto-perf/main.c b/app/test-crypto-perf/main.c
-index 85e145165f..dc781bb9cc 100644
---- a/app/test-crypto-perf/main.c
-+++ b/app/test-crypto-perf/main.c
-@@ -544,23 +544,19 @@ cperf_verify_devices_capabilities(struct cperf_options *opts,
- 				mldsa_idx = 2;
+-	tmp0 = vandq_u64(data64, vld1q_u64((uint64_t *)mask2));
++	tmp0 = vreinterpretq_u64_u32(
++		vsetq_lane_u32(0, vreinterpretq_u32_u64(data64), 0));
  
- 			if (opts->asym_op_type == RTE_CRYPTO_ASYM_OP_SIGN) {
--				if (opts->op_type == CPERF_ASYM_MLDSA44) {
--					switch (opts->mldsa_sign_iter) {
--					case 1:
--						opts->mldsa_data = &mldsa_sign_perf_data_1_iter[0];
--						break;
--					case 5:
--						opts->mldsa_data = &mldsa_sign_perf_data_5_iter[0];
--						break;
--					case 10:
--						opts->mldsa_data = &mldsa_sign_perf_data_10_iter[0];
--						break;
--					default:
--						opts->mldsa_data = &mldsa_sign_perf_data[0];
--						break;
--					}
--				} else {
-+				switch (opts->mldsa_sign_iter) {
-+				case 1:
-+					opts->mldsa_data = &mldsa_sign_perf_data_1_iter[mldsa_idx];
-+					break;
-+				case 5:
-+					opts->mldsa_data = &mldsa_sign_perf_data_5_iter[mldsa_idx];
-+					break;
-+				case 10:
-+					opts->mldsa_data = &mldsa_sign_perf_data_10_iter[mldsa_idx];
-+					break;
-+				default:
- 					opts->mldsa_data = &mldsa_sign_perf_data[mldsa_idx];
-+					break;
- 				}
- 			} else if (opts->asym_op_type == RTE_CRYPTO_ASYM_OP_VERIFY) {
- 				opts->mldsa_data = &mldsa_verify_perf_data[mldsa_idx];
-diff --git a/doc/guides/tools/cryptoperf.rst b/doc/guides/tools/cryptoperf.rst
-index efd56a25fb..2536476617 100644
---- a/doc/guides/tools/cryptoperf.rst
-+++ b/doc/guides/tools/cryptoperf.rst
-@@ -366,10 +366,11 @@ The following are the application command-line options:
+ 	tmp1 = vreinterpretq_u64_p128(vmull_p64(
+ 		vgetq_lane_p64(vreinterpretq_p64_u64(tmp0), 0),
+ 		vgetq_lane_p64(vreinterpretq_p64_u64(precomp), 0)));
+ 	tmp1 = veorq_u64(tmp1, tmp0);
+-	tmp1 = vandq_u64(tmp1, vld1q_u64((uint64_t *)mask1));
  
- * ``--mldsa-sign-iter <1/5/10>``
+ 	tmp2 = vreinterpretq_u64_p128(vmull_p64(
+ 		vgetq_lane_p64(vreinterpretq_p64_u64(tmp1), 0),
+ 		vgetq_lane_p64(vreinterpretq_p64_u64(precomp), 1)));
+-	tmp2 = veorq_u64(tmp2, tmp1);
+ 	tmp2 = veorq_u64(tmp2, tmp0);
  
--        Set ML-DSA sign iteration count for mldsa_44 sign operation.
-+        Set ML-DSA sign iteration count for mldsa sign operation.
-         Default is ``1``.
-         Only applicable when:
--        ``--optype mldsa_44`` and ``--asym-op sign``.
-+        ``--optype mldsa_44``, ``--optype mldsa_65``, ``--optype mldsa_87``
-+        and ``--asym-op sign``.
+ 	return vgetq_lane_u32(vreinterpretq_u32_u64(tmp2), 2);
+@@ -177,10 +195,10 @@ crc32_eth_calc_pmull(
+ 		fold = vld1q_u64((uint64_t *)buffer);
+ 		fold = veorq_u64(fold, temp);
+ 		if (unlikely(data_len < 4)) {
+-			fold = vshift_bytes_left(fold, 8 - data_len);
++			fold = neon_shift_left(fold, 8 - data_len);
+ 			goto barret_reduction;
+ 		}
+-		fold = vshift_bytes_left(fold, 16 - data_len);
++		fold = neon_shift_left(fold, 16 - data_len);
+ 		goto reduction_128_64;
+ 	}
  
- * ``--rsa-priv-keytype <exp/qt>``
+@@ -201,14 +219,17 @@ crc32_eth_calc_pmull(
+ 
+ 	/** Partial bytes - process last <16 bytes */
+ 	if (likely(n < data_len)) {
+-		uint64x2_t last16, a, b, mask;
++		uint8x16_t last16, t1, t2;
++		uint64x2_t a, b;
+ 		uint32_t rem = data_len & 15;
+ 
+-		last16 = vld1q_u64((const uint64_t *)&data[data_len - 16]);
+-		a = vshift_bytes_left(fold, 16 - rem);
+-		b = vshift_bytes_right(fold, rem);
+-		mask = vshift_bytes_left(vdupq_n_u64(-1), 16 - rem);
+-		b = vorrq_u64(b, vandq_u64(mask, last16));
++		last16 = vld1q_u8((const uint8_t *)&data[data_len - 16]);
++		t1 = vld1q_u8(crc_neon_shift_tab + rem);
++		a  = vreinterpretq_u64_u8(vqtbl1q_u8(vreinterpretq_u8_u64(fold), t1));
++		t2 = vmvnq_u8(t1);
++		t2 = vqtbl1q_u8(vreinterpretq_u8_u64(fold), t2);
++		t1 = vcgezq_s8(vreinterpretq_s8_u8(t1));
++		b  = vreinterpretq_u64_u8(vbslq_u8(t1, last16, t2));
+ 
+ 		/* k = rk3 & rk4 */
+ 		fold = crcr32_folding_round(b, k, a);
+@@ -230,14 +251,14 @@ void
+ rte_net_crc_neon_init(void)
+ {
+ 	/* Initialize CRC16 data */
+-	uint64_t ccitt_k1_k2[2] = {0x14ff2LLU, 0x19a3cLLU};
+-	uint64_t ccitt_k3_k4[2] = {0x189aeLLU, 0x8e10LLU};
++	uint64_t ccitt_k1_k2[2] = {0x19a3cLLU, 0x14ff2LLU};
++	uint64_t ccitt_k3_k4[2] = {0x8e10LLU, 0x189aeLLU};
+ 	uint64_t ccitt_k5_k6[2] = {0x189aeLLU, 0x114aaLLU};
+ 	uint64_t ccitt_k7_k8[2] = {0x11c581910LLU, 0x10811LLU};
+ 
+ 	/* Initialize CRC32 data */
+-	uint64_t eth_k1_k2[2] = {0x1c6e41596LLU, 0x154442bd4LLU};
+-	uint64_t eth_k3_k4[2] = {0xccaa009eLLU, 0x1751997d0LLU};
++	uint64_t eth_k1_k2[2] = {0x154442bd4LLU, 0x1c6e41596LLU};
++	uint64_t eth_k3_k4[2] = {0x1751997d0LLU, 0xccaa009eLLU};
+ 	uint64_t eth_k5_k6[2] = {0xccaa009eLLU, 0x163cd6124LLU};
+ 	uint64_t eth_k7_k8[2] = {0x1f7011640LLU, 0x1db710641LLU};
  
 -- 
-2.43.0
+2.55.0
 
