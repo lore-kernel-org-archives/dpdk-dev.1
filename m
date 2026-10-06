@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AF3CA5FF0
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 09:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C1ACA5FF0
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 09:29:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 903324275D;
-	Tue,  6 Oct 2026 11:27:33 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 8EA9740B98
- for <dev@dpdk.org>; Tue,  6 Oct 2026 11:27:14 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6DBE02001B4;
- Tue,  6 Oct 2026 11:27:14 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8F00842794;
+	Tue,  6 Oct 2026 11:27:34 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 49E6140E2E
+ for <dev@dpdk.org>; Tue,  6 Oct 2026 11:27:15 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2616F1A0171;
+ Tue,  6 Oct 2026 11:27:15 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ED4A22001B2;
- Tue,  6 Oct 2026 11:27:13 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E31B51A017D;
+ Tue,  6 Oct 2026 11:27:14 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 70E7C180006C;
- Tue,  6 Oct 2026 17:27:13 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 14E12180023E;
+ Tue,  6 Oct 2026 17:27:14 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v21 20/27] net/dpaa: support fmcless rxq number as devargs
-Date: Tue,  6 Oct 2026 14:56:56 +0530
-Message-Id: <20261006092703.2138929-21-hemant.agrawal@nxp.com>
+Subject: [PATCH v21 22/27] bus/dpaa: optimize DPAA multi-entry buffer pool
+ operations
+Date: Tue,  6 Oct 2026 14:56:58 +0530
+Message-Id: <20261006092703.2138929-23-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261006092703.2138929-1-hemant.agrawal@nxp.com>
 References: <20261005085337.1069213-1-hemant.agrawal@nxp.com>
@@ -51,89 +52,236 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-In FMCLESS mode, set the default number of Rx frame queues to the
-maximum queue number instead of the core count, because multiple
-queues may be processed on the same core. The value can also be
-configured per port through the 'drv_fmcless_rxq' device argument.
+Add a big-endian hardware buffer descriptor overlay (struct bm_hw_buf_desc)
+to the bm_buffer union so a release or acquire entry can be built and
+parsed through one 8-byte access instead of separate 16-bit and 32-bit
+address halves. The bm_buffer_set64_to_be() helper writes the whole
+descriptor in a single store, which also clears the reserved byte and the
+bpid field so no uninitialised stack content is published to the hardware
+ring, and bm_buffer_get64_from_be() reads the address back.
+
+The MAX_U48 and U48_BY_HI16_LO32 helper macros move from bman.c to
+fsl_bman.h so the new accessors can use them, and the standalone
+bman_hw_extract_addr() helper is dropped in favour of
+bm_buffer_get64_from_be().
+
+When publishing to the release ring, entry 0 is written on its own
+precisely because copying it would trip the ring valid bit; entries
+1..n-1 are the ones copied into the ring in a single memcpy:
+
+	r->bufs[0].opaque = bm_bufs[0].opaque;
+	if (num > 1)
+		memcpy(&r->bufs[1], &bm_bufs[1],
+			sizeof(struct bm_buffer) * (num - 1));
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- doc/guides/nics/dpaa.rst       |  3 +++
- drivers/net/dpaa/dpaa_ethdev.c | 34 +++++++++++++++++++++++++++++++---
- 2 files changed, 34 insertions(+), 3 deletions(-)
+ drivers/bus/dpaa/base/qbman/bman.c  | 52 ++++++++---------------------
+ drivers/bus/dpaa/include/fsl_bman.h | 48 +++++++++++++++++++++-----
+ 2 files changed, 53 insertions(+), 47 deletions(-)
 
-diff --git a/doc/guides/nics/dpaa.rst b/doc/guides/nics/dpaa.rst
-index 2b6bf7608d..d03027d8bb 100644
---- a/doc/guides/nics/dpaa.rst
-+++ b/doc/guides/nics/dpaa.rst
-@@ -286,6 +286,9 @@ the ``-a`` EAL option (e.g. ``-a dpaa_bus:fm1-mac3,drv_rx_taildrop=64``):
-    Configure the Rx / Tx frame queue taildrop congestion threshold. A value
-    of ``0`` disables taildrop.
+diff --git a/drivers/bus/dpaa/base/qbman/bman.c b/drivers/bus/dpaa/base/qbman/bman.c
+index 0ae1160973..80061b31e4 100644
+--- a/drivers/bus/dpaa/base/qbman/bman.c
++++ b/drivers/bus/dpaa/base/qbman/bman.c
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
+  *
+  * Copyright 2008-2016 Freescale Semiconductor Inc.
+- * Copyright 2017, 2024 NXP
++ * Copyright 2017, 2024-2026 NXP
+  *
+  */
+ #include <rte_memcpy.h>
+@@ -17,20 +17,6 @@
+ #define IRQNAME		"BMan portal %d"
+ #define MAX_IRQNAME	16	/* big enough for "BMan portal %d" */
  
-+``drv_fmcless_rxq``
-+   In FMCLESS mode, override the number of Rx frame queues to create.
+-
+-#define MAX_U16 UINT16_MAX
+-#define MAX_U32 UINT32_MAX
+-#ifndef BIT_SIZE
+-#define BIT_SIZE(t) (sizeof(t) * 8)
+-#endif
+-#define MAX_U48 \
+-	((((uint64_t)MAX_U16) << BIT_SIZE(uint32_t)) | MAX_U32)
+-#define HI16_OF_U48(x) \
+-	(((x) >> BIT_SIZE(rte_be32_t)) & MAX_U16)
+-#define LO32_OF_U48(x) ((x) & MAX_U32)
+-#define U48_BY_HI16_LO32(hi, lo) \
+-	(((hi) << BIT_SIZE(uint32_t)) | (lo))
+-
+ struct bman_portal {
+ 	struct bm_portal p;
+ 	/* 2-element array. pools[0] is mask, pools[1] is snapshot. */
+@@ -281,7 +267,7 @@ bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
+ 	struct bm_rcr_entry *r;
+ 	uint8_t i, avail;
+ 	uint64_t bpid = pool->params.bpid;
+-	struct bm_hw_buf_desc bm_bufs[FSL_BM_BURST_MAX];
++	struct bm_buffer bm_bufs[FSL_BM_BURST_MAX];
+ 
+ #ifdef RTE_LIBRTE_DPAA_HWDEBUG
+ 	if (!num || (num > FSL_BM_BURST_MAX))
+@@ -298,19 +284,18 @@ bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
+ 	if (unlikely(!r))
+ 		return -EBUSY;
+ 
++	for (i = 0; i < num; i++)
++		bm_buffer_set64_to_be(&bm_bufs[i], bufs[i]);
 +
- FMAN Config
- -----------
++	bm_bufs[0].be_desc.bpid = bpid;
+ 	/*
+ 	 * we can copy all but the first entry, as this can trigger badness
+ 	 * with the valid-bit
+ 	 */
+-	bm_bufs[0].bpid = bpid;
+-	bm_bufs[0].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[0]));
+-	bm_bufs[0].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[0]));
+-	for (i = 1; i < num; i++) {
+-		bm_bufs[i].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[i]));
+-		bm_bufs[i].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[i]));
+-	}
+-
+-	memcpy(r->bufs, bm_bufs, sizeof(struct bm_buffer) * num);
++	r->bufs[0].opaque = bm_bufs[0].opaque;
++	if (num > 1)
++		memcpy(&r->bufs[1], &bm_bufs[1],
++			sizeof(struct bm_buffer) * (num - 1));
  
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 78afe472a8..a367f4512f 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -57,6 +57,7 @@
- #define DRIVER_RECV_ERR_PKTS      "recv_err_pkts"
- #define DRIVER_RX_TAILDROP        "drv_rx_taildrop"
- #define DRIVER_TX_TAILDROP        "drv_tx_taildrop"
-+#define DRIVER_FMCLESS_RXQ        "drv_fmcless_rxq"
- #define RTE_PRIORITY_103 103
+ 	bm_rcr_pvb_commit(&p->p, BM_RCR_VERB_CMD_BPID_SINGLE |
+ 		(num & BM_RCR_VERB_BUFCOUNT_MASK));
+@@ -368,16 +353,6 @@ __rte_unused bman_extract_addr(struct bm_buffer *buf)
+ 	return buf->addr;
+ }
  
- /* Maximum number of stale frame queues cleaned up per congestion group. */
-@@ -2418,8 +2419,34 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 				dpaa_intf->name);
- 		}
- 	} else {
--		/* FMCLESS mode, load balance to multiple cores.*/
--		num_rx_fqs = rte_lcore_count();
-+		/* FMCLESS mode, default queue number is max queues
-+		 * because multiple queues may be processed on same core.
-+		 */
-+		long fmcless_rxq = 0;
+-static inline uint64_t
+-bman_hw_extract_addr(struct bm_hw_buf_desc *buf)
+-{
+-	uint64_t hi, lo;
+-
+-	hi = be16_to_cpu(buf->hi_addr);
+-	lo = be32_to_cpu(buf->lo_addr);
+-	return U48_BY_HI16_LO32(hi, lo);
+-}
+-
+ RTE_EXPORT_INTERNAL_SYMBOL(bman_acquire_fast)
+ int
+ bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
+@@ -386,7 +361,7 @@ bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
+ 	struct bm_mc_command *mcc;
+ 	struct bm_mc_result *mcr;
+ 	uint8_t i, rst;
+-	struct bm_hw_buf_desc bm_bufs[FSL_BM_BURST_MAX];
++	struct bm_buffer bm_bufs[FSL_BM_BURST_MAX];
+ 
+ #ifdef RTE_LIBRTE_DPAA_HWDEBUG
+ 	if (!num || (num > FSL_BM_BURST_MAX))
+@@ -405,11 +380,10 @@ bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
+ 	if (unlikely(rst < 1 || rst > FSL_BM_BURST_MAX))
+ 		return -EINVAL;
+ 
+-	rte_memcpy(bm_bufs, mcr->acquire.bufs,
+-		sizeof(struct bm_buffer) * rst);
++	rte_memcpy(bm_bufs, mcr->acquire.bufs, sizeof(struct bm_buffer) * rst);
+ 
+ 	for (i = 0; i < rst; i++)
+-		bufs[i] = bman_hw_extract_addr(&bm_bufs[i]);
++		bufs[i] = bm_buffer_get64_from_be(&bm_bufs[i]);
+ 
+ 	return rst;
+ }
+diff --git a/drivers/bus/dpaa/include/fsl_bman.h b/drivers/bus/dpaa/include/fsl_bman.h
+index 88e4df503f..fcf2f25257 100644
+--- a/drivers/bus/dpaa/include/fsl_bman.h
++++ b/drivers/bus/dpaa/include/fsl_bman.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
+  *
+  * Copyright 2008-2012 Freescale Semiconductor, Inc.
+- * Copyright 2024 NXP
++ * Copyright 2024-2026 NXP
+  *
+  */
+ 
+@@ -47,6 +47,13 @@ struct bm_mc_result;	/* MC result */
+  * pool id specific to this buffer is needed (BM_RCR_VERB_CMD_BPID_MULTI,
+  * BM_MCC_VERB_ACQUIRE), the 'bpid' field is used.
+  */
++struct __rte_packed_begin bm_hw_buf_desc {
++	uint8_t rsv;
++	uint8_t bpid;
++	rte_be16_t hi; /* High 16-bits of 48-bit address */
++	rte_be32_t lo; /* Low 32-bits of 48-bit address */
++} __rte_packed_end;
 +
-+		ret = dpaa_get_devargs_int(dev->devargs, DRIVER_FMCLESS_RXQ,
-+					   &fmcless_rxq);
-+		if (ret < 0) {
-+			DPAA_PMD_ERR("Invalid %s value", DRIVER_FMCLESS_RXQ);
-+			return ret;
-+		}
-+		if (ret == 1) {
-+			/* Range check before narrowing to int, otherwise a
-+			 * value such as 4294967296 would truncate to 0.
-+			 */
-+			if (fmcless_rxq < 1) {
-+				DPAA_PMD_ERR("fmcless rxq number must be >= 1");
-+				return -EINVAL;
-+			}
-+			if (fmcless_rxq > DPAA_MAX_NUM_PCD_QUEUES) {
-+				DPAA_PMD_WARN("fmcless rxq number > %d, clamped",
-+					DPAA_MAX_NUM_PCD_QUEUES);
-+				fmcless_rxq = DPAA_MAX_NUM_PCD_QUEUES;
-+			}
-+			num_rx_fqs = (int)fmcless_rxq;
-+		} else {
-+			num_rx_fqs = DPAA_MAX_NUM_PCD_QUEUES;
-+		}
- 	}
+ struct __rte_aligned(8) bm_buffer {
+ 	union {
+ 		struct {
+@@ -71,17 +78,11 @@ struct __rte_aligned(8) bm_buffer {
+ 			u64 __notaddress:16;
+ #endif
+ 		};
++		struct bm_hw_buf_desc be_desc;
+ 		u64 opaque;
+ 	};
+ };
  
- 	/* Each device can not have more than DPAA_MAX_NUM_PCD_QUEUES RX
-@@ -2932,5 +2959,6 @@ RTE_PMD_REGISTER_DPAA(net_dpaa, rte_dpaa_pmd);
- RTE_PMD_REGISTER_PARAM_STRING(net_dpaa,
- 		DRIVER_RECV_ERR_PKTS "=<int> "
- 		DRIVER_RX_TAILDROP "=<int> "
--		DRIVER_TX_TAILDROP "=<int>");
-+		DRIVER_TX_TAILDROP "=<int> "
-+		DRIVER_FMCLESS_RXQ "=<int>");
- RTE_LOG_REGISTER_DEFAULT(dpaa_logtype_pmd, NOTICE);
+-struct __rte_packed_begin bm_hw_buf_desc {
+-	uint8_t rsv;
+-	uint8_t bpid;
+-	rte_be16_t hi_addr; /* High 16-bits of 48-bit address */
+-	rte_be32_t lo_addr; /* Low 32-bits of 48-bit address */
+-} __rte_packed_end;
+-
+ static inline u64 bm_buffer_get64(const struct bm_buffer *buf)
+ {
+ 	return buf->addr;
+@@ -92,6 +93,14 @@ static inline dma_addr_t bm_buf_addr(const struct bm_buffer *buf)
+ 	return (dma_addr_t)buf->addr;
+ }
+ 
++#ifndef BIT_SIZE
++#define BIT_SIZE(t) (sizeof(t) * 8)
++#endif
++#define MAX_U48 \
++	((((uint64_t)UINT16_MAX) << BIT_SIZE(uint32_t)) | UINT32_MAX)
++#define U48_BY_HI16_LO32(hi, lo) \
++	(((uint64_t)(hi) << BIT_SIZE(uint32_t)) | (lo))
++
+ #define bm_buffer_set64(buf, v) \
+ 	do { \
+ 		struct bm_buffer *__buf931 = (buf); \
+@@ -99,6 +108,29 @@ static inline dma_addr_t bm_buf_addr(const struct bm_buffer *buf)
+ 		__buf931->lo = lower_32_bits(v); \
+ 	} while (0)
+ 
++/*
++ * Write the whole 8-byte descriptor in one store. Besides the 48-bit
++ * address this clears the reserved byte and the bpid field, so no
++ * uninitialized stack content can be published to the hardware ring.
++ * Callers that need a bpid must set it after this macro.
++ */
++#define bm_buffer_set64_to_be(buf, v) \
++	do { \
++		struct bm_buffer *__buf931 = (buf); \
++		\
++		__buf931->opaque = cpu_to_be64((uint64_t)(v) & MAX_U48); \
++	} while (0)
++
++#define bm_buffer_get64_from_be(buf) \
++	({ \
++		uint64_t hi, lo; \
++		struct bm_buffer *__buf931 = (buf); \
++		\
++		hi = be16_to_cpu(__buf931->be_desc.hi); \
++		lo = be32_to_cpu(__buf931->be_desc.lo); \
++		U48_BY_HI16_LO32(hi, lo); \
++	})
++
+ #define FSL_BM_BURST_MAX 8
+ 
+ /* See 1.5.3.5.4: "Release Command" */
 -- 
 2.25.1
 
