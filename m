@@ -2,97 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6CDCA5FFC
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 16:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA486CA5FFE
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 16:38:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2A7F040290;
-	Tue,  6 Oct 2026 18:15:56 +0200 (CEST)
-Received: from fhigh-b6-smtp.messagingengine.com
- (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
- by mails.dpdk.org (Postfix) with ESMTP id 7A6D44027B
- for <dev@dpdk.org>; Tue,  6 Oct 2026 18:15:54 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfhigh.stl.internal (Postfix) with ESMTP id D01F07A01A0
- for <dev@dpdk.org>; Tue,  6 Oct 2026 12:15:53 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-04.internal (MEProxy); Tue, 06 Oct 2026 12:15:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1791303353;
- x=1791389753; bh=LJDV5U/wF8BhBI3phV2zOpTuSTh7hDySnqCoyiM8KLw=; b=
- EOl8ex0Ha2ln5wV4Q5ChqmaIK078Tt+MZyH86vFv891r2ww9Ps9gbnYF15ufbswK
- AtZlNfxS8cTzSi/ZRpylvamoH0n/2TBbVmFxw1i4+ExM5kb95j4ie34yDnipJ+Ov
- /jKVfhu9YtrdJskXmmtUQ7w15HY5kXF4ypEDRFV5o/DfswtqCKmOk1Sc4Ap+0d9s
- 4+KnJ+doX1l3Lj260MW2ZX94y1D1Ov1xNI707Ru6HHBdKn3r85rykK4aTWUHy435
- kfUJ4OwmE8xkkfVgLDCqhp5wfuipr0nI3EcZ+pfcsKs58WfwMHjcJGH84fZeYEhi
- NjEradiG4T8gUf/czg6IzA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791303353; x=
- 1791389753; bh=LJDV5U/wF8BhBI3phV2zOpTuSTh7hDySnqCoyiM8KLw=; b=D
- TPr7fxPhqg5mKtHM2WxaF/TD0S6Faj44LBHGFO08yOH+6ypnukQjqjgXLzac0Db+
- I9/ukMJqlOyieL3pyO+svg+p/sXRjf9/z3Jyp2N4GWI/tVoY/DGwT22FfRSXFn4J
- bFkW2yVVtq1JsoDwl5gCHZ+YwfS99MNgNReFNW1y1jVgsTAIgG/pwT3TLBQiURQ5
- lJKyyAhAg/ChW5l/6kcMXsfCZYty9Lcz/0Uy5ZDoxFXDee3b7q+A1nXvFUDRr7gI
- 4HXwxLpSL/KNXQtzhJ2Yxg5yVeS7FAp+4rqGxaUt9clbks3BSs9S/3I8rMGplyNS
- XUZUsq6/FEdLcF+zudPJw==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791303353; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:ga1Qn3WU0L0I+xBXRU/B8ccQ9IEpRLy9jF8KJJCBsLtj248
- +Amhc9pdG+GCq4edfy9uTFrTTkgpj5pQllpG2HRGbPV/7rq6qpCn9LpfOywTXwSj
- yFlgEa1tiu7CmKItXeIxQNFgBNtfLIZoOYokCZ3Yse3DFyEk0rcyzFk22Y+tWnNP
- 383IE5Mp+WWSoQKrekAeVmBTfMFjM9+ExPd+uX8U9WD9OY2Rr1LWjtB8HTQ2uRMk
- jfXjQRdQ2D7OtbXPUALAtdD6OJUgaxeltOcqro7KSEBatROURVN5UNNO5HRBjzca
- 7t7iwhu/aMsky7gItdgVbusSRLt3lNv0qyT2fvA==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:sSYKHo+IyfvLGqYO335OjTavttfyxmvcr5EfUqT+Qxc=:wFw0c5Br+ciYu6NLnFvL3Bg3fz0HCAPVh4z9Z6pHkWA=;
-X-ME-Sender: <xms:uB7Fajx3FQ8u_EtdkLWYYElqkFvYdqPZFL1kgm3zRdzG_CdqipysLA>
- <xme:uB7FavmXK0bct35f3gl2R4We_lkR-dB-eBX-2qxtgIq5NO0PcMHf5hM_EobJxpIDh
- YNicrQ9-RP7UNmV4XNtrTIrnzt5jUfEth8uKpy6i1dwJuINTGKa1uPz>
-X-ME-Received: <xmr:uB7FascdOu6fvypGQCa8d2R5QAJm-IDaaDKHcycetKXSMajMYmjBUUiu7Dcivt6pQchrVd_GyqY2Iv0IEAE4tB4>
-X-ME-Proxy-Cause: dmFkZTGPQ9ikdxFZLhiv7wm/JL3Ag7EAw5d6HMCNDL3Eoji46Szz8fOMMnJD0u3luwEzLD
- DsB/a1vCCJOUky+O9CH/z8gU0WOJKP++xMqxhAkXagL40ljwvPaR5NcCbdLHYFhipZe31l
- EupK0r4fK++/u+7gsKOlB3M7t1pNYdrOWnIV/sSFY8dYUY+sUgjt8f9Lf5Ku812AI2AULL
- FaL7mubbgpdEZ5zMJMaeQcjEWZJzP9ua0+fEfKbl+POV8TBzqEFGdv2+bNBaKPu5vW3+i8
- fnbu8pWvlKjtcuTeRKW+6Zh+FJusXY532vmqOZF5KT9HU+jp8RUNCpB1XjJLsXC/d1+nRo
- xbsiZa7jN43AO8kEpq+HyBGGvjGyANHnoZLmoha4rzeuldoSk5ynSkEcEyTpn1PZCWkmPf
- MlVnSwjJqq6gWCwIy906l3Mm+z85IAEHO9fiyAnhvVH5C8GzEPNRQ1b3+RxsJRKQpqbSrc
- EVnPEH8NxvSjhfQkMSWQGK/atMPKm52Fspo4eLpwfvMUh9djs+rPOdIgxblRUzJZfXK3Y/
- 17Xht0OWuwySfHZtQyEdQreP90j0/5G3IeoX1BsJ/k/ofH0SwatFprW3dRo9fDMRjbtSnH
- liYyCNuETa6dxzUeKhHDCqRYFYysiG8qgXoF4Kzsr1uL7731qeW6jBea8hsQ
-X-ME-Proxy: <xmx:uB7FalpvxVwI07fUd_lgELz3lnoy9lRruuaI6nOhXCp8zuNSyjJcxQ>
- <xmx:uB7Faq5Nkcnsn9RXbc6qsoqpBAytfvoknB6IihsvhNZyXh9Qsn2T0A>
- <xmx:uB7Farrq2scRB-oAZW2sReZF7LcLpIvRx4RkVHPyqAYs7uS-y3SjsQ>
- <xmx:uB7FasiI8uCMWSViCgLQ3BnOR-4fwAw9xyYEbSwbC-MHp8JdD33D2Q>
- <xmx:uR7Fas-sXWFZjrWVtde5XUFlU_BHodinESqT3m6P-p6NMJ1psL-Oozs_>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 6 Oct 2026 12:15:52 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>,
- Scott Mitchell <scott.k.mitch1@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9E78E40E18;
+	Tue,  6 Oct 2026 18:38:26 +0200 (CEST)
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
+ [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id 986074027B
+ for <dev@dpdk.org>; Tue,  6 Oct 2026 18:38:25 +0200 (CEST)
+Received: by mail-pj1-f53.google.com with SMTP id
+ 98e67ed59e1d1-38759bcd877so1071593a91.2
+ for <dev@dpdk.org>; Tue, 06 Oct 2026 09:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791304704;
+ x=1791909504; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=e45Cw6fj6BvUXPuena4ZCpfYebC6WTN4khbDBn6YKFU=;
+ b=ywNziSY38MGMykIvTIw1CBMKEheJb9uFR9dFNNDS3wYB5nE7WNRfbG6ktemErgAue3
+ T2L2jP63mwmnzZd1GFfCrzNcvT/jBov68FofFr5rWs74+qlFU34rMa8pbkdGoGfeGT3z
+ MW55ucrmyZATkdC/QU63Aqd7t5HJWss/F5lYf8WMSirG/rvJ50CTSAQcGp5wfyh4Qtt7
+ kqljocsI+nlIRRoyeUfaX9HWGCP2p4p+oTaiMV2GAn130pL/4GTdtj35n2D6PLOhqFaL
+ QtTyMX6EnRIPZSIUlZEzgg+zOozffOC8ERELd4EY8kAsusJfxgjvyRRdudyBGSL+CX50
+ Y1YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791304704; x=1791909504;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=e45Cw6fj6BvUXPuena4ZCpfYebC6WTN4khbDBn6YKFU=;
+ b=L/KdPHBrDlSxqaE8eQiYUVk5J6Tz3wtdUe/mOkbkvezmUCxCKWJp3/wVXut5FTdfzP
+ xNCbN0vQ/FYg0uIR+VONI4jzsaxtq2fgta7noiYPqHSB5nCqyLBw+IKgR7qgd/ue9Sqv
+ XF+wFKDM9rhb3sz9QE0Yle/MVPJrc4Dfhl2iQGp6He2kouwZQGe2073/O3UeWRgm3cOq
+ TJj8UNkj2RVBX/OS5eBPAnbwuywQt+puePiZVWsxZwQCmNKeN2wVWiK17SeDfxaV8Hrd
+ uolgPvbXxmumwkt/WKY/D92jj1hyMmNNd4gbcgeHbmYooEqZnclrtcOjdjaBAn/QdQWs
+ BH2g==
+X-Gm-Message-State: AFq9FYJf+IgBWIVq+JH65CKckvyHTI5L8FKXmfuqNbToBTMxtnWyKkqC
+ 7US7GCV7PLROGeMxvSnMmdvwkXhsD/xdKH1sh7Q9Odu0Q0h6uQcUt+iZNADCOYqhAbY=
+X-Gm-Gg: AYBFou113Rqv52XyM0veq7siKmVkCV6TrAi6pQTAQ78dAwt2oXzBtrHiWi/sn/nn/0a
+ hjbSReKqWnUCOsYRR6CiSXhU6v8Lzd9N+uL/kWkBg2UgLXGLDHS15OJkppv8mMsngiYla1T4Uiu
+ U8vTpxKQKh7JAaOrdC9Jp0JHjLZI6AAqTNlYsXGUoHWH2U1oAu0ARTW45xPpCyxp6RUwZ6OMAus
+ dR+QspBvtze/P46vZp5wQ6TbK6awj+SBnX1r7+sqaeaIh5sOX3LoKFSbGmoHiaUWMCCxpduM0oa
+ xHLTxn3X4CzDbYWDkFAN202lUqVBHtQaPbGqRXoZ/IeT4HQNSXaE7Xf65rcZ0V3sm6wkEXtT78P
+ WspswgVlGN/xVKX/0nS4QXp5iYzxJhiZ0omCZefGXzScN6BMFFzm1XaWV2W1V3Huy8dhEjc9KaF
+ i4kF9pd7pBcscEFik7UyKSB+DmsugJHWOB3Tje1DOx/vQ/Z7FYWbZW94bWEt3wCBEGwyobXf73k
+ 5vbV3HQMBRvYarUsGKhsMmv8WV9XYrRE5WYXrlX
+X-Received: by 2002:a17:90b:3c43:b0:3a4:ef4a:4f12 with SMTP id
+ 98e67ed59e1d1-3a8737dc5c7mr1233501a91.61.1791304704394; 
+ Tue, 06 Oct 2026 09:38:24 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3a89b3a2b36sm259368a91.9.2026.10.06.09.38.23
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 06 Oct 2026 09:38:24 -0700 (PDT)
+Date: Tue, 6 Oct 2026 09:38:22 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Joshua Washington <joshwash@google.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v3 0/5] eal: RTE_PTR_ADD and fix unaligned types
-Date: Tue, 06 Oct 2026 18:15:50 +0200
-Message-ID: <w9-bK2QiQn2t3WicJK8b3Q@monjalon.net>
-In-Reply-To: <20260907183239.629053-1-stephen@networkplumber.org>
-References: <20260904220953.3105930-1-stephen@networkplumber.org>
- <20260907183239.629053-1-stephen@networkplumber.org>
+Subject: Re: [PATCH v4 00/15] Introduce RTE_DIV_ROUND_UP
+Message-ID: <20261006093822.603a7a2e@phoenix.local>
+In-Reply-To: <20261006023053.2572501-1-joshwash@google.com>
+References: <20260923010742.2468145-1-joshwash@google.com>
+ <20261006023053.2572501-1-joshwash@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -106,16 +82,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Scott Mitchell (1):
->   eal: RTE_PTR_ADD/SUB API improvements
+On Mon,  5 Oct 2026 19:30:36 -0700
+Joshua Washington <joshwash@google.com> wrote:
+
+> Numerous components independently define the DIV_ROUND_UP macro, using
+> the same definition. Attempt to commonize by introducing
+> RTE_DIV_ROUND_UP to rte_common.h and replacing usages of DIV_ROUND_UP
+> with RTE_DIV_ROUND_UP. Similarly, replace DIV_CEIL, which is
+> functionally identical, to RTE_DIV_ROUND_UP.
 > 
-> Stephen Hemminger (4):
->   test: fix jhash 32 bit key type
->   eal: make unaligned really unaligned
->   net/mlx5: drop unnecessary STRICT_ALIGN
->   arm: remove no longer used RTE_ARCH_STRICT_ALIGN
+> Changes in v4:
+>   - eal: Fix merge conflict in release notes after rebase.
+>   - various commits: add rte_common.h includes where missing to fix
+>     compilation issues.
+>   - opae: drop RTE_DIV_ROUND_UP change due to shered osdep file for RTE
+>     and raw drivers.
 
-Applied, thanks.
+Looks good, some minor AI notes on commit messages and doc
 
+Review: [PATCH v4 00/15] division round up consolidation
 
+Series applies cleanly to main. Each patch touches a disjoint set of
+files, so with 01/15 first the series is bisect safe. Build of all
+affected drivers, dpdk-proc-info, dpdk-test and dpdk-test-compress-perf
+with -Dwerror=true is clean.
 
+No errors or warnings.
+
+Series
+
+Info: remaining private copies not covered by this series, candidates
+for a follow-up:
+  drivers/raw/ifpga/base/opae_osdep.h   DIV_ROUND_UP (map like cxgbe)
+  drivers/crypto/ccp/ccp_dev.h          CCP_DIV_ROUND_UP
+  drivers/common/qat/dev/qat_dev_gen_lce.c  LCE_DIV_ROUND_UP
+  drivers/net/sfc/sfc_dp.h              SFC_DIV_ROUND_UP
+  drivers/common/sxe2/sxe2_osal.h       SXE2_DIV_ROUND_UP
+  drivers/common/cnxk/roc_platform.h    PLT_DIV_CEIL
+sfc_efx base (EFX_DIV_ROUND_UP) is shared code and should stay.
+
+Patch 01/15 eal: introduce division round up macro
+
+Info: the Doxygen repeats itself. "Evaluated twice" is in @param d and
+again in the first @note; "non-negative" is in @param n and again in
+the second @note. Keep the @param text and drop the duplicate notes.
+
+The plain expression form (not a statement expression with typeof) is
+correct here: several converted users need an integer constant
+expression (array bound via BITS_TO_LONGS in rnp.h, MAX_KEY_DWORDS in
+hns3_fdir.c, CNIC_ILT_LINES in bnx2x.h).
+
+Patch 05/15 net/qede, 10/15 net/cxgbe, 11/15 net/ena
+
+Info: commit message says RTE_DIV_ROUND_UP "makes DIV_ROUND_UP
+redundant", but these patches keep DIV_ROUND_UP as an alias for base/
+code. Say that instead, e.g.:
+
+  Map DIV_ROUND_UP to RTE_DIV_ROUND_UP for the shared base code
+  and use RTE_DIV_ROUND_UP directly elsewhere in the driver.
+
+Patch 05/15 net/qede
+
+Info: bcm_osal.h still defines RTE_ROUNDUP in the driver, squatting on
+the RTE_ namespace the same way the removed RTE_DIV_ROUND_UP did.
+RTE_ALIGN_MUL_CEIL() is the equivalent. Follow-up, not this series.
+
+Patch 06/15 net/rnp
+
+Info: nothing in DPDK defines BITS_TO_LONGS, so the new #ifndef guard
+does nothing; drop it.
