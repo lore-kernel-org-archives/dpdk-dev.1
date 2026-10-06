@@ -2,35 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09377CA5FED
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 09:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F3BCA5FED
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 Oct 2026 09:28:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 773C6410FC;
-	Tue,  6 Oct 2026 11:27:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D236E41101;
+	Tue,  6 Oct 2026 11:27:24 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id CB82240697
- for <dev@dpdk.org>; Tue,  6 Oct 2026 11:27:11 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4214940E09
+ for <dev@dpdk.org>; Tue,  6 Oct 2026 11:27:12 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AD7922001A5;
- Tue,  6 Oct 2026 11:27:11 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 27B232001AF;
+ Tue,  6 Oct 2026 11:27:12 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4DF3A2001A8;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E67572001A8;
  Tue,  6 Oct 2026 11:27:11 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id BABC71800226;
- Tue,  6 Oct 2026 17:27:10 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 73371180022D;
+ Tue,  6 Oct 2026 17:27:11 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: Gagandeep Singh <g.singh@nxp.com>,
-	Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v21 12/27] bus/dpaa: improve FQ shutdown with channel
- validation
-Date: Tue,  6 Oct 2026 14:56:48 +0530
-Message-Id: <20261006092703.2138929-13-hemant.agrawal@nxp.com>
+Subject: [PATCH v21 14/27] net/dpaa: optimize FM deconfig
+Date: Tue,  6 Oct 2026 14:56:50 +0530
+Message-Id: <20261006092703.2138929-15-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261006092703.2138929-1-hemant.agrawal@nxp.com>
 References: <20261005085337.1069213-1-hemant.agrawal@nxp.com>
@@ -51,292 +48,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+Consolidate FM deconfiguration to avoid duplicate calls.
+Move the fm_deconfig call to a single location and remove
+redundant checks in the device close path.
 
-Read the pool-channel-range property from the device tree, validate that
-it has two items, and store the pool channel start and count. Warn if
-the configured start differs from the default. Replace the hardcoded
-pool channel range check in qman_shutdown_fq() with these DTS-derived
-values, via dpaa_get_qm_channel_pool() and the new
-dpaa_get_qm_channel_pool_num().
-
-Reject an FQ scheduled on another portal's dedicated channel with
--EBUSY instead of trying to drain it. QM_SDQCR_CHANNELS_DEDICATED only
-dequeues the calling portal's own channel, so the FQRN would never
-arrive and the drain loop would spin forever. Push-mode Rx queues are
-such FQs. A channel in the DCP portal range is rejected the same way.
-
-Bound the FQRN wait by QMAN_FQRN_WAIT_MAX iterations rather than
-looping until the notification arrives, so a queue that never retires
-cannot hang the caller.
-
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman.c        | 93 ++++++++++++++---------
- drivers/bus/dpaa/base/qbman/qman_driver.c | 29 ++++++-
- drivers/bus/dpaa/dpaa_bus_base_symbols.c  |  1 +
- drivers/bus/dpaa/include/fsl_qman.h       | 11 ++-
- 4 files changed, 92 insertions(+), 42 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c | 42 +++++++++++++++-------------------
+ drivers/net/dpaa/dpaa_flow.c   |  9 ++++----
+ 2 files changed, 24 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index 92991dae25..9f1c5944c5 100644
---- a/drivers/bus/dpaa/base/qbman/qman.c
-+++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -2791,8 +2791,9 @@ qman_shutdown_fq(struct qman_fq *fq)
- 	struct qm_mc_result *mcr;
- 	int orl_empty, drain = 0, ret = 0;
- 	u32 res, fqid = fq->fqid;
-+	u32 loop;
- 	u8 state;
--	u32 channel, wq;
-+	u16 channel;
- 
- 	DPAA_BUS_DEBUG("In shutdown for queue = %x", fqid);
- 	if (!p)
-@@ -2806,9 +2807,10 @@ qman_shutdown_fq(struct qman_fq *fq)
- 		ret = -ETIMEDOUT;
- 		goto out;
- 	}
-+
- 	state = mcr->queryfq_np.state & QM_MCR_NP_STATE_MASK;
- 	if (state == QM_MCR_NP_STATE_OOS) {
--		DPAA_BUS_ERR("Already in OOS");
-+		DPAA_BUS_DEBUG("fqid(0x%x) Already in OOS", fqid);
- 		goto out; /* Already OOS, no need to do anymore checks */
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index bf006fefc7..d1fb76224b 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -582,15 +582,6 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 		return -ENOENT;
  	}
  
-@@ -2824,7 +2826,6 @@ qman_shutdown_fq(struct qman_fq *fq)
- 
- 	/* Need to store these since the MCR gets reused */
- 	channel = qm_fqd_get_chan(&mcr->queryfq.fqd);
--	wq = qm_fqd_get_wq(&mcr->queryfq.fqd);
- 
- 	switch (state) {
- 	case QM_MCR_NP_STATE_TEN_SCHED:
-@@ -2843,10 +2844,9 @@ qman_shutdown_fq(struct qman_fq *fq)
- 		}
- 		res = mcr->result; /* Make a copy as we reuse MCR below */
- 
--		if (res == QM_MCR_RESULT_OK)
-+		if (res == QM_MCR_RESULT_OK) {
- 			drain_mr_fqrni(&p->p);
+-	/* DPAA FM deconfig */
+-	if (!(default_q || fmc_q)) {
+-		ret = dpaa_fm_deconfig(dpaa_intf, dev->process_private);
+-		if (ret) {
+-			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
+-				dev->data->name, ret);
+-		}
+-	}
 -
--		if (res == QM_MCR_RESULT_PENDING) {
-+		} else if (res == QM_MCR_RESULT_PENDING) {
- 			/*
- 			 * Need to wait for the FQRN in the message ring, which
- 			 * will only occur once the FQ has been drained.  In
-@@ -2858,47 +2858,70 @@ qman_shutdown_fq(struct qman_fq *fq)
- 			/* Flag that we need to drain FQ */
- 			drain = 1;
+ 	dpaa_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *dpaa_dev);
+ 	intr_handle = dpaa_dev->intr_handle;
+ 	__fif = container_of(fif, struct __fman_if, __if);
+@@ -631,7 +622,26 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ clean_1:
+ 	/* release configuration memory */
+ 	rte_free(dpaa_intf->fc_conf);
++	dpaa_intf->fc_conf = NULL;
  
--			__maybe_unused u16 dequeue_wq = 0;
--			if (channel >= qm_channel_pool1 &&
--				channel < (u16)(qm_channel_pool1 + 15)) {
--				/* Pool channel, enable the bit in the portal */
--				dequeue_wq = (channel -
--						qm_channel_pool1 + 1) << 4 | wq;
--			} else if (channel < qm_channel_pool1) {
--				/* Dedicated channel */
--				dequeue_wq = wq;
--			} else {
--				DPAA_BUS_ERR("Can't recover FQ 0x%x, ch: 0x%x",
--					fqid, channel);
--				ret = -EBUSY;
--				goto out;
--			}
--			/* Set the sdqcr to drain this channel */
--			if (channel < qm_channel_pool1)
-+			const u16 pool_ch_start = dpaa_get_qm_channel_pool();
-+			const u16 pool_ch_end = pool_ch_start +
-+					dpaa_get_qm_channel_pool_num();
-+			if (channel >= pool_ch_start && channel < pool_ch_end) {
-+				/*
-+				 * Pool channel: subscribe this portal to it so
-+				 * the hardware can deliver frames and the FQ
-+				 * retires. Any portal can subscribe to any
-+				 * pool channel via SDQCR.
-+				 */
- 				qm_dqrr_sdqcr_set(&p->p,
- 						  QM_SDQCR_TYPE_ACTIVE |
--						  QM_SDQCR_CHANNELS_DEDICATED);
--			else
-+						  QM_SDQCR_CHANNELS_POOL_CONV(channel));
-+			} else if (channel < pool_ch_start) {
-+				/*
-+				 * Dedicated channel. QM_SDQCR_CHANNELS_DEDICATED
-+				 * only dequeues this portal's own channel, so if
-+				 * the FQ is scheduled on another portal's
-+				 * dedicated channel the FQRN would never arrive
-+				 * and the drain loop below would spin forever.
-+				 * Push-mode Rx queues are exactly such FQs.
-+				 */
-+				if (channel != p->config->channel) {
-+					DPAA_BUS_ERR("FQ 0x%x on portal channel 0x%x, not ours(0x%x)",
-+						fqid, channel,
-+						p->config->channel);
-+					ret = -EBUSY;
-+					goto out;
-+				}
- 				qm_dqrr_sdqcr_set(&p->p,
- 						  QM_SDQCR_TYPE_ACTIVE |
--						  QM_SDQCR_CHANNELS_POOL_CONV
--						  (channel));
--			do {
-+						  QM_SDQCR_CHANNELS_DEDICATED);
-+			} else {
-+				/* Channel is in DCP portal range (e.g. FM0); not drainable here */
-+				DPAA_BUS_ERR("DCP portal channel 0x%x for FQ 0x%x",
-+					channel, fqid);
-+				ret = -EBUSY;
-+				goto out;
-+			}
-+
-+			for (loop = 0; loop < QMAN_FQRN_WAIT_MAX; loop++) {
- 				/* Keep draining DQRR while checking the MR*/
- 				qm_dqrr_drain_nomatch(&p->p);
- 				/* Process message ring too */
--				found_fqrn = qm_mr_drain(&p->p,
--							FQRN);
-+				found_fqrn = qm_mr_drain(&p->p, FQRN);
-+				if (found_fqrn)
-+					break;
- 				cpu_relax();
--			} while (!found_fqrn);
--			/* Restore SDQCR */
--			qm_dqrr_sdqcr_set(&p->p,
--					p->sdqcr);
-+			}
-+
-+			/* Restore portal SDQCR for both dedicated and pool channels */
-+			qm_dqrr_sdqcr_set(&p->p, p->sdqcr);
-+
-+			if (!found_fqrn) {
-+				DPAA_BUS_ERR("FQ 0x%x retire did not complete",
-+					fqid);
-+				ret = -EBUSY;
-+				goto out;
-+			}
- 		}
- 		if (res != QM_MCR_RESULT_OK &&
- 		    res != QM_MCR_RESULT_PENDING) {
- 			DPAA_BUS_ERR("retire_fq failed: FQ 0x%x, res=0x%x",
--				      fqid, res);
-+				fqid, res);
- 			ret = -EIO;
- 			goto out;
- 		}
-diff --git a/drivers/bus/dpaa/base/qbman/qman_driver.c b/drivers/bus/dpaa/base/qbman/qman_driver.c
-index bbe2640c52..ea85e4fd27 100644
---- a/drivers/bus/dpaa/base/qbman/qman_driver.c
-+++ b/drivers/bus/dpaa/base/qbman/qman_driver.c
-@@ -17,9 +17,10 @@
-  * where CCSR isn't available).
-  */
- u16 qman_ip_rev;
--u16 qm_channel_pool1 = QMAN_CHANNEL_POOL1;
--u16 qm_channel_caam = QMAN_CHANNEL_CAAM;
--u16 qm_channel_pme = QMAN_CHANNEL_PME;
-+static u16 qm_channel_pool1 = QMAN_CHANNEL_POOL1;
-+static u16 qm_channel_caam = QMAN_CHANNEL_CAAM;
-+static u16 qm_channel_pme = QMAN_CHANNEL_PME;
-+static u16 qm_channel_pool_num;
- 
- /* Ccsr map address to access ccsrbased register */
- static void *qman_ccsr_map;
-@@ -63,6 +64,11 @@ u16 dpaa_get_qm_channel_pool(void)
- 	return qm_channel_pool1;
- }
- 
-+u16 dpaa_get_qm_channel_pool_num(void)
-+{
-+	return qm_channel_pool_num;
-+}
-+
- static int fsl_qman_portal_init(uint32_t index, int is_shared)
- {
- 	struct qman_portal *portal;
-@@ -273,7 +279,7 @@ int qman_global_init(void)
- 	uint64_t phys_addr;
- 	uint64_t regs_size;
- 	const u32 *clk;
--
-+	u16 pool_channel;
- 	static int done;
- 
- 	if (done)
-@@ -334,6 +340,21 @@ int qman_global_init(void)
- 		return -EINVAL;
- 	}
- 
-+	if (lenp != sizeof(rte_be32_t) * 2) {
-+		pr_err("pool-channel-range should have 2 items.\n");
-+		return -EINVAL;
++	/* For FMCLESS mode of share MAC, deconfig FM to direct
++	 * ingress traffic to kernel before fq shutdown.
++	 */
++	if (!(default_q || fmc_q) && dpaa_intf->port_handle) {
++		ret = dpaa_fm_deconfig(dpaa_intf, dev->process_private);
++		if (ret) {
++			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
++				dev->data->name, ret);
++		}
 +	}
-+	pool_channel = rte_be_to_cpu_32(chanid[0]);
-+	qm_channel_pool_num = rte_be_to_cpu_32(chanid[1]);
-+
-+	if (pool_channel != qm_channel_pool1) {
-+		pr_warn("Pool channel(0x%04x) configured != default(0x%04x)\n",
-+			pool_channel, qm_channel_pool1);
++	if (fif->num_profiles) {
++		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
++		if (ret) {
++			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
++				dev->data->name, ret);
++		}
 +	}
-+	qm_channel_pool1 = pool_channel;
-+	pr_debug("Pool channel starts from 0x%04x, number=%d, lenp:%zu\n",
-+		qm_channel_pool1, qm_channel_pool_num, lenp);
-+
- 	/* get ccsr base */
- 	dt_node = of_find_compatible_node(NULL, NULL, "fsl,qman");
- 	if (!dt_node) {
-diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-index 6fc8cf3fd6..b6ed9b2ec8 100644
---- a/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-+++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-@@ -61,6 +61,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_enable)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_disable)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_ioctl_version_number)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_link_status)
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_qm_channel_pool_num)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_update_link_status)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_update_link_speed)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_restart_link_autoneg)
-diff --git a/drivers/bus/dpaa/include/fsl_qman.h b/drivers/bus/dpaa/include/fsl_qman.h
-index b7e368f973..61a0f5c8b5 100644
---- a/drivers/bus/dpaa/include/fsl_qman.h
-+++ b/drivers/bus/dpaa/include/fsl_qman.h
-@@ -35,9 +35,6 @@ extern "C" {
- #define QMAN_CHANNEL_POOL1_REV3 0x401
- #define QMAN_CHANNEL_CAAM_REV3 0x840
- #define QMAN_CHANNEL_PME_REV3 0x860
--extern u16 qm_channel_pool1;
--extern u16 qm_channel_caam;
--extern u16 qm_channel_pme;
- enum qm_dc_portal {
- 	qm_dc_portal_fman0 = 0,
- 	qm_dc_portal_fman1 = 1,
-@@ -51,6 +48,9 @@ u16 dpaa_get_qm_channel_caam(void);
- __rte_internal
- u16 dpaa_get_qm_channel_pool(void);
++	/* Release congestion Groups after releasing FQIDs */
+ 	/* Release RX congestion Groups */
+ 	if (dpaa_intf->cgr_rx) {
+ 		/* The CGRIDs are a contiguous range, so one scan of the FQID
+@@ -685,20 +695,6 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
  
-+__rte_internal
-+u16 dpaa_get_qm_channel_pool_num(void);
-+
- /* Portal processing (interrupt) sources */
- #define QM_PIRQ_CCSCI	0x00200000	/* CEETM Congestion State Change */
- #define QM_PIRQ_CSCI	0x00100000	/* Congestion State Change */
-@@ -1279,6 +1279,11 @@ struct qman_cgr {
- /* Maximum FQID value: frame queue IDs are 24 bits wide. */
- #define QMAN_MAX_FQID			0x00FFFFFFu
+ 	rte_free(dpaa_intf->tx_queues);
+ 	dpaa_intf->tx_queues = NULL;
+-	if (dpaa_intf->port_handle) {
+-		ret = dpaa_fm_deconfig(dpaa_intf, fif);
+-		if (ret) {
+-			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
+-				dev->data->name, ret);
+-		}
+-	}
+-	if (fif->num_profiles) {
+-		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
+-		if (ret) {
+-			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
+-				dev->data->name, ret);
+-		}
+-	}
  
-+/* Polling bound while waiting for an FQ retirement notification. A retire
-+ * that has not been reported by then is not going to complete on this portal.
-+ */
-+#define QMAN_FQRN_WAIT_MAX		10000000u
+ 	rte_free(dpaa_intf->tx_conf_queues);
+ 	dpaa_intf->tx_conf_queues = NULL;
+diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
+index f21950f64d..bfe294d21d 100644
+--- a/drivers/net/dpaa/dpaa_flow.c
++++ b/drivers/net/dpaa/dpaa_flow.c
+@@ -728,6 +728,9 @@ int dpaa_fm_deconfig(struct dpaa_if *dpaa_intf,
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
++	if (!dpaa_intf->port_handle)
++		return 0;
 +
- /* Flags to qman_create_fq() */
- #define QMAN_FQ_FLAG_NO_ENQUEUE      0x00000001 /* can't enqueue */
- #define QMAN_FQ_FLAG_NO_MODIFY       0x00000002 /* can only enqueue */
+ 	/* FM PORT Disable */
+ 	ret = fm_port_disable(dpaa_intf->port_handle);
+ 	if (ret != E_OK) {
+@@ -787,10 +790,8 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set)
+ 	unsigned int i = 0;
+ 	PMD_INIT_FUNC_TRACE();
+ 
+-	if (dpaa_intf->port_handle) {
+-		if (dpaa_fm_deconfig(dpaa_intf, fif))
+-			DPAA_PMD_ERR("DPAA FM deconfig failed");
+-	}
++	if (dpaa_fm_deconfig(dpaa_intf, fif))
++		DPAA_PMD_ERR("DPAA FM deconfig failed");
+ 
+ 	if (!dev->data->nb_rx_queues)
+ 		return 0;
 -- 
 2.25.1
 
