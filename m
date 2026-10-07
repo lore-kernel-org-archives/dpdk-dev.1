@@ -2,90 +2,97 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F96ECA6002
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 20:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25124CA6002
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 20:21:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 802D540268;
-	Wed,  7 Oct 2026 22:11:16 +0200 (CEST)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com
- [209.85.218.47]) by mails.dpdk.org (Postfix) with ESMTP id CE92740265
- for <dev@dpdk.org>; Wed,  7 Oct 2026 22:11:15 +0200 (CEST)
-Received: by mail-ej1-f47.google.com with SMTP id
- a640c23a62f3a-c169ae1cb26so1617266b.1
- for <dev@dpdk.org>; Wed, 07 Oct 2026 13:11:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791403875; cv=none;
- d=google.com; s=arc-20260327;
- b=G7w1Mm7sZoS0dapqU+BsKyH4pWMvjTL+ICW8YNvLtf01FTgUJ6rslc0w/WW/tnB8ip
- eiuhjQI71WuwFn3aVBHGO+oonHEgtn6/HdzPEHx5DOoleH+zMoxLOG1mFZlN21x838CL
- nG2L9vvuCivQRSqTXi5793Z16WCwx7k2QohULdQXMrEz3DevLAPi5iR/PVSppawEZfxz
- 0wxbb5n5GFT6eg7T4WFIigskUnMDdp3+zDn+RtBHb3Nnzk6Fsh4/Ztp6BBBWTP0TCoQY
- aDHbfbgU9PsoOFuNCOwMIGKMcpwgcumbuz2t2zurv0Qka62Vq56KIb390UMiFYRVKcq4
- ufkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=LsScEQJzKsIFY6X6OikZEIIUczoJc8I5hHlK0SLOP5c=;
- fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
- b=hpTazXIVeWOVgm1zVMM0sJuXTEj0I1XP6lUEneteEk7/MUisaKsWjD0jPFsznhnPiC
- FRLA+uREnpdfoAM2+BDwT9OoWF3IASmf7ea60+HK9U1SBwsuA/ddgRFm0QEAxUbekwzn
- hbc/9Y5MZaXodX8iFAy1uowyrRY/+F7pnAPqDyzQf/xw2in66Nc/eOz0U7eR7FtR0G9H
- E1+fSDVxz8hYMjd+faf3NV6ImCxoCDLFfbJEX9s6CEyz+hGD6BPYgyjH/0yUn6h9q65C
- Vq3rmsG6HpPqlUlQNsbFI1cQjRWhSl7SXmqHAqDmEH5bo+sM8zieURgYuBuLBOLMpYTz
- T8wg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1791403875; x=1792008675; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=LsScEQJzKsIFY6X6OikZEIIUczoJc8I5hHlK0SLOP5c=;
- b=hoi8fVH0CrGDbgHTVrJBuok0KLimm4fUotdqF7CvKb1cjdtuO9x0DcDdgbSMXihvIG
- TJCThHvGo1lGx2PT8rNPuZnTnX8+CZnWshJPpS0+dO1b+xBhkfWTfKLGPFGFvTj2dDBV
- LMngwZtVxm7Yu4gESDuA/SOXhtAakfVMN2jz+if341xa6GXGvvKDpT9CD6z+Nhkjcz7h
- uPBKwLeM4+b27IeR5j7iT5rRU/MQrJRLQ2pvvL4+WEW1C3vDISijd8UG9cX5CoOCfhhJ
- gq53P13PuK7ekAl2d22MdECy6tji2IRyfJZZGSGIbpVvFqdVmUgGUnwk8Tl1YJZrCenk
- KoUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791403875; x=1792008675;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=LsScEQJzKsIFY6X6OikZEIIUczoJc8I5hHlK0SLOP5c=;
- b=AGEzRudiwgZ9HaC93l3QLPJUzEdGOx3Ql3qajp82z2DbuvRTc6WDD67fI1tBIedk67
- MP3TH3PlFyJrsX9bGs7VSJqLVIuKLg5obbIJRRbjiP8FBYGrpIMCXxaqCGKlOlIC5r6v
- FONktSp9AK1dBZBQX+NaYXok1qUzXLSoIs/qHadIZbg9yqPA/ToLat4Lnda+JiwE7DQc
- i4VEved1o+dGaYQvXgVnnNaHRJGx+4LEWaclWnET5jMS2XsuAIV6c9b5J+0lg9MX3Xl6
- /cSkpRdtq2tb0UOcX+ONnlcoejn31VoCyWfvHLZ1qvDwGe/+VLOUDHpKxcXhWJdef2aw
- Ch8A==
-X-Gm-Message-State: AFq9FYJDoHC26NgKqBahA8hzLLoZ9sEc1tPDWBcoPVO9smSehkJVSZmF
- Rou0AloEKmyCLmLC1xiMMGH2DZvafVGu7OHsxwWK8OPwPu2roFXb9teazbCxBl7PRwAbHmoGM4C
- opV5zsJvi9wwGR8011lfbKwSRGDHoHLtr9dTgqmKKGuhHZyvLnn+n0oUN
-X-Gm-Gg: AYBFou1M69vfcHEEt3Ph6b+PzW4ZEh8ExiAPwGGSKS1rMpdii/0x9IY17vYrQs8JUrM
- HSDr0QYYDhksTVpajwP0tLmFwW1J3/4/LH3jwr5gbcU6koKzyNHK0LCHGCcyfPsD6l1WMUtBg2Y
- 3qPCp/BIT4BQpfSNGt0HtyF88J7fJ9w9E7lTDUCwacDWYGFnQWbKZ9QDcA4aIhSyHChiFeB+MSg
- j2HEq2xNdeZqPmsVviU60/dcFY/Glt0ToDKRyU4o+fFdspDdRDVHh/FOBIX3QCASxALGQssnM4/
- aLo5sbB/txkE+C/quOx3TsTF/2fQvCEVEubpyOLDn8Vywy6X7YMl2MVOAHMSm+wWYtU03oXU0TO
- E5bp+/NzT
-X-Received: by 2002:a17:907:9282:b0:c2e:616b:6763 with SMTP id
- a640c23a62f3a-c319198032amr23591966b.3.1791403874673; Wed, 07 Oct 2026
- 13:11:14 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4CC0740268;
+	Wed,  7 Oct 2026 22:21:35 +0200 (CEST)
+Received: from fout-b5-smtp.messagingengine.com
+ (fout-b5-smtp.messagingengine.com [202.12.124.148])
+ by mails.dpdk.org (Postfix) with ESMTP id CB72E40265
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 22:21:33 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.stl.internal (Postfix) with ESMTP id 1C9811D0013A
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 16:21:33 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Wed, 07 Oct 2026 16:21:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1791404492;
+ x=1791490892; bh=UHYMI2GSNodvh4v7jN3fLMJK36DPAshorx/UQ2Jt/7g=; b=
+ SbS1jDNw+y7i5WD0bARjU7V+oKfr5axlNgJxeYzLhET9KX+OSxmWAQN45ujYDSIB
+ GZtJ2shZlbsOC7ZVQf25aZuI+MUh5yH/iPB+NJ98DFowGnOro45LMKkrbkd+zW6h
+ MX9YY7uu7Kh3IwtkhVG68dHV6yypBOvj9nXEeeO03mCGVIUoDKfzTwHSRsiNkkqe
+ J8NlmmctEOFr+wi5V5XuDhG/Spb/nmQFG/0WoXS1Toh3OdhFDNoodEQ2aB5wS9rn
+ OyGX7H8JZbMk2iE5ZZQUlVHNllIDX78URs3KoN2Mbg2tMIAb5P9TRXdvVVxrjems
+ o4r/B0msY9/+szGt93J9nA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791404492; x=
+ 1791490892; bh=UHYMI2GSNodvh4v7jN3fLMJK36DPAshorx/UQ2Jt/7g=; b=n
+ lgWXTJdmCbWpRBshwbbPfNchTO1m8xyeiIp92mkpfe39z5nlDzgDaIOMdRV22r5O
+ 41XwbHP5iz0HcOYbknAvKxz6qoyv+ZZErVZUE0tO5KBIV/x4W3QdiIPp1PgzQZQx
+ ZzNqpXOT5d1OzirSaRcffN4PAy1n5mvFZmddGABrdW0WQXGglTIGs1dEMBsp9f1H
+ RI/sX/a0e8o2KcjHyW3gmqqk5bvDaAr8pjxj7n8xs8oK9rxgJXMdS2mwijrproam
+ GNrHYzVIHnCwV7ezV0aRMBZJ2JmyQUKp4gIkNPBZHw9T7+8KAj7hcKYJagUssoWD
+ a5w3kmySkHppqqvT/OmPg==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1791404492; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm2:rsa-sha256:KDB+vmJlgRCZK6naJJSwyNkAAM0HtU9W04i2BCdbKgsMHsx
+ hkVb+Qwfph3M4zx04Y8p2VjomWVqISJGMBeTQI86G1L37taGFjXLHBGP+VAgKInR
+ HYXzpFvKmmM5l4rVRjK1Ybr+GtFdWLMLSKRdteY8CsQ1MNI5stusxvShtkX6amxE
+ hkNb5l7u/EO797h39vzbVHbcO5UffyUCbtIHA6D0kVwpc6Z6cds14bBE3hZyx092
+ QVn/HIzO/kDN3hYuiQjWir8DQWIdnot9PwpsE+o2MdiDjKcK4FJNCtXrjFoKIxlr
+ Gc/OzgAZgkoDNZjTaJxKyre6SDF1Qr+rScpRUlQ==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:+ifUv+wzvTZBNBPryUJMAwd/11dcyZuTQv1+w5UnYTU=:4GcBq+jacrFD08ICAQcolNEvX1nCCrgq7pm1fZWp5/M=;
+X-ME-Sender: <xms:zKnGaqEuT89QMAhowgFRetIeeZuFTLRmq-V3yaKEhm255ksTumzlfA>
+ <xme:zKnGavprn6DKQTVupfhxMkd5f62x7TANczlsxDJVsAoSuwFviPjG-vHXXcaIlv3Z3
+ iWe55QrKJNN-5sTv1HjYWBIO_Lwtmde3FgR7827jkUPLZC7arA6hvM>
+X-ME-Received: <xmr:zKnGajRI8NDWCRKW5mDwXzqS-3uMvzVF9eZWUHnUCimkoMBXyv5FzQWqtHbQGIaNjOYJyq8eNvGQ4lcxWo2LyIE>
+X-ME-Proxy-Cause: dmFkZTGCElsprzVb70mBRNfjE1Ndvd+1cAsGqp8n4rB3C5QXXRYfq+ISZaBPT6u4nH5iqJ
+ 2/UBIBUmfhyu80xrQOxuY3h4pnAts+tpzZLkZxrxiiovdgYJuZSDOs9r3jI2CkVfhylINN
+ NBVpiaBCIYQHUjE6exwWmmO/jEBAIHlFz484+5iKGt6famittH8fQCJxvb28Ojx1hR7pcl
+ RhTKGHl6EQ2iwgsHw5E52fx7yAl999SCzjhfmbCbv4vlNscUuDn16IJQpcKcc9Xf/juOFk
+ BjKbU9XehbQpba1KIrZS5jPaTcCSO8cMnFWSwb/MlCB9+oQ4SIEwXdojIE7U+GYYFsX7dh
+ k4bw8oGOqsDn89NI23e5XWXLs5S84soc+k0U/XUp0A+l2Tf4zcCIjRRzJdmGB0CjOf8IyR
+ MobceYsusjS7uN7w5J9IHxATjP7/ClvvqbafVrzqzSqseEArbbNIB6EoFhsVjBiHZfhupw
+ dzJVkQQxLS0iz9414ifyoEoaEwehFu+xJk2NCf4cUBhyzLWnXzhV/7k6Z/YEhSZ0EQf96+
+ j7Vooyq9cIG/c81rOWAnZA10y/iWImkjjyKirfhXIT98Jd23iObl1yhFWwIRQrEm7uqHj8
+ ru6eajbOOpLd4dlaqyX0UUdhDSsm5w4yyNzOlPErfPuYZDKdObBJuZz4ZQiA
+X-ME-Proxy: <xmx:zKnGasNt7zCM_fIt3efu7kyAL7GR7GOvNIHmKOdeYyq-YAvxye8FwQ>
+ <xmx:zKnGamP20HBdTK7pyjAlqIqAJZPCItZBYBAm5MGs31chxlOL_zEmiA>
+ <xmx:zKnGastdZKwDalUr9MSNtPuhAdctTd7wL3TXxq-zUQy9CMpZMZTipQ>
+ <xmx:zKnGagXNhX6dXDtW5RpCz23CqRAd6luOBiephjgTPqyYrH44pBtJyw>
+ <xmx:zKnGajCm0bGPzEd41dOLARt9GPAQaF7PHzfeed28EynXdUmYcocqYwDb>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 7 Oct 2026 16:21:31 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Joshua Washington <joshwash@google.com>
+Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v4 00/15] Introduce RTE_DIV_ROUND_UP
+Date: Wed, 07 Oct 2026 22:21:30 +0200
+Message-ID: <5dBUPxkNSW6bGjMMFysmew@monjalon.net>
+In-Reply-To: <20261006093822.603a7a2e@phoenix.local>
+References: <20260923010742.2468145-1-joshwash@google.com>
+ <20261006023053.2572501-1-joshwash@google.com>
+ <20261006093822.603a7a2e@phoenix.local>
 MIME-Version: 1.0
-References: <20261003025142.1930363-1-joshwash@google.com>
- <20261005193943.1175072-1-joshwash@google.com>
- <20261006081014.22ee1b01@phoenix.local>
-In-Reply-To: <20261006081014.22ee1b01@phoenix.local>
-From: Joshua Washington <joshwash@google.com>
-Date: Wed, 7 Oct 2026 13:11:02 -0700
-X-Gm-Features: AclHuK9jGrEERoj_AJ0dwe7n87bCG27dD7qdAzDabUTkJuUrhfBgfMHmFjiJhhw
-Message-ID: <CALuQH+XH9ChutY5OMa1tsY1naj7EwqYKCtJfxgtULU5+0r-GxA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] gve: precursor control plane changes before
- bare-metal support
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,251 +106,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Oct 6, 2026 at 8:10=E2=80=AFAM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Mon,  5 Oct 2026 12:39:31 -0700
+06/10/2026 18:38, Stephen Hemminger:
+> On Mon,  5 Oct 2026 19:30:36 -0700
 > Joshua Washington <joshwash@google.com> wrote:
->
-> > This patch series includes a number of precursor changes to the GVE
-> > ethdev driver layer in preparation for introducing support for a new
-> > GVE Mailbox control plane (an alternative to the existing AdminQ contro=
-l
-> > plane).
-> >
-> > The most major change in this series is the introduction of a new
-> > control_ops struct that will be used by both AQ and Mailbox for various
-> > operations which may need to communicate with the device. There are als=
-o
-> > some changes to how RSS and timestamping are handled in ethdev due to
-> > slight feature differences between the control planes.
-> >
-> > ---
->
-> Lots of issues found with manual run of AI review.
+> 
+> > Numerous components independently define the DIV_ROUND_UP macro, using
+> > the same definition. Attempt to commonize by introducing
+> > RTE_DIV_ROUND_UP to rte_common.h and replacing usages of DIV_ROUND_UP
+> > with RTE_DIV_ROUND_UP. Similarly, replace DIV_CEIL, which is
+> > functionally identical, to RTE_DIV_ROUND_UP.
+> > 
+> > Changes in v4:
+> >   - eal: Fix merge conflict in release notes after rebase.
+> >   - various commits: add rte_common.h includes where missing to fix
+> >     compilation issues.
+> >   - opae: drop RTE_DIV_ROUND_UP change due to shered osdep file for RTE
+> >     and raw drivers.
+> 
+> Looks good, some minor AI notes on commit messages and doc
 
-For now, I've addressed issues marked as Warning or Error. If I see
-any "Info" issues that can be trivially fixed, I'll include changes
-for those as well, but have not commented on them explicitly.
+I consider the minor notes as candidates for follow-up or not relevant.
 
->
-> Review: [PATCH v2 0/8] net/gve control ops rework (bundle 2148)
->
-> Series summary
->
-> Patches 1 and 6 add the query_rss op and NULL handling for "optional"
-> ops, but no op table in this series sets query_rss and the only table
-> fills every optional op. None of that code can run until the mailbox
-> backend lands. The abstraction is easier to judge posted together with
-> its second user.
->
-> Errors
->
-> [PATCH v2 1/8] net/gve: refactor ethdev for control ops interface
->
-> 1. Driver compatibility is no longer sent to the device after reset.
->
->    gve_verify_driver_compatibility() moved into
->    gve_adminq_get_device_properties(), which is skipped on reset:
->
->        if (skip_describe_device)
->            goto setup_device;
->        ...
->        err =3D priv->ctrl_ops->get_device_properties(priv);
->
->    Before this patch it ran right after gve_adminq_alloc() on every
->    gve_init_priv() call, including gve_dev_reset() ->
->    gve_init_priv(priv, true). Functional change in a refactor patch,
->    not mentioned in the commit message. Keep it on the path that runs
->    on reset, e.g. an AdminQ init_ctrl_plane op that does
->    gve_adminq_alloc() followed by the compatibility check.
-
-This change was intentional. Foregoing
-gve_verify_driver_compatibility() on reset should have no negative
-effect.
-
->
-> 2. Function pointer table stored in shared memory.
->
->        priv->ctrl_ops =3D &gve_adminq_ops;
->
->    priv is dev->data->dev_private, shared with secondary processes, and
->    holds the primary's address of gve_adminq_ops. A secondary installs
->    dev_ops in gve_dev_init() and returns; gve_link_update() has no
->    process type check:
->
->        err =3D priv->ctrl_ops->report_link_speed(priv);
->
->    GVE has no LSC interrupt, so rte_eth_link_get() from a secondary on
->    a started port calls link_update and jumps through the primary's
->    address. That crashes whenever the driver is mapped at a different
->    address (shared build, PIE with ASLR). Same for read_clock, mtu_set,
->    RSS and flow ops. Before this patch the secondary called the AdminQ
->    functions directly. Keep the table process local: store a control
->    plane mode enum in priv and resolve the ops with an inline helper,
->    or keep the pointer in eth_dev->process_private and set it in both
->    primary and secondary init.
-
-Will fix in v3.
-
->
-> [PATCH v2 6/8] net/gve: add RSS cache boolean flag
->
-> 3. One failed AdminQ RSS command locks out RSS configuration for the
->    life of the port.
->
->        err =3D gve_adminq_execute_cmd(priv, &cmd);
->        priv->rss_cache_dirty =3D true;
->        if (err =3D=3D 0)
->            gve_update_priv_rss_config(priv, rss_config);
->
->    On error the flag stays set. gve_adminq_ops has no query_rss, so
->    gve_rss_update_cache() returns -ENOENT from gve_rss_hash_update(),
->    gve_rss_hash_conf_get(), gve_rss_reta_update() and
->    gve_rss_reta_query(), and gve_dev_configure() skips the RETA reset
->    for the new queue count. Only gve_update_priv_rss_config() clears
->    the flag, and it is reached only through configure_rss, which every
->    caller gates on gve_rss_update_cache(). gve_dev_reset() does not
->    recover: gve_init_priv() touches the flag only when query_rss is
->    set. The same lockout follows a successful command when
->    gve_update_priv_rss_config() fails with -ENOMEM; its return value
->    is ignored since patch 5.
->
->    Before this patch a failed AdminQ command left the cached config in
->    place. AdminQ has no query, so its cache is authoritative. Drop the
->    dirty write from gve_adminq_configure_rss(), leave it to a backend
->    that implements query_rss, and propagate the update result:
->
->        err =3D gve_adminq_execute_cmd(priv, &cmd);
->        if (err =3D=3D 0)
->            err =3D gve_update_priv_rss_config(priv, rss_config);
-
-This is a good point. To keep the behavior the same as before the
-patch, I will avoid clearing the cache altogether.
-
->
-> Warnings
->
-> [PATCH v2 6/8] net/gve: add RSS cache boolean flag
->
-> 4. priv->rss_config is read before the cache is refreshed.
->
->    The commit message says the config must not be read while dirty,
->    but gve_rss_hash_update() checks priv->rss_config.key_size, copies
->    it into rss_conf->rss_key_len, and sizes the new table from the
->    cache before refreshing it:
->
->        rss_reta_size =3D priv->rss_config.indir ?
->                priv->rss_config.indir_size :
->                GVE_RSS_INDIR_SIZE;
->        err =3D gve_init_rss_config(&gve_rss_conf, rss_conf->rss_key_len,
->            rss_reta_size);
->        ...
->        err =3D gve_rss_update_cache(priv);
->
->    The later copy then takes its length from the pre-refresh cache and
->    its source from the post-refresh one:
->
->        memcpy(gve_rss_conf.indir, priv->rss_config.indir,
->            gve_rss_conf.indir_size * sizeof(*priv->rss_config.indir));
->
->    gve_dev_configure() likewise tests priv->rss_config.indir before
->    refreshing. Call gve_rss_update_cache() before the first
->    priv->rss_config access in both functions.
-
-GVE only supports RSS reta size of 128 and hash key size of 40. The
-important part of priv->rss_config to refresh is the actual data,
-which is barred behind a cache update. As for the dev_configure: if
-the indirection table is NULL, then RSS was never configured by the
-driver. This would mean that device defaults are being used. In that
-case, the device automatically scales the RSS reta for the number of
-queues, and there is no reason to attempt to update the cache.
-
->
-> [PATCH v2 7/8] net/gve: fix RSS config memory leak on close
->
-> 5. Wrong Fixes tag. priv->rss_config has been allocated by
->    gve_update_priv_rss_config() since RSS support was added and was
->    never freed, on close or on remove, before or after 7ba84453bacf.
->    Use:
->
->        Fixes: 63ef54569760 ("net/gve: support RSS configuration update")
-
-Will update the Fixes tag.
-
->
-> 6. Stable fix sits behind six refactor patches. It applies to main on
->    its own; move it to the front of the series.
-
-Will reorder the patches to have this fix first.
+Applied (with a bit of squashing), thanks.
 
 
->
-> [PATCH v2 8/8] net/gve: refactor timestamp support to clock read type
->
-> 7. RTE_ETH_RX_OFFLOAD_TIMESTAMP is now advertised when timestamp setup
->    failed.
->
->        -   if (!gve_is_gqi(priv) && priv->nic_ts_report_mz)
->        +   if (priv->clk_read_type !=3D GVE_DEV_CLK_UNSUPPORTED)
->
->    gve_setup_nic_timestamp() leaves nic_ts_report_mz NULL when the
->    memzone reservation fails and frees it when the sync thread cannot
->    be created; clk_read_type stays GVE_DEV_CLK_CMD in both cases.
->    nic_ts_stale stays set, so the Rx path never stamps packets. Before
->    this patch rte_eth_dev_configure() rejected the offload in that
->    state. Keep the nic_ts_report_mz test, or set clk_read_type to
->    GVE_DEV_CLK_UNSUPPORTED on setup failure.
+> Info: remaining private copies not covered by this series, candidates
+> for a follow-up:
+>   drivers/raw/ifpga/base/opae_osdep.h   DIV_ROUND_UP (map like cxgbe)
+>   drivers/crypto/ccp/ccp_dev.h          CCP_DIV_ROUND_UP
+>   drivers/common/qat/dev/qat_dev_gen_lce.c  LCE_DIV_ROUND_UP
+>   drivers/net/sfc/sfc_dp.h              SFC_DIV_ROUND_UP
+>   drivers/common/sxe2/sxe2_osal.h       SXE2_DIV_ROUND_UP
+>   drivers/common/cnxk/roc_platform.h    PLT_DIV_CEIL
 
-This was due to a resbase error. Will revert.
-
->
-> Info
->
-> [PATCH v2 1/8] net/gve: refactor ethdev for control ops interface
->
-> 8. The comment marks free_db_resources, setup_stats_report,
->    report_nic_timestamp and the page list ops optional, but only the
->    set_mtu caller checks for NULL. gve_teardown_device_resources()
->    calls free_db_resources unconditionally. Either check at each call
->    site or drop the "optional" claim until a backend omits them.
->
-> [PATCH v2 6/8] net/gve: add RSS cache boolean flag
->
-> 9. Pre-existing, not introduced by this patch, but the lines are
->    re-indented here: gve_dev_configure() ignores the return of
->    gve_init_rss_config_from_priv(). If the key allocation fails,
->    update_reta_config.indir is uninitialized stack and
->    gve_generate_rss_reta() writes through it. If the indir allocation
->    fails, gve_init_rss_config() frees key without clearing it and
->    gve_free_rss_config() frees it again.
->
-> 10. Pre-existing: gve_update_priv_rss_config() assigns rte_realloc()
->     straight back to the pointer, leaking the old buffer on failure:
->
->         priv_config->key =3D rte_realloc(priv_config->key, key_bytes,
->             RTE_CACHE_LINE_SIZE);
->
->     Same for indir.
->
-> [PATCH v2 7/8] net/gve: fix RSS config memory leak on close
->
-> 11. gve_teardown_device_resources() also runs on gve_dev_reset(). After
->     a reset key and indir are NULL but key_size, indir_size and
->     hash_types survive, so gve_rss_hash_conf_get() reports the old
->     rss_key_len and rss_hf. Zero priv->rss_config after freeing.
->
-> [PATCH v2 8/8] net/gve: refactor timestamp support to clock read type
->
-> 12. The GVE_DEV_CLK_UNSUPPORTED check added to
->     gve_alloc_nic_ts_report() is dead: its only caller,
->     gve_setup_nic_timestamp(), already returns on that value.
->
-> Review-Result: ERROR
+Would be nice to address in a new series, yes.
 
 
+> Info: the Doxygen repeats itself. "Evaluated twice" is in @param d and
+> again in the first @note; "non-negative" is in @param n and again in
+> the second @note. Keep the @param text and drop the duplicate notes.
 
---
+I think this repeat is fine.
 
-Joshua Washington | Software Engineer | joshwash@google.com | (414) 366-442=
-3
+
+> Info: nothing in DPDK defines BITS_TO_LONGS, so the new #ifndef guard
+> does nothing; drop it.
+
+It is in rnp_osdep.h, probably to allow including in a different environment.
+
+
