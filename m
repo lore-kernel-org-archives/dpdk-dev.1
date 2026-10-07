@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11669CA5FF1
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 10:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8322CA5FFF
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 10:52:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 522D542D96;
-	Wed,  7 Oct 2026 12:50:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3EA6142C24;
+	Wed,  7 Oct 2026 12:50:56 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 19C29427D7
- for <dev@dpdk.org>; Wed,  7 Oct 2026 12:50:50 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 153D6427D8
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 12:50:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791370251; x=1822906251;
+ t=1791370254; x=1822906254;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=9HALUAfv9B+i3nfUkXJ17IS0jcX2cPQd/ExI0+xYuIo=;
- b=Wd1JjD7VVx1H9kf3UhyilkiVF8UwhM7Ww++u0KmyQsz++V/QI1yvqwI0
- C9wYEHFfpPeDMdZOyLY+wGr100jOp9C+phk5rFi3v+rnDOU2lpbeJnfaD
- MnIHG+rS5cl/A/2huqvK2tN31KOz25YfGlGCcac9RJWYtl6JLykChykPk
- /V7330CRLrHCWKw14f0fCUB2FLxNkeynJOj2e0iPkJ1/BVeVBsbhTaEtK
- wdZBiddSaOWaBirOR1F/OXa/2aQWEnwHuHLDDF+/R0B8q47fSlmXi5VRa
- 9rjYTf+HOFVgbjYacbcyY1yK0cQRdkwrp2RKFUpEqnBaYLngU7tuQZN+a w==;
-X-CSE-ConnectionGUID: smcyK8CpSA+ThteeeI9rCA==
-X-CSE-MsgGUID: FV68nOd0SA+r88OHSdVbDA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="121827"
+ bh=AHDq8U0La5riqK6ydJWiAnyLKyOVmHypHwppMYClxuQ=;
+ b=lmjxAdcE0SlqakZC6eD7KgKiccfriXhAe8YS/nTsAcdq6YGBT6TP2PJf
+ 3IWNPNMaOXimg7JE9DJottYqVhGAs48tIclXFh9znZftBhAMnlD0Ne7W3
+ Z3Ox/2ryfQIRQ/yd4Fn2AZ1+xF2tysUHfRGaQ6f/vUUAUJetkW2CmzfOC
+ 6OMZ0VMOjAwfABFxa+Y6BXssWzX+MmL0Z8sTS1vggFrsnDPzC3xLsP9x8
+ vOUac3D3n8G0dQjDPGyA1+gzx6WqtBTPnd3ZSshW/ZC2ztuQZNlKKlfZM
+ 07mJ7vCuCej1WpUcFKs2YnikNCioFRWtGqm3qJA4ZAXaHbTpP6quGAExf g==;
+X-CSE-ConnectionGUID: d2KV5ktkRuytwb8FuzzsLg==
+X-CSE-MsgGUID: tF7dPE7vSjm05SxOehdpLA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="121829"
 X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; 
-   d="scan'208";a="121827"
+   d="scan'208";a="121829"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Oct 2026 03:50:51 -0700
-X-CSE-ConnectionGUID: JmckJHAKQ4Oqs0EVOfs4kQ==
-X-CSE-MsgGUID: M7GvZW8RQYmIevq9EleIXQ==
+ 07 Oct 2026 03:50:54 -0700
+X-CSE-ConnectionGUID: vUIjO0bjQmWXmvQ4bDAXJg==
+X-CSE-MsgGUID: 9YW4s9nzQJyaWlRmloz37A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; d="scan'208";a="280652130"
+X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; d="scan'208";a="280652142"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 07 Oct 2026 03:50:50 -0700
+ by orviesa003.jf.intel.com with ESMTP; 07 Oct 2026 03:50:53 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v5 14/25] net/ixgbe: reimplement security parser
-Date: Wed,  7 Oct 2026 11:50:09 +0100
-Message-ID: <759691f9db117a385a8933d918e8f676a96dc60f.1791369981.git.anatoly.burakov@intel.com>
+Subject: [PATCH v5 16/25] net/ixgbe: don't embed RSS conf in filter structs
+Date: Wed,  7 Oct 2026 11:50:11 +0100
+Message-ID: <af63e8b25feeb3cd24e0c049c8ef92dd6d1c524b.1791369981.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1791369979.git.anatoly.burakov@intel.com>
  <cover.1791369979.git.anatoly.burakov@intel.com>
@@ -61,1409 +61,339 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use the new flow graph API and common flow engine infrastructure to
-implement flow parser for security filter. As a result, flow item checks
-have become more stringent:
+Currently, the RSS configuration driver structure directly embeds rte_flow
+RSS configuration item, which makes it so 1) the structure actually has
+duplicate data (or, to be more precise, a local copy of data pointed to by
+the RSS conf), and 2) direct struct assignments don't work because the RSS
+conf contains pointers.
 
-- Mask is now explicitly validated to not have unsupported items in it,
-  when previously they were ignored
-- Mask is also validated to mask src/dst addresses, as otherwise it is
-  inconsistent with rte_flow API
-- The security engine was only looking for IPv4/IPv6 pattern items and
-  completely ignored both prefix and suffix. This logic has been replaced
-  by allowing [ETH]/IP/[UDP|ESP] patterns, as is used in ipsec-gw app
-
-Previously, security parser was a special case, now it is a first class
-citizen. All decryption SA tracking has been moved into the engine, as the
-engine is now the authoritative source of new Rx flows and the state of
-the Rx SA table (the Tx SA table is still up to IPsec code to manage).
-
-Because IPsec code does not manage the Rx SA table now, a synchronization
-mechanism is needed to prevent IPsec code from deallocating a security
-session when it is still referenced by security flows, so the security
-session is now atomically refcounted. For Tx, the refcount is effectively
-a noop, whereas for Rx it is now managed by rte_flow security engine.
+Fix the structure to not embed RSS conf, and instead just store the data
+directly, so that we can perform struct assignments without any problems
+with poiinters.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   2 -
- drivers/net/intel/ixgbe/ixgbe_flow.c          | 120 +---
- drivers/net/intel/ixgbe/ixgbe_flow.h          |   1 +
- drivers/net/intel/ixgbe/ixgbe_flow_security.c | 586 ++++++++++++++++++
- drivers/net/intel/ixgbe/ixgbe_ipsec.c         | 361 +++++------
- drivers/net/intel/ixgbe/ixgbe_ipsec.h         |  50 +-
- drivers/net/intel/ixgbe/meson.build           |   1 +
- 7 files changed, 773 insertions(+), 348 deletions(-)
- create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_security.c
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c |  2 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h | 18 ++++----
+ drivers/net/intel/ixgbe/ixgbe_flow.c   | 37 +++++++++-------
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c   | 61 ++++++++++++--------------
+ 4 files changed, 59 insertions(+), 59 deletions(-)
 
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+index 963016562a7..0d1da8805fe 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+@@ -7844,7 +7844,7 @@ ixgbe_rss_filter_restore(struct rte_eth_dev *dev)
+ 	struct ixgbe_filter_info *filter_info =
+ 		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(adapter);
+ 
+-	if (filter_info->rss_info.conf.queue_num)
++	if (filter_info->rss_info.queue_num)
+ 		ixgbe_config_rss_filter(adapter,
+ 			&filter_info->rss_info, TRUE);
+ }
 diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index 970d8525fab..5dc73f3b52b 100644
+index ce48dedbdd7..ebc8d0481d0 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
 +++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -313,8 +313,6 @@ struct ixgbe_l2_tn_info {
- struct rte_flow {
- 	struct ci_flow flow;
- 	enum rte_filter_type filter_type;
--	/* security flows are not rte_filter_type */
--	bool is_security;
- 	void *rule;
+@@ -210,9 +210,11 @@ struct ixgbe_fdir_state {
+ 	struct ixgbe_fdir_stats stats;
  };
  
+-struct ixgbe_rte_flow_rss_conf {
+-	struct rte_flow_action_rss conf; /**< RSS parameters. */
+-	uint8_t key[IXGBE_HKEY_MAX_INDEX * sizeof(uint32_t)]; /* Hash key. */
++struct ixgbe_rss_conf {
++	uint64_t types; /**< RSS hash types. */
++	uint32_t key_len; /**< Hash key length, 0 for default key. */
++	uint32_t queue_num; /**< Number of entries in queue. */
++	uint8_t key[IXGBE_HKEY_MAX_INDEX * sizeof(uint32_t)]; /**< Hash key. */
+ 	uint16_t queue[IXGBE_MAX_RX_QUEUE_NUM]; /**< Queues indices to use. */
+ };
+ 
+@@ -300,7 +302,7 @@ struct ixgbe_ethertype_table {
+  */
+ struct ixgbe_filter_info {
+ 	/* store the rss filter info */
+-	struct ixgbe_rte_flow_rss_conf rss_info;
++	struct ixgbe_rss_conf rss_info;
+ 	/* shared EtherType (ETQF) slot table */
+ 	struct ixgbe_ethertype_table ethertype_table;
+ 	/* 1588 timestamping ETQF slot (valid when timesync_installed) */
+@@ -731,12 +733,10 @@ void ixgbe_tm_conf_init(struct rte_eth_dev *dev);
+ void ixgbe_tm_conf_uninit(struct rte_eth_dev *dev);
+ int ixgbe_set_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 			       uint32_t tx_rate);
+-int ixgbe_rss_conf_init(struct ixgbe_rte_flow_rss_conf *out,
+-			const struct rte_flow_action_rss *in);
+-int ixgbe_action_rss_same(const struct rte_flow_action_rss *comp,
+-			  const struct rte_flow_action_rss *with);
++int ixgbe_rss_conf_init(struct ixgbe_rss_conf *out,
++		const struct rte_flow_action_rss *in);
+ int ixgbe_config_rss_filter(struct ixgbe_adapter *adapter,
+-		struct ixgbe_rte_flow_rss_conf *conf, bool add);
++		const struct ixgbe_rss_conf *conf, bool add);
+ 
+ void ixgbe_dev_macsec_register_enable(struct rte_eth_dev *dev,
+ 		struct ixgbe_macsec_setting *macsec_setting);
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index c3bc7622151..57484a53740 100644
+index 98d0af6535c..aca3da5607a 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -78,6 +78,7 @@ const struct ci_flow_engine_list ixgbe_flow_engine_list = {
- 		&ixgbe_syn_flow_engine,
- 		&ixgbe_l2_tunnel_flow_engine,
- 		&ixgbe_ntuple_flow_engine,
-+		&ixgbe_security_flow_engine,
- 	},
+@@ -57,7 +57,7 @@ struct ixgbe_filter_ele_base {
+ /* rss filter list structure */
+ struct ixgbe_rss_conf_ele {
+ 	struct ixgbe_filter_ele_base base;
+-	struct ixgbe_rte_flow_rss_conf filter_info;
++	struct ixgbe_rss_conf filter_info;
  };
+ /* ixgbe_flow memory list structure */
+ struct ixgbe_flow_mem {
+@@ -140,7 +140,8 @@ ixgbe_flow_actions_check_rss(const struct ci_flow_actions *parsed_actions,
+ 	const struct rte_flow_action *action = parsed_actions->actions[0];
+ 	const struct rte_flow_action_rss *rss_act = action->conf;
+ 	struct rte_eth_dev_data *dev_data = param->driver_ctx;
+-	const size_t rss_key_len = sizeof(((struct ixgbe_rte_flow_rss_conf *)0)->key);
++	const size_t rss_key_len = sizeof(((struct ixgbe_rss_conf *)0)->key);
++	const size_t rss_queue_max = RTE_DIM(((struct ixgbe_rss_conf *)0)->queue);
+ 	size_t q_idx, q;
  
-@@ -155,94 +156,6 @@ ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
-  * normally the packets should use network order.
-  */
+ 	/* check if queue list is not empty */
+@@ -149,6 +150,11 @@ ixgbe_flow_actions_check_rss(const struct ci_flow_actions *parsed_actions,
+ 			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+ 			"RSS queue list is empty");
+ 	}
++	if (rss_act->queue_num > rss_queue_max) {
++		return rte_flow_error_set(error, ENOTSUP,
++			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++			"RSS queue list is too long");
++	}
  
--static int
--ixgbe_parse_security_filter(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
--		const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
--		struct rte_flow_error *error)
--{
--	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	const struct rte_flow_action_security *security;
--	struct rte_security_session *session;
--	const struct rte_flow_item *item;
--	struct ci_flow_actions parsed_actions;
--	struct ci_flow_actions_check_param ap_param = {
--		.allowed_types = (const enum rte_flow_action_type[]){
--			/* only security is allowed here */
--			RTE_FLOW_ACTION_TYPE_SECURITY,
--			RTE_FLOW_ACTION_TYPE_END
--		},
--		.max_actions = 1,
--	};
+ 	/* check if each RSS queue is valid */
+ 	for (q_idx = 0; q_idx < rss_act->queue_num; q_idx++) {
+@@ -185,7 +191,7 @@ static int
+ ixgbe_parse_rss_filter(struct rte_eth_dev *dev,
+ 			const struct rte_flow_attr *attr,
+ 			const struct rte_flow_action actions[],
+-			struct ixgbe_rte_flow_rss_conf *rss_conf,
++			struct ixgbe_rss_conf *rss_conf,
+ 			struct rte_flow_error *error)
+ {
+ 	struct ci_flow_actions parsed_actions;
+@@ -199,8 +205,8 @@ ixgbe_parse_rss_filter(struct rte_eth_dev *dev,
+ 		.check = ixgbe_flow_actions_check_rss,
+ 		.max_actions = 1,
+ 	};
++	const struct rte_flow_action_rss *rss_act;
+ 	int ret;
 -	const struct rte_flow_action *action;
--	struct ip_spec spec;
--	int ret;
--
--	if (hw->mac.type != ixgbe_mac_82599EB &&
--			hw->mac.type != ixgbe_mac_X540 &&
--			hw->mac.type != ixgbe_mac_X550 &&
--			hw->mac.type != ixgbe_mac_X550EM_x &&
--			hw->mac.type != ixgbe_mac_X550EM_a &&
--			hw->mac.type != ixgbe_mac_E610)
--		return -ENOTSUP;
--
--	/* validate attributes */
--	ret = ci_flow_check_attr(attr, NULL, error);
--	if (ret)
--		return ret;
--
--	/* parse requested actions */
--	ret = ci_flow_check_actions(actions, &ap_param, &parsed_actions, error);
--	if (ret)
--		return ret;
--
+ 
+ 	/* validate attributes */
+ 	ret = ci_flow_check_attr(attr, NULL, error);
+@@ -211,12 +217,14 @@ ixgbe_parse_rss_filter(struct rte_eth_dev *dev,
+ 	ret = ci_flow_check_actions(actions, &ap_param, &parsed_actions, error);
+ 	if (ret)
+ 		return ret;
 -	action = parsed_actions.actions[0];
--	security = action->conf;
--
--	/* get the IP pattern*/
--	item = next_no_void_pattern(pattern, NULL);
--	while (item->type != RTE_FLOW_ITEM_TYPE_IPV4 &&
--			item->type != RTE_FLOW_ITEM_TYPE_IPV6) {
--		if (item->last || item->type == RTE_FLOW_ITEM_TYPE_END) {
--			rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "IP pattern missing.");
--			return -rte_errno;
--		}
--		item = next_no_void_pattern(pattern, item);
--	}
--	if (item->spec == NULL) {
--		rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM_SPEC, item,
--				"NULL IP pattern.");
--		return -rte_errno;
--	}
--	spec.is_ipv6 = item->type == RTE_FLOW_ITEM_TYPE_IPV6;
--	if (spec.is_ipv6) {
--		const struct rte_flow_item_ipv6 *ipv6 = item->spec;
--		spec.spec.ipv6 = *ipv6;
--	} else {
--		const struct rte_flow_item_ipv4 *ipv4 = item->spec;
--		spec.spec.ipv4 = *ipv4;
--	}
--
--	/*
--	 * we get pointer to security session from security action, which is
--	 * const. however, we do need to act on the session, so either we do
--	 * some kind of pointer based lookup to get session pointer internally
--	 * (which quickly gets unwieldy for lots of flows case), or we simply
--	 * cast away constness. the latter path was chosen.
--	 */
--	session = RTE_CAST_PTR(struct rte_security_session *, security->security_session);
--	ret = ixgbe_crypto_add_ingress_sa_from_flow(session, &spec);
--	if (ret) {
--		rte_flow_error_set(error, -ret,
--				RTE_FLOW_ERROR_TYPE_ACTION, action,
--				"Failed to add security session.");
--		return -rte_errno;
--	}
--	return 0;
--}
--
- /* search next no void pattern and skip fuzzy */
- static inline
- const struct rte_flow_item *next_no_fuzzy_pattern(
-@@ -1919,15 +1832,6 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
++	rss_act = parsed_actions.actions[0]->conf;
+ 
+-	if (ixgbe_rss_conf_init(rss_conf, action->conf))
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION, NULL,
++	ret = ixgbe_rss_conf_init(rss_conf, rss_act);
++	if (ret) {
++		return rte_flow_error_set(error, -ret,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+ 				"RSS context initialization failure");
++	}
+ 
+ 	return 0;
+ }
+@@ -230,7 +238,7 @@ ixgbe_clear_rss_filter(struct rte_eth_dev *dev)
+ 	struct ixgbe_filter_info *filter_info =
+ 		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(dev->data->dev_private);
+ 
+-	if (filter_info->rss_info.conf.queue_num)
++	if (filter_info->rss_info.queue_num)
+ 		ixgbe_config_rss_filter(adapter, &filter_info->rss_info, FALSE);
+ }
+ 
+@@ -275,7 +283,7 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
+ {
+ 	int ret;
+ 	struct ixgbe_adapter *adapter = IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+-	struct ixgbe_rte_flow_rss_conf rss_conf;
++	struct ixgbe_rss_conf rss_conf = {0};
+ 	struct rte_flow *flow = NULL;
+ 	struct ixgbe_rss_conf_ele *rss_filter_ptr;
+ 	struct ixgbe_flow_mem *ixgbe_flow_mem_ptr;
+@@ -303,7 +311,6 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
  	TAILQ_INSERT_TAIL(&adapter->flow_list,
  				&ixgbe_flow_mem_ptr->base, entries);
  
--	/**
--	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
--	 */
--	ret = ixgbe_parse_security_filter(dev, attr, pattern, actions, error);
--	if (!ret) {
--		flow->is_security = true;
--		return flow;
--	}
--
- 	memset(&fdir_rule, 0, sizeof(struct ixgbe_fdir_rule));
- 	ret = ixgbe_parse_fdir_filter(dev, attr, pattern,
- 				actions, &fdir_rule, error);
-@@ -2023,13 +1927,6 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
+-	memset(&rss_conf, 0, sizeof(struct ixgbe_rte_flow_rss_conf));
+ 	ret = ixgbe_parse_rss_filter(dev, attr,
+ 					actions, &rss_conf, error);
+ 	if (!ret) {
+@@ -319,8 +326,7 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
+ 			rte_free(rss_filter_ptr);
+ 			goto out;
+ 		}
+-		ixgbe_rss_conf_init(&rss_filter_ptr->filter_info,
+-				    &rss_conf.conf);
++		rss_filter_ptr->filter_info = rss_conf;
+ 		flow->rule = rss_filter_ptr;
+ 		flow->filter_type = RTE_ETH_FILTER_HASH;
+ 		return flow;
+@@ -350,7 +356,7 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
+ 		struct rte_flow_error *error)
+ {
+ 	struct ixgbe_adapter *ad = IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+-	struct ixgbe_rte_flow_rss_conf rss_conf;
++	struct ixgbe_rss_conf rss_conf = {0};
+ 	int ret;
+ 
+ 	/* try the new flow engine first */
+@@ -360,7 +366,6 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
  
  	/* fall back to legacy engines */
  
--	/**
--	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
--	 */
--	ret = ixgbe_parse_security_filter(dev, attr, pattern, actions, error);
--	if (!ret)
--		return 0;
--
- 	memset(&fdir_rule, 0, sizeof(struct ixgbe_fdir_rule));
- 	ret = ixgbe_parse_fdir_filter(dev, attr, pattern,
- 				actions, &fdir_rule, error);
-@@ -2083,12 +1980,6 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
- 				"Flow not found for this port");
+-	memset(&rss_conf, 0, sizeof(struct ixgbe_rte_flow_rss_conf));
+ 	ret = ixgbe_parse_rss_filter(dev, attr,
+ 					actions, &rss_conf, error);
+ 
+@@ -488,7 +493,7 @@ ixgbe_flow_rule_size(const struct rte_flow *flow)
+ 	case RTE_ETH_FILTER_L2_TUNNEL:
+ 		return sizeof(struct ixgbe_l2_tunnel_conf);
+ 	case RTE_ETH_FILTER_HASH:
+-		return sizeof(struct ixgbe_rte_flow_rss_conf);
++		return sizeof(struct ixgbe_rss_conf);
+ 	default:
+ 		return 0;
  	}
- 
--	/* Special case for SECURITY flows */
--	if (flow->is_security) {
--		ret = 0;
--		goto free;
--	}
--
- 	switch (filter_type) {
- 	case RTE_ETH_FILTER_FDIR:
- 		fdir_rule_ptr = (struct ixgbe_fdir_rule_ele *)pmd_flow->rule;
-@@ -2126,7 +2017,6 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
- 		return ret;
- 	}
- 
--free:
- 	TAILQ_REMOVE(&adapter->flow_list, flow_mem_base, entries);
- 	rte_free(flow_mem_base);
- 	rte_free(flow);
-@@ -2168,9 +2058,6 @@ ixgbe_flow_flush(struct rte_eth_dev *dev,
- static const char *
- ixgbe_flow_rule_engine_name(const struct rte_flow *flow)
- {
--	if (flow->is_security)
--		return "security";
--
- 	switch (flow->filter_type) {
- 	case RTE_ETH_FILTER_ETHERTYPE:
- 		return "ethertype";
-@@ -2190,9 +2077,6 @@ ixgbe_flow_rule_engine_name(const struct rte_flow *flow)
- static size_t
- ixgbe_flow_rule_size(const struct rte_flow *flow)
- {
--	if (flow->is_security)
--		return 0;
--
- 	switch (flow->filter_type) {
- 	case RTE_ETH_FILTER_ETHERTYPE:
- 		return sizeof(struct rte_eth_ethertype_filter);
-@@ -2212,7 +2096,7 @@ ixgbe_flow_rule_size(const struct rte_flow *flow)
- static const void *
- ixgbe_flow_rule_data(const struct rte_flow *flow)
- {
--	if (flow->is_security || flow->rule == NULL)
-+	if (flow->rule == NULL)
- 		return NULL;
- 
- 	return RTE_PTR_ADD(flow->rule, sizeof(struct ixgbe_filter_ele_base));
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.h b/drivers/net/intel/ixgbe/ixgbe_flow.h
-index 6f082e9402f..87cf0282454 100644
---- a/drivers/net/intel/ixgbe/ixgbe_flow.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow.h
-@@ -19,5 +19,6 @@ extern const struct ci_flow_engine ixgbe_ethertype_flow_engine;
- extern const struct ci_flow_engine ixgbe_syn_flow_engine;
- extern const struct ci_flow_engine ixgbe_l2_tunnel_flow_engine;
- extern const struct ci_flow_engine ixgbe_ntuple_flow_engine;
-+extern const struct ci_flow_engine ixgbe_security_flow_engine;
- 
- #endif /*  _IXGBE_FLOW_H_ */
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow_security.c b/drivers/net/intel/ixgbe/ixgbe_flow_security.c
-new file mode 100644
-index 00000000000..3ed2ba844b0
---- /dev/null
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow_security.c
-@@ -0,0 +1,586 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Intel Corporation
-+ */
-+
-+#include <rte_common.h>
-+#include <rte_flow.h>
-+#include <flow_graph.h>
-+#include <rte_ether.h>
-+#include <rte_security_driver.h>
-+
-+#include "ixgbe_ethdev.h"
-+#include "ixgbe_flow.h"
-+#include "../common/flow_check.h"
-+#include "../common/flow_util.h"
-+#include "../common/flow_engine.h"
-+
-+struct ixgbe_security_ip_spec {
-+	bool is_ipv6;
-+	union {
-+		struct rte_flow_item_ipv4 ipv4;
-+		struct rte_flow_item_ipv6 ipv6;
-+	} spec;
-+};
-+
-+struct ixgbe_security_filter {
-+	struct rte_security_session *session;
-+	struct ixgbe_crypto_rx_sa sa;
-+};
-+
-+struct ixgbe_security_flow {
-+	struct rte_flow flow;
-+	struct ixgbe_security_filter security;
-+};
-+
-+struct ixgbe_security_ctx {
-+	struct ci_flow_engine_ctx base;
-+	struct ixgbe_security_ip_spec spec;
-+	struct rte_security_session *session;
-+};
-+
-+struct ixgbe_security_ip_slot {
-+	ci_usage_count_t use_count;
-+	struct ipaddr ip;
-+};
-+
-+struct ixgbe_security_priv {
-+	struct ixgbe_security_ip_slot ip_slots[IPSEC_MAX_RX_IP_COUNT];
-+	struct ixgbe_security_flow *sa_slots[IPSEC_MAX_SA_COUNT];
-+};
-+
-+/**
-+ * Ingress security filter graph implementation
-+ * Pattern: START -> [ETH] -> IPV4 | IPV6 -> [ESP | UDP -> ESP] -> END
-+ */
-+
-+enum ixgbe_security_node_id {
-+	IXGBE_SECURITY_NODE_START = FLOW_GRAPH_NODE_FIRST,
-+	IXGBE_SECURITY_NODE_ETH,
-+	IXGBE_SECURITY_NODE_IPV4,
-+	IXGBE_SECURITY_NODE_IPV6,
-+	IXGBE_SECURITY_NODE_UDP,
-+	IXGBE_SECURITY_NODE_ESP,
-+	IXGBE_SECURITY_NODE_END,
-+	IXGBE_SECURITY_NODE_MAX,
-+};
-+
-+static int
-+ixgbe_validate_security_ipv4(const void *ctx __rte_unused,
-+		const struct rte_flow_item *item,
-+		struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_ipv4 *ipv4_mask = ci_flow_item_mask(item);
-+
-+	/* only src/dst addresses are supported */
-+	if (ipv4_mask->hdr.version_ihl ||
-+	    ipv4_mask->hdr.type_of_service ||
-+	    ipv4_mask->hdr.total_length ||
-+	    ipv4_mask->hdr.packet_id ||
-+	    ipv4_mask->hdr.fragment_offset ||
-+	    ipv4_mask->hdr.next_proto_id ||
-+	    ipv4_mask->hdr.time_to_live ||
-+	    ipv4_mask->hdr.hdr_checksum) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid IPv4 mask");
-+	}
-+
-+	/* both src/dst addresses must be fully masked */
-+	if (!CI_FIELD_IS_MASKED(&ipv4_mask->hdr.src_addr) ||
-+	    !CI_FIELD_IS_MASKED(&ipv4_mask->hdr.dst_addr)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid IPv4 mask");
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+ixgbe_process_security_ipv4(void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct ixgbe_security_ctx *sec_ctx = (struct ixgbe_security_ctx *)ctx;
-+	const struct rte_flow_item_ipv4 *ipv4_spec = item->spec;
-+
-+	/* copy entire spec */
-+	sec_ctx->spec.spec.ipv4 = *ipv4_spec;
-+	sec_ctx->spec.is_ipv6 = false;
-+
-+	return 0;
-+}
-+
-+static int
-+ixgbe_validate_security_ipv6(const void *ctx __rte_unused,
-+			  const struct rte_flow_item *item,
-+			  struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_ipv6 *ipv6_mask = ci_flow_item_mask(item);
-+
-+	/* only src/dst addresses are supported */
-+	if (ipv6_mask->hdr.vtc_flow ||
-+	    ipv6_mask->hdr.payload_len ||
-+	    ipv6_mask->hdr.proto ||
-+	    ipv6_mask->hdr.hop_limits) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid IPv6 mask");
-+	}
-+	/* both src/dst addresses must be fully masked */
-+	if (!CI_FIELD_IS_MASKED(&ipv6_mask->hdr.src_addr) ||
-+	    !CI_FIELD_IS_MASKED(&ipv6_mask->hdr.dst_addr)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid IPv6 mask");
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+ixgbe_process_security_ipv6(void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct ixgbe_security_ctx *sec_ctx = (struct ixgbe_security_ctx *)ctx;
-+	const struct rte_flow_item_ipv6 *ipv6_spec = item->spec;
-+
-+	/* copy entire spec */
-+	sec_ctx->spec.spec.ipv6 = *ipv6_spec;
-+	sec_ctx->spec.is_ipv6 = true;
-+
-+	return 0;
-+}
-+
-+static const struct flow_graph ixgbe_security_graph = {
-+	.nodes = (struct flow_graph_node[]) {
-+		[IXGBE_SECURITY_NODE_START] = {
-+			.name = "START",
-+		},
-+		[IXGBE_SECURITY_NODE_ETH] = {
-+			.name = "ETH",
-+			.type = RTE_FLOW_ITEM_TYPE_ETH,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+		},
-+		[IXGBE_SECURITY_NODE_IPV4] = {
-+			.name = "IPV4",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV4,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC,
-+			.validate = ixgbe_validate_security_ipv4,
-+			.process = ixgbe_process_security_ipv4,
-+		},
-+		[IXGBE_SECURITY_NODE_IPV6] = {
-+			.name = "IPV6",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV6,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC,
-+			.validate = ixgbe_validate_security_ipv6,
-+			.process = ixgbe_process_security_ipv6,
-+		},
-+		[IXGBE_SECURITY_NODE_UDP] = {
-+			.name = "UDP",
-+			.type = RTE_FLOW_ITEM_TYPE_UDP,
-+			/* for backwards compatibility, ignore all contents */
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+				       FLOW_GRAPH_NODE_EXPECT_SPEC,
-+		},
-+		[IXGBE_SECURITY_NODE_ESP] = {
-+			.name = "ESP",
-+			.type = RTE_FLOW_ITEM_TYPE_ESP,
-+			/* for backwards compatibility, ignore all contents */
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+				       FLOW_GRAPH_NODE_EXPECT_SPEC,
-+		},
-+		[IXGBE_SECURITY_NODE_END] = {
-+			.name = "END",
-+			.type = RTE_FLOW_ITEM_TYPE_END,
-+		},
-+	},
-+	.edges = (struct flow_graph_edge[]) {
-+		[IXGBE_SECURITY_NODE_START] = {
-+			.next = (size_t[]) {
-+				IXGBE_SECURITY_NODE_ETH,
-+				IXGBE_SECURITY_NODE_IPV4,
-+				IXGBE_SECURITY_NODE_IPV6,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[IXGBE_SECURITY_NODE_ETH] = {
-+			.next = (size_t[]) {
-+				IXGBE_SECURITY_NODE_IPV4,
-+				IXGBE_SECURITY_NODE_IPV6,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[IXGBE_SECURITY_NODE_IPV4] = {
-+			.next = (size_t[]) {
-+				IXGBE_SECURITY_NODE_UDP,
-+				IXGBE_SECURITY_NODE_ESP,
-+				IXGBE_SECURITY_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[IXGBE_SECURITY_NODE_IPV6] = {
-+			.next = (size_t[]) {
-+				IXGBE_SECURITY_NODE_UDP,
-+				IXGBE_SECURITY_NODE_ESP,
-+				IXGBE_SECURITY_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[IXGBE_SECURITY_NODE_UDP] = {
-+			.next = (size_t[]) {
-+				IXGBE_SECURITY_NODE_ESP,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[IXGBE_SECURITY_NODE_ESP] = {
-+			.next = (size_t[]) {
-+				IXGBE_SECURITY_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+	},
-+};
-+
-+static int
-+ixgbe_flow_security_ctx_init(const struct rte_flow_action *actions,
-+		const struct rte_flow_attr *attr,
-+		struct ci_flow_engine_ctx *ctx,
-+		struct rte_flow_error *error)
-+{
-+	struct ixgbe_security_ctx *sec_ctx = (struct ixgbe_security_ctx *)ctx;
-+	struct ci_flow_actions parsed_actions;
-+	struct ci_flow_actions_check_param ap_param = {
-+		.allowed_types = (const enum rte_flow_action_type[]){
-+			/* only security is allowed here */
-+			RTE_FLOW_ACTION_TYPE_SECURITY,
-+			RTE_FLOW_ACTION_TYPE_END
-+		},
-+		.max_actions = 1,
-+	};
-+	const struct rte_flow_action_security *security;
-+	struct rte_security_session *session;
-+	const struct ixgbe_crypto_session *ic_session;
-+	int ret;
-+
-+	/* validate attributes */
-+	ret = ci_flow_check_attr(attr, NULL, error);
-+	if (ret)
-+		return ret;
-+
-+	/* parse requested actions */
-+	ret = ci_flow_check_actions(actions, &ap_param, &parsed_actions, error);
-+	if (ret)
-+		return ret;
-+
-+	security = (const struct rte_flow_action_security *)parsed_actions.actions[0]->conf;
-+
-+	if (security->security_session == NULL) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION, parsed_actions.actions[0],
-+				"NULL security session");
-+	}
-+
-+	/* cast away constness since we need to store the session pointer in the context */
-+	session = RTE_CAST_PTR(struct rte_security_session *, security->security_session);
-+
-+	/* verify that the session is of a correct type */
-+	ic_session = SECURITY_GET_SESS_PRIV(session);
-+	if (ic_session->dev_data != ctx->dev_data) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION, parsed_actions.actions[0],
-+				"Security session was created for a different device");
-+	}
-+	if (ic_session->op != IXGBE_OP_AUTHENTICATED_DECRYPTION) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION, parsed_actions.actions[0],
-+				"Only authenticated decryption is supported");
-+	}
-+	sec_ctx->session = session;
-+
-+	return 0;
-+}
-+
-+static int
-+ixgbe_flow_security_ctx_to_flow(const struct ci_flow_engine_ctx *ctx,
-+		struct ci_flow *flow,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	const struct ixgbe_security_ctx *security_ctx = (const struct ixgbe_security_ctx *)ctx;
-+	struct ixgbe_security_flow *security_flow = (struct ixgbe_security_flow *)flow;
-+	struct ixgbe_security_filter *filter = &security_flow->security;
-+	const struct ixgbe_crypto_session *ic_session;
-+
-+	filter->session = security_ctx->session;
-+	ic_session = SECURITY_GET_SESS_PRIV(filter->session);
-+	filter->sa.key = ic_session->key;
-+	filter->sa.salt = ic_session->salt;
-+	filter->sa.spi = ic_session->spi;
-+	filter->sa.mode = IPSRXMOD_VALID | IPSRXMOD_PROTO | IPSRXMOD_DECRYPT;
-+	/* slot indices stay out of range until the flow is registered */
-+	filter->sa.sa_idx = IPSEC_MAX_SA_COUNT;
-+	filter->sa.ip_idx = IPSEC_MAX_RX_IP_COUNT;
-+	if (security_ctx->spec.is_ipv6) {
-+		filter->sa.dst_ip.type = IPv6;
-+		filter->sa.mode |= IPSRXMOD_IPV6;
-+		memcpy(filter->sa.dst_ip.ipv6,
-+				&security_ctx->spec.spec.ipv6.hdr.dst_addr,
-+				sizeof(filter->sa.dst_ip.ipv6));
-+	} else {
-+		filter->sa.dst_ip.type = IPv4;
-+		filter->sa.dst_ip.ipv4 = security_ctx->spec.spec.ipv4.hdr.dst_addr;
-+	}
-+
-+	return 0;
-+}
-+
-+static bool
-+ixgbe_security_ip_equal(const struct ipaddr *lhs, const struct ipaddr *rhs)
-+{
-+	if (lhs->type != rhs->type)
-+		return false;
-+	if (lhs->type == IPv4)
-+		return lhs->ipv4 == rhs->ipv4;
-+
-+	return memcmp(lhs->ipv6, rhs->ipv6, sizeof(lhs->ipv6)) == 0;
-+}
-+
-+/* two SA filters are the same rule if they match the same SPI and destination IP */
-+static bool
-+ixgbe_security_sa_key_equal(const struct ixgbe_crypto_rx_sa *lhs,
-+		const struct ixgbe_crypto_rx_sa *rhs)
-+{
-+	return lhs->spi == rhs->spi &&
-+			ixgbe_security_ip_equal(&lhs->dst_ip, &rhs->dst_ip);
-+}
-+
-+static int
-+ixgbe_security_sa_slot_find(const struct ixgbe_security_priv *priv,
-+		const struct ixgbe_security_flow *security_flow)
-+{
-+	uint32_t free_idx = IPSEC_MAX_SA_COUNT;
-+	uint32_t idx;
-+
-+	for (idx = 0; idx < IPSEC_MAX_SA_COUNT; idx++) {
-+		const struct ixgbe_security_flow *registered = priv->sa_slots[idx];
-+
-+		if (registered == NULL) {
-+			if (free_idx == IPSEC_MAX_SA_COUNT)
-+				free_idx = idx;
-+			continue;
-+		}
-+		if (ixgbe_security_sa_key_equal(&registered->security.sa,
-+				&security_flow->security.sa))
-+			return -EEXIST;
-+	}
-+	if (free_idx == IPSEC_MAX_SA_COUNT)
-+		return -ENOSPC;
-+
-+	return (int)free_idx;
-+}
-+
-+static int
-+ixgbe_security_ip_slot_find(const struct ixgbe_security_priv *priv,
-+		const struct ipaddr *ip)
-+{
-+	uint32_t free_idx = IPSEC_MAX_RX_IP_COUNT;
-+	uint32_t idx;
-+
-+	for (idx = 0; idx < IPSEC_MAX_RX_IP_COUNT; idx++) {
-+		if (priv->ip_slots[idx].use_count == 0) {
-+			if (free_idx == IPSEC_MAX_RX_IP_COUNT)
-+				free_idx = idx;
-+			continue;
-+		}
-+		if (ixgbe_security_ip_equal(&priv->ip_slots[idx].ip, ip))
-+			return (int)idx;
-+	}
-+	if (free_idx == IPSEC_MAX_RX_IP_COUNT)
-+		return -ENOSPC;
-+
-+	return (int)free_idx;
-+}
-+
-+static void
-+ixgbe_security_ip_slot_get(struct ixgbe_security_priv *priv, uint32_t idx,
-+		const struct ipaddr *ip)
-+{
-+	struct ixgbe_security_ip_slot *slot = &priv->ip_slots[idx];
-+
-+	if (ci_usage_count_claim(&slot->use_count))
-+		slot->ip = *ip;
-+}
-+
-+static void
-+ixgbe_security_ip_slot_put(struct ixgbe_security_priv *priv, uint32_t idx)
-+{
-+	struct ixgbe_security_ip_slot *slot = &priv->ip_slots[idx];
-+
-+	if (ci_usage_count_release(&slot->use_count))
-+		*slot = (struct ixgbe_security_ip_slot){0};
-+}
-+
-+static bool
-+ixgbe_security_flow_is_registered(const struct ixgbe_security_flow *security_flow)
-+{
-+	const struct ixgbe_security_priv *priv = security_flow->flow.flow.engine_priv;
-+	const struct ixgbe_crypto_rx_sa *sa = &security_flow->security.sa;
-+
-+	return sa->ip_idx < IPSEC_MAX_RX_IP_COUNT &&
-+			sa->sa_idx < IPSEC_MAX_SA_COUNT &&
-+			priv->sa_slots[sa->sa_idx] == security_flow &&
-+			priv->ip_slots[sa->ip_idx].use_count != 0 &&
-+			ixgbe_security_ip_equal(&priv->ip_slots[sa->ip_idx].ip,
-+					&sa->dst_ip);
-+}
-+
-+static int
-+ixgbe_flow_security_flow_register(struct ci_flow *flow,
-+		struct rte_flow_error *error)
-+{
-+	struct ixgbe_security_flow *security_flow = (struct ixgbe_security_flow *)flow;
-+	struct ixgbe_security_priv *priv = flow->engine_priv;
-+	struct ixgbe_security_filter *filter = &security_flow->security;
-+	int sa_idx, ip_idx, ret;
-+
-+	sa_idx = ixgbe_security_sa_slot_find(priv, security_flow);
-+	if (sa_idx == -EEXIST) {
-+		return rte_flow_error_set(error, EEXIST,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Ingress security filter already exists");
-+	}
-+	if (sa_idx == -ENOSPC) {
-+		return rte_flow_error_set(error, ENOSPC,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Ingress security SA table is full");
-+	}
-+	if (sa_idx < 0) {
-+		return rte_flow_error_set(error, -sa_idx,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Failed to reserve ingress security SA slot");
-+	}
-+
-+	ip_idx = ixgbe_security_ip_slot_find(priv, &filter->sa.dst_ip);
-+	if (ip_idx == -ENOSPC) {
-+		return rte_flow_error_set(error, ENOSPC,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Ingress security IP table is full");
-+	}
-+	if (ip_idx < 0) {
-+		return rte_flow_error_set(error, -ip_idx,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Failed to reserve ingress security IP slot");
-+	}
-+
-+	ret = ixgbe_crypto_session_acquire(filter->session);
-+	if (ret != 0) {
-+		return rte_flow_error_set(error, -ret,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Failed to acquire ingress security session");
-+	}
-+
-+	/* every resource is acquired by this point, so nothing below may fail */
-+	filter->sa.sa_idx = sa_idx;
-+	filter->sa.ip_idx = ip_idx;
-+	priv->sa_slots[sa_idx] = security_flow;
-+	ixgbe_security_ip_slot_get(priv, ip_idx, &filter->sa.dst_ip);
-+
-+	return 0;
-+}
-+
-+static int
-+ixgbe_flow_security_flow_unregister(struct ci_flow *flow,
-+		struct rte_flow_error *error)
-+{
-+	struct ixgbe_security_flow *security_flow = (struct ixgbe_security_flow *)flow;
-+	struct ixgbe_security_priv *priv = flow->engine_priv;
-+	struct ixgbe_security_filter *filter = &security_flow->security;
-+	int ret;
-+
-+	if (!ixgbe_security_flow_is_registered(security_flow)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, flow,
-+				"Ingress security flow registration is invalid");
-+	}
-+	ret = ixgbe_crypto_session_release(filter->session);
-+	if (ret != 0) {
-+		return rte_flow_error_set(error, -ret,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, flow,
-+				"Failed to release ingress security session");
-+	}
-+
-+	priv->sa_slots[filter->sa.sa_idx] = NULL;
-+	ixgbe_security_ip_slot_put(priv, filter->sa.ip_idx);
-+	return 0;
-+}
-+
-+static int
-+ixgbe_flow_security_flow_install(struct ci_flow *flow,
-+		struct rte_flow_error *error)
-+{
-+	struct ixgbe_security_flow *security_flow = (struct ixgbe_security_flow *)flow;
-+
-+	if (!ixgbe_security_flow_is_registered(security_flow)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, flow,
-+				"Ingress security flow registration is invalid");
-+	}
-+
-+	ixgbe_crypto_install_rx_sa(flow->dev_data, &security_flow->security.sa);
-+	return 0;
-+}
-+
-+static int
-+ixgbe_flow_security_flow_uninstall(struct ci_flow *flow,
-+		struct rte_flow_error *error)
-+{
-+	struct ixgbe_security_flow *security_flow = (struct ixgbe_security_flow *)flow;
-+	struct ixgbe_security_priv *priv = flow->engine_priv;
-+	const struct ixgbe_crypto_rx_sa *sa = &security_flow->security.sa;
-+
-+	if (!ixgbe_security_flow_is_registered(security_flow)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, flow,
-+				"Ingress security flow registration is invalid");
-+	}
-+
-+	ixgbe_crypto_uninstall_rx_sa(flow->dev_data, sa,
-+			ci_usage_count_is_last(&priv->ip_slots[sa->ip_idx].use_count));
-+	return 0;
-+}
-+
-+static int
-+ixgbe_flow_security_engine_init(const struct ci_flow_engine *engine __rte_unused,
-+		struct rte_eth_dev_data *dev_data,
-+		void *priv __rte_unused)
-+{
-+	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev_data->dev_private);
-+
-+	if (hw->mac.type == ixgbe_mac_82599EB ||
-+			hw->mac.type == ixgbe_mac_X540 ||
-+			hw->mac.type == ixgbe_mac_X550 ||
-+			hw->mac.type == ixgbe_mac_X550EM_x ||
-+			hw->mac.type == ixgbe_mac_X550EM_a ||
-+			hw->mac.type == ixgbe_mac_E610)
-+		return 0;
-+
-+	return -ENOTSUP;
-+}
-+
-+static const struct ci_flow_engine_ops ixgbe_security_ops = {
-+	.engine_init = ixgbe_flow_security_engine_init,
-+	.ctx_init = ixgbe_flow_security_ctx_init,
-+	.ctx_to_flow = ixgbe_flow_security_ctx_to_flow,
-+	.flow_register = ixgbe_flow_security_flow_register,
-+	.flow_unregister = ixgbe_flow_security_flow_unregister,
-+	.flow_install = ixgbe_flow_security_flow_install,
-+	.flow_uninstall = ixgbe_flow_security_flow_uninstall,
-+};
-+
-+const struct ci_flow_engine ixgbe_security_flow_engine = {
-+	.name = "ixgbe_security",
-+	.ctx_size = sizeof(struct ixgbe_security_ctx),
-+	.flow_size = sizeof(struct ixgbe_security_flow),
-+	.priv_size = sizeof(struct ixgbe_security_priv),
-+	.ops = &ixgbe_security_ops,
-+	.graph = &ixgbe_security_graph,
-+};
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/intel/ixgbe/ixgbe_ipsec.c
-index 3c35326016b..944cb0ff423 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ipsec.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ipsec.c
-@@ -30,12 +30,6 @@
- 	IXGBE_WRITE_REG_THEN_POLL_MASK(hw, IXGBE_IPSTXIDX, reg_val, \
- 	IPSRXIDX_WRITE, IXGBE_REGISTER_POLL_WAIT_5_MS)
- 
--#define CMP_IP(a, b) (\
--	(a).ipv6[0] == (b).ipv6[0] && \
--	(a).ipv6[1] == (b).ipv6[1] && \
--	(a).ipv6[2] == (b).ipv6[2] && \
--	(a).ipv6[3] == (b).ipv6[3])
--
- static inline void
- ixgbe_crypto_write_rx_ip(struct ixgbe_hw *hw, uint32_t idx,
- 		const struct ipaddr *ip, bool enable)
-@@ -137,195 +131,165 @@ ixgbe_crypto_clear_ipsec_tables(struct rte_eth_dev *dev)
- 		ixgbe_crypto_write_tx_key(hw, i, key, 0, false);
- 	}
- 
--	memset(priv->rx_ip_tbl, 0, sizeof(priv->rx_ip_tbl));
--	memset(priv->rx_sa_tbl, 0, sizeof(priv->rx_sa_tbl));
--	memset(priv->tx_sa_tbl, 0, sizeof(priv->tx_sa_tbl));
-+	*priv->tx_sa_tbl = (struct ixgbe_crypto_tx_sa_table){0};
-+}
-+
-+void
-+ixgbe_crypto_install_rx_sa(struct rte_eth_dev_data *dev_data,
-+		const struct ixgbe_crypto_rx_sa *sa)
-+{
-+	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev_data->dev_private);
-+	uint8_t key[16];
-+
-+	ixgbe_crypto_write_rx_ip(hw, sa->ip_idx, &sa->dst_ip, true);
-+	ixgbe_crypto_write_rx_spi(hw, sa->sa_idx, sa->spi, sa->ip_idx, true);
-+	memcpy(key, sa->key, sizeof(key));
-+	ixgbe_crypto_write_rx_key(hw, sa->sa_idx, (const uint8_t *)key,
-+			sa->salt, sa->mode, true);
-+	rte_memzero_explicit(key, sizeof(key));
-+}
-+
-+void
-+ixgbe_crypto_uninstall_rx_sa(struct rte_eth_dev_data *dev_data,
-+		const struct ixgbe_crypto_rx_sa *sa, bool clear_ip)
-+{
-+	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev_data->dev_private);
-+	const uint8_t key[16] = {0};
-+
-+	ixgbe_crypto_write_rx_spi(hw, sa->sa_idx, 0, 0, false);
-+	ixgbe_crypto_write_rx_key(hw, sa->sa_idx, key, 0, 0, false);
-+	if (clear_ip) {
-+		const struct ipaddr ip = {0};
-+
-+		ixgbe_crypto_write_rx_ip(hw, sa->ip_idx, &ip, false);
-+	}
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+index 890289f27f4..9c11e68727a 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+@@ -6079,42 +6079,40 @@ ixgbevf_dev_rxtx_start(struct rte_eth_dev *dev)
  }
  
- static int
--ixgbe_crypto_add_sa(struct ixgbe_crypto_session *ic_session)
-+ixgbe_crypto_add_tx_sa(struct ixgbe_crypto_session *ic_session)
+ int
+-ixgbe_rss_conf_init(struct ixgbe_rte_flow_rss_conf *out,
+-		    const struct rte_flow_action_rss *in)
++ixgbe_rss_conf_init(struct ixgbe_rss_conf *out,
++		const struct rte_flow_action_rss *in)
  {
- 	struct rte_eth_dev_data *dev_data = ic_session->dev_data;
- 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev_data->dev_private);
- 	struct ixgbe_ipsec *priv = IXGBE_DEV_PRIVATE_TO_IPSEC(dev_data->dev_private);
--	int i, sa_index = -1;
--	uint8_t key[16] = {0};
--
--	if (ic_session->op == IXGBE_OP_AUTHENTICATED_DECRYPTION) {
--		struct ixgbe_crypto_rx_ip_table *rxip;
--		struct ixgbe_crypto_rx_sa_table *rxsa;
--		int ip_index = -1, free_index = -1;
--
--		/* Find a match in the IP table*/
--		for (i = 0; i < IPSEC_MAX_RX_IP_COUNT; i++) {
--			if (CMP_IP(priv->rx_ip_tbl[i].ip,
--				   ic_session->dst_ip)) {
--				ip_index = i;
--				break;
--			}
--			if (free_index == -1 && priv->rx_ip_tbl[i].ref_count == 0)
--				free_index = i;
--		}
--		/* If no match, find a free entry in the IP table*/
--		if (ip_index < 0)
--			ip_index = free_index;
--
--		/* Fail if no match and no free entries*/
--		if (ip_index < 0) {
--			PMD_DRV_LOG(ERR, "No free entry left in the Rx IP table");
--			return -ENOSPC;
--		}
--		rxip = &priv->rx_ip_tbl[ip_index];
--
--		/* Find a free entry in the SA table*/
--		for (i = 0; i < IPSEC_MAX_SA_COUNT; i++) {
--			if (priv->rx_sa_tbl[i].used == 0) {
--				sa_index = i;
--				break;
--			}
--		}
--		/* Fail if no free entries*/
--		if (sa_index < 0) {
--			PMD_DRV_LOG(ERR, "No free entry left in the Rx SA table");
--			return -ENOSPC;
--		}
--		rxsa = &priv->rx_sa_tbl[sa_index];
--
--		rxip->ref_count++;
--		memcpy(&rxip->ip, &ic_session->dst_ip, sizeof(rxip->ip));
--
--		rxsa->spi = ic_session->spi;
--		rxsa->ip_index = ip_index;
--		rxsa->mode = IPSRXMOD_VALID | IPSRXMOD_PROTO | IPSRXMOD_DECRYPT;
--		if (ic_session->dst_ip.type == IPv6)
--			rxsa->mode |= IPSRXMOD_IPV6;
--
--		rxsa->used = 1;
--
--		/* write IP table entry*/
--		ixgbe_crypto_write_rx_ip(hw, ip_index, &rxip->ip, true);
--
--		/* write SPI table entry*/
--		ixgbe_crypto_write_rx_spi(hw, sa_index, rxsa->spi, ip_index, true);
--
--		/* write Key table entry*/
--		memcpy(key, ic_session->key, ic_session->key_len);
--
--		ixgbe_crypto_write_rx_key(hw, sa_index, key,
--				ic_session->salt, rxsa->mode, true);
--
--		rte_memzero_explicit(key, sizeof(key));
--
--	} else { /* sess->dir == RTE_CRYPTO_OUTBOUND */
--		struct ixgbe_crypto_tx_sa_table *txsa;
--
--		/* Find a free entry in the SA table*/
--		for (i = 0; i < IPSEC_MAX_SA_COUNT; i++) {
--			if (priv->tx_sa_tbl[i].used == 0) {
--				sa_index = i;
--				break;
--			}
-+	struct ixgbe_crypto_tx_sa_table *txsa;
-+	uint8_t key[16];
-+	int sa_index = -1;
-+	int i;
+-	if (in->key_len > RTE_DIM(out->key) ||
+-	    in->queue_num > RTE_DIM(out->queue))
++	if (in->key_len > RTE_DIM(out->key) || in->queue_num > RTE_DIM(out->queue))
+ 		return -EINVAL;
+-	out->conf = (struct rte_flow_action_rss){
+-		.func = in->func,
+-		.level = in->level,
 +
-+	for (i = 0; i < IPSEC_MAX_SA_COUNT; i++) {
-+		if (priv->tx_sa_tbl[i].used == 0) {
-+			sa_index = i;
-+			break;
- 		}
--		/* Fail if no free entries*/
--		if (sa_index < 0) {
--			PMD_DRV_LOG(ERR, "No free entry left in the Tx SA table");
--			return -ENOSPC;
--		}
--		txsa = &priv->tx_sa_tbl[sa_index];
--
--		txsa->spi = ic_session->spi;
--		txsa->used = 1;
--		ic_session->sa_index = sa_index;
--
--		memcpy(key, ic_session->key, ic_session->key_len);
--
--		/* write Key table entry*/
--		ixgbe_crypto_write_tx_key(hw, sa_index, key, ic_session->salt, true);
--
--		rte_memzero_explicit(key, sizeof(key));
- 	}
-+	if (sa_index < 0) {
-+		PMD_DRV_LOG(ERR, "No free entry left in the Tx SA table");
-+		return -ENOSPC;
-+	}
-+	txsa = &priv->tx_sa_tbl[sa_index];
-+	txsa->spi = ic_session->spi;
-+	txsa->used = 1;
-+	ic_session->sa_index = sa_index;
++	*out = (struct ixgbe_rss_conf){
+ 		.types = in->types,
+ 		.key_len = in->key_len,
+ 		.queue_num = in->queue_num,
+-		.key = memcpy(out->key, in->key, in->key_len),
+-		.queue = memcpy(out->queue, in->queue,
+-				sizeof(*in->queue) * in->queue_num),
+ 	};
++	if (in->key_len != 0)
++		memcpy(out->key, in->key, in->key_len);
++	if (in->queue_num != 0)
++		memcpy(out->queue, in->queue, sizeof(*in->queue) * in->queue_num);
 +
-+	memcpy(key, ic_session->key, ic_session->key_len);
-+	ixgbe_crypto_write_tx_key(hw, sa_index, (const uint8_t *)key,
-+			ic_session->salt, true);
-+	rte_memzero_explicit(key, sizeof(key));
- 
- 	return 0;
- }
- 
- static int
--ixgbe_crypto_remove_sa(struct ixgbe_crypto_session *ic_session)
-+ixgbe_crypto_remove_tx_sa(struct ixgbe_crypto_session *ic_session)
- {
- 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(ic_session->dev_data->dev_private);
- 	struct ixgbe_ipsec *priv =
- 			IXGBE_DEV_PRIVATE_TO_IPSEC(ic_session->dev_data->dev_private);
-+	struct ixgbe_crypto_tx_sa_table *txsa;
- 	const uint8_t key[16] = {0};
--	int i, sa_index = -1;
- 
--	if (ic_session->op == IXGBE_OP_AUTHENTICATED_DECRYPTION) {
--		struct ixgbe_crypto_rx_ip_table *rxip;
--		struct ixgbe_crypto_rx_sa_table *rxsa;
--		int ip_index = -1;
-+	if (ic_session->sa_index >= IPSEC_MAX_SA_COUNT)
-+		return -ENOENT;
-+	txsa = &priv->tx_sa_tbl[ic_session->sa_index];
-+	if (txsa->used == 0 || txsa->spi != ic_session->spi)
-+		return -ENOENT;
- 
--		/* Find a match in the IP table*/
--		for (i = 0; i < IPSEC_MAX_RX_IP_COUNT; i++) {
--			if (CMP_IP(priv->rx_ip_tbl[i].ip, ic_session->dst_ip)) {
--				ip_index = i;
--				break;
--			}
--		}
-+	ixgbe_crypto_write_tx_key(hw, ic_session->sa_index, key, 0, false);
-+	*txsa = (struct ixgbe_crypto_tx_sa_table){0};
- 
--		/* Fail if no match*/
--		if (ip_index < 0) {
--			PMD_DRV_LOG(ERR, "Entry not found in the Rx IP table");
--			return -ENOENT;
--		}
--		rxip = &priv->rx_ip_tbl[ip_index];
-+	return 0;
-+}
- 
--		/* Find a free entry in the SA table*/
--		for (i = 0; i < IPSEC_MAX_SA_COUNT; i++) {
--			if (priv->rx_sa_tbl[i].spi == ic_session->spi) {
--				sa_index = i;
--				break;
--			}
--		}
--		/* Fail if no match*/
--		if (sa_index < 0) {
--			PMD_DRV_LOG(ERR, "Entry not found in the Rx SA table");
--			return -ENOENT;
--		}
--		rxsa = &priv->rx_sa_tbl[sa_index];
-+static int
-+ixgbe_crypto_session_state_acquire(struct ixgbe_crypto_session *ic_session)
-+{
-+	uint16_t expected;
- 
--		/* Disable and clear Rx SPI and key table entries*/
--		ixgbe_crypto_write_rx_spi(hw, sa_index, 0, 0, false);
--		ixgbe_crypto_write_rx_key(hw, sa_index, key, 0, 0, false);
--
--		/* Clear the SA table entry*/
--		*rxsa = (struct ixgbe_crypto_rx_sa_table){0};
-+	expected = rte_atomic_load_explicit(&ic_session->refcnt,
-+			rte_memory_order_acquire);
-+	while (expected != IXGBE_SECURITY_SESSION_DESTROYING) {
-+		if (expected >= IXGBE_SECURITY_SESSION_REFCNT_MAX)
-+			return -ENOSPC;
-+		if (rte_atomic_compare_exchange_strong_explicit(&ic_session->refcnt,
-+				&expected, expected + 1,
-+				rte_memory_order_acq_rel, rte_memory_order_acquire))
-+			return 0;
-+	}
- 
--		/* If last used then clear the IP table entry*/
--		rxip->ref_count--;
--		if (rxip->ref_count == 0) {
--			const struct ipaddr ip = {0};
--			ixgbe_crypto_write_rx_ip(hw, ip_index, &ip, false);
--			*rxip = (struct ixgbe_crypto_rx_ip_table){0};
--		}
--	} else { /* session->dir == RTE_CRYPTO_OUTBOUND */
--		struct ixgbe_crypto_tx_sa_table *txsa;
-+	return -EBUSY;
-+}
- 
--		/* Find a match in the SA table*/
--		for (i = 0; i < IPSEC_MAX_SA_COUNT; i++) {
--			if (priv->tx_sa_tbl[i].spi == ic_session->spi) {
--				sa_index = i;
--				break;
--			}
--		}
--		/* Fail if no match entries*/
--		if (sa_index < 0) {
--			PMD_DRV_LOG(ERR, "Entry not found in the Tx SA table");
--			return -ENOENT;
--		}
--		txsa = &priv->tx_sa_tbl[sa_index];
-+static int
-+ixgbe_crypto_session_state_release(struct ixgbe_crypto_session *ic_session)
-+{
-+	uint16_t expected;
- 
--		ixgbe_crypto_write_tx_key(hw, sa_index, key, 0, false);
--		*txsa = (struct ixgbe_crypto_tx_sa_table){0};
-+	expected = rte_atomic_load_explicit(&ic_session->refcnt,
-+			rte_memory_order_acquire);
-+	while (expected != IXGBE_SECURITY_SESSION_DESTROYING) {
-+		if (expected == IXGBE_SECURITY_SESSION_UNBOUND)
-+			return -EINVAL;
-+		if (rte_atomic_compare_exchange_strong_explicit(&ic_session->refcnt,
-+				&expected, expected - 1,
-+				rte_memory_order_release, rte_memory_order_relaxed))
-+			return 0;
- 	}
- 
-+	return -EINVAL;
-+}
-+
-+int
-+ixgbe_crypto_session_acquire(struct rte_security_session *session)
-+{
-+	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(session);
-+
-+	return ixgbe_crypto_session_state_acquire(ic_session);
-+}
-+
-+int
-+ixgbe_crypto_session_release(struct rte_security_session *session)
-+{
-+	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(session);
-+
-+	return ixgbe_crypto_session_state_release(ic_session);
-+}
-+
-+static int
-+ixgbe_crypto_session_disable(struct rte_security_session *session)
-+{
-+	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(session);
-+	uint16_t expected;
-+
-+	/*
-+	 * Rx sessions must have no flow references before removal. Tx sessions
-+	 * retain the reference acquired when their SA was allocated.
-+	 */
-+	expected = ic_session->op == IXGBE_OP_AUTHENTICATED_DECRYPTION ?
-+			IXGBE_SECURITY_SESSION_UNBOUND : 1;
-+	if (!rte_atomic_compare_exchange_strong_explicit(&ic_session->refcnt,
-+			&expected, IXGBE_SECURITY_SESSION_DESTROYING,
-+			rte_memory_order_acq_rel, rte_memory_order_acquire))
-+		return -EBUSY;
- 	return 0;
- }
- 
-@@ -338,6 +302,7 @@ ixgbe_crypto_create_session(void *device,
- 	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(session);
- 	struct rte_crypto_aead_xform *aead_xform;
- 	struct rte_eth_conf *dev_conf = &eth_dev->data->dev_conf;
-+	int ret;
- 
- 	if (conf->crypto_xform->type != RTE_CRYPTO_SYM_XFORM_AEAD ||
- 			conf->crypto_xform->aead.algo !=
-@@ -369,18 +334,30 @@ ixgbe_crypto_create_session(void *device,
- 		}
- 	}
- 
--	ic_session->key = aead_xform->key.data;
-+	memcpy(ic_session->key, aead_xform->key.data, sizeof(ic_session->key));
- 	ic_session->key_len = aead_xform->key.length;
- 	memcpy(&ic_session->salt,
- 	       &aead_xform->key.data[aead_xform->key.length], 4);
- 	ic_session->spi = conf->ipsec.spi;
- 	ic_session->dev_data = eth_dev->data;
- 
-+	rte_atomic_store_explicit(&ic_session->refcnt,
-+			IXGBE_SECURITY_SESSION_UNBOUND,
-+			rte_memory_order_relaxed);
-+
-+	/* only handle tx, as rx sessions are created by rte_flow */
- 	if (ic_session->op == IXGBE_OP_AUTHENTICATED_ENCRYPTION) {
--		if (ixgbe_crypto_add_sa(ic_session)) {
-+		if (ixgbe_crypto_add_tx_sa(ic_session)) {
- 			PMD_DRV_LOG(ERR, "Failed to add SA");
-+			rte_memzero_explicit(ic_session, sizeof(*ic_session));
- 			return -EPERM;
- 		}
-+		ret = ixgbe_crypto_session_state_acquire(ic_session);
-+		if (ret != 0) {
-+			ixgbe_crypto_remove_tx_sa(ic_session);
-+			rte_memzero_explicit(ic_session, sizeof(*ic_session));
-+			return ret;
-+		}
- 	}
- 
- 	return 0;
-@@ -398,18 +375,30 @@ ixgbe_crypto_remove_session(void *device,
- {
- 	struct rte_eth_dev *eth_dev = device;
- 	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(session);
-+	int ret;
- 
- 	if (eth_dev->data != ic_session->dev_data) {
- 		PMD_DRV_LOG(ERR, "Session not bound to this device");
- 		return -ENODEV;
- 	}
- 
--	if (ixgbe_crypto_remove_sa(ic_session)) {
--		PMD_DRV_LOG(ERR, "Failed to remove session");
--		return -EFAULT;
-+	if (ixgbe_crypto_session_disable(session) < 0) {
-+		PMD_DRV_LOG(ERR, "Session is still in use");
-+		return -EBUSY;
- 	}
- 
--	memset(ic_session, 0, sizeof(struct ixgbe_crypto_session));
-+	if (ic_session->op == IXGBE_OP_AUTHENTICATED_ENCRYPTION) {
-+		ret = ixgbe_crypto_remove_tx_sa(ic_session);
-+		if (ret != 0) {
-+			PMD_DRV_LOG(ERR, "Failed to remove session");
-+			/* set refcnt back to 1 to re-enable the session */
-+			rte_atomic_store_explicit(&ic_session->refcnt, 1,
-+					rte_memory_order_release);
-+			return ret;
-+		}
-+	}
-+
-+	rte_memzero_explicit(ic_session, sizeof(*ic_session));
- 	return 0;
- }
- 
-@@ -632,34 +621,6 @@ ixgbe_crypto_enable_ipsec(struct rte_eth_dev *dev)
  	return 0;
  }
  
 -int
--ixgbe_crypto_add_ingress_sa_from_flow(struct rte_security_session *sess,
--		const struct ip_spec *spec)
--{
--	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(sess);
--
--	if (ic_session->op == IXGBE_OP_AUTHENTICATED_DECRYPTION) {
--		if (spec->is_ipv6) {
--			const struct rte_flow_item_ipv6 *ipv6 = &spec->spec.ipv6;
--			ic_session->src_ip.type = IPv6;
--			ic_session->dst_ip.type = IPv6;
--			memcpy(ic_session->src_ip.ipv6,
--				   &ipv6->hdr.src_addr, 16);
--			memcpy(ic_session->dst_ip.ipv6,
--				   &ipv6->hdr.dst_addr, 16);
--		} else {
--			const struct rte_flow_item_ipv4 *ipv4 = &spec->spec.ipv4;
--			ic_session->src_ip.type = IPv4;
--			ic_session->dst_ip.type = IPv4;
--			ic_session->src_ip.ipv4 = ipv4->hdr.src_addr;
--			ic_session->dst_ip.ipv4 = ipv4->hdr.dst_addr;
--		}
--		return ixgbe_crypto_add_sa(ic_session);
--	}
--
--	return 0;
--}
--
- static struct rte_security_ops ixgbe_security_ops = {
- 	.session_create = ixgbe_crypto_create_session,
- 	.session_update = NULL,
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ipsec.h b/drivers/net/intel/ixgbe/ixgbe_ipsec.h
-index 1099b5f598b..a872a64788b 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ipsec.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_ipsec.h
-@@ -8,6 +8,7 @@
- #include <ethdev_driver.h>
- #include <rte_security.h>
- #include <rte_security_driver.h>
-+#include <rte_stdatomic.h>
+-ixgbe_action_rss_same(const struct rte_flow_action_rss *comp,
+-		      const struct rte_flow_action_rss *with)
++static bool
++ixgbe_rss_conf_same(const struct ixgbe_rss_conf *comp,
++		const struct ixgbe_rss_conf *with)
+ {
+-	return (comp->func == with->func &&
+-		comp->level == with->level &&
+-		comp->types == with->types &&
++	return comp->types == with->types &&
+ 		comp->key_len == with->key_len &&
+ 		comp->queue_num == with->queue_num &&
+-		!memcmp(comp->key, with->key, with->key_len) &&
+-		!memcmp(comp->queue, with->queue,
+-			sizeof(*with->queue) * with->queue_num));
++		memcmp(comp->key, with->key, with->key_len) == 0 &&
++		memcmp(comp->queue, with->queue,
++			sizeof(*with->queue) * with->queue_num) == 0;
+ }
  
- #include <rte_flow.h>
+ int
+ ixgbe_config_rss_filter(struct ixgbe_adapter *adapter,
+-		struct ixgbe_rte_flow_rss_conf *conf, bool add)
++		const struct ixgbe_rss_conf *conf, bool add)
+ {
+ 	struct ixgbe_hw *hw;
+ 	uint32_t reta;
+@@ -6123,10 +6121,10 @@ ixgbe_config_rss_filter(struct ixgbe_adapter *adapter,
+ 	uint16_t sp_reta_size;
+ 	uint32_t reta_reg;
+ 	struct rte_eth_rss_conf rss_conf = {
+-		.rss_key = conf->conf.key_len ?
+-			(void *)(uintptr_t)conf->conf.key : NULL,
+-		.rss_key_len = conf->conf.key_len,
+-		.rss_hf = conf->conf.types,
++		.rss_key = conf->key_len ?
++			(void *)(uintptr_t)conf->key : NULL,
++		.rss_key_len = conf->key_len,
++		.rss_hf = conf->types,
+ 	};
+ 	struct ixgbe_filter_info *filter_info =
+ 		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(adapter);
+@@ -6137,17 +6135,15 @@ ixgbe_config_rss_filter(struct ixgbe_adapter *adapter,
+ 	sp_reta_size = ixgbe_reta_size_get(hw->mac.type);
  
-@@ -33,6 +34,9 @@
+ 	if (!add) {
+-		if (ixgbe_action_rss_same(&filter_info->rss_info.conf,
+-					  &conf->conf)) {
++		if (ixgbe_rss_conf_same(&filter_info->rss_info, conf)) {
+ 			ixgbe_mrqc_rss_remove(hw);
+-			memset(&filter_info->rss_info, 0,
+-				sizeof(struct ixgbe_rte_flow_rss_conf));
++			filter_info->rss_info = (struct ixgbe_rss_conf){0};
+ 			return 0;
+ 		}
+ 		return -EINVAL;
+ 	}
  
- #define IPSEC_MAX_RX_IP_COUNT           128
- #define IPSEC_MAX_SA_COUNT              1024
-+#define IXGBE_SECURITY_SESSION_UNBOUND  0
-+#define IXGBE_SECURITY_SESSION_REFCNT_MAX IPSEC_MAX_SA_COUNT
-+#define IXGBE_SECURITY_SESSION_DESTROYING UINT16_MAX
+-	if (filter_info->rss_info.conf.queue_num)
++	if (filter_info->rss_info.queue_num)
+ 		return -EINVAL;
+ 	/* Fill in redirection table
+ 	 * The byte-swap is needed because NIC registers are in
+@@ -6157,9 +6153,9 @@ ixgbe_config_rss_filter(struct ixgbe_adapter *adapter,
+ 	for (i = 0, j = 0; i < sp_reta_size; i++, j++) {
+ 		reta_reg = ixgbe_reta_reg_get(hw->mac.type, i);
  
- #define ESP_ICV_SIZE 16
- #define ESP_TRAILER_SIZE 2
-@@ -67,32 +71,30 @@ struct ipaddr {
- /** inline crypto crypto private session structure */
- struct __rte_cache_aligned ixgbe_crypto_session {
- 	enum ixgbe_operation op;
--	const uint8_t *key;
-+	RTE_ATOMIC(uint16_t) refcnt;
-+	uint8_t key[16];
- 	uint32_t key_len;
- 	uint32_t salt;
- 	uint32_t sa_index;
- 	uint32_t spi;
--	struct ipaddr src_ip;
--	struct ipaddr dst_ip;
- 	struct rte_eth_dev_data *dev_data;
- };
+-		if (j == conf->conf.queue_num)
++		if (j == conf->queue_num)
+ 			j = 0;
+-		reta = (reta << 8) | conf->conf.queue[j];
++		reta = (reta << 8) | conf->queue[j];
+ 		if ((i & 3) == 3)
+ 			IXGBE_WRITE_REG(hw, reta_reg,
+ 					rte_bswap32(reta));
+@@ -6176,8 +6172,7 @@ ixgbe_config_rss_filter(struct ixgbe_adapter *adapter,
+ 		rss_conf.rss_key = rss_intel_key; /* Default hash key */
+ 	ixgbe_hw_rss_hash_set(hw, &rss_conf);
  
--struct ixgbe_crypto_rx_ip_table {
--	struct ipaddr ip;
--	uint16_t ref_count;
--};
--struct ixgbe_crypto_rx_sa_table {
--	uint32_t spi;
--	uint32_t ip_index;
--	uint8_t  mode;
--	uint8_t  used;
--};
--
- struct ixgbe_crypto_tx_sa_table {
- 	uint32_t spi;
- 	uint8_t  used;
- };
+-	if (ixgbe_rss_conf_init(&filter_info->rss_info, &conf->conf))
+-		return -EINVAL;
++	filter_info->rss_info = *conf;
  
-+struct ixgbe_crypto_rx_sa {
-+	struct ipaddr dst_ip;
-+	const uint8_t *key;
-+	uint32_t salt;
-+	uint32_t spi;
-+	uint32_t mode;
-+	uint32_t ip_idx;
-+	uint32_t sa_idx;
-+};
-+
- union ixgbe_crypto_tx_desc_md {
- 	uint64_t data;
- 	struct {
-@@ -106,25 +108,17 @@ union ixgbe_crypto_tx_desc_md {
- };
- 
- struct ixgbe_ipsec {
--	struct ixgbe_crypto_rx_ip_table rx_ip_tbl[IPSEC_MAX_RX_IP_COUNT];
--	struct ixgbe_crypto_rx_sa_table rx_sa_tbl[IPSEC_MAX_SA_COUNT];
- 	struct ixgbe_crypto_tx_sa_table tx_sa_tbl[IPSEC_MAX_SA_COUNT];
- };
- 
- 
- int ixgbe_ipsec_ctx_create(struct rte_eth_dev *dev);
- int ixgbe_crypto_enable_ipsec(struct rte_eth_dev *dev);
--
--struct ip_spec {
--	bool is_ipv6;
--	union {
--		struct rte_flow_item_ipv4 ipv4;
--		struct rte_flow_item_ipv6 ipv6;
--	} spec;
--};
--int ixgbe_crypto_add_ingress_sa_from_flow(struct rte_security_session *sess,
--		const struct ip_spec *ip_spec);
--
--
-+void ixgbe_crypto_install_rx_sa(struct rte_eth_dev_data *dev_data,
-+		const struct ixgbe_crypto_rx_sa *sa);
-+void ixgbe_crypto_uninstall_rx_sa(struct rte_eth_dev_data *dev_data,
-+		const struct ixgbe_crypto_rx_sa *sa, bool clear_ip);
-+int ixgbe_crypto_session_acquire(struct rte_security_session *session);
-+int ixgbe_crypto_session_release(struct rte_security_session *session);
- 
- #endif /*IXGBE_IPSEC_H_*/
-diff --git a/drivers/net/intel/ixgbe/meson.build b/drivers/net/intel/ixgbe/meson.build
-index 90cc88f0027..12ba639b702 100644
---- a/drivers/net/intel/ixgbe/meson.build
-+++ b/drivers/net/intel/ixgbe/meson.build
-@@ -30,6 +30,7 @@ sources += files(
-         'ixgbe_flow_syn.c',
-         'ixgbe_flow_l2tun.c',
-         'ixgbe_flow_ntuple.c',
-+        'ixgbe_flow_security.c',
-         'ixgbe_ipsec.c',
-         'ixgbe_pf.c',
-         'ixgbe_rxtx.c',
+ 	return 0;
+ }
 -- 
 2.52.0
 
