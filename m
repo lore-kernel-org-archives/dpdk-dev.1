@@ -2,51 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A86CA5FFF
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 10:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E3ACA5FFC
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 10:50:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17F2240608;
-	Wed,  7 Oct 2026 12:41:40 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 13D2A40144;
- Wed,  7 Oct 2026 12:41:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 07191402D2;
+	Wed,  7 Oct 2026 12:50:32 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+ by mails.dpdk.org (Postfix) with ESMTP id 921EE40144
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 12:50:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791369699; x=1822905699;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=AkE6sc2Pp2cF3mvRaVUoDi7eILjILOdOu7uwJMqB8QE=;
- b=SXPMvOWTn35zJZ9ZLjGwJXyzP5D+Y8LqOBRK6ef+RG/aVmph+lDT2Nza
- SFMZHjz2s9SSHSfcfMhH7O3D/kv7ZY5joZDBcF8A2pPSs2nwm71aC5BzD
- W949Z1lj4iJcrSgLXmZQDlL6IE8TMsRmaQBK0Qp0Q4aNrZHYwO9xOaylJ
- 6InmPUUXPEFfkAzc9MzOCjZElG8f4QHK4739cSfX9wWzzmWuHMTpWEm8U
- Tae6aKkuge3jbMBH9qVw01KuB2Z8z5C+/vptqxRyVtxHsUtKSgDmt3Xsd
- ncdgXzuMK8JA4VLbNN31/mdWyrR558kR0YyTZiIHIoRJl+6Y9xAqdDuyk g==;
-X-CSE-ConnectionGUID: k2XuY5IOTje9RoO2G9C9Zg==
-X-CSE-MsgGUID: epSmOtiKQQeE3Mkdu8yCIQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="22711"
+ t=1791370231; x=1822906231;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=9NhVGLOe7XKcH2rDzkWPJHDKNqPw2XvRsO7Y627xcI0=;
+ b=Kis9nmWIX8jyt94I+YjgSefiYn6T3PgxuB882S/G/ef5Rvvj3UNlLIzR
+ RXz2fUT8cgv74TPwcci88gi3ftxpyczRVUnaM8RP3hZ/NxAKLhlHNkz/B
+ E/ifzDibVDwEnRXTC5J+MsPzA0rJf+ck+6WbK4lPfXFb5WbNNF49m7qXJ
+ hIG5QGZ1f+DBv6yHhANEgkH8MfSnTU5yqzIRRw/IVidwEP5iAdE6wQd85
+ WJBFRE+ouFtq0U5AXLfoAANlXvdwCIQqc5oFB31QChX64D9ZChnRxHtk8
+ OXXJcvGLOgbWd96JRgzriaIV0RLQeeB0uRq6tWHMjvXe899+LviIru5rN Q==;
+X-CSE-ConnectionGUID: MwjXMlpNRGesJPxGwYSoig==
+X-CSE-MsgGUID: plzE9zrlQ5uTTIkoPOIX1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="121791"
 X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; 
-   d="scan'208";a="22711"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Oct 2026 03:41:30 -0700
-X-CSE-ConnectionGUID: CxhQ6I9pTYqVvcdSQPlCtA==
-X-CSE-MsgGUID: Vvn4CIzpQr2VnXsiafVNhQ==
+   d="scan'208";a="121791"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Oct 2026 03:50:30 -0700
+X-CSE-ConnectionGUID: NOW7ddk7SOmesgnv4TUz4Q==
+X-CSE-MsgGUID: wmPsxMOuSLW7hYhUzO8EtQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; d="scan'208";a="303705026"
-Received: from npg-npf-wlpr-srv19.iind.intel.com ([10.190.212.201])
- by fmviesa002.fm.intel.com with ESMTP; 07 Oct 2026 03:41:28 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Cc: stable@dpdk.org
-Subject: [PATCH v2] net/intel: fix idpf Tx payload corruption in split queue
-Date: Wed,  7 Oct 2026 16:10:42 +0530
-Message-Id: <20261007104042.1189216-1-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260930044630.250936-1-shaiq.wani@intel.com>
-References: <20260930044630.250936-1-shaiq.wani@intel.com>
+X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; d="scan'208";a="280652032"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa003.jf.intel.com with ESMTP; 07 Oct 2026 03:50:29 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v5 00/25] Building a better rte_flow parser
+Date: Wed,  7 Oct 2026 11:49:55 +0100
+Message-ID: <cover.1791369979.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1787233986.git.anatoly.burakov@intel.com>
+References: <cover.1787233986.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -62,344 +59,184 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Observed on ACC while running NVMe traffic tests: under sustained
-high-throughput split-queue Tx, payload bytes on the wire did not
-match what the application submitted, while headers and checksums
-looked valid.
+Most rte_flow parsers in DPDK suffer from huge implementation complexity because
+even though 99% of what people use rte_flow parsers for is parsing protocol
+graphs, no parser is written explicitly as a graph. This patchset attempts to
+suggest a viable model to build rte_flow parsers as graphs, by offering a
+library to build rte_flow parser graphs without too much boilerplate and
+complexity.
 
-The RS-completion path was freeing mbufs by walking sw_ring[] slots
-between first_id and the EOP sw_id. sw_ring[] slots get reclaimed
-by RE and reused by subsequent submits well before RS lands, so the
-walker was freeing mbufs still in flight for later packets, whose
-buffers then got recycled and overwritten mid-DMA.
+Most of the patchset is about Intel drivers, but they are meant as
+reimplementations as well as examples for the rest of the community to assess
+how to build parsers using this new infrastructure. I expect the first three
+patches will be of most interest to non-Intel reviewers, as they deal with
+building two reusable parser architecture pieces.
 
-Fix by tracking completion ownership in a shadow ring indexed by a
-software-defined compl_tag stamped on all data descriptors of the
-packet, as required by the IDPF spec, and echoed back by HW on RS.
-The shadow ring is the sole owner of in-flight mbufs on the scalar
-split-queue path, so sw_ring[].mbuf is no longer written and queue
-stop/release drain only the shadow ring.
+The first piece is a new flow graph helper in ethdev. Its purpose is
+deliberately narrow: it targets the protocol-graph part of rte_flow pattern
+parsing, where drivers walk packet headers and validate legal item sequences and
+parameters. That does not cover all possible rte_flow features, especially more
+exotic flow items, but it does cover a large and widely shared part of what
+existing drivers need to do. Or, to put it in other words, the only flow items
+this infrastructure *doesn't* cover is things that do not lend themselves well
+to be parsed as a graph of protocol headers (e.g. conntrack items). Everything
+else should be covered or cover-able. In practice, just about all drivers will
+benefit from graph parsing as all but one of them implement only the protocol
+stack parts, which are the ones targeted by the graph helper.
 
-Since RE reclaims descriptors before RS completes, nb_tx_free does
-not bound the number of packets awaiting RS. Size the shadow ring to
-nb_tx_desc and stop transmitting when the next compl_tag slot is
-still occupied, so a pending entry is never overwritten and pending
-completions cannot overflow the completion queue.
+The second piece is a reusable flow engine framework for Intel Ethernet drivers.
+This is kept Intel-local because I do not feel it is even appropriate to define
+such a framework for all drivers to use in the first place. Even so, the intent
+is to establish a cleaner parser architecture with a defined interaction model,
+explicit memory ownership rules, locking, initialization sequence,
+implementations of rte_flow API entry points, flow replay and memory cleanup,
+and engine definitions that do not block secondary-process-safe usage. It is my
+hope that this would serve as a model for other drivers to follow, expand on,
+rework, and improve, so that maybe down the line we *might* have a common
+rte_flow infrastructure for drivers to use.
 
-Allocate the shadow ring at queue setup and fail setup on allocation
-error, and free it on all setup error and release paths. Remove the
-now unused ci_tx_entry.first_id field.
+Most of the rest of the series is parser reimplementation, but that is mainly
+the vehicle for demonstrating and validating those two pieces. ixgbe and i40e
+are wired into the new common parsing path, and their existing parsers are
+migrated incrementally to the graph-based model. Besides reducing ad hoc parser
+code, this also makes validation more explicit and more consistent. In a few
+places that means invalid inputs that were previously ignored, deferred, or
+interpreted loosely are now rejected earlier and more strictly, without any
+increase in code complexity (in fact, with marked *decrease* of it!).
 
-Fixes: 96cc9b6ea60c ("net/idpf: fix multi-segment mbuf leak in split Tx path")
-Cc: stable@dpdk.org
+v4 -> v5:
+- Fixed ixgbe ntuple parsing of L4 protocol flows
+- Rebased on top of latest ixgbe changes
+- Revised ixgbe FDIR refactoring to have less duplication
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
-v2:
-Addressed AI review comments, which include:
-* Do not store mbufs in sw_ring[] on the scalar split-queue Tx path;
-  tx_pending_pkts[] is the sole owner, fixing double-free on queue
-  stop/release.
-* Stop Tx when the next compl_tag slot is still pending, so RS
-  entries cannot be overwritten when RE runs ahead of RS.
-* Allocate the shadow ring at queue setup and propagate -ENOMEM.
-* Free the shadow ring on idpf/cpfl setup error paths and in
-  cpfl_tx_queue_release().
-Also aligned with the IDPF spec:
-* Write the same compl_tag to all data descriptors of a packet.
-* Size the shadow ring to nb_tx_desc, so pending completions cannot
-  overflow the 2 * nb_tx_desc completion queue.
-Other:
-* Remove the now unused ci_tx_entry.first_id field.
-* Drop redundant per-descriptor sw_ring[].mbuf = NULL stores.
+v3 -> v4:
+- Added a "get default mask" flow API
+- Simplified graph constraints implementation
+- Made flow graph a compiled unit instead of header-only library
+- Reworked all graph engines to use default flow mask if user didn't provide one
+- Split out ixgbe ethertype refactor into a separate patch
+- Split out SYN and ntuple priority fixes as separate patches
+- Refactored ixgbe RSS configuration structure
+- Address Vladimir's feedback for specific engines
+- Address Stephen's comments
+- Reduced the number of comments in code
 
- drivers/net/intel/common/tx.h             |   8 +-
- drivers/net/intel/cpfl/cpfl_rxtx.c        |   6 ++
- drivers/net/intel/idpf/idpf_common_rxtx.c | 105 ++++++++++++++++------
- drivers/net/intel/idpf/idpf_common_rxtx.h |   4 +
- drivers/net/intel/idpf/idpf_rxtx.c        |   5 ++
- 5 files changed, 100 insertions(+), 28 deletions(-)
+v2 -> v3:
+- Rebase on top of latest next-net-intel
+- Cleanup pass on naming of engines and hash tables
+- Added more logging to flow engine initializations
+- Introduced a lightweight refcount to initialize shared resources
+- Some small refactors in how ixgbe flow director engine keeps its state
+- Fixed typos in documentation
 
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index 2a63cd4330..7c9841a21a 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -166,7 +166,6 @@ struct ci_tx_queue;
- struct ci_tx_entry {
- 	struct rte_mbuf *mbuf; /* mbuf associated with TX desc, if any. */
- 	uint16_t next_id; /* Index of next descriptor in ring. */
--	uint16_t first_id; /* Split-queue: first sw_id of packet at EOP entry. */
- };
- 
- /**
-@@ -262,6 +261,13 @@ struct ci_tx_queue {
- 				uint16_t sw_nb_desc;
- 				uint16_t sw_tail;
- 				uint16_t rs_compl_count;
-+				/* Split-Tx completion tracking: shadow ring indexed by a
-+				 * rolling compl_tag decouples RS-completion mbuf lifetime
-+				 * from sw_ring[] slot reuse. Sized nb_tx_desc.
-+				 */
-+				struct rte_mbuf **tx_pending_pkts;
-+				uint16_t tx_pending_size;
-+				uint16_t tx_next_compl_tag;
- 		};
- 	};
- };
-diff --git a/drivers/net/intel/cpfl/cpfl_rxtx.c b/drivers/net/intel/cpfl/cpfl_rxtx.c
-index aba3a5e916..0dbe47d336 100644
---- a/drivers/net/intel/cpfl/cpfl_rxtx.c
-+++ b/drivers/net/intel/cpfl/cpfl_rxtx.c
-@@ -329,6 +329,7 @@ cpfl_tx_queue_release(void *txq)
- 		rte_free(q->complq);
- 	}
- 
-+	idpf_qc_split_tx_pending_free(q);
- 	ci_txq_release_all_mbufs(q, q->use_vec_entry);
- 	rte_free(q->sw_ring);
- 	rte_free(q->rs_last_id);
-@@ -624,6 +625,9 @@ cpfl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 		idpf_qc_single_tx_queue_reset(txq);
- 	} else {
- 		txq->desc_ring = mz->addr;
-+		ret = idpf_qc_split_tx_pending_alloc(txq, socket_id);
-+		if (ret != 0)
-+			goto err_pending_alloc;
- 		idpf_qc_split_tx_descq_reset(txq);
- 
- 		/* Setup tx completion queue if split model */
-@@ -642,6 +646,8 @@ cpfl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 	return 0;
- 
- err_complq_setup:
-+	idpf_qc_split_tx_pending_free(txq);
-+err_pending_alloc:
- 	rte_free(txq->rs_last_id);
- err_rs_last_id_alloc:
- 	rte_free(txq->sw_ring);
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index 649b5d1f99..e54056b5c0 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -233,6 +233,51 @@ idpf_qc_split_tx_descq_reset(struct ci_tx_queue *txq)
- 	txq->rs_compl_count = 0;
- 	txq->tx_next_dd = txq->tx_rs_thresh - 1;
- 	txq->tx_next_rs = txq->tx_rs_thresh - 1;
-+
-+	if (txq->tx_pending_pkts != NULL) {
-+		for (i = 0; i < txq->tx_pending_size; i++) {
-+			if (txq->tx_pending_pkts[i] != NULL) {
-+				rte_pktmbuf_free(txq->tx_pending_pkts[i]);
-+				txq->tx_pending_pkts[i] = NULL;
-+			}
-+		}
-+	}
-+	txq->tx_next_compl_tag = 0;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_split_tx_pending_alloc)
-+int
-+idpf_qc_split_tx_pending_alloc(struct ci_tx_queue *txq, unsigned int socket_id)
-+{
-+	/* Bounding pending RS to nb_tx_desc keeps the 2 * nb_tx_desc complq from overflowing. */
-+	txq->tx_pending_pkts = rte_zmalloc_socket("idpf_tx_pending",
-+			sizeof(struct rte_mbuf *) * txq->nb_tx_desc,
-+			RTE_CACHE_LINE_SIZE, socket_id);
-+	if (txq->tx_pending_pkts == NULL) {
-+		DRV_LOG(ERR, "Failed to alloc idpf tx_pending shadow ring");
-+		return -ENOMEM;
-+	}
-+	txq->tx_pending_size = txq->nb_tx_desc;
-+	txq->tx_next_compl_tag = 0;
-+
-+	return 0;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_split_tx_pending_free)
-+void
-+idpf_qc_split_tx_pending_free(struct ci_tx_queue *txq)
-+{
-+	uint32_t i;
-+
-+	if (txq->tx_pending_pkts == NULL)
-+		return;
-+
-+	for (i = 0; i < txq->tx_pending_size; i++) {
-+		if (txq->tx_pending_pkts[i] != NULL)
-+			rte_pktmbuf_free(txq->tx_pending_pkts[i]);
-+	}
-+	rte_free(txq->tx_pending_pkts);
-+	txq->tx_pending_pkts = NULL;
- }
- 
- RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_split_tx_complq_reset)
-@@ -387,6 +432,7 @@ idpf_qc_tx_queue_release(void *txq)
- 		rte_free(q->complq);
- 	}
- 
-+	idpf_qc_split_tx_pending_free(q);
- 	ci_txq_release_all_mbufs(q, false);
- 	rte_free(q->rs_last_id);
- 	rte_free(q->sw_ring);
-@@ -787,7 +833,6 @@ idpf_split_tx_free(struct idpf_complq *cq)
- 	volatile struct idpf_splitq_tx_compl_desc *compl_ring = cq->compl_ring;
- 	volatile struct idpf_splitq_tx_compl_desc *txd;
- 	uint16_t next = cq->tx_tail;
--	struct ci_tx_entry *txe;
- 	struct ci_tx_queue *txq;
- 	uint16_t gen, qid, q_head;
- 	uint16_t nb_desc_clean;
-@@ -824,26 +869,21 @@ idpf_split_tx_free(struct idpf_complq *cq)
- 		txq->nb_tx_free += nb_desc_clean;
- 		txq->last_desc_cleaned = q_head;
- 		break;
--	case IDPF_TXD_COMPLT_RS:
--		/* Walk from first segment to EOP, freeing each segment. */
--		txe = &txq->sw_ring[q_head];
--		if (txe->mbuf != NULL) {
--			uint16_t first = txe->first_id;
--			uint16_t idx = first;
--			uint16_t end = (q_head + 1 == txq->sw_nb_desc) ?
--					0 : q_head + 1;
--
--			do {
--				txe = &txq->sw_ring[idx];
--				if (txe->mbuf != NULL) {
--					rte_pktmbuf_free_seg(txe->mbuf);
--					txe->mbuf = NULL;
--				}
--				idx = (idx + 1 == txq->sw_nb_desc) ?
--					0 : idx + 1;
--			} while (idx != end);
-+	case IDPF_TXD_COMPLT_RS: {
-+		/* Shadow ring indexed by the software-defined compl_tag is
-+		 * the sole source of truth for RS-time mbuf ownership; free
-+		 * the whole multi-seg chain via mbuf->next in one call.
-+		 */
-+		uint16_t tag = q_head;
-+
-+		if (unlikely(tag >= txq->tx_pending_size)) {
-+			TX_LOG(ERR, "invalid completion tag %u.", tag);
-+		} else if (txq->tx_pending_pkts[tag] != NULL) {
-+			rte_pktmbuf_free(txq->tx_pending_pkts[tag]);
-+			txq->tx_pending_pkts[tag] = NULL;
- 		}
- 		break;
-+	}
- 	default:
- 		TX_LOG(ERR, "unknown completion type.");
- 		return;
-@@ -976,6 +1016,19 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		if (txq->nb_tx_free < nb_used)
- 			break;
- 
-+		/* RE reclaims descriptors before RS, so tag occupancy is the
-+		 * only bound on packets awaiting RS completion.
-+		 */
-+		uint16_t tag = txq->tx_next_compl_tag;
-+
-+		if (unlikely(txq->tx_pending_pkts[tag] != NULL)) {
-+			nb_to_clean = 2 * txq->tx_rs_thresh;
-+			while (nb_to_clean--)
-+				idpf_split_tx_free(txq->complq);
-+			if (txq->tx_pending_pkts[tag] != NULL)
-+				break;
-+		}
-+
- 		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
- 			cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_CS_EN;
- 
-@@ -991,8 +1044,6 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				tx_id = 0;
- 		}
- 
--		uint16_t first_sw_id = sw_id;
--
- 		do {
- 			uint16_t slen = tx_pkt->data_len;
- 			rte_iova_t buf_dma_addr = rte_mbuf_data_iova(tx_pkt);
-@@ -1004,13 +1055,12 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 					unlikely(slen > CI_MAX_DATA_PER_TXD)) {
- 				txd = &txr[tx_id];
- 				txn = &sw_ring[txe->next_id];
--				txe->mbuf = NULL;
- 
- 				txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
- 				txd->qw1.cmd_dtype = cmd_dtype |
- 					IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
- 				txd->qw1.rxr_bufsize = CI_MAX_DATA_PER_TXD;
--				txd->qw1.compl_tag = sw_id;
-+				txd->qw1.compl_tag = tag;
- 
- 				buf_dma_addr += CI_MAX_DATA_PER_TXD;
- 				slen -= CI_MAX_DATA_PER_TXD;
-@@ -1024,14 +1074,14 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 
- 			txd = &txr[tx_id];
- 			txn = &sw_ring[txe->next_id];
--			txe->mbuf = tx_pkt;
- 
- 			/* Setup TX descriptor */
- 			txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
- 			txd->qw1.cmd_dtype = cmd_dtype |
- 				IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
- 			txd->qw1.rxr_bufsize = slen;
--			txd->qw1.compl_tag = sw_id;
-+			/* Spec: COMPLETION_TAG must be identical on all data descs of a packet. */
-+			txd->qw1.compl_tag = tag;
- 			tx_id++;
- 			if (tx_id == txq->nb_tx_desc)
- 				tx_id = 0;
-@@ -1043,8 +1093,9 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		/* fill the last descriptor with End of Packet (EOP) bit */
- 		txd->qw1.cmd_dtype |= IDPF_TXD_FLEX_FLOW_CMD_EOP;
- 
--		/* Record first sw_id at EOP so completion can walk forward. */
--		sw_ring[txd->qw1.compl_tag].first_id = first_sw_id;
-+		txq->tx_pending_pkts[tag] = tx_pkts[nb_tx];
-+		if (++txq->tx_next_compl_tag == txq->tx_pending_size)
-+			txq->tx_next_compl_tag = 0;
- 
- 		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
- 		txq->rs_compl_count += nb_used;
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
-index b2d33287df..3365631d80 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.h
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
-@@ -216,6 +216,10 @@ void idpf_qc_single_rx_queue_reset(struct idpf_rx_queue *rxq);
- __rte_internal
- void idpf_qc_split_tx_descq_reset(struct ci_tx_queue *txq);
- __rte_internal
-+int idpf_qc_split_tx_pending_alloc(struct ci_tx_queue *txq, unsigned int socket_id);
-+__rte_internal
-+void idpf_qc_split_tx_pending_free(struct ci_tx_queue *txq);
-+__rte_internal
- void idpf_qc_split_tx_complq_reset(struct idpf_complq *cq);
- __rte_internal
- void idpf_splitq_rearm_common(struct idpf_rx_queue *rx_bufq);
-diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
-index 077a92a8a9..0d41cd87eb 100644
---- a/drivers/net/intel/idpf/idpf_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_rxtx.c
-@@ -495,6 +495,9 @@ idpf_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 		idpf_qc_single_tx_queue_reset(txq);
- 	} else {
- 		txq->desc_ring = mz->addr;
-+		ret = idpf_qc_split_tx_pending_alloc(txq, socket_id);
-+		if (ret != 0)
-+			goto err_pending_alloc;
- 		idpf_qc_split_tx_descq_reset(txq);
- 
- 		/* Setup tx completion queue if split model */
-@@ -512,6 +515,8 @@ idpf_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 	return 0;
- 
- err_complq_setup:
-+	idpf_qc_split_tx_pending_free(txq);
-+err_pending_alloc:
- 	rte_free(txq->rs_last_id);
- err_rs_last_id_alloc:
- 	rte_free(txq->sw_ring);
+v1 -> v2:
+- Renamed `rte_flow_graph` to `flow_graph`
+- Addressed some comments from Stephen's AI review
+- Removed the rte_flow_conv hack on account of Stephen's upcoming patches making
+  the API stable
+- Split up "flow_install" into register and install steps, which enabled two new
+  use cases: cleanup of memory without HW deregistration, and flow configuration
+  replay after `dev_start`
+- More aggressive refactoring of all engines on account of new pieces of
+  infrastructure, which allows for reduced complexity of implementation
+- Combined i40e tunnel engine patches into one patch
+- Added i40e flow director refactoring to cleanly support the new API as well as
+  the legacy PMD-specific API
+
+RFC -> v1:
+- Fixed a lot of bugs, concurrency issues, and init/uninit sequence problems in
+  Intel common flow engine implementation
+- Fixed a few copypaste errors in various engines
+- Improved comment documentation and flow engine docs
+
+Anatoly Burakov (25):
+  ethdev: add default mask query to flow
+  ethdev: add flow graph API
+  net/intel/common: add flow engines infrastructure
+  net/intel/common: add utility functions
+  net/ixgbe: add support for common flow parsing
+  net/ixgbe: make ethertype filter table dynamic
+  net/ixgbe: reimplement ethertype parser
+  net/ixgbe: fix syn filter priority
+  net/ixgbe: reimplement syn parser
+  net/ixgbe: reimplement L2 tunnel parser
+  net/ixgbe: fix ntuple filter priority
+  net/ixgbe: fix protocol-only ntuple parsing
+  net/ixgbe: reimplement ntuple parser
+  net/ixgbe: reimplement security parser
+  net/ixgbe: reimplement FDIR parser
+  net/ixgbe: don't embed RSS conf in filter structs
+  net/ixgbe: reimplement hash parser
+  net/ixgbe: advertise flow keep capability
+  net/i40e: add support for common flow parsing
+  net/i40e: reimplement ethertype parser
+  net/i40e: refactor FDIR engine infrastructure
+  net/i40e: reimplement FDIR parser
+  net/i40e: reimplement tunnel parsers
+  net/i40e: reimplement hash parser
+  net/i40e: advertise flow keep capability
+
+ doc/guides/prog_guide/ethdev/flow_graph.rst   |  750 +++
+ doc/guides/prog_guide/ethdev/index.rst        |    1 +
+ doc/guides/rel_notes/release_26_11.rst        |   22 +-
+ drivers/net/intel/common/flow_engine.h        | 1429 ++++++
+ drivers/net/intel/common/flow_util.h          |  263 ++
+ drivers/net/intel/i40e/i40e_ethdev.c          | 1523 +-----
+ drivers/net/intel/i40e/i40e_ethdev.h          |  322 +-
+ drivers/net/intel/i40e/i40e_fdir.c            | 1126 +++--
+ drivers/net/intel/i40e/i40e_flow.c            | 4185 +----------------
+ drivers/net/intel/i40e/i40e_flow.h            |   30 +
+ drivers/net/intel/i40e/i40e_flow_ethertype.c  |  351 ++
+ drivers/net/intel/i40e/i40e_flow_fdir.c       | 2154 +++++++++
+ drivers/net/intel/i40e/i40e_flow_hash.c       | 1454 ++++++
+ drivers/net/intel/i40e/i40e_flow_tunnel.c     | 1958 ++++++++
+ drivers/net/intel/i40e/i40e_hash.c            | 1212 +----
+ drivers/net/intel/i40e/i40e_hash.h            |   19 +-
+ drivers/net/intel/i40e/meson.build            |    4 +
+ drivers/net/intel/i40e/rte_pmd_i40e.c         |   12 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        | 1014 +---
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h        |  285 +-
+ drivers/net/intel/ixgbe/ixgbe_fdir.c          |  610 +--
+ drivers/net/intel/ixgbe/ixgbe_flow.c          | 3243 +------------
+ drivers/net/intel/ixgbe/ixgbe_flow.h          |   27 +
+ .../net/intel/ixgbe/ixgbe_flow_ethertype.c    |  299 ++
+ drivers/net/intel/ixgbe/ixgbe_flow_fdir.c     | 1602 +++++++
+ drivers/net/intel/ixgbe/ixgbe_flow_hash.c     |  216 +
+ drivers/net/intel/ixgbe/ixgbe_flow_l2tun.c    |  322 ++
+ drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c   |  694 +++
+ drivers/net/intel/ixgbe/ixgbe_flow_security.c |  586 +++
+ drivers/net/intel/ixgbe/ixgbe_flow_syn.c      |  312 ++
+ drivers/net/intel/ixgbe/ixgbe_ipsec.c         |  361 +-
+ drivers/net/intel/ixgbe/ixgbe_ipsec.h         |   50 +-
+ drivers/net/intel/ixgbe/ixgbe_pf.c            |   49 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c          |   80 +-
+ .../net/intel/ixgbe/ixgbe_rxtx_vec_common.c   |    4 +-
+ drivers/net/intel/ixgbe/meson.build           |    7 +
+ lib/ethdev/flow_graph.c                       |  263 ++
+ lib/ethdev/flow_graph.h                       |  149 +
+ lib/ethdev/meson.build                        |    2 +
+ lib/ethdev/rte_flow.c                         |  207 +-
+ lib/ethdev/rte_flow.h                         |   15 +
+ 41 files changed, 14849 insertions(+), 12363 deletions(-)
+ create mode 100644 doc/guides/prog_guide/ethdev/flow_graph.rst
+ create mode 100644 drivers/net/intel/common/flow_engine.h
+ create mode 100644 drivers/net/intel/common/flow_util.h
+ create mode 100644 drivers/net/intel/i40e/i40e_flow.h
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_ethertype.c
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_fdir.c
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_hash.c
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_tunnel.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow.h
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ethertype.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_fdir.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_hash.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_l2tun.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_security.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_syn.c
+ create mode 100644 lib/ethdev/flow_graph.c
+ create mode 100644 lib/ethdev/flow_graph.h
+
 -- 
-2.34.1
+2.52.0
 
