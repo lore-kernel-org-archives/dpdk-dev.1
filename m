@@ -2,58 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD114CA5FFF
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 08:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FCFCA5FFF
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 08:13:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B41242EDF;
-	Wed,  7 Oct 2026 10:12:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0FC4542EDD;
+	Wed,  7 Oct 2026 10:12:20 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id DBC0342EE6
- for <dev@dpdk.org>; Wed,  7 Oct 2026 10:12:13 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B189C42EF3
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 10:12:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791360733;
+ s=mimecast20190719; t=1791360738;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=QvCtB8Y3EgZBPX6jkp5AkoZnLORYrDWrczKaDCuS+p8=;
- b=YHblPUTkK1eHipcACTcYRMLy6PrcMQqUSIvyk1HkoHXb+NcshMC0BwvRyVKhBMwoyoF7Cu
- ltyVxTdEgGv7VVCxplSuaXBlPDgIEubfxmuLxWUm7bg3zc/dE0xWDw3kca2IJMI5VSp82X
- GGW86XT/SAFwr1bFh/K31MTYm2cAhp8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=iowl4Jprxu36d1K/5xis5szt11evX7JzmZOHowmXPzA=;
+ b=dpDoJBBP8D/1m8UH0rCn1yDCCfUBUueuih1oLy6HIrVaH6hqYyk8gdBb44Z2lztVs5rxKq
+ otcop1s1eiWGneRpsKa+xjC6XLKQSqJ8nsYlDetggGwito7qyax3zpg9IPKZEAtVyjf5n+
+ okWFkw/Xk0tUEziX+NLgnye/xsYUXJs=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-pky_wgOqOr-Yf6s02R6l_A-1; Wed,
- 07 Oct 2026 04:12:10 -0400
-X-MC-Unique: pky_wgOqOr-Yf6s02R6l_A-1
-X-Mimecast-MFC-AGG-ID: pky_wgOqOr-Yf6s02R6l_A_1791360729
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-379-0TJ-u19-MS2x3NablRkiXA-1; Wed,
+ 07 Oct 2026 04:12:13 -0400
+X-MC-Unique: 0TJ-u19-MS2x3NablRkiXA-1
+X-Mimecast-MFC-AGG-ID: 0TJ-u19-MS2x3NablRkiXA_1791360732
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 0DCC7180064D; Wed,  7 Oct 2026 08:12:09 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id BED031964CC7; Wed,  7 Oct 2026 08:12:12 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet03.pony-001.prod.iad2.dc.redhat.com [10.2.32.114])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 765C041D; Wed,  7 Oct 2026 08:12:07 +0000 (UTC)
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 619101956095; Wed,  7 Oct 2026 08:12:11 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: Anatoly Burakov <anatoly.burakov@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Maxime Coquelin <maxime.coquelin@redhat.com>
-Subject: [RESEND][PATCH v19 25/26] uapi: import IOMMUFD header
-Date: Wed,  7 Oct 2026 10:10:22 +0200
-Message-ID: <20261007081026.574382-26-david.marchand@redhat.com>
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Subject: [RESEND][PATCH v19 26/26] vfio: introduce cdev mode
+Date: Wed,  7 Oct 2026 10:10:23 +0200
+Message-ID: <20261007081026.574382-27-david.marchand@redhat.com>
 In-Reply-To: <20261007081026.574382-1-david.marchand@redhat.com>
 References: <cover.1763141462.git.anatoly.burakov@intel.com>
  <20261007081026.574382-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: x1lxEZG7H5zNaB-3bRVNV0fHx354j6pb1QsgM8x9km8_1791360729
+X-Mimecast-MFC-PROC-ID: suVWnLy0n5PNinUjN4tCAh6nztfvsCSVlpDG8cvC5n8_1791360732
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -72,1328 +72,1176 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 
-In order to support VF tokens for cdev-based VFIO mode, iommufd.h is
-required (from kernel v6.17).
+Add support for VFIO cdev (also known as IOMMUFD) API. The group API is now
+considered legacy in the kernel, and all further development is expected to
+happen in IOMMUFD infrastructure.
+
+The implementation largely follows the kernel reference code, with most
+differences from group mode concentrated in how the container and the
+devices are set up. The VFIO container allocates an "IOAS" (IO address
+space), maps the memory into that space, and attaches devices to IOAS -
+there is no IOMMU type discovery at device attach time.
+
+Unlike group mode, the cdev mode is device-centric, and all DMA mappings
+are made for an IOAS and not into VFIO container itself. As a result, while
+group mode only maps memory during first device attach, cdev mode can map
+memory without having any devices attached. However, current VFIO init has
+moved to before bus scan, because we need VFIO mode information for buses
+to decide on IOVA mode. DMA memory mapping, however, must be performed
+after the DPDK memory was already initialized, so we add another internal
+API to trigger VFIO DMA maps for cdev mode right after memory init.
+
+To assist any future use of VFIO cdev mode for custom behavior, also
+introduce "get device number" API, which is kind-of-but-not-really similar
+to the concept of IOMMU group.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
-Changes since v18:
-- updated commitlog, following rebase,
+ doc/guides/linux_gsg/linux_drivers.rst |  30 ++
+ doc/guides/rel_notes/release_26_11.rst |   5 +
+ drivers/bus/fslmc/fslmc_bus.c          |   7 +
+ lib/eal/linux/eal.c                    |   7 +
+ lib/eal/linux/eal_vfio.c               | 285 ++++++++++++++++-
+ lib/eal/linux/eal_vfio.h               |  38 ++-
+ lib/eal/linux/eal_vfio_cdev.c          | 415 +++++++++++++++++++++++++
+ lib/eal/linux/eal_vfio_mp_sync.c       |  42 +++
+ lib/eal/linux/include/dev_vfio.h       |  39 +++
+ lib/eal/linux/meson.build              |   1 +
+ 10 files changed, 855 insertions(+), 14 deletions(-)
+ create mode 100644 lib/eal/linux/eal_vfio_cdev.c
 
----
- kernel/linux/uapi/linux/iommufd.h | 1302 +++++++++++++++++++++++++++++
- 1 file changed, 1302 insertions(+)
- create mode 100644 kernel/linux/uapi/linux/iommufd.h
-
-diff --git a/kernel/linux/uapi/linux/iommufd.h b/kernel/linux/uapi/linux/iommufd.h
-new file mode 100644
-index 0000000000..5ee08de083
---- /dev/null
-+++ b/kernel/linux/uapi/linux/iommufd.h
-@@ -0,0 +1,1302 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/* Copyright (c) 2021-2022, NVIDIA CORPORATION & AFFILIATES.
-+ */
-+#ifndef _IOMMUFD_H
-+#define _IOMMUFD_H
+diff --git a/doc/guides/linux_gsg/linux_drivers.rst b/doc/guides/linux_gsg/linux_drivers.rst
+index 12e9faf4a2..7dd38a69f8 100644
+--- a/doc/guides/linux_gsg/linux_drivers.rst
++++ b/doc/guides/linux_gsg/linux_drivers.rst
+@@ -133,6 +133,31 @@ For proper operation of VFIO when running DPDK applications as a non-privileged
+ For more information, please refer to :ref:`linux_gsg_running_without_root_privileges`.
+ 
+ 
++.. _linux_gsg_vfio_modes:
 +
-+#include <linux/ioctl.h>
-+#include <uapi/linux/types.h>
++VFIO group and cdev modes
++~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +
-+#define IOMMUFD_TYPE (';')
++The Linux kernel provides two different interfaces for VFIO:
 +
-+/**
-+ * DOC: General ioctl format
-+ *
-+ * The ioctl interface follows a general format to allow for extensibility. Each
-+ * ioctl is passed in a structure pointer as the argument providing the size of
-+ * the structure in the first u32. The kernel checks that any structure space
-+ * beyond what it understands is 0. This allows userspace to use the backward
-+ * compatible portion while consistently using the newer, larger, structures.
-+ *
-+ * ioctls use a standard meaning for common errnos:
-+ *
-+ *  - ENOTTY: The IOCTL number itself is not supported at all
-+ *  - E2BIG: The IOCTL number is supported, but the provided structure has
-+ *    non-zero in a part the kernel does not understand.
-+ *  - EOPNOTSUPP: The IOCTL number is supported, and the structure is
-+ *    understood, however a known field has a value the kernel does not
-+ *    understand or support.
-+ *  - EINVAL: Everything about the IOCTL was understood, but a field is not
-+ *    correct.
-+ *  - ENOENT: An ID or IOVA provided does not exist.
-+ *  - ENOMEM: Out of memory.
-+ *  - EOVERFLOW: Mathematics overflowed.
-+ *
-+ * As well as additional errnos, within specific ioctls.
-+ */
-+enum {
-+	IOMMUFD_CMD_BASE = 0x80,
-+	IOMMUFD_CMD_DESTROY = IOMMUFD_CMD_BASE,
-+	IOMMUFD_CMD_IOAS_ALLOC = 0x81,
-+	IOMMUFD_CMD_IOAS_ALLOW_IOVAS = 0x82,
-+	IOMMUFD_CMD_IOAS_COPY = 0x83,
-+	IOMMUFD_CMD_IOAS_IOVA_RANGES = 0x84,
-+	IOMMUFD_CMD_IOAS_MAP = 0x85,
-+	IOMMUFD_CMD_IOAS_UNMAP = 0x86,
-+	IOMMUFD_CMD_OPTION = 0x87,
-+	IOMMUFD_CMD_VFIO_IOAS = 0x88,
-+	IOMMUFD_CMD_HWPT_ALLOC = 0x89,
-+	IOMMUFD_CMD_GET_HW_INFO = 0x8a,
-+	IOMMUFD_CMD_HWPT_SET_DIRTY_TRACKING = 0x8b,
-+	IOMMUFD_CMD_HWPT_GET_DIRTY_BITMAP = 0x8c,
-+	IOMMUFD_CMD_HWPT_INVALIDATE = 0x8d,
-+	IOMMUFD_CMD_FAULT_QUEUE_ALLOC = 0x8e,
-+	IOMMUFD_CMD_IOAS_MAP_FILE = 0x8f,
-+	IOMMUFD_CMD_VIOMMU_ALLOC = 0x90,
-+	IOMMUFD_CMD_VDEVICE_ALLOC = 0x91,
-+	IOMMUFD_CMD_IOAS_CHANGE_PROCESS = 0x92,
-+	IOMMUFD_CMD_VEVENTQ_ALLOC = 0x93,
-+	IOMMUFD_CMD_HW_QUEUE_ALLOC = 0x94,
-+};
++group mode
++   The original interface, based on IOMMU groups.
++   It is accessed through the container device ``/dev/vfio/vfio`` and the per-group devices under ``/dev/vfio/``.
 +
-+/**
-+ * struct iommu_destroy - ioctl(IOMMU_DESTROY)
-+ * @size: sizeof(struct iommu_destroy)
-+ * @id: iommufd object ID to destroy. Can be any destroyable object type.
-+ *
-+ * Destroy any object held within iommufd.
-+ */
-+struct iommu_destroy {
-+	__u32 size;
-+	__u32 id;
-+};
-+#define IOMMU_DESTROY _IO(IOMMUFD_TYPE, IOMMUFD_CMD_DESTROY)
++cdev mode
++   The newer interface, based on iommufd.
++   It is accessed through ``/dev/iommu`` and the per-device character devices under ``/dev/vfio/devices/``.
 +
-+/**
-+ * struct iommu_ioas_alloc - ioctl(IOMMU_IOAS_ALLOC)
-+ * @size: sizeof(struct iommu_ioas_alloc)
-+ * @flags: Must be 0
-+ * @out_ioas_id: Output IOAS ID for the allocated object
-+ *
-+ * Allocate an IO Address Space (IOAS) which holds an IO Virtual Address (IOVA)
-+ * to memory mapping.
-+ */
-+struct iommu_ioas_alloc {
-+	__u32 size;
-+	__u32 flags;
-+	__u32 out_ioas_id;
-+};
-+#define IOMMU_IOAS_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_ALLOC)
++DPDK selects the mode automatically; there is no EAL option to force a particular mode.
++Currently, group mode is preferred and is used whenever the container device ``/dev/vfio/vfio`` is usable.
++Using cdev mode requires ``/dev/iommu`` to be present and accessible.
 +
-+/**
-+ * struct iommu_iova_range - ioctl(IOMMU_IOVA_RANGE)
-+ * @start: First IOVA
-+ * @last: Inclusive last IOVA
-+ *
-+ * An interval in IOVA space.
-+ */
-+struct iommu_iova_range {
-+	__aligned_u64 start;
-+	__aligned_u64 last;
-+};
++.. note::
 +
-+/**
-+ * struct iommu_ioas_iova_ranges - ioctl(IOMMU_IOAS_IOVA_RANGES)
-+ * @size: sizeof(struct iommu_ioas_iova_ranges)
-+ * @ioas_id: IOAS ID to read ranges from
-+ * @num_iovas: Input/Output total number of ranges in the IOAS
-+ * @__reserved: Must be 0
-+ * @allowed_iovas: Pointer to the output array of struct iommu_iova_range
-+ * @out_iova_alignment: Minimum alignment required for mapping IOVA
-+ *
-+ * Query an IOAS for ranges of allowed IOVAs. Mapping IOVA outside these ranges
-+ * is not allowed. num_iovas will be set to the total number of iovas and
-+ * the allowed_iovas[] will be filled in as space permits.
-+ *
-+ * The allowed ranges are dependent on the HW path the DMA operation takes, and
-+ * can change during the lifetime of the IOAS. A fresh empty IOAS will have a
-+ * full range, and each attached device will narrow the ranges based on that
-+ * device's HW restrictions. Detaching a device can widen the ranges. Userspace
-+ * should query ranges after every attach/detach to know what IOVAs are valid
-+ * for mapping.
-+ *
-+ * On input num_iovas is the length of the allowed_iovas array. On output it is
-+ * the total number of iovas filled in. The ioctl will return -EMSGSIZE and set
-+ * num_iovas to the required value if num_iovas is too small. In this case the
-+ * caller should allocate a larger output array and re-issue the ioctl.
-+ *
-+ * out_iova_alignment returns the minimum IOVA alignment that can be given
-+ * to IOMMU_IOAS_MAP/COPY. IOVA's must satisfy::
-+ *
-+ *   starting_iova % out_iova_alignment == 0
-+ *   (starting_iova + length) % out_iova_alignment == 0
-+ *
-+ * out_iova_alignment can be 1 indicating any IOVA is allowed. It cannot
-+ * be higher than the system PAGE_SIZE.
-+ */
-+struct iommu_ioas_iova_ranges {
-+	__u32 size;
-+	__u32 ioas_id;
-+	__u32 num_iovas;
-+	__u32 __reserved;
-+	__aligned_u64 allowed_iovas;
-+	__aligned_u64 out_iova_alignment;
-+};
-+#define IOMMU_IOAS_IOVA_RANGES _IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_IOVA_RANGES)
++   Using VF tokens in cdev mode requires Linux kernel version 6.17 or later.
++   On older kernels the device is bound without the token, so the kernel should be configured to use group mode if VF token support is required.
 +
-+/**
-+ * struct iommu_ioas_allow_iovas - ioctl(IOMMU_IOAS_ALLOW_IOVAS)
-+ * @size: sizeof(struct iommu_ioas_allow_iovas)
-+ * @ioas_id: IOAS ID to allow IOVAs from
-+ * @num_iovas: Input/Output total number of ranges in the IOAS
-+ * @__reserved: Must be 0
-+ * @allowed_iovas: Pointer to array of struct iommu_iova_range
-+ *
-+ * Ensure a range of IOVAs are always available for allocation. If this call
-+ * succeeds then IOMMU_IOAS_IOVA_RANGES will never return a list of IOVA ranges
-+ * that are narrower than the ranges provided here. This call will fail if
-+ * IOMMU_IOAS_IOVA_RANGES is currently narrower than the given ranges.
-+ *
-+ * When an IOAS is first created the IOVA_RANGES will be maximally sized, and as
-+ * devices are attached the IOVA will narrow based on the device restrictions.
-+ * When an allowed range is specified any narrowing will be refused, ie device
-+ * attachment can fail if the device requires limiting within the allowed range.
-+ *
-+ * Automatic IOVA allocation is also impacted by this call. MAP will only
-+ * allocate within the allowed IOVAs if they are present.
-+ *
-+ * This call replaces the entire allowed list with the given list.
-+ */
-+struct iommu_ioas_allow_iovas {
-+	__u32 size;
-+	__u32 ioas_id;
-+	__u32 num_iovas;
-+	__u32 __reserved;
-+	__aligned_u64 allowed_iovas;
-+};
-+#define IOMMU_IOAS_ALLOW_IOVAS _IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_ALLOW_IOVAS)
 +
-+/**
-+ * enum iommufd_ioas_map_flags - Flags for map and copy
-+ * @IOMMU_IOAS_MAP_FIXED_IOVA: If clear the kernel will compute an appropriate
-+ *                             IOVA to place the mapping at
-+ * @IOMMU_IOAS_MAP_WRITEABLE: DMA is allowed to write to this mapping
-+ * @IOMMU_IOAS_MAP_READABLE: DMA is allowed to read from this mapping
-+ */
-+enum iommufd_ioas_map_flags {
-+	IOMMU_IOAS_MAP_FIXED_IOVA = 1 << 0,
-+	IOMMU_IOAS_MAP_WRITEABLE = 1 << 1,
-+	IOMMU_IOAS_MAP_READABLE = 1 << 2,
-+};
+ .. _linux_gsg_vfio_noiommu:
+ 
+ VFIO no-IOMMU mode
+@@ -265,6 +290,11 @@ The token will be used for all PF and VF ports within the application.
+    Linux versions earlier than version 5.7 do not support the creation of
+    virtual functions within the VFIO framework.
+ 
++.. note::
 +
-+/**
-+ * struct iommu_ioas_map - ioctl(IOMMU_IOAS_MAP)
-+ * @size: sizeof(struct iommu_ioas_map)
-+ * @flags: Combination of enum iommufd_ioas_map_flags
-+ * @ioas_id: IOAS ID to change the mapping of
-+ * @__reserved: Must be 0
-+ * @user_va: Userspace pointer to start mapping from
-+ * @length: Number of bytes to map
-+ * @iova: IOVA the mapping was placed at. If IOMMU_IOAS_MAP_FIXED_IOVA is set
-+ *        then this must be provided as input.
-+ *
-+ * Set an IOVA mapping from a user pointer. If FIXED_IOVA is specified then the
-+ * mapping will be established at iova, otherwise a suitable location based on
-+ * the reserved and allowed lists will be automatically selected and returned in
-+ * iova.
-+ *
-+ * If IOMMU_IOAS_MAP_FIXED_IOVA is specified then the iova range must currently
-+ * be unused, existing IOVA cannot be replaced.
-+ */
-+struct iommu_ioas_map {
-+	__u32 size;
-+	__u32 flags;
-+	__u32 ioas_id;
-+	__u32 __reserved;
-+	__aligned_u64 user_va;
-+	__aligned_u64 length;
-+	__aligned_u64 iova;
-+};
-+#define IOMMU_IOAS_MAP _IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_MAP)
++   When VFIO uses cdev mode, VF tokens require a newer kernel.
++   See :ref:`linux_gsg_vfio_modes` for details.
 +
-+/**
-+ * struct iommu_ioas_map_file - ioctl(IOMMU_IOAS_MAP_FILE)
-+ * @size: sizeof(struct iommu_ioas_map_file)
-+ * @flags: same as for iommu_ioas_map
-+ * @ioas_id: same as for iommu_ioas_map
-+ * @fd: the memfd to map
-+ * @start: byte offset from start of file to map from
-+ * @length: same as for iommu_ioas_map
-+ * @iova: same as for iommu_ioas_map
-+ *
-+ * Set an IOVA mapping from a memfd file.  All other arguments and semantics
-+ * match those of IOMMU_IOAS_MAP.
-+ */
-+struct iommu_ioas_map_file {
-+	__u32 size;
-+	__u32 flags;
-+	__u32 ioas_id;
-+	__s32 fd;
-+	__aligned_u64 start;
-+	__aligned_u64 length;
-+	__aligned_u64 iova;
-+};
-+#define IOMMU_IOAS_MAP_FILE _IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_MAP_FILE)
+ Troubleshooting VFIO
+ ~~~~~~~~~~~~~~~~~~~~
+ 
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 25e864cf53..4b763f57fb 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -72,6 +72,11 @@ New Features
+ 
+   Added ``rte_vlan_insert_tpid()`` to the net library.
+ 
++* **Added VFIO cdev (IOMMUFD) mode.**
 +
-+/**
-+ * struct iommu_ioas_copy - ioctl(IOMMU_IOAS_COPY)
-+ * @size: sizeof(struct iommu_ioas_copy)
-+ * @flags: Combination of enum iommufd_ioas_map_flags
-+ * @dst_ioas_id: IOAS ID to change the mapping of
-+ * @src_ioas_id: IOAS ID to copy from
-+ * @length: Number of bytes to copy and map
-+ * @dst_iova: IOVA the mapping was placed at. If IOMMU_IOAS_MAP_FIXED_IOVA is
-+ *            set then this must be provided as input.
-+ * @src_iova: IOVA to start the copy
-+ *
-+ * Copy an already existing mapping from src_ioas_id and establish it in
-+ * dst_ioas_id. The src iova/length must exactly match a range used with
-+ * IOMMU_IOAS_MAP.
-+ *
-+ * This may be used to efficiently clone a subset of an IOAS to another, or as a
-+ * kind of 'cache' to speed up mapping. Copy has an efficiency advantage over
-+ * establishing equivalent new mappings, as internal resources are shared, and
-+ * the kernel will pin the user memory only once.
-+ */
-+struct iommu_ioas_copy {
-+	__u32 size;
-+	__u32 flags;
-+	__u32 dst_ioas_id;
-+	__u32 src_ioas_id;
-+	__aligned_u64 length;
-+	__aligned_u64 dst_iova;
-+	__aligned_u64 src_iova;
-+};
-+#define IOMMU_IOAS_COPY _IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_COPY)
++  Added support for the VFIO character device (cdev) API, also known as IOMMUFD.
++  DPDK now supports both the group mode and the new cdev mode.
 +
-+/**
-+ * struct iommu_ioas_unmap - ioctl(IOMMU_IOAS_UNMAP)
-+ * @size: sizeof(struct iommu_ioas_unmap)
-+ * @ioas_id: IOAS ID to change the mapping of
-+ * @iova: IOVA to start the unmapping at
-+ * @length: Number of bytes to unmap, and return back the bytes unmapped
-+ *
-+ * Unmap an IOVA range. The iova/length must be a superset of a previously
-+ * mapped range used with IOMMU_IOAS_MAP or IOMMU_IOAS_COPY. Splitting or
-+ * truncating ranges is not allowed. The values 0 to U64_MAX will unmap
-+ * everything.
-+ */
-+struct iommu_ioas_unmap {
-+	__u32 size;
-+	__u32 ioas_id;
-+	__aligned_u64 iova;
-+	__aligned_u64 length;
-+};
-+#define IOMMU_IOAS_UNMAP _IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_UNMAP)
+ * **Updated AF_XDP driver.**
+ 
+   * Changed the default device plugin endpoint path used when
+diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
+index dab3a8a677..afb45e15db 100644
+--- a/drivers/bus/fslmc/fslmc_bus.c
++++ b/drivers/bus/fslmc/fslmc_bus.c
+@@ -332,6 +332,13 @@ rte_fslmc_scan(void)
+ 		goto scan_fail;
+ 	}
+ 
++	/* for container groups to work, VFIO must be in group mode */
++	if (dev_vfio_get_mode() != DEV_VFIO_MODE_GROUP) {
++		DPAA2_BUS_DEBUG("DPAA2: VFIO not in group mode");
++		ret = -EINVAL;
++		goto scan_fail;
++	}
 +
-+/**
-+ * enum iommufd_option - ioctl(IOMMU_OPTION_RLIMIT_MODE) and
-+ *                       ioctl(IOMMU_OPTION_HUGE_PAGES)
-+ * @IOMMU_OPTION_RLIMIT_MODE:
-+ *    Change how RLIMIT_MEMLOCK accounting works. The caller must have privilege
-+ *    to invoke this. Value 0 (default) is user based accounting, 1 uses process
-+ *    based accounting. Global option, object_id must be 0
-+ * @IOMMU_OPTION_HUGE_PAGES:
-+ *    Value 1 (default) allows contiguous pages to be combined when generating
-+ *    iommu mappings. Value 0 disables combining, everything is mapped to
-+ *    PAGE_SIZE. This can be useful for benchmarking.  This is a per-IOAS
-+ *    option, the object_id must be the IOAS ID.
-+ */
-+enum iommufd_option {
-+	IOMMU_OPTION_RLIMIT_MODE = 0,
-+	IOMMU_OPTION_HUGE_PAGES = 1,
-+};
+ 	ret = fslmc_get_container_group(group_name, &groupid);
+ 	if (ret != 0)
+ 		goto scan_fail;
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index a6003559da..278504237d 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -816,6 +816,13 @@ rte_eal_init(int argc, char **argv)
+ 		goto err_out;
+ 	}
+ 
++	/* VFIO memory setup that requires DPDK memory to be available. */
++	if (dev_vfio_init_mem() < 0) {
++		rte_eal_init_alert("Cannot init VFIO memory");
++		rte_errno = EAGAIN;
++		goto err_out;
++	}
 +
-+/**
-+ * enum iommufd_option_ops - ioctl(IOMMU_OPTION_OP_SET) and
-+ *                           ioctl(IOMMU_OPTION_OP_GET)
-+ * @IOMMU_OPTION_OP_SET: Set the option's value
-+ * @IOMMU_OPTION_OP_GET: Get the option's value
-+ */
-+enum iommufd_option_ops {
-+	IOMMU_OPTION_OP_SET = 0,
-+	IOMMU_OPTION_OP_GET = 1,
-+};
+ 	/* register multi-process action callbacks for hotplug after memory init */
+ 	if (eal_mp_dev_hotplug_init() < 0) {
+ 		rte_eal_init_alert("failed to register mp callback for hotplug");
+diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
+index fb6cf496e6..f25ec93426 100644
+--- a/lib/eal/linux/eal_vfio.c
++++ b/lib/eal/linux/eal_vfio.c
+@@ -437,6 +437,24 @@ vfio_container_get_by_group_num(int group_num)
+ 	return NULL;
+ }
+ 
++static struct vfio_container *
++vfio_container_get_by_dev_num(int dev_num)
++{
++	struct vfio_container *cfg;
++	struct vfio_device *dev;
 +
-+/**
-+ * struct iommu_option - iommu option multiplexer
-+ * @size: sizeof(struct iommu_option)
-+ * @option_id: One of enum iommufd_option
-+ * @op: One of enum iommufd_option_ops
-+ * @__reserved: Must be 0
-+ * @object_id: ID of the object if required
-+ * @val64: Option value to set or value returned on get
-+ *
-+ * Change a simple option value. This multiplexor allows controlling options
-+ * on objects. IOMMU_OPTION_OP_SET will load an option and IOMMU_OPTION_OP_GET
-+ * will return the current value.
-+ */
-+struct iommu_option {
-+	__u32 size;
-+	__u32 option_id;
-+	__u16 op;
-+	__u16 __reserved;
-+	__u32 object_id;
-+	__aligned_u64 val64;
-+};
-+#define IOMMU_OPTION _IO(IOMMUFD_TYPE, IOMMUFD_CMD_OPTION)
++	VFIO_CONTAINER_FOREACH_ACTIVE(cfg) {
++		VFIO_DEVICE_FOREACH_ACTIVE(cfg, dev) {
++			/* only cdev mode has dev_num */
++			if (dev->mode != DEV_VFIO_MODE_CDEV)
++				continue;
++			if (dev->dev_num == dev_num)
++				return cfg;
++		}
++	}
++	return NULL;
++}
 +
-+/**
-+ * enum iommufd_vfio_ioas_op - IOMMU_VFIO_IOAS_* ioctls
-+ * @IOMMU_VFIO_IOAS_GET: Get the current compatibility IOAS
-+ * @IOMMU_VFIO_IOAS_SET: Change the current compatibility IOAS
-+ * @IOMMU_VFIO_IOAS_CLEAR: Disable VFIO compatibility
-+ */
-+enum iommufd_vfio_ioas_op {
-+	IOMMU_VFIO_IOAS_GET = 0,
-+	IOMMU_VFIO_IOAS_SET = 1,
-+	IOMMU_VFIO_IOAS_CLEAR = 2,
-+};
+ static struct vfio_container *
+ vfio_container_create(void)
+ {
+@@ -622,6 +640,55 @@ vfio_setup_dma_mem(struct vfio_container *cfg)
+ 	return 0;
+ }
+ 
++static enum vfio_result
++vfio_cdev_assign_device(struct vfio_container *cfg, const char *sysfs_base, const char *dev_addr,
++		struct vfio_device **out_dev)
++{
++	struct vfio_device *dev, *found_dev;
++	enum vfio_result res;
++	int dev_num, ret;
 +
-+/**
-+ * struct iommu_vfio_ioas - ioctl(IOMMU_VFIO_IOAS)
-+ * @size: sizeof(struct iommu_vfio_ioas)
-+ * @ioas_id: For IOMMU_VFIO_IOAS_SET the input IOAS ID to set
-+ *           For IOMMU_VFIO_IOAS_GET will output the IOAS ID
-+ * @op: One of enum iommufd_vfio_ioas_op
-+ * @__reserved: Must be 0
-+ *
-+ * The VFIO compatibility support uses a single ioas because VFIO APIs do not
-+ * support the ID field. Set or Get the IOAS that VFIO compatibility will use.
-+ * When VFIO_GROUP_SET_CONTAINER is used on an iommufd it will get the
-+ * compatibility ioas, either by taking what is already set, or auto creating
-+ * one. From then on VFIO will continue to use that ioas and is not effected by
-+ * this ioctl. SET or CLEAR does not destroy any auto-created IOAS.
-+ */
-+struct iommu_vfio_ioas {
-+	__u32 size;
-+	__u32 ioas_id;
-+	__u16 op;
-+	__u16 __reserved;
-+};
-+#define IOMMU_VFIO_IOAS _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VFIO_IOAS)
++	/* get the cdev device number from sysfs */
++	ret = vfio_cdev_get_device_num(sysfs_base, dev_addr, &dev_num);
++	if (ret < 0) {
++		EAL_LOG(ERR, "Failed to get cdev device number for %s", dev_addr);
++		return VFIO_ERROR;
++	} else if (ret == 0) {
++		EAL_LOG(ERR, "Device %s not bound to vfio-pci cdev", dev_addr);
++		return VFIO_NOT_MANAGED;
++	}
 +
-+/**
-+ * enum iommufd_hwpt_alloc_flags - Flags for HWPT allocation
-+ * @IOMMU_HWPT_ALLOC_NEST_PARENT: If set, allocate a HWPT that can serve as
-+ *                                the parent HWPT in a nesting configuration.
-+ * @IOMMU_HWPT_ALLOC_DIRTY_TRACKING: Dirty tracking support for device IOMMU is
-+ *                                   enforced on device attachment
-+ * @IOMMU_HWPT_FAULT_ID_VALID: The fault_id field of hwpt allocation data is
-+ *                             valid.
-+ * @IOMMU_HWPT_ALLOC_PASID: Requests a domain that can be used with PASID. The
-+ *                          domain can be attached to any PASID on the device.
-+ *                          Any domain attached to the non-PASID part of the
-+ *                          device must also be flagged, otherwise attaching a
-+ *                          PASID will blocked.
-+ *                          For the user that wants to attach PASID, ioas is
-+ *                          not recommended for both the non-PASID part
-+ *                          and PASID part of the device.
-+ *                          If IOMMU does not support PASID it will return
-+ *                          error (-EOPNOTSUPP).
-+ */
-+enum iommufd_hwpt_alloc_flags {
-+	IOMMU_HWPT_ALLOC_NEST_PARENT = 1 << 0,
-+	IOMMU_HWPT_ALLOC_DIRTY_TRACKING = 1 << 1,
-+	IOMMU_HWPT_FAULT_ID_VALID = 1 << 2,
-+	IOMMU_HWPT_ALLOC_PASID = 1 << 3,
-+};
++	/* do we already have this device? */
++	found_dev = vfio_cdev_get_dev_by_num(cfg, dev_num);
++	if (found_dev != NULL) {
++		EAL_LOG(DEBUG, "Device %s already assigned to this container", dev_addr);
++		*out_dev = found_dev;
++		return VFIO_EXISTS;
++	}
++	/* create new device structure */
++	dev = vfio_device_create(cfg, DEV_VFIO_MODE_CDEV);
++	if (dev == NULL) {
++		EAL_LOG(ERR, "No space to track new VFIO cdev device");
++		return VFIO_NO_SPACE;
++	}
++	/* store device number */
++	dev->dev_num = dev_num;
 +
-+/**
-+ * enum iommu_hwpt_vtd_s1_flags - Intel VT-d stage-1 page table
-+ *                                entry attributes
-+ * @IOMMU_VTD_S1_SRE: Supervisor request
-+ * @IOMMU_VTD_S1_EAFE: Extended access enable
-+ * @IOMMU_VTD_S1_WPE: Write protect enable
-+ */
-+enum iommu_hwpt_vtd_s1_flags {
-+	IOMMU_VTD_S1_SRE = 1 << 0,
-+	IOMMU_VTD_S1_EAFE = 1 << 1,
-+	IOMMU_VTD_S1_WPE = 1 << 2,
-+};
++	/* set up our device now and store it in config */
++	ret = vfio_cdev_setup_device(cfg, dev);
++	if (ret < 0) {
++		EAL_LOG(ERR, "Cannot setup cdev device %s", dev_addr);
++		res = VFIO_ERROR;
++		goto err;
++	}
++	*out_dev = dev;
++	return VFIO_SUCCESS;
 +
-+/**
-+ * struct iommu_hwpt_vtd_s1 - Intel VT-d stage-1 page table
-+ *                            info (IOMMU_HWPT_DATA_VTD_S1)
-+ * @flags: Combination of enum iommu_hwpt_vtd_s1_flags
-+ * @pgtbl_addr: The base address of the stage-1 page table.
-+ * @addr_width: The address width of the stage-1 page table
-+ * @__reserved: Must be 0
-+ */
-+struct iommu_hwpt_vtd_s1 {
-+	__aligned_u64 flags;
-+	__aligned_u64 pgtbl_addr;
-+	__u32 addr_width;
-+	__u32 __reserved;
-+};
++err:
++	vfio_device_erase(cfg, dev);
++	return res;
++}
 +
-+/**
-+ * struct iommu_hwpt_arm_smmuv3 - ARM SMMUv3 nested STE
-+ *                                (IOMMU_HWPT_DATA_ARM_SMMUV3)
-+ *
-+ * @ste: The first two double words of the user space Stream Table Entry for
-+ *       the translation. Must be little-endian.
-+ *       Allowed fields: (Refer to "5.2 Stream Table Entry" in SMMUv3 HW Spec)
-+ *       - word-0: V, Cfg, S1Fmt, S1ContextPtr, S1CDMax
-+ *       - word-1: EATS, S1DSS, S1CIR, S1COR, S1CSH, S1STALLD
-+ *
-+ * -EIO will be returned if @ste is not legal or contains any non-allowed field.
-+ * Cfg can be used to select a S1, Bypass or Abort configuration. A Bypass
-+ * nested domain will translate the same as the nesting parent. The S1 will
-+ * install a Context Descriptor Table pointing at userspace memory translated
-+ * by the nesting parent.
-+ *
-+ * It's suggested to allocate a vDEVICE object carrying vSID and then re-attach
-+ * the nested domain, as soon as the vSID is available in the VMM level:
-+ *
-+ * - when Cfg=translate, a vDEVICE must be allocated prior to attaching to the
-+ *   allocated nested domain, as CD/ATS invalidations and vevents need a vSID.
-+ * - when Cfg=bypass/abort, a vDEVICE is not enforced during the nested domain
-+ *   attachment, to support a GBPA case where VM sets CR0.SMMUEN=0. However, if
-+ *   VM sets CR0.SMMUEN=1 while missing a vDEVICE object, kernel would fail to
-+ *   report events to the VM. E.g. F_TRANSLATION when guest STE.Cfg=abort.
-+ */
-+struct iommu_hwpt_arm_smmuv3 {
-+	__aligned_le64 ste[2];
-+};
-+
-+/**
-+ * enum iommu_hwpt_data_type - IOMMU HWPT Data Type
-+ * @IOMMU_HWPT_DATA_NONE: no data
-+ * @IOMMU_HWPT_DATA_VTD_S1: Intel VT-d stage-1 page table
-+ * @IOMMU_HWPT_DATA_ARM_SMMUV3: ARM SMMUv3 Context Descriptor Table
-+ */
-+enum iommu_hwpt_data_type {
-+	IOMMU_HWPT_DATA_NONE = 0,
-+	IOMMU_HWPT_DATA_VTD_S1 = 1,
-+	IOMMU_HWPT_DATA_ARM_SMMUV3 = 2,
-+};
-+
-+/**
-+ * struct iommu_hwpt_alloc - ioctl(IOMMU_HWPT_ALLOC)
-+ * @size: sizeof(struct iommu_hwpt_alloc)
-+ * @flags: Combination of enum iommufd_hwpt_alloc_flags
-+ * @dev_id: The device to allocate this HWPT for
-+ * @pt_id: The IOAS or HWPT or vIOMMU to connect this HWPT to
-+ * @out_hwpt_id: The ID of the new HWPT
-+ * @__reserved: Must be 0
-+ * @data_type: One of enum iommu_hwpt_data_type
-+ * @data_len: Length of the type specific data
-+ * @data_uptr: User pointer to the type specific data
-+ * @fault_id: The ID of IOMMUFD_FAULT object. Valid only if flags field of
-+ *            IOMMU_HWPT_FAULT_ID_VALID is set.
-+ * @__reserved2: Padding to 64-bit alignment. Must be 0.
-+ *
-+ * Explicitly allocate a hardware page table object. This is the same object
-+ * type that is returned by iommufd_device_attach() and represents the
-+ * underlying iommu driver's iommu_domain kernel object.
-+ *
-+ * A kernel-managed HWPT will be created with the mappings from the given
-+ * IOAS via the @pt_id. The @data_type for this allocation must be set to
-+ * IOMMU_HWPT_DATA_NONE. The HWPT can be allocated as a parent HWPT for a
-+ * nesting configuration by passing IOMMU_HWPT_ALLOC_NEST_PARENT via @flags.
-+ *
-+ * A user-managed nested HWPT will be created from a given vIOMMU (wrapping a
-+ * parent HWPT) or a parent HWPT via @pt_id, in which the parent HWPT must be
-+ * allocated previously via the same ioctl from a given IOAS (@pt_id). In this
-+ * case, the @data_type must be set to a pre-defined type corresponding to an
-+ * I/O page table type supported by the underlying IOMMU hardware. The device
-+ * via @dev_id and the vIOMMU via @pt_id must be associated to the same IOMMU
-+ * instance.
-+ *
-+ * If the @data_type is set to IOMMU_HWPT_DATA_NONE, @data_len and
-+ * @data_uptr should be zero. Otherwise, both @data_len and @data_uptr
-+ * must be given.
-+ */
-+struct iommu_hwpt_alloc {
-+	__u32 size;
-+	__u32 flags;
-+	__u32 dev_id;
-+	__u32 pt_id;
-+	__u32 out_hwpt_id;
-+	__u32 __reserved;
-+	__u32 data_type;
-+	__u32 data_len;
-+	__aligned_u64 data_uptr;
-+	__u32 fault_id;
-+	__u32 __reserved2;
-+};
-+#define IOMMU_HWPT_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_HWPT_ALLOC)
-+
-+/**
-+ * enum iommu_hw_info_vtd_flags - Flags for VT-d hw_info
-+ * @IOMMU_HW_INFO_VTD_ERRATA_772415_SPR17: If set, disallow read-only mappings
-+ *                                         on a nested_parent domain.
-+ *                                         https://www.intel.com/content/www/us/en/content-details/772415/content-details.html
-+ */
-+enum iommu_hw_info_vtd_flags {
-+	IOMMU_HW_INFO_VTD_ERRATA_772415_SPR17 = 1 << 0,
-+};
-+
-+/**
-+ * struct iommu_hw_info_vtd - Intel VT-d hardware information
-+ *
-+ * @flags: Combination of enum iommu_hw_info_vtd_flags
-+ * @__reserved: Must be 0
-+ *
-+ * @cap_reg: Value of Intel VT-d capability register defined in VT-d spec
-+ *           section 11.4.2 Capability Register.
-+ * @ecap_reg: Value of Intel VT-d capability register defined in VT-d spec
-+ *            section 11.4.3 Extended Capability Register.
-+ *
-+ * User needs to understand the Intel VT-d specification to decode the
-+ * register value.
-+ */
-+struct iommu_hw_info_vtd {
-+	__u32 flags;
-+	__u32 __reserved;
-+	__aligned_u64 cap_reg;
-+	__aligned_u64 ecap_reg;
-+};
-+
-+/**
-+ * struct iommu_hw_info_arm_smmuv3 - ARM SMMUv3 hardware information
-+ *                                   (IOMMU_HW_INFO_TYPE_ARM_SMMUV3)
-+ *
-+ * @flags: Must be set to 0
-+ * @__reserved: Must be 0
-+ * @idr: Implemented features for ARM SMMU Non-secure programming interface
-+ * @iidr: Information about the implementation and implementer of ARM SMMU,
-+ *        and architecture version supported
-+ * @aidr: ARM SMMU architecture version
-+ *
-+ * For the details of @idr, @iidr and @aidr, please refer to the chapters
-+ * from 6.3.1 to 6.3.6 in the SMMUv3 Spec.
-+ *
-+ * This reports the raw HW capability, and not all bits are meaningful to be
-+ * read by userspace. Only the following fields should be used:
-+ *
-+ * idr[0]: ST_LEVEL, TERM_MODEL, STALL_MODEL, TTENDIAN , CD2L, ASID16, TTF
-+ * idr[1]: SIDSIZE, SSIDSIZE
-+ * idr[3]: BBML, RIL
-+ * idr[5]: VAX, GRAN64K, GRAN16K, GRAN4K
-+ *
-+ * - S1P should be assumed to be true if a NESTED HWPT can be created
-+ * - VFIO/iommufd only support platforms with COHACC, it should be assumed to be
-+ *   true.
-+ * - ATS is a per-device property. If the VMM describes any devices as ATS
-+ *   capable in ACPI/DT it should set the corresponding idr.
-+ *
-+ * This list may expand in future (eg E0PD, AIE, PBHA, D128, DS etc). It is
-+ * important that VMMs do not read bits outside the list to allow for
-+ * compatibility with future kernels. Several features in the SMMUv3
-+ * architecture are not currently supported by the kernel for nesting: HTTU,
-+ * BTM, MPAM and others.
-+ */
-+struct iommu_hw_info_arm_smmuv3 {
-+	__u32 flags;
-+	__u32 __reserved;
-+	__u32 idr[6];
-+	__u32 iidr;
-+	__u32 aidr;
-+};
-+
-+/**
-+ * struct iommu_hw_info_tegra241_cmdqv - NVIDIA Tegra241 CMDQV Hardware
-+ *         Information (IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV)
-+ *
-+ * @flags: Must be 0
-+ * @version: Version number for the CMDQ-V HW for PARAM bits[03:00]
-+ * @log2vcmdqs: Log2 of the total number of VCMDQs for PARAM bits[07:04]
-+ * @log2vsids: Log2 of the total number of SID replacements for PARAM bits[15:12]
-+ * @__reserved: Must be 0
-+ *
-+ * VMM can use these fields directly in its emulated global PARAM register. Note
-+ * that only one Virtual Interface (VINTF) should be exposed to a VM, i.e. PARAM
-+ * bits[11:08] should be set to 0 for log2 of the total number of VINTFs.
-+ */
-+struct iommu_hw_info_tegra241_cmdqv {
-+	__u32 flags;
-+	__u8 version;
-+	__u8 log2vcmdqs;
-+	__u8 log2vsids;
-+	__u8 __reserved;
-+};
-+
-+/**
-+ * enum iommu_hw_info_type - IOMMU Hardware Info Types
-+ * @IOMMU_HW_INFO_TYPE_NONE: Output by the drivers that do not report hardware
-+ *                           info
-+ * @IOMMU_HW_INFO_TYPE_DEFAULT: Input to request for a default type
-+ * @IOMMU_HW_INFO_TYPE_INTEL_VTD: Intel VT-d iommu info type
-+ * @IOMMU_HW_INFO_TYPE_ARM_SMMUV3: ARM SMMUv3 iommu info type
-+ * @IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV: NVIDIA Tegra241 CMDQV (extension for ARM
-+ *                                     SMMUv3) info type
-+ */
-+enum iommu_hw_info_type {
-+	IOMMU_HW_INFO_TYPE_NONE = 0,
-+	IOMMU_HW_INFO_TYPE_DEFAULT = 0,
-+	IOMMU_HW_INFO_TYPE_INTEL_VTD = 1,
-+	IOMMU_HW_INFO_TYPE_ARM_SMMUV3 = 2,
-+	IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV = 3,
-+};
-+
-+/**
-+ * enum iommufd_hw_capabilities
-+ * @IOMMU_HW_CAP_DIRTY_TRACKING: IOMMU hardware support for dirty tracking
-+ *                               If available, it means the following APIs
-+ *                               are supported:
-+ *
-+ *                                   IOMMU_HWPT_GET_DIRTY_BITMAP
-+ *                                   IOMMU_HWPT_SET_DIRTY_TRACKING
-+ *
-+ * @IOMMU_HW_CAP_PCI_PASID_EXEC: Execute Permission Supported, user ignores it
-+ *                               when the struct
-+ *                               iommu_hw_info::out_max_pasid_log2 is zero.
-+ * @IOMMU_HW_CAP_PCI_PASID_PRIV: Privileged Mode Supported, user ignores it
-+ *                               when the struct
-+ *                               iommu_hw_info::out_max_pasid_log2 is zero.
-+ */
-+enum iommufd_hw_capabilities {
-+	IOMMU_HW_CAP_DIRTY_TRACKING = 1 << 0,
-+	IOMMU_HW_CAP_PCI_PASID_EXEC = 1 << 1,
-+	IOMMU_HW_CAP_PCI_PASID_PRIV = 1 << 2,
-+};
-+
-+/**
-+ * enum iommufd_hw_info_flags - Flags for iommu_hw_info
-+ * @IOMMU_HW_INFO_FLAG_INPUT_TYPE: If set, @in_data_type carries an input type
-+ *                                 for user space to request for a specific info
-+ */
-+enum iommufd_hw_info_flags {
-+	IOMMU_HW_INFO_FLAG_INPUT_TYPE = 1 << 0,
-+};
-+
-+/**
-+ * struct iommu_hw_info - ioctl(IOMMU_GET_HW_INFO)
-+ * @size: sizeof(struct iommu_hw_info)
-+ * @flags: Must be 0
-+ * @dev_id: The device bound to the iommufd
-+ * @data_len: Input the length of a user buffer in bytes. Output the length of
-+ *            data that kernel supports
-+ * @data_uptr: User pointer to a user-space buffer used by the kernel to fill
-+ *             the iommu type specific hardware information data
-+ * @in_data_type: This shares the same field with @out_data_type, making it be
-+ *                a bidirectional field. When IOMMU_HW_INFO_FLAG_INPUT_TYPE is
-+ *                set, an input type carried via this @in_data_type field will
-+ *                be valid, requesting for the info data to the given type. If
-+ *                IOMMU_HW_INFO_FLAG_INPUT_TYPE is unset, any input value will
-+ *                be seen as IOMMU_HW_INFO_TYPE_DEFAULT
-+ * @out_data_type: Output the iommu hardware info type as defined in the enum
-+ *                 iommu_hw_info_type.
-+ * @out_capabilities: Output the generic iommu capability info type as defined
-+ *                    in the enum iommu_hw_capabilities.
-+ * @out_max_pasid_log2: Output the width of PASIDs. 0 means no PASID support.
-+ *                      PCI devices turn to out_capabilities to check if the
-+ *                      specific capabilities is supported or not.
-+ * @__reserved: Must be 0
-+ *
-+ * Query an iommu type specific hardware information data from an iommu behind
-+ * a given device that has been bound to iommufd. This hardware info data will
-+ * be used to sync capabilities between the virtual iommu and the physical
-+ * iommu, e.g. a nested translation setup needs to check the hardware info, so
-+ * a guest stage-1 page table can be compatible with the physical iommu.
-+ *
-+ * To capture an iommu type specific hardware information data, @data_uptr and
-+ * its length @data_len must be provided. Trailing bytes will be zeroed if the
-+ * user buffer is larger than the data that kernel has. Otherwise, kernel only
-+ * fills the buffer using the given length in @data_len. If the ioctl succeeds,
-+ * @data_len will be updated to the length that kernel actually supports,
-+ * @out_data_type will be filled to decode the data filled in the buffer
-+ * pointed by @data_uptr. Input @data_len == zero is allowed.
-+ */
-+struct iommu_hw_info {
-+	__u32 size;
-+	__u32 flags;
-+	__u32 dev_id;
-+	__u32 data_len;
-+	__aligned_u64 data_uptr;
-+	union {
-+		__u32 in_data_type;
-+		__u32 out_data_type;
-+	};
-+	__u8 out_max_pasid_log2;
-+	__u8 __reserved[3];
-+	__aligned_u64 out_capabilities;
-+};
-+#define IOMMU_GET_HW_INFO _IO(IOMMUFD_TYPE, IOMMUFD_CMD_GET_HW_INFO)
-+
-+/*
-+ * enum iommufd_hwpt_set_dirty_tracking_flags - Flags for steering dirty
-+ *                                              tracking
-+ * @IOMMU_HWPT_DIRTY_TRACKING_ENABLE: Enable dirty tracking
-+ */
-+enum iommufd_hwpt_set_dirty_tracking_flags {
-+	IOMMU_HWPT_DIRTY_TRACKING_ENABLE = 1,
-+};
-+
-+/**
-+ * struct iommu_hwpt_set_dirty_tracking - ioctl(IOMMU_HWPT_SET_DIRTY_TRACKING)
-+ * @size: sizeof(struct iommu_hwpt_set_dirty_tracking)
-+ * @flags: Combination of enum iommufd_hwpt_set_dirty_tracking_flags
-+ * @hwpt_id: HW pagetable ID that represents the IOMMU domain
-+ * @__reserved: Must be 0
-+ *
-+ * Toggle dirty tracking on an HW pagetable.
-+ */
-+struct iommu_hwpt_set_dirty_tracking {
-+	__u32 size;
-+	__u32 flags;
-+	__u32 hwpt_id;
-+	__u32 __reserved;
-+};
-+#define IOMMU_HWPT_SET_DIRTY_TRACKING _IO(IOMMUFD_TYPE, \
-+					  IOMMUFD_CMD_HWPT_SET_DIRTY_TRACKING)
-+
-+/**
-+ * enum iommufd_hwpt_get_dirty_bitmap_flags - Flags for getting dirty bits
-+ * @IOMMU_HWPT_GET_DIRTY_BITMAP_NO_CLEAR: Just read the PTEs without clearing
-+ *                                        any dirty bits metadata. This flag
-+ *                                        can be passed in the expectation
-+ *                                        where the next operation is an unmap
-+ *                                        of the same IOVA range.
-+ *
-+ */
-+enum iommufd_hwpt_get_dirty_bitmap_flags {
-+	IOMMU_HWPT_GET_DIRTY_BITMAP_NO_CLEAR = 1,
-+};
-+
-+/**
-+ * struct iommu_hwpt_get_dirty_bitmap - ioctl(IOMMU_HWPT_GET_DIRTY_BITMAP)
-+ * @size: sizeof(struct iommu_hwpt_get_dirty_bitmap)
-+ * @hwpt_id: HW pagetable ID that represents the IOMMU domain
-+ * @flags: Combination of enum iommufd_hwpt_get_dirty_bitmap_flags
-+ * @__reserved: Must be 0
-+ * @iova: base IOVA of the bitmap first bit
-+ * @length: IOVA range size
-+ * @page_size: page size granularity of each bit in the bitmap
-+ * @data: bitmap where to set the dirty bits. The bitmap bits each
-+ *        represent a page_size which you deviate from an arbitrary iova.
-+ *
-+ * Checking a given IOVA is dirty:
-+ *
-+ *  data[(iova / page_size) / 64] & (1ULL << ((iova / page_size) % 64))
-+ *
-+ * Walk the IOMMU pagetables for a given IOVA range to return a bitmap
-+ * with the dirty IOVAs. In doing so it will also by default clear any
-+ * dirty bit metadata set in the IOPTE.
-+ */
-+struct iommu_hwpt_get_dirty_bitmap {
-+	__u32 size;
-+	__u32 hwpt_id;
-+	__u32 flags;
-+	__u32 __reserved;
-+	__aligned_u64 iova;
-+	__aligned_u64 length;
-+	__aligned_u64 page_size;
-+	__aligned_u64 data;
-+};
-+#define IOMMU_HWPT_GET_DIRTY_BITMAP _IO(IOMMUFD_TYPE, \
-+					IOMMUFD_CMD_HWPT_GET_DIRTY_BITMAP)
-+
-+/**
-+ * enum iommu_hwpt_invalidate_data_type - IOMMU HWPT Cache Invalidation
-+ *                                        Data Type
-+ * @IOMMU_HWPT_INVALIDATE_DATA_VTD_S1: Invalidation data for VTD_S1
-+ * @IOMMU_VIOMMU_INVALIDATE_DATA_ARM_SMMUV3: Invalidation data for ARM SMMUv3
-+ */
-+enum iommu_hwpt_invalidate_data_type {
-+	IOMMU_HWPT_INVALIDATE_DATA_VTD_S1 = 0,
-+	IOMMU_VIOMMU_INVALIDATE_DATA_ARM_SMMUV3 = 1,
-+};
-+
-+/**
-+ * enum iommu_hwpt_vtd_s1_invalidate_flags - Flags for Intel VT-d
-+ *                                           stage-1 cache invalidation
-+ * @IOMMU_VTD_INV_FLAGS_LEAF: Indicates whether the invalidation applies
-+ *                            to all-levels page structure cache or just
-+ *                            the leaf PTE cache.
-+ */
-+enum iommu_hwpt_vtd_s1_invalidate_flags {
-+	IOMMU_VTD_INV_FLAGS_LEAF = 1 << 0,
-+};
-+
-+/**
-+ * struct iommu_hwpt_vtd_s1_invalidate - Intel VT-d cache invalidation
-+ *                                       (IOMMU_HWPT_INVALIDATE_DATA_VTD_S1)
-+ * @addr: The start address of the range to be invalidated. It needs to
-+ *        be 4KB aligned.
-+ * @npages: Number of contiguous 4K pages to be invalidated.
-+ * @flags: Combination of enum iommu_hwpt_vtd_s1_invalidate_flags
-+ * @__reserved: Must be 0
-+ *
-+ * The Intel VT-d specific invalidation data for user-managed stage-1 cache
-+ * invalidation in nested translation. Userspace uses this structure to
-+ * tell the impacted cache scope after modifying the stage-1 page table.
-+ *
-+ * Invalidating all the caches related to the page table by setting @addr
-+ * to be 0 and @npages to be U64_MAX.
-+ *
-+ * The device TLB will be invalidated automatically if ATS is enabled.
-+ */
-+struct iommu_hwpt_vtd_s1_invalidate {
-+	__aligned_u64 addr;
-+	__aligned_u64 npages;
-+	__u32 flags;
-+	__u32 __reserved;
-+};
-+
-+/**
-+ * struct iommu_viommu_arm_smmuv3_invalidate - ARM SMMUv3 cache invalidation
-+ *         (IOMMU_VIOMMU_INVALIDATE_DATA_ARM_SMMUV3)
-+ * @cmd: 128-bit cache invalidation command that runs in SMMU CMDQ.
-+ *       Must be little-endian.
-+ *
-+ * Supported command list only when passing in a vIOMMU via @hwpt_id:
-+ *     CMDQ_OP_TLBI_NSNH_ALL
-+ *     CMDQ_OP_TLBI_NH_VA
-+ *     CMDQ_OP_TLBI_NH_VAA
-+ *     CMDQ_OP_TLBI_NH_ALL
-+ *     CMDQ_OP_TLBI_NH_ASID
-+ *     CMDQ_OP_ATC_INV
-+ *     CMDQ_OP_CFGI_CD
-+ *     CMDQ_OP_CFGI_CD_ALL
-+ *
-+ * -EIO will be returned if the command is not supported.
-+ */
-+struct iommu_viommu_arm_smmuv3_invalidate {
-+	__aligned_le64 cmd[2];
-+};
-+
-+/**
-+ * struct iommu_hwpt_invalidate - ioctl(IOMMU_HWPT_INVALIDATE)
-+ * @size: sizeof(struct iommu_hwpt_invalidate)
-+ * @hwpt_id: ID of a nested HWPT or a vIOMMU, for cache invalidation
-+ * @data_uptr: User pointer to an array of driver-specific cache invalidation
-+ *             data.
-+ * @data_type: One of enum iommu_hwpt_invalidate_data_type, defining the data
-+ *             type of all the entries in the invalidation request array. It
-+ *             should be a type supported by the hwpt pointed by @hwpt_id.
-+ * @entry_len: Length (in bytes) of a request entry in the request array
-+ * @entry_num: Input the number of cache invalidation requests in the array.
-+ *             Output the number of requests successfully handled by kernel.
-+ * @__reserved: Must be 0.
-+ *
-+ * Invalidate iommu cache for user-managed page table or vIOMMU. Modifications
-+ * on a user-managed page table should be followed by this operation, if a HWPT
-+ * is passed in via @hwpt_id. Other caches, such as device cache or descriptor
-+ * cache can be flushed if a vIOMMU is passed in via the @hwpt_id field.
-+ *
-+ * Each ioctl can support one or more cache invalidation requests in the array
-+ * that has a total size of @entry_len * @entry_num.
-+ *
-+ * An empty invalidation request array by setting @entry_num==0 is allowed, and
-+ * @entry_len and @data_uptr would be ignored in this case. This can be used to
-+ * check if the given @data_type is supported or not by kernel.
-+ */
-+struct iommu_hwpt_invalidate {
-+	__u32 size;
-+	__u32 hwpt_id;
-+	__aligned_u64 data_uptr;
-+	__u32 data_type;
-+	__u32 entry_len;
-+	__u32 entry_num;
-+	__u32 __reserved;
-+};
-+#define IOMMU_HWPT_INVALIDATE _IO(IOMMUFD_TYPE, IOMMUFD_CMD_HWPT_INVALIDATE)
-+
-+/**
-+ * enum iommu_hwpt_pgfault_flags - flags for struct iommu_hwpt_pgfault
-+ * @IOMMU_PGFAULT_FLAGS_PASID_VALID: The pasid field of the fault data is
-+ *                                   valid.
-+ * @IOMMU_PGFAULT_FLAGS_LAST_PAGE: It's the last fault of a fault group.
-+ */
-+enum iommu_hwpt_pgfault_flags {
-+	IOMMU_PGFAULT_FLAGS_PASID_VALID		= (1 << 0),
-+	IOMMU_PGFAULT_FLAGS_LAST_PAGE		= (1 << 1),
-+};
-+
-+/**
-+ * enum iommu_hwpt_pgfault_perm - perm bits for struct iommu_hwpt_pgfault
-+ * @IOMMU_PGFAULT_PERM_READ: request for read permission
-+ * @IOMMU_PGFAULT_PERM_WRITE: request for write permission
-+ * @IOMMU_PGFAULT_PERM_EXEC: (PCIE 10.4.1) request with a PASID that has the
-+ *                           Execute Requested bit set in PASID TLP Prefix.
-+ * @IOMMU_PGFAULT_PERM_PRIV: (PCIE 10.4.1) request with a PASID that has the
-+ *                           Privileged Mode Requested bit set in PASID TLP
-+ *                           Prefix.
-+ */
-+enum iommu_hwpt_pgfault_perm {
-+	IOMMU_PGFAULT_PERM_READ			= (1 << 0),
-+	IOMMU_PGFAULT_PERM_WRITE		= (1 << 1),
-+	IOMMU_PGFAULT_PERM_EXEC			= (1 << 2),
-+	IOMMU_PGFAULT_PERM_PRIV			= (1 << 3),
-+};
-+
-+/**
-+ * struct iommu_hwpt_pgfault - iommu page fault data
-+ * @flags: Combination of enum iommu_hwpt_pgfault_flags
-+ * @dev_id: id of the originated device
-+ * @pasid: Process Address Space ID
-+ * @grpid: Page Request Group Index
-+ * @perm: Combination of enum iommu_hwpt_pgfault_perm
-+ * @__reserved: Must be 0.
-+ * @addr: Fault address
-+ * @length: a hint of how much data the requestor is expecting to fetch. For
-+ *          example, if the PRI initiator knows it is going to do a 10MB
-+ *          transfer, it could fill in 10MB and the OS could pre-fault in
-+ *          10MB of IOVA. It's default to 0 if there's no such hint.
-+ * @cookie: kernel-managed cookie identifying a group of fault messages. The
-+ *          cookie number encoded in the last page fault of the group should
-+ *          be echoed back in the response message.
-+ */
-+struct iommu_hwpt_pgfault {
-+	__u32 flags;
-+	__u32 dev_id;
-+	__u32 pasid;
-+	__u32 grpid;
-+	__u32 perm;
-+	__u32 __reserved;
-+	__aligned_u64 addr;
-+	__u32 length;
-+	__u32 cookie;
-+};
-+
-+/**
-+ * enum iommufd_page_response_code - Return status of fault handlers
-+ * @IOMMUFD_PAGE_RESP_SUCCESS: Fault has been handled and the page tables
-+ *                             populated, retry the access. This is the
-+ *                             "Success" defined in PCI 10.4.2.1.
-+ * @IOMMUFD_PAGE_RESP_INVALID: Could not handle this fault, don't retry the
-+ *                             access. This is the "Invalid Request" in PCI
-+ *                             10.4.2.1.
-+ */
-+enum iommufd_page_response_code {
-+	IOMMUFD_PAGE_RESP_SUCCESS = 0,
-+	IOMMUFD_PAGE_RESP_INVALID = 1,
-+};
-+
-+/**
-+ * struct iommu_hwpt_page_response - IOMMU page fault response
-+ * @cookie: The kernel-managed cookie reported in the fault message.
-+ * @code: One of response code in enum iommufd_page_response_code.
-+ */
-+struct iommu_hwpt_page_response {
-+	__u32 cookie;
-+	__u32 code;
-+};
-+
-+/**
-+ * struct iommu_fault_alloc - ioctl(IOMMU_FAULT_QUEUE_ALLOC)
-+ * @size: sizeof(struct iommu_fault_alloc)
-+ * @flags: Must be 0
-+ * @out_fault_id: The ID of the new FAULT
-+ * @out_fault_fd: The fd of the new FAULT
-+ *
-+ * Explicitly allocate a fault handling object.
-+ */
-+struct iommu_fault_alloc {
-+	__u32 size;
-+	__u32 flags;
-+	__u32 out_fault_id;
-+	__u32 out_fault_fd;
-+};
-+#define IOMMU_FAULT_QUEUE_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_FAULT_QUEUE_ALLOC)
-+
-+/**
-+ * enum iommu_viommu_type - Virtual IOMMU Type
-+ * @IOMMU_VIOMMU_TYPE_DEFAULT: Reserved for future use
-+ * @IOMMU_VIOMMU_TYPE_ARM_SMMUV3: ARM SMMUv3 driver specific type
-+ * @IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV: NVIDIA Tegra241 CMDQV (extension for ARM
-+ *                                    SMMUv3) enabled ARM SMMUv3 type
-+ */
-+enum iommu_viommu_type {
-+	IOMMU_VIOMMU_TYPE_DEFAULT = 0,
-+	IOMMU_VIOMMU_TYPE_ARM_SMMUV3 = 1,
-+	IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV = 2,
-+};
-+
-+/**
-+ * struct iommu_viommu_tegra241_cmdqv - NVIDIA Tegra241 CMDQV Virtual Interface
-+ *                                      (IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV)
-+ * @out_vintf_mmap_offset: mmap offset argument for VINTF's page0
-+ * @out_vintf_mmap_length: mmap length argument for VINTF's page0
-+ *
-+ * Both @out_vintf_mmap_offset and @out_vintf_mmap_length are reported by kernel
-+ * for user space to mmap the VINTF page0 from the host physical address space
-+ * to the guest physical address space so that a guest kernel can directly R/W
-+ * access to the VINTF page0 in order to control its virtual command queues.
-+ */
-+struct iommu_viommu_tegra241_cmdqv {
-+	__aligned_u64 out_vintf_mmap_offset;
-+	__aligned_u64 out_vintf_mmap_length;
-+};
-+
-+/**
-+ * struct iommu_viommu_alloc - ioctl(IOMMU_VIOMMU_ALLOC)
-+ * @size: sizeof(struct iommu_viommu_alloc)
-+ * @flags: Must be 0
-+ * @type: Type of the virtual IOMMU. Must be defined in enum iommu_viommu_type
-+ * @dev_id: The device's physical IOMMU will be used to back the virtual IOMMU
-+ * @hwpt_id: ID of a nesting parent HWPT to associate to
-+ * @out_viommu_id: Output virtual IOMMU ID for the allocated object
-+ * @data_len: Length of the type specific data
-+ * @__reserved: Must be 0
-+ * @data_uptr: User pointer to a driver-specific virtual IOMMU data
-+ *
-+ * Allocate a virtual IOMMU object, representing the underlying physical IOMMU's
-+ * virtualization support that is a security-isolated slice of the real IOMMU HW
-+ * that is unique to a specific VM. Operations global to the IOMMU are connected
-+ * to the vIOMMU, such as:
-+ * - Security namespace for guest owned ID, e.g. guest-controlled cache tags
-+ * - Non-device-affiliated event reporting, e.g. invalidation queue errors
-+ * - Access to a sharable nesting parent pagetable across physical IOMMUs
-+ * - Virtualization of various platforms IDs, e.g. RIDs and others
-+ * - Delivery of paravirtualized invalidation
-+ * - Direct assigned invalidation queues
-+ * - Direct assigned interrupts
-+ */
-+struct iommu_viommu_alloc {
-+	__u32 size;
-+	__u32 flags;
-+	__u32 type;
-+	__u32 dev_id;
-+	__u32 hwpt_id;
-+	__u32 out_viommu_id;
-+	__u32 data_len;
-+	__u32 __reserved;
-+	__aligned_u64 data_uptr;
-+};
-+#define IOMMU_VIOMMU_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VIOMMU_ALLOC)
-+
-+/**
-+ * struct iommu_vdevice_alloc - ioctl(IOMMU_VDEVICE_ALLOC)
-+ * @size: sizeof(struct iommu_vdevice_alloc)
-+ * @viommu_id: vIOMMU ID to associate with the virtual device
-+ * @dev_id: The physical device to allocate a virtual instance on the vIOMMU
-+ * @out_vdevice_id: Object handle for the vDevice. Pass to IOMMU_DESTORY
-+ * @virt_id: Virtual device ID per vIOMMU, e.g. vSID of ARM SMMUv3, vDeviceID
-+ *           of AMD IOMMU, and vRID of Intel VT-d
-+ *
-+ * Allocate a virtual device instance (for a physical device) against a vIOMMU.
-+ * This instance holds the device's information (related to its vIOMMU) in a VM.
-+ * User should use IOMMU_DESTROY to destroy the virtual device before
-+ * destroying the physical device (by closing vfio_cdev fd). Otherwise the
-+ * virtual device would be forcibly destroyed on physical device destruction,
-+ * its vdevice_id would be permanently leaked (unremovable & unreusable) until
-+ * iommu fd closed.
-+ */
-+struct iommu_vdevice_alloc {
-+	__u32 size;
-+	__u32 viommu_id;
-+	__u32 dev_id;
-+	__u32 out_vdevice_id;
-+	__aligned_u64 virt_id;
-+};
-+#define IOMMU_VDEVICE_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VDEVICE_ALLOC)
-+
-+/**
-+ * struct iommu_ioas_change_process - ioctl(VFIO_IOAS_CHANGE_PROCESS)
-+ * @size: sizeof(struct iommu_ioas_change_process)
-+ * @__reserved: Must be 0
-+ *
-+ * This transfers pinned memory counts for every memory map in every IOAS
-+ * in the context to the current process.  This only supports maps created
-+ * with IOMMU_IOAS_MAP_FILE, and returns EINVAL if other maps are present.
-+ * If the ioctl returns a failure status, then nothing is changed.
-+ *
-+ * This API is useful for transferring operation of a device from one process
-+ * to another, such as during userland live update.
-+ */
-+struct iommu_ioas_change_process {
-+	__u32 size;
-+	__u32 __reserved;
-+};
-+
-+#define IOMMU_IOAS_CHANGE_PROCESS \
-+	_IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_CHANGE_PROCESS)
-+
-+/**
-+ * enum iommu_veventq_flag - flag for struct iommufd_vevent_header
-+ * @IOMMU_VEVENTQ_FLAG_LOST_EVENTS: vEVENTQ has lost vEVENTs
-+ */
-+enum iommu_veventq_flag {
-+	IOMMU_VEVENTQ_FLAG_LOST_EVENTS = (1U << 0),
-+};
-+
-+/**
-+ * struct iommufd_vevent_header - Virtual Event Header for a vEVENTQ Status
-+ * @flags: Combination of enum iommu_veventq_flag
-+ * @sequence: The sequence index of a vEVENT in the vEVENTQ, with a range of
-+ *            [0, INT_MAX] where the following index of INT_MAX is 0
-+ *
-+ * Each iommufd_vevent_header reports a sequence index of the following vEVENT:
-+ *
-+ * +----------------------+-------+----------------------+-------+---+-------+
-+ * | header0 {sequence=0} | data0 | header1 {sequence=1} | data1 |...| dataN |
-+ * +----------------------+-------+----------------------+-------+---+-------+
-+ *
-+ * And this sequence index is expected to be monotonic to the sequence index of
-+ * the previous vEVENT. If two adjacent sequence indexes has a delta larger than
-+ * 1, it means that delta - 1 number of vEVENTs has lost, e.g. two lost vEVENTs:
-+ *
-+ * +-----+----------------------+-------+----------------------+-------+-----+
-+ * | ... | header3 {sequence=3} | data3 | header6 {sequence=6} | data6 | ... |
-+ * +-----+----------------------+-------+----------------------+-------+-----+
-+ *
-+ * If a vEVENT lost at the tail of the vEVENTQ and there is no following vEVENT
-+ * providing the next sequence index, an IOMMU_VEVENTQ_FLAG_LOST_EVENTS header
-+ * would be added to the tail, and no data would follow this header:
-+ *
-+ * +--+----------------------+-------+-----------------------------------------+
-+ * |..| header3 {sequence=3} | data3 | header4 {flags=LOST_EVENTS, sequence=4} |
-+ * +--+----------------------+-------+-----------------------------------------+
-+ */
-+struct iommufd_vevent_header {
-+	__u32 flags;
-+	__u32 sequence;
-+};
-+
-+/**
-+ * enum iommu_veventq_type - Virtual Event Queue Type
-+ * @IOMMU_VEVENTQ_TYPE_DEFAULT: Reserved for future use
-+ * @IOMMU_VEVENTQ_TYPE_ARM_SMMUV3: ARM SMMUv3 Virtual Event Queue
-+ * @IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV: NVIDIA Tegra241 CMDQV Extension IRQ
-+ */
-+enum iommu_veventq_type {
-+	IOMMU_VEVENTQ_TYPE_DEFAULT = 0,
-+	IOMMU_VEVENTQ_TYPE_ARM_SMMUV3 = 1,
-+	IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV = 2,
-+};
-+
-+/**
-+ * struct iommu_vevent_arm_smmuv3 - ARM SMMUv3 Virtual Event
-+ *                                  (IOMMU_VEVENTQ_TYPE_ARM_SMMUV3)
-+ * @evt: 256-bit ARM SMMUv3 Event record, little-endian.
-+ *       Reported event records: (Refer to "7.3 Event records" in SMMUv3 HW Spec)
-+ *       - 0x04 C_BAD_STE
-+ *       - 0x06 F_STREAM_DISABLED
-+ *       - 0x08 C_BAD_SUBSTREAMID
-+ *       - 0x0a C_BAD_CD
-+ *       - 0x10 F_TRANSLATION
-+ *       - 0x11 F_ADDR_SIZE
-+ *       - 0x12 F_ACCESS
-+ *       - 0x13 F_PERMISSION
-+ *
-+ * StreamID field reports a virtual device ID. To receive a virtual event for a
-+ * device, a vDEVICE must be allocated via IOMMU_VDEVICE_ALLOC.
-+ */
-+struct iommu_vevent_arm_smmuv3 {
-+	__aligned_le64 evt[4];
-+};
-+
-+/**
-+ * struct iommu_vevent_tegra241_cmdqv - Tegra241 CMDQV IRQ
-+ *                                      (IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV)
-+ * @lvcmdq_err_map: 128-bit logical vcmdq error map, little-endian.
-+ *                  (Refer to register LVCMDQ_ERR_MAPs per VINTF )
-+ *
-+ * The 128-bit register value from HW exclusively reflect the error bits for a
-+ * Virtual Interface represented by a vIOMMU object. Read and report directly.
-+ */
-+struct iommu_vevent_tegra241_cmdqv {
-+	__aligned_le64 lvcmdq_err_map[2];
-+};
-+
-+/**
-+ * struct iommu_veventq_alloc - ioctl(IOMMU_VEVENTQ_ALLOC)
-+ * @size: sizeof(struct iommu_veventq_alloc)
-+ * @flags: Must be 0
-+ * @viommu_id: virtual IOMMU ID to associate the vEVENTQ with
-+ * @type: Type of the vEVENTQ. Must be defined in enum iommu_veventq_type
-+ * @veventq_depth: Maximum number of events in the vEVENTQ
-+ * @out_veventq_id: The ID of the new vEVENTQ
-+ * @out_veventq_fd: The fd of the new vEVENTQ. User space must close the
-+ *                  successfully returned fd after using it
-+ * @__reserved: Must be 0
-+ *
-+ * Explicitly allocate a virtual event queue interface for a vIOMMU. A vIOMMU
-+ * can have multiple FDs for different types, but is confined to one per @type.
-+ * User space should open the @out_veventq_fd to read vEVENTs out of a vEVENTQ,
-+ * if there are vEVENTs available. A vEVENTQ will lose events due to overflow,
-+ * if the number of the vEVENTs hits @veventq_depth.
-+ *
-+ * Each vEVENT in a vEVENTQ encloses a struct iommufd_vevent_header followed by
-+ * a type-specific data structure, in a normal case:
-+ *
-+ * +-+---------+-------+---------+-------+-----+---------+-------+-+
-+ * | | header0 | data0 | header1 | data1 | ... | headerN | dataN | |
-+ * +-+---------+-------+---------+-------+-----+---------+-------+-+
-+ *
-+ * unless a tailing IOMMU_VEVENTQ_FLAG_LOST_EVENTS header is logged (refer to
-+ * struct iommufd_vevent_header).
-+ */
-+struct iommu_veventq_alloc {
-+	__u32 size;
-+	__u32 flags;
-+	__u32 viommu_id;
-+	__u32 type;
-+	__u32 veventq_depth;
-+	__u32 out_veventq_id;
-+	__u32 out_veventq_fd;
-+	__u32 __reserved;
-+};
-+#define IOMMU_VEVENTQ_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_VEVENTQ_ALLOC)
-+
-+/**
-+ * enum iommu_hw_queue_type - HW Queue Type
-+ * @IOMMU_HW_QUEUE_TYPE_DEFAULT: Reserved for future use
-+ * @IOMMU_HW_QUEUE_TYPE_TEGRA241_CMDQV: NVIDIA Tegra241 CMDQV (extension for ARM
-+ *                                      SMMUv3) Virtual Command Queue (VCMDQ)
-+ */
-+enum iommu_hw_queue_type {
-+	IOMMU_HW_QUEUE_TYPE_DEFAULT = 0,
+ static enum vfio_result
+ vfio_group_assign_device(struct vfio_container *cfg, const char *sysfs_base, const char *dev_addr,
+ 		struct vfio_device **out_dev)
+@@ -784,6 +851,59 @@ dev_vfio_container_assign_device(int container_fd, const char *sysfs_base, const
+ 		return -1;
+ 	}
+ 
 +	/*
-+	 * TEGRA241_CMDQV requirements (otherwise, allocation will fail)
-+	 * - alloc starts from the lowest @index=0 in ascending order
-+	 * - destroy starts from the last allocated @index in descending order
-+	 * - @base_addr must be aligned to @length in bytes and mapped in IOAS
-+	 * - @length must be a power of 2, with a minimum 32 bytes and a maximum
-+	 *   2 ^ idr[1].CMDQS * 16 bytes (use GET_HW_INFO call to read idr[1]
-+	 *   from struct iommu_hw_info_arm_smmuv3)
-+	 * - suggest to back the queue memory with contiguous physical pages or
-+	 *   a single huge page with alignment of the queue size, and limit the
-+	 *   emulated vSMMU's IDR1.CMDQS to log2(huge page size / 16 bytes)
++	 * The device-to-container assignment is a complex problem to solve,
++	 * for the following reasons:
++	 *
++	 * 1. PCI infrastructure is decoupled from VFIO, so PCI does not know
++	 *    anything about VFIO
++	 *
++	 * This means that while 99% of VFIO usage is PCI-related, we cannot
++	 * communicate to PCI that we want to map a particular device using a
++	 * particular container. Previously, this was achieved using
++	 * back-channel communication between VFIO and PCI bus via IOMMU group
++	 * binding, so that whenever PCI map actually happens, VFIO knows which
++	 * container to use, so this is roughly the model we are going with.
++	 *
++	 * 2. VFIO cannot depend on PCI because VFIO is in EAL
++	 *
++	 * We cannot "assign" a PCI device to container using rte_pci_device
++	 * pointer because VFIO cannot depend on PCI definitions, nor can we
++	 * even assume that our device is in fact a PCI device, even though in
++	 * practice this is true (at the time of this writing, FSLMC is the only
++	 * bus doing non-PCI VFIO mappings, but FSLMC manages all VFIO
++	 * infrastructure by itself, so in practice even counting FSLMC bus,
++	 * we're always dealing with PCI devices).
++	 *
++	 * 3. The "assignment" means different things for group and cdev mode
++	 *
++	 * In group mode, to "bind" a device to a specific container, it is
++	 * enough to bind its IOMMU group, so that when dev_vfio_setup_device()
++	 * is called, we simply retrieve already existing group, and through
++	 * that we figure out which container to use.
++	 *
++	 * For cdev mode, there are no "groups", so "assignment" either means we
++	 * store some kind of uniquely identifying token (such as device number,
++	 * or an opaque pointer), or we simply open the device straight away,
++	 * and when dev_vfio_setup_device() comes we simply return the fd that
++	 * was already opened at assign.
++	 *
++	 * Doing it the latter way (opening the device at assign for both group
++	 * and cdev modes) actually solves all of these problems, so that's what
++	 * we're going to do - the device setup API call will actually just
++	 * assign the device to default container, while release will
++	 * automatically cleanup and unassign anything that needs to be
++	 * unassigned. There will be no "unassign" call, as it is not necessary.
++	 *
++	 * The cdev mode can deduplicate on "device number", which is assigned
++	 * by the kernel and is unique per device. The group mode keeps its
++	 * deduplication mechanism based on a combination of sysfs path and
++	 * device address, which is unique per device as well. This way we can
++	 * ensure that assigning a device before setting it up works correctly,
++	 * and that we do not open the same device fd twice or leak any
++	 * resources on device release.
 +	 */
-+	IOMMU_HW_QUEUE_TYPE_TEGRA241_CMDQV = 1,
++
+ 	if (vfio_global_cfg.mode == DEV_VFIO_MODE_NONE) {
+ 		EAL_LOG(ERR, "VFIO support not initialized");
+ 		rte_errno = ENXIO;
+@@ -803,6 +923,9 @@ dev_vfio_container_assign_device(int container_fd, const char *sysfs_base, const
+ 	case DEV_VFIO_MODE_GROUP:
+ 		res = vfio_group_assign_device(cfg, sysfs_base, dev_addr, &dev);
+ 		break;
++	case DEV_VFIO_MODE_CDEV:
++		res = vfio_cdev_assign_device(cfg, sysfs_base, dev_addr, &dev);
++		break;
+ 	default:
+ 		EAL_LOG(ERR, "Unsupported VFIO mode");
+ 		res = VFIO_NOT_SUPPORTED;
+@@ -877,6 +1000,24 @@ dev_vfio_setup_device(const char *sysfs_base, const char *dev_addr, int *vfio_de
+ 		res = vfio_group_assign_device(cfg, sysfs_base, dev_addr, &dev);
+ 		break;
+ 	}
++	case DEV_VFIO_MODE_CDEV:
++	{
++		int dev_num;
++
++		/* find device number */
++		ret = vfio_cdev_get_device_num(sysfs_base, dev_addr, &dev_num);
++		if (ret < 0)
++			goto assign_fail;
++		else if (ret == 0)
++			goto not_managed;
++
++		cfg = vfio_container_get_by_dev_num(dev_num);
++		if (cfg == NULL)
++			cfg = vfio_global_cfg.default_cfg;
++
++		res = vfio_cdev_assign_device(cfg, sysfs_base, dev_addr, &dev);
++		break;
++	}
+ 	default:
+ 		EAL_LOG(ERR, "Unsupported VFIO mode");
+ 		rte_errno = ENOTSUP;
+@@ -998,6 +1139,12 @@ dev_vfio_release_device(const char *sysfs_base __rte_unused, const char *dev_add
+ 		}
+ 		break;
+ 	}
++	case DEV_VFIO_MODE_CDEV:
++	{
++		/* for cdev, just erase the device and we're done */
++		vfio_device_erase(cfg, dev);
++		break;
++	}
+ 	default:
+ 		EAL_LOG(ERR, "Unsupported VFIO mode");
+ 		rte_errno = ENOTSUP;
+@@ -1079,6 +1226,7 @@ vfio_select_mode(void)
+ 	struct vfio_container *cfg;
+ 	enum dev_vfio_mode mode = DEV_VFIO_MODE_NONE;
+ 	enum dev_vfio_iova_mode iova_mode = DEV_VFIO_IOVA_MODE_UNKNOWN;
++	int ret;
+ 
+ 	cfg = vfio_container_create();
+ 	/* cannot happen */
+@@ -1091,32 +1239,56 @@ vfio_select_mode(void)
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
+ 		if (vfio_sync_mode(cfg, &mode) < 0 || vfio_sync_iova_mode(&iova_mode) < 0)
+ 			goto err;
+-
+-		/* primary handles DMA setup for default containers */
+-		cfg->dma_setup_done = true;
+ 		vfio_global_cfg.iova_mode = iova_mode;
++
++		if (mode == DEV_VFIO_MODE_CDEV) {
++			/* set up ops and sync IOAS */
++			vfio_cdev_setup_ops();
++			if (vfio_cdev_sync_ioas(cfg) < 0)
++				goto err;
++
++			/* primary handles DMA */
++			cfg->dma_setup_done = true;
++		} else if (mode == DEV_VFIO_MODE_GROUP) {
++			/* primary handles DMA */
++			cfg->dma_setup_done = true;
++		} else {
++			/* shouldn't happen */
++			EAL_LOG(ERR, "Unknown VFIO mode %d", mode);
++			goto err;
++		}
++
+ 		return mode;
+ 	}
+ 	/* if we failed mp sync setup, we cannot initialize VFIO */
+ 	if (vfio_mp_sync_setup() < 0)
+ 		return DEV_VFIO_MODE_NONE;
+ 
++	/* check no-IOMMU mode */
++	ret = vfio_noiommu_is_enabled();
++	if (ret < 0)
++		goto err_mpsync;
++	iova_mode = ret == 1 ? DEV_VFIO_IOVA_MODE_PA : DEV_VFIO_IOVA_MODE_VA;
++
+ 	/* try group mode first */
+ 	if (vfio_group_enable(cfg) == 0) {
+-		/* check for noiommu */
+-		int ret = vfio_noiommu_is_enabled();
+-		if (ret < 0)
+-			goto err_mpsync;
+-		vfio_global_cfg.iova_mode = ret == 1 ?
+-				DEV_VFIO_IOVA_MODE_PA :
+-				DEV_VFIO_IOVA_MODE_VA;
++		vfio_global_cfg.iova_mode = iova_mode;
+ 		return DEV_VFIO_MODE_GROUP;
+ 	}
++	EAL_LOG(DEBUG, "VFIO group mode not available, trying cdev mode...");
++	/* cdev ops, IOAS and DMA setup are deferred to dev_vfio_init_mem() */
++	if (vfio_cdev_enable(cfg) == 0) {
++		vfio_global_cfg.iova_mode = iova_mode;
++		return DEV_VFIO_MODE_CDEV;
++	}
++	EAL_LOG(DEBUG, "VFIO cdev mode not available");
+ err_mpsync:
+ 	vfio_mp_sync_cleanup();
+ err:
+ 	vfio_container_erase(cfg);
+ 	vfio_global_cfg.iova_mode = DEV_VFIO_IOVA_MODE_UNKNOWN;
++	/* reset ops as well */
++	vfio_global_cfg.ops = NULL;
+ 
+ 	return DEV_VFIO_MODE_NONE;
+ }
+@@ -1126,6 +1298,7 @@ vfio_mode_to_str(enum dev_vfio_mode mode)
+ {
+ 	switch (mode) {
+ 	case DEV_VFIO_MODE_GROUP: return "group";
++	case DEV_VFIO_MODE_CDEV: return "cdev";
+ 	default: return "not initialized";
+ 	}
+ }
+@@ -1189,6 +1362,36 @@ dev_vfio_module_is_loaded(enum dev_vfio_module module)
+ 	return vfio_check_module(module) > 0;
+ }
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_init_mem)
++int
++dev_vfio_init_mem(void)
++{
++	struct vfio_container *cfg = vfio_global_cfg.default_cfg;
++
++	/* secondary already synced everything during dev_vfio_enable() */
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return 0;
++
++	switch (vfio_global_cfg.mode) {
++	case DEV_VFIO_MODE_CDEV:
++		/* iommufd IOAS is populated once DPDK memory is available */
++		vfio_cdev_setup_ops();
++		if (vfio_cdev_setup_ioas(cfg) < 0)
++			return -1;
++		if (vfio_setup_dma_mem(cfg) < 0)
++			return -1;
++		if (vfio_register_mem_event_callback() < 0)
++			return -1;
++		cfg->dma_setup_done = true;
++		break;
++	default:
++		/* group/noiommu map memory at device attach, or no VFIO */
++		break;
++	}
++
++	return 0;
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_is_enabled)
+ int
+ dev_vfio_is_enabled(void)
+@@ -1280,6 +1483,40 @@ dev_vfio_get_group_num(const char *sysfs_base, const char *dev_addr, int *iommu_
+ 	return 0;
+ }
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_get_device_num)
++int
++dev_vfio_get_device_num(const char *sysfs_base, const char *dev_addr, int *device_num)
++{
++	int ret;
++
++	if (sysfs_base == NULL || dev_addr == NULL || device_num == NULL) {
++		rte_errno = EINVAL;
++		return -1;
++	}
++
++	if (vfio_global_cfg.mode == DEV_VFIO_MODE_NONE) {
++		EAL_LOG(ERR, "VFIO support not initialized");
++		rte_errno = ENXIO;
++		return -1;
++	}
++
++	if (vfio_global_cfg.mode != DEV_VFIO_MODE_CDEV) {
++		EAL_LOG(ERR, "VFIO not initialized in cdev mode");
++		rte_errno = ENOTSUP;
++		return -1;
++	}
++
++	ret = vfio_cdev_get_device_num(sysfs_base, dev_addr, device_num);
++	if (ret < 0) {
++		rte_errno = EINVAL;
++		return -1;
++	} else if (ret == 0) {
++		rte_errno = ENODEV;
++		return -1;
++	}
++	return 0;
++}
++
+ static int
+ vfio_dma_mem_map(struct vfio_container *cfg, uint64_t vaddr, uint64_t iova, uint64_t len,
+ 		int do_map)
+@@ -1472,6 +1709,27 @@ dev_vfio_container_create(void)
+ 		cfg->container_fd = container_fd;
+ 		break;
+ 	}
++	case DEV_VFIO_MODE_CDEV:
++	{
++		/* Open new iommufd for custom container */
++		container_fd = vfio_cdev_get_iommufd();
++		if (container_fd < 0) {
++			EAL_LOG(ERR, "Cannot open iommufd for cdev container");
++			rte_errno = EIO;
++			goto err;
++		}
++		cfg->container_fd = container_fd;
++
++		/* Set up IOAS for this container */
++		if (vfio_cdev_setup_ioas(cfg) < 0) {
++			EAL_LOG(ERR, "Cannot setup IOAS for cdev container");
++			rte_errno = EIO;
++			goto err;
++		}
++		/* we only need to set up IOAS for DMA to work */
++		cfg->dma_setup_done = true;
++		break;
++	}
+ 	default:
+ 		EAL_LOG(NOTICE, "Unsupported VFIO mode");
+ 		rte_errno = ENOTSUP;
+@@ -1532,6 +1790,13 @@ dev_vfio_container_destroy(int container_fd)
+ 		}
+ 		break;
+ 	}
++	case DEV_VFIO_MODE_CDEV:
++		/* erase all devices */
++		VFIO_DEVICE_FOREACH_ACTIVE(cfg, dev) {
++			EAL_LOG(DEBUG, "Device vfio%d still open, closing", dev->dev_num);
++			vfio_device_erase(cfg, dev);
++		}
++		break;
+ 	default:
+ 		EAL_LOG(ERR, "Unsupported VFIO mode");
+ 		rte_errno = ENOTSUP;
+diff --git a/lib/eal/linux/eal_vfio.h b/lib/eal/linux/eal_vfio.h
+index 080372a42f..980bdae0ba 100644
+--- a/lib/eal/linux/eal_vfio.h
++++ b/lib/eal/linux/eal_vfio.h
+@@ -50,9 +50,16 @@ struct vfio_device {
+ 	bool active;
+ 	enum dev_vfio_mode mode;
+ 	int fd;
+-	int group; /**< back-reference to group list */
+-	char *sysfs_base; /**< sysfs path prefix */
+-	char *dev_addr;   /**< device address */
++	union {
++		struct {
++			int dev_num;   /**< device number, e.g., X in /dev/vfio/devices/vfioX */
++		};
++		struct {
++			int group; /**< back-reference to group list */
++			char *sysfs_base; /**< sysfs path prefix */
++			char *dev_addr;   /**< device address */
++		};
++	};
+ };
+ 
+ /* group mode specific configuration */
+@@ -63,13 +70,21 @@ struct vfio_group_config {
+ 	struct vfio_group groups[RTE_MAX_VFIO_GROUPS];
+ };
+ 
++/* cdev mode specific configuration */
++struct vfio_cdev_config {
++	uint32_t ioas_id;
 +};
 +
-+/**
-+ * struct iommu_hw_queue_alloc - ioctl(IOMMU_HW_QUEUE_ALLOC)
-+ * @size: sizeof(struct iommu_hw_queue_alloc)
-+ * @flags: Must be 0
-+ * @viommu_id: Virtual IOMMU ID to associate the HW queue with
-+ * @type: One of enum iommu_hw_queue_type
-+ * @index: The logical index to the HW queue per virtual IOMMU for a multi-queue
-+ *         model
-+ * @out_hw_queue_id: The ID of the new HW queue
-+ * @nesting_parent_iova: Base address of the queue memory in the guest physical
-+ *                       address space
-+ * @length: Length of the queue memory
-+ *
-+ * Allocate a HW queue object for a vIOMMU-specific HW-accelerated queue, which
-+ * allows HW to access a guest queue memory described using @nesting_parent_iova
-+ * and @length.
-+ *
-+ * A vIOMMU can allocate multiple queues, but it must use a different @index per
-+ * type to separate each allocation, e.g::
-+ *
-+ *     Type1 HW queue0, Type1 HW queue1, Type2 HW queue0, ...
+ /* per-container configuration */
+ struct vfio_container {
+ 	bool active;
+ 	bool dma_setup_done;
+ 	int container_fd;
+ 	struct vfio_user_mem_maps mem_maps;
+-	struct vfio_group_config group_cfg;
++	union {
++		struct vfio_group_config group_cfg;
++		struct vfio_cdev_config cdev_cfg;
++	};
+ 	int n_devices;
+ 	struct vfio_device devices[RTE_MAX_VFIO_DEVICES];
+ };
+@@ -145,12 +160,25 @@ int vfio_group_setup_iommu(struct vfio_container *cfg);
+ int vfio_group_setup_device_fd(const char *dev_addr, struct vfio_group *grp,
+ 		struct vfio_device *dev);
+ 
++/* cdev mode functions */
++int vfio_cdev_enable(struct vfio_container *cfg);
++void vfio_cdev_setup_ops(void);
++int vfio_cdev_setup_ioas(struct vfio_container *cfg);
++int vfio_cdev_sync_ioas(struct vfio_container *cfg);
++int vfio_cdev_get_iommufd(void);
++int vfio_cdev_get_device_num(const char *sysfs_base, const char *dev_addr,
++		int *cdev_dev_num);
++struct vfio_device *vfio_cdev_get_dev_by_num(struct vfio_container *cfg, int cdev_dev_num);
++int vfio_cdev_setup_device(struct vfio_container *cfg, struct vfio_device *dev);
++
+ #define EAL_VFIO_MP "eal_vfio_mp_sync"
+ 
+ #define VFIO_SOCKET_REQ_CONTAINER 0x100
+ #define VFIO_SOCKET_REQ_GROUP 0x200
+ #define VFIO_SOCKET_REQ_IOMMU_TYPE 0x400
+ #define VFIO_SOCKET_REQ_IOVA_MODE 0x800
++#define VFIO_SOCKET_REQ_CDEV 0x1000
++#define VFIO_SOCKET_REQ_IOAS_ID 0x2000
+ #define VFIO_SOCKET_OK 0x0
+ #define VFIO_SOCKET_NO_FD 0x1
+ #define VFIO_SOCKET_ERR 0xFF
+@@ -161,6 +189,8 @@ struct vfio_mp_param {
+ 	union {
+ 		int group_num;
+ 		int iommu_type_id;
++		int cdev_dev_num;
++		int ioas_id;
+ 		enum dev_vfio_mode mode;
+ 		enum dev_vfio_iova_mode iova_mode;
+ 	};
+diff --git a/lib/eal/linux/eal_vfio_cdev.c b/lib/eal/linux/eal_vfio_cdev.c
+new file mode 100644
+index 0000000000..ab4d3f9f44
+--- /dev/null
++++ b/lib/eal/linux/eal_vfio_cdev.c
+@@ -0,0 +1,415 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2010-2025 Intel Corporation
 + */
-+struct iommu_hw_queue_alloc {
-+	__u32 size;
-+	__u32 flags;
-+	__u32 viommu_id;
-+	__u32 type;
-+	__u32 index;
-+	__u32 out_hw_queue_id;
-+	__aligned_u64 nesting_parent_iova;
-+	__aligned_u64 length;
++
++#include <dirent.h>
++#include <fcntl.h>
++#include <limits.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <unistd.h>
++
++#include <uapi/linux/iommufd.h>
++#include <uapi/linux/vfio.h>
++
++#include <rte_log.h>
++#include <rte_errno.h>
++#include <rte_memory.h>
++#include <rte_string_fns.h>
++
++#include "eal_vfio.h"
++#include "eal_private.h"
++#include "eal_internal_cfg.h"
++
++#define DEV_VFIO_IOMMUFD_PATH "/dev/iommu"
++#define DEV_VFIO_CDEV_FMT "/dev/vfio/devices/vfio%d"
++#define DEV_VFIO_NOIOMMU_CDEV_FMT "/dev/vfio/devices/noiommu-vfio%d"
++
++static int vfio_cdev_dma_map(struct vfio_container *cfg);
++static int vfio_cdev_dma_mem_map(struct vfio_container *cfg, uint64_t vaddr,
++		uint64_t iova, uint64_t len, int do_map);
++
++/* IOMMUFD cdev mode IOMMU operations */
++static const struct vfio_iommu_ops iommufd_ops = {
++	.type_id = 0, /* cdev mode doesn't use type_id */
++	.name = "IOMMUFD",
++	.partial_unmap = false,
++	.dma_map_func = &vfio_cdev_dma_map,
++	.dma_user_map_func = &vfio_cdev_dma_mem_map
 +};
-+#define IOMMU_HW_QUEUE_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_HW_QUEUE_ALLOC)
-+#endif
++
++void
++vfio_cdev_setup_ops(void)
++{
++	vfio_global_cfg.ops = &iommufd_ops;
++}
++
++static int
++vfio_cdev_dma_mem_map(struct vfio_container *cfg, uint64_t vaddr, uint64_t iova,
++		uint64_t len, int do_map)
++{
++	struct iommu_ioas_map ioas_map;
++	struct iommu_ioas_unmap ioas_unmap;
++	int ret;
++
++	if (do_map != 0) {
++		memset(&ioas_map, 0, sizeof(ioas_map));
++		ioas_map.size = sizeof(struct iommu_ioas_map);
++		ioas_map.flags = IOMMU_IOAS_MAP_FIXED_IOVA |
++			IOMMU_IOAS_MAP_READABLE |
++			IOMMU_IOAS_MAP_WRITEABLE;
++		ioas_map.ioas_id = cfg->cdev_cfg.ioas_id;
++		ioas_map.user_va = vaddr;
++		ioas_map.length = len;
++		ioas_map.iova = iova;
++
++		ret = ioctl(cfg->container_fd, IOMMU_IOAS_MAP, &ioas_map);
++		if (ret) {
++			/**
++			 * In case the mapping was already done EEXIST will be
++			 * returned from kernel.
++			 */
++			if (errno == EEXIST) {
++				EAL_LOG(DEBUG, "Memory segment is already mapped, skipping");
++			} else {
++				EAL_LOG(ERR, "Cannot set up DMA remapping, error %i (%s)", errno,
++					strerror(errno));
++				return -1;
++			}
++		}
++	} else {
++		memset(&ioas_unmap, 0, sizeof(ioas_unmap));
++		ioas_unmap.size = sizeof(struct iommu_ioas_unmap);
++		ioas_unmap.ioas_id = cfg->cdev_cfg.ioas_id;
++		ioas_unmap.length = len;
++		ioas_unmap.iova = iova;
++
++		ret = ioctl(cfg->container_fd, IOMMU_IOAS_UNMAP, &ioas_unmap);
++		if (ret) {
++			EAL_LOG(ERR, "Cannot clear DMA remapping, error %i (%s)", errno,
++				strerror(errno));
++			return -1;
++		}
++	}
++
++	return 0;
++}
++
++static int
++cdev_map(const struct rte_memseg_list *msl, const struct rte_memseg *ms,
++		void *arg)
++{
++	struct vfio_container *cfg = arg;
++
++	/* skip external memory that isn't a heap */
++	if (msl->external && !msl->heap)
++		return 0;
++
++	/* skip any segments with invalid IOVA addresses */
++	if (ms->iova == RTE_BAD_IOVA)
++		return 0;
++
++	return vfio_cdev_dma_mem_map(cfg, ms->addr_64, ms->iova, ms->len, 1);
++}
++
++static int
++vfio_cdev_dma_map(struct vfio_container *cfg)
++{
++	return rte_memseg_walk(cdev_map, cfg);
++}
++
++int
++vfio_cdev_sync_ioas(struct vfio_container *cfg)
++{
++	struct rte_mp_msg mp_req, *mp_rep;
++	struct rte_mp_reply mp_reply = {0};
++	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
++	struct vfio_mp_param *p = (struct vfio_mp_param *)mp_req.param;
++
++	p->req = VFIO_SOCKET_REQ_IOAS_ID;
++	rte_strscpy(mp_req.name, EAL_VFIO_MP, sizeof(mp_req.name));
++	mp_req.len_param = sizeof(*p);
++	mp_req.num_fds = 0;
++
++	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 && mp_reply.nb_received == 1) {
++		mp_rep = &mp_reply.msgs[0];
++		p = (struct vfio_mp_param *)mp_rep->param;
++		if (p->result == VFIO_SOCKET_OK && mp_rep->num_fds == 0) {
++			cfg->cdev_cfg.ioas_id = p->ioas_id;
++			free(mp_reply.msgs);
++			return 0;
++		}
++	}
++
++	free(mp_reply.msgs);
++	EAL_LOG(ERR, "Cannot request ioas_id");
++	return -1;
++}
++
++int
++vfio_cdev_setup_ioas(struct vfio_container *cfg)
++{
++	struct iommu_ioas_alloc ioas_alloc;
++	int ret;
++
++	/* Allocate an IOAS */
++	memset(&ioas_alloc, 0, sizeof(ioas_alloc));
++	ioas_alloc.size = sizeof(struct iommu_ioas_alloc);
++	ioas_alloc.flags = 0;
++
++	ret = ioctl(cfg->container_fd, IOMMU_IOAS_ALLOC, &ioas_alloc);
++	if (ret) {
++		EAL_LOG(ERR, "Cannot allocate IOAS, error %i (%s)", errno, strerror(errno));
++		return -1;
++	}
++	cfg->cdev_cfg.ioas_id = ioas_alloc.out_ioas_id;
++
++	EAL_LOG(DEBUG, "Allocated IOAS with ID %u", cfg->cdev_cfg.ioas_id);
++	return 0;
++}
++
++int
++vfio_cdev_get_iommufd(void)
++{
++	int iommufd;
++
++	/* if not requesting via mp, open iommufd locally */
++	iommufd = open(DEV_VFIO_IOMMUFD_PATH, O_RDWR);
++	if (iommufd < 0) {
++		EAL_LOG(ERR, "Cannot open %s: %s", DEV_VFIO_IOMMUFD_PATH, strerror(errno));
++		return -1;
++	}
++
++	return iommufd;
++}
++
++int
++vfio_cdev_enable(struct vfio_container *cfg)
++{
++	int iommufd;
++
++	/* Check if iommufd device exists */
++	if (access(DEV_VFIO_IOMMUFD_PATH, F_OK) != 0) {
++		EAL_LOG(DEBUG, "IOMMUFD device does not exist, skipping VFIO cdev support...");
++		return 1;
++	}
++
++	/* open iommufd */
++	iommufd = vfio_cdev_get_iommufd();
++	if (iommufd < 0)
++		return -1;
++
++	cfg->container_fd = iommufd;
++	return 0;
++}
++
++int
++vfio_cdev_get_device_num(const char *sysfs_base, const char *dev_addr, int *cdev_dev_num)
++{
++	char linkname[PATH_MAX] = {0};
++	const char *prefix;
++	size_t prefix_len;
++	char *dev_tok, *end;
++	int dev_num;
++	DIR *dir;
++	struct dirent *entry;
++
++	/* different prefixes for different IOMMU modes */
++	switch (vfio_global_cfg.iova_mode) {
++	case DEV_VFIO_IOVA_MODE_VA:
++		prefix = "vfio";
++		prefix_len = strlen(prefix);
++		break;
++	case DEV_VFIO_IOVA_MODE_PA:
++		prefix = "noiommu-vfio";
++		prefix_len = strlen(prefix);
++		break;
++	default:
++		EAL_LOG(ERR, "VFIO IOMMU mode is not initialized");
++		return -1;
++	}
++
++	/* check if vfio-dev directory exists for this device */
++	snprintf(linkname, sizeof(linkname), "%s/%s/vfio-dev", sysfs_base, dev_addr);
++
++	dir = opendir(linkname);
++	if (dir == NULL) {
++		/* device doesn't have vfio-dev, not bound to vfio-pci cdev */
++		return 0;
++	}
++
++	/* find the matching VFIO cdev entry */
++	while ((entry = readdir(dir)) != NULL) {
++		if (strncmp(entry->d_name, prefix, prefix_len) != 0)
++			continue;
++
++		/* parse device number after the cdev entry prefix */
++		errno = 0;
++		dev_tok = entry->d_name + prefix_len;
++		end = dev_tok;
++		dev_num = strtol(dev_tok, &end, 10);
++		if (end == dev_tok || *end != '\0' || errno != 0) {
++			EAL_LOG(ERR, "%s error parsing VFIO cdev device number!", dev_addr);
++			closedir(dir);
++			return -1;
++		}
++		*cdev_dev_num = dev_num;
++		closedir(dir);
++		return 1;
++	}
++
++	closedir(dir);
++	/* no vfio device found */
++	return 0;
++}
++
++struct vfio_device *
++vfio_cdev_get_dev_by_num(struct vfio_container *cfg, int cdev_dev_num)
++{
++	struct vfio_device *dev;
++	/* find device handle */
++	VFIO_DEVICE_FOREACH_ACTIVE(cfg, dev) {
++		if (dev->dev_num != cdev_dev_num)
++			continue;
++		return dev;
++	}
++	return NULL;
++}
++
++static int
++cdev_open_device_fd(int cdev_dev_num)
++{
++	char devname[PATH_MAX] = {0};
++	int dev_fd;
++
++	switch (vfio_global_cfg.iova_mode) {
++	case DEV_VFIO_IOVA_MODE_VA:
++		snprintf(devname, sizeof(devname), DEV_VFIO_CDEV_FMT, cdev_dev_num);
++		break;
++	case DEV_VFIO_IOVA_MODE_PA:
++		snprintf(devname, sizeof(devname), DEV_VFIO_NOIOMMU_CDEV_FMT, cdev_dev_num);
++		break;
++	default:
++		EAL_LOG(ERR, "VFIO IOMMU mode is not initialized");
++		return -1;
++	}
++
++	dev_fd = open(devname, O_RDWR);
++	if (dev_fd < 0) {
++		EAL_LOG(ERR, "Cannot open %s: %s", devname, strerror(errno));
++		return -1;
++	}
++
++	return dev_fd;
++}
++
++static int
++cdev_attach_device_to_iommufd(struct vfio_container *cfg, struct vfio_device *dev)
++{
++	struct vfio_device_bind_iommufd bind = {0};
++	struct vfio_device_attach_iommufd_pt attach = {0};
++	rte_uuid_t vf_token;
++
++	rte_eal_vfio_get_vf_token(vf_token);
++
++	/* try with token first */
++	if (!rte_uuid_is_null(vf_token)) {
++		bind.flags = VFIO_DEVICE_BIND_FLAG_TOKEN;
++		bind.token_uuid_ptr = (uintptr_t)&vf_token;
++		bind.argsz = sizeof(bind);
++		bind.iommufd = cfg->container_fd;
++
++		/* this may fail because the kernel is too old */
++		if (ioctl(dev->fd, VFIO_DEVICE_BIND_IOMMUFD, &bind) < 0) {
++			EAL_LOG(DEBUG, "Failed to bind device %d with VF token", dev->dev_num);
++			EAL_LOG(NOTICE, "Unable to use VF tokens with current kernel version.");
++			EAL_LOG(NOTICE, "Please use kernel >=6.17 or use group mode.");
++			/* erase the bind structure */
++			bind = (struct vfio_device_bind_iommufd){0};
++		} else {
++			goto attach;
++		}
++	}
++	bind.flags = 0;
++	bind.argsz = sizeof(bind);
++	bind.iommufd = cfg->container_fd;
++
++	if (ioctl(dev->fd, VFIO_DEVICE_BIND_IOMMUFD, &bind) < 0) {
++		EAL_LOG(ERR, "Cannot bind device to IOMMUFD, error %i (%s)", errno,
++			strerror(errno));
++		return -1;
++	}
++
++attach:
++	/* attach device to IOAS */
++	attach.argsz = sizeof(attach);
++	attach.flags = 0;
++	attach.pt_id = cfg->cdev_cfg.ioas_id;
++
++	if (ioctl(dev->fd, VFIO_DEVICE_ATTACH_IOMMUFD_PT, &attach) < 0) {
++		EAL_LOG(ERR, "Cannot attach device to IOAS, error %i (%s)", errno,
++			strerror(errno));
++		return -1;
++	}
++
++	return 0;
++}
++
++static int
++vfio_cdev_request_dev_fd(struct vfio_device *dev)
++{
++	struct rte_mp_msg mp_req, *mp_rep;
++	struct rte_mp_reply mp_reply = {0};
++	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
++	struct vfio_mp_param *p = (struct vfio_mp_param *)mp_req.param;
++	int device_fd = -1;
++
++	/* secondary process requests device fd from primary */
++	p->req = VFIO_SOCKET_REQ_CDEV;
++	p->cdev_dev_num = dev->dev_num;
++	rte_strscpy(mp_req.name, EAL_VFIO_MP, sizeof(mp_req.name));
++	mp_req.len_param = sizeof(*p);
++	mp_req.num_fds = 0;
++
++	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 && mp_reply.nb_received == 1) {
++		mp_rep = &mp_reply.msgs[0];
++		p = (struct vfio_mp_param *)mp_rep->param;
++		if (p->result == VFIO_SOCKET_OK && mp_rep->num_fds == 1)
++			device_fd = mp_rep->fds[0];
++	}
++
++	free(mp_reply.msgs);
++
++	if (device_fd < 0) {
++		EAL_LOG(ERR, "Cannot request device fd for vfio%d", dev->dev_num);
++		return -1;
++	}
++	dev->fd = device_fd;
++
++	return 0;
++}
++
++int
++vfio_cdev_setup_device(struct vfio_container *cfg, struct vfio_device *dev)
++{
++	int device_fd;
++
++	/* get device fd - primary or custom container opens it, secondary requests from primary */
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY || !vfio_container_is_default(cfg)) {
++		device_fd = cdev_open_device_fd(dev->dev_num);
++		if (device_fd < 0)
++			return -1;
++		dev->fd = device_fd;
++
++		/* attach device to iommufd */
++		if (cdev_attach_device_to_iommufd(cfg, dev) < 0) {
++			close(device_fd);
++			dev->fd = -1;
++			return -1;
++		}
++	} else if (vfio_cdev_request_dev_fd(dev) < 0) {
++		return -1;
++	}
++	return 0;
++}
+diff --git a/lib/eal/linux/eal_vfio_mp_sync.c b/lib/eal/linux/eal_vfio_mp_sync.c
+index e079c11dbf..032c41fecc 100644
+--- a/lib/eal/linux/eal_vfio_mp_sync.c
++++ b/lib/eal/linux/eal_vfio_mp_sync.c
+@@ -103,6 +103,48 @@ vfio_mp_primary(const struct rte_mp_msg *msg, const void *peer)
+ 		r->iova_mode = vfio_global_cfg.iova_mode;
+ 		r->result = VFIO_SOCKET_OK;
+ 		break;
++	case VFIO_SOCKET_REQ_CDEV:
++	{
++		struct vfio_container *cfg;
++		struct vfio_device *dev;
++
++		if (vfio_global_cfg.mode != DEV_VFIO_MODE_CDEV) {
++			EAL_LOG(ERR, "VFIO not initialized in cdev mode");
++			r->result = VFIO_SOCKET_ERR;
++			break;
++		}
++
++		r->req = VFIO_SOCKET_REQ_CDEV;
++		r->cdev_dev_num = m->cdev_dev_num;
++
++		cfg = vfio_global_cfg.default_cfg;
++		dev = vfio_cdev_get_dev_by_num(cfg, m->cdev_dev_num);
++		if (dev == NULL) {
++			r->result = VFIO_SOCKET_NO_FD;
++		} else {
++			r->result = VFIO_SOCKET_OK;
++			reply.num_fds = 1;
++			reply.fds[0] = dev->fd;
++		}
++		break;
++	}
++	case VFIO_SOCKET_REQ_IOAS_ID:
++	{
++		struct vfio_container *cfg;
++
++		if (vfio_global_cfg.mode != DEV_VFIO_MODE_CDEV) {
++			EAL_LOG(ERR, "VFIO not initialized in cdev mode");
++			r->result = VFIO_SOCKET_ERR;
++			break;
++		}
++
++		r->req = VFIO_SOCKET_REQ_IOAS_ID;
++		cfg = vfio_global_cfg.default_cfg;
++		r->ioas_id = cfg->cdev_cfg.ioas_id;
++
++		r->result = VFIO_SOCKET_OK;
++		break;
++	}
+ 	default:
+ 		EAL_LOG(ERR, "vfio received invalid message!");
+ 		return -1;
+diff --git a/lib/eal/linux/include/dev_vfio.h b/lib/eal/linux/include/dev_vfio.h
+index afc4213815..57c5894679 100644
+--- a/lib/eal/linux/include/dev_vfio.h
++++ b/lib/eal/linux/include/dev_vfio.h
+@@ -51,10 +51,12 @@ enum dev_vfio_module {
+  *
+  * - DEV_VFIO_MODE_NONE: VFIO is not enabled.
+  * - DEV_VFIO_MODE_GROUP: Legacy group mode.
++ * - DEV_VFIO_MODE_CDEV: Character device mode.
+  */
+ enum dev_vfio_mode {
+ 	DEV_VFIO_MODE_NONE = 0, /**< VFIO not enabled */
+ 	DEV_VFIO_MODE_GROUP,    /**< Group mode */
++	DEV_VFIO_MODE_CDEV,     /**< Cdev mode */
+ };
+ 
+ /**
+@@ -157,6 +159,18 @@ int dev_vfio_enable(void);
+ __rte_internal
+ void dev_vfio_cleanup(void);
+ 
++/**
++ * @internal
++ * Initialize VFIO memory mapping. Must be called after `dev_vfio_enable()` and
++ * after EAL memory initialization has completed.
++ *
++ * @return
++ *   0 on success.
++ *   <0 on failure.
++ */
++__rte_internal
++int dev_vfio_init_mem(void);
++
+ /**
+  * @internal
+  * Check whether a VFIO module is loaded.
+@@ -228,6 +242,31 @@ __rte_internal
+ int
+ dev_vfio_get_group_num(const char *sysfs_base, const char *dev_addr, int *iommu_group_num);
+ 
++/**
++ * @internal
++ * Parse VFIO cdev device number for a device.
++ *
++ * @param sysfs_base
++ *   Sysfs path prefix.
++ * @param dev_addr
++ *   Device identifier.
++ * @param vfio_device_num
++ *   Pointer to where VFIO cdev device number will be stored.
++ *
++ * @return
++ *   0 on success.
++ *   <0 on failure, rte_errno is set.
++ *
++ * Possible rte_errno values include:
++ * - ENODEV  - Device not managed by VFIO.
++ * - EINVAL  - Invalid parameters.
++ * - ENXIO   - VFIO support not initialized.
++ * - ENOTSUP - Unsupported VFIO mode.
++ */
++__rte_internal
++int
++dev_vfio_get_device_num(const char *sysfs_base, const char *dev_addr, int *vfio_device_num);
++
+ /**
+  * @internal
+  * Get device information.
+diff --git a/lib/eal/linux/meson.build b/lib/eal/linux/meson.build
+index 5ec8eddaa2..c164a30b49 100644
+--- a/lib/eal/linux/meson.build
++++ b/lib/eal/linux/meson.build
+@@ -16,6 +16,7 @@ sources += files(
+         'eal_thread.c',
+         'eal_timer.c',
+         'eal_vfio.c',
++        'eal_vfio_cdev.c',
+         'eal_vfio_group.c',
+         'eal_vfio_mp_sync.c',
+ )
 -- 
 2.54.0
 
