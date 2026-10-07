@@ -2,32 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E43CA5FFF
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 07:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1BECA5FFF
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 07:27:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 962A642D76;
-	Wed,  7 Oct 2026 09:25:08 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7028D427AC;
+	Wed,  7 Oct 2026 09:25:09 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 617EB4278C
+ by mails.dpdk.org (Postfix) with ESMTP id B301540F35
  for <dev@dpdk.org>; Wed,  7 Oct 2026 09:24:50 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 405FC200008;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9436C200002;
  Wed,  7 Oct 2026 09:24:50 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0C414200002;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5EBFE200012;
  Wed,  7 Oct 2026 09:24:50 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9116A180006C;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D7C6418000B1;
  Wed,  7 Oct 2026 15:24:49 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Subject: [PATCH v22 23/27] bus/dpaa: improve log macro usages
-Date: Wed,  7 Oct 2026 12:54:35 +0530
-Message-Id: <20261007072439.3135351-24-hemant.agrawal@nxp.com>
+Cc: Vanshika Shukla <vanshika.shukla@nxp.com>
+Subject: [PATCH v22 24/27] net/dpaa: enhance VSP port support
+Date: Wed,  7 Oct 2026 12:54:36 +0530
+Message-Id: <20261007072439.3135351-25-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261007072439.3135351-1-hemant.agrawal@nxp.com>
 References: <20261006092703.2138929-1-hemant.agrawal@nxp.com>
@@ -48,382 +49,419 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace DPAA_BUS_LOG(LEVEL, ...) calls with shorthand macros
-(DPAA_BUS_INFO, DPAA_BUS_ERR, DPAA_BUS_WARN, DPAA_BUS_DEBUG) for
-consistency across the driver.
+From: Vanshika Shukla <vanshika.shukla@nxp.com>
 
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+Add fman_onic MAC type handling to get_rx_port_type() so that ONIC
+and offline-internal ports are mapped to OH_OFFLINE_PARSING, consistent
+with how the VSP port configuration handles these types. Without this,
+ONIC ports used an incorrect port type in flow configuration, leading
+to failed FMC operations.
+
+Replace the parallel vsp_handle[] and vsp_bpid[] arrays in struct
+dpaa_if with a single struct dpaa_if_vsp per profile, holding the VSP
+handle together with the buffer pools it was configured with. Keeping
+the pool as a dpaa_bp_info pointer rather than a bare BPID lets
+dpaa_port_vsp_configure() take the pool size from the pool itself
+instead of receiving an mbuf_data_room_size argument, and leaves room
+for a profile to carry more than one external pool, so
+dpaa_port_vsp_update() no longer needs the bpid and size parameters.
+
+Bound the VSP ID against DPAA_VSP_PROFILE_MAX_NUM in
+dpaa_eth_rx_queue_bp_check(), which is the first place the vsp[] array
+is indexed. The ID comes from the FMC profile IDs and the fallback
+comes from the DTS vsp-window, so neither is guaranteed to be within
+the array; only dpaa_port_vsp_configure() checked it, which is too
+late.
+
+Move the shared-MAC base profile special case from
+dpaa_port_vsp_configure() up into dpaa_port_vsp_update(), so the
+early return happens before any handle is freed rather than after.
+
+Return -EINVAL from dpaa_port_vsp_update() where it previously
+returned 0 for a port with no profiles or an out-of-range VSP ID.
+Silently succeeding there left the caller believing the profile had
+been programmed.
+
+Drop the shortcut that skipped reconfiguration when the profile was
+already bound to the same BPID. The VSP now tracks a pool array rather
+than a single ID, so the old equality test no longer describes the
+configuration, and an unconditional reconfigure keeps Rx queue setup
+and the hardware in step.
+
+Skip the BMI statistics and Rx disable in dpaa_eth_dev_stop() for ONIC
+ports, matching dev_start() which does not enable them: the ONIC port
+has no MAC of its own to drive.
+
+Iterate dpaa_port_vsp_cleanup() over DPAA_VSP_PROFILE_MAX_NUM instead
+of fif->num_profiles so profiles outside the current window are also
+released, clear each handle after freeing it so a second call is a
+no-op, and remove the now-unused fif parameter.
+
+Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
 ---
- drivers/bus/dpaa/base/fman/fman.c         |  9 ++-
- drivers/bus/dpaa/base/fman/netcfg_layer.c |  8 +--
- drivers/bus/dpaa/dpaa_bus.c               | 86 +++++++++++------------
- drivers/bus/dpaa/rte_dpaa_logs.h          |  2 +
- 4 files changed, 51 insertions(+), 54 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c |  43 +++++++-----
+ drivers/net/dpaa/dpaa_ethdev.h |   9 ++-
+ drivers/net/dpaa/dpaa_flow.c   | 120 ++++++++++++++++++---------------
+ drivers/net/dpaa/dpaa_flow.h   |   7 +-
+ 4 files changed, 103 insertions(+), 76 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/fman/fman.c b/drivers/bus/dpaa/base/fman/fman.c
-index 55f466d751..67f77265ca 100644
---- a/drivers/bus/dpaa/base/fman/fman.c
-+++ b/drivers/bus/dpaa/base/fman/fman.c
-@@ -119,7 +119,7 @@ _fman_init(const struct device_node *fman_node, int fd)
- 	ip_rev_1 = in_be32((uint8_t *)fman->ccsr_vir + FMAN_IP_REV_1);
- 	fman->ip_rev = ip_rev_1 >> FMAN_IP_REV_1_MAJOR_SHIFT;
- 	fman->ip_rev &=	FMAN_IP_REV_1_MAJOR_MASK;
--	DPAA_BUS_LOG(NOTICE, "FMan version is 0x%02x", fman->ip_rev);
-+	DPAA_BUS_INFO("FMan version is 0x%02x", fman->ip_rev);
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 859c1e946a..87624fbd25 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -533,7 +533,7 @@ static int dpaa_eth_dev_stop(struct rte_eth_dev *dev)
+ 	PMD_INIT_FUNC_TRACE();
+ 	dev->data->dev_started = 0;
  
- 	if (fman->ip_rev >= FMAN_V3) {
- 		/*
-@@ -795,8 +795,7 @@ fman_if_init(const struct device_node *dpa_node, int fd)
- 	fman_if_vsp_init(__if);
- 
- 	/* Parsing of the network interface is complete, add it to the list */
--	DPAA_BUS_LOG(DEBUG, "Found %s, Tx Channel = %x, FMAN = %x,"
--		    "Port ID = %x",
-+	DPAA_BUS_DEBUG("Found %s, Tx Channel = %x, FMAN = %x, Port ID = %x",
- 		    dname, __if->__if.tx_channel_id, __if->__if.fman->idx,
- 		    __if->__if.mac_idx);
- 
-@@ -1109,14 +1108,14 @@ fman_init(void)
- 
- 	fd = open(FMAN_DEVICE_PATH, O_RDWR);
- 	if (unlikely(fd < 0)) {
--		DPAA_BUS_LOG(ERR, "Unable to open %s: %s", FMAN_DEVICE_PATH, strerror(errno));
-+		DPAA_BUS_ERR("Unable to open %s: %s", FMAN_DEVICE_PATH, strerror(errno));
- 		return fd;
+-	if (!fif->is_shared_mac) {
++	if (!fif->is_shared_mac && fif->mac_type != fman_onic) {
+ 		fman_if_bmi_stats_disable(fif);
+ 		fman_if_disable_rx(fif);
  	}
- 	fman_ccsr_map_fd = fd;
- 
- 	parent_node = of_find_compatible_node(NULL, NULL, "fsl,dpaa");
- 	if (!parent_node) {
--		DPAA_BUS_LOG(ERR, "Unable to find fsl,dpaa node");
-+		DPAA_BUS_ERR("Unable to find fsl,dpaa node");
- 		return -ENODEV;
+@@ -660,7 +660,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 		}
+ 	}
+ 	if (fif->num_profiles) {
+-		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
++		ret = dpaa_port_vsp_cleanup(dpaa_intf);
+ 		if (ret) {
+ 			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
+ 				dev->data->name, ret);
+@@ -1178,11 +1178,21 @@ static inline int dpaa_eth_rx_queue_bp_check(struct rte_eth_dev *dev,
+ 			vsp_id = 0;
  	}
  
-diff --git a/drivers/bus/dpaa/base/fman/netcfg_layer.c b/drivers/bus/dpaa/base/fman/netcfg_layer.c
-index e4afa28131..9bc4447dd0 100644
---- a/drivers/bus/dpaa/base/fman/netcfg_layer.c
-+++ b/drivers/bus/dpaa/base/fman/netcfg_layer.c
-@@ -95,7 +95,7 @@ netcfg_acquire(void)
- 	/* Initialise the Fman driver */
- 	_errno = fman_init();
- 	if (_errno) {
--		DPAA_BUS_LOG(ERR, "FMAN driver init failed (%d)", errno);
-+		DPAA_BUS_ERR("FMAN driver init failed (%d)", errno);
- 		close(skfd);
- 		skfd = -1;
- 		return NULL;
-@@ -106,7 +106,7 @@ netcfg_acquire(void)
- 		num_ports++;
- 
- 	if (!num_ports) {
--		DPAA_BUS_LOG(ERR, "FMAN ports not available");
-+		DPAA_BUS_ERR("FMAN ports not available");
- 		return NULL;
- 	}
- 	/* Allocate space for all enabled mac ports */
-@@ -115,7 +115,7 @@ netcfg_acquire(void)
- 
- 	netcfg = rte_calloc(NULL, 1, size, 0);
- 	if (unlikely(netcfg == NULL)) {
--		DPAA_BUS_LOG(ERR, "Unable to allocat mem for netcfg");
-+		DPAA_BUS_ERR("Unable to allocate mem for netcfg");
- 		goto error;
- 	}
- 
-@@ -131,7 +131,7 @@ netcfg_acquire(void)
- 	}
- 
- 	if (!num_cfg_ports) {
--		DPAA_BUS_LOG(ERR, "No FMAN ports found");
-+		DPAA_BUS_ERR("No FMAN ports found");
- 		goto error;
- 	} else if (num_ports != num_cfg_ports)
- 		netcfg->num_ethports = num_cfg_ports;
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 5442f8f893..7e849b669f 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -54,6 +54,9 @@
- /* At present we allow up to 4 push mode queues as default - as each of
-  * this queue need dedicated portal and we are short of portals.
-  */
-+#define DPAA_DEV_PATH1 "/sys/devices/platform/soc/soc:fsl,dpaa"
-+#define DPAA_DEV_PATH2 "/sys/devices/platform/fsl,dpaa"
+-	if (dpaa_intf->vsp_bpid[vsp_id] &&
+-		bpid != dpaa_intf->vsp_bpid[vsp_id]) {
++	/* vsp_id originates from the FMC profile IDs, and base_profile_id from
++	 * the DTS vsp-window, so bound it against the array before indexing.
++	 */
++	if (vsp_id >= DPAA_VSP_PROFILE_MAX_NUM) {
++		DPAA_PMD_ERR("Invalid VSP ID(%d) >= max(%d)",
++			     vsp_id, DPAA_VSP_PROFILE_MAX_NUM);
++		return -EINVAL;
++	}
 +
- #define DPAA_MAX_PUSH_MODE_QUEUE 8
- #define DPAA_DEFAULT_PUSH_MODE_QUEUE 4
++	if (dpaa_intf->vsp[vsp_id].vsp_bp[0] &&
++		dpaa_intf->vsp[vsp_id].vsp_bp[0]->bpid &&
++		bpid != dpaa_intf->vsp[vsp_id].vsp_bp[0]->bpid) {
+ 		DPAA_PMD_ERR("Various MPs are assigned to RXQs with same VSP");
  
-@@ -210,7 +213,7 @@ dpaa_create_device_list(void)
- 	for (i = 0; dpaa_netcfg && (i < dpaa_netcfg->num_ethports); i++) {
- 		dev = calloc(1, sizeof(struct rte_dpaa_device));
- 		if (!dev) {
--			DPAA_BUS_LOG(ERR, "Failed to allocate ETH devices");
-+			DPAA_BUS_ERR("Failed to allocate ETH devices");
- 			ret = -ENOMEM;
- 			goto cleanup;
- 		}
-@@ -221,7 +224,7 @@ dpaa_create_device_list(void)
- 		dev->intr_handle =
- 			rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
- 		if (dev->intr_handle == NULL) {
--			DPAA_BUS_LOG(ERR, "Failed to allocate intr handle");
-+			DPAA_BUS_ERR("Failed to allocate intr handle");
- 			ret = -ENOMEM;
- 			free(dev);
- 			goto cleanup;
-@@ -265,7 +268,7 @@ dpaa_create_device_list(void)
- 	 */
- 
- 	if (dpaa_sec_available()) {
--		DPAA_BUS_LOG(INFO, "DPAA SEC devices are not available");
-+		DPAA_BUS_INFO("DPAA SEC devices are not available");
- 		goto qdma_dpaa;
+-		return -1;
++		return -EINVAL;
  	}
- 
-@@ -273,8 +276,8 @@ dpaa_create_device_list(void)
- 	for (i = 0; i < RTE_LIBRTE_DPAA_MAX_CRYPTODEV; i++) {
- 		dev = calloc(1, sizeof(struct rte_dpaa_device));
- 		if (!dev) {
--			DPAA_BUS_LOG(ERR, "Failed to allocate SEC devices");
--			ret = -1;
-+			DPAA_BUS_ERR("Failed to allocate SEC devices");
-+			ret = -ENOMEM;
- 			goto cleanup;
- 		}
- 
-@@ -282,7 +285,7 @@ dpaa_create_device_list(void)
- 		dev->intr_handle =
- 			rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
- 		if (dev->intr_handle == NULL) {
--			DPAA_BUS_LOG(ERR, "Failed to allocate intr handle");
-+			DPAA_BUS_ERR("Failed to allocate intr handle");
- 			ret = -ENOMEM;
- 			free(dev);
- 			goto cleanup;
-@@ -297,7 +300,7 @@ dpaa_create_device_list(void)
- 		 */
- 		memset(dev->name, 0, RTE_ETH_NAME_MAX_LEN);
- 		sprintf(dev->name, "dpaa_sec-%d", i+1);
--		DPAA_BUS_LOG(INFO, "%s cryptodev added", dev->name);
-+		DPAA_BUS_INFO("%s cryptodev added", dev->name);
- 		dev->device.name = dev->name;
- 		dev->device.devargs = rte_bus_find_devargs(&rte_dpaa_bus, dev->name);
- 		if (dev->device.devargs != NULL)
-@@ -313,8 +316,8 @@ dpaa_create_device_list(void)
- 	for (i = 0; i < RTE_DPAA_QDMA_DEVICES; i++) {
- 		dev = calloc(1, sizeof(struct rte_dpaa_device));
- 		if (!dev) {
--			DPAA_BUS_LOG(ERR, "Failed to allocate QDMA device");
--			ret = -1;
-+			DPAA_BUS_ERR("Failed to allocate QDMA device");
-+			ret = -ENOMEM;
- 			goto cleanup;
- 		}
- 
-@@ -323,7 +326,7 @@ dpaa_create_device_list(void)
- 
- 		memset(dev->name, 0, RTE_ETH_NAME_MAX_LEN);
- 		sprintf(dev->name, "dpaa_qdma-%d", i+1);
--		DPAA_BUS_LOG(INFO, "%s qdma device added", dev->name);
-+		DPAA_BUS_INFO("%s qdma device added", dev->name);
- 		dev->device.name = dev->name;
- 		dev->device.devargs = rte_bus_find_devargs(&rte_dpaa_bus, dev->name);
- 		if (dev->device.devargs != NULL)
-@@ -377,37 +380,35 @@ int rte_dpaa_portal_init(void *arg)
- 	dpaa_seqn_dynfield_offset =
- 		rte_mbuf_dynfield_register(&dpaa_seqn_dynfield_desc);
- 	if (dpaa_seqn_dynfield_offset < 0) {
--		DPAA_BUS_LOG(ERR, "Failed to register mbuf field for dpaa sequence number");
-+		DPAA_BUS_ERR("Failed to register mbuf field for dpaa sequence number");
- 		return -rte_errno;
- 	}
- 
- 	/* Initialise bman thread portals */
- 	ret = bman_thread_init();
- 	if (ret) {
--		DPAA_BUS_LOG(ERR, "bman_thread_init failed on core %u"
--			     " (lcore=%u) with ret: %d", cpu, lcore, ret);
-+		DPAA_BUS_ERR("Failed(%d) to init bman thread on cpu%d/lcore%d",
-+			ret, cpu, lcore);
- 		return ret;
- 	}
- 
--	DPAA_BUS_LOG(DEBUG, "BMAN thread initialized - CPU=%d lcore=%d",
--		     cpu, lcore);
-+	DPAA_BUS_DEBUG("BMAN thread initialized - CPU=%d lcore=%d", cpu, lcore);
- 
- 	/* Initialise qman thread portals */
- 	ret = qman_thread_init();
- 	if (ret) {
--		DPAA_BUS_LOG(ERR, "qman_thread_init failed on core %u"
--			    " (lcore=%u) with ret: %d", cpu, lcore, ret);
-+		DPAA_BUS_ERR("Failed(%d) to init qman thread on cpu%d/lcore%d",
-+			ret, cpu, lcore);
- 		bman_thread_finish();
- 		return ret;
- 	}
- 
--	DPAA_BUS_LOG(DEBUG, "QMAN thread initialized - CPU=%d lcore=%d",
--		     cpu, lcore);
-+	DPAA_BUS_DEBUG("QMAN thread initialized - CPU=%d lcore=%d", cpu, lcore);
- 
- 	DPAA_PER_LCORE_PORTAL = rte_malloc(NULL, sizeof(struct dpaa_portal),
- 				    RTE_CACHE_LINE_SIZE);
- 	if (!DPAA_PER_LCORE_PORTAL) {
--		DPAA_BUS_LOG(ERR, "Unable to allocate memory");
-+		DPAA_BUS_ERR("Unable to allocate memory");
- 		bman_thread_finish();
- 		qman_thread_finish();
- 		return -ENOMEM;
-@@ -420,15 +421,15 @@ int rte_dpaa_portal_init(void *arg)
- 	ret = pthread_setspecific(dpaa_portal_key,
- 				  (void *)DPAA_PER_LCORE_PORTAL);
- 	if (ret) {
--		DPAA_BUS_LOG(ERR, "pthread_setspecific failed on core %u"
--			     " (lcore=%u) with ret: %d", cpu, lcore, ret);
-+		DPAA_BUS_ERR("Failed(%d) to set portal per thread on cpu%u/lcore%u",
-+			ret, cpu, lcore);
- 		dpaa_portal_finish(NULL);
- 
- 		return ret;
- 	}
- 	dpaa_portals[lcore] = DPAA_PER_LCORE_PORTAL;
- 
--	DPAA_BUS_LOG(DEBUG, "QMAN thread initialized");
-+	DPAA_BUS_DEBUG("QMAN thread initialized");
  
  	return 0;
+@@ -1227,10 +1237,10 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 			return -EINVAL;
+ 		}
+ 	} else {
+-		if (dpaa_eth_rx_queue_bp_check(dev, rxq->vsp_id,
+-			DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid)) {
+-			return -EINVAL;
+-		}
++		ret = dpaa_eth_rx_queue_bp_check(dev, rxq->vsp_id,
++				DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	if (dpaa_intf->bp_info && dpaa_intf->bp_info->bp &&
+@@ -1270,9 +1280,9 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		int8_t vsp_id = rxq->vsp_id;
+ 
+ 		if (vsp_id >= 0) {
+-			ret = dpaa_port_vsp_update(dpaa_intf, fmc_q, vsp_id,
+-					DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid,
+-					fif, buffsz + RTE_PKTMBUF_HEADROOM);
++			dpaa_intf->vsp[vsp_id].vsp_bp[0] = DPAA_MEMPOOL_TO_POOL_INFO(mp);
++			dpaa_intf->vsp[vsp_id].bp_num = 1;
++			ret = dpaa_port_vsp_update(dpaa_intf, fmc_q, vsp_id, fif);
+ 			if (ret) {
+ 				DPAA_PMD_ERR("dpaa_port_vsp_update failed");
+ 				return ret;
+@@ -1285,12 +1295,13 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 					     " to shared interface on DPDK.");
+ 				return -EINVAL;
+ 			}
+-			dpaa_intf->vsp_bpid[fif->base_profile_id] =
+-				DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid;
++			dpaa_intf->vsp[fif->base_profile_id].vsp_bp[0] =
++				DPAA_MEMPOOL_TO_POOL_INFO(mp);
++			dpaa_intf->vsp[fif->base_profile_id].bp_num = 1;
+ 		}
+ 	} else {
+-		dpaa_intf->vsp_bpid[0] =
+-			DPAA_MEMPOOL_TO_POOL_INFO(mp)->bpid;
++		dpaa_intf->vsp[0].vsp_bp[0] = DPAA_MEMPOOL_TO_POOL_INFO(mp);
++		dpaa_intf->vsp[0].bp_num = 1;
+ 	}
+ 
+ 	dpaa_intf->valid = 1;
+diff --git a/drivers/net/dpaa/dpaa_ethdev.h b/drivers/net/dpaa/dpaa_ethdev.h
+index 3cf5fba51d..6d725f8c35 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.h
++++ b/drivers/net/dpaa/dpaa_ethdev.h
+@@ -116,6 +116,12 @@ enum {
+ 
+ #define FMC_FILE "/tmp/fmc.bin"
+ 
++struct dpaa_if_vsp {
++	struct dpaa_bp_info *vsp_bp[FMAN_PORT_MAX_EXT_POOLS_NUM];
++	uint8_t bp_num;
++	void *vsp_handle;
++};
++
+ extern struct rte_mempool *dpaa_tx_sg_pool;
+ 
+ /* PMD related logs */
+@@ -162,8 +168,7 @@ struct dpaa_if {
+ 	 */
+ 	struct qman_fq *next_tx_conf_queue;
+ 
+-	void *vsp_handle[DPAA_VSP_PROFILE_MAX_NUM];
+-	uint32_t vsp_bpid[DPAA_VSP_PROFILE_MAX_NUM];
++	struct dpaa_if_vsp vsp[DPAA_VSP_PROFILE_MAX_NUM];
+ };
+ 
+ struct dpaa_if_stats {
+diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
+index bfe294d21d..7e287a39a9 100644
+--- a/drivers/net/dpaa/dpaa_flow.c
++++ b/drivers/net/dpaa/dpaa_flow.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2017-2019,2021-2025 NXP
++ * Copyright 2017-2019,2021-2026 NXP
+  */
+ 
+ /* System headers */
+@@ -10,6 +10,7 @@
+ 
+ #include <dpaa_ethdev.h>
+ #include <dpaa_flow.h>
++#include <dpaa_mempool.h>
+ #include <rte_dpaa_logs.h>
+ #include <fmlib/fm_port_ext.h>
+ #include <fmlib/fm_vsp_ext.h>
+@@ -810,8 +811,7 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set)
+ 
+ 	if (fif->num_profiles) {
+ 		for (i = 0; i < dev->data->nb_rx_queues; i++)
+-			dpaa_intf->rx_queues[i].vsp_id =
+-				fm_default_vsp_id(fif);
++			dpaa_intf->rx_queues[i].vsp_id = fm_default_vsp_id(fif);
+ 
+ 		i = 0;
+ 	}
+@@ -943,28 +943,23 @@ int dpaa_fm_term(void)
  }
-@@ -444,7 +445,7 @@ rte_dpaa_portal_fq_init(void *arg, struct qman_fq *fq)
- 	if (unlikely(!DPAA_PER_LCORE_PORTAL)) {
- 		ret = rte_dpaa_portal_init(arg);
- 		if (ret < 0) {
--			DPAA_BUS_LOG(ERR, "portal initialization failure");
-+			DPAA_BUS_ERR("portal initialization failure");
+ 
+ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
+-		uint8_t vsp_id, t_handle fman_handle,
+-		struct fman_if *fif, u32 mbuf_data_room_size)
++		uint8_t vsp_id, t_handle fman_handle, struct fman_if *fif)
+ {
++	struct dpaa_if_vsp *vsp;
+ 	t_fm_vsp_params vsp_params;
+ 	t_fm_buffer_prefix_content buf_prefix_cont;
+-	uint8_t idx = mac_idx[fif->mac_idx];
++	uint8_t idx = mac_idx[fif->mac_idx], i;
+ 	int ret;
+-
+-	if (vsp_id == fif->base_profile_id && fif->is_shared_mac) {
+-		/* For shared interface, VSP of base
+-		 * profile is default pool located in kernel.
+-		 */
+-		dpaa_intf->vsp_bpid[vsp_id] = 0;
+-		return 0;
+-	}
++	struct t_fm_ext_pools *pools;
+ 
+ 	if (vsp_id >= DPAA_VSP_PROFILE_MAX_NUM) {
+-		DPAA_PMD_ERR("VSP ID %d exceeds MAX number %d",
++		DPAA_PMD_ERR("Invalid VSP ID(%d) >= max(%d)",
+ 			vsp_id, DPAA_VSP_PROFILE_MAX_NUM);
+-		return -1;
++		return -EINVAL;
+ 	}
+ 
++	vsp = &dpaa_intf->vsp[vsp_id];
++
+ 	memset(&vsp_params, 0, sizeof(vsp_params));
+ 	vsp_params.h_fm = fman_handle;
+ 	vsp_params.relative_profile_id = vsp_id;
+@@ -977,17 +972,21 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
+ 	vsp_params.port_params.port_type = get_rx_port_type(fif);
+ 	if (vsp_params.port_params.port_type == e_FM_PORT_TYPE_DUMMY) {
+ 		DPAA_PMD_ERR("Mac type %d error", fif->mac_type);
+-		return -1;
++		return -EINVAL;
+ 	}
+ 
+-	vsp_params.ext_buf_pools.num_of_pools_used = 1;
+-	vsp_params.ext_buf_pools.ext_buf_pool[0].id = dpaa_intf->vsp_bpid[vsp_id];
+-	vsp_params.ext_buf_pools.ext_buf_pool[0].size = mbuf_data_room_size;
++	pools = &vsp_params.ext_buf_pools;
+ 
+-	dpaa_intf->vsp_handle[vsp_id] = fm_vsp_config(&vsp_params);
+-	if (!dpaa_intf->vsp_handle[vsp_id]) {
+-		DPAA_PMD_ERR("fm_vsp_config error for profile %d", vsp_id);
+-		return -EINVAL;
++	pools->num_of_pools_used = vsp->bp_num;
++	for (i = 0; i < vsp->bp_num; i++) {
++		pools->ext_buf_pool[i].id = vsp->vsp_bp[i]->bpid;
++		pools->ext_buf_pool[i].size = vsp->vsp_bp[i]->size;
++	}
++
++	vsp->vsp_handle = fm_vsp_config(&vsp_params);
++	if (!vsp->vsp_handle) {
++		DPAA_PMD_ERR("Configure VSP[%d] failed!", vsp_id);
++		return -EIO;
+ 	}
+ 
+ 	/* configure the application buffer (structure, size and
+@@ -1005,19 +1004,18 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
+ 	buf_prefix_cont.manip_ext_space =
+ 		RTE_PKTMBUF_HEADROOM - DPAA_MBUF_HW_ANNOTATION;
+ 
+-	ret = fm_vsp_config_buffer_prefix_content(dpaa_intf->vsp_handle[vsp_id],
+-					       &buf_prefix_cont);
++	ret = fm_vsp_config_buffer_prefix_content(vsp->vsp_handle,
++			&buf_prefix_cont);
+ 	if (ret != E_OK) {
+-		DPAA_PMD_ERR("fm_vsp_config_buffer_prefix_content error for profile %d err: %d",
+-			     vsp_id, ret);
++		DPAA_PMD_ERR("Configure VSP[%d]'s buffer prefix failed(%d)!",
++			vsp_id, ret);
+ 		return ret;
+ 	}
+ 
+ 	/* initialize the FM VSP module */
+-	ret = fm_vsp_init(dpaa_intf->vsp_handle[vsp_id]);
++	ret = fm_vsp_init(vsp->vsp_handle);
+ 	if (ret != E_OK) {
+-		DPAA_PMD_ERR("fm_vsp_init error for profile %d err:%d",
+-			 vsp_id, ret);
++		DPAA_PMD_ERR("Init VSP[%d] failed(%d)!", vsp_id, ret);
+ 		return ret;
+ 	}
+ 
+@@ -1025,29 +1023,44 @@ static int dpaa_port_vsp_configure(struct dpaa_if *dpaa_intf,
+ }
+ 
+ int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
+-		bool fmc_mode, uint8_t vsp_id, uint32_t bpid,
+-		struct fman_if *fif, u32 mbuf_data_room_size)
++		bool fmc_mode, uint8_t vsp_id, struct fman_if *fif)
+ {
+ 	int ret = 0;
+ 	t_handle fman_handle;
++	struct dpaa_if_vsp *vsp;
+ 
+-	if (!fif->num_profiles)
+-		return 0;
++	if (!fif->num_profiles) {
++		DPAA_PMD_ERR("%s: No multiple VSPs specified!",
++			dpaa_intf->name);
++		return -EINVAL;
++	}
+ 
+-	if (vsp_id >= fif->num_profiles)
+-		return 0;
++	if (vsp_id >= (fif->base_profile_id + fif->num_profiles)) {
++		DPAA_PMD_ERR("%s: Invalid VSP ID(%d) >= base(%d) + num(%d)",
++			dpaa_intf->name, vsp_id, fif->base_profile_id,
++			fif->num_profiles);
++		return -EINVAL;
++	}
+ 
+-	if (dpaa_intf->vsp_bpid[vsp_id] == bpid)
++	if (vsp_id == fif->base_profile_id && fif->is_shared_mac) {
++		/* For shared interface, VSP of base
++		 * profile is default pool located in kernel.
++		 */
++		dpaa_intf->vsp[vsp_id].bp_num = 0;
++		dpaa_intf->vsp[vsp_id].vsp_handle = NULL;
+ 		return 0;
++	}
+ 
+-	if (dpaa_intf->vsp_handle[vsp_id]) {
+-		ret = fm_vsp_free(dpaa_intf->vsp_handle[vsp_id]);
++	vsp = &dpaa_intf->vsp[vsp_id];
++
++	if (vsp->vsp_handle) {
++		ret = fm_vsp_free(vsp->vsp_handle);
+ 		if (ret != E_OK) {
+-			DPAA_PMD_ERR("Error fm_vsp_free: err %d vsp_handle[%d]",
+-				     ret, vsp_id);
++			DPAA_PMD_ERR("Free VSP[%d]'s handle failed(%d)",
++				vsp_id, ret);
  			return ret;
  		}
- 	}
-@@ -452,7 +453,7 @@ rte_dpaa_portal_fq_init(void *arg, struct qman_fq *fq)
- 	/* Initialise qman specific portals */
- 	ret = fsl_qman_fq_portal_init(fq->qp);
- 	if (ret) {
--		DPAA_BUS_LOG(ERR, "Unable to init fq portal");
-+		DPAA_BUS_ERR("Unable to init fq portal");
- 		return -1;
+-		dpaa_intf->vsp_handle[vsp_id] = 0;
++		vsp->vsp_handle = NULL;
  	}
  
-@@ -474,7 +475,7 @@ dpaa_portal_finish(void *arg)
- 	struct dpaa_portal *dpaa_io_portal = (struct dpaa_portal *)arg;
+ 	if (fmc_mode)
+@@ -1055,24 +1068,23 @@ int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
+ 	else
+ 		fman_handle = fm_info.fman_handle;
  
- 	if (!dpaa_io_portal) {
--		DPAA_BUS_LOG(DEBUG, "Portal already cleaned");
-+		DPAA_BUS_DEBUG("Portal already cleaned");
- 		return;
- 	}
- 
-@@ -617,24 +618,22 @@ rte_dpaa_bus_dev_build(void)
- 	/* Load the device-tree driver */
- 	ret = of_init();
- 	if (ret) {
--		DPAA_BUS_LOG(ERR, "of_init failed with ret: %d", ret);
--		return -1;
-+		DPAA_BUS_ERR("Failed(%d) to init device tree", ret);
-+		return ret;
- 	}
- 
- 	/* Get the interface configurations from device-tree */
- 	dpaa_netcfg = netcfg_acquire();
- 	if (!dpaa_netcfg) {
--		DPAA_BUS_LOG(ERR,
--			"netcfg failed: /dev/fsl_usdpaa device not available");
--		DPAA_BUS_WARN(
--			"Check if you are using USDPAA based device tree");
-+		DPAA_BUS_ERR("netcfg failed: /dev/fsl_usdpaa device not available");
-+		DPAA_BUS_WARN("Check if you are using USDPAA based device tree");
- 		return -EINVAL;
- 	}
- 
--	DPAA_BUS_LOG(NOTICE, "DPAA Bus Detected");
-+	DPAA_BUS_NOTICE("DPAA Bus Detected");
- 
- 	if (!dpaa_netcfg->num_ethports) {
--		DPAA_BUS_LOG(INFO, "NO DPDK mapped net interfaces available");
-+		DPAA_BUS_INFO("NO DPDK mapped net interfaces available");
- 		/* This is not an error */
- 	}
- 
-@@ -642,11 +641,11 @@ rte_dpaa_bus_dev_build(void)
- 	dump_netcfg(dpaa_netcfg, stdout);
- #endif
- 
--	DPAA_BUS_LOG(DEBUG, "Number of ethernet devices = %d",
--		     dpaa_netcfg->num_ethports);
-+	DPAA_BUS_DEBUG("Number of ethernet devices = %d",
-+			     dpaa_netcfg->num_ethports);
- 	ret = dpaa_create_device_list();
- 	if (ret) {
--		DPAA_BUS_LOG(ERR, "Unable to create device list. (%d)", ret);
-+		DPAA_BUS_ERR("Unable to create device list. (%d)", ret);
- 		return ret;
- 	}
- 	return 0;
-@@ -672,8 +671,6 @@ static int rte_dpaa_setup_intr(struct rte_intr_handle *intr_handle)
- 	return 0;
+-	dpaa_intf->vsp_bpid[vsp_id] = bpid;
+-
+-	return dpaa_port_vsp_configure(dpaa_intf, vsp_id, fman_handle, fif,
+-				       mbuf_data_room_size);
++	return dpaa_port_vsp_configure(dpaa_intf, vsp_id, fman_handle, fif);
  }
  
--#define DPAA_DEV_PATH1 "/sys/devices/platform/soc/soc:fsl,dpaa"
--#define DPAA_DEV_PATH2 "/sys/devices/platform/fsl,dpaa"
+-int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf, struct fman_if *fif)
++int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf)
+ {
+-	int idx, ret;
++	int ret;
++	uint8_t idx;
  
- static int
- rte_dpaa_bus_scan(void)
-@@ -689,7 +686,7 @@ rte_dpaa_bus_scan(void)
- 
- 	if ((access(DPAA_DEV_PATH1, F_OK) != 0) &&
- 	    (access(DPAA_DEV_PATH2, F_OK) != 0)) {
--		DPAA_BUS_LOG(DEBUG, "DPAA Bus not present. Skipping.");
-+		DPAA_BUS_DEBUG("DPAA Bus not present. Skipping.");
- 		return 0;
+-	for (idx = 0; idx < (uint8_t)fif->num_profiles; idx++) {
+-		if (dpaa_intf->vsp_handle[idx]) {
+-			ret = fm_vsp_free(dpaa_intf->vsp_handle[idx]);
++	for (idx = 0; idx < DPAA_VSP_PROFILE_MAX_NUM; idx++) {
++		if (dpaa_intf->vsp[idx].vsp_handle) {
++			ret = fm_vsp_free(dpaa_intf->vsp[idx].vsp_handle);
+ 			if (ret != E_OK) {
+-				DPAA_PMD_ERR("Error fm_vsp_free: err %d"
+-					     " vsp_handle[%d]", ret, idx);
++				DPAA_PMD_ERR("Free VSP[%d] failed(%d)",
++					idx, ret);
+ 				return ret;
+ 			}
++			dpaa_intf->vsp[idx].vsp_handle = NULL;
+ 		}
  	}
  
-@@ -703,7 +700,7 @@ rte_dpaa_bus_scan(void)
- 	 */
- 	ret = pthread_key_create(&dpaa_portal_key, dpaa_portal_finish);
- 	if (ret) {
--		DPAA_BUS_LOG(DEBUG, "Unable to create pthread key. (%d)", ret);
-+		DPAA_BUS_DEBUG("Unable to create pthread key. (%d)", ret);
- 		dpaa_clean_device_list();
- 		return ret;
- 	}
-@@ -720,12 +717,11 @@ rte_dpaa_bus_scan(void)
- 		dpaa_bus.svr_ver = 0;
- 	}
- 	if (dpaa_bus.svr_ver == SVR_LS1046A_FAMILY) {
--		DPAA_BUS_LOG(INFO, "This is LS1046A family SoC.");
-+		DPAA_BUS_INFO("This is LS1046A family SoC.");
- 	} else if (dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
--		DPAA_BUS_LOG(INFO, "This is LS1043A family SoC.");
-+		DPAA_BUS_INFO("This is LS1043A family SoC.");
- 	} else {
--		DPAA_BUS_LOG(WARNING,
--			"This is Unknown(%08x) DPAA1 family SoC.",
-+		DPAA_BUS_WARN("This is Unknown(%08x) DPAA1 family SoC.",
- 			dpaa_bus.svr_ver);
- 	}
+diff --git a/drivers/net/dpaa/dpaa_flow.h b/drivers/net/dpaa/dpaa_flow.h
+index 4742b8dd0a..6a949d6dd4 100644
+--- a/drivers/net/dpaa/dpaa_flow.h
++++ b/drivers/net/dpaa/dpaa_flow.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2017,2019,2022 NXP
++ * Copyright 2017,2019,2022,2026 NXP
+  */
  
-diff --git a/drivers/bus/dpaa/rte_dpaa_logs.h b/drivers/bus/dpaa/rte_dpaa_logs.h
-index 235c617edd..c6a225e5f7 100644
---- a/drivers/bus/dpaa/rte_dpaa_logs.h
-+++ b/drivers/bus/dpaa/rte_dpaa_logs.h
-@@ -30,6 +30,8 @@ extern int dpaa_logtype_bus;
+ #ifndef __DPAA_FLOW_H__
+@@ -11,9 +11,8 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set);
+ int dpaa_fm_deconfig(struct dpaa_if *dpaa_intf, struct fman_if *fif);
+ void dpaa_write_fm_config_to_file(void);
+ int dpaa_port_vsp_update(struct dpaa_if *dpaa_intf,
+-	bool fmc_mode, uint8_t vsp_id, uint32_t bpid, struct fman_if *fif,
+-	u32 mbuf_data_room_size);
+-int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf, struct fman_if *fif);
++	bool fmc_mode, uint8_t vsp_id, struct fman_if *fif);
++int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf);
+ int dpaa_port_fmc_init(struct fman_if *fif,
+ 		       uint32_t *fqids, int8_t *vspids, int max_nb_rxq);
  
- #define BUS_INIT_FUNC_TRACE() DPAA_BUS_DEBUG(" >>")
- 
-+#define DPAA_BUS_NOTICE(fmt, ...) \
-+	DPAA_BUS_LOG(NOTICE, fmt, ## __VA_ARGS__)
- #define DPAA_BUS_INFO(fmt, ...) \
- 	DPAA_BUS_LOG(INFO, fmt, ## __VA_ARGS__)
- #define DPAA_BUS_ERR(fmt, ...) \
 -- 
 2.25.1
 
