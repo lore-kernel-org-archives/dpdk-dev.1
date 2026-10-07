@@ -2,97 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25124CA6002
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 20:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6207CA6004
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 20:38:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4CC0740268;
-	Wed,  7 Oct 2026 22:21:35 +0200 (CEST)
-Received: from fout-b5-smtp.messagingengine.com
- (fout-b5-smtp.messagingengine.com [202.12.124.148])
- by mails.dpdk.org (Postfix) with ESMTP id CB72E40265
- for <dev@dpdk.org>; Wed,  7 Oct 2026 22:21:33 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.stl.internal (Postfix) with ESMTP id 1C9811D0013A
- for <dev@dpdk.org>; Wed,  7 Oct 2026 16:21:33 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Wed, 07 Oct 2026 16:21:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1791404492;
- x=1791490892; bh=UHYMI2GSNodvh4v7jN3fLMJK36DPAshorx/UQ2Jt/7g=; b=
- SbS1jDNw+y7i5WD0bARjU7V+oKfr5axlNgJxeYzLhET9KX+OSxmWAQN45ujYDSIB
- GZtJ2shZlbsOC7ZVQf25aZuI+MUh5yH/iPB+NJ98DFowGnOro45LMKkrbkd+zW6h
- MX9YY7uu7Kh3IwtkhVG68dHV6yypBOvj9nXEeeO03mCGVIUoDKfzTwHSRsiNkkqe
- J8NlmmctEOFr+wi5V5XuDhG/Spb/nmQFG/0WoXS1Toh3OdhFDNoodEQ2aB5wS9rn
- OyGX7H8JZbMk2iE5ZZQUlVHNllIDX78URs3KoN2Mbg2tMIAb5P9TRXdvVVxrjems
- o4r/B0msY9/+szGt93J9nA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791404492; x=
- 1791490892; bh=UHYMI2GSNodvh4v7jN3fLMJK36DPAshorx/UQ2Jt/7g=; b=n
- lgWXTJdmCbWpRBshwbbPfNchTO1m8xyeiIp92mkpfe39z5nlDzgDaIOMdRV22r5O
- 41XwbHP5iz0HcOYbknAvKxz6qoyv+ZZErVZUE0tO5KBIV/x4W3QdiIPp1PgzQZQx
- ZzNqpXOT5d1OzirSaRcffN4PAy1n5mvFZmddGABrdW0WQXGglTIGs1dEMBsp9f1H
- RI/sX/a0e8o2KcjHyW3gmqqk5bvDaAr8pjxj7n8xs8oK9rxgJXMdS2mwijrproam
- GNrHYzVIHnCwV7ezV0aRMBZJ2JmyQUKp4gIkNPBZHw9T7+8KAj7hcKYJagUssoWD
- a5w3kmySkHppqqvT/OmPg==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791404492; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:KDB+vmJlgRCZK6naJJSwyNkAAM0HtU9W04i2BCdbKgsMHsx
- hkVb+Qwfph3M4zx04Y8p2VjomWVqISJGMBeTQI86G1L37taGFjXLHBGP+VAgKInR
- HYXzpFvKmmM5l4rVRjK1Ybr+GtFdWLMLSKRdteY8CsQ1MNI5stusxvShtkX6amxE
- hkNb5l7u/EO797h39vzbVHbcO5UffyUCbtIHA6D0kVwpc6Z6cds14bBE3hZyx092
- QVn/HIzO/kDN3hYuiQjWir8DQWIdnot9PwpsE+o2MdiDjKcK4FJNCtXrjFoKIxlr
- Gc/OzgAZgkoDNZjTaJxKyre6SDF1Qr+rScpRUlQ==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:+ifUv+wzvTZBNBPryUJMAwd/11dcyZuTQv1+w5UnYTU=:4GcBq+jacrFD08ICAQcolNEvX1nCCrgq7pm1fZWp5/M=;
-X-ME-Sender: <xms:zKnGaqEuT89QMAhowgFRetIeeZuFTLRmq-V3yaKEhm255ksTumzlfA>
- <xme:zKnGavprn6DKQTVupfhxMkd5f62x7TANczlsxDJVsAoSuwFviPjG-vHXXcaIlv3Z3
- iWe55QrKJNN-5sTv1HjYWBIO_Lwtmde3FgR7827jkUPLZC7arA6hvM>
-X-ME-Received: <xmr:zKnGajRI8NDWCRKW5mDwXzqS-3uMvzVF9eZWUHnUCimkoMBXyv5FzQWqtHbQGIaNjOYJyq8eNvGQ4lcxWo2LyIE>
-X-ME-Proxy-Cause: dmFkZTGCElsprzVb70mBRNfjE1Ndvd+1cAsGqp8n4rB3C5QXXRYfq+ISZaBPT6u4nH5iqJ
- 2/UBIBUmfhyu80xrQOxuY3h4pnAts+tpzZLkZxrxiiovdgYJuZSDOs9r3jI2CkVfhylINN
- NBVpiaBCIYQHUjE6exwWmmO/jEBAIHlFz484+5iKGt6famittH8fQCJxvb28Ojx1hR7pcl
- RhTKGHl6EQ2iwgsHw5E52fx7yAl999SCzjhfmbCbv4vlNscUuDn16IJQpcKcc9Xf/juOFk
- BjKbU9XehbQpba1KIrZS5jPaTcCSO8cMnFWSwb/MlCB9+oQ4SIEwXdojIE7U+GYYFsX7dh
- k4bw8oGOqsDn89NI23e5XWXLs5S84soc+k0U/XUp0A+l2Tf4zcCIjRRzJdmGB0CjOf8IyR
- MobceYsusjS7uN7w5J9IHxATjP7/ClvvqbafVrzqzSqseEArbbNIB6EoFhsVjBiHZfhupw
- dzJVkQQxLS0iz9414ifyoEoaEwehFu+xJk2NCf4cUBhyzLWnXzhV/7k6Z/YEhSZ0EQf96+
- j7Vooyq9cIG/c81rOWAnZA10y/iWImkjjyKirfhXIT98Jd23iObl1yhFWwIRQrEm7uqHj8
- ru6eajbOOpLd4dlaqyX0UUdhDSsm5w4yyNzOlPErfPuYZDKdObBJuZz4ZQiA
-X-ME-Proxy: <xmx:zKnGasNt7zCM_fIt3efu7kyAL7GR7GOvNIHmKOdeYyq-YAvxye8FwQ>
- <xmx:zKnGamP20HBdTK7pyjAlqIqAJZPCItZBYBAm5MGs31chxlOL_zEmiA>
- <xmx:zKnGastdZKwDalUr9MSNtPuhAdctTd7wL3TXxq-zUQy9CMpZMZTipQ>
- <xmx:zKnGagXNhX6dXDtW5RpCz23CqRAd6luOBiephjgTPqyYrH44pBtJyw>
- <xmx:zKnGajCm0bGPzEd41dOLARt9GPAQaF7PHzfeed28EynXdUmYcocqYwDb>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 7 Oct 2026 16:21:31 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Joshua Washington <joshwash@google.com>
-Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: [PATCH v4 00/15] Introduce RTE_DIV_ROUND_UP
-Date: Wed, 07 Oct 2026 22:21:30 +0200
-Message-ID: <5dBUPxkNSW6bGjMMFysmew@monjalon.net>
-In-Reply-To: <20261006093822.603a7a2e@phoenix.local>
-References: <20260923010742.2468145-1-joshwash@google.com>
- <20261006023053.2572501-1-joshwash@google.com>
- <20261006093822.603a7a2e@phoenix.local>
+	by mails.dpdk.org (Postfix) with ESMTP id A8FE140268;
+	Wed,  7 Oct 2026 22:38:34 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 76C7C40265
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 22:38:33 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id CE3424BFA2; Wed,  7 Oct 2026 22:38:32 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/cryptodev Bug 2050] ninja compile failure for arm
+Date: Wed, 07 Oct 2026 20:38:29 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: cryptodev
+X-Bugzilla-Version: 26.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: abailey@iol.unh.edu
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-2050-3@https.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -106,52 +54,143 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-06/10/2026 18:38, Stephen Hemminger:
-> On Mon,  5 Oct 2026 19:30:36 -0700
-> Joshua Washington <joshwash@google.com> wrote:
-> 
-> > Numerous components independently define the DIV_ROUND_UP macro, using
-> > the same definition. Attempt to commonize by introducing
-> > RTE_DIV_ROUND_UP to rte_common.h and replacing usages of DIV_ROUND_UP
-> > with RTE_DIV_ROUND_UP. Similarly, replace DIV_CEIL, which is
-> > functionally identical, to RTE_DIV_ROUND_UP.
-> > 
-> > Changes in v4:
-> >   - eal: Fix merge conflict in release notes after rebase.
-> >   - various commits: add rte_common.h includes where missing to fix
-> >     compilation issues.
-> >   - opae: drop RTE_DIV_ROUND_UP change due to shered osdep file for RTE
-> >     and raw drivers.
-> 
-> Looks good, some minor AI notes on commit messages and doc
+https://bugs.dpdk.org/show_bug.cgi?id=3D2050
 
-I consider the minor notes as candidates for follow-up or not relevant.
+            Bug ID: 2050
+           Summary: ninja compile failure for arm
+           Product: DPDK
+           Version: 26.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: cryptodev
+          Assignee: dev@dpdk.org
+          Reporter: abailey@iol.unh.edu
+  Target Milestone: ---
 
-Applied (with a bit of squashing), thanks.
+Compiling dpdk on dpdk-next-crypto main branch yields a compile error on arm
+systems. I believe This is due to the supported version of ipsec mb library=
+ in
+DPDK being v2.0.0 while the latest version available on arm is 1.5.0. The a=
+rm
+fork of ipsec mb can be found here:=20
+  * https://gitlab.arm.com/arm-reference-solutions/ipsec-mb/-/tree/main/
 
+The build commands to produce this error are:
 
-> Info: remaining private copies not covered by this series, candidates
-> for a follow-up:
->   drivers/raw/ifpga/base/opae_osdep.h   DIV_ROUND_UP (map like cxgbe)
->   drivers/crypto/ccp/ccp_dev.h          CCP_DIV_ROUND_UP
->   drivers/common/qat/dev/qat_dev_gen_lce.c  LCE_DIV_ROUND_UP
->   drivers/net/sfc/sfc_dp.h              SFC_DIV_ROUND_UP
->   drivers/common/sxe2/sxe2_osal.h       SXE2_DIV_ROUND_UP
->   drivers/common/cnxk/roc_platform.h    PLT_DIV_CEIL
+"meson setup --default-library=3Dstatic -Dlibdir=3Dlib /tmp/dts.9zK3U/dpdk
+/tmp/dts.9zK3U/dpdk/aarch64-linux-gcc"
 
-Would be nice to address in a new series, yes.
+"ninja -C /tmp/dts.9zK3U/dpdk/aarch64-linux-gcc"
 
+Yields error:
 
-> Info: the Doxygen repeats itself. "Evaluated twice" is in @param d and
-> again in the first @note; "non-negative" is in @param n and again in
-> the second @note. Keep the @param text and drop the duplicate notes.
+[2747/3503] Compiling C object
+drivers/libtmp_rte_crypto_ipsec_mb.a.p/crypto_ipsec_mb_pmd_aesni_mb.c.o
+FAILED: drivers/libtmp_rte_crypto_ipsec_mb.a.p/crypto_ipsec_mb_pmd_aesni_mb=
+.c.o=20
+ccache gcc -Idrivers/libtmp_rte_crypto_ipsec_mb.a.p -Idrivers -I../drivers
+-Idrivers/crypto/ipsec_mb -I../drivers/crypto/ipsec_mb -Ilib/cryptodev
+-I../lib/cryptodev -Ilib/eal/common -I../lib/eal/common -I. -I.. -Iconfig
+-I../config -Ilib/eal/include -I../lib/eal/include -Ilib/eal/linux/include
+-I../lib/eal/linux/include -Ilib/eal/arm/include -I../lib/eal/arm/include
+-I../kernel/linux -Ilib/eal -I../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib=
+/log
+-I../lib/log -Ilib/metrics -I../lib/metrics -Ilib/telemetry -I../lib/teleme=
+try
+-Ilib/argparse -I../lib/argparse -Ilib/mbuf -I../lib/mbuf -Ilib/mempool
+-I../lib/mempool -Ilib/ring -I../lib/ring -Ilib/rcu -I../lib/rcu
+-Idrivers/bus/vdev -I../drivers/bus/vdev -Ilib/net -I../lib/net -Ilib/secur=
+ity
+-I../lib/security -fdiagnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 -Wa=
+ll
+-Winvalid-pch -Wextra -std=3Dc11 -O3 -include rte_config.h -Wvla -Wcast-qual
+-Wdeprecated -Wformat -Wformat-nonliteral -Wformat-security
+-Wmissing-declarations -Wmissing-prototypes -Wnested-externs
+-Wold-style-definition -Wpointer-arith -Wshadow -Wsign-compare
+-Wstrict-prototypes -Wundef -Wwrite-strings -Wno-packed-not-aligned
+-Wno-missing-field-initializers -D_GNU_SOURCE -fPIC -mcpu=3Dneoverse-n1
+-DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-truncation
+-Wno-address-of-packed-member -Wno-vla -DRTE_COMPONENT_CLASS=3Dpmd_crypto
+-DRTE_COMPONENT_NAME=3Dipsec_mb -DRTE_LOG_DEFAULT_LOGTYPE=3Dpmd.crypto.ipse=
+c_mb -MD
+-MQ drivers/libtmp_rte_crypto_ipsec_mb.a.p/crypto_ipsec_mb_pmd_aesni_mb.c.o=
+ -MF
+drivers/libtmp_rte_crypto_ipsec_mb.a.p/crypto_ipsec_mb_pmd_aesni_mb.c.o.d -o
+drivers/libtmp_rte_crypto_ipsec_mb.a.p/crypto_ipsec_mb_pmd_aesni_mb.c.o -c
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c: In function =E2=80=98is_aead_alg=
+o=E2=80=99:
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c:24:32: error: =E2=80=98IMB_CIPHER=
+_SM4_GCM=E2=80=99
+undeclared (first use in this function); did you mean =E2=80=98IMB_CIPHER_S=
+M4_ECB=E2=80=99?
+   24 |                 cipher_mode =3D=3D IMB_CIPHER_SM4_GCM
+      |                                ^~~~~~~~~~~~~~~~~~
+      |                                IMB_CIPHER_SM4_ECB
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c:24:32: note: each undeclared
+identifier is reported only once for each function it appears in
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c: In function
+=E2=80=98aesni_mb_set_session_aead_parameters=E2=80=99:
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c:716:50: error: =E2=80=98IMB_CIPHE=
+R_SM4_GCM=E2=80=99
+undeclared (first use in this function); did you mean =E2=80=98IMB_CIPHER_S=
+M4_ECB=E2=80=99?
+  716 |                 sess->template_job.cipher_mode =3D IMB_CIPHER_SM4_G=
+CM;
+      |                                                  ^~~~~~~~~~~~~~~~~~
+      |                                                  IMB_CIPHER_SM4_ECB
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c:717:47: error: =E2=80=98IMB_AUTH_=
+SM4_GCM=E2=80=99
+undeclared (first use in this function); did you mean =E2=80=98IMB_AUTH_AES=
+_CCM=E2=80=99?
+  717 |                 sess->template_job.hash_alg =3D IMB_AUTH_SM4_GCM;
+      |                                               ^~~~~~~~~~~~~~~~
+      |                                               IMB_AUTH_AES_CCM
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c:725:17: warning: implicit declara=
+tion
+of function =E2=80=98imb_sm4_gcm_pre=E2=80=99 [-Wimplicit-function-declarat=
+ion]
+  725 |                 imb_sm4_gcm_pre(mb_mgr, xform->aead.key.data,
+&sess->cipher.gcm_key);
+      |                 ^~~~~~~~~~~~~~~
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c:725:17: warning: nested extern
+declaration of =E2=80=98imb_sm4_gcm_pre=E2=80=99 [-Wnested-externs]
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c: In function =E2=80=98set_cpu_mb_=
+job_params=E2=80=99:
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c:1055:14: error: =E2=80=98IMB_AUTH=
+_SM4_GCM=E2=80=99
+undeclared (first use in this function); did you mean =E2=80=98IMB_AUTH_AES=
+_CCM=E2=80=99?
+ 1055 |         case IMB_AUTH_SM4_GCM:
+      |              ^~~~~~~~~~~~~~~~
+      |              IMB_AUTH_AES_CCM
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c: In function =E2=80=98set_mb_job_=
+params=E2=80=99:
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c:1607:14: error: =E2=80=98IMB_AUTH=
+_SM4_GCM=E2=80=99
+undeclared (first use in this function); did you mean =E2=80=98IMB_AUTH_AES=
+_CCM=E2=80=99?
+ 1607 |         case IMB_AUTH_SM4_GCM:
+      |              ^~~~~~~~~~~~~~~~
+      |              IMB_AUTH_AES_CCM
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c:1798:14: error: =E2=80=98IMB_CIPH=
+ER_SM4_GCM=E2=80=99
+undeclared (first use in this function); did you mean =E2=80=98IMB_CIPHER_S=
+M4_ECB=E2=80=99?
+ 1798 |         case IMB_CIPHER_SM4_GCM:
+      |              ^~~~~~~~~~~~~~~~~~
+      |              IMB_CIPHER_SM4_ECB
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c: In function =E2=80=98is_aead_alg=
+o=E2=80=99:
+../drivers/crypto/ipsec_mb/pmd_aesni_mb.c:26:1: warning: control reaches en=
+d of
+non-void function [-Wreturn-type]
+   26 | }
+      | ^
 
-I think this repeat is fine.
-
-
-> Info: nothing in DPDK defines BITS_TO_LONGS, so the new #ifndef guard
-> does nothing; drop it.
-
-It is in rnp_osdep.h, probably to allow including in a different environment.
-
-
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
