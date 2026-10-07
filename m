@@ -2,58 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70ACDCA5FF1
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 07:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F730CA5FF1
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 07:32:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DAC77427D9;
-	Wed,  7 Oct 2026 09:32:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 39BB8427C1;
+	Wed,  7 Oct 2026 09:32:29 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 74758427BF
- for <dev@dpdk.org>; Wed,  7 Oct 2026 09:32:24 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id CFCE142D66
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 09:32:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791358343;
+ s=mimecast20190719; t=1791358347;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=Yb2GlzaUclwP6sb9NSbuegjmTymecpuQmheCpUb3IvM=;
- b=NguIm4wvSc+Vz+svJfmcro6WLzPnmMVQSRc+T5q9BfxyYcbDN46RjgXAo4JUS/DVhVCbia
- TaJsjQO0I8m02/lwkYfifu38Nf6uL3fQ9q6uIWycERBjYmlIwqdmOQKwD4oXt1xtNH/mHO
- dJpIBMe1OkuitkuimpxTM8hfpJIbRyY=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ bh=6boipLWKg3BBx9yEaqLVnO7KBpmd8t6bf1FFUV86D8Y=;
+ b=UIAWpNj/vAigoCQMKQCjm96R7Q9qZsCoPLe85vPtU6tqlrlv+5zMQMilCFQsaTCjI8CKQp
+ Y1rNUouEwZYunOd2e4YvmEgLOH5uPlUHM6NT2j7UVT5+CuYniYZkDkKIgn78yb0XtMpRqR
+ 53t2kOel5LtPNcx/KIghpPF4QO/t7hc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-341-t4BVeqyENSqPYpWHUofO9g-1; Wed,
- 07 Oct 2026 03:32:19 -0400
-X-MC-Unique: t4BVeqyENSqPYpWHUofO9g-1
-X-Mimecast-MFC-AGG-ID: t4BVeqyENSqPYpWHUofO9g_1791358338
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-96-44AptzwBNSeRptWQf6UlKw-1; Wed,
+ 7 Oct 2026 07:32:23 +0000
+X-MC-Unique: 44AptzwBNSeRptWQf6UlKw-1
+X-Mimecast-MFC-AGG-ID: 44AptzwBNSeRptWQf6UlKw_1791358341
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3A7F2195606D; Wed,  7 Oct 2026 07:32:18 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C5F02195FCEC; Wed,  7 Oct 2026 07:32:21 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet03.pony-001.prod.iad2.dc.redhat.com [10.2.32.114])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id C772D1800361; Wed,  7 Oct 2026 07:32:16 +0000 (UTC)
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 9A0391956087; Wed,  7 Oct 2026 07:32:20 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: Anatoly Burakov <anatoly.burakov@intel.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
-Subject: [PATCH v19 02/26] bus/fslmc: decouple from EAL VFIO
-Date: Wed,  7 Oct 2026 09:31:40 +0200
-Message-ID: <20261007073206.567001-3-david.marchand@redhat.com>
+ Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>
+Subject: [PATCH v19 03/26] bus/pci: rename mismatching error labels
+Date: Wed,  7 Oct 2026 09:31:41 +0200
+Message-ID: <20261007073206.567001-4-david.marchand@redhat.com>
 In-Reply-To: <20261007073206.567001-1-david.marchand@redhat.com>
 References: <cover.1763141462.git.anatoly.burakov@intel.com>
  <20261007073206.567001-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: z6hC2OwbwJgUcpghuqJ_Gj09_FpNmO7YSzJDcWpnMqM_1791358338
+X-Mimecast-MFC-PROC-ID: 8O0_-3GAPEzuqejVGxSYJhM3SdrFWnj44n6oaIEJQ8U_1791358341
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -72,173 +71,75 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 
-FSLMC bus has its own VFIO implementation which is completely separate from
-one in EAL or rte_vfio. Yet, it references a couple of macros and uses a
-struct definition. Fully decoupling them is not a huge lift, so do that.
+Currently, there are two VFIO map functions - primary and secondary -
+that use a very similar goto error pattern. However, the label names are
+confusing.
+
+Specifically, for primary, we have three error labels: vfio_res (release
+VFIO resource), vfio_dev_fd (close the fd), and map (unmap all the mapped
+regions). For secondary, there is vfio_dev (close the fd), and
+vfio_dev_fd (unmap all mapped regions).
+
+For consistency, align secondary process function's error labels to match
+semantics of how they work in primary process function.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/bus/fslmc/fslmc_vfio.c | 50 +++++++++++++++++++++-------------
- drivers/bus/fslmc/meson.build  |  1 -
- 2 files changed, 31 insertions(+), 20 deletions(-)
+ drivers/bus/pci/linux/pci_vfio.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
-index 412b70e5ae..8d39895bac 100644
---- a/drivers/bus/fslmc/fslmc_vfio.c
-+++ b/drivers/bus/fslmc/fslmc_vfio.c
-@@ -35,7 +35,6 @@
- #include <dev_driver.h>
- #include <rte_eal_memconfig.h>
- #include <rte_vfio.h>
--#include <eal_vfio.h>
+diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
+index bc5c5c2499..a67de6ea02 100644
+--- a/drivers/bus/pci/linux/pci_vfio.c
++++ b/drivers/bus/pci/linux/pci_vfio.c
+@@ -968,7 +968,7 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
  
- #include "private.h"
- #include "fslmc_vfio.h"
-@@ -73,8 +72,21 @@ struct fslmc_dmaseg_list fslmc_iosegs =
- static uint64_t fslmc_mem_va2iova = RTE_BAD_IOVA;
- static int fslmc_mem_map_num;
+ 	ret = pci_vfio_fill_regions(dev, vfio_dev_fd, &device_info);
+ 	if (ret)
+-		goto err_vfio_dev;
++		goto err_vfio_dev_fd;
  
-+#define FSLMC_VFIO_SOCKET_OK 0x0
-+#define FSLMC_VFIO_SOCKET_NO_FD 0x1
-+#define FSLMC_VFIO_SOCKET_ERR 0xFF
-+
-+struct fslmc_vfio_mp_param {
-+	int req;
-+	int result;
-+	union {
-+		int group_num;
-+		int iommu_type_id;
-+	};
-+};
-+
- struct fslmc_mem_param {
--	struct vfio_mp_param mp_param;
-+	struct fslmc_vfio_mp_param mp_param;
- 	struct fslmc_dmaseg_list memsegs;
- 	struct fslmc_dmaseg_list iosegs;
- 	uint64_t mem_va2iova;
-@@ -386,7 +398,7 @@ fslmc_vfio_open_group_fd(const char *group_name)
- 	struct rte_mp_msg mp_req, *mp_rep;
- 	struct rte_mp_reply mp_reply = {0};
- 	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
--	struct vfio_mp_param *p = (struct vfio_mp_param *)mp_req.param;
-+	struct fslmc_vfio_mp_param *p = (struct fslmc_vfio_mp_param *)mp_req.param;
- 	int iommu_group_num, ret;
- 
- 	vfio_group_fd = fslmc_vfio_group_fd_by_name(group_name);
-@@ -417,10 +429,10 @@ fslmc_vfio_open_group_fd(const char *group_name)
- 	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 &&
- 	    mp_reply.nb_received == 1) {
- 		mp_rep = &mp_reply.msgs[0];
--		p = (struct vfio_mp_param *)mp_rep->param;
--		if (p->result == SOCKET_OK && mp_rep->num_fds == 1)
-+		p = (struct fslmc_vfio_mp_param *)mp_rep->param;
-+		if (p->result == FSLMC_VFIO_SOCKET_OK && mp_rep->num_fds == 1)
- 			vfio_group_fd = mp_rep->fds[0];
--		else if (p->result == SOCKET_NO_FD)
-+		else if (p->result == FSLMC_VFIO_SOCKET_NO_FD)
- 			DPAA2_BUS_ERR("Bad VFIO group fd");
- 	}
- 
-@@ -490,7 +502,7 @@ fslmc_vfio_open_container_fd(void)
- 	struct rte_mp_msg mp_req, *mp_rep;
- 	struct rte_mp_reply mp_reply = {0};
- 	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
--	struct vfio_mp_param *p = (void *)mp_req.param;
-+	struct fslmc_vfio_mp_param *p = (void *)mp_req.param;
- 
- 	if (fslmc_vfio_container_fd() > 0)
- 		return fslmc_vfio_container_fd();
-@@ -551,7 +563,7 @@ fslmc_vfio_open_container_fd(void)
- 
- 	mp_rep = &mp_reply.msgs[0];
- 	p = (void *)mp_rep->param;
--	if (p->result == SOCKET_OK && mp_rep->num_fds == 1) {
-+	if (p->result == FSLMC_VFIO_SOCKET_OK && mp_rep->num_fds == 1) {
- 		vfio_container_fd = mp_rep->fds[0];
- 		free(mp_reply.msgs);
- 	}
-@@ -594,8 +606,8 @@ fslmc_vfio_mp_primary(const struct rte_mp_msg *msg,
- 	int fd = -1;
- 	int ret;
- 	struct rte_mp_msg reply;
--	struct vfio_mp_param *r = (void *)reply.param;
--	const struct vfio_mp_param *m = (const void *)msg->param;
-+	struct fslmc_vfio_mp_param *r = (void *)reply.param;
-+	const struct fslmc_vfio_mp_param *m = (const void *)msg->param;
- 	struct fslmc_mem_param *map;
- 
- 	if (msg->len_param != sizeof(*m)) {
-@@ -612,13 +624,13 @@ fslmc_vfio_mp_primary(const struct rte_mp_msg *msg,
- 		r->group_num = m->group_num;
- 		fd = fslmc_vfio_group_fd_by_id(m->group_num);
- 		if (fd < 0) {
--			r->result = SOCKET_ERR;
-+			r->result = FSLMC_VFIO_SOCKET_ERR;
- 		} else if (!fd) {
- 			/* if group exists but isn't bound to VFIO driver */
--			r->result = SOCKET_NO_FD;
-+			r->result = FSLMC_VFIO_SOCKET_NO_FD;
+ 	/* map BARs */
+ 	maps = vfio_res->maps;
+@@ -979,14 +979,14 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+ 			if (ret < 0) {
+ 				PCI_LOG(ERR, "%s sparse mapping BAR%i failed: %s",
+ 					pci_addr, i, strerror(errno));
+-				goto err_vfio_dev_fd;
++				goto err_map;
+ 			}
  		} else {
- 			/* if group exists and is bound to VFIO driver */
--			r->result = SOCKET_OK;
-+			r->result = FSLMC_VFIO_SOCKET_OK;
- 			reply.num_fds = 1;
- 			reply.fds[0] = fd;
+ 			ret = pci_vfio_mmap_bar(vfio_dev_fd, vfio_res, i, MAP_FIXED);
+ 			if (ret < 0) {
+ 				PCI_LOG(ERR, "%s mapping BAR%i failed: %s",
+ 					pci_addr, i, strerror(errno));
+-				goto err_vfio_dev_fd;
++				goto err_map;
+ 			}
  		}
-@@ -628,9 +640,9 @@ fslmc_vfio_mp_primary(const struct rte_mp_msg *msg,
- 		r->req = FSLMC_VFIO_SOCKET_REQ_CONTAINER;
- 		fd = fslmc_vfio_container_fd();
- 		if (fd <= 0) {
--			r->result = SOCKET_ERR;
-+			r->result = FSLMC_VFIO_SOCKET_ERR;
- 		} else {
--			r->result = SOCKET_OK;
-+			r->result = FSLMC_VFIO_SOCKET_OK;
- 			reply.num_fds = 1;
- 			reply.fds[0] = fd;
- 		}
-@@ -640,7 +652,7 @@ fslmc_vfio_mp_primary(const struct rte_mp_msg *msg,
- 		map = (void *)reply.param;
- 		r = &map->mp_param;
- 		r->req = FSLMC_VFIO_SOCKET_REQ_MEM;
--		r->result = SOCKET_OK;
-+		r->result = FSLMC_VFIO_SOCKET_OK;
- 		map->memsegs = fslmc_memsegs;
- 		map->iosegs = fslmc_iosegs;
- 		map->mem_va2iova = fslmc_mem_va2iova;
-@@ -666,19 +678,19 @@ fslmc_vfio_mp_sync_mem_req(void)
- 	struct rte_mp_reply mp_reply = {0};
- 	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
- 	int ret = 0;
--	struct vfio_mp_param *mp_param;
-+	struct fslmc_vfio_mp_param *mp_param;
- 	struct fslmc_mem_param *mem_rsp;
  
- 	mp_param = (void *)mp_req.param;
- 	memset(&mp_req, 0, sizeof(struct rte_mp_msg));
- 	mp_param->req = FSLMC_VFIO_SOCKET_REQ_MEM;
- 	rte_strscpy(mp_req.name, FSLMC_VFIO_MP, sizeof(mp_req.name));
--	mp_req.len_param = sizeof(struct vfio_mp_param);
-+	mp_req.len_param = sizeof(struct fslmc_vfio_mp_param);
- 	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 &&
- 		mp_reply.nb_received == 1) {
- 		mp_rep = &mp_reply.msgs[0];
- 		mem_rsp = (struct fslmc_mem_param *)mp_rep->param;
--		if (mem_rsp->mp_param.result == SOCKET_OK) {
-+		if (mem_rsp->mp_param.result == FSLMC_VFIO_SOCKET_OK) {
- 			fslmc_memsegs = mem_rsp->memsegs;
- 			fslmc_mem_va2iova = mem_rsp->mem_va2iova;
- 			fslmc_mem_map_num = mem_rsp->mem_map_num;
-diff --git a/drivers/bus/fslmc/meson.build b/drivers/bus/fslmc/meson.build
-index 50d9e91a37..55f9d2e808 100644
---- a/drivers/bus/fslmc/meson.build
-+++ b/drivers/bus/fslmc/meson.build
-@@ -30,4 +30,3 @@ sources = files(
- )
+@@ -995,17 +995,17 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
  
- includes += include_directories('mc', 'qbman/include', 'portal')
--includes += include_directories('../../../lib/eal/linux')
+ 	/* we need save vfio_dev_fd, so it can be used during release */
+ 	if (rte_intr_dev_fd_set(dev->intr_handle, vfio_dev_fd))
+-		goto err_vfio_dev_fd;
++		goto err_map;
+ 	if (rte_intr_dev_fd_set(dev->vfio_req_intr_handle, vfio_dev_fd))
+-		goto err_vfio_dev_fd;
++		goto err_map;
+ 
+ 	return 0;
+-err_vfio_dev_fd:
++err_map:
+ 	for (j = 0; j < i; j++) {
+ 		if (maps[j].addr)
+ 			pci_unmap_resource(maps[j].addr, maps[j].size);
+ 	}
+-err_vfio_dev:
++err_vfio_dev_fd:
+ 	rte_vfio_release_device(rte_pci_get_sysfs_path(),
+ 			pci_addr, vfio_dev_fd);
+ 	return -1;
 -- 
 2.54.0
 
