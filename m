@@ -2,121 +2,103 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D70CA6002
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 16:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF7CCA5FFC
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 16:59:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5EE3740268;
-	Wed,  7 Oct 2026 18:28:58 +0200 (CEST)
-Received: from MRWPR03CU001.outbound.protection.outlook.com
- (mail-francesouthazon11011060.outbound.protection.outlook.com
- [40.107.130.60]) by mails.dpdk.org (Postfix) with ESMTP id 4EED440265
- for <dev@dpdk.org>; Wed,  7 Oct 2026 18:28:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E19C240268;
+	Wed,  7 Oct 2026 18:59:55 +0200 (CEST)
+Received: from BN1PR04CU002.outbound.protection.outlook.com
+ (mail-eastus2azon11010032.outbound.protection.outlook.com [52.101.56.32])
+ by mails.dpdk.org (Postfix) with ESMTP id AA98740265
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 18:59:54 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qh7mF22gAiONkHGGbsq61ix7TQOHgtcx+TptXlQOnlQs4g8eAX2sqiEMidRGFFLnjTy2brOxqH0J+TjUQSEd+MIm32eEVMIKPgpFURb4RC5Mm9bfP3B6sfFLVXPqVMxICu8qpVxPufPoEZsMZwg8w6p3tvzHf4XRE0GvX6z2kbidn5YPc83xL0vskSxyW2pWsSUtCXX25M9MRjEkm8bXJmZJCRaNq1gIPhrTMuChgAmSylAMpgrSuDZv/HIJUCNrJKT1kW0MqL7UruAZH8ngms105li9bOrZEOfkBqqh0D4pvCrZN0dH3vqv5hUUGW2D2RVonS/kKW0ijJohTaBUxQ==
+ b=OT4DQeQ0bhb011IYLNlGHx5fw3aiUqXtlthKLnQ92jshmvpouZHehLqJSb/5wnDpfuC6zPnp5Aj+aumCFOJq0z+7XzPw2PigTOaWgI39FCiu5CgJCixd6MB5uwqPaCF5EhE8No8pY0f//JdsITMzntCuukqFVNzaudKbvorWxTgx6qSL3cNouhgrJtT7cNgn62Vgi9jUAqpw8cT/nQx6nzONGEGOlElCtSLt1sgAlZlbw2m+pJmmiRkIt19cZ6Sv5gkvazHj+hQ+bJhmrVW9FDEUBQ+DQqObCGnAhl6sjuiJlDGJK7nQYUbm6IA2gITAJf2tBAaZbN2MzlFZPjPL6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0Ce+cnmyn1CGKRE28m599jaegvdyyC1Ny8pW1qizja0=;
- b=u36C1h6/di4akl22yqwvv4LFXlqc8J8ARNudEcgk0rUeJrdM0djf2QvPTJTBttk9QjjPL61VElzOvWSZGXlFFVY2gVvtlBFXGJOjHbpLukvFqyrs/0GlyIO6jWHnKmjooUa7jZcZeabZYcc8gfRNkQPHFrLa9UMGQRoNcjD0q0A5wBtQLe8rX7CPZMVFbrbU54hvpv8BCohcX+hPd6QF4s4bp/d01uXTFbldPhSbDbzS8gwPJ9jbSvtRS1g8ztsWBGBTXp+JgOe44YTGdBQ39HvkGErP/jO9rggMCHW7SPD+LlV4RWnkrZ3AQaFZM4MMLuv+9aMURGsVs4EoE1tNmw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
+ bh=FMKBHZDLWz0sQCI4rMDRg5KugmEID+EjFJwEjjYYeq0=;
+ b=m2TLFrKrYxNAo/WANA1bFW1cE0lKQh0tKwpxDOm+HWC+4XsdjFUfavzzNMfp/IxMsgSwrVM5Yvert0Q6XoBJySXFTMxlZTfRzW5GiBP0AWlWTBTDAMrIrfQuKEJs8qofEP0HXPXOD4A0wEVe3wOir5TNSK4r2oGj6AJLVxNtsnBAwp4WxEGxTCltzytriyuyuQBqebfQTtSleN9c0/NTXXLXfaFnLHOTI0Hq+6EGXCMaex4XX089G/MwD5bSqAzvwP/hH3YC4Vp0ghoSZ7OwWWpW7SOIRYZuoFYcM7Yq4vzel5OZJGDPcvusIy6VXNh6F9AorH+cuQxNzIEjsgNMwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0Ce+cnmyn1CGKRE28m599jaegvdyyC1Ny8pW1qizja0=;
- b=PaeVkDp501zVOfa6ggesTMOspXjNMu6Y2+oGcWTEHG3HtFPFLKkx8XXGVMqJk8KRq2NU3ZmWc8LoL6Qv1nulCWknYHEPS7iRxI1Tyw0LQox3sMA1APOxAgveG1Uo5nuNG+VqNNDEuaqaSIci709KPWeZexTIvYCqa8RlHp4+k/HFDNbu8F6B0QCov8g7qE3dItRok+8VK7gV3rxdKgUipeTLhx+79wHs7MqUZMmbRL4NNQ5DPEBpXNlw1joOA+/+1lqq2VEpasuyjqX+9/Ei4JXYuncEwC/wxVB1VcxYrxe38rpRzyPLBQYrMKVRTCPWyfuB26NxhyoxwuLKuAH9bw==
-Received: from PA1PR04MB10770.eurprd04.prod.outlook.com (2603:10a6:102:492::5)
- by ZR6PR04MB296659.eurprd04.prod.outlook.com (2603:10a6:910:e1::19)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.15; Wed, 7 Oct
- 2026 16:28:55 +0000
-Received: from PA1PR04MB10770.eurprd04.prod.outlook.com
- ([fe80::944c:6b2:95a0:32d7]) by PA1PR04MB10770.eurprd04.prod.outlook.com
- ([fe80::944c:6b2:95a0:32d7%3]) with mapi id 15.21.0496.010; Wed, 7 Oct 2026
- 16:28:55 +0000
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "thomas@monjalon.net" <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [PATCH v21 00/27] NXP DPAA driver enhancements and fixes
-Thread-Topic: [PATCH v21 00/27] NXP DPAA driver enhancements and fixes
-Thread-Index: AQHdVXTh7ITYopKKI0+Aj4AC2jVX0rbwnEuAgAEP0I+AAIl9AIAAEWH/
-Date: Wed, 7 Oct 2026 16:28:54 +0000
-Message-ID: <PA1PR04MB10770B9B7A3839B5F6EC7BA0F89942@PA1PR04MB10770.eurprd04.prod.outlook.com>
-References: <20261005085337.1069213-1-hemant.agrawal@nxp.com>
- <20261006092703.2138929-1-hemant.agrawal@nxp.com>
- <20261006080145.33d89b9b@phoenix.local>
- <GV1PR04MB10750BE973E9EC07CE3A70D5B89942@GV1PR04MB10750.eurprd04.prod.outlook.com>
- <20261007082642.24b92b4d@phoenix.local>
-In-Reply-To: <20261007082642.24b92b4d@phoenix.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Enabled=True;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SiteId=686ea1d3-bc2b-4c6f-a92c-d99c5c301635;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SetDate=2026-10-07T16:27:22.845Z;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Name=NXP
- Confidential; MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_ContentBits=1;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Method=Standard; 
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA1PR04MB10770:EE_|ZR6PR04MB296659:EE_
-x-ms-office365-filtering-correlation-id: dca349e7-9dc6-44fe-9149-08df249014ad
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|19092799006|376014|23010399003|1800799024|366016|6133799003|22082099003|18002099003|10067099003|4143699003|11063799006|38070700021|56012099006;
-x-microsoft-antispam-message-info: Lut0cp7It1EMJ6fqBV0XbnbvoMlyoPlZazinmlV6CUnqmWk59XupUE6ifWsq/Dq6EuMO0GDvdaL9ddYxsO1NheLMHdqciF9cgGklYBLW/tEujFdhXHntINBQ1nL2f31Z+rDCO1sXfGboKoE29l41YEJy4KVjUs2Ja8Mg3MpdtP+U0x/SVP7QgyXiOlvJHL9SS5cCs27XpC08Fq+BMoBwYI+wj3fE3vRS0iEbp15v5FFxc1kXNGfz1A6yZsumDEhzefM66lRyw792snB4e3yXahsoyrx9x2dPeeWm1v6StNPBKoBZJDMFQOdfHAomSCknWxo4xlLPUnent3PuIi1sNHLyBk/TqdfSo+yKEOhQ09TFlzjKOIxpgvDazdWQZH40/uHUwl2EE3KF2lMVnkw7DZd+j6OiiD5lnIsPAdK+kGKx2J/8IzmJgzqprvWlXo6Jns3HdANXfCwPxidJwKNfTriZ5s27/oFG1rHOX1tgCcs3XK98ey6WtJJC8MOT8621k50wqA+8Czfc9qzcvUWa3GFDJq3dII8Jcr4WY/ryy6Em7s6wvlpSBv+WUwkzKiEBi1yFk5TcjeVvJ6/U54hWBekaHP5DhzbbHlHTszCRYQRnHxwCL90ysx5GEsTH630fQ5VKmlz9ok7XP1G+tTjbvlGdy/BvAUZ5cRU/S6dGpjVhsLCGN2TZhGEJ58tZPYjk28HiLvLVazWkNLwrOwaZ49Qm4iFxC10E3kO9Lj4kt+g=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PA1PR04MB10770.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(19092799006)(376014)(23010399003)(1800799024)(366016)(6133799003)(22082099003)(18002099003)(10067099003)(4143699003)(11063799006)(38070700021)(56012099006);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?2X7cnl4kEtV3ETe5j618Rzol2DaFkK8eCOM//vLWYWEVZ7H46kwL/dcEAZ?=
- =?iso-8859-1?Q?nkKXvT6DXQtqpK2ux/T8fx/GtalhRAPpoqR4ZFWQcE9NxuQuzS1dPCGUN8?=
- =?iso-8859-1?Q?GSlejm7hNj/cgXHvFJhXuvUYnUvYgu4LOtRQ1jcc+ufCnNEtqr3TENyhs4?=
- =?iso-8859-1?Q?PeQbqcSIyb5B4iUxTzdKPJGu4UCuTNfiKWXLVWlJJKj9PmHupRXMcD+AmN?=
- =?iso-8859-1?Q?xJFQUhMN5tnoK1qKEiLrfHwIWoI93asNlsEXt9duUBnaXqYEoekyos7Xfo?=
- =?iso-8859-1?Q?4iyX/ipdpfNEBhwlsR/Bcta46RbygZSFSbY5vIMPIgOKM02srjP4q6t0xr?=
- =?iso-8859-1?Q?cmtD8/LTHKgoPIpgdn52a73an+5hHejS5UNRrFnqy4Zz5KH6Z9KhGc4EOC?=
- =?iso-8859-1?Q?tXQwmkXmePHSXfymvSpzwZRoM9ImlKJopqVc8IB0HqeMQ0T0UC6JsOTe9b?=
- =?iso-8859-1?Q?sQ9Jto0yz2nrzTckKYIBQlBU3+Fr+vFTpup4ZgHRSSP7QtJgM1boia3jwR?=
- =?iso-8859-1?Q?EFxK5QWnHmnwolBRo+8nlwwiCsBD0SdfePQaiAkyz9ww7tx+hk8jP8EbjR?=
- =?iso-8859-1?Q?HhQpfYR9lGZK3loXuGT4mIUGrrF5NbXIbA9vRPdooKBU5VIxYyvnk0E2bN?=
- =?iso-8859-1?Q?yDGLErcDyDAcZUAVbJWeAyAXnPBaqnjcLHg6gJOCmSxgpwm4nfHblW18Pf?=
- =?iso-8859-1?Q?qVmOb3eM2ckFVSq07HC3wYUGeI7z/zkk843qAOPfsIJP8p68iMSm/x2T1N?=
- =?iso-8859-1?Q?1e+QrvcT3Qgc0QY+Cd8p01Tr1FpC1zQKY4JFOVkkuVapiARUhxSEXSwySe?=
- =?iso-8859-1?Q?OROxWd33UK8qO4XV3AInYMtmBe+hyo85hNbabgf4snoe9iykTfvitxPpJJ?=
- =?iso-8859-1?Q?rrXugi+BVulYiQmz0/r6pzXyk6F/jZ79KSDdGOeCSidNLS8aFhl0yXa7Bm?=
- =?iso-8859-1?Q?JQvDOCyK+jvqcR/TH5mPPXkDyYbLq9YH932/M+T6Jr8oUKD7OKex1QPucH?=
- =?iso-8859-1?Q?B76dxUOumHJFe3tLOIBRpsXsrWGM39YPa0Mf+rlEhteGPbrY6fkYnd3NBZ?=
- =?iso-8859-1?Q?fuiIpS2d/ACBeduySkMJEwk/Kj5NOjQnD8/asIm+zWnnANfySGL9Iaokk/?=
- =?iso-8859-1?Q?fsmoXFWyscA0/ja2AKyIoEYEuOMGtY7hc9Q2jzwv9Dc/7bwl+VMyEuBLxc?=
- =?iso-8859-1?Q?97lW198oN3MkYtQxxt2Ut9K5rELTme0r17BzjT1xPH3a9Pm1t0gQ12a9Th?=
- =?iso-8859-1?Q?frfQVlMA/u0HMiReW3tRQQEt99CcX0dG3TpMbEVx6bH+3ZhnPY5gJpMUEX?=
- =?iso-8859-1?Q?Qq+RvMxsRnZUEhII7yZZmMkMR2m8BhnKNGce4buYYJEw9XHVyYXaftiC7N?=
- =?iso-8859-1?Q?ibVAo1U8gRL2DfOQ81IdE4RXlfS4Ccj6b4hg6LObDG1WZrcMo48mT/azae?=
- =?iso-8859-1?Q?palNVzxV2/NM/OyaxGtcuXP9DibKz8XgwHM0K1YbAC1gsgZ6d3zyi7E5zl?=
- =?iso-8859-1?Q?+/2UZGIaGkMe2slt4ueUCUV3LadCoaJDLGexWB/Up+nr3UYIciwmaCDa1r?=
- =?iso-8859-1?Q?eTafETP21i5S6WN4QaUL6KWx42Gy2rURSyl5z+fDgtJwwS4s3yK4Nq8Tw/?=
- =?iso-8859-1?Q?gOjML36oZqmhmEXBvhP2BDLEkb0yn+vfpY8gF+vwr0OI5MvbVry8vBYn2h?=
- =?iso-8859-1?Q?UVFlsmljwdy6lPVgEeOlagUSctGSK1BkTy5CsmalKXyI9KIyvouSVunoaE?=
- =?iso-8859-1?Q?21IC6BhNHeFInjz+jL1K/iNiOxEsKD5+/y6T5WFKvSNc/Y2GAULn17rSww?=
- =?iso-8859-1?Q?h4PNFFSF4w=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ bh=FMKBHZDLWz0sQCI4rMDRg5KugmEID+EjFJwEjjYYeq0=;
+ b=orjWAhO73entfL4OfGSHWQra3QDqYK3jvGUITV3yqkJ2fp0o0lvpk4WZewWcw81JFiZvyZkQ1j019O++lpY7Fw/MYXr3EqegP2hCPC031upJqEy7GhhrHUDVcUj9Bn5Ot5IaZhsq7gwft0FmKH/ueiS2RbUXPs7BEmkZ/y21ZJtnxtfSuTZhLydyaxzrzr49Cg14KEFRVpjDj1Jep8nfyKp+K/dgGhwdH0cI1tUQ+e33crXkz7ZGhDME6NhKv1bEkFOpidtXkQYxCdbpr/ymoZDhwEUgoMXW0t8iwhpFx4yrszZ0+G7Njd8SfzAlyN4NIj8qlOJszeva5Lg/yZml+g==
+Received: from DS7P221CA0013.NAMP221.PROD.OUTLOOK.COM (2603:10b6:8:25b::8) by
+ SN7PR12MB8603.namprd12.prod.outlook.com (2603:10b6:806:260::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.15; Wed, 7 Oct
+ 2026 16:59:47 +0000
+Received: from CY5PEPF00000E75.namprd02.prod.outlook.com
+ (2603:10b6:8:25b:cafe::41) by DS7P221CA0013.outlook.office365.com
+ (2603:10b6:8:25b::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.496.5 via Frontend Transport; Wed, 7
+ Oct 2026 16:59:47 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY5PEPF00000E75.mail.protection.outlook.com (10.167.247.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.496.14 via Frontend Transport; Wed, 7 Oct 2026 16:59:47 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Wed, 7 Oct
+ 2026 09:59:22 -0700
+Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Wed, 7 Oct
+ 2026 09:59:20 -0700
+From: Bing Zhao <bingz@nvidia.com>
+To: <viacheslavo@nvidia.com>, <dev@dpdk.org>, <rasland@nvidia.com>,
+ <stephen@networkplumber.org>
+CC: <orika@nvidia.com>, <dsosnowski@nvidia.com>, <suanmingm@nvidia.com>,
+ <matan@nvidia.com>, <thomas@monjalon.net>
+Subject: [PATCH v6] ethdev: support inline calculating masked item value
+Date: Wed, 7 Oct 2026 19:57:44 +0300
+Message-ID: <20261007165904.126976-1-bingz@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260610052729.5637-1-bingz@nvidia.com>
+References: <20260610052729.5637-1-bingz@nvidia.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA1PR04MB10770.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dca349e7-9dc6-44fe-9149-08df249014ad
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2026 16:28:54.9487 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /kBZ1y3QOiHwdI2uhNie2CSh9/oQOcrdkbPDj2jVvfWL+2AEsHrTw5d6J45fg2jaB7PBcUD5Z8Kre+sM//G48w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR6PR04MB296659
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.37]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PEPF00000E75:EE_|SN7PR12MB8603:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6181db3f-4c01-4837-e34e-08df249464a2
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|1800799024|23010399003|36860700016|376014|11063799006|10067099003|56012099006|22082099003|18002099003|3023799007;
+X-Microsoft-Antispam-Message-Info: Isnr5R1hlxpmh3nAgy85Y4HTt6S2nT5dmdug9Sm3omDkbe1G98xGYcJMvawez8twEqmeio2jHJLrW87pZJojW4yY+odFEggcznJFk7shANlr94TxyuxaCDqfA4vjZUh9eyXjGtoMlqX2wYbDstdSXjXQRXmgm77i19EoO8A1sJeJXUy2MY8OqrKOvFRi/dKZZRh6ywIY7PKy9UtIfJX6T3jMUaOvDAc5vsZMNUvvordRHkmgfVo26pnKoxq6JdF6H1eFTzsgciTIi6uFyLQbGZwoZbP8mNFcQ+XZNpUIIcKYUl5fICYVUP/AZ95DpNWg0SuNmTUuNGxKEb7q5KfslLrYOZ4M9+MPBbmF+5RSwy8oO7EEkhUUfiNWk61Nw6+a192RNtZ2GKmUW10aGdlX22UT0/pFw72mREEurHzGhFXkJ0QB8ptFFYEZh5O8ux4izAIx30nUV1pMXT8JVN/1U3SFCR8pSRcJDWSRrS+UsGTM+tl3IhTMIJS9sVl5aMQbjLM5955TwXFamowVr3pX/GmFizmJ+STguXMIiiwnWZv19qOGaQSVOLfyINCAKIxRveEXSLr1BRK3abemENhtX8rbr+5qNLny4b+q2ghdE/AUVrO2eDY860C4ouOnNxO5XAHxCAaLmKx2Acl74PjImK5BzzETKgtKnUor+yHeVuC32wKLt5uPbHnodCaXyxOgababJ5kaZTr63QkQ/SNzqw==
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(1800799024)(23010399003)(36860700016)(376014)(11063799006)(10067099003)(56012099006)(22082099003)(18002099003)(3023799007);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 2Iu9Z62RrBn+5mOhtYLgdqZ7PdkV8y9qyxSrc4hNZpY8JzuHXh6esXciI3d+JezgwGm+4txpofFe/Jh/4koUwhfmP0MIxv5IKun8PaMSOzlPpC+8I/1bT8IqipSQSqc5lEt8bXwO+N1pXzzWbd2gW5GRlsdgwvP51x/A7iQPObqpTJi7u8bpDRo0YmCN5/BT1Qm9zwOfLKANSsTBCS2Bhxt6/GWmlmiXANtYCGiBTjTzjs4Y7hQzsUz0VK9t8E0U7bEoikNdWmVKEBhLZZw8v51I5wr328zOF8ODDCXw4f0yAtpKsOQfnbrluKSdfpTsFSQjoVJ6lBwXeP+F2m4eCezdualR+9SGpaY4figXSqAYifbdYfupwx4P19ApV1Bk/ahvK7oiOlKBm3yoz5/fhbIjsQRXPOWBGgvMCvGsQM33t5hjWrE3FfGSZewoGW1M
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2026 16:59:47.0734 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6181db3f-4c01-4837-e34e-08df249464a2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY5PEPF00000E75.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8603
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -130,49 +112,346 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-=0A=
-=0A=
-On 07-10-2026 20:56, Stephen Hemminger wrote:=0A=
-> On Wed, 7 Oct 2026 07:24:37 +0000=0A=
-> Hemant Agrawal <hemant.agrawal@nxp.com> wrote:=0A=
-> =0A=
->> On 06-10-2026 20:31, Stephen Hemminger wrote:=0A=
->>> On Tue,  6 Oct 2026 14:56:36 +0530=0A=
->>> Hemant Agrawal <hemant.agrawal@nxp.com> wrote:=0A=
->>>    =0A=
->>>> This series collects a set of fixes and enhancements for the NXP DPAA=
-=0A=
->>>> bus, mempool, dma, crypto and net drivers targeting 26.11.=0A=
->>>>=0A=
->>>> It includes memory-leak and resource-cleanup fixes on the device=0A=
->>>> remove/close paths, more robust frame queue and congestion-group=0A=
->>>> shutdown, secondary-process safety guards, BPID and cgrid lifecycle=0A=
->>>> handling, and several new features: offline (O/H) port device support,=
-=0A=
->>>> enhanced virtual storage profile (VSP) port support, fmcless Rx queue=
-=0A=
->>>> configuration via devargs, Rx/Tx taildrop threshold devargs, non=0A=
->>>> fmX-macY shared Ethernet naming, and DMA scatter-gather and=0A=
->>>> errata-workaround devargs. Documentation and release notes are updated=
-=0A=
->>>> accordingly.=0A=
->>>>=0A=
->>>> v21:=0A=
->>=0A=
->> It is becoming a never ending cycles.  Every time we fix, it finds new i=
-ssues. Can we put a limit to accept it with no errors and minimal warnings?=
-=0A=
->> I am anyway fixing the following and sending v22.=0A=
-> =0A=
-> I won't accept patches with errors or warnings, sorry.=0A=
-> You can run the same reviews locally.=0A=
-> =0A=
-=0A=
-Ok. I respect that.  Please check V22. If there are still warnings. =0A=
-Will you please let me know what all you are running for review. I will try=
- the same locally. =0A=
-=0A=
-> The other recommendation would be to send smaller shorter series, if you =
-wait=0A=
-> for a whole set of patches there is almost certainly going to be somethin=
-g.=
+In the asynchronous API definition and some drivers, the
+rte_flow_item spec value may not be calculated by the driver due to the
+reason of speed of light rule insertion rate and sometimes the input
+parameters will be copied and changed internally.
+
+After copying, the spec and last will be protected by the keyword
+const and cannot be changed in the code itself. And also the driver
+needs some extra memory to do the calculation and extra conditions
+to understand the length of each item spec. This is not efficient.
+
+To solve the issue and support usage of the following fix, a new OP
+was introduced to calculate the spec and last values after applying
+the mask inline.
+
+Signed-off-by: Bing Zhao <bingz@nvidia.com>
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+v3:
+  - add test code
+  - fix the issue found by AI
+v4: reabse on top of the main
+v5: handle some items separately and add test for them
+v6: resend the correct version instead of v5 with AI defects resolved
+---
+ app/test/test_ethdev_api.c | 123 +++++++++++++++++++++++++++++++++++++
+ lib/ethdev/rte_flow.c      |  55 +++++++++++++++--
+ lib/ethdev/rte_flow.h      |  13 ++++
+ 3 files changed, 185 insertions(+), 6 deletions(-)
+
+diff --git a/app/test/test_ethdev_api.c b/app/test/test_ethdev_api.c
+index 00d6a5c614..ba3e785425 100644
+--- a/app/test/test_ethdev_api.c
++++ b/app/test/test_ethdev_api.c
+@@ -2,8 +2,11 @@
+  * Copyright (C) 2023, Advanced Micro Devices, Inc.
+  */
+ 
++#include <string.h>
++
+ #include <rte_log.h>
+ #include <rte_ethdev.h>
++#include <rte_flow.h>
+ 
+ #include <rte_test.h>
+ #include "test.h"
+@@ -15,6 +18,125 @@
+ #define NUM_MBUF 1024
+ #define MBUF_CACHE_SIZE 256
+ 
++static int32_t
++ethdev_api_flow_conv_pattern_masked(void)
++{
++	const struct rte_flow_item_eth spec = {
++		.hdr.dst_addr.addr_bytes = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 },
++		.hdr.src_addr.addr_bytes = { 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f },
++		.hdr.ether_type = RTE_BE16(0x1234),
++	};
++	const struct rte_flow_item_eth last = {
++		.hdr.dst_addr.addr_bytes = { 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 },
++		.hdr.src_addr.addr_bytes = { 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f },
++		.hdr.ether_type = RTE_BE16(0x5678),
++	};
++	const struct rte_flow_item_eth mask = {
++		.hdr.dst_addr.addr_bytes = { 0xff, 0xff, 0x00, 0x00, 0xff, 0xff },
++		.hdr.src_addr.addr_bytes = { 0xff, 0x00, 0xff, 0x00, 0xff, 0x00 },
++		.hdr.ether_type = RTE_BE16(0xffff),
++	};
++	const uint8_t raw_pattern[] = { 0xaa, 0xbb, 0xcc, 0xdd };
++	const struct rte_flow_item_raw raw_spec = {
++		.relative = 1,
++		.search = 1,
++		.offset = 8,
++		.limit = 4,
++		.length = sizeof(raw_pattern),
++		.pattern = raw_pattern,
++	};
++	const struct rte_flow_item_raw raw_mask = {
++		.relative = 1,
++		.search = 0,
++		.reserved = 0x3fffffff,
++		.offset = 0xffffffff,
++		.limit = 0xffff,
++		.length = 0xffff,
++		.pattern = NULL,
++	};
++	const struct rte_flow_item pattern[] = {
++		{
++			.type = RTE_FLOW_ITEM_TYPE_ETH,
++			.spec = &spec,
++			.last = &last,
++			.mask = &mask,
++		},
++		{
++			.type = RTE_FLOW_ITEM_TYPE_RAW,
++			.spec = &raw_spec,
++			.mask = &raw_mask,
++		},
++		{ .type = RTE_FLOW_ITEM_TYPE_END },
++	};
++	union {
++		struct rte_flow_item item;
++		struct rte_flow_item_eth eth;
++		struct rte_flow_item_raw raw;
++		double align;
++		uint8_t buf[256];
++	} dst;
++	const struct rte_flow_item *item;
++	const struct rte_flow_item_eth *conv_spec;
++	const struct rte_flow_item_eth *conv_last;
++	const struct rte_flow_item_raw *conv_raw_spec;
++	int ret;
++
++	ret = rte_flow_conv(RTE_FLOW_CONV_OP_PATTERN_MASKED, NULL, 0, pattern, NULL);
++	TEST_ASSERT(ret > 0, "Masked pattern conversion size query failed");
++	TEST_ASSERT((size_t)ret <= sizeof(dst.buf),
++		    "Masked pattern conversion needs too much storage");
++
++	memset(&dst, 0, sizeof(dst));
++	ret = rte_flow_conv(RTE_FLOW_CONV_OP_PATTERN_MASKED, dst.buf,
++			    sizeof(dst.buf), pattern, NULL);
++	TEST_ASSERT(ret > 0, "Masked pattern conversion failed");
++
++	item = (const struct rte_flow_item *)dst.buf;
++	conv_spec = item[0].spec;
++	conv_last = item[0].last;
++	TEST_ASSERT_NOT_NULL(conv_spec, "Converted spec must be set");
++	TEST_ASSERT_NOT_NULL(conv_last, "Converted last must be set");
++
++	TEST_ASSERT_EQUAL(conv_spec->hdr.dst_addr.addr_bytes[0], 0x01,
++			  "Masked spec dst byte 0 mismatch");
++	TEST_ASSERT_EQUAL(conv_spec->hdr.dst_addr.addr_bytes[2], 0x00,
++			  "Masked spec dst byte 2 mismatch");
++	TEST_ASSERT_EQUAL(conv_spec->hdr.src_addr.addr_bytes[1], 0x00,
++			  "Masked spec src byte 1 mismatch");
++	TEST_ASSERT_EQUAL(conv_spec->hdr.ether_type, RTE_BE16(0x1234),
++			  "Masked spec ether type mismatch");
++	TEST_ASSERT_EQUAL(conv_last->hdr.dst_addr.addr_bytes[0], 0x11,
++			  "Masked last dst byte 0 mismatch");
++	TEST_ASSERT_EQUAL(conv_last->hdr.dst_addr.addr_bytes[2], 0x00,
++			  "Masked last dst byte 2 mismatch");
++	TEST_ASSERT_EQUAL(conv_last->hdr.src_addr.addr_bytes[1], 0x00,
++			  "Masked last src byte 1 mismatch");
++	TEST_ASSERT_EQUAL(conv_last->hdr.ether_type, RTE_BE16(0x5678),
++			  "Masked last ether type mismatch");
++
++	conv_raw_spec = item[1].spec;
++	TEST_ASSERT_NOT_NULL(conv_raw_spec, "Converted RAW spec must be set");
++	TEST_ASSERT_NOT_NULL(conv_raw_spec->pattern,
++			     "Converted RAW pattern pointer must be set");
++	TEST_ASSERT(conv_raw_spec->pattern != raw_pattern,
++		    "Converted RAW pattern must be deep-copied");
++	TEST_ASSERT_EQUAL(conv_raw_spec->relative, 1,
++			  "Masked RAW relative mismatch");
++	TEST_ASSERT_EQUAL(conv_raw_spec->search, 0,
++			  "Masked RAW search mismatch");
++	TEST_ASSERT_EQUAL(conv_raw_spec->offset, raw_spec.offset,
++			  "Masked RAW offset mismatch");
++	TEST_ASSERT_EQUAL(conv_raw_spec->limit, raw_spec.limit,
++			  "Masked RAW limit mismatch");
++	TEST_ASSERT_EQUAL(conv_raw_spec->length, raw_spec.length,
++			  "Masked RAW length mismatch");
++	TEST_ASSERT_BUFFERS_ARE_EQUAL(conv_raw_spec->pattern, raw_pattern,
++				      sizeof(raw_pattern),
++				      "Converted RAW pattern mismatch");
++
++	return TEST_SUCCESS;
++}
++
+ static int32_t
+ ethdev_api_queue_status(void)
+ {
+@@ -167,6 +289,7 @@ static struct unit_test_suite ethdev_api_testsuite = {
+ 	.setup = NULL,
+ 	.teardown = NULL,
+ 	.unit_test_cases = {
++		TEST_CASE(ethdev_api_flow_conv_pattern_masked),
+ 		TEST_CASE(ethdev_api_queue_status),
+ 		/* TODO: Add deferred_start queue status test */
+ 		TEST_CASES_END() /**< NULL terminate unit test array */
+diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
+index ca2f85c3fa..e4efcbf10f 100644
+--- a/lib/ethdev/rte_flow.c
++++ b/lib/ethdev/rte_flow.c
+@@ -175,6 +175,23 @@ static const struct rte_flow_desc_data rte_flow_desc_item[] = {
+ 	MK_FLOW_ITEM(COMPARE, sizeof(struct rte_flow_item_compare)),
+ };
+ 
++static inline size_t
++rte_flow_conv_item_mask_size(const struct rte_flow_item *item)
++{
++	if ((int)item->type < 0)
++		return sizeof(void *);
++	switch (item->type) {
++	case RTE_FLOW_ITEM_TYPE_RAW:
++		return offsetof(struct rte_flow_item_raw, pattern);
++	case RTE_FLOW_ITEM_TYPE_GENEVE_OPT:
++		return offsetof(struct rte_flow_item_geneve_opt, data);
++	default:
++		if (rte_flow_desc_item[item->type].desc_fn != NULL)
++			return 0;
++		return rte_flow_desc_item[item->type].size;
++	}
++}
++
+ /** Generate flow_action[] entry. */
+ #define MK_FLOW_ACTION(t, s) \
+ 	[RTE_FLOW_ACTION_TYPE_ ## t] = { \
+@@ -797,6 +814,8 @@ rte_flow_conv_action_conf(void *buf, const size_t size,
+  *   RTE_FLOW_ITEM_TYPE_END is encountered.
+  * @param[out] error
+  *   Perform verbose error reporting if not NULL.
++ * @param[in] with_mask
++ *   If true, @p src mask will be applied to spec and last.
+  *
+  * @return
+  *   A positive value representing the number of bytes needed to store
+@@ -809,12 +828,13 @@ rte_flow_conv_pattern(struct rte_flow_item *dst,
+ 		      const size_t size,
+ 		      const struct rte_flow_item *src,
+ 		      unsigned int num,
++		      bool with_mask,
+ 		      struct rte_flow_error *error)
+ {
+ 	uintptr_t data = (uintptr_t)dst;
+ 	size_t off;
+ 	size_t ret;
+-	unsigned int i;
++	unsigned int i, j;
+ 
+ 	for (i = 0, off = 0; !num || i != num; ++i, ++src, ++dst) {
+ 		/**
+@@ -838,15 +858,27 @@ rte_flow_conv_pattern(struct rte_flow_item *dst,
+ 	src -= num;
+ 	dst -= num;
+ 	do {
++		uint8_t *c_spec = NULL, *c_last = NULL;
++		const uint8_t *mask = src->mask;
++		size_t item_mask_size = mask ? rte_flow_conv_item_mask_size(src) : 0;
++
+ 		if (src->spec) {
+ 			off = RTE_ALIGN_CEIL(off, sizeof(double));
+ 			ret = rte_flow_conv_item_spec
+ 				((void *)(data + off),
+ 				 size > off ? size - off : 0, src,
+ 				 RTE_FLOW_CONV_ITEM_SPEC);
+-			if (size && size >= off + ret)
++			if (size && size >= off + ret) {
+ 				dst->spec = (void *)(data + off);
++				c_spec = (uint8_t *)(data + off);
++			}
+ 			off += ret;
++			if (with_mask && c_spec && mask) {
++				size_t mask_size = RTE_MIN(ret, item_mask_size);
++
++				for (j = 0; j < mask_size; j++)
++					c_spec[j] &= mask[j];
++			}
+ 
+ 		}
+ 		if (src->last) {
+@@ -855,9 +887,17 @@ rte_flow_conv_pattern(struct rte_flow_item *dst,
+ 				((void *)(data + off),
+ 				 size > off ? size - off : 0, src,
+ 				 RTE_FLOW_CONV_ITEM_LAST);
+-			if (size && size >= off + ret)
++			if (size && size >= off + ret) {
+ 				dst->last = (void *)(data + off);
++				c_last = (uint8_t *)(data + off);
++			}
+ 			off += ret;
++			if (with_mask && c_last && mask) {
++				size_t mask_size = RTE_MIN(ret, item_mask_size);
++
++				for (j = 0; j < mask_size; j++)
++					c_last[j] &= mask[j];
++			}
+ 		}
+ 		if (src->mask) {
+ 			off = RTE_ALIGN_CEIL(off, sizeof(double));
+@@ -1004,7 +1044,7 @@ rte_flow_conv_rule(struct rte_flow_conv_rule *dst,
+ 		off = RTE_ALIGN_CEIL(off, sizeof(double));
+ 		ret = rte_flow_conv_pattern((void *)((uintptr_t)dst + off),
+ 					    size > off ? size - off : 0,
+-					    src->pattern_ro, 0, error);
++					    src->pattern_ro, 0, false, error);
+ 		if (ret < 0)
+ 			return ret;
+ 		if (size && size >= off + (size_t)ret)
+@@ -1104,7 +1144,7 @@ rte_flow_conv(enum rte_flow_conv_op op,
+ 		ret = sizeof(*attr);
+ 		break;
+ 	case RTE_FLOW_CONV_OP_ITEM:
+-		ret = rte_flow_conv_pattern(dst, size, src, 1, error);
++		ret = rte_flow_conv_pattern(dst, size, src, 1, false, error);
+ 		break;
+ 	case RTE_FLOW_CONV_OP_ITEM_MASK:
+ 		item = src;
+@@ -1119,7 +1159,7 @@ rte_flow_conv(enum rte_flow_conv_op op,
+ 		ret = rte_flow_conv_actions(dst, size, src, 1, error);
+ 		break;
+ 	case RTE_FLOW_CONV_OP_PATTERN:
+-		ret = rte_flow_conv_pattern(dst, size, src, 0, error);
++		ret = rte_flow_conv_pattern(dst, size, src, 0, false, error);
+ 		break;
+ 	case RTE_FLOW_CONV_OP_ACTIONS:
+ 		ret = rte_flow_conv_actions(dst, size, src, 0, error);
+@@ -1139,6 +1179,9 @@ rte_flow_conv(enum rte_flow_conv_op op,
+ 	case RTE_FLOW_CONV_OP_ACTION_NAME_PTR:
+ 		ret = rte_flow_conv_name(1, 1, dst, size, src, error);
+ 		break;
++	case RTE_FLOW_CONV_OP_PATTERN_MASKED:
++		ret = rte_flow_conv_pattern(dst, size, src, 0, true, error);
++		break;
+ 	default:
+ 		ret = rte_flow_error_set
+ 		(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
+diff --git a/lib/ethdev/rte_flow.h b/lib/ethdev/rte_flow.h
+index f864578f80..2261d1ea06 100644
+--- a/lib/ethdev/rte_flow.h
++++ b/lib/ethdev/rte_flow.h
+@@ -4544,6 +4544,19 @@ enum rte_flow_conv_op {
+ 	 *   @code const char ** @endcode
+ 	 */
+ 	RTE_FLOW_CONV_OP_ACTION_NAME_PTR,
++
++	/**
++	 * Convert an entire pattern.
++	 *
++	 * Duplicates all pattern items at once, applying each source item mask
++	 * to its copied specification and range.
++	 *
++	 * - @p src type:
++	 *   @code const struct rte_flow_item * @endcode
++	 * - @p dst type:
++	 *   @code struct rte_flow_item * @endcode
++	 */
++	RTE_FLOW_CONV_OP_PATTERN_MASKED,
+ };
+ 
+ /**
+-- 
+2.43.0
+
