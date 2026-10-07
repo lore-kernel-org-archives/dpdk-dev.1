@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8486CA6004
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 21:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F164ECA6004
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 21:43:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0271542E15;
-	Wed,  7 Oct 2026 23:41:42 +0200 (CEST)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
- [209.85.214.179])
- by mails.dpdk.org (Postfix) with ESMTP id 2E3EC427B2
- for <dev@dpdk.org>; Wed,  7 Oct 2026 23:41:37 +0200 (CEST)
-Received: by mail-pl1-f179.google.com with SMTP id
- d9443c01a7336-2db80fcdf8bso18266135ad.2
- for <dev@dpdk.org>; Wed, 07 Oct 2026 14:41:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4DE7942E63;
+	Wed,  7 Oct 2026 23:41:43 +0200 (CEST)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 2F0A9427DE
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 23:41:39 +0200 (CEST)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-2e61f017091so4682795ad.1
+ for <dev@dpdk.org>; Wed, 07 Oct 2026 14:41:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791409296;
- x=1792014096; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791409298;
+ x=1792014098; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=bgOI2Y+H9dPvxGLAnU6Kxef2XBJDDup1zF3Tg6kgieM=;
- b=mqwFODOhhx+mrgGoDYN1M3zDqlXSMZOL1ucy9Ek2tKdJ99dIWTh27APzs5FJJFk4ei
- cKSh0zkmt5e5dhX4MI++rwLoUbZCk1uNSq3eB2O9Z8cIornW5j4yk4H79La3+zUcTTJ+
- wF0lfz3Ofu55BougR3MWz+0xEWKpXOwP1sRk/2rtXfDjtw6PQswuEv1Ht7oAGLvNTAig
- QvZlxKMHwJrhEH2gvfr5qM0NL8ZWHDx1tnnQlC3K7Bgxwmc8gyOS4AVHu1fUIL5oosI0
- +0dXKR7RV2eKMMKIiMSuUMt1xXJpPrDK2le9eY0n9F+vwtAJBS2ozwwhhUSOlTBJPosd
- Id/Q==
+ bh=jpYQ6j/6y8kcd58lDNkUPM1VvA03ADLSfATji5njYMU=;
+ b=oSj+o3WCiVQD2LkTng9WVuCHA9r4B0xKBbTvCh05VwrPp4s48k86sQqkAfQ/Yh1X4W
+ D92VLaLfMHNEIT5jiD4UcaXUYCRM+TvA4n29YVPd3iPbyYpR/PRwIjlmpmCPeG74ZdqI
+ xZW9gP18Wsqy54bZywtHQQOhZZ3PPLzix3QZjoqpiwDlngHyzCP5167N2AplhaSkLSOL
+ 0O4PzolYjOlOCOVF3NFPIoqb1BmpxYYPuvzMm+Cu6foK5GeRsUJrF/WIVs4tG7op3LfQ
+ Mh9Imh7gON64A72sZY/G23qvXbd4pNe8VkEKh0/KogDzvzuLBYXtCKTooqMBvNsCyhQK
+ 3pfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791409296; x=1792014096;
+ d=1e100.net; s=20260707; t=1791409298; x=1792014098;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=bgOI2Y+H9dPvxGLAnU6Kxef2XBJDDup1zF3Tg6kgieM=;
- b=dBmDEy8icJbHC6D5PuajZhIijL3MkpDLimJiIqII9FEDOonOFBFuVJNwDTyzt0DnBp
- QXjalukMrm6hv2ogWel6XbuThQF/E/CtlQVTbHD+Ep5769hHZw24rPNc2p1pAgSN7X21
- fxMXAuRT/Q4//O6ajQ7NrZkK/7aLX6Ci1J67PMrvbwTOjLVXgrYa2kNkTVLMGKD9aqlM
- ej4M6YeuY+l9+QEhWkqVUB4yka+A3i/h4k0a7cYZMX/jWN54ragbCmZpi1g/L7kSEIgg
- ryg2xVcA+YNjo3Q627zLs1AIzJ0Zf0XwrOFbjOusntnleLNl5UUBhQxZAoxTnoN9QchO
- L2Wg==
-X-Gm-Message-State: AFq9FYLJRlYMlhNifufCmKo2CCg0+LWUVGXrOYxtk5cgnWpe/6A7eK/0
- 6TPCwMJojRk/FGkO+wwZ8upKF66ILAEYcMM2QQgXG8623uya0b5mL1eQEjR6WHw2Um0ktza9lk2
- 1W+u1K0w=
-X-Gm-Gg: AYBFou2AnTDTYde3qCZ1Exo3bievPELRnY5htpg38X8bg0CLc5MivS/h7I0YWyaBe3D
- dqsRmHm96vGDlYWWlQYx62xlrtzfAg7+dBI8bVZDD8s1a6Cu2jhX7z3mZ2bC4zj5VWovd3zc0hk
- r/t4Mwn1Avg5/c+1yQZuYkg2ipsZGJKdOM9i7mtXFnTRMZsha878A03JnnyskH0Kks0Y0dSHcQB
- S97cb9nszW90jsJ4HMTuI4dsjOfMI7Hp8QgW6DpTbHDWIjIxDZiO/9YY+cnPEOkG8GBCu62h+cL
- UOBVw7T0xeLdvd/UViahBwfcmfIhPsGWtAnKw06wHxI/OPZESdTwD3FtQsAlN8LXkPzbbky0MoW
- cgKT1mn5ZeytcwU4daUXeqihwKkLQ/9PtQlprNjb15f6IdNVNYBWRqL8HonijhdAi7IKqhQku6W
- Ooqe7qf9k9mB6GzxhrBENfJ88hOVLoXHkmnWObx2Jc0ytM+V1IPOMVBQ1fpsf02kj2ZR0WekxaD
- z91a/sJMD1YTE+Ovs7Eaa9CX1ujsd+0UuF0Cw==
-X-Received: by 2002:a17:903:1ae7:b0:2e2:c55c:90c with SMTP id
- d9443c01a7336-2e60056cfd9mr28677255ad.64.1791409296346; 
- Wed, 07 Oct 2026 14:41:36 -0700 (PDT)
+ bh=jpYQ6j/6y8kcd58lDNkUPM1VvA03ADLSfATji5njYMU=;
+ b=MtVcNVS+IxeBrUDd4TbNx4pomWeSka+2UJ87LmayOSVMuZ+lAneZh/XXABW677Tmxp
+ oETssekb08DlS3YeU35tQnRiS8PAVO2kwewG+j76a4OwKSSZCukEKUA2pCpKOT3ogj5T
+ wHk3PmPsM0ZrT/NvQ//CSzPUv0JMei/WCq770fv3S4aCKIRHrZpvyLxzPUt9UYXzOVQz
+ aCqOxp5sNTIlTbVdBsPfplu8fvJ2MqFdPHkTa87OgF1Wpjz+oV1lxohX4Jqcay2eAU1i
+ 1ehziqJ9d6Okb+gY4pcWgre9PiP4UOTLoRQvMQBnWXENoalhJ/wSuO22IcJqgg+vWaAm
+ az9Q==
+X-Gm-Message-State: AFq9FYIvgqVuNyjDFV3GlCho+F8ej3eP8QJNYxpwjHJz1+AyQoXMDGjZ
+ PWcEAMUucLu7ioyN5AsKPHWQ0OcCEb4Pwk10nKfHrKTo1WV4OZ1T7mkRy/IJfkEhx2lRjXxNzE7
+ Iiu/UH3M=
+X-Gm-Gg: AYBFou2EjeO/lK1FmWTSfT0KMU09L+Fej/70mHUHhnFuu1azsD5P7X+ppRRbo87vuTJ
+ kAWjwg964XgUaR6flEd/tdAjc9T8y/qzkbctcr2PY1C2oj1c/zW5EzYubewxpI5sa05poZ1j+WH
+ 6k/6ke6G85EnUmtDCOwnRrYB9wp7z5Km93ogsD5TYRX6MU/4ciBmJhIH9yy1DOn5/EyMsz5Uij3
+ U80d6ZXe3fnEnQ0Yj7BA0pcY4gac4iYtRCmgJ0o6b15S7GXmjVhpZLRgqYmHq0eGJ1/vkywZ6py
+ i1ocz96MMTIQKCdIfNpyYyZbe2z9Jb8daWDavkUiil9zTpJwWkgrnDxIOl59PMAjdVo+M+Umeeb
+ T/n6mLfYd+jegcBmplaQF8IPJLR7c+CD1g4a3TtKQUtH+5+i+wL2aoJJshTDLq/yAseowoaVNtr
+ 5K3pWDIbT8OBQ+IIYUuEpNWoietQBjZ+nLTtCb3zdeRUU2JlcATDuCFeqHDHt+qLk2gNXcSO19B
+ F+mQKY2y5LEMz5NcUxP7+rJi7QEylWHqeUiag==
+X-Received: by 2002:a17:903:230d:b0:2e6:1a6c:abcd with SMTP id
+ d9443c01a7336-2e61a6cadf9mr20614845ad.3.1791409297094; 
+ Wed, 07 Oct 2026 14:41:37 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e60484ca89sm16573335ad.57.2026.10.07.14.41.35
+ d9443c01a7336-2e60484ca89sm16573335ad.57.2026.10.07.14.41.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
  Wed, 07 Oct 2026 14:41:36 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>
-Subject: [PATCH 18/20] cryptodev: promote algorithm helpers to stable
-Date: Wed,  7 Oct 2026 14:39:48 -0700
-Message-ID: <20261007214115.3092715-19-stephen@networkplumber.org>
+ Anoob Joseph <anoobj@marvell.com>, Volodymyr Fialko <vfialko@marvell.com>
+Subject: [PATCH 19/20] pdcp: promote API to stable
+Date: Wed,  7 Oct 2026 14:39:49 -0700
+Message-ID: <20261007214115.3092715-20-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261007214115.3092715-1-stephen@networkplumber.org>
 References: <20261007214115.3092715-1-stephen@networkplumber.org>
@@ -83,178 +83,236 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The algorithm name lookup helpers were added in 23.03 and the
-asymmetric opcap check in 24.11. The inline raw enqueue/dequeue and
-mbuf-to-vec helpers date back to 21.05. None of them have changed and
-all are driver independent.
-
-The queue pair reset, event error query and queue pair depth functions
-are left experimental. They are currently implemented only by
-crypto/cnxk, so the interface should not be frozen before a second
-driver has tried to use it.
+The PDCP library was added in 23.07 and none of its functions have
+changed since. The whole library was experimental, including the inline
+packet pre and post process helpers, so there is nothing left to keep
+experimental once the symbols are promoted.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
  doc/guides/rel_notes/release_26_11.rst |  4 ++++
- lib/cryptodev/rte_crypto_sym.h         |  2 --
- lib/cryptodev/rte_cryptodev.c          | 10 +++++-----
- lib/cryptodev/rte_cryptodev.h          | 10 ----------
- 4 files changed, 9 insertions(+), 17 deletions(-)
+ lib/pdcp/rte_pdcp.c                    | 10 ++++-----
+ lib/pdcp/rte_pdcp.h                    | 29 --------------------------
+ lib/pdcp/rte_pdcp_group.h              |  6 ------
+ 4 files changed, 9 insertions(+), 40 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index f689f08338..6055c1edee 100644
+index 6055c1edee..1fb9251dbf 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -225,6 +225,10 @@ API Changes
+@@ -360,6 +360,10 @@ API Changes
+   The ``rte_node_*`` control path functions date from 23.07 to 25.07 and
+   are used by the graph application and the l3fwd-graph example.
  
- * cmdline: Promoted ``cmdline_token_bool_ops`` from experimental to stable.
- 
-+* cryptodev: Promoted the algorithm name helpers and the asymmetric
-+  capability check from experimental to stable, along with the inline
-+  raw enqueue/dequeue and mbuf-to-vec helpers.
++* pdcp: Promoted the whole library API from experimental to stable.
++  The ``rte_pdcp_*`` functions are unchanged since the library was added
++  in 23.07.
 +
- * dispatcher: Promoted the whole library API from experimental to stable.
-   The ``rte_dispatcher_*`` functions are unchanged since the library was
-   added in 23.11.
-diff --git a/lib/cryptodev/rte_crypto_sym.h b/lib/cryptodev/rte_crypto_sym.h
-index 630fd153bd..9bf5e63ce1 100644
---- a/lib/cryptodev/rte_crypto_sym.h
-+++ b/lib/cryptodev/rte_crypto_sym.h
-@@ -16,7 +16,6 @@
+ * pipeline: Promoted the SWX API from experimental to stable:
+   the ``rte_swx_pipeline_*``, ``rte_swx_ctl_*`` and ``rte_swx_ipsec_*``
+   functions in pipeline, the ``rte_swx_table_*`` symbols in table and
+diff --git a/lib/pdcp/rte_pdcp.c b/lib/pdcp/rte_pdcp.c
+index d21df8ab43..4bdb5c9adb 100644
+--- a/lib/pdcp/rte_pdcp.c
++++ b/lib/pdcp/rte_pdcp.c
+@@ -98,7 +98,7 @@ pdcp_dl_establish(struct rte_pdcp_entity *entity, const struct rte_pdcp_entity_c
+ 	return 0;
+ }
  
- #include <string.h>
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pdcp_entity_establish, 23.07)
++RTE_EXPORT_SYMBOL(rte_pdcp_entity_establish)
+ struct rte_pdcp_entity *
+ rte_pdcp_entity_establish(const struct rte_pdcp_entity_conf *conf)
+ {
+@@ -199,7 +199,7 @@ pdcp_dl_release(struct rte_pdcp_entity *entity, struct rte_mbuf *out_mb[])
+ 	return nb_out;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pdcp_entity_release, 23.07)
++RTE_EXPORT_SYMBOL(rte_pdcp_entity_release)
+ int
+ rte_pdcp_entity_release(struct rte_pdcp_entity *pdcp_entity, struct rte_mbuf *out_mb[])
+ {
+@@ -222,7 +222,7 @@ rte_pdcp_entity_release(struct rte_pdcp_entity *pdcp_entity, struct rte_mbuf *ou
+ 	return nb_out;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pdcp_entity_suspend, 23.07)
++RTE_EXPORT_SYMBOL(rte_pdcp_entity_suspend)
+ int
+ rte_pdcp_entity_suspend(struct rte_pdcp_entity *pdcp_entity,
+ 			struct rte_mbuf *out_mb[])
+@@ -250,7 +250,7 @@ rte_pdcp_entity_suspend(struct rte_pdcp_entity *pdcp_entity,
+ 	return nb_out;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pdcp_control_pdu_create, 23.07)
++RTE_EXPORT_SYMBOL(rte_pdcp_control_pdu_create)
+ struct rte_mbuf *
+ rte_pdcp_control_pdu_create(struct rte_pdcp_entity *pdcp_entity,
+ 			    enum rte_pdcp_ctrl_pdu_type type)
+@@ -291,7 +291,7 @@ rte_pdcp_control_pdu_create(struct rte_pdcp_entity *pdcp_entity,
+ 	return m;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pdcp_t_reordering_expiry_handle, 23.07)
++RTE_EXPORT_SYMBOL(rte_pdcp_t_reordering_expiry_handle)
+ uint16_t
+ rte_pdcp_t_reordering_expiry_handle(const struct rte_pdcp_entity *entity, struct rte_mbuf *out_mb[])
+ {
+diff --git a/lib/pdcp/rte_pdcp.h b/lib/pdcp/rte_pdcp.h
+index 15fcbf9607..b8aad9f525 100644
+--- a/lib/pdcp/rte_pdcp.h
++++ b/lib/pdcp/rte_pdcp.h
+@@ -13,7 +13,6 @@
+  * A framework for PDCP protocol processing.
+  */
  
 -#include <rte_compat.h>
- #include <rte_mbuf.h>
- #include <rte_memory.h>
+ #include <rte_common.h>
  #include <rte_mempool.h>
-@@ -983,7 +982,6 @@ __rte_crypto_sym_op_attach_sym_session(struct rte_crypto_sym_op *sym_op, void *s
-  *   - number of successfully filled entries in *vec* array.
-  *   - negative number of elements in *vec* array required.
-  */
--__rte_experimental
- static inline int
- rte_crypto_mbuf_to_vec(const struct rte_mbuf *mb, uint32_t ofs, uint32_t len,
- 	struct rte_crypto_vec vec[], uint32_t num)
-diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
-index 829a5d0846..f2d2e5c864 100644
---- a/lib/cryptodev/rte_cryptodev.c
-+++ b/lib/cryptodev/rte_cryptodev.c
-@@ -407,7 +407,7 @@ rte_cryptodev_asym_get_xform_enum(enum rte_crypto_asym_xform_type *xform_enum,
- 	return ret;
- }
- 
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_cryptodev_get_cipher_algo_string, 23.03)
-+RTE_EXPORT_SYMBOL(rte_cryptodev_get_cipher_algo_string)
- const char *
- rte_cryptodev_get_cipher_algo_string(enum rte_crypto_cipher_algorithm algo_enum)
- {
-@@ -421,7 +421,7 @@ rte_cryptodev_get_cipher_algo_string(enum rte_crypto_cipher_algorithm algo_enum)
- 	return alg_str;
- }
- 
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_cryptodev_get_auth_algo_string, 23.03)
-+RTE_EXPORT_SYMBOL(rte_cryptodev_get_auth_algo_string)
- const char *
- rte_cryptodev_get_auth_algo_string(enum rte_crypto_auth_algorithm algo_enum)
- {
-@@ -435,7 +435,7 @@ rte_cryptodev_get_auth_algo_string(enum rte_crypto_auth_algorithm algo_enum)
- 	return alg_str;
- }
- 
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_cryptodev_get_aead_algo_string, 23.03)
-+RTE_EXPORT_SYMBOL(rte_cryptodev_get_aead_algo_string)
- const char *
- rte_cryptodev_get_aead_algo_string(enum rte_crypto_aead_algorithm algo_enum)
- {
-@@ -449,7 +449,7 @@ rte_cryptodev_get_aead_algo_string(enum rte_crypto_aead_algorithm algo_enum)
- 	return alg_str;
- }
- 
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_cryptodev_asym_get_xform_string, 23.03)
-+RTE_EXPORT_SYMBOL(rte_cryptodev_asym_get_xform_string)
- const char *
- rte_cryptodev_asym_get_xform_string(enum rte_crypto_asym_xform_type xform_enum)
- {
-@@ -731,7 +731,7 @@ rte_cryptodev_asym_xform_capability_check_hash(
- 	return ret;
- }
- 
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_cryptodev_asym_xform_capability_check_opcap, 24.11)
-+RTE_EXPORT_SYMBOL(rte_cryptodev_asym_xform_capability_check_opcap)
- int
- rte_cryptodev_asym_xform_capability_check_opcap(
- 	const struct rte_cryptodev_asymmetric_xform_capability *capability,
-diff --git a/lib/cryptodev/rte_cryptodev.h b/lib/cryptodev/rte_cryptodev.h
-index 37a6a5e49b..b8c00fe576 100644
---- a/lib/cryptodev/rte_cryptodev.h
-+++ b/lib/cryptodev/rte_cryptodev.h
-@@ -372,9 +372,6 @@ rte_cryptodev_asym_xform_capability_check_hash(
- 	enum rte_crypto_auth_algorithm hash);
+ #include <rte_pdcp_hdr.h>
+@@ -161,9 +160,6 @@ struct rte_pdcp_entity_conf {
+ /* >8 End of structure rte_pdcp_entity_conf. */
  
  /**
 - * @warning
 - * @b EXPERIMENTAL: this API may change without prior notice.
 - *
-  * Check if op capability is supported
+  * 5.1.1 PDCP entity establishment
   *
-  * @param	capability	Description of the asymmetric crypto capability.
-@@ -385,7 +382,6 @@ rte_cryptodev_asym_xform_capability_check_hash(
-  *   - Return 1 if the op capability is supported
-  *   - Return 0 if unsupported
+  * Establish PDCP entity based on provided input configuration.
+@@ -174,14 +170,10 @@ struct rte_pdcp_entity_conf {
+  *   - Valid handle if success
+  *   - NULL in case of failure. rte_errno will be set to error code.
+  */
+-__rte_experimental
+ struct rte_pdcp_entity *
+ rte_pdcp_entity_establish(const struct rte_pdcp_entity_conf *conf);
+ 
+ /**
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice.
+- *
+  * 5.1.3 PDCP entity release
+  *
+  * Release PDCP entity.
+@@ -204,15 +196,11 @@ rte_pdcp_entity_establish(const struct rte_pdcp_entity_conf *conf);
+  *   - >0: Success and the number of packets returned in out_mb
+  *   - <0: Error code in case of failures
   */
 -__rte_experimental
  int
- rte_cryptodev_asym_xform_capability_check_opcap(
- 	const struct rte_cryptodev_asymmetric_xform_capability *capability,
-@@ -460,7 +456,6 @@ rte_cryptodev_asym_get_xform_enum(enum rte_crypto_asym_xform_type *xform_enum,
-  * - Return NULL if enum is not valid
-  * - Return algo_string corresponding to enum
-  */
--__rte_experimental
- const char *
- rte_cryptodev_get_cipher_algo_string(enum rte_crypto_cipher_algorithm algo_enum);
+ rte_pdcp_entity_release(struct rte_pdcp_entity *pdcp_entity,
+ 			struct rte_mbuf *out_mb[]);
  
-@@ -473,7 +468,6 @@ rte_cryptodev_get_cipher_algo_string(enum rte_crypto_cipher_algorithm algo_enum)
-  * - Return NULL if enum is not valid
-  * - Return algo_string corresponding to enum
+ /**
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice.
+- *
+  * 5.1.4 PDCP entity suspend
+  *
+  * Suspend PDCP entity.
+@@ -233,15 +221,11 @@ rte_pdcp_entity_release(struct rte_pdcp_entity *pdcp_entity,
+  *   - >0: Success and the number of packets returned in out_mb.
+  *   - <0: Error code in case of failures.
   */
 -__rte_experimental
- const char *
- rte_cryptodev_get_auth_algo_string(enum rte_crypto_auth_algorithm algo_enum);
+ int
+ rte_pdcp_entity_suspend(struct rte_pdcp_entity *pdcp_entity,
+ 			struct rte_mbuf *out_mb[]);
  
-@@ -486,7 +480,6 @@ rte_cryptodev_get_auth_algo_string(enum rte_crypto_auth_algorithm algo_enum);
-  * - Return NULL if enum is not valid
-  * - Return algo_string corresponding to enum
+ /**
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice.
+- *
+  * Create control PDU packet of the `type` specified. The control PDU packet
+  * would be allocated from *rte_pdcp_entity_conf.ctrl_pdu_pool* by lib PDCP.
+  *
+@@ -253,15 +237,11 @@ rte_pdcp_entity_suspend(struct rte_pdcp_entity *pdcp_entity,
+  *   - Control PDU generated, in case of success.
+  *   - NULL in case of failure. rte_errno will be set to error code.
   */
 -__rte_experimental
- const char *
- rte_cryptodev_get_aead_algo_string(enum rte_crypto_aead_algorithm algo_enum);
+ struct rte_mbuf *
+ rte_pdcp_control_pdu_create(struct rte_pdcp_entity *pdcp_entity,
+ 			    enum rte_pdcp_ctrl_pdu_type type);
  
-@@ -499,7 +492,6 @@ rte_cryptodev_get_aead_algo_string(enum rte_crypto_aead_algorithm algo_enum);
-  * - Return NULL, if enum is not valid.
-  * - Return xform string, for valid enum.
+ /**
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice.
+- *
+  * For input mbufs and given PDCP entity pre-process the mbufs and prepare
+  * crypto ops that can be enqueued to the cryptodev associated with given
+  * session. Only error packets would be moved returned in the input buffer,
+@@ -284,7 +264,6 @@ rte_pdcp_control_pdu_create(struct rte_pdcp_entity *pdcp_entity,
+  * @return
+  *   Count of crypto_ops prepared.
   */
 -__rte_experimental
- const char *
- rte_cryptodev_asym_get_xform_string(enum rte_crypto_asym_xform_type xform_enum);
+ static inline uint16_t
+ rte_pdcp_pkt_pre_process(const struct rte_pdcp_entity *entity,
+ 			 struct rte_mbuf *mb[], struct rte_crypto_op *cop[],
+@@ -294,9 +273,6 @@ rte_pdcp_pkt_pre_process(const struct rte_pdcp_entity *entity,
+ }
  
-@@ -1690,7 +1682,6 @@ rte_cryptodev_raw_enqueue_burst(struct rte_crypto_raw_dp_ctx *ctx,
-  *        until rte_cryptodev_raw_enqueue_done() is called.
-  *   - negative integer: failure.
+ /**
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice.
+- *
+  * For input mbufs and given PDCP entity, perform PDCP post-processing of the mbufs.
+  *
+  * Input mbufs are the ones retrieved from rte_crypto_ops dequeued from cryptodev
+@@ -325,7 +301,6 @@ rte_pdcp_pkt_pre_process(const struct rte_pdcp_entity *entity,
+  * @return
+  *   Count of packets returned in *out_mb* buffer.
   */
 -__rte_experimental
- static __rte_always_inline int
- rte_cryptodev_raw_enqueue(struct rte_crypto_raw_dp_ctx *ctx,
- 	struct rte_crypto_vec *data_vec, uint16_t n_data_vecs,
-@@ -1790,7 +1781,6 @@ rte_cryptodev_raw_dequeue_burst(struct rte_crypto_raw_dp_ctx *ctx,
-  *   - The user data pointer retrieved from device queue or NULL if no
-  *     operation is ready for dequeue.
+ static inline uint16_t
+ rte_pdcp_pkt_post_process(const struct rte_pdcp_entity *entity,
+ 			  struct rte_mbuf *in_mb[],
+@@ -336,9 +311,6 @@ rte_pdcp_pkt_post_process(const struct rte_pdcp_entity *entity,
+ }
+ 
+ /**
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice
+- *
+  * 5.2.2.2 Actions when a t-Reordering expires
+  *
+  * When t-Reordering timer expires, PDCP is required to slide the reception
+@@ -358,7 +330,6 @@ rte_pdcp_pkt_post_process(const struct rte_pdcp_entity *entity,
+  * @return
+  *   Number of packets returned in *out_mb* buffer.
   */
 -__rte_experimental
- static __rte_always_inline void *
- rte_cryptodev_raw_dequeue(struct rte_crypto_raw_dp_ctx *ctx,
- 		int *dequeue_status, enum rte_crypto_op_status *op_status)
+ uint16_t
+ rte_pdcp_t_reordering_expiry_handle(const struct rte_pdcp_entity *entity,
+ 				    struct rte_mbuf *out_mb[]);
+diff --git a/lib/pdcp/rte_pdcp_group.h b/lib/pdcp/rte_pdcp_group.h
+index f6a94ff587..cbc2111bdf 100644
+--- a/lib/pdcp/rte_pdcp_group.h
++++ b/lib/pdcp/rte_pdcp_group.h
+@@ -37,9 +37,6 @@ struct rte_pdcp_group {
+ };
+ 
+ /**
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice.
+- *
+  * Take crypto-op as an input and extract pointer to related PDCP entity.
+  * @param cop
+  *   The address of an input *rte_crypto_op* structure.
+@@ -56,9 +53,6 @@ rte_pdcp_en_from_cop(const struct rte_crypto_op *cop)
+ }
+ 
+ /**
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice.
+- *
+  * Take as input completed crypto ops, extract related mbufs and group them by
+  * *rte_pdcp_entity* they belong to. Mbuf for which the crypto operation has
+  * failed would be flagged using *RTE_MBUF_F_RX_SEC_OFFLOAD_FAILED* flag
 -- 
 2.53.0
 
