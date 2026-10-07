@@ -2,56 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E85E7CA5FFF
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 07:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8B3CA5FFF
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 07:34:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7206A42E70;
-	Wed,  7 Oct 2026 09:33:33 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EBA0942E6D;
+	Wed,  7 Oct 2026 09:33:34 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8EE8C42E51
- for <dev@dpdk.org>; Wed,  7 Oct 2026 09:33:31 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B4D2742E59
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 09:33:32 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791358411;
+ s=mimecast20190719; t=1791358412;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=EDT+fUILQvU1qLhYQjaOFyLiKxj3mUNRhtrzWjTixvI=;
- b=Px4KgwgySTebPrQuPBs1bF9XD4FUuM0d2I8QRuOCts+7sJARubAm8GjwtjVifAbrn0uiDY
- ERb6ioNIOGjssSLww6mBUnVqMNAKpUQ/iyehWu1MLthWMKW51gIE96FMorzPKRIjfM2oQC
- kWEKGEtib8rYg/H/dM/9+osRALEexPg=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=7ccJF1vmkl5k5rOCCL/67nmQf042ta9Lwd93EkkAz2s=;
+ b=Vo4SC7L0nIM08XCjp4yWQONG3kRfx3/1Yna6QaLr+9npQ/fqj2wnX1NXwuxBHtf9QpckoY
+ P5x4x7VVOTHfjWUPRI4gcBYLSrsYytwDzsKzofcDbGFQLiQs24qr6rVzyo2Y+yNaetTR07
+ +Zuon1Gcw5dmFi8WFsgtX5JktVdbIQQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-570-u1yMVeVIMJqI03jG78QwLg-1; Wed,
- 07 Oct 2026 03:33:27 -0400
-X-MC-Unique: u1yMVeVIMJqI03jG78QwLg-1
-X-Mimecast-MFC-AGG-ID: u1yMVeVIMJqI03jG78QwLg_1791358406
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-256-7yx6twDwMhmeKJOSi0NtUA-1; Wed,
+ 07 Oct 2026 03:33:31 -0400
+X-MC-Unique: 7yx6twDwMhmeKJOSi0NtUA-1
+X-Mimecast-MFC-AGG-ID: 7yx6twDwMhmeKJOSi0NtUA_1791358410
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id B2AE01851277; Wed,  7 Oct 2026 07:33:26 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 167EF1954AE5; Wed,  7 Oct 2026 07:33:30 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet03.pony-001.prod.iad2.dc.redhat.com [10.2.32.114])
  by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id B82911800579; Wed,  7 Oct 2026 07:33:25 +0000 (UTC)
+ id 498DA1800579; Wed,  7 Oct 2026 07:33:29 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v19 20/26] vfio: separate group-based IOMMU types
-Date: Wed,  7 Oct 2026 09:31:58 +0200
-Message-ID: <20261007073206.567001-21-david.marchand@redhat.com>
+Subject: [PATCH v19 21/26] vfio: add some check on input parameters
+Date: Wed,  7 Oct 2026 09:31:59 +0200
+Message-ID: <20261007073206.567001-22-david.marchand@redhat.com>
 In-Reply-To: <20261007073206.567001-1-david.marchand@redhat.com>
 References: <cover.1763141462.git.anatoly.burakov@intel.com>
  <20261007073206.567001-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: xbe0aUxr2e-C9bg_FaP6xQYF5bj5ipBCzrre9_9O1vU_1791358406
+X-Mimecast-MFC-PROC-ID: nmAYNmt2-lqzYw4_iqz2LImcKQlKahH2pgMyxxz3luo_1791358410
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -70,1145 +70,271 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 
-Move group-based IOMMU types to a new file.
-
-Notes:
-- vfio_has_supported_extensions won't close vfio_container_fd anymore,
-  this is consolidated in its caller,
-- as we switched to an imported uapi header for VFIO some time ago,
-  there is no need to check VFIO_IOMMU_SPAPR_INFO_DDW anymore,
+Make error handling more consistent, and provide/document rte_errno values
+returned from API's to indicate various conditions.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- lib/eal/linux/eal_vfio.c       | 524 +--------------------------------
- lib/eal/linux/eal_vfio.h       |   2 +
- lib/eal/linux/eal_vfio_group.c | 521 ++++++++++++++++++++++++++++++++
- lib/eal/linux/meson.build      |   1 +
- 4 files changed, 525 insertions(+), 523 deletions(-)
- create mode 100644 lib/eal/linux/eal_vfio_group.c
+ lib/eal/linux/eal_vfio.c         | 33 ++++++++++++-
+ lib/eal/linux/include/dev_vfio.h | 84 +++++++++++++++++---------------
+ 2 files changed, 78 insertions(+), 39 deletions(-)
 
 diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index 7ad8a22cbb..bd267d1796 100644
+index bd267d1796..d4a165464f 100644
 --- a/lib/eal/linux/eal_vfio.c
 +++ b/lib/eal/linux/eal_vfio.c
-@@ -81,46 +81,12 @@ vfio_check_module(enum dev_vfio_module module)
- 	return 1;
- }
+@@ -29,6 +29,12 @@
  
--static int vfio_type1_dma_map(struct vfio_container *);
--static int vfio_type1_dma_mem_map(struct vfio_container *, uint64_t, uint64_t, uint64_t, int);
--static int vfio_spapr_dma_map(struct vfio_container *);
--static int vfio_spapr_dma_mem_map(struct vfio_container *, uint64_t, uint64_t, uint64_t, int);
--static int vfio_noiommu_dma_map(struct vfio_container *);
--static int vfio_noiommu_dma_mem_map(struct vfio_container *, uint64_t, uint64_t, uint64_t, int);
- static int vfio_dma_mem_map(struct vfio_container *cfg, uint64_t vaddr, uint64_t iova,
- 		uint64_t len, int do_map);
+ #define VFIO_MEM_EVENT_CLB_NAME "vfio_mem_event_clb"
  
- static int vfio_container_group_bind(int container_fd, int iommu_group_num);
- static int vfio_container_group_unbind(int container_fd, int iommu_group_num);
++/*
++ * rte_errno convention:
++ *
++ * - EINVAL: invalid parameters
++ */
++
+ /* per-process VFIO config */
+ static struct vfio_container vfio_containers[RTE_MAX_VFIO_CONTAINERS];
  
--/* IOMMU types we support */
--static const struct vfio_iommu_ops iommu_types[] = {
--	/* x86 IOMMU, otherwise known as type 1 */
--	{
--		.type_id = VFIO_TYPE1_IOMMU,
--		.name = "Type 1",
--		.partial_unmap = false,
--		.dma_map_func = &vfio_type1_dma_map,
--		.dma_user_map_func = &vfio_type1_dma_mem_map
--	},
--	/* ppc64 IOMMU, otherwise known as spapr */
--	{
--		.type_id = VFIO_SPAPR_TCE_v2_IOMMU,
--		.name = "sPAPR",
--		.partial_unmap = true,
--		.dma_map_func = &vfio_spapr_dma_map,
--		.dma_user_map_func = &vfio_spapr_dma_mem_map
--	},
--	/* IOMMU-less mode */
--	{
--		.type_id = VFIO_NOIOMMU_IOMMU,
--		.name = "No-IOMMU",
--		.partial_unmap = true,
--		.dma_map_func = &vfio_noiommu_dma_map,
--		.dma_user_map_func = &vfio_noiommu_dma_mem_map
--	},
--};
--
- static int
- is_null_map(const struct vfio_user_mem_map *map)
+@@ -755,6 +761,11 @@ dev_vfio_setup_device(const char *sysfs_base, const char *dev_addr, int *vfio_de
+ 	const struct internal_config *internal_conf =
+ 		eal_get_internal_configuration();
+ 
++	if (sysfs_base == NULL || dev_addr == NULL || vfio_dev_fd == NULL) {
++		rte_errno = EINVAL;
++		return -1;
++	}
++
+ 	if (!vfio_enabled)
+ 		return -1;
+ 
+@@ -986,6 +997,11 @@ dev_vfio_release_device(const char *sysfs_base, const char *dev_addr,
+ 	int iommu_group_num;
+ 	int ret;
+ 
++	if (sysfs_base == NULL || dev_addr == NULL) {
++		rte_errno = EINVAL;
++		return -1;
++	}
++
+ 	if (!vfio_enabled)
+ 		return -1;
+ 
+@@ -1177,10 +1193,15 @@ dev_vfio_get_device_info(int vfio_dev_fd, struct vfio_device_info *device_info)
  {
-@@ -1205,29 +1171,6 @@ vfio_get_iommu_type(void)
- 	return vfio_global_cfg.ops->type_id;
- }
+ 	int ret;
  
--const struct vfio_iommu_ops *
--vfio_set_iommu_type(int vfio_container_fd)
--{
--	unsigned idx;
--	for (idx = 0; idx < RTE_DIM(iommu_types); idx++) {
--		const struct vfio_iommu_ops *t = &iommu_types[idx];
--
--		int ret = ioctl(vfio_container_fd, VFIO_SET_IOMMU,
--				t->type_id);
--		if (!ret) {
--			EAL_LOG(INFO, "Using IOMMU type %d (%s)",
--					t->type_id, t->name);
--			return t;
--		}
--		/* not an error, there may be more supported IOMMU types */
--		EAL_LOG(DEBUG, "Set IOMMU type %d (%s) failed, error "
--				"%i (%s)", t->type_id, t->name, errno,
--				strerror(errno));
--	}
--	/* if we didn't find a suitable IOMMU type, fail */
--	return NULL;
--}
--
- RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_get_device_info)
- int
- dev_vfio_get_device_info(int vfio_dev_fd, struct vfio_device_info *device_info)
-@@ -1249,39 +1192,6 @@ dev_vfio_get_device_info(int vfio_dev_fd, struct vfio_device_info *device_info)
- 	return 0;
- }
++	if (device_info == NULL) {
++		rte_errno = EINVAL;
++		return -1;
++	}
++
+ 	if (!vfio_enabled)
+ 		return -1;
  
--int
--vfio_has_supported_extensions(int vfio_container_fd)
--{
--	int ret;
--	unsigned idx, n_extensions = 0;
--	for (idx = 0; idx < RTE_DIM(iommu_types); idx++) {
--		const struct vfio_iommu_ops *t = &iommu_types[idx];
--
--		ret = ioctl(vfio_container_fd, VFIO_CHECK_EXTENSION,
--				t->type_id);
--		if (ret < 0) {
--			EAL_LOG(ERR, "Could not get IOMMU type, error "
--					"%i (%s)", errno, strerror(errno));
--			close(vfio_container_fd);
--			return -1;
--		} else if (ret == 1) {
--			/* we found a supported extension */
--			n_extensions++;
--		}
--		EAL_LOG(DEBUG, "IOMMU type %d (%s) is %s",
--				t->type_id, t->name,
--				ret ? "supported" : "not supported");
--	}
--
--	/* if we didn't find any supported IOMMU types, fail */
--	if (!n_extensions) {
--		close(vfio_container_fd);
--		return -1;
--	}
--
--	return 0;
--}
--
- /*
-  * Open a new VFIO container fd.
+-	if (device_info == NULL || vfio_dev_fd < 0)
++	if (vfio_dev_fd < 0)
+ 		return -1;
+ 
+ 	ret = ioctl(vfio_dev_fd, VFIO_DEVICE_GET_INFO, device_info);
+@@ -1291,6 +1312,11 @@ dev_vfio_get_group_num(const char *sysfs_base,
+ 	char *tok[16], *group_tok, *end;
+ 	int ret;
+ 
++	if (sysfs_base == NULL || dev_addr == NULL || iommu_group_num == NULL) {
++		rte_errno = EINVAL;
++		return -1;
++	}
++
+ 	if (!vfio_enabled)
+ 		return -1;
+ 
+@@ -1610,6 +1636,11 @@ dev_vfio_container_assign_device(int vfio_container_fd, const char *sysfs_base,
+ 	int iommu_group_num;
+ 	int ret;
+ 
++	if (sysfs_base == NULL || dev_addr == NULL) {
++		rte_errno = EINVAL;
++		return -1;
++	}
++
+ 	ret = dev_vfio_get_group_num(sysfs_base, dev_addr, &iommu_group_num);
+ 	if (ret < 0) {
+ 		EAL_LOG(ERR, "Cannot get IOMMU group number for device %s", dev_addr);
+diff --git a/lib/eal/linux/include/dev_vfio.h b/lib/eal/linux/include/dev_vfio.h
+index 08f4c902e7..b3bf1ed7eb 100644
+--- a/lib/eal/linux/include/dev_vfio.h
++++ b/lib/eal/linux/include/dev_vfio.h
+@@ -48,43 +48,46 @@ enum dev_vfio_module {
+ 
+ /**
+  * @internal
+- * Setup vfio_cfg for the device identified by its address.
+- * It discovers the configured I/O MMU groups or sets a new one for the device.
+- * If a new groups is assigned, the DMA mapping is performed.
++ * Set up a device managed by VFIO driver.
   *
-@@ -1325,6 +1235,7 @@ vfio_open_container_fd(bool mp_request)
- 		if (ret) {
- 			EAL_LOG(ERR,
- 				"No supported IOMMU extensions found!");
-+			close(vfio_container_fd);
- 			return -1;
- 		}
+- * @param sysfs_base
+- *   sysfs path prefix.
++ * If the device was not previously assigned to a container using
++ * `dev_vfio_container_assign_device()`, default container will be used.
+  *
++ * @param sysfs_base
++ *   Sysfs path prefix.
+  * @param dev_addr
+- *   device location.
+- *
++ *   Device identifier.
+  * @param vfio_dev_fd
+- *   Pointer to VFIO fd, will be set to the opened device fd on success.
++ *   Pointer to where VFIO device file descriptor will be stored.
+  *
+  * @return
+  *   0 on success.
+- *   <0 on failure.
+  *   >1 if the device cannot be managed this way.
++ *   <0 on failure, rte_errno is set.
++ *
++ * Possible rte_errno values include:
++ * - EINVAL  - Invalid parameters.
+  */
+ __rte_internal
+ int dev_vfio_setup_device(const char *sysfs_base, const char *dev_addr, int *vfio_dev_fd);
  
-@@ -1417,439 +1328,6 @@ dev_vfio_get_group_num(const char *sysfs_base,
- 	return 1;
- }
- 
--static int
--type1_map(const struct rte_memseg_list *msl, const struct rte_memseg *ms, void *arg)
--{
--	struct vfio_container *cfg = arg;
--
--	/* skip external memory that isn't a heap */
--	if (msl->external && !msl->heap)
--		return 0;
--
--	/* skip any segments with invalid IOVA addresses */
--	if (ms->iova == RTE_BAD_IOVA)
--		return 0;
--
--	return vfio_type1_dma_mem_map(cfg, ms->addr_64, ms->iova, ms->len, 1);
--}
--
--static int
--vfio_type1_dma_mem_map(struct vfio_container *cfg, uint64_t vaddr, uint64_t iova, uint64_t len,
--		int do_map)
--{
--	struct vfio_iommu_type1_dma_map dma_map;
--	struct vfio_iommu_type1_dma_unmap dma_unmap;
--	int ret;
--
--	if (do_map != 0) {
--		memset(&dma_map, 0, sizeof(dma_map));
--		dma_map.argsz = sizeof(struct vfio_iommu_type1_dma_map);
--		dma_map.vaddr = vaddr;
--		dma_map.size = len;
--		dma_map.iova = iova;
--		dma_map.flags = VFIO_DMA_MAP_FLAG_READ |
--				VFIO_DMA_MAP_FLAG_WRITE;
--
--		ret = ioctl(cfg->container_fd, VFIO_IOMMU_MAP_DMA, &dma_map);
--		if (ret) {
--			/**
--			 * In case the mapping was already done EEXIST will be
--			 * returned from kernel.
--			 */
--			if (errno == EEXIST) {
--				EAL_LOG(DEBUG,
--					"Memory segment is already mapped, skipping");
--			} else {
--				EAL_LOG(ERR,
--					"Cannot set up DMA remapping, error "
--					"%i (%s)", errno, strerror(errno));
--				return -1;
--			}
--		}
--	} else {
--		memset(&dma_unmap, 0, sizeof(dma_unmap));
--		dma_unmap.argsz = sizeof(struct vfio_iommu_type1_dma_unmap);
--		dma_unmap.size = len;
--		dma_unmap.iova = iova;
--
--		ret = ioctl(cfg->container_fd, VFIO_IOMMU_UNMAP_DMA, &dma_unmap);
--		if (ret) {
--			EAL_LOG(ERR, "Cannot clear DMA remapping, error "
--					"%i (%s)", errno, strerror(errno));
--			return -1;
--		} else if (dma_unmap.size != len) {
--			EAL_LOG(ERR, "Unexpected size %"PRIu64
--				" of DMA remapping cleared instead of %"PRIu64,
--				(uint64_t)dma_unmap.size, len);
--			rte_errno = EIO;
--			return -1;
--		}
--	}
--
--	return 0;
--}
--
--static int
--vfio_type1_dma_map(struct vfio_container *cfg)
--{
--	return rte_memseg_walk(type1_map, cfg);
--}
--
--/* Track the size of the statically allocated DMA window for SPAPR */
--uint64_t spapr_dma_win_len;
--uint64_t spapr_dma_win_page_sz;
--
--static int
--vfio_spapr_dma_do_map(struct vfio_container *cfg, uint64_t vaddr, uint64_t iova, uint64_t len,
--		int do_map)
--{
--	struct vfio_iommu_spapr_register_memory reg = {
--		.argsz = sizeof(reg),
--		.vaddr = (uintptr_t) vaddr,
--		.size = len,
--		.flags = 0
--	};
--	int ret;
--
--	if (do_map != 0) {
--		struct vfio_iommu_type1_dma_map dma_map;
--
--		if (iova + len > spapr_dma_win_len) {
--			EAL_LOG(ERR, "DMA map attempt outside DMA window");
--			return -1;
--		}
--
--		ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_REGISTER_MEMORY, &reg);
--		if (ret) {
--			EAL_LOG(ERR,
--				"Cannot register vaddr for IOMMU, error "
--				"%i (%s)", errno, strerror(errno));
--			return -1;
--		}
--
--		memset(&dma_map, 0, sizeof(dma_map));
--		dma_map.argsz = sizeof(struct vfio_iommu_type1_dma_map);
--		dma_map.vaddr = vaddr;
--		dma_map.size = len;
--		dma_map.iova = iova;
--		dma_map.flags = VFIO_DMA_MAP_FLAG_READ |
--				VFIO_DMA_MAP_FLAG_WRITE;
--
--		ret = ioctl(cfg->container_fd, VFIO_IOMMU_MAP_DMA, &dma_map);
--		if (ret) {
--			EAL_LOG(ERR, "Cannot map vaddr for IOMMU, error "
--					"%i (%s)", errno, strerror(errno));
--			return -1;
--		}
--
--	} else {
--		struct vfio_iommu_type1_dma_map dma_unmap;
--
--		memset(&dma_unmap, 0, sizeof(dma_unmap));
--		dma_unmap.argsz = sizeof(struct vfio_iommu_type1_dma_unmap);
--		dma_unmap.size = len;
--		dma_unmap.iova = iova;
--
--		ret = ioctl(cfg->container_fd, VFIO_IOMMU_UNMAP_DMA, &dma_unmap);
--		if (ret) {
--			EAL_LOG(ERR, "Cannot unmap vaddr for IOMMU, error "
--					"%i (%s)", errno, strerror(errno));
--			return -1;
--		}
--
--		ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_UNREGISTER_MEMORY, &reg);
--		if (ret) {
--			EAL_LOG(ERR,
--				"Cannot unregister vaddr for IOMMU, error "
--				"%i (%s)", errno, strerror(errno));
--			return -1;
--		}
--	}
--
--	return ret;
--}
--
--static int
--vfio_spapr_map_walk(const struct rte_memseg_list *msl, const struct rte_memseg *ms, void *arg)
--{
--	struct vfio_container *cfg = arg;
--
--	/* skip external memory that isn't a heap */
--	if (msl->external && !msl->heap)
--		return 0;
--
--	/* skip any segments with invalid IOVA addresses */
--	if (ms->iova == RTE_BAD_IOVA)
--		return 0;
--
--	return vfio_spapr_dma_do_map(cfg, ms->addr_64, ms->iova, ms->len, 1);
--}
--
--struct spapr_size_walk_param {
--	uint64_t max_va;
--	uint64_t page_sz;
--	bool is_user_managed;
--};
--
--/*
-- * In order to set the DMA window size required for the SPAPR IOMMU
-- * we need to walk the existing virtual memory allocations as well as
-- * find the hugepage size used.
-- */
--static int
--vfio_spapr_size_walk(const struct rte_memseg_list *msl, void *arg)
--{
--	struct spapr_size_walk_param *param = arg;
--	uint64_t max = (uint64_t) msl->base_va + (uint64_t) msl->len;
--
--	if (msl->external && !msl->heap) {
--		/* ignore user managed external memory */
--		param->is_user_managed = true;
--		return 0;
--	}
--
--	if (max > param->max_va) {
--		param->page_sz = msl->page_sz;
--		param->max_va = max;
--	}
--
--	return 0;
--}
--
--/*
-- * Find the highest memory address used in physical or virtual address
-- * space and use that as the top of the DMA window.
-- */
--static int
--find_highest_mem_addr(struct spapr_size_walk_param *param)
--{
--	/* find the maximum IOVA address for setting the DMA window size */
--	if (rte_eal_iova_mode() == RTE_IOVA_PA) {
--		static const char proc_iomem[] = "/proc/iomem";
--		static const char str_sysram[] = "System RAM";
--		uint64_t start, end, max = 0;
--		char *line = NULL;
--		char *dash, *space;
--		size_t line_len;
--
--		/*
--		 * Example "System RAM" in /proc/iomem:
--		 * 00000000-1fffffffff : System RAM
--		 * 200000000000-201fffffffff : System RAM
--		 */
--		FILE *fd = fopen(proc_iomem, "r");
--		if (fd == NULL) {
--			EAL_LOG(ERR, "Cannot open %s", proc_iomem);
--			return -1;
--		}
--		/* Scan /proc/iomem for the highest PA in the system */
--		while (getline(&line, &line_len, fd) != -1) {
--			if (strstr(line, str_sysram) == NULL)
--				continue;
--
--			space = strstr(line, " ");
--			dash = strstr(line, "-");
--
--			/* Validate the format of the memory string */
--			if (space == NULL || dash == NULL || space < dash) {
--				EAL_LOG(ERR, "Can't parse line \"%s\" in file %s",
--					line, proc_iomem);
--				continue;
--			}
--
--			start = strtoull(line, NULL, 16);
--			end   = strtoull(dash + 1, NULL, 16);
--			EAL_LOG(DEBUG, "Found system RAM from 0x%" PRIx64
--				" to 0x%" PRIx64, start, end);
--			if (end > max)
--				max = end;
--		}
--		free(line);
--		fclose(fd);
--
--		if (max == 0) {
--			EAL_LOG(ERR, "Failed to find valid \"System RAM\" "
--				"entry in file %s", proc_iomem);
--			return -1;
--		}
--
--		spapr_dma_win_len = rte_align64pow2(max + 1);
--		return 0;
--	} else if (rte_eal_iova_mode() == RTE_IOVA_VA) {
--		EAL_LOG(DEBUG, "Highest VA address in memseg list is 0x%"
--			PRIx64, param->max_va);
--		spapr_dma_win_len = rte_align64pow2(param->max_va);
--		return 0;
--	}
--
--	spapr_dma_win_len = 0;
--	EAL_LOG(ERR, "Unsupported IOVA mode");
--	return -1;
--}
--
--
--/*
-- * The SPAPRv2 IOMMU supports 2 DMA windows with starting
-- * address at 0 or 1<<59.  By default, a DMA window is set
-- * at address 0, 2GB long, with a 4KB page.  For DPDK we
-- * must remove the default window and setup a new DMA window
-- * based on the hugepage size and memory requirements of
-- * the application before we can map memory for DMA.
-- */
--static int
--spapr_dma_win_size(void)
--{
--	struct spapr_size_walk_param param;
--
--	/* only create DMA window once */
--	if (spapr_dma_win_len > 0)
--		return 0;
--
--	/* walk the memseg list to find the page size/max VA address */
--	memset(&param, 0, sizeof(param));
--	if (rte_memseg_list_walk(vfio_spapr_size_walk, &param) < 0) {
--		EAL_LOG(ERR, "Failed to walk memseg list for DMA window size");
--		return -1;
--	}
--
--	/* we can't be sure if DMA window covers external memory */
--	if (param.is_user_managed)
--		EAL_LOG(WARNING, "Detected user managed external memory which may not be managed by the IOMMU");
--
--	/* check physical/virtual memory size */
--	if (find_highest_mem_addr(&param) < 0)
--		return -1;
--	EAL_LOG(DEBUG, "Setting DMA window size to 0x%" PRIx64,
--		spapr_dma_win_len);
--	spapr_dma_win_page_sz = param.page_sz;
--	rte_mem_set_dma_mask(rte_ctz64(spapr_dma_win_len));
--	return 0;
--}
--
--static int
--vfio_spapr_create_dma_window(struct vfio_container *cfg)
--{
--	struct vfio_iommu_spapr_tce_create create = {
--		.argsz = sizeof(create), };
--	struct vfio_iommu_spapr_tce_remove remove = {
--		.argsz = sizeof(remove), };
--	struct vfio_iommu_spapr_tce_info info = {
--		.argsz = sizeof(info), };
--	int ret;
--
--	ret = spapr_dma_win_size();
--	if (ret < 0)
--		return ret;
--
--	ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_TCE_GET_INFO, &info);
--	if (ret) {
--		EAL_LOG(ERR, "Cannot get IOMMU info, error %i (%s)",
--			errno, strerror(errno));
--		return -1;
--	}
--
--	/*
--	 * sPAPR v1/v2 IOMMU always has a default 1G DMA window set.  The window
--	 * can't be changed for v1 but it can be changed for v2. Since DPDK only
--	 * supports v2, remove the default DMA window so it can be resized.
--	 */
--	remove.start_addr = info.dma32_window_start;
--	ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_TCE_REMOVE, &remove);
--	if (ret)
--		return -1;
--
--	/* create a new DMA window (start address is not selectable) */
--	create.window_size = spapr_dma_win_len;
--	create.page_shift  = rte_ctz64(spapr_dma_win_page_sz);
--	create.levels = 1;
--	ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_TCE_CREATE, &create);
--#ifdef VFIO_IOMMU_SPAPR_INFO_DDW
--	/*
--	 * The vfio_iommu_spapr_tce_info structure was modified in
--	 * Linux kernel 4.2.0 to add support for the
--	 * vfio_iommu_spapr_tce_ddw_info structure needed to try
--	 * multiple table levels.  Skip the attempt if running with
--	 * an older kernel.
--	 */
--	if (ret) {
--		/* if at first we don't succeed, try more levels */
--		uint32_t levels;
--
--		for (levels = create.levels + 1;
--			ret && levels <= info.ddw.levels; levels++) {
--			create.levels = levels;
--			ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_TCE_CREATE, &create);
--		}
--	}
--#endif /* VFIO_IOMMU_SPAPR_INFO_DDW */
--	if (ret) {
--		EAL_LOG(ERR, "Cannot create new DMA window, error "
--				"%i (%s)", errno, strerror(errno));
--		EAL_LOG(ERR,
--			"Consider using a larger hugepage size if supported by the system");
--		return -1;
--	}
--
--	/* verify the start address  */
--	if (create.start_addr != 0) {
--		EAL_LOG(ERR, "Received unsupported start address 0x%"
--			PRIx64, (uint64_t)create.start_addr);
--		return -1;
--	}
--	return ret;
--}
--
--static int
--vfio_spapr_dma_mem_map(struct vfio_container *cfg, uint64_t vaddr, uint64_t iova, uint64_t len,
--		int do_map)
--{
--	int ret = 0;
--
--	if (do_map) {
--		if (vfio_spapr_dma_do_map(cfg, vaddr, iova, len, 1)) {
--			EAL_LOG(ERR, "Failed to map DMA");
--			ret = -1;
--		}
--	} else {
--		if (vfio_spapr_dma_do_map(cfg, vaddr, iova, len, 0)) {
--			EAL_LOG(ERR, "Failed to unmap DMA");
--			ret = -1;
--		}
--	}
--
--	return ret;
--}
--
--static int
--vfio_spapr_dma_map(struct vfio_container *cfg)
--{
--	if (vfio_spapr_create_dma_window(cfg) < 0) {
--		EAL_LOG(ERR, "Could not create new DMA window!");
--		return -1;
--	}
--
--	/* map all existing DPDK segments for DMA */
--	if (rte_memseg_walk(vfio_spapr_map_walk, cfg) < 0)
--		return -1;
--
--	return 0;
--}
--
--static int
--vfio_noiommu_dma_map(struct vfio_container *cfg __rte_unused)
--{
--	/* No-IOMMU mode does not need DMA mapping */
--	return 0;
--}
--
--static int
--vfio_noiommu_dma_mem_map(struct vfio_container *cfg __rte_unused, uint64_t vaddr __rte_unused,
--		uint64_t iova __rte_unused, uint64_t len __rte_unused, int do_map __rte_unused)
--{
--	/* No-IOMMU mode does not need DMA mapping */
--	return 0;
--}
--
- static int
- vfio_dma_mem_map(struct vfio_container *cfg, uint64_t vaddr, uint64_t iova, uint64_t len,
- 		int do_map)
-diff --git a/lib/eal/linux/eal_vfio.h b/lib/eal/linux/eal_vfio.h
-index 78b8ac4a36..5dae09b125 100644
---- a/lib/eal/linux/eal_vfio.h
-+++ b/lib/eal/linux/eal_vfio.h
-@@ -70,6 +70,8 @@ struct vfio_iommu_ops {
- 	vfio_dma_func_t dma_map_func;
- };
- 
-+extern const struct vfio_iommu_ops iommu_types[3];
-+
- /* get the vfio container that devices are bound to by default */
- int vfio_open_container_fd(bool mp_request);
- 
-diff --git a/lib/eal/linux/eal_vfio_group.c b/lib/eal/linux/eal_vfio_group.c
-new file mode 100644
-index 0000000000..e588cd3014
---- /dev/null
-+++ b/lib/eal/linux/eal_vfio_group.c
-@@ -0,0 +1,521 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2010-2018 Intel Corporation
-+ */
-+
-+#include <uapi/linux/vfio.h>
-+
-+#include <errno.h>
-+#include <inttypes.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <unistd.h>
-+
-+#include <rte_common.h>
-+#include <rte_errno.h>
-+#include <rte_log.h>
-+#include <rte_memory.h>
-+
-+#include "eal_vfio.h"
-+#include "eal_private.h"
-+
-+static int vfio_type1_dma_map(struct vfio_container *);
-+static int vfio_type1_dma_mem_map(struct vfio_container *, uint64_t, uint64_t, uint64_t, int);
-+static int vfio_spapr_dma_map(struct vfio_container *);
-+static int vfio_spapr_dma_mem_map(struct vfio_container *, uint64_t, uint64_t, uint64_t, int);
-+static int vfio_noiommu_dma_map(struct vfio_container *);
-+static int vfio_noiommu_dma_mem_map(struct vfio_container *, uint64_t, uint64_t, uint64_t, int);
-+
-+/* IOMMU types we support */
-+const struct vfio_iommu_ops iommu_types[] = {
-+	/* x86 IOMMU, otherwise known as type 1 */
-+	{
-+		.type_id = VFIO_TYPE1_IOMMU,
-+		.name = "Type 1",
-+		.partial_unmap = false,
-+		.dma_map_func = &vfio_type1_dma_map,
-+		.dma_user_map_func = &vfio_type1_dma_mem_map
-+	},
-+	/* ppc64 IOMMU, otherwise known as spapr */
-+	{
-+		.type_id = VFIO_SPAPR_TCE_v2_IOMMU,
-+		.name = "sPAPR",
-+		.partial_unmap = true,
-+		.dma_map_func = &vfio_spapr_dma_map,
-+		.dma_user_map_func = &vfio_spapr_dma_mem_map
-+	},
-+	/* IOMMU-less mode */
-+	{
-+		.type_id = VFIO_NOIOMMU_IOMMU,
-+		.name = "No-IOMMU",
-+		.partial_unmap = true,
-+		.dma_map_func = &vfio_noiommu_dma_map,
-+		.dma_user_map_func = &vfio_noiommu_dma_mem_map
-+	},
-+};
-+
-+const struct vfio_iommu_ops *
-+vfio_set_iommu_type(int vfio_container_fd)
-+{
-+	for (unsigned int idx = 0; idx < RTE_DIM(iommu_types); idx++) {
-+		const struct vfio_iommu_ops *t = &iommu_types[idx];
-+
-+		int ret = ioctl(vfio_container_fd, VFIO_SET_IOMMU, t->type_id);
-+		if (ret == 0)
-+			return t;
-+		/* not an error, there may be more supported IOMMU types */
-+		EAL_LOG(DEBUG, "Set IOMMU type %d (%s) failed, error %i (%s)", t->type_id, t->name,
-+			errno, strerror(errno));
-+	}
-+	/* if we didn't find a suitable IOMMU type, fail */
-+	return NULL;
-+}
-+
-+static int
-+type1_map(const struct rte_memseg_list *msl, const struct rte_memseg *ms, void *arg)
-+{
-+	struct vfio_container *cfg = arg;
-+
-+	/* skip external memory that isn't a heap */
-+	if (msl->external && !msl->heap)
-+		return 0;
-+
-+	/* skip any segments with invalid IOVA addresses */
-+	if (ms->iova == RTE_BAD_IOVA)
-+		return 0;
-+
-+	return vfio_type1_dma_mem_map(cfg, ms->addr_64, ms->iova, ms->len, 1);
-+}
-+
-+static int
-+vfio_type1_dma_mem_map(struct vfio_container *cfg, uint64_t vaddr, uint64_t iova, uint64_t len,
-+		int do_map)
-+{
-+	struct vfio_iommu_type1_dma_map dma_map;
-+	struct vfio_iommu_type1_dma_unmap dma_unmap;
-+	int ret;
-+
-+	if (do_map != 0) {
-+		memset(&dma_map, 0, sizeof(dma_map));
-+		dma_map.argsz = sizeof(struct vfio_iommu_type1_dma_map);
-+		dma_map.vaddr = vaddr;
-+		dma_map.size = len;
-+		dma_map.iova = iova;
-+		dma_map.flags = VFIO_DMA_MAP_FLAG_READ | VFIO_DMA_MAP_FLAG_WRITE;
-+
-+		ret = ioctl(cfg->container_fd, VFIO_IOMMU_MAP_DMA, &dma_map);
-+		if (ret) {
-+			/**
-+			 * In case the mapping was already done EEXIST will be
-+			 * returned from kernel.
-+			 */
-+			if (errno == EEXIST) {
-+				EAL_LOG(DEBUG, "Memory segment is already mapped, skipping");
-+			} else {
-+				EAL_LOG(ERR, "Cannot set up DMA remapping, error %i (%s)", errno,
-+					strerror(errno));
-+				return -1;
-+			}
-+		}
-+	} else {
-+		memset(&dma_unmap, 0, sizeof(dma_unmap));
-+		dma_unmap.argsz = sizeof(struct vfio_iommu_type1_dma_unmap);
-+		dma_unmap.size = len;
-+		dma_unmap.iova = iova;
-+
-+		ret = ioctl(cfg->container_fd, VFIO_IOMMU_UNMAP_DMA, &dma_unmap);
-+		if (ret) {
-+			EAL_LOG(ERR, "Cannot clear DMA remapping, error %i (%s)", errno,
-+				strerror(errno));
-+			return -1;
-+		} else if (dma_unmap.size != len) {
-+			EAL_LOG(ERR, "Unexpected size %"PRIu64
-+				" of DMA remapping cleared instead of %"PRIu64,
-+				(uint64_t)dma_unmap.size, len);
-+			rte_errno = EIO;
-+			return -1;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+vfio_type1_dma_map(struct vfio_container *cfg)
-+{
-+	return rte_memseg_walk(type1_map, cfg);
-+}
-+
-+/* Track the size of the statically allocated DMA window for SPAPR */
-+static uint64_t spapr_dma_win_len;
-+static uint64_t spapr_dma_win_page_sz;
-+
-+static int
-+vfio_spapr_dma_do_map(struct vfio_container *cfg, uint64_t vaddr, uint64_t iova, uint64_t len,
-+		int do_map)
-+{
-+	struct vfio_iommu_spapr_register_memory reg = {
-+		.argsz = sizeof(reg),
-+		.vaddr = (uintptr_t) vaddr,
-+		.size = len,
-+		.flags = 0
-+	};
-+	int ret;
-+
-+	if (do_map != 0) {
-+		struct vfio_iommu_type1_dma_map dma_map;
-+
-+		if (iova + len > spapr_dma_win_len) {
-+			EAL_LOG(ERR, "DMA map attempt outside DMA window");
-+			return -1;
-+		}
-+
-+		ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_REGISTER_MEMORY, &reg);
-+		if (ret) {
-+			EAL_LOG(ERR, "Cannot register vaddr for IOMMU, error %i (%s)", errno,
-+				strerror(errno));
-+			return -1;
-+		}
-+
-+		memset(&dma_map, 0, sizeof(dma_map));
-+		dma_map.argsz = sizeof(struct vfio_iommu_type1_dma_map);
-+		dma_map.vaddr = vaddr;
-+		dma_map.size = len;
-+		dma_map.iova = iova;
-+		dma_map.flags = VFIO_DMA_MAP_FLAG_READ | VFIO_DMA_MAP_FLAG_WRITE;
-+
-+		ret = ioctl(cfg->container_fd, VFIO_IOMMU_MAP_DMA, &dma_map);
-+		if (ret) {
-+			EAL_LOG(ERR, "Cannot map vaddr for IOMMU, error %i (%s)", errno,
-+				strerror(errno));
-+			return -1;
-+		}
-+
-+	} else {
-+		struct vfio_iommu_type1_dma_unmap dma_unmap;
-+
-+		memset(&dma_unmap, 0, sizeof(dma_unmap));
-+		dma_unmap.argsz = sizeof(struct vfio_iommu_type1_dma_unmap);
-+		dma_unmap.size = len;
-+		dma_unmap.iova = iova;
-+
-+		ret = ioctl(cfg->container_fd, VFIO_IOMMU_UNMAP_DMA, &dma_unmap);
-+		if (ret) {
-+			EAL_LOG(ERR, "Cannot unmap vaddr for IOMMU, error %i (%s)", errno,
-+				strerror(errno));
-+			return -1;
-+		}
-+
-+		ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_UNREGISTER_MEMORY, &reg);
-+		if (ret) {
-+			EAL_LOG(ERR, "Cannot unregister vaddr for IOMMU, error %i (%s)", errno,
-+				strerror(errno));
-+			return -1;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int
-+vfio_spapr_map_walk(const struct rte_memseg_list *msl, const struct rte_memseg *ms, void *arg)
-+{
-+	struct vfio_container *cfg = arg;
-+
-+	/* skip external memory that isn't a heap */
-+	if (msl->external && !msl->heap)
-+		return 0;
-+
-+	/* skip any segments with invalid IOVA addresses */
-+	if (ms->iova == RTE_BAD_IOVA)
-+		return 0;
-+
-+	return vfio_spapr_dma_do_map(cfg, ms->addr_64, ms->iova, ms->len, 1);
-+}
-+
-+struct spapr_size_walk_param {
-+	uint64_t max_va;
-+	uint64_t page_sz;
-+	bool is_user_managed;
-+};
-+
-+/*
-+ * In order to set the DMA window size required for the SPAPR IOMMU
-+ * we need to walk the existing virtual memory allocations as well as
-+ * find the hugepage size used.
-+ */
-+static int
-+vfio_spapr_size_walk(const struct rte_memseg_list *msl, void *arg)
-+{
-+	struct spapr_size_walk_param *param = arg;
-+	uint64_t max = (uint64_t) msl->base_va + (uint64_t) msl->len;
-+
-+	if (msl->external && !msl->heap) {
-+		/* ignore user managed external memory */
-+		param->is_user_managed = true;
-+		return 0;
-+	}
-+
-+	if (max > param->max_va) {
-+		param->page_sz = msl->page_sz;
-+		param->max_va = max;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Find the highest memory address used in physical or virtual address
-+ * space and use that as the top of the DMA window.
-+ */
-+static int
-+find_highest_mem_addr(struct spapr_size_walk_param *param)
-+{
-+	/* find the maximum IOVA address for setting the DMA window size */
-+	if (rte_eal_iova_mode() == RTE_IOVA_PA) {
-+		static const char proc_iomem[] = "/proc/iomem";
-+		static const char str_sysram[] = "System RAM";
-+		uint64_t start, end, max = 0;
-+		char *line = NULL;
-+		char *dash, *space;
-+		size_t line_len;
-+
-+		/*
-+		 * Example "System RAM" in /proc/iomem:
-+		 * 00000000-1fffffffff : System RAM
-+		 * 200000000000-201fffffffff : System RAM
-+		 */
-+		FILE *fd = fopen(proc_iomem, "r");
-+		if (fd == NULL) {
-+			EAL_LOG(ERR, "Cannot open %s", proc_iomem);
-+			return -1;
-+		}
-+		/* Scan /proc/iomem for the highest PA in the system */
-+		while (getline(&line, &line_len, fd) != -1) {
-+			if (strstr(line, str_sysram) == NULL)
-+				continue;
-+
-+			space = strstr(line, " ");
-+			dash = strstr(line, "-");
-+
-+			/* Validate the format of the memory string */
-+			if (space == NULL || dash == NULL || space < dash) {
-+				EAL_LOG(ERR, "Can't parse line \"%s\" in file %s", line,
-+					proc_iomem);
-+				continue;
-+			}
-+
-+			start = strtoull(line, NULL, 16);
-+			end   = strtoull(dash + 1, NULL, 16);
-+			EAL_LOG(DEBUG, "Found system RAM from 0x%" PRIx64 " to 0x%" PRIx64,
-+				start, end);
-+			if (end > max)
-+				max = end;
-+		}
-+		free(line);
-+		fclose(fd);
-+
-+		if (max == 0) {
-+			EAL_LOG(ERR, "Failed to find valid \"System RAM\" entry in file %s",
-+				proc_iomem);
-+			return -1;
-+		}
-+
-+		spapr_dma_win_len = rte_align64pow2(max + 1);
-+		return 0;
-+	} else if (rte_eal_iova_mode() == RTE_IOVA_VA) {
-+		EAL_LOG(DEBUG, "Highest VA address in memseg list is 0x%" PRIx64, param->max_va);
-+		spapr_dma_win_len = rte_align64pow2(param->max_va);
-+		return 0;
-+	}
-+
-+	spapr_dma_win_len = 0;
-+	EAL_LOG(ERR, "Unsupported IOVA mode");
-+	return -1;
-+}
-+
-+
-+/*
-+ * The SPAPRv2 IOMMU supports 2 DMA windows with starting
-+ * address at 0 or 1<<59.  By default, a DMA window is set
-+ * at address 0, 2GB long, with a 4KB page.  For DPDK we
-+ * must remove the default window and setup a new DMA window
-+ * based on the hugepage size and memory requirements of
-+ * the application before we can map memory for DMA.
-+ */
-+static int
-+spapr_dma_win_size(void)
-+{
-+	struct spapr_size_walk_param param;
-+
-+	/* only create DMA window once */
-+	if (spapr_dma_win_len > 0)
-+		return 0;
-+
-+	/* walk the memseg list to find the page size/max VA address */
-+	memset(&param, 0, sizeof(param));
-+	if (rte_memseg_list_walk(vfio_spapr_size_walk, &param) < 0) {
-+		EAL_LOG(ERR, "Failed to walk memseg list for DMA window size");
-+		return -1;
-+	}
-+
-+	/* we can't be sure if DMA window covers external memory */
-+	if (param.is_user_managed)
-+		EAL_LOG(WARNING, "Detected user managed external memory which may not be managed by the IOMMU");
-+
-+	/* check physical/virtual memory size */
-+	if (find_highest_mem_addr(&param) < 0)
-+		return -1;
-+	EAL_LOG(DEBUG, "Setting DMA window size to 0x%" PRIx64, spapr_dma_win_len);
-+	spapr_dma_win_page_sz = param.page_sz;
-+	rte_mem_set_dma_mask(rte_ctz64(spapr_dma_win_len));
-+	return 0;
-+}
-+
-+static int
-+vfio_spapr_create_dma_window(struct vfio_container *cfg)
-+{
-+	struct vfio_iommu_spapr_tce_create create = { .argsz = sizeof(create), };
-+	struct vfio_iommu_spapr_tce_remove remove = { .argsz = sizeof(remove), };
-+	struct vfio_iommu_spapr_tce_info info = { .argsz = sizeof(info), };
-+	int ret;
-+
-+	ret = spapr_dma_win_size();
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_TCE_GET_INFO, &info);
-+	if (ret) {
-+		EAL_LOG(ERR, "Cannot get IOMMU info, error %i (%s)", errno, strerror(errno));
-+		return -1;
-+	}
-+
-+	/*
-+	 * sPAPR v1/v2 IOMMU always has a default 1G DMA window set.  The window
-+	 * can't be changed for v1 but it can be changed for v2. Since DPDK only
-+	 * supports v2, remove the default DMA window so it can be resized.
-+	 */
-+	remove.start_addr = info.dma32_window_start;
-+	ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_TCE_REMOVE, &remove);
-+	if (ret)
-+		return -1;
-+
-+	/* create a new DMA window (start address is not selectable) */
-+	create.window_size = spapr_dma_win_len;
-+	create.page_shift  = rte_ctz64(spapr_dma_win_page_sz);
-+	create.levels = 1;
-+	ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_TCE_CREATE, &create);
-+	/*
-+	 * The vfio_iommu_spapr_tce_info structure was modified in
-+	 * Linux kernel 4.2.0 to add support for the
-+	 * vfio_iommu_spapr_tce_ddw_info structure needed to try
-+	 * multiple table levels.  Skip the attempt if running with
-+	 * an older kernel.
-+	 */
-+	if (ret) {
-+		/* if at first we don't succeed, try more levels */
-+		uint32_t levels;
-+
-+		for (levels = create.levels + 1;
-+			ret && levels <= info.ddw.levels; levels++) {
-+			create.levels = levels;
-+			ret = ioctl(cfg->container_fd, VFIO_IOMMU_SPAPR_TCE_CREATE, &create);
-+		}
-+	}
-+	if (ret) {
-+		EAL_LOG(ERR, "Cannot create new DMA window, error %i (%s)", errno,
-+			strerror(errno));
-+		EAL_LOG(ERR, "Consider using a larger hugepage size if supported by the system");
-+		return -1;
-+	}
-+
-+	/* verify the start address  */
-+	if (create.start_addr != 0) {
-+		EAL_LOG(ERR, "Received unsupported start address 0x%" PRIx64,
-+			(uint64_t)create.start_addr);
-+		return -1;
-+	}
-+	return ret;
-+}
-+
-+static int
-+vfio_spapr_dma_mem_map(struct vfio_container *cfg, uint64_t vaddr, uint64_t iova, uint64_t len,
-+		int do_map)
-+{
-+	int ret = 0;
-+
-+	if (do_map) {
-+		if (vfio_spapr_dma_do_map(cfg, vaddr, iova, len, 1)) {
-+			EAL_LOG(ERR, "Failed to map DMA");
-+			ret = -1;
-+		}
-+	} else {
-+		if (vfio_spapr_dma_do_map(cfg, vaddr, iova, len, 0)) {
-+			EAL_LOG(ERR, "Failed to unmap DMA");
-+			ret = -1;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int
-+vfio_spapr_dma_map(struct vfio_container *cfg)
-+{
-+	if (vfio_spapr_create_dma_window(cfg) < 0) {
-+		EAL_LOG(ERR, "Could not create new DMA window!");
-+		return -1;
-+	}
-+
-+	/* map all existing DPDK segments for DMA */
-+	if (rte_memseg_walk(vfio_spapr_map_walk, cfg) < 0)
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static int
-+vfio_noiommu_dma_map(struct vfio_container *cfg __rte_unused)
-+{
-+	/* No-IOMMU mode does not need DMA mapping */
-+	return 0;
-+}
-+
-+static int
-+vfio_noiommu_dma_mem_map(struct vfio_container *cfg __rte_unused, uint64_t vaddr __rte_unused,
-+		uint64_t iova __rte_unused, uint64_t len __rte_unused, int do_map __rte_unused)
-+{
-+	/* No-IOMMU mode does not need DMA mapping */
-+	return 0;
-+}
-+
-+int
-+vfio_has_supported_extensions(int vfio_container_fd)
-+{
-+	unsigned int n_extensions = 0;
-+	int ret;
-+
-+	for (unsigned int idx = 0; idx < RTE_DIM(iommu_types); idx++) {
-+		const struct vfio_iommu_ops *t = &iommu_types[idx];
-+
-+		ret = ioctl(vfio_container_fd, VFIO_CHECK_EXTENSION, t->type_id);
-+		if (ret < 0) {
-+			EAL_LOG(ERR, "Could not get IOMMU type, error %i (%s)", errno,
-+				strerror(errno));
-+			return -1;
-+		} else if (ret == 1) {
-+			/* we found a supported extension */
-+			n_extensions++;
-+		}
-+		EAL_LOG(DEBUG, "IOMMU type %d (%s) is %s", t->type_id, t->name,
-+			ret ? "supported" : "not supported");
-+	}
-+
-+	/* if we didn't find any supported IOMMU types, fail */
-+	if (n_extensions == 0)
-+		return -1;
-+
-+	return 0;
-+}
-diff --git a/lib/eal/linux/meson.build b/lib/eal/linux/meson.build
-index 29ba313218..5ec8eddaa2 100644
---- a/lib/eal/linux/meson.build
-+++ b/lib/eal/linux/meson.build
-@@ -16,6 +16,7 @@ sources += files(
-         'eal_thread.c',
-         'eal_timer.c',
-         'eal_vfio.c',
-+        'eal_vfio_group.c',
-         'eal_vfio_mp_sync.c',
- )
- 
+ /**
+  * @internal
+- * Release a device mapped to a VFIO-managed I/O MMU group.
++ * Release a device managed by VFIO driver.
+  *
+  * @param sysfs_base
+- *   sysfs path prefix.
+- *
++ *   Sysfs path prefix.
+  * @param dev_addr
+- *   device location.
+- *
++ *   Device identifier.
+  * @param fd
+- *   VFIO fd.
++ *   A previously set up VFIO file descriptor.
+  *
+  * @return
+  *   0 on success.
+- *   <0 on failure.
++ *   <0 on failure, rte_errno is set.
++ *
++ * Possible rte_errno values include:
++ * - EINVAL  - Invalid parameters.
+  */
+ __rte_internal
+ int dev_vfio_release_device(const char *sysfs_base, const char *dev_addr, int fd);
+@@ -149,18 +152,19 @@ int dev_vfio_noiommu_is_enabled(void);
+  * Parse IOMMU group number for a device.
+  *
+  * @param sysfs_base
+- *   sysfs path prefix.
+- *
++ *   Sysfs path prefix.
+  * @param dev_addr
+- *   device location.
+- *
++ *   Device identifier.
+  * @param iommu_group_num
+- *   iommu group number
++ *   Pointer to where IOMMU group number will be stored.
+  *
+  * @return
+  *  >0 on success
+  *   0 for non-existent group or VFIO
+- *  <0 for errors
++ *   <0 on failure, rte_errno is set.
++ *
++ * Possible rte_errno values include:
++ * - EINVAL  - Invalid parameters.
+  */
+ __rte_internal
+ int
+@@ -181,7 +185,10 @@ dev_vfio_get_group_num(const char *sysfs_base, const char *dev_addr, int *iommu_
+  *
+  * @return
+  *   0 on success.
+- *   <0 on failure.
++ *   <0 on failure, rte_errno is set.
++ *
++ * Possible rte_errno values include:
++ * - EINVAL  - Invalid parameters.
+  */
+ __rte_internal
+ int
+@@ -251,7 +258,10 @@ dev_vfio_container_destroy(int container_fd);
+  *
+  * @return
+  *   0 on success.
+- *   <0 on failure.
++ *   <0 on failure, rte_errno is set.
++ *
++ * Possible rte_errno values include:
++ * - EINVAL  - Invalid container file descriptor.
+  */
+ __rte_internal
+ int
+@@ -263,21 +273,20 @@ dev_vfio_container_assign_device(int vfio_container_fd, const char *sysfs_base,
+  * Perform DMA mapping for devices in a container.
+  *
+  * @param container_fd
+- *   the specified container fd. Use DEV_VFIO_DEFAULT_CONTAINER_FD to
+- *   use the default container.
+- *
++ *   Container file descriptor. Use DEV_VFIO_DEFAULT_CONTAINER_FD to use the default container.
+  * @param vaddr
+  *   Starting virtual address of memory to be mapped.
+- *
+  * @param iova
+  *   Starting IOVA address of memory to be mapped.
+- *
+  * @param len
+  *   Length of memory segment being mapped.
+  *
+  * @return
+- *    0 if successful
+- *   <0 if failed
++ *   0 on success.
++ *   <0 on failure, rte_errno is set.
++ *
++ * Possible rte_errno values include:
++ * - EINVAL  - Invalid parameters.
+  */
+ __rte_internal
+ int
+@@ -288,21 +297,20 @@ dev_vfio_container_dma_map(int container_fd, uint64_t vaddr, uint64_t iova, uint
+  * Perform DMA unmapping for devices in a container.
+  *
+  * @param container_fd
+- *   the specified container fd. Use DEV_VFIO_DEFAULT_CONTAINER_FD to
+- *   use the default container.
+- *
++ *   Container file descriptor. Use DEV_VFIO_DEFAULT_CONTAINER_FD to use the default container.
+  * @param vaddr
+  *   Starting virtual address of memory to be unmapped.
+- *
+  * @param iova
+  *   Starting IOVA address of memory to be unmapped.
+- *
+  * @param len
+  *   Length of memory segment being unmapped.
+  *
+  * @return
+- *    0 if successful
+- *   <0 if failed
++ *   0 on success.
++ *   <0 on failure, rte_errno is set.
++ *
++ * Possible rte_errno values include:
++ * - EINVAL  - Invalid parameters.
+  */
+ __rte_internal
+ int
 -- 
 2.54.0
 
