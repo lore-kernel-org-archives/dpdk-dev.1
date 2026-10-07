@@ -2,52 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 402C0CA5FFC
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 10:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F7CCA5FFC
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 10:50:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3AA29410D4;
-	Wed,  7 Oct 2026 12:50:34 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5253041133;
+	Wed,  7 Oct 2026 12:50:35 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id B2B5C40144
- for <dev@dpdk.org>; Wed,  7 Oct 2026 12:50:31 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 77B3140EE5
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 12:50:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791370232; x=1822906232;
+ t=1791370234; x=1822906234;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=Khuv0igx3Hk4Yshnhl3kdjWkMtwhkjPt2qSQ2LPZl2Q=;
- b=cFp2NPsd9JoEoNyaTbsI8o7Njt89V1TMOcwJM4afGG6D+66GVTwcUxxS
- DKkEC9fL9WO3eHUf56bprDEtJba7BPhz/POZMQPz6BEVPqNypo8WXmMtK
- TtKvbfWqXKnw+a9uEOr/DLUhFp1ouL9wDkbOYfourxPgo2IhvpeUdUuae
- LdhZTBKU92e0whL3ugesU8/sbUy8R4vfPPisOxu7iQmBoIfBDYMiCaQdN
- EiLalU31SFWwl/1K4a1GvIbO5PN8Ss3i+5G+jgE34QbEn3hjcXSWNQSxX
- KR6NVgmXXJZmdO/+sJNqV6H0UKwrX9BvyQ1tOsORFgpqCZCV7PEPiGJFn g==;
-X-CSE-ConnectionGUID: ChLmLpW0QX2CRxh+zhPOFA==
-X-CSE-MsgGUID: Nb40uP7DSMm3cPULXh34iw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="121796"
+ bh=PvpunPCnUrXsOqInURoFYrzw4CKngL0TO7+8n9KNSXY=;
+ b=ElJo8r+TZH1G/SEkGDMnxxchRCdwXFtlPpMQy+8/uQ2C4Ooosr2HgId3
+ lX4mphKFwDx3n8fG9T/JHlhcGWuUwyPNdwALuXn9w3ycoRyEs3muSJvp1
+ 9NVSd7u92k2XO+F4BCR+yGHU3rVfAja/loDV9ueDaUHvyaV3QpfOIWlzc
+ 2vmiEcMt60biC7Jb1IuVoK4Y+bDmutNeB82LVoGSMQeutQ9pKZdAxskOH
+ AYrpxCfbDX4lNUi6l5SGl+iS/b5gmG1Q5Ec91AJWouN5hleWaGf1+SK5L
+ KvChefbQp+p+4lDB4fg8aAzo59nrPyX+H3R5w9NsN/7/t9O2tdcqL4KOw w==;
+X-CSE-ConnectionGUID: EwM06JeJTBOFOeoVElaq5A==
+X-CSE-MsgGUID: 29PpGLu+Sre+P0crgvDZDQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="121802"
 X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; 
-   d="scan'208";a="121796"
+   d="scan'208";a="121802"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Oct 2026 03:50:31 -0700
-X-CSE-ConnectionGUID: YG71/tIGQKGXRySgsT2XWw==
-X-CSE-MsgGUID: lIvswdfVRfeCrQ7ZsVRLOA==
+ 07 Oct 2026 03:50:33 -0700
+X-CSE-ConnectionGUID: iu937A26RTuKUUY2BmsoKg==
+X-CSE-MsgGUID: PWJgXiuYTqS1QAayySX9Bg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; d="scan'208";a="280652034"
+X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; d="scan'208";a="280652043"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 07 Oct 2026 03:50:30 -0700
+ by orviesa003.jf.intel.com with ESMTP; 07 Oct 2026 03:50:32 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Ori Kam <orika@nvidia.com>,
- Thomas Monjalon <thomas@monjalon.net>,
+To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v5 01/25] ethdev: add default mask query to flow
-Date: Wed,  7 Oct 2026 11:49:56 +0100
-Message-ID: <338aa9ecd08cbdaf39ec5696afa9b6c619d66e53.1791369980.git.anatoly.burakov@intel.com>
+Subject: [PATCH v5 02/25] ethdev: add flow graph API
+Date: Wed,  7 Oct 2026 11:49:57 +0100
+Message-ID: <6c85a27d632e3ff906b4cb198ee6f2a0c1b73d9e.1791369980.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1791369979.git.anatoly.burakov@intel.com>
  <cover.1791369979.git.anatoly.burakov@intel.com>
 References: 
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -62,313 +62,1257 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rte_flow API defines that if the mask provided with the flow item is
-NULL, a default mask should be used where applicable. There is no API to
-get such mask, so add this API to rte_flow.
+This commit adds a flow graph parsing API. This is a helper API intended to
+help ethdev drivers implement rte_flow parsers, as common usages map to
+graph traversal problem very well.
+
+Features provided by the API:
+- Flow graph, edge, and node definitions
+- Graph traversal logic
+- Declarative validation against common flow item types
+- Per-node validation and state processing callbacks
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- doc/guides/rel_notes/release_26_11.rst |   5 +
- lib/ethdev/rte_flow.c                  | 207 ++++++++++++++++++-------
- lib/ethdev/rte_flow.h                  |  15 ++
- 3 files changed, 167 insertions(+), 60 deletions(-)
+ doc/guides/prog_guide/ethdev/flow_graph.rst | 750 ++++++++++++++++++++
+ doc/guides/prog_guide/ethdev/index.rst      |   1 +
+ doc/guides/rel_notes/release_26_11.rst      |   5 +
+ lib/ethdev/flow_graph.c                     | 263 +++++++
+ lib/ethdev/flow_graph.h                     | 149 ++++
+ lib/ethdev/meson.build                      |   2 +
+ 6 files changed, 1170 insertions(+)
+ create mode 100644 doc/guides/prog_guide/ethdev/flow_graph.rst
+ create mode 100644 lib/ethdev/flow_graph.c
+ create mode 100644 lib/ethdev/flow_graph.h
 
+diff --git a/doc/guides/prog_guide/ethdev/flow_graph.rst b/doc/guides/prog_guide/ethdev/flow_graph.rst
+new file mode 100644
+index 00000000000..daa5d86f511
+--- /dev/null
++++ b/doc/guides/prog_guide/ethdev/flow_graph.rst
+@@ -0,0 +1,750 @@
++..  SPDX-License-Identifier: BSD-3-Clause
++    Copyright(c) 2026 Intel Corporation
++
++Flow Graph Parser
++=================
++
++Introduction
++------------
++
++The flow graph parser is a helper library for PMD drivers that implements ``rte_flow`` pattern matching.
++It lets a driver declare the protocol sequences it supports as a directed graph of nodes and edges.
++It then validates and extracts fields from an ``rte_flow_item`` pattern in a single traversal.
++
++The library is declared in ``flow_graph.h`` and built as part of ethdev.
++It is an internal API, available to drivers only.
++Parse diagnostics are logged at debug level using the ethdev log type.
++
++Scope and Limitations
++~~~~~~~~~~~~~~~~~~~~~
++
++Because the parser is graph-based, it is well suited for matching *protocol stacks*.
++These are sequences of protocol headers such as ``ETH / IPv4 / TCP``.
++Any pattern that can be expressed as "from protocol A, transitions to protocol B or C are allowed" fits naturally into the graph model.
++
++The library is **not** designed to cover every ``rte_flow`` item type.
++Items that do not represent a position in a protocol stack do not have a natural place in a protocol graph.
++This includes conntrack state, meter color, and other metadata items.
++Such items are best handled outside the graph, either before or after the graph parse call.
++
++Defining a Graph
++----------------
++
++A graph consists of three parts:
++
++1. An **enum** that assigns a numeric index to every node.
++2. A **node array** (``struct flow_graph_node[]``) indexed by that enum.
++3. An **edge array** (``struct flow_graph_edge[]``) also indexed by that enum, describing allowed transitions.
++
++These parts are bundled together in a ``struct flow_graph``.
++
++The running example used throughout this guide models the following protocol graph::
++
++   START -> ETH -> [VLAN] -> (IPv4 | IPv6) -> [(TCP | UDP | SCTP)] -> END
++
++Brackets ``[...]`` denote optional items.
++Parentheses ``(...)`` denote a required choice between alternatives.
++The key ideas are:
++
++* ``ETH`` is required after ``START``.
++* After ``ETH``, an optional ``VLAN`` may appear, but the pattern must then see an IP layer.
++* After an IP layer, an optional transport layer may appear; it may be TCP, UDP, or SCTP, after which the pattern reaches ``END``.
++
++Node Enum
++~~~~~~~~~
++
++Every node needs a stable index.
++The first node **must** be at index ``FLOW_GRAPH_NODE_FIRST`` (which is 0).
++This is the *start node*.
++It is used only as a traversal anchor and must not carry callbacks.
++
++.. code-block:: c
++
++   enum example_node_id {
++       EXAMPLE_NODE_START = FLOW_GRAPH_NODE_FIRST,
++       EXAMPLE_NODE_ETH,
++       EXAMPLE_NODE_VLAN,
++       EXAMPLE_NODE_IPV4,
++       EXAMPLE_NODE_IPV6,
++       EXAMPLE_NODE_TCP,
++       EXAMPLE_NODE_UDP,
++       EXAMPLE_NODE_SCTP,
++       EXAMPLE_NODE_END,
++       /* keep last */
++       EXAMPLE_NODE_MAX,
++   };
++
++Node Definitions
++~~~~~~~~~~~~~~~~
++
++Each node maps to one ``rte_flow_item_type``.
++It can also carry a *validate* callback, a *process* callback, and a set of *constraints*.
++The the ``END`` node can also have callbacks to perform end-of-match processing.
++
++A minimal skeleton (callbacks and constraints are added in later sections):
++
++.. code-block:: c
++
++   const struct flow_graph example_graph = {
++       .nodes = (struct flow_graph_node[]){
++           [EXAMPLE_NODE_START] = {
++               .name = "START",
++               /* Start node: no type, no callbacks */
++           },
++           [EXAMPLE_NODE_ETH] = {
++               .name  = "ETH",
++               .type  = RTE_FLOW_ITEM_TYPE_ETH,
++           },
++           [EXAMPLE_NODE_VLAN] = {
++               .name  = "VLAN",
++               .type  = RTE_FLOW_ITEM_TYPE_VLAN,
++           },
++           [EXAMPLE_NODE_IPV4] = {
++               .name  = "IPV4",
++               .type  = RTE_FLOW_ITEM_TYPE_IPV4,
++           },
++           [EXAMPLE_NODE_IPV6] = {
++               .name  = "IPV6",
++               .type  = RTE_FLOW_ITEM_TYPE_IPV6,
++           },
++           [EXAMPLE_NODE_TCP] = {
++               .name  = "TCP",
++               .type  = RTE_FLOW_ITEM_TYPE_TCP,
++           },
++           [EXAMPLE_NODE_UDP] = {
++               .name  = "UDP",
++               .type  = RTE_FLOW_ITEM_TYPE_UDP,
++           },
++           [EXAMPLE_NODE_SCTP] = {
++               .name  = "SCTP",
++               .type  = RTE_FLOW_ITEM_TYPE_SCTP,
++           },
++           [EXAMPLE_NODE_END] = {
++               .name  = "END",
++               .type  = RTE_FLOW_ITEM_TYPE_END,
++           },
++       },
++   };
++
++Edge Definitions
++~~~~~~~~~~~~~~~~
++
++Edges express which nodes may follow the current one.
++Every edge list is terminated by the ``FLOW_GRAPH_NODE_EDGE_END`` sentinel.
++All non-``END`` nodes **must** have an edge list.
++The ``END`` node itself does not need one.
++
++.. code-block:: c
++
++   const struct flow_graph example_graph = {
++       .nodes = (struct flow_graph_node[]){
++           /* ... same nodes as above ... */
++       },
++       .edges = (struct flow_graph_edge[]){
++           [EXAMPLE_NODE_START] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_ETH,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_ETH] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_VLAN,
++                   EXAMPLE_NODE_IPV4,
++                   EXAMPLE_NODE_IPV6,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_VLAN] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_IPV4,
++                   EXAMPLE_NODE_IPV6,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_IPV4] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_TCP,
++                   EXAMPLE_NODE_UDP,
++                   EXAMPLE_NODE_SCTP,
++                   EXAMPLE_NODE_END,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_IPV6] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_TCP,
++                   EXAMPLE_NODE_UDP,
++                   EXAMPLE_NODE_SCTP,
++                   EXAMPLE_NODE_END,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_TCP] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_END,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_UDP] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_END,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_SCTP] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_END,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++       },
++   };
++
++Reading the edges back:
++
++* From ``START``, the parser can only reach ``ETH``, which makes ``ETH`` required.
++* From ``ETH``, the parser can reach ``VLAN``, ``IPV4``, or ``IPV6``, which makes ``VLAN`` optional.
++* From ``IPV4`` or ``IPV6``, the parser can reach ``TCP``, ``UDP``, ``SCTP``, or ``END``, which makes the transport layer optional.
++
++Assembling the Graph
++~~~~~~~~~~~~~~~~~~~~
++
++With nodes and edges defined inline, assembling the graph is just a matter of
++combining the two arrays into a single compound literal:
++
++.. code-block:: c
++
++   const struct flow_graph example_graph = {
++       .nodes = (struct flow_graph_node[]){
++           [EXAMPLE_NODE_START] = {
++               .name = "START"
++           },
++           [EXAMPLE_NODE_ETH]   = {
++               .name = "ETH",
++               .type = RTE_FLOW_ITEM_TYPE_ETH
++           },
++           /* ... remaining nodes ... */
++           [EXAMPLE_NODE_END]   = {
++               .name = "END",
++               .type = RTE_FLOW_ITEM_TYPE_END
++           },
++       },
++       .edges = (struct flow_graph_edge[]){
++           [EXAMPLE_NODE_START] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_ETH,
++                   FLOW_GRAPH_NODE_EDGE_END
++               }
++           },
++           /* ... remaining edges ... */
++       },
++   };
++
++Callbacks
++---------
++
++The graph calls up to two callbacks on every visited node: *validate* and *process*.
++
++Both callbacks share the same return convention.
++On success they must return ``0``.
++On failure they must call ``rte_flow_error_set`` to record a descriptive error and return its result.
++
++Validate Callback
++~~~~~~~~~~~~~~~~~
++
++.. code-block:: c
++
++   typedef int (*flow_graph_node_validate_fn)(
++       const void *ctx,
++       const struct rte_flow_item *item,
++       struct rte_flow_error *error);
++
++This callback receives a **read-only** context pointer.
++The canonical intent is that it should check whether the item's spec, mask, and last values are acceptable for the driver.
++On failure it returns the result of ``rte_flow_error_set`` (see the return convention above).
++
++It is recommended to use this callback for **all checks that can reject a rule**.
++This includes unsupported mask bits, conflicting field combinations, hardware limitations, and other applicable criteria.
++
++Process Callback
++~~~~~~~~~~~~~~~~
++
++.. code-block:: c
++
++   typedef int (*flow_graph_node_process_fn)(
++       void *ctx,
++       const struct rte_flow_item *item,
++       struct rte_flow_error *error);
++
++This callback receives a **mutable** context pointer.
++The canonical expectation is that it should extract the fields needed for hardware programming.
++It should then store extracted data in the driver's context structure.
++On the rare failure path it returns the result of ``rte_flow_error_set`` (see the return convention above).
++
++It is recommended to use this callback for the **happy path**.
++For example, it can copy addresses, ports, and protocol IDs into the driver context so they can be programmed later.
++
++Defining a Context Structure
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++The opaque ``ctx`` pointer passed to every callback is driver-defined.
++A typical context accumulates the parsed protocol fields:
++
++.. code-block:: c
++
++   struct example_parsed_flow {
++       /* L2 */
++       struct rte_ether_addr dst_mac;
++       bool has_vlan;
++       uint16_t vlan_tci;
++
++       /* L3 */
++       bool is_ipv6;
++       rte_be32_t ipv4_src;
++       rte_be32_t ipv4_dst;
++       uint8_t ipv6_src[16];
++       uint8_t ipv6_dst[16];
++
++       /* L4 */
++       enum rte_flow_item_type l4_proto;
++       rte_be16_t src_port;
++       rte_be16_t dst_port;
++   };
++
++These fields are meant to reflect the structure used by the driver to programming hardware with.
++
++Callback Example
++~~~~~~~~~~~~~~~~
++
++Below is a validate/process pair for the IPv4 node.
++The validate callback rejects unsupported mask bits.
++The process callback copies addresses into the context:
++
++.. code-block:: c
++
++   static int
++   example_validate_ipv4(const void *ctx __rte_unused,
++                         const struct rte_flow_item *item,
++                         struct rte_flow_error *error)
++   {
++       const struct rte_flow_item_ipv4 *mask = item->mask;
++
++       /* spec is guaranteed by node constraints, mask may be NULL */
++       if (mask == NULL)
++           rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR, &mask, sizeof(mask),
++                   (const void *)(uintptr_t)item->type, NULL);
++
++       if (mask->hdr.version_ihl ||
++           mask->hdr.type_of_service ||
++           mask->hdr.total_length ||
++           mask->hdr.packet_id ||
++           mask->hdr.fragment_offset ||
++           mask->hdr.time_to_live ||
++           mask->hdr.next_proto_id ||
++           mask->hdr.hdr_checksum) {
++           return rte_flow_error_set(error, EINVAL,
++                   RTE_FLOW_ERROR_TYPE_ITEM, item,
++                   "Only src/dst addresses supported");
++       }
++       return 0;
++   }
++
++   static int
++   example_process_ipv4(void *ctx,
++                        const struct rte_flow_item *item,
++                        struct rte_flow_error *error __rte_unused)
++   {
++       struct example_parsed_flow *parsed = ctx;
++       const struct rte_flow_item_ipv4 *spec = item->spec;
++
++       parsed->is_ipv6 = false;
++       if (spec != NULL) {
++           parsed->ipv4_src = spec->hdr.src_addr;
++           parsed->ipv4_dst = spec->hdr.dst_addr;
++       }
++       return 0;
++   }
++
++Add the callbacks to the node definition:
++
++.. code-block:: c
++
++   [EXAMPLE_NODE_IPV4] = {
++       .name      = "IPV4",
++       .type      = RTE_FLOW_ITEM_TYPE_IPV4,
++       .validate  = example_validate_ipv4,
++       .process   = example_process_ipv4,
++   },
++
++Node Constraints
++----------------
++
++Many nodes share common requirements about which combination of ``spec``, ``mask``, and ``last`` pointers an item must carry.
++Instead of checking these in every validate callback, they can be declared via the ``constraints`` field.
++The field uses ``flow_graph_node_expect`` flags.
++
++Available constraint flags (may be ORed together):
++
++``FLOW_GRAPH_NODE_EXPECT_NONE``
++   Default. Any valid combination is accepted (empty, spec with optional mask,
++   or spec and last with optional mask).
++
++``FLOW_GRAPH_NODE_EXPECT_EMPTY``
++   The item must have ``spec == NULL``, ``mask == NULL``, and
++   ``last == NULL``.
++
++``FLOW_GRAPH_NODE_EXPECT_SPEC``
++   ``spec`` is required, ``mask`` is optional; ``last`` must be NULL.
++
++``FLOW_GRAPH_NODE_EXPECT_RANGE``
++   ``spec`` and ``last`` are required, ``mask`` is optional.
++
++Items that are invalid per the rte_flow API (``mask`` or ``last`` without ``spec``)
++are always rejected, regardless of node constraints.
++When ``spec`` is set but ``mask`` is NULL, the item type's default mask applies
++(see ``RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR``).
++
++Multiple flags can be ORed together.
++The item is accepted if **any one** of the flagged constraints is satisfied.
++The purpose is to express the difference between "must" (i.e. accept ONLY this), and "may" (i.e. accept this OR that).
++
++For example, an IPv4 node that requires a spec, with or without an explicit mask:
++
++.. code-block:: c
++
++   [EXAMPLE_NODE_IPV4] = {
++       .name        = "IPV4",
++       .type        = RTE_FLOW_ITEM_TYPE_IPV4,
++       .validate    = example_validate_ipv4,
++       .process     = example_process_ipv4,
++       .constraints = FLOW_GRAPH_NODE_EXPECT_SPEC,
++   },
++
++An Ethernet node that may appear empty (no spec/mask) or with spec+mask:
++
++.. code-block:: c
++
++   [EXAMPLE_NODE_ETH] = {
++       .name        = "ETH",
++       .type        = RTE_FLOW_ITEM_TYPE_ETH,
++       .validate    = example_validate_eth,
++       .process     = example_process_eth,
++       .constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
++                      FLOW_GRAPH_NODE_EXPECT_SPEC,
++   },
++
++Constraints are checked **before** the validate callback is invoked.
++
++Ignoring Item Types
++~~~~~~~~~~~~~~~~~~~
++
++The ``ignore_nodes`` field on ``struct flow_graph`` is an optional complement to node constraints.
++When the pattern may contain item types that are irrelevant to the driver, list them in ``ignore_nodes``.
++For example, metadata items like ``RTE_FLOW_ITEM_TYPE_MARK`` do not represent a protocol header.
++The parser skips ignored items silently without advancing the current graph position:
++
++.. code-block:: c
++
++   const struct flow_graph example_graph = {
++       /* ... nodes and edges ... */
++       .ignore_nodes = (enum rte_flow_item_type[]){
++           RTE_FLOW_ITEM_TYPE_MARK,
++           RTE_FLOW_ITEM_TYPE_END,
++       },
++   };
++
++``RTE_FLOW_ITEM_TYPE_VOID`` is always ignored regardless of this list.
++Omit ``ignore_nodes`` entirely when no additional item types need to be skipped.
++
++Calling the Parser
++------------------
++
++``flow_graph_parse`` walks the pattern against the graph:
++
++.. code-block:: c
++
++   int
++   flow_graph_parse(const struct flow_graph *graph,
++                        const struct rte_flow_item *pattern,
++                        struct rte_flow_error *error,
++                        void *ctx);
++
++A typical call site looks like this:
++
++.. code-block:: c
++
++   struct example_parsed_flow parsed;
++   int ret;
++
++   memset(&parsed, 0, sizeof(parsed));
++
++   ret = flow_graph_parse(&example_graph, pattern, error, &parsed);
++   if (ret != 0)
++       return ret;
++
++   /* 'parsed' now contains the extracted protocol fields */
++
++The function returns success or failure, with ``error`` populated.
++
++Error conditions:
++
++* **Graph is NULL** — for example, when the graph pointer itself is not provided.
++* **Pattern is NULL**.
++* **Unsupported transition** — when an item type has no matching edge from the current node.
++    This is the primary way the graph rejects unsupported protocol sequences.
++* **Constraint failure** — when the spec, mask, and last combination does not satisfy the node's declared constraints.
++* **Validate callback failure** — when driver-specific validation rejects the item.
++* **Process callback failure** — when driver-specific extraction path fails.
++
++.. warning::
++
++    Malformed graph tables (for example invalid node indices, missing sentinels,
++    or otherwise inconsistent driver-defined graph structures) are considered to be a driver implementation bug.
++    Graphs are trusted by default: driver-owned graph structures are expected to be valid and are not fully validated.
++
++The traversal processes items in order, skipping ignored types.
++After the last non-``END`` item, the parser looks for an ``END`` node reachable from the current position.
++It then visits that node and runs its callbacks, if any.
++This means drivers can attach a process callback to the ``END`` node for post-traversal finalization.
++
++Putting It All Together
++-----------------------
++
++The complete graph definition with callbacks and constraints:
++
++.. code-block:: c
++
++   const struct flow_graph example_graph = {
++       .nodes = (struct flow_graph_node[]){
++           [EXAMPLE_NODE_START] = {
++               .name = "START",
++           },
++           [EXAMPLE_NODE_ETH] = {
++               .name        = "ETH",
++               .type        = RTE_FLOW_ITEM_TYPE_ETH,
++               .validate    = example_validate_eth,
++               .process     = example_process_eth,
++               .constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY
++                            | FLOW_GRAPH_NODE_EXPECT_SPEC,
++           },
++           [EXAMPLE_NODE_VLAN] = {
++               .name        = "VLAN",
++               .type        = RTE_FLOW_ITEM_TYPE_VLAN,
++               .process     = example_process_vlan,
++               .constraints = FLOW_GRAPH_NODE_EXPECT_SPEC,
++           },
++           [EXAMPLE_NODE_IPV4] = {
++               .name        = "IPV4",
++               .type        = RTE_FLOW_ITEM_TYPE_IPV4,
++               .validate    = example_validate_ipv4,
++               .process     = example_process_ipv4,
++               .constraints = FLOW_GRAPH_NODE_EXPECT_SPEC,
++           },
++           [EXAMPLE_NODE_IPV6] = {
++               .name        = "IPV6",
++               .type        = RTE_FLOW_ITEM_TYPE_IPV6,
++               .validate    = example_validate_ipv6,
++               .process     = example_process_ipv6,
++               .constraints = FLOW_GRAPH_NODE_EXPECT_SPEC,
++           },
++           [EXAMPLE_NODE_TCP] = {
++               .name        = "TCP",
++               .type        = RTE_FLOW_ITEM_TYPE_TCP,
++               .validate    = example_validate_tcp,
++               .process     = example_process_tcp,
++               .constraints = FLOW_GRAPH_NODE_EXPECT_SPEC,
++           },
++           [EXAMPLE_NODE_UDP] = {
++               .name        = "UDP",
++               .type        = RTE_FLOW_ITEM_TYPE_UDP,
++               .validate    = example_validate_udp,
++               .process     = example_process_udp,
++               .constraints = FLOW_GRAPH_NODE_EXPECT_SPEC,
++           },
++           [EXAMPLE_NODE_SCTP] = {
++               .name        = "SCTP",
++               .type        = RTE_FLOW_ITEM_TYPE_SCTP,
++               .process     = example_process_sctp,
++               .constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY
++                            | FLOW_GRAPH_NODE_EXPECT_SPEC,
++           },
++           [EXAMPLE_NODE_END] = {
++               .name = "END",
++               .type = RTE_FLOW_ITEM_TYPE_END,
++           },
++       },
++       .edges = (struct flow_graph_edge[]){
++           [EXAMPLE_NODE_START] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_ETH,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_ETH] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_VLAN,
++                   EXAMPLE_NODE_IPV4,
++                   EXAMPLE_NODE_IPV6,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_VLAN] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_IPV4,
++                   EXAMPLE_NODE_IPV6,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_IPV4] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_TCP,
++                   EXAMPLE_NODE_UDP,
++                   EXAMPLE_NODE_SCTP,
++                   EXAMPLE_NODE_END,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_IPV6] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_TCP,
++                   EXAMPLE_NODE_UDP,
++                   EXAMPLE_NODE_SCTP,
++                   EXAMPLE_NODE_END,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_TCP] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_END,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_UDP] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_END,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [EXAMPLE_NODE_SCTP] = {
++               .next = (size_t[]){
++                   EXAMPLE_NODE_END,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++       },
++   };
++
++
++Tunnel Graphs and Repeated Item Types
++-------------------------------------
++
++Tunneled patterns often repeat the same ``rte_flow_item_type`` in outer and inner headers.
++A simple representative example is a TCP-IPv4 over GTP-U pattern::
++
++   ETH -> IPV4 -> UDP -> GTPU -> IPV4 -> TCP
++
++The graph library supports this naturally.
++Multiple nodes may use the same ``type`` value, as long as they are distinct nodes in the graph and reached through different edges.
++
++For tunnel parsing, the recommended style is to model repeated protocol types as separate inner/outer nodes, for example ``OUTER_IPV4`` and ``INNER_IPV4``.
++This makes the graph intent explicit, keeps callback logic clear, and avoids unexpected graph paths due to loops.
++
++.. code-block:: c
++
++   enum tunnel_node_id {
++       TUNNEL_NODE_START = FLOW_GRAPH_NODE_FIRST,
++       TUNNEL_NODE_ETH,
++       TUNNEL_NODE_OUTER_IPV4,
++       TUNNEL_NODE_TCP,
++       TUNNEL_NODE_UDP,
++       TUNNEL_NODE_GTPU,
++       TUNNEL_NODE_INNER_IPV4,
++       TUNNEL_NODE_END,
++       TUNNEL_NODE_MAX,
++   };
++
++   const struct flow_graph tunnel_graph = {
++       .nodes = (struct flow_graph_node[]){
++           /* Minimal topology example: callbacks and constraints are omitted. */
++           [TUNNEL_NODE_START] = { .name = "START" },
++           [TUNNEL_NODE_ETH] = {
++               .name = "ETH",
++               .type = RTE_FLOW_ITEM_TYPE_ETH,
++           },
++           [TUNNEL_NODE_OUTER_IPV4] = {
++               .name = "OUTER_IPV4",
++               .type = RTE_FLOW_ITEM_TYPE_IPV4,
++           },
++           [TUNNEL_NODE_UDP] = {
++               .name = "UDP",
++               .type = RTE_FLOW_ITEM_TYPE_UDP,
++           },
++           [TUNNEL_NODE_GTPU] = {
++               .name = "GTPU",
++               .type = RTE_FLOW_ITEM_TYPE_GTPU,
++           },
++           [TUNNEL_NODE_INNER_IPV4] = {
++               .name = "INNER_IPV4",
++               .type = RTE_FLOW_ITEM_TYPE_IPV4,
++           },
++           [TUNNEL_NODE_TCP] = {
++               .name = "TCP",
++               .type = RTE_FLOW_ITEM_TYPE_TCP,
++           },
++           [TUNNEL_NODE_END] = {
++               .name = "END",
++               .type = RTE_FLOW_ITEM_TYPE_END,
++           },
++       },
++       .edges = (struct flow_graph_edge[]){
++           [TUNNEL_NODE_START] = {
++               .next = (size_t[]){
++                   TUNNEL_NODE_ETH,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [TUNNEL_NODE_ETH] = {
++               .next = (size_t[]){
++                   TUNNEL_NODE_OUTER_IPV4,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [TUNNEL_NODE_OUTER_IPV4] = {
++               .next = (size_t[]){
++                   TUNNEL_NODE_UDP,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [TUNNEL_NODE_UDP] = {
++               .next = (size_t[]){
++                   TUNNEL_NODE_GTPU,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [TUNNEL_NODE_GTPU] = {
++               .next = (size_t[]){
++                   TUNNEL_NODE_INNER_IPV4,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [TUNNEL_NODE_INNER_IPV4] = {
++               .next = (size_t[]){
++                   TUNNEL_NODE_TCP,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++           [TUNNEL_NODE_TCP] = {
++               .next = (size_t[]){
++                   TUNNEL_NODE_END,
++                   FLOW_GRAPH_NODE_EDGE_END,
++               },
++           },
++       },
++   };
++
++In other words, traversal follows graph edges (node-to-node), while node matching is done against each candidate node's ``rte_flow_item_type``.
++That combination allows repeated protocol layers to be represented cleanly with separate nodes for different parsing contexts.
++
++Although arbitrary loops are possible in the graph, tunnel protocol graphs are usually easier to reason about when repeated item types are split into explicit inner/outer nodes.
++It is not recommended to create loops in the graph, as these loops will be unbounded.
+diff --git a/doc/guides/prog_guide/ethdev/index.rst b/doc/guides/prog_guide/ethdev/index.rst
+index 392ced0a2ef..b41fd045bb3 100644
+--- a/doc/guides/prog_guide/ethdev/index.rst
++++ b/doc/guides/prog_guide/ethdev/index.rst
+@@ -10,6 +10,7 @@ Ethernet Device Library
+     ethdev
+     switch_representation
+     flow_offload
++    flow_graph
+     traffic_metering_and_policing
+     traffic_management
+     qos_framework
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 3fb7eac25db..c1656895996 100644
+index c1656895996..b23eb389f7d 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -64,6 +64,11 @@ New Features
+@@ -69,6 +69,11 @@ New Features
+   Added ``RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR`` conversion operation
+   to ``rte_flow_conv()`` to retrieve the default mask of a flow item type.
  
-   Added ``rte_vlan_insert_tpid()`` to the net library.
- 
-+* **Added flow item default mask lookup.**
++* **Added internal ethdev flow graph parser helper API.**
 +
-+  Added ``RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR`` conversion operation
-+  to ``rte_flow_conv()`` to retrieve the default mask of a flow item type.
++  Added internal ``flow_graph`` API in ethdev
++  for PMD drivers to build graph-based flow pattern parsers.
 +
  * **Updated AF_XDP driver.**
  
    * Changed the default device plugin endpoint path used when
-diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
-index 1056cfd2c55..0ebf59165d4 100644
---- a/lib/ethdev/rte_flow.c
-+++ b/lib/ethdev/rte_flow.c
-@@ -37,6 +37,7 @@ struct rte_flow_desc_data {
- 	const char *name;
- 	size_t size;
- 	size_t (*desc_fn)(void *dst, const void *src, size_t size);
-+	const void *default_mask; /* items only, NULL if none */
- };
- 
- /**
-@@ -101,81 +102,146 @@ rte_flow_item_flex_conv(void *buf, const void *data, size_t size)
- 		.desc_fn = fn,               \
- 	}
- 
-+#define MK_FLOW_ITEM_MASK(t, s, m) \
-+	[RTE_FLOW_ITEM_TYPE_ ## t] = { \
-+		.name = # t, \
-+		.size = s, \
-+		.desc_fn = NULL, \
-+		.default_mask = &(m), \
-+	}
+diff --git a/lib/ethdev/flow_graph.c b/lib/ethdev/flow_graph.c
+new file mode 100644
+index 00000000000..3dd7bf1d948
+--- /dev/null
++++ b/lib/ethdev/flow_graph.c
+@@ -0,0 +1,263 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Intel Corporation
++ */
 +
- /** Information about known flow pattern items. */
- static const struct rte_flow_desc_data rte_flow_desc_item[] = {
- 	MK_FLOW_ITEM(END, 0),
- 	MK_FLOW_ITEM(VOID, 0),
- 	MK_FLOW_ITEM(INVERT, 0),
--	MK_FLOW_ITEM(ANY, sizeof(struct rte_flow_item_any)),
--	MK_FLOW_ITEM(PORT_ID, sizeof(struct rte_flow_item_port_id)),
--	MK_FLOW_ITEM(RAW, sizeof(struct rte_flow_item_raw)),
--	MK_FLOW_ITEM(ETH, sizeof(struct rte_flow_item_eth)),
--	MK_FLOW_ITEM(VLAN, sizeof(struct rte_flow_item_vlan)),
--	MK_FLOW_ITEM(IPV4, sizeof(struct rte_flow_item_ipv4)),
--	MK_FLOW_ITEM(IPV6, sizeof(struct rte_flow_item_ipv6)),
--	MK_FLOW_ITEM(ICMP, sizeof(struct rte_flow_item_icmp)),
--	MK_FLOW_ITEM(UDP, sizeof(struct rte_flow_item_udp)),
--	MK_FLOW_ITEM(TCP, sizeof(struct rte_flow_item_tcp)),
--	MK_FLOW_ITEM(SCTP, sizeof(struct rte_flow_item_sctp)),
--	MK_FLOW_ITEM(VXLAN, sizeof(struct rte_flow_item_vxlan)),
--	MK_FLOW_ITEM(E_TAG, sizeof(struct rte_flow_item_e_tag)),
--	MK_FLOW_ITEM(NVGRE, sizeof(struct rte_flow_item_nvgre)),
--	MK_FLOW_ITEM(MPLS, sizeof(struct rte_flow_item_mpls)),
--	MK_FLOW_ITEM(GRE, sizeof(struct rte_flow_item_gre)),
--	MK_FLOW_ITEM(FUZZY, sizeof(struct rte_flow_item_fuzzy)),
--	MK_FLOW_ITEM(GTP, sizeof(struct rte_flow_item_gtp)),
--	MK_FLOW_ITEM(GTPC, sizeof(struct rte_flow_item_gtp)),
--	MK_FLOW_ITEM(GTPU, sizeof(struct rte_flow_item_gtp)),
--	MK_FLOW_ITEM(ESP, sizeof(struct rte_flow_item_esp)),
--	MK_FLOW_ITEM(GENEVE, sizeof(struct rte_flow_item_geneve)),
--	MK_FLOW_ITEM(VXLAN_GPE, sizeof(struct rte_flow_item_vxlan_gpe)),
--	MK_FLOW_ITEM(ARP_ETH_IPV4, sizeof(struct rte_flow_item_arp_eth_ipv4)),
--	MK_FLOW_ITEM(IPV6_EXT, sizeof(struct rte_flow_item_ipv6_ext)),
-+	MK_FLOW_ITEM_MASK(ANY, sizeof(struct rte_flow_item_any),
-+			rte_flow_item_any_mask),
-+	MK_FLOW_ITEM_MASK(PORT_ID, sizeof(struct rte_flow_item_port_id),
-+			rte_flow_item_port_id_mask),
-+	MK_FLOW_ITEM_MASK(RAW, sizeof(struct rte_flow_item_raw),
-+			rte_flow_item_raw_mask),
-+	MK_FLOW_ITEM_MASK(ETH, sizeof(struct rte_flow_item_eth),
-+			rte_flow_item_eth_mask),
-+	MK_FLOW_ITEM_MASK(VLAN, sizeof(struct rte_flow_item_vlan),
-+			rte_flow_item_vlan_mask),
-+	MK_FLOW_ITEM_MASK(IPV4, sizeof(struct rte_flow_item_ipv4),
-+			rte_flow_item_ipv4_mask),
-+	MK_FLOW_ITEM_MASK(IPV6, sizeof(struct rte_flow_item_ipv6),
-+			rte_flow_item_ipv6_mask),
-+	MK_FLOW_ITEM_MASK(ICMP, sizeof(struct rte_flow_item_icmp),
-+			rte_flow_item_icmp_mask),
-+	MK_FLOW_ITEM_MASK(UDP, sizeof(struct rte_flow_item_udp),
-+			rte_flow_item_udp_mask),
-+	MK_FLOW_ITEM_MASK(TCP, sizeof(struct rte_flow_item_tcp),
-+			rte_flow_item_tcp_mask),
-+	MK_FLOW_ITEM_MASK(SCTP, sizeof(struct rte_flow_item_sctp),
-+			rte_flow_item_sctp_mask),
-+	MK_FLOW_ITEM_MASK(VXLAN, sizeof(struct rte_flow_item_vxlan),
-+			rte_flow_item_vxlan_mask),
-+	MK_FLOW_ITEM_MASK(E_TAG, sizeof(struct rte_flow_item_e_tag),
-+			rte_flow_item_e_tag_mask),
-+	MK_FLOW_ITEM_MASK(NVGRE, sizeof(struct rte_flow_item_nvgre),
-+			rte_flow_item_nvgre_mask),
-+	MK_FLOW_ITEM_MASK(MPLS, sizeof(struct rte_flow_item_mpls),
-+			rte_flow_item_mpls_mask),
-+	MK_FLOW_ITEM_MASK(GRE, sizeof(struct rte_flow_item_gre),
-+			rte_flow_item_gre_mask),
-+	MK_FLOW_ITEM_MASK(FUZZY, sizeof(struct rte_flow_item_fuzzy),
-+			rte_flow_item_fuzzy_mask),
-+	MK_FLOW_ITEM_MASK(GTP, sizeof(struct rte_flow_item_gtp),
-+			rte_flow_item_gtp_mask),
-+	MK_FLOW_ITEM_MASK(GTPC, sizeof(struct rte_flow_item_gtp),
-+			rte_flow_item_gtp_mask),
-+	MK_FLOW_ITEM_MASK(GTPU, sizeof(struct rte_flow_item_gtp),
-+			rte_flow_item_gtp_mask),
-+	MK_FLOW_ITEM_MASK(ESP, sizeof(struct rte_flow_item_esp),
-+			rte_flow_item_esp_mask),
-+	MK_FLOW_ITEM_MASK(GENEVE, sizeof(struct rte_flow_item_geneve),
-+			rte_flow_item_geneve_mask),
-+	MK_FLOW_ITEM_MASK(VXLAN_GPE, sizeof(struct rte_flow_item_vxlan_gpe),
-+			rte_flow_item_vxlan_gpe_mask),
-+	MK_FLOW_ITEM_MASK(ARP_ETH_IPV4, sizeof(struct rte_flow_item_arp_eth_ipv4),
-+			rte_flow_item_arp_eth_ipv4_mask),
-+	MK_FLOW_ITEM_MASK(IPV6_EXT, sizeof(struct rte_flow_item_ipv6_ext),
-+			rte_flow_item_ipv6_ext_mask),
- 	MK_FLOW_ITEM(IPV6_FRAG_EXT, sizeof(struct rte_flow_item_ipv6_frag_ext)),
--	MK_FLOW_ITEM(ICMP6, sizeof(struct rte_flow_item_icmp6)),
-+	MK_FLOW_ITEM_MASK(ICMP6, sizeof(struct rte_flow_item_icmp6),
-+			rte_flow_item_icmp6_mask),
- 	MK_FLOW_ITEM(ICMP6_ECHO_REQUEST, sizeof(struct rte_flow_item_icmp6_echo)),
- 	MK_FLOW_ITEM(ICMP6_ECHO_REPLY, sizeof(struct rte_flow_item_icmp6_echo)),
--	MK_FLOW_ITEM(ICMP6_ND_NS, sizeof(struct rte_flow_item_icmp6_nd_ns)),
--	MK_FLOW_ITEM(ICMP6_ND_NA, sizeof(struct rte_flow_item_icmp6_nd_na)),
--	MK_FLOW_ITEM(ICMP6_ND_OPT, sizeof(struct rte_flow_item_icmp6_nd_opt)),
--	MK_FLOW_ITEM(ICMP6_ND_OPT_SLA_ETH,
--		     sizeof(struct rte_flow_item_icmp6_nd_opt_sla_eth)),
--	MK_FLOW_ITEM(ICMP6_ND_OPT_TLA_ETH,
--		     sizeof(struct rte_flow_item_icmp6_nd_opt_tla_eth)),
--	MK_FLOW_ITEM(MARK, sizeof(struct rte_flow_item_mark)),
--	MK_FLOW_ITEM(META, sizeof(struct rte_flow_item_meta)),
--	MK_FLOW_ITEM(RANDOM, sizeof(struct rte_flow_item_random)),
--	MK_FLOW_ITEM(TAG, sizeof(struct rte_flow_item_tag)),
-+	MK_FLOW_ITEM_MASK(ICMP6_ND_NS, sizeof(struct rte_flow_item_icmp6_nd_ns),
-+			rte_flow_item_icmp6_nd_ns_mask),
-+	MK_FLOW_ITEM_MASK(ICMP6_ND_NA, sizeof(struct rte_flow_item_icmp6_nd_na),
-+			rte_flow_item_icmp6_nd_na_mask),
-+	MK_FLOW_ITEM_MASK(ICMP6_ND_OPT, sizeof(struct rte_flow_item_icmp6_nd_opt),
-+			rte_flow_item_icmp6_nd_opt_mask),
-+	MK_FLOW_ITEM_MASK(ICMP6_ND_OPT_SLA_ETH,
-+			sizeof(struct rte_flow_item_icmp6_nd_opt_sla_eth),
-+			rte_flow_item_icmp6_nd_opt_sla_eth_mask),
-+	MK_FLOW_ITEM_MASK(ICMP6_ND_OPT_TLA_ETH,
-+			sizeof(struct rte_flow_item_icmp6_nd_opt_tla_eth),
-+			rte_flow_item_icmp6_nd_opt_tla_eth_mask),
-+	MK_FLOW_ITEM_MASK(MARK, sizeof(struct rte_flow_item_mark),
-+			rte_flow_item_mark_mask),
-+	MK_FLOW_ITEM_MASK(META, sizeof(struct rte_flow_item_meta),
-+			rte_flow_item_meta_mask),
-+	MK_FLOW_ITEM_MASK(RANDOM, sizeof(struct rte_flow_item_random),
-+			rte_flow_item_random_mask),
-+	MK_FLOW_ITEM_MASK(TAG, sizeof(struct rte_flow_item_tag),
-+			rte_flow_item_tag_mask),
- 	MK_FLOW_ITEM(GRE_KEY, sizeof(rte_be32_t)),
- 	MK_FLOW_ITEM(GRE_OPTION, sizeof(struct rte_flow_item_gre_opt)),
--	MK_FLOW_ITEM(GTP_PSC, sizeof(struct rte_flow_item_gtp_psc)),
-+	MK_FLOW_ITEM_MASK(GTP_PSC, sizeof(struct rte_flow_item_gtp_psc),
-+			rte_flow_item_gtp_psc_mask),
- 	MK_FLOW_ITEM(PPPOES, sizeof(struct rte_flow_item_pppoe)),
- 	MK_FLOW_ITEM(PPPOED, sizeof(struct rte_flow_item_pppoe)),
--	MK_FLOW_ITEM(PPPOE_PROTO_ID,
--			sizeof(struct rte_flow_item_pppoe_proto_id)),
--	MK_FLOW_ITEM(NSH, sizeof(struct rte_flow_item_nsh)),
--	MK_FLOW_ITEM(IGMP, sizeof(struct rte_flow_item_igmp)),
--	MK_FLOW_ITEM(AH, sizeof(struct rte_flow_item_ah)),
--	MK_FLOW_ITEM(HIGIG2, sizeof(struct rte_flow_item_higig2_hdr)),
--	MK_FLOW_ITEM(L2TPV3OIP, sizeof(struct rte_flow_item_l2tpv3oip)),
--	MK_FLOW_ITEM(PFCP, sizeof(struct rte_flow_item_pfcp)),
--	MK_FLOW_ITEM(ECPRI, sizeof(struct rte_flow_item_ecpri)),
--	MK_FLOW_ITEM(GENEVE_OPT, sizeof(struct rte_flow_item_geneve_opt)),
--	MK_FLOW_ITEM(INTEGRITY, sizeof(struct rte_flow_item_integrity)),
--	MK_FLOW_ITEM(CONNTRACK, sizeof(uint32_t)),
--	MK_FLOW_ITEM(PORT_REPRESENTOR, sizeof(struct rte_flow_item_ethdev)),
--	MK_FLOW_ITEM(REPRESENTED_PORT, sizeof(struct rte_flow_item_ethdev)),
-+	MK_FLOW_ITEM_MASK(PPPOE_PROTO_ID,
-+			sizeof(struct rte_flow_item_pppoe_proto_id),
-+			rte_flow_item_pppoe_proto_id_mask),
-+	MK_FLOW_ITEM_MASK(NSH, sizeof(struct rte_flow_item_nsh),
-+			rte_flow_item_nsh_mask),
-+	MK_FLOW_ITEM_MASK(IGMP, sizeof(struct rte_flow_item_igmp),
-+			rte_flow_item_igmp_mask),
-+	MK_FLOW_ITEM_MASK(AH, sizeof(struct rte_flow_item_ah),
-+			rte_flow_item_ah_mask),
-+	MK_FLOW_ITEM_MASK(HIGIG2, sizeof(struct rte_flow_item_higig2_hdr),
-+			rte_flow_item_higig2_hdr_mask),
-+	MK_FLOW_ITEM_MASK(L2TPV3OIP, sizeof(struct rte_flow_item_l2tpv3oip),
-+			rte_flow_item_l2tpv3oip_mask),
-+	MK_FLOW_ITEM_MASK(PFCP, sizeof(struct rte_flow_item_pfcp),
-+			rte_flow_item_pfcp_mask),
-+	MK_FLOW_ITEM_MASK(ECPRI, sizeof(struct rte_flow_item_ecpri),
-+			rte_flow_item_ecpri_mask),
-+	MK_FLOW_ITEM_MASK(GENEVE_OPT, sizeof(struct rte_flow_item_geneve_opt),
-+			rte_flow_item_geneve_opt_mask),
-+	MK_FLOW_ITEM_MASK(INTEGRITY, sizeof(struct rte_flow_item_integrity),
-+			rte_flow_item_integrity_mask),
-+	MK_FLOW_ITEM_MASK(CONNTRACK, sizeof(uint32_t),
-+			rte_flow_item_conntrack_mask),
-+	MK_FLOW_ITEM_MASK(PORT_REPRESENTOR, sizeof(struct rte_flow_item_ethdev),
-+			rte_flow_item_ethdev_mask),
-+	MK_FLOW_ITEM_MASK(REPRESENTED_PORT, sizeof(struct rte_flow_item_ethdev),
-+			rte_flow_item_ethdev_mask),
- 	MK_FLOW_ITEM_FN(FLEX, sizeof(struct rte_flow_item_flex),
- 			rte_flow_item_flex_conv),
--	MK_FLOW_ITEM(L2TPV2, sizeof(struct rte_flow_item_l2tpv2)),
--	MK_FLOW_ITEM(PPP, sizeof(struct rte_flow_item_ppp)),
--	MK_FLOW_ITEM(METER_COLOR, sizeof(struct rte_flow_item_meter_color)),
-+	MK_FLOW_ITEM_MASK(L2TPV2, sizeof(struct rte_flow_item_l2tpv2),
-+			rte_flow_item_l2tpv2_mask),
-+	MK_FLOW_ITEM_MASK(PPP, sizeof(struct rte_flow_item_ppp),
-+			rte_flow_item_ppp_mask),
-+	MK_FLOW_ITEM_MASK(METER_COLOR, sizeof(struct rte_flow_item_meter_color),
-+			rte_flow_item_meter_color_mask),
- 	MK_FLOW_ITEM(IPV6_ROUTING_EXT, sizeof(struct rte_flow_item_ipv6_routing_ext)),
--	MK_FLOW_ITEM(QUOTA, sizeof(struct rte_flow_item_quota)),
--	MK_FLOW_ITEM(AGGR_AFFINITY, sizeof(struct rte_flow_item_aggr_affinity)),
--	MK_FLOW_ITEM(TX_QUEUE, sizeof(struct rte_flow_item_tx_queue)),
--	MK_FLOW_ITEM(IB_BTH, sizeof(struct rte_flow_item_ib_bth)),
--	MK_FLOW_ITEM(PTYPE, sizeof(struct rte_flow_item_ptype)),
-+	MK_FLOW_ITEM_MASK(QUOTA, sizeof(struct rte_flow_item_quota),
-+			rte_flow_item_quota_mask),
-+	MK_FLOW_ITEM_MASK(AGGR_AFFINITY, sizeof(struct rte_flow_item_aggr_affinity),
-+			rte_flow_item_aggr_affinity_mask),
-+	MK_FLOW_ITEM_MASK(TX_QUEUE, sizeof(struct rte_flow_item_tx_queue),
-+			rte_flow_item_tx_queue_mask),
-+	MK_FLOW_ITEM_MASK(IB_BTH, sizeof(struct rte_flow_item_ib_bth),
-+			rte_flow_item_ib_bth_mask),
-+	MK_FLOW_ITEM_MASK(PTYPE, sizeof(struct rte_flow_item_ptype),
-+			rte_flow_item_ptype_mask),
- 	MK_FLOW_ITEM(COMPARE, sizeof(struct rte_flow_item_compare)),
- };
- 
-@@ -1118,6 +1184,24 @@ rte_flow_conv_name(int is_action,
- 	return sizeof(const char **);
- }
- 
-+/** Retrieve the default mask pointer of a flow item type. */
-+static int
-+rte_flow_conv_item_default_mask(void *dst,
-+				const size_t size,
-+				const void *src,
-+				struct rte_flow_error *error)
++#include <errno.h>
++#include <stdbool.h>
++#include <stddef.h>
++#include <stdint.h>
++
++#include <eal_export.h>
++#include <rte_common.h>
++#include <rte_errno.h>
++
++#include "rte_ethdev.h"
++#include "rte_flow.h"
++#include "rte_flow_driver.h"
++#include "flow_graph.h"
++
++#define FLOW_GRAPH_LOG(level, fmt, ...) \
++	RTE_ETHDEV_LOG_LINE(level, "FLOW GRAPH: %s(): " fmt, __func__, ##__VA_ARGS__)
++
++static const char *
++flow_graph_item_type_to_str(enum rte_flow_item_type type)
 +{
-+	unsigned int type = (uintptr_t)src;
++	const char *name;
++	int ret;
 +
-+	if (type >= RTE_DIM(rte_flow_desc_item))
-+		return rte_flow_error_set
-+			(error, EINVAL, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-+			 "unknown item type to retrieve the default mask of");
-+	if (size >= sizeof(const void **))
-+		*((const void **)dst) = rte_flow_desc_item[type].default_mask;
-+	return sizeof(const void **);
++	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_NAME_PTR,
++			&name, sizeof(name), (const void *)(uintptr_t)type, NULL);
++	if (ret < 0)
++		return "UNKNOWN";
++
++	return name;
 +}
 +
- /** Helper function to convert flow API objects. */
- RTE_EXPORT_SYMBOL(rte_flow_conv)
- int
-@@ -1179,6 +1263,9 @@ rte_flow_conv(enum rte_flow_conv_op op,
- 	case RTE_FLOW_CONV_OP_ACTION_NAME_PTR:
- 		ret = rte_flow_conv_name(1, 1, dst, size, src, error);
- 		break;
-+	case RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR:
-+		ret = rte_flow_conv_item_default_mask(dst, size, src, error);
-+		break;
- 	default:
- 		ret = rte_flow_error_set
- 		(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-diff --git a/lib/ethdev/rte_flow.h b/lib/ethdev/rte_flow.h
-index 1bfe1b3f619..df8101e4395 100644
---- a/lib/ethdev/rte_flow.h
-+++ b/lib/ethdev/rte_flow.h
-@@ -4411,6 +4411,21 @@ enum rte_flow_conv_op {
- 	 *   @code const char ** @endcode
- 	 */
- 	RTE_FLOW_CONV_OP_ACTION_NAME_PTR,
++static bool
++_flow_graph_node_is_expected(const struct flow_graph_node *node,
++		const struct rte_flow_item *item, struct rte_flow_error *error)
++{
++	flow_graph_node_expect_t c = node->constraints;
++	bool has_spec = (item->spec != NULL);
++	bool has_mask = (item->mask != NULL);
++	bool has_last = (item->last != NULL);
++	const char *msg;
 +
-+	/**
-+	 * Convert item type to pointer to its default mask.
-+	 *
-+	 * Writes a pointer to rte_flow_item_{name}_mask to @p dst,
-+	 * or NULL if the item type has no default mask. The mask itself is not
-+	 * copied; instead, a unique pointer to an internal static constant
-+	 * storage is written to @p dst.
-+	 *
-+	 * - @p src type:
-+	 *   @code (const void *)enum rte_flow_item_type @endcode
-+	 * - @p dst type:
-+	 *   @code const void ** @endcode
-+	 */
-+	RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR,
- };
- 
- /**
++	/* mask or last without spec is invalid per rte_flow API */
++	if (!has_spec && (has_mask || has_last)) {
++		msg = has_mask ? "Unexpected mask without spec in flow item" :
++				"Unexpected last without spec in flow item";
++		goto fail;
++	}
++
++	if (c == FLOW_GRAPH_NODE_EXPECT_NONE)
++		return true;
++	if ((c & FLOW_GRAPH_NODE_EXPECT_EMPTY) && !has_spec)
++		return true;
++	if ((c & FLOW_GRAPH_NODE_EXPECT_SPEC) && has_spec && !has_last)
++		return true;
++	if ((c & FLOW_GRAPH_NODE_EXPECT_RANGE) && has_spec && has_last)
++		return true;
++
++	if (!has_spec)
++		msg = "Missing spec in flow item";
++	else if (has_last)
++		msg = "Unexpected last in flow item";
++	else if (c & FLOW_GRAPH_NODE_EXPECT_RANGE)
++		msg = "Missing last in flow item";
++	else
++		msg = "Unexpected spec in flow item";
++fail:
++	rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM, item, msg);
++
++	return false;
++}
++
++static bool
++_flow_graph_node_is_ignored(const struct flow_graph *graph,
++		enum rte_flow_item_type fi_type)
++{
++	const enum rte_flow_item_type *ignored;
++
++	if (fi_type == RTE_FLOW_ITEM_TYPE_VOID)
++		return true;
++
++	if (graph->ignore_nodes == NULL)
++		return false;
++
++	for (ignored = graph->ignore_nodes; *ignored != RTE_FLOW_ITEM_TYPE_END; ignored++) {
++		if (*ignored == fi_type)
++			return true;
++	}
++
++	return false;
++}
++
++static size_t
++_flow_graph_get_node_index(const struct flow_graph *graph,
++		const struct flow_graph_node *node)
++{
++	return (size_t)(node - graph->nodes);
++}
++
++static bool
++_flow_graph_node_is_valid(const struct flow_graph *graph,
++		const struct flow_graph_node *node,
++		struct rte_flow_error *error)
++{
++	size_t node_idx;
++
++	if (node == NULL) {
++		rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
++				"Flow graph node pointer is NULL");
++		return false;
++	}
++
++	if (node->name == NULL) {
++		rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, node,
++				"Flow graph node name is not defined");
++		return false;
++	}
++
++	node_idx = _flow_graph_get_node_index(graph, node);
++
++	/* first node can't have callbacks because there's no flow item */
++	if (node_idx == FLOW_GRAPH_NODE_FIRST &&
++			(node->validate != NULL || node->process != NULL)) {
++		rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, node,
++				"Flow graph start node callbacks are not allowed");
++		return false;
++	}
++
++	/* all non-END nodes must have edges */
++	if ((node->type != RTE_FLOW_ITEM_TYPE_END || node_idx == FLOW_GRAPH_NODE_FIRST) &&
++			graph->edges[node_idx].next == NULL) {
++		rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, node,
++				"Flow graph edge list is not defined for non-END node");
++		return false;
++	}
++
++	return true;
++}
++
++static const struct flow_graph_node *
++_flow_graph_find_next_node(const struct flow_graph *graph,
++		const struct flow_graph_node *cur_node,
++		const struct rte_flow_item *item,
++		struct rte_flow_error *error)
++{
++	enum rte_flow_item_type next_type = item->type;
++	const size_t *next_nodes;
++	size_t cur_idx, edge_idx;
++
++	if (!_flow_graph_node_is_valid(graph, cur_node, error))
++		return NULL;
++
++	cur_idx = _flow_graph_get_node_index(graph, cur_node);
++	next_nodes = graph->edges[cur_idx].next;
++
++	for (edge_idx = 0; next_nodes[edge_idx] != FLOW_GRAPH_NODE_EDGE_END; edge_idx++) {
++		const struct flow_graph_node *tmp =
++				&graph->nodes[next_nodes[edge_idx]];
++		if (!_flow_graph_node_is_valid(graph, tmp, error))
++			return NULL;
++		if (tmp->type == next_type)
++			return tmp;
++	}
++
++	rte_flow_error_set(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_ITEM,
++		item, "Pattern item not supported");
++
++	return NULL;
++}
++
++static int
++_flow_graph_visit_node(const struct flow_graph_node *node, void *ctx,
++		const struct rte_flow_item *item,
++		struct rte_flow_error *error)
++{
++	int ret;
++
++	if (!_flow_graph_node_is_expected(node, item, error))
++		return -rte_errno;
++
++	if (node->validate != NULL) {
++		ret = node->validate(ctx, item, error);
++		if (ret != 0)
++			return ret;
++	}
++
++	if (node->process != NULL) {
++		ret = node->process(ctx, item, error);
++		if (ret != 0)
++			return ret;
++	}
++
++	return 0;
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(flow_graph_parse)
++int
++flow_graph_parse(const struct flow_graph *graph,
++		const struct rte_flow_item *pattern,
++		struct rte_flow_error *error,
++		void *ctx)
++{
++	const struct flow_graph_node *cur_node;
++	const struct rte_flow_item *item;
++	struct rte_flow_error local_error = {0};
++	int ret;
++
++	/* error may be NULL, but we want the message for logging */
++	if (error == NULL)
++		error = &local_error;
++
++	if (graph == NULL || graph->nodes == NULL || graph->edges == NULL) {
++		FLOW_GRAPH_LOG(DEBUG, "flow graph is not defined");
++		return rte_flow_error_set(error, ENOTSUP,
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
++				"Flow graph is not defined");
++	}
++	if (pattern == NULL) {
++		FLOW_GRAPH_LOG(DEBUG, "flow pattern is NULL");
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ITEM, NULL,
++				"Flow pattern is NULL");
++	}
++
++	/* use start node as traversal anchor */
++	cur_node = &graph->nodes[FLOW_GRAPH_NODE_FIRST];
++
++	item = pattern;
++	do {
++		FLOW_GRAPH_LOG(DEBUG, "visiting item %s",
++				flow_graph_item_type_to_str(item->type));
++
++		if (_flow_graph_node_is_ignored(graph, item->type)) {
++			FLOW_GRAPH_LOG(DEBUG, "ignored item %s",
++					flow_graph_item_type_to_str(item->type));
++			continue;
++		}
++
++		cur_node = _flow_graph_find_next_node(graph, cur_node, item, error);
++		if (cur_node == NULL) {
++			ret = -rte_errno;
++			goto fail;
++		}
++		FLOW_GRAPH_LOG(DEBUG, "processing node %s", cur_node->name);
++
++		ret = _flow_graph_visit_node(cur_node, ctx, item, error);
++		if (ret != 0)
++			goto fail;
++	} while ((item++)->type != RTE_FLOW_ITEM_TYPE_END);
++
++	return 0;
++fail:
++	FLOW_GRAPH_LOG(DEBUG, "item %s: %s",
++			flow_graph_item_type_to_str(item->type), error->message);
++	return ret;
++}
+diff --git a/lib/ethdev/flow_graph.h b/lib/ethdev/flow_graph.h
+new file mode 100644
+index 00000000000..bb414b9a48a
+--- /dev/null
++++ b/lib/ethdev/flow_graph.h
+@@ -0,0 +1,149 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Intel Corporation
++ */
++
++#ifndef _FLOW_GRAPH_H_
++#define _FLOW_GRAPH_H_
++
++/**
++ * @file
++ * Flow Graph
++ *
++ * Graph-based rte_flow pattern parser for drivers.
++ *
++ * @warning
++ * Internal API for drivers only. Applications must not use it.
++ */
++
++#include <rte_compat.h>
++#include <rte_flow.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#define FLOW_GRAPH_NODE_FIRST (0)
++/* Edge array termination sentinel (not a valid node index). */
++#define FLOW_GRAPH_NODE_EDGE_END SIZE_MAX
++
++/**
++ * Common item constraints a node can declare instead of checking them in callbacks.
++ * Flags may be ORed; the item is accepted if any one of them is satisfied.
++ *
++ * Not having spec is invalid. A NULL mask can be accepted but the driver must
++ * interpret it as the item's default mask (see RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR).
++ */
++enum flow_graph_node_expect {
++	FLOW_GRAPH_NODE_EXPECT_NONE =  0,            /**< Any valid spec/mask/last combination. */
++	FLOW_GRAPH_NODE_EXPECT_EMPTY = RTE_BIT32(0), /**< spec, mask, last must be NULL. */
++	FLOW_GRAPH_NODE_EXPECT_SPEC =  RTE_BIT32(1), /**< spec required, mask optional, last must be NULL. */
++	FLOW_GRAPH_NODE_EXPECT_RANGE = RTE_BIT32(2), /**< spec and last required, mask optional. */
++};
++
++/* ORed combination of flow_graph_node_expect flags. */
++typedef uint32_t flow_graph_node_expect_t;
++
++/**
++ * Node validation callback.
++ *
++ * Called after the node's constraints are met. Should perform all
++ * driver-specific checks on the item.
++ *
++ * @param ctx
++ *   Driver context passed to flow_graph_parse().
++ * @param item
++ *   Flow item being validated.
++ * @param error
++ *   Flow error to fill on failure.
++ * @return
++ *   0 on success, or the return value of rte_flow_error_set() on failure.
++ */
++typedef int (*flow_graph_node_validate_fn)(
++	const void *ctx,
++	const struct rte_flow_item *item,
++	struct rte_flow_error *error);
++
++/**
++ * Node processing callback.
++ *
++ * Called after validation succeeds. Extracts item fields into driver state.
++ *
++ * @param ctx
++ *   Driver context passed to flow_graph_parse().
++ * @param item
++ *   Flow item to process.
++ * @param error
++ *   Flow error to fill on failure.
++ * @return
++ *   0 on success, or the return value of rte_flow_error_set() on failure.
++ */
++typedef int (*flow_graph_node_process_fn)(
++	void *ctx,
++	const struct rte_flow_item *item,
++	struct rte_flow_error *error);
++
++/**
++ * Graph node definition.
++ *
++ * Node validity rules:
++ * - all nodes must define a name,
++ * - all non-END nodes must define an edge list,
++ * - start node must not define validation/processing callbacks.
++ */
++struct flow_graph_node {
++	const char *name;                      /**< Node name, used for logging. */
++	enum rte_flow_item_type type;          /**< Flow item type to match. */
++	flow_graph_node_expect_t constraints;  /**< Common item constraints (ORed). */
++	flow_graph_node_validate_fn validate;  /**< Validation callback (optional). */
++	flow_graph_node_process_fn process;    /**< Processing callback (optional). */
++};
++
++/**
++ * Graph edge definition.
++ *
++ * Allowed transitions from a node. Successor item types must be unique,
++ * as the parser does not backtrack.
++ */
++struct flow_graph_edge {
++	size_t *next;  /**< Array of valid successor nodes, terminated by FLOW_GRAPH_NODE_EDGE_END. */
++};
++
++/**
++ * Driver-defined flow graph.
++ *
++ * Node and edge tables are trusted to be well-formed and are not hardened
++ * against malformed definitions.
++ */
++struct flow_graph {
++	struct flow_graph_node *nodes;
++	struct flow_graph_edge *edges;
++	enum rte_flow_item_type *ignore_nodes; /**< Additional node types to ignore, terminated by RTE_FLOW_ITEM_TYPE_END. */
++};
++
++/**
++ * Parse a flow pattern using the flow graph.
++ *
++ * Walks the pattern through the graph, invoking node callbacks for each item.
++ * VOID items and items in the graph's ignore list are skipped.
++ *
++ * @param graph
++ *   Driver's flow graph.
++ * @param pattern
++ *   Pattern terminated by RTE_FLOW_ITEM_TYPE_END.
++ * @param error
++ *   Flow error to fill on failure (may be NULL).
++ * @param ctx
++ *   Driver context passed to node callbacks.
++ * @return
++ *   0 on success, negative errno on failure.
++ */
++__rte_internal
++int
++flow_graph_parse(const struct flow_graph *graph, const struct rte_flow_item *pattern,
++		struct rte_flow_error *error, void *ctx);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _FLOW_GRAPH_H_ */
+diff --git a/lib/ethdev/meson.build b/lib/ethdev/meson.build
+index 8ba6c708a24..069bb7ec792 100644
+--- a/lib/ethdev/meson.build
++++ b/lib/ethdev/meson.build
+@@ -6,6 +6,7 @@ sources = files(
+         'ethdev_private.c',
+         'ethdev_profile.c',
+         'ethdev_trace_points.c',
++        'flow_graph.c',
+         'rte_class_eth.c',
+         'rte_ethdev.c',
+         'rte_ethdev_cman.c',
+@@ -40,6 +41,7 @@ driver_sdk_headers += files(
+         'ethdev_pci.h',
+         'ethdev_vdev.h',
+         'rte_flow_driver.h',
++        'flow_graph.h',
+         'rte_mtr_driver.h',
+         'rte_tm_driver.h',
+ )
 -- 
 2.52.0
 
