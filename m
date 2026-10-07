@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B97F7CA6004
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 21:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 226BBCA6004
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 21:41:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1E4A7427BD;
-	Wed,  7 Oct 2026 23:41:24 +0200 (CEST)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
- [209.85.214.174])
- by mails.dpdk.org (Postfix) with ESMTP id 242F2411F3
- for <dev@dpdk.org>; Wed,  7 Oct 2026 23:41:21 +0200 (CEST)
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-2dd76b1361dso29638885ad.1
- for <dev@dpdk.org>; Wed, 07 Oct 2026 14:41:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 23CEE427C3;
+	Wed,  7 Oct 2026 23:41:25 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 68EC74279F
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 23:41:23 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-2dd76b1361dso29639105ad.1
+ for <dev@dpdk.org>; Wed, 07 Oct 2026 14:41:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791409280;
- x=1792014080; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791409282;
+ x=1792014082; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=znuZL4YIKcCQ+OzmZXTskLfADE42Ekm0PWs66Gm9EkU=;
- b=UZikmm/IzLxWC2/9+Uwcx4IKPDjshAaU98aVuK84GZi2cCBbK4/XjVGrjuLWdYToIG
- mNkmkJb+ikpM+6kIr4qvB6A/KyGC5fMmesMdfdGXh73Fal1fTpwJU6ydxhUQylniVUH+
- Y59aKPqsA68InE8mkl6LkaO6Di/tCzPVQnY2TI7ShZ8lN8SD9luqUNsdeYkxo+EDiX35
- iRM5TT09+ZtpV/sc/8O00EheIuGaWQIVzmxdBaFRjptOjkbE7Q4Rt+y8h1r8iP3OmK2s
- oyl84ZrXLqwTyxgKym0/cAo30ARUNAV16L+3I7JnuaQkYWLiSHD3HHmDxc2CgDoi8nho
- 7jFQ==
+ bh=trZ63WbvdN8zif8p3BSRn4IhH/ZZ0mjThTmuI+TkUBM=;
+ b=PRwtpB4/uA5qJ+EmXUhx9MN0sD67rmd1NzG/RoOBFoVvlBY1Qwkah16HOpw6sGqmkp
+ wzKRLNb7A3LDme2/i1MUrbPu78P8UgVLoo3NAXZ2EH3rbHPb6tk3AaAvAOy0sRChL79e
+ /8C34DzWYeUujvJXhFfYh7CBZlvwupO7kgV5KZL2pwQ9tOhhrZTZ1dssQSbGczg9Y+23
+ Xf1fmgmzJgjsihJws1mLGDPZ5PiBcSLfQ91GFlxChfCenv/u53oYLz4GcOP/03mrejC3
+ PnOUSJi0J+aFREofmfR10yQ0jL7lew/r9F+MlO68eXCfNc7dPCLmMJ3A/FLbr8KRw1qz
+ Ed6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791409280; x=1792014080;
+ d=1e100.net; s=20260707; t=1791409282; x=1792014082;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=znuZL4YIKcCQ+OzmZXTskLfADE42Ekm0PWs66Gm9EkU=;
- b=mqnC6LGpo6X+NnjyKN/jO9Qs9PQBMuyLdCBl2FeOMa5TBdG3/J0BcT2ob24ks0hwkk
- 81wJkTzNR9aqKQwSkxIF2gMClhA6PEf2eQmm5u0nUQWSrsF05m79jOHRRwxnCwcmNYd9
- V/PikJirtifQNlL1COZmbUikQZ/fpcFsHc8jiwPqPuZJ2FFGDTYUzPnake9uCNLtJ2lM
- b5oMI1+Kf8g++bTfkthAEwawB+TWfsUGf2AR+PrjkwJrvijYdBZ4XkPjTtFw8kzOMts5
- DTSvyz/DXNYvkKazjGe1qN69OwNrCnPsmgcTURqmYPXr3puwUIMM3fU+/LZdrjanGKrw
- Hp3Q==
-X-Gm-Message-State: AFq9FYL1d7u6/17MFeWLQT1D05+Tp00LSTx5IdcE2SyBZVOM6s25IkSP
- +hBbJKcmrSqbQFpdxzAw+cw7pCA1K0gflqfeS47773m5c8/O5C7H5uAW5aZCLaJzupTRCst8zPD
- uKAZrHMw=
-X-Gm-Gg: AYBFou0uMjxIT0OM0sfAu17S3P3vVBMz1q7NMsqBfkNbwZuI6vK1TlXBtFUcsGFJeBT
- w7+fMSrM4lZSKmrdq/qtz12oea4nCVxIUUnWt+AnZAbvVVF9a1C+pdWqUamAjkCZR1GxcmC/iD9
- 5CGNchuAma/CHL7IJ2kIf77FmUUJR153f0n8lSZ4dQ8ahbHPdEXzj1IouZzZ9HJG00rmSstghND
- NFsM2OXFDdQVLc3x8o3TFQFwxnt3zHufmC3P/Ap/1EPnBsAfXLHsEB7LT08XlstgiIAm1ghSbhD
- xoBBEZosbM95VXE4SS2lfYEF2CF/EX29Exw3U90Zf7zyQlz2Q9W3UYlkLc5pqn7npYr6MeMm/Vp
- IlkrlnS7tbx8vDDSLWnUyOyvOFNcpg+CmLARfQ2/zVfZ9uou/4ie6pALtdZ8OEGP32fG8RRQIbg
- uhqRCDoprWBzHfkOupv9GslPa42WiUGSTRRufLeaN4kK/RGiT/bER5lqYqJ4VBaXIjkXtoPpfqi
- aEooSixYGYlp+i+U+3qt3H33TpGupEZPI+Mcw==
-X-Received: by 2002:a17:90b:4f43:b0:3a7:250:3342 with SMTP id
- 98e67ed59e1d1-3a8a1d00378mr3091157a91.43.1791409280218; 
- Wed, 07 Oct 2026 14:41:20 -0700 (PDT)
+ bh=trZ63WbvdN8zif8p3BSRn4IhH/ZZ0mjThTmuI+TkUBM=;
+ b=0mP379g0F4Sfrm5F3VgUAYVQmJdri2tcgF41nzPHgSYwOUgcqqlCbxIftDOtwqeiD2
+ +6AVEwO1JpT0heRFOtK2u6EetDwEOjg2nc/JIPVAbn2pZqQGjZIpeuOktgst+4VRlJtH
+ KnV02u9LrrcL4Mox/8AFVgeJhr/KyyRBdF3qhwJ3Wdjv2f98vXvO5nkzexMsCoE+5PqK
+ jijxly2WStEuaKwcpAc+faIMHzhB+DDdoBReSrBv2y4Tl53ILZ2nZ2xeqFCccZaHRMFO
+ 2uT1UKoK7WOeOerXFipYB9lhpwKqe9RR7iQJnbbttWV9vwtTqWWPTXc464MQj9nFAGti
+ 7INg==
+X-Gm-Message-State: AFq9FYIM6awekr/5gmdUg635+OS5imEKX/1w3anh0BPrYw5CiYuPYoWO
+ Pgy9+jNbP1lXW88n4mLXl0bqV06dZutTtBHlfPHdsFCbeCYohKeZa0N5vOhXiJWacpIdJuo7szO
+ +qMX3ors=
+X-Gm-Gg: AYBFou3OhIhBDR1BzP45JzligzTT/EUpq/QMAVDWJgsN+Wd2gEBB4E/GcvUV55JfqYK
+ MWJMG8SMu4ViGVRkSkFPRaoEOdZb2t6me5EPmXO3391kO8hn4HOPbD8X4t17vMj0BIuKq1KVHQa
+ Ez0Ke5zK+35pPcXvCyVfF0Fdqi5VW5U5PH/NPx8g8q2kEQ9dVGUcQ8jFBW+uh/3rRqn4cKfFIVv
+ e5/OVxhAwbfCHvPBEweM7qRhtkST6Hbl0SsgojhyMSDeJf08S76b7si2V5vzFZXl/0uReBkRU+2
+ QkXzFn5RobxS6x+LHeMBjcZaPa8WwGQvuo1xf6Z2yE1u/141DAIDimGEEiG+1m4AOIX40aCWW1o
+ yFVOQEuO1Ib0FmUM6Jxp7XUeEoGGloycBdI6qhhxV1tr9SxkZ57h98e65E4zQmhZcEU4ObHAssl
+ tQ6a1VnFLR0Xh4+NTxs/HyxK2go7zye7yZjxDyeS3OwxyxmVeQ5+24tBPPh3RXF+ozzgSlxrOMa
+ hjC2Ldk/KIq1bD+IcQKEqb1nXz17uCYqcPU/Q==
+X-Received: by 2002:a17:902:d4cd:b0:2e4:b37a:d577 with SMTP id
+ d9443c01a7336-2e6005073a6mr31419535ad.43.1791409282490; 
+ Wed, 07 Oct 2026 14:41:22 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e60484ca89sm16573335ad.57.2026.10.07.14.41.19
+ d9443c01a7336-2e60484ca89sm16573335ad.57.2026.10.07.14.41.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 07 Oct 2026 14:41:19 -0700 (PDT)
+ Wed, 07 Oct 2026 14:41:20 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-Subject: [PATCH 02/20] eal: promote rte_basename to stable
-Date: Wed,  7 Oct 2026 14:39:32 -0700
-Message-ID: <20261007214115.3092715-3-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH 03/20] eal: promote explicit zero and sensitive free to stable
+Date: Wed,  7 Oct 2026 14:39:33 -0700
+Message-ID: <20261007214115.3092715-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261007214115.3092715-1-stephen@networkplumber.org>
 References: <20261007214115.3092715-1-stephen@networkplumber.org>
@@ -83,65 +83,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_basename() was added in 25.11 as a portable replacement for
-basename(), whose behaviour differs between the POSIX and GNU versions.
-The prototype has not changed.
+rte_memzero_explicit() and rte_free_sensitive() were added in 25.07 and
+have not changed since. They are used by the QAT crypto driver for
+asymmetric and symmetric session keys and by the ixgbe IPsec code, which
+are exactly the sensitive data paths they exist for.
+
+An API for clearing keys is of little use to applications while it is
+marked as subject to change, so promote it.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/eal/include/rte_string_fns.h | 4 ----
- lib/eal/unix/rte_basename.c      | 2 +-
- lib/eal/windows/rte_basename.c   | 2 +-
- 3 files changed, 2 insertions(+), 6 deletions(-)
+ lib/eal/common/eal_common_memory.c | 2 +-
+ lib/eal/common/rte_malloc.c        | 2 +-
+ lib/eal/include/rte_malloc.h       | 4 ----
+ lib/eal/include/rte_memory.h       | 4 ----
+ 4 files changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/lib/eal/include/rte_string_fns.h b/lib/eal/include/rte_string_fns.h
-index b3b5bdf275..f7cfbf00b6 100644
---- a/lib/eal/include/rte_string_fns.h
-+++ b/lib/eal/include/rte_string_fns.h
-@@ -140,9 +140,6 @@ rte_str_skip_leading_spaces(const char *src)
+diff --git a/lib/eal/common/eal_common_memory.c b/lib/eal/common/eal_common_memory.c
+index 33681e7a37..c12b9e1e7f 100644
+--- a/lib/eal/common/eal_common_memory.c
++++ b/lib/eal/common/eal_common_memory.c
+@@ -1730,7 +1730,7 @@ RTE_INIT(memory_telemetry)
+ 
+ #endif /* telemetry !RTE_EXEC_ENV_WINDOWS */
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_memzero_explicit, 25.07)
++RTE_EXPORT_SYMBOL(rte_memzero_explicit)
+ void
+ rte_memzero_explicit(void *dst, size_t sz)
+ {
+diff --git a/lib/eal/common/rte_malloc.c b/lib/eal/common/rte_malloc.c
+index 388e5a63b6..0c71f26df3 100644
+--- a/lib/eal/common/rte_malloc.c
++++ b/lib/eal/common/rte_malloc.c
+@@ -56,7 +56,7 @@ rte_free(void *addr)
+ 	mem_free(addr, true, false);
  }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_free_sensitive, 25.07)
++RTE_EXPORT_SYMBOL(rte_free_sensitive)
+ void
+ rte_free_sensitive(void *addr)
+ {
+diff --git a/lib/eal/include/rte_malloc.h b/lib/eal/include/rte_malloc.h
+index 0a397e7723..c42006b594 100644
+--- a/lib/eal/include/rte_malloc.h
++++ b/lib/eal/include/rte_malloc.h
+@@ -53,9 +53,6 @@ rte_free(void *ptr);
+ 
  
  /**
 - * @warning
 - * @b EXPERIMENTAL: this API may change without prior notice.
 - *
-  * Provides the final component of a path, similar to POSIX basename function.
-  *
-  * This API provides the similar behaviour on all platforms, Linux, BSD, Windows,
-@@ -167,7 +164,6 @@ rte_str_skip_leading_spaces(const char *src)
-  *   If the return value is >= buflen, truncation occurred.
-  *   Return (size_t)-1 on error (Windows only)
+  * Frees the memory space pointed to by the provided pointer
+  * and guarantees it will be zero'd before reuse.
+  * This function is slower than simple rte_free() it should only
+@@ -70,7 +67,6 @@ rte_free(void *ptr);
+  * @param ptr
+  *   The pointer to memory to be freed.
   */
 -__rte_experimental
- size_t
- rte_basename(const char *path, char *buf, size_t buflen);
+ void
+ rte_free_sensitive(void *ptr);
  
-diff --git a/lib/eal/unix/rte_basename.c b/lib/eal/unix/rte_basename.c
-index a72d6bb3c9..f70c30b0f8 100644
---- a/lib/eal/unix/rte_basename.c
-+++ b/lib/eal/unix/rte_basename.c
-@@ -10,7 +10,7 @@
- #include <eal_export.h>
- #include <rte_string_fns.h>
+diff --git a/lib/eal/include/rte_memory.h b/lib/eal/include/rte_memory.h
+index 940770f1eb..a7749ceed1 100644
+--- a/lib/eal/include/rte_memory.h
++++ b/lib/eal/include/rte_memory.h
+@@ -729,9 +729,6 @@ int
+ rte_mem_alloc_validator_unregister(const char *name, int socket_id);
  
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_basename, 25.11)
-+RTE_EXPORT_SYMBOL(rte_basename)
- size_t
- rte_basename(const char *path, char *buf, size_t buflen)
- {
-diff --git a/lib/eal/windows/rte_basename.c b/lib/eal/windows/rte_basename.c
-index ede913e6c1..2c8cc9dc9d 100644
---- a/lib/eal/windows/rte_basename.c
-+++ b/lib/eal/windows/rte_basename.c
-@@ -7,7 +7,7 @@
- #include <eal_export.h>
- #include <rte_string_fns.h>
+ /**
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice.
+- *
+  * Fill memory with zero's (e.g. sensitive keys).
+  * Normally using memset() is fine, but in cases where clearing out local data
+  * before going out of scope is required, use rte_memzero_explicit() instead
+@@ -742,7 +739,6 @@ rte_mem_alloc_validator_unregister(const char *name, int socket_id);
+  * @param sz
+  *   Number of bytes to fill.
+  */
+-__rte_experimental
+ void
+ rte_memzero_explicit(void *dst, size_t sz);
  
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_basename, 25.11)
-+RTE_EXPORT_SYMBOL(rte_basename)
- size_t
- rte_basename(const char *path, char *buf, size_t buflen)
- {
 -- 
 2.53.0
 
