@@ -2,58 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B3ECA5FFF
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 08:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E776CCA5FF1
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 08:10:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 973BB427D5;
-	Wed,  7 Oct 2026 10:10:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B0E4642D55;
+	Wed,  7 Oct 2026 10:10:48 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id B087D427D5
- for <dev@dpdk.org>; Wed,  7 Oct 2026 10:10:44 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id ABC59427C8
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 10:10:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791360642;
+ s=mimecast20190719; t=1791360646;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=YG96jvRTlQf4jMPgLPB2ilGC/vWd5HErKpegewTOoko=;
- b=GSzIRmWt8i0BvYF22S3ed7AjjBXFOH7TvWC6H1eXbniYS0g8sQExzsCtHfEalwuLmXLImE
- JcHw7mIsZRP/DPjanahYtghWa9Lvil1SFAem0pRbCXkua0a7/UJ6BC7eqafrgo6CLUCJK8
- RSmNLN86NhrUgyLpfR94cEkkomDbqoU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ bh=6boipLWKg3BBx9yEaqLVnO7KBpmd8t6bf1FFUV86D8Y=;
+ b=A/Lz6FLBv8Ps3OXPLqJo1xZxDKukxZBmbDUxAgQaLpZOLkGWKCLdbYfog2qVnNfcs5+U1h
+ 2REq2TkWjPFyoY8KN/g78wxytt+ScMuj/G9wXTHJoYRAqHZFrkN6R/WPFuyR+jd1cT62Ve
+ 1/LVuInn4jOrOZvCJVU5DLmlKmYDJyQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-632-ec9fWDX2NjmuO5TMUO0gzg-1; Wed,
- 07 Oct 2026 04:10:36 -0400
-X-MC-Unique: ec9fWDX2NjmuO5TMUO0gzg-1
-X-Mimecast-MFC-AGG-ID: ec9fWDX2NjmuO5TMUO0gzg_1791360635
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-427-AjCumeUrPaGdw9omO0JRkw-1; Wed,
+ 07 Oct 2026 04:10:43 -0400
+X-MC-Unique: AjCumeUrPaGdw9omO0JRkw-1
+X-Mimecast-MFC-AGG-ID: AjCumeUrPaGdw9omO0JRkw_1791360642
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 9DD4B1800BD8; Wed,  7 Oct 2026 08:10:34 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D59B61801313; Wed,  7 Oct 2026 08:10:41 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet03.pony-001.prod.iad2.dc.redhat.com [10.2.32.114])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 1B1BA1800581; Wed,  7 Oct 2026 08:10:32 +0000 (UTC)
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id A88851956095; Wed,  7 Oct 2026 08:10:40 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: Anatoly Burakov <anatoly.burakov@intel.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [RESEND][PATCH v19 01/26] vhost: check DMA capability only once
-Date: Wed,  7 Oct 2026 10:09:58 +0200
-Message-ID: <20261007081026.574382-2-david.marchand@redhat.com>
+ Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>
+Subject: [RESEND][PATCH v19 03/26] bus/pci: rename mismatching error labels
+Date: Wed,  7 Oct 2026 10:10:00 +0200
+Message-ID: <20261007081026.574382-4-david.marchand@redhat.com>
 In-Reply-To: <20261007081026.574382-1-david.marchand@redhat.com>
 References: <cover.1763141462.git.anatoly.burakov@intel.com>
  <20261007081026.574382-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: omu1-AJ2A1eOA-OziNEP3G-65sAWKC879k45bjDF3xI_1791360635
+X-Mimecast-MFC-PROC-ID: 5bylQ_ztI6P6IEQdXcBcddqOUdtMI4YLvMC7p5WUUBc_1791360642
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -72,103 +71,75 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 
-Currently, vhost async copy feature will check if VFIO supports DMA mapping
-on every attempt to add/remove memory region or set memory table. This is
-not necessary, so instead check this once at new vhost connection, and
-store that value for future use.
+Currently, there are two VFIO map functions - primary and secondary -
+that use a very similar goto error pattern. However, the label names are
+confusing.
+
+Specifically, for primary, we have three error labels: vfio_res (release
+VFIO resource), vfio_dev_fd (close the fd), and map (unmap all the mapped
+regions). For secondary, there is vfio_dev (close the fd), and
+vfio_dev_fd (unmap all mapped regions).
+
+For consistency, align secondary process function's error labels to match
+semantics of how they work in primary process function.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- lib/vhost/socket.c     |  5 ++++-
- lib/vhost/vhost.h      |  1 +
- lib/vhost/vhost_user.c | 10 +++++-----
- 3 files changed, 10 insertions(+), 6 deletions(-)
+ drivers/bus/pci/linux/pci_vfio.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
-index 0943b3e9bb..a8f58c95e8 100644
---- a/lib/vhost/socket.c
-+++ b/lib/vhost/socket.c
-@@ -17,6 +17,7 @@
- #include <eal_export.h>
- #include <rte_thread.h>
- #include <rte_log.h>
-+#include <rte_vfio.h>
+diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
+index bc5c5c2499..a67de6ea02 100644
+--- a/drivers/bus/pci/linux/pci_vfio.c
++++ b/drivers/bus/pci/linux/pci_vfio.c
+@@ -968,7 +968,7 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
  
- #include "fd_man.h"
- #include "vduse.h"
-@@ -242,8 +243,10 @@ vhost_user_add_connection(int fd, struct vhost_user_socket *vsocket)
- 	if (vsocket->async_copy) {
- 		dev = get_device(vid);
+ 	ret = pci_vfio_fill_regions(dev, vfio_dev_fd, &device_info);
+ 	if (ret)
+-		goto err_vfio_dev;
++		goto err_vfio_dev_fd;
  
--		if (dev)
-+		if (dev != NULL) {
- 			dev->async_copy = 1;
-+			dev->dma_map_available = rte_vfio_is_enabled("vfio");
-+		}
+ 	/* map BARs */
+ 	maps = vfio_res->maps;
+@@ -979,14 +979,14 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+ 			if (ret < 0) {
+ 				PCI_LOG(ERR, "%s sparse mapping BAR%i failed: %s",
+ 					pci_addr, i, strerror(errno));
+-				goto err_vfio_dev_fd;
++				goto err_map;
+ 			}
+ 		} else {
+ 			ret = pci_vfio_mmap_bar(vfio_dev_fd, vfio_res, i, MAP_FIXED);
+ 			if (ret < 0) {
+ 				PCI_LOG(ERR, "%s mapping BAR%i failed: %s",
+ 					pci_addr, i, strerror(errno));
+-				goto err_vfio_dev_fd;
++				goto err_map;
+ 			}
+ 		}
+ 
+@@ -995,17 +995,17 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+ 
+ 	/* we need save vfio_dev_fd, so it can be used during release */
+ 	if (rte_intr_dev_fd_set(dev->intr_handle, vfio_dev_fd))
+-		goto err_vfio_dev_fd;
++		goto err_map;
+ 	if (rte_intr_dev_fd_set(dev->vfio_req_intr_handle, vfio_dev_fd))
+-		goto err_vfio_dev_fd;
++		goto err_map;
+ 
+ 	return 0;
+-err_vfio_dev_fd:
++err_map:
+ 	for (j = 0; j < i; j++) {
+ 		if (maps[j].addr)
+ 			pci_unmap_resource(maps[j].addr, maps[j].size);
  	}
- 
- 	VHOST_CONFIG_LOG(vsocket->path, INFO, "new device, handle is %d", vid);
-diff --git a/lib/vhost/vhost.h b/lib/vhost/vhost.h
-index bb4708aed5..75736eed3b 100644
---- a/lib/vhost/vhost.h
-+++ b/lib/vhost/vhost.h
-@@ -499,6 +499,7 @@ struct __rte_cache_aligned virtio_net {
- 	RTE_ATOMIC(int16_t)	broadcast_rarp;
- 	uint32_t		nr_vring;
- 	int			async_copy;
-+	bool			dma_map_available;
- 
- 	int			extbuf;
- 	int			linearbuf;
-diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
-index 0f14df0d4e..2d9da8ce87 100644
---- a/lib/vhost/vhost_user.c
-+++ b/lib/vhost/vhost_user.c
-@@ -267,7 +267,7 @@ free_all_mem_regions(struct virtio_net *dev)
- 	if (!dev || !dev->mem)
- 		return;
- 
--	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
-+	if (dev->async_copy && dev->dma_map_available)
- 		async_dma_map(dev, false);
- 
- 	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
-@@ -1571,7 +1571,7 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
- 		dev->mem->nregions++;
- 	}
- 
--	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
-+	if (dev->async_copy && dev->dma_map_available)
- 		async_dma_map(dev, true);
- 
- 	if (vhost_user_postcopy_register(dev, main_fd, ctx) < 0)
-@@ -1757,7 +1757,7 @@ vhost_user_add_mem_reg(struct virtio_net **pdev,
- 
- 	dev->mem->nregions++;
- 
--	if (dev->async_copy && rte_vfio_is_enabled("vfio")) {
-+	if (dev->async_copy && dev->dma_map_available) {
- 		if (async_dma_map_region(dev, reg, true) < 0)
- 			goto free_new_region_no_dma;
- 	}
-@@ -1798,7 +1798,7 @@ vhost_user_add_mem_reg(struct virtio_net **pdev,
- 	return RTE_VHOST_MSG_RESULT_OK;
- 
- free_new_region:
--	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
-+	if (dev->async_copy && dev->dma_map_available)
- 		async_dma_map_region(dev, reg, false);
- free_new_region_no_dma:
- 	remove_guest_pages(dev, reg);
-@@ -1834,7 +1834,7 @@ vhost_user_rem_mem_reg(struct virtio_net **pdev,
- 		if (region->userspace_addr == current_region->guest_user_addr
- 			&& region->guest_phys_addr == current_region->guest_phys_addr
- 			&& region->memory_size == current_region->size) {
--			if (dev->async_copy && rte_vfio_is_enabled("vfio"))
-+			if (dev->async_copy && dev->dma_map_available)
- 				async_dma_map_region(dev, current_region, false);
- 			if (dev->features & (1ULL << VIRTIO_F_IOMMU_PLATFORM))
- 				vhost_user_iotlb_cache_remove(dev,
+-err_vfio_dev:
++err_vfio_dev_fd:
+ 	rte_vfio_release_device(rte_pci_get_sysfs_path(),
+ 			pci_addr, vfio_dev_fd);
+ 	return -1;
 -- 
 2.54.0
 
