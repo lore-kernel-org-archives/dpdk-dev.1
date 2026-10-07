@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9B3CA5FFC
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 10:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11669CA5FF1
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 10:52:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0627E42D7B;
-	Wed,  7 Oct 2026 12:50:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 522D542D96;
+	Wed,  7 Oct 2026 12:50:53 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id A75EF427D7
- for <dev@dpdk.org>; Wed,  7 Oct 2026 12:50:49 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 19C29427D7
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 12:50:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791370250; x=1822906250;
+ t=1791370251; x=1822906251;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=j66RDrWiRquqetfxXrUzC32czVsoqj+H6WNGa1wXhBM=;
- b=BnUmJ01hFCkplnpORHqbGU7bhlxMTmqkXQCfXVMxaKBraguxMo5lKDD2
- DWTgY1ZYCyqFhynXxguKxZH7GzVlQep8XMnzSE3NEGzh7Cp1BvqEesVsu
- QKBGeB9NVrZf2VWVCOVJ2pIFQiLNwHNfXimbpfa8ryQUJ7rFJbO+Yafp/
- urRRsIxWu+CU+CbKrZRQ0pI9DNSP37Q+DQ3K1DAq3hqE5enIDm59P3vIt
- RMdkr+CF93rkLqnF241dKdt+ej6bArzxFc43dkFBVBCBMHIinfef2FgS5
- ouWGBHRrjIM09ZUrLrEr62iifoWPUo/c9OuvInHNh570LgoROO9XndIyB Q==;
-X-CSE-ConnectionGUID: M3kwD7FCRxqtcL20k/n3rw==
-X-CSE-MsgGUID: WKHjLnAvTZme+vxFcTLKfQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="121826"
+ bh=9HALUAfv9B+i3nfUkXJ17IS0jcX2cPQd/ExI0+xYuIo=;
+ b=Wd1JjD7VVx1H9kf3UhyilkiVF8UwhM7Ww++u0KmyQsz++V/QI1yvqwI0
+ C9wYEHFfpPeDMdZOyLY+wGr100jOp9C+phk5rFi3v+rnDOU2lpbeJnfaD
+ MnIHG+rS5cl/A/2huqvK2tN31KOz25YfGlGCcac9RJWYtl6JLykChykPk
+ /V7330CRLrHCWKw14f0fCUB2FLxNkeynJOj2e0iPkJ1/BVeVBsbhTaEtK
+ wdZBiddSaOWaBirOR1F/OXa/2aQWEnwHuHLDDF+/R0B8q47fSlmXi5VRa
+ 9rjYTf+HOFVgbjYacbcyY1yK0cQRdkwrp2RKFUpEqnBaYLngU7tuQZN+a w==;
+X-CSE-ConnectionGUID: smcyK8CpSA+ThteeeI9rCA==
+X-CSE-MsgGUID: FV68nOd0SA+r88OHSdVbDA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="121827"
 X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; 
-   d="scan'208";a="121826"
+   d="scan'208";a="121827"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Oct 2026 03:50:49 -0700
-X-CSE-ConnectionGUID: iYnPN+GrQZqwamQ2od33Lw==
-X-CSE-MsgGUID: cawapIBbStWTroPdMeov3A==
+ 07 Oct 2026 03:50:51 -0700
+X-CSE-ConnectionGUID: JmckJHAKQ4Oqs0EVOfs4kQ==
+X-CSE-MsgGUID: M7GvZW8RQYmIevq9EleIXQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; d="scan'208";a="280652126"
+X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; d="scan'208";a="280652130"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 07 Oct 2026 03:50:48 -0700
+ by orviesa003.jf.intel.com with ESMTP; 07 Oct 2026 03:50:50 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v5 13/25] net/ixgbe: reimplement ntuple parser
-Date: Wed,  7 Oct 2026 11:50:08 +0100
-Message-ID: <59287f746f8968b4bf6344c1a8107aa8027626dd.1791369981.git.anatoly.burakov@intel.com>
+Subject: [PATCH v5 14/25] net/ixgbe: reimplement security parser
+Date: Wed,  7 Oct 2026 11:50:09 +0100
+Message-ID: <759691f9db117a385a8933d918e8f676a96dc60f.1791369981.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1791369979.git.anatoly.burakov@intel.com>
  <cover.1791369979.git.anatoly.burakov@intel.com>
@@ -61,998 +61,102 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use the new flow graph API and the common parsing framework to implement
-flow parser for ntuple.
+Use the new flow graph API and common flow engine infrastructure to
+implement flow parser for security filter. As a result, flow item checks
+have become more stringent:
 
-The 5tuple filter tracking infrastructure is moved completely inside the
-new engine and is removed from the rest of the driver.
+- Mask is now explicitly validated to not have unsupported items in it,
+  when previously they were ignored
+- Mask is also validated to mask src/dst addresses, as otherwise it is
+  inconsistent with rte_flow API
+- The security engine was only looking for IPv4/IPv6 pattern items and
+  completely ignored both prefix and suffix. This logic has been replaced
+  by allowing [ETH]/IP/[UDP|ESP] patterns, as is used in ipsec-gw app
+
+Previously, security parser was a special case, now it is a first class
+citizen. All decryption SA tracking has been moved into the engine, as the
+engine is now the authoritative source of new Rx flows and the state of
+the Rx SA table (the Tx SA table is still up to IPsec code to manage).
+
+Because IPsec code does not manage the Rx SA table now, a synchronization
+mechanism is needed to prevent IPsec code from deallocating a security
+session when it is still referenced by security flows, so the security
+session is now atomically refcounted. For Tx, the refcount is effectively
+a noop, whereas for Rx it is now managed by rte_flow security engine.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_ethdev.c      | 348 +---------
- drivers/net/intel/ixgbe/ixgbe_ethdev.h      |  28 +-
- drivers/net/intel/ixgbe/ixgbe_flow.c        | 498 +-------------
- drivers/net/intel/ixgbe/ixgbe_flow.h        |   1 +
- drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c | 694 ++++++++++++++++++++
- drivers/net/intel/ixgbe/meson.build         |   1 +
- 6 files changed, 724 insertions(+), 846 deletions(-)
- create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   2 -
+ drivers/net/intel/ixgbe/ixgbe_flow.c          | 120 +---
+ drivers/net/intel/ixgbe/ixgbe_flow.h          |   1 +
+ drivers/net/intel/ixgbe/ixgbe_flow_security.c | 586 ++++++++++++++++++
+ drivers/net/intel/ixgbe/ixgbe_ipsec.c         | 361 +++++------
+ drivers/net/intel/ixgbe/ixgbe_ipsec.h         |  50 +-
+ drivers/net/intel/ixgbe/meson.build           |   1 +
+ 7 files changed, 773 insertions(+), 348 deletions(-)
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_security.c
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index d7666e0cc2c..5a3559774f2 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -150,7 +150,6 @@ static int eth_ixgbe_dev_uninit(struct rte_eth_dev *eth_dev);
- static int ixgbe_fdir_filter_init(struct rte_eth_dev *eth_dev);
- static int ixgbe_fdir_filter_uninit(struct rte_eth_dev *eth_dev);
- static int ixgbe_l2_tn_filter_init(struct rte_eth_dev *eth_dev);
--static int ixgbe_ntuple_filter_uninit(struct rte_eth_dev *eth_dev);
- static int ixgbe_dev_configure(struct rte_eth_dev *dev);
- static int ixgbe_dev_start(struct rte_eth_dev *dev);
- static int ixgbe_dev_stop(struct rte_eth_dev *dev);
-@@ -301,10 +300,6 @@ static int ixgbevf_add_mac_addr(struct rte_eth_dev *dev,
- static void ixgbevf_remove_mac_addr(struct rte_eth_dev *dev, uint32_t index);
- static int ixgbevf_set_default_mac_addr(struct rte_eth_dev *dev,
- 					     struct rte_ether_addr *mac_addr);
--static int ixgbe_add_5tuple_filter(struct ixgbe_adapter *adapter,
--			struct ixgbe_5tuple_filter *filter);
--static void ixgbe_remove_5tuple_filter(struct ixgbe_adapter *adapter,
--			struct ixgbe_5tuple_filter *filter);
- static int ixgbe_dev_flow_ops_get(struct rte_eth_dev *dev,
- 				  const struct rte_flow_ops **ops);
- static int ixgbevf_dev_set_mtu(struct rte_eth_dev *dev, uint16_t mtu);
-@@ -1266,9 +1261,6 @@ eth_ixgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
- 	memset(filter_info, 0,
- 	       sizeof(struct ixgbe_filter_info));
- 
--	/* initialize 5tuple filter list */
--	TAILQ_INIT(&filter_info->fivetuple_list);
--
- 	/* initialize flow director filter list & hash */
- 	ret = ixgbe_fdir_filter_init(eth_dev);
- 	if (ret)
-@@ -1328,24 +1320,6 @@ eth_ixgbe_dev_uninit(struct rte_eth_dev *eth_dev)
- 	return 0;
- }
- 
--static int ixgbe_ntuple_filter_uninit(struct rte_eth_dev *eth_dev)
--{
--	struct ixgbe_filter_info *filter_info =
--		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(eth_dev->data->dev_private);
--	struct ixgbe_5tuple_filter *p_5tuple;
--
--	while ((p_5tuple = TAILQ_FIRST(&filter_info->fivetuple_list))) {
--		TAILQ_REMOVE(&filter_info->fivetuple_list,
--			     p_5tuple,
--			     entries);
--		rte_free(p_5tuple);
--	}
--	memset(filter_info->fivetuple_mask, 0,
--	       sizeof(uint32_t) * IXGBE_5TUPLE_ARRAY_SIZE);
--
--	return 0;
--}
--
- static int ixgbe_fdir_filter_uninit(struct rte_eth_dev *eth_dev)
- {
- 	struct ixgbe_hw_fdir_info *fdir_info =
-@@ -3054,9 +3028,6 @@ ixgbe_dev_close(struct rte_eth_dev *dev)
- 	/* remove all the fdir filters & hash */
- 	ixgbe_fdir_filter_uninit(dev);
- 
--	/* Remove all ntuple filters of the device */
--	ixgbe_ntuple_filter_uninit(dev);
--
- 	/* clear all the filters list */
- 	ixgbe_filterlist_flush(dev);
- 
-@@ -6433,134 +6404,50 @@ ixgbe_syn_filter_program(struct ixgbe_hw *hw, uint32_t synqf)
- 	IXGBE_WRITE_FLUSH(hw);
- }
- 
--
--static inline enum ixgbe_5tuple_protocol
--convert_protocol_type(uint8_t protocol_value)
-+/* program a single ntuple (5-tuple) filter slot into hardware */
-+void
-+ixgbe_ntuple_filter_program(struct ixgbe_hw *hw, uint16_t index,
-+			const struct ixgbe_5tuple_filter_info *filter_info,
-+			uint16_t queue)
- {
--	if (protocol_value == IPPROTO_TCP)
--		return IXGBE_FILTER_PROTOCOL_TCP;
--	else if (protocol_value == IPPROTO_UDP)
--		return IXGBE_FILTER_PROTOCOL_UDP;
--	else if (protocol_value == IPPROTO_SCTP)
--		return IXGBE_FILTER_PROTOCOL_SCTP;
--	else
--		return IXGBE_FILTER_PROTOCOL_NONE;
--}
--
--/* inject a 5-tuple filter to HW */
--static inline void
--ixgbe_inject_5tuple_filter(struct ixgbe_adapter *adapter,
--			   struct ixgbe_5tuple_filter *filter)
--{
--	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(adapter);
--	int i;
- 	uint32_t ftqf, sdpqf;
- 	uint32_t l34timir = 0;
- 	uint8_t mask = 0xff;
- 
--	i = filter->index;
-+	sdpqf = (uint32_t)(filter_info->dst_port << IXGBE_SDPQF_DSTPORT_SHIFT);
-+	sdpqf = sdpqf | (filter_info->src_port & IXGBE_SDPQF_SRCPORT);
- 
--	sdpqf = (uint32_t)(filter->filter_info.dst_port <<
--				IXGBE_SDPQF_DSTPORT_SHIFT);
--	sdpqf = sdpqf | (filter->filter_info.src_port & IXGBE_SDPQF_SRCPORT);
--
--	ftqf = (uint32_t)(filter->filter_info.proto &
--		IXGBE_FTQF_PROTOCOL_MASK);
--	ftqf |= (uint32_t)((filter->filter_info.priority &
-+	ftqf = (uint32_t)(filter_info->proto & IXGBE_FTQF_PROTOCOL_MASK);
-+	ftqf |= (uint32_t)((filter_info->priority &
- 		IXGBE_FTQF_PRIORITY_MASK) << IXGBE_FTQF_PRIORITY_SHIFT);
--	if (filter->filter_info.src_ip_mask == 0) /* 0 means compare. */
-+	if (filter_info->src_ip_mask == 0) /* 0 means compare. */
- 		mask &= IXGBE_FTQF_SOURCE_ADDR_MASK;
--	if (filter->filter_info.dst_ip_mask == 0)
-+	if (filter_info->dst_ip_mask == 0)
- 		mask &= IXGBE_FTQF_DEST_ADDR_MASK;
--	if (filter->filter_info.src_port_mask == 0)
-+	if (filter_info->src_port_mask == 0)
- 		mask &= IXGBE_FTQF_SOURCE_PORT_MASK;
--	if (filter->filter_info.dst_port_mask == 0)
-+	if (filter_info->dst_port_mask == 0)
- 		mask &= IXGBE_FTQF_DEST_PORT_MASK;
--	if (filter->filter_info.proto_mask == 0)
-+	if (filter_info->proto_mask == 0)
- 		mask &= IXGBE_FTQF_PROTOCOL_COMP_MASK;
- 	ftqf |= mask << IXGBE_FTQF_5TUPLE_MASK_SHIFT;
- 	ftqf |= IXGBE_FTQF_POOL_MASK_EN;
- 	ftqf |= IXGBE_FTQF_QUEUE_ENABLE;
- 
--	IXGBE_WRITE_REG(hw, IXGBE_DAQF(i), filter->filter_info.dst_ip);
--	IXGBE_WRITE_REG(hw, IXGBE_SAQF(i), filter->filter_info.src_ip);
--	IXGBE_WRITE_REG(hw, IXGBE_SDPQF(i), sdpqf);
--	IXGBE_WRITE_REG(hw, IXGBE_FTQF(i), ftqf);
-+	IXGBE_WRITE_REG(hw, IXGBE_DAQF(index), filter_info->dst_ip);
-+	IXGBE_WRITE_REG(hw, IXGBE_SAQF(index), filter_info->src_ip);
-+	IXGBE_WRITE_REG(hw, IXGBE_SDPQF(index), sdpqf);
-+	IXGBE_WRITE_REG(hw, IXGBE_FTQF(index), ftqf);
- 
- 	l34timir |= IXGBE_L34T_IMIR_RESERVE;
--	l34timir |= (uint32_t)(filter->queue <<
--				IXGBE_L34T_IMIR_QUEUE_SHIFT);
--	IXGBE_WRITE_REG(hw, IXGBE_L34T_IMIR(i), l34timir);
-+	l34timir |= (uint32_t)(queue << IXGBE_L34T_IMIR_QUEUE_SHIFT);
-+	IXGBE_WRITE_REG(hw, IXGBE_L34T_IMIR(index), l34timir);
- }
- 
--/*
-- * add a 5tuple filter
-- *
-- * @param
-- * dev: Pointer to struct rte_eth_dev.
-- * index: the index the filter allocates.
-- * filter: pointer to the filter that will be added.
-- * rx_queue: the queue id the filter assigned to.
-- *
-- * @return
-- *    - On success, zero.
-- *    - On failure, a negative value.
-- */
--static int
--ixgbe_add_5tuple_filter(struct ixgbe_adapter *adapter,
--			struct ixgbe_5tuple_filter *filter)
-+/* clear a single ntuple (5-tuple) filter slot from hardware */
-+void
-+ixgbe_ntuple_filter_clear(struct ixgbe_hw *hw, uint16_t index)
- {
--	struct ixgbe_filter_info *filter_info =
--		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(adapter);
--	int i, idx, shift;
--
--	/*
--	 * look for an unused 5tuple filter index,
--	 * and insert the filter to list.
--	 */
--	for (i = 0; i < IXGBE_MAX_FTQF_FILTERS; i++) {
--		idx = i / (sizeof(uint32_t) * NBBY);
--		shift = i % (sizeof(uint32_t) * NBBY);
--		if (!(filter_info->fivetuple_mask[idx] & (1 << shift))) {
--			filter_info->fivetuple_mask[idx] |= 1 << shift;
--			filter->index = i;
--			TAILQ_INSERT_TAIL(&filter_info->fivetuple_list,
--					  filter,
--					  entries);
--			break;
--		}
--	}
--	if (i >= IXGBE_MAX_FTQF_FILTERS) {
--		PMD_DRV_LOG(ERR, "5tuple filters are full.");
--		return -ENOSYS;
--	}
--
--	ixgbe_inject_5tuple_filter(adapter, filter);
--
--	return 0;
--}
--
--/*
-- * remove a 5tuple filter
-- *
-- * @param
-- * dev: Pointer to struct rte_eth_dev.
-- * filter: the pointer of the filter will be removed.
-- */
--static void
--ixgbe_remove_5tuple_filter(struct ixgbe_adapter *adapter,
--			struct ixgbe_5tuple_filter *filter)
--{
--	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(adapter);
--	struct ixgbe_filter_info *filter_info =
--		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(adapter);
--	uint16_t index = filter->index;
--
--	filter_info->fivetuple_mask[index / (sizeof(uint32_t) * NBBY)] &=
--				~(1 << (index % (sizeof(uint32_t) * NBBY)));
--	TAILQ_REMOVE(&filter_info->fivetuple_list, filter, entries);
--	rte_free(filter);
--
- 	IXGBE_WRITE_REG(hw, IXGBE_DAQF(index), 0);
- 	IXGBE_WRITE_REG(hw, IXGBE_SAQF(index), 0);
- 	IXGBE_WRITE_REG(hw, IXGBE_SDPQF(index), 0);
-@@ -6613,165 +6500,6 @@ ixgbevf_dev_set_mtu(struct rte_eth_dev *dev, uint16_t mtu)
- 	return 0;
- }
- 
--static inline struct ixgbe_5tuple_filter *
--ixgbe_5tuple_filter_lookup(struct ixgbe_5tuple_filter_list *filter_list,
--			struct ixgbe_5tuple_filter_info *key)
--{
--	struct ixgbe_5tuple_filter *it;
--
--	TAILQ_FOREACH(it, filter_list, entries) {
--		if (memcmp(key, &it->filter_info,
--			sizeof(struct ixgbe_5tuple_filter_info)) == 0) {
--			return it;
--		}
--	}
--	return NULL;
--}
--
--/* translate elements in struct rte_eth_ntuple_filter to struct ixgbe_5tuple_filter_info*/
--static inline int
--ntuple_filter_to_5tuple(struct rte_eth_ntuple_filter *filter,
--			struct ixgbe_5tuple_filter_info *filter_info)
--{
--	if (filter->queue >= IXGBE_MAX_RX_QUEUE_NUM ||
--		filter->priority > IXGBE_5TUPLE_MAX_PRI ||
--		filter->priority < IXGBE_5TUPLE_MIN_PRI)
--		return -EINVAL;
--
--	switch (filter->dst_ip_mask) {
--	case UINT32_MAX:
--		filter_info->dst_ip_mask = 0;
--		filter_info->dst_ip = filter->dst_ip;
--		break;
--	case 0:
--		filter_info->dst_ip_mask = 1;
--		break;
--	default:
--		PMD_DRV_LOG(ERR, "invalid dst_ip mask.");
--		return -EINVAL;
--	}
--
--	switch (filter->src_ip_mask) {
--	case UINT32_MAX:
--		filter_info->src_ip_mask = 0;
--		filter_info->src_ip = filter->src_ip;
--		break;
--	case 0:
--		filter_info->src_ip_mask = 1;
--		break;
--	default:
--		PMD_DRV_LOG(ERR, "invalid src_ip mask.");
--		return -EINVAL;
--	}
--
--	switch (filter->dst_port_mask) {
--	case UINT16_MAX:
--		filter_info->dst_port_mask = 0;
--		filter_info->dst_port = filter->dst_port;
--		break;
--	case 0:
--		filter_info->dst_port_mask = 1;
--		break;
--	default:
--		PMD_DRV_LOG(ERR, "invalid dst_port mask.");
--		return -EINVAL;
--	}
--
--	switch (filter->src_port_mask) {
--	case UINT16_MAX:
--		filter_info->src_port_mask = 0;
--		filter_info->src_port = filter->src_port;
--		break;
--	case 0:
--		filter_info->src_port_mask = 1;
--		break;
--	default:
--		PMD_DRV_LOG(ERR, "invalid src_port mask.");
--		return -EINVAL;
--	}
--
--	switch (filter->proto_mask) {
--	case UINT8_MAX:
--		filter_info->proto_mask = 0;
--		filter_info->proto =
--			convert_protocol_type(filter->proto);
--		break;
--	case 0:
--		filter_info->proto_mask = 1;
--		break;
--	default:
--		PMD_DRV_LOG(ERR, "invalid protocol mask.");
--		return -EINVAL;
--	}
--
--	filter_info->priority = (uint8_t)filter->priority;
--	return 0;
--}
--
--/*
-- * add or delete a ntuple filter
-- *
-- * @param
-- * dev: Pointer to struct rte_eth_dev.
-- * ntuple_filter: Pointer to struct rte_eth_ntuple_filter
-- * add: if true, add filter, if false, remove filter
-- *
-- * @return
-- *    - On success, zero.
-- *    - On failure, a negative value.
-- */
--int
--ixgbe_add_del_ntuple_filter(struct ixgbe_adapter *adapter,
--			struct rte_eth_ntuple_filter *ntuple_filter,
--			bool add)
--{
--	struct ixgbe_filter_info *filter_info =
--		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(adapter);
--	struct ixgbe_5tuple_filter_info filter_5tuple;
--	struct ixgbe_5tuple_filter *filter;
--	int ret;
--
--	if (ntuple_filter->flags != RTE_5TUPLE_FLAGS) {
--		PMD_DRV_LOG(ERR, "only 5tuple is supported.");
--		return -EINVAL;
--	}
--
--	memset(&filter_5tuple, 0, sizeof(struct ixgbe_5tuple_filter_info));
--	ret = ntuple_filter_to_5tuple(ntuple_filter, &filter_5tuple);
--	if (ret < 0)
--		return ret;
--
--	filter = ixgbe_5tuple_filter_lookup(&filter_info->fivetuple_list,
--					 &filter_5tuple);
--	if (filter != NULL && add) {
--		PMD_DRV_LOG(ERR, "filter exists.");
--		return -EEXIST;
--	}
--	if (filter == NULL && !add) {
--		PMD_DRV_LOG(ERR, "filter doesn't exist.");
--		return -ENOENT;
--	}
--
--	if (add) {
--		filter = rte_zmalloc("ixgbe_5tuple_filter",
--				sizeof(struct ixgbe_5tuple_filter), 0);
--		if (filter == NULL)
--			return -ENOMEM;
--		memcpy(&filter->filter_info,
--				 &filter_5tuple,
--				 sizeof(struct ixgbe_5tuple_filter_info));
--		filter->queue = ntuple_filter->queue;
--		ret = ixgbe_add_5tuple_filter(adapter, filter);
--		if (ret < 0) {
--			rte_free(filter);
--			return ret;
--		}
--	} else
--		ixgbe_remove_5tuple_filter(adapter, filter);
--
--	return 0;
--}
--
- void
- ixgbe_ethertype_filter_program(struct ixgbe_hw *hw, uint8_t idx,
- 			uint32_t etqf, uint32_t etqs)
-@@ -8117,21 +7845,6 @@ int ixgbe_enable_sec_tx_path_generic(struct ixgbe_hw *hw)
- 	return IXGBE_SUCCESS;
- }
- 
--/* restore n-tuple filter */
--static inline void
--ixgbe_ntuple_filter_restore(struct rte_eth_dev *dev)
--{
--	struct ixgbe_adapter *adapter =
--		IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
--	struct ixgbe_filter_info *filter_info =
--		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(dev->data->dev_private);
--	struct ixgbe_5tuple_filter *node;
--
--	TAILQ_FOREACH(node, &filter_info->fivetuple_list, entries) {
--		ixgbe_inject_5tuple_filter(adapter, node);
--	}
--}
--
- /* restore rss filter */
- static inline void
- ixgbe_rss_filter_restore(struct rte_eth_dev *dev)
-@@ -8149,7 +7862,6 @@ ixgbe_rss_filter_restore(struct rte_eth_dev *dev)
- static int
- ixgbe_filter_restore(struct rte_eth_dev *dev)
- {
--	ixgbe_ntuple_filter_restore(dev);
- 	ixgbe_fdir_filter_restore(dev);
- 	ixgbe_rss_filter_restore(dev);
- 
-@@ -8172,20 +7884,6 @@ ixgbe_l2_tunnel_conf(struct rte_eth_dev *dev)
- 	(void)ixgbe_update_e_tag_eth_type(hw, l2_tn_info->e_tag_ether_type);
- }
- 
--/* remove all the n-tuple filters */
--void
--ixgbe_clear_all_ntuple_filter(struct rte_eth_dev *dev)
--{
--	struct ixgbe_adapter *adapter =
--		IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
--	struct ixgbe_filter_info *filter_info =
--		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(dev->data->dev_private);
--	struct ixgbe_5tuple_filter *p_5tuple;
--
--	while ((p_5tuple = TAILQ_FIRST(&filter_info->fivetuple_list)))
--		ixgbe_remove_5tuple_filter(adapter, p_5tuple);
--}
--
- void
- ixgbe_dev_macsec_setting_save(struct rte_eth_dev *dev,
- 				struct ixgbe_macsec_setting *macsec_setting)
 diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index af4f14210fe..970d8525fab 100644
+index 970d8525fab..5dc73f3b52b 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
 +++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -100,8 +100,6 @@
- #define IXGBE_L34T_IMIR_LLI             0x00100000
- #define IXGBE_L34T_IMIR_QUEUE           0x0FE00000
- #define IXGBE_L34T_IMIR_QUEUE_SHIFT     21
--#define IXGBE_5TUPLE_MAX_PRI            7
--#define IXGBE_5TUPLE_MIN_PRI            1
- 
- /* The overhead from MTU to max frame size. */
- #define IXGBE_ETH_OVERHEAD (RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN)
-@@ -265,8 +263,6 @@ enum ixgbe_5tuple_protocol {
- 	IXGBE_FILTER_PROTOCOL_NONE,
+@@ -313,8 +313,6 @@ struct ixgbe_l2_tn_info {
+ struct rte_flow {
+ 	struct ci_flow flow;
+ 	enum rte_filter_type filter_type;
+-	/* security flows are not rte_filter_type */
+-	bool is_security;
+ 	void *rule;
  };
  
--TAILQ_HEAD(ixgbe_5tuple_filter_list, ixgbe_5tuple_filter);
--
- struct ixgbe_5tuple_filter_info {
- 	uint32_t dst_ip;
- 	uint32_t src_ip;
-@@ -282,18 +278,6 @@ struct ixgbe_5tuple_filter_info {
- 		proto_mask:1;    /* if mask is 1b, do not compare protocol. */
- };
- 
--/* 5tuple filter structure */
--struct ixgbe_5tuple_filter {
--	TAILQ_ENTRY(ixgbe_5tuple_filter) entries;
--	uint16_t index;       /* the index of 5tuple filter */
--	struct ixgbe_5tuple_filter_info filter_info;
--	uint16_t queue;       /* rx queue assigned to */
--};
--
--#define IXGBE_5TUPLE_ARRAY_SIZE \
--	(RTE_ALIGN(IXGBE_MAX_FTQF_FILTERS, (sizeof(uint32_t) * NBBY)) / \
--	 (sizeof(uint32_t) * NBBY))
--
- /* Shared EtherType (ETQF) filter table. */
- struct ixgbe_ethertype_table {
- 	struct ixgbe_ethertype_entry {
-@@ -308,9 +292,6 @@ struct ixgbe_ethertype_table {
-  * Structure to store filters' info.
-  */
- struct ixgbe_filter_info {
--	/* Bit mask for every used 5tuple filter */
--	uint32_t fivetuple_mask[IXGBE_5TUPLE_ARRAY_SIZE];
--	struct ixgbe_5tuple_filter_list fivetuple_list;
- 	/* store the rss filter info */
- 	struct ixgbe_rte_flow_rss_conf rss_info;
- 	/* shared EtherType (ETQF) slot table */
-@@ -655,9 +636,10 @@ uint32_t ixgbe_rssrk_reg_get(enum ixgbe_mac_type mac_type, uint8_t i);
- 
- bool ixgbe_rss_update_sp(enum ixgbe_mac_type mac_type);
- 
--int ixgbe_add_del_ntuple_filter(struct ixgbe_adapter *adapter,
--			struct rte_eth_ntuple_filter *filter,
--			bool add);
-+void ixgbe_ntuple_filter_program(struct ixgbe_hw *hw, uint16_t index,
-+			const struct ixgbe_5tuple_filter_info *filter_info,
-+			uint16_t queue);
-+void ixgbe_ntuple_filter_clear(struct ixgbe_hw *hw, uint16_t index);
- 
- void ixgbe_ethertype_filter_program(struct ixgbe_hw *hw, uint8_t idx,
- 			uint32_t etqf, uint32_t etqs);
-@@ -736,8 +718,6 @@ int ixgbe_clear_all_fdir_filter(struct rte_eth_dev *dev);
- 
- extern const struct rte_flow_ops ixgbe_flow_ops;
- 
--void ixgbe_clear_all_ntuple_filter(struct rte_eth_dev *dev);
--
- int ixgbe_disable_sec_tx_path_generic(struct ixgbe_hw *hw);
- 
- int ixgbe_enable_sec_tx_path_generic(struct ixgbe_hw *hw);
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 808d3b955d8..c3bc7622151 100644
+index c3bc7622151..57484a53740 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -50,19 +50,12 @@
- #include "../common/flow_engine.h"
- #include "ixgbe_flow.h"
- 
--#define IXGBE_MIN_N_TUPLE_PRIO 1
--#define IXGBE_MAX_N_TUPLE_PRIO 7
- #define IXGBE_MAX_FLX_SOURCE_OFF 62
- 
- struct ixgbe_filter_ele_base {
- 	TAILQ_ENTRY(ixgbe_filter_ele_base) entries;
- };
- 
--/* ntuple filter list structure */
--struct ixgbe_ntuple_filter_ele {
--	struct ixgbe_filter_ele_base base;
--	struct rte_eth_ntuple_filter filter_info;
--};
- /* fdir filter list structure */
- struct ixgbe_fdir_rule_ele {
- 	struct ixgbe_filter_ele_base base;
-@@ -84,6 +77,7 @@ const struct ci_flow_engine_list ixgbe_flow_engine_list = {
- 		&ixgbe_ethertype_flow_engine,
+@@ -78,6 +78,7 @@ const struct ci_flow_engine_list ixgbe_flow_engine_list = {
  		&ixgbe_syn_flow_engine,
  		&ixgbe_l2_tunnel_flow_engine,
-+		&ixgbe_ntuple_flow_engine,
+ 		&ixgbe_ntuple_flow_engine,
++		&ixgbe_security_flow_engine,
  	},
  };
  
-@@ -161,388 +155,6 @@ ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
+@@ -155,94 +156,6 @@ ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
   * normally the packets should use network order.
   */
  
--/**
-- * Parse the rule to see if it is a n-tuple rule.
-- * And get the n-tuple filter info BTW.
-- * pattern:
-- * The first not void item can be ETH or IPV4.
-- * The second not void item must be IPV4 if the first one is ETH.
-- * The third not void item must be UDP or TCP.
-- * The next not void item must be END.
-- * action:
-- * The first not void action should be QUEUE.
-- * The next not void action should be END.
-- * pattern example:
-- * ITEM		Spec			Mask
-- * ETH		NULL			NULL
-- * IPV4		src_addr 192.168.1.20	0xFFFFFFFF
-- *		dst_addr 192.167.3.50	0xFFFFFFFF
-- *		next_proto_id	17	0xFF
-- * UDP/TCP/	src_port	80	0xFFFF
-- * SCTP		dst_port	80	0xFFFF
-- * END
-- * other members in mask and spec should set to 0x00.
-- * item->last should be NULL.
-- *
-- * Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY.
-- *
-- */
 -static int
--cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
--			 const struct rte_flow_item pattern[],
--			 const struct rte_flow_action_queue *q_act,
--			 struct rte_eth_ntuple_filter *filter,
--			 struct rte_flow_error *error)
--{
--	const struct rte_flow_item *item;
--	const struct rte_flow_item_ipv4 *ipv4_spec;
--	const struct rte_flow_item_ipv4 *ipv4_mask;
--	const struct rte_flow_item_tcp *tcp_spec;
--	const struct rte_flow_item_tcp *tcp_mask;
--	const struct rte_flow_item_udp *udp_spec;
--	const struct rte_flow_item_udp *udp_mask;
--	const struct rte_flow_item_sctp *sctp_spec;
--	const struct rte_flow_item_sctp *sctp_mask;
--	const struct rte_flow_item_eth *eth_spec;
--	const struct rte_flow_item_eth *eth_mask;
--	const struct rte_flow_item_vlan *vlan_spec;
--	const struct rte_flow_item_vlan *vlan_mask;
--	struct rte_flow_item_eth eth_null;
--	struct rte_flow_item_vlan vlan_null;
--	uint16_t priority;
--
--	/* Priority must be 16-bit */
--	if (attr->priority > UINT16_MAX) {
--		return rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY, attr,
--				"Priority must be 16-bit");
--	}
--
--	memset(&eth_null, 0, sizeof(struct rte_flow_item_eth));
--	memset(&vlan_null, 0, sizeof(struct rte_flow_item_vlan));
--
--	/* the first not void item can be MAC or IPv4 */
--	item = next_no_void_pattern(pattern, NULL);
--
--	if (item->type != RTE_FLOW_ITEM_TYPE_ETH &&
--	    item->type != RTE_FLOW_ITEM_TYPE_IPV4) {
--		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ITEM,
--			item, "Not supported by ntuple filter");
--		return -rte_errno;
--	}
--	/* Skip Ethernet */
--	if (item->type == RTE_FLOW_ITEM_TYPE_ETH) {
--		eth_spec = item->spec;
--		eth_mask = item->mask;
--		/*Not supported last point for range*/
--		if (item->last) {
--			rte_flow_error_set(error,
--			  EINVAL,
--			  RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
--			  item, "Not supported last point for range");
--			return -rte_errno;
--
--		}
--		/* if the first item is MAC, the content should be NULL */
--		if ((item->spec != NULL && memcmp(eth_spec, &eth_null, sizeof(eth_null)) != 0) ||
--		    (item->mask != NULL && memcmp(eth_mask, &eth_null, sizeof(eth_null)) != 0)) {
--			rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM, item,
--					"Not supported by ntuple filter");
--			return -rte_errno;
--		}
--		/* check if the next not void item is IPv4 or Vlan */
--		item = next_no_void_pattern(pattern, item);
--		if (item->type != RTE_FLOW_ITEM_TYPE_IPV4 &&
--			item->type != RTE_FLOW_ITEM_TYPE_VLAN) {
--			rte_flow_error_set(error,
--			  EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
--			  item, "Not supported by ntuple filter");
--			  return -rte_errno;
--		}
--	}
--
--	if (item->type == RTE_FLOW_ITEM_TYPE_VLAN) {
--		vlan_spec = item->spec;
--		vlan_mask = item->mask;
--		/*Not supported last point for range*/
--		if (item->last) {
--			rte_flow_error_set(error,
--			  EINVAL,
--			  RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
--			  item, "Not supported last point for range");
--			return -rte_errno;
--		}
--		/* the content should be NULL */
--		if ((item->spec != NULL && memcmp(vlan_spec, &vlan_null, sizeof(vlan_null)) != 0) ||
--		    (item->mask != NULL && memcmp(vlan_mask, &vlan_null, sizeof(vlan_null)) != 0)) {
--			rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM, item,
--					"Not supported by ntuple filter");
--			return -rte_errno;
--		}
--		/* check if the next not void item is IPv4 */
--		item = next_no_void_pattern(pattern, item);
--		if (item->type != RTE_FLOW_ITEM_TYPE_IPV4) {
--			rte_flow_error_set(error,
--			  EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
--			  item, "Not supported by ntuple filter");
--			return -rte_errno;
--		}
--	}
--
--	if (item->mask) {
--		/* get the IPv4 info */
--		if (!item->spec || !item->mask) {
--			rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Invalid ntuple mask");
--			return -rte_errno;
--		}
--		/*Not supported last point for range*/
--		if (item->last) {
--			rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
--				item, "Not supported last point for range");
--			return -rte_errno;
--		}
--
--		ipv4_mask = item->mask;
--		/**
--		 * Only support src & dst addresses, protocol,
--		 * others should be masked.
--		 */
--		if (ipv4_mask->hdr.version_ihl ||
--		    ipv4_mask->hdr.type_of_service ||
--		    ipv4_mask->hdr.total_length ||
--		    ipv4_mask->hdr.packet_id ||
--		    ipv4_mask->hdr.fragment_offset ||
--		    ipv4_mask->hdr.time_to_live ||
--		    ipv4_mask->hdr.hdr_checksum) {
--			rte_flow_error_set(error,
--				EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ntuple filter");
--			return -rte_errno;
--		}
--		if ((ipv4_mask->hdr.src_addr != 0 &&
--			ipv4_mask->hdr.src_addr != UINT32_MAX) ||
--			(ipv4_mask->hdr.dst_addr != 0 &&
--			ipv4_mask->hdr.dst_addr != UINT32_MAX) ||
--			(ipv4_mask->hdr.next_proto_id != UINT8_MAX &&
--			ipv4_mask->hdr.next_proto_id != 0)) {
--			rte_flow_error_set(error,
--				EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ntuple filter");
--			return -rte_errno;
--		}
--
--		filter->dst_ip_mask = ipv4_mask->hdr.dst_addr;
--		filter->src_ip_mask = ipv4_mask->hdr.src_addr;
--		filter->proto_mask  = ipv4_mask->hdr.next_proto_id;
--
--		ipv4_spec = item->spec;
--		filter->dst_ip = ipv4_spec->hdr.dst_addr;
--		filter->src_ip = ipv4_spec->hdr.src_addr;
--		filter->proto  = ipv4_spec->hdr.next_proto_id;
--	}
--
--	/* check if the next not void item is TCP or UDP */
--	item = next_no_void_pattern(pattern, item);
--	if (item->type != RTE_FLOW_ITEM_TYPE_TCP &&
--	    item->type != RTE_FLOW_ITEM_TYPE_UDP &&
--	    item->type != RTE_FLOW_ITEM_TYPE_SCTP &&
--	    item->type != RTE_FLOW_ITEM_TYPE_END) {
--		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
--		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ITEM,
--			item, "Not supported by ntuple filter");
--		return -rte_errno;
--	}
--
--	/* an empty L4 item still implies its protocol */
--	if ((item->type != RTE_FLOW_ITEM_TYPE_END) &&
--		(!item->spec && !item->mask)) {
--		uint8_t proto;
--
--		if (item->type == RTE_FLOW_ITEM_TYPE_TCP)
--			proto = IPPROTO_TCP;
--		else if (item->type == RTE_FLOW_ITEM_TYPE_UDP)
--			proto = IPPROTO_UDP;
--		else
--			proto = IPPROTO_SCTP;
--
--		if (filter->proto_mask != 0 && filter->proto != proto) {
--			*filter = (struct rte_eth_ntuple_filter){0};
--			rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "L4 item conflicts with IPv4 protocol");
--			return -rte_errno;
--		}
--		filter->proto = proto;
--		filter->proto_mask = UINT8_MAX;
--		goto check_end;
--	}
--
--	/* get the TCP/UDP/SCTP info */
--	if (item->type != RTE_FLOW_ITEM_TYPE_END &&
--		(!item->spec || !item->mask)) {
--		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
--		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ITEM,
--			item, "Invalid ntuple mask");
--		return -rte_errno;
--	}
--
--	/*Not supported last point for range*/
--	if (item->last) {
--		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
--		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
--			item, "Not supported last point for range");
--		return -rte_errno;
--
--	}
--
--	if (item->type == RTE_FLOW_ITEM_TYPE_TCP) {
--		tcp_mask = item->mask;
--
--		/**
--		 * Only support src & dst ports, tcp flags,
--		 * others should be masked.
--		 */
--		if (tcp_mask->hdr.sent_seq ||
--		    tcp_mask->hdr.recv_ack ||
--		    tcp_mask->hdr.data_off ||
--		    tcp_mask->hdr.rx_win ||
--		    tcp_mask->hdr.cksum ||
--		    tcp_mask->hdr.tcp_urp) {
--			memset(filter, 0,
--				sizeof(struct rte_eth_ntuple_filter));
--			rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ntuple filter");
--			return -rte_errno;
--		}
--		if ((tcp_mask->hdr.src_port != 0 &&
--			tcp_mask->hdr.src_port != UINT16_MAX) ||
--			(tcp_mask->hdr.dst_port != 0 &&
--			tcp_mask->hdr.dst_port != UINT16_MAX)) {
--			rte_flow_error_set(error,
--				EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ntuple filter");
--			return -rte_errno;
--		}
--
--		filter->dst_port_mask  = tcp_mask->hdr.dst_port;
--		filter->src_port_mask  = tcp_mask->hdr.src_port;
--		if (tcp_mask->hdr.tcp_flags == 0xFF) {
--			filter->flags |= RTE_NTUPLE_FLAGS_TCP_FLAG;
--		} else if (!tcp_mask->hdr.tcp_flags) {
--			filter->flags &= ~RTE_NTUPLE_FLAGS_TCP_FLAG;
--		} else {
--			memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
--			rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ntuple filter");
--			return -rte_errno;
--		}
--
--		tcp_spec = item->spec;
--		filter->dst_port  = tcp_spec->hdr.dst_port;
--		filter->src_port  = tcp_spec->hdr.src_port;
--		filter->tcp_flags = tcp_spec->hdr.tcp_flags;
--	} else if (item->type == RTE_FLOW_ITEM_TYPE_UDP) {
--		udp_mask = item->mask;
--
--		/**
--		 * Only support src & dst ports,
--		 * others should be masked.
--		 */
--		if (udp_mask->hdr.dgram_len ||
--		    udp_mask->hdr.dgram_cksum) {
--			memset(filter, 0,
--				sizeof(struct rte_eth_ntuple_filter));
--			rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ntuple filter");
--			return -rte_errno;
--		}
--		if ((udp_mask->hdr.src_port != 0 &&
--			udp_mask->hdr.src_port != UINT16_MAX) ||
--			(udp_mask->hdr.dst_port != 0 &&
--			udp_mask->hdr.dst_port != UINT16_MAX)) {
--			rte_flow_error_set(error,
--				EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ntuple filter");
--			return -rte_errno;
--		}
--
--		filter->dst_port_mask = udp_mask->hdr.dst_port;
--		filter->src_port_mask = udp_mask->hdr.src_port;
--
--		udp_spec = item->spec;
--		filter->dst_port = udp_spec->hdr.dst_port;
--		filter->src_port = udp_spec->hdr.src_port;
--	} else if (item->type == RTE_FLOW_ITEM_TYPE_SCTP) {
--		sctp_mask = item->mask;
--
--		/**
--		 * Only support src & dst ports,
--		 * others should be masked.
--		 */
--		if (sctp_mask->hdr.tag ||
--		    sctp_mask->hdr.cksum) {
--			memset(filter, 0,
--				sizeof(struct rte_eth_ntuple_filter));
--			rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ntuple filter");
--			return -rte_errno;
--		}
--
--		filter->dst_port_mask = sctp_mask->hdr.dst_port;
--		filter->src_port_mask = sctp_mask->hdr.src_port;
--
--		sctp_spec = item->spec;
--		filter->dst_port = sctp_spec->hdr.dst_port;
--		filter->src_port = sctp_spec->hdr.src_port;
--	} else {
--		goto action;
--	}
--
--check_end:
--	/* check if the next not void item is END */
--	item = next_no_void_pattern(pattern, item);
--	if (item->type != RTE_FLOW_ITEM_TYPE_END) {
--		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
--		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ITEM,
--			item, "Not supported by ntuple filter");
--		return -rte_errno;
--	}
--
--action:
--
--	filter->queue = q_act->index;
--
--	/*
--	 * rte_flow priority: 0 through UINT32_MAX, 0 is highest
--	 *
--	 * ntuple priority: 001b through 111b, 111b is highest
--	 *
--	 * which means we need to transform priority from rte_flow to ntuple:
--	 *
--	 * 1) clamp max value
--	 * 2) reverse
--	 * 3) add min value
--	 */
--	priority = RTE_MIN(IXGBE_MAX_N_TUPLE_PRIO - 1, (uint16_t)attr->priority);
--	priority = IXGBE_MAX_N_TUPLE_PRIO - 1 - priority;
--	priority += IXGBE_MIN_N_TUPLE_PRIO;
--	filter->priority = priority;
--
--	return 0;
--}
--
- static int
- ixgbe_parse_security_filter(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
- 		const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
-@@ -631,66 +243,6 @@ ixgbe_parse_security_filter(struct rte_eth_dev *dev, const struct rte_flow_attr
- 	return 0;
- }
- 
--/* a specific function for ixgbe because the flags is specific */
--static int
--ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
--			  const struct rte_flow_attr *attr,
--			  const struct rte_flow_item pattern[],
--			  const struct rte_flow_action actions[],
--			  struct rte_eth_ntuple_filter *filter,
--			  struct rte_flow_error *error)
+-ixgbe_parse_security_filter(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
+-		const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
+-		struct rte_flow_error *error)
 -{
 -	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	struct ci_flow_attr_check_param attr_param = {
--		.allow_priority = true,
--	};
+-	const struct rte_flow_action_security *security;
+-	struct rte_security_session *session;
+-	const struct rte_flow_item *item;
 -	struct ci_flow_actions parsed_actions;
 -	struct ci_flow_actions_check_param ap_param = {
 -		.allowed_types = (const enum rte_flow_action_type[]){
--			/* only queue is allowed here */
--			RTE_FLOW_ACTION_TYPE_QUEUE,
+-			/* only security is allowed here */
+-			RTE_FLOW_ACTION_TYPE_SECURITY,
 -			RTE_FLOW_ACTION_TYPE_END
 -		},
--		.driver_ctx = dev->data,
--		.check = ixgbe_flow_actions_check,
 -		.max_actions = 1,
 -	};
 -	const struct rte_flow_action *action;
+-	struct ip_spec spec;
 -	int ret;
 -
 -	if (hw->mac.type != ixgbe_mac_82599EB &&
--			hw->mac.type != ixgbe_mac_X540)
+-			hw->mac.type != ixgbe_mac_X540 &&
+-			hw->mac.type != ixgbe_mac_X550 &&
+-			hw->mac.type != ixgbe_mac_X550EM_x &&
+-			hw->mac.type != ixgbe_mac_X550EM_a &&
+-			hw->mac.type != ixgbe_mac_E610)
 -		return -ENOTSUP;
 -
 -	/* validate attributes */
--	ret = ci_flow_check_attr(attr, &attr_param, error);
+-	ret = ci_flow_check_attr(attr, NULL, error);
 -	if (ret)
 -		return ret;
 -
@@ -1060,170 +164,164 @@ index 808d3b955d8..c3bc7622151 100644
 -	ret = ci_flow_check_actions(actions, &ap_param, &parsed_actions, error);
 -	if (ret)
 -		return ret;
+-
 -	action = parsed_actions.actions[0];
+-	security = action->conf;
 -
--	ret = cons_parse_ntuple_filter(attr, pattern, action->conf, filter, error);
--	if (ret)
--		return ret;
--
--	/* Ixgbe doesn't support tcp flags. */
--	if (filter->flags & RTE_NTUPLE_FLAGS_TCP_FLAG) {
--		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
+-	/* get the IP pattern*/
+-	item = next_no_void_pattern(pattern, NULL);
+-	while (item->type != RTE_FLOW_ITEM_TYPE_IPV4 &&
+-			item->type != RTE_FLOW_ITEM_TYPE_IPV6) {
+-		if (item->last || item->type == RTE_FLOW_ITEM_TYPE_END) {
+-			rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ITEM,
+-				item, "IP pattern missing.");
+-			return -rte_errno;
+-		}
+-		item = next_no_void_pattern(pattern, item);
+-	}
+-	if (item->spec == NULL) {
 -		rte_flow_error_set(error, EINVAL,
--				   RTE_FLOW_ERROR_TYPE_ITEM,
--				   NULL, "Not supported by ntuple filter");
+-				RTE_FLOW_ERROR_TYPE_ITEM_SPEC, item,
+-				"NULL IP pattern.");
 -		return -rte_errno;
 -	}
+-	spec.is_ipv6 = item->type == RTE_FLOW_ITEM_TYPE_IPV6;
+-	if (spec.is_ipv6) {
+-		const struct rte_flow_item_ipv6 *ipv6 = item->spec;
+-		spec.spec.ipv6 = *ipv6;
+-	} else {
+-		const struct rte_flow_item_ipv4 *ipv4 = item->spec;
+-		spec.spec.ipv4 = *ipv4;
+-	}
 -
--	/* fixed value for ixgbe */
--	filter->flags = RTE_5TUPLE_FLAGS;
+-	/*
+-	 * we get pointer to security session from security action, which is
+-	 * const. however, we do need to act on the session, so either we do
+-	 * some kind of pointer based lookup to get session pointer internally
+-	 * (which quickly gets unwieldy for lots of flows case), or we simply
+-	 * cast away constness. the latter path was chosen.
+-	 */
+-	session = RTE_CAST_PTR(struct rte_security_session *, security->security_session);
+-	ret = ixgbe_crypto_add_ingress_sa_from_flow(session, &spec);
+-	if (ret) {
+-		rte_flow_error_set(error, -ret,
+-				RTE_FLOW_ERROR_TYPE_ACTION, action,
+-				"Failed to add security session.");
+-		return -rte_errno;
+-	}
 -	return 0;
 -}
 -
  /* search next no void pattern and skip fuzzy */
  static inline
  const struct rte_flow_item *next_no_fuzzy_pattern(
-@@ -2335,13 +1887,11 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
- 	int ret;
- 	struct ixgbe_adapter *adapter =
- 		IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
--	struct rte_eth_ntuple_filter ntuple_filter;
- 	struct ixgbe_fdir_rule fdir_rule;
- 	struct ixgbe_hw_fdir_info *fdir_info =
- 		IXGBE_DEV_PRIVATE_TO_FDIR_INFO(adapter);
- 	struct ixgbe_rte_flow_rss_conf rss_conf;
- 	struct rte_flow *flow = NULL;
--	struct ixgbe_ntuple_filter_ele *ntuple_filter_ptr;
- 	struct ixgbe_fdir_rule_ele *fdir_rule_ptr;
- 	struct ixgbe_rss_conf_ele *rss_filter_ptr;
- 	struct ixgbe_flow_mem *ixgbe_flow_mem_ptr;
-@@ -2378,29 +1928,6 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
- 		return flow;
- 	}
+@@ -1919,15 +1832,6 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
+ 	TAILQ_INSERT_TAIL(&adapter->flow_list,
+ 				&ixgbe_flow_mem_ptr->base, entries);
  
--	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
--	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
--			actions, &ntuple_filter, error);
--
+-	/**
+-	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
+-	 */
+-	ret = ixgbe_parse_security_filter(dev, attr, pattern, actions, error);
 -	if (!ret) {
--		ntuple_filter_ptr = rte_zmalloc("ixgbe_ntuple_filter",
--			sizeof(struct ixgbe_ntuple_filter_ele), 0);
--		if (!ntuple_filter_ptr) {
--			PMD_DRV_LOG(ERR, "failed to allocate memory");
--			ret = -ENOMEM;
--			goto out;
--		}
--		ntuple_filter_ptr->filter_info = ntuple_filter;
--		ret = ixgbe_add_del_ntuple_filter(adapter, &ntuple_filter, TRUE);
--		if (ret) {
--			rte_free(ntuple_filter_ptr);
--			goto out;
--		}
--		flow->rule = ntuple_filter_ptr;
--		flow->filter_type = RTE_ETH_FILTER_NTUPLE;
+-		flow->is_security = true;
 -		return flow;
 -	}
 -
  	memset(&fdir_rule, 0, sizeof(struct ixgbe_fdir_rule));
  	ret = ixgbe_parse_fdir_filter(dev, attr, pattern,
  				actions, &fdir_rule, error);
-@@ -2485,7 +2012,6 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
- 		struct rte_flow_error *error)
- {
- 	struct ixgbe_adapter *ad = IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
--	struct rte_eth_ntuple_filter ntuple_filter;
- 	struct ixgbe_fdir_rule fdir_rule;
- 	struct ixgbe_rte_flow_rss_conf rss_conf;
- 	int ret;
-@@ -2504,12 +2030,6 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
- 	if (!ret)
- 		return 0;
+@@ -2023,13 +1927,6 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
  
--	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
--	ret = ixgbe_parse_ntuple_filter(dev, attr, pattern,
--				actions, &ntuple_filter, error);
+ 	/* fall back to legacy engines */
+ 
+-	/**
+-	 *  Special case for flow action type RTE_FLOW_ACTION_TYPE_SECURITY
+-	 */
+-	ret = ixgbe_parse_security_filter(dev, attr, pattern, actions, error);
 -	if (!ret)
 -		return 0;
 -
  	memset(&fdir_rule, 0, sizeof(struct ixgbe_fdir_rule));
  	ret = ixgbe_parse_fdir_filter(dev, attr, pattern,
  				actions, &fdir_rule, error);
-@@ -2534,9 +2054,7 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
- 		IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	struct rte_flow *pmd_flow = flow;
- 	enum rte_filter_type filter_type = pmd_flow->filter_type;
--	struct rte_eth_ntuple_filter ntuple_filter;
- 	struct ixgbe_fdir_rule fdir_rule;
--	struct ixgbe_ntuple_filter_ele *ntuple_filter_ptr;
- 	struct ixgbe_fdir_rule_ele *fdir_rule_ptr;
- 	struct ixgbe_filter_ele_base *flow_mem_base;
- 	struct ixgbe_hw_fdir_info *fdir_info =
-@@ -2572,14 +2090,6 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
+@@ -2083,12 +1980,6 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
+ 				"Flow not found for this port");
  	}
  
+-	/* Special case for SECURITY flows */
+-	if (flow->is_security) {
+-		ret = 0;
+-		goto free;
+-	}
+-
  	switch (filter_type) {
--	case RTE_ETH_FILTER_NTUPLE:
--		ntuple_filter_ptr = (struct ixgbe_ntuple_filter_ele *)
--					pmd_flow->rule;
--		ntuple_filter = ntuple_filter_ptr->filter_info;
--		ret = ixgbe_add_del_ntuple_filter(adapter, &ntuple_filter, FALSE);
--		if (!ret)
--			rte_free(ntuple_filter_ptr);
--		break;
  	case RTE_ETH_FILTER_FDIR:
  		fdir_rule_ptr = (struct ixgbe_fdir_rule_ele *)pmd_flow->rule;
- 		fdir_rule = fdir_rule_ptr->filter_info;
-@@ -2639,8 +2149,6 @@ ixgbe_flow_flush(struct rte_eth_dev *dev,
+@@ -2126,7 +2017,6 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
  		return ret;
  	}
  
--	ixgbe_clear_all_ntuple_filter(dev);
+-free:
+ 	TAILQ_REMOVE(&adapter->flow_list, flow_mem_base, entries);
+ 	rte_free(flow_mem_base);
+ 	rte_free(flow);
+@@ -2168,9 +2058,6 @@ ixgbe_flow_flush(struct rte_eth_dev *dev,
+ static const char *
+ ixgbe_flow_rule_engine_name(const struct rte_flow *flow)
+ {
+-	if (flow->is_security)
+-		return "security";
 -
- 	ret = ixgbe_clear_all_fdir_filter(dev);
- 	if (ret < 0) {
- 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_HANDLE,
-@@ -2664,8 +2172,6 @@ ixgbe_flow_rule_engine_name(const struct rte_flow *flow)
- 		return "security";
- 
  	switch (flow->filter_type) {
--	case RTE_ETH_FILTER_NTUPLE:
--		return "ntuple";
  	case RTE_ETH_FILTER_ETHERTYPE:
  		return "ethertype";
- 	case RTE_ETH_FILTER_SYN:
-@@ -2688,8 +2194,6 @@ ixgbe_flow_rule_size(const struct rte_flow *flow)
- 		return 0;
- 
+@@ -2190,9 +2077,6 @@ ixgbe_flow_rule_engine_name(const struct rte_flow *flow)
+ static size_t
+ ixgbe_flow_rule_size(const struct rte_flow *flow)
+ {
+-	if (flow->is_security)
+-		return 0;
+-
  	switch (flow->filter_type) {
--	case RTE_ETH_FILTER_NTUPLE:
--		return sizeof(struct rte_eth_ntuple_filter);
  	case RTE_ETH_FILTER_ETHERTYPE:
  		return sizeof(struct rte_eth_ethertype_filter);
- 	case RTE_ETH_FILTER_SYN:
+@@ -2212,7 +2096,7 @@ ixgbe_flow_rule_size(const struct rte_flow *flow)
+ static const void *
+ ixgbe_flow_rule_data(const struct rte_flow *flow)
+ {
+-	if (flow->is_security || flow->rule == NULL)
++	if (flow->rule == NULL)
+ 		return NULL;
+ 
+ 	return RTE_PTR_ADD(flow->rule, sizeof(struct ixgbe_filter_ele_base));
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.h b/drivers/net/intel/ixgbe/ixgbe_flow.h
-index ba0486b2c0e..6f082e9402f 100644
+index 6f082e9402f..87cf0282454 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.h
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.h
-@@ -18,5 +18,6 @@ extern const struct ci_flow_engine_list ixgbe_flow_engine_list;
- extern const struct ci_flow_engine ixgbe_ethertype_flow_engine;
+@@ -19,5 +19,6 @@ extern const struct ci_flow_engine ixgbe_ethertype_flow_engine;
  extern const struct ci_flow_engine ixgbe_syn_flow_engine;
  extern const struct ci_flow_engine ixgbe_l2_tunnel_flow_engine;
-+extern const struct ci_flow_engine ixgbe_ntuple_flow_engine;
+ extern const struct ci_flow_engine ixgbe_ntuple_flow_engine;
++extern const struct ci_flow_engine ixgbe_security_flow_engine;
  
  #endif /*  _IXGBE_FLOW_H_ */
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c b/drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c
+diff --git a/drivers/net/intel/ixgbe/ixgbe_flow_security.c b/drivers/net/intel/ixgbe/ixgbe_flow_security.c
 new file mode 100644
-index 00000000000..aa28195de0a
+index 00000000000..3ed2ba844b0
 --- /dev/null
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c
-@@ -0,0 +1,694 @@
++++ b/drivers/net/intel/ixgbe/ixgbe_flow_security.c
+@@ -0,0 +1,586 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2026 Intel Corporation
 + */
 +
++#include <rte_common.h>
 +#include <rte_flow.h>
 +#include <flow_graph.h>
 +#include <rte_ether.h>
++#include <rte_security_driver.h>
 +
 +#include "ixgbe_ethdev.h"
 +#include "ixgbe_flow.h"
@@ -1231,426 +329,227 @@ index 00000000000..aa28195de0a
 +#include "../common/flow_util.h"
 +#include "../common/flow_engine.h"
 +
-+#define IXGBE_MIN_N_TUPLE_PRIO 1
-+#define IXGBE_MAX_N_TUPLE_PRIO 7
++struct ixgbe_security_ip_spec {
++	bool is_ipv6;
++	union {
++		struct rte_flow_item_ipv4 ipv4;
++		struct rte_flow_item_ipv6 ipv6;
++	} spec;
++};
 +
-+struct ixgbe_ntuple_flow {
++struct ixgbe_security_filter {
++	struct rte_security_session *session;
++	struct ixgbe_crypto_rx_sa sa;
++};
++
++struct ixgbe_security_flow {
 +	struct rte_flow flow;
-+	struct ixgbe_5tuple_filter_info key; /* HW-shaped match key */
-+	uint16_t queue;
-+	uint16_t index; /* HW filter slot */
++	struct ixgbe_security_filter security;
 +};
 +
-+/* per-device table of registered filters, indexed by assigned HW slot */
-+struct ixgbe_ntuple_priv {
-+	struct ixgbe_ntuple_flow *slots[IXGBE_MAX_FTQF_FILTERS];
-+};
-+
-+struct ixgbe_ntuple_ctx {
++struct ixgbe_security_ctx {
 +	struct ci_flow_engine_ctx base;
-+	struct rte_eth_ntuple_filter ntuple;
++	struct ixgbe_security_ip_spec spec;
++	struct rte_security_session *session;
++};
++
++struct ixgbe_security_ip_slot {
++	ci_usage_count_t use_count;
++	struct ipaddr ip;
++};
++
++struct ixgbe_security_priv {
++	struct ixgbe_security_ip_slot ip_slots[IPSEC_MAX_RX_IP_COUNT];
++	struct ixgbe_security_flow *sa_slots[IPSEC_MAX_SA_COUNT];
 +};
 +
 +/**
-+ * Ntuple filter graph implementation
-+ * Pattern: START -> [ETH] -> [VLAN] -> IPV4 -> [TCP|UDP|SCTP] -> END
++ * Ingress security filter graph implementation
++ * Pattern: START -> [ETH] -> IPV4 | IPV6 -> [ESP | UDP -> ESP] -> END
 + */
 +
-+enum ixgbe_ntuple_node_id {
-+	IXGBE_NTUPLE_NODE_START = FLOW_GRAPH_NODE_FIRST,
-+	IXGBE_NTUPLE_NODE_ETH,
-+	IXGBE_NTUPLE_NODE_VLAN,
-+	IXGBE_NTUPLE_NODE_IPV4,
-+	IXGBE_NTUPLE_NODE_TCP,
-+	IXGBE_NTUPLE_NODE_UDP,
-+	IXGBE_NTUPLE_NODE_SCTP,
-+	IXGBE_NTUPLE_NODE_END,
-+	IXGBE_NTUPLE_NODE_MAX,
++enum ixgbe_security_node_id {
++	IXGBE_SECURITY_NODE_START = FLOW_GRAPH_NODE_FIRST,
++	IXGBE_SECURITY_NODE_ETH,
++	IXGBE_SECURITY_NODE_IPV4,
++	IXGBE_SECURITY_NODE_IPV6,
++	IXGBE_SECURITY_NODE_UDP,
++	IXGBE_SECURITY_NODE_ESP,
++	IXGBE_SECURITY_NODE_END,
++	IXGBE_SECURITY_NODE_MAX,
 +};
 +
-+/* spec and effective mask, if present, must be all-zero */
 +static int
-+ixgbe_validate_ntuple_empty_item(const struct rte_flow_item *item, size_t size,
-+		struct rte_flow_error *error)
-+{
-+	const void *mask = ci_flow_item_mask(item);
-+
-+	if ((item->spec != NULL && !ci_is_all_byte(item->spec, size, 0)) ||
-+	    (mask != NULL && !ci_is_all_byte(mask, size, 0))) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Not supported by ntuple filter");
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+ixgbe_validate_ntuple_eth(const void *ctx __rte_unused,
++ixgbe_validate_security_ipv4(const void *ctx __rte_unused,
 +		const struct rte_flow_item *item,
 +		struct rte_flow_error *error)
 +{
-+	return ixgbe_validate_ntuple_empty_item(item,
-+			sizeof(struct rte_flow_item_eth), error);
-+}
++	const struct rte_flow_item_ipv4 *ipv4_mask = ci_flow_item_mask(item);
 +
-+static int
-+ixgbe_validate_ntuple_vlan(const void *ctx __rte_unused,
-+		const struct rte_flow_item *item,
-+		struct rte_flow_error *error)
-+{
-+	return ixgbe_validate_ntuple_empty_item(item,
-+			sizeof(struct rte_flow_item_vlan), error);
-+}
-+
-+static int
-+ixgbe_validate_ntuple_ipv4(const void *ctx __rte_unused,
-+			   const struct rte_flow_item *item,
-+			   struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_ipv4 *ipv4_mask;
-+
-+	ipv4_mask = ci_flow_item_mask(item);
-+
-+	if (ipv4_mask == NULL)
-+		return 0;
-+
-+	/* Only src/dst addresses and protocol supported */
++	/* only src/dst addresses are supported */
 +	if (ipv4_mask->hdr.version_ihl ||
 +	    ipv4_mask->hdr.type_of_service ||
 +	    ipv4_mask->hdr.total_length ||
 +	    ipv4_mask->hdr.packet_id ||
 +	    ipv4_mask->hdr.fragment_offset ||
++	    ipv4_mask->hdr.next_proto_id ||
 +	    ipv4_mask->hdr.time_to_live ||
 +	    ipv4_mask->hdr.hdr_checksum) {
 +		return rte_flow_error_set(error, EINVAL,
 +				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Only src/dst IP and protocol supported");
++				"Invalid IPv4 mask");
 +	}
 +
-+	/* Masks must be 0 or all-ones */
-+	if (!CI_FIELD_IS_ZERO_OR_MASKED(&ipv4_mask->hdr.src_addr) ||
-+	    !CI_FIELD_IS_ZERO_OR_MASKED(&ipv4_mask->hdr.dst_addr) ||
-+	    !CI_FIELD_IS_ZERO_OR_MASKED(&ipv4_mask->hdr.next_proto_id)) {
++	/* both src/dst addresses must be fully masked */
++	if (!CI_FIELD_IS_MASKED(&ipv4_mask->hdr.src_addr) ||
++	    !CI_FIELD_IS_MASKED(&ipv4_mask->hdr.dst_addr)) {
 +		return rte_flow_error_set(error, EINVAL,
 +				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Partial masks not supported");
++				"Invalid IPv4 mask");
 +	}
 +
 +	return 0;
 +}
 +
 +static int
-+ixgbe_process_ntuple_ipv4(void *ctx,
-+			  const struct rte_flow_item *item,
-+			  struct rte_flow_error *error __rte_unused)
++ixgbe_process_security_ipv4(void *ctx, const struct rte_flow_item *item,
++		struct rte_flow_error *error __rte_unused)
 +{
-+	struct ixgbe_ntuple_ctx *ntuple_ctx = ctx;
++	struct ixgbe_security_ctx *sec_ctx = (struct ixgbe_security_ctx *)ctx;
 +	const struct rte_flow_item_ipv4 *ipv4_spec = item->spec;
-+	const struct rte_flow_item_ipv4 *ipv4_mask = ci_flow_item_mask(item);
 +
-+	if (ipv4_mask == NULL)
-+		return 0;
-+
-+	ntuple_ctx->ntuple.dst_ip = ipv4_spec->hdr.dst_addr;
-+	ntuple_ctx->ntuple.src_ip = ipv4_spec->hdr.src_addr;
-+	ntuple_ctx->ntuple.proto = ipv4_spec->hdr.next_proto_id;
-+
-+	ntuple_ctx->ntuple.dst_ip_mask = ipv4_mask->hdr.dst_addr;
-+	ntuple_ctx->ntuple.src_ip_mask = ipv4_mask->hdr.src_addr;
-+	ntuple_ctx->ntuple.proto_mask = ipv4_mask->hdr.next_proto_id;
-+
-+	return 0;
-+}
-+
-+/* an empty L4 item still implies its protocol */
-+static int
-+ixgbe_ntuple_set_l4_proto(struct ixgbe_ntuple_ctx *ntuple_ctx,
-+		const struct rte_flow_item *item, uint8_t proto,
-+		struct rte_flow_error *error)
-+{
-+	struct rte_eth_ntuple_filter *ntuple = &ntuple_ctx->ntuple;
-+
-+	if (ntuple->proto_mask != 0 && ntuple->proto != proto) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"L4 item conflicts with IPv4 protocol");
-+	}
-+
-+	ntuple->proto = proto;
-+	ntuple->proto_mask = UINT8_MAX;
++	/* copy entire spec */
++	sec_ctx->spec.spec.ipv4 = *ipv4_spec;
++	sec_ctx->spec.is_ipv6 = false;
 +
 +	return 0;
 +}
 +
 +static int
-+ixgbe_validate_ntuple_tcp(const void *ctx __rte_unused,
++ixgbe_validate_security_ipv6(const void *ctx __rte_unused,
 +			  const struct rte_flow_item *item,
 +			  struct rte_flow_error *error)
 +{
-+	const struct rte_flow_item_tcp *tcp_mask;
++	const struct rte_flow_item_ipv6 *ipv6_mask = ci_flow_item_mask(item);
 +
-+	tcp_mask = ci_flow_item_mask(item);
-+
-+	if (tcp_mask == NULL)
-+		return 0;
-+
-+	/* Only src/dst ports and tcp_flags supported */
-+	if (tcp_mask->hdr.sent_seq ||
-+	    tcp_mask->hdr.recv_ack ||
-+	    tcp_mask->hdr.data_off ||
-+	    tcp_mask->hdr.rx_win ||
-+	    tcp_mask->hdr.cksum ||
-+	    tcp_mask->hdr.tcp_urp) {
++	/* only src/dst addresses are supported */
++	if (ipv6_mask->hdr.vtc_flow ||
++	    ipv6_mask->hdr.payload_len ||
++	    ipv6_mask->hdr.proto ||
++	    ipv6_mask->hdr.hop_limits) {
 +		return rte_flow_error_set(error, EINVAL,
 +				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Only src/dst ports and flags supported");
++				"Invalid IPv6 mask");
 +	}
-+
-+	/* Port masks must be 0 or all-ones */
-+	if (!CI_FIELD_IS_ZERO_OR_MASKED(&tcp_mask->hdr.src_port) ||
-+	    !CI_FIELD_IS_ZERO_OR_MASKED(&tcp_mask->hdr.dst_port)) {
++	/* both src/dst addresses must be fully masked */
++	if (!CI_FIELD_IS_MASKED(&ipv6_mask->hdr.src_addr) ||
++	    !CI_FIELD_IS_MASKED(&ipv6_mask->hdr.dst_addr)) {
 +		return rte_flow_error_set(error, EINVAL,
 +				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Partial port masks not supported");
-+	}
-+
-+	/* TCP flags not supported by hardware */
-+	if (!CI_FIELD_IS_ZERO(&tcp_mask->hdr.tcp_flags)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"TCP flags filtering not supported");
++				"Invalid IPv6 mask");
 +	}
 +
 +	return 0;
 +}
 +
 +static int
-+ixgbe_process_ntuple_tcp(void *ctx,
-+			 const struct rte_flow_item *item,
-+			 struct rte_flow_error *error)
++ixgbe_process_security_ipv6(void *ctx, const struct rte_flow_item *item,
++		struct rte_flow_error *error __rte_unused)
 +{
-+	struct ixgbe_ntuple_ctx *ntuple_ctx = ctx;
-+	const struct rte_flow_item_tcp *tcp_spec = item->spec;
-+	const struct rte_flow_item_tcp *tcp_mask = ci_flow_item_mask(item);
++	struct ixgbe_security_ctx *sec_ctx = (struct ixgbe_security_ctx *)ctx;
++	const struct rte_flow_item_ipv6 *ipv6_spec = item->spec;
 +
-+	if (tcp_mask == NULL)
-+		return ixgbe_ntuple_set_l4_proto(ntuple_ctx, item, IPPROTO_TCP, error);
-+
-+	ntuple_ctx->ntuple.dst_port = tcp_spec->hdr.dst_port;
-+	ntuple_ctx->ntuple.src_port = tcp_spec->hdr.src_port;
-+
-+	ntuple_ctx->ntuple.dst_port_mask = tcp_mask->hdr.dst_port;
-+	ntuple_ctx->ntuple.src_port_mask = tcp_mask->hdr.src_port;
++	/* copy entire spec */
++	sec_ctx->spec.spec.ipv6 = *ipv6_spec;
++	sec_ctx->spec.is_ipv6 = true;
 +
 +	return 0;
 +}
 +
-+static int
-+ixgbe_validate_ntuple_udp(const void *ctx __rte_unused,
-+			  const struct rte_flow_item *item,
-+			  struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_udp *udp_mask;
-+
-+	udp_mask = ci_flow_item_mask(item);
-+
-+	if (udp_mask == NULL)
-+		return 0;
-+
-+	/* Only src/dst ports supported */
-+	if (udp_mask->hdr.dgram_len ||
-+	    udp_mask->hdr.dgram_cksum) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Only src/dst ports supported");
-+	}
-+
-+	/* Port masks must be 0 or all-ones */
-+	if (!CI_FIELD_IS_ZERO_OR_MASKED(&udp_mask->hdr.src_port) ||
-+	    !CI_FIELD_IS_ZERO_OR_MASKED(&udp_mask->hdr.dst_port)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Partial port masks not supported");
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+ixgbe_process_ntuple_udp(void *ctx,
-+			 const struct rte_flow_item *item,
-+			 struct rte_flow_error *error)
-+{
-+	struct ixgbe_ntuple_ctx *ntuple_ctx = ctx;
-+	const struct rte_flow_item_udp *udp_spec = item->spec;
-+	const struct rte_flow_item_udp *udp_mask = ci_flow_item_mask(item);
-+
-+	if (udp_mask == NULL)
-+		return ixgbe_ntuple_set_l4_proto(ntuple_ctx, item, IPPROTO_UDP, error);
-+
-+	ntuple_ctx->ntuple.dst_port = udp_spec->hdr.dst_port;
-+	ntuple_ctx->ntuple.src_port = udp_spec->hdr.src_port;
-+
-+	ntuple_ctx->ntuple.dst_port_mask = udp_mask->hdr.dst_port;
-+	ntuple_ctx->ntuple.src_port_mask = udp_mask->hdr.src_port;
-+
-+	return 0;
-+}
-+
-+static int
-+ixgbe_validate_ntuple_sctp(const void *ctx __rte_unused,
-+			   const struct rte_flow_item *item,
-+			   struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_sctp *sctp_mask;
-+
-+	sctp_mask = ci_flow_item_mask(item);
-+
-+	if (sctp_mask == NULL)
-+		return 0;
-+
-+	/* Only src/dst ports supported */
-+	if (sctp_mask->hdr.tag ||
-+	    sctp_mask->hdr.cksum) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Only src/dst ports supported");
-+	}
-+
-+	/* Port masks must be 0 or all-ones */
-+	if (!CI_FIELD_IS_ZERO_OR_MASKED(&sctp_mask->hdr.src_port) ||
-+	    !CI_FIELD_IS_ZERO_OR_MASKED(&sctp_mask->hdr.dst_port)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Partial port masks not supported");
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+ixgbe_process_ntuple_sctp(void *ctx,
-+			  const struct rte_flow_item *item,
-+			  struct rte_flow_error *error)
-+{
-+	struct ixgbe_ntuple_ctx *ntuple_ctx = ctx;
-+	const struct rte_flow_item_sctp *sctp_spec = item->spec;
-+	const struct rte_flow_item_sctp *sctp_mask = ci_flow_item_mask(item);
-+
-+	if (sctp_mask == NULL)
-+		return ixgbe_ntuple_set_l4_proto(ntuple_ctx, item, IPPROTO_SCTP, error);
-+
-+	ntuple_ctx->ntuple.dst_port = sctp_spec->hdr.dst_port;
-+	ntuple_ctx->ntuple.src_port = sctp_spec->hdr.src_port;
-+
-+	ntuple_ctx->ntuple.dst_port_mask = sctp_mask->hdr.dst_port;
-+	ntuple_ctx->ntuple.src_port_mask = sctp_mask->hdr.src_port;
-+
-+	return 0;
-+}
-+
-+static const struct flow_graph ixgbe_ntuple_graph = {
++static const struct flow_graph ixgbe_security_graph = {
 +	.nodes = (struct flow_graph_node[]) {
-+		[IXGBE_NTUPLE_NODE_START] = {
++		[IXGBE_SECURITY_NODE_START] = {
 +			.name = "START",
 +		},
-+		[IXGBE_NTUPLE_NODE_ETH] = {
++		[IXGBE_SECURITY_NODE_ETH] = {
 +			.name = "ETH",
 +			.type = RTE_FLOW_ITEM_TYPE_ETH,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+				       FLOW_GRAPH_NODE_EXPECT_SPEC,
-+			.validate = ixgbe_validate_ntuple_eth,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
 +		},
-+		[IXGBE_NTUPLE_NODE_VLAN] = {
-+			.name = "VLAN",
-+			.type = RTE_FLOW_ITEM_TYPE_VLAN,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+				       FLOW_GRAPH_NODE_EXPECT_SPEC,
-+			.validate = ixgbe_validate_ntuple_vlan,
-+		},
-+		[IXGBE_NTUPLE_NODE_IPV4] = {
++		[IXGBE_SECURITY_NODE_IPV4] = {
 +			.name = "IPV4",
 +			.type = RTE_FLOW_ITEM_TYPE_IPV4,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+				       FLOW_GRAPH_NODE_EXPECT_SPEC,
-+			.validate = ixgbe_validate_ntuple_ipv4,
-+			.process = ixgbe_process_ntuple_ipv4,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC,
++			.validate = ixgbe_validate_security_ipv4,
++			.process = ixgbe_process_security_ipv4,
 +		},
-+		[IXGBE_NTUPLE_NODE_TCP] = {
-+			.name = "TCP",
-+			.type = RTE_FLOW_ITEM_TYPE_TCP,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+				       FLOW_GRAPH_NODE_EXPECT_SPEC,
-+			.validate = ixgbe_validate_ntuple_tcp,
-+			.process = ixgbe_process_ntuple_tcp,
++		[IXGBE_SECURITY_NODE_IPV6] = {
++			.name = "IPV6",
++			.type = RTE_FLOW_ITEM_TYPE_IPV6,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC,
++			.validate = ixgbe_validate_security_ipv6,
++			.process = ixgbe_process_security_ipv6,
 +		},
-+		[IXGBE_NTUPLE_NODE_UDP] = {
++		[IXGBE_SECURITY_NODE_UDP] = {
 +			.name = "UDP",
 +			.type = RTE_FLOW_ITEM_TYPE_UDP,
++			/* for backwards compatibility, ignore all contents */
 +			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
 +				       FLOW_GRAPH_NODE_EXPECT_SPEC,
-+			.validate = ixgbe_validate_ntuple_udp,
-+			.process = ixgbe_process_ntuple_udp,
 +		},
-+		[IXGBE_NTUPLE_NODE_SCTP] = {
-+			.name = "SCTP",
-+			.type = RTE_FLOW_ITEM_TYPE_SCTP,
++		[IXGBE_SECURITY_NODE_ESP] = {
++			.name = "ESP",
++			.type = RTE_FLOW_ITEM_TYPE_ESP,
++			/* for backwards compatibility, ignore all contents */
 +			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
 +				       FLOW_GRAPH_NODE_EXPECT_SPEC,
-+			.validate = ixgbe_validate_ntuple_sctp,
-+			.process = ixgbe_process_ntuple_sctp,
 +		},
-+		[IXGBE_NTUPLE_NODE_END] = {
++		[IXGBE_SECURITY_NODE_END] = {
 +			.name = "END",
 +			.type = RTE_FLOW_ITEM_TYPE_END,
 +		},
 +	},
 +	.edges = (struct flow_graph_edge[]) {
-+		[IXGBE_NTUPLE_NODE_START] = {
++		[IXGBE_SECURITY_NODE_START] = {
 +			.next = (size_t[]) {
-+				IXGBE_NTUPLE_NODE_ETH,
-+				IXGBE_NTUPLE_NODE_IPV4,
++				IXGBE_SECURITY_NODE_ETH,
++				IXGBE_SECURITY_NODE_IPV4,
++				IXGBE_SECURITY_NODE_IPV6,
 +				FLOW_GRAPH_NODE_EDGE_END
 +			}
 +		},
-+		[IXGBE_NTUPLE_NODE_ETH] = {
++		[IXGBE_SECURITY_NODE_ETH] = {
 +			.next = (size_t[]) {
-+				IXGBE_NTUPLE_NODE_VLAN,
-+				IXGBE_NTUPLE_NODE_IPV4,
++				IXGBE_SECURITY_NODE_IPV4,
++				IXGBE_SECURITY_NODE_IPV6,
 +				FLOW_GRAPH_NODE_EDGE_END
 +			}
 +		},
-+		[IXGBE_NTUPLE_NODE_VLAN] = {
++		[IXGBE_SECURITY_NODE_IPV4] = {
 +			.next = (size_t[]) {
-+				IXGBE_NTUPLE_NODE_IPV4,
++				IXGBE_SECURITY_NODE_UDP,
++				IXGBE_SECURITY_NODE_ESP,
++				IXGBE_SECURITY_NODE_END,
 +				FLOW_GRAPH_NODE_EDGE_END
 +			}
 +		},
-+		[IXGBE_NTUPLE_NODE_IPV4] = {
++		[IXGBE_SECURITY_NODE_IPV6] = {
 +			.next = (size_t[]) {
-+				IXGBE_NTUPLE_NODE_TCP,
-+				IXGBE_NTUPLE_NODE_UDP,
-+				IXGBE_NTUPLE_NODE_SCTP,
-+				IXGBE_NTUPLE_NODE_END,
++				IXGBE_SECURITY_NODE_UDP,
++				IXGBE_SECURITY_NODE_ESP,
++				IXGBE_SECURITY_NODE_END,
 +				FLOW_GRAPH_NODE_EDGE_END
 +			}
 +		},
-+		[IXGBE_NTUPLE_NODE_TCP] = {
++		[IXGBE_SECURITY_NODE_UDP] = {
 +			.next = (size_t[]) {
-+				IXGBE_NTUPLE_NODE_END,
++				IXGBE_SECURITY_NODE_ESP,
 +				FLOW_GRAPH_NODE_EDGE_END
 +			}
 +		},
-+		[IXGBE_NTUPLE_NODE_UDP] = {
++		[IXGBE_SECURITY_NODE_ESP] = {
 +			.next = (size_t[]) {
-+				IXGBE_NTUPLE_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[IXGBE_NTUPLE_NODE_SCTP] = {
-+			.next = (size_t[]) {
-+				IXGBE_NTUPLE_NODE_END,
++				IXGBE_SECURITY_NODE_END,
 +				FLOW_GRAPH_NODE_EDGE_END
 +			}
 +		},
@@ -1658,268 +557,910 @@ index 00000000000..aa28195de0a
 +};
 +
 +static int
-+ixgbe_flow_ntuple_ctx_init(const struct rte_flow_action *actions,
++ixgbe_flow_security_ctx_init(const struct rte_flow_action *actions,
 +		const struct rte_flow_attr *attr,
 +		struct ci_flow_engine_ctx *ctx,
 +		struct rte_flow_error *error)
 +{
-+	struct ixgbe_ntuple_ctx *ntuple_ctx = (struct ixgbe_ntuple_ctx *)ctx;
-+	struct ci_flow_attr_check_param attr_param = {
-+		.allow_priority = true,
-+	};
++	struct ixgbe_security_ctx *sec_ctx = (struct ixgbe_security_ctx *)ctx;
 +	struct ci_flow_actions parsed_actions;
 +	struct ci_flow_actions_check_param ap_param = {
 +		.allowed_types = (const enum rte_flow_action_type[]){
-+			/* only queue is allowed here */
-+			RTE_FLOW_ACTION_TYPE_QUEUE,
++			/* only security is allowed here */
++			RTE_FLOW_ACTION_TYPE_SECURITY,
 +			RTE_FLOW_ACTION_TYPE_END
 +		},
-+		.driver_ctx = ctx->dev_data,
-+		.check = ixgbe_flow_actions_check,
 +		.max_actions = 1,
 +	};
-+	const struct rte_flow_action_queue *q_act;
-+	uint16_t priority;
++	const struct rte_flow_action_security *security;
++	struct rte_security_session *session;
++	const struct ixgbe_crypto_session *ic_session;
 +	int ret;
 +
 +	/* validate attributes */
-+	ret = ci_flow_check_attr(attr, &attr_param, error);
++	ret = ci_flow_check_attr(attr, NULL, error);
 +	if (ret)
 +		return ret;
-+
-+	/* Priority must be 16-bit */
-+	if (attr->priority > UINT16_MAX) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY, attr,
-+				"Priority must be 16-bit");
-+	}
 +
 +	/* parse requested actions */
 +	ret = ci_flow_check_actions(actions, &ap_param, &parsed_actions, error);
 +	if (ret)
 +		return ret;
 +
-+	q_act = (const struct rte_flow_action_queue *)parsed_actions.actions[0]->conf;
++	security = (const struct rte_flow_action_security *)parsed_actions.actions[0]->conf;
 +
-+	ntuple_ctx->ntuple.queue = q_act->index;
++	if (security->security_session == NULL) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION, parsed_actions.actions[0],
++				"NULL security session");
++	}
 +
-+	/*
-+	* rte_flow priority: 0 through UINT32_MAX, 0 is highest
-+	*
-+	 * ntuple priority: 001b through 111b, 111b is highest
-+	 *
-+	 * which means we need to transform priority from rte_flow to ntuple:
-+	 *
-+	 * 1) clamp max value
-+	 * 2) reverse
-+	 * 3) add min value
-+	 */
-+	priority = RTE_MIN(IXGBE_MAX_N_TUPLE_PRIO - 1, (uint16_t)attr->priority);
-+	priority = IXGBE_MAX_N_TUPLE_PRIO - 1 - priority;
-+	priority += IXGBE_MIN_N_TUPLE_PRIO;
-+	ntuple_ctx->ntuple.priority = priority;
++	/* cast away constness since we need to store the session pointer in the context */
++	session = RTE_CAST_PTR(struct rte_security_session *, security->security_session);
 +
-+	/* fixed value for ixgbe */
-+	ntuple_ctx->ntuple.flags = RTE_5TUPLE_FLAGS;
++	/* verify that the session is of a correct type */
++	ic_session = SECURITY_GET_SESS_PRIV(session);
++	if (ic_session->dev_data != ctx->dev_data) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION, parsed_actions.actions[0],
++				"Security session was created for a different device");
++	}
++	if (ic_session->op != IXGBE_OP_AUTHENTICATED_DECRYPTION) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION, parsed_actions.actions[0],
++				"Only authenticated decryption is supported");
++	}
++	sec_ctx->session = session;
 +
 +	return 0;
 +}
 +
-+static enum ixgbe_5tuple_protocol
-+convert_protocol_type(uint8_t protocol_value)
-+{
-+	if (protocol_value == IPPROTO_TCP)
-+		return IXGBE_FILTER_PROTOCOL_TCP;
-+	else if (protocol_value == IPPROTO_UDP)
-+		return IXGBE_FILTER_PROTOCOL_UDP;
-+	else if (protocol_value == IPPROTO_SCTP)
-+		return IXGBE_FILTER_PROTOCOL_SCTP;
-+	else
-+		return IXGBE_FILTER_PROTOCOL_NONE;
-+}
-+
 +static int
-+ixgbe_flow_ntuple_ctx_to_flow(const struct ci_flow_engine_ctx *ctx,
++ixgbe_flow_security_ctx_to_flow(const struct ci_flow_engine_ctx *ctx,
 +		struct ci_flow *flow,
 +		struct rte_flow_error *error __rte_unused)
 +{
-+	const struct ixgbe_ntuple_ctx *ntuple_ctx = (const struct ixgbe_ntuple_ctx *)ctx;
-+	struct ixgbe_ntuple_flow *ntuple_flow = (struct ixgbe_ntuple_flow *)flow;
-+	const struct rte_eth_ntuple_filter *ntuple = &ntuple_ctx->ntuple;
-+	struct ixgbe_5tuple_filter_info *key = &ntuple_flow->key;
++	const struct ixgbe_security_ctx *security_ctx = (const struct ixgbe_security_ctx *)ctx;
++	struct ixgbe_security_flow *security_flow = (struct ixgbe_security_flow *)flow;
++	struct ixgbe_security_filter *filter = &security_flow->security;
++	const struct ixgbe_crypto_session *ic_session;
 +
-+	/* mask shape (0 or all-ones) is already guaranteed by the graph */
-+	memset(key, 0, sizeof(*key));
-+
-+	key->dst_ip_mask = ntuple->dst_ip_mask == 0;
-+	if (key->dst_ip_mask == 0)
-+		key->dst_ip = ntuple->dst_ip;
-+	key->src_ip_mask = ntuple->src_ip_mask == 0;
-+	if (key->src_ip_mask == 0)
-+		key->src_ip = ntuple->src_ip;
-+	key->dst_port_mask = ntuple->dst_port_mask == 0;
-+	if (key->dst_port_mask == 0)
-+		key->dst_port = ntuple->dst_port;
-+	key->src_port_mask = ntuple->src_port_mask == 0;
-+	if (key->src_port_mask == 0)
-+		key->src_port = ntuple->src_port;
-+	key->proto_mask = ntuple->proto_mask == 0;
-+	if (key->proto_mask == 0)
-+		key->proto = convert_protocol_type(ntuple->proto);
-+	key->priority = (uint8_t)ntuple->priority;
-+
-+	ntuple_flow->queue = ntuple->queue;
++	filter->session = security_ctx->session;
++	ic_session = SECURITY_GET_SESS_PRIV(filter->session);
++	filter->sa.key = ic_session->key;
++	filter->sa.salt = ic_session->salt;
++	filter->sa.spi = ic_session->spi;
++	filter->sa.mode = IPSRXMOD_VALID | IPSRXMOD_PROTO | IPSRXMOD_DECRYPT;
++	/* slot indices stay out of range until the flow is registered */
++	filter->sa.sa_idx = IPSEC_MAX_SA_COUNT;
++	filter->sa.ip_idx = IPSEC_MAX_RX_IP_COUNT;
++	if (security_ctx->spec.is_ipv6) {
++		filter->sa.dst_ip.type = IPv6;
++		filter->sa.mode |= IPSRXMOD_IPV6;
++		memcpy(filter->sa.dst_ip.ipv6,
++				&security_ctx->spec.spec.ipv6.hdr.dst_addr,
++				sizeof(filter->sa.dst_ip.ipv6));
++	} else {
++		filter->sa.dst_ip.type = IPv4;
++		filter->sa.dst_ip.ipv4 = security_ctx->spec.spec.ipv4.hdr.dst_addr;
++	}
 +
 +	return 0;
 +}
 +
-+/* two ntuple filters are the same rule if they match the same 5-tuple key */
 +static bool
-+ixgbe_ntuple_key_equal(const struct ixgbe_5tuple_filter_info *lhs,
-+		const struct ixgbe_5tuple_filter_info *rhs)
++ixgbe_security_ip_equal(const struct ipaddr *lhs, const struct ipaddr *rhs)
 +{
-+	return memcmp(lhs, rhs, sizeof(*lhs)) == 0;
++	if (lhs->type != rhs->type)
++		return false;
++	if (lhs->type == IPv4)
++		return lhs->ipv4 == rhs->ipv4;
++
++	return memcmp(lhs->ipv6, rhs->ipv6, sizeof(lhs->ipv6)) == 0;
++}
++
++/* two SA filters are the same rule if they match the same SPI and destination IP */
++static bool
++ixgbe_security_sa_key_equal(const struct ixgbe_crypto_rx_sa *lhs,
++		const struct ixgbe_crypto_rx_sa *rhs)
++{
++	return lhs->spi == rhs->spi &&
++			ixgbe_security_ip_equal(&lhs->dst_ip, &rhs->dst_ip);
 +}
 +
 +static int
-+ixgbe_ntuple_slot_find(const struct ixgbe_ntuple_priv *priv,
-+		const struct ixgbe_ntuple_flow *ntuple_flow)
++ixgbe_security_sa_slot_find(const struct ixgbe_security_priv *priv,
++		const struct ixgbe_security_flow *security_flow)
 +{
-+	uint16_t free_idx = IXGBE_MAX_FTQF_FILTERS;
-+	uint16_t idx;
++	uint32_t free_idx = IPSEC_MAX_SA_COUNT;
++	uint32_t idx;
 +
-+	for (idx = 0; idx < IXGBE_MAX_FTQF_FILTERS; idx++) {
-+		const struct ixgbe_ntuple_flow *registered = priv->slots[idx];
++	for (idx = 0; idx < IPSEC_MAX_SA_COUNT; idx++) {
++		const struct ixgbe_security_flow *registered = priv->sa_slots[idx];
 +
 +		if (registered == NULL) {
-+			if (free_idx == IXGBE_MAX_FTQF_FILTERS)
++			if (free_idx == IPSEC_MAX_SA_COUNT)
 +				free_idx = idx;
 +			continue;
 +		}
-+		if (ixgbe_ntuple_key_equal(&registered->key, &ntuple_flow->key))
++		if (ixgbe_security_sa_key_equal(&registered->security.sa,
++				&security_flow->security.sa))
 +			return -EEXIST;
 +	}
-+	if (free_idx == IXGBE_MAX_FTQF_FILTERS)
++	if (free_idx == IPSEC_MAX_SA_COUNT)
 +		return -ENOSPC;
 +
 +	return (int)free_idx;
 +}
 +
 +static int
-+ixgbe_flow_ntuple_flow_register(struct ci_flow *flow, struct rte_flow_error *error)
++ixgbe_security_ip_slot_find(const struct ixgbe_security_priv *priv,
++		const struct ipaddr *ip)
 +{
-+	struct ixgbe_ntuple_flow *ntuple_flow = (struct ixgbe_ntuple_flow *)flow;
-+	struct ixgbe_ntuple_priv *priv = flow->engine_priv;
-+	int idx;
++	uint32_t free_idx = IPSEC_MAX_RX_IP_COUNT;
++	uint32_t idx;
 +
-+	idx = ixgbe_ntuple_slot_find(priv, ntuple_flow);
-+	if (idx == -EEXIST) {
++	for (idx = 0; idx < IPSEC_MAX_RX_IP_COUNT; idx++) {
++		if (priv->ip_slots[idx].use_count == 0) {
++			if (free_idx == IPSEC_MAX_RX_IP_COUNT)
++				free_idx = idx;
++			continue;
++		}
++		if (ixgbe_security_ip_equal(&priv->ip_slots[idx].ip, ip))
++			return (int)idx;
++	}
++	if (free_idx == IPSEC_MAX_RX_IP_COUNT)
++		return -ENOSPC;
++
++	return (int)free_idx;
++}
++
++static void
++ixgbe_security_ip_slot_get(struct ixgbe_security_priv *priv, uint32_t idx,
++		const struct ipaddr *ip)
++{
++	struct ixgbe_security_ip_slot *slot = &priv->ip_slots[idx];
++
++	if (ci_usage_count_claim(&slot->use_count))
++		slot->ip = *ip;
++}
++
++static void
++ixgbe_security_ip_slot_put(struct ixgbe_security_priv *priv, uint32_t idx)
++{
++	struct ixgbe_security_ip_slot *slot = &priv->ip_slots[idx];
++
++	if (ci_usage_count_release(&slot->use_count))
++		*slot = (struct ixgbe_security_ip_slot){0};
++}
++
++static bool
++ixgbe_security_flow_is_registered(const struct ixgbe_security_flow *security_flow)
++{
++	const struct ixgbe_security_priv *priv = security_flow->flow.flow.engine_priv;
++	const struct ixgbe_crypto_rx_sa *sa = &security_flow->security.sa;
++
++	return sa->ip_idx < IPSEC_MAX_RX_IP_COUNT &&
++			sa->sa_idx < IPSEC_MAX_SA_COUNT &&
++			priv->sa_slots[sa->sa_idx] == security_flow &&
++			priv->ip_slots[sa->ip_idx].use_count != 0 &&
++			ixgbe_security_ip_equal(&priv->ip_slots[sa->ip_idx].ip,
++					&sa->dst_ip);
++}
++
++static int
++ixgbe_flow_security_flow_register(struct ci_flow *flow,
++		struct rte_flow_error *error)
++{
++	struct ixgbe_security_flow *security_flow = (struct ixgbe_security_flow *)flow;
++	struct ixgbe_security_priv *priv = flow->engine_priv;
++	struct ixgbe_security_filter *filter = &security_flow->security;
++	int sa_idx, ip_idx, ret;
++
++	sa_idx = ixgbe_security_sa_slot_find(priv, security_flow);
++	if (sa_idx == -EEXIST) {
 +		return rte_flow_error_set(error, EEXIST,
 +				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Ntuple filter already exists");
++				"Ingress security filter already exists");
 +	}
-+	if (idx == -ENOSPC) {
++	if (sa_idx == -ENOSPC) {
 +		return rte_flow_error_set(error, ENOSPC,
 +				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Ntuple filter table is full");
++				"Ingress security SA table is full");
 +	}
-+	if (idx < 0) {
-+		return rte_flow_error_set(error, -idx,
++	if (sa_idx < 0) {
++		return rte_flow_error_set(error, -sa_idx,
 +				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Failed to register ntuple filter");
++				"Failed to reserve ingress security SA slot");
 +	}
 +
-+	priv->slots[idx] = ntuple_flow;
-+	ntuple_flow->index = idx;
++	ip_idx = ixgbe_security_ip_slot_find(priv, &filter->sa.dst_ip);
++	if (ip_idx == -ENOSPC) {
++		return rte_flow_error_set(error, ENOSPC,
++				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++				"Ingress security IP table is full");
++	}
++	if (ip_idx < 0) {
++		return rte_flow_error_set(error, -ip_idx,
++				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++				"Failed to reserve ingress security IP slot");
++	}
++
++	ret = ixgbe_crypto_session_acquire(filter->session);
++	if (ret != 0) {
++		return rte_flow_error_set(error, -ret,
++				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++				"Failed to acquire ingress security session");
++	}
++
++	/* every resource is acquired by this point, so nothing below may fail */
++	filter->sa.sa_idx = sa_idx;
++	filter->sa.ip_idx = ip_idx;
++	priv->sa_slots[sa_idx] = security_flow;
++	ixgbe_security_ip_slot_get(priv, ip_idx, &filter->sa.dst_ip);
 +
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_ntuple_flow_unregister(struct ci_flow *flow, struct rte_flow_error *error)
++ixgbe_flow_security_flow_unregister(struct ci_flow *flow,
++		struct rte_flow_error *error)
 +{
-+	struct ixgbe_ntuple_flow *ntuple_flow = (struct ixgbe_ntuple_flow *)flow;
-+	struct ixgbe_ntuple_priv *priv = flow->engine_priv;
++	struct ixgbe_security_flow *security_flow = (struct ixgbe_security_flow *)flow;
++	struct ixgbe_security_priv *priv = flow->engine_priv;
++	struct ixgbe_security_filter *filter = &security_flow->security;
++	int ret;
 +
-+	if (ntuple_flow->index >= IXGBE_MAX_FTQF_FILTERS ||
-+			priv->slots[ntuple_flow->index] != ntuple_flow) {
++	if (!ixgbe_security_flow_is_registered(security_flow)) {
 +		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Ntuple filter slot does not match on unregister");
++				RTE_FLOW_ERROR_TYPE_HANDLE, flow,
++				"Ingress security flow registration is invalid");
++	}
++	ret = ixgbe_crypto_session_release(filter->session);
++	if (ret != 0) {
++		return rte_flow_error_set(error, -ret,
++				RTE_FLOW_ERROR_TYPE_HANDLE, flow,
++				"Failed to release ingress security session");
 +	}
 +
-+	priv->slots[ntuple_flow->index] = NULL;
-+
++	priv->sa_slots[filter->sa.sa_idx] = NULL;
++	ixgbe_security_ip_slot_put(priv, filter->sa.ip_idx);
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_ntuple_flow_install(struct ci_flow *flow,
-+		struct rte_flow_error *error __rte_unused)
++ixgbe_flow_security_flow_install(struct ci_flow *flow,
++		struct rte_flow_error *error)
 +{
-+	struct ixgbe_ntuple_flow *ntuple_flow = (struct ixgbe_ntuple_flow *)flow;
-+	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(flow->dev_data->dev_private);
++	struct ixgbe_security_flow *security_flow = (struct ixgbe_security_flow *)flow;
 +
-+	ixgbe_ntuple_filter_program(hw, ntuple_flow->index, &ntuple_flow->key,
-+			ntuple_flow->queue);
++	if (!ixgbe_security_flow_is_registered(security_flow)) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_HANDLE, flow,
++				"Ingress security flow registration is invalid");
++	}
 +
++	ixgbe_crypto_install_rx_sa(flow->dev_data, &security_flow->security.sa);
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_ntuple_flow_uninstall(struct ci_flow *flow,
-+		struct rte_flow_error *error __rte_unused)
++ixgbe_flow_security_flow_uninstall(struct ci_flow *flow,
++		struct rte_flow_error *error)
 +{
-+	struct ixgbe_ntuple_flow *ntuple_flow = (struct ixgbe_ntuple_flow *)flow;
-+	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(flow->dev_data->dev_private);
++	struct ixgbe_security_flow *security_flow = (struct ixgbe_security_flow *)flow;
++	struct ixgbe_security_priv *priv = flow->engine_priv;
++	const struct ixgbe_crypto_rx_sa *sa = &security_flow->security.sa;
 +
-+	ixgbe_ntuple_filter_clear(hw, ntuple_flow->index);
++	if (!ixgbe_security_flow_is_registered(security_flow)) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_HANDLE, flow,
++				"Ingress security flow registration is invalid");
++	}
 +
++	ixgbe_crypto_uninstall_rx_sa(flow->dev_data, sa,
++			ci_usage_count_is_last(&priv->ip_slots[sa->ip_idx].use_count));
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_ntuple_engine_init(const struct ci_flow_engine *engine __rte_unused,
++ixgbe_flow_security_engine_init(const struct ci_flow_engine *engine __rte_unused,
 +		struct rte_eth_dev_data *dev_data,
 +		void *priv __rte_unused)
 +{
 +	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev_data->dev_private);
 +
-+	/* only 82599 and X540 have L3/L4 5-tuple (ntuple) filters */
 +	if (hw->mac.type == ixgbe_mac_82599EB ||
-+			hw->mac.type == ixgbe_mac_X540)
++			hw->mac.type == ixgbe_mac_X540 ||
++			hw->mac.type == ixgbe_mac_X550 ||
++			hw->mac.type == ixgbe_mac_X550EM_x ||
++			hw->mac.type == ixgbe_mac_X550EM_a ||
++			hw->mac.type == ixgbe_mac_E610)
 +		return 0;
 +
 +	return -ENOTSUP;
 +}
 +
-+static const struct ci_flow_engine_ops ixgbe_ntuple_ops = {
-+	.engine_init = ixgbe_flow_ntuple_engine_init,
-+	.ctx_init = ixgbe_flow_ntuple_ctx_init,
-+	.ctx_to_flow = ixgbe_flow_ntuple_ctx_to_flow,
-+	.flow_register = ixgbe_flow_ntuple_flow_register,
-+	.flow_unregister = ixgbe_flow_ntuple_flow_unregister,
-+	.flow_install = ixgbe_flow_ntuple_flow_install,
-+	.flow_uninstall = ixgbe_flow_ntuple_flow_uninstall,
++static const struct ci_flow_engine_ops ixgbe_security_ops = {
++	.engine_init = ixgbe_flow_security_engine_init,
++	.ctx_init = ixgbe_flow_security_ctx_init,
++	.ctx_to_flow = ixgbe_flow_security_ctx_to_flow,
++	.flow_register = ixgbe_flow_security_flow_register,
++	.flow_unregister = ixgbe_flow_security_flow_unregister,
++	.flow_install = ixgbe_flow_security_flow_install,
++	.flow_uninstall = ixgbe_flow_security_flow_uninstall,
 +};
 +
-+const struct ci_flow_engine ixgbe_ntuple_flow_engine = {
-+	.name = "ixgbe_ntuple",
-+	.ctx_size = sizeof(struct ixgbe_ntuple_ctx),
-+	.flow_size = sizeof(struct ixgbe_ntuple_flow),
-+	.priv_size = sizeof(struct ixgbe_ntuple_priv),
-+	.ops = &ixgbe_ntuple_ops,
-+	.graph = &ixgbe_ntuple_graph,
++const struct ci_flow_engine ixgbe_security_flow_engine = {
++	.name = "ixgbe_security",
++	.ctx_size = sizeof(struct ixgbe_security_ctx),
++	.flow_size = sizeof(struct ixgbe_security_flow),
++	.priv_size = sizeof(struct ixgbe_security_priv),
++	.ops = &ixgbe_security_ops,
++	.graph = &ixgbe_security_graph,
 +};
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/intel/ixgbe/ixgbe_ipsec.c
+index 3c35326016b..944cb0ff423 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ipsec.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ipsec.c
+@@ -30,12 +30,6 @@
+ 	IXGBE_WRITE_REG_THEN_POLL_MASK(hw, IXGBE_IPSTXIDX, reg_val, \
+ 	IPSRXIDX_WRITE, IXGBE_REGISTER_POLL_WAIT_5_MS)
+ 
+-#define CMP_IP(a, b) (\
+-	(a).ipv6[0] == (b).ipv6[0] && \
+-	(a).ipv6[1] == (b).ipv6[1] && \
+-	(a).ipv6[2] == (b).ipv6[2] && \
+-	(a).ipv6[3] == (b).ipv6[3])
+-
+ static inline void
+ ixgbe_crypto_write_rx_ip(struct ixgbe_hw *hw, uint32_t idx,
+ 		const struct ipaddr *ip, bool enable)
+@@ -137,195 +131,165 @@ ixgbe_crypto_clear_ipsec_tables(struct rte_eth_dev *dev)
+ 		ixgbe_crypto_write_tx_key(hw, i, key, 0, false);
+ 	}
+ 
+-	memset(priv->rx_ip_tbl, 0, sizeof(priv->rx_ip_tbl));
+-	memset(priv->rx_sa_tbl, 0, sizeof(priv->rx_sa_tbl));
+-	memset(priv->tx_sa_tbl, 0, sizeof(priv->tx_sa_tbl));
++	*priv->tx_sa_tbl = (struct ixgbe_crypto_tx_sa_table){0};
++}
++
++void
++ixgbe_crypto_install_rx_sa(struct rte_eth_dev_data *dev_data,
++		const struct ixgbe_crypto_rx_sa *sa)
++{
++	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev_data->dev_private);
++	uint8_t key[16];
++
++	ixgbe_crypto_write_rx_ip(hw, sa->ip_idx, &sa->dst_ip, true);
++	ixgbe_crypto_write_rx_spi(hw, sa->sa_idx, sa->spi, sa->ip_idx, true);
++	memcpy(key, sa->key, sizeof(key));
++	ixgbe_crypto_write_rx_key(hw, sa->sa_idx, (const uint8_t *)key,
++			sa->salt, sa->mode, true);
++	rte_memzero_explicit(key, sizeof(key));
++}
++
++void
++ixgbe_crypto_uninstall_rx_sa(struct rte_eth_dev_data *dev_data,
++		const struct ixgbe_crypto_rx_sa *sa, bool clear_ip)
++{
++	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev_data->dev_private);
++	const uint8_t key[16] = {0};
++
++	ixgbe_crypto_write_rx_spi(hw, sa->sa_idx, 0, 0, false);
++	ixgbe_crypto_write_rx_key(hw, sa->sa_idx, key, 0, 0, false);
++	if (clear_ip) {
++		const struct ipaddr ip = {0};
++
++		ixgbe_crypto_write_rx_ip(hw, sa->ip_idx, &ip, false);
++	}
+ }
+ 
+ static int
+-ixgbe_crypto_add_sa(struct ixgbe_crypto_session *ic_session)
++ixgbe_crypto_add_tx_sa(struct ixgbe_crypto_session *ic_session)
+ {
+ 	struct rte_eth_dev_data *dev_data = ic_session->dev_data;
+ 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev_data->dev_private);
+ 	struct ixgbe_ipsec *priv = IXGBE_DEV_PRIVATE_TO_IPSEC(dev_data->dev_private);
+-	int i, sa_index = -1;
+-	uint8_t key[16] = {0};
+-
+-	if (ic_session->op == IXGBE_OP_AUTHENTICATED_DECRYPTION) {
+-		struct ixgbe_crypto_rx_ip_table *rxip;
+-		struct ixgbe_crypto_rx_sa_table *rxsa;
+-		int ip_index = -1, free_index = -1;
+-
+-		/* Find a match in the IP table*/
+-		for (i = 0; i < IPSEC_MAX_RX_IP_COUNT; i++) {
+-			if (CMP_IP(priv->rx_ip_tbl[i].ip,
+-				   ic_session->dst_ip)) {
+-				ip_index = i;
+-				break;
+-			}
+-			if (free_index == -1 && priv->rx_ip_tbl[i].ref_count == 0)
+-				free_index = i;
+-		}
+-		/* If no match, find a free entry in the IP table*/
+-		if (ip_index < 0)
+-			ip_index = free_index;
+-
+-		/* Fail if no match and no free entries*/
+-		if (ip_index < 0) {
+-			PMD_DRV_LOG(ERR, "No free entry left in the Rx IP table");
+-			return -ENOSPC;
+-		}
+-		rxip = &priv->rx_ip_tbl[ip_index];
+-
+-		/* Find a free entry in the SA table*/
+-		for (i = 0; i < IPSEC_MAX_SA_COUNT; i++) {
+-			if (priv->rx_sa_tbl[i].used == 0) {
+-				sa_index = i;
+-				break;
+-			}
+-		}
+-		/* Fail if no free entries*/
+-		if (sa_index < 0) {
+-			PMD_DRV_LOG(ERR, "No free entry left in the Rx SA table");
+-			return -ENOSPC;
+-		}
+-		rxsa = &priv->rx_sa_tbl[sa_index];
+-
+-		rxip->ref_count++;
+-		memcpy(&rxip->ip, &ic_session->dst_ip, sizeof(rxip->ip));
+-
+-		rxsa->spi = ic_session->spi;
+-		rxsa->ip_index = ip_index;
+-		rxsa->mode = IPSRXMOD_VALID | IPSRXMOD_PROTO | IPSRXMOD_DECRYPT;
+-		if (ic_session->dst_ip.type == IPv6)
+-			rxsa->mode |= IPSRXMOD_IPV6;
+-
+-		rxsa->used = 1;
+-
+-		/* write IP table entry*/
+-		ixgbe_crypto_write_rx_ip(hw, ip_index, &rxip->ip, true);
+-
+-		/* write SPI table entry*/
+-		ixgbe_crypto_write_rx_spi(hw, sa_index, rxsa->spi, ip_index, true);
+-
+-		/* write Key table entry*/
+-		memcpy(key, ic_session->key, ic_session->key_len);
+-
+-		ixgbe_crypto_write_rx_key(hw, sa_index, key,
+-				ic_session->salt, rxsa->mode, true);
+-
+-		rte_memzero_explicit(key, sizeof(key));
+-
+-	} else { /* sess->dir == RTE_CRYPTO_OUTBOUND */
+-		struct ixgbe_crypto_tx_sa_table *txsa;
+-
+-		/* Find a free entry in the SA table*/
+-		for (i = 0; i < IPSEC_MAX_SA_COUNT; i++) {
+-			if (priv->tx_sa_tbl[i].used == 0) {
+-				sa_index = i;
+-				break;
+-			}
++	struct ixgbe_crypto_tx_sa_table *txsa;
++	uint8_t key[16];
++	int sa_index = -1;
++	int i;
++
++	for (i = 0; i < IPSEC_MAX_SA_COUNT; i++) {
++		if (priv->tx_sa_tbl[i].used == 0) {
++			sa_index = i;
++			break;
+ 		}
+-		/* Fail if no free entries*/
+-		if (sa_index < 0) {
+-			PMD_DRV_LOG(ERR, "No free entry left in the Tx SA table");
+-			return -ENOSPC;
+-		}
+-		txsa = &priv->tx_sa_tbl[sa_index];
+-
+-		txsa->spi = ic_session->spi;
+-		txsa->used = 1;
+-		ic_session->sa_index = sa_index;
+-
+-		memcpy(key, ic_session->key, ic_session->key_len);
+-
+-		/* write Key table entry*/
+-		ixgbe_crypto_write_tx_key(hw, sa_index, key, ic_session->salt, true);
+-
+-		rte_memzero_explicit(key, sizeof(key));
+ 	}
++	if (sa_index < 0) {
++		PMD_DRV_LOG(ERR, "No free entry left in the Tx SA table");
++		return -ENOSPC;
++	}
++	txsa = &priv->tx_sa_tbl[sa_index];
++	txsa->spi = ic_session->spi;
++	txsa->used = 1;
++	ic_session->sa_index = sa_index;
++
++	memcpy(key, ic_session->key, ic_session->key_len);
++	ixgbe_crypto_write_tx_key(hw, sa_index, (const uint8_t *)key,
++			ic_session->salt, true);
++	rte_memzero_explicit(key, sizeof(key));
+ 
+ 	return 0;
+ }
+ 
+ static int
+-ixgbe_crypto_remove_sa(struct ixgbe_crypto_session *ic_session)
++ixgbe_crypto_remove_tx_sa(struct ixgbe_crypto_session *ic_session)
+ {
+ 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(ic_session->dev_data->dev_private);
+ 	struct ixgbe_ipsec *priv =
+ 			IXGBE_DEV_PRIVATE_TO_IPSEC(ic_session->dev_data->dev_private);
++	struct ixgbe_crypto_tx_sa_table *txsa;
+ 	const uint8_t key[16] = {0};
+-	int i, sa_index = -1;
+ 
+-	if (ic_session->op == IXGBE_OP_AUTHENTICATED_DECRYPTION) {
+-		struct ixgbe_crypto_rx_ip_table *rxip;
+-		struct ixgbe_crypto_rx_sa_table *rxsa;
+-		int ip_index = -1;
++	if (ic_session->sa_index >= IPSEC_MAX_SA_COUNT)
++		return -ENOENT;
++	txsa = &priv->tx_sa_tbl[ic_session->sa_index];
++	if (txsa->used == 0 || txsa->spi != ic_session->spi)
++		return -ENOENT;
+ 
+-		/* Find a match in the IP table*/
+-		for (i = 0; i < IPSEC_MAX_RX_IP_COUNT; i++) {
+-			if (CMP_IP(priv->rx_ip_tbl[i].ip, ic_session->dst_ip)) {
+-				ip_index = i;
+-				break;
+-			}
+-		}
++	ixgbe_crypto_write_tx_key(hw, ic_session->sa_index, key, 0, false);
++	*txsa = (struct ixgbe_crypto_tx_sa_table){0};
+ 
+-		/* Fail if no match*/
+-		if (ip_index < 0) {
+-			PMD_DRV_LOG(ERR, "Entry not found in the Rx IP table");
+-			return -ENOENT;
+-		}
+-		rxip = &priv->rx_ip_tbl[ip_index];
++	return 0;
++}
+ 
+-		/* Find a free entry in the SA table*/
+-		for (i = 0; i < IPSEC_MAX_SA_COUNT; i++) {
+-			if (priv->rx_sa_tbl[i].spi == ic_session->spi) {
+-				sa_index = i;
+-				break;
+-			}
+-		}
+-		/* Fail if no match*/
+-		if (sa_index < 0) {
+-			PMD_DRV_LOG(ERR, "Entry not found in the Rx SA table");
+-			return -ENOENT;
+-		}
+-		rxsa = &priv->rx_sa_tbl[sa_index];
++static int
++ixgbe_crypto_session_state_acquire(struct ixgbe_crypto_session *ic_session)
++{
++	uint16_t expected;
+ 
+-		/* Disable and clear Rx SPI and key table entries*/
+-		ixgbe_crypto_write_rx_spi(hw, sa_index, 0, 0, false);
+-		ixgbe_crypto_write_rx_key(hw, sa_index, key, 0, 0, false);
+-
+-		/* Clear the SA table entry*/
+-		*rxsa = (struct ixgbe_crypto_rx_sa_table){0};
++	expected = rte_atomic_load_explicit(&ic_session->refcnt,
++			rte_memory_order_acquire);
++	while (expected != IXGBE_SECURITY_SESSION_DESTROYING) {
++		if (expected >= IXGBE_SECURITY_SESSION_REFCNT_MAX)
++			return -ENOSPC;
++		if (rte_atomic_compare_exchange_strong_explicit(&ic_session->refcnt,
++				&expected, expected + 1,
++				rte_memory_order_acq_rel, rte_memory_order_acquire))
++			return 0;
++	}
+ 
+-		/* If last used then clear the IP table entry*/
+-		rxip->ref_count--;
+-		if (rxip->ref_count == 0) {
+-			const struct ipaddr ip = {0};
+-			ixgbe_crypto_write_rx_ip(hw, ip_index, &ip, false);
+-			*rxip = (struct ixgbe_crypto_rx_ip_table){0};
+-		}
+-	} else { /* session->dir == RTE_CRYPTO_OUTBOUND */
+-		struct ixgbe_crypto_tx_sa_table *txsa;
++	return -EBUSY;
++}
+ 
+-		/* Find a match in the SA table*/
+-		for (i = 0; i < IPSEC_MAX_SA_COUNT; i++) {
+-			if (priv->tx_sa_tbl[i].spi == ic_session->spi) {
+-				sa_index = i;
+-				break;
+-			}
+-		}
+-		/* Fail if no match entries*/
+-		if (sa_index < 0) {
+-			PMD_DRV_LOG(ERR, "Entry not found in the Tx SA table");
+-			return -ENOENT;
+-		}
+-		txsa = &priv->tx_sa_tbl[sa_index];
++static int
++ixgbe_crypto_session_state_release(struct ixgbe_crypto_session *ic_session)
++{
++	uint16_t expected;
+ 
+-		ixgbe_crypto_write_tx_key(hw, sa_index, key, 0, false);
+-		*txsa = (struct ixgbe_crypto_tx_sa_table){0};
++	expected = rte_atomic_load_explicit(&ic_session->refcnt,
++			rte_memory_order_acquire);
++	while (expected != IXGBE_SECURITY_SESSION_DESTROYING) {
++		if (expected == IXGBE_SECURITY_SESSION_UNBOUND)
++			return -EINVAL;
++		if (rte_atomic_compare_exchange_strong_explicit(&ic_session->refcnt,
++				&expected, expected - 1,
++				rte_memory_order_release, rte_memory_order_relaxed))
++			return 0;
+ 	}
+ 
++	return -EINVAL;
++}
++
++int
++ixgbe_crypto_session_acquire(struct rte_security_session *session)
++{
++	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(session);
++
++	return ixgbe_crypto_session_state_acquire(ic_session);
++}
++
++int
++ixgbe_crypto_session_release(struct rte_security_session *session)
++{
++	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(session);
++
++	return ixgbe_crypto_session_state_release(ic_session);
++}
++
++static int
++ixgbe_crypto_session_disable(struct rte_security_session *session)
++{
++	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(session);
++	uint16_t expected;
++
++	/*
++	 * Rx sessions must have no flow references before removal. Tx sessions
++	 * retain the reference acquired when their SA was allocated.
++	 */
++	expected = ic_session->op == IXGBE_OP_AUTHENTICATED_DECRYPTION ?
++			IXGBE_SECURITY_SESSION_UNBOUND : 1;
++	if (!rte_atomic_compare_exchange_strong_explicit(&ic_session->refcnt,
++			&expected, IXGBE_SECURITY_SESSION_DESTROYING,
++			rte_memory_order_acq_rel, rte_memory_order_acquire))
++		return -EBUSY;
+ 	return 0;
+ }
+ 
+@@ -338,6 +302,7 @@ ixgbe_crypto_create_session(void *device,
+ 	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(session);
+ 	struct rte_crypto_aead_xform *aead_xform;
+ 	struct rte_eth_conf *dev_conf = &eth_dev->data->dev_conf;
++	int ret;
+ 
+ 	if (conf->crypto_xform->type != RTE_CRYPTO_SYM_XFORM_AEAD ||
+ 			conf->crypto_xform->aead.algo !=
+@@ -369,18 +334,30 @@ ixgbe_crypto_create_session(void *device,
+ 		}
+ 	}
+ 
+-	ic_session->key = aead_xform->key.data;
++	memcpy(ic_session->key, aead_xform->key.data, sizeof(ic_session->key));
+ 	ic_session->key_len = aead_xform->key.length;
+ 	memcpy(&ic_session->salt,
+ 	       &aead_xform->key.data[aead_xform->key.length], 4);
+ 	ic_session->spi = conf->ipsec.spi;
+ 	ic_session->dev_data = eth_dev->data;
+ 
++	rte_atomic_store_explicit(&ic_session->refcnt,
++			IXGBE_SECURITY_SESSION_UNBOUND,
++			rte_memory_order_relaxed);
++
++	/* only handle tx, as rx sessions are created by rte_flow */
+ 	if (ic_session->op == IXGBE_OP_AUTHENTICATED_ENCRYPTION) {
+-		if (ixgbe_crypto_add_sa(ic_session)) {
++		if (ixgbe_crypto_add_tx_sa(ic_session)) {
+ 			PMD_DRV_LOG(ERR, "Failed to add SA");
++			rte_memzero_explicit(ic_session, sizeof(*ic_session));
+ 			return -EPERM;
+ 		}
++		ret = ixgbe_crypto_session_state_acquire(ic_session);
++		if (ret != 0) {
++			ixgbe_crypto_remove_tx_sa(ic_session);
++			rte_memzero_explicit(ic_session, sizeof(*ic_session));
++			return ret;
++		}
+ 	}
+ 
+ 	return 0;
+@@ -398,18 +375,30 @@ ixgbe_crypto_remove_session(void *device,
+ {
+ 	struct rte_eth_dev *eth_dev = device;
+ 	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(session);
++	int ret;
+ 
+ 	if (eth_dev->data != ic_session->dev_data) {
+ 		PMD_DRV_LOG(ERR, "Session not bound to this device");
+ 		return -ENODEV;
+ 	}
+ 
+-	if (ixgbe_crypto_remove_sa(ic_session)) {
+-		PMD_DRV_LOG(ERR, "Failed to remove session");
+-		return -EFAULT;
++	if (ixgbe_crypto_session_disable(session) < 0) {
++		PMD_DRV_LOG(ERR, "Session is still in use");
++		return -EBUSY;
+ 	}
+ 
+-	memset(ic_session, 0, sizeof(struct ixgbe_crypto_session));
++	if (ic_session->op == IXGBE_OP_AUTHENTICATED_ENCRYPTION) {
++		ret = ixgbe_crypto_remove_tx_sa(ic_session);
++		if (ret != 0) {
++			PMD_DRV_LOG(ERR, "Failed to remove session");
++			/* set refcnt back to 1 to re-enable the session */
++			rte_atomic_store_explicit(&ic_session->refcnt, 1,
++					rte_memory_order_release);
++			return ret;
++		}
++	}
++
++	rte_memzero_explicit(ic_session, sizeof(*ic_session));
+ 	return 0;
+ }
+ 
+@@ -632,34 +621,6 @@ ixgbe_crypto_enable_ipsec(struct rte_eth_dev *dev)
+ 	return 0;
+ }
+ 
+-int
+-ixgbe_crypto_add_ingress_sa_from_flow(struct rte_security_session *sess,
+-		const struct ip_spec *spec)
+-{
+-	struct ixgbe_crypto_session *ic_session = SECURITY_GET_SESS_PRIV(sess);
+-
+-	if (ic_session->op == IXGBE_OP_AUTHENTICATED_DECRYPTION) {
+-		if (spec->is_ipv6) {
+-			const struct rte_flow_item_ipv6 *ipv6 = &spec->spec.ipv6;
+-			ic_session->src_ip.type = IPv6;
+-			ic_session->dst_ip.type = IPv6;
+-			memcpy(ic_session->src_ip.ipv6,
+-				   &ipv6->hdr.src_addr, 16);
+-			memcpy(ic_session->dst_ip.ipv6,
+-				   &ipv6->hdr.dst_addr, 16);
+-		} else {
+-			const struct rte_flow_item_ipv4 *ipv4 = &spec->spec.ipv4;
+-			ic_session->src_ip.type = IPv4;
+-			ic_session->dst_ip.type = IPv4;
+-			ic_session->src_ip.ipv4 = ipv4->hdr.src_addr;
+-			ic_session->dst_ip.ipv4 = ipv4->hdr.dst_addr;
+-		}
+-		return ixgbe_crypto_add_sa(ic_session);
+-	}
+-
+-	return 0;
+-}
+-
+ static struct rte_security_ops ixgbe_security_ops = {
+ 	.session_create = ixgbe_crypto_create_session,
+ 	.session_update = NULL,
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ipsec.h b/drivers/net/intel/ixgbe/ixgbe_ipsec.h
+index 1099b5f598b..a872a64788b 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ipsec.h
++++ b/drivers/net/intel/ixgbe/ixgbe_ipsec.h
+@@ -8,6 +8,7 @@
+ #include <ethdev_driver.h>
+ #include <rte_security.h>
+ #include <rte_security_driver.h>
++#include <rte_stdatomic.h>
+ 
+ #include <rte_flow.h>
+ 
+@@ -33,6 +34,9 @@
+ 
+ #define IPSEC_MAX_RX_IP_COUNT           128
+ #define IPSEC_MAX_SA_COUNT              1024
++#define IXGBE_SECURITY_SESSION_UNBOUND  0
++#define IXGBE_SECURITY_SESSION_REFCNT_MAX IPSEC_MAX_SA_COUNT
++#define IXGBE_SECURITY_SESSION_DESTROYING UINT16_MAX
+ 
+ #define ESP_ICV_SIZE 16
+ #define ESP_TRAILER_SIZE 2
+@@ -67,32 +71,30 @@ struct ipaddr {
+ /** inline crypto crypto private session structure */
+ struct __rte_cache_aligned ixgbe_crypto_session {
+ 	enum ixgbe_operation op;
+-	const uint8_t *key;
++	RTE_ATOMIC(uint16_t) refcnt;
++	uint8_t key[16];
+ 	uint32_t key_len;
+ 	uint32_t salt;
+ 	uint32_t sa_index;
+ 	uint32_t spi;
+-	struct ipaddr src_ip;
+-	struct ipaddr dst_ip;
+ 	struct rte_eth_dev_data *dev_data;
+ };
+ 
+-struct ixgbe_crypto_rx_ip_table {
+-	struct ipaddr ip;
+-	uint16_t ref_count;
+-};
+-struct ixgbe_crypto_rx_sa_table {
+-	uint32_t spi;
+-	uint32_t ip_index;
+-	uint8_t  mode;
+-	uint8_t  used;
+-};
+-
+ struct ixgbe_crypto_tx_sa_table {
+ 	uint32_t spi;
+ 	uint8_t  used;
+ };
+ 
++struct ixgbe_crypto_rx_sa {
++	struct ipaddr dst_ip;
++	const uint8_t *key;
++	uint32_t salt;
++	uint32_t spi;
++	uint32_t mode;
++	uint32_t ip_idx;
++	uint32_t sa_idx;
++};
++
+ union ixgbe_crypto_tx_desc_md {
+ 	uint64_t data;
+ 	struct {
+@@ -106,25 +108,17 @@ union ixgbe_crypto_tx_desc_md {
+ };
+ 
+ struct ixgbe_ipsec {
+-	struct ixgbe_crypto_rx_ip_table rx_ip_tbl[IPSEC_MAX_RX_IP_COUNT];
+-	struct ixgbe_crypto_rx_sa_table rx_sa_tbl[IPSEC_MAX_SA_COUNT];
+ 	struct ixgbe_crypto_tx_sa_table tx_sa_tbl[IPSEC_MAX_SA_COUNT];
+ };
+ 
+ 
+ int ixgbe_ipsec_ctx_create(struct rte_eth_dev *dev);
+ int ixgbe_crypto_enable_ipsec(struct rte_eth_dev *dev);
+-
+-struct ip_spec {
+-	bool is_ipv6;
+-	union {
+-		struct rte_flow_item_ipv4 ipv4;
+-		struct rte_flow_item_ipv6 ipv6;
+-	} spec;
+-};
+-int ixgbe_crypto_add_ingress_sa_from_flow(struct rte_security_session *sess,
+-		const struct ip_spec *ip_spec);
+-
+-
++void ixgbe_crypto_install_rx_sa(struct rte_eth_dev_data *dev_data,
++		const struct ixgbe_crypto_rx_sa *sa);
++void ixgbe_crypto_uninstall_rx_sa(struct rte_eth_dev_data *dev_data,
++		const struct ixgbe_crypto_rx_sa *sa, bool clear_ip);
++int ixgbe_crypto_session_acquire(struct rte_security_session *session);
++int ixgbe_crypto_session_release(struct rte_security_session *session);
+ 
+ #endif /*IXGBE_IPSEC_H_*/
 diff --git a/drivers/net/intel/ixgbe/meson.build b/drivers/net/intel/ixgbe/meson.build
-index 91ec2611543..90cc88f0027 100644
+index 90cc88f0027..12ba639b702 100644
 --- a/drivers/net/intel/ixgbe/meson.build
 +++ b/drivers/net/intel/ixgbe/meson.build
-@@ -29,6 +29,7 @@ sources += files(
-         'ixgbe_flow_ethertype.c',
+@@ -30,6 +30,7 @@ sources += files(
          'ixgbe_flow_syn.c',
          'ixgbe_flow_l2tun.c',
-+        'ixgbe_flow_ntuple.c',
+         'ixgbe_flow_ntuple.c',
++        'ixgbe_flow_security.c',
          'ixgbe_ipsec.c',
          'ixgbe_pf.c',
          'ixgbe_rxtx.c',
