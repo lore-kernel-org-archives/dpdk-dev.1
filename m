@@ -2,61 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7654FCA5FF1
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 08:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4EFCA5FFF
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 08:04:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA6FC40290;
-	Wed,  7 Oct 2026 10:03:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 12C6841157;
+	Wed,  7 Oct 2026 10:04:35 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id BD44640264
- for <dev@dpdk.org>; Wed,  7 Oct 2026 10:03:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A7E5640290
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 10:04:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791360225; x=1822896225;
+ t=1791360274; x=1822896274;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=bpvC9XeTybKW/5ahwonv/Uf/Y+HqoQCFt3gaT26nCiQ=;
- b=XNUK410Vbac6d3WFc2aG7CZH76EOT48cXjYgHVtp0BJMdh2tfsAyp8kA
- qEqzPm6RNYaDEJa/rchk96Tqq+KzbSTnoZ+ib7fC4SL6112ecgO3ZxaRo
- wqNqdXGiYJXbkxXSVtitvCrwMUvkput8yxy5DEx9R9h+NNxrfTRqJp4tf
- 1eyrKUeT2jj3gE5K/PQeXtuYaMgjM4OZ4ar+MC6mYumdjSuUDd+O6nBbr
- yECV2VuDVy/vcYJLtSDaTUc1h587SbX3IIiMSmwMVPi6/MBCE6Pb/GWDn
- wxQrAT7wmRW1qrdCZoTjwl9YS5BDgqZtrAZcCyw3CfLitE1UgvS/tVNXJ Q==;
-X-CSE-ConnectionGUID: R4/gGIKtQ+GNoJoWqvjarg==
-X-CSE-MsgGUID: mfZL3eW2R8ef/zXwvYbUxA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="10418"
+ bh=hwlNJUXP24vswmxnbZeY/1RpFMq0jF7rgotdOoA1xjs=;
+ b=TXSZX8XhIXIsRtwwafOCJVt5GOXpmIqr0pTVKsNwHucOjZvMQkW5C/iZ
+ l2cpL+RfkUcR1wHeiZ9+HhUA2Fjs+/XDPLLvIJORw4tTPFya/g/Apg5rG
+ QMjBtEW6avYWQpMGt7Q+11279LLd/HXOoCuUUWS8/RjuQjqF2TB2BuB1z
+ 1+fRD+UTmPoiT05MH1DrQsDO/xuz9FIfkjHzoa9dtf1dgoRtMxuqithZ1
+ Du04AhhuICOu/kEyRaOx0kHsBwPiNXOkeIArmnyXN4/StCp+v3VhZTdrc
+ LJkgGZdGjO83lmauqmFzN7hXAN+wW1LNyRVzv63MycvO0axBYBxUl3lM1 w==;
+X-CSE-ConnectionGUID: 1R7n867yQcOVdkRe7YpZ/g==
+X-CSE-MsgGUID: EXOGZpm2QPa+KZs4BlLHpw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="10525"
 X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; 
-   d="scan'208";a="10418"
+   d="scan'208";a="10525"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Oct 2026 01:03:36 -0700
-X-CSE-ConnectionGUID: Kq6o+3awRuSlLLnDJZ6QTw==
-X-CSE-MsgGUID: /dKENo9JQZCbrQ9s3vrQCQ==
+ 07 Oct 2026 01:04:33 -0700
+X-CSE-ConnectionGUID: MbOfBnO2QcSISd0x4lCvVg==
+X-CSE-MsgGUID: gjZLRDyDT5GK0Zmt1O31jA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; 
-   d="scan'208";a="126253"
+   d="scan'208";a="126625"
 Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Oct 2026 01:03:36 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ 07 Oct 2026 01:04:33 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 7 Oct 2026 01:03:35 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ 15.2.2562.49; Wed, 7 Oct 2026 01:04:31 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Wed, 7 Oct 2026 01:03:35 -0700
-Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.17) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ 15.2.2562.49 via Frontend Transport; Wed, 7 Oct 2026 01:04:31 -0700
+Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.39) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 7 Oct 2026 01:03:35 -0700
+ 15.2.2562.49; Wed, 7 Oct 2026 01:04:31 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h89NraY66D9IM/fELZE6c7aHRvZV2U56mJim2bngShbteXuusUf6LG26YmZ0EoAU7m/pkZH5kK3jAfJry47T+a/TGoaUr9+2ZcMQ5GOSw7otWFKB/JgkSvx0hZHi/V7OELM2uChdqSz5ZL4PMtBWkeQ/2MN6i+qbaGP9l0gPdDdpB2SmLZndIOVVGkWSOdJ9wadlwzrrB4cdO8VZY833myyFxe9k5jMm8IfTmY6XI6PJNRnZBWtXhQ5ZMB1XuU7vLC2jaIW2lP6qpmR6ydCodWWuE8XMaq+uHk3LJwU97dcTdtxq4YKtnDgwy4zAKbh7/vB5J5RTUlA1ZnTiK7N5ZQ==
+ b=zV6ieYdbL262EC1Qeyj6qY0k3tgluGUwLmkn+WW7p1rokpCCz40wQvc2jgOOdzCeMEEt6S5ZDOpF6jz39QnjhJdZRp0bevmGgl42ZUpmaBFpgmGHmxjRul7Pa5aYMqToRxNgCEW4Cd+vZ4kuabec/U2QZusbGZ3rTfmtq4ZaJsZRBAbdWpGpKnFCXm2VLZsIZd1bP7fwRCIrFh751iLdgzrRbmlVSI//5jP6loW99fPHH+haP8C/QXarxCX2VoPchdT/Ka7emG2IYRRX+Hb87BjCUiB03HSXg3TkiSnTNuXW9QK4Tm65I5f0esd+rpHWMfvVenOmSKfeolgJk2YmnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yNzxOv0185np5Y/rGRWrfhNKjA0va7V0G0gJyNnAbiA=;
- b=GNpCSp7wa1TJOePSmvRMlBEmE3C/8fi/zwkfyGGd/1wfniJOfv0dWaqQ2vJw9FkJeHntbEh4YZ0TFEp2rBlojvlxFZKxaEEZ6zcsOmXwL0YcpudbMqJNkfL6BFltsAAZryLV/oG/ddtXknoCcth1hjol60Z1eikcdNuzxxQWS7+rjVytsQeo+cjZ4F7dPLH8m7v4AqvE11E7im8JkHTUFQiq+290MItwC5PIrvfof8S73ZJX+9uKhkXfwQuiwsy5pxDrbPqGyuNKVXEnDEhg3dh8HYglERLsHpDZDIdA1pXTMRcyPzsujlXb7LSWAi5fCbECc9eqzJcLo3ClSkkseA==
+ bh=SAaoGH6BTz/GZz92yn+TY/1w21bJXgHGxxR710OGhG4=;
+ b=LPXFE9BsDOaThKNehWvuLfJGYbgLRKdgqr5CUrn1OW6Zh4ipOwVpMsG3hIv8yS9Uz1ITcrs26gCyajer32RS5WE98TJjIW173icdYqzrd5KrHwDHVKNiy/9Uy4VgaERZmh5DdRmFee33dRzjmmsSkMsrUGY/d+r1Wl/bTd809Yh3B/iFY8qs88fZuu3/81QTMvqISUL1NeM+x0FY3xczCz2m840U23u0mVdARLS6zBiLFX2vnBpOy2QOVGeRejBmPMbLl5qyRtlaLtqUIEioSEuVkaRPLoHaiO852Anlg79PXLD1OB0ine0d4g9GIxC6AszVL0rVdJjhk9qFSZCxRQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -66,77 +66,78 @@ Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
  by DS6PR11MB798475.namprd11.prod.outlook.com (2603:10b6:8:528::12)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.15; Wed, 7 Oct
- 2026 08:03:28 +0000
+ 2026 08:04:29 +0000
 Received: from SN7PR11MB8066.namprd11.prod.outlook.com
  ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
  ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0451.014; Wed, 7 Oct 2026
- 08:03:27 +0000
-Date: Wed, 7 Oct 2026 09:03:23 +0100
+ 08:04:29 +0000
+Date: Wed, 7 Oct 2026 09:04:25 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH] metrics: remove experimental telemetry helper API
-Message-ID: <asX8y0Nv8APsp8ct@bricha3-mobl1.ger.corp.intel.com>
-References: <20261006233144.644562-2-stephen@networkplumber.org>
+To: Anurag Mandal <anurag.mandal@intel.com>
+CC: <dev@dpdk.org>, <anatoly.burakov@intel.com>
+Subject: Re: [PATCH 1/2] net/ice: free memory with matching allocator
+Message-ID: <asX9CRRFZAsArLss@bricha3-mobl1.ger.corp.intel.com>
+References: <cover.1791356190.git.anurag.mandal@intel.com>
+ <c9d029d702469ebb734cdc1117ee55bfcafeadb0.1791356190.git.anurag.mandal@intel.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20261006233144.644562-2-stephen@networkplumber.org>
-X-ClientProxiedBy: DU7P191CA0007.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:54e::32) To SN7PR11MB8066.namprd11.prod.outlook.com
+In-Reply-To: <c9d029d702469ebb734cdc1117ee55bfcafeadb0.1791356190.git.anurag.mandal@intel.com>
+X-ClientProxiedBy: DUZPR01CA0167.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b3::8) To SN7PR11MB8066.namprd11.prod.outlook.com
  (2603:10b6:806:2df::18)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|DS6PR11MB798475:EE_
-X-MS-Office365-Filtering-Correlation-Id: 649ccc9c-d43a-4538-ab66-08df2449782c
+X-MS-Office365-Filtering-Correlation-Id: 2381e04b-7544-4fc4-a164-08df24499d12
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|1800799024|376014|366016|5023799004|11063799006|3023799007|260925021911599003|10067099003|56012099006|260925021311599003|260925022911599003|22082099003|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info: XJO5IFvJXxMNK1FCfvAawfZzi+PxngIxMaP19kzrBOfxNTZlS+br1REhlC+JwsuJGoKcY/yV9dzjrLdhS9M7gCGQRGAM9RzK1vFjURlN8tVutaBw04dAsPgcCUZ3Uisp5+RT2PGz1pqxA2T9loJVWUw7CL5MmqbE3yOFYmN9h2MDzJNLYy9FA1kkrKgRqIXboSSqsGZoG9ulDo83jS88MTb+95vWU3FQyCgZ01KJOuzqtufJ0oWzvTxYQV+IOmBNqebIg3rnGVqxmRj9JVxNfnGZOI8V5UTxMwtqzelJ0u2Vfk6zunqgbjvUrd8fGHZO8pVB5RntCC5pj6HsQ+QDyKoj5eevig6ocSsr+wLIqHbjq65DjJcx3ULLQSkp83qPZQsqOecNuulVWX3NRBhvGclOqNlOuEh7mg/dywVwwTKNO/iNM0YM8W760OJuOtqy+RiNjR0ta6GYJZ0S1dnBihuIshGi/YpUu+K/gHxQJ3k/j/PxYVHiNse5968lT0cDs9TnFn370ZsyZawwWiTYbPnycdnInp4CGE/fYIRRTRGyRSvPcjW5aTuDN8vtuYj+sgxyY86BdSv3mvdL0xm1D6gJwzmBL/u7S73FbCC+6aN+MfG03DmlxY7qzXOBOwmNeZFZQ7BxEWob2TX+X4SGsLbMbLIiErJbCo6LTq284B8=
+ ARA:13230040|23010399003|1800799024|376014|366016|4143699003|11063799006|10067099003|56012099006|22082099003|18002099003|6133799003;
+X-Microsoft-Antispam-Message-Info: Z78mUhEppunql9l6L46WnnMkfksQx1a+1o6GD2lfH3G/BYFpYGVg5V469k7IQYIHSNueP4kttwY+4BuQGjiExNJt26y61p39AxiB90E9v77fffrJ0ihquL1b2JmsXASnCS04RHAkWw0rYeRKsHKmcEMPDaWMZja0n1SH4LxBe1berOjnHlvREcPVA6RoAmU6umayGP7dPSe+5lQ3tqWzlXCRW6T7SwkzHpvXxa1wx/HOZXOjj6+4gYKkTAr8zJdTyRCJWiC4o5py7VV/bC6fiyW7DOMieMCCjxFQnIcG/Ny1xUNy6+sq7OoQ1jv1kkjCY5Vg0PwmS5nGZ13ZoQfZJ1ig5RRPc8JDlCU+uV+lWN1DSZ9wURV5JZ4mm1icubFHeh88nzzsrzC44Bl2OGSmogsD6cJZD3Rfm6mcwSjkUpb3BxCt/t8VfuOIdCWnfqb8Kj5YHpK1izX/PEwPgYZ1AC7wn3doDFx0oqqDeADM7lm6VCx9whrFsuGjv4XfQtVnmxGtDBHSUw98ABj8j1qzpwoI+5FHJvmSmZS5rLrhQgp3twwBzkCO662OntRPEGlojDO/DHFGb2+9rILeWr+1v+9c1GO60aLayR903POMpBavTdIp+PRRx0ukevnrey4gFv7eO3Hg603E1EeuJ0WtjIhNDv+gz5uG4taEfTkFuWw=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(5023799004)(11063799006)(3023799007)(260925021911599003)(10067099003)(56012099006)(260925021311599003)(260925022911599003)(22082099003)(18002099003)(6133799003);
+ SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(4143699003)(11063799006)(10067099003)(56012099006)(22082099003)(18002099003)(6133799003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bFfr5R9dMrx3L6ejkxXxqIxlR+iv8IAgxOPoN+xs3j3FfMQ1I7oyEW4ZVYtd?=
- =?us-ascii?Q?Juny3c5Ru7g3nZ1LeaZf15p9WWsrk20UIiBAX69l/xYQoBRlJPHaeP0LXiZc?=
- =?us-ascii?Q?VwAcR2krs+2HeIpd+7ZEKfxoaYi0hhFCR08ZSpHXfn9iuKtTXLrdDSdQFP4l?=
- =?us-ascii?Q?BRUB75dmn0F0grjQxJLHjSFHA5PxsjyFRTfXJykLXJSXSJdab3iBrBPPHS/6?=
- =?us-ascii?Q?onFzHyz/k7AdebNP4aNb9eCJlp68HcoU5QI6ZAux7LX4kHy/2N8s3Qji5kal?=
- =?us-ascii?Q?4f62ZiDQ7U82xzDTlCu1yXr9vtQQbd7j3Ikx/6x0RLAn/vCYEeszEiwJrg1R?=
- =?us-ascii?Q?94w1HxD8uR65qPQs00TfQYaesMCDUc0bjpFTxIfTJtrUe4ftwki3RjCGnE02?=
- =?us-ascii?Q?6ANHdVIGeD3e1z8PtjNTrJ8D5ojumiGW+Q/eav/JLqEpvaPSvOJ+qN5GwsuM?=
- =?us-ascii?Q?dtdj1HA7o8QetfnY0fRKpW63MHmLya55oihJdHVushdhy8zSGsCLgu8Svktw?=
- =?us-ascii?Q?x+pcxrkLQuwkXuW6yi7JVXJSLbuVxj7QoZItGImCOhMUMIEVBlWMSxWhpWfC?=
- =?us-ascii?Q?lSzTfgszZwlzzEtpcN8yljKKC9foiEkvZ9Tj8ztfwLb3HgPvw8LT3c3+EBwf?=
- =?us-ascii?Q?pSFACgpC2Ha0BcsGDg2IZchcIwgyIjXIm38iI4VGjsGcIjP4EzCf39HPCP+L?=
- =?us-ascii?Q?9WSweJOZLzlGl1WlMFzFlsbJFwTYDEZ64mmKNezv9Buf/3TCCBn+J54toBxm?=
- =?us-ascii?Q?fNnCUds+WgypfEdvC/cT6s4uF1NS3VVGEMgvp87ToZEfZW97R7n4PBwlOQzg?=
- =?us-ascii?Q?Lj7rH8yHZsaotrFU/IweMQQrBwoGjhFY/jA2IrL0yT26OJ0Gxx3A29FRANzy?=
- =?us-ascii?Q?OTeAnPaIWMw2j/JRi8wRDgNb4NB3Pr/YD8Jn5bhleCs7buemyGLQxAfBwPaE?=
- =?us-ascii?Q?iEtcMSZlyWT2PzOAQ25d75wKNulB7uDlFO5AfM+scYYJJO2iPrz7Q0YdF3sh?=
- =?us-ascii?Q?sih/ssVV11PJ52Ocl/OlmGbZDHAoJhsCdSIlCnTI0hKNtTyKwt9tOCvjbYUd?=
- =?us-ascii?Q?oEYVmdBx2fr2YD/qEqZ4nov3XBAuy7HDa4BBDCHAKJmUPu1r8fB77X45Oo3G?=
- =?us-ascii?Q?odlmcfmo8FuOqBlAe2Vf2ZLKOm5F0oVV0q8WbksMstnIna+vvjN5Xe32nmv2?=
- =?us-ascii?Q?K3M9YgCW0XrZxQ6jAQJlBas3+eudVKOe6l6mvkyEkRKI+8S7cT3PNIlilY8C?=
- =?us-ascii?Q?P8h0NAJXgRjkr5H42uBZiFQepVLTbBN3KmEj3L15Gg7XeXNsmvvbpfd94b5l?=
- =?us-ascii?Q?FZXEUSGZvaF/WHk64w8rxzwejUIhFUjT4TrEhORAqiOlIBqdId2WIFUk7yeP?=
- =?us-ascii?Q?YuRkmsFSJlC6hEjaJ49946ozXHPcaxDBg3L0nRLtO/gQg+DQBFOOCKzHLgiF?=
- =?us-ascii?Q?qAXnyc66lJEz1ng79VDwS+Dg91pvhyFBS2SiXNIAqDn075BD2g5Bq7169ICo?=
- =?us-ascii?Q?Janqp19kF+4QYnZh88IF78Xa5BEOn/p0WdD97CP4yZ6E7ttfMfo2CqKwGX/2?=
- =?us-ascii?Q?cMVgHerbkCHzyFFRtkIc4FuxOyIpSXJoVKlBVXoFbC5+o4BW+N3TRMHqlaIS?=
- =?us-ascii?Q?nTc8KZuk0J3DXzg4zRGw8IO+Mw1FOAYP5fVW1uVzyctTqsr0mwD4M1S26q6K?=
- =?us-ascii?Q?sMxrmv33R59q0vKmGNJJE+9cobVoDBxcx6kuK1V3q5WQnbdzPfcOdrdytW+0?=
- =?us-ascii?Q?frZKFlKh0mwjmOYXIqIfw1bCFi0cBTE=3D?=
-X-Exchange-RoutingPolicyChecked: LzB2W7VC+AWL41/71h5/XFvfa20FYrVki5ywOfpLjGhg2BgpvU0wHMEt3q+1kwdHIpL1nsMxbTbwIfkM7XYQT6FF2uKY5AANzASoa9Tt0D7NUGiOOjm/zc8Wv5nDEi7GPjD4NiXhtPVz/TNzIu/XTfuvDy5vSh/G2SyX4R8lr7BHvQn6lb7CbkKOvsA+0HOdmxHLauHgYO/zCpb2AFP/VEuirrt1KMYX2t/ELnEpdtYG2bHMrawC5qTdqDg0DW8lr1o5E+qxwfddxoTj9RHUq8DvkI3dSmpi+5S/ixLT588aMrTU9LmFhwwzp+jllnWx0oY4b3U3GtnKhCIvpGThAQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 649ccc9c-d43a-4538-ab66-08df2449782c
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0Tzh7u+dU8Gxf1rcNAHY1JOCbBHQkJ3v46xUiFROEHTnOnZfw9TyS46BnyzF?=
+ =?us-ascii?Q?YWitA2GXDeyImleSxZ+GB9jDeefjPDE2Y5p7x57ZyvCCb4TwwKoOzeIpO7TX?=
+ =?us-ascii?Q?k6coFOFx3K3IipND1lAbxjea9a8Sdc8Du4I/EhPrVfAe6y614yNWC6NG7GLO?=
+ =?us-ascii?Q?IAzSt5XgPokoM0kV2un98XNlagWeH5ySo6PTyhFCB+HkhlZ0P/dOYQH9uvuG?=
+ =?us-ascii?Q?lU8g8NcRFljwdEbVMSY7ZE6glMNEsXvpXjgIuzhRLPRyOaK+ZuFGGevhmJcn?=
+ =?us-ascii?Q?dRQ56azeG8I/JvoOlodbCzrE8EZ/fUysxVdz7leOsYJrL9S1ZijXvMScyl6A?=
+ =?us-ascii?Q?sSSwcomnxAIL7EFL9CejYht+Qu+AnRwsYDKiN5MWWr2KmyVw5BTWi6CANxxZ?=
+ =?us-ascii?Q?q/8Wiw9YtcesWx1WfhRMKoFGNRRSOP6NFjGgxWjo/dtNgSRfIuzaKmAt/POL?=
+ =?us-ascii?Q?CfDUj4YF8Ky68lngTbS4LWhKgGOH3BTe189YFYeXXeXD91m0aBP7CIZgclS5?=
+ =?us-ascii?Q?E/AVTSSwhSUO/3Nx22+64AWemSLlRpVoaNEGGvfNgeKn+byaTnCXQnFSHs3z?=
+ =?us-ascii?Q?btegiziohqN/WiY5AhV8tw1A6zd7dtrU4RCSKJVVvOZTwt47kVKkiIQl9QDx?=
+ =?us-ascii?Q?F8Y4nkFv+MD9qdGnz/KfShNKu6zEFqDnvIt7tA/GT1jeeAmfhypgi60bx6Jm?=
+ =?us-ascii?Q?x7ugtGNWxfxlZoyLlrhu5SnMUT+fwhs0OSVBotMMxBcivb1Me9/Z/UUS+iuK?=
+ =?us-ascii?Q?nrggC5rOJzxHMFNa2a5gWZE5pGp03yw/8DMzjKifUv7VPYyG9YC526C+C5m2?=
+ =?us-ascii?Q?76FTlzVkm/PcvzVOE/x3B9CxIzRaGjceyDXr+kvpfOKEDfLIRN0oAJANjpWY?=
+ =?us-ascii?Q?4SxumgdBYNiUpyF16Ztpq2YGy3nCEuVF5fDtu/zrUnmcju1QmRxztkFNeDEK?=
+ =?us-ascii?Q?wiq80lhMnxSFLNd2tJGSoXrqaOxgxNMe1hxMbDLR0NjEaKvQ36GwVkOwALc2?=
+ =?us-ascii?Q?CPbzB4eSJn0muUqiDL/9fVFHR3HUDYa4u7i+iGjw3qqYsfSDuCgxLsx/+1Sy?=
+ =?us-ascii?Q?b/jjaweNnGgjMWEUTvbhtRf7ulLHixI66bhxXYD13scF04VOGSxdBfBUXd2Q?=
+ =?us-ascii?Q?fl2RGLcEQEQMozU3jBe37SI9Dr6hWh/v0axPtPAW3TMAEqh99fxCO8uW1adi?=
+ =?us-ascii?Q?IsZzUyEb4yX/kgYoPw5JGyz5AeOzr9SwF5bzPXPo6FUNdxMi9HZjPJuNZPyG?=
+ =?us-ascii?Q?vCTYYe0nPgk5/DFllBk1jZcyH3ufqYmlr1J0+o/ls26Pc6uRxAld3DCqY+pI?=
+ =?us-ascii?Q?tGGj71khiVIVvz9O6erIeupyOneniCbs5MpUK/uevR35p8TpWOISchqf/lsd?=
+ =?us-ascii?Q?4aAWZlKxzIYvW6V/7HXSjd8fKnerkXUWN9BSDYS+fIHMNjKjI6Rw62gRz8K8?=
+ =?us-ascii?Q?5mlz6N7UBxVu3t73SzwEhYuRrphR+ozJYFE0f9zHNcoaRnpBX2vXO+84scIJ?=
+ =?us-ascii?Q?2auu6gGv2jf3iZtGYnUBhoz4Ghs94tZecJv832H45rxzZuUDC03M58r6cG6h?=
+ =?us-ascii?Q?t+fKkEWCvzBnDZvn2ulpVb03k0vM2ebAzv6xiX4vN2O66QKjDn1elBpc8W06?=
+ =?us-ascii?Q?r9/KMwusqjEuqmzy/QqoP6d7mGZ7fN/cuju9HZxH11tjBP9XY8E5go5XrOTy?=
+ =?us-ascii?Q?2HyYltUOkjeQnTgpZz0nnw/KFKw5wsVdTAzgsP3OUqedao+vnlVJwoQ4Jryr?=
+ =?us-ascii?Q?Fu2h7/2YeomRHP7MslUEZW/Q1pHyHks=3D?=
+X-Exchange-RoutingPolicyChecked: 32s/X0N2PKoPkUlBSfII19CqSGWaVTBa1vn7eq/+nIbpEVIV+XXA9cdufba8/f4ES5iOwV0V+39sCrS1mvW03DNk8ndk3v+70C3I3KeIz+oWKnWoizzKgIayGVCHg4+yEy1XRXncqKanHMBLB3KDEnLEQn9cITTYg+j9fX25Qvt1Q/UvLqTGzgvWP1qB/o5WAANuCHdhQS6uOpJy/YmG+2pT28VQuJX0F6i/iXQgIcuHHjSqvaCKdPk2ZpkbwVgtJSc3GJTelRyykCdV12U4dfM7A33YXgQJiRzMgWn+4GmL2xZwEpJ+7+MOce+FVSvZrT/JdRH8s1ivn1JnXXiJEA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2381e04b-7544-4fc4-a164-08df24499d12
 X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2026 08:03:27.9268 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2026 08:04:29.7486 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 75RsbfDOR2OBBRl57wCzTMVvexizwK8vUSulfCXXT8qswubxRj2YG1ypV3yIzJACp1Qi4e+h1G8OXg8hm5awxaQzrUmN9FbCCMeeM+bXzC4=
+X-MS-Exchange-CrossTenant-UserPrincipalName: nfW7DY/x/Le4Puek8Q8yiQv8sSJeaRKmlo6AADsVjjS6765XcCoyWrPULDru6a1np7yo85MvWT6+ZfZkqjX3iIFdzEDKK+BNdNCJpOsOYQs=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS6PR11MB798475
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -152,320 +153,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Oct 06, 2026 at 04:31:44PM -0700, Stephen Hemminger wrote:
-> While investigating experimental functions leftover in DPDK.
+On Wed, Oct 07, 2026 at 07:58:19AM +0000, Anurag Mandal wrote:
+> Several buffers allocated with ice_malloc(), ice_calloc() or
+> ice_memdup() were released using rte_free() instead of ice_free().
+> Both APIs currently map to the same underlying allocator.
+> However, mixing them is inconsistent and could break if the
+> inconsistent and could break if the OS abstraction layer changes.
 > 
-> The rte_metrics_tel_* functions are dead code. Nothing in the tree
-> calls them from outside the metrics library itself; they were left
-> exported by the telemetry library rewrite in 20.05.
+> Use ice_free() for all memory obtained through the ice_malloc()
+> family.
 > 
-> Stop exporting them. Delete the header, move the types into the C file
-> and make the helpers static. The file now only builds when jansson is
-> present, so the stub branch goes away too.
-> 
-> The legacy commands ports_all_stat_values, global_stat_values and
-> ports_stats_values_by_name are unchanged.
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  doc/guides/rel_notes/release_26_11.rst |   9 +++
->  lib/metrics/meson.build                |   6 +-
->  lib/metrics/rte_metrics_telemetry.c    | 106 ++++++-------------------
->  lib/metrics/rte_metrics_telemetry.h    |  71 -----------------
->  4 files changed, 39 insertions(+), 153 deletions(-)
->  delete mode 100644 lib/metrics/rte_metrics_telemetry.h
-> 
-
-In the process, should we post a deprecation notice for the whole
-metrics-based legacy telemetry system? It's been superceded for many years
-now and it has a lot of limitations: supporting ethdev only, having
-globally registered stats (so if you have two different NIC types, you get
-a list of all stats names for both whatever port you query), and probably
-more beside. That would allow us to remove a large enough chunk of code in
-a future release.
-
-/Bruce
-
-> diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-> index 934efaaf93..254e9ada64 100644
-> --- a/doc/guides/rel_notes/release_26_11.rst
-> +++ b/doc/guides/rel_notes/release_26_11.rst
-> @@ -195,6 +195,15 @@ Removed Items
->    which were based on the legacy pipeline library API.
->    The ``pipeline`` example application covers the SWX pipeline API.
->  
-> +* metrics: Removed the experimental telemetry helper API
-> +  and the ``rte_metrics_telemetry.h`` header:
-> +  ``rte_metrics_tel_reg_all_ethdev``, ``rte_metrics_tel_encode_json_format``,
-> +  ``rte_metrics_tel_get_global_stats``, ``rte_metrics_tel_get_port_stats_ids``,
-> +  ``rte_metrics_tel_get_ports_stats_json`` and ``rte_metrics_tel_extract_data``.
-> +  These had no users and exposed jansson types in the public header.
-> +  The legacy telemetry commands ``ports_all_stat_values``,
-> +  ``global_stat_values`` and ``ports_stats_values_by_name`` are unchanged.
-> +
->  * net/iavf: Removed the ``auto_reconfig`` devarg.
->  
->    The restoration of the promiscuous and all-multicast settings after a VF reset
-> diff --git a/lib/metrics/meson.build b/lib/metrics/meson.build
-> index 6722f666d2..0e32a08dc3 100644
-> --- a/lib/metrics/meson.build
-> +++ b/lib/metrics/meson.build
-> @@ -1,10 +1,12 @@
->  # SPDX-License-Identifier: BSD-3-Clause
->  # Copyright(c) 2017 Intel Corporation
->  
-> -sources = files('rte_metrics.c', 'rte_metrics_telemetry.c')
-> -headers = files('rte_metrics.h', 'rte_metrics_telemetry.h')
-> +sources = files('rte_metrics.c')
-> +headers = files('rte_metrics.h')
->  
-> +# Legacy JSON telemetry commands are only available with jansson.
->  if dpdk_conf.has('RTE_HAS_JANSSON')
-> +    sources += files('rte_metrics_telemetry.c')
->      ext_deps += jansson_dep
->  endif
->  
-> diff --git a/lib/metrics/rte_metrics_telemetry.c b/lib/metrics/rte_metrics_telemetry.c
-> index f9ec556595..2350ef5041 100644
-> --- a/lib/metrics/rte_metrics_telemetry.c
-> +++ b/lib/metrics/rte_metrics_telemetry.c
-> @@ -2,19 +2,35 @@
->   * Copyright(c) 2020 Intel Corporation
->   */
->  
-> +#include <jansson.h>
-> +
->  #include <ethdev_driver.h>
-> -#include <eal_export.h>
->  #include <rte_string_fns.h>
->  #ifdef RTE_LIB_TELEMETRY
->  #include <telemetry_internal.h>
->  #endif
->  
->  #include "rte_metrics.h"
-> -#include "rte_metrics_telemetry.h"
-> -
-> -#ifdef RTE_HAS_JANSSON
->  
-> -struct telemetry_metrics_data tel_met_data;
-> +enum rte_telemetry_stats_type {
-> +	PORT_STATS = 0,
-> +	GLOBAL_STATS = 1
-> +};
-> +
-> +struct telemetry_encode_param {
-> +	enum rte_telemetry_stats_type type;
-> +	struct port_param {
-> +		int num_metric_ids;
-> +		uint32_t metric_ids[RTE_METRICS_MAX_METRICS];
-> +		int num_port_ids;
-> +		uint32_t port_ids[RTE_MAX_ETHPORTS];
-> +	} pp;
-> +};
-> +
-> +static struct telemetry_metrics_data {
-> +	int reg_index[RTE_MAX_ETHPORTS];
-> +	int metrics_register_done;
-> +} tel_met_data;
->  
->  int metrics_log_level;
->  #define RTE_LOGTYPE_METRICS metrics_log_level
-> @@ -72,8 +88,7 @@ rte_metrics_tel_reg_port_ethdev_to_metrics(uint16_t port_id)
->  	return ret;
->  }
->  
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_metrics_tel_reg_all_ethdev, 20.05)
-> -int32_t
-> +static int32_t
->  rte_metrics_tel_reg_all_ethdev(int *metrics_register_done, int *reg_index_list)
->  {
->  	struct driver_index {
-> @@ -227,8 +242,7 @@ rte_metrics_tel_format_port(uint32_t pid, json_t *ports,
->  	return ret;
->  }
->  
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_metrics_tel_encode_json_format, 20.05)
-> -int32_t
-> +static int32_t
->  rte_metrics_tel_encode_json_format(struct telemetry_encode_param *ep,
->  		char **json_buffer)
->  {
-> @@ -281,8 +295,7 @@ rte_metrics_tel_encode_json_format(struct telemetry_encode_param *ep,
->  	return 0;
->  }
->  
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_metrics_tel_get_ports_stats_json, 20.05)
-> -int32_t
-> +static int32_t
->  rte_metrics_tel_get_ports_stats_json(struct telemetry_encode_param *ep,
->  		int *reg_index, char **json_buffer)
->  {
-> @@ -312,8 +325,7 @@ rte_metrics_tel_get_ports_stats_json(struct telemetry_encode_param *ep,
->  	return 0;
->  }
->  
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_metrics_tel_get_port_stats_ids, 20.05)
-> -int32_t
-> +static int32_t
->  rte_metrics_tel_get_port_stats_ids(struct telemetry_encode_param *ep)
->  {
->  	int p, num_port_ids = 0;
-> @@ -379,8 +391,7 @@ rte_metrics_tel_stat_names_to_ids(const char * const *stat_names,
->  	return 0;
->  }
->  
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_metrics_tel_extract_data, 20.05)
-> -int32_t
-> +static int32_t
->  rte_metrics_tel_extract_data(struct telemetry_encode_param *ep, json_t *data)
->  {
->  	int ret;
-> @@ -547,68 +558,3 @@ RTE_INIT(metrics_ctor)
->  			handle_ports_stats_values_by_name);
->  #endif
->  }
-> -
-> -#else /* !RTE_HAS_JANSSON */
-> -
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_metrics_tel_reg_all_ethdev, 20.05)
-> -int32_t
-> -rte_metrics_tel_reg_all_ethdev(int *metrics_register_done, int *reg_index_list)
-> -{
-> -	RTE_SET_USED(metrics_register_done);
-> -	RTE_SET_USED(reg_index_list);
-> -
-> -	return -ENOTSUP;
-> -}
-> -
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_metrics_tel_encode_json_format, 20.05)
-> -int32_t
-> -rte_metrics_tel_encode_json_format(struct telemetry_encode_param *ep,
-> -	char **json_buffer)
-> -{
-> -	RTE_SET_USED(ep);
-> -	RTE_SET_USED(json_buffer);
-> -
-> -	return -ENOTSUP;
-> -}
-> -
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_metrics_tel_get_ports_stats_json, 20.05)
-> -int32_t
-> -rte_metrics_tel_get_ports_stats_json(struct telemetry_encode_param *ep,
-> -	int *reg_index, char **json_buffer)
-> -{
-> -	RTE_SET_USED(ep);
-> -	RTE_SET_USED(reg_index);
-> -	RTE_SET_USED(json_buffer);
-> -
-> -	return -ENOTSUP;
-> -}
-> -
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_metrics_tel_get_port_stats_ids, 20.05)
-> -int32_t
-> -rte_metrics_tel_get_port_stats_ids(struct telemetry_encode_param *ep)
-> -{
-> -	RTE_SET_USED(ep);
-> -
-> -	return -ENOTSUP;
-> -}
-> -
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_metrics_tel_extract_data, 20.05)
-> -int32_t
-> -rte_metrics_tel_extract_data(struct telemetry_encode_param *ep, json_t *data)
-> -{
-> -	RTE_SET_USED(ep);
-> -	RTE_SET_USED(data);
-> -
-> -	return -ENOTSUP;
-> -}
-> -
-> -RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_metrics_tel_get_global_stats, 20.05)
-> -int32_t
-> -rte_metrics_tel_get_global_stats(struct telemetry_encode_param *ep)
-> -{
-> -	RTE_SET_USED(ep);
-> -
-> -	return -ENOTSUP;
-> -}
-> -
-> -#endif /* !RTE_HAS_JANSSON */
-> diff --git a/lib/metrics/rte_metrics_telemetry.h b/lib/metrics/rte_metrics_telemetry.h
-> deleted file mode 100644
-> index dd84f5431e..0000000000
-> --- a/lib/metrics/rte_metrics_telemetry.h
-> +++ /dev/null
-> @@ -1,71 +0,0 @@
-> -/* SPDX-License-Identifier: BSD-3-Clause
-> - * Copyright(c) 2020 Intel Corporation
-> - */
-> -
-> -#ifdef RTE_HAS_JANSSON
-> -#include <jansson.h>
-> -#else
-> -#define json_t void *
-> -#endif
-> -
-> -#include <rte_compat.h>
-> -#include "rte_metrics.h"
-> -
-> -#ifndef _RTE_METRICS_TELEMETRY_H_
-> -#define _RTE_METRICS_TELEMETRY_H_
-> -
-> -#ifdef __cplusplus
-> -extern "C" {
-> -#endif
-> -
-> -enum rte_telemetry_stats_type {
-> -	PORT_STATS = 0,
-> -	GLOBAL_STATS = 1
-> -};
-> -
-> -struct telemetry_encode_param {
-> -	enum rte_telemetry_stats_type type;
-> -	struct port_param {
-> -		int num_metric_ids;
-> -		uint32_t metric_ids[RTE_METRICS_MAX_METRICS];
-> -		int num_port_ids;
-> -		uint32_t port_ids[RTE_MAX_ETHPORTS];
-> -	} pp;
-> -};
-> -
-> -struct telemetry_metrics_data {
-> -	int reg_index[RTE_MAX_ETHPORTS];
-> -	int metrics_register_done;
-> -};
-> -
-> -__rte_experimental
-> -int32_t rte_metrics_tel_reg_all_ethdev(int *metrics_register_done,
-> -		int *reg_index_list);
-> -
-> -__rte_experimental
-> -int32_t
-> -rte_metrics_tel_encode_json_format(struct telemetry_encode_param *ep,
-> -		char **json_buffer);
-> -
-> -__rte_experimental
-> -int32_t
-> -rte_metrics_tel_get_global_stats(struct telemetry_encode_param *ep);
-> -
-> -__rte_experimental
-> -int32_t
-> -rte_metrics_tel_get_port_stats_ids(struct telemetry_encode_param *ep);
-> -
-> -__rte_experimental
-> -int32_t
-> -rte_metrics_tel_get_ports_stats_json(struct telemetry_encode_param *ep,
-> -		int *reg_index, char **json_buffer);
-> -
-> -__rte_experimental
-> -int32_t
-> -rte_metrics_tel_extract_data(struct telemetry_encode_param *ep, json_t *data);
-> -
-> -#ifdef __cplusplus
-> -}
-> -#endif
-> -
-> -#endif
-> -- 
-> 2.53.0
-> 
+> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
