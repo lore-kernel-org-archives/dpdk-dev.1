@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72742CA6004
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 21:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F549CA6004
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 21:42:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43E144281D;
-	Wed,  7 Oct 2026 23:41:29 +0200 (CEST)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
- [209.85.215.172])
- by mails.dpdk.org (Postfix) with ESMTP id A384B427D7
- for <dev@dpdk.org>; Wed,  7 Oct 2026 23:41:27 +0200 (CEST)
-Received: by mail-pg1-f172.google.com with SMTP id
- 41be03b00d2f7-cc4d192643dso1065382a12.1
- for <dev@dpdk.org>; Wed, 07 Oct 2026 14:41:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2DBB642D2B;
+	Wed,  7 Oct 2026 23:41:30 +0200 (CEST)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 6D44D427DE
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 23:41:28 +0200 (CEST)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-2e7006bbf77so3090845ad.0
+ for <dev@dpdk.org>; Wed, 07 Oct 2026 14:41:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791409287;
  x=1792014087; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=lioAldGG5zTEHfPK2eWAuZ4LAdSS1FRBVVP1a6yD+L0=;
- b=FEIwWovlVknl/L6sQx8dCJltcXTq2YHE6CLY92gq0vGCCV1F7SRpUwDKrd3+2+OiVL
- Q/ysTRn4qKhP6NKqlK7pYwCY6fwdXiLrjhI4XvNA8Rx6p3lY4PTRAJUs8FANH0zJHsQ+
- q2oN2WIPDzXIukSqABEiSAO4rkBvG0AjP0XTjG6Q/TZhY02flb2m6EFvSQviIKVM15CP
- dV9JEHOgVtZ8u5/KxAd2WISFPBcrh52cTq33TsPl0F79HObHtK9Tc53JOAIQxvBcfdfB
- N9IPneTltzGc0+Rd1/2atYrRNpVLKJ+0sAZc85EotMav9EGwUND+vEFJpGS2tsULdVrV
- VxNg==
+ bh=GIE8w9TVbXZwUeENBy2WYbZbjL00zg4vcWZAr+zyDq4=;
+ b=KqP26Fho/28Gck0ZpPqY4zj/D2xemhebKRxaN7sNnYgW+t58/aqTAhAC/HmYkS8HJx
+ OzxKifBoXAugvojz7v8ZztNQ2mW3AjmfNYfx8C2QEcpTTpeG+c1NRn0XKpw4HTYFBDcW
+ rkiGLk4ap3mxu0kiLnaAVAhvFUyncoJoz9Ad53L4PALc8EL6bha6XH9iqtt05IO4ii07
+ B+mQgu4W9PdP2yl5dcblPeJTDFB344T+aUB/B6GpXKq0fv8LT4bKPJdUy9j0DjCcHkch
+ jCOsn5pfJEOJm43InOuG4JJ7AfA3LqUBjnS0An4/Y+PQr67bAZ5iydaXn7n5YKsfNtsF
+ Q6YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20260707; t=1791409287; x=1792014087;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=lioAldGG5zTEHfPK2eWAuZ4LAdSS1FRBVVP1a6yD+L0=;
- b=HH66VkyFM2USIwlSiR88+d+b2cwd4FTs9ArnflGBKWEsQl2oCIRqvxwYKkGAvgBq5Q
- 3MwVk0cxKvvOWJIP697wH3msPyxBtsGybj3HVk3XdsXZqjIjRTVL0IO2eM8wTbSG3fRW
- Fmcqo3CYz2WmJtD+lvcQjSuavZOuZ4HdI+6ZW+UNkiWywjMfQXf7YYvTAw59puFwsf7T
- weKvWiLOosZEKxjogwIYCVY1FdLcI8ycI3RmE4s3yNiRHEXrCseUpsdO6CTUcp/nDP8P
- SVAmWQM3lJigwAmdkkXUa58cnIA6a5CiKFn98KFn2c9D9bpZLxGX7Y4oMMCvkDFh6W6j
- 3p6A==
-X-Gm-Message-State: AFq9FYIZ0L6GHoiAXX6tjEUVS6RRGZKZJnn2l2Rx81+0KQD5GcUoHibK
- QUTxnENi7NKmnh/5K5tlGG0w36CaQUvCjFP5Wt3SRlzlBlBdGwLj3aTdwrkV/wqW3s9CJAhSNo0
- vVI2SGps=
-X-Gm-Gg: AYBFou32D4whacp39zOTeH6gzQM196w1KNlqd+NQdo8k/4WwwEmkqIUENmKYnUeQMsC
- aKnKO89eiI9W1S/wF6RX8QwnCIm++EEiUcW0qQgX68RboohXDYXgqaEYps0TWkO+3pD4EHgzZx5
- GTu8RKr+o7gTxOrzmI1SYsM/dgJmOKIYQW4vq5IeRwJEHgM96JjPYFbh9eTb0snUq4cbLFzGisy
- Cp1ek0vl09FCc/lisr93em36c6MA15uK9r2m9bkrHSJBqbVEHqvuPkzTtoj/l+UsZBQn48OjEOl
- IUc67ZKMffTabHIbavma1m/3LEGB+dm56UnTyT7gLM6b1LH1w5nJF/Nltsiw5h6l89OTG9h+ZHc
- 7CJ9uTUwhBzYKcsltpkh368tZulzl9hFKgFybMvYt3BzzXMggn8QPWG6grMwQAi32O6oP3jhhA3
- Oz6RYFkV4zAUnl4M652mUxqrwZU1k4RKNJkgvB55PU29gnShsdGuCt0LRH7KzWO49D+ZQq4kxrU
- xVOBFe5cGT7kQ8dQ9h0k9b3VFEf21N3qE8lmP/Ehnjombxn
-X-Received: by 2002:a17:903:4686:b0:2dd:ad73:5b69 with SMTP id
- d9443c01a7336-2e60036cef4mr29030115ad.25.1791409286539; 
- Wed, 07 Oct 2026 14:41:26 -0700 (PDT)
+ bh=GIE8w9TVbXZwUeENBy2WYbZbjL00zg4vcWZAr+zyDq4=;
+ b=cG19QFdy3WjjJx8ZKy3cRV697WpkMFx5zgXYICrouRUP70LIYGg3DppXLa/Hal3SVn
+ gaQwrdIrmGufZjhQiirYr2vmfRf8kSTNt06zrgcScy0QlpBAeagKNCNGOKASgJ8lBw6A
+ 5I9J2rJxQ/3BxFAE7+WEtn3nciMpwOUGVrmQhHUceHilNcfliqVOffC4lNUv0SwRKAS9
+ DGyFRdnmjMC/m1Amjoin1ZzEMvGsPLNbOxglXg0+yuX4G1tBjhwSUR3DWXjOrtkWoFCJ
+ k3EhGMABUpqmHHCsZwlNFWHiXTeoWt63LmTe/BRdVsyXiKIUMB6T8krnBKFF64zAOEiD
+ R21g==
+X-Gm-Message-State: AFq9FYLjGbkUS1ZZae7/6xTQt2BfNRX2y4HqlgLaWETSrPNBMrtFtqkT
+ kBptRLEvagcphKp6oyYoFM19NcXAiETmA5YjcD19B0ntq4wMRNEb6vHoIha3beU+b9JGgGL9hY4
+ gj0HrsxI=
+X-Gm-Gg: AYBFou1h955LBdQ4csYFkncXtKNOlx8qvti0oMg8QcYDTYOwEMytmNd5jQ4iuwl6LV/
+ d3fLx9zUFJbxLKP5IuozLvhaPHGuZFSn+Ut+NnFWLyTCx20lvr9NQ5kOFEs0hYg8AhR1jJkBAXE
+ xkMpGg+PxZILhrkTtv3uPxtLBmapdJ175ketloR22XVfl1aCz+4i6CdDIO6y/juiodYTzkRDWWG
+ Y+9+m4Ygg25Mz96rIefI+4VSb/BsyiRsaG7n8nonteEEIszOif5dncTKEvCdxG0Laj+C59sjzz4
+ DG5jcMP6GqBhWGrTrx01dQoLhv/QiAooU0rnCZmUIYQLXIIcppciF23BXeGr0ak2+8ruNg4kNXq
+ hZLDb9BFj3qPmaZ/Gj/4dvBVrHV3dnz5S9vtvwqCg21pYP0STIXtnp2SWJfYxnjGlgtv97HP/7E
+ 6GDlsAptNUThvFJDdTvnxbjVj/2wGhRUWhefXfpwymJ08oBNXacT9erNhzOwUv80JG/YrL86kFP
+ 0pRI3unVC5kETixwd6Y1n4nJxN8zzK8qtd+hg==
+X-Received: by 2002:a17:903:286:b0:2e5:41dc:9ac7 with SMTP id
+ d9443c01a7336-2e6004bc51fmr33493655ad.24.1791409287535; 
+ Wed, 07 Oct 2026 14:41:27 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e60484ca89sm16573335ad.57.2026.10.07.14.41.25
+ d9443c01a7336-2e60484ca89sm16573335ad.57.2026.10.07.14.41.26
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 07 Oct 2026 14:41:26 -0700 (PDT)
+ Wed, 07 Oct 2026 14:41:27 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH 07/20] ethdev: promote link connector to string to stable
-Date: Wed,  7 Oct 2026 14:39:37 -0700
-Message-ID: <20261007214115.3092715-8-stephen@networkplumber.org>
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH 08/20] port: promote SWX port API to stable
+Date: Wed,  7 Oct 2026 14:39:38 -0700
+Message-ID: <20261007214115.3092715-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261007214115.3092715-1-stephen@networkplumber.org>
 References: <20261007214115.3092715-1-stephen@networkplumber.org>
@@ -84,70 +83,117 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_eth_link_connector_to_str() was added in 25.11 and has not changed.
-It is a pure enum to string helper with no driver involvement, like the
-already stable rte_eth_link_speed_to_str().
-
-The xstats counter enable and query functions are left experimental.
-They are currently implemented only by net/mlx5, so the interface
-should not be frozen before a second driver has tried to use it.
+The SWX port ops structures have been experimental since 20.11 (ethdev,
+source/sink) and 21.05 (fd, ring). They have not changed since being
+introduced and are the only port API remaining now that the legacy
+rte_port_* API has been removed, so there is no reason to keep them
+experimental.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/rel_notes/release_26_11.rst | 3 ++-
- lib/ethdev/rte_ethdev.c                | 2 +-
- lib/ethdev/rte_ethdev.h                | 4 ----
- 3 files changed, 3 insertions(+), 6 deletions(-)
+ lib/port/rte_swx_port_ethdev.c      | 4 ++--
+ lib/port/rte_swx_port_fd.c          | 4 ++--
+ lib/port/rte_swx_port_ring.c        | 4 ++--
+ lib/port/rte_swx_port_source_sink.c | 6 +++---
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 3ad6ba2d81..ac8ce1d9a5 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -300,7 +300,8 @@ API Changes
-   * utility functions:
-     ``rte_eth_get_monitor_addr``, ``rte_eth_representor_info_get``,
-     ``rte_eth_buffer_split_get_supported_hdr_ptypes``,
--    ``rte_eth_timesync_adjust_freq`` and ``rte_tm_node_query``
-+    ``rte_eth_timesync_adjust_freq``, ``rte_tm_node_query``,
-+    and ``rte_eth_link_connector_to_str``
-   * buffer split and error handling types:
-     ``rte_eth_rxseg_split``, ``rte_eth_rxseg``, ``rte_eth_rxseg_capa``
-     and ``rte_eth_err_handle_mode``
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 7c57a9bb8f..338be3a289 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -3329,7 +3329,7 @@ rte_eth_link_to_str(char *str, size_t len, const struct rte_eth_link *eth_link)
- 	return ret;
+diff --git a/lib/port/rte_swx_port_ethdev.c b/lib/port/rte_swx_port_ethdev.c
+index de6d0e5bb3..509762901b 100644
+--- a/lib/port/rte_swx_port_ethdev.c
++++ b/lib/port/rte_swx_port_ethdev.c
+@@ -402,7 +402,7 @@ writer_stats_read(void *port, struct rte_swx_port_out_stats *stats)
+ /*
+  * Summary of port operations
+  */
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_swx_port_ethdev_reader_ops, 20.11)
++RTE_EXPORT_SYMBOL(rte_swx_port_ethdev_reader_ops)
+ struct rte_swx_port_in_ops rte_swx_port_ethdev_reader_ops = {
+ 	.create = reader_create,
+ 	.free = reader_free,
+@@ -410,7 +410,7 @@ struct rte_swx_port_in_ops rte_swx_port_ethdev_reader_ops = {
+ 	.stats_read = reader_stats_read,
+ };
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_swx_port_ethdev_writer_ops, 20.11)
++RTE_EXPORT_SYMBOL(rte_swx_port_ethdev_writer_ops)
+ struct rte_swx_port_out_ops rte_swx_port_ethdev_writer_ops = {
+ 	.create = writer_create,
+ 	.free = writer_free,
+diff --git a/lib/port/rte_swx_port_fd.c b/lib/port/rte_swx_port_fd.c
+index 72783d2b0f..0851ee66e1 100644
+--- a/lib/port/rte_swx_port_fd.c
++++ b/lib/port/rte_swx_port_fd.c
+@@ -345,7 +345,7 @@ writer_stats_read(void *port, struct rte_swx_port_out_stats *stats)
+ /*
+  * Summary of port operations
+  */
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_swx_port_fd_reader_ops, 21.05)
++RTE_EXPORT_SYMBOL(rte_swx_port_fd_reader_ops)
+ struct rte_swx_port_in_ops rte_swx_port_fd_reader_ops = {
+ 	.create = reader_create,
+ 	.free = reader_free,
+@@ -353,7 +353,7 @@ struct rte_swx_port_in_ops rte_swx_port_fd_reader_ops = {
+ 	.stats_read = reader_stats_read,
+ };
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_swx_port_fd_writer_ops, 21.05)
++RTE_EXPORT_SYMBOL(rte_swx_port_fd_writer_ops)
+ struct rte_swx_port_out_ops rte_swx_port_fd_writer_ops = {
+ 	.create = writer_create,
+ 	.free = writer_free,
+diff --git a/lib/port/rte_swx_port_ring.c b/lib/port/rte_swx_port_ring.c
+index 3ac652ac09..badd595481 100644
+--- a/lib/port/rte_swx_port_ring.c
++++ b/lib/port/rte_swx_port_ring.c
+@@ -407,7 +407,7 @@ writer_stats_read(void *port, struct rte_swx_port_out_stats *stats)
+ /*
+  * Summary of port operations
+  */
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_swx_port_ring_reader_ops, 21.05)
++RTE_EXPORT_SYMBOL(rte_swx_port_ring_reader_ops)
+ struct rte_swx_port_in_ops rte_swx_port_ring_reader_ops = {
+ 	.create = reader_create,
+ 	.free = reader_free,
+@@ -415,7 +415,7 @@ struct rte_swx_port_in_ops rte_swx_port_ring_reader_ops = {
+ 	.stats_read = reader_stats_read,
+ };
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_swx_port_ring_writer_ops, 21.05)
++RTE_EXPORT_SYMBOL(rte_swx_port_ring_writer_ops)
+ struct rte_swx_port_out_ops rte_swx_port_ring_writer_ops = {
+ 	.create = writer_create,
+ 	.free = writer_free,
+diff --git a/lib/port/rte_swx_port_source_sink.c b/lib/port/rte_swx_port_source_sink.c
+index af8b9ec68d..96ad739982 100644
+--- a/lib/port/rte_swx_port_source_sink.c
++++ b/lib/port/rte_swx_port_source_sink.c
+@@ -202,7 +202,7 @@ source_stats_read(void *port, struct rte_swx_port_in_stats *stats)
+ 	memcpy(stats, &p->stats, sizeof(p->stats));
  }
  
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_link_connector_to_str, 25.11)
-+RTE_EXPORT_SYMBOL(rte_eth_link_connector_to_str)
- const char *
- rte_eth_link_connector_to_str(enum rte_eth_link_connector link_connector)
- {
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index ae43420cf6..a3642b3c6e 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -3075,9 +3075,6 @@ int rte_eth_link_get_nowait(uint16_t port_id, struct rte_eth_link *link)
- const char *rte_eth_link_speed_to_str(uint32_t link_speed);
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_swx_port_source_ops, 20.11)
++RTE_EXPORT_SYMBOL(rte_swx_port_source_ops)
+ struct rte_swx_port_in_ops rte_swx_port_source_ops = {
+ 	.create = source_create,
+ 	.free = source_free,
+@@ -212,7 +212,7 @@ struct rte_swx_port_in_ops rte_swx_port_source_ops = {
  
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * This function converts an Ethernet link type to a string.
-  *
-  * @param link_connector
-@@ -3085,7 +3082,6 @@ const char *rte_eth_link_speed_to_str(uint32_t link_speed);
-  * @return
-  *   NULL for invalid link connector values otherwise the string representation of the link type.
+ #else
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_swx_port_source_ops, 20.11)
++RTE_EXPORT_SYMBOL(rte_swx_port_source_ops)
+ struct rte_swx_port_in_ops rte_swx_port_source_ops = {
+ 	.create = NULL,
+ 	.free = NULL,
+@@ -383,7 +383,7 @@ sink_stats_read(void *port, struct rte_swx_port_out_stats *stats)
+ /*
+  * Summary of port operations
   */
--__rte_experimental
- const char *rte_eth_link_connector_to_str(enum rte_eth_link_connector link_connector);
- 
- /**
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_swx_port_sink_ops, 20.11)
++RTE_EXPORT_SYMBOL(rte_swx_port_sink_ops)
+ struct rte_swx_port_out_ops rte_swx_port_sink_ops = {
+ 	.create = sink_create,
+ 	.free = sink_free,
 -- 
 2.53.0
 
