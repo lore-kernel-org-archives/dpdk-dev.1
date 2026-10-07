@@ -2,142 +2,145 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55121CA5FFF
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 09:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D65CA5FFF
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 Oct 2026 09:51:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6F73B40274;
-	Wed,  7 Oct 2026 11:31:55 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 3BD4240264
- for <dev@dpdk.org>; Wed,  7 Oct 2026 11:31:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3DE1140698;
+	Wed,  7 Oct 2026 11:51:43 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 605934027E
+ for <dev@dpdk.org>; Wed,  7 Oct 2026 11:51:41 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791365513; x=1822901513;
- h=date:from:to:cc:subject:message-id:references:
+ t=1791366702; x=1822902702;
+ h=from:to:cc:subject:date:message-id:references:
  in-reply-to:mime-version;
- bh=11cyLj/hanYks0ogLL7sH4SUD9eRhSPc9SNJHM2fzAY=;
- b=CM4pebxqU28bCSAW6xwoZbcJ3NXo43+KjwbCk7M1pQLY1ORAdSn262ir
- xsw/aGV8tya2JrTu8umtXXG5TgewP+fXUU7JwCIVGKg2pzvD07ZiMuQXg
- GAATdV5/b4/JdcZFyD8N0+lHoSYvNtDH5ctn2w3BMtAhmHiMeoh7cldpZ
- 33OxBYqHq+vP5tG7+je+2fnppAr/UvH0a/pyniQtuWZkoOpbLFjks/5hT
- bCb/012SpMwABOgRgAWLd/F+dBVMqrdG/J442KJB9UO016oBwJ+fMtFRH
- KmhunPopaIXN6JkTFeZ4BogIKoXlvNGD46yJLNb4wqZ2I/7q+1WWJBBoi A==;
-X-CSE-ConnectionGUID: LAVeZ74hQsqvbVq4+5R3wA==
-X-CSE-MsgGUID: 0KVLzRijTv+VpNT8TiVY/w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="129995"
-X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; 
-   d="scan'208";a="129995"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Oct 2026 02:31:52 -0700
-X-CSE-ConnectionGUID: xXfJXSDZR+q5VbEKWnaMqw==
-X-CSE-MsgGUID: umTZRdaESOmbRgPzLIqJgQ==
+ bh=KrATuF51AlnIbeU/YCDpTRJ5lqwzoNSHDxSTsaWie/4=;
+ b=OzEHVo5M6iKX6l7YUj7d9QREp/Be3LfaM+pHC+l97e3PnpFnO3i2QYtV
+ JiNVydKWDtQK/ZKWh+gwF5HW6+ykJaxK8OFgGeQ3MOEU+idyI3fZT+YYL
+ raoOXqRvXGZOahSg1QmJLuTPB2lEUtL8r+zOBVt9oc0sbevX5S6r3Uyot
+ 1OCO7Fxv8VDXu84+7Jf8R/9trXvmk5ZPqxxNRFgkj2TLikjKPXVvfjadE
+ 8QGuyHRt+iZebcYPUFwA1NdGjVMK2/LViR1CiPz/a7qMqpvhzl+XYLQw9
+ gkP7lZ+NaB9+RIwx8IpxTBkNXYachk/CjUtbnQ6lY4i9UgoKwGJDAdsXg A==;
+X-CSE-ConnectionGUID: VIsxdM3uROGlQ6ZFi4cqNQ==
+X-CSE-MsgGUID: Zj9c6y9RS6CfK/BE78lfmw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11927"; a="7418"
+X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; d="scan'208,217";a="7418"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Oct 2026 02:51:40 -0700
+X-CSE-ConnectionGUID: YvhFbBa4RhqCR+VY/ohSZg==
+X-CSE-MsgGUID: LxHhK2xySFikIdMVN/d+4A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,144,1787036400"; 
-   d="scan'208";a="16825"
+ d="scan'208,217";a="277524502"
 Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Oct 2026 02:31:53 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Oct 2026 02:51:40 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
  fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 7 Oct 2026 02:31:52 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ 15.2.2562.49; Wed, 7 Oct 2026 02:51:39 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Wed, 7 Oct 2026 02:31:52 -0700
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.58) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ 15.2.2562.49 via Frontend Transport; Wed, 7 Oct 2026 02:51:39 -0700
+Received: from BN8PR05CU002.outbound.protection.outlook.com (52.101.57.51) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 7 Oct 2026 02:31:51 -0700
+ 15.2.2562.49; Wed, 7 Oct 2026 02:51:39 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=shvCEWgAIb095yPOgnNnRQGugxdG5hPN/55thsDN/yDcDzrZjdMOHk31XvXHBeJl5VJr0hulBfixZiWMtJ58j5B+PJQuL6/gZr2ra17A+aJSZWkq5VY2B6QK1aHPsptLMZLqrbA2RNlDSWEvslh5iLfJmCI1PI5IPfVbERfmR1biAgdKPMjhb+6k5hCqkc2uKwXCuveg38izURRSC0tHXTpALvYiwjpUHADO421knDNnvLZ0USPFudy2C+rL3tWICeEEMxz2U4EY2vuCfFT1QJmjLNTZN/IjHjdGq1JEObu7RxQwPb1Lc8arBbX19P22OXRcEmiWReVsr/iwWz0oEQ==
+ b=SrwY07Kx2TMkXENdirhpBx3vGhaHAF9GJLYgNTeP4uVGqS69Oet3dmsw3eX+NuMrPno6vMgnR35IOjiVzg1J1jev04bKlV5XpupEwGNFcQnQJZS2n9r+hht2RAzLM5rT+s7EeOEafWmyXPYKE95A6iv/s673d97t4A3m2/By0ph3oEkmtxqaWE5PLUfx+1Qq16+JUskwOD6M6wZDWTjCq2uag9HwgBqOMy3m31ZRs+a4dG8lDYytQEWnaYS7OBR0B9ZSfOE/IiXWJbemkZoQLjrxiWUnrKekld5z6b24KkgcvDKVPi4fd6CSKceeQ65J7EnmnVx3N99VwRoDFZUTLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zjXIBw9CWrnF6agJJCTHS/koQ+zzAIFKspfjbE/YX4E=;
- b=Q+iPkZg2wt1QNFK+cQm4Sxd4xcFVKVp8WRQR1W06n0d0mqQwni47R0JXUo8QwRq/OPH05wA7ovtbh5UNLtomrhAA7/r63tzrQz86Ugj9mkAhhaI6xnR9akMX85yAVZipptbCvcCHzCtS7XvU9tAi5qzo/zZWTDRqrtxhI4MyGpVZ2bgP0NioXHZ49VJQMzK5oNWXTNjmzLziuN7QPnwvU8Uo8oC5BIarlJ8HlopiPmOR4ZpqjTfFvBOtkC/J+TwtIrIFcRiKfsWarl43QMU7VQi4YX4O20Zm3UJnZiV3qxmWu3D91p1sFZ6/Tgb0UW2yXDEp+d4PXoQbwTeGKkk6uw==
+ bh=QXctdOCs1TjeVlB87cRd0J/TEYObnd+Y/gH1w8yfz9I=;
+ b=EvCcxfdPV6aDun11Q2zvHEDCk2PaGtwVRqPnwrRxZc4KuMK8sImAVhH/IUaTn8gteEmpI2RB/uUeRkZAwZKI6IAW+XdW0+vvbNYHrz2g+8jgxcQuWUxqUkQgoobGc3jQwlVVZUwnDy0XpAEWFHuZO7Skp5vjDBnvLVV2qAXA/O+mr6CT3d5OdRmvymMwRdLco+QqLm2u3g7KR/sTktt1S/s+7susBwyoNM2rehWNwCq30d59ZWZF/pLfYgyC9TRLSxYlb/Z6rKQWWETErYp6Lisj+2XgBJwB9HRPbXDITRsdeXQrUcLUyGfIcUOcsGLrCNNcrzbx2HvwQY2/5PHsmg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by CH0PR11MB5299.namprd11.prod.outlook.com (2603:10b6:610:be::21)
+Received: from LV2PR11MB6045.namprd11.prod.outlook.com (2603:10b6:408:17b::20)
+ by MW4PR11MB6569.namprd11.prod.outlook.com (2603:10b6:303:1e1::14)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.15; Wed, 7 Oct
- 2026 09:31:47 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0451.014; Wed, 7 Oct 2026
- 09:31:47 +0000
-Date: Wed, 7 Oct 2026 10:31:43 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Anurag Mandal <anurag.mandal@intel.com>
-CC: <dev@dpdk.org>, <anatoly.burakov@intel.com>
-Subject: Re: [PATCH 0/2] net/ice: fix memory handling issues
-Message-ID: <asYRf0mgWZu8sUmi@bricha3-mobl1.ger.corp.intel.com>
-References: <cover.1791356190.git.anurag.mandal@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cover.1791356190.git.anurag.mandal@intel.com>
-X-ClientProxiedBy: DU7PR01CA0031.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:50e::10) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|CH0PR11MB5299:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7566f1b2-f4f4-4578-fad7-08df2455cef5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|23010399003|56012099006|11063799006|10067099003|18002099003|22082099003|6133799003;
-X-Microsoft-Antispam-Message-Info: ijegxvO0iYkyPFM7N7v5cPChBABtIDy8GFXxRHeHfz6o3Z6vDYgfLGi4uFvf7QVDTdXsUmb1bb5doEKNf/rgVhy24bByV9E63NtWAaG/u/LPT35UBPERXDhfv01cokE0QK+GbdHjdbEdQ41ky7+tqc/UOr76su0TSQO0clSMbWSl5jkVvmQ3qaFwmro31TYEsc8GOPDHKild6lizCHQI7RkKeW/1ly+uGpXmmQotTTEdWOCtIN3J+I++2r02BVLVtxCFu182TAtvv1NGRpnmW8wKsgJiWqF6pskYCH3drsKUZBo/qumppejruI2qR68fp9lYSgSK+ZvRumdwCeLICKJsU2AdsnXAmIhzNJgf9rOyEAoLyO8UHusJQacd21goTfFJOl4u+lUoycgxhfKnE2lLBE8HGgsikGiJoxRz9MD3bn/wFAXd4rJ+xWCy/qIbZfKXcjCDQ5T7hXd/xYpDcK+R+FSF2ZinO6bnL01+LiiC/GHi1wttDCH/Rbdzfle+9htenDX3HoQQIlIWOne7gILWME4G0EsLKknxbsgT+TxcOycckPo0cbreHFaO/rFsVqppsOz4BHnAO32QnXLPlOzf4v9FTtaATd1IYIiHtPiIobR3hPJfCIlP579QJqZeYHse3CXJhszaeB7NMtLEEQG3S9a0w5DgMWwSacy8/y0=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(56012099006)(11063799006)(10067099003)(18002099003)(22082099003)(6133799003);
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Wed, 7 Oct
+ 2026 09:51:35 +0000
+Received: from LV2PR11MB6045.namprd11.prod.outlook.com
+ ([fe80::1f72:3d49:b6ba:91ae]) by LV2PR11MB6045.namprd11.prod.outlook.com
+ ([fe80::1f72:3d49:b6ba:91ae%6]) with mapi id 15.21.0472.015; Wed, 7 Oct 2026
+ 09:51:34 +0000
+From: "Ji, Kai" <kai.ji@intel.com>
+To: "Nicolau, Radu" <radu.nicolau@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>
+Subject: Re: [PATCH 1/2] test/crypto: Add NULL OOP SGL test cases
+Thread-Topic: [PATCH 1/2] test/crypto: Add NULL OOP SGL test cases
+Thread-Index: AQHdVYEnEOojwpZuoEOkV0NTJA5bQbbx17r5
+Date: Wed, 7 Oct 2026 09:51:34 +0000
+Message-ID: <LV2PR11MB60456B879250E8B44296FFD281942@LV2PR11MB6045.namprd11.prod.outlook.com>
+References: <20261006105424.1630315-1-radu.nicolau@intel.com>
+In-Reply-To: <20261006105424.1630315-1-radu.nicolau@intel.com>
+Accept-Language: en-GB, en-US, en-IE
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV2PR11MB6045:EE_|MW4PR11MB6569:EE_
+x-ms-office365-filtering-correlation-id: 5c2c2aba-b4a7-4559-b33d-08df245892d3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|23010399003|42112799006|366016|1800799024|376014|56012099006|11063799006|10067099003|8096899003|38070700021|22082099003|18002099003;
+x-microsoft-antispam-message-info: JCTz8ckI2PUv3hoPCjQHMp1m+qutVAPYxIhzJqf45jNlgS468Si7yCuj5Kzi9wMfgMqPG2yWSIH4VUuLLU4qolKG80wFByjdWLx1fc2itnPjc6+0RQ08v2gkfCwu4zTKv/RrxBGAeN4QxFZQg3x0PFEwFeBJr0eFDp+U6HpHnCS4GaLGIvoTajkpJvTQDeBk7ynEx+ubnRv8+4dn6txtagaHakxX6ZJuikaWscDzfWNN29VRcPPPiLbVAsyqpXJx3/2IlSaMAM/WPki6cSjAIHfsrnFHaZEyPN+dhUE7IcmUtZYEuUKaZwXprD0EUr1cVozj7b0jFWNKuN2vAzCblK73GU8fh8kIivaltnFVOTzopH1K5qwLMQdTd936pDLzmikez1JThpkodpZrNGgM+9AjVZGtuWdqjyOJxraBobPFfWmsW9fh8tOarztU6+hVtrel+9gGYYAhqzGByPP76UpaKBJsyzEYnBHlfZpBYem5VWT66mUJbNcw3U+u/RdxNDrp6skSUJw+T4VpVeh0ntGT8GqqjliZ80/x3W53MFSkulwfNJKdb0casfoh5iWQQ30FDwyB1+CGttfnXQcV3keCLtbsKW4hbGppNiiYtsX8B2Ho+OiSQ1uh26XONtgTltEUc9nB55fj94LxHlaccI35FFeXwOk8ZPvEPuv64m03bpms81TlpGrnYazJ65NGX7dCo+D3cWyd+RzQVst8V8HsKY5ePTb5KYRErJZgdVE=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:LV2PR11MB6045.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(42112799006)(366016)(1800799024)(376014)(56012099006)(11063799006)(10067099003)(8096899003)(38070700021)(22082099003)(18002099003);
  DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?a/nbkcDXexz3eFUukJATBFlrZBmEUmS1JahfqGHqM4aLkyWpk1ovdnWtodOy?=
- =?us-ascii?Q?U2aKrVaCYMnd/8yea9Gzuq+zIwUWczUN6tfabgG0jwLJr/9Q2RJQE3u9K4qW?=
- =?us-ascii?Q?TNE3AKfV81llw3WPkhZ5R/Ngk0jf2nItM2TZ4ST+obktanCkvpmtz7ZKmSju?=
- =?us-ascii?Q?SlB2XfbTXRCdZRnNBl+trLQa0ojp0GBvtkxhenRjxeh/kh+tBMpOe884ymun?=
- =?us-ascii?Q?ZvdjvBPYXZ1UAdbDCY2YN0HaiEVnr72YS4d+YMQtlEZr/PWi0/jb2CxSwE7C?=
- =?us-ascii?Q?3yLwnjjyR10pQVz1jbTN/Lovsh5htx8Hvtno44kzdSXxP7f4pMGLaGa8V7e1?=
- =?us-ascii?Q?7ct+L5LfZzLkVWWpEDP6HCwxIAtoIjM2fFDfGB3i14izm/PjHxvQ1VzJ7k83?=
- =?us-ascii?Q?G81eqB89PBBA9/rtgaGiWdlt8nCPuUSys2CtxbxaxbHXGUOt3ZC7DPxRFYDm?=
- =?us-ascii?Q?bjqUn5VgiXQ6xYPWKUwK8bof9V0aHLA+JA8isyPRTq2UEGYnyZaOswOBJmWz?=
- =?us-ascii?Q?ckDZvgP7mK2ivXW6worYzdHV4JEl25n3scTkyEcx+S2MhhPGBxSmAL2FBO0t?=
- =?us-ascii?Q?3UnUcldSgehzg0jNo3n1gbM8TUtByJVGwr1MWN0j4OYnxEDfZSq5jZlX3Ia7?=
- =?us-ascii?Q?ty4TixjzRDvvGS/8LmoGJNbKv9LcfHpJxX2Gkl/yc54qAJwJ2zsG0drt4v3Z?=
- =?us-ascii?Q?VK1c06w/O/SEHG+mbhc2K+JJypVChcsNLFMcs/rYXfr3KHM1B1Y7dVjtLdWH?=
- =?us-ascii?Q?N7+3GwlgSiG6YulqEiAOyt9XVIxh8EDJ3GI7+Tkxt+ZLLfNPMoOLCvgnyeqq?=
- =?us-ascii?Q?fHsdkyMAIr7mdGth/ddjoNtp4KaFZSWhqjuYYsa2dBAtL+3nRigmjI2oEBbW?=
- =?us-ascii?Q?J3zjYCOQbanLK0elbtgUA1EeKoj0pgCr8NBj/RkqwKgaDF/fkN4fmjxlKntw?=
- =?us-ascii?Q?H7O5ATUuNCYK0dkDAyki0vgc1iNA2gNFB+9lrb+rHrrqRJSQ9tiP19NwRNVD?=
- =?us-ascii?Q?IUh8+lqF21osVgqqKObbdEcILLwgGA0XpUll2oi1ahzcjCUpA9Z7r/eve+d1?=
- =?us-ascii?Q?APAFjI9kAGA9BQTFg182MtW28lCUviV8TeZZtM+7apylkWftT9ir780XHFX2?=
- =?us-ascii?Q?+TyDJCMehZNxlNTAJoMp42mJxvYkhJoycP/Cj1qNnsTufRNYcfpOLmj8LdMH?=
- =?us-ascii?Q?f6WcUhdzyUb33EqpGOeTQl26dSHwjXXS83dFb62vv3NuLam1qvtEKcjE2fQA?=
- =?us-ascii?Q?PDK8607LIcNWa9M2eJFcqIlP/Uriy6xNh1UZViev/erOWyhlo1s3KH+68uPp?=
- =?us-ascii?Q?/JUYO5VXeCoq81Z/GZ6lqqarTIly1ZYab073oEfTcaaXHEOBNOtGTL/tTQUE?=
- =?us-ascii?Q?3xHDiszVpVdoomao4d+5JaEOJ6pKH2uT2p0d3oRsmCGB9OaucshPsaOnnwQX?=
- =?us-ascii?Q?sBxOjubl7Y0HrmPpARHO/f0doQqGNUXVOyZTDjx+43hyZoEa2sjHtWW1TheR?=
- =?us-ascii?Q?+GwwVXMaT7vfwMqKPmswMgTWwU1uGIQNimqdNGrqm3VnJ6CqLNDDn4xlVEyA?=
- =?us-ascii?Q?d5t/z83Dr1a6f/RT9Z7TusuzGJ6Od+nairm3fvqtsuCAnFfkPt2b+Glulz+U?=
- =?us-ascii?Q?McLWs6oCR7155MAJRDGcHcYjjhg3OdbcfGbfDYhcopVEHQgUppYepLPahtbe?=
- =?us-ascii?Q?qNPfFR7FpIAC5dY7aGhPm1rXOmRZ8W0+85in7YE4vV6eBNAPusWdXztIpoCQ?=
- =?us-ascii?Q?EdyiJ21qdcCcxn/vJUlQq97rWxoXOO4=3D?=
-X-Exchange-RoutingPolicyChecked: fOfP3yZf8At3IwDiqUMzBPHyoSgKZ31EG+wyz3baDrLhGCiZ37mYTmol3BMY7oqRtI3vRnRCPCQFOMMtBVwT9R5neICSVOqndZkCOEtVT87xxq2X7HBfXYVacUQiJblDWnjbbP30ibJSL18utHArzP1svbGLYjyELiTmOciAd33Zwjlk9JTNLIaSeFkb3RHy6ooNEVKnqhdjbz5tlHn1g4p9cPZ9wCXQhfi/SX7SQuyr0FwaYRvbjOOP2dnqGk5TPhSx/hUIyZM/AiDexrXjqX8jJCUfu4OyyGCMwvjRK5g8T/CSzhiMXeF7/sdMYC1TnC4KbbV3WwENkCIxhqjT/Q==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7566f1b2-f4f4-4578-fad7-08df2455cef5
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?FN9Qp2xaRPpADgeHdedBBhRvTojY6RMKLae6C4sHaRMz8OcXt0npMcSBaj?=
+ =?iso-8859-1?Q?dXq7A25491veNPqT4onhjP4dQmIgix7sujRn5cCNWLLJ5Vel6VjL49++SU?=
+ =?iso-8859-1?Q?ogOyrGU/oHihcFX666sUJ09xbQ1IhkuJzmIijg3ADdSNpiGl4nledpohbB?=
+ =?iso-8859-1?Q?qqpEryA9PzJ6zxN1j2/+vyEkbmzOrPJfJo0ejP5mPFzttpyVfVsyYRjN/5?=
+ =?iso-8859-1?Q?l5oEtp7KcvXqj4mBfdFmzUCxana/6tLccZmPZZRoyEy8t8ZxkfO3adROzj?=
+ =?iso-8859-1?Q?OcZBXa6XOHz5T3EVDDz53JIQnLl0LmoTS30DvULf3yE9RyYkAaAy7CZ+d0?=
+ =?iso-8859-1?Q?N1X4bwsCZqwJYnbY00/CYp/dl1m4j7wy1OHO63uk6IdOTvzKS/gwQO2C52?=
+ =?iso-8859-1?Q?uyZ92BLiZZo2w50QzrAcMibUHfVLrXJIhHfI/ZKC82DFw1c5LNyHSsQ1Hn?=
+ =?iso-8859-1?Q?5Z9PP3XVOPOw3Bwzqd2cx3jV7oLYULwN2783x1s2RCljh/K8Ntxe6Hd9R3?=
+ =?iso-8859-1?Q?PiYLSRDQmhgo7Df3Lh3gmmLt5c1VvPWfukF5JPpEZqe1UU1wUiBICQm2j7?=
+ =?iso-8859-1?Q?wXPVbofhRHPUwsAPBmuk15viAcURUhyIfCzCDO7yyPSLmFXbMup1ZDXL/h?=
+ =?iso-8859-1?Q?nELJaTFu1iSVkgqJ5ptqF7bStOyPIzkcJg8IZIVR+je8BhV+/DRHQg3KPp?=
+ =?iso-8859-1?Q?AlOeNpShxWZStLoouXhczjLvZrpCE1uJu78BQUfW/Ne9Azq9vri5Kbevbk?=
+ =?iso-8859-1?Q?InWyoePedGkZVpCJ/OkNqSk3dDVyztazdDx/bFwRNkHpoyP/+8FBFZ5dX8?=
+ =?iso-8859-1?Q?e1OJsLpIGHBGxB00NNhQ1A//OyzPyIitedYn45jC4fL0QmcI7jwFrdvLBR?=
+ =?iso-8859-1?Q?dsT3RK0gDPTqPRsH7ABxveMTYYkLRbGXqCjHorKVYOukUcZAnqAMMfp421?=
+ =?iso-8859-1?Q?ZH+T6+Z8ATw/vF/lbOYVF/AZRCgIq59M0WRUsIoZcikPDkkeiAuHCtIjBL?=
+ =?iso-8859-1?Q?o3vTOSSZB1zBivP4d7OvD4yr8etarfLuVbYdcaZ95WTsDzC9H6fqYZ/m4b?=
+ =?iso-8859-1?Q?YD4n2wzOiG+xgCxdOKrlYHH78ZMVElAQtTeTzJvpSCE5GixKWwcZ+Q/qwF?=
+ =?iso-8859-1?Q?9jZSqESvDVCxL1EEPM5xGC2B+CDic73Z+0BzQ1zPJ1AWoc5/83DM0UIm1Q?=
+ =?iso-8859-1?Q?HIHiZXryrCtiz9Gf5V3BisRMpZCZZQAYrRLGUlKfZwYIcPZ+8A5Kc/WDHu?=
+ =?iso-8859-1?Q?ZL4I7dcaGEWMJNAr/kdjbxtcLAaeeUKmiypSTfFtVjmN1tM8lZsKoPGLgQ?=
+ =?iso-8859-1?Q?xXAVExiV6ddPg7QqzU4rNz3RQlU73TpMUUPulxZbj0ouKWWd7syOAqC557?=
+ =?iso-8859-1?Q?4VId37zinDWejljyARTYGlDGFRNI3/94ehAUJp6Jf6uWwtqtuBDHlhNTvM?=
+ =?iso-8859-1?Q?oWXU2oNlebl94yMtDNircOENTOCdIxTdBYf7ovZuqEB+EpQa+xtjq7PvNa?=
+ =?iso-8859-1?Q?5KPg9ZjvZmatgKXcKpbbWhTmlZyG0LmCrj9RzkkLu6F2dY4RCWmPQkSPtp?=
+ =?iso-8859-1?Q?gOZ6wYYGuVsEUTLZOBWUh6T3RcuAmDC5+vMWmt8fv2U5Lhuf9e0UoGGtxs?=
+ =?iso-8859-1?Q?Kdf9SR8jbDgb2ikU+/5KmXT651WOnyGFzBxL8z+1jThK8hVksXl0R2DV3c?=
+ =?iso-8859-1?Q?Rrlwm0z0k83EQne2qjCa4yWrOchlYuHDedPqHXtgxPS87PNVSRCSs8/9gd?=
+ =?iso-8859-1?Q?CtdZN8gniBnT1/1Fhv2DoWjIz7MD9r+1jEBhb6iycEAbFw?=
+Content-Type: multipart/alternative;
+ boundary="_000_LV2PR11MB60456B879250E8B44296FFD281942LV2PR11MB6045namp_"
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: o7xe+IvuCRYteWDp9tLSh4RrIXXpAnMX7Q+Ey5mHjDSIqKEuVjrz1Dfby09geb6KiORQOLvqJkA3iNqz1A7plD6D4aPdwog/BbN1dn/i4z4RrtzpTrs2r/GAx7KdGfExJX7IYVFGUKCDKhUN66Iz/+i9TcD9ncr+j/ozLsQ+UYCtmhp0/L6210YA2F5OKGs1j2Fpv+jPGGciObULAcD4EJjh4oywaqJ9eSW5n5Vrfec9GElxUW+jfEGJad1Dtsskhf+jxb08red2qK1MqCE/58E+Ptx3Gqit4eIHF1kda5lm2z5AQWOPiltgfi816pnGofcun31ZVx4oFLgEl1NHag==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2026 09:31:47.5009 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L2z6dz0ZV1hXgTr2cTEHj3TnjKDwmTgJ0XjcP8lyi65lak0SF7KrL1NvJIxIEb2DBzigffRql9eukjp+YOxwWWySVBieICuUZgbHOKk0sQU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5299
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR11MB6045.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c2c2aba-b4a7-4559-b33d-08df245892d3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2026 09:51:34.8510 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GZnWpo23XWwqnXXWzgDvFSlrHDBr6TSPociW64nAEr7kOwE5lzd6KkI3ZvSR3o9E19SZ0QwDhQddv/H35YuHdQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6569
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -152,36 +155,333 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Oct 07, 2026 at 07:58:18AM +0000, Anurag Mandal wrote:
-> This patch series addresses two memory handling issues in the ice PMD.
-> 
-> - The first one makes memory allocation and release symmetric. 
->   Several buffers obtained through ice_malloc(), ice_calloc() 
->   or ice_memdup() were released with rte_free() instead of ice_free(). 
->   Both APIs currently map to the same underlying allocator. 
->   However, mixing them is inconsistent and would break if the OS 
->   abstraction layer ever changes.
-> 
-> - The second one fixes an unchecked allocation in ice_tx_queue_start() 
->   which dereferences the Tx time queue context buffer returned by 
->   ice_malloc() without NULL check.
->   On allocation failure, the E830 send-on-timestamp path therefore crashes
->   instead of reporting "No Memory" error, and also the already allocated
->   txq_elem buffer gets leaked.
-> 
-> Anurag Mandal (2):
->   net/ice: free memory with matching allocator
->   net/ice: fix unchecked Tx time context allocation
-> 
->  drivers/net/intel/ice/ice_acl_filter.c  | 10 +++++-----
->  drivers/net/intel/ice/ice_dcf.c         |  2 +-
->  drivers/net/intel/ice/ice_dcf_parent.c  |  2 +-
->  drivers/net/intel/ice/ice_ethdev.c      | 14 +++++++-------
->  drivers/net/intel/ice/ice_fdir_filter.c | 12 ++++++------
->  drivers/net/intel/ice/ice_rxtx.c        | 22 +++++++++++++---------
->  6 files changed, 33 insertions(+), 29 deletions(-)
->
-Patches applied to dpdk-next-net-intel.
+--_000_LV2PR11MB60456B879250E8B44296FFD281942LV2PR11MB6045namp_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-/Bruce 
+
+Acked-by: Kai Ji <kai.ji@intel.com>
+
+
+________________________________
+From: Radu Nicolau <radu.nicolau@intel.com>
+Sent: Tuesday, October 06, 2026 11:54
+To: dev@dpdk.org <dev@dpdk.org>
+Cc: Nicolau, Radu <radu.nicolau@intel.com>; Akhil Goyal <gakhil@marvell.com=
+>; Fan Zhang <fanzhang.oss@gmail.com>
+Subject: [PATCH 1/2] test/crypto: Add NULL OOP SGL test cases
+
+Extend the blockchiper test suite with
+NULL cipher and NULL auth OOP SGL test cases.
+
+Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
+---
+ app/test/test_cryptodev_aes_test_vectors.h | 55 ++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+
+diff --git a/app/test/test_cryptodev_aes_test_vectors.h b/app/test/test_cry=
+ptodev_aes_test_vectors.h
+index 505e603b7e..60a270a3ce 100644
+--- a/app/test/test_cryptodev_aes_test_vectors.h
++++ b/app/test/test_cryptodev_aes_test_vectors.h
+@@ -4598,6 +4598,24 @@ static const struct blockcipher_test_case aes_chain_=
+test_cases[] =3D {
+                 .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,
+                 .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP,
+         },
++       {
++               .test_descr =3D "NULL-CIPHER-NULL-AUTH encrypt & gen x8byte=
+ - OOP SGL",
++               .test_data =3D &null_test_data_chain_x8_multiple,
++               .op_mask =3D BLOCKCIPHER_TEST_OP_ENC_AUTH_GEN,
++               .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |
++                               BLOCKCIPHER_TEST_FEATURE_SG,
++               .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,
++               .sgl_segs =3D 3,
++       },
++       {
++               .test_descr =3D "NULL-AUTH-NULL-CIPHER verify & decrypt x8b=
+yte - OOP SGL",
++               .test_data =3D &null_test_data_chain_x8_multiple,
++               .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,
++               .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |
++                               BLOCKCIPHER_TEST_FEATURE_SG,
++               .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,
++               .sgl_segs =3D 3,
++       },
+         {
+                 .test_descr =3D "NULL-CIPHER-NULL-AUTH encrypt & gen x4byt=
+e",
+                 .test_data =3D &null_test_data_chain_x4_multiple,
+@@ -4620,6 +4638,24 @@ static const struct blockcipher_test_case aes_chain_=
+test_cases[] =3D {
+                 .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,
+                 .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP,
+         },
++       {
++               .test_descr =3D "NULL-CIPHER-NULL-AUTH encrypt & gen x4byte=
+ - OOP SGL",
++               .test_data =3D &null_test_data_chain_x4_multiple,
++               .op_mask =3D BLOCKCIPHER_TEST_OP_ENC_AUTH_GEN,
++               .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |
++                               BLOCKCIPHER_TEST_FEATURE_SG,
++               .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,
++               .sgl_segs =3D 3,
++       },
++       {
++               .test_descr =3D "NULL-AUTH-NULL-CIPHER verify & decrypt x4b=
+yte - OOP SGL",
++               .test_data =3D &null_test_data_chain_x4_multiple,
++               .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,
++               .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |
++                               BLOCKCIPHER_TEST_FEATURE_SG,
++               .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,
++               .sgl_segs =3D 3,
++       },
+         {
+                 .test_descr =3D "NULL-CIPHER-NULL-AUTH encrypt & gen x1byt=
+e",
+                 .test_data =3D &null_test_data_chain_x1_multiple,
+@@ -4642,6 +4678,25 @@ static const struct blockcipher_test_case aes_chain_=
+test_cases[] =3D {
+                 .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,
+                 .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP,
+         },
++       {
++               .test_descr =3D "NULL-CIPHER-NULL-AUTH encrypt & gen x1byte=
+ - OOP SGL",
++               .test_data =3D &null_test_data_chain_x1_multiple,
++               .op_mask =3D BLOCKCIPHER_TEST_OP_ENC_AUTH_GEN,
++               .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |
++                               BLOCKCIPHER_TEST_FEATURE_SG,
++               .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,
++               .sgl_segs =3D 3,
++       },
++       {
++               .test_descr =3D "NULL-AUTH-NULL-CIPHER verify & decrypt x1b=
+yte - OOP SGL",
++               .test_data =3D &null_test_data_chain_x1_multiple,
++               .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,
++               .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |
++                               BLOCKCIPHER_TEST_FEATURE_SG,
++               .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,
++               .sgl_segs =3D 3,
++
++       },
+ };
+
+ static const struct blockcipher_test_case aes_cipheronly_test_cases[] =3D =
+{
+--
+2.52.0
+
+
+--_000_LV2PR11MB60456B879250E8B44296FFD281942LV2PR11MB6045namp_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);">
+<br>
+</div>
+<div id=3D"appendonsend"></div>
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);">
+Acked-by: Kai Ji &lt;kai.ji@intel.com&gt;</div>
+<div><br>
+</div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<hr style=3D"display: inline-block; width: 98%;">
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<b>From:</b> Radu Nicolau &lt;radu.nicolau@intel.com&gt;<br>
+<b>Sent:</b> Tuesday, October 06, 2026 11:54<br>
+<b>To:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
+<b>Cc:</b> Nicolau, Radu &lt;radu.nicolau@intel.com&gt;; Akhil Goyal &lt;ga=
+khil@marvell.com&gt;; Fan Zhang &lt;fanzhang.oss@gmail.com&gt;<br>
+<b>Subject:</b> [PATCH 1/2] test/crypto: Add NULL OOP SGL test cases </div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-size: 11pt;">Extend the blockchiper test suite with<br>
+NULL cipher and NULL auth OOP SGL test cases.<br>
+<br>
+Signed-off-by: Radu Nicolau &lt;radu.nicolau@intel.com&gt;<br>
+---<br>
+&nbsp;app/test/test_cryptodev_aes_test_vectors.h | 55 +++++++++++++++++++++=
++<br>
+&nbsp;1 file changed, 55 insertions(+)<br>
+<br>
+diff --git a/app/test/test_cryptodev_aes_test_vectors.h b/app/test/test_cry=
+ptodev_aes_test_vectors.h<br>
+index 505e603b7e..60a270a3ce 100644<br>
+--- a/app/test/test_cryptodev_aes_test_vectors.h<br>
++++ b/app/test/test_cryptodev_aes_test_vectors.h<br>
+@@ -4598,6 +4598,24 @@ static const struct blockcipher_test_case aes_chain_=
+test_cases[] =3D {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_descr =3D &quot;NULL-CIPHER-NULL-AUTH encrypt &amp; gen x8=
+byte - OOP SGL&quot;,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_data =3D &amp;null_test_data_chain_x8_multiple,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op_mask =3D BLOCKCIPHER_TEST_OP_ENC_AUTH_GEN,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BLOCKCIPHER_TEST_FEATURE_SG,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_segs =3D 3,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_descr =3D &quot;NULL-AUTH-NULL-CIPHER verify &amp; decrypt=
+ x8byte - OOP SGL&quot;,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_data =3D &amp;null_test_data_chain_x8_multiple,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BLOCKCIPHER_TEST_FEATURE_SG,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_segs =3D 3,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; .test_descr =3D &quot;NULL-CIPHER-NULL-AUTH encrypt &=
+amp; gen x4byte&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; .test_data =3D &amp;null_test_data_chain_x4_multiple,=
+<br>
+@@ -4620,6 +4638,24 @@ static const struct blockcipher_test_case aes_chain_=
+test_cases[] =3D {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_descr =3D &quot;NULL-CIPHER-NULL-AUTH encrypt &amp; gen x4=
+byte - OOP SGL&quot;,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_data =3D &amp;null_test_data_chain_x4_multiple,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op_mask =3D BLOCKCIPHER_TEST_OP_ENC_AUTH_GEN,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BLOCKCIPHER_TEST_FEATURE_SG,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_segs =3D 3,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_descr =3D &quot;NULL-AUTH-NULL-CIPHER verify &amp; decrypt=
+ x4byte - OOP SGL&quot;,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_data =3D &amp;null_test_data_chain_x4_multiple,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BLOCKCIPHER_TEST_FEATURE_SG,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_segs =3D 3,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; .test_descr =3D &quot;NULL-CIPHER-NULL-AUTH encrypt &=
+amp; gen x1byte&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; .test_data =3D &amp;null_test_data_chain_x1_multiple,=
+<br>
+@@ -4642,6 +4678,25 @@ static const struct blockcipher_test_case aes_chain_=
+test_cases[] =3D {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_descr =3D &quot;NULL-CIPHER-NULL-AUTH encrypt &amp; gen x1=
+byte - OOP SGL&quot;,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_data =3D &amp;null_test_data_chain_x1_multiple,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op_mask =3D BLOCKCIPHER_TEST_OP_ENC_AUTH_GEN,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BLOCKCIPHER_TEST_FEATURE_SG,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_segs =3D 3,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_descr =3D &quot;NULL-AUTH-NULL-CIPHER verify &amp; decrypt=
+ x1byte - OOP SGL&quot;,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .test_data =3D &amp;null_test_data_chain_x1_multiple,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op_mask =3D BLOCKCIPHER_TEST_OP_AUTH_VERIFY_DEC,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .feature_mask =3D BLOCKCIPHER_TEST_FEATURE_OOP |<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BLOCKCIPHER_TEST_FEATURE_SG,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_flag =3D RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .sgl_segs =3D 3,<br>
++<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
+&nbsp;};<br>
+&nbsp;<br>
+&nbsp;static const struct blockcipher_test_case aes_cipheronly_test_cases[]=
+ =3D {<br>
+--<br>
+2.52.0<br>
+<br>
+</div>
+</body>
+</html>
+
+--_000_LV2PR11MB60456B879250E8B44296FFD281942LV2PR11MB6045namp_--
