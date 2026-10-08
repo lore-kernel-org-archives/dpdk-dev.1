@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E404ACA6017
-	for <dpdk-dev@archiver.kernel.org>; Thu,  8 Oct 2026 23:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DD0CA6017
+	for <dpdk-dev@archiver.kernel.org>; Thu,  8 Oct 2026 23:38:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ADBCE40A89;
-	Fri,  9 Oct 2026 01:37:37 +0200 (CEST)
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
- [209.85.210.176])
- by mails.dpdk.org (Postfix) with ESMTP id 315554060B
- for <dev@dpdk.org>; Fri,  9 Oct 2026 01:37:36 +0200 (CEST)
-Received: by mail-pf1-f176.google.com with SMTP id
- d2e1a72fcca58-88aea027391so3115420b3a.0
+	by mails.dpdk.org (Postfix) with ESMTP id A70AE402DD;
+	Fri,  9 Oct 2026 01:37:39 +0200 (CEST)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
+ [209.85.210.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 108DF40615
+ for <dev@dpdk.org>; Fri,  9 Oct 2026 01:37:37 +0200 (CEST)
+Received: by mail-pf1-f175.google.com with SMTP id
+ d2e1a72fcca58-88bc25fcd0eso4740999b3a.2
  for <dev@dpdk.org>; Thu, 08 Oct 2026 16:37:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791502655;
- x=1792107455; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791502656;
+ x=1792107456; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=pQYSQO2/xVX0dZ1/SLZYLTc3Lvbb6r9VTKL0cpOBV+w=;
- b=KhWzWV+tumxhTB7GVCWXd+YXjB+0uzEcRIP55/6OE/cCQDDQcdHxK5EMaZFCibioh5
- yw45UmiIvu/vLjoJ+lDtQ0kT4KV+qhjf/zmpd6KpcqgFy975pBX8bn/60HO7Pp0QI/Vw
- jwqwPxanWdUEEoMWCKqKnNoYPyz7wGpqYEM8KdiA0rwAET13odO0z/2cfbJORwkcVzpb
- I6DonWWKPIz9px05N9BMq/NlfiQzQsJ0bGpnk+gUOkvzd9McABbUz0dxiNINf38gjkYe
- HQUSsDqXSdEe+FUBR5wa+xDypdj7zDCU2LgYfiqHZ5cwn8d6uw9Vy242HvSY9cbmAjKg
- nnyQ==
+ bh=lAs7diCg1jXneplOLpOBu/ZLVgYMfpNkriw4g3Vjx7k=;
+ b=dTEKc3cmNAEAOTxPuINZOhmnJkTKIv3QwMISdG+F1UjAkGcE4xwTPaJDaPEjgkblzd
+ MBzSfMWyIdnbMehCO/lQHqo/fAUE56bFhrE1KYN45ch4O32VT8Fl58UiBKKxhsxt8Raq
+ uUsywoEEEShbXN31jJoujJHvIPyGWS3UfUpQw8vBB0iKQ6CrY4gzib9pK0VYtRjYsGf7
+ lMcWOLhpeRuOVWmIlk8DOq6mGd+EzvMBxDYh1nbqSiEgVbms5a55XhuXTk+nuN1963eI
+ B1IiHQaL461aWL+CAblwEUSb5wUBmZDfezlTtMGGHP3cLf6P6LQcbfrGA+H5lKPbqNjd
+ BeAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791502655; x=1792107455;
+ d=1e100.net; s=20260707; t=1791502656; x=1792107456;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=pQYSQO2/xVX0dZ1/SLZYLTc3Lvbb6r9VTKL0cpOBV+w=;
- b=epgpKtzMCbCh2PyhaT3e79iiheA8KA/AeyCCfrVe1qcPpDDzXA5N8SetzCH2UhZtGm
- iku6VZGGHzf9I5cWCp8EToJ6OHyFHsBzV0qx8bpiUxvevTB2DCUQ34MLHuwzNHEqZVai
- Z0rNEg9b71ncPdeqMgYuQeHx4RVbDk6qzZf5Ne7Ol2uWnh7qvWBdG7rjIUALWv/2mVWR
- Iws7VfADATHFvC/maoaPXyFl4L/g8ol/q8clu/Piefi2KZqA48wo9YARfkm5whDe4O3m
- yErTioLQ4hukD6+hQDOHxYo4c2XqmysOl1wRdzpXQySdIDUGyUxl+N1XvuHwRIDZYlzX
- SxOA==
-X-Gm-Message-State: AFq9FYIQRbgmPs8qp/VzJcJiqqMvfwaHs9n2VTXVcRmEnSPAKbPPJ5eE
- 0S0D3HyO+EwQ+EIqOk7N4ECvstJLNZhyKUCsLgOMg0XbpneZo88gKsjHY0OsLQyKQpkFfUn8YSA
- 2y1R+raU=
-X-Gm-Gg: AYBFou0AzssboRyc7fM58spLHe00wQl4abLAYEVVPfY+7M3cTsyzYcHBGi5L9YwCZot
- uhwnr/vq4nm50iRqOjTlCe1xsJvDh0SucO+YAReTPv6Lmda2AQUpXIrwhm7eoIYcIclAH0n1CYx
- +DwBRmp3cGwF0dIMp0aNstOWLnr2efXraxyoFscVtcG/EyXtOl3Qg2z30VwnEcLQGqs8R9h1TSK
- L57d3gU7m8EtYWNosZITE5vNQnALFqjoJrQSBIYYVSM/n0ik7UZC1ngMhF66LXwh6TVOK7OE/rR
- FSCyoYrfATLZoCq3b4r1BsvLksPejLSZPFAKjZi6Qx2LME75TJ9QhNWRP6IJGWllESh6BQGbc3e
- Y8gKmidXO0WEExDw/NLIjC6J6kzb9+nzt91tZDqUdQQmqKY3jGFaURf2x98kPpMjLRZEgJKHlXg
- g7HR2Eu+zSC++PRrWmERppoP51fvZGtVE9qMuD5KbnrcU0UCVN3V8Ta0iv/Z3KRnqQFxAk/ZbgR
- sUVMMc4o0KtPZkTgNFgfwNUT/PBMU4qsXYeGkj7Fafiv7mN
-X-Received: by 2002:a05:6a00:4299:b0:885:e2eb:23b6 with SMTP id
- d2e1a72fcca58-897c710687amr49672b3a.11.1791502655306; 
- Thu, 08 Oct 2026 16:37:35 -0700 (PDT)
+ bh=lAs7diCg1jXneplOLpOBu/ZLVgYMfpNkriw4g3Vjx7k=;
+ b=TueWleZ6omy/vtaL4tKjM7nrE0pMZdwTRqxvjFw1WqqyHKz9zewaF0p0AD/JO6/RPe
+ zIuY2WM1AjsZuxlYlMlZDpzCwxsZxek9dOuGKTYhHDYPYtP0ApsAdCQeqwjI8TqN9qsc
+ zc8YQLqmkfAhIT+CT9TWt2bocgYWOL/AUIIsKyf6uLzuCZPzOpXii1VZ176ttFs04fUI
+ ALh+By6ELESZgJpsSUMhU0axNzhzQghuYYHAfXFfY9+PptbBmymKOXi+TEpJD7hVJpUK
+ 5ixz5Gz1B9L0DdCzd+jxE/aRPJjZFkcM/ar20tN1PEuMmvg/WraWQNzMKKYUywMkKE2t
+ CPfQ==
+X-Gm-Message-State: AFq9FYJMSSRK6Pzh139qieTwnwfXNP66IWmr6dgnE+fAFRpuTV+f+6JY
+ 7pv0kEq+OLHpmoFTlrInaxfyWShNRCYa9DpbdDb8UsCe4ArpaT/u1X4jQ7I3tOISUDWH9kMzamI
+ po6cbVR4=
+X-Gm-Gg: AYBFou0PmC7nefmF+usyTkhTyGNI+P4z33+7BK1gzGo4bEA3UzWhzCGxLvfRhiJezvc
+ Mbn1sfgwdN3G8cvdbFM2V/MsEz6yeVYPAMhfmlAGHmAaN5uWAg/diFFXKnf4iL//l2RP9rfosX6
+ 7NAHd7LXIrQKMFT9t//p7bmaCUDPs9QV5RPfzacNQTrDzrv5HlFhJJ5SE1N0JmCER8s48YwyVng
+ LvBM69TBa/K4uL2u/q6yCiQCoB6d20o4phbkfzDcYv3nuysgB+pcG/jAeT70hD+18HZ1AkkJV18
+ iN81oTyIjaKJfiTzo59Knl/fHP1VrgWfYV4dcidxBFFIOi9BdACzMaXITi2lEiID70dE3zQlOWG
+ 3R6l3N7JbSCOO9RNtXzKjFT6fhsv92xyA1zc5HhUnQj4bvLhzrqg3afdrgwkR4yQ1ALZjiqaLSH
+ r0fFMGxfO35EFDgl9OB/nOOep/vUoIvO73J2NlnxJFhRcYGfOHtT76VpRXIgDaGunagmZG91XJ5
+ AuHhfr+MXkgRpV6WRQvgOo9gCMfksEB9ZjB7g==
+X-Received: by 2002:a05:6a00:330f:b0:886:65e6:a35e with SMTP id
+ d2e1a72fcca58-897c78dd6e2mr46868b3a.31.1791502656121; 
+ Thu, 08 Oct 2026 16:37:36 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-896c42b06e9sm187909b3a.42.2026.10.08.16.37.34
+ d2e1a72fcca58-896c42b06e9sm187909b3a.42.2026.10.08.16.37.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 08 Oct 2026 16:37:34 -0700 (PDT)
+ Thu, 08 Oct 2026 16:37:35 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 18/29] event/sw: replace SMP barriers with C11 atomics
-Date: Thu,  8 Oct 2026 16:35:11 -0700
-Message-ID: <20261008233649.1260843-19-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ Sun Yuechi <sunyuechi@iscas.ac.cn>
+Subject: [PATCH v3 19/29] test/barrier: convert to C11 atomics
+Date: Thu,  8 Oct 2026 16:35:12 -0700
+Message-ID: <20261008233649.1260843-20-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261008233649.1260843-1-stephen@networkplumber.org>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
@@ -83,113 +85,166 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The write barrier plus plain store publish patterns (cq map count,
-port initialized, device started) become release stores; the barrier
-after clearing started in sw_stop() becomes a release fence. All are
-control path.
+rte_smp_mb() is removed by this series, so the barrier test loses one
+of its two cases. Replace it with
+rte_atomic_thread_fence(rte_memory_order_seq_cst), which on x86 is the
+hand written lock add that Konstantin pointed out is worth keeping
+covered. rte_mb() stays as the other case: the test cannot prove much
+about a barrier on any one architecture, but it does keep each one
+compiled and executed.
 
-The scheduler load of started is acquire, to complete the handshake
-with the release store in sw_start(). It runs once per service call,
-not per event.
-
-Scheduler reads of cq_num_mapped_cqs stay plain loads: acquire loads
-would land in the inner scheduling loops on weakly ordered CPUs. The
-transient window where a new count is visible before the map entry
-on such CPUs predates this change and is unchanged by it; unlink is
-covered by the counter handshake.
+Convert the Peterson lock to explicit atomic accesses. The loads in
+the spin loop are relaxed, leaving the barrier under test as the only
+thing that keeps them after the stores. The store of victim needs
+release and not relaxed: the algorithm requires flag[self] to be
+visible before victim, and two relaxed stores let a weakly ordered CPU
+commit victim first, which admits both lcores into the critical
+section with nothing wrong in the barrier.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+Tested-by: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+Acked-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
+Tested-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
 ---
- drivers/event/sw/sw_evdev.c           | 29 ++++++++++++++++++---------
- drivers/event/sw/sw_evdev_scheduler.c |  7 ++++++-
- 2 files changed, 26 insertions(+), 10 deletions(-)
+ app/test/test_barrier.c | 71 ++++++++++++++++++++++-------------------
+ 1 file changed, 39 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/event/sw/sw_evdev.c b/drivers/event/sw/sw_evdev.c
-index 87a8996f9d..165d8e3950 100644
---- a/drivers/event/sw/sw_evdev.c
-+++ b/drivers/event/sw/sw_evdev.c
-@@ -84,8 +84,10 @@ sw_port_link(struct rte_eventdev *dev, void *port, const uint8_t queues[],
- 		}
+diff --git a/app/test/test_barrier.c b/app/test/test_barrier.c
+index 925a88b68a..29024f4242 100644
+--- a/app/test/test_barrier.c
++++ b/app/test/test_barrier.c
+@@ -2,35 +2,35 @@
+  * Copyright(c) 2010-2018 Intel Corporation
+  */
  
- 		q->cq_map[q->cq_num_mapped_cqs] = p->id;
--		rte_smp_wmb();
--		q->cq_num_mapped_cqs++;
-+		/* Release publishes the map entry before the new count */
-+		rte_atomic_store_explicit(
-+			(uint32_t __rte_atomic *)&q->cq_num_mapped_cqs,
-+			q->cq_num_mapped_cqs + 1, rte_memory_order_release);
- 	}
- 	return i;
+- /*
+-  * This is a simple functional test for rte_smp_mb() implementation.
+-  * I.E. make sure that LOAD and STORE operations that precede the
+-  * rte_smp_mb() call are globally visible across the lcores
+-  * before the LOAD and STORE operations that follows it.
+-  * The test uses simple implementation of Peterson's lock algorithm
+-  * (https://en.wikipedia.org/wiki/Peterson%27s_algorithm)
+-  * for two execution units to make sure that rte_smp_mb() prevents
+-  * store-load reordering to happen.
+-  * Also when executed on a single lcore could be used as a approximate
+-  * estimation of number of cycles particular implementation of rte_smp_mb()
+-  * will take.
+-  */
++/*
++ * Functional test for the full barriers rte_mb() and
++ * rte_atomic_thread_fence(rte_memory_order_seq_cst).
++ * I.E. make sure that LOAD and STORE operations that precede the barrier
++ * are globally visible across the lcores before the LOAD and STORE
++ * operations that follow it.
++ * The test uses a simple implementation of Peterson's lock algorithm
++ * (https://en.wikipedia.org/wiki/Peterson%27s_algorithm)
++ * for two execution units, since that algorithm only works if
++ * store-load reordering is prevented.
++ * Also when executed on a single lcore it can be used as an approximate
++ * estimate of the number of cycles a particular barrier takes.
++ */
+ 
++#include <errno.h>
+ #include <stdio.h>
+-#include <string.h>
+ #include <stdint.h>
++#include <stdlib.h>
++#include <string.h>
+ #include <inttypes.h>
+ 
+-#include <rte_memory.h>
+-#include <rte_per_lcore.h>
+ #include <rte_launch.h>
+ #include <rte_eal.h>
+ #include <rte_lcore.h>
++#include <rte_memory.h>
+ #include <rte_pause.h>
+ #include <rte_random.h>
+ #include <rte_cycles.h>
+-#include <rte_vect.h>
+-#include <rte_debug.h>
++#include <rte_stdatomic.h>
+ 
+ #include "test.h"
+ 
+@@ -39,13 +39,13 @@
+ 
+ enum plock_use_type {
+ 	USE_MB,
+-	USE_SMP_MB,
++	USE_FENCE,
+ 	USE_NUM
+ };
+ 
+ struct plock {
+-	volatile uint32_t flag[2];
+-	volatile uint32_t victim;
++	RTE_ATOMIC(uint32_t) flag[2];
++	RTE_ATOMIC(uint32_t) victim;
+ 	enum plock_use_type utype;
+ };
+ 
+@@ -70,18 +70,20 @@ struct lcore_plock_test {
+ };
+ 
+ static inline void
+-store_load_barrier(uint32_t utype)
++store_load_barrier(enum plock_use_type utype)
+ {
+ 	if (utype == USE_MB)
+ 		rte_mb();
+-	else if (utype == USE_SMP_MB)
+-		rte_smp_mb();
+ 	else
+-		RTE_VERIFY(0);
++		rte_atomic_thread_fence(rte_memory_order_seq_cst);
  }
-@@ -105,8 +107,14 @@ sw_port_unlink(struct rte_eventdev *dev, void *port, uint8_t queues[],
- 			if (q->cq_map[j] == p->id) {
- 				q->cq_map[j] =
- 					q->cq_map[q->cq_num_mapped_cqs - 1];
--				rte_smp_wmb();
--				q->cq_num_mapped_cqs--;
-+				/* Release publishes the map update
-+				 * before the new count
-+				 */
-+				rte_atomic_store_explicit(
-+					(uint32_t __rte_atomic *)
-+						&q->cq_num_mapped_cqs,
-+					q->cq_num_mapped_cqs - 1,
-+					rte_memory_order_release);
- 				unlinked++;
  
- 				p->num_qids_mapped--;
-@@ -210,8 +218,9 @@ sw_port_setup(struct rte_eventdev *dev, uint8_t port_id,
- 	}
- 	dev->data->ports[port_id] = p;
+ /*
+  * Peterson lock implementation.
++ * The loads in the spin loop are relaxed on purpose: the barrier under
++ * test is the only thing keeping them after the stores above, so a
++ * barrier that fails to prevent store-load reordering shows up as two
++ * lcores in the critical section at once.
+  */
+ static void
+ plock_lock(struct plock *l, uint32_t self)
+@@ -90,22 +92,27 @@ plock_lock(struct plock *l, uint32_t self)
  
+ 	other = self ^ 1;
+ 
+-	l->flag[self] = 1;
 -	rte_smp_wmb();
--	p->initialized = 1;
-+	/* Release publishes the port setup before initialized flag */
-+	rte_atomic_store_explicit((uint8_t __rte_atomic *)&p->initialized, 1,
-+				  rte_memory_order_release);
- 	return 0;
- }
- 
-@@ -817,8 +826,9 @@ sw_start(struct rte_eventdev *dev)
- 	if (sw_xstats_init(sw) < 0)
- 		return -EINVAL;
- 
--	rte_smp_wmb();
--	sw->started = 1;
-+	/* Release publishes device state before the started flag */
-+	rte_atomic_store_explicit((uint8_t __rte_atomic *)&sw->started, 1,
-+				  rte_memory_order_release);
- 
- 	return 0;
- }
-@@ -847,7 +857,8 @@ sw_stop(struct rte_eventdev *dev)
- 	sw_clean_qid_iqs(dev);
- 	sw_xstats_uninit(sw);
- 	sw->started = 0;
--	rte_smp_wmb();
-+	/* Order the started store before re-enabling the service */
-+	rte_atomic_thread_fence(rte_memory_order_release);
- 
- 	if (runstate == 1)
- 		rte_service_runstate_set(sw->service_id, 1);
-diff --git a/drivers/event/sw/sw_evdev_scheduler.c b/drivers/event/sw/sw_evdev_scheduler.c
-index 207dee5854..5b15c2a9ad 100644
---- a/drivers/event/sw/sw_evdev_scheduler.c
-+++ b/drivers/event/sw/sw_evdev_scheduler.c
-@@ -513,7 +513,12 @@ sw_event_schedule(struct rte_eventdev *dev)
- 	uint32_t i;
- 
- 	sw->sched_called++;
--	if (unlikely(!sw->started))
-+	/* Acquire pairs with the release store in sw_start(), so the device
-+	 * state it published is visible before any of it is used here. Once
-+	 * per service call, not per event.
+-	l->victim = self;
++	rte_atomic_store_explicit(&l->flag[self], 1, rte_memory_order_relaxed);
++
++	/* Release so that the other lcore cannot see this lcore claim to be
++	 * the victim while its flag still reads zero, which would let both
++	 * lcores through.
 +	 */
-+	if (unlikely(!rte_atomic_load_explicit((uint8_t __rte_atomic *)&sw->started,
-+					       rte_memory_order_acquire)))
- 		return -EAGAIN;
++	rte_atomic_store_explicit(&l->victim, self, rte_memory_order_release);
  
- 	do {
+ 	store_load_barrier(l->utype);
+ 
+-	while (l->flag[other] == 1 && l->victim == self)
++	while (rte_atomic_load_explicit(&l->flag[other], rte_memory_order_relaxed) == 1 &&
++			rte_atomic_load_explicit(&l->victim, rte_memory_order_relaxed) == self)
+ 		rte_pause();
+-	rte_smp_rmb();
++
++	rte_atomic_thread_fence(rte_memory_order_acquire);
+ }
+ 
+ static void
+ plock_unlock(struct plock *l, uint32_t self)
+ {
+-	rte_smp_wmb();
+-	l->flag[self] = 0;
++	rte_atomic_store_explicit(&l->flag[self], 0, rte_memory_order_release);
+ }
+ 
+ static void
 -- 
 2.53.0
 
