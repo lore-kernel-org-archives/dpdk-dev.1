@@ -2,143 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C48CFCA6007
-	for <dpdk-dev@archiver.kernel.org>; Thu,  8 Oct 2026 14:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAEFCA6007
+	for <dpdk-dev@archiver.kernel.org>; Thu,  8 Oct 2026 15:27:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 967C040294;
-	Thu,  8 Oct 2026 16:53:35 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id DC41B40284
- for <dev@dpdk.org>; Thu,  8 Oct 2026 16:53:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791471213; x=1823007213;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=R2XX7EJjkGURQvTJ4FlUj+vlw/T3wbgWdcd3+msH5Uw=;
- b=OMkCcMlsp60ipeXhXKAG7nseBG12rBihHkGjqIcvs8hoXtic6DZ66LCG
- RrMwo962gyPsAbdTeB6SQCUVYM2m6JNcj7vax9EggGRJbZZjTL4eTkW4t
- EkeGVSY8m2YVz0OgQHii9AWBjRjDX2VXeCFZ5UyfDK8LQHoRxoMUNlpoA
- 2ObZBWUzyyNq65LyFFplKKGh3YQcFHTiWBznkmjlC5IolH8QVuZa/8koG
- lUWth5cTEIBUIFP7km3mcdI55b9H59P+Y0R/tLGzs1OxwIVcERLpq/ihC
- WYpAczHGDwqzBhzaj8S8UoZe3N8rX/2w18yhVzSXE64JlHfbsHa473q4a w==;
-X-CSE-ConnectionGUID: KgvLM5g5Sd6HRc8dYo2lWg==
-X-CSE-MsgGUID: 991GUEbaQPmv6YqJfj2WyQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11928"; a="253644"
-X-IronPort-AV: E=Sophos;i="6.27,146,1787036400"; 
-   d="scan'208";a="253644"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Oct 2026 07:53:32 -0700
-X-CSE-ConnectionGUID: GTS079eiRkiFnA691AhP3w==
-X-CSE-MsgGUID: cofl5cBwScutcgmemlvVJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,146,1787036400"; 
-   d="scan'208";a="17650"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Oct 2026 07:53:31 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Thu, 8 Oct 2026 07:53:31 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Thu, 8 Oct 2026 07:53:31 -0700
-Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.41) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Thu, 8 Oct 2026 07:53:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=veUNtGwqGINjIEJUvGF8EskCH5tfQud9kTbFthzA6YW2OPr//RFwrl2EnJpkBjBTQ+UUoxPdhwcnB84fBUXxtQy3p9y/2FZV+oMi2eshDZ3QTP8ijvUxgX9qFJp9kVdfrwy9LVJsQnHd99BL0B2jSTi9GlnfrXB53IVIwVPbLgjND7V2+nVBVNV7KQ5tG08ufTzFgx4cppK+hmVIwuKf6R7TQGQnZab3oY9bi3CMO1TYM3VrPWY7L+9TpdAeUvLDAxQoLJG83j/mU9vNojeIZFEPSh6hECNX+wuD2K+uxj+75tKkvMQ72cPzs3AkKL5fv+rndHaIJxYNI8vNJFXaZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FzOkA1oLvGLtxvK5gxoplBsQnXNT0DL6nPMfsphVEM0=;
- b=RSWX7GyIQc7n/D8kJjVdulS7DdW4Mb9SErk8ps7EdM5xTgy0liJhFJsNaxMsXmesA4K3x6Zn3WqttxWT1InOqe1UbMTB2PoF37cHw1gq/nLdao7mserNf6rDqc2Y1lCHZU+7olDEbwptG6qmYKHrqjeZYvTwfD5vQUFi6ovXFBz3bf1n72eKXX6Y4bY++XzE0p1AdIGAe2nhlbznnduvDIZ5hcl+HtaPioE1KOYl6+mN3r9cNLFzWc5423KGmRlDzdMUXMjTIVuMrDZjTcxrnO1gTh39Bp457u6AEuR8NKgWD1bnR6tWaUzPXPHV1kXHYOe0jDsBgn1bobRs/rqrEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by PH7PR11MB6605.namprd11.prod.outlook.com (2603:10b6:510:1b0::16)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.15; Thu, 8 Oct
- 2026 14:53:25 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0496.015; Thu, 8 Oct 2026
- 14:53:25 +0000
-Date: Thu, 8 Oct 2026 15:53:19 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>, Robin Jarry <rjarry@redhat.com>
-Subject: Re: [PATCH] usertools/devbind: cleanup device type declarations
-Message-ID: <aseuX3zaIKN5eAOC@bricha3-mobl1.ger.corp.intel.com>
-References: <20261008144313.2000554-1-david.marchand@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20261008144313.2000554-1-david.marchand@redhat.com>
-X-ClientProxiedBy: DUZP191CA0034.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:4f8::11) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+	by mails.dpdk.org (Postfix) with ESMTP id 623ED40294;
+	Thu,  8 Oct 2026 17:27:49 +0200 (CEST)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 29AFC40284
+ for <dev@dpdk.org>; Thu,  8 Oct 2026 17:27:48 +0200 (CEST)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-2d6d28aa26cso26632795ad.2
+ for <dev@dpdk.org>; Thu, 08 Oct 2026 08:27:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791473267;
+ x=1792078067; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=U5L/7SLFKOvJ9Y+Y6fqbrrzB20DS0g+kDigDRHrxNMk=;
+ b=lBCeii1GEDTO5WT+bYO4ghWS0ZiOcAGQGHGE5T5BBQuqyob9pQIvIctoWBGdb1FJA4
+ jYb8lP+e8WW602yXGpqppzstCe5OnvlLRSLjpPibfEylOKUO3nwVTra0bYW0NAIxk50h
+ d8q2oXfYWIOWiDxXow47w+dx1S9jJzNqlEuelEC1NZfyFCaNwRH2oX/mpKe2XC+ai76Q
+ P8jwWDoFwXRlNGWZk4djz4u+LfzYXKPIi4rolpvHvE3vXnrDSW1NhN0EsUAEVh0pUCCx
+ 9K+tBDk+iXFvRtTKbdp0YBmX3f7aK9JqtcffqECzQXjd0DwRVQi8/538jisDVmJPukD6
+ 9bqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791473267; x=1792078067;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=U5L/7SLFKOvJ9Y+Y6fqbrrzB20DS0g+kDigDRHrxNMk=;
+ b=NnesAF8yuJTJewhyEZDC2MYXQrusL8e7FB6U9wbl/etfCImV4QHgYmh6lhmeRk9wAS
+ pKn/n1fwRsW8ivXQOrUJBkSgwH+aS5jFTIzsX6BxWNRNeAieRNZ+ey54qjlOF1FiBRA2
+ jq83NeWoj02yaMm+pII/YSp4pe6HS0a/K0S1Nkylya8zq++dPYtWssVNsNGkb+niHahc
+ bU3nffX9hYbIpcO82v5cDgGh/H/u71f60BoRN1QYrHXrHD4OQW7n4bNARLHC88XMQTG+
+ +zM2k4xpDsNBqoaMFULPYH1jmBpee4d220oK8wX3sEs85L2YgrqH6Bf0tH+Q+wnwFoJx
+ VvaA==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBxmc/Jx9MoJpAScyF6eQTY9guBh+Wv2/e7b0KQpkTgGPLtKDwJyhhqVExwg8XzepIFCnX4=@dpdk.org
+X-Gm-Message-State: AFq9FYI9i3seWtg16jL9tcEjeb7LgkvHxicysiEzu4Ht2/38qA+mBaKC
+ KksV/eTsInNduLKuoAHsHmYbItNsg0xpD3f2chOISi5mJ8WEsNFZwlvM5viImObE9tE=
+X-Gm-Gg: AYBFou03r+ljsDWlQmIsrX41d4pYlhiDaVcRFJ3I+xdkHKa2R7rsolHC68VN6/91xbR
+ jKCXTuoqFCj19x0V40CsUhLw4jOHovjDKCAkfMy08kp8AqVc5rL8YXWX5Gcdw/6I66fwO3oDg7c
+ Nl+N9W8ZJStKLJkoSE4yth/F97Iia/x4KmRLkQa9KnVQpFo/rcwVmPPTWkyUrSakki9Ys+lFSN5
+ LPQXd7Bi3+SeVeUCOYkKiBVRbGEVlG3EVWHKdKV85AqyB2wKmCktb1bID+LZ0zzAifVyq81sNFk
+ hj96TlW8HFGQn3usbBiPy6HaOdj2QWdANM97IvLseu12d7OtjbJ9q/6CS/0Figne+kPkEPFi7uG
+ 8DYGiSE1r48bGD1zpbwnWmCx6x0ZH0xPHjpg2tx5/hRE9G5Fk8lOFIIvbtcVS0f+qDYmRrYV+Rv
+ 8AihgL2IfuGA2nw5j2inCzaMveR/S338v9/JIoZaXrgjGNxOKHxohP9/Ogut/+npzzG54t+tM5v
+ /Y4IEzp0PqMt3RwEQvoN5mNYit/j7onpjPabsPT
+X-Received: by 2002:a17:902:ebc6:b0:2df:9257:8088 with SMTP id
+ d9443c01a7336-2e6005ca7dfmr49082825ad.57.1791473266922; 
+ Thu, 08 Oct 2026 08:27:46 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2e606da751dsm26927615ad.48.2026.10.08.08.27.46
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 08 Oct 2026 08:27:46 -0700 (PDT)
+Date: Thu, 8 Oct 2026 08:27:41 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Bing Zhao <bingz@nvidia.com>
+Cc: <viacheslavo@nvidia.com>, <dev@dpdk.org>, <rasland@nvidia.com>,
+ <orika@nvidia.com>, <dsosnowski@nvidia.com>, <suanmingm@nvidia.com>,
+ <matan@nvidia.com>, <thomas@monjalon.net>
+Subject: Re: [PATCH v6] ethdev: support inline calculating masked item value
+Message-ID: <20261008082741.24799e74@phoenix.local>
+In-Reply-To: <20261007165904.126976-1-bingz@nvidia.com>
+References: <20260610052729.5637-1-bingz@nvidia.com>
+ <20261007165904.126976-1-bingz@nvidia.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|PH7PR11MB6605:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6f800733-cf0d-470e-1f90-08df254be79c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|23010399003|366016|18002099003|22082099003|6133799003|11063799006|56012099006|10067099003;
-X-Microsoft-Antispam-Message-Info: kJyNy6DFFJf/KvyyBWHtY8yLdmBEaTjGPxdKeUddafDaZhzvoCM4VvSZ5YwXu+vU0cRyxn3xbOh0ozEbqlFM7iVVhigyyfaVq0pvELkIRya/kUugY2cFvHAHMFL2eHlFgpcUrjrEyOZylcBytfYXyuT//sO8mWYEOxSFHwOVGcrYZ8VynFGef4fm0wDnOuJ2CBXvyrlaaQOhKXU/pYpod5xiLVfYTxDJKTj2i8lpXi8fBkqTSXnHj3IrqknkGXiNCnb1QnU0iwoNqbADGddsbEf/IODTuKv2ZUO6kdUa1HPZ1xfPm8ZYlTPRF3qilE9i820OWwonxIGrS/evz4ZXAWCaBNTlC29+nmAdEnwAETauvIqnXY1OD/Zi1msMiDDIebqWQJJnqFi1INyrAcBRwEEtu9PdWVZ4ua7UUqYxZ6ISiqa8J8pm0qrZ+vjj3xktmERV/DBd+n258ExQOWSuO3t5+klL50S8vEMKumOLOLsmBtdl+WZTvzT0voJKJ1iLf4/6B2lNaBeZDambEJZA0wFvb8zhYjda4pdTyP5obVhhJvXPz8HAMnLy7Zj5/Slarug1V13vQrV8CtcnySUmovqrderzprE8KpscFFbZpAHF9qBdlTm9zXHXWN3WSoN43KwgrXso6ulul4wwINqh2pnpRj10eomwF0PPTRfmK9E=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(23010399003)(366016)(18002099003)(22082099003)(6133799003)(11063799006)(56012099006)(10067099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ftPtLnGGtjZ6nv5uTUiqbDQ6pz4anjdqJ23VF4m9h627yUXjzBBbD2p7/hYp?=
- =?us-ascii?Q?I/SJUnucISq68xSR46Vh5Tt5lTfwqwof+z6CbS/ozVv3CJzvZa5/T20c06Ks?=
- =?us-ascii?Q?fWnMT0p3oc8440DQd8GJbRf8yIz6/FgkdW4QR7C9m5E3p4PDhUo802sUPuBx?=
- =?us-ascii?Q?mlIf91Q5WVxw/U3lHG5ZiZUNB1LUtSn/lcwKZ2qJJvlThRftEg0ASFLrtCL/?=
- =?us-ascii?Q?cUyjsBByASl08Bn7BTqYmSxCK8HM9eUYytuq0paAAo4wVca7vesD6q67Rqvm?=
- =?us-ascii?Q?MezPstpO5UTxyfu8z3cr3hj+/ANVmt3YmTyyF7rbaAtnxPuSaqrprDKYl6/w?=
- =?us-ascii?Q?9zM2Fv5vwDEbBBQv9u9Hc1zR4k6nAYiX7CWOxJVy49+gpRfs8zXVhoOG3Nn3?=
- =?us-ascii?Q?xl04mBGKi5Saw0iKnnCLPobdeHI+uzuG7Ot88gD0J58pwcW+Se4F61HESv+y?=
- =?us-ascii?Q?el583XjOEIxsacwB7PpzZUx4uJWXMJgDRs3QaWFXCMydijfHSqrpd+p6Jm5e?=
- =?us-ascii?Q?27Wl/97wpyq+jbVxsAxrkDPEUXtOWxozvsikuoA9nYZFZwzV+FugRrtOkUCy?=
- =?us-ascii?Q?IjpGrZI2eQEAA3IwHHp2ERXG/FK7FaxaafLJASpBDzvdhs+2iY/TV6a3OM1R?=
- =?us-ascii?Q?+6gLm4px98iYHadL44abZWeWaknzTi6RLv21tDgkBm5rAhWcpSpPgrbc+9/w?=
- =?us-ascii?Q?W2Z2iKpiqaDGltMmPFyVUsO5vNGzwYQD7juI3gaOZJxxwjCvaeYVudZA7IQ/?=
- =?us-ascii?Q?s+UdysOtDHs/RdUL/TBjsttDYbNZzyd0ogJL4nZVcXc9aKjjY8bi9k5xoXid?=
- =?us-ascii?Q?dpXqna5RS/2/Ec8r0FuyFothI70sI01+UwWo3gkvj/5imQTkvLOvYQRtnG3W?=
- =?us-ascii?Q?OlOAb2rBrvtpqjeY6QzNX3DGX3hYnAzfu+nBwiFDERAbOUYrIkvNw05XOj/b?=
- =?us-ascii?Q?E7wAqsLEyeY5jZVwTjv+4eDqHZQZOcCB6IQEQ1yasSAdm0adxm+2vTMkyBN0?=
- =?us-ascii?Q?4vkH2gc0roOp5k2QAKoWf+0982/fT1Y7FQoQyLLXm89ybBq5Mfl+FxyMfEs0?=
- =?us-ascii?Q?MW4kqBJb3HZXgxsjGBJMPBcPJbqEde67pytlbWOFgyPGxVQDoUrpv8w+L8X0?=
- =?us-ascii?Q?hLNsiApcNzg61kRtNjVtu7f9aJ94sehJ/ryOvURgEaAT1xM3LiMiAX3/1n1Q?=
- =?us-ascii?Q?12dQen0MVRlR+9DFV40RHW9F4ItC2j5ixVZTEUugKfX16MBoOIUDGYcz3wMR?=
- =?us-ascii?Q?12aBHw5tN3vurgvf9XHvOOZdCUI02DlplF990yQUjfmPt6Gun9pWmpyTT186?=
- =?us-ascii?Q?IhMRbPVRj+//TKb/Ux7GRx09f9ZZ1cNH3McW1uETQm9DT5nDmmYNayY4DHv1?=
- =?us-ascii?Q?bIOW37m+nRdSx84WZrGyu4BBr2szlxCPa26N0htU5CFuXT4Ab0hCC6kLugW5?=
- =?us-ascii?Q?QTvqoKi0318nfCqXmR6uKVq9q7nxXP8Jr9kmLYGDei036qsbwYMrNd1qPYJW?=
- =?us-ascii?Q?tVZCEkr8w3ib6LOUkPRYocGi0k4IDXKCp6TqcuO+lSRtZC7TGgTaClsN3QOh?=
- =?us-ascii?Q?h+Co0yfBp5/KzKHFYNCgBHQla1Z2Q79BjFuuNPR5I6IeEjRvLuq8Q8jMVu3X?=
- =?us-ascii?Q?NEN7aLS2LMjY13RwZxPo5cj3FGL41VtAUNZ5a/WoJJJb6iUlI7PAb6McLkWp?=
- =?us-ascii?Q?fCXIU6DQEKngN8qmOjDuoBlGjQIPQDnF4qlSBrsoa7jwGscoz1lu1YSIBAqO?=
- =?us-ascii?Q?Qm9obVUqXLRXGSHAHncHk9yZdDHDQQ8=3D?=
-X-Exchange-RoutingPolicyChecked: Sb5Ajhb/HxjQwMe0Sx+Mqm6T2wgIKyYqEK0kug7NQPA/beQww+cjwi755sjoBy2dW4ys8FSEMV/nhE5csPuLpd7QFse7dHE3PZUbYRIgDleCnrco7Yo42ohmRcPVBXWPTvxKgdkCNYySxt8o9g0x/yk5psbHYJOzn8MfdDfFBY+TK7PF5AqBz+dLNBy8v9NGhCYjL9wIiYrXBkP//87itWrUwi2X+ScDlKUvhbn+J+zz5EQEj2j3lWO/fCSnZJMIo36bmb66QMAXgJA4DU09VAuxDWI8fmVz6pSIZcVSK023PGCOAEyS55NbO35A1Oz9/uC9FHAjJ7YvSAUKgR1T0w==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f800733-cf0d-470e-1f90-08df254be79c
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2026 14:53:25.0159 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YJQqb/AJoQcx3RFMa3DJEfhf/lrYwHWHfwLn0F1wdYhXvQv3YP5DLMvoIYcYvT3m7bSumZpy33HZMjoKs6ZoCtFwNReqSUZxAAEDXnUnxEU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6605
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,22 +87,127 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Oct 08, 2026 at 04:43:13PM +0200, David Marchand wrote:
-> Adding more device types has resulted in a nice chaotic order over time.
-> Introduce a single dictionary and group by types (keeping the original
-> order).
-> Sort match entries by class/vendor/device values.
+On Wed, 7 Oct 2026 19:57:44 +0300
+Bing Zhao <bingz@nvidia.com> wrote:
+
+> In the asynchronous API definition and some drivers, the
+> rte_flow_item spec value may not be calculated by the driver due to the
+> reason of speed of light rule insertion rate and sometimes the input
+> parameters will be copied and changed internally.
 > 
-> The Sub Vendor and Sub Device fields are never populated, just drop
-> them.
+> After copying, the spec and last will be protected by the keyword
+> const and cannot be changed in the code itself. And also the driver
+> needs some extra memory to do the calculation and extra conditions
+> to understand the length of each item spec. This is not efficient.
 > 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> To solve the issue and support usage of the following fix, a new OP
+> was introduced to calculate the spec and last values after applying
+> the mask inline.
+> 
+> Signed-off-by: Bing Zhao <bingz@nvidia.com>
+> Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 > ---
->  usertools/dpdk-devbind.py | 247 ++++++++++++++++----------------------
->  1 file changed, 105 insertions(+), 142 deletions(-)
-> 
 
-Good idea, thanks for the cleanup.
+Existing AI review done by CI is useless at this point...
 
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Running a more detailed review does find some things.
 
+Review: [PATCH v6] ethdev: support inline calculating masked item value
+
+Error
+-----
+
+1. NULL mask leaves spec/last unmasked.
+
+   rte_flow semantics: a NULL item mask means the default mask
+   (rte_flow_item_<name>_mask) applies, not "match all bits". Here
+   item_mask_size is 0 when src->mask is NULL, so spec and last are
+   copied raw. For ETH the default mask is all ones so nothing shows,
+   but for IPV4 (default mask covers only src/dst addr) tos, ttl,
+   etc. come back unmasked. A driver relying on the new op to get
+   "masked values" gets wrong ones.
+
+   rte_flow.c has no type -> default mask table, so either add one
+   to rte_flow_desc_data, or document that a NULL mask is not
+   applied and the caller must handle it (see doc text in Warning 3).
+
+Warning
+-------
+
+1. PMD private items get their opaque data ANDed.
+
+   rte_flow_conv_item_mask_size() returns sizeof(void *) for
+   (int)type < 0, so the first pointer-size bytes of a private spec
+   are ANDed with the first bytes of its mask. ethdev has no idea
+   what those bytes mean. Leave them alone:
+
+	if ((int)item->type < 0)
+		return 0;
+
+2. Variable part of RAW and GENEVE_OPT is not masked.
+
+   item_mask_size stops at offsetof(pattern) / offsetof(data), so
+   the copied pattern bytes and option data are never ANDed with
+   mask->pattern / mask->data. The same holds for FLEX (desc_fn
+   returns 0). Either mask them or document it; the current comment
+   says the mask is applied to the spec, which is not true for these.
+
+3. Doxygen for RTE_FLOW_CONV_OP_PATTERN_MASKED is a copy of
+   OP_PATTERN and does not describe the limits above. Suggest:
+
+	/**
+	 * Convert an entire pattern, applying item masks.
+	 *
+	 * Same as RTE_FLOW_CONV_OP_PATTERN, except each copied spec
+	 * and last is ANDed with the item mask. Not masked:
+	 * - items with a NULL mask (default mask is not applied);
+	 * - RAW pattern and GENEVE_OPT data contents;
+	 * - FLEX and PMD private items.
+	 *
+	 * - @p src type:
+	 *   @code const struct rte_flow_item * @endcode
+	 * - @p dst type:
+	 *   @code struct rte_flow_item * @endcode
+	 */
+
+4. Missing release notes. New rte_flow_conv() op is a new API and
+   needs an entry in doc/guides/rel_notes/release_26_11.rst.
+
+5. Commit message is hard to parse ("due to the reason of speed of
+   light rule insertion rate", "support usage of the following fix"
+   refers to a patch not in this series). Suggested body:
+
+	Add RTE_FLOW_CONV_OP_PATTERN_MASKED to rte_flow_conv(). It
+	copies a pattern like RTE_FLOW_CONV_OP_PATTERN and ANDs each
+	item spec and last with the item mask.
+
+	Drivers using the async flow API copy patterns on the rule
+	insertion path and need masked values. The copied spec and
+	last are const, so masking them in the driver needs extra
+	memory and per-item length handling. Doing it during the
+	conversion avoids both.
+
+Info
+----
+
+1. No in-tree user. Please send the mlx5 consumer in the same series
+   so the API is exercised and reviewed in context.
+
+2. Spec and last masking loops are duplicated, and item_mask_size is
+   computed even when with_mask is false. Factor out:
+
+	static void
+	rte_flow_conv_apply_mask(uint8_t *buf, const uint8_t *mask,
+				 size_t len)
+	{
+		size_t i;
+
+		for (i = 0; i < len; i++)
+			buf[i] &= mask[i];
+	}
+
+   and compute the size only under with_mask && mask.
+
+3. Test does not cover a NULL-mask item or an item with a non-trivial
+   default mask (e.g. IPV4). Add one once Error 1 is settled so the
+   chosen behaviour is locked in.
