@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8359CA6017
-	for <dpdk-dev@archiver.kernel.org>; Thu,  8 Oct 2026 23:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AA7CA6015
+	for <dpdk-dev@archiver.kernel.org>; Thu,  8 Oct 2026 23:37:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 36EF540615;
-	Fri,  9 Oct 2026 01:37:00 +0200 (CEST)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
- [209.85.210.180])
- by mails.dpdk.org (Postfix) with ESMTP id C5B30402E1
- for <dev@dpdk.org>; Fri,  9 Oct 2026 01:36:56 +0200 (CEST)
-Received: by mail-pf1-f180.google.com with SMTP id
- d2e1a72fcca58-88bda150550so2159728b3a.2
- for <dev@dpdk.org>; Thu, 08 Oct 2026 16:36:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 27A934064C;
+	Fri,  9 Oct 2026 01:37:01 +0200 (CEST)
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com
+ [209.85.210.173])
+ by mails.dpdk.org (Postfix) with ESMTP id D4066402E1
+ for <dev@dpdk.org>; Fri,  9 Oct 2026 01:36:57 +0200 (CEST)
+Received: by mail-pf1-f173.google.com with SMTP id
+ d2e1a72fcca58-878b44611ffso2790659b3a.3
+ for <dev@dpdk.org>; Thu, 08 Oct 2026 16:36:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791502616;
- x=1792107416; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791502617;
+ x=1792107417; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=ZuuS5IIWpatk8c/vXxFju+eG9cw0viWkqLpuCE8mPW0=;
- b=WBUAwOh4KsGBIfAVOCcNCONHVLUwIWHJQCIbmreqSbxYhoXlbbywsDapZk+5unrF7o
- 1l0xm4pAaSVZzPpBz8NggYHKCSB7iP7SgP6123EgbyC8dPYTf8mWftIqvR4rCnM3IQw6
- gIGi6HihxPBIHTN3rWoPP0gPGfUCHF2rBZIcYIshSHNTKfuO4ZYsPmqbzomgxtU4KI4Z
- 70unAOjjE4SmDnvTgxZEpp9+8NWEs8lTlI1weJPQtanuv3ZEZ5umWSwXgtkP1M17LSiz
- cBeb/kPMHZFi1HUpEqDs9PcjIfgBJO2oFYzGNJEqtZDpoO5mlvrE4Hfab9uHY5+ZjUnH
- g+Fg==
+ bh=wV3uRDjDKw+4gpUNqDku6XevfxOokDYpE3PMKcchHQM=;
+ b=kacX6FLUl00EYbgG4sB0AGkz3HtKwTK9wsfoZGCMObuLoyAnMWQQ5PD1/W9qguf8vb
+ PvSxjHGJGHN8OrC4jXCwPJ00gTodxfDNRK//52sliMk8pYgC3LqknEZrkX4KuWGYvTfJ
+ p3sso8Y5thipYkxT2U7equ5mK8/XRx4oC3sUFDiuohw+lhYHhwRMeD1fz5j88KX5zMEi
+ wwps+3t/3DUFgm0TDWlh8/Js2TDyi+Uy3lkDmOtxvLGhx8QhHo41dMkot32Sn98UuuNi
+ aNLQ14GE3by9afw0T70ZXjcFOmbkyWsyC41aScLXW2kxB29qxswIC65sy82Posiw1bho
+ x+ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791502616; x=1792107416;
+ d=1e100.net; s=20260707; t=1791502617; x=1792107417;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=ZuuS5IIWpatk8c/vXxFju+eG9cw0viWkqLpuCE8mPW0=;
- b=pOjCGpw7qOlVLIJq/vjEICEVF6dt5RwLQ2Yj8Wbt9weaLWoQLvzzFUL8hrioBmpUl9
- rBoDd1ZyIudUaqMlmBLUkKVu5SiSuTzOUa9IegiyDY+g9xqLlt8Ky9TQQqI/KqF7b0yq
- miIfnNxaQchhXn3+ju0KSJBNfkCEPp/muu8BDVP6jfjfYWGnr0rnM4FxL46PN7dDgc/N
- zr4Pb2PS1rPP4fMFj2PeB1qxofzlGeULPm78RABtmxEyDhl6vb5pHKpCdX8soanU8sQt
- kjnDZOq6ZnUzCu/3yFOkwa0v4qSZ/auyc+yZpYK19FDu/lsZqZLJtWvJykqBFxB0X614
- 5M6g==
-X-Gm-Message-State: AFq9FYKB8cYggSlTo6uExuyUx0ZKAm3SOiIdHZXx4ayx9xBZTER2eNXR
- 6CNO2Icnq330d5O55934lMw3aVVIT6ljNA0BRMJ6sXUGNXViT5gVKdNKUl+Uj+wqTV3NfiNGA3C
- mLZA/FoM=
-X-Gm-Gg: AYBFou2eNvSyVMM+n+AKIVrES5x4DeUsdgnq4BADQ0A/+S1QV47NYBcWApxXMsOTvg1
- y5iSXUfXGqWiMifTYrIPokuc6JgkQiot4NnxUOWmNd8YiDjDKUN9k9semmi/P91JCrAIdytckS4
- smJcgwd9hegcRxttzVyv3ZhRyrdipF8E2liAtTZUPeG39OeQjgnjK1aiBVdhkSKwIHlkm4Lkl3y
- 85/cXFZ1t3ElgAjTJo1VHiX56rvywqvHBqcgYRnukE/ocqAHVQaHbFq1/L1WSIQmLDk/wm5CdA2
- 3bV/HuYr8tlNT7XP/SD39W+LNstYTCb3IuaAztZyQjRXLrFuXzClijIi7ujc52Xj/g6hi3Xtu9B
- naRxfQbls6girPe0gl8UB/EaMbyrWAA53jmWXJpPWu5+0I67ghM4tOB60AdctAy5MExZsshEBJs
- jX9V2Aty7j2wQMiO8wqQORu4h3rpMAbuEiR5QZluxxPC+WsignGVpYJ9UCU8Z785UpXfsuTP4vK
- p+LJ2q/TQ2XKYCrGCoLEo4TMIiGavE1aapoag==
-X-Received: by 2002:a05:6a00:349b:b0:87d:d6d1:b72b with SMTP id
- d2e1a72fcca58-897c653b2eemr62440b3a.11.1791502615911; 
- Thu, 08 Oct 2026 16:36:55 -0700 (PDT)
+ bh=wV3uRDjDKw+4gpUNqDku6XevfxOokDYpE3PMKcchHQM=;
+ b=vjRb6vEFtjRkLcz6lcLiraVbUphUwEmtkFzWSREgq4TrgN78lL7wycXow48dgz3mNR
+ slBt76SBy7sl62oJjL62SnbOrVM0SBXL+DQ44Im6eKAZWtBjJ7x/rwycLpKow5Zw9qD0
+ xoYiyPCT1CrMR7z7djS0YnAwaoQ8NqGdO52vN1chjNqs0VQVmms+9Gy9pV5nHpfTrekk
+ cokcpRJwpvkgRaBsh6f2RUmX6AWggh0B14/rI5TsQiVYhzgbW5JeSsbXoshFidCbVwta
+ 6ot7y1lNYFSY+I0YC3JTXbgnQ5V0nQJ504KyYNwV+GhfiMLp7qS60rMi2v8VRjwaJhKv
+ ksyA==
+X-Gm-Message-State: AFq9FYLeR3+i52dlxCTixZQ5NtEfBKG8tzOZf6xq6EEAjMGp9arVu9rb
+ w6JuvbbqvxSo4Jp5+LH9VwkLAl/PPqns8WdVgvj3f1RNtIUNCcAH6862qFwJwIcppNzq4erwFnU
+ s24gElis=
+X-Gm-Gg: AYBFou1hI2zTHnpP8E/V4Kxn5ILeiTAXOWY+7EMpE+wd2sWRZ1ujw9NWCTzfdURyPFG
+ YFejxH6jymiOnMm6K+PT66yyVeajYO2kFkUv8LA3ctZZixs+IqI1g6SfiGBV2lxoOtTaiYx0WjR
+ kRjuWU+ugFbNYGnRhRC3WSV6VhHY1sIIscRDq/kQt7vx4fhsWfhoqqj2jry7SV/VNcuwNxf+ryR
+ PVkzQg2EwrHYnSmQgrhWH6pYVWul9mPXhlckgXEET5lSgVSx1rHLhomM1vUDG/jKv10ozvAPVpD
+ fpuI820gHdHdwYQTU9Y9+HHmM0RlJuMJsJIz387YnuSrlgKJ3hsvC/reVfaaxWiGjwDQT59VTAF
+ 1/twmPCHXgV5Y8k6j5PRUQQwWhUjBHYU3nWTBheFxhM8GZ+QH4qAXbk+7bN3PGfJtfxh9inBjjk
+ 0g088dKBayZ6abwALKKoxaE7ZcnOr2/B+t1U2cvcv9J4R2And8URGYRcJZdh1VMtr6JcQxBOJUn
+ X96xNEqSalat8KZIu3t1TfNLkW7WPdktfzlWA==
+X-Received: by 2002:a05:6a00:2883:b0:881:f152:3861 with SMTP id
+ d2e1a72fcca58-897c701055bmr55990b3a.25.1791502617045; 
+ Thu, 08 Oct 2026 16:36:57 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-896c42b06e9sm187909b3a.42.2026.10.08.16.36.55
+ d2e1a72fcca58-896c42b06e9sm187909b3a.42.2026.10.08.16.36.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 08 Oct 2026 16:36:55 -0700 (PDT)
+ Thu, 08 Oct 2026 16:36:56 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
-Subject: [PATCH v3 04/29] bus/vmbus: fix missing acquire on receive ring index
-Date: Thu,  8 Oct 2026 16:34:57 -0700
-Message-ID: <20261008233649.1260843-5-stephen@networkplumber.org>
+Subject: [PATCH v3 05/29] bus/vmbus: replace SMP barriers with C11 memory
+ fences
+Date: Thu,  8 Oct 2026 16:34:58 -0700
+Message-ID: <20261008233649.1260843-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261008233649.1260843-1-stephen@networkplumber.org>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
@@ -84,57 +85,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The receive path checks available data by reading the write index and
-then copies ring data. The link between the two is only the comparison,
-a control dependency, which does not order load against load on a
-weakly ordered architecture: packet data can be read before the host
-has finished writing it. Load the write index with acquire, pairing
-with the host's release store. This is the equivalent of virt_rmb()
-in the Linux hv_pkt_iter code.
+Full barriers order the preceding index store against the following
+load of the interrupt mask or pending size and stay seq_cst; read
+barriers become acquire fences. Same code generated on x86 and arm64.
 
-On x86 no barrier instruction is added and every affected function
-keeps its size; on arm64 the load becomes ldar.
-
-Fixes: 831dba47bd36 ("bus/vmbus: add Hyper-V virtual bus support")
-Cc: stable@dpdk.org
+The write barrier in rte_vmbus_chan_signal_tx() goes away instead.
+Every caller reaches it through vmbus_txbr_write(), which ends in
+vmbus_txbr_need_signal() and its full barrier, so the load of the
+interrupt mask is already ordered after the write index store.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Reviewed-by: Long Li <longli@microsoft.com>
 Reviewed-by: Wei Hu <weh@microsoft.com>
 ---
- drivers/bus/vmbus/private.h | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/bus/vmbus/vmbus_bufring.c |  4 ++--
+ drivers/bus/vmbus/vmbus_channel.c | 13 ++++++-------
+ 2 files changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/bus/vmbus/private.h b/drivers/bus/vmbus/private.h
-index 6b7782724f..33545b6614 100644
---- a/drivers/bus/vmbus/private.h
-+++ b/drivers/bus/vmbus/private.h
-@@ -12,6 +12,7 @@
- #include <bus_driver.h>
- #include <bus_vmbus_driver.h>
- #include <rte_log.h>
-+#include <rte_stdatomic.h>
- #include <rte_eal_paging.h>
- #include <rte_vmbus_reg.h>
- 
-@@ -130,7 +131,16 @@ vmbus_br_availwrite(const struct vmbus_br *br, uint32_t windex)
- static inline uint32_t
- vmbus_br_availread(const struct vmbus_br *br)
+diff --git a/drivers/bus/vmbus/vmbus_bufring.c b/drivers/bus/vmbus/vmbus_bufring.c
+index 86dc446786..95f03929cb 100644
+--- a/drivers/bus/vmbus/vmbus_bufring.c
++++ b/drivers/bus/vmbus/vmbus_bufring.c
+@@ -58,11 +58,11 @@ void vmbus_br_setup(struct vmbus_br *br, void *buf, unsigned int blen)
+ static inline bool
+ vmbus_txbr_need_signal(const struct vmbus_bufring *vbr, uint32_t old_windex)
  {
--	return br->dsize - vmbus_br_availwrite(br, br->vbr->windex);
-+	uint32_t windex;
-+
-+	/* Pairs with the host's release store of the write index;
-+	 * ring data must not be read before the index.
+-	rte_smp_mb();
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);
+ 	if (vbr->imask)
+ 		return false;
+ 
+-	rte_smp_rmb();
++	rte_atomic_thread_fence(rte_memory_order_acquire);
+ 
+ 	/*
+ 	 * This is the only case we need to signal when the
+diff --git a/drivers/bus/vmbus/vmbus_channel.c b/drivers/bus/vmbus/vmbus_channel.c
+index 6887fbad46..90ba3d1ef6 100644
+--- a/drivers/bus/vmbus/vmbus_channel.c
++++ b/drivers/bus/vmbus/vmbus_channel.c
+@@ -104,10 +104,9 @@ rte_vmbus_chan_signal_tx(struct rte_vmbus_device *dev, const struct vmbus_channe
+ {
+ 	const struct vmbus_br *tbr = &chan->txbr;
+ 
+-	/* Make sure all updates are done before signaling host */
+-	rte_smp_wmb();
+-
+-	/* If host is ignoring interrupts? */
++	/* vmbus_txbr_write() did a full barrier after the write index
++	 * update, no further ordering needed here.
 +	 */
-+	windex = rte_atomic_load_explicit(
-+		(volatile uint32_t __rte_atomic *)&br->vbr->windex,
-+		rte_memory_order_acquire);
-+
-+	return br->dsize - vmbus_br_availwrite(br, windex);
+ 	if (tbr->vbr->imask)
+ 		return;
+ 
+@@ -211,7 +210,7 @@ bool rte_vmbus_chan_rx_empty(const struct vmbus_channel *channel)
+ {
+ 	const struct vmbus_br *br = &channel->rxbr;
+ 
+-	rte_smp_rmb();
++	rte_atomic_thread_fence(rte_memory_order_acquire);
+ 	return br->vbr->rindex == br->vbr->windex;
  }
  
- int vmbus_txbr_write(struct vmbus_br *tbr, const struct iovec iov[], int iovlen,
+@@ -229,13 +228,13 @@ void rte_vmbus_chan_signal_read(struct rte_vmbus_device *dev,
+ 		return;
+ 
+ 	/* Make sure reading of pending happens after new read index */
+-	rte_smp_mb();
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);
+ 
+ 	pending_sz = rbr->vbr->pending_send;
+ 	if (!pending_sz)
+ 		return;
+ 
+-	rte_smp_rmb();
++	rte_atomic_thread_fence(rte_memory_order_acquire);
+ 	write_sz = vmbus_br_availwrite(rbr, rbr->vbr->windex);
+ 
+ 	/* If there was space before then host was not blocked */
 -- 
 2.53.0
 
