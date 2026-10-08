@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF34CA600D
-	for <dpdk-dev@archiver.kernel.org>; Thu,  8 Oct 2026 19:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1C2CA600D
+	for <dpdk-dev@archiver.kernel.org>; Thu,  8 Oct 2026 19:11:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71941402B8;
-	Thu,  8 Oct 2026 21:10:51 +0200 (CEST)
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
- [209.85.215.178])
- by mails.dpdk.org (Postfix) with ESMTP id A73F7402B8
- for <dev@dpdk.org>; Thu,  8 Oct 2026 21:10:49 +0200 (CEST)
-Received: by mail-pg1-f178.google.com with SMTP id
- 41be03b00d2f7-cc4dbcf2b85so2735999a12.3
- for <dev@dpdk.org>; Thu, 08 Oct 2026 12:10:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6FF7640294;
+	Thu,  8 Oct 2026 21:11:43 +0200 (CEST)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com
+ [209.85.160.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 67CC040284
+ for <dev@dpdk.org>; Thu,  8 Oct 2026 21:11:42 +0200 (CEST)
+Received: by mail-qt1-f179.google.com with SMTP id
+ d75a77b69052e-5338f65913dso59509371cf.2
+ for <dev@dpdk.org>; Thu, 08 Oct 2026 12:11:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791486648;
- x=1792091448; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=QqT69xtFt2sddSfydF1ZzloCmvZ/LQD7Fy5JL7XlqAo=;
- b=LJISO2U8oiQhjdcr+K8k0A10Cdl993fN1imVLHxO01dnEK8t2aVdNBOPGt9AaauAEN
- flQrsWLJmOpE0rzcwZuDTZp94U/5Qbta+PjddZ4fOtfmbs/qdshR+kK46FgK2wm13FiZ
- MNO+oLIs65s0j+jLr4/xLTU2y3nPEQ3B2vQiXIPFcBGXGtZP7NNlCixAhbV2GYhPxAZN
- JamSTtfR3Nlk5wjMh6s/bRmmfg1Ln5sHqakBY9jh9B1CO5iuQXmUUGN+zNXFzwH5LTmU
- RFx5LU7U039fa760ZZc4DoSFfV0PwWy0oHk8NgCqRVZC+SY3UCxrbpWf7Tewosjhne+H
- TtFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791486648; x=1792091448;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1791486702; x=1792091502; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=QqT69xtFt2sddSfydF1ZzloCmvZ/LQD7Fy5JL7XlqAo=;
- b=wrVq16F83zzQhHqzlF6PG8rw+ft25s9VcV2eu1CmjbhYV2lD17zTdx3/wkHDp5vmtI
- TkJwCVdoeHivMmbLTDhbY+NNyBpoQ1KHHP25VI8uXu2+f5ZICZh6eHKjehKAWTA4Dcpq
- 2kPanjYcNmSp7tImv4/HWy1V2HQSNS09oJLTqDvzWJclJgtqJkxE8kbzbvEdDJkaTxjB
- PltEnlFt4cy5UXrXsDEKaAYrfY3gpU7AOZKUYwuBky+RFAHAYvGNNLVFRgm+hgwhLevM
- POLkfwtkK61NUSuFVZHM6LdKi6udgcEUcJoQ0CzM3XocfkKGT+1nPrAT7DfQwNANbM0L
- /GCg==
-X-Gm-Message-State: AFq9FYIs+VqpsM8D3ff8pi3Wcj+1jhGjtMSMnidYvtUj/Or5951bJmhW
- JpVWM/P1gagIsR8UuPTjQuRh413vQSPxsMUP725KkloXMgAKR2msCCWvD7NQu8JaIQPQ2R5hLFV
- +mbeJvxA=
-X-Gm-Gg: AYBFou2gn84G4z//HwDOEwKZXhMHqF6dodXsnrAJRuOCJWvgRvDdm/E9xM1eVpmM2pd
- 6c/6Zygg9Du0i96bEmiUPGw/7ENKRA7yUykh8bcdnlvWRA/6HduNxTGsLEq83adPon0iJ0HtgUK
- Lo+rg3G5qfDsmLkH2lBVdPvFsF/SpCnWutxRwgF3D4iD4uLHDBE1WXzXuR+PomomgHSEVgk9tyz
- 0xAENfJLU33xHZq5h46GbT0FZV5BWw2VnVcpVtqtqCqRusn/NxQFgVXFdVoTr+Au9cbedwqSlUr
- PmWqEC8j9+7ULE98F08+ihOicLdloY42XKJwjjxzX4pV+ej6MAVzGYOP1XtrCbEga+apNPkqmUf
- BMdynTBmDKDbhRZa0DJf9C4EPE9nTCbgGYYzwFSNUjCppilJMFT3b4k6cXtfIOsmsrpzn6w2fGM
- X8Wr7t7oBjHY+gr/3END1EVA7osWWx0Wji+oHF96GJfXgJTbfNCerIiGJ93KOa6Y7iCBPu3ILjw
- BIhPl5YQvdTv0Fz8wTyAVznLrb5DidmXYNGNw==
-X-Received: by 2002:a17:90b:2dc3:b0:3ab:311e:97bd with SMTP id
- 98e67ed59e1d1-3ab311e988emr430061a91.49.1791486648235; 
- Thu, 08 Oct 2026 12:10:48 -0700 (PDT)
-Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
+ bh=5cti71sydppAye/3okhtTvqHQG+JRamHfjguWjqnjK8=;
+ b=QLHHbztmlEsy3uyD1jiLl6VzIITJVyJYnJDQe6HNulwJNI2EF8rTPzCOPbIICjX1il
+ rAyxeuM18CT7hcRFmvuUUDsfJPUK2KSjNTXHDBlNx1CTTYHgUFsGCx+DcTq9Juo8EQ7Z
+ KTkI8B1ipRyXpaY9gi+5NkYCHRh08T/OG6NRU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791486702; x=1792091502;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=5cti71sydppAye/3okhtTvqHQG+JRamHfjguWjqnjK8=;
+ b=MMw1RShcWqNuQkK7lk4XBL72007C9TWHbjNhwzOWDDKf5XkL9lDuL9QAjB6S8j9jpU
+ tyMyolmwmPn1WbtT82+m42iZH5BLPKXyXz5yUnDUMAckT+5T6grA5AfX6iGi8Q4cTIh3
+ cUzItECQrFn+sWkuBcvEzu4Iqn8Bl/lszlT8VkBHWnrqI+jsAvFxUA6yq/bbynto/gip
+ 5VNMxMpigtSKE2Bq7bRZRArIx2z44ooGSOqhETZD8oXYw2IyCJpt7XYvz7bKr6CpizO3
+ ioXD9FXmtQ9t20/+gx/QIv+0ZiahN+gw0WqWAeRd5krp97aVN8NNEy/UGgUlyyPzYGMu
+ +cRg==
+X-Gm-Message-State: AFuF++lsUXWkdIGPS4cvzC+KkS5Sg6pU7aQA2m8WCj1znI5ZNPSDWtxr
+ BgIGn5w5YkAmPbhKaVFJ1AQ7HRFVAmDkyJWt38VLWB8878S20vPdXoVXooDnHm61aVdJ2F4N+uS
+ WlFY2ZUo=
+X-Gm-Gg: AYBFou2MKWsDbkraGHrXXALzb2+3fUux0nlW5Pwf7UvskRtWLM097PAMFDNL9OpZOK5
+ JBg3dv2zT8Ig5xa/8p9oV7cFMYYr76A2XoxQ0fVM8Pb7cjS5eQNn75flbp6gRy8MXr21g1HZS5U
+ MGVABOaBYB6G4aQ02eJr86EMPa99H9DxIJqIaCxHysaxATvMdJIF1fjqaJsnyZ6oRA4KDEJUdnI
+ NhtjBl17Zcuh0H3i+Y0HpvN/BZc5qK3WFxn7moA8MjpkmWH0PLG1Du4QB+HqM9pD+5+9bza9BkP
+ DadLt/jzBZ0tpYE0zsgAC73HoUXA0FXvD2E/EwecOR1bCysrW1H9ESQ7h4vvhQdNBb/Buln0ieA
+ QnG7xPEdPGVSieQgjxN+0i5GX0aNshmY3wEzPh8LUWw9jzx/hE9bJ84H9wHq29nSVe4upsa5Wlz
+ efwq2mLdIw/a83koJvY30UJE28woQiGZwgdH8s/5hO5XWWNA2sx35lTKJ4EO3s8ogYxJbGMvBQl
+ LVIf/VvqwhKNrn1cLnSV/25UffHDVPgiQCRJVlQSF+8jF0/jTB+MRKApDviorWodw9A/LcevFbW
+ 7EpQbf5H7zreB2FZSsNDHu5xBEDV5yGl4sqDGe3y74ss7DI4f1Ehl3jlSP0Mof2PWAOo
+X-Received: by 2002:a05:622a:4d93:b0:533:3208:7a3c with SMTP id
+ d75a77b69052e-535751d4170mr109882501cf.8.1791486701395; 
+ Thu, 08 Oct 2026 12:11:41 -0700 (PDT)
+Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:79a6:f2bd:f6a:842d])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ab36dddac2sm41159a91.16.2026.10.08.12.10.47
+ d75a77b69052e-5359b757437sm1175871cf.16.2026.10.08.12.11.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 08 Oct 2026 12:10:47 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
-Subject: [RFC] bus/vmbus: make driver interface internal
-Date: Thu,  8 Oct 2026 12:09:33 -0700
-Message-ID: <20261008191046.703485-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+ Thu, 08 Oct 2026 12:11:41 -0700 (PDT)
+From: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+To: luca.vizzarro@arm.com,
+	patrickrobb1997@gmail.com
+Cc: dev@dpdk.org, dladd@iol.unh.edu, abailey@iol.unh.edu, lylavoie@iol.unh.edu,
+ Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+Subject: [PATCH v2 1/2] dts: add pvp multi paths vhost performance testsuite
+Date: Thu,  8 Oct 2026 15:11:38 -0400
+Message-ID: <20261008191139.1094155-1-knimoji@iol.unh.edu>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260901183701.431831-1-knimoji@iol.unh.edu>
+References: <20260901183701.431831-1-knimoji@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -79,587 +81,556 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The vmbus bus API was exposed as public API, but it is only usable by
-the netvsc PMD and DPDK core: the functions operate on vmbus channels
-and devices that no application can obtain. Exposing them commits DPDK
-to an ABI that has no external consumer.
+This patch adds the pvp multi paths vhost single core forward
+performance testsuite, which launches testpmd using the vhost
+and virtio virtual devices with one and two cores respectively,
+and tests the vhost single core throughput performance.
 
-Make the interface internal as announced. The public headers
-rte_bus_vmbus.h and rte_vmbus_reg.h are renamed to vmbus_api.h and
-vmbus_reg.h and listed as driver SDK headers, so they are no longer
-installed for applications. All rte_vmbus_* functions are marked
-__rte_internal and exported as internal symbols.
-
-rte_vmbus_chan_dump() had no export annotation at all, so it was
-declared in the public header but never present in the shared library.
-It is now exported as internal like the rest.
-
-netvsc needs no change: it already includes bus_vmbus_driver.h, and the
-bus driver dependency puts the driver directory on its include path.
-
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
 ---
-I don't have access to Hyper-V or Azure to test this.
-Was generated by LLM based on the intention in the deprecation note.
-Please test on proper environment before merging.
+ ...pvp_multi_paths_vhost_single_core_perf.rst |   8 +
+ dts/configurations/tests_config.example.yaml  |  12 +
+ dts/framework/testbed_model/linux_session.py  |   4 +
+ dts/framework/testbed_model/os_session.py     |   4 +
+ ..._pvp_multi_paths_vhost_single_core_perf.py | 467 ++++++++++++++++++
+ 5 files changed, 495 insertions(+)
+ create mode 100644 doc/api/dts/tests.TestSuite_pvp_multi_paths_vhost_single_core_perf.rst
+ create mode 100644 dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_perf.py
 
- doc/guides/rel_notes/deprecation.rst          |  3 --
- doc/guides/rel_notes/release_26_11.rst        |  6 ++++
- drivers/bus/vmbus/bus_vmbus_driver.h          |  2 +-
- drivers/bus/vmbus/linux/vmbus_bus.c           | 14 ++++-----
- drivers/bus/vmbus/linux/vmbus_uio.c           |  2 +-
- drivers/bus/vmbus/meson.build                 |  7 +++--
- drivers/bus/vmbus/private.h                   |  2 +-
- .../vmbus/{rte_bus_vmbus.h => vmbus_api.h}    | 30 ++++++++++++++++---
- drivers/bus/vmbus/vmbus_bufring.c             |  2 +-
- drivers/bus/vmbus/vmbus_channel.c             | 29 +++++++++---------
- drivers/bus/vmbus/vmbus_common.c              |  4 +--
- drivers/bus/vmbus/vmbus_common_uio.c          |  2 +-
- .../vmbus/{rte_vmbus_reg.h => vmbus_reg.h}    |  0
- 13 files changed, 66 insertions(+), 37 deletions(-)
- rename drivers/bus/vmbus/{rte_bus_vmbus.h => vmbus_api.h} (94%)
- rename drivers/bus/vmbus/{rte_vmbus_reg.h => vmbus_reg.h} (100%)
-
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 56a67c372e..08875f1d0a 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -135,6 +135,3 @@ Deprecation Notices
-   The graph walk functions will process nodes in topological order
-   using bitmap scanning instead of the circular buffer.
- 
--* bus/vmbus: Starting DPDK 25.11, all the vmbus API defined in
--  ``drivers/bus/vmbus/rte_bus_vmbus.h`` will become internal to DPDK.
--  Those API functions are used internally by DPDK core and netvsc PMD.
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 16d3a90723..fb195be54b 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -235,6 +235,12 @@ API Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
-+* bus/vmbus: Made the vmbus bus API internal.
-+  The ``rte_bus_vmbus.h`` and ``rte_vmbus_reg.h`` headers are no longer installed;
-+  their contents moved to the driver only headers
-+  ``vmbus_api.h`` and ``vmbus_reg.h``.
-+  All ``rte_vmbus_*`` functions are now internal to DPDK.
+diff --git a/doc/api/dts/tests.TestSuite_pvp_multi_paths_vhost_single_core_perf.rst b/doc/api/dts/tests.TestSuite_pvp_multi_paths_vhost_single_core_perf.rst
+new file mode 100644
+index 0000000000..4fcc6b6c91
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_pvp_multi_paths_vhost_single_core_perf.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
 +
- * eal: Improved pointer arithmetic macros.
- 
-   * ``RTE_PTR_ADD``, ``RTE_PTR_SUB``, ``RTE_PTR_ALIGN``, ``RTE_PTR_ALIGN_CEIL``,
-diff --git a/drivers/bus/vmbus/bus_vmbus_driver.h b/drivers/bus/vmbus/bus_vmbus_driver.h
-index 706ff1fcf5..09a38058dd 100644
---- a/drivers/bus/vmbus/bus_vmbus_driver.h
-+++ b/drivers/bus/vmbus/bus_vmbus_driver.h
-@@ -6,7 +6,7 @@
- #ifndef BUS_VMBUS_DRIVER_H
- #define BUS_VMBUS_DRIVER_H
- 
--#include <rte_bus_vmbus.h>
-+#include <vmbus_api.h>
- #include <rte_compat.h>
- #include <dev_driver.h>
- 
-diff --git a/drivers/bus/vmbus/linux/vmbus_bus.c b/drivers/bus/vmbus/linux/vmbus_bus.c
-index 779ea50b92..6c26f7e354 100644
---- a/drivers/bus/vmbus/linux/vmbus_bus.c
-+++ b/drivers/bus/vmbus/linux/vmbus_bus.c
-@@ -17,7 +17,7 @@
- #include <rte_devargs.h>
- #include <rte_memory.h>
- #include <rte_malloc.h>
--#include <rte_bus_vmbus.h>
-+#include <vmbus_api.h>
- #include <rte_kvargs.h>
- 
- #include <eal_export.h>
-@@ -164,7 +164,7 @@ static const char *map_names[VMBUS_MAX_RESOURCE] = {
- 
- 
- /* map the resources of a vmbus device in virtual memory */
--RTE_EXPORT_SYMBOL(rte_vmbus_map_device)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_map_device)
- int
- rte_vmbus_map_device(struct rte_vmbus_device *dev)
- {
-@@ -223,7 +223,7 @@ rte_vmbus_map_device(struct rte_vmbus_device *dev)
- 	return vmbus_uio_map_resource(dev);
- }
- 
--RTE_EXPORT_SYMBOL(rte_vmbus_unmap_device)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_unmap_device)
- void
- rte_vmbus_unmap_device(struct rte_vmbus_device *dev)
- {
-@@ -375,7 +375,7 @@ vmbus_scan_one(const char *name)
- /*
-  * Scan the content of the vmbus, and the devices in the devices list
-  */
--RTE_EXPORT_SYMBOL(rte_vmbus_scan)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_scan)
- int
- rte_vmbus_scan(void)
- {
-@@ -407,19 +407,19 @@ rte_vmbus_scan(void)
- 	return -1;
- }
- 
--RTE_EXPORT_SYMBOL(rte_vmbus_irq_mask)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_irq_mask)
- void rte_vmbus_irq_mask(struct rte_vmbus_device *device)
- {
- 	vmbus_uio_irq_control(device, 1);
- }
- 
--RTE_EXPORT_SYMBOL(rte_vmbus_irq_unmask)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_irq_unmask)
- void rte_vmbus_irq_unmask(struct rte_vmbus_device *device)
- {
- 	vmbus_uio_irq_control(device, 0);
- }
- 
--RTE_EXPORT_SYMBOL(rte_vmbus_irq_read)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_irq_read)
- int rte_vmbus_irq_read(struct rte_vmbus_device *device)
- {
- 	return vmbus_uio_irq_read(device);
-diff --git a/drivers/bus/vmbus/linux/vmbus_uio.c b/drivers/bus/vmbus/linux/vmbus_uio.c
-index 0ef05c0096..34cfb63d54 100644
---- a/drivers/bus/vmbus/linux/vmbus_uio.c
-+++ b/drivers/bus/vmbus/linux/vmbus_uio.c
-@@ -16,7 +16,7 @@
- #include <rte_memory.h>
- #include <rte_common.h>
- #include <rte_malloc.h>
--#include <rte_bus_vmbus.h>
-+#include <vmbus_api.h>
- #include <rte_string_fns.h>
- 
- #include "private.h"
-diff --git a/drivers/bus/vmbus/meson.build b/drivers/bus/vmbus/meson.build
-index 86ad9cc4d8..47408bb5d5 100644
---- a/drivers/bus/vmbus/meson.build
-+++ b/drivers/bus/vmbus/meson.build
-@@ -6,8 +6,11 @@ if is_windows
-     subdir_done()
- endif
- 
--headers = files('rte_bus_vmbus.h','rte_vmbus_reg.h')
--driver_sdk_headers = files('bus_vmbus_driver.h')
-+driver_sdk_headers = files(
-+        'bus_vmbus_driver.h',
-+        'vmbus_api.h',
-+        'vmbus_reg.h',
++pvp_multi_paths_vhost_single_core_perf Test Suite
++=================================================
++
++.. automodule:: tests.TestSuite_pvp_multi_paths_vhost_single_core_perf
++   :members:
++   :show-inheritance:
+diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurations/tests_config.example.yaml
+index ce67385b0b..f765526442 100644
+--- a/dts/configurations/tests_config.example.yaml
++++ b/dts/configurations/tests_config.example.yaml
+@@ -18,6 +18,18 @@ hello_world:
+ #       num_descriptors: 1024
+ #       expected_mpps: 1.0
+ #   delta_tolerance: 0.05
++# pvp_multi_paths_vhost_single_core_forward_perf:
++#   test_parameters: # Add frame size / descriptor count combinations as needed
++#     - frame_size: 64
++#       num_descriptors: 512
++#       expected_mpps: 1.0 # Set millions of packets per second according to your devices expected throughput for this given frame size / descriptor count
++#     - frame_size: 64
++#       num_descriptors: 1024
++#       expected_mpps: 1.0
++#     - frame_size: 512
++#       num_descriptors: 1024
++#       expected_mpps: 1.0
++#   delta_tolerance: 0.05
+ # pmd_rss:
+ #   NUM_QUEUES: 4
+ #   ACTUAL_KEY_SIZE: 52
+diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework/testbed_model/linux_session.py
+index c118f803b6..d0225d0063 100644
+--- a/dts/framework/testbed_model/linux_session.py
++++ b/dts/framework/testbed_model/linux_session.py
+@@ -460,3 +460,7 @@ def configure_ipv4_forwarding(self, enable: bool) -> None:
+         """Overrides :meth:`~.os_session.OSSession.configure_ipv4_forwarding`."""
+         state = 1 if enable else 0
+         self.send_command(f"sysctl -w net.ipv4.ip_forward={state}", privileged=True)
++
++    def clean_up_vhost(self) -> None:
++        """Overrides :meth:`~.os_session.OSSession.clean_up_vhost`."""
++        self.send_command("rm -rf /tmp/vhost-net*", privileged=True)
+diff --git a/dts/framework/testbed_model/os_session.py b/dts/framework/testbed_model/os_session.py
+index 4551c7fffe..7ffbf7d657 100644
+--- a/dts/framework/testbed_model/os_session.py
++++ b/dts/framework/testbed_model/os_session.py
+@@ -719,3 +719,7 @@ def get_pci_addr_of_crypto_vfs(self, pf_port: Port) -> list[str]:
+             A list containing all of the PCI addresses of the VFs on the port. If the port has no
+             VFs then the list will be empty.
+         """
++
++    @abstractmethod
++    def clean_up_vhost(self) -> None:
++        """Deletes stale vhost-user Unix domain socket files."""
+diff --git a/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_perf.py b/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_perf.py
+new file mode 100644
+index 0000000000..558afc51f7
+--- /dev/null
++++ b/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_perf.py
+@@ -0,0 +1,467 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 University of New Hampshire
++
++"""Vhost-user single-core forwarding performance test suite.
++
++This suite measures the packet forwarding performance of DPDK's vhost-user PMD running on a
++single CPU core in a Physical-Virtual-Physical (PVP) topology. Performance is evaluated across
++multiple virtio-user backend options, including packed versus split ring formats, in-order packet
++processing, mergeable buffers, and SIMD vectorization. Test cases are parameterized using
++combinations of frame sizes, descriptor ring sizes, and target MPPS baselines specified in the
++test configuration. High-speed traffic is injected from an external generator through SUT physical
++interfaces, routed through Vhost and Virtio loops, and returned to the generator to measure
++aggregate MPPS.
++"""
++
++from typing import cast
++
++from scapy.layers.inet import IP
++from scapy.layers.l2 import Ether
++from scapy.packet import Raw
++
++from api.capabilities import (
++    LinkTopology,
++    requires_link_topology,
 +)
- 
- sources = files(
-         'vmbus_bufring.c',
-diff --git a/drivers/bus/vmbus/private.h b/drivers/bus/vmbus/private.h
-index 6b7782724f..20f6d16a9b 100644
---- a/drivers/bus/vmbus/private.h
-+++ b/drivers/bus/vmbus/private.h
-@@ -13,7 +13,7 @@
- #include <bus_vmbus_driver.h>
- #include <rte_log.h>
- #include <rte_eal_paging.h>
--#include <rte_vmbus_reg.h>
-+#include <vmbus_reg.h>
- 
- extern struct rte_bus rte_vmbus_bus;
- 
-diff --git a/drivers/bus/vmbus/rte_bus_vmbus.h b/drivers/bus/vmbus/vmbus_api.h
-similarity index 94%
-rename from drivers/bus/vmbus/rte_bus_vmbus.h
-rename to drivers/bus/vmbus/vmbus_api.h
-index 2e9898ed7f..f1078110cd 100644
---- a/drivers/bus/vmbus/rte_bus_vmbus.h
-+++ b/drivers/bus/vmbus/vmbus_api.h
-@@ -3,8 +3,8 @@
-  * All Rights Reserved.
-  */
- 
--#ifndef _VMBUS_H_
--#define _VMBUS_H_
-+#ifndef VMBUS_API_H
-+#define VMBUS_API_H
- 
- /**
-  * @file
-@@ -19,10 +19,11 @@
- #include <stdint.h>
- #include <inttypes.h>
- 
-+#include <rte_compat.h>
- #include <rte_uuid.h>
- #include <rte_debug.h>
- #include <rte_interrupts.h>
--#include <rte_vmbus_reg.h>
-+#include <vmbus_reg.h>
- 
- #ifdef __cplusplus
- extern "C" {
-@@ -40,6 +41,7 @@ struct vmbus_channel;
-  * @return
-  *  0 on success, negative on error
-  */
-+__rte_internal
- int rte_vmbus_scan(void);
- 
- /**
-@@ -49,6 +51,7 @@ int rte_vmbus_scan(void);
-  *   - 0 on success.
-  *   - !0 on error.
-  */
-+__rte_internal
- int rte_vmbus_probe(void);
- 
- /**
-@@ -62,6 +65,7 @@ int rte_vmbus_probe(void);
-  *   0 on success, negative on error and positive if no driver
-  *   is found for the device.
-  */
-+__rte_internal
- int rte_vmbus_map_device(struct rte_vmbus_device *dev);
- 
- /**
-@@ -71,6 +75,7 @@ int rte_vmbus_map_device(struct rte_vmbus_device *dev);
-  *   A pointer to a rte_vmbus_device structure describing the device
-  *   to use
-  */
-+__rte_internal
- void rte_vmbus_unmap_device(struct rte_vmbus_device *dev);
- 
- /**
-@@ -85,6 +90,7 @@ void rte_vmbus_unmap_device(struct rte_vmbus_device *dev);
-  *   - -ENOMEM: Not enough memory available.
-  *   - -EINVAL: Regions could not be mapped.
-  */
-+__rte_internal
- int rte_vmbus_chan_open(struct rte_vmbus_device *device,
- 			struct vmbus_channel **chan);
- 
-@@ -94,6 +100,7 @@ int rte_vmbus_chan_open(struct rte_vmbus_device *device,
-  * @param chan
-  *    VMBUS channel
-  */
-+__rte_internal
- void rte_vmbus_chan_close(struct vmbus_channel *chan);
- 
- /**
-@@ -104,6 +111,7 @@ void rte_vmbus_chan_close(struct vmbus_channel *chan);
-  * @return
-  *   Number of channels available.
-  */
-+__rte_internal
- int rte_vmbus_max_channels(const struct rte_vmbus_device *device);
- 
- /**
-@@ -118,6 +126,7 @@ int rte_vmbus_max_channels(const struct rte_vmbus_device *device);
-  *   - -ENOMEM: Not enough memory available.
-  *   - -EINVAL: Regions could not be mapped.
-  */
-+__rte_internal
- int rte_vmbus_subchan_open(struct vmbus_channel *primary,
- 			   struct vmbus_channel **new_chan);
- 
-@@ -127,6 +136,7 @@ int rte_vmbus_subchan_open(struct vmbus_channel *primary,
-  * @param device
-  *    VMBUS device
-  */
-+__rte_internal
- void rte_vmbus_irq_mask(struct rte_vmbus_device *device);
- 
- /**
-@@ -135,6 +145,7 @@ void rte_vmbus_irq_mask(struct rte_vmbus_device *device);
-  * @param device
-  *    VMBUS device
-  */
-+__rte_internal
- void rte_vmbus_irq_unmask(struct rte_vmbus_device *device);
- 
- /**
-@@ -143,6 +154,7 @@ void rte_vmbus_irq_unmask(struct rte_vmbus_device *device);
-  * @param device
-  *    VMBUS device
-  */
-+__rte_internal
- int rte_vmbus_irq_read(struct rte_vmbus_device *device);
- 
- /**
-@@ -153,6 +165,7 @@ int rte_vmbus_irq_read(struct rte_vmbus_device *device);
-  * @return
-  *	Return true if no data present in incoming ring.
-  */
-+__rte_internal
- bool rte_vmbus_chan_rx_empty(const struct vmbus_channel *channel);
- 
- /**
-@@ -176,6 +189,7 @@ bool rte_vmbus_chan_rx_empty(const struct vmbus_channel *channel);
-  *
-  * Sends data in buffer directly to hyper-v via the vmbus
-  */
-+__rte_internal
- int rte_vmbus_chan_send(struct rte_vmbus_device *dev,
- 			struct vmbus_channel *channel, uint16_t type,
- 			void *data, uint32_t dlen,
-@@ -190,6 +204,7 @@ int rte_vmbus_chan_send(struct rte_vmbus_device *dev,
-  * Used when batching multiple sends and only signaling host
-  * after the last send.
-  */
-+__rte_internal
- void rte_vmbus_chan_signal_tx(struct rte_vmbus_device *dev,
- 			      const struct vmbus_channel *channel);
- 
-@@ -225,6 +240,7 @@ struct iova_list {
-  *
-  * Sends data in buffer directly to hyper-v via the vmbus
-  */
-+__rte_internal
- int rte_vmbus_chan_send_sglist(struct rte_vmbus_device *dev,
- 			       struct vmbus_channel *channel,
- 			       struct vmbus_gpa gpa[], uint32_t gpacnt,
-@@ -246,6 +262,7 @@ int rte_vmbus_chan_send_sglist(struct rte_vmbus_device *dev,
-  *   On success, returns 0
-  *   On failure, returns negative errno.
-  */
-+__rte_internal
- int rte_vmbus_chan_recv(struct rte_vmbus_device *dev,
- 			struct vmbus_channel *chan,
- 			void *data, uint32_t *len,
-@@ -265,6 +282,7 @@ int rte_vmbus_chan_recv(struct rte_vmbus_device *dev,
-  *   On success, returns number of bytes read.
-  *   On failure, returns negative errno.
-  */
-+__rte_internal
- int rte_vmbus_chan_recv_raw(struct vmbus_channel *chan,
- 			    void *data, uint32_t *len);
- 
-@@ -277,6 +295,7 @@ int rte_vmbus_chan_recv_raw(struct vmbus_channel *chan,
-  * @param bytes_read
-  *	Number of bytes read since last signal
-  */
-+__rte_internal
- void rte_vmbus_chan_signal_read(struct rte_vmbus_device *dev,
- 				struct vmbus_channel *chan,
- 				uint32_t bytes_read);
-@@ -289,6 +308,7 @@ void rte_vmbus_chan_signal_read(struct rte_vmbus_device *dev,
-  * @return
-  *   Sub channel index (0 for primary)
-  */
-+__rte_internal
- uint16_t rte_vmbus_sub_channel_index(const struct vmbus_channel *chan);
- 
- /**
-@@ -302,6 +322,7 @@ uint16_t rte_vmbus_sub_channel_index(const struct vmbus_channel *chan);
-  *	Approximate wait period between hypervisor examinations of
-  *	the trigger page (in nanoseconds).
-  */
-+__rte_internal
- void rte_vmbus_set_latency(const struct rte_vmbus_device *dev,
- 			   const struct vmbus_channel *chan,
- 			   uint32_t latency);
-@@ -312,10 +333,11 @@ void rte_vmbus_set_latency(const struct rte_vmbus_device *dev,
-  * @param channel
-  *	Pointer to vmbus_channel structure.
-  */
-+__rte_internal
- void rte_vmbus_chan_dump(FILE *f, const struct vmbus_channel *chan);
- 
- #ifdef __cplusplus
- }
- #endif
- 
--#endif /* _VMBUS_H_ */
-+#endif /* VMBUS_API_H */
-diff --git a/drivers/bus/vmbus/vmbus_bufring.c b/drivers/bus/vmbus/vmbus_bufring.c
-index dcd66390a3..9e8227a863 100644
---- a/drivers/bus/vmbus/vmbus_bufring.c
-+++ b/drivers/bus/vmbus/vmbus_bufring.c
-@@ -18,7 +18,7 @@
- #include <rte_stdatomic.h>
- #include <rte_memory.h>
- #include <rte_pause.h>
--#include <rte_bus_vmbus.h>
-+#include <vmbus_api.h>
- 
- #include "private.h"
- 
-diff --git a/drivers/bus/vmbus/vmbus_channel.c b/drivers/bus/vmbus/vmbus_channel.c
-index 6887fbad46..a8768eab16 100644
---- a/drivers/bus/vmbus/vmbus_channel.c
-+++ b/drivers/bus/vmbus/vmbus_channel.c
-@@ -15,7 +15,7 @@
- #include <rte_malloc.h>
- #include <rte_atomic.h>
- #include <rte_memory.h>
--#include <rte_bus_vmbus.h>
-+#include <vmbus_api.h>
- 
- #include "private.h"
- 
-@@ -65,7 +65,7 @@ vmbus_set_event(struct rte_vmbus_device *dev, const struct vmbus_channel *chan)
- /*
-  * Set the wait between when hypervisor examines the trigger.
-  */
--RTE_EXPORT_SYMBOL(rte_vmbus_set_latency)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_set_latency)
- void
- rte_vmbus_set_latency(const struct rte_vmbus_device *dev,
- 		      const struct vmbus_channel *chan,
-@@ -98,7 +98,7 @@ rte_vmbus_set_latency(const struct rte_vmbus_device *dev,
-  * Since this in userspace, rely on the monitor page.
-  * Can't do a hypercall from userspace.
-  */
--RTE_EXPORT_SYMBOL(rte_vmbus_chan_signal_tx)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_chan_signal_tx)
- void
- rte_vmbus_chan_signal_tx(struct rte_vmbus_device *dev, const struct vmbus_channel *chan)
- {
-@@ -116,7 +116,7 @@ rte_vmbus_chan_signal_tx(struct rte_vmbus_device *dev, const struct vmbus_channe
- 
- 
- /* Do a simple send directly using transmit ring. */
--RTE_EXPORT_SYMBOL(rte_vmbus_chan_send)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_chan_send)
- int rte_vmbus_chan_send(struct rte_vmbus_device *dev,
- 			struct vmbus_channel *chan, uint16_t type, void *data,
- 			uint32_t dlen, uint64_t xactid, uint32_t flags,
-@@ -161,7 +161,7 @@ int rte_vmbus_chan_send(struct rte_vmbus_device *dev,
- }
- 
- /* Do a scatter/gather send where the descriptor points to data. */
--RTE_EXPORT_SYMBOL(rte_vmbus_chan_send_sglist)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_chan_send_sglist)
- int rte_vmbus_chan_send_sglist(struct rte_vmbus_device *dev,
- 			       struct vmbus_channel *chan,
- 			       struct vmbus_gpa sg[], uint32_t sglen,
-@@ -206,7 +206,7 @@ int rte_vmbus_chan_send_sglist(struct rte_vmbus_device *dev,
- 	return error;
- }
- 
--RTE_EXPORT_SYMBOL(rte_vmbus_chan_rx_empty)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_chan_rx_empty)
- bool rte_vmbus_chan_rx_empty(const struct vmbus_channel *channel)
- {
- 	const struct vmbus_br *br = &channel->rxbr;
-@@ -216,7 +216,7 @@ bool rte_vmbus_chan_rx_empty(const struct vmbus_channel *channel)
- }
- 
- /* Signal host after reading N bytes */
--RTE_EXPORT_SYMBOL(rte_vmbus_chan_signal_read)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_chan_signal_read)
- void rte_vmbus_chan_signal_read(struct rte_vmbus_device *dev,
- 				struct vmbus_channel *chan,
- 				uint32_t bytes_read)
-@@ -249,7 +249,7 @@ void rte_vmbus_chan_signal_read(struct rte_vmbus_device *dev,
- 	vmbus_set_event(dev, chan);
- }
- 
--RTE_EXPORT_SYMBOL(rte_vmbus_chan_recv)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_chan_recv)
- int rte_vmbus_chan_recv(struct rte_vmbus_device *dev,
- 			struct vmbus_channel *chan, void *data, uint32_t *len,
- 			uint64_t *request_id)
-@@ -298,7 +298,7 @@ int rte_vmbus_chan_recv(struct rte_vmbus_device *dev,
- }
- 
- /* TODO: replace this with inplace ring buffer (no copy) */
--RTE_EXPORT_SYMBOL(rte_vmbus_chan_recv_raw)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_chan_recv_raw)
- int rte_vmbus_chan_recv_raw(struct vmbus_channel *chan,
- 			    void *data, uint32_t *len)
- {
-@@ -369,7 +369,7 @@ int vmbus_chan_create(const struct rte_vmbus_device *device,
- }
- 
- /* Setup the primary channel */
--RTE_EXPORT_SYMBOL(rte_vmbus_chan_open)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_chan_open)
- int rte_vmbus_chan_open(struct rte_vmbus_device *device,
- 			struct vmbus_channel **new_chan)
- {
-@@ -390,7 +390,7 @@ int rte_vmbus_chan_open(struct rte_vmbus_device *device,
- 	return err;
- }
- 
--RTE_EXPORT_SYMBOL(rte_vmbus_max_channels)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_max_channels)
- int rte_vmbus_max_channels(const struct rte_vmbus_device *device)
- {
- 	if (vmbus_uio_subchannels_supported(device, device->primary))
-@@ -400,7 +400,7 @@ int rte_vmbus_max_channels(const struct rte_vmbus_device *device)
- }
- 
- /* Setup secondary channel */
--RTE_EXPORT_SYMBOL(rte_vmbus_subchan_open)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_subchan_open)
- int rte_vmbus_subchan_open(struct vmbus_channel *primary,
- 			   struct vmbus_channel **new_chan)
- {
-@@ -416,13 +416,13 @@ int rte_vmbus_subchan_open(struct vmbus_channel *primary,
- 	return 0;
- }
- 
--RTE_EXPORT_SYMBOL(rte_vmbus_sub_channel_index)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_sub_channel_index)
- uint16_t rte_vmbus_sub_channel_index(const struct vmbus_channel *chan)
- {
- 	return chan->subchannel_id;
- }
- 
--RTE_EXPORT_SYMBOL(rte_vmbus_chan_close)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_chan_close)
- void rte_vmbus_chan_close(struct vmbus_channel *chan)
- {
- 	const struct rte_vmbus_device *device = chan->device;
-@@ -459,6 +459,7 @@ static void vmbus_dump_ring(FILE *f, const char *id, const struct vmbus_br *br)
- 			pkt.flags, pkt.xactid);
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_chan_dump)
- void rte_vmbus_chan_dump(FILE *f, const struct vmbus_channel *chan)
- {
- 	fprintf(f, "channel[%u] relid=%u monitor=%u\n",
-diff --git a/drivers/bus/vmbus/vmbus_common.c b/drivers/bus/vmbus/vmbus_common.c
-index 4c64856abb..63d8c0d8b0 100644
---- a/drivers/bus/vmbus/vmbus_common.c
-+++ b/drivers/bus/vmbus/vmbus_common.c
-@@ -19,7 +19,7 @@
- #include <rte_malloc.h>
- #include <rte_errno.h>
- #include <rte_memory.h>
--#include <rte_bus_vmbus.h>
-+#include <vmbus_api.h>
- 
- #include "private.h"
- 
-@@ -129,7 +129,7 @@ vmbus_probe_device(struct rte_driver *drv, struct rte_device *dev)
-  * all registered drivers that have a matching entry in its id_table
-  * for discovered devices.
-  */
--RTE_EXPORT_SYMBOL(rte_vmbus_probe)
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vmbus_probe)
- int
- rte_vmbus_probe(void)
- {
-diff --git a/drivers/bus/vmbus/vmbus_common_uio.c b/drivers/bus/vmbus/vmbus_common_uio.c
-index c6e7e07302..974b01470f 100644
---- a/drivers/bus/vmbus/vmbus_common_uio.c
-+++ b/drivers/bus/vmbus/vmbus_common_uio.c
-@@ -13,7 +13,7 @@
- #include <rte_tailq.h>
- #include <rte_log.h>
- #include <rte_malloc.h>
--#include <rte_bus_vmbus.h>
-+#include <vmbus_api.h>
- 
- #include "private.h"
- 
-diff --git a/drivers/bus/vmbus/rte_vmbus_reg.h b/drivers/bus/vmbus/vmbus_reg.h
-similarity index 100%
-rename from drivers/bus/vmbus/rte_vmbus_reg.h
-rename to drivers/bus/vmbus/vmbus_reg.h
++from api.packet import assess_performance_by_packet
++from api.test import get_current_test_case_name, verify, write_performance_json
++from api.testpmd import TestPmd
++from api.testpmd.config import (
++    Params,
++    PortTopology,
++    RXRingParams,
++    SimpleForwardingModes,
++    TXRingParams,
++)
++from framework.params.eal import VirtualDevice
++from framework.params.types import LogicalCoreList, RSSSetting, TestPmdParamsDict
++from framework.test_suite import BaseConfig, TestSuite, perf_test
++
++
++class Config(BaseConfig):
++    """Performance test metrics."""
++
++    test_parameters: list[dict[str, int | float]] = [
++        {"frame_size": 64, "num_descriptors": 1024, "expected_mpps": 1.00},
++        {"frame_size": 128, "num_descriptors": 1024, "expected_mpps": 1.00},
++        {"frame_size": 256, "num_descriptors": 1024, "expected_mpps": 1.00},
++        {"frame_size": 512, "num_descriptors": 1024, "expected_mpps": 1.00},
++        {"frame_size": 1024, "num_descriptors": 1024, "expected_mpps": 1.00},
++        {"frame_size": 1518, "num_descriptors": 1024, "expected_mpps": 1.00},
++    ]
++    delta_tolerance: float = 0.05
++
++
++@requires_link_topology(LinkTopology.TWO_LINKS)
++class TestPvpMultiPathsVhostSingleCorePerf(TestSuite):
++    """pvp multi paths vhost single core performance test suite."""
++
++    config: Config
++
++    def set_up_suite(self) -> None:
++        """Assign test parameters."""
++        self.test_parameters = self.config.test_parameters
++        self.delta_tolerance = self.config.delta_tolerance
++
++    def set_up_test_case(self) -> None:
++        """Delete stale vhost-user Unix domain socket files."""
++        self._ctx.sut_node.main_session.clean_up_vhost()
++
++    def _transmit(
++        self, vhost: TestPmd, virtio: TestPmd, frame_size: int, repetitions: int = 1
++    ) -> float:
++        """Transmit packets using testpmd instances and compute average MPPS.
++
++        Args:
++            vhost: the running vhost testpmd shell.
++            virtio: the running virtio testpmd shell.
++            frame_size: The size of the frame to transmit.
++            repetitions: The number of times to rerun the transmission.
++
++        Returns:
++            The MPPS (millions of packets per second) forwarded by the SUT.
++        """
++        assert repetitions > 0, "Invalid number of repetitions given, must be greater than 0."
++        # Build packet with dummy values, and account for the 14B and 20B Ether and IP headers
++        packet = (
++            Ether(src="52:00:00:00:00:00")
++            / IP(src="1.2.3.4", dst="192.18.1.0")
++            / Raw(load="x" * (frame_size - 14 - 20))
++        )
++
++        vhost.start()
++        virtio.start()
++        rx_avg = 0.0
++
++        for _ in range(repetitions):
++            # Transmit for 5 seconds.
++            stats = assess_performance_by_packet(packet=packet, duration=5)
++            rx_avg += stats.rx_pps
++        return rx_avg / (repetitions * 1_000_000)
++
++    def _create_and_transmit(
++        self,
++        ring_format: int,
++        in_order: int,
++        buffers: int,
++        vectorized: int,
++        extra_args: TestPmdParamsDict,
++    ) -> None:
++        """Create testpmd instances with specified params and send traffic.
++
++        Args:
++            ring_format: selects the virtio queue descriptor layout.
++            in_order: toggles in-order packet processing.
++            buffers: enables mergeable rx buffers.
++            vectorized: enables SIMD vectorized rx/tx data paths.
++            extra_args: extra/generic TestPmd arguments.
++        """
++        sut_dpdk_driver = self._ctx.sut_node.config.ports[0].os_driver_for_dpdk
++        vhost_user_vdev = VirtualDevice("net_vhost0,iface=/tmp/vhost-net,queues=1")
++        virtio_user_vdev = VirtualDevice(
++            "net_virtio_user0,"
++            "mac=00:11:22:33:44:10,"
++            "path=/tmp/vhost-net,"
++            "queues=1,"
++            f"packed_vq={ring_format},"
++            f"mrg_rxbuf={buffers},"
++            f"in_order={in_order},"
++            f"vectorized={vectorized}"
++        )
++
++        for params in self.test_parameters:
++            frame_size = params["frame_size"]
++            num_descriptors = params["num_descriptors"]
++
++            default_args: TestPmdParamsDict = {
++                "tx_ring": TXRingParams(descriptors=int(num_descriptors)),
++                "rx_ring": RXRingParams(descriptors=int(num_descriptors)),
++            }
++
++            if sut_dpdk_driver == "mlx5_core":
++                default_args["burst"] = 64
++                default_args["mbcache"] = 512
++            elif sut_dpdk_driver == "i40e":
++                default_args["rx_queues"] = 1
++                default_args["tx_queues"] = 1
++
++            vhost_params: TestPmdParamsDict = {
++                "prefix": "vhost",
++                "allowed_ports": [],
++                "memory_channels": 4,
++                "port_topology": PortTopology.chained,
++                "vdevs": [vhost_user_vdev],
++                "lcore_list": LogicalCoreList([1, 2]),
++                "nb_cores": 1,
++                **default_args,
++            }
++
++            virtio_params: TestPmdParamsDict = {
++                "prefix": "virtio",
++                "no_pci": True,
++                "memory_channels": 4,
++                "allowed_ports": [],
++                "vdevs": [virtio_user_vdev],
++                "lcore_list": LogicalCoreList([3, 4, 5]),
++                "nb_cores": 2,
++                **extra_args,
++                **default_args,
++            }
++
++            with (
++                TestPmd(**vhost_params) as vhost,
++                TestPmd(**virtio_params) as virtio,
++            ):
++                vhost.set_forward_mode(SimpleForwardingModes.mac)
++                virtio.set_forward_mode(SimpleForwardingModes.io)
++                vhost.set_portlist([0, 2, 1])
++
++                assert params["expected_mpps"] > 0, "Invalid expected mpps, must be greater than 0."
++                params["measured_mpps"] = round(
++                    self._transmit(vhost, virtio, int(frame_size), repetitions=5), 3
++                )
++                params["performance_delta"] = round(
++                    (float(params["measured_mpps"]) - float(params["expected_mpps"]))
++                    / float(params["expected_mpps"]),
++                    3,
++                )
++                params["pass"] = float(params["performance_delta"]) >= -self.delta_tolerance
++
++        self._produce_stats_table(self.test_parameters)
++        for params in self.test_parameters:
++            verify(
++                params["pass"] is True,
++                f"""Packets forwarded is less than {(1 - self.delta_tolerance) * 100}%
++                of the expected baseline.
++                Measured MPPS = {params["measured_mpps"]}
++                Expected MPPS = {params["expected_mpps"]}""",
++            )
++
++    def _produce_stats_table(self, test_parameters: list[dict[str, int | float]]) -> None:
++        """Display performance results in table format and write to structured JSON file.
++
++        Args:
++            test_parameters: The expected and real stats per set of test parameters.
++        """
++        test_case = get_current_test_case_name()
++        header = f"{'Frame Size':>12} | {'TXD/RXD':>12} | {'Real MPPS':>12} | {'Expected MPPS':>14}"
++        print(f"{test_case} Results:")
++        print("-" * len(header))
++        print(header)
++        print("-" * len(header))
++        for params in test_parameters:
++            print(f"{params['frame_size']:>12} | {params['num_descriptors']:>12} | ", end="")
++            print(f"{params['measured_mpps']:>12} | {params['expected_mpps']:>14}")
++            print("-" * len(header))
++
++        write_performance_json({"results": test_parameters})
++
++    @perf_test
++    def test_perf_vhost_single_core_virtio11_mergeable(self) -> None:
++        """Validate expected single core forwarding performance.
++
++        Steps:
++            * Set TestPMD virtio parameters: ring_format=1, buffers=1.
++            * Create a packet according to the frame size specified in the test config.
++            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
++            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
++
++        Verify:
++            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
++        """
++        extra_args: TestPmdParamsDict = {
++            "tx_offloads": 0,
++            "enable_hw_vlan_strip": True,
++            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
++        }
++        self._create_and_transmit(
++            ring_format=1,
++            buffers=1,
++            in_order=0,
++            vectorized=0,
++            extra_args=extra_args,
++        )
++
++    @perf_test
++    def test_perf_vhost_single_core_virtio11_non_mergeable(self) -> None:
++        """Validate expected single core forwarding performance.
++
++        Steps:
++            * Set TestPMD virtio parameters: ring_format=1.
++            * Create a packet according to the frame size specified in the test config.
++            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
++            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
++
++        Verify:
++            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
++        """
++        extra_args: TestPmdParamsDict = {
++            "tx_offloads": 0,
++            "enable_hw_vlan_strip": True,
++            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
++        }
++        self._create_and_transmit(
++            ring_format=1,
++            buffers=0,
++            in_order=0,
++            vectorized=0,
++            extra_args=extra_args,
++        )
++
++    @perf_test
++    def test_perf_vhost_single_core_virtio_inorder_mergeable(self) -> None:
++        """Validate expected single core forwarding performance.
++
++        Steps:
++            * Set TestPMD virtio parameters: buffers=1, in_order=1.
++            * Create a packet according to the frame size specified in the test config.
++            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
++            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
++
++        Verify:
++            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
++        """
++        extra_args: TestPmdParamsDict = {
++            "tx_offloads": 0,
++            "enable_hw_vlan_strip": True,
++            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
++        }
++        self._create_and_transmit(
++            ring_format=0,
++            buffers=1,
++            in_order=1,
++            vectorized=0,
++            extra_args=extra_args,
++        )
++
++    @perf_test
++    def test_perf_vhost_single_core_virtio_inorder_nonmergeable(self) -> None:
++        """Validate expected single core forwarding performance.
++
++        Steps:
++            * Set TestPMD virtio parameters: in_order=1.
++            * Create a packet according to the frame size specified in the test config.
++            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
++            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
++
++        Verify:
++            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
++        """
++        extra_args: TestPmdParamsDict = {
++            "tx_offloads": 0,
++            "enable_hw_vlan_strip": True,
++            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
++        }
++        self._create_and_transmit(
++            ring_format=0,
++            buffers=0,
++            in_order=1,
++            vectorized=0,
++            extra_args=extra_args,
++        )
++
++    @perf_test
++    def test_perf_vhost_single_core_virtio_mergeable(self) -> None:
++        """Validate expected single core forwarding performance.
++
++        Steps:
++            * Set TestPMD virtio parameters: buffers=1.
++            * Create a packet according to the frame size specified in the test config.
++            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
++            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
++
++        Verify:
++            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
++        """
++        extra_args: TestPmdParamsDict = {
++            "tx_offloads": 0,
++            "enable_hw_vlan_strip": True,
++            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
++        }
++        self._create_and_transmit(
++            ring_format=0,
++            buffers=1,
++            in_order=0,
++            vectorized=0,
++            extra_args=extra_args,
++        )
++
++    @perf_test
++    def test_perf_vhost_single_core_virtio_nonmergeable(self) -> None:
++        """Validate expected single core forwarding performance.
++
++        Steps:
++            * Set TestPMD virtio parameters: vectorized=1.
++            * Create a packet according to the frame size specified in the test config.
++            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
++            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
++
++        Verify:
++            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
++        """
++        extra_args: TestPmdParamsDict = {
++            "tx_offloads": 0,
++            "enable_hw_vlan_strip": True,
++            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
++        }
++        self._create_and_transmit(
++            ring_format=0,
++            buffers=0,
++            in_order=0,
++            vectorized=1,
++            extra_args=extra_args,
++        )
++
++    @perf_test
++    def test_perf_vhost_single_core_virtio_vectorized(self) -> None:
++        """Validate expected single core forwarding performance.
++
++        Steps:
++            * Set TestPMD virtio parameters: vectorized=1.
++            * Create a packet according to the frame size specified in the test config.
++            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
++            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
++
++        Verify:
++            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
++        """
++        self._create_and_transmit(
++            ring_format=0,
++            buffers=0,
++            in_order=0,
++            vectorized=1,
++            extra_args={},
++        )
++
++    @perf_test
++    def test_perf_vhost_single_core_virtio11_inorder_mergeable(self) -> None:
++        """Validate expected single core forwarding performance.
++
++        Steps:
++            * Set TestPMD virtio parameters: ring_format=1, buffers=1, in_order=1.
++            * Create a packet according to the frame size specified in the test config.
++            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
++            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
++
++        Verify:
++            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
++        """
++        extra_args: TestPmdParamsDict = {
++            "tx_offloads": 0,
++            "enable_hw_vlan_strip": True,
++            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
++        }
++        self._create_and_transmit(
++            ring_format=1,
++            buffers=1,
++            in_order=1,
++            vectorized=0,
++            extra_args=extra_args,
++        )
++
++    @perf_test
++    def test_perf_vhost_single_core_virtio11_inorder_nonmergeable(self) -> None:
++        """Validate expected single core forwarding performance.
++
++        Steps:
++            * Set TestPMD virtio parameters: ring_format=1, in_order=1.
++            * Create a packet according to the frame size specified in the test config.
++            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
++            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
++
++        Verify:
++            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
++        """
++        extra_args: TestPmdParamsDict = {"rss": cast(RSSSetting, RSSSetting.SetIPOnly())}
++        self._create_and_transmit(
++            ring_format=1,
++            buffers=0,
++            in_order=1,
++            vectorized=0,
++            extra_args=extra_args,
++        )
++
++    @perf_test
++    def test_perf_vhost_single_core_virtio11_vectorized(self) -> None:
++        """Validate expected single core forwarding performance.
++
++        Steps:
++            * Set TestPMD virtio parameters: ring_format=1, in_order=1, vectorized=1.
++            * Create a packet according to the frame size specified in the test config.
++            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
++            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
++
++        Verify:
++            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
++        """
++        extra_args: TestPmdParamsDict = {
++            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
++            "other_eal_param": Params.from_str("--force-max-simd-bitwidth=512"),
++        }
++        self._create_and_transmit(
++            ring_format=1,
++            buffers=0,
++            in_order=1,
++            vectorized=1,
++            extra_args=extra_args,
++        )
 -- 
-2.53.0
+2.55.0
 
