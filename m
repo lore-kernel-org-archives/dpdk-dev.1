@@ -2,78 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB60CA6015
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 16:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE62BCA9EBE
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 17:29:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E397B40274;
-	Fri,  9 Oct 2026 18:14:09 +0200 (CEST)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id C38774026A
- for <dev@dpdk.org>; Fri,  9 Oct 2026 18:14:08 +0200 (CEST)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-2e8246b13cbso14427055ad.2
- for <dev@dpdk.org>; Fri, 09 Oct 2026 09:14:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B786140274;
+	Fri,  9 Oct 2026 19:29:36 +0200 (CEST)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com
+ [209.85.210.182])
+ by mails.dpdk.org (Postfix) with ESMTP id EAC634026A
+ for <dev@dpdk.org>; Fri,  9 Oct 2026 19:29:35 +0200 (CEST)
+Received: by mail-pf1-f182.google.com with SMTP id
+ d2e1a72fcca58-88c72646f03so3701012b3a.2
+ for <dev@dpdk.org>; Fri, 09 Oct 2026 10:29:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791562448;
- x=1792167248; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791566974;
+ x=1792171774; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=Uc0Txc5PvvF41XQ64r5W/aWd4OsKdTsNxQjaxTkO9CY=;
- b=J2/KczJW8ZWMNJ47JoZEGFH9hRa4pUQpYJ/gRMQCMBQFw5EDOlKk0PKYFLkdgc+uwX
- Iravid1/XkpbfM/d6erjdbgwReCZTy1e7H22TfF6Pn/5zO9Sak3M83yJdlMrcnorBPFi
- yKVE3yTuEGROvJU9J6A5tC6QcJnteNTf6/PAftTYWIlaOPJZmoxCWzLh2DhmgapCVHcL
- MNT7HjAq3rq7rJsvdvth78Fl29t0tlelvlygP7W1D/ag9/YAOjfnOfY4SACJOatN68aX
- Y43YB3gEW3MP64ZLsE1Ls4MUKJ2et7p/VTwWrWTG1SPXffBnhPyxPdnfTiXr3DlYujl2
- Vf+g==
+ bh=EjvyItP5YwAA8bfhQbqIMFTiD23YxEbJIKf/Y/1ihuw=;
+ b=sGExUVDjaLPX6uQDy/IC9kYa/JY95v4HD4XxzTYtPc5RCTisP2uXxJ+T0cnCMbkiX+
+ hkOzhME5s0d9bPLheAIn+I7k2gyUL5Eza5fmxk70mgsz0nJu7iA8wez59agKGrjaXBaQ
+ DTBJdZgppX9J3GZo/c6AVAMeBZ9kTPY05MWs4QFvUd19TWuLp8ERk/A30kRWilb95y/M
+ mrsGFtfrAMzF4/5zlWJsQpM9nA/e4u159FhVeg4+wSJ+i1AnF+9PM5GC2bj6FBe6E1wU
+ kAOZWEZCLL3BB2BlisYhfcv1WUKrVUIeqxlIZ7csJi4ennAUgR2A9SnOvwNsHtulZnpu
+ +9Ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791562448; x=1792167248;
+ d=1e100.net; s=20260707; t=1791566974; x=1792171774;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=Uc0Txc5PvvF41XQ64r5W/aWd4OsKdTsNxQjaxTkO9CY=;
- b=WIc3ESfARYhqEV6LisIe+XpYMARs+UVaSOZAtAQ9Ld0mWbZaueBu4A0sF9TDv8lXRb
- y1Hi+qJU1UN7glmwOfZCA7phLx/UbNmwZ3L0dvQDrS632aYV3Ofzvp2jTcthF4R9gyg2
- 5m/nwOXqdTNhvP7Mt7Y8sdXCzStT35NZfK1/FcPvNzQ5/T25W4DnyRX7Rax3ydGtLwFZ
- +h7NqJJs5n1SamcxicOSSInBJDc/iNSPqQ8kNLwylRJzzYy89VpGt2FEpIzxlBJBm8bg
- USuFbB5GgTaeOsqGhQJqmDfx/B/GN1GfG4ikhRxZhBrM2ISeqIzBUXJXC8KeLQttqftB
- nmtQ==
-X-Gm-Message-State: AFq9FYJmLWgfrw3IWlRyzJ9SX0pAaeGoeYGTDUH1UDGbyWxnZQvCB6ig
- bWCN2UWS+F0eKBkl+swWqY4vx0djid3JcnjPHDSnwnj+YftzxUJ0Br9lMRPK93cY67Y=
-X-Gm-Gg: AYBFou0WPn2Mp6uHWAjp0o9i9VseuwUMBVPTC0sCYIyBX+EZ+9XYjgbo4Yew1MUiq3o
- 9BUMaHbLdVismzkp1k/DDt16jDqsZhfMoWo6BK8Np9aHh43O76C5N7KINl0PUtNYzsIkBxiqehb
- 5nYN5LV/pC1BZCKxcwWuBw2oeFcyx3Ldj+Hfh3I+rFgYTkPIGbp7xYvxJfCZNAem0bkJQoJRFvw
- l7v5ufbWrqEvOwLnic5EyJmk0V1Sswc/T+lmg5XBAI6k7sJs13c5uHRFZNUU3Jyu/Gau6q+GS5R
- yeogq3L17ZRgXwGdf4LwGaOMiiafrQu2TCZ2M5PS6fqwfGnGg5rhfXzqCuvPeZSLc8AgoaZ9sxO
- O1Z8saPWTFIyae7w/P1ewnOAtyUcF/3RLVcjRkhQPGtaerFVjsaqH3FZVCvFDwksgfvXfbutEo4
- FqaoJVrMXMuo1BCFT/q33QTMGBi50Nka1zcDnY6XMIweysNyfkGVcIvtK0P49WDKQyhiFzpxYe5
- 0WbcZRo9NICmjoZIvN05OWNV+qm//tiok5ho6j3
-X-Received: by 2002:a17:903:22ce:b0:2e8:3639:1a3e with SMTP id
- d9443c01a7336-2e842ac90afmr20781515ad.40.1791562447730; 
- Fri, 09 Oct 2026 09:14:07 -0700 (PDT)
+ bh=EjvyItP5YwAA8bfhQbqIMFTiD23YxEbJIKf/Y/1ihuw=;
+ b=hsDcpHwRnRGBuSiJV4OaU5lcfFSihtuttv49efMY4iSUDiXI2WdxymZ+9gZQdBBYMU
+ Pg0od2LjDR+eVa/Ioh3QCoZ2ndcsMYG+0VGw1RtMQHeWUNEoyralqFfU2DkRoxCmnPNF
+ AEPz9XDrSshnjG5ue6DQqf3Re/MZqCiW6eR7vpiOkWdDCjODGw9lo3zozgRYmpKE2T7f
+ sp8tD0OQw9Evra4VYiS+B2DbgsT2oOPneVR1YXQi6lq75cJcYy/09yJggg7cTvVAO2AM
+ Nuzisnzp15iFwZJrTlxcSrtSJ7OpyE5dRbo7zf3qDG16MruSxpUMFwSIp3yS/U3tQ+ox
+ PuWw==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBxVojg+/4W3Jx4oL/wlQG8ex4NM6hoTPzHAStb3fL1EJfLVTJtW1N4oeZZVEa4fFWUTzl0=@dpdk.org
+X-Gm-Message-State: AFq9FYIUU38FtCVTUBIQkpn8/BWg5PrIGL4XN8mgU0IE/6XobNRmycuG
+ hkC6wHj9rxD6vYAAjZc/cJyGyZNU5qLO/ODgBgrQmwI8kp4APaDM1n1V2xb5k7tui7I=
+X-Gm-Gg: AYBFou30pyv3C6RNnIiDeW874zQ54u2xC8ctSB6d1wuBF+54RJFzKlpj8XMJmytmqhe
+ OgvlU9nrz+W9C+XIkIlnHOg4tuUQOxLktLso7eS5VCBZ6rySr3vzfx3LcbozeouVyhD96Y5eHmU
+ ub8BKPEHiRUEWs/t0Qp1v1Z3cq2OWsxuc3lKzAWL+XyN8rFYDwviHI59ZO0xUFPP97bMj1GPuNo
+ Trd39Bei3y01cdbCjaeyBJ8PYVg8BtI0VFoJ5Dtk6I470m8yCA7pnew3lOiwaLSmDixpKHFErGW
+ XmRVM003fR1+bUP6YkGkqK2QOjMlVQv0hV0f8C1xXo6MJvBxd1rqCvxhMTjGXHm9FLY87K/tOP6
+ 7LS4RE0UvMPCdP1Iac8p+Hwt8tASn77Braf45zMgppRtOE+nGfdwgXPAm0PaP3lXB0zdzvqS4T8
+ svM/sQPdVR89mU4q9yzbLoOEqyZ23hyFyBZRv2Aq3xgSRAaBB8aE2WoYZpa3nu3CWw+WULTsV8g
+ w9B50Mg6aULz8/NCddebdzPYprFOVRDwg6UMQ/s
+X-Received: by 2002:a05:6a00:3d16:b0:892:8a3f:450e with SMTP id
+ d2e1a72fcca58-897c81b6476mr2536799b3a.45.1791566973999; 
+ Fri, 09 Oct 2026 10:29:33 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e8422b8dc4sm12359285ad.59.2026.10.09.09.14.07
+ d2e1a72fcca58-896c31071absm1538483b3a.15.2026.10.09.10.29.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 09 Oct 2026 09:14:07 -0700 (PDT)
-Date: Fri, 9 Oct 2026 09:14:05 -0700
+ Fri, 09 Oct 2026 10:29:33 -0700 (PDT)
+Date: Fri, 9 Oct 2026 10:29:31 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: "Randy Tice (rtice)" <rtice@cisco.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Morten =?UTF-8?B?QnLDuHJ1cA==?=
- <mb@smartsharesystems.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Harman Kalra <hkalra@marvell.com>
-Subject: Re: [PATCH v4 0/1] mbuf: add runtime metadata dynamic-field storage
-Message-ID: <20261009091405.46b9f3bf@phoenix.local>
-In-Reply-To: <PH0PR11MB7616A68AC3EA1349948CAC75A9932@PH0PR11MB7616.namprd11.prod.outlook.com>
-References: <179061941387.2.17741463412422386825.v3-0000-cover-letter.patch@cisco.com>
- <179130207755.4.10786861462241375385.v4-0000-cover-letter.patch@cisco.com>
- <20261006095123.3166b4dd@phoenix.local>
- <PH0PR11MB7616A68AC3EA1349948CAC75A9932@PH0PR11MB7616.namprd11.prod.outlook.com>
+To: Hemant Agrawal <hemant.agrawal@nxp.com>
+Cc: thomas@monjalon.net, dev@dpdk.org
+Subject: Re: [PATCH v23 00/27] NXP DPAA driver enhancements and fixes
+Message-ID: <20261009102931.25cc00eb@phoenix.local>
+In-Reply-To: <20261009091101.1703494-1-hemant.agrawal@nxp.com>
+References: <20261007072439.3135351-1-hemant.agrawal@nxp.com>
+ <20261009091101.1703494-1-hemant.agrawal@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,108 +85,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 8 Oct 2026 16:15:26 +0000
-"Randy Tice (rtice)" <rtice@cisco.com> wrote:
+On Fri,  9 Oct 2026 14:40:34 +0530
+Hemant Agrawal <hemant.agrawal@nxp.com> wrote:
 
-> I did a brief look at this and still not convinced about the exact use ca=
-se.
-> What is the problem this is trying to solve and why can't it be done
-> by using existing API=E2=80=99s.
->=20
-> #RT:
->   Our implementation currently requires an additional 256 bytes of metada=
-ta per
->   mbuf. That does not fit in the existing dynamic-field storage, so today=
- we
->   carry a private patch to extend struct rte_mbuf. The goal of this work =
-is to
->   replace that private struct change with a supported upstream mechanism.
->=20
->   We did look at using mbuf private data first. It can work when the appl=
-ication
->   owns all mbuf pool creation, but it is not sufficient for our case with=
-out
->   another global/base reservation mechanism. Some mbuf pools are created =
-by
->   drivers or libraries rather than directly by the application; the CNXK =
-inline
->   IPsec/OOP meta pool is one example (NIX_INL_META_POOL, created through
->   cnxk_nix_inl_meta_pool_cb()). To make private data work there, we had t=
-o add
->   an EAL argument that reserved a base private size for all pktmbufs, inc=
-luding
->   PMD-created pools.
->=20
->   Private data also lacks a central layout registry. If multiple modules =
-use
->   private data, they must coordinate offsets out of band to avoid overlay=
-ing
->   each other. The dynamic-field registry solves that coordination problem=
-, but
->   the existing copied dynamic-field area is too small and has copy/clone
->   semantics that are wrong for this metadata.
->=20
->   That is why this version uses a globally configured per-mbuf metadata a=
-rea
->   managed by the dynamic-field registry, with explicit metadata fields th=
-at are
->   not copied by generic copy/clone/attach paths. This direction came out =
-of the
->   prior discussion with you, Morten, and me: avoid a Cisco-private mbuf s=
-truct
->   patch, avoid per-pool private-data layout coordination, and keep sizeof=
-(struct
->   rte_mbuf) fixed.
+> This series collects a set of fixes and enhancements for the NXP DPAA
+> bus, mempool, dma, crypto and net drivers targeting 26.11.
+> 
+> It includes memory-leak and resource-cleanup fixes on the device
+> remove/close paths, more robust frame queue and congestion-group
+> shutdown, secondary-process safety guards, BPID and cgrid lifecycle
+> handling, and several new features: offline (O/H) port device support,
+> enhanced virtual storage profile (VSP) port support, fmcless Rx queue
+> configuration via devargs, Rx/Tx taildrop threshold devargs, non
+> fmX-macY shared Ethernet naming, and DMA scatter-gather and
+> errata-workaround devargs. Documentation and release notes are updated
+> accordingly.
+> 
+> v23:
 
-You uncovered a design flaw in the CNXK driver and the=20
-proposed solution is wider than it needs to be.
+I did build test on this and it fails with clang-23 which has more
+detection of unused variables.
 
-All mbufs visible to application must come from mempools controlled by the =
-application.
-The design of CNXK driver is wrong, it shouldn't be using a private hidden =
-pool.
-It is ok for drivers to have hidden mempools that are used for non-visible =
-things,
-an example is the packet capture mempool where the mbufs only go into captu=
-re stream.
+FAILED: [code=1] drivers/libtmp_rte_bus_dpaa.a.p/bus_dpaa_base_qbman_bman_driver.c.o 
+clang-23 -Idrivers/libtmp_rte_bus_dpaa.a.p -Idrivers -I../drivers -Idrivers/bus/dpaa -I../drivers/bus/dpaa -I../drive
+rs/bus/dpaa/base -I../drivers/bus/dpaa/include -I../drivers/bus/dpaa/base/qbman -Ilib/eal/common -I../lib/eal/common 
+-I. -I.. -Iconfig -I../config -Ilib/eal/include -I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/inclu
+de -Ilib/eal/x86/include -I../lib/eal/x86/include -I../kernel/linux -Ilib/eal -I../lib/eal -Ilib/kvargs -I../lib/kvar
+gs -Ilib/log -I../lib/log -Ilib/metrics -I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/argparse -I../lib/a
+rgparse -Idrivers/common/dpaax -I../drivers/common/dpaax -I../drivers/common/dpaax/caamflib -Ilib/eventdev -I../lib/e
+ventdev -Ilib/ring -I../lib/ring -Ilib/ethdev -I../lib/ethdev -Ilib/net -I../lib/net -Ilib/mbuf -I../lib/mbuf -Ilib/m
+empool -I../lib/mempool -Ilib/meter -I../lib/meter -Ilib/hash -I../lib/hash -Ilib/rcu -I../lib/rcu -Ilib/timer -I../l
+ib/timer -Ilib/cryptodev -I../lib/cryptodev -Ilib/dmadev -I../lib/dmadev -fdiagnostics-color=always -D_FILE_OFFSET_BI
+TS=64 -Wall -Winvalid-pch -Wextra -Werror -std=c11 -O3 -include rte_config.h -Wvla -Wcast-qual -Wcomma -Wdeprecated -
+Wformat -Wformat-nonliteral -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wold-styl
+e-definition -Wpointer-arith -Wshadow -Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings -Wno-missing-field-i
+nitializers -D_GNU_SOURCE -fPIC -march=native -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-truncat
+ion -Wno-address-of-packed-member -Wno-cast-qual -Wno-pointer-arith -DRTE_COMPONENT_CLASS=pmd_bus -DRTE_COMPONENT_NAM
+E=dpaa -DRTE_LOG_DEFAULT_LOGTYPE=bus.dpaa -DRTE_ANNOTATE_LOCKS -Wthread-safety -MD -MQ drivers/libtmp_rte_bus_dpaa.a.
+p/bus_dpaa_base_qbman_bman_driver.c.o -MF drivers/libtmp_rte_bus_dpaa.a.p/bus_dpaa_base_qbman_bman_driver.c.o.d -o dr
+ivers/libtmp_rte_bus_dpaa.a.p/bus_dpaa_base_qbman_bman_driver.c.o -c ../drivers/bus/dpaa/base/qbman/bman_driver.c
+../drivers/bus/dpaa/base/qbman/bman_driver.c:19:12: error: variable 'bman_ip_rev' set but not used [-Werror,-Wunused-
+but-set-global]
+   19 | static u16 bman_ip_rev;
+      |            ^
 
-More long winded AI description:
+$ git grep bman_ip_rev
+drivers/bus/dpaa/base/qbman/bman_driver.c:static u16 bman_ip_rev;
+drivers/bus/dpaa/base/qbman/bman_driver.c:              bman_ip_rev = BMAN_REV10;
+drivers/bus/dpaa/base/qbman/bman_driver.c:              bman_ip_rev = BMAN_REV20;
+drivers/bus/dpaa/base/qbman/bman_driver.c:              bman_ip_rev = BMAN_REV21;
+drivers/bus/dpaa/base/qbman/bman_driver.c:              bman_ip_rev = BMAN_REV21;
 
-On Thu, 8 Oct 2026 16:15:26 +0000
-"Randy Tice (rtice)" <rtice@cisco.com> wrote:
+There are some non-urgent things from AI feedback that you can cleanup later.
 
-> We did look at using mbuf private data first. It can work when the
-> application owns all mbuf pool creation, but it is not sufficient for
-> our case without another global/base reservation mechanism. Some mbuf
-> pools are created by drivers or libraries rather than directly by the
-> application; the CNXK inline IPsec/OOP meta pool is one example
+Applies cleanly to main (1d020e1).  HEAD and each of the 27 commits
+build with -Dwerror=true (gcc 13.3, x86) for the DPAA drivers.  Not
+built for arm64.
 
-That is the real bug. A driver should not hand the application mbufs
-from a pool the application did not create. The Rx queue API already
-takes the pool from the application, and rte_eth_rxconf can carry
-more than one (rx_mempools). If cnxk needs a meta pool whose mbufs
-reach the application, it should get it from the application, or at
-minimum create it with the same priv_size as the Rx queue pool.
+v23 resolves the v22 items.  The 01/27 and 11/27 commit messages now
+give the right reasons, 19/27 and 20/27 document that a malformed
+value fails the probe, and 26/27 releases FQIDs in contiguous runs,
+only after a successful shutdown.
 
-Internal pools are fine when the mbufs never cross the API, e.g.
-dumpcap or the bonding LACP pool.
+No errors or warnings.
 
-With that fixed, the existing private area does what you need. It is
-per pool, sized by the application, and is not copied by copy, clone
-or attach. Offset coordination inside it is the application's job,
-and if a registry is wanted it can be layered on top of priv without
-changing the mbuf layout.
+Info
+----
 
-So my answer to option 1 vs 2 is neither. I don't want a global
-layout knob that puts a load in every inline helper and needs
-per-driver range checks, to work around one driver.
+Patch 25/27, 26/27: Each qman_create_fq() also takes an FQ lookup
+  table entry (CONFIG_FSL_QMAN_FQ_LOOKUP_MAX, 32K, on 64-bit), and
+  only qman_destroy_fq() returns it.  Nothing calls that, so every
+  probe/close cycle leaks 2 entries for the oldev port and 4098 for
+  dpaa_sec; the dpaa_sec part predates this series.  Suggested
+  follow-up: mark the FQ out of service when qman_shutdown_fq()
+  succeeds,
 
-What I would take:
- - cnxk: validate wqe_skip/later_skip/first_skip against priv_size
-   and headroom. This is a bug today, independent of this series.
- - cnxk: meta pool comes from, or matches, the application pool.
- - ethdev: under RTE_ETHDEV_DEBUG_RX, check that received mbufs
-   belong to a pool configured on that queue.
+	fq->state = qman_fq_state_oos;
 
-Nithin, Harman: do mbufs from NIX_INL_META_POOL get returned to the
-application by rx_burst, or are they only consumed internally?
+  and call qman_destroy_fq(fq, 0) after each successful shutdown.
+  For the oldev FQs (QMAN_FQ_FLAG_DYNAMIC_FQID) that also replaces
+  qman_release_fqid().
+
+Pre-existing, not introduced here: in FMCLESS mode net/dpaa never
+releases the Rx FQIDs it gets from qman_alloc_fqid_range(), on close
+or on probe failure.
+
