@@ -2,37 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E1BCA6019
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 15:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 852B5CA6019
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 15:11:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9FB39402EE;
-	Fri,  9 Oct 2026 17:11:08 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8AC9040431;
+	Fri,  9 Oct 2026 17:11:09 +0200 (CEST)
 Received: from smtp06-ext.udag.de (smtp06-ext.udag.de [62.146.106.76])
- by mails.dpdk.org (Postfix) with ESMTP id 3D58B4025A
+ by mails.dpdk.org (Postfix) with ESMTP id 9165F4025A
  for <dev@dpdk.org>; Fri,  9 Oct 2026 17:11:05 +0200 (CEST)
 Received: from machine (unknown [37.228.233.98])
- by smtp06-ext.udag.de (Postfix) with ESMTPA id 7F33CE01C0;
+ by smtp06-ext.udag.de (Postfix) with ESMTPA id 07D7FE0265;
  Fri,  9 Oct 2026 17:11:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dressler.pro;
- s=uddkim-202310; t=1791558664;
+ s=uddkim-202310; t=1791558665;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=a0fpRkDHcllzbfWCJZXnNiUxOy5fvabSd8tNsxbx7EY=;
- b=aEk6R+T4ztfeA7uwC6KmKjwlrZ0XynK3SpwG1t5Pb8Ae11yJnpFTA63E+Ts3RlbsQwNRCK
- vbrA9t34MfyVecoG5oKtvLey+Gl0z0/C9fTfUrnPy+p3nOIhOAuDxguY1kYyKrDfTiqLPS
- 0VVYZw/UMif0ZiQZCXm17WuvV/NcxoGYsXgs92aV3NUksl8gHlUlYXohfiz0q0w64MQQ5m
- AxQ7QfaWbxc7Cvv8wFgiCr0KREogbsQU+cIt7QbEnwaz7kSdSNKVvYEu5601i89KVPZCg9
- r1Nt1/gsCgzBuAXwkOLnB/qT+kMfuiTXu1NO3D2VZM/n5z8/8U/y3RNbo/kN7Q==
+ bh=oUSh86oeSLdi7Oq2eouE6sKB93aQe3iKDA45AmC8GVQ=;
+ b=iVwZko9IM6YQ4NChdTitgZ8q7L/hh4pGYuzYyI0hDwvekMb2U6ipkavtd9zJZ7MG3J8Epe
+ mlLsOo33ETa3m3cZIc3x5m+v0YFr3sXnAjr1/XzFycXyQmvzPq61uCui6yRcwUl0t4YsHK
+ or4r2XGtvp134TvSzJSGdTWgsTzrmAkIGSd2ZHv3ftPbc9qyFLEmo8nFKloBZPmXCx1VwK
+ erfuzkKnr8ctROmkE0jUKapghz2CmHVVCDJDWcuR2i+ti22qGaG7GWcBjQJUouriLc4spM
+ fChWro7WttgA7uAQ8H1ofKHuI9DY+j5cypNqzpfM5lG9I60SpdtKadqLxjAFBA==
 Authentication-Results: smtp06-ext.udag.de;
  auth=pass smtp.auth=dressler-pro-0001 smtp.mailfrom=frank@dressler.pro
 From: Frank Dressler <frank@dressler.pro>
 To: Stephen Hemminger <stephen@networkplumber.org>
 Cc: dev@dpdk.org
-Subject: [PATCH v5 2/3] net/af_packet: use kernel to filter single-queue Rx
-Date: Fri,  9 Oct 2026 16:10:14 +0100
-Message-ID: <20261009151015.742011-3-frank@dressler.pro>
+Subject: [PATCH v5 3/3] net/af_packet: use kernel to filter multi-queue Rx
+Date: Fri,  9 Oct 2026 16:10:15 +0100
+Message-ID: <20261009151015.742011-4-frank@dressler.pro>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261009151015.742011-1-frank@dressler.pro>
 References: <20261005002809.1676723-1-frank@dressler.pro>
@@ -52,75 +52,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when the ignore_outgoing devarg is 1, the PMD still
-receives outgoing packets from the kernel but skips over them so
-that rte_eth_rx_burst() only returns incoming packets.
+The AF_PACKET PMD currently needs to filter out outgoing packets in
+the PMD when the ignore_outgoing devarg is enabled and multiple queues
+are used. Kernel-side filtering is only supported for the single-queue
+scenario.
 
-Since Linux kernel v4.20, the PACKET_IGNORE_OUTGOING socket option
-prevents the kernel from delivering outgoing packets to an
-AF_PACKET socket.
+Since v6.2 the Linux kernel supports filtering outgoing packets for
+AF_PACKET socket fanout groups via PACKET_FANOUT_FLAG_IGNORE_OUTGOING
+which means that the PMD does not need to do this anymore.
 
-This change sets this socket option so that the PMD does not need to
-filter out outgoing packets anymore. However, this socket option does
-not work for packet sockets which are in a fanout group, so it
-is only set in the single-queue scenario. When multiple queues
-are used, the PMD-side filtering serves as a fallback.
+Earlier kernels ignore this flag and have no direct way to detect
+whether the flag is supported.
 
-The kernel has supported this flag since v4.20, and DPDK requires
-at least v5.4, so no feature check has been added.
+This change opportunistically sets this flag for all kernel versions
+in multi-queue scenarios. Kernels that do not support this flag
+silently ignore it. Filtering outgoing packets then falls back to the
+PMD-based approach.
+
+With this change, for all kernels v6.2 or newer, all the filtering of
+outgoing packets will happen in the kernel.
 
 Signed-off-by: Frank Dressler <frank@dressler.pro>
 ---
- doc/guides/rel_notes/release_26_11.rst    |  3 ++-
- drivers/net/af_packet/rte_eth_af_packet.c | 14 +++++++++++++-
+ doc/guides/rel_notes/release_26_11.rst    |  4 ++--
+ drivers/net/af_packet/rte_eth_af_packet.c | 13 +++++++++++++
  2 files changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index daf5603a41..0cf7671cbb 100644
+index 0cf7671cbb..c4ef38b362 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -67,7 +67,8 @@ New Features
+@@ -67,8 +67,8 @@ New Features
  * **Updated AF_PACKET driver.**
  
    Added ``ignore_outgoing`` vdev argument to prevent `rte_eth_rx_burst()` from
--  returning transmitted packets.
-+  returning transmitted packets. The single-queue scenario is accelerated,
-+  as the kernel does the filtering.
+-  returning transmitted packets. The single-queue scenario is accelerated,
+-  as the kernel does the filtering.
++  returning transmitted packets. Single queue is always filtered in the kernel.
++  Multiple queues are filtered in the kernel since v6.2, otherwise in the PMD.
  
  * **Updated AF_XDP driver.**
  
 diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index 837da9a3af..085bfa9af9 100644
+index 085bfa9af9..e3ed511b45 100644
 --- a/drivers/net/af_packet/rte_eth_af_packet.c
 +++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -1038,6 +1038,18 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
- #endif
- 		}
+@@ -32,6 +32,11 @@
+ #include <unistd.h>
+ #include <poll.h>
  
-+		if (ignore_outgoing != 0 && nb_queues == 1) {
-+			rc = setsockopt(qsockfd, SOL_PACKET, PACKET_IGNORE_OUTGOING,
-+					&ignore_outgoing, sizeof(ignore_outgoing));
-+			if (rc == -1) {
-+				PMD_LOG_ERRNO(ERR,
-+					"%s: could not set PACKET_IGNORE_OUTGOING "
-+					"on AF_PACKET socket for %s",
-+					name, pair->value);
-+				goto error;
-+			}
-+		}
++/* Added in Linux 6.2. Older kernels ignore it. */
++#ifndef PACKET_FANOUT_FLAG_IGNORE_OUTGOING
++#define PACKET_FANOUT_FLAG_IGNORE_OUTGOING 0x4000
++#endif
 +
- 		rc = setsockopt(qsockfd, SOL_PACKET, PACKET_RX_RING, req, sizeof(*req));
- 		if (rc == -1) {
- 			PMD_LOG_ERRNO(ERR,
-@@ -1056,7 +1068,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ #define ETH_AF_PACKET_IFACE_ARG		"iface"
+ #define ETH_AF_PACKET_NUM_Q_ARG		"qpairs"
+ #define ETH_AF_PACKET_BLOCKSIZE_ARG	"blocksz"
+@@ -995,6 +1000,14 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ 		goto error;
+ 	}
  
- 		rx_queue = &((*internals)->rx_queue[q]);
- 		rx_queue->framecount = req->tp_frame_nr;
--		rx_queue->ignore_outgoing = ignore_outgoing != 0;
-+		rx_queue->ignore_outgoing = ignore_outgoing != 0 && nb_queues > 1;
- 
- 		rx_queue->map = mmap(NULL, 2 * req->tp_block_size * req->tp_block_nr,
- 				    PROT_READ | PROT_WRITE, MAP_SHARED | MAP_LOCKED,
++	/*
++	 * Set the flag opportunistically if multiple queues are requested.
++	 * It takes effect from Linux v6.2. Older kernels ignore it and the
++	 * PMD filters instead.
++	 */
++	if (ignore_outgoing != 0 && nb_queues > 1)
++		fanout_arg |= PACKET_FANOUT_FLAG_IGNORE_OUTGOING << 16;
++
+ 	for (q = 0; q < nb_queues; q++) {
+ 		/* Open an AF_PACKET socket for this queue... */
+ 		qsockfd = socket(AF_PACKET, SOCK_RAW, 0);
 -- 
 2.56.0
 
