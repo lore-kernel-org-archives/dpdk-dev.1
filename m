@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCDECA5FED
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 09:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C854CA6012
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 09:11:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DF9644067B;
-	Fri,  9 Oct 2026 11:11:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3BBD440A4B;
+	Fri,  9 Oct 2026 11:11:13 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 6BCDC402DC;
+ by mails.dpdk.org (Postfix) with ESMTP id CDCB240281;
  Fri,  9 Oct 2026 11:11:06 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 506D6200318;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B15B3200314;
  Fri,  9 Oct 2026 11:11:06 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1CAC2200306;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7DCBE20030C;
  Fri,  9 Oct 2026 11:11:06 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 80EF3180006C;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id EA5D21800068;
  Fri,  9 Oct 2026 17:11:05 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: stable@dpdk.org,
-	Prashant Gupta <prashant.gupta_3@nxp.com>
-Subject: [PATCH v23 05/27] bus/dpaa: fix FQD dest wq channel decoding
-Date: Fri,  9 Oct 2026 14:40:39 +0530
-Message-Id: <20261009091101.1703494-6-hemant.agrawal@nxp.com>
+Cc: stable@dpdk.org
+Subject: [PATCH v23 06/27] bus/dpaa: accept QDMA device name in devargs
+Date: Fri,  9 Oct 2026 14:40:40 +0530
+Message-Id: <20261009091101.1703494-7-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261009091101.1703494-1-hemant.agrawal@nxp.com>
 References: <20261007072439.3135351-1-hemant.agrawal@nxp.com>
@@ -50,118 +49,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
+rte_dpaa_bus_parse() recognises fmX-macY, fmX-ohY, fmX-onicY and
+dpaa_sec-N, but not the QDMA devices that dpaa_create_device_list()
+creates as "dpaa_qdma-%d". A QDMA name therefore falls through to the
+fm%u-mac%u sscanf(), which does not match, so the function returns
+-EINVAL.
 
-qman_shutdown_fq() decoded the FQD dest_wq field as:
+That makes the documented usage
 
-	channel = dest_wq & 0x7;
-	wq      = dest_wq >> 3;
+  -a dpaa_bus:dpaa_qdma-1,dpaa_dma_err_check=1
 
-but in the hardware descriptor the work queue is bits 2:0 and the
-channel is bits 15:3. The old code therefore extracted a 0-7 value as
-the channel and the real channel as the work queue. qman_shutdown_fq()
-compares the channel against the pool-channel range to decide how to
-drain the queue, and that comparison can never succeed with a 0-7
-value, so pool-channel FQs were not drained correctly on shutdown.
+fail in rte_devargs_parse() with "failed to parse device" and abort EAL
+initialization, so no dma/dpaa devarg can be passed at all.
 
-Fixes: c47ff048b99a ("bus/dpaa: add QMAN driver core routines")
+Parse dpaa_qdma-N as well, bounding the index by the number of QDMA
+devices the bus creates.
+
+Fixes: a63c6426fdfd ("dma/dpaa: add option for error checks")
 Cc: stable@dpdk.org
 
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman.c | 14 ++------------
- drivers/bus/dpaa/base/qbman/qman.h | 23 ++++++++++++++++++++++-
- 2 files changed, 24 insertions(+), 13 deletions(-)
+ drivers/bus/dpaa/dpaa_bus.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index d289df2d33..931d487de4 100644
---- a/drivers/bus/dpaa/base/qbman/qman.c
-+++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -2707,14 +2707,6 @@ int qman_delete_cgr(struct qman_cgr *cgr)
- 	return ret;
- }
- 
--#define GENMASK(h, l) \
--	(((~0U) >> (sizeof(unsigned int) * 8 - ((h) - (l) + 1))) << (l))
--
--/* 'fqid' is a 24-bit field in every h/w descriptor */
--#define QM_FQID_MASK    GENMASK(23, 0)
--#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
--#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
--
- static int
- _qm_mr_consume_and_match_verb(struct qm_portal *p, int v)
- {
-@@ -2801,7 +2793,6 @@ qman_shutdown_fq(u32 fqid)
- 	u32 res;
- 	u8 state;
- 	u32 channel, wq;
--	u16 dest_wq;
- 
- 	DPAA_BUS_DEBUG("In shutdown for queue = %x", fqid);
- 	p = get_affine_portal();
-@@ -2831,9 +2822,8 @@ qman_shutdown_fq(u32 fqid)
- 	}
- 
- 	/* Need to store these since the MCR gets reused */
--	dest_wq = be16_to_cpu(mcr->queryfq.fqd.dest_wq);
--	channel = dest_wq & 0x7;
--	wq = dest_wq >> 3;
-+	channel = qm_fqd_get_chan(&mcr->queryfq.fqd);
-+	wq = qm_fqd_get_wq(&mcr->queryfq.fqd);
- 
- 	switch (state) {
- 	case QM_MCR_NP_STATE_TEN_SCHED:
-diff --git a/drivers/bus/dpaa/base/qbman/qman.h b/drivers/bus/dpaa/base/qbman/qman.h
-index 43a16d1e3b..bd97689a91 100644
---- a/drivers/bus/dpaa/base/qbman/qman.h
-+++ b/drivers/bus/dpaa/base/qbman/qman.h
-@@ -1,12 +1,15 @@
- /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-  *
-  * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017 NXP
-+ * Copyright 2017,2026 NXP
-  *
-  */
- 
- #include "qman_priv.h"
- 
-+#define GENMASK(h, l) \
-+	(((~0U) >> (sizeof(u32) * 8 - ((h) - (l) + 1))) << (l))
-+
- /***************************/
- /* Portal register assists */
- /***************************/
-@@ -42,6 +45,14 @@
- #define QM_CL_RR0		0x3900
- #define QM_CL_RR1		0x3940
- 
-+#define QM_FQD_CHAN_OFF                3
-+#define QM_FQD_WQ_MASK         GENMASK(2, 0)
-+/* 'fqid' is a 24-bit field in every h/w descriptor */
-+#define QM_FQID_MASK    GENMASK(23, 0)
-+
-+#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
-+#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
-+
- /* BTW, the drivers (and h/w programming model) already obtain the required
-  * synchronisation for portal accesses via lwsync(), hwsync(), and
-  * data-dependencies. Use of barrier()s or other order-preserving primitives
-@@ -911,3 +922,13 @@ static inline void __qm_isr_write(struct qm_portal *portal, enum qm_isr_reg n,
- 	__qm_out(&portal->addr, QM_REG_ISR + (n << 2), val);
- #endif
- }
-+
-+static inline int qm_fqd_get_chan(const struct qm_fqd *fqd)
-+{
-+	return be16_to_cpu(fqd->dest_wq) >> QM_FQD_CHAN_OFF;
-+}
-+
-+static inline int qm_fqd_get_wq(const struct qm_fqd *fqd)
-+{
-+	return be16_to_cpu(fqd->dest_wq) & QM_FQD_WQ_MASK;
-+}
+diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
+index 368c8eeb98..5442f8f893 100644
+--- a/drivers/bus/dpaa/dpaa_bus.c
++++ b/drivers/bus/dpaa/dpaa_bus.c
+@@ -521,6 +521,11 @@ rte_dpaa_bus_parse(const char *name, void *out)
+ 				i < 1 || i > 4)
+ 			return -EINVAL;
+ 		max_name_len = sizeof("dpaa_sec-.") - 1;
++	} else if (strncmp("dpaa_qdma", &name[delta], 9) == 0) {
++		if (sscanf(&name[delta], "dpaa_qdma-%u", &i) != 1 ||
++				i < 1 || i > RTE_DPAA_QDMA_DEVICES)
++			return -EINVAL;
++		max_name_len = sizeof("dpaa_qdma-.") - 1;
+ 	} else if (strncmp("oh", &name[dev_delta], 2) == 0) {
+ 		if (sscanf(&name[delta], "fm%u-oh%u", &i, &j) != 2 ||
+ 				i >= 2 || j >= 16)
 -- 
 2.25.1
 
