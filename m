@@ -2,80 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF709CA6015
-	for <dpdk-dev@archiver.kernel.org>; Thu,  8 Oct 2026 23:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7F4CA6015
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 03:24:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B387440DFB;
-	Fri,  9 Oct 2026 01:37:51 +0200 (CEST)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com
- [209.85.210.173])
- by mails.dpdk.org (Postfix) with ESMTP id CC96640DFB
- for <dev@dpdk.org>; Fri,  9 Oct 2026 01:37:49 +0200 (CEST)
-Received: by mail-pf1-f173.google.com with SMTP id
- d2e1a72fcca58-88b5f43cb8aso2039223b3a.3
- for <dev@dpdk.org>; Thu, 08 Oct 2026 16:37:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791502669;
- x=1792107469; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=3TBZx3VSY+dvM9r+DSQ2+UeUSHN2dqpRDD7fvdIq5bQ=;
- b=Wht8UD43SMjLKoXfmsm41JZr4jU4gtKAJ4xslwePWtuUWtkYhvMeCO2pkBHEM4FoXz
- Za1/Glis/W9MeQhjh8cDBSXz5mUWO+iDd3qITn22Uq65zi1Vu4brCQE58RKAjqHamK+J
- OvweLs1Dlkq817RzFzdYjrsgRmlCZSou1VmCyzYf037iWdkDk2E72tAn6S/ahjRzenyr
- Crz0w3wmV9sTClh57t6Kf+3Ry9SJqPRTTuLnWolxEp2bnERcHQ0UhSZYyAz5ufh3j/H7
- kMewOVpTqicBG+VZgEB2gF5jEJqK8dRUnVOeGKWiymAo2v+L5nWBDnkZpAgWksamNpYS
- IhHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791502669; x=1792107469;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=3TBZx3VSY+dvM9r+DSQ2+UeUSHN2dqpRDD7fvdIq5bQ=;
- b=y9BMtRTH93DgENKdj4kXqgH4td1uZ0UcefVLDKvJ5hUYk2o5Bw2QFRLb7vS5bwlLGG
- 5Bycx7czuXdAZslY40o7NPi6skB1G3EVDL/Flk/leYygMeBVXIe+EciLWEe5nj/bLpRq
- 0UpRJlr4L4EcMzN0PeLtCNq0oBEkcdWUo8XKXYg/xFxTiVxUeG6UitkaeUyrqxe4ep9m
- U1o1WcucnrFeiXV9u3t/tdCr16csoqbOd3d2qcA4SQBqYZeC0vhQwZxH2SJsSMIbXvBu
- sGFyvsDVktEHWgyZW2HGb7QGzeCr70PXd/Zc5JnzQ6e4lLK2K/Q4WXNIqLfMGRBuy8kF
- jcqA==
-X-Gm-Message-State: AFuF++lLWzXufoBxcXSJMjfF3eKIAfLAOCQMZGCxojRcOXi9EuTEEQ8/
- 0WWsOhrWSBsD3gHNOjbr6KqFAthNZAp/CcqNrQjEojRPpRgOu2DnTWUWnrBLbVJeLlIQyXa98/D
- QsCggkAw=
-X-Gm-Gg: AYBFou1s5nfXbgwpZTM3URJNDGdRuEFhTE5NSHnpuIAhx0tv1HbVTOzGmZM1QghjZc7
- QlyRUuwksSnOCd1a+ikL/WLV6RS6Bdg9jMm/BkMp/DorVgVlDeq1r/hofE5LL83uztE6IU0TvPq
- 2VBBDaq8eA5SKigPIG3Y7xu6vBoDsn6uXhGJ4z6iLn5MRltXMZjSp68apANG8yk5Ju4fzYrVcir
- 27Db+SeKkDzw366pHMXDIZiTWx3n/nnAiYpKGCVza9pLKfN8Dp4jcliCJotyFS7fix2NaM4RtNg
- 97dzdFzsLfuXO+7CRZzNCRnzlqQbrRovbQr3ZPgGoFyMpKhQvNrJPjxsC816ORfT131fZ8ElHZq
- tObYYUQfqK5eEcXwONnoKyWjvIgCjGwwBXD8rQ4bLtxyFhoCMDaksJxU9y53eIV5nbaYJo/GWDY
- A9tlRy7GTc0NDSeiZmdod5o0OmloqLbXY7/VM6NKYtk+e7PhgAKE5u5D3LrAC7zVICv6phVPz3y
- OuSUxr0FoIPIOkDWOUPoRyS0/+PPDpjbexlsg==
-X-Received: by 2002:a05:6a00:181c:b0:88c:fa50:1a86 with SMTP id
- d2e1a72fcca58-897c78d5fddmr39401b3a.25.1791502668855; 
- Thu, 08 Oct 2026 16:37:48 -0700 (PDT)
-Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-896c42b06e9sm187909b3a.42.2026.10.08.16.37.47
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 08 Oct 2026 16:37:48 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Bibo Mao <maobibo@loongson.cn>, David Christensen <drc@linux.ibm.com>,
- Riley Fletcher <rileyf@linux.ibm.com>, Sun Yuechi <sunyuechi@iscas.ac.cn>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v3 29/29] eal: remove rte_smp_XX
-Date: Thu,  8 Oct 2026 16:35:22 -0700
-Message-ID: <20261008233649.1260843-30-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261008233649.1260843-1-stephen@networkplumber.org>
-References: <20260729175715.165120-1-stephen@networkplumber.org>
- <20261008233649.1260843-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 38D994027A;
+	Fri,  9 Oct 2026 05:24:46 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id EFA1C4026D
+ for <dev@dpdk.org>; Fri,  9 Oct 2026 05:24:44 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B02221692;
+ Thu,  8 Oct 2026 20:24:40 -0700 (PDT)
+Received: from [10.122.30.109] (unknown [10.122.30.109])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 821AA3F8C6;
+ Thu,  8 Oct 2026 20:24:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+ t=1791516284; bh=mZsBsxmMBqyd+M9q6GcdKpMkyavBFH1bVhm+lWL+3O0=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=LGAgSiQcHRzZ8xox7YWBFYh7Iq5giNfJSQ8nNLibFNJDqZ3KIzKdVlhlIRlivTaow
+ UmiBy+jhTxY7Wi5tz5zaFt2nj4NIt2jHKMEdczslu0Vg0vO7Rqa0ZQDbgik562Bau+
+ 53a1Wj9C5lgCPYU3K3J0uSp6uPeZhpArvnygfZJk=
+Message-ID: <2b8df94c-8ca3-4022-b9c4-d95970581b80@arm.com>
+Date: Thu, 8 Oct 2026 22:24:41 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/crc: make NEON CRC folding logic similar to x86 SSE
+To: Shreesh Adiga <16567adigashreesh@gmail.com>
+Cc: dev@dpdk.org
+References: <20261006151833.347561-1-16567adigashreesh@gmail.com>
+Content-Language: en-US
+From: Wathsala Vithanage <wathsala.vithanage@arm.com>
+In-Reply-To: <20261006151833.347561-1-16567adigashreesh@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,259 +48,168 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-These functions were marked for deprecation over five years ago and
-have no users left in the tree. Drop them from EAL, along with the
-deprecation notice, and record the replacements in the release notes.
+Hi Shreesh,
 
-Checkpatch no longer looks for them: now that the macros are gone,
-any remaining use is a compile error.
+Looks correct. Can you share before and after performance data in the
+commit message covering short inputs below 16 bytes, lengths exercising
+the different nonzero remainders modulo 16, and larger buffers to show
+the effect on the folding loop?
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- devtools/checkpatches.sh               |  8 ----
- doc/guides/rel_notes/deprecation.rst   |  8 ----
- doc/guides/rel_notes/release_26_11.rst | 11 +++++
- lib/eal/arm/include/rte_atomic_32.h    |  6 ---
- lib/eal/arm/include/rte_atomic_64.h    |  6 ---
- lib/eal/include/generic/rte_atomic.h   | 61 --------------------------
- lib/eal/loongarch/include/rte_atomic.h |  6 ---
- lib/eal/ppc/include/rte_atomic.h       |  6 ---
- lib/eal/riscv/include/rte_atomic.h     |  6 ---
- lib/eal/x86/include/rte_atomic.h       |  4 --
- 10 files changed, 11 insertions(+), 111 deletions(-)
+Thanks
 
-diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
-index 466e06410a..c52fb5d1b6 100755
---- a/devtools/checkpatches.sh
-+++ b/devtools/checkpatches.sh
-@@ -121,14 +121,6 @@ check_forbidden_additions() { # <patch>
- 		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
- 		"$1" || res=1
- 
--	# refrain from new additions of rte_smp_[r/w]mb()
--	awk -v FOLDERS="lib drivers app examples" \
--		-v EXPRESSIONS="rte_smp_(r|w)?mb\\\(" \
--		-v RET_ON_FAIL=1 \
--		-v MESSAGE='Using rte_smp_[r/w]mb' \
--		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
--		"$1" || res=1
--
- 	# refrain from using compiler __sync_xxx builtins
- 	awk -v FOLDERS="lib drivers app examples" \
- 		-v EXPRESSIONS="__sync_.*\\\(" \
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 56a67c372e..600d789df8 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -39,14 +39,6 @@ Deprecation Notices
-   as part of its internal API. All drivers will be adjusted
-   to use the new unified VFIO container device assignment API.
- 
--* rte_smp_*mb: These APIs provide full barrier functionality. However, many
--  use cases do not require full barriers. To support such use cases, DPDK has
--  adopted atomic operations from
--  https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html. These
--  operations and a new wrapper ``rte_atomic_thread_fence`` instead of
--  ``__atomic_thread_fence`` must be used for patches that need to be merged in
--  20.08 onwards. This change will not introduce any performance degradation.
--
- * mempool: The ``flushthresh`` field in ``struct rte_mempool_cache`` is obsolete,
-   and will be removed in DPDK 26.11.
- 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 16d3a90723..dd21c87afa 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -182,6 +182,17 @@ Removed Items
-   ``cmpset`` and ``exchange``). Use the C11 ``rte_atomic_*_explicit``
-   operations instead.
- 
-+* Removed SMP memory barriers:
-+
-+  * ``rte_smp_mb()`` replaced with ``rte_atomic_thread_fence(rte_memory_order_seq_cst)``
-+  * ``rte_smp_rmb()`` replaced with ``rte_atomic_thread_fence(rte_memory_order_acquire)``
-+  * ``rte_smp_wmb()`` replaced with ``rte_atomic_thread_fence(rte_memory_order_release)``
-+
-+  Some call sites became release stores or acquire loads instead of a
-+  standalone fence. Barriers that order CPU accesses against a device,
-+  rather than against another CPU, should use ``rte_io_wmb()`` and
-+  ``rte_io_rmb()`` instead.
-+
- * ethdev: Removed support for ethdev queue stats mapping.
- 
-   ``rte_eth_dev_set_tx_queue_stats_mapping`` and ``rte_eth_dev_set_rx_queue_stats_mapping``
-diff --git a/lib/eal/arm/include/rte_atomic_32.h b/lib/eal/arm/include/rte_atomic_32.h
-index 696a539fef..4115271091 100644
---- a/lib/eal/arm/include/rte_atomic_32.h
-+++ b/lib/eal/arm/include/rte_atomic_32.h
-@@ -17,12 +17,6 @@ extern "C" {
- 
- #define	rte_rmb() __sync_synchronize()
- 
--#define rte_smp_mb() rte_mb()
--
--#define rte_smp_wmb() rte_wmb()
--
--#define rte_smp_rmb() rte_rmb()
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/arm/include/rte_atomic_64.h b/lib/eal/arm/include/rte_atomic_64.h
-index 9f790238df..604e777bcd 100644
---- a/lib/eal/arm/include/rte_atomic_64.h
-+++ b/lib/eal/arm/include/rte_atomic_64.h
-@@ -20,12 +20,6 @@ extern "C" {
- 
- #define rte_rmb() asm volatile("dmb oshld" : : : "memory")
- 
--#define rte_smp_mb() asm volatile("dmb ish" : : : "memory")
--
--#define rte_smp_wmb() asm volatile("dmb ishst" : : : "memory")
--
--#define rte_smp_rmb() asm volatile("dmb ishld" : : : "memory")
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/include/generic/rte_atomic.h b/lib/eal/include/generic/rte_atomic.h
-index 23fc7a4d44..d659691db4 100644
---- a/lib/eal/include/generic/rte_atomic.h
-+++ b/lib/eal/include/generic/rte_atomic.h
-@@ -51,67 +51,6 @@ static inline void rte_wmb(void);
- static inline void rte_rmb(void);
- ///@}
- 
--/** @name SMP Memory Barrier
-- */
--///@{
--/**
-- * General memory barrier between lcores
-- *
-- * Guarantees that the LOAD and STORE operations that precede the
-- * rte_smp_mb() call are globally visible across the lcores
-- * before the LOAD and STORE operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_acq_rel) should be used instead.
-- */
--static inline void rte_smp_mb(void);
--
--/**
-- * Write memory barrier between lcores
-- *
-- * Guarantees that the STORE operations that precede the
-- * rte_smp_wmb() call are globally visible across the lcores
-- * before the STORE operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_release) should be used instead.
-- *  The fence also guarantees LOAD operations that precede the call
-- *  are globally visible across the lcores before the STORE operations
-- *  that follows it.
-- */
--static inline void rte_smp_wmb(void);
--
--/**
-- * Read memory barrier between lcores
-- *
-- * Guarantees that the LOAD operations that precede the
-- * rte_smp_rmb() call are globally visible across the lcores
-- * before the LOAD operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_acquire) should be used instead.
-- *  The fence also guarantees LOAD operations that precede the call
-- *  are globally visible across the lcores before the STORE operations
-- *  that follows it.
-- */
--static inline void rte_smp_rmb(void);
--///@}
--
- /** @name I/O Memory Barrier
-  */
- ///@{
-diff --git a/lib/eal/loongarch/include/rte_atomic.h b/lib/eal/loongarch/include/rte_atomic.h
-index 785a452c9e..a789e3ab4d 100644
---- a/lib/eal/loongarch/include/rte_atomic.h
-+++ b/lib/eal/loongarch/include/rte_atomic.h
-@@ -18,12 +18,6 @@ extern "C" {
- 
- #define rte_rmb()	rte_mb()
- 
--#define rte_smp_mb()	rte_mb()
--
--#define rte_smp_wmb()	rte_mb()
--
--#define rte_smp_rmb()	rte_mb()
--
- #define rte_io_mb()	rte_mb()
- 
- #define rte_io_wmb()	rte_mb()
-diff --git a/lib/eal/ppc/include/rte_atomic.h b/lib/eal/ppc/include/rte_atomic.h
-index d3bd50a11a..1e5c1747e6 100644
---- a/lib/eal/ppc/include/rte_atomic.h
-+++ b/lib/eal/ppc/include/rte_atomic.h
-@@ -24,12 +24,6 @@ extern "C" {
- 
- #define	rte_rmb() asm volatile("sync" : : : "memory")
- 
--#define rte_smp_mb() rte_mb()
--
--#define rte_smp_wmb() rte_wmb()
--
--#define rte_smp_rmb() rte_rmb()
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/riscv/include/rte_atomic.h b/lib/eal/riscv/include/rte_atomic.h
-index 061b175f33..04c40e4e9b 100644
---- a/lib/eal/riscv/include/rte_atomic.h
-+++ b/lib/eal/riscv/include/rte_atomic.h
-@@ -23,12 +23,6 @@ extern "C" {
- 
- #define rte_rmb()	asm volatile("fence r, r" : : : "memory")
- 
--#define rte_smp_mb()	rte_mb()
--
--#define rte_smp_wmb()	rte_wmb()
--
--#define rte_smp_rmb()	rte_rmb()
--
- #define rte_io_mb()	asm volatile("fence iorw, iorw" : : : "memory")
- 
- #define rte_io_wmb()	asm volatile("fence orw, ow" : : : "memory")
-diff --git a/lib/eal/x86/include/rte_atomic.h b/lib/eal/x86/include/rte_atomic.h
-index a46bedb0f0..0ed9421055 100644
---- a/lib/eal/x86/include/rte_atomic.h
-+++ b/lib/eal/x86/include/rte_atomic.h
-@@ -23,10 +23,6 @@
- 
- #define	rte_rmb() _mm_lfence()
- 
--#define rte_smp_wmb() rte_compiler_barrier()
--
--#define rte_smp_rmb() rte_compiler_barrier()
--
- #ifdef __cplusplus
- extern "C" {
- #endif
--- 
-2.53.0
+--wathsala
 
+On 10/6/26 10:18, Shreesh Adiga wrote:
+> This patch includes the following minor changes:
+> 1) Use TBL based shift left for variable len shift instead of using
+>     vshift_bytes_left which adds a switch case for 16 len cases.
+> 2) Align the fold constants to use PMULL and PMULL2 instructions
+>     instead of using cross lane operands which requires additional shift.
+> 3) Remove unnecessary static arrays used in crc32_reduce_64_to_32 by
+>     adapting x86 SSE logic.
+> 4) Use x86 SSE logic for processing partial bytes sequence to avoid
+>     using multiple variable len shifts which inserts switch case.
+>
+> Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
+> ---
+>   lib/net/net_crc_neon.c | 71 +++++++++++++++++++++++++++---------------
+>   1 file changed, 46 insertions(+), 25 deletions(-)
+>
+> diff --git a/lib/net/net_crc_neon.c b/lib/net/net_crc_neon.c
+> index d924aed25d..3833fcba6e 100644
+> --- a/lib/net/net_crc_neon.c
+> +++ b/lib/net/net_crc_neon.c
+> @@ -24,6 +24,31 @@ struct crc_pmull_ctx {
+>   alignas(16) struct crc_pmull_ctx crc32_eth_pmull;
+>   alignas(16) struct crc_pmull_ctx crc16_ccitt_pmull;
+>   
+> +static const alignas(16) uint8_t crc_neon_shift_tab[32] = {
+> +	0xff, 0xfe, 0xfd, 0xfc, 0xfb, 0xfa, 0xf9, 0xf8,
+> +	0xf7, 0xf6, 0xf5, 0xf4, 0xf3, 0xf2, 0xf1, 0xf0,
+> +	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+> +	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
+> +};
+> +
+> +/**
+> + * Shifts left 128 bit register by specified number of bytes
+> + *
+> + * @param reg
+> + *   128 bit value
+> + * @param num
+> + *   number of bytes to shift left reg by (0-16)
+> + *
+> + * @return
+> + *   reg << (num * 8)
+> + */
+> +static inline uint64x2_t
+> +neon_shift_left(uint64x2_t reg, const unsigned int num)
+> +{
+> +	uint8x16_t tbl = vld1q_u8(crc_neon_shift_tab + 16 - num);
+> +	return vreinterpretq_u64_u8(vqtbl1q_u8(vreinterpretq_u8_u64(reg), tbl));
+> +}
+> +
+>   /**
+>    * @brief Performs one folding round
+>    *
+> @@ -46,12 +71,12 @@ crcr32_folding_round(uint64x2_t data_block, uint64x2_t precomp,
+>   	uint64x2_t fold)
+>   {
+>   	uint64x2_t tmp0 = vreinterpretq_u64_p128(vmull_p64(
+> -			vgetq_lane_p64(vreinterpretq_p64_u64(fold), 1),
+> +			vgetq_lane_p64(vreinterpretq_p64_u64(fold), 0),
+>   			vgetq_lane_p64(vreinterpretq_p64_u64(precomp), 0)));
+>   
+> -	uint64x2_t tmp1 = vreinterpretq_u64_p128(vmull_p64(
+> -			vgetq_lane_p64(vreinterpretq_p64_u64(fold), 0),
+> -			vgetq_lane_p64(vreinterpretq_p64_u64(precomp), 1)));
+> +	uint64x2_t tmp1 = vreinterpretq_u64_p128(vmull_high_p64(
+> +			vreinterpretq_p64_u64(fold),
+> +			vreinterpretq_p64_u64(precomp)));
+>   
+>   	return veorq_u64(tmp1, veorq_u64(data_block, tmp0));
+>   }
+> @@ -98,26 +123,19 @@ static inline uint32_t
+>   crcr32_reduce_64_to_32(uint64x2_t data64,
+>   	uint64x2_t precomp)
+>   {
+> -	static alignas(16) uint32_t mask1[4] = {
+> -		0xffffffff, 0xffffffff, 0x00000000, 0x00000000
+> -	};
+> -	static alignas(16) uint32_t mask2[4] = {
+> -		0x00000000, 0xffffffff, 0xffffffff, 0xffffffff
+> -	};
+>   	uint64x2_t tmp0, tmp1, tmp2;
+>   
+> -	tmp0 = vandq_u64(data64, vld1q_u64((uint64_t *)mask2));
+> +	tmp0 = vreinterpretq_u64_u32(
+> +		vsetq_lane_u32(0, vreinterpretq_u32_u64(data64), 0));
+>   
+>   	tmp1 = vreinterpretq_u64_p128(vmull_p64(
+>   		vgetq_lane_p64(vreinterpretq_p64_u64(tmp0), 0),
+>   		vgetq_lane_p64(vreinterpretq_p64_u64(precomp), 0)));
+>   	tmp1 = veorq_u64(tmp1, tmp0);
+> -	tmp1 = vandq_u64(tmp1, vld1q_u64((uint64_t *)mask1));
+>   
+>   	tmp2 = vreinterpretq_u64_p128(vmull_p64(
+>   		vgetq_lane_p64(vreinterpretq_p64_u64(tmp1), 0),
+>   		vgetq_lane_p64(vreinterpretq_p64_u64(precomp), 1)));
+> -	tmp2 = veorq_u64(tmp2, tmp1);
+>   	tmp2 = veorq_u64(tmp2, tmp0);
+>   
+>   	return vgetq_lane_u32(vreinterpretq_u32_u64(tmp2), 2);
+> @@ -177,10 +195,10 @@ crc32_eth_calc_pmull(
+>   		fold = vld1q_u64((uint64_t *)buffer);
+>   		fold = veorq_u64(fold, temp);
+>   		if (unlikely(data_len < 4)) {
+> -			fold = vshift_bytes_left(fold, 8 - data_len);
+> +			fold = neon_shift_left(fold, 8 - data_len);
+>   			goto barret_reduction;
+>   		}
+> -		fold = vshift_bytes_left(fold, 16 - data_len);
+> +		fold = neon_shift_left(fold, 16 - data_len);
+>   		goto reduction_128_64;
+>   	}
+>   
+> @@ -201,14 +219,17 @@ crc32_eth_calc_pmull(
+>   
+>   	/** Partial bytes - process last <16 bytes */
+>   	if (likely(n < data_len)) {
+> -		uint64x2_t last16, a, b, mask;
+> +		uint8x16_t last16, t1, t2;
+> +		uint64x2_t a, b;
+>   		uint32_t rem = data_len & 15;
+>   
+> -		last16 = vld1q_u64((const uint64_t *)&data[data_len - 16]);
+> -		a = vshift_bytes_left(fold, 16 - rem);
+> -		b = vshift_bytes_right(fold, rem);
+> -		mask = vshift_bytes_left(vdupq_n_u64(-1), 16 - rem);
+> -		b = vorrq_u64(b, vandq_u64(mask, last16));
+> +		last16 = vld1q_u8((const uint8_t *)&data[data_len - 16]);
+> +		t1 = vld1q_u8(crc_neon_shift_tab + rem);
+> +		a  = vreinterpretq_u64_u8(vqtbl1q_u8(vreinterpretq_u8_u64(fold), t1));
+> +		t2 = vmvnq_u8(t1);
+> +		t2 = vqtbl1q_u8(vreinterpretq_u8_u64(fold), t2);
+> +		t1 = vcgezq_s8(vreinterpretq_s8_u8(t1));
+> +		b  = vreinterpretq_u64_u8(vbslq_u8(t1, last16, t2));
+>   
+>   		/* k = rk3 & rk4 */
+>   		fold = crcr32_folding_round(b, k, a);
+> @@ -230,14 +251,14 @@ void
+>   rte_net_crc_neon_init(void)
+>   {
+>   	/* Initialize CRC16 data */
+> -	uint64_t ccitt_k1_k2[2] = {0x14ff2LLU, 0x19a3cLLU};
+> -	uint64_t ccitt_k3_k4[2] = {0x189aeLLU, 0x8e10LLU};
+> +	uint64_t ccitt_k1_k2[2] = {0x19a3cLLU, 0x14ff2LLU};
+> +	uint64_t ccitt_k3_k4[2] = {0x8e10LLU, 0x189aeLLU};
+>   	uint64_t ccitt_k5_k6[2] = {0x189aeLLU, 0x114aaLLU};
+>   	uint64_t ccitt_k7_k8[2] = {0x11c581910LLU, 0x10811LLU};
+>   
+>   	/* Initialize CRC32 data */
+> -	uint64_t eth_k1_k2[2] = {0x1c6e41596LLU, 0x154442bd4LLU};
+> -	uint64_t eth_k3_k4[2] = {0xccaa009eLLU, 0x1751997d0LLU};
+> +	uint64_t eth_k1_k2[2] = {0x154442bd4LLU, 0x1c6e41596LLU};
+> +	uint64_t eth_k3_k4[2] = {0x1751997d0LLU, 0xccaa009eLLU};
+>   	uint64_t eth_k5_k6[2] = {0xccaa009eLLU, 0x163cd6124LLU};
+>   	uint64_t eth_k7_k8[2] = {0x1f7011640LLU, 0x1db710641LLU};
+>   
