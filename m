@@ -2,51 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1554CA5FED
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 06:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C66CA6012
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 07:25:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C63434027A;
-	Fri,  9 Oct 2026 08:22:22 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 1710F4026D
- for <dev@dpdk.org>; Fri,  9 Oct 2026 08:22:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791526941; x=1823062941;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=6EksIa4slxkKG38JLOGLRydNgm6QX92hzQ/AVdNKVNE=;
- b=dpL2ZgmHb5k0P4TtRDql9RyWlguB9l9yyLHrlh9qwnZYGmBrxAgd/ZsF
- XQByc8bIvmIsPLALy1wfsXDn7MabaBzarLIKgRfv0aJgu+TTj5b7a1Q5X
- EDIDMOHRxIAKoYGHsXJR6fSWN+kr8YM8csfATn0aqIKr5l2LrBs1wNwB9
- Fy/1GMD7gRInT+saO4D5Ie6FCC4dYyQoVuDBSHbSaqfTPEndYQLmWIdj7
- H2u4uAMqE4LxsQ1onGuHUPtJUniahqBUPXLoNPyP1dSzxvmxdY7dVnXoG
- nuA1CpFKMPEiRWK8RXWgQSxXS+FBmL4a9HF7I7AoYT1wFS2974c28udam w==;
-X-CSE-ConnectionGUID: tBFZ9VG3T56qcF+0Se4KSg==
-X-CSE-MsgGUID: Nf9rkLtnRb2FP5ruIoJQhg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11929"; a="429527"
-X-IronPort-AV: E=Sophos;i="6.27,147,1787036400"; 
-   d="scan'208";a="429527"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Oct 2026 23:22:19 -0700
-X-CSE-ConnectionGUID: AYJN9TOcRt2V82VbXOSysg==
-X-CSE-MsgGUID: J1Z6nLvcQtqUkRR1ZSazWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,147,1787036400"; 
-   d="scan'208";a="184345"
-Received: from client-08.iind.intel.com ([10.190.203.152])
- by orviesa009.jf.intel.com with ESMTP; 08 Oct 2026 23:22:18 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id AE55D4026D;
+	Fri,  9 Oct 2026 09:25:53 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 260494021E
+ for <dev@dpdk.org>; Fri,  9 Oct 2026 09:25:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1791530751;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=D7KzaCHLZfjNdgA7fwOQUSoPCvyN+kFWDZlYeHWzK4I=;
+ b=R5JPoXF3zRydIu7XwOFCtdsh5K7Mg6/3XpLa+I8VD0Oi+nmOJrRiBH3UIFPWq6RvETPPdm
+ EwGyKdUuXoquM2+z3n+QLJszeXh4gBngq82t1StOi0t0qhsKEzZB13PsMGmowiaj5xiS48
+ FftX6wosEnKA4yiPdbDRNAXpD+IruS8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-410-JTzcN7L0Pp2fjRgtP3nQkw-1; Fri,
+ 09 Oct 2026 03:25:48 -0400
+X-MC-Unique: JTzcN7L0Pp2fjRgtP3nQkw-1
+X-Mimecast-MFC-AGG-ID: JTzcN7L0Pp2fjRgtP3nQkw_1791530745
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 4DF171977021; Fri,  9 Oct 2026 07:25:44 +0000 (UTC)
+Received: from dmarchan.home (headnet05.pony-001.prod.iad2.dc.redhat.com
+ [10.2.32.117])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 2EC4D1800446; Fri,  9 Oct 2026 07:25:37 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com,
-	Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH] net/i40e: enable vector Rx with IEEE1588 timestamping
-Date: Fri,  9 Oct 2026 05:34:49 +0000
-Message-ID: <20261009053449.843546-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.43.0
+Cc: thomas@monjalon.net, g.singh@nxp.com,
+ Nicolas Chautru <nicolas.chautru@intel.com>,
+ Rosen Xu <rosen.xu@altera.com>, Tomasz Duszynski <tduszynski@marvell.com>,
+ Jack Bond-Preston <jack.bond-preston@foss.arm.com>,
+ Kai Ji <kai.ji@intel.com>, Pablo de Lara <pablo.de.lara.guarch@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>,
+ Liron Himi <lironh@marvell.com>, Martin Spinler <spinler@cesnet.cz>,
+ Tetsuya Mukawa <mtetsuyah@gmail.com>, Harman Kalra <hkalra@marvell.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Matan Azrad <matan@nvidia.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+Subject: [PATCH] drivers: remove driver alias macro
+Date: Fri,  9 Oct 2026 09:25:35 +0200
+Message-ID: <20261009072535.3039944-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: amEgvl7OuUGFu_8wxdm2ZQGp7ZQ0m4Uvljxq9G0kyyk_1791530745
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,305 +76,521 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enabling IEEE1588 support at build time forced all ports to fall back
-to the scalar Rx path, as the vector paths did not propagate either
-the PTP flags or the hardware timestamp register index.
-As a result, applications incurred the performance cost of scalar Rx
-on all traffic, even when packet timestamping was never enabled
-at runtime.
+Remove the RTE_PMD_REGISTER_ALIAS macro defined in the vdev bus.
 
-The hardware does not embed timestamps in Rx descriptors.
-Instead, it latches each timestamp into one of four dedicated
-registers and reports only a validity bit along with a 2-bit
-register index.
-Propagating these to the mbuf requires a per-packet store
-that SIMD cannot accelerate.
+The old macro relied on a trick where a static pointer was first
+declared as NULL, then redefined with the actual alias string by
+the ALIAS macro.
+This required careful ordering of macros and was confusing.
 
-To remove this limitation, the vector Rx paths now perform a
-lightweight scalar pass over the descriptors consumed in each
-burst, populating the same PTP flags and timestamp register
-index as the scalar implementation.
-The timestamp decoding logic is shared between the scalar and
-vector paths to ensure consistent behavior.
+Additionally, the stringification of the alias parameter meant that
+aliases containing commas were impossible, as the preprocessor would
+interpret them as macro argument separators.
 
-Applications requiring PTP hardware timestamping therefore no
-longer need to choose between hardware timestamp support and
-vector Rx throughput.
+Replace this macro with directly setting .driver.alias in the driver
+struct definitions.
 
-Scattered Rx reassembly already propagated the offload flags from the
-last segment to the head mbuf, but it did not propagate the timestamp
-register index.
-Consequently, a segmented PTP packet could carry a valid timestamp flag
-while retaining a stale register index.
-The reassembly path now propagates the timestamp index as well, ensuring
-consistent metadata for multi-segment packets.
+This macro had clones in the platform bus and the ifpga bus, though none
+of them were in use, remove them.
 
-Tx path selection remains unchanged, and builds without IEEE1588 support
-are unaffected.
-
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/net/intel/common/rx.h                 |  3 +++
- drivers/net/intel/i40e/i40e_rxtx.c            | 24 -------------------
- drivers/net/intel/i40e/i40e_rxtx.h            | 24 +++++++++++++++++++
- .../net/intel/i40e/i40e_rxtx_vec_altivec.c    | 10 ++++++++
- drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c   |  8 +++++++
- drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c |  8 +++++++
- drivers/net/intel/i40e/i40e_rxtx_vec_common.h | 24 +++++++++++++++----
- drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   | 10 ++++++++
- 8 files changed, 82 insertions(+), 29 deletions(-)
+ drivers/baseband/null/bbdev_null.c               | 4 ++--
+ drivers/baseband/turbo_sw/bbdev_turbo_software.c | 4 ++--
+ drivers/bus/ifpga/bus_ifpga_driver.h             | 5 -----
+ drivers/bus/platform/bus_platform_driver.h       | 6 ------
+ drivers/bus/vdev/bus_vdev_driver.h               | 5 -----
+ drivers/crypto/armv8/rte_armv8_pmd.c             | 4 ++--
+ drivers/crypto/ipsec_mb/pmd_aesni_gcm.c          | 4 ++--
+ drivers/crypto/ipsec_mb/pmd_aesni_mb.c           | 4 ++--
+ drivers/crypto/ipsec_mb/pmd_snow3g.c             | 4 ++--
+ drivers/crypto/ipsec_mb/pmd_zuc.c                | 5 ++---
+ drivers/crypto/null/null_crypto_pmd.c            | 2 +-
+ drivers/net/af_packet/rte_eth_af_packet.c        | 2 +-
+ drivers/net/bonding/rte_eth_bond_pmd.c           | 2 +-
+ drivers/net/mvpp2/mrvl_ethdev.c                  | 2 +-
+ drivers/net/nfb/nfb_vdev.c                       | 2 +-
+ drivers/net/null/rte_eth_null.c                  | 2 +-
+ drivers/net/octeontx/octeontx_ethdev.c           | 2 +-
+ drivers/net/pcap/pcap_ethdev.c                   | 2 +-
+ drivers/net/ring/rte_eth_ring.c                  | 2 +-
+ drivers/net/tap/rte_eth_tap.c                    | 2 +-
+ drivers/net/vdev_netvsc/vdev_netvsc.c            | 2 +-
+ drivers/net/vhost/rte_eth_vhost.c                | 2 +-
+ drivers/net/virtio/virtio_user_ethdev.c          | 2 +-
+ drivers/raw/ifpga/ifpga_rawdev.c                 | 2 +-
+ 24 files changed, 28 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/net/intel/common/rx.h b/drivers/net/intel/common/rx.h
-index e0bf520ebd..8f4454d477 100644
---- a/drivers/net/intel/common/rx.h
-+++ b/drivers/net/intel/common/rx.h
-@@ -167,6 +167,9 @@ ci_rx_reassemble_packets(struct rte_mbuf **rx_bufs, uint16_t nb_bufs, uint8_t *s
- 				start->hash = end->hash;
- 				start->vlan_tci = end->vlan_tci;
- 				start->ol_flags = end->ol_flags;
-+#ifdef RTE_LIBRTE_IEEE1588
-+				start->timesync = end->timesync;
-+#endif
- 				/* we need to strip crc for the whole packet */
- 				start->pkt_len -= crc_len;
- 				if (end->data_len > crc_len) {
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index 8bfd1e07d2..77ebcd915e 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -194,30 +194,6 @@ i40e_rxd_error_to_pkt_flags(uint64_t qword)
- 	return flags;
+diff --git a/drivers/baseband/null/bbdev_null.c b/drivers/baseband/null/bbdev_null.c
+index cfa1790126..d359bdcb5e 100644
+--- a/drivers/baseband/null/bbdev_null.c
++++ b/drivers/baseband/null/bbdev_null.c
+@@ -345,12 +345,12 @@ null_bbdev_remove(struct rte_vdev_device *vdev)
  }
  
--/* Function to check and set the ieee1588 timesync index and get the
-- * appropriate flags.
-- */
--#ifdef RTE_LIBRTE_IEEE1588
--static inline uint64_t
--i40e_get_iee15888_flags(struct rte_mbuf *mb, uint64_t qword)
--{
--	uint64_t pkt_flags = 0;
--	uint16_t tsyn = (qword & (I40E_RXD_QW1_STATUS_TSYNVALID_MASK
--				  | I40E_RXD_QW1_STATUS_TSYNINDX_MASK))
--				    >> I40E_RX_DESC_STATUS_TSYNINDX_SHIFT;
+ static struct rte_vdev_driver bbdev_null_pmd_drv = {
++	.driver.alias = "bbdev_null",
+ 	.probe = null_bbdev_probe,
+-	.remove = null_bbdev_remove
++	.remove = null_bbdev_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(DRIVER_NAME, bbdev_null_pmd_drv);
+ RTE_PMD_REGISTER_PARAM_STRING(DRIVER_NAME,
+ 	BBDEV_NULL_MAX_NB_QUEUES_ARG"=<int> "
+ 	BBDEV_NULL_SOCKET_ID_ARG"=<int>");
+-RTE_PMD_REGISTER_ALIAS(DRIVER_NAME, bbdev_null);
+diff --git a/drivers/baseband/turbo_sw/bbdev_turbo_software.c b/drivers/baseband/turbo_sw/bbdev_turbo_software.c
+index 2cab495294..9d5c505943 100644
+--- a/drivers/baseband/turbo_sw/bbdev_turbo_software.c
++++ b/drivers/baseband/turbo_sw/bbdev_turbo_software.c
+@@ -1981,12 +1981,12 @@ turbo_sw_bbdev_remove(struct rte_vdev_device *vdev)
+ }
+ 
+ static struct rte_vdev_driver bbdev_turbo_sw_pmd_drv = {
++	.driver.alias = "turbo_sw",
+ 	.probe = turbo_sw_bbdev_probe,
+-	.remove = turbo_sw_bbdev_remove
++	.remove = turbo_sw_bbdev_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(DRIVER_NAME, bbdev_turbo_sw_pmd_drv);
+ RTE_PMD_REGISTER_PARAM_STRING(DRIVER_NAME,
+ 	TURBO_SW_MAX_NB_QUEUES_ARG"=<int> "
+ 	TURBO_SW_SOCKET_ID_ARG"=<int>");
+-RTE_PMD_REGISTER_ALIAS(DRIVER_NAME, turbo_sw);
+diff --git a/drivers/bus/ifpga/bus_ifpga_driver.h b/drivers/bus/ifpga/bus_ifpga_driver.h
+index 4df95485c9..66ef5daf0f 100644
+--- a/drivers/bus/ifpga/bus_ifpga_driver.h
++++ b/drivers/bus/ifpga/bus_ifpga_driver.h
+@@ -119,18 +119,13 @@ __rte_internal
+ void rte_ifpga_driver_unregister(struct rte_afu_driver *driver);
+ 
+ #define RTE_PMD_REGISTER_AFU(nm, afudrv)\
+-static const char *afudrvinit_ ## nm ## _alias;\
+ RTE_INIT(afudrvinitfn_ ##afudrv)\
+ {\
+ 	(afudrv).driver.name = RTE_STR(nm);\
+-	(afudrv).driver.alias = afudrvinit_ ## nm ## _alias;\
+ 	rte_ifpga_driver_register(&afudrv);\
+ } \
+ RTE_PMD_EXPORT_NAME(nm)
+ 
+-#define RTE_PMD_REGISTER_AFU_ALIAS(nm, alias)\
+-static const char *afudrvinit_ ## nm ## _alias = RTE_STR(alias)
 -
--	if ((mb->packet_type & RTE_PTYPE_L2_MASK)
--			== RTE_PTYPE_L2_ETHER_TIMESYNC)
--		pkt_flags = RTE_MBUF_F_RX_IEEE1588_PTP;
--	if (tsyn & 0x04) {
--		pkt_flags |= RTE_MBUF_F_RX_IEEE1588_TMST;
--		mb->timesync = tsyn & 0x03;
--	}
+ #ifdef __cplusplus
+ }
+ #endif /* __cplusplus */
+diff --git a/drivers/bus/platform/bus_platform_driver.h b/drivers/bus/platform/bus_platform_driver.h
+index e4dcbacf5e..1a55c729db 100644
+--- a/drivers/bus/platform/bus_platform_driver.h
++++ b/drivers/bus/platform/bus_platform_driver.h
+@@ -117,19 +117,13 @@ struct rte_platform_driver {
+ 
+ /** Helper for platform driver registration. */
+ #define RTE_PMD_REGISTER_PLATFORM(nm, platform_drv) \
+-static const char *pdrvinit_ ## nm ## _alias; \
+ RTE_INIT(pdrvinitfn_ ##nm) \
+ { \
+ 	(platform_drv).driver.name = RTE_STR(nm); \
+-	(platform_drv).driver.alias = pdrvinit_ ## nm ## _alias; \
+ 	rte_platform_register(&(platform_drv)); \
+ } \
+ RTE_PMD_EXPORT_NAME(nm)
+ 
+-/** Helper for setting platform driver alias. */
+-#define RTE_PMD_REGISTER_ALIAS(nm, alias) \
+-static const char *pdrvinit_ ## nm ## _alias = RTE_STR(alias)
 -
--	return pkt_flags;
--}
--#endif
+ /**
+  * Register a platform device driver.
+  *
+diff --git a/drivers/bus/vdev/bus_vdev_driver.h b/drivers/bus/vdev/bus_vdev_driver.h
+index ecfc5384fc..d3e60d4902 100644
+--- a/drivers/bus/vdev/bus_vdev_driver.h
++++ b/drivers/bus/vdev/bus_vdev_driver.h
+@@ -119,18 +119,13 @@ __rte_internal
+ void rte_vdev_unregister(struct rte_vdev_driver *driver);
+ 
+ #define RTE_PMD_REGISTER_VDEV(nm, vdrv)\
+-static const char *vdrvinit_ ## nm ## _alias;\
+ RTE_INIT(vdrvinitfn_ ##vdrv)\
+ {\
+ 	(vdrv).driver.name = RTE_STR(nm);\
+-	(vdrv).driver.alias = vdrvinit_ ## nm ## _alias;\
+ 	rte_vdev_register(&vdrv);\
+ } \
+ RTE_PMD_EXPORT_NAME(nm)
+ 
+-#define RTE_PMD_REGISTER_ALIAS(nm, alias)\
+-static const char *vdrvinit_ ## nm ## _alias = RTE_STR(alias)
 -
- static inline uint64_t
- i40e_rxd_build_fdir(volatile union ci_rx_desc *rxdp, struct rte_mbuf *mb)
- {
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.h b/drivers/net/intel/i40e/i40e_rxtx.h
-index 0977342064..1532736bd2 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.h
-+++ b/drivers/net/intel/i40e/i40e_rxtx.h
-@@ -107,6 +107,30 @@ enum i40e_header_split_mode {
- 
- #define I40E_TX_VECTOR_OFFLOADS RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE
- 
-+/* Function to check and set the ieee1588 timesync index and get the
-+ * appropriate flags.
-+ */
-+#ifdef RTE_LIBRTE_IEEE1588
-+static inline uint64_t
-+i40e_get_iee15888_flags(struct rte_mbuf *mb, uint64_t qword)
-+{
-+	uint64_t pkt_flags = 0;
-+	uint16_t tsyn = (qword & (I40E_RXD_QW1_STATUS_TSYNVALID_MASK
-+				  | I40E_RXD_QW1_STATUS_TSYNINDX_MASK))
-+				    >> I40E_RX_DESC_STATUS_TSYNINDX_SHIFT;
-+
-+	if ((mb->packet_type & RTE_PTYPE_L2_MASK)
-+			== RTE_PTYPE_L2_ETHER_TIMESYNC)
-+		pkt_flags = RTE_MBUF_F_RX_IEEE1588_PTP;
-+	if (tsyn & 0x04) {
-+		pkt_flags |= RTE_MBUF_F_RX_IEEE1588_TMST;
-+		mb->timesync = tsyn & 0x03;
-+	}
-+
-+	return pkt_flags;
-+}
-+#endif
-+
- int i40e_dev_rx_queue_start(struct rte_eth_dev *dev, uint16_t rx_queue_id);
- int i40e_dev_rx_queue_stop(struct rte_eth_dev *dev, uint16_t rx_queue_id);
- int i40e_dev_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id);
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-index 68667bdc9b..f909cad001 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-@@ -122,6 +122,9 @@ _recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 		   uint16_t nb_pkts, uint8_t *split_packet)
- {
- 	volatile union ci_rx_desc *rxdp;
-+#ifdef RTE_LIBRTE_IEEE1588
-+	volatile union ci_rx_desc *rxdp_burst;
-+#endif
- 	struct ci_rx_entry *sw_ring;
- 	uint16_t nb_pkts_recd;
- 	int pos;
-@@ -145,6 +148,9 @@ _recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 	 * going to cost about 7 cycles
- 	 */
- 	rxdp = rxq->rx_ring + rxq->rx_tail;
-+#ifdef RTE_LIBRTE_IEEE1588
-+	rxdp_burst = rxdp;
-+#endif
- 
- 	rte_prefetch0(rxdp);
- 
-@@ -365,6 +371,10 @@ _recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 	rxq->rx_tail = (uint16_t)(rxq->rx_tail & (rxq->nb_rx_desc - 1));
- 	rxq->rxrearm_nb = (uint16_t)(rxq->rxrearm_nb + nb_pkts_recd);
- 
-+#ifdef RTE_LIBRTE_IEEE1588
-+	i40e_rx_vec_desc_to_timesync(rxdp_burst, rx_pkts, nb_pkts_recd);
-+#endif
-+
- 	return nb_pkts_recd;
+ #ifdef __cplusplus
  }
- 
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c b/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
-index dd06e258ad..d39fe68b9f 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
-@@ -115,6 +115,9 @@ _recv_raw_pkts_vec_avx2(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 			0, rxq->mbuf_initializer);
- 	struct ci_rx_entry *sw_ring = &rxq->sw_ring[rxq->rx_tail];
- 	volatile union ci_rx_desc *rxdp = rxq->rx_ring + rxq->rx_tail;
-+#ifdef RTE_LIBRTE_IEEE1588
-+	volatile union ci_rx_desc *rxdp_burst = rxdp;
-+#endif
- 	const int avx_aligned = ((rxq->rx_tail & 1) == 0);
- 	rte_prefetch0(rxdp);
- 
-@@ -602,6 +605,11 @@ _recv_raw_pkts_vec_avx2(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 		received--;
- 	}
- 	rxq->rxrearm_nb += received;
-+
-+#ifdef RTE_LIBRTE_IEEE1588
-+	i40e_rx_vec_desc_to_timesync(rxdp_burst, rx_pkts, received);
-+#endif
-+
- 	return received;
- }
- 
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c b/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
-index ea2e6dc024..63d3f54670 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
-@@ -116,6 +116,9 @@ _recv_raw_pkts_vec_avx512(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 			0, rxq->mbuf_initializer);
- 	struct ci_rx_entry *sw_ring = &rxq->sw_ring[rxq->rx_tail];
- 	volatile union ci_rx_desc *rxdp = rxq->rx_ring + rxq->rx_tail;
-+#ifdef RTE_LIBRTE_IEEE1588
-+	volatile union ci_rx_desc *rxdp_burst = rxdp;
-+#endif
- 
- 	rte_prefetch0(rxdp);
- 
-@@ -669,6 +672,11 @@ _recv_raw_pkts_vec_avx512(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 		received--;
- 	}
- 	rxq->rxrearm_nb += received;
-+
-+#ifdef RTE_LIBRTE_IEEE1588
-+	i40e_rx_vec_desc_to_timesync(rxdp_burst, rx_pkts, received);
-+#endif
-+
- 	return received;
- }
- 
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_common.h b/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
-index 292a39501e..832179fa7a 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
-@@ -50,10 +50,28 @@ _i40e_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
- 	memset(rxq->sw_ring, 0, sizeof(rxq->sw_ring[0]) * rxq->nb_rx_desc);
- }
- 
-+#ifdef RTE_LIBRTE_IEEE1588
-+/* The hardware latches Rx timestamps into one of four registers and only
-+ * reports the register index in the descriptor, so there is nothing to
-+ * extract in SIMD and this is done one descriptor at a time.
-+ */
-+static inline void
-+i40e_rx_vec_desc_to_timesync(volatile union ci_rx_desc *rxdp,
-+		struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
-+{
-+	for (uint16_t i = 0; i < nb_pkts; i++) {
-+		struct rte_mbuf *mb = rx_pkts[i];
-+		const uint64_t qword1 =
-+			rte_le_to_cpu_64(rxdp[i].wb.qword1.status_error_len);
-+
-+		mb->ol_flags |= i40e_get_iee15888_flags(mb, qword1);
-+	}
-+}
-+#endif
-+
- static inline int
- i40e_rx_vec_dev_conf_condition_check_default(struct rte_eth_dev *dev)
- {
--#ifndef RTE_LIBRTE_IEEE1588
- 	/**
- 	 * Vector mode is allowed only when number of Rx queue
- 	 * descriptor is power of 2.
-@@ -67,10 +85,6 @@ i40e_rx_vec_dev_conf_condition_check_default(struct rte_eth_dev *dev)
- 	}
- 
- 	return 0;
--#else
--	RTE_SET_USED(dev);
--	return -1;
--#endif
- }
- 
  #endif
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-index debc9bda28..2189876833 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-@@ -284,6 +284,9 @@ _recv_raw_pkts_vec(struct ci_rx_queue *__rte_restrict rxq,
- 		   uint16_t nb_pkts, uint8_t *split_packet)
- {
- 	volatile union ci_rx_desc *rxdp;
-+#ifdef RTE_LIBRTE_IEEE1588
-+	volatile union ci_rx_desc *rxdp_burst;
-+#endif
- 	struct ci_rx_entry *sw_ring;
- 	uint16_t nb_pkts_recd;
- 	int pos;
-@@ -322,6 +325,9 @@ _recv_raw_pkts_vec(struct ci_rx_queue *__rte_restrict rxq,
- 	 * going to cost about 7 cycles
- 	 */
- 	rxdp = rxq->rx_ring + rxq->rx_tail;
-+#ifdef RTE_LIBRTE_IEEE1588
-+	rxdp_burst = rxdp;
-+#endif
- 
- 	rte_prefetch_non_temporal(rxdp);
- 
-@@ -513,6 +519,10 @@ _recv_raw_pkts_vec(struct ci_rx_queue *__rte_restrict rxq,
- 	rxq->rx_tail = (uint16_t)(rxq->rx_tail & (rxq->nb_rx_desc - 1));
- 	rxq->rxrearm_nb = (uint16_t)(rxq->rxrearm_nb + nb_pkts_recd);
- 
-+#ifdef RTE_LIBRTE_IEEE1588
-+	i40e_rx_vec_desc_to_timesync(rxdp_burst, rx_pkts, nb_pkts_recd);
-+#endif
-+
- 	return nb_pkts_recd;
+diff --git a/drivers/crypto/armv8/rte_armv8_pmd.c b/drivers/crypto/armv8/rte_armv8_pmd.c
+index a7caac186d..582dbadbdd 100644
+--- a/drivers/crypto/armv8/rte_armv8_pmd.c
++++ b/drivers/crypto/armv8/rte_armv8_pmd.c
+@@ -845,8 +845,9 @@ cryptodev_armv8_crypto_uninit(struct rte_vdev_device *vdev)
  }
  
+ static struct rte_vdev_driver armv8_crypto_pmd_drv = {
++	.driver.alias = "cryptodev_armv8_pmd",
+ 	.probe = cryptodev_armv8_crypto_init,
+-	.remove = cryptodev_armv8_crypto_uninit
++	.remove = cryptodev_armv8_crypto_uninit,
+ };
+ 
+ static struct cryptodev_driver armv8_crypto_drv;
+@@ -854,7 +855,6 @@ static struct cryptodev_driver armv8_crypto_drv;
+ RTE_LOG_REGISTER_DEFAULT(crypto_armv8_log_type, ERR);
+ 
+ RTE_PMD_REGISTER_VDEV(CRYPTODEV_NAME_ARMV8_PMD, armv8_crypto_pmd_drv);
+-RTE_PMD_REGISTER_ALIAS(CRYPTODEV_NAME_ARMV8_PMD, cryptodev_armv8_pmd);
+ RTE_PMD_REGISTER_PARAM_STRING(CRYPTODEV_NAME_ARMV8_PMD,
+ 	"max_nb_queue_pairs=<int> "
+ 	"socket_id=<int>");
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_gcm.c b/drivers/crypto/ipsec_mb/pmd_aesni_gcm.c
+index 3c266cc47e..2a4bede7dd 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_gcm.c
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_gcm.c
+@@ -780,15 +780,15 @@ aesni_gcm_probe(struct rte_vdev_device *vdev)
+ }
+ 
+ static struct rte_vdev_driver cryptodev_aesni_gcm_pmd_drv = {
++	.driver.alias = "cryptodev_aesni_gcm_pmd",
+ 	.probe = aesni_gcm_probe,
+-	.remove = ipsec_mb_remove
++	.remove = ipsec_mb_remove,
+ };
+ 
+ static struct cryptodev_driver aesni_gcm_crypto_drv;
+ 
+ RTE_PMD_REGISTER_VDEV(CRYPTODEV_NAME_AESNI_GCM_PMD,
+ 		      cryptodev_aesni_gcm_pmd_drv);
+-RTE_PMD_REGISTER_ALIAS(CRYPTODEV_NAME_AESNI_GCM_PMD, cryptodev_aesni_gcm_pmd);
+ RTE_PMD_REGISTER_PARAM_STRING(CRYPTODEV_NAME_AESNI_GCM_PMD,
+ 			      "max_nb_queue_pairs=<int> socket_id=<int>");
+ RTE_PMD_REGISTER_CRYPTO_DRIVER(aesni_gcm_crypto_drv,
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
+index 4c5b6e70b5..d39539d7aa 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
+@@ -2542,15 +2542,15 @@ aesni_mb_probe(struct rte_vdev_device *vdev)
+ }
+ 
+ static struct rte_vdev_driver cryptodev_aesni_mb_pmd_drv = {
++	.driver.alias = "cryptodev_aesni_mb_pmd",
+ 	.probe = aesni_mb_probe,
+-	.remove = ipsec_mb_remove
++	.remove = ipsec_mb_remove,
+ };
+ 
+ static struct cryptodev_driver aesni_mb_crypto_drv;
+ 
+ RTE_PMD_REGISTER_VDEV(CRYPTODEV_NAME_AESNI_MB_PMD,
+ 	cryptodev_aesni_mb_pmd_drv);
+-RTE_PMD_REGISTER_ALIAS(CRYPTODEV_NAME_AESNI_MB_PMD, cryptodev_aesni_mb_pmd);
+ RTE_PMD_REGISTER_PARAM_STRING(CRYPTODEV_NAME_AESNI_MB_PMD,
+ 			"max_nb_queue_pairs=<int> socket_id=<int>");
+ RTE_PMD_REGISTER_CRYPTO_DRIVER(
+diff --git a/drivers/crypto/ipsec_mb/pmd_snow3g.c b/drivers/crypto/ipsec_mb/pmd_snow3g.c
+index 35fe23c157..28b078ea0c 100644
+--- a/drivers/crypto/ipsec_mb/pmd_snow3g.c
++++ b/drivers/crypto/ipsec_mb/pmd_snow3g.c
+@@ -566,14 +566,14 @@ snow3g_probe(struct rte_vdev_device *vdev)
+ }
+ 
+ static struct rte_vdev_driver cryptodev_snow3g_pmd_drv = {
++	.driver.alias = "cryptodev_snow3g_pmd",
+ 	.probe = snow3g_probe,
+-	.remove = ipsec_mb_remove
++	.remove = ipsec_mb_remove,
+ };
+ 
+ static struct cryptodev_driver snow3g_crypto_drv;
+ 
+ RTE_PMD_REGISTER_VDEV(CRYPTODEV_NAME_SNOW3G_PMD, cryptodev_snow3g_pmd_drv);
+-RTE_PMD_REGISTER_ALIAS(CRYPTODEV_NAME_SNOW3G_PMD, cryptodev_snow3g_pmd);
+ RTE_PMD_REGISTER_PARAM_STRING(CRYPTODEV_NAME_SNOW3G_PMD,
+ 			       "max_nb_queue_pairs=<int> socket_id=<int>");
+ RTE_PMD_REGISTER_CRYPTO_DRIVER(snow3g_crypto_drv,
+diff --git a/drivers/crypto/ipsec_mb/pmd_zuc.c b/drivers/crypto/ipsec_mb/pmd_zuc.c
+index 28ab6982f2..102ac520bb 100644
+--- a/drivers/crypto/ipsec_mb/pmd_zuc.c
++++ b/drivers/crypto/ipsec_mb/pmd_zuc.c
+@@ -369,15 +369,14 @@ zuc_probe(struct rte_vdev_device *vdev)
+ }
+ 
+ static struct rte_vdev_driver cryptodev_zuc_pmd_drv = {
++	.driver.alias = "cryptodev_zuc_pmd",
+ 	.probe = zuc_probe,
+-	.remove = ipsec_mb_remove
+-
++	.remove = ipsec_mb_remove,
+ };
+ 
+ static struct cryptodev_driver zuc_crypto_drv;
+ 
+ RTE_PMD_REGISTER_VDEV(CRYPTODEV_NAME_ZUC_PMD, cryptodev_zuc_pmd_drv);
+-RTE_PMD_REGISTER_ALIAS(CRYPTODEV_NAME_ZUC_PMD, cryptodev_zuc_pmd);
+ RTE_PMD_REGISTER_PARAM_STRING(CRYPTODEV_NAME_ZUC_PMD,
+ 	"max_nb_queue_pairs=<int> socket_id=<int>");
+ RTE_PMD_REGISTER_CRYPTO_DRIVER(zuc_crypto_drv, cryptodev_zuc_pmd_drv.driver,
+diff --git a/drivers/crypto/null/null_crypto_pmd.c b/drivers/crypto/null/null_crypto_pmd.c
+index 8458306556..6db9deaee8 100644
+--- a/drivers/crypto/null/null_crypto_pmd.c
++++ b/drivers/crypto/null/null_crypto_pmd.c
+@@ -227,6 +227,7 @@ cryptodev_null_remove_dev(struct rte_vdev_device *vdev)
+ }
+ 
+ static struct rte_vdev_driver cryptodev_null_pmd_drv = {
++	.driver.alias = "cryptodev_null_pmd",
+ 	.probe = cryptodev_null_probe,
+ 	.remove = cryptodev_null_remove_dev,
+ };
+@@ -234,7 +235,6 @@ static struct rte_vdev_driver cryptodev_null_pmd_drv = {
+ static struct cryptodev_driver null_crypto_drv;
+ 
+ RTE_PMD_REGISTER_VDEV(CRYPTODEV_NAME_NULL_PMD, cryptodev_null_pmd_drv);
+-RTE_PMD_REGISTER_ALIAS(CRYPTODEV_NAME_NULL_PMD, cryptodev_null_pmd);
+ RTE_PMD_REGISTER_PARAM_STRING(CRYPTODEV_NAME_NULL_PMD,
+ 	"max_nb_queue_pairs=<int> "
+ 	"socket_id=<int>");
+diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
+index a93df97023..ef57719803 100644
+--- a/drivers/net/af_packet/rte_eth_af_packet.c
++++ b/drivers/net/af_packet/rte_eth_af_packet.c
+@@ -1388,12 +1388,12 @@ rte_pmd_af_packet_remove(struct rte_vdev_device *dev)
+ }
+ 
+ static struct rte_vdev_driver pmd_af_packet_drv = {
++	.driver.alias = "eth_af_packet",
+ 	.probe = rte_pmd_af_packet_probe,
+ 	.remove = rte_pmd_af_packet_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(net_af_packet, pmd_af_packet_drv);
+-RTE_PMD_REGISTER_ALIAS(net_af_packet, eth_af_packet);
+ RTE_PMD_REGISTER_PARAM_STRING(net_af_packet,
+ 	"iface=<string> "
+ 	"qpairs=<int> "
+diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
+index 6a4f997b5a..526f8118b3 100644
+--- a/drivers/net/bonding/rte_eth_bond_pmd.c
++++ b/drivers/net/bonding/rte_eth_bond_pmd.c
+@@ -4305,12 +4305,12 @@ bond_ethdev_configure(struct rte_eth_dev *dev)
+ }
+ 
+ struct rte_vdev_driver pmd_bond_drv = {
++	.driver.alias = "eth_bond",
+ 	.probe = bond_probe,
+ 	.remove = bond_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(net_bonding, pmd_bond_drv);
+-RTE_PMD_REGISTER_ALIAS(net_bonding, eth_bond);
+ 
+ RTE_PMD_REGISTER_PARAM_STRING(net_bonding,
+ 	"member=<ifc> "
+diff --git a/drivers/net/mvpp2/mrvl_ethdev.c b/drivers/net/mvpp2/mrvl_ethdev.c
+index d7ed504bee..2df3a77e7f 100644
+--- a/drivers/net/mvpp2/mrvl_ethdev.c
++++ b/drivers/net/mvpp2/mrvl_ethdev.c
+@@ -3316,10 +3316,10 @@ rte_pmd_mrvl_remove(struct rte_vdev_device *vdev)
+ }
+ 
+ static struct rte_vdev_driver pmd_mrvl_drv = {
++	.driver.alias = "eth_mvpp2",
+ 	.probe = rte_pmd_mrvl_probe,
+ 	.remove = rte_pmd_mrvl_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(net_mvpp2, pmd_mrvl_drv);
+-RTE_PMD_REGISTER_ALIAS(net_mvpp2, eth_mvpp2);
+ RTE_LOG_REGISTER_DEFAULT(mrvl_logtype, NOTICE);
+diff --git a/drivers/net/nfb/nfb_vdev.c b/drivers/net/nfb/nfb_vdev.c
+index 57f10d2068..f077663889 100644
+--- a/drivers/net/nfb/nfb_vdev.c
++++ b/drivers/net/nfb/nfb_vdev.c
+@@ -95,12 +95,12 @@ vdev_nfb_vdev_remove(struct rte_vdev_device *dev)
+ 
+ /** Virtual device descriptor. */
+ static struct rte_vdev_driver vdev_nfb_vdev = {
++	.driver.alias = "eth_vdev_nfb",
+ 	.probe = vdev_nfb_vdev_probe,
+ 	.remove = vdev_nfb_vdev_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(VDEV_NFB_DRIVER, vdev_nfb_vdev);
+-RTE_PMD_REGISTER_ALIAS(VDEV_NFB_DRIVER, eth_vdev_nfb);
+ RTE_PMD_REGISTER_PARAM_STRING(net_vdev_nfb,
+ 		VDEV_NFB_ARG_DEV "=<string> "
+ 		NFB_COMMON_ARGS
+diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
+index a469825cb6..a2f70fee79 100644
+--- a/drivers/net/null/rte_eth_null.c
++++ b/drivers/net/null/rte_eth_null.c
+@@ -767,12 +767,12 @@ rte_pmd_null_remove(struct rte_vdev_device *dev)
+ }
+ 
+ static struct rte_vdev_driver pmd_null_drv = {
++	.driver.alias = "eth_null",
+ 	.probe = rte_pmd_null_probe,
+ 	.remove = rte_pmd_null_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(net_null, pmd_null_drv);
+-RTE_PMD_REGISTER_ALIAS(net_null, eth_null);
+ RTE_PMD_REGISTER_PARAM_STRING(net_null,
+ 	"size=<int> "
+ 	"copy=<int> "
+diff --git a/drivers/net/octeontx/octeontx_ethdev.c b/drivers/net/octeontx/octeontx_ethdev.c
+index e4dca30d9d..e173535d29 100644
+--- a/drivers/net/octeontx/octeontx_ethdev.c
++++ b/drivers/net/octeontx/octeontx_ethdev.c
+@@ -1896,10 +1896,10 @@ octeontx_probe(struct rte_vdev_device *dev)
+ }
+ 
+ static struct rte_vdev_driver octeontx_pmd_drv = {
++	.driver.alias = "eth_octeontx",
+ 	.probe = octeontx_probe,
+ 	.remove = octeontx_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(OCTEONTX_PMD, octeontx_pmd_drv);
+-RTE_PMD_REGISTER_ALIAS(OCTEONTX_PMD, eth_octeontx);
+ RTE_PMD_REGISTER_PARAM_STRING(OCTEONTX_PMD, "nr_port=<int> ");
+diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
+index b1f3718c8a..1e114e0008 100644
+--- a/drivers/net/pcap/pcap_ethdev.c
++++ b/drivers/net/pcap/pcap_ethdev.c
+@@ -2128,12 +2128,12 @@ pmd_pcap_remove(struct rte_vdev_device *dev)
+ }
+ 
+ static struct rte_vdev_driver pmd_pcap_drv = {
++	.driver.alias = "eth_pcap",
+ 	.probe = pmd_pcap_probe,
+ 	.remove = pmd_pcap_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(net_pcap, pmd_pcap_drv);
+-RTE_PMD_REGISTER_ALIAS(net_pcap, eth_pcap);
+ RTE_PMD_REGISTER_PARAM_STRING(net_pcap,
+ 	ETH_PCAP_RX_PCAP_ARG "=<string> "
+ 	ETH_PCAP_TX_PCAP_ARG "=<string> "
+diff --git a/drivers/net/ring/rte_eth_ring.c b/drivers/net/ring/rte_eth_ring.c
+index 4cbdbe3085..d75ae2cbed 100644
+--- a/drivers/net/ring/rte_eth_ring.c
++++ b/drivers/net/ring/rte_eth_ring.c
+@@ -783,11 +783,11 @@ rte_pmd_ring_remove(struct rte_vdev_device *dev)
+ }
+ 
+ static struct rte_vdev_driver pmd_ring_drv = {
++	.driver.alias = "eth_ring",
+ 	.probe = rte_pmd_ring_probe,
+ 	.remove = rte_pmd_ring_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(net_ring, pmd_ring_drv);
+-RTE_PMD_REGISTER_ALIAS(net_ring, eth_ring);
+ RTE_PMD_REGISTER_PARAM_STRING(net_ring,
+ 	ETH_RING_NUMA_NODE_ACTION_ARG "=name:node:action(ATTACH|CREATE)");
+diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
+index f23c23b465..604cf76b61 100644
+--- a/drivers/net/tap/rte_eth_tap.c
++++ b/drivers/net/tap/rte_eth_tap.c
+@@ -2777,13 +2777,13 @@ static struct rte_vdev_driver pmd_tun_drv = {
+ };
+ 
+ static struct rte_vdev_driver pmd_tap_drv = {
++	.driver.alias = "eth_tap",
+ 	.probe = rte_pmd_tap_probe,
+ 	.remove = rte_pmd_tap_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(net_tap, pmd_tap_drv);
+ RTE_PMD_REGISTER_VDEV(net_tun, pmd_tun_drv);
+-RTE_PMD_REGISTER_ALIAS(net_tap, eth_tap);
+ RTE_PMD_REGISTER_PARAM_STRING(net_tun,
+ 			      ETH_TAP_IFACE_ARG "=<string> ");
+ RTE_PMD_REGISTER_PARAM_STRING(net_tap,
+diff --git a/drivers/net/vdev_netvsc/vdev_netvsc.c b/drivers/net/vdev_netvsc/vdev_netvsc.c
+index d70da6c7c1..9b452ace97 100644
+--- a/drivers/net/vdev_netvsc/vdev_netvsc.c
++++ b/drivers/net/vdev_netvsc/vdev_netvsc.c
+@@ -756,12 +756,12 @@ vdev_netvsc_vdev_remove(__rte_unused struct rte_vdev_device *dev)
+ 
+ /** Virtual device descriptor. */
+ static struct rte_vdev_driver vdev_netvsc_vdev = {
++	.driver.alias = "eth_vdev_netvsc",
+ 	.probe = vdev_netvsc_vdev_probe,
+ 	.remove = vdev_netvsc_vdev_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(VDEV_NETVSC_DRIVER, vdev_netvsc_vdev);
+-RTE_PMD_REGISTER_ALIAS(VDEV_NETVSC_DRIVER, eth_vdev_netvsc);
+ RTE_PMD_REGISTER_PARAM_STRING(net_vdev_netvsc,
+ 			      VDEV_NETVSC_ARG_IFACE "=<string> "
+ 			      VDEV_NETVSC_ARG_MAC "=<string> "
+diff --git a/drivers/net/vhost/rte_eth_vhost.c b/drivers/net/vhost/rte_eth_vhost.c
+index f7425d04e6..f6ef997455 100644
+--- a/drivers/net/vhost/rte_eth_vhost.c
++++ b/drivers/net/vhost/rte_eth_vhost.c
+@@ -1792,12 +1792,12 @@ rte_pmd_vhost_remove(struct rte_vdev_device *dev)
+ }
+ 
+ static struct rte_vdev_driver pmd_vhost_drv = {
++	.driver.alias = "eth_vhost",
+ 	.probe = rte_pmd_vhost_probe,
+ 	.remove = rte_pmd_vhost_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(net_vhost, pmd_vhost_drv);
+-RTE_PMD_REGISTER_ALIAS(net_vhost, eth_vhost);
+ RTE_PMD_REGISTER_PARAM_STRING(net_vhost,
+ 	"iface=<ifc> "
+ 	"queues=<int> "
+diff --git a/drivers/net/virtio/virtio_user_ethdev.c b/drivers/net/virtio/virtio_user_ethdev.c
+index 747dddeb2e..437727c043 100644
+--- a/drivers/net/virtio/virtio_user_ethdev.c
++++ b/drivers/net/virtio/virtio_user_ethdev.c
+@@ -805,6 +805,7 @@ static int virtio_user_pmd_dma_unmap(struct rte_vdev_device *vdev, void *addr,
+ }
+ 
+ static struct rte_vdev_driver virtio_user_driver = {
++	.driver.alias = "virtio_user",
+ 	.probe = virtio_user_pmd_probe,
+ 	.remove = virtio_user_pmd_remove,
+ 	.dma_map = virtio_user_pmd_dma_map,
+@@ -812,7 +813,6 @@ static struct rte_vdev_driver virtio_user_driver = {
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(net_virtio_user, virtio_user_driver);
+-RTE_PMD_REGISTER_ALIAS(net_virtio_user, virtio_user);
+ RTE_PMD_REGISTER_PARAM_STRING(net_virtio_user,
+ 	"path=<path> "
+ 	"mac=<mac addr> "
+diff --git a/drivers/raw/ifpga/ifpga_rawdev.c b/drivers/raw/ifpga/ifpga_rawdev.c
+index 1846cca669..c4143bfb3e 100644
+--- a/drivers/raw/ifpga/ifpga_rawdev.c
++++ b/drivers/raw/ifpga/ifpga_rawdev.c
+@@ -1893,12 +1893,12 @@ ifpga_cfg_remove(struct rte_vdev_device *vdev)
+ }
+ 
+ static struct rte_vdev_driver ifpga_cfg_driver = {
++	.driver.alias = "ifpga_cfg",
+ 	.probe = ifpga_cfg_probe,
+ 	.remove = ifpga_cfg_remove,
+ };
+ 
+ RTE_PMD_REGISTER_VDEV(ifpga_rawdev_cfg, ifpga_cfg_driver);
+-RTE_PMD_REGISTER_ALIAS(ifpga_rawdev_cfg, ifpga_cfg);
+ RTE_PMD_REGISTER_PARAM_STRING(ifpga_rawdev_cfg,
+ 	"ifpga=<string> "
+ 	"port=<int> "
 -- 
-2.43.0
+2.54.0
 
