@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E40ECA6012
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 09:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1795ACA5FED
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 09:11:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9628C40431;
-	Fri,  9 Oct 2026 11:11:08 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 59549402BE;
- Fri,  9 Oct 2026 11:11:05 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 224B8200312;
+	by mails.dpdk.org (Postfix) with ESMTP id 8D8494042E;
+	Fri,  9 Oct 2026 11:11:09 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 1451F402D0;
+ Fri,  9 Oct 2026 11:11:06 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DA77D1A02D0;
  Fri,  9 Oct 2026 11:11:05 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E2B5820030F;
- Fri,  9 Oct 2026 11:11:04 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A57A31A02D4;
+ Fri,  9 Oct 2026 11:11:05 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1836118000B1;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C936018000BA;
  Fri,  9 Oct 2026 17:11:04 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v23 01/27] net/dpaa: fix double close and null deref on remove
-Date: Fri,  9 Oct 2026 14:40:35 +0530
-Message-Id: <20261009091101.1703494-2-hemant.agrawal@nxp.com>
+Subject: [PATCH v23 03/27] net/dpaa: fix resource leak on probe failure
+Date: Fri,  9 Oct 2026 14:40:37 +0530
+Message-Id: <20261009091101.1703494-4-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261009091101.1703494-1-hemant.agrawal@nxp.com>
 References: <20261007072439.3135351-1-hemant.agrawal@nxp.com>
@@ -49,52 +49,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_dpaa_remove() closed the port twice:
+When the shared Tx scatter-gather mempool cannot be created,
+rte_dpaa_probe() returns -ENOMEM directly:
 
-	ret = dpaa_eth_dev_close(eth_dev);
-	if (eth_dev->state !=  RTE_ETH_DEV_UNUSED) {
-		dpaa_eth_dev_close(eth_dev);
+	if (dpaa_tx_sg_pool == NULL) {
+		DPAA_PMD_ERR("SG pool creation failed");
+		return -ENOMEM;
+	}
 
-The first call ran unconditionally, the second ran again on a port
-that had just been torn down. The unconditional call also dereferenced
-eth_dev without checking that rte_eth_dev_allocated() found anything.
-rte_eth_dev_close() releases the port, so an application that closed
-its ports before rte_eal_cleanup() crashed in remove.
+This is reached after dpaa_dev_init() has already succeeded, so the
+early return abandons everything set up for the port.
 
-Close the port once, only when it is still in use, and log the close
-result before releasing the port. The release status is returned,
-since the port must be released regardless of how close ended.
+Unwind through cleanup labels so the failure path closes the device and
+releases the port, matching the existing dpaa_dev_init() failure path.
 
-Fixes: 78ea4b4fcb52 ("bus/dpaa: improve cleanup")
+Fixes: 533c31cc8331 ("net/dpaa: use internal mempool for SG table")
 Cc: stable@dpdk.org
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c | 36 ++++++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 1aaf97f175..a5b02cc9a8 100644
+index 10b90417de..2f6e2d20a3 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -2679,11 +2679,14 @@ rte_dpaa_remove(struct rte_dpaa_device *dpaa_dev)
- 	PMD_INIT_FUNC_TRACE();
+@@ -2602,24 +2602,30 @@ rte_dpaa_probe(struct rte_dpaa_driver *dpaa_drv,
  
- 	eth_dev = rte_eth_dev_allocated(dpaa_dev->device.name);
--	ret = dpaa_eth_dev_close(eth_dev);
--	if (eth_dev->state !=  RTE_ETH_DEV_UNUSED) {
--		dpaa_eth_dev_close(eth_dev);
-+	if (eth_dev != NULL && eth_dev->state != RTE_ETH_DEV_UNUSED) {
-+		ret = dpaa_eth_dev_close(eth_dev);
-+		if (ret != 0)
-+			DPAA_PMD_WARN("%s: close failed(%d), releasing port",
-+				dpaa_dev->device.name, ret);
- 		ret = rte_eth_dev_release_port(eth_dev);
- 	}
+ 	/* Invoke PMD device initialization function */
+ 	diag = dpaa_dev_init(eth_dev);
+-	if (diag == 0) {
+-		if (!dpaa_tx_sg_pool) {
+-			dpaa_tx_sg_pool =
+-				rte_pktmbuf_pool_create("dpaa_mbuf_tx_sg_pool",
+-				DPAA_POOL_SIZE,
+-				DPAA_POOL_CACHE_SIZE, 0,
+-				DPAA_MAX_SGS * sizeof(struct qm_sg_entry),
+-				rte_socket_id());
+-			if (dpaa_tx_sg_pool == NULL) {
+-				DPAA_PMD_ERR("SG pool creation failed");
+-				return -ENOMEM;
+-			}
++	if (diag != 0)
++		goto release_port;
 +
- 	dpaa_valid_dev--;
- 	if (!dpaa_valid_dev)
- 		rte_mempool_free(dpaa_tx_sg_pool);
++	if (dpaa_tx_sg_pool == NULL) {
++		dpaa_tx_sg_pool =
++			rte_pktmbuf_pool_create("dpaa_mbuf_tx_sg_pool",
++			DPAA_POOL_SIZE,
++			DPAA_POOL_CACHE_SIZE, 0,
++			DPAA_MAX_SGS * sizeof(struct qm_sg_entry),
++			rte_socket_id());
++		if (dpaa_tx_sg_pool == NULL) {
++			DPAA_PMD_ERR("SG pool creation failed");
++			diag = -ENOMEM;
++			goto close_dev;
+ 		}
+-		rte_eth_dev_probing_finish(eth_dev);
+-		dpaa_valid_dev++;
+-		return 0;
+ 	}
+ 
++	rte_eth_dev_probing_finish(eth_dev);
++	dpaa_valid_dev++;
++	return 0;
++
++close_dev:
++	dpaa_eth_dev_close(eth_dev);
++release_port:
+ 	rte_eth_dev_release_port(eth_dev);
+ 	return diag;
+ }
 -- 
 2.25.1
 
