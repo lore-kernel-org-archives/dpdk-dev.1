@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A49EDCA6015
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 04:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7747CA6015
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 06:06:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 74FC64027A;
-	Fri,  9 Oct 2026 06:05:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9DDA24027A;
+	Fri,  9 Oct 2026 08:06:02 +0200 (CEST)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 7578F4026D
- for <dev@dpdk.org>; Fri,  9 Oct 2026 06:05:20 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 19EEB4026D
+ for <dev@dpdk.org>; Fri,  9 Oct 2026 08:06:00 +0200 (CEST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 632D51692;
- Thu,  8 Oct 2026 21:05:16 -0700 (PDT)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A477D1692;
+ Thu,  8 Oct 2026 23:05:56 -0700 (PDT)
 Received: from [10.122.30.109] (unknown [10.122.30.109])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B27813F66F;
- Thu,  8 Oct 2026 21:05:18 -0700 (PDT)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F12C13F66F;
+ Thu,  8 Oct 2026 23:05:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
- t=1791518719; bh=tAgUjjpYWsNsPkSFPHGxZtvoQLowPZCybGAODHOpCf0=;
+ t=1791525960; bh=3XYFpwwyQq6cP7zhfAmqpdCljfa7Blf/KhHQfsYgxgk=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=W7913np2SPi3XxlA4kuNUgyZUDISDs++XrU8mx3Mhn+ULEcEXPbvQp7Wvj5+THmFB
- swGUOSJ7pBdGCQJAxy/nAGyIK8s2ECVlwsJtd4v5X01Ex/5HL1keen38OlOdzJavJl
- uSgz8cmGyDqRP0y/XXliMGc1jJlcp5eE/xWrt3Aw=
-Message-ID: <c672f023-1b29-433b-8e11-ffba3debc830@arm.com>
-Date: Thu, 8 Oct 2026 23:05:15 -0500
+ b=O7JW6TLY/1nlIUCxU2fjJbHhtqmYNsnkeq9ileaqK4LQwpak3eypLOuy4ElWWbRWu
+ pl63CKDEXGYmZHlUl9yYZZ1rk495m45PwHRs+D2KwtB77RghWpogNVixlAPkrajYJ2
+ QJO+tsafaPMC6IwHANXWgWsRfcYGmt/K1i0SlA8E=
+Message-ID: <b9d3cb13-e34f-406d-ac18-345fede8bc5b@arm.com>
+Date: Fri, 9 Oct 2026 01:05:56 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/29] ring: replace SMP read barrier with C11 acquire
- fence
+Subject: Re: [PATCH v3 01/29] bpf: replace deprecated SMP barriers with C11
+ fences
 To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
 Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+ Marat Khalili <qm2k21@gmail.com>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
  <20261008233649.1260843-1-stephen@networkplumber.org>
- <20261008233649.1260843-13-stephen@networkplumber.org>
+ <20261008233649.1260843-2-stephen@networkplumber.org>
 Content-Language: en-US
 From: Wathsala Vithanage <wathsala.vithanage@arm.com>
-In-Reply-To: <20261008233649.1260843-13-stephen@networkplumber.org>
+In-Reply-To: <20261008233649.1260843-2-stephen@networkplumber.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,42 +52,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+>   /*
+>    * Marks given callback as used by datapath.
+>    */
+>   static __rte_always_inline void
+>   bpf_eth_cbi_inuse(struct bpf_eth_cbi *cbi)
+>   {
+> -	cbi->use++;
+> -	/* make sure no store/load reordering could happen */
+> -	rte_smp_mb();
+> +	rte_atomic_store_explicit(&cbi->use,
+> +		rte_atomic_load_explicit(&cbi->use, rte_memory_order_relaxed) + 1,
+> +		rte_memory_order_relaxed);
+> +
+> +	/* full barrier: count must be visible before cb is read */
+> +	rte_atomic_thread_fence(rte_memory_order_seq_cst);
 
-On 10/8/26 18:35, Stephen Hemminger wrote:
-> rte_smp_rmb() is deprecated. This code is only used where
-> RTE_USE_C11_MEM_MODEL is unset: x86, ppc64, loongarch and ThunderX.
-> The acquire fence generates the same code on x86 (a compiler
-> barrier) and on ThunderX (dmb ishld). On ppc64 the barrier becomes
-> lwsync instead of sync, which still orders load against load.
->
-> The gcc implementation itself is kept: unlike the lock-free stack,
-> the in-tree comment records a 10% x86 performance drop with the
-> C11 version, which needs re-measuring with current compilers
-> before RTE_USE_C11_MEM_MODEL can be removed.
->
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-> Acked-by: Morten Brørup <mb@smartsharesystems.com>
-> ---
->   lib/ring/rte_ring_gcc_pvt.h | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/lib/ring/rte_ring_gcc_pvt.h b/lib/ring/rte_ring_gcc_pvt.h
-> index 340ece28c7..9c2c58824d 100644
-> --- a/lib/ring/rte_ring_gcc_pvt.h
-> +++ b/lib/ring/rte_ring_gcc_pvt.h
-> @@ -55,10 +55,10 @@ __rte_ring_headtail_move_head_st(struct rte_ring_headtail *d,
+This is correct but why use a barrier when the above store itself could 
+be SEQ_CST that
+synchronizes with load in bpf_eth_cbi_wait?
+
+>   }
 >   
->   	*old_head = d->head;
->   
-> -	/* add rmb barrier to avoid load/load reorder in weak
-> -	 * memory model. It is noop on x86
-> +	/* Acquire fence to avoid load/load reorder in weak
-> +	 * memory model. It is noop on x86.
->   	 */
+>   /*
+> @@ -91,9 +106,10 @@ bpf_eth_cbi_inuse(struct bpf_eth_cbi *cbi)
+>   static __rte_always_inline void
+>   bpf_eth_cbi_unuse(struct bpf_eth_cbi *cbi)
+>   {
+> -	/* make sure all previous loads are completed */
 > -	rte_smp_rmb();
-> +	rte_atomic_thread_fence(rte_memory_order_acquire);
+> -	cbi->use++;
+> +	/* release: pairs with the acquire bpf_eth_cbi_wait() */
+> +	rte_atomic_store_explicit(&cbi->use,
+> +		rte_atomic_load_explicit(&cbi->use, rte_memory_order_relaxed) + 1,
+> +		rte_memory_order_release);
+>   }
 >   
->   	/*
->   	 *  The subtraction is done between two unsigned 32bits value
+>   /*
+> @@ -104,15 +120,15 @@ bpf_eth_cbi_wait(const struct bpf_eth_cbi *cbi)
+>   {
+>   	uint32_t puse;
+>   
+> -	/* make sure all previous loads and stores are completed */
+> -	rte_smp_mb();
+> +	/* full barrier: cleared cb must be visible before counter is read */
+> +	rte_atomic_thread_fence(rte_memory_order_seq_cst);
+>   
+> -	puse = cbi->use;
+> +	puse = rte_atomic_load_explicit(&cbi->use, rte_memory_order_acquire);
+>   
+>   	/* in use, busy wait till current RX/TX iteration is finished */
+>   	if ((puse & BPF_ETH_CBI_INUSE) != 0) {
+>   		RTE_WAIT_UNTIL_MASKED((__rte_atomic uint32_t *)(uintptr_t)&cbi->use,
+> -			UINT32_MAX, !=, puse, rte_memory_order_relaxed);
+> +			UINT32_MAX, !=, puse, rte_memory_order_acquire);
+>   	}
+>   }
+>   
+> @@ -439,7 +455,6 @@ bpf_eth_cbi_unload(struct bpf_eth_cbi *bc)
+>   {
+>   	/* mark this cbi as empty */
+>   	bc->cb = NULL;
+> -	rte_smp_mb();
+>   
+>   	/* make sure datapath doesn't use bpf anymore, then destroy bpf */
+>   	bpf_eth_cbi_wait(bc);
+--wathsala
