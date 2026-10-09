@@ -2,96 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B170FCA9EBB
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 20:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C821DCA9EBE
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 20:58:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C8B6140274;
-	Fri,  9 Oct 2026 22:36:32 +0200 (CEST)
-Received: from fhigh-b5-smtp.messagingengine.com
- (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
- by mails.dpdk.org (Postfix) with ESMTP id 748444026A
- for <dev@dpdk.org>; Fri,  9 Oct 2026 22:36:31 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id D20B67A0104
- for <dev@dpdk.org>; Fri,  9 Oct 2026 16:36:30 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Fri, 09 Oct 2026 16:36:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1791578190;
- x=1791664590; bh=EjItkXVRB3dhpRUQ0dWdYguT9Hv6CfsoCQjcEjEBv0M=; b=
- UohJw90vc4ZVzUiKNuJL9MwQIIn8oeKyErYPWhwNXNoIn/o/OCijiXkEpQBYF29C
- S3ykQpuUPlT7BztVHvaFNjc6DTt+2Q0IG+4HxkSjFYVXOXTCYob2CAOelHn9JrGC
- tb99vViRslJBA4Q66Hh0tB57ai76hR1vLcyxOp3+O97QgBpawRY8Ovn0GFDKP2UR
- tFhS7v7Q4G1X6km9sC/PAyJuyK9+Q56FNwpuypzhsalO+60gUo0rxR/r28FEugXZ
- 3Uf9J4uzqkuInMB9FAv7AwgzkTVdmKc9StiMKgqk275EE0SHD/0cp/TQ2BfxMsRI
- F5lIo0/tIOcenm9N56OuHA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791578190; x=
- 1791664590; bh=EjItkXVRB3dhpRUQ0dWdYguT9Hv6CfsoCQjcEjEBv0M=; b=B
- udTIJGnT+JKhGO8crUsGb0GJkHm9JOZTNDDstPAnWna9DDasDvCVTncjNYK74vQU
- nCCgYfRj970o7nNxXM4FgvaeR/3mGjk8JNWsMoH2MApr+88dFaY2OKSwlU4YeL6B
- 3M4e0SaaOTGBU3RJBcx7sfPrqi8CmxPTXL/Ic7xiFPOlsgFZGrVV/Rg7U57xCZLy
- tDbGKgl3YXKFZYA8XQRP2Tl+r8igMGCh9DlvYY5V1Asz6iPlTreco+cRUFBxscao
- F48LT4Q52jD1zlCIhRWGUsWPamCiN4B0fykcDeWp0Oo6OFk+mRTjwtpZPL3vuLwr
- zwyJMZvkUmx/ZErc1UC2A==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791578190; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:TP4Xiz9vHdjpltdVMq2mSv2QHgM1SSD1t+FPb1oKa49+9cW
- Pj4o+aT5patatQBwkb/j8/hKeCTFVbWplkvetV6pDesaJgIv1+8gSwPUXJ4WllaK
- a6BbRWYBKnhYPpKaynTrw9qO+RGgmw3LWaAqa+gTsAnBd7ziJCM/qMj/fkfzdLlB
- jrJcqePqumK9x25RxkhG6lPIRvtZ0uTLSeBGfFiJaTcDq+phZ3mfLtb1IGAH3gMM
- rNp23Hxg12ig5gKZKlcXusiPEXrDeLOrqnkoJnwvPSF351S7qNW0+d9o6kc+7Ic4
- fcgJ4xs1Ia7mBjG0zut9h23PFOY2bO9go+2k31w==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:7b9eP7z2Y21ZGdQBeTuKUkeklDVX3ebAY7AUN5B5RG4=:flvZzLIu8GXMQB3/jK5RR16UHyivbYKwc9zlREhbCMY=;
-X-ME-Sender: <xms:TlDJaoo9pA0anl5wne7iCPpUI-EcYURzCDzwzDvaUd9qpCDfd7b4Vg>
- <xme:TlDJaq8cG4dbZw7iFVOef7rq-Qf4_WExeYLNf9GDXNv_BJqaugHmAv_GxBzEj466g
- l3idhJ3tCBwTQEh5DVsjy9XCZjDpLtS0y932St9ypuMuIFzeef-_d0>
-X-ME-Received: <xmr:TlDJav95oyTweXk4C7uT0dLS4mXwu8ilD6Ptxtq2MdMv6Rih1ij4iI7qSXkzPFE7Kz4p1B1d6CLRmo9ieR5gW80>
-X-ME-Proxy-Cause: dmFkZTF4wtyfTDnTSNIm90Obfzb8ISaaGUQ4a07/6V1W9YaQwtNQqjlf2AsNPaFWZppFMm
- YI0YClLCNH30jqIN2mflmOLHgKjgBtK85Q2CUtqROegZq8lmI/Xw4dUcAGxUVpa08d6KqB
- O5ckUaxywy6uWZHPfC7i07aa04Nf5mYFi8Lx9x0bYk9HD/OHEqIRRTvdyxm1p3uMPSlnJJ
- MV9V2oYfUMLUMGqHzMcS5Z4xi6pDQrx+iERnYU7zWxgEDbJQG3y+8TxkfsDDsmMmiAVcYR
- 1NegWEuLMQ7G9mOY+GeUSjnq1H7IVOt+P8p6Hd0LB20Xcy0+doG/Q4Uqz00BvKCM6LOQgd
- 1qOMi9bVuAmw5i8JIypeXFTevO7PalvU0X8rGWjIlqArF+NE63+gPseAbN5i3320oYoWMA
- 0No/0UWZE80s/Dia/emT/PoNL1y9Aq+Z98ZFSZaZOBSDmxSisS/gVuDp47dxshHnKAsuJT
- IPifQw58a/l3bc67YHMXMRZDQ6SeND/FhsERTvsZZoS3dsoHjZVcVpF3UCY1vb4YMISlYG
- xDPvr5YNprENSca+sNbuJRCuO1+w2eHsoCiALJuWjK2Q/6enpNrhzMVhxR4b5MOuT7GkzT
- b6FNoBcgbF0gMUGvI6QRt8BNW/fYQb0eN4PeGuJTLgYudvS7oB1lhAs/rCgg
-X-ME-Proxy: <xmx:TlDJahur3erXoLSr1S_FlS4SAdxlglyUE_dY18Bk-V_6UEVGSzSo3A>
- <xmx:TlDJaqoSSYP_6xvoGIgw106l3oHcKVQsNog3YTSvCbwmsbOJZDzVDw>
- <xmx:TlDJamn3c1Vr9dt4htGYyeit23rwDDxfK5V9iAh5egx3a2Tlfh6z3Q>
- <xmx:TlDJamwrO5_DeBj7pe5kg1bT_kaa28pjqG3Fb-mKsD3TKetLTPzEcg>
- <xmx:TlDJahpV5yg2_tc4SOviKsWShPsph_4Z9lTh2cEIlXrL5oR4ucdofyrr>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 9 Oct 2026 16:36:29 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 0/2] Improve AI review feedback
-Date: Fri, 09 Oct 2026 22:36:28 +0200
-Message-ID: <0Fp8Ny_VR6y8Ip2GD2TAjQ@monjalon.net>
-In-Reply-To: <20260904162454.218213-1-stephen@networkplumber.org>
-References: <20260829171822.305500-1-stephen@networkplumber.org>
- <20260904162454.218213-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 9F24040274;
+	Fri,  9 Oct 2026 22:58:02 +0200 (CEST)
+Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net
+ [31.44.14.17]) by mails.dpdk.org (Postfix) with ESMTP id A71024026A
+ for <dev@dpdk.org>; Fri,  9 Oct 2026 22:58:00 +0200 (CEST)
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net
+ [IPv6:2a02:6b8:c0e:500:1:45:d181:d501])
+ by forward501d.mail.yandex.net (postfix) with ESMTPS id CBEAC875C9;
+ Fri, 09 Oct 2026 23:57:59 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net
+ (mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net
+ [IPv6:2a02:6b8:c22:d15:0:640:87c2:0])
+ by forward501a.mail.yandex.net (postfix) with ESMTPS id B349C80619;
+ Fri, 09 Oct 2026 23:57:49 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (smtp)
+ with ESMTPSA id jvWWRVcdAGk0-6M7Eb49k; 
+ Fri, 09 Oct 2026 23:57:49 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+ t=1791579469; bh=h4PQTK2MkSUVCAw4v2nVAeMQGuAOIyd+BcODGvxSI7M=;
+ h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
+ b=tFQjQ776C0RHFBlconjIV4kfGb5fjFE+295HuS8k2mJGfOTXDXjFq0BWEQgjIY/Il
+ N6FpQ2In9r5QmhmqCc+pl4Wd6TjFNvkpoolwgSWXacSxSQ1x2W5FwN3CPGL/lvmEUm
+ B89oZhLFFJYWCzMhilR6S4M8wTwbxJ0Dbn9UnqCg=
+Authentication-Results: mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net;
+ dkim=pass header.i=@yandex.ru
+From: Roman Khromenok <roma55592@yandex.ru>
+To: dev@dpdk.org
+Cc: thomas@monjalon.net, stephen@networkplumber.org,
+ andrew.rybchenko@oktetlabs.ru
+Subject: Re: [PATCH v2 0/4] ethdev: report module signal status flags
+Date: Fri,  9 Oct 2026 22:57:41 +0200
+Message-ID: <20261009205741.550421-1-roma55592@yandex.ru>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <QfuRvLIpRPi5pHmcYtqGrA@monjalon.net>
+References: <cover.1791482259.git.roma55592@yandex.ru>
+ <20261009112259.2bd9debc@phoenix.local>
+ <20261009192113.534604-1-roma55592@yandex.ru>
+ <QfuRvLIpRPi5pHmcYtqGrA@monjalon.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -105,19 +59,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-04/09/2026 18:23, Stephen Hemminger:
-> Existing AI review used by CI generates lots of false
-> positives from lack of confidence and poor parsing.
-> 
-> This still doesn't make up for the missing tooling, where running
-> AI review locally or in GUI gives better results. But these
-> changes should reduce the bogus warnings.
-> 
-> Stephen Hemminger (2):
->   AGENTS: reduce false positives
->   devtools/ai/review-patch: reduce spurious warnings
+On Fri, 9 Oct 2026, Thomas Monjalon wrote:
+> This is specific to networking devices, right?
+> So it has to be linked with ethdev probably.
+> But if it is not specific to any driver,
+> we may consider moving it to separate library.
+> I'm not sure which place is best.
 
-Series applied, thanks.
+Yes, these are the pluggable transceivers of network ports, but
+nothing in the decoding is driver specific. Drivers only return
+the raw EEPROM bytes through the get_module_eeprom op, and the
+decoding follows the SFF specifications. The decoder (about 2700
+lines) uses ethdev only for the RTE_ETH_MODULE_SFF_* type values
+and the callback typedef.
 
+So ethdev would keep linking it, the same way it depends on net
+and meter: ethdev depends on the new library, not the other way.
+rte_eth_dev_get_module_eeprom() and the telemetry command stay
+in ethdev and call the library.
 
+The decoder is also useful for ports which are not ethdev ports:
+in our firewall, the kernel ports are read with the ethtool ioctls
+and decoded with a copy of the same code. This already works with
+rte_eth_module_eeprom_parse(), so a separate library is mostly
+about keeping ethdev smaller, especially when CMIS is added,
+which is about the size of the SFF-8636 decoder.
 
+Keeping it in ethdev is fine with me too. If you prefer that,
+I will add CMIS there.
