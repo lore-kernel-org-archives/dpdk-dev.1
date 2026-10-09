@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05797CA601E
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 18:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B802CA601F
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 19:08:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0007140274;
-	Fri,  9 Oct 2026 20:23:03 +0200 (CEST)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 4D8C94026A
- for <dev@dpdk.org>; Fri,  9 Oct 2026 20:23:03 +0200 (CEST)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-383b4a3755fso4829213a91.3
- for <dev@dpdk.org>; Fri, 09 Oct 2026 11:23:03 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 87E8640274;
+	Fri,  9 Oct 2026 21:08:16 +0200 (CEST)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 9090A4026A
+ for <dev@dpdk.org>; Fri,  9 Oct 2026 21:08:14 +0200 (CEST)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-2df8c28a0b1so305395ad.1
+ for <dev@dpdk.org>; Fri, 09 Oct 2026 12:08:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791570182;
- x=1792174982; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791572894;
+ x=1792177694; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=wnSjDFipuK9MxWX2VX7EMR9+ghlzghDqF6Xe9PoXYII=;
- b=cFknZdTv3DZTuzHqLn/uyGvQblCHOxlpazIgZb0TaWAcMC8ssuKnqHYyk1xP3GFHLW
- rN8E1NsG6INRZOGXL7WalLOKoTq2CLPR3Z9pA2a8oonOTqlgtUY3p9wvQI9qhW/zY/91
- K/UIC92tDcXQffBx+Bv43eamwsf1KvBT5DOiexlAyTuxw4G6D51k82VcJep5QTG5Ood8
- 5OlidW9G6iJi7Che7CQutbiZKZglSYdfg4/X56MUBL8cE9dTvh3YCQj7MlMJKomY8k54
- 2Fy1xx3kr1BUIL5mdkXVHkqgEvehwdIz5c2UbaSPeO2hiWbNkbr5U+OZBZt1hXKHrBoS
- LBsw==
+ bh=cVWHsRs9LOia0HR7R2gsbi72sxqiNwgGMjlb+Y8RkdA=;
+ b=c3NJeu2u1fHSXO9+GBknpr5xmebuGdTtxIwubSL25rsoSrZ6R3eIQ0Kefw1tdIw238
+ KvVERW1rKyMo9eo9ULfemfTrUy6OSBAUBfW73o1UP54YZdnKBoL6AgcCYn80GsQTxA/B
+ Ek84doK9QPiA1FkSDmXxBfYkqNlE7towP43KnIEfTjEuZ16+589nsimwR/uV/WDDrHsc
+ rFZF8LQwnh5gUwG9jsCXbqDfnnCMytB4EITVgNi+Fe5iATDLihDeEnQMOdJufQ0SpIMb
+ lv8Pk2XdAS18r+k2uDvX5/OfpAzkacUy0Yvh5w+zxnxCK/beRQhmmIx+Mtct/3E+QTEL
+ sKTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791570182; x=1792174982;
+ d=1e100.net; s=20260707; t=1791572894; x=1792177694;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=wnSjDFipuK9MxWX2VX7EMR9+ghlzghDqF6Xe9PoXYII=;
- b=eBndbEr7eOSYIiIC9BRYtHbvuK7ZkoW3yptYOnpjf1gzw6DfC0Nh2EAzN/UX1MetKH
- yFArVXgU0nzSm17EEBgnxcavD3lTZyXg12fayyZxpnxSUN9Xlhs2u7GmJSEQG1QiMo/R
- ijJ/ZY/wjMf3SQsbacnPoAhiel3Y8N+P/6rmg3Ayj4AglTZne2BSiwd9l7ZVZ9PCdljG
- 5n1y+TJ2fgZazTbI4+FlmySN7CP+tJjZSygbTNZB/E4Vh5/GP6szflMmTJzKtUhcvoI/
- 6wSU2NGskvJCjp/xO0n2vuZrIUJN6jYPbu4ohlDMyZGvecz/5SkV81NQvyNUZZANsizG
- kIxw==
-X-Gm-Message-State: AFq9FYIlNAN1L2VhVgW3EqEuChDxiHf75aZBLRxORZOIOMg6Uh/UhwPP
- 69We1+ErwTcluTv6mv3uK8JDSTNJ/2plqDIoTdFJuRVoEVFcr6MUaQfeIp3JfQRLJgU=
-X-Gm-Gg: AYBFou1V9MP5cY6fC0LEJveIcfZg5AOe/mfvzWpjRiUG0NtDwb08rtuhq0Tl1xxpYif
- WzL95W/AY9Da8anHxhkXQpeO4wYkGbOoPPv7bszUk0g+d0jOUOYb39oLmqZeyxtoVh8HtCGaCgv
- ye2QAunPorvnnpUA/MbCJ70xk027z/nMuB8lmCBQ74ce1zrgFVY06t9zUqNppd8O6Lr7EY5slEj
- 1i6c2t4TaryflQ2JJyyS1gJ99HlO6FgaCVpq9XXfkVmy4ruQvWFJhWkVuam85T2ix3ZebGjb1i3
- RnCSgdc45fIEUF0JH5RGgU4ed2GmLUPELphyVJl7iky1TB4Yfbc/VBNAo9yv3X/lpx1GY0M304x
- t2J1eVZG2jr3sPqh++lrxksBtc564Y9Cyr+nZan8j5b4dWETT6PwGj3xCxleKFGgiEZV4OZm/WL
- 07kp8mMXTOb5fwpixok5YhVhIR02KFWsh53xqvanjVZG+DizoP9h887s4/TCGttOCGL+1iJUZ2u
- fXaV5eKCdMfIhjHOP23LlwjFZ2iSrR/bOa4DWd5
-X-Received: by 2002:a17:90b:3b52:b0:3ab:1481:2fbb with SMTP id
- 98e67ed59e1d1-3ab3ae439dfmr2515328a91.59.1791570182044; 
- Fri, 09 Oct 2026 11:23:02 -0700 (PDT)
+ bh=cVWHsRs9LOia0HR7R2gsbi72sxqiNwgGMjlb+Y8RkdA=;
+ b=2OturzBkF9TmU00G30mLHGuIHQYfqGekC7UmcsIwK+BY8t9/L6jD8Mcq6oxvcFO3mn
+ qj4T3FYfag3ofkxAdj4pQjDU5WKCVcHQSZ8yB2xe8IKVovFIgQY1fOoY0TVciTiLwH9+
+ eaEPp4ARPrNJF8IB1gD+9DP1d+RqnA4EOUgTmZeL2gHChvLkcTgDQefVGT3VZEZK+kmg
+ aaymBmIlBrqsTS5BE17T23W15VjuVyDZIeTWvdGlMll7n7npH+iTb1UFT15sJ2AaRslv
+ DRyACruPUEs7paWAiOA3+3YbQCM+mb3qLXtBz+IsUPKGA9GAl8y5N7mKk/c5BF2LYZUq
+ eZuw==
+X-Gm-Message-State: AFq9FYLvWT8N2V/nDxmxJKthiCp2SkO8IcATkdlOS5MnI+M/UqStceN0
+ 4wE33ci34hK1AMR5sXqCEuXjsY3KH58JwApBM9Dy9a3WZsnCW/IZx5SeBxjfxrH2M3I=
+X-Gm-Gg: AYBFou3s27KZHyR91dtG4xlpm2byXqEdpucpct7lQL2a5IOmidK0w0QXwzueUsKXTYy
+ FY1byjKpSKq+IGIQJ9s25ClZOx/A03IjxCkhmtnT8AAZuTnhm5uvLt4xXDp2RTqYIuONhD45vTE
+ Jc9CGyxJlz4wLORhr6wLWuAkV5WR22URSkg9BuJrbiu+x6lUWv7p+wh4QW1B1prrYzKbIRDZzun
+ jYwH76hHV+e9djeHgfgNp/G3nfrqz0b2TBmWI5gZxLDgwm2f/RZqSMGoQnWQs/ehvNcQXSsWbwy
+ mzTH6v0fz5FYaPXOHRi9wu6tq+aVZKyYxkEM+qqM/NtjpEsxr2bBMOSDJ3yPjD0ziD5fknV4WhS
+ LSl1nbjYLV4F3jb6WP+ZV6VZA0PqaEuq3xBRldhsVflhu0JlXGL9Jy2SzFva8k2y3nuAZ1khiQE
+ vUfdWwdcg9ee3f4slcJSjeM2hPhpYHx/GXtij3NCH8jXZhI3SjiL06N2+zy+V59EqSgVOGTLCVr
+ UvMrxrzMgrTjEaGwH1Pn1mtaP3BMaALwpDW+lQwRRbAio+gBkU=
+X-Received: by 2002:a17:902:e5cf:b0:2df:9556:6848 with SMTP id
+ d9443c01a7336-2e8427f76bbmr22708615ad.4.1791572893479; 
+ Fri, 09 Oct 2026 12:08:13 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ab38fc9e52sm4509496a91.13.2026.10.09.11.23.01
+ d9443c01a7336-2e8421ae999sm15238515ad.31.2026.10.09.12.08.12
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 09 Oct 2026 11:23:01 -0700 (PDT)
-Date: Fri, 9 Oct 2026 11:22:59 -0700
+ Fri, 09 Oct 2026 12:08:12 -0700 (PDT)
+Date: Fri, 9 Oct 2026 12:08:09 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Roman Khromenok <roma55592@yandex.ru>
-Cc: dev@dpdk.org, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru
-Subject: Re: [PATCH v2 0/4] ethdev: report module signal status flags
-Message-ID: <20261009112259.2bd9debc@phoenix.local>
-In-Reply-To: <cover.1791482259.git.roma55592@yandex.ru>
-References: <cover.1791447600.git.roma55592@yandex.ru>
- <cover.1791482259.git.roma55592@yandex.ru>
+To: Prashant Gupta <prashant.gupta_3@nxp.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v7-S1 0/6] dpaa2: bus, DMA and mempool base fixes
+Message-ID: <20261009120809.0d07f730@phoenix.local>
+In-Reply-To: <20261009105019.1121083-1-prashant.gupta_3@nxp.com>
+References: <20261006150749.3591526-1-prashant.gupta_3@nxp.com>
+ <20261009105019.1121083-1-prashant.gupta_3@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,38 +83,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  8 Oct 2026 20:02:34 +0200
-Roman Khromenok <roma55592@yandex.ru> wrote:
+On Fri,  9 Oct 2026 16:20:13 +0530
+Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
 
-> The module EEPROM decoder shows the identity and the digital
-> diagnostics of a module, but not the signal status, which is
-> usually the first thing to check when a link does not come up.
+> This series is the first of four that upstream the missing NXP dpaa2
+> driver changes. It collects the foundational bus/fslmc, dma/dpaa2 and
+> mempool/dpaa2 fixes that the later series build on:
 > 
-> Patches 1-2 report the SFF-8636 per-lane loss of signal,
-> CDR loss of lock and Tx fault flags, as ethtool does since
-> commit 045d8db ("sff-8636: report LOL / LOS / Tx Fault").
-> The code is written for DPDK, not copied from ethtool.
+> - defer fslmc bus initialization to probe; reduce probe logging
+>   and skip ignored devices during DPRC population,
+> - use memcpy to fill the dpaa2 QDMA completion index ring,
+> - release FLE objects immediately on completion ring overflow and
+>   only account them after successful context-ring insertion,
+> - validate FLE pool memory chunks at vchan setup by verifying
+>   consistent VA-to-IOVA offsets across the mempool and free the
+>   pool on setup failure,
+> - resolve the mempool ops index locally in secondary processes by
+>   scanning rte_mempool_ops_table, removing the need for IPC.
 > 
-> Patches 3-4 report the SFF-8472 Rx_LOS and TX_FAULT state
-> from page A2h byte 110. ethtool does not show it, so it is
-> split out and can be dropped independently of patches 1-2.
+> Every commit builds cleanly (including the aarch64 DPAA cross build with
+> -Werror) and the series remains bisectable.
 > 
-> The SFF-8636 flags are latched and cleared on read,
-> so they report the events since the previous read;
-> the SFF-8472 bits are the current state of the pins.
+> Gagandeep Singh (1):
+>   dma/dpaa2: validate FLE pool IOVA mapping at vchan setup
 > 
-> The series depends on the module EEPROM decode API series and on
-> the testpmd decode command, which are in next-net but not in main
-> yet. It is based on next-net/for-main with patch 170851 applied,
-> so the release notes entry no longer conflicts.
+> Hemant Agrawal (1):
+>   bus/fslmc: reduce probe logging and skip ignored devices
 > 
-> Depends-on: series-39436 ("ethdev: add API to decode module EEPROM")
-> Depends-on: series-39455 ("ethdev: fix SFF-8472 external Rx power calibration")
-> Depends-on: series-39480 ("ethdev: fix SFF-8472 calibration overflow")
-> Depends-on: patch-170851 ("app/testpmd: add command to decode module EEPROM")
+> Jun Yang (3):
+>   dma/dpaa2: use memcpy to fill completion index ring
+>   dma/dpaa2: release SG FLE on completion ring overflow
+>   mempool/dpaa2: look up ops index locally in secondary
+> 
+> Prashant Gupta (1):
+>   bus/fslmc: defer bus initialization to probe
+> 
+>  drivers/bus/fslmc/fslmc_bus.c            | 92 +++++++++++++-----------
+>  drivers/bus/fslmc/fslmc_vfio.c           |  3 +-
+>  drivers/bus/fslmc/portal/dpaa2_hw_dprc.c |  4 ++
+>  drivers/dma/dpaa2/dpaa2_qdma.c           | 86 +++++++++++++++++-----
+>  drivers/mempool/dpaa2/dpaa2_hw_mempool.c | 24 ++++++-
+>  5 files changed, 144 insertions(+), 65 deletions(-)
+> 
 
-
-Applied to next-net.
-
-I wonder if the eeprom really belongs in its on library, really it is not
-part of standard ethdev.
+Applied this first series to next-net. The review was clean.
