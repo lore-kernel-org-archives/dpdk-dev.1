@@ -2,78 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EDBCA6015
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 16:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB60CA6015
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 16:14:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5222040274;
-	Fri,  9 Oct 2026 18:06:49 +0200 (CEST)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
- [209.85.210.170])
- by mails.dpdk.org (Postfix) with ESMTP id D91974026A
- for <dev@dpdk.org>; Fri,  9 Oct 2026 18:06:47 +0200 (CEST)
-Received: by mail-pf1-f170.google.com with SMTP id
- d2e1a72fcca58-88b5f43cb8aso2346589b3a.3
- for <dev@dpdk.org>; Fri, 09 Oct 2026 09:06:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E397B40274;
+	Fri,  9 Oct 2026 18:14:09 +0200 (CEST)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id C38774026A
+ for <dev@dpdk.org>; Fri,  9 Oct 2026 18:14:08 +0200 (CEST)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-2e8246b13cbso14427055ad.2
+ for <dev@dpdk.org>; Fri, 09 Oct 2026 09:14:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791562007;
- x=1792166807; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791562448;
+ x=1792167248; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=ByfYptQoq2EfpV823eW11a/lOy6A87ty8sm2+PUTzk4=;
- b=Sxe3kKrGojvRpGL8ZO3cGVbed+pz27E404XK97rCiCRow4T3wF8pWZd+PG9nZMsvLy
- rHse8uz7Y5iPuu8ZiUgIcC70wGy0qGHQRA4NV6fB5EfkMKS5XSH0nj8hpeSzcd1/p7Lx
- nYXv1/IFi9dJ8zlkV+zeElScOslUAivPTk1tZvUxAEHqqsb9nwjLuRDW3VW7HtfX4q4P
- n86zMk5Na+cUT8ILY7Ppxc594q7W9wOFpo8SJCbd+lXG/v6ZU9Te+zc6Cz1IrHzGKHJf
- xVg2g/dv5nWeRcslh/5dAgL9Y4b/bR6r4u9t0d+clT0ghtTpXn+j2oQfttdIZ4ThCgCF
- Deuw==
+ bh=Uc0Txc5PvvF41XQ64r5W/aWd4OsKdTsNxQjaxTkO9CY=;
+ b=J2/KczJW8ZWMNJ47JoZEGFH9hRa4pUQpYJ/gRMQCMBQFw5EDOlKk0PKYFLkdgc+uwX
+ Iravid1/XkpbfM/d6erjdbgwReCZTy1e7H22TfF6Pn/5zO9Sak3M83yJdlMrcnorBPFi
+ yKVE3yTuEGROvJU9J6A5tC6QcJnteNTf6/PAftTYWIlaOPJZmoxCWzLh2DhmgapCVHcL
+ MNT7HjAq3rq7rJsvdvth78Fl29t0tlelvlygP7W1D/ag9/YAOjfnOfY4SACJOatN68aX
+ Y43YB3gEW3MP64ZLsE1Ls4MUKJ2et7p/VTwWrWTG1SPXffBnhPyxPdnfTiXr3DlYujl2
+ Vf+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791562007; x=1792166807;
+ d=1e100.net; s=20260707; t=1791562448; x=1792167248;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=ByfYptQoq2EfpV823eW11a/lOy6A87ty8sm2+PUTzk4=;
- b=TNI9MZcBBKrQwyhyUWUkXkhbh7XCaqat0jRKZYxymrw1shL+KDDn/G9DkkrN5M/0lg
- yzPjp0CRBEJhXcU7VQGZO5uul+U9yfBmBXglJH1hBbClLVBjBpdlgZUfi1/Cdgqa3yKs
- xpIsTQBdLCSQFdVQ6e67fRMdCEYsVgTbTYDXtG5sBc1+AhyVmZt1pkNUqMJkY9s8Nic5
- u0nqKB3U7XQxYh/lO6HFn0ipGlO6bIuzjtDp60mYF2Pb2lxd/Ub5Ae4kB3LyVHftlpgZ
- tHxR1kHqpMCA562x/xYMKCMgkWLpCBG2iQb2/xVrQriPk3I/wUS1/2kuf//eS4tA5pxo
- SLVw==
-X-Gm-Message-State: AFuF++kWNsOG4b9fAtK2Ms8yyHUoQX0sfRz2G+4PG6O5LM4yGYAE5IcP
- vLpdk2i90cij1ndpHcI8Vq16bBygL6hj+LfTyx6i5XOo4PStr+yw4h91r3yhpqxerMs=
-X-Gm-Gg: AYBFou0sW+unNHRLK0UgGkPRfX9/89t5Mrd5YcoVEaPFw7dAI3OnHAzMRXWUZNVrets
- 90KwEGdca1lNWDwM5ImyDCHrqECRF2rUxRgdWKaYXXKPI9RGQoEXrRc6JNEDV58JmNnglt74esp
- RxG+8ib5c0GqrAXQ6NJ0WOPmZs0qlRIfp41GAsAglpCDfFANvxu5q2NHRAB/qOwLkjR0xBnfbJg
- RzmDt6ZE5Na5ly2TLpXnONVhutAXrgL3P30vYIigA0b9qExqbp1E2Nv8ojomj7ot+O0Stq+oE99
- HWJTYHybOkx7pjlqA9xi9b3zgIX+iVdKBRQpHvF77ICJpYo/Q9vK8B+tu+H28KMVOXcxDtYAEyl
- G5+jtsbOnbk4om66WK1a9tWjh6QBjtLsoXKxIDtwfQX3jgLQXByEptpuKNvEssKLyH195wK/bn1
- bZKk/Pf9MoXR9itOlhxWF0BkDTyL3jt8KOoxwJJWPoYx/LH8iAzdtCIPok+SUnQEIOettcrZ+yy
- /g0x1sWpsNZ0VAQjDEHNYiSoLhjJ7ztEnYVFSjk
-X-Received: by 2002:a05:6a20:2d14:b0:3e0:c57c:200b with SMTP id
- adf61e73a8af0-3e16be5098amr1927570637.40.1791562006692; 
- Fri, 09 Oct 2026 09:06:46 -0700 (PDT)
+ bh=Uc0Txc5PvvF41XQ64r5W/aWd4OsKdTsNxQjaxTkO9CY=;
+ b=WIc3ESfARYhqEV6LisIe+XpYMARs+UVaSOZAtAQ9Ld0mWbZaueBu4A0sF9TDv8lXRb
+ y1Hi+qJU1UN7glmwOfZCA7phLx/UbNmwZ3L0dvQDrS632aYV3Ofzvp2jTcthF4R9gyg2
+ 5m/nwOXqdTNhvP7Mt7Y8sdXCzStT35NZfK1/FcPvNzQ5/T25W4DnyRX7Rax3ydGtLwFZ
+ +h7NqJJs5n1SamcxicOSSInBJDc/iNSPqQ8kNLwylRJzzYy89VpGt2FEpIzxlBJBm8bg
+ USuFbB5GgTaeOsqGhQJqmDfx/B/GN1GfG4ikhRxZhBrM2ISeqIzBUXJXC8KeLQttqftB
+ nmtQ==
+X-Gm-Message-State: AFq9FYJmLWgfrw3IWlRyzJ9SX0pAaeGoeYGTDUH1UDGbyWxnZQvCB6ig
+ bWCN2UWS+F0eKBkl+swWqY4vx0djid3JcnjPHDSnwnj+YftzxUJ0Br9lMRPK93cY67Y=
+X-Gm-Gg: AYBFou0WPn2Mp6uHWAjp0o9i9VseuwUMBVPTC0sCYIyBX+EZ+9XYjgbo4Yew1MUiq3o
+ 9BUMaHbLdVismzkp1k/DDt16jDqsZhfMoWo6BK8Np9aHh43O76C5N7KINl0PUtNYzsIkBxiqehb
+ 5nYN5LV/pC1BZCKxcwWuBw2oeFcyx3Ldj+Hfh3I+rFgYTkPIGbp7xYvxJfCZNAem0bkJQoJRFvw
+ l7v5ufbWrqEvOwLnic5EyJmk0V1Sswc/T+lmg5XBAI6k7sJs13c5uHRFZNUU3Jyu/Gau6q+GS5R
+ yeogq3L17ZRgXwGdf4LwGaOMiiafrQu2TCZ2M5PS6fqwfGnGg5rhfXzqCuvPeZSLc8AgoaZ9sxO
+ O1Z8saPWTFIyae7w/P1ewnOAtyUcF/3RLVcjRkhQPGtaerFVjsaqH3FZVCvFDwksgfvXfbutEo4
+ FqaoJVrMXMuo1BCFT/q33QTMGBi50Nka1zcDnY6XMIweysNyfkGVcIvtK0P49WDKQyhiFzpxYe5
+ 0WbcZRo9NICmjoZIvN05OWNV+qm//tiok5ho6j3
+X-Received: by 2002:a17:903:22ce:b0:2e8:3639:1a3e with SMTP id
+ d9443c01a7336-2e842ac90afmr20781515ad.40.1791562447730; 
+ Fri, 09 Oct 2026 09:14:07 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cd3da04d46asm1279972a12.30.2026.10.09.09.06.46
+ d9443c01a7336-2e8422b8dc4sm12359285ad.59.2026.10.09.09.14.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 09 Oct 2026 09:06:46 -0700 (PDT)
-Date: Fri, 9 Oct 2026 08:48:50 -0700
+ Fri, 09 Oct 2026 09:14:07 -0700 (PDT)
+Date: Fri, 9 Oct 2026 09:14:05 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Cc: dev@dpdk.org, Konstantin Ananyev <konstantin.ananyev@huawei.com>, Marat
- Khalili <qm2k21@gmail.com>
-Subject: Re: [PATCH v3 01/29] bpf: replace deprecated SMP barriers with C11
- fences
-Message-ID: <20261009084744.046a7200@phoenix.local>
-In-Reply-To: <b9d3cb13-e34f-406d-ac18-345fede8bc5b@arm.com>
-References: <20260729175715.165120-1-stephen@networkplumber.org>
- <20261008233649.1260843-1-stephen@networkplumber.org>
- <20261008233649.1260843-2-stephen@networkplumber.org>
- <b9d3cb13-e34f-406d-ac18-345fede8bc5b@arm.com>
+To: "Randy Tice (rtice)" <rtice@cisco.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Morten =?UTF-8?B?QnLDuHJ1cA==?=
+ <mb@smartsharesystems.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>
+Subject: Re: [PATCH v4 0/1] mbuf: add runtime metadata dynamic-field storage
+Message-ID: <20261009091405.46b9f3bf@phoenix.local>
+In-Reply-To: <PH0PR11MB7616A68AC3EA1349948CAC75A9932@PH0PR11MB7616.namprd11.prod.outlook.com>
+References: <179061941387.2.17741463412422386825.v3-0000-cover-letter.patch@cisco.com>
+ <179130207755.4.10786861462241375385.v4-0000-cover-letter.patch@cisco.com>
+ <20261006095123.3166b4dd@phoenix.local>
+ <PH0PR11MB7616A68AC3EA1349948CAC75A9932@PH0PR11MB7616.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,52 +87,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 9 Oct 2026 01:05:56 -0500
-Wathsala Vithanage <wathsala.vithanage@arm.com> wrote:
+On Thu, 8 Oct 2026 16:15:26 +0000
+"Randy Tice (rtice)" <rtice@cisco.com> wrote:
 
-> >   /*
-> >    * Marks given callback as used by datapath.
-> >    */
-> >   static __rte_always_inline void
-> >   bpf_eth_cbi_inuse(struct bpf_eth_cbi *cbi)
-> >   {
-> > -	cbi->use++;
-> > -	/* make sure no store/load reordering could happen */
-> > -	rte_smp_mb();
-> > +	rte_atomic_store_explicit(&cbi->use,
-> > +		rte_atomic_load_explicit(&cbi->use, rte_memory_order_relaxed) + 1,
-> > +		rte_memory_order_relaxed);
-> > +
-> > +	/* full barrier: count must be visible before cb is read */
-> > +	rte_atomic_thread_fence(rte_memory_order_seq_cst);  
-> 
-> This is correct but why use a barrier when the above store itself could 
-> be SEQ_CST that
-> synchronizes with load in bpf_eth_cbi_wait?
+> I did a brief look at this and still not convinced about the exact use ca=
+se.
+> What is the problem this is trying to solve and why can't it be done
+> by using existing API=E2=80=99s.
+>=20
+> #RT:
+>   Our implementation currently requires an additional 256 bytes of metada=
+ta per
+>   mbuf. That does not fit in the existing dynamic-field storage, so today=
+ we
+>   carry a private patch to extend struct rte_mbuf. The goal of this work =
+is to
+>   replace that private struct change with a supported upstream mechanism.
+>=20
+>   We did look at using mbuf private data first. It can work when the appl=
+ication
+>   owns all mbuf pool creation, but it is not sufficient for our case with=
+out
+>   another global/base reservation mechanism. Some mbuf pools are created =
+by
+>   drivers or libraries rather than directly by the application; the CNXK =
+inline
+>   IPsec/OOP meta pool is one example (NIX_INL_META_POOL, created through
+>   cnxk_nix_inl_meta_pool_cb()). To make private data work there, we had t=
+o add
+>   an EAL argument that reserved a base private size for all pktmbufs, inc=
+luding
+>   PMD-created pools.
+>=20
+>   Private data also lacks a central layout registry. If multiple modules =
+use
+>   private data, they must coordinate offsets out of band to avoid overlay=
+ing
+>   each other. The dynamic-field registry solves that coordination problem=
+, but
+>   the existing copied dynamic-field area is too small and has copy/clone
+>   semantics that are wrong for this metadata.
+>=20
+>   That is why this version uses a globally configured per-mbuf metadata a=
+rea
+>   managed by the dynamic-field registry, with explicit metadata fields th=
+at are
+>   not copied by generic copy/clone/attach paths. This direction came out =
+of the
+>   prior discussion with you, Morten, and me: avoid a Cisco-private mbuf s=
+truct
+>   patch, avoid per-pool private-data layout coordination, and keep sizeof=
+(struct
+>   rte_mbuf) fixed.
 
-There are two different things be covered for safety here.
-The counter and the callback pointer. The counter uses atomic
-operations and the callback pointer is referenced without atomic.
+You uncovered a design flaw in the CNXK driver and the=20
+proposed solution is wider than it needs to be.
 
-AI explains it as:
+All mbufs visible to application must come from mempools controlled by the =
+application.
+The design of CNXK driver is wrong, it shouldn't be using a private hidden =
+pool.
+It is ok for drivers to have hidden mempools that are used for non-visible =
+things,
+an example is the packet capture mempool where the mbufs only go into captu=
+re stream.
 
-A seq_cst store on the counter is not enough. This is a store/load
-pattern across two objects:
+More long winded AI description:
 
-  datapath: store use, load cb
-  unload:   store cb,  load use
+On Thu, 8 Oct 2026 16:15:26 +0000
+"Randy Tice (rtice)" <rtice@cisco.com> wrote:
 
-At least one side has to see the other's store. Making the store
-of use seq_cst does not order the datapath's later load of cb,
-which is a plain load. On arm64 that compiles to stlr followed by
-ldr, and the ldr can be satisfied before the stlr is visible.
-Only stlr/ldar pairs are kept in order.
+> We did look at using mbuf private data first. It can work when the
+> application owns all mbuf pool creation, but it is not sufficient for
+> our case without another global/base reservation mechanism. Some mbuf
+> pools are created by drivers or libraries rather than directly by the
+> application; the CNXK inline IPsec/OOP meta pool is one example
 
-It can be done without fences by making cb atomic and using
-seq_cst for all four accesses (stlr + ldar on arm64). That touches
-every callback and is a bigger change than replacing the barriers,
-so I would rather do it as a follow-up if at all.
+That is the real bug. A driver should not hand the application mbufs
+from a pool the application did not create. The Rx queue API already
+takes the pool from the application, and rte_eth_rxconf can carry
+more than one (rx_mempools). If cnxk needs a meta pool whose mbufs
+reach the application, it should get it from the application, or at
+minimum create it with the same priv_size as the Rx queue pool.
 
-There is no cost difference on x86. A seq_cst store is xchg and
-the fence is lock addl, one locked instruction per burst either
-way.
+Internal pools are fine when the mbufs never cross the API, e.g.
+dumpcap or the bonding LACP pool.
+
+With that fixed, the existing private area does what you need. It is
+per pool, sized by the application, and is not copied by copy, clone
+or attach. Offset coordination inside it is the application's job,
+and if a registry is wanted it can be layered on top of priv without
+changing the mbuf layout.
+
+So my answer to option 1 vs 2 is neither. I don't want a global
+layout knob that puts a load in every inline helper and needs
+per-driver range checks, to work around one driver.
+
+What I would take:
+ - cnxk: validate wqe_skip/later_skip/first_skip against priv_size
+   and headroom. This is a bug today, independent of this series.
+ - cnxk: meta pool comes from, or matches, the application pool.
+ - ethdev: under RTE_ETHDEV_DEBUG_RX, check that received mbufs
+   belong to a pool configured on that queue.
+
+Nithin, Harman: do mbufs from NIX_INL_META_POOL get returned to the
+application by rx_burst, or are they only consumed internally?
