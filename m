@@ -2,44 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F16A0CA9EBE
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 06:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80AA6CA6017
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 07:01:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AE92E40431;
-	Sat, 10 Oct 2026 08:57:04 +0200 (CEST)
-Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net
- [31.44.14.18]) by mails.dpdk.org (Postfix) with ESMTP id BDCC2400EF;
- Sat, 10 Oct 2026 08:57:01 +0200 (CEST)
-Received: from mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net
- (mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net
- [IPv6:2a02:6b8:c0c:3325:0:640:61d:0])
- by forward502d.mail.yandex.net (postfix) with ESMTPS id 540CFC6739;
- Sat, 10 Oct 2026 09:57:01 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net (smtp)
- with ESMTPSA id uuJiaTaiOiE0-rOvE8qHg; 
- Sat, 10 Oct 2026 09:57:00 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1791615420; bh=fb4OyU4O/R7b8vAJAc3w2YCpSrXHxFLzeJKHTZ1FzgE=;
- h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
- b=dRP5oNNiCRjkZQ+ku0kjWhzdqVOb/5vKc/wjujcn0o8++MLS93rtjqtNLNQpzT2US
- 15gLE1orSXJhRqoYMRFWyfdBrcH0L3GnkB1N4OirOw4pxE3qUb6WeJ7vnOXIg8zDWr
- dxpER7PYsPMcto/u8C3edEbTgCHXzPwYfPa0ZPe4=
-Authentication-Results: mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net;
- dkim=pass header.i=@yandex.ru
-From: Roman Khromenok <roma55592@yandex.ru>
-To: dev@dpdk.org
-Cc: reshma.pattan@intel.com,
-	stephen@networkplumber.org,
-	stable@dpdk.org
-Subject: [PATCH 2/2] app/procinfo: add option to decode module EEPROM
-Date: Sat, 10 Oct 2026 08:55:42 +0200
-Message-ID: <b9c96ea7c4ba61d6d295a5c344c0c802fa29d313.1791609796.git.roma55592@yandex.ru>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <e6d262613a145c7e850a526b03070bad38c40a92.1791609796.git.roma55592@yandex.ru>
-References: <e6d262613a145c7e850a526b03070bad38c40a92.1791609796.git.roma55592@yandex.ru>
+	by mails.dpdk.org (Postfix) with ESMTP id 66347402B4;
+	Sat, 10 Oct 2026 09:01:25 +0200 (CEST)
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
+ [113.46.200.219])
+ by mails.dpdk.org (Postfix) with ESMTP id 777EE400EF
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 09:01:23 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=tf/RduexDrK1NGTGRo/k21aBoaq3a7EYnxNFDtnyV6c=;
+ b=13EIqPnw2mSwrh9Mayzw7ECZZYDMFe1+3PSmpiElON6StsZq7bbpDL53+WJ/G6RSbX5x1zGCz
+ jq6fvc2r8D+f7Jbs1hd7IRHARaD3INO0WqOc5p0yC1cNHH6ZqodfZ2eK7u3LT6R5jEcuwAOAyQk
+ ITZE8IzxjbA/kue0M+TEaRo=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+ by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4j1vTV5ms7z1prLV;
+ Sat, 10 Oct 2026 14:49:02 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+ by mail.maildlp.com (Postfix) with ESMTPS id 0F2B04056E;
+ Sat, 10 Oct 2026 15:01:20 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Sat, 10 Oct 2026 15:01:19 +0800
+Message-ID: <1ee33dc3-fb72-49e0-94b4-3b2e1d10d773@huawei.com>
+Date: Sat, 10 Oct 2026 15:01:19 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] dma/imx_edma5: add device configuration
+To: Gagandeep Singh <g.singh@nxp.com>, <dev@dpdk.org>
+CC: <hemant.agrawal@nxp.com>, Prashant Gupta <prashant.gupta_3@nxp.com>
+References: <20260811104933.3843522-1-g.singh@nxp.com>
+ <20260812092929.563973-1-g.singh@nxp.com>
+ <20260812092929.563973-4-g.singh@nxp.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20260812092929.563973-4-g.singh@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,153 +58,311 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The --show-module-eeprom option only prints a hexdump of the
-pluggable module EEPROM, which has to be decoded by hand against
-the SFF specifications.
 
-Add an optional "decode" value, --show-module-eeprom=decode,
-to print the fields decoded by rte_eth_module_eeprom_parse(),
-such as the vendor, the transceiver type and the digital
-diagnostics, as the testpmd command "show port <port_id>
-module_eeprom decode" does. Without the value, the hexdump
-is printed as before.
 
-Signed-off-by: Roman Khromenok <roma55592@yandex.ru>
----
-Tested on a stand with testpmd as the primary process and three
-net_null ports, patched locally (not part of the series) so that
-port 0 has no module and ports 1-2 return an SFF-8472 image:
-before patch 1/2 only port 0 was shown, after it ports 1-2 are
-dumped and decoded, and an invalid value is rejected.
+On 8/12/2026 5:29 PM, Gagandeep Singh wrote:
+> Add the configuration and lifecycle operations for the i.MX95 eDMA5
+> dmadev: device configure, virtual channel setup, start, stop and close.
+> 
+> Each virtual channel maps 1:1 onto a usable hardware channel and owns a
+> software job ring plus a pool of in-memory TCD64 descriptors for
+> scatter-gather. Channel setup validates the requested direction and ring
+> size, allocates these rings, and resets the hardware channel to a known
+> idle state. Start re-arms global clock and arbitration and clears the
+> per-channel bookkeeping; stop resets every configured channel; close
+> frees the per-channel resources.
+> 
+> Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+> Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
+> ---
+>  drivers/dma/imx_edma5/imx_edma5_dmadev.c | 246 +++++++++++++++++++++++
+>  1 file changed, 246 insertions(+)
+> 
+> diff --git a/drivers/dma/imx_edma5/imx_edma5_dmadev.c b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
+> index f1c65a474a..fe5539b612 100644
+> --- a/drivers/dma/imx_edma5/imx_edma5_dmadev.c
+> +++ b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
+> @@ -78,6 +78,14 @@ imx_edma5_read_channel_mask(const char *dev_name)
+>  	return mask;
+>  }
+>  
+> +/* Return the register base of hardware channel n. */
+> +static inline uint8_t *
+> +imx_edma5_chan_base(struct imx_edma5_dev *ed, uint32_t chan)
+> +{
+> +	return ed->reg_base + IMX_EDMA5_CHAN_BASE_OFF +
+> +	       (size_t)chan * IMX_EDMA5_CHAN_STRIDE;
+> +}
+> +
+>  static int
+>  imx_edma5_info_get(const struct rte_dma_dev *dev, struct rte_dma_info *dev_info,
+>  		   uint32_t info_sz)
+> @@ -97,8 +105,246 @@ imx_edma5_info_get(const struct rte_dma_dev *dev, struct rte_dma_info *dev_info,
+>  	return 0;
+>  }
+>  
+> +static void imx_edma5_reset_hw_chan(struct imx_edma5_vchan *vc);
+> +
+> +static int
+> +imx_edma5_configure(struct rte_dma_dev *dev, const struct rte_dma_conf *conf,
+> +		    uint32_t conf_sz)
+> +{
+> +	struct imx_edma5_dev *ed = dev->data->dev_private;
+> +
+> +	RTE_SET_USED(conf_sz);
+> +
+> +	if (conf->nb_vchans == 0 || conf->nb_vchans > ed->max_vchans) {
+> +		IMX_EDMA5_LOG(ERR, "Invalid nb_vchans %u (max %u)",
+> +			      conf->nb_vchans, ed->max_vchans);
+> +		return -EINVAL;
+> +	}
 
- app/proc-info/main.c                   | 35 +++++++++++++++++++++++---
- doc/guides/rel_notes/release_26_11.rst |  3 ++-
- doc/guides/tools/proc_info.rst         |  9 ++++---
- 3 files changed, 40 insertions(+), 7 deletions(-)
+No need add such verify because the rte_dma_configure already done
 
-diff --git a/app/proc-info/main.c b/app/proc-info/main.c
-index d918a0a3c8..635e81c5ab 100644
---- a/app/proc-info/main.c
-+++ b/app/proc-info/main.c
-@@ -117,6 +117,8 @@ static uint32_t enable_shw_fw_version;
- static uint32_t enable_shw_rss_reta;
- /* Enable show module eeprom information. */
- static uint32_t enable_shw_module_eeprom;
-+/* Decode module eeprom instead of a hexdump. */
-+static uint32_t module_eeprom_decode;
- 
- /* Enable dump Rx/Tx descriptor. */
- static uint32_t enable_shw_rx_desc_dump;
-@@ -184,7 +186,8 @@ proc_info_usage(const char *prgname)
- 		"  --version: to display DPDK version\n"
- 		"  --firmware-version: to display ethdev firmware version\n"
- 		"  --show-rss-reta: to display ports redirection table\n"
--		"  --show-module-eeprom: to display ports module eeprom information\n"
-+		"  --show-module-eeprom[=decode]: to display ports module eeprom information, "
-+			"as a hexdump or decoded\n"
- 		"  --show-rx-descriptor queue_id:offset:num to display ports Rx descriptor information. "
- 			"queue_id: A Rx queue identifier on this port. "
- 			"offset: The offset of the descriptor starting from tail. "
-@@ -445,7 +448,7 @@ proc_info_parse_args(int argc, char **argv)
- 		{"version", 0, NULL, 0},
- 		{"firmware-version", 0, NULL, 0},
- 		{"show-rss-reta", 0, NULL, 0},
--		{"show-module-eeprom", 0, NULL, 0},
-+		{"show-module-eeprom", optional_argument, NULL, 0},
- 		{"show-rx-descriptor", required_argument, NULL, 1},
- 		{"show-tx-descriptor", required_argument, NULL, 1},
- 		{"show-edev-queue-xstats", required_argument, NULL, 0},
-@@ -539,8 +542,17 @@ proc_info_parse_args(int argc, char **argv)
- 					"show-rss-reta", MAX_LONG_OPT_SZ))
- 				enable_shw_rss_reta = 1;
- 			else if (!strncmp(long_option[option_index].name,
--					"show-module-eeprom", MAX_LONG_OPT_SZ))
-+					"show-module-eeprom", MAX_LONG_OPT_SZ)) {
- 				enable_shw_module_eeprom = 1;
-+				if (optarg != NULL) {
-+					if (strcmp(optarg, "decode") != 0) {
-+						fprintf(stderr, "Invalid show-module-eeprom value: %s\n",
-+							optarg);
-+						return -1;
-+					}
-+					module_eeprom_decode = 1;
-+				}
-+			}
- 			else if (!strncmp(long_option[option_index].name,
- 					"edev-dump-xstats", MAX_LONG_OPT_SZ)) {
- 				int ret = parse_eventdev_dump_xstats_params(optarg);
-@@ -1850,6 +1862,13 @@ show_port_rss_reta_info(void)
- 	}
- }
- 
-+static void
-+module_eeprom_field_print(const char *name, const char *value,
-+		__rte_unused void *arg)
-+{
-+	printf("\t%-41s : %s\n", name, value);
-+}
-+
- static void
- show_module_eeprom_info(void)
- {
-@@ -1891,6 +1910,16 @@ show_module_eeprom_info(void)
- 			continue;
- 		}
- 
-+		if (module_eeprom_decode) {
-+			ret = rte_eth_module_eeprom_parse(module_info.type,
-+					eeprom_info.data, eeprom_info.length,
-+					module_eeprom_field_print, NULL);
-+			if (ret != 0)
-+				fprintf(stderr, "Port %u module EEPROM decode error: %s\n",
-+					i, strerror(-ret));
-+			continue;
-+		}
-+
- 		rte_hexdump(stdout, "hexdump", eeprom_info.data,
- 			    eeprom_info.length);
- 		printf("Finish -- Port: %u MODULE EEPROM length: %d bytes\n",
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 0bca0c2c89..51de3a490f 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -85,7 +85,8 @@ New Features
-   or obtained from any other source with the same layout,
-   such as the Linux ethtool ``ETHTOOL_GMODULEEEPROM`` ioctl.
-   The testpmd command ``show port (port_id) module_eeprom decode``
--  uses it to display the decoded module EEPROM.
-+  and the dpdk-proc-info option ``--show-module-eeprom=decode``
-+  use it to display the decoded module EEPROM.
-   The SFF-8636 decoder also reports the per-lane loss of signal,
-   loss of lock and Tx fault flags.
-   The SFF-8472 decoder also reports the Rx loss of signal and Tx fault state.
-diff --git a/doc/guides/tools/proc_info.rst b/doc/guides/tools/proc_info.rst
-index 0a54f20f8c..36f8000408 100644
---- a/doc/guides/tools/proc_info.rst
-+++ b/doc/guides/tools/proc_info.rst
-@@ -21,7 +21,7 @@ The application has a number of command line options:
-    --stats-reset | --xstats-reset] [ --show-port | --show-tm | --show-crypto |
-    --show-ring[=name] | --show-mempool[=name] | --iter-mempool=name |
-    --show-port-private | --version | --firmware-version | --show-rss-reta |
--   --show-module-eeprom | --show-rx-descriptor queue_id:offset:num |
-+   --show-module-eeprom[=decode] | --show-rx-descriptor queue_id:offset:num |
-    --show-tx-descriptor queue_id:offset:num | --show-edev-queue-xstats=queue_num:evdev_id |
-    --show-edev-port-xstats=port_num :evdev_id | --edev-dump-xstats=evdev_id |
-    --edev-reset-xstats=evdev_id | --show-edev-device-xstats=evdev_id]
-@@ -87,8 +87,11 @@ The firmware-version parameter displays ethdev firmware version.
- **--show-rss-reta**
- The show-rss-reta parameter displays ports rss redirection table.
- 
--**--show-module-eeprom**
--The show-module-eeprom parameter displays ports module eeprom information.
-+**--show-module-eeprom[=decode]**
-+The show-module-eeprom parameter displays ports module eeprom information
-+as a hexdump. With the decode value, the module eeprom is decoded
-+according to the SFF specifications, for example the vendor,
-+the transceiver type and the digital diagnostics.
- 
- **--show-rx-descriptor queue_id:offset:num**
- The show-rx-descriptor parameter displays ports Rx descriptor information
--- 
-2.47.3
+> +
+> +	if (ed->vchans == NULL) {
+> +		ed->vchans = rte_zmalloc_socket("imx_edma5_vchans",
+> +				ed->max_vchans * sizeof(struct imx_edma5_vchan),
+> +				RTE_CACHE_LINE_SIZE, dev->data->numa_node);
+> +		if (ed->vchans == NULL) {
+> +			IMX_EDMA5_LOG(ERR, "Failed to alloc vchan array");
+> +			return -ENOMEM;
+> +		}
+> +	} else {
+> +		/* Reconfigure: reset and free every previously configured channel. */
+> +		uint16_t i;
+> +
+> +		for (i = 0; i < ed->nb_vchans; i++) {
+> +			struct imx_edma5_vchan *vc = &ed->vchans[i];
+> +
+> +			if (!vc->configured)
+> +				continue;
+> +			imx_edma5_reset_hw_chan(vc);
+> +			rte_free(vc->jobs);
+> +			rte_free(vc->sg_tcd_pool);
+> +			memset(vc, 0, sizeof(*vc));
+> +		}
+> +	}
+> +
+> +	ed->nb_vchans = conf->nb_vchans;
+> +
+> +	return 0;
+> +}
+> +
+> +/* Reset a hardware channel to a known idle state. */
+> +static void
+> +imx_edma5_reset_hw_chan(struct imx_edma5_vchan *vc)
+> +{
+> +	uint8_t *ch = vc->ch_regs;
+> +	uint8_t *tcd = vc->tcd_regs;
+> +	uint32_t sbr;
+> +
+> +	/*
+> +	 * Disable hardware request and clear latched completion state.
+> +	 * CH_CSR.DONE is write-1-to-clear, so write the DONE bit to clear any
+> +	 * stale completion (e.g. left by the bootloader/kernel driver) while
+> +	 * leaving all other control bits disabled.
+> +	 */
+> +	imx_edma5_write32(ch, IMX_EDMA5_CH_CSR, IMX_EDMA5_CH_CSR_DONE);
+> +	imx_edma5_write32(ch, IMX_EDMA5_CH_ES, IMX_EDMA5_CH_ES_ERR);
+> +	imx_edma5_write32(ch, IMX_EDMA5_CH_INT, IMX_EDMA5_CH_INT_INT);
+> +
+> +	/*
+> +	 * Enable the read/write attribute bits in the System Bus Register with a
+> +	 * read-modify-write. The security/privilege attribute bits carried here
+> +	 * come up with a valid reset default that the bus fabric (XRDC) checks
+> +	 * and that must be preserved; a blind write of just RD|WR would clear
+> +	 * them and make the fabric reject the eDMA master transaction.
+> +	 */
+> +	sbr = imx_edma5_read32(ch, IMX_EDMA5_CH_SBR);
+> +	sbr |= IMX_EDMA5_CH_SBR_RD | IMX_EDMA5_CH_SBR_WR;
+> +	imx_edma5_write32(ch, IMX_EDMA5_CH_SBR, sbr);
+> +
+> +	/*
+> +	 * Leave CH_MATTR at its power-on reset value. The eDMA5 is a
+> +	 * non-coherent bus master; cache coherency is maintained by the driver
+> +	 * via explicit DC CVAC/CIVAC cache maintenance, not by AXI snooping.
+> +	 */
+> +
+> +	/* Clear the TCD control/status so the channel is idle. */
+> +	imx_edma5_write16(tcd, IMX_EDMA5_TCD_CSR, 0);
+> +	imx_edma5_write16(tcd, IMX_EDMA5_TCD_CITER, 0);
+> +	imx_edma5_write16(tcd, IMX_EDMA5_TCD_BITER, 0);
+> +}
+> +
+> +static int
+> +imx_edma5_vchan_setup(struct rte_dma_dev *dev, uint16_t vchan,
+> +		      const struct rte_dma_vchan_conf *conf,
+> +		      uint32_t conf_sz)
+> +{
+> +	struct imx_edma5_dev *ed = dev->data->dev_private;
+> +	struct imx_edma5_vchan *vc;
+> +
+> +	RTE_SET_USED(conf_sz);
+> +
+> +	if (vchan >= ed->nb_vchans) {
+> +		IMX_EDMA5_LOG(ERR, "vchan %u out of range", vchan);
+> +		return -EINVAL;
+> +	}
+
+rte_dma_vchan_setup() already done this verify
+
+> +
+> +	if (conf->direction != RTE_DMA_DIR_MEM_TO_MEM) {
+> +		IMX_EDMA5_LOG(ERR, "Only mem-to-mem direction supported");
+> +		return -EINVAL;
+> +	}
+
+rte_dma_vchan_setup() already done this verify
+
+> +
+> +	if (!rte_is_power_of_2(conf->nb_desc) ||
+> +	    conf->nb_desc < IMX_EDMA5_MIN_DESC ||
+> +	    conf->nb_desc > IMX_EDMA5_MAX_DESC) {
+> +		IMX_EDMA5_LOG(ERR, "nb_desc must be power of 2 in [%u..%u]",
+> +			      IMX_EDMA5_MIN_DESC, IMX_EDMA5_MAX_DESC);
+> +		return -EINVAL;
+> +	}
+
+	    conf->nb_desc < IMX_EDMA5_MIN_DESC ||
+	    conf->nb_desc > IMX_EDMA5_MAX_DESC)
+The min-max verify already done in rte_dma_vchan_setup()
+
+> +
+> +	vc = &ed->vchans[vchan];
+> +
+> +	/* Free previous rings if this vchan is being reconfigured. */
+> +	rte_free(vc->jobs);
+> +	rte_free(vc->sg_tcd_pool);
+> +	memset(vc, 0, sizeof(*vc));
+> +
+> +	/*
+> +	 * Map this vchan onto a usable hardware channel. chan_map[] skips
+> +	 * channels reserved by "dma-channel-mask" (channels 0 and 1 on i.MX95).
+> +	 */
+> +	vc->hw_chan = ed->chan_map[vchan];
+> +	vc->ch_regs = imx_edma5_chan_base(ed, vc->hw_chan);
+> +	vc->tcd_regs = vc->ch_regs + IMX_EDMA5_CH_TCD_OFF;
+> +	vc->nb_desc = conf->nb_desc;
+> +	vc->desc_mask = conf->nb_desc - 1;
+> +
+> +	vc->jobs = rte_zmalloc_socket("imx_edma5_jobs",
+> +			vc->nb_desc * sizeof(struct imx_edma5_job),
+> +			RTE_CACHE_LINE_SIZE, dev->data->numa_node);
+> +	if (vc->jobs == NULL) {
+> +		IMX_EDMA5_LOG(ERR, "Failed to alloc job ring for vchan %u",
+> +			      vchan);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	/* One IMX_EDMA5_SG_TCD_PER_JOB descriptor slice per job ring slot. */
+> +	vc->sg_tcd_pool = rte_zmalloc_socket("imx_edma5_sgtcd",
+> +			(size_t)vc->nb_desc * IMX_EDMA5_SG_TCD_PER_JOB *
+> +				sizeof(struct imx_edma5_hw_tcd64),
+> +			RTE_CACHE_LINE_SIZE, dev->data->numa_node);
+> +	if (vc->sg_tcd_pool == NULL) {
+> +		IMX_EDMA5_LOG(ERR, "Failed to alloc SG TCD pool for vchan %u",
+> +			      vchan);
+
+No need wrap because DPDK allow max 100 characters per line (only suggest)
+
+> +		rte_free(vc->jobs);
+> +		vc->jobs = NULL;
+> +		return -ENOMEM;
+> +	}
+> +	vc->sg_tcd_iova = rte_malloc_virt2iova(vc->sg_tcd_pool);
+> +
+> +	imx_edma5_reset_hw_chan(vc);
+> +	vc->configured = true;
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +imx_edma5_start(struct rte_dma_dev *dev)
+> +{
+> +	struct imx_edma5_dev *ed = dev->data->dev_private;
+> +	uint32_t mp_csr;
+> +	uint16_t i;
+> +
+> +	/*
+> +	 * Enable round-robin arbitration with a read-modify-write so GCLC (set
+> +	 * in probe) is preserved; clearing GCLC would re-gate the per-channel
+> +	 * clocks and external-abort any subsequent channel access.
+> +	 */
+> +	mp_csr = imx_edma5_read32(ed->reg_base, IMX_EDMA5_MP_CSR);
+> +	mp_csr |= IMX_EDMA5_MP_CSR_GCLC | IMX_EDMA5_MP_CSR_ERCA;
+> +	imx_edma5_write32(ed->reg_base, IMX_EDMA5_MP_CSR, mp_csr);
+> +
+> +	for (i = 0; i < ed->nb_vchans; i++) {
+> +		struct imx_edma5_vchan *vc = &ed->vchans[i];
+> +
+> +		if (!vc->configured)
+> +			continue;
+> +		imx_edma5_reset_hw_chan(vc);
+> +		vc->head = 0;
+> +		vc->tail = 0;
+> +		vc->nb_enqueued = 0;
+> +		vc->ridx = 0;
+> +		/* Seed last_idx one step before the first cookie (0). */
+> +		vc->last_idx = UINT16_MAX;
+> +		vc->submitted_count = 0;
+> +		vc->completed_count = 0;
+> +		vc->errors_count = 0;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +imx_edma5_stop(struct rte_dma_dev *dev)
+> +{
+> +	struct imx_edma5_dev *ed = dev->data->dev_private;
+> +	uint16_t i;
+> +
+> +	for (i = 0; i < ed->nb_vchans; i++) {
+> +		struct imx_edma5_vchan *vc = &ed->vchans[i];
+> +
+> +		if (vc->configured)
+> +			imx_edma5_reset_hw_chan(vc);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +imx_edma5_close(struct rte_dma_dev *dev)
+> +{
+> +	struct imx_edma5_dev *ed = dev->data->dev_private;
+> +	uint16_t i;
+> +
+> +	if (ed->vchans != NULL) {
+> +		for (i = 0; i < ed->max_vchans; i++) {
+> +			rte_free(ed->vchans[i].jobs);
+> +			rte_free(ed->vchans[i].sg_tcd_pool);
+> +		}
+> +		rte_free(ed->vchans);
+> +		ed->vchans = NULL;
+> +	}
+> +
+> +	ed->nb_vchans = 0;
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct rte_dma_dev_ops imx_edma5_ops = {
+>  	.dev_info_get	= imx_edma5_info_get,
+> +	.dev_configure	= imx_edma5_configure,
+> +	.dev_start	= imx_edma5_start,
+> +	.dev_stop	= imx_edma5_stop,
+> +	.dev_close	= imx_edma5_close,
+> +
+> +	.vchan_setup	= imx_edma5_vchan_setup,
+>  };
+>  
+>  static int
+
+with above fixed,
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+
 
