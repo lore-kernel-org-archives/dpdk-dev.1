@@ -2,40 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5094CCA9EBE
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 14:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A7BCA9EBE
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 14:45:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 95696402E2;
-	Sat, 10 Oct 2026 16:45:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E0D8140658;
+	Sat, 10 Oct 2026 16:45:20 +0200 (CEST)
 Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.221])
- by mails.dpdk.org (Postfix) with ESMTP id 8EAEB4027F
- for <dev@dpdk.org>; Sat, 10 Oct 2026 16:45:16 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5870140274
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 16:45:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=mg193TbeVTzKgGGDA9qprql+XZs3zundM51fRX0eZ/g=;
- b=b64liRB7qFBdymon2l3cEXII/XmkHFJWqIWXoHl5m1arehS/RCl5dVYX2bQaH/
- Hvq1fDMX4c60u+4LH8EIdwD7JMMnVtnm6xqnHaKKnAaOGSgBS+goYF3YQMowxtu+
- SsPUvFoE64E50OGiDoPuDHljASh6bHKzhlXkA3fsCUCzo=
+ MIME-Version; bh=C2gjpabXC+oRFXktg49TO/hv/PP9CO0YzJDL/thV8FY=;
+ b=puS2TpqUJME2K77vN2JZtl53p2cy3ADJzDkrqnbClzhy6LpHMRbRswh8eLUVgh
+ 0otv50UmPdSWazg+Q73b7XI1GOWMMlntIps28p/IXirx8jt6kBDRlyoaMQMLtPy2
+ PmIxGq3vZt+ogDd6NYSJzDSUIsy8VxZ9hephPXYbUiGqc=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v1 04/17] net/hinic3: add mbox message recording and debug dump
-Date: Sat, 10 Oct 2026 22:44:55 +0800
-Message-ID: <20261010144509.2731-5-yejiacheng4@h-partners.com>
+Subject: [PATCH v1 06/17] net/hinic3: add VF link state and promiscuous support
+Date: Sat, 10 Oct 2026 22:44:57 +0800
+Message-ID: <20261010144509.2731-7-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261010144509.2731-1-yejiacheng4@h-partners.com>
 References: <20261010144509.2731-1-yejiacheng4@h-partners.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID: As8vCgDX70B4T8pqMdk9Aw--.440S6
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Kw4ruw1DZw45GF4DJw4xWFg_yoWDAr4rpF
- 45ZF97urZ5Xa17XrnxAa1akay3tw18A348Wa4IkFyY9F1xZFyUAa4UJayqva15Wr1xJF17
- Za10gw4DGF15KwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j1iihUUUUU=
+X-CM-TRANSID: As8vCgDX70B4T8pqMdk9Aw--.440S8
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtFyfZw4rAw1xKF15tF4UCFg_yoWxZrykpa
+ yUGFZ3tF9rWF42q3Z8Gw47uF15W3WxG3y7Kas3Ca4Yv3W5XrZ8A34xJrW2vrn0y3srAa17
+ ZF48ur4qvF18KrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j58n5UUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNhs-SWrKT3s2EQAA3o
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNRxASmrKT3wvkwAA3M
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,299 +49,205 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Provide recorded mbox send/receive history and a dump of it together with=0D
-the AEQ state so mailbox timeouts and response mismatches can be diagnosed.=
+Every VF link previously followed the PF, so a VF could not be brought down=
 =0D
+while the PF stayed up. Track vf_valid_status and combine it with the=0D
+physical link so the VF link can be set down independently.=0D
+=0D
+Register the promiscuous callbacks in the VF eth_dev_ops and add the=0D
+symmetric feature-capability check to the disable path so a VF can enter=0D
+promiscuous mode independently as well.=0D
 =0D
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>=0D
 ---=0D
- drivers/net/hinic3/base/hinic3_eqs.c  | 59 +++++++++++++++++++++++++++=0D
- drivers/net/hinic3/base/hinic3_eqs.h  |  2 +=0D
- drivers/net/hinic3/base/hinic3_mbox.c | 53 ++++++++++++++++++++++++=0D
- drivers/net/hinic3/base/hinic3_mbox.h | 22 ++++++++++=0D
- 4 files changed, 136 insertions(+)=0D
+ drivers/net/hinic3/base/hinic3_hwdev.h     |  3 +-=0D
+ drivers/net/hinic3/base/hinic3_nic_cfg.c   |  5 ++-=0D
+ drivers/net/hinic3/base/hinic3_nic_event.c |  6 +++=0D
+ drivers/net/hinic3/hinic3_ethdev.c         | 47 +++++++++++++++++++++-=0D
+ 4 files changed, 57 insertions(+), 4 deletions(-)=0D
 =0D
-diff --git a/drivers/net/hinic3/base/hinic3_eqs.c b/drivers/net/hinic3/base=
-/hinic3_eqs.c=0D
-index 1fc78adc85..e961eda374 100644=0D
---- a/drivers/net/hinic3/base/hinic3_eqs.c=0D
-+++ b/drivers/net/hinic3/base/hinic3_eqs.c=0D
-@@ -587,6 +587,65 @@ hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev)=0D
+diff --git a/drivers/net/hinic3/base/hinic3_hwdev.h b/drivers/net/hinic3/ba=
+se/hinic3_hwdev.h=0D
+index 5601f93190..04487f9b42 100644=0D
+--- a/drivers/net/hinic3/base/hinic3_hwdev.h=0D
++++ b/drivers/net/hinic3/base/hinic3_hwdev.h=0D
+@@ -157,7 +157,8 @@ struct hinic3_hwdev {=0D
+ 	char mgmt_ver[MGMT_VERSION_MAX_LEN];=0D
+ =0D
+ 	uint16_t max_vfs;=0D
+-	uint16_t link_status;=0D
++	uint8_t link_status : 1;=0D
++	uint8_t vf_valid_status : 1; /* vport_enable: 1, vport_disable: 0 */=0D
+ 	uint32_t speed;=0D
+ 	uint64_t features[HINIC3_MAX_FEATURE_QWORD];=0D
+ };=0D
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/=
+base/hinic3_nic_cfg.c=0D
+index 0a0c7e74e0..2241908004 100644=0D
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.c=0D
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c=0D
+@@ -443,12 +443,13 @@ int=0D
+ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)=0D
+ {=0D
+ 	struct hinic3_vport_state en_state;=0D
+-	struct hinic3_nic_dev *nic_dev =3D hwdev->dev_handle;=0D
++	struct hinic3_nic_dev *nic_dev;=0D
+ 	uint16_t out_size =3D sizeof(en_state);=0D
+ 	int err;=0D
+ =0D
+ 	if (!hwdev)=0D
+ 		return -EINVAL;=0D
++	nic_dev =3D hwdev->dev_handle;=0D
+ =0D
+ 	memset(&en_state, 0, sizeof(en_state));=0D
+ 	en_state.func_id =3D hinic3_global_func_id(hwdev);=0D
+@@ -467,6 +468,8 @@ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, boo=
+l enable)=0D
+ 		return -EIO;=0D
  	}=0D
- }=0D
  =0D
-+void hinic3_dump_aeq_mbox_info(struct hinic3_hwdev *hwdev)=0D
-+{=0D
-+	struct save_mbox_info *save_mbox =3D NULL;=0D
-+	struct hinic3_eq *aeq =3D NULL;=0D
-+	struct hinic3_aeq_elem *aeqe_pos =3D NULL;=0D
-+	struct rte_pci_device *pci_dev =3D NULL;=0D
-+	struct rte_eth_dev *eth_dev =3D NULL;=0D
-+	uint32_t i, pos;=0D
-+	uint8_t src, size, wrapped, seq_id, seg_len, msg_id, mod;=0D
-+	uint8_t data[HINIC3_AEQE_DATA_SIZE];=0D
-+	uint16_t src_func_idx, cmd;=0D
-+	uint32_t aeqe_desc;=0D
-+	uint64_t mbox_header;=0D
-+	enum hinic3_aeq_type event;=0D
++	hwdev->vf_valid_status =3D enable;=0D
 +=0D
-+	eth_dev =3D &rte_eth_devices[hwdev->port_id];=0D
-+	pci_dev =3D RTE_CLASS_TO_BUS_DEVICE(eth_dev, *pci_dev);=0D
-+	save_mbox =3D hwdev->func_to_func->save_mbox;=0D
-+	aeq =3D &hwdev->aeqs->aeq[HINIC3_MBOX_RSP_MSG_AEQ];=0D
-+=0D
-+	PMD_DRV_LOG(ERR, "Sending the latest mbox messages:");=0D
-+	for (i =3D 0; i < HINIC3_MBOX_SAVE_NUM; i++) {=0D
-+		pos =3D (hwdev->func_to_func->save_mbox->start + i) % HINIC3_MBOX_SAVE_N=
-UM;=0D
-+		PMD_DRV_LOG(ERR, "send_msg_id: %u, cmd: %u, mod: %u, port: %u, func id: =
-%u, bus: %u, devid: %u",=0D
-+			save_mbox->send_info[pos].send_msg_id, save_mbox->send_info[pos].cmd,=0D
-+			save_mbox->send_info[pos].mod, save_mbox->send_info[pos].port,=0D
-+			save_mbox->send_info[pos].func_id, save_mbox->send_info[pos].bus,=0D
-+			save_mbox->send_info[pos].devid);=0D
-+	}=0D
-+=0D
-+	PMD_DRV_LOG(ERR, "dump aeqe info:");=0D
-+	PMD_DRV_LOG(ERR, "port: %u, eq cid: %u, func id: %u, bus: %u, devid: %u, =
-wrapped: %u",=0D
-+		hwdev->port_id, aeq->cons_idx, pci_dev->addr.function, pci_dev->addr.bus=
-,=0D
-+		pci_dev->addr.devid, aeq->wrapped);=0D
-+	for (i =3D 0; i < aeq->eq_len; i++) {=0D
-+		/* Parsing the data field. */=0D
-+		aeqe_pos =3D GET_AEQ_ELEM(aeq, i);=0D
-+		aeqe_desc =3D rte_be_to_cpu_32(aeqe_pos->desc);=0D
-+		memcpy(data, aeqe_pos->aeqe_data, HINIC3_AEQE_DATA_SIZE);=0D
-+		hinic3_be32_to_cpu(data, HINIC3_AEQE_DATA_SIZE);=0D
-+		mbox_header =3D *((uint64_t *)data);=0D
-+		seq_id =3D HINIC3_MSG_HEADER_GET(mbox_header, SEQID);=0D
-+		seg_len =3D HINIC3_MSG_HEADER_GET(mbox_header, SEG_LEN);=0D
-+		src_func_idx =3D HINIC3_MSG_HEADER_GET(mbox_header, SRC_GLB_FUNC_IDX);=0D
-+		msg_id =3D HINIC3_MSG_HEADER_GET(mbox_header, MSG_ID);=0D
-+		mod =3D HINIC3_MSG_HEADER_GET(mbox_header, MODULE);=0D
-+		cmd =3D HINIC3_MSG_HEADER_GET(mbox_header, CMD);=0D
-+		/* Parsing the desc field. */=0D
-+		event =3D EQ_ELEM_DESC_GET(aeqe_desc, TYPE);=0D
-+		src =3D EQ_ELEM_DESC_GET(aeqe_desc, SRC);=0D
-+		size =3D EQ_ELEM_DESC_GET(aeqe_desc, SIZE);=0D
-+		wrapped =3D EQ_ELEM_DESC_GET(aeqe_desc, WRAPPED);=0D
-+=0D
-+		PMD_DRV_LOG(ERR, "index: %d, msg_id: %u, mod: %u, cmd: %u, seq_id: %u, s=
-eg_len: %u,"=0D
-+			"src_func_idx: %u, event: %u, src: %u, size: %u, wrapped: %u", i, msg_i=
-d,=0D
-+			mod, cmd, seq_id, seg_len, src_func_idx, event, src, size, wrapped);=0D
-+	}=0D
-+}=0D
-+=0D
- static int=0D
- aeq_elem_handler(struct hinic3_eq *eq, uint32_t aeqe_desc,=0D
- 		 struct hinic3_aeq_elem *aeqe_pos, void *param)=0D
-diff --git a/drivers/net/hinic3/base/hinic3_eqs.h b/drivers/net/hinic3/base=
-/hinic3_eqs.h=0D
-index 365c9cbf39..38de79a705 100644=0D
---- a/drivers/net/hinic3/base/hinic3_eqs.h=0D
-+++ b/drivers/net/hinic3/base/hinic3_eqs.h=0D
-@@ -85,6 +85,8 @@ void hinic3_aeqs_free(struct hinic3_hwdev *hwdev);=0D
- =0D
- void hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev);=0D
- =0D
-+void hinic3_dump_aeq_mbox_info(struct hinic3_hwdev *hwdev);=0D
-+=0D
- int hinic3_aeq_poll_msg(struct hinic3_eq *eq, uint32_t timeout, void *para=
-m);=0D
- =0D
- void hinic3_dev_handle_aeq_event(struct hinic3_hwdev *hwdev, void *param);=
-=0D
-diff --git a/drivers/net/hinic3/base/hinic3_mbox.c b/drivers/net/hinic3/bas=
-e/hinic3_mbox.c=0D
-index c4ca2ed7ba..03aa5cfbb2 100644=0D
---- a/drivers/net/hinic3/base/hinic3_mbox.c=0D
-+++ b/drivers/net/hinic3/base/hinic3_mbox.c=0D
-@@ -711,6 +711,35 @@ send_tlp_mbox_seg(struct hinic3_mbox *func_to_func, ui=
-nt64_t header, uint16_t ds=0D
  	return 0;=0D
  }=0D
  =0D
-+static void hinic3_record_mbox_info(struct hinic3_mbox *func_to_func,=0D
-+				    enum hinic3_mod_type mod, uint16_t cmd,=0D
-+				    uint8_t msg_id)=0D
-+{=0D
-+	struct rte_pci_device *pci_dev =3D NULL;=0D
-+	struct rte_eth_dev *eth_dev =3D NULL;=0D
-+	struct mbox_send_info send_mbox;=0D
-+=0D
-+	eth_dev =3D &rte_eth_devices[func_to_func->hwdev->port_id];=0D
-+	pci_dev =3D RTE_CLASS_TO_BUS_DEVICE(eth_dev, *pci_dev);=0D
-+	send_mbox.cmd =3D cmd;=0D
-+	send_mbox.mod =3D mod;=0D
-+	send_mbox.port =3D func_to_func->hwdev->port_id;=0D
-+	send_mbox.send_msg_id =3D msg_id;=0D
-+	send_mbox.func_id =3D pci_dev->addr.function;=0D
-+	send_mbox.devid =3D pci_dev->addr.devid;=0D
-+	send_mbox.bus =3D pci_dev->addr.bus;=0D
-+=0D
-+	uint8_t pos =3D (func_to_func->save_mbox->start + func_to_func->save_mbox=
-->count) %=0D
-+		      HINIC3_MBOX_SAVE_NUM;=0D
-+	func_to_func->save_mbox->send_info[pos] =3D send_mbox;=0D
-+=0D
-+	if (func_to_func->save_mbox->count < HINIC3_MBOX_SAVE_NUM)=0D
-+		func_to_func->save_mbox->count++;=0D
-+	else=0D
-+		func_to_func->save_mbox->start =3D (func_to_func->save_mbox->start + 1) =
-%=0D
-+						 HINIC3_MBOX_SAVE_NUM;=0D
-+}=0D
-+=0D
- static int=0D
- send_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type m=
-od,=0D
- 		struct hinic3_handler_info *handler_info, struct mbox_msg_info *msg_info=
-)=0D
-@@ -724,6 +753,9 @@ send_mbox_to_func(struct hinic3_mbox *func_to_func, enu=
-m hinic3_mod_type mod,=0D
+diff --git a/drivers/net/hinic3/base/hinic3_nic_event.c b/drivers/net/hinic=
+3/base/hinic3_nic_event.c=0D
+index be8a1fc576..2f2d6aa75b 100644=0D
+--- a/drivers/net/hinic3/base/hinic3_nic_event.c=0D
++++ b/drivers/net/hinic3/base/hinic3_nic_event.c=0D
+@@ -112,6 +112,12 @@ link_status_event_handler(struct hinic3_hwdev *hwdev, =
+struct hinic3_handler_info=0D
  =0D
- 	rsp_aeq_id =3D HINIC3_MBOX_RSP_MSG_AEQ;=0D
- =0D
-+	hinic3_record_mbox_info(func_to_func, mod, handler_info->cmd,=0D
-+				msg_info->msg_id);=0D
+ 	/* Link event reported only after set vport enable. */=0D
+ 	hinic3_get_link_port_info(hwdev, link_status->state, &link);=0D
 +=0D
- 	/* Set the header message. */=0D
- 	header =3D HINIC3_MSG_HEADER_SET(handler_info->in_size, MSG_LEN) |=0D
- 		 HINIC3_MSG_HEADER_SET(mod, MODULE) |=0D
-@@ -782,6 +814,9 @@ send_tlp_mbox_to_func(struct hinic3_mbox *func_to_func,=
- enum hinic3_mod_type mod=0D
- =0D
- 	rsp_aeq_id =3D HINIC3_MBOX_RSP_MSG_AEQ;=0D
- =0D
-+	hinic3_record_mbox_info(func_to_func, mod, handler_info->cmd,=0D
-+				msg_info->msg_id);=0D
-+=0D
- 	/* Set the header message. */=0D
- 	header =3D HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, MSG_LEN) |=0D
- 		 HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, SEG_LEN) |=0D
-@@ -873,6 +908,7 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, e=
-num hinic3_mod_type mod,=0D
- 		goto send_err;=0D
- 	}=0D
- =0D
-+	func_to_func->mbox_send_cnt++;=0D
- 	/* Wait for the response message. */=0D
- 	time =3D timeout ? timeout : HINIC3_MBOX_COMP_TIME;=0D
- 	aeq =3D &func_to_func->hwdev->aeqs->aeq[HINIC3_MBOX_RSP_MSG_AEQ];=0D
-@@ -880,15 +916,18 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func,=
- enum hinic3_mod_type mod,=0D
- 	if (err) {=0D
- 		set_mbox_to_func_event(func_to_func, EVENT_TIMEOUT);=0D
- 		PMD_DRV_LOG(ERR, "Send mailbox message time out");=0D
-+		hinic3_dump_aeq_mbox_info(func_to_func->hwdev);=0D
- 		err =3D -ETIMEDOUT;=0D
- 		goto send_err;=0D
- 	}=0D
- =0D
-+	func_to_func->mbox_ack_cnt++;=0D
- 	/* Check whether mod and command of the rsp message match the sent messag=
-e. */=0D
- 	if (mod !=3D mbox_for_resp->mod || handler_info->cmd !=3D mbox_for_resp->=
-cmd) {=0D
- 		PMD_DRV_LOG(ERR,=0D
- 			    "Invalid response mbox message, mod: 0x%x, cmd: 0x%x, expect mod: 0=
-x%x, cmd: 0x%x",=0D
- 			    mbox_for_resp->mod, mbox_for_resp->cmd, mod, handler_info->cmd);=0D
-+		hinic3_dump_aeq_mbox_info(func_to_func->hwdev);=0D
- 		err =3D -EFAULT;=0D
- 		goto send_err;=0D
- 	}=0D
-@@ -1129,6 +1168,16 @@ hinic3_func_to_func_init(struct hinic3_hwdev *hwdev)=
-=0D
- =0D
- 	hwdev->func_to_func =3D func_to_func;=0D
- 	func_to_func->hwdev =3D hwdev;=0D
-+=0D
-+	struct save_mbox_info *save_mbox =3D rte_zmalloc("save_mbox_info",=0D
-+						      sizeof(struct save_mbox_info), 0);=0D
-+	if (!save_mbox) {=0D
-+		err =3D -ENOMEM;=0D
-+		goto alloc_save_mbox_err;=0D
++	if (HINIC3_IS_VF(hwdev)) {=0D
++		hwdev->link_status =3D link.link_status;=0D
++		link.link_status =3D hwdev->link_status & hwdev->vf_valid_status;=0D
 +	}=0D
 +=0D
-+	func_to_func->save_mbox =3D save_mbox;=0D
+ 	err =3D rte_eth_linkstatus_set(hwdev->eth_dev, &link);=0D
+ 	if (!err && hwdev->eth_dev->data->dev_conf.intr_conf.lsc !=3D 0)=0D
+ 		rte_eth_dev_callback_process(hwdev->eth_dev,=0D
+diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3=
+_ethdev.c=0D
+index 5a0e93ed8a..f4be6cdc06 100644=0D
+--- a/drivers/net/hinic3/hinic3_ethdev.c=0D
++++ b/drivers/net/hinic3/hinic3_ethdev.c=0D
+@@ -820,6 +820,7 @@ static int=0D
+ hinic3_dev_set_link_up(struct rte_eth_dev *dev)=0D
+ {=0D
+ 	struct hinic3_nic_dev *nic_dev =3D HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev)=
+;=0D
++	struct rte_eth_link link =3D { 0 };=0D
+ 	int err;=0D
+ =0D
+ 	/*=0D
+@@ -844,6 +845,23 @@ hinic3_dev_set_link_up(struct rte_eth_dev *dev)=0D
+ 		return err;=0D
+ 	}=0D
+ =0D
++	if (HINIC3_IS_VF(nic_dev->hwdev)) {=0D
++		link =3D dev->data->dev_link;=0D
++		link.link_status =3D nic_dev->hwdev->link_status &=0D
++					nic_dev->hwdev->vf_valid_status;=0D
++		if (link.link_status =3D=3D RTE_ETH_LINK_DOWN) {=0D
++			PMD_DRV_LOG(ERR,=0D
++				"Set VF link up failed, dev_name: %s, port_id: %d,"=0D
++				" link_status: %d, vf_valid_status: %d",=0D
++				nic_dev->dev_name, dev->data->port_id,=0D
++				nic_dev->hwdev->link_status,=0D
++				nic_dev->hwdev->vf_valid_status);=0D
++			return -EAGAIN;=0D
++		}=0D
 +=0D
- 	rte_spinlock_init(&func_to_func->mbox_lock);=0D
- =0D
- 	/* Alloc the memory required by the mailbox. */=0D
-@@ -1170,6 +1219,9 @@ hinic3_func_to_func_init(struct hinic3_hwdev *hwdev)=
-=0D
- 	free_mbox_info(func_to_func->mbox_send);=0D
- =0D
- alloc_mbox_for_send_err:=0D
-+	rte_free(save_mbox);=0D
-+alloc_save_mbox_err:=0D
-+	hwdev->func_to_func =3D NULL;=0D
- 	rte_free(func_to_func);=0D
- =0D
- 	return err;=0D
-@@ -1184,5 +1236,6 @@ hinic3_func_to_func_free(struct hinic3_hwdev *hwdev)=
-=0D
- 	free_mbox_tlp_buffer(func_to_func);=0D
- 	free_mbox_info(func_to_func->mbox_resp);=0D
- 	free_mbox_info(func_to_func->mbox_send);=0D
-+	rte_free(func_to_func->save_mbox);=0D
- 	rte_free(func_to_func);=0D
++		(void)rte_eth_linkstatus_set(dev, &link);=0D
++	}=0D
++=0D
+ 	return 0;=0D
  }=0D
-diff --git a/drivers/net/hinic3/base/hinic3_mbox.h b/drivers/net/hinic3/bas=
-e/hinic3_mbox.h=0D
-index df6de062e2..c0ee700ae6 100644=0D
---- a/drivers/net/hinic3/base/hinic3_mbox.h=0D
-+++ b/drivers/net/hinic3/base/hinic3_mbox.h=0D
-@@ -15,6 +15,8 @@=0D
  =0D
- #define HINIC3_MAX_PF_FUNCS 32=0D
+@@ -860,6 +878,7 @@ static int=0D
+ hinic3_dev_set_link_down(struct rte_eth_dev *dev)=0D
+ {=0D
+ 	struct hinic3_nic_dev *nic_dev =3D HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev)=
+;=0D
++	struct rte_eth_link link =3D {0};=0D
+ 	int err;=0D
  =0D
-+#define HINIC3_MBOX_SAVE_NUM          20=0D
+ 	err =3D hinic3_set_vport_enable(nic_dev->hwdev, false);=0D
+@@ -873,11 +892,19 @@ hinic3_dev_set_link_down(struct rte_eth_dev *dev)=0D
+ 	err =3D hinic3_set_port_enable(nic_dev->hwdev, false);=0D
+ 	if (err) {=0D
+ 		PMD_DRV_LOG(ERR,=0D
+-			"Set MAC link down failed, dev_name: %s, port_id: %d",=0D
+-			nic_dev->dev_name, dev->data->port_id);=0D
++			    "Set MAC link down failed, dev_name: %s, port_id: %d",=0D
++			    nic_dev->dev_name, dev->data->port_id);=0D
+ 		return err;=0D
+ 	}=0D
+ =0D
++	if (HINIC3_IS_VF(nic_dev->hwdev)) {=0D
++		link =3D dev->data->dev_link;=0D
++		link.link_status =3D nic_dev->hwdev->link_status &=0D
++					nic_dev->hwdev->vf_valid_status;=0D
 +=0D
- /* Message header define. */=0D
- #define HINIC3_MSG_HEADER_SRC_GLB_FUNC_IDX_SHIFT 0=0D
- #define HINIC3_MSG_HEADER_STATUS_SHIFT		 13=0D
-@@ -150,8 +152,25 @@ enum hinic3_mbox_cb_state {=0D
- 	HINIC3_PPF_TO_PF_MBOX_CB_RUNNING=0D
- };=0D
- =0D
-+struct mbox_send_info {=0D
-+	uint16_t cmd;=0D
-+	enum hinic3_mod_type mod;=0D
-+	uint8_t send_msg_id;=0D
-+	uint8_t port;=0D
-+	uint8_t func_id;=0D
-+	uint8_t devid;=0D
-+	uint8_t bus;=0D
-+};=0D
++		(void)rte_eth_linkstatus_set(dev, &link);=0D
++	}=0D
 +=0D
-+struct save_mbox_info {=0D
-+	struct mbox_send_info send_info[HINIC3_MBOX_SAVE_NUM];=0D
-+	uint8_t start;=0D
-+	uint8_t count;=0D
-+};=0D
+ 	return 0;=0D
+ }=0D
+ =0D
+@@ -925,6 +952,12 @@ hinic3_link_update(struct rte_eth_dev *dev, int wait_t=
+o_complete)=0D
+ 	} while (rep_cnt--);=0D
+ =0D
+ out:=0D
++	if (HINIC3_IS_VF(nic_dev->hwdev)) {=0D
++		nic_dev->hwdev->link_status =3D link.link_status;=0D
++		link.link_status =3D nic_dev->hwdev->link_status &=0D
++					nic_dev->hwdev->vf_valid_status;=0D
++	}=0D
 +=0D
- struct hinic3_mbox {=0D
- 	struct hinic3_hwdev *hwdev;=0D
-+	struct save_mbox_info *save_mbox;=0D
+ 	return rte_eth_linkstatus_set(dev, &link);=0D
+ }=0D
  =0D
- 	struct hinic3_send_mbox send_mbox;=0D
+@@ -2470,6 +2503,12 @@ hinic3_dev_promiscuous_disable(struct rte_eth_dev *d=
+ev)=0D
+ 	uint32_t rx_mode;=0D
+ 	int err;=0D
  =0D
-@@ -163,6 +182,9 @@ struct hinic3_mbox {=0D
- 	enum mbox_event_state event_flag;=0D
- 	/* Lock for mbox event flag. */=0D
- 	rte_spinlock_t mbox_lock;=0D
++	if (!(nic_dev->feature_cap & NIC_F_PROMISC)) {=0D
++		PMD_DRV_LOG(ERR, "nic_dev: %s, port_id: %d, do not support vf promisc: %=
+" PRIu64,=0D
++			    nic_dev->dev_name, dev->data->port_id, nic_dev->feature_cap);=0D
++		return -ENOTSUP;=0D
++	}=0D
 +=0D
-+	uint64_t mbox_send_cnt;=0D
-+	uint64_t mbox_ack_cnt;=0D
- };=0D
+ 	rx_mode =3D nic_dev->rx_mode & (~HINIC3_RX_MODE_PROMISC);=0D
  =0D
- int hinic3_mbox_func_aeqe_handler(struct hinic3_hwdev *hwdev, uint8_t *hea=
-der,=0D
+ 	err =3D hinic3_set_rx_mode(nic_dev->hwdev, rx_mode);=0D
+@@ -3522,6 +3561,8 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops =3D=
+ {=0D
+ 	.dev_configure                 =3D hinic3_dev_configure,=0D
+ 	.dev_infos_get                 =3D hinic3_dev_infos_get,=0D
+ 	.fw_version_get                =3D hinic3_fw_version_get,=0D
++	.dev_set_link_up               =3D hinic3_dev_set_link_up,=0D
++	.dev_set_link_down             =3D hinic3_dev_set_link_down,=0D
+ 	.rx_queue_setup                =3D hinic3_rx_queue_setup,=0D
+ 	.tx_queue_setup                =3D hinic3_tx_queue_setup,=0D
+ 	.rx_queue_intr_enable          =3D hinic3_dev_rx_queue_intr_enable,=0D
+@@ -3543,6 +3584,8 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops =3D=
+ {=0D
+ 	.vlan_offload_set              =3D hinic3_vlan_offload_set,=0D
+ 	.allmulticast_enable           =3D hinic3_dev_allmulticast_enable,=0D
+ 	.allmulticast_disable          =3D hinic3_dev_allmulticast_disable,=0D
++	.promiscuous_enable            =3D hinic3_dev_promiscuous_enable,=0D
++	.promiscuous_disable           =3D hinic3_dev_promiscuous_disable,=0D
+ 	.rss_hash_update               =3D hinic3_rss_hash_update,=0D
+ 	.rss_hash_conf_get             =3D hinic3_rss_conf_get,=0D
+ 	.reta_update                   =3D hinic3_rss_reta_update,=0D
 -- =0D
 2.33.0=0D
 =0D
