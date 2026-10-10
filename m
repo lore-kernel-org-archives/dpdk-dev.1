@@ -2,37 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11D0CA9EC0
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 18:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A7FCA9EC0
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 18:43:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EDBE040612;
-	Sat, 10 Oct 2026 20:43:04 +0200 (CEST)
-Received: from forward504a.mail.yandex.net (forward504a.mail.yandex.net
- [37.230.174.44]) by mails.dpdk.org (Postfix) with ESMTP id 702B4400D7
+	by mails.dpdk.org (Postfix) with ESMTP id 0087640A7D;
+	Sat, 10 Oct 2026 20:43:06 +0200 (CEST)
+Received: from forward500d.mail.yandex.net (forward500d.mail.yandex.net
+ [31.44.14.16]) by mails.dpdk.org (Postfix) with ESMTP id D7103400D7
  for <dev@dpdk.org>; Sat, 10 Oct 2026 20:43:03 +0200 (CEST)
+Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net
+ [IPv6:2a02:6b8:c0e:500:1:45:d181:d502])
+ by forward500d.mail.yandex.net (postfix) with ESMTPS id 6325F84810;
+ Sat, 10 Oct 2026 21:43:02 +0300 (MSK)
 Received: from mail-nwsmtp-smtp-production-main-52.vla.yp-c.yandex.net
  (mail-nwsmtp-smtp-production-main-52.vla.yp-c.yandex.net
  [IPv6:2a02:6b8:c0f:4c9f:0:640:5657:0])
- by forward504a.mail.yandex.net (postfix) with ESMTPS id B5193C00F3;
+ by forward502a.mail.yandex.net (postfix) with ESMTPS id 46F5880730;
  Sat, 10 Oct 2026 21:43:02 +0300 (MSK)
 Received: by mail-nwsmtp-smtp-production-main-52.vla.yp-c.yandex.net (smtp)
- with ESMTPSA id tgVL9mshaCg0-JvhhYv5K; 
- Sat, 10 Oct 2026 21:43:02 +0300
+ with ESMTPSA id tgVL9mshaCg0-3d1K69jR; 
+ Sat, 10 Oct 2026 21:43:01 +0300
 X-Yandex-Fwd: 1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1791657782; bh=SatyeRctuUXjr6YfyTPdAiXTasUnyJvT49tj82TJX3Y=;
+ t=1791657782; bh=N1qWUJQyOJg2aGONJjLKzy8gjZlcbR/CJ40JEkjqPCk=;
  h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
- b=E6Lba04knbKlmEBvRF4ENZMVJY6fFhXTKVQ4hKqzV2ShTzyRk3YZ4l5fubZYs9ift
- gas5Oe4K7nRkk37Xh2KmlKqNIYxvcFtpoNNf52U6l6UFtWxHIxJCNKUNDCKUevWetk
- ZQvnHvExyG1FidYGDuor0/0IC+98AnNJe7kVuYP8=
+ b=K11g+4cJchNie9x8tE4gLZI6u/8Dzhra4Aq7Kmb1/vPsIeBukx2vdOgLj6BeyBQeQ
+ /DxKk0EgZDl8TEvD6FdDC8T4wkJGLBr/LruxlUuRAU+nk2heWDgiONrGOs+Icmv+Iy
+ OHDNl0kR3Vdse4FpAkjpt+q8AS8KU4CNABfGfyVI=
 Authentication-Results: mail-nwsmtp-smtp-production-main-52.vla.yp-c.yandex.net;
  dkim=pass header.i=@yandex.ru
 From: Roman Khromenok <roma55592@yandex.ru>
 To: dev@dpdk.org
 Cc: stephen@networkplumber.org
-Subject: [PATCH v2 2/2] test: check newer SFF compliance codes
-Date: Sat, 10 Oct 2026 20:42:52 +0200
-Message-ID: <e1a392e8ec87bf0916f4ea29f853caf07ab5ed09.1791657558.git.roma55592@yandex.ru>
+Subject: [PATCH v2 1/2] ethdev: decode newer SFF compliance codes
+Date: Sat, 10 Oct 2026 20:42:51 +0200
+Message-ID: <ad3f2461bfd381b35d39988d18057be6a7427052.1791657558.git.roma55592@yandex.ru>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <835d139c746faff456f14755b7af7395b713bd70.1791574390.git.roma55592@yandex.ru>
 References: <835d139c746faff456f14755b7af7395b713bd70.1791574390.git.roma55592@yandex.ru>
@@ -51,136 +55,104 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Check the SFF-8472 Fibre Channel 1600, 3200 and 6400 MBytes/s codes,
-with 6400 MBytes/s reported only when byte 10 refers to byte 62,
-and the SFF-8636 SAS 24.0G, 12.0G and Fibre Channel 3200 MBytes/s
-codes. Each bit is set alone and the other code of the same byte
-is checked to be absent, so that swapped bits are detected.
+Decode the compliance codes added by SFF-8472 Rev 12.5a and
+SFF-8636 Rev 2.12, as ethtool does since its commits
+057c4fdd85b5 ("sfpid: add support for newer SFF-8472 compliance codes")
+and 75d62323302b ("qsfp: add support for newer SFF-8636 compliance codes"):
 
-Add a helper to look for a value of a field reported more than
-once, such as "Transceiver type".
+- SFF-8472 byte 10: Fibre Channel 1600 and 3200 MBytes/s.
+- SFF-8636 byte 133: SAS 24.0G, and SAS 12.0G which was defined
+  but not reported.
+- SFF-8636 byte 138: Fibre Channel 3200 MBytes/s.
+
+Also decode the SFF-8472 Fibre Channel Speed 2 byte 62, which byte 10
+bit 1 refers to: 64GFC, reported as 6400 MBytes/s like the other
+Fibre Channel speeds. ethtool does not decode it.
 
 Signed-off-by: Roman Khromenok <roma55592@yandex.ru>
 ---
- app/test/test_ethdev_module_eeprom.c | 84 ++++++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+v2:
+- report 64GFC as "FC: 6400 MBytes/sec", like the other
+  Fibre Channel speeds
+- refer to the ethtool commits with 12 character hashes
+  and their subjects
+- 2/2: set one bit at a time in the tests and check that
+  the other code of the same byte is absent
 
-diff --git a/app/test/test_ethdev_module_eeprom.c b/app/test/test_ethdev_module_eeprom.c
-index 25307678a1..5f7e5db403 100644
---- a/app/test/test_ethdev_module_eeprom.c
-+++ b/app/test/test_ethdev_module_eeprom.c
-@@ -4,6 +4,7 @@
+Checked against SFF-8472 Rev 12.5a (Table 5-3) and SFF-8636
+Rev 2.12 (Table 6-17). Based on next-net/for-main.
+
+ lib/ethdev/sff_8079.c | 7 +++++++
+ lib/ethdev/sff_8636.c | 6 ++++++
+ lib/ethdev/sff_8636.h | 2 ++
+ 3 files changed, 15 insertions(+)
+
+diff --git a/lib/ethdev/sff_8079.c b/lib/ethdev/sff_8079.c
+index 9632a26af3..c8db5c0975 100644
+--- a/lib/ethdev/sff_8079.c
++++ b/lib/ethdev/sff_8079.c
+@@ -173,10 +173,17 @@ static void sff_8079_show_transceiver(const uint8_t *data, struct sff_output *d)
+ 		sff_output_field(d, name, "FC: 1200 MBytes/sec");
+ 	if (data[10] & (1 << 6))
+ 		sff_output_field(d, name, "FC: 800 MBytes/sec");
++	if (data[10] & (1 << 5))
++		sff_output_field(d, name, "FC: 1600 MBytes/sec");
+ 	if (data[10] & (1 << 4))
+ 		sff_output_field(d, name, "FC: 400 MBytes/sec");
++	if (data[10] & (1 << 3))
++		sff_output_field(d, name, "FC: 3200 MBytes/sec");
+ 	if (data[10] & (1 << 2))
+ 		sff_output_field(d, name, "FC: 200 MBytes/sec");
++	/* bit 1 refers to the Fibre Channel Speed 2 byte */
++	if ((data[10] & (1 << 1)) && (data[62] & (1 << 0)))
++		sff_output_field(d, name, "FC: 6400 MBytes/sec");
+ 	if (data[10] & (1 << 0))
+ 		sff_output_field(d, name, "FC: 100 MBytes/sec");
  
- #include <errno.h>
- #include <stdalign.h>
-+#include <stdbool.h>
- #include <stdio.h>
- #include <string.h>
+diff --git a/lib/ethdev/sff_8636.c b/lib/ethdev/sff_8636.c
+index ad36927540..5e77f1b855 100644
+--- a/lib/ethdev/sff_8636.c
++++ b/lib/ethdev/sff_8636.c
+@@ -364,6 +364,10 @@ static void sff_8636_show_transceiver(const uint8_t *data, struct sff_output *d)
+ 		sff_output_field(d, name, "SONET: OC-48, short reach");
  
-@@ -67,6 +68,27 @@ parse(uint32_t type, const uint8_t *data, uint32_t length)
- #define CHECK_NO_FIELD(name) \
- 	TEST_ASSERT_NULL(find_field(name), "Unexpected field \"%s\"", name)
+ 	/* SAS/SATA Compliance Codes */
++	if (data[SFF_8636_SAS_COMP_OFFSET] & SFF_8636_SAS_24G)
++		sff_output_field(d, name, "SAS 24.0G");
++	if (data[SFF_8636_SAS_COMP_OFFSET] & SFF_8636_SAS_12G)
++		sff_output_field(d, name, "SAS 12.0G");
+ 	if (data[SFF_8636_SAS_COMP_OFFSET] & SFF_8636_SAS_6G)
+ 		sff_output_field(d, name, "SAS 6.0G");
+ 	if (data[SFF_8636_SAS_COMP_OFFSET] & SFF_8636_SAS_3G)
+@@ -432,6 +436,8 @@ static void sff_8636_show_transceiver(const uint8_t *data, struct sff_output *d)
+ 		sff_output_field(d, name, "FC: 1600 MBytes/sec");
+ 	if (data[SFF_8636_FC_SPEED_OFFSET] & SFF_8636_FC_SPEED_400_MBPS)
+ 		sff_output_field(d, name, "FC: 400 MBytes/sec");
++	if (data[SFF_8636_FC_SPEED_OFFSET] & SFF_8636_FC_SPEED_3200_MBPS)
++		sff_output_field(d, name, "FC: 3200 MBytes/sec");
+ 	if (data[SFF_8636_FC_SPEED_OFFSET] & SFF_8636_FC_SPEED_200_MBPS)
+ 		sff_output_field(d, name, "FC: 200 MBytes/sec");
+ 	if (data[SFF_8636_FC_SPEED_OFFSET] & SFF_8636_FC_SPEED_100_MBPS)
+diff --git a/lib/ethdev/sff_8636.h b/lib/ethdev/sff_8636.h
+index d2a923a7c0..9b15636c0c 100644
+--- a/lib/ethdev/sff_8636.h
++++ b/lib/ethdev/sff_8636.h
+@@ -294,6 +294,7 @@
  
-+/* A field name may be reported more than once, e.g. "Transceiver type" */
-+static bool
-+has_field_value(const char *name, const char *value)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < fields.count; i++)
-+		if (strcmp(fields.field[i].name, name) == 0 &&
-+		    strcmp(fields.field[i].value, value) == 0)
-+			return true;
-+	return false;
-+}
-+
-+#define CHECK_FIELD_VALUE(name, value) \
-+	TEST_ASSERT(has_field_value(name, value), \
-+		"Field \"%s\" with value \"%s\" not found", name, value)
-+
-+#define CHECK_NO_FIELD_VALUE(name, value) \
-+	TEST_ASSERT(!has_field_value(name, value), \
-+		"Unexpected field \"%s\" with value \"%s\"", name, value)
-+
- static void
- put_u16(uint8_t *data, unsigned int offset, uint16_t value)
- {
-@@ -243,6 +265,66 @@ test_module_eeprom_qsfp_8636_thresholds(void)
- 	return TEST_SUCCESS;
- }
+ /* SAS/SATA Complaince Codes - 133 */
+ #define	SFF_8636_SAS_COMP_OFFSET		0x85
++#define	SFF_8636_SAS_24G			RTE_BIT32(7)
+ #define	SFF_8636_SAS_12G			RTE_BIT32(6)
+ #define	SFF_8636_SAS_6G				RTE_BIT32(5)
+ #define	SFF_8636_SAS_3G				RTE_BIT32(4)
+@@ -346,6 +347,7 @@
+ #define	SFF_8636_FC_SPEED_800_MBPS		RTE_BIT32(6)
+ #define	SFF_8636_FC_SPEED_1600_MBPS		RTE_BIT32(5)
+ #define	SFF_8636_FC_SPEED_400_MBPS		RTE_BIT32(4)
++#define	SFF_8636_FC_SPEED_3200_MBPS		RTE_BIT32(3)
+ #define	SFF_8636_FC_SPEED_200_MBPS		RTE_BIT32(2)
+ #define	SFF_8636_FC_SPEED_100_MBPS		RTE_BIT32(0)
  
-+static int
-+test_module_eeprom_sfp_compliance(void)
-+{
-+	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
-+
-+	/* one bit at a time, so that swapped bits are detected */
-+	fill_sfp(data);
-+	data[10] = 0x20;	/* FC speed: 1600 MBytes/s */
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+		"Failed to parse SFF-8472 data with FC 1600");
-+	CHECK_FIELD_VALUE("Transceiver type", "FC: 1600 MBytes/sec");
-+	CHECK_NO_FIELD_VALUE("Transceiver type", "FC: 3200 MBytes/sec");
-+
-+	data[10] = 0x08;	/* FC speed: 3200 MBytes/s */
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+		"Failed to parse SFF-8472 data with FC 3200");
-+	CHECK_FIELD_VALUE("Transceiver type", "FC: 3200 MBytes/sec");
-+	CHECK_NO_FIELD_VALUE("Transceiver type", "FC: 1600 MBytes/sec");
-+
-+	data[10] = 0;
-+	data[62] = 0x01;	/* 64GFC, without the byte 10 bit 1 pointer */
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+		"Failed to parse SFF-8472 data with byte 62 only");
-+	CHECK_NO_FIELD_VALUE("Transceiver type", "FC: 6400 MBytes/sec");
-+
-+	data[10] = 0x02;	/* see byte 62, Fibre Channel Speed 2 */
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+		"Failed to parse SFF-8472 data with Fibre Channel Speed 2");
-+	CHECK_FIELD_VALUE("Transceiver type", "FC: 6400 MBytes/sec");
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_module_eeprom_qsfp_compliance(void)
-+{
-+	uint8_t data[RTE_ETH_MODULE_SFF_8636_LEN];
-+
-+	/* one bit at a time, so that swapped bits are detected */
-+	fill_qsfp(data);
-+	data[133] = 0x80;	/* SAS 24.0G */
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+		"Failed to parse SFF-8636 data with SAS 24.0G");
-+	CHECK_FIELD_VALUE("Transceiver type", "SAS 24.0G");
-+	CHECK_NO_FIELD_VALUE("Transceiver type", "SAS 12.0G");
-+
-+	data[133] = 0x40;	/* SAS 12.0G */
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+		"Failed to parse SFF-8636 data with SAS 12.0G");
-+	CHECK_FIELD_VALUE("Transceiver type", "SAS 12.0G");
-+	CHECK_NO_FIELD_VALUE("Transceiver type", "SAS 24.0G");
-+
-+	data[133] = 0;
-+	data[138] = 0x08;	/* FC speed: 3200 MBytes/s */
-+	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+		"Failed to parse SFF-8636 data with FC 3200");
-+	CHECK_FIELD_VALUE("Transceiver type", "FC: 3200 MBytes/sec");
-+	CHECK_NO_FIELD_VALUE("Transceiver type", "FC: 1600 MBytes/sec");
-+	return TEST_SUCCESS;
-+}
-+
- /* SFF-8472 status bits and their implemented bits */
- #define SFP_ENH_OPTIONS		93
- #define SFP_A2_STATUS		110
-@@ -567,6 +649,8 @@ static struct unit_test_suite module_eeprom_testsuite = {
- 		TEST_CASE(test_module_eeprom_sfp_8472_cal_saturate_min),
- 		TEST_CASE(test_module_eeprom_sfp_8472_cal_round),
- 		TEST_CASE(test_module_eeprom_sfp_8472_status),
-+		TEST_CASE(test_module_eeprom_sfp_compliance),
-+		TEST_CASE(test_module_eeprom_qsfp_compliance),
- 		TEST_CASE(test_module_eeprom_qsfp_8636),
- 		TEST_CASE(test_module_eeprom_qsfp_8636_thresholds),
- 		TEST_CASE(test_module_eeprom_qsfp_8636_signals_not_implemented),
 -- 
 2.47.3
 
