@@ -2,56 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3023ACA9EBD
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 02:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E72CA9EBB
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 02:29:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D044C402E0;
-	Sat, 10 Oct 2026 04:28:58 +0200 (CEST)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 45C4F402D4
- for <dev@dpdk.org>; Sat, 10 Oct 2026 04:28:56 +0200 (CEST)
-Received: by mail-pj1-f48.google.com with SMTP id
- 98e67ed59e1d1-3ab33730821so137975a91.3
- for <dev@dpdk.org>; Fri, 09 Oct 2026 19:28:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F294E4064F;
+	Sat, 10 Oct 2026 04:28:59 +0200 (CEST)
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com
+ [209.85.210.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 7EAAB402DC
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 04:28:55 +0200 (CEST)
+Received: by mail-pf1-f178.google.com with SMTP id
+ d2e1a72fcca58-88c72646f03so112327b3a.2
+ for <dev@dpdk.org>; Fri, 09 Oct 2026 19:28:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791599335;
  x=1792204135; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=R/lhUyQimn6TRU3kg7bKRONx72wxf75AUQ30pxOZujU=;
- b=FZor/Fch+YEqc4e/pJCyf7XXsXRL0Zt71oasSLWxT6Be/s4JDCae5fgG1jbXBIA+n7
- ar+SSLyrx+FfHNSPAVDt5zYKWMS+ggI1McWPeit72SK5p0WqF9tAuHB8AdI1/AWbWQLT
- PMfiVGDvGkqlzZIbCjSnOQM0p/oIuAUg3CJAZMxKyCL9QEGWk+QNYvBykGdLJsl2f9A5
- p96TYy5186a99BE6gRsBdgH+RfklTosIwTqakL/nKx3FR8wbztrMyGVsGghZkuZJ8rv9
- D3mG366pND85MiM7v+9npoA07ORTsbq0d2MtjLyu0Ip1JfRJJm6+WbN9I6x4GH/qdU8p
- eW1A==
+ bh=1GJSB2ELg35ukk55VzQQ+LIgh7vCfGQ842QiPY5J9MY=;
+ b=gkat5pTDpWeYt/b3FV98a7iqTWGSQC5NlE/E0kBeABL3g7OdIn3qdKDITMILpefwUx
+ jpYpO71Np39Hz03L4Y79BQ+xbUwcX+Kg4ga+sd/BghoCMFFMnAMd8MEmc3kKeoH9CuxD
+ Ww46MvJd9XF4PS07nxazWukM4Fkf2TAKKvxFCANMgTzg7UID8LS2IB9/Wudm87KAh5LC
+ 0asOWcGWbI3wCxKq78fZJ4qwGLpMn+6N1vNZZOVs+tfNTttJvW3YZ3v55OFqbHvuijj1
+ SroQxng4SSholgSKLAmC65l1SXwHYp2Rw5+Y2xbKZbiPK0asFB6r87aLAGj6MMCNEDMq
+ jnpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20260707; t=1791599335; x=1792204135;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=R/lhUyQimn6TRU3kg7bKRONx72wxf75AUQ30pxOZujU=;
- b=UxOE/ycE03ldvaRsyjyrGo4ScaFGVxG0A703limLR6/1SSnbAmU7yaQbFcyIp6ZZdL
- Xe6bcm0BDcisvknIb/KGYrith5z+GIH94VZ3DF1uEQv9W5VziyXz1Tj3oZixbBlHO0tS
- 7I32LZnYf6jcMPASvBEWXjqfydfaZPBe2LGuYhTyt2IvcjLUaiAGBiPkptnjH1ceZmnn
- tAwbz1rQZ2BpVIZGgb7lCKO2aGWtU0SlTeL3P0vQZqtvxqVwV/qRzSMNlFaLZAN1McZ3
- pMeMk9VUxh60nPu1+y3v46kNcPBsdLjM/93Aq2NXtcZ1H6tNck1gKSfGyekJ2wxZYeix
- gWhA==
-X-Gm-Message-State: AFq9FYLR8pZ8fivliUjb7ji4QH1gFu3KSsT8hXzXG6KN1zyexsRWjwjc
- T+q41I2CmKdxRXz9pzjPRuKAXtXuZ4SrRWFBq1+tHNmYJKZz3pi4tLQaFA6MhpFL4DNjY17zXj2
- lBgsYxZ4=
-X-Gm-Gg: AYBFou0Br5kjVPBTzofNi7xeGrLFBvEpSKXwuNwJ2YxA9UWIdYh9iMoSjzqVTQcv5g/
- rg7sAC4kuD092CgE80alrDqolGXdgW8jEt+QVnnhHANoHR1Ef9ggzePvXwgmFb0XOBCa4cqiC3T
- xj+08kbN1TG11kIta96k9/wwGOH5Y9PH7pbnzzbqyhGzPpw4vUgWHZdQxBY72R28F9cCesDuqkv
- Cn3H6XI9kBdy2kf1rpqHhmDvMlnRB0AVQak/W8gYoikkDfOQFQE/pW2JNJ/oAvu+QQ3vJ9l4PX1
- 1DQ7oJPxDNrdP3ugovGyPFkfUCgq26FL8r9eKSelJwjL7XGA4SCJS2YRS3iqbtiVND7LenU4KWN
- bLgmv1CbFNYieUh1NS2ntVsvcV7ZShY+8HhCNKLYNbAmSsDqJ6duLJsBXU6nPARmTIFkTImY/Yb
- yaOgns7sTRn9W4//DI9S67fdf74vsrhMTyglybRazrwSLd6tJSxu01YbOCw371m00cPLZNtzHwJ
- zbRYdj0W26l1Al06L8CDnIooyfN1BD11x20SUdnZuHs1i+X
-X-Received: by 2002:a17:90a:e7cb:b0:3aa:ee81:a62d with SMTP id
- 98e67ed59e1d1-3ab3a7480f9mr3445144a91.35.1791599335312; 
- Fri, 09 Oct 2026 19:28:55 -0700 (PDT)
+ bh=1GJSB2ELg35ukk55VzQQ+LIgh7vCfGQ842QiPY5J9MY=;
+ b=AIJtwWXzydOocSD0YST7N0+8TPW93TzZ0L35eeYkLgYeN/UtvThJqhUzHYGY3oQEYF
+ /uuwQu8szWSZEUFvNnM+YG5NarmuD4WVpFbEdWdyl9aSzRiuZm/PdAE++pYDylAawIFd
+ lZ9CTdkoF1Yur7v6yRNvdbbEaBeFyuV1LASh5l2Bk1VhPYku9OkpZtJEUnnAE2ZS7RRi
+ CQakN7e63Ms3y/sP2j+IRiQ4CumgfhK8KfSbfNp1Jnr7gALnAtBy0E0gRnkdATGQNHQR
+ 3+el1Qn6DRQrMo84thmac2Q4UrFkBHeaCOMybO95jwdLtTpiDNvwC+FVVGRhnWKkgwFN
+ WW9g==
+X-Gm-Message-State: AFq9FYLuqKOT1K0wdlzjyv+9neKtpRLUO68dZ0qdWKJRtWd1kvZj/2h8
+ IMJFrCRhspStvOCZp0mMYokc+vqMM3zJqomRFyc/nkB53c5AKexD8AvSD/cd5kOck5ErnNrKkVz
+ puDvcuLE=
+X-Gm-Gg: AYBFou0Ypo3UMVpSAKH3g3TfS5LvYwDJcXAd3mXhQIxLbXiYJFwyAdYF27/4/Er4LSA
+ rv1Y3Ht0MMMsRajtsBJz+6+wbQcrU9U/mtDm2If0Xw4ael3DomWapMcZbUBeWLh+Mbz7hMHikLl
+ gvORpNIWV2pB0cut1ZRuCNlPInqxzzFghEvnwVeds171wgtSKJFLWdY3E5jDaSVBx2XEEquxZXG
+ ET8TJ6sMwJiVDPyGcSFk4SXIVpEc0hQGy0XX7ZhSwbFQwfogCaxkyCFDpv9G6QLe6HphBYf4Gkb
+ 3kele1u/7pbH7/Rbs+V7hoeN3yKkKpsf03enlxEaoX3PVc58k+Qhv+t3xJebH9MBfothSgbHGfx
+ rs+Bl5plrtDmX1jnUGnCcrJhfaZG3d9zsP9Vji8lhnkbR2INfLBGyDg+EzXxcLqQXK3G7YOlxn4
+ 5Z4BrY7rJGAET0I3F3H7b9gIiLSHZZIlWI19qVm0b4jbEi92/oo0iYZNFOA59OcczB5jiXBnAKr
+ OpEbRxx3bAE8bUccKX/Z7HCttA+2QjgOYtNtQ==
+X-Received: by 2002:a17:90b:3a48:b0:3ab:1601:e5d6 with SMTP id
+ 98e67ed59e1d1-3ab3a2910eamr3412688a91.4.1791599334627; 
+ Fri, 09 Oct 2026 19:28:54 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
  98e67ed59e1d1-3ab3690474esm6202882a91.0.2026.10.09.19.28.54
@@ -59,10 +60,11 @@ Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  Fri, 09 Oct 2026 19:28:54 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 3/5] random: use all 64 bits of the seed
-Date: Fri,  9 Oct 2026 19:27:05 -0700
-Message-ID: <20261010022851.1872825-4-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+	stable@dpdk.org
+Subject: [PATCH v2 2/5] random: always use getentropy
+Date: Fri,  9 Oct 2026 19:27:04 -0700
+Message-ID: <20261010022851.1872825-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261010022851.1872825-1-stephen@networkplumber.org>
 References: <20260915192207.3926217-1-stephen@networkplumber.org>
@@ -82,158 +84,121 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The generator state is five 64 bit words, expanded from the seed by a
-32 bit linear congruential generator. The two halves of the seed were
-folded together first, so only 32 bits of it had any effect, and the
-low order bits of such a generator are weak, leaving the five words
-with correlated low bits.
+The current meson build check for getentropy support is broken
+and getentropy never gets used!
 
-Expand the seed with SplitMix64 instead, so every bit of the seed
-affects every word of the state. It is described in "Fast Splittable
-Pseudorandom Number Generators" by Steele, Lea and Flood,
-https://doi.org/10.1145/2714064.2660195 and is what the authors of
-the xoshiro and xoroshiro generators recommend for seeding.
+The cc.has_function() checks with -std=c11 but glibc hides
+getentropy behind _DEFAULT_SOURCE. Therefore the probe always
+failed, and code would fallback to RDSEED or TSC
+for the initial PRNG seed.
 
-The per-lcore seeds were formed by adding the lcore id to the seed,
-leaving neighbouring lcores with nearly identical state. Pass that
-sum through SplitMix64 as well.
+Now that a getentropy() wrapper exists for Windows it can always be used.
 
-Fixes: 3f002f069612 ("eal: replace libc-based random generation with LFSR")
+Falling back to the TSC now logs at ERR level, including the errno
+from getentropy() so that a blocked syscall can be told apart from
+other failures. A TSC derived seed only varies by process start time,
+which is easily determined by local attacker.
+
+A backport needs the preceding patch which adds the Windows
+getentropy() shim, otherwise the Windows build breaks.
+
+Bugzilla ID: 2035
+Fixes: faf8fd252785 ("eal: improve entropy for initial PRNG seed")
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/rel_notes/release_26_11.rst |  4 ++
- lib/eal/common/rte_random.c            | 74 +++++++++++++-------------
- 2 files changed, 40 insertions(+), 38 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst | 4 ++++
+ lib/eal/common/rte_random.c            | 6 ++++--
+ lib/eal/include/rte_random.h           | 7 ++++---
+ lib/eal/meson.build                    | 3 ---
+ 4 files changed, 12 insertions(+), 8 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 9bef8b4774..2d12eb7949 100644
+index 88c06025b0..9bef8b4774 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -161,6 +161,10 @@ New Features
- * **Updated random number generation.**
+@@ -158,6 +158,10 @@ New Features
+   Added ``rte_bbdev_queue_stats_get()`` function to retrieve statistics
+   for a specific queue, complementing the existing device-level statistics API.
  
-   * The initial seed is now always taken from ``getentropy()``.
-+  * Improved the expansion of the seed into the generator state. All
-+    64 bits of the value passed to ``rte_srand()`` now affect the state,
-+    so a given seed produces a different sequence than in previous
-+    releases.
- 
++* **Updated random number generation.**
++
++  * The initial seed is now always taken from ``getentropy()``.
++
  
  Removed Items
+ -------------
 diff --git a/lib/eal/common/rte_random.c b/lib/eal/common/rte_random.c
-index b036c50349..3c5b36aa2c 100644
+index 537fa035ee..b036c50349 100644
 --- a/lib/eal/common/rte_random.c
 +++ b/lib/eal/common/rte_random.c
-@@ -35,55 +35,45 @@ static RTE_LCORE_VAR_HANDLE(struct rte_rand_state, rand_state);
- /* instance to be shared by all unregistered non-EAL threads */
- static struct rte_rand_state unregistered_rand_state;
+@@ -7,6 +7,8 @@
+ #include <x86intrin.h>
+ #endif
+ #endif
++#include <errno.h>
++#include <string.h>
+ #include <unistd.h>
  
--static uint32_t
--__rte_rand_lcg32(uint32_t *seed)
--{
--	*seed = 1103515245U * *seed + 12345U;
--
--	return *seed;
--}
--
-+/* SplitMix64, used to expand the seed into the generator state.
-+ * It has a full 64 bit period and good avalanche, so all the bits
-+ * of the seed affect every word of the resulting state.
-+ *
-+ * See "Fast Splittable Pseudorandom Number Generators" by Steele,
-+ * Lea and Flood, https://doi.org/10.1145/2714064.2660195
-+ */
+ #include <rte_bitops.h>
+@@ -219,7 +221,6 @@ rte_drand(void)
  static uint64_t
--__rte_rand_lcg64(uint32_t *seed)
-+__rte_rand_splitmix64(uint64_t *state)
+ __rte_random_initial_seed(void)
  {
--	uint64_t low;
--	uint64_t high;
--
--	/* A 64-bit LCG would have been much cleaner, but good
--	 * multiplier/increments for such seem hard to come by.
--	 */
-+	uint64_t z;
+-#ifdef RTE_LIBEAL_USE_GETENTROPY
+ 	int ge_rc;
+ 	uint64_t ge_seed;
  
--	low = __rte_rand_lcg32(seed);
--	high = __rte_rand_lcg32(seed);
-+	z = (*state += 0x9E3779B97F4A7C15ULL);
-+	z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
-+	z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+@@ -227,7 +228,6 @@ __rte_random_initial_seed(void)
  
--	return low | (high << 32);
-+	return z ^ (z >> 31);
+ 	if (ge_rc == 0)
+ 		return ge_seed;
+-#endif
+ #ifdef __RDSEED__
+ 	unsigned int rdseed_low;
+ 	unsigned int rdseed_high;
+@@ -238,6 +238,8 @@ __rte_random_initial_seed(void)
+ 		return (uint64_t)rdseed_low | ((uint64_t)rdseed_high << 32);
+ #endif
+ 	/* second fallback: seed using rdtsc */
++	EAL_LOG(ERR, "getentropy() failed (%s), seeding PRNG from TSC: seed has low entropy",
++		strerror(errno));
+ 	return rte_get_tsc_cycles();
  }
  
- static uint64_t
--__rte_rand_lfsr258_gen_seed(uint32_t *seed, uint64_t min_value)
-+__rte_rand_lfsr258_gen_seed(uint64_t *state, uint64_t min_value)
- {
--	uint64_t res;
--
--	res = __rte_rand_lcg64(seed);
--
--	if (res < min_value)
--		res += min_value;
--
--	return res;
-+	/* LFSR258 degenerates unless each word exceeds its threshold.
-+	 * All thresholds are powers of two, so a bitwise or is enough
-+	 * and keeps the remaining bits untouched.
-+	 */
-+	return __rte_rand_splitmix64(state) | min_value;
- }
+diff --git a/lib/eal/include/rte_random.h b/lib/eal/include/rte_random.h
+index 15cbe6215a..978ecda203 100644
+--- a/lib/eal/include/rte_random.h
++++ b/lib/eal/include/rte_random.h
+@@ -20,9 +20,10 @@ extern "C" {
+ /**
+  * Seed the pseudo-random generator.
+  *
+- * The generator is automatically seeded by the EAL init with a timer
+- * value. It may need to be re-seeded by the user with a real random
+- * value.
++ * The generator is automatically seeded by the EAL init from the
++ * random source provided by the operating system, so there is no need
++ * to re-seed it to get unpredictable values. Seeding it explicitly is
++ * useful to make a run repeatable.
+  *
+  * This function is not multi-thread safe in regards to other
+  * rte_srand() calls, nor is it in relation to concurrent rte_rand(),
+diff --git a/lib/eal/meson.build b/lib/eal/meson.build
+index 092f5c5261..a261bdd48b 100644
+--- a/lib/eal/meson.build
++++ b/lib/eal/meson.build
+@@ -22,9 +22,6 @@ endif
+ if dpdk_conf.has('RTE_HAS_LIBARCHIVE')
+     ext_deps += libarchive
+ endif
+-if cc.has_function('getentropy', prefix : '#include <unistd.h>')
+-    cflags += '-DRTE_LIBEAL_USE_GETENTROPY'
+-endif
  
- static void
- __rte_srand_lfsr258(uint64_t seed, struct rte_rand_state *state)
- {
--	uint32_t lcg_seed;
--
--	lcg_seed = (uint32_t)(seed ^ (seed >> 32));
-+	uint64_t mix_state = seed;
- 
--	state->z1 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 2UL);
--	state->z2 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 512UL);
--	state->z3 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 4096UL);
--	state->z4 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 131072UL);
--	state->z5 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 8388608UL);
-+	state->z1 = __rte_rand_lfsr258_gen_seed(&mix_state, 2UL);
-+	state->z2 = __rte_rand_lfsr258_gen_seed(&mix_state, 512UL);
-+	state->z3 = __rte_rand_lfsr258_gen_seed(&mix_state, 4096UL);
-+	state->z4 = __rte_rand_lfsr258_gen_seed(&mix_state, 131072UL);
-+	state->z5 = __rte_rand_lfsr258_gen_seed(&mix_state, 8388608UL);
- }
- 
- RTE_EXPORT_SYMBOL(rte_srand)
-@@ -91,16 +81,24 @@ void
- rte_srand(uint64_t seed)
- {
- 	unsigned int lcore_id;
-+	uint64_t mix_state;
- 
--	/* add lcore_id to seed to avoid having the same sequence */
-+	/* Mix in the lcore id so that each lcore gets an unrelated
-+	 * sequence. Adding it to the seed would leave neighbouring
-+	 * lcores with nearly identical generator state.
-+	 */
- 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
- 		struct rte_rand_state *lcore_state =
- 			RTE_LCORE_VAR_LCORE(lcore_id, rand_state);
- 
--		__rte_srand_lfsr258(seed + lcore_id, lcore_state);
-+		mix_state = seed + lcore_id;
-+		__rte_srand_lfsr258(__rte_rand_splitmix64(&mix_state),
-+				    lcore_state);
- 	}
- 
--	__rte_srand_lfsr258(seed + lcore_id, &unregistered_rand_state);
-+	mix_state = seed + lcore_id;
-+	__rte_srand_lfsr258(__rte_rand_splitmix64(&mix_state),
-+			    &unregistered_rand_state);
- }
- 
- static __rte_always_inline uint64_t
+ if is_freebsd
+     annotate_locks = false
 -- 
 2.53.0
 
