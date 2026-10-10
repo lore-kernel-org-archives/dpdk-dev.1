@@ -2,51 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E9ECA6004
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 12:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F29CA9EBE
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 14:45:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1DEB64027F;
-	Sat, 10 Oct 2026 14:11:23 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id E2A054026D
- for <dev@dpdk.org>; Sat, 10 Oct 2026 14:11:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791634281; x=1823170281;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=HM4PiOK/pvywe0VckLAj24Eu93aIDfize29yAq61X6s=;
- b=lb14KN2RMBFUMW/5yCHf647Eg6AsgNdA9dPeS1/bHy2a59gM4syg/FJE
- D4leycWKRyCLU1ixkMM3LbvqoXmVtXV9NqXjmbCyOJWgYv8Q5a822m22n
- RLT5Gqc+Vt1ZUYyDAbw5yGZ/o2rVT1TI1rXTRDjBztNiEgYCYU3I6O/uN
- TeWbo9MsNq4b4x/F76tGeJ2tk68xGxSF7Y0VVYu3P/22lnceMutyHwjQZ
- B+e9XI5NnUQHku+38jJVXfgpfWnmzu4cGg2DOgNmISq5g8MKGDoAWO9iV
- +gvpsdKfAqwkteXsfYqoP6DJ/Q0UQvSsc/Rfyyva6jOlFEWsIrFvkT7sY Q==;
-X-CSE-ConnectionGUID: bBMnJhGqR6iSH6brclhBFQ==
-X-CSE-MsgGUID: zO/pNi4lTOGQ61yO8L5GeQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11930"; a="297806"
-X-IronPort-AV: E=Sophos;i="6.27,150,1787036400"; 
-   d="scan'208";a="297806"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Oct 2026 05:11:19 -0700
-X-CSE-ConnectionGUID: fSfa4IH+RS+dTWGTtr0DKA==
-X-CSE-MsgGUID: +6N5zJtHT4WpUk68CwVQ3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,150,1787036400"; 
-   d="scan'208";a="507758"
-Received: from pae-14.iind.intel.com ([10.190.203.153])
- by orviesa003.jf.intel.com with ESMTP; 10 Oct 2026 05:11:18 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 8DA7F4028D;
+	Sat, 10 Oct 2026 16:45:17 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
+ by mails.dpdk.org (Postfix) with ESMTP id 5B3154026D
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 16:45:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
+ MIME-Version; bh=eG/jcLFQVKC8THHEWvBwhIbyfnVuGxEuD7JQIwSOydI=;
+ b=HD6L2dk9C2qRCLyMPJrK86xq90/LQICqM9Y6lMUmE3rSZCslP+kJ4DkPv3v1qm
+ 3NLrmQqTVlzION5kZ81ZUTWi4Z8VkWJwxZYNe1D0PZB2SNbVdInRDmqPHAg9kK0Q
+ lbPTff6GFPhrYeInMEoyUgsAA9qX5EvaAtOUUB5nEHdAU=
+From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH] net/iavf: fix memory leaks in RSS flow engine
-Date: Sat, 10 Oct 2026 12:12:55 +0000
-Message-Id: <20261010121255.528329-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
+Cc: Feifei Wang <wangfeifei40@huawei.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v1 00/17] net/hinic3: add PMD features and fixes
+Date: Sat, 10 Oct 2026 22:44:51 +0800
+Message-ID: <20261010144509.2731-1-yejiacheng4@h-partners.com>
+X-Mailer: git-send-email 2.53.0.windows.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID: As8vCgDX70B4T8pqMdk9Aw--.440S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZF43Kr4xZFy8Gr1kWr4kZwb_yoW5uw15pF
+ WUG3y3Zr1DKrW7Jwn7Kw1xAas8X3Z7Ga47KasrJa4FvFn3ZFy5Z345GFW0yrnxtr47JF12
+ vF45Cr92gan0qrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UCtCcUUUUU=
+Sender: wff_light@vip.163.com
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNRk-SWrKT3kvjwAA3s
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,122 +47,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch addresses several memory leaks and
-incorrect error reporting that exist in the
-iavf RSS (hash) flow engine:
-
-- iavf_hash_parse_raw_pattern() returns without
-  freeing "pkt_buf" when the "msk_buf" allocation
-  fails, leaking the first buffer on every failed
-  raw pattern parse.
-
-- iavf_hash_create() only frees the parsed "meta"
-  on success.
-  Both error paths return early and leak the struct
-  iavf_rss_meta allocated by iavf_hash_parse_pattern_action(),
-  which no other caller frees.
-  Free in both error paths.
-
-- iavf_hash_destroy() never releases flow->rule.
-  The virtchnl_rss_cfg allocated by iavf_hash_create() is only
-  released by the engine's free callback, iavf_hash_free(),
-  which is invoked from iavf_flow_uninit() but not from
-  iavf_flow_destroy().
-  So every flow destroy or flush of an RSS rule leaks it.
-  The early return taken while the VF is resetting leaks it too.
-  Free the config and clear flow->rule properly in all paths.
-
-- Out of memory conditions are reported to the application as
-  EINVAL while -ENOMEM is returned.
-  Report ENOMEM instead.
-
-Fixes: bc0e85586eaf ("net/iavf: support VF RSS flow rule with raw pattern")
-Fixes: 7be10c3004be ("net/iavf: add RSS configuration for VF")
-Fixes: c02ea7410e51 ("net/iavf: fix flow flush after PF reset")
-
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
- drivers/net/intel/iavf/iavf_hash.c | 33 ++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/net/intel/iavf/iavf_hash.c b/drivers/net/intel/iavf/iavf_hash.c
-index 9515094402..00b616f34b 100644
---- a/drivers/net/intel/iavf/iavf_hash.c
-+++ b/drivers/net/intel/iavf/iavf_hash.c
-@@ -918,8 +918,10 @@ iavf_hash_parse_raw_pattern(const struct rte_flow_item *item,
- 		return -ENOMEM;
- 
- 	msk_buf = rte_zmalloc(NULL, pkt_len, 0);
--	if (!msk_buf)
-+	if (!msk_buf) {
-+		rte_free(pkt_buf);
- 		return -ENOMEM;
-+	}
- 
- 	/* convert string to int array */
- 	for (i = 0, j = 0; i < spec_len; i += 2, j++) {
-@@ -1538,7 +1540,7 @@ iavf_hash_parse_pattern_action(struct iavf_adapter *ad,
- 
- 	rss_meta_ptr = rte_zmalloc(NULL, sizeof(*rss_meta_ptr), 0);
- 	if (!rss_meta_ptr) {
--		rte_flow_error_set(error, EINVAL,
-+		rte_flow_error_set(error, ENOMEM,
- 				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
- 				   "No memory for rss_meta_ptr");
- 		return -ENOMEM;
-@@ -1594,9 +1596,10 @@ iavf_hash_create(__rte_unused struct iavf_adapter *ad,
- 	rss_cfg = rte_zmalloc("iavf rss rule",
- 			      sizeof(struct virtchnl_rss_cfg), 0);
- 	if (!rss_cfg) {
--		rte_flow_error_set(error, EINVAL,
-+		rte_flow_error_set(error, ENOMEM,
- 				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
- 				   "No memory for rss rule");
-+		rte_free(meta);
- 		return -ENOMEM;
- 	}
- 
-@@ -1612,6 +1615,7 @@ iavf_hash_create(__rte_unused struct iavf_adapter *ad,
- 				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
- 				   "Failed to add rss rule.");
- 		rte_free(rss_cfg);
-+		rte_free(meta);
- 		return -rte_errno;
- 	}
- 
-@@ -1629,19 +1633,22 @@ iavf_hash_destroy(__rte_unused struct iavf_adapter *ad,
- 	struct virtchnl_rss_cfg *rss_cfg;
- 	int ret = 0;
- 
--	if (vf->vf_reset)
--		return 0;
--
- 	rss_cfg = (struct virtchnl_rss_cfg *)flow->rule;
- 
--	ret = iavf_add_del_rss_cfg(ad, rss_cfg, false);
--	if (ret) {
--		PMD_DRV_LOG(ERR, "fail to del RSS configure");
--		rte_flow_error_set(error, -ret,
--				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
--				   "Failed to delete rss rule.");
--		return -rte_errno;
-+	if (!vf->vf_reset) {
-+		ret = iavf_add_del_rss_cfg(ad, rss_cfg, false);
-+		if (ret) {
-+			PMD_DRV_LOG(ERR, "fail to del RSS configure");
-+			rte_flow_error_set(error, -ret,
-+					   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+					   "Failed to delete rss rule.");
-+			return -rte_errno;
-+		}
- 	}
-+
-+	flow->rule = NULL;
-+	rte_free(rss_cfg);
-+
- 	return ret;
- }
- 
--- 
-2.34.1
+This series fixes offload capability advertisement and cmdq/compact CQE=0D
+configuration, and adds FEC, CIR drop statistics, VF LAG/link state, COS=0D
+mask/map, mbox recording and telemetry, RSS hash configuration, compact CQE=
+=0D
+Rx/Tx paths, TSO segment expansion, pseudo-header checksum, per-tile cmdq=0D
+ops, SP560 NIC support, and device kvargs tunables.=0D
+=0D
+Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>=0D
+=0D
+Jiacheng Ye (17):=0D
+  net/hinic3: fix offload and cmdq/compact CQE config=0D
+  net/hinic3: add CIR drop statistics and VF LAG support=0D
+  net/hinic3: add FEC mode get/set and capability support=0D
+  net/hinic3: add mbox message recording and debug dump=0D
+  net/hinic3: add COS mask and COS map support=0D
+  net/hinic3: add VF link state and promiscuous support=0D
+  net/hinic3: convert cmdq ops to static global variables=0D
+  net/hinic3: update RSS hash type configuration=0D
+  net/hinic3: refactor flow rule parsing=0D
+  net/hinic3: add SP560 NIC type identification and handling=0D
+  net/hinic3: add device kvargs parameters support=0D
+  net/hinic3: add compact CQE Rx path and ptype table=0D
+  net/hinic3: expand TSO from 127 to 255 segments=0D
+  net/hinic3: split Tx burst function for compact CQE support=0D
+  net/hinic3: add pseudo-header checksum calculation=0D
+  net/hinic3: add per-tile prefetch/drop/CEQ cmdq ops=0D
+  net/hinic3: add mbox count telemetry support=0D
+=0D
+ .mailmap                                      |   1 +=0D
+ doc/guides/rel_notes/release_26_11.rst        |  13 +=0D
+ drivers/net/hinic3/base/hinic3_cmd.h          |   2 +=0D
+ drivers/net/hinic3/base/hinic3_csr.h          |   8 +-=0D
+ drivers/net/hinic3/base/hinic3_eqs.c          |  59 ++=0D
+ drivers/net/hinic3/base/hinic3_eqs.h          |   2 +=0D
+ drivers/net/hinic3/base/hinic3_hw_cfg.c       |   2 +=0D
+ drivers/net/hinic3/base/hinic3_hw_cfg.h       |   9 +-=0D
+ drivers/net/hinic3/base/hinic3_hw_comm.c      |   9 +-=0D
+ drivers/net/hinic3/base/hinic3_hwdev.h        |   4 +-=0D
+ drivers/net/hinic3/base/hinic3_hwif.c         |   4 +-=0D
+ drivers/net/hinic3/base/hinic3_mbox.c         |  53 +=0D
+ drivers/net/hinic3/base/hinic3_mbox.h         |  22 +=0D
+ drivers/net/hinic3/base/hinic3_nic_cfg.c      | 188 +++-=0D
+ drivers/net/hinic3/base/hinic3_nic_cfg.h      | 116 +-=0D
+ drivers/net/hinic3/base/hinic3_nic_event.c    |  79 +-=0D
+ drivers/net/hinic3/hinic3_ethdev.c            | 750 +++++++++++--=0D
+ drivers/net/hinic3/hinic3_ethdev.h            |  62 +-=0D
+ drivers/net/hinic3/hinic3_fdir.c              | 158 ++-=0D
+ drivers/net/hinic3/hinic3_fdir.h              |  19 +-=0D
+ drivers/net/hinic3/hinic3_flow.c              | 581 +++++++---=0D
+ drivers/net/hinic3/hinic3_flow.h              | 196 ----=0D
+ drivers/net/hinic3/hinic3_nic_io.c            | 145 +--=0D
+ drivers/net/hinic3/hinic3_nic_io.h            | 145 ++-=0D
+ drivers/net/hinic3/hinic3_rx.c                | 589 +++++++++--=0D
+ drivers/net/hinic3/hinic3_rx.h                | 217 ++--=0D
+ drivers/net/hinic3/hinic3_telemetry.c         | 104 ++=0D
+ drivers/net/hinic3/hinic3_telemetry.h         |  25 +=0D
+ drivers/net/hinic3/hinic3_tx.c                | 997 ++++++++++++++----=0D
+ drivers/net/hinic3/hinic3_tx.h                |  81 +-=0D
+ .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    |  71 +-=0D
+ .../net/hinic3/htn_adapt/hinic3_htn_cmdq.h    |   8 +-=0D
+ drivers/net/hinic3/meson.build                |   1 +=0D
+ .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    |  75 +-=0D
+ .../net/hinic3/stn_adapt/hinic3_stn_cmdq.h    |   6 +-=0D
+ 35 files changed, 3625 insertions(+), 1176 deletions(-)=0D
+ delete mode 100644 drivers/net/hinic3/hinic3_flow.h=0D
+ create mode 100644 drivers/net/hinic3/hinic3_telemetry.c=0D
+ create mode 100644 drivers/net/hinic3/hinic3_telemetry.h=0D
+=0D
+-- =0D
+2.33.0=0D
+=0D
 
