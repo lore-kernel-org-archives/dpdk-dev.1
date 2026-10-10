@@ -2,61 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F733CA9EBB
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 01:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC24CA9EBD
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 01:59:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B7FE940658;
-	Sat, 10 Oct 2026 03:00:07 +0200 (CEST)
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200])
- by mails.dpdk.org (Postfix) with ESMTP id EF1364064F
- for <dev@dpdk.org>; Sat, 10 Oct 2026 03:00:06 +0200 (CEST)
-Received: by mail-pl1-f200.google.com with SMTP id
- d9443c01a7336-2e6188d1e51so2667245ad.0
- for <dev@dpdk.org>; Fri, 09 Oct 2026 18:00:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6157F402B4;
+	Sat, 10 Oct 2026 03:59:23 +0200 (CEST)
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
+ [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id 60BFF4027C
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 03:59:21 +0200 (CEST)
+Received: by mail-pj1-f45.google.com with SMTP id
+ 98e67ed59e1d1-3ab868eb9cfso66095a91.0
+ for <dev@dpdk.org>; Fri, 09 Oct 2026 18:59:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1791594006; x=1792198806; darn=dpdk.org;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=0MRi0aje1LRMs5fLWIarKAUOl0WH1Es+aq64SyTETtQ=;
- b=U/SDFkLoRUS/FD0grIYbCeJdH4mu9UGH48L78J7NWzbnBFkTWfk8LZt7k3TI6AhFpr
- Ti7R752rwNZzb7sAzRadvx2pwffxcmSOxgb5DaMgWND/ghtXxkMtG8rHba8aN3VenT/5
- iAN1DGiSRmBoaEO76C4JGz0/pfuQtseObpnEkk33M598ddLHaOJFNRTdzzHQdTL+8tfY
- pF2xX/baLTbV746gwMwUlPUt8WQl7+x251c4gRntyQa1ZWexHBIorItNtTV8dpRBYU6d
- mowaIBND57h90GQ4Z5pzfbgu0q0rn+6Ls75YHQCnKtXoLTr3hM53pTNj34AuIYkD3grQ
- eHNg==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791597560;
+ x=1792202360; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=53LYYrW45zPI0m+RiFEoQMQZSjTjHZbBrwkToDe1iDQ=;
+ b=qvg/7TSO5sQTVf60hsmCLmHAEH2fvJn0pJmrTKlPOnecFzVf1hTvTWZdokdGHCSQc8
+ dxCDy8O11Wt3yeyZ+XOgIjd2+E8Doh70jki6wcGkxxW5Pt3R08XORD/91JroC/6481Ir
+ iUU6B9FRowsKsQaJXhR601V7Dgsf3fRU2+beqA6DeMWJzagRSPV6SH3U1j3DrCk4B3lU
+ PoENFLbZvPxJA7NqEhpL7bR2yrb54zZziy/E2SvQLptZOHGCsmE8H2qAVb9wJ4JqOfhp
+ tnMj+BLuX8zuv6QJq7EgqpTVTkpGbPWQGX6clv9VyYWliGr4ErgjSDk6KM3Umj17pv7H
+ /2rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791594006; x=1792198806;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20260707; t=1791597560; x=1792202360;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=0MRi0aje1LRMs5fLWIarKAUOl0WH1Es+aq64SyTETtQ=;
- b=hLlm/SEyhzWWSK6ZgsJzPc/X/v0MBmJgUsEbEmguggk7f4VXixig3be71bRboXGUje
- cHVliYVz4dCnBjVjlrsW2+XOUc4OJCqtYcAsKwpyVNm/tq7r4wFQvz6bwjdaFcY+dGXD
- ubzpZqxBioUEWlrY6NTaAklcA1/ql/54d92Tp/BJGzayoyFpomfNdOJFmqmZah2JfL1S
- atMZjW0LKx7iOfzwVdYGvl/SnLnwNHMA3Uy1841Pf/J8XVf/COZ9FW+oTcXH8a4UcS0o
- 9pZJSh19AJbcFw5kzywJYNoGSBra7iT5BWG64kLj3TIM/WNz+YhWlELhRnYtaZmLiE4b
- xlcw==
-X-Gm-Message-State: AFq9FYL62wuEZbF4F48KEtcOEnnRCMSC9VoNV3FwWRICQxvN6fiVWwFQ
- 7d7bJQorhHXvpLzeW3wzbpo139c+NAPtM4N0VMEGDAkH2v2ckh7+4sXgMeG76/d7ST/Dnc1SA8X
- a2HU9yUSFtf9Hxw==
-X-Received: from plpg9.prod.google.com ([2002:a17:902:9349:b0:2e4:ba62:8051])
- (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:d60f:b0:2e4:a360:fcc6 with SMTP id
- d9443c01a7336-2e842bc1677mr30531685ad.35.1791594005656; 
- Fri, 09 Oct 2026 18:00:05 -0700 (PDT)
-Date: Fri,  9 Oct 2026 17:59:40 -0700
-In-Reply-To: <20261010005942.560881-1-joshwash@google.com>
-Mime-Version: 1.0
-References: <20261005193943.1175072-1-joshwash@google.com>
- <20261010005942.560881-1-joshwash@google.com>
-X-Mailer: git-send-email 2.56.0.170.g584c36229d-goog
-Message-ID: <20261010005942.560881-9-joshwash@google.com>
-Subject: [PATCH v3 8/8] net/gve: refactor timestamp support to clock read type
-From: Joshua Washington <joshwash@google.com>
-To: Joshua Washington <joshwash@google.com>
-Cc: dev@dpdk.org, blasko@google.com, jtranoleary@google.com
-Content-Type: text/plain; charset="UTF-8"
+ bh=53LYYrW45zPI0m+RiFEoQMQZSjTjHZbBrwkToDe1iDQ=;
+ b=JV0uXljH/m3anuJL7KwATGMzCPTY7T1vXsSYLgjPf1QLSFJMBk12E+5LqNtPGuXKGS
+ avyXUEiK5BxHs3eVHhm5ka2aKcSw/mWL8OsRa/eehrCMAR6L1ty0MZwEs2ju3PpvEaDB
+ SbljJfZ7XlOJynMLHkB7hJ/mCbQQqTd2jX3RNvqHdkAZ2YUIu/NgVI78CgYjvinSMel0
+ H1SYm6iH5hEUNK+wzhnsNOwImdnKc9I4lvbE0uU41EtjUrYCQhq0/orpQOJ8JSVNCSLW
+ 5Z8FN6q7mJZnaAe9Oq+lVuBOogZplez4dPLIIV9BXyA6BbYgKIissMALXx1XsXuv8vyW
+ 8H2A==
+X-Gm-Message-State: AFq9FYKiEWVrylO4YYwYqlc0xOYTnTeBxnRe9YyP7efo7TM+s0k8RcJK
+ 5KUPzrF9Kpf8mOGnRqO6E5IjcbVshQDJf3fW8txsqRelftRrM1KwRchRX1BQiSn/u2O/MJkLYe6
+ +9RizHtE=
+X-Gm-Gg: AYBFou2ceRoi1ePX6UhAn2nxaQkOqRWHv/csTXtAIlZwHghZHs1rPmRA1xpR9BWTWbX
+ 6AYRYp8u5gQPB8A0WJrImVzOuCmz3bC7Cp68S30HxZTHH8ml6BFfnbLax3QXMaKYO4Bwe1NZUuW
+ B11bz9a7SwNeQlwyL8kG5QyTfKo4pU7o1iy+1pPWe+bzMkyjRR9pBUbiGNoRclknn7IXY7QbEOo
+ MajdQFjbAdEtYt+ILw0u9tCiWfVvPr817Slab6vxRk09SWKfJpkJ33sC9Kp1W0th+UBakVHrA0v
+ paEicoLrxwZLWhpA7+lYsKp67FGOY2+Hl2pLVxRpQwEHU04ydyQ4HmVYLNa3pz2QGLOfdCA9Way
+ bCx2ocZUoIkIOUBDnrkSemWlR6Ai4DsX6aX7DQ1dFFCKk/59l/P32eOHShaX/kaVDkgWcAQj1Ir
+ bPCFHNzrL5OVcvAMl22AqjikOn1KxRG++rwsi2iFI5tOin+e8Hy65zb1iF2SxO0f3S9jmxhO7aC
+ qFl9EwqGX5yn/goJ66yP5HDvca8fLyy6EDlZy4=
+X-Received: by 2002:a17:90b:28ce:b0:3a4:85c4:68fc with SMTP id
+ 98e67ed59e1d1-3ab3a79df67mr3270063a91.29.1791597560429; 
+ Fri, 09 Oct 2026 18:59:20 -0700 (PDT)
+Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 41be03b00d2f7-cd3d9e1deb2sm1827854a12.15.2026.10.09.18.59.19
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 09 Oct 2026 18:59:20 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH] sched: fix data race in RED random number generation
+Date: Fri,  9 Oct 2026 18:59:15 -0700
+Message-ID: <20261010015916.1689925-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,108 +79,125 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Mark Blasko <blasko@google.com>
+The RED scheduler used its own random number generator which was
+weak and buggy. Change standard rte_rand() which has better
+randomness and is thread safe.
 
-Replace the boolean nic_timestamp_supported field with enum
-gve_dev_clk_type to represent the device clock read mode
-(unsupported, Cmd). Update AdminQ capability negotiation
-and ethdev operations to check clk_read_type.
+There is no prior deprecation notice for relatedd symbols. They were
+never meant to be part of the API: rte_fast_rand() is the internal
+generator of the dropper and the two variables are its state, all
+exposed only because the drop test is inline in rte_red.h.
 
-Only enable the NIC timestamp device option for DQO queue formats.
-GQI has no Rx timestamp support, so it no longer reserves the timestamp
-report memzone or starts the clock sync thread.
-
-Signed-off-by: Mark Blasko <blasko@google.com>
-Signed-off-by: Joshua Washington <joshwash@google.com>
+Fixes: de3cfa2c9823 ("sched: initial import")
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
-v3:
-- Keep the nic_ts_report_mz check before advertising
-  RTE_ETH_RX_OFFLOAD_TIMESTAMP, so the offload is not advertised when
-  timestamp setup failed.
-- Drop the redundant GVE_DEV_CLK_UNSUPPORTED check from
-  gve_alloc_nic_ts_report().
-- Note in the commit message that GQI no longer sets up NIC
-  timestamping.
----
- drivers/net/gve/base/gve_adminq.c | 5 +++--
- drivers/net/gve/gve_ethdev.c      | 7 ++++---
- drivers/net/gve/gve_ethdev.h      | 7 ++++++-
- 3 files changed, 13 insertions(+), 6 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst |  3 +++
+ lib/sched/rte_red.c                    |  9 +--------
+ lib/sched/rte_red.h                    | 26 ++------------------------
+ 3 files changed, 6 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/net/gve/base/gve_adminq.c b/drivers/net/gve/base/gve_adminq.c
-index db3e43c6b0..65e865939f 100644
---- a/drivers/net/gve/base/gve_adminq.c
-+++ b/drivers/net/gve/base/gve_adminq.c
-@@ -994,9 +994,10 @@ static void gve_enable_supported_features(struct gve_priv *priv,
- 		priv->max_mtu = be16_to_cpu(dev_op_jumbo_frames->max_mtu);
- 	}
- 	if (dev_op_nic_timestamp &&
--	    (supported_features_mask & GVE_SUP_NIC_TIMESTAMP_MASK)) {
-+	    (supported_features_mask & GVE_SUP_NIC_TIMESTAMP_MASK) &&
-+	    !gve_is_gqi(priv)) {
- 		PMD_DRV_LOG(INFO, "NIC TIMESTAMP device option enabled.");
--		priv->nic_timestamp_supported = true;
-+		priv->clk_read_type = GVE_DEV_CLK_CMD;
- 	}
- }
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 88c06025b0..d4a3a7e7f2 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -226,6 +226,9 @@ Removed Items
+   The only remaining method for detecting LLDP packets is by using
+   the mbuf packet type in conjunction with the ``enable_lldp`` devarg.
  
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index 31698bc38a..3c8d1a76e4 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -897,7 +897,8 @@ gve_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
- 
- 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_RSS_HASH;
--	if (!gve_is_gqi(priv) && priv->nic_ts_report_mz)
-+	if (priv->clk_read_type != GVE_DEV_CLK_UNSUPPORTED &&
-+	    priv->nic_ts_report_mz != NULL)
- 		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
- 	dev_info->tx_offload_capa =
- 		RTE_ETH_TX_OFFLOAD_MULTI_SEGS	|
-@@ -1377,7 +1378,7 @@ gve_read_clock(struct rte_eth_dev *dev, uint64_t *clock)
- 	uint64_t ts;
- 	int err;
- 
--	if (!priv->nic_timestamp_supported)
-+	if (priv->clk_read_type == GVE_DEV_CLK_UNSUPPORTED)
- 		return -EOPNOTSUPP;
- 
- 	if (!priv->nic_ts_report_mz)
-@@ -1477,7 +1478,7 @@ gve_setup_nic_timestamp(struct gve_priv *priv)
- {
- 	int err;
- 
--	if (!priv->nic_timestamp_supported)
-+	if (priv->clk_read_type == GVE_DEV_CLK_UNSUPPORTED)
- 		return;
- 
- 	rte_atomic_store_explicit(&priv->nic_ts_read_fails, 0, rte_memory_order_relaxed);
-diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index b6c06cd82d..19eac9ec0b 100644
---- a/drivers/net/gve/gve_ethdev.h
-+++ b/drivers/net/gve/gve_ethdev.h
-@@ -274,6 +274,11 @@ extern const struct rte_flow_ops gve_flow_ops;
- struct gve_priv;
- struct gve_flow_rule_params;
- 
-+enum gve_dev_clk_type {
-+	GVE_DEV_CLK_UNSUPPORTED = 0,
-+	GVE_DEV_CLK_CMD,
-+};
++* sched: Removed the private random number generator used by RED: the
++  inline function ``rte_fast_rand()``.
 +
- struct gve_ctrl_ops {
- 	int (*init_ctrl_plane)(struct gve_priv *priv);
- 	void (*free_ctrl_plane)(struct gve_priv *priv);
-@@ -407,7 +412,7 @@ struct gve_priv {
- 	TAILQ_HEAD(, gve_flow) active_flows;
  
- 	/* HW Timestamping Fields */
--	bool nic_timestamp_supported;
-+	enum gve_dev_clk_type clk_read_type;
- 	const struct rte_memzone *nic_ts_report_mz;
- 	struct gve_nic_ts_report *nic_ts_report;
- 	pthread_mutex_t nic_ts_lock;
+ API Changes
+ -----------
+diff --git a/lib/sched/rte_red.c b/lib/sched/rte_red.c
+index d7534d0bee..6d20afa9dc 100644
+--- a/lib/sched/rte_red.c
++++ b/lib/sched/rte_red.c
+@@ -5,14 +5,9 @@
+ #include <math.h>
+ #include <eal_export.h>
+ #include "rte_red.h"
+-#include <rte_random.h>
+ #include <rte_common.h>
+ 
+-static int rte_red_init_done = 0;     /**< Flag to indicate that global initialisation is done */
+-RTE_EXPORT_SYMBOL(rte_red_rand_val)
+-uint32_t rte_red_rand_val = 0;        /**< Random value cache */
+-RTE_EXPORT_SYMBOL(rte_red_rand_seed)
+-uint32_t rte_red_rand_seed = 0;       /**< Seed for random number generation */
++static int rte_red_init_done;         /**< Flag to indicate that global initialisation is done */
+ 
+ /**
+  * table[i] = log2(1-Wq) * Scale * -1
+@@ -116,8 +111,6 @@ rte_red_config_init(struct rte_red_config *red_cfg,
+ 	 *  Initialize the RED module if not already done
+ 	 */
+ 	if (!rte_red_init_done) {
+-		rte_red_rand_seed = rte_rand();
+-		rte_red_rand_val = rte_fast_rand();
+ 		__rte_red_init_tables();
+ 		rte_red_init_done = 1;
+ 	}
+diff --git a/lib/sched/rte_red.h b/lib/sched/rte_red.h
+index 3b90cc46a9..ad11941ed5 100644
+--- a/lib/sched/rte_red.h
++++ b/lib/sched/rte_red.h
+@@ -15,6 +15,7 @@
+ #include <rte_debug.h>
+ #include <rte_cycles.h>
+ #include <rte_branch_prediction.h>
++#include <rte_random.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -34,8 +35,6 @@ extern "C" {
+ /**
+  * Externs
+  */
+-extern uint32_t rte_red_rand_val;
+-extern uint32_t rte_red_rand_seed;
+ extern uint16_t rte_red_log2_1_minus_Wq[RTE_RED_WQ_LOG2_NUM];
+ extern uint16_t rte_red_pow2_frac_inv[16];
+ 
+@@ -102,23 +101,6 @@ rte_red_config_init(struct rte_red_config *red_cfg,
+ 	const uint16_t max_th,
+ 	const uint16_t maxp_inv);
+ 
+-/**
+- * @brief Generate random number for RED
+- *
+- * Implementation based on:
+- * http://software.intel.com/en-us/articles/fast-random-number-generator-on-the-intel-pentiumr-4-processor/
+- *
+- * 10 bit shift has been found through empirical tests (was 16).
+- *
+- * @return Random number between 0 and (2^22 - 1)
+- */
+-static inline uint32_t
+-rte_fast_rand(void)
+-{
+-	rte_red_rand_seed = (214013 * rte_red_rand_seed) + 2531011;
+-	return rte_red_rand_seed >> 10;
+-}
+-
+ /**
+  * @brief calculate factor to scale average queue size when queue
+  *        becomes empty
+@@ -293,12 +275,8 @@ __rte_red_drop(const struct rte_red_config *red_cfg, struct rte_red *red)
+ 
+ 	pa_den = red_cfg->pa_const - pa_num_count;
+ 
+-	/* If drop, generate and save random number to be used next time */
+-	if (unlikely((rte_red_rand_val % pa_den) < pa_num)) {
+-		rte_red_rand_val = rte_fast_rand();
+-
++	if (unlikely((rte_rand() % pa_den) < pa_num))
+ 		return 1;
+-	}
+ 
+ 	/* No drop */
+ 	return 0;
 -- 
-2.56.0.170.g584c36229d-goog
+2.53.0
 
