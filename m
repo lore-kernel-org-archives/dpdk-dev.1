@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC21CA9EBD
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 02:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D39CA9EBD
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 03:00:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 69807402B4;
-	Sat, 10 Oct 2026 04:47:03 +0200 (CEST)
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
- [113.46.200.223])
- by mails.dpdk.org (Postfix) with ESMTP id 484704027C
- for <dev@dpdk.org>; Sat, 10 Oct 2026 04:47:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CEE07402B4;
+	Sat, 10 Oct 2026 05:00:04 +0200 (CEST)
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
+ [113.46.200.219])
+ by mails.dpdk.org (Postfix) with ESMTP id BB9F84027C
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 05:00:02 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
  bh=mVYv9gpOKwNHGSNF8rADpcwPCOPGPsHgsHEI3cSD2CI=;
  b=CX5hOuxt3+wF7jcZn7Dy5F8gdOZ6YueZ8bM0KFOnkFoIDvurrcSLtfpt3j4uF1gOqOhlrIpbc
  JjqRMqPaTHqyXSxnqa8/v+AittSc2UBpTB7KNBUPIT07SLPCR8RKBw0HIfiiwXKvp50COLhDTFw
  rrdve+QlXWgHDJLsAgAhyiM=
-Received: from mail.maildlp.com (unknown [172.19.163.214])
- by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4j1nr51xy2zmVWY;
- Sat, 10 Oct 2026 10:34:45 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+ by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4j1p7300rrz1prQt;
+ Sat, 10 Oct 2026 10:47:42 +0800 (CST)
 Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id 28BA840580;
- Sat, 10 Oct 2026 10:47:00 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 243154056D;
+ Sat, 10 Oct 2026 11:00:00 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Sat, 10 Oct 2026 10:46:59 +0800
-Message-ID: <ca9d8813-258f-47d3-8087-faa9f37cd665@huawei.com>
-Date: Sat, 10 Oct 2026 10:46:59 +0800
+ 15.2.2562.45; Sat, 10 Oct 2026 10:59:59 +0800
+Message-ID: <385b6ff5-20d3-4be4-baca-8ad5cd0ed4e3@huawei.com>
+Date: Sat, 10 Oct 2026 10:59:59 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] drivers/dma: cleanup PCI probing in Intel drivers
@@ -42,7 +42,7 @@ In-Reply-To: <20261009114830.3630886-1-david.marchand@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
  kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
