@@ -2,49 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC425CA6017
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 09:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E9ECA6004
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 12:11:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2767440274;
-	Sat, 10 Oct 2026 11:31:32 +0200 (CEST)
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
- [113.46.200.219])
- by mails.dpdk.org (Postfix) with ESMTP id ADEB84026D
- for <dev@dpdk.org>; Sat, 10 Oct 2026 11:31:30 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=STYTCfMzQMrlfvjzPGp5luLLhDd1H4lz+skpDU+IuY4=;
- b=z2UT6Cu49TndFDqogdjUUz2UowhvhWSpJEmcV9XfWkd9k4o+B3byYneB3Y3oUj7+vTHk3EW77
- F2L8QPH1iXBUvDvBQFtdQgie2FZYaguD16YHOPI/uxYwSfNHffXu/Q5WiWQ+zErhJYusjRTItsz
- +su4DxklvWRmBWm8/DTW860=
-Received: from mail.maildlp.com (unknown [172.19.162.140])
- by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4j1ypl3ZvMz1prN4;
- Sat, 10 Oct 2026 17:19:11 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id C93A72011D;
- Sat, 10 Oct 2026 17:31:28 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Sat, 10 Oct 2026 17:31:28 +0800
-Message-ID: <bed911b9-df95-42c0-9b76-51c805e7694f@huawei.com>
-Date: Sat, 10 Oct 2026 17:31:28 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 1DEB64027F;
+	Sat, 10 Oct 2026 14:11:23 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id E2A054026D
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 14:11:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1791634281; x=1823170281;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=HM4PiOK/pvywe0VckLAj24Eu93aIDfize29yAq61X6s=;
+ b=lb14KN2RMBFUMW/5yCHf647Eg6AsgNdA9dPeS1/bHy2a59gM4syg/FJE
+ D4leycWKRyCLU1ixkMM3LbvqoXmVtXV9NqXjmbCyOJWgYv8Q5a822m22n
+ RLT5Gqc+Vt1ZUYyDAbw5yGZ/o2rVT1TI1rXTRDjBztNiEgYCYU3I6O/uN
+ TeWbo9MsNq4b4x/F76tGeJ2tk68xGxSF7Y0VVYu3P/22lnceMutyHwjQZ
+ B+e9XI5NnUQHku+38jJVXfgpfWnmzu4cGg2DOgNmISq5g8MKGDoAWO9iV
+ +gvpsdKfAqwkteXsfYqoP6DJ/Q0UQvSsc/Rfyyva6jOlFEWsIrFvkT7sY Q==;
+X-CSE-ConnectionGUID: bBMnJhGqR6iSH6brclhBFQ==
+X-CSE-MsgGUID: zO/pNi4lTOGQ61yO8L5GeQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11930"; a="297806"
+X-IronPort-AV: E=Sophos;i="6.27,150,1787036400"; 
+   d="scan'208";a="297806"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Oct 2026 05:11:19 -0700
+X-CSE-ConnectionGUID: fSfa4IH+RS+dTWGTtr0DKA==
+X-CSE-MsgGUID: +6N5zJtHT4WpUk68CwVQ3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,150,1787036400"; 
+   d="scan'208";a="507758"
+Received: from pae-14.iind.intel.com ([10.190.203.153])
+ by orviesa003.jf.intel.com with ESMTP; 10 Oct 2026 05:11:18 -0700
+From: Anurag Mandal <anurag.mandal@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
+ Anurag Mandal <anurag.mandal@intel.com>
+Subject: [PATCH] net/iavf: fix memory leaks in RSS flow engine
+Date: Sat, 10 Oct 2026 12:12:55 +0000
+Message-Id: <20261010121255.528329-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/5] dma/imx_edma5: introduce NXP i.MX95 eDMA5 driver
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, Gagandeep Singh <g.singh@nxp.com>, <hemant.agrawal@nxp.com>
-References: <20260811104933.3843522-1-g.singh@nxp.com>
- <20260812092929.563973-1-g.singh@nxp.com>
- <CAJFAV8z0pe6-B8Mmab2fkfji76rgboMbWD5BcFLQLGz96xtcFg@mail.gmail.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <CAJFAV8z0pe6-B8Mmab2fkfji76rgboMbWD5BcFLQLGz96xtcFg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,105 +60,122 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This patch addresses several memory leaks and
+incorrect error reporting that exist in the
+iavf RSS (hash) flow engine:
 
+- iavf_hash_parse_raw_pattern() returns without
+  freeing "pkt_buf" when the "msk_buf" allocation
+  fails, leaking the first buffer on every failed
+  raw pattern parse.
 
-On 10/9/2026 1:27 AM, David Marchand wrote:
-> Hello Chengwen,
-> 
-> On Wed, 12 Aug 2026 at 11:29, Gagandeep Singh <g.singh@nxp.com> wrote:
->>
->> V4-changes:
->>   - Removed the redundant local buffer "want"
->>   - Updated the comment for RTE_PMD_REGISTER_ALIAS
->>   - Removed stray extra blank line.
->>
->> V3-changes:
->>  - Fixed below AI comments:
->>    - Dead quote-stripping removed (`of_device_is_compatible`)
->>    - Redundant `goto out` removed
->>    - New Features entry added for bus platform changes.
->>    - Scatter-gather doc corrected in both sections
->>    - Unused CH_MATTR macros removed
->>    - Fixed SG sub-transfer length cap (`imx_edma5_copy_sg`)
->>    - Updated Per-job timeout logic.
->>    - Updated `rte_mem_iova2virt` per-op in IOVA=VA mode logic
->>    - Updated comments and documentation as per the AI comments.
->>
->> V2-changes:
->>  - Added dependent patch: bus/platform: match device by devicetree compatible string
->>  - Fixed multiple AI reported issues includes:
->>    - removed the alias from the driver, no need of it
->>    - removed imx_edma5_write32 from data-path, reported as coherency
->>      concern.
->>    - fix submit for previously enqueued jobs.
->>    - Added dsb in data path
->>    - Added a commnet for rte_mem_iova2virt() NULL behaviour.
->>    - Fixed: TCD NBYTES bits 31:30 are SMLOE/DMLOE — full 32-bit length corrupts them
->>    - Data path is fully synchronous: Acknowledged but intentionally deferred —
->>      the synchronous design is a deliberate simplification for the initial upstream submission.
->>      Noted in docs.
->>    - In-memory TCD64 pool is more complex than needed:
->>      Noted/deferred — the pool structure was retained for forward compatibility
->>      with hardware SG chaining.
->>    - Extended `imx_edma5_dump()` to read and print `CH_CSR` and `CH_ES` registers
->>      for every configured vchan.
->>    - Double and stary lines removed.
->>
->> V1:
->> This patch series adds a new dmadev Poll-Mode Driver (PMD) for the NXP
->> i.MX95 eDMA5 (Enhanced DMA Type 5) controller.
->>
->> Key features supported by this driver:
->>   - Memory-to-memory copy (RTE_DMA_OP_TYPE_MEMCPY)
->>   - Scatter-gather memory copy (RTE_DMA_OP_TYPE_SG)
->>   - 64-bit TCD (Transfer Control Descriptor) format
->>   - Non-coherent DMA with explicit cache clean/invalidate
->>   - Per-channel statistics and register dump for debug
->>
->> Patch breakdown:
->>   [1/5] bus/platform: add dependent patch to detect device using
->>         compatible string.
->>   [2/5] Skeleton: bus probe/remove, dmadev registration, MAINTAINERS,
->>         doc index, and release notes for 26.11.
->>   [3/5] Device configuration: vchan setup, TCD ring allocation,
->>         start/stop, and capability reporting.
->>   [4/5] Data path: enqueue (copy and sg), doorbell, completion poll.
->>   [5/5] Statistics and dump: per-channel counters and register dump.
->>
->> Tested on NXP i.MX95 EVK with vfio-platform.
->>
->>
->> Gagandeep Singh (5):
->>   bus/platform: match device by devicetree compatible string
->>   dma/imx_edma5: introduce eDMA5 dmadev skeleton
->>   dma/imx_edma5: add device configuration
->>   dma/imx_edma5: add data path
->>   dma/imx_edma5: add statistics and dump
->>
->>  MAINTAINERS                                |    5 +
->>  doc/guides/dmadevs/imx_edma5.rst           |   69 ++
->>  doc/guides/dmadevs/index.rst               |    1 +
->>  doc/guides/rel_notes/release_26_11.rst     |   15 +
->>  drivers/bus/platform/bus_platform_driver.h |   11 +-
->>  drivers/bus/platform/platform.c            |   49 +-
->>  drivers/dma/imx_edma5/imx_edma5_dmadev.c   | 1190 ++++++++++++++++++++
->>  drivers/dma/imx_edma5/imx_edma5_dmadev.h   |  234 ++++
->>  drivers/dma/imx_edma5/imx_edma5_hw.h       |  143 +++
->>  drivers/dma/imx_edma5/imx_edma5_logs.h     |   16 +
->>  drivers/dma/imx_edma5/meson.build          |   10 +
->>  drivers/dma/meson.build                    |    1 +
->>  12 files changed, 1741 insertions(+), 3 deletions(-)
->>  create mode 100644 doc/guides/dmadevs/imx_edma5.rst
->>  create mode 100644 drivers/dma/imx_edma5/imx_edma5_dmadev.c
->>  create mode 100644 drivers/dma/imx_edma5/imx_edma5_dmadev.h
->>  create mode 100644 drivers/dma/imx_edma5/imx_edma5_hw.h
->>  create mode 100644 drivers/dma/imx_edma5/imx_edma5_logs.h
->>  create mode 100644 drivers/dma/imx_edma5/meson.build
-> 
-> Please, could you have a look at this new DMA driver?
+- iavf_hash_create() only frees the parsed "meta"
+  on success.
+  Both error paths return early and leak the struct
+  iavf_rss_meta allocated by iavf_hash_parse_pattern_action(),
+  which no other caller frees.
+  Free in both error paths.
 
-Thanks for the reminder. The review has been completed.
+- iavf_hash_destroy() never releases flow->rule.
+  The virtchnl_rss_cfg allocated by iavf_hash_create() is only
+  released by the engine's free callback, iavf_hash_free(),
+  which is invoked from iavf_flow_uninit() but not from
+  iavf_flow_destroy().
+  So every flow destroy or flush of an RSS rule leaks it.
+  The early return taken while the VF is resetting leaks it too.
+  Free the config and clear flow->rule properly in all paths.
 
-> 
-> 
+- Out of memory conditions are reported to the application as
+  EINVAL while -ENOMEM is returned.
+  Report ENOMEM instead.
+
+Fixes: bc0e85586eaf ("net/iavf: support VF RSS flow rule with raw pattern")
+Fixes: 7be10c3004be ("net/iavf: add RSS configuration for VF")
+Fixes: c02ea7410e51 ("net/iavf: fix flow flush after PF reset")
+
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+---
+ drivers/net/intel/iavf/iavf_hash.c | 33 ++++++++++++++++++------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf_hash.c b/drivers/net/intel/iavf/iavf_hash.c
+index 9515094402..00b616f34b 100644
+--- a/drivers/net/intel/iavf/iavf_hash.c
++++ b/drivers/net/intel/iavf/iavf_hash.c
+@@ -918,8 +918,10 @@ iavf_hash_parse_raw_pattern(const struct rte_flow_item *item,
+ 		return -ENOMEM;
+ 
+ 	msk_buf = rte_zmalloc(NULL, pkt_len, 0);
+-	if (!msk_buf)
++	if (!msk_buf) {
++		rte_free(pkt_buf);
+ 		return -ENOMEM;
++	}
+ 
+ 	/* convert string to int array */
+ 	for (i = 0, j = 0; i < spec_len; i += 2, j++) {
+@@ -1538,7 +1540,7 @@ iavf_hash_parse_pattern_action(struct iavf_adapter *ad,
+ 
+ 	rss_meta_ptr = rte_zmalloc(NULL, sizeof(*rss_meta_ptr), 0);
+ 	if (!rss_meta_ptr) {
+-		rte_flow_error_set(error, EINVAL,
++		rte_flow_error_set(error, ENOMEM,
+ 				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+ 				   "No memory for rss_meta_ptr");
+ 		return -ENOMEM;
+@@ -1594,9 +1596,10 @@ iavf_hash_create(__rte_unused struct iavf_adapter *ad,
+ 	rss_cfg = rte_zmalloc("iavf rss rule",
+ 			      sizeof(struct virtchnl_rss_cfg), 0);
+ 	if (!rss_cfg) {
+-		rte_flow_error_set(error, EINVAL,
++		rte_flow_error_set(error, ENOMEM,
+ 				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+ 				   "No memory for rss rule");
++		rte_free(meta);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -1612,6 +1615,7 @@ iavf_hash_create(__rte_unused struct iavf_adapter *ad,
+ 				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+ 				   "Failed to add rss rule.");
+ 		rte_free(rss_cfg);
++		rte_free(meta);
+ 		return -rte_errno;
+ 	}
+ 
+@@ -1629,19 +1633,22 @@ iavf_hash_destroy(__rte_unused struct iavf_adapter *ad,
+ 	struct virtchnl_rss_cfg *rss_cfg;
+ 	int ret = 0;
+ 
+-	if (vf->vf_reset)
+-		return 0;
+-
+ 	rss_cfg = (struct virtchnl_rss_cfg *)flow->rule;
+ 
+-	ret = iavf_add_del_rss_cfg(ad, rss_cfg, false);
+-	if (ret) {
+-		PMD_DRV_LOG(ERR, "fail to del RSS configure");
+-		rte_flow_error_set(error, -ret,
+-				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+-				   "Failed to delete rss rule.");
+-		return -rte_errno;
++	if (!vf->vf_reset) {
++		ret = iavf_add_del_rss_cfg(ad, rss_cfg, false);
++		if (ret) {
++			PMD_DRV_LOG(ERR, "fail to del RSS configure");
++			rte_flow_error_set(error, -ret,
++					   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++					   "Failed to delete rss rule.");
++			return -rte_errno;
++		}
+ 	}
++
++	flow->rule = NULL;
++	rte_free(rss_cfg);
++
+ 	return ret;
+ }
+ 
+-- 
+2.34.1
 
