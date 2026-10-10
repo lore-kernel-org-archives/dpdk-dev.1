@@ -2,79 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E16CA9EBE
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 Oct 2026 21:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4D4CA601E
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 00:59:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ED25E40274;
-	Fri,  9 Oct 2026 23:59:30 +0200 (CEST)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id B191D4026A
- for <dev@dpdk.org>; Fri,  9 Oct 2026 23:59:29 +0200 (CEST)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-2e86dce4510so880235ad.3
- for <dev@dpdk.org>; Fri, 09 Oct 2026 14:59:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 40146402B4;
+	Sat, 10 Oct 2026 02:59:46 +0200 (CEST)
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199])
+ by mails.dpdk.org (Postfix) with ESMTP id CDB2D4027C
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 02:59:44 +0200 (CEST)
+Received: by mail-pg1-f199.google.com with SMTP id
+ 41be03b00d2f7-cd1e45a268cso108313a12.1
+ for <dev@dpdk.org>; Fri, 09 Oct 2026 17:59:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791583168;
- x=1792187968; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=jdCDfpwOaef2TJxSFTU2YQHwm1ZNjMyCNmoucccCOwM=;
- b=ZiR8z5xJ5b3L9+uPxlkEeqCQ1VXzXnG5Q1j8aTcZmFta25Mkrkt+g4pgBjTZ6Yz9VV
- Gkv5dV5SwPmackCdqvhwwDvkH98zoZ9kw8cpsWKwgZc+ALBTmiDqBstqkCWi3W2cjHH+
- dycLYz1emZiSpM9sx0hVgGJrsgHgwuaIMUaDky0Lmq4UrkRZgkb0lGfwdyCqaSh8nI62
- QNM/NpE+WejNYYyeNky6pBvVqqbwT2YBD8Wz8sPLBXa9vPvtWeLWv3VLKmS0jLcVDtH8
- 7nUcPYco7gJnrPvVF961DOKnX/SFIiukzFvXCqt5/ZbrcgfkigudMfv5joT3cFZIc+eQ
- MWXw==
+ d=google.com; s=20251104; t=1791593984; x=1792198784; darn=dpdk.org;
+ h=content-type:cc:from:subject:message-id:references:mime-version
+ :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=PcuIhCQV/sTzZ45FBn1aVYC/Lz52MsuDAeOtY/V9tkA=;
+ b=m/Jxt2mn8YRT/ppT43wQD0URa0fsVzPVtAEMmjuqrk0AMzA8261rMOSQJGxRk9CiPx
+ Y4QqbpQ9HiVGw7R27fjWliLpJYoadoTXzIIFOSzGBaIQIv/3i9/vuDcL0bdZd1qy6JXJ
+ CUOfl1gut6bHD62Y1GHga0HogedPYDkpMwgmIfzpZ+m2o3SYfF3uWX8ROHdY6RCsjUw3
+ og/Udl3cZAhfPxoyELihkyiYYHm0qHyUjFSeSTwgoEmZgcib3OtVbgcn+dVeiJh4f/CC
+ d8Im1vR20f3gsAmFk4HJf4BXUjQFMTKnBmyxTm5qcOm/7UAs2w/87J1cgC/Fefs7Ut2Z
+ B6RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791583168; x=1792187968;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=jdCDfpwOaef2TJxSFTU2YQHwm1ZNjMyCNmoucccCOwM=;
- b=lrYUrA/44N/udxVB1po3lqPzIvf1ZM7x5C76ygPWwjo4hKi9/1lBrH03T1OJdN9d/L
- xjIyHESbuOAbOwSrWvhp8Q3W+7Z0VRiam8FsuVkDbOpRyt8uSvkMUX4FbDKrtAmjMYMM
- liXDMFsc2wT54h8yiwWZAt31TIbjDlmieTmol5dTLAYKopUp7gprfDLQxj0x0Iy4BPcJ
- j3P7a38mChgH8VHCn+EBZfh+9GxU9Pw7215n2a7b+xqx8K0lSbVdrqYm2sT9Q3AClhAK
- QwTdGhyekAWdrBAgNXzdCEjrNVqT0dH1yI1TChmsO4yqicWX3BZTBqu3jUUZSxA5tOrP
- M7sg==
-X-Forwarded-Encrypted: i=1;
- AKwUvBwn94eDHMh53Y6cUakLIKyNstzp4pSorC2wTrLMrMHk4cpMQSOhM0pT3yflEUpX9ZNabNI=@dpdk.org
-X-Gm-Message-State: AFq9FYL9L4oKpP0V67OClWRWRfqoJ2uchWZz2ZZidV/CYeaYSeWS/EpC
- wSnGTTz6ZjJmSPAVc7PEMOgQ5JUF93Wj+HNNHZHrtbKyYXFcFeIGgNZjM5bnA+nDYgI=
-X-Gm-Gg: AYBFou0b95QlF6fGP3gbtzK2W0N1UuWfkF6fU+4RFlqcuZZ6Nb+EP2xbAZ3ZJbcCWde
- Dcw8t0tCXPcafLtANEVwwGJpoSBn/Pbe9YvRqMXI004hA3uSaLWj70FQd52xlB87U5zpUSKVhYj
- wQe96JOiCqjt3rT3AqDVM7dJSKelKc3x9T33uOy3z7w6hldNjHAXpqh4zgU2ooE3XByjZBFaZ/r
- Q1+2DthfUnBC+bBBPbG5Y6RzMi4inWom0XY4W8TGEx9ZeHD9BZHMRcgXKhrsKbJhSxLfC6yYESc
- wu2K0r+zT5YQEeUJcKRUgdOm+ABqktoBk+WFFlHYLy6DIsQIjl5NJUfZgUOXH94QtFtPhp9QfZT
- /dRWCv7dAaMGsgOUvjAKp+2bqCozxA6lxPpQvY+xk78XTHE+PGuxuPglDbQBRCJHw4e+sSr8dha
- VEx9MmsNg9zak9LgBoZm5xSNVaScutr9UOhK9eD5wO9yxKakjBOMN7koKWs0GW9SIYZShG3pKiH
- fDYeUqkgFLPRGWK3ebRDz5fgHQHxZlglaLp1RebCIQjx/TUWtY=
-X-Received: by 2002:a17:902:cec2:b0:2dd:ad73:c98b with SMTP id
- d9443c01a7336-2e842bcda99mr24123375ad.35.1791583168380; 
- Fri, 09 Oct 2026 14:59:28 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e8483c3dfcsm14526845ad.24.2026.10.09.14.59.26
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 09 Oct 2026 14:59:27 -0700 (PDT)
-Date: Fri, 9 Oct 2026 14:59:24 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: Roman Khromenok <roma55592@yandex.ru>, dev@dpdk.org,
- andrew.rybchenko@oktetlabs.ru
-Subject: Re: [PATCH v2 0/4] ethdev: report module signal status flags
-Message-ID: <20261009145924.703c0db1@phoenix.local>
-In-Reply-To: <QfuRvLIpRPi5pHmcYtqGrA@monjalon.net>
-References: <cover.1791447600.git.roma55592@yandex.ru>
- <20261009112259.2bd9debc@phoenix.local>
- <20261009192113.534604-1-roma55592@yandex.ru>
- <QfuRvLIpRPi5pHmcYtqGrA@monjalon.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ d=1e100.net; s=20260707; t=1791593984; x=1792198784;
+ h=content-type:cc:from:subject:message-id:references:mime-version
+ :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=PcuIhCQV/sTzZ45FBn1aVYC/Lz52MsuDAeOtY/V9tkA=;
+ b=0dgfpoyirHQRcpnUh+H5myum4UlxD+wQCUbobPw0lOx6Af9y7Fq6q3D8CjrgJlSbUI
+ pDxXmASQ0lkWXlBeu3BcqP40K2ZEpTncjB2CJc5d2YCShlvZeWX9InxGH4eJP5DF0zwZ
+ E1vSsGw5lUQQkQpgu0Ux5tnsHErd9haWhrv37qoA4s3fX6iHOxeEoS25cP4+XnX+TJOp
+ wvAcG6y5K1Ch5tk3GGrGxFFU2uWP163QjhDhRcOhngI3A8vdoeGXVTd6qtE6J6kDaXtg
+ xmyBiA5dKZUOx/yROsRs4o/IBIShRE3sGMy/WKoW4RhmNiQedI9F60CqrapkMyFz68kV
+ L42w==
+X-Gm-Message-State: AFq9FYIc58KQXK2FdvBr67QxFgzFmaiz8bwfhhiCVg5YzoMcw7RhyNEj
+ 3Rv3nUzBsAEnQhfAwTF86/sU6SasW9Ejt5zKdXM/7Wc69rdfD8Q2fkhWXPOvDv0SkZ5vcM5UI8R
+ /xNO3jczklFMJCvocTQDC+n0piOSLhwlLO07dv3oGRWpcxNMV9SaxZhNjhF0maAV9aPBZJ+s8hq
+ C2S6XcmshYCQOTOTQCiIyCnVdIbzkz4Ke1sQ==
+X-Received: from pgbj19-n2.prod.google.com
+ ([2002:a05:6a02:61d3:20b0:cca:d6f4:95b5])
+ (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:4a8f:b0:3a6:e985:5631 with SMTP id
+ 98e67ed59e1d1-3ab3a99b88emr3110852a91.62.1791593983278; 
+ Fri, 09 Oct 2026 17:59:43 -0700 (PDT)
+Date: Fri,  9 Oct 2026 17:59:32 -0700
+In-Reply-To: <20261005193943.1175072-1-joshwash@google.com>
+Mime-Version: 1.0
+References: <20261005193943.1175072-1-joshwash@google.com>
+X-Mailer: git-send-email 2.56.0.170.g584c36229d-goog
+Message-ID: <20261010005942.560881-1-joshwash@google.com>
+Subject: [PATCH v3 0/8] gve: precursor control plane changes before bare-metal
+ support
+From: Joshua Washington <joshwash@google.com>
+Cc: dev@dpdk.org, blasko@google.com, jtranoleary@google.com, 
+ Joshua Washington <joshwash@google.com>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,37 +72,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 09 Oct 2026 22:34:37 +0200
-Thomas Monjalon <thomas@monjalon.net> wrote:
+This patch series includes a number of precursor changes to the GVE
+ethdev driver layer in preparation for introducing support for a new
+GVE Mailbox control plane (an alternative to the existing AdminQ control
+plane).
 
-> 09/10/2026 21:21, Roman Khromenok:
-> > On Fri, 9 Oct 2026, Stephen Hemminger wrote:  
-> > > Applied to next-net.
-> > >
-> > > I wonder if the eeprom really belongs in its on library, really it is not
-> > > part of standard ethdev.  
-> > 
-> > Thanks, Stephen.
-> > 
-> > Agreed, the decoder does not need a device: it only parses a buffer
-> > and works without EAL. Only rte_eth_dev_get_module_eeprom() and the
-> > telemetry command are really ethdev.
-> > 
-> > If Thomas and Andrew are fine with it, I can send an RFC for 27.03
-> > moving the SFF decoders into a small library with its own API, with
-> > the ethdev telemetry command on top of it. rte_eth_module_eeprom_parse()
-> > is experimental, so it can stay as a thin wrapper or be removed.
-> > A separate library would also be the place for CMIS (QSFP-DD, OSFP)
-> > decoding later, which does not fit the SFF naming, so a neutral name
-> > like lib/xcvr may be better than lib/sff.
-> > 
-> > I am willing to maintain this library.  
-> 
-> This is specific to networking devices, right?
-> So it has to be linked with ethdev probably.
-> But if it is not specific to any driver,
-> we may consider moving it to separate library.
-> I'm not sure which place is best.
+The most major change in this series is the introduction of a new
+control_ops struct that will be used by both AQ and Mailbox for various
+operations which may need to communicate with the device. There are also
+some changes to how RSS and timestamping are handled in ethdev due to
+slight feature differences between the control planes.
 
-Agree. One of the concerns is that meson can't handle cross dependencies so it 
-needs to be ethdev -> eeprom (or vice versa).
+Changes in v3:
+  - Move fix to be the first patch in the series, and update the fix
+    reference commit
+  - Introduce process_private pointer when setting up ctrl_ops
+    interface to avoid sharing potnetially unallocated pointer across
+    applications
+  - Update optionality references in ctrl_ops struct.
+  - Avoid clearing RSS cache when sending AQ command
+  - Remove checks against GVE_DEV_CLK_UNSUPPORTED that are either
+    redundant or incorrect.
+Changes in v2:
+  - Remove -ENODATA return when updating RSS cache
+
+Jasper Tran O'Leary (1):
+  net/gve: fix RSS config memory leak on close
+
+Joshua Washington (2):
+  net/gve: update RSS config just after successful programming
+  net/gve: add RSS cache boolean flag
+
+Mark Blasko (5):
+  net/gve: refactor ethdev for control ops interface
+  net/gve: rename doorbell BAR variable to be more generic
+  net/gve: split default queue counts into Tx and Rx
+  net/gve: clean Tx queue directly in dqo
+  net/gve: refactor timestamp support to clock read type
+
+ drivers/net/gve/base/gve_adminq.c |  32 ++--
+ drivers/net/gve/base/gve_adminq.h |   9 +-
+ drivers/net/gve/gve_ethdev.c      | 266 ++++++++++++++++++++++--------
+ drivers/net/gve/gve_ethdev.h      |  55 +++++-
+ drivers/net/gve/gve_flow_rule.c   |  11 +-
+ drivers/net/gve/gve_rss.c         |   5 +-
+ drivers/net/gve/gve_rx.c          |   7 +-
+ drivers/net/gve/gve_rx_dqo.c      |   7 +-
+ drivers/net/gve/gve_tx.c          |   7 +-
+ drivers/net/gve/gve_tx_dqo.c      |  21 +--
+ 10 files changed, 297 insertions(+), 123 deletions(-)
+
+-- 
+2.56.0.170.g584c36229d-goog
+
