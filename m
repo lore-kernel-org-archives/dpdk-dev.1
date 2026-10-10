@@ -2,58 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A20CCA601E
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 01:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64083CA601E
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 01:00:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 545804065A;
-	Sat, 10 Oct 2026 02:59:53 +0200 (CEST)
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200])
- by mails.dpdk.org (Postfix) with ESMTP id 4F5AB40656
- for <dev@dpdk.org>; Sat, 10 Oct 2026 02:59:52 +0200 (CEST)
-Received: by mail-pl1-f200.google.com with SMTP id
- d9443c01a7336-2e60bb65626so2534825ad.0
- for <dev@dpdk.org>; Fri, 09 Oct 2026 17:59:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9A90F4060F;
+	Sat, 10 Oct 2026 02:59:56 +0200 (CEST)
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198])
+ by mails.dpdk.org (Postfix) with ESMTP id 60AEF40615
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 02:59:55 +0200 (CEST)
+Received: by mail-pl1-f198.google.com with SMTP id
+ d9443c01a7336-2e827b3a6b4so3620055ad.2
+ for <dev@dpdk.org>; Fri, 09 Oct 2026 17:59:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1791593991; x=1792198791; darn=dpdk.org;
+ d=google.com; s=20251104; t=1791593994; x=1792198794; darn=dpdk.org;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=67ge9In6SMOkSfBK5kgHay0tVXQdJaKNBNmkuiA3tWA=;
- b=uorq6R2jl8R39pwi1p5R3rilPOkoJ+LbDu59MLp6zkutByIqAKD/WZ+DSyGlLltHhv
- Qt6zpHj8vgErOPhbohj4Zpr7NlALsa5j6b36R1vXF/Py4C8vi2pX3DI2nUTJ1XhI/kdy
- 33AsnkPu43cPY3s3fKZCHjn4Ja3er7x/qpwyjt4vUnfc9SPPklqocsDm328gtYwPzXOb
- Wrua5Q00orCv6nF1MXoyqjFycnor1C3LdHTob0X0vz2LM31kUSXq1EA1ZdX2bjXGBF+C
- wNQmFUtgbCv5DILpxwqFK04jtTSzueMd6lbI0qAJKxx8O+1eKhNZHhyXFotmw3O9rc8J
- IYCQ==
+ :content-type; bh=FdCbBX+3hmDfRw2zAzkVMmm2KiKLMsf/OeoagKJvIV8=;
+ b=KHfO4vWQjqZq0JCa5G1oUdoVOKWrXyyJMQFEYF7haW+N1ejs3INzg4okWUgLax1PHU
+ FQA19BM3xRlMNx9SmSOC67+1Lkk8KZzwO0Cw+URrZ9PYnmZTjvltX+5+klqJU9qjofvx
+ evT3rZCFuPi5Z4DH9ntQ+RMG/woWLx333U67L4KKp5IPbKG5uMJ03Dgg0mZBBeXNoGxz
+ sSH0TbUj/cjLQgCOAs0N5Jjmv95Bm3Ts7Av/FTyqRZZjhw9FePy/Th6UsU26R6kZm05Z
+ 0OVTg8Ru37HLnKRUpakM+HD1ox5LPh7R1ymstuQ4C3WSWUYzI2qwI9GvT6JvXoPNsU7H
+ Kb7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791593991; x=1792198791;
+ d=1e100.net; s=20260707; t=1791593994; x=1792198794;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=67ge9In6SMOkSfBK5kgHay0tVXQdJaKNBNmkuiA3tWA=;
- b=zY+azWVPkm+0Ao3m/a0whMEKQ69tbUbLckqyIxvlZxM1kLbI0BMEpanmf0qaknLu50
- 5hLMkQ8OWkywSe7/SlAi1QihF8aBi1SlqwCT13ClAt9DLr78pxmPmp71rJbk2HgAvEI1
- Fx/XhTsBDKXwpTbQrghpQKlei5N+uCbh4UDZ5wEuOkiu00k73xEFOqTR4ZCCuHXxxb5d
- Tt0gEZXfmCbsbrVhCHgoB/wcP8iSmJ+7EH6FytuSkeDH2P4vKRlasKXKcL2raiIti+La
- /m7rzYzyDieTrTKLnCgHny0iTtXP4fvLXxsRnK2u4id/JwKBcOdTxbnzzHScXUxyrn99
- 8yuw==
-X-Gm-Message-State: AFq9FYKkrecEZ20nK6X/rwTXK7F2Y3aCP/v2GfHNQJQAu45kJE8UnfcU
- sQadlDEGcL70bnU2u5qF/ot6VXepouUR1yHQOyy2tgHVJAdr7dQcqyqwTlqzqYYocisMejheEP6
- NuGiSjGbMFSrJfA==
-X-Received: from plkb5.prod.google.com ([2002:a17:903:fa5:b0:2e6:13a2:7648])
+ bh=FdCbBX+3hmDfRw2zAzkVMmm2KiKLMsf/OeoagKJvIV8=;
+ b=Sg0NQ25FBGnzUrevExCD95262nk6sMHoBIIeNNXTDqUG5fmWb7B36hioGPH4prO47R
+ TXtPAGoNF1owXREo2TdjlE+qv7CYQVBGGR6ixB4kzf74dkJmX3flWTJliKvyVgqjpbdR
+ gNq7C8rOHQ1DMyRV80hNPjiXN/7wxt3L7oYtDWcVHDNsNStdcszoJiGZGXGX6/bsrR15
+ bHE14nQpA6y/PGaGzMGG8uDQcFKZQgzAT+GI4LNtaVJPkhH3iqfB2SFKFZ4EqdgjXIYO
+ +Kcfh4o9AaZN7B/+Gm0V+Zitl5q+/9IdNVFtdP9dFHRROhbTLg8nUq6uRTC7EPSeqPRD
+ tkiA==
+X-Gm-Message-State: AFq9FYJHa6tfphGkoroCjH6hSBdAj06Ar2epBIB2ws/NvxPoK8ikGPM4
+ YYJXsTOoclzP1xgh4ZFkSGI9KQ6FqODgzqRX3la5Z6dw61KrIMoiFhqbFjYXmSgXsLGUeiQCX0A
+ H9gDkl5WVn1xkqQ==
+X-Received: from plbbb2.prod.google.com ([2002:a17:902:bc82:b0:2e5:6150:b950])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:d4d1:b0:2e4:905f:5a3a with SMTP id
- d9443c01a7336-2e8428359eamr22354895ad.2.1791593991178; 
- Fri, 09 Oct 2026 17:59:51 -0700 (PDT)
-Date: Fri,  9 Oct 2026 17:59:35 -0700
+ 2002:a17:902:ef45:b0:2e8:2f7:4a60 with SMTP id
+ d9443c01a7336-2e842cd211emr27771495ad.51.1791593994231; 
+ Fri, 09 Oct 2026 17:59:54 -0700 (PDT)
+Date: Fri,  9 Oct 2026 17:59:36 -0700
 In-Reply-To: <20261010005942.560881-1-joshwash@google.com>
 Mime-Version: 1.0
 References: <20261005193943.1175072-1-joshwash@google.com>
  <20261010005942.560881-1-joshwash@google.com>
 X-Mailer: git-send-email 2.56.0.170.g584c36229d-goog
-Message-ID: <20261010005942.560881-4-joshwash@google.com>
-Subject: [PATCH v3 3/8] net/gve: rename doorbell BAR variable to be more
- generic
+Message-ID: <20261010005942.560881-5-joshwash@google.com>
+Subject: [PATCH v3 4/8] net/gve: split default queue counts into Tx and Rx
 From: Joshua Washington <joshwash@google.com>
 To: Joshua Washington <joshwash@google.com>
 Cc: dev@dpdk.org, blasko@google.com, jtranoleary@google.com
@@ -73,134 +72,66 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Mark Blasko <blasko@google.com>
 
-Rename db_bar2 to db_bar in struct gve_priv and update queue doorbell
-references across the driver. The doorbells will be in BAR 0 in GVE
-Mailbox mode.
+Replace default_num_queues with separate default_tx_num_queues and
+default_rx_num_queues fields in struct gve_priv. Update AdminQ device
+description and queue initialization logic to use the per-direction
+default queue counts.
 
 Signed-off-by: Mark Blasko <blasko@google.com>
 Signed-off-by: Joshua Washington <joshwash@google.com>
 ---
- drivers/net/gve/gve_ethdev.c | 2 +-
- drivers/net/gve/gve_ethdev.h | 2 +-
- drivers/net/gve/gve_rx.c     | 4 ++--
- drivers/net/gve/gve_rx_dqo.c | 4 ++--
- drivers/net/gve/gve_tx.c     | 4 ++--
- drivers/net/gve/gve_tx_dqo.c | 4 ++--
- 6 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/net/gve/base/gve_adminq.c | 4 ++--
+ drivers/net/gve/gve_ethdev.c      | 8 ++++----
+ drivers/net/gve/gve_ethdev.h      | 3 ++-
+ 3 files changed, 8 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/net/gve/base/gve_adminq.c b/drivers/net/gve/base/gve_adminq.c
+index 74b9a0125c..4dd095880d 100644
+--- a/drivers/net/gve/base/gve_adminq.c
++++ b/drivers/net/gve/base/gve_adminq.c
+@@ -1083,8 +1083,8 @@ int gve_adminq_describe_device(struct gve_priv *priv)
+ 	PMD_DRV_LOG(INFO, "MAC addr: " RTE_ETHER_ADDR_PRT_FMT,
+ 		    RTE_ETHER_ADDR_BYTES(&priv->dev_addr));
+ 	priv->tx_pages_per_qpl = be16_to_cpu(descriptor->tx_pages_per_qpl);
+-
+-	priv->default_num_queues = be16_to_cpu(descriptor->default_num_queues);
++	priv->default_tx_num_queues = be16_to_cpu(descriptor->default_num_queues);
++	priv->default_rx_num_queues = be16_to_cpu(descriptor->default_num_queues);
+ 
+ 	gve_enable_supported_features(priv, supported_features_mask,
+ 				      dev_op_flow_steering, dev_op_modify_ring,
 diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index ecf4247c19..30ceeeabd0 100644
+index 30ceeeabd0..1ee49856af 100644
 --- a/drivers/net/gve/gve_ethdev.c
 +++ b/drivers/net/gve/gve_ethdev.c
-@@ -1759,7 +1759,7 @@ gve_dev_init(struct rte_eth_dev *eth_dev)
- 	gve_write_version(&reg_bar->driver_version);
+@@ -1683,10 +1683,10 @@ gve_init_priv(struct gve_priv *priv, bool skip_describe_device)
+ 	priv->max_nb_txq = RTE_MIN(priv->max_nb_txq, priv->num_ntfy_blks / 2);
+ 	priv->max_nb_rxq = RTE_MIN(priv->max_nb_rxq, priv->num_ntfy_blks / 2);
  
- 	priv->reg_bar0 = reg_bar;
--	priv->db_bar2 = db_bar;
-+	priv->db_bar = db_bar;
- 	priv->pci_dev = pci_dev;
- 	priv->port_id = eth_dev->data->port_id;
- 	priv->state_flags = 0x0;
+-	if (priv->default_num_queues > 0) {
+-		priv->max_nb_txq = RTE_MIN(priv->default_num_queues, priv->max_nb_txq);
+-		priv->max_nb_rxq = RTE_MIN(priv->default_num_queues, priv->max_nb_rxq);
+-	}
++	if (priv->default_tx_num_queues > 0)
++		priv->max_nb_txq = RTE_MIN(priv->default_tx_num_queues, priv->max_nb_txq);
++	if (priv->default_rx_num_queues > 0)
++		priv->max_nb_rxq = RTE_MIN(priv->default_rx_num_queues, priv->max_nb_rxq);
+ 
+ 	PMD_DRV_LOG(INFO, "Max TX queues %d, Max RX queues %d",
+ 		    priv->max_nb_txq, priv->max_nb_rxq);
 diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index 7dbc1753a5..10572a754e 100644
+index 10572a754e..fb894f0061 100644
 --- a/drivers/net/gve/gve_ethdev.h
 +++ b/drivers/net/gve/gve_ethdev.h
-@@ -348,7 +348,7 @@ struct gve_priv {
- 	uint32_t num_ntfy_blks; /* spilt between TX and RX so must be even */
+@@ -339,7 +339,8 @@ struct gve_priv {
  
- 	struct gve_registers __iomem *reg_bar0; /* see gve_register.h */
--	rte_be32_t __iomem *db_bar2; /* "array" of doorbells */
-+	rte_be32_t __iomem *db_bar; /* "array" of doorbells */
- 	struct rte_pci_device *pci_dev;
- 	uint16_t port_id;
- 
-diff --git a/drivers/net/gve/gve_rx.c b/drivers/net/gve/gve_rx.c
-index 472d8406ba..09f9d8d480 100644
---- a/drivers/net/gve/gve_rx.c
-+++ b/drivers/net/gve/gve_rx.c
-@@ -349,7 +349,7 @@ gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
- 	rxq->is_gqi_qpl = hw->queue_format == GVE_GQI_QPL_FORMAT;
- 	rxq->mpool = pool;
- 	rxq->hw = hw;
--	rxq->ntfy_addr = &hw->db_bar2[rte_be_to_cpu_32(hw->irq_dbs[rxq->ntfy_id].id)];
-+	rxq->ntfy_addr = &hw->db_bar[rte_be_to_cpu_32(hw->irq_dbs[rxq->ntfy_id].id)];
- 
- 	mbuf_len =
- 		rte_pktmbuf_data_room_size(rxq->mpool) - RTE_PKTMBUF_HEADROOM;
-@@ -483,7 +483,7 @@ gve_rx_queue_start(struct rte_eth_dev *dev, uint16_t rx_queue_id)
- 
- 	rxq = dev->data->rx_queues[rx_queue_id];
- 
--	rxq->qrx_tail = &hw->db_bar2[rte_be_to_cpu_32(rxq->qres->db_index)];
-+	rxq->qrx_tail = &hw->db_bar[rte_be_to_cpu_32(rxq->qres->db_index)];
- 
- 	rte_write32(rte_cpu_to_be_32(GVE_IRQ_MASK), rxq->ntfy_addr);
- 
-diff --git a/drivers/net/gve/gve_rx_dqo.c b/drivers/net/gve/gve_rx_dqo.c
-index 1f901c5fd4..03c62edee6 100644
---- a/drivers/net/gve/gve_rx_dqo.c
-+++ b/drivers/net/gve/gve_rx_dqo.c
-@@ -370,7 +370,7 @@ gve_rx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 
- 	rxq->mpool = pool;
- 	rxq->hw = hw;
--	rxq->ntfy_addr = &hw->db_bar2[rte_be_to_cpu_32(hw->irq_dbs[rxq->ntfy_id].id)];
-+	rxq->ntfy_addr = &hw->db_bar[rte_be_to_cpu_32(hw->irq_dbs[rxq->ntfy_id].id)];
- 
- 	mbuf_len =
- 		rte_pktmbuf_data_room_size(rxq->mpool) - RTE_PKTMBUF_HEADROOM;
-@@ -519,7 +519,7 @@ gve_rx_queue_start_dqo(struct rte_eth_dev *dev, uint16_t rx_queue_id)
- 
- 	rxq = dev->data->rx_queues[rx_queue_id];
- 
--	rxq->qrx_tail = &hw->db_bar2[rte_be_to_cpu_32(rxq->qres->db_index)];
-+	rxq->qrx_tail = &hw->db_bar[rte_be_to_cpu_32(rxq->qres->db_index)];
- 
- 	rte_write32(rte_cpu_to_le_32(GVE_NO_INT_MODE_DQO |
- 				     GVE_ITR_NO_UPDATE_DQO),
-diff --git a/drivers/net/gve/gve_tx.c b/drivers/net/gve/gve_tx.c
-index 568e948daa..279669165f 100644
---- a/drivers/net/gve/gve_tx.c
-+++ b/drivers/net/gve/gve_tx.c
-@@ -606,7 +606,7 @@ gve_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_desc,
- 	txq->ntfy_id = queue_id;
- 	txq->is_gqi_qpl = hw->queue_format == GVE_GQI_QPL_FORMAT;
- 	txq->hw = hw;
--	txq->ntfy_addr = &hw->db_bar2[rte_be_to_cpu_32(hw->irq_dbs[txq->ntfy_id].id)];
-+	txq->ntfy_addr = &hw->db_bar[rte_be_to_cpu_32(hw->irq_dbs[txq->ntfy_id].id)];
- 
- 	/* Allocate software ring */
- 	txq->sw_ring = rte_zmalloc_socket("gve tx sw ring",
-@@ -694,7 +694,7 @@ gve_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 
- 	txq = dev->data->tx_queues[tx_queue_id];
- 
--	txq->qtx_tail = &hw->db_bar2[rte_be_to_cpu_32(txq->qres->db_index)];
-+	txq->qtx_tail = &hw->db_bar[rte_be_to_cpu_32(txq->qres->db_index)];
- 	txq->qtx_head =
- 		&hw->cnt_array[rte_be_to_cpu_32(txq->qres->counter_index)];
- 
-diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
-index 0b4d6074ab..eb9b780920 100644
---- a/drivers/net/gve/gve_tx_dqo.c
-+++ b/drivers/net/gve/gve_tx_dqo.c
-@@ -495,7 +495,7 @@ gve_tx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 	txq->port_id = dev->data->port_id;
- 	txq->ntfy_id = queue_id;
- 	txq->hw = hw;
--	txq->ntfy_addr = &hw->db_bar2[rte_be_to_cpu_32(hw->irq_dbs[txq->ntfy_id].id)];
-+	txq->ntfy_addr = &hw->db_bar[rte_be_to_cpu_32(hw->irq_dbs[txq->ntfy_id].id)];
- 
- 	/* Allocate software ring */
- 	sw_size = nb_desc;
-@@ -575,7 +575,7 @@ gve_tx_queue_start_dqo(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 
- 	txq = dev->data->tx_queues[tx_queue_id];
- 
--	txq->qtx_tail = &hw->db_bar2[rte_be_to_cpu_32(txq->qres->db_index)];
-+	txq->qtx_tail = &hw->db_bar[rte_be_to_cpu_32(txq->qres->db_index)];
- 	txq->qtx_head =
- 		&hw->cnt_array[rte_be_to_cpu_32(txq->qres->counter_index)];
+ 	uint64_t max_registered_pages;
+ 	uint64_t num_registered_pages; /* num pages registered with NIC */
+-	uint16_t default_num_queues; /* default num queues to set up */
++	uint16_t default_tx_num_queues; /* default num tx queues to set up */
++	uint16_t default_rx_num_queues; /* default num rx queues to set up */
+ 	enum gve_queue_format queue_format; /* see enum gve_queue_format */
+ 	uint8_t enable_rsc;
  
 -- 
 2.56.0.170.g584c36229d-goog
