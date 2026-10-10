@@ -2,97 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93FEDCA9EBE
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 05:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD0DCA9EBE
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 06:45:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6195D4026F;
-	Sat, 10 Oct 2026 07:45:27 +0200 (CEST)
-Received: from fout-a7-smtp.messagingengine.com
- (fout-a7-smtp.messagingengine.com [103.168.172.150])
- by mails.dpdk.org (Postfix) with ESMTP id 7B5884026D
- for <dev@dpdk.org>; Sat, 10 Oct 2026 07:45:25 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.phl.internal (Postfix) with ESMTP id DE5A0EC04ED
- for <dev@dpdk.org>; Sat, 10 Oct 2026 01:45:24 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-05.internal (MEProxy); Sat, 10 Oct 2026 01:45:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1791611124;
- x=1791697524; bh=pe5sJp+lp7s1qlUwsqnVJuHinpZIuXPjfcaqqZtBb7o=; b=
- Lr09cXqbbQ2w3CZ+uCdaxk+zpGUFFcmxkQQ0JzSP9CLadi1vK3ExCANXJ1Fcj/Ry
- TlD3tAoTq5b2D4GCCYjdcUZmd97xyLseOAoucbxC5ihbvq8lQDRHNub/BSC2+No0
- nafV3g/NOLBTQM3/ST/PYfGfEINbJESMXKzJtoxHZ4pONXCw1Uu6fkv/FoLTHPxX
- oxVpWcqpJOqAO1TeDZt0p5aPXjY48uSRryyvNmr1IZVNyt++8llHTEEJ8tA92v52
- hmbcd9YHGeApRCXMHnNQvUNVFz3wcPO7YCsaGybENUzrfRfRVxyKn2p2WdhUchOi
- JdLclNu6QHTW/i2Dy3k6DQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791611124; x=
- 1791697524; bh=pe5sJp+lp7s1qlUwsqnVJuHinpZIuXPjfcaqqZtBb7o=; b=R
- /M4UUC1v5hRMIGeouZYZfU9/N69R3sZezp4jFfoT8UnonA+Y/gLqdDn6KIhYUv9E
- tBQbFza6snyrGygEcS7XYjcfmYuhxWLvdC7fyy2MadO5uU8+uCkKyxTCBZ0Fl83K
- YLZmMOigfD0X9XkChKXCaE6jqcAkHvQriBH57dM9R9RXZsf3HoBVEqjr/J4Ao4ot
- JIkirM7x2eVXCGK+/R9B+Inx1h4EBptpI1IzJ+ip5qPO16rHsUJ4lyOMdBc2Nnty
- 87ZYeEIzJ9ERr57dJR944FwqY2JBNDKAVWrcj9gBU/rGac68VRxy7/6hIdH6JopO
- BCUOrl3zivtKsxtEi4LeA==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791611124; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:fWziMEa9DVJ5ck5iolrh5VLeMVkU8fIelMQFh0ynXEFq7Aq
- 9B0qGf7zUIbHN/5gcMKUpsL390VoM9vuRrarz8rXQ3ScmMvyk84ZwTPrVQ4qIu3v
- UT9NTmkZr1IrsJlX8nozuu9hNl+0mG+M9mq2EdpEgc8kdcnOZz/9aSNw52Wci6Os
- cTyJxsk01FbxKWrb1KKxo0DhFSQswqG8G8/bRBoWamX368pZ/UUXNywKv44zsipZ
- ZDe9NDQL06A+0bfdS9pYHZEoWwzqe4BfzjtXAztwuxVOZU11PDo2lScx48DyKHut
- kbH0PamWKHwMsInvpEnSBR98rBYI2TbgIPsSmew==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:ySSNGiJbU5C1xJmmpvWyiHUrQM6LptgRoz68ABGpMT8=:djs+ZgSwAdmMu020cn1r588UwV9Cv67knACRvGw2EIs=;
-X-ME-Sender: <xms:9NDJakScp3h3JVjGnnCb_otNCE5TwSVdyg7JaiIgJpGy_LP4euHl2A>
- <xme:9NDJah4iBAfswWit1qERzgwWk_VMA1i3lUW4hrirxa6UaUM8YTUaNRD-nDtFxim04
- LQGsTnaUAt9OYN9W0ZgzWMDZL8fQ3IVVgUdzfOx3OuCXi2McGiuWZI>
-X-ME-Received: <xmr:9NDJapyE5JhcjhlVsR1XnvdreHl5S45LOf41q_Us3fTd_FVt5CooqC1tllIZSmdSXCwCnsfsoFP0RMeyCzXX8TA>
-X-ME-Proxy-Cause: dmFkZTGDUaXxNHpow9RCadf7PhUTdiIjI4d6w5V289dvTNGp7AJBtG2zCik8SyNJDM/p5j
- /s7N89Cw6lb5+McfNWwQPdvBTjlL4Zt+jVruTwaveRk5SWW6QBo9mzQ1DOZg6s17RH/atW
- ifXok89L0TgEKT+ffxDYKCiAy4F6oRcwK6JJ7kfZ02iM8S1coAtaZX48BhRn6/jJjZRyqU
- utvD7LNrH+w31V21MD/SucxSCf6jrkNYSOTfJyzzuQ/tV5d6C3jBTkxEFnTYEwf6z0NLhN
- akYol9ru57cq6tO8FmagDYrVr6YULkBMxJadgG0JhBcIwGrvpBFYCgFchdSIblA8HKECqZ
- 5uf5DRv7az3aZfDZni9M9bzs2BOymZEmLZeKERFZzPYkRfWFRRhJpJq/0da3VyBXerqZib
- Dzh4SRqYSeD6RYPXBgR0Bvz+pmCQlQbrh/xRnNpwIoUktXnWopR+emX8pJdXJEhkd4qa/W
- BgerXxxZzAjJwkLjLTTbSxAT899WAV6QHz4zXMRPQ2HavV2YR4ohvXnRhr7YW2mr4sPr58
- ZEpBWwQFbeQnAH6GVfiDfVZI2lYtKPuzrl4k5v16OAFYbdWM/UdtmkJBaTj6rHo8QIRreo
- LKK0FISC7GRvRA8y18MgvuEt79lRCdBBqXyQbFS9MEbT+6E8JyRUQA60DASA
-X-ME-Proxy: <xmx:9NDJagRfb1OXNLNjocGxYNQAA38iScBNM_bJE_B0ga5bFHiM_pgZPA>
- <xmx:9NDJaoUaYxPR1Tnpd_Sfd7zofd3XXYyHKKSHF6n-PNEVX_DcOPNJ7w>
- <xmx:9NDJaqbWwexSPZMtwIYjxQho6pHpOIUP8iovhTQsPStD25IJNYqDwA>
- <xmx:9NDJam2-qndXB-65Xia5Bwq6B4Q6jmaxUS9l5Z8_ki-kROcvRHGz-g>
- <xmx:9NDJav24WcdiihvMgD9ZqeMmTOZ222Qr2VRShoc63dt-Wndl7dTO3mfx>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 10 Oct 2026 01:45:23 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Roman Khromenok <roma55592@yandex.ru>
-Cc: dev@dpdk.org, stephen@networkplumber.org, andrew.rybchenko@oktetlabs.ru
-Subject: Re: [PATCH v2 0/4] ethdev: report module signal status flags
-Date: Sat, 10 Oct 2026 07:45:21 +0200
-Message-ID: <xAVQX2oSR66gxZxbOBd7tw@monjalon.net>
-In-Reply-To: <20261009205741.550421-1-roma55592@yandex.ru>
-References: <cover.1791482259.git.roma55592@yandex.ru>
- <QfuRvLIpRPi5pHmcYtqGrA@monjalon.net>
- <20261009205741.550421-1-roma55592@yandex.ru>
+	by mails.dpdk.org (Postfix) with ESMTP id 5AFD44026D;
+	Sat, 10 Oct 2026 08:45:22 +0200 (CEST)
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
+ [113.46.200.222])
+ by mails.dpdk.org (Postfix) with ESMTP id 44B37400EF
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 08:45:20 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=0TPLZxuUxJJChHhi7lwuEeSgEF85GSYaMEKxRcxHrH0=;
+ b=yAKeADD/Fb94SQLrmvIEOr86Wb9uRCPQD+sWpampBxgZJ2GFDkqLLeDF6mVTnn48VHR3TGZrS
+ C0jMoPxN8lE26brkvCDfzTyNYXcHLffSxeliaU2SLZp8RaHE6s77gZsBSAuTyIdDRZTzZLStVNi
+ T2BO7wVpog5lIKygGDjItpA=
+Received: from mail.maildlp.com (unknown [172.19.163.200])
+ by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4j1v714MrnzLlX5;
+ Sat, 10 Oct 2026 14:33:01 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+ by mail.maildlp.com (Postfix) with ESMTPS id 661124055B;
+ Sat, 10 Oct 2026 14:45:17 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Sat, 10 Oct 2026 14:45:16 +0800
+Message-ID: <3e1e5462-43f2-425a-9700-8ed4c9387bb8@huawei.com>
+Date: Sat, 10 Oct 2026 14:45:16 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/5] dma/imx_edma5: introduce eDMA5 dmadev skeleton
+To: Gagandeep Singh <g.singh@nxp.com>, <dev@dpdk.org>
+CC: <hemant.agrawal@nxp.com>, Prashant Gupta <prashant.gupta_3@nxp.com>
+References: <20260811104933.3843522-1-g.singh@nxp.com>
+ <20260812092929.563973-1-g.singh@nxp.com>
+ <20260812092929.563973-3-g.singh@nxp.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20260812092929.563973-3-g.singh@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -106,38 +58,821 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-09/10/2026 22:57, Roman Khromenok:
-> On Fri, 9 Oct 2026, Thomas Monjalon wrote:
-> > This is specific to networking devices, right?
-> > So it has to be linked with ethdev probably.
-> > But if it is not specific to any driver,
-> > we may consider moving it to separate library.
-> > I'm not sure which place is best.
-> 
-> Yes, these are the pluggable transceivers of network ports, but
-> nothing in the decoding is driver specific. Drivers only return
-> the raw EEPROM bytes through the get_module_eeprom op, and the
-> decoding follows the SFF specifications. The decoder (about 2700
-> lines) uses ethdev only for the RTE_ETH_MODULE_SFF_* type values
-> and the callback typedef.
-> 
-> So ethdev would keep linking it, the same way it depends on net
-> and meter: ethdev depends on the new library, not the other way.
-> rte_eth_dev_get_module_eeprom() and the telemetry command stay
-> in ethdev and call the library.
-> 
-> The decoder is also useful for ports which are not ethdev ports:
-> in our firewall, the kernel ports are read with the ethtool ioctls
-> and decoded with a copy of the same code. This already works with
-> rte_eth_module_eeprom_parse(), so a separate library is mostly
-> about keeping ethdev smaller, especially when CMIS is added,
-> which is about the size of the SFF-8636 decoder.
-> 
-> Keeping it in ethdev is fine with me too. If you prefer that,
-> I will add CMIS there.
+On 8/12/2026 5:29 PM, Gagandeep Singh wrote:
+> Add the skeleton of a dmadev PMD for the NXP i.MX95 eDMA5 (Enhanced
+> Direct Memory Access Type 5) controller. The eDMA5 exposes 64 channels
+> with a 64-bit TCD (TCD64) layout.
 
-Having it separate would be similar to the net library, yes.
-The ethtool case is convincing me to move it to a separate library.
+It should be 64-byte accord `struct imx_edma5_hw_tcd64` define
 
+> 
+> The controller is probed on the platform bus via the generic
+> vfio-platform kernel driver and claimed by its device-tree compatible
+> string fsl,imx95-edma5. This patch adds the register definitions, the
+> private data structures, probe and remove handling, device-tree
+> dma-channel-mask parsing to skip channels reserved for other bus
+> masters, global clock and arbitration setup, and the device information
+> query. Subsequent patches add configuration, the data path, and
+> statistics.
+> 
+> Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+> Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
+> ---
+>  MAINTAINERS                              |   5 +
+>  doc/guides/dmadevs/imx_edma5.rst         |  60 +++++++
+>  doc/guides/dmadevs/index.rst             |   1 +
+>  doc/guides/rel_notes/release_26_11.rst   |   6 +
+>  drivers/dma/imx_edma5/imx_edma5_dmadev.c | 219 ++++++++++++++++++++++
+>  drivers/dma/imx_edma5/imx_edma5_dmadev.h | 220 +++++++++++++++++++++++
+>  drivers/dma/imx_edma5/imx_edma5_hw.h     | 143 +++++++++++++++
+>  drivers/dma/imx_edma5/imx_edma5_logs.h   |  16 ++
+>  drivers/dma/imx_edma5/meson.build        |  10 ++
+>  drivers/dma/meson.build                  |   1 +
+>  10 files changed, 681 insertions(+)
+>  create mode 100644 doc/guides/dmadevs/imx_edma5.rst
+>  create mode 100644 drivers/dma/imx_edma5/imx_edma5_dmadev.c
+>  create mode 100644 drivers/dma/imx_edma5/imx_edma5_dmadev.h
+>  create mode 100644 drivers/dma/imx_edma5/imx_edma5_hw.h
+>  create mode 100644 drivers/dma/imx_edma5/imx_edma5_logs.h
+>  create mode 100644 drivers/dma/imx_edma5/meson.build
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e99a65d197..b2645ebe2a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1422,6 +1422,11 @@ M: Hemant Agrawal <hemant.agrawal@nxp.com>
+>  F: drivers/dma/dpaa2/
+>  F: doc/guides/dmadevs/dpaa2.rst
+>  
+> +NXP i.MX95 eDMA5
+> +M: Gagandeep Singh <g.singh@nxp.com>
+> +M: Prashant Gupta <prashant.gupta_3@nxp.com>
+> +F: drivers/dma/imx_edma5/
+> +F: doc/guides/dmadevs/imx_edma5.rst
+>  
+>  RegEx Drivers
+>  -------------
+> diff --git a/doc/guides/dmadevs/imx_edma5.rst b/doc/guides/dmadevs/imx_edma5.rst
+> new file mode 100644
+> index 0000000000..f57881816e
+> --- /dev/null
+> +++ b/doc/guides/dmadevs/imx_edma5.rst
+> @@ -0,0 +1,60 @@
+> +..  SPDX-License-Identifier: BSD-3-Clause
+> +    Copyright 2026 NXP
+> +
+> +NXP i.MX95 eDMA5 DMA Driver
+> +===========================
+> +
+> +The ``imx_edma5`` DMA driver is a poll-mode driver (PMD) for the NXP i.MX95
+> +Enhanced Direct Memory Access controller version 5 (eDMA5). It exposes each
+> +eDMA5 controller instance as a DPDK dmadev device and can be used through the
+> +generic DMA device (dmadev) API.
+> +
+> +The i.MX95 SoC integrates multiple eDMA instances. The eDMA5 instances provide
+> +64 hardware channels, 64-bit addressing and a 64-byte Transfer Control
+> +Descriptor (TCD64). This driver targets the eDMA5 instances only (device tree
+> +compatible ``fsl,imx95-edma5``).
+> +
+> +Supported Features
+> +------------------
+> +
+> +- Memory-to-memory copy (``RTE_DMA_DIR_MEM_TO_MEM``).
+> +- Single-operation copy (``rte_dma_copy``).
+> +- Scatter-gather copy (``rte_dma_copy_sg``).
+> +- Per virtual channel statistics.
+> +
+> +Each configured virtual channel (vchan) is mapped one-to-one onto a hardware
+> +eDMA5 channel. Software-initiated (SWSTART) single-block transfers are
+> +programmed into the per-channel TCD and completion is detected by polling the
+> +TCD DONE status.
+> +
+> +Prerequisites
+> +-------------
+> +
+> +The eDMA5 register window is memory-mapped into the userspace process through
+> +the DPDK platform bus using the Linux ``vfio-platform`` mechanism. The device
+> +tree node targeted by this driver must be released from the kernel ``fsl-edma``
+> +driver (its status set to ``disabled`` or the node unbound) before it can be
+> +used by DPDK.
+> +
+> +Bind the platform device to ``vfio-platform``, for example::
+> +
+> +   echo vfio-platform > /sys/bus/platform/devices/<node>/driver_override
+> +   echo <node> > /sys/bus/platform/drivers/vfio-platform/bind
+> +
+> +where ``<node>`` is the platform device name of the eDMA5 instance (for
+> +example ``42000000.dma-controller``).
+> +
+> +Compilation
+> +-----------
+> +
+> +The driver is built as part of the standard DPDK meson build on Linux targets.
+> +No extra configuration option is required.
+> +
+> +Limitations
+> +-----------
+> +
+> +- Only the memory-to-memory transfer direction is supported.
+> +- The scatter-gather path iterates the source and destination segment lists
+> +  independently and programs one hardware transfer per consumed segment;
+> +  full TCD scatter-gather linking is not yet implemented.
+> +- The driver operates in poll mode only; completion interrupts are not used.
+> diff --git a/doc/guides/dmadevs/index.rst b/doc/guides/dmadevs/index.rst
+> index 56beb1733f..47c52a9220 100644
+> --- a/doc/guides/dmadevs/index.rst
+> +++ b/doc/guides/dmadevs/index.rst
+> @@ -17,5 +17,6 @@ an application through DMA API.
+>     hisi_acc
+>     hisi_pciep
+>     idxd
+> +   imx_edma5
+>     ioat
+>     odm
+> diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+> index a2c0267818..638e92ad8d 100644
+> --- a/doc/guides/rel_notes/release_26_11.rst
+> +++ b/doc/guides/rel_notes/release_26_11.rst
+> @@ -64,6 +64,12 @@ New Features
+>    kernel driver is the generic ``vfio-platform``, which carries no
+>    device identity in its name.
+>  
+> +* **Added NXP i.MX95 eDMA5 DMA driver.**
+> +
+> +  Added the ``imx_edma5`` DMA driver for the NXP i.MX95 eDMA5 controller.
+> +  The driver exposes each eDMA5 instance as a DPDK dmadev device and
+> +  supports memory-to-memory copy and scatter-gather copy operations.
+> +
+>  
+>  Removed Items
+>  -------------
+> diff --git a/drivers/dma/imx_edma5/imx_edma5_dmadev.c b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
+> new file mode 100644
+> index 0000000000..f1c65a474a
+> --- /dev/null
+> +++ b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
+> @@ -0,0 +1,219 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright 2026 NXP
+> + */
+> +
+> +/*
+> + * NXP i.MX95 eDMA5 dmadev driver.
+> + *
+> + * Exposes an eDMA5 controller instance as a DPDK dmadev. Each configured
+> + * virtual channel maps 1:1 onto a hardware eDMA5 channel. Memory-to-memory
+> + * copy and scatter-gather copy are supported using software-initiated
+> + * single-block transfers programmed through the per-channel 64-bit TCD.
+> + *
+> + * The device is bound to userspace through the platform bus (vfio-platform);
+> + * the device tree node must be released from the kernel fsl-edma driver before
+> + * it can be used here.
+> + */
+
+No need for above comments because it has repeat content with imx_edma5.rst
+
+> +
+> +#include <errno.h>
+> +#include <inttypes.h>
+> +#include <limits.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +
+> +#include <bus_platform_driver.h>
+> +#include <rte_bitops.h>
+> +#include <rte_byteorder.h>
+> +#include <rte_common.h>
+> +#include <rte_cycles.h>
+> +#include <rte_dmadev_pmd.h>
+> +#include <rte_malloc.h>
+> +
+> +#include "imx_edma5_dmadev.h"
+> +
+> +#include "imx_edma5_logs.h"
+> +
+> +RTE_LOG_REGISTER_DEFAULT(imx_edma5_logtype, INFO);
+> +
+> +/* Compatible string for i.MX95 eDMA5 device tree nodes. */
+> +#define IMX_EDMA5_COMPAT		"fsl,imx95-edma5"
+> +
+> +/* sysfs base path for platform devices' device-tree nodes. */
+> +#define IMX_EDMA5_SYSFS_DEVICES		"/sys/bus/platform/devices"
+> +
+> +/*
+> + * Read the device-tree "dma-channel-mask" property and return the combined
+> + * 64-bit mask of reserved hardware channels. The property is a raw binary file
+> + * of big-endian 32-bit cells: cell[0] covers channels 0-31, cell[1] channels
+> + * 32-63. A set bit marks a channel owned by another bus master (e.g. SCMI
+> + * firmware) that must not be accessed. Returns 0 if the property is absent.
+> + */
+> +static uint64_t
+> +imx_edma5_read_channel_mask(const char *dev_name)
+> +{
+> +	char path[PATH_MAX];
+> +	uint32_t cells[2] = { 0, 0 };
+> +	uint64_t mask = 0;
+> +	size_t n;
+> +	FILE *f;
+> +
+> +	snprintf(path, sizeof(path),
+> +		 IMX_EDMA5_SYSFS_DEVICES "/%s/of_node/dma-channel-mask",
+> +		 dev_name);
+> +
+> +	f = fopen(path, "rb");
+> +	if (f == NULL)
+> +		return 0;
+> +
+> +	n = fread(cells, 1, sizeof(cells), f);
+> +	fclose(f);
+> +
+> +	/* Device-tree cells are big-endian regardless of CPU endianness. */
+> +	if (n >= sizeof(uint32_t))
+> +		mask |= rte_be_to_cpu_32(cells[0]);
+> +	if (n >= 2 * sizeof(uint32_t))
+> +		mask |= (uint64_t)rte_be_to_cpu_32(cells[1]) << 32;
+> +
+> +	return mask;
+> +}
+> +
+> +static int
+> +imx_edma5_info_get(const struct rte_dma_dev *dev, struct rte_dma_info *dev_info,
+> +		   uint32_t info_sz)
+> +{
+> +	const struct imx_edma5_dev *ed = dev->data->dev_private;
+> +
+> +	RTE_SET_USED(info_sz);
+> +
+> +	dev_info->dev_capa = RTE_DMA_CAPA_MEM_TO_MEM |
+> +			     RTE_DMA_CAPA_OPS_COPY |
+> +			     RTE_DMA_CAPA_OPS_COPY_SG;
+> +	dev_info->max_vchans = ed->max_vchans;
+> +	dev_info->max_desc = IMX_EDMA5_MAX_DESC;
+> +	dev_info->min_desc = IMX_EDMA5_MIN_DESC;
+> +	dev_info->max_sges = IMX_EDMA5_MAX_SGES;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct rte_dma_dev_ops imx_edma5_ops = {
+> +	.dev_info_get	= imx_edma5_info_get,
+> +};
+> +
+> +static int
+> +imx_edma5_probe(struct rte_platform_device *pdev)
+> +{
+> +	struct rte_platform_resource *res;
+> +	struct imx_edma5_dev *ed;
+> +	struct rte_dma_dev *dev;
+> +	const char *name;
+> +
+> +	name = pdev->name;
+> +
+> +	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
+> +		IMX_EDMA5_LOG(ERR, "Secondary process not supported for %s",
+> +			      name);
+> +		return -ENOTSUP;
+> +	}
+> +
+> +	if (pdev->num_resource < 1 || pdev->resource == NULL) {
+> +		IMX_EDMA5_LOG(ERR, "No MMIO resource for %s", name);
+> +		return -EINVAL;
+> +	}
+> +	res = &pdev->resource[0];
+> +	if (res->mem.addr == NULL) {
+> +		IMX_EDMA5_LOG(ERR, "MMIO resource not mapped for %s", name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	dev = rte_dma_pmd_allocate(name, rte_socket_id(),
+> +				   sizeof(struct imx_edma5_dev));
+> +	if (dev == NULL) {
+> +		IMX_EDMA5_LOG(ERR, "Failed to allocate dmadev for %s", name);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	dev->device = &pdev->device;
+> +	dev->dev_ops = &imx_edma5_ops;
+> +
+> +	ed = dev->data->dev_private;
+> +	ed->reg_base = res->mem.addr;
+> +	ed->reg_size = res->mem.len;
+> +	ed->dev_id = dev->data->dev_id;
+> +
+> +	/*
+> +	 * Build a map from usable vchan index to hardware channel index,
+> +	 * skipping channels reserved for other bus masters by the device-tree
+> +	 * "dma-channel-mask" (accessing them external-aborts).
+> +	 */
+> +	ed->masked_channels = imx_edma5_read_channel_mask(name);
+> +	ed->nb_channels = 0;
+> +	{
+> +		uint16_t hw;
+> +
+> +		for (hw = 0; hw < IMX_EDMA5_MAX_CHANNELS; hw++) {
+> +			if (ed->masked_channels & (RTE_BIT64(hw)))
+> +				continue;
+> +			ed->chan_map[ed->nb_channels++] = hw;
+> +		}
+> +	}
+
+How about move `uint16_t hw` to the beginning of this function, so that eliminate {} sub-block
+
+> +	ed->max_vchans = ed->nb_channels;
+> +
+> +	if (ed->nb_channels == 0) {
+> +		IMX_EDMA5_LOG(ERR,
+> +			      "No usable eDMA5 channels for %s (mask 0x%" PRIx64 ")",
+> +			      name, ed->masked_channels);
+> +		rte_dma_pmd_release(name);
+> +		return -ENODEV;
+> +	}
+> +
+> +	dev->state = RTE_DMA_DEV_READY;
+> +
+> +	/*
+> +	 * Set MP_CSR.GCLC (Global Clock Control) before any per-channel register
+> +	 * is touched: the per-channel windows are individually clock-gated and
+> +	 * external-abort when accessed with GCLC clear. Also enable round-robin
+> +	 * arbitration (ERCA). Use read-modify-write to preserve reset defaults.
+> +	 */
+> +	{
+> +		uint32_t mp_csr = imx_edma5_read32(ed->reg_base, IMX_EDMA5_MP_CSR);
+> +
+> +		mp_csr |= IMX_EDMA5_MP_CSR_GCLC | IMX_EDMA5_MP_CSR_ERCA;
+> +		imx_edma5_write32(ed->reg_base, IMX_EDMA5_MP_CSR, mp_csr);
+> +	}
+
+Suggest move mp_csr to the beginning of this function
+
+> +
+> +	IMX_EDMA5_LOG(INFO, "Probed i.MX95 eDMA5 dmadev %s (%u channels)",
+> +		      name, ed->nb_channels);
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +imx_edma5_remove(struct rte_platform_device *pdev)
+> +{
+> +	const char *name = pdev->name;
+> +
+> +	return rte_dma_pmd_release(name);
+> +}
+> +
+> +static struct rte_platform_driver imx_edma5_pmd_drv = {
+> +	/*
+> +	 * Set the DT compatible string as the driver alias. The platform bus
+> +	 * match logic compares this against the device-tree "compatible" sysfs
+> +	 * strings of each platform device when the kernel driver name (always
+> +	 * "vfio-platform") does not uniquely identify the device.
+> +	 */
+> +	.driver = {
+> +		.alias = IMX_EDMA5_COMPAT,
+> +	},
+> +	.probe = imx_edma5_probe,
+> +	.remove = imx_edma5_remove,
+> +	/*
+> +	 * The eDMA5 is programmed with the IOVA of the buffers, so it works in
+> +	 * both IOVA=VA and IOVA=PA modes; no IOVA-as-VA requirement is forced.
+> +	 */
+> +	.drv_flags = 0,
+> +};
+> +
+> +RTE_PMD_REGISTER_PLATFORM(dma_imx_edma5, imx_edma5_pmd_drv);
+> diff --git a/drivers/dma/imx_edma5/imx_edma5_dmadev.h b/drivers/dma/imx_edma5/imx_edma5_dmadev.h
+> new file mode 100644
+> index 0000000000..3da7957457
+> --- /dev/null
+> +++ b/drivers/dma/imx_edma5/imx_edma5_dmadev.h
+> @@ -0,0 +1,220 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright 2026 NXP
+> + */
+> +
+> +#ifndef IMX_EDMA5_DMADEV_H
+> +#define IMX_EDMA5_DMADEV_H
+> +
+> +#include <stdbool.h>
+> +#include <stddef.h>
+> +#include <stdint.h>
+> +
+> +#include <rte_byteorder.h>
+> +#include <rte_common.h>
+> +#include <rte_dmadev.h>
+> +#include <rte_io.h>
+> +#include <rte_memory.h>
+> +
+> +#include "imx_edma5_hw.h"
+> +
+> +/*
+> + * CPU data-cache maintenance for the non-coherent eDMA5 master: clean the
+> + * source before the transfer and clean+invalidate the destination after it.
+> + * DC IVAC (invalidate-only) is EL1-only and faults from userspace, so DC CIVAC
+> + * is used. No-ops on non-arm64 builds.
+> + */
+> +static inline void
+> +imx_edma5_dcbf(void *p)
+> +{
+> +#ifdef RTE_ARCH_ARM64
+> +	asm volatile("dc cvac, %0" : : "r"(p) : "memory");
+> +#else
+> +	RTE_SET_USED(p);
+> +#endif
+> +}
+> +
+> +static inline void
+> +imx_edma5_dccivac(void *p)
+> +{
+> +#ifdef RTE_ARCH_ARM64
+> +	asm volatile("dc civac, %0" : : "r"(p) : "memory");
+> +#else
+> +	RTE_SET_USED(p);
+> +#endif
+> +}
+> +
+> +/* Clean a VA range to the Point of Coherency. */
+> +static inline void
+> +imx_edma5_cache_clean(void *addr, size_t len)
+> +{
+> +	uintptr_t p = (uintptr_t)addr & ~(uintptr_t)(RTE_CACHE_LINE_SIZE - 1);
+> +	uintptr_t end = (uintptr_t)addr + len;
+> +
+> +	for (; p < end; p += RTE_CACHE_LINE_SIZE)
+> +		imx_edma5_dcbf((void *)p);
+> +	/*
+> +	 * DSB ensures all DC CVAC instructions have completed to the Point of
+> +	 * Coherency before the eDMA5 is allowed to read the source data.
+> +	 */
+> +#ifdef RTE_ARCH_ARM64
+> +	asm volatile("dsb sy" ::: "memory");
+> +#endif
+> +}
+> +
+> +/* Clean+invalidate a VA range to the Point of Coherency. */
+> +static inline void
+> +imx_edma5_cache_inval(void *addr, size_t len)
+> +{
+> +	uintptr_t p = (uintptr_t)addr & ~(uintptr_t)(RTE_CACHE_LINE_SIZE - 1);
+> +	uintptr_t end = (uintptr_t)addr + len;
+> +
+> +	for (; p < end; p += RTE_CACHE_LINE_SIZE)
+> +		imx_edma5_dccivac((void *)p);
+> +	/*
+> +	 * DSB ensures all DC CIVAC instructions have completed to the Point of
+> +	 * Coherency before the CPU reads the destination data written by eDMA5.
+> +	 */
+> +#ifdef RTE_ARCH_ARM64
+> +	asm volatile("dsb sy" ::: "memory");
+> +#endif
+> +}
+> +
+> +/*
+> + * NBYTES field maximum: bits 31:30 of TCD_NBYTES are SMLOE/DMLOE control bits
+> + * when the minor loop offset feature is enabled. To avoid accidentally setting
+> + * those bits, cap every single-block transfer at the 30-bit maximum count.
+> + */
+> +#define IMX_EDMA5_MAX_NBYTES		((uint32_t)((1u << 30) - 1))
+> +
+> +/* Maximum scatter-gather segments per copy_sg request. */
+> +#define IMX_EDMA5_MAX_SGES		16
+> +
+> +/*
+> + * In-memory TCD64 descriptors reserved per job slot for scatter-gather.
+> + * Splitting an asymmetric src/dst segment list at the union of both sets of
+> + * boundaries yields at most n_src + n_dst - 1 sub-transfers, so with up to
+> + * IMX_EDMA5_MAX_SGES segments per side the worst case fits in this bound.
+> + */
+> +#define IMX_EDMA5_SG_TCD_PER_JOB	(2 * IMX_EDMA5_MAX_SGES)
+> +
+> +/* Software job ring size per virtual channel (power of two). */
+> +#define IMX_EDMA5_MAX_DESC		4096
+> +#define IMX_EDMA5_MIN_DESC		32
+> +
+> +/* Per in-flight job bookkeeping. */
+> +struct imx_edma5_job {
+> +	uint16_t ridx;			/* ring index returned to application */
+> +	uint8_t  submitted;		/* job has been started on hardware */
+> +	uint8_t  done;			/* job completed */
+> +	uint8_t  error;			/* job completed with error */
+> +	/*
+> +	 * Destination VA and byte count of the copy, used to invalidate the
+> +	 * destination cache lines on completion (non-coherent eDMA master).
+> +	 * NULL if the VA could not be resolved. Unused for SG jobs (nb_sg > 0).
+> +	 */
+> +	void    *dst_va;
+> +	uint32_t len;
+> +	/*
+> +	 * Source/destination IOVAs of a plain single-block copy, recorded at
+> +	 * enqueue time and used to program the TCD at submit time (the eDMA5 has
+> +	 * a single register TCD shared by all jobs). Unused for SG jobs.
+> +	 */
+> +	rte_iova_t src_iova;
+> +	rte_iova_t dst_iova;
+> +	/*
+> +	 * Scatter-gather state. nb_sg is the segment count (0 for a plain copy);
+> +	 * sg_tcd points at this job's slice of the vchan's in-memory TCD pool.
+> +	 */
+> +	uint16_t nb_sg;
+> +	struct imx_edma5_hw_tcd64 *sg_tcd;
+> +};
+> +
+> +/* A virtual channel maps 1:1 onto a single eDMA5 hardware channel. */
+> +struct imx_edma5_vchan {
+> +	uint8_t  *ch_regs;		/* channel register window base */
+> +	uint8_t  *tcd_regs;		/* channel TCD base (ch_regs + TCD_OFF) */
+> +	uint32_t  hw_chan;		/* hardware channel index */
+> +
+> +	struct imx_edma5_job *jobs;	/* software job ring */
+> +	uint16_t nb_desc;		/* size of job ring (power of two) */
+> +	uint16_t desc_mask;		/* nb_desc - 1 */
+> +
+> +	/*
+> +	 * Pool of in-memory TCD64 descriptors for scatter-gather, sized
+> +	 * nb_desc * IMX_EDMA5_SG_TCD_PER_JOB. Each job slot owns a contiguous
+> +	 * slice of IMX_EDMA5_SG_TCD_PER_JOB descriptors. sg_tcd_iova is the
+> +	 * pool base IOVA.
+> +	 */
+> +	struct imx_edma5_hw_tcd64 *sg_tcd_pool;
+> +	rte_iova_t sg_tcd_iova;
+> +
+> +	uint16_t head;			/* next slot to enqueue */
+> +	uint16_t tail;			/* next slot to reap */
+> +	uint16_t nb_enqueued;		/* outstanding jobs in ring (unreaped) */
+> +	uint16_t ridx;			/* running ring index counter */
+> +	uint16_t last_idx;		/* last completed ring index */
+> +
+> +	uint64_t submitted_count;
+> +	uint64_t completed_count;
+> +	uint64_t errors_count;
+> +
+> +	bool configured;
+> +};
+> +
+> +/* Per-device (per eDMA5 instance) private data. */
+> +struct imx_edma5_dev {
+> +	uint8_t *reg_base;		/* mapped register window base */
+> +	uint64_t reg_size;		/* mapped register window length */
+> +
+> +	uint16_t nb_channels;		/* channels available on this instance */
+> +	uint16_t max_vchans;		/* channels usable as dmadev vchans */
+> +
+> +	/*
+> +	 * Bitmask of hardware channels reserved for other bus masters (from the
+> +	 * device-tree "dma-channel-mask"). A set bit marks a channel this driver
+> +	 * must not touch; accessing it faults with a bus external abort.
+> +	 */
+> +	uint64_t masked_channels;
+> +	/* Map of usable dmadev vchan index -> hardware channel index. */
+> +	uint16_t chan_map[IMX_EDMA5_MAX_CHANNELS];
+> +
+> +	struct imx_edma5_vchan *vchans;	/* array of vchan states */
+> +	uint16_t nb_vchans;		/* number of configured vchans */
+> +
+> +	int16_t dev_id;			/* dmadev id */
+> +};
+> +
+> +/* MMIO helpers (little-endian device). */
+> +static inline uint32_t
+> +imx_edma5_read32(const uint8_t *base, uint32_t off)
+> +{
+> +	return rte_le_to_cpu_32(rte_read32(base + off));
+> +}
+> +
+> +static inline void
+> +imx_edma5_write32(uint8_t *base, uint32_t off, uint32_t val)
+> +{
+> +	rte_write32(rte_cpu_to_le_32(val), base + off);
+> +}
+> +
+> +static inline uint16_t
+> +imx_edma5_read16(const uint8_t *base, uint32_t off)
+> +{
+> +	return rte_le_to_cpu_16(rte_read16(base + off));
+> +}
+> +
+> +static inline void
+> +imx_edma5_write16(uint8_t *base, uint32_t off, uint16_t val)
+> +{
+> +	rte_write16(rte_cpu_to_le_16(val), base + off);
+> +}
+> +
+> +static inline void
+> +imx_edma5_write64(uint8_t *base, uint32_t off, uint64_t val)
+> +{
+> +	/* Write the 64-bit field as two 32-bit accesses (order not significant). */
+> +	imx_edma5_write32(base, off, (uint32_t)(val & 0xFFFFFFFFu));
+> +	imx_edma5_write32(base, off + 4, (uint32_t)(val >> 32));
+> +}
+> +
+> +#endif /* IMX_EDMA5_DMADEV_H */
+> diff --git a/drivers/dma/imx_edma5/imx_edma5_hw.h b/drivers/dma/imx_edma5/imx_edma5_hw.h
+> new file mode 100644
+> index 0000000000..07c941cd13
+> --- /dev/null
+> +++ b/drivers/dma/imx_edma5/imx_edma5_hw.h
+> @@ -0,0 +1,143 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright 2026 NXP
+> + */
+> +
+> +/*
+> + * Hardware register definitions for the NXP i.MX95 eDMA5 controller.
+> + * The block has a Management Page (MP) region followed by per-channel register
+> + * windows (base offset 0x10000, stride 0x8000, 64 channels, 64-bit TCD64).
+
+64-byte TCD64?
+
+> + * All register accesses are little-endian.
+> + */
+> +
+> +#ifndef IMX_EDMA5_HW_H
+> +#define IMX_EDMA5_HW_H
+> +
+> +#include <stdint.h>
+> +
+> +/* Number of DMA channels implemented on i.MX95 eDMA5. */
+> +#define IMX_EDMA5_MAX_CHANNELS		64
+> +
+> +/* Per-channel register window geometry. */
+> +#define IMX_EDMA5_CHAN_BASE_OFF		0x10000u
+> +#define IMX_EDMA5_CHAN_STRIDE		0x8000u
+> +
+> +/*
+> + * Management Page (MP) registers (offsets from register window base).
+> + * Only the fields used by this driver are documented here.
+> + */
+> +#define IMX_EDMA5_MP_CSR		0x0000u	/* Management control */
+> +#define IMX_EDMA5_MP_ES			0x0004u	/* Management error status */
+> +#define IMX_EDMA5_MP_INT_LOW		0x0008u	/* Interrupt request (chan 0-31) */
+> +#define IMX_EDMA5_MP_INT_HIGH		0x000Cu	/* Interrupt request (chan 32-63) */
+> +#define IMX_EDMA5_MP_HRS_LOW		0x0010u	/* Hardware request status low */
+> +#define IMX_EDMA5_MP_HRS_HIGH		0x0014u	/* Hardware request status high */
+> +
+> +/* MP_CSR bit fields. */
+> +#define IMX_EDMA5_MP_CSR_EDBG		(1u << 1)  /* Enable debug */
+> +#define IMX_EDMA5_MP_CSR_ERCA		(1u << 2)  /* Enable round-robin arb */
+> +#define IMX_EDMA5_MP_CSR_HAE		(1u << 4)  /* Halt after error */
+> +#define IMX_EDMA5_MP_CSR_GCLC		(1u << 6)  /* Global clock control */
+> +#define IMX_EDMA5_MP_CSR_GMRC		(1u << 7)  /* Global master ID replic */
+> +
+> +/* MP_ES: valid bit indicates a logged error is present. */
+> +#define IMX_EDMA5_MP_ES_VLD		(1u << 31)
+> +
+> +/*
+> + * Per-channel control registers (offsets from a channel window base).
+> + * Layout matches the eDMA4/eDMA5 fsl_edma3_ch_reg structure.
+> + */
+> +#define IMX_EDMA5_CH_CSR		0x00u	/* Channel control/status */
+> +#define IMX_EDMA5_CH_ES			0x04u	/* Channel error status */
+> +#define IMX_EDMA5_CH_INT		0x08u	/* Channel interrupt status */
+> +#define IMX_EDMA5_CH_SBR		0x0Cu	/* System bus register */
+> +#define IMX_EDMA5_CH_PRI		0x10u	/* Channel priority */
+> +#define IMX_EDMA5_CH_MUX		0x14u	/* Channel multiplexor (source) */
+> +#define IMX_EDMA5_CH_MATTR		0x18u	/* Memory attributes */
+> +
+> +/* Channel window offset of the TCD (Transfer Control Descriptor). */
+> +#define IMX_EDMA5_CH_TCD_OFF		0x20u
+> +
+> +/* CH_CSR bit fields. */
+> +#define IMX_EDMA5_CH_CSR_ERQ		(1u << 0)  /* Enable hardware request */
+> +#define IMX_EDMA5_CH_CSR_EARQ		(1u << 1)  /* Enable async hw request */
+> +#define IMX_EDMA5_CH_CSR_EEI		(1u << 2)  /* Enable error interrupt */
+> +#define IMX_EDMA5_CH_CSR_DONE		(1u << 30) /* Channel done (w1c) */
+> +#define IMX_EDMA5_CH_CSR_ACTIVE		(1u << 31) /* Channel active */
+> +
+> +/* CH_ES: valid bit indicates a logged channel error. */
+> +#define IMX_EDMA5_CH_ES_ERR		(1u << 31)
+> +
+> +/* CH_INT: write 1 to clear the channel interrupt request. */
+> +#define IMX_EDMA5_CH_INT_INT		(1u << 0)
+> +
+> +/* CH_SBR: read/write privileged/secure attributes for bus mastering. */
+> +#define IMX_EDMA5_CH_SBR_RD		(1u << 22)
+> +#define IMX_EDMA5_CH_SBR_WR		(1u << 21)
+> +
+> +/*
+> + * TCD64 field offsets, relative to the channel TCD base
+> + * (channel window base + IMX_EDMA5_CH_TCD_OFF).
+> + */
+> +#define IMX_EDMA5_TCD_SADDR		0x00u
+> +#define IMX_EDMA5_TCD_SOFF		0x08u
+> +#define IMX_EDMA5_TCD_ATTR		0x0Au
+> +#define IMX_EDMA5_TCD_NBYTES		0x0Cu
+> +#define IMX_EDMA5_TCD_SLAST		0x10u
+> +#define IMX_EDMA5_TCD_DADDR		0x18u
+> +#define IMX_EDMA5_TCD_DLAST_SGA		0x20u
+> +#define IMX_EDMA5_TCD_DOFF		0x28u
+> +#define IMX_EDMA5_TCD_CITER		0x2Au
+> +#define IMX_EDMA5_TCD_CSR		0x2Cu
+> +#define IMX_EDMA5_TCD_BITER		0x2Eu
+> +
+> +/* TCD ATTR sub-fields: transfer size is encoded as log2(bytes). GET_* extract. */
+> +#define IMX_EDMA5_TCD_ATTR_DSIZE(x)	(((x) & 0x7u))
+> +#define IMX_EDMA5_TCD_ATTR_SSIZE(x)	(((x) & 0x7u) << 8)
+> +#define IMX_EDMA5_TCD_ATTR_GET_DSIZE(x)	((x) & 0x7u)
+> +#define IMX_EDMA5_TCD_ATTR_GET_SSIZE(x)	(((x) >> 8) & 0x7u)
+> +
+> +/* Transfer size encodings for ATTR SSIZE/DSIZE (log2 of bytes). */
+> +#define IMX_EDMA5_TCD_SIZE_1B		0u
+> +#define IMX_EDMA5_TCD_SIZE_2B		1u
+> +#define IMX_EDMA5_TCD_SIZE_4B		2u
+> +#define IMX_EDMA5_TCD_SIZE_8B		3u
+> +#define IMX_EDMA5_TCD_SIZE_16B		4u
+> +#define IMX_EDMA5_TCD_SIZE_32B		5u
+> +#define IMX_EDMA5_TCD_SIZE_64B		6u
+> +
+> +/* Major iteration count field mask (15-bit CITER/BITER). */
+> +#define IMX_EDMA5_TCD_ITER_MASK		0x7FFFu
+> +
+> +/* TCD CSR bit fields. */
+> +#define IMX_EDMA5_TCD_CSR_START		(1u << 0)  /* Software start */
+> +#define IMX_EDMA5_TCD_CSR_INT_MAJOR	(1u << 1)  /* Interrupt on major done */
+> +#define IMX_EDMA5_TCD_CSR_INT_HALF	(1u << 2)  /* Interrupt on half done */
+> +#define IMX_EDMA5_TCD_CSR_D_REQ		(1u << 3)  /* Disable request on done */
+> +#define IMX_EDMA5_TCD_CSR_E_SG		(1u << 4)  /* Enable scatter-gather */
+> +#define IMX_EDMA5_TCD_CSR_E_LINK	(1u << 5)  /* Enable channel linking */
+> +#define IMX_EDMA5_TCD_CSR_ACTIVE	(1u << 6)  /* Channel active */
+> +#define IMX_EDMA5_TCD_CSR_DONE		(1u << 7)  /* Channel done */
+> +
+> +/*
+> + * In-memory 64-bit Transfer Control Descriptor. The field order and offsets
+> + * match the register TCD64 layout above; all fields are little-endian. The
+> + * descriptor must be 32-byte aligned and, on this non-coherent SoC, cleaned
+> + * from the CPU cache before the transfer is started.
+> + */
+> +struct __rte_aligned(32) imx_edma5_hw_tcd64 {
+> +	uint64_t saddr;		/* 0x00 source address */
+> +	uint16_t soff;		/* 0x08 source offset */
+> +	uint16_t attr;		/* 0x0A transfer attributes */
+> +	uint32_t nbytes;	/* 0x0C minor loop byte count */
+> +	uint64_t slast;		/* 0x10 last source adjustment */
+> +	uint64_t daddr;		/* 0x18 destination address */
+> +	uint64_t dlast_sga;	/* 0x20 next TCD address (scatter-gather) */
+> +	uint16_t doff;		/* 0x28 destination offset */
+> +	uint16_t citer;		/* 0x2A current major iteration count */
+> +	uint16_t csr;		/* 0x2C control and status */
+> +	uint16_t biter;		/* 0x2E starting major iteration count */
+> +	/* Pad to 64 bytes total; the type is 32-byte aligned for TCD fetches. */
+> +	uint8_t  reserved[16];
+> +};
+> +
+> +#endif /* IMX_EDMA5_HW_H */
+> diff --git a/drivers/dma/imx_edma5/imx_edma5_logs.h b/drivers/dma/imx_edma5/imx_edma5_logs.h
+> new file mode 100644
+> index 0000000000..e73e496bb4
+> --- /dev/null
+> +++ b/drivers/dma/imx_edma5/imx_edma5_logs.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright 2026 NXP
+> + */
+> +
+> +#ifndef IMX_EDMA5_LOGS_H
+> +#define IMX_EDMA5_LOGS_H
+> +
+> +#include <rte_log.h>
+> +
+> +extern int imx_edma5_logtype;
+> +#define RTE_LOGTYPE_IMX_EDMA5 imx_edma5_logtype
+> +
+> +#define IMX_EDMA5_LOG(level, ...) \
+> +	RTE_LOG_LINE_PREFIX(level, IMX_EDMA5, "%s(): ", __func__, __VA_ARGS__)
+> +
+> +#endif /* IMX_EDMA5_LOGS_H */
+> diff --git a/drivers/dma/imx_edma5/meson.build b/drivers/dma/imx_edma5/meson.build
+> new file mode 100644
+> index 0000000000..e4f5d4e0bb
+> --- /dev/null
+> +++ b/drivers/dma/imx_edma5/meson.build
+> @@ -0,0 +1,10 @@
+> +# SPDX-License-Identifier: BSD-3-Clause
+> +# Copyright 2026 NXP
+> +
+> +if not is_linux
+> +    build = false
+> +    reason = 'only supported on linux'
+> +endif
+> +
+> +deps += ['dmadev', 'bus_platform']
+
+Please include by alphabetical order
+
+> +sources = files('imx_edma5_dmadev.c')
+> diff --git a/drivers/dma/meson.build b/drivers/dma/meson.build
+> index e0d94db967..dd00b1dae9 100644
+> --- a/drivers/dma/meson.build
+> +++ b/drivers/dma/meson.build
+> @@ -8,6 +8,7 @@ drivers = [
+>          'hisi_acc',
+>          'hisi_pciep',
+>          'idxd',
+> +        'imx_edma5',
+>          'ioat',
+>          'odm',
+>          'skeleton',
+
+with above fixed,
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
 
