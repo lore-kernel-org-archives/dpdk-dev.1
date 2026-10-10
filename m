@@ -2,154 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4AAECA9EC0
-	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 18:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2867CCA6017
+	for <dpdk-dev@archiver.kernel.org>; Sat, 10 Oct 2026 18:32:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E1514065A;
-	Sat, 10 Oct 2026 20:32:02 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 57A4040658
- for <dev@dpdk.org>; Sat, 10 Oct 2026 20:31:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791657121; x=1823193121;
- h=message-id:date:subject:to:references:from:in-reply-to:
- content-transfer-encoding:mime-version;
- bh=ni09r9kNx3Shxz68im3w/DDRPTvzRysr7LsydEjWBL4=;
- b=RjVY4MgpbsDEKtrNW3H9ocDaJLa2691+cqVjS71bVeB2KvK9xrdJ6ffl
- lBXzzGqUcUs881qyXwsdK+XGnclgmnArnqG/ExjVc+tRIYh/ZGSU5DXOV
- k6kNP4IwSG6kMMn6UpUekQuOZfCJHVs3E4cA2ilxvU2c+3Zxg8KFjEP0u
- rONbSjFZcEEsdMsbDS/93OeR++IEAYH/Y38qwmkJnnOjkeKGkRNM9pXu6
- VEdps5sMf7qbiruRM0Nql0ehyyKBs75RgZ7AfuSJivJbv3GfyIaWbfs+V
- V3OsHlAPLVxQ5HizUwmlNDOUdgiH/c31kRnV/w0QReuQ9hon+oC8iImq0 w==;
-X-CSE-ConnectionGUID: hMAkS2DCSjKLz08RzJgTMw==
-X-CSE-MsgGUID: wI6Ie6dvQQ+1e111AFXlwA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11931"; a="521430"
-X-IronPort-AV: E=Sophos;i="6.27,150,1787036400"; 
-   d="scan'208";a="521430"
-Received: from fmviesa012.fm.intel.com ([10.60.135.152])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Oct 2026 11:31:58 -0700
-X-CSE-ConnectionGUID: eM1TTgiRSPyK/zaqC1anCQ==
-X-CSE-MsgGUID: FZF4svUOTy2OQCH0CCVIZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,150,1787036400"; 
-   d="scan'208";a="2357486"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa012.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Oct 2026 11:31:55 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Sat, 10 Oct 2026 11:31:53 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Sat, 10 Oct 2026 11:31:53 -0700
-Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.27) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Sat, 10 Oct 2026 11:31:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oauiS6EpPGt3PC/Foqau2VUSUFXU9q17mAHWCB9YsjoeL403XXhwcnaLTfX2AhxZ6k6L+7J7t0NKOtAm2q/oWjG5GeO25sgwBI8ZYk+Dzffq9atr/7VmiQegrBLuC1da0LRj1PUH1R7AeYiQh2Ekr6ZTbt1fHu9kt6iEPeX1vzCbgT608geDDpZ+fMy/UJoCqcTSRZffNdRJV1f1ZeBoVt01tbyThOQ/+qA7ZsKAuKuzDY0wXIXP//8g/kLmB0VlIo3oj3RoVBwOesWsJFK5swbGPdAdFPdeE++MrkCOYtonNCl+uQY+UnG+afSH5pIND0oBEiQ9vB8EEJFAjKVbYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dqXuR8athIQWwLW3VEwPhhS5iwYuFoYTFXWgleS/C/Y=;
- b=ENbJ+Rtfk+f0+3eMULbtR79+CHnXTbVeOJRWlDYo3pBRihOAEibSpxq3xRCedDhajyQxzkLUBrBNuRyY1FCGOjO+HD//47zVUV3W2222FstrBGQsadnLwFpwFhS9UkAxBB8joRQ2SjatrRVIv9t6i+Fh80rcCm2WsiecAuSOmkBxbs3YfFpUPjvEldPgSloul0IpCo76HUP59O4pCQvg4VKm8kDbbNeeW52cRiw22LjXEF70ZDDn2dVbkYTTvZHqlvfkNiXxRoJQe2x8QhEqZhYcjqBH7Vmefx/i74wGofOliWv+YP9y+xQS25WeIa6g99zgTgQ6Q/eiWS7kce4HTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL0PR11MB2993.namprd11.prod.outlook.com (2603:10b6:208:75::28)
- by SJ5PPF524F3F9FA.namprd11.prod.outlook.com
- (2603:10b6:a0f:fc02::829) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.19; Sat, 10 Oct
- 2026 18:31:45 +0000
-Received: from BL0PR11MB2993.namprd11.prod.outlook.com
- ([fe80::5877:2021:3cf1:1046]) by BL0PR11MB2993.namprd11.prod.outlook.com
- ([fe80::5877:2021:3cf1:1046%6]) with mapi id 15.21.0496.015; Sat, 10 Oct 2026
- 18:31:45 +0000
-Message-ID: <2941526b-3840-496f-9a45-958ba907a5e2@intel.com>
-Date: Sat, 10 Oct 2026 19:31:42 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 09/25] net/ixgbe: reimplement syn parser
-To: Anatoly Burakov <anatoly.burakov@intel.com>, <dev@dpdk.org>
-References: <b050af1f631ee04c717bc59d2f10933393b34071.1791543154.git.anatoly.burakov@intel.com>
-Content-Language: en-US
-From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
-In-Reply-To: <b050af1f631ee04c717bc59d2f10933393b34071.1791543154.git.anatoly.burakov@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0067.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:3c2::6) To BL0PR11MB2993.namprd11.prod.outlook.com
- (2603:10b6:208:75::28)
+	by mails.dpdk.org (Postfix) with ESMTP id 5F93340687;
+	Sat, 10 Oct 2026 20:32:21 +0200 (CEST)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id D47F340687
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 20:32:19 +0200 (CEST)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-2df8c28a0b1so3199585ad.1
+ for <dev@dpdk.org>; Sat, 10 Oct 2026 11:32:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791657139;
+ x=1792261939; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=5RehjmjoWys+rN2es+UwNGQesYOLevQWpBoQrwDVHNY=;
+ b=mwa+7w/vzjeClHs+Aj2iE2SearNYfc3lNbfxedo/f6wTfxcvyl6r1/mRK3P2FtmvO0
+ zHdqXcgwHe26Ym85c1+8KbarPyxpUVVvGT2IzeJLffC7c7ScIFF2cgtVGCD1Yu5JYkbq
+ lmlABLKNSi5rPK1lqKbWvB0z0dkrTILZuMn6adCHtK/W2/1hQX7K7+zevqP3x4N0GHXM
+ Y/XzMJDW/PwFs7ttVDyNtbmWrkQ6x49Quh6OXW7etubMo/Un65IUYKCAiUFFVQFK1CpZ
+ ton3cwEbONcxch8Yl4C63XDoJR2fzi8frJx51KWFtfWpUzlkCE5oUhx7uCfb2r1gEKxG
+ QxGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791657139; x=1792261939;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=5RehjmjoWys+rN2es+UwNGQesYOLevQWpBoQrwDVHNY=;
+ b=0D2y/fTDIRDP6yruYtQHU8ZI3jxLY44Hz4sjZOJc9FQIzQMIDPUfAfu2ggKymgljO1
+ 5PCnK4OwC64mgc77MagMrAWFK63+gj33piNb0jGWK4qjuvpGlZUdhGJECT0m96hgYZrF
+ x+rYTWnl+oIGFZh8hjEggwKEUrIyCi2RAhmzHWwrMo9iKSls3GTZv+Z6eNxDfLhDfygN
+ QsumFXradhSrP2xJTKeUATfJ96/yVo92ksi7WlJxF2DndZ9Cy/qtjAxjhO8S1oUHRt4R
+ CLgT/DY6O+IAvqTvuou911y4o6IV2UiyeytEyqV6skcC26Awom72tcpMY6Nf+HLn/E0A
+ 593g==
+X-Gm-Message-State: AFq9FYJKMXWy6PIt1/fNau5faHYiJV+voauAulIhuMjWOX1wI+xafmj0
+ yqpjlo3fH/lQNWTJ7zYswmlJd0i/M/iVvUbh6Rt65JCDRtbv/g3mYDKYfNPxxb3mJ24=
+X-Gm-Gg: AYBFou3GifE5QMQ7oIwoYZcsdwmU1CR+HlWmFsOct7/B22lR2Ah1/qRESl9JsITZ7P3
+ Mv2w/4khagmkkw5PLvnCMiGf//qCyp7jF1IuK6TqTMbPeqXABrvT5/u1YmRlBoK/dYequXJUJu/
+ JvI1nIozRlmnDylY0tjvQ6kkbzM8Y8eFw87CPg+sHZXaPv8v3mJwFUMVodz2fMZApsQFYxwiT3z
+ kOKd1e+18bqnaxU+1yWiCQ6YOH4fi6J86hrwOXfTdVvun+s/q1nHzEeOUSXTME3A5dJcc75zShi
+ RF6AzDSa8spSZYXK5G9ZMvwujm4pA8CA3AYh0SHzol+j/DUA+ZpbTmCsQiKz5+p1mUMFoPwEQ4A
+ KsgzgcZuhNdJTi4e26L5+zDopkGkkkHbgAQFytBMM8Dhqv0wHTms3zkQuwZTKYhz8C1jzEiudCU
+ Ew4ZVpwi6uL8cSSpoLRqV5t8xotI5Mtb7LCRMGiS4pQATcvhs8WlYUEINKf1d7z1wrYTfvfmWYa
+ RLiWybtW1ywD46M5EIplSO5YGVbRG543hcQE/hz
+X-Received: by 2002:a17:902:ce91:b0:2df:90d4:7758 with SMTP id
+ d9443c01a7336-2e8428a1f32mr42507385ad.23.1791657138816; 
+ Sat, 10 Oct 2026 11:32:18 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2e8419ff572sm24651035ad.2.2026.10.10.11.32.17
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 10 Oct 2026 11:32:18 -0700 (PDT)
+Date: Sat, 10 Oct 2026 11:23:18 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Roman Khromenok <roma55592@yandex.ru>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 1/2] ethdev: decode newer SFF compliance codes
+Message-ID: <20261010112318.483bbdc9@phoenix.local>
+In-Reply-To: <835d139c746faff456f14755b7af7395b713bd70.1791574390.git.roma55592@yandex.ru>
+References: <835d139c746faff456f14755b7af7395b713bd70.1791574390.git.roma55592@yandex.ru>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL0PR11MB2993:EE_|SJ5PPF524F3F9FA:EE_
-X-MS-Office365-Filtering-Correlation-Id: 18aeb805-2232-496e-5330-08df26fcbcee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|366016|23010399003|376014|56012099006|11063799006|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: d5qnTnl4CbzgDW8qiO0ciUgbeL0mHJegcE58xzLjIDrtzeooTDDxrpRWXxb0QcVJAyEFh9bgm26USnW3iyXMhzgjdp4ZGR84pkFIH4Ex/N/VxZS6KWpZWCBaXnTjbJm0Iu6PWXWIE0IfgAGWTv+krABVHsrqEVElmse+kmBRaAnYj22ByIOMV3aUFSDdpK2LO6OlY03XJL9KwhaXKWgTnaY49xTeDycBEXhQoyTSxD2rXCwQOmf6BOkZEb7P77y0HoXm8qTd7YAZOlLXAGi5iAU7xyATGKDn6nPzea9heTJK1Y+QAJ871rU7G7pmluzZZsM44u23fsTs0d5kVQvhe6atUSk2URHOXQkcR8QqbjgaspiDe86vs6eE64imEbwBx9l/6kX0Uz+pTlZAr8O6aLqK5fyZB5ibzB32dp0urRoJbh3WyZGTVk08t7E4zwiGCB3ndiD/+HugDvphXxCO41qGmQYzb1CsyySpVryuU3AYeq7AeUiIJ8Rx7mi9GtokJ/WiWkPrirNa0ezl/MuPkp0KxCZLSD0ViZFKwwwgo6Ohq5ByRcXEAiegTW9uYK4eZsyZAj2NNTA8phiM0LhojIl3kQtTzaYd6bREKviZiNWkbflI97Y2Jg2F//XZ38vgJW/p9WgJiliZiQra0dAIAmdHGVErJvXm4rW7UTdzOOQ=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BL0PR11MB2993.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(56012099006)(11063799006)(10067099003)(22082099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?S0ozaUY0ZUxmcUs5UDZ5RWc2bUhtVVRGVUwwcU1iaXNEdkQwcWtKblVTRzE1?=
- =?utf-8?B?OWVoNTJhRURHNUJTcjFCckQ4RWV3d3dRd1BneDd0bUtGV0JlVHFVc252ZkIw?=
- =?utf-8?B?RnFnK3JzVzgrcTNHdW82YmcxSG4zWE1LZ2duYW5jV0drRUp0RExFSll3Vy9X?=
- =?utf-8?B?Q3FiTnZ4c0RjU2tkN3A5bXkwb0tSeWYyaVZvMExLeWFEakE0ZFVWS1RwVi8y?=
- =?utf-8?B?RWR2c3czZVNINnlYczBuaDAxbldLemRzWkU3aEdPMnFYZDhkTUNQZGt6Yk5D?=
- =?utf-8?B?SG9NcmZ1cTlwNXpBWEx4SVREbG8vc0EvUHlWSjdmbHJGNnRWZTdNQzdkSUY1?=
- =?utf-8?B?MHg1VWZnbXlkQ0J0cU5rYisvZWNheDVOVVkrQkYzM3d3R2xJUDArZTl2QzNM?=
- =?utf-8?B?cEpoRmU2QXpWa2lRSmVKQ3JDZExYSDJhMkZGc1Y2c2tXeEV6MWtVY0M1bnBQ?=
- =?utf-8?B?eDBmWGMzQmZ3U0hmTjRTaWhKcERZMCtKQ0RPWXFSRjBJSXBldEtuNW9sVmVr?=
- =?utf-8?B?THFLdXZmdDhsRFJHaEFrU1huL1FJeVl1TzJwZk5LT0pzVVBPUGdab3RYMGZS?=
- =?utf-8?B?bE44NlJITW1DQ2dydlpPQ084UG5YQXkyMmthaGRBQ1VlVkd1M1BaUTFrVThl?=
- =?utf-8?B?Q2luaUx6WTB6cVl6bytYeUNYK0U0RkZPanlpNTM4SlBNSWxOeks4RnVJZXly?=
- =?utf-8?B?aGRiNWJuT1ZJTEVpNmFDZG8wSXlDb0Q5SlRRVGcrRzNWV2U0L01xek44dzB1?=
- =?utf-8?B?N2NWQy80SHo1bEdDeU9FSXREbXVTSXM0ZEtmejRYTWxqbXAwZFlBT0JYSTNa?=
- =?utf-8?B?VmpaWjJTeEozRWR3bmxzZGM4ZFEvQWlvUFNCUkRqYUMwNnpDZG4rZ1JUL05Q?=
- =?utf-8?B?aHFUQy9RWEh0aUZIdG1kY0lFZ2tEeWc3T1dLMk10M2ZrQVBIS2lpY29qS1Q0?=
- =?utf-8?B?MENJeUNvTldvZ3dLcU16MFBOWFEzOEQ0THlNcWR5eXYxUXdaYlZZdFRydHdu?=
- =?utf-8?B?dG9jbTZjbFZvckFRMWRJNlpIdk9SeE1qbk1RVEZwazZyaklscXV2VFFKTEZS?=
- =?utf-8?B?a2YrTUlFaGZ0ait2aWtwM1JmeHZNSXExMlhHbG0rVmNCY1RuaVcrQmxtYmx0?=
- =?utf-8?B?azJ2UXdZMkFXcnB0aG5HaUxUNnlWRzJlQUFzL28xSmRvT2JlSTJFK05XY0FM?=
- =?utf-8?B?bTdTZWFKd0l6Qm9PYzRUdUV5UXdNZmE3RXBlQ01GM0VYVmVlL2dzWDZRZkxv?=
- =?utf-8?B?M1o3clRwVWxudThFZlRDd2loOCt6eW9aSFlYbjVjKzc4VVVxY0JPVmxPcFV0?=
- =?utf-8?B?T0kyTlVMU1p5eDdlSURhYUtGblBmckpoRytlOW8rU0RubE53RTZIT3ZDNDkw?=
- =?utf-8?B?dkM0NjRKZ3N6U0VaTEUvVWVsb3dIMEpwZ213WkczSHltTkhxYTNSM1luVDNS?=
- =?utf-8?B?NTRkNXBOZ1N3MTZ5ZXMrNC9PUGhVcmpFak13WlRIRndQSlc1S2pveXFGV213?=
- =?utf-8?B?ckJ6NngvVi9CRGVOa2RTaThRZDY0U1k5SDhEeS9kNU5iTXQvWGZTVk5BYzhr?=
- =?utf-8?B?dXI0M3doNlhySHNSbDFQNFN2bU9keWcxdjZ3MElzOExnZyt0QzBieTh3Nloz?=
- =?utf-8?B?MWhzY3dMM2gzK3VWOU4rdFJtN3ZYdVo2Rng1dnlSR2ZzYStaTVE3NTJmMW5I?=
- =?utf-8?B?TFllMXFNREsvNEdsM29lY3VqVlBOZ3U2MlkyeEVtOExWQU9ZcnlJdUw3RnJY?=
- =?utf-8?B?T0hRay90Z1E2WUI4Q0lNeTF6Q0h6OTRDeTdxSlJUd0lTeDRuZnNOc0RNd1ZY?=
- =?utf-8?B?ZzdxbjZFMUFvZThsRTdOaWpraUhDVjhXMjM0elZ1ZkpGbllubnlJVGoxSDNV?=
- =?utf-8?B?T0F6ckxYUWRrcTNGSXdUMXZvd25PU1pRK3NnZG1vSzNlY0NYZ2RSSDhDZzJ1?=
- =?utf-8?B?YnJXVjdtUnlYbGhYVzlHbU9xeXBKblBpME54cEpTR1liWGNlbVp2RmltbkZp?=
- =?utf-8?B?YjZlK21iYTVNV2dJZGk2ZGpTVWxtOS96SktmQkZTaUtPVVpFU1VyT3ZHdkha?=
- =?utf-8?B?VXJmUVQrekpLZjFoLzdCc2lxYXJKU3A4RkNISGZlK0thZmpzY204UkNhdlhK?=
- =?utf-8?B?V0JPMXNZSGFRTjBtR2ZEZmE4UUEreVBxczQwYyswdlJwcU5EOGNrd2MvR1Y4?=
- =?utf-8?B?azJoMFdUWisrQjQ1NUNCbVUzb1VqWUFoTmo0NUVBWERVdHRBZnRRV29uY3ZT?=
- =?utf-8?B?a2ZJUnRVTHBTMk53aWMrdHJWeldSQ0hzMFhyMDhzZ3NjY2pMWXVLdWpCODN6?=
- =?utf-8?B?azFHdjgvaTFIajR6QU9KclRJOW5ZSnQxV1dlTFVhYjZiYXZxOElRWHhNYi9N?=
- =?utf-8?Q?idWo1be3f6YokLcE=3D?=
-X-Exchange-RoutingPolicyChecked: nLP9oIXiZ4tFRzx6BAEKmO1yFcmldBLvIswEVTrtEUL+oSXIxktDvvDK2YFM24dl4NvLt1nBg0nUyTKw3QXU/sryB05bbqPFrNL19DRewz2h1OQZ53yeQBIbvI0kcJVmbzudD01XXI7YaCjt24fFtVd/gQZK+n3/Rcwkg/cRMJkrw9qhzrkTtF+Ghww2cfwveXTPKaDZWPR+5xeQhSVlausqrR8soyT7d2QCvTYf4OpmEZ2snu3U8icWHCNCumQBYIMQZbMUoy4Ux34IEt7Gp0hgW1il/4CSpQbCZ/CtmasLSOQWWV432DEG08UO1ClgBWAjc/VUeshMF4kt0Gw92g==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18aeb805-2232-496e-5330-08df26fcbcee
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR11MB2993.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2026 18:31:45.4649 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gN6YA3WzgBRunoHUfYOrVWXTD7bk08bKfYzO8fOpBBunZzZtc990n4olgdcwCKtMsTOeeD1s9vnz5Cr9yi8VQPmf0D9k6bRjeLCjt7HnVYY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF524F3F9FA
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -163,27 +82,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+On Fri,  9 Oct 2026 21:34:26 +0200
+Roman Khromenok <roma55592@yandex.ru> wrote:
 
-On 10/9/2026 11:58 AM, Anatoly Burakov wrote:
-> Use the new flow graph API and the common parsing framework to implement
-> flow parser for SYN.
->
-> As a result of this migration, queue index validation has changed:
->
-> - queue is now validated at parse time against the configured number of Rx
->    queues (nb_rx_queues), rather than at install time against the hardware
->    maximum (IXGBE_MAX_RX_QUEUE_NUM)
-> - the per-function queue bound check in ixgbe_syn_filter_set() has been
->    removed as it is no longer needed
->
-> The syn filter tracking infrastructure is moved completely inside the new
-> engine and is removed from the rest of the driver.
->
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> Decode the compliance codes added by SFF-8472 Rev 12.5a and
+> SFF-8636 Rev 2.12, as ethtool does since commits 057c4fd and
+> 75d6232:
+> 
+> - SFF-8472 byte 10: Fibre Channel 1600 and 3200 MBytes/s.
+> - SFF-8636 byte 133: SAS 24.0G, and SAS 12.0G which was defined
+>   but not reported.
+> - SFF-8636 byte 138: Fibre Channel 3200 MBytes/s.
+> 
+> Also decode the SFF-8472 Fibre Channel Speed 2 byte 62 (64GFC),
+> which byte 10 bit 1 refers to. ethtool does not decode it.
+> 
+> Signed-off-by: Roman Khromenok <roma55592@yandex.ru>
 > ---
->
--- 
-Regards,
-Vladimir
 
+AI feedback.
+
+
+Subject: Re: [PATCH 1/2] ethdev: decode newer SFF compliance codes
+ 
+Bit assignments match SFF-8472 Table 5-3 (byte 10, byte 62) and
+SFF-8636 Table 6-17 (bytes 133, 138). Gating byte 62 on byte 10
+bit 1 is correct, and the A0 buffer is always 256 bytes so the
+byte 62 read is in bounds. Nothing blocking; a few small items.
+ 
+[PATCH 1/2] ethdev: decode newer SFF compliance codes
+ 
+Info:
+- "FC: 64GFC" breaks the naming of every other entry in this
+  group, which all give MBytes/sec. 64GFC is 6400 MBytes/sec:
+ 
+	if ((data[10] & (1 << 1)) && (data[62] & (1 << 0)))
+		sff_output_field(d, name, "FC: 6400 MBytes/sec");
+ 
+- Refer to the ethtool commits 057c4fd and 75d6232 with
+  12 character hashes and the subject in ("...") form, so they
+  can be found without guessing.
+ 
