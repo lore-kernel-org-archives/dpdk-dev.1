@@ -2,63 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56168CA9ECF
-	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Oct 2026 18:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69DF6CA9EC7
+	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Oct 2026 18:22:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1BB2140279;
-	Sun, 11 Oct 2026 20:22:48 +0200 (CEST)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com
- [209.85.208.54]) by mails.dpdk.org (Postfix) with ESMTP id 06C934026D
- for <dev@dpdk.org>; Sun, 11 Oct 2026 20:22:46 +0200 (CEST)
-Received: by mail-ed1-f54.google.com with SMTP id
- 4fb4d7f45d1cf-6b167ffd132so1828577a12.1
- for <dev@dpdk.org>; Sun, 11 Oct 2026 11:22:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 132BB402AC;
+	Sun, 11 Oct 2026 20:22:51 +0200 (CEST)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com
+ [209.85.208.42]) by mails.dpdk.org (Postfix) with ESMTP id F2EFA402AC
+ for <dev@dpdk.org>; Sun, 11 Oct 2026 20:22:49 +0200 (CEST)
+Received: by mail-ed1-f42.google.com with SMTP id
+ 4fb4d7f45d1cf-6aaebeadf3cso1923570a12.3
+ for <dev@dpdk.org>; Sun, 11 Oct 2026 11:22:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791742966; x=1792347766; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=6FOVUv2m/jyb4ZQKx3jEd47f00orV8SaNE65cpr2UTs=;
- b=TngGvMqcrnf9ArozU90umb9GxMCnhz1AqebXF+QqMWF8gYoIbxCPUt8fSol2L4A+PW
- /+t8tsQmWkKTDdgM2LIaBNuSHGT+SOwSg+lpzJ6XLhE5ULp8Yw0QAG01tM9YBLbTtec1
- KXad/BrpYtOoiVVTEajccIJky1OrmkEl+cNGghdPg8+bg97CfCZN1xzzvKUodTi3wwCR
- az2tfenrnGMokJgXlS3uXsZtnr7RcORrssukvJCmwVQctSh/RYrfxnDclcXE2KEl9OQt
- 2JuB8FTfdnVqvzyZrGhQSa2H/g9LBDg0D9cOxDfHCgXOy8ZiWPwbzEul7J3kulcmFPb6
- hOhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791742966; x=1792347766;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1791742969; x=1792347769; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=6FOVUv2m/jyb4ZQKx3jEd47f00orV8SaNE65cpr2UTs=;
- b=WNswrQUCyJHx1X0IpPou4jX7iW9+LdHv5Zf568A1U1q5EED1AO3BigtOkVjcVQNEUf
- DdXefrWrANwZihZvp61NH4gvBOJAlM8uwHqKrRt64v1K579v7PNk2i9SmiEJ6MSQR42o
- cR3tPrn/m+LKuVhp4IMd3nQ9rMBgrQe1C1tZQY40p2XVJl3PHr8j6aDOW416QdJEfMSw
- vQZL6QK05XPFC39/Rh/fWNhe7/XEt+vLnan13DK0GLxMKyANzBQ/2TpOtJLCzBm95rXM
- oGNnwTr2ciDQsIcaxm3Y55A77XUofDFxDd2EiwMPZF/bys21sZwty/mdUo63bqYqu3wC
- HaCA==
-X-Gm-Message-State: AFq9FYIjhpttayzWBBnEw2pdT5f3RTkvDswiV09Yq7P8itOYBKleTVrT
- G8gyZ6noaGvnxrnJKfHbNtxzp7PAJBgR6J3U8UQR5RG2x0l5yd6Je6+3o9eWI7tt
-X-Gm-Gg: AYBFou2Ck0Qok8OA8EE7BOkHJEvf7k7I7cjkpQoS1ZfX50WDJ/HXmw0UDXr0uY/BeO6
- DPxPGA8YMXXwDkGpHSL1KErzipjr/Nctc5jxs9AvO7crNlmEgD6AzSwwUe6wecp3ZRabJIojPY2
- yRR5/Em8bhPRIWYzx29eMypeFHK5WQsBzN+Sy40oYrKEzA31xClfSRt4adkcfM5a0oxfFelMTY9
- +U9ECGSlHVD7Vbhw3FTb4OM1/sIgClUooyAhRlDsGu1FkTRpCVc1DqLvAs1/1TZlou5jDA3VC5u
- xcxUyKPH5q6oYea/1YR0N11YvR4AGfZmv8nkltSBoaSWjkDNdtfYV9C9uWQd1NaMQkINhUGPvN6
- Iu3X+lAKTiQEI0x9G3UthSZ3F6wajItwC744YU7omqrxvcWufHKR3hrbO4YyjvDJ+pt0TfWGKHX
- U6L40MtJ414bCzeqsiW1I/fAxKgtClDMtf5Q8NU3v7Gcf4fNCpyMtrdz2Xh7A=
-X-Received: by 2002:a05:6402:21cb:b0:6b1:c355:c7b3 with SMTP id
- 4fb4d7f45d1cf-6b1c355cdf1mr515327a12.25.1791742966251; 
- Sun, 11 Oct 2026 11:22:46 -0700 (PDT)
+ bh=dta+FCZ/l64EsAM7LFslwMPscZcnEsyk3AhFM56XajM=;
+ b=L8CzzUPLGcaJDp5KUiwky1fkS0vKGxNxFcoJxQjNG5m9D7a6dQP7dbZ6vqTekZ6k7w
+ NQOXOOwslKbkeeZaYM14e3/YysgxsxLsm4SAFR+S48lf/jfPchXfBYIJBDdi2LhOJvMI
+ KCYPTpJ21FfxCz7NAHEFvZS/eZdYgiCGwpMdLLfI12rknmP6jCaySktZpOfCHOwGkfzk
+ hBxQWngxE+5FC/IvzKfDzelgcTpAB5U5EOp+zQXG+YrkUD/JV8SW2HVvcRpyku2CxyzZ
+ kPZzSodgGl1C6/dWp771GAL5yVGoGNy8vz6C3ADisSgDxO0/0YJCMy84ZO46fpHIuL3W
+ en1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791742969; x=1792347769;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=dta+FCZ/l64EsAM7LFslwMPscZcnEsyk3AhFM56XajM=;
+ b=J8prKBMZECaB/WklRkEMyWzv1OiAJZ0qQI/ANz9aTXnOzSX2in6r5Vg/uAY0MUIsgl
+ 0w9IOZSBA24vGRkT04z1XGC7EGirE3Do14SALz+ACsA3l91pHU5rQW4iZeOjDcsXaDgv
+ 5ckGgNX3BXwUyn85P9QET5NQswpTD3wORmeQIT+K5Ei7Ukh1u1ZJGO86vcVwwuXcznva
+ b/qwAQQRTCpwOhpmlgkrYlusNSIHIWUiegSVaBReqmknSlLE6NFN0vrmc6EFxU73fjTN
+ ZTsm6VwkBKCQdwIMsbVYiyqt8HUGpHS+yH7yDJZB71xJuhI+qyXC88TLMQXSV79i+G8I
+ Zc7A==
+X-Gm-Message-State: AFq9FYLf/6ppNaRHsTgAxy8DO4fjxSAoS94KVIyTpLzo8g516Un5k8+p
+ dhbcmiwSlVs7+7eFTFMRcAgtKoaUwB1+sFv+rPEbINN/cjnUNB3l/xV0zKdPLU2ixXc=
+X-Gm-Gg: AYBFou1c099qmASdIRBDaR8VRoRGrpmhiN5/8jXXbveamYW4Doeeae/SNBvURu9PHLA
+ l6BOH5NeDQQYwFiki+umuwdFRm9MG+Z8rTh+magTjfgQGKogJ6otkAp9KCVd/hGp+NZrOI+pJWK
+ ZL9HiiWMtYmjOwevU6E2AbUyEpiR/+ZpXXyLN9znpoOWWGFvSy0tlrKgmszYWrLitpux8mSUT9F
+ w/Z4VHD5sIwN7bZNc3ZRoMRHKI7EU2qzn1K1lHmGytdyIrra375HZBUWjILaVRui03E3s7qna7X
+ Zylu5ShpW6ZpItEw/0W3INWcsETVB+sK+mxTR3a3XtbAFazv0yxd4AYjVQ7T+Lb2dE7zMnH7cxe
+ mgRxhb/+ihun5IQjqCBB8g6WzQaOQcOhAjEE9NuP/y9++Bhc//7uzBRJjJkDnb0c25Q/W/mt+j1
+ DNpMkvQbQRpwdbRH5LeXLSk1YanLofJeHWlJFqkQwVpPHpPrOrrzDZKPu80fM=
+X-Received: by 2002:a05:6402:51cd:b0:6ab:c31:cb56 with SMTP id
+ 4fb4d7f45d1cf-6b17c295ce8mr6597628a12.17.1791742969187; 
+ Sun, 11 Oct 2026 11:22:49 -0700 (PDT)
 Received: from dpdk.lxd ([80.233.48.229]) by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-6b179de7e23sm4083718a12.25.2026.10.11.11.22.44
+ 4fb4d7f45d1cf-6b179de7e23sm4083718a12.25.2026.10.11.11.22.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 11 Oct 2026 11:22:44 -0700 (PDT)
+ Sun, 11 Oct 2026 11:22:47 -0700 (PDT)
 From: Marat Khalili <qm2k21@gmail.com>
-To: 
-Cc: dev@dpdk.org, stephen@networkplumber.org, Marat Khalili <qm2k21@gmail.com>
-Subject: [PATCH 0/9] bpf: clean up and document ethdev callback synchronization
-Date: Sun, 11 Oct 2026 18:21:48 +0000
-Message-ID: <20261011182158.124246-1-qm2k21@gmail.com>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Marat Khalili <qm2k21@gmail.com>
+Cc: dev@dpdk.org,
+	stephen@networkplumber.org
+Subject: [PATCH 1/9] bpf: document packet callback unload sequence
+Date: Sun, 11 Oct 2026 18:21:49 +0000
+Message-ID: <20261011182158.124246-2-qm2k21@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261011182158.124246-1-qm2k21@gmail.com>
+References: <20261011182158.124246-1-qm2k21@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -74,69 +79,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The DPDK BPF library provides mechanisms to attach BPF programs to
-ethdev Rx/Tx callbacks (rte_bpf_eth_rx_elf_load and
-rte_bpf_eth_tx_elf_load). Safe unloading of these callbacks relies on
-a synchronization protocol between the control plane and datapath
-threads, built upon the assumption that each port/queue callback is
-serviced by at most one datapath thread.
+Add a detailed comment with the sequence diagram to bpf_pkt.c describing
+the current de-facto synchronization protocol on BPF program unload
+between the control plane and the data plane.
 
-This patch series improves the documentation, safety, and implementation
-of the callback synchronization mechanism:
+Signed-off-by: Marat Khalili <qm2k21@gmail.com>
+---
+ lib/bpf/bpf_pkt.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 64 insertions(+), 1 deletion(-)
 
-1. Documentation:
-   - Add an ASCII sequence diagram and comprehensive documentation in
-     bpf_pkt.c explaining the synchronization protocol between the
-     control plane and datapath during callback unload.
-   - Document the single-thread-per-queue datapath requirement in
-     public API headers.
-
-2. Safety and Validation:
-   - Enforce the single-threaded datapath assumption by rejecting Tx
-     callback installation when the device advertises
-     RTE_ETH_TX_OFFLOAD_MT_LOCKFREE.
-   - Add a new flag (RTE_BPF_ETH_F_SKIP_MT_CHECK) allowing applications
-     to override this check when application architecture guarantees
-     thread exclusivity.
-   - Add automated unit test test_bpf_elf_tx_mt_lockfree.
-
-3. Synchronization Cleanups:
-   - Remove a redundant control plane memory barrier (rte_smp_mb) on
-     callback unload.
-   - Simplify datapath inuse tracking (cbi->use) from an even/odd
-     counter to a simple boolean flag (0 and 1), simplifying
-     bpf_eth_cbi_wait().
-   - Switch cbi->use stores to explicit rte_atomic_store_explicit() with
-     relaxed memory order, avoiding implicit seq_cst operations in C11.
-   - Make cbi->cb atomic with relaxed atomic load/store operations,
-     eliminating C11 data-race undefined behavior while compiling to
-     identical machine code, and making it self-evident that cb is an
-     integral part of the synchronization mechanism on par with use.
-
-Note that a full rework of the synchronization protocol (e.g. replacing
-standalone memory barriers entirely with acquire/release semantics
-across variables) was intentionally avoided to keep each commit simple,
-localized, and non-controversial. More substantial architectural
-changes, such as that or extending the library to support concurrent
-multi-threaded dataplane execution, can be cleanly built on top of this
-work in the future.
-
-Marat Khalili (9):
-  bpf: document packet callback unload sequence
-  bpf: document ethdev callback threading limitations
-  bpf: reject Tx callback installation with MT_LOCKFREE
-  bpf: add callback flag to skip multi-thread check
-  bpf: remove redundant memory barrier on unload
-  bpf: simplify callback inuse tracking to boolean flag
-  bpf: reformat packet callback unload diagram
-  bpf: use relaxed stores for callback inuse tracking
-  bpf: make callback handle atomic with relaxed access
-
- app/test/test_bpf.c      | 123 ++++++++++++++++++++++++++++
- lib/bpf/bpf_pkt.c        | 172 +++++++++++++++++++++++++++++++--------
- lib/bpf/rte_bpf_ethdev.h |  11 ++-
- 3 files changed, 271 insertions(+), 35 deletions(-)
-
+diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
+index f072fdaaed..4223ef624e 100644
+--- a/lib/bpf/bpf_pkt.c
++++ b/lib/bpf/bpf_pkt.c
+@@ -21,9 +21,72 @@
+ #include "bpf_impl.h"
+ 
+ /*
+- * information about installed BPF rx/tx callback
++ * CP-DP synchronization mechanism
++ *
++ * After the callback is installed to a port/queue, removing it safely is a non-trivial task.
++ * The `rte_bpf` object can only be destroyed while the callback is not being executed,
++ * while the number of synchronization calls in the packet callback must be minimized.
++ *
++ * APIs `rte_eth_remove_rx_callback` and `rte_eth_remove_tx_callback` remove the callback from
++ * the callback list and upon return guarantee that it will not be called again,
++ * but not that any existing invocation of the callback has completed.
++ *
++ * Current synchronization mechanism relies on the following per-port/queue entities:
++ * 1. List of installed port/queue callbacks ("cbs" on the diagram);
++ * 2. Member `cb` of struct `bpf_eth_cbi`;
++ * 3. Member `use` of struct `bpf_eth_cbi`;
++ *
++ * BPF program is only executed if the first two are set, and increments `use` at the start and
++ * end of the callback execution so that in the safe state its value is even.
++ * This relies on only one thread calling the per-port/queue callback at a time.
++ *
++ * Unload processing starts with clearing the first two entities,
++ * then waits for `use` to become even before destroying the BPF program.
++ * The whole operation is protected by a control-plane-only spinlock (not shown on the diagram).
++ *
++ * Typical sequence of synchronization actions between CP and DP on unload is shown below:
++ * ```
++ *   +----+                +-----+         +-----+        +----+         +-----+          +----+
++ *   | CP |                | cbs |         | use |        | cb |         | bpf |          | DP |
++ *   +----+                +-----+         +-----+        +----+         +-----+          +----+
++ *     |                      |               |              |              |                |
++ *     |                      |<---------------------- fetch callback -----------------------|
++ *     |                      |               |              |              |                |
++ *     |                      |               |<------------- increment to odd --------------|
++ *     |                      |               |              |              |                |
++ *     |-- remove callback -->|               |              |              |       rte_smp_mb()
++ *     |                      |               |              |              |                |
++ *     |                      |               |              |<------ fetch non-NULL --------|
++ *     |                      |               |              |              |                |
++ *     |------------------- store NULL --------------------->|              |                |
++ *     |                      |               |              |              |                |
++ *   rte_smp_mb()             |               |              |              |                |
++ *     |                      |               |              |              |                |
++ *   rte_smp_mb()             |               |              |              |                |
++ *     |                      |               |              |              |                |
++ *     +-if use is odd        |               |              |              | if cb not NULL-+
++ *     | |                    |               |              |              |              | |
++ *     | +------------ fetch odd ------------>|              |              |<-- execute --+ |
++ *     | |                    |               |              |              |  BPF program | |
++ *     | +-while use is same  |               |              |              |              +-+
++ *     | | |                  |               |              |              |                |
++ *     | | +---------- fetch odd ------------>|              |              |      rte_smp_rmb()
++ *     | | |                  |               |              |              |                |
++ *     +-+-+                  |               |<------------- increment to even -------------|
++ *     |                      |               |              |              |                |
++ *     |------------- fetch even ------------>|              |              |                |
++ *     |                      |               |              |              |                |
++ *     |----------------- destroy BPF program and cleanup ----------------->|                |
++ *     |                      |               |              |              |                |
++ *   +----+                +-----+         +-----+        +----+         +-----+          +----+
++ *   | CP |                | cbs |         | use |        | cb |         | bpf |          | DP |
++ *   +----+                +-----+         +-----+        +----+         +-----+          +----+
++ * ```
+  */
+ 
++/*
++ * information about installed BPF rx/tx callback
++ */
+ struct __rte_cache_aligned bpf_eth_cbi {
+ 	/* used by both data & control path */
+ 	RTE_ATOMIC(uint32_t) use;    /*usage counter */
 -- 
 2.43.0
 
