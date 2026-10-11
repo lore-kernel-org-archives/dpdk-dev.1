@@ -2,65 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C269CA9ECF
-	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Oct 2026 18:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5BACA9ECF
+	for <dpdk-dev@archiver.kernel.org>; Sun, 11 Oct 2026 18:23:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54DA2402D9;
-	Sun, 11 Oct 2026 20:23:06 +0200 (CEST)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com
- [209.85.208.50]) by mails.dpdk.org (Postfix) with ESMTP id 3CD994028D
- for <dev@dpdk.org>; Sun, 11 Oct 2026 20:23:04 +0200 (CEST)
-Received: by mail-ed1-f50.google.com with SMTP id
- 4fb4d7f45d1cf-6afe29c08ccso1350989a12.1
- for <dev@dpdk.org>; Sun, 11 Oct 2026 11:23:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AB9234064A;
+	Sun, 11 Oct 2026 20:23:08 +0200 (CEST)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com
+ [209.85.208.45]) by mails.dpdk.org (Postfix) with ESMTP id 0228740656
+ for <dev@dpdk.org>; Sun, 11 Oct 2026 20:23:07 +0200 (CEST)
+Received: by mail-ed1-f45.google.com with SMTP id
+ 4fb4d7f45d1cf-6b1aa2848d2so883632a12.3
+ for <dev@dpdk.org>; Sun, 11 Oct 2026 11:23:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791742984; x=1792347784; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1791742986; x=1792347786; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=0Qe/FOdQTlVjyYHYYuIk7bhSsm12llxb6JQ84buohd4=;
- b=L/dQDmUGvATTEdeiKy8sIbwjmCz7WwAKZcaHQ/4sKBrJfXGuSMbbF/yvZHbb3MYyzA
- Wm+nrB8jx5H8zSke3Hsh0y7/m8kafSD1yoAnTUsRlOy2x8fF1iwLE8K/cMQVAU+rSAMh
- Okq3V5q/GpRQ3j8EKAP8h89b/+tXyPH/4NVG3RymFwgVi84Z4cKLU5CLxq9E0SXJeTNP
- l/ZT8E9dSs1xvRSUY0njTR2fUOpcW/uB7RcnsJBjqG90ODt2yPMK1oIKT9ctKXmzB4qE
- DuHRVGKB1qo5fYmUSEMYbDwXmdic3uSjaKv0apx12zCh8fZnNoVO4DdE2mo57FtYtYzq
- 6Evg==
+ bh=1ZZjX9Jjki/3yH7gOWlKzvIegbWEppKNuJdciDm4RNo=;
+ b=m50FVKlv1NuhqE6Iu00kYCkcN/O+hWT2l7HIj/ZHPGrbRIYv4jSgiPvIOK5jWHsfVQ
+ fp+3AWIE4ozPSJPshEaQpvcgUgP0qHZHajAHtX4CUsZt1NxVLb9Eb29rttQchtduJt0M
+ M4OL0do0PVOdcEQNJYrKItRGJAp3rVhTPRmFfcWUvFM/cw29Spv/pLPZArwKaylkooSF
+ nLtXcD9Idpj3Au4ifn9twrtqudz40bfn2/nvA8z3EMVCJofAjuuIfWRjCMHIaVq3TaS/
+ c1tPjgQqgTPsfCfezeb/ov92KfNJ7kyMYRvwcYUjacEW7Dh6IOsK4hj71/FBjwkg/Fe3
+ ROwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791742984; x=1792347784;
+ d=1e100.net; s=20260707; t=1791742986; x=1792347786;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=0Qe/FOdQTlVjyYHYYuIk7bhSsm12llxb6JQ84buohd4=;
- b=IYdUNIDN/eDzaQg72n+YDxPVMvP0QpRk/z7/JjdHL4i+gu+RQeAWIBkRmsr6agMSHm
- Qvgrs/6p+Te0MNELkt6vbG8uVS8LoafOFYMflBCoac5VRYw/jonU+HB07XR8yWguixnp
- CgvrdXMuyQEZNLZJvnG/am2jyIPQVLOGoiqqgzdBbx63Bur76bl8ecau1pyI98CfH3s8
- Y4zt/U+l80ueUgOrDmJAM4ZHrZ8ANaj11S0XYuZxDceY/9TcAvx8LSQgmNwWsW5tkAFr
- H6BKFcryEFJ1NMRHyZTzXF60CLz8tIf6ZPlEfBQR4kRFv7rLDkCCy7WroA8+SC1wU/iP
- vxHg==
-X-Gm-Message-State: AFq9FYIM3J4BpXvP5qFdJ5l7oPGG3Amn149/rb6UQSBlOZSqatRGdijH
- LhrfRhNz+PhPyT8cxi9FjiZPL0S+UWYcwpZdyXkM0W0m1BlWnxdOyneDkGAIqxkfX+4=
-X-Gm-Gg: AYBFou2muHW6MRPj7zeTpOv1M3N2+ZtKdyUnnlhUZ8J1A/4GrBZzjtzNoT1b4PrpoST
- kMqnwSWW+i3paZzkz+YaIh9Rv2Zc0U8sEumgl6xMt23ZgHr7hljD2DKSPzeU1h75JsWlFpFMkgz
- 8L+sQINisSNUum7Wlma63wy1N+cIYmn1zVLGAhV56TChXIlys6b1oWgwcCrjRPAm5DNCwGKLSpa
- xVFwr2/jRc9mZoLaiePm1GXBXMTVyn6CRjxnhc6UfsIo3VH0vR23V6YdppcCtBg6gPxL0i2UTWE
- xRAlRKZlxSP8Hde15U65e6BgB3BV1UIk1bUNXveEFw0Oea+GfqiNMXvSwreOroc9DQNIOVAIR5d
- JEtiprDhP8Gw8oY4o/Md7W/nEJNge730Qj6mijFbBfNrfujK4GlGTNd+DDRgOaFmbd2Y4ml5YgM
- ryE2c685d01tb+hgW3P0nww8YwF6GZVJ2Ehl4vOM9A2nBkmoksvl5t5rIVSLA=
-X-Received: by 2002:a05:6402:915:b0:6aa:f0e:a15f with SMTP id
- 4fb4d7f45d1cf-6b17c3e5a13mr7385622a12.38.1791742983785; 
- Sun, 11 Oct 2026 11:23:03 -0700 (PDT)
+ bh=1ZZjX9Jjki/3yH7gOWlKzvIegbWEppKNuJdciDm4RNo=;
+ b=lyfmZLzAw1sd8XoVRHBcdfOToccM+uLEwhj/1if2l+vF+TgSSI8FQwtKlXH20b8bFK
+ Ooz8PeOzoGmYTA65ECGehKvVg6+3CGtmBWASBzDNjwworftf/0bBFsIxRyywaGcR9wdg
+ taktemwesh+ATWKTjHV+qTAfuGmqNd3BnQPa3WB+MToN05mksKfdnmi675HmTxW0TPtg
+ peJfSUdaTWwDrcIZ3MC6oG8Ex/p3pVvn+TK3CWcCaaF7gWZej+Vll8RCIzu1czrDqXXH
+ xlojG91kaGCO9W3IzKX7FQnG6CpK0bB/lba7n2jVn+5kT+YyUFFIEzB3R9dkJ7mKH03+
+ WUaw==
+X-Gm-Message-State: AFq9FYJeTTjDNWmot2zUY7PRmWo3qCCf3cxulWu36VtK6kraqdNsuhmD
+ +tZdUtlTiKwrzWSqW24mMk3dhCKzOS3YYQjBCQUVPW7CfeGmmjBDElXkENIPgkH9uaY=
+X-Gm-Gg: AYBFou0NtifZv3cC1rsHH4OuUuCWb9jBBTNP7dLLgbzY02vVyhl7xjmlbfuME+XmrI/
+ v9g1j2w0LMQ7+LmqBrOWiyfMPGPXCG6932VZ9tE3HLq9agIq/jY2FqxL1vHgx8H37ch64XrjxL/
+ i7cQMxwWVdsfZoziABjQadw9hd5OZWih0S2+iIWS4yczw1jSTvwegC2BRVUNFOGh1CkcUxjxbx2
+ gULPMkXzcqFEbOibQDwKMPmx8hhQD7W4Q5vaYW6nzNexWbHwlsdbs8CfiYf153Mu+6kHAm77uQe
+ atc5dWYItFKPJzNM2upsO5ppmZKvUGGkKK+FyhDH9z79cO6OnTlEr24t1UH63ckFtVPjtPWmaJH
+ 7KoSe+0r1UljDJkV26O2n9KUQ5slvU8AcRpOH1fgO8ndTEJOdUb6pC/I4bvmdJNMIPCQCnyPBtT
+ iJ9mngfkIjyWu4UDoFs1qiIbQNSYfdj4rV5xlskqPtiAF+cbC1v8EvofAacDg=
+X-Received: by 2002:a05:6402:3244:b0:6b1:c43c:c2f2 with SMTP id
+ 4fb4d7f45d1cf-6b1c43cca4emr458983a12.1.1791742986499; 
+ Sun, 11 Oct 2026 11:23:06 -0700 (PDT)
 Received: from dpdk.lxd ([80.233.48.229]) by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-6b179de7e23sm4083718a12.25.2026.10.11.11.23.01
+ 4fb4d7f45d1cf-6b179de7e23sm4083718a12.25.2026.10.11.11.23.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 11 Oct 2026 11:23:02 -0700 (PDT)
+ Sun, 11 Oct 2026 11:23:05 -0700 (PDT)
 From: Marat Khalili <qm2k21@gmail.com>
 To: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
  Marat Khalili <qm2k21@gmail.com>
 Cc: dev@dpdk.org,
 	stephen@networkplumber.org
-Subject: [PATCH 7/9] bpf: reformat packet callback unload diagram
-Date: Sun, 11 Oct 2026 18:21:55 +0000
-Message-ID: <20261011182158.124246-8-qm2k21@gmail.com>
+Subject: [PATCH 8/9] bpf: use relaxed stores for callback inuse tracking
+Date: Sun, 11 Oct 2026 18:21:56 +0000
+Message-ID: <20261011182158.124246-9-qm2k21@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261011182158.124246-1-qm2k21@gmail.com>
 References: <20261011182158.124246-1-qm2k21@gmail.com>
@@ -79,58 +79,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Reformat the CP-DP synchronization sequence diagram in bpf_pkt.c by
-removing unnecessary vertical lines and re-centering arrow labels.
+Direct assignment to an atomic variable defaults to sequentially
+consistent memory order in C11. Since cross-thread memory ordering
+for packet callback execution and unload is already explicitly
+enforced by memory barriers, sequentially consistent stores are
+unnecessary and may emit redundant barrier instructions on weakly
+ordered architectures.
 
-This comment-only commit is intentionally kept separate to make the
-diff of the preceding semantic change more readable.
+Update bpf_eth_cbi_inuse() and bpf_eth_cbi_unuse() to use
+rte_atomic_store_explicit() with rte_memory_order_relaxed, matching
+the relaxed loads already used in bpf_eth_cbi_wait().
 
 Signed-off-by: Marat Khalili <qm2k21@gmail.com>
 ---
- lib/bpf/bpf_pkt.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ lib/bpf/bpf_pkt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
-index 7ae64ed7d0..ea7e240494 100644
+index ea7e240494..9dee001f0f 100644
 --- a/lib/bpf/bpf_pkt.c
 +++ b/lib/bpf/bpf_pkt.c
-@@ -52,27 +52,23 @@
-  *     |                      |               |              |              |                |
-  *     |                      |<---------------------- fetch callback -----------------------|
-  *     |                      |               |              |              |                |
-- *     |                      |               |<------------- store 1 -----------------------|
-+ *     |                      |               |<------------------ store 1 ------------------|
-  *     |                      |               |              |              |                |
-  *     |-- remove callback -->|               |              |              |       rte_smp_mb()
-  *     |                      |               |              |              |                |
-  *     |                      |               |              |<------ fetch non-NULL --------|
-  *     |                      |               |              |              |                |
-- *     |------------------- store NULL --------------------->|              |                |
-- *     |                      |               |              |              |                |
-- *   rte_smp_mb()             |               |              |              |                |
-- *     |                      |               |              |              |                |
-- *     +-while use is 1       |               |              |              | if cb not NULL-+
-- *     | |                    |               |              |              |              | |
-- *     | +------------ fetch 1 -------------->|              |              |<-- execute --+ |
-- *     | |                    |               |              |              |  BPF program | |
-- *     | |                    |               |              |              |              +-+
-+ *     |------------------- store NULL --------------------->|              | if cb not NULL-+
-+ *     |                      |               |              |              |              | |
-+ *   rte_smp_mb()             |               |              |              |<-- execute --+ |
-+ *     |                      |               |              |              |  BPF program | |
-+ *     +-while use is 1       |               |              |              |              +-+
-  *     | |                    |               |              |              |                |
-- *     | |                    |               |              |              |      rte_smp_rmb()
-+ *     | +------------ fetch 1 -------------->|              |              |      rte_smp_rmb()
-  *     | |                    |               |              |              |                |
-- *     +-+                    |               |<------------- store 0 -----------------------|
-+ *     +-+                    |               |<------------------ store 0 ------------------|
-  *     |                      |               |              |              |                |
-- *     |------------- fetch 0 --------------->|              |              |                |
-+ *     |-------------- fetch 0 -------------->|              |              |                |
-  *     |                      |               |              |              |                |
-  *     |----------------- destroy BPF program and cleanup ----------------->|                |
-  *     |                      |               |              |              |                |
+@@ -137,7 +137,7 @@ static struct bpf_eth_cbh tx_cbh = {
+ static __rte_always_inline void
+ bpf_eth_cbi_inuse(struct bpf_eth_cbi *cbi)
+ {
+-	cbi->use = BPF_ETH_CBI_INUSE;
++	rte_atomic_store_explicit(&cbi->use, BPF_ETH_CBI_INUSE, rte_memory_order_relaxed);
+ 	/* make sure no store/load reordering could happen */
+ 	rte_smp_mb();
+ }
+@@ -150,7 +150,7 @@ bpf_eth_cbi_unuse(struct bpf_eth_cbi *cbi)
+ {
+ 	/* make sure all previous loads are completed */
+ 	rte_smp_rmb();
+-	cbi->use = 0;
++	rte_atomic_store_explicit(&cbi->use, 0, rte_memory_order_relaxed);
+ }
+ 
+ /*
 -- 
 2.43.0
 
