@@ -2,65 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DEBCA9ED0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 21:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BB4CA9ED0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 21:10:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1CAA140374;
-	Mon, 12 Oct 2026 23:09:54 +0200 (CEST)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
- [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id 20FAD40272
- for <dev@dpdk.org>; Mon, 12 Oct 2026 23:09:53 +0200 (CEST)
-Received: by mail-wr1-f44.google.com with SMTP id
- ffacd0b85a97d-48b042c0759so1720227f8f.2
- for <dev@dpdk.org>; Mon, 12 Oct 2026 14:09:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3D8EC40612;
+	Mon, 12 Oct 2026 23:09:57 +0200 (CEST)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
+ [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id DE3E740612
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 23:09:55 +0200 (CEST)
+Received: by mail-wm1-f49.google.com with SMTP id
+ 5b1f17b1804b1-4a161d9b8c7so15841765e9.3
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 14:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791839393; x=1792444193; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1791839395; x=1792444195; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=fSjdKpgqIbNSOb9hKuixabnm79AqvOF22WFarq1mBgY=;
- b=Z5ePmNbi6lfNTkkiDJjuaKstzm+I01+SEIb/PZaL0p/tKVk0yzAf/b4+oazC18NMlt
- /jJhsecMZ01bwghVC/pJ29nTfYoVCwnhuFBzhnNG/ZhOLOLoD0l1NCCvKBN6Dj7VmIFY
- sfa9jy7KaAGcwTn+v78cdIwZW7BAwCBf4T8DY/9aD9c6JaTIVAvnt2n2H9G1mWPPON5o
- +LE7hyGLJqnzSvBuU1Lp7kiw/evDen/k/5sR2cigfXcHPMhvJHlnJMCCXMxAfyo9LvGr
- WtDw2RLwa4gBVmZusxrKs7Whe9RfUsCLu1Jn+6z+JjpRFjz39QYxw0e1cuGDdSJRPREQ
- 28Fg==
+ bh=joYsp6kVBvJhSutz1h1TOVb257uAg7RVOGUKe6Uq+1s=;
+ b=kmiGRLFaLmrQCv5ZCIsd6iKDen0faxScbNryoZfkfRjCn3mOcBfcT91YHlpkd8hKav
+ tYbeZKFrDPvgEiPeOHwCPZQOvTTLLf1IwjpKjBrD2GFjS1+3P+GATncfk0bqHVzzn7KP
+ XRU4crdcYoLJkYHxlm5SSgeopAAgZnOWZW7846joggRb1M7pRmvNxGxAV52wqW4JHh6z
+ 2+goDgF8txFY/JuMYLdOfTxZeQg5eGvTnkcToD8ewSbJTdyhzm6ek54tEyJwsNKC92A5
+ cgA9Kde5H91vwobos1i/YWBuxcAJVTE3OW5vzLVdYyzyoIex9tmDB/DpRhZ6JV+WGnHn
+ IO4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791839393; x=1792444193;
+ d=1e100.net; s=20260707; t=1791839395; x=1792444195;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=fSjdKpgqIbNSOb9hKuixabnm79AqvOF22WFarq1mBgY=;
- b=ETk1tjGCZfgzwgR+5bhGZ8Q2Lw2Tr8dYyJUxzVyY50FKrVMW/8r+V0bxggT3OJTk+Z
- ZA8PmycxHD6zffpCJGh7UqLcYVT43HYVylQmZYCIrArtH7ISG3cYfaOqwWghbWtBmhlN
- m0FpKLjHYN+7yagftmRi9TE3ySfi3W5mzL1lme4BLrlQmEtX5pArU1PgI0ObZk0hCRx+
- qhn5zxf14qE/lPPvoyDo3M4+9RntK/RfgCHREbvpQ2Qxa/ad8INWUYqiS/tgszrt5igj
- XgG2/vNaAAiwUFeGXzd64YoEeBDzq6B64zybr8GMISP6ady8lQZFnSSnOn/AW6qDl3QV
- wJwA==
-X-Gm-Message-State: AFq9FYIoOvO4yLsIYlclLQkPEHoS4VxO92ZftZWQyFTtMHvwm9pbhYBN
- iiBQEwqntuTe7/SKgIhNW47gA/qyNl32pyQ/5Gv5rpajT43DQUV5z3tPRnnSj9rNeTE=
-X-Gm-Gg: AYBFou2P/bOB4WARu8ijTFXrSjox6cPdJ/XDl8UkELsXN4zg65vj8Q5qZbQHu9prJEj
- O3KxhUrbcIgmJje8OZw2S2aD2K1+vO1Mvz10dsDc/Fxnkugz9+pLRuE+YweLywrFr4ONkTWVrhv
- INBPfQl0C3x3yCyzmjUyXhfQmPsrA3ECGbKYej2gM73pa4kb8fFfnoPEOTiDuB457Z5fcCPSCDw
- yCJkVyUMaUYjhs5hjlOo/jwmVsXpJuf4ShiBMdbvBtNIt6pQ58WtObmgD9+i2dSNPeGowMqlhJg
- lAL1OEiRlrQ40yKcBvMQNZqYe68ubP3lmqeGZipDkcZem7d71awb75sK2breg005/4YbVbm+tMU
- igElL93BQsShz9TCR6EXbpegWhHmOTxQBJXJy4/1g3HT9OwYphRXg9GFn2gqorzXhdnTdWcXGU+
- 1DKBEQl5bIOy2UhLZK8FflylTqcBaIFVjH3JS6hKlOaw3MADDJaqJtExqgGwNxIptwTtxNVw==
-X-Received: by 2002:a05:600c:698d:b0:4a1:98ed:7a79 with SMTP id
- 5b1f17b1804b1-4a198ed7aecmr111950815e9.8.1791839392634; 
- Mon, 12 Oct 2026 14:09:52 -0700 (PDT)
+ bh=joYsp6kVBvJhSutz1h1TOVb257uAg7RVOGUKe6Uq+1s=;
+ b=Ttu9zvGUjgWizJJ9oMYq1wqRgq/m/Tn9NMSEk7yoWAnuQz0LA+LyrtoVRiyGKouYJo
+ lFlY18W2cUnsTM++N4PIWEdZF3nKyZn2T7u2V0AKqGC6RKquUwDqyo/sJrYRwmv3vPsR
+ 0WgI3D/IfpOkxfl1Wt2tSSLupAxiT+xo0aRgcEaRHZUjtSL24IuqVW19xJqBJ2GorvBv
+ Ac1TQCC0OkDfRjEt0yNud8nbL/KnrdrwAW4xt6yVGokGlO0cpNC1DO7LqVsFUlCib7iR
+ Pwh7rlRuG4OFnn97Nq5D7IESLPqsQaWDrNYaGQH+E1I5mfWPYGDwMz3gdefMDeSu0VxY
+ WSYQ==
+X-Gm-Message-State: AFq9FYLnxSO9JiUXx1iRfmn1Eu/c4YV9PK3Iv/A+Q45mkXh+KTWxArT5
+ MVZIDv7DyR2vuDNTbp0UIb6ZvSd01ujeuAMqwAxWVv++Okwlk8OmDfvK
+X-Gm-Gg: AYBFou0SslNJDtUTco3L2ksJ60c02w9MHatnTjdL5TiGy9G2CeTcP0wMui2dp/PvUol
+ TUmbY1q258HXOkNUuBam14hZ0NmPaZVf9RuYNWziedusFWKBPIq1soDjeW8VIjxyNqFfJH6BoqV
+ kdWnxWP2aHF0qNI8YnlW3UsGqnD0a/sXskz6G7oTqNrRzUqEBCshkgoglnKU8UuwuNB0lIWgyip
+ xxK8iCWc29znoewTY9hKEXRjqGMKbbc8wNWR8bFDMTzuTkhF7taVlJfv0ao35eOS9aFzW69JD00
+ 1XDzBdRSnYlCHrVYPc7KsWfihiXA+LpfpB8wmtf91bMh8OVVM3iIAv3KA+zr2AMNOGJ7qbL41QD
+ 1C4XIUNzVGcR+PGPvYhSievSeUzNj6MxFdeHpTUhZmqugukdPeN3Ezrd1hazYs0m82TCF08O0dq
+ wNF8RcCXb60WyT1z240eFvR1csTHvbma5/P3c3JudMPCMilVr3OLX+d+iSK1s=
+X-Received: by 2002:a05:600c:3e8f:b0:4a0:1c0e:b057 with SMTP id
+ 5b1f17b1804b1-4a18e44653cmr211852635e9.4.1791839395377; 
+ Mon, 12 Oct 2026 14:09:55 -0700 (PDT)
 Received: from dpdk.lxd ([80.233.57.229]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4a18bf2caf4sm342208725e9.10.2026.10.12.14.09.51
+ 5b1f17b1804b1-4a18bf2caf4sm342208725e9.10.2026.10.12.14.09.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 12 Oct 2026 14:09:51 -0700 (PDT)
+ Mon, 12 Oct 2026 14:09:53 -0700 (PDT)
 From: Marat Khalili <qm2k21@gmail.com>
 To: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Marat Khalili <qm2k21@gmail.com>
+ Marat Khalili <qm2k21@gmail.com>, Ferruh Yigit <ferruh.yigit@amd.com>
 Cc: dev@dpdk.org,
-	stephen@networkplumber.org
-Subject: [PATCH v2 2/9] bpf: document ethdev callback threading limitations
-Date: Mon, 12 Oct 2026 21:09:09 +0000
-Message-ID: <20261012210917.161343-3-qm2k21@gmail.com>
+	stephen@networkplumber.org,
+	stable@dpdk.org
+Subject: [PATCH v2 3/9] bpf: reject Tx callback installation with MT_LOCKFREE
+Date: Mon, 12 Oct 2026 21:09:10 +0000
+Message-ID: <20261012210917.161343-4-qm2k21@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261012210917.161343-1-qm2k21@gmail.com>
 References: <20261011182158.124246-1-qm2k21@gmail.com>
@@ -80,39 +81,213 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Document the data plane limitation in the file docstring of
-rte_bpf_ethdev.h: packet callback execution expects only one
-thread per port/queue pair at a time, making concurrent bursts
-(such as with RTE_ETH_TX_OFFLOAD_MT_LOCKFREE, shared RX queues,
-or multi-threaded software PMDs) unsupported.
+The BPF ethdev packet callback synchronization mechanism expects only
+one dataplane thread per port/queue pair at a time. When
+RTE_ETH_TX_OFFLOAD_MT_LOCKFREE is enabled, multiple threads can invoke
+rte_eth_tx_burst() concurrently on the same queue without locks. This
+breaks the callback parity counter and can lead to use-after-free or
+deadlocks during BPF program unload.
 
-Rephrase the existing control plane multi-threading limitation
-to explicitly distinguish it from the data plane requirement.
+Reject BPF Tx callback installation with -ENOTSUP when
+RTE_ETH_TX_OFFLOAD_MT_LOCKFREE is enabled on the port or queue.
+Add a unit test in test_bpf verifying this rejection.
 
+Bugzilla ID: 2051
+Fixes: a93ff62a8938 ("bpf: introduce basic Rx/Tx filters")
+Cc: stable@dpdk.org
+
+Reported-by: Stephen Hemminger <stephen@networkplumber.org>
 Signed-off-by: Marat Khalili <qm2k21@gmail.com>
 ---
- lib/bpf/rte_bpf_ethdev.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ app/test/test_bpf.c | 103 ++++++++++++++++++++++++++++++++++++++++++++
+ lib/bpf/bpf_pkt.c   |  46 ++++++++++++++++++++
+ 2 files changed, 149 insertions(+)
 
-diff --git a/lib/bpf/rte_bpf_ethdev.h b/lib/bpf/rte_bpf_ethdev.h
-index 686fda8d94..cf3b4048f0 100644
---- a/lib/bpf/rte_bpf_ethdev.h
-+++ b/lib/bpf/rte_bpf_ethdev.h
-@@ -10,8 +10,12 @@
-  *
-  * API to install BPF filter as RX/TX callbacks for eth devices.
-  * Note that right now:
-- * - it is not MT safe, i.e. it is not allowed to do load/unload for the
-- *   same port/queue from different threads in parallel.
-+ * - in the data plane, it expects only one thread per port/queue pair at a time.
-+ *   Calling RX/TX burst functions concurrently on the same queue (e.g. when using
-+ *   RTE_ETH_TX_OFFLOAD_MT_LOCKFREE, shared RX queues, or multi-threaded
-+ *   software PMDs) is not supported.
-+ * - in the control plane, it is not MT safe, i.e. it is not allowed to do
-+ *   load/unload for the same port/queue from different threads in parallel.
-  * - though it allows load/unload at runtime
-  *   (while RX/TX is ongoing on given port/queue).
-  * - allows only one BPF program per port/queue,
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index 3205afaa63..02523984b5 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -4617,6 +4617,107 @@ test_bpf_elf_rx_load(load_elf_image_t load_elf_image)
+ 	return ret == 0 ? TEST_SUCCESS : TEST_FAILED;
+ }
+ 
++static int
++null_vdev_mt_setup(const char *name, uint16_t *port, struct rte_mempool *pool)
++{
++	struct rte_eth_conf conf = {
++		.txmode = {
++			.offloads = RTE_ETH_TX_OFFLOAD_MT_LOCKFREE,
++		},
++	};
++	struct rte_eth_txconf txconf = { };
++	struct rte_eth_rxconf rxconf = { };
++	int ret;
++
++	ret = rte_vdev_init(name, NULL);
++	TEST_ASSERT(ret == 0, "rte_vdev_init(%s) failed: %d", name, ret);
++
++	ret = rte_eth_dev_get_port_by_name(name, port);
++	TEST_ASSERT(ret == 0, "failed to get port id for %s: %d", name, ret);
++
++	ret = rte_eth_dev_configure(*port, 1, 1, &conf);
++	TEST_ASSERT(ret == 0, "failed to configure port %u: %d", *port, ret);
++
++	ret = rte_eth_tx_queue_setup(*port, 0, BPF_TEST_BURST, SOCKET_ID_ANY, &txconf);
++	TEST_ASSERT(ret == 0, "failed to setup tx queue port %u: %d", *port, ret);
++
++	ret = rte_eth_rx_queue_setup(*port, 0, BPF_TEST_BURST, SOCKET_ID_ANY,
++				     &rxconf, pool);
++	TEST_ASSERT(ret == 0, "failed to setup rx queue port %u: %d", *port, ret);
++
++	ret = rte_eth_dev_start(*port);
++	TEST_ASSERT(ret == 0, "failed to start port %u: %d", *port, ret);
++
++	return 0;
++}
++
++/* Test that installing a Tx filter is rejected when MT_LOCKFREE is enabled */
++static int
++test_bpf_elf_tx_mt_lockfree(load_elf_image_t load_elf_image)
++{
++	static const struct rte_bpf_arg prog_arg = {
++		.type = RTE_BPF_ARG_PTR,
++		.size = sizeof(struct dummy_net),
++	};
++	static const char null_dev[] = "net_null_bpf_mt";
++	struct rte_mempool *mb_pool = NULL;
++	struct rte_bpf *bpf = NULL;
++	uint16_t port = UINT16_MAX;
++	int ret;
++
++	mb_pool = rte_pktmbuf_pool_create("bpf_mt_test_pool", BPF_TEST_POOLSIZE,
++					  0, 0, RTE_MBUF_DEFAULT_BUF_SIZE,
++					  SOCKET_ID_ANY);
++	TEST_ASSERT_NOT_NULL(mb_pool, "failed to create mempool");
++
++	ret = null_vdev_mt_setup(null_dev, &port, mb_pool);
++	if (ret != 0)
++		goto fail;
++
++	bpf = load_elf_image(app_test_bpf_filter_o, app_test_bpf_filter_o_len, "filter",
++			     NULL, 0, &prog_arg);
++	if (bpf == NULL) {
++		printf("%s@%d: failed to load BPF filter image\n",
++		       __func__, __LINE__);
++		ret = TEST_FAILED;
++		goto fail;
++	}
++
++	/* Tx installation must fail with -ENOTSUP due to MT_LOCKFREE */
++	ret = rte_bpf_eth_tx_install(port, 0, bpf, 0);
++	if (ret != -ENOTSUP) {
++		printf("%s@%d: expected rte_bpf_eth_tx_install to return -ENOTSUP, got %d\n",
++		       __func__, __LINE__, ret);
++		ret = TEST_FAILED;
++		goto fail;
++	}
++
++	/* Rx installation on the same port must still succeed */
++	ret = rte_bpf_eth_rx_install(port, 0, bpf, 0);
++	if (ret != 0) {
++		printf("%s@%d: expected rte_bpf_eth_rx_install to succeed, got %d\n",
++		       __func__, __LINE__, ret);
++		ret = TEST_FAILED;
++		goto fail;
++	}
++	rte_bpf_eth_rx_unload(port, 0);
++	/* bpf is destroyed by rte_bpf_eth_rx_unload */
++	bpf = NULL;
++
++	ret = TEST_SUCCESS;
++
++fail:
++	if (bpf != NULL)
++		rte_bpf_destroy(bpf);
++
++	if (port != UINT16_MAX) {
++		rte_eth_dev_stop(port);
++		rte_vdev_uninit(null_dev);
++	}
++
++	rte_mempool_free(mb_pool);
++	return ret;
++}
+ 
+ static int
+ test_bpf_elf(void)
+@@ -4633,6 +4734,8 @@ test_bpf_elf(void)
+ 			ret = test_bpf_elf_load(elf_image_loaders[li]);
+ 		if (ret == TEST_SUCCESS)
+ 			ret = test_bpf_elf_tx_load(elf_image_loaders[li]);
++		if (ret == TEST_SUCCESS)
++			ret = test_bpf_elf_tx_mt_lockfree(elf_image_loaders[li]);
+ 		if (ret == TEST_SUCCESS)
+ 			ret = test_bpf_elf_rx_load(elf_image_loaders[li]);
+ 	}
+diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
+index 4223ef624e..eab85f7417 100644
+--- a/lib/bpf/bpf_pkt.c
++++ b/lib/bpf/bpf_pkt.c
+@@ -552,6 +552,48 @@ rte_bpf_eth_tx_unload(uint16_t port, uint16_t queue)
+ 	rte_spinlock_unlock(&cbh->lock);
+ }
+ 
++/*
++ * Check if the supplied port/queue pair is suitable for BPF callback execution.
++ */
++static int
++bpf_eth_check_mt(const struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue)
++{
++	struct rte_eth_txq_info qinfo;
++	struct rte_eth_conf conf;
++	int ret;
++
++	if (cbh->type == BPF_ETH_TX) {
++		ret = rte_eth_dev_conf_get(port, &conf);
++		if (ret != 0) {
++			RTE_BPF_LOG_LINE(ERR,
++				"%s(%u, %u): failed to get device configuration: %d;",
++				__func__, port, queue, ret);
++			return ret;
++		}
++
++		if ((conf.txmode.offloads & RTE_ETH_TX_OFFLOAD_MT_LOCKFREE) != 0) {
++			RTE_BPF_LOG_LINE(ERR,
++				"%s(%u, %u): MT_LOCKFREE Tx offload is enabled on port;",
++				__func__, port, queue);
++			return -ENOTSUP;
++		}
++
++		/*
++		 * Ignore errors from tx_queue_info_get: the PMD might not implement
++		 * txq_info_get (e.g. net/null), or the queue might not be set up yet.
++		 */
++		if (rte_eth_tx_queue_info_get(port, queue, &qinfo) == 0 &&
++				(qinfo.conf.offloads & RTE_ETH_TX_OFFLOAD_MT_LOCKFREE) != 0) {
++			RTE_BPF_LOG_LINE(ERR,
++				"%s(%u, %u): MT_LOCKFREE Tx offload is enabled on queue;",
++				__func__, port, queue);
++			return -ENOTSUP;
++		}
++	}
++
++	return 0;
++}
++
+ static int
+ bpf_eth_elf_install(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
+ 	struct rte_bpf *bpf, uint32_t flags)
+@@ -572,6 +614,10 @@ bpf_eth_elf_install(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
+ 	if (bpf->prm.nb_prog_arg != 1)
+ 		return -EINVAL;
+ 
++	rc = bpf_eth_check_mt(cbh, port, queue);
++	if (rc != 0)
++		return rc;
++
+ 	if (cbh->type == BPF_ETH_RX)
+ 		frx = select_rx_callback(bpf->prm.prog_arg[0].type, flags);
+ 	else
 -- 
 2.43.0
 
