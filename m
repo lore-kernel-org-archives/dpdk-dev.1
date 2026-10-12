@@ -2,65 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D128ACA9ED0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 21:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 234EFCC6B04
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 21:10:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1899440695;
-	Mon, 12 Oct 2026 23:10:11 +0200 (CEST)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
- [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 7A463402DA
- for <dev@dpdk.org>; Mon, 12 Oct 2026 23:10:09 +0200 (CEST)
-Received: by mail-wm1-f45.google.com with SMTP id
- 5b1f17b1804b1-49e73611928so27236235e9.1
- for <dev@dpdk.org>; Mon, 12 Oct 2026 14:10:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 48634406BC;
+	Mon, 12 Oct 2026 23:10:13 +0200 (CEST)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
+ [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id DC6614064E
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 23:10:11 +0200 (CEST)
+Received: by mail-wm1-f53.google.com with SMTP id
+ 5b1f17b1804b1-49ff680331aso18505025e9.3
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 14:10:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791839409; x=1792444209; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1791839411; x=1792444211; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=779+S6pOMElGNEzC0QJFMtO5inscG4w9SO7LoLWHINs=;
- b=PGlSHoWtrydLgq6fkOCoelN1cK20rvSIoAv7ql1NmzUEdKPn9SQExcj6P+Haw2JoQq
- +sNSwdBTkQ0LaTlwS+1/xis99M0baMUsBN0zB7jTCdDwR2ZfwiG9EosaG77AawSjZxL7
- nDMlhY8Re+Pm09jj12u+3y3pe87O0VTJTdKXcKKT8FC9qqGzyawbeBuFn+CZF27Aoyy4
- SGVj+W+5EhYONU1cNW2e5MamTPcsyyQNdRi5GtcDuQWQROJOCKZlffu0F2GaqH12KepB
- hrgmxyiKJzbsv93EM3RxnTLhRcGpdxU1Gyp9QV68NzcuVVZxiGFJZxy2z9CWzHjMVZqT
- 2mXQ==
+ bh=lOcJO4KNR6NBoVTesN4s6tNJTB+zBR8y82Gvk5fMt5g=;
+ b=Wq1vdX1JhvWW7WZumxUEnoMtdwGviUeiGC5EdF7g98U45ZwswVZwfjvR4fjOonOSKQ
+ r9XAF6QS1CuX8jaEbZwIzs92lYV2aYhtut20zfuPe/jDUMbJRiPmio/qeL+93xh/W5cm
+ mzHFeKJDzDv7vtznTpSUEToI30xLquH5YklnaUwcxcDS4I35UMWHcnA1Jc+iPL4lvBUG
+ ynHIiwyfh+TAZXHQnk/xHSHAt6LaSq8By53GQlWPLVnGVh9EM5PlhdDXCqBsRyTJIAAj
+ WPGMwwsF03Z/y+nrUxQjBs+TG+sL9vjAuddziZ2ereQoC3Cd5QMVKQ8zhzsFA9o1y8LH
+ pAWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791839409; x=1792444209;
+ d=1e100.net; s=20260707; t=1791839411; x=1792444211;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=779+S6pOMElGNEzC0QJFMtO5inscG4w9SO7LoLWHINs=;
- b=2F7fyXXyIq1VnzPUjdRAyAc6sBIaEXl90JSaMPObP27ouwL9yOofqRN4EcVz6s4jPq
- cAPxW1DMY3CERxKt7kpIFCtuecRGX+AYUe5+tHrhNyZiE0IRH2aoyNb2UQySI9jmdLy9
- UTaPRyiybzMyBbWcQ5kkR0/ppGvPKMcZwpeE7xJd3ROulcsAke1SBaXQQKUnS8ozQAwF
- EZCh+LUdQeoYgczS+ieWUjfAQYZ7pgwFGprxOPCRlbBEeCkaWbMHVkDpg7yGsP59lR4A
- zc2tUVJoOAUdi7Ce7YqWtbio/6Vq025PRNJO/aU+kiW289Nk72Azc7glRe/O/1sZOx+j
- slHg==
-X-Gm-Message-State: AFq9FYLJLniOEg8h2dl70O9+XLbhN7F9JbiX+hP4oc2v9IwCDHBRpSXN
- W9r814Mu0f3wh0ci0+skd7CZHu5oNPfjS5C7+7jnDxjOIKNH/Z3MkD4hB0E3JeEVQ5o=
-X-Gm-Gg: AYBFou04xArlO3vgGLjHrDNndVKX07IYAMRgJNrsG4R8HLuWKWAPQS4BUIuq08U9xJ9
- rksJr/+EG+qrj/2Q/lSS9V7PbsN1LCs3qK62q445JjKhGbfNcRWrpcbXhXhfiBByDdQDgiDSPY9
- ygTReGytVjBq+BtE/Jpi/tvb25VIfJCg/Cr9Km6ibpt0OpExfYckxz380awD/Ct9IJVBoCrVNgn
- DaD5uLiz/AjiN+F/Db43kkcpagpCxvmatg8/i7Ujk5lPDtu3fTvm5F7N9BH2tYmQsvf6c60p9qL
- sWsnWwetLjZtiasYOT4cTPP6hWR3MGYEUiAo6eFziSwFJFT/KL829mHn0dg/zOhbUgNrfKq7iQU
- DjZmKKMk852+nxKhwrZxgy6xZoi4wnncJecj8tWbAhXnPv1oFgkrAXmiWsha3mfV8Wq5ryozPla
- 1W6szp3y+zaXeZNgCZTh9P8cxgYsZtGOL1ve6SF9sdF/B346VkuJ3eGmjeJ8IYKwRQPuw+Jw==
-X-Received: by 2002:a05:600c:a011:b0:49e:6581:7baf with SMTP id
- 5b1f17b1804b1-4a18e447d8bmr197641425e9.2.1791839409042; 
- Mon, 12 Oct 2026 14:10:09 -0700 (PDT)
+ bh=lOcJO4KNR6NBoVTesN4s6tNJTB+zBR8y82Gvk5fMt5g=;
+ b=yb6rjQKcCNa3RjQnsj19Rsx0NFt8X8CHcOEx/xaUbahNF/HrtkMZ2SHHQ3PW8UhEJS
+ u/EeQP0VU+mJXYzxStjGXDyhw6dmKXQTuXOBs77kekACkzmcHSjzY7C62waM4gOPke5e
+ OxxhLEawGDlddFlfEmoDdQtFJuBsrYPU6lQRR7vsVPoZbK5rsEuV5xhtUeI1s5y05Bpi
+ CYBYcH4O9lQe2xWTsU9+6FeeUp/rusAV+6AtiuWk6rr1nxAeTR4dfQj+aWY65xOV3sBw
+ t/II85pFuLtJ2EvsL+6FwZOEZ9z+i1NgmSQd6LBj+lERjUuLePfbAsPUeDEHmDctWrf6
+ OB2Q==
+X-Gm-Message-State: AFq9FYLiE6a7p5eQKAUPRsWRQTTslq6cHeu8LhYU+Vv0dHUelC4NyQ4z
+ 3skmus8icZ9FIQUF8KxM3QaLqHsJHrGNjFLlypUqy1AU5X5T9sbq0eEg
+X-Gm-Gg: AYBFou2KYSw1ikEeyc/UKnqv59StHhK6En6ob0iLnENPRf98d5qbojjqZc4NIeyQp1X
+ 9rTzQN7/qOecazR72182hJ41gLmrjvvpTHoUt6hV1j+K/1Zv29Q1ht7X+mi3Oj2bZVLcquBWUHi
+ PulpdGZIZMhGGtkHVpuubCqwUbJh1e3N9FJ4Uwi1YaUUVEbTzXTSKYT7ZO5DKq9WMT68h4EZAds
+ PZ3tbfC5OL8FblHkM4avd2uXGN7nG23Q8VBvEgdbA8+3gn50eGKfSNXfk/4Ld5LowbgT0L9iKqT
+ adiKvN1iCGh86VeIjCW2d5ZR0QIE8igQLYEQdNs0OycUOyro4hhhD5A94sUjJ1GbB3TZBOxdBm4
+ L3xLreNd+pL3xwbSccyCsbFXotJkQrYtRyd7p/Iq9Pdxh5tMwuBXItadZCjSc6q/42prypUpxAz
+ Kvuf2h06A7OBJh205xcg3hbUbi9UEAiYpaJFEY28iuPSrdgvqhx13XFEgIIAs=
+X-Received: by 2002:a05:600c:8b64:b0:49d:174e:2a1e with SMTP id
+ 5b1f17b1804b1-4a18e498851mr210621715e9.19.1791839411429; 
+ Mon, 12 Oct 2026 14:10:11 -0700 (PDT)
 Received: from dpdk.lxd ([80.233.57.229]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4a18bf2caf4sm342208725e9.10.2026.10.12.14.10.07
+ 5b1f17b1804b1-4a18bf2caf4sm342208725e9.10.2026.10.12.14.10.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 12 Oct 2026 14:10:08 -0700 (PDT)
+ Mon, 12 Oct 2026 14:10:10 -0700 (PDT)
 From: Marat Khalili <qm2k21@gmail.com>
 To: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
  Marat Khalili <qm2k21@gmail.com>
 Cc: dev@dpdk.org,
 	stephen@networkplumber.org
-Subject: [PATCH v2 8/9] bpf: make callback handle atomic with relaxed access
-Date: Mon, 12 Oct 2026 21:09:15 +0000
-Message-ID: <20261012210917.161343-9-qm2k21@gmail.com>
+Subject: [PATCH v2 9/9] bpf: add callback flag to skip multi-thread check
+Date: Mon, 12 Oct 2026 21:09:16 +0000
+Message-ID: <20261012210917.161343-10-qm2k21@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261012210917.161343-1-qm2k21@gmail.com>
 References: <20261011182158.124246-1-qm2k21@gmail.com>
@@ -80,178 +80,116 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The callback handle member cb of struct bpf_eth_cbi is concurrently
-cleared by the control plane on unload and read by the datapath to
-decide whether to execute the BPF filter program. Without atomic typing,
-this concurrent access constitutes a data race in the C11 memory model,
-even though hardware pointer accesses are single-copy atomic and untorn.
+Add RTE_BPF_ETH_F_SKIP_MT_CHECK flag allowing callers to bypass the
+suitability check when installing BPF packet callbacks.
 
-Change cb to RTE_ATOMIC and use rte_atomic_load_explicit() and
-rte_atomic_store_explicit() with rte_memory_order_relaxed for all its
-accesses. On modern architectures this produces the exact same machine
-code while eliminating undefined behavior.
+This allows overriding rejections in cases where the port or queue is
+configured with multi-thread capabilities (such as MT_LOCKFREE),
+but the application guarantees that only one dataplane thread
+accesses the queue at a time.
 
-In addition, marking cb as atomic improves code self-documentation by
-making it immediately evident that cb is an active part of the cross-
-thread synchronization mechanism on par with use.
+Update the unit test to verify that callback installation succeeds
+when this flag is specified, and add a release note documenting the
+restriction and the override flag.
 
 Signed-off-by: Marat Khalili <qm2k21@gmail.com>
 ---
- lib/bpf/bpf_pkt.c | 42 +++++++++++++++++++++++++-----------------
- 1 file changed, 25 insertions(+), 17 deletions(-)
+ app/test/test_bpf.c                    | 20 ++++++++++++++++++++
+ doc/guides/rel_notes/release_26_11.rst |  5 +++++
+ lib/bpf/bpf_pkt.c                      |  8 +++++---
+ lib/bpf/rte_bpf_ethdev.h               |  5 ++++-
+ 4 files changed, 34 insertions(+), 4 deletions(-)
 
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index 02523984b5..0ab8aa8759 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -4692,7 +4692,27 @@ test_bpf_elf_tx_mt_lockfree(load_elf_image_t load_elf_image)
+ 		goto fail;
+ 	}
+ 
++	/* Tx installation must succeed when check is skipped with flag */
++	ret = rte_bpf_eth_tx_install(port, 0, bpf, RTE_BPF_ETH_F_SKIP_MT_CHECK);
++	if (ret != 0) {
++		printf("%s@%d: expected rte_bpf_eth_tx_install with SKIP_MT_CHECK to succeed, got %d\n",
++		       __func__, __LINE__, ret);
++		ret = TEST_FAILED;
++		goto fail;
++	}
++	rte_bpf_eth_tx_unload(port, 0);
++	bpf = NULL;
++
+ 	/* Rx installation on the same port must still succeed */
++	bpf = load_elf_image(app_test_bpf_filter_o, app_test_bpf_filter_o_len, "filter",
++			     NULL, 0, &prog_arg);
++	if (bpf == NULL) {
++		printf("%s@%d: failed to load BPF filter image\n",
++		       __func__, __LINE__);
++		ret = TEST_FAILED;
++		goto fail;
++	}
++
+ 	ret = rte_bpf_eth_rx_install(port, 0, bpf, 0);
+ 	if (ret != 0) {
+ 		printf("%s@%d: expected rte_bpf_eth_rx_install to succeed, got %d\n",
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index e282fa5581..a0a0161e39 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -366,6 +366,11 @@ API Changes
+     ``rte_event_port_profile_links_get`` and
+     ``rte_event_port_profile_unlink``
+ 
++* bpf: BPF packet callbacks can no longer be installed on
++  ``RTE_ETH_TX_OFFLOAD_MT_LOCKFREE`` ports and queues to prevent race
++  conditions on unload, but this safety feature can be overridden with
++  the new ``RTE_BPF_ETH_F_SKIP_MT_CHECK`` flag.
++
+ * reorder: Promoted the following API from experimental to stable:
+   ``rte_reorder_seqn``, ``rte_reorder_drain_up_to_seqn``,
+   ``rte_reorder_min_seqn_set`` and ``rte_reorder_memory_footprint_get``.
 diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
-index c5fa85bf84..0b59ce22f1 100644
+index 0b59ce22f1..7ccc8daa88 100644
 --- a/lib/bpf/bpf_pkt.c
 +++ b/lib/bpf/bpf_pkt.c
-@@ -85,7 +85,7 @@
- struct __rte_cache_aligned bpf_eth_cbi {
- 	/* used by both data & control path */
- 	RTE_ATOMIC(bool) use;    /* usage flag: true when in use, false otherwise */
--	const struct rte_eth_rxtx_callback *cb;  /* callback handle */
-+	RTE_ATOMIC(const struct rte_eth_rxtx_callback *) cb;  /* callback handle */
- 	struct rte_bpf *bpf;
- 	struct rte_bpf_jit jit;
- 	/* used by control path only */
-@@ -313,7 +313,7 @@ bpf_rx_callback_vm(__rte_unused uint16_t port, __rte_unused uint16_t queue,
- 	cbi = user_param;
+@@ -602,9 +602,11 @@ bpf_eth_elf_install(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
+ 	if (bpf->prm.nb_prog_arg != 1)
+ 		return -EINVAL;
  
- 	bpf_eth_cbi_inuse(cbi);
--	rc = (cbi->cb != NULL) ?
-+	rc = (rte_atomic_load_explicit(&cbi->cb, rte_memory_order_relaxed) != NULL) ?
- 		pkt_filter_vm(cbi->bpf, pkt, nb_pkts, 1) :
- 		nb_pkts;
- 	bpf_eth_cbi_unuse(cbi);
-@@ -330,7 +330,7 @@ bpf_rx_callback_jit(__rte_unused uint16_t port, __rte_unused uint16_t queue,
- 
- 	cbi = user_param;
- 	bpf_eth_cbi_inuse(cbi);
--	rc = (cbi->cb != NULL) ?
-+	rc = (rte_atomic_load_explicit(&cbi->cb, rte_memory_order_relaxed) != NULL) ?
- 		pkt_filter_jit(&cbi->jit, pkt, nb_pkts, 1) :
- 		nb_pkts;
- 	bpf_eth_cbi_unuse(cbi);
-@@ -346,7 +346,7 @@ bpf_tx_callback_vm(__rte_unused uint16_t port, __rte_unused uint16_t queue,
- 
- 	cbi = user_param;
- 	bpf_eth_cbi_inuse(cbi);
--	rc = (cbi->cb != NULL) ?
-+	rc = (rte_atomic_load_explicit(&cbi->cb, rte_memory_order_relaxed) != NULL) ?
- 		pkt_filter_vm(cbi->bpf, pkt, nb_pkts, 0) :
- 		nb_pkts;
- 	bpf_eth_cbi_unuse(cbi);
-@@ -362,7 +362,7 @@ bpf_tx_callback_jit(__rte_unused uint16_t port, __rte_unused uint16_t queue,
- 
- 	cbi = user_param;
- 	bpf_eth_cbi_inuse(cbi);
--	rc = (cbi->cb != NULL) ?
-+	rc = (rte_atomic_load_explicit(&cbi->cb, rte_memory_order_relaxed) != NULL) ?
- 		pkt_filter_jit(&cbi->jit, pkt, nb_pkts, 0) :
- 		nb_pkts;
- 	bpf_eth_cbi_unuse(cbi);
-@@ -383,7 +383,7 @@ bpf_rx_callback_mb_vm(__rte_unused uint16_t port, __rte_unused uint16_t queue,
- 
- 	cbi = user_param;
- 	bpf_eth_cbi_inuse(cbi);
--	rc = (cbi->cb != NULL) ?
-+	rc = (rte_atomic_load_explicit(&cbi->cb, rte_memory_order_relaxed) != NULL) ?
- 		pkt_filter_mb_vm(cbi->bpf, pkt, nb_pkts, 1) :
- 		nb_pkts;
- 	bpf_eth_cbi_unuse(cbi);
-@@ -400,7 +400,7 @@ bpf_rx_callback_mb_jit(__rte_unused uint16_t port, __rte_unused uint16_t queue,
- 
- 	cbi = user_param;
- 	bpf_eth_cbi_inuse(cbi);
--	rc = (cbi->cb != NULL) ?
-+	rc = (rte_atomic_load_explicit(&cbi->cb, rte_memory_order_relaxed) != NULL) ?
- 		pkt_filter_mb_jit(&cbi->jit, pkt, nb_pkts, 1) :
- 		nb_pkts;
- 	bpf_eth_cbi_unuse(cbi);
-@@ -416,7 +416,7 @@ bpf_tx_callback_mb_vm(__rte_unused uint16_t port, __rte_unused uint16_t queue,
- 
- 	cbi = user_param;
- 	bpf_eth_cbi_inuse(cbi);
--	rc = (cbi->cb != NULL) ?
-+	rc = (rte_atomic_load_explicit(&cbi->cb, rte_memory_order_relaxed) != NULL) ?
- 		pkt_filter_mb_vm(cbi->bpf, pkt, nb_pkts, 0) :
- 		nb_pkts;
- 	bpf_eth_cbi_unuse(cbi);
-@@ -432,7 +432,7 @@ bpf_tx_callback_mb_jit(__rte_unused uint16_t port, __rte_unused uint16_t queue,
- 
- 	cbi = user_param;
- 	bpf_eth_cbi_inuse(cbi);
--	rc = (cbi->cb != NULL) ?
-+	rc = (rte_atomic_load_explicit(&cbi->cb, rte_memory_order_relaxed) != NULL) ?
- 		pkt_filter_mb_jit(&cbi->jit, pkt, nb_pkts, 0) :
- 		nb_pkts;
- 	bpf_eth_cbi_unuse(cbi);
-@@ -484,7 +484,7 @@ static void
- bpf_eth_cbi_unload(struct bpf_eth_cbi *bc)
- {
- 	/* mark this cbi as empty */
--	bc->cb = NULL;
-+	rte_atomic_store_explicit(&bc->cb, NULL, rte_memory_order_relaxed);
- 
- 	/* make sure datapath doesn't use bpf anymore, then destroy bpf */
- 	bpf_eth_cbi_wait(bc);
-@@ -495,16 +495,21 @@ bpf_eth_cbi_unload(struct bpf_eth_cbi *bc)
- static void
- bpf_eth_unload(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue)
- {
-+	const struct rte_eth_rxtx_callback *cb;
- 	struct bpf_eth_cbi *bc;
- 
- 	bc = bpf_eth_cbh_find(cbh, port, queue);
--	if (bc == NULL || bc->cb == NULL)
-+	if (bc == NULL)
-+		return;
-+
-+	cb = rte_atomic_load_explicit(&bc->cb, rte_memory_order_relaxed);
-+	if (cb == NULL)
- 		return;
+-	rc = bpf_eth_check_mt(cbh, port, queue);
+-	if (rc != 0)
+-		return rc;
++	if ((flags & RTE_BPF_ETH_F_SKIP_MT_CHECK) == 0) {
++		rc = bpf_eth_check_mt(cbh, port, queue);
++		if (rc != 0)
++			return rc;
++	}
  
  	if (cbh->type == BPF_ETH_RX)
--		rte_eth_remove_rx_callback(port, queue, bc->cb);
-+		rte_eth_remove_rx_callback(port, queue, cb);
- 	else
--		rte_eth_remove_tx_callback(port, queue, bc->cb);
-+		rte_eth_remove_tx_callback(port, queue, cb);
+ 		frx = select_rx_callback(bpf->prm.prog_arg[0].type, flags);
+diff --git a/lib/bpf/rte_bpf_ethdev.h b/lib/bpf/rte_bpf_ethdev.h
+index cf3b4048f0..7a9f87e6cb 100644
+--- a/lib/bpf/rte_bpf_ethdev.h
++++ b/lib/bpf/rte_bpf_ethdev.h
+@@ -13,7 +13,8 @@
+  * - in the data plane, it expects only one thread per port/queue pair at a time.
+  *   Calling RX/TX burst functions concurrently on the same queue (e.g. when using
+  *   RTE_ETH_TX_OFFLOAD_MT_LOCKFREE, shared RX queues, or multi-threaded
+- *   software PMDs) is not supported.
++ *   software PMDs) is not supported and will be rejected at installation time
++ *   unless overridden by RTE_BPF_ETH_F_SKIP_MT_CHECK.
+  * - in the control plane, it is not MT safe, i.e. it is not allowed to do
+  *   load/unload for the same port/queue from different threads in parallel.
+  * - though it allows load/unload at runtime
+@@ -37,6 +38,8 @@ extern "C" {
+ enum {
+ 	RTE_BPF_ETH_F_NONE = 0,
+ 	RTE_BPF_ETH_F_JIT  = 0x1, /**< use compiled into native ISA code */
++	RTE_BPF_ETH_F_SKIP_MT_CHECK = 0x2,
++	/**< skip check for concurrent data plane thread usage */
+ };
  
- 	bpf_eth_cbi_unload(bc);
- }
-@@ -581,6 +586,7 @@ bpf_eth_elf_install(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
- 	struct rte_bpf *bpf, uint32_t flags)
- {
- 	int32_t rc;
-+	const struct rte_eth_rxtx_callback *cb;
- 	struct bpf_eth_cbi *bc;
- 	rte_rx_callback_fn frx;
- 	rte_tx_callback_fn ftx;
-@@ -625,18 +631,20 @@ bpf_eth_elf_install(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
- 		return -ENOMEM;
- 
- 	/* remove old one, if any */
--	if (bc->cb != NULL)
-+	if (rte_atomic_load_explicit(&bc->cb, rte_memory_order_relaxed) != NULL)
- 		bpf_eth_unload(cbh, port, queue);
- 
- 	bc->bpf = bpf;
- 	bc->jit = jit;
- 
- 	if (cbh->type == BPF_ETH_RX)
--		bc->cb = rte_eth_add_rx_callback(port, queue, frx, bc);
-+		cb = rte_eth_add_rx_callback(port, queue, frx, bc);
- 	else
--		bc->cb = rte_eth_add_tx_callback(port, queue, ftx, bc);
-+		cb = rte_eth_add_tx_callback(port, queue, ftx, bc);
-+
-+	rte_atomic_store_explicit(&bc->cb, cb, rte_memory_order_relaxed);
- 
--	if (bc->cb == NULL) {
-+	if (cb == NULL) {
- 		rc = -rte_errno;
- 		bpf_eth_cbi_cleanup(bc);
- 	} else
+ /**
 -- 
 2.43.0
 
