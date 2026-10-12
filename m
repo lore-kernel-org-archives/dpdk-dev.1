@@ -2,51 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EC4CA9ED0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 08:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DB2CA9ED1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 08:35:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3F24940272;
-	Mon, 12 Oct 2026 10:35:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 22A8D4028D;
+	Mon, 12 Oct 2026 10:35:18 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 0CFA240041
- for <dev@dpdk.org>; Mon, 12 Oct 2026 10:35:13 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3AE594026D
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 10:35:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791794114; x=1823330114;
+ t=1791794116; x=1823330116;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=e3YXkn2grP7fd3MxlKdJajzCVek7BzSvHAyoNggEUJ8=;
- b=Y1ToG0NgBOYjCgYQrSQgsosTvAoyj65S4LYFwTrBeELsfADIEwoby3V3
- zing/6tKBc9+9CF5zZ+8NQQlYnrEEkO4FNmv5/9bCnrGrO205RByeEOJM
- 6aLGkyYCwBxOaKEWcDUQFTu5ppWoKH+toWa3Kbs8ijp3V059aoBBbNmKX
- c7MhimAehOPE7H7gDKbl06SXDk1f1sKCUWEa3oPHYg5VKsl7A3l6bnLHF
- ReG7pUAloaRj83zB+YY02UKnwNVdIL0Ddh8L2VIXDqN2kZwJgEBjS92Jz
- AdMSN3v/o3xUvDU1j2G65J2p8/GidtWfaWH5pqiFqYDf+kplBOBT3et3v g==;
-X-CSE-ConnectionGUID: JBpJpXKsTEyEZTie7pdmsA==
-X-CSE-MsgGUID: ydnRMt4HRImtvakEZmeHQQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11932"; a="396025"
+ bh=fDCbm2AXpdgEHiPAARmJjP+YXFZeHUxiEhjFizAZo5s=;
+ b=Tog4Fy+JD8GPvISHQ0lxpegaECO2eUNF7kx17zK3YZgwpYjA26L5v4py
+ +98F4ymzuuMyeVhTnkotQuPmex48MOanT7Gn9RVkrwoLjFhC7EtpVC3QG
+ hnZUHfcJm8fz50Yn0tx4gaBI3w27kcZyCspTHvtDnaxLyiAhKOevqcjxJ
+ L9byYkJC/RAymIZUeDgzS6DTt7Q7kzUr3N0aE5O3yNGSnTyDyQ1mtc8vC
+ SlXGhgm9DRWPBpLyp9pISZ68bqsqZja7MxIvUF64j78PIciVoa8lKQSiF
+ Jn4e6G3b7nN67Yzi3gscF0p32263fnqczylktti1xQ8InQDdUfCmZdhGr Q==;
+X-CSE-ConnectionGUID: xsRYuuZ0QLGp23TXe3gDdg==
+X-CSE-MsgGUID: 0R/A4TjdQ3e+Xp3SE6XbPg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11932"; a="396031"
 X-IronPort-AV: E=Sophos;i="6.27,153,1787036400"; 
-   d="scan'208";a="396025"
+   d="scan'208";a="396031"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Oct 2026 01:35:13 -0700
-X-CSE-ConnectionGUID: pJQMwGN4Siu8eMvMnp2iJQ==
-X-CSE-MsgGUID: M63l/kF/R5+Slh/vgSAZHQ==
+ 12 Oct 2026 01:35:16 -0700
+X-CSE-ConnectionGUID: sRShsMtqR9uJHbU5P6ggww==
+X-CSE-MsgGUID: PMS8M+91RXaAD7Hu83WO6w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,153,1787036400"; 
-   d="scan'208";a="1164614"
+   d="scan'208";a="1164625"
 Received: from silpixa00401454.ir.intel.com ([10.20.224.230])
- by fmviesa009.fm.intel.com with ESMTP; 12 Oct 2026 01:35:12 -0700
+ by fmviesa009.fm.intel.com with ESMTP; 12 Oct 2026 01:35:15 -0700
 From: Emma Finn <emma.finn@intel.com>
-To: 
+To: Kai Ji <kai.ji@intel.com>, Pablo de Lara <pablo.de.lara.guarch@intel.com>
 Cc: dev@dpdk.org,
 	Emma Finn <emma.finn@intel.com>
-Subject: [PATCH v2 0/2] crypto/ipsec_mb: Add SHA3 and SHAKE support
-Date: Mon, 12 Oct 2026 08:35:03 +0000
-Message-ID: <20261012083506.754857-1-emma.finn@intel.com>
+Subject: [PATCH v2 1/2] crypto/ipsec_mb: Add SHA3 support.
+Date: Mon, 12 Oct 2026 08:35:04 +0000
+Message-ID: <20261012083506.754857-2-emma.finn@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261005123041.429121-1-emma.finn@intel.com>
+In-Reply-To: <20261012083506.754857-1-emma.finn@intel.com>
 References: <20261005123041.429121-1-emma.finn@intel.com>
+ <20261012083506.754857-1-emma.finn@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -62,18 +63,369 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add SHA3 and SHAKE hash algorithm support to the ipsec_mb PMD.
+Add SHA3-224, SHA3-256, SHA3-384, SHA3-512 and HMAC variants
+to the ipsec_mb PMD.
 
-Emma Finn (2):
-  crypto/ipsec_mb: Add SHA3 support.
-  crypto/ipsec_mb: Add SHAKE support.
+Signed-off-by: Emma Finn <emma.finn@intel.com>
+---
+ doc/guides/cryptodevs/aesni_mb.rst          |   8 +
+ doc/guides/cryptodevs/features/aesni_mb.ini |   8 +
+ doc/guides/rel_notes/release_26_11.rst      |   5 +
+ drivers/crypto/ipsec_mb/pmd_aesni_mb.c      |  30 +++
+ drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h | 212 +++++++++++++++++++-
+ 5 files changed, 257 insertions(+), 6 deletions(-)
 
- doc/guides/cryptodevs/aesni_mb.rst          |  10 +
- doc/guides/cryptodevs/features/aesni_mb.ini |  10 +
- doc/guides/rel_notes/release_26_11.rst      |   6 +
- drivers/crypto/ipsec_mb/pmd_aesni_mb.c      |  38 +++
- drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h | 260 +++++++++++++++++++-
- 5 files changed, 318 insertions(+), 6 deletions(-)
-
+diff --git a/doc/guides/cryptodevs/aesni_mb.rst b/doc/guides/cryptodevs/aesni_mb.rst
+index ab7a6138a8e..663b9f19d4b 100644
+--- a/doc/guides/cryptodevs/aesni_mb.rst
++++ b/doc/guides/cryptodevs/aesni_mb.rst
+@@ -61,6 +61,14 @@ Hash algorithms:
+ * RTE_CRYPTO_AUTH_KASUMI_F9
+ * RTE_CRYPTO_AUTH_SM3
+ * RTE_CRYPTO_AUTH_SM3 HMAC
++* RTE_CRYPTO_AUTH_SHA3_224
++* RTE_CRYPTO_AUTH_SHA3_224 HMAC
++* RTE_CRYPTO_AUTH_SHA3_256
++* RTE_CRYPTO_AUTH_SHA3_256 HMAC
++* RTE_CRYPTO_AUTH_SHA3_384
++* RTE_CRYPTO_AUTH_SHA3_384 HMAC
++* RTE_CRYPTO_AUTH_SHA3_512
++* RTE_CRYPTO_AUTH_SHA3_512 HMAC
+ 
+ AEAD algorithms:
+ 
+diff --git a/doc/guides/cryptodevs/features/aesni_mb.ini b/doc/guides/cryptodevs/features/aesni_mb.ini
+index ce6b43e48bd..73bb9f42633 100644
+--- a/doc/guides/cryptodevs/features/aesni_mb.ini
++++ b/doc/guides/cryptodevs/features/aesni_mb.ini
+@@ -69,6 +69,14 @@ SNOW3G UIA2  = Y
+ KASUMI F9    = Y
+ SM3          = Y
+ SM3 HMAC     = Y
++SHA3_224     = Y
++SHA3_224 HMAC = Y
++SHA3_256     = Y
++SHA3_256 HMAC = Y
++SHA3_384     = Y
++SHA3_384 HMAC = Y
++SHA3_512     = Y
++SHA3_512 HMAC = Y
+ 
+ ;
+ ; Supported AEAD algorithms of the 'aesni_mb' crypto driver.
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc86295da..826a0cf05cf 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -24,6 +24,11 @@ DPDK Release 26.11
+ New Features
+ ------------
+ 
++* **Updated AESNI_MB crypto driver.**
++
++  * Added support for SHA3-224, SHA3-256, SHA3-384, and SHA3-512 hash
++    algorithms and their HMAC variants.
++
+ .. This section should contain new features added in this release.
+    Sample format:
+ 
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
+index 4c5b6e70b51..c96d1453b8c 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
+@@ -302,6 +302,36 @@ aesni_mb_set_session_auth_parameters(IMB_MGR *mb_mgr,
+ 	case RTE_CRYPTO_AUTH_SM3_HMAC:
+ 		sess->template_job.hash_alg = IMB_AUTH_HMAC_SM3;
+ 		break;
++#endif
++#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
++	case RTE_CRYPTO_AUTH_SHA3_224:
++		sess->template_job.hash_alg = IMB_AUTH_SHA3_224;
++		auth_precompute = 0;
++		break;
++	case RTE_CRYPTO_AUTH_SHA3_224_HMAC:
++		sess->template_job.hash_alg = IMB_AUTH_HMAC_SHA3_224;
++		break;
++	case RTE_CRYPTO_AUTH_SHA3_256:
++		sess->template_job.hash_alg = IMB_AUTH_SHA3_256;
++		auth_precompute = 0;
++		break;
++	case RTE_CRYPTO_AUTH_SHA3_256_HMAC:
++		sess->template_job.hash_alg = IMB_AUTH_HMAC_SHA3_256;
++		break;
++	case RTE_CRYPTO_AUTH_SHA3_384:
++		sess->template_job.hash_alg = IMB_AUTH_SHA3_384;
++		auth_precompute = 0;
++		break;
++	case RTE_CRYPTO_AUTH_SHA3_384_HMAC:
++		sess->template_job.hash_alg = IMB_AUTH_HMAC_SHA3_384;
++		break;
++	case RTE_CRYPTO_AUTH_SHA3_512:
++		sess->template_job.hash_alg = IMB_AUTH_SHA3_512;
++		auth_precompute = 0;
++		break;
++	case RTE_CRYPTO_AUTH_SHA3_512_HMAC:
++		sess->template_job.hash_alg = IMB_AUTH_HMAC_SHA3_512;
++		break;
+ #endif
+ 	default:
+ 		IPSEC_MB_LOG(ERR,
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
+index 6dc90a98492..aad31b9f909 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
+@@ -768,6 +768,176 @@ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
+ 			}, }
+ 		}, }
+ 	},
++#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
++	{	/* SHA3-224 */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			{.auth = {
++				.algo = RTE_CRYPTO_AUTH_SHA3_224,
++				.block_size = 144,
++				.key_size = {
++					.min = 0,
++					.max = 0,
++					.increment = 0
++				},
++				.digest_size = {
++					.min = 1,
++					.max = 28,
++					.increment = 1
++				},
++				.iv_size = { 0 }
++			}, }
++		}, }
++	},
++	{	/* HMAC SHA3-224 */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			{.auth = {
++				.algo = RTE_CRYPTO_AUTH_SHA3_224_HMAC,
++				.block_size = 144,
++				.key_size = {
++					.min = 1,
++					.max = 65535,
++					.increment = 1
++				},
++				.digest_size = {
++					.min = 1,
++					.max = 28,
++					.increment = 1
++				},
++				.iv_size = { 0 }
++			}, }
++		}, }
++	},
++	{	/* SHA3-256 */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			{.auth = {
++				.algo = RTE_CRYPTO_AUTH_SHA3_256,
++				.block_size = 136,
++				.key_size = {
++					.min = 0,
++					.max = 0,
++					.increment = 0
++				},
++				.digest_size = {
++					.min = 1,
++					.max = 32,
++					.increment = 1
++				},
++				.iv_size = { 0 }
++			}, }
++		}, }
++	},
++	{	/* HMAC SHA3-256 */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			{.auth = {
++				.algo = RTE_CRYPTO_AUTH_SHA3_256_HMAC,
++				.block_size = 136,
++				.key_size = {
++					.min = 1,
++					.max = 65535,
++					.increment = 1
++				},
++				.digest_size = {
++					.min = 1,
++					.max = 32,
++					.increment = 1
++				},
++				.iv_size = { 0 }
++			}, }
++		}, }
++	},
++	{	/* SHA3-384 */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			{.auth = {
++				.algo = RTE_CRYPTO_AUTH_SHA3_384,
++				.block_size = 104,
++				.key_size = {
++					.min = 0,
++					.max = 0,
++					.increment = 0
++				},
++				.digest_size = {
++					.min = 1,
++					.max = 48,
++					.increment = 1
++				},
++				.iv_size = { 0 }
++			}, }
++		}, }
++	},
++	{	/* HMAC SHA3-384 */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			{.auth = {
++				.algo = RTE_CRYPTO_AUTH_SHA3_384_HMAC,
++				.block_size = 104,
++				.key_size = {
++					.min = 1,
++					.max = 65535,
++					.increment = 1
++				},
++				.digest_size = {
++					.min = 1,
++					.max = 48,
++					.increment = 1
++				},
++				.iv_size = { 0 }
++			}, }
++		}, }
++	},
++	{	/* SHA3-512 */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			{.auth = {
++				.algo = RTE_CRYPTO_AUTH_SHA3_512,
++				.block_size = 72,
++				.key_size = {
++					.min = 0,
++					.max = 0,
++					.increment = 0
++				},
++				.digest_size = {
++					.min = 1,
++					.max = 64,
++					.increment = 1
++				},
++				.iv_size = { 0 }
++			}, }
++		}, }
++	},
++	{	/* HMAC SHA3-512 */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			{.auth = {
++				.algo = RTE_CRYPTO_AUTH_SHA3_512_HMAC,
++				.block_size = 72,
++				.key_size = {
++					.min = 1,
++					.max = 65535,
++					.increment = 1
++				},
++				.digest_size = {
++					.min = 1,
++					.max = 64,
++					.increment = 1
++				},
++				.iv_size = { 0 }
++			}, }
++		}, }
++	},
++#endif
+ 	{	/* SM4 CBC */
+ 		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
+ 		{.sym = {
+@@ -894,7 +1064,17 @@ static const unsigned int auth_blocksize[] = {
+ 		[IMB_AUTH_SHA_512]		= 128,
+ 		[IMB_AUTH_ZUC_EIA3_BITLEN]	= 16,
+ 		[IMB_AUTH_SNOW3G_UIA2_BITLEN]	= 16,
+-		[IMB_AUTH_KASUMI_UIA1]		= 16
++		[IMB_AUTH_KASUMI_UIA1]		= 16,
++#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
++		[IMB_AUTH_SHA3_224]		= 144,
++		[IMB_AUTH_SHA3_256]		= 136,
++		[IMB_AUTH_SHA3_384]		= 104,
++		[IMB_AUTH_SHA3_512]		= 72,
++		[IMB_AUTH_HMAC_SHA3_224]	= 144,
++		[IMB_AUTH_HMAC_SHA3_256]	= 136,
++		[IMB_AUTH_HMAC_SHA3_384]	= 104,
++		[IMB_AUTH_HMAC_SHA3_512]	= 72
++#endif
+ };
+ 
+ /**
+@@ -928,7 +1108,17 @@ static const unsigned int auth_truncated_digest_byte_lengths[] = {
+ 		[IMB_AUTH_SHA_512]		= 64,
+ 		[IMB_AUTH_ZUC_EIA3_BITLEN]	= 4,
+ 		[IMB_AUTH_SNOW3G_UIA2_BITLEN]	= 4,
+-		[IMB_AUTH_KASUMI_UIA1]		= 4
++		[IMB_AUTH_KASUMI_UIA1]		= 4,
++#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
++		[IMB_AUTH_SHA3_224]		= 28,
++		[IMB_AUTH_SHA3_256]		= 32,
++		[IMB_AUTH_SHA3_384]		= 48,
++		[IMB_AUTH_SHA3_512]		= 64,
++		[IMB_AUTH_HMAC_SHA3_224]	= 28,
++		[IMB_AUTH_HMAC_SHA3_256]	= 32,
++		[IMB_AUTH_HMAC_SHA3_384]	= 48,
++		[IMB_AUTH_HMAC_SHA3_512]	= 64
++#endif
+ };
+ 
+ /**
+@@ -967,6 +1157,16 @@ static const unsigned int auth_digest_byte_lengths[] = {
+ #if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
+ 		[IMB_AUTH_SM3]			= 32,
+ 		[IMB_AUTH_HMAC_SM3]		= 32,
++#endif
++#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
++		[IMB_AUTH_SHA3_224]		= 28,
++		[IMB_AUTH_SHA3_256]		= 32,
++		[IMB_AUTH_SHA3_384]		= 48,
++		[IMB_AUTH_SHA3_512]		= 64,
++		[IMB_AUTH_HMAC_SHA3_224]	= 28,
++		[IMB_AUTH_HMAC_SHA3_256]	= 32,
++		[IMB_AUTH_HMAC_SHA3_384]	= 48,
++		[IMB_AUTH_HMAC_SHA3_512]	= 64
+ #endif
+ 	/**< Vector mode dependent pointer table of the multi-buffer APIs */
+ 
+@@ -1049,15 +1249,15 @@ struct __rte_cache_aligned aesni_mb_session {
+ 		/* *< auth operation generate or verify */
+ 		union {
+ 			struct {
+-				alignas(16) uint8_t inner[128];
++				alignas(16) uint8_t inner[144];
+ 				/* *< inner pad */
+-				alignas(16) uint8_t outer[128];
++				alignas(16) uint8_t outer[144];
+ 				/* *< outer pad */
+ 			} pads;
+ 			/* *< HMAC Authentication pads -
+ 			 * allocating space for the maximum pad
+-			 * size supported which is 128 bytes for
+-			 * SHA512
++			 * size supported which is 144 bytes for
++			 * SHA3-224
+ 			 */
+ 
+ 			struct {
 -- 
 2.43.0
+
