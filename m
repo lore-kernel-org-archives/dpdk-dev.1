@@ -2,71 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 234EFCC6B04
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 21:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB96CA9ED2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 21:22:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 48634406BC;
-	Mon, 12 Oct 2026 23:10:13 +0200 (CEST)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
- [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id DC6614064E
- for <dev@dpdk.org>; Mon, 12 Oct 2026 23:10:11 +0200 (CEST)
-Received: by mail-wm1-f53.google.com with SMTP id
- 5b1f17b1804b1-49ff680331aso18505025e9.3
- for <dev@dpdk.org>; Mon, 12 Oct 2026 14:10:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CE95240279;
+	Mon, 12 Oct 2026 23:22:39 +0200 (CEST)
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com
+ [209.85.210.178])
+ by mails.dpdk.org (Postfix) with ESMTP id EF17740272
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 23:22:38 +0200 (CEST)
+Received: by mail-pf1-f178.google.com with SMTP id
+ d2e1a72fcca58-88834d30002so960840b3a.1
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 14:22:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791839411; x=1792444211; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=lOcJO4KNR6NBoVTesN4s6tNJTB+zBR8y82Gvk5fMt5g=;
- b=Wq1vdX1JhvWW7WZumxUEnoMtdwGviUeiGC5EdF7g98U45ZwswVZwfjvR4fjOonOSKQ
- r9XAF6QS1CuX8jaEbZwIzs92lYV2aYhtut20zfuPe/jDUMbJRiPmio/qeL+93xh/W5cm
- mzHFeKJDzDv7vtznTpSUEToI30xLquH5YklnaUwcxcDS4I35UMWHcnA1Jc+iPL4lvBUG
- ynHIiwyfh+TAZXHQnk/xHSHAt6LaSq8By53GQlWPLVnGVh9EM5PlhdDXCqBsRyTJIAAj
- WPGMwwsF03Z/y+nrUxQjBs+TG+sL9vjAuddziZ2ereQoC3Cd5QMVKQ8zhzsFA9o1y8LH
- pAWA==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791840157;
+ x=1792444957; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=NMx1oIuMgTzftSO17/HTcGjRUeJopwGsZnHvuToXmDc=;
+ b=Z3C5qi2IqCfCx++hlNYM2D0I2zSR18sPAvS4eu+QVEtz8XDmBqsuDS3y+AlfuEM/sm
+ 2qYmzgy/wHR3SldQJQ6FxxtBohb/OJw0FFS5JVZ4xzt8Dkv8BTJ2+RUOOT/jRhNRk/mq
+ hryMyVqEIHZy7E6taH5sxZCzN/ZLQxHhBxdofLjsW+vbGJXWpdqcIBsu79l1r2fTl6Y+
+ te1m+CSMqDGsxdMgZY693sixd6aK0FAIC2sP0ZgkSkY1LFVAJ0GDtvLsPnC3ijNuA3g7
+ 9YUnXqZIpQaHaq8yMD5U7E/GG07/LrQpnlxiDA2l/v5EUPhgiaU/SlZTHvfsSa3kkZAf
+ QK1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791839411; x=1792444211;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=lOcJO4KNR6NBoVTesN4s6tNJTB+zBR8y82Gvk5fMt5g=;
- b=yb6rjQKcCNa3RjQnsj19Rsx0NFt8X8CHcOEx/xaUbahNF/HrtkMZ2SHHQ3PW8UhEJS
- u/EeQP0VU+mJXYzxStjGXDyhw6dmKXQTuXOBs77kekACkzmcHSjzY7C62waM4gOPke5e
- OxxhLEawGDlddFlfEmoDdQtFJuBsrYPU6lQRR7vsVPoZbK5rsEuV5xhtUeI1s5y05Bpi
- CYBYcH4O9lQe2xWTsU9+6FeeUp/rusAV+6AtiuWk6rr1nxAeTR4dfQj+aWY65xOV3sBw
- t/II85pFuLtJ2EvsL+6FwZOEZ9z+i1NgmSQd6LBj+lERjUuLePfbAsPUeDEHmDctWrf6
- OB2Q==
-X-Gm-Message-State: AFq9FYLiE6a7p5eQKAUPRsWRQTTslq6cHeu8LhYU+Vv0dHUelC4NyQ4z
- 3skmus8icZ9FIQUF8KxM3QaLqHsJHrGNjFLlypUqy1AU5X5T9sbq0eEg
-X-Gm-Gg: AYBFou2KYSw1ikEeyc/UKnqv59StHhK6En6ob0iLnENPRf98d5qbojjqZc4NIeyQp1X
- 9rTzQN7/qOecazR72182hJ41gLmrjvvpTHoUt6hV1j+K/1Zv29Q1ht7X+mi3Oj2bZVLcquBWUHi
- PulpdGZIZMhGGtkHVpuubCqwUbJh1e3N9FJ4Uwi1YaUUVEbTzXTSKYT7ZO5DKq9WMT68h4EZAds
- PZ3tbfC5OL8FblHkM4avd2uXGN7nG23Q8VBvEgdbA8+3gn50eGKfSNXfk/4Ld5LowbgT0L9iKqT
- adiKvN1iCGh86VeIjCW2d5ZR0QIE8igQLYEQdNs0OycUOyro4hhhD5A94sUjJ1GbB3TZBOxdBm4
- L3xLreNd+pL3xwbSccyCsbFXotJkQrYtRyd7p/Iq9Pdxh5tMwuBXItadZCjSc6q/42prypUpxAz
- Kvuf2h06A7OBJh205xcg3hbUbi9UEAiYpaJFEY28iuPSrdgvqhx13XFEgIIAs=
-X-Received: by 2002:a05:600c:8b64:b0:49d:174e:2a1e with SMTP id
- 5b1f17b1804b1-4a18e498851mr210621715e9.19.1791839411429; 
- Mon, 12 Oct 2026 14:10:11 -0700 (PDT)
-Received: from dpdk.lxd ([80.233.57.229]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4a18bf2caf4sm342208725e9.10.2026.10.12.14.10.09
+ d=1e100.net; s=20260707; t=1791840157; x=1792444957;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=NMx1oIuMgTzftSO17/HTcGjRUeJopwGsZnHvuToXmDc=;
+ b=Z8nh/rEtEVd5CwelbYfrFYhsoHCnxL5E29k7Fo9apVWA0Onn4o/byOUFyKZ5lnd/Ak
+ GCXBqErxS8RYIpwnYOyB3UPsT1ihwU0nUHmsTq87I7ENkat75H5Gjh/3NwMtnp/OgDcI
+ xs8AZmn73T5Sr9R+YjPTCph5BnrevHokJ6DzwokxynnbXMD9WXqpVVye8DxKYAIIjnRW
+ RKuW8IepeX/zay/kB+Nit+mhQ5kDy/4/hrE6k6x+E4Ra9fNOlJNvfukf7cLLbMIyONkh
+ Ekl4DKcnyeD07VJiUex90P2npRHxvpv0zlcb4jA5wPvo6VajK9o8sx2U59ueXR/HF8nB
+ Ll5g==
+X-Gm-Message-State: AFq9FYL7BSkaVdInVDxa+eo5oV0JMDVZe/OQNH9ClzzM5hCf3Ehl+FoT
+ PQN2sfPfooUY3YByuK4Pmh9zhHGJzq3/1pPjeWM1KtRIyo1QgeuzYYlNIfIGWqQMbDA=
+X-Gm-Gg: AYBFou2Fh76uGEAaNEjR2SPY6BYXtm1/eXlTymHLlKTFhR0ri6++9cqr65lQEqhHGmO
+ iHIAxgROmCA16ico7T++H6r92MHC8ontbDIjN5UhyeTJnsNdIC5HG1DK/1OHa1qjOOiIPBix6Q4
+ YmgxMC39TgVYwEOkqUQXNwtBGO1fTrVfjRLmuRyON8OQP7140pnmnU8DRyjGXXPV3jSETJPaX16
+ tmIFHu+KFd0FtlKFrUWygZl3Hws7XHjPy9XLmM9rxW8UxLnAW1kMsS5nN5nxHI7Ex0OxxxgSMTo
+ Zcaln87xJ4onuWeCsZBPJjwdzZD6sB3a2fVnHFNh1zdzbYcAzMTkZhLpQkiny9A67NSFVoY/f8F
+ cjLiDAO4fbH4MQK22Ck+7Qh5F7eOo03FGvh+HzhRYbeCFyYlZ0W0+DEiPP4tBrTs1KBORWVC7OO
+ dPNaiGMfzjuvtQ8LUgO7rZXh2CtJ1eveDAiPG7bng6mhdvnsfNxiferp50f9IvEWbX5EhuOPzWs
+ DnTQnYxPhQB+BzTQwYtqAcYzYFUYUOqeyOEUn8T
+X-Received: by 2002:a05:6a00:23c8:b0:87d:dc3c:1b5e with SMTP id
+ d2e1a72fcca58-897c634d89fmr8825849b3a.26.1791840156954; 
+ Mon, 12 Oct 2026 14:22:36 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-896b68ef2easm4398469b3a.7.2026.10.12.14.22.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 12 Oct 2026 14:10:10 -0700 (PDT)
-From: Marat Khalili <qm2k21@gmail.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Marat Khalili <qm2k21@gmail.com>
-Cc: dev@dpdk.org,
-	stephen@networkplumber.org
-Subject: [PATCH v2 9/9] bpf: add callback flag to skip multi-thread check
-Date: Mon, 12 Oct 2026 21:09:16 +0000
-Message-ID: <20261012210917.161343-10-qm2k21@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261012210917.161343-1-qm2k21@gmail.com>
-References: <20261011182158.124246-1-qm2k21@gmail.com>
- <20261012210917.161343-1-qm2k21@gmail.com>
+ Mon, 12 Oct 2026 14:22:36 -0700 (PDT)
+Date: Mon, 12 Oct 2026 14:22:34 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Prashant Gupta <prashant.gupta_3@nxp.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v9-S2 00/13] net/dpaa2 updates
+Message-ID: <20261012142234.2d44b51b@phoenix.local>
+In-Reply-To: <20261012070444.2149617-1-prashant.gupta_3@nxp.com>
+References: <20261009104900.1120550-1-prashant.gupta_3@nxp.com>
+ <20261012070444.2149617-1-prashant.gupta_3@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,116 +83,104 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add RTE_BPF_ETH_F_SKIP_MT_CHECK flag allowing callers to bypass the
-suitability check when installing BPF packet callbacks.
+On Mon, 12 Oct 2026 12:34:31 +0530
+Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
 
-This allows overriding rejections in cases where the port or queue is
-configured with multi-thread capabilities (such as MT_LOCKFREE),
-but the application guarantees that only one dataplane thread
-accesses the queue at a time.
+> Changes in v9:
+> - Address review comments for meter and policing support.
+> - Add meter resource cleanup during device close.
+> - Add policing capability checks.
+> - Validate burst size ranges before hardware programming.
+> - Fix software/hardware state consistency on profile and policy updates.
+> - Use standard FDIR reporting for flow-steered packets.
+> - Replace global flow miss configuration with a per-device default flow
+>   and remove the DPAA2_FLOW_CONTROL_MISS_FLOW environment variable.
+> - Document and gate minimum DPNI version requirement for 24-byte flow keys.
+> - Rework parser decode infrastructure and parser-result dumping.
+> - Parse additional tunnel and fragmented packet types.
+> - Fold parser-related fixes into the originating patches.
+> - Remove unused VXLAN offset helpers after soft parser removal.
+> - Move release note updates into the existing DPAA2 ethernet driver
+>   entry under New Features.
+> - Fix coding style issues reported during review.
+> 
+> Series overview:
+> - fix an integer overflow in the CCSR region mapping,
+> - set Tx confirmation on device init and support a larger burst size,
+> - support MPLS and PPPoE flow distribution, meter and policing, and the
+>   flow drop action, with a per-device default flow miss action,
+> - identify Rx mbuf hash information by FLC and add minimum key size
+>   support,
+> - restructure parser processing, parse tunnel and fragmented packet
+>   types, remove the unused soft parser driver and rename Rx queue flags.
+> 
+> Gagandeep Singh (7):
+>   net/dpaa2: set Tx confirmation on device init
+>   net/dpaa2: support larger burst size
+>   net/dpaa2: support MPLS and PPPoE flow distribution
+>   net/dpaa2: support meter and policing
+>   net/dpaa2: support flow drop action
+>   net/dpaa2: set default flow miss action per device
+>   net/dpaa2: identify Rx mbuf hash information by FLC
+> 
+> Hemant Agrawal (4):
+>   net/dpaa2: fix integer overflow in CCSR region mapping
+>   net/dpaa2: add minimum key size support
+>   net/dpaa2: restructure dpaa2 parser processing
+>   net/dpaa2: parse tunnel and fragmented packet types
+> 
+> Jun Yang (2):
+>   net/dpaa2: remove unused soft parser driver
+>   net/dpaa2: rename Rx queue flags
+> 
+>  doc/guides/nics/dpaa2.rst               |    1 +
+>  doc/guides/nics/features/dpaa2.ini      |    4 +-
+>  doc/guides/rel_notes/release_26_11.rst  |   15 +-
+>  drivers/net/dpaa2/dpaa2_ethdev.c        |   89 +-
+>  drivers/net/dpaa2/dpaa2_ethdev.h        |  218 +++-
+>  drivers/net/dpaa2/dpaa2_flow.c          |  633 +++------
+>  drivers/net/dpaa2/dpaa2_meter.c         |  804 ++++++++++++
+>  drivers/net/dpaa2/dpaa2_parse_dump.h    |  374 ------
+>  drivers/net/dpaa2/dpaa2_parser_decode.h | 1549 +++++++++++++++++++++++
+>  drivers/net/dpaa2/dpaa2_pmd_logs.h      |   67 +
+>  drivers/net/dpaa2/dpaa2_recycle.c       |   24 +-
+>  drivers/net/dpaa2/dpaa2_rxtx.c          |  351 +++--
+>  drivers/net/dpaa2/dpaa2_sparser.c       |  137 --
+>  drivers/net/dpaa2/dpaa2_sparser.h       |  202 ---
+>  drivers/net/dpaa2/dpaa2_tm.c            |   16 +-
+>  drivers/net/dpaa2/mc/dpni.c             |   11 +-
+>  drivers/net/dpaa2/mc/fsl_dpni.h         |   25 +-
+>  drivers/net/dpaa2/mc/fsl_dpni_cmd.h     |    3 +-
+>  drivers/net/dpaa2/meson.build           |    2 +-
+>  19 files changed, 3096 insertions(+), 1429 deletions(-)
+>  create mode 100644 drivers/net/dpaa2/dpaa2_meter.c
+>  delete mode 100644 drivers/net/dpaa2/dpaa2_parse_dump.h
+>  create mode 100644 drivers/net/dpaa2/dpaa2_parser_decode.h
+>  delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.c
+>  delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.h
+> 
 
-Update the unit test to verify that callback installation succeeds
-when this flag is specified, and add a release note documenting the
-restriction and the override flag.
+In general looks good but there still is this open question.
 
-Signed-off-by: Marat Khalili <qm2k21@gmail.com>
----
- app/test/test_bpf.c                    | 20 ++++++++++++++++++++
- doc/guides/rel_notes/release_26_11.rst |  5 +++++
- lib/bpf/bpf_pkt.c                      |  8 +++++---
- lib/bpf/rte_bpf_ethdev.h               |  5 ++++-
- 4 files changed, 34 insertions(+), 4 deletions(-)
+Review: [PATCH v9-S2 00/13] net/dpaa2 updates
 
-diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-index 02523984b5..0ab8aa8759 100644
---- a/app/test/test_bpf.c
-+++ b/app/test/test_bpf.c
-@@ -4692,7 +4692,27 @@ test_bpf_elf_tx_mt_lockfree(load_elf_image_t load_elf_image)
- 		goto fail;
- 	}
- 
-+	/* Tx installation must succeed when check is skipped with flag */
-+	ret = rte_bpf_eth_tx_install(port, 0, bpf, RTE_BPF_ETH_F_SKIP_MT_CHECK);
-+	if (ret != 0) {
-+		printf("%s@%d: expected rte_bpf_eth_tx_install with SKIP_MT_CHECK to succeed, got %d\n",
-+		       __func__, __LINE__, ret);
-+		ret = TEST_FAILED;
-+		goto fail;
-+	}
-+	rte_bpf_eth_tx_unload(port, 0);
-+	bpf = NULL;
-+
- 	/* Rx installation on the same port must still succeed */
-+	bpf = load_elf_image(app_test_bpf_filter_o, app_test_bpf_filter_o_len, "filter",
-+			     NULL, 0, &prog_arg);
-+	if (bpf == NULL) {
-+		printf("%s@%d: failed to load BPF filter image\n",
-+		       __func__, __LINE__);
-+		ret = TEST_FAILED;
-+		goto fail;
-+	}
-+
- 	ret = rte_bpf_eth_rx_install(port, 0, bpf, 0);
- 	if (ret != 0) {
- 		printf("%s@%d: expected rte_bpf_eth_rx_install to succeed, got %d\n",
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index e282fa5581..a0a0161e39 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -366,6 +366,11 @@ API Changes
-     ``rte_event_port_profile_links_get`` and
-     ``rte_event_port_profile_unlink``
- 
-+* bpf: BPF packet callbacks can no longer be installed on
-+  ``RTE_ETH_TX_OFFLOAD_MT_LOCKFREE`` ports and queues to prevent race
-+  conditions on unload, but this safety feature can be overridden with
-+  the new ``RTE_BPF_ETH_F_SKIP_MT_CHECK`` flag.
-+
- * reorder: Promoted the following API from experimental to stable:
-   ``rte_reorder_seqn``, ``rte_reorder_drain_up_to_seqn``,
-   ``rte_reorder_min_seqn_set`` and ``rte_reorder_memory_footprint_get``.
-diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
-index 0b59ce22f1..7ccc8daa88 100644
---- a/lib/bpf/bpf_pkt.c
-+++ b/lib/bpf/bpf_pkt.c
-@@ -602,9 +602,11 @@ bpf_eth_elf_install(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
- 	if (bpf->prm.nb_prog_arg != 1)
- 		return -EINVAL;
- 
--	rc = bpf_eth_check_mt(cbh, port, queue);
--	if (rc != 0)
--		return rc;
-+	if ((flags & RTE_BPF_ETH_F_SKIP_MT_CHECK) == 0) {
-+		rc = bpf_eth_check_mt(cbh, port, queue);
-+		if (rc != 0)
-+			return rc;
-+	}
- 
- 	if (cbh->type == BPF_ETH_RX)
- 		frx = select_rx_callback(bpf->prm.prog_arg[0].type, flags);
-diff --git a/lib/bpf/rte_bpf_ethdev.h b/lib/bpf/rte_bpf_ethdev.h
-index cf3b4048f0..7a9f87e6cb 100644
---- a/lib/bpf/rte_bpf_ethdev.h
-+++ b/lib/bpf/rte_bpf_ethdev.h
-@@ -13,7 +13,8 @@
-  * - in the data plane, it expects only one thread per port/queue pair at a time.
-  *   Calling RX/TX burst functions concurrently on the same queue (e.g. when using
-  *   RTE_ETH_TX_OFFLOAD_MT_LOCKFREE, shared RX queues, or multi-threaded
-- *   software PMDs) is not supported.
-+ *   software PMDs) is not supported and will be rejected at installation time
-+ *   unless overridden by RTE_BPF_ETH_F_SKIP_MT_CHECK.
-  * - in the control plane, it is not MT safe, i.e. it is not allowed to do
-  *   load/unload for the same port/queue from different threads in parallel.
-  * - though it allows load/unload at runtime
-@@ -37,6 +38,8 @@ extern "C" {
- enum {
- 	RTE_BPF_ETH_F_NONE = 0,
- 	RTE_BPF_ETH_F_JIT  = 0x1, /**< use compiled into native ISA code */
-+	RTE_BPF_ETH_F_SKIP_MT_CHECK = 0x2,
-+	/**< skip check for concurrent data plane thread usage */
- };
- 
- /**
--- 
-2.43.0
+Applies on top of v7-S1. v8 comments on release notes, the
+duplicated burst check, and 10/13 indent, naming and commit message
+are addressed. Two items from v8 remain.
 
+
+[PATCH 05/13] net/dpaa2: support meter and policing
+
+Warning: no answer yet on meter_lock. meter_create still drops the
+lock around dpaa2_mtr_hw_program(). If control operations can be
+concurrent, there is a race here; if not allowed, what is the point
+of meter_lock? Either hold it across check, program and insert, or
+drop the lock.
+
+Info: fsl_dpni.h still has the orphaned comment left behind when
+DPNI_POLICER_OPT_DO_NOT_RESET_COUNTERS was removed:
+
+-/**
+- * Do NOT reset counters generally for policer update
+- */
+-
