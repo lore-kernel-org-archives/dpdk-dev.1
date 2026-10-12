@@ -2,64 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A32ECA9ED0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 20:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AD0CA9ED0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 20:38:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A21240279;
-	Mon, 12 Oct 2026 22:38:38 +0200 (CEST)
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
- [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id E6CE440041
- for <dev@dpdk.org>; Mon, 12 Oct 2026 09:36:33 +0200 (CEST)
-Received: by mail-dy1-f174.google.com with SMTP id
- 5a478bee46e88-35b647aac23so168267eec.1
- for <dev@dpdk.org>; Mon, 12 Oct 2026 00:36:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2BA6E402C4;
+	Mon, 12 Oct 2026 22:38:39 +0200 (CEST)
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+ by mails.dpdk.org (Postfix) with ESMTP id 522EF40041
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 09:36:37 +0200 (CEST)
+Received: by mail-dl1-f51.google.com with SMTP id
+ a92af1059eb24-15ea896ddc8so2214953c88.0
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 00:36:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791790593; x=1792395393; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=Mnpf4GhoG38dIHHU/xNWb3NwOt+EzlL9XLcRzKCB/Bc=;
- b=TRkYiT10TxY3Jj1pagL9b8JOdH9ltjWQhQZP9wftsc8KM/anuLiiqa4P5ZLjNNVSua
- LDHmSLXNes5lRHzXRP7kk+llQjfGBsiWeUKl2BYVRlpgdwlywIHnmcIYXmZ7f6/wg3Mr
- a00CQRjMAfjYvsLgcY77dHZoHSSb2rY1GqK/wrtxggtm7hfAXSiwKw8ZOR+7PU+EUVgF
- dSie+JnodM5rGYyBHKKBIS5uLd41TxS6dcXP6sFjYQi79xE++5S79ub8MqJoKqRP4p0w
- WR+Kp18DF3nasCWVCiCIpFG7xufN8ciSzTX08xW4+qPFx71aDbjVyGLQmbVfG9FOEp7U
- AYSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791790593; x=1792395393;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1791790596; x=1792395396; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=Mnpf4GhoG38dIHHU/xNWb3NwOt+EzlL9XLcRzKCB/Bc=;
- b=wxzmeFazLJ1R8uJE4lSQdHqGDDfWVbxG7kcP3RveQcnP9eE3QfdQdSTVU1ALnZnGqd
- amZaXlsl0655SornWcLW767LVyfeyZ3cXoeiS525/npbo8OOC95hzfMcgw8NKyfW9jol
- NfQzN8xu6kW8GPBYSq/jp/aiPlgIuISG49/ZcR+Il9i5MbeeJs7K+5CFi48x3c9Fzc4L
- +dGpbBr1w6k6HSQj29p57VAtHJWSS5bXaQmTyLyEkudCkGbU77wlD5tbEMoj6XfE0TEc
- Rod4wQMTRPiijKrk48mmvqYMnF80XwPxejAQLRfD7CFz55eHo7ZOBjvq7E39n5YDAL88
- 2xAA==
-X-Gm-Message-State: AFq9FYIshW7Tb0MEOqC87zCX/lUXcXUAYEH96YIUf77MbNvz/P29MbnD
- p+2cNSMW79k5yPKpH8TtCiXR7GBK4ya7a/5rIS7IamgWGM0cFmyd8qViRJAwSw==
-X-Gm-Gg: AYBFou3CKT3ANT7LMUBgOKTeMNWZ+WyyIJKKQ2QtdiMIg6Kke/c5DDTnpCcJZ9LbzNJ
- 5/r5SU8iXX+P4wkOvaGA64udnVWJEH4cTcMndlUwN3IV3GL9ZZsp4/ACHRDZVzupfGHXLfVowQ0
- DlbM9mDhrYhe0y0RdX8ijGxBvQMCoPC4cVdtrtfbSR3wAVmzEzKLrBfJ294oxMzBUCGUHkQz4RN
- 5g3mFkBZ9asTkUietboDtYLfoYnWDU3kRN1hVIExHgrdKYVtyru2fMMSM2Jd4URm4pkpYpLArCi
- Dhazx8CW9q0NLTBVCNljQTKk32FR295/qJ0w+nry0X7sm7GOs4a38HsvaUG1501ZCf4rSUQJLGK
- u9SI8jdElNHBJBNcsC+1pZtj2zIdAQfNkE0lRw6VX5MsdKGMdQ9Ocg+NGTLwvboF+yq34XI8W+E
- 2mZgDNb9xQTSITpCad1SWGGliGA7FumnOWMQFX8M+5QPKsW5fh2vJKfzyWaU2Wew1SHHv+ptfJ
-X-Received: by 2002:a05:7023:885:b0:152:97a1:dd36 with SMTP id
- a92af1059eb24-16a12539614mr11937844c88.10.1791790592485; 
- Mon, 12 Oct 2026 00:36:32 -0700 (PDT)
+ bh=L1gEXOqpeY3ZRgkGBUwk7Y55wjnSJVmU1Q/28USp1cY=;
+ b=Kowyqdhk8OKflaoEXt0cPDMxbGjNniubThOVejwLgtksiCyBP55ong4NVUIPCtSFSa
+ 683/r9gae2GyWVcc2ZEkoQcRrRHUeLOayus9D3ChgTzrbYm27VP9nWslSVm9yP6ZtaCp
+ AZPM+XeaF1B+GWaJIDPcsO92Ccqfh4ZDJpN/ja+pkLDMzZJAJSw5TCZ9qfuHylSKGxz/
+ OkSj5jPkUsEbgHLmsfpyM2CiBTUhF8Nq2DEJfyd0fI1HbWf7/qqT0p1lZeEohrUmhaIs
+ ukhMcIyN3JHlJFJvKSN6/EXocuhl5zkBvdMb8FmqXPLK2qZCRhjKM7Bneq6C7oMk0XbE
+ ITmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791790596; x=1792395396;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=L1gEXOqpeY3ZRgkGBUwk7Y55wjnSJVmU1Q/28USp1cY=;
+ b=BR4lB2ZOf7moXHLYe3Ah/NoZ3KStJFIbNaz9y4v7n+FXuXqaPLeKMIuRJEC7mxlqqI
+ NY/kv3dbtmkJT3BDOw5Lp//2Ic/n7SagNF97hgLln+7WEGYO3cGTgNsRK0PqZaC/Hc+3
+ e35GlcOqPM27YIFJujF9RZwks28BQItn/UoyPoY0M6NsG7YkH7sJqe/elMCtrX65FoMV
+ H7iRx0r3rKw52HCVmyAoRRBa/gTAbCKoxyE3NnKxIYIKiir+hbWjzYnqhBvxXuIFt6a9
+ WwI0b0sLtq7kmc1lJxhvkJXDmK0vgtN7uvAVWK/7pfoIlFd5ayNcvaiN7IYyxRgWWEup
+ v5Yg==
+X-Gm-Message-State: AFq9FYIgdcVVgJoPIG27ci2mSfvAW3XZ1Bzcm3dYVD9mmFX4xCW9uIjR
+ IgTbGKEZ7YGB07786nS8eHDyNsJ0R12GHM8stwcR3Ox9VvQYPHO5Tt7098+lcw==
+X-Gm-Gg: AYBFou39wRtaiV5n7IKbynT6MKdAtEPx7gA0oWlCAgvhgPRpM7xkq0PjS7+cdj+6x1o
+ l8rJBPxZdxEC9Eu3vLW0MQKw/R53tCE9HqF4XEPDDNF+iZoQwOU2xXvOAE3k5PxlqIEsIkkttnm
+ Yr9pDLD/t2dGWFGGtynu/cBi0PbGM/XNF5HSxri2UUx/Op+kPNvx1zVS2s51dT/QotCG1ou67UR
+ oTDPj8you0wx7LBy5ohZ1IInWGfXHjNH5oebYTNjsdJucnBpeVXx9jVzzO1XMxs53/UG9JDhdn/
+ 6BxQvzDn2JN4l5cVGbt5MV+g3HkXx67UeoDDE1Xj/hVioIXU4z7p8xUbqylc4N8+iL4L0qycgYJ
+ /QOsabrGW5zwlsDNzyBa4GuU+1cnrZSo+iAfDYdAotG6WxVXe2/eGzU4dkDFGDtSY23vYbK8k+v
+ IGq2jRYsWTpCrQEuKMkwaAH0cMBSTjl7ij+tYYKY6zyZoyquQpnTSCrBd+pzXdek8wgBsmpUCX
+X-Received: by 2002:a05:7022:3a88:b0:143:3c9f:109e with SMTP id
+ a92af1059eb24-16a61d5bd6amr16471474c88.41.1791790595988; 
+ Mon, 12 Oct 2026 00:36:35 -0700 (PDT)
 Received: from aviuser.. ([192.19.252.250]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-169a1becb11sm25558463c88.4.2026.10.12.00.36.30
+ a92af1059eb24-169a1becb11sm25558463c88.4.2026.10.12.00.36.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 12 Oct 2026 00:36:31 -0700 (PDT)
+ Mon, 12 Oct 2026 00:36:35 -0700 (PDT)
 From: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
 To: dev@dpdk.org
-Cc: Long Li <longli@microsoft.com>,
-	Wei Hu <weh@microsoft.com>
-Subject: [PATCH 0/2] net/mana: fix transmit burst and add hardware TSO support
-Date: Mon, 12 Oct 2026 07:36:24 +0000
-Message-ID: <20261012073626.642397-1-tathagat.dpdk@gmail.com>
+Cc: Long Li <longli@microsoft.com>, stable@dpdk.org, Wei Hu <weh@microsoft.com>
+Subject: [PATCH 1/2] net/mana: fix transmit burst error handling
+Date: Mon, 12 Oct 2026 07:36:25 +0000
+Message-ID: <20261012073626.642397-2-tathagat.dpdk@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261012073626.642397-1-tathagat.dpdk@gmail.com>
+References: <20261012073626.642397-1-tathagat.dpdk@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Mailman-Approved-At: Mon, 12 Oct 2026 22:38:37 +0200
@@ -76,32 +78,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch series addresses transmit burst error handling and introduces
-hardware TCP Segmentation Offload (TSO) support for the Microsoft Azure
-MANA PMD.
+When a packet exceeds max_send_sge or when populating SGL segments fails,
+mana_tx_burst() skipped the failed packet using continue.
 
-Patch 1 fixes the transmit burst loop in mana_tx_burst() to terminate
-with break instead of continue upon packet errors. Under the DPDK
-rte_eth_tx_burst() API contract, callers expect a contiguous prefix of
-transmitted packets. Skipping a packet caused unsent packets to be treated
-as unsent and freed by caller, followed by a second free upon hardware CQE
-arrival.
+Under the DPDK rte_eth_tx_burst() API contract, callers assume that the
+returned count represents a contiguous prefix of transmitted packets
+(tx_pkts[0 .. nb_tx - 1]). Skipping a packet in the middle of a burst
+causes subsequent packets to be transmitted while the caller treats them
+as unsent and frees them. When hardware later generates CQEs for those
+transmitted packets, they are freed a second time, corrupting mbuf pools
+and free caches.
 
-Patch 2 adds support for hardware TCP Segmentation Offload (TSO),
-formatting SGL entries with packet headers in SGE0, handling GDMA work
-request flags, advertising RTE_ETH_TX_OFFLOAD_TCP_TSO, and updating
-the mana driver feature table.
+Fix this by terminating the burst loop with break upon packet errors so
+that pkt_sent accurately reflects the contiguous prefix sent.
 
-Tathagat Priyadarshi (2):
-  net/mana: fix transmit burst error handling
-  net/mana: add hardware TSO support
+Fixes: 7f322844f427 ("net/mana: send packets")
+Cc: stable@dpdk.org
 
- doc/guides/nics/features/mana.ini |   1 +
- drivers/net/mana/gdma.c           |   5 +
- drivers/net/mana/mana.h           |   6 +-
- drivers/net/mana/tx.c             | 179 +++++++++++++++++++++++++-----
- 4 files changed, 163 insertions(+), 28 deletions(-)
+Signed-off-by: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
+---
+ drivers/net/mana/tx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/mana/tx.c b/drivers/net/mana/tx.c
+index 10f2212b5d..d35030cbe5 100644
+--- a/drivers/net/mana/tx.c
++++ b/drivers/net/mana/tx.c
+@@ -281,7 +281,7 @@ mana_tx_burst(void *dpdk_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		if (m_pkt->nb_segs > priv->max_send_sge) {
+ 			DP_LOG(ERR, "send packet segments %d exceeding max",
+ 			       m_pkt->nb_segs);
+-			continue;
++			break;
+ 		}
+ 
+ 		/* Fill in the oob */
+@@ -432,7 +432,7 @@ mana_tx_burst(void *dpdk_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 
+ 		/* Skip this packet if we can't populate all segments */
+ 		if (seg_idx != m_pkt->nb_segs)
+-			continue;
++			break;
+ 
+ 		/* If we can at least queue post two WQEs and there are at
+ 		 * least two packets to send, use TX CQE suppression for the
 -- 
 2.43.0
 
