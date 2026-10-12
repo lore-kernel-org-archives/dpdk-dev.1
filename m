@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24609CA9ED1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 11:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B79ECA9ED1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 11:06:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 442B340658;
-	Mon, 12 Oct 2026 13:05:48 +0200 (CEST)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
- by mails.dpdk.org (Postfix) with ESMTP id E162640609;
- Mon, 12 Oct 2026 13:05:44 +0200 (CEST)
-X-QQ-mid: zesmtpsz4t1791803141t4881b864
-X-QQ-Originating-IP: Am536UinuHi3PBdp+8IOZuB0Vet2EeWOgPTMXa6T4kU=
+	by mails.dpdk.org (Postfix) with ESMTP id 488C24060B;
+	Mon, 12 Oct 2026 13:05:50 +0200 (CEST)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+ by mails.dpdk.org (Postfix) with ESMTP id 5CFA640609;
+ Mon, 12 Oct 2026 13:05:47 +0200 (CEST)
+X-QQ-mid: zesmtpsz4t1791803144tdec3eaef
+X-QQ-Originating-IP: RFHsGXevQy/Kr2FTriJ9iz1r5Zshi4/JKJe6xZiWRks=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.198.217.6])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 12 Oct 2026 19:05:39 +0800 (CST)
+ id ; Mon, 12 Oct 2026 19:05:42 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17623865939983491149
+X-BIZMAIL-ID: 17134969038939733904
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v8 06/16] net/txgbe: set i2c sda hold time
-Date: Mon, 12 Oct 2026 18:56:23 +0800
-Message-ID: <FF17B80750766D3F+20261012110518.1911-7-zaiyuwang@trustnetic.com>
+Subject: [PATCH v8 07/16] net/txgbe: fix link speed display info for 10G mode
+Date: Mon, 12 Oct 2026 18:56:24 +0800
+Message-ID: <CC8EB24C90DB238B+20261012110518.1911-8-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261012110518.1911-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,25 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OHv85Jr8Tf/k5xzzL02IlF8KolgTismAXAGeU+6nWU0qCPOnOuEJYJdv
- X/nkS53Or9uMHdmCx/D2s/mqyohSMMSEdBVQFpwwq+ssuwKsEgkc5+fyufUKwpZ8dRzWXEb
- 3B6lIvCNY9QbaueDtUeiKnQ+Sp8gDYNbV/hUvOrbxctkgbOBxwlOnCU8f22zUV6Um/a2F6A
- WAnWnKb8g17AbFpwF5dBX7iNr3VAUTD2lATlFH01j04EHPbA3CZTqfxEE9HfIezjZUYlpg+
- TUW7xeQp2uvUuO9UfetNHLJbkeP7gubMd9E0WyqJTQ13sgwFV7rWFRaa2LebJZBE2OeyHyk
- 1PWhgZ9jvrkx9dTHXBz0b85eDpzqlemY0um4oxWab/Gt9A1hyU4x+X+szltW/tYi3rDIx+M
- q8GCFefkfHOfuDyz0jdB558nokDrWKpM9zN66nmzU4UdJu6Vq0c+/faqqdb73gm/j3q0Jk2
- jIfR/R6GusJIdlowhtlX0tXCWjIhJuUned28igt9JeEh+uVvczdIBIviZ1VVoSLTFtVyvpZ
- hwYXdmkcQkxdkBHLMSOMd6z1aXtc/jWzErxTsjDphrjBrjzFJqBZeuF0nVIDuxSES1if0Yh
- Mlq4IyQlFOO2Ia/RvIHM/imCVusg3uKEjTiPkuOB3VaRM6fke8zr8G31gemisNFTpbMzUu7
- Q3O2DnkP16Y6rIDprAEJTO112gE66kaCJhm8fzKWFesWvGPVjfrY077sRW8D/LDzQHJtv7t
- TukTzGSCLn5le0/ktRELt9+RAS9ubf7HYXUtVQAYYz0fqp/88hwelGESfh1RV58NQ9aBVoR
- HDlbopJom4LBXedTubxiVNxdETK3M2qbo9+rc1Ru+KF9AZMG7w+NtvNURbqjneJtu084IKd
- ERWfkOvGCrykK8LT55UbqUj0w2+SgNAmPzDQr1x5UOFAL4wO//gebGl61WKXZtlhBxfVfiU
- 5OdUdcBJt4PW9TOg3mlHiNmRbHjhMfDQsCc3JciXr7JPPKbN38l9WBuDvLhP9M5KJlwiAe3
- 0FZfK00MZvlnRLohas4q+PbKz/5vmYsPL8Qv4HjS5lIcelwElVEcyXgmSYg1U3CUwgRexiE
- aeVyuxqM9sic3JSYSQxuK9VzNDooBjvLepxaaNayJUW
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
+X-QQ-XMAILINFO: Naw95TAcpOaRWyGY7agNOXIapXj2dF/Ot/sqZ7jeTNNxM/EeV2zN+kgf
+ eTxtPOAZ1yMc4C3CaQvhBuMFzMc7KrqV6xaejdqFTKUptGexeB1Iow4uki7OUDMCaN9FMPg
+ A2byh9OKVkDgDDrEtS3Ek91v2ki+3Rmta9MVOfHOjX1xU4tEQnafB6H0J/Fd4w/RAzODrZW
+ EfDkOY2s3ZWKgNUZDwYKwBjoL88R+yUw43gKgaaos+g6wLkL116QuZf8fxnQHBpAWCctmKT
+ YZEIHgYRhZpXK5eHo22h+0Uxj1fo8gOM5iG7QJgxqoU1LzStsUv/IyC6L9aoA3SaVa6NKgq
+ +0FjRjdsBEfJhsPULP5hb+W+AOlbX5fFM2nlpgWmjZAtlSRFfV5VJe6WvI0G0UsmmgVAcWq
+ 6obn9uj0Ra5WmdITgFQxwEtQOKNGS1W880fnhq2pzmNY7z7x42pmiNQkQ3thfvhgkyFMh+w
+ 6w14moF3Gj3FdR8DbVpxzIsree6nAGZniagSD0n5T4g1nLB21KOZONw1MsNNUXQKVQWR/xh
+ 7c3SHx/szRkABoFIlSKnT0WnWVfnds9x7H+LYUiA58bS34PI+OBxTpGyL0XgvsIrTnpDCxS
+ lAEV8X7/ipEonQLXyvZYzJN9vYHjULlLK3w9u86Mhp0GY5QPFuCWd3xvMHQ3CvF425ADjcX
+ GSsk/wqYJwjChcTf8Dlj5VTRXHxcDdGw0qSRBoGkquaiR+yCfV/QK7bkaviu6UmDDBLcaLY
+ p1nN6B4xeXvRL9c1zD3ylMlyaXk/+C6gx3z2bJ1vGnWf83ar5LEZHKIfKbdVD4yJ1S0YReT
+ vo+JYXM8zH7sSzbxNuV5EK4IWyn/r0Bn1qOO2scMbseVHbpU00Kf1Zs5kH1aQ96T1rONtI8
+ n1k98RJOpyvbsmfp+qhk77Yz1tQHMqlEq3IoI2rxCTTC2xT+HyqXeYVrkm4Zw9SFvH+VRCv
+ yjw7MPzr23IZz6pxumJSceQrWOzXDgS1FpaOz6zvNmoXY1s8BWXoWMMragk9MtD9pZU4IQp
+ YtLI0moe8JRiO81AkhduTa1UynHWSs5Zkmbzry/VNMYZ4Swc6C9qt7B1o9xx9jvkRNpHeoj
+ V+qM8ycXdcjJDE6uXhxf4KNQXOE3ywc4tTtAQevfUsXAAyTk+MZmFA/0kWyjql4RxM3KiAz
+ wiyY
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,49 +67,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The data_in_hold_time measured on the oscilloscope does not meet the
-hardware requirement, which can corrupt SFP EEPROM reads over I2C.
+When an AML40 port links up at 10G, DPDK reports the speed as 100M
+instead of 10G. The 10G link status bit is not recognized in
+txgbe_check_mac_link_aml40(), so any non-40G speed falls through to
+the default case (UNKNOWN) which is then reported as 100M.
 
-Set the I2C SDA hold time to 100 (0x64) I2C clock periods for both
-RX and TX in txgbe_i2c_start().
+Add the 10G port status bit recognition, so a 10G link is reported
+as 10G.
 
-Fixes: 00970f6398c8 ("net/txgbe: fix reading SFP module SFF-8472 data")
+Fixes: abf042d32b39 ("net/txgbe: add Amber-Lite 25G/40G NICs")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_phy.c  | 3 +++
- drivers/net/txgbe/base/txgbe_regs.h | 3 +++
- 2 files changed, 6 insertions(+)
+ drivers/net/txgbe/base/txgbe_aml40.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
-index 2fbe50e242..8b653f0aeb 100644
---- a/drivers/net/txgbe/base/txgbe_phy.c
-+++ b/drivers/net/txgbe/base/txgbe_phy.c
-@@ -1334,6 +1334,9 @@ static void txgbe_i2c_start(struct txgbe_hw *hw, u8 dev_addr)
- 	wr32(hw, TXGBE_I2CSCLTMOUT, 0xFFFFFF);
- 	wr32(hw, TXGBE_I2CSDATMOUT, 0xFFFFFF);
- 
-+	wr32m(hw, TXGBE_I2C_SDA_HOLD,
-+		TXGBE_I2C_SDA_RX_HOLD | TXGBE_I2C_SDA_TX_HOLD, 0x640064);
-+
- 	wr32(hw, TXGBE_I2CICM, 0);
- 	wr32(hw, TXGBE_I2CENA, 1);
- }
-diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
-index bf46a80862..b0042dc0d6 100644
---- a/drivers/net/txgbe/base/txgbe_regs.h
-+++ b/drivers/net/txgbe/base/txgbe_regs.h
-@@ -1610,6 +1610,9 @@ enum txgbe_5tuple_protocol {
- #define   TXGBE_I2CSTAT_MST          ((1U << 5))
- #define TXGBE_I2CSCLTMOUT            0x0149AC
- #define TXGBE_I2CSDATMOUT            0x0149B0 /*I2C SDA Stuck at Low Timeout*/
-+#define TXGBE_I2C_SDA_HOLD              0x1497C /* SDA hold time length reg */
-+#define TXGBE_I2C_SDA_RX_HOLD           0xff0000 /* SDA rx hold time length reg */
-+#define TXGBE_I2C_SDA_TX_HOLD           0xffff /* SDA tx hold time length reg */
- 
- /* port cfg Registers */
- #define TXGBE_PORTSTAT                  0x014404
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index 892dddd373..b52702b197 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -85,6 +85,9 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
+ 		if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) ==
+ 			TXGBE_CFG_PORT_ST_AML_LINK_40G)
+ 			*speed = TXGBE_LINK_SPEED_40GB_FULL;
++		else if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_10G) ==
++			TXGBE_CFG_PORT_ST_AML_LINK_10G)
++			*speed = TXGBE_LINK_SPEED_10GB_FULL;
+ 	} else {
+ 		*speed = TXGBE_LINK_SPEED_UNKNOWN;
+ 	}
 -- 
 2.55.0.windows.2
 
