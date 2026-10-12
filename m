@@ -2,82 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BABCA9ED1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 14:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBE4CA9EDD
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 15:40:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 85A0840272;
-	Mon, 12 Oct 2026 16:31:08 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 33AB84026D
- for <dev@dpdk.org>; Mon, 12 Oct 2026 16:31:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791815466;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=ZNDvJ0NFKKNJb3pZGCZRdMpHUD4j3kBRRSvcrJD5cbg=;
- b=TnvzrAd+Vv5rIeXWDvHFZGICKWL0ecwq7VKbWNUs9kDGxm+HYWCSyK9e6jWxpgNHGSsYWc
- tfTExBpodiICIQmuFwdA8lwX6Wm9PzH/UwVzAjjb0oDj2osa2+iqE9atotpjE9xVJXSyA3
- +BkV2MkHT6sIFXR5/lOxYOehpGDkz4I=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-230-zTPz1XYoNA-AKsKBxsXjSA-1; Mon, 12 Oct 2026 14:31:04 +0000
-X-MC-Unique: zTPz1XYoNA-AKsKBxsXjSA-1
-X-Mimecast-MFC-AGG-ID: zTPz1XYoNA-AKsKBxsXjSA_1791815463
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-5ba402bfbc5so1147627e87.0
- for <dev@dpdk.org>; Mon, 12 Oct 2026 07:31:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791815463; x=1792420263;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=ZNDvJ0NFKKNJb3pZGCZRdMpHUD4j3kBRRSvcrJD5cbg=;
- b=L4QREy0vW/77AYFSm+JeHNNIGBmyfXWzFFO7KYTyUtFZDgQSw/ypt6dcnMwgETEZ5d
- 5AZRXecrDHWrj1HUEC3KEDf7lmBJZZ3tbxQRIoSi8fLwOOIpKPvXi2FX/r4bIxkFh1vl
- E50HN8lFKNMCdS+YFcstZRj/KoBM2hDHxrpMTmWvBMrtkJfzGzrgGcCu7RwTgSenVO8m
- B10RVAB+UmmU3xhDo6bXYQStl9KnznqSyV9dMnudI6TiO55+Y1U+bO2lJE/E8Y/zaCSY
- eQR9jO02jAhtqYkKLLbWQ0yFbI2MupxJxCybcALzl7FKqz7icyD3L9TtldAzLi+iP8UJ
- 7TCw==
-X-Gm-Message-State: AFq9FYJkIz+OsTRiSZt/IpXDox8jpRgZ2NHySXN9fbMVPyqCYzt6w/YW
- Ff300N0TvocAauT9xDjscp/259DLAm79Hk40kapW6hS/b7cUnXQXkPBSrJNm6ZQyrw92E2LVgZ7
- BsiDykxJE0FKxbLs+O4Xslqy3Ri4jlEfPxEDF6Akd1X/rSQf65OchSwQxe6/n1cgTX+mRlYsa23
- tby7wYNNwKY3CehjYCk04=
-X-Gm-Gg: AYBFou3E64mzWSq70kcdb2V51JktzCYIG6bR1BWccBIYXwRfwieSrNZoN41u/xQly5J
- 8454xcPySU4twrSSGAUhJg6nPN3VT35aIK82zjK1yjmH5bBxfEFY4s0+v3Ncg2KK0JR6hbVg0ae
- 7CTjhU6dp6E5MKUoDeJudahCcHalrIip5akL7GPIi32AaB1/OD5kwfxTHhF9Rrbd1mlfkzUapnp
- HeJXLrBN6wKhcY8g1sLLYaf74BAMgub2vpeOj7cTJqD4a5G
-X-Received: by 2002:a05:6512:2315:b0:5ba:36c5:4c14 with SMTP id
- 2adb3069b0e04-5bcde6b373fmr2942656e87.12.1791815463388; 
- Mon, 12 Oct 2026 07:31:03 -0700 (PDT)
-X-Received: by 2002:a05:6512:2315:b0:5ba:36c5:4c14 with SMTP id
- 2adb3069b0e04-5bcde6b373fmr2942639e87.12.1791815462962; Mon, 12 Oct 2026
- 07:31:02 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7958040272;
+	Mon, 12 Oct 2026 17:40:48 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id BE7304026D
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 17:40:46 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 153D7169E;
+ Mon, 12 Oct 2026 08:40:42 -0700 (PDT)
+Received: from [10.122.29.139] (unknown [10.122.29.139])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F5713F7B4;
+ Mon, 12 Oct 2026 08:40:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+ t=1791819640; bh=eSBQxv0gZcjW+T+8EQ7BwUwMGNgPdpxzo82o/DutoMk=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=QmUTINPHVzbn01QOIwwp+Pm/UD6FjLhkX7z/nJFGUQQsPbVeNJeIkJmZvy9nMlCPH
+ QPCRcQtxtCkQQejTbRgUnbjhD4qdblQn0gqJ1h1D70ThqpqRRxkIQXffgV1SEXB3x8
+ 9CXTCN3ncgrEoijM0rk7LYhMi5ONrchf3k+adYkE=
+Message-ID: <7355c1fe-b9d3-493e-b8ee-c518ddbc58e5@arm.com>
+Date: Mon, 12 Oct 2026 10:40:27 -0500
 MIME-Version: 1.0
-References: <20261012141037.1451851-1-thomas@monjalon.net>
-In-Reply-To: <20261012141037.1451851-1-thomas@monjalon.net>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 12 Oct 2026 16:30:51 +0200
-X-Gm-Features: AclHuK8EbK2U-Q9_CVKqsaMnCRbuztVR-xpKArJGCLYCi-9if6dxBwM-Il1LROs
-Message-ID: <CAJFAV8yrTbrEyHh7i-h-1BPdhR5rawFUW0t_6Uw8KNA1uuewtw@mail.gmail.com>
-Subject: Re: [PATCH] eal: prefix lcore role values
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, Huisong Li <lihuisong@huawei.com>, 
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
- Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>, 
- Zhirun Yan <yanzhirun_163@163.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: UkytEpJZCN_X0wHDzYFRtGPge-8sOpDPuDZcbRO4f7c_1791815463
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/29] bpf: replace deprecated SMP barriers with C11
+ fences
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Marat Khalili <qm2k21@gmail.com>
+References: <20260729175715.165120-1-stephen@networkplumber.org>
+ <20261008233649.1260843-1-stephen@networkplumber.org>
+ <20261008233649.1260843-2-stephen@networkplumber.org>
+ <b9d3cb13-e34f-406d-ac18-345fede8bc5b@arm.com>
+ <20261009084744.046a7200@phoenix.local>
+Content-Language: en-US
+From: Wathsala Vithanage <wathsala.vithanage@arm.com>
+In-Reply-To: <20261009084744.046a7200@phoenix.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,31 +54,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 12 Oct 2026 at 16:11, Thomas Monjalon <thomas@monjalon.net> wrote:
->
-> From: Huisong Li <lihuisong@huawei.com>
->
-> Add the RTE_LCORE_ prefix to the lcore role enum values in
-> rte_lcore_role_t to follow DPDK naming conventions.
->
-> - ROLE_RTE      -> RTE_LCORE_ROLE_RTE
-> - ROLE_OFF      -> RTE_LCORE_ROLE_OFF
-> - ROLE_SERVICE  -> RTE_LCORE_ROLE_SERVICE
-> - ROLE_NON_EAL  -> RTE_LCORE_ROLE_NON_EAL
->
-> Old names are kept as macros aliasing to the new names to preserve
-> backward compatibility.
->
-> Suggested-by: Thomas Monjalon <thomas@monjalon.net>
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
-> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> ---
-> This patch has been reverted in June because our CI was not ready.
-> Applying it in 26.11 will be easier because there is no ABI check.
 
-Yes, lgtm for this release.
+On 10/9/26 10:48, Stephen Hemminger wrote:
+> On Fri, 9 Oct 2026 01:05:56 -0500
+> Wathsala Vithanage <wathsala.vithanage@arm.com> wrote:
+>
+>>>    /*
+>>>     * Marks given callback as used by datapath.
+>>>     */
+>>>    static __rte_always_inline void
+>>>    bpf_eth_cbi_inuse(struct bpf_eth_cbi *cbi)
+>>>    {
+>>> -	cbi->use++;
+>>> -	/* make sure no store/load reordering could happen */
+>>> -	rte_smp_mb();
+>>> +	rte_atomic_store_explicit(&cbi->use,
+>>> +		rte_atomic_load_explicit(&cbi->use, rte_memory_order_relaxed) + 1,
+>>> +		rte_memory_order_relaxed);
+>>> +
+>>> +	/* full barrier: count must be visible before cb is read */
+>>> +	rte_atomic_thread_fence(rte_memory_order_seq_cst);
+>> This is correct but why use a barrier when the above store itself could
+>> be SEQ_CST that
+>> synchronizes with load in bpf_eth_cbi_wait?
+> There are two different things be covered for safety here.
+> The counter and the callback pointer. The counter uses atomic
+> operations and the callback pointer is referenced without atomic.
+> AI explains it as:
+>
+> A seq_cst store on the counter is not enough. This is a store/load
+> pattern across two objects:
+>
+>    datapath: store use, load cb
+>    unload:   store cb,  load use
+>
+> At least one side has to see the other's store. Making the store
+> of use seq_cst does not order the datapath's later load of cb,
+> which is a plain load. On arm64 that compiles to stlr followed by
+> ldr, and the ldr can be satisfied before the stlr is visible.
+> Only stlr/ldar pairs are kept in order.
+>
+> It can be done without fences by making cb atomic and using
+> seq_cst for all four accesses (stlr + ldar on arm64). That touches
+> every callback and is a bigger change than replacing the barriers,
+> so I would rather do it as a follow-up if at all.
+>
+> There is no cost difference on x86. A seq_cst store is xchg and
+> the fence is lock addl, one locked instruction per burst either
+> way.
 
 
---=20
-David Marchand
+Agreed, barrier is the better implementation than converting
+everything into seq_cst.
+
+Reviewed-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+
+--wathsala
 
