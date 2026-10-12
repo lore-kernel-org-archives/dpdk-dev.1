@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF3CCA9EC5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 21:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F90CA9EC5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 21:37:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6F4A640279;
-	Mon, 12 Oct 2026 23:28:17 +0200 (CEST)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mails.dpdk.org (Postfix) with ESMTP id E560840272
- for <dev@dpdk.org>; Mon, 12 Oct 2026 23:28:16 +0200 (CEST)
-Received: by mail-pl1-f176.google.com with SMTP id
- d9443c01a7336-2e5fb79ce82so11635405ad.0
- for <dev@dpdk.org>; Mon, 12 Oct 2026 14:28:16 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CB5AE4027A;
+	Mon, 12 Oct 2026 23:37:57 +0200 (CEST)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
+ [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id 9ABE240272
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 23:37:56 +0200 (CEST)
+Received: by mail-pj1-f52.google.com with SMTP id
+ 98e67ed59e1d1-3ab066bef7dso1050745a91.1
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 14:37:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791840496;
- x=1792445296; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791841075;
+ x=1792445875; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=73ymaCejbjcOdoig3uyJmqNIC+KD36yLaVooIUheFYo=;
- b=j7QO3Tu2DA01UfVatLpMNPWtHeIeZmmIvItuZC12aZOBDxPX5vJkGay0AydriTV0iF
- l7E5isGfIbCGvWlExNo6nRxS/uY+/ijxgvXCCM0gP2wNwhn3WvJZr9JUKSkm8FjOp6+G
- EaguzEEDzWnQxNLcudJnnzmlP8jkvuAuYWkKvszjIUgKN1EISh2rwFOgwpUnBEQ6JjGc
- OnQwcl0wMbHlbKUalyYZ5JI7hJRlDN+TLyzH98ywSXff9FxsxjHfl5SwOAKfq2JQNtBK
- eZrMxl9PaZrXgwGHlO8Avd3DOu97M9vluyaJDwjYtrF0cWoQx9aTImQ+SjX/1r6sj8KV
- Fysg==
+ bh=ssN5xiyaQIlPTUwWbVpQ2ekYpUnXsqF3iLwyIj8cnE4=;
+ b=yhqtcu6FZnPFUiXFjJjJoHPEpK4A4pDCqLYJzdX5KSN8Sp7CJhZY7uxOfi5H/xech7
+ HiOpBWzB4JjM7Qlhp/inNJU2JfncTFXRoSd3xBF57t+EfT/L1A2ewIAE+Lm4SEchnGjW
+ 1eA9L/zsj6Sp1kURkCUTDpFGZkv8JiKvN/C8jbkErJc1xV+xFTF98CcocbNxJD65YxD0
+ FUBSoygECtR2uQu8ge1FXC162F3iWojONpVpo8IKShFof20D8jCAFKbzd1sdAvtxD1Vj
+ ZM1wg3QzS6fp25Pdez4EEg80zBYLFS8XCmBqKGDsgYhZQ4NV99iRtnA+uIyIUSWCp6GJ
+ PlxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791840496; x=1792445296;
+ d=1e100.net; s=20260707; t=1791841075; x=1792445875;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=73ymaCejbjcOdoig3uyJmqNIC+KD36yLaVooIUheFYo=;
- b=U7DH98O66PNpmt/3ejlDMTI6guEUP0f7/8+3/x3byVLRK86ogFWSQ6D8SSU1KOXKXD
- 5nJD2X4f8Hlj1LlKkIg7Uar0xZURv8EfTzhAt+jxfF+LpXB5+ToFSBdFEdot3kaoxwxO
- cHwlvQgNYdsdmf8XryHmO4GZd4TUSgin+DiPGsFtdQzZAYQ3KEeVWXc/VUlTYK9S4eBD
- w1RFPinY8Cc+LwYZ3tAVf4Fyk3Wv/CLuh3It3+NwlxKD5oLiXFPqSa1Q3GGPmAahDd9n
- voJ2lI4x/N4B/xxXrq8n7wZBnOdXJbveoRW2jHuMdEWSpV1+Ww1zq7I2xQ2pCIkz3sRC
- JEwQ==
-X-Gm-Message-State: AFq9FYJVhM0lot4VliAHm5IakMinrrhbhvFwY3dZ6lRBKNxuajmj6XD1
- 21+ZLqcp1xQLUHQBuDqA2V2g23KMqmEHsLerLVTleJNaIjQTCLaZLLKyiCrooJwVOpo=
-X-Gm-Gg: AYBFou2C/1VIWfnFMrMllvWZLlE6EOe8zn32pvy1+QIzSIWl1nf/SH3GsoX0Kcc5MST
- aA/caM026x0z0+u9k3067dLzsqZWF6zRQat7RH6BpiRmnTiGDO96XvNKLxvA/sa3+9j4n6qDJRm
- Yle2va5xHYPVGo8ld5/6kVBS6zf8gG0TKqr9AgT5zIC+h5dwYPZTZhpPQ1yrM7LGPuWjh9pD2xw
- stBQvtGBVJNyWs/qtm8fD6cuybYJDUExWYgteyDGh7Pu9+XKUcwm371wzFeDr9o5/JDB/9ZoEpK
- ZYFYc2tGHqa7F1wE2v7a0neOA5oJ32UZPXzHlrak754FKTn2C3632n85o9oo0EImh62Q/r5m5Mn
- NvkBJmCbzpVFmz9FjeC9Fx6fhRQR+lS/2QAbavgdnyn8+vbMYsgig8NXmV9fCsgWtWaInpqk4sx
- gm2HtlgKXI/JpswIBbrZyy+nylF1a//3YfWJFN73ScBu4a1n9ud3p8VfZ7SFHZZGAjjjAr6TJql
- 4eOysJ6Nq+aZgfG2JWTA1zsfq+0Lb4FQtxQuisb
-X-Received: by 2002:a17:902:f54f:b0:2e4:a7ec:2235 with SMTP id
- d9443c01a7336-2e842cd9d35mr89868855ad.39.1791840495915; 
- Mon, 12 Oct 2026 14:28:15 -0700 (PDT)
+ bh=ssN5xiyaQIlPTUwWbVpQ2ekYpUnXsqF3iLwyIj8cnE4=;
+ b=04c4x6TF5z1m/D12IFkRPreAAoOh6Ng9NliZZT0zlyG7M2AoSrZZ6G/oFCAxd9tSaF
+ n5l9eBbhRpTZ3s6li1KRT5mp34LfThLSvYDXrKfHY31kL5Mj6pKo75sXmDjWF+7bDOxB
+ 1vX+jKFJc6DtDmhiCxs+aADhGrKviLTGTCUDAMTlqsT2cs2jhYD6oHY6lX0+1xy71Fqk
+ JlpR28JBUDxeY3pjUdqcEN9xVWut1U6XZWCHshB3O61nBjwAEF7PN/myrnIWEUDJUHap
+ v8ZIp2lb0K2C2zq8bjgibBnBRZgGM9A4hXuCuQnlBtAWz/RXL6TS3K+P3iZEC+GmDnB0
+ Txkw==
+X-Gm-Message-State: AFq9FYK+1fzyIqmLW+LP/+Orc5+dZiiBZapmhkkUXseCIG+I0KpD96Wl
+ RbvPcN2hbhe8QPEZbQgPeOPNMTpMqwDEAtt6bE6OGTNr6yPCGHfzKE6O8IeTZah14y4=
+X-Gm-Gg: AYBFou3D/3cN2H6sAmDUmuAMwWi325XaCjNv5oJXNA3PcAX6HeNHSEGsnpOfU3kz07H
+ nQfcu8B94YRTVb9INMlPGseNyAEsHaDequcF1ejYNV97Ef1EGXWRBQXB71xT17/8zTZrXt4KWvg
+ Gb/f+5Zvu/jcb/55QIf5Wxxn4+s56psAoh3Zd0/KfNmn9UdjJWn6QogxYRkcx8VO/s4SU9qnGbg
+ Mg/ydNbCZY65rK4RofgO7Pw7kqN3TGJOh8ycZXG37wRkJWnRxDnHyw7FnWAke1jpCoJBH7MxEBA
+ E+ZTbNQbzw8WzkhvOWM0xLLE3Av46N9uWCwlDCSMCBglydvhl4SxFyd242e7Z/QQsFfUwCe6MDJ
+ w26gaktXpqhytPBL/3+RTCSBseWm8mzEZGwzUX6YftVZgJUhKuftcAR5fUs+nNeBDKA8Nltnv7n
+ PlUw1PQOfQYhjgvjcx/DWtU9f+3CT07ngME8lanqdap+N7rt2W+EOQvpS1hZtdEHJyiXqKnMxYQ
+ ZnKtU4UwbqzKh1qK2R+5zTPO0e1DyNpEBsCDFDk
+X-Received: by 2002:a17:90b:268f:b0:3a4:6e84:e7f6 with SMTP id
+ 98e67ed59e1d1-3ab3a32cbadmr8860840a91.5.1791841075352; 
+ Mon, 12 Oct 2026 14:37:55 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e8422da9b1sm46906155ad.66.2026.10.12.14.28.15
+ 98e67ed59e1d1-3ab32d5a429sm10113324a91.0.2026.10.12.14.37.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 12 Oct 2026 14:28:15 -0700 (PDT)
-Date: Mon, 12 Oct 2026 14:28:13 -0700
+ Mon, 12 Oct 2026 14:37:55 -0700 (PDT)
+Date: Mon, 12 Oct 2026 14:37:52 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
-Cc: dev@dpdk.org, joshwash@google.com
-Subject: Re: [PATCH 0/4] net/gve: fix TX queue stalls and sync DQO RDA with
- Linux driver
-Message-ID: <20261012142813.103d9d68@phoenix.local>
-In-Reply-To: <20261012105023.669486-1-tathagat.dpdk@gmail.com>
-References: <20261012105023.669486-1-tathagat.dpdk@gmail.com>
+Cc: dev@dpdk.org, Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
+Subject: Re: [PATCH 0/2] net/mana: fix transmit burst and add hardware TSO
+ support
+Message-ID: <20261012143752.184a7fbe@phoenix.local>
+In-Reply-To: <20261012073626.642397-1-tathagat.dpdk@gmail.com>
+References: <20261012073626.642397-1-tathagat.dpdk@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,102 +82,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 12 Oct 2026 10:50:19 +0000
+On Mon, 12 Oct 2026 07:36:24 +0000
 Tathagat Priyadarshi <tathagat.dpdk@gmail.com> wrote:
 
-> This patch series aligns the Google Virtual NIC (gve) DQO RDA transmit path
-> with the upstream Linux kernel driver (drivers/net/ethernet/google/gve/) to
-> resolve transmit queue stalls and hardware validation issues:
+> This patch series addresses transmit burst error handling and introduces
+> hardware TCP Segmentation Offload (TSO) support for the Microsoft Azure
+> MANA PMD.
 > 
-> 1. net/gve: fix DQO descriptor cleaning loop bound
->    Fixes the off-by-one error in gve_tx_clean_descs_dqo()
->    ("while (--nb_descs)" -> "while (nb_descs--)") and avoids stalling
->    the completion queue on unrecognized descriptor types.
+> Patch 1 fixes the transmit burst loop in mana_tx_burst() to terminate
+> with break instead of continue upon packet errors. Under the DPDK
+> rte_eth_tx_burst() API contract, callers expect a contiguous prefix of
+> transmitted packets. Skipping a packet caused unsent packets to be treated
+> as unsent and freed by caller, followed by a second free upon hardware CQE
+> arrival.
 > 
-> 2. net/gve: fix DQO TX queue stall on multi-seg and TSO
->    Tracks descriptor intervals with last_re_idx per packet against
->    GVE_TX_MIN_RE_INTERVAL (32) instead of counting packets at burst end,
->    preventing descriptor ring starvation and queue deadlocks under
->    multi-segment and TSO traffic.
+> Patch 2 adds support for hardware TCP Segmentation Offload (TSO),
+> formatting SGL entries with packet headers in SGE0, handling GDMA work
+> request flags, advertising RTE_ETH_TX_OFFLOAD_TCP_TSO, and updating
+> the mana driver feature table.
 > 
-> 3. net/gve: add cacheline overlap margin to DQO TX ring
->    Enforces GVE_TX_MIN_DESC_PREVENT_CACHE_OVERLAP (4 descriptors) margin
->    in ring space checks, avoiding CPU and device DMA cacheline collisions.
-> 
-> 4. net/gve: add packet and TSO hardware constraints for DQO
->    Augments gve_tx_validate_descs() (which enforces the 10-descriptor
->    limit per packet or MTU segment) with the remaining hardware length
->    constraints: [17, 9728] bytes for non-TSO packets, maximum MSS limit
->    (9728 bytes) to avoid 14-bit field wrap-around, and validates header
->    contiguity and payload presence on TSO packets.
-> 
-> Tathagat Priyadarshi (4):
->   net/gve: fix DQO descriptor cleaning loop bound
->   net/gve: fix DQO TX queue stall on multi-seg and TSO
->   net/gve: add cacheline overlap margin to DQO TX ring
->   net/gve: add packet and TSO hardware constraints for DQO
-> 
->  drivers/net/gve/base/gve_desc_dqo.h |  3 ++
->  drivers/net/gve/gve_ethdev.h        |  2 +-
->  drivers/net/gve/gve_tx_dqo.c        | 80 +++++++++++++++++++++--------
->  3 files changed, 62 insertions(+), 23 deletions(-)
+> Tathagat Priyadarshi (2):
+>   net/mana: fix transmit burst error handling
+>   net/mana: add hardware TSO support
 
-The problem with the series is in the last patch.
-The way tx_burst works the driver has to consume packets that cause
-errors.
 
-Subject: Re: [PATCH 0/4] net/gve: DQO Tx fixes
+Several problems with this patch series.
 
-Applies cleanly to main; every commit builds with -Dwerror=true.
-Patches 1-3 match the Linux gve driver (unknown completion types are
-skipped, report_event spaced by descriptor index, 4 descriptor
-cacheline margin).
+Review: [PATCH 1/2] net/mana: fix transmit burst error handling
+        [PATCH 2/2] net/mana: add hardware TSO support
 
-Errors
+Series summary
+--------------
+Patch 1 correctly identifies the bug (continue breaks the prefix
+contract and leads to double free) but the fix trades it for a
+head-of-line block. Patch 2 carries a stable-worthy bounds fix that
+should be in patch 1, and adds more break-on-bad-packet paths.
 
-[PATCH 4/4] net/gve: add packet and TSO hardware constraints for DQO
 
-1. An invalid packet stalls the queue instead of being dropped.
+Patch 1/2
+---------
 
-       if (!gve_tx_validate_descs(tx_pkt, nb_descs, tso)) {
-               txq->stats.too_many_descs++;
-               break;
-       }
+Error: break on a per-packet validation failure stalls the queue.
 
-   tx_burst returns short, so the application gets the bad mbuf back
-   and retries it at the head of the next burst. It is rejected again,
-   and nothing behind it is ever sent. The break was already there for
-   the descriptor limit; this patch extends it to runts, oversize
-   frames, bad MSS, split headers and zero length, all per-packet
-   errors. A short return should mean only ring full. Linux frees the
-   skb and returns NETDEV_TX_OK for the same checks.
+A packet that exceeds max_send_sge, or whose MR lookup fails, will
+fail again on every retry. Applications that loop until all packets
+are sent (testpmd with retry, most forwarding apps) spin forever on
+it. Short return from tx_burst is for ring full / backpressure only;
+a bad packet must be dropped, counted, and consumed so the prefix
+contract still holds.
 
-   Validate before the ring space check, then free and continue:
+Keep pkt_sent for the doorbell, and return a separate count of
+consumed packets:
 
-       nb_descs = gve_tx_pkt_nb_data_descs(tx_pkt);
-       nb_descs += tso;
+	uint16_t nb_done = 0;
+	...
+	if (unlikely(m_pkt->nb_segs > priv->max_send_sge)) {
+		DP_LOG(ERR, "send packet segments %d exceeding max",
+		       m_pkt->nb_segs);
+		goto drop;
+	}
+	...
+	if (seg_idx != m_pkt->nb_segs)
+		goto drop;
+	...
+	if (!ret) {
+		...
+		pkt_sent++;
+		nb_done++;
+		...
+	} else {
+		break;		/* ring full: real backpressure */
+	}
+	continue;
+drop:
+	txq->stats.errors++;
+	rte_pktmbuf_free(m_pkt);
+	nb_done++;
+	}
+	...
+	return nb_done;
 
-       /* Drop packet if it doesn't adhere to hardware limits. */
-       if (unlikely(!gve_tx_validate_descs(tx_pkt, nb_descs, tso))) {
-               txq->stats.too_many_descs++;
-               rte_pktmbuf_free(tx_pkt);
-               nb_drop++;
-               continue;
-       }
+Note the RTE_ARCH_32 short doorbell break happens after nb_done is
+incremented, so the count stays correct there.
 
-       req_descs = nb_descs + GVE_TX_MIN_DESC_PREVENT_CACHE_OVERLAP;
-       ...
+Info: CQE suppression is decided before the next packet is known to
+be valid. If the packet after a suppressed WQE fails, no completion
+is generated until a later burst posts an unsuppressed WQE; with no
+further traffic those mbufs are held indefinitely. This existed
+before, but break makes it reachable from any mid-burst failure
+rather than only the last packet. With drop-and-continue it is back
+to the last-packet case only.
 
-   and use nb_tx - nb_drop for stats.packets. too_many_descs now counts
-   more than descriptor overruns; renaming it, or adding a drop
-   counter, would make the xstat less misleading. The rte_mbuf_check()
-   failure just above has the same break and needs the same fix.
 
-Info
+Patch 2/2
+---------
 
-[PATCH 4/4] net/gve: add packet and TSO hardware constraints for DQO
+Error: same as 1/2. The new "TSO header cannot be fragmented",
+"Invalid IP version for TSO" and "failed to build TSO SGL" paths
+all break and leave the packet at the head of the burst. They are
+permanent per-packet failures; use the drop path.
 
-2. The non-TSO length check fixes the original DQO Tx path, not TSO
-   support. Add:
+Warning: the MAX_SGL_ENTRIES_FOR_TRANSMIT check fixes an existing
+bug and does not belong in a feature patch. sgl.gdma_sgl[] is sized
+MAX_SGL_ENTRIES_FOR_TRANSMIT (30) but the old non-TSO loop writes up
+to nb_segs <= max_send_sge entries, and max_send_sge comes from the
+device with nothing clamping it to 30. Move that check to patch 1
+(or its own fix with Fixes/Cc stable), and clamp what is advertised:
 
-   Fixes: 4022f9999f56 ("net/gve: support basic Tx data path for DQO")
+	dev_info->tx_desc_lim.nb_seg_max =
+		RTE_MIN(priv->max_send_sge, MAX_SGL_ENTRIES_FOR_TRANSMIT);
+	dev_info->tx_desc_lim.nb_mtu_seg_max =
+		RTE_MIN(priv->max_send_sge, MAX_SGL_ENTRIES_FOR_TRANSMIT);
+
+Also, a TSO packet with payload in the first segment needs one
+extra SGE. An application that honours nb_seg_max will still get
+drops; either advertise nb_seg_max - 1 when TSO is enabled or
+document the limit in mana.rst.
+
+Warning: RTE_MBUF_F_TX_TCP_SEG implies RTE_MBUF_F_TX_TCP_CKSUM
+(rte_mbuf_core.h). When TCP_SEG is set but the packet falls back to
+the non-TSO path (tso_segsz == 0 or no payload), the TCP checksum
+is only offloaded if the application also set TCP_CKSUM. Make the
+fallback honour the implied flag:
+
+	} else if ((m_pkt->ol_flags & RTE_MBUF_F_TX_L4_MASK) ==
+			RTE_MBUF_F_TX_TCP_CKSUM ||
+		   (m_pkt->ol_flags & RTE_MBUF_F_TX_TCP_SEG)) {
+
+Warning: no release note. New driver features go in
+doc/guides/rel_notes/release_26_11.rst under New Features.
+
+Warning: commit message is a bullet list restating the diff (which
+macro is defined where, which field is zeroed). Say what is added
+and why, and how it was tested: which Azure SKU / MANA firmware,
+IPv4 and IPv6, single and multi-segment mbufs, e.g. testpmd
+"csum set tcp hw" + "tso set <mss>" with iperf through the VM.
+
+Info: the num_sge >= MAX_SGL_ENTRIES_FOR_TRANSMIT check inside the
+TSO segment loop cannot trigger; expected_sge was already checked
+against the same limit and nb_segs bounds the walk. Drop it.
+
+Info: GDMA_WR_OOB_IN_SGL and GDMA_WR_PAD_BY_SGE0 are hardware work
+request flags. Put them next to struct gdma_work_request (the flags
+member comment already refers to them) rather than between the
+offload capability macros.
