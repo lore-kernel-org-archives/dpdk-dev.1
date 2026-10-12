@@ -2,64 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D943CA9ED0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 20:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69251CA9ED0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 20:39:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 472944042C;
-	Mon, 12 Oct 2026 22:38:42 +0200 (CEST)
-Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com
- [74.125.82.176]) by mails.dpdk.org (Postfix) with ESMTP id 23ED44026D
- for <dev@dpdk.org>; Mon, 12 Oct 2026 12:50:32 +0200 (CEST)
-Received: by mail-dy1-f176.google.com with SMTP id
- 5a478bee46e88-33fb4680717so2808818eec.1
- for <dev@dpdk.org>; Mon, 12 Oct 2026 03:50:32 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5ACAC40609;
+	Mon, 12 Oct 2026 22:38:43 +0200 (CEST)
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
+ [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 3A0EA4026D
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 12:50:34 +0200 (CEST)
+Received: by mail-dy1-f177.google.com with SMTP id
+ 5a478bee46e88-3514b90bb89so3318498eec.1
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 03:50:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791802231; x=1792407031; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1791802233; x=1792407033; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=eup7dOVojxxE9BHHwol6STNKtPN/NNXUeGt24sR3RdI=;
- b=NyefZGSRBA0Otyd65gzFyvnze7pjBk5QB3jgYK3pYaBocSg2JkpSpLN6/hVmZGu0kk
- s7YZWKG3PZM3B5nje+00Awa7U+V0dx093Puj3sas5Nj/6lwLQdq0pGxwgoWsqoVCffRy
- 6Gd8ldtoZH9xvZ2ZV4KIcIDZiXu0e5NTZIzViafKw0ZtR3Y46OQRvIHGe+klWtWP91SS
- 75z/Xe3i8OvmZbnxNYa8qustZKOL3kmPWMy8hpYQGy8U6MvE8XupllxhJSXqD9ugSTfO
- dxnn25KtfDXl05aQfKcRg3U2lvUJKYnzSMtqYfAe6kH6olXVDR+4XLtnVMHvAbUuvf1M
- 35FA==
+ bh=jrNDYfCR07jonPKbi9Whp4gAg54eRWbbhRUSmtdECtY=;
+ b=AYdcptZDRSJwhOsZdUFAMmEf7L6oC4DUHRhpVxZHWmC/BmQBs87a3YuJwGFqMywd+3
+ ok/qiJVVIDTqlXNSKBykFNO+gAa+Ka8ezA0wuPjieAaSoSs1lsoc7MvFTYjv4iUCJ3ho
+ 3e36VkUO3rSO5nPh4tG/hZnlPwMAKKGhwMvBQakiCGrVGL6qbcES+EtD80B1PIrmtZxb
+ BKlZDgNqH5tM2n44A8MAcfMM+hIZ2emrm7GQQk3Wks0vk3gC39qIdN0TkMJtcdeZ8zXK
+ f5ddkE1fwCHESK3S8eKoV6bb7bcydX5NvT7BiBD/fkHNNGYbado7MUk1sBsIE4MGjsA9
+ 1jLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791802231; x=1792407031;
+ d=1e100.net; s=20260707; t=1791802233; x=1792407033;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=eup7dOVojxxE9BHHwol6STNKtPN/NNXUeGt24sR3RdI=;
- b=Oe0EEtWghc4+Hqdby6YRIFMW55PrwCM35GxnQ4UbO4pDb2bq4QNo1oRmZBPqYkfELN
- IhlAmAeUbKYPqwXMxwbkbcCYl5ZeU5c/GpGh3sf81aVvOv7dxkl6mkt+nfptdJPjv/FH
- aclmg17qTld/o4VHu4QgF9D5AgSTMTAmxjoVcRymRrc+ciiisXcDCGZUypB5rnpoQVQ4
- CLIW8cSh9e8oD4Bumc8AQ2VXBjpdF0+p5pU+y/bpQKxIEXXTX4bIFBNdqEkfu3PDSj02
- 8UT2TtnJU33rossHVer2ZP/r6pTnu6UiSX1UhK0RvzeaSPu4Nhg55r3YG546Y6IYUjYi
- m59g==
-X-Gm-Message-State: AFq9FYIwZuRX/R0hvMnO+mPWb4pWjqcSyQ9NPM4/LmujXpCAK6yfPZNq
- ArFGNpUtmS83u1Q0Tgapy2vlMJvCm30UcF2VdkpFvUlfetVxRz2ki1F1nqhy/w==
-X-Gm-Gg: AYBFou1Xk4CZeYUVj0Zmq9z795kF8tzBXsmk8dl55EqiFpxCWHUCf5XQ2tvRa/Hxfxm
- xPnCS3gOX5SUuOAnZcIJaYr8ZQ9zPmm5bMNfFMq1IcSL6ZWYq6ZlUywxCd6lJnSHdbcbaaQH6et
- qK1LRUfHUu47LqOu3u806yWzxZSXmvwGwK9xaX7sAOlcFsv0RJM344BoIvjw1Vm6a/N6++DMDnl
- vrPtjO9T3JFHarTAwZqqoM5R373k4hr+iMH9F94hbuZ32iTK1ZbGE8D5c27JUN6aA9fANY0OjB3
- 1GGy4vbQ3/VI3Sbxxs48iksOOP9/j2GgIrX+xuX3ZvGFx3jGwc2zES6caTSKrCsBP6cIN+5Ccet
- kgEEJI1sVTpqR8h/zXUg4lB/xkpA+Bu8DYOQbcJVi0MQGHED+hZAPGY8NPlusofW2UkAC7odZJs
- e1dJlikMMr7VCI9fWBP3/OT6J4/76rP5wh6kxd6LPfG8fMoQzRzulv+Z1PyEIK8DLFcQshFabV
-X-Received: by 2002:a05:693c:69c3:b0:358:3426:d606 with SMTP id
- 5a478bee46e88-3583426df51mr10116172eec.32.1791802230908; 
- Mon, 12 Oct 2026 03:50:30 -0700 (PDT)
+ bh=jrNDYfCR07jonPKbi9Whp4gAg54eRWbbhRUSmtdECtY=;
+ b=LGIBszhigRiXwybTQ00bRw9eF5lFnseqPynKo9+RIXObVKz9yk4Y1re052S//ldAkF
+ JFLXIGN79lGt4pkoAllepat8Hp0V98a3jSGTOfftfkVXgNc6Z630Z3Ah4EURa8UvtMxY
+ eRbpueAfre/2JBg2BcUAu8CUJxk4W1nVi4BAdKBYNanB3knSJ+s623yvUTZfCLAD9KF/
+ cQpqoSFxuytYZFND/7hmeDp4irW9uVx7U7ljjMP6I89ciE9PQ56fBDsu2GlkzJe/4qlN
+ GZfVtMUsEHG43xWHW8spXrhymmGm3GEX4quufIThcpisjQOe+J4Op2whg4of/lh1j17a
+ xotA==
+X-Gm-Message-State: AFq9FYJF/A0HchSAE5qFB9RQgu+ovuy7kR0KlzR/Xr6SQ1/mlBq8mjvW
+ EOvwqmOWdGI4cONYx8BqUlYuqxOC+uxi2NSEJOUoTEKf2GJQ0X48QDPqGRPbzA==
+X-Gm-Gg: AYBFou1ZcKOMk+jPTGAOItdaWqZP97bnKYzP1vO5G+qWAMHZt2l/htyxthfi9NzRAb3
+ p4CCT6+l3gGOjI9yQZvta7Ugidm4l9SDuKK0GCC9cIs1bO7XH/Ib3PEyQ0joPjhkYp8+cNkqs3v
+ 3Fm5yfXrHr3MfmkRxA3mth/km7hqZiCUZ7nDHykQblcA/6sa7quH9mYYX2CPPETMFh/fhV6oswH
+ Jlade1hi49lLniRgY+me0CuQOya3KFME/weHl1CA9dNnS4IW+fn0saYxdeZUtoRrhHf9NuS+pzg
+ LorKKlC/aUNBiO507xFGTflwYS1PVHiZOjpY9a+kKWsFC6URY4QcujjCc9CUrWsU3tAf//LOp5b
+ iw8xcbjAVZ3HM38hIvHPEl7DPJQk0bei3wipsseTqZj0OYeRf/o+R2aGdmEP/tGgjPhRJQXwnFr
+ gL05ZA6t/bKZH9PTGwcSt79pJAosfj2PBd3QxnWaFCNfRwXu1M21zLDHAYvx/LY5tFXQVAeKBL
+X-Received: by 2002:a05:7300:881a:b0:351:29c8:643 with SMTP id
+ 5a478bee46e88-3537dfb8649mr15110110eec.18.1791802233120; 
+ Mon, 12 Oct 2026 03:50:33 -0700 (PDT)
 Received: from aviuser.. ([192.19.252.250]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3537cab27d5sm36875760eec.17.2026.10.12.03.50.29
+ 5a478bee46e88-3537cab27d5sm36875760eec.17.2026.10.12.03.50.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 12 Oct 2026 03:50:30 -0700 (PDT)
+ Mon, 12 Oct 2026 03:50:32 -0700 (PDT)
 From: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
 To: dev@dpdk.org
 Cc: joshwash@google.com,
 	stable@dpdk.org
-Subject: [PATCH 1/4] net/gve: fix DQO descriptor cleaning loop bound
-Date: Mon, 12 Oct 2026 10:50:20 +0000
-Message-ID: <20261012105023.669486-2-tathagat.dpdk@gmail.com>
+Subject: [PATCH 2/4] net/gve: fix DQO TX queue stall on multi-seg and TSO
+Date: Mon, 12 Oct 2026 10:50:21 +0000
+Message-ID: <20261012105023.669486-3-tathagat.dpdk@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261012105023.669486-1-tathagat.dpdk@gmail.com>
 References: <20261012105023.669486-1-tathagat.dpdk@gmail.com>
@@ -79,54 +79,100 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In gve_tx_clean_descs_dqo(), the loop condition "while (--nb_descs)"
-causes an off-by-one error:
-- When nb_descs == 1, --nb_descs decrements to 0 on the first check,
-  executing 0 iterations instead of 1.
-- When nb_descs == 0, --nb_descs underflows uint16_t to 65535,
-  executing 65535 iterations.
+The DPDK GVE driver previously tracked transmitted packet count (re_cnt)
+at the end of each burst rather than tracking descriptor intervals per
+packet against GVE_TX_MIN_RE_INTERVAL (32).
 
-Change the condition to "while (nb_descs--)" so that exactly nb_descs
-iterations are executed for any input value.
+In multi-segment and TSO transmissions, each packet consumes multiple
+descriptors. The descriptor ring could exhaust before 32 packets were
+sent, resulting in zero descriptors requesting report_event and
+preventing the hardware DMA engine from returning GVE_COMPL_TYPE_DQO_DESC
+completions. Without these completions, txq->nb_free was never
+replenished, permanently stalling the TX queue.
 
-Additionally, in gve_tx_clean_dqo(), handle unrecognized completion
-types by breaking from the switch rather than returning immediately,
-allowing complq_tail to advance past unknown descriptors rather than
-stalling the completion ring at the same entry.
+Align with the Linux kernel driver (gve_tx_update_tail()) by tracking
+descriptor indices with last_re_idx:
+- Replace re_cnt with last_re_idx in struct gve_tx_queue.
+- Reset last_re_idx = 0 in gve_reset_tx_ring_state_dqo().
+- On each packet transmission, check descriptor interval
+  (last_desc_idx - last_re_idx) & mask >= GVE_TX_MIN_RE_INTERVAL.
+  When met, set report_event on the packet's last descriptor and
+  update last_re_idx.
 
 Fixes: 4022f9999f56 ("net/gve: support basic Tx data path for DQO")
+Fixes: 403c671a46b6 ("net/gve: support TSO in DQO RDA")
 Cc: stable@dpdk.org
 
 Acked-by: Joshua Washington <joshwash@google.com>
 Signed-off-by: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
 ---
- drivers/net/gve/gve_tx_dqo.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/gve/gve_ethdev.h |  2 +-
+ drivers/net/gve/gve_tx_dqo.c | 18 ++++++++++--------
+ 2 files changed, 11 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
+index c9a176ff17..2033f49444 100644
+--- a/drivers/net/gve/gve_ethdev.h
++++ b/drivers/net/gve/gve_ethdev.h
+@@ -193,8 +193,8 @@ struct gve_tx_queue {
+ 	uint16_t sw_size;
+ 	uint8_t cur_gen_bit;
+ 	uint32_t last_desc_cleaned;
++	uint32_t last_re_idx;
+ 	void **txqs;
+-	uint16_t re_cnt;
+ 
+ 	/* Only valid for DQO_RDA queue format */
+ 	struct gve_tx_queue *complq;
 diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
-index 5c03d3d1a2..c864d722d9 100644
+index c864d722d9..a8382ff3c4 100644
 --- a/drivers/net/gve/gve_tx_dqo.c
 +++ b/drivers/net/gve/gve_tx_dqo.c
-@@ -108,8 +108,8 @@ gve_tx_clean_dqo(struct gve_tx_queue *txq)
- 		PMD_DRV_DP_LOG(DEBUG, "GVE_COMPL_TYPE_DQO_MISS ignored !!!");
- 		break;
- 	default:
--		PMD_DRV_DP_LOG(ERR, "unknown completion type.");
--		return;
-+		PMD_DRV_DP_LOG(ERR, "unknown completion type %u", compl_desc->type);
-+		break;
+@@ -264,6 +264,8 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	uint16_t nb_descs;
+ 	bool csum, tso;
+ 	uint16_t tx_id;
++	uint32_t last_desc_idx;
++	uint32_t last_re_interval;
+ 
+ 	pkts = txq->pkt_ring_dqo;
+ 	txr = txq->tx_ring;
+@@ -331,20 +333,19 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		txd = &txr[(tx_id - 1) & mask];
+ 		txd->pkt.end_of_packet = 1;
+ 
++		last_desc_idx = (tx_id - 1) & mask;
++		last_re_interval = (last_desc_idx - txq->last_re_idx) & mask;
++		if (unlikely(last_re_interval >= GVE_TX_MIN_RE_INTERVAL)) {
++			txd->pkt.report_event = true;
++			txq->last_re_idx = last_desc_idx;
++		}
++
+ 		txq->nb_free -= nb_descs;
+ 		txq->nb_used += nb_descs;
  	}
  
- 	next++;
-@@ -122,7 +122,7 @@ gve_tx_clean_dqo(struct gve_tx_queue *txq)
+ 	/* update the tail pointer if any packets were processed */
+ 	if (nb_tx > 0) {
+-		/* Request a descriptor completion on the last descriptor */
+-		txq->re_cnt += nb_tx;
+-		if (txq->re_cnt >= GVE_TX_MIN_RE_INTERVAL) {
+-			txd = &txr[(tx_id - 1) & mask];
+-			txd->pkt.report_event = true;
+-			txq->re_cnt = 0;
+-		}
+-
+ 		rte_write32(tx_id, txq->qtx_tail);
+ 		txq->tx_tail = tx_id;
  
- static inline void
- gve_tx_clean_descs_dqo(struct gve_tx_queue *txq, uint16_t nb_descs) {
--	while (--nb_descs)
-+	while (nb_descs--)
- 		gve_tx_clean_dqo(txq);
- }
+@@ -445,6 +446,7 @@ gve_reset_tx_ring_state_dqo(struct gve_tx_queue *txq)
+ 	txq->nb_used = 0;
  
+ 	txq->last_desc_cleaned = 0;
++	txq->last_re_idx = 0;
+ 	txq->nb_free = txq->nb_tx_desc - 1;
+ 
+ 	txq->complq_tail = 0;
 -- 
 2.43.0
 
