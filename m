@@ -2,39 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 034C3CA9ED2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 08:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EC4CA9ED0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 Oct 2026 08:35:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DCF2740E09;
-	Mon, 12 Oct 2026 10:09:22 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id EEA2940615
- for <dev@dpdk.org>; Mon, 12 Oct 2026 10:08:57 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D3C7620018C;
- Mon, 12 Oct 2026 10:08:57 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A9E5D20016E;
- Mon, 12 Oct 2026 10:08:57 +0200 (CEST)
-Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
- [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3AC2A1800068;
- Mon, 12 Oct 2026 16:08:57 +0800 (+08)
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
-To: stephen@networkplumber.org,
-	thomas@monjalon.net,
-	dev@dpdk.org
-Subject: [PATCH v24 27/27] doc: update release notes with NXP DPAA changes
-Date: Mon, 12 Oct 2026 13:38:45 +0530
-Message-Id: <20261012080845.2325199-28-hemant.agrawal@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20261012080845.2325199-1-hemant.agrawal@nxp.com>
-References: <20261009091101.1703494-1-hemant.agrawal@nxp.com>
- <20261012080845.2325199-1-hemant.agrawal@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3F24940272;
+	Mon, 12 Oct 2026 10:35:16 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 0CFA240041
+ for <dev@dpdk.org>; Mon, 12 Oct 2026 10:35:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1791794114; x=1823330114;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=e3YXkn2grP7fd3MxlKdJajzCVek7BzSvHAyoNggEUJ8=;
+ b=Y1ToG0NgBOYjCgYQrSQgsosTvAoyj65S4LYFwTrBeELsfADIEwoby3V3
+ zing/6tKBc9+9CF5zZ+8NQQlYnrEEkO4FNmv5/9bCnrGrO205RByeEOJM
+ 6aLGkyYCwBxOaKEWcDUQFTu5ppWoKH+toWa3Kbs8ijp3V059aoBBbNmKX
+ c7MhimAehOPE7H7gDKbl06SXDk1f1sKCUWEa3oPHYg5VKsl7A3l6bnLHF
+ ReG7pUAloaRj83zB+YY02UKnwNVdIL0Ddh8L2VIXDqN2kZwJgEBjS92Jz
+ AdMSN3v/o3xUvDU1j2G65J2p8/GidtWfaWH5pqiFqYDf+kplBOBT3et3v g==;
+X-CSE-ConnectionGUID: JBpJpXKsTEyEZTie7pdmsA==
+X-CSE-MsgGUID: ydnRMt4HRImtvakEZmeHQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11932"; a="396025"
+X-IronPort-AV: E=Sophos;i="6.27,153,1787036400"; 
+   d="scan'208";a="396025"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Oct 2026 01:35:13 -0700
+X-CSE-ConnectionGUID: pJQMwGN4Siu8eMvMnp2iJQ==
+X-CSE-MsgGUID: M63l/kF/R5+Slh/vgSAZHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,153,1787036400"; 
+   d="scan'208";a="1164614"
+Received: from silpixa00401454.ir.intel.com ([10.20.224.230])
+ by fmviesa009.fm.intel.com with ESMTP; 12 Oct 2026 01:35:12 -0700
+From: Emma Finn <emma.finn@intel.com>
+To: 
+Cc: dev@dpdk.org,
+	Emma Finn <emma.finn@intel.com>
+Subject: [PATCH v2 0/2] crypto/ipsec_mb: Add SHA3 and SHAKE support
+Date: Mon, 12 Oct 2026 08:35:03 +0000
+Message-ID: <20261012083506.754857-1-emma.finn@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261005123041.429121-1-emma.finn@intel.com>
+References: <20261005123041.429121-1-emma.finn@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,65 +62,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a single "Updated NXP DPAA drivers" entry for the new features and
-device arguments added by this series, with one sub-bullet each:
+Add SHA3 and SHAKE hash algorithm support to the ipsec_mb PMD.
 
-  - Offline (O/H) port device support (drv_oldev bus devarg)
-  - Rx/Tx taildrop threshold devargs (drv_rx_taildrop, drv_tx_taildrop)
-  - Fmcless Rx queue count devarg (drv_fmcless_rxq)
-  - Shared MAC kernel interface name devarg (drv_sh_if_name)
-  - DMA devargs to control the existing scatter-gather batching, data
-    validation and ERR050757 programming at runtime
-    (dpaa_dma_sg_disable, dpaa_dma_data_validation,
-    dpaa_dma_pci_read_disable)
+Emma Finn (2):
+  crypto/ipsec_mb: Add SHA3 support.
+  crypto/ipsec_mb: Add SHAKE support.
 
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
----
- doc/guides/rel_notes/release_26_11.rst | 31 ++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ doc/guides/cryptodevs/aesni_mb.rst          |  10 +
+ doc/guides/cryptodevs/features/aesni_mb.ini |  10 +
+ doc/guides/rel_notes/release_26_11.rst      |   6 +
+ drivers/crypto/ipsec_mb/pmd_aesni_mb.c      |  38 +++
+ drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h | 260 +++++++++++++++++++-
+ 5 files changed, 318 insertions(+), 6 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index e027c7a27f..f1400a0a30 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -120,6 +120,37 @@ New Features
-   * Added Tx pause support for the ENETC4 VF via Rx congestion mode.
-   * Added WRR Tx scheduler devarg (``enetc4_txq_wrr``) for ENETC4 VF ring weights.
- 
-+* **Updated NXP DPAA drivers.**
-+
-+  * Added support for the DPAA Offline/Host-command (O/H) port, allowing
-+    a DPDK application to use an offline port for packet processing.
-+    The feature is selected through the ``drv_oldev`` bus device argument.
-+    The port is configured through the new experimental functions
-+    ``rte_pmd_dpaa_ol_set_classif_info()``,
-+    ``rte_pmd_dpaa_ol_reset_classif_info()``,
-+    ``rte_pmd_dpaa_ol_set_lgw_info()`` and
-+    ``rte_pmd_dpaa_ol_reset_lgw_info()``, declared in
-+    ``rte_pmd_dpaa_oldev.h``.
-+  * Added ``drv_rx_taildrop`` and ``drv_tx_taildrop`` device arguments
-+    to configure per-port frame queue taildrop congestion thresholds
-+    at device probe time.
-+  * Added ``drv_fmcless_rxq`` device argument to set the number of
-+    Rx queues when running without FMC configuration. When the argument
-+    is not given, the default number of Rx queues in FMCLESS mode is now
-+    the maximum supported per port instead of the number of lcores,
-+    because several queues may be processed on the same core.
-+  * Added ``drv_sh_if_name`` device argument to provide the Linux kernel
-+    interface name of a shared MAC interface when it differs from the
-+    ``fmX-macY`` style name used by DPDK.
-+  * Added device arguments to the DPAA QDMA driver to control existing
-+    driver behaviour at runtime: ``dpaa_dma_sg_disable`` submits each
-+    descriptor as an individual single-entry transfer instead of the
-+    default scatter-gather batching, ``dpaa_dma_data_validation`` enables
-+    the post-transfer data validation helper for debugging, and, when the
-+    driver is built with ``RTE_DMA_DPAA_ERRATA_ERR050757``,
-+    ``dpaa_dma_pci_read_disable`` skips the ERR050757 source
-+    read-transaction programming.
-+
- * **Updated Solarflare network driver.**
- 
-   * Added VF support on AMD Solarflare X45xx adapters.
 -- 
-2.25.1
-
+2.43.0
