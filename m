@@ -2,95 +2,93 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F48CC6B03
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 07:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6ECCC6B0E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 07:46:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3DA8040272;
-	Tue, 13 Oct 2026 09:43:06 +0200 (CEST)
-Received: from fout-b2-smtp.messagingengine.com
- (fout-b2-smtp.messagingengine.com [202.12.124.145])
- by mails.dpdk.org (Postfix) with ESMTP id E014D400D6
- for <dev@dpdk.org>; Tue, 13 Oct 2026 09:43:04 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfout.stl.internal (Postfix) with ESMTP id 488A41D000B0
- for <dev@dpdk.org>; Tue, 13 Oct 2026 03:43:04 -0400 (EDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AD7A94028D;
+	Tue, 13 Oct 2026 09:46:09 +0200 (CEST)
+Received: from fhigh-b1-smtp.messagingengine.com
+ (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 25D3F400D6
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 09:46:08 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 828247A00FC
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 03:46:07 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Tue, 13 Oct 2026 03:43:04 -0400
+ by phl-compute-04.internal (MEProxy); Tue, 13 Oct 2026 03:46:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1791877383;
- x=1791963783; bh=6W8wo+GVYYZwMo+TfIzwH4BKBul6acxc8Dwmfi6LLmo=; b=
- jSDV1OIizsa/oe9/k2FEf2Ycvggi7AwEIdnN6b5fion4YLC2pTapZzgBGxN4mwJ5
- GpDTz/Iw1IcJmNh9PJy+8qqeCgG0RVpx7gluKv2NQnlMwf52I3Vx6DsRa6U/sHzL
- TieZxbF8F5ru8beU3ZqAYO1FPXmvU8C6lnq61Ldyq1Qr11igRmtVdfTKSKDR8doZ
- I0Zr6KffJJiHfetbRASS2axDyYXAWlgWxhqoRXQl7pN2a/fttRIo6OlNfh1Vndkw
- mrdw9CYfZfU+WZdVSEpf0XBG8ja8mpgtd+mbx2Btz3/i4qRB0gottoXpuhmVEZXo
- YEVWrc4vXCosvgc61YZT2A==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1791877567;
+ x=1791963967; bh=gvj6qY4l8o2R6kzllTWo8FIeHdHFAnHnR3Bf74JJMtY=; b=
+ U3QC7R8ZUGKzmS4F4QmdwPojvWnq6Cd6sNpnNeEOTJ/tG1zbjQln6P8qXzjXOL4Z
+ 21OwM5N/qX+ZMyblGKSYm7mR7VxGl+lD1JlNc9iythY+zOzBjvFgY8kN5RGbEUgP
+ BB8pruJ03hzSJTIaqUscg0ZA+DLQsGgV257PrSYaf69espbJledB7xScqwapqZ+R
+ KkXlVHMHMVQE7xFMhpuckHhwkkPoK7EgsyMKC78xReyt/JkPLWU+B1l0xRoatONV
+ aInc9wpBfzFK6+7lOdrd10TY/Vj2tcn0g3u+S0aGSmgdiQ2KMo0qB950O3b1NKJ6
+ B9lab7knqhH/nrV1yKtnaQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791877383; x=
- 1791963783; bh=6W8wo+GVYYZwMo+TfIzwH4BKBul6acxc8Dwmfi6LLmo=; b=W
- 7qnjvzLAPNTiu//kuFf6hGcP9asScz7zhiTtiCoX7Ji8dmWCYpeNalBFf7WqZ5vV
- PT1lF3Um7IOYuZkQVlGDp8EHfMXnSTzCAOYXRtKn9+o5G+tY/PFp70vjm5HO5RcJ
- NuAaBxDJp8OB+bHoNsOFQxKc/X0qUobT0w/qdNVts+RnLWFTIhz6Bcm1qIul3w+S
- d/AKzRyTdlkmTtjYMxHI3u8N1g43myk7oUhzozNtC5Bi8q6enIhBhVJVifgOXi6a
- xhzMcO1O6QkVx14Qck7aNQsnIXu9XOl69xAt6Cqp1hFHRSHgfV0CxaC7TpV11R87
- YA/JuSwZt+bGnlR5B94ig==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791877567; x=
+ 1791963967; bh=gvj6qY4l8o2R6kzllTWo8FIeHdHFAnHnR3Bf74JJMtY=; b=f
+ q1gKrjGQFsTM6RKC/rie0lMhgyJmDZpFEWqy1Tv4KdrRTo3DNTb1jEoFxzaWKHr0
+ QkgOfm5zxkLGBL+OQDaoIR+HAln5My/YLzQjhmt9D3FTYS8zbCjPd21nvBjlF97W
+ khOuZRAYMXWYFpEUY1usZvKaBv2pAZmheOC9xrTfz3YVY9a3r9mFF70zNIUYGlvX
+ KxDXyIjIrKo0qvvVrYADs1jX7TiwRRm+jYcW8X9ZH6TmeBIjuvadTbibVJitk3iM
+ MIfnwUn6uQqnV7XYHe5PhNfznqYZMTcc2N3pnX/rIIfw+vYF3CDsopnsGdZ/WGob
+ xvC53oOyaQs9CGiVUog8Q==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
  repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791877383; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1791877567; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:WasXtwfOunNCUlPgLdzt6kWZHeBiiKgCt2BN5WXssYvkC1C
- EGDBe8C7e/vh5Ozg2kKzBKPncvivqAnIFuB8TDDkTzKbm15/n8CvCHabAxR40onL
- eG2FSRd4J06ZBjfuNMDYNL1h96Emmjk+JJaCZT32E8MSBFZy9k30zP0cJW8Mq4sX
- kq/BTqwrEkynx+H/Drx/xBM/00YlGd2mhqHKANFb8PV/Lnc5dBcMb+68o2TK7aGb
- Iu1eHYZ9mgfYB7YPdY/JQmbgx0GTliD2TQGxKspmMp2PMB78687BZfw8T/VM8KBZ
- OFVGm66pAschAg3klKMKOd8BzqvkPHUJvzBkOfA==;
+ s=fm2:rsa-sha256:K0eltk84ZUHgZLyDpFd5F6n5WEkL9RQFAYDJPqoBleN0I3F
+ NJww07jwCZ47K8nn3RRLK+2Tvoo8Y8mg5yPkHw/6yojpIlBVv6zgoD8/s1jm1cH8
+ hvJOMmylDT9MxWEM0WjtHKTYopDnYAC7VZxA/Enu/bImMiEp/U+3H3JxoI3Qcp+z
+ hz190bb19BmQJOD6Kimbbg4xZ5bvcyVXWhWh2gSxPwVP6gE30mQsCn70ZAs+PNHd
+ mOwJpis42gg1hQVnaMTnSLWAfJNEjkBZAl/a4NsvR3VLCE0f6y4y6x9PiHIsOQvM
+ Zf9yX7E7tfieITNxz89/L8TGkN+HxC6bWQiLHQw==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
  repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:zZTFdAEyp8Rk0Aizokew/6eRoXRxQ6RVn0pVteDU/4I=:Xl4UR7WHYlaMDPUHZ6umj3K3XvDUXP7Xag8XfxIuPgo=;
-X-ME-Sender: <xms:BuHNajvinE923Cg31C81wAqczWdSVXxbY1q6jFlAQ2fBqBKF4WtEIw>
- <xme:BuHNataubZWEmm-QqkNizdow3yQLo3y_hYkaXMnPfNwiXAe5L2O80WXRLo48TdyBh
- C0-8W7d8uV0Y1IlT4yNlgKALcWyd9ok1sqC3ouE7UOvFPnkpuw5xS8>
-X-ME-Received: <xmr:BuHNaiX9SELyRMQqUSISZ6c0mafmSIUXzvPJpuoRIRe1cKrZTvFHXBc5NwgHEqmjYuD8hnRqRkr5q_HQnPN7apw>
-X-ME-Proxy-Cause: dmFkZTFk/I0l7du85TqY4osesoFvrbtKAWCQrARYESNYQkBu5f5U9WsD9+vUEL1hjbgnFp
- LfE2XGtiwV4NJ1ZRVMkpXeRYWnvRauYXnVFyIS+X0YMa7dLlWIS+GaTwN32NOCLaEul1Ng
- 2A2RXKtv8kiOdHmD68ewDXKigYBtj7jEmMfdBsNTgAA2aTGkKY0tZCQCn8CtQ+B5/u0yVI
- nIT34XtPeTroz9S40/VHwQ45dsoiQqSs9cG8n+ty4ODV99EPayDC4dbj/ip4CJ7U51WYon
- 6hPhBeJ6eFjudiwKQ6VGWkAOLupTMTtsefAMYDSi4kqlPayItGbl6OH0x/XZg7IF2wTyN3
- p9DdK1TZDWvNnjo2XPwnk5H+9Y6MHsNrDowgLnMp9Rat3zXYNqisfeUMpFwsqygPD4szyE
- NIQZRrsk+ZtGQEvjh8sj9DDZmJO5RfZspo/ysuDQYx/tL3O78+0rl4IjkA7N7j5gquQtew
- gVPDEPNRuCOOMZTDzo8Xd6wCcXd4oGq4fnY9q0ieKWnC86DdUd1eirwUGveGaR5qteAk2A
- Ck/aaR3RybPlTd6s4gH7ZBL8bgx3+h21p3YQwUxrHFjWCHf5GScn855Qgs8aDW/v2lDqag
- xJdpgqV+DXbxDxDxxeNW+SpWmsU1tgc6QuvfF0jBm6K5rVNFEOwQUQqZselw
-X-ME-Proxy: <xmx:BuHNaiRIEDiUxXh_qWp8YHIQZ6EXS0nVcAkJ_JdBqwF_YX48YZPQcg>
- <xmx:BuHNagNqsoEaLAKrFoi8Nly3i4xhmCFqrb8ifwcmmV7isCkfXZbEKg>
- <xmx:BuHNagRF57zEZdxfAEiHXEgjoTeZJnQyScmzyr0pXo4amD0zOt-iSA>
- <xmx:BuHNaujJn7S2Uplgb9_gkMNwecwfxAIG8esC7jAJ8AD4WItliIVkFg>
- <xmx:B-HNas62sw8ERx79s-7dGagffAMDvO-DjuXnlt15d36rIXEEcCyUj0g5>
+ h=sha256:Pm4WfEdtmakg4dAnd0zUliVwptHDwvx4nYxcNj2xdgA=:gvj6qY4l8o2R6kzllTWo8FIeHdHFAnHnR3Bf74JJMtY=;
+X-ME-Sender: <xms:v-HNagBkEgCRzKzQdYVGeeNKjw1gzjcYwlXINVgf52xtZJ_siaNQzg>
+ <xme:v-HNam1_RFsTJCVnvQ3NRDFLNcGgoCLQt71oXBYO8Ifhex7cSocUGx-meWrFBv9Fz
+ 4K_g5KBx9nK0uicWiTpiGdLFC952aPKybnTDWwATjpfeTj1wilRiJQ>
+X-ME-Received: <xmr:v-HNaivitkC7L0znCZNKHXCFRZxrlLGe9TzupgmXR9GOZH_Oxk4lrCaY7zxu-Bl3hHEWUJuev5gySamZI8STO18>
+X-ME-Proxy-Cause: dmFkZTGa9Ug8doaqyhKU7FPqFRRgygr2T0WSzZL0Sov/Rt74qv1rdU4nSV732Td6LyVu+Z
+ TPOhL3IEdJ3ft//LFlxQatPQBX6FZConKaHwARZJ0sjykATbsr+lzB/xwaO1R8LEM+PT0I
+ +OGBwZUpeTw5WZ9Zhioi1R4LFERWCh5Gs3/hMoIHQHsxFE3Fa9ltLw+UZok76KaFKP9GSl
+ hAePukuhT4mgiEwFFdJQslMXcS1WN5KP+MV+lUyZ6H7udJEgAcATnoFqN85VgEFmt6tqdk
+ JnOzDEjOmHUVL7EjX1VV6AFIA4iXE6iMVv2PhPJ2yF3NgfbeqZnRl799faZbNpNicsERA/
+ AZbY7i7ueIN0uz9MqjhluVIwITiB5aEOHx+OlNydmAoDDyoCWIFxZHudoURSt+h5vp2gzV
+ +m7uL1/nclrFofO5ca+vF5BS+FtgQUmFtNzevdOob0uAoJtYvZ7I5Hn6wvNPsDIzHoGE4I
+ aGQF4/R9khU5yzft/eSH53NvroyM6BLLCCdYM0Gox6WW3LknjkI4FPT03O8yIzC35Tcvz8
+ WytbkslO1cee4LEBkuRp53Tw7PLSa067MuvfTCvarQ2A/sYBwFKRXGdXR8KVzss0uGFsXD
+ owXnvqCA9TENrap06/Wi1F99MSvN/mZfib/SDj1krL+uCx72hAoA5v7rvPtg
+X-ME-Proxy: <xmx:v-HNau7lhlhnvK5CqyfedgU6ln5tOdWZoqX-NTpf9uZkoAPy5XkxZA>
+ <xmx:v-HNarLC6XO02B7QhaqYdxUwPiDM7YTPWkBWxHPpgEITOnFJ0m1MvQ>
+ <xmx:v-HNam5VViDttBvpTEn2oEsN3vMOXu9iSiG_BgAFW3tvctOAl5zp9A>
+ <xmx:v-HNamyvTOUc5EeeYsV-MiZNrp0NOTvOgPCKuKIY4u21tks7Mbuo2w>
+ <xmx:v-HNaqPkCphOI4SyBsK92fEGmUfyBpQ17ZmuqpWeDSV3MA9D3QsvLFSS>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 13 Oct 2026 03:43:01 -0400 (EDT)
+ 13 Oct 2026 03:46:06 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>, konstantin.ananyev@huawei.com
-Subject: Re: [PATCH 0/6] mempool: cleanup, fixes,
- improvements and optimizations
-Date: Tue, 13 Oct 2026 09:43:00 +0200
-Message-ID: <IKcyWteKSGGiG13dgZJgmw@monjalon.net>
-In-Reply-To: <20260910103613.808038-1-mb@smartsharesystems.com>
-References: <20260910103613.808038-1-mb@smartsharesystems.com>
+Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH] stack: improve source code readability
+Date: Tue, 13 Oct 2026 09:46:04 +0200
+Message-ID: <x9VW9oFbSESonugkbjgkCw@monjalon.net>
+In-Reply-To: <20260811084835.7ca64d35@phoenix.local>
+References: <20260811121727.1706225-1-mb@smartsharesystems.com>
+ <20260811084835.7ca64d35@phoenix.local>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
@@ -107,15 +105,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Morten Br=C3=B8rup (6):
->   mempool: fix private data area size alignment
->   net/sxe2: do not use deprecated mempool cache field
->   mempool: remove deprecated cache flush threshold field
->   mempool: various cleanups
->   mempool: optimize access to private data
->   mempool: no cache size limit
+11/08/2026 17:48, Stephen Hemminger:
+> On Tue, 11 Aug 2026 12:17:27 +0000
+> Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+>=20
+> > Fixed misleading local variable names in the standard stack,
+> > for improved source code readability.
+> > No functional change.
+> >=20
+> > Fixes: 05d3b5283cc1 ("stack: introduce stack library")
+> >=20
+> > Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> > ---
+>=20
+> Makes sense, but drop Fixes since that implies it is a bug fix.
+> Cleanups don't need fixes.
+>=20
+> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Applied, thanks.
+Applied without Fixes line, thanks.
 
 
 
