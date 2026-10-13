@@ -2,75 +2,96 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 649DBCC6B03
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 12:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE25FCA9ED2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 12:44:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 844E44028B;
-	Tue, 13 Oct 2026 14:30:31 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D4C504027B
- for <dev@dpdk.org>; Tue, 13 Oct 2026 14:30:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791894629;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=dC+y5ZPqL86SHOIFWJxeHZnQEBGf5Mgkj4PuvOn0iQo=;
- b=eDdPyO7a46eXxyB65SbgE0DaNto+/CdOyVOBfe9Ko7vADdobVZQQypUnA7FlZSPmGfHJ4n
- zMMNI327S8qSLLPEOYDXBidJoLbYvYhXxHfVJ2oE0oDLxp0N/p6R6ziMdQNUYYrdJXlOyj
- 6OAh1MXFTm2LJWwROTRXlsIcVN9VL0Q=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-xjpM7_AtPF2PH0XY2e6UvQ-1; Tue, 13 Oct 2026 12:30:28 +0000
-X-MC-Unique: xjpM7_AtPF2PH0XY2e6UvQ-1
-X-Mimecast-MFC-AGG-ID: xjpM7_AtPF2PH0XY2e6UvQ_1791894626
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-3a9e7d65fe4so11307561fa.2
- for <dev@dpdk.org>; Tue, 13 Oct 2026 05:30:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791894626; x=1792499426;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=dC+y5ZPqL86SHOIFWJxeHZnQEBGf5Mgkj4PuvOn0iQo=;
- b=a1RkHJESVO9rGp2s+GP/dx9+fiQpfpfS5CEqJoomyMMF9ftiRJFxkpmjsojBmVNLrm
- pUrvs0Yr153x6ie4lA33y3eUvgNCoCRcD3omkP9AOIrq2dZq9xdS9awIRGmGx/w39Ud5
- yPwC9m8ENsfe8owWnt0JXEcrMwFFBx8mGzpyI4eIEQT0toxz7hNXiG+yp3oWPWu4u5Oi
- 5Omt2+9b1u6LcjkW1Xu2ghyMiQ++8yJbnVw0GwqFjUue4ljRoR0i4rUb68gHvv9CqnX9
- f7So5nqjJL/GCW+wq3gonopPKTPe1YVAZ2fsTVAeujudCZ7tDkfID0AF5abkoJNpje/4
- ihbg==
-X-Gm-Message-State: AFq9FYKucEQfThwSxnWFaW1j77vVxKCGuCUV9bIuWu6KJDwzJsa/ygDi
- AOQ3qgPHs6WClA+pfin43yDgK44a/Ex/zh5IjghTY0XgrIby/j5PZiQTthTwp5ctZuFW9JiVE7+
- WvpdoA6HM+SwSDeBC8zOxKtqQDPAnS6nQj78WxjgHpVHWBGNiOiHgDLVyyHzLXZ9xQcfSTNYmvN
- WLzBm3fVBD3vBeQjuOvnE=
-X-Gm-Gg: AYBFou0o5MIDZBcoO4r4BYbYYrvuFzxQA3Fb3QsQwSEOwRM9Rb/TRVVzSaMon0l6jOj
- FdIQZZp3rm9zctjR+MZe2PhUBj5O6eEegPuBWre77Feyt5SsAtwkyHOXtlDkExekl38BpnyfA1L
- qFdd24Y4I7ZroL+N3TGDpFwqqyYFTLKV4g0jIX2VZ5e6vP654ZydsAHXWNbq3ysJBx0GKTUKKUI
- LAT8zbufFa7HEXuTcuDB4dEkt8JJX/q7etamfdnJSVOhM1z
-X-Received: by 2002:a2e:b019:0:b0:3a6:53b7:65f with SMTP id
- 38308e7fff4ca-3a9c56e2e18mr20909751fa.24.1791894626317; 
- Tue, 13 Oct 2026 05:30:26 -0700 (PDT)
-X-Received: by 2002:a2e:b019:0:b0:3a6:53b7:65f with SMTP id
- 38308e7fff4ca-3a9c56e2e18mr20909661fa.24.1791894625865; Tue, 13 Oct 2026
- 05:30:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CF6DF4028B;
+	Tue, 13 Oct 2026 14:44:48 +0200 (CEST)
+Received: from fhigh-a4-smtp.messagingengine.com
+ (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+ by mails.dpdk.org (Postfix) with ESMTP id 3643C4027B
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 14:44:48 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id A77881400156
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 08:44:47 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-06.internal (MEProxy); Tue, 13 Oct 2026 08:44:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1791895487;
+ x=1791981887; bh=uQvLTgZiCJuUBVpzRaHsY/yDRjxExOiKkNs99/WZA+0=; b=
+ bR+5h6j+NU7E3GIYYEACKFEGGlm/w0UmR83mVO9+htTf9ImpNflzKld4/AZe3Lsz
+ DEH1kZs3rxVvdAWvPFX/rM8RtG5okvWF6ggzAEsjXcEfWOs0qYD0jCLM2y5j8xD1
+ ZDQkvSNRMEEW23saS3zvDs2zffPXSOtn4ePWEigLyYvJgGcSrIRnM0CwXpqtp0kr
+ lBqyMuD6RaZ2WCzOO+/7p6x6AsoAlCJdanrspRCMFVt3m6RVZnAigMUszfDlzRKA
+ MJTylKVX5oXIQ6yp2MSaOghG2i3RJjEho1FhK2IT7I8ShjWpEMfSRnYMM9hsOEkD
+ r9b4zZdm2I9te1e+kRoCaQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791895487; x=
+ 1791981887; bh=uQvLTgZiCJuUBVpzRaHsY/yDRjxExOiKkNs99/WZA+0=; b=w
+ SPRiGn0Wo/y1TMEEK6pT3U26JRDerqEGIZjMwd6kRB56Xn6US4/WukWQ8H5Awnsz
+ 34s6VhFcc3/8yf8P5BGT5/QB6SMdS+8Ku27J4IZ17gSh/LcYtZYFnp5huSd8STnc
+ akmRtcQRGJBZ/uDEUijmRjnrTnEyoicm4aUA1JMdhI+4/U4RAg9nK2PBK1RUazeB
+ HZN2vnPcMMG6QMPSoLL6Z1QTBOqir2o+QA/fd0Y4He/s3NEVNQB/Wj13ZuP3C5g6
+ xN76n4gjNfsrrGK43GpxrnRGp4sGqQdCitzDb3kxmH6QjaCzNXDrj6M14atIAY0h
+ x7yLIFs8tPXMn0/etBRtA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1791895487; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm2:rsa-sha256:npPxgRULwtkjKxOc39zLxnXkkAQ5o93GmLXzbUQ+svYg93n
+ 8orbB8sOF5FFrqCnqy5B7uJQUBv8kXHzh2rzRhePLL63iswZNcxziSe51vjgqYrs
+ Zc0RqI8OAVMZKlCM/h0D1wxncvKMfNyve3iE92Dm18JKWOBwQRSYAen7VJgCgbPZ
+ lDvI9TCcnEBE/JG7NuaFWvS6W4Rf+QkGKdu3zmpOrMcta6p7QidND7bn9X+/p/Ar
+ OOq6hN6/UYBI9HxzyUofmB2l0/Gxzu5HmJROSzeaWi1bRFZ6Thk28PfK7qnlePHn
+ erwMcm91QNmXMoB26yeU0OygM23PVNz4ToQJn0Q==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:i/bXOclw6qgMr9ReFhA9j20sQq5OKR42S7bvZJDhCN8=:jGUWSgEplbC4uk8aFj2tHoOAuoxb5QhsmAfen8lEPTI=;
+X-ME-Sender: <xms:vyfOajdCFw-Fa2boIwtXdNaT-yTfoOvy3iEliN5t8XQURoU7ninXeA>
+ <xme:vyfOaliIw9CO9T6OuMD6cy3rb90p_2Nc4W6ROsV1alUT1uE4NvzvqnaBay38mNINy
+ oHG0gUhQNAr2uGtTemR-pcpV3MOnyOyKdL06DMLPVZ8X7j6HggkLN44>
+X-ME-Received: <xmr:vyfOavQm35_DAYBnFOY4zcUIy-tay-gEeuIECjLDVTX0QvNMz6RCQzAbL5BnkIGKJfkj84CTG3_AZnkXNmYn31Q>
+X-ME-Proxy-Cause: dmFkZTEb4qW/Z8qIXH46Pw1NrkTLxzX2rNXDF76/vKlrgJjP46XZ/eWBkKI245E0qbjrrM
+ oL1q4yyFqJ8LRQ4iYcMqCQzDGBc+8YTK6A/Wma/+n0902TT+b+ADGyVV7EjJZy0HeLKH7P
+ yYIMzAwjx8kn57YIsp+5nLUHb0h3ToMGiWLrR0pCi7mgBVGi/ZTVYUO/Zxv+Yr+Xfw/3pO
+ 0TTGnNBLcu7vapeL4jFsen94r93KBUc/YAne5ovbIlIFUx1OSQWnXJl6hp5ugaHcivFUGN
+ BRoZ4Tbi22z0hKGAwJIAEScRdj6N5i8ab9ln6w+6G+id3BWsg20J+fa/9m6ThZHof2RfrQ
+ 9DUZx0wlBNSfFNEKA124pRUhBJGpyhzotyDXgxMC5f8uQhwk6KN4Km0/jbMj6+k/Jox7lY
+ iX21sywzJSOJpiqJcKcfoWjAyml7ZqSRJJSQYsaiZqrGsCZEjgShQRRywzCaAUglAQWpJp
+ wx1Sbp9xhU+25HUfMAYtDqpIGK6v0PPwR3wNc6oeDvrc/im44KdzjPOHefR2ZVOdMQb6vA
+ HL34uygq1EPtiSLGV/2Y7eY6ccF++d+yayqRtS3/evblZe3Tef6TBGep9KheHzG4O9ZT4U
+ 1aznoUeRlmllc0sNPz5o7OVKEhR4Zy5JpUOduP4xUIsDyRRoZC0wYoyb5dQA
+X-ME-Proxy: <xmx:vyfOamxthuhb7x-XAZMHmnSbqeutozTu5vKOs429QG5v8LALCv9Tow>
+ <xmx:vyfOaieVZIOUWIG5qGamqL2fvHgQPb3CnRsJHuhVhZaB62QZ1UeH2g>
+ <xmx:vyfOaqLUosnND3b5Sc2p7fgSASJmFF1oQ0x-TFvlhVcnsdfNSTfSEg>
+ <xmx:vyfOarGSfJBi7ChBfBp9H7VdnBVtC-7R2xvATamtflvu7yaQ-gTZmQ>
+ <xmx:vyfOam8pxXz5M2tKyUCAL0av7cKU7Dz8b2tTLsxSQx-4CzuxsHPOQTv4>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 13 Oct 2026 08:44:46 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v2 0/3] power: fixes for amd-pstate frequency scaling
+Date: Tue, 13 Oct 2026 14:44:45 +0200
+Message-ID: <nu4pW9zKTi6-BOftSg_2mg@monjalon.net>
+In-Reply-To: <20260908165447.450006-1-stephen@networkplumber.org>
+References: <20260328193419.106100-1-stephen@networkplumber.org>
+ <20260908165447.450006-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-References: <20261006082056.46426-1-dragos.tarcatu@keysight.com>
- <asZCmYlJ2KmItl7J@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <asZCmYlJ2KmItl7J@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 13 Oct 2026 14:30:12 +0200
-X-Gm-Features: AclHuK_AHg2hmqUQFVIOJMjBzXNkCUGCHK9QkGS4AMwObaO1voNRX--Mr48oHeU
-Message-ID: <CAJFAV8z9-JxbWTAWUOM1p_fc14bFQd5BA=A5p+NZuhg3sUV43w@mail.gmail.com>
-Subject: Re: [PATCH] eal/x86: check OS support for AVX and AVX512 state
-To: Dragos Tarcatu <dragos.tarcatu@keysight.com>
-Cc: dev@dpdk.org, konstantin.v.ananyev@yandex.ru, stable@dpdk.org, 
- Bruce Richardson <bruce.richardson@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Gk81zDg9poBwsQsxF-SZRAVN-QmfudQ7tf36UxOBcOA_1791894626
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,45 +105,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 7 Oct 2026 at 15:01, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> On Tue, Oct 06, 2026 at 08:20:56AM +0000, Dragos Tarcatu wrote:
-> > rte_cpu_get_flag_enabled() reads only the CPUID feature bits.  CPUID
-> > tells what the CPU implements, not what the OS enables.  If the OS does
-> > not enable the related state components in XCR0, the first AVX or AVX512
-> > instruction raises #UD.
-> >
-> > CPUID can report AVX512 while XCR0 has no AVX512 state. Old kernels
-> > without AVX512 state support leave XCR0 at 0x7. A kernel booted with
-> > clearcpuid=avx512f removes the AVX512 state from XCR0, but CPUID still
-> > reports AVX512F. Similarly, gather_data_sampling=force removes the AVX
-> > state.
-> >
-> > On such a system, the rte_net_crc constructor selects the AVX512 code
-> > from CPUID alone. The dynamic loader runs this constructor before main(),
-> > so the application gets SIGILL before EAL can parse any argument.
-> >
-> > For the AVX-class and AVX512-class flags, also read XCR0 with XGETBV.
-> > Report the flag only when the OS has enabled the related state.  Use
-> > XGETBV only when CPUID reports OSXSAVE, because the instruction faults
-> > otherwise.
-> >
-> > This change also affects rte_cpu_is_supported(). If DPDK is built for
-> > AVX512 and the OS does not enable AVX512 state, EAL can now stop with an
-> > error that names the missing flag. This is possible only if no AVX512
-> > instruction executes before rte_eal_init(), for example in a constructor.
-> >
-> > Fixes: 3934bb741354 ("eal/x86: identify AVX512 CPU flag") Cc:
-> > stable@dpdk.org
-> >
-> > Signed-off-by: Dragos Tarcatu <dragos.tarcatu@keysight.com> ---
-> Tested-by: Bruce Richardson <bruce.richardson@intel.com>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> Stephen Hemminger (3):
+>   power/amd_pstate: fix frequency matching for continuous scaling
+>   power: check for errors when writing frequency
+>   test/power: fix nominal frequency check with amd-pstate
 
 Applied, thanks.
 
 
--- 
-David Marchand
 
