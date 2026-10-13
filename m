@@ -2,77 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AFDCC6B12
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 15:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3ACCC6B0E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 16:04:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E21F740274;
-	Tue, 13 Oct 2026 17:45:55 +0200 (CEST)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id DEF6C40272
- for <dev@dpdk.org>; Tue, 13 Oct 2026 17:45:53 +0200 (CEST)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-3ab2cb8d577so2554329a91.1
- for <dev@dpdk.org>; Tue, 13 Oct 2026 08:45:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5940640279;
+	Tue, 13 Oct 2026 18:04:36 +0200 (CEST)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id CB21C40272
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 18:04:35 +0200 (CEST)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-4a0286c981dso447965e9.2
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 09:04:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791906353;
- x=1792511153; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=xJrqlHUROtA9TtfUbnlEfDc9aMH0R7Vh9V7aMYXmqm8=;
- b=okA1ALSYpomGCCBVdBdKHrLUAhhrmr1aM21hgEbB0Cm8wac/RWT5O0l21hZnOJbJJu
- IzY0ZHRH4QHgSTOkgUBQd2Pxth2BBKCKr3hpt0yUHvH2Mc3NYj7oiXsNedvyIfDXZyb0
- /Vdt+GGXUieSksYkzzCl3CHvLgCNYslsVLEmWRj17/6nO5lqIQEJJMk6EcQCoMteJnCK
- kMw8mmclg5vFWBrNkFc8jvF8z7TYEy3StnPmLbuLtecco/TPbpN9oerWPHw3daO4Ru76
- pdP8DEV0AQBJdGoOUVKNQd+PYlBYMG4drW6SEvNwkdJiVgTPyJI55834vGXPsQzG0BJb
- Rj3w==
+ d=gmail.com; s=20251104; t=1791907475; x=1792512275; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:in-reply-to:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=EuIIKDeZ32kWQSNMi4riBPjK0IgzXkKcG0ylT0UVDco=;
+ b=kkBvIBvSRJ+ej8uGcIXCjCVnJVRMnIkO0t725RytyV1hxDVLHZK5ROoXRUk0FfYzti
+ 3du0eLerjItnRWnKggf/jBjCOVPEXIVblKaYT0I1fS6MKvn6I6V2JVUoS7mWjYFchN0h
+ ddagz79h9XqWYKXlK5QZcWkCuniFsj187VJQKQeSYdtU5UJCwyi3+3iOxXhXqgkLqX5G
+ XbT+OVxAgv6HyqzIsxLzj7TXyvOjbhNE6MP8pL+GSeBjzDhX2gxpbAf/8XUI1uVtYRE6
+ iPqAnT1VI8pfMKjQa6vhDnwB2awNi66Ek39Ffu59ROrIVl6iKLGDKCMOxZ7IEYLbWpZQ
+ wn2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791906353; x=1792511153;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=xJrqlHUROtA9TtfUbnlEfDc9aMH0R7Vh9V7aMYXmqm8=;
- b=jx5tLvqnkxruUIPaxG5heARm38FHTLoqRFR9tNPdmmtAGG/QUsTw5VwH+Kg2qMwfow
- F6tzra+hXZq/fSB2XACK6ZRaO95vNPVNy+ycPJcP1zRRWkdID1h+7iY/b0Ssa66flqtn
- aKL+BnGWY5nNPQrucODxlvyAZERkpApbYB562E+CI7+NxV8Etz/OpNCdY1BBlsVNV0BV
- uiAxJoLKqXYHMTkDnvZfx/gLRFw8aZv/sKCnOoYL+4tpgJA5lEa/gMjgftBh2GENfICt
- Ne9u+BUyVaxfupr58Y7s8rdg3m3t1wFi6fehcCCG6sM43FiECNevo7wNQHIf7e8y6dZq
- 3zLw==
+ d=1e100.net; s=20260707; t=1791907475; x=1792512275;
+ h=content-transfer-encoding:content-type:in-reply-to:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=EuIIKDeZ32kWQSNMi4riBPjK0IgzXkKcG0ylT0UVDco=;
+ b=ZAftSM2pVBLxv1N9zFufBwacsnwKfIHhBQC8GKYp0J7B7wkG0Jvcck9IhzN1oza/3I
+ puc03UQli9RkZdLR9dpREPCd9DoTTvV3qGJqb7c48Se6dW/NPBoK+yNgp55GTb7nkYVs
+ v5jgepFAfmC0ds5MHPAhjvCoqUfSareapYPwpyfP3RqpH50zaULCA2IANsmW5IHnX1ua
+ fTQoDR+ZbA+pFG8YrKIhyhaiVKhE9kSBF3mU9Fg+1nLQ1YicbAa0BXd5n6a9kfKW8wsX
+ /+UKnFZ/4MYctGJZqPA99zq7brjnta/AJWh7/zoGKxbVpJMqd4N6BTDdxefl6SJsm/Ee
+ u4mQ==
 X-Forwarded-Encrypted: i=1;
- AKwUvBxWH2vSrbf2mm1pRMm7/Bj1Z5EC/7ue17VJAV2dwdqLy77SfRlJpIhT0AH7oNzctAHLhuM=@dpdk.org
-X-Gm-Message-State: AFq9FYKIeTSWKz3MEgWctS7Ha73u/9zcx6zfQpG8ZxG45vys42C0jSO4
- zAeO9TANB8WhwjW3audEZjcM+p7TLbteL83XiSzYi5HnMHrjUQSqWnLGTtM3uvT9dGk=
-X-Gm-Gg: AYBFou3IGbY9s7iLduiApSnTvkcFQMNvVkbCfQm5pe15PHmaBW1op/NzqQejNBJ92NN
- upM7Dooi5f7W+Pnp6Hkry527GCN4uYrFe4pkCVbNTcsUXuEq0mrNO2jL/y6TyS+kf75rQO2iGzz
- sNf+4DbbW8ik3sTyN8S74AZsIzPBX/iurjjYeoPGKO1WwZE2yzEhUAd7Zgy36t6D1LNXTJSC4tE
- 1mvNUiVA0cihnQ+amX53w4H4jP+h7iOFrvCkhcIqNyaB+cC7aATa+UpYgVXPkUVbeBQZ1WtkR0S
- v24LlI//+2WV6Xni2AzxO9PdsV/CNg/sQumxjVIATMetD5Ms9gSYXHvqCu0wj3+9R/NSZMxczuR
- D+lrNuK/zo47xGfszk4gzUEItMGxjk26Jeqf7LFWT2WhRT1mLyHrfNTljxSG5gwMTlh6w9ZZpqA
- IrG/FfMG2PqQdkBAgbMlbeVlT1EcdCq8xJwMTpioEmVxzSMtZvMdjqU9BTzUcBVlwSvommpD1wZ
- Aa1Hs/3GFNHmsDSwIY3d4zRQMXZWTKZlch+6NJX
-X-Received: by 2002:a17:90b:134b:b0:3ac:12e6:a5bc with SMTP id
- 98e67ed59e1d1-3ac12e6c028mr4203584a91.61.1791906352947; 
- Tue, 13 Oct 2026 08:45:52 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ AKwUvBy0gpsNWk7U82ev/xi5CNRyH7ov1XUFClFdF2anTGSU/CFSET83W5e1kEWmDM8mEnTM5vY=@dpdk.org
+X-Gm-Message-State: AFq9FYKVeWRH9minXNtXh2OPaI3vmM2Gb7J6do01B/Js3gUafR+YmM3Z
+ 4UoPOxzPL1K1hFkueejo9EqMPXRj7omejy81qvfYwsI3UF7tG4if4WoF9VEpR5iNHQ4=
+X-Gm-Gg: AYBFou03UthyN5roKwZctwYlhhmGkqb4c1toRyppW/0W6OD4CuqLnpSKdf3ppASdgww
+ TtpDEWCxfwhDNm9JPonqH1wG9VDRDtdlooYALCPv62iZp+7jkutvxXvWJxvebJk/Jd+ZlAIi05Z
+ 8KUjUSIXRgFJW0tQq+Qw2TNkoaJwBFchIARcraJCsgFaYVH283E1xTzTMTTt9GOY4s7V2FooTf7
+ 5emZ7olS8ewYYPAe9iUT326xOtw+0n+cCWuiXKX90fwuegreoycnIFN9EuXRxWyNxudJUMFiu6Q
+ eNGR/8QR2TCiIHuA73+0H5G8ctCMZw5rNHVLWm+ioznp1wzOgR4T5fIPYghzWApJ1Zl01IX7iDz
+ 9qSF8TZQ0FFzFLUTfAgm5WoAkrLsM9P8c9izoQXu0aHaflLuic0MXyTcevwQwU3L9HvF04B9+XX
+ ekMXVpqCpmN0oJnyvW99a6fGIL0bkWuM5Rs53L5nY2CzvPV3RgF7Fyh7kb5s+Bkznhl4M=
+X-Received: by 2002:a05:600c:3e07:b0:4a1:8627:aec7 with SMTP id
+ 5b1f17b1804b1-4a18e4987abmr220064495e9.5.1791907475093; 
+ Tue, 13 Oct 2026 09:04:35 -0700 (PDT)
+Received: from [192.168.0.78] ([80.233.42.129])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ac5f2a88b4sm147936a91.14.2026.10.13.08.45.52
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Oct 2026 08:45:52 -0700 (PDT)
-Date: Tue, 13 Oct 2026 08:45:47 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bing Zhao <bingz@nvidia.com>
-Cc: <viacheslavo@nvidia.com>, <dev@dpdk.org>, <rasland@nvidia.com>,
- <orika@nvidia.com>, <dsosnowski@nvidia.com>, <suanmingm@nvidia.com>,
- <matan@nvidia.com>, <thomas@monjalon.net>
-Subject: Re: [PATCH v7] ethdev: support inline calculating masked item value
-Message-ID: <20261013084547.642a11ab@phoenix.local>
-In-Reply-To: <20261013134950.310252-1-bingz@nvidia.com>
-References: <20261007165904.126976-1-bingz@nvidia.com>
- <20261013134950.310252-1-bingz@nvidia.com>
+ 5b1f17b1804b1-4a18bf15691sm366082245e9.6.2026.10.13.09.04.33
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Tue, 13 Oct 2026 09:04:34 -0700 (PDT)
+Message-ID: <31fc3286-242e-4104-9247-330a3d1ce217@gmail.com>
+Date: Tue, 13 Oct 2026 17:04:33 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/29] bpf: replace deprecated SMP barriers with C11
+ fences
+To: David Marchand <david.marchand@redhat.com>
+Cc: Wathsala Vithanage <wathsala.vithanage@arm.com>, dev@dpdk.org,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Stephen Hemminger <stephen@networkplumber.org>
+References: <20260729175715.165120-1-stephen@networkplumber.org>
+ <20261008233649.1260843-1-stephen@networkplumber.org>
+ <20261008233649.1260843-2-stephen@networkplumber.org>
+ <b9d3cb13-e34f-406d-ac18-345fede8bc5b@arm.com>
+ <6888e84c-e250-4ed9-ad70-46178014eb15@gmail.com>
+ <CAJFAV8zWR0PPrSNzwMyP=2wFFTpjCq4dWFs9X0HSjkCNXVF2mg@mail.gmail.com>
+Content-Language: en-US
+From: Marat Khalili <qm2k21@gmail.com>
+In-Reply-To: <CAJFAV8zWR0PPrSNzwMyP=2wFFTpjCq4dWFs9X0HSjkCNXVF2mg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,99 +92,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 13 Oct 2026 16:49:50 +0300
-Bing Zhao <bingz@nvidia.com> wrote:
+On 13/10/2026 08:54, David Marchand wrote:
+> This blocks the SMP barrier removal for rc1.
+>
+> What is your proposal?
+>
+> I think it makes sense to take
+> https://patchwork.dpdk.org/project/dpdk/list/?series=39599 first, then
+> resolve the conflict for the patch from this thread.
+> Is this BPF series ready for merge?
+>
+> If it is not ready yet, what should be done on the current patch?
+> Is a s/rte_smp_rmb()/rte_atomic_thread_fence(rte_memory_order_seq_cst)/ enough?
+> The commitlog would also need some rewritting.
 
-> In the asynchronous API definition and some drivers, the
-> rte_flow_item spec value may not be calculated by the driver due to the
-> reason of speed of light rule insertion rate and sometimes the input
-> parameters will be copied and changed internally.
-> 
-> After copying, the spec and last will be protected by the keyword
-> const and cannot be changed in the code itself. And also the driver
-> needs some extra memory to do the calculation and extra conditions
-> to understand the length of each item spec. This is not efficient.
-> 
-> To solve the issue and support usage of the following fix, a new OP
-> was introduced to calculate the spec and last values after applying
-> the mask inline.
-> 
-> Signed-off-by: Bing Zhao <bingz@nvidia.com>
-> Reviewed-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
-> ---
+I think we should be able to unblock this patchset with the diff below. 
+Last version contains some additional out-of-scope changes that might 
+not be helpful in the long run, but I tend to believe Stephen and 
+Wathsala that they are not breaking anything (I have not checked it 
+myself). If the version below is ok with Stephen I would prefer it 
+(consider it acked), otherwise I can withdraw my NAK for the sake of the 
+release, at the cost of some potentially confusing noise in the commit 
+history in the future.
 
-Semi-automated AI review had some feedback.
-I assume mlx5 will come as followon so complaints about just this patch
-are not really valid. And not concerned about its complaints
-about going over flow twice when copying.
+diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
+index f072fdaaed..0d0c37cdc5 100644
+--- a/lib/bpf/bpf_pkt.c
++++ b/lib/bpf/bpf_pkt.c
+@@ -82,7 +82,7 @@ bpf_eth_cbi_inuse(struct bpf_eth_cbi *cbi)
+  {
+         cbi->use++;
+         /* make sure no store/load reordering could happen */
+-       rte_smp_mb();
++       rte_atomic_thread_fence(rte_memory_order_seq_cst);
+  }
 
-[PATCH v7] ethdev: support inline calculating masked item value
+  /*
+@@ -92,7 +92,7 @@ static __rte_always_inline void
+  bpf_eth_cbi_unuse(struct bpf_eth_cbi *cbi)
+  {
+         /* make sure all previous loads are completed */
+-       rte_smp_rmb();
++       rte_atomic_thread_fence(rte_memory_order_release);
+         cbi->use++;
+  }
 
-Applies to main, builds with -Dwerror=true.
+@@ -105,7 +105,7 @@ bpf_eth_cbi_wait(const struct bpf_eth_cbi *cbi)
+         uint32_t puse;
 
-Warning
+         /* make sure all previous loads and stores are completed */
+-       rte_smp_mb();
++       rte_atomic_thread_fence(rte_memory_order_seq_cst);
 
-1. GENEVE_OPT option_len is masked, data length is not.
+         puse = cbi->use;
 
-rte_flow_conv_item_mask_size() returns offsetof(..., data), so
-option_len is ANDed with the mask. The default
-rte_flow_item_geneve_opt_mask has option_len = 0, while the deep
-copy of data is sized from the unmasked spec->option_len. The output
-is a spec with option_len == 0 pointing at option_len * 4 bytes of
-data; the new test asserts exactly that. mlx5 sizes the option data
-from spec->option_len (mlx5_flow.c, data_len = spec->option_len * 4),
-so a driver switched to this op loses the option length.
+@@ -439,7 +439,7 @@ bpf_eth_cbi_unload(struct bpf_eth_cbi *bc)
+  {
+         /* mark this cbi as empty */
+         bc->cb = NULL;
+-       rte_smp_mb();
++       rte_atomic_thread_fence(rte_memory_order_seq_cst);
 
-option_len is a length, not a match value. Leave it unmasked:
+         /* make sure datapath doesn't use bpf anymore, then destroy bpf */
+         bpf_eth_cbi_wait(bc);
 
-	case RTE_FLOW_ITEM_TYPE_GENEVE_OPT:
-		return offsetof(struct rte_flow_item_geneve_opt,
-				option_len);
-
-and change the test to assert option_len is preserved.
-
-2. TAG index is a selector, same reasoning as COMPARE.
-
-rte_flow_item_tag.index picks the register, it is not matched
-against packet data. mlx5 takes it from the unmasked spec on purpose
-(mlx5_flow_dv.c: "When set mask, the index should be from spec").
-With a template mask that has index == 0, this op returns index 0,
-i.e. a different tag. Exclude it:
-
-	case RTE_FLOW_ITEM_TYPE_TAG:
-		return offsetof(struct rte_flow_item_tag, index);
-
-Update the "Not masked" list in rte_flow.h, the comment above
-rte_flow_conv_item_mask_size() and the rte_flow_conv_pattern()
-doxygen to match, and add a TAG case to the test.
-
-3. No user of the new op.
-
-The commit message refers to "the following fix", but nothing in
-this submission or in tree uses RTE_FLOW_CONV_OP_PATTERN_MASKED.
-Send it as a series with the driver change that consumes it, so the
-semantics above can be checked against a real caller.
-
-4. Commit message needs rewriting. Suggested body:
-
-  Drivers translating async flow rules get const spec/last and must
-  copy each item to apply the mask, which needs per-item knowledge
-  of the spec size.
-
-  Add RTE_FLOW_CONV_OP_PATTERN_MASKED to rte_flow_conv(). It copies
-  the pattern like RTE_FLOW_CONV_OP_PATTERN and ANDs each copied
-  spec and last with the item mask. Pointed-to data (RAW pattern,
-  GENEVE_OPT data), selector fields, FLEX, COMPARE and PMD private
-  items are not masked.
-
-Info
-
-5. RAW pattern bytes are deep-copied into the writable output buffer
-and spec.length is already masked, so masking the copied pattern
-with mask->pattern for that length is straightforward. If it is left
-out on purpose, say why in the commit message.
-
-6. The insertion-rate argument needs numbers. rte_flow_conv() walks
-the pattern twice (validate, copy) and masks byte by byte; show it
-is not slower than the driver-local copy it replaces, or drop the
-claim.
