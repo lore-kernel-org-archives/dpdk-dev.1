@@ -2,94 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C3DCC6B19
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 17:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B48CC6B19
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 17:18:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DFCD940A77;
-	Tue, 13 Oct 2026 19:16:19 +0200 (CEST)
-Received: from mail-pj1-f98.google.com (mail-pj1-f98.google.com
- [209.85.216.98]) by mails.dpdk.org (Postfix) with ESMTP id 67CBE40A77
- for <dev@dpdk.org>; Tue, 13 Oct 2026 19:16:17 +0200 (CEST)
-Received: by mail-pj1-f98.google.com with SMTP id
- 98e67ed59e1d1-3ab2bf5e75bso1761944a91.3
- for <dev@dpdk.org>; Tue, 13 Oct 2026 10:16:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791911776; x=1792516576;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=5bQ3GekSM1IX9sNTJCi1GQQF+TC6DFUK2hUzVoxKp/o=;
- b=iZ/M65UhpvAHjmazC7H6djXi88TPlRJE79/y0d84JuF+gZ2LXUby8ukG8gqofck+0f
- FLIcrAi6djF3m2OlNXYWqMTU2PdvXFYZqR/08pgY6XRG6B3pvQu/bOkHGLPmRDjZVQYn
- I0VlmPBGwfEBCotzslWfxlG5Jn3Zwm77dq7uymq/irrA2jqJpQ8OKPfKn6w9YwQatUqi
- TQ38J7nF1PGWh9n8A8JPgpJf/Ip3hsG43smc2wb75T6f25Of+pq4pXNpBT72+0vQZGWh
- 5QSg+q79KxJQdgG6MBtiuboUT9PrdOmKr9QWLn0Q5kwoCtdVdE8yEa5nGdnMW218AGrM
- qFug==
-X-Gm-Message-State: AFq9FYKsh8GfoIVtUkeEKYG8+XC1ghXanrI1B0cR49lzqYj9YYUgAv7f
- 3DhOt7vBmb46xGjF8mAwL2Kx82wQ+OARBjkZ4WkX0ugBqHOu2KMjOjAIX/ro6pF3voCPCcAlPSh
- GPXmtH1e/JX0JwGvTDv7cNz1q2nZ8Dd/cfnMwQ1pkClbsFVY6zPdRCYZTVEz1kNYTp4v4KFLWuB
- y84K/jzG3ZQx3FEbyAZOvkNFsnsFuuzK2k0grnKvawtdcdlxVX3vde32xkSxuC0mROqZsP/2rgN
- CSnISmiRjSp
-X-Gm-Gg: AYBFou0HOi9ybDAoEeLXJIyZxy5KDKE8ONqtPk0/Q3JXDDa5W1anwC8ayzOfF5LGQj5
- ElnanQlS8ysZp7ptkrNPrn5SgRyL4y4FQDu8kDu64DExuBPpSkxyf2Oltx2KO/yRQNeCtsUx17X
- nUEqjSN0Gm+2jxHjg8fFz46shkuFnrSs1335qEK2+CmmPPBZioD4Lt8eg94Y4z1vQK2vxDAeFSA
- QCJT94hGZJ1Lll3jPaNoTfdnCNfOx8zUg4rib3QV5jndkisoQclknmQxsvN18LYtR18W4G7xJuR
- DFE5a2uJdSEMpPpBRTyoOnFe0QFpForS1+XTHyEgRvSWB1QTXzSRU9Yd4+mn6fMcz9Xkj8T7HIc
- Bz4RdXqYhKMu5g9wSfF6CSPeDaXXVzx8vQj5ynFJhItYjg2sSYqU29aW/QDXs8KvinZTm5geobD
- PFefvlCaoFr0SpZy0+mkw1sjAaUoD0YploxMZpHLZxymgUcYPnkJBw
-X-Received: by 2002:a17:90b:3143:b0:3aa:548f:eb77 with SMTP id
- 98e67ed59e1d1-3ab3ac95141mr12309016a91.56.1791911776332; 
- Tue, 13 Oct 2026 10:16:16 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
- by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3ac5f1e2cd0sm124327a91.6.2026.10.13.10.16.15
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 13 Oct 2026 10:16:16 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qv1-f71.google.com with SMTP id
- 6a1803df08f44-91786abb5abso51934856d6.3
- for <dev@dpdk.org>; Tue, 13 Oct 2026 10:16:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1791911775; x=1792516575; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=5bQ3GekSM1IX9sNTJCi1GQQF+TC6DFUK2hUzVoxKp/o=;
- b=K12gHSdUjpjnlxc7U6gtsUJF+Qg0ILOa2b8sWOAfbJLDRNFsOhuMT1I6XdR8WD3xmG
- mqO47Jxbb1Im6eU6bEKzz7KH94++uZzJz5uL4S2RG3mGlBtxS7txAsKO60EF3g/ZoC9I
- ZSQWU1S+bFGoCMfhmjS0IBizh5k3fnMxvxs34=
-X-Received: by 2002:a05:620a:470b:b0:93e:c12c:440b with SMTP id
- af79cd13be357-93ec12c4a20mr2073002685a.71.1791911774623; 
- Tue, 13 Oct 2026 10:16:14 -0700 (PDT)
-X-Received: by 2002:a05:620a:470b:b0:93e:c12c:440b with SMTP id
- af79cd13be357-93ec12c4a20mr2072995685a.71.1791911773734; 
- Tue, 13 Oct 2026 10:16:13 -0700 (PDT)
-Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-93ef5028051sm283063785a.18.2026.10.13.10.16.12
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Oct 2026 10:16:13 -0700 (PDT)
-From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-X-Google-Original-From: Mohammad Shuab Siddique
- <Mohammad-Shuab.Siddique@broadcom.com>
-To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com, manish.kurup@broadcom.com,
- Dakota Sicher <dakota.sicher@broadcom.com>,
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH v2 2/2] net/bnxt: remove VLA from EM key block swap
-Date: Tue, 13 Oct 2026 11:19:55 -0600
-Message-ID: <20261013171955.452416-3-Mohammad-Shuab.Siddique@broadcom.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261013171955.452416-1-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20261005151727.1706155-1-manish.kurup@broadcom.com>
- <20261013171955.452416-1-Mohammad-Shuab.Siddique@broadcom.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 8B39840272;
+	Tue, 13 Oct 2026 19:18:50 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 2500340269
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 19:18:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1791911929; x=1823447929;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=ALlJlW7C1dHj8+VVbzb9yBPFSGXcMlMmFbBiu7DIpZI=;
+ b=YqwU+k4rfjKlAHnzE6ctFQF/r10dKppLgWTIXBoh1K/GLHle9ERJz7K7
+ s0UYGkRx1p05RpCby6Qsda/qr3ZxL/n/7nvyR6iQMjL1z0XcSEtu7pgX3
+ qVIxUfUmMQ6+5XmCyq2VOuTZaDNhd+RI5Ow1MgL8RZ5xwjr0OV4pf9P3C
+ wf5yG1dSeXGPLch1GTVrfRDgKgg3isslzBNUsPgW2J2YGuW/XBPhIv2uU
+ DRhZjpE+hLCiqCzlCzJNRkHvNFxu1di+c32PwbM4+hptTHKuMHGXGTAW/
+ mftz7gbU2f2dZpJgoB6D2+wweTTk4aKY6bKOsZROVs/hPJKxtD0TZ33E/ w==;
+X-CSE-ConnectionGUID: Q8X3s9aGQ0qUWkeyy9pTOQ==
+X-CSE-MsgGUID: 9U3qC3ZtTv67Pj6e9SMmyQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="639978"
+X-IronPort-AV: E=Sophos;i="6.27,156,1787036400"; 
+   d="scan'208";a="639978"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Oct 2026 10:18:47 -0700
+X-CSE-ConnectionGUID: c9eC+0MVT+y2i/fJl0s18w==
+X-CSE-MsgGUID: AWDEu1ALTMaXQOsz79jiSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,156,1787036400"; 
+   d="scan'208";a="1291512"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Oct 2026 10:18:47 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Tue, 13 Oct 2026 10:18:46 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Tue, 13 Oct 2026 10:18:46 -0700
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.56)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Tue, 13 Oct 2026 10:18:39 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TExv5bHSzvgMw6odxLc9ycNEN7zUIRb+Y2FglVyXFCJDEX+xCrnhjkf8yUf49thJrjGdtybpQAbA5hU+nhuZ3nEv9IXrIUX7JqIjBc1bpzTP615Q831lzDyI8QvaRgxItVFGUtU41S4pVWn9b9B/QfWCNPwf+mBt9+BZaRIaYWngKIscMfaax0ccPnd4XWkd2/NeK8ClmSPu1dBA/ta6KgNVzgmJSeZwmBCfeJGamH9QpxZ8Zz/e5SMbk0GJ1dVFeun/h9Z6wrT9P6VMmDP0ey/FO3BTsNXumdDwZZrJ5g/I6kyRdMEs39M/KkphOyZzjXX3mqGtN5S8A9S5sPhwHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BF9PiEoU4SOOzhDmSfbaV2RkKrju6VP/TeDCkG5g2l4=;
+ b=b1uj23KvLg687Xb2fYvWen+hfIeMM0nXQzzvVv/+zUsP4swNAEb2WHbZVFnQLcasGm6DW8dgt4kywVTcTq58Tf4MRwvakB+KY38n+g3mFsUjJITyhGqejE4DfdNMv6OIOgPLiBZTjZMTS7Lks2VaCpvpQZRin93ZTlCtIb9+dMmoXhXAP2QBQw3EmTkvtw+lNGacuzzdSyozApsXUYWgLgWSmMXZxIUPcvmXot0K0gZcvJa8gU2ZAz7OdyYZJta6FL90v+l0f4WNkfJOhRX7b+hi5RR05TCbhl+JYjCEdgAEQ11qflYi/xeqYpM3eOzreG8EMPJWrnYibzIOpmr34g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by IA1PR11MB6244.namprd11.prod.outlook.com (2603:10b6:208:3e6::8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.23; Tue, 13 Oct
+ 2026 17:18:35 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0496.021; Tue, 13 Oct 2026
+ 17:18:34 +0000
+Date: Tue, 13 Oct 2026 18:18:28 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v7 00/25] Building a better rte_flow parser
+Message-ID: <as5n5Gd_ibUFwu8T@bricha3-mobl1.ger.corp.intel.com>
+References: <cover.1787233986.git.anatoly.burakov@intel.com>
+ <cover.1791892574.git.anatoly.burakov@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <cover.1791892574.git.anatoly.burakov@intel.com>
+X-ClientProxiedBy: DUZPR01CA0047.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::16) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|IA1PR11MB6244:EE_
+X-MS-Office365-Filtering-Correlation-Id: 190d5044-7728-40ea-1cfc-08df294e0278
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|376014|366016|1800799024|6133799003|22082099003|10067099003|18002099003|3023799007|4143699003|11063799006|5023799004|56012099006;
+X-Microsoft-Antispam-Message-Info: jVT6Oi99xqytIvzq3ecGqVkduTbs8kAUXYb1tvzUx2r5KFeZ45t75wYCSzE5q1PJZeb4o3tnbJan+jF4METU+o9ZT8HUfL0pbUtivt/yBcLousZfI89Xf1lIvYzNH9MtWIlKk2EKS0wWEByi8NDIKDnhTrSmJrBAc5tPQzffSbt3vv//O6sJ6XUdODTwPB176wMBe9o4m96aKzTR6RyvT+zsO1hI15WWUR2becou0dBTvovTtiUs3tZVl8MN6DIVRY0Djzb4RZlaCkmHN42RqMqYn9FxqMqNky9RJERdo99G71muvA+T0aIUuejs1NhdiTarpsGoeZUc2t1ruZpH6PYIa+0q9D37N5AMVAKobsXKWmJunM1yWB51txFbD7Sbcj6tO6gP1JJE6dkuoF8noAsHrx9AE1Bb8otMFXI3RMTyXrB5eTFdA2vSTB2wO7RKkubCAYucFbgpMM3pIY7jwNJHOlz4+MHIvGt4FJAGHmIVZk5DKuJLYItaD5NBUBaElt85WqT/gWPD6BJO227eVGobJAWYChVSuUgHEj46QS71op9WIBZjpJlNRkscMaO3wg6qHCp9MlTAc5A8aiq8QF2dhQ7II3IAqBv3/8CtOs+JprJZCy0meawwDiaGv2WCaqezuybCxC9xr2Wg0zzYY5dPhmlAo3UCuBHfrXRyemY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(6133799003)(22082099003)(10067099003)(18002099003)(3023799007)(4143699003)(11063799006)(5023799004)(56012099006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KkoRwqV+0iz4vZoLMoA7q3a8Vt0+lD9t8e6v4b5na4T+xNHT6YpX3dL3LOfn?=
+ =?us-ascii?Q?oqKLpclr9XsjqAKe+bfyxvjLzTKhst/vwMGhGOoFcdMlyyAPz7DoPP5MUJ3e?=
+ =?us-ascii?Q?XR39aRpuI3OfWiWcPbRre/E8b5GdqJ4AyQbjUiV2VPLgfTZCa947HVkV5aM/?=
+ =?us-ascii?Q?g4xNySRC7/vqEsju47sHX1f3EMMWV6hJAstUFJyTwCyw97szTAJXHwcxE1dr?=
+ =?us-ascii?Q?YzM1Q0dRNGS6rnnBD//VbM6CXs8xmTXXLkvljSBxmy3sSFVDJySEEnDuyOWW?=
+ =?us-ascii?Q?eayEvk4Pexp9eRy7hNcDDRiS2d9t+FigPuU2gp+YnM3Q3Xl0k0qLEYzMqGbr?=
+ =?us-ascii?Q?UXj9eirfgG4VaSzrWGRyyZkB2UI1W5mfgnYoqpXO2Tyi1yxj2nutmzph/L5a?=
+ =?us-ascii?Q?/Cb75OTbNBjAZ4ZqSsaqlnz6FvJ99PntZxxj2D16poRAQpxsblruHzwE5lLB?=
+ =?us-ascii?Q?J2qRRw65tUuV+aIlLa8bkRPPv0bbnpCn+liiQ5NZDRyYySENzwNk2Q3ozQrC?=
+ =?us-ascii?Q?d89TsvWCvDTjwINnrYQOMw9YT5UMISDS9t1WTS2JoBMrCKxNH5WpVBsbE4eP?=
+ =?us-ascii?Q?/tHSISUPhjvdfsoi69GGbjIzUyXjk03ZXexoZEpXYUn222CtVVtyCrh7dpBB?=
+ =?us-ascii?Q?7rltK5QeejObyLdE5RuonwA5YTVFbP0P34JmFeIT/ST5wU+ZsQ7ruHoAxuIY?=
+ =?us-ascii?Q?kAnOuJS9yyqFBKi0FxY0Xs/UACWe76Th/Dz8uPGehz+ojFgPZQz2cwwC2212?=
+ =?us-ascii?Q?MOo/z1x7faSlTzutuLeYBTF6nCryIZTsA3EFcLtbIiO1jfjwGhSq3lGbQRho?=
+ =?us-ascii?Q?JO0xk4jh8iJzpBKKWu9sT/XNxsi30vQ0eKySqKUGsMQGCJiN0Ol/rGBYNq2r?=
+ =?us-ascii?Q?D9pj9SgeE+scd6PcKyKIUsX8ek0TOBMmiquQAH+APrIPHbe2AUhWu2fjhYmx?=
+ =?us-ascii?Q?iFVsNSDwA2/4/xLI1WC1b++uBGXV1SdApBFz6tf7HzpdUfkBOEjKuhoXUe1E?=
+ =?us-ascii?Q?b4mDcJyWJ66g1UrCg81p/Os1hvx03+i44PemeoLxPz/qndmgD5+HK+I7yvBQ?=
+ =?us-ascii?Q?Txob4MQ2mTTId/d5+B4Q+MXO4rgN80TxUN+40hpwYd+qQqXxfUIB5M77KU2o?=
+ =?us-ascii?Q?/lu/MpONTJdjig3uYX3xTKTLTQmgC/QIOyU5p/CkzrMdgxq2gZoP665UbLCe?=
+ =?us-ascii?Q?Y2tmamxDMqzPLV11OUz78vgKtbHWMNVs59QB0CNU9EaBqCaSV5TNaxkkp/Lk?=
+ =?us-ascii?Q?SGF7cyBmlF1Vuv8fgDxU9+cF69SwVGs11AajapaBkRfebA/EQEKf7sdXg+8G?=
+ =?us-ascii?Q?NNAvTFojkpQ7CXVzWTYDGbxINEIWgOVVL1HR8ur8jjqt2+0c8uDt3ph3mXbS?=
+ =?us-ascii?Q?aVjYO0lPHPkf5B2mjb4G+xECrsGyExi6lK6b4Q2D9NVhcSZ+1W1emoHssf54?=
+ =?us-ascii?Q?FEYzAcfAst2cKsOrf14N9Ec6PkFHSBABmAT76n4QHe7K7F3MqGGVFMqwsdck?=
+ =?us-ascii?Q?aWONe35KHbF1rhyRiJh6mNzaPaUwI2QFUBCL9N6ZxSi7eGiCUUOAq2tnBQcT?=
+ =?us-ascii?Q?ehGcwg0cIbMKpb2L60dWyPVSgqAOVpnb9ngClrFPj2PlNWajg0zG4zmtBN/y?=
+ =?us-ascii?Q?XxPsnVbSIp+wqgU/sU9wJihdtbfc7YXdPpypRIRtO864CltlulPQMblV0fon?=
+ =?us-ascii?Q?PZ6E0bQvK/Htsb8cn7ajAK3w4XSAG1aNs9tX15XLJ2Haf1HbAjFDInZj10fm?=
+ =?us-ascii?Q?U9KFyaOg2nKqmWSNWoLZrDb5UMXZHBs=3D?=
+X-Exchange-RoutingPolicyChecked: oQDSIxVC7MUtlwMPnrbkBSJZskqi1ct25piETG+eZ1DPtg83vR6be2h3ufwYjXwfaLlK6WjIxmEjoWQPGtbcHSHdJMBGl3JeEh8XXoth7JN3H273hpNR4cHj+Z4BNJNtTu96T+dvytRIg6B8lxf2uo+e2XBJUAxMGSGg7QRL5PNd/lRuBD9nL77CmnzoQLsjCt3ZDZ1l3Ux8dQAzNC6ZnpGyeT0rTGN3e+hQ7pX/khxNe3wkGYSSHEUbA6184j/qsDalWbCXoYJe1XiG8wjesIZk53pVtb991i/7QClyV7GadP6nIVeY5XcGoQfwlIoi0Yh4mwebkGJmSpzQHULYOQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 190d5044-7728-40ea-1cfc-08df294e0278
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2026 17:18:33.8332 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oA5Tl9oVtXBET+zoAyIWDz6IKgIoghIuqS+AXxoF2BVukaos05u82fjFnutZoHIN6SMCT03/FqxG8wfKCEfMNBrAYjFFhj5O17VgLBvywQY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6244
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -103,59 +153,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Dakota Sicher <dakota.sicher@broadcom.com>
+On Tue, Oct 13, 2026 at 01:02:58PM +0100, Anatoly Burakov wrote:
+> Most rte_flow parsers in DPDK suffer from huge implementation complexity because
+> even though 99% of what people use rte_flow parsers for is parsing protocol
+> graphs, no parser is written explicitly as a graph. This patchset attempts to
+> suggest a viable model to build rte_flow parsers as graphs, by offering a
+> library to build rte_flow parser graphs without too much boilerplate and
+> complexity.
+> 
+> Most of the patchset is about Intel drivers, but they are meant as
+> reimplementations as well as examples for the rest of the community to assess
+> how to build parsers using this new infrastructure. I expect the first three
+> patches will be of most interest to non-Intel reviewers, as they deal with
+> building two reusable parser architecture pieces.
+> 
+> The first piece is a new flow graph helper in ethdev. Its purpose is
+> deliberately narrow: it targets the protocol-graph part of rte_flow pattern
+> parsing, where drivers walk packet headers and validate legal item sequences and
+> parameters. That does not cover all possible rte_flow features, especially more
+> exotic flow items, but it does cover a large and widely shared part of what
+> existing drivers need to do. Or, to put it in other words, the only flow items
+> this infrastructure *doesn't* cover is things that do not lend themselves well
+> to be parsed as a graph of protocol headers (e.g. conntrack items). Everything
+> else should be covered or cover-able. In practice, just about all drivers will
+> benefit from graph parsing as all but one of them implement only the protocol
+> stack parts, which are the ones targeted by the graph helper.
+> 
+> The second piece is a reusable flow engine framework for Intel Ethernet drivers.
+> This is kept Intel-local because I do not feel it is even appropriate to define
+> such a framework for all drivers to use in the first place. Even so, the intent
+> is to establish a cleaner parser architecture with a defined interaction model,
+> explicit memory ownership rules, locking, initialization sequence,
+> implementations of rte_flow API entry points, flow replay and memory cleanup,
+> and engine definitions that do not block secondary-process-safe usage. It is my
+> hope that this would serve as a model for other drivers to follow, expand on,
+> rework, and improve, so that maybe down the line we *might* have a common
+> rte_flow infrastructure for drivers to use.
+> 
+> Most of the rest of the series is parser reimplementation, but that is mainly
+> the vehicle for demonstrating and validating those two pieces. ixgbe and i40e
+> are wired into the new common parsing path, and their existing parsers are
+> migrated incrementally to the graph-based model. Besides reducing ad hoc parser
+> code, this also makes validation more explicit and more consistent. In a few
+> places that means invalid inputs that were previously ignored, deferred, or
+> interpreted loosely are now rejected earlier and more strictly, without any
+> increase in code complexity (in fact, with marked *decrease* of it!).
+> 
+> v6 -> v7:
+> - Validate graph nodes only once, including start node
+> - Stop trying new engines when context allocation fails
+> - Typos/copyright year changes
+> - Fixed ixgbe ethertype skipping over stale entries
+> - Fixed ixgbe ntuple to correctly handle L4 protocols when they are not zero
+> - Fixed ixgbe fdir to mask out impossible bits from the rule
+> - Fixed ixgbe security engine only deleting first SA table entry
+> - Reworked i40e ORT programming because these registers are global
+> - Fixed i40e RSS validation to handle GTP protocols correctly
+> - Fixed hash table names being too long in some cases
+> 
 
-ulp_mapper_blob_block_swap() used a variable-length array on the
-stack as scratch space for the block swap. The block size comes from
-the device table and is small, but a VLA is still undesirable. Swap
-the blocks in place instead, which needs no scratch buffer.
+Patchset applied to dpdk-next-net-intel.
 
-Signed-off-by: Dakota Sicher <dakota.sicher@broadcom.com>
-Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
-Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
----
- drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+As well as the arm build issue, I also fixed a number of checkpatch issues,
+since there were a large number on this set. Most I kept unfixed, since I
+felt the exceptions were reasonable, but please check what was applied in
+case some issue was introduced with the checkpatch changes I made on apply.
 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-index 2d89f10d5e8..2cba6fffa81 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-@@ -388,10 +388,9 @@ static const char * const mpc_error_str[] = {
- static int32_t
- ulp_mapper_blob_block_swap(struct ulp_blob *blob, uint32_t block_sz)
- {
--	uint8_t data[block_sz]; /* size of a block for temp storage */
- 	uint16_t num_words, data_sz;
--	uint8_t *pdata;
--	int i;
-+	uint8_t *pdata, *lo, *hi, tmp;
-+	uint32_t i, j;
- 
- 	/* Shouldn't happen since it is internal function, but check anyway */
- 	if (unlikely(blob == NULL || !block_sz)) {
-@@ -407,13 +406,16 @@ ulp_mapper_blob_block_swap(struct ulp_blob *blob, uint32_t block_sz)
- 		return -EINVAL;
- 	}
- 
-+	/* Swap the blocks in place, one byte at a time, no temp buffer */
- 	num_words = data_sz / block_sz;
- 	for (i = 0; i < num_words / 2; i++) {
--		memcpy(data, &pdata[i * block_sz], block_sz);
--		memcpy(&pdata[i * block_sz],
--		       &pdata[(num_words - 1 - i) * block_sz], block_sz);
--		memcpy(&pdata[(num_words - 1 - i) * block_sz],
--		       data, block_sz);
-+		lo = &pdata[i * block_sz];
-+		hi = &pdata[(num_words - 1 - i) * block_sz];
-+		for (j = 0; j < block_sz; j++) {
-+			tmp = lo[j];
-+			lo[j] = hi[j];
-+			hi[j] = tmp;
-+		}
- 	}
- 	return 0;
- }
--- 
-2.47.3
-
+Thanks,
+/Bruce
