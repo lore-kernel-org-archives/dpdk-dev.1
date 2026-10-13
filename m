@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADBECC6B0E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 14:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFB2CC6B0E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 14:49:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B381C40274;
-	Tue, 13 Oct 2026 16:46:01 +0200 (CEST)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 0227740272
- for <dev@dpdk.org>; Tue, 13 Oct 2026 16:45:59 +0200 (CEST)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-3856d6fbcb3so1783684a91.2
- for <dev@dpdk.org>; Tue, 13 Oct 2026 07:45:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DBDC340274;
+	Tue, 13 Oct 2026 16:49:47 +0200 (CEST)
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
+ [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 91E27402A4
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 12:43:55 +0200 (CEST)
+Received: by mail-dy1-f174.google.com with SMTP id
+ 5a478bee46e88-30b6dad2382so6471508eec.0
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 03:43:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791902759;
- x=1792507559; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=qZmk3oWDtq9n6Dv6GPKw4bpNQ/sAJ8NvSPVhjSKO4t0=;
- b=XQBu7ioV/9mtoRNGNSc0jrKOV18iUxbPMOybxRioIV9Aa5HB2wQd82H7Ibbz0FkKmb
- 1dNbVwVU7JQjfbzgeX84nm8lN43lCFyQuRMFQspKzRHiXNChVBLhbOuiHh29/oFgaQfk
- 70TqI9xsWFVB1k1IO+DzOtBBNtfmCNlhZrl97mE+rJ674zixk77kFlo5gnpFjN92uKWO
- 98vvRpcW+sR3wfUc97qgQODD2B8e2o3vvZq/4pGY9ButJfqPzNXLwPLw8hA0+uwGmZim
- Z6nMgjcDILC3zHzyzejh9GO8Gy4dypdR8/zqoliLO4c28tqgfU8Wjv/t4ok+PCrJV97R
- 1vxQ==
+ d=gmail.com; s=20251104; t=1791888234; x=1792493034; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=SssEwrLotsUYMxD6QFJYybe1eIZRVWxhsiE202wYZ+Y=;
+ b=Fe1xVZULDT6WtRSP6vrbuVr6sWIBPd8PB3zIx7cAmvgz2cu4IhhnnVX+Owo+B3qUzm
+ 5CMACagqt3Ih3VNDNDYrUNipuIXInSqE7+0Oa5nEGF2h8m9wdEvPVbRHU8Ws7eJs30K8
+ SJiafP3CjCDKXyon+Xo2m5HZaulpHZutSau3XoQAlSpKGz61ZeYK8r7Wq/MTeA134Sf2
+ QD4AELWp8tWALC/NFA7QyFLcGEwevY9VS3kq3mzfmhjRSIiKv0LlCYH1bBLfUkLDLdQt
+ nXdrBH4t6bVUn9QzhfgNLBmisaReTlKgtvXVfVRHQRRXM9ZcyE3dWmcd/eJfZGplIPA7
+ ADCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791902759; x=1792507559;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=qZmk3oWDtq9n6Dv6GPKw4bpNQ/sAJ8NvSPVhjSKO4t0=;
- b=CvBZjo+dMEoT8lBKJACY07omCrtjU8uxcg+M3qhxp83hR4fHW7AzlVk2BnuS+2+vNl
- yc5gbAqjRKXJGJskqewjdm3/5iPBeERSW3/PfRb7PE+6QKNcSTY0J5O9OV1aLAITL93h
- HtrHFhizempCyu226ELwWe3ZaxqhUJUCrHqptzC86xhfPAoM9THrwfybPjhjZtl5b+Jh
- ukJJscLZtfzry96jg52+Kqi/wWZ3iT1gg2wi5e+4kW0I0BWdco29gquU3qYRWjzq+nXk
- +CdLmZhHVe37m9sx8odTgnWIuUkMhKWltvdbQzWkH5MTNcP0KWqNGOa2gZ4MwP6+w6zD
- ORzg==
-X-Gm-Message-State: AFq9FYKGBZXsu4mEch2JYhOi/NzBhHk9X+dYnZXfU6juBjCnHsSpm4mS
- XVszV1/WbF7Rk3faODLYJxFqUljg7MoIArKvzaWlGFy+E+7kvR62tzxcnwnBb77XSoL3fF2dAvP
- DNeqN
-X-Gm-Gg: AYBFou230xAeknUBcl2iT+f2wlZ7rGBJPegZJ5PEYIjUdWc/VzEjE+yBbnSGR6zSVar
- UPhG/ZiWqeEja6GgPU6nY0QPjmtFmuMR31PxMr/Sic//qPRfHeQVG6TP+OucABRN6k4PyI2brRs
- DVM8CGVQLdykwHvsAQK/Y+4lPmw2WVgSQRdUagXMgeZEw5PXBwSu7dkcteMClOFs76V4x81RhMa
- rI3PgtoZ7E3kQZhxMw6aK6csKTSq3QlSf+2g+IIFit3iIoRUzt0XMD/1TYQNN1XrMxjLXs5EWt2
- 6qxfIrnrTNeWKCg9WHclvcqeii5vL9K+bbJMvkzMlK64Z+JAxOrpaQijHGPNIfZTk/bjIzVDbjH
- GFFipTA/b2S30J1jlEZh04TtsWqgIWTB4G92ttAZvFzkIA5uMEjNH0Jow+xi8Gk3qN4NLBhE8As
- Fdm0RTdHqUbTpdVG2SBqmaCh8vagVQG0o1bpxtJuy1PCK0FVF2rRMRwg1Il1wvdees5ZWPWHmY7
- CAok3IV7qhLnARh242MNGkkxwQxdU3FkFUrwtHs
-X-Received: by 2002:a17:90b:2b50:b0:3a8:609c:7a6 with SMTP id
- 98e67ed59e1d1-3ab3a8e9100mr10098258a91.44.1791902758793; 
- Tue, 13 Oct 2026 07:45:58 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ab371e2833sm22517295a91.17.2026.10.13.07.45.58
+ d=1e100.net; s=20260707; t=1791888234; x=1792493034;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=SssEwrLotsUYMxD6QFJYybe1eIZRVWxhsiE202wYZ+Y=;
+ b=Ad0qwnpGvTqhd/RzmS2d78yUcixD3UFgLKTvrTAvBHpLu7W9LvtCA2uRXDxc0nZcJF
+ 5sdgNGQSYWi3WDofsNgh+NIx0VD0KKo3YagELwayv6n91s15dBlqh+VZiczu4kcgKXrv
+ PfrN4qQHDBXXVxO2aY/ZXn3OyuT5eQXzrTJjUgJHxaSnfHV5zzEYeziCV4kK0ABaEqkj
+ Kal0WBRj1B92SD30clKeeGgr7tvonqRfBNgmOXnRp7yhBjjwzw3DpEmgRNCBv+sEtO0J
+ D6IkH9a+TapDfpHycVcYKCekeCxCC1seTFb8RPNaA4UmrpLgvdmFUp7/DraJUyXJttTH
+ 4XEQ==
+X-Gm-Message-State: AFq9FYKd2q8d0b8slUumO98B3Fgob8LF7+nKgLi1Ww8Vqq3C/ke2fmqo
+ WF77mvlIQ7cjhuY95Zlru7zUoeebuk+9Is5eFtpgPkXwPKeVjOPvbJ6qW1uLGg==
+X-Gm-Gg: AYBFou0tBRR2JDzy0GyAEd9AYxBScOM6Hsk76MRlpc+XZlUeaPsMs5eCb7sxRa48dDp
+ beWsjJfbgsHk8SIb9C63/XRzgeoMLkvMBhDvI6mUZtSmWsxNHoucq9CmKnk9Yxr5YCOrb1JGGUr
+ SUGoqdA0YmAOOngXIgUvJuSIO+tkjJmkgMO9W3mPbkn51CvDoX2mWu6d6mT/pyxpHIOvNnnEhBO
+ DuIIJmAJoEQjpYMUmWwYdNAmTqXZ2foAuoQH6fzIO1dSrEs/fK2j2RtbWF3QnZS4KfXhdASc8Qg
+ jz9RgXtmCyx8lwIm6HjEG0Xjd7DkUZ5HV1t/j5wzg050KVjJk4/G1hN8A+/lwr4LKiH4xT/Pkx3
+ 28p0eYgsGtgF92BJjWXepb7C+Y6jdwZ3v4uIq+cG/VHq4f00fHHX8LjNRFSuGho1G94yeZ+uY/G
+ fVMbkrXRInrfh+Tg/kX6kRVd0hDEcU9yqALuCSxklJ5nsSN9AfhMMp26dkl4F+SYaamquoybmVe
+ w==
+X-Received: by 2002:a05:693c:6099:b0:35c:1f93:7f2f with SMTP id
+ 5a478bee46e88-35c1f937f93mr3571727eec.41.1791888234137; 
+ Tue, 13 Oct 2026 03:43:54 -0700 (PDT)
+Received: from aviuser.. ([192.19.252.250]) by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-35b19c6c7b4sm16695675eec.24.2026.10.13.03.43.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Oct 2026 07:45:58 -0700 (PDT)
-Date: Tue, 13 Oct 2026 07:45:55 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Zhang Tengfei <zhtfdev@gmail.com>
-Cc: dev@dpdk.org, jiawenwu@trustnetic.com, zaiyuwang@trustnetic.com
-Subject: Re: [PATCH 0/3] net/txgbe: fix FDIR Rx packet buffer handling
-Message-ID: <20261013074555.1ab5dc7c@phoenix.local>
-In-Reply-To: <cover.1791898970.git.zhtfdev@gmail.com>
-References: <cover.1791898970.git.zhtfdev@gmail.com>
+ Tue, 13 Oct 2026 03:43:53 -0700 (PDT)
+From: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
+To: dev@dpdk.org
+Cc: joshwash@google.com,
+	stephen@networkplumber.org
+Subject: [PATCH v2 0/4] net/gve: fix Tx queue stalls and sync DQO RDA with
+ Linux driver
+Date: Tue, 13 Oct 2026 10:43:44 +0000
+Message-ID: <20261013104348.714550-1-tathagat.dpdk@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261012105023.669486-1-tathagat.dpdk@gmail.com>
+References: <20261012105023.669486-1-tathagat.dpdk@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Mailman-Approved-At: Tue, 13 Oct 2026 16:49:46 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,75 +81,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 13 Oct 2026 22:00:16 +0800
-Zhang Tengfei <zhtfdev@gmail.com> wrote:
+This patch series aligns the Google Virtual NIC (gve) DQO RDA transmit path
+with the upstream Linux kernel driver (drivers/net/ethernet/google/gve/) to
+resolve transmit queue stalls and hardware validation issues:
 
-> Enabling Flow Director reduces the Rx packet buffer 0 to reserve memory
-> for the filter table, but the size was computed from the current
-> register value and never restored when FDIR was no longer used. Since
-> the FDIR mode is reset when the last rule is removed, on flush, or when
-> enabling FDIR fails, the next rule enabled FDIR again and shrank the
-> buffer once more, until it underflowed. Validating a rule also enabled
-> FDIR.
-> 
-> Patch 1 computes the buffer size from the default packet buffer size,
-> which alone stops the repeated reduction.
-> Patch 2 stops enabling FDIR from flow validate and rolls back the mode
-> when the first rule fails.
-> Patch 3 disables FDIR and restores the buffer when no rule is left.
-> 
-> The same issue was fixed in ixgbe:
-> <https://patches.dpdk.org/project/dpdk/patch/20260927042545.45152-1-zhtfdev@gmail.com>
-> 
-> Compile tested only.
-> 
-> Zhang Tengfei (3):
->   net/txgbe: fix Rx packet buffer size with flow director
->   net/txgbe: do not enable flow director on flow validate
->   net/txgbe: disable flow director when no rule is left
-> 
->  drivers/net/txgbe/txgbe_ethdev.h |  1 +
->  drivers/net/txgbe/txgbe_fdir.c   | 36 +++++++++++++++----
->  drivers/net/txgbe/txgbe_flow.c   | 60 +++++++++++++++++---------------
->  3 files changed, 62 insertions(+), 35 deletions(-)
-> 
+1. net/gve: fix DQO descriptor cleaning loop bound
+   Fixes the off-by-one error in gve_tx_clean_descs_dqo()
+   ("while (--nb_descs)" -> "while (nb_descs--)") and avoids stalling
+   the completion queue on unrecognized descriptor types.
 
-AI review saw a warning that would be easy to fix.
+2. net/gve: fix DQO Tx queue stall on multi-seg and TSO
+   Tracks descriptor intervals with last_re_idx per packet against
+   GVE_TX_MIN_RE_INTERVAL (32) instead of counting packets at burst end,
+   preventing descriptor ring starvation and queue deadlocks under
+   multi-segment and TSO traffic.
 
-Subject: Re: [PATCH 0/3] net/txgbe: flow director state fixes
+3. net/gve: add cacheline overlap margin to DQO Tx ring
+   Enforces GVE_TX_MIN_DESC_PREVENT_CACHE_OVERLAP (4 descriptors) margin
+   in ring space checks, avoiding CPU and device DMA cacheline collisions.
 
-Applied to main, each commit builds with -Dwerror=true. Fixes: tags
-check out.
+4. net/gve: add packet and TSO hardware constraints for DQO
+   Augments gve_tx_validate_descs() (which enforces the 10-descriptor
+   limit per packet or MTU segment) with the remaining hardware length
+   constraints: [17, 9728] bytes for non-TSO packets, maximum MSS limit
+   (9728 bytes), TSO total length limit (262143 bytes), and validates
+   header contiguity and payload presence on TSO packets. Invalid packets
+   are dropped instead of stalling the queue.
 
-Series looks right overall; one validate regression in 2/3.
+v2:
+- Patch 1/4, 3/4: No changes.
+- Patch 2/4:
+  * Write the Tx tail when report_event is set so the device can start
+    fetching descriptors before the end of the burst
+    (per Joshua Washington).
+  * Pop the completion tag before writing the TSO context descriptor.
+  * Use reverse Christmas tree declaration ordering
+    (per Joshua Washington).
+- Patch 4/4:
+  * Drop (free) invalid mbufs and continue the burst instead of
+    returning short, which caused head-of-line blocking
+    (per Stephen Hemminger).
+  * Validate packets before the ring space check.
+  * Exclude dropped packets from stats.packets.
+  * Rename too_many_descs to dropped_pkts since it now counts all
+    dropped packets (per Stephen Hemminger).
+  * Use a single GVE_TX_MAX_PKT_SIZE_DQO for the max packet size and
+    max MSS (per Joshua Washington).
+  * Declare seg_remain and mbuf_remain in the smallest scope
+    (per Joshua Washington).
+  * Reject packets whose descriptor count can never fit in the Tx ring.
+  * Enforce the TSO total length limit (262143 bytes).
+  * Add Fixes tag for the original DQO Tx path (per Stephen Hemminger).
 
-[PATCH 2/3] net/txgbe: do not enable flow director on flow validate
+Tathagat Priyadarshi (4):
+  net/gve: fix DQO descriptor cleaning loop bound
+  net/gve: fix DQO Tx queue stall on multi-seg and TSO
+  net/gve: add cacheline overlap margin to DQO Tx ring
+  net/gve: add packet and TSO hardware constraints for DQO
 
-Warning: validate now accepts rules that create will always reject.
+ drivers/net/gve/base/gve_desc_dqo.h |   3 +
+ drivers/net/gve/gve_ethdev.h        |   4 +-
+ drivers/net/gve/gve_tx_dqo.c        | 152 ++++++++++++++++++++--------
+ 3 files changed, 115 insertions(+), 44 deletions(-)
 
-txgbe_parse_fdir_filter_normal() can set
-rule->mode = RTE_FDIR_MODE_PERFECT_MAC_VLAN. Before this patch, with
-mode NONE, parse called txgbe_fdir_configure() which returns -ENOSYS
-for anything other than SIGNATURE or PERFECT, so validate failed.
-Now parse only checks for a mode mismatch, validate succeeds, and
-create fails later in txgbe_fdir_configure().
-
-Keep the cheap mode check in parse so validate and create agree:
-
-	if (rule->mode != RTE_FDIR_MODE_SIGNATURE &&
-	    rule->mode != RTE_FDIR_MODE_PERFECT)
-		return -ENOTSUP;
-
-	if (fdir_conf->mode != RTE_FDIR_MODE_NONE &&
-	    fdir_conf->mode != rule->mode)
-		return -ENOTSUP;
-
-[PATCH 3/3] net/txgbe: disable flow director when no rule is left
-
-Info: txgbe_fdir_disable() restores a single packet buffer layout
-(PB0 = rx_pb_size, PB1-7 = 0), not what txgbe_configure_dcb() set at
-dev_start. That matches what txgbe_fdir_configure() already does, so
-FDIR with DCB is already broken and this is not a new problem. If
-you respin, consider saving the PBRXSIZE values before enabling FDIR
-and restoring them on disable, or reject FDIR when DCB Rx is
-configured.
+-- 
+2.43.0
