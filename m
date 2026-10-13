@@ -2,49 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 197F1CC6B0F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 21:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC02CCC6B12
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 22:02:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 07DC540272;
-	Tue, 13 Oct 2026 23:47:18 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 27EB540269
- for <dev@dpdk.org>; Tue, 13 Oct 2026 23:47:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A7AA940272;
+	Wed, 14 Oct 2026 00:02:06 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 83E3640269
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 00:02:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791928036; x=1823464036;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=mKgfN1uXvgBcEQwC3X29E2fRfyzy6nGwQ0Vg9aj5ncU=;
- b=O4L5GnMr5lO3x0QhfeKXM2jqZF2Yb4Bvxew8pP4zP+c5O8mXRI+EpyJ8
- 72E9ItVYVOku9IVUSpKw4PnOXc/kOq5Xmv/MbDjZ4M0iO1xM9I8HvxPzl
- xTkfoAzIoPgYWC6+eUsyGCDuz9R+nVBd+CzgKZv3Qzc4tiKVZ5OGNTu6r
- 4gljJrWIMSnU9RswVCLY3At3KKup/MZWJVUYoEe2B88kN+sYiiIPqGAtg
- +xhlehQQ7FLqGpSzZW+r2YJk4AKMbLeE1561xvhx0DNWvn0ziv1+lAPYz
- CO6TkdzIxkoeQK5/0sSuB8uRNtZMv6HCZ0w7wYPCuPtB9dD1RUBzhGouq w==;
-X-CSE-ConnectionGUID: 05M+SmObRT2k1iSe8e0qRw==
-X-CSE-MsgGUID: PR2ZLLrtQAqzqafpcVdKfQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="685726"
+ t=1791928925; x=1823464925;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=Jk1UTSsVR/Xg1RfNQTcLz3Mkl/batfnMnTOMwfHF9xE=;
+ b=ivR0vC1EFsolxDRsPzYUSGRSRHD2hemP/vXtiv342bxWQndjk7M3F0FF
+ 6nNL3VFzf+TTtxWiJw6AvZ17pPtRT/6j2jiNswyvgdnKxlhYTCUwQGqQA
+ jVKPpDhpeMa1ltzWNHAkGYcLRYaJdDvnZkWN4nPuCNNaWv/V4j2S54+mk
+ kKc3Dz9Czt0EVTUfSoXpqJBdpph/NRCn5PDRuIBR2UOejxxQY9BC9kTjF
+ Z2fMpWxB8BiLjQFutrp6T1+js6N+5rVD5JD5xBFx2A5nSGe3ZjfLutMIP
+ RBM08FNrvyVd9TSuV8ne0+5mOmDFHL5odfFTlui+Viva9jKNSUZbFerOj g==;
+X-CSE-ConnectionGUID: ZyT7X2NmT+2q+qvo+kmY5g==
+X-CSE-MsgGUID: cwptdqiYSc+V0nK/JUXxBQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="544740"
 X-IronPort-AV: E=Sophos;i="6.27,156,1787036400"; 
-   d="scan'208";a="685726"
+   d="scan'208";a="544740"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Oct 2026 14:47:15 -0700
-X-CSE-ConnectionGUID: b4ILSTZuQESN2o2rPruVsw==
-X-CSE-MsgGUID: HYvKCFHxSKmALae+ioyf3w==
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Oct 2026 15:02:03 -0700
+X-CSE-ConnectionGUID: Dy+R3JXhSTG9kEJE0gAT7A==
+X-CSE-MsgGUID: 51FJG58yRRK7kBS1RRmTsw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,156,1787036400"; 
-   d="scan'208";a="1342704"
+   d="scan'208";a="1343859"
 Received: from gnrd03.iind.intel.com ([10.190.213.135])
- by fmviesa003.fm.intel.com with ESMTP; 13 Oct 2026 14:47:13 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 13 Oct 2026 15:02:01 -0700
 From: Soumyadeep Hore <soumyadeep.hore@intel.com>
 To: dev@dpdk.org, bruce.richardson@intel.com, rajesh3.kumar@intel.com,
  aman.deep.singh@intel.com
 Cc: manoj.kumar.subbarao@intel.com
-Subject: [PATCH] examples/ptpclient: compensate for clock frequency drift
-Date: Wed, 14 Oct 2026 03:16:49 +0530
-Message-ID: <20261013214649.878454-1-soumyadeep.hore@intel.com>
+Subject: [PATCH v2] examples/ptpclient: compensate for clock frequency drift
+Date: Wed, 14 Oct 2026 03:31:45 +0530
+Message-ID: <20261013220145.880388-1-soumyadeep.hore@intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261013214649.878454-1-soumyadeep.hore@intel.com>
+References: <20261013214649.878454-1-soumyadeep.hore@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -62,9 +64,9 @@ Errors-To: dev-bounces@dpdk.org
 
 The ptpclient example corrected only the instantaneous phase offset by
 calling rte_eth_timesync_adjust_time() once per DELAY_RESP. It never
-compensated for oscillator frequency drift, so the master/slave offset
-settled at a non-zero steady-state value (proportional to the drift rate
-times the sync interval) instead of converging towards zero.
+compensated for oscillator frequency drift, so the transmitter/receiver
+offset settled at a non-zero steady-state value (proportional to the
+drift rate times the sync interval) instead of converging towards zero.
 
 Replace the one-shot phase step with a PI clock servo, using the same
 model as linuxptp. The servo output is a frequency correction that is
@@ -80,17 +82,21 @@ applied through the best mechanism the PMD provides:
 
 Hardware support is probed once at runtime, so any PMD that implements
 the adjust_freq operation in the future uses the hardware path without
-further changes. The selected path is logged once per port.
+further changes. The servo state is kept per port and the selected path
+is logged once per port.
 
 Bugzilla ID: 1474
 
 Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
 ---
+v2:
+ - Use transmitter/receiver instead of master/slave terminology
+
  examples/ptpclient/ptpclient.c | 114 ++++++++++++++++++++++++++++++++-
  1 file changed, 111 insertions(+), 3 deletions(-)
 
 diff --git a/examples/ptpclient/ptpclient.c b/examples/ptpclient/ptpclient.c
-index 59ce892742..d3e947941e 100644
+index 59ce892742..99a4606fbd 100644
 --- a/examples/ptpclient/ptpclient.c
 +++ b/examples/ptpclient/ptpclient.c
 @@ -34,6 +34,12 @@ static volatile bool force_quit;
@@ -149,8 +155,8 @@ index 59ce892742..d3e947941e 100644
 +}
 +
 +/*
-+ * PI clock servo. Drives the master/slave offset to zero by compensating for
-+ * clock frequency drift, not just the instantaneous phase offset.
++ * PI clock servo. Drives the transmitter/receiver offset to zero by compensating
++ * for clock frequency drift, not just the instantaneous phase offset.
 + *
 + * The servo output is a frequency correction (ppb). When the PMD supports
 + * hardware frequency adjustment it is applied via rte_eth_timesync_adjust_freq()
