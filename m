@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31634CC6B03
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 10:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2077CC6B03
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 10:40:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43E5640DDC;
-	Tue, 13 Oct 2026 12:38:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5E8C940DDA;
+	Tue, 13 Oct 2026 12:39:00 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id A2EE14060B
- for <dev@dpdk.org>; Tue, 13 Oct 2026 12:38:43 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 01E584060B
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 12:38:44 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 84AE01A0034;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D99E31A0092;
  Tue, 13 Oct 2026 12:38:43 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4EEFC1A0004;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9FD3F1A0004;
  Tue, 13 Oct 2026 12:38:43 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C371318000B5;
- Tue, 13 Oct 2026 18:38:42 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 22E4F180006C;
+ Tue, 13 Oct 2026 18:38:43 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v25 18/24] net/dpaa: support fmcless rxq number as devargs
-Date: Tue, 13 Oct 2026 16:08:27 +0530
-Message-Id: <20261013103833.3822265-19-hemant.agrawal@nxp.com>
+Subject: [PATCH v25 19/24] net/dpaa: support non fmX-macY type of shared
+ Ethernet name
+Date: Tue, 13 Oct 2026 16:08:28 +0530
+Message-Id: <20261013103833.3822265-20-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261013103833.3822265-1-hemant.agrawal@nxp.com>
 References: <20261012080845.2325199-1-hemant.agrawal@nxp.com>
@@ -49,89 +49,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+When using a shared interface, the Linux interface name (as shown by
+ifconfig) may differ from the fmX-macY style name used by DPDK. Add a
+"drv_sh_if_name" device argument to let the application provide the
+kernel shared interface name to the DPAA PMD.
 
-In FMCLESS mode, set the default number of Rx frame queues to the
-maximum queue number instead of the core count, because multiple
-queues may be processed on the same core. The value can also be
-configured per port through the 'drv_fmcless_rxq' device argument.
-A malformed value fails the probe instead of silently using the
-default.
+	e.g. -a dpaa_bus:fm1-mac3,drv_sh_if_name=eth1
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- doc/guides/nics/dpaa.rst       | 15 +++++--
- drivers/net/dpaa/dpaa_ethdev.c | 81 ++++++++++++++++++++++++++++++++--
- 2 files changed, 90 insertions(+), 6 deletions(-)
+ doc/guides/nics/dpaa.rst       |  4 ++
+ drivers/net/dpaa/dpaa_ethdev.c | 74 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 76 insertions(+), 2 deletions(-)
 
 diff --git a/doc/guides/nics/dpaa.rst b/doc/guides/nics/dpaa.rst
-index c6aab46828..32462a587b 100644
+index 32462a587b..ef442ddac7 100644
 --- a/doc/guides/nics/dpaa.rst
 +++ b/doc/guides/nics/dpaa.rst
-@@ -272,9 +272,18 @@ Refer to the document :doc:`build_and_test` for details.
-       Done
-       testpmd>
+@@ -285,6 +285,10 @@ the ``-a`` EAL option (e.g. ``-a dpaa_bus:fm1-mac3,drv_fmcless_rxq=4``):
+ ``drv_fmcless_rxq``
+    In FMCLESS mode, override the number of Rx frame queues to create.
  
--* Use dev arg option ``recv_err_pkts=1`` to receive all packets including error packets
--  and thus disabling hardware based packet handling at driver level,
--  e.g. ``dpaa:fm1-mac3,recv_err_pkts=1``.
-+Device Arguments
-+~~~~~~~~~~~~~~~~
++``drv_sh_if_name``
++   Provide the kernel Linux interface name for a shared MAC interface when it
++   differs from the ``fmX-macY`` style name used by DPDK.
 +
-+The DPAA PMD supports the following per-port device arguments, passed with
-+the ``-a`` EAL option (e.g. ``-a dpaa_bus:fm1-mac3,drv_fmcless_rxq=4``):
-+
-+``recv_err_pkts`` (default disabled)
-+   Receive all packets including error packets, disabling hardware based
-+   packet handling at driver level. e.g. ``dpaa:fm1-mac3,recv_err_pkts=1``
-+
-+``drv_fmcless_rxq``
-+   In FMCLESS mode, override the number of Rx frame queues to create.
- 
  FMAN Config
  -----------
+ 
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index f044a0a3b9..b3d214add1 100644
+index b3d214add1..842af40d01 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -55,6 +55,7 @@
- #define CHECK_INTERVAL          100  /* 100ms */
+@@ -56,8 +56,12 @@
  #define MAX_REPEAT_TIME         90   /* 9s (90 * 100ms) in total */
  #define DRIVER_RECV_ERR_PKTS      "recv_err_pkts"
-+#define DRIVER_FMCLESS_RXQ        "drv_fmcless_rxq"
+ #define DRIVER_FMCLESS_RXQ        "drv_fmcless_rxq"
++#define DRIVER_SH_IF_NAME         "drv_sh_if_name"
  #define RTE_PRIORITY_103 103
  
++static int dpaa_get_devargs_str(struct rte_devargs *devargs, const char *key,
++				char *val, size_t size);
++
  /* Supported Rx offloads */
-@@ -2228,6 +2229,53 @@ dpaa_get_devargs(struct rte_devargs *devargs, const char *key)
+ static uint64_t dev_rx_offloads_sup =
+ 		RTE_ETH_RX_OFFLOAD_SCATTER;
+@@ -252,6 +256,7 @@ dpaa_eth_dev_configure(struct rte_eth_dev *dev)
+ 	int speed, duplex;
+ 	int ret, rx_status, socket_fd;
+ 	struct ifreq ifr;
++	char sh_if_name[IFNAMSIZ];
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
+@@ -273,7 +278,24 @@ dpaa_eth_dev_configure(struct rte_eth_dev *dev)
+ 			DPAA_PMD_ERR("Cannot open IF socket");
+ 			return -errno;
+ 		}
+-		strlcpy(ifr.ifr_name, dpaa_intf->name, IFNAMSIZ);
++
++		sh_if_name[0] = '\0';
++		ret = dpaa_get_devargs_str(dpaa_dev->device.devargs,
++					   DRIVER_SH_IF_NAME, sh_if_name,
++					   sizeof(sh_if_name));
++		if (ret == -E2BIG) {
++			DPAA_PMD_ERR("%s: " DRIVER_SH_IF_NAME " longer than %d, ignored",
++				     dpaa_intf->name, IFNAMSIZ - 1);
++			ret = 0;
++		} else if (ret < 0) {
++			DPAA_PMD_ERR("%s: failed(%d) to parse " DRIVER_SH_IF_NAME ", ignored",
++				     dpaa_intf->name, ret);
++			ret = 0;
++		}
++		if (ret <= 0 || sh_if_name[0] == '\0')
++			strlcpy(ifr.ifr_name, dpaa_intf->name, IFNAMSIZ);
++		else
++			strlcpy(ifr.ifr_name, sh_if_name, IFNAMSIZ);
+ 
+ 		if (ioctl(socket_fd, SIOCGIFMTU, &ifr) < 0) {
+ 			DPAA_PMD_ERR("Cannot get interface mtu");
+@@ -2276,6 +2298,53 @@ dpaa_get_devargs_int(struct rte_devargs *devargs, const char *key, long *val)
  	return 1;
  }
  
 +static int
-+parse_int_devarg_handler(__rte_unused const char *key, const char *value,
++parse_str_devarg_handler(__rte_unused const char *key, const char *value,
 +			 void *opaque)
 +{
-+	char *end;
-+	long val;
-+
-+	errno = 0;
-+	val = strtol(value, &end, 0);
-+	if (errno != 0 || end == value || *end != '\0')
-+		return -EINVAL;
-+
-+	*(long *)opaque = val;
++	*(const char **)opaque = value;
 +	return 0;
 +}
 +
 +/*
-+ * Fetch an integer valued device argument.
-+ * Returns 1 and stores the parsed value in *val if the key is present and
-+ * valid, 0 if the key is absent, and a negative errno on parse error.
++ * Fetch a string valued device argument into a caller-supplied buffer.
++ * Returns 1 and copies the value into val (up to size bytes, NUL-terminated)
++ * if the key is present, 0 if the key is absent, and a negative errno on error.
 + */
 +static int
-+dpaa_get_devargs_int(struct rte_devargs *devargs, const char *key, long *val)
++dpaa_get_devargs_str(struct rte_devargs *devargs, const char *key,
++		     char *val, size_t size)
 +{
 +	struct rte_kvargs *kvlist;
++	const char *str = NULL;
 +	int ret;
 +
 +	if (!devargs)
@@ -146,7 +165,13 @@ index f044a0a3b9..b3d214add1 100644
 +		return 0;
 +	}
 +
-+	ret = rte_kvargs_process(kvlist, key, parse_int_devarg_handler, val);
++	ret = rte_kvargs_process(kvlist, key, parse_str_devarg_handler, &str);
++	if (ret < 0 || str == NULL) {
++		rte_kvargs_free(kvlist);
++		return ret < 0 ? ret : 0;
++	}
++
++	ret = rte_strscpy(val, str, size);
 +	rte_kvargs_free(kvlist);
 +	if (ret < 0)
 +		return ret;
@@ -157,50 +182,13 @@ index f044a0a3b9..b3d214add1 100644
  /* Initialise a network interface */
  static int
  dpaa_dev_init(struct rte_eth_dev *eth_dev)
-@@ -2296,8 +2344,34 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 				dpaa_intf->name);
- 		}
- 	} else {
--		/* FMCLESS mode, load balance to multiple cores.*/
--		num_rx_fqs = rte_lcore_count();
-+		/* FMCLESS mode, default queue number is max queues
-+		 * because multiple queues may be processed on same core.
-+		 */
-+		long fmcless_rxq = 0;
-+
-+		ret = dpaa_get_devargs_int(dev->devargs, DRIVER_FMCLESS_RXQ,
-+					   &fmcless_rxq);
-+		if (ret < 0) {
-+			DPAA_PMD_ERR("Invalid %s value", DRIVER_FMCLESS_RXQ);
-+			return ret;
-+		}
-+		if (ret == 1) {
-+			/* Range check before narrowing to int, otherwise a
-+			 * value such as 4294967296 would truncate to 0.
-+			 */
-+			if (fmcless_rxq < 1) {
-+				DPAA_PMD_ERR("fmcless rxq number must be >= 1");
-+				return -EINVAL;
-+			}
-+			if (fmcless_rxq > DPAA_MAX_NUM_PCD_QUEUES) {
-+				DPAA_PMD_WARN("fmcless rxq number > %d, clamped",
-+					DPAA_MAX_NUM_PCD_QUEUES);
-+				fmcless_rxq = DPAA_MAX_NUM_PCD_QUEUES;
-+			}
-+			num_rx_fqs = (int)fmcless_rxq;
-+		} else {
-+			num_rx_fqs = DPAA_MAX_NUM_PCD_QUEUES;
-+		}
- 	}
- 
- 	/* Each device can not have more than DPAA_MAX_NUM_PCD_QUEUES RX
-@@ -2740,5 +2814,6 @@ static struct rte_dpaa_driver rte_dpaa_pmd = {
- 
+@@ -2815,5 +2884,6 @@ static struct rte_dpaa_driver rte_dpaa_pmd = {
  RTE_PMD_REGISTER_DPAA(net_dpaa, rte_dpaa_pmd);
  RTE_PMD_REGISTER_PARAM_STRING(net_dpaa,
--		DRIVER_RECV_ERR_PKTS "=<int>");
-+		DRIVER_RECV_ERR_PKTS "=<int> "
-+		DRIVER_FMCLESS_RXQ "=<int>");
+ 		DRIVER_RECV_ERR_PKTS "=<int> "
+-		DRIVER_FMCLESS_RXQ "=<int>");
++		DRIVER_FMCLESS_RXQ "=<int> "
++		DRIVER_SH_IF_NAME "=<string>");
  RTE_LOG_REGISTER_DEFAULT(dpaa_logtype_pmd, NOTICE);
 -- 
 2.25.1
