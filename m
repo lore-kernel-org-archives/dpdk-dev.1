@@ -2,97 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AB2CC6B0E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 08:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82018CC6B0E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 08:27:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D9F4740272;
-	Tue, 13 Oct 2026 10:20:14 +0200 (CEST)
-Received: from fhigh-b1-smtp.messagingengine.com
- (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
- by mails.dpdk.org (Postfix) with ESMTP id AC40D400D6
- for <dev@dpdk.org>; Tue, 13 Oct 2026 10:20:13 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 33F1F7A0106
- for <dev@dpdk.org>; Tue, 13 Oct 2026 04:20:13 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Tue, 13 Oct 2026 04:20:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1791879612;
- x=1791966012; bh=Ih1lAQ3M4cIl2DhHXb6Cel2PkXPCSjAkF66jFEeX3m8=; b=
- X0Ts6hZc1AxFRumIhJdFcQHfNxXZ+Esn60fdzT8JnGxpYnywTWok/A1SMTLyy52O
- 1TtFqN7xZromXLuBOSUIHxjNkeaI86ZFHa4h/ObTYiOQKmmVsCPodQ15znEdsv9j
- uSMua/ICf22MA7ksDTHh+xIGUOqgZ7AbP+AmdGromUoeX09zSowON9w/aBHcGAui
- 50rrxoxpJ4tUFz9Ti70qaELS8XBa1suGdwqXSw5sIerM+L21mQlFt1MXamsMMMGo
- HK125fYtRVqgwVkmKsGTu7qdMStfYbxBz9Iw7jH+mLTwPoxTq8sbbFmtG2gZypGC
- FSKupVmcq/E460Isxqhrpw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791879612; x=
- 1791966012; bh=Ih1lAQ3M4cIl2DhHXb6Cel2PkXPCSjAkF66jFEeX3m8=; b=p
- np7J1xMy1HSWUSd6YKPZBb2p/bW6+8DpHdmw4W4PUd7MBsfuEGb+5SgTOLeaXInI
- IVSUQIRXwRdlO7ICFGmnATp/LVt74URopMOL7I2EXXc9EJs0UO6VFcuOs9JxkG07
- tVgN0Z4M2TXuDiNgqVOGri9Wok7/++CANF8CTdwQF2uZ7ob3mE5c0ihe8+TAo2Kc
- lGZaGEqpA4SWhi+QV1Fm7Q/AvVdp1TUAvxRQ219aYnjwdUTcuYOCrV76dugK4Onr
- auPsroB8bOTepoReAHEiNOrer5kcMBY32p0mXl35oPz1NYp9Obyrp6PZd/C+oWpO
- 6TiLVnRG7M5MzJcI3+4uQ==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791879612; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:ePiJ8/nFPjSKS8lAwkLRUiCbfcrTh/COcIZ9wZCLYBW8W3r
- ZmO7VkzdJXPxapONHv+U5N5j+fmf+LKMZEuOeatb26I0EtRXgKa6rKGodU+tdsR7
- 7NOcIbBGeeGQvdE1J+BOdpHTLTWQBpzT0Ua7iA+AvM3WZuqNRKh8khrFdajoXs0d
- CVVj690QO1ZwXMstYxeLPx1rL9d/lKJTeKF+CQl8Q091TxR1ctp+N/OeZlDPFuSt
- 3n2dKvukCFFvVqLz2TJqxsJJGqjQ+OItQ1S7Ex/qsKqtIxi967pr9TzGTwgfD73K
- JSSq8l40i01zuAGZ9PB1llfEVxGcJOT1SMtZlaQ==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:O+7KK4YOTKBlLy+8sTT+azUdMVHpF10A8Bms2Zrtmdk=:XWXv3PaA3naq2KyupAW8tD2n5/MIzUwH61J0HDEPWQI=;
-X-ME-Sender: <xms:vOnNakoE7KLpCACoOyzD8afPefCIpz06vTuQcrhvQPrLWzXi9pKtbQ>
- <xme:vOnNamGdJtnXnZu-sPwdefMWLzR5CJfQRXgnuNLSrRXBnEDJoikKTSxfYseiA7QIo
- zp1xu_H7_mQ6ewNIgPl2Bno4sCAOxaD_j3dDj4aWpkMLrqaisafzV4>
-X-ME-Received: <xmr:vOnNass7LeLKBGF4Gdy90HxLeJXEtoUJRQJBDBmbsEvnmrl84EekTJo1BFyFVrfTfldocb5M7-GDpcfHxqfzc2Q>
-X-ME-Proxy-Cause: dmFkZTEMrb/gK24LASo8R+AjFqRTKbZyR4FUFqLuVyLfrdBgwBRTjAAqbmUwdkq9iwErVQ
- JljQkmCYUItv3kUc57lHkfFHgPb9swENKgtsGwCZbc4fNzRdmgmQlRQ9LmH58DOEPe/yPl
- aPyHVKtQkxszN3SidJpCNPt9g4hTVvFYfEBZNMsaXMElR7dBUvITaqbI6bpHcrrEC8uAIj
- xUKC+GpOV2XT1HXfD936g5HF/UuLIWWzG7Cb6aHB81SeLrhOihj06UJxGLLJMFMVwTsLti
- OhPQ/K/ljNt02OkfCApPmowUdxm9X5CYaVHgVaH8Nsk5rEQTy4/jJKnHjoLFim4PZVQskT
- KgUO/MCtmBr48AFZ0B2PYaG7cGMfUQKwwyW1qIl/L8NGFFAytMp/LlSD+LPu3ZPPCyzAi8
- Odlqkfu1o9/sWVVpBWUhlpKOVHNc9igSXOegyquRp8uzpFpI40nRcdqYWNHncbywuojX0a
- iPV9PQ+Y22v1wPql8vIhho8fomrFHc3+xarXwYaWkExzYwyCxH0cPsf3KfEYgZrHbVKV/s
- Gwxnx53VVIRQKMcBPocMHghFwNHHR7Ix1rjDJ1SCRy7Dz8xqnC2rIUpytBw7dkaBI8K7AJ
- h1T6IwjzzVJvPtV9y+ExCasxf8UdbcB8ZAMWPghspWrwMuORjb+O9j0dzxNw
-X-ME-Proxy: <xmx:vOnNagW-SzXjDQ-5hrs8g6qpx_J_0zsc5fUBtfWFFSPrmKyRkKlfNg>
- <xmx:vOnNagH5puOopurL7d0o4jJeLIhgzEm182Beg2WJLt0zR5SDg3lFyQ>
- <xmx:vOnNaq0VXOLQTnWLXYJmtikox6CtU81ccItbrhsf632di3el-wcDvA>
- <xmx:vOnNaqNlQFPU1HQYItCH-URiVnfA_DuXpazkN0hJrvwWFkekqWODwA>
- <xmx:vOnNan03qz8hR8dD6nY6Gd8V0Yy1BLcs6NdS_aPkrBnDf8X2CSwvJjaF>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 13 Oct 2026 04:20:11 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>, Ravi Kerur <rkerur@brocade.com>
-Subject: Re: [PATCH v3] eal: fail initialization if TSC frequency is zero
-Date: Tue, 13 Oct 2026 10:20:10 +0200
-Message-ID: <AkjjTVT8QVi8erXmCOhnBg@monjalon.net>
-In-Reply-To: <20260929141423.309936-1-stephen@networkplumber.org>
-References: <20260928231637.733450-1-stephen@networkplumber.org>
- <20260929141423.309936-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 6B73E40272;
+	Tue, 13 Oct 2026 10:27:37 +0200 (CEST)
+Received: from out-ham1.mail.syseleven.net (out-ham1.mail.syseleven.net
+ [151.252.42.30]) by mails.dpdk.org (Postfix) with ESMTP id 4A6DF400D6
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 10:27:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=syseleven.de;
+ s=2022n001; t=1791880055;
+ bh=Kn/IQp4ORWXBorZUeF/X1sIKlu0myCP5DIjcw11WJMk=; h=From:From;
+ b=Dvb0QkR/8egoXH7TT0ICVSnK8cA21198G5WSWOEbC2b5ObC2dIcLPcfHbT/goA0qP
+ fuPtV4RAQ9+qwjAOMVy2r3iZ3+Pck3qaJTJg7UnkKymikMaRMxMHbBjSv8C760OYX5
+ gLoh8PsTrFu9HdbSM3Bk+9nKeR67zU7aPTp/PLSc76oGO9tR5eZBs4f6HTTq1O+PFF
+ Nxy6xEHFUvLTK9Aid5WDxWxD3vcQWL9LNMPOGLi6+bdoc4mXTSWXISW4cesz3ouDfQ
+ EjsJg19W7OjBBoKNkEwYd9EU81lKpXk8nahHqxA8af6FcL9hgTGyK3kcZL4L6+i2bX
+ wjh5Ne1apJWRg==
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+ by out-ham1.mail.syseleven.net (Postfix) with ESMTPSA id B408A40BE9;
+ Tue, 13 Oct 2026 10:27:35 +0200 (CEST)
+Message-ID: <54667e512558ee763d5161cc2cae8eb10a23eab2.camel@syseleven.de>
+Subject: Re: [PATCH v2] build: fix cross compilation to x86_64
+From: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org
+Date: Tue, 13 Oct 2026 10:27:33 +0200
+In-Reply-To: <gO2lw07QSVubxmsBdHTdeg@monjalon.net>
+References: <20261005125943.678879-1-a.schollmeyer@syseleven.de>
+ <20261007092637.916513-1-a.schollmeyer@syseleven.de>
+ <gO2lw07QSVubxmsBdHTdeg@monjalon.net>
+Organization: SysEleven GmbH
+Content-Type: multipart/signed; micalg="pgp-sha512";
+ protocol="application/pgp-signature"; boundary="=-dkeNd+0eZ1F3YbNShl3b"
+User-Agent: Evolution 3.52.3-0ubuntu1.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -106,28 +50,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-29/09/2026 16:13, Stephen Hemminger:
-> Many parts of DPDK will fail with divide by zero and
-> other errors if the initialization logic ever TSC hz was ever
-> determined to be zero. This might happen on a broken get_tsc_freq_arch()
-> or bad emulation in QEMU.
-> 
-> If TSC hz is zero, log the error and propagate back to
-> fail rte_eal_init().
-> 
-> This fix doesn't need to go to stable since it is a purely
-> theoretical problem; we aren't getting divide by zero reports
-> from users.
-> 
-> Also, clarify that DPDK TSC is stable and the same for all lcore's.
-> The comment in rte_cycles.h implied that it could be different per lcore.
-> 
-> Fixes: 040cf8a41187 ("eal: deduplicate timer functions")
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Applied, thanks.
+--=-dkeNd+0eZ1F3YbNShl3b
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Am Dienstag, dem 13.10.2026 um 09:49 +0200 schrieb Thomas Monjalon:
+> Can this change be in config/x86/meson.build ?
+
+Unfortunately, I don't think so. In case of cross compilation to
+x86_64, cpu_instruction_set =3D=3D 'x86_64' at the location where I put the
+conditional. This causes the arch support check a few lines below my
+patch to be triggered and fail. The arch-specific config is only
+included later in the code. Thus, a conditional in the arch-specific
+file would still cause the Meson error.
+
+--=20
+Adrian Schollmeyer
+Cloud Security Engineer
+SysEleven GmbH=20
+Boxhagener Stra=C3=9Fe 80=20
+10245 Berlin=20
+
+T +49 30 / 23 32 012-0
+F +49 30 / 61 67 55 5-0=20
+
+https://www.syseleven.de=20
+https://www.linkedin.com/company/syseleven-gmbh
+
+Current system status always at:=20
+https://www.syseleven-status.net/=20
+
+Company headquarters: Berlin=20
+Registered court: AG Berlin Charlottenburg, HRB 108571 Berlin=20
+Managing directors: Andreas Hermann, Jens Plogsties, Andreas R=C3=BCckriege=
+l
 
 
 
+
+
+--=-dkeNd+0eZ1F3YbNShl3b
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErl0Mi1pV5uGCoyMrfIq1KN9YvTsFAmrN63UACgkQfIq1KN9Y
+vTv7Dg/+NKe+HIteilKf1bchPAAMps25CjRU67ZvcCcswN3PAwQXfrG1WgjCoHkN
+hsmhO0m/GRwOIR4NogmSsZfJJBA7cznkH9gT0dZSaHEsKC62qmA/jI5yazAfL4zO
+r0bvJNtIFtDkWIZfw5bJigadEFtlLwzg4LY9j8ghMpCJe1khPzrLhTp1z2h0LS1L
+dMtuncK+lY5ig8IlVWd8iUQZBjq//cFoG5zRKHa8odXXyM//eYXCF7IJ0KluJvEy
+6p0nEe6vyIlvQm7e4x+R6iXFDwqcpX9qvzZpMjZoNt5TRU4ohlxp1+5LpF/L+ggo
+cbdso4s9+GvRYdamoMvI7nIf94ifWxHaVOAxJai9uKefsmzVu0fS9Daz+Zs7uA1R
++uC0omxqk4Fp1jPQfLGeMkqcl2mrMNLP81DbQfqBFb0zxGFREQlb4B+oLzbt1MU+
+N1t76as5/Ky5B5P4jh2B/kWXoD0v0IesGkK+mjuaRWXwiRJD1c4y1cS02qGGQTAQ
+frsmnqXti9Bs7ivhNm2iPd3V/iPAMARyptv795ylmW8EiCDGZtcm8sW87nGvQfLG
+KM9XGGZqL8/8TLCfNjXt2wPkkb9uweWdsNINGyOLYb2LkX7tVWA6qBd7ki74YHle
+kFlMZkF9MhwhRbsz86sdKAfPcgCRir1SiFkfNudY8/+fhTGlOOA=
+=klmw
+-----END PGP SIGNATURE-----
+
+--=-dkeNd+0eZ1F3YbNShl3b--
