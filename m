@@ -2,98 +2,92 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA98CC6B08
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 09:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77389CC6B08
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 09:04:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F5EC40272;
-	Tue, 13 Oct 2026 11:02:25 +0200 (CEST)
-Received: from fout-b2-smtp.messagingengine.com
- (fout-b2-smtp.messagingengine.com [202.12.124.145])
- by mails.dpdk.org (Postfix) with ESMTP id E7447400D6
- for <dev@dpdk.org>; Tue, 13 Oct 2026 11:02:23 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.stl.internal (Postfix) with ESMTP id 6AEBF1D0006F
- for <dev@dpdk.org>; Tue, 13 Oct 2026 05:02:23 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Tue, 13 Oct 2026 05:02:23 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 723FB40272;
+	Tue, 13 Oct 2026 11:04:24 +0200 (CEST)
+Received: from fhigh-b1-smtp.messagingengine.com
+ (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 254C7400D6
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 11:04:23 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 9713A7A00D5
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 05:04:22 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-06.internal (MEProxy); Tue, 13 Oct 2026 05:04:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1791882143;
- x=1791968543; bh=H0LX49W1W+WEpXqLvBxMhZbMDVvvy9QDGANNfnEhiNg=; b=
- ZR8ZXjpsUPej6vP9w5gmT26V3RfWrbugTHz2eiXoRtc/7jE3M6UHiwq3E90aULex
- xG0u6BZq217adBMs81MCA2YEELANpA+a/nCYdQbU7uxduJ2VNRrt++9Io358cv9i
- PtZ51RVbp/t8Gu9YmjxHxyWTltXy0hW/t5ztH/BZK98iCutDIby+ZS+gis5dT17F
- sKMAlT9B1FYRYMs1wcxBYj8RzNQ/WGxWxcjKtAVd4qTohr7Mg1MCtKhWZmJQEQ6E
- 6kbGH1MznPRaHLc9spXYCia/2vYldGWRRCEwoSQFDO7gvCT+xOcme/Ec30eiHpAs
- 2/Xqfjgo7lacDyuoL1SEUQ==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1791882262;
+ x=1791968662; bh=H+ZJ19vtBt6N7IhnildWaBPA2qreroLV3SnOT9pWxGg=; b=
+ TiG5qnUBq2val5vyQXbABQjsCoLB2jI05vlfQTpU4Sz9bOFbNvvNmGIFAu8OZ4Em
+ CUP1nc8DIU/f8OV8S87y1w7nHb9zSXZwY9yjxKTQ5T//ZZHxNCj3x/DG2YGKKm+Z
+ NtZb8SsAa3l4YWO6Tg1sf/WMMPPr2gc38Joj5cRFpehRujRfQr+VsgxVPWtkTCzn
+ 6VPCCCuXef/nR98Y8mEc7v3kN5jgennlVH/Lp2MEMiZH4pvSPkr1pLNiJGMOd9Uw
+ l21TTw2ek4ldP9lGmo/D+aMGiiLURmPSnGY0C248D5N5bjkJWxbjW2La29DarloU
+ QeYvo6/ntmnHOf4po97j7A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791882143; x=
- 1791968543; bh=H0LX49W1W+WEpXqLvBxMhZbMDVvvy9QDGANNfnEhiNg=; b=V
- w1530ljLhEVflxBfu6QHw+XrsSCLspWH8EjwbLFxRTtbSqk/Q2soEDo+aWk+pJSG
- iNqIjSjHTgjlTbjnB+k1vVk68DkCT2psxPhlFM8tMjX8rBCvB+G0vqaSOkPKrfgG
- YRVo9Iq3KNARFcOnFOIJ6VzYMK2Hc28EiSc0Hl7CvsShtGNLI6XZI4kvx5gBFdzS
- XlCFl+kwUGoEgNhLcqxR6z+wwtrdjmqs50g2j5cQJGySDHP8IkQQ+XYoa3qy5j+t
- Qu4/HuhBkk41kB1us5YxO1u1zKmVGFLCyR8BWL8E++uiBO9q4LzIjFNe4xKF7LTb
- nkyBZYDlhyDegGQ9Qp0/w==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791882262; x=
+ 1791968662; bh=H+ZJ19vtBt6N7IhnildWaBPA2qreroLV3SnOT9pWxGg=; b=b
+ kUfjM8BSOaojK54ffrOumN1uBew92P8Us8mPnXfD1hAN3zRHxNA+GsD3KdfkSbjw
+ B2muVh2DiN0LysJiixc7kj199AmKaa41n/f/rK37C1LRBYYwa+yHqyCH6j9Te4Iq
+ z1eARcSLGmTOVlow0hMAa0E0O/VITvgJV0OA9vpHKytr/bzf+a821k1hBaOLvvGX
+ BBc9Fr0+mkaRNbbPy4AA497uQ89GltY+oEaEEKdEuvgX3LDkeuIL+7RCIXgmXZ53
+ G6dMAXLLFmvvPrXz9Meoquq/0Ax38495dqTGn5m/1v6IJDH6DBiEbl+BhcwAllF6
+ mvgWnALq4/D+yA9IrIw1Q==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
  repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791882143; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1791882262; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:egik6uVprwf1BqUY0XnUnrBLxENVsQ9V1uuJYzTgO2O9mCL
- qOMEEfEbbi7Mmkc3mmyDYwyQpEKaqPoynwipzBRyiJUDdleDgR1+6/Slhn5/NYcp
- nnuvwcdYympmAgYKTL9iyNaFOEpz1C61Pu71aXacrUZ2d4MGJTnhXUhR2gnldvui
- Q6TBDBM1xFAxivNWbIDLO2xtMOzfXE9Tt2IcGvEWoHjP0zUPI/uQNoxoEZudVGuo
- XewWVY8xt4rHT+a95u5gM2COKarhm9Pc3xyQe8xk7TFn/PgVt/8mLJZrLPg4m0ZE
- SEWuW7p4DG0yIJ9nzhmwpwQtKMhZAmBzO9xncow==;
+ s=fm2:rsa-sha256:K3TYMGGh4ElSwHYphSLC/EBA+NB2qy1imU2HkEEFXz4CyHz
+ q+t8byiVMutfY67z+ZAxcaeeaE63q8oXsL41fJa4eARHu85istuFqwW4XW0CMN1F
+ EvsPkibJwuMUR12EFo/VDqaYeRBu1BOGBRqHSLQ4RNoZ/U9lS3ds4T9NZGbt74Kf
+ V1fR0l2L+AyT6/LnVzpLnWtUbCTzXKcOrhsndHijVifm/aesC0YC8Ez/OYLvDJ0G
+ oFjCVtGd2ywF0iEfn7kukudri8yTIkgJoPW81r3veZ+WsBQVdaJwz0UmUnDmIMjf
+ 4Fq3gC2+atluH+hEfjO+KIsWglIqUOKT2hYciLw==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
  repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:WnRkjlkrWvrJ6/iBYdrx928RAnxRKAzXrbdTZeiWp/c=:Ivtj+MpAiNwwvEAPSNtr7OQ/TIXbRkS2/GPdkOmkgZU=;
-X-ME-Sender: <xms:n_PNas7fTxQRkhnJWdm9k-wgfXR1bT64faVNJy4G2QmXjhXdcnEl1Q>
- <xme:n_PNao19Le50G0joCFxK9yPTByhX8mXoDl8qNHwN5LQT-IZDMrCFKIftTOVSo-Pt4
- QKRHbr9MqWkbY0j-85HfqJ1jPRLnqwhRODDIOk3bDI7oTXPMVqjJ_w>
-X-ME-Received: <xmr:n_PNaqeZL1pEiftgQMQNMs5WD37dKmH8RwCHocAIobcacTuZHPnTVOZ9gJZFphwPHPfVtgq9cm5naMuAwDZ-t7E>
-X-ME-Proxy-Cause: dmFkZTGSpcHu1GFAczrsWUGgQZnBUXbwL2k6nLkDNgy1KX/l9tvCi8Ki10NDfsIJKZUweO
- hjT6GvDY35LDofopphOfeyMuUlZPw3fzma7GrbKoWrX1gLB3rfIUkOoLPd81M5pDUEDCje
- ovJQoECIAdjo6dJh3XLd0QzSU82vDSB04hLa0zcfow3yBf7kSknhsVZWLjFm56Dr+K1PBz
- Ic27p1yGhkBrawb3MOGtkGn4+kXXaywOSF/GvoMDwBMbq0LfgqSeVHWotZUpx0YDLpADvu
- tDgmDdmqusXwxdylz6x67C8Cp7JApPvgSCJCFtTZUHq29NbEaSc9TFmN1FdTjaqkY97GEs
- d5kbg8Qt0+ZvLpMV+677c+2HqPnKDD58POdoh/PJRAc5nYA3sGRLee6KNtPPSJwoPd9KiX
- /R1TrBXNSGlFOBZrtz3AD28Q/JC/3mvANP/v9W1cuiti1eyKghxIPCyqJlXr2aE47+17QV
- QEKeNFIQjvOvqa6wDyG+LLZinQ4fX94UG8+ItER1TABrbHcO9lwvGmnqGoIi5CdWouBRCZ
- OFobE/g+Jrfm2RMG0EaQFNgbn0qH31l1GEwRoprETEEXBl6h5fYkxCpjndLFEaMSLR1Vy6
- ghGeDSe4trN9pP2IIMbQr67Yj/6gTec7kLthdW0k8S8mtIJaNITo2qjj3W3Q
-X-ME-Proxy: <xmx:n_PNamd6EqEFWjrsw0Pi1y4cTlnL9-kFwHt5ZQeNMAOmjcEUnISFXg>
- <xmx:n_PNatyDDkN29wF3Vv4nZyTVbqDw8bE92oXkKSd9cDEtz4XTUuJhaA>
- <xmx:n_PNat86JX3QDEdxRtNT9hZv2iniadoRorlY7tXkf0OnhbBACr36jw>
- <xmx:n_PNalg_B6suK3TKFi22riV-0QGzw4NnGwD65UAuZID2PyqrQxEsLg>
- <xmx:n_PNan0qF0U-xNzqOCZtidG2X9NehsdUzJvJGYdPy4OV7U0mv_k3CM2W>
+ h=sha256:1UrB64L7ovyTj16pSe9Qa5xiFYgwGpk9PVhdD80/mvk=:ZDvh06gKOl8GwpRRubEUVuVlYhOk0/dEsHuhr3+46B0=;
+X-ME-Sender: <xms:FvTNalhjSxJyCaapoNTNTWfV0AeAyfVFgyfZv98whPb9jsOFMB44AA>
+ <xme:FvTNamVJJSy2DH9uwNVpJ2FHB1CK87vdky1s0UkqorvQfSMoufVntko9v2fTsOaiT
+ 30LM7hHnlbmnh_eMemRPDevjgL1SxKG_1DJjr4mx1RU0EoqT7lKQgk>
+X-ME-Received: <xmr:FvTNan0H7Jk4UKtxmLjYtzJFBT1wrilBhw9cTTT-75nWFQepNY5hvz9Z2ZpUNnakV9wMdlAHR44O0jDTYsVhCm4>
+X-ME-Proxy-Cause: dmFkZTGhH271NvZVcE6dwpr35WYIjMTMjiyqz+KVTlbXPkZ2O+xd+7gCYshVLqr1+Qs+FX
+ BpQodHt5ifCL3zlJfEaznNE0GUWNNqxSTZkCUFNAefWmwepR+E3OLUSj6uaAPFjGZ77cX9
+ T55F8tfV9whRu1UihHRC+zEV0VAy1pKbOs7dbGONx4W4XoHSYNyKQKi+Ehy5hrhdsYwXDJ
+ Eo7Vn4o+nI3X8U6tz9HIEQOlV2tgXn7sUFrKDjGTkBOGvUO2CyQEr2ingDs5juP9qO3/5b
+ 38opwwZoYxRTHbOwKjuJQXIj4NLuaYp2+hGwMTcvmOuLU43CcKsXfrKdY6QFp93vaTtvg1
+ HgPlLYHPzat/DGiA5h5bBhDW3qVnZ+aj5av7t3yGpa89g6AKzOqF1Ft+PWBwrO10rdxJP+
+ x+sAN5mwSyXN6egUzg2DSX0tETQw0P1l/aIqNhyQhnBqm6Pvv6dHUa4NqgtP38OcLwk3MQ
+ K+5aWp2XA0Lq42YhXKnb8ar+hnnINceD0IfCMQ+XTQXaQdLJdMhtO23Y9SC7MausXP2KSI
+ SczUo03vincDK3LIG6dUgYg4/ojaDxUdgfQSjsbljLOTYvwDE4O9Erhu2doCgLQC3A7iiq
+ 2GtoQiaOQV5wOL9XKftJ6YTktHWHdUW7GoyHMocFdP/a+UOsM9Om68TotXIw
+X-ME-Proxy: <xmx:FvTNasEdCb5MeEVHZezoO8EIiPZaicvi-Y-6TvppYBhmLLZhO6KiqA>
+ <xmx:FvTNalgH0hpIr13Sc1v6hUcsOKP-gy_QmX3iADH9UAxFMJxEcrFKvQ>
+ <xmx:FvTNan95AFu-9ohSFl5mKs5kk_jFs1wbQH6rpWusUzh8ZpRMZRsr7A>
+ <xmx:FvTNaspSNjnwlshEpJkxKYhig4ur3IoMtY74x-GQr04zhFTv8FoKDg>
+ <xmx:FvTNaiK9YBFGx-022Uv3zvr5YGwJoEMg3LD-tjJGjXKDR_P0tFGh_XLb>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 13 Oct 2026 05:02:21 -0400 (EDT)
+ 13 Oct 2026 05:04:21 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: Re: [PATCH v2 2/3] eal: increase memzone name size to 64
-Date: Tue, 13 Oct 2026 11:02:20 +0200
-Message-ID: <nOwddlJXR9OIFrDxjU8jSA@monjalon.net>
-In-Reply-To: <20260922155249.3115271-3-stephen@networkplumber.org>
-References: <20260921215733.404686-1-stephen@networkplumber.org>
- <20260922155249.3115271-1-stephen@networkplumber.org>
- <20260922155249.3115271-3-stephen@networkplumber.org>
+To: Pablo de Lara <pablo.de.lara.guarch@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] maintainers: update for IPSEC MB and ISA-L drivers
+Date: Tue, 13 Oct 2026 11:04:19 +0200
+Message-ID: <td44LEAOTQ2EAXz1o5C3mA@monjalon.net>
+In-Reply-To: <20260929141600.3867376-1-pablo.de.lara.guarch@intel.com>
+References: <20260929141600.3867376-1-pablo.de.lara.guarch@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -110,39 +104,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-22/09/2026 17:52, Stephen Hemminger:
-> Memzone names are limited to 31 characters, and ring, mempool and
-> stack names lose the length of their prefixes on top of that.
-> A mempool name is limited to 25 characters, which leaves little room
-> for libraries such as rib and fib that derive names from the name
-> given by the application.
+29/09/2026 16:15, Pablo de Lara:
+> Remove myself from IPSEC MB and ISA-L PMD maintainership,
+> as I will no longer be working at Intel or directly with DPDK.
 > 
-> Increase RTE_MEMZONE_NAMESIZE to 64. The derived ring, mempool,
-> stack and RCU defer queue sizes follow.
-> 
-> Reorder struct rte_ring and struct rte_mempool so the larger name
-> does not push datapath fields into another cache line.
-> 
-> For rte_ring, flags and the size fields come first, followed by the
-> memzone pointer and the name. The cache alignment moves from the
-> first field to the structure itself. struct rte_ring grows by one
-> cache line.
-> 
-> For rte_mempool the fields used in the datapath are gathered at the
-> start: pool_data/pool_id, local_cache, ops_index and cache_size.
-> The remaining fields, along with pool_config, mz and name, follow.
-> Previously local_cache and ops_index were in the second cache line.
-> struct rte_mempool stays 192 bytes.
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  doc/guides/rel_notes/release_26_11.rst | 21 +++++++++++++++++++
->  lib/eal/include/rte_memzone.h          |  2 +-
->  lib/mempool/rte_mempool.h              | 29 +++++++++++++-------------
->  lib/ring/rte_ring_core.h               |  9 ++++----
->  4 files changed, 41 insertions(+), 20 deletions(-)
+> Signed-off-by: Pablo de Lara <pablo.de.lara.guarch@intel.com>
 
-Please rebase on top of mempool changes in main.
-
+Applied, thanks for all Pablo.
 
 
