@@ -2,57 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0851ACC6B1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 15:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3524CCC6B16
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 15:09:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 482E940612;
-	Tue, 13 Oct 2026 17:09:00 +0200 (CEST)
-Received: from pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com
- (pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com
- [52.42.203.116]) by mails.dpdk.org (Postfix) with ESMTP id 0BB9D40612
- for <dev@dpdk.org>; Tue, 13 Oct 2026 17:08:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 323CA40612;
+	Tue, 13 Oct 2026 17:09:24 +0200 (CEST)
+Received: from pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com
+ (pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.1.125])
+ by mails.dpdk.org (Postfix) with ESMTP id AE99A40272;
+ Tue, 13 Oct 2026 17:09:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
- t=1791904138; x=1823440138;
+ t=1791904163; x=1823440163;
  h=from:to:cc:subject:date:message-id:mime-version;
- bh=U/cOAtyWRYVpINHbYKJDmkvvPAfMj8s6lffvj5lS1tQ=;
- b=eWnn+mMKEBBlmTM6FxYCk94+xnx3dy89E7Y9bbh0vLXwmJ6aFBkthL5q
- FUL7IcxFwZv+We3aDDlExB8zRPH9qvV3q+bEP4JteiyE7zYD8LG7+zuEN
- eONOzLOG8Zkx7grs+idtUOE279VCwJxjpCRJkeeB06AQfyGKdQ62CLo77
- KMCLHdB0MT5dIy9h2kfi8TfvUFlR6oNX6aGPumkbaGeBXSSNwIzvhP8xt
- uCL6CP8ag925BLcYZdAYsVlg4Lv8uXfgY+4YwseL1a33pAQaiOPH8quAl
- QtLhlcmqCuljWK7VeZYmgqPXsTXtZz6PQF0V1wZC6dTjtyWr88fvHavV2 A==;
-X-CSE-ConnectionGUID: f+hM0FzqSvSShN2UelQpqg==
-X-CSE-MsgGUID: TOry7GftRiCbtZIS7d8SUg==
-X-IronPort-AV: E=Sophos;i="6.27,155,1787011200"; d="scan'208";a="31171652"
-Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO
- smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
- by internal-pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com with
- ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 15:08:57 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.111:9993]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.42.146:2525]
- with esmtp (Farcaster)
- id 6578d6bc-db76-4b45-ac45-f3d3551760b1; Tue, 13 Oct 2026 15:08:56 +0000 (UTC)
-X-Farcaster-Flow-ID: 6578d6bc-db76-4b45-ac45-f3d3551760b1
+ bh=+aNDsQBenbWddbevUaNrRVF7537GGlXZSbT88kswJKc=;
+ b=EWbS1Qhr2/lDexYg4nnF+w2+T1olrKkTBKnTXXEJii7QMxsvNdgEjn5k
+ V0089OkVDCtiWx1ZSZiZmMohYIvFGb6mjSC5IEs4JuXPIYC/Si6x/+jn2
+ lcnnBxyVB0VcGfOL11iyrwB3mrGM6x5WHRgKKMBq7KVtUZyhCvn/2Qpjh
+ c+DCoweI6da6Yt3jijAajnw9Uyz+zUX0H8QnCTAOpwPfG3DTRIr6vKxJt
+ bG3ic410yMsdaPPnjRUZnP4ylSCpoo91UXjX9uiN9rqz/3+t0K95rhJnf
+ VZWqT0BjIZr4eckByULpT9tNWH+ZrSPiwnYP6pltUt4v+iPVUAyr8FYkj g==;
+X-CSE-ConnectionGUID: eNwRcOZAS6m28LFPkajtOA==
+X-CSE-MsgGUID: WI0Qeqm9QbunywgVFViHoQ==
+X-IronPort-AV: E=Sophos;i="6.27,155,1787011200"; d="scan'208";a="31142844"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO
+ smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+ by internal-pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com with
+ ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 15:09:21 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [205.251.233.178:30880]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.1.91:2525] with
+ esmtp (Farcaster)
+ id 0f95d52b-7fb9-43a7-8a9d-bed82446c4e2; Tue, 13 Oct 2026 15:09:21 +0000 (UTC)
+X-Farcaster-Flow-ID: 0f95d52b-7fb9-43a7-8a9d-bed82446c4e2
 Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
- Tue, 13 Oct 2026 15:08:56 +0000
+ Tue, 13 Oct 2026 15:09:21 +0000
 Received: from HFA15-CG15235BS.amazon.com (10.1.212.11) by
  EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.53;
- Tue, 13 Oct 2026 15:08:55 +0000
+ Tue, 13 Oct 2026 15:09:19 +0000
 From: Shai Brandes <shaibran@amazon.com>
 To: <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>
-Subject: [PATCH 05/13] net/ena/base: add LLQ policy inline helper
-Date: Tue, 13 Oct 2026 18:08:35 +0300
-Message-ID: <20261013150835.9482-1-shaibran@amazon.com>
+CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>, <stable@dpdk.org>
+Subject: [PATCH 06/13] net/ena/base: fix LLQ feature version sent to device
+Date: Tue, 13 Oct 2026 18:09:06 +0300
+Message-ID: <20261013150906.9531-1-shaibran@amazon.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.1.212.11]
-X-ClientProxiedBy: EX19D031UWC002.ant.amazon.com (10.13.139.212) To
+X-ClientProxiedBy: EX19D031UWC003.ant.amazon.com (10.13.139.252) To
  EX19D001UWA001.ant.amazon.com (10.13.138.214)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,229 +67,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce a helper to abstract the LLQ placement policy check,
-replacing direct mem_queue_type comparisons across ena-com.
+During LLQ configuration the driver reads the supported LLQ
+feature version from the device with a GET feature command, but
+leaves the feature_version field zeroed in the subsequent SET
+feature command.
+
+The device therefore never learns which LLQ version the driver
+negotiated, and falls back to interpreting the configuration
+according to the base version regardless of what the driver
+actually agreed to, which can lead to a Tx descriptor layout
+mismatch between driver and device.
+
+Store the feature version reported in the GET response and echo
+it back in the SET command so the negotiated version is
+communicated to the device.
+
+Fixes: b68309be44c0 ("net/ena/base: update communication layer for the ENAv2")
+Cc: stable@dpdk.org
 
 Signed-off-by: Shai Brandes <shaibran@amazon.com>
 ---
- drivers/net/ena/base/ena_com.h     |  5 +++
- drivers/net/ena/base/ena_eth_com.c | 55 +++++++++++++++---------------
- drivers/net/ena/base/ena_eth_com.h |  6 ++--
- 3 files changed, 35 insertions(+), 31 deletions(-)
+ drivers/net/ena/base/ena_com.c | 4 ++++
+ drivers/net/ena/base/ena_com.h | 1 +
+ 2 files changed, 5 insertions(+)
 
+diff --git a/drivers/net/ena/base/ena_com.c b/drivers/net/ena/base/ena_com.c
+index 9a118394d2..d218026220 100644
+--- a/drivers/net/ena/base/ena_com.c
++++ b/drivers/net/ena/base/ena_com.c
+@@ -784,6 +784,8 @@ static int ena_com_set_llq(struct ena_com_dev *ena_dev)
+ 		BIT(ENA_ADMIN_DISABLE_META_CACHING) |
+ 		BIT(ENA_ADMIN_LIMIT_TX_BURST);
+ 
++	cmd.feat_common.feature_version = llq_info->feature_version;
++
+ 	ret = ena_com_execute_admin_command_no_resp(admin_queue,
+ 						    (struct ena_admin_aq_entry *)&cmd,
+ 						    sizeof(cmd));
+@@ -805,6 +807,8 @@ static int ena_com_config_llq_info(struct ena_com_dev *ena_dev,
+ 
+ 	memset(llq_info, 0, sizeof(*llq_info));
+ 
++	llq_info->feature_version = llq_features->feature_version;
++
+ 	supported_feat = llq_features->header_location_ctrl_supported;
+ 
+ 	if (likely(supported_feat & llq_default_cfg->llq_header_location)) {
 diff --git a/drivers/net/ena/base/ena_com.h b/drivers/net/ena/base/ena_com.h
-index 2002dd2bda..c4b4ea0620 100644
+index c4b4ea0620..e05933d6fe 100644
 --- a/drivers/net/ena/base/ena_com.h
 +++ b/drivers/net/ena/base/ena_com.h
-@@ -1120,6 +1120,11 @@ static inline struct ena_com_dev *ena_com_io_cq_to_ena_dev(struct ena_com_io_cq
- 	return container_of(io_cq, struct ena_com_dev, io_cq_queues[io_cq->qid]);
- }
+@@ -93,6 +93,7 @@ struct ena_com_llq_info {
+ 	u16 descs_per_entry;
+ 	u16 max_entries_in_tx_burst;
+ 	bool disable_meta_caching;
++	u8 feature_version;
+ };
  
-+static inline bool ena_com_sq_is_llq(struct ena_com_io_sq *io_sq)
-+{
-+	return io_sq->mem_queue_type != ENA_ADMIN_PLACEMENT_POLICY_HOST;
-+}
-+
- static inline bool ena_com_get_adaptive_moderation_enabled(struct ena_com_dev *ena_dev)
- {
- 	return ena_dev->adaptive_coalescing;
-diff --git a/drivers/net/ena/base/ena_eth_com.c b/drivers/net/ena/base/ena_eth_com.c
-index 8a019b3451..e3b2a753c4 100644
---- a/drivers/net/ena/base/ena_eth_com.c
-+++ b/drivers/net/ena/base/ena_eth_com.c
-@@ -151,16 +151,16 @@ static int ena_com_write_bounce_buffer_to_dev(struct ena_com_io_sq *io_sq,
- 	return ENA_COM_OK;
- }
- 
--static int ena_com_write_header_to_bounce(struct ena_com_io_sq *io_sq,
--						 u8 *header_src,
--						 u16 header_len)
-+static int ena_com_write_header_to_llq_entry(struct ena_com_io_sq *io_sq,
-+					  u8 *header_src,
-+					  u16 header_len)
- {
- 	struct ena_com_llq_pkt_ctrl *pkt_ctrl = &io_sq->llq_buf_ctrl;
- 	struct ena_com_llq_info *llq_info = &io_sq->llq_info;
--	u8 *bounce_buffer = pkt_ctrl->curr_bounce_buf;
-+	u8 *curr_llq_entry = pkt_ctrl->curr_llq_entry;
- 	u16 header_offset;
- 
--	if (unlikely(io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_HOST))
-+	if (unlikely(!ena_com_sq_is_llq(io_sq)))
- 		return 0;
- 
- 	header_offset =
-@@ -172,13 +172,13 @@ static int ena_com_write_header_to_bounce(struct ena_com_io_sq *io_sq,
- 		return ENA_COM_FAULT;
- 	}
- 
--	if (unlikely(!bounce_buffer)) {
-+	if (unlikely(!curr_llq_entry)) {
- 		ena_trc_err(ena_com_io_sq_to_ena_dev(io_sq),
--			    "Bounce buffer is NULL\n");
-+			    "LLQ entry is NULL\n");
- 		return ENA_COM_FAULT;
- 	}
- 
--	memcpy(bounce_buffer + header_offset, header_src, header_len);
-+	memcpy(curr_llq_entry + header_offset, header_src, header_len);
- 
- 	return 0;
- }
-@@ -186,46 +186,46 @@ static int ena_com_write_header_to_bounce(struct ena_com_io_sq *io_sq,
- static void *get_sq_desc_llq(struct ena_com_io_sq *io_sq)
- {
- 	struct ena_com_llq_pkt_ctrl *pkt_ctrl = &io_sq->llq_buf_ctrl;
--	u8 *bounce_buffer;
-+	u8 *curr_llq_entry;
- 	void *sq_desc;
- 
--	bounce_buffer = pkt_ctrl->curr_bounce_buf;
-+	curr_llq_entry = pkt_ctrl->curr_llq_entry;
- 
--	if (unlikely(!bounce_buffer)) {
-+	if (unlikely(!curr_llq_entry)) {
- 		ena_trc_err(ena_com_io_sq_to_ena_dev(io_sq),
--			    "Bounce buffer is NULL\n");
-+			    "LLQ entry is NULL\n");
- 		return NULL;
- 	}
- 
--	sq_desc = bounce_buffer + pkt_ctrl->idx * io_sq->desc_entry_size;
-+	sq_desc = curr_llq_entry + pkt_ctrl->idx * io_sq->desc_entry_size;
- 	pkt_ctrl->idx++;
- 	pkt_ctrl->descs_left_in_line--;
- 
- 	return sq_desc;
- }
- 
--static int ena_com_close_bounce_buffer(struct ena_com_io_sq *io_sq)
-+static int ena_com_close_llq_entry(struct ena_com_io_sq *io_sq)
- {
- 	struct ena_com_llq_pkt_ctrl *pkt_ctrl = &io_sq->llq_buf_ctrl;
- 	struct ena_com_llq_info *llq_info = &io_sq->llq_info;
- 	int rc;
- 
--	if (unlikely(io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_HOST))
-+	if (unlikely(!ena_com_sq_is_llq(io_sq)))
- 		return ENA_COM_OK;
- 
- 	/* bounce buffer was used, so write it and get a new one */
- 	if (likely(pkt_ctrl->idx)) {
- 		rc = ena_com_write_bounce_buffer_to_dev(io_sq,
--							pkt_ctrl->curr_bounce_buf);
-+							pkt_ctrl->curr_llq_entry);
- 		if (unlikely(rc)) {
- 			ena_trc_err(ena_com_io_sq_to_ena_dev(io_sq),
- 				    "Failed to write bounce buffer to device\n");
- 			return rc;
- 		}
- 
--		pkt_ctrl->curr_bounce_buf =
-+		pkt_ctrl->curr_llq_entry =
- 			ena_com_get_next_bounce_buffer(&io_sq->bounce_buf_ctrl);
--		memset(io_sq->llq_buf_ctrl.curr_bounce_buf,
-+		memset(io_sq->llq_buf_ctrl.curr_llq_entry,
- 		       0x0, llq_info->desc_list_entry_size);
- 	}
- 
-@@ -241,7 +241,7 @@ static void *get_tx_sq_desc(struct ena_com_io_sq *io_sq)
- {
- 	void *tx_desc;
- 
--	if (likely(io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_DEV))
-+	if (likely(ena_com_sq_is_llq(io_sq)))
- 		return get_sq_desc_llq(io_sq);
- 
- 	tx_desc = get_sq_desc_regular_queue(io_sq);
-@@ -259,16 +259,16 @@ static int ena_com_sq_update_llq_tail(struct ena_com_io_sq *io_sq)
- 
- 	if (!pkt_ctrl->descs_left_in_line) {
- 		rc = ena_com_write_bounce_buffer_to_dev(io_sq,
--							pkt_ctrl->curr_bounce_buf);
-+							pkt_ctrl->curr_llq_entry);
- 		if (unlikely(rc)) {
- 			ena_trc_err(ena_com_io_sq_to_ena_dev(io_sq),
- 				    "Failed to write bounce buffer to device\n");
- 			return rc;
- 		}
- 
--		pkt_ctrl->curr_bounce_buf =
-+		pkt_ctrl->curr_llq_entry =
- 			ena_com_get_next_bounce_buffer(&io_sq->bounce_buf_ctrl);
--		memset(io_sq->llq_buf_ctrl.curr_bounce_buf,
-+		memset(io_sq->llq_buf_ctrl.curr_llq_entry,
- 		       0x0, llq_info->desc_list_entry_size);
- 
- 		pkt_ctrl->idx = 0;
-@@ -291,7 +291,7 @@ static int ena_com_sq_update_reqular_queue_tail(struct ena_com_io_sq *io_sq)
- 
- static int ena_com_sq_update_tail(struct ena_com_io_sq *io_sq)
- {
--	if (likely(io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_DEV))
-+	if (likely(ena_com_sq_is_llq(io_sq)))
- 		return ena_com_sq_update_llq_tail(io_sq);
- 
- 	return ena_com_sq_update_reqular_queue_tail(io_sq);
-@@ -514,14 +514,13 @@ int ena_com_prepare_tx(struct ena_com_io_sq *io_sq,
- 		return ENA_COM_INVAL;
- 	}
- 
--	if (unlikely(io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_DEV
--		     && !buffer_to_push)) {
-+	if (unlikely(ena_com_sq_is_llq(io_sq) && !buffer_to_push)) {
- 		ena_trc_err(ena_com_io_sq_to_ena_dev(io_sq),
- 			    "Push header wasn't provided in LLQ mode\n");
- 		return ENA_COM_INVAL;
- 	}
- 
--	rc = ena_com_write_header_to_bounce(io_sq, buffer_to_push, header_len);
-+	rc = ena_com_write_header_to_llq_entry(io_sq, buffer_to_push, header_len);
- 	if (unlikely(rc))
- 		return rc;
- 
-@@ -534,7 +533,7 @@ int ena_com_prepare_tx(struct ena_com_io_sq *io_sq,
- 
- 	/* If the caller doesn't want to send packets */
- 	if (unlikely(!num_bufs && !header_len)) {
--		rc = ena_com_close_bounce_buffer(io_sq);
-+		rc = ena_com_close_llq_entry(io_sq);
- 		if (unlikely(rc))
- 			ena_trc_err(ena_com_io_sq_to_ena_dev(io_sq),
- 				    "Failed to write buffers to LLQ\n");
-@@ -635,7 +634,7 @@ int ena_com_prepare_tx(struct ena_com_io_sq *io_sq,
- 		return rc;
- 	}
- 
--	rc = ena_com_close_bounce_buffer(io_sq);
-+	rc = ena_com_close_llq_entry(io_sq);
- 
- 	*nb_hw_desc = io_sq->tail - start_tail;
- 	return rc;
-diff --git a/drivers/net/ena/base/ena_eth_com.h b/drivers/net/ena/base/ena_eth_com.h
-index f773699467..503cf45cf7 100644
---- a/drivers/net/ena/base/ena_eth_com.h
-+++ b/drivers/net/ena/base/ena_eth_com.h
-@@ -110,7 +110,7 @@ static inline bool ena_com_sq_have_enough_space(struct ena_com_io_sq *io_sq,
- {
- 	int temp;
- 
--	if (unlikely(io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_HOST))
-+	if (unlikely(!ena_com_sq_is_llq(io_sq)))
- 		return ena_com_free_q_entries(io_sq) >= required_buffers;
- 
- 	/* This calculation doesn't need to be 100% accurate. So to reduce
-@@ -136,8 +136,8 @@ static inline bool ena_com_meta_desc_changed(struct ena_com_io_sq *io_sq,
- 
- static inline bool is_llq_max_tx_burst_exists(struct ena_com_io_sq *io_sq)
- {
--	return (io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_DEV) &&
--	       io_sq->llq_info.max_entries_in_tx_burst > 0;
-+	return likely(ena_com_sq_is_llq(io_sq)) &&
-+	       (io_sq->llq_info.max_entries_in_tx_burst > 0);
- }
- 
- static inline bool ena_com_is_doorbell_needed(struct ena_com_io_sq *io_sq,
+ struct ena_com_io_cq {
 -- 
 2.17.1
 
