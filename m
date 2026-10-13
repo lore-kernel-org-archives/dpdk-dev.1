@@ -2,80 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C522CC6B03
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 10:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 119A1CC6B03
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 10:38:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 42386402F0;
-	Tue, 13 Oct 2026 12:12:29 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 430FE402EA
- for <dev@dpdk.org>; Tue, 13 Oct 2026 12:12:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791886346;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=SvPtVyPhOCsFaCciMRuwi/NaNzYskMwUBhhb8WsPZUs=;
- b=K5VTC12QTiqEQ7Kpb8DiKVMmDPCzlEO3Al8VVEYq0lfcQdvyR9PQXE9FUOYJl4KvgNjkMf
- AZE+RcUyaY5EHqhaSEwZ3/to43neu/U2KH+yBSxZGEVy1knrlFD6+PO1KmI0fXkLYFkUan
- nV3A03UJbqEl+szWmIuVCdJIu+jvDfE=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-85-F3onXxAhPPaj4ZDozBG1eQ-1; Tue, 13 Oct 2026 10:12:25 +0000
-X-MC-Unique: F3onXxAhPPaj4ZDozBG1eQ-1
-X-Mimecast-MFC-AGG-ID: F3onXxAhPPaj4ZDozBG1eQ_1791886344
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-3a77d27eb6cso14101631fa.3
- for <dev@dpdk.org>; Tue, 13 Oct 2026 03:12:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791886344; x=1792491144;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=SvPtVyPhOCsFaCciMRuwi/NaNzYskMwUBhhb8WsPZUs=;
- b=E9Vqu/hBbHMC7yPh7QzkisDsUajrMxxZ5hSYN29yd4kl1zXlZej49xkqFeoBI7dPtA
- XTJMMHDwFrVGH0nXCg4Pu3nTJYdu823sJ299ecZYOuJ6145jFKM1g95XpUg+z9JjulBr
- YKS0VKPsaBk9YRDotoVmiITZEl2jZcNgSjZ/ywqilorG6myl7qxPPNt9G2EGj1Zmn6st
- Q/ENd4CAZaFA2PzLHDr0ugVCcEAGOdTKx5JzHu+eiXyTxUXOBqtYOr81WAMzFfFylR60
- IJUaiEnjEAXwGOR5nfJetFZXs7x/t9EufWBvI8h0iCF89axGrs9qDOrOBtw0i+sycOJa
- tHrQ==
-X-Gm-Message-State: AFq9FYJZljYQJXfVObq3HmCeJnnwGALGru/zY39BYnmmX8229N8bvMdq
- Rd0OAHo3nG8QxnkiNOgAuQO2lJ22dq0Pm5EBcBw/l8iXiJkN7XdaP5XLTyUD+gDsEojsZ1wbH+/
- unVlCpF9Jh8fXD21+ECYRQFzawDINS6svtevdzcazss52foz374ktO9t3Is03SjR2viNGAaJGJy
- bFaMihroDMt+fjN4HYuQk=
-X-Gm-Gg: AYBFou3/eUFapI2400OnwVPD1vU9K+YvD51j70yKcTSjIlH6Fqh83ziuJwofxCJy7N0
- R3/8uYfNPrOtWA7+9nH4EH1vxK7TpeytW/2WxdLqcz3IgXm7bOZKraipJRaV9jRZCyj0sES5hDt
- uwRLATzoGAj4989mhiZANO0HFvpYiGJPJPJcM/p9UNd8G/tvDkagzxYf6hCgq0Aob4x2I3RwiBg
- eKXzEqeCHqO7hQGJ1zJ4DCl4YhCl45J+wduKgYb/dDtz+js
-X-Received: by 2002:a2e:be0d:0:b0:3a7:60f3:40ab with SMTP id
- 38308e7fff4ca-3a9c5398e36mr25088531fa.8.1791886343856; 
- Tue, 13 Oct 2026 03:12:23 -0700 (PDT)
-X-Received: by 2002:a2e:be0d:0:b0:3a7:60f3:40ab with SMTP id
- 38308e7fff4ca-3a9c5398e36mr25088371fa.8.1791886343081; Tue, 13 Oct 2026
- 03:12:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E9451402EA;
+	Tue, 13 Oct 2026 12:38:38 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id DBBF840279
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 12:38:37 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A38291A0085;
+ Tue, 13 Oct 2026 12:38:37 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6AED71A0004;
+ Tue, 13 Oct 2026 12:38:37 +0200 (CEST)
+Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
+ [92.120.146.12])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 997F91800068;
+ Tue, 13 Oct 2026 18:38:36 +0800 (+08)
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
+To: stephen@networkplumber.org,
+	thomas@monjalon.net,
+	dev@dpdk.org
+Subject: [PATCH v25 00/24] NXP DPAA driver enhancements and fixes
+Date: Tue, 13 Oct 2026 16:08:09 +0530
+Message-Id: <20261013103833.3822265-1-hemant.agrawal@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20261012080845.2325199-1-hemant.agrawal@nxp.com>
+References: <20261012080845.2325199-1-hemant.agrawal@nxp.com>
 MIME-Version: 1.0
-References: <20260811104933.3843522-1-g.singh@nxp.com>
- <20260812092929.563973-1-g.singh@nxp.com>
- <20260812092929.563973-2-g.singh@nxp.com>
- <CAJFAV8zOOvdFpwmCvJbV8Qj3TDmM4zR-CRcVupC1bovAyv0AwA@mail.gmail.com>
- <CAJFAV8z9c94-C39rrDHLeHTEd9pOG1n_HSkDEbpkOHDkNdcrxQ@mail.gmail.com>
-In-Reply-To: <CAJFAV8z9c94-C39rrDHLeHTEd9pOG1n_HSkDEbpkOHDkNdcrxQ@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 13 Oct 2026 12:12:11 +0200
-X-Gm-Features: AclHuK8N55lBq7M_Bo1oTxdQO4kbGNDVPaHbEnD2qR7P3J_DwjcoSlSnHUzE28c
-Message-ID: <CAJFAV8xXp-NcXTUY__6LwWS9g+M-ym-7423QCx6tpBk3Q=GXyA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] bus/platform: match device by devicetree
- compatible string
-To: Gagandeep Singh <g.singh@nxp.com>
-Cc: dev@dpdk.org, hemant.agrawal@nxp.com, 
- Tomasz Duszynski <tduszynski@marvell.com>,
- Thomas Monjalon <thomas@monjalon.net>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: TJePF4hGCJUh3Yl-DhbqaMZxkkJmXJ1C-n8AZ8tQyNE_1791886344
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,27 +47,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 9 Oct 2026 at 09:31, David Marchand <david.marchand@redhat.com> wrote:
-> > > -/** Helper for setting platform driver alias. */
-> > > +/**
-> > > + * Helper for setting platform driver alias.
-> > > + *
-> > > + * Note: this macro uses RTE_STR() to stringify the alias argument, so it
-> > > + * cannot express strings that contain a comma. For such aliases,
-> > > + * set .driver.alias directly in the rte_platform_driver initializer instead.
-> > > + */
-> > >  #define RTE_PMD_REGISTER_ALIAS(nm, alias) \
-> > >  static const char *pdrvinit_ ## nm ## _alias = RTE_STR(alias)
->
-> I just sent a patch on this topic.
-> Have a look please.
->
-> https://patchwork.dpdk.org/project/dpdk/patch/20261009072535.3039944-1-david.marchand@redhat.com/
+This series collects a set of fixes and enhancements for the NXP DPAA
+bus, mempool, dma, crypto and net drivers targeting 26.11.
 
-Merged.
-Please rebase.
+It includes memory-leak and resource-cleanup fixes on the device
+remove/close paths, more robust frame queue shutdown, secondary-process
+safety guards, BPID lifecycle handling, and several new features:
+enhanced virtual storage profile (VSP) port support, fmcless Rx queue
+configuration via devargs, non fmX-macY shared Ethernet naming, and DMA
+scatter-gather and errata-workaround devargs. Documentation and release
+notes are updated accordingly.
 
+v25:
+* Dropped the offline (O/H) port and DPAA cgrid cleanup patches, and
+  the Rx/Tx taildrop devargs patch whose Rx threshold was overwritten
+  by nb_desc at queue setup. Now 24 patches.
+* net/dpaa: keep the shared MAC base profile exempt from the one pool
+  per VSP check; it is identified by bp_num, not by vsp_bp[0].
+
+v24:
+* fix clang 23 compilation
+
+v23:
+* crypto/dpaa_sec: release the FQIDs as contiguous runs again. v22
+  released them one at a time, which cost one ioctl per queue, up to
+  4096 for inq[], undoing the batching this patch adds. Runs of
+  adjacent FQIDs that shut down cleanly are now freed with a single
+  qman_release_fqid_range(), and a queue that fails to shut down
+  still keeps its FQID reserved.
+* net/dpaa: correct the NULL deref trigger in the remove fix commit
+  message. dpaa_bus_cleanup() only calls remove for probed devices,
+  so the case is an application that closed its ports before
+  rte_eal_cleanup().
+* net/dpaa: commit message for the fmcless rxq devarg now matches the
+  code: a malformed value is rejected instead of using the default.
+* bus/dpaa: drop the write-only bman_ip_rev and qm_channel_pme
+  globals, which clang 23 rejects with -Wunused-but-set-global.
+  Folded into the patches that made them write-only so each builds
+  clean on its own.
+
+v22:
+* crypto/dpaa_sec: same fix in dpaa_sec_uninit(), releasing only the
+  FQIDs whose queues shut down.
+* net/dpaa: correct the Fixes tag on the FMC init fix; the referred
+  commit is f5fe3eed5122, not f5fe3eed51d2.
+* drivers: drop the now-unused DPAA_1G_MAC_START_IDX,
+  DPAA_2_5G_MAC_START_IDX, HI16_OF_U48() and LO32_OF_U48(), and the
+  dead num_rx_fqs store on the FMC init error path.
+* mempool/dpaa: pass the destructor priority as a literal to
+  RTE_FINI_PRIO(); the macro token pastes its argument onto
+  RTE_PRIORITY_, so the numeric macro has to stay.
+* doc: record that the default FMCLESS Rx queue count changed from
+  the lcore count to the per-port maximum.
+
+v21:
+* net/dpaa: jump to free_tx on the tx_conf_queues, cgr_tx and Tx
+  CGRID-range failures in dpaa_dev_init(); free_rx releases neither
+  tx_queues nor tx_conf_queues, so those two arrays leaked.
+* net/dpaa: range-check the drv_fmcless_rxq devarg value before
+  narrowing it, and stop treating a parse error as an absent key.
+* Commit messages: removed statements describing changes that were
+  not in the corresponding diff.
+
+v20:
+* net/dpaa: propagate the dpaa_port_fmc_init() error instead of
+  returning success with no Rx queues, as a separate fix with a
+  Fixes tag so it can be backported.
+* doc: log an over-long drv_sh_if_name.
+
+v19:
+	addressed AI review comments
+
+Still open, to be fixed in a follow-up series rather than here:
+qman_create_fq() also takes an FQ lookup table entry on 64-bit, and
+only qman_destroy_fq() clears it. Releasing it needs the FQ marked
+out of service after shutdown (qman_shutdown_fq() leaves fq->state
+untouched) and a new exported bus/dpaa helper, so it is grouped with
+the pre-existing FMCLESS Rx FQID leak in net/dpaa.
+
+Gagandeep Singh (1):
+  dma/dpaa: add devargs for SG and errata workaround
+
+Hemant Agrawal (10):
+  net/dpaa: fix double close and null deref on remove
+  net/dpaa: fix probe success when FMC init fails
+  net/dpaa: fix resource leak on probe failure
+  net/dpaa: fix free port resources on close
+  bus/dpaa: accept QDMA device name in devargs
+  net/dpaa: optimize FM deconfig
+  mempool/dpaa: fix write after free on pool free
+  net/dpaa: support non fmX-macY type of shared Ethernet name
+  bus/dpaa: improve log macro usages
+  doc: update release notes with NXP DPAA changes
+
+Jun Yang (10):
+  bus/dpaa: refine fman naming
+  bus/dpaa: scan max BPID from DTS
+  drivers: shutdown DPAA FQ by fq descriptor
+  bus/dpaa: improve FQ shutdown with channel validation
+  drivers: add BMI Tx statistics
+  net/dpaa: optimize FMC MAC type parsing
+  drivers: release DPAA bpid on driver destructor
+  net/dpaa: support fmcless rxq number as devargs
+  bus/dpaa: optimize DPAA multi-entry buffer pool operations
+  drivers: improve DPAA crypto fq resource handling
+
+Prashant Gupta (2):
+  bus/dpaa: fix FQD dest wq channel decoding
+  drivers: add process-type guards for secondary process
+
+Vanshika Shukla (1):
+  net/dpaa: enhance VSP port support
+
+ doc/guides/dmadevs/dpaa.rst               |  30 +-
+ doc/guides/nics/dpaa.rst                  |  19 +-
+ doc/guides/rel_notes/release_26_11.rst    |  19 ++
+ drivers/bus/dpaa/base/fman/fman.c         |  23 +-
+ drivers/bus/dpaa/base/fman/fman_hw.c      | 202 ++++++++-----
+ drivers/bus/dpaa/base/fman/netcfg_layer.c |   8 +-
+ drivers/bus/dpaa/base/qbman/bman.c        |  60 ++--
+ drivers/bus/dpaa/base/qbman/bman_driver.c |  76 +++--
+ drivers/bus/dpaa/base/qbman/bman_priv.h   |   5 -
+ drivers/bus/dpaa/base/qbman/qman.c        | 114 ++++----
+ drivers/bus/dpaa/base/qbman/qman.h        |  23 +-
+ drivers/bus/dpaa/base/qbman/qman_driver.c |  29 +-
+ drivers/bus/dpaa/dpaa_bus.c               |  91 +++---
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c  |   3 +
+ drivers/bus/dpaa/include/fman.h           |  32 +-
+ drivers/bus/dpaa/include/fsl_bman.h       |  56 +++-
+ drivers/bus/dpaa/include/fsl_qman.h       |  26 +-
+ drivers/bus/dpaa/rte_dpaa_logs.h          |   2 +
+ drivers/crypto/dpaa_sec/dpaa_sec.c        | 147 ++++++++--
+ drivers/dma/dpaa/dpaa_qdma.c              | 120 ++++++--
+ drivers/mempool/dpaa/dpaa_mempool.c       |  72 ++++-
+ drivers/mempool/dpaa/dpaa_mempool.h       |   2 +-
+ drivers/net/dpaa/dpaa_ethdev.c            | 337 +++++++++++++++++-----
+ drivers/net/dpaa/dpaa_ethdev.h            |  22 +-
+ drivers/net/dpaa/dpaa_flow.c              | 129 +++++----
+ drivers/net/dpaa/dpaa_flow.h              |   7 +-
+ drivers/net/dpaa/dpaa_fmc.c               |  91 ++++--
+ 27 files changed, 1240 insertions(+), 505 deletions(-)
 
 -- 
-David Marchand
+2.25.1
 
