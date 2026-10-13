@@ -2,100 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29192CC6B1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 19:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CF6CC6B12
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 21:11:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5FD81402F0;
-	Tue, 13 Oct 2026 21:51:45 +0200 (CEST)
-Received: from fhigh-a8-smtp.messagingengine.com
- (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
- by mails.dpdk.org (Postfix) with ESMTP id D2295402E5
- for <dev@dpdk.org>; Tue, 13 Oct 2026 21:51:43 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 5454F14000B4
- for <dev@dpdk.org>; Tue, 13 Oct 2026 15:51:43 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Tue, 13 Oct 2026 15:51:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1791921103;
- x=1792007503; bh=sNIOKezi7+qF43j5U9i7hg/ArtmmubtCDY3bz49gUB4=; b=
- Y3cRImTGk36RwtmX15pEx/cSPJEWc6ijK3b7nM/KjAKCnrAwpVUX01AdNUoJeO+I
- 2pMAykhl1hy7ACHZQjjsaHRZPsmxvk5FCicpKeLYrhHsq48cSxTJCIOWLcj5XR8I
- 6nu9+phAAMNjU0fsmZWhWA/2SlVBdZ5EUsT80A4n13yZbBR+egWNo9QmX5psvg2F
- BQgP3hINNW7tBHOL43WIoQHcPtNqdjaoLW5mXrNI8/2bQGcAt00Pd9CNJODpeMZ+
- F4QoYS7Kw6mOWY3tfmIAN8H8Vj4FgZTphiFW4CFATSTtCAvPooaCHYRWDwjYFl12
- w7ACRTznNLUPfVP1U4NHww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791921103; x=
- 1792007503; bh=sNIOKezi7+qF43j5U9i7hg/ArtmmubtCDY3bz49gUB4=; b=Y
- z3YTqq9qBRnk3cdv6x97A/cFkjaAodI3yjYbwmuprLvzo0i2we9GOpJSP1AvNod+
- J2urwmc8a4myhhIqDpTbN1NgqYu281q5Ch1kjs8FLSXNFUosE4cb93TnLJVuhPWu
- 6rKBj3yq9oW/nUzZDKQVTFw3kiLauhywnHKxRyA4+/S/66kXKpI0C9gO+7+1Uu0U
- ShFWI939LDfOO6JyHpQXkJUMIJGMUF9zfDo2bXXg+MHnFEr9kptFZhzlPuY71OtS
- qDxl5HwGxcv8yLilN8OYd/RR6G+v68vGQNH9KVmO31puBmuBcTCqzP8mo7/GmY4S
- /c+Zan4xptU0ZKg5iJTTg==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791921103; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:FRoegIBjDUCne2aUyzhBZ2Pc2yz/uMnszh+WcOpaErhebP8
- UXJsn7IHpFTZDgzrQMZlgtaoVnwkT9PUiIop1EF5Us1RQHVRCsbGZtsjG4XzZptG
- sWXgU5UEf4iIRWfciSITJ244bMgu7Hx4kKFpKTvvkGnTF0NRL+y8bkR8mL28BRgF
- D/V+r5Z+R89dRxgmFYZlUsFsOR7VcqByoxRH7vCAKSWEtMm/xNUCNElWa1QWq5rQ
- dKSgV/lR6gjsg2Ty4H37R5tFKRzu2z6fCtnkRSV/2GCRYnVnqKpGQ7Uo/zkq0j5a
- KyLAzhBIkks/tItYgoQRQm0NALNbZSmtPU0Gjdw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:vJB/gE94KX4zH9abB5CI6Pyc3QuPmFQdoCpQuGBWUgM=:3iomJa9qyB1y1VBea/uILDm7Nl3rTNZWe0Efl+/+sY8=;
-X-ME-Sender: <xms:z4vOalR-G5MIHvyAIkTC0Oe1XMkcrJX2rzm38YDZnQUwTmEmiPQKCg>
- <xme:z4vOanuboKedit5QLX7CsdH_rOfpzuljishyY_-Ot3aFWiYpTNqsOzKTQ2sxHejIy
- ZHhEsE-xkNqQfQ9pz463cV3Ttx3-qpaUKdPYicsAPe75gw2tPU9Mw>
-X-ME-Received: <xmr:z4vOamb9rwCGOh1JJJMBz2Y5WA_EROzP3Y-plJCpSIt5xymaUfGBbsK_0VyPI0_2YGSAMJJ7CiUGUtX64HB-ltE>
-X-ME-Proxy-Cause: dmFkZTF8IcwbKxtiXMaq95j8tgSeFxMPxh/B1Ajohk/0kTHWGoCpwoI+246J3uy02D84Yd
- /+yxizvNBP6OaXhqA6Bagv+nBnKsl7mKO1bc3H63q+h9H1EGBPsN3rTbwF6icfo/A79RXH
- EkRFlwm2Wq8CZAtO01zXlfrGpdg17rDJhayunFqQHRlsBZXuoBdrpEP1Qs4IefMEedbrgm
- d90OBvtJm6LgHNObSJG+0Me2WrWuXOdbkQXEK0eDk8ZZE9hF/tTNdcp7HSBUAQR5RA1ZBv
- WDN0G/t6wSAdBSUYCh6HK64As/xrIPYAmxwkyZHUYHr5wwei82zlpAUn6S8Z26Gyjd91rk
- 6An8SwMsG3oJicINQ5HzAsn3xzOOI36L0yh+0SqTZdqFDdQQJEm9dZ8JOZoKN0ehXkRYAY
- 3Tfzh6SEVYbz/i9Tj0pAXFX2/vHwLYsb1Ozh7ym/cvy2qI5I8PtPL5cJYDKDcbIbBJyk8B
- m7hszVhMymyF6CHJNeN4aPHO5KMZ4MwgquvkNV8SwOPuV4Aio8gNVnnaEMwcY+6/8PxfzM
- L+4BX/6TckBwTnNWOxyHxevoFP6Ja6vymSCCGGAZEdP8Hlh3BOCRIe9Ar6CluU98FNmVTz
- 2/A2fiybV+l+mGwjiwwbn4dzcNEz8ACW478VICvqT7mbzGrmcopyHYgnR21Q
-X-ME-Proxy: <xmx:z4vOatHJEW4ALmod5sqK-h9VW0bZRYaK757qA4GvRdv5W6pczNSqMw>
- <xmx:z4vOaqwOVGzTN7bx2EJAKnhQTfT1OnzL0APKrb1elzab92gWi6rm3Q>
- <xmx:z4vOavk2djcvC0glHk-ub8PRG3JJlujd4O3Wy2INx_zXTnEEmpd8Fw>
- <xmx:z4vOajntutSrU2c-riDjKWweF1Itj3VknpO1rj2Iu2GTTMaxXPSCqw>
- <xmx:z4vOalIe7SDcS3k9YuRT9WH9LMw2qxksM3qXAiLTZPAiOpCgNvy5t7LW>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 13 Oct 2026 15:51:41 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: "Nicolau, Radu" <radu.nicolau@intel.com>
-Cc: "De Lara Guarch, Pablo" <pablo.de.lara.guarch@intel.com>,
- "dev@dpdk.org" <dev@dpdk.org>, "Ji, Kai" <kai.ji@intel.com>,
- Akhil Goyal <gakhil@marvell.com>, David Marchand <david.marchand@redhat.com>
-Subject: Re: [PATCH v2] crypto/ipsec_mb: require minimum version 2.0 for IPsec
- MB
-Date: Tue, 13 Oct 2026 21:51:39 +0200
-Message-ID: <0UZYeU6OS3OoPauzypyoiQ@monjalon.net>
-In-Reply-To: <CO6PR18MB44840100B18E768A90E3A5F3D8812@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <20260811112636.4106950-1-radu.nicolau@intel.com>
- <SAWPR11MB992100DA82CA3158F0D374C184A72@SAWPR11MB9921.namprd11.prod.outlook.com>
- <CO6PR18MB44840100B18E768A90E3A5F3D8812@CO6PR18MB4484.namprd18.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D29DD40272;
+	Tue, 13 Oct 2026 23:11:27 +0200 (CEST)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 0C92940269
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 23:11:26 +0200 (CEST)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-4a16bc2278aso24364555e9.1
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 14:11:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1791925885; x=1792530685; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:in-reply-to:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=tA5Hg5HjGsheVFGtIuH2nNF3xKouVKhM6AVh7qk8wM8=;
+ b=rpQ7ss8nPXDPNMMdY/ijzfa3z4BYuOtlhesIljD0QUWR6fRy8EZGnZoM+Voqm0RqWK
+ qZ8ClH3A80PaDG/K4kjmgNdiF8fSxEMAItWipZjb/d0A7Ubg6fELvX/0wxEq3rYsdVrE
+ 3SNmvA6tMYXI0Qk2PJymmIDG1CkS6xEYg3jgonhsShDZhsjHoj/c5BzrUTlATTudyvCl
+ mEkZR34adc+I1M83GZNHTFNB7fST8d8A/kmiHyaOnsn9mLr99/cR2eU8e1s2Q9tdIIue
+ go3+Vsh1v1YdJ086W/2pwcvYiLsg/0fe0xiUK0MTkYDl9MwUn3cALnfaxqDA59oN/lzn
+ snXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791925885; x=1792530685;
+ h=content-transfer-encoding:content-type:in-reply-to:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=tA5Hg5HjGsheVFGtIuH2nNF3xKouVKhM6AVh7qk8wM8=;
+ b=XvYsnlYKNvDYPLlnKkWl38jfGyciDDGDyikN2Q3onQ3x2tOO2mUmu3hz6kCvNGShrT
+ Y6MXx70S9uV13Gyr7BcSwlGINqZ498SrOmlNZ18Y0FmCKzokt1IDAZoNnBXioCL6vceR
+ zfR3+f9pNLuXerJnnYjgUp0/XiKWd2dtp6pVUtQhaakcb6iRnAziLBb943yuBZK8rPYi
+ gkFW8b9N5xp0sSwGrumTcasq3Ra/wvmpSfOtu0EQL4rmWHCeIZNzSMPdf7nfwTlY9q5e
+ 2l47BAexu8S8c910S0P12lxA/hQBZ8ty2rnxBCI/u2Vxlp82Cax8iYtJ2iIa06OPDvg6
+ 3q/g==
+X-Forwarded-Encrypted: i=1;
+ AKwUvByh4XrkvsrWKFmxUDAiizRX6tZDTvhVcSP9ExbhLN5rqKuigqtHQm6th1TQy+Ioi0sOzkc=@dpdk.org
+X-Gm-Message-State: AFq9FYKfa+iDB4Zg/9u2Ot8GLaugNtM0m9vtcB7UqNLIoT1Xhkc1WSTw
+ WkkVkDCCNMuunx0F8jzp8zpEMZKqi1XNvyB5lFyjp/lMboKLeTnw5OVo
+X-Gm-Gg: AYBFou1roz2WuiPYF2atWvFLvIXCQTJ5FA6f/f/xYDRRFolwoZkkfqeZnLSCwv7YsJN
+ 9p1t7B3r18dzGWT4SY8QteQayqAtSnQXMOpg8/Pu+NTrW9MoMfitbG2oDKNnzziOTccxopXQuHT
+ 9Jxw7dm9mqMgAo4W0Oc8BOzgopVf5FM4bp2bfXktd7j2ufmRLsLQyWju1PyJANtr3WosMkkAMRs
+ xGKy33iqvOtzSlBg3+/pv073DOzMsQ7Dr9jq1LK52qRlKvcWv65Ol5HHfkSbLkdVjVnT9NNeaI9
+ r9F96ZgIxCX1xOaAQAZJFe1i4Vy749cH1OnRC5pJpOvdhVjUhy7IGynwpo+/JNxdvfztQhcXJfz
+ EkfGjY1RhsIQSmYEDcDIgdgIOm0zHMNhfeRI2Bb+R9digHtp6L1UJ/LSQr3/FJbF4dXzxFJou6b
+ e2/OgkCBlWaao1UmXr1ccB6uPGiquKcD+TiFR3sHXK5pwqypW+2Pmcti4DG/ztuUwBAGk=
+X-Received: by 2002:a05:600c:6990:b0:4a0:1ea1:477a with SMTP id
+ 5b1f17b1804b1-4a18e4d8bbamr241862985e9.27.1791925885233; 
+ Tue, 13 Oct 2026 14:11:25 -0700 (PDT)
+Received: from [192.168.0.78] ([80.233.42.129])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-4a1b2d352e7sm14760115e9.0.2026.10.13.14.11.23
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Tue, 13 Oct 2026 14:11:23 -0700 (PDT)
+Message-ID: <55863f64-e5c6-4661-a6af-4f06c484e9aa@gmail.com>
+Date: Tue, 13 Oct 2026 22:11:21 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/29] bpf: replace deprecated SMP barriers with C11
+ fences
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: David Marchand <david.marchand@redhat.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>, dev@dpdk.org,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Thomas Monjalon <thomas@monjalon.net>
+References: <20260729175715.165120-1-stephen@networkplumber.org>
+ <20261008233649.1260843-1-stephen@networkplumber.org>
+ <20261008233649.1260843-2-stephen@networkplumber.org>
+ <b9d3cb13-e34f-406d-ac18-345fede8bc5b@arm.com>
+ <6888e84c-e250-4ed9-ad70-46178014eb15@gmail.com>
+ <CAJFAV8zWR0PPrSNzwMyP=2wFFTpjCq4dWFs9X0HSjkCNXVF2mg@mail.gmail.com>
+ <31fc3286-242e-4104-9247-330a3d1ce217@gmail.com>
+ <20261013093140.6b763438@phoenix.local>
+Content-Language: en-US
+From: Marat Khalili <qm2k21@gmail.com>
+In-Reply-To: <20261013093140.6b763438@phoenix.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -109,25 +94,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-24/09/2026 13:18, Akhil Goyal:
-> > From: Nicolau, Radu <radu.nicolau@intel.com>
-> > > Increase the minimum required IPsec MB library version to 2.0 As a
-> > > consequence, clean up the aesni_mb PMD code.
-> > >
-> > > Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
-> > 
-> > Acked-by: Pablo de Lara <pablo.de.lara.guarch@intel.com>
-> 
-> Applied to dpdk-next-crypto
-
-As usual with Intel IPsec MB, it triggers a compilation failure on Arm:
-
-drivers/crypto/ipsec_mb/pmd_aesni_mb.c:24:32:
-error: 'IMB_CIPHER_SM4_GCM' undeclared
-
-I have to drop this commit while pulling next-crypto in main.
-
-Please find a solution.
-I'm still advocating to merge the Arm fork.
-
-
+> I am not a language lawyer, but what I read is that C11 atomic fence
+> is defined to only guarantee ordering of atomic objects. Since the use
+> counter is not atomic in the original code, the replacement with
+> rte_atomic_thread_fence() is not the same as original asm.
+>
+> My patch made these atomic and that is why.
+>
+> Should have no impact in datapath.
+>
+> I will respin with better human oriented comments, I have developed
+> a distaste for AI prose. Reads like a lawyer wrote it.
+Just a small clarification: `use` is currently declared as atomic in 
+main, so all simple reads and writes to it are seq_cst atomic (and 
+simple increment is a pair of two seq_cst atomic operations).
