@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE3DCC6B03
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 10:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 601BCCC6B03
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 10:39:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4438840656;
-	Tue, 13 Oct 2026 12:38:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5375240679;
+	Tue, 13 Oct 2026 12:38:44 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id CF7CA40279;
- Tue, 13 Oct 2026 12:38:38 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 2C19740279;
+ Tue, 13 Oct 2026 12:38:39 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AD0CD1A0004;
- Tue, 13 Oct 2026 12:38:38 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0AF101A0034;
+ Tue, 13 Oct 2026 12:38:39 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 748CF1A009D;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CA03C1A0092;
  Tue, 13 Oct 2026 12:38:38 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 984B118000B7;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id E8EE41800068;
  Tue, 13 Oct 2026 18:38:37 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v25 03/24] net/dpaa: fix resource leak on probe failure
-Date: Tue, 13 Oct 2026 16:08:12 +0530
-Message-Id: <20261013103833.3822265-4-hemant.agrawal@nxp.com>
+Subject: [PATCH v25 04/24] net/dpaa: fix free port resources on close
+Date: Tue, 13 Oct 2026 16:08:13 +0530
+Message-Id: <20261013103833.3822265-5-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261013103833.3822265-1-hemant.agrawal@nxp.com>
 References: <20261012080845.2325199-1-hemant.agrawal@nxp.com>
@@ -49,78 +49,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the shared Tx scatter-gather mempool cannot be created,
-rte_dpaa_probe() returns -ENOMEM directly:
+dpaa_intf->tx_conf_queues is allocated unconditionally for every port
+in dpaa_dev_init():
 
-	if (dpaa_tx_sg_pool == NULL) {
-		DPAA_PMD_ERR("SG pool creation failed");
-		return -ENOMEM;
-	}
+	dpaa_intf->tx_conf_queues = rte_zmalloc(NULL,
+		sizeof(struct qman_fq) * MAX_DPAA_CORES, MAX_CACHELINE);
 
-This is reached after dpaa_dev_init() has already succeeded, so the
-early return abandons everything set up for the port.
+but it is never released. It is a driver private allocation, so
+rte_eth_dev_release_port() does not free it either. The memory is
+therefore leaked on every device close and on every probe failure that
+happens after the allocation.
 
-Unwind through cleanup labels so the failure path closes the device and
-releases the port, matching the existing dpaa_dev_init() failure path.
+dpaa_eth_dev_close() returned early for offline (O/H) and ONIC ports,
+before the common cleanup that frees the queue and congestion-group
+memory allocated at probe. Added support to clean that path as well.
 
-Fixes: 533c31cc8331 ("net/dpaa: use internal mempool for SG table")
+Fixes: 58e0420f72f8 ("net/dpaa: support Tx confirmation to enable PTP")
 Cc: stable@dpdk.org
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 36 ++++++++++++++++++++--------------
- 1 file changed, 21 insertions(+), 15 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 10b90417de..2f6e2d20a3 100644
+index 2f6e2d20a3..1688acfb30 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -2602,24 +2602,30 @@ rte_dpaa_probe(struct rte_dpaa_driver *dpaa_drv,
+@@ -537,7 +537,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
  
- 	/* Invoke PMD device initialization function */
- 	diag = dpaa_dev_init(eth_dev);
--	if (diag == 0) {
--		if (!dpaa_tx_sg_pool) {
--			dpaa_tx_sg_pool =
--				rte_pktmbuf_pool_create("dpaa_mbuf_tx_sg_pool",
--				DPAA_POOL_SIZE,
--				DPAA_POOL_CACHE_SIZE, 0,
--				DPAA_MAX_SGS * sizeof(struct qm_sg_entry),
--				rte_socket_id());
--			if (dpaa_tx_sg_pool == NULL) {
--				DPAA_PMD_ERR("SG pool creation failed");
--				return -ENOMEM;
--			}
-+	if (diag != 0)
-+		goto release_port;
-+
-+	if (dpaa_tx_sg_pool == NULL) {
-+		dpaa_tx_sg_pool =
-+			rte_pktmbuf_pool_create("dpaa_mbuf_tx_sg_pool",
-+			DPAA_POOL_SIZE,
-+			DPAA_POOL_CACHE_SIZE, 0,
-+			DPAA_MAX_SGS * sizeof(struct qm_sg_entry),
-+			rte_socket_id());
-+		if (dpaa_tx_sg_pool == NULL) {
-+			DPAA_PMD_ERR("SG pool creation failed");
-+			diag = -ENOMEM;
-+			goto close_dev;
- 		}
--		rte_eth_dev_probing_finish(eth_dev);
--		dpaa_valid_dev++;
+ 	if (fif->mac_type == fman_offline_internal ||
+ 	    fif->mac_type == fman_onic)
 -		return 0;
++		goto clean_1;
+ 
+ 	/* Reset link to autoneg */
+ 	if (link->link_status && !link->link_autoneg) {
+@@ -562,7 +562,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 				dev->data->name, ret);
+ 		}
+ 	}
+-
++clean_1:
+ 	/* release configuration memory */
+ 	rte_free(dpaa_intf->fc_conf);
+ 
+@@ -624,6 +624,9 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 		}
  	}
  
-+	rte_eth_dev_probing_finish(eth_dev);
-+	dpaa_valid_dev++;
-+	return 0;
++	rte_free(dpaa_intf->tx_conf_queues);
++	dpaa_intf->tx_conf_queues = NULL;
 +
-+close_dev:
-+	dpaa_eth_dev_close(eth_dev);
-+release_port:
- 	rte_eth_dev_release_port(eth_dev);
- 	return diag;
+ 	return ret;
  }
+ 
+@@ -2385,7 +2388,7 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 	if (!dpaa_intf->tx_conf_queues) {
+ 		DPAA_PMD_ERR("Failed to alloc mem for TX conf queues");
+ 		ret = -ENOMEM;
+-		goto free_rx;
++		goto free_tx;
+ 	}
+ 
+ 	/* If congestion control is enabled globally*/
+@@ -2396,7 +2399,7 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 		if (!dpaa_intf->cgr_tx) {
+ 			DPAA_PMD_ERR("Failed to alloc mem for cgr_tx");
+ 			ret = -ENOMEM;
+-			goto free_rx;
++			goto free_tx;
+ 		}
+ 
+ 		ret = qman_alloc_cgrid_range(&cgrid_tx[0], MAX_DPAA_CORES,
+@@ -2404,7 +2407,7 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 		if (ret != MAX_DPAA_CORES) {
+ 			DPAA_PMD_WARN("insufficient CGRIDs available");
+ 			ret = -EINVAL;
+-			goto free_rx;
++			goto free_tx;
+ 		}
+ 	} else {
+ 		dpaa_intf->cgr_tx = NULL;
+@@ -2500,6 +2503,8 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 	return 0;
+ 
+ free_tx:
++	rte_free(dpaa_intf->tx_conf_queues);
++	dpaa_intf->tx_conf_queues = NULL;
+ 	rte_free(dpaa_intf->tx_queues);
+ 	dpaa_intf->tx_queues = NULL;
+ 	dpaa_intf->nb_tx_queues = 0;
 -- 
 2.25.1
 
