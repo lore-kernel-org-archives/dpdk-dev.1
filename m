@@ -2,85 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CF6CC6B12
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 21:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 197F1CC6B0F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 21:47:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D29DD40272;
-	Tue, 13 Oct 2026 23:11:27 +0200 (CEST)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
- [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 0C92940269
- for <dev@dpdk.org>; Tue, 13 Oct 2026 23:11:26 +0200 (CEST)
-Received: by mail-wm1-f45.google.com with SMTP id
- 5b1f17b1804b1-4a16bc2278aso24364555e9.1
- for <dev@dpdk.org>; Tue, 13 Oct 2026 14:11:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791925885; x=1792530685; darn=dpdk.org;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=tA5Hg5HjGsheVFGtIuH2nNF3xKouVKhM6AVh7qk8wM8=;
- b=rpQ7ss8nPXDPNMMdY/ijzfa3z4BYuOtlhesIljD0QUWR6fRy8EZGnZoM+Voqm0RqWK
- qZ8ClH3A80PaDG/K4kjmgNdiF8fSxEMAItWipZjb/d0A7Ubg6fELvX/0wxEq3rYsdVrE
- 3SNmvA6tMYXI0Qk2PJymmIDG1CkS6xEYg3jgonhsShDZhsjHoj/c5BzrUTlATTudyvCl
- mEkZR34adc+I1M83GZNHTFNB7fST8d8A/kmiHyaOnsn9mLr99/cR2eU8e1s2Q9tdIIue
- go3+Vsh1v1YdJ086W/2pwcvYiLsg/0fe0xiUK0MTkYDl9MwUn3cALnfaxqDA59oN/lzn
- snXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791925885; x=1792530685;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=tA5Hg5HjGsheVFGtIuH2nNF3xKouVKhM6AVh7qk8wM8=;
- b=XvYsnlYKNvDYPLlnKkWl38jfGyciDDGDyikN2Q3onQ3x2tOO2mUmu3hz6kCvNGShrT
- Y6MXx70S9uV13Gyr7BcSwlGINqZ498SrOmlNZ18Y0FmCKzokt1IDAZoNnBXioCL6vceR
- zfR3+f9pNLuXerJnnYjgUp0/XiKWd2dtp6pVUtQhaakcb6iRnAziLBb943yuBZK8rPYi
- gkFW8b9N5xp0sSwGrumTcasq3Ra/wvmpSfOtu0EQL4rmWHCeIZNzSMPdf7nfwTlY9q5e
- 2l47BAexu8S8c910S0P12lxA/hQBZ8ty2rnxBCI/u2Vxlp82Cax8iYtJ2iIa06OPDvg6
- 3q/g==
-X-Forwarded-Encrypted: i=1;
- AKwUvByh4XrkvsrWKFmxUDAiizRX6tZDTvhVcSP9ExbhLN5rqKuigqtHQm6th1TQy+Ioi0sOzkc=@dpdk.org
-X-Gm-Message-State: AFq9FYKfa+iDB4Zg/9u2Ot8GLaugNtM0m9vtcB7UqNLIoT1Xhkc1WSTw
- WkkVkDCCNMuunx0F8jzp8zpEMZKqi1XNvyB5lFyjp/lMboKLeTnw5OVo
-X-Gm-Gg: AYBFou1roz2WuiPYF2atWvFLvIXCQTJ5FA6f/f/xYDRRFolwoZkkfqeZnLSCwv7YsJN
- 9p1t7B3r18dzGWT4SY8QteQayqAtSnQXMOpg8/Pu+NTrW9MoMfitbG2oDKNnzziOTccxopXQuHT
- 9Jxw7dm9mqMgAo4W0Oc8BOzgopVf5FM4bp2bfXktd7j2ufmRLsLQyWju1PyJANtr3WosMkkAMRs
- xGKy33iqvOtzSlBg3+/pv073DOzMsQ7Dr9jq1LK52qRlKvcWv65Ol5HHfkSbLkdVjVnT9NNeaI9
- r9F96ZgIxCX1xOaAQAZJFe1i4Vy749cH1OnRC5pJpOvdhVjUhy7IGynwpo+/JNxdvfztQhcXJfz
- EkfGjY1RhsIQSmYEDcDIgdgIOm0zHMNhfeRI2Bb+R9digHtp6L1UJ/LSQr3/FJbF4dXzxFJou6b
- e2/OgkCBlWaao1UmXr1ccB6uPGiquKcD+TiFR3sHXK5pwqypW+2Pmcti4DG/ztuUwBAGk=
-X-Received: by 2002:a05:600c:6990:b0:4a0:1ea1:477a with SMTP id
- 5b1f17b1804b1-4a18e4d8bbamr241862985e9.27.1791925885233; 
- Tue, 13 Oct 2026 14:11:25 -0700 (PDT)
-Received: from [192.168.0.78] ([80.233.42.129])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4a1b2d352e7sm14760115e9.0.2026.10.13.14.11.23
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 13 Oct 2026 14:11:23 -0700 (PDT)
-Message-ID: <55863f64-e5c6-4661-a6af-4f06c484e9aa@gmail.com>
-Date: Tue, 13 Oct 2026 22:11:21 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id 07DC540272;
+	Tue, 13 Oct 2026 23:47:18 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 27EB540269
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 23:47:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1791928036; x=1823464036;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=mKgfN1uXvgBcEQwC3X29E2fRfyzy6nGwQ0Vg9aj5ncU=;
+ b=O4L5GnMr5lO3x0QhfeKXM2jqZF2Yb4Bvxew8pP4zP+c5O8mXRI+EpyJ8
+ 72E9ItVYVOku9IVUSpKw4PnOXc/kOq5Xmv/MbDjZ4M0iO1xM9I8HvxPzl
+ xTkfoAzIoPgYWC6+eUsyGCDuz9R+nVBd+CzgKZv3Qzc4tiKVZ5OGNTu6r
+ 4gljJrWIMSnU9RswVCLY3At3KKup/MZWJVUYoEe2B88kN+sYiiIPqGAtg
+ +xhlehQQ7FLqGpSzZW+r2YJk4AKMbLeE1561xvhx0DNWvn0ziv1+lAPYz
+ CO6TkdzIxkoeQK5/0sSuB8uRNtZMv6HCZ0w7wYPCuPtB9dD1RUBzhGouq w==;
+X-CSE-ConnectionGUID: 05M+SmObRT2k1iSe8e0qRw==
+X-CSE-MsgGUID: PR2ZLLrtQAqzqafpcVdKfQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="685726"
+X-IronPort-AV: E=Sophos;i="6.27,156,1787036400"; 
+   d="scan'208";a="685726"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Oct 2026 14:47:15 -0700
+X-CSE-ConnectionGUID: b4ILSTZuQESN2o2rPruVsw==
+X-CSE-MsgGUID: HYvKCFHxSKmALae+ioyf3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,156,1787036400"; 
+   d="scan'208";a="1342704"
+Received: from gnrd03.iind.intel.com ([10.190.213.135])
+ by fmviesa003.fm.intel.com with ESMTP; 13 Oct 2026 14:47:13 -0700
+From: Soumyadeep Hore <soumyadeep.hore@intel.com>
+To: dev@dpdk.org, bruce.richardson@intel.com, rajesh3.kumar@intel.com,
+ aman.deep.singh@intel.com
+Cc: manoj.kumar.subbarao@intel.com
+Subject: [PATCH] examples/ptpclient: compensate for clock frequency drift
+Date: Wed, 14 Oct 2026 03:16:49 +0530
+Message-ID: <20261013214649.878454-1-soumyadeep.hore@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/29] bpf: replace deprecated SMP barriers with C11
- fences
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: David Marchand <david.marchand@redhat.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>, dev@dpdk.org,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Thomas Monjalon <thomas@monjalon.net>
-References: <20260729175715.165120-1-stephen@networkplumber.org>
- <20261008233649.1260843-1-stephen@networkplumber.org>
- <20261008233649.1260843-2-stephen@networkplumber.org>
- <b9d3cb13-e34f-406d-ac18-345fede8bc5b@arm.com>
- <6888e84c-e250-4ed9-ad70-46178014eb15@gmail.com>
- <CAJFAV8zWR0PPrSNzwMyP=2wFFTpjCq4dWFs9X0HSjkCNXVF2mg@mail.gmail.com>
- <31fc3286-242e-4104-9247-330a3d1ce217@gmail.com>
- <20261013093140.6b763438@phoenix.local>
-Content-Language: en-US
-From: Marat Khalili <qm2k21@gmail.com>
-In-Reply-To: <20261013093140.6b763438@phoenix.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -94,17 +60,195 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> I am not a language lawyer, but what I read is that C11 atomic fence
-> is defined to only guarantee ordering of atomic objects. Since the use
-> counter is not atomic in the original code, the replacement with
-> rte_atomic_thread_fence() is not the same as original asm.
->
-> My patch made these atomic and that is why.
->
-> Should have no impact in datapath.
->
-> I will respin with better human oriented comments, I have developed
-> a distaste for AI prose. Reads like a lawyer wrote it.
-Just a small clarification: `use` is currently declared as atomic in 
-main, so all simple reads and writes to it are seq_cst atomic (and 
-simple increment is a pair of two seq_cst atomic operations).
+The ptpclient example corrected only the instantaneous phase offset by
+calling rte_eth_timesync_adjust_time() once per DELAY_RESP. It never
+compensated for oscillator frequency drift, so the master/slave offset
+settled at a non-zero steady-state value (proportional to the drift rate
+times the sync interval) instead of converging towards zero.
+
+Replace the one-shot phase step with a PI clock servo, using the same
+model as linuxptp. The servo output is a frequency correction that is
+applied through the best mechanism the PMD provides:
+
+- When the driver supports hardware frequency adjustment, the correction
+  is applied with rte_eth_timesync_adjust_freq() (for example the E810
+  INCVAL register).
+- Otherwise the same correction is realized in software as an
+  incremental phase step over the elapsed interval using
+  rte_eth_timesync_adjust_time(), which every timesync-capable PMD
+  provides.
+
+Hardware support is probed once at runtime, so any PMD that implements
+the adjust_freq operation in the future uses the hardware path without
+further changes. The selected path is logged once per port.
+
+Bugzilla ID: 1474
+
+Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
+---
+ examples/ptpclient/ptpclient.c | 114 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 111 insertions(+), 3 deletions(-)
+
+diff --git a/examples/ptpclient/ptpclient.c b/examples/ptpclient/ptpclient.c
+index 59ce892742..d3e947941e 100644
+--- a/examples/ptpclient/ptpclient.c
++++ b/examples/ptpclient/ptpclient.c
+@@ -34,6 +34,12 @@ static volatile bool force_quit;
+ #define NSEC_PER_SEC        1000000000L
+ #define KERNEL_TIME_ADJUST_LIMIT  20000
+ 
++/* PI clock servo parameters (same model as linuxptp). */
++#define PTP_SERVO_KP              0.7
++#define PTP_SERVO_KI              0.3
++/* Step the clock directly when the offset exceeds this threshold. */
++#define PTP_STEP_THRESHOLD_NS     100000
++
+ struct rte_mempool *mbuf_pool;
+ uint32_t ptp_enabled_port_mask;
+ uint8_t ptp_enabled_port_nb;
+@@ -97,6 +103,18 @@ struct ptpv2_time_receiver_ordinary {
+ 
+ static struct ptpv2_time_receiver_ordinary ptp_data;
+ 
++/* Per-port clock servo state. */
++struct ptp_clock_servo {
++	int freq_adj_supported;     /* -1 unknown, 0 software, 1 hardware */
++	int count;                  /* number of samples processed */
++	int64_t last_offset;        /* previous offset (ns) */
++	uint64_t last_local;        /* NIC clock at previous sample (ns) */
++	double drift_ppb;           /* integral term / standing frequency (ppb) */
++};
++
++static struct ptp_clock_servo ptp_servo[RTE_MAX_ETHPORTS];
++
++
+ static inline uint64_t timespec64_to_ns(const struct timespec *ts)
+ {
+ 	return ((uint64_t) ts->tv_sec * NSEC_PER_SEC) + ts->tv_nsec;
+@@ -229,7 +247,7 @@ print_clock_info(struct ptpv2_time_receiver_ordinary *ptp)
+ 	int64_t nsec;
+ 	struct timespec net_time, sys_time;
+ 
+-	printf("time transmitter clock id: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
++	printf("\ntime transmitter clock id: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
+ 		ptp->transmitter_clock_id[0],
+ 		ptp->transmitter_clock_id[1],
+ 		ptp->transmitter_clock_id[2],
+@@ -308,6 +326,93 @@ delta_eval(struct ptpv2_time_receiver_ordinary *ptp)
+ 	return delta;
+ }
+ 
++/*
++ * Convert a frequency correction in ppb to the scaled ppm (16-bit fractional)
++ * unit expected by rte_eth_timesync_adjust_freq().
++ */
++static int64_t
++ppb_to_scaled_ppm(double ppb)
++{
++	return (int64_t)(ppb * 65536.0 / 1000.0);
++}
++
++/*
++ * PI clock servo. Drives the master/slave offset to zero by compensating for
++ * clock frequency drift, not just the instantaneous phase offset.
++ *
++ * The servo output is a frequency correction (ppb). When the PMD supports
++ * hardware frequency adjustment it is applied via rte_eth_timesync_adjust_freq()
++ * (e.g. the E810 INCVAL register). Otherwise the same correction is realized in
++ * software as an incremental phase step over the elapsed interval using
++ * rte_eth_timesync_adjust_time(), which every timesync-capable PMD provides.
++ */
++static void
++clock_servo(struct ptpv2_time_receiver_ordinary *ptp, int64_t offset)
++{
++	struct ptp_clock_servo *servo = &ptp_servo[ptp->portid];
++	struct timespec now;
++	uint64_t local;
++	double ppb, ki_term;
++
++	/* Probe hardware frequency adjustment support once. */
++	if (servo->freq_adj_supported < 0) {
++		servo->freq_adj_supported =
++			(rte_eth_timesync_adjust_freq(ptp->portid, 0) == 0) ? 1 : 0;
++		printf("Port %u clock frequency adjustment: %s\n", ptp->portid,
++		       servo->freq_adj_supported ? "hardware" : "software");
++	}
++
++	if (rte_eth_timesync_read_time(ptp->portid, &now) != 0)
++		return;
++	local = timespec64_to_ns(&now);
++
++	/* Large offset: step the clock directly and (re)start the servo. */
++	if (offset >= PTP_STEP_THRESHOLD_NS || offset <= -PTP_STEP_THRESHOLD_NS) {
++		rte_eth_timesync_adjust_time(ptp->portid, offset);
++		servo->last_offset = 0;
++		servo->last_local = local;
++		if (servo->count == 0)
++			servo->count = 1;
++		return;
++	}
++
++	switch (servo->count) {
++	case 0:
++		/* First sample: establish the baseline only. */
++		servo->last_offset = offset;
++		servo->last_local = local;
++		servo->count = 1;
++		return;
++	case 1:
++		/* Second sample: seed the drift estimate from the slope. */
++		if (local > servo->last_local)
++			servo->drift_ppb = 1e9 *
++				(double)(offset - servo->last_offset) /
++				(double)(local - servo->last_local);
++		servo->count = 2;
++		break;
++	default:
++		ki_term = PTP_SERVO_KI * (double)offset;
++		servo->drift_ppb += ki_term;
++		break;
++	}
++
++	ppb = PTP_SERVO_KP * (double)offset + servo->drift_ppb;
++
++	if (servo->freq_adj_supported == 1) {
++		rte_eth_timesync_adjust_freq(ptp->portid, ppb_to_scaled_ppm(ppb));
++	} else if (local > servo->last_local) {
++		/* Realize the frequency correction as a phase step. */
++		double dt = (double)(local - servo->last_local);
++
++		rte_eth_timesync_adjust_time(ptp->portid,
++					     (int64_t)(ppb * dt / 1e9));
++	}
++
++	servo->last_offset = offset;
++	servo->last_local = local;
++}
++
+ /*
+  * Parse the PTP SYNC message.
+  */
+@@ -507,8 +612,7 @@ parse_drsp(struct ptpv2_time_receiver_ordinary *ptp)
+ 			/* Evaluate the delta for adjustment. */
+ 			ptp->delta = delta_eval(ptp);
+ 
+-			rte_eth_timesync_adjust_time(ptp->portid,
+-							ptp->delta);
++			clock_servo(ptp, ptp->delta);
+ 
+ 			ptp->current_ptp_port = ptp->portid;
+ 
+@@ -576,6 +680,10 @@ lcore_main(void)
+ 	printf("\nCore %u Waiting for SYNC packets. [Ctrl+C to quit]\n",
+ 			rte_lcore_id());
+ 
++	/* Hardware frequency support is probed on the first adjustment. */
++	for (portid = 0; portid < RTE_MAX_ETHPORTS; portid++)
++		ptp_servo[portid].freq_adj_supported = -1;
++
+ 	/* Run until the application is quit or killed. */
+ 
+ 	while (!force_quit) {
+-- 
+2.43.0
+
