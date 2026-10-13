@@ -2,76 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 326EBCC6B0E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 15:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 174EDCC6B16
+	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 15:12:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9B0D640A81;
-	Tue, 13 Oct 2026 17:12:11 +0200 (CEST)
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com
- [209.85.216.44]) by mails.dpdk.org (Postfix) with ESMTP id 59C0F40A7F
- for <dev@dpdk.org>; Tue, 13 Oct 2026 17:12:09 +0200 (CEST)
-Received: by mail-pj1-f44.google.com with SMTP id
- 98e67ed59e1d1-38ec1402b05so1576837a91.2
- for <dev@dpdk.org>; Tue, 13 Oct 2026 08:12:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B29C940A8B;
+	Tue, 13 Oct 2026 17:12:13 +0200 (CEST)
+Received: from pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com
+ (pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com
+ [35.162.73.231]) by mails.dpdk.org (Postfix) with ESMTP id 28D8C40A7F
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 17:12:11 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791904328;
- x=1792509128; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=mxEH76NjLnRX5QG6365s67rpE2ZkjSbwQKib0KBEARE=;
- b=XgWzQcs54EY3OuQeJFubXU/RSOrVn2rTNj/TC5TyrB5OViUP2gHcIAVakgmmuWdj/9
- Of2T/VkCz2ciury+KTKwdFf+DifA3IaS8czv9BbhyEtOY1V7yfsBVD7Z6On7g3ZCRsCJ
- Do9uSjtJQTEUpxXR0FTI0glS0gFKpAoqoo9ehnUcukgfvfGPWlljagbC6I4t2jWMbXPh
- xXpiGvJkeoR8C/z3fU+o175BlBQXYHiFQWNj0pgKLUnAzn/+Xqyf7+mG95IS9FyXj7/H
- 4JbqxhADN1CugFGKp6w+anmWd6EfdQME0qDfIogIVgZ/YQKf/LwlrsE71DB9IIjVFF2a
- PfMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791904328; x=1792509128;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=mxEH76NjLnRX5QG6365s67rpE2ZkjSbwQKib0KBEARE=;
- b=GT6AkhgH7tF9719QdK6/JsXa/TWcKAdAI0CQBfNs7lGir203jCIHTFNd5lzFKM9345
- v1PGlVfW7mXoaLgJx52qKciFci5SUvuqAR99GKKFNa4biagG6C45MkrAg9F7qU+/68Qu
- aBs9hdEnAvvcB1AurmDdjh+o+/ryBTm58okk7F3Ex4wIxokhI6/7uaYDS7RPu9R9eNCH
- 1IH6jnd3AjbwFpsJ4QpRucaaDhFNHg3kUVG11Yk7VfbcmQ01/JMwLaGbBt2HFecLJx7A
- fBY7lPlM343WgTmcAbiSlcEUhey4esUz6lmEJW4apIJxmKxLXYPdfbNZEQx0u8oBZeHx
- oVLA==
-X-Gm-Message-State: AFq9FYLhvTVXdFiQPsDZdjud8CClpNKs5TVNn3leuX3fEB7hBnjKMh2s
- xIkU1OuCld/GS3tbb0Ab+TUhLshlyy46wA3LrMl7fvFzuZS0SdelYKIbMueoEdSrW80LGmLbQZD
- oZMdPisg=
-X-Gm-Gg: AYBFou2Y0fPCaHTKXv1D52SyoL3rHLSvV1t9SH7bbuzu9pBCLtTssrcK9Epd8Wqu5fG
- aZiXTlDXVmfTqU9SIJWorG8d+68o+In+8j2lJD6JURubN2/itHULnUDKjgSq8iouQ7NTCdIDl4Z
- gW3KWyNgUSS+fMcaWkL6q0uCauMPsyx2baSmBBqBMPt/j/zi7jDZFyHduAx9EJn6YPjW0TO76/Q
- SvymjEJTjo479ph+z6pwi9U/EM9PKezV1253UQS1z9hpMdyT/wrhW/3hNHi1myvKZCyB4lLKIFN
- OX3BCdDpxuXnAQReMbCXtWypjXEdLErDok591BQTEdYxMfXtm4NM/eeslPwnFf0G4wI43tfNE0I
- 70jqRXigzOCYE8XskYSQqdcBYHoC0ypNJa3Ymi9/MCW5btVa2pIsqOWsBO0LL8dRZ+S+7P8UGtI
- rL81lm88FOd9G2KMEktpN3ioSr0/S/R8sVUAXRsYe7C5NjNLvJJ28V1zce5LBIUTS/rpXfqRQde
- 2SWJ8EL0k7kioCENSKYG3wo4YcEy0/w83F52yIlEA==
-X-Received: by 2002:a17:90b:1dd0:b0:3a8:272a:a32a with SMTP id
- 98e67ed59e1d1-3ab3a9fc963mr10592089a91.40.1791904328190; 
- Tue, 13 Oct 2026 08:12:08 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ac5f05083fsm35116a91.1.2026.10.13.08.12.07
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Oct 2026 08:12:07 -0700 (PDT)
-Date: Tue, 13 Oct 2026 07:52:43 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Prashant Gupta <prashant.gupta_3@nxp.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: Re: [PATCH v9-S2 01/13] net/dpaa2: fix integer overflow in CCSR
- region mapping
-Message-ID: <20261013075243.2903fa47@phoenix.local>
-In-Reply-To: <20261012070444.2149617-2-prashant.gupta_3@nxp.com>
-References: <20261009104900.1120550-1-prashant.gupta_3@nxp.com>
- <20261012070444.2149617-1-prashant.gupta_3@nxp.com>
- <20261012070444.2149617-2-prashant.gupta_3@nxp.com>
+ d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+ t=1791904331; x=1823440331;
+ h=from:to:cc:subject:date:message-id:mime-version;
+ bh=r0ZNm0nXlFCMAgDfL+TCPtVCaiC/1MIZ6pP//MZXwz0=;
+ b=tmMgRtnlI7Cma/LW/i5ki9EHuAUXgIFzT2i2WleK9HrPIh7I8wIQHENb
+ C2EIdGUdEgmjiMFssMRDikcAIi5Y8vulVEkAq65JUk8VqY2nuupzxtZnR
+ j+Rse+GEBXy2sLjMwXD9V9nBUvGjjQ4mgqcshI3Dj13sl0qmqURUkJEW6
+ gHwhDwyqD8Rz62E97WYo0j19SpHBjigv680nqpXeQwXp5CniFJBVfwnfo
+ cQlVaLXa+rtSwi0yBHsSoFVLnfSTcKSNeryCPvKQc4f+bJLrEvbuNGK+m
+ 9fP5A7eH3sSIez5vz1QisgztNhIk4C1VBJu7cGtrEueO5EfmAuEG9Ww1m A==;
+X-CSE-ConnectionGUID: jG6KtRhJQiS6JRKcNkqxdQ==
+X-CSE-MsgGUID: /FaRwsrmQOmYYHI2ZJkI2A==
+X-IronPort-AV: E=Sophos;i="6.27,155,1787011200"; d="scan'208";a="30947631"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO
+ smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+ by internal-pdx-out-012.esa.us-west-2.outbound.mail-perimeter.amazon.com with
+ ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 15:12:10 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [205.251.233.53:3318]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.51.115:2525]
+ with esmtp (Farcaster)
+ id 4bc8fd8c-efbf-4fd6-8f32-bd54c3ab4a93; Tue, 13 Oct 2026 15:12:09 +0000 (UTC)
+X-Farcaster-Flow-ID: 4bc8fd8c-efbf-4fd6-8f32-bd54c3ab4a93
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
+ Tue, 13 Oct 2026 15:12:09 +0000
+Received: from HFA15-CG15235BS.amazon.com (10.1.212.11) by
+ EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.53;
+ Tue, 13 Oct 2026 15:12:08 +0000
+From: Shai Brandes <shaibran@amazon.com>
+To: <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>, Amit Bernstein
+ <amitbern@amazon.com>
+Subject: [PATCH 12/13] net/ena/base: remove x86 Tx LLQ write barrier
+Date: Tue, 13 Oct 2026 18:11:55 +0300
+Message-ID: <20261013151155.9825-1-shaibran@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.1.212.11]
+X-ClientProxiedBy: EX19D031UWA001.ant.amazon.com (10.13.139.88) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,63 +68,110 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 12 Oct 2026 12:34:32 +0530
-Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
+ena_com_write_bounce_buffer_to_dev() issues a wmb() before copying each
+LLQ entry from the bounce buffer to the write-combining (WC) LLQ memory
+region. It was intended to ensure the bounce buffer is fully written
+before the copy reads it. That is never needed: a CPU always observes
+its own prior stores, on every architecture. wmb() also orders stores
+against later stores, not against later loads, so it could not provide
+that guarantee anyway.
 
-> From: Hemant Agrawal <hemant.agrawal@nxp.com>
-> 
-> In lsx_ccsr_map_region, PAGE_SIZE is a macro defined as
-> sysconf(_SC_PAGESIZE), which returns a signed long and may be negative
-> on error. The value was used directly in size_t comparisons and passed
-> to mmap, causing an integer overflow (Coverity CID 49765682).
-> 
-> The old round-down "len & PAGE_MASK" ignored the in-page offset: for a
-> 4096-byte or 6656-byte len on a 64K-page kernel the masked result is 0,
-> causing the mapping to fail, where the old code would have bumped len up
-> to PAGE_SIZE. The correct mapping size must cover the region from the
-> page-aligned start through offset + len.
-> 
-> Fix by calling sysconf(_SC_PAGESIZE) explicitly into a signed long,
-> checking for a non-positive return before use, computing page_mask from
-> the verified value, and using RTE_ALIGN_CEIL(offset + len, page_size)
-> for map_len so that the mmap covers the full requested region regardless
-> of page size. The page-aligned start address and the back-pointer offset
-> are both derived from the same page_mask, keeping the three values
-> consistent.
-> 
-> Coverity issue: 49765682
-> Fixes: f023d059769f ("net/dpaa2: support recycle loopback port")
-> Cc: stable@dpdk.org
-> Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
-> ---
->  drivers/net/dpaa2/dpaa2_recycle.c | 23 +++++++++++++++--------
->  1 file changed, 15 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/net/dpaa2/dpaa2_recycle.c b/drivers/net/dpaa2/dpaa2_recycle.c
-> index f78d12362e..9b6ae3f515 100644
-> --- a/drivers/net/dpaa2/dpaa2_recycle.c
-> +++ b/drivers/net/dpaa2/dpaa2_recycle.c
-> @@ -176,6 +176,9 @@ static void *lsx_ccsr_map_region(uint64_t addr, size_t len)
->  	void *tmp;
->  	uint64_t start;
->  	uint64_t offset;
-> +	uint64_t page_mask;
-> +	long page_size;
-> +	size_t map_len;
->  
->  	fd = open("/dev/mem", O_RDWR);
+The barrier is needed on ARM for a different reason: it orders one LLQ
+entry's stores to the device ahead of the next entry's. The copy uses
+relaxed stores, which on ARM may reach the device partially and out of
+order while the burst is still being written. The barrier in the
+doorbell write cannot prevent this, as it only orders the entries
+against the doorbell, not against each other. With the barrier removed,
+c8gn at 32 queues fails with IPP_REASS_ERROR_PRE_VALID_DB ("Data Out of
+Window") before the doorbell is written.
 
-Does this driver work with CONFIG_STRICT_DEVMEM and CONFIG_IO_STRICT_DEVMEM?
-Note it won't work in lockdown mode at all.
+On x86 the barrier is redundant. WC stores are weakly ordered there
+too, so it never ordered entries against each other. The entries reach
+the device before the doorbell because of the memory type, not a fence:
+each entry is written as complete 64-byte WC lines, and on Intel the UC
+doorbell write flushes pending WC buffers, while on AMD each 64-byte WC
+line is flushed once it is fully written. The per-entry SFENCE made the
+CPU wait for the previous entry to reach the device before copying the
+next one, defeating the purpose of write combining.
 
->  	if (fd < 0) {
-> @@ -183,20 +186,24 @@ static void *lsx_ccsr_map_region(uint64_t addr, size_t len)
->  		return NULL;
->  	}
->  
-> -	start = addr & PAGE_MASK;
-> +	page_size = sysconf(_SC_PAGESIZE);
-> +	if (page_size <= 0) {
+Introduce arm_wmb(), a write barrier on ARM and a no-op elsewhere, and
+use it in place of wmb() before the bounce buffer copy.
 
-Something is broken if this happens, should log it?
+Signed-off-by: Amit Bernstein <amitbern@amazon.com>
+Signed-off-by: Shai Brandes <shaibran@amazon.com>
+---
+ doc/guides/rel_notes/release_26_11.rst |  2 ++
+ drivers/net/ena/base/ena_eth_com.c     | 23 ++++++++++++++++++++---
+ drivers/net/ena/base/ena_plat_dpdk.h   |  8 ++++++++
+ 3 files changed, 30 insertions(+), 3 deletions(-)
+
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 05281c3d11..c6c8719d2b 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -95,6 +95,8 @@ New Features
+ * **Updated Amazon ENA (Elastic Network Adapter) ethernet driver.**
+ 
+   * Added Rx flow steering support using the generic flow API.
++  * Restrict the Tx LLQ write barrier to ARM, where it is required for correct entry ordering,
++    and remove it on x86, where it is redundant and limits throughput.
+ 
+ * **Updated Intel iavf driver.**
+ 
+diff --git a/drivers/net/ena/base/ena_eth_com.c b/drivers/net/ena/base/ena_eth_com.c
+index ea0fb374db..5dbb432acc 100644
+--- a/drivers/net/ena/base/ena_eth_com.c
++++ b/drivers/net/ena/base/ena_eth_com.c
+@@ -132,10 +132,27 @@ static int ena_com_write_bounce_buffer_to_dev(struct ena_com_io_sq *io_sq,
+ 			    io_sq->qid, io_sq->llq_runtime.entries_in_tx_burst_left);
+ 	}
+ 
+-	/* Make sure everything was written into the bounce buffer before
+-	 * writing the bounce buffer to the device
++	/* Ensure the previous LLQ entry reaches the device before this one.
++	 *
++	 * The original wmb() was intended to ensure the bounce buffer is
++	 * fully written before it is copied to the device. This is not
++	 * required: a CPU always observes its own prior stores, on every
++	 * architecture. Moreover, wmb() orders stores against later stores,
++	 * not against later loads, so it could not provide this guarantee.
++	 *
++	 * The copy below uses relaxed stores to the WC LLQ region: plain
++	 * stores with no barrier, which the CPU may send to the device in any
++	 * order. On ARM, this means an entry may reach the device partially
++	 * and out of order before the doorbell is written. In addition, the
++	 * barrier in the doorbell write cannot prevent this, as it only orders
++	 * the entries against the doorbell, not against each other.
++	 *
++	 * On x86, this barrier is not needed. Each entry is written as complete
++	 * 64-byte WC lines, all of which reach the device before the
++	 * doorbell: on Intel, the UC doorbell write flushes pending WC
++	 * buffers; on AMD, each line is flushed once it is fully written.
+ 	 */
+-	wmb();
++	arm_wmb();
+ 
+ 	/* The line is completed. Copy it to dev */
+ 	ENA_MEMCPY_TO_DEVICE_64(io_sq->desc_addr.pbuf_dev_addr + dst_offset,
+diff --git a/drivers/net/ena/base/ena_plat_dpdk.h b/drivers/net/ena/base/ena_plat_dpdk.h
+index 4a6d53d0a2..12f1643a85 100644
+--- a/drivers/net/ena/base/ena_plat_dpdk.h
++++ b/drivers/net/ena/base/ena_plat_dpdk.h
+@@ -73,6 +73,14 @@ typedef RTE_ATOMIC(int32_t) ena_atomic32_t;
+ #define rmb rte_rmb
+ #define mb rte_mb
+ #define mmiowb rte_io_wmb
++
++/* Write memory barrier for ARM architectures - covers 32 and 64 bit ARM */
++#if defined(RTE_ARCH_ARM)
++#define arm_wmb rte_wmb
++#else
++static inline void arm_wmb(void) { }
++#endif
++
+ #define __iomem
+ 
+ #ifndef READ_ONCE
+-- 
+2.17.1
 
