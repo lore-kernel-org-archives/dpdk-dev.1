@@ -2,162 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5686ACC6B1D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 12:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3345CCC6B1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 12:45:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 907604060A;
-	Wed, 14 Oct 2026 14:44:54 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id DDB794021E
- for <dev@dpdk.org>; Wed, 14 Oct 2026 14:44:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791981893; x=1823517893;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=+aFjOkNSdixN/FvD/AzedvkEvrF1o9u+Dahwpy9c+6c=;
- b=jggbOHqyTmQ6OKPzPlps2lpHp5EtwxDEhc74O6seYSCZoNkJHqdiRb1h
- /aeyXENE/blKOv8WDV7krVEAofgjcEUH5/rnjTRVt1sCLl9KtmsP4doGJ
- C+pYKllRPiNEAQt7WjJistu/Ym0kjN9k7ufXQsjaEYz5iLi8pmkHjWNNM
- nXSWbugqIadF0DKwLxlJdco8HDz/z3i+Cr8w6PEQDNRsz4pzuu9xjRFGY
- D6CJQNYT72zFxXfb4UKWprkR+6gKV8Hr8Xb5wXXTRjk5Y782QnErLXNbV
- gDHPCmaCpDs4IMSPpNDFjRv22HD0jDV/t4U7AqVfxv1E5/z0/jDCZ6RCN g==;
-X-CSE-ConnectionGUID: GkGPmT73QfKayjlOsN6TRw==
-X-CSE-MsgGUID: WRmkP97lQtCGW4ga9Dqfgg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="613791"
-X-IronPort-AV: E=Sophos;i="6.27,157,1787036400"; 
-   d="scan'208";a="613791"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2026 05:44:52 -0700
-X-CSE-ConnectionGUID: /SywqQizRX+M2ZWfs+9PwA==
-X-CSE-MsgGUID: 9yehjzdyQH2WWRCvNdyRdw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,157,1787036400"; 
-   d="scan'208";a="1371554"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2026 05:44:50 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 14 Oct 2026 05:44:50 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Wed, 14 Oct 2026 05:44:50 -0700
-Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.11) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 14 Oct 2026 05:44:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CRh2JvaFYJyI+Rg9YnoEZt2HhAlJUuME4DbU5uG/3HYUNZujFa/5Je+iBR51d/n3LNGI+7UIKg1N+0w1YWE6ta1jQPFcribHhYGky7ES187eL2n99zqSP4N/V1vADJIxWW2V6KkStCrjwO+Q3JevfutpPuHpkW6E3Djj3RZpCixNN9TBDfwyHWD9BqxtxgM1+Ln+xLygztgaoztHh+1ZtirVEOMYb3joc3p4tB5AtH4JwB379aTp7j+/5eSKIHN3fhMrxy4VOSm8EFallVU27FwfSK8ME9SNrHd9HwhWA6J5X7BFsgUXhc6ZBk005omngK6KtXvrOpFH3dZpQtXaoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+aFjOkNSdixN/FvD/AzedvkEvrF1o9u+Dahwpy9c+6c=;
- b=aQdu79Fj+0AuloTJ9c2m6NiB+VPOg1SuIBGUzC+g9wt3fah0P9xunKv6xfiPMXaBZNcDdwztQNvgOw/xwNhdjSD3JL+LlJfLg1sXAr5BMFvW0IrCpBbKpgZj6jPgTcszau4Q2wFwnuJZmmFfdC6HqBVX7nYc4IWY95vvIfIPhO4p1Z4J62O3BBCjLKN611SB0IQigZvS7mkm59KJRMcoedWaBPCDxfJbvf6HFtXywmD1yPk/ndEUSJ1vU+seNZwqq/dLyT+bU3BXV8L36iM2Bk/0UkwAvzEm0DyuulUv7xUVLS4OPR7fcCm4eb2POs9KfZGiMZ0y6bbgGlyVqIyK5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
- BL1PR11MB6052.namprd11.prod.outlook.com (2603:10b6:208:394::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.13; Wed, 14 Oct
- 2026 12:44:41 +0000
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa]) by DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa%3]) with mapi id 15.21.0522.011; Wed, 14 Oct 2026
- 12:44:40 +0000
-Message-ID: <6ecbe3c1-0925-4392-afd8-53c777495175@intel.com>
-Date: Wed, 14 Oct 2026 13:44:36 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] crypto/ipsec_mb: require minimum version 2.0 for IPsec
- MB
-To: Thomas Monjalon <thomas@monjalon.net>
-CC: "De Lara Guarch, Pablo" <pablo.de.lara.guarch@intel.com>, "dev@dpdk.org"
- <dev@dpdk.org>, "Ji, Kai" <kai.ji@intel.com>, Akhil Goyal
- <gakhil@marvell.com>, David Marchand <david.marchand@redhat.com>, "Bruce
- Richardson" <bruce.richardson@intel.com>, John McNamara
- <john.mcnamara@intel.com>
-References: <20260811112636.4106950-1-radu.nicolau@intel.com>
- <0UZYeU6OS3OoPauzypyoiQ@monjalon.net>
- <9a235219-aa8c-4372-8a61-d2ca9d731604@intel.com>
- <1ZyWCFPKR3SU1pTJ1PHaEw@monjalon.net>
-Content-Language: en-US
-From: Radu Nicolau <radu.nicolau@intel.com>
-In-Reply-To: <1ZyWCFPKR3SU1pTJ1PHaEw@monjalon.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU2PR04CA0039.eurprd04.prod.outlook.com
- (2603:10a6:10:234::14) To DM8PR11MB5653.namprd11.prod.outlook.com
- (2603:10b6:8:25::8)
+	by mails.dpdk.org (Postfix) with ESMTP id 7CC124064C;
+	Wed, 14 Oct 2026 14:45:55 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id C10A64021E
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 14:45:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1791981953;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=jGo7og5xHolc+JT4Hks1hcWz90I7GE8/Sz5PVn5v01Y=;
+ b=HK9bSugeRmehsnryKd29z7sbBQ188qv8svgTa+A6lIJ78Fyxyn2XXLQs9BC/54md9uXV2p
+ 48RBEFJxu69RBSUOKkilNZ1sbkDSVr+tL4r5091CzT7KjdtqTiWYvc5AzIPb2qb1wvUWfQ
+ CYk0QWwFCxHL5XzgIfvwY/bzv9aK0F4=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-655-ql_Kb2grNKqCzqbe8fFNEw-1; Wed, 14 Oct 2026 12:45:51 +0000
+X-MC-Unique: ql_Kb2grNKqCzqbe8fFNEw-1
+X-Mimecast-MFC-AGG-ID: ql_Kb2grNKqCzqbe8fFNEw_1791981950
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-3a1fa5bb969so4820231fa.0
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 05:45:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791981950; x=1792586750;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=jGo7og5xHolc+JT4Hks1hcWz90I7GE8/Sz5PVn5v01Y=;
+ b=UKE6Rj5hazm+K3XObYtXgKnBQ8HvrQKy1ApFm3JiZJkBl1j1arkjdcdDmGaeFJUIn3
+ w9ami8IWDZrYJfFwErma9aUKOyrGe9yp22d8fAiXlexFbuz1DDMnezKEDyN6kcptpaSu
+ Qpa0hsQbUsqE24m3SYXYsV+58mnlUNznYpxV2v/I4QW6jhnLpjRKHI0kJjujYIbWyBhP
+ GcdhRpq2qSnxhst+VzwJRQ1DXAWoVzjW1wUJ09m4N+LX+6oIw792CTa1nnmKuJXhnIlx
+ q/fS9Mto77pQ+YoR+MAfIKhLrM5TXZdAAgtae7gUZklcrm0MF2YLDqAYcQgvBRkiwQ/x
+ AFYA==
+X-Gm-Message-State: AFq9FYLPt+cCHLEVLCTliUnr2dAVIsEN7gxg6+hn6WXuz66pfXoPdowp
+ Ag+2fHuKNOG30tapLNsucmE2sbaQURv7Z9KNrV9WhYna+K3ojC0stWyj8jF7N5HKE60f17lKaTY
+ 7OimOnF13ytiU9lo8AWluQDaYk1O4bhOaiPZdTH6PKJNY/ceNu1X2nX0vP60d/NxffN4hwirLVV
+ BfHc2wiqqrklx/+wqenSE=
+X-Gm-Gg: AYBFou2IBwKB7JasdOzmNnlRq/xdSiw5Ufbs2lidEJZM43/jYR7d/UA0Mfb6h1XFG8k
+ fGNZKZmC/HV3N/jRE2VS8wn4ozk34o/5UFmAgDeiT0E7affGfbRAJp3gF7xKePo5GzchQ7ImfTj
+ 4oiu/VyJXgUclcxmExC8LlJTZa5gdloSdPorQeMQ+TUGBf6GFGdPYQ05Jv35Q2QUqpFOO4CGRS5
+ 8Na/q9PyWg0kw+QlA7Z2QPSCFeuAi/jzjh187CYy26+zdOj
+X-Received: by 2002:a2e:bc23:0:b0:3a6:636b:63c5 with SMTP id
+ 38308e7fff4ca-3a9c5384f54mr32804651fa.16.1791981950137; 
+ Wed, 14 Oct 2026 05:45:50 -0700 (PDT)
+X-Received: by 2002:a2e:bc23:0:b0:3a6:636b:63c5 with SMTP id
+ 38308e7fff4ca-3a9c5384f54mr32804591fa.16.1791981949456; Wed, 14 Oct 2026
+ 05:45:49 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|BL1PR11MB6052:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6cc72199-0ffc-4209-2cc5-08df29f0ea0d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|366016|1800799024|376014|22082099003|18002099003|10067099003|6133799003|11063799006|4143699003|261009223027099003|56012099006;
-X-Microsoft-Antispam-Message-Info: 5JukLsyO49dhQ/ne7N4hI12ye8xqwGtKxJhqNAheIg6sY9mNpCDHQUtBFy52QtxSfwjr0QnJBb46N/katIdJBHYRO6bV2FgYbjEJBjsLGADxs3nzQ9rWrxS/rIvFqYBvySKBFPGNtUF65u8Fy55ZnVQdN5E2/cmsV3mUnvg6dV4I0fPioQKe1XfiCkX+u1OiV0lZHjG1UNXYB5ixtfr3y9KrkjGGnHyVU7goP6XvBJX+PCNlN3rg723DO/1g+14x17oBqbsJXdoSjMWmCnZMxn8T3/yb4Gb0e4CiYglQW43WExOM1QJsD0Y0nscLdPLRB7xPOinq5R2pX1pcPp1Y67uQMUvyLaKIKCSGXIUJV57B0PfF56FPagcd8HysyF+2tYEMj9E/oB/OBhd0AXR5yqhJJ3WqqC8WsXOwTsQiesJ2PaF7vQ+pNjqJRJ6+8r4ThL7wPhOm/SIHMcbIepIYYgGfZqk8D5Er2vJUoKIjZCR59FIAO7uKhVNmHHdwA4witlfVhM2jTLvt1nzkpQII/4pf7Nhn0beAH3ew2N97Wmev48E8xNyEgLZD32HLF4rbxZ5xFjk7ylMxlmTItwgsjY09NQCaXxxSOn9Te3ZRdicqNGLvYgz5aYSc9xMlZGP3ot5c/4p+960Y6/KBY1C9NzSJWxDhQ7wYjSH4CuwPICY=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(22082099003)(18002099003)(10067099003)(6133799003)(11063799006)(4143699003)(261009223027099003)(56012099006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?d1R1b2N2dlBKN2lKb0JFZkkvZzVMdEZ5U0lGZThhTXNEUE04dG1uNko4QUlp?=
- =?utf-8?B?YVl5bDNES1I2emMwTm1sOG9uS0RlVHVsOWQxalNZYjdCQkVGZG9vRG9uZ21l?=
- =?utf-8?B?Mk9JUkFqWjdmaFhhZnluSjVUNy9VQklmK2kvam9jWFRRNWFMRjIzSzlibDRM?=
- =?utf-8?B?dU1neDNaaWkybzhCK2U4dmFQVlg5emh2NTVhOUVGODE2OU00c09PYklQUlBJ?=
- =?utf-8?B?SG54NllHUUVaTUtEQkFNelUyc0crRDFZVjRiREgzTm1XNUxFaXZYQ2VMU2V3?=
- =?utf-8?B?NkJLSmV5cjJHL1RHRk9RamZnMUxnTEdTb1ZtNWV1TmkvOHpqTFcycVY1TWVy?=
- =?utf-8?B?ZG14Uk12dkVoaXhuRzNrMW8yb0dQdlFmbFFVRkRpUzh4WHl2Ly9SZzJMTG1u?=
- =?utf-8?B?YjVMOUw0bXFqdUZHYTZRcUxVUkptWmhmdGJ2ZElQQUkrYnVvYzZtQUt6bFph?=
- =?utf-8?B?Q2cwWGNnT2o1ZXdGa2gySFJRYkZzS21qSlJPVnpwYmRXMFp4dkVNRjloeWkz?=
- =?utf-8?B?eEUwdEZWaVpqdnR1bUJ1UmxPclUrb0EvWE1KRms1QVVhZ0pXeWd1WG1wSkRx?=
- =?utf-8?B?dFdJZWQ3YVpHRGNqQ3AwRzhpeWJsK1E5WW5IekYxbDU2RmhnNmZTWTVrK0FN?=
- =?utf-8?B?ckdnd0wxdjlzRG9LSVh2eXN2dmdRUktaZkgyR05ZTGxQWmszU1BNait1ZWhO?=
- =?utf-8?B?dS8vL1VrTGsxTDFaNzJGY0Z3bWxXZldUTDJEOVdVd21aUTcrQlVlbHZ2czJ6?=
- =?utf-8?B?U0t1YjYwcFhaeGRaK0FycnFqbzlkcjNzN3RNNHhRcUdSdGs0UE05Uy9hTFlI?=
- =?utf-8?B?M3VsNkEyMVVzSk8rUDh4LzNqdHBYZHJzODduTXhaQThVVExlRjg0SDV1ZXcz?=
- =?utf-8?B?NTV4bWwwNkdrL1RVL1loazRBYVo1MTZVdWpnZDNvVW0wMWVmQkpDL3dNU1VC?=
- =?utf-8?B?U3RkMTF1dUdPalN4aTNWZ2RJR2dyakFGZkJMWnFrWFpNWlJ0dkNEWFVwbUkw?=
- =?utf-8?B?UjZQUElYdHlIcG1hY29xWEhyazYxdzlhdk5MTU1lQlh3UkQ0dEEzSHpua0ZW?=
- =?utf-8?B?cS9tSURXMXpJU0QrUlFIRzNweEkxZEI3S3VQSUtucXFDWnl2NmJncUdrMVJu?=
- =?utf-8?B?L3Y1Q01sR29xWTdsRnVPZitZdGJLUXpZVUgxazBBeDNsdHhHSFZoTytOUUQy?=
- =?utf-8?B?aE1WY21yTHI0Um40L1VubnBMTUQxL3hqQXBzSTJPRXplNHM4ZjQ0LzhJMlor?=
- =?utf-8?B?YTl0My94YUJrbW82YVJYVWhvblhHbFJrNUszVHdvRXEwRjVtSHNJWmsyU3BY?=
- =?utf-8?B?RnBlS0dDTDMzK21rdElaaDBQRjFJREEyVUFlZEl6VzNKSjUvaFdRRTBOZk1R?=
- =?utf-8?B?REUxb2JsN1VjendCeHp6OWlvWTQ3TEtjaURyY0J6Z0xpQ1AvS1lvZjEvWHU4?=
- =?utf-8?B?cm93RTd0VDNYdGtZS244d2JiRTRiS09uNzN5U2N0QVhjVzNDSTFvU0RpVlk0?=
- =?utf-8?B?ZytnL0dBUDh4dDEyaDYrMU1sTGFRVW1jaFFhTFQ3a25odWZPZHlrN240ODhy?=
- =?utf-8?B?cy9iZ1lYM2NuQTJyakRRL0hIOGwrUCs0bUtsRUFRZHJ3Ym45Q091dXpWNFlt?=
- =?utf-8?B?ZWR6Z01FbWVuSjNvbUdBUjhqNkV0QzhmQ3cveXJSYUtXWHJkNXR4ak40L0dr?=
- =?utf-8?B?cXFDaUVBT2pJNm5aRTRVMTVYRFNxN01HbU4wckdFVGNvK3JZK29iUDVHQkZ3?=
- =?utf-8?B?N3p1dUVNdTdjNTlKZ2dpYkpxKzdSY3dNNVpRRVA4Z2RSRjgwTmFQcUo3TVNI?=
- =?utf-8?B?dlllbUdUQlo2R1c1b2N4SkNWbWYxS3RLeGRqWDdxSThGeTY5aCt2VjJIYTBM?=
- =?utf-8?B?R2tGd2dJbG9kK0RVSWl3ZXZ2L05WM2dTaCtoYXB5YXhBekhqL2h0MVlwd05U?=
- =?utf-8?B?aXNkTG0rZWw4RFg4dFUzekNEeTFOMEsrck9TVUE0QmhMQ0xUcGYxQmZDZzhv?=
- =?utf-8?B?ZnhtRWIvSnZnbGhibE1LT2VMY0E5SHRMZ21waG5yS1hpZ2g0RW1yT3NhYkpQ?=
- =?utf-8?B?aG43ZFpWcWRMNDdQZ3poMUhNVGJrTHkrSTFSWEcwb2hhTFZGQlBkUDdoNTlQ?=
- =?utf-8?B?SmlkTngwWlFQb1N2Wmt5cEZLVXlQaFZmUHZlQVVoMUVWNU1EamNYcjNuQ1Rs?=
- =?utf-8?B?K0hWd0VvZ0dmV3BjZVJ0Z01LUGhSU3ZaeWNycjU1S0ZzYitGWUZsRGd2elFJ?=
- =?utf-8?B?RlV1UW9pUGYrRVEwVkFXMnQ0cExaT2JYQVNmajZDMkxJVVpLMFJGaytzbndB?=
- =?utf-8?B?TE9qaGZFQWJJbDEweTFRdG5XU05UTjZJc1ZtT2N6UnFOR3YwRTNudz09?=
-X-Exchange-RoutingPolicyChecked: hrv6kAQYpZipahPBGlezije/UZpAmJi55uNlNzUljOkWn3zXxCpAxRdJtEHLk48k+O/OYiBS89zhD1T7IZ2R7fvL4sW2855dEORROzyD6oqJt5/s7muguIKTD87gW6UGcONC4oOF4PHdE5rM5PLghgbPa9Ogk/8i0HQBFLYwMyaxzHUof4kGRDck7HiKg62ywO70NHF5BHxe7BexFpK9UVxdV+Lx+GLFNi+740vGq0QvMsvNSX7QgUF2+6Kw6yNhJ8X0E+sTVCsTW+mZ6NTEr5Oc8vxzSVwfJ3Og4gtSA4SEcPn1mxP1koE1QmsQW15ygWYccit/4twCXFfi2KEbiQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6cc72199-0ffc-4209-2cc5-08df29f0ea0d
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2026 12:44:40.8276 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RX/XP++Ed8Hn4cqSGJWO5OK6zCtdXq0grC/0QqMcZuA5JSVbaulazET5D9N7+O7bNme9Z/FO3V7EFr2wAK0xsA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB6052
-X-OriginatorOrg: intel.com
+References: <20260729175715.165120-1-stephen@networkplumber.org>
+ <20261013222410.2257622-1-stephen@networkplumber.org>
+In-Reply-To: <20261013222410.2257622-1-stephen@networkplumber.org>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 14 Oct 2026 14:45:37 +0200
+X-Gm-Features: AclHuK9mpbRWEqb-IgMv7NgarT7S3BwwLV66BU3QKAClcvXtIvy_eBVF_rgKmGE
+Message-ID: <CAJFAV8y+jB2XSuJXd4sppedQuqrQbp7Kw2g3pqdr-nNhOSFiyg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/29] remove rte_smp_XX barriers
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: QKYkMHoYSZo9Mx7vDATUl5j0Jv9G5Fg9Y1LdmAGwDU0_1791981950
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -171,42 +83,127 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Wed, 14 Oct 2026 at 00:35, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> This patch series completes the removal of rte_smp_XX barrier
+> functions that was announced over five years ago (20.05).
+>
+> In the process several race conditions were found and fixed. See
+> patches 3, 4 and 17, marked with Fixes: and Cc: stable. Patch 2 is
+> also marked for stable because 3 and 4 do not build with clang
+> without it.
+>
+> Most of this is mechanical with AI assistance, so strongly encourage
+> maintainers to take a good look.
+>
+> Barriers ordering memory writes against a device doorbell now use
+> rte_io_wmb() rather than an SMP barrier; on arm64 that is dmb oshst
+> instead of dmb ishst. In some cases the C11 form gives marginal
+> performance gains.
+>
+> The lock-free stack patch measured faster than the generic version it
+> replaces, up to 63% on a 32-core x86 box; the numbers are in that
+> patch's commit message.
+>
+> Patch 19 keeps the Peterson lock test, converted to C11 atomics, with
+> the seq_cst fence and rte_mb() as its two cases. It comes before
+> patch 20, which holds the last rte_smp_mb() caller, so x86 builds
+> with tests enabled stay bisectable. Tested on x86, arm and riscv;
+> still untested on ppc and loongarch.
+>
+> Patch 18 has no ack. Bruce, yours landed on 17; 18 changed since.
+>
+> Left for follow-up: device read barriers in patches 6, 8 and 14 are
+> acquire fences where rte_io_rmb() would match the write side (same
+> generated code today, so no regression). And the net/thunderx mailbox
+> flags in patch 10 are plain bitfields that need to be atomic, which
+> is pre-existing.
+>
+> v4 - rebase on main, which obsoleted the netvsc patch; address review
+>      comments from Konstantin, Marat, David and Wei Hu; collect tags
+>
+> Stephen Hemminger (29):
+>   bpf: replace deprecated SMP barriers with C11 fences
+>   bus/vmbus: remove packed attribute from ring buffer
+>   bus/vmbus: fix ring buffer ordering on weakly ordered CPUs
+>   bus/vmbus: fix missing acquire on receive ring index
+>   bus/vmbus: replace SMP barriers with C11 memory fences
+>   drivers/baseband: convert rte_smp_rmb to fence
+>   net/hinic: replace rte_smp_rmb
+>   net/intel: replace rte_smp_rmb
+>   net/virtio: replace rte_smp_rmb
+>   net/thunderx: replace deprecated SMP barriers
+>   stack: always use C11 memory model implementation
+>   ring: replace SMP read barrier with C11 acquire fence
+>   crypto/virtio: update comment reference to rte_smp_rmb
+>   crypto/caam_jr: replace rte_smp_rmb
+>   crypto/caam_jr: use IO barrier before job ring doorbell
+>   crypto/octeontx: use IO barrier before doorbell
+>   event/sw: fix unlinks in progress counter races
+>   event/sw: replace SMP barriers with C11 atomics
+>   test/barrier: convert to C11 atomics
+>   eal/x86: move optimized fence out of SMP barrier
+>   common/octeontx: remove redundant barrier in mbox
+>   mempool/octeontx: use IO barrier in pool destroy
+>   event/octeontx: replace deprecated SMP barriers
+>   event/dpaa2: replace deprecated barrier in selftest
+>   event/dsw: replace SMP barriers with release fences
+>   event/opdl: replace SMP barriers with C11 atomics
+>   net/virtio: replace deprecated barrier in avail index update
+>   eal: remove stale SMP barrier in rte_service
+>   eal: remove rte_smp_XX
+>
+>  app/test/test_barrier.c                       |  71 ++++----
+>  devtools/checkpatches.sh                      |   8 -
+>  doc/guides/rel_notes/deprecation.rst          |   8 -
+>  doc/guides/rel_notes/release_26_11.rst        |  11 ++
+>  .../fpga_5gnr_fec/rte_fpga_5gnr_fec.c         |   8 +-
+>  drivers/baseband/fpga_lte_fec/fpga_lte_fec.c  |  12 +-
+>  drivers/bus/vmbus/private.h                   |  12 +-
+>  drivers/bus/vmbus/rte_vmbus_reg.h             |   4 +-
+>  drivers/bus/vmbus/vmbus_bufring.c             |  22 +--
+>  drivers/bus/vmbus/vmbus_channel.c             |  13 +-
+>  drivers/common/octeontx/octeontx_mbox.c       |   6 +-
+>  drivers/crypto/caam_jr/caam_jr.c              |   5 +-
+>  .../crypto/octeontx/otx_cryptodev_hw_access.h |   4 +-
+>  drivers/crypto/virtio/virtqueue.h             |   8 +-
+>  drivers/event/dpaa2/dpaa2_eventdev_selftest.c |   4 +-
+>  drivers/event/dsw/dsw_event.c                 |   8 +-
+>  drivers/event/octeontx/ssovf_evdev_selftest.c |   6 +-
+>  drivers/event/octeontx/ssovf_worker.c         |   8 +-
+>  drivers/event/opdl/opdl_evdev.c               |   8 +-
+>  drivers/event/sw/sw_evdev.c                   |  37 +++--
+>  drivers/event/sw/sw_evdev.h                   |  11 +-
+>  drivers/event/sw/sw_evdev_scheduler.c         |  24 ++-
+>  drivers/mempool/octeontx/octeontx_fpavf.c     |   4 +-
+>  drivers/net/hinic/base/hinic_pmd_cmdq.c       |   3 +-
+>  drivers/net/hinic/base/hinic_pmd_mgmt.c       |   2 +-
+>  drivers/net/intel/ice/ice_rxtx.c              |   2 +-
+>  drivers/net/intel/ixgbe/ixgbe_rxtx.c          |   2 +-
+>  drivers/net/thunderx/base/nicvf_hw.c          |   3 +-
+>  drivers/net/thunderx/base/nicvf_plat.h        |   5 +-
+>  drivers/net/virtio/virtqueue.h                |  22 +--
+>  lib/bpf/bpf_pkt.c                             |  26 +--
+>  lib/eal/arm/include/rte_atomic_32.h           |   6 -
+>  lib/eal/arm/include/rte_atomic_64.h           |   6 -
+>  lib/eal/common/rte_service.c                  |   1 -
+>  lib/eal/include/generic/rte_atomic.h          |  61 -------
+>  lib/eal/loongarch/include/rte_atomic.h        |   6 -
+>  lib/eal/ppc/include/rte_atomic.h              |   6 -
+>  lib/eal/riscv/include/rte_atomic.h            |   6 -
+>  lib/eal/x86/include/rte_atomic.h              |  41 ++---
+>  lib/ring/rte_ring_gcc_pvt.h                   |   6 +-
+>  lib/stack/meson.build                         |   1 -
+>  lib/stack/rte_stack_lf.h                      |   4 -
+>  lib/stack/rte_stack_lf_generic.h              | 153 ------------------
+>  43 files changed, 226 insertions(+), 438 deletions(-)
+>  delete mode 100644 lib/stack/rte_stack_lf_generic.h
 
-On 14-Oct-26 1:16 PM, Thomas Monjalon wrote:
-> 14/10/2026 11:37, Radu Nicolau:
->> On 13-Oct-26 8:51 PM, Thomas Monjalon wrote:
->>> 24/09/2026 13:18, Akhil Goyal:
->>>>> From: Nicolau, Radu <radu.nicolau@intel.com>
->>>>>> Increase the minimum required IPsec MB library version to 2.0 As a
->>>>>> consequence, clean up the aesni_mb PMD code.
->>>>>>
->>>>>> Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
->>>>> Acked-by: Pablo de Lara <pablo.de.lara.guarch@intel.com>
->>>> Applied to dpdk-next-crypto
->>> As usual with Intel IPsec MB, it triggers a compilation failure on Arm:
->>>
->>> drivers/crypto/ipsec_mb/pmd_aesni_mb.c:24:32:
->>> error: 'IMB_CIPHER_SM4_GCM' undeclared
->>>
->>> I have to drop this commit while pulling next-crypto in main.
->>>
->>> Please find a solution.
->>> I'm still advocating to merge the Arm fork.
->> Hi Thomas, the root cause of the build failure on Arm is their library
->> fork which lags behind, being at 1.5 release which is at this point
->> almost 3 years old.
->>
->> The only solution in this release cycle is to drop this patch and rebase
->> the ones adding support for 3.0.
->>
->> Considering Arm lack of support and contributions for these PMD over the
->> last couple of years, the only long term solution I see to avoid PMD
->> code littered with ifdefs and supporting very old releases of the
->> library is to drop the Arm version altogether.
-> No.
-> The only solution is to work with Arm.
+Thank you for this big cleanup.
+Series applied.
 
-Indeed that would be the ideal solution.
 
-If anyone @Arm is still watching this space, please chip in.
+-- 
+David Marchand
 
