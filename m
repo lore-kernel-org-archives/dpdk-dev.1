@@ -2,149 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9390CC6B1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 08:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B06BCC6B1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 08:29:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ED45640279;
-	Wed, 14 Oct 2026 10:06:51 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 88DDD40272
- for <dev@dpdk.org>; Wed, 14 Oct 2026 09:41:02 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 69E56iMc3278744; Wed, 14 Oct 2026 00:41:01 -0700
-Received: from sj2pr03cu001.outbound.protection.outlook.com
- (mail-westusazon11022079.outbound.protection.outlook.com [52.101.43.79])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4h9r9xkn7k-1
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Wed, 14 Oct 2026 00:41:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UltxDqCgtoJHqMVdkM8bRnbNO7Za/z2UqQFQU8+Rylwg6Fso8bLt/7MlQvt1srfZnwUDxx1zlnBHmdgVdrvuGfpwiA4Kewaq/2crUG0iqFLKEBoP2hAt/HF88piSuAAZtEH91VVyEf5/lUEJDeAxNQBWNOrOBRnHiQXpxIzECibjbBsZvtioYsnFeGIbmgVS5aud46Dp31mkxtMXnxr194GLU2nhfHz0Gv/Qat7lynDjOKfHJMcLXzr5Z3k7ckFhty9t12uL5ss7ZUUlitH8/7LJZ+O3GeGrsLJaJwsNcT9ZsLnU52sRlRz/v9c1BnQN4nm3yHQxf/Bur9fMUSVknA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gpNlM0CBgJG4k2u0HRUAPBOIJoFZN7NDmInVKAjl0ck=;
- b=YlEcMq6fidjqKKesYsljfF1qlu7rVR8n2Kjf3DCZmnCMTkfqI1D4SVsIL5ICVLt3CeTYq+Pl2QjhKDH+aNpUMxk5PBIfCDCDwMIYMIBARq99xDL77qpn76Wxet6FZzQ8slOC8wTLFC2HKiTebHmm28tamy7Oe8vXax6sUqDi4k1XQ06FBdamWY+fpzhNrsXY91FbFfWPBLCGpJU/ciy63NwqrywLpX4pO77IBk+/p8adpmx8NdN+voHVfFtlGXPeXJN5ZxUPFiH6/X9gKRGUeL5aXV5licN6JWclF/XFhzm7uQ2BVaULpk3lFwMYBqWAvvOIuuC8WELZbwE5N3GNJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gpNlM0CBgJG4k2u0HRUAPBOIJoFZN7NDmInVKAjl0ck=;
- b=jkTyklOfEzmPUnG4FGnrNor1VvgfW2th8hrcc0/QKmbFFh2EfVj6YDKhGO38Mu3sK0CBLYkfKUzWf6l2TVWAf7mcpToKLoBPm1YHVPURWPYwpg2E2bx1NiiNA9PITOAFo3+mywYhVLLxON5okalOLKUFs85QMO5wNWk4SbrxNxk=
-Received: from LV8PR18MB6078.namprd18.prod.outlook.com (2603:10b6:408:224::5)
- by PH8PR18MB5335.namprd18.prod.outlook.com (2603:10b6:510:250::15)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.13; Wed, 14 Oct
- 2026 07:40:58 +0000
-Received: from LV8PR18MB6078.namprd18.prod.outlook.com
- ([fe80::e753:86c:d16e:63e2]) by LV8PR18MB6078.namprd18.prod.outlook.com
- ([fe80::e753:86c:d16e:63e2%3]) with mapi id 15.21.0522.012; Wed, 14 Oct 2026
- 07:40:58 +0000
-From: Pratik Senapati <psenapati@marvell.com>
-To: "Ji, Kai" <kai.ji@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, Akhil Goyal
- <gakhil@marvell.com>, Anoob Joseph <anoobj@marvell.com>
-Subject: Re: [PATCH v1 1/1] crypto/openssl: filter legacy ciphers from
- capability list
-Thread-Topic: [PATCH v1 1/1] crypto/openssl: filter legacy ciphers from
- capability list
-Thread-Index: AQHdV+D33rDuqD9F1kOHV+JXOBdZjLb1WK8LgAdPF+U=
-Date: Wed, 14 Oct 2026 07:40:58 +0000
-Message-ID: <LV8PR18MB60785664769C41BA6F7080BDBD9D2@LV8PR18MB6078.namprd18.prod.outlook.com>
-References: <20261009112543.1766727-1-psenapati@marvell.com>
- <20261009112543.1766727-2-psenapati@marvell.com>
- <LV2PR11MB604545E17B9928A3A4758C2A81922@LV2PR11MB6045.namprd11.prod.outlook.com>
-In-Reply-To: <LV2PR11MB604545E17B9928A3A4758C2A81922@LV2PR11MB6045.namprd11.prod.outlook.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=marvell.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV8PR18MB6078:EE_|PH8PR18MB5335:EE_
-x-ms-office365-filtering-correlation-id: 5976cd99-535d-490c-520e-08df29c67cd1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|23010399003|366016|6133799003|10067099003|22082099003|18002099003|11063799006|4143699003|261009223027099003|38070700021|56012099006;
-x-microsoft-antispam-message-info: AGMpp+9PjjetwELrebBW72Xq9xnAS48XjaX6lrcz4wTsn4ZEB0+P8HjDwO1HTRlckR3LMdCOdExF/voJOVgwg8WG+R8kFkRRErVN4+PnU62LRpS4JDn8uLJ26kzwsrs72dGj+LZk7dq1tPgp3Dw0yyNvXtXKEgMIub6pLOxLrjAfOb/8fNMpivbKN63DNQsO0yJvv39rIw1Vovb0Y3BXKB2I87Ci2FElpVYYJ/3GCbg0rz/NWzjwMr4lWthBBzaVFVtn0nrV/EZatjLRaIcxW8AKettPCV3b2AiV5TbCyU0+lJne4U1edlwoM9OegrYaml8hLxxpn7FpMuEKJAx9KYrrAc5gynav4vRN8Of9RlZBqu2xijAmJmQ5vGFQ800fds9EWDKFyH3GZCM/PPAfBEkip8PSNt+C32adz2gjLfGDs6YOOUYWp6BTIzZeLe3Q8Py5mw0Njp1fuaxvP/pljkyhT6MrjB3pvCPK3CIfn+0BPMucsTict7aFrcu0CBWf5xpP/lnR4cfKKVCZ/hm5FbULc3azXHbVX+h+zQRA7CjZV7BWK+Ci0hSaDyMhyhIv2J/EzxTRW1OK4Li0kBc87JyzttoVTvvHMsMLy53wyC4LkzQe+RXzMh5ucRtOBG9rUU4jr5OoZDT6vDQkSo/WpvVttjpDtT8BtpTacj/n2HywHt/7Gnb5jiIMadLuxkeysMqA/T08BYtnKPitgjVIA/6ScRPxR0ulV8sgv26fw7I=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:LV8PR18MB6078.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(6133799003)(10067099003)(22082099003)(18002099003)(11063799006)(4143699003)(261009223027099003)(38070700021)(56012099006);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?rry/dT3XOzd0cv6Mb8ReOVfs8fvuMi5Q192sWaaDYLBimM6L+fnch0EzDL?=
- =?iso-8859-1?Q?XMCnjgSn/dK66xy27QcSy2ZjOZ7LS9QxuvtJrfaur0TbbZuk3adwK160PL?=
- =?iso-8859-1?Q?ieyvhczudY0hVzqbLBzkiBxH4JAByowywsLL4O7YQ3SifufsqZzg2f27zL?=
- =?iso-8859-1?Q?7wTvTe77hvnPpEO7A2Y6neM880FBY06Cy9i1Hsz44NvYbSGrM3paWoLUp2?=
- =?iso-8859-1?Q?TJNr5e7euYrmxAtdDgVwdQ+n8dA3buN58SAJp0rRpfJV2xSxU505PV7af8?=
- =?iso-8859-1?Q?8mqzk2MO3x3kjN7xIyK8/eZ5KMAZTNsVsVgM/6/iBkX5FnmNY5ate0nsCG?=
- =?iso-8859-1?Q?BT66mf1/ECsLTCg/H2fYUTHxf2e7Ub0TZ9mkABRkim6nslPLfnYgR77ESy?=
- =?iso-8859-1?Q?Ze6D0tA2zq+HhtiacfbAOnKOVUFMr+VuGW+Tu03U3qNkqa7fk+MSLA4Ywm?=
- =?iso-8859-1?Q?yeq+QlL19/x55fFjdNwmXnmXMXg5tTI0zuHBVHNGeTz48h/MRFG5Qshg1r?=
- =?iso-8859-1?Q?7YeBHseH8/VyrFBeDfHZLw2siZ61B0TS4ScxvE2xnZ9m+47Xvx2ZhNFCJG?=
- =?iso-8859-1?Q?aSsiZvUqetW4gMqzrIWf823OfppLww9a7tV6jcF/VtTkxSNZ7tnsE6KztG?=
- =?iso-8859-1?Q?VPAnotqa7jx6k7+nzlae0TCSqmd/o/qMSvskjd7c79cHadCMEqos0VscgH?=
- =?iso-8859-1?Q?AFKh+DnpO1PCNZMR9Iy80nwnhu+MfZbXfehRb2/6ly8VX6fEaSrgdScA5o?=
- =?iso-8859-1?Q?in4a+S6vU0q3vKD1kD9P4/580xiE+hYQNhYKKoRayrfAr7eDBD+RGje3xx?=
- =?iso-8859-1?Q?K+GQiVWxoZgjK9iGwvwseGJ3ITlZXqMS2cbb+Bzu17yo5MNrVPQp1xzYWM?=
- =?iso-8859-1?Q?oMm/Mz8TeR90s6WYgHKsiak7iukQHc+YsnlsbF9A4MOssWM7D0d5GFqYXj?=
- =?iso-8859-1?Q?1GI/jBl4EWbvpQ0uQJDSiG0qsvYs8fFMUPQ95r0REDIYpgXBQRXfUVhO3b?=
- =?iso-8859-1?Q?ZtPdbZ7CxgLyGOKd8B5vROcYHv2uzeBBtWHvTdlghDzyJAzeHlr8rY2yy1?=
- =?iso-8859-1?Q?BSdHNCu67FSmXR0K4RrX6M2MxjXI9x4pAuL0RwVSZ775xW+cPQ7w53OtvO?=
- =?iso-8859-1?Q?/grmycLNzgaIbbQwvXNCb8DGSLiz8dx62hJtoCO2vnmT0lcVAUvEDXu+t/?=
- =?iso-8859-1?Q?8W0ifxoWhuxPWXzBC/skeUavEe0MVQSsuIkBuArYamoEV/V1iRfBfFth9Z?=
- =?iso-8859-1?Q?5q/zqQkD+aNIyJv+junwnyE0TUKc8qe6fOgBtjQlz2fziX8erOpuMo5V2V?=
- =?iso-8859-1?Q?XvJ1HEMDWUOr8g74G3z7KB5xCTVroF531NhQH25H6gRS9VMUD6mTIYT3yo?=
- =?iso-8859-1?Q?IO8D5TfjPxLyTU6rGs1nBXaF6NCKWM+P7sgWEJIfVXC038UEw8A9eiwEAg?=
- =?iso-8859-1?Q?cAMjbCZEDukUxVX60eT2KIvsFSXLCLFaI9NX0lzWbInLlev4J7vrIfn3SE?=
- =?iso-8859-1?Q?503/vDbQCIz/Z+r54qDeJE9+Y62Iu0cjmz0R+imC3SA8lZZaPDiNvwHLCk?=
- =?iso-8859-1?Q?8qUW10DH6eD85aL9k73uazhetvxsgnt6nSaQVrB88tQJh8ftDN2CAnk+UV?=
- =?iso-8859-1?Q?V41yXPJQRTKzofqX84elvLzCKMv94EQyOpNh7AhbgIeQhBK1oxtkhb/ViK?=
- =?iso-8859-1?Q?zi/PX9KFkv4QWhalZh6k7NHeel928Oe0D4aPLIDLgFpawGRMol7djpR/t+?=
- =?iso-8859-1?Q?M9/Nc/VArgnRndFjMeHGyKmkPI3sdClqtgo7b+lICZfs5M?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id CAA6440279;
+	Wed, 14 Oct 2026 10:29:46 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5C5D340272
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 10:29:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1791966584;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=iMo6ZmcovYzza5sKSujS/olzc2XDggqvhhhbnsZ36dY=;
+ b=KnZC4wU1Yb93obKbRty1ytZr00GzgAg0EUg+O9JvcseUv5z82PN3ktVcR/6G79pFrgOGLr
+ fsuMQ7dMLZFYH/DM+u9vRa/lP85BXUJM+lnSaATdJx/kpjaPesCsLVqOE44xuh4shvi0s5
+ jsMF/MK2fqsNpWlyDOv9PIhfbgVq5vk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-357-a_-rQaB-OXyxNDn6mkew2A-1; Wed,
+ 14 Oct 2026 08:29:41 +0000
+X-MC-Unique: a_-rQaB-OXyxNDn6mkew2A-1
+X-Mimecast-MFC-AGG-ID: a_-rQaB-OXyxNDn6mkew2A_1791966580
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id DB34C1956041; Wed, 14 Oct 2026 08:29:39 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.44.32.174])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 168A3180057F; Wed, 14 Oct 2026 08:29:35 +0000 (UTC)
+From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+Cc: Yongji Xie <xieyongji@bytedance.com>, mst@redhat.com, jasowangio@gmail.com,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org,
+ chenbox@nvidia.com, david.marchand@redhat.com
+Subject: [PATCH v4 1/9] uapi: import VDUSE and VFIO header from v7.3-rc7 kernel
+Date: Wed, 14 Oct 2026 10:29:22 +0200
+Message-ID: <20261014082930.96261-2-eperezma@redhat.com>
+In-Reply-To: <20261014082930.96261-1-eperezma@redhat.com>
+References: <20261014082930.96261-1-eperezma@redhat.com>
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: 5Jsoa8wA5C5LHqfXd9ET8igsN6Ags/4tG7tUcVuUnV9PJFcOZFQ2I2peFTJefUXvcImL52yR6bktr8XP8ijSG3IBmJDctafiuY1WxZZWalzCxh3+4iLh+/Jm8GlCiqqfd8+k+oVmONmKgNqmbUjEdgB+UZZAwpKtKwb1xT8bsTBzmUr21NluEdnFZT9MVjSjVBEJ5KL+w09rgRuxiFKNg/zLfzwCRwnr4iVUnEEHvMfyEQZjpChnfiT2n7NOUDolzl3s5p+so+ztfKDA8YXCUfNwIVsK21uJtDw0lCZvEHPJd2gSqIzrMxejTsnBQzFGXuvpXwtvHspBw1LCy/9b2g==
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR18MB6078.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5976cd99-535d-490c-520e-08df29c67cd1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2026 07:40:58.3949 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QwpwzkKj4kGBmIUc0i87LXM6SIX5F9EL2qyCgp6ZeJhceijHin+ebROSem4Kp/Qpv9VaUqAgzctQ/CmFor14nw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR18MB5335
-X-Authority-Analysis: v=2.4 cv=DvDDa2/+ c=1 sm=1 tr=0 ts=6acf320d cx=c_pps
- a=floMify7oDVZ59GUGiBMBA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=660iZSQnnn4A:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=l0iWHRpgs5sLHlkKQ1IR:22 a=qit2iCtTFQkLgVSMPQTB:22 a=77XOSPeotPUk_shIfAYA:9
- a=wPNLvfGTeEIA:10
-X-Proofpoint-ORIG-GUID: dtJoN-HvGQ46kcK4Ak_yeJ0Yc36iSGzr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE0MDAzMCBTYWx0ZWRfXyb3RI5tcaTwP
- 4spiuYhzzSCugC3/QzynotSbE8TrOZsSA/nNzA+4bV+U6vfSELBicc/rKJvpJyjYTWOd2ytdo4T
- iZIC78Q8mMurTAALgZ9UJ8szoW/OJU/KKQ0BLG+4rRL5UKjMXIO/lGgvFLrwFRzx7wUpPnefMIn
- q8JQ6vnR/jSdIR2LIqaBySXLs6ZKuLs6IaI1EQsStcv5lRhF77Vym6kT7b4xA4Iof4D2muJTdyP
- JsU7oIsb5rOy5tL92BhZp0qTNbGbeFL8yeiQMzDjXivb+7c/LxgyWUBYJEBnzFjZJG9P9xgfGlr
- tVRiq5TCDes48kfyAs0yLFnf95eb6vxdHPmtowgALonbQqvhtS+2cYfJTroX+dqn1Qdb8z+D0EX
- hl7PHFWWjIVacqDMmxx1a3vJB+eVe0fJco/xWuzHdhMudxGF1Y9l9DbeB9SvUHvsCBX+cXkixYd
- rMWSE/IVaXPJSrsLPpA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE0MDAzMCBTYWx0ZWRfX33OxrfNbrUi1
- WJw6RuxgsSX2hEGGQGSFPwZt4sRSY2QXTogi6kL2Qw6/0z6F606SYW9EM5svhWKvLH+zHy4oi0Z
- M0JAORchYSeE/wFCYwEcEACPXah9hYE=
-X-Proofpoint-GUID: dtJoN-HvGQ46kcK4Ak_yeJ0Yc36iSGzr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-13_01,2026-10-09_01,2025-10-01_01
-X-Mailman-Approved-At: Wed, 14 Oct 2026 10:06:50 +0200
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 5tyPt9OXgQnKAgiZg-w93k2kP5AbvJ0Ou3mjQvK-U4U_1791966580
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -158,52 +69,560 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> /** Configure device */=0A=
->static int=0A=
-> openssl_pmd_config(__rte_unused struct rte_cryptodev *dev,=0A=
->@@ -1014,7 +1038,10 @@ openssl_pmd_info_get(struct rte_cryptodev *dev,=0A=
->         if (dev_info !=3D NULL) {=0A=
->                 dev_info->driver_id =3D dev->driver_id;=0A=
->                 dev_info->feature_flags =3D dev->feature_flags;=0A=
->-               dev_info->capabilities =3D openssl_pmd_capabilities;=0A=
->+               if (openssl_pmd_caps_active[0].op =3D=3D RTE_CRYPTO_OP_TYP=
-E_UNDEFINED)=0A=
->+                       dev_info->capabilities =3D openssl_pmd_capabilitie=
-s;=0A=
->=0A=
->It seems  fallback also advertises DES even when DES is unavailable, which=
- defeats the filtering during that >window. Would it be better fix to initi=
-alize the filtered list before the device can be queried; then this fallbac=
-k >should not be needed.=0A=
->=0A=
->+               else=0A=
->+                       dev_info->capabilities =3D openssl_pmd_caps_active=
-;=0A=
->                 dev_info->max_nb_queue_pairs =3D internals->max_nb_qpairs=
-;=0A=
->                 /* No limit of number of sessions */=0A=
->                 dev_info->sym.max_nb_sessions =3D 0;=0A=
->--=0A=
->2.43.0=0A=
-=0A=
-Hi Kai,=0A=
-=0A=
-You're right, there's an issue where 3-DES is advertised and it causes a se=
-ssion-failure. This is due to the fact that 3-DES (sessionless) in the 8-By=
-te key mode routes via DES, unlike the 16/24 byte key-mode. =0A=
-=0A=
-When the legacy provider is missing, 3-DES is still marked as available and=
- when a session is attempted a failure occurs. =0A=
-=0A=
-I will be sending a v2 that fixes this by making a change in the sessionles=
-s path. =0A=
-=0A=
-Also, after testing, I noticed that based on the logic implemented, only th=
-e active list is used, and hence I will be altering the logic to only use t=
-he active list, removing the need to check whether we need to use the regul=
-ar or filtered list; this change will be included in the v2 patch-series.=
-=0A=
-=0A=
-Thanks,=0A=
-=0A=
-Pratik Senapati=
+This header will be used by the Vhost library.
+
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
+---
+ kernel/linux/uapi/linux/iommufd.h | 105 +++++++++++++++++++++++++--
+ kernel/linux/uapi/linux/vduse.h   | 113 ++++++++++++++++++++++++++++--
+ kernel/linux/uapi/linux/vfio.h    |  51 +++++++++++++-
+ kernel/linux/uapi/version         |   2 +-
+ 4 files changed, 257 insertions(+), 14 deletions(-)
+
+diff --git a/kernel/linux/uapi/linux/iommufd.h b/kernel/linux/uapi/linux/iommufd.h
+index 5ee08de08388..26b1cb9465e2 100644
+--- a/kernel/linux/uapi/linux/iommufd.h
++++ b/kernel/linux/uapi/linux/iommufd.h
+@@ -57,6 +57,7 @@ enum {
+ 	IOMMUFD_CMD_IOAS_CHANGE_PROCESS = 0x92,
+ 	IOMMUFD_CMD_VEVENTQ_ALLOC = 0x93,
+ 	IOMMUFD_CMD_HW_QUEUE_ALLOC = 0x94,
++	IOMMUFD_CMD_IOAS_NOIOMMU_GET_PA = 0x95,
+ };
+ 
+ /**
+@@ -219,18 +220,49 @@ struct iommu_ioas_map {
+ };
+ #define IOMMU_IOAS_MAP _IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_MAP)
+ 
++/**
++ * struct iommu_ioas_noiommu_get_pa - ioctl(IOMMU_IOAS_NOIOMMU_GET_PA)
++ * @size: sizeof(struct iommu_ioas_noiommu_get_pa)
++ * @flags: Reserved, must be 0 for now
++ * @ioas_id: IOAS ID to query IOVA to PA mapping from
++ * @__reserved: Must be 0
++ * @iova: IOVA to query
++ * @length: On input, non-zero maximum number of bytes to query starting from
++ *          @iova. On output, number of physically contiguous bytes starting
++ *          from @out_phys, capped by the input length.
++ * @out_phys: Output physical address the IOVA maps to
++ *
++ * Query the physical address backing an IOVA range. The beginning of the
++ * range must be mapped already and length must be non-zero. For noiommu
++ * devices doing unsafe DMA only.
++ */
++struct iommu_ioas_noiommu_get_pa {
++	__u32 size;
++	__u32 flags;
++	__u32 ioas_id;
++	__u32 __reserved;
++	__aligned_u64 iova;
++	__aligned_u64 length;
++	__aligned_u64 out_phys;
++};
++#define IOMMU_IOAS_NOIOMMU_GET_PA _IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_NOIOMMU_GET_PA)
++
+ /**
+  * struct iommu_ioas_map_file - ioctl(IOMMU_IOAS_MAP_FILE)
+  * @size: sizeof(struct iommu_ioas_map_file)
+  * @flags: same as for iommu_ioas_map
+  * @ioas_id: same as for iommu_ioas_map
+- * @fd: the memfd to map
+- * @start: byte offset from start of file to map from
++ * @fd: the memfd or supported dma-buf file to map
++ * @start: byte offset from start of the file to map from
+  * @length: same as for iommu_ioas_map
+  * @iova: same as for iommu_ioas_map
+  *
+- * Set an IOVA mapping from a memfd file.  All other arguments and semantics
+- * match those of IOMMU_IOAS_MAP.
++ * Set an IOVA mapping from a memfd file. On kernels with dma-buf support,
++ * supported dma-buf files may also be accepted. This is not a generic
++ * dma-buf import path; currently supported dma-bufs include single-range
++ * VFIO PCI dma-bufs exported through VFIO_DEVICE_FEATURE_DMA_BUF, and
++ * other dma-bufs may be rejected. All other arguments and semantics match
++ * those of IOMMU_IOAS_MAP.
+  */
+ struct iommu_ioas_map_file {
+ 	__u32 size;
+@@ -465,16 +497,27 @@ struct iommu_hwpt_arm_smmuv3 {
+ 	__aligned_le64 ste[2];
+ };
+ 
++/**
++ * struct iommu_hwpt_amd_guest - AMD IOMMU guest I/O page table data
++ *				 (IOMMU_HWPT_DATA_AMD_GUEST)
++ * @dte: Guest Device Table Entry (DTE)
++ */
++struct iommu_hwpt_amd_guest {
++	__aligned_u64 dte[4];
++};
++
+ /**
+  * enum iommu_hwpt_data_type - IOMMU HWPT Data Type
+  * @IOMMU_HWPT_DATA_NONE: no data
+  * @IOMMU_HWPT_DATA_VTD_S1: Intel VT-d stage-1 page table
+  * @IOMMU_HWPT_DATA_ARM_SMMUV3: ARM SMMUv3 Context Descriptor Table
++ * @IOMMU_HWPT_DATA_AMD_GUEST: AMD IOMMU guest page table
+  */
+ enum iommu_hwpt_data_type {
+ 	IOMMU_HWPT_DATA_NONE = 0,
+ 	IOMMU_HWPT_DATA_VTD_S1 = 1,
+ 	IOMMU_HWPT_DATA_ARM_SMMUV3 = 2,
++	IOMMU_HWPT_DATA_AMD_GUEST = 3,
+ };
+ 
+ /**
+@@ -559,11 +602,22 @@ struct iommu_hw_info_vtd {
+ 	__aligned_u64 ecap_reg;
+ };
+ 
++/**
++ * enum iommu_hw_info_arm_smmuv3_flags - Flags for ARM SMMUv3 hw_info
++ * @IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI:
++ *    If set, user space must issue TLBI/CFGI+SYNC commands twice due to
++ *    hardware erratum T264-SMMU-3. See the description at
++ *    arm_smmu_erratum_repeat_tlbi_cfgi_key.
++ */
++enum iommu_hw_info_arm_smmuv3_flags {
++	IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI = 1 << 0,
++};
++
+ /**
+  * struct iommu_hw_info_arm_smmuv3 - ARM SMMUv3 hardware information
+  *                                   (IOMMU_HW_INFO_TYPE_ARM_SMMUV3)
+  *
+- * @flags: Must be set to 0
++ * @flags: Combination of enum iommu_hw_info_arm_smmuv3_flags
+  * @__reserved: Must be 0
+  * @idr: Implemented features for ARM SMMU Non-secure programming interface
+  * @iidr: Information about the implementation and implementer of ARM SMMU,
+@@ -579,7 +633,7 @@ struct iommu_hw_info_vtd {
+  * idr[0]: ST_LEVEL, TERM_MODEL, STALL_MODEL, TTENDIAN , CD2L, ASID16, TTF
+  * idr[1]: SIDSIZE, SSIDSIZE
+  * idr[3]: BBML, RIL
+- * idr[5]: VAX, GRAN64K, GRAN16K, GRAN4K
++ * idr[5]: VAX, GRAN64K, GRAN16K, GRAN4K, DS
+  *
+  * - S1P should be assumed to be true if a NESTED HWPT can be created
+  * - VFIO/iommufd only support platforms with COHACC, it should be assumed to be
+@@ -587,7 +641,7 @@ struct iommu_hw_info_vtd {
+  * - ATS is a per-device property. If the VMM describes any devices as ATS
+  *   capable in ACPI/DT it should set the corresponding idr.
+  *
+- * This list may expand in future (eg E0PD, AIE, PBHA, D128, DS etc). It is
++ * This list may expand in future (eg E0PD, AIE, PBHA, D128 etc). It is
+  * important that VMMs do not read bits outside the list to allow for
+  * compatibility with future kernels. Several features in the SMMUv3
+  * architecture are not currently supported by the kernel for nesting: HTTU,
+@@ -623,6 +677,32 @@ struct iommu_hw_info_tegra241_cmdqv {
+ 	__u8 __reserved;
+ };
+ 
++/**
++ * struct iommu_hw_info_amd - AMD IOMMU device info
++ *
++ * @efr : Value of AMD IOMMU Extended Feature Register (EFR)
++ * @efr2: Value of AMD IOMMU Extended Feature 2 Register (EFR2)
++ *
++ * Please See description of these registers in the following sections of
++ * the AMD I/O Virtualization Technology (IOMMU) Specification.
++ * (https://docs.amd.com/v/u/en-US/48882_3.10_PUB)
++ *
++ * - MMIO Offset 0030h IOMMU Extended Feature Register
++ * - MMIO Offset 01A0h IOMMU Extended Feature 2 Register
++ *
++ * Note: The EFR and EFR2 are raw values reported by hardware.
++ * VMM is responsible to determine the appropriate flags to be exposed to
++ * the VM since cetertain features are not currently supported by the kernel
++ * for HW-vIOMMU.
++ *
++ * Current VMM-allowed list of feature flags are:
++ * - EFR[GTSup, GASup, GioSup, PPRSup, EPHSup, GATS, GLX, PASmax]
++ */
++struct iommu_hw_info_amd {
++	__aligned_u64 efr;
++	__aligned_u64 efr2;
++};
++
+ /**
+  * enum iommu_hw_info_type - IOMMU Hardware Info Types
+  * @IOMMU_HW_INFO_TYPE_NONE: Output by the drivers that do not report hardware
+@@ -632,6 +712,7 @@ struct iommu_hw_info_tegra241_cmdqv {
+  * @IOMMU_HW_INFO_TYPE_ARM_SMMUV3: ARM SMMUv3 iommu info type
+  * @IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV: NVIDIA Tegra241 CMDQV (extension for ARM
+  *                                     SMMUv3) info type
++ * @IOMMU_HW_INFO_TYPE_AMD: AMD IOMMU info type
+  */
+ enum iommu_hw_info_type {
+ 	IOMMU_HW_INFO_TYPE_NONE = 0,
+@@ -639,6 +720,7 @@ enum iommu_hw_info_type {
+ 	IOMMU_HW_INFO_TYPE_INTEL_VTD = 1,
+ 	IOMMU_HW_INFO_TYPE_ARM_SMMUV3 = 2,
+ 	IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV = 3,
++	IOMMU_HW_INFO_TYPE_AMD = 4,
+ };
+ 
+ /**
+@@ -656,11 +738,15 @@ enum iommu_hw_info_type {
+  * @IOMMU_HW_CAP_PCI_PASID_PRIV: Privileged Mode Supported, user ignores it
+  *                               when the struct
+  *                               iommu_hw_info::out_max_pasid_log2 is zero.
++ * @IOMMU_HW_CAP_PCI_ATS_NOT_SUPPORTED: ATS is not supported or cannot be used
++ *                                      on this device (absence implies ATS
++ *                                      may be enabled)
+  */
+ enum iommufd_hw_capabilities {
+ 	IOMMU_HW_CAP_DIRTY_TRACKING = 1 << 0,
+ 	IOMMU_HW_CAP_PCI_PASID_EXEC = 1 << 1,
+ 	IOMMU_HW_CAP_PCI_PASID_PRIV = 1 << 2,
++	IOMMU_HW_CAP_PCI_ATS_NOT_SUPPORTED = 1 << 3,
+ };
+ 
+ /**
+@@ -1013,6 +1099,11 @@ struct iommu_fault_alloc {
+ enum iommu_viommu_type {
+ 	IOMMU_VIOMMU_TYPE_DEFAULT = 0,
+ 	IOMMU_VIOMMU_TYPE_ARM_SMMUV3 = 1,
++	/*
++	 * TEGRA241_CMDQV requirements (otherwise, VCMDQs will not work)
++	 * - Kernel will allocate a VINTF (HYP_OWN=0) to back this VIOMMU. So,
++	 *   VMM must wire the HYP_OWN bit to 0 in guest VINTF_CONFIG register
++	 */
+ 	IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV = 2,
+ };
+ 
+diff --git a/kernel/linux/uapi/linux/vduse.h b/kernel/linux/uapi/linux/vduse.h
+index 6e4c67a00f8b..9c71b79e70cc 100644
+--- a/kernel/linux/uapi/linux/vduse.h
++++ b/kernel/linux/uapi/linux/vduse.h
+@@ -10,6 +10,16 @@
+ 
+ #define VDUSE_API_VERSION	0
+ 
++/* VQ groups and ASID support */
++
++#define VDUSE_API_VERSION_1	1
++
++/* The VDUSE instance expects a request for vq ready */
++#define VDUSE_F_QUEUE_READY	0
++
++/* The VDUSE instance expects a request for suspend */
++#define VDUSE_F_SUSPEND		1
++
+ /*
+  * Get the version of VDUSE API that kernel supported (VDUSE_API_VERSION).
+  * This is used for future extension.
+@@ -27,6 +37,8 @@
+  * @features: virtio features
+  * @vq_num: the number of virtqueues
+  * @vq_align: the allocation alignment of virtqueue's metadata
++ * @ngroups: number of vq groups that VDUSE device declares
++ * @nas: number of address spaces that VDUSE device declares
+  * @reserved: for future use, needs to be initialized to zero
+  * @config_size: the size of the configuration space
+  * @config: the buffer of the configuration space
+@@ -41,7 +53,9 @@ struct vduse_dev_config {
+ 	__u64 features;
+ 	__u32 vq_num;
+ 	__u32 vq_align;
+-	__u32 reserved[13];
++	__u32 ngroups; /* if VDUSE_API_VERSION >= 1 */
++	__u32 nas; /* if VDUSE_API_VERSION >= 1 */
++	__u32 reserved[11];
+ 	__u32 config_size;
+ 	__u8 config[];
+ };
+@@ -55,6 +69,12 @@ struct vduse_dev_config {
+  */
+ #define VDUSE_DESTROY_DEV	_IOW(VDUSE_BASE, 0x03, char[VDUSE_NAME_MAX])
+ 
++/* Get the VDUSE supported features */
++#define VDUSE_GET_FEATURES	_IOR(VDUSE_BASE, 0x04, __u64)
++
++/* Set the VDUSE features */
++#define VDUSE_SET_FEATURES	_IOW(VDUSE_BASE, 0x05, __u64)
++
+ /* The ioctls for VDUSE device (/dev/vduse/$NAME) */
+ 
+ /**
+@@ -118,14 +138,18 @@ struct vduse_config_data {
+  * struct vduse_vq_config - basic configuration of a virtqueue
+  * @index: virtqueue index
+  * @max_size: the max size of virtqueue
+- * @reserved: for future use, needs to be initialized to zero
++ * @reserved1: for future use, needs to be initialized to zero
++ * @group: virtqueue group
++ * @reserved2: for future use, needs to be initialized to zero
+  *
+  * Structure used by VDUSE_VQ_SETUP ioctl to setup a virtqueue.
+  */
+ struct vduse_vq_config {
+ 	__u32 index;
+ 	__u16 max_size;
+-	__u16 reserved[13];
++	__u16 reserved1;
++	__u32 group;
++	__u16 reserved2[10];
+ };
+ 
+ /*
+@@ -156,6 +180,16 @@ struct vduse_vq_state_packed {
+ 	__u16 last_used_idx;
+ };
+ 
++/**
++ * struct vduse_vq_group_asid - virtqueue group ASID
++ * @group: Index of the virtqueue group
++ * @asid: Address space ID of the group
++ */
++struct vduse_vq_group_asid {
++	__u32 group;
++	__u32 asid;
++};
++
+ /**
+  * struct vduse_vq_info - information of a virtqueue
+  * @index: virtqueue index
+@@ -215,6 +249,7 @@ struct vduse_vq_eventfd {
+  * @uaddr: start address of userspace memory, it must be aligned to page size
+  * @iova: start of the IOVA region
+  * @size: size of the IOVA region
++ * @asid: Address space ID of the IOVA region
+  * @reserved: for future use, needs to be initialized to zero
+  *
+  * Structure used by VDUSE_IOTLB_REG_UMEM and VDUSE_IOTLB_DEREG_UMEM
+@@ -224,7 +259,8 @@ struct vduse_iova_umem {
+ 	__u64 uaddr;
+ 	__u64 iova;
+ 	__u64 size;
+-	__u64 reserved[3];
++	__u32 asid;
++	__u32 reserved[5];
+ };
+ 
+ /* Register userspace memory for IOVA regions */
+@@ -238,6 +274,7 @@ struct vduse_iova_umem {
+  * @start: start of the IOVA region
+  * @last: last of the IOVA region
+  * @capability: capability of the IOVA region
++ * @asid: Address space ID of the IOVA region, only if device API version >= 1
+  * @reserved: for future use, needs to be initialized to zero
+  *
+  * Structure used by VDUSE_IOTLB_GET_INFO ioctl to get information of
+@@ -248,7 +285,8 @@ struct vduse_iova_info {
+ 	__u64 last;
+ #define VDUSE_IOVA_CAP_UMEM (1 << 0)
+ 	__u64 capability;
+-	__u64 reserved[3];
++	__u32 asid; /* Only if device API version >= 1 */
++	__u32 reserved[5];
+ };
+ 
+ /*
+@@ -257,6 +295,32 @@ struct vduse_iova_info {
+  */
+ #define VDUSE_IOTLB_GET_INFO	_IOWR(VDUSE_BASE, 0x1a, struct vduse_iova_info)
+ 
++/**
++ * struct vduse_iotlb_entry_v2 - entry of IOTLB to describe one IOVA region
++ *
++ * @v1: the original vduse_iotlb_entry
++ * @asid: address space ID of the IOVA region
++ * @reserved: for future use, needs to be initialized to zero
++ *
++ * Structure used by VDUSE_IOTLB_GET_FD2 ioctl to find an overlapped IOVA region.
++ */
++struct vduse_iotlb_entry_v2 {
++	__u64 offset;
++	__u64 start;
++	__u64 last;
++	__u8 perm;
++	__u8 padding[7];
++	__u32 asid;
++	__u32 reserved[11];
++};
++
++/*
++ * Same as VDUSE_IOTLB_GET_FD but with vduse_iotlb_entry_v2 argument that
++ * support extra fields.
++ */
++#define VDUSE_IOTLB_GET_FD2	_IOWR(VDUSE_BASE, 0x1b, struct vduse_iotlb_entry_v2)
++
++
+ /* The control messages definition for read(2)/write(2) on /dev/vduse/$NAME */
+ 
+ /**
+@@ -265,11 +329,16 @@ struct vduse_iova_info {
+  * @VDUSE_SET_STATUS: set the device status
+  * @VDUSE_UPDATE_IOTLB: Notify userspace to update the memory mapping for
+  *                      specified IOVA range via VDUSE_IOTLB_GET_FD ioctl
++ * @VDUSE_SET_VQ_GROUP_ASID: Notify userspace to update the address space of a
++ *                           virtqueue group.
+  */
+ enum vduse_req_type {
+ 	VDUSE_GET_VQ_STATE,
+ 	VDUSE_SET_STATUS,
+ 	VDUSE_UPDATE_IOTLB,
++	VDUSE_SET_VQ_GROUP_ASID,
++	VDUSE_SET_VQ_READY,
++	VDUSE_SUSPEND,
+ };
+ 
+ /**
+@@ -304,6 +373,28 @@ struct vduse_iova_range {
+ 	__u64 last;
+ };
+ 
++/**
++ * struct vduse_iova_range_v2 - IOVA range [start, last] if API_VERSION >= 1
++ * @start: start of the IOVA range
++ * @last: last of the IOVA range
++ * @asid: address space ID of the IOVA range
++ */
++struct vduse_iova_range_v2 {
++	__u64 start;
++	__u64 last;
++	__u32 asid;
++	__u32 padding;
++};
++
++/**
++ * struct vduse_vq_ready - Virtqueue ready request message
++ * @num: Virtqueue number
++ */
++struct vduse_vq_ready {
++	__u32 num;
++	__u32 ready;
++};
++
+ /**
+  * struct vduse_dev_request - control request
+  * @type: request type
+@@ -312,6 +403,9 @@ struct vduse_iova_range {
+  * @vq_state: virtqueue state, only index field is available
+  * @s: device status
+  * @iova: IOVA range for updating
++ * @iova_v2: IOVA range for updating if API_VERSION >= 1
++ * @vq_group_asid: ASID of a virtqueue group
++ * @vq_ready: Virtqueue ready request
+  * @padding: padding
+  *
+  * Structure used by read(2) on /dev/vduse/$NAME.
+@@ -324,6 +418,15 @@ struct vduse_dev_request {
+ 		struct vduse_vq_state vq_state;
+ 		struct vduse_dev_status s;
+ 		struct vduse_iova_range iova;
++		/* Following members but padding exist only if vduse api
++		 * version >= 1
++		 */
++		struct vduse_iova_range_v2 iova_v2;
++		struct vduse_vq_group_asid vq_group_asid;
++
++		/* Only if VDUSE_F_QUEUE_READY is negotiated */
++		struct vduse_vq_ready vq_ready;
++
+ 		__u32 padding[32];
+ 	};
+ };
+diff --git a/kernel/linux/uapi/linux/vfio.h b/kernel/linux/uapi/linux/vfio.h
+index c2e4839f83eb..daa94bf69367 100644
+--- a/kernel/linux/uapi/linux/vfio.h
++++ b/kernel/linux/uapi/linux/vfio.h
+@@ -141,7 +141,7 @@ struct vfio_info_cap_header {
+  *
+  * Retrieve information about the group.  Fills in provided
+  * struct vfio_group_info.  Caller sets argsz.
+- * Return: 0 on succes, -errno on failure.
++ * Return: 0 on success, -errno on failure.
+  * Availability: Always
+  */
+ struct vfio_group_status {
+@@ -964,6 +964,10 @@ struct vfio_device_bind_iommufd {
+  * hwpt corresponding to the given pt_id.
+  *
+  * Return: 0 on success, -errno on failure.
++ *
++ * When a device is resetting, -EBUSY will be returned to reject any concurrent
++ * attachment to the resetting device itself or any sibling device in the IOMMU
++ * group having the resetting device.
+  */
+ struct vfio_device_attach_iommufd_pt {
+ 	__u32	argsz;
+@@ -1262,6 +1266,19 @@ enum vfio_device_mig_state {
+  * The initial_bytes field indicates the amount of initial precopy
+  * data available from the device. This field should have a non-zero initial
+  * value and decrease as migration data is read from the device.
++ * The presence of the VFIO_PRECOPY_INFO_REINIT output flag indicates
++ * that new initial data is present on the stream.
++ * The new initial data may result, for example, from device reconfiguration
++ * during migration that requires additional initialization data.
++ * In that case initial_bytes may report a non-zero value irrespective of
++ * any previously reported values, which progresses towards zero as precopy
++ * data is read from the data stream. dirty_bytes is also reset
++ * to zero and represents the state change of the device relative to the new
++ * initial_bytes.
++ * VFIO_PRECOPY_INFO_REINIT can be reported only after userspace opts in to
++ * VFIO_DEVICE_FEATURE_MIG_PRECOPY_INFOv2. Without this opt-in, the flags field
++ * of struct vfio_precopy_info is reserved for bug-compatibility reasons.
++ *
+  * It is recommended to leave PRE_COPY for STOP_COPY only after this field
+  * reaches zero. Leaving PRE_COPY earlier might make things slower.
+  *
+@@ -1297,6 +1314,7 @@ enum vfio_device_mig_state {
+ struct vfio_precopy_info {
+ 	__u32 argsz;
+ 	__u32 flags;
++#define VFIO_PRECOPY_INFO_REINIT (1 << 0) /* output - new initial data is present */
+ 	__aligned_u64 initial_bytes;
+ 	__aligned_u64 dirty_bytes;
+ };
+@@ -1506,6 +1524,37 @@ struct vfio_device_feature_dma_buf {
+ 	struct vfio_region_dma_range dma_ranges[] __counted_by(nr_ranges);
+ };
+ 
++/*
++ * Enables the migration precopy_info_v2 behaviour.
++ *
++ * VFIO_DEVICE_FEATURE_MIG_PRECOPY_INFOv2.
++ *
++ * On SET, enables the v2 pre_copy_info behaviour, where the
++ * vfio_precopy_info.flags is a valid output field.
++ */
++#define VFIO_DEVICE_FEATURE_MIG_PRECOPY_INFOv2  12
++
++/**
++ * VFIO_DEVICE_FEATURE_ZPCI_ERROR feature provides PCI error information to
++ * userspace for vfio-pci devices on s390. On s390, PCI error recovery
++ * involves platform firmware and notification to operating systems is done
++ * by architecture specific mechanism. Exposing this information to
++ * userspace allows it to take appropriate actions to handle an
++ * error on the device.
++ *
++ * Userspace provides an opaque buffer of fixed length, and the kernel
++ * fills it with the zpci_ccdf_err data structure. The length of
++ * zpci_ccdf_err is provided to userspace via the
++ * VFIO_DEVICE_INFO_CAP_ZPCI_BASE capability.
++ *
++ * The ioctl returns -ENOMSG if there are no pending PCI errors.
++ */
++struct vfio_device_feature_zpci_err {
++	__aligned_u64 data;
++};
++
++#define VFIO_DEVICE_FEATURE_ZPCI_ERROR 13
++
+ /* -------- API for Type1 VFIO IOMMU -------- */
+ 
+ /**
+diff --git a/kernel/linux/uapi/version b/kernel/linux/uapi/version
+index 69f29b2320e4..8036d72f9f0c 100644
+--- a/kernel/linux/uapi/version
++++ b/kernel/linux/uapi/version
+@@ -1 +1 @@
+-v6.19
++v7.3-rc7
+-- 
+2.56.0
+
