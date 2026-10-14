@@ -2,76 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5403CC6B1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 17:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43846CC6B1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 17:40:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EDF7D40272;
-	Wed, 14 Oct 2026 19:39:03 +0200 (CEST)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
- [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id CD5B140144
- for <dev@dpdk.org>; Wed, 14 Oct 2026 19:39:01 +0200 (CEST)
-Received: by mail-pj1-f53.google.com with SMTP id
- 98e67ed59e1d1-3a80d1c98f5so498030a91.0
- for <dev@dpdk.org>; Wed, 14 Oct 2026 10:39:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791999541;
- x=1792604341; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=Zsda9hFrIcWzpGWxo9RecR3Sh3VlGPKVnh2AcyKjZx4=;
- b=k3N5E2aWaaqI6wzFSu7ii4iPk73v8vgFcMW4k7yrLDvpNeKM1UwrpP1/3fHnh6/dMy
- MU7a3TeBlz7gc6/iuH32jt//eJnuvBwhrfHSL0IKeCdI+w1RQRyUG/H6xtum1T9DiIiD
- cDOFmWnb7IhnZfLfXBQpg04vXzEFg23RqeBdpn/VPQKpD/QccD9rvDW1VUfu1WaQWPio
- 6Hxi9PeTr+nK5QBYwtjP+RojD2hY2KhpKTFtKklJ9ycsXusrg6UZ37/eOvWTJMTCjA8g
- yX9V7ZSZbbQ5IY5sxO98qfQ8zPAH1zaZD+5mLNx6M1IjVoJTTikx4SY8ZA0lHM/dzNw/
- NlsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791999541; x=1792604341;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=Zsda9hFrIcWzpGWxo9RecR3Sh3VlGPKVnh2AcyKjZx4=;
- b=wl90yZkju1MU6UOLSDoYjaG2ajzxZIy9Fg/YidfC6CS5LnJN8oBfioKZD0OR2JDPjs
- 3PPUG3Gq3bwvcaOu8TTt+rfhoobkOzYdgEXBGhHqYZuXqRipKvIWpPYmw4OhLD98gBIE
- Y2Dge9rv/s4YeNVK/v0s1Z8wMhIRkZkcyDDHuyIQV7gkGXFlWHIh+ENmkbU1AnySLnGT
- ot3lqMHxAU/iL/8TI22UvzS//U7L3pOpSapGAJz9h67564Ns+6zeefikDC4IK2UDeyOB
- mLCbyjSjhI/J0Req9RLrk805naWLoKzzB0PRwGpP0dcGgFl1YwTKqb0e28wBl50aeWrn
- Ci9g==
-X-Gm-Message-State: AFq9FYLhOgt7mMNiXl4gcvYHnyxoBclDEEaMmkFoRrl8JTcGHweQMxYu
- Ebypmz9ZhwLaBrYBKuXyA+4m5NLDVCLOX666lAQLNzbsbSoOMU9XONrV3kC6Yw4K2pg=
-X-Gm-Gg: AYBFou0IKgx3XiPk1MoO6juk73vAR58tJMvceNPB45pguRTEVwiDKAjfU+44oUPI/PG
- kvM7jt59UZwtzy+7RTxEkNbJ+YV/+LF0Y9Jwwp74N8bVGRo/KtdNpOy4kCwGC5niuM5frcNr16X
- 7ZdasmyTNmjxsXnDlDXan+th5WLNG8GoR4cP+eTldOeChm7kCLkvaA31rTM1lli1fSF3aqAuRcd
- Vu0VlpmyubpG+6yYfkhrNyggGZYANCtVVZ/ICbf51n8AnxkV+9ssTEFG/vYlnxafIA95IkubQIm
- AoUj20Dq3iQ3xaC6P4pCZSXHNE2P6tYMvZZ+DGfBR4e7yS2aRuYaIYqsFXpNQUEzxqZfpNLakfq
- VaSQtkoWwZlNwmOSlTCG12FM+Qhhy+5WnMdkPtg2fvAPEcnJKeomviMXH/PayOfPTUaPoC2xxHy
- AUbDhFsf67q36qUkELxYWf2zE+oQSRvkVDhSZnejGEM4rx4fVhi/Zj4maQKdlymJHBdi9OPYWHa
- MM7Q1R+E4W3Zrcl3iseOxmtCSNny7Talo/Bxw88
-X-Received: by 2002:a17:90b:1dce:b0:3ac:7556:8ee4 with SMTP id
- 98e67ed59e1d1-3ac7556a3e9mr2293620a91.67.1791999540785; 
- Wed, 14 Oct 2026 10:39:00 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cd635c58d91sm134649a12.14.2026.10.14.10.39.00
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Oct 2026 10:39:00 -0700 (PDT)
-Date: Wed, 14 Oct 2026 10:38:58 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dawid Wesierski <dawid.wesierski@intel.com>
-Cc: dev@dpdk.org, reshma.pattan@intel.com, thomas@monjalon.net,
- mb@smartsharesystems.com, marek.kasiewicz@intel.com, Jerin Jacob
- <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, Nithin
- Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan <yanzhirun_163@163.com>
-Subject: Re: [PATCH v7] pcapng: add user-supplied timestamp support
-Message-ID: <20261014103858.5a454dac@phoenix.local>
-In-Reply-To: <20261014172102.1090177-1-dawid.wesierski@intel.com>
-References: <20260629093942.983145-1-dawid.wesierski@intel.com>
- <20261014172102.1090177-1-dawid.wesierski@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3884340272;
+	Wed, 14 Oct 2026 19:40:13 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id CFEBF40272
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 19:40:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1791999611;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=3/NJMGIpxiZgCyGwDiaOcHlHQi2vAkNk+ZAmuLbyy1Q=;
+ b=HqMxOLJK04t+Yo+RaQn8rx28mJ/7jhqlr8aWLmDJWc6cMNZdD+QEK3ROmExWH5nMtPMhDt
+ kZgyjWx6if3gbS8mQbXTTyQOc9wiAvHlz0z+Gh6+wmKZiC6kWkp6wJAeeI60WU4nAgJ5CO
+ Scp86mFgVd01w2Sf7xoX6kKWM5CKQPw=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-540-Kj94_IkqOxKEWCdW3uUjTg-1; Wed,
+ 14 Oct 2026 17:40:06 +0000
+X-MC-Unique: Kj94_IkqOxKEWCdW3uUjTg-1
+X-Mimecast-MFC-AGG-ID: Kj94_IkqOxKEWCdW3uUjTg_1791999605
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id A9F921800C3A; Wed, 14 Oct 2026 17:40:05 +0000 (UTC)
+Received: from dmarchan.redhat.corp
+ (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id BD2EB1800347; Wed, 14 Oct 2026 17:40:04 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: hemant.agrawal@nxp.com,
+	dev@dpdk.org
+Subject: [PATCH 00/16] Device unplug and bus cleanup refactoring for NXP
+Date: Wed, 14 Oct 2026 19:39:43 +0200
+Message-ID: <20261014174001.1830726-1-david.marchand@redhat.com>
+In-Reply-To: <20260723135400.3621271-1-david.marchand@redhat.com>
+References: <20260723135400.3621271-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: i5pm6Xm0IHAeoPAG2zHh46MccEQZtQUgZwkZMuXu5hA_1791999605
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,18 +67,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 14 Oct 2026 17:21:01 +0000
-Dawid Wesierski <dawid.wesierski@intel.com> wrote:
+Hello Hemant,
 
->  
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pcapng_tsc_to_ns, 26.11)
-> +uint64_t
-> +rte_pcapng_tsc_to_ns(const rte_pcapng_t *self, uint64_t tsc)
-> +{
-> +	return pcapng_timestamp(self, tsc);
-> +}
-> +
+This is a followup to the refactoring started in 26.07.
 
-Since the tsc_to_ns is independent of the pcapng handle, I had some
-patches in other work which made it not require pcapng_open and/or move
-it to EAL. What do you think?
+I took some time with my best AI friend to cleanup DPAA and FSLMC bus
+drivers.
+
+Like the last time, only compilation has been checked.
+I have no hardware to test runtime.
+
+One thing that could be broken is either the order of devices
+initialisation, or bugs in the device filtering that I tried to
+simplify.
+
+I went with the approach of splitting the device list between
+internal bus object (that I called "control" devices, maybe a better
+name can be found), and normal bus device object for which DPDK has a
+driver.
+
+I think it is worth testing and fixing, as it will make the two NXP
+bus drivers similar to other bus drivers (but keep the special IO devices
+handling internal to the FSLMC bus for example).
+
+
+-- 
+David Marchand
+
+Changes since RFC v2:
+- rebased,
+- fixed interrupt closing,
+
+Changes since RFC v1:
+- fixed FD leak in bus/dpaa pre existing code,
+- fixed device name leak in bus/fslmc pre existing code,
+- fixed other leaks found by AI review,
+- split DPAA2 devices in two list:
+  - one list in the bus object for devices for which a driver exists,
+  - one list local to the fslmc bus code for internal resources that
+    are initialised out of the EAL / bus framework,
+
+David Marchand (16):
+  drivers/bus: cleanup device freeing in NXP bus scan
+  drivers/bus: fix FD leak during scan in NXP drivers
+  bus/dpaa: allocate interrupt during probing
+  bus/dpaa: support unplug and use generic cleanup
+  bus/fslmc: fix device name leak
+  bus/fslmc: fix memory leaks in scan
+  bus/fslmc: fix per type device count
+  bus/fslmc: fix some VFIO device FD and memory leaks
+  bus/fslmc: fix interrupt leak in DPIO cleanup
+  bus/fslmc: simplify device parsing in scan
+  bus/fslmc: release resources on probe failure
+  bus/fslmc: refactor device filtering for multiprocess
+  bus/fslmc: move unplug for some device out of VFIO
+  bus/fslmc: call VFIO setup for some device from bus layer
+  bus/fslmc: allocate interrupt during probing
+  bus/fslmc: use generic cleanup
+
+ doc/guides/rel_notes/release_26_11.rst   |   4 +
+ drivers/bus/dpaa/dpaa_bus.c              | 149 +++++----
+ drivers/bus/fslmc/bus_fslmc_driver.h     |   4 +-
+ drivers/bus/fslmc/fslmc_bus.c            | 404 ++++++++++++++++------
+ drivers/bus/fslmc/fslmc_vfio.c           | 407 +++++++++++------------
+ drivers/bus/fslmc/fslmc_vfio.h           |   6 +
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c |   1 +
+ drivers/bus/fslmc/private.h              |   6 +
+ 8 files changed, 592 insertions(+), 389 deletions(-)
+
+-- 
+2.54.0
+
