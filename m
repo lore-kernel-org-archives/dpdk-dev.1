@@ -2,34 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B47CC6B19
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 05:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80576CC6B19
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 05:44:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CC5D44027C;
-	Wed, 14 Oct 2026 07:44:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C45BB402F0;
+	Wed, 14 Oct 2026 07:44:11 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id C650D40279
- for <dev@dpdk.org>; Wed, 14 Oct 2026 07:44:05 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8389140279;
+ Wed, 14 Oct 2026 07:44:06 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 759E31A0136;
- Wed, 14 Oct 2026 07:44:05 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 55D301A0138;
+ Wed, 14 Oct 2026 07:44:06 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3E6F11A0175;
- Wed, 14 Oct 2026 07:44:05 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 208CB1A0134;
+ Wed, 14 Oct 2026 07:44:06 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0A69618000B6;
- Wed, 14 Oct 2026 13:44:03 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id E9AA81800068;
+ Wed, 14 Oct 2026 13:44:04 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
-Subject: [PATCH v10-S2 00/11] net/dpaa2 updates
-Date: Wed, 14 Oct 2026 11:13:49 +0530
-Message-ID: <20261014054400.980123-1-prashant.gupta_3@nxp.com>
+Cc: stable@dpdk.org,
+	Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: [PATCH v10-S2 01/11] net/dpaa2: fix integer overflow in CCSR region
+ mapping
+Date: Wed, 14 Oct 2026 11:13:50 +0530
+Message-ID: <20261014054400.980123-2-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261012070444.2149617-1-prashant.gupta_3@nxp.com>
+In-Reply-To: <20261014054400.980123-1-prashant.gupta_3@nxp.com>
 References: <20261012070444.2149617-1-prashant.gupta_3@nxp.com>
+ <20261014054400.980123-1-prashant.gupta_3@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
@@ -46,62 +50,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Changes in v10:
-- Drop meter and policing support patch.
-- Drop parser processing rework patch.
-- Remove associated meter infrastructure and parser decode changes.
-- Update release notes to the existing DPAA2 New Features section.
-- Address review comments for per-device default flow miss action.
-- Document minimum DPNI version requirement for 24-byte flow keys.
-- Fold parser-related fixes into the remaining parser updates.
-- Remove unused soft parser files and related build integration.
-- Fix coding style issues reported during review.
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
 
-Series overview:
-- fix an integer overflow in the CCSR region mapping,
-- set Tx confirmation on device init and support a larger burst size,
-- support MPLS and PPPoE flow distribution,
-- support the flow drop action and a per-device default flow miss action,
-- identify Rx mbuf hash information by FLC and add minimum key size
-  support,
-- parse tunnel and fragmented packet types,
-- remove the unused soft parser driver and rename Rx queue flags.
+In lsx_ccsr_map_region, PAGE_SIZE is a macro defined as
+sysconf(_SC_PAGESIZE), which returns a signed long and may be negative
+on error. The value was used directly in size_t comparisons and passed
+to mmap, causing an integer overflow (Coverity CID 49765682).
 
-Gagandeep Singh (6):
-  net/dpaa2: set Tx confirmation on device init
-  net/dpaa2: support larger burst size
-  net/dpaa2: support MPLS and PPPoE flow distribution
-  net/dpaa2: support flow drop action
-  net/dpaa2: set default flow miss action per device
-  net/dpaa2: identify Rx mbuf hash information by FLC
+The old round-down "len & PAGE_MASK" ignored the in-page offset: for a
+4096-byte or 6656-byte len on a 64K-page kernel the masked result is 0,
+causing the mapping to fail, where the old code would have bumped len up
+to PAGE_SIZE. The correct mapping size must cover the region from the
+page-aligned start through offset + len.
 
-Hemant Agrawal (3):
-  net/dpaa2: fix integer overflow in CCSR region mapping
-  net/dpaa2: add minimum key size support
-  net/dpaa2: parse tunnel and fragmented packet types
+Fix by calling sysconf(_SC_PAGESIZE) explicitly into a signed long,
+checking for a non-positive return before use, computing page_mask from
+the verified value, and using RTE_ALIGN_CEIL(offset + len, page_size)
+for map_len so that the mmap covers the full requested region regardless
+of page size. The page-aligned start address and the back-pointer offset
+are both derived from the same page_mask, keeping the three values
+consistent.
 
-Jun Yang (2):
-  net/dpaa2: remove unused soft parser driver
-  net/dpaa2: rename Rx queue flags
+Coverity issue: 49765682
+Fixes: f023d059769f ("net/dpaa2: support recycle loopback port")
+Cc: stable@dpdk.org
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+---
+ drivers/net/dpaa2/dpaa2_recycle.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
- doc/guides/nics/features/dpaa2.ini     |   4 +-
- doc/guides/rel_notes/release_26_11.rst |  13 +
- drivers/net/dpaa2/dpaa2_ethdev.c       |  84 +---
- drivers/net/dpaa2/dpaa2_ethdev.h       |  36 +-
- drivers/net/dpaa2/dpaa2_flow.c         | 633 ++++++-------------------
- drivers/net/dpaa2/dpaa2_recycle.c      |  24 +-
- drivers/net/dpaa2/dpaa2_rxtx.c         |  60 ++-
- drivers/net/dpaa2/dpaa2_sparser.c      | 137 ------
- drivers/net/dpaa2/dpaa2_sparser.h      | 202 --------
- drivers/net/dpaa2/dpaa2_tm.c           |  16 +-
- drivers/net/dpaa2/mc/dpni.c            |  11 +-
- drivers/net/dpaa2/mc/fsl_dpni.h        |   8 +-
- drivers/net/dpaa2/mc/fsl_dpni_cmd.h    |   3 +-
- drivers/net/dpaa2/meson.build          |   1 -
- 14 files changed, 327 insertions(+), 905 deletions(-)
- delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.c
- delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.h
-
+diff --git a/drivers/net/dpaa2/dpaa2_recycle.c b/drivers/net/dpaa2/dpaa2_recycle.c
+index f78d12362e..9b6ae3f515 100644
+--- a/drivers/net/dpaa2/dpaa2_recycle.c
++++ b/drivers/net/dpaa2/dpaa2_recycle.c
+@@ -176,6 +176,9 @@ static void *lsx_ccsr_map_region(uint64_t addr, size_t len)
+ 	void *tmp;
+ 	uint64_t start;
+ 	uint64_t offset;
++	uint64_t page_mask;
++	long page_size;
++	size_t map_len;
+ 
+ 	fd = open("/dev/mem", O_RDWR);
+ 	if (fd < 0) {
+@@ -183,20 +186,24 @@ static void *lsx_ccsr_map_region(uint64_t addr, size_t len)
+ 		return NULL;
+ 	}
+ 
+-	start = addr & PAGE_MASK;
++	page_size = sysconf(_SC_PAGESIZE);
++	if (page_size <= 0) {
++		close(fd);
++		return NULL;
++	}
++	page_mask = ~((uint64_t)page_size - 1);
++	start = addr & page_mask;
+ 	offset = addr - start;
+-	len = len & PAGE_MASK;
+-	if (len < (size_t)PAGE_SIZE)
+-		len = PAGE_SIZE;
++	map_len = RTE_ALIGN_CEIL(offset + len, (size_t)page_size);
+ 
+-	tmp = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, start);
++	tmp = mmap(NULL, map_len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, start);
+ 
+ 	close(fd);
+ 
+-	if (tmp != MAP_FAILED)
+-		return (uint8_t *)tmp + offset;
+-	else
++	if (tmp == MAP_FAILED)
+ 		return NULL;
++
++	return (uint8_t *)tmp + offset;
+ }
+ 
+ static const uint8_t ls_sd1_prot_idx_map[] = {
 -- 
 2.43.0
 
