@@ -2,41 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C079CC6B1D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 15:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16285CC6B1D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 15:11:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C4A6640E09;
-	Wed, 14 Oct 2026 17:10:02 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.4])
- by mails.dpdk.org (Postfix) with ESMTP id 9E776406B6
- for <dev@dpdk.org>; Wed, 14 Oct 2026 17:09:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D25A4406BA;
+	Wed, 14 Oct 2026 17:10:06 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
+ by mails.dpdk.org (Postfix) with ESMTP id 227AE40A67
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 17:09:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=x+b7bB7CgnB4RhVp3L4tKHgZSBjjbctMKwaUtAB+kGY=;
- b=GDyeHRvovoFXQaVqLk0/G5LJ0hLACwiI1aDd14l+dx/B4f6yFZbNQfWCOAMU8C
- zDY5V8Y5cLsWA2qO2nclYNKnrCmCDMUNyJO7HOx4FrpQifPusqvJYLXxwu0wQJvl
- SL3/V6whOhCKaMuTHKyBV8La04fGiQM4knJvXoiHWqo7I=
+ MIME-Version; bh=3FIyrU5fi5Y0Q4uZ269DgDwNZnXXknq2rIHeIgYgVwM=;
+ b=lekuswlLa5GDIhcSUvCizwC/jt4quwGHXgWwMySHKM5QRCLMb4goxiRHG1p9rD
+ JDHg6brUiKea0bZhH5JIwgsRISQrjFY0vEGEWpH3SU+yeoNQjfhIouaI4W6bMPfs
+ vQ14ZaB6brsiOvRp7UdfvddZEqKKQ6eER7D6DnKxHSgUk=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v2 14/26] net/hinic3: update RSS hash type configuration
-Date: Wed, 14 Oct 2026 23:09:10 +0800
-Message-ID: <20261014150923.838-15-yejiacheng4@h-partners.com>
+Subject: [PATCH v2 21/26] net/hinic3: ensure queue depth and state consistency
+Date: Wed, 14 Oct 2026 23:09:17 +0800
+Message-ID: <20261014150923.838-22-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261014150923.838-1-yejiacheng4@h-partners.com>
 References: <20261010144509.2731-1-yejiacheng4@h-partners.com>
  <20261014150923.838-1-yejiacheng4@h-partners.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgAXMEEym89qB_SFAw--.62919S16
-X-Coremail-Antispam: 1Uf129KBjvJXoW3GF13WF4rtr4UArWktw1kKrg_yoWxJr1rp3
- y7G3y7JrWDtrWrXwn5Xa1UC3W5Zw4kC3yIgw12q3sYkF4kZr1xA345Aay0yrs0gFWxX3Wa
- vayrZ3s8K3WYv37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07ULzV8UUUUU=
+X-CM-TRANSID: As8vCgAXMEEym89qB_SFAw--.62919S23
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJF4xKFW7KFWDAryfAF1DWrg_yoW5Xw1UpF
+ WDGa9xta4IqrsrJwnIka13Za43XanxtryUWFyxt34Y9r15ZF40y345tFWFqrnrt395AF42
+ vr4jyw4vg342q37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07URMKZUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNhqDjWrPmzofcQAA3I
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNByEjmrPmzwcogAA3e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,166 +50,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The aggregated compact CQE does not expose a readable RSS hash flags field.
-To keep the same behavior as the normal CQE, always enable ipv6_ext and
-tcp_ipv6_ext (every tile supports them) and save the configured RSS hash
-flags in software state.
+The hardware tracks a single queue depth across all Tx queues, so each
+queue must be validated against the first one and forced to match on
+mismatch instead of silently diverging. Also reset the rx/tx queue states
+in dev_stop and clear the cached depths so the queue state reflects the
+stopped device before the next start.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/rel_notes/release_26_11.rst   |  1 +
- drivers/net/hinic3/base/hinic3_nic_cfg.h | 21 +++++++++++++--------
- drivers/net/hinic3/hinic3_ethdev.c       | 23 +++++++++--------------
- drivers/net/hinic3/hinic3_ethdev.h       |  2 ++
- drivers/net/hinic3/hinic3_rx.c           | 17 ++++++++---------
- 5 files changed, 33 insertions(+), 31 deletions(-)
+ drivers/net/hinic3/hinic3_ethdev.c | 16 ++++++++++++++--
+ drivers/net/hinic3/hinic3_ethdev.h |  4 ++++
+ 2 files changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 09917a19c9..3f106bfe31 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -119,6 +119,7 @@ New Features
-   * Added CIR drop statistics and VF link aggregation (LAG) support.
-   * Added FEC mode get and set support.
-   * Added Class of Service (COS) mask and map support.
-+  * Updated RSS hash type configuration.
-   * Added mailbox message counter reporting through the device private dump API.
- 
- * **Updated Intel iavf driver.**
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-index 4d4cb2d8cb..d8b7dd9bc4 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.h
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-@@ -73,14 +73,19 @@
- 	HINIC3_SUPPORT_FEATURE(dev, IPXIP_OFFLOAD)
- 
- struct hinic3_rss_type {
--	uint8_t tcp_ipv6_ext;
--	uint8_t ipv6_ext;
--	uint8_t tcp_ipv6;
--	uint8_t ipv6;
--	uint8_t tcp_ipv4;
--	uint8_t ipv4;
--	uint8_t udp_ipv6;
--	uint8_t udp_ipv4;
-+	union {
-+		struct {
-+			uint8_t tcp_ipv6_ext;
-+			uint8_t ipv6_ext;
-+			uint8_t tcp_ipv6;
-+			uint8_t ipv6;
-+			uint8_t tcp_ipv4;
-+			uint8_t ipv4;
-+			uint8_t udp_ipv6;
-+			uint8_t udp_ipv4;
-+		};
-+		uint64_t val;
-+	};
- };
- 
- enum hinic3_rss_hash_type {
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 21d7fc1a0e..f3dc5a15a6 100644
+index b64746664d..b2f1d618c0 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -2680,20 +2680,17 @@ hinic3_rss_hash_update(struct rte_eth_dev *dev,
- 	rss_type.tcp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP) ? 1 : 0;
- 	rss_type.udp_ipv4 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP) ? 1 : 0;
- 	rss_type.udp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP) ? 1 : 0;
--
--	if (nic_dev->feature_cap & NIC_F_HTN_CMDQ) {
--		rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
--		rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
--	} else {
--		rss_type.ipv6_ext = 0;
--		rss_type.tcp_ipv6_ext = 0;
--	}
-+	rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
-+	rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
+@@ -316,8 +316,6 @@ hinic3_xstats_calc_num(struct hinic3_nic_dev *nic_dev)
+ 	}
+ }
  
- 	err = hinic3_set_rss_type(nic_dev->hwdev, rss_type);
--	if (err)
-+	if (err) {
- 		PMD_DRV_LOG(ERR, "Set RSS type failed");
-+		return err;
+-#define HINIC3_MAX_QUEUE_DEPTH 16384
+-#define HINIC3_MIN_QUEUE_DEPTH 128
+ #define HINIC3_TXD_ALIGN       1
+ #define HINIC3_RXD_ALIGN       1
+ 
+@@ -1322,6 +1320,14 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 
+ 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
+ 	hwdev = nic_dev->hwdev;
++	/* Queue depth must be equal to first queue */
++	if (nic_dev->txq_depth == 0) {
++		nic_dev->txq_depth = nb_desc;
++	} else if (nb_desc != nic_dev->txq_depth) {
++		PMD_DRV_LOG(WARNING, "txq%u depth:%u is not equal to first queue depth:%u.",
++			qid, nb_desc, nic_dev->txq_depth);
++		nb_desc = nic_dev->txq_depth;
 +	}
  
--	return err;
-+	nic_dev->rss_type = rss_type;
-+	return 0;
- }
+ 	/* Queue depth must be power of 2, otherwise will be aligned up. */
+ 	sq_depth = (nb_desc & (nb_desc - 1))
+@@ -2231,7 +2237,13 @@ hinic3_dev_stop(struct rte_eth_dev *dev)
+ 	/* Free mempool. */
+ 	hinic3_copy_mempool_uninit(nic_dev);
  
- /**
-@@ -2748,10 +2745,8 @@ hinic3_rss_conf_get(struct rte_eth_dev *dev, struct rte_eth_rss_conf *rss_conf)
- 	rss_conf->rss_hf |= rss_type.tcp_ipv6 ? RTE_ETH_RSS_NONFRAG_IPV6_TCP : 0;
- 	rss_conf->rss_hf |= rss_type.udp_ipv4 ? RTE_ETH_RSS_NONFRAG_IPV4_UDP : 0;
- 	rss_conf->rss_hf |= rss_type.udp_ipv6 ? RTE_ETH_RSS_NONFRAG_IPV6_UDP : 0;
--	if (nic_dev->feature_cap & NIC_F_HTN_CMDQ) {
--		rss_conf->rss_hf |= rss_type.ipv6_ext ? RTE_ETH_RSS_IPV6_EX : 0;
--		rss_conf->rss_hf |= rss_type.tcp_ipv6_ext ? RTE_ETH_RSS_IPV6_TCP_EX : 0;
--	}
-+	rss_conf->rss_hf |= rss_type.ipv6_ext ? RTE_ETH_RSS_IPV6_EX : 0;
-+	rss_conf->rss_hf |= rss_type.tcp_ipv6_ext ? RTE_ETH_RSS_IPV6_TCP_EX : 0;
- 
++	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++)
++		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
++	for (uint16_t i = 0; i < dev->data->nb_tx_queues; i++)
++		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
++
+ 	nic_dev->rxq_depth = 0;
++	nic_dev->txq_depth = 0;
  	return 0;
  }
+ 
 diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index ec5daf523b..f7d3dfcff6 100644
+index 92c7d44741..72337230c8 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.h
 +++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -9,6 +9,7 @@
- #include <rte_ethdev_core.h>
- 
- #include "hinic3_fdir.h"
-+#include "base/hinic3_nic_cfg.h"
+@@ -15,6 +15,9 @@
  
  #define HINIC3_PMD_DRV_VERSION "B106"
  
-@@ -130,6 +131,7 @@ struct hinic3_nic_dev {
- 	uint16_t num_rss; /**< Number of RSS queues. */
- 
- 	uint32_t rx_mode;
-+	struct hinic3_rss_type rss_type;
- 	uint8_t rx_queue_list[HINIC3_MAX_QUEUE_NUM];
- 	rte_spinlock_t queue_list_lock;
- 
-diff --git a/drivers/net/hinic3/hinic3_rx.c b/drivers/net/hinic3/hinic3_rx.c
-index ed753ba4ec..a4846dc695 100644
---- a/drivers/net/hinic3/hinic3_rx.c
-+++ b/drivers/net/hinic3/hinic3_rx.c
-@@ -437,17 +437,15 @@ hinic3_init_rss_type(struct hinic3_nic_dev *nic_dev,
- 	rss_type.tcp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP) ? 1 : 0;
- 	rss_type.udp_ipv4 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP) ? 1 : 0;
- 	rss_type.udp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP) ? 1 : 0;
--
--	if (nic_dev->feature_cap & NIC_F_HTN_CMDQ) {
--		rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
--		rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
--	} else {
--		rss_type.ipv6_ext = 0;
--		rss_type.tcp_ipv6_ext = 0;
--	}
-+	rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
-+	rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
- 
- 	err = hinic3_set_rss_type(nic_dev->hwdev, rss_type);
--	return err;
-+	if (err)
-+		return err;
++#define HINIC3_MAX_QUEUE_DEPTH         16384
++#define HINIC3_MIN_QUEUE_DEPTH         128
 +
-+	nic_dev->rss_type = rss_type;
-+	return 0;
- }
+ #define PCI_DEV_TO_INTR_HANDLE(pci_dev) ((pci_dev)->intr_handle)
  
- int
-@@ -1056,6 +1054,7 @@ hinic3_rx_get_compact_cqe_info(struct hinic3_rxq *rxq, volatile struct hinic3_rq
- 	cqe_info->pkt_len = HINIC3_RQ_COMPACT_CQE_STATUS_GET(dw0, PKT_LEN);
- 	cqe_info->ts_flag = HINIC3_RQ_COMPACT_CQE_STATUS_GET(dw0, TS_FLAG);
- 	cqe_info->ptype = HINIC3_RQ_COMPACT_CQE_STATUS_GET(dw0, PTYPE);
-+	cqe_info->rss_type = (rxq->nic_dev->rss_type.val != 0) ? 1 : 0;
- 	cqe_info->rss_hash_value = dw1;
+ #define HINIC3_PKT_RX_L4_CKSUM_BAD	RTE_MBUF_F_RX_L4_CKSUM_BAD
+@@ -149,6 +152,7 @@ struct hinic3_nic_dev {
+ 	uint16_t max_rqs;
  
- 	if (cqe_info->cqe_len == HINIC3_RQ_COMPACT_CQE_16BYTE) {
+ 	uint16_t rxq_depth;
++	uint16_t txq_depth;
+ 	uint16_t rx_buff_len;
+ 	uint16_t mtu_size;
+ 
 -- 
 2.33.0
 
