@@ -2,57 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD640CC6B2D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 17:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4ABCC6B1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 17:40:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D94FB40615;
-	Wed, 14 Oct 2026 19:40:13 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 90F8540687;
+	Wed, 14 Oct 2026 19:40:20 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id C9A0140144
- for <dev@dpdk.org>; Wed, 14 Oct 2026 19:40:11 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 80AFD40687
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 19:40:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791999611;
+ s=mimecast20190719; t=1791999619;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=5b0v29M6ddV+x0UNt1zfQe4juhmnVrxWMUHBcTaAAcQ=;
- b=d54UrBCgEpBCjAbb96dkTPpQwuLzZnMjDzm440+oqbYQw1lWrlun44TUoAaocbheqGp6kO
- WPNNhlEyFEiXFtxnptFJz//GSglDFKi+nKhvzZzbWezC7ZE3kcu6yM3inprZ3zpzV+skhp
- FBlDGCytSRphQz5kZLOHZsP5biRNMR4=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ bh=0sRMZUsbADMUJNN4uafpSqP+Pc7V8ARQIFz0g0s+H1s=;
+ b=ckGNo/W8CTmRiu4oQb+2HeUd0+Mb1ohqAq5lf03yj9gpD7VDsceYTSuIm644rKxXYZYsVz
+ OrA9xd56ifu0Gis3GE/WQc2jGAwWixweYIDaYAOJM++l28CIHFhNLu//Ru963Hry+6+COj
+ gvsAy1uzLf5N9F6y7jmoUM3sfjANSbM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-595-Ka-FacFlOXiOU8U90A0diA-1; Wed,
- 14 Oct 2026 17:40:10 +0000
-X-MC-Unique: Ka-FacFlOXiOU8U90A0diA-1
-X-Mimecast-MFC-AGG-ID: Ka-FacFlOXiOU8U90A0diA_1791999609
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-693-bnD8K1F4PXaICNgZEX1B1Q-1; Wed,
+ 14 Oct 2026 17:40:15 +0000
+X-MC-Unique: bnD8K1F4PXaICNgZEX1B1Q-1
+X-Mimecast-MFC-AGG-ID: bnD8K1F4PXaICNgZEX1B1Q_1791999613
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 10BC11955F7E; Wed, 14 Oct 2026 17:40:09 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 12D4C19560AE; Wed, 14 Oct 2026 17:40:13 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id EB6EA30000E3; Wed, 14 Oct 2026 17:40:07 +0000 (UTC)
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 82709195608E; Wed, 14 Oct 2026 17:40:11 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: hemant.agrawal@nxp.com,
 	dev@dpdk.org
-Cc: Sachin Saxena <sachin.saxena@nxp.com>
-Subject: [PATCH 01/16] drivers/bus: cleanup device freeing in NXP bus scan
-Date: Wed, 14 Oct 2026 19:39:44 +0200
-Message-ID: <20261014174001.1830726-2-david.marchand@redhat.com>
+Cc: Sachin Saxena <sachin.saxena@nxp.com>, Hyong Youb Kim <hyonkim@cisco.com>,
+ Harman Kalra <hkalra@marvell.com>
+Subject: [PATCH 02/16] drivers/bus: fix FD leak during scan in NXP drivers
+Date: Wed, 14 Oct 2026 19:39:45 +0200
+Message-ID: <20261014174001.1830726-3-david.marchand@redhat.com>
 In-Reply-To: <20261014174001.1830726-1-david.marchand@redhat.com>
 References: <20260723135400.3621271-1-david.marchand@redhat.com>
  <20261014174001.1830726-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Hk3JawB_GR19_Imn85rgV5JZzBDGHLkSTgKcB6zkilQ_1791999609
+X-Mimecast-MFC-PROC-ID: bWJTZtW1lWRHLbrtgyh9TXaTs3CDQBCRLLDhgBBYdTE_1791999613
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -69,118 +70,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Following the scan/probe refactoring, in the DPAA bus driver scan method,
-the device list is empty at the time the pthread key object is allocated.
-This leaves only one location that wants to release the whole device
-list, so remove the dpaa_clean_device_list() helper.
+In theory, if the interrupt handle setup fails, an eventfd gets leaked.
 
-Remove the same helper in FSLMC bus for consistency.
+In practice, as long as the interrupt handle is valid, those calls can
+not fail, but this could get broken in the future so it is better to
+handle this error branch correctly.
+
+Fixes: d61138d4f0e2 ("drivers: remove direct access to interrupt handle")
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/bus/dpaa/dpaa_bus.c   | 15 ++-------------
- drivers/bus/fslmc/fslmc_bus.c | 22 ++++++----------------
- 2 files changed, 8 insertions(+), 29 deletions(-)
+ drivers/bus/dpaa/dpaa_bus.c    | 11 +++++++----
+ drivers/bus/fslmc/fslmc_vfio.c | 18 ++++++++++--------
+ 2 files changed, 17 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 368c8eeb98..06962a5b29 100644
+index 06962a5b29..5df2dff8f2 100644
 --- a/drivers/bus/dpaa/dpaa_bus.c
 +++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -193,8 +193,6 @@ dpaa_sec_available(void)
- 	return -1;
- }
- 
--static void dpaa_clean_device_list(void);
--
- static int
- dpaa_create_device_list(void)
- {
-@@ -336,21 +334,13 @@ dpaa_create_device_list(void)
- 	return 0;
- 
- cleanup:
--	dpaa_clean_device_list();
--	return ret;
--}
--
--static void
--dpaa_clean_device_list(void)
--{
--	struct rte_dpaa_device *dev = NULL;
--
- 	RTE_BUS_FOREACH_DEV(dev, &rte_dpaa_bus) {
- 		rte_bus_remove_device(&rte_dpaa_bus, &dev->device);
- 		rte_intr_instance_free(dev->intr_handle);
- 		free(dev);
--		dev = NULL;
- 	}
-+
-+	return ret;
- }
- 
- RTE_EXPORT_INTERNAL_SYMBOL(rte_dpaa_portal_init)
-@@ -699,7 +689,6 @@ rte_dpaa_bus_scan(void)
- 	ret = pthread_key_create(&dpaa_portal_key, dpaa_portal_finish);
- 	if (ret) {
- 		DPAA_BUS_LOG(DEBUG, "Unable to create pthread key. (%d)", ret);
--		dpaa_clean_device_list();
- 		return ret;
+@@ -648,11 +648,14 @@ static int rte_dpaa_setup_intr(struct rte_intr_handle *intr_handle)
+ 		return errno;
  	}
  
-diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index 032069ebf3..98bd898acb 100644
---- a/drivers/bus/fslmc/fslmc_bus.c
-+++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -43,19 +43,6 @@ rte_fslmc_get_device_count(enum rte_dpaa2_dev_type device_type)
- 	return fslmc_bus_device_count[device_type];
- }
+-	if (rte_intr_fd_set(intr_handle, fd))
+-		return rte_errno;
++	if (rte_intr_fd_set(intr_handle, fd) ||
++			rte_intr_type_set(intr_handle, RTE_INTR_HANDLE_EXT)) {
++		int err = rte_errno;
  
--static void
--cleanup_fslmc_device_list(void)
--{
--	struct rte_dpaa2_device *dev;
--
--	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
--		rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
--		rte_intr_instance_free(dev->intr_handle);
--		free(dev);
--		dev = NULL;
--	}
--}
--
- static int
- compare_dpaa2_devname(struct rte_dpaa2_device *dev1,
- 		      struct rte_dpaa2_device *dev2)
-@@ -305,6 +292,7 @@ fslmc_dev_compare(const char *name1, const char *name2)
- static int
- rte_fslmc_scan(void)
- {
-+	struct rte_dpaa2_device *dev;
- 	int ret;
- 	char fslmc_dirpath[PATH_MAX];
- 	DIR *dir;
-@@ -314,8 +302,6 @@ rte_fslmc_scan(void)
- 	char *group_name;
- 
- 	if (process_once) {
--		struct rte_dpaa2_device *dev;
--
- 		DPAA2_BUS_DEBUG("Fslmc bus already scanned. Not rescanning");
- 		RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
- 			dev->device.devargs = rte_bus_find_devargs(&rte_fslmc_bus,
-@@ -383,7 +369,11 @@ rte_fslmc_scan(void)
- 	closedir(dir);
- 
- 	/* Remove all devices in the list */
--	cleanup_fslmc_device_list();
-+	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
-+		rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
-+		rte_intr_instance_free(dev->intr_handle);
-+		free(dev);
+-	if (rte_intr_type_set(intr_handle, RTE_INTR_HANDLE_EXT))
+-		return rte_errno;
++		close(fd);
++		rte_intr_fd_set(intr_handle, -1);
++		return err;
 +	}
- scan_fail:
- 	DPAA2_BUS_DEBUG("FSLMC Bus Not Available. Skipping (%d)", ret);
- 	/* Irrespective of failure, scan only return success */
+ 
+ 	return 0;
+ }
+diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
+index e9bf6a6c5c..c8b5518956 100644
+--- a/drivers/bus/fslmc/fslmc_vfio.c
++++ b/drivers/bus/fslmc/fslmc_vfio.c
+@@ -1382,14 +1382,16 @@ rte_dpaa2_vfio_setup_intr(struct rte_intr_handle *intr_handle,
+ 			return fd;
+ 		}
+ 
+-		if (rte_intr_fd_set(intr_handle, fd))
+-			return -rte_errno;
+-
+-		if (rte_intr_type_set(intr_handle, RTE_INTR_HANDLE_VFIO_MSI))
+-			return -rte_errno;
+-
+-		if (rte_intr_dev_fd_set(intr_handle, vfio_dev_fd))
+-			return -rte_errno;
++		if (rte_intr_fd_set(intr_handle, fd) ||
++				rte_intr_type_set(intr_handle, RTE_INTR_HANDLE_VFIO_MSI) ||
++				rte_intr_dev_fd_set(intr_handle, vfio_dev_fd)) {
++			int error = -rte_errno;
++
++			close(fd);
++			rte_intr_fd_set(intr_handle, -1);
++			rte_intr_dev_fd_set(intr_handle, -1);
++			return error;
++		}
+ 
+ 		return 0;
+ 	}
 -- 
 2.54.0
 
