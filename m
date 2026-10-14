@@ -2,89 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E96E2CC6B2C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 20:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3121BC3DA7A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 20:34:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 377FB402A4;
-	Wed, 14 Oct 2026 22:16:40 +0200 (CEST)
-Received: from fhigh-b7-smtp.messagingengine.com
- (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
- by mails.dpdk.org (Postfix) with ESMTP id EEFD44013F
- for <dev@dpdk.org>; Wed, 14 Oct 2026 22:16:38 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 551C97A00FE
- for <dev@dpdk.org>; Wed, 14 Oct 2026 16:16:38 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-10.internal (MEProxy); Wed, 14 Oct 2026 16:16:38 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 53E3E4025A;
+	Wed, 14 Oct 2026 22:34:47 +0200 (CEST)
+Received: from fout-b6-smtp.messagingengine.com
+ (fout-b6-smtp.messagingengine.com [202.12.124.149])
+ by mails.dpdk.org (Postfix) with ESMTP id 5B26F4013F
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 22:34:45 +0200 (CEST)
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+ by mailfout.stl.internal (Postfix) with ESMTP id DE1421D00066
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 16:34:44 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-12.internal (MEProxy); Wed, 14 Oct 2026 16:34:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm2; t=1792008998; x=1792095398; bh=PzYQmBAY66iOIU7zlr3H+
- qLExFk2EScDPhf7rEuQzaU=; b=nTtnMQGUrL3CYU59Wf3dq6KyZJMSqbXCOBzpW
- 7l54SFT/FQoznEwCZ7wxZXnzkDHpsFTsLZIuWCwV1cz2rCZfJ+pW6/QsqK+fF5rk
- NGwrxlBEXSfHmZBt37axXsSBupKr7iki5fPGzGlGvBE5fZXLmzMyuLiNMJP9gW5h
- MBUqcg6suNVjYDdPuoa67UfWIHWtmRGdbB3vyGNiZbLt5xhlZyYzhy1jjF65pIPX
- 2jXzKpn8Ri9ojAqvUSGpPtun2nqmLem2iqmHSbY91PWkhX65eJ8Gww/GPFG4+1Ax
- b0VWhmFFzsepKN1hcZNnDGTe0iOfl8keu40Znw6B8PRhN9ulQ==
+ :to; s=fm2; t=1792010084; x=1792096484; bh=b6uQE//99teQr093jqY5Q
+ +Mug2UxYhk4NQ/B/XBhJeU=; b=FhcaN0dFfC0K/PqxkhM6bse5VpAHpLzbuPikH
+ ABZ8LML/lTsx90pk2u19E3DyP90FpyU53bL6B/wcg7hkmYfXkFl6wVQZLriWRA8c
+ Idn32A38ck35QrKW6l95qEYVrfCa5t382RnaS8QPOz3zGruwlM/Ao0s9hutzAiGI
+ eF+T/38oXZV7FqT+bzb6uwV28VbvPFBablcWBvAHZskRseebCjYFhw4hyJncX6YD
+ 2ypjizegjaX3wh7rR/CJPgjF9yzQkNtDGFvNqQWTGiu8/LwGIr/hfW2L0KBRRsZY
+ 4xh4wxltyQ2sOW0hYOb1rzGO4z+9NJQl66Pd9jiCQ4h73Rlsw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
  :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
- 1792008998; x=1792095398; bh=PzYQmBAY66iOIU7zlr3H+qLExFk2EScDPhf
- 7rEuQzaU=; b=Ua5Pv99zloIObjpzuohlhGtuhv2nTvZb7xRAkfSm3LwDB/nqZLu
- 1raVVJLdluujn5Iqe8nveZ+AfwAvuJmp6Gtud82Ic1j8vasUao1cXGOoUl+SvL2Q
- ZIPi8kE7XwAvuZQ2mDHGxVDiW5iW0p06BZtogpe821Rjz08YvNQORy+qpO2A67J0
- ptaPBxZcG2ufYQ7uzAeuU7R0aSNyeZxCu+iNnOTdKQFdUOeQbbbbChM5PuO6aRFg
- AEbjOFEnUauiD/ckOIcA1z26I5zc3xtMuZUs291p3ivaRA+dKjgzjwej0Tp+iJVv
- 69hA4wvUAf3o3YRI4u/RY+GeiSP/LKeL8Eg==
+ 1792010084; x=1792096484; bh=b6uQE//99teQr093jqY5Q+Mug2UxYhk4NQ/
+ B/XBhJeU=; b=x+Gay8ipj3Wk2J3xhAxVo4um2tsvlaGExWlM8vsMVuoqNexsngz
+ ebaSJA1fu72ijLKd+7OidoliAytgqKObOpKBPpSaAKdpqS48wIQ06/qzhMYjCnKf
+ F6A5FNUfX9XlM04CIsXs1vVZ8eX/TQi4+P9Dnyb8cpkwLBDL3YsjOIwE0ep+iMcT
+ n7hITrsyIeeM1PU6aEVLeBRBw91zhFIvcYP5k5OxJJOYK2yKn4pjuTMdXYv0ruxV
+ 1vmuKCxtqLHeb+/jFuQ+CuZQDQqU4oOT76ga8KFLrehiRAvZKsNge04THiru+eqb
+ MlxNndsZokdr4PUdYGLieEggihqY6hOx2mg==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
  repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1792008998; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1792010084; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:CZ4WL5PYAjjxJTnFHCTARH8sjJQOfCzReAjwnIiOewfMnMj
- ThtJA4GiCIGHSjOQ5LJsau0oASYRMIRB+Ma/o9yKpIlJnVyQt+AU4gf3rlqqf8Ag
- dbtwJRr5PtBSRmUdiXbXghwmtUBKFAy1a4FQ4IvZp1tNuwmGTBnHyCZ4IZ7D5fbz
- 2i4xJNic8yPEkAJQW/1CVUF6gCNtTE2q01Witr8tNay+BUiwaYwB9VkJ312PqcYW
- QArP80lEy7grngE1l+0wt3K0ldR49sbA4wiItqBD6/j0aaY9O2kciCodiDYCztRb
- vXhK9eYmfpJGR1Lfq38alr6kmp+w/q478tcHD+w==;
+ s=fm2:rsa-sha256:k5qIzHUr9lF1cJonAlXYNAgWPGAyFJWqsF3AJYW/eFMQ2bt
+ lFm3XK0SYh4oWZO1Z6fT5pEZVelPFT+sqeTMRhEwvclcl+eqFLei/37NumiERZeM
+ FHJ+qTodoZLWfhjbBch+m/+uvOmUKtqBTc2/oTHVqLDqtksqa8GzmQJKqLYbik/W
+ YWc7mDQWz6U/xbtp2E6AdTdN924S4YnJ6tJNP3DJKdIId+nO783rT9qlRGSqBeet
+ cR+7m3Tj9gmc9B5SLEHn+fTB3Z0xPfUGOnAij8uq01QGBpBdK/V/eSzaop1E5wpl
+ 5lg4/LDGzhSMcmznebT/y1ez6nw1tbIw+rSQOZA==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
  repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
  action=mi-m=1; hc=9;
  hn=cc,content-transfer-encoding,date,feedback-id,from,
  message-id,mime-version,subject,to;
 Message-Instance: m=1;
- h=sha256:/oOfA4n8r89IiSdR6s4Cn+B9pILnRECaCHF7c/fqjUY=:v5awn5ij+NBXCyZbtHX/Mvf35IxHBtbixJARlxSyUmE=;
-X-ME-Sender: <xms:JePPaqQmDKlJlI5WMEOGvmKZLqylpx6uJnQsoq2B-_M7Zsv0K7CgZA>
- <xme:JePPakG3q1nInEx-Kz1oTu5TchGFva9EtCeGFc5l7QJ8MZPTCOBK444kANblItcJv
- iUCO4bdewYrWMgzciwwxOGnlqvcQa84uBJHskUafwK3_3MHNJllgA>
-X-ME-Received: <xmr:JePPam8fQp6qDpcRZZE3TBe4xliqxq9wiX1E2P2b7uxk8cIXtAe0zPWenzsfjIUba-ROZdHMozqanh1ws7gkR7ZHQesh>
-X-ME-Proxy-Cause: dmFkZTGm/K2d7EjUeLZTb8XO2A7jPppqidappRbCj92FmkhGpLSixV0fqnt+cN969boWZM
- +hYnWJt45FveTJnAYB0A6YXX3nvtOVbdi8Gab+Qbidtww9+B5/FYJhF3Npz7WyVm24xuIJ
- bz3C42SlFC+3cfFQ/tls1iBO19W2g0zujVPP+0Kx/vYs6ApMYnIYwOw8tgDigjuOMR2EJw
- mtfcRVdNLu9Xfqb5PvXgMxunQuWO16MVyA+LoQXFnqSSAn3jNGehRoQ+rU3YbGLDOTjdtL
- CT86ZqHqZdWf8ZYR5Oazh4XLbWCRCuPZuGZxERuc7jBSZlCd8Q8Cxkk08GLkML3JSh4yD/
- r0x1oJG10cAWRcdQMU8OQmG6GXNsGSEaGqjprCTdnhuhRel4vRGZEVYJRBlU15RdJraAx8
- 8B6MpPfiMLw/E1xHVEXuyE/9Z/MTfK131PSCLJ8wZJ9WDwGgweKyXivq9SQGxhP0z3AXiR
- nnLXoYphDBKNxzDR8wBGJ924zNQaGTYe5VZGmUT3uWCWGoz8h3nRjuJAUu4ZH3z/0lF32E
- 1+dGPRQwajtMrxlX7Fb6VXgPj2KPTJq9ApJUyE1csPJ15DnfqXbtsXEX3y8A+aOBXS9P6D
- 6u8ON1++L2eSm8GQvscGXoYaG95NfWC6txiMiDbfBqCc7FBTG0QD5wXlDKlQ
-X-ME-Proxy: <xmx:JuPPauITi7gtV9e27g7Kkjtta5HefIq8bbUEI5PwawbObUGYH9CQew>
- <xmx:JuPPapaL6gvi3uU8JyEGcCP55Lg5sOBT9fQP8ulRt3FA_zjaGN1dkw>
- <xmx:JuPPaoK2WHeL7igzC2Kf4ClkX5qFKj9Xi7fIFHrwWbiYS2foRB2n6w>
- <xmx:JuPPavD89-rtbtaXNlq4Egyngz0v4ZCR_SxjJGBSQrG929Fx3B0EHw>
- <xmx:JuPPapyFaEX5YruUEYkb8x7bK20hGzdgQ2S1Wc3hcqphXJd1S11yVgRd>
+ h=sha256:XFfmXh5ony7c3LIdnJQxShZjuwddtHnyDRiV2oMdAUE=:di0Mzsfm38m122/VQbsNdupkMqQea8bwksNuNxFwk1o=;
+X-ME-Sender: <xms:ZOfPauFcSmBbxMlqMNu7ke5Yvfp4JtNuzSKUbQzidkhUhpk12Ni16w>
+ <xme:ZOfPajqdHypDRmdARcNkWdMkwxidV1srmRQTHn7qB2KfYG69mAgod6DX-TCDl3-Gl
+ TaQqb0u9BcgSVegCayrpLwgkvHYPkz2v-QjZMnCvOmjVppYmmXwVIk>
+X-ME-Received: <xmr:ZOfPanTAxG_mqwTWwHJkuUP7C7uloZNUQeFiQv3V7Klr6-j5UOFbHeW22REa-hQ_TpAJ1tzeJddPAHu_XkBNr9cGHfz2>
+X-ME-Proxy-Cause: dmFkZTGDuilSxD8v6ZYfaFgXiMgPqam5gGrMdTA5bqAWB4VQjAYHhWIW5+xAgcdVjLETPU
+ wS2yen6shPHQiQGC76ux7vICmqxRand+BI7wDF17jSHEf9IuNmgCvUYMI3go0/x+fG3UfZ
+ SsX1mtnMc7/kaiTp1aAtrmuEyfB7RdM87Js9tmBGhlw7Aa5ipI+31x2LgK8y5/ytmFBkNp
+ 1YeY9WVH17Z4n6phbRYqmHtvI0X9lTSmnaP0Rw+8ISrWaYMH9QkGXMbtDTq/fPMS4Vc3mM
+ ZM97pgz6bbRCT1bQ2J+Gk6psp+iuq7jd0sS4pukd1ShOkn+vaqy8vcD0/dTgo1Hrb/2YSX
+ 1KTHBNtpyzh7j/j7XnBci9aP8xFhspztmJw+z1mb2hQtfOqlswmB3qKBsWpfcWguuNppYL
+ xxPAWF+MWCMGw5nOyNJEkx82cb087/WgtQpfXfgV6PHBHyzdmZyBBI66IHNQ5yDOYxzTqp
+ h4vaql2PCM8C4Of3WsFgZuv0CMDRm4S5EqYuRUtcAFGSwPFlEKrAqUJk1FHJDVZY8mf1st
+ RpwcqSCuNYvOgmyd/qPQEoTSEg24zfu4Wt4j5iJh9YZ+3n8R2deBd5G7KxWOI9/veqbTgb
+ Op1EWNbgoBTN/PzJXmq6JZKjgn78ixIlXYT/o+JmFmuYlzmybr997exfhwUQ
+X-ME-Proxy: <xmx:ZOfPagMhcBBNVrMozIgv38nUfCqzs0eBsMq63ETOXfKnalSFiVXylQ>
+ <xmx:ZOfPaqPIqPoIfb0i5ZwDpjVDXqsmgDXgWDdNJtDcJb658rpiWUER2g>
+ <xmx:ZOfPagtjLpdYJylNs5AcirVUKvzhHv99XSXqkfw6F5K-pSnbFdaJ7w>
+ <xmx:ZOfPakWJQU7EVjv3ka--_uuBo0U1W1xf3i3SRnwnAckQt_OaMN29VQ>
+ <xmx:ZOfPah1IfIKqcDcYKcb6nyP3WReqsaOw8lNb1pOkTd5M79nFaLJZBE1U>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 14 Oct 2026 16:16:37 -0400 (EDT)
+ 14 Oct 2026 16:34:43 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: stable@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH] eal: enforce internal API check with Clang
-Date: Wed, 14 Oct 2026 22:16:27 +0200
-Message-ID: <20261014201627.571496-1-thomas@monjalon.net>
+Cc: Anatoly Burakov <anatoly.burakov@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH] net/ixgbe: avoid private driver include in testpmd
+Date: Wed, 14 Oct 2026 22:34:34 +0200
+Message-ID: <20261014203435.583064-1-thomas@monjalon.net>
 X-Mailer: git-send-email 2.55.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -101,70 +101,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The __rte_internal macro is intended to prevent calls
-to internal API functions unless ALLOW_INTERNAL_API is defined.
-Unfortunately the check misses some calls to internal API
-when built with GCC or Clang.
-Clang can be better to diagnose such cases.
+Testpmd commands should use the driver's public API
+rather than access its private structures directly.
+Note: ixgbe_testpmd.c should be considered as part of testpmd.
 
-Clang 14 and later support the error attribute
-and therefore select it instead of diagnose_if for __rte_internal.
-Unlike diagnose_if, the error attribute only rejects
-internal API calls that remain after optimization.
-Internal API calls can therefore go easily unnoticed,
-making internal API checks less strict with recent Clang.
+ixgbe_testpmd.c includes ixgbe_ethdev.h only to check whether bypass
+operations are available through the private adapter structure.
 
-Prefer diagnose_if when available to keep strong Clang diagnostics.
-Retain the error attribute as a fallback for GCC.
-
-Fixes: 4ab63cd60ceb ("eal: fix internal ABI tag with clang")
-Cc: stable@dpdk.org
+Rely on the public bypass API to check availability
+and handle -ENOTSUP in the commands.
+Remove ixgbe_ethdev.h, ethdev_driver.h
+and the now unnecessary RTE_LIBRTE_IXGBE_BYPASS definition.
 
 Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 ---
- lib/eal/include/rte_compat.h | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_testpmd.c | 55 ++++++++++---------------
+ 1 file changed, 21 insertions(+), 34 deletions(-)
 
-diff --git a/lib/eal/include/rte_compat.h b/lib/eal/include/rte_compat.h
-index 97c1540bd0..b62e49d676 100644
---- a/lib/eal/include/rte_compat.h
-+++ b/lib/eal/include/rte_compat.h
-@@ -32,17 +32,7 @@ __attribute__((section(".text.experimental")))
- #define __has_attribute(x) 0
- #endif
+diff --git a/drivers/net/intel/ixgbe/ixgbe_testpmd.c b/drivers/net/intel/ixgbe/ixgbe_testpmd.c
+index e0d161eafe..e209093477 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_testpmd.c
++++ b/drivers/net/intel/ixgbe/ixgbe_testpmd.c
+@@ -2,11 +2,12 @@
+  * Copyright(c) 2010-2016 Intel Corporation.
+  */
  
--#if !defined ALLOW_INTERNAL_API && __has_attribute(error) /* For GCC */
+-/* Required for ixgbe internal structures to be aligned with the driver */
+-#define RTE_LIBRTE_IXGBE_BYPASS
++#include <errno.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+ 
+-#include <ethdev_driver.h>
+-#include "ixgbe_ethdev.h"
++#include <rte_string_fns.h>
+ #include "rte_pmd_ixgbe.h"
+ 
+ #include <cmdline_parse_etheraddr.h>
+@@ -621,20 +622,6 @@ static cmdline_parse_inst_t cmd_tc_min_bw = {
+ /* The NIC bypass watchdog timeout. */
+ uint32_t bypass_timeout = RTE_PMD_IXGBE_BYPASS_TMT_OFF;
+ 
+-static inline bool
+-check_bypass_enabled(portid_t port_id)
+-{
+-	struct ixgbe_adapter *adapter;
 -
--#ifdef RTE_TOOLCHAIN_MSVC
--#define __rte_internal
--#else
--#define __rte_internal \
--__attribute__((error("Symbol is not public ABI"), \
--section(".text.internal")))
--#endif
+-	adapter = rte_eth_devices[port_id].data->dev_private;
+-	if (adapter->bps.ops.bypass_rw == NULL) {
+-		fprintf(stderr, "Bypass is not enabled on this port.\n");
+-		return false;
+-	}
 -
--#elif !defined ALLOW_INTERNAL_API && __has_attribute(diagnose_if) /* For clang */
-+#if !defined ALLOW_INTERNAL_API && __has_attribute(diagnose_if) /* For Clang */
+-	return true;
+-}
+-
+ /* Enable bypass mode */
+ struct cmd_config_bypass_result {
+ 	cmdline_fixed_string_t port;
+@@ -704,9 +691,6 @@ cmd_set_bypass_mode_parsed(void *parsed_result,
+ 	portid_t port_id = res->port_id;
+ 	int32_t rc = -EINVAL;
  
- #ifdef RTE_TOOLCHAIN_MSVC
- #define __rte_internal
-@@ -55,6 +45,16 @@ section(".text.internal"))) \
- _Pragma("GCC diagnostic pop")
- #endif
+-	if (!check_bypass_enabled(port_id))
+-		return;
+-
+ 	if (!strcmp(res->value, "bypass"))
+ 		bypass_mode = RTE_PMD_IXGBE_BYPASS_MODE_BYPASS;
+ 	else if (!strcmp(res->value, "isolate"))
+@@ -716,7 +700,9 @@ cmd_set_bypass_mode_parsed(void *parsed_result,
  
-+#elif !defined ALLOW_INTERNAL_API && __has_attribute(error) /* For GCC */
-+
-+#ifdef RTE_TOOLCHAIN_MSVC
-+#define __rte_internal
-+#else
-+#define __rte_internal \
-+__attribute__((error("Symbol is not public ABI"), \
-+section(".text.internal")))
-+#endif
-+
- #else
+ 	/* Set the bypass mode for the relevant port. */
+ 	rc = rte_pmd_ixgbe_bypass_state_set(port_id, &bypass_mode);
+-	if (rc != 0)
++	if (rc == -ENOTSUP)
++		fprintf(stderr, "Bypass is not enabled on this port.\n");
++	else if (rc != 0)
+ 		fprintf(stderr, "\t Failed to set bypass mode for port = %d.\n",
+ 			port_id);
+ }
+@@ -773,9 +759,6 @@ cmd_set_bypass_event_parsed(void *parsed_result,
+ 	uint32_t bypass_event = RTE_PMD_IXGBE_BYPASS_EVENT_NONE;
+ 	uint32_t bypass_mode = RTE_PMD_IXGBE_BYPASS_MODE_NORMAL;
  
- #ifdef RTE_TOOLCHAIN_MSVC
+-	if (!check_bypass_enabled(port_id))
+-		return;
+-
+ 	if (!strcmp(res->event_value, "timeout"))
+ 		bypass_event = RTE_PMD_IXGBE_BYPASS_EVENT_TIMEOUT;
+ 	else if (!strcmp(res->event_value, "os_on"))
+@@ -803,6 +786,10 @@ cmd_set_bypass_event_parsed(void *parsed_result,
+ 			rc = rte_pmd_ixgbe_bypass_wd_timeout_store(port_id,
+ 				bypass_timeout);
+ 		}
++		if (rc == -ENOTSUP) {
++			fprintf(stderr, "Bypass is not enabled on this port.\n");
++			return;
++		}
+ 		if (rc != 0) {
+ 			fprintf(stderr,
+ 				"Failed to set timeout value %u for port %d, errto code: %d.\n",
+@@ -813,7 +800,9 @@ cmd_set_bypass_event_parsed(void *parsed_result,
+ 	/* Set the bypass event to transition to bypass mode. */
+ 	rc = rte_pmd_ixgbe_bypass_event_store(port_id, bypass_event,
+ 		bypass_mode);
+-	if (rc != 0)
++	if (rc == -ENOTSUP)
++		fprintf(stderr, "Bypass is not enabled on this port.\n");
++	else if (rc != 0)
+ 		fprintf(stderr, "\t Failed to set bypass event for port = %d.\n",
+ 			port_id);
+ }
+@@ -952,11 +941,13 @@ cmd_show_bypass_config_parsed(void *parsed_result,
+ 		"power supply off",
+ 		"timeout"};
+ 
+-	if (!check_bypass_enabled(port_id))
+-		return;
+-
+ 	/* Display the bypass mode.*/
+-	if (rte_pmd_ixgbe_bypass_state_show(port_id, &bypass_mode) != 0) {
++	rc = rte_pmd_ixgbe_bypass_state_show(port_id, &bypass_mode);
++	if (rc == -ENOTSUP) {
++		fprintf(stderr, "Bypass is not enabled on this port.\n");
++		return;
++	}
++	if (rc != 0) {
+ 		fprintf(stderr, "\tFailed to get bypass mode for port = %d\n",
+ 			port_id);
+ 		return;
+@@ -985,10 +976,6 @@ cmd_show_bypass_config_parsed(void *parsed_result,
+ 				modes[event_mode]);
+ 		}
+ 	}
+-	if (rc != 0)
+-		fprintf(stderr,
+-			"\tFailed to get bypass configuration for port = %d\n",
+-			port_id);
+ }
+ 
+ static cmdline_parse_token_string_t cmd_showbypass_config_show =
 -- 
 2.55.0
 
