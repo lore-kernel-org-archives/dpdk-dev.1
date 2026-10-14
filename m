@@ -2,60 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9962ACC6B1D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 15:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A34CC6B1D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 15:07:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A21CE40DF6;
-	Wed, 14 Oct 2026 17:01:22 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5874540DD8
- for <dev@dpdk.org>; Wed, 14 Oct 2026 17:01:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791990080;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=EmQLgjwZpD+W+XZAoT48KjwzvUzuilzeb3lD3l4FT5g=;
- b=Vm5EizyvbpW8io07pHlJHsARdPJhrf3vdsG1hGI4SSNcjL+H5LbgI1+0amnYvh3zLbcFZS
- ABbNg147mCXdyIlxWlG5Svxl+lHpeImwS1M7s6pBFIiHkHWmlrBujU9jB39xZh6mnOsLUU
- QZepLf938+9N8lAzbvW3Y0flfQNOQZI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-548-Q3bv-7P5MoquuRhBcmF7gg-1; Wed,
- 14 Oct 2026 15:01:15 +0000
-X-MC-Unique: Q3bv-7P5MoquuRhBcmF7gg-1
-X-Mimecast-MFC-AGG-ID: Q3bv-7P5MoquuRhBcmF7gg_1791990074
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 532A7180075A; Wed, 14 Oct 2026 15:01:14 +0000 (UTC)
-Received: from max-p1.redhat.corp (headnet04.pony-001.prod.iad2.dc.redhat.com
- [10.2.32.116])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 0EE211800495; Wed, 14 Oct 2026 15:01:12 +0000 (UTC)
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Alexandru-Ionut Jipa <jipaionut@gmail.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>
-Subject: [PATCH 14/14] gso: fix overflow when writing to very small buffers
-Date: Wed, 14 Oct 2026 17:00:49 +0200
-Message-ID: <20261014150049.2540538-14-maxime.coquelin@redhat.com>
-In-Reply-To: <20261014150049.2540538-1-maxime.coquelin@redhat.com>
-References: <20261014150049.2540538-1-maxime.coquelin@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 48F70402A4;
+	Wed, 14 Oct 2026 17:07:43 +0200 (CEST)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id A22984026E
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 17:07:42 +0200 (CEST)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-2e618db81c0so9514115ad.2
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 08:07:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791990461;
+ x=1792595261; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=JF5WCkbHjFSNWd/BMSKgmDtXS2s8UOtTBAOhjEjPg8g=;
+ b=JxL2ZBrNttklwuwqArkAEGWRZ21hf6KO4NMhZyg/X5KCqCC2tqrRe8s4EfO2IihjU3
+ 2qObsSap4j4QwgKAvNA0w3qFQzSnAWXBg2aNzdC939cxNcpQ7410/f+nmuhrDZPhSyW+
+ UV4hNdzvTgSQbKyHblSN7T8l2jc/ewyLcAnLWAQxGLMHFlzos3sAQM5WIfJGVeXn3iOP
+ 9CtY3G6oLtJcFEQXE8ReJNdFSWJNod1d3T0kzejKUlz3zoLqO/x0Ea8AnGWNN8su9GD1
+ KIBYpbsRgQlAkpJuDfGKlT+Ggk//EXGxc5G1Nd5kC1aMWmPU5mREuPkAoSKcRuZ0FKL6
+ uUjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791990461; x=1792595261;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=JF5WCkbHjFSNWd/BMSKgmDtXS2s8UOtTBAOhjEjPg8g=;
+ b=xvUXyNbqD7g2gkq1v9pkaqnFX+5uPRfdejYKxWB40Si3m/ppal8/4da867+UerNO6D
+ t5Ur+sE3NHV5AdK3ExRFOsyoOd1/+bWiBB5Lb4GQ5y/4Hm2f4w9fTaw61rDoeme71LqY
+ PVhOgEe+U2422rRELF2WPDrDqv1JC6sAxDsj/naX55kPwt3YbhPzdNzWnvwDb36ZQSqL
+ H57b1GOLoDuOV0D0p7ZvElx401oqo4bP8JrXPPBDRV/BRnKrVA7dR3m41Q8+GdxCCaTJ
+ JuWv8FACVtJKsuugpOxQSo5NJspzdOxl9BYgQNLJP9zIa8V4zTFlYla5b7+JDtHNxdxh
+ FVUQ==
+X-Gm-Message-State: AFq9FYLCyvirHhd3hNq33+OYaNAKFd/+HqaSBl9P054gpsfbBOboZ0YV
+ M/9L4vwSIBKJE+SZt7e0mKnd+UYW6XcsoWH3/OOjLOWC5HBZOHX5YBBMfNt0bShNq38=
+X-Gm-Gg: AYBFou2qk1L76F0svV/brRD6LUMWnF7+tI2HlO2vROZ7ilBTgAf2uAhLpUxjS/uKgzU
+ oKosNmsflCN35UN3exlnY2dpIXiNqIROSWp45TD6bDHaaV9UEy3Y1r1tEHiQT7jwE8GHFALBaUe
+ fy9Wd3JgXNM303d7zxnPWiBIebwudoIZQ6oHArIsAHtcLoxxkTbKPOm7hs2zxBIwlurzg4ZsyLk
+ ZUymZye4nVQTq0Qo5da2jOzRq+A54+kqDXyFIXEpY5YLyqo2AY4+OkJHGsVsB6k2v0RleVwa6hV
+ A3YsCUxLHpvCehFUPioUHtDPLhLfqsNHyCpGaZz6yw0RFn/rV29FStGFxHszoMcte6NRrKjQ7Sb
+ /EXFtRj9s4IB7zOVRN0/k4R+8HwlbIgJhanGTIKaYUbXIZMUOUR+2lnKd3f4kEQkkCGnOpovoQn
+ hzKXTSZKTeK7DC9Z81ujVO+mF8MFS1lb8I9z8fkkSKWPlGAnkooQJMYtTYNdOAAWNfYsWxVjDtx
+ M7wi5XP6F2CAxSl7nD4fczwSGKvyBav+cLAn3st
+X-Received: by 2002:a17:902:d50a:b0:2e3:1bb4:610d with SMTP id
+ d9443c01a7336-2e842f31562mr141591705ad.50.1791990461448; 
+ Wed, 14 Oct 2026 08:07:41 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2e8422e4cf3sm69198915ad.72.2026.10.14.08.07.40
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 14 Oct 2026 08:07:40 -0700 (PDT)
+Date: Wed, 14 Oct 2026 08:07:39 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+Cc: <dev@dpdk.org>, Jakub Grajciar <jgrajcia@cisco.com>, <stable@dpdk.org>
+Subject: Re: [PATCH 1/6] net/memif: guard against empty Tx burst
+Message-ID: <20261014080739.45ef24b5@phoenix.local>
+In-Reply-To: <20261014091257.1051190-2-sriram.yagnaraman@ericsson.com>
+References: <20261014091257.1051190-1-sriram.yagnaraman@ericsson.com>
+ <20261014091257.1051190-2-sriram.yagnaraman@ericsson.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 9OzYR3AarJiwssvT75IB7dhKn_Fd1HujYOjCLmYGiVw_1791990074
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,136 +83,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Bruce Richardson <bruce.richardson@intel.com>
+On Wed, 14 Oct 2026 11:12:52 +0200
+Sriram Yagnaraman <sriram.yagnaraman@ericsson.com> wrote:
 
-The gso library never checks that the buffers used for the packet
-headers are actually big enough to handle those headers, leading to a
-memcpy overflow if the allocated mbuf size is too small. Add some
-appropriate checks.
+> eth_memif_tx() reads bufs[0]->pool before any check on nb_pkts, to pick
+> the mempool for its fast-path single-pool test. A caller that passes
+> nb_pkts == 0 therefore dereferences bufs[0], which is out of bounds for
+> an empty burst. Return early when there is nothing to transmit.
+> 
+> Fixes: 09c7e63a71f9 ("net/memif: introduce memory interface PMD")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+> ---
 
-CVE-2026-100236
-Bugzilla ID: 2047
-
-Fixes: 119583797b6a ("gso: support TCP/IPv4 GSO")
-Cc: stable@dpdk.org
-
-Reported-by: Alexandru-Ionut Jipa <jipaionut@gmail.com>
-Acked-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- .mailmap                  |  1 +
- lib/gso/gso_common.c      | 12 ++++++++++++
- lib/gso/gso_tcp4.c        |  5 ++---
- lib/gso/gso_tunnel_tcp4.c |  6 +++---
- lib/gso/gso_tunnel_udp4.c |  4 ++--
- lib/gso/gso_udp4.c        |  5 ++---
- 6 files changed, 22 insertions(+), 11 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index 2e348c3bce..38d89d9e87 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -71,6 +71,7 @@ Alexander Skorichenko <askorichenko@netgate.com>
- Alexander Solganik <solganik@gmail.com>
- Alexander V Gutkin <alexander.v.gutkin@intel.com>
- Alexandre Ferrieux <alexandre.ferrieux@orange.com>
-+Alexandru-Ionut Jipa <jipaionut@gmail.com>
- Alexey Kardashevskiy <aik@ozlabs.ru>
- Alexey Simakov <bigalex934@gmail.com>
- Alfredo Cardigliano <cardigliano@ntop.org>
-diff --git a/lib/gso/gso_common.c b/lib/gso/gso_common.c
-index 378bf2c6aa..481c3b3beb 100644
---- a/lib/gso/gso_common.c
-+++ b/lib/gso/gso_common.c
-@@ -50,8 +50,20 @@ gso_do_segment(struct rte_mbuf *pkt,
- 	struct rte_mbuf *hdr_segment, *pyld_segment, *prev_segment;
- 	uint16_t pkt_in_data_pos, segment_bytes_remaining;
- 	uint16_t pyld_len, nb_segs;
-+	uint16_t direct_buf_size, direct_tailroom;
- 	bool more_in_pkt, more_out_segs;
- 
-+	/*
-+	 * The header must be fully contained in pkt's first segment and must fit
-+	 * in a freshly allocated direct_pool mbuf.
-+	 */
-+	direct_buf_size = rte_pktmbuf_data_room_size(direct_pool);
-+	if (unlikely(direct_buf_size <= (uint16_t)RTE_PKTMBUF_HEADROOM))
-+		return -EINVAL;
-+	direct_tailroom = direct_buf_size - RTE_PKTMBUF_HEADROOM;
-+	if (unlikely(pkt_hdr_offset > pkt->data_len || pkt_hdr_offset > direct_tailroom))
-+		return -EINVAL;
-+
- 	pkt_in = pkt;
- 	nb_segs = 0;
- 	more_in_pkt = 1;
-diff --git a/lib/gso/gso_tcp4.c b/lib/gso/gso_tcp4.c
-index e2ae4aaf6c..d086106355 100644
---- a/lib/gso/gso_tcp4.c
-+++ b/lib/gso/gso_tcp4.c
-@@ -53,11 +53,10 @@ gso_tcp4_segment(struct rte_mbuf *pkt,
- 		return 0;
- 	}
- 
--	/* Don't process the packet without data */
-+	/* Don't process the packet without data or hdr larger than seg size */
- 	hdr_offset = pkt->l2_len + pkt->l3_len + pkt->l4_len;
--	if (unlikely(hdr_offset >= pkt->pkt_len)) {
-+	if (unlikely(hdr_offset >= pkt->pkt_len || hdr_offset >= gso_size))
- 		return 0;
--	}
- 
- 	pyld_unit_size = gso_size - hdr_offset;
- 
-diff --git a/lib/gso/gso_tunnel_tcp4.c b/lib/gso/gso_tunnel_tcp4.c
-index 3a9159774b..f0d1a6efd6 100644
---- a/lib/gso/gso_tunnel_tcp4.c
-+++ b/lib/gso/gso_tunnel_tcp4.c
-@@ -77,10 +77,10 @@ gso_tunnel_tcp4_segment(struct rte_mbuf *pkt,
- 	}
- 
- 	hdr_offset += pkt->l3_len + pkt->l4_len;
--	/* Don't process the packet without data */
--	if (hdr_offset >= pkt->pkt_len) {
-+	/* Don't process the packet without data or hdr larger than seg size */
-+	if (hdr_offset >= pkt->pkt_len || hdr_offset >= gso_size)
- 		return 0;
--	}
-+
- 	pyld_unit_size = gso_size - hdr_offset;
- 
- 	/* Segment the payload */
-diff --git a/lib/gso/gso_tunnel_udp4.c b/lib/gso/gso_tunnel_udp4.c
-index 4fb275484c..43e4103bc7 100644
---- a/lib/gso/gso_tunnel_udp4.c
-+++ b/lib/gso/gso_tunnel_udp4.c
-@@ -78,8 +78,8 @@ gso_tunnel_udp4_segment(struct rte_mbuf *pkt,
- 		return 0;
- 
- 	hdr_offset += pkt->l3_len;
--	/* Don't process the packet without data */
--	if ((hdr_offset + pkt->l4_len) >= pkt->pkt_len)
-+	/* Don't process the packet without data or hdrs larger than seg size */
-+	if ((hdr_offset + pkt->l4_len) >= pkt->pkt_len || hdr_offset >= gso_size)
- 		return 0;
- 
- 	/* pyld_unit_size must be a multiple of 8 because frag_off
-diff --git a/lib/gso/gso_udp4.c b/lib/gso/gso_udp4.c
-index 5d0186aa24..e2ec84759d 100644
---- a/lib/gso/gso_udp4.c
-+++ b/lib/gso/gso_udp4.c
-@@ -62,10 +62,9 @@ gso_udp4_segment(struct rte_mbuf *pkt,
- 	 */
- 	hdr_offset = pkt->l2_len + pkt->l3_len;
- 
--	/* Don't process the packet without data. */
--	if (unlikely(hdr_offset + pkt->l4_len >= pkt->pkt_len)) {
-+	/* Don't process the packet without data or header larger than seg size. */
-+	if (unlikely(hdr_offset + pkt->l4_len >= pkt->pkt_len || hdr_offset >= gso_size))
- 		return 0;
--	}
- 
- 	/* pyld_unit_size must be a multiple of 8 because frag_off
- 	 * uses 8 bytes as unit.
--- 
-2.56.0
-
+Calling tx_burst with 0 packets is undefined. Ok to check but drivers
+are not required.
