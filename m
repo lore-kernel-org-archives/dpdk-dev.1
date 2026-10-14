@@ -2,41 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D41CC6B1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 15:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD79CC6B1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 15:14:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 845A140E4C;
-	Wed, 14 Oct 2026 17:10:14 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.4])
- by mails.dpdk.org (Postfix) with ESMTP id A67EC40616
- for <dev@dpdk.org>; Wed, 14 Oct 2026 17:09:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=NZjyi0ng93eiP79dRuY2FVXdz5zUtveD8px7yW/0DtY=;
- b=nIOaYLMaYxZSGI7KWwMP3yRWr5WhHEalNYRyIL8BvnCEzPBgos6LML1c+p/bM3
- yFuiIJwRNuZYezGRaH+1Jpic1HsJ0fNKpWiM3/EE5R3cyNAP56r//2FLRLEctvT2
- bw3fyQ4a9p1F3D6nyDOlTHqy9XNnRWjPdr9mdQqSLVDWk=
-From: Jiacheng Ye <yejiacheng4@h-partners.com>
+	by mails.dpdk.org (Postfix) with ESMTP id CFEE0406BA;
+	Wed, 14 Oct 2026 17:14:15 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 149E340144;
+ Wed, 14 Oct 2026 17:14:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1791990854; x=1823526854;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=R7sS9sLnt4taeTU6/UJh6lTtnnUqQvCOB/PAzQND3xs=;
+ b=UeW6lIUxQ7yuI1gbqFsV7ItaoPfIXUj6oAzAZ0t2gN05ynbrRGpJuoOP
+ DkaHDh0vp18qrNN/dnzuQ/dc7FBgqKKZuDtguXaxBHlmt5PLg/NTHByKQ
+ cqnxxdAQhCFY1n9p1yeM6VMrKK0s/VvQsjKYggz5fXKRafByfwRxiy4sP
+ vK8+l0SkxDT/ZCaBq3WtdqT+J4GVlwPGegVJ5Ulqi4zeFb55ig+68F71n
+ ElxxF11Tx/PEZYF4LOqJBYYCPSGEGX4+wwqwTMkfImn+evpA+eBJianUF
+ hlpjNPMZZVEiFLrLbTZ3Mg1eQGeLPQQH8enya5DgpCaXbfhIPQGadYpoU Q==;
+X-CSE-ConnectionGUID: JH+Jqy+bRt6mUOAnvWEv6g==
+X-CSE-MsgGUID: /weJePAzSD2dK51jm7ECng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="642321"
+X-IronPort-AV: E=Sophos;i="6.27,158,1787036400"; 
+   d="scan'208";a="642321"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Oct 2026 08:14:02 -0700
+X-CSE-ConnectionGUID: z+Lm8qiXTVacrVwri2bAsw==
+X-CSE-MsgGUID: Jd2Oib8oQIedzZNMmV2S0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,158,1787036400"; 
+   d="scan'208";a="1785391"
+Received: from pae-31.iind.intel.com ([10.49.105.72])
+ by fmviesa008.fm.intel.com with ESMTP; 14 Oct 2026 08:14:00 -0700
+From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
 To: dev@dpdk.org
-Cc: Feifei Wang <wangfeifei40@huawei.com>,
- Thomas Monjalon <thomas@monjalon.net>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v2 12/26] net/hinic3: add VF link state and promiscuous support
-Date: Wed, 14 Oct 2026 23:09:08 +0800
-Message-ID: <20261014150923.838-13-yejiacheng4@h-partners.com>
-X-Mailer: git-send-email 2.53.0.windows.2
-In-Reply-To: <20261014150923.838-1-yejiacheng4@h-partners.com>
-References: <20261010144509.2731-1-yejiacheng4@h-partners.com>
- <20261014150923.838-1-yejiacheng4@h-partners.com>
+Cc: Gaetan Rivet <grive@u256.net>,
+ Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+Subject: [PATCH v2 0/5] net/failsafe: fixes for sub-device removal and
+ configuration
+Date: Wed, 14 Oct 2026 22:15:59 +0000
+Message-Id: <20261014221604.128677-1-sandeep.penigalapati@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261014194257.123356-1-sandeep.penigalapati@intel.com>
+References: <20261014194257.123356-1-sandeep.penigalapati@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgAXMEEym89qB_SFAw--.62919S14
-X-Coremail-Antispam: 1Uf129KBjvJXoW3JrWUtw45WrW7trWUuw13CFg_yoW7CF1rpa
- yUGa93tFyDWF42q3Z8Gw47uF15X3WxG347Kas3Ca4Yv3W5Zr98A34xGry2vr13tr9rJa12
- vF48ur4q9F18KrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uio7tUUUUU=
-Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNxmDjWrPmzkfhQAA39
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,153 +64,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Every VF link previously followed the PF, so a VF could not be brought down
-while the PF stayed up. Track vf_valid_status and combine it with the
-physical link so the VF link can be set down independently.
+This series collects fixes for the fail-safe PMD found while testing
+live migration of a VF-backed sub-device (iavf) paired with a virtio-net
+standby sub-device.
 
-Register the promiscuous callbacks in the VF eth_dev_ops so a VF can enter
-promiscuous mode independently as well.
+- double release of the sub-device port on hot-unplug;
+- NULL queue-release op on sub-devices that do not implement it;
+- MAC address pool size off-by-one and replay of zeroed MAC slots;
+- unsupported link-status control (-ENOTSUP) treated as fatal;
+- sub-device removal not detected without the RMV interrupt (e.g. VFIO
+  device release), now handled through a bus device-event callback.
 
-Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
----
- drivers/net/hinic3/base/hinic3_hwdev.h     |  3 +-
- drivers/net/hinic3/base/hinic3_nic_cfg.c   |  2 ++
- drivers/net/hinic3/base/hinic3_nic_event.c |  6 ++++
- drivers/net/hinic3/hinic3_ethdev.c         | 32 ++++++++++++++++++++--
- 4 files changed, 40 insertions(+), 3 deletions(-)
+v2:
+- patch 2/5: add an explicit ETH(sdev) != NULL check before dereferencing
+  in fs_rx_queue_release()/fs_tx_queue_release().
+- patch 5/5: clarify in a comment that a secondary process detects the
+  removal via the shared sub_device state checked by fs_rx_unsafe()/
+  fs_tx_unsafe() in the burst path.
 
-diff --git a/drivers/net/hinic3/base/hinic3_hwdev.h b/drivers/net/hinic3/base/hinic3_hwdev.h
-index c6661aa1a6..87ca18e571 100644
---- a/drivers/net/hinic3/base/hinic3_hwdev.h
-+++ b/drivers/net/hinic3/base/hinic3_hwdev.h
-@@ -157,7 +157,8 @@ struct hinic3_hwdev {
- 	char mgmt_ver[MGMT_VERSION_MAX_LEN];
- 
- 	uint16_t max_vfs;
--	uint16_t link_status;
-+	uint8_t link_status;
-+	uint8_t vf_valid_status; /* vport_enable: 1, vport_disable: 0 */
- 	uint64_t features[HINIC3_MAX_FEATURE_QWORD];
- };
- 
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-index 8f0309e44d..21177bb531 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-@@ -470,6 +470,8 @@ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)
- 		return -EIO;
- 	}
- 
-+	hwdev->vf_valid_status = enable;
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/hinic3/base/hinic3_nic_event.c b/drivers/net/hinic3/base/hinic3_nic_event.c
-index 981a5f5083..787b4b0739 100644
---- a/drivers/net/hinic3/base/hinic3_nic_event.c
-+++ b/drivers/net/hinic3/base/hinic3_nic_event.c
-@@ -111,6 +111,12 @@ link_status_event_handler(struct hinic3_hwdev *hwdev, struct hinic3_handler_info
- 
- 	/* Link event reported only after set vport enable. */
- 	hinic3_get_link_port_info(hwdev, link_status->state, &link);
-+
-+	if (HINIC3_IS_VF(hwdev)) {
-+		hwdev->link_status = link.link_status;
-+		link.link_status = hwdev->link_status & hwdev->vf_valid_status;
-+	}
-+
- 	err = rte_eth_linkstatus_set(hwdev->eth_dev, &link);
- 	if (!err && hwdev->eth_dev->data->dev_conf.intr_conf.lsc != 0)
- 		rte_eth_dev_callback_process(hwdev->eth_dev,
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index bffcff9569..6e6c8a3c08 100644
---- a/drivers/net/hinic3/hinic3_ethdev.c
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -836,6 +836,7 @@ static int
- hinic3_dev_set_link_up(struct rte_eth_dev *dev)
- {
- 	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	struct rte_eth_link link = { 0 };
- 	int err;
- 
- 	/*
-@@ -860,6 +861,14 @@ hinic3_dev_set_link_up(struct rte_eth_dev *dev)
- 		return err;
- 	}
- 
-+	if (HINIC3_IS_VF(nic_dev->hwdev)) {
-+		link = dev->data->dev_link;
-+		link.link_status = nic_dev->hwdev->link_status &
-+					nic_dev->hwdev->vf_valid_status;
-+
-+		(void)rte_eth_linkstatus_set(dev, &link);
-+	}
-+
- 	return 0;
- }
- 
-@@ -876,6 +885,7 @@ static int
- hinic3_dev_set_link_down(struct rte_eth_dev *dev)
- {
- 	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	struct rte_eth_link link = {0};
- 	int err;
- 
- 	err = hinic3_set_vport_enable(nic_dev->hwdev, false);
-@@ -889,11 +899,19 @@ hinic3_dev_set_link_down(struct rte_eth_dev *dev)
- 	err = hinic3_set_port_enable(nic_dev->hwdev, false);
- 	if (err) {
- 		PMD_DRV_LOG(ERR,
--			"Set MAC link down failed, dev_name: %s, port_id: %d",
--			nic_dev->dev_name, dev->data->port_id);
-+			    "Set MAC link down failed, dev_name: %s, port_id: %d",
-+			    nic_dev->dev_name, dev->data->port_id);
- 		return err;
- 	}
- 
-+	if (HINIC3_IS_VF(nic_dev->hwdev)) {
-+		link = dev->data->dev_link;
-+		link.link_status = nic_dev->hwdev->link_status &
-+					nic_dev->hwdev->vf_valid_status;
-+
-+		(void)rte_eth_linkstatus_set(dev, &link);
-+	}
-+
- 	return 0;
- }
- 
-@@ -941,6 +959,12 @@ hinic3_link_update(struct rte_eth_dev *dev, int wait_to_complete)
- 	} while (rep_cnt--);
- 
- out:
-+	if (HINIC3_IS_VF(nic_dev->hwdev)) {
-+		nic_dev->hwdev->link_status = link.link_status;
-+		link.link_status = nic_dev->hwdev->link_status &
-+					nic_dev->hwdev->vf_valid_status;
-+	}
-+
- 	return rte_eth_linkstatus_set(dev, &link);
- }
- 
-@@ -3571,6 +3595,8 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
- 	.dev_configure                 = hinic3_dev_configure,
- 	.dev_infos_get                 = hinic3_dev_infos_get,
- 	.fw_version_get                = hinic3_fw_version_get,
-+	.dev_set_link_up               = hinic3_dev_set_link_up,
-+	.dev_set_link_down             = hinic3_dev_set_link_down,
- 	.rx_queue_setup                = hinic3_rx_queue_setup,
- 	.tx_queue_setup                = hinic3_tx_queue_setup,
- 	.rx_queue_intr_enable          = hinic3_dev_rx_queue_intr_enable,
-@@ -3592,6 +3618,8 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
- 	.vlan_offload_set              = hinic3_vlan_offload_set,
- 	.allmulticast_enable           = hinic3_dev_allmulticast_enable,
- 	.allmulticast_disable          = hinic3_dev_allmulticast_disable,
-+	.promiscuous_enable            = hinic3_dev_promiscuous_enable,
-+	.promiscuous_disable           = hinic3_dev_promiscuous_disable,
- 	.rss_hash_update               = hinic3_rss_hash_update,
- 	.rss_hash_conf_get             = hinic3_rss_conf_get,
- 	.reta_update                   = hinic3_rss_reta_update,
+
+Sandeep Penigalapati (5):
+  net/failsafe: fix double release of sub-device port
+  net/failsafe: fix queue release without sub-device op
+  net/failsafe: fix MAC address pool size and replay
+  net/failsafe: ignore unsupported link status update
+  net/failsafe: detect sub-device removal via device event
+
+ drivers/net/failsafe/failsafe_ether.c   | 40 ++++++++++--
+ drivers/net/failsafe/failsafe_ops.c     | 29 ++++++++-
+ drivers/net/failsafe/failsafe_private.h | 13 ++--
+ drivers/net/failsafe/failsafe_rxtx.c    | 83 +------------------------
+ 4 files changed, 67 insertions(+), 98 deletions(-)
+
 -- 
-2.33.0
+2.34.1
 
