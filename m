@@ -2,76 +2,143 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B507C3DA7A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 16:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D53CC6B1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 16:48:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 38D2A402A4;
-	Wed, 14 Oct 2026 18:47:38 +0200 (CEST)
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
- [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id 6913E4013F
- for <dev@dpdk.org>; Wed, 14 Oct 2026 18:47:37 +0200 (CEST)
-Received: by mail-dy1-f179.google.com with SMTP id
- 5a478bee46e88-3550c917fd3so1666233eec.0
- for <dev@dpdk.org>; Wed, 14 Oct 2026 09:47:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791996456; x=1792601256; darn=dpdk.org;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=KBi903Sazc4ggjIykaPK8BvCsbiuqnMxbJsO+Rweato=;
- b=bGrfUuIRxw6/CXg7VOlCpWIUd2xCXFFsUigLv4wfRVkZw5Zk6yLjYlfitXV9zJ4UMW
- Rwe7uAQXa7NoO0v8pDhAlFJTErivZs/MTm5UsvWLBBGEWbbFD1q//XebkNLNgiSVG6ot
- F+aTpY2mWA1tcl9qe2bxInfjam4ktqnC/xVTrcE5kQCvT3jHWw5lC4UB/uI+2Wdyfy7o
- iUy2cFhHZi3R8LZqDgpfkXG9cOX662a+48DnSoqOidfcanK5FO2/7ZOFCxnJLYip6pjC
- +4wedtz546mXKrQDYgdoyKVpprEwTJqrzytak+OHk8QeWo621DIuJzv65pae5+xET6dm
- IyJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791996456; x=1792601256;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=KBi903Sazc4ggjIykaPK8BvCsbiuqnMxbJsO+Rweato=;
- b=v05CA4umf8ppThOJ8HdnWVEingIaZp1yHySm94Awcg2zxdyHKPBiJOTQxHGa12q2TR
- pMXY3KX6VjjetyaJaQEjccvkEBPyxo9c8E3IZYU1e6ltR3TnUmYwP/OyF1xW1ny9rlzz
- 3VcZKJ+wqvdb6RaojKAHnKoticWfjwXOBpEzfAIF5K/hJcmbAbAzN6O7SzcXc4rJ44J9
- eXmv2uaBP81Vuq2EzltPeVML4XwjLockeCgkWxIGB8SH9q3FEL9o5facYMXuim172GX9
- lkTaMeHCQ6eAN/DNxf/X9yh5r6ZI6YZ8nZNjHhCTKwmrVyMg/2mlmOE2GWOMyPvjlIqt
- kS9Q==
-X-Forwarded-Encrypted: i=1;
- AKwUvByg+9/uzByEPFjEk1ZhRiLsYNFmsWzZILg4V++x7O5t4wZNDOETcXUlfK93DTaAWwA2ca0=@dpdk.org
-X-Gm-Message-State: AFq9FYLKi6d1rFMLSps6i0pnav3Tuu4j2fkYu8vhuslAzA7jKwGF5vRI
- s0v6R3qLiyVKhfSs+NGf3TZCLADX/Xxx29oeqYV0F+J0F4fsWrQjJQDP
-X-Gm-Gg: AYBFou2g4xIpWs+H/jcDcfiAs2zRXCJzo8oi2dvdaCRTX45WyaXLRAQy1FewEAGkNhs
- WWYm6+fgFdvKb41ouF7Oei2sWDrQLeYwcXt+LyNcWzHozxmoT3Mym4Z5Ouz9OtQEBFO4DxoCJKJ
- ymwdGCeaTvSJ02cKVegB0s+iz4qfRKkea0pXoXGFk5rsaw/a9uWIMmH9JqFRKHsdH3BrnXYxudR
- L6ifGfDER0WKrkSyObLzk4kb4JeERZLd4+b5GbrdovXJalQWQYKnGhSKsQXCLlOp9kcs9oHTi3U
- Lku/DMZoU4wTqNCUM7r26v7D+3SWLe0yMWy/hF6JCBYil2E+ghvEeJXGWta5Eem9xwdWd+8il+4
- VO5fwV8kzAl16cgFwAwzkDbY3iJ41lhasLo7GohmFPlTu5jnds/aRXIMW5xaDXzry9dUDtwnxLv
- wI0LuU3S34O4nN0mRr206cpwYDw46P+9V6SCry6EqSumdEa2QYrbI42gY8yty/lk8fqi5PkG/9w
- GWJf1R7Sz22vw/URnRqFV+Z4Jg=
-X-Received: by 2002:a05:693c:8957:10b0:35b:cb8a:8d0e with SMTP id
- 5a478bee46e88-35bcb8a91d1mr9873276eec.16.1791996456214; 
- Wed, 14 Oct 2026 09:47:36 -0700 (PDT)
-Received: from [192.168.1.112] (mail.forbuysw.info. [66.175.223.235])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-35b19c6c7b4sm28685859eec.24.2026.10.14.09.47.33
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Wed, 14 Oct 2026 09:47:35 -0700 (PDT)
-Message-ID: <54095ca6-afe3-4c28-bfce-4456d9e30e4b@gmail.com>
-Date: Thu, 15 Oct 2026 00:47:31 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] net/txgbe: fix FDIR Rx packet buffer handling
-To: Jiawen Wu <jiawenwu@trustnetic.com>, dev@dpdk.org
-Cc: stephen@networkplumber.org, zaiyuwang@trustnetic.com
-References: <cover.1791898970.git.zhtfdev@gmail.com>
- <017d01dd5b7c$dedc3a30$9c94ae90$@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5A75F402A4;
+	Wed, 14 Oct 2026 18:48:29 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 7FFE04013F
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 18:48:27 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 69EEaOUr174368; Wed, 14 Oct 2026 09:48:26 -0700
+Received: from byapr05cu005.outbound.protection.outlook.com
+ (mail-westusazon11020108.outbound.protection.outlook.com [52.101.85.108])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4h9r9xnxnm-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+ Wed, 14 Oct 2026 09:48:26 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vjhLmd4iohvLz/iRF48vWNoW3q3xxhpD8QGa4+RHG/tvCFDbyXNFmO5ltUbHbtorin591dSqPhgfLwR3ZkMwcw58yCoz5GIWf6R1mdFQ0Zv+HlqJgqIahhGXHkqcjc4c/aIPLpylP1M192qsufT3/nplSQI7T8T4OTMQCnRNN2iDIHCOl6pagkuaGcp+bcRK15ieHHmzOhXnf8USbg7TAVkbSihwGjKONvLTa46Gmif69pc5cC+/TBZvmtGD1jfcUq8Vwk4P7iuP5nnbR9KU4sB1cJK19sAX4OW406qoG4LBVwHCrgkiBtiw2mUCMFpegeXSJUaZy3yCbvUUpMfeng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uM/DtAJ/aiLNFmhkaC2iX57znhL/+qmnMpzKqNLhRns=;
+ b=wB/7YPbmIPiDVsT8egToMwjFKDu4owSdflh1hIxv2jbR1/6BpQ+b9sYKm3vu02VDouA014rrcMzsoqcyv8Wj+qn2M5eitRSHv2/0GGLXe1yor/MUHm+4n8tlLDP6MUgzCZfMfBDLOwZZ9N5ln2hO0zIzjpZrP9gxf4ri1b/3EreiKC7gDGTwy/hD0a7BkGwq7D7IFxB+IImQJORkLvyeH8LbyqwCu2wJF8fD143wceOkcaxelHxH8RcopN5ShY5H7//Sb1qb3fOlq6q+ksrh1NBEuJvuUtfuloIFhBR5DieATZ9diRjhGKVYB+An5rmx3JljcJ7hHPmwxnqL9Z8dKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uM/DtAJ/aiLNFmhkaC2iX57znhL/+qmnMpzKqNLhRns=;
+ b=uJLDQYT17Daax72KjhwkLG2aYX4q2c/0rtzXZHabidqBIUDeHSGVs8y7FUClISQ2IWbUUei7bEvslPMphNKD4z5Bpzi/rYFjH2AWkW22aO8B1o5UOjOA0UgTUSEQeu/NUW1/yUB620/sXWR9niPI8aMSgoHvT/pH9TwFPJcu5Ik=
+Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
+ BL1PPF3F9C553CB.namprd18.prod.outlook.com (2603:10b6:20f:fc04::d92)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.26; Wed, 14 Oct
+ 2026 16:47:23 +0000
+Received: from CO6PR18MB4484.namprd18.prod.outlook.com
+ ([fe80::a2df:a596:cfe:17]) by CO6PR18MB4484.namprd18.prod.outlook.com
+ ([fe80::a2df:a596:cfe:17%5]) with mapi id 15.21.0522.011; Wed, 14 Oct 2026
+ 16:47:23 +0000
+From: Akhil Goyal <gakhil@marvell.com>
+To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, Maxime Coquelin
+ <maxime.coquelin@redhat.com>, Chenbo Xia <chenbox@nvidia.com>
+Subject: RE: [EXTERNAL] [PATCH] vhost: make cryptodev support optional
+Thread-Topic: [EXTERNAL] [PATCH] vhost: make cryptodev support optional
+Thread-Index: AQHdW/mGGLDhBGPwPE+0rMyzcJMaCrb9PwJw
+Date: Wed, 14 Oct 2026 16:47:23 +0000
+Message-ID: <CO6PR18MB4484DD9111F1AE20CBCB701BD89D2@CO6PR18MB4484.namprd18.prod.outlook.com>
+References: <20261014163138.1639970-1-david.marchand@redhat.com>
+In-Reply-To: <20261014163138.1639970-1-david.marchand@redhat.com>
+Accept-Language: en-US
 Content-Language: en-US
-From: Zhang Tengfei <zhtfdev@gmail.com>
-In-Reply-To: <017d01dd5b7c$dedc3a30$9c94ae90$@trustnetic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=marvell.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|BL1PPF3F9C553CB:EE_
+x-ms-office365-filtering-correlation-id: 69f555ff-297f-4a86-2996-08df2a12d24f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|366016|23010399003|1800799024|18002099003|38070700021|22082099003|10067099003|56012099006|11063799006;
+x-microsoft-antispam-message-info: SCImSz123LcPxBdxg8X7H1ASxgY/cNhx25k7bLwY8K2ETpcWJmfxZXxZwPYHEfc8JZ2HY1ahxK8//xFCmYabO191yckwhL049/wnEyk8N7eU5cJDDKq6QOMhTchJaXXQ8YVZBQL5wohmdVzE8V8t7AATkeu6bqUNdgBYBz6Gj0mewS9FYw6lxyzX5iZI3DK2mTVDYnsoFf6hLk2+D2L4je8vDcHmexQjpklg6Y3UyF9sZOrnQ4KJBPanvHahqOQqvnqf4x0K0I6hya39SZFiJgI+Nxt7/ztOXu13iVEqGF46GvwMBaf5t/09modafE1FGwzlRvfd7parRnZYK/RwudCDVH5FW3W/p1SWwJ5X/c/Rv8SWwOteARcfxVsTEn2v8J+ZZ5c37EoQ93GMWH2YWFmXTH/o7cnM0x1Jdp9UQssvn5M/BA/Xy+vwPzrqPlH4LqoMjlh1VEMLfnKK3RRPK+lD/sbz/Jw7BCKY6MU0Pv9ODNQZG9l726Sguj5QsKpgCsEBE8NaKGvtO8a3P62z8uAzS65VfujVWQUIq+EW7HkUF29VaXNnNbvffBX7ao+ybTTaHTZH51XWihDBPE3ylLsS9y7N3vk2p1Vk1Qo/zQaGPrYP7v11j48N6ZMp1G93toCLxRzNtS2pXI98corLU66vhv5L8QtybfPnvORBbgmzVrI/JIhjuH+llNWFvt7MLWqUtsGPr9xMxcG53+IzxDtI5mhRtQtlMlfqOyCUQl4=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(18002099003)(38070700021)(22082099003)(10067099003)(56012099006)(11063799006);
+ DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?hXHFKxMM6A2IX17WvophQbrFmDqzk+r0aqwT/M46q/bzj1JorVqlSuV3qxnS?=
+ =?us-ascii?Q?0lJcelYSQm4z7OaDh44cWL7TOw29CI2fr5ZUN/zrpdIf04e9fBOJhirexMYp?=
+ =?us-ascii?Q?W3q8JIhFJ409Yn58mAcPnyam6dnphpjm5+H7gNPkNV/7jHLGW7UTBFK3ZIrb?=
+ =?us-ascii?Q?L44pVHbY4+fIzEW/otBt6b66BtRY/5cde08do3CcXtJ1UgnTC3VtTfZWoiNi?=
+ =?us-ascii?Q?J13xI4yi8AyuFW9mFVkU9ZjQ7Q9BMd/k9tcUBNixnDu/rjrouR5jIcaoCQ4W?=
+ =?us-ascii?Q?h6sOwMdL3Mww8YEDRDO/CeLjb1lFEAFTwPiKhIRbl9h6RDqdULd3dK1u3Yny?=
+ =?us-ascii?Q?uVEESK2Kc1PFLCWIBFshSyF3t/Q0LZtCZxgq95gAtnIXtwATiSOx/ZyvsgKv?=
+ =?us-ascii?Q?X0MKTQo8UfYDAl4aasuk5nVqLrYKTyjP0WNHAP5417wI4BDdDo0deJLecixk?=
+ =?us-ascii?Q?+8b6c0sOP0ncNdWUR9FET0Mq0tKzV0zyI+6gscEwoMG24w1l+X7/4weCD0L5?=
+ =?us-ascii?Q?lMMXv452yBc8Q+P2JlHq5plLxTVnBFmDbYexswwQKfYl2HDc1ZGWjR/9Scrt?=
+ =?us-ascii?Q?6g1ORsdzTyX2hAzU+aHGnu8WJEYhUMPIybZ74dNY3GjP6uGyyhPRvjrE6clW?=
+ =?us-ascii?Q?eE5nfZe6Q2u8rd88HHi8uIaqw0rL1EujMmCTh8yZv1kCdrX+9zMiyieRaDtr?=
+ =?us-ascii?Q?OvYLHF0fbfzmOb/T0MXLB5aXOWpAD7ea1dyTEpUzTqgWWkRzEgllpf+y72Qh?=
+ =?us-ascii?Q?djACDRrzqCeu842o3AshFq7PbODp0wNbL4gDhQP7LTgfGeTjhuboFvCHr4lr?=
+ =?us-ascii?Q?+e8RczZHkN+VIr87pQCkZsEwAunaVKk+fI81Z+QBkItTTb5Ydv3BQ557fLQP?=
+ =?us-ascii?Q?i4B/H7uPygiREOaqMDCggXJekzR76zTiYq4k8PnLYozkEvgqecVg7aDCEWIh?=
+ =?us-ascii?Q?0372XsS0WcZDchw7i4GKTk3o93CUb/7Bm9zWtUsdloAYweO2bPY2KO6BW//Y?=
+ =?us-ascii?Q?7GhhVGOIS8iTWTq0EWU4ra2hDcAUX5rjhQGkhBn70Qou85jxyvU0aPoRqFSG?=
+ =?us-ascii?Q?ZitwtDq/87IDzvXNK0H8pF0CDpS+lieKYm7fuLOTy+OoYD3BuvAx3naMg9Pf?=
+ =?us-ascii?Q?WYR1KNLnC1eEetmc5m4L3akqdTXMALS0K7bbj5zsTFmF/qCIIxiazqapdmGZ?=
+ =?us-ascii?Q?E/yatsli9SH+GkbVEgUbi+SOCt0T4Ax1/m+Pa5sOF9hFSMxnxpuPoVqnmqkf?=
+ =?us-ascii?Q?nruBI+0/WnQxB6bPW4MeZe4qrSC+ozvsjnQT/ThhUWNtma7lII+9XqrDeNOC?=
+ =?us-ascii?Q?jcyJweCyrLRlHnUIccLYNlliabtiZrLshJu7pcx+cSun/Uho2Ph4GqB/x8ux?=
+ =?us-ascii?Q?LAocCXfeOELe4w/IM9kCpA9ZM0tst95igB/fZ/ScdfU2y2WbPmeJkcJk/Zwh?=
+ =?us-ascii?Q?HRwwIbBezVnO1ebEMau8sqa20xQCbBfUdd1DJD162MtfFoZUx65X46AXlohA?=
+ =?us-ascii?Q?cxMpDSkMphPpjFjx5Vvg7zr9WAbIUBM6ck+CyBbFaPT6YAMdu4PBSAGBOtJl?=
+ =?us-ascii?Q?pFhzhBufz/+C5WWq3R7nC/Wzsg4jJknvp/29cs+HGTY7kADS5ht4RuoD7hI1?=
+ =?us-ascii?Q?1cQ6qUkyq5FuEMrlQN83uzq92Jq1c6mrF801lOJaBKIhCzTgy3oLRKpZ/i2B?=
+ =?us-ascii?Q?0o/0Z9SLAiZPqzWTXRYkDVERbfvRJfBKf0VQKb+WaKCyEOS0?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: V8670yKWAlHEfFRY2GNSDFHZ+c2J+XDTQIgOS6vF3s3b3L7G0dXc4d5IUuvfDGegPp4eeqQ2tjla55uxnvd/csywQKjqg2VEcJocUDdaAMc7aQOR6NSgottO2Ga9VMvMMebFWiqw87Yf5rCNLrSPH1TekOdA8pBhYHUZ1Vqpw73REBJ/gl8UbwDRwXUMLuxEvJalF+Kx31TRATKDQpZFAoqotfncaQ4ruC5fE7x9XiZsBXHVx8zMMcHvjP5fs+2MKUo2J8gJ1HdyMvqGbT7uAHJGKekiq5oRvebe11z3N5DH2sYsCs6aBATe+gAggouc7twSIE/M2k6+0gAYGTyhbA==
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69f555ff-297f-4a86-2996-08df2a12d24f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2026 16:47:23.5787 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Ymd6E6WlZdGCKYwAFfXPid6wCSJy+tXji1zS4OANYrkNHsOQf/5pPRu7pBuUSnnu6lZ2uJK/mDp+2FS/wFPi8g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PPF3F9C553CB
+X-Authority-Analysis: v=2.4 cv=DvDDa2/+ c=1 sm=1 tr=0 ts=6acfb25a cx=c_pps
+ a=l6WPzq2nfbAxniYbonYZnA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=660iZSQnnn4A:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=l0iWHRpgs5sLHlkKQ1IR:22 a=qit2iCtTFQkLgVSMPQTB:22 a=20KFwNOVAAAA:8
+ a=M5GUcnROAAAA:8 a=jYAYpwmviFdS7lZrJM8A:9 a=CjuIK1q_8ugA:10
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: kVRgWm2MPb0XS5jXIj-FM-m79Lulbw5Z
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE0MDA2NiBTYWx0ZWRfXxRuFgE0HU9qu
+ GMoRx1uqEv0D+UyaIBNzcLNNYjxcRP/tflkftGXn+8mkhpdoHmffAiR8LeGj2FPBrpM+amAmq+A
+ u2dviuhUHHSnEyvhE85DjDnSRPNUYYrQyECxQNSNuZ5ZM4AFPQo1CMAqarDagsEr9Dd4f7LMO1i
+ +HOu9xt8Gq4ogu+Gg7YDXiSD534wx7SEE28ZEw7epUlgXMP6tB+iXnSz7cNb4HBYbvIHkziaQoW
+ t+ynjarbfRxILLWVm6zpkoxhaBDPKChUi5ziEmfra0bk/WZL+eUByh5e3FWPmlzzQ/ugTQVJURS
+ MVGpN73xI965vaqp5bQSQ+HvNjylviGvg9llpsdfAMlDMPHviIn2Db8hl/wy2zy1YdNoCj7AtZz
+ Ii4qYSJRlzmz7JpBy+HladcI7UCqIUOqdMSyemvSueb1n5R2E6MS33KxUx/1CXuPKgctrMooJ6c
+ wlB5lVdFjde6n8cMEmQ==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE0MDA2NiBTYWx0ZWRfX3+/5qtrwte2N
+ 2FThxYI1ccW/v8JT0pjdKsx07rItwoojLnN/Dy2qqZsRigYBfCX83bp3gHy1VeEg1GVyVBgPHrx
+ UCyumRf/Q9z6vMKOAoSbzFHmragd2wQ=
+X-Proofpoint-GUID: kVRgWm2MPb0XS5jXIj-FM-m79Lulbw5Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-13_01,2026-10-14_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,32 +152,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 10/14/26 09:39, Jiawen Wu wrote:
-> 
-> 
->> -----Original Message-----
->> From: Zhang Tengfei <zhtfdev@gmail.com>
->> Sent: Tuesday, October 13, 2026 10:00 PM
->> To: dev@dpdk.org; dev@dpdk.org
->> Cc: stephen@networkplumber.org; Zhang Tengfei <zhtfdev@gmail.com>; jiawenwu@trustnetic.com; zaiyuwang@trustnetic.com;
->> stephen@networkplumber.org; Zhang Tengfei <zhtfdev@gmail.com>; jiawenwu@trustnetic.com; zaiyuwang@trustnetic.com
->> Subject: [PATCH 0/3] net/txgbe: fix FDIR Rx packet buffer handling
->> The same issue was fixed in ixgbe:
->> <https://patches.dpdk.org/project/dpdk/patch/20260927042545.45152-1-zhtfdev@gmail.com>
->>
->> Compile tested only.
-> 
-> It should to be tested with the actual NICs.
-> 
-
-
-v2 is out. I do not have a txgbe NIC, so it is compile-tested
-only.
-Would you be able to test it on a txgbe NIC?
-
-With the port started: create and delete one FDIR rule ten
-times, then check that PBRXSIZE(0) (0x19020) does not keep
-shrinking and that FDIRCTL (0x19500) is 0 after delete.
-flow validate must not change either register. A rule with an
-out-of-range queue must fail and leave them unchanged. flow
-flush must restore PBRXSIZE(0). SP and AML if you have both.
+> The vhost crypto part has seen CVEs in the past and is getting a lot of
+> eyes those days.
+>=20
+> Contrary to the vhost async datapath code, the cryptodev code seems to
+> have active contributors, so dropping this code does not seem a good
+> thing.
+>=20
+> This change here allows to keep this support, yet disable it for
+> uninterested parties.
+>=20
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+Acked-by: Akhil Goyal <gakhil@marvell.com>
