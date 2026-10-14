@@ -2,60 +2,103 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C00CC6B27
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 08:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A04CC6B1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 09:13:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 572594060C;
-	Wed, 14 Oct 2026 10:30:15 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 06A84406B4
- for <dev@dpdk.org>; Wed, 14 Oct 2026 10:30:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791966612;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=19HlDYdgRzTZu1seCtZln/ZiPokAQ8lqjWKQWLd/Fwg=;
- b=H9JcRmr5dMLQG01qF6gE96ONPDz5RkZIqYXrxfFm3kTE//5+dU+AnVs1DH1wufkslup+R+
- HvkBcnRVvcQ/JkUXpIkggt4mWI/R6uqTKybSYUsxAyxs+1jEsNzgGyUljJU2kow7x3w4yW
- h/zuqM+UC71JqcWzqaNKB42Qxx+M8M0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-615-aOdsERwpNSGwUlhEa_ZXpw-1; Wed,
- 14 Oct 2026 08:30:09 +0000
-X-MC-Unique: aOdsERwpNSGwUlhEa_ZXpw-1
-X-Mimecast-MFC-AGG-ID: aOdsERwpNSGwUlhEa_ZXpw_1791966607
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id CCBCB19560AD; Wed, 14 Oct 2026 08:30:07 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.44.32.174])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id E5A6C1800347; Wed, 14 Oct 2026 08:30:04 +0000 (UTC)
-From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-To: Maxime Coquelin <maxime.coquelin@redhat.com>
-Cc: Yongji Xie <xieyongji@bytedance.com>, mst@redhat.com, jasowangio@gmail.com,
- Bruce Richardson <bruce.richardson@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org,
- chenbox@nvidia.com, david.marchand@redhat.com
-Subject: [PATCH v4 9/9] vhost: Support vduse suspend feature
-Date: Wed, 14 Oct 2026 10:29:30 +0200
-Message-ID: <20261014082930.96261-10-eperezma@redhat.com>
-In-Reply-To: <20261014082930.96261-1-eperezma@redhat.com>
-References: <20261014082930.96261-1-eperezma@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id EFB0840609;
+	Wed, 14 Oct 2026 11:13:04 +0200 (CEST)
+Received: from MRWPR03CU001.outbound.protection.outlook.com
+ (mail-francesouthazon11011014.outbound.protection.outlook.com
+ [40.107.130.14])
+ by mails.dpdk.org (Postfix) with ESMTP id EF6254042F;
+ Wed, 14 Oct 2026 11:13:02 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gO9ts2sL1e1ZiEy7IXy+Y7G2gFCrLq2Kn1HBecC7nWPlxlKTxwQ2VMcllfSJZFWlt+dvZSa0punvpDuEKxRHiUutmRMBzai7u7rsmkQAoSoZ3i0Xd0UYhCEXez2B20HhENZEQ5YOVII8B95/mE7UEECUZGNfmO/K/rXhFpXcAdt5SXHOCW1XKjCmEbLb50LfDki6+aVOCsrJKBzMWHw2X6hmmshd1j6WAClMnxMTvjJnnzZxFZWIBptk74QNex0mAV7NTavDh6cSZ/0ebvHShV/HyuxYW9hSZK49DJ1dXxzMSZrezTmQHi37fAtLyhkAgIxXAMelYjv7hXQqQpKEtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IQzt3FObhuHm3IBuE2WGyTHVtux1IHUFz6FrVcYLi7Y=;
+ b=bo2RIq3dSGEQuj5dAcWchoAQuVNRZO8DNfqlZfdpYkHyRIG7rHWksQFBnwX72DYQG+A759uaPEQKQQpiTHtpkDPx58R2wM21bz/wBlbAGZMer9HDgZRyKHaZQ24xvxhDn6Jm36t7/DapWT509gCXOFbau7Dm33RtCas/qlGSpaZMWR9YBkhr66lHlpOsiiXtNFzgCAlPDgizPQWNhkZ1DvyCwZNten0wW5281pzb3YNJbAOh3gT6QL6iH/pQ6Qk8VpKNl1TI9e6PbDxkkghUPqrm/n94g3NppwNVywv/pCYatPAblwl8aw2Z/IaEl9YyZJSIs/L64tPc1+p2XWzZdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 192.176.1.74) smtp.rcpttodomain=cisco.com smtp.mailfrom=ericsson.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IQzt3FObhuHm3IBuE2WGyTHVtux1IHUFz6FrVcYLi7Y=;
+ b=c6dlVEaGE/ETm32JarcCi3hleo1rT498ROAcS5cW0q6UD7L/hPOt9B6f7B4ovKTeWOmPeEU1ilousekqT9MYlz4KQGERiua79vKF1wyaMyMU1uEQfiRhpZdUe0Z4Mxg0AgtTfQhq81euvj9oG+nrnlW5Svy8szYAv8dlTqIHuCAQ4pKhRyeqo6m890yVDVlNp4sxQGXbs+RQPgHpmHne+DCXCNYf2RONz3OdUBE8fyy3nNgSYwXjbYpSjtu7/uqiCf0ddjv8hU+z54zKPTYqiCDR07YMSZ7lzeC+D7b5f5pmhB8df/Tq8jDqizBJRcN2TJ2q/vROwBV2qe2FwXhcuQ==
+Received: from DUZPR01CA0049.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::9) by DB9PR07MB7914.eurprd07.prod.outlook.com
+ (2603:10a6:10:2ae::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.12; Wed, 14 Oct
+ 2026 09:13:00 +0000
+Received: from DB1PEPF000509F1.eurprd03.prod.outlook.com
+ (2603:10a6:10:469:cafe::18) by DUZPR01CA0049.outlook.office365.com
+ (2603:10a6:10:469::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.496.5 via Frontend Transport; Wed, 14
+ Oct 2026 09:12:59 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 192.176.1.74)
+ smtp.mailfrom=ericsson.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ericsson.com;
+Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
+ 192.176.1.74 as permitted sender)
+ receiver=protection.outlook.com; 
+ client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
+Received: from oa.msg.ericsson.com (192.176.1.74) by
+ DB1PEPF000509F1.mail.protection.outlook.com (10.167.242.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.522.6 via Frontend Transport; Wed, 14 Oct 2026 09:12:59 +0000
+Received: from seliius19819.seli.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Wed, 14 Oct 2026 11:12:58 +0200
+Received: from seliiuvd10563.seli.gic.ericsson.se
+ (seliiuvd10563.seli.gic.ericsson.se [10.120.141.220])
+ by seliius19819.seli.gic.ericsson.se (Postfix) with ESMTP id CD0FF4020B67;
+ Wed, 14 Oct 2026 11:12:57 +0200 (CEST)
+Received: by seliiuvd10563.seli.gic.ericsson.se (Postfix, from userid 93258)
+ id 9EEBD6096A9D; Wed, 14 Oct 2026 11:12:57 +0200 (CEST)
+From: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+To: <dev@dpdk.org>
+CC: Stephen Hemminger <stephen@networkplumber.org>, Sriram Yagnaraman
+ <sriram.yagnaraman@ericsson.com>, Jakub Grajciar <jgrajcia@cisco.com>,
+ <stable@dpdk.org>
+Subject: [PATCH 0/6] net/memif: lifecycle fixes and unit test
+Date: Wed, 14 Oct 2026 11:12:51 +0200
+Message-ID: <20261014091257.1051190-1-sriram.yagnaraman@ericsson.com>
+X-Mailer: git-send-email 2.43.7
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -JwCXwkBiu_aLvk1a8sq69GCeBy9Y9cC8FTYful3C9w_1791966607
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509F1:EE_|DB9PR07MB7914:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7da6bb0a-9b34-44e7-d601-08df29d357e8
+X-SMTP-Server: smtp-central.internal.ericsson.com
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|82310400026|376014|36860700016|23010399003|18002099003|10067099003|261009223027099003|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info: NO/xwZ0t9mFlO2L1wzWwItF7f6c0a2CHjx2kORiTCvwWzxaipUrtcLxITtKy8NVActw31fYeMABVkcMNZGrspUam/HUMeeNDRzxJTJyyBHLEVooFywH62FSv1MbI1w1va7kwwENUmFhgXDJezNBa0rmwTBh7KbdeIJz/Tujz5kD6ubDU46iaZsdjyU6oxddFEOCYUFX1PbhC9xNsttcKN24XBrLw7TGXrHeibDWFPHorCz+oFzfqvTyE5nQtOSnJLmypGAr4BS3v/ynl6SIVEHcev2A8D0bu+nCh8azG/I4mybQ15s1brdnSURld6iR7nUOqDdsMPLxnpB5NdzNE5IpBoIcBGZQ0brgQ4IElegFKTat1He0j+Cv4kjQor/9RDw3PonAakYZqRCai8T80fspI/ZHQMIc7xN/cxnAs7ZoSa3o1Xj+6FqTa5rRmQeE5MX4Hsz9ZsSAlKy/2ydDxsikT7AHyfmGGm/cXkLrbZfNBoy6IMWd9HIWcpMoGGAJq9g/Cgwb6dUl71bpUUdVhDxTx+7D9pPi3BcUv7uXqLJQ5TXQjCQB1XwMxwgWC8iEObaWeVhh16kMGlo+1us1pms3ZgOuPbm+kHw/+Jn1FDEi71i2HJBEIRHGEnhxmfSXTRiGANvVk2b0Xb4JpByeirNm+xWtAg95yDcxavfe/TSMipcAToMkcAW5BpWAQAGpo+yVPw5++b+pgADZ7/6uvkg==
+X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
+ CAT:NONE;
+ SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(23010399003)(18002099003)(10067099003)(261009223027099003)(11063799006)(56012099006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: NWHrgUHlncjubmnM4GWz0LvxSNsv7IT1mwvNFjKYza0VqRPTHyXcgR47xn6TRmbbp1UHS6DIbrL8uvUjZ4Gx+0/gvAH+KJRWa/tUpe5L5OnVlpJGqHQU4pE+9q0jc4R3Q5blpYoBMZbi7f986j5yqO+XvCUBFOsZ9rxxRG1L03dSPbys564OVNSLbjAfcqddPTJUmGLVfAqlgds3NK17d5TverWk9Qs+Ha62/90Cmo7MRuEGhwPce/BQ6J9ZW+PDDHu30E5meuuLGyxIuFd/EAliLtfllIRLhQkgJb2j7eV95Z7xITElwGCIo2CX/iFPE734Wz373Pbf7Hg0jUMyBYav6aH7HUckPxnOLMjmrCDHv+js8g8Aw3xrvCvnh5tg1DYD3TwIGWECYgQ1RlPPT5ePw8OzLwjuUKaXz/NkUYdFRctGjLv+R3T/4YkIHrkY
+X-OriginatorOrg: ericsson.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2026 09:12:59.8781 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7da6bb0a-9b34-44e7-d601-08df29d357e8
+X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
+ Helo=[oa.msg.ericsson.com]
+X-MS-Exchange-CrossTenant-AuthSource: DB1PEPF000509F1.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR07MB7914
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,119 +112,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for the VDUSE_F_SUSPEND feature.
+This series fixes a set of error-path and lifecycle bugs in the memif
+PMD and adds a unit test for the driver.
 
-The suspend feature allows the driver to stop the device from processing
-the virtqueues.  This ensures that the virtqueue state can be fetched
-reliably in a live migration.
+The first five patches are fixes:
 
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
----
-v4: Add VDUSE_SUSPEND to lib/vhost/vduse.c:vduse_reqs_str
----
- lib/vhost/vduse.c | 43 ++++++++++++++++++++++++++++++++++++++++++-
- lib/vhost/vhost.h |  1 +
- 2 files changed, 43 insertions(+), 1 deletion(-)
+ - guard eth_memif_tx() against an empty burst so a zero-count call
+   returns before touching the burst or the ring;
+ - close file descriptor 0 instead of leaking it (the close path
+   tested for fd > 0 instead of fd >= 0);
+ - free the MAC address allocated during probe when a later step
+   fails, instead of leaking it;
+ - unwind a partially-created device on failure in memif_create(),
+   releasing the port and the process-private data rather than
+   returning with them registered and leaked;
+ - disconnect the device on close so queues and shared regions are
+   torn down, and make memif_disconnect() safe to call on a device
+   that was configured but never started.
 
-diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
-index bcbd9fcd6d52..321f15091f65 100644
---- a/lib/vhost/vduse.c
-+++ b/lib/vhost/vduse.c
-@@ -40,13 +40,15 @@ static const char * const vduse_reqs_str[] = {
- 	"VDUSE_UPDATE_IOTLB",
- 	"VDUSE_SET_VQ_GROUP_ASID",
- 	"VDUSE_SET_VQ_READY",
-+	"VDUSE_SUSPEND",
- };
- 
- #define vduse_req_id_to_str(id) \
- 	(id < RTE_DIM(vduse_reqs_str) ? \
- 	vduse_reqs_str[id] : "Unknown")
- 
--static const uint64_t supported_vduse_features = RTE_BIT64(VDUSE_F_QUEUE_READY);
-+static const uint64_t supported_vduse_features =
-+	RTE_BIT64(VDUSE_F_QUEUE_READY) | RTE_BIT64(VDUSE_F_SUSPEND);
- 
- static uint64_t vduse_vq_to_group(struct virtio_net *dev, struct vhost_virtqueue *vq)
- {
-@@ -416,6 +418,7 @@ vduse_device_stop(struct virtio_net *dev)
- 	vhost_destroy_device_notify(dev);
- 
- 	dev->flags &= ~VIRTIO_DEV_READY;
-+	dev->vduse_suspended = false;
- 
- 	for (i = 0; i < dev->nr_vring; i++)
- 		vduse_vring_cleanup(dev, i);
-@@ -537,6 +540,12 @@ vduse_events_handler(int fd, void *arg, int *close __rte_unused)
- 			resp.result = VDUSE_REQ_RESULT_FAILED;
- 			break;
- 		}
-+		if (dev->vduse_suspended) {
-+			VHOST_CONFIG_LOG(dev->ifname, ERR,
-+				"SET_VQ_READY received on suspended device");
-+			resp.result = VDUSE_REQ_RESULT_FAILED;
-+			break;
-+		}
- 
- 		i = req.vq_ready.num;
- 		if (i >= dev->nr_vring) {
-@@ -567,11 +576,43 @@ vduse_events_handler(int fd, void *arg, int *close __rte_unused)
- 		vq->enabled = req.vq_ready.ready;
- 		resp.result = VDUSE_REQ_RESULT_OK;
- 		break;
-+	case VDUSE_SUSPEND:
-+		if (!(dev->vduse_features & RTE_BIT64(VDUSE_F_SUSPEND))) {
-+			VHOST_CONFIG_LOG(dev->ifname, ERR,
-+				"Unnegotiated suspend message");
-+			resp.result = VDUSE_REQ_RESULT_FAILED;
-+			break;
-+		}
-+		if (!(dev->status & VIRTIO_DEVICE_STATUS_DRIVER_OK)) {
-+			VHOST_CONFIG_LOG(dev->ifname, ERR,
-+				"Unexpected suspend message with no DRIVER_OK");
-+			resp.result = VDUSE_REQ_RESULT_FAILED;
-+			break;
-+		}
-+		for (i = 0; dev->notify_ops != NULL &&
-+			    dev->notify_ops->vring_state_changed != NULL &&
-+			    i < dev->nr_vring; i++) {
-+			if (dev->virtqueue[i] == dev->cvq)
-+				continue;
-+
-+			ret = dev->notify_ops->vring_state_changed(dev->vid, i, false);
-+			if (ret) {
-+				VHOST_CONFIG_LOG(dev->ifname, ERR,
-+					"Failed to disable VQ %u for suspend", i);
-+				resp.result = VDUSE_REQ_RESULT_FAILED;
-+				goto out;
-+			}
-+		}
-+		dev->vduse_suspended = true;
-+		resp.result = VDUSE_REQ_RESULT_OK;
-+		break;
-+
- 	default:
- 		resp.result = VDUSE_REQ_RESULT_FAILED;
- 		break;
- 	}
- 
-+out:
- 	resp.request_id = req.request_id;
- 
- 	ret = write(dev->vduse_dev_fd, &resp, sizeof(resp));
-diff --git a/lib/vhost/vhost.h b/lib/vhost/vhost.h
-index 4958932923d7..b16b8efe0625 100644
---- a/lib/vhost/vhost.h
-+++ b/lib/vhost/vhost.h
-@@ -535,6 +535,7 @@ struct __rte_cache_aligned virtio_net {
- 	int			vduse_dev_fd;
- 	uint64_t		vduse_api_ver;
- 	uint64_t		vduse_features;
-+	bool			vduse_suspended;
- 
- 	struct vhost_virtqueue	*cvq;
- 
+The last patch adds a memif PMD unit test (app/test, memif_pmd_autotest)
+that stands up a server/client vdev pair over a loopback socket and
+covers dev_info, link state, stats, single- and multi-segment loopback,
+stop/start reconnect, empty Tx burst, and close without stop.
+
+Verified: memif_pmd_autotest passes 9/9; check-git-log and checkpatch
+are clean across the series.
+
+Sriram Yagnaraman (6):
+  net/memif: guard against empty Tx burst
+  net/memif: close file descriptor zero
+  net/memif: fix MAC address leak on probe failure
+  net/memif: unwind partial device on create failure
+  net/memif: disconnect on device close
+  test/memif: add memif PMD unit test
+
+ app/test/meson.build              |   1 +
+ app/test/test_pmd_memif.c         | 574 ++++++++++++++++++++++++++++++
+ drivers/net/memif/memif_socket.c  |  14 +-
+ drivers/net/memif/rte_eth_memif.c |  59 ++-
+ 4 files changed, 626 insertions(+), 22 deletions(-)
+ create mode 100644 app/test/test_pmd_memif.c
+
 -- 
-2.56.0
+2.43.7
 
