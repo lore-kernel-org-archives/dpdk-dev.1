@@ -2,49 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C179CC6B1D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 12:23:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB569CC6B1D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 12:23:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2567B402E9;
-	Wed, 14 Oct 2026 14:23:32 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 025B94060A;
+	Wed, 14 Oct 2026 14:23:33 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 8CCC54021E
- for <dev@dpdk.org>; Wed, 14 Oct 2026 14:23:30 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 235C1402E9
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 14:23:31 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791980611; x=1823516611;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=bYs6UDfJBfzzwQ84nUwSNwkeZQlVaNwfpFAcIX1i9O8=;
- b=KSf4or2BbILJ+QB+j5qhKs7r2J5hbuH/vCD2usP186scFvdIkn8e18St
- JyUkxLd3Ej198X1XDoPq9qiYDQlLThXYYNkp7T/kIoqHJpKnLZ0bpouxy
- UssFCk7p7YJLWdhQqPoVC6lQo5NQvLhjmeHgkw43SVxNI8ny3Qbxoi13s
- kZolEPkFsTH/n9N0PEu2ySMm1NI91oBpIu0Ep5CjTVf/XfomK7x75zLZL
- 3VtEgEmuEwW3Ddgm+I9bSfHqpx5hCTVd0xbLqF7QeUbgg/7RvdSTXi+lH
- XHqTJWgE0MQe0CfUnRdQTcQe7D89gOFfPKyGcG/n/D9TOa0K7MbBdlDem Q==;
-X-CSE-ConnectionGUID: tQqZ/T8TRW+rCaI2vshLXQ==
-X-CSE-MsgGUID: wVDh1sYiSfWxf4rBCN3jKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="717288"
+ t=1791980612; x=1823516612;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=ZBlQZ+lzg69ZPPwYt87f1br8HMqL0DBlK7G+1+JWBFY=;
+ b=CT1ViiCzlTzCFQL9KTtPZI4orszWXHgtXfH2d0Pz/1XhDeCpTu9v1c4z
+ ww+ORuj3L0759brQ/n9YdnvqH480GS0Plbmd3LVXlIq29QWr6b5dIu1gM
+ vDIO/hvih85/0lYep+YJ+7SEoAX9HX0X+owO2S514B8mlXV5dMyyk2LFP
+ /iYBcxz0qfJZ8RY3SO6sRSMTvTIdaomMWg5IdrV6jdIF4rLQpY3ih2dfx
+ emej1x5PxXdZAVi2bmyZ969m8mqHyxh7451yjWFhYLIgKFD4kP53WlD50
+ XkjhglQgZOsJj7zR3i2btMMb1qZ7z/sdPkXwK/SN9s/CQnjWnWnkWRT6r A==;
+X-CSE-ConnectionGUID: ap9LNbjkSv2xlrXY3EyIPg==
+X-CSE-MsgGUID: dUpV96xFRTy2Sz3hZ2BMZw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="717296"
 X-IronPort-AV: E=Sophos;i="6.27,157,1787036400"; 
-   d="scan'208";a="717288"
+   d="scan'208";a="717296"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2026 05:23:30 -0700
-X-CSE-ConnectionGUID: Hxihh7rFTK2vZovKLlKb0Q==
-X-CSE-MsgGUID: WpuuHbxaQX+h7KG23OyYJQ==
+ 14 Oct 2026 05:23:31 -0700
+X-CSE-ConnectionGUID: H7XzwhXYSkayI7NfZXwjHg==
+X-CSE-MsgGUID: SEVF8cIgTvKrNQw1y7PAlw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,157,1787036400"; 
-   d="scan'208";a="1524770"
+   d="scan'208";a="1524773"
 Received: from mtldev4.igk.intel.com ([10.123.233.187])
- by fmviesa002.fm.intel.com with ESMTP; 14 Oct 2026 05:23:29 -0700
+ by fmviesa002.fm.intel.com with ESMTP; 14 Oct 2026 05:23:30 -0700
 From: Dawid Wesierski <dawid.wesierski@intel.com>
 To: dev@dpdk.org
 Cc: vladimir.medvedkin@intel.com, bruce.richardson@intel.com,
  anatoly.burakov@intel.com, marek.kasiewicz@intel.com
-Subject: [PATCH 0/3] net/iavf: fix TM hierarchy commit and TM ops without QoS
-Date: Wed, 14 Oct 2026 12:24:15 +0000
-Message-ID: <20261014122419.631288-1-dawid.wesierski@intel.com>
+Subject: [PATCH 1/3] net/iavf: fix invalid free of queue TC map
+Date: Wed, 14 Oct 2026 12:24:16 +0000
+Message-ID: <20261014122419.631288-2-dawid.wesierski@intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261014122419.631288-1-dawid.wesierski@intel.com>
+References: <20261014122419.631288-1-dawid.wesierski@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -61,36 +63,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Three fixes in the iavf traffic manager.
+iavf_hierarchy_commit() allocates the queue TC map with calloc(), and
+it frees the previous map with free(old_qtc_map) after a successful
+commit. A later change added rte_free(vf->qtc_map) in front of that
+free(), because it was written for a tree that still leaked the map.
 
-Patch 1 removes a second free of the queue TC map. The fault is in main
-only, after commit f6e33f09f766. No release has it.
+After the first commit, rte_free() gets a pointer from the libc
+heap, and free() then releases the same pointer a second time.
+rte_free() reads a malloc_elem header in the bytes in front of the
+pointer. It usually logs "Invalid memory" and returns, but the result
+depends on the contents of the libc heap.
 
-Patch 2 sets the queue ID and TC of each queue node in the queue
-bandwidth message. Without it, a queue node with no shaper profile
-resets queue 0, and its own queue keeps the rate limit that the PF
-holds from an earlier process.
+Remove the rte_free() call. free(old_qtc_map) releases the old map.
 
-Patch 3 returns -ENOTSUP from the TM ops that read qos_cap when the PF
-does not grant VIRTCHNL_VF_OFFLOAD_QOS, for example the in-tree ice PF.
-These ops cause a segmentation fault now.
+Fixes: f6e33f09f766 ("net/iavf: disable runtime queue setup when rate limiting")
 
-The Media Transport Library carries patches 2 and 3 on DPDK 26.07, and
-tests them on E830 VFs with the out-of-tree ice PF. On a VF that an
-earlier process rate limited, a TSC-paced 1080p59.94 stream runs at
-27.5 fps. With patch 2, a commit of queue nodes without shaper profiles
-removes the old limits, and the stream runs at 59.9 fps.
+Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
+---
+ drivers/net/intel/iavf/iavf_tm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Dawid Wesierski (3):
-  net/iavf: fix invalid free of queue TC map
-  net/iavf: fix bandwidth config of unshaped queues
-  net/iavf: fix crash in TM ops without QoS capability
-
- drivers/net/intel/iavf/iavf_tm.c | 42 ++++++++++++++++++++++++++++----
- 1 file changed, 37 insertions(+), 5 deletions(-)
-
-
-base-commit: b39ee12b030f49c524b9d8c350a0f4b04141ccf9
+diff --git a/drivers/net/intel/iavf/iavf_tm.c b/drivers/net/intel/iavf/iavf_tm.c
+index fc84bf7e6b..603da09bb5 100644
+--- a/drivers/net/intel/iavf/iavf_tm.c
++++ b/drivers/net/intel/iavf/iavf_tm.c
+@@ -913,7 +913,6 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
+ 		goto fail_clear;
+ 
+ 	/* replace the previously committed mapping, if any */
+-	rte_free(vf->qtc_map);
+ 	vf->qtc_map = qtc_map;
+ 	free(old_qtc_map);
+ 	if (adapter->stopped == 1)
 -- 
 2.43.0
 
