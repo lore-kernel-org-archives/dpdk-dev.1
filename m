@@ -2,56 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A80CC6B1D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 15:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80795CC6B1D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 15:14:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F09440E18;
-	Wed, 14 Oct 2026 17:14:21 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 5478040144;
- Wed, 14 Oct 2026 17:14:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791990856; x=1823526856;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=rEamoKa5VOxaTjYcN2CQe4XyB0tv53AwhHIK7UWpd50=;
- b=irAU97eq1mZxn6wkLEsd6fHvK8BP0268Shh1vYJm4FgTvaMVmYkMBAda
- 5RvLdgizUfFLWQ92o+jYbFnseh2WwHI/PrEJ4/BEOkwg8QJa5cx+wooBI
- Ot1wlDu3k6WphbEag2HNmNQDh0UXlr5gpU09cEVO4rtNf278yOZdapwgG
- eHyUEWi4VOTad7EyookY3TwAjlxCm/IdLCQdCzEWcx4vCKnfuFcg+HwgX
- lSrNRKGord9r8BqbSKiZ2QrraFOOCUxi4ErCkWyQecnqSPLvFFrt50JuG
- 4eM1p1fkdiRcotEQhtdU8uN93QKDrrOhxie9uTT2c/Aqj4WHf1k+iDFaI A==;
-X-CSE-ConnectionGUID: YXT4Oxr4Rqals6RQqqjp0g==
-X-CSE-MsgGUID: UK1DDQrNSQur0ImpuKmd7w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="642352"
-X-IronPort-AV: E=Sophos;i="6.27,158,1787036400"; 
-   d="scan'208";a="642352"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2026 08:14:10 -0700
-X-CSE-ConnectionGUID: 08MQBJB9STGjYfwaGOKTsw==
-X-CSE-MsgGUID: QqSQWVUgRxSMdJSs18FKIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,158,1787036400"; 
-   d="scan'208";a="1785452"
-Received: from pae-31.iind.intel.com ([10.49.105.72])
- by fmviesa008.fm.intel.com with ESMTP; 14 Oct 2026 08:14:09 -0700
-From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-To: dev@dpdk.org
-Cc: Gaetan Rivet <grive@u256.net>,
- Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-Subject: [PATCH v2 5/5] net/failsafe: detect sub-device removal via device
- event
-Date: Wed, 14 Oct 2026 22:16:04 +0000
-Message-Id: <20261014221604.128677-6-sandeep.penigalapati@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261014221604.128677-1-sandeep.penigalapati@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0A7AF40DD2;
+	Wed, 14 Oct 2026 17:14:30 +0200 (CEST)
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
+ [209.85.216.47]) by mails.dpdk.org (Postfix) with ESMTP id BA2BD40B9C
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 17:14:28 +0200 (CEST)
+Received: by mail-pj1-f47.google.com with SMTP id
+ 98e67ed59e1d1-3ac5b090d16so815453a91.0
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 08:14:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791990868;
+ x=1792595668; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=zx1adFjXjGrBrOCiFuZN3VAwjvk1Y2r9HJfJIeplMgQ=;
+ b=KmEdmHMo8yqGSCsLRO8TdZyC/rQO2srkituX1UOROn9K4SVrB16w8cV5GusBW/SnAA
+ B4p4lileybTZF7TX1JUnPPlzFZFSbBPTu39JUYH9fUXKUokZ0IULxIZGnaSjznpfp4Mu
+ RmwlKus4PsW2aEjFPSUy7fltKQtoY8La37zZvBfOABfi3N0nQXhBC6lYoYwLMKYKGPX1
+ RCFp8kdAE9esHxf7epE3ijN518jVoUgOHNq4nB7a73IVdL2zTROSVAyx+sSAGLWjNAUe
+ N2GDV4Ia5guVh+VRmRO2Ty4vAQ0XF7Z0cMf3/SaLD8TrsU38YOxqftCNnihBCFMOedWW
+ IbCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1791990868; x=1792595668;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=zx1adFjXjGrBrOCiFuZN3VAwjvk1Y2r9HJfJIeplMgQ=;
+ b=u2DPcq3t2biY0sI5opnVS+3BQrkF34et4fNe426Ywl1HdMTLXulKGAQpbKdJPLLzDU
+ ZMqaTJvjHowzJ72BsibJdC1iwYxWhM4s0QqiIQfeNfdYFdseN+1Y9EmNWEiUHAnWLtUM
+ Jn4cRsL9/JCNG4GKCjS1j6iRPI89w436dsFpDVWC+zDqX8+yS5O5SxJgiZQl3x4bZaDo
+ OwgT2VSapZ45jS2QpDML0pcU7NCtOeKSC97moB+o/E2rcWotJjqWH+5dWFl25xRCfa3I
+ U1srGZ7wHTLFAP2FkVnK3JHavAbu19bTNT1iP4mZ1WXsTySKBgP1OjcynswWBrSPLcou
+ PkdA==
+X-Gm-Message-State: AFq9FYKDLszZ+eVW++lwPSl1QdxP8XmY7oF2p/Wer+mGyehFWKqeWjXO
+ 9QdpCx9wApg9LKxNBBh0tzAGRaBPNuu0Q1FQjqcDBx6ys/DC8eeCVwEsYfbnk58RIh0=
+X-Gm-Gg: AYBFou2S2qtdqktQTv6Biyd52e5TsJshK1Qkt8lxeZrcgm752lQHx/sMWHH8D8/RIFO
+ EC+C35HoKg3WzaA1b5e8m18psE5fowSQtJ0nZ+EUj+M4op+FAJVAgEPAZSq1ML/1kFaei2lMHZd
+ 1pcEnGtxTnzoJTziG0TjsWXkUIFbETB5bhd5/uNDnTTdwIcTlqICaYKU90TC5SQ7eiVagRsTtr0
+ PbFNJ4FdQSWEu1Mux2ZGts1VkWRGXxbn0uo6a1+AyIfnBAqVUQFZRfV/prm18oilacRETozrTFs
+ L7Z2/v9PCgNPHb2oPWst9hCgyXoL7L0T/yLtXsAqUcxzkO/LS3bYKoG9ImAsebU2pfW8qwETJbq
+ DNf+t1rqTM/iVqrGyW6pQJWd8ZHYNBYlOH1lQDqKbH17KzgTV2AgdjCZuJVvIjZdqoBQWAr9nD+
+ 1HZtdUqEmVU08+V0h/UtvoYD0orNG//NxTjglbEf1ojyS021F3B2pBLydpNHI00qfTETvPFld51
+ ZKO7s1zslI/7+6WYbNrWq0un3w31DFUIjdTHMMJ
+X-Received: by 2002:a17:90b:5343:b0:3a6:d850:bf16 with SMTP id
+ 98e67ed59e1d1-3ab3a9feae3mr9103210a91.23.1791990866355; 
+ Wed, 14 Oct 2026 08:14:26 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3ac5f202d78sm4800424a91.3.2026.10.14.08.14.25
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 14 Oct 2026 08:14:26 -0700 (PDT)
+Date: Wed, 14 Oct 2026 08:14:24 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+Cc: dev@dpdk.org, Gaetan Rivet <grive@u256.net>, stable@dpdk.org
+Subject: Re: [PATCH 0/5] net/failsafe: fixes for sub-device removal and
+ configuration
+Message-ID: <20261014081424.10323018@phoenix.local>
+In-Reply-To: <20261014194257.123356-1-sandeep.penigalapati@intel.com>
 References: <20261014194257.123356-1-sandeep.penigalapati@intel.com>
- <20261014221604.128677-1-sandeep.penigalapati@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,286 +82,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fail-safe relied on the removal (RMV) interrupt and on swapping the
-Rx/Tx burst functions to "safe" variants to cope with a disappearing
-sub-device. When a sub-device does not support the RMV interrupt (for
-example a VFIO device whose removal is only reported by the bus as a
-device event on the release request), the removal was not detected:
-the burst functions kept polling the gone device and traffic was not
-failed over to the other sub-device.
+On Wed, 14 Oct 2026 19:42:52 +0000
+Sandeep Penigalapati <sandeep.penigalapati@intel.com> wrote:
 
-Register a bus device-event callback for sub-devices without RMV
-interrupt support and run the existing removal handling from it. The
-callback is registered and unregistered by the primary process only:
-struct sub_device lives in shared memory, so in a secondary process the
-registration flag would read as set and sdev->dev would point into the
-primary address space; dereferencing it would crash.
+> This series collects fixes for the fail-safe PMD found while testing
+> live migration of a VF-backed sub-device (iavf) paired with a virtio-net
+> standby sub-device.
+> 
+> - double release of the sub-device port on hot-unplug;
+> - NULL queue-release op on sub-devices that do not implement it;
+> - MAC address pool size off-by-one and replay of zeroed MAC slots;
+> - unsupported link-status control (-ENOTSUP) treated as fatal;
+> - sub-device removal not detected without the RMV interrupt (e.g. VFIO
+>   device release), now handled through a bus device-event callback.
+> 
+> 
+> Sandeep Penigalapati (5):
+>   net/failsafe: fix double release of sub-device port
+>   net/failsafe: fix queue release without sub-device op
+>   net/failsafe: fix MAC address pool size and replay
+>   net/failsafe: ignore unsupported link status update
+>   net/failsafe: detect sub-device removal via device event
+> 
+>  drivers/net/failsafe/failsafe_ether.c   | 40 ++++++++++--
+>  drivers/net/failsafe/failsafe_ops.c     | 24 ++++++-
+>  drivers/net/failsafe/failsafe_private.h | 13 ++--
+>  drivers/net/failsafe/failsafe_rxtx.c    | 83 +------------------------
+>  4 files changed, 62 insertions(+), 98 deletions(-)
+> 
 
-With removal now reported reliably, the per-burst safe/fast function
-switching is no longer needed; drop failsafe_set_burst_fn() and the
-_fast burst variants and keep a single burst path guarded by an
-unlikely() check.
-
-Fixes: a46f8d584eb8 ("net/failsafe: add fail-safe PMD")
-Cc: stable@dpdk.org
-Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
----
-v2:
-- Clarify in a comment that a secondary detects removal via the shared
-  sub_device state checked by fs_rx_unsafe()/fs_tx_unsafe().
-
- drivers/net/failsafe/failsafe_ether.c   | 29 ++++++++-
- drivers/net/failsafe/failsafe_ops.c     | 19 ++++++
- drivers/net/failsafe/failsafe_private.h | 13 ++--
- drivers/net/failsafe/failsafe_rxtx.c    | 83 +------------------------
- 4 files changed, 52 insertions(+), 92 deletions(-)
-
-diff --git a/drivers/net/failsafe/failsafe_ether.c b/drivers/net/failsafe/failsafe_ether.c
-index f23580ed37..2a15eb4da5 100644
---- a/drivers/net/failsafe/failsafe_ether.c
-+++ b/drivers/net/failsafe/failsafe_ether.c
-@@ -386,6 +386,22 @@ failsafe_eth_dev_unregister_callbacks(struct sub_device *sdev)
- 			     " %d", SUB_ID(sdev));
- 		sdev->lsc_callback = 0;
- 	}
-+	/*
-+	 * The bus device-event callback is registered by the primary only
-+	 * (hotplug is handled there). sub_device is shared memory, so in a
-+	 * secondary the flag reads as set and sdev->dev holds the primary's
-+	 * pointer; dereferencing it (rte_dev_name) would crash. Skip it.
-+	 */
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY &&
-+	    sdev->dev_event_callback) {
-+		ret = rte_dev_event_callback_unregister(rte_dev_name(sdev->dev),
-+						failsafe_dev_event_callback,
-+						sdev);
-+		if (ret < 0)
-+			WARN("Failed to unregister device event callback for"
-+			     " sub_device %d", SUB_ID(sdev));
-+		sdev->dev_event_callback = 0;
-+	}
- }
- 
- void
-@@ -592,8 +608,6 @@ failsafe_eth_rmv_event_callback(uint16_t port_id __rte_unused,
- 		return -1;
- 	/* Switch as soon as possible tx_dev. */
- 	fs_switch_dev(fs_dev(sdev), sdev);
--	/* Use safe bursts in any case. */
--	failsafe_set_burst_fn(fs_dev(sdev), 1);
- 	/*
- 	 * Async removal, the sub-PMD will try to unregister
- 	 * the callback at the source of the current thread context.
-@@ -603,6 +617,17 @@ failsafe_eth_rmv_event_callback(uint16_t port_id __rte_unused,
- 	return 0;
- }
- 
-+void
-+failsafe_dev_event_callback(const char *device_name __rte_unused,
-+			    enum rte_dev_event_type type,
-+			    void *cb_arg)
-+{
-+	if (type != RTE_DEV_EVENT_REMOVE)
-+		return;
-+	failsafe_eth_rmv_event_callback(PORT_ID((struct sub_device *)cb_arg),
-+					RTE_ETH_EVENT_INTR_RMV, cb_arg, NULL);
-+}
-+
- int
- failsafe_eth_lsc_event_callback(uint16_t port_id __rte_unused,
- 				enum rte_eth_event_type event __rte_unused,
-diff --git a/drivers/net/failsafe/failsafe_ops.c b/drivers/net/failsafe/failsafe_ops.c
-index f0c12dfaa3..d5b49a39c2 100644
---- a/drivers/net/failsafe/failsafe_ops.c
-+++ b/drivers/net/failsafe/failsafe_ops.c
-@@ -82,6 +82,25 @@ fs_dev_configure(struct rte_eth_dev *dev)
- 			else
- 				sdev->rmv_callback = 1;
- 		}
-+		/*
-+		 * Without RMV interrupts, a hot-unplug is only reported by the
-+		 * bus (e.g. a VFIO device release request) as a device event.
-+		 * Only the primary registers for it; a secondary learns of the
-+		 * removal through the shared sub_device state checked by
-+		 * fs_rx_unsafe()/fs_tx_unsafe() on every burst.
-+		 */
-+		if (rte_eal_process_type() == RTE_PROC_PRIMARY &&
-+		    !rmv_interrupt && sdev->dev != NULL &&
-+		    sdev->dev_event_callback == 0) {
-+			ret = rte_dev_event_callback_register(rte_dev_name(sdev->dev),
-+					failsafe_dev_event_callback,
-+					sdev);
-+			if (ret)
-+				WARN("Failed to register device event callback for sub_device %d",
-+				     SUB_ID(sdev));
-+			else
-+				sdev->dev_event_callback = 1;
-+		}
- 		dev->data->dev_conf.intr_conf.rmv = 0;
- 		if (lsc_interrupt && sdev->lsc_callback == 0) {
- 			ret = rte_eth_dev_callback_register(PORT_ID(sdev),
-diff --git a/drivers/net/failsafe/failsafe_private.h b/drivers/net/failsafe/failsafe_private.h
-index aae091e792..a565ee2fbc 100644
---- a/drivers/net/failsafe/failsafe_private.h
-+++ b/drivers/net/failsafe/failsafe_private.h
-@@ -138,6 +138,8 @@ struct sub_device {
- 	unsigned int rmv_callback:1;
- 	/* LSC callback registration state */
- 	unsigned int lsc_callback:1;
-+	/* Bus device event (removal) callback registration state */
-+	unsigned int dev_event_callback:1;
- };
- 
- /*
-@@ -208,18 +210,11 @@ int failsafe_hotplug_alarm_cancel(struct rte_eth_dev *dev);
- 
- /* RX / TX */
- 
--void failsafe_set_burst_fn(struct rte_eth_dev *dev, int force_safe);
--
- uint16_t failsafe_rx_burst(void *rxq,
- 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- uint16_t failsafe_tx_burst(void *txq,
- 		struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
- 
--uint16_t failsafe_rx_burst_fast(void *rxq,
--		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
--uint16_t failsafe_tx_burst_fast(void *txq,
--		struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
--
- /* ARGS */
- 
- int failsafe_args_parse(struct rte_eth_dev *dev, const char *params);
-@@ -246,6 +241,9 @@ int failsafe_eth_rmv_event_callback(uint16_t port_id,
- int failsafe_eth_lsc_event_callback(uint16_t port_id,
- 				    enum rte_eth_event_type event,
- 				    void *cb_arg, void *out);
-+void failsafe_dev_event_callback(const char *device_name,
-+				 enum rte_dev_event_type type,
-+				 void *cb_arg);
- int failsafe_eth_new_event_callback(uint16_t port_id,
- 				    enum rte_eth_event_type event,
- 				    void *cb_arg, void *out);
-@@ -487,7 +485,6 @@ fs_switch_dev(struct rte_eth_dev *dev,
- 	} else {
- 		return;
- 	}
--	failsafe_set_burst_fn(dev, 0);
- 	rte_wmb();
- }
- 
-diff --git a/drivers/net/failsafe/failsafe_rxtx.c b/drivers/net/failsafe/failsafe_rxtx.c
-index 500483bda3..8d53d9dd40 100644
---- a/drivers/net/failsafe/failsafe_rxtx.c
-+++ b/drivers/net/failsafe/failsafe_rxtx.c
-@@ -28,39 +28,6 @@ fs_tx_unsafe(struct sub_device *sdev)
- 		(sdev->state != DEV_STARTED);
- }
- 
--void
--failsafe_set_burst_fn(struct rte_eth_dev *dev, int force_safe)
--{
--	struct sub_device *sdev;
--	uint8_t i;
--	int need_safe;
--	int safe_set;
--
--	need_safe = force_safe;
--	FOREACH_SUBDEV(sdev, i, dev)
--		need_safe |= fs_rx_unsafe(sdev);
--	safe_set = (dev->rx_pkt_burst == &failsafe_rx_burst);
--	if (need_safe && !safe_set) {
--		DEBUG("Using safe RX bursts%s",
--		      (force_safe ? " (forced)" : ""));
--		dev->rx_pkt_burst = &failsafe_rx_burst;
--	} else if (!need_safe && safe_set) {
--		DEBUG("Using fast RX bursts");
--		dev->rx_pkt_burst = &failsafe_rx_burst_fast;
--	}
--	need_safe = force_safe || fs_tx_unsafe(TX_SUBDEV(dev));
--	safe_set = (dev->tx_pkt_burst == &failsafe_tx_burst);
--	if (need_safe && !safe_set) {
--		DEBUG("Using safe TX bursts%s",
--		      (force_safe ? " (forced)" : ""));
--		dev->tx_pkt_burst = &failsafe_tx_burst;
--	} else if (!need_safe && safe_set) {
--		DEBUG("Using fast TX bursts");
--		dev->tx_pkt_burst = &failsafe_tx_burst_fast;
--	}
--	rte_wmb();
--}
--
- /*
-  * Override source port in Rx packets.
-  *
-@@ -89,7 +56,7 @@ failsafe_rx_burst(void *queue,
- 	rxq = queue;
- 	sdev = rxq->sdev;
- 	do {
--		if (fs_rx_unsafe(sdev)) {
-+		if (unlikely(fs_rx_unsafe(sdev))) {
- 			nb_rx = 0;
- 			sdev = sdev->next;
- 			continue;
-@@ -108,34 +75,6 @@ failsafe_rx_burst(void *queue,
- 	return nb_rx;
- }
- 
--uint16_t
--failsafe_rx_burst_fast(void *queue,
--			 struct rte_mbuf **rx_pkts,
--			 uint16_t nb_pkts)
--{
--	struct sub_device *sdev;
--	struct rxq *rxq;
--	void *sub_rxq;
--	uint16_t nb_rx;
--
--	rxq = queue;
--	sdev = rxq->sdev;
--	do {
--		RTE_ASSERT(!fs_rx_unsafe(sdev));
--		sub_rxq = ETH(sdev)->data->rx_queues[rxq->qid];
--		FS_ATOMIC_P(rxq->refcnt[sdev->sid]);
--		nb_rx = ETH(sdev)->
--			rx_pkt_burst(sub_rxq, rx_pkts, nb_pkts);
--		FS_ATOMIC_V(rxq->refcnt[sdev->sid]);
--		sdev = sdev->next;
--	} while (nb_rx == 0 && sdev != rxq->sdev);
--	rxq->sdev = sdev;
--	if (nb_rx)
--		failsafe_rx_set_port(rx_pkts, nb_rx,
--				     rxq->priv->data->port_id);
--	return nb_rx;
--}
--
- uint16_t
- failsafe_tx_burst(void *queue,
- 		  struct rte_mbuf **tx_pkts,
-@@ -156,23 +95,3 @@ failsafe_tx_burst(void *queue,
- 	FS_ATOMIC_V(txq->refcnt[sdev->sid]);
- 	return nb_tx;
- }
--
--uint16_t
--failsafe_tx_burst_fast(void *queue,
--			 struct rte_mbuf **tx_pkts,
--			 uint16_t nb_pkts)
--{
--	struct sub_device *sdev;
--	struct txq *txq;
--	void *sub_txq;
--	uint16_t nb_tx;
--
--	txq = queue;
--	sdev = TX_SUBDEV(&rte_eth_devices[txq->priv->data->port_id]);
--	RTE_ASSERT(!fs_tx_unsafe(sdev));
--	sub_txq = ETH(sdev)->data->tx_queues[txq->qid];
--	FS_ATOMIC_P(txq->refcnt[sdev->sid]);
--	nb_tx = ETH(sdev)->tx_pkt_burst(sub_txq, tx_pkts, nb_pkts);
--	FS_ATOMIC_V(txq->refcnt[sdev->sid]);
--	return nb_tx;
--}
--- 
-2.34.1
-
+One related failsafe issue is that today tap is carrying some stubs
+only because failsafe doesn't handle ENOTSUP
