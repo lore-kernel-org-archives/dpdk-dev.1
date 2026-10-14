@@ -2,81 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1B0CC6B24
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 06:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADCDCC6B24
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 07:13:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A18B640279;
-	Wed, 14 Oct 2026 08:45:29 +0200 (CEST)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
- [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id BC3BB40272
- for <dev@dpdk.org>; Wed, 14 Oct 2026 08:45:28 +0200 (CEST)
-Received: by mail-wr1-f49.google.com with SMTP id
- ffacd0b85a97d-48afbd2c386so2139137f8f.3
- for <dev@dpdk.org>; Tue, 13 Oct 2026 23:45:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1791960328; x=1792565128; darn=dpdk.org;
- h=content-transfer-encoding:content-type:in-reply-to:content-language
- :references:cc:to:from:subject:user-agent:mime-version:date
- :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=+/9HcqhijrTF5I2DenkRM2n2wQ+EHIrHo2zs8PxV30c=;
- b=VhLeHapdEwEjET80ve2BWkOkGUfhq+wgJ6FVdG202QSxQw5ZVFInepqzkrJyWsGlvu
- KyGhQilWGtE//albZsspVAQMd90Z5xn+wTAflpxRGb5muVgqmhD7Hmw9aNyBVmRHZHdh
- 40tCIa0qIpqY2YSW2zaZfdbaJm+eBL54qaMSjGR4CWSgNYSAyRavH7MmbrMnTGZwMoCa
- HKAhoWifvB9aWrAs2+dmrZax/QZUVgFh3Tn9lpUkDCgUnzqung2FnF4TnbDgjpE5fevN
- Q3PjF5KBWkzOTJXtFFA1qTEUYd3GKQw93hEG+DuD/Ug/AmWHdmz+NaUr7g3y23/V7GSQ
- wunA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791960328; x=1792565128;
- h=content-transfer-encoding:content-type:in-reply-to:content-language
- :references:cc:to:from:subject:user-agent:mime-version:date
- :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=+/9HcqhijrTF5I2DenkRM2n2wQ+EHIrHo2zs8PxV30c=;
- b=gucVfmRea5db+y/gO42IqRaSdrrqhP5KGawIM4gTAZxytuEX14moh3DEMoDong+9wI
- SEuGANeCIi35/8rFah7rqlJOn0l3JxJkunCZLUrqussto1uU2shD+7Pq8XpXmfToqwX7
- hXlsrEAY9LlGCi+sJVK14yFTGFGVnQwo3PwWEKfiv5/HJ1nPii981Q8Z22Qf7dEPAXOd
- DWlmq2R4eF7/7FlucCuQvZXNbIuyghh9as/J70J/PEs6DL+89IdAdsTprsA7U4dytHID
- lhGavM4Jhb08d6k8BZBVztxnTs75qxZ9o8fFSA6uzNmWNEfWiwEphp7mqkYsejR+GP94
- 1hpQ==
-X-Gm-Message-State: AFq9FYLdvUXiGichnL6BbtaMIyTm/4U0s5ZiGsGLIqwDeq38RJvGIRSr
- 9tnmegVYxzCjBTOVRKv3bIf6NSQIr8bgF3vE4bkkwot+1BUI21a6HwVtIHXzROQSlSw=
-X-Gm-Gg: AYBFou3d67gCRjpF0C2p/jP15TO4C0iSQAHc0ZXbgRyaGNXF9wBeWxcJO3tfRwU/y3J
- gHeN5r+44nWhQONTu9lpcvXJxVLuvtWONk2nRvnFC1tjiFs1l7WHi4vE0AbIgmwri1QFebytmEd
- AhKRBNkfDUi4czhqhalV5ERbK+Ks68w2LP6xTMYIWF6yqxdAa9OMrCJ3g1j/3RyQfOTtbNi2Jqe
- yGPcW2UhE6a5u9kFf2dnxDyjC1a/0MDVX7d+NEyyBTfyAHNxLEhabj1rV7nxBidfQfkElxYzBva
- JFR3Me8gqVcg+h1T8BtpzCrox5OiD6O+eEzdMvo3HN46ybzZmGKcsr9cFRuEieCX2xLEIIJsM9T
- WjVzNmJzeuycnUSCb/GLdlZWdGlHhhHrcAFTZoTocXur0pUByMzEioRfqLxuPSdyGS+GVNByYLh
- 9ST3WwW4FDuBMTwrXmH/fMSlwEfaDyHFEFAwR3ijSs0mMTZCObnazrntWW6yM3h54VoJ1zzG+HP
- VkKeQ==
-X-Received: by 2002:a05:6000:470f:b0:48b:74b:4ce1 with SMTP id
- ffacd0b85a97d-48dbad00328mr26307055f8f.32.1791960327997; 
- Tue, 13 Oct 2026 23:45:27 -0700 (PDT)
-Received: from [192.168.0.78] ([80.233.42.129])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-48de72d2b13sm4659496f8f.55.2026.10.13.23.45.25
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 13 Oct 2026 23:45:26 -0700 (PDT)
-Message-ID: <dd243c4c-bb36-4340-96d5-28b2b35b186b@gmail.com>
-Date: Wed, 14 Oct 2026 07:45:24 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/29] bpf: replace deprecated SMP barriers with C11
- fences
-From: Marat Khalili <qm2k21@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 13AAE402A4;
+	Wed, 14 Oct 2026 09:13:32 +0200 (CEST)
+Received: from forward103d.mail.yandex.net (forward103d.mail.yandex.net
+ [51.250.60.163]) by mails.dpdk.org (Postfix) with ESMTP id 2A58D40272
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 09:13:30 +0200 (CEST)
+Received: from mail-nwsmtp-smtp-production-main-17.klg.yp-c.yandex.net
+ (mail-nwsmtp-smtp-production-main-17.klg.yp-c.yandex.net
+ [IPv6:2a02:6b8:c42:5a3:0:640:5b8e:0])
+ by forward103d.mail.yandex.net (postfix) with ESMTPS id 78001C0824;
+ Wed, 14 Oct 2026 10:13:27 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-17.klg.yp-c.yandex.net (smtp)
+ with ESMTPSA id uCORNqZtq0U0-LNHlRc67; 
+ Wed, 14 Oct 2026 10:13:26 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+ t=1791962006; bh=Gth8e+uU8fAxu/EAOVJK9VyC5G4uJSim+3BF+oCgi1A=;
+ h=Message-ID:Date:Cc:Subject:To:From;
+ b=N1sl0MowPWkdHpKeW88iV+JAeIgxlWScL25Jq3iDGEbixa0FSrr5bBtahZLMV1vfr
+ SZNAy68M2Ew679tgvPG+0SIG9xNjvrNQPXS6S15NJpIdTA/Sw1WkcgXPGKy2Lv0+1W
+ yeI8TJ+RjKyLMP699fcC/pjfnZjoHmkSuO1EiJxo=
+Authentication-Results: mail-nwsmtp-smtp-production-main-17.klg.yp-c.yandex.net;
+ dkim=pass header.i=@yandex.ru
+From: Roman Khromenok <roma55592@yandex.ru>
 To: dev@dpdk.org
-Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- David Marchand <david.marchand@redhat.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>
-References: <20260729175715.165120-1-stephen@networkplumber.org>
- <20261008233649.1260843-1-stephen@networkplumber.org>
- <20261008233649.1260843-2-stephen@networkplumber.org>
- <b9d3cb13-e34f-406d-ac18-345fede8bc5b@arm.com>
- <6888e84c-e250-4ed9-ad70-46178014eb15@gmail.com>
-Content-Language: en-US
-In-Reply-To: <6888e84c-e250-4ed9-ad70-46178014eb15@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc: thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
+ stephen@networkplumber.org
+Subject: [RFC 0/2] move module EEPROM decoding to a transceiver library
+Date: Wed, 14 Oct 2026 09:12:43 +0200
+Message-ID: <20261014071245.2323258-1-roma55592@yandex.ru>
+X-Mailer: git-send-email 2.47.3
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -91,33 +50,95 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 12/10/2026 19:52, Marat Khalili wrote:
+As discussed in the module signal status flags thread [1], the SFF
+module EEPROM decoders do not depend on any device or driver, and
+they are also useful for ports which are not ethdev ports, such as
+kernel ports read with the ethtool ioctls.
 
-> On 09/10/2026 07:05, Wathsala Vithanage wrote:
->>>   /*
->>>    * Marks given callback as used by datapath.
->>>    */
->>>   static __rte_always_inline void
->>>   bpf_eth_cbi_inuse(struct bpf_eth_cbi *cbi)
->>>   {
->>> -    cbi->use++;
->>> -    /* make sure no store/load reordering could happen */
->>> -    rte_smp_mb();
->>> +    rte_atomic_store_explicit(&cbi->use,
->>> +        rte_atomic_load_explicit(&cbi->use, 
->>> rte_memory_order_relaxed) + 1,
->>> +        rte_memory_order_relaxed);
->>> +
->>> +    /* full barrier: count must be visible before cb is read */
->>> +    rte_atomic_thread_fence(rte_memory_order_seq_cst);
->
-> NAK: optimizing this increment makes little sense when more careful 
-> analysis shows that it can be simply removed.
->
-> I highly recommend keeping this patchset dedicated to removing 
-> rte_smp_XX barriers and moving other bpf_pkt.c improvements elsewhere.
+This RFC moves them from ethdev to a new transceiver library:
 
-Withdrawing my NAK. It was mostly for stylistic and commit history 
-considerations, we have run out of time and this is the only version 
-that has a reviewed-by.
+- lib/transceiver/ has the SFF-8079, SFF-8472 and SFF-8636 decoders,
+  moved with git mv, and a new rte_transceiver_decode() API.
+  It does not include rte_ethdev.h: the module types and the callback
+  type are defined by the library, with the same values as the
+  RTE_ETH_MODULE_SFF_* types, which is checked at build time.
+- ethdev depends on the library, as it does on net and meter.
+  The telemetry command /ethdev/module_eeprom calls it, and
+  rte_eth_module_eeprom_parse() is kept as a wrapper, so the API
+  added in 26.11 does not change.
+- The tests move to transceiver_autotest, with one test of the
+  ethdev wrapper.
+
+Questions for this RFC:
+
+1. Name: "transceiver" is used here as it is self-explanatory;
+   "xcvr" would be shorter.
+2. Should rte_eth_module_eeprom_parse() stay as a wrapper,
+   or be deprecated in favor of rte_transceiver_decode()?
+
+The next step would be CMIS (QSFP-DD, OSFP) decoding in this library,
+starting with the lower page and page 00h, which are read like the
+SFF-8636 ones and need no ethdev API change.
+
+Release notes will be added when the 27.03 release notes exist.
+
+The pending series 39575 (dpdk-proc-info module EEPROM decode)
+is independent of this one.
+
+The series is based on next-net/for-main and depends on the module
+EEPROM decoding series already applied there:
+
+Depends-on: series-39436 ("ethdev: add API to decode module EEPROM")
+Depends-on: series-39480 ("ethdev: fix SFF-8472 calibration overflow")
+Depends-on: series-39555 ("ethdev: report module signal status flags")
+Depends-on: series-39580 ("ethdev: decode newer SFF compliance codes")
+Depends-on: series-39579 ("test: check newer SFF compliance codes")
+
+Tested with gcc, and clang with ASan and UBSan: builds without
+warnings, transceiver_autotest passes, the documentation builds
+without warnings, and the telemetry command decodes a module.
+
+[1] http://mails.dpdk.org/archives/dev/2026-October/348102.html
+
+
+Roman Khromenok (2):
+  transceiver: introduce module EEPROM decoding library
+  test/transceiver: move module EEPROM decoding tests
+
+ MAINTAINERS                                   |   7 +
+ app/test/meson.build                          |   2 +-
+ ...dev_module_eeprom.c => test_transceiver.c} | 138 +++++++++++-------
+ doc/api/doxy-api-index.md                     |   1 +
+ doc/api/doxy-api.conf.in                      |   1 +
+ doc/guides/prog_guide/index.rst               |   1 +
+ doc/guides/prog_guide/transceiver_lib.rst     |  83 +++++++++++
+ lib/ethdev/meson.build                        |   6 +-
+ lib/ethdev/rte_ethdev.c                       |   9 +-
+ lib/ethdev/rte_ethdev.h                       |   3 +
+ lib/ethdev/sff_telemetry.c                    |   7 +-
+ lib/meson.build                               |   2 +
+ lib/transceiver/meson.build                   |  11 ++
+ lib/transceiver/rte_transceiver.c             |  24 +++
+ lib/transceiver/rte_transceiver.h             | 102 +++++++++++++
+ lib/{ethdev => transceiver}/sff_8079.c        |   2 +-
+ lib/{ethdev => transceiver}/sff_8472.c        |   0
+ lib/{ethdev => transceiver}/sff_8636.c        |   4 +-
+ lib/{ethdev => transceiver}/sff_8636.h        |   0
+ lib/{ethdev => transceiver}/sff_common.c      |  28 ++--
+ lib/{ethdev => transceiver}/sff_common.h      |  10 +-
+ 21 files changed, 353 insertions(+), 88 deletions(-)
+ rename app/test/{test_ethdev_module_eeprom.c => test_transceiver.c} (82%)
+ create mode 100644 doc/guides/prog_guide/transceiver_lib.rst
+ create mode 100644 lib/transceiver/meson.build
+ create mode 100644 lib/transceiver/rte_transceiver.c
+ create mode 100644 lib/transceiver/rte_transceiver.h
+ rename lib/{ethdev => transceiver}/sff_8079.c (99%)
+ rename lib/{ethdev => transceiver}/sff_8472.c (100%)
+ rename lib/{ethdev => transceiver}/sff_8636.c (99%)
+ rename lib/{ethdev => transceiver}/sff_8636.h (100%)
+ rename lib/{ethdev => transceiver}/sff_common.c (95%)
+ rename lib/{ethdev => transceiver}/sff_common.h (96%)
+
+-- 
+2.47.3
 
