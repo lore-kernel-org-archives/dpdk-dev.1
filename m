@@ -2,37 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9DDCC6B1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 03:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B47CC6B19
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 05:44:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E1AEA4069F;
-	Wed, 14 Oct 2026 05:57:58 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 3C61A40279
- for <dev@dpdk.org>; Wed, 14 Oct 2026 05:57:52 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 20D3320012F;
- Wed, 14 Oct 2026 05:57:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CC5D44027C;
+	Wed, 14 Oct 2026 07:44:06 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id C650D40279
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 07:44:05 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 759E31A0136;
+ Wed, 14 Oct 2026 07:44:05 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E14E920012B;
- Wed, 14 Oct 2026 05:57:51 +0200 (CEST)
-Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
- [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5E1ED180006C;
- Wed, 14 Oct 2026 11:57:51 +0800 (+08)
-From: Gagandeep Singh <g.singh@nxp.com>
-To: dev@dpdk.org,
-	fengchengwen@huawei.com
-Cc: hemant.agrawal@nxp.com, Gagandeep Singh <g.singh@nxp.com>,
- Prashant Gupta <prashant.gupta_3@nxp.com>
-Subject: [PATCH v6 5/5] dma/imx_edma5: add statistics and dump
-Date: Wed, 14 Oct 2026 09:27:46 +0530
-Message-Id: <20261014035746.509685-6-g.singh@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20261014035746.509685-1-g.singh@nxp.com>
-References: <20261013065127.102157-1-g.singh@nxp.com>
- <20261014035746.509685-1-g.singh@nxp.com>
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3E6F11A0175;
+ Wed, 14 Oct 2026 07:44:05 +0200 (CEST)
+Received: from lsv031405.swis.in-blr01.nxp.com
+ (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0A69618000B6;
+ Wed, 14 Oct 2026 13:44:03 +0800 (+08)
+From: Prashant Gupta <prashant.gupta_3@nxp.com>
+To: stephen@networkplumber.org,
+	dev@dpdk.org
+Subject: [PATCH v10-S2 00/11] net/dpaa2 updates
+Date: Wed, 14 Oct 2026 11:13:49 +0530
+Message-ID: <20261014054400.980123-1-prashant.gupta_3@nxp.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261012070444.2149617-1-prashant.gupta_3@nxp.com>
+References: <20261012070444.2149617-1-prashant.gupta_3@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
@@ -49,167 +46,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add per-vchan statistics, virtual channel status reporting and a device
-dump callback to the eDMA5 dmadev.
+Changes in v10:
+- Drop meter and policing support patch.
+- Drop parser processing rework patch.
+- Remove associated meter infrastructure and parser decode changes.
+- Update release notes to the existing DPAA2 New Features section.
+- Address review comments for per-device default flow miss action.
+- Document minimum DPNI version requirement for 24-byte flow keys.
+- Fold parser-related fixes into the remaining parser updates.
+- Remove unused soft parser files and related build integration.
+- Fix coding style issues reported during review.
 
-stats_get and stats_reset expose the submitted, completed and error
-counters maintained by the data path, supporting both a single vchan and
-the RTE_DMA_ALL_VCHAN aggregate. vchan_status reports whether a channel is
-idle, active or halted on an unreaped error by inspecting the outstanding
-jobs in the software ring. dev_dump prints the device and per-vchan
-software state to aid debugging.
+Series overview:
+- fix an integer overflow in the CCSR region mapping,
+- set Tx confirmation on device init and support a larger burst size,
+- support MPLS and PPPoE flow distribution,
+- support the flow drop action and a per-device default flow miss action,
+- identify Rx mbuf hash information by FLC and add minimum key size
+  support,
+- parse tunnel and fragmented packet types,
+- remove the unused soft parser driver and rename Rx queue flags.
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
----
- drivers/dma/imx_edma5/imx_edma5_dmadev.c | 126 +++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
+Gagandeep Singh (6):
+  net/dpaa2: set Tx confirmation on device init
+  net/dpaa2: support larger burst size
+  net/dpaa2: support MPLS and PPPoE flow distribution
+  net/dpaa2: support flow drop action
+  net/dpaa2: set default flow miss action per device
+  net/dpaa2: identify Rx mbuf hash information by FLC
 
-diff --git a/drivers/dma/imx_edma5/imx_edma5_dmadev.c b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
-index 1e3c410c24..9625faf5b5 100644
---- a/drivers/dma/imx_edma5/imx_edma5_dmadev.c
-+++ b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
-@@ -900,6 +900,126 @@ imx_edma5_burst_capacity(const void *dev_private, uint16_t vchan)
- 	return vc->nb_desc - 1 - vc->nb_enqueued;
- }
- 
-+static int
-+imx_edma5_vchan_status(const struct rte_dma_dev *dev, uint16_t vchan,
-+		       enum rte_dma_vchan_status *status)
-+{
-+	const struct imx_edma5_dev *ed = dev->data->dev_private;
-+	const struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+	uint16_t idx;
-+
-+	/*
-+	 * HALTED_ERROR if an errored job is still unreaped, ACTIVE while any job
-+	 * is outstanding (not done, or enqueued but not submitted), else IDLE.
-+	 */
-+	*status = RTE_DMA_VCHAN_IDLE;
-+
-+	for (idx = vc->tail; idx != vc->head; idx = (idx + 1) & vc->desc_mask) {
-+		const struct imx_edma5_job *job = &vc->jobs[idx];
-+
-+		if (job->submitted && job->done && job->error) {
-+			*status = RTE_DMA_VCHAN_HALTED_ERROR;
-+			break;
-+		}
-+
-+		if (!job->submitted || !job->done) {
-+			*status = RTE_DMA_VCHAN_ACTIVE;
-+			break;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+imx_edma5_stats_get(const struct rte_dma_dev *dev, uint16_t vchan,
-+		    struct rte_dma_stats *stats, uint32_t stats_sz)
-+{
-+	const struct imx_edma5_dev *ed = dev->data->dev_private;
-+
-+	RTE_SET_USED(stats_sz);
-+
-+	stats->submitted = 0;
-+	stats->completed = 0;
-+	stats->errors = 0;
-+
-+	/* RTE_DMA_ALL_VCHAN requests the aggregate across every vchan. */
-+	if (vchan == RTE_DMA_ALL_VCHAN) {
-+		uint16_t i;
-+
-+		for (i = 0; i < ed->nb_vchans; i++) {
-+			const struct imx_edma5_vchan *vc = &ed->vchans[i];
-+
-+			stats->submitted += vc->submitted_count;
-+			stats->completed += vc->completed_count;
-+			stats->errors += vc->errors_count;
-+		}
-+	} else if (vchan < ed->nb_vchans) {
-+		const struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+
-+		stats->submitted = vc->submitted_count;
-+		stats->completed = vc->completed_count;
-+		stats->errors = vc->errors_count;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+imx_edma5_stats_reset(struct rte_dma_dev *dev, uint16_t vchan)
-+{
-+	struct imx_edma5_dev *ed = dev->data->dev_private;
-+
-+	/* RTE_DMA_ALL_VCHAN requests a reset of every vchan. */
-+	if (vchan == RTE_DMA_ALL_VCHAN) {
-+		uint16_t i;
-+
-+		for (i = 0; i < ed->nb_vchans; i++) {
-+			struct imx_edma5_vchan *vc = &ed->vchans[i];
-+
-+			vc->submitted_count = 0;
-+			vc->completed_count = 0;
-+			vc->errors_count = 0;
-+		}
-+	} else if (vchan < ed->nb_vchans) {
-+		struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+
-+		vc->submitted_count = 0;
-+		vc->completed_count = 0;
-+		vc->errors_count = 0;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+imx_edma5_dump(const struct rte_dma_dev *dev, FILE *f)
-+{
-+	const struct imx_edma5_dev *ed = dev->data->dev_private;
-+	uint16_t i;
-+
-+	fprintf(f, "  imx_edma5 nb_channels=%u nb_vchans=%u\n",
-+		      ed->nb_channels, ed->nb_vchans);
-+	for (i = 0; i < ed->nb_vchans; i++) {
-+		const struct imx_edma5_vchan *vc = &ed->vchans[i];
-+
-+		fprintf(f,
-+			"    vchan %u: hw_chan=%u nb_desc=%u enqueued=%u "
-+			"submitted=%" PRIu64 " completed=%" PRIu64
-+			" errors=%" PRIu64 "\n",
-+			i, vc->hw_chan, vc->nb_desc, vc->nb_enqueued,
-+			vc->submitted_count, vc->completed_count,
-+			vc->errors_count);
-+		/* Hardware register snapshot for debug (CH_CSR, CH_ES). */
-+		fprintf(f,
-+			"      hw: CH_CSR=0x%08x CH_ES=0x%08x\n",
-+			imx_edma5_read32(vc->ch_regs, IMX_EDMA5_CH_CSR),
-+			imx_edma5_read32(vc->ch_regs, IMX_EDMA5_CH_ES));
-+	}
-+
-+	return 0;
-+}
-+
- static const struct rte_dma_dev_ops imx_edma5_ops = {
- 	.dev_info_get	= imx_edma5_info_get,
- 	.dev_configure	= imx_edma5_configure,
-@@ -908,6 +1028,12 @@ static const struct rte_dma_dev_ops imx_edma5_ops = {
- 	.dev_close	= imx_edma5_close,
- 
- 	.vchan_setup	= imx_edma5_vchan_setup,
-+	.vchan_status	= imx_edma5_vchan_status,
-+
-+	.stats_get	= imx_edma5_stats_get,
-+	.stats_reset	= imx_edma5_stats_reset,
-+
-+	.dev_dump	= imx_edma5_dump,
- };
- 
- static int
+Hemant Agrawal (3):
+  net/dpaa2: fix integer overflow in CCSR region mapping
+  net/dpaa2: add minimum key size support
+  net/dpaa2: parse tunnel and fragmented packet types
+
+Jun Yang (2):
+  net/dpaa2: remove unused soft parser driver
+  net/dpaa2: rename Rx queue flags
+
+ doc/guides/nics/features/dpaa2.ini     |   4 +-
+ doc/guides/rel_notes/release_26_11.rst |  13 +
+ drivers/net/dpaa2/dpaa2_ethdev.c       |  84 +---
+ drivers/net/dpaa2/dpaa2_ethdev.h       |  36 +-
+ drivers/net/dpaa2/dpaa2_flow.c         | 633 ++++++-------------------
+ drivers/net/dpaa2/dpaa2_recycle.c      |  24 +-
+ drivers/net/dpaa2/dpaa2_rxtx.c         |  60 ++-
+ drivers/net/dpaa2/dpaa2_sparser.c      | 137 ------
+ drivers/net/dpaa2/dpaa2_sparser.h      | 202 --------
+ drivers/net/dpaa2/dpaa2_tm.c           |  16 +-
+ drivers/net/dpaa2/mc/dpni.c            |  11 +-
+ drivers/net/dpaa2/mc/fsl_dpni.h        |   8 +-
+ drivers/net/dpaa2/mc/fsl_dpni_cmd.h    |   3 +-
+ drivers/net/dpaa2/meson.build          |   1 -
+ 14 files changed, 327 insertions(+), 905 deletions(-)
+ delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.c
+ delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.h
+
 -- 
-2.25.1
+2.43.0
 
