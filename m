@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CC4CC6B2D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 17:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D56FBC3DA7A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 17:13:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3A7340615;
-	Wed, 14 Oct 2026 19:10:46 +0200 (CEST)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
- [209.85.215.172])
- by mails.dpdk.org (Postfix) with ESMTP id B7922402A4
- for <dev@dpdk.org>; Wed, 14 Oct 2026 19:10:43 +0200 (CEST)
-Received: by mail-pg1-f172.google.com with SMTP id
- 41be03b00d2f7-cd61cef87f1so844318a12.0
- for <dev@dpdk.org>; Wed, 14 Oct 2026 10:10:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E9D74402A4;
+	Wed, 14 Oct 2026 19:13:19 +0200 (CEST)
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
+ [209.85.210.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 86C744013F
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 19:13:18 +0200 (CEST)
+Received: by mail-pf1-f170.google.com with SMTP id
+ d2e1a72fcca58-8935f42e8f0so426746b3a.2
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 10:13:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791997843;
- x=1792602643; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791997997;
+ x=1792602797; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=XXADsu8p7ha69l4qnjY2pfvn5y4J3xsON3VlSCpKf34=;
- b=AQ/zrQMyofco2Eaf6fXDQHPUOHN1dTLAcbuPGoUInRe8XqpOL/N1mMY8dvXgQXZg3s
- SvwXwo8AHdjJpEJPxZABEi498aPtS13rC8KhXoPT86vmsuswCTp+IK22UlxZSpggA5iX
- oQxSzmKVcFNSttLbCzE2uCg9CqvI4LvHsVUe7Pzo8OeOV6x/9cOr4bXYErat56fsRQw3
- CttCLUem5tibyl9RLgkmIjQxjJEE+5cxcQt8zmeLYkoUI16WwJXAlPMTAXf9PnpW4BzR
- s/rzw2UKQEHGKqAnbb/9HkbJIPm83qwatlVuEoartKPNs9x7UUHG1NE+Ii7QWT1K1JRV
- 7ngQ==
+ bh=Z8sYM7AtXqRZG7lD5zJ+ffCInG1PGXc/KjLGW7hbjiE=;
+ b=KnZvcMcsL1MgMfhi4uh4uGjP+TxuaRneKFM3YaveCsgex0FdD5i1r4oUeXAVCvqQKR
+ 0ue2Z5aFp9zBXrL9maoIHMr0Rb1eQJURM3jmpynuqzxCDi+2B40ptDDiMB226Fm4wgBX
+ t1DsRaR6sf43PDZ3sX39/DsLG6RTR4jDBw9iaz0Irgv3672IUvVsTgP4YQMLbrHMBXfg
+ CodIx4mWG8CBOxjRx6lrKN0i+sFU2WcrWe1MjisNGS9rV08CR6XGB7dmkrtrA09WuNBZ
+ ITzKZmTOdaXuUUx6skpx1tr2uvrclMgazcgEFOdxkTLJdHTuyIldRD0CDcIapW3XmvlD
+ WXUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791997843; x=1792602643;
+ d=1e100.net; s=20260707; t=1791997997; x=1792602797;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=XXADsu8p7ha69l4qnjY2pfvn5y4J3xsON3VlSCpKf34=;
- b=Kpsfz/GPDAIDPR/03d3zkJth2t6I5J8Y4y5TtCfatimcXl+4r50K+wutN4QaNFQtAf
- SCzek8dhTAUSiTLX6+an8E3GD5INpaJCvRVxGIcRBWrGmCftz6WWr1hQiiqEtAr66bQ9
- Hf004NjYbNC9N9i4dtRg8a8uBfO73tgNLinBzmV3Wu+6vNisAIyq+aRGm/z05EZnOP4E
- 2+NidlEcuU6bSfOR5OBhp44WkdI0BHaNUDWNaJni5rVQ4jaqyG1QeHH+Q02dKWAgP31Q
- DIYPdo5g1dtkip/gz52cTGDYnCKMcbhnsrFTXi2/TZWwrU/ka9cZh3HDiFnEozEfseav
- LKgg==
-X-Gm-Message-State: AFq9FYJ75fdGLY3CHHE98HeLgdyxcR6Y1+S5uZ5s6KBE7bbEjkf2QJc6
- EZaeNrqLUXSEFV99sa0JDL9w+GDYfxEdZ9jCJvYc4S4up8qG/nCi304Zz3yOjG1C1LA=
-X-Gm-Gg: AYBFou2XvGd3mJ+t9XEbfzUFtzGtoqHVex66JkOQNuTtn3GqXqcu+eoUDtppmjIL5hE
- Dji79HrL2SYJo4szwb2xP4F44+U6U4J/iVb+cwijcuZ9o6FZQEop9axZBBJkEtn/1rtYmjNUuzb
- d3DIUclHv1iZ2f1Vt6DLjgfkM5BXWwgVPlf17N4RtX39NPZ9sEuzJALTULyD0GnME+iiFTOYcOO
- jKLv5rEQ/n3CBF/+lTCC2b5ETIaDsfpdaAF7XZpEI/aEx5GSfwJJtnVcY+F1K2xjncJTyySh34u
- op9oO32VXb3OkNaNTjFxTSuQ3eYeA45Uf8MIKhCSzmQqrOmNSOfElcpUzU8LWrzI8/sGgKjkHvb
- UYzzWnBRjXtVJOQjUFPI0Mu65qbK3NCVSLEJHVYGHbJHw8MHQICntFXLXJvDNNLzth3mHibm+ye
- AewRXGSJiN175bvYfPyjCqcAVqQvA7Dk+p0CDRvYzYPa86ii2SL4I5fD4gvwW90zuLmh4eT//Es
- VUYtTeo6RmPjh7XGzBjAT8eXkye7L/fg1NC3dIx
-X-Received: by 2002:a17:90b:518f:b0:3a4:b0a1:c7ed with SMTP id
- 98e67ed59e1d1-3ab3a90e667mr13613706a91.13.1791997842436; 
- Wed, 14 Oct 2026 10:10:42 -0700 (PDT)
+ bh=Z8sYM7AtXqRZG7lD5zJ+ffCInG1PGXc/KjLGW7hbjiE=;
+ b=eOzARKACECTwQ8BHjPh/yb7+Oh/Sz+UB+4X8fWZY1W6hB49cVvepx+WQ+07ZGBqkvJ
+ 5Sx+2Chv0FBFLzP9y5HzOIpj/5trQvBDu4VK6gd3USGGGaVh7JHGtsixCLTXGGCz4qLe
+ 3uVU7yfkVPiE8EDrLq7C9NDMSdaS0c3vcpHwrUbpqLeiFU0oFPXCyLiFLIYXNwDZKtEe
+ aJaD2oP6fI5Hom96w/kZfxiZ6hhBcAt++a5N01HHXs7ECkC8JhtP1oODSMxoyb/2xRnT
+ 3L2PTjzLguOpG1x4ePwD9yPRiehgq8y452YutCkSqp/ulG5gwUiTqfkXOZlqkj7TxesH
+ XVyg==
+X-Gm-Message-State: AFq9FYLMTF9/SXAaiItNnYR6VIqKHqMIRwvBmMLmSCcbrYSOIFdF/cZO
+ 7KQXrNQOq376o0D0OxJvAfi4EEETcNBI1+cWE1yZaL/oTbYmlhw4ZA3KCQKP72+24bg=
+X-Gm-Gg: AYBFou2IAwG6f7QlLUkjqtPMONelRFzKHgsmdCkWM9WA9tspX3cED4dqce6fSlT71HW
+ bJv2jas60Z62m7/Q+VjirCcwG/8/TT1zZTMy7wK5p9YW0lkJvJAscCxCasfuOmqN69XrVXoWzud
+ Hq0XPzHZlQJADHlkm439w+Gl2YtE+/45vYb2dWwQ82lG6vVAT31EQA9IVqKosPj1ACWGFlL+ubr
+ 5cBGf/d+Ygq7XEMhYJN+tmR1cg49rWGK5HV7g4sXphjnTAptUwyvRe/ly0i5gK/2fFnGwieKJVq
+ CUm2BGca5tz3KawhxMhOHfYc3QCfqSB2/ICnPSRbjeVZpjRziAkKoSko58DwsakTu3wpepKh+Fh
+ qKrWFDpdZ9XLYozgraoURKPHpG6/BowFx645JNWRTyo3o8MWUG5C5Y/+DsS350dasQskFaOi2b9
+ fbid+QD+ulPp2oojT/GZrN9uxTi1Hoo8FxkW+Y5TqncwEZUHGuyj4OR1RYxwSEGV2NQ22Mcu+Po
+ nrpo3fLX335ksK/Iij7Z4pEb51PyAPEGCBGQk/L
+X-Received: by 2002:a05:6a00:4007:b0:857:7317:cff5 with SMTP id
+ d2e1a72fcca58-897c6a2ed21mr12668855b3a.22.1791997997437; 
+ Wed, 14 Oct 2026 10:13:17 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ac943e7a98sm302933a91.6.2026.10.14.10.10.41
+ d2e1a72fcca58-89d7f51f592sm1426072b3a.7.2026.10.14.10.13.16
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Oct 2026 10:10:42 -0700 (PDT)
-Date: Wed, 14 Oct 2026 10:10:37 -0700
+ Wed, 14 Oct 2026 10:13:17 -0700 (PDT)
+Date: Wed, 14 Oct 2026 10:13:14 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-Cc: dev@dpdk.org, Gaetan Rivet <grive@u256.net>, stable@dpdk.org
-Subject: Re: [PATCH v2 0/5] net/failsafe: fixes for sub-device removal and
- configuration
-Message-ID: <20261014101037.37385ed9@phoenix.local>
-In-Reply-To: <20261014221604.128677-1-sandeep.penigalapati@intel.com>
-References: <20261014194257.123356-1-sandeep.penigalapati@intel.com>
- <20261014221604.128677-1-sandeep.penigalapati@intel.com>
+To: Jiacheng Ye <yejiacheng4@h-partners.com>
+Cc: dev@dpdk.org, Feifei Wang <wangfeifei40@huawei.com>, Thomas Monjalon
+ <thomas@monjalon.net>, Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: Re: [PATCH v2 00/26] net/hinic3: add PMD features and fixes
+Message-ID: <20261014101314.2262376c@phoenix.local>
+In-Reply-To: <20261014150923.838-1-yejiacheng4@h-partners.com>
+References: <20261010144509.2731-1-yejiacheng4@h-partners.com>
+ <20261014150923.838-1-yejiacheng4@h-partners.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,147 +84,390 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 14 Oct 2026 22:15:59 +0000
-Sandeep Penigalapati <sandeep.penigalapati@intel.com> wrote:
+On Wed, 14 Oct 2026 23:08:56 +0800
+Jiacheng Ye <yejiacheng4@h-partners.com> wrote:
 
-> This series collects fixes for the fail-safe PMD found while testing
-> live migration of a VF-backed sub-device (iavf) paired with a virtio-net
-> standby sub-device.
-> 
-> - double release of the sub-device port on hot-unplug;
-> - NULL queue-release op on sub-devices that do not implement it;
-> - MAC address pool size off-by-one and replay of zeroed MAC slots;
-> - unsupported link-status control (-ENOTSUP) treated as fatal;
-> - sub-device removal not detected without the RMV interrupt (e.g. VFIO
->   device release), now handled through a bus device-event callback.
+> This series fixes offload capability advertisement, cmdq/compact CQE
+> configuration, and several defects found during review, and adds NIC
+> type identification, FEC, CIR drop statistics, VF LAG/link state, COS
+> mask/map, mbox recording, RSS hash configuration, compact CQE Rx/Tx
+> paths, TSO segment expansion, Tx burst mode reporting, queue statistics,
+> pseudo-header checksum, per-tile cmdq ops, SP560 NIC support, and device
+> kvargs tunables.
 > 
 > v2:
-> - patch 2/5: add an explicit ETH(sdev) != NULL check before dereferencing
->   in fs_rx_queue_release()/fs_tx_queue_release().
-> - patch 5/5: clarify in a comment that a secondary process detects the
->   removal via the shared sub_device state checked by fs_rx_unsafe()/
->   fs_tx_unsafe() in the burst path.
+> - Add five bug fixes (SP230 VF PCI device ID, ethertype flow double
+>   removal, VXLAN VNI spec/mask, vport enable null dereference, and
+>   secondary-process ethdev ops setup).
+> - Split NIC type identification into its own patch and drop the mbox
+>   count telemetry patch.
+> - Add hinic3.rst and features/hinic3.ini documentation.
+> - Drop the tx_free_loop and rx_empty_threshold devargs and the Tx/Rx
+>   spin loops.
+> - Use the correct GENEVE/VXLAN-GPE flow item types and reject
+>   unsupported mask fields; reject IP-in-IP rules on SP620.
+> - Remove QINQ offload advertisement, split link_status and
+>   vf_valid_status into separate variables, use memcpy for unaligned mbox
+>   reads, and drop module parameter reads.
+> - Split the Tx burst patch into focused, self-contained commits for
+>   queue depth/state consistency, SP230 VF software statistics, Tx burst
+>   mode reporting, and Tx queue copied-mbuf statistics.
+> - Reword commit messages with full Fixes hashes and add
+>   stable@dpdk.org Cc tags where the defect exists in a released version.
 > 
+> Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 > 
-> Sandeep Penigalapati (5):
->   net/failsafe: fix double release of sub-device port
->   net/failsafe: fix queue release without sub-device op
->   net/failsafe: fix MAC address pool size and replay
->   net/failsafe: ignore unsupported link status update
->   net/failsafe: detect sub-device removal via device event
+> Jiacheng Ye (26):
+>   net/hinic3: fix SP230 VF PCI device ID
+>   net/hinic3: fix double removal in ethertype flow destroy
+>   net/hinic3: fix VXLAN VNI spec and mask write
+>   net/hinic3: fix vport enable null dereference
+>   net/hinic3: attach ethdev and set ops in secondary process
+>   net/hinic3: add NIC type identification
+>   net/hinic3: fix offload and cmdq/compact CQE config
+>   net/hinic3: add CIR drop statistics and VF LAG support
+>   net/hinic3: add FEC mode get/set and capability support
+>   net/hinic3: add mbox message recording and debug dump
+>   net/hinic3: add COS mask and COS map support
+>   net/hinic3: add VF link state and promiscuous support
+>   net/hinic3: convert cmdq ops to static global variables
+>   net/hinic3: update RSS hash type configuration
+>   net/hinic3: refactor flow rule parsing
+>   net/hinic3: add SP560 NIC type identification and handling
+>   net/hinic3: add device kvargs parameters support
+>   net/hinic3: add compact CQE Rx path and ptype table
+>   net/hinic3: expand TSO from 127 to 255 segments
+>   net/hinic3: split Tx burst function for compact CQE support
+>   net/hinic3: ensure queue depth and state consistency
+>   net/hinic3: add SP230 VF software statistics
+>   net/hinic3: add Tx burst mode get
+>   net/hinic3: expose Tx queue copied-mbuf statistics
+>   net/hinic3: add pseudo-header checksum calculation
+>   net/hinic3: add per-tile prefetch/drop/CEQ cmdq ops
 > 
->  drivers/net/failsafe/failsafe_ether.c   | 40 ++++++++++--
->  drivers/net/failsafe/failsafe_ops.c     | 29 ++++++++-
->  drivers/net/failsafe/failsafe_private.h | 13 ++--
->  drivers/net/failsafe/failsafe_rxtx.c    | 83 +------------------------
->  4 files changed, 67 insertions(+), 98 deletions(-)
+>  .mailmap                                      |    1 +
+>  doc/guides/nics/features/hinic3.ini           |    4 +
+>  doc/guides/nics/hinic3.rst                    |   22 +-
+>  doc/guides/rel_notes/release_26_11.rst        |   13 +
+>  drivers/net/hinic3/base/hinic3_cmd.h          |    2 +
+>  drivers/net/hinic3/base/hinic3_csr.h          |    8 +-
+>  drivers/net/hinic3/base/hinic3_eqs.c          |   55 +
+>  drivers/net/hinic3/base/hinic3_eqs.h          |    2 +
+>  drivers/net/hinic3/base/hinic3_hw_cfg.c       |    2 +
+>  drivers/net/hinic3/base/hinic3_hw_cfg.h       |    8 +-
+>  drivers/net/hinic3/base/hinic3_hw_comm.c      |    9 +-
+>  drivers/net/hinic3/base/hinic3_hwdev.h        |    3 +-
+>  drivers/net/hinic3/base/hinic3_hwif.c         |    4 +-
+>  drivers/net/hinic3/base/hinic3_mbox.c         |   43 +
+>  drivers/net/hinic3/base/hinic3_mbox.h         |   18 +
+>  drivers/net/hinic3/base/hinic3_nic_cfg.c      |  193 ++-
+>  drivers/net/hinic3/base/hinic3_nic_cfg.h      |  105 +-
+>  drivers/net/hinic3/base/hinic3_nic_event.c    |   68 +-
+>  drivers/net/hinic3/hinic3_ethdev.c            |  715 +++++++++--
+>  drivers/net/hinic3/hinic3_ethdev.h            |   55 +-
+>  drivers/net/hinic3/hinic3_fdir.c              |   65 +-
+>  drivers/net/hinic3/hinic3_fdir.h              |   14 +-
+>  drivers/net/hinic3/hinic3_flow.c              |  602 +++++++---
+>  drivers/net/hinic3/hinic3_flow.h              |  196 ---
+>  drivers/net/hinic3/hinic3_nic_io.c            |  156 +--
+>  drivers/net/hinic3/hinic3_nic_io.h            |  145 ++-
+>  drivers/net/hinic3/hinic3_rx.c                |  591 ++++++++--
+>  drivers/net/hinic3/hinic3_rx.h                |  216 ++--
+>  drivers/net/hinic3/hinic3_tx.c                | 1048 +++++++++++++----
+>  drivers/net/hinic3/hinic3_tx.h                |   59 +-
+>  .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    |   71 +-
+>  .../net/hinic3/htn_adapt/hinic3_htn_cmdq.h    |    8 +-
+>  .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    |   75 +-
+>  .../net/hinic3/stn_adapt/hinic3_stn_cmdq.h    |    6 +-
+>  34 files changed, 3392 insertions(+), 1190 deletions(-)
+>  delete mode 100644 drivers/net/hinic3/hinic3_flow.h
 > 
 
-More detail semi-automated AI review had some good ideas.
+Semi-automated AI review finds some errors.
 
-Subject: Re: [PATCH v2 0/5] net/failsafe: hotplug fixes
+Note: AI review of tx burst functions is not perfect at this point.
+Have tried to teach it about mbuf ownership on transmit and error handling
+and it gets it mostly right, and flags lots of buggy drivers.
+But it is not perfect.
 
-Series applies to main (eb903f407c) and builds per commit with
--Dwerror=true. Patches 3 and 4 are fine. Comments on 1, 2 and 5.
+Subject: Re: [PATCH v2 00/26] net/hinic3: fixes and new features
 
-The most important point is in 5/5: the removal of the safe/fast
-burst switching is the real fix for the hot-unplug crash, and it is
-mixed with a new feature under the wrong rationale and Fixes tag.
+Series applies to main, and every commit builds with -Dwerror=true.
+
+Series-level:
+
+The first five patches are proper fixes. Several later "feature" or
+"refactor" patches also carry bug fixes that are not called out
+(13, 15, 25). Those need their own commit message lines and Fixes:
+tags so stable can find them.
+
+Cc: stable is not needed on 01 and 07. 8843a7a6bca5 and aa31be38544e
+first appear in v26.03, which is not an LTS.
 
 
-[PATCH v2 1/5] net/failsafe: fix double release of sub-device port
+Errors
+======
 
-Warning: commit message describes the wrong release path.
+[PATCH 18/26] net/hinic3: add compact CQE Rx path and ptype table
 
-For a sub-device in DEV_ACTIVE, the first release is done by
-rte_eth_dev_close() (it calls rte_eth_dev_release_port() since
-fbd1913561 "ethdev: remove old close behaviour"), not by the bus
-remove. The bus remove path only owns release when the sub-device was
-DEV_PROBED and never configured. The code change is correct for both.
+Secondary process gets no Rx/Tx burst functions. Burst pointers are
+per-process, but rx_pkt_burst/tx_pkt_burst (and tx_pkt_prepare from
+25/26) are now only set inside the primary-only block of
+hinic3_dev_init(). Patch 17 still set them for both processes; this
+patch moved them. That undoes 05/26. config and ptype_tbl live in
+shared memory, so the selection can run in both processes:
 
-Also say what actually happens: since 36c46e7381 the first release
-sets eth_dev->data = NULL, so the second release dereferences NULL in
-eth_dev_fp_ops_reset(rte_eth_fp_ops + eth_dev->data->port_id) and
-decrements allocated_ports twice.
+	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+		nic_dev->config = config;
+		hinic3_nic_feature_init(nic_dev);
+		err = hinic3_init_rx_ptype_table(eth_dev);
+		...
+	}
 
-Suggested body:
+	eth_dev->tx_pkt_prepare = hinic3_prep_pkts;
+	if (nic_dev->config.rx_cqe_compact_en) {
+		eth_dev->rx_pkt_burst = hinic3_recv_pkts_compact_cqe;
+		eth_dev->tx_pkt_burst = hinic3_xmit_pkts_compact_cqe;
+	} else {
+		eth_dev->rx_pkt_burst = hinic3_recv_pkts;
+		eth_dev->tx_pkt_burst = hinic3_xmit_pkts;
+	}
 
-  The sub-device port is already released before fs_dev_remove()
-  calls rte_eth_dev_release_port(): by rte_eth_dev_close() for an
-  active sub-device, or by the driver remove in rte_dev_remove()
-  for a probed one. The second release dereferences the NULL
-  eth_dev->data and crashes.
 
-  Remove the redundant call.
+[PATCH 17/26] net/hinic3: add device kvargs parameters support
 
-With the else branch gone the remaining braces can go too:
+Invalid devargs are silently accepted. rte_kvargs_process() returns
+-1 when the handler fails and does not set rte_errno, so
+
+	ret = -rte_errno;
+
+yields 0 (or a stale value). The probe succeeds with whatever was
+parsed before the bad key. Use:
 
 	if (ret < 0)
-		ERROR("Bus detach failed for sub_device %u",
-		      SUB_ID(sdev));
+		ret = -EINVAL;
+
+and drop strerror(rte_errno) from the caller's log.
 
 
-[PATCH v2 2/5] net/failsafe: fix queue release without sub-device op
+[PATCH 20/26] net/hinic3: split Tx burst function for compact CQE
+  support
 
-Warning: wrong Fixes tag. The unconditional SUBOPS() call is in the
-original driver; 7483341ae553 only changed the callback signature.
+Both hinic3_xmit_pkts() and hinic3_xmit_pkts_compact_cqe() free a
+bad packet and continue (correct), but then return nb_pkt, the count
+of queued packets. The caller owns tx_pkts[ret..nb_pkts-1]. After any
+freed packet the return is short, so the application re-sends or
+frees a packet the driver already queued: double free or
+use-after-free. Return the number consumed; keep nb_pkt for the
+doorbell and stats:
 
-  Fixes: a46f8d584eb8 ("net/failsafe: add fail-safe PMD")
+	end:
+		if (nb_pkt) {
+			hinic3_write_db(...);
+			...
+		}
+		return nb_tx;
 
-Info: the v2 ETH(sdev) != NULL test is dead code. sdev_port_id is
-set at probe and only reset to RTE_MAX_ETHPORTS in fs_dev_remove()
-on the way to DEV_UNDEFINED, so ETH(sdev) is never NULL for a
-DEV_ACTIVE sub-device. The other FOREACH_SUBDEV_STATE(..., DEV_ACTIVE)
-loops in this file do not check it either. Drop it.
+hinic3_xmit_pkts() also does rte_prefetch0(*tx_pkts) after
+tx_pkts++, which reads tx_pkts[nb_pkts] on the last iteration, past
+the caller's array:
+
+	if (nb_tx + 1 < nb_pkts)
+		rte_prefetch0(tx_pkts[nb_tx + 1]);
 
 
-[PATCH v2 5/5] net/failsafe: detect sub-device removal via device event
+[PATCH 26/26] net/hinic3: add per-tile prefetch/drop/CEQ cmdq ops
 
-Warning: two unrelated changes with different stable status; split.
+RQ context is built in a command buffer from rte_pktmbuf_alloc(),
+which is not zeroed, and hinic3_rq_prepare_ctxt() does not clear it.
 
-(a) Dropping failsafe_set_burst_fn() and the _fast variants is the
-actual crash fix, and the commit message gets the reason wrong. It is
-not "no longer needed because removal is now reported reliably". Since
-c87d435a4d79 ("ethdev: copy fast-path API into separate structure"),
-rte_eth_dev_start() copies dev->rx_pkt_burst/tx_pkt_burst into
-rte_eth_fp_ops after dev_ops->dev_start returns. fs_dev_start() ->
-fs_switch_dev() -> failsafe_set_burst_fn(dev, 0) installs the _fast
-variants, which then get copied. The later switch to the safe
-variants in failsafe_eth_rmv_event_callback() only writes
-dev->rx_pkt_burst, which the data path no longer reads. So after any
-removal, RMV interrupt or not, the application keeps calling
-failsafe_rx_burst_fast(), which skips fs_rx_unsafe() and dereferences
-ETH(sdev) == NULL once the sub-device is gone.
+- SP230 in compact CQE mode: the generic code now skips pi_paddr_hi/lo
+  for compact WQE, and the HTN op does not write them. Before this
+  patch they were pi_dma_addr; now firmware gets stale buffer data.
+- SP620/SP560 compact: "cqe_sge_len |= RQ_CTXT_CQE_LEN_SET(...)" ORs
+  into a field that is never initialized for HINIC3_COMPACT_RQ_WQE.
 
-This part should be its own patch:
+Zero the context and let the per-tile op override last:
 
-  net/failsafe: fix Rx/Tx burst after sub-device removal
+	memset(rq_ctxt, 0, sizeof(*rq_ctxt));
+	...
+	rq_ctxt->pi_paddr_hi = upper_32_bits(rq->pi_dma_addr);
+	rq_ctxt->pi_paddr_lo = lower_32_bits(rq->pi_dma_addr);
+	...
+	/* last, so the tile can override pi_paddr/cqe_sge_len */
+	hinic3_cmdq_get_ops(rq->nic_dev)->
+		prepare_rq_ctxt_ceq_and_prefetch(rq, rq_ctxt);
 
-  Since burst functions are copied into rte_eth_fp_ops at start,
-  replacing dev->rx_pkt_burst/tx_pkt_burst afterwards has no
-  effect. The fast variants installed at start stay in use after
-  a sub-device is removed and dereference the removed device.
+Same memset for hinic3_sq_prepare_ctxt().
 
-  Remove the fast variants and always use the checked burst path.
 
-  Fixes: c87d435a4d79 ("ethdev: copy fast-path API into separate structure")
-  Cc: stable@dpdk.org
+Warnings
+========
 
-(b) Registering a bus device-event callback for sub-devices without
-RMV interrupt is new functionality. It cannot fix a46f8d584eb8; the
-rte_dev_event API did not exist when fail-safe was added. No Fixes:,
-no Cc: stable.
+[PATCH 09/26] net/hinic3: add FEC mode get/set and capability support
 
-Info: the device event is raised automatically only for VFIO (via
-the req notifier). For UIO sub-devices it comes from the uevent
-monitor, which the application must start with
-rte_dev_event_monitor_start() and rte_dev_hotplug_handle_enable().
-Worth one line in the commit message or in fail_safe.rst.
+hinic3_fec_capability_get() returns -ENOTSUP while link is down,
+since it reports only dev_link.link_speed. "show port N fec
+capabilities" fails until link comes up. Report capability per
+supported speed, independent of current link state.
 
-Info: failsafe_dev_event_callback() can call the RMV callback with 0
-as port_id; the argument is __rte_unused and PORT_ID() plus the cast
-only adds noise:
+hinic3_fec_param_valid() rejects AUTO, but the conversion table maps
+HINIC3_PORT_FEC_AUTO, so capability can advertise AUTO that fec_set
+refuses. Accept AUTO or mask it out of the reported capa.
 
-	if (type == RTE_DEV_EVENT_REMOVE)
-		failsafe_eth_rmv_event_callback(0, RTE_ETH_EVENT_INTR_RMV,
-						cb_arg, NULL);
+
+[PATCH 10/26] net/hinic3: add mbox message recording and debug dump
+
+eth_dev_priv_dump gets a FILE *, but hinic3_dump_aeq_info() and
+hinic3_dump_aeq_mbox_info() print through PMD_DRV_LOG at ERR level.
+A user query should not log errors. Pass the FILE * down and use
+fprintf().
+
+
+[PATCH 15/26] net/hinic3: refactor flow rule parsing
+
+Not a pure refactor. Behaviour changes not in the commit message:
+
+- IPv4/VXLAN TCAM keys no longer set vlan_flag mask, so rules now
+  match tagged packets too
+- STN dynamic TCAM limit 1024 -> 2048
+- RTE_ETHER_TYPE_CNM and RTE_ETHER_TYPE_ECP accepted
+- TCAM index freed on ethertype set failure (a leak fix; Fixes:)
+- multiple actions now rejected
+
+Describe them, and put the leak fix in its own patch with Fixes:.
+
+
+[PATCH 16/26] net/hinic3: add SP560 NIC type identification and handling
+
+DEFAULT_DRV_FEATURE gains bit 27 (NIC_F_RX_SW_COMPACT_CQE). Nothing
+uses it until 18/26 and the commit message does not mention it. Move
+it to 18 and say why.
+
+
+[PATCH 17/26] net/hinic3: add device kvargs parameters support
+
+Documented defaults do not match the code. The handler divides user
+input by 8 (pending limit, coalesce num) or 5 (time), but the default
+macros are already in hardware units. Your own log line prints
+tx_pending_limit default as 16 pkt; hinic3.rst says 2. Likewise
+tx_coalescing_time 10 us vs 2, rx_cqe_coalesce_num 56 vs 7,
+rx_cqe_timer_loop 40 us vs 8. Document units and real defaults, or
+keep defaults in user units.
+
+No upper bound. The hardware fields (sq_attr.pending_limit,
+coalescing_time, cqe_ctx.threshold_cqe_num) are uint8_t, so large
+values truncate silently. Reject anything above UINT8_MAX * unit.
+
+Defaults change without explanation: RQ CQE coalesce 63 -> 7, timer
+15 -> 8, Tx CI pending limit 3 -> 2, coalescing time 16 -> 2 (applied
+in 26/26). Say why in the commit message.
+
+Intermediate state: vport enable now sends config.rx_cqe_compact_en
+(default 1) to firmware, but masking against NIC capability does not
+arrive until hinic3_nic_feature_init() in 18/26. At this commit, NICs
+without compact CQE have it enabled in firmware while Rx queues still
+use non-compact WQE. Move the capability masking into this patch.
+
+
+[PATCH 18/26] and [PATCH 21/26] queue depth
+
+A mismatched nb_desc is silently replaced with the first queue's
+depth. The application sized its mempool for what it asked for.
+Return -EINVAL instead.
+
+rxq_depth/txq_depth are reset in dev_stop(), but configured queues
+survive stop. After stop, setting up one queue again accepts any
+depth and mismatches the others. Reset in dev_configure(), or compare
+against an existing queue's q_depth.
+
+
+[PATCH 19/26] net/hinic3: expand TSO from 127 to 255 segments
+
+The copy pool is one global 1024-entry pool of 4 KB mbufs, created
+on the calling lcore's socket and shared by all ports. One TSO packet
+can now hold up to 227 of them until Tx completion, so a few large
+in-flight packets drain it and the rest drop as offload_errors. Size
+the pool per port from txq depth, or bound copies per packet.
+
+
+[PATCH 20/26] net/hinic3: split Tx burst function for compact CQE
+  support
+
+Tx burst is selected by rx_cqe_compact_en. The Tx WQE task format
+used to follow NIC_F_TX_WQE_COMPACT_TASK. With rx_cqe_compact_en=0
+on SP230, hinic3_xmit_pkts() builds normal task sections regardless
+of what the Tx side supports. Select the Tx path on its own feature
+bit.
+
+
+[PATCH 23/26] net/hinic3: add Tx burst mode get
+
+	uint16_t tx_offloads = dev->data->dev_conf.txmode.offloads;
+
+truncates a uint64_t. It works only because every flag tested is
+below bit 16. Use uint64_t.
+
+
+[PATCH 25/26] net/hinic3: add pseudo-header checksum calculation
+
+The IPv6 pseudo-header length and protocol come from re-walking
+extension headers in the packet, while the L4 header is located with
+mbuf->l3_len. The two can disagree, and the walk has no bound against
+data_len. Use mbuf->l3_len as the application-supplied header length
+and take the protocol from ol_flags (TCP_CKSUM/TCP_SEG -> IPPROTO_TCP,
+UDP_CKSUM -> IPPROTO_UDP); drop hinic3_get_ipv6_len_proto().
+
+Packets with refcnt > 1 or indirect mbufs are skipped, so they leave
+with a wrong L4 checksum and nothing reports it. Fail them instead:
+
+	if (unlikely(rte_mbuf_refcnt_read(mbuf) > 1 ||
+		     RTE_MBUF_CLONED(mbuf))) {
+		rte_errno = EINVAL;
+		return i;
+	}
+
+
+[PATCH 26/26] net/hinic3: add per-tile prefetch/drop/CEQ cmdq ops
+
+The STN op forces EN=1 in compact mode. EN is the interrupt-disable
+bit (EN = dp_intr_en ? 0 : 1), so Rx interrupt mode silently stops
+working on SP620/SP560 with compact CQE, while hinic3.ini still says
+"Rx interrupt = Y". Honour dp_intr_en, or reject intr_conf.rxq when
+compact CQE is on.
+
+
+Info
+====
+
+[PATCH 05/26] hinic3_dev_close() gains a secondary-process early
+return placed before "int ret;" (declaration after statement), and
+the commit message does not mention it.
+
+[PATCH 07/26] Reformatting rx/tx_offload_capa inside a stable fix
+only makes backport harder. Drop the churn.
+
+[PATCH 11/26] HINIC3_COS_NUM_MAX_HTN is no longer used.
+
+[PATCH 13/26] Ops selection moves from the NIC_F_HTN_CMDQ capability
+to PCI device ID, with unknown IDs falling back to STN. Say so. The
+old code also leaked cmdq_ops and rte_free()'d the static ops pointer
+on the init error path; this patch fixes that and should say so.
+
+[PATCH 18/26] hinic3_get_l4_ptype(IGMP) << 16 gives 0x07000000, which
+is not a defined inner L4 ptype. Typo: HINIC3_L4_PYTPE_SHIFT.
+
+[PATCH 19/26] wqe_info->last_cpy_mbuf_usable is only ever set to 0;
+the truncation block in hinic3_copy_tx_mbuf_multi() is dead.
+
+[PATCH 22/26] The SP230 VF branch still queries firmware vport stats
+and discards them, and repeats the per-queue loops above (adding NULL
+checks those loops lack). Accumulate in the existing loops and skip
+the firmware call for this case.
+
+[PATCH 25/26] If SP620/SP560 hardware needs the pseudo-header, L4
+checksum and TSO offload have been wrong since the driver was added.
+That makes this a fix: Fixes: and Cc: stable. HINIC3_TX_OFFLOAD_MASK
+now includes HINIC3_PKT_TX_IPV6, so plain IPv6 packets with no
+offload requested take the offload path and an extra WQEBB; explain
+or drop it.
