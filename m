@@ -2,57 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBFB2CC6B1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 15:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9962ACC6B1D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 15:02:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8BBAF40DDD;
-	Wed, 14 Oct 2026 17:01:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A21CE40DF6;
+	Wed, 14 Oct 2026 17:01:22 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3861B40BA2
- for <dev@dpdk.org>; Wed, 14 Oct 2026 17:01:17 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5874540DD8
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 17:01:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1791990076;
+ s=mimecast20190719; t=1791990080;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=lMNttUSzKFZ/+ie6BUqw1mNs4QsIeaqNkeh8Xnkr4Ic=;
- b=FWg78rHsLFHJYQ0SHQervQaL46s4Z3rgAIg8rJ6eQKApd/ijsoYvN8pl4oiXpDtzLuhe4E
- z8ggaKL30ecVdNNCeXFSJo6trysg8Ipj96x2NGmgAm/w1Hpy/dNr82MkBn4x6WeLQZhPSk
- WhvDLtkf57OQdSu15aEvCtwYzqoi4nw=
+ bh=EmQLgjwZpD+W+XZAoT48KjwzvUzuilzeb3lD3l4FT5g=;
+ b=Vm5EizyvbpW8io07pHlJHsARdPJhrf3vdsG1hGI4SSNcjL+H5LbgI1+0amnYvh3zLbcFZS
+ ABbNg147mCXdyIlxWlG5Svxl+lHpeImwS1M7s6pBFIiHkHWmlrBujU9jB39xZh6mnOsLUU
+ QZepLf938+9N8lAzbvW3Y0flfQNOQZI=
 Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-160-9kakMY-8NlKXYXYhBhatgg-1; Wed,
- 14 Oct 2026 15:01:13 +0000
-X-MC-Unique: 9kakMY-8NlKXYXYhBhatgg-1
-X-Mimecast-MFC-AGG-ID: 9kakMY-8NlKXYXYhBhatgg_1791990072
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-548-Q3bv-7P5MoquuRhBcmF7gg-1; Wed,
+ 14 Oct 2026 15:01:15 +0000
+X-MC-Unique: Q3bv-7P5MoquuRhBcmF7gg-1
+X-Mimecast-MFC-AGG-ID: Q3bv-7P5MoquuRhBcmF7gg_1791990074
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id B05591800772; Wed, 14 Oct 2026 15:01:12 +0000 (UTC)
+ id 532A7180075A; Wed, 14 Oct 2026 15:01:14 +0000 (UTC)
 Received: from max-p1.redhat.corp (headnet04.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.116])
  by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 989A51800495; Wed, 14 Oct 2026 15:01:11 +0000 (UTC)
+ id 0EE211800495; Wed, 14 Oct 2026 15:01:12 +0000 (UTC)
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 To: dev@dpdk.org
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
- Naseeb Dangi <naseebdangi100@gmail.com>,
- Kevin Traynor <ktraynor@redhat.com>
-Subject: [PATCH 13/14] vhost: fix indirect descriptor table double fetch
-Date: Wed, 14 Oct 2026 17:00:48 +0200
-Message-ID: <20261014150049.2540538-13-maxime.coquelin@redhat.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
+ Alexandru-Ionut Jipa <jipaionut@gmail.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: [PATCH 14/14] gso: fix overflow when writing to very small buffers
+Date: Wed, 14 Oct 2026 17:00:49 +0200
+Message-ID: <20261014150049.2540538-14-maxime.coquelin@redhat.com>
 In-Reply-To: <20261014150049.2540538-1-maxime.coquelin@redhat.com>
 References: <20261014150049.2540538-1-maxime.coquelin@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: hjlQAwuADrelFJdKs2tMKx6snmwka0SRiw1SAhfZagM_1791990072
+X-Mimecast-MFC-PROC-ID: 9OzYR3AarJiwssvT75IB7dhKn_Fd1HujYOjCLmYGiVw_1791990074
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -69,147 +69,136 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The virtio descriptor length field was read multiple times from
-guest-controlled memory, creating a TOCTOU (time-of-check-time-of-use)
-vulnerability. A malicious guest could exploit this by modifying
-desc->len between reads, causing the host to allocate a buffer of
-one size but iterate over a different number of descriptors, leading
-to an out-of-bounds read.
+From: Bruce Richardson <bruce.richardson@intel.com>
 
-Affected functions:
-- fill_vec_buf_packed_indirect(): desc->len read for allocation at
-  one point, then re-read for loop bound calculation
-- fill_vec_buf_split(): vq->desc[idx].len re-read for allocation
-  after being captured in a local variable
-- vdpa.c indirect descriptor handling: same pattern
+The gso library never checks that the buffers used for the packet
+headers are actually big enough to handle those headers, leading to a
+memcpy overflow if the allocated mbuf size is too small. Add some
+appropriate checks.
 
-Fix by capturing the descriptor length once in a local variable
-and using that for all subsequent operations.
+CVE-2026-100236
+Bugzilla ID: 2047
 
-Also fix a memory leak in fill_vec_buf_packed_indirect() where
-free_ind_table() was not called on the map_one_desc() error path.
+Fixes: 119583797b6a ("gso: support TCP/IPv4 GSO")
+Cc: stable@dpdk.org
 
-CVE: CVE-2026-93683
-Bugzilla ID: 2046
-
-Fixes: d0c24508e1f ("vhost: add support for non-contiguous indirect descs tables")
-Fixes: 2f3225a7d69 ("vhost: add vector filling support for packed ring")
-
-Reported-by: Naseeb Dangi <naseebdangi100@gmail.com>
-Acked-by: Kevin Traynor <ktraynor@redhat.com>
-Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+Reported-by: Alexandru-Ionut Jipa <jipaionut@gmail.com>
+Acked-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/vhost/vdpa.c       |  8 +++++---
- lib/vhost/virtio_net.c | 22 +++++++++++++---------
- 2 files changed, 18 insertions(+), 12 deletions(-)
+ .mailmap                  |  1 +
+ lib/gso/gso_common.c      | 12 ++++++++++++
+ lib/gso/gso_tcp4.c        |  5 ++---
+ lib/gso/gso_tunnel_tcp4.c |  6 +++---
+ lib/gso/gso_tunnel_udp4.c |  4 ++--
+ lib/gso/gso_udp4.c        |  5 ++---
+ 6 files changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/lib/vhost/vdpa.c b/lib/vhost/vdpa.c
-index bc2dd8d2e1..ff3b4379aa 100644
---- a/lib/vhost/vdpa.c
-+++ b/lib/vhost/vdpa.c
-@@ -195,7 +195,9 @@ rte_vdpa_relay_vring_used(int vid, uint16_t qid, void *vring_m)
- 			return -1;
+diff --git a/.mailmap b/.mailmap
+index 2e348c3bce..38d89d9e87 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -71,6 +71,7 @@ Alexander Skorichenko <askorichenko@netgate.com>
+ Alexander Solganik <solganik@gmail.com>
+ Alexander V Gutkin <alexander.v.gutkin@intel.com>
+ Alexandre Ferrieux <alexandre.ferrieux@orange.com>
++Alexandru-Ionut Jipa <jipaionut@gmail.com>
+ Alexey Kardashevskiy <aik@ozlabs.ru>
+ Alexey Simakov <bigalex934@gmail.com>
+ Alfredo Cardigliano <cardigliano@ntop.org>
+diff --git a/lib/gso/gso_common.c b/lib/gso/gso_common.c
+index 378bf2c6aa..481c3b3beb 100644
+--- a/lib/gso/gso_common.c
++++ b/lib/gso/gso_common.c
+@@ -50,8 +50,20 @@ gso_do_segment(struct rte_mbuf *pkt,
+ 	struct rte_mbuf *hdr_segment, *pyld_segment, *prev_segment;
+ 	uint16_t pkt_in_data_pos, segment_bytes_remaining;
+ 	uint16_t pyld_len, nb_segs;
++	uint16_t direct_buf_size, direct_tailroom;
+ 	bool more_in_pkt, more_out_segs;
  
- 		if (vq->desc[desc_id].flags & VRING_DESC_F_INDIRECT) {
--			dlen = vq->desc[desc_id].len;
-+			uint64_t desc_len = vq->desc[desc_id].len;
++	/*
++	 * The header must be fully contained in pkt's first segment and must fit
++	 * in a freshly allocated direct_pool mbuf.
++	 */
++	direct_buf_size = rte_pktmbuf_data_room_size(direct_pool);
++	if (unlikely(direct_buf_size <= (uint16_t)RTE_PKTMBUF_HEADROOM))
++		return -EINVAL;
++	direct_tailroom = direct_buf_size - RTE_PKTMBUF_HEADROOM;
++	if (unlikely(pkt_hdr_offset > pkt->data_len || pkt_hdr_offset > direct_tailroom))
++		return -EINVAL;
 +
-+			dlen = desc_len;
- 			nr_descs = dlen / sizeof(struct vring_desc);
- 			if (unlikely(nr_descs > vq->size))
- 				return -1;
-@@ -209,11 +211,11 @@ rte_vdpa_relay_vring_used(int vid, uint16_t qid, void *vring_m)
- 			if (unlikely(!desc_ring))
- 				return -1;
- 
--			if (unlikely(dlen < vq->desc[desc_id].len)) {
-+			if (unlikely(dlen < desc_len)) {
- 				vhost_user_iotlb_rd_lock(vq);
- 				idesc = vhost_alloc_copy_ind_table(dev, vq,
- 						vq->desc[desc_id].addr,
--						vq->desc[desc_id].len);
-+						desc_len);
- 				vhost_user_iotlb_rd_unlock(vq);
- 				if (unlikely(!idesc))
- 					return -1;
-diff --git a/lib/vhost/virtio_net.c b/lib/vhost/virtio_net.c
-index ff4613df68..8bdddedccf 100644
---- a/lib/vhost/virtio_net.c
-+++ b/lib/vhost/virtio_net.c
-@@ -775,7 +775,9 @@ fill_vec_buf_split(struct virtio_net *dev, struct vhost_virtqueue *vq,
- 	*desc_chain_head = idx;
- 
- 	if (vq->desc[idx].flags & VRING_DESC_F_INDIRECT) {
--		dlen = vq->desc[idx].len;
-+		uint64_t desc_len = vq->desc[idx].len;
-+
-+		dlen = desc_len;
- 		nr_descs = dlen / sizeof(struct vring_desc);
- 		if (unlikely(nr_descs > vq->size))
- 			return -1;
-@@ -787,13 +789,13 @@ fill_vec_buf_split(struct virtio_net *dev, struct vhost_virtqueue *vq,
- 		if (unlikely(!descs))
- 			return -1;
- 
--		if (unlikely(dlen < vq->desc[idx].len)) {
-+		if (unlikely(dlen < desc_len)) {
- 			/*
- 			 * The indirect desc table is not contiguous
- 			 * in process VA space, we have to copy it.
- 			 */
- 			idesc = vhost_alloc_copy_ind_table(dev, vq,
--					vq->desc[idx].addr, vq->desc[idx].len);
-+					vq->desc[idx].addr, desc_len);
- 			if (unlikely(!idesc))
- 				return -1;
- 
-@@ -898,29 +900,29 @@ fill_vec_buf_packed_indirect(struct virtio_net *dev,
- 	uint16_t i;
- 	uint32_t nr_descs;
- 	uint16_t vec_id = *vec_idx;
--	uint64_t dlen;
-+	uint64_t desc_len = desc->len;
-+	uint64_t dlen = desc_len;
- 	struct vring_packed_desc *descs, *idescs = NULL;
- 
--	dlen = desc->len;
- 	descs = (struct vring_packed_desc *)(uintptr_t)
- 		vhost_iova_to_vva(dev, vq, desc->addr, &dlen, VHOST_ACCESS_RO);
- 	if (unlikely(!descs))
- 		return -1;
- 
--	if (unlikely(dlen < desc->len)) {
-+	if (unlikely(dlen < desc_len)) {
- 		/*
- 		 * The indirect desc table is not contiguous
- 		 * in process VA space, we have to copy it.
- 		 */
- 		idescs = vhost_alloc_copy_ind_table(dev,
--				vq, desc->addr, desc->len);
-+				vq, desc->addr, desc_len);
- 		if (unlikely(!idescs))
- 			return -1;
- 
- 		descs = idescs;
+ 	pkt_in = pkt;
+ 	nb_segs = 0;
+ 	more_in_pkt = 1;
+diff --git a/lib/gso/gso_tcp4.c b/lib/gso/gso_tcp4.c
+index e2ae4aaf6c..d086106355 100644
+--- a/lib/gso/gso_tcp4.c
++++ b/lib/gso/gso_tcp4.c
+@@ -53,11 +53,10 @@ gso_tcp4_segment(struct rte_mbuf *pkt,
+ 		return 0;
  	}
  
--	nr_descs =  desc->len / sizeof(struct vring_packed_desc);
-+	nr_descs = desc_len / sizeof(struct vring_packed_desc);
- 	if (unlikely(nr_descs >= vq->size)) {
- 		free_ind_table(idescs);
- 		return -1;
-@@ -936,8 +938,10 @@ fill_vec_buf_packed_indirect(struct virtio_net *dev,
- 		*len += dlen;
- 		if (unlikely(map_one_desc(dev, vq, buf_vec, &vec_id,
- 						descs[i].addr, dlen,
--						perm)))
-+						perm))) {
-+			free_ind_table(idescs);
- 			return -1;
-+		}
- 	}
- 	*vec_idx = vec_id;
+-	/* Don't process the packet without data */
++	/* Don't process the packet without data or hdr larger than seg size */
+ 	hdr_offset = pkt->l2_len + pkt->l3_len + pkt->l4_len;
+-	if (unlikely(hdr_offset >= pkt->pkt_len)) {
++	if (unlikely(hdr_offset >= pkt->pkt_len || hdr_offset >= gso_size))
+ 		return 0;
+-	}
  
+ 	pyld_unit_size = gso_size - hdr_offset;
+ 
+diff --git a/lib/gso/gso_tunnel_tcp4.c b/lib/gso/gso_tunnel_tcp4.c
+index 3a9159774b..f0d1a6efd6 100644
+--- a/lib/gso/gso_tunnel_tcp4.c
++++ b/lib/gso/gso_tunnel_tcp4.c
+@@ -77,10 +77,10 @@ gso_tunnel_tcp4_segment(struct rte_mbuf *pkt,
+ 	}
+ 
+ 	hdr_offset += pkt->l3_len + pkt->l4_len;
+-	/* Don't process the packet without data */
+-	if (hdr_offset >= pkt->pkt_len) {
++	/* Don't process the packet without data or hdr larger than seg size */
++	if (hdr_offset >= pkt->pkt_len || hdr_offset >= gso_size)
+ 		return 0;
+-	}
++
+ 	pyld_unit_size = gso_size - hdr_offset;
+ 
+ 	/* Segment the payload */
+diff --git a/lib/gso/gso_tunnel_udp4.c b/lib/gso/gso_tunnel_udp4.c
+index 4fb275484c..43e4103bc7 100644
+--- a/lib/gso/gso_tunnel_udp4.c
++++ b/lib/gso/gso_tunnel_udp4.c
+@@ -78,8 +78,8 @@ gso_tunnel_udp4_segment(struct rte_mbuf *pkt,
+ 		return 0;
+ 
+ 	hdr_offset += pkt->l3_len;
+-	/* Don't process the packet without data */
+-	if ((hdr_offset + pkt->l4_len) >= pkt->pkt_len)
++	/* Don't process the packet without data or hdrs larger than seg size */
++	if ((hdr_offset + pkt->l4_len) >= pkt->pkt_len || hdr_offset >= gso_size)
+ 		return 0;
+ 
+ 	/* pyld_unit_size must be a multiple of 8 because frag_off
+diff --git a/lib/gso/gso_udp4.c b/lib/gso/gso_udp4.c
+index 5d0186aa24..e2ec84759d 100644
+--- a/lib/gso/gso_udp4.c
++++ b/lib/gso/gso_udp4.c
+@@ -62,10 +62,9 @@ gso_udp4_segment(struct rte_mbuf *pkt,
+ 	 */
+ 	hdr_offset = pkt->l2_len + pkt->l3_len;
+ 
+-	/* Don't process the packet without data. */
+-	if (unlikely(hdr_offset + pkt->l4_len >= pkt->pkt_len)) {
++	/* Don't process the packet without data or header larger than seg size. */
++	if (unlikely(hdr_offset + pkt->l4_len >= pkt->pkt_len || hdr_offset >= gso_size))
+ 		return 0;
+-	}
+ 
+ 	/* pyld_unit_size must be a multiple of 8 because frag_off
+ 	 * uses 8 bytes as unit.
 -- 
 2.56.0
 
