@@ -2,53 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51473CC6B1D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 12:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC229CC6B1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 12:23:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B11D40658;
-	Wed, 14 Oct 2026 14:23:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 314B440616;
+	Wed, 14 Oct 2026 14:23:42 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id A827F4021E;
- Wed, 14 Oct 2026 14:23:35 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 72D6640430;
+ Wed, 14 Oct 2026 14:23:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791980616; x=1823516616;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=+hAnZuplmiLrfKvYQ2nirCPR9rKqKA2k4qSTB9guX7M=;
- b=K+tU2zn8eHnkBTXml/OxKsg9ThgqWcX7udouvx30h+zIZO2vGf4gbDxW
- ABYCdrHlElA3kqEfkVo+M+GHF8XvRi6nx9Cyvoj8m6G617g1opcIO88GI
- sJOGx1oAs2iNUdcyenEirgBPel0Vpjc8CB3ea4UZCHVU1r5WMJmglkCJ/
- B4YX0j8wbxvTjPf0RDgSzxT7s749Na070tzbbph7puD1cq6zb+5RdWaoi
- Hjhcnoz4kNcmfJfxhLHoqdaW3jceLrfDxj/VS1f02PnR/P0K4XH4iubbD
- g3QGYII7QjtBVKvWyxFDLGpN7+gKe/p3qVccsnfLjvmbPeA/gxAcy04IK g==;
-X-CSE-ConnectionGUID: W4pdWsxoTZKUU1KGbs3dAw==
-X-CSE-MsgGUID: 1ZW30dMnQL2Tc1bG/agR6A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="717307"
+ t=1791980621; x=1823516621;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=gykuHP51qnrGEnR9QiZCuaUorwhPIW3tIhN8jAEQHSU=;
+ b=Va5SJWZlIzKSAiQOBHsefOGaYq8srwgp8f6UMJwS3aPrRHUP7pHCmY0Z
+ rhJ3kChHlC3LcVc9D8d6A7qW4SgmjJee/BxOtoJxeDMpoDsglz84tLI6I
+ Hycum08TQC74YGFNfuWDHig+BwlrC0DpR7UsP7FTdUtrGrbwV/g2rT+XH
+ UWvd36zV60VwJbrxpikmLAf3tgIxY5tq/s+NnJ0LxjARFfaAO1gYJzTz8
+ ZSqkRgnxhX9FINJMkEkywOnw/JjGlmChiLueg2clqLFfo8NmwI4o4E+uF
+ 6AcCxcuSB6VAv/C0q6rwtdodRR7wZ+pyANcHl9ndc55F4DmIIkhkhXkcf A==;
+X-CSE-ConnectionGUID: 54SujwLhT3GbVL2vyd+wCg==
+X-CSE-MsgGUID: OIKyL+VxRsaewOJglISJqQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11934"; a="717313"
 X-IronPort-AV: E=Sophos;i="6.27,157,1787036400"; 
-   d="scan'208";a="717307"
+   d="scan'208";a="717313"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2026 05:23:36 -0700
-X-CSE-ConnectionGUID: 4h6MjMcyReC8ewUfwbzdpw==
-X-CSE-MsgGUID: 7o7q+rE7RxqtmhwiSDYJzg==
+ 14 Oct 2026 05:23:41 -0700
+X-CSE-ConnectionGUID: +4VZSVqXQrevZLrZMR63Jw==
+X-CSE-MsgGUID: /392dUx1TaKThmt6vfjdfw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,157,1787036400"; 
-   d="scan'208";a="1524789"
+   d="scan'208";a="1524809"
 Received: from mtldev4.igk.intel.com ([10.123.233.187])
- by fmviesa002.fm.intel.com with ESMTP; 14 Oct 2026 05:23:34 -0700
+ by fmviesa002.fm.intel.com with ESMTP; 14 Oct 2026 05:23:37 -0700
 From: Dawid Wesierski <dawid.wesierski@intel.com>
 To: dev@dpdk.org
 Cc: vladimir.medvedkin@intel.com, bruce.richardson@intel.com,
  anatoly.burakov@intel.com, marek.kasiewicz@intel.com, stable@dpdk.org,
- Ting Xu <ting.xu@intel.com>, Qiming Yang <qiming.yang@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>, Saurabh Singhal <saurabhs@arista.com>,
  Qi Zhang <qi.z.zhang@intel.com>
-Subject: [PATCH 3/3] net/iavf: fix crash in TM ops without QoS capability
-Date: Wed, 14 Oct 2026 12:24:18 +0000
-Message-ID: <20261014122419.631288-4-dawid.wesierski@intel.com>
+Subject: [PATCH] net/iavf: fix interrupt callback race on close
+Date: Wed, 14 Oct 2026 12:24:27 +0000
+Message-ID: <20261014122427.631805-1-dawid.wesierski@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261014122419.631288-1-dawid.wesierski@intel.com>
-References: <20261014122419.631288-1-dawid.wesierski@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -65,114 +63,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The VF allocates qos_cap and initializes the TM lists only when the PF
-grants VIRTCHNL_VF_OFFLOAD_QOS. The in-tree ice PF does not grant it.
-On such a VF, node add, shaper profile add, capabilities get, and node
-capabilities get dereference a NULL qos_cap, or insert into a list that
-has no initialization. The application gets a segmentation fault from a
-call such as rte_tm_capabilities_get().
+From: Marek Kasiewicz <marek.kasiewicz@intel.com>
 
-Return -ENOTSUP from these operations when qos_cap is NULL. The other
-TM operations only search the lists, or check VIRTCHNL_VF_OFFLOAD_QOS
-already, so they do not need the check.
+iavf_dev_close() unregisters iavf_dev_interrupt_handler() with
+rte_intr_callback_unregister() and ignores the result. That call
+returns -EAGAIN, and leaves the callback registered, while the
+interrupt thread is running a callback of the same source.
 
-Fixes: 44d0a720a538 ("net/iavf: query QoS capabilities and set queue TC mapping")
+Close hits that window. It sends virtchnl commands (RSS, promiscuous
+mode, flows), and iavf_dev_interrupt_handler() handles each response.
+The handler clears the pending command before it returns, so the
+thread waiting in iavf_wait_for_msg() can go on to the unregister
+while the interrupt thread is still inside the callback. This is
+likely when the two threads share a CPU.
+
+Two failures follow:
+- The interrupt thread resumes the callback after
+  rte_eth_dev_release_port() has set dev->data to NULL, and
+  iavf_handle_virtchnl_msg() dereferences it: segmentation fault.
+- The callback returns, but its source stays registered after the
+  port is closed. At rte_eal_cleanup(),
+  pci_vfio_unmap_resource_primary() closes the interrupt eventfd, and
+  the next rebuild of the epoll set aborts the process:
+    EAL: PANIC in eal_intr_thread_main():
+    Error adding fd 49 epoll_ctl, Bad file descriptor
+
+Use rte_intr_callback_unregister_sync(), as ice_dev_close() does. The
+iavf_dev_init() error path has the same pattern; fix it too.
+
+The sync variant waits for a running callback to return. It would
+spin forever only if called from iavf_dev_interrupt_handler() itself,
+and that handler never closes or re-initializes the port: it hands PF
+events and resets to the iavf-event thread with iavf_dev_event_post().
+A close from any other interrupt thread callback, such as an alarm,
+returns at once, because the iavf source is not active then.
+
+Fixes: 22b123a36d07 ("net/avf: initialize PMD")
+Fixes: e35a5737a746 ("net/iavf: unregister interrupt handler before FD close")
 Cc: stable@dpdk.org
 
+Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
 Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
 ---
- drivers/net/intel/iavf/iavf_tm.c | 37 ++++++++++++++++++++++++++++++--
- 1 file changed, 35 insertions(+), 2 deletions(-)
+ drivers/net/intel/iavf/iavf_ethdev.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_tm.c b/drivers/net/intel/iavf/iavf_tm.c
-index 57075ee5b8..07ba58f6f5 100644
---- a/drivers/net/intel/iavf/iavf_tm.c
-+++ b/drivers/net/intel/iavf/iavf_tm.c
-@@ -102,6 +102,18 @@ iavf_tm_conf_uninit(struct rte_eth_dev *dev)
- 	vf->qtc_map = NULL;
- }
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 6cf12ec34f..be4b491859 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -3178,8 +3178,8 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
+ 		rte_intr_disable(pci_dev->intr_handle);
  
-+/* qos_cap and the TM lists exist only if the PF grants VIRTCHNL_VF_OFFLOAD_QOS. */
-+static int
-+iavf_tm_qos_check(struct iavf_info *vf, struct rte_tm_error *error)
-+{
-+	if (vf->qos_cap != NULL)
-+		return 0;
-+
-+	error->type = RTE_TM_ERROR_TYPE_CAPABILITIES;
-+	error->message = "VF has no QoS capability";
-+	return -ENOTSUP;
-+}
-+
- static inline struct iavf_tm_node *
- iavf_tm_node_search(struct rte_eth_dev *dev,
- 		    uint32_t node_id, enum iavf_tm_node_type *node_type)
-@@ -279,12 +291,18 @@ iavf_tm_node_add(struct rte_eth_dev *dev, uint32_t node_id,
- 	struct iavf_tm_shaper_profile *shaper_profile = NULL;
- 	struct iavf_tm_node *tm_node;
- 	struct iavf_tm_node *parent_node;
--	uint16_t tc_nb = vf->qos_cap->num_elem;
-+	uint16_t tc_nb;
- 	int ret;
+ 		/* unregister callback func from eal lib */
+-		rte_intr_callback_unregister(pci_dev->intr_handle,
+-					     iavf_dev_interrupt_handler, eth_dev);
++		rte_intr_callback_unregister_sync(pci_dev->intr_handle,
++						  iavf_dev_interrupt_handler, eth_dev);
+ 	}
+ 	iavf_phc_sync_alarm_stop(eth_dev);
+ 	rte_eal_alarm_cancel(iavf_dev_alarm_handler, eth_dev);
+@@ -3275,8 +3275,8 @@ iavf_dev_close(struct rte_eth_dev *dev)
+ 		rte_intr_disable(intr_handle);
  
- 	if (!params || !error)
- 		return -EINVAL;
- 
-+	ret = iavf_tm_qos_check(vf, error);
-+	if (ret)
-+		return ret;
-+
-+	tc_nb = vf->qos_cap->num_elem;
-+
- 	/* if already committed */
- 	if (vf->tm_conf.committed) {
- 		error->type = RTE_TM_ERROR_TYPE_UNSPECIFIED;
-@@ -524,6 +542,10 @@ iavf_shaper_profile_add(struct rte_eth_dev *dev,
- 	if (!profile || !error)
- 		return -EINVAL;
- 
-+	ret = iavf_tm_qos_check(vf, error);
-+	if (ret)
-+		return ret;
-+
- 	ret = iavf_shaper_profile_param_check(profile, error);
- 	if (ret)
- 		return ret;
-@@ -588,11 +610,17 @@ iavf_tm_capabilities_get(struct rte_eth_dev *dev,
- 			 struct rte_tm_error *error)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
--	uint16_t tc_nb = vf->qos_cap->num_elem;
-+	uint16_t tc_nb;
-+	int ret;
- 
- 	if (!cap || !error)
- 		return -EINVAL;
- 
-+	ret = iavf_tm_qos_check(vf, error);
-+	if (ret)
-+		return ret;
-+
-+	tc_nb = vf->qos_cap->num_elem;
- 	if (tc_nb > vf->vf_res->num_queue_pairs)
- 		return -EINVAL;
- 
-@@ -744,10 +772,15 @@ iavf_node_capabilities_get(struct rte_eth_dev *dev,
- 	enum iavf_tm_node_type node_type;
- 	struct virtchnl_qos_cap_elem tc_cap;
- 	struct iavf_tm_node *tm_node;
-+	int ret;
- 
- 	if (!cap || !error)
- 		return -EINVAL;
- 
-+	ret = iavf_tm_qos_check(vf, error);
-+	if (ret)
-+		return ret;
-+
- 	if (node_id == RTE_TM_NODE_ID_NULL) {
- 		error->type = RTE_TM_ERROR_TYPE_NODE_ID;
- 		error->message = "invalid node id";
+ 		/* unregister callback func from eal lib */
+-		rte_intr_callback_unregister(intr_handle,
+-					     iavf_dev_interrupt_handler, dev);
++		rte_intr_callback_unregister_sync(intr_handle,
++						  iavf_dev_interrupt_handler, dev);
+ 	}
+ 	iavf_phc_sync_alarm_stop(dev);
+ 	rte_eal_alarm_cancel(iavf_dev_alarm_handler, dev);
+
+base-commit: b39ee12b030f49c524b9d8c350a0f4b04141ccf9
 -- 
 2.43.0
 
