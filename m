@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9F6CC6B1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 18:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E45CC6B1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 18:40:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6A32640B92;
-	Wed, 14 Oct 2026 20:39:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AFB0340C35;
+	Wed, 14 Oct 2026 20:39:41 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id D108640659
- for <dev@dpdk.org>; Wed, 14 Oct 2026 20:39:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id ADC0A40A79
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 20:39:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792003178; x=1823539178;
+ t=1792003179; x=1823539179;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=xTUPzhBOrBA1XUOM/y2nX5NvZyXx/QzeJUQWkTSX2Qg=;
- b=YU1HNbTGx6IuitGJhmOEDy6Km56kMLrUipfKmRjc+6+ZLmS/eGlvReiB
- nzycvq9NbU0ymzbQAd2Gu5z+/uibrw55rPfqZqskLyXru1N/7rpbVySqL
- tiuVzYM6Vwa3tZ9AAxdfTnvRrKf3efJG/Avcxp6ZmR/qAhAcql4/9LMkS
- AXC59GRfDpxNnujKTBhH7eLBumE4PZsJOiYbM5dnOhBrFY0jHh3SOBBva
- 5HB56SYpdVujjd/8Uv48Xm1ukKOK8YR/5YRXGGOyW1S4NGeg3THVO9NIN
- NBHbOSjcmLQobGoA5ECgAuG8ry//33LAapDPQiyNadWIl0cc+ghiJBqAz w==;
-X-CSE-ConnectionGUID: WTA7NDk+Rj+fDPhrm9yQdQ==
-X-CSE-MsgGUID: 8DbB+dQSTu2YAOjaCCHDQA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="753372"
+ bh=Jo37Z9FQVplJZMc8tkPYYfi7VvqQeDIEoGYmEghIXSI=;
+ b=neLEnF2cDxfgjezUw7jR7QguIPRE8zz4wrOIvkN/KsTV40gxrBoEKP4r
+ bJY9uF/tt3eXlklOhiI5OSnxggwAxri/NIx1QYfaSFPoaU9Np4bEhtnVB
+ cIfyMD9qQfMT9kDMc9C+XhKbu6y1xWLnsq7u/e48s4WZMbljBDHLNp9LH
+ 3dtwCH0WBaautd4Q9tQco/pfr18eH/5l6WkpZRRr8yV4LgJLgdkqDEJMJ
+ 0KqwWbLzHJVNmy30/Cyf1Y/pp6/GtLzgPZ7nCS7ov9oh4Z0BIl03LE9gj
+ Sc5XiDWwpsiGWyisMxaCu2iU0yRjYwRtopKTTiRYluc+oipkUN+EFfxGF w==;
+X-CSE-ConnectionGUID: L7dJ6KiwSpO6OOEpNltKdQ==
+X-CSE-MsgGUID: kKJWAsKRR2qGwnSuMsMl6Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="753384"
 X-IronPort-AV: E=Sophos;i="6.27,158,1787036400"; 
-   d="scan'208";a="753372"
+   d="scan'208";a="753384"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2026 11:39:33 -0700
-X-CSE-ConnectionGUID: 8wZIshmOSSiGW1hvhxAskg==
-X-CSE-MsgGUID: xtfZiQgUQG+ra5RA1NgH4Q==
+ 14 Oct 2026 11:39:36 -0700
+X-CSE-ConnectionGUID: p2DCojYcS3+X/3wLx3HTMw==
+X-CSE-MsgGUID: eZc6JWSrQPWpL5prSj3UiA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,158,1787036400"; 
-   d="scan'208";a="1419880"
+   d="scan'208";a="1419913"
 Received: from silpixa00401176.ir.intel.com ([10.20.224.212])
- by orviesa009.jf.intel.com with ESMTP; 14 Oct 2026 11:39:31 -0700
+ by orviesa009.jf.intel.com with ESMTP; 14 Oct 2026 11:39:35 -0700
 From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 To: dev@dpdk.org
 Cc: rjarry@redhat.com, mb@smartsharesystems.com, maxime@leroys.fr,
  konstantin.ananyev@huawei.com
-Subject: [RFC PATCH v2 5/7] fib: add multi-VRF support
-Date: Wed, 14 Oct 2026 18:39:19 +0000
-Message-ID: <20261014183921.495158-6-vladimir.medvedkin@intel.com>
+Subject: [RFC PATCH v2 7/7] fib: add hash based VRF support for DIR24-8
+Date: Wed, 14 Oct 2026 18:39:21 +0000
+Message-ID: <20261014183921.495158-8-vladimir.medvedkin@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261014183921.495158-1-vladimir.medvedkin@intel.com>
 References: <20260322154215.3686528-1-vladimir.medvedkin@intel.com>
@@ -63,1111 +63,207 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Allow a FIB to hold several independent routing tables (VRFs):
+Add multi-VRF support to the DIR24_8 algorithm without replicating its
+16M entry tbl24 per VRF: all the VRFs share a single DIR24_8 table which
+maps an address to the identifier of the longest prefix present in any
+VRF. A hash table keyed by (VRF, prefix ID) then resolves the nexthop
+of the VRF, a miss returning the per-VRF default.
 
-- rte_fib_conf gains the number of VRFs (max_vrfs, 0 or 1 meaning a
-  single VRF as before) and optional per-VRF default nexthops;
-- rte_fib_vrf_add(), rte_fib_vrf_delete() and rte_fib_vrf_lookup_bulk()
-  take a VRF ID (one per address for the lookup), rte_fib_vrf_get_rib()
-  returns the RIB of a VRF. The legacy functions operate on VRF 0;
-- the dataplane modify and lookup callbacks gain a VRF argument, a NULL
-  VRF array meaning VRF 0 for every address.
+The dataplane keeps an internal RIB of the prefixes of all the VRFs
+holding the prefix IDs and the VRF records, while the RIB of every VRF
+returned by rte_fib_vrf_get_rib() mirrors the routes of that VRF as
+for the other algorithms.
 
-The FIB keeps one RIB per VRF. The DIR8_16_8 algorithm supports
-multiple VRFs natively: its 2 KB root table is replicated per VRF while
-the tbl16 and tbl8 pools are shared, and the scalar and AVX512 lookup
-functions index the root table with the VRF ID when more than one VRF
-is configured. The other algorithms reject max_vrfs >= 2.
-
-Add a VRF mode to test-fib, enabled by the new "-V <number of VRFs>"
-option or by a routes or lookup file with a leading VRF field
-("<vrf> <prefix>/<depth> <nexthop>", "<vrf> <address>"), the format
-being detected from the number of fields. The FIB is created with that
-many VRFs and exercised through the VRF API: generated routes are
-spread randomly over the VRFs and each generated lookup address is
-looked up in the VRF of the route it is derived from (or in a random
-VRF for the random ones), -w and -u dump the VRF formats, and the
-comparison with LPM (-c) uses one LPM table per VRF, demultiplexing
-every burst by VRF as an application would do.
-
-A multi-VRF deployment usually has a full view in VRF 0 and much smaller
-tables in the other VRFs, which a random VRF per route does not
-reproduce. The "--vrfconf" option, a list of "<vrf> <n>%" items, gives
-every listed VRF a random n% of the VRF 0 routes (read from the file or
-generated), with their next hops. The routes of the other VRFs are
-appended to the table, so that the lookup addresses derived from the
-routes are spread over the VRFs like the routes are.
+The VRF specific bookkeeping is kept generic (fib_vrf.[ch]) and driven
+by a small set of address family specific operations (RIB traversal and
+LPM table update) so that the IPv6 TRIE algorithm can reuse it.
 
 Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 ---
- app/test-fib/main.c                    | 557 +++++++++++++++----
- app/test/test_fib.c                    | 714 ++++++++++++++++++++++++-
- app/test/test_fib_perf.c               | 350 +++---------
- app/test/test_fib_routes.h             | 282 ++++++++++
- doc/guides/prog_guide/fib_lib.rst      |  33 +-
- doc/guides/rel_notes/release_26_11.rst |  15 +
- lib/fib/dir24_8.c                      |   4 +-
- lib/fib/dir24_8.h                      |  39 +-
- lib/fib/dir24_8_avx512.c               |  18 +-
- lib/fib/dir24_8_avx512.h               |  32 +-
- lib/fib/dir24_8_rvv.c                  |   3 +-
- lib/fib/dir24_8_rvv.h                  |  16 +-
- lib/fib/dir8_16_8.c                    | 127 +++--
- lib/fib/dir8_16_8.h                    |  63 ++-
- lib/fib/dir8_16_8_avx512.c             |  79 ++-
- lib/fib/dir8_16_8_avx512.h             |  16 +-
- lib/fib/rte_fib.c                      | 192 +++++--
- lib/fib/rte_fib.h                      |  98 +++-
- 18 files changed, 2077 insertions(+), 561 deletions(-)
- create mode 100644 app/test/test_fib_routes.h
+ app/test-fib/main.c                    |   28 +-
+ app/test/test_fib.c                    |  352 +++++--
+ app/test/test_fib_perf.c               |   47 +-
+ doc/guides/prog_guide/fib_lib.rst      |   25 +-
+ doc/guides/rel_notes/release_26_11.rst |    3 +-
+ lib/fib/dir24_8_vrf.c                  |  290 ++++++
+ lib/fib/dir24_8_vrf.h                  |   60 ++
+ lib/fib/fib_vrf.c                      | 1256 ++++++++++++++++++++++++
+ lib/fib/fib_vrf.h                      |  277 ++++++
+ lib/fib/fib_vrf_avx512.c               |  142 +++
+ lib/fib/meson.build                    |   22 +-
+ lib/fib/rte_fib.c                      |   81 +-
+ lib/fib/rte_fib.h                      |   18 +-
+ 13 files changed, 2485 insertions(+), 116 deletions(-)
+ create mode 100644 lib/fib/dir24_8_vrf.c
+ create mode 100644 lib/fib/dir24_8_vrf.h
+ create mode 100644 lib/fib/fib_vrf.c
+ create mode 100644 lib/fib/fib_vrf.h
+ create mode 100644 lib/fib/fib_vrf_avx512.c
 
 diff --git a/app/test-fib/main.c b/app/test-fib/main.c
-index be1ba20277..96efe0d618 100644
+index 96efe0d618..3de2c062a2 100644
 --- a/app/test-fib/main.c
 +++ b/app/test-fib/main.c
-@@ -2,7 +2,9 @@
-  * Copyright(c) 2019 Intel Corporation
-  */
+@@ -820,12 +820,12 @@ print_usage(void)
+ 		"\t\ttrie - TRIE based FIB\n"
+ 		"defaults are: dir for ipv4 and trie for ipv6\n"
+ 		"[-e <entry size (valid only for dir and trie fib types): "
+-		"1/2/4/8 (default 4)>]\n"
++		"1/2/4/8 (default 4), only 8 for dir in VRF mode>]\n"
+ 		"[-g <number of tbl8's for dir24_8, dir8_16_8 or trie FIBs>]\n"
+ 		"[-V <number of VRFs (2 to 65535)>]\n"
+ 		"[--vrfconf <\",\" separated \"<vrf> <n>%%\" list: every listed "
+ 		"VRF gets a random n%% of the VRF 0 routes>]\n"
+-		"\tVRF mode (valid for the dir8_16_8 FIB) is "
++		"\tVRF mode (valid for dir and dir8_16_8 FIBs) is "
+ 		"enabled by -V, by --vrfconf or by a routes or lookup file with "
+ 		"a leading VRF field (\"<vrf> <prefix>/<depth> <nexthop>\", "
+ 		"\"<vrf> <address>\"), the other files put everything in VRF 0\n"
+@@ -945,10 +945,20 @@ setup_vrfs(uint16_t max_file_vrf)
+ 	if (config.nb_vrfs == 0)
+ 		return;
+ 	if ((config.flags & IPV6_FLAG) ||
+-			(config.flags & FIB_TYPE_MASK) != FIB_V4_DIR_8_16_8_TYPE)
+-		rte_exit(-EINVAL, "VRFs are only supported by the dir8_16_8 FIB "
+-			"type\n");
++			(config.flags & FIB_TYPE_MASK) == FIB_RIB_TYPE)
++		rte_exit(-EINVAL, "VRFs are only supported by the dir and "
++			"dir8_16_8 FIB types\n");
+ 	config.flags |= VRF_FLAG;
++
++	/* The hash based VRF DIR24_8 FIB only supports 8 byte next hops. */
++	if (!(config.flags & IPV6_FLAG) &&
++			(config.flags & FIB_TYPE_MASK) == FIB_V4_DIR_TYPE) {
++		if ((config.flags & ENT_SZ_FLAG) && config.ent_sz != 8)
++			rte_exit(-EINVAL, "-e %u is not valid in VRF mode for "
++				"the dir FIB type, only 8 byte next hops are "
++				"supported\n", config.ent_sz);
++		config.ent_sz = 8;
++	}
+ }
  
-+#include <ctype.h>
- #include <getopt.h>
+ static void
+@@ -1168,6 +1178,7 @@ static int
+ select_lookup_fn_v4(struct rte_fib *fib, enum rte_fib_type type)
+ {
+ 	enum rte_fib_lookup_type lookup_type;
++	bool vrf = vrf_enabled();
+ 
+ 	if (type == RTE_FIB_DIR8_16_8) {
+ 		if (config.lookup_fn == 1)
+@@ -1176,6 +1187,13 @@ select_lookup_fn_v4(struct rte_fib *fib, enum rte_fib_type type)
+ 			lookup_type = RTE_FIB_LOOKUP_DIR8_16_8_VECTOR_AVX512;
+ 		else
+ 			return -EINVAL;
++	} else if (type == RTE_FIB_DIR24_8 && vrf) {
++		if (config.lookup_fn == 1)
++			lookup_type = RTE_FIB_LOOKUP_DIR24_8_VRF_SCALAR;
++		else if (config.lookup_fn == 2)
++			lookup_type = RTE_FIB_LOOKUP_DIR24_8_VRF_VECTOR_AVX512;
++		else
++			return -EINVAL;
+ 	} else if (type == RTE_FIB_DIR24_8) {
+ 		if (config.lookup_fn == 1)
+ 			lookup_type = RTE_FIB_LOOKUP_DIR24_8_SCALAR_MACRO;
+diff --git a/app/test/test_fib.c b/app/test/test_fib.c
+index ce5e48264a..ffdbbadb0a 100644
+--- a/app/test/test_fib.c
++++ b/app/test/test_fib.c
+@@ -5,6 +5,7 @@
+ 
+ #include <stdio.h>
+ #include <stdint.h>
 +#include <stdbool.h>
  #include <stdlib.h>
  #include <string.h>
- 
-@@ -54,16 +56,33 @@
- #define SHUFFLE_FLAG		(1 << 7)
- #define DRY_RUN_FLAG		(1 << 8)
- #define ENT_SZ_FLAG		(1 << 9)
-+#define VRF_FLAG		(1 << 10)
-+
-+/* Maximum number of VRFs derived from VRF 0 with --vrfconf. */
-+#define MAX_VRF_CONF		64
- 
- static char *distrib_string;
- static char line[LINE_MAX];
- 
- enum {
-+	RT_VRF,
- 	RT_PREFIX,
- 	RT_NEXTHOP,
- 	RT_NUM
- };
- 
-+enum {
-+	LK_VRF,
-+	LK_IP,
-+	LK_NUM
-+};
-+
-+/* A VRF holding a random share of the VRF 0 routes. */
-+struct vrf_conf {
-+	uint16_t	vrf;
-+	uint8_t		pct;
-+};
-+
- #ifndef NIPQUAD
- #define NIPQUAD_FMT "%u.%u.%u.%u"
- #define NIPQUAD(addr)				\
-@@ -81,12 +100,20 @@ static struct {
- 	const char	*lookup_ips_file_s;
- 	void		*rt;
- 	void		*lookup_tbl;
--	uint32_t	nb_routes;
-+	uint16_t	*lookup_vrfs;	/**< Per lookup address VRF (VRF mode). */
-+	struct vrf_conf	vrf_conf[MAX_VRF_CONF];
-+	unsigned int	nb_vrf_conf;
-+	uint32_t	nb_routes;	/**< All the routes, VRF copies included. */
-+	uint32_t	nb_base_routes;	/**< Routes read from the file or generated. */
- 	uint32_t	nb_lookup_ips;
- 	uint32_t	nb_lookup_ips_rnd;
- 	uint32_t	nb_routes_per_depth[128 + 1];
- 	uint32_t	flags;
- 	uint32_t	tbl8;
-+	uint16_t	nb_vrfs;	/**< Number of VRFs, 0 = VRF mode off. */
-+	uint32_t	*nb_vrf_routes;	/**< Number of routes of every VRF. */
-+	bool		routes_file_vrf;	/**< Routes file has a VRF field. */
-+	bool		lookup_file_vrf;	/**< Lookup file has a VRF field. */
- 	uint8_t		ent_sz;
- 	uint8_t		rnd_lookup_ips_ratio;
- 	uint8_t		print_fract;
-@@ -100,6 +127,7 @@ static struct {
- 	.nb_routes_per_depth = {0},
- 	.flags = FIB_V4_DIR_TYPE,
- 	.tbl8 = DEFAULT_LPM_TBL8,
-+	.nb_vrfs = 0,
- 	.ent_sz = 4,
- 	.rnd_lookup_ips_ratio = 0,
- 	.print_fract = 10,
-@@ -109,15 +137,39 @@ static struct {
- struct rt_rule_4 {
- 	uint32_t	addr;
- 	uint8_t		depth;
-+	uint16_t	vrf;
- 	uint64_t	nh;
- };
- 
- struct rt_rule_6 {
- 	struct rte_ipv6_addr addr;
- 	uint8_t		depth;
-+	uint16_t	vrf;
- 	uint64_t	nh;
- };
- 
-+static inline bool
-+vrf_enabled(void)
-+{
-+	return (config.flags & VRF_FLAG) != 0;
-+}
-+
-+static inline uint16_t
-+rnd_vrf(void)
-+{
-+	return vrf_enabled() ? rte_rand() % config.nb_vrfs : 0;
-+}
-+
-+/* Generated routes go to VRF 0 when the other VRFs are derived from it. */
-+static inline uint16_t
-+gen_vrf(void)
-+{
-+	uint16_t vrf = (config.nb_vrf_conf != 0) ? 0 : rnd_vrf();
-+
-+	config.nb_vrf_routes[vrf]++;
-+	return vrf;
-+}
-+
- static uint64_t
- get_rnd_rng(uint64_t l, uint64_t u)
- {
-@@ -276,17 +328,9 @@ shuffle_rt_4(struct rt_rule_4 *rt, int n)
- 
- 	for (i = 0; i < n; i++) {
- 		j = rte_rand() % n;
--		tmp.addr = rt[i].addr;
--		tmp.depth = rt[i].depth;
--		tmp.nh = rt[i].nh;
--
--		rt[i].addr = rt[j].addr;
--		rt[i].depth = rt[j].depth;
--		rt[i].nh = rt[j].nh;
--
--		rt[j].addr = tmp.addr;
--		rt[j].depth = tmp.depth;
--		rt[j].nh = tmp.nh;
-+		tmp = rt[i];
-+		rt[i] = rt[j];
-+		rt[j] = tmp;
- 	}
- }
- 
-@@ -298,17 +342,9 @@ shuffle_rt_6(struct rt_rule_6 *rt, int n)
- 
- 	for (i = 0; i < n; i++) {
- 		j = rte_rand() % n;
--		tmp.addr = rt[i].addr;
--		tmp.depth = rt[i].depth;
--		tmp.nh = rt[i].nh;
--
--		rt[i].addr = rt[j].addr;
--		rt[i].depth = rt[j].depth;
--		rt[i].nh = rt[j].nh;
--
--		rt[j].addr = tmp.addr;
--		rt[j].depth = tmp.depth;
--		rt[j].nh = tmp.nh;
-+		tmp = rt[i];
-+		rt[i] = rt[j];
-+		rt[j] = tmp;
- 	}
- }
- 
-@@ -320,6 +356,7 @@ gen_random_rt_4(struct rt_rule_4 *rt, int nh_sz)
- 	if (config.nb_routes_per_depth[0] != 0) {
- 		rt[k].addr = 0;
- 		rt[k].depth = 0;
-+		rt[k].vrf = gen_vrf();
- 		rt[k++].nh = rte_rand() & get_max_nh(nh_sz);
- 	}
- 
-@@ -333,6 +370,7 @@ gen_random_rt_4(struct rt_rule_4 *rt, int nh_sz)
- 				(uint64_t)(edge + step));
- 			rt[k].addr = rnd_val << (32 - i);
- 			rt[k].depth = i;
-+			rt[k].vrf = gen_vrf();
- 			rt[k].nh = rte_rand() & get_max_nh(nh_sz);
- 		}
- 	}
-@@ -358,6 +396,7 @@ gen_random_rt_6(struct rt_rule_6 *rt, int nh_sz)
- 	if (config.nb_routes_per_depth[0] != 0) {
- 		memset(&rt[k].addr, 0, 16);
- 		rt[k].depth = 0;
-+		rt[k].vrf = gen_vrf();
- 		rt[k++].nh = rte_rand() & get_max_nh(nh_sz);
- 	}
- 
-@@ -375,6 +414,7 @@ gen_random_rt_6(struct rt_rule_6 *rt, int nh_sz)
- 				complete_v6_addr((uint32_t *)&rt[k].addr,
- 					rnd, a);
- 				rt[k].depth = (a * 32) + i;
-+				rt[k].vrf = gen_vrf();
- 				rt[k].nh = rte_rand() & get_max_nh(nh_sz);
- 			}
- 		}
-@@ -415,19 +455,24 @@ gen_rnd_lookup_tbl(int af)
- 				i++, j = (j + 1) % config.nb_routes) {
- 			if ((rte_rand() % 100) < config.rnd_lookup_ips_ratio) {
- 				tbl4[i] = rte_rand();
-+				config.lookup_vrfs[i] = rnd_vrf();
- 				config.nb_lookup_ips_rnd++;
--			} else
-+			} else {
- 				tbl4[i] = rt4[j].addr | (rte_rand() &
- 					((1ULL << (32 - rt4[j].depth)) - 1));
-+				config.lookup_vrfs[i] = rt4[j].vrf;
-+			}
- 		}
- 	} else {
- 		for (i = 0, j = 0; i < config.nb_lookup_ips;
- 				i++, j = (j + 1) % config.nb_routes) {
- 			if ((rte_rand() % 100) < config.rnd_lookup_ips_ratio) {
- 				set_rnd_ipv6(&tbl6[i], &rt6[j].addr, 0);
-+				config.lookup_vrfs[i] = rnd_vrf();
- 				config.nb_lookup_ips_rnd++;
- 			} else {
- 				set_rnd_ipv6(&tbl6[i], &rt6[j].addr, rt6[j].depth);
-+				config.lookup_vrfs[i] = rt6[j].vrf;
- 			}
- 		}
- 	}
-@@ -459,33 +504,159 @@ _inet_net_pton(int af, char *prefix, void *addr)
- 	return depth;
- }
- 
-+/*
-+ * Split a line into its fields: "[<vrf>] <prefix>/<depth> <nexthop>" for
-+ * routes, "[<vrf>] <address>" for lookups. The VRF field is validated
-+ * against the number of VRFs.
-+ */
- static int
--parse_rt_4(FILE *f)
-+parse_fields(char *s, char **in, int nb_fields, bool has_vrf, uint16_t *vrf)
- {
--	int ret, i, j = 0;
--	char *s, *sp, *in[RT_NUM];
- 	static const char *dlm = " \t\n";
--	int string_tok_nb = RTE_DIM(in);
-+	char *sp, *tok;
-+	int i, first = has_vrf ? 0 : 1;
-+
-+	for (i = first; i < nb_fields; i++) {
-+		tok = strtok_r(s, dlm, &sp);
-+		if (tok == NULL)
-+			return -EINVAL;
-+		in[i] = tok;
-+		s = NULL;
-+	}
-+	if (strtok_r(NULL, dlm, &sp) != NULL)
-+		return -EINVAL;
-+
-+	*vrf = 0;
-+	if (has_vrf) {
-+		tok = in[0];
-+		GET_CB_FIELD(tok, *vrf, 0,
-+			(unsigned long)RTE_MAX(config.nb_vrfs, 1) - 1, 0);
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * Count the lines of a file and detect its format: a line with one more
-+ * field than the plain format starts with a VRF, the biggest one is returned.
-+ */
-+static uint32_t
-+scan_file(FILE *f, int nb_plain_fields, bool *has_vrf, uint16_t *max_vrf)
-+{
-+	uint32_t nb_lines = 0;
-+	int nb_fields;
-+	char *s;
-+
-+	*has_vrf = false;
-+	*max_vrf = 0;
-+	while (fgets(line, sizeof(line), f) != NULL) {
-+		nb_fields = 0;
-+		for (s = line; *s != '\0'; s++) {
-+			if (!isspace((unsigned char)*s) &&
-+					(s == line || isspace((unsigned char)s[-1])))
-+				nb_fields++;
-+		}
-+		if (nb_fields == 0)
-+			continue;
-+		if (nb_lines == 0)
-+			*has_vrf = (nb_fields == nb_plain_fields + 1);
-+		if (*has_vrf) {
-+			unsigned long vrf;
-+			char *end;
-+
-+			errno = 0;
-+			vrf = strtoul(line, &end, 0);
-+			if (errno != 0 || end == line || vrf >= UINT16_MAX)
-+				rte_exit(-EINVAL, "Bad VRF at line %u\n",
-+					nb_lines + 1);
-+			*max_vrf = RTE_MAX(*max_vrf, (uint16_t)vrf);
-+		}
-+		nb_lines++;
-+	}
-+	rewind(f);
-+	return nb_lines;
-+}
-+
-+/* Number of routes of a VRF derived from VRF 0 with --vrfconf. */
-+static uint32_t
-+nb_vrf_conf_routes(const struct vrf_conf *vc)
-+{
-+	return RTE_MAX((uint64_t)config.nb_base_routes * vc->pct / 100, 1U);
-+}
-+
-+/*
-+ * Every VRF of --vrfconf gets a random subset of the VRF 0 routes, with their
-+ * next hops, appended after the base routes.
-+ */
-+static void
-+gen_vrf_copies(int af)
-+{
-+	struct rt_rule_4 *rt4 = config.rt;
-+	struct rt_rule_6 *rt6 = config.rt;
-+	uint64_t *copied;
-+	uint32_t i, j, k, n;
-+	unsigned int c;
-+
-+	if (config.nb_vrf_conf == 0)
-+		return;
-+
-+	/* Bitmap of the base routes already copied to the current VRF. */
-+	copied = malloc(RTE_ALIGN_CEIL(config.nb_base_routes, 64) / 8);
-+	if (copied == NULL)
-+		rte_exit(-ENOMEM, "Can not alloc the VRF copies bitmap\n");
-+
-+	k = config.nb_base_routes;
-+	for (c = 0; c < config.nb_vrf_conf; c++) {
-+		uint16_t vrf = config.vrf_conf[c].vrf;
-+
-+		n = RTE_MIN(nb_vrf_conf_routes(&config.vrf_conf[c]),
-+			config.nb_vrf_routes[0]);
-+		memset(copied, 0, RTE_ALIGN_CEIL(config.nb_base_routes, 64) / 8);
-+		for (i = 0; i < n; i++, k++) {
-+			/* A random VRF 0 route not copied to this VRF yet. */
-+			do {
-+				j = rte_rand() % config.nb_base_routes;
-+			} while ((copied[j / 64] & RTE_BIT64(j % 64)) != 0 ||
-+				((af == AF_INET) ? rt4[j].vrf : rt6[j].vrf) != 0);
-+			copied[j / 64] |= RTE_BIT64(j % 64);
-+			if (af == AF_INET) {
-+				rt4[k] = rt4[j];
-+				rt4[k].vrf = vrf;
-+				config.nb_routes_per_depth[rt4[k].depth]++;
-+			} else {
-+				rt6[k] = rt6[j];
-+				rt6[k].vrf = vrf;
-+				config.nb_routes_per_depth[rt6[k].depth]++;
-+			}
-+		}
-+		config.nb_vrf_routes[vrf] += n;
-+	}
-+	config.nb_routes = k;
-+	free(copied);
-+}
-+
-+static int
-+parse_rt_4(FILE *f)
-+{
-+	int ret, j = 0;
-+	char *in[RT_NUM];
- 	struct rt_rule_4 *rt;
- 
- 	rt = (struct rt_rule_4 *)config.rt;
- 
- 	while (fgets(line, sizeof(line), f) != NULL) {
--		s = line;
--		for (i = 0; i != string_tok_nb; i++) {
--			in[i] = strtok_r(s, dlm, &sp);
--			if (in[i] == NULL)
--				return -EINVAL;
--			s = NULL;
--		}
-+		ret = parse_fields(line, in, RT_NUM, config.routes_file_vrf,
-+			&rt[j].vrf);
-+		if (ret != 0)
-+			return ret;
- 
- 		ret = _inet_net_pton(AF_INET, in[RT_PREFIX], &rt[j].addr);
--		if (ret == -1)
--			return -errno;
-+		if (ret < 0)
-+			return ret;
- 
- 		rt[j].addr = rte_be_to_cpu_32(rt[j].addr);
- 		rt[j].depth = ret;
- 		config.nb_routes_per_depth[ret]++;
-+		config.nb_vrf_routes[rt[j].vrf]++;
- 		GET_CB_FIELD(in[RT_NEXTHOP], rt[j].nh, 0,
- 				UINT32_MAX, 0);
- 		j++;
-@@ -496,22 +667,17 @@ parse_rt_4(FILE *f)
- static int
- parse_rt_6(FILE *f)
- {
--	int ret, i, j = 0;
--	char *s, *sp, *in[RT_NUM];
--	static const char *dlm = " \t\n";
--	int string_tok_nb = RTE_DIM(in);
-+	int ret, j = 0;
-+	char *in[RT_NUM];
- 	struct rt_rule_6 *rt;
- 
- 	rt = (struct rt_rule_6 *)config.rt;
- 
- 	while (fgets(line, sizeof(line), f) != NULL) {
--		s = line;
--		for (i = 0; i != string_tok_nb; i++) {
--			in[i] = strtok_r(s, dlm, &sp);
--			if (in[i] == NULL)
--				return -EINVAL;
--			s = NULL;
--		}
-+		ret = parse_fields(line, in, RT_NUM, config.routes_file_vrf,
-+			&rt[j].vrf);
-+		if (ret != 0)
-+			return ret;
- 
- 		ret = _inet_net_pton(AF_INET6, in[RT_PREFIX], &rt[j].addr);
- 		if (ret < 0)
-@@ -519,6 +685,7 @@ parse_rt_6(FILE *f)
- 
- 		rt[j].depth = ret;
- 		config.nb_routes_per_depth[ret]++;
-+		config.nb_vrf_routes[rt[j].vrf]++;
- 		GET_CB_FIELD(in[RT_NEXTHOP], rt[j].nh, 0,
- 				UINT32_MAX, 0);
- 		j++;
-@@ -534,21 +701,29 @@ parse_lookup(FILE *f, int af)
- 	uint32_t i;
- 	uint8_t *tbl = (uint8_t *)config.lookup_tbl;
- 	int step = (af == AF_INET) ? 4 : 16;
--	char *s;
-+	char *in[LK_NUM];
- 
- 	/* Only the addresses of the full bursts are read. */
- 	for (i = 0; i < config.nb_lookup_ips &&
- 			fgets(line, sizeof(line), f) != NULL; i++) {
--		s = strtok(line, " \t\n");
--		if (s == NULL)
--			return -EINVAL;
--		ret = inet_pton(af, s, &tbl[(size_t)i * step]);
-+		ret = parse_fields(line, in, LK_NUM, config.lookup_file_vrf,
-+			&config.lookup_vrfs[i]);
-+		if (ret != 0)
-+			return ret;
-+		ret = inet_pton(af, in[LK_IP], &tbl[(size_t)i * step]);
- 		if (ret != 1)
- 			return -EINVAL;
- 	}
- 	return 0;
- }
- 
-+static void
-+fprint_vrf(FILE *f, uint16_t vrf)
-+{
-+	if (vrf_enabled())
-+		fprintf(f, "%u ", vrf);
-+}
-+
- static int
- dump_lookup(int af)
- {
-@@ -564,11 +739,16 @@ dump_lookup(int af)
- 	}
- 
- 	if (af == AF_INET) {
--		for (i = 0; i < config.nb_lookup_ips; i++)
-+		for (i = 0; i < config.nb_lookup_ips; i++) {
-+			fprint_vrf(f, config.lookup_vrfs[i]);
- 			fprintf(f, NIPQUAD_FMT"\n", NIPQUAD(tbl4[i]));
-+		}
- 	} else {
--		for (i = 0; i < config.nb_lookup_ips; i++)
--			fprintf(f, RTE_IPV6_ADDR_FMT"\n", RTE_IPV6_ADDR_SPLIT(&tbl6[i * 16]));
-+		for (i = 0; i < config.nb_lookup_ips; i++) {
-+			fprint_vrf(f, config.lookup_vrfs[i]);
-+			fprintf(f, RTE_IPV6_ADDR_FMT"\n",
-+				RTE_IPV6_ADDR_SPLIT(&tbl6[i]));
-+		}
- 	}
- 	fclose(f);
- 	return 0;
-@@ -603,6 +783,14 @@ print_config(void)
- 		"Random lookup ips: %u\n",
- 		config.nb_lookup_ips, config.rnd_lookup_ips_ratio,
- 		config.nb_lookup_ips_rnd);
-+	if (vrf_enabled()) {
-+		uint32_t j;
-+
-+		fprintf(stdout, "VRFs: %u, routes per VRF:", config.nb_vrfs);
-+		for (j = 0; j < RTE_MIN(config.nb_vrfs, 16U); j++)
-+			fprintf(stdout, " %u", config.nb_vrf_routes[j]);
-+		fprintf(stdout, (config.nb_vrfs > 16) ? " ...\n" : "\n");
-+	}
- }
- 
- static void
-@@ -634,6 +822,13 @@ print_usage(void)
- 		"[-e <entry size (valid only for dir and trie fib types): "
- 		"1/2/4/8 (default 4)>]\n"
- 		"[-g <number of tbl8's for dir24_8, dir8_16_8 or trie FIBs>]\n"
-+		"[-V <number of VRFs (2 to 65535)>]\n"
-+		"[--vrfconf <\",\" separated \"<vrf> <n>%%\" list: every listed "
-+		"VRF gets a random n%% of the VRF 0 routes>]\n"
-+		"\tVRF mode (valid for the dir8_16_8 FIB) is "
-+		"enabled by -V, by --vrfconf or by a routes or lookup file with "
-+		"a leading VRF field (\"<vrf> <prefix>/<depth> <nexthop>\", "
-+		"\"<vrf> <address>\"), the other files put everything in VRF 0\n"
- 		"[-w <path to the file to dump routing table>]\n"
- 		"[-u <path to the file to dump ip's for lookup>]\n"
- 		"[-v <type of lookup function:"
-@@ -693,15 +888,89 @@ check_config(void)
- 	return 0;
- }
- 
-+/* "<vrf> <percent>%[, ...]": VRFs holding a random share of VRF 0. */
-+static int
-+parse_vrf_conf(char *s)
-+{
-+	char *item, *sp, *end;
-+	unsigned long vrf, pct;
-+	unsigned int i;
-+
-+	for (item = strtok_r(s, ",", &sp); item != NULL;
-+			item = strtok_r(NULL, ",", &sp)) {
-+		if (config.nb_vrf_conf == MAX_VRF_CONF)
-+			return -EINVAL;
-+		errno = 0;
-+		vrf = strtoul(item, &end, 0);
-+		if (errno != 0 || end == item || vrf == 0 || vrf >= UINT16_MAX)
-+			return -EINVAL;
-+		item = end;
-+		pct = strtoul(item, &end, 0);
-+		if (errno != 0 || end == item || pct == 0 || pct > 100)
-+			return -EINVAL;
-+		if (*end == '%')
-+			end++;
-+		while (isspace((unsigned char)*end))
-+			end++;
-+		if (*end != '\0')
-+			return -EINVAL;
-+		for (i = 0; i < config.nb_vrf_conf; i++) {
-+			if (config.vrf_conf[i].vrf == vrf)
-+				return -EINVAL;
-+		}
-+		config.vrf_conf[config.nb_vrf_conf].vrf = vrf;
-+		config.vrf_conf[config.nb_vrf_conf].pct = pct;
-+		config.nb_vrf_conf++;
-+	}
-+	return (config.nb_vrf_conf != 0) ? 0 : -EINVAL;
-+}
-+
-+/*
-+ * VRF mode is enabled by the files with a VRF field, by --vrfconf and by -V,
-+ * which can only raise the number of VRFs they need.
-+ */
-+static void
-+setup_vrfs(uint16_t max_file_vrf)
-+{
-+	uint32_t nb_vrfs = (uint32_t)max_file_vrf + 1;
-+	unsigned int i;
-+
-+	for (i = 0; i < config.nb_vrf_conf; i++)
-+		nb_vrfs = RTE_MAX(nb_vrfs, (uint32_t)config.vrf_conf[i].vrf + 1);
-+	if (config.nb_vrfs != 0 && config.nb_vrfs < nb_vrfs)
-+		rte_exit(-EINVAL, "-V %u is less than the %u VRFs used\n",
-+			config.nb_vrfs, nb_vrfs);
-+	if (config.nb_vrfs == 0 && nb_vrfs > 1)
-+		config.nb_vrfs = nb_vrfs;
-+	if (config.nb_vrfs == 0)
-+		return;
-+	if ((config.flags & IPV6_FLAG) ||
-+			(config.flags & FIB_TYPE_MASK) != FIB_V4_DIR_8_16_8_TYPE)
-+		rte_exit(-EINVAL, "VRFs are only supported by the dir8_16_8 FIB "
-+			"type\n");
-+	config.flags |= VRF_FLAG;
-+}
-+
- static void
- parse_opts(int argc, char **argv)
- {
--	int opt;
-+	static const struct option long_opts[] = {
-+		{ "vrfconf", required_argument, NULL, 0 },
-+		{ NULL, 0, NULL, 0 }
-+	};
-+	int opt, opt_idx;
- 	char *endptr;
-+	unsigned long val;
- 
--	while ((opt = getopt(argc, argv, "f:t:n:d:l:r:c6ab:e:g:w:u:sv:")) !=
--			-1) {
-+	while ((opt = getopt_long(argc, argv, "f:t:n:d:l:r:c6ab:e:g:w:u:sv:V:",
-+			long_opts, &opt_idx)) != -1) {
- 		switch (opt) {
-+		case 0:
-+			if (parse_vrf_conf(optarg) != 0) {
-+				print_usage();
-+				rte_exit(-EINVAL, "Invalid option --vrfconf\n");
-+			}
-+			break;
- 		case 'f':
- 			config.routes_file = optarg;
- 			break;
-@@ -795,6 +1064,16 @@ parse_opts(int argc, char **argv)
- 				rte_exit(-EINVAL, "Invalid option -g\n");
- 			}
- 			break;
-+		case 'V':
-+			errno = 0;
-+			val = strtoul(optarg, &endptr, 10);
-+			if ((errno != 0) || (*endptr != '\0') || (val < 2) ||
-+					(val > UINT16_MAX)) {
-+				print_usage();
-+				rte_exit(-EINVAL, "Invalid option -V\n");
-+			}
-+			config.nb_vrfs = val;
-+			break;
- 		case 'v':
- 			if ((strcmp(optarg, "s1") == 0) ||
- 					(strcmp(optarg, "s") == 0)) {
-@@ -831,9 +1110,11 @@ dump_rt_4(struct rt_rule_4 *rt)
- 		return -1;
- 	}
- 
--	for (i = 0; i < config.nb_routes; i++)
-+	for (i = 0; i < config.nb_routes; i++) {
-+		fprint_vrf(f, rt[i].vrf);
- 		fprintf(f, NIPQUAD_FMT"/%d %"PRIu64"\n", NIPQUAD(rt[i].addr),
- 			rt[i].depth, rt[i].nh);
-+	}
- 
- 	fclose(f);
- 	return 0;
-@@ -846,6 +1127,43 @@ print_depth_err(void)
- 		"-d 0:0 option or remove /0 prefix from routes file\n");
- }
- 
-+/* Number of LPM tables needed for the comparison: one per VRF. */
-+static inline unsigned int
-+nb_lpm_tables(void)
-+{
-+	return vrf_enabled() ? config.nb_vrfs : 1;
-+}
-+
-+/*
-+ * Per-VRF LPM lookup of a burst: the addresses are demultiplexed by VRF,
-+ * looked up in bulk in the matching LPM table and the results put back in
-+ * place. This is what an application would do with one LPM table per VRF.
-+ */
-+static void
-+lpm_vrf_lookup_burst(struct rte_lpm **lpm, const uint16_t *vrfs,
-+	const uint32_t *ips, uint32_t *nhs, unsigned int n)
-+{
-+	uint32_t tmp_ips[BURST_SZ], tmp_nhs[BURST_SZ];
-+	unsigned int idx[BURST_SZ];
-+	uint64_t done = 0;
-+	unsigned int i, j, k;
-+
-+	for (i = 0; i < n; i++) {
-+		if (done & (1ULL << i))
-+			continue;
-+		for (j = i, k = 0; j < n; j++) {
-+			if (vrfs[j] != vrfs[i])
-+				continue;
-+			done |= 1ULL << j;
-+			idx[k] = j;
-+			tmp_ips[k++] = ips[j];
-+		}
-+		rte_lpm_lookup_bulk(lpm[vrfs[i]], tmp_ips, tmp_nhs, k);
-+		for (j = 0; j < k; j++)
-+			nhs[idx[j]] = tmp_nhs[j];
-+	}
-+}
-+
- static int
- select_lookup_fn_v4(struct rte_fib *fib, enum rte_fib_type type)
- {
-@@ -885,11 +1203,13 @@ run_v4(void)
- 	struct rt_rule_4 *rt;
- 	uint32_t i, j, k;
- 	int ret = 0;
--	struct rte_lpm	*lpm = NULL;
-+	struct rte_lpm	**lpm = NULL;
- 	struct rte_lpm_config lpm_conf;
- 	uint32_t *tbl4 = config.lookup_tbl;
-+	const uint16_t *vrfs = vrf_enabled() ? config.lookup_vrfs : NULL;
- 	uint64_t fib_nh[BURST_SZ];
- 	uint32_t lpm_nh[BURST_SZ];
-+	char name[32];
- 
- 	rt = (struct rt_rule_4 *)config.rt;
- 
-@@ -905,8 +1225,9 @@ run_v4(void)
- 
- 	conf.type = get_fib_type();
- 	conf.default_nh = def_nh;
--	conf.max_routes = config.nb_routes * 2;
-+	conf.max_routes = config.nb_base_routes * 2;
- 	conf.rib_ext_sz = 0;
-+	conf.max_vrfs = config.nb_vrfs;
- 	if (conf.type == RTE_FIB_DIR24_8) {
- 		conf.dir24_8.nh_sz = rte_ctz32(config.ent_sz);
- 		conf.dir24_8.num_tbl8 = RTE_MIN(config.tbl8,
-@@ -914,11 +1235,12 @@ run_v4(void)
- 	} else if (conf.type == RTE_FIB_DIR8_16_8) {
- 		/*
- 		 * DIR8_16_8 only supports 8 byte next hops. The first stride
--		 * (8 bits) needs at most one second level group per /8, so 256
--		 * groups always suffice. The third level (last 8 bits) groups
--		 * are sized like the DIR24_8 tbl8s.
-+		 * (8 bits) needs at most one second level group per /8 and
-+		 * VRF, so 256 groups per VRF always suffice. The third level
-+		 * (last 8 bits) groups are sized like the DIR24_8 tbl8s.
- 		 */
--		conf.dir8_16_8.num_tbl16 = DIR8_16_8_MAX_TBL16;
-+		conf.dir8_16_8.num_tbl16 = DIR8_16_8_MAX_TBL16 *
-+			RTE_MAX(config.nb_vrfs, 1);
- 		conf.dir8_16_8.num_tbl8 = config.tbl8;
- 	}
- 
-@@ -939,8 +1261,8 @@ run_v4(void)
- 	for (k = config.print_fract, i = 0; k > 0; k--) {
- 		start = rte_rdtsc_precise();
- 		for (j = 0; j < (config.nb_routes - i) / k; j++) {
--			ret = rte_fib_add(fib, rt[i + j].addr, rt[i + j].depth,
--				rt[i + j].nh);
-+			ret = rte_fib_vrf_add(fib, rt[i + j].vrf, rt[i + j].addr,
-+				rt[i + j].depth, rt[i + j].nh);
- 			if (unlikely(ret != 0)) {
- 				printf("Can not add a route to FIB, err %d\n",
- 					ret);
-@@ -957,16 +1279,23 @@ run_v4(void)
- 		lpm_conf.number_tbl8s = RTE_MAX(conf.dir24_8.num_tbl8,
- 			config.tbl8);
- 
--		lpm = rte_lpm_create("test_lpm", -1, &lpm_conf);
--		if (lpm == NULL) {
--			printf("Can not alloc LPM, err %d\n", rte_errno);
--			return -rte_errno;
-+		lpm = calloc(nb_lpm_tables(), sizeof(*lpm));
-+		if (lpm == NULL)
-+			return -ENOMEM;
-+		for (i = 0; i < nb_lpm_tables(); i++) {
-+			snprintf(name, sizeof(name), "test_lpm%u", i);
-+			lpm[i] = rte_lpm_create(name, -1, &lpm_conf);
-+			if (lpm[i] == NULL) {
-+				printf("Can not alloc LPM, err %d\n", rte_errno);
-+				return -rte_errno;
-+			}
- 		}
- 		for (k = config.print_fract, i = 0; k > 0; k--) {
- 			start = rte_rdtsc_precise();
- 			for (j = 0; j < (config.nb_routes - i) / k; j++) {
--				ret = rte_lpm_add(lpm, rt[i + j].addr,
--					rt[i + j].depth, rt[i + j].nh);
-+				ret = rte_lpm_add(lpm[rt[i + j].vrf],
-+					rt[i + j].addr, rt[i + j].depth,
-+					rt[i + j].nh);
- 				if (ret != 0) {
- 					if (rt[i + j].depth == 0)
- 						print_depth_err();
-@@ -984,7 +1313,8 @@ run_v4(void)
- 	acc = 0;
- 	for (i = 0; i < config.nb_lookup_ips; i += BURST_SZ) {
- 		start = rte_rdtsc_precise();
--		ret = rte_fib_lookup_bulk(fib, tbl4 + i, fib_nh, BURST_SZ);
-+		ret = rte_fib_vrf_lookup_bulk(fib, vrfs ? vrfs + i : NULL,
-+			tbl4 + i, fib_nh, BURST_SZ);
- 		acc += rte_rdtsc_precise() - start;
- 		if (ret != 0) {
- 			printf("FIB lookup fails, err %d\n", ret);
-@@ -997,8 +1327,12 @@ run_v4(void)
- 		acc = 0;
- 		for (i = 0; i < config.nb_lookup_ips; i += BURST_SZ) {
- 			start = rte_rdtsc_precise();
--			ret = rte_lpm_lookup_bulk(lpm, tbl4 + i, lpm_nh,
--				BURST_SZ);
-+			if (vrfs != NULL)
-+				lpm_vrf_lookup_burst(lpm, vrfs + i, tbl4 + i,
-+					lpm_nh, BURST_SZ);
-+			else
-+				ret = rte_lpm_lookup_bulk(lpm[0], tbl4 + i,
-+					lpm_nh, BURST_SZ);
- 			acc += rte_rdtsc_precise() - start;
- 			if (ret != 0) {
- 				printf("LPM lookup fails, err %d\n", ret);
-@@ -1008,8 +1342,14 @@ run_v4(void)
- 		printf("AVG LPM lookup %.1f\n", (double)acc / (double)i);
- 
- 		for (i = 0; i < config.nb_lookup_ips; i += BURST_SZ) {
--			rte_fib_lookup_bulk(fib, tbl4 + i, fib_nh, BURST_SZ);
--			rte_lpm_lookup_bulk(lpm, tbl4 + i, lpm_nh, BURST_SZ);
-+			rte_fib_vrf_lookup_bulk(fib, vrfs ? vrfs + i : NULL,
-+				tbl4 + i, fib_nh, BURST_SZ);
-+			if (vrfs != NULL)
-+				lpm_vrf_lookup_burst(lpm, vrfs + i, tbl4 + i,
-+					lpm_nh, BURST_SZ);
-+			else
-+				rte_lpm_lookup_bulk(lpm[0], tbl4 + i, lpm_nh,
-+					BURST_SZ);
- 			for (j = 0; j < BURST_SZ; j++) {
- 				struct rte_lpm_tbl_entry *tbl;
- 				tbl = (struct rte_lpm_tbl_entry *)&lpm_nh[j];
-@@ -1027,7 +1367,8 @@ run_v4(void)
- 	for (k = config.print_fract, i = 0; k > 0; k--) {
- 		start = rte_rdtsc_precise();
- 		for (j = 0; j < (config.nb_routes - i) / k; j++)
--			rte_fib_delete(fib, rt[i + j].addr, rt[i + j].depth);
-+			rte_fib_vrf_delete(fib, rt[i + j].vrf, rt[i + j].addr,
-+				rt[i + j].depth);
- 
- 		printf("AVG FIB delete %"PRIu64"\n",
- 			(rte_rdtsc_precise() - start) / j);
-@@ -1038,7 +1379,7 @@ run_v4(void)
- 		for (k = config.print_fract, i = 0; k > 0; k--) {
- 			start = rte_rdtsc_precise();
- 			for (j = 0; j < (config.nb_routes - i) / k; j++)
--				rte_lpm_delete(lpm, rt[i + j].addr,
-+				rte_lpm_delete(lpm[rt[i + j].vrf], rt[i + j].addr,
- 					rt[i + j].depth);
- 
- 			printf("AVG LPM delete %"PRIu64"\n",
-@@ -1063,9 +1404,9 @@ dump_rt_6(struct rt_rule_6 *rt)
- 	}
- 
- 	for (i = 0; i < config.nb_routes; i++) {
--		fprintf(f, RTE_IPV6_ADDR_FMT"/%d %"PRIu64"\n", RTE_IPV6_ADDR_SPLIT(&rt[i].addr),
--			rt[i].depth, rt[i].nh);
--
-+		fprint_vrf(f, rt[i].vrf);
-+		fprintf(f, RTE_IPV6_ADDR_FMT"/%d %"PRIu64"\n",
-+			RTE_IPV6_ADDR_SPLIT(&rt[i].addr), rt[i].depth, rt[i].nh);
- 	}
- 	fclose(f);
- 	return 0;
-@@ -1254,6 +1595,8 @@ main(int argc, char **argv)
- 	int ret, af, rt_ent_sz, lookup_ent_sz;
- 	FILE *fr = NULL;
- 	FILE *fl = NULL;
-+	uint16_t max_vrf, max_file_vrf = 0;
-+	unsigned int i;
- 	uint8_t depth_lim;
- 
- 	ret = rte_eal_init(argc, argv);
-@@ -1284,14 +1627,9 @@ main(int argc, char **argv)
- 			rte_exit(-errno, "Can not open file with routes %s\n",
- 				config.routes_file);
- 
--		config.nb_routes = 0;
--		while (fgets(line, sizeof(line), fr) != NULL)
--			config.nb_routes++;
--
--		if (config.nb_routes < config.print_fract)
--			config.print_fract = config.nb_routes;
--
--		rewind(fr);
-+		config.nb_routes = scan_file(fr, RT_NUM - 1,
-+			&config.routes_file_vrf, &max_vrf);
-+		max_file_vrf = RTE_MAX(max_file_vrf, max_vrf);
- 	}
- 
- 	/* Count number of ip's in file*/
-@@ -1301,12 +1639,24 @@ main(int argc, char **argv)
- 			rte_exit(-errno, "Can not open file with ip's %s\n",
- 				config.lookup_ips_file);
- 
--		config.nb_lookup_ips = 0;
--		while (fgets(line, sizeof(line), fl) != NULL)
--			config.nb_lookup_ips++;
--		rewind(fl);
-+		config.nb_lookup_ips = scan_file(fl, LK_NUM - 1,
-+			&config.lookup_file_vrf, &max_vrf);
-+		max_file_vrf = RTE_MAX(max_file_vrf, max_vrf);
- 	}
- 
-+	setup_vrfs(max_file_vrf);
-+	config.nb_vrf_routes = calloc(RTE_MAX(config.nb_vrfs, 1),
-+		sizeof(*config.nb_vrf_routes));
-+	if (config.nb_vrf_routes == NULL)
-+		rte_exit(-ENOMEM, "Can not alloc the per VRF route counts\n");
-+
-+	/* The VRFs of --vrfconf hold copies of the VRF 0 routes. */
-+	config.nb_base_routes = config.nb_routes;
-+	for (i = 0; i < config.nb_vrf_conf; i++)
-+		config.nb_routes += nb_vrf_conf_routes(&config.vrf_conf[i]);
-+	if (config.nb_routes < config.print_fract)
-+		config.print_fract = config.nb_routes;
-+
- 	/* Lookups are done in full bursts, the leftovers are dropped. */
- 	config.nb_lookup_ips = RTE_ALIGN_FLOOR(config.nb_lookup_ips, BURST_SZ);
- 	if (config.nb_lookup_ips == 0)
-@@ -1324,14 +1674,20 @@ main(int argc, char **argv)
- 	if (config.lookup_tbl == NULL)
- 		rte_exit(-ENOMEM, "Can not alloc lookup table\n");
- 
-+	/* Alloc table with the VRF of every ip for lookup (VRF 0 otherwise) */
-+	config.lookup_vrfs = rte_zmalloc(NULL, sizeof(uint16_t) *
-+		config.nb_lookup_ips, 0);
-+	if (config.lookup_vrfs == NULL)
-+		rte_exit(-ENOMEM, "Can not alloc lookup VRF table\n");
-+
- 	/* Fill routes table */
- 	if (fr == NULL) {
- 		if (distrib_string != NULL)
--			ret = parse_distrib(depth_lim, config.nb_routes);
-+			ret = parse_distrib(depth_lim, config.nb_base_routes);
- 		else {
- 			uint8_t rpd[129] = {0};
- 			uint32_t nrpd[129] = {0};
--			ret = complete_distrib(depth_lim, config.nb_routes,
-+			ret = complete_distrib(depth_lim, config.nb_base_routes,
- 				rpd, nrpd);
- 		}
- 		if (ret != 0)
-@@ -1341,12 +1697,12 @@ main(int argc, char **argv)
- 			gen_random_rt_4(config.rt,
- 				rte_ctz32(config.ent_sz));
- 			if (config.flags & SHUFFLE_FLAG)
--				shuffle_rt_4(config.rt, config.nb_routes);
-+				shuffle_rt_4(config.rt, config.nb_base_routes);
- 		} else {
- 			gen_random_rt_6(config.rt,
- 				rte_ctz32(config.ent_sz));
- 			if (config.flags & SHUFFLE_FLAG)
--				shuffle_rt_6(config.rt, config.nb_routes);
-+				shuffle_rt_6(config.rt, config.nb_base_routes);
- 		}
- 	} else {
- 		if (af == AF_INET)
-@@ -1359,6 +1715,7 @@ main(int argc, char **argv)
- 				config.routes_file);
- 		}
- 	}
-+	gen_vrf_copies(af);
- 
- 	/* Fill lookup table with ip's*/
- 	if (fl == NULL)
-diff --git a/app/test/test_fib.c b/app/test/test_fib.c
-index bb8021c818..ce5e48264a 100644
---- a/app/test/test_fib.c
-+++ b/app/test/test_fib.c
-@@ -8,6 +8,7 @@
- #include <stdlib.h>
- #include <string.h>
  #include <inttypes.h>
-+#include <errno.h>
- 
+@@ -13,6 +14,7 @@
  #include <rte_ip.h>
  #include <rte_log.h>
-@@ -16,6 +17,7 @@
+ #include <rte_byteorder.h>
++#include <rte_rib.h>
+ #include <rte_fib.h>
  #include <rte_malloc.h>
  
- #include "test.h"
-+#include "test_fib_routes.h"
- 
- typedef int32_t (*rte_fib_test)(void);
- 
-@@ -621,13 +623,479 @@ test_fib_rcu_sync_rw(void)
- 	return status == 0 ? TEST_SUCCESS : TEST_FAILED;
- }
- 
-+/*
-+ * VRF (Virtual Routing and Forwarding) tests for the DIR8_16_8 FIB.
-+ * A VRF-capable FIB is created with max_vrfs >= 2; every VRF holds an
-+ * independent routing table while sharing the underlying table pools.
-+ */
-+#define TEST_MAX_VRFS	4
- #define TEST_NUM_TBL16	16
- #define TEST_NUM_TBL8	64
-+#define VRF_BURST_SZ	16
+@@ -635,23 +637,35 @@ test_fib_rcu_sync_rw(void)
  #define DEF_NH		77
+ 
+ static struct rte_fib *
+-vrf_fib_create(const char *name, uint64_t *vrf_default_nh)
++vrf_fib_create_type(const char *name, uint64_t *vrf_default_nh,
++	enum rte_fib_type type)
+ {
+ 	struct rte_fib_conf cfg = {0};
+ 	char fib_name[24];
+ 
+-	cfg.type = RTE_FIB_DIR8_16_8;
++	cfg.type = type;
+ 	cfg.max_routes = 1000;
+ 	cfg.default_nh = DEF_NH;
+ 	cfg.max_vrfs = TEST_MAX_VRFS;
+ 	cfg.vrf_default_nh = vrf_default_nh;
+-	cfg.dir8_16_8.num_tbl16 = TEST_NUM_TBL16;
+-	cfg.dir8_16_8.num_tbl8 = TEST_NUM_TBL8;
++	if (type == RTE_FIB_DIR24_8) {
++		cfg.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B;
++		cfg.dir24_8.num_tbl8 = TEST_NUM_TBL8;
++	} else {
++		cfg.dir8_16_8.num_tbl16 = TEST_NUM_TBL16;
++		cfg.dir8_16_8.num_tbl8 = TEST_NUM_TBL8;
++	}
+ 
+ 	snprintf(fib_name, sizeof(fib_name), "%.20s", name);
+ 	return rte_fib_create(fib_name, SOCKET_ID_ANY, &cfg);
+ }
  
 +static struct rte_fib *
 +vrf_fib_create(const char *name, uint64_t *vrf_default_nh)
 +{
-+	struct rte_fib_conf cfg = {0};
-+	char fib_name[24];
-+
-+	cfg.type = RTE_FIB_DIR8_16_8;
-+	cfg.max_routes = 1000;
-+	cfg.default_nh = DEF_NH;
-+	cfg.max_vrfs = TEST_MAX_VRFS;
-+	cfg.vrf_default_nh = vrf_default_nh;
-+	cfg.dir8_16_8.num_tbl16 = TEST_NUM_TBL16;
-+	cfg.dir8_16_8.num_tbl8 = TEST_NUM_TBL8;
-+
-+	snprintf(fib_name, sizeof(fib_name), "%.20s", name);
-+	return rte_fib_create(fib_name, SOCKET_ID_ANY, &cfg);
++	return vrf_fib_create_type(name, vrf_default_nh, RTE_FIB_DIR8_16_8);
 +}
 +
-+static uint64_t
-+vrf_lookup1(struct rte_fib *fib, uint16_t vrf, uint32_t ip)
-+{
-+	uint32_t ips[1] = { ip };
-+	uint16_t vrfs[1] = { vrf };
-+	uint64_t nhs[1] = { 0 };
+ static uint64_t
+ vrf_lookup1(struct rte_fib *fib, uint16_t vrf, uint32_t ip)
+ {
+@@ -676,10 +690,16 @@ test_vrf_create_invalid(void)
+ 	cfg.max_vrfs = TEST_MAX_VRFS;
+ 
+ 	cfg.type = RTE_FIB_DIR24_8;
+-	cfg.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
++	cfg.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B;
+ 	cfg.dir24_8.num_tbl8 = 128;
+ 	fib = rte_fib_create(name, SOCKET_ID_ANY, &cfg);
+-	RTE_TEST_ASSERT(fib == NULL, "DIR24_8 must reject max_vrfs >= 2\n");
++	RTE_TEST_ASSERT(fib != NULL, "DIR24_8 must support max_vrfs >= 2\n");
++	rte_fib_free(fib);
 +
-+	if (rte_fib_vrf_lookup_bulk(fib, vrfs, ips, nhs, 1) != 0)
-+		return UINT64_MAX;
-+	return nhs[0];
-+}
-+
-+static int32_t
-+test_vrf_create_invalid(void)
-+{
-+	struct rte_fib *fib;
-+	struct rte_fib_conf cfg = {0};
-+	const char *name = "vrf_bad";
-+
-+	cfg.max_routes = 100;
-+	cfg.default_nh = 0;
-+	cfg.max_vrfs = TEST_MAX_VRFS;
-+
-+	cfg.type = RTE_FIB_DIR24_8;
 +	cfg.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
-+	cfg.dir24_8.num_tbl8 = 128;
 +	fib = rte_fib_create(name, SOCKET_ID_ANY, &cfg);
-+	RTE_TEST_ASSERT(fib == NULL, "DIR24_8 must reject max_vrfs >= 2\n");
-+
-+	cfg.type = RTE_FIB_DUMMY;
-+	fib = rte_fib_create(name, SOCKET_ID_ANY, &cfg);
-+	RTE_TEST_ASSERT(fib == NULL, "DUMMY must reject max_vrfs >= 2\n");
-+
-+	cfg.type = RTE_FIB_DIR8_16_8;
-+	cfg.dir8_16_8.num_tbl16 = 0;
-+	cfg.dir8_16_8.num_tbl8 = TEST_NUM_TBL8;
-+	fib = rte_fib_create(name, SOCKET_ID_ANY, &cfg);
-+	RTE_TEST_ASSERT(fib == NULL, "num_tbl16 == 0 must fail\n");
-+
-+	return TEST_SUCCESS;
-+}
-+
++	RTE_TEST_ASSERT(fib == NULL,
++		"DIR24_8 with max_vrfs >= 2 must reject nh_sz != 8B\n");
+ 
+ 	cfg.type = RTE_FIB_DUMMY;
+ 	fib = rte_fib_create(name, SOCKET_ID_ANY, &cfg);
+@@ -1093,6 +1113,109 @@ test_vrf_rcu_sync_rw(void)
+ 	return status == 0 ? TEST_SUCCESS : TEST_FAILED;
+ }
+ 
 +/*
-+ * Same prefixes in each VRF resolve to that VRF's own nexthop, and a delete
-+ * in one VRF does not affect the others.
++ * VRF behaviour on the hash-based DIR24_8 dataplane (a shared prefix trie
++ * with per-(vrf, prefix) nexthops in a hash table). Mirrors the DIR8_16_8 VRF
++ * checks: per-VRF isolation, longest-prefix match, defaults and deletes.
 + */
 +static int32_t
-+test_vrf_isolation(void)
++test_vrf_dir24_8(void)
 +{
 +	struct rte_fib *fib;
++	struct rte_rib_node *node;
++	uint32_t default_vrf_ip;
 +	uint16_t v;
-+	uint64_t nh;
++	uint64_t default_vrf_nh, nh;
 +
-+	fib = vrf_fib_create(__func__, NULL);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create VRF FIB\n");
++	fib = vrf_fib_create_type(__func__, NULL, RTE_FIB_DIR24_8);
++	RTE_TEST_ASSERT(fib != NULL, "Failed to create DIR24_8 VRF FIB\n");
 +
 +	for (v = 0; v < TEST_MAX_VRFS; v++) {
 +		RTE_TEST_ASSERT(rte_fib_vrf_add(fib, v, RTE_IPV4(10, 0, 0, 0),
@@ -1177,6 +273,27 @@ index bb8021c818..ce5e48264a 100644
 +		RTE_TEST_ASSERT(rte_fib_vrf_add(fib, v, RTE_IPV4(10, 1, 1, 0),
 +			24, 300 + v) == 0, "add /24 vrf %u\n", v);
 +	}
++
++	/* Every VRF has its own RIB mirroring its routes. */
++	for (v = 0; v < TEST_MAX_VRFS; v++) {
++		struct rte_rib *rib = rte_fib_vrf_get_rib(fib, v);
++
++		RTE_TEST_ASSERT(rib != NULL &&
++			(v == 0 || rib != rte_fib_get_rib(fib)),
++			"vrf %u must have its own RIB\n", v);
++		node = rte_rib_lookup_exact(rib, RTE_IPV4(10, 1, 1, 0), 24);
++		RTE_TEST_ASSERT(node != NULL, "vrf %u /24 missing from RIB\n", v);
++		rte_rib_get_nh(node, &nh);
++		RTE_TEST_ASSERT(nh == (uint64_t)(300 + v),
++			"vrf %u RIB /24 nexthop got %"PRIu64"\n", v, nh);
++	}
++
++	default_vrf_ip = RTE_IPV4(10, 2, 3, 4);
++	RTE_TEST_ASSERT(rte_fib_lookup_bulk(fib, &default_vrf_ip, &default_vrf_nh, 1) == 0,
++		"default VRF DIR24_8 lookup failed\n");
++	RTE_TEST_ASSERT(default_vrf_nh == 100,
++		"default VRF DIR24_8 lookup must use VRF 0 nexthop, got %"PRIu64"\n",
++		default_vrf_nh);
 +
 +	for (v = 0; v < TEST_MAX_VRFS; v++) {
 +		nh = vrf_lookup1(fib, v, RTE_IPV4(10, 2, 3, 4));
@@ -1193,963 +310,419 @@ index bb8021c818..ce5e48264a 100644
 +			"vrf %u default lookup got %"PRIu64"\n", v, nh);
 +	}
 +
-+	/* Delete the /8 from VRF 1 only. */
-+	RTE_TEST_ASSERT(rte_fib_vrf_delete(fib, 1, RTE_IPV4(10, 0, 0, 0),
-+		8) == 0, "del /8 vrf 1\n");
-+	nh = vrf_lookup1(fib, 1, RTE_IPV4(10, 2, 3, 4));
-+	RTE_TEST_ASSERT(nh == DEF_NH, "vrf 1 /8 after delete got %"PRIu64"\n",
-+		nh);
-+	/* The more specific /24 in VRF 1 still matches. */
++	/* Delete the /24 from VRF 1 only; its covering /8 then matches. */
++	RTE_TEST_ASSERT(rte_fib_vrf_delete(fib, 1, RTE_IPV4(10, 1, 1, 0),
++		24) == 0, "del /24 vrf 1\n");
 +	nh = vrf_lookup1(fib, 1, RTE_IPV4(10, 1, 1, 7));
-+	RTE_TEST_ASSERT(nh == 301, "vrf 1 /24 after /8 delete got %"PRIu64"\n",
++	RTE_TEST_ASSERT(nh == 101, "vrf 1 /24 after delete got %"PRIu64"\n",
 +		nh);
-+	/* Other VRFs are unaffected. */
++	RTE_TEST_ASSERT(rte_rib_lookup_exact(rte_fib_vrf_get_rib(fib, 1),
++		RTE_IPV4(10, 1, 1, 0), 24) == NULL,
++		"vrf 1 /24 still in its RIB after delete\n");
++	RTE_TEST_ASSERT(rte_rib_lookup_exact(rte_fib_vrf_get_rib(fib, 0),
++		RTE_IPV4(10, 1, 1, 0), 24) != NULL,
++		"vrf 0 /24 vanished from its RIB\n");
++	/* Other VRFs keep their own /24. */
 +	for (v = 0; v < TEST_MAX_VRFS; v++) {
 +		if (v == 1)
 +			continue;
-+		nh = vrf_lookup1(fib, v, RTE_IPV4(10, 2, 3, 4));
-+		RTE_TEST_ASSERT(nh == (uint64_t)(100 + v),
-+			"vrf %u /8 unexpectedly changed to %"PRIu64"\n", v, nh);
++		nh = vrf_lookup1(fib, v, RTE_IPV4(10, 1, 1, 7));
++		RTE_TEST_ASSERT(nh == (uint64_t)(300 + v),
++			"vrf %u /24 unexpectedly changed to %"PRIu64"\n",
++			v, nh);
 +	}
 +
-+	rte_fib_free(fib);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * The same network owned by a different prefix length in each VRF resolves
-+ * independently; a VRF with no matching route returns its default.
-+ */
-+static int32_t
-+test_vrf_overlapping_prefixes(void)
-+{
-+	struct rte_fib *fib;
-+	uint64_t nh;
-+
-+	fib = vrf_fib_create(__func__, NULL);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create VRF FIB\n");
-+
-+	RTE_TEST_ASSERT(rte_fib_vrf_add(fib, 0, RTE_IPV4(10, 0, 0, 0), 8, 10)
-+		== 0, "add /8 vrf 0\n");
-+	RTE_TEST_ASSERT(rte_fib_vrf_add(fib, 1, RTE_IPV4(10, 1, 0, 0), 16, 20)
-+		== 0, "add /16 vrf 1\n");
-+	RTE_TEST_ASSERT(rte_fib_vrf_add(fib, 2, RTE_IPV4(10, 1, 1, 0), 24, 30)
-+		== 0, "add /24 vrf 2\n");
-+	/* VRF 3 has no matching route. */
-+	nh = vrf_lookup1(fib, 0, RTE_IPV4(10, 1, 1, 5));
-+	RTE_TEST_ASSERT(nh == 10, "vrf 0 /8 got %"PRIu64"\n", nh);
-+	nh = vrf_lookup1(fib, 1, RTE_IPV4(10, 1, 1, 5));
-+	RTE_TEST_ASSERT(nh == 20, "vrf 1 /16 got %"PRIu64"\n", nh);
-+	nh = vrf_lookup1(fib, 2, RTE_IPV4(10, 1, 1, 5));
-+	RTE_TEST_ASSERT(nh == 30, "vrf 2 /24 got %"PRIu64"\n", nh);
-+	nh = vrf_lookup1(fib, 3, RTE_IPV4(10, 1, 1, 5));
-+	RTE_TEST_ASSERT(nh == DEF_NH, "vrf 3 miss got %"PRIu64"\n", nh);
-+
-+	rte_fib_free(fib);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * A single bulk lookup carrying an interleaved per-IP VRF array resolves
-+ * each address in its own VRF, with every available lookup implementation.
-+ */
-+static int32_t
-+test_vrf_mixed_lookup(void)
-+{
-+	const enum rte_fib_lookup_type types[] = {
-+		RTE_FIB_LOOKUP_DIR8_16_8_SCALAR,
-+		RTE_FIB_LOOKUP_DIR8_16_8_VECTOR_AVX512,
-+	};
-+	struct rte_fib *fib;
-+	uint32_t ips[VRF_BURST_SZ];
-+	uint16_t vrfs[VRF_BURST_SZ];
-+	uint64_t nhs[VRF_BURST_SZ];
-+	unsigned int i, t;
-+
-+	fib = vrf_fib_create(__func__, NULL);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create VRF FIB\n");
-+
-+	/* Same prefix in every VRF, a distinct nexthop per VRF. */
-+	for (i = 0; i < TEST_MAX_VRFS; i++)
-+		RTE_TEST_ASSERT(rte_fib_vrf_add(fib, i, RTE_IPV4(20, 0, 0, 0),
-+			8, i + 1) == 0, "add vrf %u\n", i);
-+
-+	for (i = 0; i < VRF_BURST_SZ; i++) {
-+		ips[i] = RTE_IPV4(20, 0, 0, i + 1);
-+		vrfs[i] = i % TEST_MAX_VRFS;
-+	}
-+
-+	for (t = 0; t < RTE_DIM(types); t++) {
-+		/* The vector lookup needs a 512 bit SIMD width. */
-+		if (rte_fib_select_lookup(fib, types[t]) != 0)
-+			continue;
-+		memset(nhs, 0, sizeof(nhs));
-+		RTE_TEST_ASSERT(rte_fib_vrf_lookup_bulk(fib, vrfs, ips, nhs,
-+			VRF_BURST_SZ) == 0, "mixed lookup failed\n");
-+
-+		for (i = 0; i < VRF_BURST_SZ; i++)
-+			RTE_TEST_ASSERT(nhs[i] == (i % TEST_MAX_VRFS) + 1,
-+				"lookup type %u: pkt %u vrf %u got %"PRIu64"\n",
-+				types[t], i, vrfs[i], nhs[i]);
-+	}
-+
-+	rte_fib_free(fib);
-+	return TEST_SUCCESS;
-+}
-+
-+/* A lookup miss returns that VRF's configured default nexthop. */
-+static int32_t
-+test_vrf_default_nh(void)
-+{
-+	struct rte_fib *fib;
-+	uint64_t vrf_def[TEST_MAX_VRFS];
-+	uint16_t v;
-+	uint64_t nh;
-+
-+	for (v = 0; v < TEST_MAX_VRFS; v++)
-+		vrf_def[v] = 1000 + v;
-+
-+	fib = vrf_fib_create(__func__, vrf_def);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create VRF FIB\n");
-+
-+	for (v = 0; v < TEST_MAX_VRFS; v++) {
-+		nh = vrf_lookup1(fib, v, RTE_IPV4(8, 8, 8, 8));
-+		RTE_TEST_ASSERT(nh == (uint64_t)(1000 + v),
-+			"vrf %u default nh got %"PRIu64"\n", v, nh);
-+	}
-+
-+	rte_fib_free(fib);
-+	return TEST_SUCCESS;
-+}
-+
-+/* Re-adding an existing prefix updates its nexthop in place, per VRF. */
-+static int32_t
-+test_vrf_update_route(void)
-+{
-+	struct rte_fib *fib;
-+	uint64_t nh;
-+
-+	fib = vrf_fib_create(__func__, NULL);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create VRF FIB\n");
-+
-+	RTE_TEST_ASSERT(rte_fib_vrf_add(fib, 2, RTE_IPV4(40, 0, 0, 0), 8, 5)
-+		== 0, "initial add\n");
-+	nh = vrf_lookup1(fib, 2, RTE_IPV4(40, 1, 1, 1));
-+	RTE_TEST_ASSERT(nh == 5, "initial nh got %"PRIu64"\n", nh);
-+
-+	/* Re-add the same prefix with a new nexthop. */
-+	RTE_TEST_ASSERT(rte_fib_vrf_add(fib, 2, RTE_IPV4(40, 0, 0, 0), 8, 99)
-+		== 0, "update add\n");
-+	nh = vrf_lookup1(fib, 2, RTE_IPV4(40, 1, 1, 1));
-+	RTE_TEST_ASSERT(nh == 99, "updated nh got %"PRIu64"\n", nh);
-+
-+	/* The update stays within its VRF. */
-+	nh = vrf_lookup1(fib, 0, RTE_IPV4(40, 1, 1, 1));
-+	RTE_TEST_ASSERT(nh == DEF_NH, "vrf 0 leaked update %"PRIu64"\n", nh);
-+
-+	rte_fib_free(fib);
-+	return TEST_SUCCESS;
-+}
-+
-+/* Out-of-range VRF IDs are rejected by the VRF API. */
-+static int32_t
-+test_vrf_bounds(void)
-+{
-+	struct rte_fib *fib;
-+	uint32_t ips[1] = { RTE_IPV4(1, 2, 3, 4) };
-+	uint16_t vrfs[1];
-+	uint64_t nhs[1];
-+
-+	fib = vrf_fib_create(__func__, NULL);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create VRF FIB\n");
-+
-+	RTE_TEST_ASSERT(rte_fib_vrf_add(fib, TEST_MAX_VRFS,
-+		RTE_IPV4(1, 0, 0, 0), 8, 1) == -EINVAL,
-+		"add with out-of-range vrf must fail\n");
-+	RTE_TEST_ASSERT(rte_fib_vrf_delete(fib, TEST_MAX_VRFS,
-+		RTE_IPV4(1, 0, 0, 0), 8) == -EINVAL,
-+		"delete with out-of-range vrf must fail\n");
-+	RTE_TEST_ASSERT(rte_fib_vrf_get_rib(fib, TEST_MAX_VRFS) == NULL,
-+		"get_rib with out-of-range vrf must return NULL\n");
-+
-+	RTE_TEST_ASSERT(rte_fib_vrf_add(fib, TEST_MAX_VRFS - 1,
-+		RTE_IPV4(1, 0, 0, 0), 8, 1) == 0,
-+		"add to the last valid vrf must succeed\n");
-+
-+	/* A valid per-IP VRF lookup in the last VRF returns the new nexthop. */
-+	vrfs[0] = TEST_MAX_VRFS - 1;
-+	RTE_TEST_ASSERT(rte_fib_vrf_lookup_bulk(fib, vrfs, ips, nhs, 1) == 0,
-+		"valid vrf lookup must succeed\n");
-+	RTE_TEST_ASSERT(nhs[0] == 1, "lookup must return the added nexthop\n");
-+
-+	rte_fib_free(fib);
-+	return TEST_SUCCESS;
-+}
-+
-+/* Each VRF exposes a distinct, non-NULL RIB; VRF 0 is the main RIB. */
-+static int32_t
-+test_vrf_get_rib(void)
-+{
-+	struct rte_fib *fib;
-+	struct rte_rib *ribs[TEST_MAX_VRFS];
-+	uint16_t v, w;
-+
-+	fib = vrf_fib_create(__func__, NULL);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create VRF FIB\n");
-+
-+	for (v = 0; v < TEST_MAX_VRFS; v++) {
-+		ribs[v] = rte_fib_vrf_get_rib(fib, v);
-+		RTE_TEST_ASSERT(ribs[v] != NULL, "vrf %u rib is NULL\n", v);
-+	}
-+	RTE_TEST_ASSERT(rte_fib_vrf_get_rib(fib, 0) == rte_fib_get_rib(fib),
-+		"vrf 0 rib must be the main rib\n");
-+	for (v = 0; v < TEST_MAX_VRFS; v++)
-+		for (w = v + 1; w < TEST_MAX_VRFS; w++)
-+			RTE_TEST_ASSERT(ribs[v] != ribs[w],
-+				"vrf %u and %u share a rib\n", v, w);
++	/* A route owned by a single VRF exercises the full-removal path. */
++	RTE_TEST_ASSERT(rte_fib_vrf_add(fib, 3, RTE_IPV4(172, 16, 0, 0), 16,
++		999) == 0, "add single-owner /16 vrf 3\n");
++	nh = vrf_lookup1(fib, 3, RTE_IPV4(172, 16, 5, 5));
++	RTE_TEST_ASSERT(nh == 999, "vrf 3 single-owner /16 got %"PRIu64"\n",
++		nh);
++	nh = vrf_lookup1(fib, 0, RTE_IPV4(172, 16, 5, 5));
++	RTE_TEST_ASSERT(nh == DEF_NH, "vrf 0 must miss 172.16/16 got %"PRIu64
++		"\n", nh);
++	RTE_TEST_ASSERT(rte_fib_vrf_delete(fib, 3, RTE_IPV4(172, 16, 0, 0),
++		16) == 0, "del single-owner /16 vrf 3\n");
++	nh = vrf_lookup1(fib, 3, RTE_IPV4(172, 16, 5, 5));
++	RTE_TEST_ASSERT(nh == DEF_NH,
++		"vrf 3 after single-owner delete got %"PRIu64"\n", nh);
 +
 +	rte_fib_free(fib);
 +	return TEST_SUCCESS;
 +}
 +
  /*
-- * Network order lookups with every lookup implementation of DIR8_16_8, with a
-- * burst of two vector groups and a leftover.
-+ * RCU QSBR can be attached to a VRF FIB in both SYNC and DQ modes, and a
-+ * second attach is rejected.
-+ */
-+static int32_t
-+test_vrf_rcu(void)
-+{
-+	struct rte_fib *fib;
-+	struct rte_rcu_qsbr *qsv, *qsv2;
-+	struct rte_fib_rcu_config rcu_cfg = {0};
-+	size_t sz;
-+	int32_t status;
-+
-+	fib = vrf_fib_create(__func__, NULL);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create VRF FIB\n");
-+
-+	sz = rte_rcu_qsbr_get_memsize(RTE_MAX_LCORE);
-+	qsv = (struct rte_rcu_qsbr *)rte_zmalloc_socket(NULL, sz,
-+		RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
-+	RTE_TEST_ASSERT(qsv != NULL, "Can not allocate memory for RCU\n");
-+	RTE_TEST_ASSERT(rte_rcu_qsbr_init(qsv, RTE_MAX_LCORE) == 0,
-+		"Can not initialize RCU\n");
-+
-+	rcu_cfg.v = qsv;
-+	rcu_cfg.mode = RTE_FIB_QSBR_MODE_SYNC;
-+	status = rte_fib_rcu_qsbr_add(fib, &rcu_cfg);
-+	RTE_TEST_ASSERT(status == 0, "Can not attach RCU to VRF FIB\n");
-+
-+	/* A second attach must be rejected. */
-+	qsv2 = (struct rte_rcu_qsbr *)rte_zmalloc_socket(NULL, sz,
-+		RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
-+	RTE_TEST_ASSERT(qsv2 != NULL, "Can not allocate memory for RCU\n");
-+	rcu_cfg.v = qsv2;
-+	status = rte_fib_rcu_qsbr_add(fib, &rcu_cfg);
-+	RTE_TEST_ASSERT(status == -EEXIST,
-+		"Secondary RCU was mistakenly attached\n");
-+
-+	rte_fib_free(fib);
-+	rte_free(qsv);
-+	rte_free(qsv2);
-+
-+	/* DQ (defer queue) mode must also attach to a VRF FIB. */
-+	fib = vrf_fib_create("vrf_rcu_dq", NULL);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create VRF FIB\n");
-+	qsv = (struct rte_rcu_qsbr *)rte_zmalloc_socket(NULL, sz,
-+		RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
-+	RTE_TEST_ASSERT(qsv != NULL, "Can not allocate memory for RCU\n");
-+	RTE_TEST_ASSERT(rte_rcu_qsbr_init(qsv, RTE_MAX_LCORE) == 0,
-+		"Can not initialize RCU\n");
-+	rcu_cfg.v = qsv;
-+	rcu_cfg.mode = RTE_FIB_QSBR_MODE_DQ;
-+	status = rte_fib_rcu_qsbr_add(fib, &rcu_cfg);
-+	RTE_TEST_ASSERT(status == 0, "Can not attach DQ-mode RCU to VRF FIB\n");
-+
-+	rte_fib_free(fib);
-+	rte_free(qsv);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * RCU sync reader/writer test for a VRF FIB. The reader looks up g_ip via
-+ * the legacy bulk API (which targets VRF 0) while the writer churns the
-+ * same route in VRF 0 with depth > 24 to force tbl8 group reclamation.
-+ */
-+static int32_t
-+test_vrf_rcu_sync_rw(void)
-+{
-+	struct rte_fib_conf config = { 0 };
-+	struct rte_fib_rcu_config rcu_cfg = {0};
-+	size_t sz;
-+	int32_t status;
-+	uint32_t i, next_hop;
-+	uint8_t depth;
-+
-+	if (rte_lcore_count() < 2) {
-+		printf("Not enough cores for %s, expecting at least 2\n",
-+			__func__);
-+		return TEST_SKIPPED;
-+	}
-+
-+	config.max_routes = MAX_ROUTES;
-+	config.default_nh = DEF_NH;
-+	config.type = RTE_FIB_DIR8_16_8;
-+	config.max_vrfs = TEST_MAX_VRFS;
-+	config.dir8_16_8.num_tbl16 = TEST_NUM_TBL16;
-+	config.dir8_16_8.num_tbl8 = 1;
-+
-+	g_fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	RTE_TEST_ASSERT(g_fib != NULL, "Failed to create VRF FIB\n");
-+
-+	sz = rte_rcu_qsbr_get_memsize(1);
-+	g_v = (struct rte_rcu_qsbr *)rte_zmalloc_socket(NULL, sz,
-+		RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
-+	RTE_TEST_ASSERT(g_v != NULL, "Can not allocate memory for RCU\n");
-+
-+	status = rte_rcu_qsbr_init(g_v, 1);
-+	RTE_TEST_ASSERT(status == 0, "Can not initialize RCU\n");
-+
-+	rcu_cfg.v = g_v;
-+	rcu_cfg.mode = RTE_FIB_QSBR_MODE_SYNC;
-+	status = rte_fib_rcu_qsbr_add(g_fib, &rcu_cfg);
-+	RTE_TEST_ASSERT(status == 0, "Can not attach RCU to VRF FIB\n");
-+
-+	writer_done = 0;
-+	rte_eal_remote_launch(test_fib_rcu_qsbr_reader, NULL,
-+		rte_get_next_lcore(-1, 1, 0));
-+
-+	depth = 28;
-+	next_hop = 1;
-+	status = rte_fib_vrf_add(g_fib, 0, g_ip, depth, next_hop);
-+	if (status != 0) {
-+		printf("%s: Failed to add rule\n", __func__);
-+		goto error;
-+	}
-+
-+	for (i = 0; i < WRITER_ITERATIONS; i++) {
-+		status = rte_fib_vrf_delete(g_fib, 0, g_ip, depth);
-+		if (status != 0) {
-+			printf("%s: Failed to delete rule at iteration %d\n",
-+				__func__, i);
-+			goto error;
-+		}
-+
-+		status = rte_fib_vrf_add(g_fib, 0, g_ip, depth, next_hop);
-+		if (status != 0) {
-+			printf("%s: Failed to add rule at iteration %d\n",
-+				__func__, i);
-+			goto error;
-+		}
-+	}
-+
-+error:
-+	writer_done = 1;
-+	rte_eal_mp_wait_lcore();
-+
-+	rte_fib_free(g_fib);
-+	rte_free(g_v);
-+
-+	return status == 0 ? TEST_SUCCESS : TEST_FAILED;
-+}
-+
-+/*
-+ * Network order lookups with every lookup implementation of DIR8_16_8, in
-+ * single and multi VRF FIBs, with a burst of two vector groups and a leftover.
+  * Network order lookups with every lookup implementation of DIR8_16_8, in
+  * single and multi VRF FIBs, with a burst of two vector groups and a leftover.
+@@ -1190,21 +1313,28 @@ test_lookup_network_order(void)
+ /*
+  * VRF cross-validation.
+  *
+- * Build one VRF-capable DIR8_16_8 FIB with N VRFs and N independent reference
+- * DIR8_16_8 FIBs. The same large route table is added to each VRF and its
+- * matching reference, using a per-VRF distinct unique next hop. Each VRF lookup
+- * must match its reference exactly, which proves both per-VRF correctness and
+- * isolation (no VRF bleeds into another), with every available lookup
+- * implementation.
++ * Build one VRF-capable FIB with N VRFs and N independent single-VRF reference
++ * DIR24_8 FIBs. The large route table is added to every VRF and its reference
++ * with a per-VRF unique nexthop, then routes are deleted, updated and re-added
++ * in a pseudo-random pattern. After every phase, mixed per-IP VRF lookups must
++ * match the references exactly, which proves per-VRF correctness and isolation
++ * for all the add/delete code paths and every available lookup implementation.
   */
- static int32_t
- test_lookup_network_order(void)
-@@ -645,9 +1113,11 @@ test_lookup_network_order(void)
- 	const uint64_t probe_nhs[] = { 100, 300, 400, DEF_NH };
- 	struct rte_fib_conf cfg = { 0 };
- 	struct rte_fib *fib;
--	uint32_t ips[17];
--	uint64_t nhs[17];
--	unsigned int i, t;
-+	uint32_t ips[VRF_BURST_SZ + 1];
-+	uint16_t vrfs[VRF_BURST_SZ + 1];
-+	uint64_t nhs[VRF_BURST_SZ + 1];
-+	unsigned int i, t, nb_vrfs;
-+	uint16_t v;
- 
- 	cfg.type = RTE_FIB_DIR8_16_8;
- 	cfg.max_routes = 100;
-@@ -656,34 +1126,217 @@ test_lookup_network_order(void)
- 	cfg.dir8_16_8.num_tbl16 = TEST_NUM_TBL16;
- 	cfg.dir8_16_8.num_tbl8 = TEST_NUM_TBL8;
- 
--	fib = rte_fib_create("fib_be", SOCKET_ID_ANY, &cfg);
--	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
-+	for (nb_vrfs = 1; nb_vrfs <= TEST_MAX_VRFS; nb_vrfs += TEST_MAX_VRFS - 1) {
-+		cfg.max_vrfs = nb_vrfs;
-+		fib = rte_fib_create("fib_be", SOCKET_ID_ANY, &cfg);
-+		RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
--	RTE_TEST_ASSERT(rte_fib_add(fib, RTE_IPV4(10, 0, 0, 0), 8, 100) == 0,
--		"add /8\n");
--	RTE_TEST_ASSERT(rte_fib_add(fib, RTE_IPV4(10, 1, 1, 0), 24, 300) == 0,
--		"add /24\n");
--	RTE_TEST_ASSERT(rte_fib_add(fib, RTE_IPV4(10, 1, 1, 7), 32, 400) == 0,
--		"add /32\n");
--	for (i = 0; i < RTE_DIM(ips); i++)
--		ips[i] = rte_cpu_to_be_32(probes[i % RTE_DIM(probes)]);
-+		for (v = 0; v < nb_vrfs; v++) {
-+			RTE_TEST_ASSERT(rte_fib_vrf_add(fib, v,
-+				RTE_IPV4(10, 0, 0, 0), 8, 100 + v) == 0,
-+				"add /8 vrf %u\n", v);
-+			RTE_TEST_ASSERT(rte_fib_vrf_add(fib, v,
-+				RTE_IPV4(10, 1, 1, 0), 24, 300 + v) == 0,
-+				"add /24 vrf %u\n", v);
-+			RTE_TEST_ASSERT(rte_fib_vrf_add(fib, v,
-+				RTE_IPV4(10, 1, 1, 7), 32, 400 + v) == 0,
-+				"add /32 vrf %u\n", v);
-+		}
-+		for (i = 0; i < RTE_DIM(ips); i++) {
-+			ips[i] = rte_cpu_to_be_32(probes[i % RTE_DIM(probes)]);
-+			vrfs[i] = i % nb_vrfs;
-+		}
 +
-+		for (t = 0; t < RTE_DIM(types); t++) {
-+			/* The vector lookup needs a 512 bit SIMD width. */
-+			if (rte_fib_select_lookup(fib, types[t]) != 0)
-+				continue;
-+
-+			memset(nhs, 0, sizeof(nhs));
-+			RTE_TEST_ASSERT(rte_fib_vrf_lookup_bulk(fib, vrfs, ips,
-+				nhs, RTE_DIM(ips)) == 0, "lookup failed\n");
-+			for (i = 0; i < RTE_DIM(ips); i++) {
-+				uint64_t exp = probe_nhs[i % RTE_DIM(probes)];
-+
-+				if (exp != DEF_NH)
-+					exp += vrfs[i];
-+				RTE_TEST_ASSERT(nhs[i] == exp, "%u vrfs, lookup "
-+					"type %u: ip %u vrf %u got %"PRIu64
-+					" expected %"PRIu64"\n", nb_vrfs,
-+					types[t], i, vrfs[i], nhs[i], exp);
-+			}
-+
-+			/* A NULL VRF array (and the legacy lookup) select VRF 0. */
-+			memset(nhs, 0, sizeof(nhs));
-+			RTE_TEST_ASSERT(rte_fib_vrf_lookup_bulk(fib, NULL, ips,
-+				nhs, RTE_DIM(ips)) == 0, "lookup failed\n");
-+			for (i = 0; i < RTE_DIM(ips); i++)
-+				RTE_TEST_ASSERT(nhs[i] ==
-+					probe_nhs[i % RTE_DIM(probes)],
-+					"%u vrfs, lookup type %u: ip %u vrf 0 "
-+					"got %"PRIu64"\n", nb_vrfs, types[t], i,
-+					nhs[i]);
-+		}
-+		rte_fib_free(fib);
-+	}
-+
-+	return TEST_SUCCESS;
++static inline uint64_t
++vrf_validate_nh(uint32_t i, uint16_t v, uint32_t gen)
++{
++	return (uint64_t)i + 1 + (uint64_t)v * ((uint64_t)MAX_RULE_NUM + 1) +
++		((uint64_t)gen << 40);
 +}
 +
-+#define ITERATIONS	(1 << 10)
-+#define BATCH_SIZE	(1 << 12)
-+#define BULK_SIZE	32
+ static int
+ vrf_validate_lookups_type(struct rte_fib *dut, struct rte_fib **ref,
+-	enum rte_fib_lookup_type type)
++	const char *phase, enum rte_fib_lookup_type type)
+ {
+ 	uint64_t mism = 0, total = 0;
+ 	unsigned int i, j;
+ 
+-	/* Compare mixed per-IP VRF lookups against the matching references. */
+ 	for (i = 0; i < ITERATIONS; i++) {
+ 		static uint32_t ip_batch[BATCH_SIZE];
+ 		static uint16_t vrf_batch[BATCH_SIZE];
+@@ -1212,7 +1342,17 @@ vrf_validate_lookups_type(struct rte_fib *dut, struct rte_fib **ref,
+ 		uint64_t nh_ref[BULK_SIZE];
+ 
+ 		for (j = 0; j < BATCH_SIZE; j++) {
+-			ip_batch[j] = rte_rand();
++			/* Half random, half inside a known prefix. */
++			if (j & 1) {
++				const struct route_rule *r =
++					&large_route_table[rte_rand() %
++					NUM_ROUTE_ENTRIES];
 +
-+/*
-+ * VRF cross-validation.
-+ *
-+ * Build one VRF-capable DIR8_16_8 FIB with N VRFs and N independent reference
-+ * DIR8_16_8 FIBs. The same large route table is added to each VRF and its
-+ * matching reference, using a per-VRF distinct unique next hop. Each VRF lookup
-+ * must match its reference exactly, which proves both per-VRF correctness and
-+ * isolation (no VRF bleeds into another), with every available lookup
-+ * implementation.
-+ */
-+static int
-+vrf_validate_lookups_type(struct rte_fib *dut, struct rte_fib **ref,
-+	enum rte_fib_lookup_type type)
-+{
-+	uint64_t mism = 0, total = 0;
-+	unsigned int i, j;
-+
-+	/* Compare mixed per-IP VRF lookups against the matching references. */
-+	for (i = 0; i < ITERATIONS; i++) {
-+		static uint32_t ip_batch[BATCH_SIZE];
-+		static uint16_t vrf_batch[BATCH_SIZE];
-+		uint64_t nh_dut[BULK_SIZE];
-+		uint64_t nh_ref[BULK_SIZE];
-+
-+		for (j = 0; j < BATCH_SIZE; j++) {
-+			ip_batch[j] = rte_rand();
-+			vrf_batch[j] = rte_rand() % TEST_MAX_VRFS;
-+		}
-+
-+		for (j = 0; j < BATCH_SIZE; j += BULK_SIZE) {
-+			uint32_t k;
-+
-+			rte_fib_vrf_lookup_bulk(dut, &vrf_batch[j],
-+				&ip_batch[j], nh_dut, BULK_SIZE);
-+			/* Reference: each IP resolved in its own VRF's FIB. */
-+			for (k = 0; k < BULK_SIZE; k++)
-+				rte_fib_lookup_bulk(ref[vrf_batch[j + k]],
-+					&ip_batch[j + k], &nh_ref[k], 1);
-+			for (k = 0; k < BULK_SIZE; k++) {
-+				total++;
-+				if (nh_dut[k] != nh_ref[k]) {
-+					if (mism < 20)
-+						printf("Mismatch vrf=%u "
-+						"ip=0x%08x dut=%" PRIu64
-+						" ref=%" PRIu64 "\n",
-+						vrf_batch[j + k],
-+						ip_batch[j + k],
-+						nh_dut[k], nh_ref[k]);
-+					mism++;
-+				}
++				ip_batch[j] = r->ip | (rte_rand() &
++					(uint32_t)((1ULL << (32 - r->depth)) - 1));
++			} else {
++				ip_batch[j] = rte_rand();
 +			}
-+		}
-+	}
-+
-+	printf("Lookup type %u: validated %" PRIu64 " lookups across %u VRFs, "
-+		"%" PRIu64 " mismatches\n", type, total, TEST_MAX_VRFS, mism);
-+	return (mism != 0) ? -1 : 0;
-+}
-+
-+/* Validate the lookups with every lookup implementation of the algorithm. */
-+static int
-+vrf_validate_lookups(struct rte_fib *dut, struct rte_fib **ref)
-+{
-+	const enum rte_fib_lookup_type types[] = {
-+		RTE_FIB_LOOKUP_DIR8_16_8_SCALAR,
-+		RTE_FIB_LOOKUP_DIR8_16_8_VECTOR_AVX512,
-+	};
-+	unsigned int t;
-+	int ret;
+ 			vrf_batch[j] = rte_rand() % TEST_MAX_VRFS;
+ 		}
+ 
+@@ -1221,17 +1361,16 @@ vrf_validate_lookups_type(struct rte_fib *dut, struct rte_fib **ref,
+ 
+ 			rte_fib_vrf_lookup_bulk(dut, &vrf_batch[j],
+ 				&ip_batch[j], nh_dut, BULK_SIZE);
+-			/* Reference: each IP resolved in its own VRF's FIB. */
+ 			for (k = 0; k < BULK_SIZE; k++)
+ 				rte_fib_lookup_bulk(ref[vrf_batch[j + k]],
+ 					&ip_batch[j + k], &nh_ref[k], 1);
+ 			for (k = 0; k < BULK_SIZE; k++) {
+ 				total++;
+ 				if (nh_dut[k] != nh_ref[k]) {
+-					if (mism < 20)
+-						printf("Mismatch vrf=%u "
++					if (mism < 10)
++						printf("%s: mismatch vrf=%u "
+ 						"ip=0x%08x dut=%" PRIu64
+-						" ref=%" PRIu64 "\n",
++						" ref=%" PRIu64 "\n", phase,
+ 						vrf_batch[j + k],
+ 						ip_batch[j + k],
+ 						nh_dut[k], nh_ref[k]);
+@@ -1241,35 +1380,84 @@ vrf_validate_lookups_type(struct rte_fib *dut, struct rte_fib **ref,
+ 		}
+ 	}
+ 
+-	printf("Lookup type %u: validated %" PRIu64 " lookups across %u VRFs, "
+-		"%" PRIu64 " mismatches\n", type, total, TEST_MAX_VRFS, mism);
++	printf("%s: lookup type %u: validated %" PRIu64 " lookups across %u "
++		"VRFs, %" PRIu64 " mismatches\n", phase, type, total,
++		TEST_MAX_VRFS, mism);
+ 	return (mism != 0) ? -1 : 0;
+ }
+ 
+ /* Validate the lookups with every lookup implementation of the algorithm. */
+ static int
+-vrf_validate_lookups(struct rte_fib *dut, struct rte_fib **ref)
++vrf_validate_lookups(struct rte_fib *dut, struct rte_fib **ref,
++	const char *phase)
+ {
+ 	const enum rte_fib_lookup_type types[] = {
+ 		RTE_FIB_LOOKUP_DIR8_16_8_SCALAR,
+ 		RTE_FIB_LOOKUP_DIR8_16_8_VECTOR_AVX512,
++		RTE_FIB_LOOKUP_DIR24_8_VRF_SCALAR,
++		RTE_FIB_LOOKUP_DIR24_8_VRF_VECTOR_AVX512,
+ 	};
+ 	unsigned int t;
+ 	int ret;
  
  	for (t = 0; t < RTE_DIM(types); t++) {
- 		/* The vector lookup needs a 512 bit SIMD width. */
--		if (rte_fib_select_lookup(fib, types[t]) != 0)
-+		if (rte_fib_select_lookup(dut, types[t]) != 0)
+-		/* The vector lookup needs a 512 bit SIMD width. */
++		/* Other algorithm, or vector lookup without 512 bit SIMD. */
+ 		if (rte_fib_select_lookup(dut, types[t]) != 0)
  			continue;
-+		ret = vrf_validate_lookups_type(dut, ref, types[t]);
-+		if (ret != 0)
-+			return ret;
+-		ret = vrf_validate_lookups_type(dut, ref, types[t]);
++		ret = vrf_validate_lookups_type(dut, ref, phase, types[t]);
+ 		if (ret != 0)
+ 			return ret;
+ 	}
+ 	return 0;
+ }
+ 
++/*
++ * Apply one operation to every (route, VRF) pair, or to a random half of them
++ * if not all, checking that dut and ref agree on the return status.
++ */
+ static int
+-test_fib_vrf_validate_dir8_16_8(void)
++vrf_validate_apply(struct rte_fib *dut, struct rte_fib **ref, bool all,
++	bool del, uint32_t gen, const char *phase)
++{
++	unsigned int i;
++	uint16_t v;
++
++	for (i = 0; i < NUM_ROUTE_ENTRIES; i++) {
++		for (v = 0; v < TEST_MAX_VRFS; v++) {
++			int r_dut, r_ref;
++
++			if (!all && (rte_rand() & 1) == 0)
++				continue;
++			if (del) {
++				r_dut = rte_fib_vrf_delete(dut, v,
++					large_route_table[i].ip,
++					large_route_table[i].depth);
++				r_ref = rte_fib_delete(ref[v],
++					large_route_table[i].ip,
++					large_route_table[i].depth);
++			} else {
++				uint64_t nh = vrf_validate_nh(i, v, gen);
++
++				r_dut = rte_fib_vrf_add(dut, v,
++					large_route_table[i].ip,
++					large_route_table[i].depth, nh);
++				r_ref = rte_fib_add(ref[v],
++					large_route_table[i].ip,
++					large_route_table[i].depth, nh);
++			}
++			if (r_dut != r_ref) {
++				printf("%s: status mismatch i=%u vrf=%u "
++					"dut=%d ref=%d\n", phase, i, v, r_dut,
++					r_ref);
++				return -1;
++			}
++		}
 +	}
 +	return 0;
 +}
++
++static int
++vrf_validate(enum rte_fib_type type)
+ {
+ 	struct rte_fib *dut = NULL;
+ 	struct rte_fib *ref[TEST_MAX_VRFS] = { NULL };
+@@ -1282,24 +1470,31 @@ test_fib_vrf_validate_dir8_16_8(void)
  
--		memset(nhs, 0, sizeof(nhs));
--		RTE_TEST_ASSERT(rte_fib_lookup_bulk(fib, ips, nhs,
--			RTE_DIM(ips)) == 0, "lookup failed\n");
--		for (i = 0; i < RTE_DIM(ips); i++)
--			RTE_TEST_ASSERT(nhs[i] == probe_nhs[i % RTE_DIM(probes)],
--				"lookup type %u: ip %u got %"PRIu64"\n",
--				types[t], i, nhs[i]);
+ 	generate_large_route_rule_table();
+ 
+-	printf("No. routes = %u, VRFs = %u\n",
+-		(unsigned int) NUM_ROUTE_ENTRIES, TEST_MAX_VRFS);
++	printf("No. routes = %u, VRFs = %u, algorithm = %s\n",
++		(unsigned int) NUM_ROUTE_ENTRIES, TEST_MAX_VRFS,
++		(type == RTE_FIB_DIR24_8) ? "DIR24_8" : "DIR8_16_8");
+ 
+ 	cfg.max_routes = 2000000;
+ 	cfg.default_nh = 0;
+-	cfg.type = RTE_FIB_DIR8_16_8;
++	cfg.type = type;
+ 	cfg.max_vrfs = TEST_MAX_VRFS;
+-	cfg.dir8_16_8.num_tbl16 = 256 * TEST_MAX_VRFS;
+-	cfg.dir8_16_8.num_tbl8 = 1 << 18;
++	if (type == RTE_FIB_DIR24_8) {
++		cfg.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B;
++		cfg.dir24_8.num_tbl8 = 1 << 16;
++	} else {
++		cfg.dir8_16_8.num_tbl16 = 256 * TEST_MAX_VRFS;
++		cfg.dir8_16_8.num_tbl8 = 1 << 18;
++	}
++	/* The references use 8 byte nexthops so results are comparable. */
++	cfg_ref.max_routes = 2000000;
++	cfg_ref.default_nh = 0;
++	cfg_ref.type = RTE_FIB_DIR24_8;
++	cfg_ref.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B;
++	cfg_ref.dir24_8.num_tbl8 = 1 << 16;
+ 
+ 	dut = rte_fib_create("vrf_validate_dut", SOCKET_ID_ANY, &cfg);
+ 	RTE_TEST_ASSERT(dut != NULL, "Failed to create VRF FIB\n");
+ 
+-	cfg_ref.max_routes = 2000000;
+-	cfg_ref.default_nh = 0;
+-	cfg_ref.type = RTE_FIB_DIR8_16_8;
+-	cfg_ref.dir8_16_8.num_tbl16 = 256;
+-	cfg_ref.dir8_16_8.num_tbl8 = 1 << 16;
+ 	for (v = 0; v < TEST_MAX_VRFS; v++) {
+ 		snprintf(name, sizeof(name), "vrf_validate_ref%u", v);
+ 		ref[v] = rte_fib_create(name, SOCKET_ID_ANY, &cfg_ref);
+@@ -1310,35 +1505,74 @@ test_fib_vrf_validate_dir8_16_8(void)
+ 		}
+ 	}
+ 
+-	/* Add the same routes to each VRF and its reference, per-VRF unique nh. */
+-	for (i = 0; i < NUM_ROUTE_ENTRIES; i++) {
+-		for (v = 0; v < TEST_MAX_VRFS; v++) {
+-			uint64_t nh = (uint64_t)i + 1 +
+-				(uint64_t)v * ((uint64_t)MAX_RULE_NUM + 1);
+-			int r_dut = rte_fib_vrf_add(dut, v,
+-				large_route_table[i].ip,
+-				large_route_table[i].depth, nh);
+-			int r_ref = rte_fib_add(ref[v],
+-				large_route_table[i].ip,
+-				large_route_table[i].depth, nh);
+-			if (r_dut != r_ref) {
+-				printf("Add status mismatch i=%u vrf=%u "
+-					"dut=%d ref=%d\n", i, v, r_dut, r_ref);
+-				ret = -1;
+-				goto out;
+-			}
+-		}
+-	}
+-
+-	ret = vrf_validate_lookups(dut, ref);
++	/* 1: everything present in every VRF. */
++	ret = vrf_validate_apply(dut, ref, true, false, 0, "add all");
++	if (ret != 0)
++		goto out;
++	ret = vrf_validate_lookups(dut, ref, "add all");
++	if (ret != 0)
++		goto out;
++
++	/* 2: delete about half of the (route, VRF) pairs. */
++	ret = vrf_validate_apply(dut, ref, false, true, 0, "delete");
++	if (ret != 0)
++		goto out;
++	ret = vrf_validate_lookups(dut, ref, "delete");
++	if (ret != 0)
++		goto out;
++
++	/*
++	 * 3: add about half of the (route, VRF) pairs with new nexthops, which
++	 * updates the remaining routes and re-adds the deleted ones.
++	 */
++	ret = vrf_validate_apply(dut, ref, false, false, 1, "update");
++	if (ret != 0)
++		goto out;
++	ret = vrf_validate_lookups(dut, ref, "update");
++	if (ret != 0)
++		goto out;
++
++	/* 4: put everything back with fresh nexthops. */
++	ret = vrf_validate_apply(dut, ref, true, false, 2, "re-add");
++	if (ret != 0)
++		goto out;
++	ret = vrf_validate_lookups(dut, ref, "re-add");
++	if (ret != 0)
++		goto out;
++
++	/* 5: delete everything, only default nexthops must remain. */
++	ret = vrf_validate_apply(dut, ref, true, true, 0, "delete all");
++	if (ret != 0)
++		goto out;
++	ret = vrf_validate_lookups(dut, ref, "delete all");
++	if (ret != 0)
++		goto out;
++
++	/* 6: once more from scratch, reusing the retired prefix IDs. */
++	ret = vrf_validate_apply(dut, ref, true, false, 3, "add again");
++	if (ret != 0)
++		goto out;
++	ret = vrf_validate_lookups(dut, ref, "add again");
+ out:
+ 	rte_fib_free(dut);
+-	for (v = 0; v < TEST_MAX_VRFS; v++)
+-		rte_fib_free(ref[v]);
++	for (i = 0; i < TEST_MAX_VRFS; i++)
++		rte_fib_free(ref[i]);
+ 
+ 	return ret;
+ }
+ 
 +static int
 +test_fib_vrf_validate_dir8_16_8(void)
 +{
-+	struct rte_fib *dut = NULL;
-+	struct rte_fib *ref[TEST_MAX_VRFS] = { NULL };
-+	struct rte_fib_conf cfg = { 0 };
-+	struct rte_fib_conf cfg_ref = { 0 };
-+	unsigned int i;
-+	uint16_t v;
-+	int ret = 0;
-+	char name[64];
++	return vrf_validate(RTE_FIB_DIR8_16_8);
++}
 +
-+	generate_large_route_rule_table();
++static int
++test_fib_vrf_validate_dir24_8(void)
++{
++	return vrf_validate(RTE_FIB_DIR24_8);
++}
 +
-+	printf("No. routes = %u, VRFs = %u\n",
-+		(unsigned int) NUM_ROUTE_ENTRIES, TEST_MAX_VRFS);
-+
-+	cfg.max_routes = 2000000;
-+	cfg.default_nh = 0;
-+	cfg.type = RTE_FIB_DIR8_16_8;
-+	cfg.max_vrfs = TEST_MAX_VRFS;
-+	cfg.dir8_16_8.num_tbl16 = 256 * TEST_MAX_VRFS;
-+	cfg.dir8_16_8.num_tbl8 = 1 << 18;
-+
-+	dut = rte_fib_create("vrf_validate_dut", SOCKET_ID_ANY, &cfg);
-+	RTE_TEST_ASSERT(dut != NULL, "Failed to create VRF FIB\n");
-+
-+	cfg_ref.max_routes = 2000000;
-+	cfg_ref.default_nh = 0;
-+	cfg_ref.type = RTE_FIB_DIR8_16_8;
-+	cfg_ref.dir8_16_8.num_tbl16 = 256;
-+	cfg_ref.dir8_16_8.num_tbl8 = 1 << 16;
-+	for (v = 0; v < TEST_MAX_VRFS; v++) {
-+		snprintf(name, sizeof(name), "vrf_validate_ref%u", v);
-+		ref[v] = rte_fib_create(name, SOCKET_ID_ANY, &cfg_ref);
-+		if (ref[v] == NULL) {
-+			printf("Failed to create reference FIB %u\n", v);
-+			ret = -1;
-+			goto out;
-+		}
- 	}
--	rte_fib_free(fib);
- 
--	return TEST_SUCCESS;
-+	/* Add the same routes to each VRF and its reference, per-VRF unique nh. */
-+	for (i = 0; i < NUM_ROUTE_ENTRIES; i++) {
-+		for (v = 0; v < TEST_MAX_VRFS; v++) {
-+			uint64_t nh = (uint64_t)i + 1 +
-+				(uint64_t)v * ((uint64_t)MAX_RULE_NUM + 1);
-+			int r_dut = rte_fib_vrf_add(dut, v,
-+				large_route_table[i].ip,
-+				large_route_table[i].depth, nh);
-+			int r_ref = rte_fib_add(ref[v],
-+				large_route_table[i].ip,
-+				large_route_table[i].depth, nh);
-+			if (r_dut != r_ref) {
-+				printf("Add status mismatch i=%u vrf=%u "
-+					"dut=%d ref=%d\n", i, v, r_dut, r_ref);
-+				ret = -1;
-+				goto out;
-+			}
-+		}
-+	}
-+
-+	ret = vrf_validate_lookups(dut, ref);
-+out:
-+	rte_fib_free(dut);
-+	for (v = 0; v < TEST_MAX_VRFS; v++)
-+		rte_fib_free(ref[v]);
-+
-+	return ret;
- }
- 
  static struct unit_test_suite fib_fast_tests = {
-@@ -699,6 +1352,16 @@ static struct unit_test_suite fib_fast_tests = {
- 	TEST_CASE(test_lookup_network_order),
- 	TEST_CASE(test_invalid_rcu),
- 	TEST_CASE(test_fib_rcu_sync_rw),
-+	TEST_CASE(test_vrf_create_invalid),
-+	TEST_CASE(test_vrf_isolation),
-+	TEST_CASE(test_vrf_overlapping_prefixes),
-+	TEST_CASE(test_vrf_mixed_lookup),
-+	TEST_CASE(test_vrf_default_nh),
-+	TEST_CASE(test_vrf_update_route),
-+	TEST_CASE(test_vrf_bounds),
-+	TEST_CASE(test_vrf_get_rib),
-+	TEST_CASE(test_vrf_rcu),
-+	TEST_CASE(test_vrf_rcu_sync_rw),
+ 	.suite_name = "fib autotest",
+ 	.setup = NULL,
+@@ -1362,6 +1596,7 @@ static struct unit_test_suite fib_fast_tests = {
+ 	TEST_CASE(test_vrf_get_rib),
+ 	TEST_CASE(test_vrf_rcu),
+ 	TEST_CASE(test_vrf_rcu_sync_rw),
++	TEST_CASE(test_vrf_dir24_8),
  	TEST_CASES_END()
  	}
  };
-@@ -709,6 +1372,7 @@ static struct unit_test_suite fib_slow_tests = {
- 	.teardown = NULL,
+@@ -1373,6 +1608,7 @@ static struct unit_test_suite fib_slow_tests = {
  	.unit_test_cases = {
  	TEST_CASE(test_multiple_create),
-+	TEST_CASE(test_fib_vrf_validate_dir8_16_8),
+ 	TEST_CASE(test_fib_vrf_validate_dir8_16_8),
++	TEST_CASE(test_fib_vrf_validate_dir24_8),
  	TEST_CASES_END()
  	}
  };
 diff --git a/app/test/test_fib_perf.c b/app/test/test_fib_perf.c
-index 0967644316..ff8240aabf 100644
+index ff8240aabf..e8d44566bb 100644
 --- a/app/test/test_fib_perf.c
 +++ b/app/test/test_fib_perf.c
-@@ -6,17 +6,16 @@
- #include <stdio.h>
- #include <stdint.h>
- #include <stdlib.h>
--#include <math.h>
- #include <inttypes.h>
+@@ -175,30 +175,21 @@ test_fib_perf_dir8_16_8(void)
+ #define VRF_PERF_NB_VRFS	4
  
- #include <rte_cycles.h>
- #include <rte_random.h>
- #include <rte_branch_prediction.h>
--#include <rte_ip.h>
- #include <rte_fib.h>
- 
- #include "test.h"
- #include "test_xmmt_ops.h"
-+#include "test_fib_routes.h"
- 
- #define TEST_FIB_ASSERT(cond) do {				\
- 	if (!(cond)) {						\
-@@ -29,270 +28,6 @@
- #define BATCH_SIZE (1 << 12)
- #define BULK_SIZE 32
- 
--#define MAX_RULE_NUM (1200000)
--
--struct route_rule {
--	uint32_t ip;
--	uint8_t depth;
--};
--
--static struct route_rule large_route_table[MAX_RULE_NUM];
--
--static uint32_t num_route_entries;
--#define NUM_ROUTE_ENTRIES num_route_entries
--
--enum {
--	IP_CLASS_A,
--	IP_CLASS_B,
--	IP_CLASS_C
--};
--#define RTE_FIB_MAX_DEPTH	32
--/* struct route_rule_count defines the total number of rules in following a/b/c
-- * each item in a[]/b[]/c[] is the number of common IP address class A/B/C, not
-- * including the ones for private local network.
-- */
--struct route_rule_count {
--	uint32_t a[RTE_FIB_MAX_DEPTH];
--	uint32_t b[RTE_FIB_MAX_DEPTH];
--	uint32_t c[RTE_FIB_MAX_DEPTH];
--};
--
--/* All following numbers of each depth of each common IP class are just
-- * got from previous large constant table in app/test/test_lpm_routes.h .
-- * In order to match similar performance, they keep same depth and IP
-- * address coverage as previous constant table. These numbers don't
-- * include any private local IP address. As previous large const rule
-- * table was just dumped from a real router, there are no any IP address
-- * in class C or D.
-- */
--static struct route_rule_count rule_count = {
--	.a = { /* IP class A in which the most significant bit is 0 */
--		    0, /* depth =  1 */
--		    0, /* depth =  2 */
--		    1, /* depth =  3 */
--		    0, /* depth =  4 */
--		    2, /* depth =  5 */
--		    1, /* depth =  6 */
--		    3, /* depth =  7 */
--		  185, /* depth =  8 */
--		   26, /* depth =  9 */
--		   16, /* depth = 10 */
--		   39, /* depth = 11 */
--		  144, /* depth = 12 */
--		  233, /* depth = 13 */
--		  528, /* depth = 14 */
--		  866, /* depth = 15 */
--		 3856, /* depth = 16 */
--		 3268, /* depth = 17 */
--		 5662, /* depth = 18 */
--		17301, /* depth = 19 */
--		22226, /* depth = 20 */
--		11147, /* depth = 21 */
--		16746, /* depth = 22 */
--		17120, /* depth = 23 */
--		77578, /* depth = 24 */
--		  401, /* depth = 25 */
--		  656, /* depth = 26 */
--		 1107, /* depth = 27 */
--		 1121, /* depth = 28 */
--		 2316, /* depth = 29 */
--		  717, /* depth = 30 */
--		   10, /* depth = 31 */
--		   66  /* depth = 32 */
--	},
--	.b = { /* IP class A in which the most 2 significant bits are 10 */
--		    0, /* depth =  1 */
--		    0, /* depth =  2 */
--		    0, /* depth =  3 */
--		    0, /* depth =  4 */
--		    1, /* depth =  5 */
--		    1, /* depth =  6 */
--		    1, /* depth =  7 */
--		    3, /* depth =  8 */
--		    3, /* depth =  9 */
--		   30, /* depth = 10 */
--		   25, /* depth = 11 */
--		  168, /* depth = 12 */
--		  305, /* depth = 13 */
--		  569, /* depth = 14 */
--		 1129, /* depth = 15 */
--		50800, /* depth = 16 */
--		 1645, /* depth = 17 */
--		 1820, /* depth = 18 */
--		 3506, /* depth = 19 */
--		 3258, /* depth = 20 */
--		 3424, /* depth = 21 */
--		 4971, /* depth = 22 */
--		 6885, /* depth = 23 */
--		39771, /* depth = 24 */
--		  424, /* depth = 25 */
--		  170, /* depth = 26 */
--		  433, /* depth = 27 */
--		   92, /* depth = 28 */
--		  366, /* depth = 29 */
--		  377, /* depth = 30 */
--		    2, /* depth = 31 */
--		  200  /* depth = 32 */
--	},
--	.c = { /* IP class A in which the most 3 significant bits are 110 */
--		     0, /* depth =  1 */
--		     0, /* depth =  2 */
--		     0, /* depth =  3 */
--		     0, /* depth =  4 */
--		     0, /* depth =  5 */
--		     0, /* depth =  6 */
--		     0, /* depth =  7 */
--		    12, /* depth =  8 */
--		     8, /* depth =  9 */
--		     9, /* depth = 10 */
--		    33, /* depth = 11 */
--		    69, /* depth = 12 */
--		   237, /* depth = 13 */
--		  1007, /* depth = 14 */
--		  1717, /* depth = 15 */
--		 14663, /* depth = 16 */
--		  8070, /* depth = 17 */
--		 16185, /* depth = 18 */
--		 48261, /* depth = 19 */
--		 36870, /* depth = 20 */
--		 33960, /* depth = 21 */
--		 50638, /* depth = 22 */
--		 61422, /* depth = 23 */
--		466549, /* depth = 24 */
--		  1829, /* depth = 25 */
--		  4824, /* depth = 26 */
--		  4927, /* depth = 27 */
--		  5914, /* depth = 28 */
--		 10254, /* depth = 29 */
--		  4905, /* depth = 30 */
--		     1, /* depth = 31 */
--		   716  /* depth = 32 */
--	}
--};
--
--static void generate_random_rule_prefix(uint32_t ip_class, uint8_t depth)
--{
--/* IP address class A, the most significant bit is 0 */
--#define IP_HEAD_MASK_A			0x00000000
--#define IP_HEAD_BIT_NUM_A		1
--
--/* IP address class B, the most significant 2 bits are 10 */
--#define IP_HEAD_MASK_B			0x80000000
--#define IP_HEAD_BIT_NUM_B		2
--
--/* IP address class C, the most significant 3 bits are 110 */
--#define IP_HEAD_MASK_C			0xC0000000
--#define IP_HEAD_BIT_NUM_C		3
--
--	uint32_t class_depth;
--	uint32_t range;
--	uint32_t mask;
--	uint32_t step;
--	uint32_t start;
--	uint32_t fixed_bit_num;
--	uint32_t ip_head_mask;
--	uint32_t rule_num;
--	uint32_t k;
--	struct route_rule *ptr_rule;
--
--	if (ip_class == IP_CLASS_A) {        /* IP Address class A */
--		fixed_bit_num = IP_HEAD_BIT_NUM_A;
--		ip_head_mask = IP_HEAD_MASK_A;
--		rule_num = rule_count.a[depth - 1];
--	} else if (ip_class == IP_CLASS_B) { /* IP Address class B */
--		fixed_bit_num = IP_HEAD_BIT_NUM_B;
--		ip_head_mask = IP_HEAD_MASK_B;
--		rule_num = rule_count.b[depth - 1];
--	} else {                             /* IP Address class C */
--		fixed_bit_num = IP_HEAD_BIT_NUM_C;
--		ip_head_mask = IP_HEAD_MASK_C;
--		rule_num = rule_count.c[depth - 1];
--	}
--
--	if (rule_num == 0)
--		return;
--
--	/* the number of rest bits which don't include the most significant
--	 * fixed bits for this IP address class
--	 */
--	class_depth = depth - fixed_bit_num;
--
--	/* range is the maximum number of rules for this depth and
--	 * this IP address class
--	 */
--	range = 1 << class_depth;
--
--	/* only mask the most depth significant generated bits
--	 * except fixed bits for IP address class
--	 */
--	mask = range - 1;
--
--	/* Widen coverage of IP address in generated rules */
--	if (range <= rule_num)
--		step = 1;
--	else
--		step = round((double)range / rule_num);
--
--	/* Only generate rest bits except the most significant
--	 * fixed bits for IP address class
--	 */
--	start = rte_rand() & mask;
--	ptr_rule = &large_route_table[num_route_entries];
--	for (k = 0; k < rule_num; k++) {
--		ptr_rule->ip = (start << (RTE_FIB_MAX_DEPTH - depth))
--			| ip_head_mask;
--		ptr_rule->depth = depth;
--		ptr_rule++;
--		start = (start + step) & mask;
--	}
--	num_route_entries += rule_num;
--}
--
--static void insert_rule_in_random_pos(uint32_t ip, uint8_t depth)
--{
--	uint32_t pos;
--	int try_count = 0;
--	struct route_rule tmp;
--
--	do {
--		pos = rte_rand();
--		try_count++;
--	} while ((try_count < 10) && (pos > num_route_entries));
--
--	if ((pos > num_route_entries) || (pos >= MAX_RULE_NUM))
--		pos = num_route_entries >> 1;
--
--	tmp = large_route_table[pos];
--	large_route_table[pos].ip = ip;
--	large_route_table[pos].depth = depth;
--	if (num_route_entries < MAX_RULE_NUM)
--		large_route_table[num_route_entries++] = tmp;
--}
--
--static void generate_large_route_rule_table(void)
--{
--	uint32_t ip_class;
--	uint8_t  depth;
--
--	num_route_entries = 0;
--	memset(large_route_table, 0, sizeof(large_route_table));
--
--	for (ip_class = IP_CLASS_A; ip_class <= IP_CLASS_C; ip_class++) {
--		for (depth = 1; depth <= RTE_FIB_MAX_DEPTH; depth++)
--			generate_random_rule_prefix(ip_class, depth);
--	}
--
--	/* Add following rules to keep same as previous large constant table,
--	 * they are 4 rules with private local IP address and 1 all-zeros prefix
--	 * with depth = 8.
--	 */
--	insert_rule_in_random_pos(RTE_IPV4(0, 0, 0, 0), 8);
--	insert_rule_in_random_pos(RTE_IPV4(10, 2, 23, 147), 32);
--	insert_rule_in_random_pos(RTE_IPV4(192, 168, 100, 10), 24);
--	insert_rule_in_random_pos(RTE_IPV4(192, 168, 25, 100), 24);
--	insert_rule_in_random_pos(RTE_IPV4(192, 168, 129, 124), 32);
--}
--
- static void
- print_route_distribution(const struct route_rule *table, uint32_t n)
+ static int
+-test_fib_perf_vrf_dir8_16_8(void)
++measure_vrf_perf(const char *name, struct rte_fib_conf *config)
  {
-@@ -437,5 +172,88 @@ test_fib_perf_dir8_16_8(void)
- 	return measure_fib_perf("fib_perf_dir8_16_8", &config);
+ 	struct rte_fib *fib = NULL;
+-	struct rte_fib_conf config = { 0 };
+ 	uint64_t begin, total_time;
+ 	unsigned int i, j;
+ 	uint16_t v;
+ 	int status = 0;
+ 	int64_t count = 0;
+ 
+-	config.max_routes = 2000000;
+-	config.rib_ext_sz = 0;
+-	config.type = RTE_FIB_DIR8_16_8;
+-	config.default_nh = 0;
+-	config.max_vrfs = VRF_PERF_NB_VRFS;
+-	config.dir8_16_8.num_tbl16 = 256 * VRF_PERF_NB_VRFS;
+-	config.dir8_16_8.num_tbl8 = 1 << 18;
+-
+ 	generate_large_route_rule_table();
+ 
+ 	printf("No. routes = %u, VRFs = %u\n",
+ 		(unsigned int) NUM_ROUTE_ENTRIES, VRF_PERF_NB_VRFS);
+ 
+-	fib = rte_fib_create("vrf_perf_d8", SOCKET_ID_ANY, &config);
++	fib = rte_fib_create(name, SOCKET_ID_ANY, config);
+ 	TEST_FIB_ASSERT(fib != NULL);
+ 
+ 	begin = rte_rdtsc();
+@@ -254,6 +245,40 @@ test_fib_perf_vrf_dir8_16_8(void)
+ 	return 0;
  }
  
-+#define VRF_PERF_NB_VRFS	4
-+
 +static int
 +test_fib_perf_vrf_dir8_16_8(void)
 +{
-+	struct rte_fib *fib = NULL;
 +	struct rte_fib_conf config = { 0 };
-+	uint64_t begin, total_time;
-+	unsigned int i, j;
-+	uint16_t v;
-+	int status = 0;
-+	int64_t count = 0;
 +
 +	config.max_routes = 2000000;
 +	config.rib_ext_sz = 0;
@@ -2159,1803 +732,2435 @@ index 0967644316..ff8240aabf 100644
 +	config.dir8_16_8.num_tbl16 = 256 * VRF_PERF_NB_VRFS;
 +	config.dir8_16_8.num_tbl8 = 1 << 18;
 +
-+	generate_large_route_rule_table();
++	/* Keep the name short, the RIB derives memzone names from it. */
++	return measure_vrf_perf("vrf_perf_d8", &config);
++}
 +
-+	printf("No. routes = %u, VRFs = %u\n",
-+		(unsigned int) NUM_ROUTE_ENTRIES, VRF_PERF_NB_VRFS);
++static int
++test_fib_perf_vrf_dir24_8(void)
++{
++	struct rte_fib_conf config = { 0 };
 +
-+	fib = rte_fib_create("vrf_perf_d8", SOCKET_ID_ANY, &config);
-+	TEST_FIB_ASSERT(fib != NULL);
++	config.max_routes = 2000000;
++	config.rib_ext_sz = 0;
++	config.type = RTE_FIB_DIR24_8;
++	config.default_nh = 0;
++	config.max_vrfs = VRF_PERF_NB_VRFS;
++	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B;
++	config.dir24_8.num_tbl8 = 1 << 16;
 +
-+	begin = rte_rdtsc();
-+	for (i = 0; i < NUM_ROUTE_ENTRIES; i++)
-+		for (v = 0; v < VRF_PERF_NB_VRFS; v++)
-+			if (rte_fib_vrf_add(fib, v, large_route_table[i].ip,
-+					large_route_table[i].depth,
-+					(uint64_t)i | ((uint64_t)v << 32)) == 0)
-+				status++;
-+	total_time = rte_rdtsc() - begin;
-+	printf("Unique added entries = %d\n", status);
-+	printf("Average VRF FIB Add: %g cycles\n", (double)total_time /
-+		((double)NUM_ROUTE_ENTRIES * VRF_PERF_NB_VRFS));
-+
-+	total_time = 0;
-+	count = 0;
-+	for (i = 0; i < ITERATIONS; i++) {
-+		static uint32_t ip_batch[BATCH_SIZE];
-+		static uint16_t vrf_batch[BATCH_SIZE];
-+		uint64_t next_hops[BULK_SIZE];
-+
-+		for (j = 0; j < BATCH_SIZE; j++) {
-+			ip_batch[j] = rte_rand();
-+			vrf_batch[j] = rte_rand() % VRF_PERF_NB_VRFS;
-+		}
-+
-+		begin = rte_rdtsc();
-+		for (j = 0; j < BATCH_SIZE; j += BULK_SIZE) {
-+			uint32_t k;
-+			rte_fib_vrf_lookup_bulk(fib, &vrf_batch[j], &ip_batch[j],
-+				next_hops, BULK_SIZE);
-+			for (k = 0; k < BULK_SIZE; k++)
-+				if (unlikely(!(next_hops[k] != 0)))
-+					count++;
-+		}
-+		total_time += rte_rdtsc() - begin;
-+	}
-+	printf("BULK VRF FIB Lookup: %.1f cycles (fails = %.1f%%)\n",
-+		(double)total_time / ((double)ITERATIONS * BATCH_SIZE),
-+		(count * 100.0) / (double)(ITERATIONS * BATCH_SIZE));
-+
-+	begin = rte_rdtsc();
-+	for (i = 0; i < NUM_ROUTE_ENTRIES; i++)
-+		for (v = 0; v < VRF_PERF_NB_VRFS; v++)
-+			rte_fib_vrf_delete(fib, v, large_route_table[i].ip,
-+				large_route_table[i].depth);
-+	total_time = rte_rdtsc() - begin;
-+	printf("Average VRF FIB Delete: %g cycles\n", (double)total_time /
-+		((double)NUM_ROUTE_ENTRIES * VRF_PERF_NB_VRFS));
-+
-+	rte_fib_free(fib);
-+
-+	return 0;
++	return measure_vrf_perf("vrf_perf_d24", &config);
 +}
 +
  REGISTER_PERF_TEST(fib_perf_autotest, test_fib_perf);
  REGISTER_PERF_TEST(fib_perf_dir8_16_8_autotest, test_fib_perf_dir8_16_8);
-+REGISTER_PERF_TEST(fib_perf_vrf_dir8_16_8_autotest, test_fib_perf_vrf_dir8_16_8);
-diff --git a/app/test/test_fib_routes.h b/app/test/test_fib_routes.h
+ REGISTER_PERF_TEST(fib_perf_vrf_dir8_16_8_autotest, test_fib_perf_vrf_dir8_16_8);
++REGISTER_PERF_TEST(fib_perf_vrf_dir24_8_autotest, test_fib_perf_vrf_dir24_8);
+diff --git a/doc/guides/prog_guide/fib_lib.rst b/doc/guides/prog_guide/fib_lib.rst
+index 888c1acdfa..64665cfc98 100644
+--- a/doc/guides/prog_guide/fib_lib.rst
++++ b/doc/guides/prog_guide/fib_lib.rst
+@@ -62,13 +62,28 @@ The VRF aware methods are:
+ 
+ * ``rte_fib_vrf_lookup_bulk()``: Bulk LPM lookup with a VRF ID per IP address.
+ 
+-* ``rte_fib_vrf_get_rib()``: Get the ``rte_rib`` of a given VRF.
++* ``rte_fib_vrf_get_rib()``: Get the ``rte_rib`` holding the routes of a given VRF.
+ 
+ The legacy methods operate on VRF 0.
+-Multi-VRF FIBs are supported by the ``RTE_FIB_DIR8_16_8`` algorithm, which keeps
+-an independent ``rte_rib`` and an independent root table per VRF, while the lower
+-level tables are allocated from pools shared by all the VRFs.
+-The VRF ID selects the root table, then the lookup proceeds as for a single VRF.
++Multi-VRF FIBs are supported by the ``RTE_FIB_DIR24_8`` and ``RTE_FIB_DIR8_16_8``
++algorithms.
++Every VRF has its own ``rte_rib`` in both cases,
++but the dataplane tables are organized differently:
++
++Per-VRF root table
++   ``RTE_FIB_DIR8_16_8`` keeps an independent root table
++   per VRF, while the lower level tables are allocated from pools shared by all the VRFs.
++   The VRF ID selects the root table, then the lookup proceeds as for a single VRF.
++
++Shared table and hash resolution
++   ``RTE_FIB_DIR24_8`` keeps a single lookup table
++   holding the prefixes of all the VRFs.
++   The lookup table returns an internal prefix identifier, which is then combined
++   with the VRF ID to find the next hop ID in a hash table.
++   A miss in the hash table returns the VRF default next hop ID.
++   With this scheme the memory of the lookup table does not grow with the number of
++   VRFs, but ``max_routes`` is the number of distinct prefixes across all the VRFs
++   and ``nh_sz`` must select 8 byte next hop IDs.
+ 
+ 
+ Implementation details
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 5f77116d8c..c42ca0830d 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -216,7 +216,8 @@ New Features
+   A FIB can now hold several independent routing tables (VRFs), configured with
+   the ``max_vrfs`` and ``vrf_default_nh`` fields of ``rte_fib_conf`` and
+   accessed with the ``rte_fib_vrf_*`` functions. ``RTE_FIB_DIR8_16_8`` keeps a
+-  root table per VRF.
++  root table per VRF, while ``RTE_FIB_DIR24_8`` shares its lookup table across
++  VRFs and resolves the per-VRF next hops through a hash table.
+ 
+ 
+ Removed Items
+diff --git a/lib/fib/dir24_8_vrf.c b/lib/fib/dir24_8_vrf.c
 new file mode 100644
-index 0000000000..c03eaede05
+index 0000000000..f2a5850758
 --- /dev/null
-+++ b/app/test/test_fib_routes.h
-@@ -0,0 +1,282 @@
++++ b/lib/fib/dir24_8_vrf.c
+@@ -0,0 +1,290 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2018 Vladimir Medvedkin <medvedkinv@gmail.com>
-+ * Copyright(c) 2019 Intel Corporation
++ * Copyright(c) 2026 Intel Corporation
 + */
 +
-+#ifndef _TEST_FIB_ROUTES_H_
-+#define _TEST_FIB_ROUTES_H_
-+
-+#include <math.h>
++#include <stdbool.h>
 +#include <stdint.h>
 +#include <string.h>
 +
-+#include <rte_ip.h>
-+#include <rte_random.h>
++#include <rte_cpuflags.h>
++#include <rte_debug.h>
++#include <rte_errno.h>
++#include <rte_malloc.h>
++#include <rte_vect.h>
 +
-+/* Large IPv4 route table generator shared by the FIB tests. */
++#include <rte_rib.h>
++#include <rte_fib.h>
 +
-+#define MAX_RULE_NUM (1200000)
++#include "dir24_8.h"
++#ifdef CC_AVX512_SUPPORT
++#include "dir24_8_avx512.h"
++#endif
++#include "dir24_8_vrf.h"
++#include "fib_log.h"
++#include "fib_vrf.h"
 +
-+struct route_rule {
-+	uint32_t ip;
-+	uint8_t depth;
-+};
-+
-+static struct route_rule large_route_table[MAX_RULE_NUM];
-+
-+static uint32_t num_route_entries;
-+#define NUM_ROUTE_ENTRIES num_route_entries
-+
-+enum {
-+	IP_CLASS_A,
-+	IP_CLASS_B,
-+	IP_CLASS_C
-+};
-+#define RTE_FIB_MAX_DEPTH	32
-+/* struct route_rule_count defines the total number of rules in following a/b/c
-+ * each item in a[]/b[]/c[] is the number of common IP address class A/B/C, not
-+ * including the ones for private local network.
++/*
++ * IPv4 glue for the generic VRF code: RIB access and DIR24_8 table updates.
 + */
-+struct route_rule_count {
-+	uint32_t a[RTE_FIB_MAX_DEPTH];
-+	uint32_t b[RTE_FIB_MAX_DEPTH];
-+	uint32_t c[RTE_FIB_MAX_DEPTH];
-+};
 +
-+/* All following numbers of each depth of each common IP class are just
-+ * got from previous large constant table in app/test/test_lpm_routes.h .
-+ * In order to match similar performance, they keep same depth and IP
-+ * address coverage as previous constant table. These numbers don't
-+ * include any private local IP address. As previous large const rule
-+ * table was just dumped from a real router, there are no any IP address
-+ * in class C or D.
-+ */
-+static struct route_rule_count rule_count = {
-+	.a = { /* IP class A in which the most significant bit is 0 */
-+		    0, /* depth =  1 */
-+		    0, /* depth =  2 */
-+		    1, /* depth =  3 */
-+		    0, /* depth =  4 */
-+		    2, /* depth =  5 */
-+		    1, /* depth =  6 */
-+		    3, /* depth =  7 */
-+		  185, /* depth =  8 */
-+		   26, /* depth =  9 */
-+		   16, /* depth = 10 */
-+		   39, /* depth = 11 */
-+		  144, /* depth = 12 */
-+		  233, /* depth = 13 */
-+		  528, /* depth = 14 */
-+		  866, /* depth = 15 */
-+		 3856, /* depth = 16 */
-+		 3268, /* depth = 17 */
-+		 5662, /* depth = 18 */
-+		17301, /* depth = 19 */
-+		22226, /* depth = 20 */
-+		11147, /* depth = 21 */
-+		16746, /* depth = 22 */
-+		17120, /* depth = 23 */
-+		77578, /* depth = 24 */
-+		  401, /* depth = 25 */
-+		  656, /* depth = 26 */
-+		 1107, /* depth = 27 */
-+		 1121, /* depth = 28 */
-+		 2316, /* depth = 29 */
-+		  717, /* depth = 30 */
-+		   10, /* depth = 31 */
-+		   66  /* depth = 32 */
-+	},
-+	.b = { /* IP class A in which the most 2 significant bits are 10 */
-+		    0, /* depth =  1 */
-+		    0, /* depth =  2 */
-+		    0, /* depth =  3 */
-+		    0, /* depth =  4 */
-+		    1, /* depth =  5 */
-+		    1, /* depth =  6 */
-+		    1, /* depth =  7 */
-+		    3, /* depth =  8 */
-+		    3, /* depth =  9 */
-+		   30, /* depth = 10 */
-+		   25, /* depth = 11 */
-+		  168, /* depth = 12 */
-+		  305, /* depth = 13 */
-+		  569, /* depth = 14 */
-+		 1129, /* depth = 15 */
-+		50800, /* depth = 16 */
-+		 1645, /* depth = 17 */
-+		 1820, /* depth = 18 */
-+		 3506, /* depth = 19 */
-+		 3258, /* depth = 20 */
-+		 3424, /* depth = 21 */
-+		 4971, /* depth = 22 */
-+		 6885, /* depth = 23 */
-+		39771, /* depth = 24 */
-+		  424, /* depth = 25 */
-+		  170, /* depth = 26 */
-+		  433, /* depth = 27 */
-+		   92, /* depth = 28 */
-+		  366, /* depth = 29 */
-+		  377, /* depth = 30 */
-+		    2, /* depth = 31 */
-+		  200  /* depth = 32 */
-+	},
-+	.c = { /* IP class A in which the most 3 significant bits are 110 */
-+		     0, /* depth =  1 */
-+		     0, /* depth =  2 */
-+		     0, /* depth =  3 */
-+		     0, /* depth =  4 */
-+		     0, /* depth =  5 */
-+		     0, /* depth =  6 */
-+		     0, /* depth =  7 */
-+		    12, /* depth =  8 */
-+		     8, /* depth =  9 */
-+		     9, /* depth = 10 */
-+		    33, /* depth = 11 */
-+		    69, /* depth = 12 */
-+		   237, /* depth = 13 */
-+		  1007, /* depth = 14 */
-+		  1717, /* depth = 15 */
-+		 14663, /* depth = 16 */
-+		  8070, /* depth = 17 */
-+		 16185, /* depth = 18 */
-+		 48261, /* depth = 19 */
-+		 36870, /* depth = 20 */
-+		 33960, /* depth = 21 */
-+		 50638, /* depth = 22 */
-+		 61422, /* depth = 23 */
-+		466549, /* depth = 24 */
-+		  1829, /* depth = 25 */
-+		  4824, /* depth = 26 */
-+		  4927, /* depth = 27 */
-+		  5914, /* depth = 28 */
-+		 10254, /* depth = 29 */
-+		  4905, /* depth = 30 */
-+		     1, /* depth = 31 */
-+		   716  /* depth = 32 */
-+	}
-+};
-+
-+static void generate_random_rule_prefix(uint32_t ip_class, uint8_t depth)
++static void *
++rib_lookup(void *rib, const void *ip)
 +{
-+/* IP address class A, the most significant bit is 0 */
-+#define IP_HEAD_MASK_A			0x00000000
-+#define IP_HEAD_BIT_NUM_A		1
-+
-+/* IP address class B, the most significant 2 bits are 10 */
-+#define IP_HEAD_MASK_B			0x80000000
-+#define IP_HEAD_BIT_NUM_B		2
-+
-+/* IP address class C, the most significant 3 bits are 110 */
-+#define IP_HEAD_MASK_C			0xC0000000
-+#define IP_HEAD_BIT_NUM_C		3
-+
-+	uint32_t class_depth;
-+	uint32_t range;
-+	uint32_t mask;
-+	uint32_t step;
-+	uint32_t start;
-+	uint32_t fixed_bit_num;
-+	uint32_t ip_head_mask;
-+	uint32_t rule_num;
-+	uint32_t k;
-+	struct route_rule *ptr_rule;
-+
-+	if (ip_class == IP_CLASS_A) {        /* IP Address class A */
-+		fixed_bit_num = IP_HEAD_BIT_NUM_A;
-+		ip_head_mask = IP_HEAD_MASK_A;
-+		rule_num = rule_count.a[depth - 1];
-+	} else if (ip_class == IP_CLASS_B) { /* IP Address class B */
-+		fixed_bit_num = IP_HEAD_BIT_NUM_B;
-+		ip_head_mask = IP_HEAD_MASK_B;
-+		rule_num = rule_count.b[depth - 1];
-+	} else {                             /* IP Address class C */
-+		fixed_bit_num = IP_HEAD_BIT_NUM_C;
-+		ip_head_mask = IP_HEAD_MASK_C;
-+		rule_num = rule_count.c[depth - 1];
-+	}
-+
-+	if (rule_num == 0)
-+		return;
-+
-+	/* the number of rest bits which don't include the most significant
-+	 * fixed bits for this IP address class
-+	 */
-+	class_depth = depth - fixed_bit_num;
-+
-+	/* range is the maximum number of rules for this depth and
-+	 * this IP address class
-+	 */
-+	range = 1 << class_depth;
-+
-+	/* only mask the most depth significant generated bits
-+	 * except fixed bits for IP address class
-+	 */
-+	mask = range - 1;
-+
-+	/* Widen coverage of IP address in generated rules */
-+	if (range <= rule_num)
-+		step = 1;
-+	else
-+		step = round((double)range / rule_num);
-+
-+	/* Only generate rest bits except the most significant
-+	 * fixed bits for IP address class
-+	 */
-+	start = rte_rand() & mask;
-+	ptr_rule = &large_route_table[num_route_entries];
-+	for (k = 0; k < rule_num; k++) {
-+		ptr_rule->ip = (start << (RTE_FIB_MAX_DEPTH - depth))
-+			| ip_head_mask;
-+		ptr_rule->depth = depth;
-+		ptr_rule++;
-+		start = (start + step) & mask;
-+	}
-+	num_route_entries += rule_num;
++	return rte_rib_lookup(rib, *(const uint32_t *)ip);
 +}
 +
-+static void insert_rule_in_random_pos(uint32_t ip, uint8_t depth)
++static void *
++rib_lookup_exact(void *rib, const void *ip, uint8_t depth)
 +{
-+	uint32_t pos;
-+	int try_count = 0;
-+	struct route_rule tmp;
-+
-+	do {
-+		pos = rte_rand();
-+		try_count++;
-+	} while ((try_count < 10) && (pos > num_route_entries));
-+
-+	if ((pos > num_route_entries) || (pos >= MAX_RULE_NUM))
-+		pos = num_route_entries >> 1;
-+
-+	tmp = large_route_table[pos];
-+	large_route_table[pos].ip = ip;
-+	large_route_table[pos].depth = depth;
-+	if (num_route_entries < MAX_RULE_NUM)
-+		large_route_table[num_route_entries++] = tmp;
++	return rte_rib_lookup_exact(rib, *(const uint32_t *)ip, depth);
 +}
 +
-+static void generate_large_route_rule_table(void)
++static void *
++rib_lookup_parent(void *node)
 +{
-+	uint32_t ip_class;
-+	uint8_t  depth;
-+
-+	num_route_entries = 0;
-+	memset(large_route_table, 0, sizeof(large_route_table));
-+
-+	for (ip_class = IP_CLASS_A; ip_class <= IP_CLASS_C; ip_class++) {
-+		for (depth = 1; depth <= RTE_FIB_MAX_DEPTH; depth++)
-+			generate_random_rule_prefix(ip_class, depth);
-+	}
-+
-+	/* Add following rules to keep same as previous large constant table,
-+	 * they are 4 rules with private local IP address and 1 all-zeros prefix
-+	 * with depth = 8.
-+	 */
-+	insert_rule_in_random_pos(RTE_IPV4(0, 0, 0, 0), 8);
-+	insert_rule_in_random_pos(RTE_IPV4(10, 2, 23, 147), 32);
-+	insert_rule_in_random_pos(RTE_IPV4(192, 168, 100, 10), 24);
-+	insert_rule_in_random_pos(RTE_IPV4(192, 168, 25, 100), 24);
-+	insert_rule_in_random_pos(RTE_IPV4(192, 168, 129, 124), 32);
++	return rte_rib_lookup_parent(node);
 +}
 +
-+#endif /* _TEST_FIB_ROUTES_H_ */
-diff --git a/doc/guides/prog_guide/fib_lib.rst b/doc/guides/prog_guide/fib_lib.rst
-index c20759faaf..888c1acdfa 100644
---- a/doc/guides/prog_guide/fib_lib.rst
-+++ b/doc/guides/prog_guide/fib_lib.rst
-@@ -46,6 +46,31 @@ The main methods within the ``rte_fib`` API are:
-   for a set of IP addresses, it will return a set of corresponding next hop IDs.
- 
- 
-+Virtual Routing and Forwarding (VRF)
-+------------------------------------
++static void *
++rib_get_nxt_cover(void *rib, const void *ip, uint8_t depth, void *last)
++{
++	return rte_rib_get_nxt(rib, *(const uint32_t *)ip, depth, last,
++		RTE_RIB_GET_NXT_COVER);
++}
 +
-+A FIB can hold several independent routing tables, one per VRF, selected by
-+``max_vrfs`` in the configuration struct (0 or 1 means a single VRF).
-+Every VRF has its own default next hop ID (``vrf_default_nh``, or ``default_nh``
-+for all of them when it is NULL) and is addressed by a VRF ID from 0 to
-+``max_vrfs - 1``.
++static void *
++rib_walk(void *rib, void *last)
++{
++	return rte_rib_get_nxt(rib, 0, 0, last, RTE_RIB_GET_NXT_ALL);
++}
 +
-+The VRF aware methods are:
++static void *
++rib_insert(void *rib, const void *ip, uint8_t depth)
++{
++	return rte_rib_insert(rib, *(const uint32_t *)ip, depth);
++}
 +
-+* ``rte_fib_vrf_add()``, ``rte_fib_vrf_delete()``: Same as ``rte_fib_add()``
-+  and ``rte_fib_delete()`` for a given VRF.
++static void
++rib_remove(void *rib, const void *ip, uint8_t depth)
++{
++	rte_rib_remove(rib, *(const uint32_t *)ip, depth);
++}
 +
-+* ``rte_fib_vrf_lookup_bulk()``: Bulk LPM lookup with a VRF ID per IP address.
++static void
++rib_get_prefix(const void *node, void *ip, uint8_t *depth)
++{
++	rte_rib_get_ip(node, ip);
++	rte_rib_get_depth(node, depth);
++}
 +
-+* ``rte_fib_vrf_get_rib()``: Get the ``rte_rib`` of a given VRF.
++static uint64_t
++rib_get_nh(const void *node)
++{
++	uint64_t nh;
 +
-+The legacy methods operate on VRF 0.
-+Multi-VRF FIBs are supported by the ``RTE_FIB_DIR8_16_8`` algorithm, which keeps
-+an independent ``rte_rib`` and an independent root table per VRF, while the lower
-+level tables are allocated from pools shared by all the VRFs.
-+The VRF ID selects the root table, then the lookup proceeds as for a single VRF.
++	rte_rib_get_nh(node, &nh);
++	return nh;
++}
 +
++static void
++rib_set_nh(void *node, uint64_t nh)
++{
++	rte_rib_set_nh(node, nh);
++}
 +
- Implementation details
- ----------------------
- 
-@@ -143,13 +168,13 @@ dataplane algorithm on FIB creation.
- The main FIB configuration struct stores the dataplane parameters inside ``dir8_16_8``
- within the ``rte_fib_conf`` and it consists of:
- 
--* ``num_tbl16``: The number of second level groups, at most one per /8 is ever
--  needed.
-+* ``num_tbl16``: The number of second level groups, at most one per /8 and VRF is
-+  ever needed.
- 
- * ``num_tbl8``: The number of third level groups.
- 
--Compared to DIR-24-8, the root table is small (2 KB), which makes it suitable
--when many tables must be kept, at the price of an extra memory access for
-+Compared to DIR-24-8, the root table is small (2 KB per VRF), which makes it
-+suitable for a large number of VRFs, at the price of an extra memory access for
- prefixes longer than 8 bits.
- 
- 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 04781a2761..5f77116d8c 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -211,6 +211,13 @@ New Features
-   * Added the ``RTE_FIB_DIR8_16_8`` IPv4 algorithm, a three level variant of
-     DIR-24-8 with a small root table, with scalar and AVX512 lookup functions.
- 
-+* **Added VRF support to the FIB library.**
++static void *
++rib_get_ext(void *node)
++{
++	return rte_rib_get_ext(node);
++}
 +
-+  A FIB can now hold several independent routing tables (VRFs), configured with
-+  the ``max_vrfs`` and ``vrf_default_nh`` fields of ``rte_fib_conf`` and
-+  accessed with the ``rte_fib_vrf_*`` functions. ``RTE_FIB_DIR8_16_8`` keeps a
-+  root table per VRF.
-+
- 
- Removed Items
- -------------
-@@ -466,6 +473,11 @@ API Changes
-   * ``rte_tel_data_add_dict_uint_hex``
-   * ``rte_telemetry_register_cmd_arg``
- 
-+* fib: Added a VRF ID argument to the dataplane callbacks.
-+
-+  The ``rte_fib_modify_fn_t`` and ``rte_fib_lookup_fn_t`` function types gained
-+  a VRF argument.
-+
- 
- ABI Changes
- -----------
-@@ -488,6 +500,9 @@ ABI Changes
- * cryptodev: The struct ``rte_crypto_rsa_op_param``
-   was updated to include ``pss_salt``.
- 
-+* fib: ``struct rte_fib_conf`` was extended with the ``max_vrfs`` and
-+  ``vrf_default_nh`` fields.
-+
- 
- Known Issues
- ------------
-diff --git a/lib/fib/dir24_8.c b/lib/fib/dir24_8.c
-index bb7975eca1..9b14693320 100644
---- a/lib/fib/dir24_8.c
-+++ b/lib/fib/dir24_8.c
-@@ -465,7 +465,7 @@ modify_fib(struct dir24_8_tbl *dp, struct rte_rib *rib, uint32_t ip,
- }
- 
- int
--dir24_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
-+dir24_8_modify(struct rte_fib *fib, uint16_t vrf_id, uint32_t ip, uint8_t depth,
- 	uint64_t next_hop, int op)
- {
- 	struct dir24_8_tbl *dp;
-@@ -476,6 +476,8 @@ dir24_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
- 	int ret = 0;
- 	uint64_t par_nh, node_nh;
- 
-+	RTE_SET_USED(vrf_id);
-+
- 	if ((fib == NULL) || (depth > RTE_FIB_MAXDEPTH))
- 		return -EINVAL;
- 
-diff --git a/lib/fib/dir24_8.h b/lib/fib/dir24_8.h
-index b343b5d686..88c47072d9 100644
---- a/lib/fib/dir24_8.h
-+++ b/lib/fib/dir24_8.h
-@@ -116,7 +116,8 @@ is_entry_extended(uint64_t ent)
- }
- 
- #define LOOKUP_FUNC(suffix, type, bulk_prefetch, nh_sz)			\
--static inline void dir24_8_lookup_bulk_##suffix(void *p, const uint32_t *ips, \
-+static inline void dir24_8_lookup_bulk_##suffix(void *p,			\
-+	const uint16_t *vrf_ids, const uint32_t *ips,			\
- 	uint64_t *next_hops, const unsigned int n)			\
- {									\
- 	struct dir24_8_tbl *dp = (struct dir24_8_tbl *)p;		\
-@@ -125,6 +126,7 @@ static inline void dir24_8_lookup_bulk_##suffix(void *p, const uint32_t *ips, \
- 	uint32_t prefetch_offset =					\
- 		RTE_MIN((unsigned int)bulk_prefetch, n);		\
- 									\
-+	RTE_SET_USED(vrf_ids);						\
- 	for (i = 0; i < prefetch_offset; i++)				\
- 		rte_prefetch0(get_tbl24_p(dp, ips[i], nh_sz));		\
- 	for (i = 0; i < (n - prefetch_offset); i++) {			\
-@@ -179,43 +181,47 @@ dir24_8_lookup_bulk(struct dir24_8_tbl *dp, const uint32_t *ips,
- }
- 
- static inline void
--dir24_8_lookup_bulk_0(void *p, const uint32_t *ips,
-+dir24_8_lookup_bulk_0(void *p, const uint16_t *vrf_ids, const uint32_t *ips,
- 	uint64_t *next_hops, const unsigned int n)
- {
- 	struct dir24_8_tbl *dp = (struct dir24_8_tbl *)p;
- 
-+	RTE_SET_USED(vrf_ids);
- 	dir24_8_lookup_bulk(dp, ips, next_hops, n, 0);
- }
- 
- static inline void
--dir24_8_lookup_bulk_1(void *p, const uint32_t *ips,
-+dir24_8_lookup_bulk_1(void *p, const uint16_t *vrf_ids, const uint32_t *ips,
- 	uint64_t *next_hops, const unsigned int n)
- {
- 	struct dir24_8_tbl *dp = (struct dir24_8_tbl *)p;
- 
-+	RTE_SET_USED(vrf_ids);
- 	dir24_8_lookup_bulk(dp, ips, next_hops, n, 1);
- }
- 
- static inline void
--dir24_8_lookup_bulk_2(void *p, const uint32_t *ips,
-+dir24_8_lookup_bulk_2(void *p, const uint16_t *vrf_ids, const uint32_t *ips,
- 	uint64_t *next_hops, const unsigned int n)
- {
- 	struct dir24_8_tbl *dp = (struct dir24_8_tbl *)p;
- 
-+	RTE_SET_USED(vrf_ids);
- 	dir24_8_lookup_bulk(dp, ips, next_hops, n, 2);
- }
- 
- static inline void
--dir24_8_lookup_bulk_3(void *p, const uint32_t *ips,
-+dir24_8_lookup_bulk_3(void *p, const uint16_t *vrf_ids, const uint32_t *ips,
- 	uint64_t *next_hops, const unsigned int n)
- {
- 	struct dir24_8_tbl *dp = (struct dir24_8_tbl *)p;
- 
-+	RTE_SET_USED(vrf_ids);
- 	dir24_8_lookup_bulk(dp, ips, next_hops, n, 3);
- }
- 
- static inline void
--dir24_8_lookup_bulk_uni(void *p, const uint32_t *ips,
-+dir24_8_lookup_bulk_uni(void *p, const uint16_t *vrf_ids, const uint32_t *ips,
- 	uint64_t *next_hops, const unsigned int n)
- {
- 	struct dir24_8_tbl *dp = (struct dir24_8_tbl *)p;
-@@ -224,6 +230,8 @@ dir24_8_lookup_bulk_uni(void *p, const uint32_t *ips,
- 	uint32_t prefetch_offset = RTE_MIN(15U, n);
- 	uint8_t nh_sz = dp->nh_sz;
- 
-+	RTE_SET_USED(vrf_ids);
-+
- 	for (i = 0; i < prefetch_offset; i++)
- 		rte_prefetch0(get_tbl24_p(dp, ips[i], nh_sz));
- 	for (i = 0; i < (n - prefetch_offset); i++) {
-@@ -246,34 +254,35 @@ dir24_8_lookup_bulk_uni(void *p, const uint32_t *ips,
- 
- #define BSWAP_MAX_LENGTH	64
- 
--typedef void (*dir24_8_lookup_bulk_be_cb)(void *p, const uint32_t *ips, uint64_t *next_hops,
--	const unsigned int n);
-+typedef void (*dir24_8_lookup_bulk_be_cb)(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- static inline void
--dir24_8_lookup_bulk_be(void *p, const uint32_t *ips, uint64_t *next_hops, const unsigned int n,
--	dir24_8_lookup_bulk_be_cb cb)
-+dir24_8_lookup_bulk_be(void *p, const uint16_t *vrf_ids, const uint32_t *ips,
-+	uint64_t *next_hops, const unsigned int n, dir24_8_lookup_bulk_be_cb cb)
- {
- 	uint32_t le_ips[BSWAP_MAX_LENGTH];
- 	unsigned int i;
- 
- #if RTE_BYTE_ORDER == RTE_BIG_ENDIAN
--	cb(p, ips, next_hops, n);
-+	cb(p, vrf_ids, ips, next_hops, n);
- #else
- 	for (i = 0; i < n; i += BSWAP_MAX_LENGTH) {
- 		int j;
- 		for (j = 0; j < BSWAP_MAX_LENGTH && i + j < n; j++)
- 			le_ips[j] = rte_be_to_cpu_32(ips[i + j]);
- 
--		cb(p, le_ips, next_hops + i, j);
-+		cb(p, vrf_ids, le_ips, next_hops + i, j);
- 	}
- #endif
- }
- 
- #define DECLARE_BE_LOOKUP_FN(name) \
- static inline void \
--name##_be(void *p, const uint32_t *ips, uint64_t *next_hops, const unsigned int n) \
-+name##_be(void *p, const uint16_t *vrf_ids, const uint32_t *ips, \
-+	uint64_t *next_hops, const unsigned int n) \
- { \
--	dir24_8_lookup_bulk_be(p, ips, next_hops, n, name); \
-+	dir24_8_lookup_bulk_be(p, vrf_ids, ips, next_hops, n, name); \
- }
- 
- DECLARE_BE_LOOKUP_FN(dir24_8_lookup_bulk_1b)
-@@ -296,7 +305,7 @@ rte_fib_lookup_fn_t
- dir24_8_get_lookup_fn(void *p, enum rte_fib_lookup_type type, bool be_addr);
- 
- int
--dir24_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
-+dir24_8_modify(struct rte_fib *fib, uint16_t vrf_id, uint32_t ip, uint8_t depth,
- 	uint64_t next_hop, int op);
- 
- int
-diff --git a/lib/fib/dir24_8_avx512.c b/lib/fib/dir24_8_avx512.c
-index 89b43583c7..77b7a8b3de 100644
---- a/lib/fib/dir24_8_avx512.c
-+++ b/lib/fib/dir24_8_avx512.c
-@@ -133,14 +133,14 @@ dir24_8_vec_lookup_x8_8b(void *p, const uint32_t *ips,
- 
- #define DECLARE_VECTOR_FN(suffix, nh_type, be_addr) \
- void \
--rte_dir24_8_vec_lookup_bulk_##suffix(void *p, const uint32_t *ips, uint64_t *next_hops, \
--	const unsigned int n) \
-+rte_dir24_8_vec_lookup_bulk_##suffix(void *p, const uint16_t *vrf_ids, \
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n) \
- { \
- 	uint32_t i; \
- 	for (i = 0; i < (n / 16); i++) \
- 		dir24_8_vec_lookup_x16(p, ips + i * 16, next_hops + i * 16, sizeof(nh_type), \
- 			be_addr); \
--	dir24_8_lookup_bulk_##suffix(p, ips + i * 16, next_hops + i * 16, n - i * 16); \
-+	dir24_8_lookup_bulk_##suffix(p, vrf_ids, ips + i * 16, next_hops + i * 16, n - i * 16); \
- }
- 
- DECLARE_VECTOR_FN(1b, uint8_t, false)
-@@ -151,21 +151,21 @@ DECLARE_VECTOR_FN(4b, uint32_t, false)
- DECLARE_VECTOR_FN(4b_be, uint32_t, true)
- 
- void
--rte_dir24_8_vec_lookup_bulk_8b(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n)
-+rte_dir24_8_vec_lookup_bulk_8b(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n)
- {
- 	uint32_t i;
- 	for (i = 0; i < (n / 8); i++)
- 		dir24_8_vec_lookup_x8_8b(p, ips + i * 8, next_hops + i * 8, false);
--	dir24_8_lookup_bulk_8b(p, ips + i * 8, next_hops + i * 8, n - i * 8);
-+	dir24_8_lookup_bulk_8b(p, vrf_ids, ips + i * 8, next_hops + i * 8, n - i * 8);
- }
- 
- void
--rte_dir24_8_vec_lookup_bulk_8b_be(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n)
-+rte_dir24_8_vec_lookup_bulk_8b_be(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n)
- {
- 	uint32_t i;
- 	for (i = 0; i < (n / 8); i++)
- 		dir24_8_vec_lookup_x8_8b(p, ips + i * 8, next_hops + i * 8, true);
--	dir24_8_lookup_bulk_8b_be(p, ips + i * 8, next_hops + i * 8, n - i * 8);
-+	dir24_8_lookup_bulk_8b_be(p, vrf_ids, ips + i * 8, next_hops + i * 8, n - i * 8);
- }
-diff --git a/lib/fib/dir24_8_avx512.h b/lib/fib/dir24_8_avx512.h
-index 3e2bbc2490..7681cac436 100644
---- a/lib/fib/dir24_8_avx512.h
-+++ b/lib/fib/dir24_8_avx512.h
-@@ -6,35 +6,35 @@
- #define _DIR248_AVX512_H_
- 
- void
--rte_dir24_8_vec_lookup_bulk_1b(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_1b(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- void
--rte_dir24_8_vec_lookup_bulk_2b(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_2b(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- void
--rte_dir24_8_vec_lookup_bulk_4b(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_4b(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- void
--rte_dir24_8_vec_lookup_bulk_8b(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_8b(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- void
--rte_dir24_8_vec_lookup_bulk_1b_be(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_1b_be(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- void
--rte_dir24_8_vec_lookup_bulk_2b_be(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_2b_be(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- void
--rte_dir24_8_vec_lookup_bulk_4b_be(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_4b_be(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- void
--rte_dir24_8_vec_lookup_bulk_8b_be(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_8b_be(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- #endif /* _DIR248_AVX512_H_ */
-diff --git a/lib/fib/dir24_8_rvv.c b/lib/fib/dir24_8_rvv.c
-index 9c14ca0481..53158e42e8 100644
---- a/lib/fib/dir24_8_rvv.c
-+++ b/lib/fib/dir24_8_rvv.c
-@@ -13,7 +13,7 @@
- #define DECLARE_VECTOR_FN(SFX, NH_SZ) \
- void \
- rte_dir24_8_vec_lookup_bulk_##SFX(void *p, \
--		const uint32_t *ips, uint64_t *next_hops, unsigned int n) \
-+		const uint16_t *vrf_ids, const uint32_t *ips, uint64_t *next_hops, unsigned int n) \
- { \
- 	const uint8_t  idx_bits = 3 - NH_SZ; \
- 	const uint32_t idx_mask = (1u << (3 - NH_SZ)) - 1u; \
-@@ -21,6 +21,7 @@ rte_dir24_8_vec_lookup_bulk_##SFX(void *p, \
- 	struct dir24_8_tbl *tbl = (struct dir24_8_tbl *)p; \
- 	const uint64_t *tbl24   = tbl->tbl24; \
- 	size_t vl; \
-+	RTE_SET_USED(vrf_ids); \
- 	for (unsigned int i = 0; i < n; i += vl) { \
- 		vl = __riscv_vsetvl_e32m4(n - i); \
- 		vuint32m4_t v_ips = __riscv_vle32_v_u32m4(&ips[i], vl); \
-diff --git a/lib/fib/dir24_8_rvv.h b/lib/fib/dir24_8_rvv.h
-index 7be99f7882..7064665d60 100644
---- a/lib/fib/dir24_8_rvv.h
-+++ b/lib/fib/dir24_8_rvv.h
-@@ -6,19 +6,19 @@
- #define _DIR248_RVV_H_
- 
- void
--rte_dir24_8_vec_lookup_bulk_1b(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_1b(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- void
--rte_dir24_8_vec_lookup_bulk_2b(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_2b(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- void
--rte_dir24_8_vec_lookup_bulk_4b(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_4b(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- void
--rte_dir24_8_vec_lookup_bulk_8b(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir24_8_vec_lookup_bulk_8b(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- #endif /* _DIR248_RVV_H_ */
-diff --git a/lib/fib/dir8_16_8.c b/lib/fib/dir8_16_8.c
-index 7207cd4748..533aaf6cce 100644
---- a/lib/fib/dir8_16_8.c
-+++ b/lib/fib/dir8_16_8.c
-@@ -57,13 +57,16 @@ struct dir8_16_8_rcu_dq_entry {
- };
- 
- static rte_fib_lookup_fn_t
--get_scalar_fn(bool be_addr)
-+get_scalar_fn(const struct dir8_16_8_tbl *dp, bool be_addr)
- {
-+	if (dp->num_vrfs > 1)
-+		return be_addr ? dir8_16_8_vrf_lookup_bulk_be :
-+			dir8_16_8_vrf_lookup_bulk;
- 	return be_addr ? dir8_16_8_lookup_bulk_be : dir8_16_8_lookup_bulk;
- }
- 
- static rte_fib_lookup_fn_t
--get_vector_fn(bool be_addr)
-+get_vector_fn(const struct dir8_16_8_tbl *dp, bool be_addr)
- {
- #ifdef CC_AVX512_SUPPORT
- 	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) <= 0 ||
-@@ -74,9 +77,13 @@ get_vector_fn(bool be_addr)
- 	if (be_addr && rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512BW) <= 0)
- 		return NULL;
- 
-+	if (dp->num_vrfs > 1)
-+		return be_addr ? rte_dir8_16_8_vrf_vec_lookup_bulk_be :
-+			rte_dir8_16_8_vrf_vec_lookup_bulk;
- 	return be_addr ? rte_dir8_16_8_vec_lookup_bulk_be :
- 		rte_dir8_16_8_vec_lookup_bulk;
- #else
-+	RTE_SET_USED(dp);
- 	RTE_SET_USED(be_addr);
- 	return NULL;
- #endif
-@@ -93,12 +100,12 @@ dir8_16_8_get_lookup_fn(void *p, enum rte_fib_lookup_type type, bool be_addr)
- 
- 	switch (type) {
- 	case RTE_FIB_LOOKUP_DIR8_16_8_SCALAR:
--		return get_scalar_fn(be_addr);
-+		return get_scalar_fn(dp, be_addr);
- 	case RTE_FIB_LOOKUP_DIR8_16_8_VECTOR_AVX512:
--		return get_vector_fn(be_addr);
-+		return get_vector_fn(dp, be_addr);
- 	case RTE_FIB_LOOKUP_DEFAULT:
--		fn = get_vector_fn(be_addr);
--		return (fn != NULL) ? fn : get_scalar_fn(be_addr);
-+		fn = get_vector_fn(dp, be_addr);
-+		return (fn != NULL) ? fn : get_scalar_fn(dp, be_addr);
- 	default:
- 		return NULL;
- 	}
-@@ -336,8 +343,8 @@ install_to_fib(struct dir8_16_8_tbl *dp, int level, uint64_t base,
- }
- 
- static int
--modify_fib(struct dir8_16_8_tbl *dp, struct rte_rib *rib, uint32_t ip,
--	uint8_t depth, uint64_t next_hop)
-+modify_fib(struct dir8_16_8_tbl *dp, struct rte_rib *rib, uint32_t tbl0_base,
-+	uint32_t ip, uint8_t depth, uint64_t next_hop)
- {
- 	struct rte_rib_node *tmp = NULL;
- 	uint64_t ledge, redge;
-@@ -360,8 +367,7 @@ modify_fib(struct dir8_16_8_tbl *dp, struct rte_rib *rib, uint32_t ip,
- 				ledge = redge + (1ULL << (32 - tmp_depth));
- 				continue;
- 			}
--
--			ret = install_to_fib(dp, 0, 0, ledge, redge, next_hop);
-+			ret = install_to_fib(dp, 0, tbl0_base, ledge, redge, next_hop);
- 			if (ret != 0)
- 				return ret;
- 
-@@ -376,8 +382,7 @@ modify_fib(struct dir8_16_8_tbl *dp, struct rte_rib *rib, uint32_t ip,
- 			redge = (uint64_t)ip + (1ULL << (32 - depth));
- 			if (ledge == redge && ledge != 0)
- 				break;
--
--			ret = install_to_fib(dp, 0, 0, ledge, redge, next_hop);
-+			ret = install_to_fib(dp, 0, tbl0_base, ledge, redge, next_hop);
- 			if (ret != 0)
- 				return ret;
- 		}
-@@ -386,24 +391,16 @@ modify_fib(struct dir8_16_8_tbl *dp, struct rte_rib *rib, uint32_t ip,
- 	return 0;
- }
- 
--int
--dir8_16_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
 +static int
-+dir8_16_8_modify_core(struct dir8_16_8_tbl *dp, struct rte_rib *rib,
-+	uint32_t tbl0_base, uint64_t def_nh, uint32_t ip, uint8_t depth,
- 	uint64_t next_hop, int op)
- {
--	struct dir8_16_8_tbl *dp;
--	struct rte_rib *rib;
- 	struct rte_rib_node *node;
- 	struct rte_rib_node *parent;
- 	int ret = 0;
- 	uint64_t par_nh, node_nh;
- 
--	if ((fib == NULL) || (depth > RTE_FIB_MAXDEPTH))
--		return -EINVAL;
--
--	dp = rte_fib_get_dp(fib);
--	rib = rte_fib_get_rib(fib);
--	RTE_ASSERT((dp != NULL) && (rib != NULL));
--
- 	if (next_hop > dir8_16_8_get_max_nh())
- 		return -EINVAL;
- 
-@@ -416,8 +413,7 @@ dir8_16_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
- 			rte_rib_get_nh(node, &node_nh);
- 			if (node_nh == next_hop)
- 				return 0;
--
--			ret = modify_fib(dp, rib, ip, depth, next_hop);
-+			ret = modify_fib(dp, rib, tbl0_base, ip, depth, next_hop);
- 			if (ret == 0)
- 				rte_rib_set_nh(node, next_hop);
- 
-@@ -434,7 +430,7 @@ dir8_16_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
- 			if (par_nh == next_hop)
- 				return 0;
- 		}
--		ret = modify_fib(dp, rib, ip, depth, next_hop);
-+		ret = modify_fib(dp, rib, tbl0_base, ip, depth, next_hop);
- 		if (ret != 0) {
- 			rte_rib_remove(rib, ip, depth);
- 			return ret;
-@@ -450,9 +446,10 @@ dir8_16_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
- 			rte_rib_get_nh(parent, &par_nh);
- 			rte_rib_get_nh(node, &node_nh);
- 			if (par_nh != node_nh)
--				ret = modify_fib(dp, rib, ip, depth, par_nh);
-+				ret = modify_fib(dp, rib, tbl0_base, ip, depth,
-+					par_nh);
- 		} else
--			ret = modify_fib(dp, rib, ip, depth, dp->def_nh);
-+			ret = modify_fib(dp, rib, tbl0_base, ip, depth, def_nh);
- 		if (ret == 0)
- 			rte_rib_remove(rib, ip, depth);
- 		return ret;
-@@ -463,15 +460,38 @@ dir8_16_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
- 	return -EINVAL;
- }
- 
-+int
-+dir8_16_8_modify(struct rte_fib *fib, uint16_t vrf_id, uint32_t ip, uint8_t depth,
-+	uint64_t next_hop, int op)
++lpm_modify(void *lpm, void *rib, const void *ip, uint8_t depth,
++	uint64_t prefix_id, enum fib_vrf_op op)
 +{
-+	struct dir8_16_8_tbl *dp;
-+	struct rte_rib *rib;
++	return dir24_8_modify_dp(lpm, rib, *(const uint32_t *)ip, depth,
++		prefix_id, (op == FIB_VRF_ADD) ? RTE_FIB_ADD : RTE_FIB_DEL);
++}
++
++static const struct fib_vrf_ops dir24_8_vrf_ops = {
++	.rib_lookup = rib_lookup,
++	.rib_lookup_exact = rib_lookup_exact,
++	.rib_lookup_parent = rib_lookup_parent,
++	.rib_get_nxt_cover = rib_get_nxt_cover,
++	.rib_walk = rib_walk,
++	.rib_insert = rib_insert,
++	.rib_remove = rib_remove,
++	.rib_get_prefix = rib_get_prefix,
++	.rib_get_nh = rib_get_nh,
++	.rib_set_nh = rib_set_nh,
++	.rib_get_ext = rib_get_ext,
++	.lpm_modify = lpm_modify,
++};
++
++int
++dir24_8_vrf_modify(struct rte_fib *fib, uint16_t vrf_id, uint32_t ip,
++	uint8_t depth, uint64_t next_hop, int op)
++{
++	struct dir24_8_vrf_tbl *dp;
++	struct rte_rib *vrf_rib;
 +
 +	if ((fib == NULL) || (depth > RTE_FIB_MAXDEPTH))
 +		return -EINVAL;
 +
 +	dp = rte_fib_get_dp(fib);
-+	RTE_ASSERT(dp != NULL);
++	vrf_rib = rte_fib_vrf_get_rib(fib, vrf_id);
++	RTE_ASSERT((dp != NULL) && (vrf_rib != NULL));
 +
-+	if (vrf_id >= dp->num_vrfs)
-+		return -EINVAL;
-+
-+	rib = rte_fib_vrf_get_rib(fib, vrf_id);
-+	RTE_ASSERT(rib != NULL);
-+
-+	return dir8_16_8_modify_core(dp, rib,
-+		(uint32_t)vrf_id * DIR8_16_8_TBL0_NUM_ENT,
-+		dp->def_nh[vrf_id], ip, depth, next_hop, op);
++	ip &= rte_rib_depth_to_mask(depth);
++	return fib_vrf_modify(&dp->ht, dp->lpm, dp->rib, vrf_rib, vrf_id, &ip,
++		depth, next_hop, (op == RTE_FIB_ADD) ? FIB_VRF_ADD : FIB_VRF_DEL);
 +}
 +
- void *
- dir8_16_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
- {
- 	char mem_name[DIR8_16_8_NAMESIZE];
- 	struct dir8_16_8_tbl *dp;
--	uint64_t def_nh;
--	uint32_t num_tbl16, num_tbl8;
--	uint32_t i;
--	uint64_t tbl16_sz, tbl8_sz;
-+	uint64_t def_nh, tbl16_sz, tbl8_sz;
-+	uint32_t num_tbl16, num_tbl8, i;
-+	uint16_t num_vrfs, v;
- 
- 	if ((name == NULL) || (fib_conf == NULL) || (fib_conf->dir8_16_8.num_tbl16 == 0) ||
- 			(fib_conf->dir8_16_8.num_tbl8 == 0) ||
-@@ -480,27 +500,56 @@ dir8_16_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
- 		return NULL;
- 	}
- 
-+	num_vrfs = RTE_MAX(fib_conf->max_vrfs, 1);
- 	def_nh = fib_conf->default_nh;
- 	num_tbl16 = fib_conf->dir8_16_8.num_tbl16;
- 	num_tbl8 = fib_conf->dir8_16_8.num_tbl8;
- 
-+	/* Validate the per-VRF default nexthops, if provided. */
-+	if (fib_conf->vrf_default_nh != NULL) {
-+		for (v = 0; v < num_vrfs; v++) {
-+			if (fib_conf->vrf_default_nh[v] > dir8_16_8_get_max_nh()) {
-+				rte_errno = EINVAL;
-+				return NULL;
-+			}
-+		}
++void *
++dir24_8_vrf_create(const char *name, int socket_id,
++	struct rte_fib_conf *fib_conf)
++{
++	struct dir24_8_vrf_tbl *dp;
++	struct rte_fib_conf lpm_conf;
++	struct rte_rib_conf rib_conf;
++	char mem_name[64], dp_name[32];
++	int ret;
++
++	/* The hash table only stores 8 byte nexthops. */
++	if ((name == NULL) || (fib_conf == NULL) ||
++			(fib_conf->max_routes <= 0) ||
++			(fib_conf->dir24_8.nh_sz != RTE_FIB_DIR24_8_8B)) {
++		rte_errno = EINVAL;
++		return NULL;
 +	}
 +
- 	dp = rte_zmalloc_socket(name, sizeof(struct dir8_16_8_tbl) +
--		DIR8_16_8_TBL0_NUM_ENT * sizeof(uint64_t), RTE_CACHE_LINE_SIZE, socket_id);
-+		(size_t)num_vrfs * DIR8_16_8_TBL0_NUM_ENT * sizeof(uint64_t),
-+		RTE_CACHE_LINE_SIZE, socket_id);
- 	if (dp == NULL) {
- 		rte_errno = ENOMEM;
- 		return NULL;
- 	}
-+	dp->num_vrfs = num_vrfs;
- 
--	/* Init first level table with the default nexthop. */
--	for (i = 0; i < DIR8_16_8_TBL0_NUM_ENT; i++)
--		dp->tbl0[i] = def_nh << 1;
-+	/* Per-VRF default nexthop array. */
-+	snprintf(mem_name, sizeof(mem_name), "DEFNH_%p", dp);
-+	dp->def_nh = rte_zmalloc_socket(mem_name,
-+		(size_t)num_vrfs * sizeof(uint64_t),
-+		RTE_CACHE_LINE_SIZE, socket_id);
-+	if (dp->def_nh == NULL) {
++	snprintf(mem_name, sizeof(mem_name), "DP_%s", name);
++	dp = rte_zmalloc_socket(mem_name, sizeof(*dp), RTE_CACHE_LINE_SIZE,
++		socket_id);
++	if (dp == NULL) {
 +		rte_errno = ENOMEM;
-+		goto free_dp;
++		return NULL;
 +	}
-+	for (v = 0; v < num_vrfs; v++)
-+		dp->def_nh[v] = (fib_conf->vrf_default_nh != NULL) ?
-+			fib_conf->vrf_default_nh[v] : def_nh;
++	/* The RIB and hash table names must be unique. */
++	snprintf(dp_name, sizeof(dp_name), "%p", (void *)dp);
 +
-+	/* Init each VRF's tbl0 block with that VRF's default nexthop. */
-+	for (v = 0; v < num_vrfs; v++) {
-+		uint32_t base = (uint32_t)v * DIR8_16_8_TBL0_NUM_ENT;
-+		for (i = 0; i < DIR8_16_8_TBL0_NUM_ENT; i++)
-+			dp->tbl0[base + i] = dp->def_nh[v] << 1;
++	/*
++	 * The DIR24_8 table stores 4 byte prefix IDs, 0 meaning no route,
++	 * whatever default nexthop the user configured.
++	 */
++	lpm_conf = *fib_conf;
++	lpm_conf.default_nh = 0;
++	lpm_conf.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
++	snprintf(mem_name, sizeof(mem_name), "LPM_%s", name);
++	dp->lpm = dir24_8_create(mem_name, socket_id, &lpm_conf);
++	if (dp->lpm == NULL)
++		goto free_dp;
++
++	/* Internal RIB of all the prefixes, with the VRF records. */
++	rib_conf.ext_sz = fib_vrf_rib_ext_sz();
++	rib_conf.max_nodes = fib_conf->max_routes * 2;
++	dp->rib = rte_rib_create(dp_name, socket_id, &rib_conf);
++	if (dp->rib == NULL)
++		goto free_lpm;
++
++	ret = fib_vrf_ht_init(&dp->ht, dp_name, socket_id, &dir24_8_vrf_ops,
++		RTE_MAX(fib_conf->max_vrfs, 1), fib_conf->default_nh,
++		fib_conf->vrf_default_nh, fib_conf->max_routes);
++	if (ret != 0) {
++		rte_errno = -ret;
++		goto free_rib;
 +	}
- 
- 	snprintf(mem_name, sizeof(mem_name), "TBL16_%p", dp);
- 	tbl16_sz = (uint64_t)DIR8_16_8_TBL16_GRP_NUM_ENT * sizeof(uint64_t) * num_tbl16;
- 	dp->tbl16 = rte_zmalloc_socket(mem_name, tbl16_sz, RTE_CACHE_LINE_SIZE, socket_id);
- 	if (dp->tbl16 == NULL) {
- 		rte_errno = ENOMEM;
--		goto free_dp;
-+		goto free_defnh;
- 	}
- 
- 	snprintf(mem_name, sizeof(mem_name), "TBL8_%p", dp);
-@@ -532,7 +581,6 @@ dir8_16_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
- 	for (i = 0; i < num_tbl8; i++)
- 		dp->tbl8_pool[i] = i;
- 
--	dp->def_nh = def_nh;
- 	dp->number_tbl16s = num_tbl16;
- 	dp->number_tbl8s = num_tbl8;
- 
-@@ -544,6 +592,8 @@ dir8_16_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
- 	rte_free(dp->tbl8);
- free_tbl16:
- 	rte_free(dp->tbl16);
-+free_defnh:
-+	rte_free(dp->def_nh);
- free_dp:
- 	rte_free(dp);
- 	return NULL;
-@@ -558,6 +608,7 @@ dir8_16_8_free(void *p)
- 		return;
- 
- 	rte_rcu_qsbr_dq_delete(dp->dq);
-+	rte_free(dp->def_nh);
- 	rte_free(dp->tbl8_pool);
- 	rte_free(dp->tbl16_pool);
- 	rte_free(dp->tbl8);
-diff --git a/lib/fib/dir8_16_8.h b/lib/fib/dir8_16_8.h
-index 31ca5162de..1ea867d4ba 100644
---- a/lib/fib/dir8_16_8.h
-+++ b/lib/fib/dir8_16_8.h
-@@ -36,7 +36,8 @@ struct dir8_16_8_tbl {
- 	uint32_t	cur_tbl16s;	/**< Current number of tbl16 groups. */
- 	uint32_t	number_tbl8s;	/**< Total number of tbl8 groups. */
- 	uint32_t	cur_tbl8s;	/**< Current number of tbl8 groups. */
--	uint64_t	def_nh;		/**< Default next hop. */
-+	uint16_t	num_vrfs;	/**< Number of VRFs (1 = single VRF). */
-+	uint64_t	*def_nh;	/**< Per-VRF default nexthops (num_vrfs). */
- 	uint64_t	*tbl16;		/**< Second level table. */
- 	uint64_t	*tbl8;		/**< Third level table. */
- 	uint32_t	*tbl16_pool;	/**< Stack of free tbl16 group idxes. */
-@@ -47,7 +48,7 @@ struct dir8_16_8_tbl {
- 	enum rte_fib_qsbr_mode rcu_mode;/* Blocking, defer queue. */
- 	struct rte_rcu_qsbr *v;		/* RCU QSBR variable. */
- 	struct rte_rcu_qsbr_dq *dq;	/* RCU QSBR defer queue. */
--	/* First level table (top 8 bits). */
-+	/* First level table (top 8 bits), sized num_vrfs * 256. */
- 	alignas(RTE_CACHE_LINE_SIZE) uint64_t	tbl0[];
- };
- 
-@@ -83,13 +84,14 @@ dir8_16_8_is_entry_extended(uint64_t ent)
- }
- 
- static inline void
--dir8_16_8_lookup_bulk(void *p, const uint32_t *ips,
-+dir8_16_8_lookup_bulk(void *p, const uint16_t *vrf_ids, const uint32_t *ips,
- 	uint64_t *next_hops, const unsigned int n)
- {
- 	struct dir8_16_8_tbl *dp = (struct dir8_16_8_tbl *)p;
- 	uint64_t tmp;
- 	uint32_t i;
- 
-+	RTE_SET_USED(vrf_ids);
- 	for (i = 0; i < n; i++) {
- 		tmp = dp->tbl0[dir8_16_8_get_tbl0_idx(ips[i])];
- 		/* Prefixes are usually longer than /8. */
-@@ -104,11 +106,11 @@ dir8_16_8_lookup_bulk(void *p, const uint32_t *ips,
- #define DIR8_16_8_BSWAP_MAX_LENGTH	64
- 
- static inline void
--dir8_16_8_lookup_bulk_be(void *p, const uint32_t *ips,
-+dir8_16_8_lookup_bulk_be(void *p, const uint16_t *vrf_ids, const uint32_t *ips,
- 	uint64_t *next_hops, const unsigned int n)
- {
- #if RTE_BYTE_ORDER == RTE_BIG_ENDIAN
--	dir8_16_8_lookup_bulk(p, ips, next_hops, n);
-+	dir8_16_8_lookup_bulk(p, vrf_ids, ips, next_hops, n);
- #else
- 	uint32_t le_ips[DIR8_16_8_BSWAP_MAX_LENGTH];
- 	unsigned int i;
-@@ -118,7 +120,54 @@ dir8_16_8_lookup_bulk_be(void *p, const uint32_t *ips,
- 		for (j = 0; j < DIR8_16_8_BSWAP_MAX_LENGTH && i + j < n; j++)
- 			le_ips[j] = rte_be_to_cpu_32(ips[i + j]);
- 
--		dir8_16_8_lookup_bulk(p, le_ips, next_hops + i, j);
-+		dir8_16_8_lookup_bulk(p, vrf_ids, le_ips, next_hops + i, j);
-+	}
++
++	return dp;
++
++free_rib:
++	rte_rib_free(dp->rib);
++free_lpm:
++	dir24_8_free(dp->lpm);
++free_dp:
++	rte_free(dp);
++	return NULL;
++}
++
++void
++dir24_8_vrf_free(void *p)
++{
++	struct dir24_8_vrf_tbl *dp = p;
++
++	if (dp == NULL)
++		return;
++
++	fib_vrf_ht_free(&dp->ht, dp->rib);
++	rte_rib_free(dp->rib);
++	dir24_8_free(dp->lpm);
++	rte_free(dp);
++}
++
++#ifdef CC_AVX512_SUPPORT
++static void
++dir24_8_vrf_vec_lookup_bulk(void *p, const uint16_t *vrf_ids,
++	const uint32_t *ips, uint64_t *next_hops, const unsigned int n)
++{
++	struct dir24_8_vrf_tbl *dp = p;
++
++	rte_dir24_8_vec_lookup_bulk_4b(dp->lpm, NULL, ips, next_hops, n);
++	fib_vrf_ht_resolve_avx512(&dp->ht, vrf_ids, next_hops, n);
++}
++
++static void
++dir24_8_vrf_vec_lookup_bulk_be(void *p, const uint16_t *vrf_ids,
++	const uint32_t *ips, uint64_t *next_hops, const unsigned int n)
++{
++	struct dir24_8_vrf_tbl *dp = p;
++
++	rte_dir24_8_vec_lookup_bulk_4b_be(dp->lpm, NULL, ips, next_hops, n);
++	fib_vrf_ht_resolve_avx512(&dp->ht, vrf_ids, next_hops, n);
++}
++#endif
++
++static rte_fib_lookup_fn_t
++dir24_8_vrf_get_vector_fn(bool be_addr)
++{
++#ifdef CC_AVX512_SUPPORT
++	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) <= 0 ||
++			rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512DQ) <= 0 ||
++			rte_cpu_get_flag_enabled(RTE_CPUFLAG_VPCLMULQDQ) <= 0 ||
++			rte_vect_get_max_simd_bitwidth() < RTE_VECT_SIMD_512)
++		return NULL;
++
++	if (be_addr && rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512BW) <= 0)
++		return NULL;
++
++	return be_addr ? dir24_8_vrf_vec_lookup_bulk_be :
++		dir24_8_vrf_vec_lookup_bulk;
++#else
++	RTE_SET_USED(be_addr);
++	return NULL;
 +#endif
 +}
 +
++rte_fib_lookup_fn_t
++dir24_8_vrf_get_lookup_fn(void *p, enum rte_fib_lookup_type type,
++	bool be_addr)
++{
++	rte_fib_lookup_fn_t fn;
++
++	if (p == NULL)
++		return NULL;
++
++	switch (type) {
++	case RTE_FIB_LOOKUP_DIR24_8_VRF_SCALAR:
++		return be_addr ? dir24_8_vrf_lookup_bulk_be :
++			dir24_8_vrf_lookup_bulk;
++	case RTE_FIB_LOOKUP_DIR24_8_VRF_VECTOR_AVX512:
++		return dir24_8_vrf_get_vector_fn(be_addr);
++	case RTE_FIB_LOOKUP_DEFAULT:
++		fn = dir24_8_vrf_get_vector_fn(be_addr);
++		if (fn != NULL)
++			return fn;
++		return be_addr ? dir24_8_vrf_lookup_bulk_be :
++			dir24_8_vrf_lookup_bulk;
++	default:
++		return NULL;
++	}
++}
+diff --git a/lib/fib/dir24_8_vrf.h b/lib/fib/dir24_8_vrf.h
+new file mode 100644
+index 0000000000..97ecbef7cc
+--- /dev/null
++++ b/lib/fib/dir24_8_vrf.h
+@@ -0,0 +1,60 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Intel Corporation
++ */
++
++#ifndef _DIR24_8_VRF_H_
++#define _DIR24_8_VRF_H_
++
++#include <rte_fib.h>
++
++#include "dir24_8.h"
++#include "fib_vrf.h"
++
++/**
++ * @file
++ * DIR24_8 algorithm with hash based VRF resolution: a single DIR24_8 table
++ * holding 4 byte prefix IDs, resolved to per-VRF nexthops through fib_vrf.
++ */
++
++struct dir24_8_vrf_tbl {
++	struct dir24_8_tbl *lpm;	/**< Shared prefix ID table. */
++	struct rte_rib *rib;		/**< Prefixes of all the VRFs, nh = prefix ID. */
++	struct fib_vrf_ht ht;		/**< (VRF, prefix ID) -> nexthop. */
++};
++
 +static inline void
-+dir8_16_8_vrf_lookup_bulk(void *p, const uint16_t *vrf_ids, const uint32_t *ips,
++dir24_8_vrf_lookup_bulk(void *p, const uint16_t *vrf_ids, const uint32_t *ips,
 +	uint64_t *next_hops, const unsigned int n)
 +{
-+	struct dir8_16_8_tbl *dp = (struct dir8_16_8_tbl *)p;
-+	uint64_t tmp;
-+	uint32_t i;
++	struct dir24_8_vrf_tbl *dp = p;
 +
-+	/* A NULL vrf_ids array selects VRF 0 for every IP. */
-+	if (unlikely(vrf_ids == NULL)) {
-+		dir8_16_8_lookup_bulk(p, NULL, ips, next_hops, n);
-+		return;
-+	}
-+
-+	for (i = 0; i < n; i++) {
-+		tmp = dp->tbl0[vrf_ids[i] * DIR8_16_8_TBL0_NUM_ENT +
-+			dir8_16_8_get_tbl0_idx(ips[i])];
-+		if (dir8_16_8_is_entry_extended(tmp))
-+			tmp = dp->tbl16[dir8_16_8_get_tbl16_idx(tmp, ips[i])];
-+		if (unlikely(dir8_16_8_is_entry_extended(tmp)))
-+			tmp = dp->tbl8[dir8_16_8_get_tbl8_idx(tmp, ips[i])];
-+		next_hops[i] = tmp >> 1;
-+	}
++	dir24_8_lookup_bulk(dp->lpm, ips, next_hops, n, RTE_FIB_DIR24_8_4B);
++	fib_vrf_ht_resolve(&dp->ht, vrf_ids, next_hops, n);
 +}
 +
 +static inline void
-+dir8_16_8_vrf_lookup_bulk_be(void *p, const uint16_t *vrf_ids,
++dir24_8_vrf_lookup_bulk_be(void *p, const uint16_t *vrf_ids,
 +	const uint32_t *ips, uint64_t *next_hops, const unsigned int n)
 +{
-+#if RTE_BYTE_ORDER == RTE_BIG_ENDIAN
-+	dir8_16_8_vrf_lookup_bulk(p, vrf_ids, ips, next_hops, n);
-+#else
-+	uint32_t le_ips[DIR8_16_8_BSWAP_MAX_LENGTH];
++	struct dir24_8_vrf_tbl *dp = p;
++
++	dir24_8_lookup_bulk_4b_be(dp->lpm, NULL, ips, next_hops, n);
++	fib_vrf_ht_resolve(&dp->ht, vrf_ids, next_hops, n);
++}
++
++void *
++dir24_8_vrf_create(const char *name, int socket_id,
++	struct rte_fib_conf *fib_conf);
++
++void
++dir24_8_vrf_free(void *p);
++
++rte_fib_lookup_fn_t
++dir24_8_vrf_get_lookup_fn(void *p, enum rte_fib_lookup_type type,
++	bool be_addr);
++
++int
++dir24_8_vrf_modify(struct rte_fib *fib, uint16_t vrf_id, uint32_t ip,
++	uint8_t depth, uint64_t next_hop, int op);
++
++#endif /* _DIR24_8_VRF_H_ */
+diff --git a/lib/fib/fib_vrf.c b/lib/fib/fib_vrf.c
+new file mode 100644
+index 0000000000..5213e3a64a
+--- /dev/null
++++ b/lib/fib/fib_vrf.c
+@@ -0,0 +1,1256 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Intel Corporation
++ */
++
++#include <stdalign.h>
++#include <stdbool.h>
++#include <stdint.h>
++#include <string.h>
++
++#include <rte_bitops.h>
++#include <rte_debug.h>
++#include <rte_errno.h>
++#include <rte_hash.h>
++#include <rte_hash_crc.h>
++#include <rte_malloc.h>
++#include <rte_random.h>
++
++#include "fib_log.h"
++#include "fib_vrf.h"
++
++/* VRF records of a RIB node: an inline block extended by chained chunks. */
++#define FIB_VRF_EXT_RECS	5
++#define FIB_VRF_CHUNK_RECS	24
++#define FIB_VRF_NO_VRF		UINT16_MAX
++
++/*
++ * Smallest and largest hash table sizes (in buckets). With at least 2^17
++ * buckets, the records of a prefix in different VRFs never share a bucket.
++ */
++#define FIB_VRF_HT_MIN_LOG2	17
++#define FIB_VRF_HT_MAX_LOG2	24
++
++/* CRC32C polynomial and x^-64 mod P, used to invert the bucket hash. */
++#define FIB_VRF_CRC_POLY	0x1EDC6F41
++#define FIB_VRF_CRC_INV_X64	0xA6733E67
++
++struct fib_vrf_chunk {
++	struct fib_vrf_chunk *next;
++	uint32_t owner_mask;
++	uint16_t vrf[FIB_VRF_CHUNK_RECS];
++	uint64_t nh[FIB_VRF_CHUNK_RECS];
++};
++
++struct fib_vrf_node_ext {
++	struct fib_vrf_chunk *head;
++	uint32_t owner_mask;
++	uint16_t num_recs;	/**< Records are stored contiguously. */
++	uint16_t vrf[FIB_VRF_EXT_RECS];
++	uint64_t nh[FIB_VRF_EXT_RECS];
++};
++
++/* Position of a record inside a node extension. */
++struct fib_vrf_slot {
++	struct fib_vrf_chunk **link;	/**< Link pointing to chunk. */
++	struct fib_vrf_chunk *chunk;	/**< NULL while in the inline block. */
++	unsigned int idx;
++};
++
++static inline uint16_t *
++slot_vrf(struct fib_vrf_node_ext *ext, const struct fib_vrf_slot *s)
++{
++	return (s->chunk != NULL) ? &s->chunk->vrf[s->idx] : &ext->vrf[s->idx];
++}
++
++static inline uint64_t *
++slot_nh(struct fib_vrf_node_ext *ext, const struct fib_vrf_slot *s)
++{
++	return (s->chunk != NULL) ? &s->chunk->nh[s->idx] : &ext->nh[s->idx];
++}
++
++static inline uint32_t *
++slot_mask(struct fib_vrf_node_ext *ext, const struct fib_vrf_slot *s)
++{
++	return (s->chunk != NULL) ? &s->chunk->owner_mask : &ext->owner_mask;
++}
++
++static inline bool
++slot_is_owner(struct fib_vrf_node_ext *ext, const struct fib_vrf_slot *s)
++{
++	return (*slot_mask(ext, s) & RTE_BIT32(s->idx)) != 0;
++}
++
++static inline void
++slot_set_owner(struct fib_vrf_node_ext *ext, const struct fib_vrf_slot *s, bool owner)
++{
++	if (owner)
++		*slot_mask(ext, s) |= RTE_BIT32(s->idx);
++	else
++		*slot_mask(ext, s) &= ~RTE_BIT32(s->idx);
++}
++
++static inline void
++slot_first(struct fib_vrf_slot *s)
++{
++	s->link = NULL;
++	s->chunk = NULL;
++	s->idx = 0;
++}
++
++static inline bool
++slot_next(struct fib_vrf_node_ext *ext, struct fib_vrf_slot *s)
++{
++	unsigned int cap = (s->chunk != NULL) ? FIB_VRF_CHUNK_RECS : FIB_VRF_EXT_RECS;
++
++	if (++s->idx < cap)
++		return true;
++
++	s->link = (s->chunk != NULL) ? &s->chunk->next : &ext->head;
++	s->chunk = *s->link;
++	s->idx = 0;
++
++	return s->chunk != NULL;
++}
++
++static struct fib_vrf_chunk *
++chunk_alloc(void)
++{
++	struct fib_vrf_chunk *chunk;
 +	unsigned int i;
 +
-+	for (i = 0; i < n; i += DIR8_16_8_BSWAP_MAX_LENGTH) {
-+		unsigned int j;
-+		for (j = 0; j < DIR8_16_8_BSWAP_MAX_LENGTH && i + j < n; j++)
-+			le_ips[j] = rte_be_to_cpu_32(ips[i + j]);
++	chunk = rte_zmalloc(NULL, sizeof(*chunk), 0);
++	if (chunk == NULL)
++		return NULL;
 +
-+		dir8_16_8_vrf_lookup_bulk(p,
-+			(vrf_ids != NULL) ? vrf_ids + i : NULL,
-+			le_ips, next_hops + i, j);
- 	}
- #endif
- }
-@@ -133,7 +182,7 @@ rte_fib_lookup_fn_t
- dir8_16_8_get_lookup_fn(void *p, enum rte_fib_lookup_type type, bool be_addr);
- 
- int
--dir8_16_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
-+dir8_16_8_modify(struct rte_fib *fib, uint16_t vrf_id, uint32_t ip, uint8_t depth,
- 	uint64_t next_hop, int op);
- 
- int
-diff --git a/lib/fib/dir8_16_8_avx512.c b/lib/fib/dir8_16_8_avx512.c
-index c147451252..2a9c6b6a15 100644
---- a/lib/fib/dir8_16_8_avx512.c
-+++ b/lib/fib/dir8_16_8_avx512.c
-@@ -8,6 +8,9 @@
- #include "dir8_16_8.h"
- #include "dir8_16_8_avx512.h"
- 
-+/* VRF IDs used when the caller passes no vrf_ids array: VRF 0 for every IP. */
-+static const rte_xmm_t dir8_16_8_def_vrf_ids;
++	for (i = 0; i < FIB_VRF_CHUNK_RECS; i++)
++		chunk->vrf[i] = FIB_VRF_NO_VRF;
 +
- static inline __m256i
- dir8_16_8_vec_load_ips(const uint32_t *ips, bool be_addr)
- {
-@@ -21,9 +24,14 @@ dir8_16_8_vec_load_ips(const uint32_t *ips, bool be_addr)
- }
- 
- static inline __m256i
--dir8_16_8_vec_get_tbl0_idx(__m256i ip_vec)
-+dir8_16_8_vec_get_tbl0_idx(const uint16_t *vrf_ids, __m256i ip_vec)
- {
--	return _mm256_srli_epi32(ip_vec, 24);
-+	__m256i vrf_vec = _mm256_cvtepu16_epi32(
-+		_mm_loadu_si128((const void *)vrf_ids));
++	return chunk;
++}
 +
-+	/* vrf_id * DIR8_16_8_TBL0_NUM_ENT + (ip >> 24) */
-+	return _mm256_add_epi32(_mm256_slli_epi32(vrf_vec, 8),
-+		_mm256_srli_epi32(ip_vec, 24));
- }
- 
- /* Second lookup stage input for 8 IPs, filled by the first stage. */
-@@ -43,11 +51,11 @@ struct dir8_16_8_vec_stage {
-  * some CPUs a gather costs much more than the 8 loads it replaces.
-  */
- static inline void
--dir8_16_8_vec_prefetch_x8(const struct dir8_16_8_tbl *dp, const uint32_t *ips, bool be_addr,
--	struct dir8_16_8_vec_stage *st)
-+dir8_16_8_vec_prefetch_x8(const struct dir8_16_8_tbl *dp, const uint16_t *vrf_ids,
-+	const uint32_t *ips, bool be_addr, struct dir8_16_8_vec_stage *st)
- {
- 	const __m256i ip_vec = dir8_16_8_vec_load_ips(ips, be_addr);
--	const rte_ymm_t idx0 = { .y = dir8_16_8_vec_get_tbl0_idx(ip_vec) };
-+	const rte_ymm_t idx0 = { .y = dir8_16_8_vec_get_tbl0_idx(vrf_ids, ip_vec) };
- 	const rte_ymm_t ip = { .y = ip_vec };
- 	const uint64_t *tbl0 = dp->tbl0;
- 	const uint64_t *tbl16 = dp->tbl16;
-@@ -90,7 +98,8 @@ dir8_16_8_vec_lookup_x8(const struct dir8_16_8_tbl *dp, const struct dir8_16_8_v
- }
- 
- static inline void
--vec_lookup_bulk(void *p, const uint32_t *ips, uint64_t *next_hops, unsigned int n, bool be_addr)
-+vec_lookup_bulk(void *p, const uint16_t *vrf_ids, const uint32_t *ips,
-+	uint64_t *next_hops, unsigned int n, bool be_addr)
- {
- 	const struct dir8_16_8_tbl *dp = p;
- 	struct dir8_16_8_vec_stage stage[3];
-@@ -98,13 +107,26 @@ vec_lookup_bulk(void *p, const uint32_t *ips, uint64_t *next_hops, unsigned int
- 	struct dir8_16_8_vec_stage *st1 = &stage[1];
- 	struct dir8_16_8_vec_stage *st2 = &stage[2];
- 	struct dir8_16_8_vec_stage *tmp;
-+	const uint16_t *vrfs = vrf_ids;
-+	unsigned int vrf_inc = 1;
- 	unsigned int i = 0;
- 
-+	/*
-+	 * A NULL vrf_ids array selects VRF 0 for every IP: keep reading
-+	 * the zeroed default VRF vector instead of checking vrf_ids per batch.
-+	 */
-+	if (vrf_ids == NULL) {
-+		vrfs = dir8_16_8_def_vrf_ids.u16;
-+		vrf_inc = 0;
++static int
++slot_at(struct fib_vrf_node_ext *ext, unsigned int n, struct fib_vrf_slot *s)
++{
++	unsigned int k;
++
++	slot_first(s);
++	for (k = 0; k < n; k++) {
++		if (slot_next(ext, s))
++			continue;
++
++		*s->link = chunk_alloc();
++		if (*s->link == NULL)
++			return -ENOMEM;
++
++		s->chunk = *s->link;
 +	}
 +
- 	if (n >= 16) {
--		dir8_16_8_vec_prefetch_x8(dp, ips, be_addr, st0);
--		dir8_16_8_vec_prefetch_x8(dp, &ips[8], be_addr, st1);
-+		dir8_16_8_vec_prefetch_x8(dp, vrfs, ips, be_addr, st0);
-+		dir8_16_8_vec_prefetch_x8(dp, &vrfs[8 * vrf_inc], &ips[8],
-+			be_addr, st1);
- 		for (; i + 24 <= n; i += 8) {
--			dir8_16_8_vec_prefetch_x8(dp, &ips[i + 16], be_addr, st2);
-+			dir8_16_8_vec_prefetch_x8(dp, &vrfs[(i + 16) * vrf_inc],
-+				&ips[i + 16], be_addr, st2);
- 			dir8_16_8_vec_lookup_x8(dp, st0, &ips[i], be_addr, &next_hops[i]);
- 			tmp = st0;
- 			st0 = st1;
-@@ -115,28 +137,47 @@ vec_lookup_bulk(void *p, const uint32_t *ips, uint64_t *next_hops, unsigned int
- 		dir8_16_8_vec_lookup_x8(dp, st1, &ips[i + 8], be_addr, &next_hops[i + 8]);
- 		i += 16;
- 	} else if (n >= 8) {
--		dir8_16_8_vec_prefetch_x8(dp, ips, be_addr, st0);
-+		dir8_16_8_vec_prefetch_x8(dp, vrfs, ips, be_addr, st0);
- 		dir8_16_8_vec_lookup_x8(dp, st0, ips, be_addr, next_hops);
- 		i = 8;
- 	}
- 
--	/* Scalar lookup of the last n % 8 IPs. */
-+	/* Scalar lookup of the last n % 8 IPs, the default VRF vector covers them. */
-+	vrfs += i * vrf_inc;
- 	if (be_addr)
--		dir8_16_8_lookup_bulk_be(p, &ips[i], &next_hops[i], n - i);
-+		dir8_16_8_vrf_lookup_bulk_be(p, vrfs, &ips[i], &next_hops[i],
-+			n - i);
- 	else
--		dir8_16_8_lookup_bulk(p, &ips[i], &next_hops[i], n - i);
-+		dir8_16_8_vrf_lookup_bulk(p, vrfs, &ips[i], &next_hops[i],
-+			n - i);
-+}
-+
-+void
-+rte_dir8_16_8_vec_lookup_bulk(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n)
-+{
-+	RTE_SET_USED(vrf_ids);
-+	vec_lookup_bulk(p, NULL, ips, next_hops, n, false);
-+}
-+
-+void
-+rte_dir8_16_8_vec_lookup_bulk_be(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n)
-+{
-+	RTE_SET_USED(vrf_ids);
-+	vec_lookup_bulk(p, NULL, ips, next_hops, n, true);
- }
- 
- void
--rte_dir8_16_8_vec_lookup_bulk(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n)
-+rte_dir8_16_8_vrf_vec_lookup_bulk(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n)
- {
--	vec_lookup_bulk(p, ips, next_hops, n, false);
-+	vec_lookup_bulk(p, vrf_ids, ips, next_hops, n, false);
- }
- 
- void
--rte_dir8_16_8_vec_lookup_bulk_be(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n)
-+rte_dir8_16_8_vrf_vec_lookup_bulk_be(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n)
- {
--	vec_lookup_bulk(p, ips, next_hops, n, true);
-+	vec_lookup_bulk(p, vrf_ids, ips, next_hops, n, true);
- }
-diff --git a/lib/fib/dir8_16_8_avx512.h b/lib/fib/dir8_16_8_avx512.h
-index d468481029..d1ab4ab128 100644
---- a/lib/fib/dir8_16_8_avx512.h
-+++ b/lib/fib/dir8_16_8_avx512.h
-@@ -6,11 +6,19 @@
- #define _DIR8_16_8_AVX512_H_
- 
- void
--rte_dir8_16_8_vec_lookup_bulk(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir8_16_8_vec_lookup_bulk(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- void
--rte_dir8_16_8_vec_lookup_bulk_be(void *p, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+rte_dir8_16_8_vec_lookup_bulk_be(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
-+
-+void
-+rte_dir8_16_8_vrf_vec_lookup_bulk(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
-+
-+void
-+rte_dir8_16_8_vrf_vec_lookup_bulk_be(void *p, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- #endif /* _DIR8_16_8_AVX512_H_ */
-diff --git a/lib/fib/rte_fib.c b/lib/fib/rte_fib.c
-index fcc28899cb..795031edcd 100644
---- a/lib/fib/rte_fib.c
-+++ b/lib/fib/rte_fib.c
-@@ -42,23 +42,24 @@ struct rte_fib {
- 	char			name[RTE_FIB_NAMESIZE];
- 	enum rte_fib_type	type;	/**< Type of FIB struct */
- 	unsigned int flags;		/**< Flags */
--	struct rte_rib		*rib;	/**< RIB helper datastructure */
-+	struct rte_rib		**ribs;	/**< Per-VRF RIBs; ribs[0] is the main RIB. */
- 	void			*dp;	/**< pointer to the dataplane struct*/
- 	rte_fib_lookup_fn_t	lookup;	/**< FIB lookup function */
- 	rte_fib_modify_fn_t	modify; /**< modify FIB datastructure */
- 	uint64_t		def_nh;
-+	uint16_t		max_vrfs; /**< Number of VRFs (0/1 = single). */
- };
- 
- static void
--dummy_lookup(void *fib_p, const uint32_t *ips, uint64_t *next_hops,
--	const unsigned int n)
-+dummy_lookup(void *fib_p, const uint16_t *vrf_ids __rte_unused,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n)
- {
- 	unsigned int i;
- 	struct rte_fib *fib = fib_p;
- 	struct rte_rib_node *node;
- 
- 	for (i = 0; i < n; i++) {
--		node = rte_rib_lookup(fib->rib, ips[i]);
-+		node = rte_rib_lookup(fib->ribs[0], ips[i]);
- 		if (node != NULL)
- 			rte_rib_get_nh(node, &next_hops[i]);
- 		else
-@@ -67,26 +68,26 @@ dummy_lookup(void *fib_p, const uint32_t *ips, uint64_t *next_hops,
- }
- 
- static int
--dummy_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
--	uint64_t next_hop, int op)
-+dummy_modify(struct rte_fib *fib, uint16_t vrf_id __rte_unused,
-+	uint32_t ip, uint8_t depth, uint64_t next_hop, int op)
- {
- 	struct rte_rib_node *node;
- 	if ((fib == NULL) || (depth > RTE_FIB_MAXDEPTH))
- 		return -EINVAL;
- 
--	node = rte_rib_lookup_exact(fib->rib, ip, depth);
-+	node = rte_rib_lookup_exact(fib->ribs[0], ip, depth);
- 
- 	switch (op) {
- 	case RTE_FIB_ADD:
- 		if (node == NULL)
--			node = rte_rib_insert(fib->rib, ip, depth);
-+			node = rte_rib_insert(fib->ribs[0], ip, depth);
- 		if (node == NULL)
- 			return -rte_errno;
- 		return rte_rib_set_nh(node, next_hop);
- 	case RTE_FIB_DEL:
- 		if (node == NULL)
- 			return -ENOENT;
--		rte_rib_remove(fib->rib, ip, depth);
-+		rte_rib_remove(fib->ribs[0], ip, depth);
- 		return 0;
- 	}
- 	return -EINVAL;
-@@ -118,7 +119,8 @@ init_dataplane(struct rte_fib *fib, __rte_unused int socket_id,
- 		if (fib->dp == NULL)
- 			return -rte_errno;
- 		fib->lookup = dir8_16_8_get_lookup_fn(fib->dp,
--			RTE_FIB_LOOKUP_DEFAULT, !!(fib->flags & RTE_FIB_F_LOOKUP_NETWORK_ORDER));
-+			RTE_FIB_LOOKUP_DEFAULT,
-+			!!(fib->flags & RTE_FIB_F_LOOKUP_NETWORK_ORDER));
- 		fib->modify = dir8_16_8_modify;
- 		return 0;
- 	default:
-@@ -134,7 +136,7 @@ rte_fib_add(struct rte_fib *fib, uint32_t ip, uint8_t depth, uint64_t next_hop)
- 	if ((fib == NULL) || (fib->modify == NULL) ||
- 			(depth > RTE_FIB_MAXDEPTH))
- 		return -EINVAL;
--	return fib->modify(fib, ip, depth, next_hop, RTE_FIB_ADD);
-+	return fib->modify(fib, 0, ip, depth, next_hop, RTE_FIB_ADD);
- }
- 
- RTE_EXPORT_SYMBOL(rte_fib_delete)
-@@ -144,7 +146,7 @@ rte_fib_delete(struct rte_fib *fib, uint32_t ip, uint8_t depth)
- 	if ((fib == NULL) || (fib->modify == NULL) ||
- 			(depth > RTE_FIB_MAXDEPTH))
- 		return -EINVAL;
--	return fib->modify(fib, ip, depth, 0, RTE_FIB_DEL);
-+	return fib->modify(fib, 0, ip, depth, 0, RTE_FIB_DEL);
- }
- 
- RTE_EXPORT_SYMBOL(rte_fib_lookup_bulk)
-@@ -155,10 +157,65 @@ rte_fib_lookup_bulk(struct rte_fib *fib, uint32_t *ips,
- 	FIB_RETURN_IF_TRUE(((fib == NULL) || (ips == NULL) ||
- 		(next_hops == NULL) || (fib->lookup == NULL)), -EINVAL);
- 
--	fib->lookup(fib->dp, ips, next_hops, n);
-+	/* A NULL vrf_ids array selects VRF 0 for every IP. */
-+	fib->lookup(fib->dp, NULL, ips, next_hops, n);
 +	return 0;
 +}
 +
 +static void
-+free_dataplane(struct rte_fib *fib);
-+
-+/*
-+ * Allocate the RIB array and create the FIB's RIBs: ribs[0] is the main RIB
-+ * (named after the FIB), plus one independent RIB per extra VRF. A single-VRF
-+ * FIB still keeps a one-element array so ribs[0] is always the main RIB.
-+ */
-+static int
-+fib_create_ribs(struct rte_fib *fib, const char *name,
-+	const struct rte_rib_conf *rib_conf, int socket_id)
++ext_init(struct fib_vrf_node_ext *ext)
 +{
-+	uint16_t v, num_vrfs = RTE_MAX(fib->max_vrfs, 1);
++	unsigned int i;
 +
-+	fib->ribs = rte_zmalloc_socket(NULL,
-+		(size_t)num_vrfs * sizeof(struct rte_rib *),
-+		RTE_CACHE_LINE_SIZE, socket_id);
-+	if (fib->ribs == NULL)
-+		return -ENOMEM;
-+
-+	fib->ribs[0] = rte_rib_create(name, socket_id, rib_conf);
-+	if (fib->ribs[0] == NULL)
-+		return -rte_errno;
-+
-+	for (v = 1; v < num_vrfs; v++) {
-+		/*
-+		 * Derive a short unique RIB name from the FIB pointer: the
-+		 * user name plus a "_vN" suffix could overflow the RIB name
-+		 * length limit.
-+		 */
-+		char rib_name[RTE_FIB_NAMESIZE];
-+
-+		snprintf(rib_name, sizeof(rib_name), "%p-v%u", (void *)fib, v);
-+		fib->ribs[v] = rte_rib_create(rib_name, socket_id, rib_conf);
-+		if (fib->ribs[v] == NULL)
-+			return -rte_errno;
-+	}
- 	return 0;
- }
- 
-+/* Free every RIB and the RIB array. */
-+static void
-+fib_free_ribs(struct rte_fib *fib)
-+{
-+	uint16_t v, num_vrfs = RTE_MAX(fib->max_vrfs, 1);
-+
-+	if (fib->ribs == NULL)
-+		return;
-+	for (v = 0; v < num_vrfs; v++)
-+		rte_rib_free(fib->ribs[v]);
-+	rte_free(fib->ribs);
-+	fib->ribs = NULL;
++	ext->head = NULL;
++	ext->owner_mask = 0;
++	ext->num_recs = 0;
++	for (i = 0; i < FIB_VRF_EXT_RECS; i++)
++		ext->vrf[i] = FIB_VRF_NO_VRF;
 +}
 +
- RTE_EXPORT_SYMBOL(rte_fib_create)
- struct rte_fib *
- rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
-@@ -166,15 +223,17 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
- 	char mem_name[RTE_FIB_NAMESIZE];
- 	int ret;
- 	struct rte_fib *fib = NULL;
--	struct rte_rib *rib = NULL;
- 	struct rte_tailq_entry *te;
-+	struct rte_tailq_entry *tmp_te;
- 	struct rte_fib_list *fib_list;
- 	struct rte_rib_conf rib_conf;
- 
- 	/* Check user arguments. */
- 	if ((name == NULL) || (conf == NULL) ||	(conf->max_routes < 0) ||
- 			(conf->flags & ~RTE_FIB_ALLOWED_FLAGS) ||
--			(conf->type > RTE_FIB_DIR8_16_8)) {
-+			(conf->type > RTE_FIB_DIR8_16_8) ||
-+			(conf->max_vrfs >= 2 &&
-+				conf->type != RTE_FIB_DIR8_16_8)) {
- 		rte_errno = EINVAL;
- 		return NULL;
- 	}
-@@ -182,29 +241,7 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
- 	rib_conf.ext_sz = conf->rib_ext_sz;
- 	rib_conf.max_nodes = conf->max_routes * 2;
- 
--	rib = rte_rib_create(name, socket_id, &rib_conf);
--	if (rib == NULL) {
--		FIB_LOG(ERR,
--			"Can not allocate RIB %s", name);
--		return NULL;
--	}
--
- 	snprintf(mem_name, sizeof(mem_name), "FIB_%s", name);
--	fib_list = RTE_TAILQ_CAST(rte_fib_tailq.head, rte_fib_list);
--
--	rte_mcfg_tailq_write_lock();
--
--	/* guarantee there's no existing */
--	TAILQ_FOREACH(te, fib_list, next) {
--		fib = (struct rte_fib *)te->data;
--		if (strncmp(name, fib->name, RTE_FIB_NAMESIZE) == 0)
--			break;
--	}
--	fib = NULL;
--	if (te != NULL) {
--		rte_errno = EEXIST;
--		goto exit;
--	}
- 
- 	/* allocate tailq entry */
- 	te = rte_zmalloc("FIB_TAILQ_ENTRY", sizeof(*te), 0);
-@@ -212,7 +249,7 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
- 		FIB_LOG(ERR,
- 			"Can not allocate tailq entry for FIB %s", name);
- 		rte_errno = ENOMEM;
--		goto exit;
-+		return NULL;
- 	}
- 
- 	/* Allocate memory to store the FIB data structures. */
-@@ -225,10 +262,11 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
- 	}
- 
- 	rte_strlcpy(fib->name, name, sizeof(fib->name));
--	fib->rib = rib;
- 	fib->type = conf->type;
- 	fib->flags = conf->flags;
- 	fib->def_nh = conf->default_nh;
-+	fib->max_vrfs = conf->max_vrfs;
++static void
++ext_free_chunks(struct fib_vrf_node_ext *ext)
++{
++	struct fib_vrf_chunk *chunk, *next;
 +
- 	ret = init_dataplane(fib, socket_id, conf);
- 	if (ret < 0) {
- 		FIB_LOG(ERR,
-@@ -238,6 +276,27 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
- 		goto free_fib;
- 	}
- 
-+	ret = fib_create_ribs(fib, name, &rib_conf, socket_id);
-+	if (ret < 0) {
-+		FIB_LOG(ERR, "Can not allocate RIBs for FIB %s", name);
-+		rte_errno = -ret;
-+		goto free_ribs;
++	for (chunk = ext->head; chunk != NULL; chunk = next) {
++		next = chunk->next;
++		rte_free(chunk);
++	}
++	ext->head = NULL;
++}
++
++static int
++ext_reserve(struct fib_vrf_node_ext *ext, unsigned int n)
++{
++	struct fib_vrf_slot s;
++
++	return (n == 0) ? 0 : slot_at(ext, n - 1, &s);
++}
++
++static bool
++ext_find(struct fib_vrf_node_ext *ext, uint16_t vrf, struct fib_vrf_slot *s)
++{
++	unsigned int k;
++
++	slot_first(s);
++	for (k = 0; k < ext->num_recs; k++, slot_next(ext, s)) {
++		if (*slot_vrf(ext, s) == vrf)
++			return true;
 +	}
 +
-+	fib_list = RTE_TAILQ_CAST(rte_fib_tailq.head, rte_fib_list);
++	return false;
++}
 +
-+	rte_mcfg_tailq_write_lock();
++static bool
++ext_get_nh(struct fib_vrf_node_ext *ext, uint16_t vrf, uint64_t *nh)
++{
++	struct fib_vrf_slot s;
 +
-+	/* guarantee there's no existing */
-+	TAILQ_FOREACH(tmp_te, fib_list, next) {
-+		if (strncmp(name, ((struct rte_fib *)tmp_te->data)->name,
-+				RTE_FIB_NAMESIZE) == 0) {
-+			rte_errno = EEXIST;
-+			rte_mcfg_tailq_write_unlock();
-+			goto free_ribs;
++	if (!ext_find(ext, vrf, &s))
++		return false;
++
++	*nh = *slot_nh(ext, &s);
++
++	return true;
++}
++
++static bool
++ext_is_owner(struct fib_vrf_node_ext *ext, uint16_t vrf)
++{
++	struct fib_vrf_slot s;
++
++	return ext_find(ext, vrf, &s) && slot_is_owner(ext, &s);
++}
++
++static unsigned int
++ext_count_owners(const struct fib_vrf_node_ext *ext)
++{
++	const struct fib_vrf_chunk *chunk;
++	unsigned int n = rte_popcount32(ext->owner_mask);
++
++	for (chunk = ext->head; chunk != NULL; chunk = chunk->next)
++		n += rte_popcount32(chunk->owner_mask);
++
++	return n;
++}
++
++static int
++ext_set(struct fib_vrf_node_ext *ext, uint16_t vrf, uint64_t nh, bool owner)
++{
++	struct fib_vrf_slot s;
++	int ret;
++
++	if (!ext_find(ext, vrf, &s)) {
++		ret = slot_at(ext, ext->num_recs, &s);
++		if (ret != 0)
++			return ret;
++
++		ext->num_recs++;
++	}
++
++	*slot_vrf(ext, &s) = vrf;
++	*slot_nh(ext, &s) = nh;
++	slot_set_owner(ext, &s, owner);
++
++	return 0;
++}
++
++static int
++ext_del(struct fib_vrf_node_ext *ext, uint16_t vrf)
++{
++	struct fib_vrf_slot s, last;
++
++	if (!ext_find(ext, vrf, &s))
++		return -ENOENT;
++
++	/* Records are contiguous: move the last one into the hole. */
++	slot_at(ext, ext->num_recs - 1, &last);
++	*slot_vrf(ext, &s) = *slot_vrf(ext, &last);
++	*slot_nh(ext, &s) = *slot_nh(ext, &last);
++	slot_set_owner(ext, &s, slot_is_owner(ext, &last));
++	*slot_vrf(ext, &last) = FIB_VRF_NO_VRF;
++	*slot_nh(ext, &last) = 0;
++	slot_set_owner(ext, &last, false);
++	ext->num_recs--;
++
++	/* The last chunk became empty. */
++	if (last.chunk != NULL && last.idx == 0) {
++		*last.link = NULL;
++		rte_free(last.chunk);
++	}
++
++	return ext->num_recs;
++}
++
++static inline bool
++bmp_get(const uint64_t *bmp, uint32_t i)
++{
++	return (bmp[i / 64] & RTE_BIT64(i % 64)) != 0;
++}
++
++static inline void
++bmp_set(uint64_t *bmp, uint32_t i)
++{
++	bmp[i / 64] |= RTE_BIT64(i % 64);
++}
++
++static inline void
++bmp_clear(uint64_t *bmp, uint32_t i)
++{
++	bmp[i / 64] &= ~RTE_BIT64(i % 64);
++}
++
++static inline uint64_t
++bucket_key(const struct fib_vrf_bucket *b, unsigned int j)
++{
++	return rte_atomic_load_explicit(&b->key[j], rte_memory_order_relaxed);
++}
++
++static inline void
++bucket_set_key(struct fib_vrf_bucket *b, unsigned int j, uint64_t key)
++{
++	rte_atomic_store_explicit(&b->key[j], key, rte_memory_order_release);
++}
++
++static int
++bucket_find(const struct fib_vrf_bucket *b, uint64_t key)
++{
++	unsigned int j;
++
++	for (j = 0; j < FIB_VRF_HT_ASSOC; j++) {
++		if (bucket_key(b, j) == key)
++			return j;
++	}
++
++	return -1;
++}
++
++static void
++bucket_refresh_full(struct fib_vrf_ht *ht, uint32_t bidx)
++{
++	if (bucket_find(&ht->buckets[bidx], 0) < 0)
++		bmp_set(ht->full_bmp, bidx);
++	else
++		bmp_clear(ht->full_bmp, bidx);
++}
++
++static void *
++pid_map_node(const struct fib_vrf_ht *ht, uint32_t prefix_id)
++{
++	void *node;
++
++	if (rte_hash_lookup_data(ht->pid_map, &prefix_id, &node) < 0)
++		return NULL;
++
++	return node;
++}
++
++static inline struct fib_vrf_node_ext *
++node_ext(const struct fib_vrf_ht *ht, void *node)
++{
++	return ht->ops->rib_get_ext(node);
++}
++
++static inline uint32_t
++node_pid(const struct fib_vrf_ht *ht, const void *node)
++{
++	return (uint32_t)ht->ops->rib_get_nh(node);
++}
++
++/* A bucket is polarized when it holds a record of a prefix referenced by more than one VRF. */
++static void
++bucket_refresh_polarized(struct fib_vrf_ht *ht, uint32_t bidx)
++{
++	const struct fib_vrf_bucket *b = &ht->buckets[bidx];
++	unsigned int j;
++
++	for (j = 0; j < FIB_VRF_HT_ASSOC; j++) {
++		uint64_t key = bucket_key(b, j);
++		void *node;
++
++		if (key == 0)
++			continue;
++
++		node = pid_map_node(ht, (uint32_t)key);
++		if (node != NULL && node_ext(ht, node)->num_recs > 1) {
++			bmp_set(ht->polarized_bmp, bidx);
++			return;
 +		}
 +	}
 +
- 	te->data = (void *)fib;
- 	TAILQ_INSERT_TAIL(fib_list, te, next);
- 
-@@ -245,13 +304,13 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
- 
- 	return fib;
- 
-+free_ribs:
-+	fib_free_ribs(fib);
-+	free_dataplane(fib);
- free_fib:
- 	rte_free(fib);
- free_te:
- 	rte_free(te);
--exit:
--	rte_mcfg_tailq_write_unlock();
--	rte_rib_free(rib);
- 
- 	return NULL;
- }
-@@ -324,7 +383,7 @@ rte_fib_free(struct rte_fib *fib)
- 	rte_mcfg_tailq_write_unlock();
- 
- 	free_dataplane(fib);
--	rte_rib_free(fib->rib);
-+	fib_free_ribs(fib);
- 	rte_free(fib);
- 	rte_free(te);
- }
-@@ -340,7 +399,7 @@ RTE_EXPORT_SYMBOL(rte_fib_get_rib)
- struct rte_rib *
- rte_fib_get_rib(struct rte_fib *fib)
- {
--	return (fib == NULL) ? NULL : fib->rib;
-+	return (fib == NULL) ? NULL : fib->ribs[0];
- }
- 
- RTE_EXPORT_SYMBOL(rte_fib_select_lookup)
-@@ -386,3 +445,48 @@ rte_fib_rcu_qsbr_add(struct rte_fib *fib, struct rte_fib_rcu_config *cfg)
- 		return -ENOTSUP;
- 	}
- }
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_fib_vrf_add, 26.11)
-+int
-+rte_fib_vrf_add(struct rte_fib *fib, uint16_t vrf_id, uint32_t ip,
-+	uint8_t depth, uint64_t next_hop)
-+{
-+	if ((fib == NULL) || (fib->modify == NULL) ||
-+			(depth > RTE_FIB_MAXDEPTH) ||
-+			(vrf_id >= RTE_MAX(fib->max_vrfs, 1)))
-+		return -EINVAL;
-+	return fib->modify(fib, vrf_id, ip, depth, next_hop, RTE_FIB_ADD);
++	bmp_clear(ht->polarized_bmp, bidx);
 +}
 +
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_fib_vrf_delete, 26.11)
-+int
-+rte_fib_vrf_delete(struct rte_fib *fib, uint16_t vrf_id, uint32_t ip,
-+	uint8_t depth)
++static int
++ht_delete(struct fib_vrf_ht *ht, uint16_t vrf, uint32_t prefix_id)
 +{
-+	if ((fib == NULL) || (fib->modify == NULL) ||
-+			(depth > RTE_FIB_MAXDEPTH) ||
-+			(vrf_id >= RTE_MAX(fib->max_vrfs, 1)))
-+		return -EINVAL;
-+	return fib->modify(fib, vrf_id, ip, depth, 0, RTE_FIB_DEL);
-+}
++	uint64_t key = fib_vrf_key(vrf, prefix_id);
++	uint32_t bidx = fib_vrf_bucket_idx(ht, key);
++	struct fib_vrf_bucket *b = &ht->buckets[bidx];
++	int j = bucket_find(b, key);
 +
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_fib_vrf_lookup_bulk, 26.11)
-+int
-+rte_fib_vrf_lookup_bulk(struct rte_fib *fib, const uint16_t *vrf_ids,
-+	uint32_t *ips, uint64_t *next_hops, int n)
-+{
-+	FIB_RETURN_IF_TRUE(((fib == NULL) || (ips == NULL) ||
-+		(next_hops == NULL) || (fib->lookup == NULL)), -EINVAL);
++	if (j < 0)
++		return -ENOENT;
 +
-+	fib->lookup(fib->dp, vrf_ids, ips, next_hops, n);
++	bucket_set_key(b, j, 0);
++	b->val[j] = 0;
++	bmp_clear(ht->full_bmp, bidx);
++	bucket_refresh_polarized(ht, bidx);
++
 +	return 0;
 +}
 +
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_fib_vrf_get_rib, 26.11)
-+struct rte_rib *
-+rte_fib_vrf_get_rib(struct rte_fib *fib, uint16_t vrf_id)
++/* Insert a record, or update it if it exists. */
++static int
++ht_upsert(struct fib_vrf_ht *ht, uint16_t vrf, uint32_t prefix_id, uint64_t next_hop)
 +{
-+	if ((fib == NULL) || (vrf_id >= RTE_MAX(fib->max_vrfs, 1)))
-+		return NULL;
-+	return fib->ribs[vrf_id];
++	uint64_t key = fib_vrf_key(vrf, prefix_id);
++	uint32_t bidx = fib_vrf_bucket_idx(ht, key);
++	struct fib_vrf_bucket *b = &ht->buckets[bidx];
++	int j;
++
++	j = bucket_find(b, key);
++	if (j >= 0) {
++		b->val[j] = next_hop;
++		return 0;
++	}
++
++	j = bucket_find(b, 0);
++	if (j < 0)
++		return -ENOSPC;
++
++	/* Publish the value before the key. */
++	b->val[j] = next_hop;
++	bucket_set_key(b, j, key);
++	bucket_refresh_full(ht, bidx);
++
++	return 0;
 +}
++
++static uint32_t
++invert_bits(uint32_t x)
++{
++	uint32_t y = 0;
++	int i;
++
++	for (i = 0; i < 32; i++) {
++		y = (y << 1) | (x & 1);
++		x >>= 1;
++	}
++
++	return y;
++}
++
++static uint32_t
++gf2_mul(uint32_t a, uint32_t b, uint32_t poly)
++{
++	uint64_t product = 0;
++	uint64_t r_poly = poly | RTE_BIT64(32);
++	int i;
++
++	for (; b != 0; b &= (b - 1))
++		product ^= (uint64_t)a << rte_ctz32(b);
++
++	for (i = 63; i >= 32; i--) {
++		if (product & RTE_BIT64(i))
++			product ^= r_poly << (i - 32);
++	}
++
++	return (uint32_t)product;
++}
++
++static uint32_t
++find_collision(uint16_t vrf, uint32_t desired_crc)
++{
++	uint32_t diff = rte_hash_crc_8byte(fib_vrf_key(vrf, 0), 0) ^ desired_crc;
++
++	return invert_bits(gf2_mul(invert_bits(diff), FIB_VRF_CRC_INV_X64, FIB_VRF_CRC_POLY));
++}
++
++static bool
++pid_is_usable(const struct fib_vrf_ht *ht, uint32_t prefix_id)
++{
++	return prefix_id != 0 && prefix_id <= FIB_VRF_PREFIX_ID_MAX &&
++		rte_hash_lookup(ht->pid_map, &prefix_id) < 0;
++}
++
++static int
++pid_for_bucket(const struct fib_vrf_ht *ht, uint16_t vrf, uint32_t bidx)
++{
++	uint32_t i, prefix_id;
++
++	for (i = 0; i < (1U << (32 - ht->bits)); i++) {
++		prefix_id = find_collision(vrf, bidx | i << ht->bits);
++		if (pid_is_usable(ht, prefix_id))
++			return (int)prefix_id;
++	}
++	return -ENOSPC;
++}
++
++/*
++ * First bucket of [from, to) with a free slot (and no record of a multi-VRF
++ * prefix when unpolarized is set), UINT32_MAX if none.
++ */
++static uint32_t
++first_free_bucket(const struct fib_vrf_ht *ht, uint32_t from, uint32_t to, bool unpolarized)
++{
++	uint32_t i, bidx;
++
++	for (i = from / 64; i * 64 < to; i++) {
++		uint64_t available = ~ht->full_bmp[i];
++
++		if (unpolarized)
++			available &= ~ht->polarized_bmp[i];
++		if (i == from / 64)
++			available &= UINT64_MAX << (from % 64);
++		if (available != 0) {
++			bidx = i * 64 + rte_ctz64(available);
++			return (bidx < to) ? bidx : UINT32_MAX;
++		}
++	}
++
++	return UINT32_MAX;
++}
++
++static inline uint32_t
++vrf_bucket_offset(const struct fib_vrf_ht *ht, uint16_t vrf_diff)
++{
++	return fib_vrf_bucket_idx(ht, fib_vrf_key(vrf_diff, 0));
++}
++
++static inline bool
++vrf_has_room(const struct fib_vrf_ht *ht, uint32_t bidx, uint16_t vrf,
++	uint16_t other_vrf)
++{
++	return !bmp_get(ht->full_bmp, bidx ^ vrf_bucket_offset(ht, vrf ^ other_vrf));
++}
++
++static bool
++records_have_room(const struct fib_vrf_ht *ht, uint16_t vrf, uint32_t bidx,
++	struct fib_vrf_node_ext *ext, uint16_t extra_vrf)
++{
++	struct fib_vrf_slot s;
++	unsigned int k;
++
++	if (extra_vrf != FIB_VRF_NO_VRF && !vrf_has_room(ht, bidx, vrf, extra_vrf))
++		return false;
++
++	if (ext == NULL)
++		return true;
++
++	slot_first(&s);
++	for (k = 0; k < ext->num_recs; k++, slot_next(ext, &s)) {
++		if (!vrf_has_room(ht, bidx, vrf, *slot_vrf(ext, &s)))
++			return false;
++	}
++
++	return true;
++}
++
++/*
++ * Allocate a prefix ID whose record for vrf lands in a bucket with room (an
++ * unpolarized one when requested), and whose records for the VRFs referencing
++ * ext and for extra_vrf fit as well. The buckets are scanned from start,
++ * wrapping around.
++ */
++static int
++pid_alloc(const struct fib_vrf_ht *ht, uint16_t vrf, uint32_t start,
++	bool unpolarized, struct fib_vrf_node_ext *ext, uint16_t extra_vrf)
++{
++	uint32_t bidx, end = ht->mask + 1;
++	unsigned int pass;
++	int ret;
++
++	for (pass = 0; pass < 2; pass++) {
++		for (bidx = first_free_bucket(ht, start, end, unpolarized);
++				bidx != UINT32_MAX;
++				bidx = first_free_bucket(ht, bidx + 1, end, unpolarized)) {
++			if (!records_have_room(ht, vrf, bidx, ext, extra_vrf))
++				continue;
++			ret = pid_for_bucket(ht, vrf, bidx);
++			if (ret >= 0)
++				return ret;
++		}
++		end = start;
++		start = 0;
++	}
++
++	return -ENOSPC;
++}
++
++static void
++node_mark_polarized(struct fib_vrf_ht *ht, void *node)
++{
++	struct fib_vrf_node_ext *ext = node_ext(ht, node);
++	uint32_t prefix_id = node_pid(ht, node);
++	struct fib_vrf_slot s;
++	unsigned int k;
++
++	if (ext->num_recs < 2)
++		return;
++
++	slot_first(&s);
++	for (k = 0; k < ext->num_recs; k++, slot_next(ext, &s))
++		bmp_set(ht->polarized_bmp,
++			fib_vrf_bucket_idx(ht, fib_vrf_key(*slot_vrf(ext, &s), prefix_id)));
++}
++
++static void
++node_refresh_polarized(struct fib_vrf_ht *ht, void *node)
++{
++	struct fib_vrf_node_ext *ext = node_ext(ht, node);
++	uint32_t prefix_id = node_pid(ht, node);
++	struct fib_vrf_slot s;
++	unsigned int k;
++
++	slot_first(&s);
++	for (k = 0; k < ext->num_recs; k++, slot_next(ext, &s))
++		bucket_refresh_polarized(ht, fib_vrf_bucket_idx(ht,
++			fib_vrf_key(*slot_vrf(ext, &s), prefix_id)));
++}
++
++/*
++ * Closest existing prefix strictly covering ip/depth.
++ * Can not just call rib_lookup_exact and rib_get_parent
++ * since target prefix may not present in the RIB.
++ */
++static void *
++nearest_ancestor(const struct fib_vrf_ht *ht, void *rib, const void *ip,
++	uint8_t depth)
++{
++	alignas(uint64_t) uint8_t node_ip[FIB_VRF_IP_MAX_SZ];
++	void *node = ht->ops->rib_lookup(rib, ip);
++	uint8_t node_depth;
++
++	while (node != NULL) {
++		ht->ops->rib_get_prefix(node, node_ip, &node_depth);
++		if (node_depth < depth)
++			break;
++		node = ht->ops->rib_lookup_parent(node);
++	}
++	return node;
++}
++
++/* retrieve nexthop of the nearest ancestor of the node within a given VRF */
++static bool
++ancestor_nexthop(const struct fib_vrf_ht *ht, void *node, uint16_t vrf, uint64_t *nh)
++{
++	void *anc;
++
++	for (anc = ht->ops->rib_lookup_parent(node); anc != NULL;
++			anc = ht->ops->rib_lookup_parent(anc)) {
++		if (ext_get_nh(node_ext(ht, anc), vrf, nh))
++			return true;
++	}
++
++	return false;
++}
++
++static int
++node_move(struct fib_vrf_ht *ht, void *lpm, void *rib, void *node, uint32_t new_pid)
++{
++	struct fib_vrf_node_ext *ext = node_ext(ht, node);
++	alignas(uint64_t) uint8_t ip[FIB_VRF_IP_MAX_SZ];
++	uint32_t old_pid = node_pid(ht, node);
++	struct fib_vrf_slot s;
++	unsigned int k, n;
++	uint8_t depth;
++	int ret;
++
++	slot_first(&s);
++	for (n = 0; n < ext->num_recs; n++, slot_next(ext, &s)) {
++		ret = ht_upsert(ht, *slot_vrf(ext, &s), new_pid, *slot_nh(ext, &s));
++		if (ret != 0)
++			goto drop_records;
++	}
++
++	ret = rte_hash_add_key_data(ht->pid_map, &new_pid, node);
++	if (ret < 0)
++		goto drop_records;
++
++	/* Switch the LPM table to the new ID. */
++	ht->ops->rib_get_prefix(node, ip, &depth);
++	/* make sure all previous ht_upserts are visible before changing LPM part */
++	rte_atomic_thread_fence(rte_memory_order_release);
++	ret = ht->ops->lpm_modify(lpm, rib, ip, depth, new_pid, FIB_VRF_ADD);
++	if (ret != 0) {
++		rte_hash_del_key(ht->pid_map, &new_pid);
++		goto drop_records;
++	}
++
++	/* clean up old records with old prefix_id */
++	slot_first(&s);
++	for (k = 0; k < ext->num_recs; k++, slot_next(ext, &s))
++		ht_delete(ht, *slot_vrf(ext, &s), old_pid);
++
++	rte_hash_del_key(ht->pid_map, &old_pid);
++	node_mark_polarized(ht, node);
++
++	return 0;
++
++drop_records:
++	slot_first(&s);
++	for (k = 0; k < n; k++, slot_next(ext, &s))
++		ht_delete(ht, *slot_vrf(ext, &s), new_pid);
++
++	return ret;
++}
++
++/*
++ * Before a second VRF starts referencing a prefix whose single record sits in a
++ * polarized bucket, try to move that record to an unpolarized bucket by giving
++ * the prefix a new ID. The node is left untouched when no suitable prefix ID is
++ * available.
++ */
++static void
++node_relocate_if_polarized(struct fib_vrf_ht *ht, void *lpm, void *rib, void *node,
++	uint16_t new_vrf)
++{
++	struct fib_vrf_node_ext *ext = node_ext(ht, node);
++	uint16_t owner_vrf;
++	int ret;
++
++	if (ext->num_recs != 1 || ext->vrf[0] == new_vrf)
++		return;
++
++	owner_vrf = ext->vrf[0];
++	if (!bmp_get(ht->polarized_bmp,
++			fib_vrf_bucket_idx(ht, fib_vrf_key(owner_vrf, node_pid(ht, node)))))
++		return;
++
++	ret = pid_alloc(ht, owner_vrf, rte_rand_max(ht->mask + 1), true, NULL, new_vrf);
++	if (ret < 0)
++		return;
++
++	node_move(ht, lpm, rib, node, (uint32_t)ret);
++}
++
++static int
++record_upsert(struct fib_vrf_ht *ht, void *lpm, void *rib, uint16_t vrf,
++	uint32_t prefix_id, uint64_t next_hop)
++{
++	void *victims[FIB_VRF_HT_ASSOC];
++	const struct fib_vrf_bucket *b;
++	unsigned int i, j, n = 0;
++	int ret;
++
++	ret = ht_upsert(ht, vrf, prefix_id, next_hop);
++	if (ret != -ENOSPC)
++		return ret;
++
++	b = &ht->buckets[fib_vrf_bucket_idx(ht, fib_vrf_key(vrf, prefix_id))];
++	for (j = 0; j < FIB_VRF_HT_ASSOC; j++) {
++		uint32_t pid = (uint32_t)bucket_key(b, j);
++		void *node = pid_map_node(ht, pid);
++		uint16_t num_recs;
++
++		if (pid == prefix_id || node == NULL)
++			continue;
++
++		num_recs = node_ext(ht, node)->num_recs;
++
++		for (i = n; i > 0 && node_ext(ht, victims[i - 1])->num_recs > num_recs; i--)
++			victims[i] = victims[i - 1];
++		victims[i] = node;
++		n++;
++	}
++
++	for (i = 0; i < n; i++) {
++		struct fib_vrf_node_ext *ext = node_ext(ht, victims[i]);
++		uint32_t start = (ext->num_recs == 1) ? 0 : rte_rand_max(ht->mask + 1);
++
++		ret = pid_alloc(ht, ext->vrf[0], start, false, ext, FIB_VRF_NO_VRF);
++		if (ret < 0 || node_move(ht, lpm, rib, victims[i], (uint32_t)ret) != 0)
++			continue;
++
++		return ht_upsert(ht, vrf, prefix_id, next_hop);
++	}
++
++	return -ENOSPC;
++}
++
++/* Update the records of vrf in the prefixes covered by ip/depth that do not belong to vrf itself */
++static int
++subtree_set(struct fib_vrf_ht *ht, void *lpm, void *rib, const void *ip,
++	uint8_t depth, uint16_t vrf, uint64_t nh, bool have_nh)
++{
++	alignas(uint64_t) uint8_t child_ip[FIB_VRF_IP_MAX_SZ];
++	uint8_t child_depth;
++	void *child;
++	int ret;
++
++	for (child = ht->ops->rib_get_nxt_cover(rib, ip, depth, NULL);
++			child != NULL;
++			child = ht->ops->rib_get_nxt_cover(rib, ip, depth, child)) {
++		struct fib_vrf_node_ext *ext = node_ext(ht, child);
++
++		/* The subtree resolves through this route of vrf. */
++		if (ext_is_owner(ext, vrf))
++			continue;
++
++		if (have_nh) {
++			node_relocate_if_polarized(ht, lpm, rib, child, vrf);
++			ret = ext_set(ext, vrf, nh, false);
++			if (ret != 0)
++				return ret;
++			ret = record_upsert(ht, lpm, rib, vrf,
++				node_pid(ht, child), nh);
++			if (ret != 0)
++				return ret;
++			node_mark_polarized(ht, child);
++		} else {
++			ret = ext_del(ext, vrf);
++			/* Nothing inherited here, hence nothing below. */
++			if (ret == -ENOENT)
++				continue;
++			ht_delete(ht, vrf, node_pid(ht, child));
++			if (ret == 1)
++				node_refresh_polarized(ht, child);
++		}
++
++		ht->ops->rib_get_prefix(child, child_ip, &child_depth);
++		ret = subtree_set(ht, lpm, rib, child_ip, child_depth, vrf, nh, have_nh);
++		if (ret != 0)
++			return ret;
++	}
++
++	return 0;
++}
++
++/* Retire a prefix whose last owner is gone, with all its records. */
++static int
++remove_node(struct fib_vrf_ht *ht, void *lpm, void *rib, void *node, const void *ip, uint8_t depth)
++{
++	struct fib_vrf_node_ext *ext = node_ext(ht, node);
++	struct fib_vrf_chunk *chunk, *next;
++	uint16_t inline_vrf[FIB_VRF_EXT_RECS];
++	uint32_t prefix_id = node_pid(ht, node);
++	unsigned int i;
++	int ret;
++
++	/* The node is freed by the LPM delete, save what is needed. */
++	memcpy(inline_vrf, ext->vrf, sizeof(inline_vrf));
++	chunk = ext->head;
++
++	ret = ht->ops->lpm_modify(lpm, rib, ip, depth, 0, FIB_VRF_DEL);
++	if (ret != 0)
++		return ret;
++
++	rte_hash_del_key(ht->pid_map, &prefix_id);
++
++	for (i = 0; i < FIB_VRF_EXT_RECS; i++) {
++		if (inline_vrf[i] != FIB_VRF_NO_VRF)
++			ht_delete(ht, inline_vrf[i], prefix_id);
++	}
++	for (; chunk != NULL; chunk = next) {
++		for (i = 0; i < FIB_VRF_CHUNK_RECS; i++) {
++			if (chunk->vrf[i] != FIB_VRF_NO_VRF)
++				ht_delete(ht, chunk->vrf[i], prefix_id);
++		}
++		next = chunk->next;
++		rte_free(chunk);
++	}
++
++	return 0;
++}
++
++/* Drop the records of a prefix ID the LPM table never exposed. */
++static void
++drop_new_records(struct fib_vrf_ht *ht, uint16_t vrf, uint32_t prefix_id,
++	struct fib_vrf_node_ext *inherit, unsigned int n_inherit)
++{
++	struct fib_vrf_slot s;
++	unsigned int k, done = 0;
++
++	ht_delete(ht, vrf, prefix_id);
++	if (inherit == NULL)
++		return;
++
++	slot_first(&s);
++	for (k = 0; k < inherit->num_recs && done < n_inherit; k++, slot_next(inherit, &s)) {
++		if (*slot_vrf(inherit, &s) == vrf)
++			continue;
++
++		ht_delete(ht, *slot_vrf(inherit, &s), prefix_id);
++		done++;
++	}
++}
++
++static int
++route_add_new(struct fib_vrf_ht *ht, void *lpm, void *rib, uint16_t vrf, const void *ip,
++	uint8_t depth, uint64_t next_hop)
++{
++	struct fib_vrf_node_ext *ext, *pext = NULL;
++	struct fib_vrf_slot s;
++	void *parent, *node;
++	uint64_t old_nh = 0;
++	uint32_t prefix_id;
++	unsigned int k, n_inherit = 0;
++	bool have_old = false;
++	int ret;
++
++	/*
++	 * The new prefix inherits every VRF referencing its nearest ancestor:
++	 * those VRFs keep resolving to the ancestor nexthop in its range.
++	 */
++	parent = nearest_ancestor(ht, rib, ip, depth);
++	if (parent != NULL) {
++		pext = node_ext(ht, parent);
++		have_old = ext_get_nh(pext, vrf, &old_nh);
++		n_inherit = pext->num_recs - (have_old ? 1 : 0);
++	}
++
++	/* A multi-VRF prefix goes to an unpolarized bucket if there is one. */
++	ret = -ENOSPC;
++	if (n_inherit > 0)
++		ret = pid_alloc(ht, vrf, 0, true, pext, FIB_VRF_NO_VRF);
++	if (ret < 0)
++		ret = pid_alloc(ht, vrf, 0, false, pext, FIB_VRF_NO_VRF);
++	if (ret < 0)
++		return ret;
++
++	prefix_id = (uint32_t)ret;
++
++	/* Records must resolve before the LPM table returns the ID. */
++	ret = ht_upsert(ht, vrf, prefix_id, next_hop);
++	if (ret != 0)
++		return ret;
++
++	if (pext != NULL) {
++		unsigned int done = 0;
++
++		slot_first(&s);
++		for (k = 0; k < pext->num_recs; k++, slot_next(pext, &s)) {
++			if (*slot_vrf(pext, &s) == vrf)
++				continue;
++			ret = ht_upsert(ht, *slot_vrf(pext, &s), prefix_id,
++				*slot_nh(pext, &s));
++			if (ret != 0) {
++				drop_new_records(ht, vrf, prefix_id, pext, done);
++				return ret;
++			}
++
++			done++;
++		}
++	}
++
++	/* The records must be visible before the LPM table returns the ID. */
++	rte_atomic_thread_fence(rte_memory_order_release);
++	ret = ht->ops->lpm_modify(lpm, rib, ip, depth, prefix_id, FIB_VRF_ADD);
++	if (ret != 0)
++		goto drop_records;
++
++	node = ht->ops->rib_lookup_exact(rib, ip, depth);
++	ext = node_ext(ht, node);
++	ext_init(ext);
++	ret = ext_reserve(ext, 1 + n_inherit);
++	if (ret != 0)
++		goto remove_lpm;
++
++	ext_set(ext, vrf, next_hop, true);
++	if (pext != NULL) {
++		slot_first(&s);
++		for (k = 0; k < pext->num_recs; k++, slot_next(pext, &s)) {
++			if (*slot_vrf(pext, &s) != vrf)
++				ext_set(ext, *slot_vrf(pext, &s), *slot_nh(pext, &s), false);
++		}
++	}
++
++	ret = rte_hash_add_key_data(ht->pid_map, &prefix_id, node);
++	if (ret < 0)
++		goto remove_lpm;
++
++	node_mark_polarized(ht, node);
++
++	/* Sub-prefixes that resolved vrf through the ancestor now use nh. */
++	ret = subtree_set(ht, lpm, rib, ip, depth, vrf, next_hop, true);
++	if (ret != 0) {
++		subtree_set(ht, lpm, rib, ip, depth, vrf, old_nh, have_old);
++		remove_node(ht, lpm, rib, node, ip, depth);
++		return ret;
++	}
++
++	return 0;
++
++remove_lpm:
++	ext_free_chunks(ext);
++	ht->ops->lpm_modify(lpm, rib, ip, depth, 0, FIB_VRF_DEL);
++drop_records:
++	drop_new_records(ht, vrf, prefix_id, pext, n_inherit);
++
++	return ret;
++}
++
++static int
++route_add_existing(struct fib_vrf_ht *ht, void *lpm, void *rib, void *node,
++	uint16_t vrf, const void *ip, uint8_t depth, uint64_t next_hop)
++{
++	struct fib_vrf_node_ext *ext = node_ext(ht, node);
++	uint64_t old_nh = 0;
++	uint32_t prefix_id;
++	bool have_old, was_owner;
++	int ret;
++
++	was_owner = ext_is_owner(ext, vrf);
++	have_old = ext_get_nh(ext, vrf, &old_nh);
++
++	if (!was_owner)
++		node_relocate_if_polarized(ht, lpm, rib, node, vrf);
++
++	prefix_id = node_pid(ht, node);
++
++	ret = ext_set(ext, vrf, next_hop, true);
++	if (ret != 0)
++		return ret;
++
++	ret = record_upsert(ht, lpm, rib, vrf, prefix_id, next_hop);
++	if (ret != 0) {
++		if (have_old)
++			ext_set(ext, vrf, old_nh, was_owner);
++		else
++			ext_del(ext, vrf);
++		return ret;
++	}
++
++	node_mark_polarized(ht, node);
++
++	if (was_owner && old_nh == next_hop)
++		return 0;
++
++	ret = subtree_set(ht, lpm, rib, ip, depth, vrf, next_hop, true);
++	if (ret != 0) {
++		subtree_set(ht, lpm, rib, ip, depth, vrf, old_nh, have_old);
++		/* Making room for the subtree records may have moved the node. */
++		prefix_id = node_pid(ht, node);
++		if (have_old) {
++			ext_set(ext, vrf, old_nh, was_owner);
++			ht_upsert(ht, vrf, prefix_id, old_nh);
++		} else {
++			ext_del(ext, vrf);
++			ht_delete(ht, vrf, prefix_id);
++		}
++
++		return ret;
++	}
++
++	return 0;
++}
++
++static int
++route_del(struct fib_vrf_ht *ht, void *lpm, void *rib, void *node,
++	uint16_t vrf, const void *ip, uint8_t depth)
++{
++	struct fib_vrf_node_ext *ext;
++	uint64_t ls_nh = 0;
++	bool have_less_specific;
++	int ret;
++
++	ext = node_ext(ht, node);
++	if (!ext_is_owner(ext, vrf))
++		return -ENOENT;
++
++	/* find nexthop of the less specific route covering given node for the given VRF */
++	have_less_specific = ancestor_nexthop(ht, node, vrf, &ls_nh);
++
++	if (ext_count_owners(ext) == 1) {
++		ret = remove_node(ht, lpm, rib, node, ip, depth);
++		if (ret != 0)
++			return ret;
++	} else {
++		uint32_t prefix_id = node_pid(ht, node);
++
++		if (have_less_specific) {
++			ext_set(ext, vrf, ls_nh, false);
++			ht_upsert(ht, vrf, prefix_id, ls_nh);
++		} else {
++			ext_del(ext, vrf);
++			ht_delete(ht, vrf, prefix_id);
++		}
++
++		if (ext->num_recs == 1)
++			node_refresh_polarized(ht, node);
++	}
++
++	/* Only updates and deletions are left, they cannot run out of space. */
++	return subtree_set(ht, lpm, rib, ip, depth, vrf, ls_nh, have_less_specific);
++}
++
++/* The default route is the per-VRF nexthop returned on a hash miss. */
++static void
++default_route_modify(struct fib_vrf_ht *ht, uint16_t vrf, uint64_t next_hop, enum fib_vrf_op op)
++{
++	ht->def_nh[vrf] = (op == FIB_VRF_ADD) ? next_hop : ht->conf_def_nh[vrf];
++}
++
++int
++fib_vrf_modify(struct fib_vrf_ht *ht, void *lpm, void *rib, void *vrf_rib, uint16_t vrf,
++	const void *ip, uint8_t depth, uint64_t next_hop, enum fib_vrf_op op)
++{
++	void *node, *vrf_node;
++	int ret = 0;
++	bool inserted = false;
++
++	if (ht == NULL || lpm == NULL || rib == NULL || vrf_rib == NULL ||
++			ip == NULL || vrf >= ht->num_vrfs)
++		return -EINVAL;
++
++	/* The RIB of the VRF mirrors its routes and tells which ones exist. */
++	vrf_node = ht->ops->rib_lookup_exact(vrf_rib, ip, depth);
++	switch (op) {
++	case FIB_VRF_ADD:
++		if (vrf_node == NULL) {
++			vrf_node = ht->ops->rib_insert(vrf_rib, ip, depth);
++			if (vrf_node == NULL)
++				return -rte_errno;
++
++			inserted = true;
++		}
++
++		if (depth == 0) {
++			default_route_modify(ht, vrf, next_hop, op);
++		} else {
++			node = ht->ops->rib_lookup_exact(rib, ip, depth);
++			if (node != NULL)
++				ret = route_add_existing(ht, lpm, rib, node, vrf,
++					ip, depth, next_hop);
++			else
++				ret = route_add_new(ht, lpm, rib, vrf, ip, depth, next_hop);
++		}
++
++		if (ret != 0 && inserted)
++			ht->ops->rib_remove(vrf_rib, ip, depth);
++
++		if (ret == 0)
++			ht->ops->rib_set_nh(vrf_node, next_hop);
++
++		break;
++	case FIB_VRF_DEL:
++		if (vrf_node == NULL)
++			return -ENOENT;
++
++		if (depth == 0)
++			default_route_modify(ht, vrf, next_hop, op);
++		else {
++			node = ht->ops->rib_lookup_exact(rib, ip, depth);
++			if (node == NULL)
++				return -ENOENT;
++
++			ret = route_del(ht, lpm, rib, node, vrf, ip, depth);
++		}
++
++		if (ret == 0)
++			ht->ops->rib_remove(vrf_rib, ip, depth);
++
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return ret;
++}
++
++size_t
++fib_vrf_rib_ext_sz(void)
++{
++	return sizeof(struct fib_vrf_node_ext);
++}
++
++static uint64_t *
++bitmap_alloc(const char *name, uint32_t nb_bits, int socket_id)
++{
++	return rte_zmalloc_socket(name, RTE_ALIGN_CEIL(nb_bits, 64) / 8,
++		RTE_CACHE_LINE_SIZE, socket_id);
++}
++
++int
++fib_vrf_ht_init(struct fib_vrf_ht *ht, const char *name, int socket_id,
++	const struct fib_vrf_ops *ops, uint16_t num_vrfs, uint64_t default_nh,
++	const uint64_t *vrf_default_nh, uint32_t max_routes)
++{
++	char mem_name[64];
++	struct rte_hash_parameters hash_params = {
++		.key_len = sizeof(uint32_t),
++		.hash_func = rte_hash_crc,
++		.socket_id = socket_id,
++	};
++	uint64_t nb_records, nb_buckets;
++	uint16_t v;
++
++	if (ht == NULL || name == NULL || ops == NULL || num_vrfs == 0 || max_routes == 0)
++		return -EINVAL;
++
++	memset(ht, 0, sizeof(*ht));
++	ht->ops = ops;
++	ht->num_vrfs = num_vrfs;
++
++	/*
++	 * Worst case every VRF references every prefix: size the table for
++	 * half load with that many records.
++	 */
++	nb_records = (uint64_t)max_routes * num_vrfs * 2;
++	nb_buckets = nb_records / FIB_VRF_HT_ASSOC;
++	nb_buckets = RTE_MAX(nb_buckets, RTE_BIT64(FIB_VRF_HT_MIN_LOG2));
++	nb_buckets = RTE_MIN(nb_buckets, RTE_BIT64(FIB_VRF_HT_MAX_LOG2));
++
++	ht->bits = rte_log2_u64(nb_buckets);
++	if (RTE_BIT64(ht->bits) < nb_buckets)
++		ht->bits++;
++	ht->mask = RTE_BIT32(ht->bits) - 1;
++
++	snprintf(mem_name, sizeof(mem_name), "VRF_HT_%s", name);
++	ht->buckets = rte_zmalloc_socket(mem_name,
++		sizeof(struct fib_vrf_bucket) * RTE_BIT64(ht->bits),
++		RTE_CACHE_LINE_SIZE, socket_id);
++
++	snprintf(mem_name, sizeof(mem_name), "VRF_FULL_%s", name);
++	ht->full_bmp = bitmap_alloc(mem_name, RTE_BIT32(ht->bits), socket_id);
++
++	snprintf(mem_name, sizeof(mem_name), "VRF_POL_%s", name);
++	ht->polarized_bmp = bitmap_alloc(mem_name, RTE_BIT32(ht->bits),
++		socket_id);
++
++	snprintf(mem_name, sizeof(mem_name), "VRF_DEFNH_%s", name);
++	ht->def_nh = rte_zmalloc_socket(mem_name,
++		sizeof(uint64_t) * num_vrfs * 2, RTE_CACHE_LINE_SIZE, socket_id);
++	if (ht->buckets == NULL || ht->full_bmp == NULL ||
++			ht->polarized_bmp == NULL || ht->def_nh == NULL)
++		goto nomem;
++
++	ht->conf_def_nh = ht->def_nh + num_vrfs;
++	for (v = 0; v < num_vrfs; v++) {
++		ht->def_nh[v] = (vrf_default_nh != NULL) ?
++			vrf_default_nh[v] : default_nh;
++		ht->conf_def_nh[v] = ht->def_nh[v];
++	}
++
++	snprintf(mem_name, sizeof(mem_name), "VRF_PID_%s", name);
++	hash_params.name = mem_name;
++	/* x1.5 should be enough */
++	hash_params.entries = RTE_MAX(max_routes + max_routes / 2, 64U);
++	ht->pid_map = rte_hash_create(&hash_params);
++	if (ht->pid_map == NULL)
++		goto nomem;
++
++	return 0;
++
++nomem:
++	fib_vrf_ht_free(ht, NULL);
++
++	return -ENOMEM;
++}
++
++void
++fib_vrf_ht_free(struct fib_vrf_ht *ht, void *rib)
++{
++	void *node;
++
++	if (ht == NULL)
++		return;
++
++	/* Records of prefixes still present, chained outside the RIB nodes. */
++	if (rib != NULL) {
++		for (node = ht->ops->rib_walk(rib, NULL); node != NULL;
++				node = ht->ops->rib_walk(rib, node))
++			ext_free_chunks(node_ext(ht, node));
++	}
++
++	rte_hash_free(ht->pid_map);
++	rte_free(ht->def_nh);
++	rte_free(ht->polarized_bmp);
++	rte_free(ht->full_bmp);
++	rte_free(ht->buckets);
++	memset(ht, 0, sizeof(*ht));
++}
+diff --git a/lib/fib/fib_vrf.h b/lib/fib/fib_vrf.h
+new file mode 100644
+index 0000000000..ea6a2bc09e
+--- /dev/null
++++ b/lib/fib/fib_vrf.h
+@@ -0,0 +1,277 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Intel Corporation
++ */
++
++#ifndef _FIB_VRF_H_
++#define _FIB_VRF_H_
++
++/**
++ * @file
++ * Hash based VRF resolution shared by the DIR24_8 (IPv4) and TRIE (IPv6)
++ * dataplanes.
++ *
++ * All VRFs share a single LPM table mapping an address to the prefix ID of the
++ * longest prefix present in any VRF (0 meaning no route at all). A hash table
++ * then maps (VRF, prefix ID) to the nexthop this VRF resolves to for that
++ * prefix, and a miss returns the per-VRF default nexthop.
++ *
++ * The dataplane keeps an internal RIB holding the prefixes of all the VRFs,
++ * with the prefix ID as node nexthop. Every node carries a fib_vrf_node_ext
++ * listing the VRFs that have a route either at the node prefix (owner records)
++ * or at a covering prefix (inherited records), together with the nexthop each
++ * of them resolves to. The invariant maintained by fib_vrf_modify() is: for
++ * every node N and every VRF V having a route covering N, the hash table holds
++ * (V, pid(N)) -> nexthop of the longest such route, and no record exists for
++ * VRFs without a covering route. The per-VRF RIBs exposed to the user are
++ * mirrors of the routes of each VRF and are maintained alongside.
++ *
++ * The address family specific bits (RIB access, LPM table update) are
++ * abstracted through fib_vrf_ops, so the same code drives both dataplanes.
++ */
++
++#include <stdalign.h>
++#include <stdbool.h>
++#include <stdint.h>
++
++#include <rte_branch_prediction.h>
++#include <rte_common.h>
++#include <rte_hash_crc.h>
++#include <rte_prefetch.h>
++#include <rte_stdatomic.h>
++
++/** Number of records per hash bucket. */
++#define FIB_VRF_HT_ASSOC	8
++/** Largest address (in bytes) handled by the generic modify code. */
++#define FIB_VRF_IP_MAX_SZ	16
++/** Prefix IDs are stored in 4 byte LPM entries with one flag bit. */
++#define FIB_VRF_PREFIX_ID_MAX	((1U << 31) - 1)
++
++struct rte_hash;
++
++enum fib_vrf_op {
++	FIB_VRF_ADD,
++	FIB_VRF_DEL,
++};
++
++/**
++ * Address family specific operations. Addresses are passed as opaque pointers
++ * (uint32_t for IPv4, struct rte_ipv6_addr for IPv6). Node handles are opaque
++ * RIB node pointers.
++ */
++struct fib_vrf_ops {
++	/** Longest prefix match in the RIB, NULL if none. */
++	void *(*rib_lookup)(void *rib, const void *ip);
++	/** Exact match in the RIB, NULL if none. */
++	void *(*rib_lookup_exact)(void *rib, const void *ip, uint8_t depth);
++	/** Nearest valid ancestor of a node, NULL if none. */
++	void *(*rib_lookup_parent)(void *node);
++	/**
++	 * Iterate over the prefixes directly covered by ip/depth (the
++	 * RTE_RIB_GET_NXT_COVER semantic), last == NULL starts the walk.
++	 */
++	void *(*rib_get_nxt_cover)(void *rib, const void *ip, uint8_t depth,
++		void *last);
++	/** Iterate over all the prefixes of the RIB, last == NULL starts. */
++	void *(*rib_walk)(void *rib, void *last);
++	/** Insert a prefix in the RIB, NULL on failure with rte_errno set. */
++	void *(*rib_insert)(void *rib, const void *ip, uint8_t depth);
++	/** Remove a prefix from the RIB. */
++	void (*rib_remove)(void *rib, const void *ip, uint8_t depth);
++	/** Copy the node prefix into ip (FIB_VRF_IP_MAX_SZ bytes) and depth. */
++	void (*rib_get_prefix)(const void *node, void *ip, uint8_t *depth);
++	/** Node nexthop, i.e. its prefix ID in the internal RIB. */
++	uint64_t (*rib_get_nh)(const void *node);
++	/** Set the node nexthop. */
++	void (*rib_set_nh)(void *node, uint64_t nh);
++	/** Node user extension area. */
++	void *(*rib_get_ext)(void *node);
++	/**
++	 * Install (op == FIB_VRF_ADD, inserting the RIB node) or remove
++	 * (op == FIB_VRF_DEL, removing the RIB node) ip/depth in the LPM table
++	 * with prefix_id as its value.
++	 */
++	int (*lpm_modify)(void *lpm, void *rib, const void *ip, uint8_t depth,
++		uint64_t prefix_id, enum fib_vrf_op op);
++};
++
++struct __rte_cache_aligned fib_vrf_bucket {
++	RTE_ATOMIC(uint64_t) key[FIB_VRF_HT_ASSOC];
++	uint64_t val[FIB_VRF_HT_ASSOC];
++};
++
++struct fib_vrf_ht {
++	/* Lookup fast path. */
++	struct fib_vrf_bucket *buckets;
++	uint64_t *def_nh;		/**< Per-VRF default nexthop. */
++	uint32_t mask;			/**< Number of buckets - 1. */
++	uint16_t num_vrfs;
++	/* Control path. */
++	uint32_t bits;			/**< log2 of the number of buckets. */
++	uint64_t *full_bmp;		/**< Bit set: bucket has no free slot. */
++	/** Bit set: bucket holds a record of a multi-VRF prefix. */
++	uint64_t *polarized_bmp;
++	uint64_t *conf_def_nh;		/**< Configured default nexthops. */
++	struct rte_hash *pid_map;	/**< prefix ID -> RIB node. */
++	const struct fib_vrf_ops *ops;
++};
++
++static inline uint64_t
++fib_vrf_key(uint16_t vrf, uint32_t prefix_id)
++{
++	return (uint64_t)vrf << 32 | prefix_id;
++}
++
++static inline uint32_t
++fib_vrf_bucket_idx(const struct fib_vrf_ht *ht, uint64_t key)
++{
++	return rte_hash_crc_8byte(key, 0) & ht->mask;
++}
++
++/*
++ * A record is published by writing its value before its key. The acquire
++ * load (a plain load on x86) makes sure that the value read after a key match
++ * is not an older one, as a plain load reordered before the key load could be
++ * on weakly ordered architectures.
++ */
++static inline uint64_t
++fib_vrf_bucket_search(const struct fib_vrf_ht *ht,
++	const struct fib_vrf_bucket *b, uint64_t key, uint16_t vrf)
++{
++	unsigned int j;
++
++	for (j = 0; j < FIB_VRF_HT_ASSOC; j++) {
++		if (rte_atomic_load_explicit(&b->key[j],
++				rte_memory_order_acquire) == key)
++			return b->val[j];
++	}
++	return ht->def_nh[vrf];
++}
++
++/**
++ * Resolve the nexthop of one VRF for the prefix ID returned by the LPM table.
++ */
++static inline uint64_t
++fib_vrf_ht_lookup(const struct fib_vrf_ht *ht, uint16_t vrf,
++	uint32_t prefix_id)
++{
++	uint64_t key;
++
++	if (unlikely(prefix_id == 0))
++		return ht->def_nh[vrf];
++	key = fib_vrf_key(vrf, prefix_id);
++	return fib_vrf_bucket_search(ht, &ht->buckets[fib_vrf_bucket_idx(ht, key)],
++		key, vrf);
++}
++
++#define FIB_VRF_RESOLVE_BURST	32
++
++/* Resolve up to FIB_VRF_RESOLVE_BURST prefix IDs, prefetching their buckets. */
++static inline void
++fib_vrf_ht_resolve_burst(const struct fib_vrf_ht *ht, const uint16_t *vrfs,
++	uint64_t *next_hops, unsigned int n)
++{
++	uint64_t keys[FIB_VRF_RESOLVE_BURST];
++	uint32_t bidx[FIB_VRF_RESOLVE_BURST];
++	unsigned int j;
++
++	for (j = 0; j < n; j++) {
++		keys[j] = fib_vrf_key(vrfs[j], (uint32_t)next_hops[j]);
++		bidx[j] = fib_vrf_bucket_idx(ht, keys[j]);
++		rte_prefetch0(&ht->buckets[bidx[j]]);
++	}
++	for (j = 0; j < n; j++) {
++		if (unlikely((uint32_t)next_hops[j] == 0)) {
++			next_hops[j] = ht->def_nh[vrfs[j]];
++			continue;
++		}
++		next_hops[j] = fib_vrf_bucket_search(ht, &ht->buckets[bidx[j]],
++			keys[j], vrfs[j]);
++	}
++}
++
++/**
++ * Turn the prefix IDs returned by the LPM table into nexthops in place.
++ *
++ * @param ht
++ *   Hash table.
++ * @param vrfs
++ *   Per address VRF, NULL means VRF 0 for every address.
++ * @param next_hops
++ *   Prefix IDs on entry (0 = no route), nexthops on return.
++ * @param n
++ *   Number of addresses.
++ */
++static inline void
++fib_vrf_ht_resolve(const struct fib_vrf_ht *ht, const uint16_t *vrfs,
++	uint64_t *next_hops, unsigned int n)
++{
++	unsigned int i;
++
++	if (unlikely(vrfs == NULL)) {
++		for (i = 0; i < n; i++)
++			next_hops[i] = fib_vrf_ht_lookup(ht, 0,
++				(uint32_t)next_hops[i]);
++		return;
++	}
++
++	for (i = 0; i + FIB_VRF_RESOLVE_BURST <= n; i += FIB_VRF_RESOLVE_BURST)
++		fib_vrf_ht_resolve_burst(ht, vrfs + i, next_hops + i,
++			FIB_VRF_RESOLVE_BURST);
++	if (i < n)
++		fib_vrf_ht_resolve_burst(ht, vrfs + i, next_hops + i, n - i);
++}
++
++#ifdef CC_AVX512_SUPPORT
++/** AVX512 flavour of fib_vrf_ht_resolve(). */
++void
++fib_vrf_ht_resolve_avx512(const struct fib_vrf_ht *ht, const uint16_t *vrfs,
++	uint64_t *next_hops, unsigned int n);
++#endif
++
++/** Size of the node extension of the internal RIB. */
++size_t
++fib_vrf_rib_ext_sz(void);
++
++/**
++ * Initialize a hash table. The LPM table must return prefix IDs allocated by
++ * fib_vrf_modify() and 0 for addresses without any route.
++ *
++ * @param num_vrfs
++ *   Number of VRFs, at least 1.
++ * @param default_nh
++ *   Default nexthop of every VRF, unless vrf_default_nh is set.
++ * @param vrf_default_nh
++ *   Optional per-VRF default nexthops (num_vrfs entries).
++ * @param max_routes
++ *   Maximum number of distinct prefixes (across all VRFs).
++ */
++int
++fib_vrf_ht_init(struct fib_vrf_ht *ht, const char *name, int socket_id,
++	const struct fib_vrf_ops *ops, uint16_t num_vrfs, uint64_t default_nh,
++	const uint64_t *vrf_default_nh, uint32_t max_routes);
++
++/**
++ * Release the hash table resources and the node extensions of the internal
++ * RIB, which must still be intact.
++ */
++void
++fib_vrf_ht_free(struct fib_vrf_ht *ht, void *rib);
++
++/**
++ * Add or delete a route of one VRF. ip must be masked to depth already.
++ *
++ * @param ht
++ *   Hash table.
++ * @param lpm
++ *   LPM table shared by all the VRFs.
++ * @param rib
++ *   Internal RIB holding the prefixes of all the VRFs.
++ * @param vrf_rib
++ *   RIB of the VRF, mirroring its routes.
++ */
++int
++fib_vrf_modify(struct fib_vrf_ht *ht, void *lpm, void *rib, void *vrf_rib,
++	uint16_t vrf, const void *ip, uint8_t depth, uint64_t next_hop,
++	enum fib_vrf_op op);
++
++#endif /* _FIB_VRF_H_ */
+diff --git a/lib/fib/fib_vrf_avx512.c b/lib/fib/fib_vrf_avx512.c
+new file mode 100644
+index 0000000000..4a4d3b604a
+--- /dev/null
++++ b/lib/fib/fib_vrf_avx512.c
+@@ -0,0 +1,142 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Intel Corporation
++ */
++
++#include <stdalign.h>
++
++#include <rte_bitops.h>
++#include <rte_vect.h>
++
++#include "fib_vrf.h"
++
++/* log2(sizeof(struct fib_vrf_bucket)) */
++#define BUCKET_SHIFT	7
++
++/* Chunks of 8 lookups hashed, and their buckets prefetched, ahead of search. */
++#define RESOLVE_AHEAD	3
++/* Hashed chunks kept for the search, a power of 2 above RESOLVE_AHEAD. */
++#define RESOLVE_RING	4
++
++/*
++ * Barrett reduction of the bit-reflected CRC32C of a 64-bit key: x^96 / P
++ * without its x^64 term, and P placing the remainder in bits 64-95.
++ */
++#define CRC32C_MU	0xa434f61c6f5389f8ULL
++#define CRC32C_POLY	0x105ec76f0ULL
++
++/* Searched for the prefix ID 0 (no route at all), never matches a key. */
++static const struct fib_vrf_bucket no_route_bucket = {
++	.key = { UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX,
++		UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX },
++};
++
++/* rte_hash_crc_8byte(key, 0) of 8 keys, in the low 32 bits of each lane. */
++static inline __m512i
++crc32c_x8(__m512i keys)
++{
++	const __m512i mu = _mm512_set1_epi64(CRC32C_MU);
++	const __m512i poly = _mm512_set1_epi64(CRC32C_POLY);
++	__m512i even, odd, quot;
++
++	/* The x^64 term of the constant contributes the key itself. */
++	even = _mm512_clmulepi64_epi128(keys, mu, 0x00);
++	odd = _mm512_clmulepi64_epi128(keys, mu, 0x01);
++	quot = _mm512_xor_si512(keys,
++		_mm512_slli_epi64(_mm512_unpacklo_epi64(even, odd), 1));
++
++	even = _mm512_clmulepi64_epi128(quot, poly, 0x00);
++	odd = _mm512_clmulepi64_epi128(quot, poly, 0x01);
++	return _mm512_unpackhi_epi64(even, odd);
++}
++
++/* Prefetch from registers: reloading the vector just stored stalls. */
++static inline void
++prefetch_x8(__m512i ptrs)
++{
++	__m256i lo = _mm512_castsi512_si256(ptrs);
++	__m256i hi = _mm512_extracti64x4_epi64(ptrs, 1);
++	__m128i p[4] = {
++		_mm256_castsi256_si128(lo), _mm256_extracti128_si256(lo, 1),
++		_mm256_castsi256_si128(hi), _mm256_extracti128_si256(hi, 1),
++	};
++	unsigned int i;
++
++	for (i = 0; i < RTE_DIM(p); i++) {
++		rte_prefetch0((const void *)_mm_cvtsi128_si64(p[i]));
++		rte_prefetch0((const void *)_mm_extract_epi64(p[i], 1));
++	}
++}
++
++/* Hash 8 lookups: store their keys and buckets, and prefetch the buckets. */
++static inline void
++hash_x8(const struct fib_vrf_ht *ht, const uint16_t *vrfs,
++	const uint64_t *next_hops, uint64_t *keys,
++	const struct fib_vrf_bucket **bkt)
++{
++	__m512i nh = _mm512_loadu_si512(next_hops);
++	__m512i vrf = (vrfs != NULL) ? _mm512_cvtepu16_epi64(
++		_mm_loadu_si128((const __m128i *)vrfs)) : _mm512_setzero_si512();
++	__m512i key = _mm512_or_si512(_mm512_slli_epi64(vrf, 32), nh);
++	__m512i ptr = _mm512_add_epi64(_mm512_set1_epi64((uintptr_t)ht->buckets),
++		_mm512_and_si512(_mm512_slli_epi64(crc32c_x8(key), BUCKET_SHIFT),
++			_mm512_set1_epi64((uint64_t)ht->mask << BUCKET_SHIFT)));
++
++	ptr = _mm512_mask_mov_epi64(ptr, _mm512_testn_epi64_mask(nh, nh),
++		_mm512_set1_epi64((uintptr_t)&no_route_bucket));
++	_mm512_store_si512(keys, key);
++	_mm512_store_si512(bkt, ptr);
++	prefetch_x8(ptr);
++}
++
++/* Search 8 hashed lookups in their buckets. */
++static inline void
++search_x8(const struct fib_vrf_ht *ht, const uint16_t *vrfs,
++	const uint64_t *keys, const struct fib_vrf_bucket * const *bkt,
++	uint64_t *next_hops)
++{
++	unsigned int i;
++
++	for (i = 0; i < 8; i++) {
++		const struct fib_vrf_bucket *b = bkt[i];
++		/* The keys are read as plain memory, like the LPM table entries. */
++		__mmask8 match = _mm512_cmpeq_epi64_mask(
++			_mm512_loadu_si512(RTE_CAST_PTR(const void *, b->key)),
++			_mm512_set1_epi64(keys[i]));
++
++		if (unlikely(match == 0))
++			next_hops[i] = ht->def_nh[(vrfs != NULL) ? vrfs[i] : 0];
++		else
++			next_hops[i] = b->val[rte_ctz32(match)];
++	}
++}
++
++void
++fib_vrf_ht_resolve_avx512(const struct fib_vrf_ht *ht, const uint16_t *vrfs,
++	uint64_t *next_hops, unsigned int n)
++{
++	alignas(64) uint64_t keys[RESOLVE_RING][8];
++	alignas(64) const struct fib_vrf_bucket *bkt[RESOLVE_RING][8];
++	unsigned int nb = RTE_ALIGN_FLOOR(n, 8);
++	unsigned int i, s;
++
++	RTE_BUILD_BUG_ON(sizeof(struct fib_vrf_bucket) != RTE_BIT32(BUCKET_SHIFT));
++	RTE_BUILD_BUG_ON(RESOLVE_AHEAD >= RESOLVE_RING);
++
++	for (i = 0; i < nb + RESOLVE_AHEAD * 8; i += 8) {
++		if (i < nb) {
++			s = (i / 8) % RESOLVE_RING;
++			hash_x8(ht, (vrfs != NULL) ? vrfs + i : NULL, next_hops + i,
++				keys[s], bkt[s]);
++		}
++		if (i >= RESOLVE_AHEAD * 8) {
++			unsigned int c = i - RESOLVE_AHEAD * 8;
++
++			s = (c / 8) % RESOLVE_RING;
++			search_x8(ht, (vrfs != NULL) ? vrfs + c : NULL, keys[s],
++				bkt[s], next_hops + c);
++		}
++	}
++	for (i = nb; i < n; i++)
++		next_hops[i] = fib_vrf_ht_lookup(ht, (vrfs != NULL) ? vrfs[i] : 0,
++			(uint32_t)next_hops[i]);
++}
+diff --git a/lib/fib/meson.build b/lib/fib/meson.build
+index f24f679039..1b8ab4859a 100644
+--- a/lib/fib/meson.build
++++ b/lib/fib/meson.build
+@@ -2,14 +2,32 @@
+ # Copyright(c) 2018 Vladimir Medvedkin <medvedkinv@gmail.com>
+ # Copyright(c) 2019 Intel Corporation
+ 
+-sources = files('rte_fib.c', 'rte_fib6.c', 'dir24_8.c', 'dir8_16_8.c', 'trie.c')
++sources = files(
++        'dir24_8.c',
++        'dir24_8_vrf.c',
++        'dir8_16_8.c',
++        'fib_vrf.c',
++        'rte_fib.c',
++        'rte_fib6.c',
++        'trie.c',
++)
+ headers = files('rte_fib.h', 'rte_fib6.h')
+ deps += ['rib']
+ deps += ['rcu']
+ deps += ['net']
++deps += ['hash']
+ 
+ if dpdk_conf.has('RTE_ARCH_X86_64')
+-    sources_avx512 += files('dir24_8_avx512.c', 'dir8_16_8_avx512.c', 'trie_avx512.c')
++    sources_avx512 += files(
++            'dir24_8_avx512.c',
++            'dir8_16_8_avx512.c',
++            'fib_vrf_avx512.c',
++            'trie_avx512.c',
++    )
++    # the VRF lookups hash the keys with VPCLMULQDQ
++    if cc.has_argument('-mvpclmulqdq')
++        cflags_avx512 += ['-mvpclmulqdq']
++    endif
+ elif dpdk_conf.has('RTE_ARCH_RISCV')
+     sources += files('dir24_8_rvv.c')
+ endif
+diff --git a/lib/fib/rte_fib.c b/lib/fib/rte_fib.c
+index 795031edcd..ac7f1b133b 100644
+--- a/lib/fib/rte_fib.c
++++ b/lib/fib/rte_fib.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <stdint.h>
++#include <stdbool.h>
+ #include <string.h>
+ #include <sys/queue.h>
+ 
+@@ -16,8 +17,11 @@
+ 
+ #include <rte_rib.h>
+ #include <rte_fib.h>
++#include <rte_vect.h>
++#include <rte_cpuflags.h>
+ 
+ #include "dir24_8.h"
++#include "dir24_8_vrf.h"
+ #include "dir8_16_8.h"
+ #include "fib_log.h"
+ 
+@@ -50,6 +54,13 @@ struct rte_fib {
+ 	uint16_t		max_vrfs; /**< Number of VRFs (0/1 = single). */
+ };
+ 
++/* Multi-VRF DIR24_8 shares one RIB and resolves VRFs through a hash table. */
++static inline bool
++fib_is_dir24_8_vrf(const struct rte_fib *fib)
++{
++	return fib->type == RTE_FIB_DIR24_8 && fib->max_vrfs > 1;
++}
++
+ static void
+ dummy_lookup(void *fib_p, const uint16_t *vrf_ids __rte_unused,
+ 	const uint32_t *ips, uint64_t *next_hops, const unsigned int n)
+@@ -107,12 +118,23 @@ init_dataplane(struct rte_fib *fib, __rte_unused int socket_id,
+ 		fib->modify = dummy_modify;
+ 		return 0;
+ 	case RTE_FIB_DIR24_8:
+-		fib->dp = dir24_8_create(dp_name, socket_id, conf);
+-		if (fib->dp == NULL)
+-			return -rte_errno;
+-		fib->lookup = dir24_8_get_lookup_fn(fib->dp,
+-			RTE_FIB_LOOKUP_DEFAULT, !!(fib->flags & RTE_FIB_F_LOOKUP_NETWORK_ORDER));
+-		fib->modify = dir24_8_modify;
++		if (fib_is_dir24_8_vrf(fib)) {
++			fib->dp = dir24_8_vrf_create(dp_name, socket_id, conf);
++			if (fib->dp == NULL)
++				return -rte_errno;
++			fib->lookup = dir24_8_vrf_get_lookup_fn(fib->dp,
++				RTE_FIB_LOOKUP_DEFAULT,
++				!!(fib->flags & RTE_FIB_F_LOOKUP_NETWORK_ORDER));
++			fib->modify = dir24_8_vrf_modify;
++		} else {
++			fib->dp = dir24_8_create(dp_name, socket_id, conf);
++			if (fib->dp == NULL)
++				return -rte_errno;
++			fib->lookup = dir24_8_get_lookup_fn(fib->dp,
++				RTE_FIB_LOOKUP_DEFAULT,
++				!!(fib->flags & RTE_FIB_F_LOOKUP_NETWORK_ORDER));
++			fib->modify = dir24_8_modify;
++		}
+ 		return 0;
+ 	case RTE_FIB_DIR8_16_8:
+ 		fib->dp = dir8_16_8_create(dp_name, socket_id, conf);
+@@ -165,19 +187,14 @@ rte_fib_lookup_bulk(struct rte_fib *fib, uint32_t *ips,
+ static void
+ free_dataplane(struct rte_fib *fib);
+ 
+-/*
+- * Allocate the RIB array and create the FIB's RIBs: ribs[0] is the main RIB
+- * (named after the FIB), plus one independent RIB per extra VRF. A single-VRF
+- * FIB still keeps a one-element array so ribs[0] is always the main RIB.
+- */
+ static int
+ fib_create_ribs(struct rte_fib *fib, const char *name,
+ 	const struct rte_rib_conf *rib_conf, int socket_id)
+ {
+-	uint16_t v, num_vrfs = RTE_MAX(fib->max_vrfs, 1);
++	uint16_t v, num_ribs = RTE_MAX(fib->max_vrfs, 1);
+ 
+ 	fib->ribs = rte_zmalloc_socket(NULL,
+-		(size_t)num_vrfs * sizeof(struct rte_rib *),
++		(size_t)num_ribs * sizeof(struct rte_rib *),
+ 		RTE_CACHE_LINE_SIZE, socket_id);
+ 	if (fib->ribs == NULL)
+ 		return -ENOMEM;
+@@ -186,12 +203,7 @@ fib_create_ribs(struct rte_fib *fib, const char *name,
+ 	if (fib->ribs[0] == NULL)
+ 		return -rte_errno;
+ 
+-	for (v = 1; v < num_vrfs; v++) {
+-		/*
+-		 * Derive a short unique RIB name from the FIB pointer: the
+-		 * user name plus a "_vN" suffix could overflow the RIB name
+-		 * length limit.
+-		 */
++	for (v = 1; v < num_ribs; v++) {
+ 		char rib_name[RTE_FIB_NAMESIZE];
+ 
+ 		snprintf(rib_name, sizeof(rib_name), "%p-v%u", (void *)fib, v);
+@@ -199,18 +211,18 @@ fib_create_ribs(struct rte_fib *fib, const char *name,
+ 		if (fib->ribs[v] == NULL)
+ 			return -rte_errno;
+ 	}
++
+ 	return 0;
+ }
+ 
+-/* Free every RIB and the RIB array. */
+ static void
+ fib_free_ribs(struct rte_fib *fib)
+ {
+-	uint16_t v, num_vrfs = RTE_MAX(fib->max_vrfs, 1);
++	uint16_t v, num_ribs = RTE_MAX(fib->max_vrfs, 1);
+ 
+ 	if (fib->ribs == NULL)
+ 		return;
+-	for (v = 0; v < num_vrfs; v++)
++	for (v = 0; v < num_ribs; v++)
+ 		rte_rib_free(fib->ribs[v]);
+ 	rte_free(fib->ribs);
+ 	fib->ribs = NULL;
+@@ -233,7 +245,8 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
+ 			(conf->flags & ~RTE_FIB_ALLOWED_FLAGS) ||
+ 			(conf->type > RTE_FIB_DIR8_16_8) ||
+ 			(conf->max_vrfs >= 2 &&
+-				conf->type != RTE_FIB_DIR8_16_8)) {
++				conf->type != RTE_FIB_DIR8_16_8 &&
++				conf->type != RTE_FIB_DIR24_8)) {
+ 		rte_errno = EINVAL;
+ 		return NULL;
+ 	}
+@@ -243,7 +256,6 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
+ 
+ 	snprintf(mem_name, sizeof(mem_name), "FIB_%s", name);
+ 
+-	/* allocate tailq entry */
+ 	te = rte_zmalloc("FIB_TAILQ_ENTRY", sizeof(*te), 0);
+ 	if (te == NULL) {
+ 		FIB_LOG(ERR,
+@@ -252,7 +264,6 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
+ 		return NULL;
+ 	}
+ 
+-	/* Allocate memory to store the FIB data structures. */
+ 	fib = rte_zmalloc_socket(mem_name,
+ 		sizeof(struct rte_fib),	RTE_CACHE_LINE_SIZE, socket_id);
+ 	if (fib == NULL) {
+@@ -287,7 +298,6 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
+ 
+ 	rte_mcfg_tailq_write_lock();
+ 
+-	/* guarantee there's no existing */
+ 	TAILQ_FOREACH(tmp_te, fib_list, next) {
+ 		if (strncmp(name, ((struct rte_fib *)tmp_te->data)->name,
+ 				RTE_FIB_NAMESIZE) == 0) {
+@@ -305,8 +315,9 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
+ 	return fib;
+ 
+ free_ribs:
+-	fib_free_ribs(fib);
++	/* The dataplane may hold references to RIB nodes, free it first. */
+ 	free_dataplane(fib);
++	fib_free_ribs(fib);
+ free_fib:
+ 	rte_free(fib);
+ free_te:
+@@ -348,7 +359,10 @@ free_dataplane(struct rte_fib *fib)
+ 	case RTE_FIB_DUMMY:
+ 		return;
+ 	case RTE_FIB_DIR24_8:
+-		dir24_8_free(fib->dp);
++		if (fib_is_dir24_8_vrf(fib))
++			dir24_8_vrf_free(fib->dp);
++		else
++			dir24_8_free(fib->dp);
+ 		return;
+ 	case RTE_FIB_DIR8_16_8:
+ 		dir8_16_8_free(fib->dp);
+@@ -372,7 +386,6 @@ rte_fib_free(struct rte_fib *fib)
+ 
+ 	rte_mcfg_tailq_write_lock();
+ 
+-	/* find our tailq entry */
+ 	TAILQ_FOREACH(te, fib_list, next) {
+ 		if (te->data == (void *)fib)
+ 			break;
+@@ -411,8 +424,12 @@ rte_fib_select_lookup(struct rte_fib *fib,
+ 
+ 	switch (fib->type) {
+ 	case RTE_FIB_DIR24_8:
+-		fn = dir24_8_get_lookup_fn(fib->dp, type,
+-			!!(fib->flags & RTE_FIB_F_LOOKUP_NETWORK_ORDER));
++		if (fib_is_dir24_8_vrf(fib))
++			fn = dir24_8_vrf_get_lookup_fn(fib->dp, type,
++				!!(fib->flags & RTE_FIB_F_LOOKUP_NETWORK_ORDER));
++		else
++			fn = dir24_8_get_lookup_fn(fib->dp, type,
++				!!(fib->flags & RTE_FIB_F_LOOKUP_NETWORK_ORDER));
+ 		if (fn == NULL)
+ 			return -EINVAL;
+ 		fib->lookup = fn;
+@@ -438,6 +455,8 @@ rte_fib_rcu_qsbr_add(struct rte_fib *fib, struct rte_fib_rcu_config *cfg)
+ 
+ 	switch (fib->type) {
+ 	case RTE_FIB_DIR24_8:
++		if (fib_is_dir24_8_vrf(fib))
++			return -ENOTSUP;
+ 		return dir24_8_rcu_qsbr_add(fib->dp, cfg, fib->name);
+ 	case RTE_FIB_DIR8_16_8:
+ 		return dir8_16_8_rcu_qsbr_add(fib->dp, cfg, fib->name);
 diff --git a/lib/fib/rte_fib.h b/lib/fib/rte_fib.h
-index 68ee6f0652..948bef7600 100644
+index 948bef7600..0094afc269 100644
 --- a/lib/fib/rte_fib.h
 +++ b/lib/fib/rte_fib.h
-@@ -54,11 +54,11 @@ enum rte_fib_type {
+@@ -94,8 +94,12 @@ enum rte_fib_lookup_type {
+ 	/**<
+ 	 * Scalar implementation for the DIR8_16_8 algorithm
+ 	 */
+-	RTE_FIB_LOOKUP_DIR8_16_8_VECTOR_AVX512
++	RTE_FIB_LOOKUP_DIR8_16_8_VECTOR_AVX512,
+ 	/**< Vector (AVX512) lookup for the DIR8_16_8 algorithm */
++	RTE_FIB_LOOKUP_DIR24_8_VRF_SCALAR,
++	/**< Scalar lookup for the VRF-capable DIR24_8 algorithm */
++	RTE_FIB_LOOKUP_DIR24_8_VRF_VECTOR_AVX512
++	/**< Vector (AVX512) lookup for the VRF-capable DIR24_8 algorithm */
  };
  
- /** Modify FIB function */
--typedef int (*rte_fib_modify_fn_t)(struct rte_fib *fib, uint32_t ip,
--	uint8_t depth, uint64_t next_hop, int op);
-+typedef int (*rte_fib_modify_fn_t)(struct rte_fib *fib, uint16_t vrf_id,
-+	uint32_t ip, uint8_t depth, uint64_t next_hop, int op);
- /** FIB bulk lookup function */
--typedef void (*rte_fib_lookup_fn_t)(void *fib, const uint32_t *ips,
--	uint64_t *next_hops, const unsigned int n);
-+typedef void (*rte_fib_lookup_fn_t)(void *fib, const uint16_t *vrf_ids,
-+	const uint32_t *ips, uint64_t *next_hops, const unsigned int n);
- 
- enum rte_fib_op {
- 	RTE_FIB_ADD,
-@@ -123,6 +123,16 @@ struct rte_fib_conf {
- 		} dir8_16_8;
+ /** If set, fib lookup is expecting IPv4 address in network byte order */
+@@ -124,8 +128,15 @@ struct rte_fib_conf {
  	};
  	unsigned int flags; /**< Optional feature flags from RTE_FIB_F_* */
-+	/**
-+	 * Number of VRFs to support. 0 or 1 means a single (default) VRF.
-+	 * Values >= 2 require RTE_FIB_DIR8_16_8.
-+	 */
-+	uint16_t max_vrfs;
-+	/**
-+	 * Array of per-VRF default nexthops, indexed by VRF ID (max_vrfs
-+	 * entries). NULL means use default_nh for every VRF.
-+	 */
-+	uint64_t *vrf_default_nh;
- };
- 
- /** FIB RCU QSBR configuration structure. */
-@@ -237,6 +247,86 @@ rte_fib_delete(struct rte_fib *fib, uint32_t ip, uint8_t depth);
- int
- rte_fib_lookup_bulk(struct rte_fib *fib, uint32_t *ips,
- 		uint64_t *next_hops, int n);
-+
-+/**
-+ * Add a route to a specific VRF of the FIB.
-+ *
-+ * @param fib
-+ *   FIB object handle
-+ * @param vrf_id
-+ *   VRF ID (0 to max(max_vrfs, 1) - 1)
-+ * @param ip
-+ *   IPv4 prefix address to be added to the FIB
-+ * @param depth
-+ *   Prefix length
-+ * @param next_hop
-+ *   Next hop to be added to the FIB
-+ * @return
-+ *   0 on success, negative value otherwise
-+ */
-+__rte_experimental
-+int
-+rte_fib_vrf_add(struct rte_fib *fib, uint16_t vrf_id, uint32_t ip,
-+	uint8_t depth, uint64_t next_hop);
-+
-+/**
-+ * Delete a route from a specific VRF of the FIB.
-+ *
-+ * @param fib
-+ *   FIB object handle
-+ * @param vrf_id
-+ *   VRF ID (0 to max(max_vrfs, 1) - 1)
-+ * @param ip
-+ *   IPv4 prefix address to be deleted from the FIB
-+ * @param depth
-+ *   Prefix length
-+ * @return
-+ *   0 on success, negative value otherwise
-+ */
-+__rte_experimental
-+int
-+rte_fib_vrf_delete(struct rte_fib *fib, uint16_t vrf_id, uint32_t ip,
-+	uint8_t depth);
-+
-+/**
-+ * Lookup multiple IP addresses, each in its own VRF, in the FIB.
-+ *
-+ * @param fib
-+ *   FIB object handle
-+ * @param vrf_ids
-+ *   Array of VRF IDs, one per IP: ips[i] is looked up in VRF vrf_ids[i].
-+ *   Each entry must be in the range 0 to max(max_vrfs, 1) - 1.
-+ *   A NULL pointer is treated as VRF 0 for every IP.
-+ * @param ips
-+ *   Array of IPs to be looked up in the FIB
-+ * @param next_hops
-+ *   Next hop of the most specific rule found for IP in its VRF.
-+ *   If the lookup fails, the element contains that VRF's default nexthop.
-+ * @param n
-+ *   Number of elements in the vrf_ids, ips and next_hops arrays to lookup.
-+ * @return
-+ *   -EINVAL for incorrect arguments, otherwise 0
-+ */
-+__rte_experimental
-+int
-+rte_fib_vrf_lookup_bulk(struct rte_fib *fib, const uint16_t *vrf_ids,
-+	uint32_t *ips, uint64_t *next_hops, int n);
-+
-+/**
-+ * Get pointer to the RIB of a specific VRF.
-+ *
-+ * @param fib
-+ *   FIB object handle
-+ * @param vrf_id
-+ *   VRF ID (0 to max(max_vrfs, 1) - 1)
-+ * @return
-+ *   Pointer to the VRF RIB on success
-+ *   NULL otherwise
-+ */
-+__rte_experimental
-+struct rte_rib *
-+rte_fib_vrf_get_rib(struct rte_fib *fib, uint16_t vrf_id);
-+
- /**
-  * Get pointer to the dataplane specific struct
-  *
+ 	/**
+-	 * Number of VRFs to support. 0 or 1 means a single (default) VRF.
+-	 * Values >= 2 require RTE_FIB_DIR8_16_8.
++	 * Number of VRFs to support. 0 or 1 means a single VRF.
++	 * Values >= 2 require RTE_FIB_DIR24_8 or RTE_FIB_DIR8_16_8.
++	 *
++	 * RTE_FIB_DIR8_16_8 keeps a root table per VRF.
++	 *
++	 * RTE_FIB_DIR24_8 shares a single DIR24_8 table across VRFs and
++	 * resolves the per-VRF nexthops through a hash table: max_routes is
++	 * then the number of distinct prefixes across all VRFs and
++	 * dir24_8.nh_sz must be RTE_FIB_DIR24_8_8B.
+ 	 */
+ 	uint16_t max_vrfs;
+ 	/**
+@@ -239,6 +250,7 @@ rte_fib_delete(struct rte_fib *fib, uint32_t ip, uint8_t depth);
+  *   This is an array of eight byte values.
+  *   If the lookup for the given IP failed, then corresponding element would
+  *   contain default nexthop value configured for a FIB.
++ *   For a multi-VRF FIB, all addresses are looked up in VRF 0.
+  * @param n
+  *   Number of elements in ips (and next_hops) array to lookup.
+  *  @return
 -- 
 2.43.0
 
