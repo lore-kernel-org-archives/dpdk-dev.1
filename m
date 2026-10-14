@@ -2,105 +2,102 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A294CC6B1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 14:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42521CC6B1D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 15:00:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 870444042C;
-	Wed, 14 Oct 2026 16:42:22 +0200 (CEST)
-Received: from fout-a6-smtp.messagingengine.com
- (fout-a6-smtp.messagingengine.com [103.168.172.149])
- by mails.dpdk.org (Postfix) with ESMTP id E788840144
- for <dev@dpdk.org>; Wed, 14 Oct 2026 16:42:20 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfout.phl.internal (Postfix) with ESMTP id 8B9D0EC0197
- for <dev@dpdk.org>; Wed, 14 Oct 2026 10:42:20 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-04.internal (MEProxy); Wed, 14 Oct 2026 10:42:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1791988940;
- x=1792075340; bh=FavQRp4gF/vKrNG1VexVj8xNc2IrYDXwBajn4hv63DI=; b=
- ASbiiHNo+gXxXG7I58excTZdgN6t/GG6Bx6p+RX7nUEL1tIDMStsjbKuZ+Hcx3vc
- DuOVRDLBfne2GPsN6UqTuHKd6hpx9zhoqsNlT6PCSoSJ8j6GhDGEpv7rYg903c4D
- 8U0n03T1Umwmdj30JsUdkx0BKvDAblwDVtgBGgf8BTHx36MvPkWaYqv8umbdFxqS
- gB6sROP1ao3+e5B5w8/ZIGwV4AAHgEyhbbiZ580fXZhZ4f/CJedKC4MPKKb3Xnf7
- +iTaNYNfZhwpO7L6L6TvWgPl68F8xToTt/xjGyniGxmeyd6G07CSb11R9KBE008k
- T7Fas5z5ltjTRGZFLSFbZg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791988940; x=
- 1792075340; bh=FavQRp4gF/vKrNG1VexVj8xNc2IrYDXwBajn4hv63DI=; b=d
- 1lx2QKpXucI/s5WoJcGNN9CFiUZSAzeo73BjzG943V09trGufADA7YRFH3l31knU
- k4te8/45r5Ya+kquOc6iOz5mitShLKoFwfAHoCp6KRUXzjyOXIqPxBGEc2GBOGNb
- 7VQnbN0OK4hd/K6aRqDg1Yiu6E2e53vtFoRo/234PZCBA9FMXWZqknS53vMOCNFt
- 9wBAROgsc1gRTwFxoC7AU7umOSqVTZ0yNsvK1QK890adPKqdeD4f54SteyRr3cKD
- ncyoaG/1NVQKiKxK6X+8zgZkJ/t3v4w47q2fhn1Qn7SlkoVvoSus5ZBDQazL51rb
- RcDMQHjMR+mbcjMDGS+AA==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791988940; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:gBmUtymNlkQ09uAjX7w+hnpqORy66HWb0Kww0b1y7LsyGzZ
- UxAbjIklPVHQCNGgEExoyphxycJblMHRpIMy5N3jN0eE3yaPSMlMwC3182Y/a9Q+
- 6RnQqKTm6K5YlwwLRiN2WYchxXXK2wVNK0D2Lck/g0zYOxQHMVrSIkxQ5JZLekxL
- ydTPSLZrkLpZ7KptY7fL8dXeQHEDN0WBjt2VOSxGmZIm+pizysw0bUJMUrt82sLT
- jjGRqBCd7Mq1ghi8UEONm2bjwAgM9gducccyLUdtHRoQvE5b2qtZaxoUXGhMl2+S
- rmL9zCQnIoCkOMIvRSXTGhBOEZGy5EPrpyVhRRw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:zqg0FjanswSa2jQh03bxwKa/XUyf2fQY4PBOfKgpHak=:o/rbk9apHo0YLZY3YFBgs+JFiyaaPxO+HsFz7HyLnzE=;
-X-ME-Sender: <xms:y5TPanKDpcYo7f3EfFHfztA6RZiswF0rAhUc68PnQblILsogcqO9Zg>
- <xme:y5TPam_O2g7sNMuloGrvNNRK0HOg8sB2kiE4OV2a8170CBpHyS1SbdfCc96rb-sCJ
- iaut4e7sTD2azqXs0p83S6V7CJIMgEFeRdkBin-nEpI-bMQ5BT97A>
-X-ME-Received: <xmr:y5TParHYRkH0j5okyNXDqWe72hzK4oI0-L3EXWrW-BN-0JFqZCFC5GI6flkABwPIpdMH0CRdUDUQZkyP-uPrWow>
-X-ME-Proxy-Cause: dmFkZTGA/KxbXn4TLxPCVWqwJYpfsUtb08pUj7fFJnXlamhcRELkjuhRkIHEIUCh5qxN6B
- Vi8MXJJEhWH3itJkazw//ou7xmMIogm6KQAleZaHkOLlZ45oOPPe6vGAXoW31yvQ4simP4
- DpneAfaEGxcxtt1GQ3pr4y5MqJc5mmS13SnWliDXrZp4YYPHwP0iNBeGZ9k6sYQ87VWuur
- nyodGKsKsCdVJ+byiZ8ifEg3chA7XMZiu0ZfRxEvQbVf+ngpk/0duRBJf22lByNm4wF6gZ
- VRSqsxBgIV9ZTAjC2pWJlebDXysQ0KoNd4vhfxBYDmqJdpXmQupiTZDKXkaheVxDMb1jOc
- LlmSeJPlnJp6UT19A1SaG96VYU9LH/vNGlUCCMQDIZ5v3mDlF6Bz6nRk7KsrTwU/sti2av
- jbuGPQJuid7/B7gXf3ibNc05uT+Y/KURh9jx/LolrPdt0f5eJNbjHXPVxJpCf1DwSVgW6U
- dirTcbZc1WVmlz+v5/ydWLAjSnVHJWRESUmJ/b0JfLaVKR/jTRYa8jJxRNDs/ggeis+C3b
- b8pO63dF86yZYSl2ngAmpvXreD7jwlBL+zqndNeqADs0Pyc6pxXV/rgQT1y4Ypk2csSOrM
- 7PcgRI7Heux4uiiyLtlq3+hLjNeJI8A43uz0dBE7t7x/A01dMbklygxNA3Bw
-X-ME-Proxy: <xmx:y5TPap6Gs-W-1dMSg6NpSYDjREFrHxprod5JmXa3StZcfT49EUXCAg>
- <xmx:y5TPasbblHyN_HzV3d79o5r0taF_5SRnhsO0BXHn4EJxmDsQdXJf6A>
- <xmx:y5TPavhIXELeu_7N58qTNf601xEml5Po0KPQOGjAwnjJgM1IIYXWVg>
- <xmx:y5TPamfvEkkFuvJCZoQ8qS47uPJ9V1o0vw9uJp3I2PN1fdSsMYISrg>
- <xmx:zJTPagwuCw0i0jXk-9InTK0lI3b_Uh4fLVsN3FueN7d9qAXGQQbDi_kO>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 14 Oct 2026 10:42:18 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Radu Nicolau <radu.nicolau@intel.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, "Ji, Kai" <kai.ji@intel.com>,
- Akhil Goyal <gakhil@marvell.com>, David Marchand <david.marchand@redhat.com>, 
- Bruce Richardson <bruce.richardson@intel.com>,
- John McNamara <john.mcnamara@intel.com>,
- Jack Bond-Preston <jack.bond-preston@foss.arm.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- Paul Szczepanek <paul.szczepanek@arm.com>, jyotsna.chitri@arm.com
-Subject: Re: [PATCH v2] crypto/ipsec_mb: require minimum version 2.0 for IPsec
- MB
-Date: Wed, 14 Oct 2026 16:42:16 +0200
-Message-ID: <fjUyopQLSkieZRyFov00PA@monjalon.net>
-In-Reply-To: <6ecbe3c1-0925-4392-afd8-53c777495175@intel.com>
-References: <20260811112636.4106950-1-radu.nicolau@intel.com>
- <1ZyWCFPKR3SU1pTJ1PHaEw@monjalon.net>
- <6ecbe3c1-0925-4392-afd8-53c777495175@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6420E4021E;
+	Wed, 14 Oct 2026 17:00:32 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id BD93140144
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 17:00:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1791990030;
+ h=from:from:reply-to:reply-to:subject:subject:date:date:
+ message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+ content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+ bh=2mICydK9R4GIF+H9vvflO6y91koHUb+kglO38bLUlSs=;
+ b=T7cnDYXpDvEX/x+FzwS6wx480lgkFVoppOGzTikcJgkCbE4CvY+G8hgHsNd1NnNmBaWXN1
+ wdgIPYY7Ir7F5EI/5TAuOa/PqdbyQfB0m/e7wm7qdk8PCScnfTuqyL+RHRdjuY8n0LDSzD
+ mP2WTe9VvJ5+/HGiIt7ZsKRlXk6bQKQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-582-z6e8n-8lOYGkxSBjnsT7xQ-1; Wed,
+ 14 Oct 2026 15:00:29 +0000
+X-MC-Unique: z6e8n-8lOYGkxSBjnsT7xQ-1
+X-Mimecast-MFC-AGG-ID: z6e8n-8lOYGkxSBjnsT7xQ_1791990027
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id A8220180067A; Wed, 14 Oct 2026 15:00:27 +0000 (UTC)
+Received: from [100.90.45.206] (headnet04.pony-001.prod.iad2.dc.redhat.com
+ [10.2.32.116])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 7EC451800347; Wed, 14 Oct 2026 15:00:26 +0000 (UTC)
+Message-ID: <ae11482f-c6e4-4213-acff-d4fdf0ed4324@redhat.com>
+Date: Wed, 14 Oct 2026 17:00:24 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: DPDK security advisory: Multiple vulnerabilities in
+ vhost/vhost-crypto/vDPA/GSO libraries
+To: announce@dpdk.org, oss-security@lists.openwall.com
+Cc: dev@dpdk.org, stable@dpdk.org
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ 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
+ Mwqu3GQ=
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: -tADLOcKYkP3mO_IqrNQNHC8PCFH8MKF1egWemTtPvo_1791990027
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -112,49 +109,167 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
+Reply-To: security@dpdk.org
 Errors-To: dev-bounces@dpdk.org
 
-14/10/2026 14:44, Radu Nicolau:
-> On 14-Oct-26 1:16 PM, Thomas Monjalon wrote:
-> > 14/10/2026 11:37, Radu Nicolau:
-> >> On 13-Oct-26 8:51 PM, Thomas Monjalon wrote:
-> >>> 24/09/2026 13:18, Akhil Goyal:
-> >>>>> From: Nicolau, Radu <radu.nicolau@intel.com>
-> >>>>>> Increase the minimum required IPsec MB library version to 2.0 As a
-> >>>>>> consequence, clean up the aesni_mb PMD code.
-> >>>>>>
-> >>>>>> Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
-> >>>>> Acked-by: Pablo de Lara <pablo.de.lara.guarch@intel.com>
-> >>>> Applied to dpdk-next-crypto
-> >>> 
-> >>> As usual with Intel IPsec MB, it triggers a compilation failure on Arm:
-> >>>
-> >>> drivers/crypto/ipsec_mb/pmd_aesni_mb.c:24:32:
-> >>> error: 'IMB_CIPHER_SM4_GCM' undeclared
-> >>>
-> >>> I have to drop this commit while pulling next-crypto in main.
-> >>>
-> >>> Please find a solution.
-> >>> I'm still advocating to merge the Arm fork.
-> >> 
-> >> Hi Thomas, the root cause of the build failure on Arm is their library
-> >> fork which lags behind, being at 1.5 release which is at this point
-> >> almost 3 years old.
-> >>
-> >> The only solution in this release cycle is to drop this patch and rebase
-> >> the ones adding support for 3.0.
-> >>
-> >> Considering Arm lack of support and contributions for these PMD over the
-> >> last couple of years, the only long term solution I see to avoid PMD
-> >> code littered with ifdefs and supporting very old releases of the
-> >> library is to drop the Arm version altogether.
-> > No.
-> > The only solution is to work with Arm.
-> 
-> Indeed that would be the ideal solution.
-> 
-> If anyone @Arm is still watching this space, please chip in.
+Multiple vulnerabilities were fixed in DPDK.
+Downstream stakeholders were warned in advance in order to coordinate 
+the release of fixes and reduce the vulnerability window.
 
-Adding Arm folks
+A malicious guest can exploit various memory safety issues in the DPDK 
+vhost, vhost-crypto, vDPA, and GSO libraries to cause host crashes, 
+denial of service, or potential memory corruption.
+Some of these vulnerabilities affect the vhost-user boundary and can be 
+triggered by a malicious VM.
+
+Fixed in DPDK 23.11.8, 24.11.8, 25.11.4 LTS releases and main branch.
+
+---
+
+CVE-2026-86848 / CVE-2026-86846
+Summary: vhost-crypto TOCTOU out-of-bounds write in finalize path
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2001
+            https://bugs.dpdk.org/show_bug.cgi?id=2026
+CVSS 3.1: 8.8 (High)
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H
+Note: CVE-2026-86846 is a duplicate issue with avail ring index, fixed 
+in same patch.
+
+---
+
+CVE-2026-86561
+Summary: Missing memory size validation before mmap in vhost memory 
+region setup
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2002
+CVSS 3.1: 6.5 (Medium)
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H
+
+---
+
+CVE-2026-86562
+Summary: Double-fetch leading to heap buffer overflow in 
+virtio_net_ctrl_pop (VDUSE)
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2003
+            https://bugs.dpdk.org/show_bug.cgi?id=2021
+CVSS 3.1: 7.8 (High)
+CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H
+
+---
+
+CVE-2026-86563
+Summary: Double offset bug in vhost log mapping calculation
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2004
+CVSS 3.1: 7.8 (High)
+CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H
+
+---
+
+CVE-2026-86567
+Summary: VDUSE vring stale pointer rebinding (use-after-unmap)
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2029
+CVSS 3.1: 8.8 (High)
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H
+
+---
+
+CVE-2026-86566
+Summary: Copy length underflow in vhost enqueue (mbuf_to_desc)
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2020
+CVSS 3.1: 6.5 (Medium)
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H
+
+---
+
+CVE-2026-86849
+Summary: Integer overflow and missing validation in vhost-crypto request 
+handling
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2022
+CVSS 3.1: 6.5 (Medium)
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H
+
+
+---
+
+CVE-2026-86845
+Summary: Use-after-free and type confusion in vhost-crypto session handling
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2028
+CVSS 3.1: 6.5 (Medium)
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H
+
+
+---
+
+CVE-2026-86847
+Summary: Infinite cleanup loop in vhost-crypto writeback chain
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2023
+CVSS 3.1: 6.5 (Medium)
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H
+
+
+---
+
+CVE-2026-86856
+Summary: Stack and heap buffer overflow in nfp vDPA driver
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2027
+CVSS 3.1: 6.5 (Medium)
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H
+
+
+---
+
+CVE-2026-86564
+Summary: Out-of-bounds heap read in vhost control virtqueue handler
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2007
+CVSS 3.1: 3.3 (Low)
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L
+
+
+---
+
+CVE-2026-86565
+Summary: Split-ring inflight descriptor table overflow
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2008
+CVSS 3.1: 8.8 (High)
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H
+
+
+---
+
+CVE-2026-93683
+Summary: Indirect descriptor table double-fetch (TOCTOU)
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2046
+CVSS 3.1: 6.4 (Medium)
+CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:N/A:L
+
+
+---
+
+CVE-2026-100236
+Summary: GSO library heap out-of-bounds read/write with small mbuf pools
+Bugzilla: https://bugs.dpdk.org/show_bug.cgi?id=2047
+CVSS 3.1: 8.6 (High)
+CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:H
+
+---
+
+Acknowledgments:
+
+The DPDK project thanks the following security researchers for 
+responsibly reporting these vulnerabilities:
+
+- Adiel Sol (Dream Group) - CVE-2026-86848
+- Ivar Al-Safawi - CVE-2026-86561, CVE-2026-86562, CVE-2026-86563, 
+CVE-2026-86567
+- Jia Jia - CVE-2026-86565
+- Arthur Chan (Adalogics) - CVE-2026-86566, CVE-2026-86849, 
+CVE-2026-86845, CVE-2026-86846, CVE-2026-86847, CVE-2026-86856
+- syber steve - CVE-2026-86564
+- Naseeb Dangi and Xiang Li from AOSP Lab aty Nankai Universit - 
+CVE-2026-93683
+
+---
+
+For more information on DPDK security, see:
+https://doc.dpdk.org/guides/contributing/vulnerability.html
 
 
