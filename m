@@ -2,149 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C938FCC6B1D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 16:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2DECC6B1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 16:12:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0DF614068E;
-	Wed, 14 Oct 2026 18:04:00 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 613AB4064C
- for <dev@dpdk.org>; Wed, 14 Oct 2026 18:03:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3511D402A4;
+	Wed, 14 Oct 2026 18:12:39 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 4650240144
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 18:12:36 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1791993838; x=1823529838;
+ t=1791994358; x=1823530358;
  h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=PpWvF+ez7a7pLDXF285RiXp2qt6W2FqgTos/1SdPmd4=;
- b=WYDG6y5XSKwcDXgCTdEg3aFYJkxweh0DYzP0J13OBYtyGBxYW6MInZzt
- 6RfIVVrjZXBTBntOcHa+qOveojG9ZeWMK39bRCiJ0RuTB1Nd2qfy6YmqH
- M2E442IHh7ys51/Hc4vUVb2f1ug2eFMR2VkDsiEZK3D9W+fVri6m9ReLa
- TMTRUB2JAzc24Pa+AwSWytdm5z0ephbRAv1i5iKUT3HPfUz4bkfZWxaxz
- RNIqrCsQ+fw5YiTtwMS9sJMrRV+5kpFhm1Wa61v2V8jRWpFWYPBghjail
- OFDiYLuRgRiSJtLj65ZdPseFVhNcJrA3UTldRA3YcyOzzU5V0tmjPRouh w==;
-X-CSE-ConnectionGUID: gYg8ID+PRYaYJnI3iL58pg==
-X-CSE-MsgGUID: W1siYGlcShiza8ohMOmZAA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="643370"
-X-IronPort-AV: E=Sophos;i="6.27,158,1787036400"; 
-   d="scan'208";a="643370"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2026 09:03:14 -0700
-X-CSE-ConnectionGUID: Of+tPtiIQ6qeB7nYVJB9xg==
-X-CSE-MsgGUID: 734N0s1mQEahe7kTtG2/fA==
+ in-reply-to:mime-version;
+ bh=fn2bO5B24GYqYU7OJN7vUyLGqzpHeqbcNyaLevsatfU=;
+ b=mLiHxkJRKhDmIZfWBCk9un/kKSo3cGPiQ524gQQiIef2MvuVvUmSYB3Y
+ cI2cTTu8pEfhWeEU9kLuv9m1FQKsOz+xKNCbFnZgl3Ic2KgUHE/VZxyCl
+ tlXVpnMdvsFChucjOnfyIA2wZaewqkA78sCCTn+WrPws5eXVrm95diPqC
+ UvjwmgmfaFobH3YN/5PwCdvr43drKKIcngyk4mNBjAVN+U7hxoJZKh/di
+ /3EOmwunptvGZal870qx+MBvf7mSh2ES2JfYp37WURqAq4tbYIBSZZ31Q
+ virreKMYrEJnvOcBbWVpC6J8IeLVGFXwNeuQ9RgtsMyiVQk479GfeSnKo A==;
+X-CSE-ConnectionGUID: nL3XKXEnQg6LfR0+JpPLXA==
+X-CSE-MsgGUID: 3Jp9S+GdSsqDZGul8Yx06A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="734433"
+X-IronPort-AV: E=Sophos;i="6.27,158,1787036400"; d="scan'208,217";a="734433"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Oct 2026 09:12:36 -0700
+X-CSE-ConnectionGUID: Cfry+G4uT9i0Jsxq6j4AFQ==
+X-CSE-MsgGUID: cLP70UxGTyeegA1Lx7M3+Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,158,1787036400"; 
-   d="scan'208";a="1483296"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2026 09:03:13 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.27,158,1787036400"; d="scan'208,217";a="1371669"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Oct 2026 09:12:37 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 14 Oct 2026 09:03:12 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ 15.2.2562.49; Wed, 14 Oct 2026 09:12:35 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Wed, 14 Oct 2026 09:03:12 -0700
-Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.65) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ 15.2.2562.49 via Frontend Transport; Wed, 14 Oct 2026 09:12:35 -0700
+Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.1) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 14 Oct 2026 09:03:12 -0700
+ 15.2.2562.49; Wed, 14 Oct 2026 09:12:35 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TRGY+ac30Fl5RGjfZWd4WCMVWFGjzrAuDu8/9fir1Smz+fN3SxdVEvcpPk+adyBH0DLdybUK425BO6oT5xhX1PE87KBcnuPfM9lh3YQGtU7Gm6FdwGvgeJ1S3ZOKIOPNREJn+dEmvN3aXanafQSyNvSCgq9ExLGrEPM4Y4pr8YV1u+JvfEKOh8KlBqOp6XRChbxf65+12S3RwiQWC1/gxgBfN1KdrM3Kt0Jaj70TbZPZIeU6++hbSQJMjLJ4brneX5TUji4vAnOpwyrHd0NN33VOyeNWbNxnilZMbqJ5wowTuPx3hz+XcicxgRXSCqkcW+JbQTApHD8t1OSbAWMb5Q==
+ b=ZhNVcwGymOkg5b0pJrB6ic0FjTCCm1f8EY1l3EadQdftQvJHtpalM7QGY3F+gN3fZRBWYD60gS4jXPJjl9DR78pdaLSoLIeyLJRe4dh99hMA0uyDFx9s3qLsnT28VnqYisTHSJkzFarI55bS6zg8mOJ07YX5fyRFO8IuSK+dM/gCIq2RCt5h5T+7sSUpjpPHE8BbABo7uORcIyHefg57IQ3UYzyetHecWTL8Ceht9lGi1dE3kWZk3O4+m30cSRHIiyUCB3jQXTMwS5lz/m67K5T49vf9Q/Ok2P9VXRERpbgOFjHVICXjz71EwbNfgOaRwvLKAQWqIuUv0TKcst98yQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=prW1kuB3bGWx7jXD/D+GuckxOB0WBWYyBJ8M5h/yXT4=;
- b=ysb0S2BaZtzTCrMI3iBq1haQqbGC+sawbrg9/XWmq7NbSfTDewVBq4DGWrh5XPWuxhGcKwYJWQOeh+uDUw/dWLxLeSYINxqZd3jZkecQEakeeu5HkM+dDkcKBvF+mjJYFmg9f2v20R+dUi53zEuFnv5w4p/HtFe2vjGvdOujnWrET4JeyAvxA79z6ey8bX4b6ht+9ogf9gMxtbJ2f4I13/IaZbg8Ct7sWJDyqDoeQo378vPTzgXPUqnycyhk73ZYrEe/AgYlNq34o9jJr24V0AlK/PYwooFO1rJSPseQyFZbUVtm223V+UMwBg07OHCZYX7kw3YljbH7ZTbv/JgRvw==
+ bh=/Nz+FxpBzN/PUZD2TdAQtirI/5+lpur3nhgaGguYjmo=;
+ b=w2ljUuwNtf+lw0rFEE+ZjJrHJ7mF/1KDYHuqj9X8fDCoPHBTLf89Edx6lGchqUlpAvtb1HtgZrVCvwfyaPbkBv4Hsuq0sVawNTr1GCL1JXOnNWRWd1EccloYq8z04ou91rlIH5nXu8ACSehM4Z3uROWZGPII1kZaa2OjVMtkhD2RvCgM8QP/cHhYCv5LRO+9wXkayMrzm/pTAOzI9ynFnXI3ZoXQ2AjzmGxg3j5w9dp+7m/YGp+fTQvjn3yqyLpTTYk9pq0MKMc+DHdlt1BC6f8TjVII1BjVsEVaMyeBTEZprcxd+HmJI1ypvJVIO1Z2XIlLX2NQClFOssrh6TcCUw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB6280.namprd11.prod.outlook.com (2603:10b6:208:3c0::15)
- by DS0PPFF95D191BB.namprd11.prod.outlook.com (2603:10b6:f:fc02::50f)
+Received: from LV2PR11MB6045.namprd11.prod.outlook.com (2603:10b6:408:17b::20)
+ by MW3PR11MB4586.namprd11.prod.outlook.com (2603:10b6:303:5e::15)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.12; Wed, 14 Oct
- 2026 16:03:09 +0000
-Received: from MN0PR11MB6280.namprd11.prod.outlook.com
- ([fe80::45ad:ed1:a048:ac11]) by MN0PR11MB6280.namprd11.prod.outlook.com
- ([fe80::45ad:ed1:a048:ac11%6]) with mapi id 15.21.0496.021; Wed, 14 Oct 2026
- 16:03:09 +0000
-From: "Cornu, Marcel D" <marcel.d.cornu@intel.com>
-To: "Nicolau, Radu" <radu.nicolau@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "Nicolau, Radu" <radu.nicolau@intel.com>, "Ji, Kai" <kai.ji@intel.com>,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>
-Subject: RE: [PATCH v4 2/4] crypto/ipsec_mb: add support for 256-NxA4/5/6
- algorithms
-Thread-Topic: [PATCH v4 2/4] crypto/ipsec_mb: add support for 256-NxA4/5/6
- algorithms
-Thread-Index: AQHdW+eSYgX1XaCnqE6IpEgImX05uLb9HCvQ
-Date: Wed, 14 Oct 2026 16:03:09 +0000
-Message-ID: <MN0PR11MB628087CFAF27359BC8926B2BDA9D2@MN0PR11MB6280.namprd11.prod.outlook.com>
-References: <20261014142217.2117229-1-radu.nicolau@intel.com>
- <20261014142217.2117229-3-radu.nicolau@intel.com>
-In-Reply-To: <20261014142217.2117229-3-radu.nicolau@intel.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.23; Wed, 14 Oct
+ 2026 16:12:32 +0000
+Received: from LV2PR11MB6045.namprd11.prod.outlook.com
+ ([fe80::1f72:3d49:b6ba:91ae]) by LV2PR11MB6045.namprd11.prod.outlook.com
+ ([fe80::1f72:3d49:b6ba:91ae%6]) with mapi id 15.21.0496.021; Wed, 14 Oct 2026
+ 16:12:32 +0000
+From: "Ji, Kai" <kai.ji@intel.com>
+To: "Finn, Emma" <emma.finn@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [PATCH v3 0/2] crypto/ipsec_mb: Add SHA3 and SHAKE support
+Thread-Topic: [PATCH v3 0/2] crypto/ipsec_mb: Add SHA3 and SHAKE support
+Thread-Index: AQHdWvX/WFOAnFWG60OuJYzllw5Ke7b9N5gj
+Date: Wed, 14 Oct 2026 16:12:32 +0000
+Message-ID: <LV2PR11MB604554ED03EC5E9FF1BAFB56819D2@LV2PR11MB6045.namprd11.prod.outlook.com>
+References: <20261012083506.754857-2-emma.finn@intel.com>
+ <20261013093312.817235-1-emma.finn@intel.com>
+In-Reply-To: <20261013093312.817235-1-emma.finn@intel.com>
+Accept-Language: en-GB, en-US, en-IE
+Content-Language: en-GB
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+msip_labels: 
 authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB6280:EE_|DS0PPFF95D191BB:EE_
-x-ms-office365-filtering-correlation-id: 871d824e-78f9-48a6-22d1-08df2a0ca448
+x-ms-traffictypediagnostic: LV2PR11MB6045:EE_|MW3PR11MB4586:EE_
+x-ms-office365-filtering-correlation-id: 084dffa2-3d08-4c8c-cc7e-08df2a0df3e4
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|23010399003|1800799024|366016|38070700021|56012099006|4143699003|11063799006|261009223027099003|18002099003|22082099003|10067099003;
-x-microsoft-antispam-message-info: nGdZbb6mZNndylmqv+7795OraLTmUkmfKPXu1nP1Ugc7VhY9JwLjP7gQwgKfZqR+5OF3BOK6I4kn9ahnq0j7WP0usSWeX00BxaJ8Ma8jMLuwUz7h0GmKe0SBB9tiKIKDPWOA0OFCSbknEltR8Pa/1ZK4FlzZCgiOHmCl3Y0S1eFE2nO7C3nIO8Ogz/5xakUDZo0j9hRU0yhUy6kK5mBj9W6Ih8PatvqRNflwzyJsVdaeMLDv2j/OUwMttNDaJ7wDUzhTDof560qDdKWR7tOqj9wCavgWQ25OuTe/MzcYjMjgrH1dsvY2tDrKmKU0zHuyJjBkF/RGT+AOtF1ud8CH2fDLVMtEUJ1VzD7A2xpVaO6ulnUD6d/OysOfuXetaIJv/9An6Jjl05L2szOBK40a4ZqW6lmlDEMVaEB+Z83HBkHEvkrUL8L1HWHKuU1CxdeqpCiZiLrJ7rCEXsBwVScfN0yQRy0Q6XBBvXIgb4b/6uz9s676dyhpnwprFsZxEU1tWOlfxyiBEXTryAjhMmsHLqOULMJSpROtFVphJKYnPPK8reY3PkaJGhNUe4HJ79l1+yB6vbR+r9okMGVtkmkhoXlmgPqz3rIQH3HM8k1VO1CsIAO4O0yegUVLFvSgfsOZHtCxfpA03il2qAfNyKdeksUY6RsOKI78awUwZ4MENdnhebk0e/2ZDC0Lzgtn3H37wAaDyyUUv3wHTdaFMHaNyQIyw+lTPAZq6uHyQcEWud0=
+ ARA:13230040|42112799006|23010399003|376014|1800799024|366016|22082099003|18002099003|10067099003|8096899003|261009223027099003|38070700021|4143699003|56012099006|11063799006;
+x-microsoft-antispam-message-info: Z7GgTVGkO/74Pl0xu8A50v7Awqit0BhLD76lrJzes0lGCTduJBPOwMxjP62WaHQM9grJ2lguNBEU58lTKAYLGkiiNXNLQLJwjo+RAFwqBFj/EIt8Qk45C38xGR2dpuo+Og8ktdYh1jRD6y3up8r1x8OAuNbzHYvrKhMKjpGi1U2D6usLRuedGkqc6+MaakAKgB2xXrw6TZSOo4mMuLivvXWHS7jMn7lTDC+D+M5J9yJTMwZdv1K4vGpAetFhtwrG2iCkpnayOBak4qv3wfQMjaNc2fozN0ijNWEZShL60g62aNn+Ff//nh3KENniR9vLd+cFsgNV6l2PHvCI3ev4tK8csvyaaMiA1PVYnnpa1RWRvWgGMMAn9/JTpwEwUjabibbjYzauoFZR98Eg+m/vfwULOJlWTJZCZrIhvIMzYvmzgNfKdLY/88avNNUcqbyq6ib0jfv8DrjiESGQXlKYSSP32oWVE/YyyQK9eKS4jGBXD99gc8WjWxbZgpM7vB8U7p2s7m14y0dOTpP948uhbJEcxPQReYZaaWO+VNa+bqmyhlfkx524EJrn6LeGoPYOf9JFRLVuo9RPGUs9vu4WglvW0IG43MlY+vyiwOHKnxs5MNTYljUvJRmA4VM7XFjYXXyYSr6t49ZSbgWbvMXFiB1K3vdK9HhEbPM4tTczJVku4R2Tz/Uvy+LTq+IAJsAtaJG4W7kD4BcNqnq+58OaZaqAZkI3L42MY/uiblWKsVA=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:MN0PR11MB6280.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(23010399003)(1800799024)(366016)(38070700021)(56012099006)(4143699003)(11063799006)(261009223027099003)(18002099003)(22082099003)(10067099003);
+ IPV:NLI; SFV:NSPM; H:LV2PR11MB6045.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(42112799006)(23010399003)(376014)(1800799024)(366016)(22082099003)(18002099003)(10067099003)(8096899003)(261009223027099003)(38070700021)(4143699003)(56012099006)(11063799006);
  DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?xGa9PI6doMaGf+qsQS2oMqFDtxQFtwcy93l9+gAPfTlOxhv3ou0YNKHLtf9k?=
- =?us-ascii?Q?F3RtuvPKO0baRKAk1SNHxeahesBQyVuJ4KP9New+R+CMl8OnlIyWCCKBgItI?=
- =?us-ascii?Q?DgLih6baKXHWDiCCIq6gq4B68lklay+3dxEdt/kvRN0kxo3eSVIw1uI6Ardr?=
- =?us-ascii?Q?IlHHlt5CfwlXE+RH2oKWMiXyD0NGwkrU9pRpinb4zzkrwPYN+/Sj6b4GK1Vq?=
- =?us-ascii?Q?iesdfgA3ksYJxii9nISPQPemRbUYxuwr215Mk6Q3bXD4dIJuokSnlVc9MOvo?=
- =?us-ascii?Q?aVMuITzWrN4IZFocKd97jzmJlkiY+41VONIWoxndw4Y8O3Aw3aJoR3d6NN35?=
- =?us-ascii?Q?Mt1m0Afe0Ao+KO0mJjzqsYnrYYKJ1mpWDXxyE6WwBnR0TLSszZGNKiLcUfit?=
- =?us-ascii?Q?prXao6cshIWwfjqx7OWr7Oy4aDk+xmUMLnUv/Ygwi+jOiICu1VvGwku0TDUb?=
- =?us-ascii?Q?E+jlia6XRduyam9DhvJJovpQhUiivyvW9qE2+MqnV6iOC07omz2oHyMopV+C?=
- =?us-ascii?Q?rv6HESLeQbZeTeyeySUjBwP1uVUU4S6R7gHt1broO5TxJyhxa6eIvdeQ1gIX?=
- =?us-ascii?Q?ZdLe+F3EXjj2HxNkgfQDd2jyRcbf9L4IeC8wU8gNxVUAPD2RFt8CljbQtilw?=
- =?us-ascii?Q?FnGXjoqlK+LCu6cge4m2jPgd5HhrbKJQM+yDrYG8VnWMS81Ff6/BNRiBwyUx?=
- =?us-ascii?Q?LaBUu+rTwSuqVlVatZDT3+T2T8qDQ5xYF2PMF246Wg5GBDogsCr67xB3JqHi?=
- =?us-ascii?Q?VFWFMDvFZGAhkQ8bll5VmXLvt/D9a7h3K5cJr5B9mmBwcL5DYZLS5GGiyXZx?=
- =?us-ascii?Q?ZPoz59ZsqjDJANDWiI5JFYM5f2qlbLliWlApZlJZFU/PUgbAX8Sz41gNrUR7?=
- =?us-ascii?Q?6dhtZjvZqXozq60IBrgMbGM5kmDskl5WeR6c89gRIFZL8HNctKaQdFkWVRja?=
- =?us-ascii?Q?MDIH24SldGoMKS4glMd5dMIqH8JV5pGprohOrT8VddE/wuTJvED9xsyhKAiO?=
- =?us-ascii?Q?JSWgByA2p4+HenA8h0VOhykr2Ri8h0KpEratQOyJ5BjdxgmH/sG9uMz4mCb6?=
- =?us-ascii?Q?JTyH1dTvHZaGA06oVAM4EoWNxjbd/Sgi8Ai50/7r213wxa7PWx5KLiz1edFw?=
- =?us-ascii?Q?2UfxhR07AfEWWKEfFavPoxYjZzIkkpzW9IB6px3gQaZ6GzBxdHiUk1l1ItvN?=
- =?us-ascii?Q?VnRSF6vFs2pG2ZhsRW7gLcy7uD4L8iCuGQy3HFmNMli20avLPzKrWaGBF8a8?=
- =?us-ascii?Q?ih1NbyLqkQ9n2MaN8aEZ6c9JS/x1kIkUQRf/1ZO1YuqRx6upplbrRitC9isr?=
- =?us-ascii?Q?AN0yFUik5C8PX6iEjnyuHiTBhzENCrzAeGZzDRKoAHyHDmmQOmcNKPK/ITet?=
- =?us-ascii?Q?SNaHsrhZmyWlJ/XtgV9UCL7zlg5APejWcFlnMGdT/wvXvCgT0Xoe/q4gMFyv?=
- =?us-ascii?Q?dVEGd1Q3XrQJLvXlXthYCOzqlMIbkQJOOUR7ZV/td6yVedCCV3D0SXSPumN2?=
- =?us-ascii?Q?899HALMXrdtznq2D/6+KQpL9pKc7nUTXBjvRKALmVivmlQofaiFM6QhP7H1h?=
- =?us-ascii?Q?lNGBtjm/fI6f9yddLG11GRhmxxlJqgKJf7pj6GTTTatDj0Q818FDTidY/xj1?=
- =?us-ascii?Q?LU5GX5qEbuMuJmF4dL8FQo4CILxdEXPeJ1DP8U4JMlvwnja/AE1M2doTO5rc?=
- =?us-ascii?Q?ZNNBDS5D3ltuZTrrNWpcVLQBFOWMsPKFc+o2VfY9gmJuoPcn6aHjqZE4g+Ph?=
- =?us-ascii?Q?2mhIdlQBSg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?XGBjI4NKcil2mWjfMIwDOrlBDiiN6EzfDPyziXFkDzfG3l5a3dpgB0gEBH52?=
+ =?us-ascii?Q?Yytpy54tqgHD0puRu7CKFVoQ5AX0UBRut4/jKUepWAHfz4DLKadhXXai9ATG?=
+ =?us-ascii?Q?t35XHFFTxor3vJ6qIyAqcvyMYItd8z73bCdL7QJ9Htnpx8Vf6kngFYk3yS/i?=
+ =?us-ascii?Q?BwnBkoizvPN/83Sd3F5CV78Vm6EpWvKsXHlh+Aso1t4Kui+V7a89WUqX0ith?=
+ =?us-ascii?Q?OdBx8bFfHMn+Ovd3H5Ms8F42+NZE0lcsqQ/YAlcjIWJmkRy6wteJgbpy4xem?=
+ =?us-ascii?Q?BATEemqDTl6do00F0x+TsIcmrOgeno5VcKjhKb88+fHOiqXBdnvgoTNEPIYZ?=
+ =?us-ascii?Q?bTwIFyhYs4eh09VaM3UOUEn9hrDZEvRECwrJSLLNEJwMvl6GsORCspfCS30x?=
+ =?us-ascii?Q?zGDa8396HMYtxJWL7qxV11eT9gCzI2DzM58bVR0k4B/1NuupofQsSfS7LNdR?=
+ =?us-ascii?Q?53c9dAGqIK8o7z7vxT+YEpVss2aanR301AeMQY5y792e/nTHfxLN+gAMkdp4?=
+ =?us-ascii?Q?qxEht1sKEg5LHtKxDgQxQsBqOU7vOC4MGwFoCyGGuad0TgyWJsGkTVlU+q4f?=
+ =?us-ascii?Q?wEO1MfYVe7cOJo/sM5nQQkZQPfq7TTqiouGRMqYBbO67DmmWVcjXc5BNA9dr?=
+ =?us-ascii?Q?fAZsKJxoVvkd8VawZ++/p3uk3BkgPS6u5ce6zKjBAM5JBOiTUwQEKMgHFp6H?=
+ =?us-ascii?Q?fvWfN1VxyB3upl2FVRojjTr3+M4t5oj8TOqmvYGwms6e57qv36by3Tp36Z/F?=
+ =?us-ascii?Q?krPkOx+mNIWj3b3C4Yqiv4sA4mF0O1RMNtnEuAM2BYUOzmjybunRCcYWWl/2?=
+ =?us-ascii?Q?ls3mJP+YQvonKy4+9OGQ+p3zM0BtoyI1c0tuLrMSbQ5kQ8PAVPGishFKO3dv?=
+ =?us-ascii?Q?0r2WDAGx44A1wbAv6AN5B98jOT5vUmtvtHWQCR8sM9va92iUBuKzeLAk2oSt?=
+ =?us-ascii?Q?ngZEdYgXwHZJPZj6asG7BY76XuqImoe310iihfM+B8VpJ69+tnvqBt3XhWC+?=
+ =?us-ascii?Q?OE2DVnZ86ZQQGP3/Xnlm/uLsAm0GXRx/5sbSs00tZmKjGwLR5+nyzz33TlC5?=
+ =?us-ascii?Q?15JUhoae7MJZ3M+EmPiKU7cK8t+lRtl6Hj+hQnGo8LO0yNF4e2S8uTpIJlD2?=
+ =?us-ascii?Q?3bWP2G/zn7Th+HcTA4ptFPqW9kHv1Wr/sJDkBr96z8zduIHGYusXJjSLdCS3?=
+ =?us-ascii?Q?aZz8nYOOPyIpH9GTat+X+4KFLnDHolworH5f1MVHaVah1842aqcSrXR3mkxA?=
+ =?us-ascii?Q?nik8K0nvHcmvhFBPAzR9Vcu9ddzMBzdzpkitvA0KKldX3BqeOfowzOvfQRrO?=
+ =?us-ascii?Q?xjxI3mqtZIfVh85Ey4Uw7jWpWM+kzZEenFO5uBGxuopa7yJGFRh3VDHTzQ4J?=
+ =?us-ascii?Q?RJ9cvTG7UrZpfHXi/m/pxduGT2ooIZ+PHrdcpKvlrTCCEdwIP3WFpX46hKcv?=
+ =?us-ascii?Q?P4pJ3Ud6ZUVCd5wit6gBSJ835iH9lbU2nkR6xEEch0IC/dVSpB58EtyJ5KlT?=
+ =?us-ascii?Q?FT3/YLSJrxdt8kKnM8PokQ0xCA2y062PohUMlVXhQJetOJWy6Yyd9mkeNw1Y?=
+ =?us-ascii?Q?DviKEv94ILZZlXt8v+sq0IMXutkZfAaxU0r0G7jWIEoTcojH0meWsrApg2FJ?=
+ =?us-ascii?Q?4t/RAs/Fe0hHx8FKH7mXFDOZJ/3F6LhUCFRVLStKlAkRoFR1g5UU3EIsTb+o?=
+ =?us-ascii?Q?mB5qlS9v2I2gIXfJNnq/EAqC1fSR/au+6ALeeC0RyDev2qZm?=
+Content-Type: multipart/alternative;
+ boundary="_000_LV2PR11MB604554ED03EC5E9FF1BAFB56819D2LV2PR11MB6045namp_"
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: 1FXGPTt4M1c2ChGseMC+aOX2raxhymgrB9yoo/c0+LcEhRB5cbMjQmIMXeVG1dos7i3JxYXMKQ9RUf+mVY/uXz/P8co2cOPedUy+xtb17EpjOSu/HdkNH0YzJpweHYM8wjysj4spCTisZv3vF15KJ0c/cb+0Xt5URS4NKUqbVYoP4ddCObt5uhjDrKCqZ3groAeybko9R7vAXfij9rpz60an20d1zlEgtX46MkCVlX4OKkgl5ZUgTZ5kTa3BKRfLSX/SRehiZcSXLUJJwzUMSbwJiPDFsJdafcF4V63b3iGDP1yGQUWza2TDjGdZO6vXBoxbGAD9ZTb0KDtjKA+U4w==
+X-Exchange-RoutingPolicyChecked: 2o8EiD7syFEjuXWf0PNh01okZ+Bv4DkONz2ahlI3khEbeflUYdiwkrZzIzwMdon/HpbzbX2lWBUqKWBXUKHtV/JiRUhgfcSPQnG+2QKHLl1SpRAlgrH+S3Hh9VJuZ81hIDCcbrlwWg0Xx2qyjGKQcihwzqBh1jD+CTetZHuj+UHZVEZgzjZjtTG41KnmXWj3soOkaMS6OD8iUcw8g0caEMviAad75TEXzTMSIPGVhWe9CklM27avuUZ48P4RrthJym3wBcaaj9BgMuUGICWvaKxE+E99F3/RLBin1fhujCGQQUaJS7PPSH63qya06tZRywOHhjQabH/9102fSNjLWg==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6280.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 871d824e-78f9-48a6-22d1-08df2a0ca448
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2026 16:03:09.3524 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR11MB6045.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 084dffa2-3d08-4c8c-cc7e-08df2a0df3e4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2026 16:12:32.4286 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: EOgm0AnnCrgg+twxiP6mlncu2d9CjBC8D2HzEU2ugtpm+YBdfVymaUBlfM0IggRkBfyspDLJgGy62xyLMOdvSPgIpWOyPocG0oOL+bgKMJ0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PPFF95D191BB
+X-MS-Exchange-CrossTenant-userprincipalname: oZ6cwdr3ipKVrsrFprKF+ImTOmKdvO26oj9c4YS87MGNphY+nrG+dctVQ9xOMAjUrcl1jdtCV54Go5SHHmtLZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4586
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -159,93 +154,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-> b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-> index a2f7f9abf8..dc07d96aad 100644
-> --- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-> +++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-> @@ -18,11 +18,18 @@ struct aesni_mb_op_buf_data {  static inline int
-> is_aead_algo(IMB_HASH_ALG hash_alg, IMB_CIPHER_MODE cipher_mode)  {
-> -	return (hash_alg =3D=3D IMB_AUTH_CHACHA20_POLY1305 ||
-> -		hash_alg =3D=3D IMB_AUTH_AES_CCM ||
-> -		cipher_mode =3D=3D IMB_CIPHER_GCM
-> +	return (hash_alg =3D=3D IMB_AUTH_CHACHA20_POLY1305
-> +		|| hash_alg =3D=3D IMB_AUTH_AES_CCM
-> +		|| cipher_mode =3D=3D IMB_CIPHER_GCM
->  #if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
->  		|| cipher_mode =3D=3D IMB_CIPHER_SM4_GCM
-> +		|| cipher_mode =3D=3D IMB_CIPHER_GCM
-> +		|| cipher_mode =3D=3D IMB_CIPHER_SM4_GCM
-> +#endif
-> +#if IMB_VERSION(3, 0, 0) <=3D IMB_VERSION_NUM
-> +		|| cipher_mode =3D=3D IMB_CIPHER_SNOW5G_NCA4
-> +		|| cipher_mode =3D=3D IMB_CIPHER_AES_NCA5
-> +		|| cipher_mode =3D=3D IMB_CIPHER_ZUC_NCA6
->  #endif
->  		);
-GCM and SM4_GCM are checked twice here in the 1.5 block.
+--_000_LV2PR11MB604554ED03EC5E9FF1BAFB56819D2LV2PR11MB6045namp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-> @@ -1793,6 +1968,29 @@ set_mb_job_params(IMB_JOB *job, struct
-> ipsec_mb_qp *qp,
->  				session->iv.offset);
->  		break;
->  #endif
-> +#if IMB_VERSION(3, 0, 0) <=3D IMB_VERSION_NUM
-> +	case IMB_AUTH_SNOW5G_NCA4:
-> +	case IMB_AUTH_AES_NCA5:
-> +	case IMB_AUTH_ZUC_NCA6:
-> +		job->hash_start_src_offset_in_bytes =3D
-> +				op->sym->aead.data.offset;
-> +		job->msg_len_to_hash_in_bytes =3D
-> +				op->sym->aead.data.length;
-> +		job->cipher_start_src_offset_in_bytes =3D
-> +			op->sym->aead.data.offset;
-> +		job->msg_len_to_cipher_in_bytes =3D op->sym->aead.data.length;
-> +		job->iv =3D rte_crypto_op_ctod_offset(op, uint8_t *,
-> +			session->iv.offset);
-> +		break;
-> +	case IMB_AUTH_SNOW5G_NIA4:
-> +	case IMB_AUTH_AES_NIA5:
-> +	case IMB_AUTH_ZUC_NIA6:
-> +		job->hash_start_src_offset_in_bytes =3D
-> +				op->sym->auth.data.offset >> 3;
-> +		job->msg_len_to_hash_in_bytes =3D
-> +				op->sym->auth.data.length >> 3;
-> +		break;
-Should NEA be added here? Is it falling into the default case and not conve=
-rting to bytes?
-> +#endif
+Series-acked-by: Kai Ji <kai.ji@intel.com>
 
+________________________________
+From: Emma Finn <emma.finn@intel.com>
+Sent: 13 October 2026 10:33
+Cc: dev@dpdk.org <dev@dpdk.org>; Finn, Emma <emma.finn@intel.com>
+Subject: [PATCH v3 0/2] crypto/ipsec_mb: Add SHA3 and SHAKE support
 
-> @@ -1058,6 +1285,13 @@ struct __rte_cache_aligned aesni_mb_session {
->  			/* *< Expanded GCM key */
->  			uint8_t zuc_cipher_key[32];
->  			/* *< ZUC cipher key */
-> +			uint8_t nxa_cipher_key[32];
-> +			/* *< NxA cipher key */
-> +			struct {
-> +				alignas(16) uint32_t encode[60];
-> +				alignas(16) uint32_t decode[60];
-> +			} expanded_nxa5_keys;
-> +			/* *< expanded NxA5 keys */
-Should there be identical buffers in the auth struct for NIA5? Will this be=
- overwritten with NEA5+NIA5 combo?
->  			snow3g_key_schedule_t pKeySched_snow3g_cipher;
->  			/* *< SNOW3G scheduled cipher key */
->  			kasumi_key_sched_t pKeySched_kasumi_cipher; @@ -
-> 1113,6 +1347,8 @@ struct __rte_cache_aligned aesni_mb_session {
->  			/* *< Expanded XCBC authentication keys */
->  			uint8_t zuc_auth_key[32];
->  			/* *< ZUC authentication key */
-> +			uint8_t snow5g_auth_key[32];
-> +			/* *< SNOW5G authentication key */
->  			snow3g_key_schedule_t pKeySched_snow3g_auth;
->  			/* *< SNOW3G scheduled authentication key */
->  			kasumi_key_sched_t pKeySched_kasumi_auth;
+Add SHA3 and SHAKE authentication support to the AESNI_MB PMD using
+IPsecMB 3.0.
 
-One other note that features/aesni_mb.ini still has "Non-Byte aligned data =
-=3D Y".
-Should that be changed to N now?
+Emma Finn (2):
+  crypto/ipsec_mb: Add SHA3 support.
+  crypto/ipsec_mb: Add SHAKE support.
 
-Regards,
-Marcel
+ doc/guides/cryptodevs/aesni_mb.rst          |  10 +
+ doc/guides/cryptodevs/features/aesni_mb.ini |  10 +
+ doc/guides/rel_notes/release_26_11.rst      |   6 +
+ drivers/crypto/ipsec_mb/pmd_aesni_mb.c      |  38 +++
+ drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h | 260 +++++++++++++++++++-
+ 5 files changed, 318 insertions(+), 6 deletions(-)
+
+--
+2.43.0
+
+--_000_LV2PR11MB604554ED03EC5E9FF1BAFB56819D2LV2PR11MB6045namp_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);">
+Series-acked-by: Kai Ji &lt;kai.ji@intel.com&gt;</div>
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);">
+<br>
+</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Emma Finn &lt;emma.fi=
+nn@intel.com&gt;<br>
+<b>Sent:</b> 13 October 2026 10:33<br>
+<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;; Finn, Emma &lt;emma.finn@inte=
+l.com&gt;<br>
+<b>Subject:</b> [PATCH v3 0/2] crypto/ipsec_mb: Add SHA3 and SHAKE support<=
+/font>
+<div>&nbsp;</div>
+</div>
+<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
+">
+<div class=3D"PlainText">Add SHA3 and SHAKE authentication support to the A=
+ESNI_MB PMD using<br>
+IPsecMB 3.0.<br>
+<br>
+Emma Finn (2):<br>
+&nbsp; crypto/ipsec_mb: Add SHA3 support.<br>
+&nbsp; crypto/ipsec_mb: Add SHAKE support.<br>
+<br>
+&nbsp;doc/guides/cryptodevs/aesni_mb.rst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp; |&nbsp; 10 +<br>
+&nbsp;doc/guides/cryptodevs/features/aesni_mb.ini |&nbsp; 10 +<br>
+&nbsp;doc/guides/rel_notes/release_26_11.rst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+|&nbsp;&nbsp; 6 +<br>
+&nbsp;drivers/crypto/ipsec_mb/pmd_aesni_mb.c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+|&nbsp; 38 +++<br>
+&nbsp;drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h | 260 +++++++++++++++++++=
+-<br>
+&nbsp;5 files changed, 318 insertions(+), 6 deletions(-)<br>
+<br>
+-- <br>
+2.43.0<br>
+</div>
+</span></font></div>
+</body>
+</html>
+
+--_000_LV2PR11MB604554ED03EC5E9FF1BAFB56819D2LV2PR11MB6045namp_--
