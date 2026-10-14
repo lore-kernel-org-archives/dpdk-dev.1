@@ -2,80 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB2ECC6B12
-	for <dpdk-dev@archiver.kernel.org>; Tue, 13 Oct 2026 22:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA03CC6B19
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 00:30:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F35140E2C;
-	Wed, 14 Oct 2026 00:35:34 +0200 (CEST)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
- [209.85.214.177])
- by mails.dpdk.org (Postfix) with ESMTP id 6C35D40B99
- for <dev@dpdk.org>; Wed, 14 Oct 2026 00:35:31 +0200 (CEST)
-Received: by mail-pl1-f177.google.com with SMTP id
- d9443c01a7336-2e8b20a899fso13338265ad.1
- for <dev@dpdk.org>; Tue, 13 Oct 2026 15:35:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 81E2840279;
+	Wed, 14 Oct 2026 02:30:32 +0200 (CEST)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com
+ [209.85.218.53]) by mails.dpdk.org (Postfix) with ESMTP id DF1EE40279
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 02:30:30 +0200 (CEST)
+Received: by mail-ej1-f53.google.com with SMTP id
+ a640c23a62f3a-c2e62319cfaso47396766b.2
+ for <dev@dpdk.org>; Tue, 13 Oct 2026 17:30:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791937830; cv=none;
+ d=google.com; s=arc-20260327;
+ b=r2doqiB6Q1+lOk+yrO5I0Xfn4dnRP2wfedGCLgmiT60HPY3CXJe1A2PnJegiIXvfoT
+ oc2ZFUOgt7Z4jtxiiwTbuSB0t9mfGlXSTtFgy/8Zn9sVaY5HXSt9NG2mtIoCfAmXIjvB
+ ZIwIecynFURVxg4xSvXe7+yXo9oe7hFfudAsCsa67FUjG0CEK+sPh/7URp1R28l65tTc
+ Y0JA19husvmcwK0b8RHpAGtLF3+6ZFz8kgqJNeNh0AmxjGBQIl3rtf8mysDu2D9ZkuiM
+ LaIr603iI/zoIb8J3GLUSlKI9um09+oHGK7cX3JXwkJwKvSOa8cg5Qb/3wzHPXb81liU
+ akLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=Au+j6XLyrX/YKyIZbqxFRBKorf/ZVTFxzOym8fG+kTs=;
+ fh=B7P2NvyyRGOjLSxx5zip+3vrfzLklYHr6xZFKEWgy2s=;
+ b=RhUhVeXfuo+yVi/XsO1AcHZ4+4n+fdnJN1ULpTM9tFw4ijM32QnqW2UQCCNUxXMRVu
+ fIdslTy7nswe3vyTwzAybw+h/b98LGBX118uJPaVR+RLGeV8v+pUc+am9DjSrGN7MhnV
+ 9+bT+xAtrWSbM7pCu5Kn9FeC05MPBagfTyWRxLfVeTfAbUlCOLdHl+3L03vW5ckt8056
+ vBiT4vyrU8Wfl3sObvNi+DG4pcY9sb4YXld7xkWY5ezIeol3sIF1BNs8RIaQRL1gCMD4
+ qwYfd7DxVLatxQjmMntggEIhwA3m+tyeoDP9BP27psqt0Sv9uzEq9Kc+8ayjgsxqRrdq
+ 0ASQ==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1791930930;
- x=1792535730; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=mVzMjt8wqGeBmpHcBXwSi13u/EZtA6xpKPNOU3XTROo=;
- b=HBk9wbM0n6nvI7uPFBWzDDL8Meit0YotsgN6V5+lJh8JXcZVt+FQUct7HjDR/QUHod
- /vZtQ1RHOV6YAIPF6XEkEZbvmCXv1k3A0gtPQS05D5++T3ycdNZP9E1tpSy8JWj3k2q0
- kISLPFs1UflsYagu3uRaDU4do6R9wx6laHoR4cbPH+eS7nSJpaDVvFK18nYaA/qosuz9
- GZVPh0eGhKz+qCPR6cfpRbd7O1rxNY6lCCDQZws80vXSG2inkHGUq33OUfOtQ2v90nfU
- iIGVv0pGp4uLdawOP8Jye11FEg1ni0sBDrUuc8gstXsRvcATTICoXl4UaaUpHXaOPIln
- be/Q==
+ d=google.com; s=20251104; t=1791937830; x=1792542630; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=Au+j6XLyrX/YKyIZbqxFRBKorf/ZVTFxzOym8fG+kTs=;
+ b=Hp2BM0rOWi/KTSrlTznOdiBuTHtFApkxKd8i2pONllQV9ynRlh9t8tqOxu+HBpQ+M+
+ 0Pa47VV1xxgUulkQCvS8MjUi5FXJl8AMby/hlRBE94QrI4zShSGsWlF5l71UHaOB/gWF
+ hiV1qxb73u6pDSHS4Oh0qW4eFKYTk8B8pBdbO5005Gy1gczIaKGmIUZAHG6px9pLMEQk
+ 4j+afUz1iiiYC2lSuL5WWYYRXn3+oVqBg1sZUHT4QE29CAP/vUMmJpWvbejZReVqjxkH
+ HBSMilnyB9Bx0WuinQeDCZgcptP6y3kxhNfkD4xdZhxKi2FNQ5txNBCivFx8RbYH8/0Z
+ e5iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1791930930; x=1792535730;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=mVzMjt8wqGeBmpHcBXwSi13u/EZtA6xpKPNOU3XTROo=;
- b=NxFnJA9Exx0ZQyVLDZjjx9EqN95XeC5OP/JQpLp6ahTgy7b7T5D3wdgGzq6nDfIPBf
- meBO5zWb5yxt5GuAaKeZmZ14gt1VXcYVt0Pe2uQHNgTgLR2pkfs/EIEwaFGqNpNcDUhX
- BMvrXSjJXG7XU0jLDYK5lyGMiSzTxJ+5hCrcRx3V5IeToJ2JLOhsu1/C/hex0qo8Lhbn
- lZUbbLdWEu9c9H7KH0tajBMMFKUuGG5P74wdF/Ygt5MUdyYdxPl0InxbvUKpSk2TeV9r
- 0E8JoyjEF6q8FKT72l7iVBMo4TlqZc46xREZ4jDKUQKulq7lbzY/C/z6AWKqdjFzkIb/
- wjhw==
-X-Gm-Message-State: AFq9FYJmQl0v0mMwMgpvekDzE3Txyf55/ZKA8oGgbOwhXgGh5cKxTr5i
- RmAw8T/LO9OL3ojmRCHGjVpI94t67i9wztxWtvCONY9d+pao+ksLPBrUURmRMicXM0ksoHbuHJ2
- CakN1Esw=
-X-Gm-Gg: AYBFou2ACUtZZZKrS4jNN3jObJGceeHa1enJ7aYn4cYiu4nITlWjNBgThM3+oXnDxAs
- odu19fRm8vHjD3HwF6HQqfU5tqQsAuvLi8w2OwmcYS2tzek8GDD+MQ4wMy1zJFUHjhXS9Dm7jiE
- 4CWZzIhv+yWBNmbfKOBy4He33rB8c2M67/olIstdITiG7SOHiMvoAmiP3LBBVQzogE1YGlajqRP
- pGA87EHVV/JgUu4PobPbbq5BDLAQRSW4Ekq4su7ypQCd2Kx2dTbQc+PWtJZmjQYObnQt8brv3SS
- KDL7Ul7qaLzwo4OepvWdD4IRgyvA+q5Kb8fUhv+FG6MCM/FmTvbPWnB+UOnT/QSRIxtcgxY6XET
- ue/JUsEgagkmnPipWmHlPrlyHtKckkHngbYbgvHst/S9ThvRaF1UjyJcHu+rayOP34j9Uwi/T5f
- V0yTAP6KMcnNZJLvINVlWv10ZletXEMoMjSAz2f9MzDEQ4K5yTEj8TGpUDL5HvwKMFU2BxRE6PN
- BQ5oPAeH/qZItIlU458CGVW/ZwBkou07CB7qA==
-X-Received: by 2002:a17:903:41cf:b0:2dd:ad74:6d16 with SMTP id
- d9443c01a7336-2e842ab68efmr129751605ad.28.1791930930530; 
- Tue, 13 Oct 2026 15:35:30 -0700 (PDT)
-Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e8421b19a2sm61865145ad.46.2026.10.13.15.35.29
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 13 Oct 2026 15:35:30 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Bibo Mao <maobibo@loongson.cn>, David Christensen <drc@linux.ibm.com>,
- Riley Fletcher <rileyf@linux.ibm.com>, Sun Yuechi <sunyuechi@iscas.ac.cn>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v4 29/29] eal: remove rte_smp_XX
-Date: Tue, 13 Oct 2026 15:22:42 -0700
-Message-ID: <20261013222410.2257622-30-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261013222410.2257622-1-stephen@networkplumber.org>
-References: <20260729175715.165120-1-stephen@networkplumber.org>
- <20261013222410.2257622-1-stephen@networkplumber.org>
+ d=1e100.net; s=20260707; t=1791937830; x=1792542630;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=Au+j6XLyrX/YKyIZbqxFRBKorf/ZVTFxzOym8fG+kTs=;
+ b=Q0moFUftOeHyzX5Vlsh2mq9vD/sJpE1GlneDOT8xBc+ZjGFbmaoo/aqgyP4SJ8YO4+
+ mYBhSVAcu19sETwjVwqacnJiws5+XByXfZ9gA/9OUj3BLSgTk+/KYBzzKawwBLYgiNSt
+ 9vLF9N2cD6oDkUUtxhC6SxAJfoKSWCr7giKNvGeYnRknBZGx9wjA8tbnzg7YRw7nitza
+ bFwlgObkSvALDjBBylBGlwbhWbENY3OqWufYHZANrly7V3gftBb/nWLe9QOXpPS1o3qK
+ 8yupjxRYF5XEMCNTxuKvewVBxSze6TXX9B4etZjv1h8nryiDyaz9aOs+XA+4rjcjCoQw
+ vgGA==
+X-Gm-Message-State: AFq9FYJar987h4OGnzQkCMBZcIyRJJf6NTu/J4GZYNki5p0qV74vXWIt
+ J+lCdTcpcd/nc9XFu9dC9AqxZgk8Et+4tYlEp3Y0yPooVns+pZxOt79GZeGG78e+cGmT/Vou4Iu
+ VWpH2OjrxStUR/yBIhnszuploa9QmjkTUvrzluxJm
+X-Gm-Gg: AYBFou2kCDiB4Wtpv6VzoQF4/itRc/LH9S06ruay1WAXAtZEmAl5KxceLB1Tk2LBbRO
+ x1Uz4j7VBBWGP7O2VFvdym32cYOXAan06osXda5pBYQrh1IGkupy/qWo4jnpUPhIWqif0rjJRi2
+ 7sGKW0GZliYCLLk7pOHSKe8mUI49QHMkntDPgdzG4xlvGfkeBDbLQldtHO2tVmDAgwgXD0i90kX
+ pBhabzl6DdLOs+w7Z0r1M9jQNasw1SZWiu6v45b/YUrUDKSB1fwG821t6hvPj4M1a7ZZA4eN3KT
+ BVwQLFjUdKPJFn5VP6Bo4wTm35XmnuVEEZ4UoJca6C+ajxyajw0HbnYLVNWLon3fzhC7z/whMk0
+ PHolhP8w0Bw==
+X-Received: by 2002:a17:907:7243:b0:c26:19de:9138 with SMTP id
+ a640c23a62f3a-c31aa0c3392mr1396406766b.43.1791937829894; Tue, 13 Oct 2026
+ 17:30:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261012105023.669486-1-tathagat.dpdk@gmail.com>
+ <20261013104348.714550-1-tathagat.dpdk@gmail.com>
+ <20261013104348.714550-3-tathagat.dpdk@gmail.com>
+In-Reply-To: <20261013104348.714550-3-tathagat.dpdk@gmail.com>
+From: Joshua Washington <joshwash@google.com>
+Date: Tue, 13 Oct 2026 17:30:18 -0700
+X-Gm-Features: AclHuK-qbmhjoXxvBqZgQcT5yGanylAcy6C80GKaY0skl4qpPPA_qxyESk3Hhos
+Message-ID: <CALuQH+Uvi5_HyHAq9zviPt0BOvMBW9cTp1JibXPqdocNKEnyag@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] net/gve: fix DQO Tx queue stall on multi-seg and
+ TSO
+To: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
+Cc: dev@dpdk.org, stephen@networkplumber.org, stable@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,259 +99,178 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-These functions were marked for deprecation over five years ago and
-have no users left in the tree. Drop them from EAL, along with the
-deprecation notice, and record the replacements in the release notes.
+On Tue, Oct 13, 2026 at 3:44=E2=80=AFAM Tathagat Priyadarshi
+<tathagat.dpdk@gmail.com> wrote:
+>
+> The DPDK GVE driver previously tracked transmitted packet count (re_cnt)
+> at the end of each burst rather than tracking descriptor intervals per
+> packet against GVE_TX_MIN_RE_INTERVAL (32).
+>
+> In multi-segment and TSO transmissions, each packet consumes multiple
+> descriptors. The descriptor ring could exhaust before 32 packets were
+> sent, resulting in zero descriptors requesting report_event and
+> preventing the hardware DMA engine from returning GVE_COMPL_TYPE_DQO_DESC
+> completions. Without these completions, txq->nb_free was never
+> replenished, permanently stalling the TX queue.
+>
+> Align with the Linux kernel driver (gve_tx_update_tail()) by tracking
+> descriptor indices with last_re_idx:
+> - Replace re_cnt with last_re_idx in struct gve_tx_queue.
+> - Reset last_re_idx =3D 0 in gve_reset_tx_ring_state_dqo().
+> - On each packet transmission, check descriptor interval
+>   (last_desc_idx - last_re_idx) & mask >=3D GVE_TX_MIN_RE_INTERVAL.
+>   When met, set report_event on the packet's last descriptor and
+>   update last_re_idx.
+> - Ring the transmit doorbell immediately upon setting report_event to
+>   kick hardware processing early and reduce device fetch latency during
+>   bursts of multi-descriptor TSO packets, amortizing MMIO writes over
+>   RE_INTERVAL descriptors.
+> - Defensively pop completion tags before writing TSO context descriptors
+>   to avoid partial descriptor ring updates if completion tags are
+>   exhausted.
+>
+> Fixes: 4022f9999f56 ("net/gve: support basic Tx data path for DQO")
+> Fixes: 403c671a46b6 ("net/gve: support TSO in DQO RDA")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
+> ---
+>  drivers/net/gve/gve_ethdev.h |  2 +-
+>  drivers/net/gve/gve_tx_dqo.c | 46 ++++++++++++++++++++----------------
+>  2 files changed, 27 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
+> index c9a176ff17..2033f49444 100644
+> --- a/drivers/net/gve/gve_ethdev.h
+> +++ b/drivers/net/gve/gve_ethdev.h
+> @@ -193,8 +193,8 @@ struct gve_tx_queue {
+>         uint16_t sw_size;
+>         uint8_t cur_gen_bit;
+>         uint32_t last_desc_cleaned;
+> +       uint32_t last_re_idx;
+>         void **txqs;
+> -       uint16_t re_cnt;
+>
+>         /* Only valid for DQO_RDA queue format */
+>         struct gve_tx_queue *complq;
+> diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
+> index c864d722d9..0839179d7f 100644
+> --- a/drivers/net/gve/gve_tx_dqo.c
+> +++ b/drivers/net/gve/gve_tx_dqo.c
+> @@ -250,21 +250,23 @@ gve_fill_tx_pkt_desc(struct gve_tx_queue *txq, uint=
+16_t *tx_id,
+>  uint16_t
+>  gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_=
+pkts)
+>  {
+> +       volatile union gve_tx_desc_dqo *txr, *txd;
+>         struct gve_tx_queue *txq =3D tx_queue;
+> -       volatile union gve_tx_desc_dqo *txr;
+> -       volatile union gve_tx_desc_dqo *txd;
+> -       uint16_t mask =3D txq->nb_tx_desc - 1;
+> -       struct gve_tx_pkt *pkts;
+> +       uint32_t last_re_interval;
+>         struct rte_mbuf *tx_pkt;
+> -       uint16_t compl_tag;
+> -       const char *reason;
+> +       struct gve_tx_pkt *pkts;
+> +       uint32_t last_desc_idx;
+>         uint16_t nb_tx =3D 0;
+>         uint64_t bytes =3D 0;
+> +       const char *reason;
+> +       uint16_t compl_tag;
+>         uint64_t ol_flags;
+>         uint16_t nb_descs;
+> -       bool csum, tso;
+>         uint16_t tx_id;
+> +       bool csum, tso;
+> +       uint16_t mask;
 
-Checkpatch no longer looks for them: now that the macros are gone,
-any remaining use is a compile error.
+It's kind of hard to tell from first glance, given how many
+declarations are here and how many are changing, but are all of these
+changes necessary for a fix? Things like moving txr, txd to the same
+line or separating the declaration and definition of mask, even though
+txq is already defined in an earlier line anyway seem unnecessary at
+first glance. There might be other such changes, but I stopped there,
+since those are in the first 5 lines of delta. Let's try to keep the
+fix focused, only making changes that are actually necessary.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- devtools/checkpatches.sh               |  8 ----
- doc/guides/rel_notes/deprecation.rst   |  8 ----
- doc/guides/rel_notes/release_26_11.rst | 11 +++++
- lib/eal/arm/include/rte_atomic_32.h    |  6 ---
- lib/eal/arm/include/rte_atomic_64.h    |  6 ---
- lib/eal/include/generic/rte_atomic.h   | 61 --------------------------
- lib/eal/loongarch/include/rte_atomic.h |  6 ---
- lib/eal/ppc/include/rte_atomic.h       |  6 ---
- lib/eal/riscv/include/rte_atomic.h     |  6 ---
- lib/eal/x86/include/rte_atomic.h       |  4 --
- 10 files changed, 11 insertions(+), 111 deletions(-)
-
-diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
-index 466e06410a..c52fb5d1b6 100755
---- a/devtools/checkpatches.sh
-+++ b/devtools/checkpatches.sh
-@@ -121,14 +121,6 @@ check_forbidden_additions() { # <patch>
- 		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
- 		"$1" || res=1
- 
--	# refrain from new additions of rte_smp_[r/w]mb()
--	awk -v FOLDERS="lib drivers app examples" \
--		-v EXPRESSIONS="rte_smp_(r|w)?mb\\\(" \
--		-v RET_ON_FAIL=1 \
--		-v MESSAGE='Using rte_smp_[r/w]mb' \
--		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
--		"$1" || res=1
--
- 	# refrain from using compiler __sync_xxx builtins
- 	awk -v FOLDERS="lib drivers app examples" \
- 		-v EXPRESSIONS="__sync_.*\\\(" \
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 49ee85fa4e..5cc7cc12e6 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -29,14 +29,6 @@ Deprecation Notices
-   Use the ``-S <service-corelist>`` parameter instead
-   to specify the cores to be used for background services in DPDK.
- 
--* rte_smp_*mb: These APIs provide full barrier functionality. However, many
--  use cases do not require full barriers. To support such use cases, DPDK has
--  adopted atomic operations from
--  https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html. These
--  operations and a new wrapper ``rte_atomic_thread_fence`` instead of
--  ``__atomic_thread_fence`` must be used for patches that need to be merged in
--  20.08 onwards. This change will not introduce any performance degradation.
--
- * mempool: The ``flushthresh`` field in ``struct rte_mempool_cache`` is obsolete,
-   and will be removed in DPDK 26.11.
- 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 25301088bf..d4a1333fa6 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -200,6 +200,17 @@ Removed Items
-   ``cmpset`` and ``exchange``). Use the C11 ``rte_atomic_*_explicit``
-   operations instead.
- 
-+* Removed SMP memory barriers:
-+
-+  * ``rte_smp_mb()`` replaced with ``rte_atomic_thread_fence(rte_memory_order_seq_cst)``
-+  * ``rte_smp_rmb()`` replaced with ``rte_atomic_thread_fence(rte_memory_order_acquire)``
-+  * ``rte_smp_wmb()`` replaced with ``rte_atomic_thread_fence(rte_memory_order_release)``
-+
-+  Some call sites became release stores or acquire loads instead of a
-+  standalone fence. Barriers that order CPU accesses against a device,
-+  rather than against another CPU, should use ``rte_io_wmb()`` and
-+  ``rte_io_rmb()`` instead.
-+
- * mempool: Removed the deprecated and obsolete ``flushthresh`` field
-   from the ``rte_mempool_cache`` structure.
- 
-diff --git a/lib/eal/arm/include/rte_atomic_32.h b/lib/eal/arm/include/rte_atomic_32.h
-index 696a539fef..4115271091 100644
---- a/lib/eal/arm/include/rte_atomic_32.h
-+++ b/lib/eal/arm/include/rte_atomic_32.h
-@@ -17,12 +17,6 @@ extern "C" {
- 
- #define	rte_rmb() __sync_synchronize()
- 
--#define rte_smp_mb() rte_mb()
--
--#define rte_smp_wmb() rte_wmb()
--
--#define rte_smp_rmb() rte_rmb()
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/arm/include/rte_atomic_64.h b/lib/eal/arm/include/rte_atomic_64.h
-index 9f790238df..604e777bcd 100644
---- a/lib/eal/arm/include/rte_atomic_64.h
-+++ b/lib/eal/arm/include/rte_atomic_64.h
-@@ -20,12 +20,6 @@ extern "C" {
- 
- #define rte_rmb() asm volatile("dmb oshld" : : : "memory")
- 
--#define rte_smp_mb() asm volatile("dmb ish" : : : "memory")
--
--#define rte_smp_wmb() asm volatile("dmb ishst" : : : "memory")
--
--#define rte_smp_rmb() asm volatile("dmb ishld" : : : "memory")
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/include/generic/rte_atomic.h b/lib/eal/include/generic/rte_atomic.h
-index 23fc7a4d44..d659691db4 100644
---- a/lib/eal/include/generic/rte_atomic.h
-+++ b/lib/eal/include/generic/rte_atomic.h
-@@ -51,67 +51,6 @@ static inline void rte_wmb(void);
- static inline void rte_rmb(void);
- ///@}
- 
--/** @name SMP Memory Barrier
-- */
--///@{
--/**
-- * General memory barrier between lcores
-- *
-- * Guarantees that the LOAD and STORE operations that precede the
-- * rte_smp_mb() call are globally visible across the lcores
-- * before the LOAD and STORE operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_acq_rel) should be used instead.
-- */
--static inline void rte_smp_mb(void);
--
--/**
-- * Write memory barrier between lcores
-- *
-- * Guarantees that the STORE operations that precede the
-- * rte_smp_wmb() call are globally visible across the lcores
-- * before the STORE operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_release) should be used instead.
-- *  The fence also guarantees LOAD operations that precede the call
-- *  are globally visible across the lcores before the STORE operations
-- *  that follows it.
-- */
--static inline void rte_smp_wmb(void);
--
--/**
-- * Read memory barrier between lcores
-- *
-- * Guarantees that the LOAD operations that precede the
-- * rte_smp_rmb() call are globally visible across the lcores
-- * before the LOAD operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_acquire) should be used instead.
-- *  The fence also guarantees LOAD operations that precede the call
-- *  are globally visible across the lcores before the STORE operations
-- *  that follows it.
-- */
--static inline void rte_smp_rmb(void);
--///@}
--
- /** @name I/O Memory Barrier
-  */
- ///@{
-diff --git a/lib/eal/loongarch/include/rte_atomic.h b/lib/eal/loongarch/include/rte_atomic.h
-index 785a452c9e..a789e3ab4d 100644
---- a/lib/eal/loongarch/include/rte_atomic.h
-+++ b/lib/eal/loongarch/include/rte_atomic.h
-@@ -18,12 +18,6 @@ extern "C" {
- 
- #define rte_rmb()	rte_mb()
- 
--#define rte_smp_mb()	rte_mb()
--
--#define rte_smp_wmb()	rte_mb()
--
--#define rte_smp_rmb()	rte_mb()
--
- #define rte_io_mb()	rte_mb()
- 
- #define rte_io_wmb()	rte_mb()
-diff --git a/lib/eal/ppc/include/rte_atomic.h b/lib/eal/ppc/include/rte_atomic.h
-index d3bd50a11a..1e5c1747e6 100644
---- a/lib/eal/ppc/include/rte_atomic.h
-+++ b/lib/eal/ppc/include/rte_atomic.h
-@@ -24,12 +24,6 @@ extern "C" {
- 
- #define	rte_rmb() asm volatile("sync" : : : "memory")
- 
--#define rte_smp_mb() rte_mb()
--
--#define rte_smp_wmb() rte_wmb()
--
--#define rte_smp_rmb() rte_rmb()
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/riscv/include/rte_atomic.h b/lib/eal/riscv/include/rte_atomic.h
-index 061b175f33..04c40e4e9b 100644
---- a/lib/eal/riscv/include/rte_atomic.h
-+++ b/lib/eal/riscv/include/rte_atomic.h
-@@ -23,12 +23,6 @@ extern "C" {
- 
- #define rte_rmb()	asm volatile("fence r, r" : : : "memory")
- 
--#define rte_smp_mb()	rte_mb()
--
--#define rte_smp_wmb()	rte_wmb()
--
--#define rte_smp_rmb()	rte_rmb()
--
- #define rte_io_mb()	asm volatile("fence iorw, iorw" : : : "memory")
- 
- #define rte_io_wmb()	asm volatile("fence orw, ow" : : : "memory")
-diff --git a/lib/eal/x86/include/rte_atomic.h b/lib/eal/x86/include/rte_atomic.h
-index a46bedb0f0..0ed9421055 100644
---- a/lib/eal/x86/include/rte_atomic.h
-+++ b/lib/eal/x86/include/rte_atomic.h
-@@ -23,10 +23,6 @@
- 
- #define	rte_rmb() _mm_lfence()
- 
--#define rte_smp_wmb() rte_compiler_barrier()
--
--#define rte_smp_rmb() rte_compiler_barrier()
--
- #ifdef __cplusplus
- extern "C" {
- #endif
--- 
-2.53.0
-
+>
+> +       mask =3D txq->nb_tx_desc - 1;
+>         pkts =3D txq->pkt_ring_dqo;
+>         txr =3D txq->tx_ring;
+>
+> @@ -306,15 +308,15 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **=
+tx_pkts, uint16_t nb_pkts)
+>                         break;
+>                 }
+>
+> +               if (!gve_free_compl_tags_pop(txq, &compl_tag))
+> +                       break;
+> +
+>                 if (tso) {
+>                         txd =3D &txr[tx_id];
+>                         gve_tx_fill_seg_desc_dqo(txd, tx_pkt);
+>                         tx_id =3D (tx_id + 1) & mask;
+>                 }
+>
+> -               if (!gve_free_compl_tags_pop(txq, &compl_tag))
+> -                       break;
+> -
+>                 pkts[compl_tag].mbuf =3D tx_pkt;
+>                 while (tx_pkt) {
+>                         /* Skip writing descriptors if mbuf has no data. =
+*/
+> @@ -331,23 +333,26 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **=
+tx_pkts, uint16_t nb_pkts)
+>                 txd =3D &txr[(tx_id - 1) & mask];
+>                 txd->pkt.end_of_packet =3D 1;
+>
+> +               last_desc_idx =3D (tx_id - 1) & mask;
+> +               last_re_interval =3D (last_desc_idx - txq->last_re_idx) &=
+ mask;
+> +               if (unlikely(last_re_interval >=3D GVE_TX_MIN_RE_INTERVAL=
+)) {
+> +                       txd->pkt.report_event =3D true;
+> +                       txq->last_re_idx =3D last_desc_idx;
+> +                       rte_write32(tx_id, txq->qtx_tail);
+> +                       txq->tx_tail =3D tx_id;
+> +               }
+> +
+>                 txq->nb_free -=3D nb_descs;
+>                 txq->nb_used +=3D nb_descs;
+>         }
+>
+> -       /* update the tail pointer if any packets were processed */
+> -       if (nb_tx > 0) {
+> -               /* Request a descriptor completion on the last descriptor=
+ */
+> -               txq->re_cnt +=3D nb_tx;
+> -               if (txq->re_cnt >=3D GVE_TX_MIN_RE_INTERVAL) {
+> -                       txd =3D &txr[(tx_id - 1) & mask];
+> -                       txd->pkt.report_event =3D true;
+> -                       txq->re_cnt =3D 0;
+> -               }
+> -
+> +       /* update the tail pointer if any uncommitted descriptors remain =
+*/
+> +       if (txq->tx_tail !=3D tx_id) {
+>                 rte_write32(tx_id, txq->qtx_tail);
+>                 txq->tx_tail =3D tx_id;
+> +       }
+>
+> +       if (nb_tx > 0) {
+>                 txq->stats.packets +=3D nb_tx;
+>                 txq->stats.bytes +=3D bytes;
+>                 txq->stats.errors +=3D nb_pkts - nb_tx;
+> @@ -445,6 +450,7 @@ gve_reset_tx_ring_state_dqo(struct gve_tx_queue *txq)
+>         txq->nb_used =3D 0;
+>
+>         txq->last_desc_cleaned =3D 0;
+> +       txq->last_re_idx =3D 0;
+>         txq->nb_free =3D txq->nb_tx_desc - 1;
+>
+>         txq->complq_tail =3D 0;
+> --
+> 2.43.0
+>
