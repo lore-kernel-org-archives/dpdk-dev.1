@@ -2,79 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4653CC6B38
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF5CCC6B38
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:54:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AEBFE402DF;
-	Thu, 15 Oct 2026 19:42:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CB0B7402DF;
+	Thu, 15 Oct 2026 19:54:51 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 086F84027C
- for <dev@dpdk.org>; Thu, 15 Oct 2026 19:42:13 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 3319D4027C
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 19:54:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792086133;
+ s=mimecast20190719; t=1792086889;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=M1cLwJdu9KApxu+hw66TCK7Jk/O4CfMCiQfFusgmAVI=;
- b=EsXZedsccp+Kft6RY1o4vLlu9Pn4qn/ORc1trcZYJJKmh2MqnFGBx9ZvOtTsmf8Xv9iPGM
- QZl8k80jlbaiRQbYT4G/ue+VPPsemMTnsi0MpXLDpmorF29hfypRScXmyRZUD0pLrhJbYb
- 9Hk4WB9jpZOxJF2sdgbIzaPbIYiN9cA=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=OnSeBGWzS4EpMV/U2mcZUskMRgVqJX9i6s619ZU1t10=;
+ b=h1tFNBtYPPvZj2cC4c/fYfu34ZnHRVR6TCjPI5FAZ4CmfpV4+dfFGolBRPgS+H+GuM8HWy
+ arm1afnywylT6H5o+A6HsRQTOnVD9P4vggv9aSM4WNSSzqAdAEJzA7iL3Tf1iL9ysQKft+
+ 5ppi3FBoJZyWgfMcF+ZLy6muPE2dGlo=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-WUUYAguIO6mRR1mIXhyl9A-1; Thu, 15 Oct 2026 17:42:06 +0000
-X-MC-Unique: WUUYAguIO6mRR1mIXhyl9A-1
-X-Mimecast-MFC-AGG-ID: WUUYAguIO6mRR1mIXhyl9A_1792086125
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-3a58fef21b3so12690941fa.0
- for <dev@dpdk.org>; Thu, 15 Oct 2026 10:42:05 -0700 (PDT)
+ us-mta-428-SmRrszkuOu6FEkNZwLDkpA-1; Thu, 15 Oct 2026 17:54:48 +0000
+X-MC-Unique: SmRrszkuOu6FEkNZwLDkpA-1
+X-Mimecast-MFC-AGG-ID: SmRrszkuOu6FEkNZwLDkpA_1792086886
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-3a77cbb4202so12732661fa.2
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 10:54:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792086125; x=1792690925;
+ d=1e100.net; s=20260707; t=1792086886; x=1792691686;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=M1cLwJdu9KApxu+hw66TCK7Jk/O4CfMCiQfFusgmAVI=;
- b=gW3cTG6BoMI2oBApEcVnn8WZQ4AcOdOrIuwhfnI44Mb68PhPVrCOgO+r0UPAfL3Svb
- nabolHf17qywyPYn04wdOeS0n1QXZf6W3b8MS/gPUku7Wnn2Z29XJBkA94IIEjx/e0Z9
- fjbEnYfbr1G6+HzFPBPuhQV2ut6d6tcw0MAVvq4CwFiYEXzTqCXrSI2JEP69tG1x5dua
- RUuj5RCtEQlj3JH6aQvxqmdvhpK7D51QVVU4dbxwJCqc/QobucM1T8fgiGYghTIBhdrs
- UtrisPFLbnsuzWUiVhm5x/GSxgFOjzcxH1nNDPyaZnwF29bavmXP7BSIB9AIWoAIWfGs
- vwIQ==
-X-Gm-Message-State: AFq9FYIeAyDDIcdNf+zMiPdB9MlZIdaZNz/6GqbcuovK+JZn2A8mwTCI
- G5p5ZOHpvl1MZJCiz+I5V2WrtvO0HWjtUgfr8XlIXZeoZ71Q/CyBRETMoBBG8IYz+x7zeFcMBtW
- BRLUjc4dJx3gGdA2HMUGaijMhkv7FGXXEOolkgESB+Hf+b+2ZsAzY67yPZM8+qbuzVnUhXefeDS
- WxNSSRNhWzh0hZVQXqwHs=
-X-Gm-Gg: AYBFou31itMrNumlj2zXtRbdkg0/RTxPNoJwsFIIppt0mjRqWNsYXcGJ9KPvShiAEnN
- 5ZJecffz1CSmtj9RwO3fyYwyejGndDeMxsNmCMLCSsYLuOoa42fIfTSkrmxcTQ/UlXlHDqzneKB
- +RuZDlq5uB4CR7jYZQLLARjtPtuPPVZWab0jFHdfCLeojAxbelzTJ2b5Pf+gacMGVlw14Od76kt
- 8UoNtxkE/eUxrfjI9fWwfCUytHKbVy2qnS1FUU+EeCbxq89
-X-Received: by 2002:a2e:bc1b:0:b0:3a6:6d05:7375 with SMTP id
- 38308e7fff4ca-3a9c515ce0dmr45512451fa.8.1792086124624; 
- Thu, 15 Oct 2026 10:42:04 -0700 (PDT)
-X-Received: by 2002:a2e:bc1b:0:b0:3a6:6d05:7375 with SMTP id
- 38308e7fff4ca-3a9c515ce0dmr45512341fa.8.1792086124128; Thu, 15 Oct 2026
- 10:42:04 -0700 (PDT)
+ bh=OnSeBGWzS4EpMV/U2mcZUskMRgVqJX9i6s619ZU1t10=;
+ b=pPT8m/kMvqvuwgiQ3gTNyyNN47J47ptuLbwpBqELt/pGMJR0IXqJjL+MXFTXvg99lE
+ aw/O5jPW+gcjscx45TkXAK6Dz4MQ/9SA4tcNX1rQWKtpOsLmaTOJ6CY6snWnjD6+szUx
+ d3VOdSWlZ3ra1SyDCTDwRJOw2qzNf2G2zwbEsih2sXAo7R01I4UL2Qw1A2XXKDwBTxdJ
+ BBSyRlP7usNj7FzcXPdWpUw/hMnI9fVXSXhP9bKjxbZtiHXigW7oeno20A2B4pWd2A/Y
+ bOwo2vYMYu31yz4j80DXODVoBIFebTxHxsJnie0mdhGGqpgsf2+YrEx00Jh5l1nf0gr4
+ QQbA==
+X-Gm-Message-State: AFq9FYI0gsf/pk/uRE/KTtHg9IUqfglZKSHALd8U3sNM7bBsQuANlS9s
+ pnxrNlcUOgLCcEwKEW8bUeU+EM8jci2lFAz42JEe4lJPFjKKETgrxv+gGF24jld7v/QJNWzeI0l
+ OnoDQztnv1s+W3FaR1+FSlwhb7EhZntlI4yQvE559/2B8b8RUuR/Jv1NiQxc8L9rB9Oi14fe4Ml
+ x1SCH9o55dLjD0/BO7ln4=
+X-Gm-Gg: AYBFou2kgc2sVzF9R0vQtuNUnOu1RlGEa2yoMxln8SHuEE/2hakz1EZSTcCVEXFXeZz
+ fRVxYNDzm1ZxQlEPb54rLSS0VTjL8e8KB4f44QFs4K30+fMINBhkL2OK6cr+1qukZblDziKmrtg
+ XGMcdhEd+Rhwq7nY7qnm9tRTB0d3y6fSfzhJL0Z1daoVck+nYN977vQXsfCFCyReBn6q26Tk/f9
+ xo6dTthsyNtDJcMeEeYh11o32yZrRmC5F3bxz09Mn8OTSY7
+X-Received: by 2002:a05:651c:211e:b0:3a1:30c4:d95 with SMTP id
+ 38308e7fff4ca-3a9c515d781mr50539731fa.5.1792086886398; 
+ Thu, 15 Oct 2026 10:54:46 -0700 (PDT)
+X-Received: by 2002:a05:651c:211e:b0:3a1:30c4:d95 with SMTP id
+ 38308e7fff4ca-3a9c515d781mr50539651fa.5.1792086885941; Thu, 15 Oct 2026
+ 10:54:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260717090326.1860634-1-rjarry@redhat.com>
- <20261015143122.3197430-5-rjarry@redhat.com>
-In-Reply-To: <20261015143122.3197430-5-rjarry@redhat.com>
+References: <ee502d37f54dbb6ea8ae4473e684eeb0f500db1d.1792079025.git.anatoly.burakov@intel.com>
+ <CAJFAV8wubWQvcN7wArMbVZ5yxu8iLEMiUUQwWzGmCqyAVDk6Mg@mail.gmail.com>
+In-Reply-To: <CAJFAV8wubWQvcN7wArMbVZ5yxu8iLEMiUUQwWzGmCqyAVDk6Mg@mail.gmail.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 15 Oct 2026 19:41:52 +0200
-X-Gm-Features: AclHuK_EPsJ7wpMw6pIe4tWMtY7zFKd3BM1drT4fXQKmL-1WB9a--fEw3HQtaJw
-Message-ID: <CAJFAV8z+zv=og5mT4GRd2uR4XPJ2vBKDLSGYeU8a+P+GMC9bdA@mail.gmail.com>
-Subject: Re: [PATCH dpdk/26.11 v4 0/2] graph: topological bitmap scheduling
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org, Christophe Fontaine <cfontain@redhat.com>,
- Jerin Jacob <jerinj@marvell.com>, 
- Kiran Kumar Kokkilagadda <kirankumark@marvell.com>, 
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Maxime Leroy <maxime@leroys.fr>, 
- Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>, 
- Zhirun Yan <yanzhirun_163@163.com>
+Date: Thu, 15 Oct 2026 19:54:32 +0200
+X-Gm-Features: AclHuK88JEw-xLAjCzucIUClhB368WCDQWk6Jl263dUX9h7MMhgU9XW5qdDnskY
+Message-ID: <CAJFAV8xaCdniuSE-whogA66Fxpxc9hipD_4===u=X5p9iWG23w@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] vfio: fix device lookup with no-IOMMU mode enabled
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, abailey@iol.unh.edu,
+ dladd@iol.unh.edu
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 0bdzqu-67Cv065ZvrGs7yuKPGU7PO1zbFsx37IFL7cU_1792086125
+X-Mimecast-MFC-PROC-ID: vKg526ohXY5MCN4J132EsbHXEOC8BbY-7cAA3GGdCn4_1792086886
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -90,75 +84,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 15 Oct 2026 at 16:32, Robin Jarry <rjarry@redhat.com> wrote:
+On Thu, 15 Oct 2026 at 18:15, David Marchand <david.marchand@redhat.com> wrote:
 >
-> Replace the FIFO circular buffer in rte_graph with a bitmap and a
-> topologically-sorted schedule table. The old circular buffer appended
-> nodes in enqueue order, effectively a partial DFS driven by per-node
-> process functions. This caused convergence nodes to be visited before
-> all upstream branches had run, resulting in redundant visits with
-> smaller batches.
->
-> Nodes are now sorted by (topo_order, node_id) using BFS depth from
-> source nodes, ensuring upstream nodes are always visited before
-> downstream ones. The diamond perf test shows a ~10% throughput
-> improvement (converge visited once at 256 objs/call instead of twice
-> at 128).
->
-> Changes v3 -> v4:
->  - fixed check_includes error after RTE_PTR_ADD() changes
->  - s/__rte_always_inline/inline/ to fix checkpatch warnings
->  - removed entry from deprecation notice
->  - added release notes entries
->
-> Changes v2 -> v3:
->  - dropped explicit priority field (int16_t) from rte_node_register
->    and struct node; topological ordering from BFS is sufficient
->  - removed hiprio worker node type from diamond test; topo_order
->    alone provides correct ordering without user intervention
->  - updated documentation and SVG diagram accordingly
->
-> Changes v1 -> v2:
->  - split diamond perf test into separate preparatory patch
->  - added topological depth (topo_order) as secondary sort key to
->    preserve upstream-before-downstream ordering, preventing a
->    regression in the reverse tree test
->  - restored idx == 0 guard on bitmap set in the enqueue path to
->    avoid a ~15% throughput regression caused by touching the pending
->    bitmap cache line on every enqueue call
->  - added performance numbers measured before and after
->
-> Cc: Christophe Fontaine <cfontain@redhat.com>
-> Cc: David Marchand <david.marchand@redhat.com>
-> Cc: Jerin Jacob <jerinj@marvell.com>
-> Cc: Kiran Kumar Kokkilagadda <kirankumark@marvell.com>
-> Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-> Cc: Maxime Leroy <maxime@leroys.fr>
-> Cc: Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>
-> Cc: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-> Cc: Zhirun Yan <yanzhirun_163@163.com>
->
-> Robin Jarry (2):
->   graph: add diamond topology performance test
->   graph: replace circular buffer with topological bitmap
->
->  app/test/test_graph_perf.c                    |  130 +-
->  doc/guides/prog_guide/graph_lib.rst           |   29 +-
->  .../prog_guide/img/graph_mem_layout.svg       | 1823 +++++++----------
->  doc/guides/rel_notes/deprecation.rst          |    8 -
->  doc/guides/rel_notes/release_26_11.rst        |   11 +
->  lib/graph/graph.c                             |   27 +-
->  lib/graph/graph_debug.c                       |   12 +-
->  lib/graph/graph_ops.c                         |   46 +
->  lib/graph/graph_populate.c                    |  107 +-
->  lib/graph/graph_private.h                     |   41 +-
->  lib/graph/rte_graph_model_mcore_dispatch.h    |   34 +-
->  lib/graph/rte_graph_model_rtc.h               |   63 +-
->  lib/graph/rte_graph_worker.h                  |    2 +-
->  lib/graph/rte_graph_worker_common.h           |   80 +-
->  14 files changed, 1170 insertions(+), 1243 deletions(-)
+> On Thu, 15 Oct 2026 at 17:44, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+> >
+> > Currently, when the `enable_unsafe_noiommu_mode` VFIO module parameter is
+> > set, VFIO selects PA IOVA mode and then only looks for no-IOMMU device
+> > nodes: `/dev/vfio/noiommu-N` in group mode, and `noiommu-vfioN` in cdev
+> > mode.
+> >
+> > However, the parameter does not make every VFIO device a no-IOMMU
+> > device. The kernel only creates a no-IOMMU group for a device that has no
+> > IOMMU group of its own; devices behind a real IOMMU still get a regular
+> > `/dev/vfio/N` group and `vfioN` cdev. On such systems, devices bound
+> > to `vfio-pci` are therefore reported as not managed by VFIO and fail
+> > to probe.
+> >
+> > Fix it by trying the regular node name first and falling back to the
+> > no-IOMMU one, in both group and cdev modes.
+> >
+> > Fixes: 6cb38a7f56e0 ("vfio: introduce VFIO mode")
+> > Fixes: d129414711aa ("vfio: introduce cdev mode")
+> >
+> > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> Acked-by: David Marchand <david.marchand@redhat.com>
 
-Series applied, thanks.
+Applied, thanks.
 
 
 -- 
