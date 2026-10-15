@@ -2,74 +2,105 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B4DCC6B33
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 13:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E17CC6B34
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 13:52:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A69E40291;
-	Thu, 15 Oct 2026 15:48:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2FCDB40291;
+	Thu, 15 Oct 2026 15:52:31 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5E82D400EF
- for <dev@dpdk.org>; Thu, 15 Oct 2026 15:48:00 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 38C8C402DA
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 15:52:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792072079;
+ s=mimecast20190719; t=1792072348;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=n6Gzi8Rzh0Jw3DWRIKDMvN5TlujGUL5geoXgtMD0mpk=;
- b=hgDWS+dEEk57dzQGAU4oan9fBd9cDP517tEIlx14JiL0+8Iv9DvzIHuZ1gBwbBzJJN6CHc
- 69gGSl7eqq5AljRGcbLKQHBPOYW/Y4nUykg48oKSXE7P8xLURK0/Q/ETkXfXTSDI7BFY5q
- SzHU8rb4bkJ2G5fOs6pkYapJ25WbMWk=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-ejFojJV6N5i5v_e9S1OyHw-1; Thu, 15 Oct 2026 13:47:57 +0000
-X-MC-Unique: ejFojJV6N5i5v_e9S1OyHw-1
-X-Mimecast-MFC-AGG-ID: ejFojJV6N5i5v_e9S1OyHw_1792072076
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-5bcf03751deso992349e87.2
- for <dev@dpdk.org>; Thu, 15 Oct 2026 06:47:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792072076; x=1792676876;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=n6Gzi8Rzh0Jw3DWRIKDMvN5TlujGUL5geoXgtMD0mpk=;
- b=E6agkIRbia7X5ovxTwRkz/W7WOdGlAztd3HMOwg5dgJOQ3VE9NiAqrVzUYFuQjtzA1
- cm7Y4P5FmkD3U1aLzZ2sM9uzDJf+m+F82IAYQNJF0RNcczjzMP4quL4Nwxo59Qp1DUQl
- ZDxGi7hgKxBlQxxsffs4A/9LbflgCujP/WTEtaIEOAkK6A7Ey3PHrdrktgymE8f1FKOn
- OlaRMbO7raTFLSDU8WPs1vG+/FYLyr0KlZ4SIHTsBWbGqF9Rz0P1kFzK5e8Prmu0i49+
- u7iPYx2dAJ9kBE9enIeLkTwScvuUD5WmcjRfYD6Ysb7ubc32qBI62GdrJbI3rot0U06r
- 5fBg==
-X-Gm-Message-State: AFq9FYKzhmmHEWbOnH5pHVa7K7dFvA50y7wkqPHY2MUdhuakJNa6Bwvc
- iwlkg15dcbP+6XqfhaGNJ7i3hpG9b+6lDrGA+ADbjsk/SF8+l680sz9pGIqJARFqK3HJgAU/TIw
- pvYJwTiKZvjRJQiDw6xre1/Avq0guSef8mN3ISVyqkNCMGjTQQ7c5QF1V7ExtSbWP9OYYwUFfPP
- mJd58H0vPP56JPIYe1cvM=
-X-Gm-Gg: AYBFou3XZO5FhcEjGZoaA8crT3W1yWAe4VJpjfi838Qm+lEYFmb3G6eaIRUJ9V5K+Hk
- iWIlkR4WqyOWs36UunzX56vmqGRpz3EczkZv9yJc2AsRArjZOG4jpY0qLIsg/0dlpKbsUEi8vYI
- J+qoQNRAgIVQDHi7SnfBzMdyaiUUrqFnEpyxN5htE+BGSnPFBsirq0DnZJfJtLrQniCWOeyqDj6
- ntlNsHwC8WftCVGAzQMBfU5sff32o7mrMmayq34TMvBmGJL
-X-Received: by 2002:a05:6512:1289:b0:5b8:ef97:e372 with SMTP id
- 2adb3069b0e04-5bcde8c3d93mr7560991e87.46.1792072075539; 
- Thu, 15 Oct 2026 06:47:55 -0700 (PDT)
-X-Received: by 2002:a05:6512:1289:b0:5b8:ef97:e372 with SMTP id
- 2adb3069b0e04-5bcde8c3d93mr7560967e87.46.1792072074121; Thu, 15 Oct 2026
- 06:47:54 -0700 (PDT)
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=ftJoVn5kqNEH8igJcsxb/1Mw5O5lUu5c360Yvm0qgwI=;
+ b=EOI7CWyuxGJWshGR4W22IlMtQu9GiVOBi2ahPR5j3IVHeoXOIV1wFnm+Dtt6ooNFgubB0Q
+ Ac+02bm+HDxVx1Lz8jxVbCuz15xpWLEimc5WoqjPBwR4rOubEQMtqfu6EkYfuGKhIkXSje
+ ugChH5TxU2Hv2o4Sz6o26vLEj7dmWqw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-150-ojAM0Q94Oom52SqEGqLxpw-1; Thu,
+ 15 Oct 2026 13:52:25 +0000
+X-MC-Unique: ojAM0Q94Oom52SqEGqLxpw-1
+X-Mimecast-MFC-AGG-ID: ojAM0Q94Oom52SqEGqLxpw_1792072344
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 3382B1955EA1; Thu, 15 Oct 2026 13:52:24 +0000 (UTC)
+Received: from [100.90.45.206] (headnet04.pony-001.prod.iad2.dc.redhat.com
+ [10.2.32.116])
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 2171630000E3; Thu, 15 Oct 2026 13:52:22 +0000 (UTC)
+Message-ID: <483ed182-e1e8-415d-88d4-1f6ea9ada87a@redhat.com>
+Date: Thu, 15 Oct 2026 15:52:20 +0200
 MIME-Version: 1.0
-References: <20261005110613.473007-1-bruce.richardson@intel.com>
- <atDYWtn8lwvGspyT@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <atDYWtn8lwvGspyT@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 15 Oct 2026 15:47:41 +0200
-X-Gm-Features: AclHuK-861dEIH-dngrFw_a9xGL2hqfWumB7D08ds4SyjcTGkYEx4vbyQuWyA1s
-Message-ID: <CAJFAV8x_-WcbE6i5vh_vaTXPUqYwaNXNY7eFgQpqLjzHWP1CVg@mail.gmail.com>
-Subject: Re: [PATCH] net/iavf: set interrupt throttling register
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] vhost: drop async datapath
+To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
+Cc: bruce.richardson@intel.com, Chenbo Xia <chenbox@nvidia.com>
+References: <20260723153111.3943368-1-david.marchand@redhat.com>
+ <20261014155750.1269862-1-david.marchand@redhat.com>
+ <20261014155750.1269862-5-david.marchand@redhat.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
+ kLgBQUki3voWhUbMb69ybqdMUHOl21DGCj0BTU3lXwapYXOAnsh8q6RRM+deUpasyT+Jvf3a
+ gU35dgZcomRh5HPmKMU4KfeA38cVUebsFec1HuJAWzOb/UdtQkYyZR4rbzw8SbsOemtMtwOx
+ YdXodneQD7KuRU9IhJKiEfipwqk2pufm2VSGl570l5ANyWMA/XADNhcEXhpkZ1Iwj3TWO7XR
+ uH4xfvPl8nBsLo/EbEI7fbuUULcAnHfowQslPUm6/yaGv6cT5160SPXT1t8U9QDO6aTSo59N
+ jH519JS8oeKZB1n1eLDslCfBpIpWkW8ZElGkOGWAN0vmpLfdyiqBNNyS3eGAfMkJ6b1A24un
+ /TKc6j2QxM0QK4yZGfAxDxtvDv9LFXec8ENJYsbiR6WHRHq7wXl/n8guyh5AuBNQ3LIK44x0
+ KjGXP1FJkUhUuruGyZsMrDLBRHYi+hhDAgRjqHgoXi5XGETA1PAiNBNnQwMf5aubt+mE2Q5r
+ qLNTgwSo2dpTU3+mJ3y3KlsIfoaxYI7XNsPRXGnZi4hbxmeb2NSXgdCXhX3nELUNYm4ArKBP
+ LugOIT/zRwk0H0+RVwL2zHdMO1Tht1UOFGfOZpvuBF60jhMzbQARAQABzSxNYXhpbWUgQ29x
+ dWVsaW4gPG1heGltZS5jb3F1ZWxpbkByZWRoYXQuY29tPsLBeAQTAQIAIgUCV3u/5QIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQyjiNKEaHD4ma2g/+P+Hg9WkONPaY1J4AR7Uf
+ kBneosS4NO3CRy0x4WYmUSLYMLx1I3VH6SVjqZ6uBoYy6Fs6TbF6SHNc7QbB6Qjo3neqnQR1
+ 71Ua1MFvIob8vUEl3jAR/+oaE1UJKrxjWztpppQTukIk4oJOmXbL0nj3d8dA2QgHdTyttZ1H
+ xzZJWWz6vqxCrUqHU7RSH9iWg9R2iuTzii4/vk1oi4Qz7y/q8ONOq6ffOy/t5xSZOMtZCspu
+ Mll2Szzpc/trFO0pLH4LZZfz/nXh2uuUbk8qRIJBIjZH3ZQfACffgfNefLe2PxMqJZ8mFJXc
+ RQO0ONZvwoOoHL6CcnFZp2i0P5ddduzwPdGsPq1bnIXnZqJSl3dUfh3xG5ArkliZ/++zGF1O
+ wvpGvpIuOgLqjyCNNRoR7cP7y8F24gWE/HqJBXs1qzdj/5Hr68NVPV1Tu/l2D1KMOcL5sOrz
+ 2jLXauqDWn1Okk9hkXAP7+0Cmi6QwAPuBT3i6t2e8UdtMtCE4sLesWS/XohnSFFscZR6Vaf3
+ gKdWiJ/fW64L6b9gjkWtHd4jAJBAIAx1JM6xcA1xMbAFsD8gA2oDBWogHGYcScY/4riDNKXi
+ lw92d6IEHnSf6y7KJCKq8F+Jrj2BwRJiFKTJ6ChbOpyyR6nGTckzsLgday2KxBIyuh4w+hMq
+ TGDSp2rmWGJjASrOwU0EVPSbkwEQAMkaNc084Qvql+XW+wcUIY+Dn9A2D1gMr2BVwdSfVDN7
+ 0ZYxo9PvSkzh6eQmnZNQtl8WSHl3VG3IEDQzsMQ2ftZn2sxjcCadexrQQv3Lu60Tgj7YVYRM
+ H+fLYt9W5YuWduJ+FPLbjIKynBf6JCRMWr75QAOhhhaI0tsie3eDsKQBA0w7WCuPiZiheJaL
+ 4MDe9hcH4rM3ybnRW7K2dLszWNhHVoYSFlZGYh+MGpuODeQKDS035+4H2rEWgg+iaOwqD7bg
+ CQXwTZ1kSrm8NxIRVD3MBtzp9SZdUHLfmBl/tLVwDSZvHZhhvJHC6Lj6VL4jPXF5K2+Nn/Su
+ CQmEBisOmwnXZhhu8ulAZ7S2tcl94DCo60ReheDoPBU8PR2TLg8rS5f9w6mLYarvQWL7cDtT
+ d2eX3Z6TggfNINr/RTFrrAd7NHl5h3OnlXj7PQ1f0kfufduOeCQddJN4gsQfxo/qvWVB7PaE
+ 1WTIggPmWS+Xxijk7xG6x9McTdmGhYaPZBpAxewK8ypl5+yubVsE9yOOhKMVo9DoVCjh5To5
+ aph7CQWfQsV7cd9PfSJjI2lXI0dhEXhQ7lRCFpf3V3mD6CyrhpcJpV6XVGjxJvGUale7+IOp
+ sQIbPKUHpB2F+ZUPWds9yyVxGwDxD8WLqKKy0WLIjkkSsOb9UBNzgRyzrEC9lgQ/ABEBAAHC
+ wV8EGAECAAkFAlT0m5MCGwwACgkQyjiNKEaHD4nU8hAAtt0xFJAy0sOWqSmyxTc7FUcX+pbD
+ KVyPlpl6urKKMk1XtVMUPuae/+UwvIt0urk1mXi6DnrAN50TmQqvdjcPTQ6uoZ8zjgGeASZg
+ jj0/bJGhgUr9U7oG7Hh2F8vzpOqZrdd65MRkxmc7bWj1k81tOU2woR/Gy8xLzi0k0KUa8ueB
+ iYOcZcIGTcs9CssVwQjYaXRoeT65LJnTxYZif2pfNxfINFzCGw42s3EtZFteczClKcVSJ1+L
+ +QUY/J24x0/ocQX/M1PwtZbB4c/2Pg/t5FS+s6UB1Ce08xsJDcwyOPIH6O3tccZuriHgvqKP
+ yKz/Ble76+NFlTK1mpUlfM7PVhD5XzrDUEHWRTeTJSvJ8TIPL4uyfzhjHhlkCU0mw7Pscyxn
+ DE8G0UYMEaNgaZap8dcGMYH/96EfE5s/nTX0M6MXV0yots7U2BDb4soLCxLOJz4tAFDtNFtA
+ wLBhXRSvWhdBJZiig/9CG3dXmKfi2H+wdUCSvEFHRpgo7GK8/Kh3vGhgKmnnxhl8ACBaGy9n
+ fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
+ UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
+ Mwqu3GQ=
+In-Reply-To: <20261014155750.1269862-5-david.marchand@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: u5DBmxC2VVydmlDkLBcx3uJkR5i8_JiXqBapbURpwX4_1792072076
+X-Mimecast-MFC-PROC-ID: 269pNWWp9Y4xQdNCjBOW2xVE8m8g_c2p3hAQF6RmGJ4_1792072344
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,49 +114,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 15 Oct 2026 at 15:43, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> On Mon, Oct 05, 2026 at 12:06:13PM +0100, Bruce Richardson wrote:
-> > The interrupt throttling register(ITR) bank 0 value is set to 2, but
-> > to ensure best performance across all systems also set the bank 1 value
-> > to match.
-> >
-> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> > ---
-> >  drivers/net/intel/iavf/iavf_ethdev.c | 5 +----
-> >  1 file changed, 1 insertion(+), 4 deletions(-)
-> >
->
-> Further testing has indicated that this patch is simply working around a
-> config issue on kernel driver side[1] and should not be necessary in DPDK.
->
-> Dropping as rejected in patchwork.
->
-> /Bruce
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fb096882095e5a8d6b5159e43793d4a38a0c5b1f
->
-> > diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-> > index a8abe0154c..dc3cea0b95 100644
-> > --- a/drivers/net/intel/iavf/iavf_ethdev.c
-> > +++ b/drivers/net/intel/iavf/iavf_ethdev.c
-> > @@ -899,10 +899,7 @@ static int iavf_config_rx_queues_irqs(struct rte_eth_dev *dev,
-> >                                      (0 << IAVF_VFINT_DYN_CTLN1_ITR_INDX_SHIFT) |
-> >                                      IAVF_VFINT_DYN_CTLN1_WB_ON_ITR_MASK |
-> >                                      (2UL << IAVF_VFINT_DYN_CTLN1_INTERVAL_SHIFT));
-> > -                     /* debug - check for success! the return value
-> > -                      * should be 2, offset is 0x2800
-> > -                      */
-> > -                     /* IAVF_READ_REG(hw, IAVF_VFINT_ITRN1(0, 0)); */
-> > +                     IAVF_WRITE_REG(hw, IAVF_VFINT_ITRN1(1, vf->msix_base - 1), 2);
-> >               } else {
-> >                       /* If no WB_ON_ITR offload flags, need to set
-> >                        * interrupt for descriptor write back.
-
-Why keep this dead code then?
 
 
--- 
-David Marchand
+On 10/14/26 5:57 PM, David Marchand wrote:
+> All the API related to this feature is experimental, allowing us by the
+> project policy to drop the feature in one go.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
+> Changes since v3:
+> - rebased after VFIO changes,
+> 
+> Changes since v2:
+> - removed inflight async statistics,
+> 
+> Changes since v1:
+> - dropped dependency on PCI library,
+> 
+> Changes since RFC:
+> - kept mmap populate behavior for vhost_crypto,
+> 
+> ---
+>   doc/guides/prog_guide/vhost_lib.rst    |  151 +-
+>   doc/guides/rel_notes/release_26_11.rst |   20 +
+>   lib/vhost/meson.build                  |    3 +-
+>   lib/vhost/rte_vhost.h                  |    3 +-
+>   lib/vhost/rte_vhost_async.h            |  293 ---
+>   lib/vhost/socket.c                     |   12 -
+>   lib/vhost/vhost.c                      |  436 ----
+>   lib/vhost/vhost.h                      |  118 -
+>   lib/vhost/vhost_user.c                 |  111 -
+>   lib/vhost/virtio_net.c                 | 3275 +++++-------------------
+>   10 files changed, 687 insertions(+), 3735 deletions(-)
+>   delete mode 100644 lib/vhost/rte_vhost_async.h
+> 
+Already provided my R-by on previous revision:
+
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
