@@ -2,55 +2,159 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 464F1CC6B33
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 09:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4245DCC6B33
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 09:21:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37F5240A73;
-	Thu, 15 Oct 2026 11:17:41 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 9F16D40A67;
- Thu, 15 Oct 2026 11:17:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8B779402E7;
+	Thu, 15 Oct 2026 11:21:52 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 675C8402DA
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 11:21:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792055859; x=1823591859;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=zb+N+4I+e2aVrKSq2xyAJhzkPBeHPyPXYmr1MsyoYOg=;
- b=SYF0X8bhYqU533zavzC8UjLsCfKjgRdxijjNjhzvWy3jj1qtDZ550ihO
- xYyd7egyc3nm0HC3gjzJl3loaZNjxMA2qd4vWiWMskYtFsR1yxAhVUa49
- FGMt/e+LTHhJuGvvxOtk77W+vixtKW3HovPBetPyhx+vVl7NRuSWTJytV
- J3zVlUQ6QUc3bvvlFH24g3479L1n+vC0OR3A1vcui4FqpE4QFdx6e7LUg
- kjEd34RewHS0xLT/u22dvAifN9xuKwfBzvXx0s1BwuOnjr3glQALAANwr
- nUcEyWhnhIOXwyG58ZkOnxBevn1emS4kzw9yCu85TtmCmA2/c9CmE+qGR g==;
-X-CSE-ConnectionGUID: loL9D3MrQPms2i7EbUBpuA==
-X-CSE-MsgGUID: zZ3x8WY1Qmi48Q/Vy9ML5w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="808487"
+ t=1792056110; x=1823592110;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=gUgMUUMQvE+LynNQuqIKmbo9ne9BMMVdWWr0qnkt2/s=;
+ b=FvVLU9PGOQa8sm/x3Pt7RqpZUEifU92hu+O683x0vdeXisk6XTAvBQw1
+ vy3tVr/FnNYJIXagr2km8pFICwlzNFvFUIeIs2ooLyrYEKdaFOzENiCA5
+ datSEiLEpt88AnoESauXdKSP6RMTH1nDUOcg1+SdGlJdQkDa0u33nlD9Y
+ IPj1knVsvdqeiqZZMfZLqGzhHej70eqen4dPOw9Oxx2DzlDafGMJdmNak
+ tLIeZUivXF3o6GolNrtJz70bFHxvoiShRtwrq3vGUImHyJab9DkBBCQWm
+ la3tVDSuQ4iQrLA4/6cZuSp3ElqpjS8Sfw4Xzu2EwTnr9DOTSt9TW1Cq5 w==;
+X-CSE-ConnectionGUID: 8kZOq6MeTlCVdzpnGD4McQ==
+X-CSE-MsgGUID: QBmihTkaRcmumxd612Rs5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="832220"
 X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
-   d="scan'208";a="808487"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Oct 2026 02:17:38 -0700
-X-CSE-ConnectionGUID: 7u6ITGVQRgunEl/u0VZO3g==
-X-CSE-MsgGUID: /GJ+4L2VQWGVQy9ORmsYmw==
+   d="scan'208";a="832220"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Oct 2026 02:21:42 -0700
+X-CSE-ConnectionGUID: cTeJSL8jQQ2uFTS97fIXdA==
+X-CSE-MsgGUID: qcyVdwWCQRyqQG406j3CFg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
-   d="scan'208";a="2000396"
-Received: from pae-31.iind.intel.com ([10.49.105.72])
- by fmviesa009.fm.intel.com with ESMTP; 15 Oct 2026 02:17:37 -0700
-From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-To: dev@dpdk.org
-Cc: grive@u256.net, stephen@networkplumber.org, stable@dpdk.org,
- Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-Subject: [PATCH v3 6/6] net/failsafe: detect sub-device removal via device
- event
-Date: Thu, 15 Oct 2026 16:19:27 +0000
-Message-Id: <20261015161927.194886-7-sandeep.penigalapati@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261015161927.194886-1-sandeep.penigalapati@intel.com>
-References: <20261014221604.128677-1-sandeep.penigalapati@intel.com>
- <20261015161927.194886-1-sandeep.penigalapati@intel.com>
+   d="scan'208";a="1668628"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Oct 2026 02:21:42 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Thu, 15 Oct 2026 02:21:41 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Thu, 15 Oct 2026 02:21:41 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.8) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Thu, 15 Oct 2026 02:21:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pIoplZa9g2qr/hZY5si6n0oOYbTc7po/FgGbQ740OGy4f/TnugnXhDCSij5b0rd3HGrcRej+kMu/dte3MKoXN+gvOaj4K+YEAMTBzfWz4RDWNes3xMv/0+CwMBj4Qx2t2OzMjcjoH4rgzjwvQHkVhOsV2Chz6ktZLKZwaHZXPIF+u+WxGlkzjg86ugOrGezETd8z5AKzIrPaUxLzaR0d0MngY1/7BDtCDVp5t6UWdR4fPkEgsJ3kJG2tcrLe/4XybC3b8sNi+hqNJ333oEJu2IFqLVMRRJW53PhQsU5XTAbD9Ewp/GCoiWAVVqLNwP7eIe0XLtdR1kN8KkUUVrm8qA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BPBhcD7KYYAl4WpmvnbxtXNpqQK1ZmD3Sr+e0ca7/ps=;
+ b=Op+uewZr2NeUU5dhHWmwynYzruegyD9rdcHMsw39w9+rTlo3LRKirurM6ib85NitV6KrLRlfDCQ0lLGekUt4xQXgLeEJXrK5NNISkQBxUyn5P8nYZhQtJLcBsBq5xbIWugOZktK4kAqQU7xFwDQTrtz+h4o+1fPOo3rpqjqyorSbLiLRAjl5joujjKbdMelGTCqa97W9dD8kfAxBtOulPwQmwAoYYgQNaWXydnMxH1z7BwdLDGJYu7OJQMa4yR5/hx3evTqJw/ndtsvRGODS37RCX/+6aA1nrWIeE9GlHwXoY03bJfuOzeH1SokwBbWCaA4Fw5TDpLiuCiiXLBJTsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ CYXPR11MB8691.namprd11.prod.outlook.com (2603:10b6:930:d5::22) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.496.24; Thu, 15 Oct 2026 09:21:39 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.21.0522.012; Thu, 15 Oct 2026
+ 09:21:39 +0000
+Message-ID: <db6338f6-fc56-4320-9561-475e55e3ee85@intel.com>
+Date: Thu, 15 Oct 2026 11:21:35 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/25] Building a better rte_flow parser
+To: Thomas Monjalon <thomas@monjalon.net>, Bruce Richardson
+ <bruce.richardson@intel.com>
+CC: <dev@dpdk.org>, David Marchand <david.marchand@redhat.com>
+References: <cover.1787233986.git.anatoly.burakov@intel.com>
+ <cover.1791892574.git.anatoly.burakov@intel.com>
+ <as5n5Gd_ibUFwu8T@bricha3-mobl1.ger.corp.intel.com>
+ <ABC_uunLSjatNxgGlc8CGA@monjalon.net>
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Content-Language: en-US
+In-Reply-To: <ABC_uunLSjatNxgGlc8CGA@monjalon.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0006.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:150::11) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|CYXPR11MB8691:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e964a17-8a78-466a-ec60-08df2a9db80b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|23010399003|1800799024|366016|56012099006|4143699003|11063799006|261009223027099003|10067099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: bsAkHWF4PtptJoRyczfwmazyuzfUVme8igbHCB0fBifdNUbZlRpLNmXe+ML7hjiKP2+xwZ0slg3yMxBTJHQopo5F1MArrtVhAk/z43zxZdd2HC5REQnkOrWdYGNK0VZZXLp3aqc1mYOXW5t7+0NpM8/U2rLT9d1cb6lB15zdliVdVr/HCkVLxPUcv8LbZQLzEPP1KoMMwp1mnuIsmPlwx8Tu4BelH2h6sfPOZllkFR/Mjqb1vRSRi1gDtJ0XOc5tPK7ZyzuPeob3VVlnVGCtfcQ/GINIlVB/U3Q6kuRW1+fisx7M9bn0YJ0QZx04iHoDBPrjEduEMWOQPI5vYOqxL6vM+Tb0fgYKxmQwWpsddFDdiZj/0UXJcraPpVWQ2oHFEyQwPfpcsuI0b6bHnQgqYRI/8tUpSiP4QJPlQVfjIPit/50T7eBYB+SvyKRd3DLkIVJA88Iyx2K/6HRTig7MS9zu3xCMDIAC5/ePDYEkrE1vnPID5dDvvtKkHZt8S3YFpIr0weJys1o8gih6BC3YcsjXyIYKPrflTyqBQ5iNmuVqnsHzY49bdDNdeF8zc+kHxKBEKIZ2FDRWzT9vdsWdSA6MYGGf9Y1Whac5zXbrG8/fys2yxPp3ClBLu1aos/gY
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(23010399003)(1800799024)(366016)(56012099006)(4143699003)(11063799006)(261009223027099003)(10067099003)(22082099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dEdxcVFTVHdGTENQTlloUXBtU2hZNnNjclpZYTE1NjloSko0bnpyUzlSYU02?=
+ =?utf-8?B?b0pLTjJwQmVZZno3SjkzbnlJdEhDRGZKeEZZSWtldlU1RE1rQ1pOUGNnUll6?=
+ =?utf-8?B?TFBPMWFmTGhOeDdBbXk3cllLbXlldmxEVWl2U2JQN1BzSWVyTWppamI5SXRv?=
+ =?utf-8?B?YXRuZmt0Nm1zeUNaY2g2UENsMGMyNVRmQXZ2QVdhTWxRL0kzSnhCZ285empZ?=
+ =?utf-8?B?WCtsdWZ0aUVhS3hoS2l2dnNYaFUyY0RGcmJLMWo1L2s4aGZMbVlKSDNwbWxo?=
+ =?utf-8?B?MmhOSnRBOEhzYmVLTk1rdlBjT3E2SDhzRzFsZFhXZ0c3b2g2QVQwMUtGSWVh?=
+ =?utf-8?B?Z1IyT0ZmN3VVdTd2RTIxTUcvRGRFckpMQitPZU8wNFhUQ3ZBQ0dIU21OdEw4?=
+ =?utf-8?B?Q3NNUG93eUVNM3lXcFlKY2szK0RLMm1sUmZKTUxRemZiTlEwU3I0SjZ1Vnc0?=
+ =?utf-8?B?cG9CR2xYVUJVMG4vb2dRY3RmWC9MY3hsTW5hM3h0NDA1ZGZvMDc0K0dIQnRC?=
+ =?utf-8?B?QU5adFFqNnd2YS9FMmZWU0p6K250bGJvcjNQcXF4SXk0YXAyZmlmcktDZll3?=
+ =?utf-8?B?Y0x3QS85MDFLSno5V0tvd1p0REVqajhjSEdGK0hsV0lyYmtYdytDMlpVM2Rv?=
+ =?utf-8?B?OVJBbzJPNmRuTzljWUxPOWZ3Mmc5YU9vTEZjbllKQzRIQkJidVZDL295UzZV?=
+ =?utf-8?B?TFFLZEphVkpJUDZnei9aNHV1L0xKVWNCNTdVRGtuekdqN1BLSjZHN0orVThR?=
+ =?utf-8?B?WlV4dm5LaUszeVNPc2NqYjZRWnpVWkp4WlZJaEp1cHBrMk9scUxFMG9RMzM3?=
+ =?utf-8?B?NERiUGs2UitwVytLWWRvaFZ3S0NQb3ZMOFRWZFVFcVptaVUrMENmK0wxcmRo?=
+ =?utf-8?B?ZDlvUnZEUUNUWkJIaFJZTTZjMUptWWg4U2QxRWdiL1VJbzFWekFTWEZBMk1C?=
+ =?utf-8?B?S2tCbE8yZ3VtOERwdjExeHZ0NDZCQlZqcTNQdkFPRUtjaWpmTEl4Q01lR0Uv?=
+ =?utf-8?B?dW9kdHZlMmFsNlV6RG9CaUZEZnpiSWNDVHBlSE5jbmpWSUY2TDBNRHFndklt?=
+ =?utf-8?B?dGdHTllVcDhHUVZtMVh2K1dOWVdMS0hjZWs0VVA0clN2aEhSZ1RPSldVVnNV?=
+ =?utf-8?B?OHlNYWJ3emdhWnYrUlNoV0svS3RFS0NlTElrZ3NRTS9aQWxmR2Zqazk4Ryts?=
+ =?utf-8?B?YWgzQ2trRS9BMG9vQUFwQ3ZuQUhTZG4ydTNpL1ZUQVZkV3VUamZ0cmVFL2Jm?=
+ =?utf-8?B?YVE0MDRNR3lxaGNGMHN2RS9NMUwrZUlpcHZ6YXBEa0pIQTRQa25taUEyUUdV?=
+ =?utf-8?B?UkFNVzBqMDVRM3VtSk5weHRYbVpMdXBKVHgySXVYWWh4Z0M0ZXdQL3haRC9p?=
+ =?utf-8?B?WG1rN0hzSllDTE9hQnJKMGNad2JXSmFmbU5LcUlEMkRNaFlMQklsSlRQdWFm?=
+ =?utf-8?B?WVY4Qms5UnJTem5ITFMvY0dQUC91U29sbEJaZVpnMVNXU1RlT0s2QldUWjRj?=
+ =?utf-8?B?ellBUE45MkdZdE5KNXMzM2RNcE1Zd094TVlQRmxaTklkMGY5MWZISlUxMWdw?=
+ =?utf-8?B?YnVES2xzZWt4b0NERGphaUJMRXR4dlFGOWphMTlodmJKK1BpYTFIRGZMRXFr?=
+ =?utf-8?B?bnpDdG5nRW05dWp4Z1BqOExuMmc1K0FOTFR2RlFoS3g4RjVrUC9OQzVQVmpN?=
+ =?utf-8?B?bzZqUjBnWSt6RzlSanJiT3l2R1BsYk9HNzR4WmtYWHpyNzlrTytpT1d6ZWtT?=
+ =?utf-8?B?bW0rb1lPdmZpdUdsSHowbDdMcjJrc0dXQUNhZ1E0Q2xNRkZPaU5tdU0xTDJE?=
+ =?utf-8?B?bkJFMDV2K1ZPSXBWTzcwQXB1M3MvdFRsTURuYzF2TkN5UjYzdHJhT2w4Q2pN?=
+ =?utf-8?B?N2x2aldyNllEbWNoQVlKd3dKUnU1SlRQUS8wS0FWWm5kd3hYb0VHRXVyRGJV?=
+ =?utf-8?B?ZTlPR2M4S2lHZzVka3U5QkI4dUFXaHB4dFBHNVZ2YlBXWXQ4T242Nk04eXpz?=
+ =?utf-8?B?b1hVUUU4YlhCWXBjYk5WTHFVQ0FjSEozTUdtT25lNUxhbmtqRERSRUpESHNm?=
+ =?utf-8?B?MEJjZW9UL25kRWdISlcvUUlCY1JaOUhiZldQWmo0Z0RJMlhXQ0wwSjBES21l?=
+ =?utf-8?B?cVg5YjVhUU5Wei9leVBnd2RzanRxWWVIejQ1eHBYa1dDQnh3QUxoWkcrK2tI?=
+ =?utf-8?B?a2xTYS9PSU41RHZvcmphWFRHMERMTFczRUhnbS9XdXVRcTk3aXdQVzVxMW1B?=
+ =?utf-8?B?Skd3SGUwWUxndnl4dU5IZHlwWldWZHM0N0srd1k5Ykx4azF5aEtQaDJTK2x2?=
+ =?utf-8?B?UUFRUDVEZG5aeHlMMFRmcHJ2dmFpd3Z4UUFQeW91Z0ZTdVhMT3JBZmxpdU9C?=
+ =?utf-8?Q?RuT1ZXyjQ5+xYRFE=3D?=
+X-Exchange-RoutingPolicyChecked: NgCpbQGVilGvkIH+VRtEWR5/XpYrkuEj9YDEXKQkQLBfEtUyoP3kn7pXYVtUfwoIRJ5zHJ4eRxasXCVC+iNXr6SPaojl96Nf+PLn/4M9YysCW6VjXyetYRkzemrvQjEOTEHewj+UbXvl/QG/D8cPMN/o3W/XaeF1XGXoqnkJVJX41E1LrcG5M14/6p9hBZCtvstkQ8W4N91DGNZL+RqLivlZ57DwwSwdqfx9tBjrOICROl4pQ2TiUEVGFFTLvPT2Sbku/wAY4HmL4PMpsgV66PV5GE0cb11iN+3UMqLtC7CQATPAd4VfholX9zJdhF7PP+fyRxdtlPVrw2dIYZ27Eg==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e964a17-8a78-466a-ec60-08df2a9db80b
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 09:21:39.7178 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mzQCqUIISb58CmNjpJ4sAKjYohIXaq+0fGcp1SNbbYWylQ7d3sRnrIeranfqRr4nYPxNwoTKWlRtcxnVPYunN/ta6sSH1AYpUaDQTjrG79U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR11MB8691
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,135 +168,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fail-safe relied on the removal (RMV) interrupt to learn that a
-sub-device disappeared. A sub-device that does not support the RMV
-interrupt (for example a VFIO device whose removal is only reported by
-the bus as a device event on the release request) was never detected,
-so traffic was not failed over to the other sub-device.
+On 10/14/2026 10:50 PM, Thomas Monjalon wrote:
+> 13/10/2026 19:18, Bruce Richardson:
+>> Patchset applied to dpdk-next-net-intel.
+>>
+>> As well as the arm build issue, I also fixed a number of checkpatch issues,
+>> since there were a large number on this set. Most I kept unfixed, since I
+>> felt the exceptions were reasonable, but please check what was applied in
+>> case some issue was introduced with the checkpatch changes I made on apply.
+> 
+> Unfortunately it fails compiling on my FreeBSD,
+> because of an internal API included in a header included in testpmd.
+> 
+> You can make it fail reliably with Clang on Linux with this patch:
+> https://patches.dpdk.org/project/dpdk/patch/20261014201627.571496-1-thomas@monjalon.net/
+> 
+> And you can fix the problem with this patch:
+> https://patches.dpdk.org/project/dpdk/patch/20261014203435.583064-1-thomas@monjalon.net/
+> 
+> Please review them.
+> 
+> In the meantime I cannot pull this series in main,
+> except the first 2 patches for ethdev API.
 
-Register a bus device-event callback for such sub-devices and run the
-existing removal handling from it. For VFIO devices the bus delivers
-the event automatically; UIO-bound devices additionally require
-rte_dev_event_monitor_start() and rte_dev_hotplug_handle_enable() to be
-enabled by the application.
+Done and done!
 
-The callback is registered and unregistered by the primary process
-only: struct sub_device lives in shared memory, so in a secondary
-process the registration flag would read as already set and sdev->dev
-would point into the primary address space. A secondary learns of the
-removal through the shared sub-device state checked on every burst.
+I wonder if some of that could've been avoided if the CI was better at 
+applying patches on top of other trees instead of always trying main. I 
+remember trying to do it with VFIO patchset, and I don't think I 
+succeeded in getting it to apply/build on top of next-net even though I 
+did the recheck requests and everything. I couldn't really get this 
+patchset building through CI so some Arm compile issues have slipped by 
+me as Bruce mentioned.
 
-Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
----
-v2:
-- Clarified secondary-process detection in a comment.
-v3:
-- Split the Rx/Tx burst fix into its own patch (5/6).
-- Simplified failsafe_dev_event_callback() and documented the VFIO/UIO
-  device-event monitoring requirements.
-
- drivers/net/failsafe/failsafe_ether.c   | 26 +++++++++++++++++++++++++
- drivers/net/failsafe/failsafe_ops.c     | 19 ++++++++++++++++++
- drivers/net/failsafe/failsafe_private.h |  5 +++++
- 3 files changed, 50 insertions(+)
-
-diff --git a/drivers/net/failsafe/failsafe_ether.c b/drivers/net/failsafe/failsafe_ether.c
-index 2c183ea29a..307f2abfa5 100644
---- a/drivers/net/failsafe/failsafe_ether.c
-+++ b/drivers/net/failsafe/failsafe_ether.c
-@@ -385,6 +385,22 @@ failsafe_eth_dev_unregister_callbacks(struct sub_device *sdev)
- 			     " %d", SUB_ID(sdev));
- 		sdev->lsc_callback = 0;
- 	}
-+	/*
-+	 * The bus device-event callback is registered by the primary only
-+	 * (hotplug is handled there). sub_device is shared memory, so in a
-+	 * secondary the flag reads as set and sdev->dev holds the primary's
-+	 * pointer; dereferencing it (rte_dev_name) would crash. Skip it.
-+	 */
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY &&
-+	    sdev->dev_event_callback) {
-+		ret = rte_dev_event_callback_unregister(rte_dev_name(sdev->dev),
-+						failsafe_dev_event_callback,
-+						sdev);
-+		if (ret < 0)
-+			WARN("Failed to unregister device event callback for"
-+			     " sub_device %d", SUB_ID(sdev));
-+		sdev->dev_event_callback = 0;
-+	}
- }
- 
- void
-@@ -600,6 +616,16 @@ failsafe_eth_rmv_event_callback(uint16_t port_id __rte_unused,
- 	return 0;
- }
- 
-+void
-+failsafe_dev_event_callback(const char *device_name __rte_unused,
-+			    enum rte_dev_event_type type,
-+			    void *cb_arg)
-+{
-+	if (type == RTE_DEV_EVENT_REMOVE)
-+		failsafe_eth_rmv_event_callback(0, RTE_ETH_EVENT_INTR_RMV,
-+						cb_arg, NULL);
-+}
-+
- int
- failsafe_eth_lsc_event_callback(uint16_t port_id __rte_unused,
- 				enum rte_eth_event_type event __rte_unused,
-diff --git a/drivers/net/failsafe/failsafe_ops.c b/drivers/net/failsafe/failsafe_ops.c
-index 56c7c884a1..5680451f21 100644
---- a/drivers/net/failsafe/failsafe_ops.c
-+++ b/drivers/net/failsafe/failsafe_ops.c
-@@ -82,6 +82,25 @@ fs_dev_configure(struct rte_eth_dev *dev)
- 			else
- 				sdev->rmv_callback = 1;
- 		}
-+		/*
-+		 * Without RMV interrupts, a hot-unplug is only reported by the
-+		 * bus (e.g. a VFIO device release request) as a device event.
-+		 * Only the primary registers for it; a secondary learns of the
-+		 * removal through the shared sub_device state checked by
-+		 * fs_rx_unsafe()/fs_tx_unsafe() on every burst.
-+		 */
-+		if (rte_eal_process_type() == RTE_PROC_PRIMARY &&
-+		    !rmv_interrupt && sdev->dev != NULL &&
-+		    sdev->dev_event_callback == 0) {
-+			ret = rte_dev_event_callback_register(rte_dev_name(sdev->dev),
-+					failsafe_dev_event_callback,
-+					sdev);
-+			if (ret)
-+				WARN("Failed to register device event callback for sub_device %d",
-+				     SUB_ID(sdev));
-+			else
-+				sdev->dev_event_callback = 1;
-+		}
- 		dev->data->dev_conf.intr_conf.rmv = 0;
- 		if (lsc_interrupt && sdev->lsc_callback == 0) {
- 			ret = rte_eth_dev_callback_register(PORT_ID(sdev),
-diff --git a/drivers/net/failsafe/failsafe_private.h b/drivers/net/failsafe/failsafe_private.h
-index 0f14080394..a565ee2fbc 100644
---- a/drivers/net/failsafe/failsafe_private.h
-+++ b/drivers/net/failsafe/failsafe_private.h
-@@ -138,6 +138,8 @@ struct sub_device {
- 	unsigned int rmv_callback:1;
- 	/* LSC callback registration state */
- 	unsigned int lsc_callback:1;
-+	/* Bus device event (removal) callback registration state */
-+	unsigned int dev_event_callback:1;
- };
- 
- /*
-@@ -239,6 +241,9 @@ int failsafe_eth_rmv_event_callback(uint16_t port_id,
- int failsafe_eth_lsc_event_callback(uint16_t port_id,
- 				    enum rte_eth_event_type event,
- 				    void *cb_arg, void *out);
-+void failsafe_dev_event_callback(const char *device_name,
-+				 enum rte_dev_event_type type,
-+				 void *cb_arg);
- int failsafe_eth_new_event_callback(uint16_t port_id,
- 				    enum rte_eth_event_type event,
- 				    void *cb_arg, void *out);
 -- 
-2.34.1
-
+Thanks,
+Anatoly
