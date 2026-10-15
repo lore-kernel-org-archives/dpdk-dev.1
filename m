@@ -2,42 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F362ECC6B33
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 11:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEC2CC6B3A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 11:14:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 227E6400EF;
-	Thu, 15 Oct 2026 13:14:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E38D34064A;
+	Thu, 15 Oct 2026 13:14:54 +0200 (CEST)
 Received: from smtp04-ext3.udag.de (smtp04-ext3.udag.de [62.146.106.41])
- by mails.dpdk.org (Postfix) with ESMTP id 315AB40041
+ by mails.dpdk.org (Postfix) with ESMTP id 9A86340041
  for <dev@dpdk.org>; Thu, 15 Oct 2026 13:14:51 +0200 (CEST)
 Received: from machine (unknown [37.228.233.98])
- by smtp04-ext3.udag.de (Postfix) with ESMTPA id D9467E04F0;
- Thu, 15 Oct 2026 13:14:49 +0200 (CEST)
+ by smtp04-ext3.udag.de (Postfix) with ESMTPA id D9C73E04F3;
+ Thu, 15 Oct 2026 13:14:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dressler.pro;
- s=uddkim-202310; t=1792062890;
+ s=uddkim-202310; t=1792062891;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=YCp+0Cttf4LzxGwPM95IqJyV6PANzGryZ7IjWYs53Gg=;
- b=mJFs3uXEGRFZEEHvxdNlTScpfX4bE5wiNA64xwqNJUHtTeJXnErFLb7FPp8h1HSZuD/nLj
- eKX06bKEFelP3sgWIMEWHae/CLXGCo5nTNu/u7j1pIDF5F9i/zuVFd61yMivpnMt48REip
- YlSmnVoL0dc2+zMvr+Hyw53hocfxfqxhIBRgGHztsVZHKCfZVbTQ9ZGsoeWE47WInN+hjy
- sbHLpzyFBubbRFN111HqqHBTImUova0hhoMdIkY15urk5LkWoBhVAfMz56oOiisLcgrcaT
- 1TcbTqt/M4QqVtjJPS8IcclqYF5yJyCOANImeORbRvIOdVawSBD/lW/nd61XIQ==
+ bh=GF/ybOrkgu6p60aTl34VSYvyEQUjX8MdNObed92EyME=;
+ b=XUEnzlxG/ZeR2jZ0z5ksu+VatQUwxtYDWWpBKDtP1UojQwDfSlaJnYBRyGEzqGHj4VcFHO
+ 6s1oXBrOz7k+soW68BPdJgqiwYzsQj4h4ZHcTfJ1qR3e407HH9lSBpCM9FN60mTTEJ1WWJ
+ 9KP9RcJVrZksIGn+qkvbE94paxkqqmmB5SsCUdaWW7Ta1Ne3uVgb95VIokjNviiv5t9Jx/
+ nhQj9MLRIfAMtdc4mTQvuV8rv1x0pILIyk2aFu360XmZdzbNX6nRkPlMXQnA/6xBC38BnM
+ 5shpjC29OdZZnH6PlKTr9xhP4Wh3PLnca7shM1oeLoOqt7YN1GPRDvhGKaxcRA==
 Authentication-Results: smtp04-ext3.udag.de;
  auth=pass smtp.auth=dressler-pro-0001 smtp.mailfrom=frank@dressler.pro
 From: Frank Dressler <frank@dressler.pro>
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v6 0/4] net/af_packet: do not return outgoing packets from
- rte_eth_rx_burst
-Date: Thu, 15 Oct 2026 12:14:30 +0100
-Message-ID: <20261015111434.1470973-1-frank@dressler.pro>
+Subject: [PATCH v6 1/4] test/af_packet: ignore stray packets in loopback test
+Date: Thu, 15 Oct 2026 12:14:31 +0100
+Message-ID: <20261015111434.1470973-2-frank@dressler.pro>
 X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261009151015.742011-1-frank@dressler.pro>
+In-Reply-To: <20261015111434.1470973-1-frank@dressler.pro>
 References: <20261009151015.742011-1-frank@dressler.pro>
+ <20261015111434.1470973-1-frank@dressler.pro>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -52,137 +53,171 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In contrast to other PMDs, the AF_PACKET PMD does not only return
-incoming but also outgoing packets from rte_eth_rx_burst(). This is
-fine for applications similar to tcpdump which usually want to see
-both. But it is not always the desired behavior. For example, the
-AF_PACKET PMD might be used in a testing environment in which no
-regular ethernet PMD works. In such an environment, the AF_PACKET
-PMD must behave like a regular one, i.e. not return sent packets
-from rte_eth_rx_burst(). One could use the AF_XDP PMD for this but
-it has different dependencies than the AF_PACKET PMD because it
-requires the bpf() syscall, for example, which might not be
-available.
+The loopback test counts looped back frames. But there can be
+unexpected frames among them such as IPv6 Neighbor Discovery
+packets injected by the kernel which can lead to unexpected results.
 
-For this reason, this series adds the ignore_outgoing=<0|1> devarg.
-When set, the PMD ensures that rte_eth_rx_burst() only returns
-incoming traffic. The default is 0 so that existing software works
-as before.
+Tag sent frames in the source MAC and count only matching ones.
 
-The ignore_outgoing test tags the frames it injects so that it can
-distinguish them from stray frames, which would otherwise be counted
-as well and could lead to a wrong result. As the pre-existing
-loopback test could suffer from stray frames as well, the first patch
-changes it to use tagged frames.
+Signed-off-by: Frank Dressler <frank@dressler.pro>
+---
+ .mailmap                      |  1 +
+ app/test/test_pmd_af_packet.c | 58 ++++++++++++++++++++++++++---------
+ 2 files changed, 44 insertions(+), 15 deletions(-)
 
-The second patch adds filtering of outgoing packets in the PMD
-because that works in all supported kernel versions and for all
-queue counts. The test creates an AF_PACKET vdev and injects frames
-at the fd end of the TAP device and via a second AF_PACKET vdev.
-Frames from the fd end arrive as incoming traffic and frames from
-the second vdev as outgoing traffic, so with ignore_outgoing=1 the
-first vdev should return only the incoming frames. The frames from
-the fd end are required to distinguish a dead device from one which
-dropped the outgoing frames.
-
-The third patch adds PACKET_IGNORE_OUTGOING which moves the
-filtering into the kernel. It is supported since Linux 4.20 but only
-works for single-queue AF_PACKET scenarios. Multi-queue AF_PACKET
-is still filtered in the PMD.
-
-The fourth patch adds PACKET_FANOUT_FLAG_IGNORE_OUTGOING which is
-supported since Linux 6.2 and moves the filtering into the kernel
-for the multi-queue scenarios. The kernel does not expose a direct
-way to check whether it supports PACKET_FANOUT_FLAG_IGNORE_OUTGOING
-but it also does not return an error when the sockopt is set on
-kernels that do not support it. Because of that the sockopt is set
-opportunistically. The PMD check is kept, since older kernels accept
-the flag without effect and support cannot be detected.
-
-Overall we get the following:
-
-              | Single Queue | Multi-Queue
-  ------------+--------------+-------------
-  Kernel 5.4+ |  in kernel   | in PMD
-  Kernel 6.2+ |  in kernel   | in kernel
-
-I tested this on both, kernel 7.2.8 and kernel 5.4.0 with both single
-and multiple queues. My results, strace'ing testpmd 7.2.8, with the
-variants of ignore_outgoing=0|1 and single/multi-queue:
-
-Kernel 5.4.0:
-	qpairs=1,ignore_outgoing=0: -
-	qpairs=1,ignore_outgoing=1: setsockopt(14, SOL_PACKET, 0x17 /* PACKET_??? */, [1], 4) = 0
-	// 0x17 is PACKET_IGNORE_OUTGOING
-
-	qpairs=2,ignore_outgoing=0: setsockopt(14, SOL_PACKET, PACKET_FANOUT, [-1878917532], 4) = 0
-	// -1878917532 does NOT contain PACKET_FANOUT_FLAG_IGNORE_OUTGOING<<16
-	qpairs=2,ignore_outgoing=1: setsockopt(14, SOL_PACKET, PACKET_FANOUT, [-805175699], 4) = 0
-	// -805175699 does contain PACKET_FANOUT_FLAG_IGNORE_OUTGOING<<16
-
-Kernel 7.2.8:
-	qpairs=1,ignore_outgoing=0: -
-	qpairs=1,ignore_outgoing=1: setsockopt(13, SOL_PACKET, PACKET_IGNORE_OUTGOING, [1], 4) = 0
-
-	qpairs=2,ignore_outgoing=0: setsockopt(13, SOL_PACKET, PACKET_FANOUT, [-1878978899], 4) = 0
-	// -1878978899 does NOT contain PACKET_FANOUT_FLAG_IGNORE_OUTGOING<<16
-	qpairs=2,ignore_outgoing=1: setsockopt(13, SOL_PACKET, PACKET_FANOUT, [-805236964], 4) = 0
-	// -805236964 does contain PACKET_FANOUT_FLAG_IGNORE_OUTGOING<<16
-
-They show that the setsockopt succeeds even on the old kernel that
-does not support PACKET_FANOUT_FLAG_IGNORE_OUTGOING, so setting it
-opportunistically is fine. They also show that the code only tries to
-set PACKET_FANOUT_FLAG_IGNORE_OUTGOING or PACKET_IGNORE_OUTGOING when
-requested by ignore_outgoing=1. And it shows that
-PACKET_IGNORE_OUTGOING is used for single and
-PACKET_FANOUT_FLAG_IGNORE_OUTGOING for multi-queue.
-
-I have also manually ran testpmd in all modes and both kernels to
-verify that ignore_outgoing works as expected, sending packets and
-checking what testpmd was receiving (``set verbose 1``).
-
-
-v6:
-- add tags to frames to distinguish injected ones from stray ones
-- update the loopback and ignore_outgoing tests to count only tagged
-  frames
-- inject frames as incoming to distinguish a dead port from a
-  working one in ignore_outgoing=1
-- bound the receive flush so a continuous stream cannot hang the test
-- quote rte_eth_rx_burst() with double backticks in the docs
-- use Linux 6.2 instead of v6.2 throughout the code and the docs
-- add a paragraph to af_packet.rst on single-queue and multi-queue
-  filtering
-v5:
-- remove Co-Authored-By line in patch 2
-v4:
-- split into PMD filtering, PACKET_IGNORE_OUTGOING for the
-  single-queue scenario, and PACKET_FANOUT_FLAG_IGNORE_OUTGOING for
-  multiple queues
-- set the fanout flag for all kernel versions. kernels that do not
-  support it silently ignore it and filtering falls back to the
-  PMD-based approach
-- changed the test to test both single and multi-queue
-v3:
-- drop #ifdef PACKET_IGNORE_OUTGOING (uapi since 4.20; DPDK requires kernel >= 5.4)
-- fail the test if ignore_outgoing=1 cannot create a port
-- drop kernel >= 4.20 notes from docs and release notes
-v2:
-- use PACKET_IGNORE_OUTGOING / ignore_outgoing= instead of capture_dir
-
-
-Frank Dressler (4):
-  test/af_packet: ignore stray packets in loopback test
-  net/af_packet: filter Rx of outgoing packets in the PMD
-  net/af_packet: use kernel to filter single-queue Rx
-  net/af_packet: use kernel to filter multi-queue Rx
-
- .mailmap                                  |   1 +
- app/test/test_pmd_af_packet.c             | 301 ++++++++++++++++++++--
- doc/guides/nics/af_packet.rst             |   8 +
- doc/guides/rel_notes/release_26_11.rst    |   7 +
- drivers/net/af_packet/rte_eth_af_packet.c |  50 +++-
- 5 files changed, 345 insertions(+), 22 deletions(-)
-
+diff --git a/.mailmap b/.mailmap
+index 67ff247224..8c49fcb6f3 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -509,6 +509,7 @@ Francis Kelly <fkelly@nvidia.com> <fkelly@mellanox.com>
+ Francis Racicot <francis.racicot@intel.com>
+ Franck Lenormand <franck.lenormand@nxp.com>
+ François-Frédéric Ozog <ff@ozog.com>
++Frank Dressler <frank@dressler.pro>
+ Frank Du <frank.du@intel.com>
+ Frank Zhao <frank.zhao@starfivetech.com>
+ Frederico Cadete <frederico.cadete-ext@oneaccess-net.com>
+diff --git a/app/test/test_pmd_af_packet.c b/app/test/test_pmd_af_packet.c
+index b668ca5b81..74eb47f1a2 100644
+--- a/app/test/test_pmd_af_packet.c
++++ b/app/test/test_pmd_af_packet.c
+@@ -44,6 +44,14 @@ test_pmd_af_packet(void)
+ #define BURST_SIZE 32
+ #define RING_SIZE 256
+ 
++/* Length of Ethernet frames built by the tests */
++#define TEST_FRAME_LEN (sizeof(struct rte_ether_hdr) + 46)
++
++/* Source MAC used to recognise frames sent by this test */
++static const struct rte_ether_addr DEV_MAC_TAG = {
++	.addr_bytes = { 'P', 'A', 'C', 'K', 'E', 'T' },
++};
++
+ /* Polling and timeout constants */
+ #define STATS_POLL_INTERVAL_US 100
+ #define STATS_POLL_TIMEOUT_US 100000  /* 100ms overall timeout */
+@@ -206,23 +214,39 @@ alloc_tx_mbufs(struct rte_mbuf **bufs, unsigned int count)
+ 
+ 	for (i = 0; i < count; i++) {
+ 		struct rte_ether_hdr *eth_hdr;
++
+ 		eth_hdr = (struct rte_ether_hdr *)rte_pktmbuf_append(bufs[i],
+-				sizeof(struct rte_ether_hdr) + 46);
++				TEST_FRAME_LEN);
+ 		if (eth_hdr == NULL) {
+ 			/* Free all allocated mbufs on failure */
+ 			rte_pktmbuf_free_bulk(bufs, count);
+ 			return 0;
+ 		}
+ 
+-		/* Set broadcast destination and zero source MAC */
++		/* Set broadcast destination and DEV_MAC_TAG source MAC */
+ 		memset(&eth_hdr->dst_addr, 0xFF, RTE_ETHER_ADDR_LEN);
+-		memset(&eth_hdr->src_addr, 0x00, RTE_ETHER_ADDR_LEN);
++		rte_ether_addr_copy(&DEV_MAC_TAG, &eth_hdr->src_addr);
+ 		eth_hdr->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+ 	}
+ 
+ 	return count;
+ }
+ 
++/*
++ * Helper: Indicates whether the mbuf source MAC is DEV_MAC_TAG.
++ */
++static bool
++is_tagged_mbuf(struct rte_mbuf *buf)
++{
++	struct rte_ether_hdr *eth;
++
++	if (rte_pktmbuf_data_len(buf) < sizeof(*eth))
++		return false;
++
++	eth = rte_pktmbuf_mtod(buf, struct rte_ether_hdr *);
++	return rte_is_same_ether_addr(&eth->src_addr, &DEV_MAC_TAG);
++}
++
+ /*
+  * Helper: Transmit packets and free unsent mbufs.
+  * Returns the number of packets successfully transmitted.
+@@ -243,15 +267,22 @@ do_tx_burst(uint16_t pid, uint16_t queue_id, struct rte_mbuf **bufs,
+ 
+ /*
+  * Helper: Receive packets and free received mbufs.
++ * If count_tagged is non-NULL, count DEV_MAC_TAG frames in it.
+  * Returns the number of packets received.
+  */
+ static uint16_t
+ do_rx_burst(uint16_t pid, uint16_t queue_id, struct rte_mbuf **bufs,
+-	    unsigned int count)
++	    unsigned int count, unsigned int *count_tagged)
+ {
+-	uint16_t nb_rx;
++	uint16_t i, nb_rx;
+ 
+ 	nb_rx = rte_eth_rx_burst(pid, queue_id, bufs, count);
++	if (count_tagged != NULL) {
++		for (i = 0; i < nb_rx; i++) {
++			if (is_tagged_mbuf(bufs[i]))
++				(*count_tagged)++;
++		}
++	}
+ 	rte_pktmbuf_free_bulk(bufs, nb_rx);
+ 
+ 	return nb_rx;
+@@ -527,7 +558,7 @@ test_af_packet_rx(void)
+ 	}
+ 
+ 	/* Try to receive packets (non-blocking) using helper */
+-	do_rx_burst(port_id, 0, bufs, BURST_SIZE);
++	do_rx_burst(port_id, 0, bufs, BURST_SIZE, NULL);
+ 
+ 	/* RX from tap interface without external traffic will return 0 */
+ 	/* This test just verifies the RX path doesn't crash */
+@@ -544,7 +575,8 @@ test_af_packet_loopback(void)
+ {
+ 	struct rte_mbuf *tx_bufs[BURST_SIZE];
+ 	struct rte_mbuf *rx_bufs[BURST_SIZE];
+-	uint16_t nb_tx, total_rx = 0;
++	uint16_t nb_tx;
++	unsigned int count_tagged = 0;
+ 	uint64_t elapsed = 0;
+ 	unsigned int allocated;
+ 	char tap_buf[2048];
+@@ -588,14 +620,10 @@ test_af_packet_loopback(void)
+ 		}
+ 
+ 		/* Try to receive via af_packet RX */
+-		uint16_t nb_rx = rte_eth_rx_burst(port_id, 0, rx_bufs, BURST_SIZE);
+-		if (nb_rx > 0) {
+-			total_rx += nb_rx;
+-			rte_pktmbuf_free_bulk(rx_bufs, nb_rx);
+-		}
++		do_rx_burst(port_id, 0, rx_bufs, BURST_SIZE, &count_tagged);
+ 
+ 		/* Check if we've received enough */
+-		if (total_rx >= nb_tx)
++		if (count_tagged >= nb_tx)
+ 			break;
+ 
+ 		rte_delay_us_block(STATS_POLL_INTERVAL_US);
+@@ -609,7 +637,7 @@ test_af_packet_loopback(void)
+ 	 * Note: We may not receive all packets due to timing, but receiving
+ 	 * any packets proves the loopback path works.
+ 	 */
+-	printf("Loopback: TX=%u, RX=%u\n", nb_tx, total_rx);
++	printf("Loopback: TX=%u, RX=%u\n", nb_tx, count_tagged);
+ 
+ 	return TEST_SUCCESS;
+ }
+@@ -982,7 +1010,7 @@ test_af_packet_multi_queue(void)
+ 
+ 	/* Test RX on different queues */
+ 	for (q = 0; q < num_queues; q++)
+-		do_rx_burst(test_port, q, bufs, BURST_SIZE);
++		do_rx_burst(test_port, q, bufs, BURST_SIZE, NULL);
+ 
+ 	/* Cleanup */
+ 	rte_eth_dev_stop(test_port);
 -- 
 2.56.0
+
