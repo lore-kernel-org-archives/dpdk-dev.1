@@ -2,75 +2,95 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF5CCC6B38
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF5FC2D0A6
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:58:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CB0B7402DF;
-	Thu, 15 Oct 2026 19:54:51 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3319D4027C
- for <dev@dpdk.org>; Thu, 15 Oct 2026 19:54:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792086889;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=OnSeBGWzS4EpMV/U2mcZUskMRgVqJX9i6s619ZU1t10=;
- b=h1tFNBtYPPvZj2cC4c/fYfu34ZnHRVR6TCjPI5FAZ4CmfpV4+dfFGolBRPgS+H+GuM8HWy
- arm1afnywylT6H5o+A6HsRQTOnVD9P4vggv9aSM4WNSSzqAdAEJzA7iL3Tf1iL9ysQKft+
- 5ppi3FBoJZyWgfMcF+ZLy6muPE2dGlo=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-428-SmRrszkuOu6FEkNZwLDkpA-1; Thu, 15 Oct 2026 17:54:48 +0000
-X-MC-Unique: SmRrszkuOu6FEkNZwLDkpA-1
-X-Mimecast-MFC-AGG-ID: SmRrszkuOu6FEkNZwLDkpA_1792086886
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-3a77cbb4202so12732661fa.2
- for <dev@dpdk.org>; Thu, 15 Oct 2026 10:54:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792086886; x=1792691686;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=OnSeBGWzS4EpMV/U2mcZUskMRgVqJX9i6s619ZU1t10=;
- b=pPT8m/kMvqvuwgiQ3gTNyyNN47J47ptuLbwpBqELt/pGMJR0IXqJjL+MXFTXvg99lE
- aw/O5jPW+gcjscx45TkXAK6Dz4MQ/9SA4tcNX1rQWKtpOsLmaTOJ6CY6snWnjD6+szUx
- d3VOdSWlZ3ra1SyDCTDwRJOw2qzNf2G2zwbEsih2sXAo7R01I4UL2Qw1A2XXKDwBTxdJ
- BBSyRlP7usNj7FzcXPdWpUw/hMnI9fVXSXhP9bKjxbZtiHXigW7oeno20A2B4pWd2A/Y
- bOwo2vYMYu31yz4j80DXODVoBIFebTxHxsJnie0mdhGGqpgsf2+YrEx00Jh5l1nf0gr4
- QQbA==
-X-Gm-Message-State: AFq9FYI0gsf/pk/uRE/KTtHg9IUqfglZKSHALd8U3sNM7bBsQuANlS9s
- pnxrNlcUOgLCcEwKEW8bUeU+EM8jci2lFAz42JEe4lJPFjKKETgrxv+gGF24jld7v/QJNWzeI0l
- OnoDQztnv1s+W3FaR1+FSlwhb7EhZntlI4yQvE559/2B8b8RUuR/Jv1NiQxc8L9rB9Oi14fe4Ml
- x1SCH9o55dLjD0/BO7ln4=
-X-Gm-Gg: AYBFou2kgc2sVzF9R0vQtuNUnOu1RlGEa2yoMxln8SHuEE/2hakz1EZSTcCVEXFXeZz
- fRVxYNDzm1ZxQlEPb54rLSS0VTjL8e8KB4f44QFs4K30+fMINBhkL2OK6cr+1qukZblDziKmrtg
- XGMcdhEd+Rhwq7nY7qnm9tRTB0d3y6fSfzhJL0Z1daoVck+nYN977vQXsfCFCyReBn6q26Tk/f9
- xo6dTthsyNtDJcMeEeYh11o32yZrRmC5F3bxz09Mn8OTSY7
-X-Received: by 2002:a05:651c:211e:b0:3a1:30c4:d95 with SMTP id
- 38308e7fff4ca-3a9c515d781mr50539731fa.5.1792086886398; 
- Thu, 15 Oct 2026 10:54:46 -0700 (PDT)
-X-Received: by 2002:a05:651c:211e:b0:3a1:30c4:d95 with SMTP id
- 38308e7fff4ca-3a9c515d781mr50539651fa.5.1792086885941; Thu, 15 Oct 2026
- 10:54:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 09DF04060F;
+	Thu, 15 Oct 2026 19:58:56 +0200 (CEST)
+Received: from fout-b4-smtp.messagingengine.com
+ (fout-b4-smtp.messagingengine.com [202.12.124.147])
+ by mails.dpdk.org (Postfix) with ESMTP id 0678A4027C
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 19:58:55 +0200 (CEST)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+ by mailfout.stl.internal (Postfix) with ESMTP id 5EACC1D000E3
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 13:58:54 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-11.internal (MEProxy); Thu, 15 Oct 2026 13:58:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1792087133;
+ x=1792173533; bh=BGLAGEqFJuNVYcGxNrXztIoDVfioIxdvE9BjLFkIvdI=; b=
+ UMjpUpuznSWfCKt7LYYBLgwjPnykulmEy8TH7qMgY/KKOIkIx1nUnEoqpYiTcgxX
+ RXNV0loXVYTjkfsdfh8IzwSy4Rx96eSclv5bhIi79d/m9U1lqpeynZk6R/YS18ea
+ l6eLfKNeLlUEF0o9ZKHSIJKyn6wp9hRXi38DO60moyhh909YNyYPAvgb9ulGk6OR
+ AAJ1Xeyd3zLEehIHb1zddDK4wjq2p1ke6xyRRVAIPvQbQsVMkAk7bQJpxjpDOYS4
+ FbGJJJLc+uj6M8ofs8Bw1H5wnO5V9K2qsQJU3Z/N2XEfD4QDWAsRDKq6V3DrYTrk
+ 9+I8c89rxQV1qTJ3HOw9Ew==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792087133; x=
+ 1792173533; bh=BGLAGEqFJuNVYcGxNrXztIoDVfioIxdvE9BjLFkIvdI=; b=b
+ 0AuhB/gL42Mn4g37ysQtlSPdakHFtn02xOLeUlfdNKMZm7/GVp3x0Qy+lZv0ln56
+ PU/yDKgB25FBHg77250JO2KZwAhSX5OYksM04xFM7IhyoDTCtar5+SEXhqayr62O
+ j5A7cqseMpbzcvhB0GqWSrKoDyDu8YZHzlQUeBToUBP/rMNnMGULkXI+lSWfuujV
+ AO6jnrc5pwYxBXZOFtwHM3j6h1WVAhi+0e/psv9m78S/qnVII7AYm1AYul7vln9B
+ IZonXiZeHYEPLGENK6VnapwTg8fsdCU3dD/3KhRzP4OtKtxQUNEgf5QhWVRMmkYk
+ LrZOvDWgH7Erd3kk9c8cQ==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1792087133; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm2:rsa-sha256:CXRYvH/IfZSnQUmif2HzM/uX50ogDHjT/P9CCi45+FIPHEx
+ lk254GYCtSzWPYooX1bORF2pbsu/lHa9EnUkbhxOv7If7QjzFgwFutzBTlDchrat
+ V2TfQuRHRaYanuEFzjZWBdDD5cbLzry7x4yfrMxLN2fK1GRu7JcB5GB1EyBO43UO
+ eVzGWT7cX//NdzHA02Mn1Dg51igOgJ8trn2NG00+hFVAS32gVboU2xPK3dLTAW1q
+ EyQL4ev/5OJzFWR1Bd4NJloAIYjS9Dt1a6EqmN2edXEhk1FOR16sjzPW25NY0IA3
+ ZiVw7fLo3Ch1Pj7FxWJz2okEe5tt484OgWk37rQ==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:QXhRqoT4TSAShCtatTL/fbT1K4O6PWXBUDPPj60zDNQ=:Lx1Sk+k3MDpV4Ek1EcGy9bnW/txZVqj3XtwvxPiYwBo=;
+X-ME-Sender: <xms:XRTRaiOyRMYMUm5iJDpSiXuID8wF7nPMdWwhTJyfwxdETcVFycxH8g>
+ <xme:XRTRalQ2J1NMUQYitoPoSyWnZtWecI5EcbBA0iMRAsLnip7kAmV08qY8QIoBwbCey
+ QPiVsTcYK4lk4IQ-_nXsB_E3WzLEvW0oaAZ_vjGxA0p1REOygrCww>
+X-ME-Received: <xmr:XRTRaoZMhmtqwf1QTHouPmi2BbP_pc2eEMZA0OfDqw6n_1Af0-kojmMUAN__3p6v8yH6tJc3kcn1l3lhRrI6cWs>
+X-ME-Proxy-Cause: dmFkZTFdBqqOIov0Pax6UyUilCIFCrv/yuZs7o9m3aAKiaKDxowFjvsUe1u4ppU7MaPxIt
+ gd1fXFvzMlTcN8mkW6UEcFiVccBZAiqCx/+STUQ/EBLX3QvzFKTNDFVvpXhaUZPk1DRyva
+ WkegBeupT6eBWvODbAFHH6WgiF6vXeYPE8reuMhoxT2jxQCm6kBjWahc46YW03zX52dFAO
+ Xyx+jdnt6v3cF2POirjXTG+iAUWwyNZFxsU+MAvu62QXr/j6O/5UO32VdQt19OhG7sNj7S
+ WRniBd690Ro42i8LaToJEq/lw6ZrQJTBLWWa+Z5j8RtdZIZUL0f8kLmVfKdcEdt4suo9b6
+ Rh8m0zeMEo/IvSLZH+Cw1654qgzGqJNjj0hbVpd2wdK+u/0nAePc/JqyUHlwvIoEB5Q0oM
+ X5ZDjUb7n3RUi1G9hyEnoPj5bC6YDisHaSKgcXnhNBSwfPcyHot0DC/128ZVcYJJA7YSDd
+ Je389c7rIRBPeBoRam2mkixC2WxkToyOgtbeC2ohGDJCq6/wJ25wk58q19g+cUIhZOhh5L
+ syR75WPa9aYDQiQ4zK91OH2iu6pDnpSDkBNZeAP5alZ8ngGhZINK+qW3AlPTP9srjWsQAc
+ Zfv912t8Zn2gdlg+IMYWEECVBPnfRUDZzjAQQOlIcS1W3/HsCOge0L60ud0w
+X-ME-Proxy: <xmx:XRTRaq3wSOLXoHIR3nKUDgU4OyYJnb5nNBBJinIkeXen6KjtskJK8w>
+ <xmx:XRTRagXwQ_veg8iXrpzZwmHG3jXfxkHaFwot96Q1NHstL14D4t4GqA>
+ <xmx:XRTRasUz-Ihf1YFDW8fI5GY_oMl1xzLgIrOEw99ALnF9QD8rF1RBZw>
+ <xmx:XRTRaneELkr97ZT8WZLFiXfbtLMk_XMEKwtPSHewI0BmqROjL4ktow>
+ <xmx:XRTRatiQHBFS01pbHIzIdB8sZorcGbhr6Nbb_7ELoGtBR_UoVF95u4OT>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 15 Oct 2026 13:58:52 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Shreesh Adiga <16567adigashreesh@gmail.com>
+Cc: Wathsala Vithanage <wathsala.vithanage@arm.com>, dev@dpdk.org
+Subject: Re: [PATCH] net/crc: make NEON CRC folding logic similar to x86 SSE
+Date: Thu, 15 Oct 2026 19:58:51 +0200
+Message-ID: <GJFovAQ8QlWVWCchQGJUYg@monjalon.net>
+In-Reply-To: <20261006151833.347561-1-16567adigashreesh@gmail.com>
+References: <20261006151833.347561-1-16567adigashreesh@gmail.com>
 MIME-Version: 1.0
-References: <ee502d37f54dbb6ea8ae4473e684eeb0f500db1d.1792079025.git.anatoly.burakov@intel.com>
- <CAJFAV8wubWQvcN7wArMbVZ5yxu8iLEMiUUQwWzGmCqyAVDk6Mg@mail.gmail.com>
-In-Reply-To: <CAJFAV8wubWQvcN7wArMbVZ5yxu8iLEMiUUQwWzGmCqyAVDk6Mg@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 15 Oct 2026 19:54:32 +0200
-X-Gm-Features: AclHuK88JEw-xLAjCzucIUClhB368WCDQWk6Jl263dUX9h7MMhgU9XW5qdDnskY
-Message-ID: <CAJFAV8xaCdniuSE-whogA66Fxpxc9hipD_4===u=X5p9iWG23w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] vfio: fix device lookup with no-IOMMU mode enabled
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, abailey@iol.unh.edu,
- dladd@iol.unh.edu
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: vKg526ohXY5MCN4J132EsbHXEOC8BbY-7cAA3GGdCn4_1792086886
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,34 +104,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 15 Oct 2026 at 18:15, David Marchand <david.marchand@redhat.com> wrote:
->
-> On Thu, 15 Oct 2026 at 17:44, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
-> >
-> > Currently, when the `enable_unsafe_noiommu_mode` VFIO module parameter is
-> > set, VFIO selects PA IOVA mode and then only looks for no-IOMMU device
-> > nodes: `/dev/vfio/noiommu-N` in group mode, and `noiommu-vfioN` in cdev
-> > mode.
-> >
-> > However, the parameter does not make every VFIO device a no-IOMMU
-> > device. The kernel only creates a no-IOMMU group for a device that has no
-> > IOMMU group of its own; devices behind a real IOMMU still get a regular
-> > `/dev/vfio/N` group and `vfioN` cdev. On such systems, devices bound
-> > to `vfio-pci` are therefore reported as not managed by VFIO and fail
-> > to probe.
-> >
-> > Fix it by trying the regular node name first and falling back to the
-> > no-IOMMU one, in both group and cdev modes.
-> >
-> > Fixes: 6cb38a7f56e0 ("vfio: introduce VFIO mode")
-> > Fixes: d129414711aa ("vfio: introduce cdev mode")
-> >
-> > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> Acked-by: David Marchand <david.marchand@redhat.com>
+06/10/2026 17:18, Shreesh Adiga:
+> This patch includes the following minor changes:
+> 1) Use TBL based shift left for variable len shift instead of using
+>    vshift_bytes_left which adds a switch case for 16 len cases.
+> 2) Align the fold constants to use PMULL and PMULL2 instructions
+>    instead of using cross lane operands which requires additional shift.
+> 3) Remove unnecessary static arrays used in crc32_reduce_64_to_32 by
+>    adapting x86 SSE logic.
+> 4) Use x86 SSE logic for processing partial bytes sequence to avoid
+>    using multiple variable len shifts which inserts switch case.
+> 
+> Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
 
 Applied, thanks.
 
 
--- 
-David Marchand
 
