@@ -2,52 +2,98 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FB0CC6B3A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 11:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A230DCC6B3A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 11:49:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 56A8240671;
-	Thu, 15 Oct 2026 13:41:04 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 3FAED400EF
- for <dev@dpdk.org>; Thu, 15 Oct 2026 13:41:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792064462; x=1823600462;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=hX4KDwCtRXjxgB34YsBRF/u1wOlVI3iBwycQKUAOP1w=;
- b=kezsgw80JVxl9vZ4ru/w/gY9IDogLSQ7lDSIyENqQaNuT0Gs0hGPYwkU
- JYlxbBNetK0lUI/IQ/1BqBLBvTmOyvcNvFbrEGOZZXRY9DvJmtCPFXAVM
- TeJ/5e4JRCw1uzxRXi5O/rKSfZ9jrQEBwYdXw5FC2FU2aA8DFbH8WMVCs
- hNb7B94LYjj/bqQx3sKYaxJFOiGs5wUqoNA4aSEfRFI7PTtsvmgwY9nNp
- JbuUo+dRCq/YEpteC/sBV83JafhpHBzFwJat2jcPhtBdkvX/FTH/WTJaj
- xEdcZk5u/prwKj0OFCyrFu38q0o9Qi9vT1nyvOpGSytLvKAapIcGahji2 Q==;
-X-CSE-ConnectionGUID: mOpi1b1XQbyiYhYO63ylTw==
-X-CSE-MsgGUID: VUtyfiZEQJ6iosOcuoSzIQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="712178"
-X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
-   d="scan'208";a="712178"
-Received: from fmviesa012.fm.intel.com ([10.60.135.152])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Oct 2026 04:41:02 -0700
-X-CSE-ConnectionGUID: KLceznGkSCS+y/W/SuVGUA==
-X-CSE-MsgGUID: z5iAhfuzSfWnn9741ZEDYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
-   d="scan'208";a="3428687"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa012.fm.intel.com with ESMTP; 15 Oct 2026 04:41:01 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Qi Zhang <qi.z.zhang@intel.com>, Kevin Liu <kevinx.liu@intel.com>
-Subject: [PATCH v1 2/2] net/ice: do not include private headers in testpmd
-Date: Thu, 15 Oct 2026 12:40:55 +0100
-Message-ID: <ffee24bde9f780bde2b9f3d497020f82a74b597e.1792064448.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <816779271abc165ec8404edcfc243ef0e9f5fd65.1792064447.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id 9B6824064A;
+	Thu, 15 Oct 2026 13:49:03 +0200 (CEST)
+Received: from fout-a1-smtp.messagingengine.com
+ (fout-a1-smtp.messagingengine.com [103.168.172.144])
+ by mails.dpdk.org (Postfix) with ESMTP id A75914064A
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 13:49:01 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.phl.internal (Postfix) with ESMTP id 26DC1EC00BB
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 07:49:01 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Thu, 15 Oct 2026 07:49:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1792064941;
+ x=1792151341; bh=mM8ZCVxG0NB3iAJWfVajSHZcEtWfxCW9u/n+DozLkZk=; b=
+ aBcLOtUnFIaG5NVk6VTNBbe7Mu1k4RvE2goNP5MYXNOpjqqYjbu/p4oxQDE68Of+
+ 9QbRPUsQRv7H9tJoyB9oYsf80K6iDutX9DJNEFoD+2oLM0xeCPbMQerDCkv5Ewg/
+ sVMrFwzWAX01um+etwynDRpD5+kwbuie0BbO/Gf4aAsGvUSAmuYR10nQma1sEPyH
+ 0cBmTT3t93hiiOkzdtFu290Y9/zkm2rqJJPX6FNJN3HQXeXmWyH0Dk5SXhDxCwtl
+ zPKwSNOpC5YYRSGHNFxoQEKfB6vgwH7AeJj37TKXPdwvLwlKJEu/iiAI1WjKmbAT
+ +4kOFz5oydb5CDF5roXsyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792064941; x=
+ 1792151341; bh=mM8ZCVxG0NB3iAJWfVajSHZcEtWfxCW9u/n+DozLkZk=; b=U
+ lsRw674sDJvq3cnLsHKeEK2vK9zHz2nEygfnQA4hrf2KKYh0QjjN709j/J+o1OpA
+ JFa2xUFlVAKDvfvLV5KUMASKnWs1pWvtHBcYg694DiIm2lGK3MYD4XedbdqiCASE
+ +fKCGPb6+AP2dd/AW3h+oK0YEE9JjE+c/MF8OyskpI8TCmL8Y/it5SO86eGioZiD
+ pmEU3/awuJLKt0s+t8t5Wsi+JrML5bmNCpuIqGNcxlKeC6NDrCrrytoHDYEPh4nJ
+ qDS4XmucQVRhwNKk3K69OizmkiFdt4+sJkOYt6AIziKs37ddByvFTZb5JpVD/yj0
+ WGiImqVMIDtCErhkuMxmg==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1792064941; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm2:rsa-sha256:SXO4BaHLlr3UUF10JKkfaxaLyqTLf1Ic1PxihZ0vUtNZIoA
+ bIEYxg0U3n5vi0JvCnTl1fFKQHPtWMIguFiF35XpiohrZyvfdglwH6Hxs6DWhe9x
+ GorMHrZiW5pJQ5zQhIYEjrpEBGBHRLiG7lkDM84xSeY0Soz49EshSKeqJX6OkdHC
+ hKazGTpYCpeTpf+e/QaPHRzRmrmgHj3hdyws72OvPiyJmP+gDnPmL/1Z3zsI/rVi
+ 1hmNH53bpWNPiGDMcgHKWUjABAP+lzmeH5q2chTTPVGVX9nDQSe3m4plwg5BaQUE
+ nrFFmTBz955+yqynQoHvTLcaS+J3k/8ykJ+xPvA==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:6CgfSh4LTwHan0l24uk6TlSXHmwGM0jFUXtqyMXxhkQ=:lx01GKPic4XL2Rt8lx2RpMLCnZPteQ1KV02bDqytV4E=;
+X-ME-Sender: <xms:rL3Qate0t-A-4wVPfWrm2nrdObQkRtxl7-pKg2uNMJ3ONfQTGX-DZA>
+ <xme:rL3QarWqdu0lQizltKVPNwio9T3026LpmjPZN297iAPzOahXcass--Zv2viQq-QjZ
+ xSdQfOjRE-E8L-dWPfQgIu0K-JPrlpnEJlZhZttwQmj6vr9oTYq4Q>
+X-ME-Received: <xmr:rL3QaudWlHtoIWwmHI_rRa00MgY7K8obcMxthO_vxJ6jwkL3gdbHkky2UFIfwKSKv42ygLwpZSm3AYYYbIiHocg>
+X-ME-Proxy-Cause: dmFkZTEu/ZJBRHo6nU+O3H7YTngmQnYXcPyCOAIcw4hSu+HdWqw9h+fqopuBOnjASxsW7i
+ raaDOPF7scIpf12TBGwPgolQbPlXFkeVeDKPQCJYeCDY8OXfPhN7y6TLzLi2lxNmOYURzz
+ MzP7UIqU0kszAG19T7LA+SL9TRGp6Lh+rJZ3jHAB/PkdJPsgNMEOEFtIkfXPyKFb8zbiHW
+ 38rpak4BPmTSImQwZZx6qPBdj6zz2eyhV12igulZcG9RHmRYJ9QGv+s1gyb+EPYHiuP5Vz
+ OOahdqgQJuLfhoqoKfp9dSM4g6C9cevRojfqwHCgpM9kCcuOzWDDBgAtBCLKoCjqyNsut7
+ /8BqUSVKf+mGDv0Nul75J4NhDls+4Mo1btxtROtvEMlP4xHbBMT1jk8wGJWA23gGx+6wCI
+ bST7aQ8icfnTXE+asNPkSmjCBJDsjdchGi4aVR2fq1HDv2Ob6NaCQqdCxK4Tx86GWie0Hy
+ JgZCVtKgKAYiL76I9AsbpMw2KC4rovoCTdFdAHQuq6uqcdCWWwIC0Ed2uDvvdkcrS4UL0e
+ 3eRbmicEk8r9IJloiBMqqOPkdvIWneViKqUyjNorIkCON/7pQvCE8dEnquvoifPl/9FTiK
+ I4t8eatVQgzHYnAIXsweKtVfkCXR6nTkaI9THIg4ytPF6ZwXV+bYX403AqIw
+X-ME-Proxy: <xmx:rL3QavNKX7YoLGRJ3ex-CZgl5kvpNxODJFitG5FoxvgOHeBiQIkQcQ>
+ <xmx:rL3QakhJ14O6PGk0R50NrJEUGufr9NTaxV7IaZzfXtb0ETDLeY1h9A>
+ <xmx:rL3Qaq3xAGYDS0SDazH65zSIo7Xs3TExGLAuWP39w0dlHi_JOj4_dQ>
+ <xmx:rL3QamiKRcYRtF5rxruMlyAs-Mm-DnwkugKXAl2IBLAwJUrcECwENg>
+ <xmx:rb3QajYKhAkr6ZSa2FBCtZxawWv_3Vnfqxu3lHyu05Tslnjohkgt2mBv>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 15 Oct 2026 07:49:00 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: Anatoly Burakov <anatoly.burakov@intel.com>, dev@dpdk.org,
+ David Marchand <david.marchand@redhat.com>
+Subject: Re: [PATCH v7 00/25] Building a better rte_flow parser
+Date: Thu, 15 Oct 2026 13:48:58 +0200
+Message-ID: <ZmsZS2WcTr-Or_zPC6C_7w@monjalon.net>
+In-Reply-To: <atC5owA-q3EEO-XC@bricha3-mobl1.ger.corp.intel.com>
+References: <cover.1787233986.git.anatoly.burakov@intel.com>
+ <ABC_uunLSjatNxgGlc8CGA@monjalon.net>
+ <atC5owA-q3EEO-XC@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,207 +107,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, the `ice_testpmd.c` file includes headers that are only
-available to driver itself, but should not be available to applications,
-including testpmd. Instead, testpmd should access them through public PMD
-specific API.
+15/10/2026 13:31, Bruce Richardson:
+> On Wed, Oct 14, 2026 at 10:50:19PM +0200, Thomas Monjalon wrote:
+> > 13/10/2026 19:18, Bruce Richardson:
+> > > Patchset applied to dpdk-next-net-intel.
+> > > 
+> > > As well as the arm build issue, I also fixed a number of checkpatch issues,
+> > > since there were a large number on this set. Most I kept unfixed, since I
+> > > felt the exceptions were reasonable, but please check what was applied in
+> > > case some issue was introduced with the checkpatch changes I made on apply.
+> > 
+> > Unfortunately it fails compiling on my FreeBSD,
+> > because of an internal API included in a header included in testpmd.
+> > 
+> How are you building for BSD to see this error? The next-net-intel tree
+> is building fine for me on BSD, both as release and debug builds.
 
-The ice driver does not have one (even though it offers a testpmd file), so
-add the public PMD-specific API header, move all function definitions
-into that file, and get rid of driver-private includes in testpmd file.
+I don't know the difference, probably I have an old FreeBSD,
+and it doesn't matter since my patch on __rte_internal
+shows that the error is real and can be exposed with any Clang.
 
-Fixes: df539aaf35cb ("net/ice: refactor flex descriptor protocol field extraction")
-Cc: stable@dpdk.org
-
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- doc/guides/nics/ice.rst                |  3 +
- doc/guides/rel_notes/release_26_11.rst |  2 +
- drivers/net/intel/ice/ice_diagnose.c   |  1 +
- drivers/net/intel/ice/ice_ethdev.h     |  9 ---
- drivers/net/intel/ice/ice_testpmd.c    |  7 ++-
- drivers/net/intel/ice/meson.build      |  1 +
- drivers/net/intel/ice/rte_pmd_ice.h    | 76 ++++++++++++++++++++++++++
- 7 files changed, 88 insertions(+), 11 deletions(-)
- create mode 100644 drivers/net/intel/ice/rte_pmd_ice.h
-
-diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
-index ba598742c5..e4dd87649b 100644
---- a/doc/guides/nics/ice.rst
-+++ b/doc/guides/nics/ice.rst
-@@ -1021,6 +1021,9 @@ To start ``testpmd``, and add vlan 10 to port 0:
- Diagnostic Utilities
- --------------------
- 
-+The diagnostic dump functions are also available to applications through
-+the public ``rte_pmd_ice.h`` header.
-+
- Dump DDP Package
- ~~~~~~~~~~~~~~~~
- 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index a4f44e5ebd..f3c820a72a 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -118,6 +118,8 @@ New Features
-     enabling QinQ tag insertion and outer IPv4/UDP checksum offloads on those paths.
-   * Added support for getting and setting link (802.3x) flow control.
-   * Added support for Tx rate limiting per queue.
-+  * Made the existing diagnostic dump functions available through
-+    the public ``rte_pmd_ice.h`` header.
- 
- * **Updated Intel ixgbe driver.**
- 
-diff --git a/drivers/net/intel/ice/ice_diagnose.c b/drivers/net/intel/ice/ice_diagnose.c
-index 4946ace7ae..ecfcdf5559 100644
---- a/drivers/net/intel/ice/ice_diagnose.c
-+++ b/drivers/net/intel/ice/ice_diagnose.c
-@@ -13,6 +13,7 @@
- 
- #include "ice_ethdev.h"
- #include "ice_rxtx.h"
-+#include "rte_pmd_ice.h"
- 
- #define ICE_BLK_MAX_COUNT          512
- #define ICE_BUFF_SEG_HEADER_FLAG   0x1
-diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index 8d5e17e2df..08c2b61519 100644
---- a/drivers/net/intel/ice/ice_ethdev.h
-+++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -821,15 +821,6 @@ ice_align_floor(int n)
- 	((phy_type) & ICE_PHY_TYPE_HIGH_200G_AUI8_AOC_ACC) || \
- 	((phy_type) & ICE_PHY_TYPE_HIGH_200G_AUI8))
- 
--__rte_experimental
--int rte_pmd_ice_dump_package(uint16_t port, uint8_t **buff, uint32_t *size);
--
--__rte_experimental
--int rte_pmd_ice_dump_switch(uint16_t port, uint8_t **buff, uint32_t *size);
--
--__rte_experimental
--int rte_pmd_ice_dump_txsched(uint16_t port, bool detail, FILE *stream);
--
- int
- ice_tm_setup_txq_node(struct ice_pf *pf, struct ice_hw *hw, uint16_t qid, uint32_t node_teid);
- 
-diff --git a/drivers/net/intel/ice/ice_testpmd.c b/drivers/net/intel/ice/ice_testpmd.c
-index 98c02d68c6..0c135d79a3 100644
---- a/drivers/net/intel/ice/ice_testpmd.c
-+++ b/drivers/net/intel/ice/ice_testpmd.c
-@@ -2,14 +2,17 @@
-  * Copyright(c) 2022 Intel Corporation.
-  */
- 
--#include <stdlib.h>
-+#include <errno.h>
- #include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+
-+#include <rte_pmd_ice.h>
- 
- #include <cmdline_parse_num.h>
- #include <cmdline_parse_string.h>
- 
- #include "testpmd.h"
--#include "ice_ethdev.h"
- 
- /* Fixed size for ICE ddp runtime configure */
- #define ICE_BUFF_SIZE	0x000c9000
-diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
-index 322d9597d2..00077be30a 100644
---- a/drivers/net/intel/ice/meson.build
-+++ b/drivers/net/intel/ice/meson.build
-@@ -19,6 +19,7 @@ sources = files(
- )
- 
- testpmd_sources = files('ice_testpmd.c')
-+headers = files('rte_pmd_ice.h')
- 
- deps += ['hash', 'net']
- 
-diff --git a/drivers/net/intel/ice/rte_pmd_ice.h b/drivers/net/intel/ice/rte_pmd_ice.h
-new file mode 100644
-index 0000000000..dccfdcd5f4
---- /dev/null
-+++ b/drivers/net/intel/ice/rte_pmd_ice.h
-@@ -0,0 +1,76 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Intel Corporation
-+ */
-+
-+#ifndef _RTE_PMD_ICE_H_
-+#define _RTE_PMD_ICE_H_
-+
-+/**
-+ * @file rte_pmd_ice.h
-+ *
-+ * ICE PMD specific diagnostic functions.
-+ */
-+
-+#include <stdbool.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+
-+#include <rte_compat.h>
-+
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
-+/**
-+ * Dump the runtime DDP package configuration.
-+ *
-+ * @param port
-+ *   The port identifier of the Ethernet device.
-+ * @param buff
-+ *   Pointer to an allocated buffer. On success, it may be replaced by a
-+ *   newly allocated buffer; the caller must free the resulting buffer.
-+ * @param size
-+ *   Input buffer size in bytes; receives the size of the dump on success.
-+ * @return
-+ *   0 on success, -ENODEV for an invalid port, -ENOTSUP for a non-ICE port,
-+ *   or a negative error code on failure.
-+ */
-+__rte_experimental
-+int rte_pmd_ice_dump_package(uint16_t port, uint8_t **buff, uint32_t *size);
-+
-+/**
-+ * Dump the runtime switch configuration.
-+ *
-+ * @param port
-+ *   The port identifier of the Ethernet device.
-+ * @param buff
-+ *   Pointer to a caller-allocated output buffer.
-+ * @param size
-+ *   Input buffer size in bytes; receives the size of the dump on success.
-+ * @return
-+ *   0 on success, -ENODEV for an invalid port, -ENOTSUP for a non-ICE port,
-+ *   or a negative error code on failure.
-+ */
-+__rte_experimental
-+int rte_pmd_ice_dump_switch(uint16_t port, uint8_t **buff, uint32_t *size);
-+
-+/**
-+ * Dump the Tx scheduling tree to a stream in DOT format.
-+ *
-+ * @param port
-+ *   The port identifier of the Ethernet device.
-+ * @param detail
-+ *   Include node configuration parameters when true.
-+ * @param stream
-+ *   Output stream opened by the caller.
-+ * @return
-+ *   0 on success, -ENODEV for an invalid port, or -ENOTSUP for a non-ICE port.
-+ */
-+__rte_experimental
-+int rte_pmd_ice_dump_txsched(uint16_t port, bool detail, FILE *stream);
-+
-+#ifdef __cplusplus
-+}
-+#endif
-+
-+#endif /* _RTE_PMD_ICE_H_ */
--- 
-2.52.0
 
