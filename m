@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60517CC6B3A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 14:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AB6CC6B34
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 14:13:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 293DE40E01;
+	by mails.dpdk.org (Postfix) with ESMTP id E69EB40E12;
 	Thu, 15 Oct 2026 16:12:15 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id DB1C540679
- for <dev@dpdk.org>; Thu, 15 Oct 2026 16:11:53 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4DC3140679;
+ Thu, 15 Oct 2026 16:11:54 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BDA8D1A00A7;
- Thu, 15 Oct 2026 16:11:53 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2E8461A00AE;
+ Thu, 15 Oct 2026 16:11:54 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8879C1A009E;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ECF971A009E;
  Thu, 15 Oct 2026 16:11:53 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0B8DA18000B1;
- Thu, 15 Oct 2026 22:11:52 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5BD0018000B5;
+ Thu, 15 Oct 2026 22:11:53 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v26 17/26] drivers: release DPAA bpid on driver destructor
-Date: Thu, 15 Oct 2026 19:41:35 +0530
-Message-Id: <20261015141144.3140281-18-hemant.agrawal@nxp.com>
+Cc: stable@dpdk.org,
+	Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v26 18/26] dma/dpaa: fix data validation on the completion path
+Date: Thu, 15 Oct 2026 19:41:36 +0530
+Message-Id: <20261015141144.3140281-19-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261015141144.3140281-1-hemant.agrawal@nxp.com>
 References: <20261013103833.3822265-1-hemant.agrawal@nxp.com>
@@ -49,191 +50,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+fsl_qdma_data_validation() runs on every completion. It is a
+byte-by-byte software compare of the transferred data, which belongs to
+debugging and not to the datapath, where it costs a read-back and a
+compare of every descriptor that completes.
 
-A BPID allocated by dpaa_mbuf_create_pool() is only returned to the
-kernel from dpaa_mbuf_free_pool(), so an application that exits without
-rte_mempool_free() leaks it until the board is rebooted.
+Gate it behind s_data_validation, which is off by default, so the
+compare is skipped unless it is explicitly asked for.
 
-Track the allocated BPIDs and their flags in a static table and add a
-driver destructor that releases any still in use at exit. The
-destructor cannot touch the bman_pool object in EAL memory, so
-bman_free_bpid() releases the ID from the flags alone.
+Fixes: f1d30e2786b6 ("dma/dpaa: refactor driver")
+Cc: stable@dpdk.org
 
-rte_dpaa_bpid_info is left to process teardown: Rx queues reference it
-via fq->bp_array, and EAL memory is detached before destructors run.
-
-Also allocate bp_info with rte_zmalloc() and use FSL_BM_BURST_MAX for
-the bulk acquire size.
-
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/bman.c       |  8 ++++
- drivers/bus/dpaa/dpaa_bus_base_symbols.c |  1 +
- drivers/bus/dpaa/include/fsl_bman.h      |  3 ++
- drivers/mempool/dpaa/dpaa_mempool.c      | 51 +++++++++++++++++++++---
- 4 files changed, 57 insertions(+), 6 deletions(-)
+ drivers/dma/dpaa/dpaa_qdma.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/bus/dpaa/base/qbman/bman.c b/drivers/bus/dpaa/base/qbman/bman.c
-index ee4232d0a0..0ae1160973 100644
---- a/drivers/bus/dpaa/base/qbman/bman.c
-+++ b/drivers/bus/dpaa/base/qbman/bman.c
-@@ -251,6 +251,14 @@ void bman_free_pool(struct bman_pool *pool)
- 	kfree(pool);
- }
+diff --git a/drivers/dma/dpaa/dpaa_qdma.c b/drivers/dma/dpaa/dpaa_qdma.c
+index 0234042ded..4701432d09 100644
+--- a/drivers/dma/dpaa/dpaa_qdma.c
++++ b/drivers/dma/dpaa/dpaa_qdma.c
+@@ -11,6 +11,7 @@
  
-+void bman_free_bpid(u8 bpid, u32 flags)
-+{
-+	if (flags & BMAN_POOL_FLAG_THRESH)
-+		bm_pool_set(bpid, zero_thresholds);
-+	if (flags & BMAN_POOL_FLAG_DYNAMIC_BPID)
-+		bman_release_bpid(bpid);
-+}
+ static uint32_t s_sg_max_entry_sz = 2000;
+ static bool s_hw_err_check;
++static bool s_data_validation;
+ 
+ #define DPAA_DMA_ERROR_CHECK "dpaa_dma_err_check"
+ 
+@@ -392,6 +393,9 @@ fsl_qdma_data_validation(struct fsl_qdma_desc *desc[],
+ 	char err_msg[512];
+ 	int offset;
+ 
++	if (likely(!s_data_validation))
++		return;
 +
- const struct bman_pool_params *bman_get_params(const struct bman_pool *pool)
- {
- 	return &pool->params;
-diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-index 3e243a4426..0927e5fe2c 100644
---- a/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-+++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-@@ -44,6 +44,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(fman_if_receive_rx_errors)
- RTE_EXPORT_INTERNAL_SYMBOL(netcfg_acquire)
- RTE_EXPORT_INTERNAL_SYMBOL(netcfg_release)
- RTE_EXPORT_INTERNAL_SYMBOL(bman_new_pool)
-+RTE_EXPORT_INTERNAL_SYMBOL(bman_free_bpid)
- RTE_EXPORT_INTERNAL_SYMBOL(bman_free_pool)
- RTE_EXPORT_INTERNAL_SYMBOL(bman_get_params)
- RTE_EXPORT_INTERNAL_SYMBOL(bman_release)
-diff --git a/drivers/bus/dpaa/include/fsl_bman.h b/drivers/bus/dpaa/include/fsl_bman.h
-index 639e0edc96..88e4df503f 100644
---- a/drivers/bus/dpaa/include/fsl_bman.h
-+++ b/drivers/bus/dpaa/include/fsl_bman.h
-@@ -292,6 +292,9 @@ struct bman_pool *bman_new_pool(const struct bman_pool_params *params);
- __rte_internal
- void bman_free_pool(struct bman_pool *pool);
  
-+__rte_internal
-+void bman_free_bpid(u8 bpid, u32 flags);
-+
- /**
-  * bman_get_params - Returns a pool object's parameters.
-  * @pool: the pool object
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 94aea5e77c..5c92e2e079 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.c
-+++ b/drivers/mempool/dpaa/dpaa_mempool.c
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-- *   Copyright 2017,2019,2023-2025 NXP
-+ *   Copyright 2017,2019,2023-2026 NXP
-  *
-  */
- 
-@@ -25,10 +25,21 @@
- #include <rte_eal.h>
- #include <rte_malloc.h>
- #include <rte_ring.h>
-+#include <rte_common.h>
- 
- #include <dpaa_mempool.h>
- #include <dpaax_iova_table.h>
- 
-+struct dpaa_bpid_flag {
-+	uint32_t flags;
-+	bool used;
-+};
-+
-+/* Process-local record of allocated BPIDs, still valid in the destructor
-+ * when the bman_pool object in EAL memory may already be detached.
-+ */
-+static struct dpaa_bpid_flag s_dpaa_bpid_allocated_flag[DPAA_MAX_BPOOLS];
-+
- #define FMAN_ERRATA_BOUNDARY ((uint64_t)4096)
- #define FMAN_ERRATA_BOUNDARY_MASK (~(FMAN_ERRATA_BOUNDARY - 1))
- 
-@@ -50,7 +61,7 @@ static int
- dpaa_mbuf_create_pool(struct rte_mempool *mp)
- {
- 	struct bman_pool *bp;
--	struct bm_buffer bufs[8];
-+	struct bm_buffer bufs[FSL_BM_BURST_MAX];
- 	struct dpaa_bp_info *bp_info;
- 	uint8_t bpid;
- 	int num_bufs = 0, ret = 0;
-@@ -83,8 +94,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 		 * then in 1s for the remainder.
- 		 */
- 		if (ret != 1)
--			ret = bman_acquire(bp, bufs, 8, 0);
--		if (ret < 8)
-+			ret = bman_acquire(bp, bufs, FSL_BM_BURST_MAX, 0);
-+		if (ret < FSL_BM_BURST_MAX)
- 			ret = bman_acquire(bp, bufs, 1, 0);
- 		if (ret > 0)
- 			num_bufs += ret;
-@@ -115,7 +126,7 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	rte_dpaa_bpid_info[bpid].ptov_off = 0;
- 	rte_dpaa_bpid_info[bpid].flags = 0;
- 
--	bp_info = rte_malloc(NULL,
-+	bp_info = rte_zmalloc(NULL,
- 			     sizeof(struct dpaa_bp_info),
- 			     RTE_CACHE_LINE_SIZE);
- 	if (!bp_info) {
-@@ -127,6 +138,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	rte_memcpy(bp_info, (void *)&rte_dpaa_bpid_info[bpid],
- 		   sizeof(struct dpaa_bp_info));
- 	mp->pool_data = (void *)bp_info;
-+	s_dpaa_bpid_allocated_flag[bpid].flags = params.flags;
-+	s_dpaa_bpid_allocated_flag[bpid].used = true;
- 
- 	DPAA_MEMPOOL_INFO("BMAN pool created for bpid =%d", bpid);
- 	return 0;
-@@ -143,10 +156,18 @@ dpaa_mbuf_free_pool(struct rte_mempool *mp)
- 		bman_free_pool(bp_info->bp);
- 		DPAA_MEMPOOL_INFO("BMAN pool freed for bpid =%d",
- 				  bp_info->bpid);
--		bp_info->bp = NULL;
-+		if (rte_dpaa_bpid_info != NULL) {
-+			rte_dpaa_bpid_info[bp_info->bpid].mp = NULL;
-+			rte_dpaa_bpid_info[bp_info->bpid].bp = NULL;
-+		}
-+		s_dpaa_bpid_allocated_flag[bp_info->bpid].used = false;
- 		rte_free(bp_info);
- 		mp->pool_data = NULL;
- 	}
-+
-+	/* rte_dpaa_bpid_info is left to process teardown: Rx queues still
-+	 * reference it via fq->bp_array.
-+	 */
- }
- 
- static int
-@@ -481,4 +502,22 @@ static const struct rte_mempool_ops dpaa_mpool_ops = {
- 	.populate = dpaa_populate,
- };
- 
-+/* RTE_FINI_PRIO() pastes this onto RTE_PRIORITY_; EAL only defines the
-+ * named priorities, so declare the numeric one used below.
-+ */
-+#define RTE_PRIORITY_104 104
-+
-+RTE_FINI_PRIO(dpaa_mpool_finish, 104)
-+{
-+	uint16_t bpid;
-+
-+	for (bpid = 0; bpid < DPAA_MAX_BPOOLS; bpid++) {
-+		if (s_dpaa_bpid_allocated_flag[bpid].used) {
-+			bman_free_bpid(bpid, s_dpaa_bpid_allocated_flag[bpid].flags);
-+			s_dpaa_bpid_allocated_flag[bpid].used = false;
-+		}
-+	}
-+
-+}
-+
- RTE_MEMPOOL_REGISTER_OPS(dpaa_mpool_ops);
+ 	offset = sprintf(err_msg, "Fatal TC%d/queue%d: ",
+ 		fsl_queue->block_id,
 -- 
 2.25.1
 
