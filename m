@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B2DFCC6B33
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 14:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F64CC6B33
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 14:40:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1214140BA6;
-	Thu, 15 Oct 2026 16:39:58 +0200 (CEST)
-Received: from DUZPR83CU001.outbound.protection.outlook.com
- (mail-northeuropeazon11012027.outbound.protection.outlook.com [52.101.66.27])
- by mails.dpdk.org (Postfix) with ESMTP id BD43040A73;
- Thu, 15 Oct 2026 16:39:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1DCEC40DCF;
+	Thu, 15 Oct 2026 16:40:00 +0200 (CEST)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com
+ (mail-northeuropeazon11010024.outbound.protection.outlook.com [52.101.84.24])
+ by mails.dpdk.org (Postfix) with ESMTP id D17B640BA3;
+ Thu, 15 Oct 2026 16:39:57 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Blr/dEFnJh//si6T7If5ZnFHKMIeqD9qin9pZnVDjQfDXUZDDLRm1Wqw+6ThqRVfVPO/xPeY3W0hBg46t9X0yEYJx6WetCicIiJBGIctXYRd8z4qu1MPhZbXrFnU68MfsPXgKJ13c372xFZ52og27/wqaQ9X6wSbCZ6hqWN2VbxT0KeMnc6kSAdYZ9mwCIkdhHYgjmVVPkZLsOmLCohmSfMnRQfI9cXTVn+NR1DVtHqY4fJBrmM0ZNoK8I5yGO6bcjT3ffZbhmcqKtFKIDaTWhnBzOp+R8FNlCaBKscmMhfPl+e/W5nA1a4Dm+Rp3cpF7MFwIBSd2GWJ83QVE5skHA==
+ b=CdGEez8eypVOGSyOBNZVEfxnVPtJ1IuvNVPNWl26tJ48bqtzMTdBgKdb1im17u56fgEjBFcL+aJ4otqQLz08sb+3+zHv/LFlQWNX57ivCMfqxo5Wyqho62zBRcNGFynHfGtxHx0Z947c8FmgVqs3fxLmhGx5OR3VBKCHVfLEjYNs+BxkDIqqsjr3gPIQLAp508YIvr0lqf71TTB1wGg1N/hDwlQ/ZEidRNGrxFCEyiMxN/qS/EE7d4Exv6iha0hvXcA/KH46F+ICU/yuJVv/Up2d831nq4gUxOlVjPtbt7g3PlDcTvAaNxvkFbWCj+Z7dJWl70D4lUqmEJEqICnCLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mhiFdg7Gb0Mc0zkoNYGSmJw4UkKCHT/JTBGR36XMNFU=;
- b=N5VXn1NrznKUi+HHlbKOq65p96/V2sFcWXjE3J6Zl79LNwA4GizYb8EeE9jn5+46BBXzbOWF9SPTm8Ue0W0By1cMkRl/8+IcRyDMKCk6U+YLxRKNn+T1e71HZ7wq27HwXl/+bqRv1hoCgpQqeE4RmX2NGqk7fZq8y1ghk7viTOCnFqSFbOq8LmnYtmhNoEU9oPAQmiPIuoV8KiqD21sOyIvQ91lpbRZSMxszLxrKRYthtTHoCGAfhpXknmiYRMpct2FP+gHTOivbRnzpGq6/8MTEGvbOdUvEYMYpOsBCRP7s4iwjskRKLaKgK26o8Lgte1WxwwoRK0sdVHsZXX0vXQ==
+ bh=vRhNNLUoxxO9g0rc9J03lX1Xh1duZFF/soIPaWwSLdc=;
+ b=eX5gFPQuv3jI5bifWj9dqCX4jrm7ZZRBJJN0utNO4qL0eBdausWG+/gucSiNe38QOuEBLql1EqFQmE9qv6FOVKrLU5izDX/u4HBTZPLKuseTF2cZKT8yYvqRwsYZfgoPX40EF/p1b0BX3vCfo/rN9tIcVM4+iDpJT42v7nUCx3OYHU/3yArCvl2q+W/choNF1A88rbT1qEO32Skk2M5qGFJi/LtxYJd7iSvcNTgU6Wi5SVEhtSRdC55dC8SLXPeNSa96Q+77DGIc2UBKELvEBPkwWnHv2m7d7t79/97zhPX3kdkMmZVHNLsdYyMOcrppop1KRQmew0f4rbD6A/HvSA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  192.176.1.74) smtp.rcpttodomain=cisco.com smtp.mailfrom=ericsson.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mhiFdg7Gb0Mc0zkoNYGSmJw4UkKCHT/JTBGR36XMNFU=;
- b=iYuYBW7RaAI3mszTG/Lj4gjw1opBNnxTwMy88S1CpVMxPMKcCooQ+rsRrlB8Hpa56tlBhyxc53+jVccGnnEJhbZkvJAc/R04DqPG0mjlqfTKabJMPSoxx/ltLkgmRim82EmHXP+5G1P1Si+7MK68jMrrRugJB8/nKcFwGd/tmcjsoGFxrBt9+qlqLLRXYp4r1cJmDFNWHZMWZk+uctCS8qg0iIY08NT0DFgg0U5DlD0rsiTO4mu1U5dsteg/KJQG1vdybvN8ZrZAJ3BCuthhgU/rvetAnUYQC3Zo6Et7iqoMawyEUXh9Kt+VvZbr8NfyHpZMvN270j08SyKtWKTmAw==
-Received: from PR3P193CA0012.EURP193.PROD.OUTLOOK.COM (2603:10a6:102:50::17)
- by AM0PR07MB6226.eurprd07.prod.outlook.com (2603:10a6:20b:154::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.14; Thu, 15 Oct
- 2026 14:39:47 +0000
-Received: from MI3PEPF00008550.eurprd05.prod.outlook.com
- (2603:10a6:102:50:cafe::a) by PR3P193CA0012.outlook.office365.com
- (2603:10a6:102:50::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.522.4 via Frontend Transport; Thu, 15
- Oct 2026 14:39:47 +0000
+ bh=vRhNNLUoxxO9g0rc9J03lX1Xh1duZFF/soIPaWwSLdc=;
+ b=GySQSZDrOV+vQI/wyNZEGprhzuWN8fG6wReFbSGj4bnndOuFtgrEPk2rwpRjZ6IcWqCgPycCrRtaSIiqmIitecHIRn4zEN7wF7Wkp6eMMB80/kdthadCSesAuAZnIBMdRPCWqoSDCPy0F8ilXETEGDMoDA4tGHj48Z0ZNumOl2shtYyRAgvKfq68URS6csw0Exko3tKOAGFJ5ixAmdKoUS88fW/gGdd91x/bgeHmJTN2ZqFJqg0j57I2vUV4GPOC0RE0GcunyIiPzTogNeW4Pbws94MultZVXL06i6mCIhEXujvtwyLNhcF0udovLHY46oEJL2wKJz9RcWvbQU3xcA==
+Received: from AS4P189CA0059.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:659::29)
+ by AM7PR07MB6580.eurprd07.prod.outlook.com (2603:10a6:20b:1a3::13)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.13; Thu, 15 Oct
+ 2026 14:39:55 +0000
+Received: from DB1PEPF000509F9.eurprd02.prod.outlook.com
+ (2603:10a6:20b:659:cafe::3f) by AS4P189CA0059.outlook.office365.com
+ (2603:10a6:20b:659::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.21 via Frontend Transport; Thu,
+ 15 Oct 2026 14:39:55 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 192.176.1.74)
  smtp.mailfrom=ericsson.com; dkim=none (message not signed)
@@ -46,28 +46,27 @@ Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
  receiver=protection.outlook.com; 
  client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
 Received: from oa.msg.ericsson.com (192.176.1.74) by
- MI3PEPF00008550.mail.protection.outlook.com (10.167.240.4) with Microsoft
+ DB1PEPF000509F9.mail.protection.outlook.com (10.167.242.155) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.6 via Frontend Transport; Thu, 15 Oct 2026 14:39:47 +0000
-Received: from seliius19697.seli.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.68) with Microsoft SMTP Server
+ 15.21.522.6 via Frontend Transport; Thu, 15 Oct 2026 14:39:55 +0000
+Received: from seliius19819.seli.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.63) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Thu, 15 Oct 2026 16:39:46 +0200
+ 15.2.2562.43; Thu, 15 Oct 2026 16:39:47 +0200
 Received: from seliiuvd10563.seli.gic.ericsson.se
  (seliiuvd10563.seli.gic.ericsson.se [10.120.141.220])
- by seliius19697.seli.gic.ericsson.se (Postfix) with ESMTP id 7AADB4020A84;
- Thu, 15 Oct 2026 16:39:45 +0200 (CEST)
+ by seliius19819.seli.gic.ericsson.se (Postfix) with ESMTP id 1DBC14020B7C;
+ Thu, 15 Oct 2026 16:39:46 +0200 (CEST)
 Received: by seliiuvd10563.seli.gic.ericsson.se (Postfix, from userid 93258)
- id 4A3D560B034C; Thu, 15 Oct 2026 16:39:45 +0200 (CEST)
+ id 6743E60B0350; Thu, 15 Oct 2026 16:39:45 +0200 (CEST)
 From: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
 To: <dev@dpdk.org>
 CC: Stephen Hemminger <stephen@networkplumber.org>, Sriram Yagnaraman
  <sriram.yagnaraman@ericsson.com>, Jakub Grajciar <jgrajcia@cisco.com>,
  <stable@dpdk.org>
-Subject: [PATCH v2 3/8] net/memif: do not close EAL-owned memseg file
- descriptor
-Date: Thu, 15 Oct 2026 16:39:40 +0200
-Message-ID: <20261015143945.2150772-4-sriram.yagnaraman@ericsson.com>
+Subject: [PATCH v2 6/8] net/memif: disconnect on device close
+Date: Thu, 15 Oct 2026 16:39:43 +0200
+Message-ID: <20261015143945.2150772-7-sriram.yagnaraman@ericsson.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20261015143945.2150772-1-sriram.yagnaraman@ericsson.com>
 References: <20261015143945.2150772-1-sriram.yagnaraman@ericsson.com>
@@ -76,31 +75,31 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MI3PEPF00008550:EE_|AM0PR07MB6226:EE_
-X-MS-Office365-Filtering-Correlation-Id: 172214d6-8c6b-44e2-88a0-08df2aca2916
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509F9:EE_|AM7PR07MB6580:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b1bd1e9-f56b-486e-ef63-08df2aca2df9
 X-SMTP-Server: smtp-central.internal.ericsson.com
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|376014|23010399003|36860700016|1800799024|18002099003|22082099003|10067099003|11063799006|261009223027099003|56012099006;
-X-Microsoft-Antispam-Message-Info: 8A8XPjxdf1FHkIp+hlhWwiZoQRY/QsM/NdxvtiNVb79Hudtyaw7t8SOhfIhd12WyD8XzBo5UIZnZFgN2tkNFIB/KkQUrR5BDQMawhvm+vfUOek0O+mcD4mHJqZZaEvqne1fSVbmckIpluUsnVDGWo2NO82wIT047nuyYudSJqwIVaF9GQdY0yUE56HqBAlL4u7gWHfqQ1O5nH/V6XkEYdJPD4uQcu4H2G2YIQQCVVqZsN7xsYFnfvpkmFRKZARsbWI5f8uvKYmzefwyWldos/8wn6d5hSpeouBh9MKXFLydN8Wrokr9O6ws3A2FSGLfRGezYg0SqfoNxnO9OMohdYGBh8NoJbjBW2CRbeQLtl4qgxw5OR/9pmy8IhSYB6ndYN0UebVG+RfIIHRmqAPVUyZg4JjfRM+deS91moyNs7yRI/JeAo5qHISenVeQz8zA+v5XZ6mGSAU7Dcic5LeobtQ11fQirh+kI4rqzv7+YddCzMgesvyu5XwOrQxaM8/wxeyMFppBZbEiYas1yTaqQ7UzR15rOjjTR5CLEErxAQG12W/pvmfcJE/sKB5hmyK0rRj5kl6oKri1C8eH1igL1d8jOO0Kdz6X5OjqTdkE4GuZ2khDYLQOphgUipV9JnNHeN2YvxLTQqLVtXAIW0bMBJ/NwYePaGb+6jgYtscyajwg/EP7C1C7auStcjOku0VI+Pwl2JUcR+ZZ6VeByqS7amg==
+ ARA:13230040|82310400026|36860700016|23010399003|376014|1800799024|10067099003|22082099003|260925021911599003|260925022911599003|18002099003|260925021311599003|11063799006|261009223027099003|56012099006;
+X-Microsoft-Antispam-Message-Info: +fwr63yzukf3BSdFWAfoVipsgfpi+Xj/e2Pasr5H2oBOa6lEWHuYucXrQ5DDZnE+NRJwlgeTrdz58yOi2ar0RyIPBfGu0ZiIraHC8EhVz5l0P3Neypox5N532Q3UovRiL+zB3jr1CO+j1RfNizYscTmFrmwGHndyH1BCZ11atXkoCzD9LHT2kEfy6EYS4b20b5Qp3svV1dgeZxcBUkL/U6a0zXnO1V5ea3/1xKr8YDUD41spKyj6MMOdHIDTNRghhvhd/LOvYjglnmTEJt2F85RP2AdjZkvS/9vPgKTGfuVaaRr89+0qcQE0c3L62rGobVGIesxsSarC4TYiT5uDw3+pZnzFISEDsEiXFY/09IkXzG1GKfFvVRQW+HGKzjWnglhNTq7FH4t24YdaO2D9nxZT8kXBj0fC6UMbtL5Io3+HbrLU9svNoPw5TqOXERSwvTLiuGm/XnEwwpwkTSBQyPILjJ+BcfEmHGnOE3ZfcNN7UreYP6VMAWN6x+aVUni8XrylrCCwt5m9luBzHF39G2bRuHZKmhK83Ej2i6VaGKlXAtea2m8MBD/tnyfsjp1SRtVeo3Tw/yR4t41zVzIJDEl4R5iYsGh8JHWmS4Zu/0qshYXSEM46CoIpCK057WqpqyVkS8DBa/1FLpgjFhFGzajY48cUEGt/sX0eUKD3KYztexYxYl/P2sJGa0AICZuOlmMEP6u3r4UjQMSpowc+NQ==
 X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
  CAT:NONE;
- SFS:(13230040)(82310400026)(376014)(23010399003)(36860700016)(1800799024)(18002099003)(22082099003)(10067099003)(11063799006)(261009223027099003)(56012099006);
+ SFS:(13230040)(82310400026)(36860700016)(23010399003)(376014)(1800799024)(10067099003)(22082099003)(260925021911599003)(260925022911599003)(18002099003)(260925021311599003)(11063799006)(261009223027099003)(56012099006);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: X6oJx6wa/g6x/gKo6qaI4uWFbe1e7uyVoy0cETV9L5PvBQKYVCn/0FpHtAJhdIeq5d8teEYFqHG7bg93vOgQUMW5XP1OIKjCnL6jyR8cWcdBE+IMEUEqwv9hX5YDq2EygMd943/SPVQMmTovgsVUwpBnC74v7BIl/5kNBx1Xwe9qfPMcLRvfvjjjh0qtHm0CogvZyZ3veD6V4nMgKlDVR3tFHlXC0srOfAw14TBjqxXPaZckv/5D/SBkSGw4ln1E5agMp8uarA/vAzsC74yND8JPLlPkAdo5y/egkGebGo5QNEY+0dbdRJG84HWHWjdUZ6g7uaISCT8PhYVyeNyRWOSXErseMUpUSpQQdsc5QSTTYc72dya4jG4MnUafGujL6UN0YjNs93Aza2Sp5AWEX78e3agHTOAkY7RimsaXxpb7lOZOccxEtica8YSHIGoo
+X-MS-Exchange-AntiSpam-MessageData-0: ata8+TfhDgzr4rdjeozf4ILTXTUuzl5QS7fkOAHnETlq9M7tUH6Whfhw1Zp0VS5nts1uZ63Fjxlte4reJHGXHp7gDvV2pR1woqXW8b9H5BiU0wjmccwFMfuVZTh5k+qmmxN2B3tF/LDxYM8msUEi2eNGV+Rxqfx6yufNS31ob4rlgk0emGD1EduGFeYWEaeM4qju8PGKMWR1XmCntbkfXu/azEUzEv55rxr0wHqCUl4kJT2uDYOOOzyoFqs7WblAl3arjB1BgEpP2LAFCc/L/d8VmekoeE3Opupy4UqQrwpgb8FRKeqzFA+66J8DT7niZN+9RwaD6ZZCaTg5qnKieh3ZtNVgEE/GzRoPEvQx5TtJa7+ojvNI8o6jZo4KXvCmF/uz3uWiMShVAnxx5ZCCpm4gc6D63fhhiL9eGaYO8aMoT6XIyiyQtNxKR2qT1kf5
 X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 14:39:47.0223 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 172214d6-8c6b-44e2-88a0-08df2aca2916
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 14:39:55.2150 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b1bd1e9-f56b-486e-ef63-08df2aca2df9
 X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
  Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: MI3PEPF00008550.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DB1PEPF000509F9.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR07MB6226
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR07MB6580
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -114,48 +113,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In zero-copy mode the per-memseg regions (i > 0) take their fd from
-rte_memseg_get_fd(), which rte_memory.h documents as EAL-internal and
-read-only. Both memif_connect() and memif_free_regions() closed that fd,
-so the next connect handed the peer a stale (possibly reused)
-descriptor and the PMD closed a descriptor it does not own. Stop closing
-it in both paths and just clear the region fd; the fd is not ours.
+memif_dev_close() enqueued a disconnect message but never flushed it and
+never tore down the control channel, leaking the control-channel
+interrupt callback, its file descriptor and the pmd->cc allocation.
 
-Fixes: 43b815d88188 ("net/memif: support zero-copy slave")
+The leak is reachable on a server that is stopped or was never started:
+memif_msg_receive_init() binds pmd->cc to the device without checking
+dev_started, so such a server still accepts a peer and holds a live cc
+at close time. (rte_eth_dev_close() rejects a started port, so a started
+device is always stopped first.) Call memif_disconnect() from close,
+which flushes the queued disconnect and releases the control channel;
+it is guarded on pmd->cc and clears it, so it is safe when dev_stop
+already ran.
+
+memif_disconnect() also walked the per-queue interrupt handles indexed
+by the configured ring count without checking that the queue pointer was
+set. Closing a device that was configured but never started (so queues
+were never allocated) then dereferenced a NULL queue; skip NULL queue
+entries.
+
+Fixes: 09c7e63a71f9 ("net/memif: introduce memory interface PMD")
 Cc: stable@dpdk.org
 
-Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
 Signed-off-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
 ---
- drivers/net/memif/rte_eth_memif.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/net/memif/memif_socket.c  | 6 ++++++
+ drivers/net/memif/rte_eth_memif.c | 4 ++++
+ 2 files changed, 10 insertions(+)
 
+diff --git a/drivers/net/memif/memif_socket.c b/drivers/net/memif/memif_socket.c
+index 5918406271..6f10e8d970 100644
+--- a/drivers/net/memif/memif_socket.c
++++ b/drivers/net/memif/memif_socket.c
+@@ -664,6 +664,9 @@ memif_disconnect(struct rte_eth_dev *dev)
+ 				continue;
+ 		}
+ 
++		if (mq == NULL)
++			continue;
++
+ 		if (rte_intr_fd_get(mq->intr_handle) >= 0) {
+ 			close(rte_intr_fd_get(mq->intr_handle));
+ 			rte_intr_fd_set(mq->intr_handle, -1);
+@@ -682,6 +685,9 @@ memif_disconnect(struct rte_eth_dev *dev)
+ 				continue;
+ 		}
+ 
++		if (mq == NULL)
++			continue;
++
+ 		if (rte_intr_fd_get(mq->intr_handle) >= 0) {
+ 			close(rte_intr_fd_get(mq->intr_handle));
+ 			rte_intr_fd_set(mq->intr_handle, -1);
 diff --git a/drivers/net/memif/rte_eth_memif.c b/drivers/net/memif/rte_eth_memif.c
-index 6d8d55e570..fb82117d9a 100644
+index fa9847de06..3174d21dc0 100644
 --- a/drivers/net/memif/rte_eth_memif.c
 +++ b/drivers/net/memif/rte_eth_memif.c
-@@ -1289,9 +1289,9 @@ memif_free_regions(struct rte_eth_dev *dev)
- 		if (r != NULL) {
- 			/* This is memzone */
- 			if (i > 0 && (pmd->flags & ETH_MEMIF_FLAG_ZERO_COPY)) {
-+				/* memseg fd is owned by EAL, do not close */
- 				r->addr = NULL;
--				if (r->fd > 0)
--					close(r->fd);
-+				r->fd = -1;
- 			}
- 			if (r->addr != NULL) {
- 				munmap(r->addr, r->region_size);
-@@ -1611,8 +1611,7 @@ memif_connect(struct rte_eth_dev *dev)
- 				}
- 			}
- 			if (i > 0 && (pmd->flags & ETH_MEMIF_FLAG_ZERO_COPY)) {
--				/* close memseg file */
--				close(mr->fd);
-+				/* memseg fd is owned by EAL, do not close */
- 				mr->fd = -1;
- 			}
- 		}
+@@ -1717,6 +1717,10 @@ memif_dev_close(struct rte_eth_dev *dev)
+ 
+ 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+ 		memif_msg_enq_disconnect(pmd->cc, "Device closed", 0);
++		/* Flush the disconnect and tear down the control channel;
++		 * memif_disconnect() is idempotent if dev_stop already ran.
++		 */
++		memif_disconnect(dev);
+ 
+ 		for (i = 0; i < dev->data->nb_rx_queues; i++)
+ 			memif_rx_queue_release(dev, i);
 -- 
 2.43.7
 
