@@ -2,155 +2,97 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14CB8CC6B34
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 08:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F03F1CC6B34
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 09:13:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F2D564025A;
-	Thu, 15 Oct 2026 10:54:27 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id AD59B40041;
- Thu, 15 Oct 2026 10:54:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792054466; x=1823590466;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=UzDyzb2DnEln+TWIoKX3MEfGBDf5nmUhEB6DKMwDZsc=;
- b=Nrs8n9M3XEoCzjPG2JRe6CedrQsGbmo65XhCT0gq8X7J+uS0g/l5+Lv4
- +YamQT8i4+mMVjoY8v7z9APkmknrxJDI6J9Y+Hd/Z8NscaZa3DF4T6qYj
- tB1BVbNWMDEbkUZ4/bCb7CMWRkA4pqBL0IUV2TWv0UOrjld/LjzErNnBF
- oty2TgB1CSvFer+KDLmoRG6+VdDL7MxkJlbn0MT6+tgOIpklQdte3+H8l
- hsHh+lpIQDUSPqLaAKoGFeaHuiyBsDV/+xPgF98t2uzbGC1YfDLdmAZIt
- za3L5x1Yk91fqUYd7IlrPMzSZBwyeCQGPDGsiHfL29BIUv4YSuaEkF1pk w==;
-X-CSE-ConnectionGUID: GxDTZh4IR9akCGSjFhm7lg==
-X-CSE-MsgGUID: Klvcn6zTQf29br14hRB9ZQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="922260"
-X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
-   d="scan'208";a="922260"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Oct 2026 01:54:25 -0700
-X-CSE-ConnectionGUID: KK9+4eqGS1qiJXo5DuYphQ==
-X-CSE-MsgGUID: GscM4oAyQxCW3DI8BordBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
-   d="scan'208";a="2003760"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Oct 2026 01:54:24 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Thu, 15 Oct 2026 01:54:24 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Thu, 15 Oct 2026 01:54:24 -0700
-Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.67) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Thu, 15 Oct 2026 01:54:24 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L7G0gMeL2y4oN7vGx9Lc/ed+rfDW+6pLs6Av97mCbD+ehQFhTgiw7ftr8nOT4Yj93hzhkpFA4zdTjjac+o+Gc6s3vamFvKGeM6rsbSaYbMWC4WHrUPBXOCWLicrs77zp3fQzjH7nxZP/gnXR8p61s1BPbcVRXN9WNkgpqfHYSHOum0FXW2fYTjb+44DImidf89D4r+lIv1aolyJiz70HKs/zeWEgzs3x7T+IYgd2nYcdKo1y9StObFBIOjyETcGXe9G0/yCljJKXfKOx8XdaApZC7iq96VbDa8Wn1/L+eN61RbLI4bYecdZ0yy3mzPIclk0gvlVlOpNelBDl+Or87g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5sn6OhuEX0U23E8C6HGcOfEixWbfAW+1i8dWBNJUvRU=;
- b=b+asgxAUEDuJdbrRzUdFXq1dgUf/NzC64f4PInQZLxr6PqwV1k7WiL9Ck0+S0NM1vIblzOXCHC7r8aJmgExQZV7qYbVXTtH68z9Z2ZKh7ZxRydcfXNIkr9NLeDkaQ3HJ5IOTDDSWWbzaq4m4VhVCGkv/ldlGqvfKHTxYI/m95OlTNGzz2UfH78I8GguouQlWj7R/3kr3DASVTnXENdrOKLx+JarPCl4I6vHN4jc5RlybnSmFdLd2uwESSU/ZXp4UrJbvpVof0fKrvrSEGYWaCtfLVsDZ2d/J201vF4rm6E3fubdWKuW5Ip4dKJGpCrCcz+khn7VTHnYsdTRZ+1vK6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- IA1PR11MB6073.namprd11.prod.outlook.com (2603:10b6:208:3d7::5) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.496.21; Thu, 15 Oct 2026 08:54:21 +0000
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.21.0522.012; Thu, 15 Oct 2026
- 08:54:21 +0000
-Message-ID: <79bf9b9d-9113-4049-a321-7d8a7b57dac5@intel.com>
-Date: Thu, 15 Oct 2026 10:54:16 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] eal: enforce internal API check with Clang
-To: Thomas Monjalon <thomas@monjalon.net>, <dev@dpdk.org>
-CC: <stable@dpdk.org>, Bruce Richardson <bruce.richardson@intel.com>
-References: <20261014201627.571496-1-thomas@monjalon.net>
-From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-Content-Language: en-US
-In-Reply-To: <20261014201627.571496-1-thomas@monjalon.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BN0PR02CA0034.namprd02.prod.outlook.com
- (2603:10b6:408:e5::9) To DM4PR11MB6502.namprd11.prod.outlook.com
- (2603:10b6:8:89::7)
+	by mails.dpdk.org (Postfix) with ESMTP id 01E11402DA;
+	Thu, 15 Oct 2026 11:13:46 +0200 (CEST)
+Received: from fhigh-a3-smtp.messagingengine.com
+ (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+ by mails.dpdk.org (Postfix) with ESMTP id 6BC8B40041
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 11:13:44 +0200 (CEST)
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id BA8F11400100
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 05:13:43 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-09.internal (MEProxy); Thu, 15 Oct 2026 05:13:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1792055623;
+ x=1792142023; bh=CIJY8pcqtSWuq4SvF3F0fE8S6Xx2UvHk8KJ1POqNfbk=; b=
+ izQvlTK3UEZCtFkNB0ul4OiQhnFJLVdMWEnIk+LzgkrzvwPeZfKiKpzbh9N2AM9G
+ RcIFNid+sESIGGM4rdwr1oHyFXRKvYSH/g4p/0OXa6vfmXK6ABipy47PDrowT18q
+ 3uHxaYr7NjZ7tis1xWeRN3jxlxm7FJ8xuqjAOPCeH4ieAKbed3oCiAYoSG92UC+O
+ lAb9RPYhPwQbf5aawnoK7DXdwTxBxEiZ0UW68GWQ64fR3yk1pCqZ2SewoC70R4oC
+ 3wj6TXKHpRXUcrR14Ga4PjU1htGDakLA7lh34MwAuH0S5R5C421xZGyosaDvKy04
+ +NPki+MrvnzXtcR7iymnrQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792055623; x=
+ 1792142023; bh=CIJY8pcqtSWuq4SvF3F0fE8S6Xx2UvHk8KJ1POqNfbk=; b=A
+ CUpD3jtFIi5cRLNIoCAGsQirLEaNNhiY95YcaD8UFuGTYUphM0UzgjDcfSIo+lSa
+ ZbXqLk4avGRDkaxfgJahUGeJQPRT8mqntH1WlpA3skiSE6nRKn3GyTJuNTHR7ElN
+ 2Eeby73035AaRUuWvH4MgPRygE9QadAZMf8MecA7KTNvRfxza3yM0jNymt7PF4Cu
+ m0fN0ztNnH+UeFz9RLQk1Ag9HTtHirezzM8qazE2DYVtXQ70d4rMxgqO0bbmZSNT
+ O4/phIEcpYG6xFKV76rmZowaD4mtsyYrwDE4CYuzuIh4dgsaelnZ0XVz68KqEdFL
+ FHOE6oSP7diOVHmxMDGWQ==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1792055623; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm2:rsa-sha256:fObaLdL0rKQtym4mpFZZs3YRrXKcPmYmYwn15FJY4HxFJUW
+ 5QXF34KlnWXEoVnhpGTNx5PWS3uPhviSJkSXzsQY2YA4qZuKICkN9JWsvoO7ny6B
+ EJftHOAD26oFp6wflYqDVfMLU6J9SyEvl4VNm0fRKvIJVsVaUSxYAvrRrKFEnlOr
+ hLmIRqEcoLIbCz8rKucM9iynvUdIg1XiLn+gd0l6uuagLs3QKNPqMWO6zD2+Sdzd
+ IQ6YF/7z0ARrVnR5kBNujaTiZOyGViYfFE3MllyQ+iDRgicUxx7qcZ8Tl3X9Kqb+
+ Y1VQCR7ZNEfcLBLnU0nfUflOifWhBI2Sg9ApFKg==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:3WBphyOpLDgb/rZB56f+LXkIkJTWVbC2Pl8VXLkant0=:K6uhUly4YP2nJyBkrQ3vt/8XSG866Mrwpo1BVwFRolY=;
+X-ME-Sender: <xms:R5nQarmV5HqpiGtXGGGMSa_aMgVCaBBpUVg1rLeC-Cg587nxTp8R_g>
+ <xme:R5nQau929TD_AiqrCc0wnEPZiP9OFSRRJmNR0VHqf6i72AUlnK1FabG2dXzqJ8xH8
+ XrheEZU2wwocFcaA31HvPR3a6loyby25z1bmz3TiSuiEKDact4UyA>
+X-ME-Received: <xmr:R5nQaplnhbWokUuJCArnCeTlV4KaMUXPGyi4ZDEVbkuihUk4fbtefrUUfdEeQYyU99P0JcPrgKEirpkE5QfRVHo>
+X-ME-Proxy-Cause: dmFkZTFWZm2LyUp/43y4nagp83mUoZFADw5mQxKEv8zcz383zbIf1RHYqr2txmudQ6vwR7
+ i5q9fjYlGGiibOyOyJGWbnuSFRB473xtwWt15nA/hezeWDWD0fEH9qa/pYmIhREh9Okefd
+ BJQEx0Kmlxesxm26J/uxlvYD6lHLSsLMZhZlDUF2R9wdbShDmynpYFkUTm518ttbicD0Z7
+ lT2Y1+y2ibQIM5V8u/2c477RllGDd80X5ADkuBA0SxG+DeQPM37fGwMbxzIv4l5XDXUx9S
+ Mn91kw4rbV8MAslg+U4MbQ5Cw8KIRdbUEQuPdJvoCnjqQYlMmCCLIwwjUMG3PCAGVM9WBF
+ 6KWAKg6Cpc2OSDWPcnS4DG9wwC+X5SIW66gqbnaEOAhgD8GiY5+gJ+Nr2N+ViT9Pg+JB0F
+ AuUp1IbiYNs7UIZC4DJ67HvxLDFyD0pe6E077unBMQt/Sc20Gdu0J/ge8vHWggCM74qau4
+ qhiFB3OuF2iCiL63/3dcnoHsytwe0hsqn1EdAafsnmzgDrkmBpkRb6weWiBzDFoKlU6uPT
+ xxdQ1AXHN+84LPC1blDrZgiAP+mGAohoU82lbQlLLgDnQjDYSkJkwbnrPrLz9p1VWGUHTh
+ KM4Id/0rjMaX02i401GExhmlbxE/VPfLrIXtu0rT+ArCHp/tOVlpRtcKJ1Dg
+X-ME-Proxy: <xmx:R5nQar1SG7cWmw2oMxFc5QBrNLnlvfBG5rQwjxs0BXihpeCEym-rJg>
+ <xmx:R5nQakoWHh3SXDXrBVIaBoZ6zkgbgV4SOqZmt9tWaAsLVHqhjS9jrQ>
+ <xmx:R5nQaocHLv85pcbxf2DjWpvAtYCRBEoEFD4xZ8uOcpBUuadEqKB9Tw>
+ <xmx:R5nQajq0EbHkFRbgdsEMvzeyriLafjkBzUG4ppQRReH1j7dDz_OmyA>
+ <xmx:R5nQasUOALmOg67GdXtACh5Eyth_RnFKviMhWkLp9rj1AOmkgbILMRw8>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 15 Oct 2026 05:13:42 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH] net/ixgbe: avoid private driver include in testpmd
+Date: Thu, 15 Oct 2026 11:13:40 +0200
+Message-ID: <Q5JnIR46RbOi5z8Dxhadxw@monjalon.net>
+In-Reply-To: <0b380d9d-f7e1-4521-a548-9a9163f10995@intel.com>
+References: <20261014203435.583064-1-thomas@monjalon.net>
+ <0b380d9d-f7e1-4521-a548-9a9163f10995@intel.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|IA1PR11MB6073:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa9534fc-d129-4e37-20df-08df2a99e75c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|366016|23010399003|56012099006|11063799006|10067099003|22082099003|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info: 9hRD9WzaJORV0Jy8oDGLuCRhjQdTc5UBajdC4309mrPOZvtwAfLtXlnejK1w806Y0M802Jtt8j/8BPFG6Q+9LbMYuSUgoyv/QQ1mJuQfUigYcZDeDroDf2vyoUHLKvaxXakscu100cHw8cA4c69FnZS9rJs4fgd9U8GvVGResBHWvp09MKetYBOh6YRTyC/9Uz0O6Gq0tigrusS+lqDuKOd297LMxZ1fA62TB1u9o2AbmwveOItT6zakGP5t8bm5g+S+khyPkaRLiVN26rTdkw14OgW7Y1CAu7IoK8AuTF7odXTEHv6l9WfAxid2y5n5RCxeMfxPqZGcO3Sx+LcB5u95zcPuzRanjycXO+i/qWS+DRqUrpRkdbPLxqH1tyFYlL1PMwlczg0h04iSmYwLASzbFmQE4/WEoadLQwHLBWSup+zjIAKaiX3FjfVTDBKeOYv1+zjNyol9xj4bEaD9JeXncb5deTQVQZoS26ZPLApT9Dave3qWaq2JZX176Cq43c7EWQLv1jdudmvYwlocPgyPsJJnFTBnRZ/SS5hQTRG+0345lRgU5ah6uGDZpSFzoXzkkTdap1H4NwLq2LMvvpRBt01o4LUnAV7XcHEcSJlUe0XvPFPq6JolbQNbTC/KP8Mkblrh7R7P3obUnCaIGSG6liG6qtDRzirw0lawsE0=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016)(23010399003)(56012099006)(11063799006)(10067099003)(22082099003)(18002099003)(6133799003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YkhHd0ZiaGlsNDNNUlFxeStEVFU2c2Y1VzkzUVNLQ0pXSGVoNkpQOW44U1F3?=
- =?utf-8?B?dG90TENEZkMyZ3RnajMxWCtyYUtEcTdVcmoyQVo2ZEkzR2ZWalVvdUcvMEZa?=
- =?utf-8?B?QmhLbzFBTmlMWENJZWpaQWtrQTAzRjFrRUxaaC84STVRMjc5VkxFODI1WGpR?=
- =?utf-8?B?VTA0eXROZTB5K01PSkFzR1hBRHZKc21tSGUreUxxaXZmNjJ5WTBmQmZnTmZG?=
- =?utf-8?B?SVFSTzZ3ejQ2bEw1TlBTUXVCWlRQNlZSUjdqNVErVDRRcndEZUVCbkhKeFZm?=
- =?utf-8?B?S29TellkbXA4QVlKektaYkJLSStxdTNkY2hSYmt6dHdaU2NPT09xbm9tVCt0?=
- =?utf-8?B?ZEdEeEVvdEhvdU9LVTFjQ0UydHNqUVg4NG9XbElmSHR6QmE3bzFBRmwyZ3Z5?=
- =?utf-8?B?UUhYSmp2RHdxMzdIbXlYSWFCTm1rUWNpalhPZWpGMmd1TWcrMm5NR0xtYzVC?=
- =?utf-8?B?Q1hEM1hCTG5EWkIxM21nMCtGY2ZhSW4xYmw2TFhWV2NOYmpyeHMrR0FjZ1Ra?=
- =?utf-8?B?TG1TeVkwL01IWCtsdC9pWmk0QkcvTXExa3FVRi95SjV6SnViMXlxb0pwY0hQ?=
- =?utf-8?B?QnExWEphVzg1ekZvVHN6cU54L0tscWFKUVMwVElLeDBjYUM4TjNaemlZbkky?=
- =?utf-8?B?aXkyYkwyY3dnT1l4NVlwYmxEUmozblVtaE5ZRmxxd1ZUR1ZIMm5NNzBVMjFW?=
- =?utf-8?B?NW5xOHJOQkxGZDhvYUtnaDM5QWpZalNud053WllQMjBNTERTVDg4ZWc1Y0d6?=
- =?utf-8?B?TnF2ZXR2YVo5emhiZVJvM0pSeElaMjFRV3pNWVU0bEx0TnRVSFNkSmlJWmNt?=
- =?utf-8?B?OHM1Q1E4em1OZ0xGcWczeDVJLzIwYURLQWpHbWE5SlIzbDdkUHp3UlBrYzlt?=
- =?utf-8?B?TVZkUXlydVdMK25XTFA2dm1ZeTFnNFFtY3dNcndCT2JYOHM5UTJqcnhONTNY?=
- =?utf-8?B?SVgrWkwzdzNUNVNaa3lFUHY3T3lWclFhSTFDeDN2L1U1bVFDK05LYnoraXpL?=
- =?utf-8?B?am1HSnlqTlpPV3ptR05EaG1HelhzS3Q4dHFYQWVHZXN0eXJpcnhBYTdoKzNN?=
- =?utf-8?B?L2I4SWJKY0ozRUNta0hSRmt6WXBRSUM5TjU5QkNHZzEvSEg3YXNwN1R5OFFQ?=
- =?utf-8?B?dmhzQ1NRbUEvMis0OEZCSEk1WWQvdDVaa01ITmJaQzIxaUtFRE1YNkxLSTNh?=
- =?utf-8?B?Q1MwcEZBeVlaUFFnWlRhTXhHMm9BMGxGbkJONUszQjRJK25EQ0ZqVzh6OHR3?=
- =?utf-8?B?TDJzTmQzcnZUc3F3WlZXdzNzdGExcU1YbHk5VzhXYkRSNEoxRjh3TTBsYy9D?=
- =?utf-8?B?UG1sdEdiUVl4aXUwWkxVRFZjMWZtUlpXRkUxQ0IyMmdqc1hXZjZrUDJic3du?=
- =?utf-8?B?V09RQmtKclpRZzV4bURGVlRrd290akdnZEtybTN3R1o2ckFZRjV4ZUhIV1RQ?=
- =?utf-8?B?MndIWkZzaURSVnhYdHdVOEhUUTVXLy9aVGFHb2d0bnVMMmdINzhIQnovSHJO?=
- =?utf-8?B?TGRQNEVzaDJnKzB4SFF6czdTbitzSFltOU9EcDFwN1BYNUozVjVnOENaRDRU?=
- =?utf-8?B?SWhwQVQ3d0lRYk1INmNhMWxZRnZ5VUlPV0dyVFovQXF4TVlScGNzMytHUmdD?=
- =?utf-8?B?R0dOOXVpQ3Z4QXhDQ1lNVWlJRXZCb1JQb3oxd2JLenlhN3NwUXMwMlVmeENW?=
- =?utf-8?B?MXorbzZ2bmpnTlhGTTI5cCtldmZLYUFHb0trdXN1VEQyUnB6RitvOHR1KzJv?=
- =?utf-8?B?ZDFzczc5b3V6dHkwVS80VVpwQXhaRnp2V1ZxWHlqM3lReGZINEFmQ3VsQ2h1?=
- =?utf-8?B?dGJzOHNLSENYVkpwQWkvRHpBemJmMXBQcS9EMDY1emtjOVY0aXVVVWlZMnBE?=
- =?utf-8?B?MUtRek95OHNyODFGVFB1TXNKVUhmNTBnRlowUUFScHNoZk82UG9YRzNCTFlV?=
- =?utf-8?B?ak5MeU1zVnJsUjNKd2JXMkVXNU8veHFlQ2ZRbUR6dDNTZ0lIL25TNzhMYjhs?=
- =?utf-8?B?and1U3FvdURPbVl4ZkdXUmFNVkNibm5pVHRXZXhWMExobHQrMEovR3FZZnc3?=
- =?utf-8?B?cElBVEhEOXExWmNHUXdscmx6MHhRSGx2YkZyUXNzZS9MSXFEbWdpU3BldWk1?=
- =?utf-8?B?c1lUODVGWWtBUnV1L0lpbUpVcHc3ZkphTWhzek1SVlZoZ0JtY2VRRmpHVXQr?=
- =?utf-8?B?Q0t0bjJUUmVxbWp0dTBsUUZ6OGltaVB5R0tQQ0JjVm1Qc3B6UmQ3TENlYmdU?=
- =?utf-8?B?UXpoa2M2ZWlwQ3NjYVU2NkZSWGs3Z2EvRE1leHdQZjM3cElXaG9GNzJ3UENL?=
- =?utf-8?B?TEZZbGFFTjFvYyt4Y2gwQkNqdEtrUUk1eGFZZXpkSytndXNocGNjS1IrRUJt?=
- =?utf-8?Q?a5Bu0Q0/M5O4TVtI=3D?=
-X-Exchange-RoutingPolicyChecked: SlLfefpQ1Lnl78/XmxfIUrz8EfSHhitdipKK+fYOr8jxxWt8a01utxINfim9/iWvT2PK6OnAIJudaGnbNpvLPesq4o8MEIajgJnCscNnw3AgpkNxpIirKJregvl5PdR+SkQS1h/oW8sdqmJX8nlsvpvE/5zNau/KBtus5md1149yrRIpvye68gslNivpGsf38uGeIvdX+b5sk4uO9raYdA9oiAL0RqPeRFz8jGsdsu14Fr4pLslcM6Ma+8BgMfGpSKch2v4KYAq9PNIm5RJaoRNuFCwVfpbSgbf8oKZzzVKqqif8PjeJbSE3/nDE6zDaIUE5KnnJ6M2YB23OTa8+EQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa9534fc-d129-4e37-20df-08df2a99e75c
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 08:54:21.1481 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JsnESEFoQuyw3KcYatkJlLsyvj8YPuOzQG4nrqi0kOdm4QG0eCB+IhZGaGTTlf2+IboCk1MRT2Sn1K/CH7QeGACT5LzOHN4m+elfoQeVySk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6073
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -164,31 +106,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 10/14/2026 10:16 PM, Thomas Monjalon wrote:
-> The __rte_internal macro is intended to prevent calls
-> to internal API functions unless ALLOW_INTERNAL_API is defined.
-> Unfortunately the check misses some calls to internal API
-> when built with GCC or Clang.
-> Clang can be better to diagnose such cases.
+15/10/2026 10:53, Burakov, Anatoly:
+> On 10/14/2026 10:34 PM, Thomas Monjalon wrote:
+> > Testpmd commands should use the driver's public API
+> > rather than access its private structures directly.
+> > Note: ixgbe_testpmd.c should be considered as part of testpmd.
+> > 
+> > ixgbe_testpmd.c includes ixgbe_ethdev.h only to check whether bypass
+> > operations are available through the private adapter structure.
+> > 
+> > Rely on the public bypass API to check availability
+> > and handle -ENOTSUP in the commands.
+> > Remove ixgbe_ethdev.h, ethdev_driver.h
+> > and the now unnecessary RTE_LIBRTE_IXGBE_BYPASS definition.
+> > 
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> > ---
 > 
-> Clang 14 and later support the error attribute
-> and therefore select it instead of diagnose_if for __rte_internal.
-> Unlike diagnose_if, the error attribute only rejects
-> internal API calls that remain after optimization.
-> Internal API calls can therefore go easily unnoticed,
-> making internal API checks less strict with recent Clang.
-> 
-> Prefer diagnose_if when available to keep strong Clang diagnostics.
-> Retain the error attribute as a fallback for GCC.
-> 
-> Fixes: 4ab63cd60ceb ("eal: fix internal ABI tag with clang")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> ---
+> Reviewed-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
+I forgot to say it is mostly written by AI.
+I didn't review it myself.
+Please double check.
 
--- 
-Thanks,
-Anatoly
+
