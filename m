@@ -2,43 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1713CC6B33
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 11:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C0ACC6B3A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 11:19:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 978D640693;
-	Thu, 15 Oct 2026 13:14:57 +0200 (CEST)
-Received: from smtp04-ext3.udag.de (smtp04-ext3.udag.de [62.146.106.41])
- by mails.dpdk.org (Postfix) with ESMTP id 87C3A4064A
- for <dev@dpdk.org>; Thu, 15 Oct 2026 13:14:53 +0200 (CEST)
-Received: from machine (unknown [37.228.233.98])
- by smtp04-ext3.udag.de (Postfix) with ESMTPA id F18A5E0504;
- Thu, 15 Oct 2026 13:14:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dressler.pro;
- s=uddkim-202310; t=1792062893;
+	by mails.dpdk.org (Postfix) with ESMTP id 68D75402E4;
+	Thu, 15 Oct 2026 13:19:11 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id C509C400EF
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 13:19:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1792063148;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=qOwvSfffhV/3RY44k93CDKOVk+FoM+F0KzY5QQToieo=;
- b=Kb0MLxydjk1vSlCmQT3mnGhqYA9Na2nGKA/Verm5FweCtBDlUj5/Lc3RECvSYMqk4q8qWc
- 737ZtQJX3VwVmmvKxMYjbnN1hCI/l0o2OhgX8vsHsb2XGSParEuPiCSkE4opO+edKLls+7
- E695VFGMMlefQp8q0uPL01m9iboqBjk4NmQ0Xr8SmM9XDVGomuqahh/n9xOwgrSVIUTCFJ
- EVzwNqTAXUqoE87oE1pnID75Ea+RU4zphtL3rKSQFctc9O2LZ0SppjTcHHdIB2d+4Erw5p
- T9hBIHyBtDmv4MOksWXmgJrYuny6mLucRj4lw47KcdmrYatAKxWOrdCEW0VaDw==
-Authentication-Results: smtp04-ext3.udag.de;
- auth=pass smtp.auth=dressler-pro-0001 smtp.mailfrom=frank@dressler.pro
-From: Frank Dressler <frank@dressler.pro>
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org
-Subject: [PATCH v6 4/4] net/af_packet: use kernel to filter multi-queue Rx
-Date: Thu, 15 Oct 2026 12:14:34 +0100
-Message-ID: <20261015111434.1470973-5-frank@dressler.pro>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261015111434.1470973-1-frank@dressler.pro>
-References: <20261009151015.742011-1-frank@dressler.pro>
- <20261015111434.1470973-1-frank@dressler.pro>
+ bh=WOYvZUsiBetwwpcpflX0nTGsHBuoyyIMVFcT4VSVYIE=;
+ b=Ix6/E/eUFpgsDNwj+2fd1kSykXa4/SptbRmOvIXNspefKzbc4RMBRr+0/dpfU/LqGnUbQW
+ yHwZsv/MlPmzDbEf3yu8wjicM3VpcwTwBIz3iE6SH35T+nSbNqMtvzO7ev/nNcShZ3Kt06
+ m9fl35xFqG/XOiPtgtFTSlIq4QYhaD0=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-424-nrnlHbXrPdyyTHsglzmGlA-1; Thu, 15 Oct 2026 11:19:07 +0000
+X-MC-Unique: nrnlHbXrPdyyTHsglzmGlA-1
+X-Mimecast-MFC-AGG-ID: nrnlHbXrPdyyTHsglzmGlA_1792063146
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5bcf6b5224cso2174313e87.1
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 04:19:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792063146; x=1792667946;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=WOYvZUsiBetwwpcpflX0nTGsHBuoyyIMVFcT4VSVYIE=;
+ b=qCRhgNZ0APjtjP+QvDksXMq0iNSRkMeZPEl1Byp7R339EGo7BasX9QV0sHarCuMXOg
+ xI3Q0YPZKXHI/sAbcTcAAI93LzdnUaLQEIR3oUp4znNut1ttxLhXPEnNtE5tPZSya8xt
+ ZZSLKIKthrSjoep4Vz37GcIzCquRSdkPuizAldhB93RZEZfX78ztRL08in2Tk6G44QU4
+ 6wgU5ed091vmDJ2/k8e1TIRcCLPJN5Y13JR8IByg/5omUF8rxWXCDHC70Rp8xyF4Z0uY
+ jdBsLmXapSJCxgMXbYK9bnDTy64n9tByPukFNkeB5ILfzNqB4BVvOp0SoiI6bJd1VEM/
+ 8bzA==
+X-Gm-Message-State: AFq9FYIp6oZNNewyOWtAcI1eFIlPkNTGakY8QPCT87l3GSOGGClirgV1
+ me03KdofKDMdkpc6cWKB3jW+Tt93q5/b/AeqoBnAJCjUFduhAAKVF4J+nomdKB2UBBOrfLkUJWH
+ r3gI/Xf0jdD3pjrV288snxHvdyvs4p4j9MBCu22/oZu9gDRgjSUCX8siDOkILhPCyalPkNTJwIT
+ XXwcc9GuAOY73v5lgDQbU=
+X-Gm-Gg: AYBFou0oR43qMlMxgLhq3EbseTJXq1ZyK7mb2t8gCpnxq2YlpWqXR+aqNxYqJUevA2M
+ FlBUF/WUgYkVBzIUuYTG2pBHP7j7xq/G7DGd/AHTn0cTnrhZ0yaSPN1TEBgP5QSe4TAgyuK7/Cc
+ lLOlc2UUaXOR/+51wOl3m6j+nwaCeo3uiBN1XNVf/7OW4SEzwVMc3nYiSkGgizWmNKoKwqyZMhV
+ S/o6UgbeJm3CFKnrlribw13vCA28FTuWqATqDKyfvX1sTMh
+X-Received: by 2002:a05:6512:1592:b0:5bc:b5ea:94b2 with SMTP id
+ 2adb3069b0e04-5bcde8db1damr6677641e87.59.1792063145485; 
+ Thu, 15 Oct 2026 04:19:05 -0700 (PDT)
+X-Received: by 2002:a05:6512:1592:b0:5bc:b5ea:94b2 with SMTP id
+ 2adb3069b0e04-5bcde8db1damr6677622e87.59.1792063145041; Thu, 15 Oct 2026
+ 04:19:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261014203435.583064-1-thomas@monjalon.net>
+ <0b380d9d-f7e1-4521-a548-9a9163f10995@intel.com>
+ <Q5JnIR46RbOi5z8Dxhadxw@monjalon.net>
+ <fe35faf8-fad1-4977-8272-bdf6f1896825@intel.com>
+In-Reply-To: <fe35faf8-fad1-4977-8272-bdf6f1896825@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 15 Oct 2026 13:18:52 +0200
+X-Gm-Features: AclHuK8Dgad8tc0F5FfbTTXDUvP_2N1OiMxrfmss3k54SGtg4X1RBs6pht9h6dI
+Message-ID: <CAJFAV8zqXgiwAghLZgR4Ha0dnvwtf9puECJpmv57N2zTE2dMxQ@mail.gmail.com>
+Subject: Re: [PATCH] net/ixgbe: avoid private driver include in testpmd
+To: Thomas Monjalon <thomas@monjalon.net>, "Burakov,
+ Anatoly" <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>, 
+ Bruce Richardson <bruce.richardson@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: wN-Ux6OWZRDxatL6nAsVjqU0m8qeEEWA4YsOPM1V0XA_1792063146
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,85 +87,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The AF_PACKET PMD currently needs to filter out outgoing packets in
-the PMD when the ignore_outgoing devarg is enabled and multiple queues
-are used. Kernel-side filtering is only supported for the single-queue
-scenario.
+On Thu, 15 Oct 2026 at 12:41, Burakov, Anatoly
+<anatoly.burakov@intel.com> wrote:
+>
+> On 10/15/2026 11:13 AM, Thomas Monjalon wrote:
+> > 15/10/2026 10:53, Burakov, Anatoly:
+> >> On 10/14/2026 10:34 PM, Thomas Monjalon wrote:
+> >>> Testpmd commands should use the driver's public API
+> >>> rather than access its private structures directly.
+> >>> Note: ixgbe_testpmd.c should be considered as part of testpmd.
+> >>>
+> >>> ixgbe_testpmd.c includes ixgbe_ethdev.h only to check whether bypass
+> >>> operations are available through the private adapter structure.
+> >>>
+> >>> Rely on the public bypass API to check availability
+> >>> and handle -ENOTSUP in the commands.
+> >>> Remove ixgbe_ethdev.h, ethdev_driver.h
+> >>> and the now unnecessary RTE_LIBRTE_IXGBE_BYPASS definition.
+> >>>
+> >>> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> >>> ---
+> >>
+> >> Reviewed-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> >
+> > I forgot to say it is mostly written by AI.
+> > I didn't review it myself.
+> > Please double check.
+>
+> It doesn't look wrong to me, testpmd code should not be using
+> driver-internal things anyway except through pmd-specific API, which is
+> what this patch does.
 
-Since Linux 6.2, the kernel filters outgoing packets for a fanout
-group when PACKET_FANOUT_FLAG_IGNORE_OUTGOING is set.
+On the principle, this looks good indeed.
 
-This change opportunistically sets this flag for all kernel versions
-in multi-queue scenarios. Kernels before Linux 6.2 ignore the flag
-and have no way to detect support. The PMD filtering is kept as a
-fallback for kernels that do not support the flag.
+My fault for just moving the code around, without considering the used APIs.
+And there are probably similar issues in some other drivers _testpmd.c
+files (at least net/ice seems to include ice_ethdev.h).
 
-Signed-off-by: Frank Dressler <frank@dressler.pro>
----
- doc/guides/nics/af_packet.rst             |  3 +++
- doc/guides/rel_notes/release_26_11.rst    |  3 ++-
- drivers/net/af_packet/rte_eth_af_packet.c | 13 +++++++++++++
- 3 files changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/doc/guides/nics/af_packet.rst b/doc/guides/nics/af_packet.rst
-index 6df14c510d..702822a428 100644
---- a/doc/guides/nics/af_packet.rst
-+++ b/doc/guides/nics/af_packet.rst
-@@ -45,6 +45,9 @@ of AF_PACKET for frame reception.
- 
- When ``ignore_outgoing`` is set, ``PACKET_IGNORE_OUTGOING`` is set for
- single-queue ports, which moves the filtering from the PMD to the kernel.
-+For multi-queue ports ``PACKET_FANOUT_FLAG_IGNORE_OUTGOING`` is set to
-+achieve the same but this only works from Linux 6.2. For earlier Linux
-+versions, the PMD does the filtering for multi-queue ports.
- 
- Because this implementation is based on PACKET_MMAP, and PACKET_MMAP has its
- own pre-requisites, it should be noted that the inner workings of PACKET_MMAP
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index e83cb9854f..9740e9fdce 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -118,7 +118,8 @@ New Features
- 
-   Added ``ignore_outgoing`` so ``rte_eth_rx_burst()`` returns only incoming
-   packets. The single-queue scenario is accelerated, as the kernel does
--  the filtering.
-+  the filtering. Multi-queue ports are also filtered in the kernel since
-+  Linux 6.2, otherwise in the PMD.
- 
- * **Updated AF_XDP driver.**
- 
-diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index 44b91502fb..0d044ab661 100644
---- a/drivers/net/af_packet/rte_eth_af_packet.c
-+++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -32,6 +32,11 @@
- #include <unistd.h>
- #include <poll.h>
- 
-+/* Added in Linux 6.2. Older kernels ignore it. */
-+#ifndef PACKET_FANOUT_FLAG_IGNORE_OUTGOING
-+#define PACKET_FANOUT_FLAG_IGNORE_OUTGOING 0x4000
-+#endif
-+
- #define ETH_AF_PACKET_IFACE_ARG		"iface"
- #define ETH_AF_PACKET_NUM_Q_ARG		"qpairs"
- #define ETH_AF_PACKET_BLOCKSIZE_ARG	"blocksz"
-@@ -995,6 +1000,14 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
- 		goto error;
- 	}
- 
-+	/*
-+	 * Set the flag opportunistically if multiple queues are requested.
-+	 * It takes effect from Linux 6.2. Older kernels ignore it and the
-+	 * PMD filters instead.
-+	 */
-+	if (ignore_outgoing != 0 && nb_queues > 1)
-+		fanout_arg |= PACKET_FANOUT_FLAG_IGNORE_OUTGOING << 16;
-+
- 	for (q = 0; q < nb_queues; q++) {
- 		/* Open an AF_PACKET socket for this queue... */
- 		qsockfd = socket(AF_PACKET, SOCK_RAW, 0);
 -- 
-2.56.0
+David Marchand
 
