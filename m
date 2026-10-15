@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A29CC6B2D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 Oct 2026 22:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0834CC6B2D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 02:53:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 36B794025A;
-	Thu, 15 Oct 2026 00:55:44 +0200 (CEST)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
- [209.85.214.175])
- by mails.dpdk.org (Postfix) with ESMTP id 2FCCD40144
- for <dev@dpdk.org>; Thu, 15 Oct 2026 00:55:43 +0200 (CEST)
-Received: by mail-pl1-f175.google.com with SMTP id
- d9443c01a7336-2e608cd460eso25323245ad.3
- for <dev@dpdk.org>; Wed, 14 Oct 2026 15:55:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 604194026E;
+	Thu, 15 Oct 2026 04:53:33 +0200 (CEST)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
+ [209.85.210.176])
+ by mails.dpdk.org (Postfix) with ESMTP id EBC794025A
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 04:53:31 +0200 (CEST)
+Received: by mail-pf1-f176.google.com with SMTP id
+ d2e1a72fcca58-878b44611ffso3148166b3a.3
+ for <dev@dpdk.org>; Wed, 14 Oct 2026 19:53:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792018542;
- x=1792623342; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792032810;
+ x=1792637610; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=VNxEU6Ey7unu/jlhiuOEINEjeSusU47TTii7J8q6+jo=;
- b=M8/r1W1OeYe1N0Rh85dQT5z9ZOi8iUEWYMG8tiNvl4S8SMbJqKo83k+xy0bOuPWTfH
- WsLXDFBOAad1JdAdAkMG8O8Au6FjeWqc3+TVU8dv2z60EIb2gWF+cDFjcfDvnejHCaNz
- FJCnzXrYFvF/SBQKOihyj4//mVROQl7oUkByNw3XxSspEfFvtfzrMGE2ZWjQTrLJgel8
- sPZWNK5YzTAM9vV1YxM2IykezXX98Sv2zsdpZbEh3iOviJH6c0edP5NaYBXm1yg0Z7wL
- wEdc2sKhMqAghGfqKFOyLaegmOrObmGrrt+srOGDXLDZkK3sFn00LYqlCjR2g4tEG4Me
- WGEQ==
+ bh=4n/fIJqoYlCg/ahRTQo8VgVGxvQP8ey0h40a+6XsDFQ=;
+ b=Lhz1NnhC4EkplopAJ3ilXHo8OPNxTkjeoOvS9/CQSBhYnz/lLFsxUYZ46ldk/CbhUA
+ Zw/hhPDGm/A4+2Vh4HR1mfSPrUXKuxQe/enRg2kM4FOBICmRlDkN/CPfvKSR8dGOWoMl
+ h2vl3CELOTWNSaI4iGv5BsiXGzQA288kAkjNQ6Vhl9pSeT0HQEMlsMn5pQ49djs77+xT
+ Ndyc9DrKr4HCzNBvo6US5P7scYY0mJ1SXgTdhUD+ZUpUUt9XWx3m2yc79XTNRtQh+jhV
+ EXcQ+MCAJmOy61ODPzTmkEMj75a4VTnIWNMAto6nvMmGsEZavGO4YJK9r9Pkba01RXJS
+ Cd0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792018542; x=1792623342;
+ d=1e100.net; s=20260707; t=1792032810; x=1792637610;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=VNxEU6Ey7unu/jlhiuOEINEjeSusU47TTii7J8q6+jo=;
- b=AYHUMx8yK/x1p67MDNmwVuyAAUno5Z+Lz5O6g88iMXP7/ZhUxw0fhPpSOKQ0Fb22vW
- evS8sQu4p3LlnrsfnD9F7Z2YEAOvOETa1G+LI5j5yjCSI76RAj7aDfKOhKjJtPpwG452
- DSyZpR8Ybqm9pUhO1ni19brCVe76SOixSi/jBH1Wq5pedcSOrHhXguR2JSKmgNPTpiwi
- /5Esz/THtkQ5SOVWVIp2gOO/nlAkqSV9OB0BtrHRmgWKc56hFraPjzKubofjEFFrxW+3
- NPu3AL78Imw728obSCB3sjNbQHVL89f9kirc9HAKwQ5ExKbS1U5zpe4GPCkvh7YhIzQ+
- PfEQ==
-X-Gm-Message-State: AFq9FYIVb5hO4SIA63FLkZwP8OlU+GN3PpoWe90/0jFV6CTL/KE3nYPZ
- MXq61E/dWKm+dyw9ISAuGQBz18HX6e5JKa6KXLpaETaMfjLVAOAOswHW7cjlg2cWJXs=
-X-Gm-Gg: AYBFou1V0l+LlK/FQUm1S6t7ZK3XspP5FivktEercxNH1UfaXWqkLOfYLGEtzIEpxq+
- KdPQ5mCktwdxnVY41z47jH+xn0LoRnCu/ccvLTnVEcdquU7FX/Z5GxoRuMoXxjsUoe5TYxXff46
- vfcDdIafz+dhZueYvuwhbbnCNhJDdxoI9wDhu2SbdL0EuBwEvoaHQ/FcSOOp5+iLoDzqkWEqht4
- eAn8UN64PTWLmAAqGjb9zHndDkoTArvT2+jkpc1JPx1SiquPXPhk7lwARp/EneJF/aTnfg+Q6m0
- PxaGqBbE5C4zUI+Xo7ZYvftKvr/3griojI4vQgXSpi60yrzoPF3FHZui0BMkSlOhiBTs1XPMWWE
- 1ef+Wfs8oiZQhPsUr0cb+8cRCgZOmxeenZsggcCHIA9lhstM8aQr9zYHqDIcp1Pkf/9YSSuNw0a
- DHAGD1Hk8RBelgheFaYXqxQnhGCiZUdeRnCdCto9fz8pB94z1Sy0u02qGuXP2C6hbsoZj8KHnnu
- CI+93vgx/4kLWg3+wOOOGqW+bABlqqaGje/w5uR
-X-Received: by 2002:a17:90a:da85:b0:3ac:1c76:61c3 with SMTP id
- 98e67ed59e1d1-3ac1c767e3fmr7341349a91.27.1792018542276; 
- Wed, 14 Oct 2026 15:55:42 -0700 (PDT)
+ bh=4n/fIJqoYlCg/ahRTQo8VgVGxvQP8ey0h40a+6XsDFQ=;
+ b=s9RplnJ6zYTTXEtIOFiZaHRdvEFrDMC6xdRcIi3Uj16CD1XeMAW+YMR+MsKA4ZRtYV
+ xqqTXj9LjTvVm8sxAbxmsdEAXjx8IYDd4uw/oVNYk62BH3L5LfIkMImDCprDoSkADFli
+ 9+1d0jcAczdWQSE7YqKdVouYtcaCWHGcjgT9A7wI3HKl0W6O6lGwkwv+GJlFJfAwDue5
+ aoQjTJAQxPYblvlxWHqTsXgihkj3ogOPnaBF3r/1o3WXBikp+2rZMBxOtSmCfxoupf2o
+ 8mkWmwxsl1R8meZtPpOF+SbBKM0iBFsH9sMV+SyvYO5khESYDXakvkXSgjSGgOpo/85C
+ 2RXA==
+X-Gm-Message-State: AFq9FYK2puW0kkzzXkxjTPZQlj9036cY7r4Cg4HPSfPAMoOQvrrw1K3t
+ IKjIej35k3IoxW/qia2y12Ojn4pQP588nneASvPn5p1H2fdDvw6gHWRGbHxm3ATN3so=
+X-Gm-Gg: AYBFou1uthdm59mMaCwbLM11lVZK5G+PstZwbXYzqXAofase1imh6jTz6Qw9pM2PWhY
+ RG5G9k1AkWTGZcH9jz+apBRP8kKH4Qs+k8XyXjRF8Fxn2CWGFjRCcqpqdCBoidUiox6koK/rme9
+ 1C/NmDlgAF6QQ/9MYgxyAxMA4lhTig1CAYLBOCEZe6L1U9LGl/WltPqlTQK/LdzNKQu25geN+7d
+ IacfHZDMxSUHf6Ibjj+AIK3FaGlBkhjQxehf8qldhByZtAEd0aphCygfzn6szExCfshaInGXFdk
+ ClWgaEFGOYyRFVIfciJVwbGRJXojAFOW/8SWOdU/3TKLDrZPkLweg77iR1tKKzom3rNTjuNP86/
+ RQoSHER8hFmsJSMTkay8YBs3ng1vrnZ3OJ951vo8aL6nTfAMRTXrDyWaxxa0Onj4wxjdSHbuzxf
+ crGjjB9EvfOs0KK9bY4j/hMBvaZGn+7DzoPglDUqWDTFg+Ft9N97JAU8qzrQyxbWcUwoS9MYgz3
+ ZNhAAnpDd9jDsJlgTGyb7/rA0z4z/ReKFKBNj0A
+X-Received: by 2002:a05:6300:4045:b0:3e1:370e:f249 with SMTP id
+ adf61e73a8af0-3e19a64c1ffmr10380600637.60.1792032809994; 
+ Wed, 14 Oct 2026 19:53:29 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ac943e7548sm1299498a91.1.2026.10.14.15.55.41
+ 41be03b00d2f7-cd635cbaca7sm500000a12.25.2026.10.14.19.53.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 14 Oct 2026 15:55:42 -0700 (PDT)
-Date: Wed, 14 Oct 2026 15:55:40 -0700
+ Wed, 14 Oct 2026 19:53:29 -0700 (PDT)
+Date: Wed, 14 Oct 2026 19:53:27 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Cc: dev@dpdk.org, rjarry@redhat.com, mb@smartsharesystems.com,
- maxime@leroys.fr, konstantin.ananyev@huawei.com
-Subject: Re: [RFC PATCH v2 0/7] VRF support in FIB library
-Message-ID: <20261014155540.33820187@phoenix.local>
-In-Reply-To: <20261014183921.495158-1-vladimir.medvedkin@intel.com>
-References: <20260322154215.3686528-1-vladimir.medvedkin@intel.com>
- <20261014183921.495158-1-vladimir.medvedkin@intel.com>
+To: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
+Cc: dev@dpdk.org, joshwash@google.com
+Subject: Re: [PATCH v2 0/4] net/gve: fix Tx queue stalls and sync DQO RDA
+ with Linux driver
+Message-ID: <20261014195327.189c5a4f@phoenix.local>
+In-Reply-To: <20261013104348.714550-1-tathagat.dpdk@gmail.com>
+References: <20261012105023.669486-1-tathagat.dpdk@gmail.com>
+ <20261013104348.714550-1-tathagat.dpdk@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,44 +84,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 14 Oct 2026 18:39:14 +0000
-Vladimir Medvedkin <vladimir.medvedkin@intel.com> wrote:
+On Tue, 13 Oct 2026 10:43:44 +0000
+Tathagat Priyadarshi <tathagat.dpdk@gmail.com> wrote:
 
-> This series adds multi-VRF support to the IPv4 FIB, allowing a single FIB
-> instance to host multiple isolated routing tables.
+> This patch series aligns the Google Virtual NIC (gve) DQO RDA transmit path
+> with the upstream Linux kernel driver (drivers/net/ethernet/google/gve/) to
+> resolve transmit queue stalls and hardware validation issues:
 > 
-> Today a FIB instance is a single routing table, so an application serving
-> several VRFs needs one FIB per VRF. In a burst oriented datapath packets of
-> one burst can belong to different VRFs, and the application either does
-> per-packet lookups in different FIBs or regroups the burst by VRF before
-> the lookup. Both are expensive. With this series all the VRFs live in one
-> FIB, the bulk lookup takes a VRF ID per address, and the existing API
-> operates on VRF 0.
+> 1. net/gve: fix DQO descriptor cleaning loop bound
+>    Fixes the off-by-one error in gve_tx_clean_descs_dqo()
+>    ("while (--nb_descs)" -> "while (nb_descs--)") and avoids stalling
+>    the completion queue on unrecognized descriptor types.
 > 
-> v1 replicated the 16M entry tbl24 per VRF. That kept the lookup on par with
-> the single VRF case, but memory grew linearly with the number of VRFs,
-> which was the main concern raised on v1. v2 resolves the issue by adding
-> of two dataplane algorithms with different memory/lookup trade-offs.
+> 2. net/gve: fix DQO Tx queue stall on multi-seg and TSO
+>    Tracks descriptor intervals with last_re_idx per packet against
+>    GVE_TX_MIN_RE_INTERVAL (32) instead of counting packets at burst end,
+>    preventing descriptor ring starvation and queue deadlocks under
+>    multi-segment and TSO traffic.
 > 
-> DIR8-16-8 is a new three level variant of DIR-24-8 with 8, 16 and 8 bit
-> strides. Only the 256 entry root table (2 KB) is replicated per VRF; the
-> tbl16 and tbl8 groups come from pools shared by all the VRFs, so memory
-> follows the routes actually installed rather than the number of VRFs. The
-> cost is an extra memory access for prefixes longer than /8.
+> 3. net/gve: add cacheline overlap margin to DQO Tx ring
+>    Enforces GVE_TX_MIN_DESC_PREVENT_CACHE_OVERLAP (4 descriptors) margin
+>    in ring space checks, avoiding CPU and device DMA cacheline collisions.
 > 
-> DIR-24-8 gets multi-VRF support by resolving the VRF after the longest
-> prefix match, along the lines Konstantin suggested on v1. Instead of a
-> vector of next hops per prefix, a single tbl24_8 shared by all the VRFs
-> returns an internal prefix ID, and a hash table keyed by {VRF, prefix ID}
-> returns the next hop, a miss meaning the VRF default next hop. The aim is
-> to resolve the VRF with a single memory access, so buckets hold 8 records
-> and there is no probing beyond the bucket.
+> 4. net/gve: add packet and TSO hardware constraints for DQO
+>    Augments gve_tx_validate_descs() (which enforces the 10-descriptor
+>    limit per packet or MTU segment) with the remaining hardware length
+>    constraints: [17, 9728] bytes for non-TSO packets, maximum MSS limit
+>    (9728 bytes), TSO total length limit (262143 bytes), and validates
+>    header contiguity and payload presence on TSO packets. Invalid packets
+>    are dropped instead of stalling the queue.
+> 
+> v2:
+> - Patch 1/4, 3/4: No changes.
 
+Don't know if this got sent yesterday.
+Here was AI review of this
 
-The problem with existing FIB lookups is they are space intensive.
-They tradeoff memory for cache misses. Every level of indirection adds
-another cache miss.
+Subject: Re: [PATCH v2 0/4] net/gve: DQO Tx fixes
 
-Not sure they work well for VRF case at all. Normal LPM is more compact.
-For normal mortal size machines having multiple VRF's is going to be huge.
-How big are you envisioning this?
+Applies cleanly to main; every commit builds with -Dwerror=true.
+v2 drops invalid packets and continues instead of stalling the burst,
+pops the completion tag before writing the TSO context descriptor,
+and adds the Fixes tags. All three Fixes hashes resolve.
+
+Info
+
+[PATCH v2 2/4] net/gve: fix DQO Tx queue stall on multi-seg and TSO
+
+1. Ringing the doorbell each time report_event is set is a
+   performance change, not part of the stall fix. Descriptors posted
+   earlier in the burst are reclaimed on the next burst either way,
+   and Linux rings once per xmit batch. It is harmless, but for a
+   stable backport it is better as a separate patch with numbers. At
+   least drop "amortizing MMIO writes": it adds MMIO writes.
+
+[PATCH v2 4/4] net/gve: add packet and TSO hardware constraints for DQO
+
+2. tso_total_len is 24 bits wide; 262143 is the hardware limit (see
+   the comment in the Linux gve_prep_tso()), not the field width.
+   Reword: "Define GVE_TX_MAX_TSO_LEN_DQO (262143), the hardware limit
+   on TSO payload length."
+
+3. dropped_pkts is not in tx_xstats_name_offset[], so nothing reports
+   it; too_many_descs had the same problem. Export it:
+
+       { "dropped_pkts", TX_QUEUE_STATS_OFFSET(dropped_pkts) },
+
+   or drop the counter and rely on errors.
+
+4. The commit message lists the diff line by line. Cut it to the
+   problem (invalid packets stalled the queue; hardware limits were
+   not enforced) and the fix (drop and continue; the limits enforced).
+
