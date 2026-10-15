@@ -2,86 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17603CC6B39
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 16:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10175CC6B3A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 16:25:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2A6D7402DF;
-	Thu, 15 Oct 2026 18:23:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 470A8402F0;
+	Thu, 15 Oct 2026 18:25:34 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id C0FE4402DA
- for <dev@dpdk.org>; Thu, 15 Oct 2026 18:23:35 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 349B8402DA
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 18:25:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792081415;
+ s=mimecast20190719; t=1792081532;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=DVxwU4zOF2tQ7YYA7RwpSXBK6bPQIRW7HqoxuljO8Pg=;
- b=VLKcD1JxgU1GMgPaclgYyllia167/HTmQ6wddlM0zpbvzZGVt/Tzwk7W68vROfYEMSlavF
- /UYR8L0gEh1ad9UWl++Rw32yhPxxOoGtSkss+d2NUC2c3qY7elipL1cWEY3e6re7mVBjGn
- BEWuI1Dm2eNKdtIsJVUKzAOImYexxa4=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=XVmm6n4HP93P2mOW7S3bJzXG4rpgIs9BTYCk2zCMdw8=;
+ b=Sjs/0Xkf/gfvZAmD8fptAXaKWPx/TSB+MOTTvh0eA7ZCgoJDSdoyXWJLwr63MeR+OShX9s
+ JvhPGJd3vW83MqGRFtYmCcVqTbEHV1cjPjaaPoJYrSfdsAVxUv7SugKPCQ6wDYkuqW1m4/
+ 77f0we6xKoG1KVGSDBqqGaq5dKwC7x4=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-395-G_Ua7xK6NeW0uOaj2hpBeQ-1; Thu, 15 Oct 2026 16:23:33 +0000
-X-MC-Unique: G_Ua7xK6NeW0uOaj2hpBeQ-1
-X-Mimecast-MFC-AGG-ID: G_Ua7xK6NeW0uOaj2hpBeQ_1792081412
-Received: by mail-wm1-f72.google.com with SMTP id
- 5b1f17b1804b1-4a16db51147so36546175e9.3
- for <dev@dpdk.org>; Thu, 15 Oct 2026 09:23:33 -0700 (PDT)
+ us-mta-447-1woi2qpFOAmFxrYfUohBpQ-1; Thu, 15 Oct 2026 16:25:29 +0000
+X-MC-Unique: 1woi2qpFOAmFxrYfUohBpQ-1
+X-Mimecast-MFC-AGG-ID: 1woi2qpFOAmFxrYfUohBpQ_1792081527
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-5bb78051100so1202326e87.3
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 09:25:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792081412; x=1792686212;
- h=in-reply-to:references:user-agent:subject:to:from:cc:message-id
- :date:content-type:content-transfer-encoding:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=DVxwU4zOF2tQ7YYA7RwpSXBK6bPQIRW7HqoxuljO8Pg=;
- b=JV1B8QE/JKBly2cueuQOQZS2T6CRPA9nCR8oRQSbaD0mQ4rDtBPMZKopNUVTycoQFf
- FTYrIRNrfN7E6XUN8glpYi6n5eYc5Vrgky+t4m9dU0psyIDRbeDkJUsR21MaIAIdhi50
- /DDYCHFDantSIeXleSVXbi9WlZ2ZJuARfyKRfDR78EowUtRkYFEzsXoQFxqYzmy5/80k
- CDsuC+MVNfE24bikB+nwtprH6sNGdBiFBVprDAlOBzzEXmGoEvmGI+xMs7jxCfWAtUT2
- 8IZ7HDqdysWP6IpxUfE/HQ0l5yPbr5iu81XPaDbGo6LInszgvfl7VC29GVEcd54A0GK4
- gocw==
-X-Forwarded-Encrypted: i=1;
- AKwUvBzPs3HSdVwuDb0v/j9ZGgymLaR5DsXfzVSJat5inRpj2HAkOFLXIpg82lvnDlf8TxZ+l28=@dpdk.org
-X-Gm-Message-State: AFq9FYIhmiGwX3c5XC/WC+X5+frlLzG+6fOExrmioQ3AOx9v2KBZ8JlZ
- t40HrIx6xSAT9UxvRq0/fN57bRYNCUv+uRPcZRKZ8wnQ1hE7MLUaMckNOL9Jz3ZsEGyaVkHzwrF
- NVnZu09cvnUPKYPkamDKrMKSdKc5zr7KHtVZv8n6XRRNd
-X-Gm-Gg: AYBFou2xQg8ayARQrr5Ss+52pSnFRmC2COzI+g8Vqr/qKTUc5bFVsEm+v7DwbshEN4x
- m+CSz2adnKdI2jBSkXqep/cEPctGi2GPl8eQ4xBRoH6PRkxF+f61+bkdvspbiNIFmo/4F+FPuu3
- TZmbeIbPFBlXHnQnDFzEcDx92UTrnjkNUg2YCxj+8ulvSqVmfQwU2tBPmnKwocr/PWgwxGm42+T
- Y7IJWClkbHGUA+8vZ0M65h/W1UKLsbPVt8ojYExHhTgDlPTLZKbCbvUh5aUG1IYXewskVJSzWv2
- AlPuFNCqii0W5XJ8uvu6FQ0IfeVGSTY9g9Pzkr3KmOK6AZtebzuH9O4KrPTxDGcsJrEW8nogZPM
- k7PtsERlxUuXYF1A1e6rubcombmVfQfFLEjkt+XnD3z/DejEu/bqlveQI
-X-Received: by 2002:a05:600c:524d:b0:4a1:80d8:aeb3 with SMTP id
- 5b1f17b1804b1-4a18e4a95c2mr395957565e9.12.1792081412354; 
- Thu, 15 Oct 2026 09:23:32 -0700 (PDT)
-X-Received: by 2002:a05:600c:524d:b0:4a1:80d8:aeb3 with SMTP id
- 5b1f17b1804b1-4a18e4a95c2mr395956075e9.12.1792081411377; 
- Thu, 15 Oct 2026 09:23:31 -0700 (PDT)
-Received: from localhost (2a01cb00021ec0002e23edbec21b0e73.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:2e23:edbe:c21b:e73])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4a1bd972aebsm90439015e9.1.2026.10.15.09.23.30
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 15 Oct 2026 09:23:30 -0700 (PDT)
-Mime-Version: 1.0
-Date: Thu, 15 Oct 2026 18:23:30 +0200
-Message-Id: <DM5JUAJZOBD1.1MJUHEI3YCXCO@redhat.com>
-Cc: <thomas@monjalon.net>, "Aaron Conole" <aconole@redhat.com>, "Bruce
- Richardson" <bruce.richardson@intel.com>
-From: "Robin Jarry" <rjarry@redhat.com>
-To: "David Marchand" <david.marchand@redhat.com>, <dev@dpdk.org>
-Subject: Re: [PATCH] ci: fix dependency on cmdline
-User-Agent: aerc/0.22.0-33-gba1d070bca97
+ d=1e100.net; s=20260707; t=1792081527; x=1792686327;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=XVmm6n4HP93P2mOW7S3bJzXG4rpgIs9BTYCk2zCMdw8=;
+ b=ytKp6V6CBGXdmKCrnm8FqzNhMxGhS9sT3Pk0TlqIoKj+q4cBpf+Coa0fJZlPdv6e2X
+ 5TfNX6ROefmq91R5jV5ZVWgdHcMWFngRudZM1mPZ/a2kY8GDnmCFCHzEw4hk4O+1N4ls
+ /I4pUOFoAuRkR3QYQc0/bAFbBwXAckT+UVEje2kyy8JkPeMhmoyYNo+mA0dRyQhLuvy7
+ DPOiku+iZaWb6+KHwkRpwQXpv1Q+0EhpAk4d3zk92Ut/2KswATRh+/cGuF1dl+Es+v3z
+ sNSrIJy/2PIE83JPxJAUpK/FB0rgC8FlI0rO0/v+GKY38pZtYhS/ZOg3UvROeiwS8ZBr
+ Kv+Q==
+X-Gm-Message-State: AFq9FYIyzlKl/BjFVleB6ephhcRBu2sD8S8ghnJYBnFR+l98IhgLKUE2
+ lxii9FpUZBB98tJiMqfPeUtJz4BvMN5uE8piqyy8vNVWE3PLEWDfW6KNomNA0HcybRwaCLUcDF8
+ rK+XlXaRMm/5XrUBrSQ3m4x7OZuCx86gXr3ytjH+7TzIPXRHFTjEHrFQQH9m85l24/Ky0QDfaZm
+ ne0wqYWx1KoyEQTrPzyZM=
+X-Gm-Gg: AYBFou33KlfQDBSnE8VtnxLkUVGCaKZyYA80IV78UYDPWxgJ1AAYylhOj/65FLJz9HJ
+ S5eqcUSPy+TuygiIRgnMt2NJdykcNjvfoZogzWz7bn84eU9sXbETelAKAJlmp3PdwuwB85SZvtB
+ /q+sETo6CylgsWxx0NB/ELmMQ8P//LnACWl5OWU86Rizx3Sh06OPT1HLhJgdZ7zz+MJnykEeQeY
+ 3q5B4RutBc7ykcReruTdZCmwnMdm96oD8QlR+wxKNg1mp4r
+X-Received: by 2002:a05:6512:3a82:b0:5be:4684:d027 with SMTP id
+ 2adb3069b0e04-5be4684d1d5mr425049e87.12.1792081527350; 
+ Thu, 15 Oct 2026 09:25:27 -0700 (PDT)
+X-Received: by 2002:a05:6512:3a82:b0:5be:4684:d027 with SMTP id
+ 2adb3069b0e04-5be4684d1d5mr425040e87.12.1792081526829; Thu, 15 Oct 2026
+ 09:25:26 -0700 (PDT)
+MIME-Version: 1.0
 References: <20261015160157.3348253-1-david.marchand@redhat.com>
-In-Reply-To: <20261015160157.3348253-1-david.marchand@redhat.com>
+ <DM5JUAJZOBD1.1MJUHEI3YCXCO@redhat.com>
+In-Reply-To: <DM5JUAJZOBD1.1MJUHEI3YCXCO@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 15 Oct 2026 18:25:12 +0200
+X-Gm-Features: AclHuK9tAMKOJbUC-gf_xZcBJm7iECb54IyLEfBTaVKDgsquEsqX8s9dI8RCoeA
+Message-ID: <CAJFAV8zTVFEwzDrbOt9NLd8QjYNgFw2HEWQz_h=CKVnwaXkMgw@mail.gmail.com>
+Subject: Re: [PATCH] ci: fix dependency on cmdline
+To: Robin Jarry <rjarry@redhat.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, Aaron Conole <aconole@redhat.com>, 
+ Bruce Richardson <bruce.richardson@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 0rybwK6If_qKR21l3Bkxqq4_d_oApuQrmszGccE_-H0_1792081412
+X-Mimecast-MFC-PROC-ID: _K5cE2KF35I-m55y9ArTmvVM_MbHbJQ2iZbug2pWRms_1792081527
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,34 +84,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-David Marchand, Oct 15, 2026 at 18:01:
-> The unit tests, testpmd and some examples depend on the cmdline library.
-> Without it, the "mini" target in GHA ends up as a build failure.
+On Thu, 15 Oct 2026 at 18:23, Robin Jarry <rjarry@redhat.com> wrote:
 >
-> Fixes: 6de2c9c791b8 ("build: make cmdline optional")
+> David Marchand, Oct 15, 2026 at 18:01:
+> > The unit tests, testpmd and some examples depend on the cmdline library.
+> > Without it, the "mini" target in GHA ends up as a build failure.
+> >
+> > Fixes: 6de2c9c791b8 ("build: make cmdline optional")
+> >
+> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > ---
+> >  .ci/linux-build.sh | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
+> > index 4f266940e9..2c7386d320 100755
+> > --- a/.ci/linux-build.sh
+> > +++ b/.ci/linux-build.sh
+> > @@ -120,7 +120,7 @@ else
+> >  fi
+> >  if [ "$MINI" = "true" ]; then
+> >      OPTS="$OPTS -Denable_drivers=net/null"
+> > -    OPTS="$OPTS -Ddisable_libs=*"
+> > +    OPTS="$OPTS -Denable_libs=cmdline"
+> >      if [ "$DEF_LIB" = "static" ]; then
+> >          OPTS="$OPTS -Dexamples=l2fwd"
 >
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
->  .ci/linux-build.sh | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
-> index 4f266940e9..2c7386d320 100755
-> --- a/.ci/linux-build.sh
-> +++ b/.ci/linux-build.sh
-> @@ -120,7 +120,7 @@ else
->  fi
->  if [ "$MINI" =3D "true" ]; then
->      OPTS=3D"$OPTS -Denable_drivers=3Dnet/null"
-> -    OPTS=3D"$OPTS -Ddisable_libs=3D*"
-> +    OPTS=3D"$OPTS -Denable_libs=3Dcmdline"
->      if [ "$DEF_LIB" =3D "static" ]; then
->          OPTS=3D"$OPTS -Dexamples=3Dl2fwd"
+> Why aren't the per-target dependencies honored?
 
-Why aren't the per-target dependencies honored?
+Examples have hardcoded dependencies see examples/meson.build.
+Since the mini target explicitly requests l2fwd, this triggers an error.
 
---=20
-Robin
 
-# At participating locations only.
+-- 
+David Marchand
 
