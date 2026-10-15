@@ -2,86 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C537CC6B39
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 16:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF164CC6B39
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 16:29:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9514E40658;
-	Thu, 15 Oct 2026 18:26:33 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id CCCFA402DA
- for <dev@dpdk.org>; Thu, 15 Oct 2026 18:26:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792081591;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=AiEPvKF1vXgEXk7D/IwM2iMVLJyJ8Ui1Yn1E2dGnoqM=;
- b=WABe/cGEgzJXWOUxsfmEs3XdYKZr5EDFyGf958XHvbO1OVQohJhBosRW8/C5Jtk0exIC1N
- VCOi3AlETwcxMvGHqTQhRss+TpnS3HrNOqaZqTB5dIZlYRUiJs2adYjEs1hNkTO3XZGO0Y
- cxvPG+As8S05HWrp9hy9VWDLf+H8QzM=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-516-nQjQs7ICNoeN6XAnKfrtbw-1; Thu, 15 Oct 2026 16:26:30 +0000
-X-MC-Unique: nQjQs7ICNoeN6XAnKfrtbw-1
-X-Mimecast-MFC-AGG-ID: nQjQs7ICNoeN6XAnKfrtbw_1792081589
-Received: by mail-wm1-f70.google.com with SMTP id
- 5b1f17b1804b1-4a1bfd5516bso10142325e9.3
- for <dev@dpdk.org>; Thu, 15 Oct 2026 09:26:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792081589; x=1792686389;
- h=in-reply-to:references:user-agent:subject:to:from:cc:message-id
- :date:content-type:content-transfer-encoding:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=AiEPvKF1vXgEXk7D/IwM2iMVLJyJ8Ui1Yn1E2dGnoqM=;
- b=ZNHKO64mmPiFenNKVBUf2vD0ZjQR8mZTH6EILeH8WtuJ0vJYVMErH4zG5Y/BOEancW
- hk6qw6JBGpPHfA/xxOBQow88LfFerxd71nIM8fY+QLn3sIxYvv+71y9yde5FRWC36c/w
- pDURjddlZ/xtWFsiZdMZ//JlJ7hWoDKbbOrbl5C5uEFGtchjpYCMlvVoS6T6Pc0owijf
- flq0arxSK5QeCDM5PWpQqbSeIS7oLMrOuF2UGNbx2omeup+cymUbBH0UQ9yP7aUksQEd
- h7N7Ts4tKh78uTSz+1q2wNbkDO2XHPXS5alu1oY9gXzpCt1kXklnY+y5+OC/BjHEvkll
- NWmg==
-X-Gm-Message-State: AFq9FYKnCPGYrVbxF5mDWrxnIrAXZFzSym1HoUubjVdmslQIN0Sux0rB
- mbBOx1YlLFZXWel/oudkfLiAJRVg1YOUUE/nua+XSfkTpMK/4VcYuCEWpJegSIYuHUEcZSjAAc+
- jnWDf1SAmMFgRtd6TX9RPJRWh0pDRPtlHIMX41fobQBZemEENowHN
-X-Gm-Gg: AYBFou3EumpiBj4hYh0t3gIpZQIEOlevyhbd5KgtB8S+DbHegD0AK2NDu/IkyyS4yqX
- EY6M6YrwMgnFHjUkRHBlUTPUf+iDY0YQ4J+gSs1tj7pKIaOPX6nqUjryjf07PsU0adq/OeQSz/v
- LiUeM1d8khfsnug7ka5gNo2uv3R/JkSgb4XQEh6bh3zwn1Z1vHXGF791Ix1I06ZKjhp0nSDuOrr
- Dy73BADYWnUXnafDAMnitzxTmudCgoLodzd8ZStKabjDdlVFcko2ZDuqJ2dmSp0Di4s0fDvMyoV
- AYPEfaMVk4sHE/dnbUD0PN6LdSdLWOr4bESmKMRXwgiFzc12HOSsw3f0S8TAE1XtsTKZDLyj8Wc
- w2yfk6wuEi3T2mIDzGBTGhKW2JCeLRsgXWrZ/cn4bSuUw0cCl47kbaXSA
-X-Received: by 2002:a05:600c:a00c:b0:49f:fe90:de63 with SMTP id
- 5b1f17b1804b1-4a18e4e0a3emr410628365e9.28.1792081588700; 
- Thu, 15 Oct 2026 09:26:28 -0700 (PDT)
-X-Received: by 2002:a05:600c:a00c:b0:49f:fe90:de63 with SMTP id
- 5b1f17b1804b1-4a18e4e0a3emr410627725e9.28.1792081588215; 
- Thu, 15 Oct 2026 09:26:28 -0700 (PDT)
-Received: from localhost (2a01cb00021ec0002e23edbec21b0e73.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:2e23:edbe:c21b:e73])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-48de0bd1843sm19957841f8f.56.2026.10.15.09.26.27
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 15 Oct 2026 09:26:27 -0700 (PDT)
-Mime-Version: 1.0
-Date: Thu, 15 Oct 2026 18:26:27 +0200
-Message-Id: <DM5JWJSS12VT.22J6MHQJOGKQS@redhat.com>
-Cc: <dev@dpdk.org>, <thomas@monjalon.net>, "Aaron Conole"
- <aconole@redhat.com>, "Bruce Richardson" <bruce.richardson@intel.com>
-From: "Robin Jarry" <rjarry@redhat.com>
-To: "David Marchand" <david.marchand@redhat.com>
-Subject: Re: [PATCH] ci: fix dependency on cmdline
-User-Agent: aerc/0.22.0-33-gba1d070bca97
-References: <20261015160157.3348253-1-david.marchand@redhat.com>
- <DM5JUAJZOBD1.1MJUHEI3YCXCO@redhat.com>
- <CAJFAV8zTVFEwzDrbOt9NLd8QjYNgFw2HEWQz_h=CKVnwaXkMgw@mail.gmail.com>
-In-Reply-To: <CAJFAV8zTVFEwzDrbOt9NLd8QjYNgFw2HEWQz_h=CKVnwaXkMgw@mail.gmail.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: BQT0bnonLKjjhsxoRhok740zHL-U9Tyq5LPGtKxUMvE_1792081589
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id CEC4B402F0;
+	Thu, 15 Oct 2026 18:29:19 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 7DF11402DF
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 18:29:18 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 88CA614BF;
+ Thu, 15 Oct 2026 09:29:14 -0700 (PDT)
+Received: from [10.57.10.51] (unknown [10.57.10.51])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50A173F871;
+ Thu, 15 Oct 2026 09:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+ t=1792081757; bh=TpO6HQF1NDqzpOPP+/PpnJrLOiGMeec3dWvip/VdBBk=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=hSCVy9qIYeb0c03YOZ/Yh1SsJ2Xd8gYBxlz2JnhtwFN3ikM0PZK5E1i55jgPOp/bX
+ 7KSOfodTmau4iGJ6buHBEcP4zxVa51Es9oTJOQF1crhtgrCBdZV4jIzxflSAWSnVWP
+ 9WJJUIWussVHZmDRSrjn/O99JXbFtsioLQ4Zog68=
+Message-ID: <f5ca583d-eefc-4817-bdf2-5c482d0d1459@arm.com>
+Date: Thu, 15 Oct 2026 17:29:14 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/8] dts: remove imports from framework in test suites
+To: Andrew Bailey <abailey@iol.unh.edu>, dev@dpdk.org,
+ patrickrobb1997@gmail.com
+Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
+ Dean Marx <dmarx@iol.unh.edu>
+References: <20260806135346.568766-1-abailey@iol.unh.edu>
+ <20260902181333.461556-1-abailey@iol.unh.edu>
+Content-Language: en-GB
+From: Luca Vizzarro <Luca.Vizzarro@arm.com>
+In-Reply-To: <20260902181333.461556-1-abailey@iol.unh.edu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,9 +51,9 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-David Marchand, Oct 15, 2026 at 18:25:
-> Examples have hardcoded dependencies see examples/meson.build.
-> Since the mini target explicitly requests l2fwd, this triggers an error.
+Hi Andrew,
 
-Ah, so we would need to add the cmdline dependency per-example?
+thank you for this. Merged with minor changes (some missed doc bits) and 
+a random print.
 
+Luca
