@@ -2,73 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62686CC6B3A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 11:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3868DCC6B3A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 11:14:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4FC53400EF;
-	Thu, 15 Oct 2026 13:13:11 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 45D3940041
- for <dev@dpdk.org>; Thu, 15 Oct 2026 13:13:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792062788;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=YSw+6gTqq7aA3qkZA5+7Q3f+DVsT8HR3YLd+Apojpyk=;
- b=KLr25huYeU6TIoM3Q682RhnCjDreIFmKg7qDF1gqd2fxlHYoFSnXW74qbNk67KnAbCabSa
- oADHcD0XkkBQ7dgML8yIJYW+VhTvwzxBC4T+c++91uhpzEcuaeioo9tpM5wsOV3xckEXH+
- 1Uwp6lm8GU8w0j+7zHIGLJ1lIxUNGs4=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-586-oLdC_VzvNPusULXSdwrL9w-1; Thu, 15 Oct 2026 11:13:07 +0000
-X-MC-Unique: oLdC_VzvNPusULXSdwrL9w-1
-X-Mimecast-MFC-AGG-ID: oLdC_VzvNPusULXSdwrL9w_1792062785
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-3ab054f411aso3095791fa.2
- for <dev@dpdk.org>; Thu, 15 Oct 2026 04:13:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792062785; x=1792667585;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=YSw+6gTqq7aA3qkZA5+7Q3f+DVsT8HR3YLd+Apojpyk=;
- b=LZ4DHq1KfOp4oOiHbU4vVHDCxnRaZZZ1t0FVxdeGC9Lewb+48E2UEktUHmgrnjhkEb
- xKypBsA9Pp5o5e8V1vnFHl0cSj4sSJItSUaqqsx3sAPshQdYfHeQ46b296CYppSuNVOk
- CUw31gaaM2CTDMi+53+DNdW3H9cTiVydYg3uwMbCy+nEXbxHYorjbj49TrDub6bc7eaz
- TVKn+3Llh8NkevFTXmzm521S9Z2pHJaXG49QhZc79CS15+veHN2niGnuSaB1SG8f6Dwy
- aFv475mLc0iLQzGVVtfrmSFSuyKbRLEUn8sUyrMEBobDRZq+qqvO0WX1wu9YdC5b+QMG
- wiew==
-X-Gm-Message-State: AFq9FYK9QJqz3UMPAJ0xItQeXkNCZVmztt5Us2TIGtTZKLlwhzN5dB81
- ouSyKr3AMOkD4SU5qPYLlANIDk2ozLIsZhJ+GlpMQsvwFnOoVuNgFjsOEWf6z523fyK/+kwgM5l
- yArjFOAh0DUPR6AoG7nMxIhzDzsrOtoZgOUpPkLLRI7s+i9OICGJuaVvY2GiUHu+5cY20yO/JmY
- 0U/cCoLoLfweAapdr+hj8=
-X-Gm-Gg: AYBFou2STaDZ1MG4O9wYiSgpMqO0YjZXepHNM5xdZWAwWufRFfypcCItgCr/PDZe9lL
- tAW42kPncvhaRvhu0hyzw32J19c3VhpK0R5i8aJP0G+YGySfa8qeDfB2s4Vx6VPH+eJtstcLVU1
- kBHQjCqYzdjpZtiWYPt+z1ufj8RQdx5zoJzi60hDN09I5+S1BmAbtOfk7vgk5E5UFIYpxgFixqv
- oY3smgOjFloDsFbIPs5BOEloUPcEmcc6aPFmiOPGlYdROxX
-X-Received: by 2002:a05:651c:4ca:b0:3a9:a1ed:633d with SMTP id
- 38308e7fff4ca-3a9c55b0285mr42724331fa.17.1792062785444; 
- Thu, 15 Oct 2026 04:13:05 -0700 (PDT)
-X-Received: by 2002:a05:651c:4ca:b0:3a9:a1ed:633d with SMTP id
- 38308e7fff4ca-3a9c55b0285mr42724281fa.17.1792062784918; Thu, 15 Oct 2026
- 04:13:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2DD3840430;
+	Thu, 15 Oct 2026 13:14:02 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 8CAB140041
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 13:14:00 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 8FD5E2080A;
+ Thu, 15 Oct 2026 13:13:59 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-References: <20261015110944.11508-1-bruce.richardson@intel.com>
-In-Reply-To: <20261015110944.11508-1-bruce.richardson@intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 15 Oct 2026 13:12:52 +0200
-X-Gm-Features: AclHuK_Y2tXACS6ye4LrMGHGfExqadDNqhWXomsnbS1pbdGwjCPya0KSGWi3VLY
-Message-ID: <CAJFAV8wugtAUroug=7EkehuPdtYKB6=o7heqZRswOeTX8EZ71w@mail.gmail.com>
-Subject: Re: [PATCH] meson: fix always-true meson version check
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: JFNsYYygU3n5fWZ64BMEZcXw4zH1A3mwQw4IDnGu-p0_1792062785
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v4 0/1] mbuf: add runtime metadata dynamic-field storage
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Thu, 15 Oct 2026 13:13:55 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65AB4@smartserver.smartshare.dk>
+In-Reply-To: <20261009121603.1f97aca8@phoenix.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v4 0/1] mbuf: add runtime metadata dynamic-field storage
+Thread-Index: Ad1YIrkqed0cbPBeSfm+jN9gE9YzSgEbWGFw
+References: <179061941387.2.17741463412422386825.v3-0000-cover-letter.patch@cisco.com><179130207755.4.10786861462241375385.v4-0000-cover-letter.patch@cisco.com><20261006095123.3166b4dd@phoenix.local><PH0PR11MB7616A68AC3EA1349948CAC75A9932@PH0PR11MB7616.namprd11.prod.outlook.com><20261009091405.46b9f3bf@phoenix.local><PH0PR11MB76165F045BA8ECE8877446B9A9922@PH0PR11MB7616.namprd11.prod.outlook.com>
+ <20261009121603.1f97aca8@phoenix.local>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Randy Tice (rtice)" <rtice@cisco.com>
+Cc: <dev@dpdk.org>, "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
+ "Harman Kalra" <hkalra@marvell.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,19 +49,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 15 Oct 2026 at 13:08, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> Since the minimum version of meson needed to build DPDK has been
-> increased to 0.61, the version check for >= 0.60.2 will always be true,
-> so just remove it.
->
-> Fixes: c1d15cc8d571 ("build: bump meson version to remove warnings")
->
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-
-Acked-by: David Marchand <david.marchand@redhat.com>
-
--- 
-David Marchand
-
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBGcmlkYXksIDkgT2N0b2JlciAyMDI2IDIxLjE2DQo+IA0KPiBPbiBGcmks
+IDkgT2N0IDIwMjYgMTg6MTI6MjAgKzAwMDANCj4gIlJhbmR5IFRpY2UgKHJ0aWNlKSIgPHJ0aWNl
+QGNpc2NvLmNvbT4gd3JvdGU6DQo+IA0KPiA+IFN0ZXBoZW4sDQo+ID4gSeKAmW0gdGhpbmtpbmcs
+IHBlcmhhcHMgdGhlIGJlc3QgcGF0aCBmb3J3YXJkIGZvciBub3csIGlzIHRvIGNvbnRpbnVlDQo+
+IHVzaW5nIGEgcHJpdmF0ZSBtYnVmIGxheW91dCBhbmQgY2FycnkgdGhlIGNvbGxhdGVyYWwgaW50
+ZXJuYWxseSDigJQgYXQNCj4gbGVhc3QgZm9yIG5vdy4gVGhlIGNoYW5nZXMgYXJlIGdldHRpbmcg
+d2VsbCBiZXlvbmQgdGhlIGluaXRpYWwgZGVzaXJlZA0KPiBpbXBhY3RzIGFuZCBoYXMgcG90ZW50
+aWFsIG1ha2UgdGhpbmdzIGJlY29tZSB1bnN0YWJsZS4NCj4gPg0KPiA+IEkgd291bGQgbG92ZSB0
+byBzZWUgc29tZSBzb3J0IG9mIHNvbHV0aW9uIGFsb25nIHRoZXNlIGxpbmVzIGluIHRoZQ0KPiBm
+dXR1cmUgc28gd2UgY2FuIGRpc2NvbnRpbnVlIHRoZSB1c2Ugb2YgYSBwcml2YXRlIHBhdGNoLiBU
+byBiZSBjbGVhciwNCj4gdGhlIHNvbHV0aW9uIGlzIG5vdCBidWlsdCBhcm91bmQgY254aywgY254
+ayBpcyBqdXN0IGltcGFjdGVkIOKAlCB3ZSBoYXZlDQo+IHNldmVyYWwgb3RoZXIgcGxhdGZvcm0g
+YnVpbGRzIHRoYXQgZG8gbm90IHVzZSBjbnhrIGJ1dCB3ZSBzdGlsbCBjYXJyeQ0KPiB0aGUgbWV0
+YWRhdGEgaW4gdGhlIG1idWYgaXRzZWxmIGZvciBwZXJmb3JtYW5jZSByZWFzb25zLg0KPiA+DQo+
+ID4gV1JUIHRoZSBza2lwIGZ1bmN0aW9ucywgd2UgZml0IHVuZGVyIHRoZSAzODQgbWF4IGZvciB3
+cWUgYnV0IHRoZXJl4oCZcw0KPiBubyByb29tIGZvciBhZGRpdGlvbmFsIGdyb3d0aCBiZXlvbmQg
+dGhhdCB3aXRoIGhvdyBpdOKAmXMgbGFpZCBvdXQuIFRoZQ0KPiBvdGhlciAyIGFyZSBub3QgYXMg
+c2Vuc2l0aXZlIHRvIHRoZSBzaXplIGJ1dCBzdGlsbCBoYXZlIHZhbGlkIGxpbWl0cw0KPiB3aGlj
+aCBhcmUgd2VsbCBiZXlvbmQgb3VyIHVzZSBjYXNlLiBUb2RheSB3ZSBjYXJyeSAyNTYgYnl0ZXMg
+d2hpY2ggY2Fwcw0KPiB1cyBvbiB3cWUuDQo+ID4NCj4gPiBUaGF0IHNhaWQsIHdlIHBsYW4gdG8g
+ZGlzY3VzcyBpbnRlcm5hbGx5IG5leHQgd2VlayBvbiBob3cgdG8gbW92ZQ0KPiBmb3J3YXJkIGFz
+IHdlIHByZXAgZm9yIG91ciB2MjUuMTEgdXBncmFkZSB3b3JrLiBJIHdhbnQgdG8gdGhhbmsgeW91
+IGFuZA0KPiBNb3J0ZW4sIGhvd2V2ZXIsIGZvciB5b3VyIHRpbWUgYW5kIHN1cHBvcnQgb24gdGhp
+cyB3b3JrLg0KPiA+IFJlZ2FyZHMsDQo+ID4gLXJ0DQo+IA0KPiBJIGRvIHRoaW5rIENOWEsgbmVl
+ZHMgZml4aW5nLg0KDQpJIHdvdWxkIGxpa2UgdG8gc2VlIHRoaXMgZmVhdHVyZSBnbyBpbnRvIHRo
+ZSBtYnVmIGxpYnJhcnkuDQpBIGxvdCBvZiBlZmZvcnQgaGFzIGJlZW4gcHV0IGludG8gbWFraW5n
+IGl0IGdlbmVyYWxseSB1c2VmdWwuDQpVbmZvcnR1bmF0ZWx5LCBpdCBpcyBwcm9iYWJseSB0b28g
+bGF0ZSBmb3IgMjYuMTEsIGJ1dCBtYXliZSAyNy4xMS4NCg0KSU1PLCBpZiBvbmUgTklDIGRyaXZl
+ciBoYXMgd2VpcmQgYmVoYXZpb3Igb3IgYXNzdW1wdGlvbnMsIGl0IHNob3VsZCBub3QgYmUgYSBi
+YXJyaWVyIHRvIGV4dGVuZGluZyB0aGUgbWJ1ZiBsaWJyYXJ5IHdpdGggdGhpcyBuZXcgZmVhdHVy
+ZS4NCkVzcGVjaWFsbHkgaWYgdGhlIGRyaXZlciBjYW4gYmUgZml4ZWQuDQpNeSBvcGluaW9uIHdv
+dWxkIGJlIGRpZmZlcmVudCBpZiBtYW55IGRyaXZlcnMgd2VyZSBpbmNvbXBhdGlibGUuDQoNCkZ1
+cnRoZXJtb3JlLCBmaXhpbmcgYSBkcml2ZXIgd2l0aCB3ZWlyZCBiZWhhdmlvciAob3Igd2VpcmQg
+YXNzdW1wdGlvbnMpIHNob3VsZCBub3QgYmUgdGhlIGpvYiBvZiBzb21lb25lIGNvbnRyaWJ1dGlu
+ZyB0byBhIGNvcmUgbGlicmFyeSENCkkgdGhpbmsgaXQgaXMgZ3JlYXQgdGhhdCBSYW5keSBpZGVu
+dGlmaWVkIHRoZSBDTlhLIGRyaXZlciBpc3N1ZS4NCkFuZCBJIGNvbnNpZGVyIGl0IGEgcGVyZmVj
+dGx5IHJlYXNvbmFibGUgd29ya2Fyb3VuZCB0byBzYXkgdGhhdCB0aGUgZHJpdmVyIGlzIG5vdCBj
+b21wYXRpYmxlIHdpdGggdGhpcyBmZWF0dXJlLCBzbyBlaXRoZXIgZG9uJ3QgdXNlIHRoZSBmZWF0
+dXJlLCBvciBkb24ndCB1c2UgdGhlIGRyaXZlci4NCg0KSWYgdGhlIGRyaXZlciBoYXNuJ3QgYmVl
+biBmaXhlZCBieSB0aGUgdGltZSB0aGlzIGZlYXR1cmUgZ2V0cyBpbnRvIGFuIExUUyByZWxlYXNl
+LCB0aGUgZHJpdmVyIGNhbiBiZSBmaXhlZCBpbiBhbnkgbGF0ZXIgKG5vbi1MVFMpIHJlbGVhc2Us
+IGFuZCB0aGUgaW5jb21wYXRpYmlsaXR5IHdvcmthcm91bmQgY2FuIGJlIHJlbW92ZWQgYXQgdGhh
+dCBwb2ludC4NCg0KLU1vcnRlbg0KDQo=
