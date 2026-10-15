@@ -2,93 +2,97 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FCFCCA466
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 20:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9318CCA465
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 21:07:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7262F400EF;
-	Thu, 15 Oct 2026 22:45:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D2617400EF;
+	Thu, 15 Oct 2026 23:07:24 +0200 (CEST)
 Received: from fout-b6-smtp.messagingengine.com
  (fout-b6-smtp.messagingengine.com [202.12.124.149])
- by mails.dpdk.org (Postfix) with ESMTP id 502A540041
- for <dev@dpdk.org>; Thu, 15 Oct 2026 22:45:46 +0200 (CEST)
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
- by mailfout.stl.internal (Postfix) with ESMTP id AA26C1D000DD
- for <dev@dpdk.org>; Thu, 15 Oct 2026 16:45:45 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-11.internal (MEProxy); Thu, 15 Oct 2026 16:45:45 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 9EEA840041
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 23:07:23 +0200 (CEST)
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+ by mailfout.stl.internal (Postfix) with ESMTP id F0BD91D000D7
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 17:07:22 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-12.internal (MEProxy); Thu, 15 Oct 2026 17:07:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1792097145;
- x=1792183545; bh=PRhis628oH+kMNDLTSyzHRzu/GDkdbG1mI9IMiBHYsc=; b=
- eD2pft5BxpidH09R0inZIhVy+h7qbn6klBupX7LEe8YcoPogcNqVhPbnjrWMVNIV
- vcLMirMs6PBQyaRu1NCEV/Ka8ieBEisLYJNoo9wlwz4SIVnHWgTvIv/lFt+9eCZ+
- fvUZgYWeOIZ/8DUCpaBT4l60HtzZcuDvrgW9NWj3cu2tvlYys8oPH2WXsbNZVkga
- dQkjGeMBU0sBJHojvXHxPcTRc7ssjkIrMl6V7RKMV4xlvg/IQkNfSf1f6Kt36IHd
- JANPhaVEvgNMZdymu2QS+eZn9atbyjL1uPOlHPle6Cjifw8XkgZH5cpGg7HHhp+K
- aaMNcz4v2DLkdTD/BgY0Vg==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1792098442;
+ x=1792184842; bh=jr5ePEt629SnoePK/JlKQMHXEYuOYJcWNQMJp/r/zm0=; b=
+ kWGSy+GOe6JjWHqEEVxZh65L6F6peZJVHtu6iMtpIzJ0/1GqWuNJyT8w0CyuuNBN
+ wdvkoKkN8Xn7PB4f+JSjhyxCBRd7TSYu8+rRYl1v26o24jkWgKeRdbHa88yFQT7z
+ SbdA4jjmkh4W7nDEiimVpRGMsaA5CdhNWpkHW2LSpCvbEo1vP2VN10TwxhxgNbXL
+ 0WlB0QIy09Pca1nB9PX9E49r0VZoEV0rMuGkTs2trjHsw6ECHnUUGAPKInEBbpJC
+ ceAsyCV8wyPgySQYBL4XoN5CJ9HtFzVKVecq5G7o/0/fuM40sK7zlvAxzpTSCqln
+ GvIV6T26l0Ti1K4R5T178Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792097145; x=
- 1792183545; bh=PRhis628oH+kMNDLTSyzHRzu/GDkdbG1mI9IMiBHYsc=; b=u
- BfEPJdesiDytWSyFgudBup/ejgqo1XwVirtSvoUT4D8ZR25Cgp2a3Qkwx2SdNbSk
- Udk321H2RJcB9ZSFkAtBtpRhFaz5nFQOf0GTnkdYq9THcfo1KaCbJpBjE57AUUbG
- +W1VD4TdiqW+Jn/DVEJpz//pJMMifV9BAIciT1/7F2UxdeGpVY8L3+A0mhP41dvp
- vIq/o0itsTOttMPkuxqKgmA2coVW7xVIGhFGn3chxiu6uFmIXg0f20RVQwtYPRqQ
- wlWeltGsnrU9Ie8lhE4qRNyiFdP5KSSKEJ7L5qt6D2qJNnYCUAQRZYvgosOeleaS
- xAYOmqLur/TJFtpmBqs1g==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792098442; x=
+ 1792184842; bh=jr5ePEt629SnoePK/JlKQMHXEYuOYJcWNQMJp/r/zm0=; b=I
+ OHbtaU45ujIokv+AFOx2Rq+IB65iCVJa5UhxVgfAxf/gZCPGhwz0WM1z7B0pneVA
+ U7lm5elAjS1P8UlBi0JkwQDe48eSo4DgKxeBpypNA3XRUabAKshtdMluskUBYaK1
+ XZ1s4lGvuwKFReDza6uk+T8n6JKsGZEl9z7AYa2EYIDjSumPzzqFfaQ2qlpkbxFA
+ FtBfvQgR3I4bI2LGdTVXt6YT4dJ2oV59JrCXSiSTNLopbpGLWe3uQu+uAAxbxJJE
+ JNOkKEilBu01MYWBhw72YbimrpfSx474D+LUXUnnjc+OD2jkZ8gaJ95bxGIDbj+H
+ qt3YLbxfYwnIS77wy+JnQ==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
  repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1792097145; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1792098442; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:nQcrQTRvCnZfR96hzZkprGvyukkedxcQ9KJJ+nfLuYIAY6u
- N7sB46oFokdPatX0tiaSfMKvJuFglTSEEaOG1E6NZrrokyeYu8KYNrhJ+NseGc/5
- UQs3yPfnUvawskgQ3J0TEknk1fMTleenYKMP9t1tRJ+92nwk0TY3gDqQJFWlOKS1
- 9Qh0MiM/yarcq50h4LkIlsLVTsgquUOSpN0bhqCL3ynVvh8a7HYfEDLoTSiO8cX9
- QlegnpInpm8F2cW8CHgVxC9I09eYU3l2RFOQqwe90ZD85RO8OL3teVV6TU6SvMLl
- eif6AbkljtNdqqLgHszTDIBDJ1c6lCexCO+2XBA==;
+ s=fm2:rsa-sha256:WS9WSAhduPMXFBB+Ckmk7HpYQeSRdH4iYGJ9kICJkVpiesk
+ WyU2S6u6VXzsmEB5Orqng1/6xDVtDxcMxcKPUyZIJjBadavO37ztOVM71xZFWjyG
+ URX2OxTlxgEl357s7mj4dxbhkLS0m+sKJzWN2Y12G2/xxxu/gy0vBTmEO4SLXn82
+ MsqMX2lMqtn8Fn2TNWONgr37KxAkWzJ1tIU0f+tvam2ZgF5hVyBaVK/tHoz/oSiZ
+ Anf/4QGjFRyxlwXDhtGcyyO1Tg3RvMX6IUS2zCm/hsNUoykKhNou5MD0ngBdmTZq
+ awRESOF0xhTBpTh1SJa2tnFL1dPvbyWo+f/Jm/w==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
  repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:ZwUkHRAOZVDOR0d9IYcoMhnEpRFz3ZvO5KZbZZVjkiA=:j+yDAWOXmkpaQZTA061FeFKjCiWsOnndVX9FHh4gy+8=;
-X-ME-Sender: <xms:eTvRauRn-kgRqgLYbkP1RHpFViEolhpg8UzjLT1CVVk2ZSgY01gTYQ>
- <xme:eTvRaoH_vCfvqcFkyUfGBDpzODBln9ZWGhkRg2l3CHnAFLwvn78L86LHAvJhBOqTW
- MyO-LJrBvB5HSdOcFCd_sG4q7HcuDZz37BHRU-pAWVsA6K_yfkXOw>
-X-ME-Received: <xmr:eTvRaq9ih_1UPMLapu020en2ZqldwmTVmAza3dPbhx3Dl3nu4aRasUUQK6FLtft5r9HXuiY1jQuMKMfwhvJbOYA>
-X-ME-Proxy-Cause: dmFkZTFYEmwipeqJWZjdtA39crX71cUgbXLgg+Bo622BagCpOG/dbbLNIyhz+XCApHCKxc
- EVpwiSJX6PU1qk/eGTOEECsZ0OxDSzfFHp4xykd4whi7xjTo5MYkg/uBHalWWu0Pl93szr
- QvXv8jl5PMAHTnu5+6myCI487x9hz4cD6LI0Hn1KKKnyyFC2zxnV6EOz8IKS4gvSrKavOD
- qGKKpDgkwms3WLMRHc+Gq+zlrDK8bne5EZtRS437leO97Di6cfj4SaUpulyaKu5B2UDU31
- oFdsvI9C4YZ7Wp6ETHC/ubukTy4yRBJU0WEz4/dhc8rfL/dBatj0gJBcGFaOL2Cbcg8hAt
- WZwuznzhSQwnq2dHbWZN0WNVPttj0zRpzKv7ioDDsYD4SVhGwuSzk9+ZLz6n87AEyM+MuK
- w47JDAWjRNZ4gZ7+yiLQ9tPHEwpixNWdBHlffK/rLaJjTa2vNQtl4mANYIwZpslmdxCiV6
- C5webC2lratJ/D6LCfXvpywillYncmyZYly6haCFFXrsA5UcfXNM5Jsj+TpNpJSRknfjZA
- wtmWgRRq9hWRD8K8GvOemN2//IQgznG9uc2lInB1ZB9DcoeykWcIFRVqwUlAufhPI64mQB
- R/WUlFfruB1nJyA2YkwYRNnYLZ9QvuecFUJv3DlXl6wjUdDWcSjwjsjofJTw
-X-ME-Proxy: <xmx:eTvRaiI2dALIapkB0Ocn_nbpdj4LlLQ9oP9Y66ALzYHNEYBSPy32Pw>
- <xmx:eTvRatag8wsHN9eIqwQFLBH5CeC2MlWFqb8MUVJ7cm0bFSI1t7YeDQ>
- <xmx:eTvRasJCTrsvVjGVaKsaI1Dwyssf5_6ZC2SRer-seVsSjw9pEfeHzw>
- <xmx:eTvRajA0hkHN034oGN82O46DIRhuzz5qOIqsTq3-f2-ibSjxk8CGLQ>
- <xmx:eTvRapcQSMgkNafe6Xqa0CN8ASpuqYXBDiwD8UcJP9BdrPzGNMFpqdJa>
+ h=sha256:CS67WhLJQwojQzcvlyzXGsKs8eWs7dM0rkjxcPMVl48=:rMtVOhgNtkydH/ZXsAey7qst0hCMpMFIJsyOR5VkWcQ=;
+X-ME-Sender: <xms:iUDRavDfvU5X-gXsZQb9i3QZvz1eFYhs7_cjXHU13Dq5L1tGYmZJJg>
+ <xme:iUDRag9H4P1kEE6VjMfdt5P02DgkAChsEDpzodamViIg_k1VYbeIFB4zh5xUggGS2
+ 2kdZGEEp8xYrDtZYSJHuYc2fhbfcArby9wSPHmrqM7LVA10K42L3xn7>
+X-ME-Received: <xmr:iUDRauHOFKSXxFBL317OJetDvZW6ZEOkHUNpqE-1ldq8Vr5OqZh0aAc_c_dqAYck68nKZzeMKe6CdAdPnjPSGWo>
+X-ME-Proxy-Cause: dmFkZTGRHebdWHwvnFpZNyXocUvbAvT2UmVZGNXHJn6cZRtf6Sxd0cQ1shAvwWIynqoM+L
+ 1bzLzKDKFeF7TdNjNJ1gnhNLcGNQgNVj0hOpeYa7eXw+4kq3o7I7Suj7IRgU7qMxO/BkEE
+ qFPDS7LiLmWSMuh4e1NikiUkm8UdkQ0QcOnkJiGWrWPWScPaKgd07ueUjm/k7OzMn3mC+f
+ 9noJnWkxBd4AcxAenAZk07O0zW0S2H3GtQIr2dK/luRTeWXrXHHS1IG941hETItICDzYA0
+ nnyQAwJw30pf5vxut5eq0ZgAwDaacGuF9GY8djziPDr77b6Wf5/Nv3ZTVfL/Y6FWwJFMjN
+ 6RGEvPrGSEzFsj7gKP0osn2C+P/4oCJczmJ7TwE07Q7lTtRd0IC77tn5WSMfrGurxv7gL+
+ dOLtgkkLPP+fUycx1UMwanLpIFuTJyxNZ1RR1ubWRJTAlqFshcmAQFIZv+UCHVx/HsLVLm
+ Hv5q0eR+PCZ46Ecoa6wvZoPNAtcGsmM/n/0N3G7wV2Ih6G3WuUJRBv0QgX0JRBsOw1eP9v
+ yo1JRbH13CiItidmZckr3sW183Ln2j+4RerFvObEeFITzJQoS1/VSg70HvsWHyqmmjkKoP
+ Oxov4U8uyA2ePuUgpFpsShSq/qCKC5mlfkbIXLh4MwbPebNYa4MYqjGb29lg
+X-ME-Proxy: <xmx:iUDRamMiU39S8DcikMbBUbPdDJ2hWezhcVayfnMx54zua-gAq5Q20A>
+ <xmx:iUDRagcpoRfUcnknk6ivMsX_1vgYCvydBLN9BIlkZrg6HtEZPCH1xA>
+ <xmx:iUDRajvsj0RmhPbGRq7hXnR-LnBTtQeD0Df_g_UF01pruFrdaqemHw>
+ <xmx:iUDRahlU_qT-sXjBn2-CIz7H90NvwvpaNzqmCtegCQYS1j0HV3wuVQ>
+ <xmx:ikDRajyu2ZfevXjXNBtLQUNRUlN6-7SA87Nafa87x4ZGfv_E4g9Q39pu>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 Oct 2026 16:45:44 -0400 (EDT)
+ 15 Oct 2026 17:07:20 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Marat Khalili <qm2k21@gmail.com>
-Subject: Re: [PATCH v8 00/10] bpf: JIT and interpreter fixes
-Date: Thu, 15 Oct 2026 22:45:41 +0200
-Message-ID: <B2MZKifMS0eqt3v5CkJwKw@monjalon.net>
-In-Reply-To: <20260827214236.1415047-1-stephen@networkplumber.org>
-References: <0260608203322.1116296-1-stephen@networkplumber.org>
- <20260827214236.1415047-1-stephen@networkplumber.org>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ "dev@dpdk.org" <dev@dpdk.org>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH 1/1] test/bpf: remove redundant library guard
+Date: Thu, 15 Oct 2026 23:07:18 +0200
+Message-ID: <V-M0r-wdQAOoWIZy_1ucBg@monjalon.net>
+In-Reply-To: <a4b3ff913c894845996b91a03c1cb88b@huawei.com>
+References: <20260805090350.37661-1-marat.khalili@huawei.com>
+ <40f46de2e8374938bb36eb428f45153f@huawei.com>
+ <a4b3ff913c894845996b91a03c1cb88b@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -105,22 +109,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Christophe Fontaine (1):
->   bpf/arm64: fix offset type to allow a negative jump
-> 
-> Stephen Hemminger (9):
->   bpf/x86: fix JIT encoding of fixed-width immediates
->   test/bpf: add JSET test with small immediate
->   bpf: mask shift count in interpreter per RFC 9669
->   bpf/arm64: mask shift count per RFC 9669
->   test/bpf: add test for large shift
->   Subject: [PATCH 07/10] bpf/arm64: add BPF_ABS/BPF_IND packet load
->     support
->   test/bpf: check that JIT was generated
->   test/bpf: check that bpf_convert can be JIT'd
->   bpf: fix uninitialized warning
+> > The app/test/meson.build already adds 'bpf' as a dependency to test_bpf.c.
+> > If the bpf library is disabled, the test source file is excluded from
+> > the build entirely.
+> > 
+> > Therefore, the RTE_LIB_BPF guard is dead code and can be removed.
+> > 
+> > Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
 Applied, thanks.
-
 
 
