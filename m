@@ -2,154 +2,148 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C06BCC6B33
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 14:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C9ACC6B34
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 14:44:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C7BCF4064C;
-	Thu, 15 Oct 2026 16:44:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DA06C40DD3;
+	Thu, 15 Oct 2026 16:44:42 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id AE203402E7
- for <dev@dpdk.org>; Thu, 15 Oct 2026 16:44:39 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8913C402E7
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 16:44:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792075480; x=1823611480;
- h=message-id:date:subject:to:references:from:in-reply-to:
- content-transfer-encoding:mime-version;
- bh=rfeRARVx8PW0qN+Xt6FKwrd3QiRtc+4HlFI2M33NDVo=;
- b=IXPUPc34jru6GCnGX0VjMD8pdwbnHKFlbZ7o7fNNp+DxPIt14weNk4/M
- KGTvbhDiyal4OTCpd6Imi95mMqBXRMPUo1b82/KerGZyRSHgTKfzY1ZaK
- XaEkPvUMM2zt9JWKkawYwUf3U5DLQNS2JHC8F+K5h3b4puLSg2GvnCNDC
- x9XvgaCbK6cr+6iHZfTAOA49chW8lGUuyWiuIfvgVjZeertdKXwHLzPTC
- oUGxIW3CybpgdHxDgG+5ee0hQAbQ0Dzy6yqWGDO7SAPQyI2KRaZSj/rZu
- HL9inkH6lQArs/BcNgXkiA2bJWb2sjZkusaa2s3PzvUeSAfi0dRmPmBoc A==;
-X-CSE-ConnectionGUID: tb/KZyj9R/yLOoPN+2ZdmQ==
-X-CSE-MsgGUID: 9XSbxmqhRaaOtf/85ooQ1g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="731816"
-X-IronPort-AV: E=Sophos;i="6.27,160,1787036400"; 
-   d="scan'208";a="731816"
+ t=1792075481; x=1823611481;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:mime-version;
+ bh=yXj241bZlWnK8DUWLfQukiEjPJpX8VQdAESFOH0E09s=;
+ b=Zqx8v5u/xPk0f82/Y+w4NgrqgbGJXPX+wNJHCJEa26ELTViuL7SiobJV
+ P5aruymmmQUDFeNmx8IMXpIj15B4q1K9wWor5v9If5bJwsPBFYzYaBcRU
+ dZwffuLjh9CQ9TLjH5BNkA5mZTG481ZoDPuWhOqiykKViIMPegl+esdXq
+ G+SqV2wTd3su4R2gWPDsLknkcZD5KexZ0hH1pFUYNg4OYHLqRwcg9BpUL
+ C48vZePruSE+G85IOSWLmMqubUed5Sljab5KE48OHkh9ngIl+hH7Bburn
+ WRon85GCHvoH8qu5x+q0dcgiC3Icvfk1iN1MokJOHwOo7C6+XkfALKiEv Q==;
+X-CSE-ConnectionGUID: DAvyUUNSTImNGIXXs8lYbw==
+X-CSE-MsgGUID: 3EoaBIJNSJ6GE2dR4fwNfw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="731817"
+X-IronPort-AV: E=Sophos;i="6.27,160,1787036400"; d="scan'208,217";a="731817"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  15 Oct 2026 07:44:39 -0700
-X-CSE-ConnectionGUID: viHvahgFRSS/tLDqhmJ4kQ==
-X-CSE-MsgGUID: GgeyprVvRo6emAI8g70CrA==
+X-CSE-ConnectionGUID: WAGn0buOSf6cVzWYTe9vGA==
+X-CSE-MsgGUID: 4J3SrYvzTnCrXxMIZYbGqg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,160,1787036400"; 
-   d="scan'208";a="2066995"
+X-IronPort-AV: E=Sophos;i="6.27,160,1787036400"; d="scan'208,217";a="2066996"
 Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  15 Oct 2026 07:44:39 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
  ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.2562.49; Thu, 15 Oct 2026 07:44:38 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.2562.49 via Frontend Transport; Thu, 15 Oct 2026 07:44:38 -0700
-Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.6) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.21) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Thu, 15 Oct 2026 07:44:37 -0700
+ 15.2.2562.49; Thu, 15 Oct 2026 07:44:38 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K5Kd0gM7nvMFeUgybERo393zM50t6Y/fFqEkPWnhgboIUJdXLdXnEWZVrFb0eEXVN2Pl4KU/QKvarC6OmExvWjMEZS5VQrOvv+9yHBjDuxetsN7FCcVQ7i1j8IN2uodLfTm0TVNNeTATPh0RVOne8IqdWgs5+ILItDuyh+1IjJO097c5vroRDdArjZ4uhiDWlioGIjZA6SaAqdlTW0MzSPLPjiwMMyM6/TlaZAyAB3sRK8rLVn+NZJJ1oGmdK476lvOxHdPB0mrGVIhqqOEGnWApKyIwYTmW87uYRbd/HauiX1yW4HiNcX4xn3zSnUrAMGy7auxXujr6qCx+5CMtdw==
+ b=TZdXB7SmhxoAlIQF1mY0e+mSJPAjFdGMcIFtCHCICls7cqjho42N7WhGg6Yb0QCdb/2MPxK1sa7d7+gI2IM/IltgxUpo5Anv0C9sKB67OsvcIrJfFMFxZl6CjucQg3H81sZSu/Vjyp095KTp4PVPSIwVJWvWBCnjMMt6N3HjkFO+Rbv2hhTmipUyEktSXC/Wn6UlzbbJzCO7m+ktcOQIzeJqKl0541XAbR5aiHUUZT+3bYgxJdmiL8fx1utBcevTDln9b4r+5uGNBW8E+50vKrOEpDbW2F09EBZn2Io+yWEvWwJzrG57NWSh95LI1N/KjAOAXFOdm4pc+Pv6nchT/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5aNQByhmfO8YNQ7iIwhwPvMDcm4ax6d2lTwEWqLs/7o=;
- b=GA3/IF6308lr1g+FGXbFHMbYDqgkVw+OGdLuvI5Z0Va4AKxf0zSfCZBPGXJ6saMqoPIFVXkKFpuzuJqzwuC1BJv4h1JsQCDf5PcOFHrFZ7Ra9GTWfjHRSHNa9XPU5VrnOthrycgNZQ8LiVknskNvnuf0aVJfY4bQx2ONm2Y6wDLi8b19yGzYmbPGVOjD7rMHbtqh/9jTp3w1ojMBSckmW7ICodLIDiHQGSu6KhnBU3Vu31bxzuj0WwSRnqbV/QE0sXq1YM6ibQDbF3jos7d3ZL5i+EkpdTh0vCQmJjnsP9QQIgEnTLwutUgCMQgX/219q7Xxgtpyjah79Ac4ygoPLQ==
+ bh=LOlcdL9iRhnxAd7v52dow4X1T7GP7hXVR+4gFZ49X7Y=;
+ b=JZlJMvvN+IjqHFzjAlAV6sOaqham/axyJI0iFtLDga3p9+9tTw/SDsTqRs0fDes46AY0K31v+wWfFNukqdd2leRGMCNig4uB+fG9xZO4wKq+xGYBYlDbe0CNBrAiqkwpY7ox5ORNj/hn6IisGT88+OAsOuzeHjrFm+aytOgUDYyYl+5nMAfqp0sNW+hKJzKiAeed8M1HEx22mFPgvzgfWacjfooYTBAOeIP/PHubL7ZW1xzI5yKF0At9idgsQXP2TkTblG6Fw2cru2wfzVjksTJmlPIba2mPK3pm9O/LsxMw52ulkZK5ok7LK6ne84nMTlY9MWOS8g8z6tHi9BvrRQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL0PR11MB2993.namprd11.prod.outlook.com (2603:10b6:208:75::28)
- by DSVPR11MB9718.namprd11.prod.outlook.com (2603:10b6:8:34d::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.21; Thu, 15 Oct
+Received: from LV2PR11MB6045.namprd11.prod.outlook.com (2603:10b6:408:17b::20)
+ by SJ0PR11MB4958.namprd11.prod.outlook.com (2603:10b6:a03:2ae::24)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.12; Thu, 15 Oct
  2026 14:44:36 +0000
-Received: from BL0PR11MB2993.namprd11.prod.outlook.com
- ([fe80::5877:2021:3cf1:1046]) by BL0PR11MB2993.namprd11.prod.outlook.com
- ([fe80::5877:2021:3cf1:1046%6]) with mapi id 15.21.0522.013; Thu, 15 Oct 2026
- 14:44:36 +0000
-Message-ID: <4ee35150-a166-4a6a-9be0-71f4d2fcbac0@intel.com>
-Date: Thu, 15 Oct 2026 15:44:33 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] net/ixgbe: avoid private driver include in testpmd
-To: Anatoly Burakov <anatoly.burakov@intel.com>, <dev@dpdk.org>
-References: <20261014203435.583064-1-thomas@monjalon.net>
- <35d9aed797cb433296b1c0d53fbda4b45c38e833.1792074055.git.anatoly.burakov@intel.com>
-Content-Language: en-US
-From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
-In-Reply-To: <35d9aed797cb433296b1c0d53fbda4b45c38e833.1792074055.git.anatoly.burakov@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU6P191CA0031.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:53f::10) To BL0PR11MB2993.namprd11.prod.outlook.com
- (2603:10b6:208:75::28)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL0PR11MB2993:EE_|DSVPR11MB9718:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62069242-b466-4458-7271-08df2acad556
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|376014|1800799024|366016|5023799004|56012099006|11063799006|4143699003|261009223027099003|18002099003|18092099006|10067099003|22082099003|6133799003|3023799007;
-X-Microsoft-Antispam-Message-Info: PZrGUuLw0X/RCcnkbxhuDiXLYA5jBj+pBR9dq3iIMplukXVGIzH+aOwzEuOhobIT0dAlgb44VYBkxnXgvt5pik2wfQyWQZpl5EH4HxL68CHtsR4bQqaSimGytdvD9ruUtktZI4D9PzrgPeZ2cwUpSLtA+bHdQt75jTNanpGzqyidCdwgEykLbWiLJoQdzZ0Jf+oXdVnhG2gGdCjdvNIVtUzhN3YMVvGyGJIJWcTRuF/0hq7bilhuh/jtMn/xQwezhbwIVl8Mwm1JcINHueAs2nSRe4laRY67CgOPguln2Bc0OL1zRvElrgSnGepU/qT67kQrwFu+p1SbdZFbIqZcmhzaplHy8TPnpPj9BbD+stz0UNOENoBqsBz1g8JT9rVqpUrETg8kY9b+0t468C2Ef2bpyy/9NB69Mfs36znEW9Dq7N5xE9tXZNoqNappN8C0sGRsQcVYULWffOmXCDoKjBVjR88mT23A0EcHeNQsgOVL0V0QzuKscYdArsI1BDyVS7IH1/xHZoILDQgW1GSCdOuJpOxWMl/OOlKoY756lf9R888xXQ+CG7ihBt8yzfMRxETvQq4S/HJqaIh1A7JV+OQZpt1yOkqm60BS01arlaYeyCQofaKPbBtLF8TswuPSUrwBnJFxqumMo4+N5vyTOB40OSS3Rkhp+Ni2deQYy5U=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BL0PR11MB2993.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(5023799004)(56012099006)(11063799006)(4143699003)(261009223027099003)(18002099003)(18092099006)(10067099003)(22082099003)(6133799003)(3023799007);
+Received: from LV2PR11MB6045.namprd11.prod.outlook.com
+ ([fe80::1f72:3d49:b6ba:91ae]) by LV2PR11MB6045.namprd11.prod.outlook.com
+ ([fe80::1f72:3d49:b6ba:91ae%6]) with mapi id 15.21.0496.021; Thu, 15 Oct 2026
+ 14:44:35 +0000
+From: "Ji, Kai" <kai.ji@intel.com>
+To: "Finn, Emma" <emma.finn@intel.com>, "De Lara Guarch, Pablo"
+ <pablo.de.lara.guarch@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [PATCH v3 1/2] crypto/ipsec_mb: Add SHA3 support.
+Thread-Topic: [PATCH v3 1/2] crypto/ipsec_mb: Add SHA3 support.
+Thread-Index: AQHdWvXqsX7Z6pjOHUaUmQqdd4/OFrb+sVez
+Date: Thu, 15 Oct 2026 14:44:35 +0000
+Message-ID: <LV2PR11MB6045342DAD2429F5119F5E7F819C2@LV2PR11MB6045.namprd11.prod.outlook.com>
+References: <20261012083506.754857-2-emma.finn@intel.com>
+ <20261013093312.817235-1-emma.finn@intel.com>
+ <20261013093312.817235-2-emma.finn@intel.com>
+In-Reply-To: <20261013093312.817235-2-emma.finn@intel.com>
+Accept-Language: en-GB, en-US, en-IE
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV2PR11MB6045:EE_|SJ0PR11MB4958:EE_
+x-ms-office365-filtering-correlation-id: e5fd010a-e6a2-4e76-3ca6-08df2acad52a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|1800799024|42112799006|366016|10070799003|376014|23010399003|6133799003|18002099003|8096899003|3023799007|10067099003|22082099003|4143699003|11063799006|261009223027099003|56012099006|38070700021;
+x-microsoft-antispam-message-info: ZXjMVZ9xwsAOWTG2caSdQC9GgAzOFsglIliNIaYv2lVlNMDwKq2tZfgBAeeJjGrHmZXVW1qmVEl5COU/U8kPZzgkwK9T1Fvce8qj/4w6Y4EEYlIS996uwlZU0Hm1IuOTXxjb0gywFuTLenP6a8iMkhDXdSD3iSMZc3JHwUCPFzlBkh48xFzjSw+XVCHHzLdR6mMCmLp1AC03H2MVzwqtAHWsjalFyGpblCbmfchvYT2pLbIXs4jTfVPcu0kzbW8o9f8FhXAB6IHiVD4yxZPebWvIyhcEjzySyF4Il+aewlkvkQ8AzBxupCHo+nXhuLJJQK5hjufE0D8bnxcs0yWNpS8pOGoj4s1mKJ6WwNKjg/iNQ/I6FJSLwISslDTVGxyy8ce5y9WQ0tABTk/myqoALMDK9/o7ZQaDcat3I4aSpEtkl2cT+MqoKpU1B2FwqlvZauW+ByiItMtgBL/+JjpazQ/C3lnxrJARUWZH3/DNYa+hHU0jwWI4S7KB/X/79UmbbSHf6iSFGd/Ddq3H6h32/rJOPo1xsihdZn6leqozYu4CMCmScy6er8GjURCdE0N7aRwK7/3ckQFxROgRkME2XtTL848LYEUsBUqScbLG6GSDg21lzha+chjHOX7z5Oyae/jX3RMHGeE8jsec/iQ+rtTi0iAud8VdjdOM7dZuZ197HEZl7+x65NgC30TbcDbR5zL6ZYVFLlBviCnfo1PGjFQjVUfkRZU8DtdqvZ3QBa4=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:LV2PR11MB6045.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(42112799006)(366016)(10070799003)(376014)(23010399003)(6133799003)(18002099003)(8096899003)(3023799007)(10067099003)(22082099003)(4143699003)(11063799006)(261009223027099003)(56012099006)(38070700021);
  DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?L2FpekR6WittR1pEQ0dDSm5Fd0NwQmJqSzd4Q1BCb0I5SkNhZE51RjVEK0g2?=
- =?utf-8?B?a2RpcWNzUHRhYlBoZWJWMEdUeis1bTFUYXdaKzVGd3Fram9NTXQwWFBFaTRx?=
- =?utf-8?B?M3l5c0FZaHZUWWc1SnBrSzdvd00yNVRWa2w2Q0h5blRWN1hRL1F5d0ZCZGZU?=
- =?utf-8?B?eGhHV2QyK3FGZHhXWGRnTm4veVE4RUZkMWFKUnQzbmhyRmpMUDVkdW9jaW5Z?=
- =?utf-8?B?TTRFb0JKQVJPL3A4L3V4c1lReGg4SXZZMlRvZE1DQU5iTFp1R2RCRWhzZ1RO?=
- =?utf-8?B?RGRqa0FrMElHK0FUckhkS21iR2xqK0hQZDlsMnpZdFdCRXNUeVU5WWV5bUNl?=
- =?utf-8?B?V3lsWjZIWU1JelZxQkwvMmlhbDQ5NmlhUHdKdUQ4T2YwOFJ6d2hQYWlwUEgz?=
- =?utf-8?B?U1NxQ1M0VjhGVUc2Wnh1SzlCbDNSMVVna2QyN0Fka1g5TmtTL2lBZWhDb2ZP?=
- =?utf-8?B?eGJ4aVRWaVBNSVhFeC91Q0NRMDZVc3BSbXVab1hTYXlwMEEvb3p6YjQrVU5L?=
- =?utf-8?B?UUt3aUI5cUpGeFZMYWtHenhDNkI2ampRUFprU2VPdmM4TDlQTFRNQ1pUaHdk?=
- =?utf-8?B?RWdERERjN1UyWmRFZnFCUGFCTTZnQ3l4TnNsS1cwLzRyNS81WTdZcytsNk41?=
- =?utf-8?B?VlB0bFpmdS9ETzFMTFUvVVRlVWlGTkx5cWs0aDR4REg4cG9yWEtZWVRRYjlQ?=
- =?utf-8?B?M3BZY2I0NTlMM0F0Y3VFem5Lc1QxOFdUelBPdFdrQW1NMDlMR0Z4TUZ5ZDhN?=
- =?utf-8?B?SFBEK0Via2EyazUxdE5EZzRLYWdoZDc3V0s4dzAvbTltaTBMVUNGQW9oekJv?=
- =?utf-8?B?VTc1MFdGWmRhZUlDUWUyOVg5R3BYbUhDZDg1aXpnRGVGRTB3VGxIdG5QLzls?=
- =?utf-8?B?ekxxeU5zT2F4dUszU09OK1hSM2tPZ1BsS3BYQ3QzR1lzOVFYM2VXVGFaeVla?=
- =?utf-8?B?M3NTaStCZnB3WlJVM1pWSExCV2x2Z1F3N0NjWld6RDlVMmhER1BPMHIxa1RF?=
- =?utf-8?B?TWJ0Q2JjS3U0WGsrT2MxT0hZQjREQXVLWDh3OThzMkVrMDFIKy9sNWZrWW9x?=
- =?utf-8?B?NWNJTVVtZkx4RHV0dFBpKzVRMytBVjRzbW9RenNNWkxiSTE3RDU0Rm1vNnJw?=
- =?utf-8?B?OFI1MXp2NkxHNTJneHFxWStPNHlzdE1SRmFPSEIra2lZdlV4R0o2UlcrSyta?=
- =?utf-8?B?ZDZuM3JhT3Q2OFY1UlJibDJuY0c2RmlIT3czQ29jU3kxNjI5c09ZRC80ZHJn?=
- =?utf-8?B?SDlzUUl1VWpBVXJwNUhodFJudHliYi91TUdPQ2Vlb2tRY1RxNFhpSlJrVFpq?=
- =?utf-8?B?UFQ1QmpTa2Z0RlJXMDFVbTkzYVVwc2JZU2gxZlA5TkorQ2JiVXE0cFA4MmFQ?=
- =?utf-8?B?dmxHL1FteGt2b2xKbHZGZUJFQWhIM2c3NnRxM0ZPNUdLNlFXeThXdEV3UkIv?=
- =?utf-8?B?bTFrTGJpdlJhbkg2bTdrc1dFVm9SVGxmYUFNNHNWalViSHFJOFhkeHViamVv?=
- =?utf-8?B?dG9mVUdXODE2R2NmUEpiMGRzMjQ4TTJSbFdJazh4b2dGNytsTkE3KzdTUHND?=
- =?utf-8?B?UzFYN1FuUVlpWlloU1BpSitIWnhrR3ovV0pxd1cyZ1E4c3RWYmlzTmtTWGIz?=
- =?utf-8?B?UkR4V2p2MmxlVUtmSTE1b2VHQzd6VzVDK2xSeW90dFFWR0orcFQ3WEpsSlp0?=
- =?utf-8?B?NkMwMnVrMFdseEhkVURDU3lBSXo4bU9WVmtvRitVT2hDL0oxU0R5VTJIem5m?=
- =?utf-8?B?Ulh5a2hSTmVSOC8remsrcm5JbmFPQmxIbm4vVnlieXlYU3c0aFZBSU5JNXIy?=
- =?utf-8?B?cWtzMkU1TFhvQ29DS3JoUDJEWGhZa1IzRmdRYXZOelNXditwN1BYUzJid0dy?=
- =?utf-8?B?VVFrMlhTV3VYTm41TUZxTXh6OGdBUXM4Z0Q5NHVMUENvblZZdVVVQUI3TDFN?=
- =?utf-8?B?cDJKSDk3MWc5YjFjeFh3aGZSemZzSDVubWJXdmJkOFlPdWRZZ2huWUIxYXFx?=
- =?utf-8?B?a1QxaE5kTS9QcjcrRzRZaU5vNkcrMXBCM1JSMzZvYTc1RzNPVmQ3U091MU4w?=
- =?utf-8?B?UTJldHdwbVNFWnFVNjA3VTZ2WlBOS1J6cEhhOFJWb0dCWTBLNzhybTltRGUv?=
- =?utf-8?B?cUp1TkhTVUVZRjQ2T3lKbCtVNkkrVTNvLzZUanVEWnNPSGs5SzFMUzJxTFEz?=
- =?utf-8?B?QjNSWFcrZkt5ZjZpeDNqbWMwaWVzeHZML1RwT21SZ2VRd0d3MCtVd0RSZTM5?=
- =?utf-8?B?bEJDcWJaU1BsUllRdzZHbkxvNDEwUWtZOWhMc2FVM2xYMllCcm9NZXNnakVJ?=
- =?utf-8?B?QmNSSzgyUXh5UXptdU83OEZCc0F0REljdkFxeCtkRUtBT01zMWltSXArcklM?=
- =?utf-8?Q?9szdYr3ySfW0zr8g=3D?=
-X-Exchange-RoutingPolicyChecked: jYYIg/rCKNIlMkPDt7AxnqxQK7bMkC/n3K8YlHijmxEoq100YFkxbn84Jufylxn8Qu5BuHVw0ijhjMQ9+x6Nobs7kRq47qR2IqlnddNL1HHk1ZxHHg2PSjMNJ/XCJNvL3gKhWcsxbmNW2IHNnw/LYx7OlE+c1PHyoHvW96VJ9DtYxrNHslAP1mCJEIHTUpnLxxbJbAFhxMDSv32owX0lDKVoKneV7YMwRNHZjurjG/1o9G8RXqPrk4x/BRSJoOPJX6ulkFaHtJZfsL5TFEaERHMUN3hUB4Ar71kDULx45aMISwGzBobB8CikpL3zQIq93oSo/LU8E+oG1WMj+6LtZQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62069242-b466-4458-7271-08df2acad556
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR11MB2993.namprd11.prod.outlook.com
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?qYIy87vETfHqmDjVqQt953hJ0hA22eYVGHYqgpCNULKh3Q3+0q3s3hSbHp?=
+ =?iso-8859-1?Q?OaY8zEQeKJLgTGrO4cpx3Z7HozsF31qPkSd47S3LeRIOUwZMzNUTaqy2lR?=
+ =?iso-8859-1?Q?TQAZC5K5AxR/gPO6YtQO8oiklQJCs6mvd62lhP0Wog2Re2z1ot8j/NF3GT?=
+ =?iso-8859-1?Q?aiNZT+/LefpspeoEiwbXTCIxlBEXwW1hacPXGbRNlYvKRHsBSBV31g2Gpw?=
+ =?iso-8859-1?Q?Sgr5ErYGFUi2H66NFdn8+dxlJK/p5+dV1TMngWcnhayo4wnWgl35+B7qYI?=
+ =?iso-8859-1?Q?HO43B227FLgspzaHxfbU5hRGOjE5Au2neX98gBBdFbvVMLI8QGGASFC4P+?=
+ =?iso-8859-1?Q?3NCImNhytsk1Pou63muEwN7HdeG/8CbV9F+Fambk5BNmpMMnkv19re69F3?=
+ =?iso-8859-1?Q?aHWGGlfrKFnfE4Lx/c3vL8y4d9VbVDPwUQ27J/OegBEJVCUJ6rdrLO/MfU?=
+ =?iso-8859-1?Q?5S9AqtXwMYOqFjY9oFygKIewyQXP1hXIqwbfKKq48BGqNmTVZkcZTyZdA1?=
+ =?iso-8859-1?Q?ORM/5LJoHY2OJC1z2NEdjxdMkzQcn9mTyWNmWq12b5U7ky1UvSMesQRcJp?=
+ =?iso-8859-1?Q?V66BQFo5EAXNLST+TutB/JnozSonp+5CYTQ05mOa4rt/4hwILK+qgK5JP3?=
+ =?iso-8859-1?Q?tNUOhQdZFuVUpYk8eGq1UaNZUP4XWB5eV2Mncv0fpRZzT9CH8PIsqYLvgq?=
+ =?iso-8859-1?Q?SCVUgw/2gEPlxdyz7WayPOpu8uBnozZsm7sXtdKqz7lJETkOdhbT1F6OEl?=
+ =?iso-8859-1?Q?xJrdfoRPYP2bNolZ2wxm9aPC5Hovw2TX2B3DwrD3xeR1LSBcBq44DSlY1K?=
+ =?iso-8859-1?Q?Ca0//edGUJ6sRFaEFNI458MeIqQRJIgRmR2VfGAcEXi+dYQ2aBIOdFV48T?=
+ =?iso-8859-1?Q?pXKPHrW4HChHTQlbcSrcptYIl77VpF2VetJ+qsIoWL7IZbzmmpZYCx0JOK?=
+ =?iso-8859-1?Q?lni/tkE+I15f6GiXZekLiDPqLOEJKfBw7LTjwFWtY3pk+9gc2Hg9rXq/MW?=
+ =?iso-8859-1?Q?7hRPtQ5NH/ogfk77EQBAmY9Syr5DO3pHC0Lz/tFRJwTq99gSYRBiiBTnXv?=
+ =?iso-8859-1?Q?N2Vou0xp/1ZyrnXUKlx8E7Ufii7jvKTUK0cmBMAhNtAlvyAPOaTDvM6XbQ?=
+ =?iso-8859-1?Q?zoF8y6osU3mmtUQIy+0Sh+MPcueQIm5jVI1kChU0Nk6gV3Cpfy3fYacz4K?=
+ =?iso-8859-1?Q?MGCokb/qrEl0VF29Dtxu1CN70DD71wQYxYI3zi3dErxW/OQ23AAHbVVHKu?=
+ =?iso-8859-1?Q?r5A5Hh4nl/UjjoTgoAdO2wO/fg7w7SPkRlF6em7Mq8MMuZ1gx9k6NNswxU?=
+ =?iso-8859-1?Q?RLJh4ooMq/XPvqaGu7utouE8zV1o/lBsYKDc0h6lfk9fhyEN+X7MrlEVq4?=
+ =?iso-8859-1?Q?po9Z2rg+dCm8vATNWuKlHCRluNgxqshKwmdm7LmUOFy4bLb7wp/9AV5yR3?=
+ =?iso-8859-1?Q?KfWXj1a/wu1WlABA02G0U4qTw0vdiTO4mxvAeyUL8iU9GQ9x0Z14wICi4n?=
+ =?iso-8859-1?Q?1DzvSfUte9ZjDkjy+2XVsW5Pi3UBWxbV1bWsGhdNRiBZuIHxuxL8orl8G1?=
+ =?iso-8859-1?Q?AeoVp1uXNUujG9pjOgjWoS0PllWqnlQkVccBYRLzkOaPX8zZ1QLdWPe1cf?=
+ =?iso-8859-1?Q?B74KKg7byHq5OowFdo5L5k7ki4xUixo9cSUf6hiDXwT/rQ/ekpSTBMrUna?=
+ =?iso-8859-1?Q?jFUg4Z/IK2zrT9UI358LfhM9j0VojY8ayL7Ma2tllZHr3dZ4rIZ0JrMLfs?=
+ =?iso-8859-1?Q?4/jbXYszw8MnwDQDK17S/jEGn3GOixKL6wi+WytZup8V3iIMHS3SqmVqhE?=
+ =?iso-8859-1?Q?8CwmVFKyO5X2XL8a61ekWTXFHJNIoLsgCzltZ2YL26OAylaEfltm?=
+Content-Type: multipart/alternative;
+ boundary="_000_LV2PR11MB6045342DAD2429F5119F5E7F819C2LV2PR11MB6045namp_"
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: PMBW34E3Y/SnPqmHf2nraz4EXRk+TilgDzdtmICAaab+u7hmtmYBKfnXqZavrtMqQAa5eHvP13jYuwhiBZ4T1Eht1HuiXTPoaGPHULAVU0HVXGpQ3drb02P61BS0hISYte1/4bRjWrouEHjMk2mIS1L+AwYc+WVPITy8aCIMNgMYdTnohuJ1JN5ao6vf6OYPvfnS71F1XtuXoFVlSpRvWngHNSJiTwJ/U0GlUQOKlEdJk5XpqJi41DK7rRknVK4iVx4K8Kd8bHDZi9PRvgeGTf4KdhmP3RKnhk2XPFz8/Qfs/cmnxY17G00eiIBC8jkkfHT4FhG259Skge1mNeMx9A==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 14:44:36.3149 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hLXp2Pp6uMHqYuF/dp7C43tHj4O4L7ie+6ABjdFEJKMY5boI+7OtTtDd5W5hic3ZizYMyGG18GVSDELYZdbql3navsUdCt12FnYRdQ+tBys=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DSVPR11MB9718
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR11MB6045.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5fd010a-e6a2-4e76-3ca6-08df2acad52a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2026 14:44:35.7020 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ABryr+3v2oxSGH3BZig7MP+k2wZcOTd7t87SBdfpOX5y/NGMcxeyoEjt7FDt1YwfH5DQzdlXONypeMz2nIy72w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4958
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -164,155 +158,1288 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+--_000_LV2PR11MB6045342DAD2429F5119F5E7F819C2LV2PR11MB6045namp_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/15/2026 3:21 PM, Anatoly Burakov wrote:
-> From: Thomas Monjalon <thomas@monjalon.net>
->
-> Testpmd commands should use the driver's public API
-> rather than access its private structures directly.
-> Note: ixgbe_testpmd.c should be considered as part of testpmd.
->
-> ixgbe_testpmd.c includes ixgbe_ethdev.h only to check whether bypass
-> operations are available through the private adapter structure.
->
-> Rely on the public bypass API to check availability
-> and handle -ENOTSUP in the commands.
-> Remove ixgbe_ethdev.h, ethdev_driver.h
-> and the now unnecessary RTE_LIBRTE_IXGBE_BYPASS definition.
->
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> Reviewed-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
->   drivers/net/intel/ixgbe/ixgbe_testpmd.c | 55 ++++++++++---------------
->   1 file changed, 21 insertions(+), 34 deletions(-)
->
-> diff --git a/drivers/net/intel/ixgbe/ixgbe_testpmd.c b/drivers/net/intel/ixgbe/ixgbe_testpmd.c
-> index e0d161eafe..e209093477 100644
-> --- a/drivers/net/intel/ixgbe/ixgbe_testpmd.c
-> +++ b/drivers/net/intel/ixgbe/ixgbe_testpmd.c
-> @@ -2,11 +2,12 @@
->    * Copyright(c) 2010-2016 Intel Corporation.
->    */
->   
-> -/* Required for ixgbe internal structures to be aligned with the driver */
-> -#define RTE_LIBRTE_IXGBE_BYPASS
-> +#include <errno.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
->   
-> -#include <ethdev_driver.h>
-> -#include "ixgbe_ethdev.h"
-> +#include <rte_string_fns.h>
->   #include "rte_pmd_ixgbe.h"
->   
->   #include <cmdline_parse_etheraddr.h>
-> @@ -621,20 +622,6 @@ static cmdline_parse_inst_t cmd_tc_min_bw = {
->   /* The NIC bypass watchdog timeout. */
->   uint32_t bypass_timeout = RTE_PMD_IXGBE_BYPASS_TMT_OFF;
->   
-> -static inline bool
-> -check_bypass_enabled(portid_t port_id)
-> -{
-> -	struct ixgbe_adapter *adapter;
-> -
-> -	adapter = rte_eth_devices[port_id].data->dev_private;
-> -	if (adapter->bps.ops.bypass_rw == NULL) {
-> -		fprintf(stderr, "Bypass is not enabled on this port.\n");
-> -		return false;
-> -	}
-> -
-> -	return true;
-> -}
-> -
->   /* Enable bypass mode */
->   struct cmd_config_bypass_result {
->   	cmdline_fixed_string_t port;
-> @@ -704,9 +691,6 @@ cmd_set_bypass_mode_parsed(void *parsed_result,
->   	portid_t port_id = res->port_id;
->   	int32_t rc = -EINVAL;
->   
-> -	if (!check_bypass_enabled(port_id))
-> -		return;
-> -
->   	if (!strcmp(res->value, "bypass"))
->   		bypass_mode = RTE_PMD_IXGBE_BYPASS_MODE_BYPASS;
->   	else if (!strcmp(res->value, "isolate"))
-> @@ -716,7 +700,9 @@ cmd_set_bypass_mode_parsed(void *parsed_result,
->   
->   	/* Set the bypass mode for the relevant port. */
->   	rc = rte_pmd_ixgbe_bypass_state_set(port_id, &bypass_mode);
-> -	if (rc != 0)
-> +	if (rc == -ENOTSUP)
-> +		fprintf(stderr, "Bypass is not enabled on this port.\n");
-> +	else if (rc != 0)
->   		fprintf(stderr, "\t Failed to set bypass mode for port = %d.\n",
->   			port_id);
->   }
-> @@ -773,9 +759,6 @@ cmd_set_bypass_event_parsed(void *parsed_result,
->   	uint32_t bypass_event = RTE_PMD_IXGBE_BYPASS_EVENT_NONE;
->   	uint32_t bypass_mode = RTE_PMD_IXGBE_BYPASS_MODE_NORMAL;
->   
-> -	if (!check_bypass_enabled(port_id))
-> -		return;
-> -
->   	if (!strcmp(res->event_value, "timeout"))
->   		bypass_event = RTE_PMD_IXGBE_BYPASS_EVENT_TIMEOUT;
->   	else if (!strcmp(res->event_value, "os_on"))
-> @@ -803,6 +786,10 @@ cmd_set_bypass_event_parsed(void *parsed_result,
->   			rc = rte_pmd_ixgbe_bypass_wd_timeout_store(port_id,
->   				bypass_timeout);
->   		}
-> +		if (rc == -ENOTSUP) {
-> +			fprintf(stderr, "Bypass is not enabled on this port.\n");
-> +			return;
-> +		}
->   		if (rc != 0) {
->   			fprintf(stderr,
->   				"Failed to set timeout value %u for port %d, errto code: %d.\n",
-> @@ -813,7 +800,9 @@ cmd_set_bypass_event_parsed(void *parsed_result,
->   	/* Set the bypass event to transition to bypass mode. */
->   	rc = rte_pmd_ixgbe_bypass_event_store(port_id, bypass_event,
->   		bypass_mode);
-> -	if (rc != 0)
-> +	if (rc == -ENOTSUP)
-> +		fprintf(stderr, "Bypass is not enabled on this port.\n");
-> +	else if (rc != 0)
->   		fprintf(stderr, "\t Failed to set bypass event for port = %d.\n",
->   			port_id);
->   }
-> @@ -952,11 +941,13 @@ cmd_show_bypass_config_parsed(void *parsed_result,
->   		"power supply off",
->   		"timeout"};
->   
-> -	if (!check_bypass_enabled(port_id))
-> -		return;
-> -
->   	/* Display the bypass mode.*/
-> -	if (rte_pmd_ixgbe_bypass_state_show(port_id, &bypass_mode) != 0) {
-> +	rc = rte_pmd_ixgbe_bypass_state_show(port_id, &bypass_mode);
-> +	if (rc == -ENOTSUP) {
-> +		fprintf(stderr, "Bypass is not enabled on this port.\n");
-> +		return;
-> +	}
-> +	if (rc != 0) {
->   		fprintf(stderr, "\tFailed to get bypass mode for port = %d\n",
->   			port_id);
->   		return;
-> @@ -985,10 +976,6 @@ cmd_show_bypass_config_parsed(void *parsed_result,
->   				modes[event_mode]);
->   		}
->   	}
-> -	if (rc != 0)
-> -		fprintf(stderr,
-> -			"\tFailed to get bypass configuration for port = %d\n",
-> -			port_id);
->   }
->   
->   static cmdline_parse_token_string_t cmd_showbypass_config_show =
+Acked-by: Kai Ji <kai.ji@intel.com>
 
--- 
-Regards,
-Vladimir
 
+
+________________________________
+From: Finn, Emma <emma.finn@intel.com>
+Sent: Tuesday, October 13, 2026 10:33
+To: Ji, Kai <kai.ji@intel.com>; De Lara Guarch, Pablo <pablo.de.lara.guarch=
+@intel.com>
+Cc: dev@dpdk.org <dev@dpdk.org>; Finn, Emma <emma.finn@intel.com>
+Subject: [PATCH v3 1/2] crypto/ipsec_mb: Add SHA3 support.
+
+Add SHA3-224, SHA3-256, SHA3-384, SHA3-512 and HMAC variants
+to the ipsec_mb PMD.
+
+Signed-off-by: Emma Finn <emma.finn@intel.com>
+---
+ doc/guides/cryptodevs/aesni_mb.rst          |   8 +
+ doc/guides/cryptodevs/features/aesni_mb.ini |   8 +
+ doc/guides/rel_notes/release_26_11.rst      |   5 +
+ drivers/crypto/ipsec_mb/pmd_aesni_mb.c      |  30 +++
+ drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h | 212 +++++++++++++++++++-
+ 5 files changed, 257 insertions(+), 6 deletions(-)
+
+diff --git a/doc/guides/cryptodevs/aesni_mb.rst b/doc/guides/cryptodevs/aes=
+ni_mb.rst
+index ab7a6138a8e..663b9f19d4b 100644
+--- a/doc/guides/cryptodevs/aesni_mb.rst
++++ b/doc/guides/cryptodevs/aesni_mb.rst
+@@ -61,6 +61,14 @@ Hash algorithms:
+ * RTE_CRYPTO_AUTH_KASUMI_F9
+ * RTE_CRYPTO_AUTH_SM3
+ * RTE_CRYPTO_AUTH_SM3 HMAC
++* RTE_CRYPTO_AUTH_SHA3_224
++* RTE_CRYPTO_AUTH_SHA3_224 HMAC
++* RTE_CRYPTO_AUTH_SHA3_256
++* RTE_CRYPTO_AUTH_SHA3_256 HMAC
++* RTE_CRYPTO_AUTH_SHA3_384
++* RTE_CRYPTO_AUTH_SHA3_384 HMAC
++* RTE_CRYPTO_AUTH_SHA3_512
++* RTE_CRYPTO_AUTH_SHA3_512 HMAC
+
+ AEAD algorithms:
+
+diff --git a/doc/guides/cryptodevs/features/aesni_mb.ini b/doc/guides/crypt=
+odevs/features/aesni_mb.ini
+index ce6b43e48bd..73bb9f42633 100644
+--- a/doc/guides/cryptodevs/features/aesni_mb.ini
++++ b/doc/guides/cryptodevs/features/aesni_mb.ini
+@@ -69,6 +69,14 @@ SNOW3G UIA2  =3D Y
+ KASUMI F9    =3D Y
+ SM3          =3D Y
+ SM3 HMAC     =3D Y
++SHA3_224     =3D Y
++SHA3_224 HMAC =3D Y
++SHA3_256     =3D Y
++SHA3_256 HMAC =3D Y
++SHA3_384     =3D Y
++SHA3_384 HMAC =3D Y
++SHA3_512     =3D Y
++SHA3_512 HMAC =3D Y
+
+ ;
+ ; Supported AEAD algorithms of the 'aesni_mb' crypto driver.
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/=
+release_26_11.rst
+index c8cc86295da..826a0cf05cf 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -24,6 +24,11 @@ DPDK Release 26.11
+ New Features
+ ------------
+
++* **Updated AESNI_MB crypto driver.**
++
++  * Added support for SHA3-224, SHA3-256, SHA3-384, and SHA3-512 hash
++    algorithms and their HMAC variants.
++
+ .. This section should contain new features added in this release.
+    Sample format:
+
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_=
+mb/pmd_aesni_mb.c
+index 4c5b6e70b51..c96d1453b8c 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
+@@ -302,6 +302,36 @@ aesni_mb_set_session_auth_parameters(IMB_MGR *mb_mgr,
+         case RTE_CRYPTO_AUTH_SM3_HMAC:
+                 sess->template_job.hash_alg =3D IMB_AUTH_HMAC_SM3;
+                 break;
++#endif
++#if IMB_VERSION(3, 0, 0) <=3D IMB_VERSION_NUM
++       case RTE_CRYPTO_AUTH_SHA3_224:
++               sess->template_job.hash_alg =3D IMB_AUTH_SHA3_224;
++               auth_precompute =3D 0;
++               break;
++       case RTE_CRYPTO_AUTH_SHA3_224_HMAC:
++               sess->template_job.hash_alg =3D IMB_AUTH_HMAC_SHA3_224;
++               break;
++       case RTE_CRYPTO_AUTH_SHA3_256:
++               sess->template_job.hash_alg =3D IMB_AUTH_SHA3_256;
++               auth_precompute =3D 0;
++               break;
++       case RTE_CRYPTO_AUTH_SHA3_256_HMAC:
++               sess->template_job.hash_alg =3D IMB_AUTH_HMAC_SHA3_256;
++               break;
++       case RTE_CRYPTO_AUTH_SHA3_384:
++               sess->template_job.hash_alg =3D IMB_AUTH_SHA3_384;
++               auth_precompute =3D 0;
++               break;
++       case RTE_CRYPTO_AUTH_SHA3_384_HMAC:
++               sess->template_job.hash_alg =3D IMB_AUTH_HMAC_SHA3_384;
++               break;
++       case RTE_CRYPTO_AUTH_SHA3_512:
++               sess->template_job.hash_alg =3D IMB_AUTH_SHA3_512;
++               auth_precompute =3D 0;
++               break;
++       case RTE_CRYPTO_AUTH_SHA3_512_HMAC:
++               sess->template_job.hash_alg =3D IMB_AUTH_HMAC_SHA3_512;
++               break;
+ #endif
+         default:
+                 IPSEC_MB_LOG(ERR,
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h b/drivers/crypto/i=
+psec_mb/pmd_aesni_mb_priv.h
+index 6dc90a98492..aad31b9f909 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
+@@ -768,6 +768,176 @@ static const struct rte_cryptodev_capabilities aesni_=
+mb_capabilities[] =3D {
+                         }, }
+                 }, }
+         },
++#if IMB_VERSION(3, 0, 0) <=3D IMB_VERSION_NUM
++       {       /* SHA3-224 */
++               .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++               {.sym =3D {
++                       .xform_type =3D RTE_CRYPTO_SYM_XFORM_AUTH,
++                       {.auth =3D {
++                               .algo =3D RTE_CRYPTO_AUTH_SHA3_224,
++                               .block_size =3D 144,
++                               .key_size =3D {
++                                       .min =3D 0,
++                                       .max =3D 0,
++                                       .increment =3D 0
++                               },
++                               .digest_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 28,
++                                       .increment =3D 1
++                               },
++                               .iv_size =3D { 0 }
++                       }, }
++               }, }
++       },
++       {       /* HMAC SHA3-224 */
++               .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++               {.sym =3D {
++                       .xform_type =3D RTE_CRYPTO_SYM_XFORM_AUTH,
++                       {.auth =3D {
++                               .algo =3D RTE_CRYPTO_AUTH_SHA3_224_HMAC,
++                               .block_size =3D 144,
++                               .key_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 65535,
++                                       .increment =3D 1
++                               },
++                               .digest_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 28,
++                                       .increment =3D 1
++                               },
++                               .iv_size =3D { 0 }
++                       }, }
++               }, }
++       },
++       {       /* SHA3-256 */
++               .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++               {.sym =3D {
++                       .xform_type =3D RTE_CRYPTO_SYM_XFORM_AUTH,
++                       {.auth =3D {
++                               .algo =3D RTE_CRYPTO_AUTH_SHA3_256,
++                               .block_size =3D 136,
++                               .key_size =3D {
++                                       .min =3D 0,
++                                       .max =3D 0,
++                                       .increment =3D 0
++                               },
++                               .digest_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 32,
++                                       .increment =3D 1
++                               },
++                               .iv_size =3D { 0 }
++                       }, }
++               }, }
++       },
++       {       /* HMAC SHA3-256 */
++               .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++               {.sym =3D {
++                       .xform_type =3D RTE_CRYPTO_SYM_XFORM_AUTH,
++                       {.auth =3D {
++                               .algo =3D RTE_CRYPTO_AUTH_SHA3_256_HMAC,
++                               .block_size =3D 136,
++                               .key_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 65535,
++                                       .increment =3D 1
++                               },
++                               .digest_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 32,
++                                       .increment =3D 1
++                               },
++                               .iv_size =3D { 0 }
++                       }, }
++               }, }
++       },
++       {       /* SHA3-384 */
++               .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++               {.sym =3D {
++                       .xform_type =3D RTE_CRYPTO_SYM_XFORM_AUTH,
++                       {.auth =3D {
++                               .algo =3D RTE_CRYPTO_AUTH_SHA3_384,
++                               .block_size =3D 104,
++                               .key_size =3D {
++                                       .min =3D 0,
++                                       .max =3D 0,
++                                       .increment =3D 0
++                               },
++                               .digest_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 48,
++                                       .increment =3D 1
++                               },
++                               .iv_size =3D { 0 }
++                       }, }
++               }, }
++       },
++       {       /* HMAC SHA3-384 */
++               .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++               {.sym =3D {
++                       .xform_type =3D RTE_CRYPTO_SYM_XFORM_AUTH,
++                       {.auth =3D {
++                               .algo =3D RTE_CRYPTO_AUTH_SHA3_384_HMAC,
++                               .block_size =3D 104,
++                               .key_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 65535,
++                                       .increment =3D 1
++                               },
++                               .digest_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 48,
++                                       .increment =3D 1
++                               },
++                               .iv_size =3D { 0 }
++                       }, }
++               }, }
++       },
++       {       /* SHA3-512 */
++               .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++               {.sym =3D {
++                       .xform_type =3D RTE_CRYPTO_SYM_XFORM_AUTH,
++                       {.auth =3D {
++                               .algo =3D RTE_CRYPTO_AUTH_SHA3_512,
++                               .block_size =3D 72,
++                               .key_size =3D {
++                                       .min =3D 0,
++                                       .max =3D 0,
++                                       .increment =3D 0
++                               },
++                               .digest_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 64,
++                                       .increment =3D 1
++                               },
++                               .iv_size =3D { 0 }
++                       }, }
++               }, }
++       },
++       {       /* HMAC SHA3-512 */
++               .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++               {.sym =3D {
++                       .xform_type =3D RTE_CRYPTO_SYM_XFORM_AUTH,
++                       {.auth =3D {
++                               .algo =3D RTE_CRYPTO_AUTH_SHA3_512_HMAC,
++                               .block_size =3D 72,
++                               .key_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 65535,
++                                       .increment =3D 1
++                               },
++                               .digest_size =3D {
++                                       .min =3D 1,
++                                       .max =3D 64,
++                                       .increment =3D 1
++                               },
++                               .iv_size =3D { 0 }
++                       }, }
++               }, }
++       },
++#endif
+         {       /* SM4 CBC */
+                 .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,
+                 {.sym =3D {
+@@ -894,7 +1064,17 @@ static const unsigned int auth_blocksize[] =3D {
+                 [IMB_AUTH_SHA_512]              =3D 128,
+                 [IMB_AUTH_ZUC_EIA3_BITLEN]      =3D 16,
+                 [IMB_AUTH_SNOW3G_UIA2_BITLEN]   =3D 16,
+-               [IMB_AUTH_KASUMI_UIA1]          =3D 16
++               [IMB_AUTH_KASUMI_UIA1]          =3D 16,
++#if IMB_VERSION(3, 0, 0) <=3D IMB_VERSION_NUM
++               [IMB_AUTH_SHA3_224]             =3D 144,
++               [IMB_AUTH_SHA3_256]             =3D 136,
++               [IMB_AUTH_SHA3_384]             =3D 104,
++               [IMB_AUTH_SHA3_512]             =3D 72,
++               [IMB_AUTH_HMAC_SHA3_224]        =3D 144,
++               [IMB_AUTH_HMAC_SHA3_256]        =3D 136,
++               [IMB_AUTH_HMAC_SHA3_384]        =3D 104,
++               [IMB_AUTH_HMAC_SHA3_512]        =3D 72
++#endif
+ };
+
+ /**
+@@ -928,7 +1108,17 @@ static const unsigned int auth_truncated_digest_byte_=
+lengths[] =3D {
+                 [IMB_AUTH_SHA_512]              =3D 64,
+                 [IMB_AUTH_ZUC_EIA3_BITLEN]      =3D 4,
+                 [IMB_AUTH_SNOW3G_UIA2_BITLEN]   =3D 4,
+-               [IMB_AUTH_KASUMI_UIA1]          =3D 4
++               [IMB_AUTH_KASUMI_UIA1]          =3D 4,
++#if IMB_VERSION(3, 0, 0) <=3D IMB_VERSION_NUM
++               [IMB_AUTH_SHA3_224]             =3D 28,
++               [IMB_AUTH_SHA3_256]             =3D 32,
++               [IMB_AUTH_SHA3_384]             =3D 48,
++               [IMB_AUTH_SHA3_512]             =3D 64,
++               [IMB_AUTH_HMAC_SHA3_224]        =3D 28,
++               [IMB_AUTH_HMAC_SHA3_256]        =3D 32,
++               [IMB_AUTH_HMAC_SHA3_384]        =3D 48,
++               [IMB_AUTH_HMAC_SHA3_512]        =3D 64
++#endif
+ };
+
+ /**
+@@ -967,6 +1157,16 @@ static const unsigned int auth_digest_byte_lengths[] =
+=3D {
+ #if IMB_VERSION(1, 5, 0) <=3D IMB_VERSION_NUM
+                 [IMB_AUTH_SM3]                  =3D 32,
+                 [IMB_AUTH_HMAC_SM3]             =3D 32,
++#endif
++#if IMB_VERSION(3, 0, 0) <=3D IMB_VERSION_NUM
++               [IMB_AUTH_SHA3_224]             =3D 28,
++               [IMB_AUTH_SHA3_256]             =3D 32,
++               [IMB_AUTH_SHA3_384]             =3D 48,
++               [IMB_AUTH_SHA3_512]             =3D 64,
++               [IMB_AUTH_HMAC_SHA3_224]        =3D 28,
++               [IMB_AUTH_HMAC_SHA3_256]        =3D 32,
++               [IMB_AUTH_HMAC_SHA3_384]        =3D 48,
++               [IMB_AUTH_HMAC_SHA3_512]        =3D 64
+ #endif
+         /**< Vector mode dependent pointer table of the multi-buffer APIs =
+*/
+
+@@ -1049,15 +1249,15 @@ struct __rte_cache_aligned aesni_mb_session {
+                 /* *< auth operation generate or verify */
+                 union {
+                         struct {
+-                               alignas(16) uint8_t inner[128];
++                               alignas(16) uint8_t inner[144];
+                                 /* *< inner pad */
+-                               alignas(16) uint8_t outer[128];
++                               alignas(16) uint8_t outer[144];
+                                 /* *< outer pad */
+                         } pads;
+                         /* *< HMAC Authentication pads -
+                          * allocating space for the maximum pad
+-                        * size supported which is 128 bytes for
+-                        * SHA512
++                        * size supported which is 144 bytes for
++                        * SHA3-224
+                          */
+
+                         struct {
+--
+2.43.0
+
+
+--_000_LV2PR11MB6045342DAD2429F5119F5E7F819C2LV2PR11MB6045namp_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+line-height: 1.1; margin: 20px 0px 10px; font-family: &quot;IntelOne Text&q=
+uot;; font-size: 10pt; color: rgb(0, 0, 0);">
+<span style=3D"font-weight: 500;">Acked-by: Kai Ji &lt;kai.ji@intel.com&gt;=
+</span></div>
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+line-height: 1.1; margin: 20px 0px 10px; font-family: &quot;IntelOne Text&q=
+uot;; font-size: 10pt; color: rgb(0, 0, 0);">
+<span style=3D"font-weight: 500;"><br>
+</span></div>
+<div><br>
+</div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<hr style=3D"display: inline-block; width: 98%;">
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<b>From:</b> Finn, Emma &lt;emma.finn@intel.com&gt;<br>
+<b>Sent:</b> Tuesday, October 13, 2026 10:33<br>
+<b>To:</b> Ji, Kai &lt;kai.ji@intel.com&gt;; De Lara Guarch, Pablo &lt;pabl=
+o.de.lara.guarch@intel.com&gt;<br>
+<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;; Finn, Emma &lt;emma.finn@inte=
+l.com&gt;<br>
+<b>Subject:</b> [PATCH v3 1/2] crypto/ipsec_mb: Add SHA3 support. </div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-size: 11pt;">Add SHA3-224, SHA3-256, SHA3-384, SHA3-512 =
+and HMAC variants<br>
+to the ipsec_mb PMD.<br>
+<br>
+Signed-off-by: Emma Finn &lt;emma.finn@intel.com&gt;<br>
+---<br>
+&nbsp;doc/guides/cryptodevs/aesni_mb.rst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp; 8 +<br>
+&nbsp;doc/guides/cryptodevs/features/aesni_mb.ini |&nbsp;&nbsp; 8 +<br>
+&nbsp;doc/guides/rel_notes/release_26_11.rst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+|&nbsp;&nbsp; 5 +<br>
+&nbsp;drivers/crypto/ipsec_mb/pmd_aesni_mb.c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+|&nbsp; 30 +++<br>
+&nbsp;drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h | 212 +++++++++++++++++++=
+-<br>
+&nbsp;5 files changed, 257 insertions(+), 6 deletions(-)<br>
+<br>
+diff --git a/doc/guides/cryptodevs/aesni_mb.rst b/doc/guides/cryptodevs/aes=
+ni_mb.rst<br>
+index ab7a6138a8e..663b9f19d4b 100644<br>
+--- a/doc/guides/cryptodevs/aesni_mb.rst<br>
++++ b/doc/guides/cryptodevs/aesni_mb.rst<br>
+@@ -61,6 +61,14 @@ Hash algorithms:<br>
+&nbsp;* RTE_CRYPTO_AUTH_KASUMI_F9<br>
+&nbsp;* RTE_CRYPTO_AUTH_SM3<br>
+&nbsp;* RTE_CRYPTO_AUTH_SM3 HMAC<br>
++* RTE_CRYPTO_AUTH_SHA3_224<br>
++* RTE_CRYPTO_AUTH_SHA3_224 HMAC<br>
++* RTE_CRYPTO_AUTH_SHA3_256<br>
++* RTE_CRYPTO_AUTH_SHA3_256 HMAC<br>
++* RTE_CRYPTO_AUTH_SHA3_384<br>
++* RTE_CRYPTO_AUTH_SHA3_384 HMAC<br>
++* RTE_CRYPTO_AUTH_SHA3_512<br>
++* RTE_CRYPTO_AUTH_SHA3_512 HMAC<br>
+&nbsp;<br>
+&nbsp;AEAD algorithms:<br>
+&nbsp;<br>
+diff --git a/doc/guides/cryptodevs/features/aesni_mb.ini b/doc/guides/crypt=
+odevs/features/aesni_mb.ini<br>
+index ce6b43e48bd..73bb9f42633 100644<br>
+--- a/doc/guides/cryptodevs/features/aesni_mb.ini<br>
++++ b/doc/guides/cryptodevs/features/aesni_mb.ini<br>
+@@ -69,6 +69,14 @@ SNOW3G UIA2&nbsp; =3D Y<br>
+&nbsp;KASUMI F9&nbsp;&nbsp;&nbsp; =3D Y<br>
+&nbsp;SM3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D Y<br>
+&nbsp;SM3 HMAC&nbsp;&nbsp;&nbsp;&nbsp; =3D Y<br>
++SHA3_224&nbsp;&nbsp;&nbsp;&nbsp; =3D Y<br>
++SHA3_224 HMAC =3D Y<br>
++SHA3_256&nbsp;&nbsp;&nbsp;&nbsp; =3D Y<br>
++SHA3_256 HMAC =3D Y<br>
++SHA3_384&nbsp;&nbsp;&nbsp;&nbsp; =3D Y<br>
++SHA3_384 HMAC =3D Y<br>
++SHA3_512&nbsp;&nbsp;&nbsp;&nbsp; =3D Y<br>
++SHA3_512 HMAC =3D Y<br>
+&nbsp;<br>
+&nbsp;;<br>
+&nbsp;; Supported AEAD algorithms of the 'aesni_mb' crypto driver.<br>
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/=
+release_26_11.rst<br>
+index c8cc86295da..826a0cf05cf 100644<br>
+--- a/doc/guides/rel_notes/release_26_11.rst<br>
++++ b/doc/guides/rel_notes/release_26_11.rst<br>
+@@ -24,6 +24,11 @@ DPDK Release 26.11<br>
+&nbsp;New Features<br>
+&nbsp;------------<br>
+&nbsp;<br>
++* **Updated AESNI_MB crypto driver.**<br>
++<br>
++&nbsp; * Added support for SHA3-224, SHA3-256, SHA3-384, and SHA3-512 hash=
+<br>
++&nbsp;&nbsp;&nbsp; algorithms and their HMAC variants.<br>
++<br>
+&nbsp;.. This section should contain new features added in this release.<br=
+>
+&nbsp;&nbsp;&nbsp; Sample format:<br>
+&nbsp;<br>
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_=
+mb/pmd_aesni_mb.c<br>
+index 4c5b6e70b51..c96d1453b8c 100644<br>
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c<br>
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c<br>
+@@ -302,6 +302,36 @@ aesni_mb_set_session_auth_parameters(IMB_MGR *mb_mgr,<=
+br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case RTE_CRYPTO_AUTH_SM3_H=
+MAC:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; sess-&gt;template_job.hash_alg =3D IMB_AUTH_HMAC_SM3;=
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; break;<br>
++#endif<br>
++#if IMB_VERSION(3, 0, 0) &lt;=3D IMB_VERSION_NUM<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case RTE_CRYPTO_AUTH_SHA3_224:<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; sess-&gt;template_job.hash_alg =3D IMB_AUTH_SHA3_224;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; auth_precompute =3D 0;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; break;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case RTE_CRYPTO_AUTH_SHA3_224_HMAC:<b=
+r>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; sess-&gt;template_job.hash_alg =3D IMB_AUTH_HMAC_SHA3_224;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; break;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case RTE_CRYPTO_AUTH_SHA3_256:<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; sess-&gt;template_job.hash_alg =3D IMB_AUTH_SHA3_256;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; auth_precompute =3D 0;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; break;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case RTE_CRYPTO_AUTH_SHA3_256_HMAC:<b=
+r>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; sess-&gt;template_job.hash_alg =3D IMB_AUTH_HMAC_SHA3_256;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; break;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case RTE_CRYPTO_AUTH_SHA3_384:<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; sess-&gt;template_job.hash_alg =3D IMB_AUTH_SHA3_384;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; auth_precompute =3D 0;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; break;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case RTE_CRYPTO_AUTH_SHA3_384_HMAC:<b=
+r>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; sess-&gt;template_job.hash_alg =3D IMB_AUTH_HMAC_SHA3_384;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; break;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case RTE_CRYPTO_AUTH_SHA3_512:<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; sess-&gt;template_job.hash_alg =3D IMB_AUTH_SHA3_512;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; auth_precompute =3D 0;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; break;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case RTE_CRYPTO_AUTH_SHA3_512_HMAC:<b=
+r>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; sess-&gt;template_job.hash_alg =3D IMB_AUTH_HMAC_SHA3_512;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; break;<br>
+&nbsp;#endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; IPSEC_MB_LOG(ERR,<br>
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h b/drivers/crypto/i=
+psec_mb/pmd_aesni_mb_priv.h<br>
+index 6dc90a98492..aad31b9f909 100644<br>
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h<br>
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h<br>
+@@ -768,6 +768,176 @@ static const struct rte_cryptodev_capabilities aesni_=
+mb_capabilities[] =3D {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, }<=
+br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; }, }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++#if IMB_VERSION(3, 0, 0) &lt;=3D IMB_VERSION_NUM<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ /* SHA3-224 */<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; {.sym =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .xform_type =3D =
+RTE_CRYPTO_SYM_XFORM_AUTH,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {.auth =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .algo =3D RTE_CRYPTO_AUTH_SHA3_224,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .block_size =3D 144,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .key_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 0,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 0,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 0<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .digest_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 28,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .iv_size =3D { 0 }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ /* HMAC SHA3-224 */<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; {.sym =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .xform_type =3D =
+RTE_CRYPTO_SYM_XFORM_AUTH,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {.auth =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .algo =3D RTE_CRYPTO_AUTH_SHA3_224_HMAC,<br=
+>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .block_size =3D 144,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .key_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 65535,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .digest_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 28,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .iv_size =3D { 0 }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ /* SHA3-256 */<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; {.sym =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .xform_type =3D =
+RTE_CRYPTO_SYM_XFORM_AUTH,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {.auth =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .algo =3D RTE_CRYPTO_AUTH_SHA3_256,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .block_size =3D 136,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .key_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 0,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 0,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 0<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .digest_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 32,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .iv_size =3D { 0 }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ /* HMAC SHA3-256 */<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; {.sym =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .xform_type =3D =
+RTE_CRYPTO_SYM_XFORM_AUTH,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {.auth =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .algo =3D RTE_CRYPTO_AUTH_SHA3_256_HMAC,<br=
+>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .block_size =3D 136,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .key_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 65535,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .digest_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 32,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .iv_size =3D { 0 }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ /* SHA3-384 */<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; {.sym =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .xform_type =3D =
+RTE_CRYPTO_SYM_XFORM_AUTH,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {.auth =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .algo =3D RTE_CRYPTO_AUTH_SHA3_384,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .block_size =3D 104,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .key_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 0,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 0,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 0<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .digest_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 48,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .iv_size =3D { 0 }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ /* HMAC SHA3-384 */<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; {.sym =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .xform_type =3D =
+RTE_CRYPTO_SYM_XFORM_AUTH,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {.auth =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .algo =3D RTE_CRYPTO_AUTH_SHA3_384_HMAC,<br=
+>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .block_size =3D 104,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .key_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 65535,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .digest_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 48,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .iv_size =3D { 0 }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ /* SHA3-512 */<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; {.sym =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .xform_type =3D =
+RTE_CRYPTO_SYM_XFORM_AUTH,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {.auth =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .algo =3D RTE_CRYPTO_AUTH_SHA3_512,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .block_size =3D 72,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .key_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 0,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 0,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 0<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .digest_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 64,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .iv_size =3D { 0 }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ /* HMAC SHA3-512 */<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; {.sym =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .xform_type =3D =
+RTE_CRYPTO_SYM_XFORM_AUTH,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {.auth =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .algo =3D RTE_CRYPTO_AUTH_SHA3_512_HMAC,<br=
+>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .block_size =3D 72,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .key_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 65535,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .digest_size =3D {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .min =3D 1,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .max =3D 64,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; .increment =3D 1<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .iv_size =3D { 0 }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; }, }<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br>
++#endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp; /* SM4 CBC */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; .op =3D RTE_CRYPTO_OP_TYPE_SYMMETRIC,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; {.sym =3D {<br>
+@@ -894,7 +1064,17 @@ static const unsigned int auth_blocksize[] =3D {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; [IMB_AUTH_SHA_512]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 128,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; [IMB_AUTH_ZUC_EIA3_BITLEN]&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp; =3D 16,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; [IMB_AUTH_SNOW3G_UIA2_BITLEN]&nbsp;&nbsp; =3D 16,<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_KASUMI_UIA1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp; =3D 16<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_KASUMI_UIA1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp; =3D 16,<br>
++#if IMB_VERSION(3, 0, 0) &lt;=3D IMB_VERSION_NUM<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_224]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 144,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_256]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 136,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_384]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 104,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_512]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 72,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_224]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 144,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_256]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 136,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_384]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 104,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_512]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 72<br>
++#endif<br>
+&nbsp;};<br>
+&nbsp;<br>
+&nbsp;/**<br>
+@@ -928,7 +1108,17 @@ static const unsigned int auth_truncated_digest_byte_=
+lengths[] =3D {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; [IMB_AUTH_SHA_512]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 64,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; [IMB_AUTH_ZUC_EIA3_BITLEN]&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp; =3D 4,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; [IMB_AUTH_SNOW3G_UIA2_BITLEN]&nbsp;&nbsp; =3D 4,<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_KASUMI_UIA1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp; =3D 4<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_KASUMI_UIA1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp; =3D 4,<br>
++#if IMB_VERSION(3, 0, 0) &lt;=3D IMB_VERSION_NUM<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_224]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 28,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_256]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 32,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_384]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 48,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_512]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 64,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_224]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 28,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_256]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 32,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_384]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 48,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_512]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 64<br>
++#endif<br>
+&nbsp;};<br>
+&nbsp;<br>
+&nbsp;/**<br>
+@@ -967,6 +1157,16 @@ static const unsigned int auth_digest_byte_lengths[] =
+=3D {<br>
+&nbsp;#if IMB_VERSION(1, 5, 0) &lt;=3D IMB_VERSION_NUM<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; [IMB_AUTH_SM3]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 32,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; [IMB_AUTH_HMAC_SM3]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 32,<br>
++#endif<br>
++#if IMB_VERSION(3, 0, 0) &lt;=3D IMB_VERSION_NUM<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_224]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 28,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_256]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 32,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_384]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 48,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_SHA3_512]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp; =3D 64,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_224]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 28,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_256]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 32,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_384]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 48,<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; [IMB_AUTH_HMAC_SHA3_512]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; =3D 64<br>
+&nbsp;#endif<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**&lt; Vector mode depend=
+ent pointer table of the multi-buffer APIs */<br>
+&nbsp;<br>
+@@ -1049,15 +1249,15 @@ struct __rte_cache_aligned aesni_mb_session {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; /* *&lt; auth operation generate or verify */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; union {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struc=
+t {<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; alignas(16) uint8_t inner[128];<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; alignas(16) uint8_t inner[144];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* *&lt; inner pad */<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; alignas(16) uint8_t outer[128];<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; alignas(16) uint8_t outer[144];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* *&lt; outer pad */<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } pad=
+s;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* *&=
+lt; HMAC Authentication pads -<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ * allocating space for the maximum pad<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * size sup=
+ported which is 128 bytes for<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * SHA512<b=
+r>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * size sup=
+ported which is 144 bytes for<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * SHA3-224=
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+ */<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struc=
+t {<br>
+--<br>
+2.43.0<br>
+<br>
+</div>
+</body>
+</html>
+
+--_000_LV2PR11MB6045342DAD2429F5119F5E7F819C2LV2PR11MB6045namp_--
