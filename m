@@ -2,93 +2,92 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A61CC6B38
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 18:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192A4CCA464
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 18:56:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3BF81402E4;
-	Thu, 15 Oct 2026 20:38:54 +0200 (CEST)
-Received: from fhigh-b6-smtp.messagingengine.com
- (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
- by mails.dpdk.org (Postfix) with ESMTP id 88506400EF
- for <dev@dpdk.org>; Thu, 15 Oct 2026 20:38:53 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id E64407A0101
- for <dev@dpdk.org>; Thu, 15 Oct 2026 14:38:52 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Thu, 15 Oct 2026 14:38:52 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 0F9CE402E4;
+	Thu, 15 Oct 2026 20:56:58 +0200 (CEST)
+Received: from fout-b4-smtp.messagingengine.com
+ (fout-b4-smtp.messagingengine.com [202.12.124.147])
+ by mails.dpdk.org (Postfix) with ESMTP id 24CB4400EF
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 20:56:57 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.stl.internal (Postfix) with ESMTP id 946661D000F7
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 14:56:56 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Thu, 15 Oct 2026 14:56:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1792089532;
- x=1792175932; bh=JM/DpWqnJWxxanbduN5iUMLrI2H7AB2ZxRsfEt34C+M=; b=
- XWSan58nWwsI7zitHb7LAjXnIM9Db+K7O7xvK8f0qECwYLDxT6YP6u2KUqYb+qTQ
- j9Ry58QgWgrKM19Lc2sZp7M8H/1GzVzyQ7dmXXkIWTBLsNp7WZLQH2BTo8GNqKKF
- CR79ApDtLzvYcT0OYGmC94XeOyohlbN3DmQUFwU22H+Mj3J1SIN8L4CH3H3HkRRP
- 3Q2fz8I0eBXcwg013VNP8s81mTZAHb3uKR5HlAqWnp4D6QP3zp7tMkQVSHVP2BlT
- GYBa7UvQk8dD/Ce/uyx1mehZIJ6H4AVgqG/mMhHi5b4pT/JdjuYtpl4iGx7eq9vN
- MZ4gW6AQjRZCt4LQw5zJyw==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1792090616;
+ x=1792177016; bh=eZ1adrWSbyxMQkGmqmCa8i6F6iHhX+mbOUlfNDpvX5Q=; b=
+ kQyvaKG/DK4O3ZyKGswsL2n/E2AY0siqw16ZGhY6sOFJjiccpdxo940ycOBE1TL9
+ Ke579PhLHtQaKS7X02hxbi9ECD5AIJAgsgXTZ9mFv+4QSYBrCsBpCXavAaAHcM3j
+ xukeXDa7H7Q91zyGwDJVUND8YrM2r+qgql/jcOD98dnos1dFRU0sjasc7c3UPQ5C
+ BHN9sRkN+mx48OaSq7OnAyLOEXNEspvFx3EhZEbIHKuVyW03TX/UI7P62iqCgXnm
+ wV7buBM0pLXT/A8cNAc6jujW/ZeoOvxOYAMiJOVxs6WhzWfQzdBNUd62ck/S7lAf
+ CymmNiNHaaqS76AD/qtLCw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792089532; x=
- 1792175932; bh=JM/DpWqnJWxxanbduN5iUMLrI2H7AB2ZxRsfEt34C+M=; b=m
- EBafY5AKQEgYJk7uwD3VmCJUk5WcoSLxv3YCjoN/Hn3mOSY60uDjewxsJAG/+EBs
- VTv8rqWVBBrk1BbliIyAK6hB9e+ZHekYYpNkhm8slDhQslhuTMnz5y38KbGHlq3N
- WkEOc26CdZT9/6FUdx2kaNs8ohWkWzTZe5brMkI1CfabUvDjYomKnRMB4iE67666
- g6JgkXWH/Tm0K49uZPG7BptRh4TYFzwdbkxYY+WQIL/SWEeh57HDGzbLOQGzIJgz
- 0aR3JEARGkI7IUmUeDTi9pD+ImhiyA4lWtO3zb441M6h/ZdQ3i8T2l1ba0kCB5ZS
- Q591Y8mrmZL5if3Xgu6KQ==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792090616; x=
+ 1792177016; bh=eZ1adrWSbyxMQkGmqmCa8i6F6iHhX+mbOUlfNDpvX5Q=; b=T
+ odRbgLF9IO9DJYUaOrBZ6lF9/Cxk379st5CcmpgwVVA4VSUt1xkTw1Hchmp9hsGy
+ fIItNPOjES+07KncnCw+7RQzC0s5UAUCcu0UUvQacNvz0umTizXcT+5ZkRJF5sej
+ L9Hb0YwgPb8mvG/Jh2RRR/7hVW6YXWP6KAFCc7Y4N99B9KN16oBPsVWc3cv9mLTk
+ 0PBqKMz/H2rD3z0PQmXJ/F+WmOaQNyh2wbjlO2FWwVWOkxNnHVnqer+Nx2PpgcZ3
+ naYVvbLZDC8xSInoTZs8EqTmyo66knpk9JubaMLlGDMPdgryU0URzAQJd5kB4VL0
+ 0maiN82g9+fyszQ71ta6Q==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
  repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1792089532; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1792090616; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:LIV+tHdIYoY4SAwyLwjXm2rST0mUv+cF8/Pc7s6EV1JTEbA
- pcO/mw0KWlaRQjeBnP+PdtEPBbMrAl/sa2FoMnz/qXK2rPxV8TqeI3natEpaNdN8
- I7PhC/i4sel5Akne94dGu5suKWX5/spqZgG5Zsg6XyRuPHGIZ2J0wNg+g68mjhlW
- L9kr6huDNoz7p+10jf59nZID6F7404mOXs7kN3ZfZLrTFZl38/odwizZnZvsaiI0
- eNowYh0qJB9SsqWHgInUI6BNxlPZOnSCmkVef3zBHJ3AxsrYW5SerepLehf8xuqq
- DwzmmqtA4BC+tbwzLbJithOsJD4dYeqb56nFXQA==;
+ s=fm2:rsa-sha256:AQGJaGDShg8vIodLsN/gz9OiuIqU6JFQRu8bNVs7D6gzabd
+ Pq55QNmoyv2RJ0jGfN7LVGCIVhLoYw+zbf3ZNciCbsBlHXe2dRl7DV35m5PohdqP
+ mGUMS3qiWNX/H8LSmj15yVUxNDrYZCSphooxl4GbBtjRa7H7DbQgKAtbX48iz7a4
+ qdw06NW5vw/ZbpLDauQGR/UdB4rqgpo/jlglY5eEdk8t+IC6giP0QtFN/gcHyJFi
+ Zmz6ju4aOV3GYxErhi+LHzCmyOE/Tqf2IFjo2SiM+v8dfTru4en5UamAyEjwGOHV
+ 6vFE5Q+PTp1bGI/V+0K62sjFr46tMiKl7kCGV9w==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
  repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:oplP7fgaJtFNbSqOCMERrEHyffPZpSZ6jEluwOVaAIk=:Sa2KJiLayDjehYQKCwLnsDk5BPKC7IBkpsTi6CV+Y38=;
-X-ME-Sender: <xms:ux3RamdArmqe7pCmVJNcTZAVTzkx8WmV9lST77UCOE0ydGSI4SJ6_g>
- <xme:ux3RanO2MA5Oi8IVtsJtI6bBPVf9dc3V7g2S4FKh2CcJ8WRmTn5vNjKjejDQHyda1
- OUFMjUgnvYE7CuifS9LvQ4DPulkowhufutVbHslW9dX1ub82BoAw6g>
-X-ME-Received: <xmr:ux3RasgOlyhjZyFRndpKCQKrNMoh8bpmOaQY1WAxgibEexmzTCvF_rWQliNDtSlxHJRVDjRaHWhi7Y6ZOVnUYFI>
-X-ME-Proxy-Cause: dmFkZTFwFm/zo8M0k1UEedPb5MaoIV8wKrt9NcrKXXlHP1J5Z8t4n1ufXXRBI/etiARK9v
- dUINrILN60r3XVN3o1rTkAj4xs5o5IXsqx9etoeINDgNu1RrGhCytKHt8a51bYD/HnqxYR
- 42iwbyLLILEnVRRMvStxYgHOFnSrvEyrF9btMXUlDrrTE1+hI9XP/yfvhkL0DN4zWPf94o
- jxgqyVCF9qNmt58vbAmw+wpBFrWQU69zlyR8eRMTtwQJ26okgoVM/7PntsVlgkjUeJNnDf
- lr2GN77sFfKZoGWnY848h4Ch90069bDVTli443YgidgGM50O4Zyjmdg3LMPv0pdJV6izr5
- 0xTQVdTbxv9oG0LLUgIr9cW11E+lIVSsvdT+GgISG3QJs0VEvzehsDgNcidDCiBEmzV3Ys
- 3tXcbUTU0+czx35GCEM+PF2bqhVhn0SkQyS7/0uIidMNNIYotQfM6qsNcTDUT6xZ0MxAOB
- fCRM6gCqUd4u+19dj+GXCfgt8glgWl6urT0VBtWNlyM2qOamjZhJ3Y3IYEFJeUg6XMqunE
- qNggPI8/zd6UvNRN7bOelc4tf4S7bQKfcc1AD7MMWM5lZ23vx7rbrwspAGdOsh++rGRRU3
- qim77TcRXBv3UTrXdqopsedZgqcouKolXptEhz2CrMs7s+pIvZYtc142MnWw
-X-ME-Proxy: <xmx:ux3Rai0JGeneieNglzU3Or1RhDbYJFmLyaYlC9JE-ylQoy3dkut_BA>
- <xmx:ux3RauiLpOaeSQSLvdvc_fp6QFQGuJZ5ED6OvBiYg4g8y7bwJ2k--A>
- <xmx:ux3RaqdPOILM1g5NnguEEfTh92c9yuWeDTaT-i3fX3PSfqnxfhQ_Zg>
- <xmx:ux3RapkHadH3c--_D-0WUVAf3keH4FDgvMm6svOQPo3tELHBVYqgXw>
- <xmx:vB3RajKHS170eAyBJ6bCdfq5Zqdlj-QEb_BTCDvFq6IcoAkkKPzklPhe>
+ h=sha256:9eyKfgi+m/wrukNYPIKIAUwrIM/OptVed+sUVt/4VhE=:s0g9kxhLJWcEMwjJbMAaDDCh59g1MSyd4ngvR2CNkGk=;
+X-ME-Sender: <xms:9yHRakLhMn4srjVnvliOtlSPpM-JfAgRc9GSDctUw5P_A4enCtjeqw>
+ <xme:9yHRaocge_R1mUOm23Myjn0NUT9PUTtvwInkUHiUPhQFZlcfqKUVnrtfVVhwvO0IN
+ SGUyt8wBeY2QcYufw10pKZdORmRxO0hvpjmTiJtAeCPXKN-t8At8OgH>
+X-ME-Received: <xmr:9yHRaj3WrqHJ4wvkgCsWAcBG1AyCxn_mqukbjzJKKgdZDxucPKIBhtQ4S3Dks5OeRQtXWothSrWQ-_TUgFkxGjU>
+X-ME-Proxy-Cause: dmFkZTFjy0/IpwnnDmQ/nQBOj4KPtYJn33FB87MHbp0uJZy8HxZJZ8CSmldrvS0mdLufmH
+ 7jBAO6iRAjeRgH9eUFZoe4XPi/RHmEDFXK61sHip9fPAboNJKNbjIFcbKuLU5qbgpYqtLh
+ J7UGG/2FvlBB87Ea3dGhCGqOa2AU4vP3ypCI9zBOOJblWz6nImSH8Rzb4i+8bBcN2e77iT
+ FihGD/tiP0jQJxbDcaEZpGRBEbvmq2+eeBy85s2dEAw3DINbYz8y0mDt1Fa7oi3+ruGpMg
+ /2nZ1Z15cUVolkjfztvvRuLmoF9XB7wy9QHeu4c1UbkWtQ/+k7AwLgEaJ/OQnFHAxicViu
+ znyde8V5L88h954wwXyKyYohHh/sUOExRPgKxfvCBMLDjrY+kVTffBqLdb2/lSE2gRPUw4
+ aAglM3f/MWnVcfGWOtOMCKnksaBkeEw0MjfklhjfhkKMglx0ursZx5mLvRbmMg7aiOQdl8
+ T6YKNbqjghXcgUpBgv35oexLBaYVVzKR/63j0K32IC2WRDCwfXpNuIyf5lb8SSt9M1H05r
+ bszbO4p96p4SalCZONp5H/XkRK6TqslodlRVyhjjw0d9S8GwnGIHgO6Mg7oqi8BamWDeQ0
+ K3fnMs5wXNNJc7EoMpaGld+xg09jd6ptYD7pG1mAzH8kA3GTobYllB9TRYIw
+X-ME-Proxy: <xmx:9yHRapj9-QN1dHzRbTzosir_liAc8BpcrP61yg52fclgIzXDeJrvrg>
+ <xmx:-CHRahSS5RdLjxMY3j1Dc3zxLX6ylrZ71oG9mv2M3jj0-sabnpCh6Q>
+ <xmx:-CHRaiiuN1mjjnCv_d69XlyriUoMKHqQmdZipaF1PWm13LrbcHpZIQ>
+ <xmx:-CHRap6Sbqrekk51b640AhrCphs5y9U0CSY9VDzzhmlLyzfnQDcrjw>
+ <xmx:-CHRag1wp05kf5s3v0DxLS2VlgYiP_DBJ-kPRszGMfSkiHkifBgsSPw_>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 Oct 2026 14:38:50 -0400 (EDT)
+ 15 Oct 2026 14:56:55 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Sun Yuechi <sunyuechi@iscas.ac.cn>
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH 0/2] lpm: use scalar lookupx4 on RISC-V
-Date: Thu, 15 Oct 2026 20:38:47 +0200
-Message-ID: <VZaQBRv0QC-gmh3m6UJqkw@monjalon.net>
-In-Reply-To: <cover.1791181595.git.sunyuechi@iscas.ac.cn>
-References: <cover.1791181595.git.sunyuechi@iscas.ac.cn>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: Re: [PATCH] sched: fix data race in RED random number generation
+Date: Thu, 15 Oct 2026 20:56:53 +0200
+Message-ID: <AFEuXescQoukiT1Cxmcmqg@monjalon.net>
+In-Reply-To: <20261010015916.1689925-1-stephen@networkplumber.org>
+References: <20261010015916.1689925-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -105,24 +104,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-05/10/2026 08:30, Sun Yuechi:
-> The RVV rte_lpm_lookupx4() beats the scalar version only on in-order
-> cores, and only because it reads the four tbl24 entries up front.
-> Patch 1 makes the scalar version do the same, patch 2 removes the RVV
-> version.
+10/10/2026 03:59, Stephen Hemminger:
+> The RED scheduler used its own random number generator which was
+> weak and buggy. Change standard rte_rand() which has better
+> randomness and is thread safe.
 > 
-> lpm_perf_autotest, LookupX4, units differ per machine:
+> There is no prior deprecation notice for relatedd symbols. They were
+> never meant to be part of the API: rte_fast_rand() is the internal
+> generator of the dropper and the two variables are its state, all
+> exposed only because the drop test is inline in rte_red.h.
 > 
->              SpacemiT X60       Sophgo SG2044       SpacemiT X100
->              (in-order)         (out-of-order)      (out-of-order)
->              rv64gc  rv64gcv    rv64gc  rva23u64    rv64gc  rva23u64
->   main       5.5     4.4 (RVV)  2.7     3.2 (RVV)   35.2    54.3 (RVV)
->   patched    2.5     2.7-3.2    2.7     2.9         34.6    41.3
-> 
-> Sun Yuechi (2):
->   lpm: load tbl24 entries up front in scalar lookupx4
->   lpm: use scalar lookupx4 on RISC-V
+> Fixes: de3cfa2c9823 ("sched: initial import")
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
 Applied, thanks.
+
 
 
