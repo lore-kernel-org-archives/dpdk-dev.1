@@ -2,52 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 506D4CC6B39
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:20:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EE4CC6B38
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:20:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9EBF64060F;
-	Thu, 15 Oct 2026 19:20:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8E8F8402DF;
+	Thu, 15 Oct 2026 19:20:29 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 34B2A4027C
- for <dev@dpdk.org>; Thu, 15 Oct 2026 19:20:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 89ADB4027C
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 19:20:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792084799;
+ s=mimecast20190719; t=1792084827;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=tzAfG+ps4OJOJTfTv2QxsrKYjySj22mpEfIHjkQDvsE=;
- b=fAQmpzLF03kp+CbjVYMSv4ZlyT6+Ks4BeiY3hNOKSQs1UUjZCHkhjGhFz1lSHIWQ68ul0L
- djDgtSrEuJcRwD/sgBir/FOpnf+GeFFhrnfYVJfc3Q2VeVMgG6xIjS3/nbQvJlTs2G+P23
- YYbdI9inb/C5xEYghyXNHZBg4BnvHIk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=T49H2txl0rFM8HWrI87+oj9ODiJy256mlatf3ULPHJY=;
+ b=V6sHb81VNUUzT/YUcAf99OTCYUlU4bt9gswmefdpmehl/6cK7nY4Laow/paA/Dm2/dmBvh
+ Gx6/gPn6ScCQkGYWf0TvNW1Y7Ci2Q7w+l/ipzOFQ6mPOUeusfZYK0Ab8jIqaOu9RkwsxWu
+ CUNnjP0PQEhz8HN7lCd3cQdtiNB50b4=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-460-UkbSsh3rM2e_HGyjsrMoyw-1; Thu,
- 15 Oct 2026 17:19:56 +0000
-X-MC-Unique: UkbSsh3rM2e_HGyjsrMoyw-1
-X-Mimecast-MFC-AGG-ID: UkbSsh3rM2e_HGyjsrMoyw_1792084795
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-210-lB4bRPnDNgKxiQeuwNUhhQ-1; Thu,
+ 15 Oct 2026 17:20:21 +0000
+X-MC-Unique: lB4bRPnDNgKxiQeuwNUhhQ-1
+X-Mimecast-MFC-AGG-ID: lB4bRPnDNgKxiQeuwNUhhQ_1792084820
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 617811956065; Thu, 15 Oct 2026 17:19:55 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 1C01518005BE; Thu, 15 Oct 2026 17:20:20 +0000 (UTC)
 Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.117])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 97B41195608A; Thu, 15 Oct 2026 17:19:53 +0000 (UTC)
-Message-ID: <6143342a-7127-427b-9b97-6f75af6da1b1@redhat.com>
-Date: Thu, 15 Oct 2026 19:19:51 +0200
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C8A68180057F; Thu, 15 Oct 2026 17:20:17 +0000 (UTC)
+Message-ID: <6d7bebc2-99c2-4d43-b5d6-c0a3ebcb6841@redhat.com>
+Date: Thu, 15 Oct 2026 19:20:15 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/vhost: preserve Tx ownership on VLAN failure
-To: Weijun Pan <wpan3636@gmail.com>, Chenbo Xia <chenbox@nvidia.com>,
- Jan Blunck <jblunck@infradead.org>
-Cc: dev@dpdk.org, stable@dpdk.org
-References: <20260726170258.8791-1-wpan3636@gmail.com>
+Subject: Re: [PATCH v3 1/1] vhost: tolerate file descriptor in REM_MEM_REG msg
+To: pravin.bathija@dell.com, dev@dpdk.org, david.marchand@redhat.com,
+ stephen@networkplumber.org, fengchengwen@huawei.com
+Cc: stable@dpdk.org, thomas@monjalon.net
+References: <20260731081031.3648665-1-pravin.bathija@dell.com>
+ <20260731081031.3648665-2-pravin.bathija@dell.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -92,10 +93,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20260726170258.8791-1-wpan3636@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20260731081031.3648665-2-pravin.bathija@dell.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 0dX2Sn2pz7sSykf571ceUJeQuzivgwuswi5TzbfwPZQ_1792084795
+X-Mimecast-MFC-PROC-ID: cmwWgsKG2lkLuNjNCmwL-iGmBUWWDR6dOXk7jsIk6bo_1792084820
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -115,36 +116,52 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 7/26/26 7:02 PM, Weijun Pan wrote:
-> The Tx path compacts the input mbuf array after software VLAN
-> insertion fails. Later packets are moved into the failed packet's
-> slot while the failed mbuf is freed.
+On 7/31/26 10:10 AM, pravin.bathija@dell.com wrote:
+> From: Pravin M Bathija<pravin.bathija@dell.com>
 > 
-> The returned count then no longer identifies a prefix of the original
-> burst. An application freeing the unsent suffix can therefore free
-> duplicate or stale mbuf pointers.
+> The vhost-user specification (vhost-user.rst) states that no file
+> descriptors SHOULD be passed with VHOST_USER_REM_MEM_REG.  However,
+> it also says: "For compatibility with existing incorrect
+> implementations, the back-end MAY accept messages with one file
+> descriptor.  If a file descriptor is passed, the back-end MUST close
+> it without using it otherwise."
 > 
-> Stop preprocessing at the first VLAN insertion failure and leave the
-> failed mbuf and the remaining suffix owned by the caller. Count only
-> packets prepared for vhost enqueue but not accepted as missed.
+> Some front-ends, notably libblkio, reuse the same message-building
+> helper for both ADD_MEM_REG and REM_MEM_REG and unconditionally attach
+> the mapping fd.  The previous implementation rejected any
+> REM_MEM_REG carrying a file descriptor with the error:
 > 
-> Bugzilla ID: 1884
-> Fixes: f63d356ee993 ("net/vhost: insert/strip VLAN header in software")
+> 	expect 0 FDs for request VHOST_USER_REM_MEM_REG, received 1
+> 
+> This broke teardown and memory region hot-swap with these front-ends.
+> 
+> To reproduce, run any libblkio (v1.5.0) application using the
+> virtio-blk-vhost-user driver against a DPDK vhost back-end.  The
+> connection is dropped during cleanup or whenever a memory region is
+> unmapped and remapped.
+> 
+> QEMU's libvhost-user reference back-end (vu_rem_mem_reg) already
+> tolerates zero or one fd in this message.  Align DPDK's behavior
+> with both the specification's compatibility clause and the reference
+> implementation by accepting the message and closing any unexpected fd.
+> 
+> Tested with:
+>   - QEMU VM bring-up with runtime add/remove memory regions via
+>     QEMU monitor
+>   - QEMU post-copy live migration between source and destination
+>   - SPDK vhost-blk with libblkio (fio libblkio engine, write + md5
+>     verify)
+>   - libblkio alloc-mem-region and map-mem-region tests exercising
+>     ADD_MEM_REG / REM_MEM_REG / ADD_MEM_REG cycles against SPDK
+>     vhost-blk
+> 
+> Fixes: 1d730eea6a42 ("vhost: add memory region handlers")
 > Cc:stable@dpdk.org
 > 
-> Signed-off-by: Weijun Pan<wpan3636@gmail.com>
+> Signed-off-by: Pravin M Bathija<pravin.bathija@dell.com>
 > ---
-> Cc: Jan Blunck<jblunck@infradead.org>
-> 
-> Tested:
-> - Full x86_64 debug build with AddressSanitizer.
-> - Two-process net_vhost and virtio-user data-path test.
-> - Forced VLAN insertion failure on packet 1 by removing its headroom.
-> - rte_eth_tx_burst() returned 1 and preserved the unsent suffix.
-> - testpmd received 1 packet with no RX errors or missed packets.
-> 
->   drivers/net/vhost/rte_eth_vhost.c | 14 ++++++--------
->   1 file changed, 6 insertions(+), 8 deletions(-)
+>   lib/vhost/vhost_user.c | 9 ++++++++-
+>   1 file changed, 8 insertions(+), 1 deletion(-)
 Applied to next-virtio/for-next-net.
 
 Thanks,
