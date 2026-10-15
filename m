@@ -2,75 +2,98 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC95CCA462
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 23:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B99CC6B38
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 23:43:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F802400EF;
-	Fri, 16 Oct 2026 01:37:00 +0200 (CEST)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com
- [209.85.210.172])
- by mails.dpdk.org (Postfix) with ESMTP id 1A8D740041
- for <dev@dpdk.org>; Fri, 16 Oct 2026 01:36:58 +0200 (CEST)
-Received: by mail-pf1-f172.google.com with SMTP id
- d2e1a72fcca58-8819033dbadso3876360b3a.0
- for <dev@dpdk.org>; Thu, 15 Oct 2026 16:36:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792107418;
- x=1792712218; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=bw4Sf5X08scvqQAGYSGeF6ENuwy5p9e7VwLoU0T8+Ec=;
- b=In39bOB7CjhgJScM6CVm6Qe0H4wEhrEXRoyov7rY2nxLXGgZOAbblDtkPV9VV+/vfa
- wYaCilciOBesjkJYk5vjGRFy4WzcYtZsgwLKrUWZZOCbXK1GfisLNdgG4pWzYnx8dBs6
- ebHzaNSbGMdmI649kShhEkmkJ7045+SB4W3VP4rXl3qVnrrZGhVcilqm27B+yRfW4PYg
- A3AUOjJb0dMEMFVB0x9YHrAmxs2TRYXxATCuWVdNG4VmyTNkokjhXIiwaDM2CjlUN37p
- Zj3WPUrdAYkeR+mds6zJEztlcMWPIvhO5k6dndOkhNAeo74I/64kiqbdNC82AXMEjZvo
- fb+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792107418; x=1792712218;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=bw4Sf5X08scvqQAGYSGeF6ENuwy5p9e7VwLoU0T8+Ec=;
- b=I/XblRY15W7o9sk4+XqXueA9GMIGUzpIEq6eTNtweRMLL5XeQj4o9ED9QVvXfcNZ0W
- fdlVKk2wC5yQu1bFkG+pLG4Wo1umK72SRfI09qT8Alyh7wpqG+YNeukfuQKMNikcgKPP
- wDMb7y2AKZg9+x88uyFjQsk02SL1dLP4Jr8s8bwFG3nLxqSFW+Km0DBpMOTrqiije3s0
- 3FV3IiZxGmtOq3ZH+W7c6QA1lk3961VOO+/cD+bC3KMsud35JediBFa1SgsOxw/1PtQ6
- iThlz4bxHLmddlwa0pu4tB/u+WNzpch/ap+p2kKHtF8YlraH1JAnSiJjvszE2A5uxtJd
- D2iA==
-X-Gm-Message-State: AFq9FYLfup67/aGptVU0enRcqTS/SY5uvGUQfbjKqVFzSQXPh7YXhvzd
- zHyy5ViaJDo+IQOX0s0RaKZT7vGYD2dsSjQQueO3QC8G+9BNIMRpPqMzmnnVjYYRJCQ=
-X-Gm-Gg: AYBFou0BUVuxsVEPw6E3u1H7cRJj+ApChv/cQ1WIhaOO32qV+49VudpjrgYFolYsIc4
- ouEOJduUnbYQ5aG1tHJojIkYOJf9mYJihkZQrisuGaKXTiCyZHs3hTnLsWijVZC9qGQm3L/aaIS
- E2ZM6cFtUxwsoZTTyYZFSJEm9AAMFYBAPlrAA4DSnjpmVX6F2Ky+7n5LB/kRTnxludDotU+ASta
- AIZWeJLQ8R2R4u4aje194KXc7H3dAugYG1QHcwMkuLMZtk9rDuhMAuQR3XejeVeiMHKYCRra9yk
- QV1EJnFBLMdByDR8LKSEbDOMjy8SMapTUPD6eD3FQiMNqnWcQdodhwY7J8rvqWWNfLo+GXgkz84
- 13fOJVGZVpGYN2KPYopMwK7AX7Pe9XvHTIcAuZxV2+D8CJ5gqdsUgj2B8U6GyGEruDdDBVCqh/a
- pibFn3556qoEUwT1vyIzxQWPJtywh3XNfLq211JrfKnvNEeQFpajZy6Yhf93xiibfQqHJD7Tp/9
- hegrx/UN2txiw51XaNlvxmy6I73MBCPl0axslY0gA==
-X-Received: by 2002:a05:6a00:3694:b0:899:55e9:8806 with SMTP id
- d2e1a72fcca58-89955f90940mr13818883b3a.22.1792107417155; 
- Thu, 15 Oct 2026 16:36:57 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-89f56c8b922sm247584b3a.11.2026.10.15.16.36.55
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 Oct 2026 16:36:56 -0700 (PDT)
-Date: Thu, 15 Oct 2026 16:36:54 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Prashant Gupta <prashant.gupta_3@nxp.com>
-Cc: dev@dpdk.org, Jun Yang <jun.yang@nxp.com>
-Subject: Re: [PATCH v11-S2 10/11] net/dpaa2: remove unused soft parser driver
-Message-ID: <20261015163654.56a86df9@phoenix.local>
-In-Reply-To: <20261015092513.2427856-11-prashant.gupta_3@nxp.com>
-References: <20261014054400.980123-1-prashant.gupta_3@nxp.com>
- <20261015092513.2427856-1-prashant.gupta_3@nxp.com>
- <20261015092513.2427856-11-prashant.gupta_3@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5DD76400EF;
+	Fri, 16 Oct 2026 01:42:59 +0200 (CEST)
+Received: from fout-b1-smtp.messagingengine.com
+ (fout-b1-smtp.messagingengine.com [202.12.124.144])
+ by mails.dpdk.org (Postfix) with ESMTP id 7883B40041
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 01:42:57 +0200 (CEST)
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+ by mailfout.stl.internal (Postfix) with ESMTP id C02A51D00071
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 19:42:56 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-12.internal (MEProxy); Thu, 15 Oct 2026 19:42:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1792107776;
+ x=1792194176; bh=134hZf1/7eJuyT+CG8B3uPI7zo3cSoW9wIIWvL+ph+I=; b=
+ BMFdsnBFkcC+K8PD1zIOVq70ep7+Z8MZXkMT5fOscSJedkBsEJDDLDwVnE2KgzcS
+ hAQ0yFAMJmJYsGRhkh8PdQidtzlnopFgL5gP1bHT0D2Cqx9Hk7Ipl9HYqljPkY6S
+ pUqDQicyIiD7QfE/1B6qzFvMOq2yDbze/U6d5HNx3tgO12SLjFwgznRsobZcmATP
+ Wih+cEdeuwMNB0pWL9bQPlEjwDWGeSuDpVEPWTPjkSZMcMU2jkr3ced+sUumI7uq
+ PC+i2Q2UwrzbleS4rNAEsIHuYOSB1inW4RJcsWOCAqbccJet090MSWj4v8xDo7ma
+ QUuMvKmUgLflhUcmJaXehQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792107776; x=
+ 1792194176; bh=134hZf1/7eJuyT+CG8B3uPI7zo3cSoW9wIIWvL+ph+I=; b=a
+ RJ1VLbwJSNiSghajUdTNTV1SGWXghZykb7C7XSOAF7JVGQa6WE9K+c3yy+dsTRbH
+ muRnq2YqGCjxF/0c5VNnh1Y/7SwPLmbXgTROd+3VjsGIKvAEEtTwcxO+6OIquUzD
+ puJRvPO/6AY1BqkrPP/ArtDzL6MHIwWQRRi0CW7PRR2SiP8MuixqRNn8ZI51AoYw
+ QpMlqS6ijAyryzzIZkmhPTwLS79k2hhjMhbu8TtH0bXVk4zKSO1KaFQUC+9rfcGF
+ rzqYzL8s7bb+J043tLkLEfhxDZABHtbDuPbn07dbRtPbjOi5Hebe5635Ol8nQIqb
+ uzCWvWufP03i2BQYkcs0w==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1792107776; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm2:rsa-sha256:AWxgV+dpCrXY25TcdOFUpI20US7VpRSrop6mjS07ihkskB6
+ Rh5Z3RFXMxar7jTYZtiXp6Y+YGNmdG6+RsnwcGMBDu4768llg5Qz0hxsMa7v71Lv
+ kOpP/OOFvcL1Rtrasxq1w/ZVmBht0qvWXMpAv7mzZTfX/QBgSd1sbpQomGcZDSSe
+ hDpmfrPGI49XG6NjzAnux4E80zliyan7i8IjcXfKDCvPLCZ+xrnty3KSp/O8ev/e
+ k3PGrtnSAq2oBk7jkjGihWoua77NxsNsVm/k5l0umRLwCtX91Oy4kudHZRDAulJ0
+ gpi10gr5oR5zbcsFnAZL4IH3MV7sGUiKSMLLlDA==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:paR2J83ebQIRAeBuT5o/6yo1WJfG9P0hA5BlZ/unoHw=:EZX7Gvbp59JEWN9TWA5gR6QeIon5URyguy404bjGVdI=;
+X-ME-Sender: <xms:_2TRapCSugx1tUEF7Lb0wqkYMG_e7lq5SET20lry4ICrb5hpfxJh8w>
+ <xme:_2TRai8VdFbMywtD0ivgdnJJQHWBwtx1cJeHlhto5Q8YvqOAwx_4TNcbM31GLq-TR
+ atca8eC7-SmxqE_mU0PDW0p9DkfiCNffDxKiAkElMZxjcM2zCW12YM>
+X-ME-Received: <xmr:_2TRaoFStOsHiPEVS-wsj4wz66wXBotzRbj2povvSW7eykHbKIBowZrsS195-c0x-K01H4kzxbnTI1vQoZVzDgk>
+X-ME-Proxy-Cause: dmFkZTGGCSN4dWUP9Ll2Wkd4v5LgdlV4P0mkQ6m4CiobrzCW5KPDlU8S+PXlwZUpa+xT7P
+ U7PapXAeq1QveR4SP1wb1AUoRITyGl7hIFJk+vFG1Su+xK1FudY1RbYWBC6J4cMdlXERzF
+ SNtDW/oWzj2eE0b+0bhR5J4Ufu5SLq3lPLfq0TOhHcLXqhl3I+BZUI4oVjUL+QBD2/Imz+
+ U6eOplw4ysDKoi8yEEyZGbRl4XQr9lO6Usgam9fcLExvNDcgK+r3/cEUHnNuW1bCOeQytQ
+ 5OZWLTf4m2v+3rs7hzMHvTCANq7MN3xUcOsOU+CNfejjdoZZg4/uKzL02myfQZzuLagMkg
+ ow+Iyl2dwNmRYOsvoxs8NWRoPMKBIjjVawrhKi1yUKRr4GwRUSDVhwvVA9GRejrGg3TWms
+ vzWO0XqpWnqmva7Jxx2QRO6WZ4jT/Dyh49ihAfhIGXGSv3pwJo0NMYM3mj6iqvjrtej539
+ 1T3wWbxKq8ABou5A7MAe03A/EwIx80BpUBPYJBFiTChyqoBH02Q9nyHPa6ylIo5yk6IBMn
+ MLYUoaSv+uVANHchFC+FSfhbmeYu1JAxDxXrSHVa8fO9hZWLbyx5W8hB23ARpM5A3nEBrJ
+ PQsitNCbXvIgxqQLqbKZdWtzdzY/ggRS8gm1my9VBf4NtfhyAd2/SidOsx4g
+X-ME-Proxy: <xmx:_2TRaoPt_2Wk_OQtva8ttRPzv_FvPdFt3lUryx7euvfV4k55CngvyQ>
+ <xmx:_2TRaqdlMo-LKacziU9JfC5nSbtT5YxFCZavOm73SrqGJZiWM_6PEA>
+ <xmx:_2TRalt8Xk39a3N0bVYAVE7M85rEzcKkNUSnIWRUxEkWVlu_eniw-w>
+ <xmx:_2TRarlx7pezlbtmPz6TFSR8L4xd23RbiGXKvGuGwf7Nv_s1e6y_3g>
+ <xmx:AGXRagsXtyyQtJ5F2TawbaUvifhRSirEB_9TrYK5y5s_B-czG4bfaJCB>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 15 Oct 2026 19:42:54 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Marat Khalili <qm2k21@gmail.com>, Marat Khalili <marat.khalili@huawei.com>
+Cc: dev@dpdk.org, Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v4 7/7] app/validate-bpf: add BPF validation application
+Date: Fri, 16 Oct 2026 01:42:52 +0200
+Message-ID: <d9SQxPwySmi2JPzs0FolZw@monjalon.net>
+In-Reply-To: <T5P7ebNzTTqVuRXvg1A0FQ@monjalon.net>
+References: <20260915192626.48125-1-marat.khalili@huawei.com>
+ <20260917143539.46951-8-qm2k21@gmail.com>
+ <T5P7ebNzTTqVuRXvg1A0FQ@monjalon.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,37 +107,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 15 Oct 2026 14:55:12 +0530
-Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
-
-> From: Jun Yang <jun.yang@nxp.com>
+16/10/2026 01:33, Thomas Monjalon:
+> 17/09/2026 16:35, Marat Khalili:
+> > Add a new DPDK application, dpdk-validate-bpf, for pre-validating eBPF
+> > programs for compatibility with the lib/bpf execution context.
 > 
-> The DPAA2 soft parser (SP) byte code has to be installed by the boot
-> firmware before Linux starts; the WRIOP parser cannot be reprogrammed once
-> the MC is up. Loading an SP image at run time from the PMD therefore never
-> took effect, so the loader and its DPNI_SS_INGRESS plumbing were dead
-> code and are removed.
-> 
-> The rte_flow VXLAN and eCPRI pattern items were only ever accepted while
-> an SP image was believed to be loaded. With the SP gone they are rejected
-> by dpaa2_dev_verify_patterns() before the configure switch is reached, so
-> their handlers dpaa2_configure_flow_vxlan() and
-> dpaa2_configure_flow_ecpri(), the switch cases that call them, the mask
-> descriptors and the VXLAN_HF_VNI helper are removed as well. Both items are
-> also dropped from the dpaa2 feature matrix so that the documented
-> capabilities match the code.
-> 
-> Signed-off-by: Jun Yang <jun.yang@nxp.com>
-> Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
-> ---
+> Now that registers are private to the library,
+> this application cannot compile.
+
+No sorry, just need to include the private header.
 
 
-After applying this to next-net, I reran the set of checks.
-But this patch causes problem:
-
-$ ./devtools/check-doc-vs-code.sh 
-rte_flow doc out of sync for dpaa2
-	item vxlan
-
-
-Backed out the whole series, update and resend.
