@@ -2,73 +2,98 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BAACC6B38
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 23:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E187CC6B38
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 23:33:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B01740291;
-	Fri, 16 Oct 2026 01:26:11 +0200 (CEST)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
- [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id 421C640041
- for <dev@dpdk.org>; Fri, 16 Oct 2026 01:26:10 +0200 (CEST)
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-3856d6fbcb3so1418773a91.2
- for <dev@dpdk.org>; Thu, 15 Oct 2026 16:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792106769;
- x=1792711569; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=YN/5xXgSMcE5TDNmz0MwnPtycv+rHWarA2h05tG4ux8=;
- b=zwRIRn/6/vXCgv5ZQq1NLftBINKknFuBjNssvtzzzDWZIleo1JHsy6B2k1p+pE0fjf
- 6SxFDaRJ8np9e0XfBFerbDQfHS44iezhbxsUeNqbwQoubFINPBWSn0d9WWr1uSYcr3Hl
- c5JkZOKfMc5naFW/mJujTmOGHbBCdgNwXsofo2w1ft8zF7pPty1K7SC343OMHy0nvBQW
- 8FeaAGi21nzAP2Ydn1d3Wr5fI8cAF+Is6Q3jwU5WHkbgnIVKaKSwBn4c6yuDB19WsCGg
- xqDklnRf5Rfr1Vt+KGoNJtSAaUuHN2IO0OHW3ZEysX532LqTpyIZN3/vniM1H70bRV9x
- 2bqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792106769; x=1792711569;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=YN/5xXgSMcE5TDNmz0MwnPtycv+rHWarA2h05tG4ux8=;
- b=ej6ADEoRzpOh4UvD+eC8iAn9t4kikEBLoZ2EdUjzDTD2mvWwPVtxRxZhSgbh3efPUZ
- r3xvorxrbGztOiafoPw3o9tErHpeOwwrVK3bSFAkeBMVYkE2giveO/gzqoSK10cWgrL0
- r+RmqMPfwRm2uc+DNsjlEqKMvGIyl2MSykFzVijWGaaoeQTCNuhzLQDheNQwdrWXZWuf
- MlCudzP55jBI19ZmAQj0AW3qZu/iMgUmP7A8/OKCkXbW5NLW7+J+vHpzfoIi/WRZkbh6
- b7pdDOXCuTA8zuKJyru0+g1+Du4p37pguricL3oCt04d4SFy4qbH6prDWzswxaC5TM/Y
- JK8w==
-X-Gm-Message-State: AFq9FYKxqQ/hAkyphp9OjE0MWCGFMUlL5GcbpCto/0gW3biPVeA00Cj6
- Oqx24fcrHcXSWnFqr7AsQBtHxxM2OArBXW2bfUk7oCk3xRVn3cgREKdT2Lxebp1QbnQ=
-X-Gm-Gg: AYBFou2xpCSiosQoYlV4JrIRZcrVhBEvNjcvkDG9GU7/sOL9vCdjvAmW77uZcMuwKMd
- FLNjAil3mS3jwq0Y2IUgP0mQTvppkc27I/loJcyXhAQLd/YoFHKnkZ804YPQyf4WfPf01ExLIWn
- 2RZaGmN9UYTDbnv7Rm9c7s7R+eSZkTsO+K7xDuZyJ0Xt2lNQeHAeUa+AGlAkpLidQ9poGcf+TjY
- zpJMhnOemKmXDywrPgtMrA2NGCJbIwvwWXoSe+OD6Nv6X5ukhlyRzkDMQv2FiivyMooppnhpwA5
- U2FqoAwHxS2Ff2OJW2bU/cspLtg4NuR8EB+g6J1VCgPYCKDB7rYwWHtQGWqdmvl7iN0DQBmUntV
- wyI2b2n9UXkfrh0jOTJedTuJzKjwX8JS6tkKhxCqWGRTP5EmyJ6ifQnLp16YXepZGJsA4xC4nLM
- 4pOQoqyVqvTrOj6jOlRY59r9U0HUEgaa28ygGz2tx+xjSkTuSuHfL2e4R022AHAOvAT3wVGu7Ty
- lkSrFbyZ0as1EfnQKpeNFt0UhyANKlCHPA6qAmP
-X-Received: by 2002:a17:90a:10cf:b0:3ab:9c73:12f with SMTP id
- 98e67ed59e1d1-3ab9c73097dmr9939364a91.24.1792106769042; 
- Thu, 15 Oct 2026 16:26:09 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ac940055f5sm6287069a91.0.2026.10.15.16.26.08
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 Oct 2026 16:26:08 -0700 (PDT)
-Date: Thu, 15 Oct 2026 16:26:05 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Prashant Gupta <prashant.gupta_3@nxp.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v11-S2 00/11] net/dpaa2 updates
-Message-ID: <20261015162605.1c0b93fc@phoenix.local>
-In-Reply-To: <20261015092513.2427856-1-prashant.gupta_3@nxp.com>
-References: <20261014054400.980123-1-prashant.gupta_3@nxp.com>
- <20261015092513.2427856-1-prashant.gupta_3@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 01F04400EF;
+	Fri, 16 Oct 2026 01:33:23 +0200 (CEST)
+Received: from fout-b1-smtp.messagingengine.com
+ (fout-b1-smtp.messagingengine.com [202.12.124.144])
+ by mails.dpdk.org (Postfix) with ESMTP id D8DB140041
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 01:33:21 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.stl.internal (Postfix) with ESMTP id 21EAD1D00109
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 19:33:21 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Thu, 15 Oct 2026 19:33:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1792107200;
+ x=1792193600; bh=hf5aMxe7qOEQyKhIzHe1V2akNdYNL9P+tdVmjT441QQ=; b=
+ oYd9slCyM7wUdTX0EBeqj0JVSTOJKoap6Hy8SgVStsk8mraciXNqgYE2v5AOGtJE
+ 5WI7ec40q+Qp4lYuaKDhUhGWAa7fK/sRBhHI2he/EjAf6em0hHqx5ragKaV53Oug
+ 8wJ3oXknZNAzSkSUU2ThlO80mfF5WTWT7CjKrk2LifYKrvOMrZ2q8NPIHaafNy1M
+ hLHzVOvcH8chmdOttsF9shSklZAZmn4yc0pmQPvDuViTjQez2u6Nz6D5sepDMWps
+ DUXssjziJNWWXnMyn5YwyO1QVuVc3qktRVU5JlBMlGmx8DxBB70we5NcyIathptg
+ QkD4i0HCxq1HKvJoA+yuew==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792107200; x=
+ 1792193600; bh=hf5aMxe7qOEQyKhIzHe1V2akNdYNL9P+tdVmjT441QQ=; b=O
+ hF9bwaH4TMCH/MxC4WFS2NVx6tkCDQr97lYGxN5FexTymQ2eLdw/3JcBC2Dl9L7f
+ QV+ph6Urv+m7ca8iVdAKrXUPOM6XZiCVdJwiAqEcBT2mOV0m+Xc+Kxq1kqTS1glG
+ tX01ulrHmTNmzLCSO0z2wu8NeSI43+PkiXZvHxF6bXAK4kA6SWI6J2TS0afINBIx
+ qQQwYpTpNzDlUac1Bq3rw3s1Yt+yjHjCZ3UNXap4fxNpGz//zbr8vuiyaVv+oBI/
+ fSWdvGXz8eIKV7ibinWuNrC7SctGeQvyaZjhrNqQ2plb+T35Yn155DeSDK0CkVNX
+ l9enYRDKJ2wmXSt739E8A==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1792107200; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm2:rsa-sha256:jlEoTVfy68FxfNqBeekM0KBFuTFkx2FkmLRc9nYGL7dchmK
+ rkKoaLtMbSd+VS/If39gowlEE8PHOa8XC1Opx5hINy8N/ZFwtAW69kEk6xKXGkr7
+ fDdmaggV1X/rxPuKqDBZhMB/3h9DAt+xVQzFEHuEaxk5dTpGrO5/DzqRgjkvsgGZ
+ GinXRMIXgOYQyO5qIJ3OsL43Tif8rYZkUhseHYexNZDMZXpsJJaH6RuP09K7x2X5
+ d8mB39cT/Z7thhcREWbMBLMcO85sDVRFH/Q15UZm72ialWBlGwPWp+eA2FdCtN+b
+ n3hXUhBQZkDtfGMM6tf8cMiZ0na48mLhueOfNKg==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:uVWxIT/q6/Huuy2HoI+CxXh2B4eNjp9RxKAaatf+yh4=:hf5aMxe7qOEQyKhIzHe1V2akNdYNL9P+tdVmjT441QQ=;
+X-ME-Sender: <xms:wGLRauGSSoZWg0uV0AVrLMgfvFzAHPoFDRkcfdZrSzzMayoRx7uVdw>
+ <xme:wGLRaqz9uAH6kjAFhPrGRhoQjMSSB4uRRdL0JL_lv9Zvg115aVztZnnO69HwVRXQq
+ vKCjhI7g7eQdSX_79M7YLn25VB_Rb3CwOU12VzooL_6O6RYPdlUeA4>
+X-ME-Received: <xmr:wGLRarqdJ3oTxvxFmaXujcxZKhIQo7Bzz_X1MZiMPwWCTvv6dkT2OozV0HULnvVxWBTQCjCqyAyYl-rExZ_BVSY>
+X-ME-Proxy-Cause: dmFkZTEFhk0qkWu7dUNYv8+xJKz7LmuPm9CqtDBB4aRQJ1B+AkEwAPodMhYo4cALJHB/st
+ 80THP/0M+s0EqgfrGya5lxV2c229DKzyliWw1LPMaDcGAhCD+cFS0XPxrhMwOejBSv2N4P
+ JRJXtBjY6KZRQ/dtvsJXySxEfw+Ig2H2c4/YAqB2rDdumZn5Yq+2mGS9+2iO78NLAh7mjX
+ ZvPaHuRZpDa88tKl61egK8ZKKdUH23sAb8RHXdHkKVgtNBKBhFygBMcVTMAeNueHzEnrDp
+ wprp4gnFAuwyvuoctoGSFwQe7WCuZ9nk7wzxrikFRAvPGxnS8DqBuGorXq83NLG+1enQkB
+ dTs++IcJFpTExvlGVeUilA86ORbYqxggobZgkrK8EiVDqNsz5ks7UuuPJs5eGrL/B0jZtr
+ c/+EXvev/W2O5qJ2Y0wFJ1U1JfV2RjSLR9royhMV80T8BVYWUiCIjt1HkXMr9BpabocK9L
+ TY5evkfWPwCsWF8RYRFtXrcueg82CXJ8tm7ggMks36kIgJoXLJ1NgJpHQiNDxJz3vykxvN
+ XCtRoVWoDp1sTuIO3e6ZqRPLAsdbzuOmThiCpib08SMPl8cE+PPX1TK7hF+4F6rIt9PYTb
+ QdN0wIMZGiOCEUfyge1rKdDm4csAq6GZOJyVXM3i6kvpfybvw0NCLFlqVCVA
+X-ME-Proxy: <xmx:wGLRasgqOGnNBmHvSL-Y0vXUQIuT8l7vq_E1BC5me16Z9xARkxTthg>
+ <xmx:wGLRagh6zMZ_Akpi9E8VTCA30txhsrOCYhOu3D8Zi8Oev7r1cAPhYQ>
+ <xmx:wGLRaqhPtE-mfCTQ-qtUB9tYZosMOb-uFiP3CTBUu7gYk_fbaW5TqA>
+ <xmx:wGLRaoKXTEMBQUhayVgsVatrJUnk2XO07tADrrOEr1y4FwuDDC9BlA>
+ <xmx:wGLRaih8xvmEFeJm45ZHWFbsusd8his8iYdMPt0yvNrn-DedliE2tG7H>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 15 Oct 2026 19:33:19 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Marat Khalili <qm2k21@gmail.com>, Marat Khalili <marat.khalili@huawei.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, dev@dpdk.org,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v4 7/7] app/validate-bpf: add BPF validation application
+Date: Fri, 16 Oct 2026 01:33:16 +0200
+Message-ID: <T5P7ebNzTTqVuRXvg1A0FQ@monjalon.net>
+In-Reply-To: <20260917143539.46951-8-qm2k21@gmail.com>
+References: <20260915192626.48125-1-marat.khalili@huawei.com>
+ <20260917143539.46951-1-qm2k21@gmail.com>
+ <20260917143539.46951-8-qm2k21@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,22 +107,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 15 Oct 2026 14:55:02 +0530
-Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
+17/09/2026 16:35, Marat Khalili:
+> Add a new DPDK application, dpdk-validate-bpf, for pre-validating eBPF
+> programs for compatibility with the lib/bpf execution context.
 
-> Changes in v11:
-> - Fix fragmented packet type handling to match hardware parser
->   summary reporting.
-> - Address review comments.
-> 
-> Series overview:
-> - fix an integer overflow in the CCSR region mapping,
-> - set Tx confirmation on device init and support a larger burst size,
-> - support MPLS and PPPoE flow distribution,
-> - support the flow drop action and a per-device default flow miss action,
-> - identify Rx mbuf hash information by FLC and add minimum key size
->   support,
-> - parse tunnel and fragmented packet types,
-> - remove the unused soft parser driver and rename Rx queue flags.
+Now that registers are private to the library,
+this application cannot compile.
 
-Applied to next-net
+
