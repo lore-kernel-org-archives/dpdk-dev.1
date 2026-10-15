@@ -2,144 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 595E1CC6B3A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 14:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 410F0CC6B3A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 14:11:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B4024027C;
-	Thu, 15 Oct 2026 16:02:33 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 9B0724025A
- for <dev@dpdk.org>; Thu, 15 Oct 2026 16:02:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 409864027C;
+	Thu, 15 Oct 2026 16:11:44 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id DA84F400EF;
+ Thu, 15 Oct 2026 16:11:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792072952; x=1823608952;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=7b65agfPW9jTaE6Hhd6P0UuzyyfgqvI5/rIvUFJvZSw=;
- b=HqLeqgtPVW1e/uBMKmW7zSpspAb5JHe1wT9C2LTAe4N6NyUr30PU44gm
- 00YyGDGsdynKOMp8v0Gjx/X5agCY2IdATP2plDPDPs9zAL4hv6d0MEg6A
- 6Nh2py/AC4SIQ1cxSMEOEbhPMzMrK2foDNtWm/INBIfa67DiSgop3uH85
- IbXQ2tnnxF4geVakWg3Nfj4ikX1xzjxg1GXgeqTkRiwzUixmB5uL1kUih
- 7Awu+Wui7Hm4vJLdr2Q5dibrJ+46VTRMK+ATDwCOQpqdR1jzAloVUayt+
- V1r4oOMm0boa42aLOyQQnhV5x1nJ7MEhNR+4AyyVRI6tIRVNaDxSEOnOc A==;
-X-CSE-ConnectionGUID: HEubqsvfSO+6Og0b2/WF5g==
-X-CSE-MsgGUID: eiL8mezxRDmH4fOgoSQh4A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="946400"
-X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
-   d="scan'208";a="946400"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Oct 2026 07:02:30 -0700
-X-CSE-ConnectionGUID: 0QE+kZ6BRVy0cig+pJgiyQ==
-X-CSE-MsgGUID: rYyFxhipS3+1nAWKLid29Q==
+ t=1792073504; x=1823609504;
+ h=from:to:cc:subject:date:message-id:
+ content-transfer-encoding:mime-version;
+ bh=0qJo7AORIqscAv9W1FJGjCAYuH3uNOrVSKv9Z08XB/0=;
+ b=kvJVtzbx4WMVgtjR49XIcu54r/vM9NviZ8vxVc7h1pq4gFVssN4kcFKh
+ XBs1pgfeEchpLcFCkgAoQekKrO47eoqMst89zDYUZIxE9F7+aqwE63PWm
+ NRY558Pwcb/WdJ+vVix0Go8i4hUyhlcmIUwhS4XeOjJ+YClRHHknFK4Fu
+ VlczLFp0/ZHd4SWZ7p1A/Sf48iVThy3J4y4SPafppFnHYcuG2HR0XQi1a
+ TPz3+RUJ/A6KnuM4JgRvc5uivtBuRrU4sDbollem+g5VjaJm1EtVcNhz6
+ x24JIKiJlR+ZQYV2XEyuZe3a20DZypcTSLPok/SA++jkAF5Yk9MsMbrTn w==;
+X-CSE-ConnectionGUID: MozDWA3eS6yNMWCboq7qMg==
+X-CSE-MsgGUID: Xcb/H8KaRDaz9HoVBpHzaA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="748669"
+X-IronPort-AV: E=Sophos;i="6.27,160,1787036400"; 
+   d="scan'208";a="748669"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Oct 2026 07:11:41 -0700
+X-CSE-ConnectionGUID: fdXTxAAQRe6NWiniEfwuVA==
+X-CSE-MsgGUID: hiB9iagwTsaBsk9s6fAMeQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
-   d="scan'208";a="2134767"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Oct 2026 07:02:28 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.27,160,1787036400"; 
+   d="scan'208";a="1678004"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Oct 2026 07:11:40 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Thu, 15 Oct 2026 07:02:27 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.2.2562.49; Thu, 15 Oct 2026 07:11:40 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Thu, 15 Oct 2026 07:02:27 -0700
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.0) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ 15.2.2562.49 via Frontend Transport; Thu, 15 Oct 2026 07:11:40 -0700
+Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.2) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Thu, 15 Oct 2026 07:02:25 -0700
+ 15.2.2562.49; Thu, 15 Oct 2026 07:11:40 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OO5C+SKxh4sANe9TKFgpNvCKLkCHTaYjkGOGo4yE91GTeTcywMlzzMVs8QVukuO722gdXUrYVxaoif/uLZKphAHz+XYDaKUH1ws10pNZ0rOkUZXIxYxBcFgvHKH/se6z8t0CT6runsvMNlRWoG/X3n3wvrj9f97xGP+g892q76WkVfIbY0d0Efc0MmrpwY1JLL0P9W4FPiPMmMiWma1DIIc17nwPXvOSxNTFWqE0ZHW+WulW42rvWLN3/gNJTnkb7YAQAvAs3wVIzBHu4C2nZcKgASZ/aD7gbvSpCwWNTcdCrbANaw4ASbBGQGYNX8LKLX1V5xO63kKwjBz9ohpBJQ==
+ b=kTczpw9hGxC1xYjnjx8ii9xuPNZwXjGNRrAh0lYh64sY140JWYc9LuDr61Fz3uNCLSBdj5AlwADV1ZrPJF5trmy4lDSb09f6EFE0NBZJl+fVNBb4Tr6vRz3SYYTSrF2NKP2eOhNeY1Xq69k/8CnN3h5S/nvPdg7NdV95dXyTICrKRdkrvTZGgBSYcqehDHIr/c3eEVxGDxpXwSQD04yi+2x02tV08AJf+OSNfq0yJuyhbImT2cE8NZ9023TTdWfzVlQHHpWM24QP+RioUdKojO2/cxf6oU6DgXb6rE27rWfHaOKOPGor/Pamw4YpTjG6/kflMtF8PnAlm/uEIetMNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KqiZDHL5ypSjJoZBRkvkE9MD+h3CY2IggrODGgc+SZQ=;
- b=vbjiV7F2JmiLEpOmQWMYCL4zPhYNTyd7VzLJTChT1gs03ynMl75UFeqpPY1s2HLUfyWTrzbvOkvIYZpX1i10ULRpqxPMSP1hpaYZu0L/Cv2OLGOQMSriorYRqkwzqg1sN3ZqDmZQwQFbDo3YzDT3fEr32TiN6kB2U30i8Z10Ms6WR0nmMeUVlqPHUho5yRJZY6E+Yfl1CDtoSDTs9SBKnYIAOc7mtKzlxruqNdlZBcwlGNCmAUe1RosFDhwwdaPGWKDO6WVdT2iU25ssUJeFfsxYPhSyNV2weOnC5fCSBJIsh8EHFDgwqpO/yUrBjqnAEJ/baAhA4j1tjegsOlWu8g==
+ bh=5HlZv0aSP/d1ym4jMHueGvjLqDg8UwR8papF6LWnWf0=;
+ b=CrKU67vIkSivEBCtzjd3m55eG8xSRRLIXgUIss5Z1W96O+SynN3NmHCdF3vvs7OmThkvjK73Cadv8KRZZxmbDbVDWGdaCU+o2bP0b6m3KVzOjRueuZTMtGHa4WTDyUJGV5yJUfw9AJtRwM1/XOcXMTwex6uwkDFuTrNaeZlV1axnUzblAa6tOVAExTgUad6hb14gAPrdQLI5peENVvweZppx447/zkKk/Ci03R4BQ0lXpM0ADsaDIwU1ueGVBzBzaClmQ1nvzvCjB/RJxJHD/FHI9jYTS8TAE5Q28xPUfLmB6xFhZX8mwyGk6K+LadCI1hHJm1rzxtWBryMlCxmwbQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by DM3PPF529E923C8.namprd11.prod.outlook.com (2603:10b6:f:fc00::f22)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.13; Thu, 15 Oct
- 2026 14:02:19 +0000
+ by CH0PR11MB5283.namprd11.prod.outlook.com (2603:10b6:610:be::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.14; Thu, 15 Oct
+ 2026 14:11:38 +0000
 Received: from SN7PR11MB8066.namprd11.prod.outlook.com
  ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
  ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0496.021; Thu, 15 Oct 2026
- 14:02:18 +0000
-Date: Thu, 15 Oct 2026 15:02:13 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: Re: [PATCH] net/iavf: set interrupt throttling register
-Message-ID: <atDc5cZqzHSSF-F6@bricha3-mobl1.ger.corp.intel.com>
-References: <20261005110613.473007-1-bruce.richardson@intel.com>
- <atDYWtn8lwvGspyT@bricha3-mobl1.ger.corp.intel.com>
- <CAJFAV8x_-WcbE6i5vh_vaTXPUqYwaNXNY7eFgQpqLjzHWP1CVg@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAJFAV8x_-WcbE6i5vh_vaTXPUqYwaNXNY7eFgQpqLjzHWP1CVg@mail.gmail.com>
-X-ClientProxiedBy: DU6P191CA0011.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:540::25) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|DM3PPF529E923C8:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04142ccd-450f-4818-9212-08df2ac4ec9b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|23010399003|56012099006|11063799006|261009223027099003|4143699003|10067099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: XsVSVPGnZOMPVBOFAE5HmtqepgHtnuOwqqV3QFMNiksq+lksFXscoinepdI1C4zu3zsLaKBQ2+m49O/e39eY8F5TlmhmPFX9//kewdGZuHpzgP02RAtpjARscHoLWIfQSFrH/ncO3W926MhIfmw5hpuyGBgKQyPW3+02KYFHKudZyjoe5C+aWcs1QiWj7D4Z7iyegn5kRj/W9BlrfL+G7rGn5P+VpaJrop9x/mzBXMY9XMAXteG9i1ccE4hrDZEYQXfoGYuI7Iqi+BI+fv9P9Op78pPE1QvNThrSLmEVA1qpIH+Io9P17WEky5YBkjIq/rjMziygIUiAh/YLUVSoVG/lBoqDmtcE9RF1LUIoeL7xQe08FGobKoZAI0bmS8rbVyyStgIuIU4pgLjKCYCO7fe5MMJ3epZ9HwFkaXwO5W3bmGFVZjHOWNN4pXRldzv3zm2FjR25nNDLt5t1CGTEpRY+NtVEO8fRRo/7Hh40aSWMlvoPZwFb+8//Fo8+1HPVykDbLfDOyRMb5YIsd0negX7mA4hXuXBMl8AtYHCL45yeK5gUQUdoMGoFDm/89BnbVSNQogPl72Ov9m4HKF4kIdUvj9bJSTdXzGnYVkbM40jCMwpSiH6QXogUWvNnB7+Vl7V1hFlUeAktuxDQhWAlW1hyUj+UmTvoJ/sj9uCNHog=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ 14:11:38 +0000
+From: "Richardson, Bruce" <bruce.richardson@intel.com>
+To: dev <dev@dpdk.org>
+CC: DPDK Techboard <techboard@dpdk.org>
+Subject: Minutes of Technical Board Meeting, 2026-10-14
+Thread-Topic: Minutes of Technical Board Meeting, 2026-10-14
+Thread-Index: Ad1crxdE3FCPX/vIQlOpj0VIgIO1Rg==
+Date: Thu, 15 Oct 2026 14:11:38 +0000
+Message-ID: <SN7PR11MB8066BB403CE3C86A95E80682979C2@SN7PR11MB8066.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN7PR11MB8066:EE_|CH0PR11MB5283:EE_
+x-ms-office365-filtering-correlation-id: 8eae913b-10f4-4f6a-e364-08df2ac63a78
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|366016|376014|23010399003|1800799024|18002099003|10067099003|11063799006|261009223027099003|38070700021|56012099006;
+x-microsoft-antispam-message-info: 8oup7IKOhVwOcyGuFW/Ax+S9gTT1JyjYL6ApDXd1fID8SyGrB9KQP52fsSeWhMH9LtujVOs3gEyfFBKnmoh+P+5pBqrNguzvDg/DfiJW36HLjU/WN/aDBfrgwTr293jl2UN8pp3lS53pxWfu7dON67DLrJ9KkPIvXDxQMydUBCxXpUIFSUCVDadXhx5sa2D1RU6maw5/RFNlsBFrUW2+J3XlxqXQWjKFL+085w2jJZ73XBaxvXE9nvEyJsKDIV1pjzMG//SF6E0EqtM1VnemqYyaxKWM/hnYZoKv54n8uKaDe6YDd1gycahTkPXrTAXYu/1hKZKUP04gx33J965132mMjDSXYz0PbXqyeBvMaDwyTNu2w8891YT4v+41WPkyoV6oH6xeG1wAI2qTtlaDihLFMbg+JHtVuOtEN8EP81tPoBaaFvIgbH2YlHHh2iZH1Lv5T5jX5mpp7qIDM+yzEyIMzCDy3UcGk8Z0vqrvelp7yl8dhHjtDqmN/9NYDEyYlpDHZNbrhXwOKYNJCHBwc7GzOtQwOISUNnhXQnYrkVQb+RhpBPaUO7QwBCtp3IjrMoAbaETP7FLpICqcxqUGW/CYZPVOEBPcPRyC/Md/WUzjsITmaZNCeQC9qwaKiQ8ytieNrSsX98N766wZfKT5C7Hcqo430pQT2CB5Jn2n4vI=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(56012099006)(11063799006)(261009223027099003)(4143699003)(10067099003)(18002099003)(22082099003);
+ SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(18002099003)(10067099003)(11063799006)(261009223027099003)(38070700021)(56012099006);
  DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hxgI8NzHmy+xhM0td30E10yA5rwNEU+rc/sm7eYLViNX5f6hwrs6v9tJsKKZ?=
- =?us-ascii?Q?QCFCBMATh+tT8bLYgPafAdTexc0iSoB84TQZiSinXL6eJgV+fFREP2I3A1xp?=
- =?us-ascii?Q?E9Nqnlbtm7XvcrORXTryRjLcTCYtTRSRe+hQ5kM1nzDWO05bOJSG8uvK9sQK?=
- =?us-ascii?Q?LQyxfVmUOpQfF+l9coOxHT84jAHaKBbwwC/7Sw7t3dLhi+UQu+u020twIKfK?=
- =?us-ascii?Q?VPFACnjiVXabs6o1Nh5W6g6I+oSSd2ihfBfarUf0OLfJMaWmA5nbfJSpwhMH?=
- =?us-ascii?Q?rhpjk4JP7NbxGWMYG1OwTLTyj71qj2xSs+MM3AcgqHVGJSn00sXNzyf4j/pj?=
- =?us-ascii?Q?pC/wsr90lRgxK0r0ed0alFZK0JdFC7YCQxMG/PoaR880DIN1SR+N9CSCUJ0l?=
- =?us-ascii?Q?Z+Lp3rflV4B2KDkCHYEaD5s4nARWoah4ycQRId9IW10HfYTwWAD1D5ZSQ4Oi?=
- =?us-ascii?Q?mZQKWZ55srKJH0ZyjfeC4awh1mIaCVbOFg1dg5FMtyPbuf2bk3mor0qteWoA?=
- =?us-ascii?Q?X1r2cG0t6uksllHSJHiAyqFXoFgYZqC7Ge3H+zmjVYZlruLXwQJeYze0RmBJ?=
- =?us-ascii?Q?9GuyquaRi79fPVZCyxu/+SiivCcn6v7t9P0jxvtyVs/hIsOlhnWYzwLvwEuI?=
- =?us-ascii?Q?5GNEN+1S3kiMX7yzXN09MUy/NRjT8U8PAFdzcRb/Qdam3d0MgTFdbP2jJCuf?=
- =?us-ascii?Q?eovP7AeRLUzYzqZRCckGNX1T42TZiJn6iNVoIiXAKwuopH6d0xxtnCnbbcW8?=
- =?us-ascii?Q?MrYI2B0yt1yEncECenr5r/2MzoHqsb/9s1v57qeC4gjU+wNkMvKFiYfZRXd8?=
- =?us-ascii?Q?SLC3hMJRSq9wjulmkXU6c4pIfP7S1FO8ueByCe3p1zwKRnKaSYi+Y1VXadfe?=
- =?us-ascii?Q?/lse5RSJyDT6xCRaZiCcUAohmIw+38n56Epx4M8WwPz3pWImrnHD5KXSp+uW?=
- =?us-ascii?Q?r1xiO2EZPdKm6Wnj/OCadDEpIVQq1IQBQX37SYG7SyNXTbXMyi4C5KRqy4Vt?=
- =?us-ascii?Q?35M3IleDVnVBaUQCfun84Q/5QcW2blkmuWYiZP7PNgj9rrYfwH0aMgnUPhhW?=
- =?us-ascii?Q?V1MDegKTWLgXvJotrAdZFwzTp3mFUqhyMf4XqbQFzkIxdIj3JyZS0rOmW/RY?=
- =?us-ascii?Q?7cCAtUjsYnhaO3mxRCTO325B5OOv6NBotVJWtAp8KamHAf/rDa1QRG0P8fgn?=
- =?us-ascii?Q?mrU0cn6FzG8SDNeGIbow681E+S3gLau2E2xX0mvB5Dvp/Beo4Jvgg2mBj7vI?=
- =?us-ascii?Q?omKhu2/FZZ1Ejw4fTbi2n+WKb55S4Guvkn16yf7SbJxU9BQBCB+btUgt648E?=
- =?us-ascii?Q?SPfzbSbDjzvqtv0Nbnz/hdR+Zqoum96LsvEHgrKOE0FTv9PdMe2ducPI2rgi?=
- =?us-ascii?Q?JTQX0btJc+U7WKETK2LXXEVIqT0EWOMskueZb7mZYJXJtepBocnKPxgMxTar?=
- =?us-ascii?Q?s4/gDObl2fgP5iakwb4jUKxg9Nh68MgInlOA2da5qn2ucX4+mUyorRXlA1PY?=
- =?us-ascii?Q?gi2hBNYhtbkd7nY9IWcCLKKtzXfujnuanGOCURVIURkLwJ+WSi1zk9bMwOOJ?=
- =?us-ascii?Q?Fr8KgADjA5Yc3wYTU1dLXqncVYTojs4T8E3eS5ctA1Xbvy9Z/OUuG4I+nzxO?=
- =?us-ascii?Q?VWS3mcyGV4ImMnvwaUsnQXXiEAO8vXR34zQWO+Am9CZtCk7Aj02YsvND1lmu?=
- =?us-ascii?Q?B1gHeUMl9KKYhRezC6ntj2BNmzCJTG8dAAxf3TjbvwF6kVygwDUxnUqv9YxB?=
- =?us-ascii?Q?cZnosCYC/U6rH8QIuwIHubdz5pRxbiU=3D?=
-X-Exchange-RoutingPolicyChecked: 4sdoCwaqhd8JRUTQ+3gDF7vCjCTlOrPA/ZwVKF5MX6sLQcXEi7Wo/G0U6pdj+TwZXr8j6ujsV1c0XhzM71AJUc/y2NfgDsISoKvUOhD/si7cDCc1rYxTILTxN+6iDsnYyDZYZ+iNnFylZkDri3hub3kjEQDImYo2Ghx9wYffrLtVuHNyQVdtB3EELmv0N142rF0Kt4xoIzKllRFJsoJ4BWqQddYQ9W3WkttwuVg1DBu/eM1c1ljoFMouw3RCt7KfR48Qz5XAd/u6wW3coHRTN+G6Rndf2qlU6s7MWu8rZqBdBihNbwW30911j+LmNUefxKYKUF54SDLkAXIWsePNUg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04142ccd-450f-4818-9212-08df2ac4ec9b
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?iALj1OPhtPjBlIU36I27rVd/La3e+tJGdrZZ9zbzeSbVsAqnA9S6A3VgTO?=
+ =?iso-8859-1?Q?Z8vN++dZgFmpFUeV4lNlrhNGex//hJxRXe/vdZROPZtAsuH+9PSMBKpvXO?=
+ =?iso-8859-1?Q?YcMi9hDlM4NLlk+4q2iwAZAqu3pDZ03kvT6Itemm6mx3veLQHoDXUq6mVF?=
+ =?iso-8859-1?Q?pMobbJjKMxS6eHgW/ZpAJ9UMnH49em8Ck2kZyPcxXjqZ0SKqY8IWgxAN3j?=
+ =?iso-8859-1?Q?hnM78CLnO+OQI2pi/n2nChqQJIY/UsbALxXvdTWQ8MdvM64QmogFtiE5Or?=
+ =?iso-8859-1?Q?nBTym5vxYt6lRROwcxlHHYOBJdc6EEOooqW+4ZbAMRK6JkFb2efDMtr4dx?=
+ =?iso-8859-1?Q?xH6AwCSzqI/cKmTDw+SeMsPl/OxV//sqloTsJhOONvPQXbugL03M1ZNr+N?=
+ =?iso-8859-1?Q?vRc1aabZt2WR+SYnb4xTP58IHLEXfisSUHnRqFOomDgowxYSw1l67DDthn?=
+ =?iso-8859-1?Q?+zfANzup3Do9PBcfEnmPibNjKW0whxubaj2skWFg0afP0rUudl7zkPB2TG?=
+ =?iso-8859-1?Q?X5mZAd6fj/pMc0tgIZr8ZGmenT8vacwtI9m3KgX6/+IK0pdqay+AMqP5mG?=
+ =?iso-8859-1?Q?EuJUrg/ecyYj0hxUtZ6B7+d8rTj40FrWaAZ0CPLSW8P/waJhF+v/dG062s?=
+ =?iso-8859-1?Q?TrPyhXFHTz2Aeks9kSZLjCCcROFw+Ep4hA8aKbgpV7Zl3131My9yYgbqdx?=
+ =?iso-8859-1?Q?mtUhgn5CA8Q+eE42pZYpcgwGk38WO1tVQTjlGfTldewtblmzQOlQmIa2MI?=
+ =?iso-8859-1?Q?CTnsEA97EOFHowZ6sxr8OGd0HjdL5876FQhF1cbwrf18CRiU8RtIf0lYld?=
+ =?iso-8859-1?Q?nbAvqPoryZsy3tq4f9MANbaV3MaKg12GwFY21PzyZ9BOtQll3eML78dwdY?=
+ =?iso-8859-1?Q?VtlHI2QaxyqDPj1c8aPWEFnIlaYAvClmWfbovzyR7+S1D+URfCi1GQmCJf?=
+ =?iso-8859-1?Q?OXH023sD7tNMD9ECZ5U23B7Nld1e4l/lvYVwZ6U5VdZERhY+Wow7FJmcX/?=
+ =?iso-8859-1?Q?8ua//ng7IqTg+S//v0Vn57ivpqUQoEGZ9d+C29oQ/QhIpefA3ixIQrE2jR?=
+ =?iso-8859-1?Q?hqIlyX/9HainuknRYd6/96UavtsElZlrs8SVE7OilWZiIqlqChBLac+Fij?=
+ =?iso-8859-1?Q?B7zLQ2R585/i+TLv2QWyFP6lC2vCbYnNokYgMNteD8tGPgYkLGqk4qzmd0?=
+ =?iso-8859-1?Q?0J5Jr6rMsBcH1e3mpCQ42taYN4xGOGJ7/tISKJDW7Hb+kNV74jA6Jq13Wz?=
+ =?iso-8859-1?Q?PxADC4/9GS80pwrDTAEbjfpjUon3+OuYlquBrY0LcPPDXrGD2TVQlGeqJs?=
+ =?iso-8859-1?Q?7L2tHwm6BB58c7zYvJlBL53V8tiQHxYOQJ2ejVL7VUi8PhyZd+l8v4IUAM?=
+ =?iso-8859-1?Q?lRl6RZT3WJn0KnVHqT3dc7nhUxLngzS19Ba1Dz/ueI+YKWOtlk87PDPp+d?=
+ =?iso-8859-1?Q?II5Iwm60i5XsZYGhTQH47NmpKO37i7UPrbFv0xqTNZFulaD3F+zl/T7EJG?=
+ =?iso-8859-1?Q?ec77j7iXRZQyNwQI06MEbafectctFssjkp+8jF6orOycjHa4eFfiAnIYCO?=
+ =?iso-8859-1?Q?B/Qv4rKT7MObfPd8eTO3fp5hOgzjjAYFt/wjRCbXn0YqR0WJ2Fi+Y+/MDz?=
+ =?iso-8859-1?Q?Aeek+8caXun+6l6IySNMjJhvx8m/yWbQfEfyl3/tKYWdv8ypD8EflgXl/Z?=
+ =?iso-8859-1?Q?QslqWJOpAeLEHRTyS+Ld12+KjVupyfv6i6Io/n85SAhctUq08HMtQJEznq?=
+ =?iso-8859-1?Q?CVU/pgorCrdi5UiaviC+S16xktsyyXGUo6auFvdRB+XDXM7bte6LCBmE5J?=
+ =?iso-8859-1?Q?DRuuRtaDjQ=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: X3LC75r4ZymVo5jAU7R79KEYHscH84ZjY7nLwOUQf5NyU0PP2NbBw1Rq23MNy5+suxnBO+Hj7n/ag1qacbBziYCdGDq9XacpKYlDFu/dHHwrFHG6/QC6Tw0Z4XViR94V3RrCLhCBLeZoCS9gBe9rXiA+Oja8GzpHpBIbFZHGmUpseNf7e3l+UIvdXC04TSQusCHDKG/9MloxqFlA+2F2wzZ7UwH6poY2yuqFfsHVYju/3Zer0y7uqepXeyDUbOLc3j0cfGMh88PyrIWrZrAwKEQsS8238wndM2lE9WX72+oC5VQi/HB9HrwQGLC0TsIyDDNnD1oNY4Ibw3pYfs2Hog==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 14:02:18.5312 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DcOQSuG6W0jg5lUB3OaKqdUbHfewKenr5stUCAwW1lHTN68PoGQNTwPJXFygsBeQafKDnGCPxFwX3MqPLKKeiFbofOgCz0T1LaCTWWM4LCs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF529E923C8
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8eae913b-10f4-4f6a-e364-08df2ac63a78
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2026 14:11:38.2636 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: T0Y5YyijK/7UVhGmcNCzIAwPAxEkuP8VYXhCIPDqKUiIFkaz+IRYSBPOl+kLVjsvTTHCr20jsXREX6I4KtjgBGCmgzpckAXgoJTe2xO8pwk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5283
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -154,50 +154,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Oct 15, 2026 at 03:47:41PM +0200, David Marchand wrote:
-> On Thu, 15 Oct 2026 at 15:43, Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
-> >
-> > On Mon, Oct 05, 2026 at 12:06:13PM +0100, Bruce Richardson wrote:
-> > > The interrupt throttling register(ITR) bank 0 value is set to 2, but
-> > > to ensure best performance across all systems also set the bank 1 value
-> > > to match.
-> > >
-> > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> > > ---
-> > >  drivers/net/intel/iavf/iavf_ethdev.c | 5 +----
-> > >  1 file changed, 1 insertion(+), 4 deletions(-)
-> > >
-> >
-> > Further testing has indicated that this patch is simply working around a
-> > config issue on kernel driver side[1] and should not be necessary in DPDK.
-> >
-> > Dropping as rejected in patchwork.
-> >
-> > /Bruce
-> >
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fb096882095e5a8d6b5159e43793d4a38a0c5b1f
-> >
-> > > diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-> > > index a8abe0154c..dc3cea0b95 100644
-> > > --- a/drivers/net/intel/iavf/iavf_ethdev.c
-> > > +++ b/drivers/net/intel/iavf/iavf_ethdev.c
-> > > @@ -899,10 +899,7 @@ static int iavf_config_rx_queues_irqs(struct rte_eth_dev *dev,
-> > >                                      (0 << IAVF_VFINT_DYN_CTLN1_ITR_INDX_SHIFT) |
-> > >                                      IAVF_VFINT_DYN_CTLN1_WB_ON_ITR_MASK |
-> > >                                      (2UL << IAVF_VFINT_DYN_CTLN1_INTERVAL_SHIFT));
-> > > -                     /* debug - check for success! the return value
-> > > -                      * should be 2, offset is 0x2800
-> > > -                      */
-> > > -                     /* IAVF_READ_REG(hw, IAVF_VFINT_ITRN1(0, 0)); */
-> > > +                     IAVF_WRITE_REG(hw, IAVF_VFINT_ITRN1(1, vf->msix_base - 1), 2);
-> > >               } else {
-> > >                       /* If no WB_ON_ITR offload flags, need to set
-> > >                        * interrupt for descriptor write back.
-> 
-> Why keep this dead code then?
-> 
-No reason. Just haven't got the time right now to do up a replacement patch
-to delete the old dead code.
+Members Attending: 9/10
+        - Aaron Conole
+        - Bruce Richardson
+        - Hemant Agrawal
+        - Jerin Jacob
+        - Kevin Traynor
+        - Maxime Coquelin
+        - Morten Br=F8rup
+        - Stephen Hemminger
+        - Thomas Monjalon
 
-/Bruce
+NOTE: The Technical Board meetings take place every second Wednesday at 3 p=
+m UTC
+on https://zoom-lfx.platform.linuxfoundation.org/meeting/96459488340?passwo=
+rd=3Dd808f1f6-0a28-4165-929e-5a5bcae7efeb
+Meetings are public, and DPDK community members are welcome to attend.
+Agenda and minutes can be found at http://core.dpdk.org/techboard/minutes
+The next meeting will happen on October 28 and will be chaired by Morten Br=
+=F8rup.
+
+1. Additions to Security Team
+   - Kevin and Maxime volunteered to be part of the DPDK security team
+   - Both were accepted onto the team after a quick vote
+
+2. Release Update for 26.11
+   - Progress ongoing for RC1 due this week.
+   - Some trees still to be pulled and more patches under review
+   - As flagged on the mailing list, concern was expressed about issues wit=
+h
+     IPSec multibuffer compatibility between platforms in crypto drivers
+     - One commit had to be dropped when crypto tree was pulled because of
+       build breaks
+     - Thomas asks for the maintainers of the relevant packages from Intel/=
+Arm
+       to work to try and improve this
+=20
+3. Having a single Public Key for Security Disclosures
+   - For reporting security vulnerabilities, best practice is to use encryp=
+ted
+     emails.
+   - This is impractical for reporters where each member of security team h=
+as
+     a different key
+   - Suggestion to have a single GPG/PGP key for the whole team, who each h=
+ave
+     a private key to read the messages
+   - Can also be used to secure messages received from automatic security
+     scanning (see below)
+   - Stephen to follow up on creating that common key and ensuring secure
+     distribution of private keys
+
+4. New Security Scanner available for Open-Source Software (OSS)
+   - Provided by Anthropic, projects can opt in to have their code scanned
+   - Stephen is looking to register DPDK project, and board generally felt =
+this
+     was worth doing
+   - As part of the registration, a threat model can be provided to help gu=
+ide
+     the analysis
+   - Stephen to generate a short model draft and circulate it to the board =
+for
+     comments, before uploading to guide the security scan
+
+5. UNH Lab Retrospective and Future Work Plans for 2027
+   - The work is already underway to plan out the statement of work for the
+     UNH Lab for DPDK in 2027
+   - Tasks are being identified for this, for presentation to and budget
+     approval by Governing Board in next few weeks.
+   - Dillon Ladd from the lab presented to the techboard:
+     - Draft presentation on the lab work done in 2026 including:
+       - New testing and test cases added to the CI system
+       - An overview of the ongoing CI lab maintenance undertaken by the la=
+b
+         staff
+       - A proposed list of tasks under consideration for 2027 for Techboar=
+d
+         prioritization
+       - Tooling enhancements to allow easier use of AI for DTS and test
+         development
+       - Proposals for new areas of focus for testing
+       - Techboard members to review and grade on the spreadsheet over the =
+next
+         week.
+
