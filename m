@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21180CC6B39
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FF3CC6B39
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:18:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 47072402DF;
-	Thu, 15 Oct 2026 19:18:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 855644060A;
+	Thu, 15 Oct 2026 19:18:58 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 7C2214027C
- for <dev@dpdk.org>; Thu, 15 Oct 2026 19:18:05 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 444994027C
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 19:18:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792084685;
+ s=mimecast20190719; t=1792084736;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=Y3f6xC2MS81FkARbjI3Emd9a6OF88mPLkiqo2j3Ni/k=;
- b=dLI7fy2PKnbIEKyNUYfGnQgq+jmS6lqe8gTGPUPoPGlx3KbYj5aTPvY1TCescAE7ujT/M9
- LMwtvznR8GpHv+pI54qj7n4XNr2aXydoHlWL6Abb/WV1ur7nTCjC8cny7Qb/E24iwxVQLY
- lOPBEvuWqrgyAZKjfpAZElsVWJYypAA=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ bh=2GZAANwrSkDPOtJxf950UIJ8dvoREimrjv1jRZP9cKg=;
+ b=C2CHzqECtEqF1dAg7JnjdOanEPPorGl0vwqLyY9ENhmG2n68V9fAfVhqOY7T4fpP8UTnzN
+ hkI8+YfOBLo51dzhtw4R2nTBcGMc8zfuF6DbnCgmxK8hq1KB/G1mdsR/bHHG9CaDmCu5H8
+ rUF79ghvwr+FQlCk2jhynnPWKBU6WKg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-433-fNdHb-7PMgq6VYCFUkfnWg-1; Thu,
- 15 Oct 2026 17:18:03 +0000
-X-MC-Unique: fNdHb-7PMgq6VYCFUkfnWg-1
-X-Mimecast-MFC-AGG-ID: fNdHb-7PMgq6VYCFUkfnWg_1792084682
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-509-bXU04BD2MU2W8cgIALcqTw-1; Thu,
+ 15 Oct 2026 17:18:50 +0000
+X-MC-Unique: bXU04BD2MU2W8cgIALcqTw-1
+X-Mimecast-MFC-AGG-ID: bXU04BD2MU2W8cgIALcqTw_1792084729
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 6B6751944B04; Thu, 15 Oct 2026 17:18:02 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 0FA9D195605B; Thu, 15 Oct 2026 17:18:49 +0000 (UTC)
 Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.117])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 896F27D8; Thu, 15 Oct 2026 17:18:01 +0000 (UTC)
-Message-ID: <20b9cb53-d0ba-4016-b6ac-2bceb169f697@redhat.com>
-Date: Thu, 15 Oct 2026 19:17:59 +0200
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 30867180057F; Thu, 15 Oct 2026 17:18:47 +0000 (UTC)
+Message-ID: <18a18afd-9dea-4d4d-9d9c-7f5c2644e88d@redhat.com>
+Date: Thu, 15 Oct 2026 19:18:45 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] net/vhost: support queue info query
@@ -92,9 +92,9 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
 In-Reply-To: <20260701061412.154739-1-wangliangxing@hygon.cn>
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: QLvTgkqG00tOK9BMeNwPqBUGP3bPlxhwa2sh1RtRsq4_1792084682
+X-Mimecast-MFC-PROC-ID: piRBgvo4ti4E5JMDFzJAFlajCBwflNXkddwFiDsTy1w_1792084729
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -132,7 +132,7 @@ On 7/1/26 8:14 AM, Liangxing Wang wrote:
 >   drivers/net/vhost/rte_eth_vhost.c | 38 +++++++++++++++++++++++++++++++
 >   1 file changed, 38 insertions(+)
 > 
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+Applied to next-virtio/for-next-net.
 
 Thanks,
 Maxime
