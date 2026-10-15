@@ -2,51 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FF3CC6B39
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B48CC6B39
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:19:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 855644060A;
-	Thu, 15 Oct 2026 19:18:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 646064060A;
+	Thu, 15 Oct 2026 19:19:35 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 444994027C
- for <dev@dpdk.org>; Thu, 15 Oct 2026 19:18:57 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 2B225402DF
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 19:19:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792084736;
+ s=mimecast20190719; t=1792084772;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=2GZAANwrSkDPOtJxf950UIJ8dvoREimrjv1jRZP9cKg=;
- b=C2CHzqECtEqF1dAg7JnjdOanEPPorGl0vwqLyY9ENhmG2n68V9fAfVhqOY7T4fpP8UTnzN
- hkI8+YfOBLo51dzhtw4R2nTBcGMc8zfuF6DbnCgmxK8hq1KB/G1mdsR/bHHG9CaDmCu5H8
- rUF79ghvwr+FQlCk2jhynnPWKBU6WKg=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ bh=hEfqQr3wK2VQqi4koO/9bEHL13AVMpMp9OM6ASuvraw=;
+ b=WuuiZZN6wxt5X94NqCxqIILy+Jpii2oAfywlDAbz56/9ZKNopFR31F6tyU6lE4HJfdfUnC
+ f25rBInu/MRZ5F4XQUdo0zeWZrZSFA+T76m7ao/p5W3g5eYexL61+ian0hI983Qd7SWGX5
+ Xms2EkJd5cl5gWGKyUHYZ5LpT7Q74ho=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-509-bXU04BD2MU2W8cgIALcqTw-1; Thu,
- 15 Oct 2026 17:18:50 +0000
-X-MC-Unique: bXU04BD2MU2W8cgIALcqTw-1
-X-Mimecast-MFC-AGG-ID: bXU04BD2MU2W8cgIALcqTw_1792084729
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-504-DC_g705EOo2TdqnYOY-KUA-1; Thu,
+ 15 Oct 2026 17:19:28 +0000
+X-MC-Unique: DC_g705EOo2TdqnYOY-KUA-1
+X-Mimecast-MFC-AGG-ID: DC_g705EOo2TdqnYOY-KUA_1792084767
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 0FA9D195605B; Thu, 15 Oct 2026 17:18:49 +0000 (UTC)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D2E361955E82; Thu, 15 Oct 2026 17:19:26 +0000 (UTC)
 Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.117])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 30867180057F; Thu, 15 Oct 2026 17:18:47 +0000 (UTC)
-Message-ID: <18a18afd-9dea-4d4d-9d9c-7f5c2644e88d@redhat.com>
-Date: Thu, 15 Oct 2026 19:18:45 +0200
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 3DBC7300019F; Thu, 15 Oct 2026 17:19:25 +0000 (UTC)
+Message-ID: <2423e4d7-0342-4461-819f-3219a2daa3cd@redhat.com>
+Date: Thu, 15 Oct 2026 19:19:23 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/vhost: support queue info query
-To: Liangxing Wang <wangliangxing@hygon.cn>, chenbox@nvidia.com
-Cc: dev@dpdk.org
-References: <20260701061412.154739-1-wangliangxing@hygon.cn>
+Subject: Re: [PATCH v3] net/virtio-user: fix eventfd sharing in secondary
+ process
+To: Samar Yadav <samaryadav5@gmail.com>, dev@dpdk.org
+Cc: chenbox@nvidia.com, stable@dpdk.org, stephen@networkplumber.org,
+ tiwei.bie@intel.com
+References: <20260629120615.2701697-1-samaryadav5@gmail.com>
+ <20260703102530.133813-1-samaryadav5@gmail.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -91,10 +94,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20260701061412.154739-1-wangliangxing@hygon.cn>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20260703102530.133813-1-samaryadav5@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: piRBgvo4ti4E5JMDFzJAFlajCBwflNXkddwFiDsTy1w_1792084729
+X-Mimecast-MFC-PROC-ID: 1lpTGlM6iNlF4tNXPeI4daWIpEYpiLWXmRqkf0neb9w_1792084767
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -114,23 +117,62 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 7/1/26 8:14 AM, Liangxing Wang wrote:
-> Add Rx and Tx queue info callbacks to report the vhost-user vring
-> size as the queue descriptor number.
+On 7/3/26 12:25 PM, Samar Yadav wrote:
+> virtio_user secondary processes cannot communicate with the vhost
+> backend: the kick/call eventfds are opened by the primary and never
+> shared, so a secondary's queue notification writes to an invalid fd
+> and traffic stalls.
 > 
-> The vhost-user PMD does not use the descriptor count passed by
-> rte_eth_rx_queue_setup() and rte_eth_tx_queue_setup(). The actual queue
-> depth is negotiated with the virtio frontend and maintained by the
-> vhost library. Query the vhost vring and report its size through
-> rxq_info_get and txq_info_get.
+> Share the fds over a dedicated virtio-user multiprocess channel. The
+> primary registers a process-wide MP action that returns a port's
+> kick/call fds (looked up by port name); a secondary requests them at
+> probe time, before the port is announced.
 > 
-> With this change, testpmd using vhost-user PMD can display the correct
-> Rx and Tx queue descriptor number in the port start log.
+> The received fds are stored in eth_dev->process_private, which is
+> per-process, instead of the primary-owned shared dev->kickfds and
+> dev->callfds arrays; the secondary data path notifies the backend using
+> its own kickfd. In the primary, the MP handler reads the fd arrays under
+> dev->mutex, and the teardown path takes the same lock while closing and
+> freeing them, so the two cannot race.
 > 
-> Signed-off-by: Liangxing Wang <wangliangxing@hygon.cn>
+> Also fix the pre-existing pthread_mutex_init(&dev->mutex, NULL) call in
+> virtio_user_dev_init(): POSIX requires PTHREAD_PROCESS_SHARED for a mutex
+> stored in shared memory regardless of which processes actually lock it;
+> use rte_thread_mutex_init_shared() as other multiprocess-aware drivers do.
+> 
+> Fixes: 1c8489da561b ("net/virtio-user: fix multi-process support")
+> Cc: tiwei.bie@intel.com
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Samar Yadav <samaryadav5@gmail.com>
 > ---
->   drivers/net/vhost/rte_eth_vhost.c | 38 +++++++++++++++++++++++++++++++
->   1 file changed, 38 insertions(+)
+> v3:
+> - Reorder new #includes: system headers first, then DPDK lib headers
+>    (alphabetized), then local virtio_* headers, per project convention.
+> - Name the "2" in eventfd count/index arithmetic (kick + call per queue)
+>    as VIRTIO_USER_EVENTFDS_PER_QUEUE instead of a bare literal. Leaves
+>    the pre-existing max_queue_pairs * 2 vring math untouched, since that
+>    is a different multiplier (vrings per queue pair) and already matches
+>    this file's existing style.
+> - Name the 5-second MP reply timeout in virtio_user_sync_eventfds() as
+>    VIRTIO_USER_MP_TIMEOUT_SEC with a comment on the rationale.
+> 
+> v2:
+> - Use rte_calloc() instead of rte_malloc() for the kick/call fd arrays
+>    in virtio_user_sync_eventfds() so allocation failures are cleaner and
+>    unset entries are zero-initialised before the explicit -1 sentinel loop.
+>    (Stephen Hemminger)
+> - Fix the pre-existing pthread_mutex_init(&dev->mutex, NULL) call in
+>    virtio_user_dev_init() to use rte_thread_mutex_init_shared(), which
+>    sets PTHREAD_PROCESS_SHARED as POSIX requires for a mutex in shared
+>    memory. Add #include <rte_thread.h> to pull in the declaration.
+>    (Stephen Hemminger)
+> 
+>   .mailmap                                      |   1 +
+>   .../net/virtio/virtio_user/virtio_user_dev.c  |  59 +++-
+>   .../net/virtio/virtio_user/virtio_user_dev.h  |  23 ++
+>   drivers/net/virtio/virtio_user_ethdev.c       | 276 +++++++++++++++++-
+>   4 files changed, 350 insertions(+), 9 deletions(-)
 > 
 Applied to next-virtio/for-next-net.
 
