@@ -2,34 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F16BBCC6B34
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 12:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0FE6CC6B34
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 12:57:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E3C2D4064C;
-	Thu, 15 Oct 2026 14:57:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D6FED40658;
+	Thu, 15 Oct 2026 14:57:48 +0200 (CEST)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 6B44B400EF
- for <dev@dpdk.org>; Thu, 15 Oct 2026 14:57:45 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A997A4042C
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 14:57:46 +0200 (CEST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 435061516;
- Thu, 15 Oct 2026 05:57:41 -0700 (PDT)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 974E114BF;
+ Thu, 15 Oct 2026 05:57:42 -0700 (PDT)
 Received: from KDFJ2LQKPJ.cambridge.arm.com (KDFJ2LQKPJ.cambridge.arm.com
  [10.2.197.114])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E00493F871;
- Thu, 15 Oct 2026 05:57:43 -0700 (PDT)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15F433F871;
+ Thu, 15 Oct 2026 05:57:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=foss.arm.com; s=main;
- t=1792069064; bh=famw8WJkCK0KdpuG17kPCQIgrgjxAc8uVwYcWc2pHwE=;
+ t=1792069065; bh=8f9DQfaX/5q23NZ+n36O46vmWEdVRRkQrczLXlDd4LE=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=W4YOwEDkIcqp6ZUUcF4WQGcx1ScyQ8fl/mKBrSAfZki+hkHSWUw9PdnnFdfVaXcoU
- 49u3okpYb+z1SLUD3xWNCIcg6ht7/KAFto/OEOEFEWp+FRi7boOBgYhYgZqgvp8yx+
- orwfaMZis1aUsZGj2/y223EQiEo/79V/87qmstDw=
+ b=iK/ih4W0BY1+P5UepRy89Ne1jTvcaoIe8knjWsn50AD82tAa7BTresV9LDDUAjgS1
+ Zsj27TqF2HdIaDDt7asIpZzMpQLB5HScAFOpjLickRmCWN3rqY5s919mngdXs+kcJ9
+ YaxjnqcluuUwEixzQucMEiXFT4utmIcyPTv6Hcoo=
 From: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
-To: Elena Agostini <eagostini@nvidia.com>
+To: Chas Williams <3chas3@gmail.com>,
+	"Min Hu (Connor)" <humin29@huawei.com>
 Cc: dev@dpdk.org,
 	Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: [PATCH 1/2] gpudev: fix minsize build
-Date: Thu, 15 Oct 2026 13:57:39 +0100
-Message-ID: <20261015125740.47008-2-jack.bond-preston@foss.arm.com>
+Subject: [PATCH 2/2] net/bonding: fix minsize build
+Date: Thu, 15 Oct 2026 13:57:40 +0100
+Message-ID: <20261015125740.47008-3-jack.bond-preston@foss.arm.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261015125740.47008-1-jack.bond-preston@foss.arm.com>
 References: <20261015125740.47008-1-jack.bond-preston@foss.arm.com>
@@ -50,39 +51,50 @@ Errors-To: dev-bounces@dpdk.org
 
 "minsize" builds of DPDK with GCC can trigger the following warning
 (error with Werror):
-../lib/gpudev/gpudev.c: In function 'rte_gpu_attach':
-../lib/gpudev/gpudev.c:290:39: warning: 'shared_dev' may be used uninitialized [-Wmaybe-uninitialized]
-  290 |         rte_atomic_fetch_add_explicit(&dev->mpshared->process_refcnt, 1, rte_memory_order_relaxed);
-      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/net/bonding/rte_eth_bond_pmd.c: In function 'bond_ethdev_tx_burst_tlb':
+../drivers/net/bonding/rte_eth_bond_pmd.c:997:29: warning: 'primary_member_addr' may be used uninitialized [-Wmaybe-uninitialized]
+  997 |                         if (rte_is_same_ether_addr(&ether_hdr->src_addr,
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  998 |                                                         &primary_member_addr))
+      |                                                         ~~~~~~~~~~~~~~~~~~~~~
 
-This can't really happen - shared_dev is initialized in the for loop
-before this usage. However, the compiler can't see that gpu_max is
-guaranteed to be > 0 in that loop (which it is, as we have returned
-earlier if gpus == NULL), and thus assumes the loop may not run any
-iterations.
+This is a compiler bug - primary_member_addr was initialized above by
+the rte_ether_addr_copy() call.
 
-Regardless, NULL-initialize shared_dev at declaration to silence the
-warning.
+Silence the warning by replacing rte_ether_addr_copy() with memcpy()
+in this instance, which satisfies GCC that the variable has been
+initialized.
 
 Signed-off-by: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
 Reviewed-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
 ---
- lib/gpudev/gpudev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/gpudev/gpudev.c b/lib/gpudev/gpudev.c
-index 4a2335834c..93a30464f0 100644
---- a/lib/gpudev/gpudev.c
-+++ b/lib/gpudev/gpudev.c
-@@ -251,7 +251,7 @@ rte_gpu_attach(const char *name)
- {
- 	int16_t dev_id;
- 	struct rte_gpu *dev;
--	struct rte_gpu_mpshared *shared_dev;
-+	struct rte_gpu_mpshared *shared_dev = NULL;
+Note: The other option is to memset() primary_member_addr after declaring it,
+which also satisfies GCC - I went with this change for smaller code impact.
 
- 	if (rte_eal_process_type() != RTE_PROC_SECONDARY) {
- 		GPU_LOG(ERR, "only secondary process can attach device");
+ drivers/net/bonding/rte_eth_bond_pmd.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
+index 6a4f997b5a..b7b111536e 100644
+--- a/drivers/net/bonding/rte_eth_bond_pmd.c
++++ b/drivers/net/bonding/rte_eth_bond_pmd.c
+@@ -978,8 +978,13 @@ bond_ethdev_tx_burst_tlb(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	memcpy(members, internals->tlb_members_order,
+ 				sizeof(internals->tlb_members_order[0]) * num_of_members);
+
+-
+-	rte_ether_addr_copy(primary_port->data->mac_addrs, &primary_member_addr);
++	/*
++	 * memcpy() the address to avoid a GCC bug - using rte_ether_addr_copy()
++	 * causes -Wmaybe-uninitialized warnings to trigger on usages of
++	 * primary_member_addr.
++	 */
++	memcpy(&primary_member_addr, primary_port->data->mac_addrs,
++			sizeof(primary_member_addr));
+
+ 	if (nb_pkts > 3) {
+ 		for (i = 0; i < 3; i++)
 --
 2.43.0
 
