@@ -2,76 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF2FCC6B3A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 11:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDA9CC6B34
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 11:41:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D6CD402DA;
-	Thu, 15 Oct 2026 13:40:19 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 66FDA400EF
- for <dev@dpdk.org>; Thu, 15 Oct 2026 13:40:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792064418;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=uZKlCKBDDmBqCBkzPRCfa1DATMLrrZ0/9jAqbZS87ME=;
- b=UDIJbnYBxId0xw2KuHaDvWl6c0SwlSFUeAfkApwSIAM1lfWEeU2OcLrAIkEgo1U8bsDByW
- kSxEr+mxMU/5hAkarqdiCk2FIp5WDRDEtXfAswy0lJ1rg5AuHOpeJjj4CdlTVpegR8oFnX
- B4jbsYYZyDyiVqsvX4e9ZVWP4JMm2TU=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-692-gZvSXacuO0GcVFG2nPAk6A-1; Thu, 15 Oct 2026 11:40:16 +0000
-X-MC-Unique: gZvSXacuO0GcVFG2nPAk6A-1
-X-Mimecast-MFC-AGG-ID: gZvSXacuO0GcVFG2nPAk6A_1792064415
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-3aafdfadb53so4740831fa.0
- for <dev@dpdk.org>; Thu, 15 Oct 2026 04:40:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792064415; x=1792669215;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=uZKlCKBDDmBqCBkzPRCfa1DATMLrrZ0/9jAqbZS87ME=;
- b=OpkYwdKJrdANqTT+zxT2Azx0WYYWtdJ21Khi65g8QC+15LC++nAaCYkqCqel1XrvZ7
- yQEvaLdeWWlNWTK5JRtXAsDcXbYcOkBZszQ1GQ8ahQeEIGpRq5iuaJXXxgNO6ENQmCCv
- ko8tn0hX8Lh6nadS3cGVLJe3RZg61UVvJCZ/zWrFRZIb1AlQwrcDi37ZfRHHorRAYIyB
- 3GVFRnKzK2fwNzD/9W+7WuY1uHAlIs63VC+JfdvyEK7a5ly38Os3Wh7frWQ1eJ0ndCj/
- kp1inHguqCdzzB6uVfUrjg2ceyAYe3GiucwKenUAHh5dg9wRsVDlTRqkbObn4W+eywkQ
- PA5A==
-X-Gm-Message-State: AFq9FYK3idNjTkUdc4LOMmtx+9hzI/CyMzaNip149DCAXakCaZucOBSn
- y8RfWDk28mvS353/VePo0qdxRFynQ1IPUJ7RPBDVcTH3VOTZDFsBv7PIo2ktBacjEhzGG4fj9fQ
- ZUNIELHhLmDPVqd2maa3y6cq2ptBIVUWbyE0y8EnlfkfPwuFUYMaB392FY0xnK4uFe8olOCxQI6
- phhR+kF06+Wue+74Qhpto=
-X-Gm-Gg: AYBFou27lVuVQfpDSIh1ru5ywyM8euQCSwoc2IZrTgrXbCRxJKcnspyfIUXLqfhYE6y
- ccUM4JcMFetJj+zw1WE/OxVwq6qNmtBUfVkIpMCrt6605v9YDJjVkogBbmUS5qbCEya5gokSLFS
- sRfwaa/kBCkDwAKc76mwRS69uKpMeBoYTfLZk+gijx0ZxxLK8QplcmRIp2L67HdbB1scjtCUOBd
- ONHMcJ5rTijxkDKfTJpy5dBNvwjjpW4chbdVHxuur+ESMq3
-X-Received: by 2002:a2e:bc23:0:b0:3a8:7caa:cd4b with SMTP id
- 38308e7fff4ca-3a9c53b2673mr36188121fa.7.1792064415180; 
- Thu, 15 Oct 2026 04:40:15 -0700 (PDT)
-X-Received: by 2002:a2e:bc23:0:b0:3a8:7caa:cd4b with SMTP id
- 38308e7fff4ca-3a9c53b2673mr36188001fa.7.1792064414687; Thu, 15 Oct 2026
- 04:40:14 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 801E24064A;
+	Thu, 15 Oct 2026 13:41:03 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 7945E4064E
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 13:41:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792064461; x=1823600461;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=NAloR/LzDbE/s9OrCShYcgUswAmYNbAngsO42IzbicQ=;
+ b=YLBdyXOF6ekzuICoUkWfSuE83U2kspr8mpkSC7G9zUaBtjlSi80XMA9Z
+ NXmz6wBq7NoZ7oBfwj5J74M5uCzJI45ST+ddJLkkE5TeQg+PsasV9BzFc
+ TYQ5s3i/irK5papbegV2x/r3cyVsq+140B7XuMhYravcHW/Ljcr6Mr9hs
+ V0Bf5oci8SkqvRq+DE3OHtKsFVQZ/Ab9BvIic/ogx1LdEZJQNuCv7J74a
+ EkhB+KUYXahMOPcxj7Ard5HL+N20tndmspJ2L9QS0/9MrKbUz8A4RM2bz
+ AqkmlGlvsoWsGgwAkwjH3DgnHLRfwBonZBgcWXW+NxfAlXChQfNXemU4l A==;
+X-CSE-ConnectionGUID: mb6+cm0tRbydkXcWbBHPew==
+X-CSE-MsgGUID: M5YmGiomSpeN8uc+tdfCIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11935"; a="712177"
+X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
+   d="scan'208";a="712177"
+Received: from fmviesa012.fm.intel.com ([10.60.135.152])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Oct 2026 04:41:00 -0700
+X-CSE-ConnectionGUID: HL2agZAGTL627qNdGmyaGw==
+X-CSE-MsgGUID: giyhVp+FSt+aruwx/7z2pA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,159,1787036400"; 
+   d="scan'208";a="3428683"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa012.fm.intel.com with ESMTP; 15 Oct 2026 04:41:00 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH v1 1/2] net/iavf: do not include private headers in testpmd
+Date: Thu, 15 Oct 2026 12:40:54 +0100
+Message-ID: <816779271abc165ec8404edcfc243ef0e9f5fd65.1792064447.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
 MIME-Version: 1.0
-References: <20261014201627.571496-1-thomas@monjalon.net>
- <20261015112916.2622825-1-david.marchand@redhat.com>
- <20261015112916.2622825-3-david.marchand@redhat.com>
-In-Reply-To: <20261015112916.2622825-3-david.marchand@redhat.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 15 Oct 2026 13:40:02 +0200
-X-Gm-Features: AclHuK8nfO_l-Iyrr7yVHjosdb8JiHqTQYA7zOMh4XQrWxdnQJJP-eyfw4lTXGs
-Message-ID: <CAJFAV8y3=VWOBBVprmZ2mJg29DY5R9atk77vZ1HrqR25LVjwig@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] eal: enforce internal API check with Clang 14
-To: thomas@monjalon.net
-Cc: dev@dpdk.org, bruce.richardson@intel.com, anatoly.burakov@intel.com, 
- stable@dpdk.org, Aaron Conole <aconole@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 8La8u6i8JInuaq6VG-wIVRAEVkGzQy9oyFE1LlZoI-U_1792064415
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,37 +60,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 15 Oct 2026 at 13:29, David Marchand <david.marchand@redhat.com> wrote:
->
-> From: Thomas Monjalon <thomas@monjalon.net>
->
-> The __rte_internal macro is intended to prevent calls
-> to internal API functions unless ALLOW_INTERNAL_API is defined.
-> Unfortunately the check misses some calls to internal API
-> when built with GCC or Clang.
-> Clang can be better to diagnose such cases.
->
-> Clang 14 and later support the error attribute
-> and therefore select it instead of diagnose_if for __rte_internal.
-> Unlike diagnose_if, the error attribute only rejects
-> internal API calls that remain after optimization.
-> Internal API calls can therefore go easily unnoticed,
-> making internal API checks less strict with recent Clang.
->
-> Prefer diagnose_if when available to keep strong Clang diagnostics.
-> Retain the error attribute as a fallback for GCC.
->
-> Fixes: 4ab63cd60ceb ("eal: fix internal ABI tag with clang")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+Currently, the `iavf_testpmd.c` file includes headers that are only
+available to driver itself, but should not be available to applications,
+including testpmd.
 
-Just a note about CI.
-It seems we have some trouble with the ovsrobot but this series passes
-GHA in my repo:
-https://github.com/david-marchand/dpdk/actions/runs/38725255308
+Fix the testpmd file to not include private headers (they are unused).
 
+Fixes: c702044ed909 ("net/iavf: remove Tx LLDP dynfield method")
+Cc: ciara.loftus@intel.com
 
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ drivers/net/intel/iavf/iavf_testpmd.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf_testpmd.c b/drivers/net/intel/iavf/iavf_testpmd.c
+index f3b932da04..1146f534e3 100644
+--- a/drivers/net/intel/iavf/iavf_testpmd.c
++++ b/drivers/net/intel/iavf/iavf_testpmd.c
+@@ -9,9 +9,7 @@
+ #include <cmdline_parse_num.h>
+ #include <cmdline_parse_string.h>
+ 
+-#include "iavf.h"
+ #include "testpmd.h"
+-#include "iavf_rxtx.h"
+ 
+ struct cmd_reinit_result {
+ 	cmdline_fixed_string_t port;
 -- 
-David Marchand
+2.52.0
 
