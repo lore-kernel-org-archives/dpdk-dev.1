@@ -2,105 +2,98 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EE4CC6B38
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC501CC6B39
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 17:22:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8E8F8402DF;
-	Thu, 15 Oct 2026 19:20:29 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 89ADB4027C
- for <dev@dpdk.org>; Thu, 15 Oct 2026 19:20:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792084827;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=T49H2txl0rFM8HWrI87+oj9ODiJy256mlatf3ULPHJY=;
- b=V6sHb81VNUUzT/YUcAf99OTCYUlU4bt9gswmefdpmehl/6cK7nY4Laow/paA/Dm2/dmBvh
- Gx6/gPn6ScCQkGYWf0TvNW1Y7Ci2Q7w+l/ipzOFQ6mPOUeusfZYK0Ab8jIqaOu9RkwsxWu
- CUNnjP0PQEhz8HN7lCd3cQdtiNB50b4=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-210-lB4bRPnDNgKxiQeuwNUhhQ-1; Thu,
- 15 Oct 2026 17:20:21 +0000
-X-MC-Unique: lB4bRPnDNgKxiQeuwNUhhQ-1
-X-Mimecast-MFC-AGG-ID: lB4bRPnDNgKxiQeuwNUhhQ_1792084820
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 1C01518005BE; Thu, 15 Oct 2026 17:20:20 +0000 (UTC)
-Received: from [100.90.45.206] (headnet05.pony-001.prod.iad2.dc.redhat.com
- [10.2.32.117])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id C8A68180057F; Thu, 15 Oct 2026 17:20:17 +0000 (UTC)
-Message-ID: <6d7bebc2-99c2-4d43-b5d6-c0a3ebcb6841@redhat.com>
-Date: Thu, 15 Oct 2026 19:20:15 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id D06BC402DF;
+	Thu, 15 Oct 2026 19:22:09 +0200 (CEST)
+Received: from fhigh-b5-smtp.messagingengine.com
+ (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+ by mails.dpdk.org (Postfix) with ESMTP id CDEBB4027C
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 19:22:07 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 4E21C7A00CE
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 13:22:07 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-05.internal (MEProxy); Thu, 15 Oct 2026 13:22:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1792084927;
+ x=1792171327; bh=tKpTsx73IyW++HVgopWq1I20PDt9rQ/qU2GPBlc9JHY=; b=
+ EZ7igwfRZO79VYRLd8+p9Z+AaTW4TnuCG5M4BsZquP1z4Z89LdfOYfJLUGVGbnia
+ Cdl9O2tzOIHa8LIlNmmVkHylTVIBhmJ0pXiWK0+pyD7VAxX7bXQdAgVCaOTZ4mwS
+ 9UcB4jU0QZy61RAn1ESEirPE1S98KYOj/JddUpsl3wEAtd5pNDS4fQSFtalqelSv
+ V0hBvVHH+YBdcxREM9MfY98Qkzy/IOrnKR9tNZTpwDXJcQBqKxSmawBDGIgHWtsP
+ Ka5DINffqTLQ8a5RxZgGOILTjN0ZhRx/bC8S1vFLmrpO7r38eLGJKcHYVf4BSHmV
+ jUVuu1pccCw3Ick2/oRxgw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792084927; x=
+ 1792171327; bh=tKpTsx73IyW++HVgopWq1I20PDt9rQ/qU2GPBlc9JHY=; b=c
+ PQx+Pk2vd8AQEZcGNEGwWVWJEqvfVfcUJO2aubGpgZwAEUycrUSsTevtLzevvOwh
+ TSxt4lK5aT5S2i6MqkgQ69xlwVYSmmjj9mqiGpqKhQXh6RCvqYO0he6iWYWjhmz1
+ leGyvubFGsIdPcIuuM2gX/Amsu0FmkgSuWN72KE1SdAvRRQN4IodfxTZRT469un3
+ AKfytNOU6AJbrQEfAK9f8uRGtcljg9SADKwTEQuJ+fEc/2Lnb1lnWzVByOypHJmq
+ +HZV+CPHFPiErnQuaUyBuh1DlpxZVhDLUB+rqkWjTA20rsjWigCx26qU/vSIc0PW
+ 7x4iUWvdDNAknNuXHUUkA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1792084927; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm2:rsa-sha256:cdL3UAE30tZSyMxENOwnAnOHYlnB5NdRUfyXYdRbaY9WTcl
+ Nqn/ntoSTjvYp4ML14cf+zwKZtudrSJs9BHNpYYbzlggJWHezbgbTYp4lK+eZY5T
+ jrGmkEzVrQnhVzWfJAFofSb+eVLcfN1a0yCUt0S/Unh77yrGdt9IYXfwEt4eFVT4
+ tKe0R+mgdi9jmunVmSDo1QD4V4be6Uq2/PgZE729/xjfH1uLoGn5269PJ4yyW/CK
+ D0yY/2386VwpZzLqH+4O1SKQuIOCq2VWCVgYXmoPi6QGgw0Xq5UER/27hrMlPeFA
+ lwm9Fql6jJbDHcfclxhiXa0YR8qlQUExid07o1Q==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:32Pxjtgq6QwY+sAxr8R2GBNFJsVJvbTTwgMEQH9TLLs=:kdhVy28EhWup0efom66QskfrFtA76WEFe77w7jsbMjM=;
+X-ME-Sender: <xms:vgvRalKQEf_WMf7N38KnSYmiLt0vUBmUT7EliZlfNjSCoYWRBlQ7qA>
+ <xme:vgvRaslsUthBxnjvH9ODqbYA68ksy9epyEm00YsuvOTT0097RNGy4YB_iy_wf00DG
+ 1zTScZEvXh8PCk832z-wFCfEs-f6Zsnfcb2eE_1nRkUNF3Dc8itBA>
+X-ME-Received: <xmr:vgvRahP7C0jzFXxhqMoDcn2KWcXGF5Qdw0EnUy6ny-pIvvNl-8WnvZnnZvQPI6zLfgqTeof9fvXU4G9376HNi7Y>
+X-ME-Proxy-Cause: dmFkZTF/JY+4BqtrDGExTAahP0TW5uif752hyAwsbkN0zO/sQK51WJvogbyqKxi00uKq6K
+ HTuVgceUjxfneUydLzm+7C7VrpXgXVGQzGVMSMCmhjvtnf/djG+mN0yS3nUSY0CIjxYJGt
+ s4AUwfjJIwhO2e9x/iD+4x0bQr9CtkHkTp3Bt3h0LXWxpURS1DNvFLRE7M0a5HlP/W0mGM
+ WscsMD3m0ROJKrixnXT6nW9BrNV4yKlyTCg3taXdDJfQfx2yoUW712KxQ4YICDd/DT1lmL
+ DpnjMqBS6MmlvReFPWu+Rbj0L/JXEnkUpPJ3/bVVFLiF+eBx4JZRHxURQRF0rhPJ5gOnn9
+ iMju9OK8CTe1nBdXZz0/6sB4ekGOP+aXVeHffi7bpnubIqjJ4+F+TvrSt7bUnx37g8GvmT
+ 8HjGFgBNslWX4uOorLsxaJfBfFTG0wBvmj8Id2Fpiz1roGEs8U3F9JSSX0rBvILIrilmYG
+ uwUP7T8wJAhhl2bMKkZiQgUXSME2BA9/3dtQlnmRNIuFR/M67OawMkqxg7+Uwhb7SrdRR1
+ N+vklupLe3Lt+nBK46yqj1OdByuBeDxJUgZ7gAtvA+CrZ70d1WIi0MFMz5sio5oW/8CHPX
+ kE7omyvdQoWZHAQQ3TvivGi+//eydxU6m5F6UaL22+AvCSv+g51YPMSTqzng
+X-ME-Proxy: <xmx:vgvRaq3fXXskP63_6vs5ZK6jJ4nXfRpZ_hv8bv6KeLOE_8o-3rp9uw>
+ <xmx:vgvRaok9fLpq2I8cHxsTlbw-XcCYETxlOkFsF88pL5SOyvD2jSNgKQ>
+ <xmx:vgvRapVzHBQLXevO0LXqFax0WzrqMWYBaiiuNr0k84Wnxahskt1bMg>
+ <xmx:vgvRamvRZhg7mcWYBylUlGAYKJdBKtug05VUEldjfkRMxR-lsqLiAQ>
+ <xmx:vwvRan1ftrxjp1yvcB7PI0ZniZuSUsCjolCGVRUGSsv_Sw_OmmmOVppi>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 15 Oct 2026 13:22:05 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v7 0/2] introduce pile stack and mempool driver
+Date: Thu, 15 Oct 2026 19:22:03 +0200
+Message-ID: <ItqMX3UyR721OV9AeSB9fA@monjalon.net>
+In-Reply-To: <20260914155901.943571-1-mb@smartsharesystems.com>
+References: <20260901064331.594276-1-mb@smartsharesystems.com>
+ <20260914155901.943571-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] vhost: tolerate file descriptor in REM_MEM_REG msg
-To: pravin.bathija@dell.com, dev@dpdk.org, david.marchand@redhat.com,
- stephen@networkplumber.org, fengchengwen@huawei.com
-Cc: stable@dpdk.org, thomas@monjalon.net
-References: <20260731081031.3648665-1-pravin.bathija@dell.com>
- <20260731081031.3648665-2-pravin.bathija@dell.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20260731081031.3648665-2-pravin.bathija@dell.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: cmwWgsKG2lkLuNjNCmwL-iGmBUWWDR6dOXk7jsIk6bo_1792084820
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -114,56 +107,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+14/09/2026 17:58, Morten Br=C3=B8rup:
+> Added a new high-performance lock-free "pile", using the Stack API,
+> and an accompanying mempool driver.
+>=20
+> Morten Br=C3=B8rup (2):
+>   stack: introduce pile
+>   mempool: introduce pile driver
+
+Applied, thanks.
 
 
-On 7/31/26 10:10 AM, pravin.bathija@dell.com wrote:
-> From: Pravin M Bathija<pravin.bathija@dell.com>
-> 
-> The vhost-user specification (vhost-user.rst) states that no file
-> descriptors SHOULD be passed with VHOST_USER_REM_MEM_REG.  However,
-> it also says: "For compatibility with existing incorrect
-> implementations, the back-end MAY accept messages with one file
-> descriptor.  If a file descriptor is passed, the back-end MUST close
-> it without using it otherwise."
-> 
-> Some front-ends, notably libblkio, reuse the same message-building
-> helper for both ADD_MEM_REG and REM_MEM_REG and unconditionally attach
-> the mapping fd.  The previous implementation rejected any
-> REM_MEM_REG carrying a file descriptor with the error:
-> 
-> 	expect 0 FDs for request VHOST_USER_REM_MEM_REG, received 1
-> 
-> This broke teardown and memory region hot-swap with these front-ends.
-> 
-> To reproduce, run any libblkio (v1.5.0) application using the
-> virtio-blk-vhost-user driver against a DPDK vhost back-end.  The
-> connection is dropped during cleanup or whenever a memory region is
-> unmapped and remapped.
-> 
-> QEMU's libvhost-user reference back-end (vu_rem_mem_reg) already
-> tolerates zero or one fd in this message.  Align DPDK's behavior
-> with both the specification's compatibility clause and the reference
-> implementation by accepting the message and closing any unexpected fd.
-> 
-> Tested with:
->   - QEMU VM bring-up with runtime add/remove memory regions via
->     QEMU monitor
->   - QEMU post-copy live migration between source and destination
->   - SPDK vhost-blk with libblkio (fio libblkio engine, write + md5
->     verify)
->   - libblkio alloc-mem-region and map-mem-region tests exercising
->     ADD_MEM_REG / REM_MEM_REG / ADD_MEM_REG cycles against SPDK
->     vhost-blk
-> 
-> Fixes: 1d730eea6a42 ("vhost: add memory region handlers")
-> Cc:stable@dpdk.org
-> 
-> Signed-off-by: Pravin M Bathija<pravin.bathija@dell.com>
-> ---
->   lib/vhost/vhost_user.c | 9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
-Applied to next-virtio/for-next-net.
-
-Thanks,
-Maxime
 
