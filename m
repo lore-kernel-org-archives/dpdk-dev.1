@@ -2,53 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A65CC6B34
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 13:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAD5CC6B34
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 13:53:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2D76B4064E;
-	Thu, 15 Oct 2026 15:52:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 152CF4064A;
+	Thu, 15 Oct 2026 15:53:01 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id E0AB3402DA
- for <dev@dpdk.org>; Thu, 15 Oct 2026 15:52:42 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 857DF40291
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 15:52:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792072362;
+ s=mimecast20190719; t=1792072379;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=8MpdKC+S2kHPKgNc8LqAmZNucRvz61O/+2Rp+HzG+j0=;
- b=jUBr1v1MqyWK7rgjiT7S5Xq+rE1ARu3k8sSI/2BfUKyDMtXJNepRqbyNgm67n027N+sgK7
- IrRqqfonB0WkZ+1ucWtBWkUwyyB29BIWZ/Zs8SIhVMrEhmwOgciRZeUeBZ1Ngxr6gzg+0H
- no6yPMWoa8U4IvqnvRtQOiXRi6I2/as=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=TmwtkwdklSZ6J4uDNwxKcgoNFaFcP256DlH+NxW+UJY=;
+ b=YnB963itPruJTFSNxihsKVW1UmEpWgG0e5IvIScYxa6Y4Mxt0Ylp4HOPA1dB5IV7nehhsh
+ ijhH5bNfz5WM20SHugX2n70PNN3b3SL6B0SviTbIKzn+Zqzg/shxwybwsjK3OCpQIWjeve
+ uk0ZbvjPKU9/4TBHlrIfABb/xFbRIOE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-312-mcC7bvgvPeqknpgQFbBRDw-1; Thu,
- 15 Oct 2026 13:52:41 +0000
-X-MC-Unique: mcC7bvgvPeqknpgQFbBRDw-1
-X-Mimecast-MFC-AGG-ID: mcC7bvgvPeqknpgQFbBRDw_1792072359
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-333-QOCJUMgFPEiGf93jgZQffw-1; Thu,
+ 15 Oct 2026 13:52:54 +0000
+X-MC-Unique: QOCJUMgFPEiGf93jgZQffw-1
+X-Mimecast-MFC-AGG-ID: QOCJUMgFPEiGf93jgZQffw_1792072373
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 049271955F2E; Thu, 15 Oct 2026 13:52:39 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 884C7180067B; Thu, 15 Oct 2026 13:52:53 +0000 (UTC)
 Received: from [100.90.45.206] (headnet04.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.116])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id E97DB26C; Thu, 15 Oct 2026 13:52:37 +0000 (UTC)
-Message-ID: <1d039f1e-d624-4ac5-b4a5-820c49bd2f67@redhat.com>
-Date: Thu, 15 Oct 2026 15:52:35 +0200
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 75ACB1956042; Thu, 15 Oct 2026 13:52:52 +0000 (UTC)
+Message-ID: <23183167-9c3f-4f72-97e3-a42daaf46b5b@redhat.com>
+Date: Thu, 15 Oct 2026 15:52:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] vhost: rename packed layout helpers for batches
+Subject: Re: [PATCH v4 6/6] vhost: simplify some descriptor handling
 To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
 Cc: bruce.richardson@intel.com, Chenbo Xia <chenbox@nvidia.com>
 References: <20260723153111.3943368-1-david.marchand@redhat.com>
  <20261014155750.1269862-1-david.marchand@redhat.com>
- <20261014155750.1269862-6-david.marchand@redhat.com>
+ <20261014155750.1269862-7-david.marchand@redhat.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -93,10 +93,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20261014155750.1269862-6-david.marchand@redhat.com>
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+In-Reply-To: <20261014155750.1269862-7-david.marchand@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ecsF2yqubE6q0s3y9CHabuOtw5op3gL9DHMJJxZEDp0_1792072359
+X-Mimecast-MFC-PROC-ID: AQ7NOOj_X9LUolGMV4Sn78NLRZU7x6A4AwUHip3M8zo_1792072373
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -117,21 +117,23 @@ Errors-To: dev-bounces@dpdk.org
 
 
 On 10/14/26 5:57 PM, David Marchand wrote:
-> Now that the async datapath has been removed, the _sync in function names
-> gives no useful information.
+> Now that the async datapath has been removed, move back the descriptors
+> copy/filling code in desc_to_mbuf/mbuf_to_desc and eliminate an
+> intermediate helper.
 > 
-> Besides, vhost_reserve_avail_batch_packed does not reserve anything and
-> its name is confusing, rename it following the other rx/tx split/packed
-> helpers convention.
+> Tracking buf_iova is not needed in the descriptor to mbuf case.
 > 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
 > ---
+> Changes since v3:
+> - rebased after RTE_PTR_ADD changes,
+> 
 > Changes since v2:
-> - cleaned up indent,
+> - used RTE_PTR_ADD for consistency,
 > 
 > ---
->   lib/vhost/virtio_net.c | 28 +++++++++-------------------
->   1 file changed, 9 insertions(+), 19 deletions(-)
+>   lib/vhost/virtio_net.c | 81 +++++++++++++++++-------------------------
+>   1 file changed, 32 insertions(+), 49 deletions(-)
 > 
 Already provided my R-by on previous revision:
 
