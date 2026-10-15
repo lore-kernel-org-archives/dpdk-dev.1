@@ -2,72 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0572CCA465
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 19:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA03CCA464
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 19:51:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92F5A402DA;
-	Thu, 15 Oct 2026 21:28:18 +0200 (CEST)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
- [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id BC5A44027C
- for <dev@dpdk.org>; Thu, 15 Oct 2026 21:28:16 +0200 (CEST)
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-398b3c37877so2918397a91.0
- for <dev@dpdk.org>; Thu, 15 Oct 2026 12:28:16 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2562A4027C;
+	Thu, 15 Oct 2026 21:51:39 +0200 (CEST)
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com
+ [209.85.210.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 5F27B400EF
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 21:51:37 +0200 (CEST)
+Received: by mail-pf1-f174.google.com with SMTP id
+ d2e1a72fcca58-868b3248b2cso4392957b3a.1
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 12:51:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792092496;
- x=1792697296; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792093896;
+ x=1792698696; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=uNBm/PmfzB1X7hCveUQe/Ox9kuS8FS6suyo7gWXfU/4=;
- b=I1FGPhprLvyagTSWz7rLrlnVwf75oIL6MG0rZwVguFy1FHt367oBGMc+qMq6vdgXDL
- 0DnWM0WZsiMx6TYJdScfR1nzKa7OoG72eiomCRZDPl81824YA+/58cZtps4mF7WF7v8o
- 9u92BevddavTGoZrIJSOgmdzKUTa2ykcNpNzwaDB666KRv4OG1jFyUU8N+0qgNV8UbbT
- VCB7958Ghz/if0USsnXkV8KY7b45RSqawQ8GopaeGVF6ko/slvD9CKVtkG86HOY0PK/8
- kDzmJMrxE/tt/oD9tqIPDQ2To3wu6hgaZRm+PaKBJrL2N3CvateKZkOYkseDL+HcDeRW
- 1LmA==
+ bh=8Y9n9OFn+idNFbKPwVXNDExV1rVfipVfS9s17emOCW0=;
+ b=BQMmQJI89uXLKuRoXIUZduQ36iNCEfvYH5rTI3VfHQrBCmCJl30aOUNi+kbER3T2MK
+ yxsZA0NryO69/e5zFND4DtMVx3AJ/8hmO2lRE5b3osSme9HvAzZ4cn+mhK8LbS43S2zQ
+ JKau9TY8+9eOb7/bzvgwX2mRCcUcQ4r2P70dkIHJREYYA4NYVOgmVrFN5nf3utQ52+wd
+ 7cXURumKvlJ82CA46+28oZwiqlUTW3BU11WjI+aXf/3SC8I4bB7vPgc7o2bGcffkguJ+
+ Gceu7Y6zHyJTy9G9qLJku2aOh20aVAB9PO4gyPF38oCO3TBom7PyNFxXtQPtyOnl1HDh
+ zs+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792092496; x=1792697296;
+ d=1e100.net; s=20260707; t=1792093896; x=1792698696;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=uNBm/PmfzB1X7hCveUQe/Ox9kuS8FS6suyo7gWXfU/4=;
- b=DwbRWQmvIyupivRDJANv3xtNJenJKgCeZbVa66DCEj4mQfqQUkYfGUtaYu9uJYsLHT
- lufX9NFU+wFevUwNeBbEBI2vPROTZcFgGLvGrmciUs+boHQbyfpN087S2Zi2ZFpvSndk
- BKmBtQQzrFxr+tahNhJvRYli3AKJtkUaiNOeyfg6T8Ws7aX833qf/di5HJK1QO4/zor1
- 8Tks1WI98eyfwHtHHLpDzVJ/y0ebhPmpuu7zCFXIAsqWaUDO535rQVVJvhDrORMiayzy
- +wl0hzxK0oj4yapfLQgMZTv9cyYFUjWeSTHhOqc+UZQ6+l8KDCW3XYjHTi0NPWr560F+
- y0ZA==
-X-Gm-Message-State: AFq9FYL60sNjFngU63bH8dC4JiOWM+5/AhbytAJM8/J2xDpZ04MljnXs
- VxTKk+dLKYwfcSeM+GqPPSoHU3zoM+q6YCW2l6DElYMswMUqa5XBl9T4Zj9d0Cyc4/NulhfMvEl
- 1ZaFK
-X-Gm-Gg: AYBFou3D6jJceKUiwHbM/7V/cyaNKqRHswisbxv55fZ/adJfSwcGUQL6i7I8bzNSMaP
- xQ6OEf5337/W50JUhHaMoE5M+ti8UkNd4tBrEsS89xlnUxxhr91kw5Y1eZzcyPR5SXM6OTxlWIB
- Zo0EntgIqDn9I4x68JtO8RCnhs224eGLp/G+m422SeDLZp+9EB1YBkFVxCZxLAmwm/1q5TvvxiG
- zwHwmd7VNb5W74+Ybia6Ag7m1zsJYAOasRArI0Ft20U1ZmKj4EkrPG5cdLXjimMuOWkKB9VeMbj
- 7hm8W331FZd1u5Dxp3umYP3clvzL5+0sUoacwL/4ro1dmejB7WgUcBFSg53pLvzZSn5iQrqQA+3
- sp3qBf/rGX8OxZFsfuKSvKxwja52XD73KfUGS29OraLCzh1jQFjs71wRfCOLc7dN/qMYCr24TfT
- zKli4kHmfmTLi7zSHLIdVpsUX8Oa/eGtjHKbsaCQwqKWF69TxR07h3KKROdOOy/MgBpj6qr9WPn
- ZX+IML64j9f6VVvSM7Fv0yY+ENBjVRwF6r/GwNl
-X-Received: by 2002:a17:90b:4b85:b0:3a0:7261:d58e with SMTP id
- 98e67ed59e1d1-3ab3ab60609mr16654631a91.22.1792092495632; 
- Thu, 15 Oct 2026 12:28:15 -0700 (PDT)
+ bh=8Y9n9OFn+idNFbKPwVXNDExV1rVfipVfS9s17emOCW0=;
+ b=WEpKvH/LMlqQHXTib2amNz0j5u7z60G6Rp51GXlFn10sCK5MR4IKLstQ+MsZlgLQH+
+ MqhtzWLPh0RtxL1MnnA0uMvhunhJK+t97lLhjE/9hb3j3L19MxNszwEvENz9Ffm+MnXM
+ DTg6BCFelwz3jyEXiABzOy/NO8JVgYLvqTUEQXD0gsHS2vIJqmBgJqpi/TVE88BRdLyC
+ 0N7j/5BN4bxWExTfy8WDebXnE4om1J2IpPpEYnY/avI+o/sH/hpX/vmNuTCYdXe93Cab
+ 0B7a6Rc8UCubfNEQO2P4pxNdPVcrqWD6lWK3EwnvlMUsDCL2Z5lV6QCHYVb2o3cWNeK4
+ unIw==
+X-Gm-Message-State: AFq9FYIpuDhhFkxRwKNRbf0Wg51bvEk03n/yYBARNwgPqqhqd28atOVY
+ Gs9qZY5rfA8aX2R0+v7nLxP8c+r4OdUNuFGMsaP2L14UBPeWWnSpBtCoZhUj8GkH91I=
+X-Gm-Gg: AYBFou1UZbGu576w8Nro+puTvPM/QIHDxs1fdMtqgmJxb1/1hP3DMUXXtKXNc3CBHPf
+ kmjF99tTHBX0sa/p5bNoKsb0yiAGtfaSi6rYQgDmEpXuY4JyIe53vUif2Y/ada0A+dejR7vbuuc
+ sW17KBeHRRNw2zoMeHP717Eso73FtvCfEpZU+D7/wkANiXEU0KlBJjcuKg3+1FLdzjD7jjB5bA7
+ IEqMClsSAqbAcsSkYhK93uTjpGrJT8S0bSup9G6N+GqG5qM/Qc/GLqmHZn5KheHejvN3c7OeBf/
+ nVcEKhleh9fQ4y+m5cPn0RQWMq4Hi5HOacEwLnbfuPzhq4Sykh1GBTIvPbJchOTtsd8MLG+WJPd
+ MVOxwJYsOrEhBzTJZigphUb3cXKPsYYUQwcyNk/BN329KAIkgt4qDfBETnNakPrHKZxDeQdmtdW
+ xx7AjFu5trww4yniq0DOnFxxFPRAK2E2V411TNAA7Z5fNE0NjEnRV+/ABvNpfog1SnK3FapQ6hq
+ Ri+aX1yQ+SC6+NkbtPbScip4ofmU4HFLAoUIyFV
+X-Received: by 2002:a05:6a00:4612:b0:89f:5ac6:32f1 with SMTP id
+ d2e1a72fcca58-89f5ac647bdmr308333b3a.23.1792093896384; 
+ Thu, 15 Oct 2026 12:51:36 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3acc43a1e1esm594596a91.1.2026.10.15.12.28.15
+ d2e1a72fcca58-89f58211b2esm93758b3a.54.2026.10.15.12.51.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 Oct 2026 12:28:15 -0700 (PDT)
-Date: Thu, 15 Oct 2026 12:28:13 -0700
+ Thu, 15 Oct 2026 12:51:36 -0700 (PDT)
+Date: Thu, 15 Oct 2026 12:51:33 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Frank Dressler <frank@dressler.pro>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v6 0/4] net/af_packet: do not return outgoing packets
- from rte_eth_rx_burst
-Message-ID: <20261015122813.66f6df2c@phoenix.local>
-In-Reply-To: <20261015111434.1470973-1-frank@dressler.pro>
-References: <20261009151015.742011-1-frank@dressler.pro>
- <20261015111434.1470973-1-frank@dressler.pro>
+To: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+Cc: <dev@dpdk.org>, Jakub Grajciar <jgrajcia@cisco.com>, <stable@dpdk.org>
+Subject: Re: [PATCH v2 0/8] net/memif: lifecycle fixes and unit test
+Message-ID: <20261015125133.41f86af9@phoenix.local>
+In-Reply-To: <20261015143945.2150772-1-sriram.yagnaraman@ericsson.com>
+References: <20261015143945.2150772-1-sriram.yagnaraman@ericsson.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,165 +82,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 15 Oct 2026 12:14:30 +0100
-Frank Dressler <frank@dressler.pro> wrote:
+On Thu, 15 Oct 2026 16:39:37 +0200
+Sriram Yagnaraman <sriram.yagnaraman@ericsson.com> wrote:
 
-> In contrast to other PMDs, the AF_PACKET PMD does not only return
-> incoming but also outgoing packets from rte_eth_rx_burst(). This is
-> fine for applications similar to tcpdump which usually want to see
-> both. But it is not always the desired behavior. For example, the
-> AF_PACKET PMD might be used in a testing environment in which no
-> regular ethernet PMD works. In such an environment, the AF_PACKET
-> PMD must behave like a regular one, i.e. not return sent packets
-> from rte_eth_rx_burst(). One could use the AF_XDP PMD for this but
-> it has different dependencies than the AF_PACKET PMD because it
-> requires the bpf() syscall, for example, which might not be
-> available.
+> This series fixes a set of error-path and lifecycle bugs in the memif
+> PMD and adds a unit test for the driver.
 > 
-> For this reason, this series adds the ignore_outgoing=<0|1> devarg.
-> When set, the PMD ensures that rte_eth_rx_burst() only returns
-> incoming traffic. The default is 0 so that existing software works
-> as before.
+> The first seven patches are fixes:
 > 
-> The ignore_outgoing test tags the frames it injects so that it can
-> distinguish them from stray frames, which would otherwise be counted
-> as well and could lead to a wrong result. As the pre-existing
-> loopback test could suffer from stray frames as well, the first patch
-> changes it to use tagged frames.
+>  - guard eth_memif_tx() against an empty burst (nb_pkts == 0);
+>  - close file descriptor 0 instead of leaking it;
+>  - do not close the EAL-owned memseg fd in zero-copy mode;
+>  - free the MAC address allocated during probe on failure;
+>  - unwind a partially-created device on create failure;
+>  - disconnect on close so a stopped server's control channel is not
+>    leaked, and make memif_disconnect() safe on a never-started device;
+>  - fix eth_memif_tx_zc() returning 65535 on an invalid interrupt fd.
 > 
-> The second patch adds filtering of outgoing packets in the PMD
-> because that works in all supported kernel versions and for all
-> queue counts. The test creates an AF_PACKET vdev and injects frames
-> at the fd end of the TAP device and via a second AF_PACKET vdev.
-> Frames from the fd end arrive as incoming traffic and frames from
-> the second vdev as outgoing traffic, so with ignore_outgoing=1 the
-> first vdev should return only the incoming frames. The frames from
-> the fd end are required to distinguish a dead device from one which
-> dropped the outgoing frames.
+> The last patch adds a memif PMD unit test (app/test, memif_pmd_autotest):
+> a server/client vdev pair over a loopback socket covering dev_info, link
+> state, stats, single-segment loopback (slow and fast path), multi-segment
+> loopback across a ring wrap, stop/start reconnect, empty Tx burst, and
+> close without stop.
 > 
-> The third patch adds PACKET_IGNORE_OUTGOING which moves the
-> filtering into the kernel. It is supported since Linux 4.20 but only
-> works for single-queue AF_PACKET scenarios. Multi-queue AF_PACKET
-> is still filtered in the PMD.
+> Verified: memif_pmd_autotest passes 10/10; each commit builds with
+> -Dwerror=true; check-git-log and checkpatch are clean.
 > 
-> The fourth patch adds PACKET_FANOUT_FLAG_IGNORE_OUTGOING which is
-> supported since Linux 6.2 and moves the filtering into the kernel
-> for the multi-queue scenarios. The kernel does not expose a direct
-> way to check whether it supports PACKET_FANOUT_FLAG_IGNORE_OUTGOING
-> but it also does not return an error when the sockopt is set on
-> kernels that do not support it. Because of that the sockopt is set
-> opportunistically. The PMD check is kept, since older kernels accept
-> the flag without effect and support cannot be detected.
-> 
-> Overall we get the following:
-> 
->               | Single Queue | Multi-Queue
->   ------------+--------------+-------------
->   Kernel 5.4+ |  in kernel   | in PMD
->   Kernel 6.2+ |  in kernel   | in kernel
-> 
-> I tested this on both, kernel 7.2.8 and kernel 5.4.0 with both single
-> and multiple queues. My results, strace'ing testpmd 7.2.8, with the
-> variants of ignore_outgoing=0|1 and single/multi-queue:
-> 
-> Kernel 5.4.0:
-> 	qpairs=1,ignore_outgoing=0: -
-> 	qpairs=1,ignore_outgoing=1: setsockopt(14, SOL_PACKET, 0x17 /* PACKET_??? */, [1], 4) = 0
-> 	// 0x17 is PACKET_IGNORE_OUTGOING
-> 
-> 	qpairs=2,ignore_outgoing=0: setsockopt(14, SOL_PACKET, PACKET_FANOUT, [-1878917532], 4) = 0
-> 	// -1878917532 does NOT contain PACKET_FANOUT_FLAG_IGNORE_OUTGOING<<16
-> 	qpairs=2,ignore_outgoing=1: setsockopt(14, SOL_PACKET, PACKET_FANOUT, [-805175699], 4) = 0
-> 	// -805175699 does contain PACKET_FANOUT_FLAG_IGNORE_OUTGOING<<16
-> 
-> Kernel 7.2.8:
-> 	qpairs=1,ignore_outgoing=0: -
-> 	qpairs=1,ignore_outgoing=1: setsockopt(13, SOL_PACKET, PACKET_IGNORE_OUTGOING, [1], 4) = 0
-> 
-> 	qpairs=2,ignore_outgoing=0: setsockopt(13, SOL_PACKET, PACKET_FANOUT, [-1878978899], 4) = 0
-> 	// -1878978899 does NOT contain PACKET_FANOUT_FLAG_IGNORE_OUTGOING<<16
-> 	qpairs=2,ignore_outgoing=1: setsockopt(13, SOL_PACKET, PACKET_FANOUT, [-805236964], 4) = 0
-> 	// -805236964 does contain PACKET_FANOUT_FLAG_IGNORE_OUTGOING<<16
-> 
-> They show that the setsockopt succeeds even on the old kernel that
-> does not support PACKET_FANOUT_FLAG_IGNORE_OUTGOING, so setting it
-> opportunistically is fine. They also show that the code only tries to
-> set PACKET_FANOUT_FLAG_IGNORE_OUTGOING or PACKET_IGNORE_OUTGOING when
-> requested by ignore_outgoing=1. And it shows that
-> PACKET_IGNORE_OUTGOING is used for single and
-> PACKET_FANOUT_FLAG_IGNORE_OUTGOING for multi-queue.
-> 
-> I have also manually ran testpmd in all modes and both kernels to
-> verify that ignore_outgoing works as expected, sending packets and
-> checking what testpmd was receiving (``set verbose 1``).
-> 
-> 
-> v6:
-> - add tags to frames to distinguish injected ones from stray ones
-> - update the loopback and ignore_outgoing tests to count only tagged
->   frames
-> - inject frames as incoming to distinguish a dead port from a
->   working one in ignore_outgoing=1
-> - bound the receive flush so a continuous stream cannot hang the test
-> - quote rte_eth_rx_burst() with double backticks in the docs
-> - use Linux 6.2 instead of v6.2 throughout the code and the docs
-> - add a paragraph to af_packet.rst on single-queue and multi-queue
->   filtering
+> Thanks to Stephen Hemminger and the ai-code-review bot for the v1 review
+> that prompted all of the v2 changes below.
 
-Still see minor issues in AI reviews that need fix before it gets merged.
+More semi-automated AI review feedback
 
-Subject: Re: [PATCH v6 0/4] net/af_packet: ignore_outgoing devarg
+2/8 and 6/8 conflict with d9191f684c ("interrupts: add helpers to
+close FD") on main, which already converted the queue fd closes in
+memif_disconnect() to rte_intr_fd_close(). Rebase, keeping
+rte_intr_fd_close() and the new mq == NULL checks. Resolved that way,
+every commit builds with -Dwerror=true. Not run.
 
-Series applies cleanly to main and builds at every commit with
--Dwerror=true (driver and dpdk-test).
-
-Kernel side checks out: sockaddr_ll is at
-TPACKET_ALIGN(sizeof(struct tpacket2_hdr)) as the kernel lays it out,
-PACKET_IGNORE_OUTGOING has no effect once a socket joins a fanout
-group (the group prot_hook replaces the per-socket one), and pre-6.2
-fanout_add() does not validate unknown flag bits, so setting
-PACKET_FANOUT_FLAG_IGNORE_OUTGOING unconditionally is safe and the
-PMD-side check remains the correct fallback.
-
-Only minor items below.
+The v1 comments are addressed. One of them was wrong, and that error
+went into 6/8 and 8/8; my mistake. Details below.
 
 
-Patch 2/4 net/af_packet: filter Rx of outgoing packets in the PMD
------------------------------------------------------------------
+[PATCH v2 6/8] net/memif: disconnect on device close
 
-Info: ignore_outgoing is unsigned, log it with %u.
+Warning: the reachable case is a server that was started and then
+stopped, not one that was never started. memif_msg_receive_init()
+skips any server with ETH_MEMIF_FLAG_DISABLED set. memif_create() sets
+that flag and only memif_connect_server() clears it, at dev_start.
+dev_stop never sets it again, so:
 
--	PMD_LOG(DEBUG, "%s:\tignore outgoing %d", name, ignore_outgoing);
-+	PMD_LOG(DEBUG, "%s:\tignore outgoing %u", name, ignore_outgoing);
+  never started:       peer rejected, pmd->cc is NULL at close
+  started, stopped:    peer accepted, pmd->cc bound, and on CONNECT
+                       memif_connect() sets CONNECTED and link up on
+                       a stopped port
 
-Info: test_af_packet_ignore_outgoing() defines n_inject for the TAP
-side but hardcodes 4 for the af_packet side. Use one constant for
-both:
+The second case is the bug. Fix it at the source in a separate patch
+by refusing peers while stopped:
 
--	allocated = alloc_tx_mbufs(bufs, 4);
-+	allocated = alloc_tx_mbufs(bufs, n_inject);
+	static int
+	memif_dev_stop(struct rte_eth_dev *dev)
+	{
+		...
+		pmd->flags |= ETH_MEMIF_FLAG_DISABLED;
+		memif_disconnect(dev);
 
+  Fixes: 09c7e63a71f9 ("net/memif: introduce memory interface PMD")
 
-Patch 3/4 net/af_packet: use kernel to filter single-queue Rx
--------------------------------------------------------------
-
-Info: commit message states the 4.20 availability twice. Drop the
-last paragraph and fold "DPDK requires at least Linux 5.4, so no
-feature check is needed" into the second one.
-
-Info: release notes should say what the user gets, not how it is
-done. Where filtering happens (and the 6.2 dependency added in 4/4)
-is already in doc/guides/nics/af_packet.rst. Suggest leaving the
-release note entry as added in 2/4:
-
-  Added ``ignore_outgoing`` devarg so ``rte_eth_rx_burst()``
-  returns only incoming packets.
-
-Info: PACKET_QDISC_BYPASS is guarded with #if defined() and 4/4 adds
-a fallback define for PACKET_FANOUT_FLAG_IGNORE_OUTGOING, but
-PACKET_IGNORE_OUTGOING is used bare. Fine against any 4.20+ uapi
-headers; add a matching #ifndef fallback (value 23) only if you want
-it consistent with 4/4.
+Keep the memif_disconnect() call in close as a backstop for an init
+racing with stop, and change the commit message to "started and then
+stopped".
 
 
-Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
+[PATCH v2 8/8] test/memif: add memif PMD unit test
+
+Warning: test_memif_close_without_stop() still never reaches the cc
+teardown. The throwaway server is never started, so the client's init
+is rejected and pmd->cc stays NULL. I suggested that setup in v1, and
+it was wrong. What the test does cover is close on a configured but
+never-started port, i.e. the mq == NULL skip. Reword its comment to
+say so.
+
+Once the DISABLED-on-stop fix is in, test that instead: start the
+server, stop it, start a client, and check the server stays down:
+
+	TEST_ASSERT(configure_port(sport) == 0, "server start failed");
+	TEST_ASSERT(rte_eth_dev_stop(sport) == 0, "server stop failed");
+	/* create and start the client as now */
+	TEST_ASSERT(wait_for_link_pair(sport, cport) != 0,
+		    "stopped server accepted a peer");
+
+Without that fix, this check fails today: the stopped server reports
+link up.
+
+Info: test_memif_fastpath() checks only the length. Verify the payload
+as test_memif_send_receive() now does.
+
