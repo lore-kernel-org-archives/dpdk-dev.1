@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCC2CC6B34
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 14:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B73B5CC6B3A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 Oct 2026 14:12:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D61274069F;
-	Thu, 15 Oct 2026 16:11:50 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id A22414064C;
- Thu, 15 Oct 2026 16:11:48 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7BF13200098;
+	by mails.dpdk.org (Postfix) with ESMTP id C9123406BA;
+	Thu, 15 Oct 2026 16:11:54 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 1BF094064C;
+ Thu, 15 Oct 2026 16:11:49 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DDAA81A00AA;
  Thu, 15 Oct 2026 16:11:48 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4618E20006D;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A5C8D1A00A7;
  Thu, 15 Oct 2026 16:11:48 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 70FDF18000B1;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C1513180006C;
  Thu, 15 Oct 2026 22:11:47 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v26 01/26] net/dpaa: fix double close and null deref on remove
-Date: Thu, 15 Oct 2026 19:41:19 +0530
-Message-Id: <20261015141144.3140281-2-hemant.agrawal@nxp.com>
+Subject: [PATCH v26 02/26] net/dpaa: fix probe success when FMC init fails
+Date: Thu, 15 Oct 2026 19:41:20 +0530
+Message-Id: <20261015141144.3140281-3-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261015141144.3140281-1-hemant.agrawal@nxp.com>
 References: <20261013103833.3822265-1-hemant.agrawal@nxp.com>
@@ -49,52 +49,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_dpaa_remove() closed the port twice:
+dpaa_dev_init() jumped to the free_rx cleanup label without setting ret
+when dpaa_port_fmc_init() failed:
 
-	ret = dpaa_eth_dev_close(eth_dev);
-	if (eth_dev->state !=  RTE_ETH_DEV_UNUSED) {
-		dpaa_eth_dev_close(eth_dev);
-
-The first call ran unconditionally, the second ran again on a port
-that had just been torn down. The unconditional call also dereferenced
-eth_dev without checking that rte_eth_dev_allocated() found anything.
-rte_eth_dev_close() releases the port, so an application that closed
-its ports before rte_eal_cleanup() crashed in remove.
-
-Close the port once, only when it is still in use, and log the close
-result before releasing the port. The release status is returned,
-since the port must be released regardless of how close ended.
-
-Fixes: 78ea4b4fcb52 ("bus/dpaa: improve cleanup")
+Fixes: f5fe3eed5122 ("net/dpaa: support FMC parser for VSP")
 Cc: stable@dpdk.org
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 1aaf97f175..a5b02cc9a8 100644
+index a5b02cc9a8..10b90417de 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -2679,11 +2679,14 @@ rte_dpaa_remove(struct rte_dpaa_device *dpaa_dev)
- 	PMD_INIT_FUNC_TRACE();
- 
- 	eth_dev = rte_eth_dev_allocated(dpaa_dev->device.name);
--	ret = dpaa_eth_dev_close(eth_dev);
--	if (eth_dev->state !=  RTE_ETH_DEV_UNUSED) {
--		dpaa_eth_dev_close(eth_dev);
-+	if (eth_dev != NULL && eth_dev->state != RTE_ETH_DEV_UNUSED) {
-+		ret = dpaa_eth_dev_close(eth_dev);
-+		if (ret != 0)
-+			DPAA_PMD_WARN("%s: close failed(%d), releasing port",
-+				dpaa_dev->device.name, ret);
- 		ret = rte_eth_dev_release_port(eth_dev);
- 	}
-+
- 	dpaa_valid_dev--;
- 	if (!dpaa_valid_dev)
- 		rte_mempool_free(dpaa_tx_sg_pool);
+@@ -2259,6 +2259,7 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 		if (num_rx_fqs < 0) {
+ 			DPAA_PMD_ERR("%s FMC initializes failed!",
+ 				dpaa_intf->name);
++			ret = num_rx_fqs;
+ 			goto free_rx;
+ 		}
+ 		if (!num_rx_fqs) {
 -- 
 2.25.1
 
