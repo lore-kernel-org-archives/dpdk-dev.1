@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BB4CCA462
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 14:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C12CCA46C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 14:16:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D65C140656;
-	Fri, 16 Oct 2026 16:16:05 +0200 (CEST)
-Received: from AM0PR02CU008.outbound.protection.outlook.com
- (mail-westeuropeazon11013045.outbound.protection.outlook.com [52.101.72.45])
- by mails.dpdk.org (Postfix) with ESMTP id 83E3B402DA;
+	by mails.dpdk.org (Postfix) with ESMTP id 0D6D040693;
+	Fri, 16 Oct 2026 16:16:07 +0200 (CEST)
+Received: from AS8PR04CU009.outbound.protection.outlook.com
+ (mail-westeuropeazon11011013.outbound.protection.outlook.com [52.101.70.13])
+ by mails.dpdk.org (Postfix) with ESMTP id AB81D40291;
  Fri, 16 Oct 2026 16:16:03 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uVselD+3wcHiG/mGQIunmmkFUo+bOc7p0gUiypzF+U7NqlrRZos34ELCAi1brB9U034NfbYeUNTLuDClgug2C9V4jOZ/5oq+kRMWKDwG6Vqo9SFtU/6l8/K0TeZMXUfL7E2c6n72ZSVlqNOOPNG0POURUljQtrCY3haKsomxGfYeJ6zvAvAKyqDYp26jrXbNpTy/qiR7+0BJL8UslDav9Yy3qCAo3BibNtNumgGsKtUrZj9d22k4+njDhrP6/whHQXWjpBEQGnyyZu8g4cb1NEW5o5QJz+HTILtsKGKmXjx6UGB2TkjIYKBRQPxkaiQU86WlFGQxb309mCQk+2Ibwg==
+ b=i2SNIOnPZpLDoA6GTAKJSKPk+6kaCV1nT3Xd2KggvPe5QC6d9bpgY1Vgt/MtIdrqT1zeTpPKKIzDJG3euKWMEBayOosRy3HZrjLkHxSMOeEcmC3ivpYGe8isu1sUBktvUdbCXmfPmHX+owvdcOWQsJUCOVm+DK8UxySOzqg8t1rwjZZPUM9GB2kXWdYaJz6Pt4QuWFyOrHCQuopZWFN0dxzxBv7/kkAMHzCoMZj5OMoe1yWfCT5NA/R7s2Lmpgpyxg9IXXOC3QY3O45JGPiTjT5j8adAJtCFpZ3UFx/njBNsh20+nm3skzIMtRAHNRgRv8rnmPZmfCJStSazfXgGrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xtmj5rmFr7SlV3MngwmYHEAXdnP6wosWgiWgVMcbLS8=;
- b=M4xtCfnfZ6/SOrcXWqhwxt4cQhPtaUkXrX8Gp1wszuLzA/9LkBPjIHHgBnCPG5Cih3o6jKhh5bptrMAunhXASkDCPpYM4/dFUHHgMtTmGn+I9IAh0EXd5ZeqbxKojLxi5aLI/wbB1Tpa6FjlQo+ypOpmhszeEGHto2RjKVwAqg4i44jcTCoGzbzf2wwf37yGouqU7+EayRBIcxG7+hQn290Po7VeOTDbt6L9ySg35WaiYZDjhaQfR5clO39yXouJnlZn40ZjW2wz2lT0m4L5Dt+0zPvHUxvHcDVfq3Hxi7HOdL+5jRLJLV9hJxjK9fZM1eZTEpyiXks24XcrAEswcQ==
+ bh=h9lWZMY8MBmMhpf+VksYFSvSsowgs6Jjh3zbVEeGGuY=;
+ b=I1DYYce6QBqpZJA8qfAVGupOLvOxA1fgBrfwVPrtXzEzvx00sXcE28xu8RBXLQAlz/gZixpE1gsllCEmzHvWMkd56308UFToej2mIBGZXb84DyRG6rW7B+927Sp9GonINkGiY/QrNY0uyzChr7yCRW9hKla7AIJ03J5bsbDcZPS7yJfV++uJ3TMsv3N3yFWstWAtvDynlstMr/sQbdU+dGRz/W8oQFNnvPFrMkbbFSWp0lwibWNtHzfApyvrNQBbIYWCkB6U5iSuyf2td0DV9l65lHORiFkB+hsZf+Uf7HZAJO4jUrkiCfkle94q63ntkT/7sDfAfJNw4ltDTinS0Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  192.176.1.74) smtp.rcpttodomain=cisco.com smtp.mailfrom=ericsson.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xtmj5rmFr7SlV3MngwmYHEAXdnP6wosWgiWgVMcbLS8=;
- b=dMsD8AAxzIl2mfBr3kgwW/rLpRXhre64l1tq2jE3wzdZsjOZJE2t1wMVUTDod8ttm1I+w2X0vWXuyDEvvGzZYkSF5WadqjYxjX5XbErWi/ix/V8i9KT0Hoy5eohVvSiJqupeb1id7cHDKluwdZm21S4tons02pIr33yX0Vrj6b9CqzflziAnniMirXTxVizoRRAEd4m/Kd91tkQJPKYzD5r/4NzImPY/g14y1URqHMAIJYuFeaPE3BxwWY9NfV9zNF+09KabuAG9GBNv/ACV/vVxKYQxhLwbVZeADgt4CyvdTTDnjNVAfYSa8OoC1Uy+Jo6nNune9+szU71/gnZk9w==
-Received: from DB9PR02CA0016.eurprd02.prod.outlook.com (2603:10a6:10:1d9::21)
- by AS5PR07MB10572.eurprd07.prod.outlook.com (2603:10a6:20b:6c5::18)
+ bh=h9lWZMY8MBmMhpf+VksYFSvSsowgs6Jjh3zbVEeGGuY=;
+ b=Xnb5gWTBey6feNv+OPScoaeh2NGdEIovb3Y42crn2vHZSgAwVXtlNCkmyn5MrfRFeg+N1YYtw2QnYhHe8fqpK6mf0Q4ZJjl5bVtPBWPlPFdczACVRtuRC73l3ceFDKcJjBZhFgagGUr3DMPnT7ERx90CyjyEShiAYwaAxvDmsV6u1n7NEwORIlIAoc+XxU6KWs2/2/xbu+KcUCatyCYF2f8EOm1mRqe7td0taUDcC1FeMQpSZns/h83MM0oRoDzhhjiJUKdsVGp1jCG8Q8Kgbzlnhv8CWSngGrtb0+sR8vxs+fkvb5Qetn/jneIcefDvCj2Irucm/IWCjNJHc6qzjw==
+Received: from PAZP264CA0026.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:122::13)
+ by AS4PR07MB9631.eurprd07.prod.outlook.com (2603:10a6:20b:4f4::5)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.14; Fri, 16 Oct
- 2026 14:16:00 +0000
-Received: from DU6PEPF0000A7DD.eurprd02.prod.outlook.com
- (2603:10a6:10:1d9:cafe::40) by DB9PR02CA0016.outlook.office365.com
- (2603:10a6:10:1d9::21) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 14:16:01 +0000
+Received: from MI3PEPF0000848A.eurprd02.prod.outlook.com
+ (2603:10a6:102:122:cafe::b) by PAZP264CA0026.outlook.office365.com
+ (2603:10a6:102:122::13) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.522.4 via Frontend Transport; Fri, 16
- Oct 2026 14:15:59 +0000
+ Oct 2026 14:16:01 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 192.176.1.74)
  smtp.mailfrom=ericsson.com; dkim=none (message not signed)
@@ -46,27 +46,27 @@ Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
  receiver=protection.outlook.com; 
  client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
 Received: from oa.msg.ericsson.com (192.176.1.74) by
- DU6PEPF0000A7DD.mail.protection.outlook.com (10.167.8.37) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.6 via Frontend Transport; Fri, 16 Oct 2026 14:15:59 +0000
-Received: from seliius19819.seli.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.61) with Microsoft SMTP Server
+ MI3PEPF0000848A.mail.protection.outlook.com (10.167.240.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.522.6 via Frontend Transport; Fri, 16 Oct 2026 14:16:01 +0000
+Received: from seliius19697.seli.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.65) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.2562.43; Fri, 16 Oct 2026 16:15:59 +0200
 Received: from seliiuvd10563.seli.gic.ericsson.se
  (seliiuvd10563.seli.gic.ericsson.se [10.120.141.220])
- by seliius19819.seli.gic.ericsson.se (Postfix) with ESMTP id 534324020B7E;
- Fri, 16 Oct 2026 16:15:58 +0200 (CEST)
+ by seliius19697.seli.gic.ericsson.se (Postfix) with ESMTP id BB28B4020A84;
+ Fri, 16 Oct 2026 16:15:57 +0200 (CEST)
 Received: by seliiuvd10563.seli.gic.ericsson.se (Postfix, from userid 93258)
- id A319962858A6; Fri, 16 Oct 2026 16:15:57 +0200 (CEST)
+ id 7C857628589B; Fri, 16 Oct 2026 16:15:57 +0200 (CEST)
 From: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
 To: <dev@dpdk.org>
 CC: Stephen Hemminger <stephen@networkplumber.org>, Jakub Grajciar
  <jgrajcia@cisco.com>, <stable@dpdk.org>, Sriram Yagnaraman
  <sriram.yagnaraman@ericsson.com>
-Subject: [PATCH v3 8/9] net/memif: fix bogus Tx count on invalid interrupt FD
-Date: Fri, 16 Oct 2026 16:15:56 +0200
-Message-ID: <20261016141557.3081522-9-sriram.yagnaraman@ericsson.com>
+Subject: [PATCH v3 2/9] net/memif: close file descriptor zero
+Date: Fri, 16 Oct 2026 16:15:50 +0200
+Message-ID: <20261016141557.3081522-3-sriram.yagnaraman@ericsson.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20261016141557.3081522-1-sriram.yagnaraman@ericsson.com>
 References: <20261016141557.3081522-1-sriram.yagnaraman@ericsson.com>
@@ -75,31 +75,31 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF0000A7DD:EE_|AS5PR07MB10572:EE_
-X-MS-Office365-Filtering-Correlation-Id: 28c2d942-c63e-4fb5-05a5-08df2b9000cf
+X-MS-TrafficTypeDiagnostic: MI3PEPF0000848A:EE_|AS4PR07MB9631:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7df3a4b9-6beb-4276-1d08-08df2b9001b6
 X-SMTP-Server: smtp-central.internal.ericsson.com
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700016|82310400026|23010399003|376014|1800799024|18002099003|22082099003|10067099003|11063799006|261009223027099003|56012099006;
-X-Microsoft-Antispam-Message-Info: xmFn38D2JZOWmaXpI6m6PY8i6QZK5/AjtRBwbrvLqrq072QgeQHsbJ24r+XUJP+lqT9JPHSMh9iGzJLA0oCJ5o+XwNVsl3ta8RC1ArwXlIbVy7yGKK4RGzX9JOoSC0YokUkh97EMCU9QPtxNp/IqcLbiCQw7di+G2sqhWVOam+eLpSu+fGXk5HvfE8iLlmv9Wzj0Bx8YvVw+9J8cb+KPxEXy8Aud/mVjVghNeMteNN/nNQscY9aU/TX+NREdDizVjMNw9BlGeSAvcVwSmB7Eil2+b5UiDq3qfaG6Y3omUO7d2PDx6cj5IcL0qN+b1gfB8zU2y7uA2+CVzBgSOPKtRf02t8kyaM0rWcR8W/an9glNw4GKHLSfJ2qR1gBsDHZWb5m3ev2na1BIxSOCZ9yWGUAQWxH8E4QJyIUqRxwAB43f9rwWiGyECHE7r5S7v+3uw6piL/3jHco/kAVoi0CQqUNAMeev1yVCUQCXAEp2jpLcljJ3qp0AhyaVsxYrmI2u18Fjn1bmHAF4VVHxiAf4vPjLfzGibzVLoRQJPvARZEFYeqPKcsjwhE9KVp8PoymHN5pB39QGrJvC23GeX550cJmfyoUYreZ6ShIkdUw9+fbxyrkIctkPC0SDZ7uC6UxDYEiZbTNrDn3ysHOlPPYKxCxOdj7kky+UtiZdFXSdcmUKEu8EY+5UO3H9KkE+AIJnrQ9kSk+D40KVb//N2UmZSQ==
+ ARA:13230040|82310400026|376014|23010399003|36860700016|1800799024|22082099003|18002099003|10067099003|11063799006|261009223027099003|56012099006;
+X-Microsoft-Antispam-Message-Info: EHOdzJmbt2x5fLoa+kzJoaUWUOd1Mo+MDq52OuOgc5aY97vN6lx3bLbMuJ0AYjCmJbRgwwy4OvJtL1WRTsFg9vRyNb+Gmk4qc5H3TSFdRdfSXUB9KlvUvAfoJRaWUq/J9ZjvhigriFQoyd1ZpXLVkXFfoQ3f1i3btkpCgLx6LCg7S0JkQaBfdzoU1XSK/Lzk5TKlubFObbn8FXKbEjrnydm/XxYaKRiC6hmbfcGuUtD5EA8/5QcZf5Q9EZ0C2XYj6xKQpIa562XoPu4CaXZcm9rUhCTqtXF2ogTc3lnK+dB8Jv+vmfj+wxVdB6/K8lSEy6hye1NWb5TekTRP5etGuGxTsCCT+TgAIckMowLLIrLikJDus3pv7upBAIoO7fcp6bLRx6uVktewYCoKQzjg/8PIcs0mLb6iHHPdKSGgwQHmiPrfeMkJoSzWXCorZb318sRd93shLn6eQe6CbLnrm7dKFxaVf1/BZXEQ8u3x4O+mY41XwIWwPxMVWKJsS6YL0SkRoqOiWvC3z5V2CoqtIL0DukS2mQS67nPQ0fCb2AaU5ZCn74UtX8Zn07Q3iwLI/e8LIKZAu+AyS2xUfrDedZWcakUpFPXk6BgzrmTt6HG3+6iGFOJ7vJvsNjdu7Wn3lhMQFyTnmCIM9+ZxP1nsOatNAaep6tIK6fyAnsH2HpNj4bkzcGq1lut2+5K/KeeKEw8us5Di/kb8K2TwdvlXTA==
 X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
  CAT:NONE;
- SFS:(13230040)(36860700016)(82310400026)(23010399003)(376014)(1800799024)(18002099003)(22082099003)(10067099003)(11063799006)(261009223027099003)(56012099006);
+ SFS:(13230040)(82310400026)(376014)(23010399003)(36860700016)(1800799024)(22082099003)(18002099003)(10067099003)(11063799006)(261009223027099003)(56012099006);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: UnIpHD2pyaw0kF4cBs+9mk85U7XMUxyXqYvRxQE+ucO2tAssZRFf2oWCy9lSx7Fm7l+bY1MqFeE9NakYvzdz4A8o14d653OVTeFHuGBolK6t3yDItc0oavrHvciS0CdwM7PFnvXIx+NYvj4NaOVJhzAmgqGnwYfzPQHFM2pxrlREAmROGVL6HeG5hijgGnnlUQmVrGgdvbaLM+I3eK1XJMgp7BoYCheErmcFNpuEj08n5BI2aZcWuJAc6psURAa5+J4xLgFdJrstm2mz4Muf4fgyb736txrAYMBWpqSohx85Vg7Lae2cM0MbeM8MVo6NWXtG6NFKwvNeC+OiOUx+EsGDZbqRoXHvdOLxP4isMuSWEcMDPaXzwc74mGWgjQRVu2Gw4t/cVKzDANXliT1uxW587VZC/Eqn/fWxU4I1tWt1fYVFlT+/JT4TFGnPziwC
+X-MS-Exchange-AntiSpam-MessageData-0: edJ9DRN2/fYa1nCYng/05gPxeC2M+6S4WxpDRFuSc4vGsgFXgmDD3RlwuHLenFRut4PJiJ1bq/5IRx856HJ/GqyckxWdhqWpJKJwie4pwq5yFkVaRMMzdtTCCcF/ivpAhXEB7qCvgl0bngE+g9FD1/XFHA1Ou+VjOFus6n14R/+XxxilmniJdERDamOSN/3vlNlXdDMIq1OWM3h1wvR3yxaetqf4MdtglIOgsRfzGn5VJnphfdlhugcVvrvAXANdookyfhy51aJCNfDuGYLBgm6bh1UshAMRuLMEkREVXIYmnF3uppsUT8TmQbvpcJKITiApChPKla9rl+kvRVQgGIPkWtJKDXzVu6nkN6R4iej8mjGW6eOcXNbzxFpA93XXLZq3C6xKUCzI3YEIuL+p5K8jPOoRpVAJ8T4odfvntz24VvXNDiU2+P/3bXcxMElH
 X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 14:15:59.7893 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28c2d942-c63e-4fb5-05a5-08df2b9000cf
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 14:16:01.2406 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7df3a4b9-6beb-4276-1d08-08df2b9001b6
 X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
  Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: DU6PEPF0000A7DD.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: MI3PEPF0000848A.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR07MB10572
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR07MB9631
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -113,40 +113,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-eth_memif_tx_zc() returns uint16_t but did "return -1" when the
-interrupt FD was invalid, so the caller saw 65535 packets sent after
-ring->head had already been published. The FD can legitimately be -1:
-memif_init_queues() only warns and continues when eventfd() fails. Skip
-the kick when the FD is invalid, as eth_memif_tx() does, and return the
-real count.
+Several cleanup paths guard close() with "fd > 0", which skips a valid
+file descriptor of 0 and leaks it. A descriptor of 0 is legitimate (for
+example when stdin has been closed before the region or interrupt fd is
+created). Use ">= 0" consistently with the -1 sentinel the code already
+uses elsewhere, in the memif_free_regions() shm munmap path, the
+memif_region_init_shm() error path, the control-channel teardown in
+memif_disconnect(), and the SCM_RIGHTS fd check in memif_msg_send().
 
-Fixes: aedd054c5c2a ("drivers: check interrupt file descriptor validity")
+Fixes: 09c7e63a71f9 ("net/memif: introduce memory interface PMD")
 Cc: stable@dpdk.org
 
-Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
 Signed-off-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
 ---
- drivers/net/memif/rte_eth_memif.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/memif/memif_socket.c  | 4 ++--
+ drivers/net/memif/rte_eth_memif.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/net/memif/memif_socket.c b/drivers/net/memif/memif_socket.c
+index 87b23aa8b4..550e2e468a 100644
+--- a/drivers/net/memif/memif_socket.c
++++ b/drivers/net/memif/memif_socket.c
+@@ -41,7 +41,7 @@ memif_msg_send(int fd, memif_msg_t *msg, int afd)
+ 	mh.msg_iov = iov;
+ 	mh.msg_iovlen = 1;
+ 
+-	if (afd > 0) {
++	if (afd >= 0) {
+ 		memset(&ctl, 0, sizeof(ctl));
+ 		mh.msg_control = ctl;
+ 		mh.msg_controllen = sizeof(ctl);
+@@ -623,7 +623,7 @@ memif_disconnect(struct rte_eth_dev *dev)
+ 		}
+ 
+ 		ih = pmd->cc->intr_handle;
+-		if (rte_intr_fd_get(ih) > 0) {
++		if (rte_intr_fd_get(ih) >= 0) {
+ 			ret = rte_intr_callback_unregister(ih,
+ 							memif_intr_handler,
+ 							pmd->cc);
 diff --git a/drivers/net/memif/rte_eth_memif.c b/drivers/net/memif/rte_eth_memif.c
-index cdf77d77b0..0680dc3947 100644
+index 36db03a268..1d1d12e242 100644
 --- a/drivers/net/memif/rte_eth_memif.c
 +++ b/drivers/net/memif/rte_eth_memif.c
-@@ -1254,11 +1254,9 @@ eth_memif_tx_zc(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	rte_atomic_store_explicit(&ring->head, slot, rte_memory_order_release);
+@@ -1295,7 +1295,7 @@ memif_free_regions(struct rte_eth_dev *dev)
+ 			}
+ 			if (r->addr != NULL) {
+ 				munmap(r->addr, r->region_size);
+-				if (r->fd > 0) {
++				if (r->fd >= 0) {
+ 					close(r->fd);
+ 					r->fd = -1;
+ 				}
+@@ -1416,7 +1416,7 @@ memif_region_init_shm(struct rte_eth_dev *dev, uint8_t has_buffers)
+ 	return ret;
  
- 	/* Send interrupt, if enabled. */
--	if ((ring->flags & MEMIF_RING_FLAG_MASK_INT) == 0) {
-+	if ((ring->flags & MEMIF_RING_FLAG_MASK_INT) == 0 &&
-+	    rte_intr_fd_get(mq->intr_handle) >= 0) {
- 		uint64_t a = 1;
--		if (rte_intr_fd_get(mq->intr_handle) < 0)
--			return -1;
--
- 		ssize_t size = write(rte_intr_fd_get(mq->intr_handle),
- 				     &a, sizeof(a));
- 		if (unlikely(size < 0)) {
+ error:
+-	if (r->fd > 0)
++	if (r->fd >= 0)
+ 		close(r->fd);
+ 	r->fd = -1;
+ 
 -- 
 2.43.7
 
