@@ -2,78 +2,146 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AA2CC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 15:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA065CCA46C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 15:42:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9B7FC40695;
-	Fri, 16 Oct 2026 17:40:00 +0200 (CEST)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id 7DEF140658
- for <dev@dpdk.org>; Fri, 16 Oct 2026 17:39:58 +0200 (CEST)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-2e934449bb0so25926505ad.0
- for <dev@dpdk.org>; Fri, 16 Oct 2026 08:39:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792165197;
- x=1792769997; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=ZL6cIQtoMmHT3zDCUvqu8gXpkSVirNYNjmtEgF5egzQ=;
- b=PItHaDPXEUEsUnifV1x5ccm/WL+qhVcxm1vaELH1DbyUnzNbewCf11CBmMZ/AioDTC
- sGtdO49yrGPHGa4ghLXOeOVN+sceXTflBWyB8eFgoNHkpqYUtm9ivvrbh+JrzGUUyRio
- nA3AUTNJh6K5Aq7yWyq9rJh/dEjVioabd/gSAzEGJekm02piw/bO6zje/1E61PNsL4MD
- /4qgVwbOS0ZS+RzBozco+bDqdvtdJtcIKgxH+XRfAD32X4BVflasUh1HV/8Q7ICaJtbJ
- reQJymwoJCPx72jVLHNkmyd92vN8mSIcpfgxKrP/4WsG6xCevaEdSJiXc6/NxNSEISNd
- cn7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792165197; x=1792769997;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=ZL6cIQtoMmHT3zDCUvqu8gXpkSVirNYNjmtEgF5egzQ=;
- b=RrF8GWzX8HoKfMDcZbgX/LbQPX8zPjqUIzDJ5I6Tpq9Itfwesw4N1ZNYorVV8AjEPy
- 8f43tRQl7MIOMXygGjYaEq13pkWZyUF4r4SbZClCaTGCQVywZo+iXuQawThJ/vytSjeL
- 4vlJ5mB/exmyE9xeAO+rISOSmU4wi9eNaHDorpLsYzhSBpxxobR6OFeN2fyznI0APtxu
- w+TL8i/fl2Qp2qyY2+tUvd1K8LSzGaGoXlSKMt8LDIvtn88a0NRQEneeTGkW3fRL1JeO
- Z5oqa2RqzxAB3NyTGQQmJnW8bCCloj2DXCHdV+eyW2W7zjadSsnMeUcpET6dTjUe4gGM
- DTOw==
-X-Gm-Message-State: AFq9FYJsZtoZUT4a9LwUpohoTS4q1DQmfIKE6hLW73Afjhk9QcwPSql3
- q73vexNOnA+Q9hrrYoOOo4kh96NJjgHOI8v4w67vdXwnLLCPaL4D3pQyvy3yM3MKxzAz2Fhbcfq
- rAorMSqQ=
-X-Gm-Gg: AYBFou3EBtd7+nI+NRBa2f88BeRAu0T9CZ0Z2oNJzUdwlLnQhzzLsQ/EPlzBOhAWd9T
- VZTYkDxHktWYCxjaxRbNyGXhh4c7cji+hRNFr3HdBwoTF/kUHfyO8Vw6cYfTsxTgU3nV6+iH/YI
- K+vHHr+mCpP5pIQSRzwfxM8i39hQg5w9AvDkKX7ovUZ8VDlL1AowOFMlxSWCPFPuhUZ36rkiycy
- 6cf9PaDUGKIfxHBKX3wQEcyBTZMcNciord4iyltat3vh7MMMKodyWI7yNlYf8lz9NIg/pgQrCEe
- 8HIJCGnNcEIu0yQ2v8aVx+KvypAPvBGv1lt7GjrW2MqsQh+i2uebjuyE+cJan0rOWF4Kl23HQTk
- e7Oiugy+3AKFwZ9ZFdx8Kks84JF1aMjKxgWgJp9CF4KklU9BYYDP16IjcUGpp7A7Jmch+ONm8Yo
- 1zS0EhTSt2FT0+JlM5wRozHSMfaF+R2DBXNpq2qpsr51RzP2dpm1gC7pHWyegwQfs0UnPMBAN0N
- 1JAWZZCSLZRPVlzGFzNEFC3e6bEnbQJssEdow==
-X-Received: by 2002:a17:903:2f87:b0:2e9:4175:3079 with SMTP id
- d9443c01a7336-2e9a69e4360mr3553485ad.21.1792165197410; 
- Fri, 16 Oct 2026 08:39:57 -0700 (PDT)
-Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e97e804cf3sm12214445ad.25.2026.10.16.08.39.55
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Oct 2026 08:39:56 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Anurag Mandal <anurag.mandal@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v3 3/3] fib, rib: fix name prefixes
-Date: Fri, 16 Oct 2026 08:38:45 -0700
-Message-ID: <20261016153949.2965592-4-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261016153949.2965592-1-stephen@networkplumber.org>
-References: <20260921215733.404686-1-stephen@networkplumber.org>
- <20261016153949.2965592-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id D39104042F;
+	Fri, 16 Oct 2026 17:42:46 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 19091402F2
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 17:42:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792165365; x=1823701365;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=A/1htgtVpgxoyc7inGQOZG1STsofgWq5Kd1lP+tmc7s=;
+ b=FX7+LlWy9EnZuj+OEfOBZAZs6CsTZfLrMz/qzAdNJATCwexBCckE83nr
+ uInskx5VpptFTwmm3U4ySVb06vG8iXDxM+/PZ+Qh/r2DjkvudU87U0Wxa
+ lWBi/umukEd2DiV84QiyicwZiE4rpRC6UyhtK8o48ChCRsJK24MetB3EM
+ b1qa5k66OYGQL+khIiyffe1F+RGupXpNDbl9w3cpqCdSlGRoA6+sODAKP
+ cH842Syny7efLuFwms9a+6NM/ZzbAneaDsR10C1Prk3ZVClf8R/a/+YWc
+ I4rIAdPtD22s75kISpTQ8wtQKtbWp0eNgPBQPnsUpwCRBToRtBhfEF0xS Q==;
+X-CSE-ConnectionGUID: Bc5VRbEHQ8ynMEJ2PrmL4A==
+X-CSE-MsgGUID: oQuPfIQ2Rman3xqxdKH4rw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11937"; a="964080"
+X-IronPort-AV: E=Sophos;i="6.27,162,1787036400"; 
+   d="scan'208";a="964080"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Oct 2026 08:42:44 -0700
+X-CSE-ConnectionGUID: jA9g5ug9Rdy6xzlLJGG06Q==
+X-CSE-MsgGUID: qAGx08/rSVqU7hg5VaYlTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,162,1787036400"; 
+   d="scan'208";a="2223176"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Oct 2026 08:42:45 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Fri, 16 Oct 2026 08:42:44 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Fri, 16 Oct 2026 08:42:43 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.46) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Fri, 16 Oct 2026 08:42:43 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GtMAWwE9rEfHt0balCV84Oc1udaanxg3Nva1Co6YnwmPpH6/Nl4TVaVRpr8TZmknBY2FKv+jZmj0DjcPR1qBicROteretcEtBWJ4h9uubkj9i3sML8+Ol4mRJUhYqWsi4b3ApzsC9AwteljbHwzb3rg+FPWx2YOAlwo94wzFvKKSFOzcMikqNfwPbNQcSOOw7M9UCQ1svwXnOviJ7q9RCp3XfZ/u1QL4ohyplgUWW0tE7gdZUycGXF/1+8HuehopEfFniyQhhJPaR9KC/UCJvi3xixWjIZ712N2Oh9VFna6hSKXEjMA0JszE6kfHyL4M6bCabn+3aqbxsuMDx27s9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rR/lnHwkUoiisW85zRKmOJBm5UIaKUD2r8GIF93wH80=;
+ b=RbDGPOMiToW06wDsTpxkhikWlJSYqqo09oPLr/HgtibBT6v89ZeqasLNsbXA4mWYjHjoOIxIIQHIjEr8JP6UlZcCSz1zpqp1LF5evUFW5722RY1szKMnQcsHpRHzFA97WfViK6OBJwNC9iBrw3hM+e/rVaPFe5kHfCmx/21Wg+0m2+KZnEhQNWAaWTua0Xs1g3J1DCuFuTaDJd5vjYBsN2RNzr3ec+gWWCUu92tVc+1h6ZfizmNHrZ0VIl/Q5SkshldnwpBjoBlW0SBob5hpZ/7y/t4x61IFsKIZPmkMCPkCQkW2K1uXSIcUQHr0zZbs7Tstn8C77qRwKcVypBPnXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by SA2PR11MB5004.namprd11.prod.outlook.com (2603:10b6:806:112::18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.13; Fri, 16 Oct
+ 2026 15:42:28 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0522.013; Fri, 16 Oct 2026
+ 15:42:27 +0000
+Date: Fri, 16 Oct 2026 16:42:21 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: <dev@dpdk.org>
+Subject: Re: [RFC PATCH 00/12] Add config-time dependency tracking
+Message-ID: <atJF3QvCmQ23hIR7@bricha3-mobl1.ger.corp.intel.com>
+References: <20261016105950.273068-1-bruce.richardson@intel.com>
+ <CAJFAV8zGPrMZMJU-8rF5GiGqQMBaN8H707h_Y_Hss3u8EHgZ9A@mail.gmail.com>
+ <atI4Vo8qoomdEOHo@bricha3-mobl1.ger.corp.intel.com>
+ <CAJFAV8w9E1fmTQ5+xbkUdX2zxJGnj4AfiirLQLkHtE45g=73yw@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAJFAV8w9E1fmTQ5+xbkUdX2zxJGnj4AfiirLQLkHtE45g=73yw@mail.gmail.com>
+X-ClientProxiedBy: DU2PR04CA0002.eurprd04.prod.outlook.com
+ (2603:10a6:10:3b::7) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|SA2PR11MB5004:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0f7eccf0-24fb-41b7-89fd-08df2b9c148f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|366016|23010399003|56012099006|11063799006|4143699003|261009223027099003|22082099003|10067099003|6133799003|18002099003|3023799007;
+X-Microsoft-Antispam-Message-Info: eGxEJ1gIcOEdtxexEVJ2wG9d3PAcOKU4zSKt5/NZb66P6aHXKLZwUlkvxS+7wTB1IS2pnOdxaIfQ9MsX7KTWyURvdSJV7Hjrh5f0+SYT6xIlq+vZoBhwIgn3wIZFPTZnfZhNLuaPJvCK6VqnEQ4C+6lPfokkb+zHKapGJbCIHW/olTx/pXbjU+ncCB5nMMIli/6hmW0LEkBaBdtWknrpXrZBt1z5Fd/tZpiJyigiDe4RvjdxU0+WZV+7OZ4lNuQKtsQAyM+WE3BbNHz1oWlzhNXJMaBHJyqtUDMO4szSuJSUCvSmqns4eDAFNk9Q8MMdvjKL2SYdrkOZ/Qu4rLOo+FSRvqwu2aNr+SdPPDM0OYln8K5TdbSmGUbEzsASpbHMbI5J6aT2i3reqVOGHEprnwVTkypmLS9ObKyA02dv83fFx/xcx8rNRMM7pkxUWKcrVlkufqtfYwO0ZaJ3bssPkmC47BKUBdxIEoEgbY88odcDddiLHR+HCWQjH5fSlWXpn9MQsrErwb4FhmlW0NnLsDrbVPE+0EOJ4D450vrdR88pGY1Y4Z+qGTYqTJlPjxHpJRocKrmuqiMHrC/Y+WPuz2CWuW5dH6wnEIHHQQbji7wZU0pG6ifZNT2dN0YVL35OzF/BQOgZevg9oWYbSstc6UtHBT6ujwbOFtVvE8FVfjY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(23010399003)(56012099006)(11063799006)(4143699003)(261009223027099003)(22082099003)(10067099003)(6133799003)(18002099003)(3023799007);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?djbXEsgA6XLBaml/TEEK5nZFFsu6eHbRnirq7fmVaqnVqrw8o48DBxvUCvCm?=
+ =?us-ascii?Q?T1bhFnTmCLr/JKmr/6U3HRgBMEw+6bHdovqpbUDHjuKmZTcT5QVZuZMiwg9t?=
+ =?us-ascii?Q?IDFrCG8O415RDxvByi7HeLXDBtewwhMhC5N5fU4k21aXZ3HGknpShM1m4XS8?=
+ =?us-ascii?Q?F9eiCHiAgzI+10h+rgJus0PmA3IbvnB0vUIEK13IuOaXNzlfoXzQI2uKZ+CQ?=
+ =?us-ascii?Q?LdH7cLd55ky/0wObrhwLb8S8h5HO3qmnPlT55yv8v/Zdkrnk7P/A1CqatcFW?=
+ =?us-ascii?Q?IfSAUjc0p34U2QVglu4h+2OktrHJZNK5NbJSHxNSbd+pEjnsnv6Q0SVVoIH2?=
+ =?us-ascii?Q?+Ke8PlQdQEahCifbdGHDFX8E/8GWm/a22/m3ndrnVZaHv9B6dpL7uTsHJRLc?=
+ =?us-ascii?Q?QEDhxSqk2jIT27Eer1IcnZhDTPd3d6su9AxsglNn6p2PGO4F2JiQvLP+LmGR?=
+ =?us-ascii?Q?F3emXufDWSG2LVdTMN43oBfJ7Fk3WkONDtPn9hMZkQj0RTGAVKa9aa7Y709y?=
+ =?us-ascii?Q?X5Rm625BgtF0WHu9GrXfE7lxjqm96xVE7KAcx7OFIcVzsmRu8E+yldfCB6qS?=
+ =?us-ascii?Q?N7zy8oih/yE0DwyRYdBoW5ZTS4oOGBt2gz7lJRewwEOa5dYSn0M1EwE/Jfbe?=
+ =?us-ascii?Q?+Of1o8jP1DtStCSqTJXD42Pq1D6JYp2hfop9XIS5QbAAGG+seVIAdjXe8WPf?=
+ =?us-ascii?Q?P6HjOcr/FOki6FhyLe0f81KzP4uzUuY5s7ePm3WGcM1OCQNMSKapbh4bx3TA?=
+ =?us-ascii?Q?uiKzKywtnV1is6H70Onlhp7BWHeHkcklWaqLb7770cw7jTg1K7AlKSrw75fS?=
+ =?us-ascii?Q?1Za9Hbkodl627sUF+ZXAhY/jFCHmkMvKfGwn8G4pTfyjdQ8XqclAugV8C+rO?=
+ =?us-ascii?Q?UbrDlrSNBMxQxYcq60dK96Q6BAHrwIuwQVNQU/txpJ0I6BH9fi1GiVp7Ndou?=
+ =?us-ascii?Q?7OGASQQLl+3t55nhHLlcDCfDiaAmgJv2ndMXxZz1RuviEn0L76DkV2Rmp3Bm?=
+ =?us-ascii?Q?oLHyTSRCXLpxewyEtxRDn3juRurwSckIj9niNDknnbY45sxpuh+rCJq4GDMa?=
+ =?us-ascii?Q?voLTswxWaoc0F6U8EUTpXpfSJO3VuJ8XwsQ5reCzuEswjZNz3lWNVhNa/UWt?=
+ =?us-ascii?Q?0sE/6trWap+bqvdp7IlvmtQCmSyisDSK1h29uqbvVS5XTHDR1BNT7Ta2qSud?=
+ =?us-ascii?Q?9vk+4sBt6dzxY8+0hGd3RxXqcSWn1e9heyZCS7DbopT4113cYSm68z7IKDiT?=
+ =?us-ascii?Q?ZNI477HlshdbiGEqJnWLQscR/LF/nx6dLKBoBqU/TcK6W7HQxBZ3xfSP6AVP?=
+ =?us-ascii?Q?0lQZm5eXfIC98d1sbPf0waX223TamSX7tuOwhBakZJWNCHqBw/ZqnQCZmukF?=
+ =?us-ascii?Q?8I/YwQv8+W++7BrtnPnPLij0T/l+GgFGfSVu8a4RuA5MfI5Q5E8U622y24+s?=
+ =?us-ascii?Q?g1AJe/l9afPAJHIMEWmo9z7KRIlLhqvPsWhD/A29C5ZQeEN9XAY8l2oIRAWg?=
+ =?us-ascii?Q?kDwMgh0VeSowOYmUDDEIUueAFDp7u4KHwPyk/0pRwTkKprCv55x9XKDyIlwM?=
+ =?us-ascii?Q?rtEEjfiP6rj4/K+v/4DiFtQ0tFB0xPD19w/LpjCtPs/wLt71KDrqPAyJbw8d?=
+ =?us-ascii?Q?oeZwPPh1dJXS1GLhGS16l5I2yCW4/kFMcbFt+p6e6OkzFkaQvSAPkDrYol01?=
+ =?us-ascii?Q?1hl3j4+N6Ex4qneVcVZh0ufPHreGWnPhOGtYc1XDkcDRXMXaohs9q7CljOwf?=
+ =?us-ascii?Q?37JG+Ru2nZoJUlt6B/4lojRA/TGBKDM=3D?=
+X-Exchange-RoutingPolicyChecked: BbyiLfQ1tGVV+VAnvwMcvcsa2O7bHUx9Lure35d6yT73XgHZDB9A6TYumwAGmUv9UysjRA+/dw1g4iaQbBoJmbcAKBZldbRPan1sqzXmkDA9e5fNyNYup/Q4XUt0oEtdNkL8T8MBPXN34Eiif2TVQDsNvoT3xWWj9i00xblguS3oW5FEWw2vllGAZv9QhqhSEkrBdYGQt62h2Yp4sxMK/8sARYxUBJyD9av7PSKsXJ94l0c7twWn11McLkNacHwqOFbTi6TQIMRMY72rzZ43d2xW3S+3gr4MmxcTVsRTKqbqfkBwQh24atsBdAco3rlYw2YQNAbStM7lwDpEiLHnmg==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f7eccf0-24fb-41b7-89fd-08df2b9c148f
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 15:42:27.2416 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: v1a2kJb2EsIWFZM4yG4lunwF9Np54ksAvy7QolRKBNdT01fxD7y4oAgm4aOr45yluIsCY5Oi6ar5rZ9aKnIk4aFZ+PXzayh293n5rqm4HRY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5004
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,245 +155,161 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Anurag Mandal <anurag.mandal@intel.com>
+On Fri, Oct 16, 2026 at 04:51:48PM +0200, David Marchand wrote:
+> On Fri, 16 Oct 2026 at 16:44, Bruce Richardson
+> <bruce.richardson@intel.com> wrote:
+> >
+> > On Fri, Oct 16, 2026 at 04:35:51PM +0200, David Marchand wrote:
+> > > On Fri, 16 Oct 2026 at 13:00, Bruce Richardson
+> > > <bruce.richardson@intel.com> wrote:
+> > > >
+> > > > Add configuration time dependency tracking for libs and drivers in DPDK,
+> > > > so that when a user requests a driver, all dependent drivers also get
+> > > > enabled. Similarly with libraries. What is not enabled in this RFC is
+> > > > support for enabling libraries based on driver requests, or enabling
+> > > > either libs or drivers based on the enable-apps config option. I've
+> > > > omitted the former for now, because it would involve moving more logic
+> > > > out of the lib/meson.build file and drivers/meson.build files into the
+> > > > top-level one, something I'm a little hesitant to do for now. The
+> > > > addition of apps only adds value once the cross-type dependency tracking
+> > > > is enabled, since no app depends on any others.
+> > > >
+> > > > The first 5 patches in this series are cleanups and bug fixes. The
+> > > > following patches then implement the dependency tracking. While I
+> > > > investigated having meson parse each components meson.build file
+> > > > initially, without actually building it, this failed to work due to
+> > > > logic other than variable assignments in many drivers.
+> > > >
+> > > > Instead, python scripts are used to manage the dependency list. For
+> > > > easier debug, and future introspection this dependency management is
+> > > > split between two scripts - the first generates a dependency table file
+> > > > which it writes to the build folder, allowing us to analyse this
+> > > > post-build if so desired. The second script uses this file to actually
+> > > > compute the necessary per-component dependencies.
+> > > >
+> > > > The final patch of the series is a major reduction in the number of
+> > > > required components for doing DPDK builds. We completely remove the list
+> > > > of required libraries, and assume that a minimal build should only
+> > > > require enough libraries to build EAL. However, EAL does assume that we
+> > > > have a few additional buses, for example, EAL args are present for pci
+> > > > and vdev. Also, in order for mempools to work, we always need to have
+> > > > the default mempool ring driver build. That means that our de-facto
+> > > > minimal build target set is the set of components needed to build
+> > > > "bus/pci,bus/vdev,mempool/ring" (which would include EAL in the output,
+> > > > which is why we can remove any hard-coded library lists)
+> > > >
+> > > > Bruce Richardson (12):
+> > > >   build: fix name of base library object
+> > > >   build: fix ignoring requested driver when class is disabled
+> > > >   build: prevent overlap of enable and disable lists
+> > > >   build: add direct support for optional dependencies
+> > > >   net/bond: rename directory for consistency
+> > > >   build: add script to generate dependencies list
+> > > >   build: use recursive addition for enabled libraries option
+> > > >   build: use recursive addition for enabled drivers option
+> > > >   build: improve error reporting for unbuildable components
+> > > >   build: add EAL common directory to global include list
+> > > >   build: make EAL an explicit dependency
+> > > >   build: simplify mandatory library lists
+> > > >
+> > > >  MAINTAINERS                                   |   2 +-
+> > > >  app/meson.build                               |  15 +-
+> > > >  app/proc-info/meson.build                     |   4 +-
+> > > >  app/test-bbdev/meson.build                    |  18 +-
+> > > >  app/test-crypto-perf/meson.build              |   4 +-
+> > > >  app/test-pmd/meson.build                      |  50 ++---
+> > > >  app/test/meson.build                          |   6 -
+> > > >  buildtools/get-deps.py                        | 203 ++++++++++++++++++
+> > > >  buildtools/meson.build                        |   2 +
+> > > >  buildtools/resolve-deps.py                    |  80 +++++++
+> > > >  devtools/test-meson-builds.sh                 |   3 +-
+> > > >  doc/api/doxy-api.conf.in                      |   2 +-
+> > > >  .../link_bonding_poll_mode_drv_lib.rst        |   2 +-
+> > > >  doc/guides/testpmd_app_ug/testpmd_funcs.rst   |   2 +-
+> > > >  drivers/common/mlx5/linux/meson.build         |   1 -
+> > > >  drivers/meson.build                           |  85 ++++++--
+> > > >  .../net/{bonding => bond}/bonding_testpmd.c   |   0
+> > > >  .../eth_bond_8023ad_private.h                 |   0
+> > > >  .../net/{bonding => bond}/eth_bond_private.h  |   0
+> > > >  drivers/net/{bonding => bond}/meson.build     |   1 -
+> > > >  drivers/net/{bonding => bond}/rte_eth_bond.h  |   0
+> > > >  .../{bonding => bond}/rte_eth_bond_8023ad.c   |   0
+> > > >  .../{bonding => bond}/rte_eth_bond_8023ad.h   |   0
+> > > >  .../net/{bonding => bond}/rte_eth_bond_alb.c  |   0
+> > > >  .../net/{bonding => bond}/rte_eth_bond_alb.h  |   0
+> > > >  .../net/{bonding => bond}/rte_eth_bond_api.c  |   0
+> > > >  .../net/{bonding => bond}/rte_eth_bond_args.c |   0
+> > > >  .../net/{bonding => bond}/rte_eth_bond_flow.c |   0
+> > > >  .../net/{bonding => bond}/rte_eth_bond_pmd.c  |   0
+> > > >  drivers/net/intel/ice/meson.build             |   7 +-
+> > > >  drivers/net/meson.build                       |   2 +-
+> > > >  lib/acl/meson.build                           |   1 +
+> > > >  lib/cfgfile/meson.build                       |   1 +
+> > > >  lib/cryptodev/meson.build                     |   2 +-
+> > > >  lib/dmadev/meson.build                        |   2 +-
+> > > >  lib/eal/meson.build                           |   6 +-
+> > > >  lib/ethdev/meson.build                        |   2 +-
+> > > >  lib/eventdev/meson.build                      |   1 -
+> > > >  lib/ipsec/meson.build                         |   2 +-
+> > > >  lib/jobstats/meson.build                      |   1 +
+> > > >  lib/log/meson.build                           |   1 -
+> > > >  lib/mempool/meson.build                       |   2 +-
+> > > >  lib/meson.build                               |  76 +++----
+> > > >  lib/meter/meson.build                         |   1 +
+> > > >  lib/metrics/meson.build                       |   2 +-
+> > > >  lib/pci/meson.build                           |   1 +
+> > > >  lib/ptr_compress/meson.build                  |   1 +
+> > > >  lib/rawdev/meson.build                        |   2 +-
+> > > >  lib/ring/meson.build                          |   2 +-
+> > > >  lib/stack/meson.build                         |   1 +
+> > > >  lib/timer/meson.build                         |   1 +
+> > > >  meson.build                                   |  21 ++
+> > > >  52 files changed, 478 insertions(+), 140 deletions(-)
+> > > >  create mode 100644 buildtools/get-deps.py
+> > > >  create mode 100644 buildtools/resolve-deps.py
+> > > >  rename drivers/net/{bonding => bond}/bonding_testpmd.c (100%)
+> > > >  rename drivers/net/{bonding => bond}/eth_bond_8023ad_private.h (100%)
+> > > >  rename drivers/net/{bonding => bond}/eth_bond_private.h (100%)
+> > > >  rename drivers/net/{bonding => bond}/meson.build (95%)
+> > > >  rename drivers/net/{bonding => bond}/rte_eth_bond.h (100%)
+> > > >  rename drivers/net/{bonding => bond}/rte_eth_bond_8023ad.c (100%)
+> > > >  rename drivers/net/{bonding => bond}/rte_eth_bond_8023ad.h (100%)
+> > > >  rename drivers/net/{bonding => bond}/rte_eth_bond_alb.c (100%)
+> > > >  rename drivers/net/{bonding => bond}/rte_eth_bond_alb.h (100%)
+> > > >  rename drivers/net/{bonding => bond}/rte_eth_bond_api.c (100%)
+> > > >  rename drivers/net/{bonding => bond}/rte_eth_bond_args.c (100%)
+> > > >  rename drivers/net/{bonding => bond}/rte_eth_bond_flow.c (100%)
+> > > >  rename drivers/net/{bonding => bond}/rte_eth_bond_pmd.c (100%)
+> > >
+> > > Interesting series.
+> > >
+> > > I did not review in depth, but it seems promising.
+> > > The first 4 (and maybe the 5th one) patches can go to 26.11 right now.
+> > >
+> > > I noticed a little formatting issue in patch 9 commitlog.
+> > >
+> > > One thing bothers me.. but I did not play enough with the options maybe...
+> > >
+> > > Could we use new build options (request_libs/apps/drivers or better named) ?
+> > > This series changes the enable_libs/apps/drivers semantics and will
+> > > likely result in confused users.
+> > > (and we would need no support for mixing old and new options)
+> > >
+> > Can you clarify how it changes the semantic from a user viewpoint? Unless
+> > I'm missing something, the only change is automatically fixing a broken
+> > build for a user who didn't know the dependencies of the driver they want
+> > enabled.
+> 
+> Well, the fact that everything becomes optional is a change in
+> behavior, and enable_drivers=net/null not enabling ethdev is a problem
+> to me.
+> Or I misunderstood the last patch comments.
+> 
 
-The RIB library named the mempool holding its nodes "MP_<name>".
-That prefix is the one the mempool library itself prepends to
-the backing memzone, so the memzone ended up named
-"MP_MP_<name>" which is improper.
+Ok, I take the point, but that's actually a separate difference from the
+majority of the changes. We can actually take the last patch and still keep
+ethdev and other libraries as mandatory for compatibility. I just dropped
+them since in the past we removed other libs from always_enable without
+notice or compat concerns.
 
-The FIB library passed its own name unchanged to the underlying
-RIB and did not add a prefix to the RIB name.
-
-This patch names each object after its owner.
-The node mempool of a RIB is now "RIB_<name>" or "RIB6_<name>",
-and the RIB owned by a FIB is now "FIB_<name>" or "FIB6_<name>".
-
-A mempool name is limited to RTE_MEMPOOL_NAMESIZE, which is
-shorter than RTE_RIB_NAMESIZE.
-The name was passed down silently and an oversized one surfaced
-as an opaque rte_mempool_create() failure, so check the derived
-name up front and return ENAMETOOLONG instead.
-As the prefixes above are added on top of the name, the maximum
-length of a name is limited to the following:
-RIB : 53 characters
-RIB6: 52 characters
-FIB : 49 characters
-FIB6: 47 characters
-
-Bugzilla ID: 1981 1982
-Fixes: 5a5793a5ffa2 ("rib: add RIB library")
-Fixes: f7e861e21c46 ("rib: support IPv6")
-Fixes: 39e927248416 ("fib: add FIB library")
-Fixes: 40d41a8a7b34 ("fib: support IPv6")
-
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
----
- doc/guides/rel_notes/release_26_11.rst | 15 +++++++++++++++
- lib/fib/rte_fib.c                      | 16 +++++++++++++---
- lib/fib/rte_fib6.c                     | 16 +++++++++++++---
- lib/rib/rte_rib.c                      | 14 ++++++++++++--
- lib/rib/rte_rib6.c                     | 14 ++++++++++++--
- 5 files changed, 65 insertions(+), 10 deletions(-)
-
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 0d9465c9e2..e67eb8770f 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -545,6 +545,21 @@ API Changes
-   * ``rte_tel_data_add_dict_uint_hex``
-   * ``rte_telemetry_register_cmd_arg``
- 
-+* rib: The node mempool created by ``rte_rib_create()`` and ``rte_rib6_create()``
-+  is now named ``RIB_<name>`` and ``RIB6_<name>`` instead of ``MP_<name>``.
-+
-+* fib: The RIB created by ``rte_fib_create()`` and ``rte_fib6_create()``
-+  is now named ``FIB_<name>`` and ``FIB6_<name>``.
-+
-+* rib, fib: The name of a RIB, RIB6, FIB or FIB6 is used to derive the name of
-+  its node mempool, which is bounded by ``RTE_MEMPOOL_NAMESIZE``.
-+  As the prefixes above are added on top of the name,
-+  the maximum length of a name is the following:
-+
-+  * RIB  - 53 characters.
-+  * RIB6 - 52 characters.
-+  * FIB  - 49 characters.
-+  * FIB6 - 47 characters.
- 
- ABI Changes
- -----------
-diff --git a/lib/fib/rte_fib.c b/lib/fib/rte_fib.c
-index 184210f380..7a587820ad 100644
---- a/lib/fib/rte_fib.c
-+++ b/lib/fib/rte_fib.c
-@@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib_tailq)
- #define FIB_RETURN_IF_TRUE(cond, retval)
- #endif
- 
-+/* Prefix used for the memory objects owned by a FIB. */
-+#define FIB_MEM_PREFIX		"FIB_"
-+
- struct rte_fib {
- 	char			name[RTE_FIB_NAMESIZE];
- 	enum rte_fib_type	type;	/**< Type of FIB struct */
-@@ -173,14 +176,21 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
- 	rib_conf.ext_sz = conf->rib_ext_sz;
- 	rib_conf.max_nodes = conf->max_routes * 2;
- 
--	rib = rte_rib_create(name, socket_id, &rib_conf);
-+	/* Add FIB Prefix to its mempool name */
-+	ret = snprintf(mem_name, sizeof(mem_name), FIB_MEM_PREFIX "%s", name);
-+	if (ret < 0 || ret >= (int)sizeof(mem_name)) {
-+		FIB_LOG(ERR, "FIB name %s is too long", name);
-+		rte_errno = ENAMETOOLONG;
-+		return NULL;
-+	}
-+
-+	rib = rte_rib_create(mem_name, socket_id, &rib_conf);
- 	if (rib == NULL) {
- 		FIB_LOG(ERR,
--			"Can not allocate RIB %s", name);
-+			"Can not allocate RIB for FIB: %s", mem_name);
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "FIB_%s", name);
- 	fib_list = RTE_TAILQ_CAST(rte_fib_tailq.head, rte_fib_list);
- 
- 	rte_mcfg_tailq_write_lock();
-diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
-index 770becdb61..1a31ab09aa 100644
---- a/lib/fib/rte_fib6.c
-+++ b/lib/fib/rte_fib6.c
-@@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib6_tailq)
- #define FIB6_RETURN_IF_TRUE(cond, retval)
- #endif
- 
-+/* Prefix used for the memory objects owned by a FIB6. */
-+#define FIB6_MEM_PREFIX		"FIB6_"
-+
- struct rte_fib6 {
- 	char			name[RTE_FIB6_NAMESIZE];
- 	enum rte_fib6_type	type;	/**< Type of FIB struct */
-@@ -172,14 +175,21 @@ rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
- 	rib_conf.ext_sz = conf->rib_ext_sz;
- 	rib_conf.max_nodes = conf->max_routes * 2;
- 
--	rib = rte_rib6_create(name, socket_id, &rib_conf);
-+	/* Add FIB6 Prefix to its mempool name */
-+	ret = snprintf(mem_name, sizeof(mem_name), FIB6_MEM_PREFIX "%s", name);
-+	if (ret < 0 || ret >= (int)sizeof(mem_name)) {
-+		FIB_LOG(ERR, "FIB6 name %s is too long", name);
-+		rte_errno = ENAMETOOLONG;
-+		return NULL;
-+	}
-+
-+	rib = rte_rib6_create(mem_name, socket_id, &rib_conf);
- 	if (rib == NULL) {
- 		FIB_LOG(ERR,
--			"Can not allocate RIB %s", name);
-+			"Can not allocate RIB6 for FIB6 %s", mem_name);
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "FIB6_%s", name);
- 	fib_list = RTE_TAILQ_CAST(rte_fib6_tailq.head, rte_fib6_list);
- 
- 	rte_mcfg_tailq_write_lock();
-diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
-index 046db131ca..55802f0060 100644
---- a/lib/rib/rte_rib.c
-+++ b/lib/rib/rte_rib.c
-@@ -32,6 +32,8 @@ EAL_REGISTER_TAILQ(rte_rib_tailq)
- #define RIB_MAXDEPTH		32
- /* Maximum length of a RIB name. */
- #define RTE_RIB_NAMESIZE	64
-+/* Prefix used for the memory objects owned by a RIB. */
-+#define RIB_MEM_PREFIX		"RIB_"
- 
- struct rte_rib_node {
- 	struct rte_rib_node	*left;
-@@ -417,6 +419,7 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
- 	struct rte_tailq_entry *te;
- 	struct rte_rib_list *rib_list;
- 	struct rte_mempool *node_pool;
-+	int ret;
- 
- 	/* Check user arguments. */
- 	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
-@@ -424,7 +427,15 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
-+	/* Add RIB Prefix to its node mempool name */
-+	ret = snprintf(mem_name, sizeof(mem_name), RIB_MEM_PREFIX "%s", name);
-+	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
-+		RIB_LOG(ERR, "RIB name %s is too long, limit is %zu characters",
-+			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB_MEM_PREFIX));
-+		rte_errno = ENAMETOOLONG;
-+		return NULL;
-+	}
-+
- 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
- 		sizeof(struct rte_rib_node) + conf->ext_sz, 0, 0,
- 		NULL, NULL, NULL, NULL, socket_id, 0);
-@@ -435,7 +446,6 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "RIB_%s", name);
- 	rib_list = RTE_TAILQ_CAST(rte_rib_tailq.head, rte_rib_list);
- 
- 	rte_mcfg_tailq_write_lock();
-diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
-index 918ddbdfd3..7d9a0ba36f 100644
---- a/lib/rib/rte_rib6.c
-+++ b/lib/rib/rte_rib6.c
-@@ -24,6 +24,8 @@
- #define RTE_RIB_VALID_NODE	1
- /* Maximum length of a RIB6 name. */
- #define RTE_RIB6_NAMESIZE	64
-+/* Prefix used for the memory objects owned by a RIB6. */
-+#define RIB6_MEM_PREFIX		"RIB6_"
- 
- TAILQ_HEAD(rte_rib6_list, rte_tailq_entry);
- static struct rte_tailq_elem rte_rib6_tailq = {
-@@ -480,6 +482,7 @@ rte_rib6_create(const char *name, int socket_id,
- 	struct rte_tailq_entry *te;
- 	struct rte_rib6_list *rib6_list;
- 	struct rte_mempool *node_pool;
-+	int ret;
- 
- 	/* Check user arguments. */
- 	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
-@@ -487,7 +490,15 @@ rte_rib6_create(const char *name, int socket_id,
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
-+	/* Add RIB6 Prefix to its node mempool name */
-+	ret = snprintf(mem_name, sizeof(mem_name), RIB6_MEM_PREFIX "%s", name);
-+	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
-+		RIB_LOG(ERR, "RIB6 name %s is too long, limit is %zu characters",
-+			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB6_MEM_PREFIX));
-+		rte_errno = ENAMETOOLONG;
-+		return NULL;
-+	}
-+
- 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
- 		sizeof(struct rte_rib6_node) + conf->ext_sz, 0, 0,
- 		NULL, NULL, NULL, NULL, socket_id, 0);
-@@ -498,7 +509,6 @@ rte_rib6_create(const char *name, int socket_id,
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "RIB6_%s", name);
- 	rib6_list = RTE_TAILQ_CAST(rte_rib6_tailq.head, rte_rib6_list);
- 
- 	rte_mcfg_tailq_write_lock();
--- 
-2.53.0
-
+/Bruce
