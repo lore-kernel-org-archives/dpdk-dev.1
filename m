@@ -2,73 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F30DCC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 16:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C60CC6B38
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 16:28:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ACC58402E7;
-	Fri, 16 Oct 2026 18:23:51 +0200 (CEST)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id BA1524026C
- for <dev@dpdk.org>; Fri, 16 Oct 2026 18:23:50 +0200 (CEST)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-2e977109392so56035ad.0
- for <dev@dpdk.org>; Fri, 16 Oct 2026 09:23:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792167830;
- x=1792772630; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=mgyo3V2yXEtnrB69gM9NLIho4E4kXeTxzUG+OgJGEjE=;
- b=QcIN7/4vBweTFt9NmUj1dAMEaV86hW6sa8eLrfAhs446WLLKsYcyayl50O7L6oAP6S
- DAMOGjSkRZm+SgUU4aJsUMRCRd9TEWKWmU1Gq035f49MPrjzqmgW//wpxJDy8UzmPIjI
- wXSaeR0CK6dGLtKgDFp6ikQLYmroxW5AOjg77d72whsAlYwhg4WBfJfiunT8/UP/HnvF
- Q1agyCMpjprVfysd+uiaR1IplUBhzC+Un5JuzqONAwWtpeJuahNsaG9iUhxDCs0XUewM
- 6GEiJ2mdCV5JCIbAp0MkoW0JN3NyqUH/+vx89kjOv+8xSKnhiDxMTezPPf2jexzeTfVq
- 1T3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792167830; x=1792772630;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=mgyo3V2yXEtnrB69gM9NLIho4E4kXeTxzUG+OgJGEjE=;
- b=17716spGA7mCQsmmOykHIbqxsJ7CXC+A8giC6Bufy7C9HXU43DgR9E6d/4BzMEnDau
- b+ypMprf5yPUNG7VDHOozbPdiOqEtLml0ieM2p7ohnc8BhJ8HSbPTpWkmaj6WLxmGL2Z
- xpXVY1W4NMVFc88udxoUZkyzwtinROcUwImaksThL0dOJCOXqH0bkpmsZRzLVonWLIhh
- x9OgmgRb9xVy/ly/qMZE3QjVWvVQ7VaCUTU+GYuvDEQeamacfkz22TEbGxKYwU0MkEx4
- 4/HjxKwVUZe3T/bcAtFM7k9q7+pwoLCN0XAGCbnIEJIDJ1RVHqUVw2T3xj1+B7SetsmF
- m45w==
-X-Gm-Message-State: AFq9FYLTmLUahPoCyZnVK0dPmFh8CghUZlu/HEQ46ZQzA3eVcIDiaBKT
- caAVWPjqfIJrXBRICNMNdhptXSbYo4jSxASNAkWN1LBC7P8aqwcHQSbYFTIn4ZCkKdE=
-X-Gm-Gg: AYBFou0Xi4QJTQcU80AaxQRMwn0TtTFT3II7OI3uV30A26GtkVfSoRkE7rt4cT4GPsE
- 0C5ddDAGtfToU3lpsIdZssNoOzk++a80rsXXMMZony7rr9PJYaczRU8t1JFBky5rX32wwQ5p2Jj
- gwsGar1qng8hh3gudx8/dyPqmU1zCgGICZ8VHDSQryrB541bSDRz8K9qrgPbxa2hRjhMQQEhJaf
- YxjyWERw9CGgnztNdbepjNRiHFVWxBb9n5ae/MJdzFMiMXi0Cqr78vegfWkOQT2YB6Z2+w/0NNB
- z8jNrFJT+SiPcfN8KLM1bPmfgl8IjgL8AkmZoucrIZkdLtLCc58nRRMK6kxQ7pCpD/wTVVrQt5v
- 4DWCK+uSKwg+NbtGHb53HGQuzCeTDCKobg5wf4zggzCV/pTVK+/f5vNRmCbUIiA3Pv7DwXFye8i
- k5Nsa9Yw+qkqEFkM52Wmi+5vEOaynXJG7tVAyb/Wn9DzfxvzfevTni9mrPODcwDEQbyewd5UIB+
- K/62YttDTPZytka6qdwG1L6Va7qOx6aC4RYV8Bd
-X-Received: by 2002:a17:903:2c8b:b0:2e9:5c55:c46a with SMTP id
- d9443c01a7336-2e9a6834a18mr4836615ad.7.1792167829667; 
- Fri, 16 Oct 2026 09:23:49 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e97e804ef4sm12420095ad.18.2026.10.16.09.23.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Oct 2026 09:23:49 -0700 (PDT)
-Date: Fri, 16 Oct 2026 09:23:47 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
-Cc: dev@dpdk.org, joshwash@google.com
-Subject: Re: [PATCH v3 00/10] net/gve: fix DQO Tx queue stalls
-Message-ID: <20261016092347.480e6453@phoenix.local>
-In-Reply-To: <cover.1792129992.git.tathagat.dpdk@gmail.com>
-References: <20261012105023.669486-1-tathagat.dpdk@gmail.com>
- <cover.1792129992.git.tathagat.dpdk@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 301A3402E7;
+	Fri, 16 Oct 2026 18:28:09 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id E7CE94026C
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 18:28:07 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D620E1477;
+ Fri, 16 Oct 2026 09:28:03 -0700 (PDT)
+Received: from [10.57.14.7] (unknown [10.57.14.7])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F1653F7B4;
+ Fri, 16 Oct 2026 09:28:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+ t=1792168087; bh=+EIRDRWfqljbN8UdsYeMdQ7bSvP/PeIbUFzlMjX5qfs=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=kOUp9X38MCFYx1544ugtlxbPD/VBla+yGl2AWcYCdxHWKL7C4tHYho1t/8qOf3/Ia
+ XBN3EaDlqeJpQQAbP3jaiWE3ahLCRIUL2+oxDpBZS7hc89SPqVC9pNynom1BIHmsGx
+ J9oT7dAyoocwcP4NG3g3rH4RjrSBSSy8zcm7nlCQ=
+Message-ID: <8811b276-3f46-484a-bffa-33accfe740b1@arm.com>
+Date: Fri, 16 Oct 2026 17:28:04 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] dts: resolve trex driver binding issue
+Content-Language: en-GB
+To: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>, patrickrobb1997@gmail.com,
+ dev@dpdk.org
+Cc: dladd@iol.unh.edu, abailey@iol.unh.edu, lylavoie@iol.unh.edu
+References: <20260811185509.1650102-1-knimoji@iol.unh.edu>
+From: Luca Vizzarro <Luca.Vizzarro@arm.com>
+In-Reply-To: <20260811185509.1650102-1-knimoji@iol.unh.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -83,17 +49,180 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 16 Oct 2026 06:26:37 +0000
-Tathagat Priyadarshi <tathagat.dpdk@gmail.com> wrote:
+Hi Koushik,
 
-> This series fixes several ways the gve DQO RDA Tx path can stall or
-> post invalid descriptors: completion handling bugs (1-2), a report
-> event interval that can starve the ring (3), a stray TSO context
-> descriptor when completion tags run out (4), a missing cacheline
-> margin (5), invalid packets blocking the burst (6-8), and missing
-> device length checks (9-10).
+Apologies for the long wait. To start off, could you please address the 
+AI Code Review as it raised a few concerns:
 
+http://mails.dpdk.org/archives/test-report/2026-August/1029040.html
 
-Looks good, but does not apply to main now.
+The patch will also require rebasing.
 
-Also need a ack from GVE maintainer across all of the patches
+On 11/08/2026 19:55, Koushik Bhargav Nimoji wrote:
+> diff --git a/dts/framework/test_result.py b/dts/framework/test_result.py
+> index 21faa55dc1..13ed8f671c 100644
+> --- a/dts/framework/test_result.py
+> +++ b/dts/framework/test_result.py
+> @@ -117,6 +117,7 @@ class ResultNode(BaseModel):
+>       label: str
+>       children: list[Union["ResultNode", ResultLeaf]] = Field(default_factory=list)
+>       parent: Union["ResultNode", None] = None
+> +    ports: list[dict[str, str]] | None = None
+
+This attribute lacks the appropriate documentation. Also unless I missed 
+something, I am not sure how this belongs to this patch. Can you please 
+clarify?
+
+>   
+>       def add_child(self, label: str) -> "ResultNode":
+>           """Creates and append a child node to the model.
+> diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
+> index c20a0fa885..b23930b953 100644
+> --- a/dts/framework/test_run.py
+> +++ b/dts/framework/test_run.py
+> @@ -115,7 +115,7 @@
+>   from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
+>   from framework.settings import SETTINGS
+>   from framework.test_result import Result, ResultNode, TestRunResult
+> -from framework.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
+> +from framework.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite, TestSuiteType
+>   from framework.testbed_model.capability import (
+>       Capability,
+>       get_supported_capabilities,
+> @@ -375,11 +375,6 @@ def next(self) -> State | None:
+>               ctx.topology.bind_cryptodevs("dpdk")
+>   
+>           ctx.topology.configure_ports("sut", "dpdk")
+> -        if ctx.func_tg and ctx.topology.type is not LinkTopology.NO_LINK:
+> -            ctx.func_tg.setup(ctx.topology)
+> -        if ctx.perf_tg and ctx.topology.type is not LinkTopology.NO_LINK:
+> -            ctx.perf_tg.setup(ctx.topology)
+> -
+>           self.result.ports = [
+>               port.to_dict() for port in ctx.topology.sut_ports + ctx.topology.tg_ports
+>           ]
+> @@ -506,12 +501,34 @@ class TestSuiteSetup(TestSuiteState):
+>       """Test suite setup."""
+>   
+>       logger_name: ClassVar[str] = "test_suite_setup"
+> +    test_run: TestRun
+
+Unsure why this is necessary, given it's already inherited by 
+TestSuiteState.
+
+>   
+>       def before(self) -> None:
+>           """Hook before the state is processed."""
+>           super().before()
+>           self.logger.set_custom_log_file(self.test_suite.name)
+>   
+> +        ctx = self.test_run.ctx
+> +        testsuite_type = self.test_suite.testsuite_type
+
+nit: stick to the snake case, so test_suite_type
+
+> +        if (
+> +            ctx.topology.type is not LinkTopology.NO_LINK
+> +            and testsuite_type is not TestSuiteType.CRYPTO
+> +        ):
+> +            if testsuite_type == TestSuiteType.FUNC:
+> +                required_tg, other_tg = ctx.func_tg, ctx.perf_tg
+> +            else:
+> +                required_tg, other_tg = ctx.perf_tg, ctx.func_tg
+> +
+> +            if other_tg and other_tg.is_setup:
+> +                other_tg.teardown()
+> +
+> +                if testsuite_type == TestSuiteType.FUNC and ctx.tg_node:
+> +                    for port in ctx.topology.tg_ports:
+> +                        ctx.tg_node.main_session.bind_ports_to_driver([port], port.config.os_driver)
+
+I am a bit confused why this happens here. The driver to be bound to 
+should be governed by the TG that uses such ports. Could be os_driver, 
+could be dpdk_driver, regardless of Scapy and TRex.
+
+> +
+> +            if required_tg and not required_tg.is_setup:
+> +                required_tg.setup(ctx.topology)
+> +
+>       @property
+>       def description(self) -> str:
+>           """State description."""
+> diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
+> index 69ce26040a..554fe3a475 100644
+> --- a/dts/framework/test_suite.py
+> +++ b/dts/framework/test_suite.py
+> @@ -45,6 +45,17 @@ class BaseConfig(FrozenModel):
+>       """Base for a custom test suite configuration."""
+>   
+>   
+> +class TestSuiteType(Enum):
+> +    """Enum to specify test suite type."""
+> +
+> +    FUNC = auto()
+> +    PERF = auto()
+> +    CRYPTO = auto()
+> +
+> +
+> +TestSuiteClassType = TypeVar("TestSuiteClassType", bound=type["TestSuite"])
+> +
+> +
+>   class TestSuite(TestProtocol):
+>       """The base class with building blocks needed by most test cases.
+>   
+> @@ -85,6 +96,30 @@ class TestSuite(TestProtocol):
+>       _sut_ip_address_egress: Union[IPv4Interface, IPv6Interface]
+>       _tg_ip_address_ingress: Union[IPv4Interface, IPv6Interface]
+>       _tg_ip_address_egress: Union[IPv4Interface, IPv6Interface]
+> +    testsuite_type: ClassVar[TestSuiteType]
+nit: snake_case
+> +
+> +    @classmethod
+> +    def make_decorator(
+> +        cls, testsuite_type: TestSuiteType
+nit: snake_case
+> +    ) -> Callable[[TestSuiteClassType], TestSuiteClassType]:
+> +        """Creates a decorator for test suites.
+> +
+> +        The decorator casts the decorated function as :class:`TestSuite`,
+> +        sets it as `testsuite_type` and initializes a variable to
+> +        determine the type of test suite.
+> +
+> +        Args:
+> +            testsuite_type: A functional, performance, or cryptodev test suite.
+nit: snake_case
+> +
+> +        Returns:
+> +            The decorator of a functional, performance, or cryptodev test suite.
+> +        """
+> +
+> +        def _decorator(testsuite_cls: TestSuiteClassType) -> TestSuiteClassType:
+> +            testsuite_cls.testsuite_type = testsuite_type
+> +            return testsuite_cls
+nit: snake_case
+> +
+> +        return _decorator
+
+So the above function doesn't really use cls, making it a @static_method 
+instead of a @class_method. Given static_method is discouraged, it 
+ultimately means that this method should rather be a module-level 
+function. But I do understand that we'd also prefer to have consistency 
+and this is already done for TestCase. So I am ok with either.
+
+>   
+>       def __init__(self, config: BaseConfig) -> None:
+>           """Initialize the test suite testbed information and basic configuration.
+> @@ -270,6 +305,11 @@ def _adjust_addresses(self, packets: list[Packet], expected: bool = False) -> li
+>           return ret_packets
+>   
+>   
+> +#: Test suite type decorators
+> +func_suite: Callable[[Any], type["TestSuite"]] = TestSuite.make_decorator(TestSuiteType.FUNC)
+> +perf_suite: Callable[[Any], type["TestSuite"]] = TestSuite.make_decorator(TestSuiteType.PERF)
+> +crypto_suite: Callable[[Any], type["TestSuite"]] = TestSuite.make_decorator(TestSuiteType.CRYPTO)
+> +
+>   #: The generic type for a method of an instance of TestSuite
+>   TestSuiteMethodType = TypeVar("TestSuiteMethodType", bound=Callable[[TestSuite], None])
+>   
+Many thanks,
+Luca
