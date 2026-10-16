@@ -2,74 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5E1CC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 13:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D73ACCA46C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 14:02:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 15CB940291;
-	Fri, 16 Oct 2026 15:25:50 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id F0764400D7
- for <dev@dpdk.org>; Fri, 16 Oct 2026 15:25:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792157147;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=TRo8yt6jwp6iexmYRC5Wttw6TpKYP9fJr7tnnNgIcMc=;
- b=gdnWOHvVOh1x5FDWtKQW4d6Wl7vAa9RFkJeRdO9uusekoB7fLtkQ5hnv6ykrxUPhlDZmxk
- GoaS46L9ukwoRP2WwEaT5Clzx9vCF8zsSviu3gEfh1H1qEMXYP/QajKrWBFKW0gQ+r3OdC
- 4r8zXyRGqcKVfeNeivBlxGqrGQbGBXU=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-106-jc34s65uNh2NeZU-DS-DJw-1; Fri, 16 Oct 2026 13:25:44 +0000
-X-MC-Unique: jc34s65uNh2NeZU-DS-DJw-1
-X-Mimecast-MFC-AGG-ID: jc34s65uNh2NeZU-DS-DJw_1792157143
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-3a59ac42cd8so31206061fa.0
- for <dev@dpdk.org>; Fri, 16 Oct 2026 06:25:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792157143; x=1792761943;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=TRo8yt6jwp6iexmYRC5Wttw6TpKYP9fJr7tnnNgIcMc=;
- b=YtRJ4BRevOgfpTm+/Jhw2tLMNxgpZJvTnHLD/9efrjlrsiT1oS4ZjXOoityLF3CUN6
- mhgNgVPVnbc5yuPtM1QCpQ6YhyZXTZ3mTG2AwMa/BIbioG5GNYQ30C0M8bN5XpZUe7oG
- t+yiQbKITFO+R4aDUA0c9UjswiK8q5DWlXfNXSyrh02FKXpKCjkd9iK9GLiOnnHJAeBb
- 9fRU0YUhuFJvmNNunSkje+qLlctYQ+JikZDgmm3B1gtFZiUdcQteNxwI67cuaLGxGyzb
- zy6TnkejvQXAtAasXLAFygVzUfKrWX8Lw1eKj2fidxnZ1DhZV/FRETOjJI1x3d9ClORu
- nrxw==
-X-Gm-Message-State: AFq9FYK/32xX1+Owx6L9hKRmCVnI52a+EPrx7BN/PvnJKcWIGgRK+gVf
- paWvDWWRW3M3Y0a00zIgX1pjGyZGnaolbtVWyUw7O1sfon+a5YFdKvybOcnTFZirq6OmcyABWFT
- 0FDt1/BEEtKDlN5eFjJmJzWtI8vWPkNIibhrsTZTCYv2yGheVZBApiEIy9pTsmVcBa/uXljAuDB
- i+8mkTLlXDoL/hdtq8SV8=
-X-Gm-Gg: AYBFou18eF+qmBbcmHTCWs4GC1V2Xc1gqtfyLo8ggYuG3CR/gbydDHlwPJ3SwSdUm3a
- r3TZZEaj1SBdmVrwpGJUJ7UAPuWjqA9RM8NeffmtKe35odw+jqRnaOKr4FtW7wQn/swrC5671KS
- aaNvyehONL3GEYFKC5do4zj22qYN7MRwxQeyruErvLKzoncmC7q1BWZtfch0yM5M7mCic6+3noP
- tD2wWVWWUoS1vXsenNFnloBh8FuIb9Zqeuiae5yvLt9F2jt
-X-Received: by 2002:a2e:be88:0:b0:3ab:1639:9a49 with SMTP id
- 38308e7fff4ca-3ab16399cfdmr5956871fa.18.1792157143253; 
- Fri, 16 Oct 2026 06:25:43 -0700 (PDT)
-X-Received: by 2002:a2e:be88:0:b0:3ab:1639:9a49 with SMTP id
- 38308e7fff4ca-3ab16399cfdmr5956781fa.18.1792157142805; Fri, 16 Oct 2026
- 06:25:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 56736402E9;
+	Fri, 16 Oct 2026 16:02:27 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 966F3400D7
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 16:02:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792159346; x=1823695346;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=B5iaPvT0BYhkkxg3e0K3MaIxPy8NdVKTQgEgEEUmHvk=;
+ b=NENSSvSuKwLrp8LLm7BwYBTNO/rotqk/FXH0PM8D52hJMpkcj9pkuqeT
+ E2EhWkxcwGrqFNTfunYPaotnSgGYGiPfGWgpG7iErMFqWPn72WpwbMlOr
+ YOx2GpEmLsQY/ZjM7P7FUmYgIs5Nb5MrBprZh1iKqFJxY+PuWZvM/upbt
+ dFj3nzwUi+PT72aCNiNWlOFcEI0B4jpF8iUpXKNxFgDvx2NsKY9y1F0u6
+ pQiN4OOGH2zkC25Fths2qGR8mAquJ/aW/zZKTHYa5zn/PLX++801krjfD
+ LO00X14lgh7cc9YsN4RDzE0P2hpI8ITpzMn0bKMohV9OdxXcU1oeeO1SY A==;
+X-CSE-ConnectionGUID: PdDCpECbReylE04hYU3+tA==
+X-CSE-MsgGUID: 85IHa7GtQn2dEPRlkbidWg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="1043659"
+X-IronPort-AV: E=Sophos;i="6.27,161,1787036400"; 
+   d="scan'208";a="1043659"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Oct 2026 07:02:20 -0700
+X-CSE-ConnectionGUID: iMvte+/MSza90Nht3VH78w==
+X-CSE-MsgGUID: zwtU0nRIRNuXvouMRtY7lg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,161,1787036400"; 
+   d="scan'208";a="1951639"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa001.jf.intel.com with ESMTP; 16 Oct 2026 07:02:19 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [27.03 RFC PATCH v1 0/8] Add usage counter helpers
+Date: Fri, 16 Oct 2026 15:02:07 +0100
+Message-ID: <cover.1792159157.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
 MIME-Version: 1.0
-References: <CALUB8OP7m2zbN7YFV+_+BNHxJwrv+meCqaJPZSzynHnqcrpKCg@mail.gmail.com>
-In-Reply-To: <CALUB8OP7m2zbN7YFV+_+BNHxJwrv+meCqaJPZSzynHnqcrpKCg@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 16 Oct 2026 15:25:30 +0200
-X-Gm-Features: AclHuK-MEii393lwt5fV141-mChfkBLVNPG1pkf53_6cKW0feN5XTYgZSB3ogao
-Message-ID: <CAJFAV8zGVhiP3z1Y1c+ZexbzX4fvbNHd+_yKiMp9hNbTFu0PSg@mail.gmail.com>
-Subject: Re: [DPDK/core Bug 1970] fib: trie leaks a tbl8 group on failed insert
-To: Nitin Upadhyay <unitin438@gmail.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Cc: dev@dpdk.org, maxime@leroys.fr
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: oAOLmBotUSOoTtEBPG8caihcy231nHTR3UGXV409mMQ_1792157143
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,18 +58,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+There is a recurring pattern in DPDK code: on first use, do something,
+on last use, undo something. In a lot of cases, these reference counters
+are atomic or otherwise thread-safe, but in cases where they're not, we
+use raw integers and do manual checks and counter updates instead.
 
-On Fri, 16 Oct 2026 at 13:31, Nitin Upadhyay <unitin438@gmail.com> wrote:
-> I reproduced both cases from your Bug 1970 reproducer on DPDK main at commit b618d731ab. Both tests fail as described.
->
-> Have you had a chance to investigate a fix for this, or if you'd be open to some help investigating it? I'd be interested in contributing a fix upstream.
+This patchset attempts to provide a really minimal "usage counter" library
+that does *only* that: track usage of resources. The patchset does not do
+a full DPDK conversion to these counters, but it does convert a few things
+to demonstrate what it would look like if we had them.
 
-Maxime mentionned during a grout meeting that he will be offline for some weeks.
-For now, it is probably best to discuss this topic with the fib
-library maintainer.
+Anatoly Burakov (8):
+  eal: add usage count helpers
+  vfio: use usage counters
+  dev: replace raw refcount with usage count
+  vhost: use usage counters for vchan tracking
+  acl: use usage counters for ref counting
+  thash: use usage counters for ref counting
+  lpm: use usage counters for ref counting
+  net/nbl: track devices with usage counters
 
+ doc/api/doxy-api-index.md                |  1 +
+ drivers/net/nbl/nbl_common/nbl_userdev.c | 22 +++---
+ lib/acl/acl.h                            |  4 +-
+ lib/acl/acl_bld.c                        |  9 +--
+ lib/eal/include/meson.build              |  1 +
+ lib/eal/include/rte_usage_count.h        | 96 ++++++++++++++++++++++++
+ lib/eal/linux/eal_dev.c                  | 20 +++--
+ lib/eal/linux/eal_vfio.c                 |  7 +-
+ lib/eal/linux/eal_vfio.h                 |  5 +-
+ lib/eal/linux/eal_vfio_group.c           | 11 +--
+ lib/hash/rte_thash.c                     | 10 +--
+ lib/lpm/rte_lpm6.c                       | 13 ++--
+ lib/vhost/vhost.c                        |  5 +-
+ lib/vhost/vhost.h                        |  3 +-
+ 14 files changed, 151 insertions(+), 56 deletions(-)
+ create mode 100644 lib/eal/include/rte_usage_count.h
 
 -- 
-David Marchand
+2.52.0
 
