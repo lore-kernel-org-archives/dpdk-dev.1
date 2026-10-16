@@ -2,74 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E21CCA46C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 13:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D106BCC6B38
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 13:08:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA8F640A7F;
-	Fri, 16 Oct 2026 15:06:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2B71940291;
+	Fri, 16 Oct 2026 15:08:06 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3173840A75
- for <dev@dpdk.org>; Fri, 16 Oct 2026 15:06:52 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 1A6D3400D7
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 15:08:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792156011;
+ s=mimecast20190719; t=1792156084;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=YYDMS9bRO1pn6RO0IFwkbrB0oREsGQR8GWv9BOsMyfc=;
- b=PxVwAXFDnzM7EKVXU8GOgw/eYUY7J3X6YLBvS6iHpivYdJhOXgUF58r1a4PpB7nJi9TWg0
- wvJygYZ0B1sMT5DoaMdQI2IPSyig/8W/jqse9v+ELzwiUsYUHLUNA8g2G6Yb0dpvcAovfh
- Qu03cRO0ZBXfvCAamEfqLQ4Fnr/isY0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-218-IAIsMHEwOheMaif0PlkOqA-1; Fri,
- 16 Oct 2026 13:06:46 +0000
-X-MC-Unique: IAIsMHEwOheMaif0PlkOqA-1
-X-Mimecast-MFC-AGG-ID: IAIsMHEwOheMaif0PlkOqA_1792156003
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 684811944A82; Fri, 16 Oct 2026 13:06:42 +0000 (UTC)
-Received: from dmarchan.redhat.corp
- (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 422B77D6; Fri, 16 Oct 2026 13:06:36 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: thomas@monjalon.net, Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>,
- Praveen Shetty <praveen.shetty@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>, Zyta Szpak <zyta@marvell.com>,
- Liron Himi <lironh@marvell.com>, Dimon Zhao <dimon.zhao@nebula-matrix.com>,
- Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>,
- Devendra Singh Rawat <dsinghrawat@marvell.com>,
- Alok Prasad <palok@marvell.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Jerin Jacob <jerinj@marvell.com>, Maciej Czekaj <mczekaj@marvell.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>, Junlong Wang <wang.junlong1@zte.com.cn>,
- Ming Ran <ran.ming@zte.com.cn>
-Subject: [PATCH 8/8] ethdev: check unknown Rx/Tx multi-queue modes
-Date: Fri, 16 Oct 2026 15:05:54 +0200
-Message-ID: <20261016130555.1685102-9-david.marchand@redhat.com>
-In-Reply-To: <20261016130555.1685102-1-david.marchand@redhat.com>
-References: <20261016130555.1685102-1-david.marchand@redhat.com>
+ bh=3P8tlPvR7Q2H0cSi9+z+wh7xTAADYH4T1DjjXzg4VpM=;
+ b=eptGwZ9HpryVwjCf1hCxyiA+OKGDEWxB9v4iMjleFBYpg3b4v4/+btfd9oul9sn/vGnb/W
+ MUBm6Gl1HSBB/ichJGX2Dnfr6L27pPvjHmNlrceTa4O2fZjPrPSJ5XG+nyIEoXVGOdEq6B
+ /lmpVtHYXXBsZkZlElb4wHTazRivslE=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-643-7qkgNXntNTCZa_vdgBNfmw-1; Fri, 16 Oct 2026 13:08:03 +0000
+X-MC-Unique: 7qkgNXntNTCZa_vdgBNfmw-1
+X-Mimecast-MFC-AGG-ID: 7qkgNXntNTCZa_vdgBNfmw_1792156082
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-5ba4284e23eso4305308e87.2
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 06:08:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792156082; x=1792760882;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=3P8tlPvR7Q2H0cSi9+z+wh7xTAADYH4T1DjjXzg4VpM=;
+ b=05Mc+m2I/oWJySkqzGGCt19MJvaMvuBL9yhs+zhSvBQmjdMVcMCmy2UpUF22hnRKVa
+ 47cjVFVlB3JQkDV2nF8jVPW7V5WBctCDqB1b0JyHxfP2FGRmpMhiByA0xvsImxqtg0Fk
+ R8osL6n7VsGZ7+AGrHRLgeJ+m02JxazPgZEqKjjTF1MdgFpnT0vTnGTtFEHUffDGj0Yo
+ lviISZcfQ5JCdZu6T4kn5oaksF0MkgQ02rMIFixMJg2UXvnOEtaK9BwlIWbjcxCU6ewZ
+ gQHjD1u3py7Qhu9mcqyjpORYVxrbskIXnOzLjLJu8tF8OM6jp5SRxbuLYn8Z34yXiS2O
+ 7HMg==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBzI0nmgmzU6wNNFWGcoRpw1YqtkkwqcPCqQ0tUFlgunqL8s4tXJJfs0vMvPPCTi/DqRJ9E=@dpdk.org
+X-Gm-Message-State: AFq9FYJmiqr176gjRtyWhvlH6tSaUQCCBu4SU6KB4gXMtbJTMW0unILc
+ wAYO2mkg7uYtu2pU4AluzVQGuM81wHF1K0G/MEV4tRBssRC2R59xcMonc7Zpro5TNZ14zahbhQv
+ LNQw2y29bbO4YZdr5n7ApY09XS3AY224XXFG40Ga+H0//NJTNJrbTnTPzv5EoqghXtjdG3mYaAw
+ 8RkTDzAJDJ3XWCCjf5J8Y=
+X-Gm-Gg: AYBFou0/t13mw9wQ7JUgfzTPOQaTJGQgkOhf3MeYY5RhHGN9hz/eyZl0ctMJRebdRjC
+ f6EuhnFmwaXdpBXip8ZeFaoEchES+X7Ih29RUhL22EozuXD1hIhxEDGj7jn05WAWqCUXS4Unr9q
+ 4192wKqWulVUSB+iJRIizkEk0fmtQ3kvYnDljJpAbpjxgGnimZhYQjwoeH36s0wZnu/XEO+LMQx
+ WMEwjOJ5c8UR5GlGk3pAPIU9EVabW6sslPIHnEOGMgtwsbP
+X-Received: by 2002:a05:6512:224c:b0:5be:3444:57f1 with SMTP id
+ 2adb3069b0e04-5be3444605emr3433300e87.63.1792156081663; 
+ Fri, 16 Oct 2026 06:08:01 -0700 (PDT)
+X-Received: by 2002:a05:6512:224c:b0:5be:3444:57f1 with SMTP id
+ 2adb3069b0e04-5be3444605emr3433290e87.63.1792156081135; Fri, 16 Oct 2026
+ 06:08:01 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+References: <20260921030811.1034869-1-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260921091932.39fa0013@phoenix.local>
+ <CAJFAV8y=YSgqdt+gtXn37VYZagnMzMCaRg+VQZbmjfQ974vW7w@mail.gmail.com>
+ <CAPTrkjHZgh_ASCsyjh9B=LbUQaGvXGWCJSVHWJmYr+PZavHucQ@mail.gmail.com>
+In-Reply-To: <CAPTrkjHZgh_ASCsyjh9B=LbUQaGvXGWCJSVHWJmYr+PZavHucQ@mail.gmail.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 16 Oct 2026 15:07:49 +0200
+X-Gm-Features: AclHuK-wu43otstCTXPFRzNw9m8D7t6Wj0FSSxeiO29C9u2NEdYzFlSZkaXvsv8
+Message-ID: <CAJFAV8wyFrsFQzPqjzxb5UrCGZer38eMy_PvJOyBYqcy_gb2GQ@mail.gmail.com>
+Subject: Re: [PATCH] net/bnxt: remove VMDq support
+To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org, 
+ kishore.padmanabha@broadcom.com, Keegan Freyhof <keegan.freyhof@broadcom.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 1qv1jiNp-jgaJphYVCxOUXY8MNVLtxOXUwRkSstMJMc_1792156003
+X-Mimecast-MFC-PROC-ID: 0OdoYq7JCHTVygUwSH1U6KMmK3j3BKHiy2DJeuPYMNY_1792156082
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,579 +88,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add validation in rte_eth_dev_configure() to reject invalid multi-queue
-mode values early, before passing them to drivers.
-If we do not enforce valid values are passed by an application,
-this application might face issues in the future when we add more modes.
+On Thu, 24 Sept 2026 at 00:44, Mohammad Shuab Siddique
+<mohammad-shuab.siddique@broadcom.com> wrote:
+>
+> I will restore the explicit rejection in v2.
 
-For Rx mq_mode, reject any bits outside the defined RSS, DCB, and VMDq
-flags.
-For Tx mq_mode, reject values greater than RTE_ETH_MQ_TX_VMDQ_ONLY.
+Well, this was not my point.
 
-Thanks to this, many drivers can stop caring about unexpected modes.
+I just posted a series.
+See https://patchwork.dpdk.org/project/dpdk/list/?series=39678
+Reviews welcome.
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- doc/guides/rel_notes/release_26_11.rst |  1 +
- drivers/net/bnxt/bnxt_rxq.c            | 14 ++------------
- drivers/net/cnxk/cnxk_ethdev.c         | 11 -----------
- drivers/net/cnxk/cnxk_rep_ops.c        | 16 +---------------
- drivers/net/intel/cpfl/cpfl_ethdev.c   | 13 -------------
- drivers/net/intel/e1000/igb_ethdev.c   | 15 +--------------
- drivers/net/intel/e1000/igc_ethdev.c   | 19 -------------------
- drivers/net/intel/idpf/idpf_ethdev.c   |  6 ------
- drivers/net/mvneta/mvneta_ethdev.c     |  7 -------
- drivers/net/mvpp2/mrvl_ethdev.c        |  7 -------
- drivers/net/nbl/nbl_dev/nbl_dev.c      |  6 ------
- drivers/net/nfp/nfp_net_common.c       |  8 --------
- drivers/net/octeontx/octeontx_ethdev.c | 10 ----------
- drivers/net/qede/qede_ethdev.c         |  5 -----
- drivers/net/sfc/sfc_repr.c             | 16 +---------------
- drivers/net/sfc/sfc_rx.c               | 14 +-------------
- drivers/net/sfc/sfc_tx.c               |  9 ---------
- drivers/net/thunderx/nicvf_ethdev.c    | 12 ------------
- drivers/net/virtio/virtio_ethdev.c     | 14 --------------
- drivers/net/zxdh/zxdh_ethdev.c         | 19 -------------------
- lib/ethdev/rte_ethdev.c                | 17 +++++++++++++++++
- 21 files changed, 24 insertions(+), 215 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index caffd2a611..4c00f51d89 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -433,6 +433,7 @@ API Changes
-   * VMDq modes (Rx ``RTE_ETH_MQ_RX_VMDQ_FLAG``,
-     Tx ``RTE_ETH_MQ_TX_VMDQ_DCB``/``RTE_ETH_MQ_TX_VMDQ_ONLY``) are rejected
-     if the driver reports no VMDq pool.
-+  * Unknown Rx and Tx modes are rejected.
- 
- * ethdev: Updated VMDq related API.
- 
-diff --git a/drivers/net/bnxt/bnxt_rxq.c b/drivers/net/bnxt/bnxt_rxq.c
-index 9743296b39..11115db1fd 100644
---- a/drivers/net/bnxt/bnxt_rxq.c
-+++ b/drivers/net/bnxt/bnxt_rxq.c
-@@ -85,18 +85,8 @@ int bnxt_mq_rx_configure(struct bnxt *bp)
- 
- 	bp->nr_vnics = 0;
- 
--	/* Multi-queue mode */
--	switch (dev_conf->rxmode.mq_mode) {
--	case RTE_ETH_MQ_RX_NONE:
--	case RTE_ETH_MQ_RX_RSS:
--		pools = bp->rx_cosq_cnt ? bp->rx_cosq_cnt : pools;
--		break;
--	default:
--		PMD_DRV_LOG_LINE(ERR, "Unsupported mq_mode %d",
--				 dev_conf->rxmode.mq_mode);
--		return -EINVAL;
--	}
--
-+	if (bp->rx_cosq_cnt)
-+		pools = bp->rx_cosq_cnt;
- 	pools = RTE_MIN(pools, bp->rx_cp_nr_rings);
- 	nb_q_per_grp = bp->rx_cp_nr_rings / pools;
- 	PMD_DRV_LOG_LINE(DEBUG, "pools = %u nb_q_per_grp = %u",
-diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
-index 9a4da870cd..0bd0302d6a 100644
---- a/drivers/net/cnxk/cnxk_ethdev.c
-+++ b/drivers/net/cnxk/cnxk_ethdev.c
-@@ -1485,17 +1485,6 @@ cnxk_nix_configure(struct rte_eth_dev *eth_dev)
- 		goto fail_configure;
- 	}
- 
--	if (rxmode->mq_mode != RTE_ETH_MQ_RX_NONE &&
--	    rxmode->mq_mode != RTE_ETH_MQ_RX_RSS) {
--		plt_err("Unsupported mq rx mode %d", rxmode->mq_mode);
--		goto fail_configure;
--	}
--
--	if (txmode->mq_mode != RTE_ETH_MQ_TX_NONE) {
--		plt_err("Unsupported mq tx mode %d", txmode->mq_mode);
--		goto fail_configure;
--	}
--
- 	/* Free the resources allocated from the previous configure */
- 	if (dev->configured == 1) {
- 		/* Unregister queue irq's */
-diff --git a/drivers/net/cnxk/cnxk_rep_ops.c b/drivers/net/cnxk/cnxk_rep_ops.c
-index 4a9c027bf5..da7ebd9c26 100644
---- a/drivers/net/cnxk/cnxk_rep_ops.c
-+++ b/drivers/net/cnxk/cnxk_rep_ops.c
-@@ -143,12 +143,10 @@ rep_eth_conf_chk(const struct rte_eth_conf *conf, uint16_t nb_rx_queues)
- 		ret = -EINVAL;
- 	}
- 
--	switch (conf->rxmode.mq_mode) {
--	case RTE_ETH_MQ_RX_RSS:
-+	if (conf->rxmode.mq_mode == RTE_ETH_MQ_RX_RSS) {
- 		if (nb_rx_queues != 1) {
- 			plt_err("Rx RSS is not supported with %u queues", nb_rx_queues);
- 			ret = -EINVAL;
--			break;
- 		}
- 
- 		rss_conf = &conf->rx_adv_conf.rss_conf;
-@@ -157,18 +155,6 @@ rep_eth_conf_chk(const struct rte_eth_conf *conf, uint16_t nb_rx_queues)
- 			plt_err("Rx RSS configuration is not supported");
- 			ret = -EINVAL;
- 		}
--		break;
--	case RTE_ETH_MQ_RX_NONE:
--		break;
--	default:
--		plt_err("Rx mode MQ modes other than RSS not supported");
--		ret = -EINVAL;
--		break;
--	}
--
--	if (conf->txmode.mq_mode != RTE_ETH_MQ_TX_NONE) {
--		plt_err("Tx mode MQ modes not supported");
--		ret = -EINVAL;
- 	}
- 
- 	if (conf->lpbk_mode != 0) {
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
-index f425181bf2..71f0b73936 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.c
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
-@@ -707,12 +707,6 @@ cpfl_dev_configure(struct rte_eth_dev *dev)
- 		return -ENOTSUP;
- 	}
- 
--	if (conf->txmode.mq_mode != RTE_ETH_MQ_TX_NONE) {
--		PMD_INIT_LOG(ERR, "Multi-queue TX mode %d is not supported",
--			     conf->txmode.mq_mode);
--		return -ENOTSUP;
--	}
--
- 	if (conf->lpbk_mode != 0) {
- 		PMD_INIT_LOG(ERR, "Loopback operation mode %d is not supported",
- 			     conf->lpbk_mode);
-@@ -739,13 +733,6 @@ cpfl_dev_configure(struct rte_eth_dev *dev)
- 		return -ENOTSUP;
- 	}
- 
--	if (conf->rxmode.mq_mode != RTE_ETH_MQ_RX_RSS &&
--	    conf->rxmode.mq_mode != RTE_ETH_MQ_RX_NONE) {
--		PMD_INIT_LOG(ERR, "RX mode %d is not supported.",
--			     conf->rxmode.mq_mode);
--		return -EINVAL;
--	}
--
- 	if (base->caps.rss_caps != 0 && dev->data->nb_rx_queues != 0) {
- 		ret = cpfl_init_rss(vport);
- 		if (ret != 0) {
-diff --git a/drivers/net/intel/e1000/igb_ethdev.c b/drivers/net/intel/e1000/igb_ethdev.c
-index 181af58169..c65a468b26 100644
---- a/drivers/net/intel/e1000/igb_ethdev.c
-+++ b/drivers/net/intel/e1000/igb_ethdev.c
-@@ -1179,25 +1179,12 @@ igb_check_mq_mode(struct rte_eth_dev *dev)
- 			return -EINVAL;
- 		}
- 	} else {
--		/* To no break software that set invalid mode, only display
--		 * warning if invalid mode is used.
--		 */
--		if (rx_mq_mode != RTE_ETH_MQ_RX_NONE &&
--		    rx_mq_mode != RTE_ETH_MQ_RX_VMDQ_ONLY &&
--		    rx_mq_mode != RTE_ETH_MQ_RX_RSS) {
-+		if (rx_mq_mode == RTE_ETH_MQ_RX_VMDQ_RSS) {
- 			/* RSS together with VMDq not supported*/
- 			PMD_INIT_LOG(ERR, "RX mode %d is not supported.",
- 				     rx_mq_mode);
- 			return -EINVAL;
- 		}
--
--		if (tx_mq_mode != RTE_ETH_MQ_TX_NONE &&
--		    tx_mq_mode != RTE_ETH_MQ_TX_VMDQ_ONLY) {
--			PMD_INIT_LOG(WARNING, "TX mode %d is not supported."
--					" Due to txmode is meaningless in this"
--					" driver, just ignore.",
--					tx_mq_mode);
--		}
- 	}
- 	return 0;
- }
-diff --git a/drivers/net/intel/e1000/igc_ethdev.c b/drivers/net/intel/e1000/igc_ethdev.c
-index 73dd5dd1a3..2c8ff57e6b 100644
---- a/drivers/net/intel/e1000/igc_ethdev.c
-+++ b/drivers/net/intel/e1000/igc_ethdev.c
-@@ -344,30 +344,11 @@ static const struct eth_dev_ops eth_igc_ops = {
- static int
- igc_check_mq_mode(struct rte_eth_dev *dev)
- {
--	enum rte_eth_rx_mq_mode rx_mq_mode = dev->data->dev_conf.rxmode.mq_mode;
--	enum rte_eth_tx_mq_mode tx_mq_mode = dev->data->dev_conf.txmode.mq_mode;
--
- 	if (RTE_ETH_DEV_SRIOV(dev).active != 0) {
- 		PMD_INIT_LOG(ERR, "SRIOV is not supported.");
- 		return -EINVAL;
- 	}
- 
--	if (rx_mq_mode != RTE_ETH_MQ_RX_NONE &&
--		rx_mq_mode != RTE_ETH_MQ_RX_RSS) {
--		/* RSS together with VMDq not supported*/
--		PMD_INIT_LOG(ERR, "RX mode %d is not supported.",
--				rx_mq_mode);
--		return -EINVAL;
--	}
--
--	/* To no break software that set invalid mode, only display
--	 * warning if invalid mode is used.
--	 */
--	if (tx_mq_mode != RTE_ETH_MQ_TX_NONE)
--		PMD_INIT_LOG(WARNING,
--			"TX mode %d is not supported. Due to meaningless in this driver, just ignore",
--			tx_mq_mode);
--
- 	return 0;
- }
- 
-diff --git a/drivers/net/intel/idpf/idpf_ethdev.c b/drivers/net/intel/idpf/idpf_ethdev.c
-index 5a8c783013..f3115d2369 100644
---- a/drivers/net/intel/idpf/idpf_ethdev.c
-+++ b/drivers/net/intel/idpf/idpf_ethdev.c
-@@ -650,12 +650,6 @@ idpf_dev_configure(struct rte_eth_dev *dev)
- 		return -ENOTSUP;
- 	}
- 
--	if (conf->txmode.mq_mode != RTE_ETH_MQ_TX_NONE) {
--		PMD_INIT_LOG(ERR, "Multi-queue TX mode %d is not supported",
--			     conf->txmode.mq_mode);
--		return -ENOTSUP;
--	}
--
- 	if (conf->lpbk_mode != 0) {
- 		PMD_INIT_LOG(ERR, "Loopback operation mode %d is not supported",
- 			     conf->lpbk_mode);
-diff --git a/drivers/net/mvneta/mvneta_ethdev.c b/drivers/net/mvneta/mvneta_ethdev.c
-index eef9758224..975d3da81e 100644
---- a/drivers/net/mvneta/mvneta_ethdev.c
-+++ b/drivers/net/mvneta/mvneta_ethdev.c
-@@ -120,13 +120,6 @@ mvneta_dev_configure(struct rte_eth_dev *dev)
- 	struct mvneta_priv *priv = dev->data->dev_private;
- 	struct neta_ppio_params *ppio_params;
- 
--	if (dev->data->dev_conf.rxmode.mq_mode != RTE_ETH_MQ_RX_NONE) {
--		MVNETA_LOG(INFO, "Unsupported RSS and rx multi queue mode %d",
--			dev->data->dev_conf.rxmode.mq_mode);
--		if (dev->data->nb_rx_queues > 1)
--			return -EINVAL;
--	}
--
- 	if (dev->data->dev_conf.txmode.offloads & RTE_ETH_TX_OFFLOAD_MULTI_SEGS)
- 		priv->multiseg = 1;
- 
-diff --git a/drivers/net/mvpp2/mrvl_ethdev.c b/drivers/net/mvpp2/mrvl_ethdev.c
-index 2df3a77e7f..9be3e5a92d 100644
---- a/drivers/net/mvpp2/mrvl_ethdev.c
-+++ b/drivers/net/mvpp2/mrvl_ethdev.c
-@@ -483,13 +483,6 @@ mrvl_dev_configure(struct rte_eth_dev *dev)
- 		return -EINVAL;
- 	}
- 
--	if (dev->data->dev_conf.rxmode.mq_mode != RTE_ETH_MQ_RX_NONE &&
--	    dev->data->dev_conf.rxmode.mq_mode != RTE_ETH_MQ_RX_RSS) {
--		MRVL_LOG(INFO, "Unsupported rx multi queue mode %d",
--			dev->data->dev_conf.rxmode.mq_mode);
--		return -EINVAL;
--	}
--
- 	if (dev->data->dev_conf.rxmode.mtu > priv->max_mtu) {
- 		MRVL_LOG(ERR, "MTU %u is larger than max_mtu %u",
- 			 dev->data->dev_conf.rxmode.mtu,
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index e41732ccd3..d28eea082f 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -14,7 +14,6 @@ static int nbl_dev_port_configure(struct nbl_adapter *adapter)
- int nbl_dev_configure(struct rte_eth_dev *eth_dev)
- {
- 	struct rte_eth_dev_data *dev_data = eth_dev->data;
--	enum rte_eth_rx_mq_mode rx_mq_mode = eth_dev->data->dev_conf.rxmode.mq_mode;
- 	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
- 	int ret;
- 
-@@ -23,11 +22,6 @@ int nbl_dev_configure(struct rte_eth_dev *eth_dev)
- 
- 	NBL_LOG(DEBUG, "Begin to configure the device, state: %d", adapter->state);
- 
--	if (rx_mq_mode != RTE_ETH_MQ_RX_NONE && rx_mq_mode != RTE_ETH_MQ_RX_RSS) {
--		NBL_LOG(ERR, "Rx mq mode %d is not supported", rx_mq_mode);
--		return -ENOTSUP;
--	}
--
- 	dev_data->dev_conf.intr_conf.lsc = 0;
- 
- 	switch (adapter->state) {
-diff --git a/drivers/net/nfp/nfp_net_common.c b/drivers/net/nfp/nfp_net_common.c
-index f9957086d2..97841c00b5 100644
---- a/drivers/net/nfp/nfp_net_common.c
-+++ b/drivers/net/nfp/nfp_net_common.c
-@@ -357,22 +357,14 @@ nfp_net_configure(struct rte_eth_dev *dev)
- 	struct nfp_net_hw *hw;
- 	struct rte_eth_conf *dev_conf;
- 	struct rte_eth_rxmode *rxmode;
--	struct rte_eth_txmode *txmode;
- 
- 	hw = nfp_net_get_hw(dev);
- 	dev_conf = &dev->data->dev_conf;
- 	rxmode = &dev_conf->rxmode;
--	txmode = &dev_conf->txmode;
- 
- 	if ((rxmode->mq_mode & RTE_ETH_MQ_RX_RSS_FLAG) != 0)
- 		rxmode->offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
- 
--	/* Checking TX mode */
--	if (txmode->mq_mode != RTE_ETH_MQ_TX_NONE) {
--		PMD_DRV_LOG(ERR, "TX mq_mode DCB and VMDq not supported.");
--		return -EINVAL;
--	}
--
- 	/* Checking MTU set */
- 	if (rxmode->mtu > hw->max_mtu + NFP_ETH_OVERHEAD) {
- 		PMD_DRV_LOG(ERR, "MTU (%u) larger than the maximum possible frame size (%u).",
-diff --git a/drivers/net/octeontx/octeontx_ethdev.c b/drivers/net/octeontx/octeontx_ethdev.c
-index e0df23049c..bde4c2c615 100644
---- a/drivers/net/octeontx/octeontx_ethdev.c
-+++ b/drivers/net/octeontx/octeontx_ethdev.c
-@@ -494,16 +494,6 @@ octeontx_dev_configure(struct rte_eth_dev *dev)
- 		return -EINVAL;
- 	}
- 
--	if (txmode->mq_mode) {
--		octeontx_log_err("tx mq_mode DCB or VMDq not supported");
--		return -EINVAL;
--	}
--
--	if (rxmode->mq_mode != RTE_ETH_MQ_RX_NONE) {
--		octeontx_log_err("unsupported rx qmode %d", rxmode->mq_mode);
--		return -EINVAL;
--	}
--
- 	if (!(txmode->offloads & RTE_ETH_TX_OFFLOAD_MT_LOCKFREE)) {
- 		PMD_INIT_LOG(NOTICE, "cant disable lockfree tx");
- 		txmode->offloads |= RTE_ETH_TX_OFFLOAD_MT_LOCKFREE;
-diff --git a/drivers/net/qede/qede_ethdev.c b/drivers/net/qede/qede_ethdev.c
-index c41177b86a..93fc75ad0a 100644
---- a/drivers/net/qede/qede_ethdev.c
-+++ b/drivers/net/qede/qede_ethdev.c
-@@ -1289,11 +1289,6 @@ static int qede_dev_configure(struct rte_eth_dev *eth_dev)
- 		DP_NOTICE(edev, false,
- 			  "Invalid devargs supplied, requested change will not take effect\n");
- 
--	if (!(rxmode->mq_mode == RTE_ETH_MQ_RX_NONE ||
--	      rxmode->mq_mode == RTE_ETH_MQ_RX_RSS)) {
--		DP_ERR(edev, "Unsupported multi-queue mode\n");
--		return -ENOTSUP;
--	}
- 	/* Flow director mode check */
- 	if (qede_check_fdir_support(eth_dev))
- 		return -ENOTSUP;
-diff --git a/drivers/net/sfc/sfc_repr.c b/drivers/net/sfc/sfc_repr.c
-index 2be17d3c8f..73d7d9bbc6 100644
---- a/drivers/net/sfc/sfc_repr.c
-+++ b/drivers/net/sfc/sfc_repr.c
-@@ -391,13 +391,11 @@ sfc_repr_check_conf(struct sfc_repr *sr, uint16_t nb_rx_queues,
- 		ret = -EINVAL;
- 	}
- 
--	switch (conf->rxmode.mq_mode) {
--	case RTE_ETH_MQ_RX_RSS:
-+	if (conf->rxmode.mq_mode == RTE_ETH_MQ_RX_RSS) {
- 		if (nb_rx_queues != 1) {
- 			sfcr_err(sr, "Rx RSS is not supported with %u queues",
- 				 nb_rx_queues);
- 			ret = -EINVAL;
--			break;
- 		}
- 
- 		rss_conf = &conf->rx_adv_conf.rss_conf;
-@@ -406,18 +404,6 @@ sfc_repr_check_conf(struct sfc_repr *sr, uint16_t nb_rx_queues,
- 			sfcr_err(sr, "Rx RSS configuration is not supported");
- 			ret = -EINVAL;
- 		}
--		break;
--	case RTE_ETH_MQ_RX_NONE:
--		break;
--	default:
--		sfcr_err(sr, "Rx mode MQ modes other than RSS not supported");
--		ret = -EINVAL;
--		break;
--	}
--
--	if (conf->txmode.mq_mode != RTE_ETH_MQ_TX_NONE) {
--		sfcr_err(sr, "Tx mode MQ modes not supported");
--		ret = -EINVAL;
- 	}
- 
- 	if (conf->lpbk_mode != 0) {
-diff --git a/drivers/net/sfc/sfc_rx.c b/drivers/net/sfc/sfc_rx.c
-index aa59931f06..789507f78e 100644
---- a/drivers/net/sfc/sfc_rx.c
-+++ b/drivers/net/sfc/sfc_rx.c
-@@ -1670,18 +1670,6 @@ sfc_rx_check_mode(struct sfc_adapter *sa, struct rte_eth_rxmode *rxmode)
- {
- 	uint64_t offloads_supported = sfc_rx_get_dev_offload_caps(sa) |
- 				      sfc_rx_get_queue_offload_caps(sa);
--	int rc = 0;
--
--	switch (rxmode->mq_mode) {
--	case RTE_ETH_MQ_RX_NONE:
--	case RTE_ETH_MQ_RX_RSS:
--		/* No special checks are required */
--		break;
--	default:
--		sfc_err(sa, "Rx multi-queue mode %u not supported",
--			rxmode->mq_mode);
--		rc = EINVAL;
--	}
- 
- 	/*
- 	 * Requested offloads are validated against supported by ethdev,
-@@ -1700,7 +1688,7 @@ sfc_rx_check_mode(struct sfc_adapter *sa, struct rte_eth_rxmode *rxmode)
- 		rxmode->offloads |= RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM;
- 	}
- 
--	return rc;
-+	return 0;
- }
- 
- /**
-diff --git a/drivers/net/sfc/sfc_tx.c b/drivers/net/sfc/sfc_tx.c
-index fac56cb27c..a860265c6a 100644
---- a/drivers/net/sfc/sfc_tx.c
-+++ b/drivers/net/sfc/sfc_tx.c
-@@ -314,15 +314,6 @@ sfc_tx_check_mode(struct sfc_adapter *sa, const struct rte_eth_txmode *txmode)
- 	uint64_t dev_tx_offload_cap = sfc_tx_get_dev_offload_caps(sa);
- 	int rc = 0;
- 
--	switch (txmode->mq_mode) {
--	case RTE_ETH_MQ_TX_NONE:
--		break;
--	default:
--		sfc_err(sa, "Tx multi-queue mode %u not supported",
--			txmode->mq_mode);
--		rc = EINVAL;
--	}
--
- 	if ((dev_tx_offload_cap & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) != 0 &&
- 	    (txmode->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) == 0) {
- 		sfc_err(sa, "There is no FAST_FREE flag in the attempted Tx mode configuration");
-diff --git a/drivers/net/thunderx/nicvf_ethdev.c b/drivers/net/thunderx/nicvf_ethdev.c
-index 30d03f4db9..0f7b754e8a 100644
---- a/drivers/net/thunderx/nicvf_ethdev.c
-+++ b/drivers/net/thunderx/nicvf_ethdev.c
-@@ -1990,7 +1990,6 @@ nicvf_dev_configure(struct rte_eth_dev *dev)
- 	struct rte_eth_dev_data *data = dev->data;
- 	struct rte_eth_conf *conf = &data->dev_conf;
- 	struct rte_eth_rxmode *rxmode = &conf->rxmode;
--	struct rte_eth_txmode *txmode = &conf->txmode;
- 	struct nicvf *nic = nicvf_pmd_priv(dev);
- 	uint8_t cqcount;
- 
-@@ -2004,17 +2003,6 @@ nicvf_dev_configure(struct rte_eth_dev *dev)
- 		return -EINVAL;
- 	}
- 
--	if (txmode->mq_mode) {
--		PMD_INIT_LOG(INFO, "Tx mq_mode DCB or VMDq not supported");
--		return -EINVAL;
--	}
--
--	if (rxmode->mq_mode != RTE_ETH_MQ_RX_NONE &&
--		rxmode->mq_mode != RTE_ETH_MQ_RX_RSS) {
--		PMD_INIT_LOG(INFO, "Unsupported rx qmode %d", rxmode->mq_mode);
--		return -EINVAL;
--	}
--
- 	if (conf->dcb_capability_en) {
- 		PMD_INIT_LOG(INFO, "DCB enable not supported");
- 		return -EINVAL;
-diff --git a/drivers/net/virtio/virtio_ethdev.c b/drivers/net/virtio/virtio_ethdev.c
-index a6fe4f3023..e6ad2de4ba 100644
---- a/drivers/net/virtio/virtio_ethdev.c
-+++ b/drivers/net/virtio/virtio_ethdev.c
-@@ -2241,20 +2241,6 @@ virtio_dev_configure(struct rte_eth_dev *dev)
- 	PMD_INIT_LOG(DEBUG, "configure");
- 	req_features = VIRTIO_PMD_DEFAULT_GUEST_FEATURES;
- 
--	if (rxmode->mq_mode != RTE_ETH_MQ_RX_NONE && rxmode->mq_mode != RTE_ETH_MQ_RX_RSS) {
--		PMD_DRV_LOG(ERR,
--			"Unsupported Rx multi queue mode %d",
--			rxmode->mq_mode);
--		return -EINVAL;
--	}
--
--	if (txmode->mq_mode != RTE_ETH_MQ_TX_NONE) {
--		PMD_DRV_LOG(ERR,
--			"Unsupported Tx multi queue mode %d",
--			txmode->mq_mode);
--		return -EINVAL;
--	}
--
- 	if (dev->data->dev_conf.intr_conf.rxq) {
- 		ret = virtio_init_device(dev, hw->req_guest_features);
- 		if (ret < 0)
-diff --git a/drivers/net/zxdh/zxdh_ethdev.c b/drivers/net/zxdh/zxdh_ethdev.c
-index 7c2f894642..f3efc927b2 100644
---- a/drivers/net/zxdh/zxdh_ethdev.c
-+++ b/drivers/net/zxdh/zxdh_ethdev.c
-@@ -1038,25 +1038,6 @@ zxdh_dev_configure(struct rte_eth_dev *dev)
- 		return -EINVAL;
- 	}
- 
--	if (rxmode->mq_mode != RTE_ETH_MQ_RX_RSS && rxmode->mq_mode != RTE_ETH_MQ_RX_NONE) {
--		PMD_DRV_LOG(ERR, "Unsupported Rx multi queue mode %d", rxmode->mq_mode);
--		return -EINVAL;
--	}
--
--	if (txmode->mq_mode != RTE_ETH_MQ_TX_NONE) {
--		PMD_DRV_LOG(ERR, "Unsupported Tx multi queue mode %d", txmode->mq_mode);
--		return -EINVAL;
--	}
--	if (rxmode->mq_mode != RTE_ETH_MQ_RX_RSS && rxmode->mq_mode != RTE_ETH_MQ_RX_NONE) {
--		PMD_DRV_LOG(ERR, "Unsupported Rx multi queue mode %d", rxmode->mq_mode);
--		return -EINVAL;
--	}
--
--	if (txmode->mq_mode != RTE_ETH_MQ_TX_NONE) {
--		PMD_DRV_LOG(ERR, "Unsupported Tx multi queue mode %d", txmode->mq_mode);
--		return -EINVAL;
--	}
--
- 	ret = zxdh_features_update(hw, rxmode, txmode);
- 	if (ret < 0)
- 		return ret;
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 44b20697ae..5b99562f37 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -1526,6 +1526,23 @@ rte_eth_dev_configure(uint16_t port_id, uint16_t nb_rx_q, uint16_t nb_tx_q,
- 		goto rollback;
- 	}
- 
-+#define RX_MQ_MODE_KNOWN_FLAGS \
-+	(RTE_ETH_MQ_RX_RSS_FLAG | RTE_ETH_MQ_RX_DCB_FLAG | RTE_ETH_MQ_RX_VMDQ_FLAG)
-+
-+	if ((dev_conf->rxmode.mq_mode & ~RX_MQ_MODE_KNOWN_FLAGS) != 0) {
-+		RTE_ETHDEV_LOG_LINE(ERR, "Ethdev port_id=%u invalid rx mq_mode 0x%x",
-+			port_id, dev_conf->rxmode.mq_mode);
-+		ret = -EINVAL;
-+		goto rollback;
-+	}
-+
-+	if (dev_conf->txmode.mq_mode > RTE_ETH_MQ_TX_VMDQ_ONLY) {
-+		RTE_ETHDEV_LOG_LINE(ERR, "Ethdev port_id=%u invalid tx mq_mode %u",
-+			port_id, dev_conf->txmode.mq_mode);
-+		ret = -EINVAL;
-+		goto rollback;
-+	}
-+
- 	if (dev_info.flow_type_rss_offloads == 0 &&
- 			(dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG) != 0) {
- 		RTE_ETHDEV_LOG_LINE(ERR, "Ethdev port_id=%u does not support RSS rx mode",
 -- 
-2.54.0
+David Marchand
 
