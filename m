@@ -2,98 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B86F6CCF2D3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 11:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA5CCCF2E3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 11:47:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8285740663;
-	Mon, 19 Oct 2026 13:32:20 +0200 (CEST)
-Received: from fout-a4-smtp.messagingengine.com
- (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTP id DFF2E40664
- for <dev@dpdk.org>; Mon, 19 Oct 2026 13:32:18 +0200 (CEST)
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
- by mailfout.phl.internal (Postfix) with ESMTP id 6D6F6EC00FA
- for <dev@dpdk.org>; Mon, 19 Oct 2026 07:32:18 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-12.internal (MEProxy); Mon, 19 Oct 2026 07:32:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1792409538;
- x=1792495938; bh=mvZMZvXyBDa7HwxgIHNZjgCVVEY1ndi0xMjtup5pBfo=; b=
- VEVaLqfqr61R4/aDiu6eNFQpSzE3iBJjQ+h8h/jbvEe8lmDUk55PBYyeIEONI5OZ
- wiUGhEcD3jQozSMtZgdMVaBEJ8kyN4c0h8s8KE3EUTvIii0iWRQS52Erglfh5+k6
- LdQKEsoHRU24Wc66lfmjFlBoN4NBPUwSKLpykTPkpYvuJFhKlcCzbnWLw2M1bohW
- HHQ2N6Rv4t4OxrMkEiki1hE8aET7hVACpJxRo7HXz2eXKtEqEBQAr/uqb0COqBwV
- Ez3oj0EXqVOG32TIxXU4is5yLTRUj6/5vnm6O+w7oRGOW0I06dtKF8DE92HVMoH3
- cMuVv5/BN+43ormZ3uArCg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792409538; x=
- 1792495938; bh=mvZMZvXyBDa7HwxgIHNZjgCVVEY1ndi0xMjtup5pBfo=; b=e
- 28DgKwSa7hpJHE50VIbt3yksvKT0COZzSrBUmeTdbXinV9BbyrMSJnCmxr0wH9BG
- A1rUmFezuw54KHwL1Ng/aG6a/Yj5byJ7tfc0vpfUpmcghiLKRVv5DKpvGHCFNGNL
- x82S2KZfq8PTMrwt4vYLtpPtp5GMihvIsuo9faTgfpduYLwNOcHLkaN3amDbTTrG
- 1ZhD25nPelFEqAgrCN+RbOleKaTH6nO2yHxX7hmT9eAXW+vTsik0eqVITzcsmmv5
- cSazgJ9FSIgTgC/q18dUO++om+I5oPc2LxMmoJMMdeEWLNcUdyEg9UMbweVh8TQX
- 8qNM3FIy7iDsYBnnxknWQ==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1792409538; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:hiA1PiT4mYXELQkDGh9KLw8r5rGMJCt9HxNFnP7oXQWoos/
- yzX064LpqmqKj2ZYzO8LMqvfZZmwSnLeCs09KcAj/Eryh7OHPltdxT7+ZdPFnBed
- o/JE/X0cLV8/xuBRY3+xO6krsUXSFpQ8WqG8nI3sh7AJ/sMxZDi4Am7s2ynt8YLq
- Pe5r/0aE0P2TP+jm5Sf0wX9iajSPRWl1tAzkmNYoofN7LCMeQvBkBkOl+97G3Bsq
- 5bmi/0UdFS36LF90goIIja2ehPzfms718bUUU8pcqPGInJW6KG961NxKQbq+kssH
- 59Dppum6H/e7/10h7mMr6DZqcLtSBOROzsRIo5A==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:gdNr1wkLYnjHrhIMUBdSXSo2kpd0+bFzMIFN26whsbQ=:gRHzvLKFWVx/ZZWKZFkmeyKhHei+YMdnmHJhQW1m4is=;
-X-ME-Sender: <xms:wf_VakL45H0gEBVg9XT6_liwOycQj-o0H-1tNeftbnEXH_5mfSu7_Q>
- <xme:wf_VajP7yfgk_qQPmkH6zduSEhIE9nF-XN2nikJ6nlAKPN8z0Vnl94187QCEwGDZP
- U0xL8QthXlxkEGSbkhT9h4FEAtngvUTJJ52pcgjNSW04DnOUWImri8>
-X-ME-Received: <xmr:wf_Vaq6EQMaubQ3FklvbV3MhA9aiU0ly-VsuUMjNgeDvcLcKDal-8BQRnM4X4KpUuLEcLQkWdWjg1zbJavyBjWs>
-X-ME-Proxy-Cause: dmFkZTGoj6Gk9iK7xD4dJy//6sabvI1wyG4rpJIN3wt4nRP71G/N4BeWlrbFImo2rftUGW
- zs0ba++W0CDoywsZDvUaHmBydgw2sBxTjRnwyFSKl0AnbCVmmuOa9qSdUjAjo6MOgtYnkP
- +MmUniZ9reoEUJ6uxYQFubr43nkVG7Lku4kJ/cZ8GdLVXcJduZqsIOgQqT+HoaGdpnu7TW
- 7BhqO5PTO8qvAwtT8MaHKbczp3AJQmKmPZBIZjsZv9yBYvVKaX9fWhK8F/g+/pf6EuYXNS
- /wUfmEtJ5eao3nWVAX0YPxXmGvQ+IeX3d3EAlkVgCyAtr4HP6xkVJxPmXXWmfZ6gbAQCPD
- LLZHrxyJVIQ5ydpUJQc0sqKVHuxKoTFo7hjGkdoutfHUFp8RTej8/meqvWgfmrRA5aYyE8
- fn+ATTABXTOHSgMRv5OdvnmQ0ziTGAI87P/VSuIZtx+Evgfopoux3VuHsbkLAL2XpXTB5H
- 51r9V0SSk8kvuLeVnedJVx33owV+m5d3vsn2BXJ9bnZDlPduGHMJM5dRnMZgc5FOJRe8JS
- uDX7rraBLB0sZG50XCoomRnGhOpofB3LfH1vG86gA6NAS4ur6jGvRlrIbMZJS0vXKAvLyj
- 3sYIbwNh2dw4JAhe4u4RGTk2QK9oUQDYeU4/obszc+R8fvieQYhJYJv6R9YA
-X-ME-Proxy: <xmx:wf_Vat7v_QlyG2A71UC-oGbfL8YjkmXKAxBLP4anHjymUR1n8ulU6w>
- <xmx:wf_VagEkhzOudFhYH0xpduqXy7U-4Ew6JBETgq9uWVWYLr96eOqVQA>
- <xmx:wf_ValU4h0r9QKJA4TUz0r-M1OGeWNyS5HZVirjtj2El7jFyifQE7A>
- <xmx:wf_VasWqTl-rwVFMvGv6hf8Xm5jMxrXxjfeWSJtByb5pZsyzgdHa7w>
- <xmx:wv_VakVP5X4IMs6JGt7VHZUH79pUuMU82-1cjXfalkYW9q9aheKw825p>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 19 Oct 2026 07:32:16 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dpdklab@iol.unh.edu, kishore.padmanabha@broadcom.com,
- ajit.khaparde@broadcom.com, Alexander Goodkind <alex@goodkind.io>
-Cc: dev@dpdk.org, test-report@dpdk.org, stable@dpdk.org, tarick@bedeir.com
-Subject: Re: |WARNING| [v2] net/bnxt: fix aliasing in firmware command writes
-Date: Mon, 19 Oct 2026 13:32:15 +0200
-Message-ID: <1KJFoaOTQOSsFVpUvuxtUw@monjalon.net>
-In-Reply-To: <20261018030249.80449-1-alex@goodkind.io>
-References: <CAAbO5hbOnKdeD78Q6BHLSA-dD9Vzo004Myr_74_yK4as=bb6UA@mail.gmail.com>
- <20261018024910.5D1706051830@postal.iol.unh.edu>
- <20261018030249.80449-1-alex@goodkind.io>
+	by mails.dpdk.org (Postfix) with ESMTP id AC64B40664;
+	Mon, 19 Oct 2026 13:47:03 +0200 (CEST)
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
+ by mails.dpdk.org (Postfix) with ESMTP id BA4534026C
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 19:45:53 +0200 (CEST)
+Received: by mail-dl1-f49.google.com with SMTP id
+ a92af1059eb24-15354aa70e8so387416c88.1
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 10:45:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1792172752; x=1792777552; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=cmbKGLKN6otxMkLryn9eJrJBi6qNuvjJD+k1JDlVEa4=;
+ b=PQCTnwP0PHBjxttYAj8ZuId9NMsycblnyNGfFy9rkAniEv1/Uohz3S7NoZtvNn0fd6
+ ocZXsTX+cWTK+PrahFA1AIZdbidA3CeO+9FqxsRg0uTdmpM2qIzGcL7qGseui/a6lPsZ
+ ttvFd1eZKD80SrTk9dsLzL1/OLq4Ii4IkVHFz7tkjVPZmhjwCSo4sS6tT0ywPr/nJ3fm
+ uf7a7RygEN/FHhUOfCWur22b8Mm0UgwXMn4q2Z0fok8+b6yqtQzVevRJxvXI5XEEhlHP
+ PhfTWUDVEfsCGf5RGSog9nJ9pcKbq5taprTw7r1R3y7Txyzh9BOlfFOJxrXnyNfmd9ms
+ PhQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792172753; x=1792777553;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=cmbKGLKN6otxMkLryn9eJrJBi6qNuvjJD+k1JDlVEa4=;
+ b=Zo/bVYef7O9wgxP3TohIAYlorcW3zE7jqSKAuhTasWrOOPhIq6yGE8fQIcL8oqGXwY
+ J9iXQhtB8AP46i1SSsa8l8oySUSkKlGQoxEIusNDbS5k3+fScX88eeau7uvWzO7/k2d+
+ 7wmzed88Qv21VQmcezve0tY+TlILZ1tx8kwVD63Gs/2zj80x9KZlT0kVf3kQnXKjj0Fg
+ F3dMVEdzD9oYe+7veYtKglPo9gsGBwLxs1SMfyRmgJsjDaNrMd5ERXd+qOi2oKv+/F+5
+ xtq2ZrQZPgLbc+hBmSY9HIZ5RD1Eew/BdeE5FUdGQrtBNakgTB2hF4Uo+sC8qq4AaCX6
+ 6VQw==
+X-Gm-Message-State: AFq9FYJxmdhzJngKSecbeRd7M+euQMvn69owkpSOiN/SSo8IgI7bR43z
+ tKx20gYGTC4gQtyswP6r6rXzn7lAiuOxjf5ZfEEIZjdWqxcq/GwEgq8mx/2dow==
+X-Gm-Gg: AYBFou0hLvdQjMOKt8kjCwqab3OxuiWKTBk4lp5zKvHv6l+wb30VdtKeesewAlkxf1F
+ zO/ZX2YaUBmmO2gLRjOzXQi7UnrlVMwnykXYW5IB1bdD/w5/j+lO2DG0f65tS1r+EhonVIOZEd6
+ ll2CruPACjlbHgwbP8KHOJyF0vh3GFMImq5aUqmQbmaPOgjpi8D4UguvHwOCrqQvQZkau9C5qAk
+ CX0S6y+p1cracJNrMa+jnXMi1kvETTylLG3l7kHoFmQHsUvYyFXP1YR56MRPEIg1GrmYXSeoJAd
+ u5wS72Oh7ohTua+GnSxlBfgUP+ahw2+2QVuBYA16nRqCZcI380qfwrIDUZ2XDKkm99Ez0CfK88f
+ d+kvXT5rAugIHkmJqUkoc+bxKWSS/e71IOop8ZiSg/kEWBLwgLqQcvnUwCcwU8VjmZqhqaJIhOl
+ bLrIBaLiFvfRK6WSTDr4s++u32UqbjH3CcU37SDTan60oCTj7p8CBF+nDQtD90xPa1oTvyZOCQ
+X-Received: by 2002:a05:7022:f50b:b0:17c:a0c5:8c9a with SMTP id
+ a92af1059eb24-18514914deamr739108c88.42.1792172752317; 
+ Fri, 16 Oct 2026 10:45:52 -0700 (PDT)
+Received: from aviuser.. ([192.19.252.250]) by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-18314ef8ed8sm7099936c88.3.2026.10.16.10.45.50
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 16 Oct 2026 10:45:51 -0700 (PDT)
+From: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
+To: dev@dpdk.org
+Cc: Joshua Washington <joshwash@google.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v4 00/10] net/gve: fix DQO Tx queue stalls
+Date: Fri, 16 Oct 2026 17:45:35 +0000
+Message-ID: <cover.1792170902.git.tathagat.dpdk@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailman-Approved-At: Mon, 19 Oct 2026 13:47:02 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -107,15 +76,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-18/10/2026 05:02, Alexander Goodkind:
-> > Missing release notes update
-> 
-> Comparable fixes, including the enic aliasing fix [1] and the checksum
-> memcpy fix [2], did not include release-note entries. I followed that
-> precedent here, but I can add a release-note entry if the maintainers
-> would prefer one.
+This series fixes several ways the gve DQO RDA Tx path can stall or
+post invalid descriptors: completion handling bugs (1-2), a report
+event interval that can starve the ring (3), a stray TSO context
+descriptor when completion tags run out (4), a missing cacheline
+margin (5), invalid packets blocking the burst (6-8), and missing
+device length checks (9-10).
 
-We don't mention fixes in release notes.
+v4:
+- Rebased on main; v3 no longer applied after 4a543ae8c8
+  ("net/gve: clean Tx queue directly in DQO") removed txqs next
+  to the field changed in 3/10. No functional changes.
 
+v3:
+- Split the series into one fix per patch, per review feedback.
+  The code is the same as v2 except where noted below.
+- 1/10, 2/10: v2 1/4, split in two. Kept Joshua's Ack.
+- 3/10: v2 2/4 without the declaration reordering
+  (per Joshua Washington) and without ringing the doorbell on each
+  report event, which is a performance change to be sent separately
+  with numbers (per Stephen Hemminger).
+- 4/10: the completion tag reorder from v2 2/4, as its own patch.
+  Fixes tag now points at the commit that made the tag pop fallible.
+- 5/10: v2 3/4, unchanged. Kept Joshua's Ack.
+- 6/10-10/10: v2 4/4, split:
+  * Keep too_many_descs and add per-reason invalid_mbufs and
+    invalid_pkts counters instead of a generic dropped_pkts
+    (per Joshua Washington), and export them as xstats
+    (per Stephen Hemminger).
+  * Count sent packets after writing descriptors instead of
+    subtracting drops (per Joshua Washington).
+  * Move the length and TSO header checks into gve_tx_validate_pkt(),
+    leaving gve_tx_validate_descs() to descriptor counts, without
+    the declaration moves.
+  * Reword the TSO length limit (per Stephen Hemminger) and shorten
+    the commit messages.
+- Stephen's Reviewed-by on v2 is not carried over because of the
+  rework.
 
+Tathagat Priyadarshi (10):
+  net/gve: fix DQO descriptor cleaning loop bound
+  net/gve: fix DQO completion queue stall on unknown type
+  net/gve: fix DQO Tx report event interval
+  net/gve: fix stray TSO context descriptor on tag exhaustion
+  net/gve: add cacheline overlap margin to DQO Tx ring
+  net/gve: fix Tx stall on invalid packets
+  net/gve: export Tx drop counters in xstats
+  net/gve: reject Tx packets that cannot fit in the ring
+  net/gve: enforce DQO Tx packet length limits
+  net/gve: enforce DQO TSO header and length limits
+
+ drivers/net/gve/base/gve_desc_dqo.h |   3 +
+ drivers/net/gve/gve_ethdev.c        |   3 +
+ drivers/net/gve/gve_ethdev.h        |   4 +-
+ drivers/net/gve/gve_tx_dqo.c        | 113 +++++++++++++++++++++-------
+ 4 files changed, 96 insertions(+), 27 deletions(-)
+
+-- 
+2.43.0
 
