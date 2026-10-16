@@ -2,90 +2,104 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB45CC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 18:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1B1CCF2C3
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 19:59:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4213A40291;
-	Fri, 16 Oct 2026 20:33:19 +0200 (CEST)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com
- [209.85.208.42]) by mails.dpdk.org (Postfix) with ESMTP id 232184026C
- for <dev@dpdk.org>; Fri, 16 Oct 2026 20:33:18 +0200 (CEST)
-Received: by mail-ed1-f42.google.com with SMTP id
- 4fb4d7f45d1cf-6ae14eecc64so194833a12.1
- for <dev@dpdk.org>; Fri, 16 Oct 2026 11:33:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792175598; cv=none;
- d=google.com; s=arc-20260327;
- b=EOlsG7g2Th1UHvwn9jm4NcuBi5Sx0E97jFQXefAtUeCzzmsq4lEa8SkyyUc/bL+XO9
- 7qSW7iuYYXYXGRx5CdFtsVbSm57O8OTK6uBpGMnnRJhd3t1miJSWHpAJrlbV+ATmmwHG
- L1C4VJ0uLaduzawzhW24vBytP981554Ku8NcXm11EYbX9J+CuXUUNV20YAiVnFeNEohc
- gRYaQusmlKIJ6SZ9dsyQQMY77+/S38DsJ6HxUUVLf65sMhOkhZ+Md83+6840GezyVv7a
- ErcKsI+gIg9Kn/2qoA210d/UMAQbOLhJ/sffmDyR+gYpLH5su5vbKBsazsfkYHWWAL4K
- CJkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=YnvLIeF42QatfihAxQ7bf54W7PLxRWg+JahYLphs/4o=;
- fh=vORWBWpPiOMEAwQ4TXFX3ahBFQQ38jIhY0mpNDlQfUw=;
- b=UVJgqpivnMHKwl03n4N7rjyYn6qrSOAq6j7zBoWVgOe7V7dzfS1C3R5pVQyTkplJKs
- ScbbvptV0Zt+M5svph3mZqd522+kHnKRt4mqmtNhGHdF0+BfKWPkD1rBQE1eLJq3lACx
- H125I72FRUa/5x3SNyVCbEi76BB9RVndHWTUlegRjX5XVSdgc1AW8mK8fVi5WW8xgyZS
- jQl2yzmObD0a44cQe0zRhOGluHcwLl+4rtTzhu7hwGf2nRzCzcEYvvn4sDoaM9wVSFO+
- Gd5+pPksmGA6jYpUSryJ2szohF4s0TDT0kpYMdaYQDUMXmnyyXkduHIS+WnSgcFDPvn7
- IiPg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1792175598; x=1792780398; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=YnvLIeF42QatfihAxQ7bf54W7PLxRWg+JahYLphs/4o=;
- b=UkG4Bl+8MoUcHDHzJ6O4zKvuw6G85NJgrvbfBmHELPMtTx+Yt5ifpnwEjw4swE3ViP
- Wq49ugP3wYvqs2XkFURzfALr3pRj49V/DNMBBSJqQlmlNcMvBQ5bBjh/dhDeLM2lNAlw
- X13TfxHOnWhZlnnay7P+G6wSonrJT0sgH59PkRm3dLDK8gZdHrAwtTg6ThsYk7Dw5LoD
- HnHR5QxDpCqozvrHlxA+CkDjQiG2WoljH2zmBZdX38Tz2j//uQq8gqdqkx5KVXoFs/AE
- /VkCtngEjpZnZio9UK+avSBO3qovEnENV2m6A0q04Xi/3Jj0XbBKVSNDicJu3nAeVc+u
- zjlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792175598; x=1792780398;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=YnvLIeF42QatfihAxQ7bf54W7PLxRWg+JahYLphs/4o=;
- b=Rjq82FrDVrEeu6DmZB5/Mv18000P8NgttwXChPX+0ERsVMe7e9kTsv5l3V7kOELeSi
- nGcq+Le7f2M2uAy4bQF2u3krkAtkxKkJyfuALFJUXcprHUmYituXcYQMDqpdY4v4xbTV
- qIO0LIx77D5gjm6WGtHKzE+K1onA55Zor1DV19LvMeC0O/CbWkVEvjwMgoBdVrF2V/RX
- NeLCKwQ0h1hVaaXVPB2duS1deFbCaxGFFRLJzxzTYdlCSnsvjGWGayWSbBSTeyzvsjJd
- LpyHmuc1o1T0dyKrTdvFavoTBiIGaStoglPkG7FqCxixOZCqZlps5uMennYLTfr170dk
- zu6g==
-X-Gm-Message-State: AFq9FYJao+6JAjqQxFoV2eZwn+GClGcEpcXi292avfTAiF+6+uKKuHhu
- 6xgdty/9nYaiT9Narm8C0vNC7nFTfyxu+PwKMfKm7aw+NIiAybdGIkfxqoEC1aH3GOyJfoEDM9A
- G36AsxoSjbYtTtA7EUsy1gaOGiDEbsIZpGwHH0PwN
-X-Gm-Gg: AYBFou0FSiv+xCQVx+hAdLkPLsXG1bTcUfIqKzq8tBlbgBrH6PdXTD5+no4e8kAV9jQ
- V8e0oeEu+yT8rC+a7HWRzXXXeUwkuOjSRH4WPndQ9PoZhm5nFWivvG7vUqeK/iPcWu/PRHgfYUu
- hkOJGxZlmZ85qzOHrIUORrBb9znKpt+jUeqOW6ISgvDxvwm8wHF265lCz7y0eig20oSXK/M6mPB
- hjaXwzHLt4JEPswwI5hrghZf/54COH7SXK6dbWXeTiuvWwU4Bw+2wUXEbGGJbDpvOPxfVsxq7Fq
- hq8U11jzxVr6wVZ5suol6fe1fOjLF1mLZXPU/eolVXbJs7fD4lo2R3f8
-X-Received: by 2002:a17:907:3fa0:b0:c3f:2b28:713d with SMTP id
- a640c23a62f3a-c419dc367ddmr51664766b.19.1792175597072; Fri, 16 Oct 2026
- 11:33:17 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 63EC940291;
+	Fri, 16 Oct 2026 21:59:04 +0200 (CEST)
+Received: from GVXPR05CU001.outbound.protection.outlook.com
+ (mail-swedencentralazon11013048.outbound.protection.outlook.com
+ [52.101.83.48]) by mails.dpdk.org (Postfix) with ESMTP id AE5D84026C;
+ Fri, 16 Oct 2026 21:59:02 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nFxKnlZWaK+zmmHwI5iJ+TZDxwEEm6/i5cfQyyYRksvz3pi09mJXfKxS7udwFWjM3FbElRwm55Lb6Pya5UCZBazjJYQs+1uREIQcJdtPvplxtVAkFqnogEUBM1cGeVljeOO7hYZBqqomnzHU+8fLJT2UvA3AAezlUgY6tdWqEZrXkEihDyLBODpCpEVObg/ScOKYgV+srMhvhwdb9Ovd8KpvrRFWyf2PD30kR30FMU6FeNTx6ML4gzo3EvASbZjcdndiSTqegp7IpINeCykKC2auWGS/Db7RAdbg7QJMgLHbD9GS6/2mjLu/zV+pMWCaMVN2cgwx34XjvdYHi6x4FA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+ZZbbMTOY1ddRXaWcrHqCQ5viZRndlRvMt/Yc2mLE9k=;
+ b=kQtv+tXdI2f0Sb2uT9mHHMyH/T5MDOplZjRElmipuBVWBo7lOgQTSjfB5buYg4c69DfCx4WneP5eXTB2W7fxTUANlEOShE49Qh+Eu7YeR4svrnofPtBiqYlmMpOGQ/YQHBhQQ9RPr5216/qJ1x12nRJkCSCKoWdkEGI1tKIpNQ3VvWji6qkZ0mI9isEwG0Pmy2hfvibuZLIniSxKCwOxpFP5Ww4Nq8OrJbYHAWULOCNEbiK8rc6KzzC6z7V+mxjojp6ZvcwxPfqwaH7GL+jv4G9qxHOGy9HkuhAI4pwlftw6v7rRDSxJgQoZlpuNKTIvfdLVvpdeIHx/+KV0deJcEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 192.176.1.74) smtp.rcpttodomain=cisco.com smtp.mailfrom=ericsson.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+ZZbbMTOY1ddRXaWcrHqCQ5viZRndlRvMt/Yc2mLE9k=;
+ b=M8pNX4hj0Yl8SSf3pxatgSm1CFxcVkPS+2BXK/tiV7luSfhdqLC5JitiknOHSokVko+NCAE/QHCZVWSg0ociZG+ICXTYJQujbbkQPHrJnAQLYGxMwb5GElctHlWg6jYLW4p3edaNrOgDV7Prny91QdRbyTAxoLfVMcjOGpY3pHvy6Q0YrjWx0XUCrc7ZdFhNGbQweH6hHFtJlcS5HoPTP6G8MHNJkIdtVDqqOtn8Wok7edt05+99bfMwNVzs8wgtNABs0RtZM2xaN8jszhy6cKzAzfSfalmYV+SFZ23Sp7C2q7gDa4i5EGe5s9kVI33aH1FXR7DPx/JrsyWEmICGWg==
+Received: from PA7P264CA0092.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:348::17)
+ by AM7PR07MB6771.eurprd07.prod.outlook.com (2603:10a6:20b:1bd::21)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.15; Fri, 16 Oct
+ 2026 19:59:00 +0000
+Received: from ZR1PEPF0000E6B3.eurprd05.prod.outlook.com
+ (2603:10a6:102:348:cafe::74) by PA7P264CA0092.outlook.office365.com
+ (2603:10a6:102:348::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.522.4 via Frontend Transport; Fri, 16
+ Oct 2026 19:58:59 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 192.176.1.74)
+ smtp.mailfrom=ericsson.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ericsson.com;
+Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
+ 192.176.1.74 as permitted sender)
+ receiver=protection.outlook.com; 
+ client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
+Received: from oa.msg.ericsson.com (192.176.1.74) by
+ ZR1PEPF0000E6B3.mail.protection.outlook.com (10.167.241.90) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.522.6 via Frontend Transport; Fri, 16 Oct 2026 19:58:59 +0000
+Received: from seliius19819.seli.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.64) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Fri, 16 Oct 2026 21:58:59 +0200
+Received: from seliiuvd10563.seli.gic.ericsson.se
+ (seliiuvd10563.seli.gic.ericsson.se [10.120.141.220])
+ by seliius19819.seli.gic.ericsson.se (Postfix) with ESMTP id E4B274020B73;
+ Fri, 16 Oct 2026 21:58:57 +0200 (CEST)
+Received: by seliiuvd10563.seli.gic.ericsson.se (Postfix, from userid 93258)
+ id B16966285898; Fri, 16 Oct 2026 21:58:57 +0200 (CEST)
+From: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+To: <dev@dpdk.org>
+CC: Stephen Hemminger <stephen@networkplumber.org>, Jakub Grajciar
+ <jgrajcia@cisco.com>, <stable@dpdk.org>, Sriram Yagnaraman
+ <sriram.yagnaraman@ericsson.com>
+Subject: [PATCH v4 1/9] net/memif: guard against empty Tx burst
+Date: Fri, 16 Oct 2026 21:58:49 +0200
+Message-ID: <20261016195857.3258796-2-sriram.yagnaraman@ericsson.com>
+X-Mailer: git-send-email 2.43.7
+In-Reply-To: <20261016195857.3258796-1-sriram.yagnaraman@ericsson.com>
+References: <20261016195857.3258796-1-sriram.yagnaraman@ericsson.com>
 MIME-Version: 1.0
-References: <cover.1792170902.git.tathagat.dpdk@gmail.com>
- <974e46780a800b596c6e747e0716afc579d58433.1792170902.git.tathagat.dpdk@gmail.com>
-In-Reply-To: <974e46780a800b596c6e747e0716afc579d58433.1792170902.git.tathagat.dpdk@gmail.com>
-From: Joshua Washington <joshwash@google.com>
-Date: Fri, 16 Oct 2026 11:33:05 -0700
-X-Gm-Features: AclHuK8VUYqZaVA81kwkdaK_vvofhyuWE3mZy9MJGsX3xAsvpjKps4jeL6VFk-g
-Message-ID: <CALuQH+XPnK4frF_MU5z7uhp-WKo6iZiaxKYc95qQh+ZAxRVJzg@mail.gmail.com>
-Subject: Re: [PATCH v4 10/10] net/gve: enforce DQO TSO header and length limits
-To: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
-Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>,
- stable@dpdk.org, 
- Rushil Gupta <rushilg@google.com>, Varun Lakkur Ambaji Rao <varun.la@gmail.com>,
- Ankit Garg <nktgrg@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ZR1PEPF0000E6B3:EE_|AM7PR07MB6771:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3139971e-365a-4417-bfc0-08df2bbfeb5c
+X-SMTP-Server: smtp-central.internal.ericsson.com
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|1800799024|23010399003|36860700016|82310400026|56012099006|11063799006|5023799004|261009223027099003|22082099003|10067099003|18002099003;
+X-Microsoft-Antispam-Message-Info: CUgfwT9BAUgPvj9pHLZrnH+qU07PLVhdIOahfZFeyPJayrVbUF7NqX18Xq34u8UgOCJCdC/8yBjMEd0dtpl2GkQdbRPb35E36mtRkB1K1zoNG6vnD6w3yh5oBTSmWnTm1Xn0WRvaCQSVpf4lhf4rz//nrHQrWU+hCuXFyekAMxr8e7G1gukGjsaqcB1ZDQEb72Ha6SiFwzr6P7flHoac3Xtr1r02jYxwSOu1vg9jEgs3Zy0e92elbJMqdnTmGAKS4qTwdWBuHxzuGX9iGds24fFFjVinKpeayhEJV5QFGB4wnuORHGff2rzsfVndTQaFrzkBQb0WcxLUeKzuN5KH6uvuvIQwxyLZKOF1JWAfxrwTC17YTRVrw+9iOwP1e4f7MQTFJ2GkuVhncoBvAQ8j2sIiC80MLrn0CFL8ggHTHOhfM3LLO4Gi3FNKyhak4vSRP/brmgKJFMBVzta1ZnsLGchWZCgvMtKkWOIG1nFpcJ65OyVLE59R1h+kLo48PbxZTCdoIrxTTEa/Nkk2yG0BnOBqJUBnCbKIH2duRyUdoIS0vCZb3tL1+ziaCVoc+aSSR0FSuaQsrRaeJgvRif1tAJPuKdWglIw2Yu2BfPLM26aeeQNsJC2Ywh1K6rUnBL1JUCK+EwKDjNq1NTtuoPWhnZbOtXd9C3ay/B6H5L/Hl1YkG1STONEQz9lFMtfHwHlLHa7PF80cUFe2n+L8ZT6SPw==
+X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
+ CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(23010399003)(36860700016)(82310400026)(56012099006)(11063799006)(5023799004)(261009223027099003)(22082099003)(10067099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: odt18e3sJLbpk84rfPfSfsFZb2GHu42tk38RslLY3CzJ0WLCHZeLiJS40IV0mZbKDb0fUbK9SrC9Bkzkujqg6hMd20cpGo/iX0FKnmkwhaoHiCr7CNusd6Fqwg0uZCdXX/1J3ss6k81rRkFdAJSKXFs1Qcp3QYCeSH+rFEmrAZy20zLA9Qw1ZPyHMmyMqnrDYoGvE7UiqiCiSGPEpx385LxPtypJL3al/G0W+3D5/43V/ItAGEUwrETYUI9sAcq/2tgV0MrS4Vlqxg1GkiIqIFB7pR2JH5iFudjTdy/bI+j/CNP7inzhIXgkVEIIMVJbDQvKbX6NfQpGG7mK9Vnr4hJ2nhKSjzAq80hEAgb0qoEnZ+fQdZoM1lX7OBDn5CYNrTAY7E3rSsCZEJ3ZhqypqRxkB9YVGDBoU4eiYPUnw/gjKehLF0s0zaYmskItF5wT
+X-OriginatorOrg: ericsson.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 19:58:59.6668 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3139971e-365a-4417-bfc0-08df2bbfeb5c
+X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
+ Helo=[oa.msg.ericsson.com]
+X-MS-Exchange-CrossTenant-AuthSource: ZR1PEPF0000E6B3.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR07MB6771
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,80 +113,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Oct 16, 2026 at 10:46=E2=80=AFAM Tathagat Priyadarshi
-<tathagat.dpdk@gmail.com> wrote:
->
-> TSO packets are not checked against the device limits before use.
-> The device requires an MSS of 88 to 9728 bytes and a payload of at
-> most 262143 bytes, as noted in the Linux driver. A packet outside
-> these limits triggers malicious driver detection, which drops it and
-> disables the datapath, stalling all queues.
->
-> The missing checks also break the driver itself: a tso_segsz of 0
-> divides by zero in gve_tx_validate_descs(), headers longer than 255
-> bytes are truncated by the 8-bit header_len field, and headers not
-> contained in the first segment give gve_tx_validate_descs() a
-> negative first segment length.
->
-> Drop TSO packets that violate these limits and count them as
-> invalid_pkts.
->
-> Fixes: 403c671a46b6 ("net/gve: support TSO in DQO RDA")
-> Fixes: be8f0eb81f98 ("net/gve: fix DQO TSO descriptor limit")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
-Acked-by: Joshua Washington <joshwash@google.com>
-> ---
->  drivers/net/gve/base/gve_desc_dqo.h |  1 +
->  drivers/net/gve/gve_tx_dqo.c        | 14 +++++++++++++-
->  2 files changed, 14 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/gve/base/gve_desc_dqo.h b/drivers/net/gve/base/g=
-ve_desc_dqo.h
-> index d50d88765e..53e394f01c 100644
-> --- a/drivers/net/gve/base/gve_desc_dqo.h
-> +++ b/drivers/net/gve/base/gve_desc_dqo.h
-> @@ -14,6 +14,7 @@
->  #define GVE_TX_MIN_TSO_MSS_DQO 88
->  #define GVE_TX_MIN_PKT_SIZE_DQO 17
->  #define GVE_TX_MAX_PKT_SIZE_DQO 9728
-> +#define GVE_TX_MAX_TSO_LEN_DQO ((256 * 1024) - 1)
->
->  /* Basic TX descriptor (DTYPE 0x0C) */
->  struct gve_tx_pkt_desc_dqo {
-> diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
-> index f686a8c110..52fcdb285a 100644
-> --- a/drivers/net/gve/gve_tx_dqo.c
-> +++ b/drivers/net/gve/gve_tx_dqo.c
-> @@ -127,11 +127,23 @@ gve_tx_clean_descs_dqo(struct gve_tx_queue *txq, ui=
-nt16_t nb_descs) {
->  static inline bool
->  gve_tx_validate_pkt(const struct rte_mbuf *tx_pkt, bool is_tso)
->  {
-> +       uint32_t headlen;
-> +
->         if (!is_tso)
->                 return tx_pkt->pkt_len >=3D GVE_TX_MIN_PKT_SIZE_DQO &&
->                        tx_pkt->pkt_len <=3D GVE_TX_MAX_PKT_SIZE_DQO;
->
-> -       return true;
-> +       /* Headers must be present, fit the context descriptor, and be
-> +        * contained in the first segment; the payload must not be empty.
-> +        */
-> +       headlen =3D tx_pkt->l2_len + tx_pkt->l3_len + tx_pkt->l4_len;
-> +       if (tx_pkt->l4_len =3D=3D 0 || headlen > GVE_TX_MAX_HDR_SIZE_DQO =
-||
-> +           tx_pkt->data_len < headlen || tx_pkt->pkt_len <=3D headlen)
-> +               return false;
-> +
-> +       return tx_pkt->pkt_len - headlen <=3D GVE_TX_MAX_TSO_LEN_DQO &&
-> +              tx_pkt->tso_segsz >=3D GVE_TX_MIN_TSO_MSS_DQO &&
-> +              tx_pkt->tso_segsz <=3D GVE_TX_MAX_PKT_SIZE_DQO;
->  }
->
->  /* Max descriptors a single packet may use. A larger packet can never pa=
-ss
-> --
-> 2.43.0
->
+eth_memif_tx() reads bufs[0]->pool to pick the mempool for its
+single-pool fast-path test, before any check on nb_pkts. A caller that
+passes nb_pkts == 0 therefore dereferences bufs[0], out of bounds for an
+empty burst. Return early when there is nothing to transmit, after the
+ring == NULL check so a secondary process still requests regions.
+
+Fixes: b5613c8f9d0a ("net/memif: add a Tx fast path")
+Cc: stable@dpdk.org
+
+Signed-off-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+---
+ drivers/net/memif/rte_eth_memif.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/memif/rte_eth_memif.c b/drivers/net/memif/rte_eth_memif.c
+index 3ed177ffb2..36db03a268 100644
+--- a/drivers/net/memif/rte_eth_memif.c
++++ b/drivers/net/memif/rte_eth_memif.c
+@@ -904,6 +904,8 @@ eth_memif_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 				mq->in_port, rte_strerror(-ret));
+ 		return 0;
+ 	}
++	if (unlikely(nb_pkts == 0))
++		return 0;
+ 
+ 	ring_size = 1 << mq->log2_ring_size;
+ 	mask = ring_size - 1;
+-- 
+2.43.7
+
