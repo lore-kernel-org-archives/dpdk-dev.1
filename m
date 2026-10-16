@@ -2,101 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF24ECC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 07:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF72BCCA462
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 09:30:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C498140291;
-	Fri, 16 Oct 2026 09:49:09 +0200 (CEST)
-Received: from CO1PR03CU002.outbound.protection.outlook.com
- (mail-westus2azon11010032.outbound.protection.outlook.com [52.101.46.32])
- by mails.dpdk.org (Postfix) with ESMTP id 322EE400D5;
- Fri, 16 Oct 2026 09:49:08 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qsHKmHce+EhCdzaz64vrfDWKaRn+7CSOjp3WwHniHR7LsiL5mqArZ5miVk1yxNrP/J4Kat0QXFFKKDCcVCCSJERYq1h9jJrgLQ22OnU3vHWa+5ZVqm+CLnoDGqVD34c+5c/x9WADn8gRcLRakb+T2OjRsvcZKjhOpDRdK7otre6xO6WknnnRXpuSmaLmJfPhDAbjkjctMA+eEfXQZ5n7c7X8hj0kC3p7D8ck+lAl6lLtEaM1WapQLYm1u+V6l1Qh41dXYpUvov3Za/zg0ULqy52cqbTHwST/FOUK3osDnOMULoQBcCgmIKDkGY87mslJznsJYAoA3sy9UbbjeOOpQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JvyaJOihLI8ayYswy6qxakb/sbVmuoF4eQd2KnPufEM=;
- b=RgBUcvcXAnd8srPROPn/TCDy/qknAX95Gv43iNF8dd4SDMqQ+a7WExbG92cVWcW3eWLjNtscTVCZuuIhGMLFGZtYZN5GD5F1UMGs7/Ay3+HJMxN0QoW0WOV/aPK+x2H8bNYJMbhM0TIEM4KMBZyOI2uJsZWhsKxqWXOQ85g4zY0R18VNLZL49W6OGH17nSlSLn+PJrg1gZpN5vyqLxq1UdLBn2itKDo4C/lWQWCI0O1dx8CvWDOpJSzviwBtrRw7un2I+zpSzgJC+nYKbpmytKP+/dQ2FwQM+xQwxnzu80DnKGzUYNoCvTjvc1Y+sxuo2w7+0noizRQ9haGVIiG5FQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JvyaJOihLI8ayYswy6qxakb/sbVmuoF4eQd2KnPufEM=;
- b=VHF+2ZgderRiaq4ynY3WFgwPuHGfmjX/7vXkMsPZEvBUgsZfkyxCjKsjWRkDahTReze75cg8/0fd4PzkJeLHFG40wD3IzH6XhGnKyYr2wGmFvaeOOrbmzWBRRCDkPZzMFpC9fzuyyTBZizjQtpGMQcZSbu8HEPJtFh1q3K0ks56ltiBtCJH3KaM0mJY2oR8Vm2sa0DR69ElmuuToowjyX36PAS1wChmjuPF46v7AssApQY8eFcsY0dGDytF4/3V0P9Jxkqij7jqYCkZOJmnWIkKIJf1QCVStZiO6I1BCeC+ZrYHvTAHOg2paa2H4L1VqlCfQgUFQrrfXC+HYoHm2+g==
-Received: from BN9PR03CA0474.namprd03.prod.outlook.com (2603:10b6:408:139::29)
- by CH3PR12MB8211.namprd12.prod.outlook.com (2603:10b6:610:125::11)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.14; Fri, 16 Oct
- 2026 07:49:02 +0000
-Received: from BN1PEPF00018073.namprd04.prod.outlook.com
- (2603:10b6:408:139:cafe::80) by BN9PR03CA0474.outlook.office365.com
- (2603:10b6:408:139::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.20 via Frontend Transport; Fri,
- 16 Oct 2026 07:49:02 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN1PEPF00018073.mail.protection.outlook.com (10.167.245.201) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.6 via Frontend Transport; Fri, 16 Oct 2026 07:49:01 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Fri, 16 Oct
- 2026 00:48:38 -0700
-Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Fri, 16 Oct
- 2026 00:48:35 -0700
-From: Rongwei Liu <rongweil@nvidia.com>
-To: <dev@dpdk.org>, <matan@nvidia.com>, <viacheslavo@nvidia.com>,
- <orika@nvidia.com>, <suanmingm@nvidia.com>, <thomas@monjalon.net>
-CC: Dariusz Sosnowski <dsosnowski@nvidia.com>, <stable@dpdk.org>, Bing Zhao
- <bingz@nvidia.com>
-Subject: [PATCH v1] net/mlx5: fix suffix groups without default FDB rule
-Date: Fri, 16 Oct 2026 10:48:06 +0300
-Message-ID: <20261016074817.2831545-1-rongweil@nvidia.com>
-X-Mailer: git-send-email 2.53.0
+	by mails.dpdk.org (Postfix) with ESMTP id D5B6940291;
+	Fri, 16 Oct 2026 11:30:22 +0200 (CEST)
+Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com
+ [113.46.200.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 4B68E400D5
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 11:30:20 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=LKE5G0DUGven6uERkpMx9ThWAWO/9BYFJjybMW/wG4Q=;
+ b=lZ3q9uzC/65JQNOU8AImfeHwxMMwBy0HMumu3SRNMyEQIBlYRaeW97P5LFUp2KA42+9DxU1xj
+ r0IAWRQpe2TWnTEbyTMeSU9ur5MuHQOkpU+JZwUFbaoYMNXzpFe9tRVOkfcSa0QwKleMyPwORhY
+ p50cJ4inT9N6CPrDbSoOMqc=
+Received: from mail.maildlp.com (unknown [172.19.163.163])
+ by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4j5fVW56ZBz1K9BV;
+ Fri, 16 Oct 2026 17:17:55 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+ by mail.maildlp.com (Postfix) with ESMTPS id 79C834057A;
+ Fri, 16 Oct 2026 17:30:15 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Fri, 16 Oct 2026 17:30:15 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>
+CC: <dev@dpdk.org>, <bruce.richardson@intel.com>
+Subject: [PATCH] argparse: support range step for corelist parsing
+Date: Fri, 16 Oct 2026 17:30:01 +0800
+Message-ID: <20261016093001.9067-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.126.231.37]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00018073:EE_|CH3PR12MB8211:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46431dd0-c68e-43dc-8482-08df2b59f1d7
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|376014|36860700016|1800799024|23010399003|10067099003|18002099003|11063799006|261009223027099003|56012099006;
-X-Microsoft-Antispam-Message-Info: 9vnr5I+yuAE0H5Ep6fGJ6byq/43uIH+AjabfzoHMCdEx0gfM+Mnu2ffSnXrhsYEbyBvnm7IClRnWGujHBl9JQJW1itlu1Vfs2XmdaNZQ1wsmhdX+vEjLsSGVJnLF0Pv+kEeYeJWCNij5ZB1W9pP6yQwaBRkf/PKlvgtuWz+Ir1lGZdwsMzelSlQ3iyOw/583hwfi+7rTdmfzagkOKRqkaQhG/JT65rhyt6z5lO59O9Q3ptGT8wKsxAAIGn2RVvhBatj3B0iQdkbV7vC/xZQJWV0ERH6+pVfY4yfbhm8Yhs+63DiH1zU8TymLo9NwrOsh0ghIB2JzIV9xei7L392bPgi7Gr5pbUuOpSB1j18+I822MqluPz8/LdsmktuRmtlU5oHnehTbq6+ZqyST8S8brgeCPGWKx7VLiapmpNy1AAsWWynjqeOFBAUroFEUz99lbpvtkgzN3g99amREWnYTTaOjii9yWtvXoMzf03MI8Do9/r+oIEKvq1tlGfYMb38Ud4TSNaiGGfac4SOUThYiit93eCrNOII5BZRAPodbU9fgyNswuk1VUzRbbKM1z2JAkd1IR7QcIv2tx25U6cdM0hToJuo8GW9q4tiEiD2nuvMZyZep47J0QTapGPHylBjbzy9N/f9Kkjxc4xodSNrJE6zdm7q3qhohJttegWcLhv64AHlwJYDyQ5lc20unXPYSt2oX5VAEYGizWkijHO/c7A==
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(376014)(36860700016)(1800799024)(23010399003)(10067099003)(18002099003)(11063799006)(261009223027099003)(56012099006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: Pyp9jxY61CS7gscksvNAFUCRQ4W6SOTaOIaxNIZz6jADc3qU7jPJ/OGrX46MNreQqxFz0j5YM4/bcV19ACYC8lIqKEvgvr+EGDR5v1ebl7VBnpyzBb5d5K+HaMsJBx2hVXof9xqo5sQHuFt48p61L1TUXqDuHTmLFLZbIX/4YitIF4CtIbBc3REGNt7P0pCwx4S87SILJKihjmmPXRPr75kM3wF3sGh64SSk3bEvWvlrka2pDQhDu4GYeMme5fZ9HfvgK21x3bEFtf+RmpmHkBtfeEYOly5g5ubPV69tQnuyGTWdm5+2rU90hnL56TZasaFy3OKISxgPMZ/KPGkel4FsEPzMSsxHD1McodKL1TzKdnVMGJ/ETSdIG3EUuffRuSE2IwzWyDSYv7oBdZBd15IE6LyXDInmnFSGBEkCA70To7wdDEYOrtR7PdYTeWMl
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 07:49:01.7525 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46431dd0-c68e-43dc-8482-08df2b59f1d7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN1PEPF00018073.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8211
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -110,45 +52,279 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-With fdb_def_rule_en=0, mlx5 SWS still decrements meter and sampler
-suffix groups, causing continuation rules to be installed in the
-wrong tables.
+Introduce a stride/step syntax ('-l start-end:step') to the EAL
+corelist parser implemented within the argparse library.
 
-Decrement these groups only when the default FDB rule is active,
-keeping suffix placement consistent with group-to-table translation.
+On modern multi-core platforms, especially ARM architectures (such
+as Kunpeng) logical sibling cores are frequently laid out contiguously
+(e.g., physical core 0 maps to logical cores 0 and 1). When deploying
+high-performance DPDK data planes, pinning worker threads to adjacent
+sibling cores introduces Heavy L1/L2 cache contention and drastically
+degrades overall throughput.
 
-Fixes: 1939eb6f660c ("net/mlx5: support flow port action with HWS")
-Cc: Dariusz Sosnowski <dsosnowski@nvidia.com>
-Cc: stable@dpdk.org
+Previously, users had to explicitly expand core lists via commas
+(e.g., "-l 0,2,4,6...126") in orchestration scripts to skip
+hyperthreads, which is error-prone and hurts maintainability.
 
-Signed-off-by: Rongwei Liu <rongweil@nvidia.com>
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+This patch introduces the range step, so we could use "-l 0-126:2" in
+the same case.
+
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/net/mlx5/mlx5_flow.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ app/test/test_argparse.c               | 96 ++++++++++++++++++++++++++
+ doc/guides/prog_guide/argparse_lib.rst |  2 +
+ lib/argparse/rte_argparse.c            | 53 ++++++++++----
+ 3 files changed, 139 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
-index b0eac185b5..37654918b5 100644
---- a/drivers/net/mlx5/mlx5_flow.c
-+++ b/drivers/net/mlx5/mlx5_flow.c
-@@ -7048,7 +7048,7 @@ flow_create_split_meter(struct rte_eth_dev *dev,
- 			goto exit;
+diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
+index fdc6dd113c..a87dc461b3 100644
+--- a/app/test/test_argparse.c
++++ b/app/test/test_argparse.c
+@@ -822,8 +822,11 @@ test_argparse_parse_type_corelist(void)
+ 	char *corelist_valid_single = test_strdup("5");
+ 	char *corelist_valid_multiple = test_strdup("0,1,5");
+ 	char *corelist_valid_range = test_strdup("1-5");
++	char *corelist_valid_range_step = test_strdup("1-5:2");
+ 	char *corelist_valid_mixed = test_strdup("0,1,5-10,12-16,18,20");
++	char *corelist_valid_mixed_step = test_strdup("0,1,5-10:2,12-16:3,18,20");
+ 	char *corelist_valid_reverse_range = test_strdup("10-5");
++	char *corelist_valid_reverse_range_step = test_strdup("10-5:2");
+ 	char *corelist_valid_initial_spaces = test_strdup("   1,2,5-7");
+ 	char *corelist_valid_empty = test_strdup("");
+ 	char *corelist_invalid_spaces = test_strdup(" 1 , 2 , 5-7 ");
+@@ -831,6 +834,12 @@ test_argparse_parse_type_corelist(void)
+ 	char *corelist_invalid_range_incomplete = test_strdup("1-");
+ 	char *corelist_invalid_range_double_dash = test_strdup("1--5");
+ 	char *corelist_invalid_range_double_range = test_strdup("1-3-5");
++	char *corelist_invalid_range_step_incomplete1 = test_strdup("1:");
++	char *corelist_invalid_range_step_incomplete2 = test_strdup("1:2");
++	char *corelist_invalid_range_step_incomplete3 = test_strdup("1-5:");
++	char *corelist_invalid_range_step_double = test_strdup("1-5::");
++	char *corelist_invalid_range_step_negative = test_strdup("1-5:-2:");
++	char *corelist_invalid_range_step_more = test_strdup("1-5:2:");
+ 	char *corelist_invalid_special_chars = test_strdup("1,2@3");
+ 	char *corelist_invalid_comma_only = test_strdup(",");
+ 	char *corelist_invalid_out_of_range = test_strdup("70000");
+@@ -867,6 +876,18 @@ test_argparse_parse_type_corelist(void)
+ 	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5!");
+ 	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5!");
+ 
++	/* test valid range step */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_valid_range_step,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (range step) failed!");
++	for (int i = 1; i <= 5; i += 2)
++		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 1-5:2!", i);
++	for (int i = 2; i <= 5; i += 2)
++		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 1-5:2!", i);
++	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5:2!");
++	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5:2!");
++
+ 	/* test valid mixed corelist */
+ 	CPU_ZERO(&val_cpuset);
+ 	ret = rte_argparse_parse_type(corelist_valid_mixed,
+@@ -886,6 +907,31 @@ test_argparse_parse_type_corelist(void)
+ 	TEST_ASSERT(!CPU_ISSET(17, &val_cpuset), "Core 17 should not be set in mixed corelist!");
+ 	TEST_ASSERT(!CPU_ISSET(19, &val_cpuset), "Core 19 should not be set in mixed corelist!");
+ 
++	/* test valid mixed step corelist */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_valid_mixed_step,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (mixed step) failed!");
++	TEST_ASSERT(CPU_ISSET(0, &val_cpuset), "Core 0 should be set in mixed step corelist!");
++	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in mixed step corelist!");
++	for (int i = 5; i <= 10; i += 2)
++		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 5-10:2!", i);
++	for (int i = 6; i <= 10; i += 2)
++		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 5-10:2!", i);
++	for (int i = 12; i <= 16; i += 3)
++		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 12-16:3!", i);
++	for (int i = 13; i <= 16; i += 3)
++		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 12-16:3!", i);
++	for (int i = 14; i <= 16; i += 3)
++		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 12-16:3!", i);
++	TEST_ASSERT(CPU_ISSET(18, &val_cpuset), "Core 18 should be set in mixed step corelist!");
++	TEST_ASSERT(CPU_ISSET(20, &val_cpuset), "Core 20 should be set in mixed step corelist!");
++	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in mixed step corelist!");
++	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in mixed step corelist!");
++	TEST_ASSERT(!CPU_ISSET(17, &val_cpuset), "Core 17 should not be set in mixed step corelist!");
++	TEST_ASSERT(!CPU_ISSET(19, &val_cpuset), "Core 19 should not be set in mixed step corelist!");
++
++
+ 	/* test valid reverse range (10-5 should be interpreted as 5-10) */
+ 	CPU_ZERO(&val_cpuset);
+ 	ret = rte_argparse_parse_type(corelist_valid_reverse_range,
+@@ -897,6 +943,20 @@ test_argparse_parse_type_corelist(void)
+ 	TEST_ASSERT(!CPU_ISSET(4, &val_cpuset), "Core 4 should not be set in reverse range 10-5!");
+ 	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in reverse range 10-5!");
+ 
++	/* test valid reverse range step (10-5:2 should be interpreted as 5-10:2) */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_valid_reverse_range_step,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (reverse range) failed!");
++	for (int i = 5; i <= 10; i += 2)
++		TEST_ASSERT(CPU_ISSET(i, &val_cpuset),
++				"Core %d should be set in reverse range 10-5:2!", i);
++	for (int i = 6; i <= 10; i += 2)
++		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset),
++				"Core %d should not be set in reverse range 10-5:2!", i);
++	TEST_ASSERT(!CPU_ISSET(4, &val_cpuset), "Core 4 should not be set in reverse range 10-5!");
++	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in reverse range 10-5!");
++
+ 	/* test valid corelist with initial spaces only */
+ 	CPU_ZERO(&val_cpuset);
+ 	ret = rte_argparse_parse_type(corelist_valid_initial_spaces,
+@@ -948,6 +1008,42 @@ test_argparse_parse_type_corelist(void)
+ 			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
+ 	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (double range) should have failed!");
+ 
++	/* test invalid corelist with step complete1 */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete1,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete1) should have failed!");
++
++	/* test invalid corelist with step incomplete2 */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete2,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete2) should have failed!");
++
++	/* test invalid corelist with step incomplete3 */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete3,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete3) should have failed!");
++
++	/* test invalid corelist with step double */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_double,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step double) should have failed!");
++
++	/* test invalid corelist with step negative */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_negative,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step negative) should have failed!");
++
++	/* test invalid corelist with step more */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_more,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step more) should have failed!");
++
+ 	/* test invalid corelist with special characters */
+ 	CPU_ZERO(&val_cpuset);
+ 	ret = rte_argparse_parse_type(corelist_invalid_special_chars,
+diff --git a/doc/guides/prog_guide/argparse_lib.rst b/doc/guides/prog_guide/argparse_lib.rst
+index b0907cfc07..3d01406599 100644
+--- a/doc/guides/prog_guide/argparse_lib.rst
++++ b/doc/guides/prog_guide/argparse_lib.rst
+@@ -271,8 +271,10 @@ The corelist parsing supports the following input formats:
+ - **Single core**: ``--cores 5`` (sets core 5)
+ - **Multiple cores**: ``--cores 1,2,5`` (sets cores 1, 2, and 5)
+ - **Core ranges**: ``--cores 1-5`` (sets cores 1, 2, 3, 4, and 5)
++- **Core ranges with step**: ``--cores 1-5:2`` (sets cores 1, 3, and 5)
+ - **Mixed format**: ``--cores 0,2-4,7`` (sets cores 0, 2, 3, 4, and 7)
+ - **Reverse ranges**: ``--cores 5-1`` (equivalent to 1-5, sets cores 1, 2, 3, 4, and 5)
++- **Reverse ranges with step**: ``--cores 5-1:2`` (equivalent to 1-5:2, sets cores 1, 3, and 5)
+ - **Empty corelist**: ``--cores ""`` (sets no cores)
+ 
+ The parsed result is stored in an ``rte_cpuset_t`` structure that can be used
+diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
+index 88c3e7740c..f1e1fb9d20 100644
+--- a/lib/argparse/rte_argparse.c
++++ b/lib/argparse/rte_argparse.c
+@@ -573,6 +573,9 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
+ {
+ 	rte_cpuset_t *cpuset = arg->val_saver;
+ 	const char *last = value;
++	bool is_step = false;
++	int32_t step = 1;
++	int32_t max = -1;
+ 	int min = -1;
+ 
+ 	if (value == NULL) {
+@@ -584,7 +587,6 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
+ 	while (*last != '\0') {
+ 		char *end;
+ 		int64_t idx;
+-		int32_t max;
+ 
+ 		while (isblank(*value))
+ 			value++;
+@@ -603,6 +605,14 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
+ 				arg->name_long);
+ 			return -EINVAL;
  		}
- 		/* Setting the sfx group atrr. */
--		sfx_attr.group = sfx_attr.transfer ?
-+		sfx_attr.group = (sfx_attr.transfer && priv->fdb_def_rule) ?
- 				(MLX5_FLOW_TABLE_LEVEL_METER - 1) :
- 				 MLX5_FLOW_TABLE_LEVEL_METER;
- 		flow_split_info->prefix_layers =
-@@ -7229,7 +7229,7 @@ flow_create_split_sample(struct rte_eth_dev *dev,
- 			sfx_tbl_data = container_of(sfx_tbl,
- 						struct mlx5_flow_tbl_data_entry,
- 						tbl);
--			sfx_attr.group = sfx_attr.transfer ?
-+			sfx_attr.group = (sfx_attr.transfer && priv->fdb_def_rule) ?
- 			(sfx_tbl_data->level - 1) : sfx_tbl_data->level;
++		if (is_step) {
++			if (idx == 0) {
++				ARGPARSE_LOG(ERR, "argument %s step value must be positive!",
++					arg->name_long);
++				return -EINVAL;
++			}
++			step = idx;
++		}
+ 
+ 		if (*end == '-') {
+ 			if (min != -1) { /* can't have '-' within a range */
+@@ -612,22 +622,41 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
+ 			}
+ 			min = idx; /* start of range, move to next loop stage */
+ 		} else if (*end == ',' || *end == '\0') {
+-			/* single value followed by comma or end (min is set only by '-') */
+-			if (min == -1) {
+-				min = max = idx;
+-			} else if (min > idx) {
+-				/* we have range from high to low */
++			if (!is_step) {
++				/* single value followed by comma or end (min is set only by '-') */
++				if (min == -1) {
++					min = max = idx;
++				} else if (min > idx) {
++					/* we have range from high to low */
++					max = min;
++					min = idx;
++				} else {
++					/* range from low to high */
++					max = idx;
++				}
++			}
++
++			for (; min <= max; min += step)
++				CPU_SET(min, cpuset);
++
++			/* no longer in a range */
++			min = -1;
++			max = -1;
++			step = 1;
++			is_step = false;
++		} else if (*end == ':') {
++			if (min == -1 || is_step) {
++				ARGPARSE_LOG(ERR, "argument %s step can only be used after a range (start-end:step)!",
++					arg->name_long);
++				return -EINVAL;
++			}
++			if (min > idx) {
+ 				max = min;
+ 				min = idx;
+ 			} else {
+-				/* range from low to high */
+ 				max = idx;
+ 			}
+-
+-			for (; min <= max; min++)
+-				CPU_SET(min, cpuset);
+-
+-			min = -1; /* no longer in a range */
++			is_step = true;
  		} else {
- 			MLX5_ASSERT(attr->transfer);
+ 			/* end is an unexpected character, return error */
+ 			ARGPARSE_LOG(ERR, "argument %s has an unexpected character!",
 -- 
-2.53.0
+2.17.1
 
