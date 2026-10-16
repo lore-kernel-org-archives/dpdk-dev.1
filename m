@@ -2,65 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70957CC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 11:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AA1CCA462
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 11:32:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2585E40A72;
+	by mails.dpdk.org (Postfix) with ESMTP id E8C9140A7D;
 	Fri, 16 Oct 2026 13:31:36 +0200 (CEST)
-Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com
- [74.125.82.178]) by mails.dpdk.org (Postfix) with ESMTP id 0A8F840291
- for <dev@dpdk.org>; Fri, 16 Oct 2026 08:27:06 +0200 (CEST)
-Received: by mail-dy1-f178.google.com with SMTP id
- 5a478bee46e88-35cd4e8bdbdso7927868eec.1
- for <dev@dpdk.org>; Thu, 15 Oct 2026 23:27:05 -0700 (PDT)
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+ by mails.dpdk.org (Postfix) with ESMTP id 81A37402EE
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 08:27:08 +0200 (CEST)
+Received: by mail-dl1-f51.google.com with SMTP id
+ a92af1059eb24-15dd124bbe7so345187c88.1
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 23:27:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1792132025; x=1792736825; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1792132027; x=1792736827; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=vBDiA7CD41MoYgfVqcLFQGwKkr/kbKYe/bmBfqLS4ro=;
- b=XO7GGSbI+N4ec1sMQwazR/zMgk9Y+WmUKhlNKDsep8Dr20yg8lWXuWOhbCpjC9SsDW
- Qm53stlgy8WU2RMEGlp1gCaKTQlbW0X7ZqK7jAtOLGl5i4nZXU7MTyuvFzywT2IA0iq3
- +bYTwK3ab4Sfde2WO9PjwwME1z4S8JtHnGhk2uT3Czoa+yb9lGDpeFqkNXA/Rj5oVrWh
- Coq+z4j+/bP1LuHagm2x/ywHcE/Kw9PXqfzEgimHCt32yTLtevdpzG9bnftucLxlHJjz
- HQD1waDubM6yCpPFKpEGzF3p9YFtD+279p2yI56OVeSwt6Ygpy/tD6A2f/AFGDVPLpJr
- 51Tg==
+ bh=U06ix2DxLCp+PQezcwt6PA66l2msHfBYKCNZ3Y+FGkA=;
+ b=mT3YkJWb00BnsxIG35oB5Zf52teT0EbLM78ox8n6wSKOGPWTA87JzRi/SNF+x5npt+
+ e4TU/dL2h+J5gcohMX0g/z7+Z6h6vw4dxDveCsMuh/TI7UbMFxHcW6kYJi5FOh5G1UTL
+ ybbSC6QPebkgwywki2A7sqkrT9Uxd/oc9WbJbI73rSMnkNawlLM7vRFHU5O/CTxhzW28
+ JV+ghv0UGOm4OD+SZYa32rxVzZvhlliXMxtG15OH6fl9p0zXF7oDjoyDklhaaO4lyyyx
+ Ngqx1LKitSZnbWLeUT8h/XfaqWK54+OWX29x27POzKSXa5fOHB4QusjeQDiB8yIPXqoq
+ mwJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792132025; x=1792736825;
+ d=1e100.net; s=20260707; t=1792132027; x=1792736827;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=vBDiA7CD41MoYgfVqcLFQGwKkr/kbKYe/bmBfqLS4ro=;
- b=Ci/mYaYu99/disjsR/VvBl4DDtQdWtAotqSyvf9SJeAXC3WFcsuMoWAUA3BQn2LnaM
- 9e3Nu1g6DWDZdQCmnxP24XOy96PVjuTZKOBcFeSC416ZoWyxU0QP4kHFDbs16tYINcgB
- tCYHP15OtEaJf9lGiXItErz/hej1IyX4QK51pdymDJy5tB++5/os98SecXXhSsMjmTFg
- yuV7LEcb+haZxzhDPTuKOJaVVtFMsBSz3108ZQ9tw4W1dUeVtdIvdKZSnRnaaka9gmB+
- ZKWgpAoGnAMz+k0ob2+wO2QlZYWsoSDnSm5OfHC3Agi3h/DYmKnnOWJISxtzQMDToxkm
- 8ABg==
-X-Gm-Message-State: AFq9FYIrGFbSxgHuKrn6Ma9vSQBNrfLit30akMQ8WTSAadvsAr3+6niQ
- OHtYcaS/ffvZxREga8j4vlmt6cxmxJJXB1zmZQi8BbmWUjdYI1p9rePvYDoZ3g==
-X-Gm-Gg: AYBFou0g95wbY7dk8bHsmjvRjNh2W5WvmK10DlSNmXMp05m1JfgCPgymTRRBdDeXbYl
- lCvkfnrWed6skhOnwwecUrgorBrle+6/1tEbAMbczcxCVmGMXLQ4pqqoPuZ1J6IU11y7ZZcp8gy
- I18I8aUdAvOQBDwYlLHoPFm/pHf/GS1rlh84LMtYgc+RgXJbZdFjrUlF/JM1i6Gi6DZjvDiJUww
- 1UJ4d62LqvN6QZ6A+zA4hyDdLfyrHWEMH3qIP7zbShApeq+QohxwwHE7MgwJPYkO3hyP0rU06uj
- ALQEKn+RDKS6E/BG6CQZHb99EJxCBBRRNYhyHpPnMWh/G5I1TnnpNhT2xsDZemYx4wyr0mGrSrv
- 9cEc353dDTKA696xRUwc4uD/fLeHbMIrGQB0jcx55/FUZ3Z3t267KrBWvv7vtIJUl15KHgsrYie
- oA9XEgR2wjwGeURX84bs9U5qS0rlGV0w32cwm9p/5FNzytOmP/EvUUgyBtqsV50eNibKKxivIM
-X-Received: by 2002:a05:701b:4653:b0:155:7721:3a4c with SMTP id
- a92af1059eb24-16a62bc8067mr26011489c88.35.1792132024817; 
- Thu, 15 Oct 2026 23:27:04 -0700 (PDT)
+ bh=U06ix2DxLCp+PQezcwt6PA66l2msHfBYKCNZ3Y+FGkA=;
+ b=oJeZ1jRx6arjCttHqbKqu02kjImj6CeGH5q5SWpCXIBoEUb8Bv6W4qyu8NcCcLl40c
+ m4iCE+25lAuMBqhK88lBjTcl8b6VZvhTqkwnYEJwwpmDiL/MHHiryQY+kdiWcHXtihFB
+ npE+PDU6K5TOBwejzyghbGs7WH4txdhEE1BVuyOri+rlSOOCDoh1daGPl1p0CmMeu33n
+ 7je2MizV3rzAvUOUZZt9Mmy0pujeHo6hi+VGYlTQayW9MCv+JLTwPBAUIyDVqJO75EtU
+ opHx7092IZKnwlSqH6Fb4rjktt52DH4INdvmHpiUHI6ufyiVvO11xpNsoVVNDQQSun6+
+ 4C0Q==
+X-Gm-Message-State: AFq9FYI8MVzFnJOhep+15c4SOSCkr+XGMcGj/TLRimm3zZU0hSOV9N48
+ 3vAHIepkGReu9VBkp7+v0v4J+StB9edgmfC1W8a3pr+hY14LWBmKyFtwHLoflA==
+X-Gm-Gg: AYBFou3/Yx+3/8PHHfBHpyGtSGEsljE4s5F7x1IcbJH8ZmbeOnq8gm46UrObu3cMj66
+ aAGfQ7O+qENfZeQiNTpPgO3RA46aDc2CLu+TNR8Gp3y3+S7N0w0GLun0uHVWPojG4tbXfaTZ8Aa
+ 750yg7GIl7yQR3x2RXhdFz/sIIBbA7gwrsqTOg10YCm44rV0z9E4kQ+iaM8B9t4LCzM0FjgKZx2
+ XQy3CbNNbCcRqc87dRcQAk8LvyLutnwpWURVIiSLq6kZpqGkTOK6X2hu1i850tNYLQwjPoP2YS9
+ gamR9rJ8l6/Nw+NrANgmdyuKqGeOMAT8fCadTCjpFnOW+cq8P3P5Rg49HLVqPumoj1lYMAuTqyj
+ ytqnlsecNErQoLQWBOCH2nS9N7c5k6OvqpPXKVIMV0YXgbW53y27KSY/C2FphSwZXnVIpA0wTwb
+ /nPrzIbpqdOvqNGzPzPbT1GOgktWoHcW9DBIEbesya5ycTUW6EhTK07A+PpEECDCmwK2AKDRPy
+X-Received: by 2002:a05:7022:e884:b0:17e:6de6:6a1a with SMTP id
+ a92af1059eb24-17e6de66ab6mr11586382c88.8.1792132027407; 
+ Thu, 15 Oct 2026 23:27:07 -0700 (PDT)
 Received: from aviuser.. ([192.19.252.250]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-183190aa3ebsm2743324c88.8.2026.10.15.23.27.02
+ a92af1059eb24-183190aa3ebsm2743324c88.8.2026.10.15.23.27.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 Oct 2026 23:27:04 -0700 (PDT)
+ Thu, 15 Oct 2026 23:27:06 -0700 (PDT)
 From: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
 To: dev@dpdk.org
 Cc: joshwash@google.com,
 	stephen@networkplumber.org,
 	stable@dpdk.org
-Subject: [PATCH v3 05/10] net/gve: add cacheline overlap margin to DQO Tx ring
-Date: Fri, 16 Oct 2026 06:26:42 +0000
-Message-ID: <ec96ead0d262dd7e0a1b587d89375a170327a8b4.1792129992.git.tathagat.dpdk@gmail.com>
+Subject: [PATCH v3 06/10] net/gve: fix Tx stall on invalid packets
+Date: Fri, 16 Oct 2026 06:26:43 +0000
+Message-ID: <771fdd2b2d81d74832aa5499999791e09c1c2c97.1792129992.git.tathagat.dpdk@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1792129992.git.tathagat.dpdk@gmail.com>
 References: <cover.1792129992.git.tathagat.dpdk@gmail.com>
@@ -80,58 +80,109 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The GVNIC DQO hardware DMA engine prefetches descriptors in cacheline
-units (64 bytes = 4 descriptors of 16 bytes each). When producer tail
-and consumer head indices share a cacheline, CPU and device DMA memory
-collisions can occur.
+When a packet fails rte_mbuf_check() or exceeds the descriptor limit,
+the Tx burst stops at that packet without consuming it. The
+application retries the same packet, it fails again, and the queue
+never moves.
 
-Align with the Linux driver (gve_has_tx_slots_available()) by requiring
-GVE_TX_MIN_DESC_PREVENT_CACHE_OVERLAP (4 descriptors) headroom when
-checking descriptor availability before enqueueing packets.
+Free such packets and continue with the burst. Validate before the
+ring space check, so that an oversized packet is dropped instead of
+stopping the burst there. Count rte_mbuf_check() failures in a new
+invalid_mbufs counter.
 
-Fixes: 4022f9999f56 ("net/gve: support basic Tx data path for DQO")
+Fixes: f4a70b449bfa ("net/gve: add DQO Tx descriptor limit")
+Fixes: f33ce4445ee6 ("net/gve: validate Tx packet before sending")
 Cc: stable@dpdk.org
 
 Signed-off-by: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
-Acked-by: Joshua Washington <joshwash@google.com>
 ---
- drivers/net/gve/gve_tx_dqo.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/gve/gve_ethdev.h |  1 +
+ drivers/net/gve/gve_tx_dqo.c | 24 +++++++++++++++---------
+ 2 files changed, 16 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
+index 8349b1c92e..24ef3a4552 100644
+--- a/drivers/net/gve/gve_ethdev.h
++++ b/drivers/net/gve/gve_ethdev.h
+@@ -114,6 +114,7 @@ struct gve_tx_stats {
+ 	uint64_t bytes;
+ 	uint64_t errors;
+ 	uint64_t too_many_descs;
++	uint64_t invalid_mbufs;
+ };
+ 
+ struct gve_rx_stats {
 diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
-index 36d56b7d26..c5ae2136ad 100644
+index c5ae2136ad..44d2fa870f 100644
 --- a/drivers/net/gve/gve_tx_dqo.c
 +++ b/drivers/net/gve/gve_tx_dqo.c
-@@ -259,6 +259,7 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	struct gve_tx_pkt *pkts;
- 	struct rte_mbuf *tx_pkt;
+@@ -261,6 +261,7 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  	uint16_t compl_tag;
-+	uint16_t req_descs;
+ 	uint16_t req_descs;
  	const char *reason;
++	uint16_t nb_sent = 0;
  	uint16_t nb_tx = 0;
  	uint64_t bytes = 0;
-@@ -291,14 +292,17 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	uint64_t ol_flags;
+@@ -283,7 +284,9 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 
+ 		if (rte_mbuf_check(tx_pkt, true, &reason)) {
+ 			PMD_DRV_DP_LOG(DEBUG, "Invalid mbuf: %s", reason);
+-			break;
++			txq->stats.invalid_mbufs++;
++			rte_pktmbuf_free(tx_pkt);
++			continue;
+ 		}
+ 
+ 		ol_flags = tx_pkt->ol_flags;
+@@ -292,6 +295,14 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  
  		nb_descs = gve_tx_pkt_nb_data_descs(tx_pkt);
  		nb_descs += tso;
-+		req_descs = nb_descs + GVE_TX_MIN_DESC_PREVENT_CACHE_OVERLAP;
++
++		/* Drop packet if it doesn't adhere to hardware limits. */
++		if (!gve_tx_validate_descs(tx_pkt, nb_descs, tso)) {
++			txq->stats.too_many_descs++;
++			rte_pktmbuf_free(tx_pkt);
++			continue;
++		}
++
+ 		req_descs = nb_descs + GVE_TX_MIN_DESC_PREVENT_CACHE_OVERLAP;
  
--		/* Clean if there aren't enough descriptors to send the packet. */
--		if (unlikely(!gve_can_tx(txq, nb_descs, 1))) {
-+		/* Clean if there aren't enough descriptors to send the packet
-+		 * while maintaining the cacheline overlap margin.
-+		 */
-+		if (unlikely(!gve_can_tx(txq, req_descs, 1))) {
- 			int nb_to_clean = RTE_MAX(DQO_TX_MULTIPLIER * txq->rs_thresh,
--						  nb_descs);
-+						  (int)req_descs);
- 
- 			gve_tx_clean_descs_dqo(txq, nb_to_clean);
--			if (!gve_can_tx(txq, nb_descs, 1))
-+			if (!gve_can_tx(txq, req_descs, 1))
+ 		/* Clean if there aren't enough descriptors to send the packet
+@@ -306,12 +317,6 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  				break;
  		}
  
+-		/* Drop packet if it doesn't adhere to hardware limits. */
+-		if (!gve_tx_validate_descs(tx_pkt, nb_descs, tso)) {
+-			txq->stats.too_many_descs++;
+-			break;
+-		}
+-
+ 		if (!gve_free_compl_tags_pop(txq, &compl_tag))
+ 			break;
+ 
+@@ -350,6 +355,7 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 
+ 		txq->nb_free -= nb_descs;
+ 		txq->nb_used += nb_descs;
++		nb_sent++;
+ 	}
+ 
+ 	/* update the tail pointer if any packets were processed */
+@@ -357,9 +363,9 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		rte_write32(tx_id, txq->qtx_tail);
+ 		txq->tx_tail = tx_id;
+ 
+-		txq->stats.packets += nb_tx;
++		txq->stats.packets += nb_sent;
+ 		txq->stats.bytes += bytes;
+-		txq->stats.errors += nb_pkts - nb_tx;
++		txq->stats.errors += nb_pkts - nb_sent;
+ 	}
+ 
+ 	return nb_tx;
 -- 
 2.43.0
 
