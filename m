@@ -2,23 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5BECCF2C4
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 19:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF031CCF2C4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 19:59:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A71540A89;
-	Fri, 16 Oct 2026 21:59:12 +0200 (CEST)
-Received: from PA4PR04CU001.outbound.protection.outlook.com
- (mail-francecentralazon11013018.outbound.protection.outlook.com
- [40.107.162.18])
- by mails.dpdk.org (Postfix) with ESMTP id A81FE402E7;
- Fri, 16 Oct 2026 21:59:04 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1FA7F40B8F;
+	Fri, 16 Oct 2026 21:59:13 +0200 (CEST)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com
+ (mail-northeuropeazon11010068.outbound.protection.outlook.com [52.101.84.68])
+ by mails.dpdk.org (Postfix) with ESMTP id 32843402EF;
+ Fri, 16 Oct 2026 21:59:05 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xdzyzdNeX03BZE4qXzLIoEJbV9+X1Z+HhN9weY4c0Gohed+AgNZ2Mk+7BXeuywz4s81ReDQzDMqx+ue6u36/Z66Caer/vwUkwgvIZdUjEOBkmCJBjTsVkOD/8HaOazm+bgxIRCp5LBlA79VJ9VPUXcgY6kGycGnRY6TiNkots+h0K85zscJ5zkrNLxdnwpBpdNFXmGHqt0HlNA0jyEMs/kFWbG+Viz/apDnA80wMATBTQTEUNJCYFMxCzoKs4vqpTOmQd4F7pRHzOc5aBq1K4rvNz8+vZQ7w8Jz9k0cqtX+HNrmSaM4yNKgoAtDXhh6awvaLiY1fHxyahFNWLfRgnQ==
+ b=yKF1wNoRUWfaV34lyQ6XSJAPepCdcF6MVSaC/vxek7hVUeQUa6BgsM5+yhxftEwCoCJ8DL+jMACmhyVq8xNFf75yqxs3py7kGKQToGupQ9NY/7IHFYknLcKgnl3sp58a8r80912SwM9hstrrKcvcfrBw0bkDsD2h+lw4aC8Vs89clE/t0RyDgpfmH7iDYBRu69tVakIihirPtIkqRoY2V1le203eOV89AcHQN4Voaln+Lqlp9Jvs1uJd2D5+lh4Y1kkoUtzguHUIt6x5eE18ncxlP+N7HV6BQkPswH3dyenx7nB/hh1FJ+VXEPRebrKToFpS2LQaMwb6GsU1kybGWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h9lWZMY8MBmMhpf+VksYFSvSsowgs6Jjh3zbVEeGGuY=;
- b=K3Wyao1vOklqCtuDY5dg3NYwonxlrsK4Y64hNxSrzJgOZurFuVT7N8u6NuF1zB+w/P3A4eFSEsKQgrDY0vYSuHbs/QGv+G0/y8SaqrGk+650EmLApagsS72wVvEsk6hSuSgWU5pJkoTDFVjl2aGttI9K85nHD8w6J6FtnFjWPjyha+DgD+R6NARGN/qeadMez7HbjGb7/woax5IMFcpLsTvy/XtGBPVj/1EVw27hR19jABJo4HIeoQLS9rJbjdBVXoVljg2US4tXKyZEDGng6872H51nbW9wIP4taSNy69YJF/sH9leaMvfivAKvFUaCu5TFtMXshBmbIkdy/rSKIQ==
+ bh=e71tApqYizhimSO13TkY0nuaJlNrVO07rcSsIJe0DaU=;
+ b=c/nMhVekskzVb0nVuYiIA0uXXu8Sc4fed0T91T0RUlY7sOefkElZ5yFyWfcUJ7KX+n2SKpk+6bW47OAy3PV0Tim6amM10Wd0kxMBH6Nb60QkoJxYOfneB3255wWxYXWIG5kwDyvuhBVx4/p1NUlYkyvSmZTry0e0nR6/aoQWnxE0K4BMw8Tt7643MUqpwCMYPXu+s3LHgvisC+Z3267CyDsvEZTtEUTgW4A6k9T8c0ZysprGAdjqWgno/XGCdIzVkqO4R+XlqNIEYDGQDnfxXSbt/u1THwlHtwYzU/cBuDUxRLI1UbIzTucCh5krDZ7GXp7OJEjJ/rThOZ1r0vnmLA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  192.176.1.74) smtp.rcpttodomain=cisco.com smtp.mailfrom=ericsson.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
@@ -26,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h9lWZMY8MBmMhpf+VksYFSvSsowgs6Jjh3zbVEeGGuY=;
- b=G2IPrzFmtWpGotl+4gciAufCxgKP3IrnKNngGI96s7ihZiFKznZK/yWCgkS/aAr8xqneizYWERIUyPCULX4du/s7CkH7hvr56vCZ0NcqL006Y5mdu+vVNkIv93kdNTECIum/SWEkm3NITXgimsxmamIo72gjpY2joOM7nUiR+ZZkYpjIMz9I+4Fh649eH61Iw5DEawkPVfKCY8eEtZbP4gvLbeBzxEllzGbxCSj7CA+lj4dPhNeXQtpZQRc1o2RY2X4GU2WVHbBjB9XRzvAciLzVrFHkPwcBs6Ayt8fm3PdBDqRqYXpq1uPaduLhMi7yv5xuRaim7kW6UBd+rAB64Q==
-Received: from AS4P189CA0045.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:5dd::17)
- by DU4PR07MB11855.eurprd07.prod.outlook.com (2603:10a6:10:634::11)
+ bh=e71tApqYizhimSO13TkY0nuaJlNrVO07rcSsIJe0DaU=;
+ b=L5TzZKpx3lx6l+TO/3UDBs2thFR2g4FrzuBOKIw4zIRGI8Uhgu7SstnmKFEhPr3ynVV1lk96unOzKsyg5jnHOHY3e7AGEGZ2bzGmc65mqqQ+kQyhE9fMaflB3hLq0G8wNlAxKEFvAvpQNiV8cKheNggOQiL2E1nm86q3RTactRF3wjE8uAe+2R3R36mf+KHdpWjiwbWdeVQh5vC6hGtIFGwA0mRk9BNS4Kn/ZiLniKUzcZNnw6C8D0HpjQdJRvgqz70cY+FCd9Rgx0TXvHP4oIwzelgk7F4noFLyk3nVX4290kKMevkW4EziJO0wHDPtShEOsJrd/HADngtsjq04xA==
+Received: from PA7P264CA0262.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:375::13)
+ by GV4PR07MB11049.eurprd07.prod.outlook.com (2603:10a6:150:2bc::6)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.13; Fri, 16 Oct
- 2026 19:59:03 +0000
-Received: from AMS1EPF0000009C.eurprd02.prod.outlook.com
- (2603:10a6:20b:5dd:cafe::30) by AS4P189CA0045.outlook.office365.com
- (2603:10a6:20b:5dd::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.20 via Frontend Transport; Fri,
- 16 Oct 2026 19:59:03 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.17; Fri, 16 Oct
+ 2026 19:59:00 +0000
+Received: from MI3PEPF00008496.eurprd03.prod.outlook.com
+ (2603:10a6:102:375:cafe::5e) by PA7P264CA0262.outlook.office365.com
+ (2603:10a6:102:375::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.522.4 via Frontend Transport; Fri, 16
+ Oct 2026 19:59:00 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 192.176.1.74)
  smtp.mailfrom=ericsson.com; dkim=none (message not signed)
@@ -47,27 +46,27 @@ Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
  receiver=protection.outlook.com; 
  client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
 Received: from oa.msg.ericsson.com (192.176.1.74) by
- AMS1EPF0000009C.mail.protection.outlook.com (10.167.242.73) with Microsoft
+ MI3PEPF00008496.mail.protection.outlook.com (10.167.240.181) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.6 via Frontend Transport; Fri, 16 Oct 2026 19:59:03 +0000
+ 15.21.522.6 via Frontend Transport; Fri, 16 Oct 2026 19:59:00 +0000
 Received: from seliius19697.seli.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.66) with Microsoft SMTP Server
+ smtp-central.internal.ericsson.com (100.87.178.67) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.2562.43; Fri, 16 Oct 2026 21:58:59 +0200
 Received: from seliiuvd10563.seli.gic.ericsson.se
  (seliiuvd10563.seli.gic.ericsson.se [10.120.141.220])
- by seliius19697.seli.gic.ericsson.se (Postfix) with ESMTP id EBA774020A84;
+ by seliius19697.seli.gic.ericsson.se (Postfix) with ESMTP id F34A34020A9D;
  Fri, 16 Oct 2026 21:58:57 +0200 (CEST)
 Received: by seliiuvd10563.seli.gic.ericsson.se (Postfix, from userid 93258)
- id B6A0C6285899; Fri, 16 Oct 2026 21:58:57 +0200 (CEST)
+ id C3232628589B; Fri, 16 Oct 2026 21:58:57 +0200 (CEST)
 From: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
 To: <dev@dpdk.org>
 CC: Stephen Hemminger <stephen@networkplumber.org>, Jakub Grajciar
  <jgrajcia@cisco.com>, <stable@dpdk.org>, Sriram Yagnaraman
  <sriram.yagnaraman@ericsson.com>
-Subject: [PATCH v4 2/9] net/memif: close file descriptor zero
-Date: Fri, 16 Oct 2026 21:58:50 +0200
-Message-ID: <20261016195857.3258796-3-sriram.yagnaraman@ericsson.com>
+Subject: [PATCH v4 4/9] net/memif: fix MAC address leak on probe failure
+Date: Fri, 16 Oct 2026 21:58:52 +0200
+Message-ID: <20261016195857.3258796-5-sriram.yagnaraman@ericsson.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20261016195857.3258796-1-sriram.yagnaraman@ericsson.com>
 References: <20261016195857.3258796-1-sriram.yagnaraman@ericsson.com>
@@ -76,31 +75,31 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS1EPF0000009C:EE_|DU4PR07MB11855:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7cfc3016-bbd4-4f35-8bc3-08df2bbfed6a
+X-MS-TrafficTypeDiagnostic: MI3PEPF00008496:EE_|GV4PR07MB11049:EE_
+X-MS-Office365-Filtering-Correlation-Id: 34dc1758-b2d5-4cd0-1628-08df2bbfeba9
 X-SMTP-Server: smtp-central.internal.ericsson.com
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|23010399003|36860700016|376014|82310400026|56012099006|11063799006|261009223027099003|22082099003|18002099003|10067099003;
-X-Microsoft-Antispam-Message-Info: U4SDLQaNF+untQdg8JQW8fmhF3BIWQ+I6ZQlq0LxKqHKgd7wRKJg/scWVm8Crnw5OZAp1EjvCDBppOxPqjNrkQcCTqiBEbTypLHjSFT8zS+VBfBx9k5lqmiWK6HexKjggzfm/9rYRbW5uWx94naG/C4imhKsWKk5w9AE+UKF6Uut1rKwoB7YscBNgM2+brWS3WNWJzgzK00ap9yzHequl7fRXRkLIedNyufq/z+VqbruQ0fSS1gfk+13VpCNux7fTj5fwO4yP/wIEMKfbM23gtB8o9o//f65/wCxmHK4fz3sENHhTt/A7Bp27HZdcuwJ9NsUEBZsFeKHsgQDnQbbc3E6Bmii1P2X2fCK77ILBQ8YI5FnP+3F3Itm2xMcl+Ym9dT9nvyXxNhHjJH0we1Y9COzb0rAm7MCpPsr5iS2rAo0rkbsh97aVyF0ApV8/6JvigHcs3/DSI2Y1s/32qFxFx7aXz1tkfIhPKw6YyZeoh9mXLSHvWh2fisFrNt95ntC9NNaYFRdepmqMPMbdB2A0/w0fDAFuL4OotfA3mr8DGZWBN3ZDF9rUUxWdGiqtLtxQ8bSeNCnFD5Bty5+FROFB0TTstFzy9TnA/ddmnT01tyWUFlJAhJvgNdFKSq1Dy9bAikXR/Af6VQyQH6i+xD1nA+t7r+kG7vG1WR8WW0RUy45sIq3zgBicHJXsjD5hG9jqY7NM+9DzmQhObBY7kk7Gw==
+ ARA:13230040|82310400026|23010399003|1800799024|376014|36860700016|11063799006|56012099006|261009223027099003|10067099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: rXykF8WhnNyu7i96fUJTyM+VrJNKrMW1TJXSJHki9QOw1Y4KxUE3Mdal3DIU9ig0exUf4TG4Ezv7f11hc/XG3R9PRfvxLr/K96ODhLp4aM5OzeqEmV/dmd6//ifuYHFLEuys7MBLfYN7Y+ZhNIAHCayRaImD19iw3/IcTXWeicPzW0Co0YfccdbP2Mh3mq0BRkSPZQrAn+v5qb1xDbtXudWid3QOK+GyIkl4KkodW25p6wfbF5R0++J65bEfx4hvzCgUv/BV2KtYbFuPupZfdQAn0jCMq/DwfEwrzF611EVvKT82rRzJisv44Gn9toMFFShKkEAbOk9p7zgJH1TXhooHDerVSA2DgWAMLsRSyrF8O1n9tCcN4PAVO2/bauYi2q2TAR0G1l+jQaPuC/rjK8yhwuqKBjwwEOAOHDZjd+gvoekeapDxsFiCqp+uEY1y+KAQnV/1stPvYcdfjxkqWipR6anmMZ7wDu/C3owKIJgSHU1/Z9TDL57aeXKUDzXXbh72Y9NEa5DN0onCynLDrzd0KU75tAdrOU/iJIv4QepeoBAQ1psWCwSZiXxZSvi4ynbjGczfT/IJNBxDEGmQAIxtnL2QF7lJe39aY1XVpLXJend6t/LXiA1I50rTQ5BfdQNg5KycA5XUo15r9yr2R1m240ikbXPhohPvhvg82Bn0XD6QW8IIBBM2NKDsUym3QmoRoXojJPlogMFE/sAIJQ==
 X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
  CAT:NONE;
- SFS:(13230040)(1800799024)(23010399003)(36860700016)(376014)(82310400026)(56012099006)(11063799006)(261009223027099003)(22082099003)(18002099003)(10067099003);
+ SFS:(13230040)(82310400026)(23010399003)(1800799024)(376014)(36860700016)(11063799006)(56012099006)(261009223027099003)(10067099003)(18002099003)(22082099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: c1Tn6lW6sHrxDxoXtqTy1cg4cYlh3R/mLfH/vOQ8Q9ob6WbKgDPxWGSyiyA5Y16fOomAIoiqN8GujLSiBen1yh94/+rQCDncmueSxBKh7MnGqFjJ2qDxlWfCnQPIseesxuoWFIPDtCCxD2cca/dVsOcS0XiYhorK9zDJvJXzrBP8PUR2c92LENqVQur+zRf23pcKRInl4aSWULuKI5BIlp1GjduSTRB7p/DZjEQU6YC4ivnVyWVhytVznCtavUU0RmLOb/YjCGi4b40tWNGrwOCN1ALtKUI/ffHfH4UyGv1pEhRwgj+TXCLm+JV7svRDVJAxYRzHJHEjfgOai0eDkUA3TP0vVJGC3qWlqaokb4OJ2YDcbFxRYcVPhpKVXFg4+z28zzEXWrRngkXwYhtKhJGF0gj0k7fDJZBWY6I2j59vSJNIeS7vdwTwkdc+Q1q9
+X-MS-Exchange-AntiSpam-MessageData-0: cf55CCRWSvYYCQHMwX3OSgAEVKC+enuIMHrFrG+3LuEWQAYJRwdJNbCKY/OH9XfrP3V6HnZCHCmZ8y5PZZwWvvJwwoO2a6lo/wD1fUd6LR/d/GXVBNdxHQxnhg1Jv+tK/QLXbbS8X+XypI8sehVp5IC8y2IjsdF2KEuC1zzXJd8mxfv9QM33/hm6MkpBdjWk/Mm54DorkQSAFf98fEeV+NHgHP3GaztWlISt33qdGtXEMgUSOhpAskTnScQsl5DXa6/nqjxyXvMEpQD0InOIKpWa1P1jm5qceTj05+gOjd/oy6fHv8DFJvCt04n0Pqf2tYOBktb7RtaS7KA+GWbiJv/TEzeOItPQZBPX59gG10TE2viQ0QbpEZ7duTzztHpVPje5viMKb0P1tTcFof9x3qCT660iFo6mU0jNjeVvRfTNt5Sq8xeC//pdRoSqYi43
 X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 19:59:03.0317 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7cfc3016-bbd4-4f35-8bc3-08df2bbfed6a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 19:59:00.1532 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34dc1758-b2d5-4cd0-1628-08df2bbfeba9
 X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
  Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: AMS1EPF0000009C.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: MI3PEPF00008496.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR07MB11855
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR07MB11049
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -114,67 +113,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Several cleanup paths guard close() with "fd > 0", which skips a valid
-file descriptor of 0 and leaks it. A descriptor of 0 is legitimate (for
-example when stdin has been closed before the region or interrupt fd is
-created). Use ">= 0" consistently with the -1 sentinel the code already
-uses elsewhere, in the memif_free_regions() shm munmap path, the
-memif_region_init_shm() error path, the control-channel teardown in
-memif_disconnect(), and the SCM_RIGHTS fd check in memif_msg_send().
+rte_pmd_memif_probe() allocates the default MAC address up front and
+only hands ownership to the device in memif_create() on success. Every
+argument-parsing error jumps to the exit label, which freed the kvargs
+but not the MAC address, leaking it. The allocation was also dereferenced
+by rte_eth_random_addr() with no check that rte_zmalloc() succeeded, and
+was done even in the secondary process which never uses it.
+
+Allocate the MAC address only in the primary process after the secondary
+path has returned, check it for NULL, and free it at the exit label on
+any failure (on success memif_create() owns it via data->mac_addrs).
+While here, return -ENOMEM instead of -1 on the secondary-process
+process-private allocation failure, matching the primary path.
 
 Fixes: 09c7e63a71f9 ("net/memif: introduce memory interface PMD")
 Cc: stable@dpdk.org
 
 Signed-off-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
 ---
- drivers/net/memif/memif_socket.c  | 4 ++--
- drivers/net/memif/rte_eth_memif.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/memif/rte_eth_memif.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/memif/memif_socket.c b/drivers/net/memif/memif_socket.c
-index 87b23aa8b4..550e2e468a 100644
---- a/drivers/net/memif/memif_socket.c
-+++ b/drivers/net/memif/memif_socket.c
-@@ -41,7 +41,7 @@ memif_msg_send(int fd, memif_msg_t *msg, int afd)
- 	mh.msg_iov = iov;
- 	mh.msg_iovlen = 1;
- 
--	if (afd > 0) {
-+	if (afd >= 0) {
- 		memset(&ctl, 0, sizeof(ctl));
- 		mh.msg_control = ctl;
- 		mh.msg_controllen = sizeof(ctl);
-@@ -623,7 +623,7 @@ memif_disconnect(struct rte_eth_dev *dev)
- 		}
- 
- 		ih = pmd->cc->intr_handle;
--		if (rte_intr_fd_get(ih) > 0) {
-+		if (rte_intr_fd_get(ih) >= 0) {
- 			ret = rte_intr_callback_unregister(ih,
- 							memif_intr_handler,
- 							pmd->cc);
 diff --git a/drivers/net/memif/rte_eth_memif.c b/drivers/net/memif/rte_eth_memif.c
-index 36db03a268..1d1d12e242 100644
+index e753243440..70359554e6 100644
 --- a/drivers/net/memif/rte_eth_memif.c
 +++ b/drivers/net/memif/rte_eth_memif.c
-@@ -1295,7 +1295,7 @@ memif_free_regions(struct rte_eth_dev *dev)
- 			}
- 			if (r->addr != NULL) {
- 				munmap(r->addr, r->region_size);
--				if (r->fd > 0) {
-+				if (r->fd >= 0) {
- 					close(r->fd);
- 					r->fd = -1;
- 				}
-@@ -1416,7 +1416,7 @@ memif_region_init_shm(struct rte_eth_dev *dev, uint8_t has_buffers)
+@@ -2232,12 +2232,9 @@ rte_pmd_memif_probe(struct rte_vdev_device *vdev)
+ 	gid_t owner_gid = -1;
+ 	uint32_t flags = 0;
+ 	const char *secret = NULL;
+-	struct rte_ether_addr *ether_addr = rte_zmalloc("",
+-		sizeof(struct rte_ether_addr), 0);
++	struct rte_ether_addr *ether_addr = NULL;
+ 	struct rte_eth_dev *eth_dev;
+ 
+-	rte_eth_random_addr(ether_addr->addr_bytes);
+-
+ 	MIF_LOG(INFO, "Initialize MEMIF: %s.", name);
+ 
+ 	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
+@@ -2264,7 +2261,7 @@ rte_pmd_memif_probe(struct rte_vdev_device *vdev)
+ 		if (eth_dev->process_private == NULL) {
+ 			MIF_LOG(ERR,
+ 				"Failed to alloc memory for process private");
+-			return -1;
++			return -ENOMEM;
+ 		}
+ 
+ 		rte_eth_dev_probing_finish(eth_dev);
+@@ -2272,6 +2269,13 @@ rte_pmd_memif_probe(struct rte_vdev_device *vdev)
+ 		return 0;
+ 	}
+ 
++	ether_addr = rte_zmalloc("", sizeof(struct rte_ether_addr), 0);
++	if (ether_addr == NULL) {
++		MIF_LOG(ERR, "Failed to alloc MAC address");
++		return -ENOMEM;
++	}
++	rte_eth_random_addr(ether_addr->addr_bytes);
++
+ 	ret = rte_mp_action_register(MEMIF_MP_SEND_REGION, memif_mp_send_region);
+ 	/*
+ 	 * Primary process can continue probing, but secondary process won't
+@@ -2346,6 +2350,12 @@ rte_pmd_memif_probe(struct rte_vdev_device *vdev)
+ 			   log2_ring_size, pkt_buffer_size, secret, ether_addr);
+ 
+ exit:
++	/*
++	 * On success memif_create() takes ownership of ether_addr
++	 * (data->mac_addrs); free it on any failure or early exit.
++	 */
++	if (ret != 0)
++		rte_free(ether_addr);
+ 	rte_kvargs_free(kvlist);
  	return ret;
- 
- error:
--	if (r->fd > 0)
-+	if (r->fd >= 0)
- 		close(r->fd);
- 	r->fd = -1;
- 
+ }
 -- 
 2.43.7
 
