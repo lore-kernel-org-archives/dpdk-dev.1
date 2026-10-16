@@ -2,56 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A31D7CC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 16:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2B2CC6B38
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 17:04:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ECCF9402E7;
-	Fri, 16 Oct 2026 18:49:23 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id BDA444026C
- for <dev@dpdk.org>; Fri, 16 Oct 2026 18:49:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792169362;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=EXs6o63Bfn6sadnZh7nvIB+aTV/C88F00WT4zcKRUSI=;
- b=RgrniMXyru5nxddVLrb7k4UItMJxmzZwtPodgDFdivY1zxxQS0mUmNs7PTNE+B3LMNXKPT
- gnAqHX6NH9yUccsClX9iIm0NIZ/g5Q73QxMBVG8W5yApNgJKTbcwFprjScHDzjFK/9iKA8
- CM5NdMyNAeCdOODVgIgHc3JKP+VxdKk=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-397-ENYe5NIzPpmas5AEeZRywg-1; Fri,
- 16 Oct 2026 16:49:20 +0000
-X-MC-Unique: ENYe5NIzPpmas5AEeZRywg-1
-X-Mimecast-MFC-AGG-ID: ENYe5NIzPpmas5AEeZRywg_1792169360
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id EBA5B18005B9
- for <dev@dpdk.org>; Fri, 16 Oct 2026 16:49:19 +0000 (UTC)
-Received: from dmarchan.redhat.corp
- (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 590141955F10
- for <dev@dpdk.org>; Fri, 16 Oct 2026 16:49:19 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Subject: [PATCH] eal: add some debug for unit test failures
-Date: Fri, 16 Oct 2026 18:49:14 +0200
-Message-ID: <20261016164914.1763399-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 55B2040291;
+	Fri, 16 Oct 2026 19:04:49 +0200 (CEST)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 465334026C
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 19:04:48 +0200 (CEST)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-2e5378b281aso164725ad.2
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 10:04:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792170287;
+ x=1792775087; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=YGpgloFQr+KfVxvRxlBN/geYvaDEXkkQcvTSqYbDbfA=;
+ b=ZTyHn5uOwT/z8vkkXZF8qlG7jvTIYTmFho2P1Uo2kTp0IL+SssmpyKx1jP8zvcmCrX
+ gLPFk+iU2yxxf5DkcjOba20FuGb3yftZzPEQ9O+6TuNg2qUTuLqLuGH3/LFtxTM45b5B
+ +2LFLuqXBv8pcAmeCRw9yOkFTo6klD0TKquN1J1rt3rX2M1mL35va5RcM6ZULCFBbscU
+ hcsLXgtGYi7HrR9IKYBNCbVOygRcOmiBMwpIHbqToigZGgrq7PamvIC6ZyDItka+lEJ7
+ 4TuG/tIcRVezxNq7tF0YEJegP17hLjQj+n1xnE3lzBtDqr2K8d7ClxoB7XIROSfeBQ/f
+ Uhbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792170287; x=1792775087;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=YGpgloFQr+KfVxvRxlBN/geYvaDEXkkQcvTSqYbDbfA=;
+ b=VfAm6hT7Hxn+6UD7JDhTtEMDkOY1U3LZG7hYXHH3cXET5tbsLEXQLOzW2gsCNjGt1F
+ SQab5dWwKW0yM+v0LWocN5iv1yCBQmvpRYZ0bACXA6EpKnRg9u2R7yv7JDybJjXqeEkm
+ rRLPVJiWJI8z5sQCpaHGIrfhxELsrWC46vxdwHRQ9zmotcvfKEchJ3t/0jSzWWQSHmWQ
+ IEckDrzc0h+ssOcsa7qkyFh14Il6R9U0mh0vrekYM9BhGiPtov/nkNSjfeNPpL0nhENR
+ xKJXvRz/ItGdVSe9IFaTFx9Z3EgfMnXQZdlNTmnLtxPgPR0PiKLLImGhn+mXFEg9L3UI
+ oqSA==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBxJ5f8V60Hi6tydhBIQ9Lj5Vfm4Hhc+n3m4jwQGDz0r+WVXCwx3zDujuqb0iq1ron064nU=@dpdk.org
+X-Gm-Message-State: AFq9FYKayKlYHczZww9SwTr32IvyWIAcLXeFyZ0scRxbtSQ1AVP37EW7
+ 8imoPkqJ4B4Y7h8V9ZrHfeGwkUtc8023d6PFMhIgwV3q72bf9DWyHjBjL1oXufJqn38=
+X-Gm-Gg: AYBFou23SXO6N2uSW8/hBUIcHgy0hgjdPPSjp27HZxmHj5hScw7EoLIi5HSkYGCauTX
+ XsSNfI2VzxUgFzRWjhwrAAh8XQ2Yl2Qiy5R7ESz5bFhPOtDF0N9TFVodGQtqNJTX5w6/3XTeQLW
+ pXWmg7v7rk5n0hHVPLk+h6AkqdT/HwZMCR7uSWBcsis6btbCsXy/BA7DeNxL50xYcZeS2bg314W
+ rCgZUitkSAHvu5cpyUCONRtYCs9VnQCPpJSEvdAE70OB3YKw+zEQfMcxHeY+KTmIaoMzDTPSykq
+ g/f1W1c4rF7BXalLQaXKwCzHevHtHsHt3gvrP7eZtIol2UnPDML6ThpUUJii8mj/PcqrFXq03ub
+ /GOd/oJsWSmcj1xoZ32ZLfhrJSAc8Aj9Y/4g34qL82ql0NWtUGRSQeMCfXOeGZM4w/V4oRmiZm6
+ UkCyPklBRSzsBDoRPhodX9BG5GwjIUJUsR3YGg0PJWpUrBJ5zJFG/SUZUvYZxYc+V/io2Gog5ew
+ bThjW+TktIH73Id0CUw625D62ZOvyJM3XdYudgw
+X-Received: by 2002:a17:903:b83:b0:2e9:5313:8f76 with SMTP id
+ d9443c01a7336-2e9a6c13b56mr5235675ad.47.1792170287227; 
+ Fri, 16 Oct 2026 10:04:47 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2e97e85fd1dsm13506765ad.49.2026.10.16.10.04.46
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 16 Oct 2026 10:04:46 -0700 (PDT)
+Date: Fri, 16 Oct 2026 10:04:35 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Hemant Agrawal <hemant.agrawal@nxp.com>
+Cc: "thomas@monjalon.net" <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [PATCH v27 00/25] NXP DPAA driver enhancements and fixes
+Message-ID: <20261016100435.4dc6dc10@phoenix.local>
+In-Reply-To: <GV1PR04MB10750670E599D034FA89E627A899B2@GV1PR04MB10750.eurprd04.prod.outlook.com>
+References: <20261015141144.3140281-1-hemant.agrawal@nxp.com>
+ <20261016111958.163060-1-hemant.agrawal@nxp.com>
+ <20261016093848.7dbe6c73@phoenix.local>
+ <GV1PR04MB10750670E599D034FA89E627A899B2@GV1PR04MB10750.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: VjCLB59HdJ3JoVinkMIkhSdTYzTSaUxzNrwcTaTfa8k_1792169360
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,63 +87,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Dirty patch to try to catch more info about a unit test failure seen in
-ARM containers at UNH.
+On Fri, 16 Oct 2026 16:48:30 +0000
+Hemant Agrawal <hemant.agrawal@nxp.com> wrote:
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- app/test/commands.c          | 4 +++-
- app/test/process.c           | 7 +++++++
- lib/eal/common/malloc_heap.c | 2 ++
- 3 files changed, 12 insertions(+), 1 deletion(-)
+> Hi Stephan,
+> 
+> > -----Original Message-----
+> > From: Stephen Hemminger <stephen@networkplumber.org>
+> >  
+> 
+> NXP Confidential
+> > On Fri, 16 Oct 2026 16:49:33 +0530
+> > Hemant Agrawal <hemant.agrawal@nxp.com> wrote:
+> >  
+> > > This series collects a set of fixes and enhancements for the NXP DPAA
+> > > bus, mempool, dma, crypto and net drivers targeting 26.11.
+> > >
+> > > It includes memory-leak and resource-cleanup fixes on the device
+> > > remove/close paths, more robust frame queue shutdown,
+> > > secondary-process safety guards, BPID lifecycle handling, and several new  
+> > features:  
+> > > enhanced virtual storage profile (VSP) port support, fmcless Rx queue
+> > > configuration, non fmX-macY shared Ethernet naming, and DMA
+> > > scatter-gather and errata-workaround devargs. Documentation and
+> > > release notes are updated accordingly.
+> > >
+> > > V27:
+> > > - fixed qm_channel_pool_num check issue.
+> > > - fixed commit message as devarg for fmcless rxq number was removed.
+> > > - Added missing export internal symbol and fq destroy.
+> > > - merged both FQ shutdown patches as we cannot change the sequence
+> > >    because of the dependency.
+> > > - mac_idx has a user which is dpaa flow so no change. Added static to
+> > >    g_fmc_model and updated release notes.
+> > > - Issues reported in v25 which are not handled, were optional, so
+> > >    skipping them.  
+> >
+> >
+> > FYI - what I do is feed the patch into a Claude project with existing AGENTS.md
+> > file. The chat continues as versions get sent to email so the context window
+> > has all the versions of the patch. This lets it see the progress and check if
+> > previous findings were addressed.
+> >
+> > Review of [PATCH v27 00/25] NXP DPAA fixes and enhancements
+> >
+> > Series applies cleanly to 26.11-rc1 and every commit builds with -
+> > Dwerror=true. The fixes are now first. 08 cherry-picks cleanly onto
+> > v24.11 and v25.11, and 06 applies there once 01-05 are in.
+> >
+> > v26 Warnings on 12 (now 14) and 20 are addressed. The 24 Warning is only
+> > partly fixed.
+> >  
+> 
+> I see only one warning in this patchset 24/25 -   is it possible that you drop this patch and apply rest of the series?
 
-diff --git a/app/test/commands.c b/app/test/commands.c
-index 497d8e9952..5108295202 100644
---- a/app/test/commands.c
-+++ b/app/test/commands.c
-@@ -368,8 +368,10 @@ int commands_init(void)
- 	}
- 
- 	commands = (char *)calloc(commands_len, sizeof(char));
--	if (!commands)
-+	if (!commands) {
-+		printf("commands_init: calloc(%d) failed %s\n", commands_len, strerror(errno));
- 		return -1;
-+	}
- 
- 	TAILQ_FOREACH(t, &commands_list, next) {
- 		strlcat(commands, t->command, commands_len);
-diff --git a/app/test/process.c b/app/test/process.c
-index 92c8af702b..dc39d0ea7b 100644
---- a/app/test/process.c
-+++ b/app/test/process.c
-@@ -200,6 +200,13 @@ process_dup(const char *const argv[], int numargs, const char *env_value)
- 	}
- #endif
- #endif
-+	if (WIFEXITED(status))
-+		printf("Child process exited with status %d\n", WEXITSTATUS(status));
-+	else if (WIFSIGNALED(status))
-+		printf("Child process killed by signal %d\n", WTERMSIG(status));
-+	else
-+		printf("Child process terminated with wait status %d\n", status);
-+
- 	return status;
- }
- 
-diff --git a/lib/eal/common/malloc_heap.c b/lib/eal/common/malloc_heap.c
-index 39240c261c..6c6bcd3b29 100644
---- a/lib/eal/common/malloc_heap.c
-+++ b/lib/eal/common/malloc_heap.c
-@@ -657,6 +657,8 @@ malloc_heap_alloc_on_heap_id(size_t size, unsigned int heap_id, unsigned int fla
- 	/* for legacy mode, try once and with all flags */
- 	if (internal_conf->legacy_mem) {
- 		ret = heap_alloc(heap, size, flags, align, bound, contig);
-+		if (ret == NULL)
-+			EAL_LOG(ERR, "Error allocating from heap in legacy mode");
- 		goto alloc_unlock;
- 	}
- 
--- 
-2.54.0
-
+I could if that is what you want
