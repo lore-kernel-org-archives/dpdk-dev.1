@@ -2,129 +2,145 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDB0CC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 17:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C15ECC6B38
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 17:33:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59A4240291;
-	Fri, 16 Oct 2026 19:07:52 +0200 (CEST)
-Received: from GVXPR05CU001.outbound.protection.outlook.com
- (mail-swedencentralazon11013028.outbound.protection.outlook.com
- [52.101.83.28]) by mails.dpdk.org (Postfix) with ESMTP id 901C74026C
- for <dev@dpdk.org>; Fri, 16 Oct 2026 19:07:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 987F54064F;
+	Fri, 16 Oct 2026 19:33:45 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 64B444026C;
+ Fri, 16 Oct 2026 19:33:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792172024; x=1823708024;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=QmheyBQC+DQRoY5Q1ieO0R8vqBEVFIRQhHKC1Jsryhc=;
+ b=dE6cZPoUq3WzOcmLVlp4rKEUlaq0nYY8aHUqKHb0cWAot8ONfPOrpmiE
+ uU4KfkrUfrvB2DsJ5cxUWjHYvyFHS0BD5qldCPRClcIdrIwd/RL+zMh/X
+ e0DuCGb9Hwq270/jkb6GBdDetLHlPn03V5ypa6Ah3raOefElHm9ls45vN
+ OIof7AuxL8gh+MM8qoA9eCNvptJtH/BBcl7cxPCXHL+9sW61DVJYb178y
+ QFVwb5OGw1IvSxfqAcQMIN3ttcpPKRVjAZ+rb8Es0Xws4jyobmyeljmHt
+ owzRURPC164k/ngbKg0fMrRAAZ6+sK338DTAcneBaTko+uc52i9bD1O10 A==;
+X-CSE-ConnectionGUID: xps+HqH4Tzqcwa+gg1cIgg==
+X-CSE-MsgGUID: kgyTVPVZTQ+IXWJFw/MKkw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11937"; a="980113"
+X-IronPort-AV: E=Sophos;i="6.27,162,1787036400"; 
+   d="scan'208";a="980113"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Oct 2026 10:33:42 -0700
+X-CSE-ConnectionGUID: JCX3zca/Tkmu9pQwJv7Msw==
+X-CSE-MsgGUID: B/UnJ0X/Sge21ZATHsJNkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,162,1787036400"; 
+   d="scan'208";a="2061622"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Oct 2026 10:33:42 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Fri, 16 Oct 2026 10:33:41 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Fri, 16 Oct 2026 10:33:41 -0700
+Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.59) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Fri, 16 Oct 2026 10:33:39 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SsOPpZ3wjSQNRK4nmaa+LGr3m0tBNOytFDnQbJ3fjnc+ZOHr/Lx15vA0UYN3ANouGVgJ5Rk586gDfXzp4pBshJaCbRzJqCYhSPkbZbw3mMHNOdxxm9Jnq+pzONKrpkROTGBr15FoaAuFDbI0H4GASomsknu8hMUhcD39+NfaKvk4MVEJ+D9KfMouE737btgjF/KYbKSErWgLb42PgiHs5hecpU1QojfdorlMz0R9LLHUo2pC5KUnKGNqMAutNtKyseCrUrEYKgURWiGoOs7I3uYSq/FCuet30I/LvQZ80+lCUVex7MZ9DqBh83pR5BnaeKDEYGU8KqrC3q98H5/NUQ==
+ b=J3YjiI4+q/RXMZ2V78gzNyUP6ssCR0ur1Gu/nRDmiGcdQIBn3RWPxNArgGUvvRy8oqX/zV3ltiN78BmFSYnT9Cn3rPjQFCIpgPyO3dfyi7Rw5vR7mXlGl56SQtclvWN0d3y9GIwxcohZrNBftOUQUgTfqaW4/1ICrZEX1nJZIxyT73i+DoUeGDJ+GlZ36f6hGG968kn6GA9jNkvcv/0gNdkrnDTH9ZcM6KM875SpzCXNYL9kw/vo++VpxFHKa8peZWrGqU5x8VS5caVNKGiMy7uAiYTVvxWJYUQq9On5TVLztcN7CmYTOpt0Lj5SMork2u76uA24ji4oszhI8buGUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xTUG0JLz5wG465cyOPoZy1cYNLYEigOvD/kh7maZiqw=;
- b=FA7EWuK45AISQXE+7xGJfl/MDA4FaILXwxDUjHvXxWC/KA3BbrvFI+BDp0oeEgNF5ed8FxBy2iGBYixF1WeAwc40Nu2E9DjQkREKBOwKj16hrieLxHs+Lj7u0qdbwxE03CeP8NxCFNZ4ZgrgKazqkcPOZIbWRvA8dJabomblT6HCf94KAxjW7zqQtIrDPx6T6BHU4kD2UReb8XG6vAvBrjxflWycAe5CbrPz1R5PD9IKYbjB50WMLo5sx1QpxOIYTjkMhEIlVO87RxS74eUEeS33VjiwXPyCQ6gC3ORIN+V3U91UXtBywux3I3PvieOcnbB01S4m7a2FHs37RkCJtQ==
+ bh=glaLRIF39uytzkb6keCfZGSWpPJfRh07CV6R7R7uMJc=;
+ b=YuDLiO8ed0Rl6BPgTr8XqEtuTEXWRsYpqAAqkPHuc0iYrEoO4THJXFkPPusNnluvbzk8aEA3T7eNaTW0V5UOrhwmvbEe9Uc8flKo0tyDb8XXf8c6I2TOzPIuHbNSJAdoIxPddfdhP5ddDF3toXvl0aLMmTLAJyxZYlBckDUo/o6fGDmS2KNrtUr7Ds/OLTQD3fw248w71MccPzlEqCMDMtPeAC4H5JwqhNPHx0TaUZT8PGoxibL/E0WjmKa1n8zVGTGPyqUiWxcw6ayX2pDoTWIZvCbgD5l/4MLq+Me4ZMp0Wj4fZ0HpmI1QXIDUtitvMXMiAIlfme03oDojGczTFg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xTUG0JLz5wG465cyOPoZy1cYNLYEigOvD/kh7maZiqw=;
- b=WVOcP2DUv5DnENMiHyOZe7j5horb5sJOvp1GgjYwDoL/rrXNQdGSKBmzPQ131MLm4kVwOSI2yvfGAfldzCDfrVkFX/H+61bdgME/Isv8KyCmqrKBtxqHgWhM50rcuAJ54WmHOea7LekbxLwor+/kFTI7gIb2gt0orpQ7awfdcNckhSJuAOjWLfu/4byt0Fsu2+GV2YFzJZibxGAlFi+7uJFIhJXQ5re3Yb87H8Od5reUP50Zr82eKHr06CcbgqrECWgDWva7C5QlfZ0I+utgWm/q1pJdnAN1tUj8DcTFSI5Ixn5KQv7jZ4xE8UJkKJWElFC/rP1/gVGvhEPKZsWHzw==
-Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
- (2603:10a6:150:212::14) by MMZPR04MB625833.eurprd04.prod.outlook.com
- (2603:10a6:190:52::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.14; Fri, 16 Oct
- 2026 17:07:48 +0000
-Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
- ([fe80::9985:c5d3:961:2003]) by GV1PR04MB10750.eurprd04.prod.outlook.com
- ([fe80::9985:c5d3:961:2003%6]) with mapi id 15.21.0522.013; Fri, 16 Oct 2026
- 17:07:48 +0000
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "thomas@monjalon.net" <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v27 00/25] NXP DPAA driver enhancements and fixes
-Thread-Topic: [PATCH v27 00/25] NXP DPAA driver enhancements and fixes
-Thread-Index: AQHdXWBMnOwr8hhdk0Si6YK9HoxH8LcAXvaAgAACLDCAAAT0gIAAAJ2A
-Date: Fri, 16 Oct 2026 17:07:48 +0000
-Message-ID: <GV1PR04MB10750B1B09B39DB39187773B5899B2@GV1PR04MB10750.eurprd04.prod.outlook.com>
-References: <20261015141144.3140281-1-hemant.agrawal@nxp.com>
- <20261016111958.163060-1-hemant.agrawal@nxp.com>
- <20261016093848.7dbe6c73@phoenix.local>
- <GV1PR04MB10750670E599D034FA89E627A899B2@GV1PR04MB10750.eurprd04.prod.outlook.com>
- <20261016100435.4dc6dc10@phoenix.local>
-In-Reply-To: <20261016100435.4dc6dc10@phoenix.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Enabled=True;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SiteId=686ea1d3-bc2b-4c6f-a92c-d99c5c301635;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SetDate=2026-10-16T17:06:46.0000000Z;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Name=NXP
- Confidential; MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_ContentBits=3;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Method=Standard
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: GV1PR04MB10750:EE_|MMZPR04MB625833:EE_
-x-ms-office365-filtering-correlation-id: 3fce6b9b-5793-4b9a-7b64-08df2ba80126
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|376014|1800799024|19092799006|23010399003|38070700021|56012099006|4143699003|11063799006|10067099003|18002099003|22082099003|6133799003;
-x-microsoft-antispam-message-info: h/jMfP6OCC7h4Cz4KN5JPlsgJwd5waGJL24otL/rIyWLOLMQXLm0d2VvhJfsItpl2lp1YffV7PfqF6hQy3z2MKtIoyVSwnT9EgCXmWLdFPSlpmtTuCN31TBjRRiMumBDWnSm+pDei47sUbLB9rsuFJBpN9En1o7uqVkI3GfX1b1UqEtFxWJNAI/agxEv3p/VolElveY8g62jfIk4OXv4Jh9lxcvuoy8pZ2GvAXNTb8vv06f/+jfx0ZJDCFUsXitYmATipdqOD/94K7it57psD7xfBzrw3r0JFLtQtcudqRas2TKKI4eJ2qCTL78NdUii6PON+piujWD3W5Qiuf7yV1G6bYOqi+GZuBPtk9/SDQYI+E1+AHI2+p6waqIyBFZmor/LwiAs1AAYJox0Zl9554gJk7BUwswFU0NLKVLp6nlyMPKBr+tbz2/bkyAikDpT4FLNa2+J213oQ3uncU4E28T7P1akzNyZeJO0O+j2XehNXvt6xOiq6U3aeXTicZd/eJW9EMQHV/QxGDTpaiaWevhhqAotS0sdfAimMiPC2xk9/hdAc/iso45HOqdzIb/IYSI9BNkmASP52T1/VY5/ec556oorod2y7gqzhEB2rm5mf4QBJ/p+mM0ACOZJ/JY2g0dwopGhM9/aWEhqu8mPvSmTJjD3r9D7ts497IVhT/Int1ANxnJ2muIDfquD5hHVo7to1oxaR9l9QEES74ivv7Rq3moOs0u78Li7kZ7qG/I=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:GV1PR04MB10750.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(19092799006)(23010399003)(38070700021)(56012099006)(4143699003)(11063799006)(10067099003)(18002099003)(22082099003)(6133799003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WVZQTU96U0dGMTVIVlpxSGc3anN3R240aDY3d1NhWk9XL2svdWhELzVaS1Aw?=
- =?utf-8?B?cnpSNkxibGRjMlgyYisxRmUxVUUxc2xiTTBtYUtxZ1ZzNmNXWTNZd0plUlNp?=
- =?utf-8?B?L0poeFBOTEpMRUJOSURjR091TmMzcU01Ym1RM3ZldVVTeUFSWVpicUN5UjN6?=
- =?utf-8?B?R3pCOTBtTVZTVS9rMCtzbCs4UzkrbEF0azIzQXQyNEdjZzdEZ3crL1BHZWw2?=
- =?utf-8?B?cWxBbHgyMG9xMjh0MWZVN3ErOTNsSHYwUm5zV2gzSmo1eCs0dlc4d3hqQ3Vn?=
- =?utf-8?B?K2RBNUxBeFBmQUdHcERSL29BWWplcjRza0VoQ2pGcytmUmVKS3Q3U3podHN5?=
- =?utf-8?B?R3E4SlRIVGJCSTc0ZU1wM1NzaTFGNjhXYThOU0owTXNyYkpHZHdXZnRBcTFq?=
- =?utf-8?B?TldCV21zREs5N0xSN1RQU2xkVzZCVFlIWFNBNElxMHdwQWtucUhxNzhoRWRM?=
- =?utf-8?B?bnBGNm9sNDd5bk94RzRxSjFxdXFCd1RzQkIvcjVIVnZyamNNQjlOTTlRc3dv?=
- =?utf-8?B?UU05OHAxcWRKZUkxZi9rOUd0YnlLR2hXekxxT2ZsaU9BeXB0S2NaQ1hhTU91?=
- =?utf-8?B?UVVPS2dqcG1URXdGaHdUSHk3clgzRzdNUUFCcU9QZS93cTk1WlVzSWVuZy9Q?=
- =?utf-8?B?VFZzMDdkUEMxVDZSY0tTKzBveTh0djNRcDhnSWp3WGRzNjYyNjV3K3hkaitF?=
- =?utf-8?B?WityaUVCbFBPc0EwWlRCa0tVWmt4UXVoM3NnbVVYRkZkMC85NERXeDRKVTJt?=
- =?utf-8?B?cEs5cHZ2OEUwSGM3OXAyT0lUdmd2MStEZndQV250bWpUd1lnU3kvZ1VUSlBj?=
- =?utf-8?B?V0ZJSnlYazRhZWFKdjk5MnRGR1RUVTlyK216K2p1Wkp4Y2s2ckVHd0JLMHR4?=
- =?utf-8?B?UUNNRTJDOHlkZU5HQ09XVzY5UnN5QjlJeHducWZCcXR5dEUvL3VWU1pvYXBa?=
- =?utf-8?B?ck9aaTZ6NTgwcUlJako2VGd6RDVPQzlDcGV2dXJTNnI1cERtNHQ0bWVMenZw?=
- =?utf-8?B?RE9NVXZRdmJacE9wL3YreUo0Umh4cGNlWENaVGRZWUkyNmNLM1JpQ254aWVa?=
- =?utf-8?B?NUQ3WmZxTC9lek5ZN3k1MkljRWQ1dzF0eW9KR2ZJZFp1TDRZVnNIcTdzYmxG?=
- =?utf-8?B?L3lkZW1RWkhHaTl6WS9kODdDcFdwVHpJaUN6TmljT2lBRE9WZjI1Mkk2SVlI?=
- =?utf-8?B?dmtrQllVNTFHeFhmMVNVbnoxNlpwUmsrUitSaFQ4RklXcWxlZzBjUFd3SXRt?=
- =?utf-8?B?bFBtM0Vhb0EvMnJKT1lNR3hES3ZmWXJaVEs1Y05GcjJKa2t0QmYvWS96MFdB?=
- =?utf-8?B?dWhtb0I4bXppbHg3Yy8zQ2ZYVFhHN01qYkorU0dtdjMwbU5aSHFJT2w3WURU?=
- =?utf-8?B?UU9KWnNFRXhwZ0lpNGRHT25qM2xnVTBIZURieWo4TGIxRys5Qm9zVmZUcC9v?=
- =?utf-8?B?UklQUTlNVktOSlc2dkJBdjhENmcyZG1mTGlUTVpKT0JYUU02SWZUTks4NVBS?=
- =?utf-8?B?aks1VGU5dnNvWXFGMWdsSXgwZ2xIaTNqQ0ZMclZGQ1NFTHI5c0I2eHUrTzhM?=
- =?utf-8?B?Q0w4MHpjc29iM2U1bVI2U1c4cThJbUkrRmg2cFY3NTFFVlpaODBTMExUNjBi?=
- =?utf-8?B?ZmE0QXNRL1dieGNDMnNneFJHcUJUeDhlWndsWElRQ0o5by9PeGVUMjIxb3Bq?=
- =?utf-8?B?QldNL2lVS2FYbEtuc01iWUdRQkNtYldicllUd1UyNnJNUktYc1FrcjhadjY0?=
- =?utf-8?B?blVQUGFVbXQ1a3F6dUJBcVhSbW5HUjRYTnJTZW9OMWZaeExReUlONTBnRjhz?=
- =?utf-8?B?M1U0dXFXdmNGcjNGcjNETExpM2xucUNKQTZnZ3ljQW0xdXBtbkNnaUlBdEIy?=
- =?utf-8?B?cFN6aXJIeE10VVYxZDlDc0J3YVlDMElvU0tIU2xweTdMY3AwWUZhR3JybC9r?=
- =?utf-8?B?c3F5dHl0ZlU5WHRaV2RINDFOcWVYYkNob3h6WThpbDAvdW1kckpNZHRsaEpa?=
- =?utf-8?B?R0QwbWlZWkRtRlpKNVluNHhFN2ZyL1BkclVaYUY5eURGekF0andacTVnbmNM?=
- =?utf-8?B?R1o0ajV6aGErLzJONmFCN3VCWk5xZzJzc0E0RkVWMTJLNE5RaGdpaGxMMjBv?=
- =?utf-8?B?VW1xNXVIVFVKWkFxWEZVaUhJeVFmOFMyZXlEblJoQWR4QStORjJleUpHUEd2?=
- =?utf-8?B?ZVFGTkJBN1RlU1N0d1pOUnMyR1V6N00rcXZmcjdWV0VVeUV5OWUxTVJRcnc2?=
- =?utf-8?B?OWlKYkxVMkt5UDF6VDBvME1reWl5MWdXcE5HbXJybG1CM2xGK2tOaUdaaWFB?=
- =?utf-8?B?UURrbThSd1RKZlNsUXJPakJnWlRDOHdRbFQwSUdCenk4MTZSTXRHdz09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by PH0PR11MB5880.namprd11.prod.outlook.com (2603:10b6:510:143::14)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.13; Fri, 16 Oct
+ 2026 17:33:28 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0522.013; Fri, 16 Oct 2026
+ 17:33:28 +0000
+Date: Fri, 16 Oct 2026 18:33:22 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Shaiq Wani <shaiq.wani@intel.com>
+CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>, <stable@dpdk.org>
+Subject: Re: [PATCH v2] net/intel: fix idpf Tx payload corruption in split
+ queue
+Message-ID: <atJf4tntpth3DGk1@bricha3-mobl1.ger.corp.intel.com>
+References: <20260930044630.250936-1-shaiq.wani@intel.com>
+ <20261007104042.1189216-1-shaiq.wani@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20261007104042.1189216-1-shaiq.wani@intel.com>
+X-ClientProxiedBy: DUZPR01CA0050.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::20) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|PH0PR11MB5880:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ffb4664-9829-42dd-f2f5-08df2bab96a0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|376014|366016|1800799024|18002099003|22082099003|10067099003|4143699003|261009221727099003|261009223027099003|261009223327099003|261009220027099003|261009221227099003|5023799004|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info: p0AQF1GZ+qa0215IjrWaQu91b8TlTHRJmalhsC1ltKqlKsw0Do2+JYBtpq/aM1z9/CVjPg8HZlEW1Y0opyeEQmEGg6Ah6e44+Ek0mw2u9TJLI33VZSmXrpZu+0k3LIOucdi7ggyx/eteDJoDoUvvQ+0HTkHlkAgIQIVJb5n0O2nxtr+IO2Z6CQypU4rq+GbLA09pGPQWCxBipc4h6sv9G3mmBb7UskVk/yw2klL4Ey+hJ4aCtIxBGbnZqeMHsXYP8I6OWXSQP12dnraBOAdTbRpD/zx0hk9IF/VfZqgU5OUZ6eGFnWXDSnibFbpEVSFCkhHZRe/aJLuzGMFvnzi3zntWRFomGDc1+Dl7lMo+26fq2fV8ascHfvKVFAMNeih2YVcjmFXMHM/d6IEEhynP5SgWx59IEN2xXRG9t9LjfW2zzltnItID3gj/P3dW4dIa47xm+FiMuo2WJMJfNzjF0JRP8Qga78TZPFtGuwzQrbz9LLWGE4V2gzIs/MrukR26lLS+avI5FMS34VWlwxGzSHnd19yc4wzmxL/Jgg1VJZRigHIlKoHYJxGdXbemZWaa5bzDHi1z98K+uoSOG3WwJgMoYICd7f+g6T73f6vIR56KIHn+cc6XrNbXQIJ+eKRe6wY1zXAK9lhdEPz4QrWNVuxBLyY2B03nw3KPOtmc6qQ=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(18002099003)(22082099003)(10067099003)(4143699003)(261009221727099003)(261009223027099003)(261009223327099003)(261009220027099003)(261009221227099003)(5023799004)(11063799006)(56012099006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FisXfbypj2XwY4GarL7lvt6vo6ciXVqb2dJE4V4xCMZ4MYLDvI4ewuCg6qSU?=
+ =?us-ascii?Q?dVIDwMuwsVWgpExYWDh0ijxlxmVm1A7d9ut+TvzqIW7DWgxgs3ETRbV7pTc5?=
+ =?us-ascii?Q?qXjg/hep3vK7MVIz4OBWK0OoOJHIkyn4Wupu4EoiIlxzw8qyzcgdacgJ+/8t?=
+ =?us-ascii?Q?GUQmgrrySB9WunGYbQrR938VBX+mgud+ayjDFruEVZFVBG8xDLJxINI3vaWC?=
+ =?us-ascii?Q?LjUA33wPcPIqJYyfFOf+iD30Kp6QgaiAOH4W2kTB02USEPigDSgoX19HrPYD?=
+ =?us-ascii?Q?PYBM/VmL6Gyu6JsRYUsE1vOLLoufzxU5ijCS/Om38JmbvGTRhgda83JvhoVX?=
+ =?us-ascii?Q?rZfKjtnN/79DdPKUH9NvOeDHKf/zRC1PTqGrs7l3fKmhIUTwzdCgPI8CWuY0?=
+ =?us-ascii?Q?UYoGRuUAPhstWgDFtC55WVfkDKps9/gZ9GeJqC4cg6mG1dyv8qLPghxbokq0?=
+ =?us-ascii?Q?qI30kskTukk6doA7X2rq1RxpLDkm94KXffl46l1ufhVatdncNLI2rxrhGaH+?=
+ =?us-ascii?Q?P4CpqVvUX0b0Y0vOPbya5V/J4Lo0hC8Ms5DrsaZPe/Z1g9/Wra/K/eM2wWXK?=
+ =?us-ascii?Q?GvyH9VBBDpallmD581B/BjGVP7/Wt51UCOOY62hF8BUQirB9t3KyZvQ5JHOQ?=
+ =?us-ascii?Q?6hPHlQywunmPSLuGHHH2kkrtlq4yKr/NoyC0ok0yzQ0HP9tPfJQEli/cUXXx?=
+ =?us-ascii?Q?gt2BM5xEVsKoCBCRaARPUHePKvVMBmWpdUlWABDM/3KOj89LvMWTFlKXnJz5?=
+ =?us-ascii?Q?brK92/lXwBj+3OGZnXGxeqreAHO3RBovkdZIbEvuE9REPeU+0sMqsMPFtChM?=
+ =?us-ascii?Q?gCcubo+heMfS/rQ703Vj7LDm8+G+Mzh2kWVGPOB7DBNBvzm979whviJnA4eZ?=
+ =?us-ascii?Q?tC6/K8BrdDbxJ5yZWN+blQfwRCxWH21aZE+/dnPQvX1G6DX9Orhy+w8Dk5YP?=
+ =?us-ascii?Q?yIlIrE6gt6me6XPwNn4Zpcy9GEubbwbfj3znYolUDWprbr8Yb0ioxJox8wx7?=
+ =?us-ascii?Q?x4w2vnjHXVKwoekmC+ItM+Dn/H+PPSdLqg01v9oSNCPGKfzArqGZ/DcyE68C?=
+ =?us-ascii?Q?EUtBIuMC2y1mCzEgo6eKbtCoHOeSVaNxjeeI2TVSf1GXYHVBJsQdeI3e9znO?=
+ =?us-ascii?Q?qwrCRvMXkssCrHeW8/6NR1Oysh4IkVhoTsDaa2VRi3/c1rKs5FhOj4SME2Lz?=
+ =?us-ascii?Q?ObExEGgyRjHKoy0bIbdFlcZhcPU8i9mcpkc7kDtCD9PGRB89IyGs27wyhaTq?=
+ =?us-ascii?Q?n29IZr68aUvET3BxRSpBve2WRD6vGuPe/dbcqHc+LnS207JDmAwmsllH4NM1?=
+ =?us-ascii?Q?gxzmEWr2ngyDGsY5YUPW46gKsCWVQ4TVoB95ywub3JkedqaV8KhYqHDQzHQQ?=
+ =?us-ascii?Q?ehA6NnzwpqJlUXpOkm3pKuKbmfOidGbSrQ4w/aRz0wzMKoI7yOkf8nP02mmC?=
+ =?us-ascii?Q?AKFfpoxdqWP6auJHqhC2P8x0+fj9MUNhYrcUHhAhaTSanLtXmbnaXTcPmhkZ?=
+ =?us-ascii?Q?GgHbM7qA1zMuTh7d19eSa+uChnzDFfxTfEmrmNc6GqEoQ0h5za+nmyjO4GLm?=
+ =?us-ascii?Q?f7iKmZBmOSl08edCruqWZJUwqkn2gvBBAkHzxMhlwC/NMvgWB+bSoncaFuCi?=
+ =?us-ascii?Q?fiFaMcK0mLd2CLHFEKKvxQfkoS2Tx+nS0Xdi+q5dUtUIuIbjv+Ki0wP7ywtB?=
+ =?us-ascii?Q?TKP8LcY2l+Fr+1nYvzF6xzffRxh8MmYoy3c/r8kFjj36i7I5zyNivQxG3L14?=
+ =?us-ascii?Q?jVhjn9XoYSWul+/HKfSYsU0hGHL+KZs=3D?=
+X-Exchange-RoutingPolicyChecked: QVp+/YcD/nplIGiuGSNUH2rBPZPkhSL2yQoiC6UUVy8aaT5vXO/PVe+DkLa3QJTSYJbnjyYDWerFhfikmYFxw+lV08IVVSkviH3fTt66PMcVgbD5Glok9P0yz+dGKSYNTuC7kXX0p+tHttq2U7dJ4ShtN6jjw3cx6h4mBJJwmEBOYH3whtwaILYN39M7MccmWhRaA+7EhHYk7ZGano+Mv+PruNdfLnXBQFpAvNa0EYcH6xM4ijHrAQDQh85RB7s/49yqFDlDRfWIr83Hfm3dsCmiKHgWy0VdpeR3DUhwA2LvQt96/5OtwPk2GGlU9y1/ECK5I1joa0nh0gtgyMxA7Q==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ffb4664-9829-42dd-f2f5-08df2bab96a0
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB10750.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fce6b9b-5793-4b9a-7b64-08df2ba80126
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2026 17:07:48.3486 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sgVp+N7xwY3mqWSRJwgXVa8rMV6wNLRfOWtbAWgxpx5PrQgg5Hj3OjONm8pYg9IDhGxReHW09qpgP22uixx2HA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MMZPR04MB625833
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 17:33:27.9248 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 95p39a69XgIziJYHpLT2UD6XGxSNJYPQCzh5HmMhzdjDUmzBtAyfbMkcwejW2Pb9+bj6xY81015XUQIiKFGAB2NykC/WYTRtK0zE/djZ2OM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5880
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -138,54 +154,389 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCg0KTlhQIENvbmZpZGVudGlhbA0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBG
-cm9tOiBTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+DQo+IFNl
-bnQ6IDE2IE9jdG9iZXIgMjAyNiAyMjozNQ0KPiBUbzogSGVtYW50IEFncmF3YWwgPGhlbWFudC5h
-Z3Jhd2FsQG54cC5jb20+DQo+IENjOiB0aG9tYXNAbW9uamFsb24ubmV0OyBkZXZAZHBkay5vcmcN
-Cj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MjcgMDAvMjVdIE5YUCBEUEFBIGRyaXZlciBlbmhhbmNl
-bWVudHMgYW5kIGZpeGVzDQo+IEltcG9ydGFuY2U6IEhpZ2gNCj4NCj4gT24gRnJpLCAxNiBPY3Qg
-MjAyNiAxNjo0ODozMCArMDAwMA0KPiBIZW1hbnQgQWdyYXdhbCA8aGVtYW50LmFncmF3YWxAbnhw
-LmNvbT4gd3JvdGU6DQo+DQo+ID4gSGkgU3RlcGhhbiwNCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5h
-bCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IFN0ZXBoZW4gSGVtbWluZ2VyIDxzdGVwaGVuQG5l
-dHdvcmtwbHVtYmVyLm9yZz4NCj4gPiA+DQo+ID4NCj4gPiBOWFAgQ29uZmlkZW50aWFsDQo+ID4g
-PiBPbiBGcmksIDE2IE9jdCAyMDI2IDE2OjQ5OjMzICswNTMwDQo+ID4gPiBIZW1hbnQgQWdyYXdh
-bCA8aGVtYW50LmFncmF3YWxAbnhwLmNvbT4gd3JvdGU6DQo+ID4gPg0KPiA+ID4gPiBUaGlzIHNl
-cmllcyBjb2xsZWN0cyBhIHNldCBvZiBmaXhlcyBhbmQgZW5oYW5jZW1lbnRzIGZvciB0aGUgTlhQ
-DQo+ID4gPiA+IERQQUEgYnVzLCBtZW1wb29sLCBkbWEsIGNyeXB0byBhbmQgbmV0IGRyaXZlcnMg
-dGFyZ2V0aW5nIDI2LjExLg0KPiA+ID4gPg0KPiA+ID4gPiBJdCBpbmNsdWRlcyBtZW1vcnktbGVh
-ayBhbmQgcmVzb3VyY2UtY2xlYW51cCBmaXhlcyBvbiB0aGUgZGV2aWNlDQo+ID4gPiA+IHJlbW92
-ZS9jbG9zZSBwYXRocywgbW9yZSByb2J1c3QgZnJhbWUgcXVldWUgc2h1dGRvd24sDQo+ID4gPiA+
-IHNlY29uZGFyeS1wcm9jZXNzIHNhZmV0eSBndWFyZHMsIEJQSUQgbGlmZWN5Y2xlIGhhbmRsaW5n
-LCBhbmQNCj4gPiA+ID4gc2V2ZXJhbCBuZXcNCj4gPiA+IGZlYXR1cmVzOg0KPiA+ID4gPiBlbmhh
-bmNlZCB2aXJ0dWFsIHN0b3JhZ2UgcHJvZmlsZSAoVlNQKSBwb3J0IHN1cHBvcnQsIGZtY2xlc3Mg
-UngNCj4gPiA+ID4gcXVldWUgY29uZmlndXJhdGlvbiwgbm9uIGZtWC1tYWNZIHNoYXJlZCBFdGhl
-cm5ldCBuYW1pbmcsIGFuZCBETUENCj4gPiA+ID4gc2NhdHRlci1nYXRoZXIgYW5kIGVycmF0YS13
-b3JrYXJvdW5kIGRldmFyZ3MuIERvY3VtZW50YXRpb24gYW5kDQo+ID4gPiA+IHJlbGVhc2Ugbm90
-ZXMgYXJlIHVwZGF0ZWQgYWNjb3JkaW5nbHkuDQo+ID4gPiA+DQo+ID4gPiA+IFYyNzoNCj4gPiA+
-ID4gLSBmaXhlZCBxbV9jaGFubmVsX3Bvb2xfbnVtIGNoZWNrIGlzc3VlLg0KPiA+ID4gPiAtIGZp
-eGVkIGNvbW1pdCBtZXNzYWdlIGFzIGRldmFyZyBmb3IgZm1jbGVzcyByeHEgbnVtYmVyIHdhcyBy
-ZW1vdmVkLg0KPiA+ID4gPiAtIEFkZGVkIG1pc3NpbmcgZXhwb3J0IGludGVybmFsIHN5bWJvbCBh
-bmQgZnEgZGVzdHJveS4NCj4gPiA+ID4gLSBtZXJnZWQgYm90aCBGUSBzaHV0ZG93biBwYXRjaGVz
-IGFzIHdlIGNhbm5vdCBjaGFuZ2UgdGhlIHNlcXVlbmNlDQo+ID4gPiA+ICAgIGJlY2F1c2Ugb2Yg
-dGhlIGRlcGVuZGVuY3kuDQo+ID4gPiA+IC0gbWFjX2lkeCBoYXMgYSB1c2VyIHdoaWNoIGlzIGRw
-YWEgZmxvdyBzbyBubyBjaGFuZ2UuIEFkZGVkIHN0YXRpYyB0bw0KPiA+ID4gPiAgICBnX2ZtY19t
-b2RlbCBhbmQgdXBkYXRlZCByZWxlYXNlIG5vdGVzLg0KPiA+ID4gPiAtIElzc3VlcyByZXBvcnRl
-ZCBpbiB2MjUgd2hpY2ggYXJlIG5vdCBoYW5kbGVkLCB3ZXJlIG9wdGlvbmFsLCBzbw0KPiA+ID4g
-PiAgICBza2lwcGluZyB0aGVtLg0KPiA+ID4NCj4gPiA+DQo+ID4gPiBGWUkgLSB3aGF0IEkgZG8g
-aXMgZmVlZCB0aGUgcGF0Y2ggaW50byBhIENsYXVkZSBwcm9qZWN0IHdpdGgNCj4gPiA+IGV4aXN0
-aW5nIEFHRU5UUy5tZCBmaWxlLiBUaGUgY2hhdCBjb250aW51ZXMgYXMgdmVyc2lvbnMgZ2V0IHNl
-bnQgdG8NCj4gPiA+IGVtYWlsIHNvIHRoZSBjb250ZXh0IHdpbmRvdyBoYXMgYWxsIHRoZSB2ZXJz
-aW9ucyBvZiB0aGUgcGF0Y2guIFRoaXMNCj4gPiA+IGxldHMgaXQgc2VlIHRoZSBwcm9ncmVzcyBh
-bmQgY2hlY2sgaWYgcHJldmlvdXMgZmluZGluZ3Mgd2VyZSBhZGRyZXNzZWQuDQo+ID4gPg0KPiA+
-ID4gUmV2aWV3IG9mIFtQQVRDSCB2MjcgMDAvMjVdIE5YUCBEUEFBIGZpeGVzIGFuZCBlbmhhbmNl
-bWVudHMNCj4gPiA+DQo+ID4gPiBTZXJpZXMgYXBwbGllcyBjbGVhbmx5IHRvIDI2LjExLXJjMSBh
-bmQgZXZlcnkgY29tbWl0IGJ1aWxkcyB3aXRoIC0NCj4gPiA+IER3ZXJyb3I9dHJ1ZS4gVGhlIGZp
-eGVzIGFyZSBub3cgZmlyc3QuIDA4IGNoZXJyeS1waWNrcyBjbGVhbmx5IG9udG8NCj4gPiA+IHYy
-NC4xMSBhbmQgdjI1LjExLCBhbmQgMDYgYXBwbGllcyB0aGVyZSBvbmNlIDAxLTA1IGFyZSBpbi4N
-Cj4gPiA+DQo+ID4gPiB2MjYgV2FybmluZ3Mgb24gMTIgKG5vdyAxNCkgYW5kIDIwIGFyZSBhZGRy
-ZXNzZWQuIFRoZSAyNCBXYXJuaW5nIGlzDQo+ID4gPiBvbmx5IHBhcnRseSBmaXhlZC4NCj4gPiA+
-DQo+ID4NCj4gPiBJIHNlZSBvbmx5IG9uZSB3YXJuaW5nIGluIHRoaXMgcGF0Y2hzZXQgMjQvMjUg
-LSAgIGlzIGl0IHBvc3NpYmxlIHRoYXQgeW91IGRyb3ANCj4gdGhpcyBwYXRjaCBhbmQgYXBwbHkg
-cmVzdCBvZiB0aGUgc2VyaWVzPw0KPg0KPiBJIGNvdWxkIGlmIHRoYXQgaXMgd2hhdCB5b3Ugd2Fu
-dA0KDQpZZXMsIHBsZWFzZS4NCg0KSSB3aWxsIHNlbmQgdGhlIDI0LzI1IGluZGVwZW5kZW50bHkg
-bGF0ZXIuDQo=
+On Wed, Oct 07, 2026 at 04:10:42PM +0530, Shaiq Wani wrote:
+> Observed on ACC while running NVMe traffic tests: under sustained
+> high-throughput split-queue Tx, payload bytes on the wire did not
+> match what the application submitted, while headers and checksums
+> looked valid.
+> 
+> The RS-completion path was freeing mbufs by walking sw_ring[] slots
+> between first_id and the EOP sw_id. sw_ring[] slots get reclaimed
+> by RE and reused by subsequent submits well before RS lands, so the
+> walker was freeing mbufs still in flight for later packets, whose
+> buffers then got recycled and overwritten mid-DMA.
+> 
+> Fix by tracking completion ownership in a shadow ring indexed by a
+> software-defined compl_tag stamped on all data descriptors of the
+> packet, as required by the IDPF spec, and echoed back by HW on RS.
+> The shadow ring is the sole owner of in-flight mbufs on the scalar
+> split-queue path, so sw_ring[].mbuf is no longer written and queue
+> stop/release drain only the shadow ring.
+> 
+> Since RE reclaims descriptors before RS completes, nb_tx_free does
+> not bound the number of packets awaiting RS. Size the shadow ring to
+> nb_tx_desc and stop transmitting when the next compl_tag slot is
+> still occupied, so a pending entry is never overwritten and pending
+> completions cannot overflow the completion queue.
+> 
+> Allocate the shadow ring at queue setup and fail setup on allocation
+> error, and free it on all setup error and release paths. Remove the
+> now unused ci_tx_entry.first_id field.
+> 
+> Fixes: 96cc9b6ea60c ("net/idpf: fix multi-segment mbuf leak in split Tx path")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
+> ---
+> v2:
+> Addressed AI review comments, which include:
+> * Do not store mbufs in sw_ring[] on the scalar split-queue Tx path;
+>   tx_pending_pkts[] is the sole owner, fixing double-free on queue
+>   stop/release.
+> * Stop Tx when the next compl_tag slot is still pending, so RS
+>   entries cannot be overwritten when RE runs ahead of RS.
+> * Allocate the shadow ring at queue setup and propagate -ENOMEM.
+> * Free the shadow ring on idpf/cpfl setup error paths and in
+>   cpfl_tx_queue_release().
+> Also aligned with the IDPF spec:
+> * Write the same compl_tag to all data descriptors of a packet.
+> * Size the shadow ring to nb_tx_desc, so pending completions cannot
+>   overflow the 2 * nb_tx_desc completion queue.
+> Other:
+> * Remove the now unused ci_tx_entry.first_id field.
+> * Drop redundant per-descriptor sw_ring[].mbuf = NULL stores.
+> 
+>  drivers/net/intel/common/tx.h             |   8 +-
+>  drivers/net/intel/cpfl/cpfl_rxtx.c        |   6 ++
+>  drivers/net/intel/idpf/idpf_common_rxtx.c | 105 ++++++++++++++++------
+>  drivers/net/intel/idpf/idpf_common_rxtx.h |   4 +
+>  drivers/net/intel/idpf/idpf_rxtx.c        |   5 ++
+>  5 files changed, 100 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+> index 2a63cd4330..7c9841a21a 100644
+> --- a/drivers/net/intel/common/tx.h
+> +++ b/drivers/net/intel/common/tx.h
+> @@ -166,7 +166,6 @@ struct ci_tx_queue;
+>  struct ci_tx_entry {
+>  	struct rte_mbuf *mbuf; /* mbuf associated with TX desc, if any. */
+>  	uint16_t next_id; /* Index of next descriptor in ring. */
+> -	uint16_t first_id; /* Split-queue: first sw_id of packet at EOP entry. */
+>  };
+>  
+>  /**
+> @@ -262,6 +261,13 @@ struct ci_tx_queue {
+>  				uint16_t sw_nb_desc;
+>  				uint16_t sw_tail;
+>  				uint16_t rs_compl_count;
+> +				/* Split-Tx completion tracking: shadow ring indexed by a
+> +				 * rolling compl_tag decouples RS-completion mbuf lifetime
+> +				 * from sw_ring[] slot reuse. Sized nb_tx_desc.
+> +				 */
+> +				struct rte_mbuf **tx_pending_pkts;
+> +				uint16_t tx_pending_size;
+> +				uint16_t tx_next_compl_tag;
+>  		};
+>  	};
+>  };
+
+This addition increases the size of the tx_queue struct, affecting all
+drivers. I asked AI for some suggestions about this:
+
+---
+
+While the patch is functionally correct, it introduces unnecessary memory overhead, redundant fields, and dead code in the fast path:
+
+A. Avoid the ci_tx_queue Size Increase
+1. tx_pending_size is completely redundant: It is always assigned txq->nb_tx_desc at allocation and checked against txq->nb_tx_desc. Since nb_tx_desc is already a member of ci_tx_queue, tx_pending_size can be removed entirely.
+2. Reuse existing pointers/padding:
+   * In ci_tx_queue, sw_ring is a union:
+    union {
+        struct ci_tx_entry *sw_ring;
+        struct ci_tx_entry_vec *sw_ring_vec;
+        struct rte_mbuf **tx_pending_pkts; /* Can be placed here! */
+    };
+
+   * tx_next_compl_tag (2 bytes) can fit inside the existing 6-byte hole/padding in the idpf struct (or reuse sw_tail, which was previously the software tail index).
+   * This eliminates the 16-byte growth, keeping ci_tx_queue at 144 bytes.
+
+B. Eliminate Redundant Memory Allocation (Saving ~32 KB per Queue)
+
+Currently, in split-queue scalar mode:
+
+* Both sw_ring (sized 2 * nb_desc * sizeof(ci_tx_entry) = 32 KB for 1024 descriptors) and tx_pending_pkts (sized nb_desc * sizeof(struct rte_mbuf *) = 8 KB) are allocated.
+* In scalar split-queue Tx, sw_ring[].mbuf is now completely unused.
+* Better options:
+  - Option 1 (Reuse sw_ring): Since sw_ring is already allocated and each struct ci_tx_entry has an mbuf pointer, store the packet directly in sw_ring[tag].mbuf. This avoids allocating tx_pending_pkts altogether, saves an extra rte_zmalloc_socket call, and avoids adding new fields to ci_tx_queue.
+  - Option 2 (Allocate only tx_pending_pkts): In split-queue scalar mode, do not allocate sw_ring at all (or alias it), saving 32 KB per queue.
+
+C. Clean Up Dead Code in the Fast-Path Loop
+In idpf_dp_splitq_xmit_pkts, the loop still contains:
+
+	txd = &txr[tx_id];
+	txn = &sw_ring[txe->next_id];
+	...
+	sw_id = txe->next_id;
+	txe = txn;
+	...
+	txq->sw_tail = sw_id;
+
+Because nothing is stored in or read from sw_ring in this path, these operations generate unnecessary cache-line accesses on every descriptor in the burst. Cleaning them up will improve Tx packet burst efficiency.
+
+> diff --git a/drivers/net/intel/cpfl/cpfl_rxtx.c b/drivers/net/intel/cpfl/cpfl_rxtx.c
+> index aba3a5e916..0dbe47d336 100644
+> --- a/drivers/net/intel/cpfl/cpfl_rxtx.c
+> +++ b/drivers/net/intel/cpfl/cpfl_rxtx.c
+> @@ -329,6 +329,7 @@ cpfl_tx_queue_release(void *txq)
+>  		rte_free(q->complq);
+>  	}
+>  
+> +	idpf_qc_split_tx_pending_free(q);
+>  	ci_txq_release_all_mbufs(q, q->use_vec_entry);
+>  	rte_free(q->sw_ring);
+>  	rte_free(q->rs_last_id);
+> @@ -624,6 +625,9 @@ cpfl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+>  		idpf_qc_single_tx_queue_reset(txq);
+>  	} else {
+>  		txq->desc_ring = mz->addr;
+> +		ret = idpf_qc_split_tx_pending_alloc(txq, socket_id);
+> +		if (ret != 0)
+> +			goto err_pending_alloc;
+>  		idpf_qc_split_tx_descq_reset(txq);
+>  
+>  		/* Setup tx completion queue if split model */
+> @@ -642,6 +646,8 @@ cpfl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+>  	return 0;
+>  
+>  err_complq_setup:
+> +	idpf_qc_split_tx_pending_free(txq);
+> +err_pending_alloc:
+>  	rte_free(txq->rs_last_id);
+>  err_rs_last_id_alloc:
+>  	rte_free(txq->sw_ring);
+> diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
+> index 649b5d1f99..e54056b5c0 100644
+> --- a/drivers/net/intel/idpf/idpf_common_rxtx.c
+> +++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
+> @@ -233,6 +233,51 @@ idpf_qc_split_tx_descq_reset(struct ci_tx_queue *txq)
+>  	txq->rs_compl_count = 0;
+>  	txq->tx_next_dd = txq->tx_rs_thresh - 1;
+>  	txq->tx_next_rs = txq->tx_rs_thresh - 1;
+> +
+> +	if (txq->tx_pending_pkts != NULL) {
+> +		for (i = 0; i < txq->tx_pending_size; i++) {
+> +			if (txq->tx_pending_pkts[i] != NULL) {
+> +				rte_pktmbuf_free(txq->tx_pending_pkts[i]);
+> +				txq->tx_pending_pkts[i] = NULL;
+> +			}
+> +		}
+> +	}
+> +	txq->tx_next_compl_tag = 0;
+> +}
+> +
+> +RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_split_tx_pending_alloc)
+> +int
+> +idpf_qc_split_tx_pending_alloc(struct ci_tx_queue *txq, unsigned int socket_id)
+> +{
+> +	/* Bounding pending RS to nb_tx_desc keeps the 2 * nb_tx_desc complq from overflowing. */
+> +	txq->tx_pending_pkts = rte_zmalloc_socket("idpf_tx_pending",
+> +			sizeof(struct rte_mbuf *) * txq->nb_tx_desc,
+> +			RTE_CACHE_LINE_SIZE, socket_id);
+> +	if (txq->tx_pending_pkts == NULL) {
+> +		DRV_LOG(ERR, "Failed to alloc idpf tx_pending shadow ring");
+> +		return -ENOMEM;
+> +	}
+> +	txq->tx_pending_size = txq->nb_tx_desc;
+> +	txq->tx_next_compl_tag = 0;
+> +
+> +	return 0;
+> +}
+> +
+> +RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_split_tx_pending_free)
+> +void
+> +idpf_qc_split_tx_pending_free(struct ci_tx_queue *txq)
+> +{
+> +	uint32_t i;
+> +
+> +	if (txq->tx_pending_pkts == NULL)
+> +		return;
+> +
+> +	for (i = 0; i < txq->tx_pending_size; i++) {
+> +		if (txq->tx_pending_pkts[i] != NULL)
+> +			rte_pktmbuf_free(txq->tx_pending_pkts[i]);
+> +	}
+> +	rte_free(txq->tx_pending_pkts);
+> +	txq->tx_pending_pkts = NULL;
+>  }
+>  
+>  RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_split_tx_complq_reset)
+> @@ -387,6 +432,7 @@ idpf_qc_tx_queue_release(void *txq)
+>  		rte_free(q->complq);
+>  	}
+>  
+> +	idpf_qc_split_tx_pending_free(q);
+>  	ci_txq_release_all_mbufs(q, false);
+>  	rte_free(q->rs_last_id);
+>  	rte_free(q->sw_ring);
+> @@ -787,7 +833,6 @@ idpf_split_tx_free(struct idpf_complq *cq)
+>  	volatile struct idpf_splitq_tx_compl_desc *compl_ring = cq->compl_ring;
+>  	volatile struct idpf_splitq_tx_compl_desc *txd;
+>  	uint16_t next = cq->tx_tail;
+> -	struct ci_tx_entry *txe;
+>  	struct ci_tx_queue *txq;
+>  	uint16_t gen, qid, q_head;
+>  	uint16_t nb_desc_clean;
+> @@ -824,26 +869,21 @@ idpf_split_tx_free(struct idpf_complq *cq)
+>  		txq->nb_tx_free += nb_desc_clean;
+>  		txq->last_desc_cleaned = q_head;
+>  		break;
+> -	case IDPF_TXD_COMPLT_RS:
+> -		/* Walk from first segment to EOP, freeing each segment. */
+> -		txe = &txq->sw_ring[q_head];
+> -		if (txe->mbuf != NULL) {
+> -			uint16_t first = txe->first_id;
+> -			uint16_t idx = first;
+> -			uint16_t end = (q_head + 1 == txq->sw_nb_desc) ?
+> -					0 : q_head + 1;
+> -
+> -			do {
+> -				txe = &txq->sw_ring[idx];
+> -				if (txe->mbuf != NULL) {
+> -					rte_pktmbuf_free_seg(txe->mbuf);
+> -					txe->mbuf = NULL;
+> -				}
+> -				idx = (idx + 1 == txq->sw_nb_desc) ?
+> -					0 : idx + 1;
+> -			} while (idx != end);
+> +	case IDPF_TXD_COMPLT_RS: {
+> +		/* Shadow ring indexed by the software-defined compl_tag is
+> +		 * the sole source of truth for RS-time mbuf ownership; free
+> +		 * the whole multi-seg chain via mbuf->next in one call.
+> +		 */
+> +		uint16_t tag = q_head;
+> +
+> +		if (unlikely(tag >= txq->tx_pending_size)) {
+> +			TX_LOG(ERR, "invalid completion tag %u.", tag);
+> +		} else if (txq->tx_pending_pkts[tag] != NULL) {
+> +			rte_pktmbuf_free(txq->tx_pending_pkts[tag]);
+> +			txq->tx_pending_pkts[tag] = NULL;
+>  		}
+>  		break;
+> +	}
+>  	default:
+>  		TX_LOG(ERR, "unknown completion type.");
+>  		return;
+> @@ -976,6 +1016,19 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+>  		if (txq->nb_tx_free < nb_used)
+>  			break;
+>  
+> +		/* RE reclaims descriptors before RS, so tag occupancy is the
+> +		 * only bound on packets awaiting RS completion.
+> +		 */
+> +		uint16_t tag = txq->tx_next_compl_tag;
+> +
+> +		if (unlikely(txq->tx_pending_pkts[tag] != NULL)) {
+> +			nb_to_clean = 2 * txq->tx_rs_thresh;
+> +			while (nb_to_clean--)
+> +				idpf_split_tx_free(txq->complq);
+> +			if (txq->tx_pending_pkts[tag] != NULL)
+> +				break;
+> +		}
+> +
+>  		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
+>  			cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_CS_EN;
+>  
+> @@ -991,8 +1044,6 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+>  				tx_id = 0;
+>  		}
+>  
+> -		uint16_t first_sw_id = sw_id;
+> -
+>  		do {
+>  			uint16_t slen = tx_pkt->data_len;
+>  			rte_iova_t buf_dma_addr = rte_mbuf_data_iova(tx_pkt);
+> @@ -1004,13 +1055,12 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+>  					unlikely(slen > CI_MAX_DATA_PER_TXD)) {
+>  				txd = &txr[tx_id];
+>  				txn = &sw_ring[txe->next_id];
+> -				txe->mbuf = NULL;
+>  
+>  				txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
+>  				txd->qw1.cmd_dtype = cmd_dtype |
+>  					IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
+>  				txd->qw1.rxr_bufsize = CI_MAX_DATA_PER_TXD;
+> -				txd->qw1.compl_tag = sw_id;
+> +				txd->qw1.compl_tag = tag;
+>  
+>  				buf_dma_addr += CI_MAX_DATA_PER_TXD;
+>  				slen -= CI_MAX_DATA_PER_TXD;
+> @@ -1024,14 +1074,14 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+>  
+>  			txd = &txr[tx_id];
+>  			txn = &sw_ring[txe->next_id];
+> -			txe->mbuf = tx_pkt;
+>  
+>  			/* Setup TX descriptor */
+>  			txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
+>  			txd->qw1.cmd_dtype = cmd_dtype |
+>  				IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
+>  			txd->qw1.rxr_bufsize = slen;
+> -			txd->qw1.compl_tag = sw_id;
+> +			/* Spec: COMPLETION_TAG must be identical on all data descs of a packet. */
+> +			txd->qw1.compl_tag = tag;
+>  			tx_id++;
+>  			if (tx_id == txq->nb_tx_desc)
+>  				tx_id = 0;
+> @@ -1043,8 +1093,9 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+>  		/* fill the last descriptor with End of Packet (EOP) bit */
+>  		txd->qw1.cmd_dtype |= IDPF_TXD_FLEX_FLOW_CMD_EOP;
+>  
+> -		/* Record first sw_id at EOP so completion can walk forward. */
+> -		sw_ring[txd->qw1.compl_tag].first_id = first_sw_id;
+> +		txq->tx_pending_pkts[tag] = tx_pkts[nb_tx];
+> +		if (++txq->tx_next_compl_tag == txq->tx_pending_size)
+> +			txq->tx_next_compl_tag = 0;
+>  
+>  		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
+>  		txq->rs_compl_count += nb_used;
+> diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
+> index b2d33287df..3365631d80 100644
+> --- a/drivers/net/intel/idpf/idpf_common_rxtx.h
+> +++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
+> @@ -216,6 +216,10 @@ void idpf_qc_single_rx_queue_reset(struct idpf_rx_queue *rxq);
+>  __rte_internal
+>  void idpf_qc_split_tx_descq_reset(struct ci_tx_queue *txq);
+>  __rte_internal
+> +int idpf_qc_split_tx_pending_alloc(struct ci_tx_queue *txq, unsigned int socket_id);
+> +__rte_internal
+> +void idpf_qc_split_tx_pending_free(struct ci_tx_queue *txq);
+> +__rte_internal
+>  void idpf_qc_split_tx_complq_reset(struct idpf_complq *cq);
+>  __rte_internal
+>  void idpf_splitq_rearm_common(struct idpf_rx_queue *rx_bufq);
+> diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
+> index 077a92a8a9..0d41cd87eb 100644
+> --- a/drivers/net/intel/idpf/idpf_rxtx.c
+> +++ b/drivers/net/intel/idpf/idpf_rxtx.c
+> @@ -495,6 +495,9 @@ idpf_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+>  		idpf_qc_single_tx_queue_reset(txq);
+>  	} else {
+>  		txq->desc_ring = mz->addr;
+> +		ret = idpf_qc_split_tx_pending_alloc(txq, socket_id);
+> +		if (ret != 0)
+> +			goto err_pending_alloc;
+>  		idpf_qc_split_tx_descq_reset(txq);
+>  
+>  		/* Setup tx completion queue if split model */
+> @@ -512,6 +515,8 @@ idpf_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+>  	return 0;
+>  
+>  err_complq_setup:
+> +	idpf_qc_split_tx_pending_free(txq);
+> +err_pending_alloc:
+>  	rte_free(txq->rs_last_id);
+>  err_rs_last_id_alloc:
+>  	rte_free(txq->sw_ring);
+> -- 
+> 2.34.1
+> 
