@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC1BCC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 11:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EFFCC6B38
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 11:20:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D11C402DA;
+	by mails.dpdk.org (Postfix) with ESMTP id E6B95406B6;
 	Fri, 16 Oct 2026 13:20:31 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id E7BA4400D7;
- Fri, 16 Oct 2026 13:20:04 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CDE3E40430;
+ Fri, 16 Oct 2026 13:20:05 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A1DEF200219;
- Fri, 16 Oct 2026 13:20:04 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AE52B2001FD;
+ Fri, 16 Oct 2026 13:20:05 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 77FEC200226;
- Fri, 16 Oct 2026 13:20:04 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 82C692001D6;
+ Fri, 16 Oct 2026 13:20:05 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DF52818000B5;
- Fri, 16 Oct 2026 19:20:03 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0843518000B6;
+ Fri, 16 Oct 2026 19:20:04 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v27 07/25] mempool/dpaa: fix write after free on pool free
-Date: Fri, 16 Oct 2026 16:49:40 +0530
-Message-Id: <20261016111958.163060-8-hemant.agrawal@nxp.com>
+Subject: [PATCH v27 10/25] bus/dpaa: accept QDMA device name in devargs
+Date: Fri, 16 Oct 2026 16:49:43 +0530
+Message-Id: <20261016111958.163060-11-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261016111958.163060-1-hemant.agrawal@nxp.com>
 References: <20261015141144.3140281-1-hemant.agrawal@nxp.com>
@@ -49,40 +49,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-dpaa_mbuf_free_pool() freed the pool private data and then wrote to it:
+rte_dpaa_bus_parse() recognises fmX-macY, fmX-ohY, fmX-onicY and
+dpaa_sec-N, but not the QDMA devices that dpaa_create_device_list()
+creates as "dpaa_qdma-%d". A QDMA name therefore falls through to the
+fm%u-mac%u sscanf(), which does not match, so the function returns
+-EINVAL.
 
-	rte_free(mp->pool_data);
-	bp_info->bp = NULL;
+That makes the documented usage
 
-bp_info is DPAA_MEMPOOL_TO_POOL_INFO(mp), which is mp->pool_data, so
-both refer to the same allocation. Clearing bp_info->bp after the
-rte_free() writes into freed memory.
+  -a dpaa_bus:dpaa_qdma-1,dpaa_dma_err_check=1
 
-Clear the field before releasing the allocation, and free bp_info
-directly rather than the alias.
+fail in rte_devargs_parse() with "failed to parse device" and abort EAL
+initialization, so no dma/dpaa devarg can be passed at all.
 
-Fixes: 376fb49ecfca ("net/dpaa: prevent multiple mempool config")
+Parse dpaa_qdma-N as well, bounding the index by the number of QDMA
+devices the bus creates.
+
+Fixes: a63c6426fdfd ("dma/dpaa: add option for error checks")
 Cc: stable@dpdk.org
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/mempool/dpaa/dpaa_mempool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bus/dpaa/dpaa_bus.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 2f8555a026..94aea5e77c 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.c
-+++ b/drivers/mempool/dpaa/dpaa_mempool.c
-@@ -143,8 +143,8 @@ dpaa_mbuf_free_pool(struct rte_mempool *mp)
- 		bman_free_pool(bp_info->bp);
- 		DPAA_MEMPOOL_INFO("BMAN pool freed for bpid =%d",
- 				  bp_info->bpid);
--		rte_free(mp->pool_data);
- 		bp_info->bp = NULL;
-+		rte_free(bp_info);
- 		mp->pool_data = NULL;
- 	}
- }
+diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
+index 368c8eeb98..5442f8f893 100644
+--- a/drivers/bus/dpaa/dpaa_bus.c
++++ b/drivers/bus/dpaa/dpaa_bus.c
+@@ -521,6 +521,11 @@ rte_dpaa_bus_parse(const char *name, void *out)
+ 				i < 1 || i > 4)
+ 			return -EINVAL;
+ 		max_name_len = sizeof("dpaa_sec-.") - 1;
++	} else if (strncmp("dpaa_qdma", &name[delta], 9) == 0) {
++		if (sscanf(&name[delta], "dpaa_qdma-%u", &i) != 1 ||
++				i < 1 || i > RTE_DPAA_QDMA_DEVICES)
++			return -EINVAL;
++		max_name_len = sizeof("dpaa_qdma-.") - 1;
+ 	} else if (strncmp("oh", &name[dev_delta], 2) == 0) {
+ 		if (sscanf(&name[delta], "fm%u-oh%u", &i, &j) != 2 ||
+ 				i >= 2 || j >= 16)
 -- 
 2.25.1
 
