@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 235B3CC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 11:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B92CCA464
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 11:00:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 604A64065A;
-	Fri, 16 Oct 2026 13:00:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5B2CA406B6;
+	Fri, 16 Oct 2026 13:00:13 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id 25F7E40658
+ by mails.dpdk.org (Postfix) with ESMTP id AF902402EE
  for <dev@dpdk.org>; Fri, 16 Oct 2026 13:00:07 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1792148408; x=1823684408;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=bDO/peRwkN2jqnCbfr1VN/mjnrs26QDeaIjWAqLPGEU=;
- b=LIPJhhey7+sTS6jnUV3G7xsn/qcxO/JeXpgpkMz7u4XTXNZUJ8qpPaPX
- UpxC9YujUslwAXPySBQdxpcqE78bBszp7quNydPXBS451SpHjxcwtd9kJ
- GQ+0yG4gP2bw3IrCoBlkrcwE50z59cqX1bH4I21Baf674BvRPDJ1tiyHk
- L4+UlBEhpueBPtaB/piypEXHkpcE0MC9b6R+0TbX3uaYLM/O8uoLRUPpB
- 9QvYkxpmqNWrzCaOIPEMtUj0Z0BWiA5HzhLD/K6KSG8cZiRlFcdcjG1VB
- 3JdX/NR1znoITvHgwaYzYe9fc4TvZYHCQkZ18k/5ISjQFFUuiGUnp6uKB w==;
-X-CSE-ConnectionGUID: vEXm5WF5Q12GpMnfL6LNxA==
-X-CSE-MsgGUID: nMoQzX2LRWyyUtXVwym4bw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="944134"
+ bh=R+yWseTMP2fns1cgG8/BRItGgV1fHcbufwm8lFnnykw=;
+ b=T7dFYJqTzQf3nIqZtwCObRKUIDbHwHK2SNygX2HBicGipHhB1hrL774P
+ cVDa3C3AylPgvRQlLhrAOzzbwxu8Bs/Bl0S2duYZgCNauv+k7qH3x/5uo
+ feVCRp53S7nV7G8ohESBzj0fNbSqB1rqTOPz0PY4AYbSU2GswCTTvDW6P
+ IjgYLHjjcfKrTaqYXpenvOItdQqsFYCVGVqP0Gp16aFzyyUIFeyKXTzJR
+ JuW97wmRVTmkEbGyohVjhfa7HdoQG6MQfvvshwKrYh9Cwt9cCB9ZatNgQ
+ 9eXJNV1OjbGejL+v5R7H4cUeiEPylIePnthjk/UQxXxB3VmX4SVWiGWM8 Q==;
+X-CSE-ConnectionGUID: HEAoyl6WQtKHEgCj1qeYvw==
+X-CSE-MsgGUID: 9dLuBkwxTk6Rg8iUJbg42w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="944136"
 X-IronPort-AV: E=Sophos;i="6.27,161,1787036400"; 
-   d="scan'208";a="944134"
+   d="scan'208";a="944136"
 Received: from fmviesa011.fm.intel.com ([10.60.135.151])
  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Oct 2026 04:00:07 -0700
-X-CSE-ConnectionGUID: g+/MOC1BSrOPd/lwEnhEvA==
-X-CSE-MsgGUID: iWGe46KRSz+4cc5YTsdBKQ==
+ 16 Oct 2026 04:00:08 -0700
+X-CSE-ConnectionGUID: OrCjn9vPSkmXYGyqRgVGfw==
+X-CSE-MsgGUID: O7NM9879Soim1LswrLlGAg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,161,1787036400"; 
-   d="scan'208";a="3759383"
+   d="scan'208";a="3759387"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa011.fm.intel.com with ESMTP; 16 Oct 2026 04:00:06 -0700
+ by fmviesa011.fm.intel.com with ESMTP; 16 Oct 2026 04:00:07 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC PATCH 05/12] net/bond: rename directory for consistency
-Date: Fri, 16 Oct 2026 11:59:43 +0100
-Message-ID: <20261016105950.273068-6-bruce.richardson@intel.com>
+Subject: [RFC PATCH 06/12] build: add script to generate dependencies list
+Date: Fri, 16 Oct 2026 11:59:44 +0100
+Message-ID: <20261016105950.273068-7-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261016105950.273068-1-bruce.richardson@intel.com>
 References: <20261016105950.273068-1-bruce.richardson@intel.com>
@@ -61,189 +61,258 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-All libraries and drivers in DPDK have the directory name match the
-resulting .so library name, with the exception of "net/bonding" which is
-internally renamed to "net/bond". The shorter name is used for the .so
-object and for dependency tracking in other DPDK components. Remove the
-inconsistency by renaming the directory from "bonding" to "bond",
-thereby removing the need for any tooling to take account of the fact
-that directory names may not be the same as object or dependency names.
+At start of the build configuration, generate a list of all components
+and their dependencies on other internal components. Future changes can
+use this list to have smarter behaviour for enabling and disabling
+drivers and libs.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- MAINTAINERS                                              | 2 +-
- doc/api/doxy-api.conf.in                                 | 2 +-
- doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst | 2 +-
- doc/guides/testpmd_app_ug/testpmd_funcs.rst              | 2 +-
- drivers/meson.build                                      | 1 +
- drivers/net/{bonding => bond}/bonding_testpmd.c          | 0
- drivers/net/{bonding => bond}/eth_bond_8023ad_private.h  | 0
- drivers/net/{bonding => bond}/eth_bond_private.h         | 0
- drivers/net/{bonding => bond}/meson.build                | 1 -
- drivers/net/{bonding => bond}/rte_eth_bond.h             | 0
- drivers/net/{bonding => bond}/rte_eth_bond_8023ad.c      | 0
- drivers/net/{bonding => bond}/rte_eth_bond_8023ad.h      | 0
- drivers/net/{bonding => bond}/rte_eth_bond_alb.c         | 0
- drivers/net/{bonding => bond}/rte_eth_bond_alb.h         | 0
- drivers/net/{bonding => bond}/rte_eth_bond_api.c         | 0
- drivers/net/{bonding => bond}/rte_eth_bond_args.c        | 0
- drivers/net/{bonding => bond}/rte_eth_bond_flow.c        | 0
- drivers/net/{bonding => bond}/rte_eth_bond_pmd.c         | 0
- drivers/net/meson.build                                  | 2 +-
- 19 files changed, 6 insertions(+), 6 deletions(-)
- rename drivers/net/{bonding => bond}/bonding_testpmd.c (100%)
- rename drivers/net/{bonding => bond}/eth_bond_8023ad_private.h (100%)
- rename drivers/net/{bonding => bond}/eth_bond_private.h (100%)
- rename drivers/net/{bonding => bond}/meson.build (95%)
- rename drivers/net/{bonding => bond}/rte_eth_bond.h (100%)
- rename drivers/net/{bonding => bond}/rte_eth_bond_8023ad.c (100%)
- rename drivers/net/{bonding => bond}/rte_eth_bond_8023ad.h (100%)
- rename drivers/net/{bonding => bond}/rte_eth_bond_alb.c (100%)
- rename drivers/net/{bonding => bond}/rte_eth_bond_alb.h (100%)
- rename drivers/net/{bonding => bond}/rte_eth_bond_api.c (100%)
- rename drivers/net/{bonding => bond}/rte_eth_bond_args.c (100%)
- rename drivers/net/{bonding => bond}/rte_eth_bond_flow.c (100%)
- rename drivers/net/{bonding => bond}/rte_eth_bond_pmd.c (100%)
+ buildtools/get-deps.py | 203 +++++++++++++++++++++++++++++++++++++++++
+ buildtools/meson.build |   1 +
+ meson.build            |   7 ++
+ 3 files changed, 211 insertions(+)
+ create mode 100644 buildtools/get-deps.py
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 482bc7df76..02a06d9506 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -671,7 +671,7 @@ F: doc/guides/nics/features/default.ini
- Link bonding
- M: Chas Williams <chas3@att.com>
- M: Min Hu (Connor) <humin29@huawei.com>
--F: drivers/net/bonding/
-+F: drivers/net/bond/
- F: doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
- F: app/test/test_link_bonding*
- F: examples/bond/
-diff --git a/doc/api/doxy-api.conf.in b/doc/api/doxy-api.conf.in
-index 94096ee710..f8b80e1110 100644
---- a/doc/api/doxy-api.conf.in
-+++ b/doc/api/doxy-api.conf.in
-@@ -15,7 +15,7 @@ INPUT                   = @TOPDIR@/doc/api/doxy-api-index.md \
-                           @TOPDIR@/drivers/mempool/dpaa2 \
-                           @TOPDIR@/drivers/net/ark \
-                           @TOPDIR@/drivers/net/bnxt \
--                          @TOPDIR@/drivers/net/bonding \
-+                          @TOPDIR@/drivers/net/bond \
-                           @TOPDIR@/drivers/net/cnxk \
-                           @TOPDIR@/drivers/net/dpaa \
-                           @TOPDIR@/drivers/net/dpaa2 \
-diff --git a/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst b/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
-index 2fa1ac4028..469a8f1d9e 100644
---- a/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
-+++ b/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
-@@ -29,7 +29,7 @@ bonding device and its member devices.
- 
-     The Link Bonding PMD Library is enabled by default in the build
-     configuration, the library can be disabled using the meson option
--    "-Ddisable_drivers=net/bonding".
-+    "-Ddisable_drivers=net/bond".
- 
- 
- Link Bonding Modes Overview
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index 30cac0ad8c..72c4f5bec7 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -5738,6 +5738,6 @@ Driver specific commands
- Some drivers provide specific features.
- See:
- 
--- :ref:`net/bonding testpmd driver specific commands <bonding_testpmd_commands>`
-+- :ref:`net/bond testpmd driver specific commands <bonding_testpmd_commands>`
- - :ref:`net/i40e testpmd driver specific commands <i40e_testpmd_commands>`
- - :ref:`net/ixgbe testpmd driver specific commands <ixgbe_testpmd_commands>`
-diff --git a/drivers/meson.build b/drivers/meson.build
-index e75fa983e2..cb71bc8231 100644
---- a/drivers/meson.build
-+++ b/drivers/meson.build
-@@ -35,6 +35,7 @@ endif
- 
- # map legacy driver names
- driver_map = {
-+    'net/bonding': 'net/bond',
-     'net/cpfl': 'net/intel/cpfl',
-     'net/e1000': 'net/intel/e1000',
-     'net/fm10k': 'net/intel/fm10k',
-diff --git a/drivers/net/bonding/bonding_testpmd.c b/drivers/net/bond/bonding_testpmd.c
-similarity index 100%
-rename from drivers/net/bonding/bonding_testpmd.c
-rename to drivers/net/bond/bonding_testpmd.c
-diff --git a/drivers/net/bonding/eth_bond_8023ad_private.h b/drivers/net/bond/eth_bond_8023ad_private.h
-similarity index 100%
-rename from drivers/net/bonding/eth_bond_8023ad_private.h
-rename to drivers/net/bond/eth_bond_8023ad_private.h
-diff --git a/drivers/net/bonding/eth_bond_private.h b/drivers/net/bond/eth_bond_private.h
-similarity index 100%
-rename from drivers/net/bonding/eth_bond_private.h
-rename to drivers/net/bond/eth_bond_private.h
-diff --git a/drivers/net/bonding/meson.build b/drivers/net/bond/meson.build
-similarity index 95%
-rename from drivers/net/bonding/meson.build
-rename to drivers/net/bond/meson.build
-index 14304b68a8..bf73ce2e57 100644
---- a/drivers/net/bonding/meson.build
-+++ b/drivers/net/bond/meson.build
-@@ -7,7 +7,6 @@ if is_windows
-     subdir_done()
+diff --git a/buildtools/get-deps.py b/buildtools/get-deps.py
+new file mode 100644
+index 0000000000..ca3ee35ff7
+--- /dev/null
++++ b/buildtools/get-deps.py
+@@ -0,0 +1,203 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 Intel Corporation
++
++"""Report the internal DPDK dependencies of every library, driver and app.
++
++Scans the meson.build file of each component for "deps" and "optional_deps"
++assignments, without needing to execute them.  This lets the build work out what
++each component requires before any component has been configured, which in turn
++allows enabling a component to also enable whatever it depends on.
++
++Output is one line per component:
++
++    kind|name|path|deps|optional_deps
++
++"kind" is one of lib, drv or app, and the two dependency fields are
++comma-separated and may be empty.  Dependency names are the names components are
++known by once built, i.e. a library is named after its directory, while a driver
++is "<class>_<name>".
++"""
++
++import re
++import sys
++from pathlib import Path
++from typing import NamedTuple
++
++# an assignment to one of the dependency variables, capturing the operator so
++# that "deps = " (replacing the class defaults) can be told from "deps += "
++ASSIGN = re.compile(r"^(deps|std_deps|optional_deps)\s*(\+?=)\s*(.*)$")
++# meson has no double-quoted strings, so anything quoted is quoted with '
++QUOTED = re.compile(r"'([^']+)'")
++
++
++class Component(NamedTuple):
++    kind: str  # lib, drv or app
++    name: str  # the name the component is known by once built
++    path: str  # source directory, relative to the DPDK root
++    deps: list
++    optional_deps: list
++
++
++def strip_comment(line):
++    """Remove a trailing comment. Dependency names never contain '#'."""
++    return line.split("#", 1)[0]
++
++
++def logical_lines(path):
++    """Yield (indent, text) with multi-line list literals joined into one line."""
++    if not path.is_file():
++        return
++    pending = ""
++    depth = 0
++    indent = 0
++    for raw in path.read_text().splitlines():
++        text = strip_comment(raw)
++        if not text.strip():
++            continue
++        # depth == 0 means we are not inside any brackets or parentheses
++        if depth == 0:
++            indent = len(text) - len(text.lstrip())
++            pending = text.strip()
++        else:
++            # inside a multi-line list or parentheses, so just append the stripped text
++            pending += " " + text.strip()
++        # brackets and the parentheses of calls such as files(...) may both span lines
++        depth = pending.count("[") - pending.count("]") + pending.count("(") - pending.count(")")
++        if depth <= 0:
++            depth = 0
++            yield indent, pending
++            pending = ""
++
++
++def dedup(items):
++    return list(dict.fromkeys(items))
++
++
++def list_variable(path, varname):
++    """Collect every value assigned or appended to a list variable."""
++    found = []
++    pattern = re.compile(r"^%s\s*\+?=\s*(.*)$" % re.escape(varname))
++    for _, line in logical_lines(path):
++        m = pattern.match(line)
++        if m:
++            found += QUOTED.findall(m.group(1))
++    return dedup(found)
++
++
++def scan(path):
++    """Return (deps, optional_deps, replaces_std_deps) for a component.
++
++    Conditions around an assignment are deliberately ignored: a dependency that
++    is only needed on some platforms is still recorded, which over-approximates
++    in the safe direction.  Use "optional_deps" for a dependency that should be
++    linked against only when it is already being built.
++    """
++    deps = []
++    optional = []
++    replaces = False
++
++    for indent, line in logical_lines(path):
++        m = ASSIGN.match(line)
++        if not m:
++            continue
++        var, op, rhs = m.groups()
++
++        items = QUOTED.findall(rhs)
++        if not items:
++            # a computed value such as "deps += some_variable" cannot be scanned
++            continue
++
++        if var == "optional_deps":
++            optional += items
++        elif op == "=" and var == "deps" and indent == 0:
++            # only a top-level "deps =" discards the class defaults; one inside a
++            # conditional may not run at all, so treat it as an addition
++            replaces = True
++            deps = list(items)
++        else:
++            deps += items
++
++    return dedup(deps), dedup(optional), replaces
++
++
++def scan_libs(root):
++    libdir = root / "lib"
++    for lib in list_variable(libdir / "meson.build", "libraries"):
++        deps, optional, _ = scan(libdir / lib / "meson.build")
++        yield Component("lib", lib, "lib/" + lib, deps, optional)
++
++
++def scan_drivers(root):
++    drvdir = root / "drivers"
++    for subpath in list_variable(drvdir / "meson.build", "subdirs"):
++        if "/" in subpath:
++            # a driver listed on its own gets no class-wide default dependencies
++            cls, rest = subpath.split("/", 1)
++            drivers, std_deps = [rest], []
++        else:
++            cls = subpath
++            classfile = drvdir / cls / "meson.build"
++            drivers = list_variable(classfile, "drivers")
++            std_deps, _, _ = scan(classfile)
++
++        for drv in drivers:
++            path = cls + "/" + drv
++            deps, optional, replaces = scan(drvdir / path / "meson.build")
++            if not replaces:
++                deps = dedup(std_deps + deps)
++            yield Component(
++                "drv", cls + "_" + drv.split("/")[-1], "drivers/" + path, deps, optional
++            )
++
++
++def scan_apps(root):
++    appdir = root / "app"
++    for app in list_variable(appdir / "meson.build", "apps"):
++        deps, optional, _ = scan(appdir / app / "meson.build")
++        yield Component("app", app, "app/" + app, deps, optional)
++
++
++def validate(components):
++    """Reject anything that would make the dependency graph unusable."""
++    errors = []
++    provider = {}
++    for c in components:
++        # apps are never depended upon, so they are outside the component namespace
++        if c.kind == "app":
++            continue
++        if c.name in provider:
++            errors.append(
++                '"%s" is provided by both %s and %s' % (c.name, provider[c.name], c.path)
++            )
++        provider[c.name] = c.path
++
++    for c in components:
++        for d in c.deps + c.optional_deps:
++            if d not in provider:
++                errors.append('%s depends on "%s", which is not a known component' % (c.path, d))
++    return errors
++
++
++def main():
++    if len(sys.argv) != 2:
++        sys.exit("usage: %s <dpdk-source-root>" % sys.argv[0])
++    root = Path(sys.argv[1])
++
++    components = list(scan_libs(root)) + list(scan_drivers(root)) + list(scan_apps(root))
++
++    errors = validate(components)
++    if errors:
++        for e in errors:
++            print("error: " + e, file=sys.stderr)
++        sys.exit(1)
++
++    for c in components:
++        print(
++            "%s|%s|%s|%s|%s"
++            % (c.kind, c.name, c.path, ",".join(c.deps), ",".join(c.optional_deps))
++        )
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/buildtools/meson.build b/buildtools/meson.build
+index 32cea7cff7..02c66a5580 100644
+--- a/buildtools/meson.build
++++ b/buildtools/meson.build
+@@ -22,6 +22,7 @@ gen_version_map = py3 + files('gen-version-map.py')
+ list_dir_globs = py3 + files('list-dir-globs.py')
+ sphinx_wrapper = py3 + files('call-sphinx-build.py')
+ get_cpu_count_cmd = py3 + files('get-cpu-count.py')
++get_deps_cmd = py3 + files('get-deps.py')
+ get_numa_count_cmd = py3 + files('get-numa-count.py')
+ get_min_meson_version_cmd = py3 + files('get-min-meson-version.py')
+ get_test_suites_cmd = py3 + files('get-test-suites.py')
+diff --git a/meson.build b/meson.build
+index 6b8cfa8b2e..e153894ac7 100644
+--- a/meson.build
++++ b/meson.build
+@@ -88,6 +88,13 @@ if is_linux
+     global_inc += include_directories('kernel/linux')
  endif
  
--name = 'bond' #, james bond :-)
- sources = files(
-         'rte_eth_bond_8023ad.c',
-         'rte_eth_bond_alb.c',
-diff --git a/drivers/net/bonding/rte_eth_bond.h b/drivers/net/bond/rte_eth_bond.h
-similarity index 100%
-rename from drivers/net/bonding/rte_eth_bond.h
-rename to drivers/net/bond/rte_eth_bond.h
-diff --git a/drivers/net/bonding/rte_eth_bond_8023ad.c b/drivers/net/bond/rte_eth_bond_8023ad.c
-similarity index 100%
-rename from drivers/net/bonding/rte_eth_bond_8023ad.c
-rename to drivers/net/bond/rte_eth_bond_8023ad.c
-diff --git a/drivers/net/bonding/rte_eth_bond_8023ad.h b/drivers/net/bond/rte_eth_bond_8023ad.h
-similarity index 100%
-rename from drivers/net/bonding/rte_eth_bond_8023ad.h
-rename to drivers/net/bond/rte_eth_bond_8023ad.h
-diff --git a/drivers/net/bonding/rte_eth_bond_alb.c b/drivers/net/bond/rte_eth_bond_alb.c
-similarity index 100%
-rename from drivers/net/bonding/rte_eth_bond_alb.c
-rename to drivers/net/bond/rte_eth_bond_alb.c
-diff --git a/drivers/net/bonding/rte_eth_bond_alb.h b/drivers/net/bond/rte_eth_bond_alb.h
-similarity index 100%
-rename from drivers/net/bonding/rte_eth_bond_alb.h
-rename to drivers/net/bond/rte_eth_bond_alb.h
-diff --git a/drivers/net/bonding/rte_eth_bond_api.c b/drivers/net/bond/rte_eth_bond_api.c
-similarity index 100%
-rename from drivers/net/bonding/rte_eth_bond_api.c
-rename to drivers/net/bond/rte_eth_bond_api.c
-diff --git a/drivers/net/bonding/rte_eth_bond_args.c b/drivers/net/bond/rte_eth_bond_args.c
-similarity index 100%
-rename from drivers/net/bonding/rte_eth_bond_args.c
-rename to drivers/net/bond/rte_eth_bond_args.c
-diff --git a/drivers/net/bonding/rte_eth_bond_flow.c b/drivers/net/bond/rte_eth_bond_flow.c
-similarity index 100%
-rename from drivers/net/bonding/rte_eth_bond_flow.c
-rename to drivers/net/bond/rte_eth_bond_flow.c
-diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bond/rte_eth_bond_pmd.c
-similarity index 100%
-rename from drivers/net/bonding/rte_eth_bond_pmd.c
-rename to drivers/net/bond/rte_eth_bond_pmd.c
-diff --git a/drivers/net/meson.build b/drivers/net/meson.build
-index 4e8ccb945f..0de3e30cf2 100644
---- a/drivers/net/meson.build
-+++ b/drivers/net/meson.build
-@@ -11,7 +11,7 @@ drivers = [
-         'axgbe',
-         'bnx2x',
-         'bnxt',
--        'bonding',
-+        'bond',
-         'cnxk',
-         'cxgbe',
-         'dpaa',
++# record what each component depends on, so that enabling a component can also
++# enable the components it needs
++dpdk_deps_graph = configure_file(
++        command: [get_deps_cmd, dpdk_source_root],
++        capture: true,
++        output: 'dependencies.txt')
++
+ # build libs and drivers
+ subdir('lib')
+ subdir('drivers')
 -- 
 2.53.0
 
