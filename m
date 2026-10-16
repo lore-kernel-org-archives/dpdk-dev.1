@@ -2,74 +2,129 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 479DCCC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 17:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDB0CC6B38
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 17:07:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 380A840291;
-	Fri, 16 Oct 2026 19:05:31 +0200 (CEST)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id CB91840291
- for <dev@dpdk.org>; Fri, 16 Oct 2026 19:05:30 +0200 (CEST)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-2e987b4a710so5252455ad.1
- for <dev@dpdk.org>; Fri, 16 Oct 2026 10:05:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792170330;
- x=1792775130; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=QrvFuekZZVR0Wyiovdrdl4e7P4PnyYi3DCYgrpdSHwo=;
- b=Lu+4p3dlDuJs9LkGuWzpJsyVe83LL8lMVHcxiFbgQ7Vh8lxtRtynetqF0P7uNbh8QP
- I1W4LJdCkiKHK+7qRCD1fUSkmN/5kaPh4H/Gc8qprSHSZQ6xTYKQuMpd+Rl5ZDlzqLye
- XfowtQDNNkg1c5c7VCL05M8I/7PlSi4EjvZyJXUUPybfv71Al409/qQI9iwxVZR2VWdz
- tTIwYXXkQ1bAKlDznvS+oCZkdcKk70c6s1khyYqrf+QwPlXJrsJd/Vz80fkvfLYuprOd
- cv8Xm3gwHWohk+2bDBnwI80fwEWenQNmVLULD/j6evgG0GucXO5jdt+YJHDrDs/Cy22u
- T3rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792170330; x=1792775130;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=QrvFuekZZVR0Wyiovdrdl4e7P4PnyYi3DCYgrpdSHwo=;
- b=dgqVeDv6EnAR39SvLOKEIMmpntYk//PIpMjkmbf/fzW+SsCLExIHCphIi+Dr4OgO/f
- HKSZG3exFzeEt6KjTkiIlyOj56SxmeiNhcq5ZxGPso6Fy5WPmWTzLInKFhygoqe/9/Ah
- ueDlGJl7/JQWRrmIDfOgYWIludHdm02q9tzScedKRndIqqRSYWKrMahsNuoSkPD13n5p
- LxyKubCQzFI1Z8HykNtCuOn8T/CK1N2F6HVLNjoY8fZCvL6q3FtsG6e6G4nQ7RZCrCXe
- qc8JZrKDqBCOlWlcvg+O8Yg2aCMel1KK5tmKFoQtRZNDuSYZVQwSRsF+Gva3cIDSUpNK
- KWbg==
-X-Gm-Message-State: AFq9FYJB1S9lw8d4lIVnKlr/WtHu3b0SgjGdiml83jDMD2LxYVtl+Vmf
- GCNt5YCOflDCFEw4C2S/i8RSpdbsPTVNhBlqt3raOe0NOHySBo1zvL02X6ctsCGR3ExrK22rgE6
- Ruq4wD6U=
-X-Gm-Gg: AYBFou2rTFICrSZV8LmZjXghL7Q9hmSS3NCZvq9mKEpT6H2CPT4jNbsdn1LzMX4kUZw
- vGiaSG4En37gq1cz7jJnL3i4ituDSpeNRmhfmyb9plmNc0ZWJP/YqxmqmQADs2Zxc8O2huctawh
- yUNvKBoFslT0g42kPQqD2SpClvJm70VbRTZMd1GBZ+5eNxyhJBeV6WsDBPYwWPkvVmxHKYDshbl
- MfTGZM/ZnIUsCL2YXTsNHg5rFc0AEdHdIt2BLC31INAufHPSQMxb746bIBg9DeaWGZYgrIIp0NM
- MKBS3KkTziSX7HMGkuanXst0+9paDMcqAKj+jn7H8WgK355nNUacISnkgM7/eEuwYc4LKS2lUX3
- b7KU5SqOqrt6oQBBVDNV/wuNgvFKoC4mpJX19yhKkm05ZrUBsZIUWwJoR2C2bhGIMVC1eei2Ksl
- NfUos21Z0VMAtMYdKQOVm2YB9vnZfPI4A+wtIclKs46g+4SBiBM7PETeZkvXXdh08/NQ87BwNrB
- o+2baze8vzQnBFb/K9rJl+GQVAjIKHx+WCUsUJCGdUBKjpgd1Y=
-X-Received: by 2002:a17:902:f546:b0:2e9:4ecb:24a5 with SMTP id
- d9443c01a7336-2e9a6833d02mr4178775ad.2.1792170329821; 
- Fri, 16 Oct 2026 10:05:29 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e97e878910sm13239685ad.61.2026.10.16.10.05.29
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Oct 2026 10:05:29 -0700 (PDT)
-Date: Fri, 16 Oct 2026 10:05:23 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
-Cc: <dev@dpdk.org>, Jakub Grajciar <jgrajcia@cisco.com>, <stable@dpdk.org>
-Subject: Re: [PATCH v3 0/9] net/memif: lifecycle fixes and unit test
-Message-ID: <20261016100523.74067d8a@phoenix.local>
-In-Reply-To: <20261016141557.3081522-1-sriram.yagnaraman@ericsson.com>
-References: <20261016141557.3081522-1-sriram.yagnaraman@ericsson.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 59A4240291;
+	Fri, 16 Oct 2026 19:07:52 +0200 (CEST)
+Received: from GVXPR05CU001.outbound.protection.outlook.com
+ (mail-swedencentralazon11013028.outbound.protection.outlook.com
+ [52.101.83.28]) by mails.dpdk.org (Postfix) with ESMTP id 901C74026C
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 19:07:50 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SsOPpZ3wjSQNRK4nmaa+LGr3m0tBNOytFDnQbJ3fjnc+ZOHr/Lx15vA0UYN3ANouGVgJ5Rk586gDfXzp4pBshJaCbRzJqCYhSPkbZbw3mMHNOdxxm9Jnq+pzONKrpkROTGBr15FoaAuFDbI0H4GASomsknu8hMUhcD39+NfaKvk4MVEJ+D9KfMouE737btgjF/KYbKSErWgLb42PgiHs5hecpU1QojfdorlMz0R9LLHUo2pC5KUnKGNqMAutNtKyseCrUrEYKgURWiGoOs7I3uYSq/FCuet30I/LvQZ80+lCUVex7MZ9DqBh83pR5BnaeKDEYGU8KqrC3q98H5/NUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xTUG0JLz5wG465cyOPoZy1cYNLYEigOvD/kh7maZiqw=;
+ b=FA7EWuK45AISQXE+7xGJfl/MDA4FaILXwxDUjHvXxWC/KA3BbrvFI+BDp0oeEgNF5ed8FxBy2iGBYixF1WeAwc40Nu2E9DjQkREKBOwKj16hrieLxHs+Lj7u0qdbwxE03CeP8NxCFNZ4ZgrgKazqkcPOZIbWRvA8dJabomblT6HCf94KAxjW7zqQtIrDPx6T6BHU4kD2UReb8XG6vAvBrjxflWycAe5CbrPz1R5PD9IKYbjB50WMLo5sx1QpxOIYTjkMhEIlVO87RxS74eUEeS33VjiwXPyCQ6gC3ORIN+V3U91UXtBywux3I3PvieOcnbB01S4m7a2FHs37RkCJtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xTUG0JLz5wG465cyOPoZy1cYNLYEigOvD/kh7maZiqw=;
+ b=WVOcP2DUv5DnENMiHyOZe7j5horb5sJOvp1GgjYwDoL/rrXNQdGSKBmzPQ131MLm4kVwOSI2yvfGAfldzCDfrVkFX/H+61bdgME/Isv8KyCmqrKBtxqHgWhM50rcuAJ54WmHOea7LekbxLwor+/kFTI7gIb2gt0orpQ7awfdcNckhSJuAOjWLfu/4byt0Fsu2+GV2YFzJZibxGAlFi+7uJFIhJXQ5re3Yb87H8Od5reUP50Zr82eKHr06CcbgqrECWgDWva7C5QlfZ0I+utgWm/q1pJdnAN1tUj8DcTFSI5Ixn5KQv7jZ4xE8UJkKJWElFC/rP1/gVGvhEPKZsWHzw==
+Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
+ (2603:10a6:150:212::14) by MMZPR04MB625833.eurprd04.prod.outlook.com
+ (2603:10a6:190:52::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.14; Fri, 16 Oct
+ 2026 17:07:48 +0000
+Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
+ ([fe80::9985:c5d3:961:2003]) by GV1PR04MB10750.eurprd04.prod.outlook.com
+ ([fe80::9985:c5d3:961:2003%6]) with mapi id 15.21.0522.013; Fri, 16 Oct 2026
+ 17:07:48 +0000
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "thomas@monjalon.net" <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH v27 00/25] NXP DPAA driver enhancements and fixes
+Thread-Topic: [PATCH v27 00/25] NXP DPAA driver enhancements and fixes
+Thread-Index: AQHdXWBMnOwr8hhdk0Si6YK9HoxH8LcAXvaAgAACLDCAAAT0gIAAAJ2A
+Date: Fri, 16 Oct 2026 17:07:48 +0000
+Message-ID: <GV1PR04MB10750B1B09B39DB39187773B5899B2@GV1PR04MB10750.eurprd04.prod.outlook.com>
+References: <20261015141144.3140281-1-hemant.agrawal@nxp.com>
+ <20261016111958.163060-1-hemant.agrawal@nxp.com>
+ <20261016093848.7dbe6c73@phoenix.local>
+ <GV1PR04MB10750670E599D034FA89E627A899B2@GV1PR04MB10750.eurprd04.prod.outlook.com>
+ <20261016100435.4dc6dc10@phoenix.local>
+In-Reply-To: <20261016100435.4dc6dc10@phoenix.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Enabled=True;
+ MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SiteId=686ea1d3-bc2b-4c6f-a92c-d99c5c301635;
+ MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SetDate=2026-10-16T17:06:46.0000000Z;
+ MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Name=NXP
+ Confidential; MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_ContentBits=3;
+ MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Method=Standard
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: GV1PR04MB10750:EE_|MMZPR04MB625833:EE_
+x-ms-office365-filtering-correlation-id: 3fce6b9b-5793-4b9a-7b64-08df2ba80126
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|366016|376014|1800799024|19092799006|23010399003|38070700021|56012099006|4143699003|11063799006|10067099003|18002099003|22082099003|6133799003;
+x-microsoft-antispam-message-info: h/jMfP6OCC7h4Cz4KN5JPlsgJwd5waGJL24otL/rIyWLOLMQXLm0d2VvhJfsItpl2lp1YffV7PfqF6hQy3z2MKtIoyVSwnT9EgCXmWLdFPSlpmtTuCN31TBjRRiMumBDWnSm+pDei47sUbLB9rsuFJBpN9En1o7uqVkI3GfX1b1UqEtFxWJNAI/agxEv3p/VolElveY8g62jfIk4OXv4Jh9lxcvuoy8pZ2GvAXNTb8vv06f/+jfx0ZJDCFUsXitYmATipdqOD/94K7it57psD7xfBzrw3r0JFLtQtcudqRas2TKKI4eJ2qCTL78NdUii6PON+piujWD3W5Qiuf7yV1G6bYOqi+GZuBPtk9/SDQYI+E1+AHI2+p6waqIyBFZmor/LwiAs1AAYJox0Zl9554gJk7BUwswFU0NLKVLp6nlyMPKBr+tbz2/bkyAikDpT4FLNa2+J213oQ3uncU4E28T7P1akzNyZeJO0O+j2XehNXvt6xOiq6U3aeXTicZd/eJW9EMQHV/QxGDTpaiaWevhhqAotS0sdfAimMiPC2xk9/hdAc/iso45HOqdzIb/IYSI9BNkmASP52T1/VY5/ec556oorod2y7gqzhEB2rm5mf4QBJ/p+mM0ACOZJ/JY2g0dwopGhM9/aWEhqu8mPvSmTJjD3r9D7ts497IVhT/Int1ANxnJ2muIDfquD5hHVo7to1oxaR9l9QEES74ivv7Rq3moOs0u78Li7kZ7qG/I=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:GV1PR04MB10750.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(19092799006)(23010399003)(38070700021)(56012099006)(4143699003)(11063799006)(10067099003)(18002099003)(22082099003)(6133799003);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WVZQTU96U0dGMTVIVlpxSGc3anN3R240aDY3d1NhWk9XL2svdWhELzVaS1Aw?=
+ =?utf-8?B?cnpSNkxibGRjMlgyYisxRmUxVUUxc2xiTTBtYUtxZ1ZzNmNXWTNZd0plUlNp?=
+ =?utf-8?B?L0poeFBOTEpMRUJOSURjR091TmMzcU01Ym1RM3ZldVVTeUFSWVpicUN5UjN6?=
+ =?utf-8?B?R3pCOTBtTVZTVS9rMCtzbCs4UzkrbEF0azIzQXQyNEdjZzdEZ3crL1BHZWw2?=
+ =?utf-8?B?cWxBbHgyMG9xMjh0MWZVN3ErOTNsSHYwUm5zV2gzSmo1eCs0dlc4d3hqQ3Vn?=
+ =?utf-8?B?K2RBNUxBeFBmQUdHcERSL29BWWplcjRza0VoQ2pGcytmUmVKS3Q3U3podHN5?=
+ =?utf-8?B?R3E4SlRIVGJCSTc0ZU1wM1NzaTFGNjhXYThOU0owTXNyYkpHZHdXZnRBcTFq?=
+ =?utf-8?B?TldCV21zREs5N0xSN1RQU2xkVzZCVFlIWFNBNElxMHdwQWtucUhxNzhoRWRM?=
+ =?utf-8?B?bnBGNm9sNDd5bk94RzRxSjFxdXFCd1RzQkIvcjVIVnZyamNNQjlOTTlRc3dv?=
+ =?utf-8?B?UU05OHAxcWRKZUkxZi9rOUd0YnlLR2hXekxxT2ZsaU9BeXB0S2NaQ1hhTU91?=
+ =?utf-8?B?UVVPS2dqcG1URXdGaHdUSHk3clgzRzdNUUFCcU9QZS93cTk1WlVzSWVuZy9Q?=
+ =?utf-8?B?VFZzMDdkUEMxVDZSY0tTKzBveTh0djNRcDhnSWp3WGRzNjYyNjV3K3hkaitF?=
+ =?utf-8?B?WityaUVCbFBPc0EwWlRCa0tVWmt4UXVoM3NnbVVYRkZkMC85NERXeDRKVTJt?=
+ =?utf-8?B?cEs5cHZ2OEUwSGM3OXAyT0lUdmd2MStEZndQV250bWpUd1lnU3kvZ1VUSlBj?=
+ =?utf-8?B?V0ZJSnlYazRhZWFKdjk5MnRGR1RUVTlyK216K2p1Wkp4Y2s2ckVHd0JLMHR4?=
+ =?utf-8?B?UUNNRTJDOHlkZU5HQ09XVzY5UnN5QjlJeHducWZCcXR5dEUvL3VWU1pvYXBa?=
+ =?utf-8?B?ck9aaTZ6NTgwcUlJako2VGd6RDVPQzlDcGV2dXJTNnI1cERtNHQ0bWVMenZw?=
+ =?utf-8?B?RE9NVXZRdmJacE9wL3YreUo0Umh4cGNlWENaVGRZWUkyNmNLM1JpQ254aWVa?=
+ =?utf-8?B?NUQ3WmZxTC9lek5ZN3k1MkljRWQ1dzF0eW9KR2ZJZFp1TDRZVnNIcTdzYmxG?=
+ =?utf-8?B?L3lkZW1RWkhHaTl6WS9kODdDcFdwVHpJaUN6TmljT2lBRE9WZjI1Mkk2SVlI?=
+ =?utf-8?B?dmtrQllVNTFHeFhmMVNVbnoxNlpwUmsrUitSaFQ4RklXcWxlZzBjUFd3SXRt?=
+ =?utf-8?B?bFBtM0Vhb0EvMnJKT1lNR3hES3ZmWXJaVEs1Y05GcjJKa2t0QmYvWS96MFdB?=
+ =?utf-8?B?dWhtb0I4bXppbHg3Yy8zQ2ZYVFhHN01qYkorU0dtdjMwbU5aSHFJT2w3WURU?=
+ =?utf-8?B?UU9KWnNFRXhwZ0lpNGRHT25qM2xnVTBIZURieWo4TGIxRys5Qm9zVmZUcC9v?=
+ =?utf-8?B?UklQUTlNVktOSlc2dkJBdjhENmcyZG1mTGlUTVpKT0JYUU02SWZUTks4NVBS?=
+ =?utf-8?B?aks1VGU5dnNvWXFGMWdsSXgwZ2xIaTNqQ0ZMclZGQ1NFTHI5c0I2eHUrTzhM?=
+ =?utf-8?B?Q0w4MHpjc29iM2U1bVI2U1c4cThJbUkrRmg2cFY3NTFFVlpaODBTMExUNjBi?=
+ =?utf-8?B?ZmE0QXNRL1dieGNDMnNneFJHcUJUeDhlWndsWElRQ0o5by9PeGVUMjIxb3Bq?=
+ =?utf-8?B?QldNL2lVS2FYbEtuc01iWUdRQkNtYldicllUd1UyNnJNUktYc1FrcjhadjY0?=
+ =?utf-8?B?blVQUGFVbXQ1a3F6dUJBcVhSbW5HUjRYTnJTZW9OMWZaeExReUlONTBnRjhz?=
+ =?utf-8?B?M1U0dXFXdmNGcjNGcjNETExpM2xucUNKQTZnZ3ljQW0xdXBtbkNnaUlBdEIy?=
+ =?utf-8?B?cFN6aXJIeE10VVYxZDlDc0J3YVlDMElvU0tIU2xweTdMY3AwWUZhR3JybC9r?=
+ =?utf-8?B?c3F5dHl0ZlU5WHRaV2RINDFOcWVYYkNob3h6WThpbDAvdW1kckpNZHRsaEpa?=
+ =?utf-8?B?R0QwbWlZWkRtRlpKNVluNHhFN2ZyL1BkclVaYUY5eURGekF0andacTVnbmNM?=
+ =?utf-8?B?R1o0ajV6aGErLzJONmFCN3VCWk5xZzJzc0E0RkVWMTJLNE5RaGdpaGxMMjBv?=
+ =?utf-8?B?VW1xNXVIVFVKWkFxWEZVaUhJeVFmOFMyZXlEblJoQWR4QStORjJleUpHUEd2?=
+ =?utf-8?B?ZVFGTkJBN1RlU1N0d1pOUnMyR1V6N00rcXZmcjdWV0VVeUV5OWUxTVJRcnc2?=
+ =?utf-8?B?OWlKYkxVMkt5UDF6VDBvME1reWl5MWdXcE5HbXJybG1CM2xGK2tOaUdaaWFB?=
+ =?utf-8?B?UURrbThSd1RKZlNsUXJPakJnWlRDOHdRbFQwSUdCenk4MTZSTXRHdz09?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB10750.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3fce6b9b-5793-4b9a-7b64-08df2ba80126
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2026 17:07:48.3486 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: sgVp+N7xwY3mqWSRJwgXVa8rMV6wNLRfOWtbAWgxpx5PrQgg5Hj3OjONm8pYg9IDhGxReHW09qpgP22uixx2HA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MMZPR04MB625833
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,125 +138,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 16 Oct 2026 16:15:48 +0200
-Sriram Yagnaraman <sriram.yagnaraman@ericsson.com> wrote:
-
-> This series fixes a set of error-path and lifecycle bugs in the memif
-> PMD and adds a unit test for the driver.
-> 
-> The first eight patches are fixes:
-> 
->  - guard eth_memif_tx() against an empty burst (nb_pkts == 0);
->  - close file descriptor 0 instead of leaking it;
->  - do not close the EAL-owned memseg fd in zero-copy mode;
->  - free the MAC address allocated during probe on failure;
->  - unwind a partially-created device on create failure;
->  - refuse connections on a stopped server so it does not come up on a
->    stopped port;
->  - disconnect on close so a stopped server's control channel is not
->    leaked, and make memif_disconnect() safe on a never-started device;
->  - fix eth_memif_tx_zc() returning 65535 on an invalid interrupt fd.
-> 
-> The last patch adds a memif PMD unit test (app/test, memif_pmd_autotest):
-> a server/client vdev pair over a loopback socket covering dev_info, link
-> state, stats, single-segment loopback (slow and fast path), multi-segment
-> loopback across a ring wrap, stop/start reconnect, empty Tx burst, close
-> without stop, and a stopped server refusing a peer.
-> 
-> Verified: memif_pmd_autotest passes 11/11; each commit builds with
-> -Dwerror=true; check-git-log and checkpatch are clean.
-> 
-> Thanks to Stephen Hemminger and the ai-code-review bot for the reviews
-> that shaped this series.
-> 
-> v3:
->  - Rebase on main, picking up rte_intr_fd_close() from
->    d9191f684c ("interrupts: add helpers to close FD"): patch 2 keeps
->    only the owned-fd ">= 0" fixes not superseded by that helper, and
->    patch 7 keeps the NULL-queue guards above the rte_intr_fd_close()
->    calls.
->  - New patch 6: refuse connections on a stopped server. The started-
->    then-stopped case is the actual trigger for the control-channel
->    leak; dev_stop now sets ETH_MEMIF_FLAG_DISABLED. (v2 patch 6/7
->    described this as never-started, which was wrong.)
->  - Patch 7 (disconnect on close): reword to the real trigger and keep
->    the close-time disconnect as a backstop.
->  - Patch 3 (memseg fd): also stop closing the EAL-owned fd in
->    memif_connect(), not only memif_free_regions().
->  - Test: new test_memif_stopped_server_rejects_peer covering patch 6
->    (fails without it); reword close-without-stop to what it actually
->    covers (the NULL-queue skip); verify the full fast-path payload.
-> 
-> v2:
->  - P1: correct Fixes tag (Tx fast path, not original driver); move the
->    empty-burst check after the ring == NULL block.
->  - P2: split the memseg-fd change into its own patch rather than
->    widening the check to ">= 0".
->  - P4 (MAC leak): document the secondary -1 -> -ENOMEM change.
->  - P5 (unwind): add Fixes: multi-process support.
->  - New patch: fix eth_memif_tx_zc() bogus Tx count on invalid fd.
->  - Test: add to MAINTAINERS; return TEST_FAILED (not SKIPPED) on probe
->    failure; add a default-bsize pair to cover the Tx fast path; set
->    ring size via rsize and fix the stale comments.
-> 
-> Sriram Yagnaraman (9):
->   net/memif: guard against empty Tx burst
->   net/memif: close file descriptor zero
->   net/memif: do not close EAL-owned memseg file descriptor
->   net/memif: fix MAC address leak on probe failure
->   net/memif: unwind partial device on create failure
->   net/memif: refuse connection on stopped device
->   net/memif: disconnect on device close
->   net/memif: fix bogus Tx count on invalid interrupt FD
->   test/memif: add memif PMD unit test
-> 
->  MAINTAINERS                       |   1 +
->  app/test/meson.build              |   1 +
->  app/test/test_pmd_memif.c         | 751 ++++++++++++++++++++++++++++++
->  drivers/net/memif/memif_socket.c  |  10 +-
->  drivers/net/memif/rte_eth_memif.c |  76 ++-
->  5 files changed, 812 insertions(+), 27 deletions(-)
->  create mode 100644 app/test/test_pmd_memif.c
-> 
-
-
-Still see warnings from AI
-
-v3 applies to main (26.11-rc1) and every commit builds with
--Dwerror=true. Not run. The v2 comments are addressed. 6/9 fixes the
-stopped-server case at the source, and the close test now covers what
-its comment says.
-
-
-[PATCH v3 7/9] net/memif: disconnect on device close
-
-Info: the commit message describes the tree before 6/9. With 6/9
-applied first, dev_stop does set ETH_MEMIF_FLAG_DISABLED, so "dev_stop
-does not set it again ... memif_msg_receive_init() still accepts a
-peer" is no longer true at this commit. Suggest:
-
-  Before the previous patch, a server that was started and then
-  stopped still accepted a peer and held a live pmd->cc at close.
-  Call memif_disconnect() from close as a backstop for an init that
-  races with stop.
-
-
-[PATCH v3 9/9] test/memif: add memif PMD unit test
-
-Warning: test_memif_stopped_server_rejects_peer() passes only by
-timing out, so it always burns the full wait_for_link_pair() window
-(CONNECT_TRIES * CONNECT_DELAY_US = 5s). memif_pmd_autotest is a fast
-test with a 10s meson timeout, and that budget also has to cover EAL
-init and the other handshakes, under ASan too. Use a short window for
-the negative check:
-
-	static int
-	wait_for_link_pair_tries(int p0, int p1, int tries)
-	...
-
-	#define REJECT_TRIES 10	/* 1s */
-
-	ret = wait_for_link_pair_tries(sport, cport, REJECT_TRIES);
-
-Info: the commit message does not list the fast-path loopback or the
-stopped-server test.
+DQoNCg0KTlhQIENvbmZpZGVudGlhbA0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBG
+cm9tOiBTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+DQo+IFNl
+bnQ6IDE2IE9jdG9iZXIgMjAyNiAyMjozNQ0KPiBUbzogSGVtYW50IEFncmF3YWwgPGhlbWFudC5h
+Z3Jhd2FsQG54cC5jb20+DQo+IENjOiB0aG9tYXNAbW9uamFsb24ubmV0OyBkZXZAZHBkay5vcmcN
+Cj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MjcgMDAvMjVdIE5YUCBEUEFBIGRyaXZlciBlbmhhbmNl
+bWVudHMgYW5kIGZpeGVzDQo+IEltcG9ydGFuY2U6IEhpZ2gNCj4NCj4gT24gRnJpLCAxNiBPY3Qg
+MjAyNiAxNjo0ODozMCArMDAwMA0KPiBIZW1hbnQgQWdyYXdhbCA8aGVtYW50LmFncmF3YWxAbnhw
+LmNvbT4gd3JvdGU6DQo+DQo+ID4gSGkgU3RlcGhhbiwNCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5h
+bCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IFN0ZXBoZW4gSGVtbWluZ2VyIDxzdGVwaGVuQG5l
+dHdvcmtwbHVtYmVyLm9yZz4NCj4gPiA+DQo+ID4NCj4gPiBOWFAgQ29uZmlkZW50aWFsDQo+ID4g
+PiBPbiBGcmksIDE2IE9jdCAyMDI2IDE2OjQ5OjMzICswNTMwDQo+ID4gPiBIZW1hbnQgQWdyYXdh
+bCA8aGVtYW50LmFncmF3YWxAbnhwLmNvbT4gd3JvdGU6DQo+ID4gPg0KPiA+ID4gPiBUaGlzIHNl
+cmllcyBjb2xsZWN0cyBhIHNldCBvZiBmaXhlcyBhbmQgZW5oYW5jZW1lbnRzIGZvciB0aGUgTlhQ
+DQo+ID4gPiA+IERQQUEgYnVzLCBtZW1wb29sLCBkbWEsIGNyeXB0byBhbmQgbmV0IGRyaXZlcnMg
+dGFyZ2V0aW5nIDI2LjExLg0KPiA+ID4gPg0KPiA+ID4gPiBJdCBpbmNsdWRlcyBtZW1vcnktbGVh
+ayBhbmQgcmVzb3VyY2UtY2xlYW51cCBmaXhlcyBvbiB0aGUgZGV2aWNlDQo+ID4gPiA+IHJlbW92
+ZS9jbG9zZSBwYXRocywgbW9yZSByb2J1c3QgZnJhbWUgcXVldWUgc2h1dGRvd24sDQo+ID4gPiA+
+IHNlY29uZGFyeS1wcm9jZXNzIHNhZmV0eSBndWFyZHMsIEJQSUQgbGlmZWN5Y2xlIGhhbmRsaW5n
+LCBhbmQNCj4gPiA+ID4gc2V2ZXJhbCBuZXcNCj4gPiA+IGZlYXR1cmVzOg0KPiA+ID4gPiBlbmhh
+bmNlZCB2aXJ0dWFsIHN0b3JhZ2UgcHJvZmlsZSAoVlNQKSBwb3J0IHN1cHBvcnQsIGZtY2xlc3Mg
+UngNCj4gPiA+ID4gcXVldWUgY29uZmlndXJhdGlvbiwgbm9uIGZtWC1tYWNZIHNoYXJlZCBFdGhl
+cm5ldCBuYW1pbmcsIGFuZCBETUENCj4gPiA+ID4gc2NhdHRlci1nYXRoZXIgYW5kIGVycmF0YS13
+b3JrYXJvdW5kIGRldmFyZ3MuIERvY3VtZW50YXRpb24gYW5kDQo+ID4gPiA+IHJlbGVhc2Ugbm90
+ZXMgYXJlIHVwZGF0ZWQgYWNjb3JkaW5nbHkuDQo+ID4gPiA+DQo+ID4gPiA+IFYyNzoNCj4gPiA+
+ID4gLSBmaXhlZCBxbV9jaGFubmVsX3Bvb2xfbnVtIGNoZWNrIGlzc3VlLg0KPiA+ID4gPiAtIGZp
+eGVkIGNvbW1pdCBtZXNzYWdlIGFzIGRldmFyZyBmb3IgZm1jbGVzcyByeHEgbnVtYmVyIHdhcyBy
+ZW1vdmVkLg0KPiA+ID4gPiAtIEFkZGVkIG1pc3NpbmcgZXhwb3J0IGludGVybmFsIHN5bWJvbCBh
+bmQgZnEgZGVzdHJveS4NCj4gPiA+ID4gLSBtZXJnZWQgYm90aCBGUSBzaHV0ZG93biBwYXRjaGVz
+IGFzIHdlIGNhbm5vdCBjaGFuZ2UgdGhlIHNlcXVlbmNlDQo+ID4gPiA+ICAgIGJlY2F1c2Ugb2Yg
+dGhlIGRlcGVuZGVuY3kuDQo+ID4gPiA+IC0gbWFjX2lkeCBoYXMgYSB1c2VyIHdoaWNoIGlzIGRw
+YWEgZmxvdyBzbyBubyBjaGFuZ2UuIEFkZGVkIHN0YXRpYyB0bw0KPiA+ID4gPiAgICBnX2ZtY19t
+b2RlbCBhbmQgdXBkYXRlZCByZWxlYXNlIG5vdGVzLg0KPiA+ID4gPiAtIElzc3VlcyByZXBvcnRl
+ZCBpbiB2MjUgd2hpY2ggYXJlIG5vdCBoYW5kbGVkLCB3ZXJlIG9wdGlvbmFsLCBzbw0KPiA+ID4g
+PiAgICBza2lwcGluZyB0aGVtLg0KPiA+ID4NCj4gPiA+DQo+ID4gPiBGWUkgLSB3aGF0IEkgZG8g
+aXMgZmVlZCB0aGUgcGF0Y2ggaW50byBhIENsYXVkZSBwcm9qZWN0IHdpdGgNCj4gPiA+IGV4aXN0
+aW5nIEFHRU5UUy5tZCBmaWxlLiBUaGUgY2hhdCBjb250aW51ZXMgYXMgdmVyc2lvbnMgZ2V0IHNl
+bnQgdG8NCj4gPiA+IGVtYWlsIHNvIHRoZSBjb250ZXh0IHdpbmRvdyBoYXMgYWxsIHRoZSB2ZXJz
+aW9ucyBvZiB0aGUgcGF0Y2guIFRoaXMNCj4gPiA+IGxldHMgaXQgc2VlIHRoZSBwcm9ncmVzcyBh
+bmQgY2hlY2sgaWYgcHJldmlvdXMgZmluZGluZ3Mgd2VyZSBhZGRyZXNzZWQuDQo+ID4gPg0KPiA+
+ID4gUmV2aWV3IG9mIFtQQVRDSCB2MjcgMDAvMjVdIE5YUCBEUEFBIGZpeGVzIGFuZCBlbmhhbmNl
+bWVudHMNCj4gPiA+DQo+ID4gPiBTZXJpZXMgYXBwbGllcyBjbGVhbmx5IHRvIDI2LjExLXJjMSBh
+bmQgZXZlcnkgY29tbWl0IGJ1aWxkcyB3aXRoIC0NCj4gPiA+IER3ZXJyb3I9dHJ1ZS4gVGhlIGZp
+eGVzIGFyZSBub3cgZmlyc3QuIDA4IGNoZXJyeS1waWNrcyBjbGVhbmx5IG9udG8NCj4gPiA+IHYy
+NC4xMSBhbmQgdjI1LjExLCBhbmQgMDYgYXBwbGllcyB0aGVyZSBvbmNlIDAxLTA1IGFyZSBpbi4N
+Cj4gPiA+DQo+ID4gPiB2MjYgV2FybmluZ3Mgb24gMTIgKG5vdyAxNCkgYW5kIDIwIGFyZSBhZGRy
+ZXNzZWQuIFRoZSAyNCBXYXJuaW5nIGlzDQo+ID4gPiBvbmx5IHBhcnRseSBmaXhlZC4NCj4gPiA+
+DQo+ID4NCj4gPiBJIHNlZSBvbmx5IG9uZSB3YXJuaW5nIGluIHRoaXMgcGF0Y2hzZXQgMjQvMjUg
+LSAgIGlzIGl0IHBvc3NpYmxlIHRoYXQgeW91IGRyb3ANCj4gdGhpcyBwYXRjaCBhbmQgYXBwbHkg
+cmVzdCBvZiB0aGUgc2VyaWVzPw0KPg0KPiBJIGNvdWxkIGlmIHRoYXQgaXMgd2hhdCB5b3Ugd2Fu
+dA0KDQpZZXMsIHBsZWFzZS4NCg0KSSB3aWxsIHNlbmQgdGhlIDI0LzI1IGluZGVwZW5kZW50bHkg
+bGF0ZXIuDQo=
