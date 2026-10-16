@@ -2,65 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83DCACCF2E3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 11:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A8BCCF2D6
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 11:47:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A13E40A80;
-	Mon, 19 Oct 2026 13:47:08 +0200 (CEST)
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
- [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id E444640291
- for <dev@dpdk.org>; Fri, 16 Oct 2026 19:46:15 +0200 (CEST)
-Received: by mail-dy1-f171.google.com with SMTP id
- 5a478bee46e88-33fb4680717so292810eec.1
- for <dev@dpdk.org>; Fri, 16 Oct 2026 10:46:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 56DD140A84;
+	Mon, 19 Oct 2026 13:47:09 +0200 (CEST)
+Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
+ by mails.dpdk.org (Postfix) with ESMTP id C44D74026C
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 19:46:18 +0200 (CEST)
+Received: by mail-dl1-f43.google.com with SMTP id
+ a92af1059eb24-141395927feso306585c88.0
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 10:46:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1792172775; x=1792777575; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1792172778; x=1792777578; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=J2GITz/yLJAan1FCQAoMl8BIbof4gh12ZcdAm/Kqka4=;
- b=C2HxagnZ8HmIVHP8ObvX8otE9AYPJypcH8n+/WUBYAhIPuK2sjIeiv1sXfKrZD0sIJ
- kGVRiPlB0jhaYFzkRAzYR5HXnL/BYN2G31qQKjmLsS5HkNKULWa4CU3UWAaz172elSok
- onq3+iq+JAoLSN9yk/tT0Xpkl9gF7O+SWFzj+Hzb8bfVU9Uh36f+a8Yc+kuqEtznj1dg
- gfkp7N3J3GEUXGaLBGjm9SKUW34rrXePeb08i0A4bJTtryxaUMrotnU0Tk+mj+wtu2OG
- dA5KsXXLU4tI9Oxl1Rsm+8EA185zwKdikLtgw1NNx6zbYq5H9Bgfp53TdB/7EUxJ576H
- QuFA==
+ bh=mJxQiFT4bMNZKrKZTfLNdqggu7IsCcFUxZLxhSzQktw=;
+ b=NuYqBmVJhizYlK3N8xHp9bfmOf1wOVDXiV/rLueHuN5kI7scooFheExCqrT/Gfg3Dl
+ iowLSTi7sJkAHDQRiSYe/kGZ2xicYg/M95GiLRyHJJey8uvIOKqGxqQZzig1yct9lG4O
+ DRIqHdLnq3koWth60FKWxKPfZQP/+WCNj2pRPVL6HLKVhZrNGUUHB8CKo0GgPOpIKnh9
+ KwNUwjsOlGU0iwoykgKOOoghM2MnPL3ou/es+6m90E49ziGeeGRBshdEIsLm6G1hsoG5
+ /SN0O2G1CjbW696Xvqs/kXjS0gtiDZDPEG3HENCs2z3+oFo74l8mUALR5TqNDJQFMFus
+ WA+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792172775; x=1792777575;
+ d=1e100.net; s=20260707; t=1792172778; x=1792777578;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=J2GITz/yLJAan1FCQAoMl8BIbof4gh12ZcdAm/Kqka4=;
- b=BmtsSVSZ/OnP7g5RMdZvcTg6DApU6bfuN8ZvfaEnDUpFwz3geijkAT8pEIexvIKeDf
- s9qB6bOtRFMv8PyzS9a9S6/GLTDd6pojyj3UwMimSvU/JDg59DTJQ1YzdKKh+OPUNE/I
- nR1m8pV93SLtsFj6OLPIEzs/t/gvyrwKBjqFQd2QyvMPtsNwk1xM2w0uaVen0hkk0TD7
- Bp0HKzsIa+OdgBbA2mTtBk50tVpVldLoE/uMQEeuaqwJbCQ+bg1gEA20cn0vgEtzaW6H
- Vh8fcTrp9svBr8pxS7ayaFF0xL25SQ79KlecljHFkURtST4Ik5iRv+TW8PYJkpMV66YB
- nQbA==
-X-Gm-Message-State: AFq9FYIZByRmIRbXbKbXNsaRmTbOmspH5mt2xsGzf2EP3VvvJIxwyDyQ
- S1659Y9o329WsoXy47iqlyMM5hDTsoP/YMA1MLpPQoD9yA2jC1cliynNZhssOA==
-X-Gm-Gg: AYBFou2UftPXGkpJKoklgXPpGMpk8/JtHUeZotnUPZJnx8p6AnKdXrS8F1cmgInVCk/
- snjlxzB8WAFbL1KRqKE4b+FoRhi5a8ACFxCGOSm2qH7NHdzcNw5KKUztY11BDX/dQMrdDRmm9lZ
- 61QQ+sIdieRMTBYiMGLPtBt3Rzn6dH7ZBu/+KAFvoPeg813gpT/sFI053yyTgjHubZ3m70aIliW
- DfTGAqi7KoPLJTtZatVBBEHk5o8vwjpBhVm5UnBKUnJIW4FUQb2wanFJzu4AGkAeflBSLtdC5aS
- CQ7E/bdTOH6oIB0ZNwe2uSrOlgojoZp7lZspBwV1uRV085k7d35rFcN7QVDtRQIhVGcKQG8f92B
- skq8dPIsDtuB+lc0AQDqF7XVh7bu4L7vRYWJ6s+3laHOkiVgxCrDYh08Cxa9wzsBQzF46Oe9LS4
- yDmk6LuMHovUZWxWIWlpRAmCjWhgQisCHK5QcWkr2WSxArjPSsmFZAVlFRo5OcShic9dvMb4iW
-X-Received: by 2002:a05:7022:1201:b0:179:b953:a14e with SMTP id
- a92af1059eb24-18514b02ca6mr404107c88.45.1792172774397; 
- Fri, 16 Oct 2026 10:46:14 -0700 (PDT)
+ bh=mJxQiFT4bMNZKrKZTfLNdqggu7IsCcFUxZLxhSzQktw=;
+ b=nOeKeLQrRT/MvaEnjyBEoNzT+7J1tRTbDFzyUtoftQvPdjAfzB3/xcovkicZ72J9mj
+ LfwARnHMgMsF7EHiaCRJZENN7BTY5vPmCJ6UHrtOno3u/oRx/q8jN4jepLeWaDRwMdx7
+ sNJyb0BA24PfXZkqR10N7A0KJlmSc6UVB0ExxUTKY1Ozhr4cxyJllXEIiv2n0iNoVQAZ
+ OpmezN7ZKZf1DRYVPox8uKYfpoVddW2xp/52SiLfx3p6Z6cgcMMzHAavr2Hkp8pfwugf
+ Rcqdw6jIgKjySXWHjmhKo2smZPtS/tCuo5TY7lkH+7dPsQZlWrkNbNDf48QKd7i+Af2r
+ PoUg==
+X-Gm-Message-State: AFq9FYJUSsK3cRM2S2CKQiFZ2IPJkLE1zH6c2ZUvitSzCw2qWwLyvfXE
+ 4iShYep/GY/0u7O+eiA+4YUcy0yTFe5YDF3i5itEKIKBKFR6YIlDEOff43SNeQ==
+X-Gm-Gg: AYBFou12Xm1bTAacx3mzabsC1TzwM8WXbpRt6pPLIVvFAhnW3AwbSGh5uE1x8+p+GsD
+ zUAmj1aQurg3+zkn1V/3rOD41GJQhwJONpvB52ruGXvpGYn54L/cX67ilMSE1GB8evuGO3lZ042
+ zubASj5FBD9UFoKOR/EVHnRSTZAxpNBEMXwGxhO4KpBw6IqnV4bNVaacPY59Mr8OG3AnPATiq6g
+ xl4uhGPKV8oRcVeHLQrZNohZ0FO4YopihHZQxuF4ep/YkxKzYR+4SHDujGFYeXjoK2ca2G7H0o9
+ f9wCptCoYR4iIucOe2KsJWAyZLjxQuAVi1iZIKXg/VEBwSd513u9CqACAYVVfNuWSq3IeN+DeTc
+ fpTd25rfw1bfOguv5ns2K3rTZ7/qhAup9DbF/88cZdykfV8QBgLVnRz8Oh0MHFe04GgYLVzleV2
+ skHkbNYVy7msYEqTA4eTrSFXQ6wVvbGJ5LNUOZ7UojWoCQUMk4xpnTVBztqSQwrZjdkbhgyr1E
+X-Received: by 2002:a05:701b:42c3:10b0:168:6ad8:e89d with SMTP id
+ a92af1059eb24-18511eb6876mr828356c88.11.1792172777553; 
+ Fri, 16 Oct 2026 10:46:17 -0700 (PDT)
 Received: from aviuser.. ([192.19.252.250]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-18314ef8ed8sm7099936c88.3.2026.10.16.10.46.12
+ a92af1059eb24-18314ef8ed8sm7099936c88.3.2026.10.16.10.46.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Oct 2026 10:46:14 -0700 (PDT)
+ Fri, 16 Oct 2026 10:46:17 -0700 (PDT)
 From: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
 To: dev@dpdk.org
 Cc: Joshua Washington <joshwash@google.com>,
  Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Ankit Garg <nktgrg@google.com>
-Subject: [PATCH v4 07/10] net/gve: export Tx drop counters in xstats
-Date: Fri, 16 Oct 2026 17:45:42 +0000
-Message-ID: <743453a5b3f7b1c19ee0e9d6c8882d83870cb006.1792170902.git.tathagat.dpdk@gmail.com>
+ Varun Lakkur Ambaji Rao <varun.la@gmail.com>,
+ Rushil Gupta <rushilg@google.com>
+Subject: [PATCH v4 08/10] net/gve: reject Tx packets that cannot fit in the
+ ring
+Date: Fri, 16 Oct 2026 17:45:43 +0000
+Message-ID: <0a5ec0b0bcfe33414bb5020959ec8c16c572cef1.1792170902.git.tathagat.dpdk@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1792170902.git.tathagat.dpdk@gmail.com>
 References: <cover.1792170902.git.tathagat.dpdk@gmail.com>
@@ -80,30 +82,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-too_many_descs is counted but missing from the Tx xstats table, so it
-cannot be read. Export it together with invalid_mbufs.
+A TSO packet needing more descriptors than the ring can ever have
+free fails the ring space check on every burst and blocks the queue.
+One slot is always reserved, the cacheline overlap margin must stay
+free, and up to GVE_TX_MIN_RE_INTERVAL - 1 posted descriptors are not
+reclaimed until more are posted.
 
-Fixes: f4a70b449bfa ("net/gve: add DQO Tx descriptor limit")
+Drop such packets and count them as too_many_descs.
+
+Fixes: 403c671a46b6 ("net/gve: support TSO in DQO RDA")
 Cc: stable@dpdk.org
 
 Signed-off-by: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
 ---
- drivers/net/gve/gve_ethdev.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/gve/gve_tx_dqo.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index 3c8d1a76e4..1dfbe8f396 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -1042,6 +1042,8 @@ static const struct gve_xstats_name_offset tx_xstats_name_offset[] = {
- 	{ "packets", TX_QUEUE_STATS_OFFSET(packets) },
- 	{ "bytes",   TX_QUEUE_STATS_OFFSET(bytes) },
- 	{ "errors",  TX_QUEUE_STATS_OFFSET(errors) },
-+	{ "too_many_descs", TX_QUEUE_STATS_OFFSET(too_many_descs) },
-+	{ "invalid_mbufs", TX_QUEUE_STATS_OFFSET(invalid_mbufs) },
- };
+diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
+index 281700b463..46a03d482d 100644
+--- a/drivers/net/gve/gve_tx_dqo.c
++++ b/drivers/net/gve/gve_tx_dqo.c
+@@ -123,14 +123,30 @@ gve_tx_clean_descs_dqo(struct gve_tx_queue *txq, uint16_t nb_descs) {
+ 		gve_tx_clean_dqo(txq);
+ }
  
- static const struct gve_xstats_name_offset rx_xstats_name_offset[] = {
++/* Max descriptors a single packet may use. A larger packet can never pass
++ * gve_can_tx(): one slot is always reserved, the cacheline overlap margin
++ * must stay free, and up to GVE_TX_MIN_RE_INTERVAL - 1 descriptors posted
++ * after the last report_event are not reclaimed until more are posted.
++ */
++static inline int
++gve_tx_max_pkt_descs(const struct gve_tx_queue *txq)
++{
++	return (int)txq->nb_tx_desc - 1 - GVE_TX_MIN_DESC_PREVENT_CACHE_OVERLAP -
++		(GVE_TX_MIN_RE_INTERVAL - 1);
++}
++
+ /* GVE expects at most 10 data descriptors per mtu-sized segment. Beyond this,
+  * the hardware will assume the driver is malicious and stop transmitting
+  * packets altogether. Validate that a packet can be sent to avoid sending
+  * posting descriptors for an invalid packet.
+  */
+ static inline bool
+-gve_tx_validate_descs(struct rte_mbuf *tx_pkt, uint16_t nb_descs, bool is_tso)
++gve_tx_validate_descs(const struct gve_tx_queue *txq, struct rte_mbuf *tx_pkt,
++		      uint16_t nb_descs, bool is_tso)
+ {
++	if (nb_descs > gve_tx_max_pkt_descs(txq))
++		return false;
++
+ 	if (!is_tso)
+ 		return nb_descs <= GVE_TX_MAX_DATA_DESCS;
+ 
+@@ -294,7 +310,7 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		nb_descs += tso;
+ 
+ 		/* Drop packet if it doesn't adhere to hardware limits. */
+-		if (!gve_tx_validate_descs(tx_pkt, nb_descs, tso)) {
++		if (!gve_tx_validate_descs(txq, tx_pkt, nb_descs, tso)) {
+ 			txq->stats.too_many_descs++;
+ 			rte_pktmbuf_free(tx_pkt);
+ 			continue;
 -- 
 2.43.0
 
