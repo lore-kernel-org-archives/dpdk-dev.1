@@ -2,104 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857E8CCF2C1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 14:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B75CC6B38
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 14:36:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E5E7440DCE;
-	Fri, 16 Oct 2026 16:16:14 +0200 (CEST)
-Received: from DUZPR83CU001.outbound.protection.outlook.com
- (mail-northeuropeazon11012003.outbound.protection.outlook.com [52.101.66.3])
- by mails.dpdk.org (Postfix) with ESMTP id 9E9A2406BC;
- Fri, 16 Oct 2026 16:16:10 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nI17CdJQwBvVmaGQdX0JD6cebWZfVRYI0VzmPmeU0FseUwbtIhGHWAIC+AqSoZ/ttxi+P/z7kwKuqt2An1De69fLhDI0ig7PiKaZkpk/h++C8uwmzaYRVNrgN03wHSMyTYzG0Qrebrj8G+ppSSIStGV5hcP/jWlh5WS4xKWjwF65VOBnvMZATK0e4egQAGvO8diuDWurlEwxmI1ytqFKexWBG82FGCqmSdAh02d/kHkg+CFgXp0lLcrB+jh70JuI8/nehz1xRl6MHq8fdd4TxPtpvTaf99gAO9KUS7qM1P4f1Zw2tdTa+Vn28+dB94DuNbj8qegwR2R9KjXt/uHXcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K5e0sWI0dbH77lAf7oJFhDkAdNXVaOaNzwmZi17hv8I=;
- b=QaofRli77nt4CwMY9gEwxcEbOWMMpklUF8ulywNcOIXzGV5VqLpc55xK09tB1x8oAQkVP06ZF8FLl/GqP8mVuwzTXjvku6ZO8AVIWHw/c44FzaGCXeO17zzWqQ+foA9VpA02R5DqOP3+Qomu6gbh1gTED4/v/Xv5qFOSZqcBxeWp7BzgnMMrPU046eQiZHuuZUJAQ8fs/BjAymHo6AGJrTEer8TVEHWvEeSmIiCF8qz7SQpVY7Sl43HnMKy2eyahP3K5FMJCtC8/1Zz1UP3sHVBA7Hu27EI1ya3K3DyNySo0qbaxDqdjoiG0VWq6Ulhhi6tUc7yiPC8sl9lHOXU9tw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.176.1.74) smtp.rcpttodomain=cisco.com smtp.mailfrom=ericsson.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K5e0sWI0dbH77lAf7oJFhDkAdNXVaOaNzwmZi17hv8I=;
- b=hwORBBe7qXZmwNpxq16Wo37iN3JOHxMC1XIx/x8o1102DWmbAAo0h4VKguXgSoGdpgy4J9wSD5Tf2nZU/Rh99W7WULQ1Ur5w1knw5oKVC8MwOnai8PuiMDZWZFT02wEV7CzFvyQlwcAXc6cSGBLr6H9lYWhJygaZWu9S69u2+bsEAG4LxdYZOBIcRRwmjjeTkPtTkEKfmu+oMTCXbG7O8ybJndC2iUCRm59WHRXML/vOegW81gFDzGcria+dCesGWULexHKp+gCUh3erC/LJsf05p+zZPhwwubDukaZgmCvICQZ8dzndTYdFRqhFFuQj3xprsnppCUdhM/hUsPVMFw==
-Received: from DUZPR01CA0225.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b4::22) by AM9PR07MB7746.eurprd07.prod.outlook.com
- (2603:10a6:20b:302::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.15; Fri, 16 Oct
- 2026 14:16:05 +0000
-Received: from MAD0EPF000008AB.eurprd04.prod.outlook.com
- (2603:10a6:10:4b4:cafe::6f) by DUZPR01CA0225.outlook.office365.com
- (2603:10a6:10:4b4::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.522.4 via Frontend Transport; Fri, 16
- Oct 2026 14:16:05 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 192.176.1.74)
- smtp.mailfrom=ericsson.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ericsson.com;
-Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
- 192.176.1.74 as permitted sender)
- receiver=protection.outlook.com; 
- client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
-Received: from oa.msg.ericsson.com (192.176.1.74) by
- MAD0EPF000008AB.mail.protection.outlook.com (10.167.241.183) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.6 via Frontend Transport; Fri, 16 Oct 2026 14:16:04 +0000
-Received: from seliius19697.seli.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.60) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Fri, 16 Oct 2026 16:16:00 +0200
-Received: from seliiuvd10563.seli.gic.ericsson.se
- (seliiuvd10563.seli.gic.ericsson.se [10.120.141.220])
- by seliius19697.seli.gic.ericsson.se (Postfix) with ESMTP id 77FC04020AA6;
- Fri, 16 Oct 2026 16:15:58 +0200 (CEST)
-Received: by seliiuvd10563.seli.gic.ericsson.se (Postfix, from userid 93258)
- id A880D62858A7; Fri, 16 Oct 2026 16:15:57 +0200 (CEST)
-From: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
-To: <dev@dpdk.org>
-CC: Stephen Hemminger <stephen@networkplumber.org>, Jakub Grajciar
- <jgrajcia@cisco.com>, <stable@dpdk.org>, Sriram Yagnaraman
- <sriram.yagnaraman@ericsson.com>
-Subject: [PATCH v3 9/9] test/memif: add memif PMD unit test
-Date: Fri, 16 Oct 2026 16:15:57 +0200
-Message-ID: <20261016141557.3081522-10-sriram.yagnaraman@ericsson.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <20261016141557.3081522-1-sriram.yagnaraman@ericsson.com>
-References: <20261016141557.3081522-1-sriram.yagnaraman@ericsson.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6AE8C402E9;
+	Fri, 16 Oct 2026 16:36:10 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 030FA40291
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 16:36:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1792161368;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=wNMs6/wWJKfnaOIATxShsoJYdvlgWT6PrFbcKY8iSqQ=;
+ b=GzV+MFTr1tk5IEHSE8J/1cMWDR7Itn50P7KkjDKZtFn7LLGBA+8eqmAdO8sOFUmRSe1kph
+ JtOrFRSpkIeZLQ4qpdvfBDSN3xNGvew6wmoaXhYRv8PjrRUej6ihYS8RLxlmKDOTYsFdGn
+ bZDjCtSGIr7lVtdMSfj/FepmAKx1xzg=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-499-hBqXepsqNwySTBDEC2o4Xg-1; Fri, 16 Oct 2026 14:36:07 +0000
+X-MC-Unique: hBqXepsqNwySTBDEC2o4Xg-1
+X-Mimecast-MFC-AGG-ID: hBqXepsqNwySTBDEC2o4Xg_1792161365
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5be3f54847eso1597e87.2
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 07:36:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792161365; x=1792766165;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=wNMs6/wWJKfnaOIATxShsoJYdvlgWT6PrFbcKY8iSqQ=;
+ b=V4HcktzqA5jY6q38WltuNDIfDzBrZZvwKNRSLubeqVxafAJgOGnydvN9SduHVVl9vL
+ X1OlVPKyAvzIRGkLq4er4W1u/1WSs/dWlBLlfJxFa07Q7XEFf71wG8NZ760nljyNaOm5
+ jsOCPrtTCONkTz7kPL7od29bU+MiW628i9l4kiCPZ0t0HneLu4ycvd+VmXb/AMTvKVgb
+ pRA51NRkyyj9MCsFuytQfJkncZF8JOJAcYlE22TcX9i3nt92/lsD5e2sEITzw+Gix07+
+ vPjoYREq4CWeHskKtpf36ue7zmlM+0Zakk83WkE+JL8g5D+BT8wUN252rC5deLwWpw1m
+ G5CQ==
+X-Gm-Message-State: AFq9FYIhrJc6JFf0BStFWtkFHM5YU19thJPZFsVvoYaeDD7T9qdNN6Nn
+ BMsNQnCIgnnJbymerFpi5UpT/1NY81gX3Og0QDAxZBc25wzsl1gq4Hw0kn9z6Lf7sQFlfU83NvE
+ iSQmU0T+oYGrNWNzjUXhCQ1cZ24VnruHeD4upo0342sNvCgmtVynBcXkMRamYtILSy2d+nmDyA2
+ esbHY3TloVQogs01tYKLE=
+X-Gm-Gg: AYBFou36CueQz7Cc1yIunAQEfqfGnUd39clTIYUZHZA3hG7xg//hbGsjrGvWHOSj7K0
+ aEk45bN3mOLg8CDG7O5Kaaiz5b5PExO+29aAvLXmQdWIkhl5yp5AbzGJaGEN/T4pJyR/lZDQDMJ
+ kUWYR+DYEJKGbffIPmZsbxvO8jksUnNWGAVMeedPh3gwHKW0UGY9JtVanu/Sjmhk3T4Qq8wXgW8
+ VmuEU4ug4yjqgCNI+dAMHbxWUZQpyM9aAp23E4MDqFtqAjW
+X-Received: by 2002:a05:6512:3b83:b0:5be:428e:2be7 with SMTP id
+ 2adb3069b0e04-5be428e2c87mr2026534e87.11.1792161365373; 
+ Fri, 16 Oct 2026 07:36:05 -0700 (PDT)
+X-Received: by 2002:a05:6512:3b83:b0:5be:428e:2be7 with SMTP id
+ 2adb3069b0e04-5be428e2c87mr2026478e87.11.1792161362978; Fri, 16 Oct 2026
+ 07:36:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MAD0EPF000008AB:EE_|AM9PR07MB7746:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c90f478-06d9-48ba-3e5e-08df2b9003d7
-X-SMTP-Server: smtp-central.internal.ericsson.com
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|23010399003|376014|36860700016|82310400026|56012099006|260925021311599003|260925021911599003|11063799006|261009223027099003|260925022911599003|18002099003|10067099003|22082099003|6133799003;
-X-Microsoft-Antispam-Message-Info: 8AyGRYGeSbwPpwcgh2s9ke5O9aArazVjkuY/M4T5tjGKp8ek050tlqR/vAUNS1LG/0ebC+gxNveI7VY2T4xB0ZcyV5UexNsAb5KHJQO6T5O6jHACO2ez3BW/Lqhx83T6M/WLGRplUnd0mLaXJRIntPAlRPlbrIJwOUs7t1OQ/DPuQgkX3DoA8+tSv4LhkeY18FR6B8S3FzmTf9qvpoCeD1EMmTuHly2oM0QDZPNPRw+veFjYF2bPXBdzTyHSsKzBCF/xQSqHWwjLWuGDKhsAtslIcTttC2EF5RdMzA2dLkAcDAr0N0ULeyoV4zHfRV+jOBazh45DiCIBauVaJQrBaiV9nuAhhHIPmml11R5sQrApfnadI8VlNKVwikf+h+a/4AJ3nmz7Qn1rEBunZe+y9pUzSEvBtaGmFxMJspkwfzWC7xw+S0dJGZYgRvOSbDSy2kf7mV5iMNh++J0gW8JUjby2OfP3vHD4Kkcc/i9WQ+RipC5gca+5RsMzUnVy/QAhwNso0XjAdvVHkGTz9uWasvTz7y6Ab8L2t5Txds206q3mcqTyFhfxTJ1CMDPMwjYHhJHTZm6YFNu1BKrtSP/wPyWmuxZD99CU4JLNSeE8V/blwQKlo7aChc0ePTTEPvabjhfcmJnxSiUP4gawCPM0ktU9fNK87XKht2BFjKd3cuwyCSZrLNcAKt95azn60Z8xcXsC37eNk19vHCUqHhFtZQ==
-X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
- CAT:NONE;
- SFS:(13230040)(1800799024)(23010399003)(376014)(36860700016)(82310400026)(56012099006)(260925021311599003)(260925021911599003)(11063799006)(261009223027099003)(260925022911599003)(18002099003)(10067099003)(22082099003)(6133799003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: I/LgfBLqy92wNPHtBBlx45oxcT0Dzi1aeA55kjtO6eSIlpS2EeDWYoSuh4qozax+9FZ0B0Gn6WyFWgebIvjjaHfm8hx4oW7xvVKgSzPOYsTF4TFOGe9ixshf0IWDOB3PirD3MsgfN95YJ5aqJWY3pdVHib6O0l7BRyBDUM9l88rhhQ0mU+Zo6SPI1Vz5ULmkb3Ni4AV0rKwgIc0qGcTHqwDEKqIuxCwSe2zoa0yQu8qeHAEzQWTNG5LhmMoLkSW1Pfg1WVD4bM7n8qbfDjymTvQNdm/tZD2G73VX2A99PXEF1P3PeT2a25KTTQT30eoext0mUUbo5GgafB/SZmk+ohmCVVpjeVY99ZrYM3otdXNm2oovAA54t6GyM29LUbxeYFvKZzsxrA13CzDIvz2WBgJaeTpqEhFDSaKTdUAaqKvJ+1mFSN7/3XDI7ovQ016Y
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 14:16:04.8409 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c90f478-06d9-48ba-3e5e-08df2b9003d7
-X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
- Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: MAD0EPF000008AB.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR07MB7746
+References: <20261016105950.273068-1-bruce.richardson@intel.com>
+In-Reply-To: <20261016105950.273068-1-bruce.richardson@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 16 Oct 2026 16:35:51 +0200
+X-Gm-Features: AclHuK-B_npzgUq6HncXadLx3ASwbg-ZlR4uu6fDEHxrb07uFZeIWXCwev9X3TI
+Message-ID: <CAJFAV8zGPrMZMJU-8rF5GiGqQMBaN8H707h_Y_Hss3u8EHgZ9A@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/12] Add config-time dependency tracking
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: gDUBPB-MudhUv846_tLYdXttHh6H2ykXeYE_qBfqgVQ_1792161365
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -113,811 +82,142 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a memif_pmd_autotest unit test, modelled on the TAP PMD test. memif
-differs from TAP in that a port is only usable once a peer connects, so
-the test creates a server and a client memif port in the same process,
-connected over an abstract-namespace socket (the loopback setup from the
-memif documentation), and waits for the asynchronous control-channel
-handshake to bring both ports up.
+On Fri, 16 Oct 2026 at 13:00, Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+>
+> Add configuration time dependency tracking for libs and drivers in DPDK,
+> so that when a user requests a driver, all dependent drivers also get
+> enabled. Similarly with libraries. What is not enabled in this RFC is
+> support for enabling libraries based on driver requests, or enabling
+> either libs or drivers based on the enable-apps config option. I've
+> omitted the former for now, because it would involve moving more logic
+> out of the lib/meson.build file and drivers/meson.build files into the
+> top-level one, something I'm a little hesitant to do for now. The
+> addition of apps only adds value once the cross-type dependency tracking
+> is enabled, since no app depends on any others.
+>
+> The first 5 patches in this series are cleanups and bug fixes. The
+> following patches then implement the dependency tracking. While I
+> investigated having meson parse each components meson.build file
+> initially, without actually building it, this failed to work due to
+> logic other than variable assignments in many drivers.
+>
+> Instead, python scripts are used to manage the dependency list. For
+> easier debug, and future introspection this dependency management is
+> split between two scripts - the first generates a dependency table file
+> which it writes to the build folder, allowing us to analyse this
+> post-build if so desired. The second script uses this file to actually
+> compute the necessary per-component dependencies.
+>
+> The final patch of the series is a major reduction in the number of
+> required components for doing DPDK builds. We completely remove the list
+> of required libraries, and assume that a minimal build should only
+> require enough libraries to build EAL. However, EAL does assume that we
+> have a few additional buses, for example, EAL args are present for pci
+> and vdev. Also, in order for mempools to work, we always need to have
+> the default mempool ring driver build. That means that our de-facto
+> minimal build target set is the set of components needed to build
+> "bus/pci,bus/vdev,mempool/ring" (which would include EAL in the output,
+> which is why we can remove any hard-coded library lists)
+>
+> Bruce Richardson (12):
+>   build: fix name of base library object
+>   build: fix ignoring requested driver when class is disabled
+>   build: prevent overlap of enable and disable lists
+>   build: add direct support for optional dependencies
+>   net/bond: rename directory for consistency
+>   build: add script to generate dependencies list
+>   build: use recursive addition for enabled libraries option
+>   build: use recursive addition for enabled drivers option
+>   build: improve error reporting for unbuildable components
+>   build: add EAL common directory to global include list
+>   build: make EAL an explicit dependency
+>   build: simplify mandatory library lists
+>
+>  MAINTAINERS                                   |   2 +-
+>  app/meson.build                               |  15 +-
+>  app/proc-info/meson.build                     |   4 +-
+>  app/test-bbdev/meson.build                    |  18 +-
+>  app/test-crypto-perf/meson.build              |   4 +-
+>  app/test-pmd/meson.build                      |  50 ++---
+>  app/test/meson.build                          |   6 -
+>  buildtools/get-deps.py                        | 203 ++++++++++++++++++
+>  buildtools/meson.build                        |   2 +
+>  buildtools/resolve-deps.py                    |  80 +++++++
+>  devtools/test-meson-builds.sh                 |   3 +-
+>  doc/api/doxy-api.conf.in                      |   2 +-
+>  .../link_bonding_poll_mode_drv_lib.rst        |   2 +-
+>  doc/guides/testpmd_app_ug/testpmd_funcs.rst   |   2 +-
+>  drivers/common/mlx5/linux/meson.build         |   1 -
+>  drivers/meson.build                           |  85 ++++++--
+>  .../net/{bonding => bond}/bonding_testpmd.c   |   0
+>  .../eth_bond_8023ad_private.h                 |   0
+>  .../net/{bonding => bond}/eth_bond_private.h  |   0
+>  drivers/net/{bonding => bond}/meson.build     |   1 -
+>  drivers/net/{bonding => bond}/rte_eth_bond.h  |   0
+>  .../{bonding => bond}/rte_eth_bond_8023ad.c   |   0
+>  .../{bonding => bond}/rte_eth_bond_8023ad.h   |   0
+>  .../net/{bonding => bond}/rte_eth_bond_alb.c  |   0
+>  .../net/{bonding => bond}/rte_eth_bond_alb.h  |   0
+>  .../net/{bonding => bond}/rte_eth_bond_api.c  |   0
+>  .../net/{bonding => bond}/rte_eth_bond_args.c |   0
+>  .../net/{bonding => bond}/rte_eth_bond_flow.c |   0
+>  .../net/{bonding => bond}/rte_eth_bond_pmd.c  |   0
+>  drivers/net/intel/ice/meson.build             |   7 +-
+>  drivers/net/meson.build                       |   2 +-
+>  lib/acl/meson.build                           |   1 +
+>  lib/cfgfile/meson.build                       |   1 +
+>  lib/cryptodev/meson.build                     |   2 +-
+>  lib/dmadev/meson.build                        |   2 +-
+>  lib/eal/meson.build                           |   6 +-
+>  lib/ethdev/meson.build                        |   2 +-
+>  lib/eventdev/meson.build                      |   1 -
+>  lib/ipsec/meson.build                         |   2 +-
+>  lib/jobstats/meson.build                      |   1 +
+>  lib/log/meson.build                           |   1 -
+>  lib/mempool/meson.build                       |   2 +-
+>  lib/meson.build                               |  76 +++----
+>  lib/meter/meson.build                         |   1 +
+>  lib/metrics/meson.build                       |   2 +-
+>  lib/pci/meson.build                           |   1 +
+>  lib/ptr_compress/meson.build                  |   1 +
+>  lib/rawdev/meson.build                        |   2 +-
+>  lib/ring/meson.build                          |   2 +-
+>  lib/stack/meson.build                         |   1 +
+>  lib/timer/meson.build                         |   1 +
+>  meson.build                                   |  21 ++
+>  52 files changed, 478 insertions(+), 140 deletions(-)
+>  create mode 100644 buildtools/get-deps.py
+>  create mode 100644 buildtools/resolve-deps.py
+>  rename drivers/net/{bonding => bond}/bonding_testpmd.c (100%)
+>  rename drivers/net/{bonding => bond}/eth_bond_8023ad_private.h (100%)
+>  rename drivers/net/{bonding => bond}/eth_bond_private.h (100%)
+>  rename drivers/net/{bonding => bond}/meson.build (95%)
+>  rename drivers/net/{bonding => bond}/rte_eth_bond.h (100%)
+>  rename drivers/net/{bonding => bond}/rte_eth_bond_8023ad.c (100%)
+>  rename drivers/net/{bonding => bond}/rte_eth_bond_8023ad.h (100%)
+>  rename drivers/net/{bonding => bond}/rte_eth_bond_alb.c (100%)
+>  rename drivers/net/{bonding => bond}/rte_eth_bond_alb.h (100%)
+>  rename drivers/net/{bonding => bond}/rte_eth_bond_api.c (100%)
+>  rename drivers/net/{bonding => bond}/rte_eth_bond_args.c (100%)
+>  rename drivers/net/{bonding => bond}/rte_eth_bond_flow.c (100%)
+>  rename drivers/net/{bonding => bond}/rte_eth_bond_pmd.c (100%)
 
-The suite checks dev_info reports the memif driver, that the pair reaches
-link up, statistics get and reset, a client-to-server loopback burst with
-payload verification, multi-segment loopback across a ring wrap with
-payload verification (general coverage for the chained-descriptor Rx and
-Tx paths), that the pair reconnects after a port restart, that a
-zero-length Tx burst is handled, and that a configured-but-not-started
-port can be closed without crashing. It is a fast test, runs without
-hugepages and under ASan.
+Interesting series.
 
-Signed-off-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
----
- MAINTAINERS               |   1 +
- app/test/meson.build      |   1 +
- app/test/test_pmd_memif.c | 751 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 753 insertions(+)
- create mode 100644 app/test/test_pmd_memif.c
+I did not review in depth, but it seems promising.
+The first 4 (and maybe the 5th one) patches can go to 26.11 right now.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93ad53027d..ec154f3a05 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1164,6 +1164,7 @@ F: drivers/net/memif/
- F: devtools/test-memif.sh
- F: doc/guides/nics/memif.rst
- F: doc/guides/nics/features/memif.ini
-+F: app/test/test_pmd_memif.c
- 
- 
- Crypto Drivers
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 9805cf5bee..5ef1ced7ce 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -148,6 +148,7 @@ source_file_deps = {
-     'test_pflock.c': [],
-     'test_pie.c': ['sched'],
-     'test_pmd_af_packet.c': ['net_af_packet', 'ethdev', 'bus_vdev'],
-+    'test_pmd_memif.c': ['ethdev', 'net_memif', 'bus_vdev'],
-     'test_pmd_pcap.c': ['net_pcap', 'ethdev', 'bus_vdev']  + packet_burst_generator_deps,
-     'test_pmd_perf.c': ['ethdev', 'net'] + packet_burst_generator_deps,
-     'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
-diff --git a/app/test/test_pmd_memif.c b/app/test/test_pmd_memif.c
-new file mode 100644
-index 0000000000..fa554cbb54
---- /dev/null
-+++ b/app/test/test_pmd_memif.c
-@@ -0,0 +1,751 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Ericsson AB
-+ */
-+
-+/*
-+ * Basic test of memif PMD functionality.
-+ * Based off of the TAP PMD test (test_pmd_tap.c).
-+ *
-+ * memif connects two endpoints over shared memory. Unlike a NIC or TAP
-+ * device, a memif port is only usable once its peer connects, so the test
-+ * creates a server and a client memif port in this one process, connected
-+ * over an abstract-namespace socket (the loopback setup documented in
-+ * doc/guides/nics/memif.rst). The control-channel handshake is asynchronous,
-+ * so the test waits for both ports to report link up before exercising the
-+ * data path.
-+ */
-+
-+#include "test.h"
-+
-+#include <stdio.h>
-+
-+#ifndef RTE_EXEC_ENV_LINUX
-+
-+/* memif PMD is only available on Linux */
-+static int
-+test_pmd_memif(void)
-+{
-+	printf("memif PMD not supported on this platform, skipping test\n");
-+	return TEST_SKIPPED;
-+}
-+
-+#else /* RTE_EXEC_ENV_LINUX */
-+
-+#include <string.h>
-+#include <unistd.h>
-+
-+#include <rte_ethdev.h>
-+#include <rte_bus_vdev.h>
-+#include <rte_mbuf.h>
-+#include <rte_ether.h>
-+
-+#define SOCKET0 0
-+#define RING_SIZE 256
-+#define NB_MBUF 4096
-+#define MAX_PKT_BURST 32
-+#define PKT_LEN 64
-+
-+/* memif ignores nb_tx_desc; the ring size is set via the rsize arg. */
-+#define MEMIF_LOG2_RING 8
-+
-+/*
-+ * Same socket name and id on both ports makes them a connected pair.
-+ * The small-bsize pair forces chained descriptors; the default-bsize pair
-+ * exercises the single-pool Tx fast path.
-+ */
-+#define MEMIF_SRV_NAME "net_memif_test_srv"
-+#define MEMIF_CLI_NAME "net_memif_test_cli"
-+#define MEMIF_SRV_ARGS "role=server,id=0,bsize=512,rsize=8,socket-abstract=yes,socket=memif-autotest"
-+#define MEMIF_CLI_ARGS "role=client,id=0,bsize=512,rsize=8,socket-abstract=yes,socket=memif-autotest"
-+#define MEMIF_FP_SRV_NAME "net_memif_test_fsrv"
-+#define MEMIF_FP_CLI_NAME "net_memif_test_fcli"
-+#define MEMIF_FP_SRV_ARGS "role=server,id=2,socket-abstract=yes,socket=memif-autotest-fp"
-+#define MEMIF_FP_CLI_ARGS "role=client,id=2,socket-abstract=yes,socket=memif-autotest-fp"
-+
-+/* Time to wait for the asynchronous control-channel handshake. */
-+#define CONNECT_TRIES 50
-+#define CONNECT_DELAY_US 100000
-+
-+static struct rte_mempool *mp;
-+static int memif_srv_port = -1;
-+static int memif_cli_port = -1;
-+static int memif_fp_srv_port = -1;
-+static int memif_fp_cli_port = -1;
-+
-+static int
-+find_port(const char *frag)
-+{
-+	uint16_t port_id;
-+	char name[RTE_ETH_NAME_MAX_LEN];
-+
-+	RTE_ETH_FOREACH_DEV(port_id) {
-+		if (rte_eth_dev_get_name_by_port(port_id, name) == 0 &&
-+		    strstr(name, frag) != NULL)
-+			return port_id;
-+	}
-+	return -1;
-+}
-+
-+static int
-+configure_port(int port)
-+{
-+	struct rte_eth_conf port_conf;
-+	int ret;
-+
-+	memset(&port_conf, 0, sizeof(port_conf));
-+
-+	ret = rte_eth_dev_configure(port, 1, 1, &port_conf);
-+	if (ret < 0) {
-+		printf("Configure failed for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	ret = rte_eth_tx_queue_setup(port, 0, RING_SIZE, SOCKET0, NULL);
-+	if (ret < 0) {
-+		printf("TX queue setup failed for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	ret = rte_eth_rx_queue_setup(port, 0, RING_SIZE, SOCKET0, NULL, mp);
-+	if (ret < 0) {
-+		printf("RX queue setup failed for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	ret = rte_eth_dev_start(port);
-+	if (ret < 0) {
-+		printf("Error starting port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+/* Wait until both ports report link up, i.e. the peers have connected. */
-+static int
-+wait_for_link_pair(int p0, int p1)
-+{
-+	struct rte_eth_link l0, l1;
-+	int i;
-+
-+	for (i = 0; i < CONNECT_TRIES; i++) {
-+		if (rte_eth_link_get_nowait(p0, &l0) == 0 &&
-+		    rte_eth_link_get_nowait(p1, &l1) == 0 &&
-+		    l0.link_status == RTE_ETH_LINK_UP &&
-+		    l1.link_status == RTE_ETH_LINK_UP)
-+			return 0;
-+		usleep(CONNECT_DELAY_US);
-+	}
-+	return -1;
-+}
-+
-+static int
-+wait_for_link(void)
-+{
-+	return wait_for_link_pair(memif_srv_port, memif_cli_port);
-+}
-+
-+static struct rte_mbuf *
-+create_test_packet(uint16_t pkt_len, uint8_t seed)
-+{
-+	struct rte_mbuf *mbuf;
-+	struct rte_ether_hdr *eth_hdr;
-+	uint8_t *payload;
-+	uint16_t i;
-+
-+	mbuf = rte_pktmbuf_alloc(mp);
-+	if (mbuf == NULL)
-+		return NULL;
-+
-+	if (pkt_len < RTE_ETHER_MIN_LEN)
-+		pkt_len = RTE_ETHER_MIN_LEN;
-+
-+	eth_hdr = (struct rte_ether_hdr *)rte_pktmbuf_append(mbuf, pkt_len);
-+	if (eth_hdr == NULL) {
-+		rte_pktmbuf_free(mbuf);
-+		return NULL;
-+	}
-+
-+	memset(&eth_hdr->dst_addr, 0xFF, RTE_ETHER_ADDR_LEN);
-+	memset(&eth_hdr->src_addr, 0x02, RTE_ETHER_ADDR_LEN);
-+	eth_hdr->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+
-+	payload = (uint8_t *)(eth_hdr + 1);
-+	for (i = 0; i < pkt_len - sizeof(*eth_hdr); i++)
-+		payload[i] = (uint8_t)(seed + i);
-+
-+	return mbuf;
-+}
-+
-+static int
-+test_memif_dev_info(void)
-+{
-+	struct rte_eth_dev_info dev_info;
-+	int ret;
-+
-+	ret = rte_eth_dev_info_get(memif_srv_port, &dev_info);
-+	TEST_ASSERT(ret == 0, "dev_info_get failed: %s", rte_strerror(-ret));
-+	TEST_ASSERT(strcmp(dev_info.driver_name, "net_memif") == 0,
-+		    "unexpected driver name: %s", dev_info.driver_name);
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_memif_link_up(void)
-+{
-+	/* The pair must have connected during setup. */
-+	TEST_ASSERT(wait_for_link() == 0,
-+		    "memif server/client did not reach link up");
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_memif_stats_get(void)
-+{
-+	struct rte_eth_stats stats;
-+
-+	TEST_ASSERT(rte_eth_stats_get(memif_srv_port, &stats) == 0,
-+		    "stats_get failed for server port");
-+	TEST_ASSERT(rte_eth_stats_get(memif_cli_port, &stats) == 0,
-+		    "stats_get failed for client port");
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_memif_stats_reset(void)
-+{
-+	struct rte_eth_stats stats;
-+
-+	TEST_ASSERT(rte_eth_stats_reset(memif_srv_port) == 0,
-+		    "stats_reset failed");
-+	TEST_ASSERT(rte_eth_stats_get(memif_srv_port, &stats) == 0,
-+		    "stats_get after reset failed");
-+	TEST_ASSERT(stats.ipackets == 0 && stats.opackets == 0 &&
-+		    stats.ibytes == 0 && stats.obytes == 0,
-+		    "stats not zero after reset");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Send a burst from the client and receive it on the server, verifying the
-+ * payload is delivered intact. This exercises the Rx/Tx data path over the
-+ * connected memif pair.
-+ */
-+static int
-+test_memif_send_receive(void)
-+{
-+	struct rte_mbuf *tx[MAX_PKT_BURST];
-+	struct rte_mbuf *rx[MAX_PKT_BURST];
-+	const uint16_t nb = MAX_PKT_BURST / 2;
-+	uint16_t nb_tx, nb_rx, got;
-+	int i, tries;
-+
-+	TEST_ASSERT(wait_for_link() == 0, "link not up before send/receive");
-+
-+	for (i = 0; i < nb; i++) {
-+		tx[i] = create_test_packet(PKT_LEN, (uint8_t)i);
-+		if (tx[i] == NULL) {
-+			while (--i >= 0)
-+				rte_pktmbuf_free(tx[i]);
-+			TEST_ASSERT(0, "failed to build test packet");
-+		}
-+	}
-+
-+	nb_tx = rte_eth_tx_burst(memif_cli_port, 0, tx, nb);
-+	for (i = nb_tx; i < nb; i++)
-+		rte_pktmbuf_free(tx[i]);
-+	TEST_ASSERT(nb_tx > 0, "client transmitted no packets");
-+
-+	/* Receive may take a moment; poll a few times. */
-+	got = 0;
-+	for (tries = 0; tries < 10 && got < nb_tx; tries++) {
-+		nb_rx = rte_eth_rx_burst(memif_srv_port, 0, rx, MAX_PKT_BURST);
-+		for (i = 0; i < nb_rx; i++) {
-+			/* Payload must match the position-dependent pattern. */
-+			uint8_t *p = rte_pktmbuf_mtod_offset(rx[i], uint8_t *,
-+					sizeof(struct rte_ether_hdr));
-+			uint16_t plen = PKT_LEN -
-+					sizeof(struct rte_ether_hdr);
-+			uint16_t k;
-+			int bad = rte_pktmbuf_pkt_len(rx[i]) != PKT_LEN;
-+
-+			for (k = 0; !bad && k < plen; k++)
-+				if (p[k] != (uint8_t)(got + k))
-+					bad = 1;
-+			if (bad) {
-+				for (k = i; k < nb_rx; k++)
-+					rte_pktmbuf_free(rx[k]);
-+				TEST_ASSERT(0,
-+					    "packet %u payload/length mismatch",
-+					    got);
-+			}
-+			rte_pktmbuf_free(rx[i]);
-+			got++;
-+		}
-+		if (got < nb_tx)
-+			usleep(10000);
-+	}
-+
-+	TEST_ASSERT(got == nb_tx,
-+		    "received %u packets, expected %u", got, nb_tx);
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Single-segment loopback on the default-bsize pair, where bsize exceeds
-+ * the mbuf data room so eth_memif_tx() takes the single-pool fast path.
-+ */
-+static int
-+test_memif_fastpath(void)
-+{
-+	struct rte_mbuf *tx[MAX_PKT_BURST];
-+	struct rte_mbuf *rx[MAX_PKT_BURST];
-+	const uint16_t nb = MAX_PKT_BURST / 2;
-+	uint16_t nb_tx, got;
-+	int i, tries;
-+
-+	TEST_ASSERT(wait_for_link_pair(memif_fp_srv_port, memif_fp_cli_port)
-+		    == 0, "fast-path pair not up");
-+
-+	for (i = 0; i < nb; i++) {
-+		tx[i] = create_test_packet(PKT_LEN, (uint8_t)i);
-+		if (tx[i] == NULL) {
-+			while (--i >= 0)
-+				rte_pktmbuf_free(tx[i]);
-+			TEST_ASSERT(0, "failed to build test packet");
-+		}
-+	}
-+
-+	nb_tx = rte_eth_tx_burst(memif_fp_cli_port, 0, tx, nb);
-+	for (i = nb_tx; i < nb; i++)
-+		rte_pktmbuf_free(tx[i]);
-+	TEST_ASSERT(nb_tx > 0, "fast-path client transmitted no packets");
-+
-+	got = 0;
-+	for (tries = 0; tries < 10 && got < nb_tx; tries++) {
-+		uint16_t nb_rx = rte_eth_rx_burst(memif_fp_srv_port, 0, rx,
-+						  MAX_PKT_BURST);
-+		for (i = 0; i < nb_rx; i++) {
-+			uint8_t *p = rte_pktmbuf_mtod_offset(rx[i], uint8_t *,
-+					sizeof(struct rte_ether_hdr));
-+			uint16_t plen = PKT_LEN -
-+					sizeof(struct rte_ether_hdr);
-+			uint16_t k;
-+			int bad = rte_pktmbuf_pkt_len(rx[i]) != PKT_LEN;
-+
-+			for (k = 0; !bad && k < plen; k++)
-+				if (p[k] != (uint8_t)(got + k))
-+					bad = 1;
-+			if (bad) {
-+				for (k = i; k < nb_rx; k++)
-+					rte_pktmbuf_free(rx[k]);
-+				TEST_ASSERT(0,
-+					    "fast-path packet %u payload/length mismatch",
-+					    got);
-+			}
-+			rte_pktmbuf_free(rx[i]);
-+			got++;
-+		}
-+		if (got < nb_tx)
-+			usleep(10000);
-+	}
-+
-+	TEST_ASSERT(got == nb_tx, "fast-path received %u expected %u",
-+		    got, nb_tx);
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_memif_stop_start(void)
-+{
-+	TEST_ASSERT(rte_eth_dev_stop(memif_cli_port) == 0,
-+		    "stop client failed");
-+	TEST_ASSERT(rte_eth_dev_start(memif_cli_port) == 0,
-+		    "restart client failed");
-+	/* After a restart the pair must reconnect. */
-+	TEST_ASSERT(wait_for_link() == 0, "link did not recover after restart");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * A zero-length Tx burst must be accepted and return 0 without touching
-+ * the (empty) mbuf array. Regression test for the empty-burst guard in
-+ * eth_memif_tx().
-+ */
-+static int
-+test_memif_tx_empty_burst(void)
-+{
-+	struct rte_mbuf *dummy = NULL;
-+
-+	TEST_ASSERT(wait_for_link() == 0, "link not up before empty burst");
-+	TEST_ASSERT(rte_eth_tx_burst(memif_cli_port, 0, &dummy, 0) == 0,
-+		    "zero-length Tx burst did not return 0");
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Close a configured but never-started port. The queues were never
-+ * allocated, so memif_disconnect() must skip the NULL queue entries
-+ * rather than dereference them. Regression test for the NULL-queue guard
-+ * in the disconnect-on-close fix. Uses a throwaway device so the suite
-+ * pair stays intact.
-+ */
-+static int
-+test_memif_close_without_stop(void)
-+{
-+	int sport, ret;
-+	struct rte_eth_conf port_conf;
-+
-+	ret = rte_vdev_init("net_memif_test_tmps",
-+			    "role=server,id=1,socket-abstract=yes,socket=memif-autotest-tmp");
-+	if (ret < 0) {
-+		printf("could not create throwaway server: %s\n",
-+		       rte_strerror(-ret));
-+		return TEST_FAILED;
-+	}
-+
-+	sport = find_port("net_memif_test_tmps");
-+	if (sport < 0) {
-+		rte_vdev_uninit("net_memif_test_tmps");
-+		TEST_ASSERT(0, "throwaway server port not found");
-+	}
-+
-+	/* Configure but do not start: close is rejected on a started port. */
-+	memset(&port_conf, 0, sizeof(port_conf));
-+	ret = rte_eth_dev_configure(sport, 1, 1, &port_conf);
-+	if (ret < 0) {
-+		rte_vdev_uninit("net_memif_test_tmps");
-+		TEST_ASSERT(0, "configure of throwaway server failed: %s",
-+			    rte_strerror(-ret));
-+	}
-+
-+	/* Close without ever starting; must not crash on the NULL queues. */
-+	ret = rte_eth_dev_close(sport);
-+	rte_vdev_uninit("net_memif_test_tmps");
-+	TEST_ASSERT(ret == 0, "close without stop failed: %s",
-+		    rte_strerror(-ret));
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * A server that has been started and then stopped must refuse peers: a
-+ * connection accepted while stopped would leave a live control channel on
-+ * a stopped port. Regression test for the refuse-connection-on-stopped-
-+ * device fix. Without it the stopped server reports link up here.
-+ */
-+static int
-+test_memif_stopped_server_rejects_peer(void)
-+{
-+	int sport, cport, ret;
-+
-+	ret = rte_vdev_init("net_memif_test_tmp2s",
-+			    "role=server,id=3,socket-abstract=yes,socket=memif-autotest-tmp2");
-+	if (ret < 0) {
-+		printf("could not create throwaway server: %s\n",
-+		       rte_strerror(-ret));
-+		return TEST_FAILED;
-+	}
-+	sport = find_port("net_memif_test_tmp2s");
-+	if (sport < 0) {
-+		rte_vdev_uninit("net_memif_test_tmp2s");
-+		TEST_ASSERT(0, "throwaway server port not found");
-+	}
-+	if (configure_port(sport) < 0) {
-+		rte_vdev_uninit("net_memif_test_tmp2s");
-+		TEST_ASSERT(0, "throwaway server start failed");
-+	}
-+	if (rte_eth_dev_stop(sport) < 0) {
-+		rte_eth_dev_close(sport);
-+		rte_vdev_uninit("net_memif_test_tmp2s");
-+		TEST_ASSERT(0, "throwaway server stop failed");
-+	}
-+
-+	ret = rte_vdev_init("net_memif_test_tmp2c",
-+			    "role=client,id=3,socket-abstract=yes,socket=memif-autotest-tmp2");
-+	if (ret < 0) {
-+		rte_eth_dev_close(sport);
-+		rte_vdev_uninit("net_memif_test_tmp2s");
-+		TEST_ASSERT(0, "could not create throwaway client: %s",
-+			    rte_strerror(-ret));
-+	}
-+	cport = find_port("net_memif_test_tmp2c");
-+	if (cport < 0 || configure_port(cport) < 0) {
-+		rte_eth_dev_close(sport);
-+		rte_vdev_uninit("net_memif_test_tmp2c");
-+		rte_vdev_uninit("net_memif_test_tmp2s");
-+		TEST_ASSERT(0, "throwaway client setup failed");
-+	}
-+
-+	/* The stopped server must not come up. */
-+	ret = wait_for_link_pair(sport, cport);
-+
-+	rte_eth_dev_stop(cport);
-+	rte_eth_dev_close(cport);
-+	rte_eth_dev_close(sport);
-+	rte_vdev_uninit("net_memif_test_tmp2c");
-+	rte_vdev_uninit("net_memif_test_tmp2s");
-+
-+	TEST_ASSERT(ret != 0, "stopped server accepted a peer");
-+	return TEST_SUCCESS;
-+}
-+
-+#define BIG_PKT_LEN 4000	/* > bsize (512) => chained descriptors */
-+#define BIG_SEG_LEN 1000	/* each mbuf segment carries this many bytes */
-+/* ~8 descriptors per packet; enough to wrap the 2^MEMIF_LOG2_RING ring */
-+#define WRAP_PKTS ((1 << MEMIF_LOG2_RING) / 8 + 8)
-+
-+/*
-+ * Build a multi-segment mbuf of pkt_len bytes, chaining as many pool mbufs
-+ * as needed (BIG_SEG_LEN bytes each) with a position-dependent pattern.
-+ */
-+static struct rte_mbuf *
-+create_big_packet(uint16_t pkt_len, uint8_t seed)
-+{
-+	struct rte_mbuf *head = NULL, *tail = NULL;
-+	uint16_t done = 0;
-+
-+	while (done < pkt_len) {
-+		struct rte_mbuf *seg = rte_pktmbuf_alloc(mp);
-+		uint16_t seg_len = RTE_MIN((uint16_t)BIG_SEG_LEN,
-+					   (uint16_t)(pkt_len - done));
-+		uint8_t *data;
-+		uint16_t i;
-+
-+		if (seg == NULL) {
-+			rte_pktmbuf_free(head);
-+			return NULL;
-+		}
-+		data = (uint8_t *)rte_pktmbuf_append(seg, seg_len);
-+		for (i = 0; i < seg_len; i++)
-+			data[i] = (uint8_t)(seed + done + i);
-+
-+		if (head == NULL) {
-+			head = seg;
-+			tail = seg;
-+		} else {
-+			tail->next = seg;
-+			tail = seg;
-+			head->nb_segs++;
-+			head->pkt_len += seg_len;
-+		}
-+		done += seg_len;
-+	}
-+	return head;
-+}
-+
-+/* Verify a received packet's payload, walking its segment chain. */
-+static int
-+check_big_packet(struct rte_mbuf *m, uint16_t pkt_len, uint8_t seed)
-+{
-+	uint16_t off = 0;
-+	struct rte_mbuf *seg;
-+
-+	if (rte_pktmbuf_pkt_len(m) != pkt_len)
-+		return -1;
-+	for (seg = m; seg != NULL; seg = seg->next) {
-+		const uint8_t *data = rte_pktmbuf_mtod(seg, const uint8_t *);
-+		uint16_t i;
-+
-+		for (i = 0; i < rte_pktmbuf_data_len(seg); i++, off++)
-+			if (data[i] != (uint8_t)(seed + off))
-+				return -1;
-+	}
-+	return off == pkt_len ? 0 : -1;
-+}
-+
-+/*
-+ * Send multi-segment packets larger than the memif buffer size, repeated
-+ * enough to wrap the ring, and verify each is delivered intact. Exercises
-+ * the chained-descriptor Rx and Tx paths across a ring wrap.
-+ */
-+static int
-+test_memif_multiseg(void)
-+{
-+	unsigned int sent = 0, recv = 0;
-+	unsigned int iter;
-+
-+	TEST_ASSERT(wait_for_link() == 0, "link not up before multiseg test");
-+
-+	for (iter = 0; iter < WRAP_PKTS; iter++) {
-+		struct rte_mbuf *tx, *rx[MAX_PKT_BURST];
-+		uint16_t n, j;
-+		int tries;
-+
-+		tx = create_big_packet(BIG_PKT_LEN, (uint8_t)iter);
-+		TEST_ASSERT(tx != NULL, "failed to build big packet %u", iter);
-+		if (tx->nb_segs <= 1) {
-+			rte_pktmbuf_free(tx);
-+			TEST_ASSERT(0, "test packet is not multi-segment");
-+		}
-+
-+		if (rte_eth_tx_burst(memif_cli_port, 0, &tx, 1) != 1) {
-+			rte_pktmbuf_free(tx);
-+			continue;
-+		}
-+		sent++;
-+
-+		for (tries = 0; tries < 10; tries++) {
-+			n = rte_eth_rx_burst(memif_srv_port, 0, rx,
-+					     MAX_PKT_BURST);
-+			for (j = 0; j < n; j++) {
-+				if (check_big_packet(rx[j], BIG_PKT_LEN,
-+						(uint8_t)recv) != 0) {
-+					uint16_t k;
-+					for (k = j; k < n; k++)
-+						rte_pktmbuf_free(rx[k]);
-+					TEST_ASSERT(0,
-+						"multi-seg payload corrupted at pkt %u",
-+						recv);
-+				}
-+				rte_pktmbuf_free(rx[j]);
-+				recv++;
-+			}
-+			if (recv >= sent)
-+				break;
-+			usleep(2000);
-+		}
-+	}
-+
-+	TEST_ASSERT(recv == sent,
-+		    "multi-seg: sent %u received %u", sent, recv);
-+	return TEST_SUCCESS;
-+}
-+
-+static void
-+test_memif_cleanup(void)
-+{
-+	if (memif_srv_port >= 0) {
-+		rte_eth_dev_stop(memif_srv_port);
-+		rte_eth_dev_close(memif_srv_port);
-+	}
-+	if (memif_cli_port >= 0) {
-+		rte_eth_dev_stop(memif_cli_port);
-+		rte_eth_dev_close(memif_cli_port);
-+	}
-+	if (memif_fp_srv_port >= 0) {
-+		rte_eth_dev_stop(memif_fp_srv_port);
-+		rte_eth_dev_close(memif_fp_srv_port);
-+	}
-+	if (memif_fp_cli_port >= 0) {
-+		rte_eth_dev_stop(memif_fp_cli_port);
-+		rte_eth_dev_close(memif_fp_cli_port);
-+	}
-+	rte_vdev_uninit(MEMIF_SRV_NAME);
-+	rte_vdev_uninit(MEMIF_CLI_NAME);
-+	rte_vdev_uninit(MEMIF_FP_SRV_NAME);
-+	rte_vdev_uninit(MEMIF_FP_CLI_NAME);
-+	if (mp != NULL) {
-+		rte_mempool_free(mp);
-+		mp = NULL;
-+	}
-+	memif_srv_port = -1;
-+	memif_cli_port = -1;
-+	memif_fp_srv_port = -1;
-+	memif_fp_cli_port = -1;
-+}
-+
-+static int
-+test_memif_setup(void)
-+{
-+	int ret;
-+
-+	mp = rte_pktmbuf_pool_create("memif_test_pool", NB_MBUF, 32, 0,
-+				     RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
-+	if (mp == NULL) {
-+		printf("Error: failed to create mempool: %s\n",
-+		       rte_strerror(rte_errno));
-+		return -1;
-+	}
-+
-+	ret = rte_vdev_init(MEMIF_SRV_NAME, MEMIF_SRV_ARGS);
-+	if (ret < 0) {
-+		printf("Error: failed to create memif server: %s\n",
-+		       rte_strerror(-ret));
-+		rte_mempool_free(mp);
-+		mp = NULL;
-+		return TEST_FAILED;
-+	}
-+
-+	ret = rte_vdev_init(MEMIF_CLI_NAME, MEMIF_CLI_ARGS);
-+	if (ret < 0) {
-+		printf("Error: failed to create memif client: %s\n",
-+		       rte_strerror(-ret));
-+		rte_vdev_uninit(MEMIF_SRV_NAME);
-+		rte_mempool_free(mp);
-+		mp = NULL;
-+		return -1;
-+	}
-+
-+	memif_srv_port = find_port(MEMIF_SRV_NAME);
-+	memif_cli_port = find_port(MEMIF_CLI_NAME);
-+	if (memif_srv_port < 0 || memif_cli_port < 0) {
-+		printf("Error: failed to find memif ports\n");
-+		test_memif_cleanup();
-+		return -1;
-+	}
-+
-+	if (configure_port(memif_srv_port) < 0 ||
-+	    configure_port(memif_cli_port) < 0) {
-+		test_memif_cleanup();
-+		return -1;
-+	}
-+
-+	/* Second pair with default bsize to exercise the Tx fast path. */
-+	if (rte_vdev_init(MEMIF_FP_SRV_NAME, MEMIF_FP_SRV_ARGS) < 0 ||
-+	    rte_vdev_init(MEMIF_FP_CLI_NAME, MEMIF_FP_CLI_ARGS) < 0) {
-+		printf("Error: failed to create fast-path memif pair\n");
-+		test_memif_cleanup();
-+		return TEST_FAILED;
-+	}
-+
-+	memif_fp_srv_port = find_port(MEMIF_FP_SRV_NAME);
-+	memif_fp_cli_port = find_port(MEMIF_FP_CLI_NAME);
-+	if (memif_fp_srv_port < 0 || memif_fp_cli_port < 0) {
-+		printf("Error: failed to find fast-path memif ports\n");
-+		test_memif_cleanup();
-+		return TEST_FAILED;
-+	}
-+
-+	if (configure_port(memif_fp_srv_port) < 0 ||
-+	    configure_port(memif_fp_cli_port) < 0) {
-+		test_memif_cleanup();
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct unit_test_suite test_pmd_memif_suite = {
-+	.setup = test_memif_setup,
-+	.teardown = test_memif_cleanup,
-+	.suite_name = "memif PMD Unit Test Suite",
-+	.unit_test_cases = {
-+		TEST_CASE(test_memif_dev_info),
-+		TEST_CASE(test_memif_link_up),
-+		TEST_CASE(test_memif_stats_get),
-+		TEST_CASE(test_memif_send_receive),
-+		TEST_CASE(test_memif_fastpath),
-+		TEST_CASE(test_memif_multiseg),
-+		TEST_CASE(test_memif_stats_reset),
-+		TEST_CASE(test_memif_stop_start),
-+		TEST_CASE(test_memif_tx_empty_burst),
-+		TEST_CASE(test_memif_close_without_stop),
-+		TEST_CASE(test_memif_stopped_server_rejects_peer),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static int
-+test_pmd_memif(void)
-+{
-+	return unit_test_suite_runner(&test_pmd_memif_suite);
-+}
-+
-+#endif /* RTE_EXEC_ENV_LINUX */
-+
-+REGISTER_FAST_TEST(memif_pmd_autotest, NOHUGE_OK, ASAN_OK, test_pmd_memif);
+I noticed a little formatting issue in patch 9 commitlog.
+
+One thing bothers me.. but I did not play enough with the options maybe...
+
+Could we use new build options (request_libs/apps/drivers or better named) ?
+This series changes the enable_libs/apps/drivers semantics and will
+likely result in confused users.
+(and we would need no support for mixing old and new options)
+
+
 -- 
-2.43.7
+David Marchand
 
