@@ -2,43 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF72BCCA462
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 09:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A6CCCA464
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 09:51:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5B6940291;
-	Fri, 16 Oct 2026 11:30:22 +0200 (CEST)
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com
- [113.46.200.225])
- by mails.dpdk.org (Postfix) with ESMTP id 4B68E400D5
- for <dev@dpdk.org>; Fri, 16 Oct 2026 11:30:20 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=LKE5G0DUGven6uERkpMx9ThWAWO/9BYFJjybMW/wG4Q=;
- b=lZ3q9uzC/65JQNOU8AImfeHwxMMwBy0HMumu3SRNMyEQIBlYRaeW97P5LFUp2KA42+9DxU1xj
- r0IAWRQpe2TWnTEbyTMeSU9ur5MuHQOkpU+JZwUFbaoYMNXzpFe9tRVOkfcSa0QwKleMyPwORhY
- p50cJ4inT9N6CPrDbSoOMqc=
-Received: from mail.maildlp.com (unknown [172.19.163.163])
- by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4j5fVW56ZBz1K9BV;
- Fri, 16 Oct 2026 17:17:55 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id 79C834057A;
- Fri, 16 Oct 2026 17:30:15 +0800 (CST)
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 0C0D6400D7;
+	Fri, 16 Oct 2026 11:51:40 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id DCB11400D5
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 11:51:37 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 69G3oAA5288891 for <dev@dpdk.org>; Fri, 16 Oct 2026 02:51:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=+C+0VWDyQfWPCpVFJPbBb35
+ v4SqXPnMlXXxSij7ceCw=; b=faKUi8eAwHqsVpP6NOl/K+FlfXDC8jSrB81u4WV
+ ThYHUa9jC2aEfRiDg+zkTi7Qd3N7T089Xc1CgsR4kFM1Uf1HWb0pXlgYxLPNmwFP
+ YHrdmfvLvAjwA1keId72ntefUOfj8wV/LeJDoWyqYXwt6gtqn/S7ZrDbcAJdGqJg
+ TS3gU5XJPRmTEt4YFBgrAU+yWW1xWL2WmfQNZ0r4XwhhXPuYCtZ4NEyKvLMMoZvn
+ izGAG3TeZJ9aPw9wIaHJvRQ/rEv2QPFdXsCwpgOl6wKaJQLDINRmmu56xxeZl8cS
+ FbNkUL1xxeV9DF/3rxKwrsRIKFf1rQNE+5J7SZ7f3TJfH8g==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4hbcc3s9n9-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 02:51:36 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Fri, 16 Oct 2026 17:30:15 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>
-CC: <dev@dpdk.org>, <bruce.richardson@intel.com>
-Subject: [PATCH] argparse: support range step for corelist parsing
-Date: Fri, 16 Oct 2026 17:30:01 +0800
-Message-ID: <20261016093001.9067-1-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
+ 15.2.1544.25; Fri, 16 Oct 2026 02:51:36 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Fri, 16 Oct 2026 02:51:36 -0700
+Received: from LYYJYPGKF4.marvell.com (unknown [10.28.161.103])
+ by maili.marvell.com (Postfix) with ESMTP id 7A73F3F7096;
+ Fri, 16 Oct 2026 02:51:34 -0700 (PDT)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>, "Shijith
+ Thotton" <sthotton@marvell.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH] event/cnxk: fix TIM HWWQE handling and chunk alignment
+Date: Fri, 16 Oct 2026 15:21:31 +0530
+Message-ID: <20261016095132.73347-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemo500009.china.huawei.com (7.202.194.199)
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE2MDAzOCBTYWx0ZWRfX3EaZiLTiFgPy
+ oPxVbyozFly6ZhHHpICkHKGIrvHO5QZtI8sc1bD+bpkjTQjF7Ffh0+p2zdUEnVnv0UyJi9kDYxj
+ OAl2h8YxukGY8fBnS5WmV3Etpy8uI34=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE2MDAzOCBTYWx0ZWRfX772oy/Ymj9Kh
+ a/RaKgrvT+1vZ+2dtBb/pKDCAqLFuHcYgIHswSUCrSSbShH8UFxL10pCirGIQ/CR2yvyLC5EEJk
+ KHSzTDezlxmg5YUEPG1TgZb+6g78Tlpu9+LZGwXyrgvHGTh+zY7Kcqpl+k+TUZPsdfDJMU9IhTJ
+ KTzJi6+iYKrOi+qO9dJ4RXq2XJ73xIwYtisRhNg0FnIj6Gg2fEbmFQZ/yDYyjumiM/l/Tb/jDBL
+ jfjuUYz4+M5i9Fdb51JRqLR+VdL5/ikV5HwzOtMMxv9nqTrnpycb7JlGSiYDr90Phi4OrIzGAO2
+ kBkHjHqHt6/w4vX+ZoH65dzUfviAa+l0f8pDZ10/HOizMG5fpAjdNo9nThJhpcJdY4RkJmStMwW
+ ePl8QI4uGSZjVY0Oj54zM/HZt8lKZSmeAOScr1+UEmyL/g0itBh+/WgG+2z90Sz8RV8dRvyyg+1
+ MfS7h/u5QTqiwbE9X+g==
+X-Authority-Analysis: v=2.4 cv=O/+sLx9W c=1 sm=1 tr=0 ts=6ad1f3a8 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=EAYMVhzMl8SCOHhVQcBL:22 a=M5GUcnROAAAA:8 a=qBbE4_ttCYJanBOFhhcA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: EWx-6i_xuwyPayXyyy8BJ2I7BjB4sMl9
+X-Proofpoint-GUID: EWx-6i_xuwyPayXyyy8BJ2I7BjB4sMl9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-14_01,2026-10-14_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,279 +82,287 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce a stride/step syntax ('-l start-end:step') to the EAL
-corelist parser implemented within the argparse library.
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-On modern multi-core platforms, especially ARM architectures (such
-as Kunpeng) logical sibling cores are frequently laid out contiguously
-(e.g., physical core 0 maps to logical cores 0 and 1). When deploying
-high-performance DPDK data planes, pinning worker threads to adjacent
-sibling cores introduces Heavy L1/L2 cache contention and drastically
-degrades overall throughput.
+Use a single predicate for HWWQE enable, fast-path selection and chunk
+pool sizing so a TIM_HWWQE_VER_0 device is not run with HWWQE paths
+without being configured. Fix the burst response mapping in
+cnxk_tim_add_entry_tmo_hwwqe() to match the single timer path.
 
-Previously, users had to explicitly expand core lists via commas
-(e.g., "-l 0,2,4,6...126") in orchestration scripts to skip
-hyperthreads, which is error-prone and hurts maintainability.
+With tim_disable_npa, the generic ring ops only align objects to
+RTE_MEMPOOL_ALIGN, which does not give the 256B alignment CN20K needs.
+Populate the pool from a 256B aligned memzone with the trailer padded
+so the object stride is a multiple of 256B, and keep the chunk slot
+count within CNXK_TIM_MAX_CHUNK_SLOTS after rounding up.
 
-This patch introduces the range step, so we could use "-l 0-126:2" in
-the same case.
+Fixes: 19861e9eac8d ("event/cnxk: align CN20K TIM chunk buffers")
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 ---
- app/test/test_argparse.c               | 96 ++++++++++++++++++++++++++
- doc/guides/prog_guide/argparse_lib.rst |  2 +
- lib/argparse/rte_argparse.c            | 53 ++++++++++----
- 3 files changed, 139 insertions(+), 12 deletions(-)
+ drivers/event/cnxk/cnxk_tim_evdev.c  | 100 ++++++++++++++++++++++-----
+ drivers/event/cnxk/cnxk_tim_worker.h |  41 +++++------
+ 2 files changed, 103 insertions(+), 38 deletions(-)
 
-diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
-index fdc6dd113c..a87dc461b3 100644
---- a/app/test/test_argparse.c
-+++ b/app/test/test_argparse.c
-@@ -822,8 +822,11 @@ test_argparse_parse_type_corelist(void)
- 	char *corelist_valid_single = test_strdup("5");
- 	char *corelist_valid_multiple = test_strdup("0,1,5");
- 	char *corelist_valid_range = test_strdup("1-5");
-+	char *corelist_valid_range_step = test_strdup("1-5:2");
- 	char *corelist_valid_mixed = test_strdup("0,1,5-10,12-16,18,20");
-+	char *corelist_valid_mixed_step = test_strdup("0,1,5-10:2,12-16:3,18,20");
- 	char *corelist_valid_reverse_range = test_strdup("10-5");
-+	char *corelist_valid_reverse_range_step = test_strdup("10-5:2");
- 	char *corelist_valid_initial_spaces = test_strdup("   1,2,5-7");
- 	char *corelist_valid_empty = test_strdup("");
- 	char *corelist_invalid_spaces = test_strdup(" 1 , 2 , 5-7 ");
-@@ -831,6 +834,12 @@ test_argparse_parse_type_corelist(void)
- 	char *corelist_invalid_range_incomplete = test_strdup("1-");
- 	char *corelist_invalid_range_double_dash = test_strdup("1--5");
- 	char *corelist_invalid_range_double_range = test_strdup("1-3-5");
-+	char *corelist_invalid_range_step_incomplete1 = test_strdup("1:");
-+	char *corelist_invalid_range_step_incomplete2 = test_strdup("1:2");
-+	char *corelist_invalid_range_step_incomplete3 = test_strdup("1-5:");
-+	char *corelist_invalid_range_step_double = test_strdup("1-5::");
-+	char *corelist_invalid_range_step_negative = test_strdup("1-5:-2:");
-+	char *corelist_invalid_range_step_more = test_strdup("1-5:2:");
- 	char *corelist_invalid_special_chars = test_strdup("1,2@3");
- 	char *corelist_invalid_comma_only = test_strdup(",");
- 	char *corelist_invalid_out_of_range = test_strdup("70000");
-@@ -867,6 +876,18 @@ test_argparse_parse_type_corelist(void)
- 	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5!");
- 	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5!");
+diff --git a/drivers/event/cnxk/cnxk_tim_evdev.c b/drivers/event/cnxk/cnxk_tim_evdev.c
+index 44acd4ef5170..41f1d20cec5a 100644
+--- a/drivers/event/cnxk/cnxk_tim_evdev.c
++++ b/drivers/event/cnxk/cnxk_tim_evdev.c
+@@ -12,14 +12,56 @@
+ static struct event_timer_adapter_ops cnxk_tim_ops;
+ static cnxk_sso_set_priv_mem_t sso_set_priv_mem_fn;
  
-+	/* test valid range step */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_range_step,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (range step) failed!");
-+	for (int i = 1; i <= 5; i += 2)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 1-5:2!", i);
-+	for (int i = 2; i <= 5; i += 2)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 1-5:2!", i);
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5:2!");
-+	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5:2!");
++static void
++cnxk_tim_chnk_pool_mem_free(struct rte_mempool_memhdr *memhdr, void *opaque)
++{
++	RTE_SET_USED(memhdr);
++	rte_free(opaque);
++}
 +
- 	/* test valid mixed corelist */
- 	CPU_ZERO(&val_cpuset);
- 	ret = rte_argparse_parse_type(corelist_valid_mixed,
-@@ -886,6 +907,31 @@ test_argparse_parse_type_corelist(void)
- 	TEST_ASSERT(!CPU_ISSET(17, &val_cpuset), "Core 17 should not be set in mixed corelist!");
- 	TEST_ASSERT(!CPU_ISSET(19, &val_cpuset), "Core 19 should not be set in mixed corelist!");
- 
-+	/* test valid mixed step corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_mixed_step,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (mixed step) failed!");
-+	TEST_ASSERT(CPU_ISSET(0, &val_cpuset), "Core 0 should be set in mixed step corelist!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in mixed step corelist!");
-+	for (int i = 5; i <= 10; i += 2)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 5-10:2!", i);
-+	for (int i = 6; i <= 10; i += 2)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 5-10:2!", i);
-+	for (int i = 12; i <= 16; i += 3)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 12-16:3!", i);
-+	for (int i = 13; i <= 16; i += 3)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 12-16:3!", i);
-+	for (int i = 14; i <= 16; i += 3)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 12-16:3!", i);
-+	TEST_ASSERT(CPU_ISSET(18, &val_cpuset), "Core 18 should be set in mixed step corelist!");
-+	TEST_ASSERT(CPU_ISSET(20, &val_cpuset), "Core 20 should be set in mixed step corelist!");
-+	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in mixed step corelist!");
-+	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in mixed step corelist!");
-+	TEST_ASSERT(!CPU_ISSET(17, &val_cpuset), "Core 17 should not be set in mixed step corelist!");
-+	TEST_ASSERT(!CPU_ISSET(19, &val_cpuset), "Core 19 should not be set in mixed step corelist!");
++/* CN20K needs 256B aligned chunk buffers (cn20k-tim 14.2), other models use ROC_ALIGN. */
++static inline size_t
++cnxk_tim_chunk_buf_align(void)
++{
++	return roc_model_is_cn20k() ? CNXK_TIM_CN20K_CHUNK_BUF_ALIGN : ROC_ALIGN;
++}
 +
++/* Populate the pool from a single aligned block, like the SSO XAQ pool. */
++static int
++cnxk_tim_chnk_pool_populate_aligned(struct rte_mempool *mp, size_t align)
++{
++	size_t stride, len;
++	void *mem;
++	int rc;
 +
- 	/* test valid reverse range (10-5 should be interpreted as 5-10) */
- 	CPU_ZERO(&val_cpuset);
- 	ret = rte_argparse_parse_type(corelist_valid_reverse_range,
-@@ -897,6 +943,20 @@ test_argparse_parse_type_corelist(void)
- 	TEST_ASSERT(!CPU_ISSET(4, &val_cpuset), "Core 4 should not be set in reverse range 10-5!");
- 	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in reverse range 10-5!");
- 
-+	/* test valid reverse range step (10-5:2 should be interpreted as 5-10:2) */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_reverse_range_step,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (reverse range) failed!");
-+	for (int i = 5; i <= 10; i += 2)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset),
-+				"Core %d should be set in reverse range 10-5:2!", i);
-+	for (int i = 6; i <= 10; i += 2)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset),
-+				"Core %d should not be set in reverse range 10-5:2!", i);
-+	TEST_ASSERT(!CPU_ISSET(4, &val_cpuset), "Core 4 should not be set in reverse range 10-5!");
-+	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in reverse range 10-5!");
++	stride = (size_t)mp->header_size + mp->elt_size + mp->trailer_size;
++	len = stride * mp->size;
 +
- 	/* test valid corelist with initial spaces only */
- 	CPU_ZERO(&val_cpuset);
- 	ret = rte_argparse_parse_type(corelist_valid_initial_spaces,
-@@ -948,6 +1008,42 @@ test_argparse_parse_type_corelist(void)
- 			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
- 	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (double range) should have failed!");
- 
-+	/* test invalid corelist with step complete1 */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete1,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete1) should have failed!");
++	mem = rte_zmalloc_socket("cnxk_tim_chunks", len, align, mp->socket_id);
++	if (mem == NULL)
++		return -ENOMEM;
 +
-+	/* test invalid corelist with step incomplete2 */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete2,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete2) should have failed!");
++	rc = rte_mempool_populate_iova(mp, mem, rte_malloc_virt2iova(mem), len,
++				       cnxk_tim_chnk_pool_mem_free, mem);
++	if (rc <= 0) {
++		/* The pool only takes ownership of the memory when objects were added. */
++		rte_free(mem);
++		return rc < 0 ? rc : -ENOMEM;
++	}
 +
-+	/* test invalid corelist with step incomplete3 */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete3,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete3) should have failed!");
++	return 0;
++}
 +
-+	/* test invalid corelist with step double */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_double,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step double) should have failed!");
-+
-+	/* test invalid corelist with step negative */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_negative,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step negative) should have failed!");
-+
-+	/* test invalid corelist with step more */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_more,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step more) should have failed!");
-+
- 	/* test invalid corelist with special characters */
- 	CPU_ZERO(&val_cpuset);
- 	ret = rte_argparse_parse_type(corelist_invalid_special_chars,
-diff --git a/doc/guides/prog_guide/argparse_lib.rst b/doc/guides/prog_guide/argparse_lib.rst
-index b0907cfc07..3d01406599 100644
---- a/doc/guides/prog_guide/argparse_lib.rst
-+++ b/doc/guides/prog_guide/argparse_lib.rst
-@@ -271,8 +271,10 @@ The corelist parsing supports the following input formats:
- - **Single core**: ``--cores 5`` (sets core 5)
- - **Multiple cores**: ``--cores 1,2,5`` (sets cores 1, 2, and 5)
- - **Core ranges**: ``--cores 1-5`` (sets cores 1, 2, 3, 4, and 5)
-+- **Core ranges with step**: ``--cores 1-5:2`` (sets cores 1, 3, and 5)
- - **Mixed format**: ``--cores 0,2-4,7`` (sets cores 0, 2, 3, 4, and 7)
- - **Reverse ranges**: ``--cores 5-1`` (equivalent to 1-5, sets cores 1, 2, 3, 4, and 5)
-+- **Reverse ranges with step**: ``--cores 5-1:2`` (equivalent to 1-5:2, sets cores 1, 3, and 5)
- - **Empty corelist**: ``--cores ""`` (sets no cores)
- 
- The parsed result is stored in an ``rte_cpuset_t`` structure that can be used
-diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
-index 88c3e7740c..f1e1fb9d20 100644
---- a/lib/argparse/rte_argparse.c
-+++ b/lib/argparse/rte_argparse.c
-@@ -573,6 +573,9 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
+ static int
+ cnxk_tim_chnk_pool_create(struct cnxk_tim_ring *tim_ring,
+ 			  struct rte_event_timer_adapter_conf *rcfg)
  {
- 	rte_cpuset_t *cpuset = arg->val_saver;
- 	const char *last = value;
-+	bool is_step = false;
-+	int32_t step = 1;
-+	int32_t max = -1;
- 	int min = -1;
+ 	unsigned int mp_flags = 0;
++	struct rte_mempool *mp;
+ 	unsigned int cache_sz;
+-	const char *ops;
+ 	char pool_name[25];
++	size_t align, sz;
++	const char *ops;
+ 	int rc;
  
- 	if (value == NULL) {
-@@ -584,7 +587,6 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
- 	while (*last != '\0') {
- 		char *end;
- 		int64_t idx;
--		int32_t max;
+ 	/* Create chunk pool. */
+@@ -29,6 +71,10 @@ cnxk_tim_chnk_pool_create(struct cnxk_tim_ring *tim_ring,
+ 		tim_ring->prod_type_sp = true;
+ 	}
  
- 		while (isblank(*value))
- 			value++;
-@@ -603,6 +605,14 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
- 				arg->name_long);
- 			return -EINVAL;
++	/* One aligned block backs the pool, so objects need not be page contiguous. */
++	if (tim_ring->disable_npa)
++		mp_flags |= RTE_MEMPOOL_F_NO_IOVA_CONTIG;
++
+ 	snprintf(pool_name, sizeof(pool_name), "cnxk_tim_chunk_pool%d",
+ 		 tim_ring->ring_id);
+ 
+@@ -43,10 +89,12 @@ cnxk_tim_chnk_pool_create(struct cnxk_tim_ring *tim_ring,
+ 		return -ENOMEM;
+ 	}
+ 
+-	/* cn20k needs 256B-aligned chunk buffers (cn20k-tim 14.2). */
+-	if (roc_model_is_cn20k())
+-		tim_ring->chunk_pool->header_size = RTE_ALIGN_CEIL(
+-			tim_ring->chunk_pool->header_size, CNXK_TIM_CN20K_CHUNK_BUF_ALIGN);
++	/* Align the header and pad the trailer so every chunk buffer is aligned. */
++	mp = tim_ring->chunk_pool;
++	align = cnxk_tim_chunk_buf_align();
++	mp->header_size = RTE_ALIGN_CEIL(mp->header_size, align);
++	sz = (size_t)mp->header_size + mp->elt_size + mp->trailer_size;
++	mp->trailer_size += RTE_ALIGN_CEIL(sz, align) - sz;
+ 
+ 	if (!tim_ring->disable_npa)
+ 		ops = rte_mbuf_platform_mempool_ops();
+@@ -61,7 +109,11 @@ cnxk_tim_chnk_pool_create(struct cnxk_tim_ring *tim_ring,
+ 		goto free;
+ 	}
+ 
+-	rc = rte_mempool_populate_default(tim_ring->chunk_pool);
++	if (tim_ring->disable_npa) {
++		rc = cnxk_tim_chnk_pool_populate_aligned(tim_ring->chunk_pool, align);
++	} else {
++		rc = rte_mempool_populate_default(tim_ring->chunk_pool);
++	}
+ 	if (rc < 0) {
+ 		plt_err("Unable to populate chunkpool.");
+ 		goto free;
+@@ -81,6 +133,12 @@ cnxk_tim_chnk_pool_create(struct cnxk_tim_ring *tim_ring,
+ 	return rc;
+ }
+ 
++static inline bool
++cnxk_tim_hwwqe_enabled(const struct cnxk_tim_evdev *dev)
++{
++	return dev->tim.feat.hwwqe && dev->tim.feat.hwwqe_ver != TIM_HWWQE_VER_0;
++}
++
+ static int
+ cnxk_tim_enable_hwwqe(struct cnxk_tim_evdev *dev, struct cnxk_tim_ring *tim_ring)
+ {
+@@ -120,7 +178,7 @@ cnxk_tim_set_fp_ops(struct cnxk_tim_ring *tim_ring)
+ 	if (dev == NULL)
+ 		return;
+ 
+-	if (dev->tim.feat.hwwqe) {
++	if (cnxk_tim_hwwqe_enabled(dev)) {
+ 		cnxk_tim_ops.arm_burst = cnxk_tim_arm_burst_hwwqe;
+ 		cnxk_tim_ops.arm_tmo_tick_burst = cnxk_tim_arm_tmo_burst_hwwqe;
+ 		cnxk_tim_ops.cancel_burst = cnxk_tim_timer_cancel_burst_hwwqe;
+@@ -243,24 +301,30 @@ cnxk_tim_ring_create(struct rte_event_timer_adapter *adptr)
+ 		struct cnxk_tim_ctl *ring_ctl = &dev->ring_ctl_data[i];
+ 
+ 		if (ring_ctl->ring == tim_ring->ring_id) {
+-			tim_ring->chunk_sz =
+-				ring_ctl->chunk_slots ?
+-					((uint32_t)(ring_ctl->chunk_slots + 1) *
+-					 CNXK_TIM_CHUNK_ALIGNMENT) :
+-					      tim_ring->chunk_sz;
++			if (ring_ctl->chunk_slots >= CNXK_TIM_MIN_CHUNK_SLOTS &&
++			    ring_ctl->chunk_slots <= CNXK_TIM_MAX_CHUNK_SLOTS)
++				tim_ring->chunk_sz = ((uint32_t)ring_ctl->chunk_slots + 1) *
++						     CNXK_TIM_CHUNK_ALIGNMENT;
+ 			tim_ring->enable_stats = ring_ctl->enable_stats;
+ 			tim_ring->disable_npa = ring_ctl->disable_npa;
  		}
-+		if (is_step) {
-+			if (idx == 0) {
-+				ARGPARSE_LOG(ERR, "argument %s step value must be positive!",
-+					arg->name_long);
-+				return -EINVAL;
-+			}
-+			step = idx;
-+		}
+ 	}
  
- 		if (*end == '-') {
- 			if (min != -1) { /* can't have '-' within a range */
-@@ -612,22 +622,41 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
- 			}
- 			min = idx; /* start of range, move to next loop stage */
- 		} else if (*end == ',' || *end == '\0') {
--			/* single value followed by comma or end (min is set only by '-') */
--			if (min == -1) {
--				min = max = idx;
--			} else if (min > idx) {
--				/* we have range from high to low */
-+			if (!is_step) {
-+				/* single value followed by comma or end (min is set only by '-') */
-+				if (min == -1) {
-+					min = max = idx;
-+				} else if (min > idx) {
-+					/* we have range from high to low */
-+					max = min;
-+					min = idx;
-+				} else {
-+					/* range from low to high */
-+					max = idx;
-+				}
-+			}
+-	if (roc_model_is_cn20k())
++	if (roc_model_is_cn20k()) {
+ 		tim_ring->chunk_sz =
+ 			RTE_ALIGN_CEIL(tim_ring->chunk_sz, CNXK_TIM_CN20K_CHUNK_BUF_ALIGN);
++		/* Clamp to the largest 256B aligned size within the slot limit. */
++		if (CNXK_TIM_NB_CHUNK_SLOTS(tim_ring->chunk_sz) > CNXK_TIM_MAX_CHUNK_SLOTS)
++			tim_ring->chunk_sz = RTE_ALIGN_FLOOR(
++				(CNXK_TIM_MAX_CHUNK_SLOTS + 1) * CNXK_TIM_CHUNK_ALIGNMENT,
++				CNXK_TIM_CN20K_CHUNK_BUF_ALIGN);
++	}
+ 
+-	if (!dev->tim.feat.hwwqe && tim_ring->disable_npa) {
+-		tim_ring->nb_chunks =
+-			tim_ring->nb_timers /
+-			CNXK_TIM_NB_CHUNK_SLOTS(tim_ring->chunk_sz);
++	if (!cnxk_tim_hwwqe_enabled(dev) && tim_ring->disable_npa) {
++		/* Each bucket needs at least one chunk. */
++		tim_ring->nb_chunks = RTE_MAX(RTE_ALIGN_MUL_CEIL(tim_ring->nb_timers,
++				CNXK_TIM_NB_CHUNK_SLOTS(tim_ring->chunk_sz)) /
++				CNXK_TIM_NB_CHUNK_SLOTS(tim_ring->chunk_sz), 1UL);
+ 		tim_ring->nb_chunks = tim_ring->nb_chunks * tim_ring->nb_bkts;
+ 	} else {
+ 		tim_ring->disable_npa = 0;
+@@ -289,7 +353,7 @@ cnxk_tim_ring_create(struct rte_event_timer_adapter *adptr)
+ 		goto tim_chnk_free;
+ 	}
+ 
+-	if (dev->tim.feat.hwwqe && dev->tim.feat.hwwqe_ver != TIM_HWWQE_VER_0) {
++	if (cnxk_tim_hwwqe_enabled(dev)) {
+ 		rc = cnxk_tim_enable_hwwqe(dev, tim_ring);
+ 		if (rc < 0) {
+ 			plt_err("Failed to enable hwwqe");
+diff --git a/drivers/event/cnxk/cnxk_tim_worker.h b/drivers/event/cnxk/cnxk_tim_worker.h
+index 9e33ff58d683..e031e83dabec 100644
+--- a/drivers/event/cnxk/cnxk_tim_worker.h
++++ b/drivers/event/cnxk/cnxk_tim_worker.h
+@@ -692,31 +692,31 @@ cnxk_tim_add_entry_tmo_hwwqe(struct cnxk_tim_ring *const tim_ring,
+ 
+ 		done += CNXK_TIM_ENT_PER_LMT;
+ 		rsp &= 0xF;
+-		if (rsp != 0x1) {
++		if (rsp != 0x1 && rsp != 0x5) {
+ 			switch (rsp) {
+ 			case 0x3:
+ 				for (j = 0; j < CNXK_TIM_ENT_PER_LMT; j++)
+ 					tim[(i * CNXK_TIM_ENT_PER_LMT) + j]->state =
+-						RTE_EVENT_TIMER_ERROR_TOOEARLY;
++						RTE_EVENT_TIMER_ERROR_TOOLATE;
+ 				done -= CNXK_TIM_ENT_PER_LMT;
+ 				break;
+ 			case 0x4:
+ 				for (j = 0; j < CNXK_TIM_ENT_PER_LMT; j++)
+ 					tim[(i * CNXK_TIM_ENT_PER_LMT) + j]->state =
+-						RTE_EVENT_TIMER_ERROR_TOOLATE;
++						RTE_EVENT_TIMER_ERROR_TOOEARLY;
+ 				done -= CNXK_TIM_ENT_PER_LMT;
+ 				break;
+ 			case 0x2:
+ 			default:
+ 				for (j = 0; j < CNXK_TIM_ENT_PER_LMT; j++) {
+-					if ((rte_atomic_load_explicit(
+-						     (uint64_t __rte_atomic
+-							      *)&tim[(i * CNXK_TIM_ENT_PER_LMT) + j]
+-							     ->impl_opaque[0],
+-						     rte_memory_order_relaxed) &
+-					     0xF0) != 0x10) {
+-						tim[(i * CNXK_TIM_ENT_PER_LMT) + j]->state =
+-							RTE_EVENT_TIMER_ERROR;
++					struct rte_event_timer *t =
++						tim[(i * CNXK_TIM_ENT_PER_LMT) + j];
++					uint64_t res = rte_atomic_load_explicit(
++						(uint64_t __rte_atomic *)&t->impl_opaque[0],
++						rte_memory_order_relaxed) & 0xF0;
 +
-+			for (; min <= max; min += step)
-+				CPU_SET(min, cpuset);
++					if (res != 0x10 && res != 0x50) {
++						t->state = RTE_EVENT_TIMER_ERROR;
+ 						done--;
+ 					}
+ 				}
+@@ -749,27 +749,28 @@ cnxk_tim_add_entry_tmo_hwwqe(struct cnxk_tim_ring *const tim_ring,
+ 
+ 		done += (nb_timers - cnt);
+ 		rsp &= 0xF;
+-		if (rsp != 0x1) {
++		if (rsp != 0x1 && rsp != 0x5) {
+ 			switch (rsp) {
+ 			case 0x3:
+ 				for (j = 0; j < nb_timers - cnt; j++)
+-					tim[cnt + j]->state = RTE_EVENT_TIMER_ERROR_TOOEARLY;
++					tim[cnt + j]->state = RTE_EVENT_TIMER_ERROR_TOOLATE;
+ 				done -= (nb_timers - cnt);
+ 				break;
+ 			case 0x4:
+ 				for (j = 0; j < nb_timers - cnt; j++)
+-					tim[cnt + j]->state = RTE_EVENT_TIMER_ERROR_TOOLATE;
++					tim[cnt + j]->state = RTE_EVENT_TIMER_ERROR_TOOEARLY;
+ 				done -= (nb_timers - cnt);
+ 				break;
+ 			case 0x2:
+ 			default:
+ 				for (j = 0; j < nb_timers - cnt; j++) {
+-					if ((rte_atomic_load_explicit(
+-						     (uint64_t __rte_atomic *)&tim[cnt + j]
+-							     ->impl_opaque[0],
+-						     rte_memory_order_relaxed) &
+-					     0xF0) != 0x10) {
+-						tim[cnt + j]->state = RTE_EVENT_TIMER_ERROR;
++					struct rte_event_timer *t = tim[cnt + j];
++					uint64_t res = rte_atomic_load_explicit(
++						(uint64_t __rte_atomic *)&t->impl_opaque[0],
++						rte_memory_order_relaxed) & 0xF0;
 +
-+			/* no longer in a range */
-+			min = -1;
-+			max = -1;
-+			step = 1;
-+			is_step = false;
-+		} else if (*end == ':') {
-+			if (min == -1 || is_step) {
-+				ARGPARSE_LOG(ERR, "argument %s step can only be used after a range (start-end:step)!",
-+					arg->name_long);
-+				return -EINVAL;
-+			}
-+			if (min > idx) {
- 				max = min;
- 				min = idx;
- 			} else {
--				/* range from low to high */
- 				max = idx;
- 			}
--
--			for (; min <= max; min++)
--				CPU_SET(min, cpuset);
--
--			min = -1; /* no longer in a range */
-+			is_step = true;
- 		} else {
- 			/* end is an unexpected character, return error */
- 			ARGPARSE_LOG(ERR, "argument %s has an unexpected character!",
++					if (res != 0x10 && res != 0x50) {
++						t->state = RTE_EVENT_TIMER_ERROR;
+ 						done--;
+ 					}
+ 				}
 -- 
-2.17.1
+2.50.1 (Apple Git-155)
 
