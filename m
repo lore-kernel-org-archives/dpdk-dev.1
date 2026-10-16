@@ -2,48 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED9DCC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 11:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 869B9CC6B38
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 11:00:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37F5D40430;
-	Fri, 16 Oct 2026 13:00:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5FFE2402EE;
+	Fri, 16 Oct 2026 13:00:08 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id 4A50D400D5;
+ by mails.dpdk.org (Postfix) with ESMTP id 0B7C5400D5;
  Fri, 16 Oct 2026 13:00:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792148405; x=1823684405;
+ t=1792148406; x=1823684406;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ePN3XWECpQZQx1KogbrJ0CWM+2QfUrmV0Pm8D8f759k=;
- b=BiD1ZbytgpM3F+rvr1zhIgJP+u+SDCEfejCv/RoTuGnz0qblZTQQmg4j
- 6u5SWNSpo+YlsZrF5LRds/TJaDFJqzPpf3LFGi/qC/vl4XguV+YPCdOlk
- RYrTN4L8SEHx453v0ixf/XzWQMg9GVcf1TFJLXtqAts0H3wUENtcO+jXA
- viIJ/kP/usYTd113qTwYiAd5GaXf3CZ4Xq5L2Fv1WpzRNfUrOYcy5CqUL
- Uo6xzrBBLzMoYYXupae2VclCzxDRfmp7/XO1LieLaz2Okkody56Sq2ZA8
- J84FOL2yIcH3lTdg+r0f9XQO96EAKau6KsMQ2B2twj7VR83vI2Q1BMzsr g==;
-X-CSE-ConnectionGUID: JQRL5H97Rey4gNkO383AeQ==
-X-CSE-MsgGUID: XY3XgZhGSaKfO0eN79VAfQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="944130"
+ bh=MVX9RWAlAvbaUNQejalnqh2p36AkilEIyQ0Semywknw=;
+ b=Q2HEufWooBt0EX6W2yuGQcO5IcuiDajd/H8/JGinTSnzDQL0usL+v98J
+ Owk8Wz6CovqwLAyaiw1AZwA2xDKAcaN6IPdCMibJcPZ6zzUhpp/C6iuf7
+ b+0vhvIKbLFlZKE5hxvHUw529QPV4fxTJ0QZrNs5HxmmMY/sWX3Of0Atq
+ 7s4DHyn5ywF6AN8vdKfjqBaElOdUhcRASr5Omf4E8gDpMpd8zQwKXq9uy
+ iqcGayAi2+/UCrgeyb3vyT0X/qm2tUMDSgX1xEbJHuLPAOPbyc4pEtN6N
+ npNV5DuUN4QRLxrY+A/DvoQix445jJdZZByHun+cNCfJCaiJlUSmSs3Cy w==;
+X-CSE-ConnectionGUID: DSaj/jO/QQWMCl/jpaXrpg==
+X-CSE-MsgGUID: M9QSz8fQRGKSL5Ot+a1j+A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="944131"
 X-IronPort-AV: E=Sophos;i="6.27,161,1787036400"; 
-   d="scan'208";a="944130"
+   d="scan'208";a="944131"
 Received: from fmviesa011.fm.intel.com ([10.60.135.151])
  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Oct 2026 04:00:04 -0700
-X-CSE-ConnectionGUID: O5gCtIN1SRmlg0S0ZMcThw==
-X-CSE-MsgGUID: ebyMsGLlRUuhtoMxkPbqlA==
+ 16 Oct 2026 04:00:05 -0700
+X-CSE-ConnectionGUID: UzLZh0YGQ3Wjfj8vVxl1KA==
+X-CSE-MsgGUID: kAsMwmLpQ9mXoQOX3IbQdA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,161,1787036400"; 
-   d="scan'208";a="3759363"
+   d="scan'208";a="3759371"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa011.fm.intel.com with ESMTP; 16 Oct 2026 04:00:03 -0700
+ by fmviesa011.fm.intel.com with ESMTP; 16 Oct 2026 04:00:04 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
 	stable@dpdk.org
-Subject: [RFC PATCH 01/12] build: fix name of base library object
-Date: Fri, 16 Oct 2026 11:59:39 +0100
-Message-ID: <20261016105950.273068-2-bruce.richardson@intel.com>
+Subject: [RFC PATCH 02/12] build: fix ignoring requested driver when class is
+ disabled
+Date: Fri, 16 Oct 2026 11:59:40 +0100
+Message-ID: <20261016105950.273068-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261016105950.273068-1-bruce.richardson@intel.com>
 References: <20261016105950.273068-1-bruce.richardson@intel.com>
@@ -62,46 +63,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The generation of the base code objects, in the case where the base code
-needs separate C files, used the lib_name value, but that was not
-actually assigned till later in the loop, meaning the name used was for
-the previous driver built. Fix this by moving the 3-line block up in the
-loop.
+When a whole driver class is disabled due to missing dependencies, we
+are silently ignoring the fact that the user may have requested drivers
+of that class and therefore that the build configuration should fail.
+This can be seen by configuring a build with parameters
+"-Denable_drivers=event/sw -Ddisable_libs=eventdev". With eventdev
+disabled, all event drivers are never considered and no error from this
+misconfiguration results.
 
-Fixes: 8fa3af6c05f8 ("build: add generic support for base code in drivers")
+Fix this by adding a check for requested drivers when disabling a whole
+class of devices.
+
+Fixes: 70b6941e4e22 ("build: check drivers class dependencies early")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/meson.build | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/meson.build | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/drivers/meson.build b/drivers/meson.build
-index 102a8262e5..02adf51173 100644
+index 02adf51173..b761e19be5 100644
 --- a/drivers/meson.build
 +++ b/drivers/meson.build
-@@ -249,6 +249,10 @@ foreach subpath:subdirs
-             continue
-         endif
- 
-+        enabled_drivers += name
-+        lib_name = '_'.join(['rte', class, name])
-+        dpdk_conf.set(lib_name.to_upper(), 1)
-+
-         # not all drivers base code is lock annotation safe, so do base code builds before
-         # adding on the lock annotation flags. NOTE: If no custom cflags, the lock annotation
-         # checks will be done though.
-@@ -263,10 +267,6 @@ foreach subpath:subdirs
-             sources += base_sources
-         endif
- 
--        enabled_drivers += name
--        lib_name = '_'.join(['rte', class, name])
--        dpdk_conf.set(lib_name.to_upper(), 1)
--
-         if developer_mode and is_windows and use_function_versioning
-             message('@0@: Function versioning is not supported by Windows.'.format(name))
-         endif
+@@ -119,6 +119,14 @@ foreach subpath:subdirs
+                 endif
+                 message('Disabling @1@/* drivers: missing internal dependency "@0@"'
+                         .format(d, class))
++                # error out if a driver in this class was explicitly requested,
++                # i.e. not via wildcard, since it can now never be built.
++                foreach drv_path : get_option('enable_drivers').split(',')
++                    if drv_path.startswith(class + '/')
++                        error('Cannot build explicitly requested driver "@0@".\n'.format(drv_path)
++                                +'\tReason: missing internal dependency "@0@"'.format(d))
++                    endif
++                endforeach
+                 break
+             endif
+         endforeach
 -- 
 2.53.0
 
