@@ -2,73 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BB4CC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 15:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AA2CC6B38
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 15:40:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D417840689;
-	Fri, 16 Oct 2026 17:39:59 +0200 (CEST)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
- [209.85.214.177])
- by mails.dpdk.org (Postfix) with ESMTP id BEE2C40609
- for <dev@dpdk.org>; Fri, 16 Oct 2026 17:39:56 +0200 (CEST)
-Received: by mail-pl1-f177.google.com with SMTP id
- d9443c01a7336-2e9995ce866so4499255ad.0
- for <dev@dpdk.org>; Fri, 16 Oct 2026 08:39:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9B7FC40695;
+	Fri, 16 Oct 2026 17:40:00 +0200 (CEST)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 7DEF140658
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 17:39:58 +0200 (CEST)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-2e934449bb0so25926505ad.0
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 08:39:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792165196;
- x=1792769996; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=2cq6YLaFF5lndzMMl2gUQHuUZFvEtmaGAYKtPtNcO/I=;
- b=PqH9LTM4jW5H1S363S2ywMK8+8J8uA3kwnRIo8p2/NIZf041R/xXjCPq2jM+VFHt5J
- HaOfNuz9zfTROs4t+4J/k6c7vdF02i96HMUH+hlTiUtFItS6L2SfEAfuzartLbqzZNHt
- eCdIRkTzgoCtDHILDmOuneQpsxc2Kvl84YSQdjZwavYGGPZKqqvjADSw6zkhLZ9jpi5Q
- CrpRGLmZWnvYv52T893zP59jUtXs+/ye6E4udgSYsMh8wuJjiFy34+MHGB3zGX9BJqu6
- GMRr/SW6Z6EGQktZoy3bbcm8VBsIbsiZNxNuvCmypVafbVnavJB4wz+MxZmBN+QEJ0ZD
- 2bmQ==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792165197;
+ x=1792769997; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=ZL6cIQtoMmHT3zDCUvqu8gXpkSVirNYNjmtEgF5egzQ=;
+ b=PItHaDPXEUEsUnifV1x5ccm/WL+qhVcxm1vaELH1DbyUnzNbewCf11CBmMZ/AioDTC
+ sGtdO49yrGPHGa4ghLXOeOVN+sceXTflBWyB8eFgoNHkpqYUtm9ivvrbh+JrzGUUyRio
+ nA3AUTNJh6K5Aq7yWyq9rJh/dEjVioabd/gSAzEGJekm02piw/bO6zje/1E61PNsL4MD
+ /4qgVwbOS0ZS+RzBozco+bDqdvtdJtcIKgxH+XRfAD32X4BVflasUh1HV/8Q7ICaJtbJ
+ reQJymwoJCPx72jVLHNkmyd92vN8mSIcpfgxKrP/4WsG6xCevaEdSJiXc6/NxNSEISNd
+ cn7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792165196; x=1792769996;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=2cq6YLaFF5lndzMMl2gUQHuUZFvEtmaGAYKtPtNcO/I=;
- b=yS17CPcA03+trirc4ygQgfKAvtI8evgEyxkWoH90gq6OVmnQfSUIy/jzbENcGNK7hI
- B9CnOa8hA2b/x6YXtWUoLYKAUseSdIy5NqvdEid2FwAGcG/bOnMKBJfZtP7CEBfcYfmX
- 95XVlUM9Mxnv8l1tMmsmR6V4hObEFUcvcyhTgHvPdspo4zeHzPwEMqcOcyQMj3635eFW
- wcbcuccvTdHqOzhOEnNEebePUa8gR8Fbg3/NphSNLPW2RIDfJ0Yg+Evvzm/3QFZxRm7Q
- 4HBNE1Jr+Tl4xBXplfYY66Egqi5ILa3BKzjokytJgujzxujQLIvax79QRwN5vGPZJnCv
- qHcg==
-X-Gm-Message-State: AFq9FYJS45OSrrCdqFS+tek1umjJ5vW9N8ZOQg7QFJ3tVURmLfbPtuFl
- oQx7LBNeIHZgjea+TtxTQdDuUYQVJyt3ka1Y53viY496u83M/TW8IVhrGhPKg5pf/yspe7ZFwXH
- korcUYRQ=
-X-Gm-Gg: AYBFou0h5aSq7KZMrShqE4DbubOdQwIUaRfIKOZllN+61rz3lFMuNmNyuTC7CxtwNTw
- /Uu37BBXwJT7a6QuMt/+Q/QpoivC8HKKxGxD5C3o6iQgI5jH1X3PAnm4BlwE/tdoMvHMdiNhpjA
- glnOCpdE5SFMIXqPMBGvyKZHZ7b8ni3EL6hydjz6VCy5YYz7u2BUXUpEB9xPGGzEL/L/22yQTKa
- e2cHX3vkklex0bWB3HhkyyZFYzGWFiKWGsndKSU+e50JOmq0awdnvnoTQdINb8dSQ/GJO/x2TIj
- nSZyUOQ2RCdiS1luVBsm/MGsblJTqrwnEiHC6jxy206V4i2Yvi2L3qtejjN5yZL6zg837C22AlM
- G5cdKv2SaqBps9Id0o8+7mfpueyYnVOEkNQIA/i2jmG8zvKld2vd0of8/A64WBEkh3de8Ue/w92
- /xHlHAZeNMbGAjRe5nJlgY+lUwQnAAkRCCoTNnocJhwHPQLXeoWq7Hj/uruxzKAMjK0sU3SsjDW
- mEIX9MwkhQC1BULknrgqmX7udxXYIvjU9Xc5A==
-X-Received: by 2002:a17:902:d2cf:b0:2e9:66f6:7894 with SMTP id
- d9443c01a7336-2e9a6c0467emr3277755ad.40.1792165195782; 
- Fri, 16 Oct 2026 08:39:55 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1792165197; x=1792769997;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=ZL6cIQtoMmHT3zDCUvqu8gXpkSVirNYNjmtEgF5egzQ=;
+ b=RrF8GWzX8HoKfMDcZbgX/LbQPX8zPjqUIzDJ5I6Tpq9Itfwesw4N1ZNYorVV8AjEPy
+ 8f43tRQl7MIOMXygGjYaEq13pkWZyUF4r4SbZClCaTGCQVywZo+iXuQawThJ/vytSjeL
+ 4vlJ5mB/exmyE9xeAO+rISOSmU4wi9eNaHDorpLsYzhSBpxxobR6OFeN2fyznI0APtxu
+ w+TL8i/fl2Qp2qyY2+tUvd1K8LSzGaGoXlSKMt8LDIvtn88a0NRQEneeTGkW3fRL1JeO
+ Z5oqa2RqzxAB3NyTGQQmJnW8bCCloj2DXCHdV+eyW2W7zjadSsnMeUcpET6dTjUe4gGM
+ DTOw==
+X-Gm-Message-State: AFq9FYJsZtoZUT4a9LwUpohoTS4q1DQmfIKE6hLW73Afjhk9QcwPSql3
+ q73vexNOnA+Q9hrrYoOOo4kh96NJjgHOI8v4w67vdXwnLLCPaL4D3pQyvy3yM3MKxzAz2Fhbcfq
+ rAorMSqQ=
+X-Gm-Gg: AYBFou3EBtd7+nI+NRBa2f88BeRAu0T9CZ0Z2oNJzUdwlLnQhzzLsQ/EPlzBOhAWd9T
+ VZTYkDxHktWYCxjaxRbNyGXhh4c7cji+hRNFr3HdBwoTF/kUHfyO8Vw6cYfTsxTgU3nV6+iH/YI
+ K+vHHr+mCpP5pIQSRzwfxM8i39hQg5w9AvDkKX7ovUZ8VDlL1AowOFMlxSWCPFPuhUZ36rkiycy
+ 6cf9PaDUGKIfxHBKX3wQEcyBTZMcNciord4iyltat3vh7MMMKodyWI7yNlYf8lz9NIg/pgQrCEe
+ 8HIJCGnNcEIu0yQ2v8aVx+KvypAPvBGv1lt7GjrW2MqsQh+i2uebjuyE+cJan0rOWF4Kl23HQTk
+ e7Oiugy+3AKFwZ9ZFdx8Kks84JF1aMjKxgWgJp9CF4KklU9BYYDP16IjcUGpp7A7Jmch+ONm8Yo
+ 1zS0EhTSt2FT0+JlM5wRozHSMfaF+R2DBXNpq2qpsr51RzP2dpm1gC7pHWyegwQfs0UnPMBAN0N
+ 1JAWZZCSLZRPVlzGFzNEFC3e6bEnbQJssEdow==
+X-Received: by 2002:a17:903:2f87:b0:2e9:4175:3079 with SMTP id
+ d9443c01a7336-2e9a69e4360mr3553485ad.21.1792165197410; 
+ Fri, 16 Oct 2026 08:39:57 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2e97e804cf3sm12214445ad.25.2026.10.16.08.39.53
+ d9443c01a7336-2e97e804cf3sm12214445ad.25.2026.10.16.08.39.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 16 Oct 2026 08:39:54 -0700 (PDT)
+ Fri, 16 Oct 2026 08:39:56 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 2/3] eal: increase memzone name size to 64
-Date: Fri, 16 Oct 2026 08:38:44 -0700
-Message-ID: <20261016153949.2965592-3-stephen@networkplumber.org>
+Cc: Anurag Mandal <anurag.mandal@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH v3 3/3] fib, rib: fix name prefixes
+Date: Fri, 16 Oct 2026 08:38:45 -0700
+Message-ID: <20261016153949.2965592-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261016153949.2965592-1-stephen@networkplumber.org>
 References: <20260921215733.404686-1-stephen@networkplumber.org>
  <20261016153949.2965592-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -83,161 +87,245 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Memzone names are limited to 31 characters, and ring, mempool and
-stack names lose the length of their prefixes on top of that.
-A mempool name is limited to 25 characters, which leaves little room
-for libraries such as rib and fib that derive names from the name
-given by the application.
+From: Anurag Mandal <anurag.mandal@intel.com>
 
-Increase RTE_MEMZONE_NAMESIZE to 64. The derived ring, mempool,
-stack and RCU defer queue sizes follow.
+The RIB library named the mempool holding its nodes "MP_<name>".
+That prefix is the one the mempool library itself prepends to
+the backing memzone, so the memzone ended up named
+"MP_MP_<name>" which is improper.
 
-Reorder struct rte_ring and struct rte_mempool so the larger name
-does not push datapath fields into another cache line.
+The FIB library passed its own name unchanged to the underlying
+RIB and did not add a prefix to the RIB name.
 
-For rte_ring, flags and the size fields come first, followed by the
-memzone pointer and the name. The cache alignment moves from the
-first field to the structure itself. struct rte_ring grows by one
-cache line.
+This patch names each object after its owner.
+The node mempool of a RIB is now "RIB_<name>" or "RIB6_<name>",
+and the RIB owned by a FIB is now "FIB_<name>" or "FIB6_<name>".
 
-For rte_mempool the fields used in the datapath are gathered at the
-start: pool_data/pool_id, local_cache, ops_index and cache_size.
-The remaining fields, along with pool_config, mz and name, follow.
-Previously local_cache and ops_index were in the second cache line.
-struct rte_mempool stays 192 bytes.
+A mempool name is limited to RTE_MEMPOOL_NAMESIZE, which is
+shorter than RTE_RIB_NAMESIZE.
+The name was passed down silently and an oversized one surfaced
+as an opaque rte_mempool_create() failure, so check the derived
+name up front and return ENAMETOOLONG instead.
+As the prefixes above are added on top of the name, the maximum
+length of a name is limited to the following:
+RIB : 53 characters
+RIB6: 52 characters
+FIB : 49 characters
+FIB6: 47 characters
 
+Bugzilla ID: 1981 1982
+Fixes: 5a5793a5ffa2 ("rib: add RIB library")
+Fixes: f7e861e21c46 ("rib: support IPv6")
+Fixes: 39e927248416 ("fib: add FIB library")
+Fixes: 40d41a8a7b34 ("fib: support IPv6")
+
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- doc/guides/rel_notes/release_26_11.rst | 21 ++++++++++++++++++
- lib/eal/include/rte_memzone.h          |  2 +-
- lib/mempool/rte_mempool.h              | 30 ++++++++++++++------------
- lib/ring/rte_ring_core.h               |  9 ++++----
- 4 files changed, 42 insertions(+), 20 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst | 15 +++++++++++++++
+ lib/fib/rte_fib.c                      | 16 +++++++++++++---
+ lib/fib/rte_fib6.c                     | 16 +++++++++++++---
+ lib/rib/rte_rib.c                      | 14 ++++++++++++--
+ lib/rib/rte_rib6.c                     | 14 ++++++++++++--
+ 5 files changed, 65 insertions(+), 10 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index be758a0c02..0d9465c9e2 100644
+index 0d9465c9e2..e67eb8770f 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -567,6 +567,27 @@ ABI Changes
- * cryptodev: The struct ``rte_crypto_rsa_op_param``
-   was updated to include ``pss_salt``.
+@@ -545,6 +545,21 @@ API Changes
+   * ``rte_tel_data_add_dict_uint_hex``
+   * ``rte_telemetry_register_cmd_arg``
  
-+* **Increased memzone maximum name size.**
++* rib: The node mempool created by ``rte_rib_create()`` and ``rte_rib6_create()``
++  is now named ``RIB_<name>`` and ``RIB6_<name>`` instead of ``MP_<name>``.
 +
-+  ``RTE_MEMZONE_NAMESIZE`` was increased from 32 to 64,
-+  and the derived ``RTE_RING_NAMESIZE``, ``RTE_MEMPOOL_NAMESIZE``,
-+  ``RTE_STACK_NAMESIZE`` and ``RTE_RCU_QSBR_DQ_NAMESIZE`` grew accordingly.
-+  This impacts the following structures:
++* fib: The RIB created by ``rte_fib_create()`` and ``rte_fib6_create()``
++  is now named ``FIB_<name>`` and ``FIB6_<name>``.
 +
-+  * ``struct rte_memzone`` grew by 32 bytes.
++* rib, fib: The name of a RIB, RIB6, FIB or FIB6 is used to derive the name of
++  its node mempool, which is bounded by ``RTE_MEMPOOL_NAMESIZE``.
++  As the prefixes above are added on top of the name,
++  the maximum length of a name is the following:
 +
-+  * ``struct rte_ring`` grew by one cache line,
-+    and ``memzone`` and ``name`` were moved after the size fields
-+    to keep the datapath fields in the first cache line.
++  * RIB  - 53 characters.
++  * RIB6 - 52 characters.
++  * FIB  - 49 characters.
++  * FIB6 - 47 characters.
+ 
+ ABI Changes
+ -----------
+diff --git a/lib/fib/rte_fib.c b/lib/fib/rte_fib.c
+index 184210f380..7a587820ad 100644
+--- a/lib/fib/rte_fib.c
++++ b/lib/fib/rte_fib.c
+@@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib_tailq)
+ #define FIB_RETURN_IF_TRUE(cond, retval)
+ #endif
+ 
++/* Prefix used for the memory objects owned by a FIB. */
++#define FIB_MEM_PREFIX		"FIB_"
 +
-+  * ``struct rte_mempool`` is unchanged in size,
-+    but the fields were reordered so the datapath fields
-+    (``pool_data``/``pool_id``, ``local_cache``, ``ops_index``
-+    and ``cache_size``) come first,
-+    and ``name``, ``pool_config`` and ``mz`` were moved after them.
+ struct rte_fib {
+ 	char			name[RTE_FIB_NAMESIZE];
+ 	enum rte_fib_type	type;	/**< Type of FIB struct */
+@@ -173,14 +176,21 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
+ 	rib_conf.ext_sz = conf->rib_ext_sz;
+ 	rib_conf.max_nodes = conf->max_routes * 2;
+ 
+-	rib = rte_rib_create(name, socket_id, &rib_conf);
++	/* Add FIB Prefix to its mempool name */
++	ret = snprintf(mem_name, sizeof(mem_name), FIB_MEM_PREFIX "%s", name);
++	if (ret < 0 || ret >= (int)sizeof(mem_name)) {
++		FIB_LOG(ERR, "FIB name %s is too long", name);
++		rte_errno = ENAMETOOLONG;
++		return NULL;
++	}
 +
-+  * ``struct rte_stack`` grew by one cache line.
++	rib = rte_rib_create(mem_name, socket_id, &rib_conf);
+ 	if (rib == NULL) {
+ 		FIB_LOG(ERR,
+-			"Can not allocate RIB %s", name);
++			"Can not allocate RIB for FIB: %s", mem_name);
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "FIB_%s", name);
+ 	fib_list = RTE_TAILQ_CAST(rte_fib_tailq.head, rte_fib_list);
+ 
+ 	rte_mcfg_tailq_write_lock();
+diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
+index 770becdb61..1a31ab09aa 100644
+--- a/lib/fib/rte_fib6.c
++++ b/lib/fib/rte_fib6.c
+@@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib6_tailq)
+ #define FIB6_RETURN_IF_TRUE(cond, retval)
+ #endif
+ 
++/* Prefix used for the memory objects owned by a FIB6. */
++#define FIB6_MEM_PREFIX		"FIB6_"
 +
+ struct rte_fib6 {
+ 	char			name[RTE_FIB6_NAMESIZE];
+ 	enum rte_fib6_type	type;	/**< Type of FIB struct */
+@@ -172,14 +175,21 @@ rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
+ 	rib_conf.ext_sz = conf->rib_ext_sz;
+ 	rib_conf.max_nodes = conf->max_routes * 2;
  
- Known Issues
- ------------
-diff --git a/lib/eal/include/rte_memzone.h b/lib/eal/include/rte_memzone.h
-index 5a0e1b8a15..d5c92fe0ec 100644
---- a/lib/eal/include/rte_memzone.h
-+++ b/lib/eal/include/rte_memzone.h
-@@ -47,7 +47,7 @@ extern "C" {
-  */
- struct __rte_packed_begin rte_memzone {
- 
--#define RTE_MEMZONE_NAMESIZE 32       /**< Maximum length of memory zone name.*/
-+#define RTE_MEMZONE_NAMESIZE 64       /**< Maximum length of memory zone name.*/
- 	char name[RTE_MEMZONE_NAMESIZE];  /**< Name of the memory zone. */
- 
- 	rte_iova_t iova;                  /**< Start IO address. */
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index b34cd893b1..1df8dbebf4 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -237,34 +237,36 @@ struct __rte_cache_aligned rte_mempool_info {
-  * The RTE mempool structure.
-  */
- struct __rte_cache_aligned rte_mempool {
--	char name[RTE_MEMPOOL_NAMESIZE]; /**< Name of mempool. */
- 	union {
- 		void *pool_data;         /**< Ring or pool to store objects. */
- 		uint64_t pool_id;        /**< External mempool identifier. */
- 	};
--	void *pool_config;               /**< optional args for ops alloc. */
--	const struct rte_memzone *mz;    /**< Memzone where pool is alloc'd. */
-+	struct rte_mempool_cache *local_cache; /**< Per-lcore local cache */
-+	uint32_t sizeof_cache_per_lcore; /**< Multiplier for indexing into the local cache. */
-+	/**
-+	 * Index into rte_mempool_ops_table array of mempool ops
-+	 * structs, which contain callback function pointers.
-+	 * We're using an index here rather than pointers to the callbacks
-+	 * to facilitate any secondary processes that may want to use
-+	 * this mempool.
-+	 */
-+	int32_t ops_index;
-+	uint32_t cache_size;
-+	/**< Size of per-lcore default local cache. */
+-	rib = rte_rib6_create(name, socket_id, &rib_conf);
++	/* Add FIB6 Prefix to its mempool name */
++	ret = snprintf(mem_name, sizeof(mem_name), FIB6_MEM_PREFIX "%s", name);
++	if (ret < 0 || ret >= (int)sizeof(mem_name)) {
++		FIB_LOG(ERR, "FIB6 name %s is too long", name);
++		rte_errno = ENAMETOOLONG;
++		return NULL;
++	}
 +
- 	unsigned int flags;              /**< Flags of the mempool. */
- 	int socket_id;                   /**< Socket id passed at create. */
- 	uint32_t size;                   /**< Max size of the mempool. */
--	uint32_t cache_size;             /**< Size of per-lcore default local cache. */
++	rib = rte_rib6_create(mem_name, socket_id, &rib_conf);
+ 	if (rib == NULL) {
+ 		FIB_LOG(ERR,
+-			"Can not allocate RIB %s", name);
++			"Can not allocate RIB6 for FIB6 %s", mem_name);
+ 		return NULL;
+ 	}
  
- 	uint32_t elt_size;               /**< Size of an element. */
- 	uint32_t header_size;            /**< Size of header (before elt). */
- 	uint32_t trailer_size;           /**< Size of trailer (after elt). */
+-	snprintf(mem_name, sizeof(mem_name), "FIB6_%s", name);
+ 	fib_list = RTE_TAILQ_CAST(rte_fib6_tailq.head, rte_fib6_list);
  
- 	unsigned private_data_size;      /**< Size of private data. */
--	/**
--	 * Index into rte_mempool_ops_table array of mempool ops
--	 * structs, which contain callback function pointers.
--	 * We're using an index here rather than pointers to the callbacks
--	 * to facilitate any secondary processes that may want to use
--	 * this mempool.
--	 */
--	int32_t ops_index;
+ 	rte_mcfg_tailq_write_lock();
+diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
+index 046db131ca..55802f0060 100644
+--- a/lib/rib/rte_rib.c
++++ b/lib/rib/rte_rib.c
+@@ -32,6 +32,8 @@ EAL_REGISTER_TAILQ(rte_rib_tailq)
+ #define RIB_MAXDEPTH		32
+ /* Maximum length of a RIB name. */
+ #define RTE_RIB_NAMESIZE	64
++/* Prefix used for the memory objects owned by a RIB. */
++#define RIB_MEM_PREFIX		"RIB_"
  
--	struct rte_mempool_cache *local_cache; /**< Per-lcore local cache */
--	uint32_t sizeof_cache_per_lcore; /**< Multiplier for indexing into the local cache. */
-+	void *pool_config;               /**< optional args for ops alloc. */
-+	const struct rte_memzone *mz;    /**< Memzone where pool is alloc'd. */
-+	char name[RTE_MEMPOOL_NAMESIZE]; /**< Name of mempool. */
+ struct rte_rib_node {
+ 	struct rte_rib_node	*left;
+@@ -417,6 +419,7 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
+ 	struct rte_tailq_entry *te;
+ 	struct rte_rib_list *rib_list;
+ 	struct rte_mempool *node_pool;
++	int ret;
  
- 	uint32_t populated_size;         /**< Number of populated objects. */
- 	struct rte_mempool_objhdr_list elt_list; /**< List of objects in pool */
-diff --git a/lib/ring/rte_ring_core.h b/lib/ring/rte_ring_core.h
-index 6cd6ce9884..5425cdcef2 100644
---- a/lib/ring/rte_ring_core.h
-+++ b/lib/ring/rte_ring_core.h
-@@ -113,15 +113,14 @@ struct rte_ring_hts_headtail {
-  * values in a modulo-32bit base: that's why the overflow of the indexes is not
-  * a problem.
-  */
--struct rte_ring {
--	alignas(RTE_CACHE_LINE_SIZE) char name[RTE_RING_NAMESIZE];
--	/**< Name of the ring. */
-+struct __rte_cache_aligned rte_ring {
- 	int flags;               /**< Flags supplied at creation. */
--	const struct rte_memzone *memzone;
--			/**< Memzone, if any, containing the rte_ring */
- 	uint32_t size;           /**< Size of ring. */
- 	uint32_t mask;           /**< Mask (size-1) of ring. */
- 	uint32_t capacity;       /**< Usable size of ring */
-+	const struct rte_memzone *memzone;
-+			/**< Memzone, if any, containing the rte_ring */
-+	char name[RTE_RING_NAMESIZE]; /**< Name of the ring. */
+ 	/* Check user arguments. */
+ 	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
+@@ -424,7 +427,15 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
+ 		return NULL;
+ 	}
  
- 	RTE_CACHE_GUARD;
+-	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
++	/* Add RIB Prefix to its node mempool name */
++	ret = snprintf(mem_name, sizeof(mem_name), RIB_MEM_PREFIX "%s", name);
++	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
++		RIB_LOG(ERR, "RIB name %s is too long, limit is %zu characters",
++			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB_MEM_PREFIX));
++		rte_errno = ENAMETOOLONG;
++		return NULL;
++	}
++
+ 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
+ 		sizeof(struct rte_rib_node) + conf->ext_sz, 0, 0,
+ 		NULL, NULL, NULL, NULL, socket_id, 0);
+@@ -435,7 +446,6 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
+ 		return NULL;
+ 	}
  
+-	snprintf(mem_name, sizeof(mem_name), "RIB_%s", name);
+ 	rib_list = RTE_TAILQ_CAST(rte_rib_tailq.head, rte_rib_list);
+ 
+ 	rte_mcfg_tailq_write_lock();
+diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
+index 918ddbdfd3..7d9a0ba36f 100644
+--- a/lib/rib/rte_rib6.c
++++ b/lib/rib/rte_rib6.c
+@@ -24,6 +24,8 @@
+ #define RTE_RIB_VALID_NODE	1
+ /* Maximum length of a RIB6 name. */
+ #define RTE_RIB6_NAMESIZE	64
++/* Prefix used for the memory objects owned by a RIB6. */
++#define RIB6_MEM_PREFIX		"RIB6_"
+ 
+ TAILQ_HEAD(rte_rib6_list, rte_tailq_entry);
+ static struct rte_tailq_elem rte_rib6_tailq = {
+@@ -480,6 +482,7 @@ rte_rib6_create(const char *name, int socket_id,
+ 	struct rte_tailq_entry *te;
+ 	struct rte_rib6_list *rib6_list;
+ 	struct rte_mempool *node_pool;
++	int ret;
+ 
+ 	/* Check user arguments. */
+ 	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
+@@ -487,7 +490,15 @@ rte_rib6_create(const char *name, int socket_id,
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
++	/* Add RIB6 Prefix to its node mempool name */
++	ret = snprintf(mem_name, sizeof(mem_name), RIB6_MEM_PREFIX "%s", name);
++	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
++		RIB_LOG(ERR, "RIB6 name %s is too long, limit is %zu characters",
++			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB6_MEM_PREFIX));
++		rte_errno = ENAMETOOLONG;
++		return NULL;
++	}
++
+ 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
+ 		sizeof(struct rte_rib6_node) + conf->ext_sz, 0, 0,
+ 		NULL, NULL, NULL, NULL, socket_id, 0);
+@@ -498,7 +509,6 @@ rte_rib6_create(const char *name, int socket_id,
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "RIB6_%s", name);
+ 	rib6_list = RTE_TAILQ_CAST(rte_rib6_tailq.head, rte_rib6_list);
+ 
+ 	rte_mcfg_tailq_write_lock();
 -- 
 2.53.0
 
