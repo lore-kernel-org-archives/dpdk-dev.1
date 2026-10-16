@@ -2,39 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C408FCC6B38
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 07:04:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EF3CCA462
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 07:30:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D36C64064E;
-	Fri, 16 Oct 2026 09:04:04 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 0E13A40609
- for <dev@dpdk.org>; Fri, 16 Oct 2026 09:03:58 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E5A1C2001D1;
- Fri, 16 Oct 2026 09:03:57 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B08492001CC;
- Fri, 16 Oct 2026 09:03:57 +0200 (CEST)
-Received: from lsv031405.swis.in-blr01.nxp.com
- (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2E153180006C;
- Fri, 16 Oct 2026 15:03:56 +0800 (+08)
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
-To: stephen@networkplumber.org,
-	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v12-S2 11/11] net/dpaa2: rename Rx queue flags
-Date: Fri, 16 Oct 2026 12:33:39 +0530
-Message-ID: <20261016070339.3011744-12-prashant.gupta_3@nxp.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261016070339.3011744-1-prashant.gupta_3@nxp.com>
-References: <20261015092513.2427856-1-prashant.gupta_3@nxp.com>
- <20261016070339.3011744-1-prashant.gupta_3@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 07BBD40291;
+	Fri, 16 Oct 2026 09:30:48 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 304AC400D5;
+ Fri, 16 Oct 2026 09:30:47 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id F1B032080A;
+ Fri, 16 Oct 2026 09:30:46 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] examples/l3fwd: fix check of unchecked IP checksum
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Fri, 16 Oct 2026 09:30:42 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65AB5@smartserver.smartshare.dk>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] examples/l3fwd: fix check of unchecked IP checksum
+Thread-Index: Ad1FASXnP7fd/+8DTma+nu4tHLUKrgACwBQQBgxgnVA=
+References: <20260915105822.988106-1-mb@smartsharesystems.com> 
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: <dev@dpdk.org>, "Maxime Coquelin" <maxime.coquelin@redhat.com>,
+ "Stephen Hemminger" <stephen@networkplumber.org>,
+ "David Marchand" <david.marchand@redhat.com>
+Cc: <stable@dpdk.org>, "Harrison Caldicott" <harrison@itsfubar.com.au>,
+ "Robin Jarry" <rjarry@redhat.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,110 +48,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
-
-Rename the Rx-side device flags to a consistent DPAA2_RX_*_FLAG naming:
-DPAAX_RX_ERROR_QUEUE_FLAG becomes DPAA2_RX_ERROR_QUEUE_FLAG and
-DPAA2_DATA_STASHING_OFF becomes DPAA2_RX_DATA_STASHING_OFF_FLAG.
-
-This is a mechanical rename with no functional change.
-
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
----
- drivers/net/dpaa2/dpaa2_ethdev.c | 10 +++++-----
- drivers/net/dpaa2/dpaa2_ethdev.h |  6 ++++--
- drivers/net/dpaa2/dpaa2_rxtx.c   |  4 ++--
- 3 files changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index 4f5e738965..b3a1631923 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -550,7 +550,7 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
- 			goto fail;
- 	}
- 
--	if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
-+	if (priv->flags & DPAA2_RX_ERROR_QUEUE_FLAG) {
- 		priv->rx_err_vq = rte_zmalloc("dpni_rx_err",
- 			sizeof(struct dpaa2_queue), 0);
- 		if (!priv->rx_err_vq) {
-@@ -1041,7 +1041,7 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 		options |= DPNI_QUEUE_OPT_FLC;
- 		cfg.flc.stash_control = true;
- 		dpaa2_flc_stashing_clear_all(&cfg.flc.value);
--		if (priv->flags & DPAA2_DATA_STASHING_OFF) {
-+		if (priv->flags & DPAA2_RX_DATA_STASHING_OFF_FLAG) {
- 			dpaa2_flc_stashing_set(DPAA2_FLC_DATA_STASHING, 0,
- 				&cfg.flc.value);
- 			dpaa2_q->data_stashing_off = 1;
-@@ -1521,7 +1521,7 @@ dpaa2_dev_start(struct rte_eth_dev *dev)
- 		dpaa2_q->fqid = qid.fqid;
- 	}
- 
--	if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
-+	if (priv->flags & DPAA2_RX_ERROR_QUEUE_FLAG) {
- 		ret = dpni_get_queue(dpni, CMD_PRI_LOW, priv->token,
- 				     DPNI_QUEUE_RX_ERR, 0, 0, &cfg, &qid);
- 		if (ret) {
-@@ -3475,7 +3475,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 
- 	if (dpaa2_get_devargs(dev->devargs, DRIVER_NO_DATA_STASHING) ||
- 	    getenv("DPAA2_DATA_STASHING_OFF")) {
--		priv->flags |= DPAA2_DATA_STASHING_OFF;
-+		priv->flags |= DPAA2_RX_DATA_STASHING_OFF_FLAG;
- 		DPAA2_PMD_INFO("Data stashing disabled");
- 	}
- 
-@@ -3581,7 +3581,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 	}
- 
- 	if (dpaa2_get_devargs(dev->devargs, DRIVER_ERROR_QUEUE)) {
--		priv->flags |= DPAAX_RX_ERROR_QUEUE_FLAG;
-+		priv->flags |= DPAA2_RX_ERROR_QUEUE_FLAG;
- 		DPAA2_PMD_INFO("Enable error queue");
- 	}
- 
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index c68e24cbb8..5e3f8f2f78 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.h
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -98,9 +98,11 @@
- #define DPAA2_TX_DYNAMIC_CONF_ENABLE	RTE_BIT32(9)
- 
- /* Disable data stashing (prefetch of packet data into CPU cache) */
--#define DPAA2_DATA_STASHING_OFF		RTE_BIT32(10)
-+#define DPAA2_RX_DATA_STASHING_OFF_FLAG		RTE_BIT32(10)
- 
--#define DPAAX_RX_ERROR_QUEUE_FLAG	RTE_BIT32(11)
-+#define DPAA2_RX_ERROR_QUEUE_FLAG	RTE_BIT32(11)
-+
-+#define DPAA2_RX_PRINT_PSR_RESULT_FLAG RTE_BIT32(12)
- 
- /* DPDMUX index for DPMAC */
- #define DPAA2_DPDMUX_DPMAC_IDX 0
-diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-index 052133eb55..e83fa8c158 100644
---- a/drivers/net/dpaa2/dpaa2_rxtx.c
-+++ b/drivers/net/dpaa2/dpaa2_rxtx.c
-@@ -831,7 +831,7 @@ dpaa2_dev_prefetch_rx_common(void *queue, struct rte_mbuf **bufs,
- 	if (!by_channel) {
- 		struct dpaa2_dev_priv *priv = eth_data->dev_private;
- 
--		if (unlikely(priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG))
-+		if (unlikely(priv->flags & DPAA2_RX_ERROR_QUEUE_FLAG))
- 			dump_err_pkts(priv->rx_err_vq);
- 	}
- 
-@@ -1096,7 +1096,7 @@ dpaa2_dev_rx_common(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts,
- 	struct rte_eth_dev_data *eth_data = dpaa2_q->eth_data;
- 	struct dpaa2_dev_priv *priv = eth_data->dev_private;
- 
--	if (!by_channel && unlikely(priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG))
-+	if (!by_channel && unlikely(priv->flags & DPAA2_RX_ERROR_QUEUE_FLAG))
- 		dump_err_pkts(priv->rx_err_vq);
- 
- 	if (by_channel) {
--- 
-2.43.0
-
+UElORyBmb3IgcmV2aWV3Lg0KDQpQUzoNClRoaXMgZXhhbXBsZSBhcHBsaWNhdGlvbiBidWcgaGFz
+IHByb3BhZ2F0ZWQgaW50byBHcm91dCwgYW5kIGEgYnVnIHJlcG9ydCBoYXMgYmVlbiByZWdpc3Rl
+cmVkIHRoZXJlIFsyXS4NCg0KWzJdOiBodHRwczovL2dpdGh1Yi5jb20vRFBESy9ncm91dC9pc3N1
+ZXMvNzU2DQoNCg0KVmVubGlnIGhpbHNlbiAvIEtpbmQgcmVnYXJkcywNCi1Nb3J0ZW4gQnLDuHJ1
+cA0KDQoNCj4gRnJvbTogTW9ydGVuIEJyw7hydXANCj4gU2VudDogVHVlc2RheSwgMTUgU2VwdGVt
+YmVyIDIwMjYgMTQuNDANCj4gDQo+ICtUTzogTWF4aW1lLCBIYXJyaXNvbiAoaW5mbyBtaWdodCBi
+ZSByZWxhdGVkIHRvIG15IHF1ZXN0aW9uIGFib3V0DQo+IHZpcnRpbyBvZmZsb2FkKQ0KPiANCj4g
+PiBGcm9tOiBNb3J0ZW4gQnLDuHJ1cCBbbWFpbHRvOm1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbV0N
+Cj4gPiBTZW50OiBUdWVzZGF5LCAxNSBTZXB0ZW1iZXIgMjAyNiAxMi41OA0KPiA+DQo+ID4gSWYg
+dGhlIFBNRCBkaWRuJ3QgY2hlY2sgdGhlIElQIGhlYWRlciBjaGVja3N1bSwgdGhlDQo+ID4gb2Zm
+bG9hZCB2YWx1ZSBpcyBSVEVfTUJVRl9GX1JYX0lQX0NLU1VNX1VOS05PV04sDQo+ID4gbm90IFJU
+RV9NQlVGX0ZfUlhfSVBfQ0tTVU1fTk9ORS4NCj4gPg0KPiA+IEZpeGVzOiA0YjAxY2FiZmIwOWIg
+KCJleGFtcGxlcy9sM2Z3ZDogYWRkIG9wdGlvbiB0byByZWxheCBSeA0KPiBvZmZsb2FkIikNCj4g
+PiBDYzogc3RhYmxlQGRwZGsub3JnDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBNb3J0ZW4gQnLD
+uHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KPiA+IC0tLQ0KPiA+ICBleGFtcGxlcy9s
+M2Z3ZC9sM2Z3ZC5oIHwgMiArLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
+IDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9leGFtcGxlcy9sM2Z3ZC9sM2Z3
+ZC5oIGIvZXhhbXBsZXMvbDNmd2QvbDNmd2QuaA0KPiA+IGluZGV4IDM0OWZjMzdjNzkuLjMzMWQx
+NzYwMmQgMTAwNjQ0DQo+ID4gLS0tIGEvZXhhbXBsZXMvbDNmd2QvbDNmd2QuaA0KPiA+ICsrKyBi
+L2V4YW1wbGVzL2wzZndkL2wzZndkLmgNCj4gPiBAQCAtMTcxLDcgKzE3MSw3IEBAIGlzX3ZhbGlk
+X2lwdjRfcGt0KHN0cnVjdCBydGVfaXB2NF9oZHIgKnBrdCwNCj4gPiB1aW50MzJfdCBsaW5rX2xl
+biwgdWludDY0X3Qgb2xfZmxhZ3MNCj4gPg0KPiA+ICAJLyogMi4gVGhlIElQIGNoZWNrc3VtIG11
+c3QgYmUgY29ycmVjdC4gKi8NCj4gPiAgCS8qIGlmIHRoaXMgaXMgbm90IGNoZWNrZWQgaW4gSC9X
+LCBjaGVjayBpdC4gKi8NCj4gPiAtCWlmICgob2xfZmxhZ3MgJiBSVEVfTUJVRl9GX1JYX0lQX0NL
+U1VNX01BU0spID09DQo+ID4gUlRFX01CVUZfRl9SWF9JUF9DS1NVTV9OT05FKSB7DQo+ID4gKwlp
+ZiAoKG9sX2ZsYWdzICYgUlRFX01CVUZfRl9SWF9JUF9DS1NVTV9NQVNLKSA9PQ0KPiA+IFJURV9N
+QlVGX0ZfUlhfSVBfQ0tTVU1fVU5LTk9XTikgew0KPiA+ICAJCXVpbnQxNl90IGFjdHVhbF9ja3N1
+bSwgZXhwZWN0ZWRfY2tzdW07DQo+ID4gIAkJYWN0dWFsX2Nrc3VtID0gcGt0LT5oZHJfY2hlY2tz
+dW07DQo+ID4gIAkJcGt0LT5oZHJfY2hlY2tzdW0gPSAwOw0KPiA+IC0tDQo+ID4gMi40My4wDQo+
+IA0KPiBTaW1wbGUgQUkgZnJvbSBDSSBzYXlzOg0KPiA+ICoqSW5jb3JyZWN0IGZpeCBmb3IgdGhl
+IHN0YXRlZCBwcm9ibGVtKioNCj4gPg0KPiA+IFRoZSBwYXRjaCBkZXNjcmlwdGlvbiBzdGF0ZXMg
+IklmIHRoZSBQTUQgZGlkbid0IGNoZWNrIHRoZSBJUCBoZWFkZXINCj4gPiBjaGVja3N1bSwgdGhl
+IG9mZmxvYWQgdmFsdWUgaXMgUlRFX01CVUZfRl9SWF9JUF9DS1NVTV9VTktOT1dOLCBub3QNCj4g
+PiBSVEVfTUJVRl9GX1JYX0lQX0NLU1VNX05PTkUuIg0KPiA+DQo+ID4gSG93ZXZlciwgYWNjb3Jk
+aW5nIHRvIHRoZSBtYnVmIGRvY3VtZW50YXRpb246DQo+ID4gLSBgUlRFX01CVUZfRl9SWF9JUF9D
+S1NVTV9VTktOT1dOYCAodmFsdWUgMCkgbWVhbnMgdGhlIFBNRCByZXBvcnRzIG5vDQo+ID4gY2hl
+Y2tzdW0gaW5mb3JtYXRpb24gYXQgYWxsDQo+ID4gLSBgUlRFX01CVUZfRl9SWF9JUF9DS1NVTV9O
+T05FYCBtZWFucyBjaGVja3N1bSBpcyBub3Qgb2ZmbG9hZGVkIGJ1dA0KPiBjYW4NCj4gPiBiZSBz
+b2Z0d2FyZSBjYWxjdWxhdGVkDQo+ID4gLSBgUlRFX01CVUZfRl9SWF9JUF9DS1NVTV9CQURgIG1l
+YW5zIGhhcmR3YXJlIHJlcG9ydGVkIGNoZWNrc3VtIGlzDQo+IGJhZA0KPiA+IC0gYFJURV9NQlVG
+X0ZfUlhfSVBfQ0tTVU1fR09PRGAgbWVhbnMgaGFyZHdhcmUgdmVyaWZpZWQgY2hlY2tzdW0gaXMN
+Cj4gPiBnb29kDQo+ID4NCj4gPiBUaGUgb3JpZ2luYWwgY29kZSBjaGVja2luZyBmb3IgYFJURV9N
+QlVGX0ZfUlhfSVBfQ0tTVU1fTk9ORWAgaXMNCj4gPiBzZW1hbnRpY2FsbHkgbW9yZSBjb3JyZWN0
+IGZvciAic29mdHdhcmUgbXVzdCB2ZXJpZnkgdGhlIGNoZWNrc3VtIg0KPiB0aGFuDQo+ID4gYFJU
+RV9NQlVGX0ZfUlhfSVBfQ0tTVU1fVU5LTk9XTmAuIFdoZW4gdGhlIHZhbHVlIGlzIGBVTktOT1dO
+YCwgdGhlDQo+IFBNRA0KPiA+IHByb3ZpZGVzIG5vIGluZm9ybWF0aW9uIGFib3V0IHdoZXRoZXIg
+aXQgY2hlY2tlZCBvciBub3QsIHNvIHNvZnR3YXJlDQo+ID4gdmVyaWZpY2F0aW9uIGlzIHBydWRl
+bnQuIEJ1dCB3aGVuIGl0J3MgZXhwbGljaXRseSBgTk9ORWAsIHNvZnR3YXJlDQo+ID4gY2hlY2tz
+dW0gaXMgZGVmaW5pdGVseSByZXF1aXJlZC4NCj4gDQo+IFRoYXQgaXMgKm5vdCogaG93IEkgaW50
+ZXJwcmV0IHRoZSBlbnVtIHZhbHVlcy4NCj4gVGhlIGRvY3VtZW50YXRpb24gc2F5cyBbMV06DQo+
+IC0gUlRFX01CVUZfRl9SWF9JUF9DS1NVTV9VTktOT1dOOiBubyBpbmZvcm1hdGlvbiBhYm91dCB0
+aGUgUlggSVANCj4gY2hlY2tzdW0NCj4gLSBSVEVfTUJVRl9GX1JYX0lQX0NLU1VNX0JBRDogdGhl
+IElQIGNoZWNrc3VtIGluIHRoZSBwYWNrZXQgaXMgd3JvbmcNCj4gLSBSVEVfTUJVRl9GX1JYX0lQ
+X0NLU1VNX0dPT0Q6IHRoZSBJUCBjaGVja3N1bSBpbiB0aGUgcGFja2V0IGlzIHZhbGlkDQo+IC0g
+UlRFX01CVUZfRl9SWF9JUF9DS1NVTV9OT05FOiB0aGUgSVAgY2hlY2tzdW0gaXMgbm90IGNvcnJl
+Y3QgaW4gdGhlDQo+IHBhY2tldCBkYXRhLCBidXQgdGhlIGludGVncml0eSBvZiB0aGUgSVAgaGVh
+ZGVyIGlzIHZlcmlmaWVkDQo+IA0KPiBJLmUuIFVOS05PV04gbWVhbnMgdGhhdCB0aGUgUE1EIHBy
+b3ZpZGVkIG5vIGluZm9ybWF0aW9uIGFib3V0IHRoZQ0KPiBjaGVja3N1bS4gKE1heWJlIGl0IGRp
+ZCBub3QgZXZlbiBsb29rIGF0IHRoZSBjaGVja3N1bS4pDQo+IFRoZSBvbF9mbGFncyBmaWVsZCBj
+b250YWlucyBVTktOT1dOICh2YWx1ZSAwKSB3aGVuDQo+IFJURV9FVEhfUlhfT0ZGTE9BRF9DSEVD
+S1NVTSB3YXMgbm90IHJlcXVlc3RlZC4NCj4gQW5kIHRoaXMgaXMgZXhhY3RseSB3aGF0IHRoZSBw
+YXRjaCB0aGlzIHBhdGNoIGZpeGVzIGRpZDoNCj4gSXQgY2xlYXJlZCBSVEVfRVRIX1JYX09GRkxP
+QURfQ0hFQ0tTVU0gd2hlbiB0aGUgUE1EIGRpZG4ndCBvZmZlciB0aGlzDQo+IGNhcGFiaWxpdHku
+DQo+IA0KPiBXaGVyZWFzIE5PTkUgbWVhbnMgdGhhdCB0aGUgcGFja2V0IGlzIGdvb2QsIGJ1dCB0
+aGUgY2hlY2tzdW0gZmllbGQgaW4NCj4gdGhlIHBhY2tldCBoYXMgbm90IGJlZW4gc2V0IGJ5IHRo
+ZSBzZW5kZXIgKGFuZCBtYXkgY29udGFpbiBnYXJiYWdlKS4NCj4gU28gaXQgaXMgYWJzb2x1dGVs
+eSB3cm9uZyB0byB2ZXJpZnkgdGhlIGNoZWNrc3VtIGZpZWxkJ3MgdmFsdWUsIHdoZW4NCj4gdGhl
+IG9sX2ZsYWdzIGVudW0gc2F5cyB0aGF0IGl0IGlzIHVuc2V0IChhbmQgbWF5IGNvbnRhaW4gZ2Fy
+YmFnZSkuIE15DQo+IHBhdGNoIGZpeGVzIHRoYXQuDQo+IA0KPiBbMV06DQo+IGh0dHBzOi8vZ2l0
+aHViLmNvbS9EUERLL2RwZGsvYmxvYi9mNDM2MzJhYzczMjEzODUyMzNhYjZhMTFmMDk4OWFhNjIy
+M2RjDQo+IDYxYi9saWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmgjTDc0LUw3OQ0KDQo=
