@@ -2,65 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45197CCA462
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 11:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA834CC6B38
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 11:31:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 82E42406A2;
-	Fri, 16 Oct 2026 13:31:34 +0200 (CEST)
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
- [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id EFE6640291
- for <dev@dpdk.org>; Fri, 16 Oct 2026 08:27:00 +0200 (CEST)
-Received: by mail-dy1-f170.google.com with SMTP id
- 5a478bee46e88-3535a54bed9so4281496eec.1
- for <dev@dpdk.org>; Thu, 15 Oct 2026 23:27:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6C2D3406FF;
+	Fri, 16 Oct 2026 13:31:35 +0200 (CEST)
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com
+ [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id 6C12C402EB
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 08:27:03 +0200 (CEST)
+Received: by mail-dy1-f181.google.com with SMTP id
+ 5a478bee46e88-3535bf8b3e0so4442730eec.0
+ for <dev@dpdk.org>; Thu, 15 Oct 2026 23:27:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1792132020; x=1792736820; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1792132022; x=1792736822; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=Z32gcMwPgs+QhZ7FtYyi7QFqu1rpFE1eKT7hc0Marpc=;
- b=Z2tVvSZNmWvqIkDP3uUW4tyX6TkpY3LUoDcKYbiIm1uHgyf83MaW8+c2H/J1WQ+5S1
- F/8WOv503SiY8ZiqPLKK4fCZRh12NZXHOHHRCN6yU5ViQIPDk6hSil2O5MnkZNilbc2F
- K2fuJX0FIMh5vT5cfXJoGka57UfoFOBU2kZPkwQY50kJF6dUrLuHk+u3iZ8JJRLNy4pL
- f6tgIg8qt02Hpc1ClcFPOZ+aIzMhURanbbnzq27jrVvHC/209H6tjsTGTDC5JByn/Aws
- jpMha8zjjxt5GTy38gE2qM4bOoLCGCRFYEBd8P95tny1U7IuqrRDuvXlfMiUjhAtRKu7
- Zy9Q==
+ bh=bOoJlCU9CWQymF8XEQlfGwgrH6OHY12VbWT4iQmr+Ik=;
+ b=a3sJEBbtIUVV7t154tOW9w+ckzHKnaIaFhTgfKXVoi7XuE0pioKXRZE6vpuJkroAXS
+ gCJjmtBC+G5yKUAnASjj9G5RRl6PoCm9kLygPfc74nSXCCsaOPCp5rscgsDbn4I6MotF
+ 0RhKiOmzvXuMcsk/8UPhcG0OvOhhZxR8Vg1QJF3C+992Mw6VCNcb2LjIKEqOvtSBqiW/
+ GIaUUiUXmziFifVXgm9TkWG5ydkSh/N60+i+6kz1aKumAQ1HRfs5sE0f5EbXGe4ffool
+ r1xQnjSoi/YPZRHzV5gWlYo5Ah3y2gldEpf9FhEaZXkAdVyAXOa4sT1k3UfgZGR1SyVN
+ zvNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792132020; x=1792736820;
+ d=1e100.net; s=20260707; t=1792132022; x=1792736822;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=Z32gcMwPgs+QhZ7FtYyi7QFqu1rpFE1eKT7hc0Marpc=;
- b=jTp/wG/FMFUOfNfdPEac+mrM551x9P0v7m5896OYKf/IYxaGYKpIk98PDLV4zZSWrg
- U+S92U3+DbN4L0t6HjgU+VxmXLU1SCW+jWMiDmhnzGZJn39dr+Ja0ozqDxp9+fnbFoUT
- xWT2T1qeTPlcLakD1fSR4MS6S6IrM0NlgeAuls+SmzNGWVenv17FKVCcER4a12Hjcc35
- yXAXVyKhXi8sUSOp8Y2QMkHh3y0i+cLxTkxYA13GminV1bN2GValmxqLfzmY/jH6SXBw
- WsochFLWfem6ZsYk0qgBSpMkEN1mn2fEfaMj+XrIN8CGLSnrPc2Hyzd3HVJQmRKWXRLh
- GeXw==
-X-Gm-Message-State: AFq9FYK++cRrcpYPI9u9A3bRoTg1Mm8JkFeNZ7Q6z1f804wybxDV9biP
- rwnZNic0qWcx5SPO2tX6xA7a2XUFBilor1wynuq8c+o7N/TEvo7E6a86l846cw==
-X-Gm-Gg: AYBFou3WJiMFzZTtDXJNlM24Rx0oXDFShMKKsBtR/NzNe6T1zp+BWa7ZmIpdvMBIQNH
- fGx0Nh7Az8inmpzgKCmeZh37gQFFiM+598RqdXou8ZAyHwK0fQNujLPnOu3G5EvMTsBsVy4R+Xf
- xH7quVWLIrVs28l14iI5wW2oA4+CUukD/KH5r6np10FB/MRnkZcSdbPaHu93/M4bokq9OYU7GlQ
- 25WODOp5iEBtw7mwJ3OfWvN+9dlMaQezx8b3fkw4TqgD8OBKWDCzS6H+vZtrgAZXavpkF9EmWNV
- GD/bGaRY8hLxdIoPuzef7AIqoPunUnSjElGex8OezMSgBZUqjdvmFrbxYpqzYqfE6XsL9cIea4N
- L0r1kgTuC2g7MVxrofJa5GhhXA+pZ70l+L4EYcthN8pfXxdMeXXiel+SPyrPxatnqO8bjPBbyva
- 7SpGZ+gt7fhNon/slzUDwtOSeRdHPvaC3qa87+qik2fIRckSnVEfSvfn8UM96w14sIuDgpbJg5
-X-Received: by 2002:a05:7022:3d14:b0:143:7001:7645 with SMTP id
- a92af1059eb24-16a62600d3emr38502622c88.47.1792132019928; 
- Thu, 15 Oct 2026 23:26:59 -0700 (PDT)
+ bh=bOoJlCU9CWQymF8XEQlfGwgrH6OHY12VbWT4iQmr+Ik=;
+ b=M1tkTpeHXC3rvkZWfpKmDf4S3rwDFUa9hDBf3Ogaqzzc9qvWq3UU+uuQTLbXVaJQ7W
+ pPgPjdY7CTRX0K3glrrwsIkmijtb8sDBIliaVAG05UczW0JqG1GwdBDNEa/Hazeo8Ldr
+ jh9C6sbIwv8MFZxNoCua7gjzJZxl9sY7ci/0mXmRuo9yTXUWiBtXZoQqR+x+0ktrcaoS
+ 01WiiD+Udv06QVySvsy+1HFh5YHnLcGF4y/XlewESbhMzh+C+yFmJiunBvg83gVmL3Bp
+ XyPeYhp4TQds3gNHvj/F3DJGeRBxtJ6px35knfNdL8cz17DBt33/MOv5ttMGZEIoORPl
+ EVkQ==
+X-Gm-Message-State: AFq9FYISJ7L7/pGldzmSICF5tYr/LTZPxb9VpTSRddM1jMcZSkVwB9fA
+ C45VjMH79t7tKBLHxToD7RqhfdxDERlwEbyHTy3kIONS5v9jrw00YF5dub0gGg==
+X-Gm-Gg: AYBFou1/ASul/DoE9dz10AbcoCNzdEcYR3vpElU89hiqtP57cGJZj3lNtKPfLn3JIhg
+ xD+vlbR8i/KUp8Xpg5Lpl7GbxmlhS/PxIPNQbIkTjrQO75US58G98rej8sgAktaP4a3S1OpzUcI
+ A4KGn6xBZM94BRMZMHlzEyPN9n5EzxoIoWyc+hk8PjMSfEfobdkwkXeijgGCaWx7egMHkZoJH/H
+ oncn2kbKdxfuDlHJ6SnumW3mR/Ym2E3Ro/1Le0j0vp9DPuveBy5MFBxsE0FuPDqW0aigKhSpkBP
+ CslOpwYw8qARQ2lcLXxJa5NCJvbB1ywcXnzi1j5JKIUid0ekSzEWVdiANGSq6/aPZFRiW9fhG1Y
+ tLrc5W3qTMUDytsu5M3p11Vjy7dI9l1BLSBxJuurVA9nKdSn5DQcr7Na1oJ43t9WdJNbuOr20PC
+ OTsyC+M8DHRg8a10047/P7m9gtPVlfSORabuOfo4ph2GCkFyfShj4AnEEq5TrFE6qm+32bLGWD
+X-Received: by 2002:a05:701b:4649:b0:182:9071:3249 with SMTP id
+ a92af1059eb24-1829071340bmr2348276c88.30.1792132022434; 
+ Thu, 15 Oct 2026 23:27:02 -0700 (PDT)
 Received: from aviuser.. ([192.19.252.250]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-183190aa3ebsm2743324c88.8.2026.10.15.23.26.57
+ a92af1059eb24-183190aa3ebsm2743324c88.8.2026.10.15.23.27.00
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 Oct 2026 23:26:59 -0700 (PDT)
+ Thu, 15 Oct 2026 23:27:02 -0700 (PDT)
 From: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
 To: dev@dpdk.org
 Cc: joshwash@google.com,
 	stephen@networkplumber.org,
 	stable@dpdk.org
-Subject: [PATCH v3 03/10] net/gve: fix DQO Tx report event interval
-Date: Fri, 16 Oct 2026 06:26:40 +0000
-Message-ID: <4939c366a9ded3a69a18361810372003354c12de.1792129992.git.tathagat.dpdk@gmail.com>
+Subject: [PATCH v3 04/10] net/gve: fix stray TSO context descriptor on tag
+ exhaustion
+Date: Fri, 16 Oct 2026 06:26:41 +0000
+Message-ID: <afad8110ea0c66e44c3f265ce9ea11eb066fd3c0.1792129992.git.tathagat.dpdk@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1792129992.git.tathagat.dpdk@gmail.com>
 References: <cover.1792129992.git.tathagat.dpdk@gmail.com>
@@ -80,91 +81,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A descriptor completion is requested once every 32 packets, and Tx
-descriptors are only reclaimed on these completions. With
-multi-segment or TSO packets the ring can fill before 32 packets are
-posted, so no completion is ever requested and the Tx queue stalls
-for good.
+For TSO packets, the context descriptor is written and tx_id advanced
+before a completion tag is allocated. If no tag is available, the
+burst stops, but when earlier packets in the burst were sent, the
+tail written at the end of the burst still covers the context
+descriptor. The device then receives it with no data descriptors
+behind it, and the slot is never deducted from nb_free.
 
-Request a completion once GVE_TX_MIN_RE_INTERVAL descriptors have
-been posted since the last one, as the Linux driver does.
+Allocate the completion tag before writing any descriptor.
 
-Fixes: 4022f9999f56 ("net/gve: support basic Tx data path for DQO")
-Fixes: 403c671a46b6 ("net/gve: support TSO in DQO RDA")
+Fixes: 5fd289ff3a00 ("net/gve: support out-of-order completions on DQ Tx")
 Cc: stable@dpdk.org
 
 Signed-off-by: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
 ---
- drivers/net/gve/gve_ethdev.h |  2 +-
- drivers/net/gve/gve_tx_dqo.c | 22 ++++++++++++++--------
- 2 files changed, 15 insertions(+), 9 deletions(-)
+ drivers/net/gve/gve_tx_dqo.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index c9a176ff17..8349b1c92e 100644
---- a/drivers/net/gve/gve_ethdev.h
-+++ b/drivers/net/gve/gve_ethdev.h
-@@ -194,7 +194,7 @@ struct gve_tx_queue {
- 	uint8_t cur_gen_bit;
- 	uint32_t last_desc_cleaned;
- 	void **txqs;
--	uint16_t re_cnt;
-+	uint16_t last_re_idx;
- 
- 	/* Only valid for DQO_RDA queue format */
- 	struct gve_tx_queue *complq;
 diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
-index c864d722d9..a2ebadd0b8 100644
+index a2ebadd0b8..36d56b7d26 100644
 --- a/drivers/net/gve/gve_tx_dqo.c
 +++ b/drivers/net/gve/gve_tx_dqo.c
-@@ -254,6 +254,8 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	volatile union gve_tx_desc_dqo *txr;
- 	volatile union gve_tx_desc_dqo *txd;
- 	uint16_t mask = txq->nb_tx_desc - 1;
-+	uint16_t last_re_interval;
-+	uint16_t last_desc_idx;
- 	struct gve_tx_pkt *pkts;
- 	struct rte_mbuf *tx_pkt;
- 	uint16_t compl_tag;
-@@ -331,20 +333,23 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		txd = &txr[(tx_id - 1) & mask];
- 		txd->pkt.end_of_packet = 1;
+@@ -308,15 +308,15 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 			break;
+ 		}
  
-+		/* Request a descriptor completion once at least
-+		 * GVE_TX_MIN_RE_INTERVAL descriptors have been posted
-+		 * since the last request.
-+		 */
-+		last_desc_idx = (tx_id - 1) & mask;
-+		last_re_interval = (last_desc_idx - txq->last_re_idx) & mask;
-+		if (unlikely(last_re_interval >= GVE_TX_MIN_RE_INTERVAL)) {
-+			txd->pkt.report_event = true;
-+			txq->last_re_idx = last_desc_idx;
-+		}
++		if (!gve_free_compl_tags_pop(txq, &compl_tag))
++			break;
 +
- 		txq->nb_free -= nb_descs;
- 		txq->nb_used += nb_descs;
- 	}
+ 		if (tso) {
+ 			txd = &txr[tx_id];
+ 			gve_tx_fill_seg_desc_dqo(txd, tx_pkt);
+ 			tx_id = (tx_id + 1) & mask;
+ 		}
  
- 	/* update the tail pointer if any packets were processed */
- 	if (nb_tx > 0) {
--		/* Request a descriptor completion on the last descriptor */
--		txq->re_cnt += nb_tx;
--		if (txq->re_cnt >= GVE_TX_MIN_RE_INTERVAL) {
--			txd = &txr[(tx_id - 1) & mask];
--			txd->pkt.report_event = true;
--			txq->re_cnt = 0;
--		}
+-		if (!gve_free_compl_tags_pop(txq, &compl_tag))
+-			break;
 -
- 		rte_write32(tx_id, txq->qtx_tail);
- 		txq->tx_tail = tx_id;
- 
-@@ -445,6 +450,7 @@ gve_reset_tx_ring_state_dqo(struct gve_tx_queue *txq)
- 	txq->nb_used = 0;
- 
- 	txq->last_desc_cleaned = 0;
-+	txq->last_re_idx = 0;
- 	txq->nb_free = txq->nb_tx_desc - 1;
- 
- 	txq->complq_tail = 0;
+ 		pkts[compl_tag].mbuf = tx_pkt;
+ 		while (tx_pkt) {
+ 			/* Skip writing descriptors if mbuf has no data. */
 -- 
 2.43.0
 
