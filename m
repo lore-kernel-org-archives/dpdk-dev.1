@@ -2,96 +2,148 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 689D9CCA462
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 02:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD36CCA463
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 Oct 2026 03:12:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92E42402EB;
-	Fri, 16 Oct 2026 04:49:38 +0200 (CEST)
-Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com
- [74.125.224.42]) by mails.dpdk.org (Postfix) with ESMTP id 42504400EF
- for <dev@dpdk.org>; Fri, 16 Oct 2026 04:49:37 +0200 (CEST)
-Received: by mail-yx1-f42.google.com with SMTP id
- 956f58d0204a3-677d35fd1d2so2423121d50.1
- for <dev@dpdk.org>; Thu, 15 Oct 2026 19:49:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792118976; cv=none;
- d=google.com; s=arc-20260327;
- b=W2hgojcgDSlZfnoLmiXrqLU3nMIikH2lK/CzYW3EweEeshTu34Y+f6jQekHLcpBT9R
- jVLhn7+sQ2oEGTDb3NNMgwJeCWz8K6fXNi/UpzrjB9NGQy/Ycd2XeSCOqZ4D4z12U3c2
- avO8ZGy8hkbKxzTBoKbw2+myyO9kU7Q+K2PbGbkNgnVFOWZDLfO1iOvaBQx3QMAri8Uf
- IwcwmHHeRIImbh2IL0whUiAEBxw1KVH2bXCPmNkw9b18gQUgAb8gbhaxos786S5Dithb
- ehl2MJ7R0aFJ95DC9CmuGI8JlqhRN9WNNuKOvo0eg/2zUkDtgH3yAs+ObYtAjLOX/q7H
- JLVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=HA5ZvZGIkWFg6xoZ/QYATcb3gO13P6DtsGILJOJcUHw=;
- fh=H3Xhn9QvJJ0RZTahh/KbHsMLFNitrfUoo69XQZUqnso=;
- b=mz9Od3/gTBOVOOooy2O8cW96X/+Hpj6T4dlbVGXmkr9MA7pAJsAcSmzn0MUvXicItq
- 2UMM7+2Hv0eq2Se8jipMWzkvQixY9latUZ1oqh++f2MIU116L25SYjgE0lNUWcLYXnSR
- qFARWieoDpbjT8ObAUYHjeLl3kWeR8OGPhyFK16063ov39wKs6NVy5mJcNZhOD8JXyPP
- hbyH9xena0OVuanOnEP8SFC5ANZxukEDMmbT47SrR9AKx4AP0EI08Nnav6nr5+GbiGca
- nQIo9/zyJXPk7zjxQgFRIt7kNn/X3auHWrn8aBD1hWw2BP0i04Hk3ZhLfoTzuRWASEj5
- hP7w==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1792118976; x=1792723776; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=HA5ZvZGIkWFg6xoZ/QYATcb3gO13P6DtsGILJOJcUHw=;
- b=EY+tW1dvSlG1fRblUfw+G9RK1SS5XjXuxF2qpN/MfQGTHfUN5+fFTsa+yERl6c3k5Z
- CeYNR4g4wZ2nWoRCQcsgnfkn1Q0HAz1BABSu78biVnnV7VS3uvrmHYw2zDA369RdbQ9c
- SNSZY2c39W6dRkNh6hY7/bftgcyoKdihiE9n/gvAwPZLyqGNb5CKL0Mb5x5PojRFMMId
- aoS84CCIgOD9LE9Jk0TD8i8H7iU19KbCh3shP6kGWqVHPfh95Pq0cc/L3Lw8amMMP++W
- Ek2Pjn78hoVGC9dzC4vBdxYkhVlnTzYhS3vPfhaENmDk08zQAjysg6p7I5BxovcovX8S
- Lffg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792118976; x=1792723776;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=HA5ZvZGIkWFg6xoZ/QYATcb3gO13P6DtsGILJOJcUHw=;
- b=MMVQN7WCy/724SuJt9wwRM6NL2uKbxEP1/W/SU4ea6FWI/CdQ/IgjZMpj4Y3kNdhJl
- 5UX+TDzaPTo9BOEX3aAZ6gyjVEyMOshhbzxsvPd/y6ktd3VRHB25zsMr9VaoufgA35qB
- 2GIdBR7wRY17W72T3h+0kv71lll1/OVezmUAD1p0RXABAS2p1yrLiVvEWqUif00OJJgw
- Bo31ak0piMPSQuykvmirjcxJSfKh3FBcoWz3ujf8zFv3zhh2cT+b4rxhHkv++V0KLEh9
- YOCOSKljlRooYj447EcdpVNzQjxrag5NEUv3nbHUOjmd2t07983J5IbqbfbBIS7QKDEa
- erwQ==
-X-Forwarded-Encrypted: i=1;
- AKwUvBy5dCRTNoAjSEARwEj4cdKtynVtt3M//p+tDowKCyHdqN88S/cjfBaIYobcuEkUXjgX2fg=@dpdk.org
-X-Gm-Message-State: AFq9FYKzkIsvCjeaps1yU94YznkFFgWVh/mDnbQYvkAK31/OQJ5iEOZX
- CrIbmC7gJKLoar7PUdgIkalKI4DLT23so4nl/wmrKtrVLNksjMLwBtxXhzzGE1KYFdnSVH/5jkK
- FLC3xwHJjyW6OR8R+quxhyeHJSZqComM=
-X-Gm-Gg: AYBFou3judFHab66fve1oGSOk6guqSj0C/+msJrsdxAxjnbNDUOKubnG3Zg4+/pWsl3
- lQlY7iH1ucK5Yi+4OgIKJoeXJLCw8GfX/n5FYMVxfS0b1+jTI0nDihjejLf+c4N4ZFiuVrTmIwJ
- mk5/64NxhWzQhJkyG5+u6moUA1cBTTnYLSV0FJ+eMgn1qYNN7dPMwlvyItkYMbeINs+i0wVtmlH
- iVCFIxgR9RaYXHz1P/eChDCIeYNOBr19i0MBPzsx2f2ODwjUAtOp4v/D66i9Z+1mxPiC5DHzJDS
- /c3DWJqUH2vH6EV3mTIOZShNaZEtgW9y0UqI1QMjOAFSOB/G2IpqQwQCUuc7CaYyonfTKSAX0kr
- o6Ok756TS8Tb0c196z19h8KVzyy4Jp2kZsNIZzk3T++Im+gJWqu2oce23NYLa40WpgYDflDKgOq
- wGFRbWpQI7oHrvO4Lr
-X-Received: by 2002:a05:690e:1187:b0:679:ad30:f006 with SMTP id
- 956f58d0204a3-679ad3101cemr541436d50.81.1792118976392; Thu, 15 Oct 2026
- 19:49:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20260909160637.3607104-1-rtice@cisco.com>
- <20260909160637.3607104-2-rtice@cisco.com>
- <CAMuDWKRJLZLLq5XLGNmysd7=GiNCOvGh+u=p510RqDNktOdbVg@mail.gmail.com>
-In-Reply-To: <CAMuDWKRJLZLLq5XLGNmysd7=GiNCOvGh+u=p510RqDNktOdbVg@mail.gmail.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Fri, 16 Oct 2026 08:19:09 +0530
-X-Gm-Features: AclHuK9GZVmSg0vO8FYlYDhRC-0l8Wtot7iVh4z7JWLRujGsneOyXqW0iCraYHU
-Message-ID: <CALBAE1MKkdBc_h_mEJcTMy7jeYC0aYgq2Fhini6fjhgALj-uwQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] drivers: fix CN20K mbuf size truncation
-To: Nithin Dabilpuram <nithind1988@gmail.com>
-Cc: Randy L Tice <rtice@cisco.com>, dev@dpdk.org, stable@dpdk.org,
- thomas@monjalon.net, 
- pbhagavatula@marvell.com, sthotton@marvell.com, ndabilpuram@marvell.com, 
- kirankumark@marvell.com, skori@marvell.com, skoteshwar@marvell.com, 
- hkalra@marvell.com, rbhansali@marvell.com
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 74CFE40291;
+	Fri, 16 Oct 2026 05:12:31 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 685C7400EF
+ for <dev@dpdk.org>; Fri, 16 Oct 2026 05:12:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792120351; x=1823656351;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=lEZbrfX9ilhG+GoqiPX2JMWbz+s/93oQFW1PN9p86qE=;
+ b=W+LY0Ao9XQlRZu2KuzHIIGc1s7K+gdeAm7rSq2r+lU7qu7RX0M1QiqRA
+ lm9n95EDl2eXBL5w8t6wiTQ2p153vlpuGoflFMxkCQLY8fw6Bn5VoN6z5
+ 8ZyeueKd0cTavzq3adAbqEcF/QQQtD/Jr71prxpD2Fhx1yaFmc2h/vZzA
+ G129Uf5FEVSdAVzuXQN+1GjeWCBLs9ATeNjLiOi+aWVIjYVNYW6f8a8kl
+ 7FM47gphvXqA6j6di/oiA2IFKt1tfZf1kKwGTK4PICxBjhoNZTxK3b46K
+ 214RCPXY5OUE7ay2bOOAPe2qhYrCtMUVfS+aCnz5DysAcmYuOp1WJKdGn g==;
+X-CSE-ConnectionGUID: PGqfO2YgSf27PzZmHZq2TA==
+X-CSE-MsgGUID: CjYz1eDKQqeu5xdsCXeXQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11936"; a="1005047"
+X-IronPort-AV: E=Sophos;i="6.27,161,1787036400"; 
+   d="scan'208";a="1005047"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Oct 2026 20:12:30 -0700
+X-CSE-ConnectionGUID: r3d7Ya92TyCMggPmFlmXZw==
+X-CSE-MsgGUID: LuvsrJnfSQyidBNmx1w1Ig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,161,1787036400"; 
+   d="scan'208";a="1942304"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Oct 2026 20:12:30 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Thu, 15 Oct 2026 20:12:28 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Thu, 15 Oct 2026 20:12:28 -0700
+Received: from BN8PR05CU002.outbound.protection.outlook.com (52.101.57.16) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Thu, 15 Oct 2026 20:12:28 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WSJ/CTZT1siis4bz03/GVU7TjjIsrEvgSpK1i7EPXVYs17Kujd+S9Ptp6IVmf9+xeI5qoCbdsQBSB/vWs1BzQreYqYbQwCM/5JTsNH55D4kGDF3D864s9hKsgcklW2asg62yHcFFRLJlp//al4h9Zr77ayqGtq5lcl88MrsLCdsilO2hJm0Iq42t0U3crrgpiypcljeL+h4o8SPwFPDM5Uk+CXbiNRP2HVMPQfekTBp7cENjhlymms7ajVfbg4bXVLuUDlRpOFdLrS0xG2U6TV/h934t0EoWQBxwcDlAd/6lmGUKUPIFKtRIAVrnCHHH8M68XpX6iJ2ceWDHrNg33g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Uou25RnTDC77Xww0JOp6IsNWH7CP76/Uzhki5v9G/qs=;
+ b=TXXinD/FQIG9f+W7+JCyYFzXyIC15vEnAulWs6VbEflCHjdrkbIHQGu6FzJ7g9TcAAJMLW05SkUkyNFY/z1NRBB/PcF2WMd7iOEJDtK26TA45IlP0T9qCF7OsCiNB9O3uWrCZ+tGKXPzue8qW1QULDLeo3yFohWFnQS62BcCgGU8gQi2e/3ZfwL2gep5NTRNQ2kTKG+9n8o8+bJPu8PflcA2YQTnnQ8kei7aiVmdKAnPY94nWmm2XJhhCiAV2Qqak80k8+DckoIJsQsEdIRrn6yDE5jlCD/AzB+LAhBsaJnPC/Go9qBor6YFcg4iyMHU+NlE0tZcyI/lcjW6dC38xw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from AT6PR11MB044526.namprd11.prod.outlook.com
+ (2603:10b6:170:110::22) by SN7PR11MB7018.namprd11.prod.outlook.com
+ (2603:10b6:806:2ad::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.23; Fri, 16 Oct
+ 2026 03:12:25 +0000
+Received: from AT6PR11MB044526.namprd11.prod.outlook.com
+ ([fe80::4301:f255:af66:888c]) by AT6PR11MB044526.namprd11.prod.outlook.com
+ ([fe80::4301:f255:af66:888c%6]) with mapi id 15.21.0522.013; Fri, 16 Oct 2026
+ 03:12:25 +0000
+From: "Mandal, Anurag" <anurag.mandal@intel.com>
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "Richardson, Bruce" <bruce.richardson@intel.com>
+Subject: RE: [PATCH v1 5/7] net/iavf: fix hash flow metadata leaks
+Thread-Topic: [PATCH v1 5/7] net/iavf: fix hash flow metadata leaks
+Thread-Index: AQHdW++L6/TSha6TRkSBzH9TKNv2w7b/gAnw
+Date: Fri, 16 Oct 2026 03:12:25 +0000
+Message-ID: <AT6PR11MB044526DC14053DED4A12805BFAE49B2@AT6PR11MB044526.namprd11.prod.outlook.com>
+References: <cover.1791991100.git.anatoly.burakov@intel.com>
+ <60442096f221bf2ccd30dcc2d19a7f9819a9a2c2.1791991100.git.anatoly.burakov@intel.com>
+In-Reply-To: <60442096f221bf2ccd30dcc2d19a7f9819a9a2c2.1791991100.git.anatoly.burakov@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AT6PR11MB044526:EE_|SN7PR11MB7018:EE_
+x-ms-office365-filtering-correlation-id: 03357e69-9e66-46d8-ad2f-08df2b334d96
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|23010399003|1800799024|376014|366016|6133799003|22082099003|10067099003|18002099003|38070700021|11063799006|4143699003|261009223027099003|56012099006;
+x-microsoft-antispam-message-info: gjszKKfL5w94PHqszH7QEpBbjfrA0jknoo2oWWZA9kNFzY1tO79Aj63LjiEBV/ukkOk09tHKhjMgFHqmULgTm32e6xDh/+VwKMw/5gn+Fidx/aZnKOz9KTzA9rs1g70lu2YTum0327s/lrpn6kELJxoHMOfNj5g8fUEq+DLVnQnaDhNE1yI9O8TBZXEX55J/iIAFAjTN99WWvRy0fRAF8k4WN0DMgJhu9ljG7S49GWv/G+C2zb69m3HUW4o6fdQ0nvgOBaLquZ3M3+OibtS4ThLUGSK/cwFIC/lhKGNMutLcdHtYwRJs8FECPrMrJZGXiQ4lHAvPKVSw3UgQgaKwNe5JmpHN9LScuTXEMi/nKMyjE7OJzhLcCy0tKbpZPdFrZWipgZHx69XxMRjuDUPJ2OJKwhH+3YX6vfVLVT3a0t4oE8jebOJbwlZSNR3ygO0nnbxwijS+yoWXkp/VqqciLAesHKLLWRR0enrchTgL71XB4iLNfSZ1z16kM2ERU0v6gHQ6O3+SZHUm4FDclZXw/KA1/8TJL3TIOB9J8EQ5NqQLhxn02BOPlOrH9i3D8CRwGJlyeUVeK/nSWCm9UgyMpFwAUMgREBCawByAtiRNAS8l+uEQd1sBlbCy0IZvHiBdvEK6c8o6etj6CrOvLD33u244SRdbze7FwehTJECXvTY=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:AT6PR11MB044526.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(6133799003)(22082099003)(10067099003)(18002099003)(38070700021)(11063799006)(4143699003)(261009223027099003)(56012099006);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?cfZvf8P8xi9p0b+78SkXg3IMnZSWI8k1jGqN7lWD9OM8ECjC6tUilA+JA7rI?=
+ =?us-ascii?Q?J02ML7JmLNMV843lN4fInKAbtxIZUpSXxjvLFPrgknMxaL5ILmKCW04skZVi?=
+ =?us-ascii?Q?IZxK9w1uDhcdlY4CqkTXeN50k74DB3aVOTOdVlUBlosPNd05DbQ9dTllS1gU?=
+ =?us-ascii?Q?RsxIMR0yY6MDlFXzg9SK1yAFq4XzYq4eKvAwuzbzGqpl9Uv0jHL1AWHq4rvz?=
+ =?us-ascii?Q?gCYRSuYE6dQ8LMdKK2YwBZG6Cy1nkbrCHikR3nzGrSCcWZxQMI8AuZlfZBj4?=
+ =?us-ascii?Q?4x3aRL8OITuxXZEku41+hEy3iNR6Co/XVsM4oyq3nxRjwv7dAZIkZVWoYgEH?=
+ =?us-ascii?Q?V18P8ABZY+6sRxbnZxJkq6/g7prJBdeOQ4YWJyieUIWknePLC7/BMSvTh1LB?=
+ =?us-ascii?Q?Fw5qDLrissZxkuN1cFpZxYcr87bAR8MFPhDsp6DRhEtKmmXyLZ66kiYRR/fC?=
+ =?us-ascii?Q?YzitcABHBzCZOzjPZI8HGDn302koH0vfDKcVJj+9B5Z6ndEvYTkdZqH+2+At?=
+ =?us-ascii?Q?zcX/zHJzJrEae8HMkyUj9i6s15FohJ7GkeMflUTC3FsJ/7/yW7jyedXnSEwD?=
+ =?us-ascii?Q?+jVw2jHTLES6cGtG77260BIQmIKAhSDOdAAdkMwTJLG6WkUFOC0C+oEYcBP1?=
+ =?us-ascii?Q?ODYxr8AzSr0BL5j5AT0Lp0GIUxyZJ88L9i0N9YuF+SC5W39RQfLlrRSZKmJk?=
+ =?us-ascii?Q?dv/vDENAaO7+dRAaGKRJU4zvr2D/hrzB+NeRQRWzA+tFQfOf1jw/tWK5gcjR?=
+ =?us-ascii?Q?iESGJU6PHLCWp1bfzAGASzmOt4EzUQQpMR9eTce6Y4CVvvtgP56PIJScdp06?=
+ =?us-ascii?Q?p1yeSaM2B1km586IMqaxzV8QNBinlNdnftWjj1E/T8jI8fJMn0MfKGfNWyoc?=
+ =?us-ascii?Q?3CKWpGkFJe8+6DpmeX03gTAPGvZJnffyse5WON/nq6d4dN7etUMSNJL5tXkY?=
+ =?us-ascii?Q?NViO0Khld9lknNFGRSVYDRXAsFmtO0T6QjzphAJD755z5gtsTcg/gznxJ5M2?=
+ =?us-ascii?Q?lzKFqHY09wvTTeXVSR9UHo6IeFD2y890STt6IMpjLbv/3Nij9CmmaJRgbFkZ?=
+ =?us-ascii?Q?WYQye/eJLgDCWuZeMr/+30W3xbjoiZ0w7lwyFD6WY/9YfmZPq/9vdSJSaiWw?=
+ =?us-ascii?Q?0nM/1+5VkirRrCTSSHkKJ/glOeFDqAngusqUgLIcH+wC6L7UXAjXqv1PiSFD?=
+ =?us-ascii?Q?DXmcog9U8m5NJJnUTRlxHkCv44LEQ2jk2LzAhw/+fDl07fFjsl+M3xO/7mCw?=
+ =?us-ascii?Q?41FkufTMk4OydPeSsafWshCFSm1Xgz7joU0a2FwZejUYGToVftafMIoWzTDd?=
+ =?us-ascii?Q?T3MrhIm9iGaq7JZbgZ3MQBnwr3ckDEQmvomrL3D36szY0dNzC9TnZTWNlRnm?=
+ =?us-ascii?Q?y1ePtoaJIRoGA/2BHB8z7nghpdvFyn801XsnSz4K5iVr0JU0FEussR4vQUb5?=
+ =?us-ascii?Q?lSeUcIWEejM43yc0AmrSr9VcxGt0yu6C5FtdRLZnvJ+2pL/TYasDU8njI9lG?=
+ =?us-ascii?Q?ekbJbttus45b0DTT49b43ngmEuxrknwYS3ghI7IyiVv9A3HRhQpWBvxYGkTv?=
+ =?us-ascii?Q?LaGE7UITu+lMuBscVrL4uKP7g3z05Pi3iwMYl0lXZEv1bgiPa4EwQmvY8hiZ?=
+ =?us-ascii?Q?mtUHyoKvNl8Lr94MmSoEojUy5rmutyd1QPOue/dcN1dzgJhUc5xzZ3o3sfvJ?=
+ =?us-ascii?Q?L6ADjX8Wt91mD9xp+wwVAc9W5W7zKUpa0/CwdxiCc5b73XmxDat9PEu8Xs6v?=
+ =?us-ascii?Q?WOQhYsXy+Q=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: UoI9P3QJvn5Kw/tII0F8ynV1f4164j02vHph1/J54hpnlyLKaD9gi0LGOs813cfwdINRdK0xbohGt5FyszoTC+S9tmfZZoVPoiYWVri4ZpQkbXbIOoqtd6nQS/6tuGjmwVMWuFHbmdE7cogFqCzR5rLO9H5dX2vStF3y/lwXHJnveaWZdEm8VRhow2H3ugg93H7BCzfzy2wszU5TogdxVC5/V2iKSNkYCXcwHZZqn+pL1ziRY914C8kZeHeyGNiTTQ5TncEYGCksUYtk3DbSaD3vLfZkkXt4A6DYf5vNcEJ7HQb0nhFnTFDRqzSQvxF3E1U+b491LXGLL89b8+to+A==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AT6PR11MB044526.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 03357e69-9e66-46d8-ad2f-08df2b334d96
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2026 03:12:25.4454 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yVB9aB0guv9VM2aaqKKLnYmM97m+GpK55rpzS1Y/t1Je4J9sQp41Mlmc+BF/QLVStnsC9NuyxXYWIcwCMN0Y9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7018
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -105,104 +157,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Sep 22, 2026 at 11:39=E2=80=AFAM Nithin Dabilpuram
-<nithind1988@gmail.com> wrote:
->
-> Acked-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+
+> -----Original Message-----
+> From: Anatoly Burakov <anatoly.burakov@intel.com>
+> Sent: 14 October 2026 20:49
+> To: dev@dpdk.org
+> Subject: [PATCH v1 5/7] net/iavf: fix hash flow metadata leaks
+>=20
+> Hash flow parsing allocates RSS metadata, but validation has no callback =
+to
+> release it. Creation also leaks the metadata if rule allocation or the re=
+quest to
+> add the RSS rule fails.
+>=20
+> Add a validation callback to release the parsed metadata, and free it on =
+both
+> creation failure paths. Parsing already checks the RSS inputs; validation=
+ does
+> not add or remove a rule.
+>=20
+> Fixes: 7be10c3004be ("net/iavf: add RSS configuration for VF")
+> Fixes: 215a247b5f33 ("net/iavf: refactor hash flow")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> ---
+>  drivers/net/intel/iavf/iavf_hash.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>=20
+> diff --git a/drivers/net/intel/iavf/iavf_hash.c
+> b/drivers/net/intel/iavf/iavf_hash.c
+> index cef30cd08e1..6787a380f8e 100644
+> --- a/drivers/net/intel/iavf/iavf_hash.c
+> +++ b/drivers/net/intel/iavf/iavf_hash.c
+> @@ -80,6 +80,9 @@ iavf_hash_destroy(struct iavf_adapter *ad, struct
+> rte_flow *flow,  static void  iavf_hash_uninit_parser(struct iavf_adapter=
+ *ad);
+> static int
+> +iavf_hash_validation(struct iavf_adapter *ad, struct rte_flow *flow,
+> +		     void *meta, struct rte_flow_error *error); static int
+>  iavf_hash_parse_pattern_action(struct iavf_adapter *ad,
+>  			       struct iavf_pattern_match_item *array,
+>  			       uint32_t array_len,
+> @@ -680,6 +683,7 @@ static struct iavf_flow_engine iavf_hash_engine =3D {
+>  	.create =3D iavf_hash_create,
+>  	.destroy =3D iavf_hash_destroy,
+>  	.uninit =3D iavf_hash_uninit_parser,
+> +	.validation =3D iavf_hash_validation,
+>  	.name =3D "hash",
+>  	.type =3D IAVF_FLOW_ENGINE_HASH,
+>  	.rule_size =3D sizeof(struct virtchnl_rss_cfg), @@ -1579,6 +1583,15 @@
+> iavf_hash_parse_pattern_action(struct iavf_adapter *ad,
+>  	return ret;
+>  }
+>=20
+> +static int
+> +iavf_hash_validation(__rte_unused struct iavf_adapter *ad,
+> +		     __rte_unused struct rte_flow *flow, void *meta,
+> +		     __rte_unused struct rte_flow_error *error) {
+> +	rte_free(meta);
+> +	return 0;
+> +}
+> +
+>  static int
+>  iavf_hash_create(__rte_unused struct iavf_adapter *ad,
+>  		 __rte_unused struct rte_flow *flow, void *meta, @@ -1594,6
+> +1607,7 @@ iavf_hash_create(__rte_unused struct iavf_adapter *ad,
+>  		rte_flow_error_set(error, EINVAL,
+>  				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+>  				   "No memory for rss rule");
+> +		rte_free(meta);
+>  		return -ENOMEM;
+>  	}
+>=20
+> @@ -1609,6 +1623,7 @@ iavf_hash_create(__rte_unused struct iavf_adapter
+> *ad,
+>  				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+>  				   "Failed to add rss rule.");
+>  		rte_free(rss_cfg);
+> +		rte_free(meta);
+>  		return -rte_errno;
+>  	}
+>=20
+> --
+> 2.52.0
+
+Hi Anatoly,=20
+
+I had submitted similar fix  in this patch earlier.
+https://patches.dpdk.org/project/dpdk/patch/20261010121255.528329-1-anurag.=
+mandal@intel.com/
+
+Thanks,
+Anurag M
 
 
-Applied to dpdk-next-net-mrvl/for-main. Thanks
 
->
-> On Wed, Sep 9, 2026 at 9:37=E2=80=AFPM Randy L Tice <rtice@cisco.com> wro=
-te:
-> >
-> > CN20K inline security receive paths recover the packet mbuf by
-> > subtracting sizeof(struct rte_mbuf) from a pointer stored in
-> > completion metadata.
-> >
-> > The size is currently kept in a uint8_t local variable before
-> > that subtraction. This truncates the value when the mbuf structure
-> > grows beyond 255 bytes, and can recover the wrong mbuf address.
-> >
-> > Use a uint32_t local value for the mbuf byte size so larger mbuf
-> > layouts are handled correctly.
-> >
-> > Fixes: 5856f23129bb ("net/cnxk: support CN20K inline IPsec Rx")
-> > Fixes: edd0d5f3c299 ("event/cnxk: support CN20K inline IPsec Rx")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: Randy L Tice <rtice@cisco.com>
-> > ---
-> >  .mailmap                          | 1 +
-> >  drivers/event/cnxk/cn20k_worker.h | 4 ++--
-> >  drivers/net/cnxk/cn20k_rx.h       | 4 ++--
-> >  3 files changed, 5 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/.mailmap b/.mailmap
-> > index fcb3d1bb3f..2a8b54ea23 100644
-> > --- a/.mailmap
-> > +++ b/.mailmap
-> > @@ -1379,6 +1379,7 @@ Rakesh Kudurumalla <rkudurumalla@marvell.com> <rk=
-udurumalla@caviumnetworks.com>
-> >  Ralf Hoffmann <ralf.hoffmann@allegro-packets.com>
-> >  Rami Rosen <ramirose@gmail.com> <rami.rosen@intel.com>
-> >  Rami Rosen <ramirose@gmail.com> <roszenrami@gmail.com>
-> > +Randy L Tice <rtice@cisco.com>
-> >  Randy Schacher <stuart.schacher@broadcom.com>
-> >  Rani Sharoni <ranish@nvidia.com>
-> >  Ranjit Menon <ranjit.menon@intel.com>
-> > diff --git a/drivers/event/cnxk/cn20k_worker.h b/drivers/event/cnxk/cn2=
-0k_worker.h
-> > index 6442113e09..5723a6eabb 100644
-> > --- a/drivers/event/cnxk/cn20k_worker.h
-> > +++ b/drivers/event/cnxk/cn20k_worker.h
-> > @@ -48,7 +48,7 @@ cn20k_process_vwqe(uintptr_t vwqe, uint16_t port_id, =
-const uint32_t flags, struc
-> >  {
-> >         uint64_t mbuf_init =3D 0x100010000ULL | RTE_PKTMBUF_HEADROOM;
-> >         struct cnxk_timesync_info *tstamp =3D ws->tstamp[port_id];
-> > -       uint8_t m_sz =3D sizeof(struct rte_mbuf);
-> > +       const uint32_t m_sz =3D sizeof(struct rte_mbuf);
-> >         void *lookup_mem =3D ws->lookup_mem;
-> >         uint64_t meta_aura =3D 0, laddr =3D 0;
-> >         uintptr_t lbase =3D ws->lmt_base;
-> > @@ -165,7 +165,7 @@ cn20k_process_vwqe(uintptr_t vwqe, uint16_t port_id=
-, const uint32_t flags, struc
-> >  static __rte_always_inline void
-> >  cn20k_sso_hws_post_process(struct cn20k_sso_hws *ws, uint64_t *u64, co=
-nst uint32_t flags)
-> >  {
-> > -       uint8_t m_sz =3D sizeof(struct rte_mbuf);
-> > +       const uint32_t m_sz =3D sizeof(struct rte_mbuf);
-> >         uintptr_t sa_base =3D 0;
-> >
-> >         u64[0] =3D (u64[0] & (0x3ull << 32)) << 6 | (u64[0] & (0x3FFull=
- << 36)) << 4 |
-> > diff --git a/drivers/net/cnxk/cn20k_rx.h b/drivers/net/cnxk/cn20k_rx.h
-> > index f8fa6de2b9..b544868c03 100644
-> > --- a/drivers/net/cnxk/cn20k_rx.h
-> > +++ b/drivers/net/cnxk/cn20k_rx.h
-> > @@ -702,7 +702,7 @@ cn20k_nix_recv_pkts(void *rx_queue, struct rte_mbuf=
- **rx_pkts, uint16_t pkts, co
-> >         uint64_t mbuf_init =3D rxq->mbuf_initializer;
-> >         const void *lookup_mem =3D rxq->lookup_mem;
-> >         const uint64_t data_off =3D rxq->data_off;
-> > -       uint8_t m_sz =3D sizeof(struct rte_mbuf);
-> > +       const uint32_t m_sz =3D sizeof(struct rte_mbuf);
-> >         const uint64_t wdata =3D rxq->wdata;
-> >         const uint32_t qmask =3D rxq->qmask;
-> >         const uintptr_t desc =3D rxq->desc;
-> > @@ -815,7 +815,7 @@ cn20k_nix_flush_recv_pkts(void *rx_queue, struct rt=
-e_mbuf **rx_pkts, uint16_t pk
-> >         uint64_t mbuf_init =3D rxq->mbuf_initializer;
-> >         const void *lookup_mem =3D rxq->lookup_mem;
-> >         const uint64_t data_off =3D rxq->data_off;
-> > -       uint8_t m_sz =3D sizeof(struct rte_mbuf);
-> > +       const uint32_t m_sz =3D sizeof(struct rte_mbuf);
-> >         const uint64_t wdata =3D rxq->wdata;
-> >         const uint32_t qmask =3D rxq->qmask;
-> >         const uintptr_t desc =3D rxq->desc;
-> > --
-> > 2.35.6
-> >
