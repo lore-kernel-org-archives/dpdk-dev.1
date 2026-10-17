@@ -2,71 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CF0CCF2C4
-	for <dpdk-dev@archiver.kernel.org>; Sat, 17 Oct 2026 19:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26B2CCCF2C4
+	for <dpdk-dev@archiver.kernel.org>; Sat, 17 Oct 2026 20:36:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA998402EB;
-	Sat, 17 Oct 2026 21:49:02 +0200 (CEST)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
- [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id AE3F940276
- for <dev@dpdk.org>; Sat, 17 Oct 2026 21:49:00 +0200 (CEST)
-Received: by mail-pj1-f54.google.com with SMTP id
- 98e67ed59e1d1-3ac677668a9so763118a91.2
- for <dev@dpdk.org>; Sat, 17 Oct 2026 12:49:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B4CBE40291;
+	Sat, 17 Oct 2026 22:36:28 +0200 (CEST)
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com
+ [209.85.210.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 1C42640276
+ for <dev@dpdk.org>; Sat, 17 Oct 2026 22:36:26 +0200 (CEST)
+Received: by mail-pf1-f174.google.com with SMTP id
+ d2e1a72fcca58-8a01cac8733so601036b3a.2
+ for <dev@dpdk.org>; Sat, 17 Oct 2026 13:36:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792266540;
- x=1792871340; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=rcemjn3jO4vjDhPt+l30a1lZ4ek/fFYvKric6EBmp5Q=;
- b=ktdTTxgFbbIM1RVa5RJnvvKI21JYB94cPyt8YJH09dYfah0uwpjeM9k8ChIoKH2T6Z
- yF3m4IeTz1ExZwK2e25BBHLXKkL6oOUqhbxT7K6zGvxZIhx4EAofT6dUH1rF0aNDEf/h
- DtN7CeLjWic+rYI4pF9907Dh0fgFUKk0YIkvdtKL/Cn8dKIZhOa+G9ZY9eko0SL0dVEx
- bP/RtYpYdfsJ7bUz3QvuI5nHBLSCsrq+OuKyz5wywddt1qD60zr3HN/cN0TKPAPNhYTF
- OG+OeYeNfxOUOkSG4p5AEkx8CDjvN+SKEKk2zPYw8spPJxckDYVSx2kzh6Xf0T3wzhpI
- m+mA==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792269386;
+ x=1792874186; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=PGDLY1idJg/ZoxwDW/HrdZZ4PFErPj7/JmH6KLXhIAI=;
+ b=Q5KFSUV+ZOASDjunfZZG3ReIBg1/t0stGs0OCMYri5HzDSM5pTNe9ksaDA/So3PRKR
+ jm4edtQnqCd+0/bLIMKxSG1GyIHUYih7HYCWLX4rAyu4hplrfwxljp45bCKXTV9kHtf1
+ XoqelBT/wHIjrn3vPnJNSPJYDuawQkwvqJwKV8ISv37fwVxGMRNksQmt89Whdgiz0F9k
+ SjSTlq7ezMpWykUZAL684VyspoC+aE4EcosmqjDB/fPqiIM8nxkRM76cn1L/ib5inqze
+ zMbDvnP66Ckd2H3ifHOJ24WfOZ9tzxHH6AOmJhAuF6KT1Z4cJMOme9gk+pK4085VAKkx
+ atAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792266540; x=1792871340;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=rcemjn3jO4vjDhPt+l30a1lZ4ek/fFYvKric6EBmp5Q=;
- b=v0h9ZHlH9FtQylYqvB41GewZAuAk4/nO88YxPuWkSSYH3xGuYrENsSTm6sDBPlVRu/
- ql171jBFwMkpXT8WpYUrQ8NYtggeboYvOG3IgTQ1HdyDz6d6uxfCigem0UqxMLLY/Md8
- fTrx/CpXbNZVHQ3jwKGHy5cvVPUzij8LOLYTAXcc/GthkM8G7d2IR7pte85X4yjlzxC5
- hGyH/fZBS0MM8y3rX7udNEzSQz6uXR2h5OuRxOlnS8Ntun04GieEYy5SHzOE6uO7pDgk
- zrw27LMqd0sh+WuAdD3CvWEcS+ooVPFxLnyIfKpe35gBCcSFg1UTZ5wHS5TmYjGVTAoQ
- PrIg==
-X-Gm-Message-State: AFq9FYI8o+wbfb7G9y9Esu9QO3bFdi8kHPjYmlDrsX18VULsio20wOjN
- XjAsX2JAn8vBRl5bRN668xvLQJCN7UYWRwdvo8IBH58fBuoM/0cyQB/y9Vq+/CTmA8zi+Cz+BQ2
- dz//S
-X-Gm-Gg: AYBFou2IitIceQIvFqltSihjpQm2Adri2axYl3ff6Ap/Vsg9nrevpzrCRIJYQbJMwmA
- cC7c/rsygkyGTX9LD7GAczAKO6lU+Q+QdIjdq1opDfT9omDD73q/Myf9Z/E1ogiOZR6cevPjKcV
- TPbG65XA7dbs0/VgTTkU23qYZWr4tvUNgk3mK9wsbpIdG5HR1HQY+dOe9WjD2IjX4WaMp2UHFxj
- kFhlaNlE8NO/pK4Csv5b5JqzH5b0dFxabryginGOmUcDp9nmuPUCwJb81nfmYREFdltIsH8J7WE
- kmlJsOddXLMbdhUSttkH5TFp9Oo0bJ7kTgM/eZA0hiQ9wVYfYiqFLy2qdKcXTqyfC2C3UjoDA3D
- Abjt9RO7MzuDqWbXRfr6eIPtxVnmiZi5kGfSfNCjWww4gPb5Ykf/5guJKLG8lnzKqTX/PXcGvTS
- drqD+qlDUMGEtYr/gnZvphuhmdo6GGjtrVofLmHwJB5Ngu2E+Q4dy5R8dJVg1xGnLuJjvIXRtWg
- OQePCLZi9QJ9tpShADJO1P5FsvUMgQi2mbMxQ==
-X-Received: by 2002:a17:90b:2ec3:b0:3ac:80dc:f41d with SMTP id
- 98e67ed59e1d1-3acef134d71mr3023761a91.32.1792266539775; 
- Sat, 17 Oct 2026 12:48:59 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1792269386; x=1792874186;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=PGDLY1idJg/ZoxwDW/HrdZZ4PFErPj7/JmH6KLXhIAI=;
+ b=oyuzGx+khUHGo/gKJO3r54Zc/xK7DI3kJfORX6mvBXd2e28dXeHvmwEvc12NnsZ4Lx
+ WF967h1zP+UMKgltGT144myeY99TNfXzCgYQs4qD0GgemUK03dOF5jny3Kk4HCO6JJZV
+ n6RoekZKbjED05GJf5v7LRiwyQ9w5c06+MtMiyJh3rb078VZles7OncA0BoSBLq6GMub
+ dGjzMidp7N4W87r+EoVqBd67vVow/NaUTbCJytiyR7zCMIKbhMoEgzeBcHmO1wdc3uYq
+ vWhk/TowGgRJfrZDRvDfAkTK9wNq+BabJoSfJpgtXL0SvWw4534kzMr6ZWRHncEhfxwg
+ bOrQ==
+X-Gm-Message-State: AFq9FYJ/MPXUsd44TWPzDMJVH02QyEJdDSP3m5Kx0d60q7ORIS47JJUL
+ iYC5hpMBw5ND9CEQGSzQ489abffgEz7rQrkZAFGFAAl896eg5uLLvs4HTPx9q91uUHTteqUsyim
+ WxtNEXFM=
+X-Gm-Gg: AYBFou3Qv/slY8fKEk1KYQpF2OOJKH0NE2wOF3+GkC9ld0Dq5C1PE5EFvaLSvjs3gsN
+ G5RGmARSFdxMXP0oGY4nf+usTrAf2odEHoeCIJUg7eCPbr35cfbaC1xZv8Iyc2ykw3eFHtNJMrt
+ 8F8r18o0VV2NXMDArZmMRyG7Nfa8CRowFOhq2jOJrVWn/LuW4Us8tOTYwnN86l0WqWbPlroawdL
+ EdndBQwz+7v1KCeSqjWJ7zL6qa0eCaZw9BZ6T5Bf7+Q57kKZ/cZOPhzfjssOhQyajnKXeeDg76f
+ IhEAVT3aL9XJfb0X85HiEjPZ1zYf/io552QT4U0UKdJYJf9EA39y7GrHZjnfVZamXbr6M9qx2aA
+ 81l0uwvZGKV0SVzSZajB1XPjKcBQn9iUngblFcJScF0GnhvHnqnb/Hau7ORV1AeiGOicaXnI/R5
+ sGC1Wj10d/FyhuRv1qsAOHkygm8ihMAsXHCur6R1PATdMUeWWRrwgq52cbopmrTCRq/X0KnNbsx
+ W4MZnNte5BF1NCuJEOIp2/bmSjy3Qla+CevDQ==
+X-Received: by 2002:a05:6a00:4404:b0:892:a8f1:c53d with SMTP id
+ d2e1a72fcca58-8a04bb360d4mr2554427b3a.22.1792269385867; 
+ Sat, 17 Oct 2026 13:36:25 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3acc980a548sm4533655a91.0.2026.10.17.12.48.59
+ d2e1a72fcca58-89f57653ea9sm2451929b3a.32.2026.10.17.13.36.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 17 Oct 2026 12:48:59 -0700 (PDT)
+ Sat, 17 Oct 2026 13:36:23 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: [RFC 2/2] app/testpmd: add option to limit run time
-Date: Sat, 17 Oct 2026 12:48:55 -0700
-Message-ID: <20261017194856.2950241-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [RFC 0/3] fix bogus interrupt FD leak warnings
+Date: Sat, 17 Oct 2026 13:35:02 -0700
+Message-ID: <20261017203621.3136254-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261017194856.2950241-1-stephen@networkplumber.org>
-References: <20261017194856.2950241-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,194 +79,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When benchmarking it is useful to be able to run testpmd for
-a fixed amount of time.  In non-interactive mode testpmd runs
-until a signal arrives or something is read from stdin.
+Running testpmd with an i40e device on 26.11-rc1 prints a set of FD
+leak warnings on port close and on exit:
 
-Add --run-time=N to stop forwarding and exit after N seconds,
-printing the final statistics as on a normal exit.
-The stats period loop is folded into the same wait.
+  Closing ports...
+  EAL: Some interrupt handle is leaking a FD: 19
+  EAL: Some interrupt handle is leaking a device FD: 18
+  Port 0 is closed
+  ...
+  Bye...
+  EAL: Some interrupt handle is leaking a FD: 20
+  EAL: Some interrupt handle is leaking a device FD: 18
+  EAL: Some interrupt handle is leaking a device FD: 18
+  EAL: Some interrupt handle is leaking a FD: 7
+  EAL: Some interrupt handle is leaking a FD: 7
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test-pmd/parameters.c             | 18 ++++++++
- app/test-pmd/testpmd.c                | 61 ++++++++++++++++++---------
- app/test-pmd/testpmd.h                |  1 +
- doc/guides/testpmd_app_ug/run_app.rst |  6 +++
- 4 files changed, 66 insertions(+), 20 deletions(-)
+The warning is new in 26.11 (commit d770ee9caed0, "interrupts: warn on
+leaked FDs"). It is doing its job - one of these is a real leak - but
+most of what it reports here is not, and the noise will get reported as
+a regression.
 
-diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
-index f031dd7445..c852075dfb 100644
---- a/app/test-pmd/parameters.c
-+++ b/app/test-pmd/parameters.c
-@@ -61,6 +61,8 @@ enum {
- 	TESTPMD_OPT_TX_FIRST_NUM,
- #define TESTPMD_OPT_STATS_PERIOD "stats-period"
- 	TESTPMD_OPT_STATS_PERIOD_NUM,
-+#define TESTPMD_OPT_RUN_TIME "run-time"
-+	TESTPMD_OPT_RUN_TIME_NUM,
- #define TESTPMD_OPT_DISPLAY_XSTATS "display-xstats"
- 	TESTPMD_OPT_DISPLAY_XSTATS_NUM,
- #define TESTPMD_OPT_NB_CORES "nb-cores"
-@@ -282,6 +284,7 @@ static const struct option long_options[] = {
- 	REQUIRED_ARG(TESTPMD_OPT_ETH_PEER),
- 	NO_ARG(TESTPMD_OPT_TX_FIRST),
- 	REQUIRED_ARG(TESTPMD_OPT_STATS_PERIOD),
-+	REQUIRED_ARG(TESTPMD_OPT_RUN_TIME),
- 	REQUIRED_ARG(TESTPMD_OPT_DISPLAY_XSTATS),
- 	REQUIRED_ARG(TESTPMD_OPT_NB_CORES),
- 	REQUIRED_ARG(TESTPMD_OPT_NB_PORTS),
-@@ -408,6 +411,8 @@ usage(char* progname)
- 	       "(only if interactive is disabled).\n");
- 	printf("  --stats-period=PERIOD: statistics will be shown "
- 	       "every PERIOD seconds (only if interactive is disabled).\n");
-+	printf("  --run-time=N: stop forwarding and exit after N seconds "
-+	       "(only if interactive is disabled).\n");
- 	printf("  --display-xstats xstat_name1[,...]: comma-separated list of "
- 	       "extended statistics to show. Used with --stats-period "
- 	       "specified or interactive commands that show Rx/Tx statistics "
-@@ -997,6 +1002,19 @@ launch_args_parse(int argc, char** argv)
- 				"packets first\n");
- 			tx_first = 1;
- 			break;
-+		case TESTPMD_OPT_RUN_TIME_NUM: {
-+			char *end = NULL;
-+			unsigned long secs;
-+
-+			errno = 0;
-+			secs = strtoul(optarg, &end, 10);
-+			if (optarg[0] == '\0' || *end != '\0' || errno != 0 ||
-+					secs == 0 || secs > INT32_MAX)
-+				rte_exit(EXIT_FAILURE, "Invalid run-time value\n");
-+
-+			run_time = secs;
-+			break;
-+		}
- 		case TESTPMD_OPT_STATS_PERIOD_NUM: {
- 			char *end = NULL;
- 
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index e1766eec72..aaab1a83a6 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -242,6 +242,7 @@ uint16_t mbuf_data_size[MAX_SEGS_BUFFER_SPLIT] = {
- uint32_t param_total_num_mbufs = 0;  /**< number of mbufs in all pools - if
-                                       * specified on command-line. */
- uint16_t stats_period; /**< Period to show statistics (disabled by default) */
-+uint32_t run_time; /**< Seconds to forward before exit (0 = no limit) */
- 
- /** Extended statistics to show. */
- struct rte_eth_xstat_name *xstats_display;
-@@ -4556,6 +4557,41 @@ disable_primary_monitor(void)
- }
- #endif
- 
-+/*
-+ * Non-interactive wait: print stats every stats_period seconds
-+ * and stop after run_time seconds, or on signal.
-+ */
-+static void
-+forward_wait(void)
-+{
-+	uint64_t hz = rte_get_timer_hz();
-+	uint64_t now = rte_get_timer_cycles();
-+	uint64_t end = now + (uint64_t)run_time * hz;
-+	uint64_t next_stats = now;
-+
-+	while (f_quit == 0) {
-+		uint64_t wake;
-+
-+		now = rte_get_timer_cycles();
-+		if (run_time != 0 && now >= end)
-+			break;
-+
-+		if (stats_period != 0 && now >= next_stats) {
-+			print_stats();
-+			next_stats = now + (uint64_t)stats_period * hz;
-+		}
-+
-+		/* wake at least once a second to check for signal */
-+		wake = now + hz;
-+		if (stats_period != 0 && next_stats < wake)
-+			wake = next_stats;
-+		if (run_time != 0 && end < wake)
-+			wake = end;
-+
-+		rte_delay_us_sleep((wake - now) * US_PER_S / hz);
-+	}
-+}
-+
- int
- main(int argc, char** argv)
- {
-@@ -4650,6 +4686,9 @@ main(int argc, char** argv)
- 		rte_exit(EXIT_FAILURE, "--tx-first cannot be used on "
- 				"interactive mode.\n");
- 
-+	if (run_time && interactive)
-+		rte_exit(EXIT_FAILURE, "--run-time cannot be used on interactive mode.\n");
-+
- 	if (tx_first && lsc_interrupt) {
- 		fprintf(stderr,
- 			"Warning: lsc_interrupt needs to be off when using tx_first. Disabling.\n");
-@@ -4755,26 +4794,8 @@ main(int argc, char** argv)
- 	} else {
- 		printf("No commandline core given, start packet forwarding\n");
- 		start_packet_forwarding(tx_first);
--		if (stats_period != 0) {
--			uint64_t prev_time = 0, cur_time, diff_time = 0;
--			uint64_t timer_period;
--
--			/* Convert to number of cycles */
--			timer_period = stats_period * rte_get_timer_hz();
--
--			while (f_quit == 0) {
--				cur_time = rte_get_timer_cycles();
--				diff_time += cur_time - prev_time;
--
--				if (diff_time >= timer_period) {
--					print_stats();
--					/* Reset the timer */
--					diff_time = 0;
--				}
--				/* Sleep to avoid unnecessary checks */
--				prev_time = cur_time;
--				rte_delay_us_sleep(US_PER_S);
--			}
-+		if (stats_period != 0 || run_time != 0) {
-+			forward_wait();
- 		} else {
- 			char c;
- 
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index 6d4c3e8f84..3c9c78a59c 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -625,6 +625,7 @@ extern uint16_t mbuf_data_size[MAX_SEGS_BUFFER_SPLIT];
- extern uint32_t param_total_num_mbufs;
- 
- extern uint16_t stats_period;
-+extern uint32_t run_time;
- 
- extern struct rte_eth_xstat_name *xstats_display;
- extern unsigned int xstats_display_num;
-diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app_ug/run_app.rst
-index e678058b97..6c6da5319c 100644
---- a/doc/guides/testpmd_app_ug/run_app.rst
-+++ b/doc/guides/testpmd_app_ug/run_app.rst
-@@ -64,6 +64,12 @@ The command line options are:
-     Display statistics every PERIOD seconds, if interactive mode is disabled.
-     The default value is 0, which means that the statistics will not be displayed.
- 
-+*   ``--run-time N``
-+
-+    Stop forwarding and exit after N seconds, if interactive mode is disabled.
-+    Final statistics are displayed as on a normal exit.
-+    The default value is 0, which means run until interrupted.
-+
- *   ``--display-xstats xstat_name1[,...]``
- 
-     Display comma-separated list of extended statistics every PERIOD seconds
+There are three distinct causes.
+
+The interrupt source created by rte_intr_callback_register() keeps a
+copy of the caller's handle. The copy carries the caller's fd and
+dev_fd, but does not own them, so freeing the source complains about
+fds that the caller still holds and will close itself.
+
+The VFIO device fd is closed by dev_vfio_release_device() on unmap,
+but is left behind in the interrupt handle, so freeing the handle later
+reports an fd that is already closed. The VFIO request handle holds the
+same fd and has the same problem.
+
+The alarm timerfd is a real leak: it is never closed on EAL cleanup.
+FreeBSD was already fixed for this; Linux was not.
+
+Patches 1 and 2 address the bogus warnings, patch 3 the actual leak.
+With all three applied the same testpmd run shuts down cleanly with no
+warnings.
+
+Open questions:
+
+- Patch 1 clears the fds in the source's copy of the handle. Clearing
+  them at dup time, or not duplicating the fds into the source at all,
+  may be the better fix.
+- Patch 2 resets dev_fd at the two unmap sites. Doing it inside
+  dev_vfio_release_device(), next to the close, would cover any other
+  caller.
+
+Stephen Hemminger (3):
+  eal/linux: do not warn when freeing interrupt source copy
+  bus/pci: reset VFIO device FD after release
+  eal/linux: close alarm timerfd on cleanup
+
+ drivers/bus/pci/linux/pci_vfio.c |  3 +++
+ lib/eal/linux/eal_alarm.c        |  1 +
+ lib/eal/linux/eal_interrupts.c   | 18 +++++++++++++++---
+ 3 files changed, 19 insertions(+), 3 deletions(-)
+
+--
+2.51.0
+
+Stephen Hemminger (3):
+  eal/linux: do not warn when freeing interrupt source copy
+  bus/pci: reset VFIO device FD after release
+  eal/linux: close alarm timerfd on cleanup
+
+ drivers/bus/pci/linux/pci_vfio.c |  3 +++
+ lib/eal/linux/eal_alarm.c        |  1 +
+ lib/eal/linux/eal_interrupts.c   | 18 +++++++++++++++---
+ 3 files changed, 19 insertions(+), 3 deletions(-)
+
 -- 
 2.53.0
 
