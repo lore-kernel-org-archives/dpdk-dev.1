@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC75CCF2C7
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Oct 2026 02:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69583CCF2C4
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Oct 2026 03:02:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D2F05402E5;
-	Sun, 18 Oct 2026 04:29:32 +0200 (CEST)
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
- [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 08CC340276
- for <dev@dpdk.org>; Sun, 18 Oct 2026 04:29:32 +0200 (CEST)
-Received: by mail-dy1-f174.google.com with SMTP id
- 5a478bee46e88-35cd4e8bdbdso2622371eec.1
- for <dev@dpdk.org>; Sat, 17 Oct 2026 19:29:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 02B0A402AD;
+	Sun, 18 Oct 2026 05:02:54 +0200 (CEST)
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com
+ [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id C1401402AD
+ for <dev@dpdk.org>; Sun, 18 Oct 2026 05:02:52 +0200 (CEST)
+Received: by mail-dy1-f181.google.com with SMTP id
+ 5a478bee46e88-3514b90bb89so2775226eec.1
+ for <dev@dpdk.org>; Sat, 17 Oct 2026 20:02:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=goodkind.io; s=google; t=1792290571; x=1792895371; darn=dpdk.org;
+ d=goodkind.io; s=google; t=1792292571; x=1792897371; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=xVAinbJUjML8/TyamT8ADXVzRf4PTVRtmy7NKAOKIMU=;
- b=nd/vH2A2vYOLDDSiMQfHxqEXQgpjY+n/ZesOFMPX1KxZokx4ZW2zvXB/6aXzrhcNLy
- xVP9kTSFT40NjgFk8V9nt6Uk+KpX81WN4XEIb+/W8ZFu8oe7jMPVQR/MPhPife730qbY
- Ji4AtiGCVzgslQ2kc4m3eRkANw37hrNQ5OJCgXZGPJqTDGeBhTXPcZP4166XVQfTNr0v
- FgrkCute6reHix7SosjiOnMltMuRJAiwDoDGrWuPp1+EV2YU5+3K1PV+lhqZ6+OaX+gv
- ueEg5zura/qLIHf+uhWeyH4UdjIl+vyudQwxNQOpEzDPrRtmf4mWhGTCDTAQZQmm91qQ
- +1Rg==
+ bh=Bw9vyIHrPvlhXQ9973jle6MISlA8TQg6fSLHkmLnJ4w=;
+ b=FlD9bUl/a3L5mBbLX9NGhdyLupdSJk+91Tva/zIRoo7cKsioqQlfSJcTDb1kDNxVDU
+ h8DkS7rfibz0emuMFDs9l8N6ddE8w59Ftuv89wWy8gKKj9KoAjmHOzAU6I8jkX3K1mb8
+ to+9gYOUqDrooPDQrr4F688CIlgMd1ujpNaRiY8oTQhMm+p/ioT2kV4JT9uKvOE9NC11
+ /u9MvVs99hU2SBOUsWq6CFvaSs9EEksBt1shtd8euuKLucx81tfcCwqK6QXV4McrxTtm
+ l8f2MSTWR48blDeHAYQwMruTCszGu1IMy8xWXqC3mR5gA/G4lYNVQYUPXYsz6wqCUnT5
+ OEUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792290571; x=1792895371;
+ d=1e100.net; s=20260707; t=1792292571; x=1792897371;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=xVAinbJUjML8/TyamT8ADXVzRf4PTVRtmy7NKAOKIMU=;
- b=mRI1mnBW6qbAzErNxZwvqTxuEd3wnfolj6Np4HcHbWp6EEszn+AFZhn5KTZtnzjdWk
- Tsas47nTCbkticlhOZqeIpdepNqCn4nGxFF2LWekqPsLYabo0gVhGOeoeVc5i1c6ZqpJ
- 6hT/Sxj8shMUecraZ3Au5p2w1V7oOtfZeKZXARPcu81zh6AgZiBIR5RPircV4nA9GR3i
- tPKyxB77l8fUF+U73MrxodWvF7ptbKtSr5CYa377SKfErue6yPf6XU3Xq9Imfq68v+S4
- IZg+QShIeOkBNzBwWznjqyenduJfZZ+G2Rv0Myr6zc46GB+2zR/DFL6zCwbSU0L2uXT1
- mmQg==
-X-Gm-Message-State: AFq9FYIRG8Jc/cdWjqx6lFGyHeKt4Vqn79IQ5oRPdNarzPnSZQsdG9EH
- sKO8qjNIVH8Dv8VFljnXzUf38CoHHIgupCkDTZfnX4VjahdRVNYZgT+qR5g3sJuIcU0=
-X-Gm-Gg: AYBFou0PvOGonKLKVjamJfMPSTM9vy24LLcS3gwgXdiPp5bAkSylV+cXesWGlk2GE6e
- 7KZ6gvlIjjzMJDu17PWEhS3ZwFUrRojTm59qf29ATyrsv+4PJwm8ecdFQHZXVrq/6A+9YG62dJY
- u0fgExXhoh98VS18/ObfFjKRhTdGcv2AtMxkzvm9VxTkYpJLr8UANamSOPqea8BljF5iNxz9yev
- FlNCPrH6My55/W8mjokNY1i91skSy4lRFvtbM9/fcGcSyyBh6d2vOTuz/1p1yAqh8rmRAe5s/W5
- uKgTDisPGevkAtRIpnxsfy3nktRbuXVz2qw7XzTeA4Bqr1Zvq9a+pnMNjiJ9eVFv9c0Q0Ebdstt
- UqTQBTdwIeAb1cCPj0rV+SYyHSwZUWhG7p9J7i/Dlf+U629xwI4vGmN46nieRo1EPjNwpzON/t9
- 1xtcjeHVsv6/410Q+RN8vNJVH4jnvWR1w5Ub2b2DVormPCGsY9+3kD03kjyBFj6g5NfTnHut34s
- jN1jX5kag45hDk=
-X-Received: by 2002:a05:7300:10d:b0:35b:c271:df19 with SMTP id
- 5a478bee46e88-361a2d37bc2mr5771538eec.32.1792290570588; 
- Sat, 17 Oct 2026 19:29:30 -0700 (PDT)
+ bh=Bw9vyIHrPvlhXQ9973jle6MISlA8TQg6fSLHkmLnJ4w=;
+ b=QaibDShvQvOeHnJsx6cXmH4J44LCa1zzpA0v+8z0Tj3tb2PGGSvDJQpQdHXKPa9Ulb
+ p6VUdIH1XQTLt6N0W+fnyuTDj4f5/jCfZJJJ1M0Z5ic4MiZl6iE4wqkSqcArV0hvnHXz
+ j/cVx5oFZoLib1WATPubWQ3uh40KbrNCHDsf7OPu1mwVxs4/HCtFn6BmxAN/v7Q4RTwp
+ CjiFl3S8aRyOlUTUd5nRH6DiEqPFV/pK+ghgm6fja11yZ72URN5RkgIrHgEnnvnHdFj5
+ ZU9IvWd+RyFC5bRD3lkzhLdrwoOMIJAwDG6HSCa8LlxLW0mZ9fDsOZCoCzdIDZer7ola
+ CseQ==
+X-Gm-Message-State: AFq9FYJe19W/0/7tw5TF2jjKPqPHJB8J7vP9ulEw4ATXVDBbaMtHyJMS
+ pELvFdGMA2VbNakCk02HQIsrsUgAyblxhfCipI0bXBru1TDmLmjaUsKaxGUjYtudNMM=
+X-Gm-Gg: AYBFou1dK01t+0ZVQVr9uSkXmMx2U5hTpSGV7ZR+bSPtICLgEvBFZUUJmTBXMFq2ICm
+ w3E6cUGpcsXrT1ZnNGzTjb3BthwPjx7CL4HCDHNutc4LcGBkZgKDrih/PpQiLLvN6pJ3lKdZ59p
+ xX8l1WqEeXpps0cPaia+F//FcTmc5HCOgHDeRRDNzcW52EiZ69t2CUj+JcPHMHQirb5eWuqC4/W
+ R/hXHIYaiBf6Wrkt4d9wI5ebdGoF2qTwmesUJNAvBhPRvDBGycy2IsfoHFiJHlTjNzYN+iqA0om
+ r9U5fOhges2+bm7xNQRRU+qO1zJo+TQeJZr/hrJtg6qnJlVkUM+rQp3PHjZkVQn1+wRlbOvgSV6
+ LmJHzMEo/33sQ545frSf7wENTW+eGlnIBlSauBpZ/WKuJ07GK6GF79KZ3izW1OhntpLi6Nzd0hx
+ BRNDGmvv0TdNkei9e2h2ENjznN2x1sk4g3wVYmGoowPaja8yLmE3nHfQN5Zzi1bZwl4n7XIPwWx
+ 6UTpGq+XM/oIiRNjQP+b/KzxA==
+X-Received: by 2002:a05:701b:4306:10b0:187:ec67:2fc5 with SMTP id
+ a92af1059eb24-187ec6730e2mr1708508c88.32.1792292571472; 
+ Sat, 17 Oct 2026 20:02:51 -0700 (PDT)
 Received: from localhost ([2001:5a8:4296:4f00:a1c6:b570:cfa:f332])
  by smtp.gmail.com with UTF8SMTPSA id
- 5a478bee46e88-36082a7b33bsm36084130eec.24.2026.10.17.19.29.29
+ a92af1059eb24-1831c5cb39esm19217866c88.22.2026.10.17.20.02.50
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Sat, 17 Oct 2026 19:29:30 -0700 (PDT)
+ Sat, 17 Oct 2026 20:02:51 -0700 (PDT)
 From: Alexander Goodkind <alex@goodkind.io>
-To: kishore.padmanabha@broadcom.com,
-	ajit.khaparde@broadcom.com
-Cc: dev@dpdk.org,
-	stable@dpdk.org,
-	thomas@monjalon.net,
-	tarick@bedeir.com
-Subject: [PATCH v2] net/bnxt: fix aliasing in firmware command writes
-Date: Sat, 17 Oct 2026 19:29:29 -0700
-Message-ID: <20261018022929.91865-1-alex@goodkind.io>
+To: dpdklab@iol.unh.edu, kishore.padmanabha@broadcom.com,
+ ajit.khaparde@broadcom.com
+Cc: dev@dpdk.org, test-report@dpdk.org, stable@dpdk.org, thomas@monjalon.net,
+ tarick@bedeir.com
+Subject: Re: |WARNING| [v2] net/bnxt: fix aliasing in firmware command writes
+Date: Sat, 17 Oct 2026 20:02:49 -0700
+Message-ID: <20261018030249.80449-1-alex@goodkind.io>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <CAAbO5hbOnKdeD78Q6BHLSA-dD9Vzo004Myr_74_yK4as=bb6UA@mail.gmail.com>
+In-Reply-To: <20261018024910.5D1706051830@postal.iol.unh.edu>
 References: <CAAbO5hbOnKdeD78Q6BHLSA-dD9Vzo004Myr_74_yK4as=bb6UA@mail.gmail.com>
+ <20261018022929.91865-1-alex@goodkind.io>
+ <20261018024910.5D1706051830@postal.iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -83,85 +83,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use memcpy to copy each firmware command word into a local uint32_t
-before writing it to the card. Replace the uint32_t pointer reads in
-bnxt_hwrm_send_message() with byte access.
+> On the last iteration when i + 4 > msg_len, only msg_len - i bytes
+> are copied.
 
-Fixes: 1cd45aeb3270 ("net/bnxt: support Stratus VF device")
-Cc: stable@dpdk.org
+The copy length is sizeof(request_word), so memcpy initializes the
+entire uint32_t before rte_write32(). It does not shorten the copy
+based on msg_len. The previous pointer dereference also read a full
+uint32_t.
 
-Signed-off-by: Alexander Goodkind <alex@goodkind.io>
----
+> Missing release notes update
 
-v2: The previous patch got corrupted during email delivery.
+Comparable fixes, including the enic aliasing fix [1] and the checksum
+memcpy fix [2], did not include release-note entries. I followed that
+precedent here, but I can add a release-note entry if the maintainers
+would prefer one.
 
-VPP could not initialize the interfaces on my PowerEdge XR11 with a
-Broadcom BCM57504 card, using SR-IOV virtual functions inside an Ubuntu
-LXC container on Proxmox. The debugger showed an empty command header
-immediately before the driver wrote it to the card.
-
-The original pointer reads violate GCC's strict-aliasing rule [1].
-The patched driver initialized the interfaces and transferred packets
-with DPDK 26.03.0 and VPP 26.06-release. Separate build and software
-tests passed against the current Broadcom source.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-
- .mailmap                     |  1 +
- drivers/net/bnxt/bnxt_hwrm.c | 11 +++++++----
- 2 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index 5d1df79860..3143e642b5 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -65,6 +65,7 @@ Alex Zelezniak <alexz@att.com>
- Alexander Bechikov <asb.tyum@gmail.com>
- Alexander Belyakov <abelyako@gmail.com>
- Alexander Chernavin <achernavin@netgate.com>
-+Alexander Goodkind <alex@goodkind.io>
- Alexander Guy <alexander@andern.org>
- Alexander Kozyrev <akozyrev@nvidia.com> <akozyrev@mellanox.com>
- Alexander Matushevsky <matua@amazon.com>
-diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index ab1521953a..573a33b2de 100644
---- a/drivers/net/bnxt/bnxt_hwrm.c
-+++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -483,7 +483,7 @@ static int bnxt_hwrm_send_message(struct bnxt *bp, void *msg,
- 	unsigned int i;
- 	struct input *req = msg;
- 	struct output *resp = bp->hwrm_cmd_resp_addr;
--	uint32_t *data = msg;
-+	const uint8_t *data = msg;
- 	uint8_t *bar;
- 	uint8_t *valid;
- 	uint16_t max_req_len = bp->max_req_len;
-@@ -526,7 +526,7 @@ static int bnxt_hwrm_send_message(struct bnxt *bp, void *msg,
- 		short_input.req_addr =
- 			rte_cpu_to_le_64(bp->hwrm_short_cmd_req_dma_addr);
- 
--		data = (uint32_t *)&short_input;
-+		data = (const uint8_t *)&short_input;
- 		msg_len = sizeof(short_input);
- 
- 		max_req_len = BNXT_HWRM_SHORT_REQ_LEN;
-@@ -534,9 +534,12 @@ static int bnxt_hwrm_send_message(struct bnxt *bp, void *msg,
- 
- 	/* Write request msg to hwrm channel */
- 	for (i = 0; i < msg_len; i += 4) {
-+		uint32_t request_word;
-+
- 		bar = (uint8_t *)bp->bar0 + bar_offset + i;
--		rte_write32(*data, bar);
--		data++;
-+		memcpy(&request_word, data, sizeof(request_word));
-+		rte_write32(request_word, bar);
-+		data += sizeof(request_word);
- 	}
- 
- 	/* Zero the rest of the request space */
-
-base-commit: af80aca47b05d46f4a5e1951de3ce8372bd726b6
--- 
-2.54.0 (Apple Git-157)
-
+[1] https://github.com/DPDK/dpdk/commit/7895d17cf41094cb7d5ad67f484dd492f5a643bf
+[2] https://github.com/DPDK/dpdk/commit/1c9a7fba5c90e0422b517404499ed106f647bcff
