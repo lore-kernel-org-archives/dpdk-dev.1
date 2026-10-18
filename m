@@ -2,58 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AF8CCF2C9
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Oct 2026 06:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5451DCCF2C4
+	for <dpdk-dev@archiver.kernel.org>; Sun, 18 Oct 2026 06:37:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 866D94060F;
-	Sun, 18 Oct 2026 08:37:01 +0200 (CEST)
-Received: from pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com
- (pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com
- [50.112.246.219])
- by mails.dpdk.org (Postfix) with ESMTP id 25EA240276;
- Sun, 18 Oct 2026 08:37:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A450F40658;
+	Sun, 18 Oct 2026 08:37:25 +0200 (CEST)
+Received: from pdx-out-006.esa.us-west-2.outbound.mail-perimeter.amazon.com
+ (pdx-out-006.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.26.1.71])
+ by mails.dpdk.org (Postfix) with ESMTP id D340A40276;
+ Sun, 18 Oct 2026 08:37:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
- t=1792305420; x=1823841420;
+ t=1792305444; x=1823841444;
  h=from:to:cc:subject:date:message-id:mime-version;
- bh=JjXMljuTvUMWW6UQu6XNgnZWFJgdjxLisQMrwW+c3xY=;
- b=TnLQk7vuJLm5sBbP2Wvu1eQidBF+7q0tCEgNVa5S4TT3wsYV9UBgtpJ6
- GjThT9fl71o4h4hCPUQ8MeLZrxP3329tTFO5agkg58raXw9OgdlvON0ZU
- JzZLRGyCM+ILWn4VVzMdHqGGx9Pxi4sHr7sBzMnJL84lcGMwTKzEdbOLD
- VZt3O1UkbjqY+nVgYvlti62mGWuDsduIaRPtPFCpHYFCk1oJdWiZPVsaK
- M4y8wgOkYiVJc43z1jH5NfzVjLzhNr4I7YApYULBmBQ2zlnqpeQjBmgnI
- 3gfRSSx4B6+COZQWys90W0vzcP1JfAaCXHaPVXzBB0sccTmDYmmsEemXv A==;
-X-CSE-ConnectionGUID: HXmf3djqQiKPJu4+abqgGA==
-X-CSE-MsgGUID: 12noqTH9QNK9XuCKJBCDCA==
-X-IronPort-AV: E=Sophos;i="6.27,165,1787011200"; d="scan'208";a="31332923"
+ bh=0PwraB6rIBYuzS9IO+Z4HVtm4k3Mgm/50GzPzwLezfw=;
+ b=RJbdnwUSRbmFcvlqtfx5O/R9MX46FXJ9oEsKgSTvvkCxzUsbdYCcWwNc
+ Epmlx4YTl5QKdTyUEyt2VKury13TtScknMu0Tdh+Rq0hiLuBtCAxdTMbg
+ c+08bGb6johyFcne8c2PWVty4dcUsWBnxssw04Jyr/Lx4O9QeL79ZOd5o
+ Ol0Gf5vjtmaWgfZSSrZNtx4m0XAALPkI/6KyUr75z5ayLMyVCCqe87oWM
+ rYe0xQenYt6Vf6/D+xTddJaR9T+bK3ZTGHCxvhchmBf1WC6o3Sn1NS4zd
+ psyH1xT4x7xRytldv4/RHRZL7jyJgwMhZG+GAQuxphn+gpOdtd9UdxeUe g==;
+X-CSE-ConnectionGUID: g6NPnCrnT3W+7WGRkO0qaA==
+X-CSE-MsgGUID: 5h/X2+9tQNCEbhf9XClwAA==
+X-IronPort-AV: E=Sophos;i="6.27,165,1787011200"; d="scan'208";a="31598068"
 Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO
  smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
- by internal-pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com with
- ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2026 06:36:57 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [205.251.233.111:30615]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.42.190:2525]
+ by internal-pdx-out-006.esa.us-west-2.outbound.mail-perimeter.amazon.com with
+ ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2026 06:37:22 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [205.251.233.182:3247]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.1.120:2525]
  with esmtp (Farcaster)
- id 0e17530a-91b2-4e64-ac88-09dc63c6e2d4; Sun, 18 Oct 2026 06:36:56 +0000 (UTC)
-X-Farcaster-Flow-ID: 0e17530a-91b2-4e64-ac88-09dc63c6e2d4
+ id 553f6796-6c93-4753-ba6f-7c24792a8ba1; Sun, 18 Oct 2026 06:37:22 +0000 (UTC)
+X-Farcaster-Flow-ID: 553f6796-6c93-4753-ba6f-7c24792a8ba1
 Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
- Sun, 18 Oct 2026 06:36:56 +0000
+ Sun, 18 Oct 2026 06:37:22 +0000
 Received: from HFA15-CG15235BS.amazon.com (10.1.212.8) by
  EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.53;
- Sun, 18 Oct 2026 06:36:54 +0000
+ Sun, 18 Oct 2026 06:37:20 +0000
 From: Shai Brandes <shaibran@amazon.com>
 To: <stephen@networkplumber.org>
 CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>, <stable@dpdk.org>
-Subject: [PATCH v2 02/13] net/ena/base: fix race in PHC destroy
-Date: Sun, 18 Oct 2026 09:36:46 +0300
-Message-ID: <20261018063646.1069-1-shaibran@amazon.com>
+Subject: [PATCH v2 03/13] net/ena/base: fix missing barriers in PHC timestamp
+ read
+Date: Sun, 18 Oct 2026 09:37:11 +0300
+Message-ID: <20261018063711.1117-1-shaibran@amazon.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.1.212.8]
-X-ClientProxiedBy: EX19D031UWC004.ant.amazon.com (10.13.139.246) To
+X-ClientProxiedBy: EX19D031UWC002.ant.amazon.com (10.13.139.212) To
  EX19D001UWA001.ant.amazon.com (10.13.138.214)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -68,60 +68,96 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-ena_com_phc_get_timestamp() checked phc->active and cached the
-resp pointer from ena_dev->phc.virt_addr before acquiring the PHC
-spinlock, so neither the liveness check nor the pointer read was
-serialised against teardown.
+The PHC read path in ena_com_phc_get_timestamp() polls the shared
+error_bound and timestamp fields for a matching req_id to detect
+that the device has published a fresh reading. Both completion
+checks read the payload without a barrier after observing req_id.
 
-If ena_com_phc_destroy() runs in that window it clears active,
-releases the lock, frees the PHC DMA memory and sets virt_addr to
-NULL. The reader then dereferences either a pointer to already
-freed memory or a NULL virt_addr, depending on where it was
-preempted, crashing the application on PHC teardown or device
-reconfiguration.
+On weakly-ordered architectures the CPU may load the payload fields
+before the req_id load is observed as updated, so a stale timestamp
+or error bound can be returned while the read is reported as valid.
 
-Move the phc->active check and the resp pointer assignment inside
-the spinlock so that destroy cannot free the DMA memory while a
-timestamp read is in progress.
+Add dma_rmb() after both req_id completion checks to order the
+req_id load against the subsequent payload loads.
 
-Fixes: f73f53f7dc7a ("net/ena: upgrade HAL")
+Fixes: a14be4dd8693 ("net/ena/base: add PHC error statistics")
 Cc: stable@dpdk.org
 
 Signed-off-by: Shai Brandes <shaibran@amazon.com>
 ---
- drivers/net/ena/base/ena_com.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/ena/base/ena_com.c | 50 +++++++++++++++++++++-------------
+ 1 file changed, 31 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/net/ena/base/ena_com.c b/drivers/net/ena/base/ena_com.c
-index b1fe0bcdf7..737626bcfa 100644
+index 737626bcfa..49818c4bd0 100644
 --- a/drivers/net/ena/base/ena_com.c
 +++ b/drivers/net/ena/base/ena_com.c
-@@ -1996,20 +1996,23 @@ void ena_com_phc_destroy(struct ena_com_dev *ena_dev)
- 
- int ena_com_phc_get_timestamp(struct ena_com_dev *ena_dev, u64 *timestamp)
- {
--	volatile struct ena_admin_phc_resp *resp = ena_dev->phc.virt_addr;
- 	const ena_time_high_res_t zero_system_time = ENA_TIME_INIT_HIGH_RES();
- 	struct ena_com_phc_info *phc = &ena_dev->phc;
-+	volatile struct ena_admin_phc_resp *resp;
- 	ena_time_high_res_t expire_time;
- 	ena_time_high_res_t block_time;
- 	unsigned long flags = 0;
- 	int ret = ENA_COM_OK;
- 
-+	ENA_SPINLOCK_LOCK(phc->lock, flags);
+@@ -2037,27 +2037,34 @@ int ena_com_phc_get_timestamp(struct ena_com_dev *ena_dev, u64 *timestamp)
+ 				    "PHC get time request 0x%x failed (device error)\n",
+ 				    phc->req_id);
+ 			phc->stats.phc_err_dv++;
+-		} else if (resp->error_flags & ENA_PHC_ERROR_FLAGS) {
+-			/* Device updated req_id during blocking time but got
+-			 * a PHC error, this occurs if device:
+-			 * - exceeded the get time request limit
+-			 * - received an invalid timestamp
+-			 * - received an excessively high error bound
+-			 * - received an invalid error bound
+-			 */
+-			ena_trc_err(ena_dev,
+-				    "PHC get time request 0x%x failed (error 0x%x)\n",
+-				    phc->req_id,
+-				    resp->error_flags);
+-			phc->stats.phc_err_ts += !!(resp->error_flags &
+-				ENA_ADMIN_PHC_ERROR_FLAG_TIMESTAMP);
+-			phc->stats.phc_err_eb += !!(resp->error_flags &
+-				ENA_ADMIN_PHC_ERROR_FLAG_ERROR_BOUND);
+ 		} else {
+-			/* Device updated req_id during blocking time
+-			 * with valid timestamp and error bound
++			/* Ensure PHC payload is read after req_id update
++			 * is observed
+ 			 */
+-			phc->stats.phc_exp++;
++			dma_rmb();
 +
- 	if (!phc->active) {
-+		ENA_SPINLOCK_UNLOCK(phc->lock, flags);
- 		ena_trc_err(ena_dev, "PHC feature is not active in the device\n");
- 		return ENA_COM_UNSUPPORTED;
++			if (resp->error_flags & ENA_PHC_ERROR_FLAGS) {
++				/* Device updated req_id during blocking time
++				 * but got a PHC error, this occurs if device:
++				 * - exceeded the get time request limit
++				 * - received an invalid timestamp
++				 * - received an excessively high error bound
++				 * - received an invalid error bound
++				 */
++				ena_trc_err(ena_dev,
++					    "PHC get time request 0x%x failed (error 0x%x)\n",
++					    phc->req_id,
++					    resp->error_flags);
++				phc->stats.phc_err_ts += !!(resp->error_flags &
++					ENA_ADMIN_PHC_ERROR_FLAG_TIMESTAMP);
++				phc->stats.phc_err_eb += !!(resp->error_flags &
++					ENA_ADMIN_PHC_ERROR_FLAG_ERROR_BOUND);
++			} else {
++				/* Device updated req_id during blocking time
++				 * with valid timestamp and error bound
++				 */
++				phc->stats.phc_exp++;
++			}
+ 		}
  	}
  
--	ENA_SPINLOCK_LOCK(phc->lock, flags);
-+	resp = ena_dev->phc.virt_addr;
+@@ -2100,6 +2107,11 @@ int ena_com_phc_get_timestamp(struct ena_com_dev *ena_dev, u64 *timestamp)
+ 			continue;
+ 		}
  
- 	/* Check if PHC is in blocked state */
- 	if (unlikely(ENA_TIME_COMPARE_HIGH_RES(phc->system_time, zero_system_time))) {
++		/* Ensure PHC payload (timestamp, error_bound, error_flags)
++		 * is read after req_id update is observed
++		 */
++		dma_rmb();
++
+ 		/* req_id was updated by the device which indicates that
+ 		 * PHC timestamp, error_bound and error_flags are updated too,
+ 		 * checking errors before retrieving timestamp and
 -- 
 2.17.1
 
