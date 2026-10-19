@@ -2,47 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC83BCCF2DA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 08:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09381CCF2DA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 08:58:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8116B40608;
-	Mon, 19 Oct 2026 10:36:17 +0200 (CEST)
-Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com
- [113.46.200.227])
- by mails.dpdk.org (Postfix) with ESMTP id 3892540269;
- Mon, 19 Oct 2026 10:36:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D583740613;
+	Mon, 19 Oct 2026 10:58:12 +0200 (CEST)
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
+ [113.46.200.219])
+ by mails.dpdk.org (Postfix) with ESMTP id AFB0640269
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 10:58:08 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=jYs95Gyqib5SMufBqrMrNp5Tk313ok1H1tdVZhhmBMg=;
- b=EVEeP5vFusqqBkCZexys+HOOSaJEAMqCTx9R5FEwjyl3btpzygu73PmG+GIkFrf6EFYr9u6LE
- pcCF768N7bu9kiVVi9FMdPwukH4QtPvJrrzGDclcKikMSUgijgQ6pRGHVw3y6cYvOgiWH+Lv/1p
- 582dgkeJ+2qnAaYvyILqwDQ=
-Received: from mail.maildlp.com (unknown [172.19.163.200])
- by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4j7TR11V70znTxK;
- Mon, 19 Oct 2026 16:36:13 +0800 (CST)
+ bh=gRaKoq4AZGgcQyy2ehbB40ry4y53ihQk4Vy4yiMcElc=;
+ b=nvVbCL14r9rz0GaxvJ6ExbaLwBrRMM8kn+P9wIY+2ODAx0VsbFBIijheBJUNiQr7M9fLSTKg2
+ CSYYhXnFJAWoDNUChXPkSDEhaj/j9hcjEcHV5gZMNZDlj1PqNohBiAoy+denswE0RgOr3al8mH2
+ C2f/o+Q16C6rSC7EOc0XTIw=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+ by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4j7Tw63Y8Rz1prRJ;
+ Mon, 19 Oct 2026 16:57:58 +0800 (CST)
 Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id B2C2E4056A;
- Mon, 19 Oct 2026 16:36:12 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
+ by mail.maildlp.com (Postfix) with ESMTPS id 378F34056E;
+ Mon, 19 Oct 2026 16:58:01 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
  kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Mon, 19 Oct 2026 16:36:12 +0800
-Message-ID: <73b5e9cd-6789-422a-9679-88693c60352b@huawei.com>
-Date: Mon, 19 Oct 2026 16:36:12 +0800
+ 15.2.2562.45; Mon, 19 Oct 2026 16:57:54 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>
+CC: <dev@dpdk.org>, <bruce.richardson@intel.com>
+Subject: [PATCH v2] argparse: support range step for corelist parsing
+Date: Mon, 19 Oct 2026 16:57:48 +0800
+Message-ID: <20261019085748.34787-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20261016093001.9067-1-fengchengwen@huawei.com>
+References: <20261016093001.9067-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: |WARNING| argparse: support range step for corelist parsing
-To: <dpdklab@iol.unh.edu>, <test-report@dpdk.org>
-References: <<20261016093001.9067-1-fengchengwen@huawei.com>
- <20261016101228.123E46051830@postal.iol.unh.edu>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-In-Reply-To: <20261016101228.123E46051830@postal.iol.unh.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+Content-Type: text/plain
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
  kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -57,215 +54,326 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 10/16/2026 6:12 PM, dpdklab@iol.unh.edu wrote:
-> Test-Label: ai-code-review
-> Test-Status: WARNING
-> https://dpdk.org/patch/171477
-> 
-> _AI Code Review_
-> 
-> === Patch Review: series.patch (via Claude) ===
-> Review date: 2026-10-16
-> 
-> # DPDK Patch Review
-> 
-> ## Patch: argparse: support range step for corelist parsing
-> 
-> ### ERRORS
-> 
-> **Error 1: Integer overflow in step accumulation (correctness bug)**
-> 
-> Line 629 in `lib/argparse/rte_argparse.c`:
-> ```c
-> for (; min <= max; min += step)
-> ```
-> 
-> When `step` is large and `min + step` exceeds `INT32_MAX`, the loop counter wraps around to a negative value, creating an infinite loop. The variables `min` and `max` are `int` (32-bit signed), and `step` is `int32_t`. If a malicious or mistaken user provides input like `"0-100:2147483647"`, the addition `min += step` will overflow after the first iteration.
+Introduce a stride/step syntax ('-l start-end:step') to the EAL
+corelist parser implemented within the argparse library.
 
-False positive, the:
-		errno = 0;
-		idx = strtol(value, &end, 10);
-		last = end;
-		if (errno || idx > UINT16_MAX) {
-			ARGPARSE_LOG(ERR, "argument %s contains a numerical value out of range!",
-				arg->name_long);
-			return -EINVAL;
-		}
-already treat such input as an error.
+On modern multi-core platforms, especially ARM architectures (such
+as Kunpeng) logical sibling cores are frequently laid out contiguously
+(e.g., physical core 0 maps to logical cores 0 and 1). When deploying
+high-performance DPDK data planes, pinning worker threads to adjacent
+sibling cores introduces Heavy L1/L2 cache contention and drastically
+degrades overall throughput.
 
-> 
-> **Suggested fix:**
-> Check that `step` does not cause overflow before the loop:
-> ```c
-> if (step > max - min) {
->     ARGPARSE_LOG(ERR, "argument %s step value too large for range!",
->         arg->name_long);
->     return -EINVAL;
-> }
-> for (; min <= max; min += step)
->     CPU_SET(min, cpuset);
-> ```
-> 
-> ---
-> 
-> **Error 2: Step validation insufficient (correctness bug)**
-> 
-> Lines 608-613 in `lib/argparse/rte_argparse.c`:
-> ```c
-> if (is_step) {
->     if (idx == 0) {
->         ARGPARSE_LOG(ERR, "argument %s step value must be positive!",
->             arg->name_long);
->         return -EINVAL;
->     }
->     step = idx;
-> }
-> ```
-> 
-> This only rejects zero but allows negative values. A negative step (e.g., `"1-5:-2"`) would pass this check because `idx` is `int64_t` and `-2 != 0`. The loop at line 629 would then decrement `min` instead of incrementing it, either becoming infinite or setting unintended cores.
+Previously, users had to explicitly expand core lists via commas
+(e.g., "-l 0,2,4,6...126") in orchestration scripts to skip
+hyperthreads, which is error-prone and hurts maintainability.
 
-False positive, the:
-		if (!isdigit(*value)) {
-			ARGPARSE_LOG(ERR, "argument %s has an unexpected non digit character!",
-				arg->name_long);
-			return -EINVAL;
-		}
-already treat -2 as an error.
+This patch introduces the range step, so we could use "-l 0-126:2" in
+the same case.
 
-> 
-> **Suggested fix:**
-> ```c
-> if (is_step) {
->     if (idx <= 0) {
->         ARGPARSE_LOG(ERR, "argument %s step value must be positive!",
->             arg->name_long);
->         return -EINVAL;
->     }
->     step = idx;
-> }
-> ```
-> 
-> ---
-> 
-> **Error 3: Step value not clamped to 32-bit range before assignment (correctness bug)**
-> 
-> Line 613 in `lib/argparse/rte_argparse.c`:
-> ```c
-> step = idx;
-> ```
-> 
-> `idx` is `int64_t` (from `rte_strtoint64_l()`), but `step` is `int32_t`. If the user provides `"0-10:4294967296"` (2^32), the assignment truncates the upper 32 bits, and `step` becomes 0, causing an infinite loop at line 629 or violating the earlier zero-check if the truncated value is negative.
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+---
+v2: add release note and more testcases
+---
+ app/test/test_argparse.c               | 123 +++++++++++++++++++++++++
+ doc/guides/prog_guide/argparse_lib.rst |   2 +
+ doc/guides/rel_notes/release_26_11.rst |   6 ++
+ lib/argparse/rte_argparse.c            |  53 ++++++++---
+ 4 files changed, 172 insertions(+), 12 deletions(-)
 
-False positive, the:
-		if (!isdigit(*value)) {
-			ARGPARSE_LOG(ERR, "argument %s has an unexpected non digit character!",
-				arg->name_long);
-			return -EINVAL;
-		}
-
-		errno = 0;
-		idx = strtol(value, &end, 10);
-		last = end;
-		if (errno || idx > UINT16_MAX) {
-			ARGPARSE_LOG(ERR, "argument %s contains a numerical value out of range!",
-				arg->name_long);
-			return -EINVAL;
-		}
-
-it mean min/max/step must be in [0, UINT16_MAX] after above verify
-
-> 
-> **Suggested fix:**
-> Add a range check after the positive validation:
-> ```c
-> if (is_step) {
->     if (idx <= 0) {
->         ARGPARSE_LOG(ERR, "argument %s step value must be positive!",
->             arg->name_long);
->         return -EINVAL;
->     }
->     if (idx > INT32_MAX) {
->         ARGPARSE_LOG(ERR, "argument %s step value exceeds maximum!",
->             arg->name_long);
->         return -EINVAL;
->     }
->     step = (int32_t)idx;
-> }
-> ```
-> 
-> ---
-> 
-> **Error 4: `max` and `min` signed/unsigned type confusion (correctness bug)**
-> 
-> Lines 576-579 in `lib/argparse/rte_argparse.c`:
-> ```c
-> int32_t step = 1;
-> int32_t max = -1;
-> int min = -1;
-> ```
-> 
-> `min` is declared as `int` (typically 32-bit signed), while `max` is `int32_t` (explicitly 32-bit signed). This inconsistency is a latent bug: if `int` is 16-bit on some platform, `min` and `max` have different ranges. Modern DPDK targets assume 32-bit `int`, but the inconsistency is unnecessary and confusing.
-
-False positive, DPDK only support at least 32bit platform, the int is 32-bit at such platform.
-
-> 
-> **Suggested fix:**
-> Declare `min` as `int32_t` for consistency:
-> ```c
-> int32_t step = 1;
-> int32_t max = -1;
-> int32_t min = -1;
-> ```
-> 
-> ---
-> 
-> ### WARNINGS
-> 
-> **Warning 1: Release notes missing for new user-visible feature**
-> 
-> The patch adds a new user-facing syntax (`start-end:step`) to the `-l` corelist parser, which is a significant functional enhancement. The documentation in `doc/guides/prog_guide/argparse_lib.rst` is updated, but there is no corresponding entry in the release notes (`doc/guides/rel_notes/release_*.rst`) announcing this feature.
-> 
-> **Suggested fix:**
-> Add a release notes entry under "New Features" in the current release notes file describing the new range step syntax for corelist parsing.
-
-OK, will done in v2
-
-> 
-> ---
-> 
-> **Warning 2: Test coverage for boundary conditions incomplete**
-> 
-> The test suite in `app/test/test_argparse.c` adds extensive tests for the step syntax, including invalid cases. However, it does not test:
-> - Maximum representable step values near `INT32_MAX` (boundary test)
-> - Step values that would cause integer overflow in the loop counter
-> - Step values larger than the range itself (e.g., `"0-5:10"`, which should set only core 0)
-> - Very large core numbers near `CPU_SETSIZE` (e.g., `"1000-1010:2"` if supported)
-
-OK, will add some of them
-
-> 
-> **Suggested fix:**
-> Add tests for these boundary conditions to ensure the overflow checks (once added per Error 1) work correctly and that the implementation behaves as expected in edge cases.
-> 
-> ---
-> 
-> ### INFO
-> 
-> None.
-> 
-> ---
-> 
-> ## Summary
-> 
-> The patch introduces useful functionality but has four correctness bugs that must be fixed:
-> 1. Integer overflow in the step loop can cause infinite loops
-> 2. Negative step values are not rejected
-> 3. 64-to-32-bit step truncation is unchecked, allowing zero/negative truncated values
-> 4. Inconsistent `int` vs `int32_t` declaration for `min` and `max`
-> 
-> Additionally, release notes are missing for this user-visible feature change, and test coverage could be improved for boundary conditions.
-> 
-> ---
-> 
-> Review-Result: ERROR
+diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
+index fdc6dd113c..c63380197f 100644
+--- a/app/test/test_argparse.c
++++ b/app/test/test_argparse.c
+@@ -822,8 +822,12 @@ test_argparse_parse_type_corelist(void)
+ 	char *corelist_valid_single = test_strdup("5");
+ 	char *corelist_valid_multiple = test_strdup("0,1,5");
+ 	char *corelist_valid_range = test_strdup("1-5");
++	char *corelist_valid_range_step = test_strdup("1-5:2");
++	char *corelist_valid_range_step_big = test_strdup("1-5:10");
+ 	char *corelist_valid_mixed = test_strdup("0,1,5-10,12-16,18,20");
++	char *corelist_valid_mixed_step = test_strdup("0,1,5-10:2,12-16:3,18,20");
+ 	char *corelist_valid_reverse_range = test_strdup("10-5");
++	char *corelist_valid_reverse_range_step = test_strdup("10-5:2");
+ 	char *corelist_valid_initial_spaces = test_strdup("   1,2,5-7");
+ 	char *corelist_valid_empty = test_strdup("");
+ 	char *corelist_invalid_spaces = test_strdup(" 1 , 2 , 5-7 ");
+@@ -831,6 +835,14 @@ test_argparse_parse_type_corelist(void)
+ 	char *corelist_invalid_range_incomplete = test_strdup("1-");
+ 	char *corelist_invalid_range_double_dash = test_strdup("1--5");
+ 	char *corelist_invalid_range_double_range = test_strdup("1-3-5");
++	char *corelist_invalid_range_step_incomplete1 = test_strdup("1:");
++	char *corelist_invalid_range_step_incomplete2 = test_strdup("1:2");
++	char *corelist_invalid_range_step_incomplete3 = test_strdup("1-5:");
++	char *corelist_invalid_range_step_double = test_strdup("1-5::");
++	char *corelist_invalid_range_step_zero = test_strdup("1-5:0");
++	char *corelist_invalid_range_step_big = test_strdup("1-5:65536");
++	char *corelist_invalid_range_step_negative = test_strdup("1-5:-2");
++	char *corelist_invalid_range_step_more = test_strdup("1-5:2:");
+ 	char *corelist_invalid_special_chars = test_strdup("1,2@3");
+ 	char *corelist_invalid_comma_only = test_strdup(",");
+ 	char *corelist_invalid_out_of_range = test_strdup("70000");
+@@ -867,6 +879,30 @@ test_argparse_parse_type_corelist(void)
+ 	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5!");
+ 	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5!");
+ 
++	/* test valid range step */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_valid_range_step,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (range step) failed!");
++	for (int i = 1; i <= 5; i += 2)
++		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 1-5:2!", i);
++	for (int i = 2; i <= 5; i += 2)
++		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 1-5:2!", i);
++	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5:2!");
++	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5:2!");
++
++	/* test valid range step big */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_valid_range_step_big,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (range step big) failed!");
++	for (int i = 1; i <= 5; i += 10)
++		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 1-5:10!", i);
++	for (int i = 2; i <= 5; i++)
++		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 1-5:10!", i);
++	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5:10!");
++	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5:10!");
++
+ 	/* test valid mixed corelist */
+ 	CPU_ZERO(&val_cpuset);
+ 	ret = rte_argparse_parse_type(corelist_valid_mixed,
+@@ -886,6 +922,31 @@ test_argparse_parse_type_corelist(void)
+ 	TEST_ASSERT(!CPU_ISSET(17, &val_cpuset), "Core 17 should not be set in mixed corelist!");
+ 	TEST_ASSERT(!CPU_ISSET(19, &val_cpuset), "Core 19 should not be set in mixed corelist!");
+ 
++	/* test valid mixed step corelist */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_valid_mixed_step,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (mixed step) failed!");
++	TEST_ASSERT(CPU_ISSET(0, &val_cpuset), "Core 0 should be set in mixed step corelist!");
++	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in mixed step corelist!");
++	for (int i = 5; i <= 10; i += 2)
++		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 5-10:2!", i);
++	for (int i = 6; i <= 10; i += 2)
++		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 5-10:2!", i);
++	for (int i = 12; i <= 16; i += 3)
++		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 12-16:3!", i);
++	for (int i = 13; i <= 16; i += 3)
++		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 12-16:3!", i);
++	for (int i = 14; i <= 16; i += 3)
++		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 12-16:3!", i);
++	TEST_ASSERT(CPU_ISSET(18, &val_cpuset), "Core 18 should be set in mixed step corelist!");
++	TEST_ASSERT(CPU_ISSET(20, &val_cpuset), "Core 20 should be set in mixed step corelist!");
++	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in mixed step corelist!");
++	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in mixed step corelist!");
++	TEST_ASSERT(!CPU_ISSET(17, &val_cpuset), "Core 17 should not be set in mixed step corelist!");
++	TEST_ASSERT(!CPU_ISSET(19, &val_cpuset), "Core 19 should not be set in mixed step corelist!");
++
++
+ 	/* test valid reverse range (10-5 should be interpreted as 5-10) */
+ 	CPU_ZERO(&val_cpuset);
+ 	ret = rte_argparse_parse_type(corelist_valid_reverse_range,
+@@ -897,6 +958,20 @@ test_argparse_parse_type_corelist(void)
+ 	TEST_ASSERT(!CPU_ISSET(4, &val_cpuset), "Core 4 should not be set in reverse range 10-5!");
+ 	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in reverse range 10-5!");
+ 
++	/* test valid reverse range step (10-5:2 should be interpreted as 5-10:2) */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_valid_reverse_range_step,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (reverse range) failed!");
++	for (int i = 5; i <= 10; i += 2)
++		TEST_ASSERT(CPU_ISSET(i, &val_cpuset),
++				"Core %d should be set in reverse range 10-5:2!", i);
++	for (int i = 6; i <= 10; i += 2)
++		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset),
++				"Core %d should not be set in reverse range 10-5:2!", i);
++	TEST_ASSERT(!CPU_ISSET(4, &val_cpuset), "Core 4 should not be set in reverse range 10-5!");
++	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in reverse range 10-5!");
++
+ 	/* test valid corelist with initial spaces only */
+ 	CPU_ZERO(&val_cpuset);
+ 	ret = rte_argparse_parse_type(corelist_valid_initial_spaces,
+@@ -948,6 +1023,54 @@ test_argparse_parse_type_corelist(void)
+ 			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
+ 	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (double range) should have failed!");
+ 
++	/* test invalid corelist with step complete1 */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete1,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete1) should have failed!");
++
++	/* test invalid corelist with step incomplete2 */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete2,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete2) should have failed!");
++
++	/* test invalid corelist with step incomplete3 */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete3,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete3) should have failed!");
++
++	/* test invalid corelist with step double */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_double,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step double) should have failed!");
++
++	/* test invalid corelist with step zero */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_zero,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step zero) should have failed!");
++
++	/* test invalid corelist with step big */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_big,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step big) should have failed!");
++
++	/* test invalid corelist with step negative */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_negative,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step negative) should have failed!");
++
++	/* test invalid corelist with step more */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_range_step_more,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step more) should have failed!");
++
+ 	/* test invalid corelist with special characters */
+ 	CPU_ZERO(&val_cpuset);
+ 	ret = rte_argparse_parse_type(corelist_invalid_special_chars,
+diff --git a/doc/guides/prog_guide/argparse_lib.rst b/doc/guides/prog_guide/argparse_lib.rst
+index b0907cfc07..3d01406599 100644
+--- a/doc/guides/prog_guide/argparse_lib.rst
++++ b/doc/guides/prog_guide/argparse_lib.rst
+@@ -271,8 +271,10 @@ The corelist parsing supports the following input formats:
+ - **Single core**: ``--cores 5`` (sets core 5)
+ - **Multiple cores**: ``--cores 1,2,5`` (sets cores 1, 2, and 5)
+ - **Core ranges**: ``--cores 1-5`` (sets cores 1, 2, 3, 4, and 5)
++- **Core ranges with step**: ``--cores 1-5:2`` (sets cores 1, 3, and 5)
+ - **Mixed format**: ``--cores 0,2-4,7`` (sets cores 0, 2, 3, 4, and 7)
+ - **Reverse ranges**: ``--cores 5-1`` (equivalent to 1-5, sets cores 1, 2, 3, 4, and 5)
++- **Reverse ranges with step**: ``--cores 5-1:2`` (equivalent to 1-5:2, sets cores 1, 3, and 5)
+ - **Empty corelist**: ``--cores ""`` (sets no cores)
+ 
+ The parsed result is stored in an ``rte_cpuset_t`` structure that can be used
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index be758a0c02..1712007398 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -123,6 +123,12 @@ New Features
+   Added internal ``flow_graph`` API in ethdev
+   for PMD drivers to build graph-based flow pattern parsers.
+ 
++* **Added step syntax for corelist ranges parsing.**
++
++  The corelist parser now supports step syntax for core ranges.
++  For example, ``-l 0-126:2`` selects cores 0, 2, 4, ..., 126.
++  This is useful for skipping sibling cores on systems with SMT/hyperthreading.
++
+ * **Updated AF_XDP driver.**
+ 
+   * Changed the default device plugin endpoint path used when
+diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
+index 88c3e7740c..f1e1fb9d20 100644
+--- a/lib/argparse/rte_argparse.c
++++ b/lib/argparse/rte_argparse.c
+@@ -573,6 +573,9 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
+ {
+ 	rte_cpuset_t *cpuset = arg->val_saver;
+ 	const char *last = value;
++	bool is_step = false;
++	int32_t step = 1;
++	int32_t max = -1;
+ 	int min = -1;
+ 
+ 	if (value == NULL) {
+@@ -584,7 +587,6 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
+ 	while (*last != '\0') {
+ 		char *end;
+ 		int64_t idx;
+-		int32_t max;
+ 
+ 		while (isblank(*value))
+ 			value++;
+@@ -603,6 +605,14 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
+ 				arg->name_long);
+ 			return -EINVAL;
+ 		}
++		if (is_step) {
++			if (idx == 0) {
++				ARGPARSE_LOG(ERR, "argument %s step value must be positive!",
++					arg->name_long);
++				return -EINVAL;
++			}
++			step = idx;
++		}
+ 
+ 		if (*end == '-') {
+ 			if (min != -1) { /* can't have '-' within a range */
+@@ -612,22 +622,41 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
+ 			}
+ 			min = idx; /* start of range, move to next loop stage */
+ 		} else if (*end == ',' || *end == '\0') {
+-			/* single value followed by comma or end (min is set only by '-') */
+-			if (min == -1) {
+-				min = max = idx;
+-			} else if (min > idx) {
+-				/* we have range from high to low */
++			if (!is_step) {
++				/* single value followed by comma or end (min is set only by '-') */
++				if (min == -1) {
++					min = max = idx;
++				} else if (min > idx) {
++					/* we have range from high to low */
++					max = min;
++					min = idx;
++				} else {
++					/* range from low to high */
++					max = idx;
++				}
++			}
++
++			for (; min <= max; min += step)
++				CPU_SET(min, cpuset);
++
++			/* no longer in a range */
++			min = -1;
++			max = -1;
++			step = 1;
++			is_step = false;
++		} else if (*end == ':') {
++			if (min == -1 || is_step) {
++				ARGPARSE_LOG(ERR, "argument %s step can only be used after a range (start-end:step)!",
++					arg->name_long);
++				return -EINVAL;
++			}
++			if (min > idx) {
+ 				max = min;
+ 				min = idx;
+ 			} else {
+-				/* range from low to high */
+ 				max = idx;
+ 			}
+-
+-			for (; min <= max; min++)
+-				CPU_SET(min, cpuset);
+-
+-			min = -1; /* no longer in a range */
++			is_step = true;
+ 		} else {
+ 			/* end is an unexpected character, return error */
+ 			ARGPARSE_LOG(ERR, "argument %s has an unexpected character!",
+-- 
+2.17.1
 
