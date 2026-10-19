@@ -2,78 +2,145 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B1CCCF2DE
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 13:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2443CCF2D6
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 13:24:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BFF0B40DD1;
-	Mon, 19 Oct 2026 15:08:49 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 9B0054067B
- for <dev@dpdk.org>; Mon, 19 Oct 2026 15:08:48 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 69J8Og8i538867 for <dev@dpdk.org>; Mon, 19 Oct 2026 06:08:47 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=w
- Rp7vOZgh6a7oLDB5diV4Zbnc1xdo0mQGoNP5npRTXA=; b=a6LLHoZFC/Wp9oBnd
- d9tOytUc76D+dNMn1n69W9jBsJXR0qpc4AnFaX8Gv4fQF4h8F1FKQiViPgBgQSho
- VmDdwHM8VbzO1vCl5NCk4ZoD72+M9lj1MCNOPaHDbHLLSEJJXQ6Go1CUbJjuWsLY
- d5MR8bMCIqynmeqMaAAUwIJCuTMdHd/0EGYfNBsF+5TfM6scUdHJxSz7mSNoKD58
- qI5UhB+H+rqUOftW6BL12oB+hDgcUA/49WMuEjs7O9hSYr18i1dKTqKptLBn1yc8
- nbkLBKAN/wmDhgjgyRzjlrlx6SoSWqVcj6ruwPIX/m20Py7+r+Fr/KdI1DZQ42k2
- hqpzA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4hc6cj5gxh-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 19 Oct 2026 06:08:47 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id E8AF340430;
+	Mon, 19 Oct 2026 15:24:48 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 9B2D440297;
+ Mon, 19 Oct 2026 15:24:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792416287; x=1823952287;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=RX7P8deN3vbbbmJowRdQRbn/JRVV17Ci+AnyWiRU0y0=;
+ b=Bxn2WLPjKHl/mNOm1V08g/ioXYEPFASmeuYf6hjBP0RTyT9bJJfkEJVa
+ yRMeXY0RX1K+knUTraqayj9m/wFLjU9HqBXGoLyQYwQwOyQLdswe0NP+Y
+ ZuO9g03Hz5CwCv7nnW4HpD5Q76uwpiqno3f3BFFaGF35eU6vFOz+vU1ON
+ PSXC3yODAqusUqAg9E+g36932jPf5DJA75FiosGL8Yfn9C8lTn7dwpzmJ
+ LNKHVkyvi1rtXi7TBajNbfyVbpC+S54k3vqhDSe1uC89EmtubU8EMMCiE
+ K4SGzyxYIOecPO0tHRG7rDdJQdhT2Dq2wWCCNmMaPOjzcITX7aIWbT/b3 Q==;
+X-CSE-ConnectionGUID: OfON0TmeSGma30zlbxWDcQ==
+X-CSE-MsgGUID: hT5wQ8kwTMeyW/Rv0IYR/Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11939"; a="997117"
+X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
+   d="scan'208";a="997117"
+Received: from fmviesa011.fm.intel.com ([10.60.135.151])
+ by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Oct 2026 06:24:45 -0700
+X-CSE-ConnectionGUID: jWyZKZ1bQTmfB++lK8JrwQ==
+X-CSE-MsgGUID: 0KTg7QgkTPyHrjmDQcZN+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
+   d="scan'208";a="4369009"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa011.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Oct 2026 06:24:45 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 19 Oct 2026 06:08:47 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 19 Oct 2026 06:08:47 -0700
-Received: from cavium-System-Product-Name.. (unknown [10.28.38.254])
- by maili.marvell.com (Postfix) with ESMTP id BC6C53F704D;
- Mon, 19 Oct 2026 06:08:44 -0700 (PDT)
-From: Tejasree Kondoj <ktejasree@marvell.com>
-To: Akhil Goyal <gakhil@marvell.com>
-CC: Rupesh Chiluka <rchiluka@marvell.com>, Anoob Joseph <anoobj@marvell.com>, 
- Vidya Sagar Velumuri <vvelumuri@marvell.com>, Ankur Dwivedi
- <adwivedi@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH 16/16] crypto/cnxk: size CN20K IPsec SA by context length
-Date: Mon, 19 Oct 2026 18:37:57 +0530
-Message-ID: <20261019130759.2181566-17-ktejasree@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261019130759.2181566-1-ktejasree@marvell.com>
-References: <20261019130759.2181566-1-ktejasree@marvell.com>
+ 15.2.2562.49; Mon, 19 Oct 2026 06:24:44 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Mon, 19 Oct 2026 06:24:44 -0700
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.66) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Mon, 19 Oct 2026 06:24:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QfxrVJrFsvqNOAKj2yJzDgMzj2Bg+7GVII6FlNg8+CyZUi7uLF51oyhI/HtKt1zXmQ6cfO2fFw9MygZnG8UWVkWbAAZd/H2XGOpXd5RzoSZfogD/UmqtljuKSgjsOFuF16xFZrvfEiBZXoZJM/hFlMde2nXGxltYZo6QjGJT1/zzFGVVbohLwE+wn9hnjzWiziKBoCbAp1rrNDX87PtJBaY/rCX0IL6XYU5PSNQl1BR9TeObr04SE9VoUmCcMo+NKKFbNz31qFIKsqYUN3K2zJ3ZYt/LpZcChtYQc64Ye/yCQ9XIwHuxMdFQUIw1gHqetFI70uQsG92OwMptt4P9qA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2hAXb3ZalEVTyu6sM0qvEqyJsJal7d5czZ1QsbvIOL0=;
+ b=dNjmCkujk2jmoCwTgvnw9HtCIefK3hOwaeWKZGqj6W4FRLzghV/aybaQS4v6SbaZS8WRk6FuVjNulqqdiZ2WShoTxvkfMmWQfOFQb0fh2qIEXGbqS3WuNeMF3O/SeMoBjEEmuR92tsErU8iQZKPC2NlHsIQAu8e2Ys0/EiZ03mmwlTI2cZ7AvuRjA/tvidKMGWOwxPyfCA5XuPc2xXZYRSuVFlUJ3VTOkM6nRoIOG/U4UFp0YgmHi3Q5mQ4QF+x+S2n3DExap5NUryu6+u64T7p1Jl9jYq5+7wsQI2OTcs+RSBZPLgruvZOy/1pKmKVQrIU4UTreSZhyGWBh2EslGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by DS0PR11MB7734.namprd11.prod.outlook.com (2603:10b6:8:df::7) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.522.19; Mon, 19 Oct 2026 13:24:41 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0522.017; Mon, 19 Oct 2026
+ 13:24:41 +0000
+Date: Mon, 19 Oct 2026 14:24:36 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+CC: <dev@dpdk.org>, <david.marchand@redhat.com>, <anatoly.burakov@intel.com>, 
+ <soumyadeep.hore@intel.com>, <stable@dpdk.org>
+Subject: Re: [PATCH v2] net/ice: fix max number of descriptors for E830
+Message-ID: <atYaFA6l8NqCjIqf@bricha3-mobl1.ger.corp.intel.com>
+References: <20261008111928.43095-1-sandeep.penigalapati@intel.com>
+ <20261012161226.130164-1-sandeep.penigalapati@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20261012161226.130164-1-sandeep.penigalapati@intel.com>
+X-ClientProxiedBy: DUZPR01CA0345.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b8::28) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Wf-9WNW4GPWK7FUm7a-3q-fw7K0NoLXp
-X-Authority-Analysis: v=2.4 cv=L7KI0OT8 c=1 sm=1 tr=0 ts=6ad6165f cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=EAYMVhzMl8SCOHhVQcBL:22 a=M5GUcnROAAAA:8 a=637z7pUVPLZPQSpCa9UA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE5MDA1MiBTYWx0ZWRfX0x46xbLpHbyq
- KLXydJ+8a10tVhZ8CAbCzlc0C6e/TMURb0jvL5p413npbmJcZ8OG9ILanu/Yv3Z3GjdPVUItaOU
- /N1n0AABicEv06HQJNryP/lMScmKJm6j7PFUsOjMVvSMkS9q2r9xlbrVauBNyn2RNXRzHOzrU7F
- 1yxrExdtKlNNPaIXDwwW53BlvZ0eRolteBEl0D8r6g+ZEDS3Z/ccGzZLfx27ROwyp//unladVR1
- UYwSISEw4AQK9giFaR1oXWRzmpvWMsXmv1Gz5HaFadbc/pRg92JAH3bp5MmUNd4qquqLFEaWWzy
- tHxS88WIHJFSPoOrvdTO/J2qmHuDiVjrDs4bGwzgZdjbVFxZp085r6wgAbF9WlevnpDauLYXYkX
- HFQl2ELlQxPGGm34pfNeXawBOKlyD8UFC7hL5/Z3lDbaTFFZI501tLB4cOXNYkXSXI6pHrg2ZtK
- enKeyB3cISGu3nOPH3g==
-X-Proofpoint-GUID: Wf-9WNW4GPWK7FUm7a-3q-fw7K0NoLXp
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE5MDA1MiBTYWx0ZWRfX8rkDVNsMW3EC
- Vd6SVA2XYWs4tpfwhf6ElWLuUftoHqR3cNE9n914vnWPHCTF7+IGQhrtcEGpKBYRPvL98ULNVqh
- IUxZifTIQhQcUrQzqJMDnYcZqpvLynY=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-19_03,2026-10-14_01,2025-10-01_01
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|DS0PR11MB7734:EE_
+X-MS-Office365-Filtering-Correlation-Id: 991ca289-af54-497a-9c61-08df2de45508
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|1800799024|23010399003|366016|6133799003|18002099003|10067099003|22082099003|4143699003|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info: AZ1DyR/v8tDfCJq9SiPENoA9LOMlNDkqxuYPq6EI4x+JsYTR+Fhf1N+5Q6N8+W6Bu2MEGwvkfIAB7wkUmOEXdUicfL+bbzf3AaTs2wmRNnolGFufF+bd2r7ExdhJTIKeP9kYYN0r1yjpzQmAzDDESfAAN2bqS5fBtI1vXFAWvnOzONcKALSV31C+QKPtoOlHhtt80vbARhVH2CFOtyDa4vFROMZAClCpV39ldwYVZq9hkY+xhdUeRXLzXUPssiDs52xaL/drhVNAEiVsg/VuK669DEo84vTF/r5qTOa4UET6UnJEnPR5Rt/3AthluN+WPT3TQgyZ/TwHOivkYDaJnZZKFhVhQBf04sG1axYzFA59OA5byahknJIXKUbPaItEEZXS9HuF1UPWhbJ8pCfAgM+CDXUmj7R70IOv2UAd8YgIaToEvdJz7xta7kYEgZURaRuKMHK/pmlAs7LKGJCZB2wRclSKU+nGmfN0dhLCnef5vKRerEZXAG3+V99zIL2fQXucUCzJRRyui2aMYz4aQTquND8RKDrVuG0G5G5qkfShf1YHa8oxQlvkQ+e1wZ4p4adlEvJ3si9UgeLdeoXgcMWR9OU4QyHKn1bjC9LxCY/hJQe8J4gMWM+QJsG/9JPEO1x4jkUjMnksvBgcAyjRCh8sUiU9DhdN/7zFoErXjFw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(6133799003)(18002099003)(10067099003)(22082099003)(4143699003)(11063799006)(56012099006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gSr/94HTFtv32QG9RLDhD/h6dHJwssN+6PY5KGkJLjpodX19QVZC9qLDXdUo?=
+ =?us-ascii?Q?fZEqluCiXh+2Gv9+IXv7dULaUX9aqKFJKdcjRgEisXvjzb1FM37KoVOylukt?=
+ =?us-ascii?Q?xXuDQika4Wu3x44TGFG39VCkE0rcTwtZmTONxiu67zYRYHZzyou5HqXemFDU?=
+ =?us-ascii?Q?PeyHYVR3QVzYDJn/JKKnyeb4TpGWm07hWtVV2I/oauIWk8hLu5ErvuHTQUfR?=
+ =?us-ascii?Q?2YISmhvWboEikh/Y6rKSmh5v/FNSFa37wdfGqzEYEVj/cMTaMTvawGlgyu+T?=
+ =?us-ascii?Q?QukS92+3IJksLdMrqIZUv8FI40JufK/iUm8DIsfYofySsGigvj2/5QcEUvZC?=
+ =?us-ascii?Q?qwrz+vNPs05vxO409U5aYu0bWLxqWtYXU4Wc7DzKjOtSlxu7CTmoRSfqwhHi?=
+ =?us-ascii?Q?/Bulfhvk3JUNoxvWIi/HP6KsggpdYEabYlIckl6sD8ybbc0oc0dLprxTfGyH?=
+ =?us-ascii?Q?Up2g2P6v05UM0WkYMNoKCxzV9wcAkKkgwps39e199AeqOSZwlHcE3txtiJXE?=
+ =?us-ascii?Q?eqPnDqO1vzjOmyUnYgnC9Q8r/kokbSJNYC/Yp8gAYWl/SEPIYRC2Mr7rIDND?=
+ =?us-ascii?Q?lRK58RJtiAxJWcXzhfkkEpGnPiZBsGj/AVQm+Gu26I120bF4Z18TLev2BzOj?=
+ =?us-ascii?Q?9Bh2+x2DOYu01D6Z6YuB4qrzUm/6eaid7WdD+e8j6atwcJUU9QpMiF+aVC7y?=
+ =?us-ascii?Q?IxEcWUOQNjl7oT5sHyHayfXOVEt9y8NrlN0p7DboyqQi8qa4HgJp0Kycx/vd?=
+ =?us-ascii?Q?Q4z0gXg4tbfsvAot85pucnYBw4pbAzZR+RF10AGtTkQw4hqZnH20KWbmKo9Y?=
+ =?us-ascii?Q?BeSKcaQbu6AEFphf7KRVyI870vr3XKlVmOM5czCk9l4h33aodrGeA5dxB1KG?=
+ =?us-ascii?Q?3NbJQm4bZfWY9p2xnbdZChoF/gTKIYa0Wmq4aT1VgCchJUHZeNC19ZZAZNuf?=
+ =?us-ascii?Q?P/7hjOWawFeqcOP7SyDfvcR60wpft+03FvUsZtsswTOF+EqT1sJ2Avvcu3Eh?=
+ =?us-ascii?Q?IY8XDvSpHBEwqDhM6Zk3pKzJuNVQVJVxxfYR0j5O1sTFi4liLRfgy/wUb2Fa?=
+ =?us-ascii?Q?7ptZ2hVZvhoBp2kEFWrdMBZTYvzozTPKk9QuSyz2s2+QzTXO2+AGfJMBWjgY?=
+ =?us-ascii?Q?zBwABNSezWlkLDPpE51/jMNoC7cpYSxTby/VWpC6cX34T0kzDYE5TpARqjE8?=
+ =?us-ascii?Q?e6G18UKLVeFVhRzKf3u3SqFdpr553hohev0kqYNf9CrLRkqVSGXZLFGHTxyW?=
+ =?us-ascii?Q?D4hxugAEhB9EbGZpxgNLe12bMPuaW7gfM51fjE+e6zrdVXUSyD1YbBwNkGfi?=
+ =?us-ascii?Q?TNqWmnKVgXEPe34lNgOFOlA1c/T6kX9jKSet6YyItXhjFuiQpRiFg4/Izp14?=
+ =?us-ascii?Q?jdQSCEXRAz6UBIg/sqwS2WVT1FEStCEwpOkp1PMu6gqg4uFyo+WnBJ5cK9VU?=
+ =?us-ascii?Q?Pn+S3Regoklm26fqHKJobJyozElWbUSWmf3MYu7yo0AL8RW6bCy+Vz0/7rwr?=
+ =?us-ascii?Q?+Jed/tXHyIF4b7YtRSEx69DH2quw/7tMToJNHLHjUD2WecVn/bAKypC+ObW/?=
+ =?us-ascii?Q?CPXpv8nq37IOq7mQJtHVwDI37j1cL7zpQ0RKodSa9Ihc1+Go8DHAanzclQEj?=
+ =?us-ascii?Q?K9BH5VMeWRn7XhxaoE7GulU55wwyiY3G74l2U0/5as52P1dNdKApJSgTeytK?=
+ =?us-ascii?Q?Bh4OYQpJN0wAtVSzEoGKXnAt6SVbqeMX0NGBhkuNufkDZQg5NvpDW1GUFxyE?=
+ =?us-ascii?Q?7/3bncJlsH+qYlAT+KVCRn3OAGOE39g=3D?=
+X-Exchange-RoutingPolicyChecked: iEOteLMUqKlkX8lsND3uVINc/F8sydkcHmdkwHPD02Kb53K+BVP99QSMyu4nT9lPZL4a3XMSaKocMrCU26qX5Y/w/rZMwtLATPspkNRHHxP1cZOnztpq/PCDrRxMs2zjpknWZWKckRnky/Tu8qAZyWWOBHTif3ym2KkYqfyP+6wLV3l76/cKSMHY7ecgwwP56RJgQ+VXsgDDBIuM1VrguXvneAeBnjL2g2wMX1n3XG9pkF3FU5uxdkJ+LAZwrJ7HTFGq9/Uq2AqtlwgNZb2YKZk+POw9geYFuHvpnauwkHxL4N4dgT0h8Rqq77gExe/5t99A4US7YRaYSFDxPRETqw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 991ca289-af54-497a-9c61-08df2de45508
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2026 13:24:41.5420 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CLRW2KfvrPGTwFNmjzlHGPUJOy3zuX8HFJxQ1lqphZ7uU1tnjDaNmtUoN+HxzTHZWbZn933tiM+PhlIk91JxJ4+I1QEv8XsihOttKr0Dx04=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7734
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,81 +154,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Rupesh Chiluka <rchiluka@marvell.com>
-
-Allocate the CN20K inbound/outbound IPsec SA with a size of at least
-(ctx_ilen + 1) * 128 bytes when ctx_ilen is set, so larger contexts
-such as a 1 KiB SA are supported. Zero the full allocation instead of
-only the default SA size.
-
-Also advertise ctx_ilen in the PMD param string.
-
-Signed-off-by: Tejasree Kondoj <ktejasree@marvell.com>
-Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
----
- drivers/crypto/cnxk/cn20k_ipsec.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/crypto/cnxk/cn20k_ipsec.c b/drivers/crypto/cnxk/cn20k_ipsec.c
-index b2cab4ff5f..c7fe670724 100644
---- a/drivers/crypto/cnxk/cn20k_ipsec.c
-+++ b/drivers/crypto/cnxk/cn20k_ipsec.c
-@@ -31,12 +31,17 @@ cn20k_ipsec_outb_sa_create(struct roc_cpt *roc_cpt, struct roc_cpt_lf *lf,
- 	struct cnxk_ipsec_outb_rlens rlens;
- 	struct cn20k_ipsec_sa *sa;
- 	union cpt_inst_w4 inst_w4;
-+	size_t out_sa_sz;
- 	void *out_sa;
- 	int ret = 0;
- 
- 	sa = &sec_sess->sa;
- 
--	out_sa = rte_zmalloc("cn20k_cpt", sizeof(struct roc_ow_ipsec_outb_sa), ROC_CPTR_ALIGN);
-+	out_sa_sz = sizeof(struct roc_ow_ipsec_outb_sa);
-+	if (roc_cpt->ctx_ilen)
-+		out_sa_sz = PLT_MAX(out_sa_sz, (size_t)(roc_cpt->ctx_ilen + 1) * ROC_CTX_UNIT_128B);
-+
-+	out_sa = rte_zmalloc("cn20k_cpt", out_sa_sz, ROC_CPTR_ALIGN);
- 	if (out_sa == NULL) {
- 		plt_err("Couldn't allocate memory for outbound SA");
- 		return -ENOMEM;
-@@ -124,7 +129,7 @@ cn20k_ipsec_outb_sa_create(struct roc_cpt *roc_cpt, struct roc_cpt_lf *lf,
- 		sa_dptr->w0.s.count_glb_octets = 1;
- 	}
- 
--	memset(out_sa, 0, sizeof(struct roc_ow_ipsec_outb_sa));
-+	memset(out_sa, 0, out_sa_sz);
- 
- 	/* Copy word0 from sa_dptr to populate ctx_push_sz ctx_size fields */
- 	memcpy(out_sa, sa_dptr, 8);
-@@ -161,12 +166,17 @@ cn20k_ipsec_inb_sa_create(struct roc_cpt *roc_cpt, struct roc_cpt_lf *lf,
- 	struct roc_ow_ipsec_inb_sa *sa_dptr;
- 	struct cn20k_ipsec_sa *sa;
- 	union cpt_inst_w4 inst_w4;
-+	size_t in_sa_sz;
- 	void *in_sa;
- 	int ret = 0;
- 
- 	sa = &sec_sess->sa;
- 
--	in_sa = rte_zmalloc("cn20k_cpt", sizeof(struct roc_ow_ipsec_inb_sa), ROC_CPTR_ALIGN);
-+	in_sa_sz = sizeof(struct roc_ow_ipsec_inb_sa);
-+	if (roc_cpt->ctx_ilen)
-+		in_sa_sz = PLT_MAX(in_sa_sz, (size_t)(roc_cpt->ctx_ilen + 1) * ROC_CTX_UNIT_128B);
-+
-+	in_sa = rte_zmalloc("cn20k_cpt", in_sa_sz, ROC_CPTR_ALIGN);
- 	if (in_sa == NULL) {
- 		plt_err("Couldn't allocate memory for inbound SA");
- 		return -ENOMEM;
-@@ -231,7 +241,7 @@ cn20k_ipsec_inb_sa_create(struct roc_cpt *roc_cpt, struct roc_cpt_lf *lf,
- 		sa_dptr->w0.s.count_glb_octets = 1;
- 	}
- 
--	memset(in_sa, 0, sizeof(struct roc_ow_ipsec_inb_sa));
-+	memset(in_sa, 0, in_sa_sz);
- 
- 	/* Copy word0 from sa_dptr to populate ctx_push_sz ctx_size fields */
- 	memcpy(in_sa, sa_dptr, 8);
--- 
-2.43.0
-
+On Mon, Oct 12, 2026 at 04:12:26PM +0000, Sandeep Penigalapati wrote:
+> E830 supports at most 8096 descriptors per ring, but the advertised
+> descriptor limits and the Rx/Tx queue setup checks used the generic
+> maximum of 8160. Only the ring allocation honoured the E830 limit.
+> 
+> An application could therefore request up to 8160 descriptors on E830.
+> With Tx packet pacing enabled, the Tx time queue length (Tx descriptors
+> plus a fetch margin) overflows the 13-bit queue length field, wraps to
+> zero and triggers a Malicious Driver Detection event.
+> 
+> Use ICE_MAX_NUM_DESC_BY_MAC() for the advertised limits and the queue
+> setup checks so they match the ring allocation.
+> 
+> Fixes: 0b6ff09a1f19 ("net/intel: support Tx packet pacing for E830")
+> Cc: stable@dpdk.org
+> Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+> ---
+> v2:
+>   - No functional change. Added a short comment on the descriptor-limit
+>     defines pointing ring-facing limits at ICE_MAX_NUM_DESC_BY_MAC(),
+>     per review feedback.
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
