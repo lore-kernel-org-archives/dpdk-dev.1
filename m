@@ -1,28 +1,28 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F9160A7E41
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 15:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB4060A6F55
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 15:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=QAP0GCNQ
+	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=WliZWjzM
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6537240B8D;
-	Mon, 19 Oct 2026 17:20:07 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
- by mails.dpdk.org (Postfix) with ESMTP id 30F28406FF
- for <dev@dpdk.org>; Mon, 19 Oct 2026 17:19:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 167CA406B7;
+	Mon, 19 Oct 2026 17:19:58 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.5])
+ by mails.dpdk.org (Postfix) with ESMTP id 1003D4064F;
+ Mon, 19 Oct 2026 17:19:55 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=aWvt9y11BJMykSK1ZCPTLBMZfXPphYoIoO9dk4VJ/pM=;
- b=QAP0GCNQnsgz5bztv0Xppgtki3tfUW3nKMuauRjXT5Bbl2mOXCenhcl9X3KPxY
- Abr84RljontgUXT9qscqSA3ce20YtGRecENtsk6EGYRheh9YtZhQM2VeGhpIYk4b
- kNY2FJAPtug8JXcbnmM8ddvfJIu5WKQwsC2ybub5Sd5Cg=
+ MIME-Version; bh=9loECt8hrIGh5sy147D10dpfpWo6lWHVJUsm7KRsC00=;
+ b=WliZWjzMn1GXtiMR8MTUvDau+cmu8xGL/ICdrcPA02tguSqQYMf+Poye4HoRpB
+ WbBZXgz8ZB+6v0oea1yc1XxXnfB9LM23jMcN27q7St5+YHi8pIbFMh+GfWcVGgLm
+ PjT4+oM4MmnkOBvxmiONIO1Y3tB4zgghjkBgD9H76Dgo4=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH 11/27] net/hinic3: add FEC mode get/set and capability support
-Date: Mon, 19 Oct 2026 23:19:13 +0800
-Message-ID: <20261019151930.1572-12-yejiacheng4@h-partners.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
+Subject: [PATCH 02/27] net/hinic3: fix double removal in ethertype flow destroy
+Date: Mon, 19 Oct 2026 23:19:04 +0800
+Message-ID: <20261019151930.1572-3-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261019151930.1572-1-yejiacheng4@h-partners.com>
 References: <20261014150923.838-1-yejiacheng4@h-partners.com>
@@ -30,13 +30,13 @@ References: <20261014150923.838-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgCXK5cUNdZqqgUkBA--.15723S13
-X-Coremail-Antispam: 1Uf129KBjvJXoW3CryfWr1xZFW5GFWUXr18Zrb_yoWDtFW7pa
- 1UGF98Jr98GF4xZrnxJwsrA3W5Gw1fG3y0ga4xCFySkan2qrW0vFy5Ja9FyF13KrW7XFyx
- ZF4qgFWDKw4Fqa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uio7tUUUUU=
+X-CM-TRANSID: Ac8vCgCXK5cUNdZqqgUkBA--.15723S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZrWrZr4rWw4DGw13Xw4Dtwb_yoWDCrg_Cr
+ yI9F17A34qkr48tw1UKr43Z34akr4vqFyIvw4Iqry3G34UAF4IqFyUur4fJas7GF1UZFnx
+ Cr9rK34Ik3s5KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+ 9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU01q2tUUUUU==
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNhykrmrWNRzUowAA3C
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMxmjrWrWNRnMhwAA3-
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,340 +54,33 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-High-speed links need a configurable FEC mode to interoperate with the
-peer, so add FEC get/set/capability callbacks. The advertised/supported
-FEC values are converted between the firmware and DPDK representations.
+The ethertype destroy path removes the same flow node from
+filter_ethertype_list twice, corrupting the tailq and leading to
+use-after-free. Drop the redundant removal.
+
+Fixes: efa3b9b36fc7 ("net/hinic3: add flow control and filters")
+Cc: stable@dpdk.org
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/nics/features/hinic3.ini      |   1 +
- doc/guides/rel_notes/release_26_11.rst   |   1 +
- drivers/net/hinic3/base/hinic3_nic_cfg.c | 112 +++++++++++++++++++++++
- drivers/net/hinic3/base/hinic3_nic_cfg.h |  32 +++++++
- drivers/net/hinic3/hinic3_ethdev.c       | 108 ++++++++++++++++++++++
- 5 files changed, 254 insertions(+)
+ drivers/net/hinic3/hinic3_flow.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/doc/guides/nics/features/hinic3.ini b/doc/guides/nics/features/hinic3.ini
-index 6cdd240a82..8083dc63d1 100644
---- a/doc/guides/nics/features/hinic3.ini
-+++ b/doc/guides/nics/features/hinic3.ini
-@@ -26,6 +26,7 @@ Flow control         = Y
- CRC offload          = Y
- VLAN offload         = Y
- QinQ offload         = P
-+FEC                  = Y
- L3 checksum offload  = Y
- L4 checksum offload  = Y
- Inner L3 checksum    = P
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index db3459a97b..151adeed1a 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -145,6 +145,7 @@ New Features
- * **Updated Huawei hinic3 ethernet driver.**
+diff --git a/drivers/net/hinic3/hinic3_flow.c b/drivers/net/hinic3/hinic3_flow.c
+index 5c255619e3..453b4369b3 100644
+--- a/drivers/net/hinic3/hinic3_flow.c
++++ b/drivers/net/hinic3/hinic3_flow.c
+@@ -1332,10 +1332,6 @@ hinic3_flow_destroy(struct rte_eth_dev *dev, struct rte_flow *flow,
+ 			&rules->ethertype_filter, false);
+ 		if (!ret)
+ 			TAILQ_REMOVE(&nic_dev->filter_ethertype_list, flow, node);
+-
+-		flow->rule = rules;
+-		flow->filter_type = rules->filter_type;
+-		TAILQ_REMOVE(&nic_dev->filter_ethertype_list, flow, node);
+ 		break;
  
-   * Added CIR drop statistics and VF link aggregation (LAG) support.
-+  * Added FEC mode get and set support.
- 
- * **Updated Intel iavf driver.**
- 
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-index 1c0e6df081..a1adb50e68 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-@@ -1755,6 +1755,118 @@ hinic3_set_link_status_follow(struct hinic3_hwdev *hwdev,
- 	return follow.head.status;
- }
- 
-+static void
-+hinic3_fec_param_convert(uint32_t opcode, uint8_t in_fec_param, uint8_t *out_fec_param)
-+{
-+	uint8_t fec_value_table_length;
-+	uint8_t i;
-+
-+	struct hinic3_fec_param_value_map fec_value_table[] = {
-+		{HINIC3_PORT_FEC_NOT_SET, RTE_BIT32(HINIC3_PORT_FEC_NOT_SET), 0},
-+		{HINIC3_PORT_FEC_RSFEC, RTE_BIT32(HINIC3_PORT_FEC_RSFEC),
-+		 RTE_ETH_FEC_MODE_CAPA_MASK(RS)},
-+		{HINIC3_PORT_FEC_BASEFEC, RTE_BIT32(HINIC3_PORT_FEC_BASEFEC),
-+		 RTE_ETH_FEC_MODE_CAPA_MASK(BASER)},
-+		{HINIC3_PORT_FEC_NOFEC, RTE_BIT32(HINIC3_PORT_FEC_NOFEC),
-+		 RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC)},
-+		{HINIC3_PORT_FEC_LLRSFEC, RTE_BIT32(HINIC3_PORT_FEC_LLRSFEC),
-+		 RTE_ETH_FEC_MODE_CAPA_MASK(LLRS)}
-+	};
-+
-+	*out_fec_param = 0;
-+	fec_value_table_length =
-+		(uint8_t)(sizeof(fec_value_table) / sizeof(struct hinic3_fec_param_value_map));
-+
-+	if (opcode == HINIC3_FEC_MODE_OPCODE_SET) {
-+		for (i = 0; i < fec_value_table_length; i++) {
-+			if ((in_fec_param & fec_value_table[i].ethtool_fec_value) != 0)
-+				*out_fec_param = fec_value_table[i].fec_offset;
-+		}
-+	}
-+
-+	if (opcode == HINIC3_FEC_MODE_OPCODE_GET) {
-+		for (i = 0; i < fec_value_table_length; i++) {
-+			if ((in_fec_param & fec_value_table[i].hinic3_fec_value) != 0)
-+				*out_fec_param |= fec_value_table[i].ethtool_fec_value;
-+		}
-+	}
-+}
-+
-+int
-+hinic3_set_fec_mode(struct hinic3_hwdev *hwdev, uint8_t fecparam)
-+{
-+	struct mag_cmd_cfg_fec_mode fec_msg = { 0 };
-+	uint16_t out_size = sizeof(fec_msg);
-+	uint8_t advertised_fec = 0;
-+	int err;
-+
-+	if (!hwdev)
-+		return -EINVAL;
-+
-+	hinic3_fec_param_convert(HINIC3_FEC_MODE_OPCODE_SET, fecparam, &advertised_fec);
-+	fec_msg.opcode = HINIC3_FEC_MODE_OPCODE_SET;
-+	fec_msg.port_id = hinic3_physical_port_id(hwdev);
-+	fec_msg.advertised_fec = advertised_fec;
-+
-+	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_HILINK,
-+				      MAG_CMD_CFG_FEC_MODE,
-+				      &fec_msg, sizeof(fec_msg),
-+				      &fec_msg, &out_size);
-+
-+	if (fec_msg.head.status != 0 || err) {
-+		PMD_DRV_LOG(ERR, "Failed to set fec mode failed, err: %d, status: 0x%x, out size: 0x%x",
-+			    err, fec_msg.head.status, out_size);
-+		return -EINVAL;
-+	}
-+
-+	PMD_DRV_LOG(INFO, "Set fec mode success, active fec capa mode: %d", fecparam);
-+	return 0;
-+}
-+
-+int
-+hinic3_get_fec_mode(struct hinic3_hwdev *hwdev, uint8_t *advertised_fec,
-+		    uint8_t *supported_fec)
-+{
-+	struct mag_cmd_cfg_fec_mode fec_msg = { 0 };
-+	uint16_t out_size = sizeof(fec_msg);
-+	int err;
-+
-+	if (!hwdev)
-+		return -EINVAL;
-+
-+	if (advertised_fec != NULL)
-+		*advertised_fec = 0;
-+
-+	if (supported_fec != NULL)
-+		*supported_fec = 0;
-+
-+	fec_msg.opcode = HINIC3_FEC_MODE_OPCODE_GET;
-+	fec_msg.port_id = hinic3_physical_port_id(hwdev);
-+
-+	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_HILINK,
-+				      MAG_CMD_CFG_FEC_MODE,
-+				      &fec_msg, sizeof(fec_msg),
-+				      &fec_msg, &out_size);
-+
-+	if (fec_msg.head.status != 0 || err) {
-+		PMD_DRV_LOG(ERR, "Failed to get fec mode failed, err: %d, status: 0x%x, out size: 0x%x",
-+			    err, fec_msg.head.status, out_size);
-+		return -EINVAL;
-+	}
-+
-+	if (advertised_fec != NULL)
-+		hinic3_fec_param_convert(HINIC3_FEC_MODE_OPCODE_GET,
-+					RTE_BIT32(fec_msg.advertised_fec),
-+					advertised_fec);
-+
-+	if (supported_fec != NULL)
-+		hinic3_fec_param_convert(HINIC3_FEC_MODE_OPCODE_GET,
-+					fec_msg.supported_fec,
-+					supported_fec);
-+
-+	return 0;
-+}
-+
- bool
- hinic3_cmd_vf_lag(void *hwdev, uint16_t func_id, uint8_t opcode)
- {
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-index 6fb56fff4f..9458a576c4 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.h
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-@@ -967,6 +967,33 @@ int hinic3_msg_to_mgmt_sync(struct hinic3_hwdev *hwdev, enum hinic3_mod_type mod
- 
- int hinic3_set_ci_table(struct hinic3_hwdev *hwdev, struct hinic3_sq_attr *attr);
- 
-+enum hinic3_fec_mode_opcode {
-+	HINIC3_FEC_MODE_OPCODE_GET = 0,
-+	HINIC3_FEC_MODE_OPCODE_SET = 1,
-+};
-+
-+struct mag_cmd_cfg_fec_mode {
-+	struct mgmt_msg_head head;
-+	uint8_t port_id;
-+	uint8_t opcode;
-+	uint8_t advertised_fec;
-+	uint8_t supported_fec;
-+};
-+
-+enum hinic3_cmd_port_fec {
-+	HINIC3_PORT_FEC_NOT_SET = 0,
-+	HINIC3_PORT_FEC_RSFEC = 1,
-+	HINIC3_PORT_FEC_BASEFEC = 2,
-+	HINIC3_PORT_FEC_NOFEC = 3,
-+	HINIC3_PORT_FEC_LLRSFEC = 4,
-+};
-+
-+struct hinic3_fec_param_value_map {
-+	uint8_t fec_offset;
-+	uint8_t hinic3_fec_value;
-+	uint8_t ethtool_fec_value;
-+};
-+
- /**
-  * Update MAC address to hardware.
-  *
-@@ -1583,4 +1610,9 @@ int hinic3_get_cir_drop(void *hwdev, struct hinic3_cir_drop *stats);
- 
- bool hinic3_cmd_vf_lag(void *hwdev, uint16_t func_id, uint8_t opcode);
- 
-+int hinic3_set_fec_mode(struct hinic3_hwdev *hwdev, uint8_t fecparam);
-+
-+int hinic3_get_fec_mode(struct hinic3_hwdev *hwdev, uint8_t *advertised_fec,
-+			uint8_t *supported_fec);
-+
- #endif /* _HINIC3_NIC_CFG_H_ */
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 81ec27210a..33bffcca5a 100644
---- a/drivers/net/hinic3/hinic3_ethdev.c
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -3362,6 +3362,111 @@ hinic3_dev_filter_ctrl(struct rte_eth_dev *dev, const struct rte_flow_ops **arg)
- 	return 0;
- }
- 
-+static const uint32_t HINIC3_FEC_CAPA_NUM_PER_SPEED = 1;
-+
-+static const uint32_t hinic3_speed_capa[] = {
-+	RTE_ETH_SPEED_NUM_NONE, RTE_ETH_SPEED_NUM_10M,
-+	RTE_ETH_SPEED_NUM_100M, RTE_ETH_SPEED_NUM_1G,
-+	RTE_ETH_SPEED_NUM_10G, RTE_ETH_SPEED_NUM_25G,
-+	RTE_ETH_SPEED_NUM_40G, RTE_ETH_SPEED_NUM_50G,
-+	RTE_ETH_SPEED_NUM_100G, RTE_ETH_SPEED_NUM_200G,
-+	RTE_ETH_SPEED_NUM_400G, RTE_ETH_SPEED_NUM_800G
-+};
-+
-+static bool
-+hinic3_fec_param_valid(uint32_t fec_param)
-+{
-+	if (fec_param == RTE_ETH_FEC_MODE_CAPA_MASK(LLRS) ||
-+	    fec_param == RTE_ETH_FEC_MODE_CAPA_MASK(RS) ||
-+	    fec_param == RTE_ETH_FEC_MODE_CAPA_MASK(BASER) ||
-+	    fec_param == RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC)) {
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+static int
-+hinic3_fec_set(struct rte_eth_dev *dev, uint32_t fec_capa)
-+{
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	int err;
-+
-+	if (hinic3_fec_param_valid(fec_capa) == false) {
-+		PMD_DRV_LOG(ERR, "Fec param is invalid, failed to set fec param.");
-+		return -EINVAL;
-+	}
-+
-+	err = hinic3_set_fec_mode(nic_dev->hwdev, (uint8_t)fec_capa);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Set fec param failed: %d.", err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+hinic3_fec_get(struct rte_eth_dev *dev, uint32_t *fec_capa)
-+{
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	uint8_t advertised_fec = 0;
-+	int err;
-+
-+	err = hinic3_get_fec_mode(nic_dev->hwdev, &advertised_fec, NULL);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Get fec parma failed: %d.", err);
-+		return err;
-+	}
-+
-+	*fec_capa = (uint32_t)advertised_fec;
-+
-+	return 0;
-+}
-+
-+static int
-+hinic3_fec_capability_get(struct rte_eth_dev *dev,
-+			  struct rte_eth_fec_capa *speed_fec_capa,
-+			  unsigned int num)
-+{
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	struct nic_port_info port_info = { 0 };
-+	uint8_t supported_fec = 0;
-+	int err;
-+
-+	if (speed_fec_capa == NULL)
-+		return HINIC3_FEC_CAPA_NUM_PER_SPEED;
-+
-+	if (num < HINIC3_FEC_CAPA_NUM_PER_SPEED) {
-+		PMD_DRV_LOG(ERR, "Not enough array size(%u) to store FEC capabilities, should not be less than %u.",
-+			    num, HINIC3_FEC_CAPA_NUM_PER_SPEED);
-+		return -EINVAL;
-+	}
-+
-+	err = hinic3_get_fec_mode(nic_dev->hwdev, NULL, &supported_fec);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Failed to get fec capability, err: %d.", err);
-+		return err;
-+	}
-+
-+	err = hinic3_get_port_info(nic_dev->hwdev, &port_info);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Failed to get port info, err: %d.", err);
-+		return err;
-+	}
-+
-+	if (port_info.speed >= RTE_DIM(hinic3_speed_capa))
-+		return -EINVAL;
-+
-+	speed_fec_capa->speed = hinic3_speed_capa[port_info.speed];
-+	speed_fec_capa->capa = (uint32_t)supported_fec;
-+
-+	if (speed_fec_capa->capa == 0)
-+		return -ENOTSUP;
-+
-+	return HINIC3_FEC_CAPA_NUM_PER_SPEED;
-+}
-+
- static const struct eth_dev_ops hinic3_pmd_ops = {
- 	.dev_configure                 = hinic3_dev_configure,
- 	.dev_infos_get                 = hinic3_dev_infos_get,
-@@ -3408,6 +3513,9 @@ static const struct eth_dev_ops hinic3_pmd_ops = {
- 	.mac_addr_add                  = hinic3_mac_addr_add,
- 	.set_mc_addr_list              = hinic3_set_mc_addr_list,
- 	.flow_ops_get                  = hinic3_dev_filter_ctrl,
-+	.fec_get_capability            = hinic3_fec_capability_get,
-+	.fec_get                       = hinic3_fec_get,
-+	.fec_set                       = hinic3_fec_set,
- };
- 
- static const struct eth_dev_ops hinic3_pmd_vf_ops = {
+ 	case RTE_ETH_FILTER_FDIR:
 -- 
 2.33.0
 
