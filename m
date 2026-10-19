@@ -1,30 +1,31 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A176606A31B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 18:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185F4606A31C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 18:35:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0123C40A71;
+	by mails.dpdk.org (Postfix) with ESMTP id B914840A81;
 	Mon, 19 Oct 2026 20:35:14 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 929DB4069D
- for <dev@dpdk.org>; Mon, 19 Oct 2026 20:34:57 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 71EB4200023;
- Mon, 19 Oct 2026 20:34:57 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id A1ACE4069F
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 20:34:58 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 85DE41A0029;
+ Mon, 19 Oct 2026 20:34:58 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3D782200003;
- Mon, 19 Oct 2026 20:34:57 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 50BE51A001B;
+ Mon, 19 Oct 2026 20:34:58 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DF57118000B1;
- Tue, 20 Oct 2026 02:34:55 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id ED9A21800068;
+ Tue, 20 Oct 2026 02:34:56 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: [PATCH v13-S2 08/10] net/dpaa2: add minimum key size support
-Date: Tue, 20 Oct 2026 00:04:41 +0530
-Message-ID: <20261019183443.176790-9-prashant.gupta_3@nxp.com>
+Subject: [PATCH v13-S2 09/10] net/dpaa2: parse tunnel and fragmented packet
+ types
+Date: Tue, 20 Oct 2026 00:04:42 +0530
+Message-ID: <20261019183443.176790-10-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261019183443.176790-1-prashant.gupta_3@nxp.com>
 References: <20261016070339.3011744-1-prashant.gupta_3@nxp.com>
@@ -51,94 +52,143 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 
-The default size for a QoS key is 24 bytes. If the key size is
-smaller than the maximum, use the default (minimum) key size
-instead of always returning the maximum size (56 bytes). This
-allows smaller flow tables to be used when the extracted key
-fits within the default size.
+Extend dpaa2_dev_rx_parse_new() (LX2160A FRC fast path) to
+identify IPv4/IPv6 fragmented packets, IPsec ESP, and
+GTP-U/GTP-C packets.
 
-Support for 24-byte QoS key entries is available from DPNI
-version 8.7 onwards. For older DPNI versions, the existing
-56-byte entry size is retained to maintain compatibility.
+Map the corresponding parser summary values to DPDK packet
+types. Fragmented IPv4/IPv6 packets are reported with
+RTE_PTYPE_L4_FRAG. GTP-U and GTP-C packets are additionally
+marked with RTE_PTYPE_L4_UDP to reflect the UDP transport
+used by the outer tunnel header.
+
+Advertise the newly supported packet types through
+dpaa2_supported_ptypes_get().
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_flow.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c |  4 +++
+ drivers/net/dpaa2/dpaa2_ethdev.h | 20 ++++++++++++---
+ drivers/net/dpaa2/dpaa2_rxtx.c   | 44 ++++++++++++++++++++++++++------
+ 3 files changed, 56 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/dpaa2/dpaa2_flow.c b/drivers/net/dpaa2/dpaa2_flow.c
-index 4f7716ab66..c670ee9cca 100644
---- a/drivers/net/dpaa2/dpaa2_flow.c
-+++ b/drivers/net/dpaa2/dpaa2_flow.c
-@@ -26,8 +26,11 @@
- static char *dpaa2_flow_control_log;
- static int dpaa2_sp_loaded = -1;
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index f88ecb88aa..72b37a988d 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -1371,6 +1371,10 @@ dpaa2_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
+ 		RTE_PTYPE_L4_UDP,
+ 		RTE_PTYPE_L4_SCTP,
+ 		RTE_PTYPE_L4_ICMP,
++		RTE_PTYPE_L4_FRAG,
++		RTE_PTYPE_TUNNEL_ESP,
++		RTE_PTYPE_TUNNEL_GTPU,
++		RTE_PTYPE_TUNNEL_GTPC,
+ 	};
  
-+/* Default size of a key */
-+#define DPNI_DEFAULT_KEY_SIZE 24
-+
- enum dpaa2_flow_entry_size {
--	DPAA2_FLOW_ENTRY_MIN_SIZE = (DPNI_MAX_KEY_SIZE / 2),
-+	DPAA2_FLOW_ENTRY_MIN_SIZE = DPNI_DEFAULT_KEY_SIZE,
- 	DPAA2_FLOW_ENTRY_MAX_SIZE = DPNI_MAX_KEY_SIZE
- };
+ 	if (dev->rx_pkt_burst == dpaa2_dev_prefetch_rx ||
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
+index 2569b2bd83..dc72939103 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.h
++++ b/drivers/net/dpaa2/dpaa2_ethdev.h
+@@ -127,9 +127,9 @@
+ #define DPAA2_PKT_TYPE_ETHER		0x0060
+ #define DPAA2_PKT_TYPE_IPV4		0x0000
+ #define DPAA2_PKT_TYPE_IPV6		0x0020
+-#define DPAA2_PKT_TYPE_IPV4_EXT \
++#define DPAA2_PKT_TYPE_IPV4_FRAG \
+ 			(0x0001 | DPAA2_PKT_TYPE_IPV4)
+-#define DPAA2_PKT_TYPE_IPV6_EXT \
++#define DPAA2_PKT_TYPE_IPV6_FRAG \
+ 			(0x0001 | DPAA2_PKT_TYPE_IPV6)
+ #define DPAA2_PKT_TYPE_IPV4_TCP \
+ 			(0x000e | DPAA2_PKT_TYPE_IPV4)
+@@ -144,9 +144,21 @@
+ #define DPAA2_PKT_TYPE_IPV6_SCTP	\
+ 			(0x000f | DPAA2_PKT_TYPE_IPV6)
+ #define DPAA2_PKT_TYPE_IPV4_ICMP \
+-			(0x0003 | DPAA2_PKT_TYPE_IPV4_EXT)
++			(0x0003 | DPAA2_PKT_TYPE_IPV4_FRAG)
+ #define DPAA2_PKT_TYPE_IPV6_ICMP \
+-			(0x0003 | DPAA2_PKT_TYPE_IPV6_EXT)
++			(0x0003 | DPAA2_PKT_TYPE_IPV6_FRAG)
++#define DPAA2_PKT_TYPE_IPV4_ESP \
++			(0x0005 | DPAA2_PKT_TYPE_IPV4)
++#define DPAA2_PKT_TYPE_IPV6_ESP \
++			(0x0005 | DPAA2_PKT_TYPE_IPV6)
++#define DPAA2_PKT_TYPE_IPV4_GTPU \
++			(0x0014 | DPAA2_PKT_TYPE_IPV4)
++#define DPAA2_PKT_TYPE_IPV6_GTPU \
++			(0x0014 | DPAA2_PKT_TYPE_IPV6)
++#define DPAA2_PKT_TYPE_IPV4_GTPC \
++			(0x0015 | DPAA2_PKT_TYPE_IPV4)
++#define DPAA2_PKT_TYPE_IPV6_GTPC \
++			(0x0015 | DPAA2_PKT_TYPE_IPV6)
+ #define DPAA2_PKT_TYPE_VLAN_1		0x0160
+ #define DPAA2_PKT_TYPE_VLAN_2		0x0260
  
-@@ -4519,7 +4522,7 @@ dpaa2_configure_flow_fs_action(struct dpaa2_dev_priv *priv,
- }
- 
- static inline uint16_t
--dpaa2_flow_entry_size(uint16_t key_max_size)
-+dpaa2_flow_entry_size(struct dpaa2_dev_priv *priv, uint16_t key_max_size)
- {
- 	if (key_max_size > DPAA2_FLOW_ENTRY_MAX_SIZE) {
- 		DPAA2_PMD_ERR("Key size(%d) > max(%d)",
-@@ -4529,11 +4532,11 @@ dpaa2_flow_entry_size(uint16_t key_max_size)
- 		return 0;
+diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
+index 71e292fea6..c2c581f69b 100644
+--- a/drivers/net/dpaa2/dpaa2_rxtx.c
++++ b/drivers/net/dpaa2/dpaa2_rxtx.c
+@@ -76,14 +76,6 @@ dpaa2_dev_rx_parse_new(struct rte_mbuf *m, const struct qbman_fd *fd,
+ 		m->packet_type = RTE_PTYPE_L2_ETHER |
+ 			RTE_PTYPE_L3_IPV6;
+ 		break;
+-	case DPAA2_PKT_TYPE_IPV4_EXT:
+-		m->packet_type = RTE_PTYPE_L2_ETHER |
+-			RTE_PTYPE_L3_IPV4_EXT;
+-		break;
+-	case DPAA2_PKT_TYPE_IPV6_EXT:
+-		m->packet_type = RTE_PTYPE_L2_ETHER |
+-			RTE_PTYPE_L3_IPV6_EXT;
+-		break;
+ 	case DPAA2_PKT_TYPE_IPV4_TCP:
+ 		m->packet_type = RTE_PTYPE_L2_ETHER |
+ 			RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_TCP;
+@@ -116,6 +108,42 @@ dpaa2_dev_rx_parse_new(struct rte_mbuf *m, const struct qbman_fd *fd,
+ 		m->packet_type = RTE_PTYPE_L2_ETHER |
+ 			RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_ICMP;
+ 		break;
++	case DPAA2_PKT_TYPE_IPV4_FRAG:
++		m->packet_type = RTE_PTYPE_L2_ETHER |
++			RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_FRAG;
++		break;
++	case DPAA2_PKT_TYPE_IPV6_FRAG:
++		m->packet_type = RTE_PTYPE_L2_ETHER |
++			RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_FRAG;
++		break;
++	case DPAA2_PKT_TYPE_IPV4_ESP:
++		m->packet_type = RTE_PTYPE_L2_ETHER |
++			RTE_PTYPE_L3_IPV4 | RTE_PTYPE_TUNNEL_ESP;
++		break;
++	case DPAA2_PKT_TYPE_IPV6_ESP:
++		m->packet_type = RTE_PTYPE_L2_ETHER |
++			RTE_PTYPE_L3_IPV6 | RTE_PTYPE_TUNNEL_ESP;
++		break;
++	case DPAA2_PKT_TYPE_IPV4_GTPU:
++		m->packet_type = RTE_PTYPE_L2_ETHER |
++			RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_UDP |
++			RTE_PTYPE_TUNNEL_GTPU;
++		break;
++	case DPAA2_PKT_TYPE_IPV6_GTPU:
++		m->packet_type = RTE_PTYPE_L2_ETHER |
++			RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_UDP |
++			RTE_PTYPE_TUNNEL_GTPU;
++		break;
++	case DPAA2_PKT_TYPE_IPV4_GTPC:
++		m->packet_type = RTE_PTYPE_L2_ETHER |
++			RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_UDP |
++			RTE_PTYPE_TUNNEL_GTPC;
++		break;
++	case DPAA2_PKT_TYPE_IPV6_GTPC:
++		m->packet_type = RTE_PTYPE_L2_ETHER |
++			RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_UDP |
++			RTE_PTYPE_TUNNEL_GTPC;
++		break;
+ 	default:
+ 		m->packet_type = dpaa2_dev_rx_parse_slow(m, annotation);
  	}
- 
--	if (key_max_size > DPAA2_FLOW_ENTRY_MIN_SIZE)
-+	if (key_max_size > DPAA2_FLOW_ENTRY_MIN_SIZE ||
-+			dpaa2_dev_cmp_dpni_ver(priv, 8, 7) < 0)
- 		return DPAA2_FLOW_ENTRY_MAX_SIZE;
- 
--	/* Current MC only support fixed entry size(56)*/
--	return DPAA2_FLOW_ENTRY_MAX_SIZE;
-+	return DPAA2_FLOW_ENTRY_MIN_SIZE;
- }
- 
- static inline int
-@@ -4595,7 +4598,7 @@ dpaa2_configure_fs_rss_table(struct dpaa2_dev_priv *priv,
- 	}
- 
- 	key_max_size = tc_extract->key_profile.key_max_size;
--	entry_size = dpaa2_flow_entry_size(key_max_size);
-+	entry_size = dpaa2_flow_entry_size(priv, key_max_size);
- 
- 	dpaa2_flow_fs_extracts_log(priv, tc_id);
- 	ret = dpkg_prepare_key_cfg(&tc_extract->dpkg,
-@@ -4686,7 +4689,7 @@ dpaa2_configure_qos_table(struct dpaa2_dev_priv *priv,
- 	}
- 
- 	key_max_size = qos_extract->key_profile.key_max_size;
--	entry_size = dpaa2_flow_entry_size(key_max_size);
-+	entry_size = dpaa2_flow_entry_size(priv, key_max_size);
- 
- 	dpaa2_flow_qos_extracts_log(priv);
- 
-@@ -4977,11 +4980,11 @@ dpaa2_generic_flow_set(struct dpaa2_dev_flow *flow,
- 
- 	qos_key_extract = &priv->extract.qos_key_extract;
- 	key_size = qos_key_extract->key_profile.key_max_size;
--	flow->qos_rule.key_size = dpaa2_flow_entry_size(key_size);
-+	flow->qos_rule.key_size = dpaa2_flow_entry_size(priv, key_size);
- 
- 	tc_key_extract = &priv->extract.tc_key_extract[flow->tc_id];
- 	key_size = tc_key_extract->key_profile.key_max_size;
--	flow->fs_rule.key_size = dpaa2_flow_entry_size(key_size);
-+	flow->fs_rule.key_size = dpaa2_flow_entry_size(priv, key_size);
- 
- 	/* Let's parse action on matching traffic */
- 	end_of_list = 0;
 -- 
 2.43.0
 
