@@ -1,44 +1,46 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93EA606A332
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 21:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87711606A31B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 21:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=yandex.ru header.i=@yandex.ru header.a=rsa-sha256 header.s=mail header.b=K11P78hh
+	dkim=pass (1024-bit key, unprotected) header.d=yandex.ru header.i=@yandex.ru header.a=rsa-sha256 header.s=mail header.b=kRIx4Odi
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CB0940297;
-	Mon, 19 Oct 2026 23:10:20 +0200 (CEST)
-Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net
- [31.44.14.17]) by mails.dpdk.org (Postfix) with ESMTP id 85BC74021E
- for <dev@dpdk.org>; Mon, 19 Oct 2026 23:10:18 +0200 (CEST)
-Received: from mail-nwsmtp-smtp-production-main-33.yp-c.yandex.net
- (mail-nwsmtp-smtp-production-main-33.yp-c.yandex.net)
- by forward501d.mail.yandex.net (postfix) with ESMTPS id BEF2A80622;
- Tue, 20 Oct 2026 00:10:15 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-33 with ESMTPSA id
- BAhVx1ffTCg0-OGQDDWSX; Tue, 20 Oct 2026 00:10:15 +0300
+	by mails.dpdk.org (Postfix) with ESMTP id C957540297;
+	Mon, 19 Oct 2026 23:22:57 +0200 (CEST)
+Received: from forward501e.mail.yandex.net (forward501e.mail.yandex.net
+ [93.77.172.86]) by mails.dpdk.org (Postfix) with ESMTP id BF4684021E;
+ Mon, 19 Oct 2026 23:22:55 +0200 (CEST)
+Received: from mail-nwsmtp-smtp-production-main-11.yp-c.yandex.net
+ (mail-nwsmtp-smtp-production-main-11.yp-c.yandex.net)
+ by forward501e.mail.yandex.net (postfix) with ESMTPS id 4EA55C0080;
+ Tue, 20 Oct 2026 00:22:54 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-11 with ESMTPSA id
+ oMhZToaeO4Y0-chMF9PX3; Tue, 20 Oct 2026 00:22:53 +0300
 X-Yandex-Fwd: 1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1792444215; bh=cAJ7Qp2n71MhFer5CpRXwC3xM8xR9M0kqdqrzsKUIBc=;
+ t=1792444973; bh=dQ9/WEmmzwqxksReMMzlsQ2iNZL/IBHUd8wsdc8BcZA=;
  h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
- b=K11P78hhgBka2sL1U39JCGkdu5RqlV7LhzZd/DXK/tnzUqpS446WJXeEjDoh+2HCJ
- P7ifygycxi9X8ubuXPc3j4XnWUikDayAxtPvYxOVdGONvpipK/Ix0vjXenUiPeh8tq
- pJmSw0hNtoBcHQu4rIlbSh7+cPGapGQmf2dz8Ius=
-Authentication-Results: mail-nwsmtp-smtp-production-main-33;
+ b=kRIx4OdifzDLGVKSFf+A0AWa/c081FxKXITWMoq7ar18psRoWLxLDOEayh9O3Am/R
+ 7cS9q+P7e4zhtudtti3hqiuN8jiLEgiKLP5LGy8nC2FsPver3VUg4q+IOeJtzpj/jh
+ xggWfWbEcNCVK287D/u1jv5OeXXs0saD1EsDU1wg=
+Authentication-Results: mail-nwsmtp-smtp-production-main-11;
  dkim=pass header.i=@yandex.ru
-Message-ID: <e5ff5f2b-de4c-48a7-bc0d-3a7392bb6e1a@yandex.ru>
-Date: Mon, 19 Oct 2026 22:10:11 +0100
+Message-ID: <a578685e-9312-4d30-8fca-58ba6ec91e94@yandex.ru>
+Date: Mon, 19 Oct 2026 22:22:50 +0100
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/9] bpf: document ethdev callback threading limitations
+Subject: Re: [PATCH v2 3/9] bpf: reject Tx callback installation with
+ MT_LOCKFREE
 To: Marat Khalili <qm2k21@gmail.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: dev@dpdk.org, stephen@networkplumber.org
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Ferruh Yigit <ferruh.yigit@amd.com>
+Cc: dev@dpdk.org, stephen@networkplumber.org, stable@dpdk.org
 References: <20261011182158.124246-1-qm2k21@gmail.com>
  <20261012210917.161343-1-qm2k21@gmail.com>
- <20261012210917.161343-3-qm2k21@gmail.com>
+ <20261012210917.161343-4-qm2k21@gmail.com>
 Content-Language: en-US, ru
 From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-In-Reply-To: <20261012210917.161343-3-qm2k21@gmail.com>
+In-Reply-To: <20261012210917.161343-4-qm2k21@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
@@ -60,44 +62,219 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 
 
-> Document the data plane limitation in the file docstring of
-> rte_bpf_ethdev.h: packet callback execution expects only one
-> thread per port/queue pair at a time, making concurrent bursts
-> (such as with RTE_ETH_TX_OFFLOAD_MT_LOCKFREE, shared RX queues,
-> or multi-threaded software PMDs) unsupported.
-Not sure what do you mean by:
-'shared RX queues' and 'multi-threaded software PMDs'. Can you probably 
-clarify?
+
+> The BPF ethdev packet callback synchronization mechanism expects only
+> one dataplane thread per port/queue pair at a time. When
+> RTE_ETH_TX_OFFLOAD_MT_LOCKFREE is enabled, multiple threads can invoke
+> rte_eth_tx_burst() concurrently on the same queue without locks. This
+> breaks the callback parity counter and can lead to use-after-free or
+> deadlocks during BPF program unload.
 >
-> Rephrase the existing control plane multi-threading limitation
-> to explicitly distinguish it from the data plane requirement.
+> Reject BPF Tx callback installation with -ENOTSUP when
+> RTE_ETH_TX_OFFLOAD_MT_LOCKFREE is enabled on the port or queue.
+> Add a unit test in test_bpf verifying this rejection.
+
+Should we be more generic here and reject any TX callbacks for 
+RTE_ETH_TX_OFFLOAD_MT_LOCKFREE devices?
+Right now callbacks are not allowed for hairpin queues.
+As another thing: AFAIK, ethdev callbacks (both RX and TX) will survive 
+dev stop/configure/start sequence.
+We probably need to handle both scenarios.
+
+> Bugzilla ID: 2051
+> Fixes: a93ff62a8938 ("bpf: introduce basic Rx/Tx filters")
+> Cc: stable@dpdk.org
 >
+> Reported-by: Stephen Hemminger <stephen@networkplumber.org>
 > Signed-off-by: Marat Khalili <qm2k21@gmail.com>
 > ---
->   lib/bpf/rte_bpf_ethdev.h | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
+>   app/test/test_bpf.c | 103 ++++++++++++++++++++++++++++++++++++++++++++
+>   lib/bpf/bpf_pkt.c   |  46 ++++++++++++++++++++
+>   2 files changed, 149 insertions(+)
 >
-> diff --git a/lib/bpf/rte_bpf_ethdev.h b/lib/bpf/rte_bpf_ethdev.h
-> index 686fda8d94..cf3b4048f0 100644
-> --- a/lib/bpf/rte_bpf_ethdev.h
-> +++ b/lib/bpf/rte_bpf_ethdev.h
-> @@ -10,8 +10,12 @@
->    *
->    * API to install BPF filter as RX/TX callbacks for eth devices.
->    * Note that right now:
-> - * - it is not MT safe, i.e. it is not allowed to do load/unload for the
-> - *   same port/queue from different threads in parallel.
-> + * - in the data plane, it expects only one thread per port/queue pair at a time.
-> + *   Calling RX/TX burst functions concurrently on the same queue (e.g. when using
-> + *   RTE_ETH_TX_OFFLOAD_MT_LOCKFREE, shared RX queues, or multi-threaded
-> + *   software PMDs) is not supported.
-> + * - in the control plane, it is not MT safe, i.e. it is not allowed to do
-> + *   load/unload for the same port/queue from different threads in parallel.
-AFAIK, all CP ethdev API is not MT-safe.
-Not sure there is a reason to put it here again.
-If you believe it is, then probably worth to mention that it follows 
-ethdev CP API convention.
->    * - though it allows load/unload at runtime
->    *   (while RX/TX is ongoing on given port/queue).
->    * - allows only one BPF program per port/queue,
+> diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+> index 3205afaa63..02523984b5 100644
+> --- a/app/test/test_bpf.c
+> +++ b/app/test/test_bpf.c
+> @@ -4617,6 +4617,107 @@ test_bpf_elf_rx_load(load_elf_image_t load_elf_image)
+>   	return ret == 0 ? TEST_SUCCESS : TEST_FAILED;
+>   }
+>   
+> +static int
+> +null_vdev_mt_setup(const char *name, uint16_t *port, struct rte_mempool *pool)
+> +{
+> +	struct rte_eth_conf conf = {
+> +		.txmode = {
+> +			.offloads = RTE_ETH_TX_OFFLOAD_MT_LOCKFREE,
+> +		},
+> +	};
+> +	struct rte_eth_txconf txconf = { };
+> +	struct rte_eth_rxconf rxconf = { };
+> +	int ret;
+> +
+> +	ret = rte_vdev_init(name, NULL);
+> +	TEST_ASSERT(ret == 0, "rte_vdev_init(%s) failed: %d", name, ret);
+> +
+> +	ret = rte_eth_dev_get_port_by_name(name, port);
+> +	TEST_ASSERT(ret == 0, "failed to get port id for %s: %d", name, ret);
+> +
+> +	ret = rte_eth_dev_configure(*port, 1, 1, &conf);
+> +	TEST_ASSERT(ret == 0, "failed to configure port %u: %d", *port, ret);
+> +
+> +	ret = rte_eth_tx_queue_setup(*port, 0, BPF_TEST_BURST, SOCKET_ID_ANY, &txconf);
+> +	TEST_ASSERT(ret == 0, "failed to setup tx queue port %u: %d", *port, ret);
+> +
+> +	ret = rte_eth_rx_queue_setup(*port, 0, BPF_TEST_BURST, SOCKET_ID_ANY,
+> +				     &rxconf, pool);
+> +	TEST_ASSERT(ret == 0, "failed to setup rx queue port %u: %d", *port, ret);
+> +
+> +	ret = rte_eth_dev_start(*port);
+> +	TEST_ASSERT(ret == 0, "failed to start port %u: %d", *port, ret);
+> +
+> +	return 0;
+> +}
+> +
+> +/* Test that installing a Tx filter is rejected when MT_LOCKFREE is enabled */
+> +static int
+> +test_bpf_elf_tx_mt_lockfree(load_elf_image_t load_elf_image)
+> +{
+> +	static const struct rte_bpf_arg prog_arg = {
+> +		.type = RTE_BPF_ARG_PTR,
+> +		.size = sizeof(struct dummy_net),
+> +	};
+> +	static const char null_dev[] = "net_null_bpf_mt";
+> +	struct rte_mempool *mb_pool = NULL;
+> +	struct rte_bpf *bpf = NULL;
+> +	uint16_t port = UINT16_MAX;
+> +	int ret;
+> +
+> +	mb_pool = rte_pktmbuf_pool_create("bpf_mt_test_pool", BPF_TEST_POOLSIZE,
+> +					  0, 0, RTE_MBUF_DEFAULT_BUF_SIZE,
+> +					  SOCKET_ID_ANY);
+> +	TEST_ASSERT_NOT_NULL(mb_pool, "failed to create mempool");
+> +
+> +	ret = null_vdev_mt_setup(null_dev, &port, mb_pool);
+> +	if (ret != 0)
+> +		goto fail;
+> +
+> +	bpf = load_elf_image(app_test_bpf_filter_o, app_test_bpf_filter_o_len, "filter",
+> +			     NULL, 0, &prog_arg);
+> +	if (bpf == NULL) {
+> +		printf("%s@%d: failed to load BPF filter image\n",
+> +		       __func__, __LINE__);
+> +		ret = TEST_FAILED;
+> +		goto fail;
+> +	}
+> +
+> +	/* Tx installation must fail with -ENOTSUP due to MT_LOCKFREE */
+> +	ret = rte_bpf_eth_tx_install(port, 0, bpf, 0);
+> +	if (ret != -ENOTSUP) {
+> +		printf("%s@%d: expected rte_bpf_eth_tx_install to return -ENOTSUP, got %d\n",
+> +		       __func__, __LINE__, ret);
+> +		ret = TEST_FAILED;
+> +		goto fail;
+> +	}
+> +
+> +	/* Rx installation on the same port must still succeed */
+> +	ret = rte_bpf_eth_rx_install(port, 0, bpf, 0);
+> +	if (ret != 0) {
+> +		printf("%s@%d: expected rte_bpf_eth_rx_install to succeed, got %d\n",
+> +		       __func__, __LINE__, ret);
+> +		ret = TEST_FAILED;
+> +		goto fail;
+> +	}
+> +	rte_bpf_eth_rx_unload(port, 0);
+> +	/* bpf is destroyed by rte_bpf_eth_rx_unload */
+> +	bpf = NULL;
+> +
+> +	ret = TEST_SUCCESS;
+> +
+> +fail:
+> +	if (bpf != NULL)
+> +		rte_bpf_destroy(bpf);
+> +
+> +	if (port != UINT16_MAX) {
+> +		rte_eth_dev_stop(port);
+> +		rte_vdev_uninit(null_dev);
+> +	}
+> +
+> +	rte_mempool_free(mb_pool);
+> +	return ret;
+> +}
+>   
+>   static int
+>   test_bpf_elf(void)
+> @@ -4633,6 +4734,8 @@ test_bpf_elf(void)
+>   			ret = test_bpf_elf_load(elf_image_loaders[li]);
+>   		if (ret == TEST_SUCCESS)
+>   			ret = test_bpf_elf_tx_load(elf_image_loaders[li]);
+> +		if (ret == TEST_SUCCESS)
+> +			ret = test_bpf_elf_tx_mt_lockfree(elf_image_loaders[li]);
+>   		if (ret == TEST_SUCCESS)
+>   			ret = test_bpf_elf_rx_load(elf_image_loaders[li]);
+>   	}
+> diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
+> index 4223ef624e..eab85f7417 100644
+> --- a/lib/bpf/bpf_pkt.c
+> +++ b/lib/bpf/bpf_pkt.c
+> @@ -552,6 +552,48 @@ rte_bpf_eth_tx_unload(uint16_t port, uint16_t queue)
+>   	rte_spinlock_unlock(&cbh->lock);
+>   }
+>   
+> +/*
+> + * Check if the supplied port/queue pair is suitable for BPF callback execution.
+> + */
+> +static int
+> +bpf_eth_check_mt(const struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue)
+> +{
+> +	struct rte_eth_txq_info qinfo;
+> +	struct rte_eth_conf conf;
+> +	int ret;
+> +
+> +	if (cbh->type == BPF_ETH_TX) {
+> +		ret = rte_eth_dev_conf_get(port, &conf);
+> +		if (ret != 0) {
+> +			RTE_BPF_LOG_LINE(ERR,
+> +				"%s(%u, %u): failed to get device configuration: %d;",
+> +				__func__, port, queue, ret);
+> +			return ret;
+> +		}
+> +
+> +		if ((conf.txmode.offloads & RTE_ETH_TX_OFFLOAD_MT_LOCKFREE) != 0) {
+> +			RTE_BPF_LOG_LINE(ERR,
+> +				"%s(%u, %u): MT_LOCKFREE Tx offload is enabled on port;",
+> +				__func__, port, queue);
+> +			return -ENOTSUP;
+> +		}
+> +
+> +		/*
+> +		 * Ignore errors from tx_queue_info_get: the PMD might not implement
+> +		 * txq_info_get (e.g. net/null), or the queue might not be set up yet.
+> +		 */
+> +		if (rte_eth_tx_queue_info_get(port, queue, &qinfo) == 0 &&
+> +				(qinfo.conf.offloads & RTE_ETH_TX_OFFLOAD_MT_LOCKFREE) != 0) {
+> +			RTE_BPF_LOG_LINE(ERR,
+> +				"%s(%u, %u): MT_LOCKFREE Tx offload is enabled on queue;",
+> +				__func__, port, queue);
+> +			return -ENOTSUP;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static int
+>   bpf_eth_elf_install(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
+>   	struct rte_bpf *bpf, uint32_t flags)
+> @@ -572,6 +614,10 @@ bpf_eth_elf_install(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
+>   	if (bpf->prm.nb_prog_arg != 1)
+>   		return -EINVAL;
+>   
+> +	rc = bpf_eth_check_mt(cbh, port, queue);
+> +	if (rc != 0)
+> +		return rc;
+> +
+>   	if (cbh->type == BPF_ETH_RX)
+>   		frx = select_rx_callback(bpf->prm.prog_arg[0].type, flags);
+>   	else
 
