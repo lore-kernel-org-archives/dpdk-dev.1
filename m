@@ -2,56 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1D0CCF2E3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 13:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2601CCF2DE
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 13:48:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 74BFC40297;
-	Mon, 19 Oct 2026 15:48:32 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B2ED40611;
+	Mon, 19 Oct 2026 15:48:40 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id C06E84028E
- for <dev@dpdk.org>; Mon, 19 Oct 2026 15:48:30 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0595E4060F
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 15:48:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792417710;
+ s=mimecast20190719; t=1792417718;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=niy9Kf/Np90puAY6YlzPn3p7Np01RPgYBb7C/pyBZ5Q=;
- b=bPq801lPutTdSN5e24CRRbYVyXT7gzm1o02XEZ7WPpQKyhQNPjvuqOQtZ1Fwf0TaxIkUT/
- o3Qg/++PmfL0pHb3/fgwETnUlepfUpPa+5n7UyjbgJnQMuDbAwtt6mKDcJpIM9EtPjsNfi
- JCXloZCqrroBUSpk6BZ07pY23Uy4SmQ=
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=4kvCllKd2BVQIVhJw3QFpZzNm+AmLNMI0jK108cwnSM=;
+ b=RVg4zcSA+dWxqyD54ASaK/c2pXkYtNwcAQ97bQl2NeXDwHy66EcefxJUL0DOPCY0qsI/kd
+ H5FTLV+Kx18xSCKbwZkyicQ5zUhUWc6zy5Hhw1HUeNY2A+5fVdDFR02uE8RBwzcZgF8JnH
+ vYtLuEXQE/TLK1vAZOIsDhn+yS3Yb+s=
 Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-587-unLirvkkNraKvVdW4p3A2A-1; Mon,
- 19 Oct 2026 13:48:27 +0000
-X-MC-Unique: unLirvkkNraKvVdW4p3A2A-1
-X-Mimecast-MFC-AGG-ID: unLirvkkNraKvVdW4p3A2A_1792417706
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-279-HN4_DJGeOumw2kG6eDYcZw-1; Mon,
+ 19 Oct 2026 13:48:34 +0000
+X-MC-Unique: HN4_DJGeOumw2kG6eDYcZw-1
+X-Mimecast-MFC-AGG-ID: HN4_DJGeOumw2kG6eDYcZw_1792417711
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 7434B1977505; Mon, 19 Oct 2026 13:48:14 +0000 (UTC)
+ id AD8901954193; Mon, 19 Oct 2026 13:48:19 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.44.32.201])
  by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 88ABB1803A6F; Mon, 19 Oct 2026 13:48:10 +0000 (UTC)
+ id 6180C18046E8; Mon, 19 Oct 2026 13:48:14 +0000 (UTC)
 From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
 To: Maxime Coquelin <maxime.coquelin@redhat.com>
 Cc: dev@dpdk.org, mst@redhat.com, jasowangio@gmail.com, chenbox@nvidia.com,
  david.marchand@redhat.com, Stephen Hemminger <stephen@networkplumber.org>,
  Yongji Xie <xieyongji@bytedance.com>,
  Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v5 0/9] Add vduse live migration features
-Date: Mon, 19 Oct 2026 15:47:59 +0200
-Message-ID: <20261019134808.192525-1-eperezma@redhat.com>
+Subject: [PATCH v5 1/9] uapi: import VDUSE and VFIO header from v7.3 kernel
+Date: Mon, 19 Oct 2026 15:48:00 +0200
+Message-ID: <20261019134808.192525-2-eperezma@redhat.com>
+In-Reply-To: <20261019134808.192525-1-eperezma@redhat.com>
+References: <20261019134808.192525-1-eperezma@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: FpSmzikwq_LEQsyqRMTVflArNmbU-kEQDB-Q6l7h7U8_1792417706
+X-Mimecast-MFC-PROC-ID: 5PvZvbCoipRwwqTwfCnfUzZOH4BM09uTJ5xk2bDFDpM_1792417711
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,98 +69,575 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series introduces features to the VDUSE (vDPA Device in Userspace) driver
-to support Live Migration.
+This header will be used by the Vhost library.
 
-Currently, DPDK does not support VDUSE devices live migration because the
-driver lacks a mechanism to suspend the device and quiesce the rings to
-initiate the switchover.  This series implements the suspend operation to
-address this limitation.
-
-Furthermore, enabling Live Migration for devices with control virtqueue
-requires two additional features.  Both of them are included in this series.
-
-* Address Spaces ID (ASID) support: This allows QEMU to isolate and intercept
-  the device's CVQ. By doing so, QEMU is able to migrate the device status
-  transparently, without requiring the device to support state save and
-  restore.
-* QUEUE_READY: This allows QEMU to control when the dataplane virtqueues are
-  enabled.  This ensures the dataplane is started after the device
-  configuration has been fully restored via the CVQ.
-
-It also enables the VIRTIO_NET_F_STATUS feature.  This allows the device to
-signal the driver that it needs to send gratuitous ARP with
-VIRTIO_NET_S_ANNOUNCE, reducing the Live Migration downtime.
-
-v5:
-* Update headers to 7.3
-* Rebase on top of main, merge conflicts.
-
-v4:
-* Rebase on top of origin/main, which already includes the __counted_by error
-fix.
-* Add VDUSE_SUSPEND to lib/vhost/vduse.c:vduse_reqs_str (Maxime).
-
-v3:
-* Include uapi/linux/stddef.h and revert the -D__counted_by from v2.
-
-v2:
-* Add -D__counted_by(X)= if the compiler does not support it. It is
-  pulled by the kernel headers.
-
-PATCH v1:
-* Move to VDUSE_SET_FEATURES ioctl instead of config space field.
-* Add a few bounds control.
-* Update kernel headers to v7.3-rc3.
-
-RFC v4:
-* Sync headers with Linux's latest existing and proposed UAPI.  Both
-  files constants and new ioctl VDUSE_SET_FEATURES.
-* Check for more error conditions and clarified some error messages in
-  ready message processing.
-* Add relevant release notes.
-* Fix cosmetic whitespaces & checkpath errors.
-* Fix error path of vhost_user_iotlb_init and vhost_user_iotlb_init_one.
-* Fix commits author.
-
-RFC v3:
-* Replace incorrect '%lx' DEBUG print format specifier with PRIx64
-
-RFC v2:
-* Following latest comments on kernel series about VDUSE features, not checking
-  API version but only check if VDUSE_GET_FEATURES success.
-* Move the start and last declarations in the braces as gcc 8 does not like
-  them interleaved with statements. Actually, I think the move was a mistake in
-  the first version.
-  https://mails.dpdk.org/archives/test-report/2026-February/958175.html
-
-Eugenio Pérez (3):
-  uapi: import VDUSE and VFIO header from v7.3 kernel
-  vhost: Support VDUSE QUEUE_READY feature
-  vhost: Support vduse suspend feature
-
-Maxime Coquelin (6):
-  vhost: introduce ASID support
-  vhost: add VDUSE API version negotiation
-  vhost: add virtqueues groups support to VDUSE
-  vhost: add ASID support to VDUSE IOTLB operations
-  vhost: claim VDUSE support for API version 1
-  vhost: add net status feature to VDUSE
-
- kernel/linux/uapi/linux/iommufd.h | 105 +++++++++++-
- kernel/linux/uapi/linux/stddef.h  |   4 +
- kernel/linux/uapi/linux/vduse.h   | 113 ++++++++++++-
- kernel/linux/uapi/linux/vfio.h    |  51 +++++-
+Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
+---
+ kernel/linux/uapi/linux/iommufd.h | 105 +++++++++++++++++++++++++--
+ kernel/linux/uapi/linux/stddef.h  |   4 ++
+ kernel/linux/uapi/linux/vduse.h   | 113 ++++++++++++++++++++++++++++--
+ kernel/linux/uapi/linux/vfio.h    |  51 +++++++++++++-
  kernel/linux/uapi/version         |   2 +-
- lib/vhost/iotlb.c                 | 233 +++++++++++++++++----------
- lib/vhost/iotlb.h                 |  14 +-
- lib/vhost/vduse.c                 | 259 +++++++++++++++++++++++++++---
- lib/vhost/vduse.h                 |   3 +-
- lib/vhost/vhost.c                 |  16 +-
- lib/vhost/vhost.h                 |  16 +-
- lib/vhost/vhost_user.c            |  13 +-
- 12 files changed, 676 insertions(+), 153 deletions(-)
+ 5 files changed, 261 insertions(+), 14 deletions(-)
 
+diff --git a/kernel/linux/uapi/linux/iommufd.h b/kernel/linux/uapi/linux/iommufd.h
+index 5ee08de08388..26b1cb9465e2 100644
+--- a/kernel/linux/uapi/linux/iommufd.h
++++ b/kernel/linux/uapi/linux/iommufd.h
+@@ -57,6 +57,7 @@ enum {
+ 	IOMMUFD_CMD_IOAS_CHANGE_PROCESS = 0x92,
+ 	IOMMUFD_CMD_VEVENTQ_ALLOC = 0x93,
+ 	IOMMUFD_CMD_HW_QUEUE_ALLOC = 0x94,
++	IOMMUFD_CMD_IOAS_NOIOMMU_GET_PA = 0x95,
+ };
+ 
+ /**
+@@ -219,18 +220,49 @@ struct iommu_ioas_map {
+ };
+ #define IOMMU_IOAS_MAP _IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_MAP)
+ 
++/**
++ * struct iommu_ioas_noiommu_get_pa - ioctl(IOMMU_IOAS_NOIOMMU_GET_PA)
++ * @size: sizeof(struct iommu_ioas_noiommu_get_pa)
++ * @flags: Reserved, must be 0 for now
++ * @ioas_id: IOAS ID to query IOVA to PA mapping from
++ * @__reserved: Must be 0
++ * @iova: IOVA to query
++ * @length: On input, non-zero maximum number of bytes to query starting from
++ *          @iova. On output, number of physically contiguous bytes starting
++ *          from @out_phys, capped by the input length.
++ * @out_phys: Output physical address the IOVA maps to
++ *
++ * Query the physical address backing an IOVA range. The beginning of the
++ * range must be mapped already and length must be non-zero. For noiommu
++ * devices doing unsafe DMA only.
++ */
++struct iommu_ioas_noiommu_get_pa {
++	__u32 size;
++	__u32 flags;
++	__u32 ioas_id;
++	__u32 __reserved;
++	__aligned_u64 iova;
++	__aligned_u64 length;
++	__aligned_u64 out_phys;
++};
++#define IOMMU_IOAS_NOIOMMU_GET_PA _IO(IOMMUFD_TYPE, IOMMUFD_CMD_IOAS_NOIOMMU_GET_PA)
++
+ /**
+  * struct iommu_ioas_map_file - ioctl(IOMMU_IOAS_MAP_FILE)
+  * @size: sizeof(struct iommu_ioas_map_file)
+  * @flags: same as for iommu_ioas_map
+  * @ioas_id: same as for iommu_ioas_map
+- * @fd: the memfd to map
+- * @start: byte offset from start of file to map from
++ * @fd: the memfd or supported dma-buf file to map
++ * @start: byte offset from start of the file to map from
+  * @length: same as for iommu_ioas_map
+  * @iova: same as for iommu_ioas_map
+  *
+- * Set an IOVA mapping from a memfd file.  All other arguments and semantics
+- * match those of IOMMU_IOAS_MAP.
++ * Set an IOVA mapping from a memfd file. On kernels with dma-buf support,
++ * supported dma-buf files may also be accepted. This is not a generic
++ * dma-buf import path; currently supported dma-bufs include single-range
++ * VFIO PCI dma-bufs exported through VFIO_DEVICE_FEATURE_DMA_BUF, and
++ * other dma-bufs may be rejected. All other arguments and semantics match
++ * those of IOMMU_IOAS_MAP.
+  */
+ struct iommu_ioas_map_file {
+ 	__u32 size;
+@@ -465,16 +497,27 @@ struct iommu_hwpt_arm_smmuv3 {
+ 	__aligned_le64 ste[2];
+ };
+ 
++/**
++ * struct iommu_hwpt_amd_guest - AMD IOMMU guest I/O page table data
++ *				 (IOMMU_HWPT_DATA_AMD_GUEST)
++ * @dte: Guest Device Table Entry (DTE)
++ */
++struct iommu_hwpt_amd_guest {
++	__aligned_u64 dte[4];
++};
++
+ /**
+  * enum iommu_hwpt_data_type - IOMMU HWPT Data Type
+  * @IOMMU_HWPT_DATA_NONE: no data
+  * @IOMMU_HWPT_DATA_VTD_S1: Intel VT-d stage-1 page table
+  * @IOMMU_HWPT_DATA_ARM_SMMUV3: ARM SMMUv3 Context Descriptor Table
++ * @IOMMU_HWPT_DATA_AMD_GUEST: AMD IOMMU guest page table
+  */
+ enum iommu_hwpt_data_type {
+ 	IOMMU_HWPT_DATA_NONE = 0,
+ 	IOMMU_HWPT_DATA_VTD_S1 = 1,
+ 	IOMMU_HWPT_DATA_ARM_SMMUV3 = 2,
++	IOMMU_HWPT_DATA_AMD_GUEST = 3,
+ };
+ 
+ /**
+@@ -559,11 +602,22 @@ struct iommu_hw_info_vtd {
+ 	__aligned_u64 ecap_reg;
+ };
+ 
++/**
++ * enum iommu_hw_info_arm_smmuv3_flags - Flags for ARM SMMUv3 hw_info
++ * @IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI:
++ *    If set, user space must issue TLBI/CFGI+SYNC commands twice due to
++ *    hardware erratum T264-SMMU-3. See the description at
++ *    arm_smmu_erratum_repeat_tlbi_cfgi_key.
++ */
++enum iommu_hw_info_arm_smmuv3_flags {
++	IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI = 1 << 0,
++};
++
+ /**
+  * struct iommu_hw_info_arm_smmuv3 - ARM SMMUv3 hardware information
+  *                                   (IOMMU_HW_INFO_TYPE_ARM_SMMUV3)
+  *
+- * @flags: Must be set to 0
++ * @flags: Combination of enum iommu_hw_info_arm_smmuv3_flags
+  * @__reserved: Must be 0
+  * @idr: Implemented features for ARM SMMU Non-secure programming interface
+  * @iidr: Information about the implementation and implementer of ARM SMMU,
+@@ -579,7 +633,7 @@ struct iommu_hw_info_vtd {
+  * idr[0]: ST_LEVEL, TERM_MODEL, STALL_MODEL, TTENDIAN , CD2L, ASID16, TTF
+  * idr[1]: SIDSIZE, SSIDSIZE
+  * idr[3]: BBML, RIL
+- * idr[5]: VAX, GRAN64K, GRAN16K, GRAN4K
++ * idr[5]: VAX, GRAN64K, GRAN16K, GRAN4K, DS
+  *
+  * - S1P should be assumed to be true if a NESTED HWPT can be created
+  * - VFIO/iommufd only support platforms with COHACC, it should be assumed to be
+@@ -587,7 +641,7 @@ struct iommu_hw_info_vtd {
+  * - ATS is a per-device property. If the VMM describes any devices as ATS
+  *   capable in ACPI/DT it should set the corresponding idr.
+  *
+- * This list may expand in future (eg E0PD, AIE, PBHA, D128, DS etc). It is
++ * This list may expand in future (eg E0PD, AIE, PBHA, D128 etc). It is
+  * important that VMMs do not read bits outside the list to allow for
+  * compatibility with future kernels. Several features in the SMMUv3
+  * architecture are not currently supported by the kernel for nesting: HTTU,
+@@ -623,6 +677,32 @@ struct iommu_hw_info_tegra241_cmdqv {
+ 	__u8 __reserved;
+ };
+ 
++/**
++ * struct iommu_hw_info_amd - AMD IOMMU device info
++ *
++ * @efr : Value of AMD IOMMU Extended Feature Register (EFR)
++ * @efr2: Value of AMD IOMMU Extended Feature 2 Register (EFR2)
++ *
++ * Please See description of these registers in the following sections of
++ * the AMD I/O Virtualization Technology (IOMMU) Specification.
++ * (https://docs.amd.com/v/u/en-US/48882_3.10_PUB)
++ *
++ * - MMIO Offset 0030h IOMMU Extended Feature Register
++ * - MMIO Offset 01A0h IOMMU Extended Feature 2 Register
++ *
++ * Note: The EFR and EFR2 are raw values reported by hardware.
++ * VMM is responsible to determine the appropriate flags to be exposed to
++ * the VM since cetertain features are not currently supported by the kernel
++ * for HW-vIOMMU.
++ *
++ * Current VMM-allowed list of feature flags are:
++ * - EFR[GTSup, GASup, GioSup, PPRSup, EPHSup, GATS, GLX, PASmax]
++ */
++struct iommu_hw_info_amd {
++	__aligned_u64 efr;
++	__aligned_u64 efr2;
++};
++
+ /**
+  * enum iommu_hw_info_type - IOMMU Hardware Info Types
+  * @IOMMU_HW_INFO_TYPE_NONE: Output by the drivers that do not report hardware
+@@ -632,6 +712,7 @@ struct iommu_hw_info_tegra241_cmdqv {
+  * @IOMMU_HW_INFO_TYPE_ARM_SMMUV3: ARM SMMUv3 iommu info type
+  * @IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV: NVIDIA Tegra241 CMDQV (extension for ARM
+  *                                     SMMUv3) info type
++ * @IOMMU_HW_INFO_TYPE_AMD: AMD IOMMU info type
+  */
+ enum iommu_hw_info_type {
+ 	IOMMU_HW_INFO_TYPE_NONE = 0,
+@@ -639,6 +720,7 @@ enum iommu_hw_info_type {
+ 	IOMMU_HW_INFO_TYPE_INTEL_VTD = 1,
+ 	IOMMU_HW_INFO_TYPE_ARM_SMMUV3 = 2,
+ 	IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV = 3,
++	IOMMU_HW_INFO_TYPE_AMD = 4,
+ };
+ 
+ /**
+@@ -656,11 +738,15 @@ enum iommu_hw_info_type {
+  * @IOMMU_HW_CAP_PCI_PASID_PRIV: Privileged Mode Supported, user ignores it
+  *                               when the struct
+  *                               iommu_hw_info::out_max_pasid_log2 is zero.
++ * @IOMMU_HW_CAP_PCI_ATS_NOT_SUPPORTED: ATS is not supported or cannot be used
++ *                                      on this device (absence implies ATS
++ *                                      may be enabled)
+  */
+ enum iommufd_hw_capabilities {
+ 	IOMMU_HW_CAP_DIRTY_TRACKING = 1 << 0,
+ 	IOMMU_HW_CAP_PCI_PASID_EXEC = 1 << 1,
+ 	IOMMU_HW_CAP_PCI_PASID_PRIV = 1 << 2,
++	IOMMU_HW_CAP_PCI_ATS_NOT_SUPPORTED = 1 << 3,
+ };
+ 
+ /**
+@@ -1013,6 +1099,11 @@ struct iommu_fault_alloc {
+ enum iommu_viommu_type {
+ 	IOMMU_VIOMMU_TYPE_DEFAULT = 0,
+ 	IOMMU_VIOMMU_TYPE_ARM_SMMUV3 = 1,
++	/*
++	 * TEGRA241_CMDQV requirements (otherwise, VCMDQs will not work)
++	 * - Kernel will allocate a VINTF (HYP_OWN=0) to back this VIOMMU. So,
++	 *   VMM must wire the HYP_OWN bit to 0 in guest VINTF_CONFIG register
++	 */
+ 	IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV = 2,
+ };
+ 
+diff --git a/kernel/linux/uapi/linux/stddef.h b/kernel/linux/uapi/linux/stddef.h
+index 8ecf96def499..e1619f8395a2 100644
+--- a/kernel/linux/uapi/linux/stddef.h
++++ b/kernel/linux/uapi/linux/stddef.h
+@@ -69,6 +69,10 @@
+ #define __counted_by_be(m)
+ #endif
+ 
++#ifndef __counted_by_ptr
++#define __counted_by_ptr(m)
++#endif
++
+ #define __kernel_nonstring
+ 
+ #endif /* _LINUX_STDDEF_H */
+diff --git a/kernel/linux/uapi/linux/vduse.h b/kernel/linux/uapi/linux/vduse.h
+index 6e4c67a00f8b..9c71b79e70cc 100644
+--- a/kernel/linux/uapi/linux/vduse.h
++++ b/kernel/linux/uapi/linux/vduse.h
+@@ -10,6 +10,16 @@
+ 
+ #define VDUSE_API_VERSION	0
+ 
++/* VQ groups and ASID support */
++
++#define VDUSE_API_VERSION_1	1
++
++/* The VDUSE instance expects a request for vq ready */
++#define VDUSE_F_QUEUE_READY	0
++
++/* The VDUSE instance expects a request for suspend */
++#define VDUSE_F_SUSPEND		1
++
+ /*
+  * Get the version of VDUSE API that kernel supported (VDUSE_API_VERSION).
+  * This is used for future extension.
+@@ -27,6 +37,8 @@
+  * @features: virtio features
+  * @vq_num: the number of virtqueues
+  * @vq_align: the allocation alignment of virtqueue's metadata
++ * @ngroups: number of vq groups that VDUSE device declares
++ * @nas: number of address spaces that VDUSE device declares
+  * @reserved: for future use, needs to be initialized to zero
+  * @config_size: the size of the configuration space
+  * @config: the buffer of the configuration space
+@@ -41,7 +53,9 @@ struct vduse_dev_config {
+ 	__u64 features;
+ 	__u32 vq_num;
+ 	__u32 vq_align;
+-	__u32 reserved[13];
++	__u32 ngroups; /* if VDUSE_API_VERSION >= 1 */
++	__u32 nas; /* if VDUSE_API_VERSION >= 1 */
++	__u32 reserved[11];
+ 	__u32 config_size;
+ 	__u8 config[];
+ };
+@@ -55,6 +69,12 @@ struct vduse_dev_config {
+  */
+ #define VDUSE_DESTROY_DEV	_IOW(VDUSE_BASE, 0x03, char[VDUSE_NAME_MAX])
+ 
++/* Get the VDUSE supported features */
++#define VDUSE_GET_FEATURES	_IOR(VDUSE_BASE, 0x04, __u64)
++
++/* Set the VDUSE features */
++#define VDUSE_SET_FEATURES	_IOW(VDUSE_BASE, 0x05, __u64)
++
+ /* The ioctls for VDUSE device (/dev/vduse/$NAME) */
+ 
+ /**
+@@ -118,14 +138,18 @@ struct vduse_config_data {
+  * struct vduse_vq_config - basic configuration of a virtqueue
+  * @index: virtqueue index
+  * @max_size: the max size of virtqueue
+- * @reserved: for future use, needs to be initialized to zero
++ * @reserved1: for future use, needs to be initialized to zero
++ * @group: virtqueue group
++ * @reserved2: for future use, needs to be initialized to zero
+  *
+  * Structure used by VDUSE_VQ_SETUP ioctl to setup a virtqueue.
+  */
+ struct vduse_vq_config {
+ 	__u32 index;
+ 	__u16 max_size;
+-	__u16 reserved[13];
++	__u16 reserved1;
++	__u32 group;
++	__u16 reserved2[10];
+ };
+ 
+ /*
+@@ -156,6 +180,16 @@ struct vduse_vq_state_packed {
+ 	__u16 last_used_idx;
+ };
+ 
++/**
++ * struct vduse_vq_group_asid - virtqueue group ASID
++ * @group: Index of the virtqueue group
++ * @asid: Address space ID of the group
++ */
++struct vduse_vq_group_asid {
++	__u32 group;
++	__u32 asid;
++};
++
+ /**
+  * struct vduse_vq_info - information of a virtqueue
+  * @index: virtqueue index
+@@ -215,6 +249,7 @@ struct vduse_vq_eventfd {
+  * @uaddr: start address of userspace memory, it must be aligned to page size
+  * @iova: start of the IOVA region
+  * @size: size of the IOVA region
++ * @asid: Address space ID of the IOVA region
+  * @reserved: for future use, needs to be initialized to zero
+  *
+  * Structure used by VDUSE_IOTLB_REG_UMEM and VDUSE_IOTLB_DEREG_UMEM
+@@ -224,7 +259,8 @@ struct vduse_iova_umem {
+ 	__u64 uaddr;
+ 	__u64 iova;
+ 	__u64 size;
+-	__u64 reserved[3];
++	__u32 asid;
++	__u32 reserved[5];
+ };
+ 
+ /* Register userspace memory for IOVA regions */
+@@ -238,6 +274,7 @@ struct vduse_iova_umem {
+  * @start: start of the IOVA region
+  * @last: last of the IOVA region
+  * @capability: capability of the IOVA region
++ * @asid: Address space ID of the IOVA region, only if device API version >= 1
+  * @reserved: for future use, needs to be initialized to zero
+  *
+  * Structure used by VDUSE_IOTLB_GET_INFO ioctl to get information of
+@@ -248,7 +285,8 @@ struct vduse_iova_info {
+ 	__u64 last;
+ #define VDUSE_IOVA_CAP_UMEM (1 << 0)
+ 	__u64 capability;
+-	__u64 reserved[3];
++	__u32 asid; /* Only if device API version >= 1 */
++	__u32 reserved[5];
+ };
+ 
+ /*
+@@ -257,6 +295,32 @@ struct vduse_iova_info {
+  */
+ #define VDUSE_IOTLB_GET_INFO	_IOWR(VDUSE_BASE, 0x1a, struct vduse_iova_info)
+ 
++/**
++ * struct vduse_iotlb_entry_v2 - entry of IOTLB to describe one IOVA region
++ *
++ * @v1: the original vduse_iotlb_entry
++ * @asid: address space ID of the IOVA region
++ * @reserved: for future use, needs to be initialized to zero
++ *
++ * Structure used by VDUSE_IOTLB_GET_FD2 ioctl to find an overlapped IOVA region.
++ */
++struct vduse_iotlb_entry_v2 {
++	__u64 offset;
++	__u64 start;
++	__u64 last;
++	__u8 perm;
++	__u8 padding[7];
++	__u32 asid;
++	__u32 reserved[11];
++};
++
++/*
++ * Same as VDUSE_IOTLB_GET_FD but with vduse_iotlb_entry_v2 argument that
++ * support extra fields.
++ */
++#define VDUSE_IOTLB_GET_FD2	_IOWR(VDUSE_BASE, 0x1b, struct vduse_iotlb_entry_v2)
++
++
+ /* The control messages definition for read(2)/write(2) on /dev/vduse/$NAME */
+ 
+ /**
+@@ -265,11 +329,16 @@ struct vduse_iova_info {
+  * @VDUSE_SET_STATUS: set the device status
+  * @VDUSE_UPDATE_IOTLB: Notify userspace to update the memory mapping for
+  *                      specified IOVA range via VDUSE_IOTLB_GET_FD ioctl
++ * @VDUSE_SET_VQ_GROUP_ASID: Notify userspace to update the address space of a
++ *                           virtqueue group.
+  */
+ enum vduse_req_type {
+ 	VDUSE_GET_VQ_STATE,
+ 	VDUSE_SET_STATUS,
+ 	VDUSE_UPDATE_IOTLB,
++	VDUSE_SET_VQ_GROUP_ASID,
++	VDUSE_SET_VQ_READY,
++	VDUSE_SUSPEND,
+ };
+ 
+ /**
+@@ -304,6 +373,28 @@ struct vduse_iova_range {
+ 	__u64 last;
+ };
+ 
++/**
++ * struct vduse_iova_range_v2 - IOVA range [start, last] if API_VERSION >= 1
++ * @start: start of the IOVA range
++ * @last: last of the IOVA range
++ * @asid: address space ID of the IOVA range
++ */
++struct vduse_iova_range_v2 {
++	__u64 start;
++	__u64 last;
++	__u32 asid;
++	__u32 padding;
++};
++
++/**
++ * struct vduse_vq_ready - Virtqueue ready request message
++ * @num: Virtqueue number
++ */
++struct vduse_vq_ready {
++	__u32 num;
++	__u32 ready;
++};
++
+ /**
+  * struct vduse_dev_request - control request
+  * @type: request type
+@@ -312,6 +403,9 @@ struct vduse_iova_range {
+  * @vq_state: virtqueue state, only index field is available
+  * @s: device status
+  * @iova: IOVA range for updating
++ * @iova_v2: IOVA range for updating if API_VERSION >= 1
++ * @vq_group_asid: ASID of a virtqueue group
++ * @vq_ready: Virtqueue ready request
+  * @padding: padding
+  *
+  * Structure used by read(2) on /dev/vduse/$NAME.
+@@ -324,6 +418,15 @@ struct vduse_dev_request {
+ 		struct vduse_vq_state vq_state;
+ 		struct vduse_dev_status s;
+ 		struct vduse_iova_range iova;
++		/* Following members but padding exist only if vduse api
++		 * version >= 1
++		 */
++		struct vduse_iova_range_v2 iova_v2;
++		struct vduse_vq_group_asid vq_group_asid;
++
++		/* Only if VDUSE_F_QUEUE_READY is negotiated */
++		struct vduse_vq_ready vq_ready;
++
+ 		__u32 padding[32];
+ 	};
+ };
+diff --git a/kernel/linux/uapi/linux/vfio.h b/kernel/linux/uapi/linux/vfio.h
+index c2e4839f83eb..daa94bf69367 100644
+--- a/kernel/linux/uapi/linux/vfio.h
++++ b/kernel/linux/uapi/linux/vfio.h
+@@ -141,7 +141,7 @@ struct vfio_info_cap_header {
+  *
+  * Retrieve information about the group.  Fills in provided
+  * struct vfio_group_info.  Caller sets argsz.
+- * Return: 0 on succes, -errno on failure.
++ * Return: 0 on success, -errno on failure.
+  * Availability: Always
+  */
+ struct vfio_group_status {
+@@ -964,6 +964,10 @@ struct vfio_device_bind_iommufd {
+  * hwpt corresponding to the given pt_id.
+  *
+  * Return: 0 on success, -errno on failure.
++ *
++ * When a device is resetting, -EBUSY will be returned to reject any concurrent
++ * attachment to the resetting device itself or any sibling device in the IOMMU
++ * group having the resetting device.
+  */
+ struct vfio_device_attach_iommufd_pt {
+ 	__u32	argsz;
+@@ -1262,6 +1266,19 @@ enum vfio_device_mig_state {
+  * The initial_bytes field indicates the amount of initial precopy
+  * data available from the device. This field should have a non-zero initial
+  * value and decrease as migration data is read from the device.
++ * The presence of the VFIO_PRECOPY_INFO_REINIT output flag indicates
++ * that new initial data is present on the stream.
++ * The new initial data may result, for example, from device reconfiguration
++ * during migration that requires additional initialization data.
++ * In that case initial_bytes may report a non-zero value irrespective of
++ * any previously reported values, which progresses towards zero as precopy
++ * data is read from the data stream. dirty_bytes is also reset
++ * to zero and represents the state change of the device relative to the new
++ * initial_bytes.
++ * VFIO_PRECOPY_INFO_REINIT can be reported only after userspace opts in to
++ * VFIO_DEVICE_FEATURE_MIG_PRECOPY_INFOv2. Without this opt-in, the flags field
++ * of struct vfio_precopy_info is reserved for bug-compatibility reasons.
++ *
+  * It is recommended to leave PRE_COPY for STOP_COPY only after this field
+  * reaches zero. Leaving PRE_COPY earlier might make things slower.
+  *
+@@ -1297,6 +1314,7 @@ enum vfio_device_mig_state {
+ struct vfio_precopy_info {
+ 	__u32 argsz;
+ 	__u32 flags;
++#define VFIO_PRECOPY_INFO_REINIT (1 << 0) /* output - new initial data is present */
+ 	__aligned_u64 initial_bytes;
+ 	__aligned_u64 dirty_bytes;
+ };
+@@ -1506,6 +1524,37 @@ struct vfio_device_feature_dma_buf {
+ 	struct vfio_region_dma_range dma_ranges[] __counted_by(nr_ranges);
+ };
+ 
++/*
++ * Enables the migration precopy_info_v2 behaviour.
++ *
++ * VFIO_DEVICE_FEATURE_MIG_PRECOPY_INFOv2.
++ *
++ * On SET, enables the v2 pre_copy_info behaviour, where the
++ * vfio_precopy_info.flags is a valid output field.
++ */
++#define VFIO_DEVICE_FEATURE_MIG_PRECOPY_INFOv2  12
++
++/**
++ * VFIO_DEVICE_FEATURE_ZPCI_ERROR feature provides PCI error information to
++ * userspace for vfio-pci devices on s390. On s390, PCI error recovery
++ * involves platform firmware and notification to operating systems is done
++ * by architecture specific mechanism. Exposing this information to
++ * userspace allows it to take appropriate actions to handle an
++ * error on the device.
++ *
++ * Userspace provides an opaque buffer of fixed length, and the kernel
++ * fills it with the zpci_ccdf_err data structure. The length of
++ * zpci_ccdf_err is provided to userspace via the
++ * VFIO_DEVICE_INFO_CAP_ZPCI_BASE capability.
++ *
++ * The ioctl returns -ENOMSG if there are no pending PCI errors.
++ */
++struct vfio_device_feature_zpci_err {
++	__aligned_u64 data;
++};
++
++#define VFIO_DEVICE_FEATURE_ZPCI_ERROR 13
++
+ /* -------- API for Type1 VFIO IOMMU -------- */
+ 
+ /**
+diff --git a/kernel/linux/uapi/version b/kernel/linux/uapi/version
+index 69f29b2320e4..6fd05018ab7c 100644
+--- a/kernel/linux/uapi/version
++++ b/kernel/linux/uapi/version
+@@ -1 +1 @@
+-v6.19
++v7.3
 -- 
 2.56.0
 
