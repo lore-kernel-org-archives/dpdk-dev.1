@@ -1,66 +1,68 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6D0606A319
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 20:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D27606A319
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 20:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=a/VRJRlp
+	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=Nh/NCfcG
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7496840659;
-	Mon, 19 Oct 2026 22:23:02 +0200 (CEST)
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com
- [209.85.219.44]) by mails.dpdk.org (Postfix) with ESMTP id DB7944021E
- for <dev@dpdk.org>; Mon, 19 Oct 2026 22:23:00 +0200 (CEST)
-Received: by mail-qv1-f44.google.com with SMTP id
- 6a1803df08f44-9179bfa9e9cso45076096d6.1
- for <dev@dpdk.org>; Mon, 19 Oct 2026 13:23:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3D83540608;
+	Mon, 19 Oct 2026 22:23:04 +0200 (CEST)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com
+ [209.85.222.180])
+ by mails.dpdk.org (Postfix) with ESMTP id F0E9B40609
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 22:23:02 +0200 (CEST)
+Received: by mail-qk1-f180.google.com with SMTP id
+ af79cd13be357-93f1cf92c9eso259383585a.0
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 13:23:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1792441380; x=1793046180; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1792441382; x=1793046182; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=nsUjpUkprb0De2ezeywh970D5KG1ZRyKocJ9uLMfMr8=;
- b=a/VRJRlpEpgtzY22p/Pm4yW9PXEGaR1zdWF1ipqDdkp/8LFbA6Is7ezF+9/sbUT65V
- B6NyuzTWu6D06X+auTNseKgX7kkFZkvkYAGqRppKlw06aRRu7sS17/6e3k9jdLU/w1av
- SW+1pdNG4b1uJblUZYkpxU81ON3kA/C3MoMLs=
+ bh=uLdQilMd7bDdV7xCwKiqlAkW34ws3KEmoi5Ne6tyt9A=;
+ b=Nh/NCfcGCy4ZUN5FFbFtvDRaIsjYaS2v6kvONm342/UWFjRAFlpIDM70VHSLYzx3E0
+ bEhMKqen6TPVqW+XHev6V4qxxX8GLaHgj+okpyqzWFyho9ho+Ma+yfltmHTBnc4SE+d4
+ e9DPljrHzQjUnDIKbJnJVT8fzO8z36J6nwuHk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792441380; x=1793046180;
+ d=1e100.net; s=20260707; t=1792441382; x=1793046182;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=nsUjpUkprb0De2ezeywh970D5KG1ZRyKocJ9uLMfMr8=;
- b=AP7PG4/2za+JMUOKF27ZgITWsiWt1wV04VI2oLh25yW/CYoyG2cTc5juZwpHlJzoqU
- vEAkV/YspYEHEq9/fQil59OmJu69p6kvI8bs8f1qqEL/qgsYKHRBahbN2hmrX2wxPqMr
- XKoHBEYZFNqtsVWNGCf1Ff1apYsQq5xXVHPC8zSeUyZvV10pIlstv0oB+0S91h0KAxZa
- C65NH4iSBvwXD2ShjruBvwYvBJOVmVi9Nf/3FgbsJ8QLTxqHTd82JXsNcCrr7qE2aWOt
- SgzX67ZZltMz69dfTmh/NKdmC8VWv0JoKcQLynV2s3TeaccJXrwuR4rMzFgYkbyCEsB+
- a8VQ==
-X-Gm-Message-State: AFq9FYJy/+xmAxaZaGzfPulTbIuhR9vWWoEa2BLgGeISRARp8EfczRJV
- o9A8JwOHxVV8cbidqP1xvivWa+eXbrwhHJ8tFAyLM9LC92+cXpFFXqPmwmQm8/ULvqj2x3n77wq
- GOLWKFUq8dC/FeJwvOueVg80lritoxykd0LtsAywOIrDMF/CwzikvOPOE4gCEUpZP8rB5Ga1bJY
- NBr6FdxV/s0+ODEiutAhmSNjjkhAI=
-X-Gm-Gg: AYBFou0JJmSYiDvJ9fDHBNb5/9U4SDIPsZ9CKuMIhrnMVDuhK3ccbwAfxPsNfKjAlpI
- DUwgpOuZwC+CAXu2QSaxeRzDy2n1ANbfeobn0QuJkRd6rcv52q56HXajyGCKee5kemkLGafk8yW
- O/Yt6zN2wEEYkyvQsVss/wUEAwOqhOQnVFjnsvh//5vNLtf2OIGcloEsTdTuzE48g22KCfdYghn
- QDV3UPWkcpv12NFHrduMSqi9XAcJ2ob8izNYevTG/QcYRrTZ684wmTvrRwnE1q41oe6q5C8vJLM
- xRchwqK5+ZqD1NwPoCxMKVtZOlHGkCOIw68nXJ1mO2sEP9LU8VRknUsLUZQZcbuAIlnha43WkvG
- GpvT7XdJ4KCAKxpzj10HB5+DcfBKFppkoqvV+Y0xySDyq9C6sUZiEGAQOLgRJKfK/eDJj94KImq
- DNVC27OKVfLayU93FOIc9S/UPWiP6+L0Or78Nw88VWfXSsniZQMaHoR8iSQLk+A+vP7ze7UZkt0
- pJiDRORF9lo0NEcw99eKT6GlGYOaeo=
-X-Received: by 2002:a05:6214:2e43:b0:91b:8ee1:2212 with SMTP id
- 6a1803df08f44-91bdf01eb99mr135672996d6.20.1792441380005; 
- Mon, 19 Oct 2026 13:23:00 -0700 (PDT)
+ bh=uLdQilMd7bDdV7xCwKiqlAkW34ws3KEmoi5Ne6tyt9A=;
+ b=fhdPw7KXr1NwmVVxEkniO/f0eo6KIgZq2siyBRBDPyb6TZCz2xCczWPohdh3snzGKz
+ Um8Xf2Rel2x50JIBkwmqPi60pnbr2q6YHxOMTOinGXL3bI95MWagu96YbM3d3Wh1bisp
+ 7mfxyHZ8jXd4Wb329VrrgLfigVn3fShWQqJRFPA+mmACDWOZ5qq7EYR1Q4CNnaEKHpnH
+ xQxryz37VRChR5gr3rd06agpaoxZnltlZfQUNvABbRw86YMG72oEeulxRaAiuWuHmbnn
+ uVhtxvmB6Jdv93GoB4ub8z79+4uLZ2TK9V9S+M6l7qsjliK09KPfi+AFK1KpRcAfejJe
+ 5XPQ==
+X-Gm-Message-State: AFq9FYL1nx74czBu3INrFgDrhMaBTmdR0ZCDofQtgVv18ODlq9VRX2+c
+ 8nvV20QJyOzgTMzizgImEiQGQ10pZa/6zxNAV0QJUwOErfa2kdgPsYZeuSBJ/CDe6p8a8lCxIq7
+ 6GP4bNM6hx7/osFi8HkN2DQjl/NZ8vjwmVJSXLtbEs2CYHGRZ7iyzWKFqXJwWXuhmKHUnbdsdZM
+ lwT4uWlYe1Q48frFWiX7NBq6giXCc=
+X-Gm-Gg: AYBFou3FD+Ov5A3AkI9L/WEaRedRZlIgLcdUblzLFHMv1ebMMqYo6wPD+9DpnFONaxc
+ QgQYw+p10ObMl4FdvxHn8ImFP3FfAnOF1P7mESBaI4yMQDz8y0tvRz0K/g5sSG+6PDLzag2Pvo1
+ wTP+9Dm+OC/sSUP91JCuZxsHnwGhOh615XVO1B4K5pAgGflQnEEclzrLTvaPP6HahRiijGc0zBH
+ 9bRyxQoIlkg6UCIGkijVfsWPILYlmatQm2QzuOYE5b7zz2P5w66p5RKzsUQ0OqPwLWYHp6tUqTD
+ i2TYP12NQzSxPq44SdGGjaidjcf7JwQmTAC8L+lvFiT0vXnjeDokK/Jq1SHTjFRWwmJO3pn9iZy
+ LpZv3DHG77fL+6lDQb7dY60t+qjI8dQ4TMifVXohWjr3lFiiB2Gt4NzPG4XvBKjv2XDpFLR8wbf
+ UbjC+MC64hYiW2dbuLVsRlstxLXgbUubQGG4QU/nJcstiNum8y57S949ARonrBhpNEDbpgSv/Ob
+ iUeH6wWXIkMsBihhX8VS2dEUgdhgQjPXEWAi9KaqxN7cOSbWhyYwIvC379Qp/mIlODmgU3VZlY4
+ 6Q==
+X-Received: by 2002:a05:620a:45ab:b0:93b:d7a0:d9e7 with SMTP id
+ af79cd13be357-93f29dcf5d7mr1526774785a.65.1792441382196; 
+ Mon, 19 Oct 2026 13:23:02 -0700 (PDT)
 Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91c040b4915sm5510666d6.26.2026.10.19.13.22.58
+ 6a1803df08f44-91c040b4915sm5510666d6.26.2026.10.19.13.23.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 19 Oct 2026 13:22:59 -0700 (PDT)
+ Mon, 19 Oct 2026 13:23:01 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: dev@dpdk.org, luca.vizzarro@arm.com, patrickrobb1997@gmail.com,
  dladd@iol.unh.edu
 Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu,
  Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v4 2/3] dts: fix cryptodev verify parsing
-Date: Mon, 19 Oct 2026 16:22:51 -0400
-Message-ID: <20261019202252.907692-2-abailey@iol.unh.edu>
+Subject: [PATCH v4 3/3] dts: add verify coverage for cryptodev testing
+Date: Mon, 19 Oct 2026 16:22:52 -0400
+Message-ID: <20261019202252.907692-3-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261019202252.907692-1-abailey@iol.unh.edu>
 References: <20260514172553.191331-1-abailey@iol.unh.edu>
@@ -84,70 +86,205 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The previous implementation of gathering the data of verify output did
-not properly gather the correct values. This commit amends the faulty
-regex with working ones.
-
-Bugzilla ID: 1945
-Fixes: 8ee2df9da125 ("dts: add cryptodev package")
+Currently, next-DTS only covers throughput testing through the
+dpdk-test-crypto application. This series adds coverage for the verify
+option to next DTS to allow functional testing for various algorithms of
+crypto devices and virtual devices.
 
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- dts/api/cryptodev/__init__.py |  1 +
- dts/api/cryptodev/types.py    | 20 ++++++++------------
- 2 files changed, 9 insertions(+), 12 deletions(-)
 
-diff --git a/dts/api/cryptodev/__init__.py b/dts/api/cryptodev/__init__.py
-index a3ad59f7f0..e91eddeef9 100644
---- a/dts/api/cryptodev/__init__.py
-+++ b/dts/api/cryptodev/__init__.py
-@@ -131,6 +131,7 @@ def run_app(self, num_vfs: int = 1) -> list[CryptodevResults]:
-             case TestType.pmd_cyclecount:
-                 parser = PmdCyclecountResults
-             case TestType.verify:
-+                parser_options |= re.DOTALL
-                 parser = VerifyResults
- 
-         return [parser.parse(line) for line in re.findall(regex, result.stdout, parser_options)]
-diff --git a/dts/api/cryptodev/types.py b/dts/api/cryptodev/types.py
-index 7b4fd17cb6..bce577de10 100644
---- a/dts/api/cryptodev/types.py
-+++ b/dts/api/cryptodev/types.py
-@@ -160,26 +160,22 @@ class VerifyResults(CryptodevResults):
-     """A parser for verify test output."""
- 
-     #:
--    lcore_id: int = field(metadata=TextParser.find_int(r"lcore\s+(?:id.*\n\s+)?(\d+)"))
-+    lcore_id: int = field(metadata=TextParser.find_int(r"\s*(\d+)"))
-     #: buffer size ran with app
-     buffer_size: int = field(
--        metadata=TextParser.find_int(r"Buf(?:.*\n\s+(?:\d+\s+))?(?:fer size:\s+)?(\d+)"),
-+        metadata=TextParser.find_int(r"\s*(?:\d+\s+)(\d+)"),
-     )
-     #: burst size ran with app
-     burst_size: int = field(
--        metadata=TextParser.find_int(r"Burst(?:.*\n\s+(?:\d+\s+){2})?(?: size:\s+)?(\d+)"),
-+        metadata=TextParser.find_int(r"\s*(?:\d+\s+){2}(\d+)"),
-     )
-     #: number of packets enqueued
--    enqueued: int = field(metadata=TextParser.find_int(r"Enqueued.*\n\s+(?:\d+\s+){3}(\d+)"))
-+    enqueued: int = field(metadata=TextParser.find_int(r"\s*(?:\d+\s+){3}(\d+)"))
-     #: number of packets dequeued
--    dequeued: int = field(metadata=TextParser.find_int(r"Dequeued.*\n\s+(?:\d+\s+){4}(\d+)"))
-+    dequeued: int = field(metadata=TextParser.find_int(r"\s*(?:\d+\s+){4}(\d+)"))
-     #: number of packets enqueue failed
--    failed_enqueued: int = field(
--        metadata=TextParser.find_int(r"Failed Enq.*\n\s+(?:\d+\s+){5}(\d+)")
--    )
-+    failed_enqueued: int = field(metadata=TextParser.find_int(r"\s*(?:\d+\s+){5}(\d+)"))
-     #: number of packets dequeue failed
--    failed_dequeued: int = field(
--        metadata=TextParser.find_int(r"Failed Deq.*\n\s+(?:\d+\s+){6}(\d+)")
--    )
-+    failed_dequeued: int = field(metadata=TextParser.find_int(r"\s*(?:\d+\s+){6}(\d+)"))
-     #: total number of failed operations
--    failed_ops: int = field(metadata=TextParser.find_int(r"Failed Ops.*\n\s+(?:\d+\s+){7}(\d+)"))
-+    failed_ops: int = field(metadata=TextParser.find_int(r"\s*(?:\d+\s+){7}(\d+)"))
--- 
+v4:
+ * Rebased on Main.
+
+ dts/tests/TestSuite_cryptodev_verify.py | 162 ++++++++++++++++++++++++
+ tests.TestSuite_cryptodev_verify.rst    |   8 ++
+ 2 files changed, 170 insertions(+)
+ create mode 100644 dts/tests/TestSuite_cryptodev_verify.py
+ create mode 100644 tests.TestSuite_cryptodev_verify.rst
+
+diff --git a/dts/tests/TestSuite_cryptodev_verify.py b/dts/tests/TestSuite_cryptodev_verify.py
+new file mode 100644
+index 0000000000..bfd11eba45
+--- /dev/null
++++ b/dts/tests/TestSuite_cryptodev_verify.py
+@@ -0,0 +1,162 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 University of New Hampshire
++
++"""DPDK cryptodev verify test suite.
++
++The main goal of this test suite is to utilize the verify mode of dpdk-test-crypto application
++to ensure functional correctness for various cryptographic operations supported by DPDK
++cryptodev-pmd.
++"""
++
++from api.capabilities import (
++    LinkTopology,
++    requires_link_topology,
++)
++from api.cryptodev import Cryptodev
++from api.cryptodev.config import (
++    AeadAlgName,
++    AuthenticationAlgorithm,
++    AuthenticationOpMode,
++    CipherAlgorithm,
++    DeviceType,
++    EncryptDecryptSwitch,
++    OperationType,
++    TestType,
++    get_device_from_str,
++)
++from api.cryptodev.types import (
++    CryptodevResults,
++)
++from api.test import verify
++from api.test_suite import TestSuite, crypto_test
++from api.testbed_model.virtual_device import VirtualDevice
++from framework.context import get_ctx
++
++TOTAL_OPS = 10_000_000
++AES_CBC_DATA = "test_aes_cbc.data"
++AES_GCM_DATA = "test_aes_gcm.data"
++
++
++@requires_link_topology(LinkTopology.NO_LINK)
++class TestCryptodevVerify(TestSuite):
++    """DPDK Crypto Device Testing Suite."""
++
++    def set_up_suite(self) -> None:
++        """Set up the test suite."""
++        self.device_type: DeviceType | None = get_device_from_str(
++            str(get_ctx().sut_node.crypto_device_type)
++        )
++
++    def _verify_output(
++        self,
++        results: list[CryptodevResults],
++    ) -> bool:
++        for result in results:
++            if (
++                getattr(result, "failed_enqueued") > 0
++                or getattr(result, "failed_dequeued") > 0
++                or getattr(result, "failed_ops") > 0
++            ):
++                return False
++        return True
++
++    @crypto_test
++    def aesni_mb_vdev(self) -> None:
++        """aesni_mb_vdev test.
++
++        Steps:
++            * Create a cryptodev instance with aesni_mb virtual device and provided buffer sizes.
++        Verify:
++            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
++                with the dpdk-test-crypto application.
++        """
++        app = Cryptodev(
++            vdevs=[VirtualDevice("crypto_aesni_mb0")],
++            ptest=TestType.verify,
++            test_file=AES_CBC_DATA,
++            test_name="sha1_hmac_buff_32",
++            devtype=DeviceType.crypto_aesni_mb,
++            optype=OperationType.cipher_then_auth,
++            cipher_algo=CipherAlgorithm.aes_cbc,
++            cipher_op=EncryptDecryptSwitch.encrypt,
++            cipher_key_sz=32,
++            cipher_iv_sz=16,
++            auth_algo=AuthenticationAlgorithm.sha1_hmac,
++            auth_op=AuthenticationOpMode.generate,
++            auth_key_sz=64,
++            digest_sz=12,
++            burst_sz=32,
++            buffer_sz=32,
++            total_ops=TOTAL_OPS,
++        )
++
++        verify(
++            self._verify_output(app.run_app(num_vfs=0)), "Failed to verify test sha1_hmac_buff_32"
++        )
++
++    @crypto_test
++    def openssl_vdev(self) -> None:
++        """Openssl vdev test.
++
++        Steps:
++            * Create a cryptodev instance with openssl virtual device and provided buffer sizes.
++        Verify:
++            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
++                with the dpdk-test-crypto application.
++
++        Raises:
++            SkippedTestException: When configuration is not provided.
++        """
++        app = Cryptodev(
++            vdevs=[VirtualDevice("crypto_openssl0")],
++            ptest=TestType.verify,
++            test_file=AES_GCM_DATA,
++            test_name="aes_gcm_buff_32",
++            devtype=DeviceType.crypto_openssl,
++            optype=OperationType.aead,
++            aead_algo=AeadAlgName.aes_gcm,
++            aead_op=EncryptDecryptSwitch.encrypt,
++            aead_key_sz=16,
++            aead_aad_sz=16,
++            aead_iv_sz=12,
++            digest_sz=16,
++            burst_sz=32,
++            buffer_sz=32,
++            total_ops=TOTAL_OPS,
++        )
++
++        verify(self._verify_output(app.run_app(num_vfs=0)), "Failed to verify test aes_gcm_buff_32")
++
++    @crypto_test
++    def sha1_hmac_buff_32(self) -> None:
++        """aes_cbc test.
++
++        Steps:
++            * Create a cryptodev instance with provided device type and buffer sizes.
++        Verify:
++            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
++                with the dpdk-test-crypto application.
++
++        Raises:
++            SkippedTestException: When configuration is not provided.
++        """
++        app = Cryptodev(
++            ptest=TestType.verify,
++            test_file=AES_CBC_DATA,
++            test_name="sha1_hmac_buff_32",
++            devtype=self.device_type,
++            optype=OperationType.cipher_then_auth,
++            cipher_algo=CipherAlgorithm.aes_cbc,
++            cipher_op=EncryptDecryptSwitch.encrypt,
++            cipher_key_sz=32,
++            cipher_iv_sz=16,
++            auth_algo=AuthenticationAlgorithm.sha1_hmac,
++            auth_op=AuthenticationOpMode.generate,
++            auth_key_sz=64,
++            digest_sz=20,
++            burst_sz=32,
++            buffer_sz=32,
++            total_ops=TOTAL_OPS,
++        )
++
++        verify(self._verify_output(app.run_app()), "Failed to verify test sha1_hmac_buff_32")
+diff --git a/tests.TestSuite_cryptodev_verify.rst b/tests.TestSuite_cryptodev_verify.rst
+new file mode 100644
+index 0000000000..d0a305a7d5
+--- /dev/null
++++ b/tests.TestSuite_cryptodev_verify.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++cryptodev_verify Test Suite
++===========================
++
++.. automodule:: tests.TestSuite_cryptodev_verify
++   :members:
++   :show-inheritance:
+--
 2.55.0
 
