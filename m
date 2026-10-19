@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B793ECCF2DA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 08:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC83BCCF2DA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 08:36:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3EDA40430;
-	Mon, 19 Oct 2026 10:27:42 +0200 (CEST)
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com
- [113.46.200.225])
- by mails.dpdk.org (Postfix) with ESMTP id 4EFC140269;
- Mon, 19 Oct 2026 10:27:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8116B40608;
+	Mon, 19 Oct 2026 10:36:17 +0200 (CEST)
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com
+ [113.46.200.227])
+ by mails.dpdk.org (Postfix) with ESMTP id 3892540269;
+ Mon, 19 Oct 2026 10:36:16 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=nCpIUni3FECjJh+m1S1JTYgXmQwBGrFyTSSgvRQqN70=;
- b=Q/CC3jS/zGRiAxvey6MbNWE2NQ8Lxli/T+bs/09+rs5vBp4Hq5IGH8oJiCke3xtjGrwc4gKRn
- 0f8h7/+4eqP9Px+1KOCUrOUKgmitxhJunQJf96NeEgFyDpLWvG9J2CkRBp5acpv1q2KKj0ckF1d
- 7Hlnz7VP59ItIDTlqzduf14=
-Received: from mail.maildlp.com (unknown [172.19.163.15])
- by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4j7TF12kckz1K9Bd;
- Mon, 19 Oct 2026 16:27:33 +0800 (CST)
+ bh=jYs95Gyqib5SMufBqrMrNp5Tk313ok1H1tdVZhhmBMg=;
+ b=EVEeP5vFusqqBkCZexys+HOOSaJEAMqCTx9R5FEwjyl3btpzygu73PmG+GIkFrf6EFYr9u6LE
+ pcCF768N7bu9kiVVi9FMdPwukH4QtPvJrrzGDclcKikMSUgijgQ6pRGHVw3y6cYvOgiWH+Lv/1p
+ 582dgkeJ+2qnAaYvyILqwDQ=
+Received: from mail.maildlp.com (unknown [172.19.163.200])
+ by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4j7TR11V70znTxK;
+ Mon, 19 Oct 2026 16:36:13 +0800 (CST)
 Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id 1AC4040586;
- Mon, 19 Oct 2026 16:27:36 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id B2C2E4056A;
+ Mon, 19 Oct 2026 16:36:12 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Mon, 19 Oct 2026 16:27:35 +0800
-Message-ID: <a22ba926-ab45-4f57-b173-a5dd92b190b2@huawei.com>
-Date: Mon, 19 Oct 2026 16:27:35 +0800
+ 15.2.2562.45; Mon, 19 Oct 2026 16:36:12 +0800
+Message-ID: <73b5e9cd-6789-422a-9679-88693c60352b@huawei.com>
+Date: Mon, 19 Oct 2026 16:36:12 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: |WARNING| argparse: support range step for corelist parsing
 To: <dpdklab@iol.unh.edu>, <test-report@dpdk.org>
 References: <<20261016093001.9067-1-fengchengwen@huawei.com>
- <20261016100926.06D096051830@postal.iol.unh.edu>
+ <20261016101228.123E46051830@postal.iol.unh.edu>
 Content-Language: en-US
-CC: "dev@dpdk.org" <dev@dpdk.org>
 From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20261016100926.06D096051830@postal.iol.unh.edu>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+In-Reply-To: <20261016101228.123E46051830@postal.iol.unh.edu>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.161]
@@ -57,7 +57,7 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 10/16/2026 6:09 PM, dpdklab@iol.unh.edu wrote:
+On 10/16/2026 6:12 PM, dpdklab@iol.unh.edu wrote:
 > Test-Label: ai-code-review
 > Test-Status: WARNING
 > https://dpdk.org/patch/171477
@@ -71,102 +71,201 @@ On 10/16/2026 6:09 PM, dpdklab@iol.unh.edu wrote:
 > 
 > ## Patch: argparse: support range step for corelist parsing
 > 
-> This patch adds stride/step syntax (`start-end:step`) to the EAL corelist parser to help users skip sibling cores more easily (e.g., `-l 0-126:2` instead of `-l 0,2,4,6...126`).
+> ### ERRORS
 > 
-> ---
+> **Error 1: Integer overflow in step accumulation (correctness bug)**
 > 
-> ## ERRORS
-> 
-> None identified.
-> 
-> ---
-> 
-> ## WARNINGS
-> 
-> ### 1. Missing release notes update
-> 
-> The patch adds new API functionality (range step syntax in corelist parsing) but does not update the release notes.
-> 
-> **Location:** No changes to `doc/guides/rel_notes/release_*.rst`
-> 
-> **Why it matters:** User-visible feature additions require release notes per DPDK guidelines.
-> 
-> **Suggested fix:** Add a feature note in the current release notes file under the appropriate section:
-> 
-> ```rst
-> * **argparse: Added step syntax for corelist ranges.**
-> 
->   The corelist parser now supports stride/step syntax for core ranges.
->   For example, ``-l 0-126:2`` selects cores 0, 2, 4, ..., 126.
->   This is useful for skipping sibling cores on systems with SMT/hyperthreading.
-
-OK, will done in v2
-
-> ```
-> 
-> ---
-> 
-> ### 2. Test coverage: missing zero-step test case
-> 
-> The patch adds validation that step must be positive (`if (idx == 0)`) but does not include a test case for step=0.
-> 
-> **Location:** `app/test/test_argparse.c` line 605-613 validates step > 0, but no test exercises `"1-5:0"`.
-> 
-> **Why it matters:** Untested error paths may hide bugs. The zero-step case is explicitly rejected in code but not verified in the test suite.
-> 
-> **Suggested fix:** Add a test case:
-> 
+> Line 629 in `lib/argparse/rte_argparse.c`:
 > ```c
-> char *corelist_invalid_range_step_zero = test_strdup("1-5:0");
-> /* ... later in test ... */
-> CPU_ZERO(&val_cpuset);
-> ret = rte_argparse_parse_type(corelist_invalid_range_step_zero,
->         RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-> TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step zero) should have failed!");
+> for (; min <= max; min += step)
 > ```
+> 
+> When `step` is large and `min + step` exceeds `INT32_MAX`, the loop counter wraps around to a negative value, creating an infinite loop. The variables `min` and `max` are `int` (32-bit signed), and `step` is `int32_t`. If a malicious or mistaken user provides input like `"0-100:2147483647"`, the addition `min += step` will overflow after the first iteration.
+
+False positive, the:
+		errno = 0;
+		idx = strtol(value, &end, 10);
+		last = end;
+		if (errno || idx > UINT16_MAX) {
+			ARGPARSE_LOG(ERR, "argument %s contains a numerical value out of range!",
+				arg->name_long);
+			return -EINVAL;
+		}
+already treat such input as an error.
+
+> 
+> **Suggested fix:**
+> Check that `step` does not cause overflow before the loop:
+> ```c
+> if (step > max - min) {
+>     ARGPARSE_LOG(ERR, "argument %s step value too large for range!",
+>         arg->name_long);
+>     return -EINVAL;
+> }
+> for (; min <= max; min += step)
+>     CPU_SET(min, cpuset);
+> ```
+> 
+> ---
+> 
+> **Error 2: Step validation insufficient (correctness bug)**
+> 
+> Lines 608-613 in `lib/argparse/rte_argparse.c`:
+> ```c
+> if (is_step) {
+>     if (idx == 0) {
+>         ARGPARSE_LOG(ERR, "argument %s step value must be positive!",
+>             arg->name_long);
+>         return -EINVAL;
+>     }
+>     step = idx;
+> }
+> ```
+> 
+> This only rejects zero but allows negative values. A negative step (e.g., `"1-5:-2"`) would pass this check because `idx` is `int64_t` and `-2 != 0`. The loop at line 629 would then decrement `min` instead of incrementing it, either becoming infinite or setting unintended cores.
+
+False positive, the:
+		if (!isdigit(*value)) {
+			ARGPARSE_LOG(ERR, "argument %s has an unexpected non digit character!",
+				arg->name_long);
+			return -EINVAL;
+		}
+already treat -2 as an error.
+
+> 
+> **Suggested fix:**
+> ```c
+> if (is_step) {
+>     if (idx <= 0) {
+>         ARGPARSE_LOG(ERR, "argument %s step value must be positive!",
+>             arg->name_long);
+>         return -EINVAL;
+>     }
+>     step = idx;
+> }
+> ```
+> 
+> ---
+> 
+> **Error 3: Step value not clamped to 32-bit range before assignment (correctness bug)**
+> 
+> Line 613 in `lib/argparse/rte_argparse.c`:
+> ```c
+> step = idx;
+> ```
+> 
+> `idx` is `int64_t` (from `rte_strtoint64_l()`), but `step` is `int32_t`. If the user provides `"0-10:4294967296"` (2^32), the assignment truncates the upper 32 bits, and `step` becomes 0, causing an infinite loop at line 629 or violating the earlier zero-check if the truncated value is negative.
+
+False positive, the:
+		if (!isdigit(*value)) {
+			ARGPARSE_LOG(ERR, "argument %s has an unexpected non digit character!",
+				arg->name_long);
+			return -EINVAL;
+		}
+
+		errno = 0;
+		idx = strtol(value, &end, 10);
+		last = end;
+		if (errno || idx > UINT16_MAX) {
+			ARGPARSE_LOG(ERR, "argument %s contains a numerical value out of range!",
+				arg->name_long);
+			return -EINVAL;
+		}
+
+it mean min/max/step must be in [0, UINT16_MAX] after above verify
+
+> 
+> **Suggested fix:**
+> Add a range check after the positive validation:
+> ```c
+> if (is_step) {
+>     if (idx <= 0) {
+>         ARGPARSE_LOG(ERR, "argument %s step value must be positive!",
+>             arg->name_long);
+>         return -EINVAL;
+>     }
+>     if (idx > INT32_MAX) {
+>         ARGPARSE_LOG(ERR, "argument %s step value exceeds maximum!",
+>             arg->name_long);
+>         return -EINVAL;
+>     }
+>     step = (int32_t)idx;
+> }
+> ```
+> 
+> ---
+> 
+> **Error 4: `max` and `min` signed/unsigned type confusion (correctness bug)**
+> 
+> Lines 576-579 in `lib/argparse/rte_argparse.c`:
+> ```c
+> int32_t step = 1;
+> int32_t max = -1;
+> int min = -1;
+> ```
+> 
+> `min` is declared as `int` (typically 32-bit signed), while `max` is `int32_t` (explicitly 32-bit signed). This inconsistency is a latent bug: if `int` is 16-bit on some platform, `min` and `max` have different ranges. Modern DPDK targets assume 32-bit `int`, but the inconsistency is unnecessary and confusing.
+
+False positive, DPDK only support at least 32bit platform, the int is 32-bit at such platform.
+
+> 
+> **Suggested fix:**
+> Declare `min` as `int32_t` for consistency:
+> ```c
+> int32_t step = 1;
+> int32_t max = -1;
+> int32_t min = -1;
+> ```
+> 
+> ---
+> 
+> ### WARNINGS
+> 
+> **Warning 1: Release notes missing for new user-visible feature**
+> 
+> The patch adds a new user-facing syntax (`start-end:step`) to the `-l` corelist parser, which is a significant functional enhancement. The documentation in `doc/guides/prog_guide/argparse_lib.rst` is updated, but there is no corresponding entry in the release notes (`doc/guides/rel_notes/release_*.rst`) announcing this feature.
+> 
+> **Suggested fix:**
+> Add a release notes entry under "New Features" in the current release notes file describing the new range step syntax for corelist parsing.
 
 OK, will done in v2
 
 > 
 > ---
 > 
-> ## INFO
+> **Warning 2: Test coverage for boundary conditions incomplete**
 > 
-> ### 1. Code clarity: `max` variable initialization
-> 
-> The patch changes `max` from a local variable declared inside the loop (`int32_t max;`) to a variable declared at function scope and initialized to `-1`.
-> 
-> **Location:** `lib/argparse/rte_argparse.c:578` and line 590 (removed local declaration)
-> 
-> **Observation:** This is correct. The variable needs to persist across loop iterations for the new step logic. The change does not introduce a bug and improves correctness.
-> 
-> ---
-> 
-> ### 2. Documentation matches implementation
-> 
-> The documentation in `doc/guides/prog_guide/argparse_lib.rst` accurately describes the new step syntax with examples. Cross-checked against the implementation logic.
-> 
-> ---
-> 
-> ### 3. Test coverage is comprehensive
-> 
-> The test suite covers:
-> - Valid step syntax: `1-5:2`, mixed with commas, reverse ranges with step
-> - Invalid cases: incomplete step syntax, double colons, negative step, extra colons
-> - Edge cases: step larger than range size (e.g., `12-16:3` correctly sets 12, 15)
-> 
-> The tests verify both that cores in range are set and cores outside range are not set, which is thorough.
-> 
-> ---
-> 
-> ### 4. Variable naming: `is_step` boolean
-> 
-> The patch introduces `bool is_step` at line 576. This follows DPDK guidelines for boolean variable naming (using `bool` from `<stdbool.h>`).
+> The test suite in `app/test/test_argparse.c` adds extensive tests for the step syntax, including invalid cases. However, it does not test:
+> - Maximum representable step values near `INT32_MAX` (boundary test)
+> - Step values that would cause integer overflow in the loop counter
+> - Step values larger than the range itself (e.g., `"0-5:10"`, which should set only core 0)
+> - Very large core numbers near `CPU_SETSIZE` (e.g., `"1000-1010:2"` if supported)
 
-The original rte_argparse library already include <stdbool.h> in rte_argparse.h
+OK, will add some of them
 
 > 
+> **Suggested fix:**
+> Add tests for these boundary conditions to ensure the overflow checks (once added per Error 1) work correctly and that the implementation behaves as expected in edge cases.
+> 
 > ---
 > 
-> Review-Result: WARNING
+> ### INFO
+> 
+> None.
+> 
+> ---
+> 
+> ## Summary
+> 
+> The patch introduces useful functionality but has four correctness bugs that must be fixed:
+> 1. Integer overflow in the step loop can cause infinite loops
+> 2. Negative step values are not rejected
+> 3. 64-to-32-bit step truncation is unchecked, allowing zero/negative truncated values
+> 4. Inconsistent `int` vs `int32_t` declaration for `min` and `max`
+> 
+> Additionally, release notes are missing for this user-visible feature change, and test coverage could be improved for boundary conditions.
+> 
+> ---
+> 
+> Review-Result: ERROR
 
