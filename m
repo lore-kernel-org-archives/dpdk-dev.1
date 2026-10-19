@@ -1,28 +1,28 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D600260AA0D9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 15:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE49B60A6F6E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 15:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=dp141dtr
+	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=K+13J0by
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4BEFE40E31;
-	Mon, 19 Oct 2026 17:20:21 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
- by mails.dpdk.org (Postfix) with ESMTP id 057DE4066C
- for <dev@dpdk.org>; Mon, 19 Oct 2026 17:20:03 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D81C240A75;
+	Mon, 19 Oct 2026 17:20:04 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
+ by mails.dpdk.org (Postfix) with ESMTP id ADBE740647;
+ Mon, 19 Oct 2026 17:19:55 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=UWsbtu5BLBjRw/7+4il+SUVUsempXkCJ87U1q+BAAOo=;
- b=dp141dtrrCGpz4cx59+NUOWlD8EP4QpN1AJaTk3hgVMbIkVNRrxJGdtaq7EZmb
- n2+LcIhqioNPKcczwA6SNss6O0fQMi9IgzPsb9Y5BVTd1JX3xz5+NepMlnnxSPd+
- BY+Picchhp2WEJobY7xazPPEmbiAurEDWNYJltmhjqwpM=
+ MIME-Version; bh=YJJVbT3Y/dnkT6R9lbCE34qvqJf09bLFJvbLTotep5M=;
+ b=K+13J0byS7gtp+0Qe10wIqpZ6aqCCxjcHCgS+34pbkGQ80phqPQnwCd9t4GY6w
+ ooky50jiTmLk8SCqgSILMU6TE0mY0++yQwtckRhNT2y0Jf4dYzCc51B9fbdtulPP
+ A3uas0a+WCCkQOmLcT4VILd2ISOuk5HJ6wBFOKM7kxyiY=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH 26/27] net/hinic3: expose Tx queue copied-mbuf statistics
-Date: Mon, 19 Oct 2026 23:19:28 +0800
-Message-ID: <20261019151930.1572-27-yejiacheng4@h-partners.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
+Subject: [PATCH 03/27] net/hinic3: fix TCAM index leak on ethertype flow set
+Date: Mon, 19 Oct 2026 23:19:05 +0800
+Message-ID: <20261019151930.1572-4-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261019151930.1572-1-yejiacheng4@h-partners.com>
 References: <20261014150923.838-1-yejiacheng4@h-partners.com>
@@ -30,13 +30,13 @@ References: <20261014150923.838-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgCXK5cUNdZqqgUkBA--.15723S28
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZFW8ZFy5urW8Ar4fAr1xAFb_yoWDGFc_AF
- yv93ZrZw4Skr12ya1F9F4xtry0934IqFn5AF4IqrWfA347AF4avryj9rsxJryqgrW7ZFsx
- uF4fXan8W3sxGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1DDG7UUUUU==
+X-CM-TRANSID: Ac8vCgCXK5cUNdZqqgUkBA--.15723S5
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KF43KrWkGFWDZr1UAr47urg_yoW8Gr1UpF
+ ZxuayvyFyvy3yUC3WkJa10vFZ8Ca12y34DKan7u34Uurs8Xa1rA34YkFWrWr1kZrW7Aa42
+ vF4DCr9Fg3WDt37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7CztUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMgKlr2rWNSLMcAAA3t
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNRmjrWrWNRnSbAAA3M
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,29 +54,33 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The Tx path copies mbufs when the segment count exceeds the inline
-limit, tracking the number of copied packets and the number of segments
-too large to inline. Expose these two counters in the per-queue extended
-statistics so they are visible to applications.
+When adding an ethertype filter on an HTN NIC, a TCAM index is allocated
+before the firmware command is sent. If the command fails, the index is
+never freed, leaking a dynamic TCAM slot and eventually exhausting the
+dynamic TCAM pool. Free the index on the error path.
+
+Fixes: efa3b9b36fc7 ("net/hinic3: add flow control and filters")
+Cc: stable@dpdk.org
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/hinic3_ethdev.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/hinic3/hinic3_fdir.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index db41614505..310eed6a0c 100644
---- a/drivers/net/hinic3/hinic3_ethdev.c
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -287,6 +287,8 @@ static const struct hinic3_xstats_name_off hinic3_txq_stats_strings[] = {
- 	HINIC3_TXQ_STAT(burst_pkts),
- 	HINIC3_TXQ_STAT(sge_len0),
- 	HINIC3_TXQ_STAT(mbuf_null),
-+	HINIC3_TXQ_STAT(cpy_pkts),
-+	HINIC3_TXQ_STAT(sge_len_too_large),
- 
- #ifdef HINIC3_XSTAT_PROF_TX
- 	HINIC3_TXQ_STAT(app_tsc),
+diff --git a/drivers/net/hinic3/hinic3_fdir.c b/drivers/net/hinic3/hinic3_fdir.c
+index 71d50a3d22..95ce7cfe16 100644
+--- a/drivers/net/hinic3/hinic3_fdir.c
++++ b/drivers/net/hinic3/hinic3_fdir.c
+@@ -1001,6 +1001,9 @@ hinic3_set_fdir_ethertype_filter(void *hwdev, uint8_t pkt_type, void *filter, ui
+ 		PMD_DRV_LOG(ERR,
+ 			    "set fdir ethertype rule failed, err: %d, status: 0x%x, out size: 0x%x, func_id %d",
+ 			    err, ethertype_cmd.head.status, out_size, ethertype_cmd.func_id);
++		if ((hinic3_get_driver_feature(nic_dev) & NIC_F_HTN_FDIR) != 0 && en != 0)
++			hinic3_tcam_index_free(nic_dev, HINIC3_TCAM_GET_INDEX_IN_BLOCK(index),
++				HINIC3_TCAM_GET_DYNAMIC_BLOCK_INDEX(index));
+ 		return -EIO;
+ 	}
+ 	if ((hinic3_get_driver_feature(nic_dev) & NIC_F_HTN_FDIR) != 0) {
 -- 
 2.33.0
 
