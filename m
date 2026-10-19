@@ -1,54 +1,42 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA82607884B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 15:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADE560A8F40
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 15:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Ik//vAow
+	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=iytQwmJx
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B17364067A;
-	Mon, 19 Oct 2026 17:06:39 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id C5E7B4028E
- for <dev@dpdk.org>; Mon, 19 Oct 2026 17:06:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792422396; x=1823958396;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=VnPO0X9VX2dOaBEkRBw2iLWlFSsm3dZ7InOKuWEpwQo=;
- b=Ik//vAowqcxKU0a4oe4zeidzynjZ/9ReHMGRpORevuJGM4IbGE4zKcmc
- 6SnBkvfyhyZXOwGciZXRB26bMyyFrTHcWsmPAyRZ3LLiViWlREazT6U+M
- RaWdoUd0OACE/W6TmGwhcPgzRc1yhkNk1fYmti5xgZMagoCOEFkddf8N9
- a+7oXhvDVIMa+ptZu++BUDIQt3RIvmo+o18Lxln+T4ne8KSQs7YLdBRoB
- ZnHGiqDGAgBVVZ2luiXjnGlr9w9CO/0L5Y6HwF28m471aLmPc+leZlDXj
- /p/ZASVtfV3fcNbQcQBFY6Ebxr4+Ha6dgXp0zj2Q/v2OP8oeMHyR7JpFd A==;
-X-CSE-ConnectionGUID: 3hBOjkOKSbmIUFcQyXCaJw==
-X-CSE-MsgGUID: 393t4qY1RCGY9VkY6t7KTw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1132167"
-X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
-   d="scan'208";a="1132167"
-Received: from fmviesa012.fm.intel.com ([10.60.135.152])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Oct 2026 08:06:36 -0700
-X-CSE-ConnectionGUID: z5pLlJFQTKafhaX9JNybUg==
-X-CSE-MsgGUID: et5ef2yqSlG34VZoIKQoVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
-   d="scan'208";a="4319722"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa012.fm.intel.com with ESMTP; 19 Oct 2026 08:06:34 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v2 2/9] net/iavf: do not store ethdev pointer
-Date: Mon, 19 Oct 2026 16:06:21 +0100
-Message-ID: <d95d63fb595a5f69103627b2737bf551c576b3d7.1792422213.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1792422213.git.anatoly.burakov@intel.com>
- <cover.1792422213.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id 05DF640DDD;
+	Mon, 19 Oct 2026 17:20:13 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
+ by mails.dpdk.org (Postfix) with ESMTP id 11B1840693
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 17:19:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
+ MIME-Version; bh=MoexJm5LCQjlaBID3CxVMYyMTpToJGhbqvREwVJUHvo=;
+ b=iytQwmJxzKAjrsbPOkiuztMPe9z2TP6Zo1CNJSCc1WX9CNkF+6sk4WgnkpIFQe
+ N/YQCQTYMuCiC/wtqHxWkV329DkqHws7U948PpVXMC8SBMC5MpSUJlMn3KLbZYOy
+ kaEOcWRgTGYjbDil4RScSj5wvB7QDfpN+TZ6hWuTOz/UU=
+From: Jiacheng Ye <yejiacheng4@h-partners.com>
+To: dev@dpdk.org
+Cc: Feifei Wang <wangfeifei40@huawei.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH 15/27] net/hinic3: convert cmdq ops to static global variables
+Date: Mon, 19 Oct 2026 23:19:17 +0800
+Message-ID: <20261019151930.1572-16-yejiacheng4@h-partners.com>
+X-Mailer: git-send-email 2.53.0.windows.2
+In-Reply-To: <20261019151930.1572-1-yejiacheng4@h-partners.com>
+References: <20261014150923.838-1-yejiacheng4@h-partners.com>
+ <20261019151930.1572-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: Ac8vCgCXK5cUNdZqqgUkBA--.15723S17
+X-Coremail-Antispam: 1Uf129KBjvAXoW3Cry7Zr45JF45JFW5Xry5urg_yoW8Gry7Co
+ WfJr9YyF1ftry8GF9xKFnYkay7X3srJFZ8Jan5Gr9rXasrJFy7WF9xXw4F9a4YvayrAanr
+ Aay7J3Wqga4xXw18n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUzgAwUUUUU
+Sender: wff_light@vip.163.com
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMh6krmrWNR7MawAA3W
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,268 +46,318 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_ZEN_BLOCKED_OPENDNS,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,RCVD_IN_DNSWL_BLOCKED,
+	RCVD_IN_ZEN_BLOCKED_OPENDNS,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-We should not be storing rte_eth_dev pointers in shared memory, because
-rte_eth_dev pointers are process local. To address that, remove the pointer
-from iavf_info, replace it with `rte_eth_devices`-based lookup, and rework
-the call paths to either use that lookup, or not require ethdev pointer
-in the first place.
+Replace the per-device dynamically allocated cmdq_ops with static global
+instances (hinic3_htn_cmdq_ops and hinic3_stn_cmdq_ops) selected by NIC
+type, avoiding per-device allocation and freeing.
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Select the ops by NIC type via hinic3_cmdq_get_ops(), falling back to the
+STN ops for unknown IDs, instead of the NIC_F_HTN_CMDQ capability bit used
+previously.
+
+Dropping the dynamic allocation also removes an init-path leak: the old
+code allocated a cmdq_ops block with rte_zmalloc(), then overwrote the
+pointer with the static ops instance, leaking the allocation and
+rte_free()'ing the static pointer on the error path.
+
+Fixes: 9204b6b7bb1a ("net/hinic3: split new/old command queue operations")
+
+Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/intel/iavf/iavf.h              |  9 ++++++--
- drivers/net/intel/iavf/iavf_ethdev.c       | 13 ++++++------
- drivers/net/intel/iavf/iavf_ipsec_crypto.c | 24 +++++++++++-----------
- drivers/net/intel/iavf/iavf_ipsec_crypto.h |  4 ++--
- drivers/net/intel/iavf/iavf_vchnl.c        |  7 ++++---
- 5 files changed, 31 insertions(+), 26 deletions(-)
+ drivers/net/hinic3/base/hinic3_nic_cfg.c      |  7 ++--
+ drivers/net/hinic3/hinic3_ethdev.c            | 37 +++++++++++--------
+ drivers/net/hinic3/hinic3_ethdev.h            |  1 -
+ drivers/net/hinic3/hinic3_nic_io.c            | 11 +++---
+ drivers/net/hinic3/hinic3_nic_io.h            | 11 ++++++
+ .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    | 21 ++++-------
+ .../net/hinic3/htn_adapt/hinic3_htn_cmdq.h    |  6 +--
+ .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    | 23 +++++-------
+ .../net/hinic3/stn_adapt/hinic3_stn_cmdq.h    |  6 +--
+ 9 files changed, 65 insertions(+), 58 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index c40b97444b..1f277eeee2 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -7,6 +7,7 @@
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+index 6dc6a564d6..25fee0801c 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+@@ -1214,7 +1214,7 @@ hinic3_rss_get_indir_tbl(struct hinic3_hwdev *hwdev, uint32_t *indir_table)
+ 	cmd_buf->size = sizeof(struct nic_rss_indirect_tbl);
+ 	nic_dev = (struct hinic3_nic_dev *)hwdev->dev_handle;
  
- #include <sys/queue.h>
+-	cmd = nic_dev->cmdq_ops->prepare_cmd_buf_get_rss_indir_table(nic_dev, cmd_buf);
++	cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_get_rss_indir_table(nic_dev, cmd_buf);
+ 	err = hinic3_cmdq_detail_resp(hwdev, HINIC3_MOD_L2NIC, cmd, cmd_buf, cmd_buf, 0);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR, "Get rss indir table failed");
+@@ -1222,7 +1222,7 @@ hinic3_rss_get_indir_tbl(struct hinic3_hwdev *hwdev, uint32_t *indir_table)
+ 		return err;
+ 	}
  
-+#include <ethdev_driver.h>
- #include <rte_kvargs.h>
- #include <rte_tm_driver.h>
+-	nic_dev->cmdq_ops->cmd_buf_to_rss_indir_table(cmd_buf, indir_table);
++	hinic3_cmdq_get_ops(nic_dev)->cmd_buf_to_rss_indir_table(cmd_buf, indir_table);
  
-@@ -293,8 +294,6 @@ struct iavf_info {
- 	struct iavf_qtc_map *qtc_map;
- 	struct iavf_tm_conf tm_conf;
+ 	hinic3_free_cmd_buf(cmd_buf);
+ 	return 0;
+@@ -1247,7 +1247,8 @@ hinic3_rss_set_indir_tbl(struct hinic3_hwdev *hwdev, const uint32_t *indir_table
+ 	}
  
--	struct rte_eth_dev *eth_dev;
--
- 	RTE_ATOMIC(bool)in_reset_recovery;
- 	bool reset_pending;
- 	bool pf_reset_in_progress;
-@@ -408,6 +407,12 @@ struct iavf_adapter {
- 	uint16_t tpid;  /* VLAN tag identifier */
- };
+ 	nic_dev = (struct hinic3_nic_dev *)hwdev->dev_handle;
+-	cmd = nic_dev->cmdq_ops->prepare_cmd_buf_set_rss_indir_table(nic_dev, indir_table, cmd_buf);
++	cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_set_rss_indir_table(nic_dev,
++		indir_table, cmd_buf);
+ 	err = hinic3_cmdq_direct_resp(hwdev, HINIC3_MOD_L2NIC, cmd, cmd_buf, &out_param, 0);
+ 	if (err || out_param != 0) {
+ 		PMD_DRV_LOG(ERR, "Set rss indir table failed");
+diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
+index 9903bbaf5f..f4495d40b1 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.c
++++ b/drivers/net/hinic3/hinic3_ethdev.c
+@@ -556,6 +556,27 @@ hinic3_get_nic_type(struct rte_pci_device *pci_dev)
+ 	}
+ }
  
-+static inline struct rte_eth_dev *
-+iavf_get_eth_dev(struct iavf_adapter *adapter)
++/**
++ * Get cmdq ops for the given NIC device.
++ *
++ * @param[in] nic_dev
++ * Pointer to NIC device structure.
++ *
++ * @return
++ * Pointer to cmdq ops structure.
++ */
++const struct hinic3_nic_cmdq_ops *
++hinic3_cmdq_get_ops(struct hinic3_nic_dev *nic_dev)
 +{
-+	return &rte_eth_devices[adapter->dev_data->port_id];
++	static const struct hinic3_nic_cmdq_ops *cmdq_ops[] = {
++		[NIC_SP620]   = &hinic3_stn_cmdq_ops,
++		[NIC_SP230]   = &hinic3_htn_cmdq_ops,
++		[NIC_UNKNOWN] = &hinic3_stn_cmdq_ops,
++	};
++
++	return cmdq_ops[nic_dev->nic_type];
 +}
 +
- /* IAVF_DEV_PRIVATE_TO */
- #define IAVF_DEV_PRIVATE_TO_ADAPTER(adapter) \
- 	((struct iavf_adapter *)adapter)
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 68aced0e31..befee1d3eb 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -326,6 +326,7 @@ static void
- iavf_dev_watchdog(void *cb_arg)
- {
- 	struct iavf_adapter *adapter = cb_arg;
-+	struct rte_eth_dev *dev = iavf_get_eth_dev(adapter);
- 	struct iavf_hw *hw = IAVF_DEV_PRIVATE_TO_HW(adapter);
- 	int vfr_inprogress = 0, rc = 0;
- 
-@@ -339,7 +340,7 @@ iavf_dev_watchdog(void *cb_arg)
- 
- 		if (!vfr_inprogress) {
- 			PMD_DRV_LOG(INFO, "VF \"%s\" reset has completed",
--				adapter->vf.eth_dev->data->name);
-+				dev->data->name);
- 			adapter->vf.vf_reset = false;
- 			iavf_set_no_poll(adapter, false);
- 		}
-@@ -350,14 +351,14 @@ iavf_dev_watchdog(void *cb_arg)
- 		if (vfr_inprogress) {
- 			PMD_DRV_LOG(INFO,
- 				"VF \"%s\" reset event detected by watchdog",
--				adapter->vf.eth_dev->data->name);
-+				dev->data->name);
- 
- 			/* enter reset state with VFLR event */
- 			adapter->vf.vf_reset = true;
- 			iavf_set_no_poll(adapter, false);
- 			adapter->vf.link_up = false;
- 
--			iavf_dev_event_post(adapter->vf.eth_dev, RTE_ETH_EVENT_INTR_RESET,
-+			iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_RESET,
- 				NULL, 0);
- 		}
+ /**
+  * Initialize Class of Service (CoS). For PF devices, it also sync the link
+  * status with the physical port.
+@@ -3741,13 +3762,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
+ 		goto alloc_eth_addr_fail;
  	}
-@@ -365,11 +366,11 @@ iavf_dev_watchdog(void *cb_arg)
- 	if (adapter->devargs.watchdog_period) {
- 		/* re-alarm watchdog */
- 		rc = rte_eal_alarm_set(adapter->devargs.watchdog_period,
--					&iavf_dev_watchdog, cb_arg);
-+					&iavf_dev_watchdog, dev);
  
- 		if (rc)
- 			PMD_DRV_LOG(ERR, "Failed \"%s\" to reset device watchdog alarm",
--				adapter->vf.eth_dev->data->name);
-+				dev->data->name);
- 	}
- }
- 
-@@ -2669,8 +2670,6 @@ iavf_init_vf(struct rte_eth_dev *dev)
- 	struct iavf_hw *hw = IAVF_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
- 
--	vf->eth_dev = dev;
+-	nic_dev->cmdq_ops = rte_zmalloc("cmdq_ops", sizeof(struct hinic3_nic_cmdq_ops), 0);
+-	if (!nic_dev->cmdq_ops) {
+-		PMD_DRV_LOG(ERR, "Allocate cmdq_ops memory failed");
+-		err = -ENOMEM;
+-		goto alloc_cmdq_ops_fail;
+-	}
 -
- 	err = iavf_parse_devargs(dev);
- 	if (err) {
- 		PMD_INIT_LOG(ERR, "Failed to parse devargs");
-diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-index 06b51b5e62..b481330346 100644
---- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-+++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-@@ -689,11 +689,9 @@ iavf_ipsec_crypto_session_create(void *device,
-  * returns: 1 if valid
-  */
- uint32_t
--iavf_ipsec_crypto_action_valid(struct rte_eth_dev *ethdev,
-+iavf_ipsec_crypto_action_valid(struct iavf_adapter *adapter,
- 	const struct rte_security_session *session, uint32_t spi)
- {
--	struct iavf_adapter *adapter =
--		IAVF_DEV_PRIVATE_TO_ADAPTER(ethdev->data->dev_private);
- 	const struct iavf_security_session *sess = (const void *)session->driver_priv_data;
+ 	nic_dev->rx_ops = rte_zmalloc("rx_ops", sizeof(struct hinic3_nic_rx_ops), 0);
+ 	if (!nic_dev->rx_ops) {
+ 		PMD_DRV_LOG(ERR, "Allocate rx_ops memory failed");
+@@ -3815,11 +3829,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
+ 		goto get_cap_fail;
+ 	}
  
- 	/* verify we have a valid session and that it belong to this adapter */
-@@ -1502,24 +1500,25 @@ static struct rte_security_ops iavf_ipsec_crypto_ops = {
- int
- iavf_security_ctx_create(struct iavf_adapter *adapter)
- {
-+	struct rte_eth_dev *dev = iavf_get_eth_dev(adapter);
- 	struct rte_security_ctx *sctx;
+-	if (!(nic_dev->feature_cap & NIC_F_HTN_CMDQ))
+-		nic_dev->cmdq_ops = hinic3_nic_cmdq_get_stn_ops();
+-	else
+-		nic_dev->cmdq_ops = hinic3_nic_cmdq_get_htn_ops();
+-
+ 	hinic3_nic_tx_rx_ops_init(nic_dev);
  
- 	sctx = rte_malloc("security_ctx", sizeof(struct rte_security_ctx), 0);
- 	if (sctx == NULL)
+ 	err = hinic3_init_sw_rxtxqs(nic_dev);
+@@ -3918,10 +3927,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
+ 	nic_dev->rx_ops = NULL;
+ 
+ alloc_rx_ops_fail:
+-	rte_free(nic_dev->cmdq_ops);
+-	nic_dev->cmdq_ops = NULL;
+-
+-alloc_cmdq_ops_fail:
+ 	rte_free(eth_dev->data->mac_addrs);
+ 	eth_dev->data->mac_addrs = NULL;
+ 
+diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
+index ea1da11295..ec5daf523b 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.h
++++ b/drivers/net/hinic3/hinic3_ethdev.h
+@@ -157,7 +157,6 @@ struct hinic3_nic_dev {
+ 	struct hinic3_ethertype_filter_list filter_ethertype_list;
+ 	struct hinic3_fdir_rule_filter_list filter_fdir_rule_list;
+ 	uint8_t cos_map[HINIC3_COS_NUM_MAX];
+-	struct hinic3_nic_cmdq_ops *cmdq_ops;
+ 	struct hinic3_nic_rx_ops *rx_ops;
+ 	struct hinic3_nic_tx_ops *tx_ops;
+ 	enum nic_type nic_type; /**< NIC type. */
+diff --git a/drivers/net/hinic3/hinic3_nic_io.c b/drivers/net/hinic3/hinic3_nic_io.c
+index 9203dcce40..361586868e 100644
+--- a/drivers/net/hinic3/hinic3_nic_io.c
++++ b/drivers/net/hinic3/hinic3_nic_io.c
+@@ -391,8 +391,8 @@ init_sq_ctxts(struct hinic3_nic_dev *nic_dev)
+ 		max_ctxts = (nic_dev->num_sqs - q_id) > HINIC3_Q_CTXT_MAX
+ 				    ? HINIC3_Q_CTXT_MAX
+ 				    : (nic_dev->num_sqs - q_id);
+-		cmd = nic_dev->cmdq_ops->prepare_cmd_buf_qp_context_multi_store(nic_dev, cmd_buf,
+-			HINIC3_QP_CTXT_TYPE_SQ, q_id, max_ctxts);
++		cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_qp_context_multi_store(nic_dev,
++			cmd_buf, HINIC3_QP_CTXT_TYPE_SQ, q_id, max_ctxts);
+ 		rte_atomic_thread_fence(rte_memory_order_seq_cst);
+ 		err = hinic3_cmdq_direct_resp(nic_dev->hwdev, HINIC3_MOD_L2NIC,
+ 					      cmd, cmd_buf, &out_param, 0);
+@@ -443,8 +443,8 @@ init_rq_ctxts(struct hinic3_nic_dev *nic_dev)
+ 		max_ctxts = (nic_dev->num_rqs - q_id) > HINIC3_Q_CTXT_MAX
+ 				    ? HINIC3_Q_CTXT_MAX
+ 				    : (nic_dev->num_rqs - q_id);
+-		cmd = nic_dev->cmdq_ops->prepare_cmd_buf_qp_context_multi_store(nic_dev, cmd_buf,
+-			HINIC3_QP_CTXT_TYPE_RQ, q_id, max_ctxts);
++		cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_qp_context_multi_store(nic_dev,
++			cmd_buf, HINIC3_QP_CTXT_TYPE_RQ, q_id, max_ctxts);
+ 		rte_atomic_thread_fence(rte_memory_order_seq_cst);
+ 		err = hinic3_cmdq_direct_resp(nic_dev->hwdev, HINIC3_MOD_L2NIC,
+ 					      cmd, cmd_buf, &out_param, 0);
+@@ -491,7 +491,8 @@ clean_queue_offload_ctxt(struct hinic3_nic_dev *nic_dev,
  		return -ENOMEM;
- 
--	sctx->device = adapter->vf.eth_dev;
-+	sctx->device = dev;
- 	sctx->ops = &iavf_ipsec_crypto_ops;
- 	sctx->sess_cnt = 0;
- 
--	adapter->vf.eth_dev->security_ctx = sctx;
-+	dev->security_ctx = sctx;
- 
- 	if (adapter->security_ctx == NULL) {
- 		adapter->security_ctx = rte_malloc("iavf_security_ctx",
- 				sizeof(struct iavf_security_ctx), 0);
- 		if (adapter->security_ctx == NULL) {
--			rte_free(adapter->vf.eth_dev->security_ctx);
--			adapter->vf.eth_dev->security_ctx = NULL;
-+			rte_free(dev->security_ctx);
-+			dev->security_ctx = NULL;
- 			return -ENOMEM;
- 		}
- 	}
-@@ -1565,7 +1564,8 @@ iavf_security_get_pkt_md_offset(struct iavf_adapter *adapter)
- int
- iavf_security_ctx_destroy(struct iavf_adapter *adapter)
- {
--	struct rte_security_ctx *sctx  = adapter->vf.eth_dev->security_ctx;
-+	struct rte_eth_dev *dev = iavf_get_eth_dev(adapter);
-+	struct rte_security_ctx *sctx  = dev->security_ctx;
- 	struct iavf_security_ctx *iavf_sctx = adapter->security_ctx;
- 
- 	if (iavf_sctx == NULL)
-@@ -1578,7 +1578,7 @@ iavf_security_ctx_destroy(struct iavf_adapter *adapter)
- 	rte_free(sctx);
- 
- 	adapter->security_ctx = NULL;
--	adapter->vf.eth_dev->security_ctx = NULL;
-+	dev->security_ctx = NULL;
- 
- 	return 0;
- }
-@@ -1748,7 +1748,7 @@ parse_udp_item(const struct rte_flow_item_udp *item, struct rte_udp_hdr *udp)
- }
- 
- static struct iavf_ipsec_flow_item *
--iavf_ipsec_flow_item_parse(struct rte_eth_dev *ethdev,
-+iavf_ipsec_flow_item_parse(struct iavf_adapter *adapter,
- 		const struct rte_flow_item pattern[],
- 		const struct rte_security_session *session,
- 		uint32_t type)
-@@ -1819,7 +1819,7 @@ iavf_ipsec_flow_item_parse(struct rte_eth_dev *ethdev,
- 		goto flow_cleanup;
  	}
  
--	if (!iavf_ipsec_crypto_action_valid(ethdev, session,
-+	if (!iavf_ipsec_crypto_action_valid(adapter, session,
- 			ipsec_flow->spi))
- 		goto flow_cleanup;
+-	cmd = nic_dev->cmdq_ops->prepare_cmd_buf_clean_tso_lro_space(nic_dev, cmd_buf, ctxt_type);
++	cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_clean_tso_lro_space(nic_dev,
++		cmd_buf, ctxt_type);
  
-@@ -1967,7 +1967,7 @@ iavf_ipsec_flow_parse(struct iavf_adapter *ad,
- 		const struct rte_security_session *session = parsed_actions.actions[0]->conf;
- 		uint32_t type = (uint64_t)(item->meta);
- 		struct iavf_ipsec_flow_item *fi =
--				iavf_ipsec_flow_item_parse(ad->vf.eth_dev, pattern, session, type);
-+				iavf_ipsec_flow_item_parse(ad, pattern, session, type);
- 		if (fi && meta) {
- 			*meta = fi;
- 			ret = 0;
-diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.h b/drivers/net/intel/iavf/iavf_ipsec_crypto.h
-index 795b75a624..3d4b1da127 100644
---- a/drivers/net/intel/iavf/iavf_ipsec_crypto.h
-+++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.h
-@@ -127,13 +127,13 @@ int iavf_security_get_pkt_md_offset(struct iavf_adapter *adapter);
+ 	/* Send a command to hardware to clean up queue offload context. */
+ 	err = hinic3_cmdq_direct_resp(nic_dev->hwdev, HINIC3_MOD_L2NIC,
+diff --git a/drivers/net/hinic3/hinic3_nic_io.h b/drivers/net/hinic3/hinic3_nic_io.h
+index e1741d1156..d7ec81f2e6 100644
+--- a/drivers/net/hinic3/hinic3_nic_io.h
++++ b/drivers/net/hinic3/hinic3_nic_io.h
+@@ -79,6 +79,17 @@ struct hinic3_nic_cmdq_ops {
+ 	cmd_buf_to_rss_indir_table_t			cmd_buf_to_rss_indir_table;
+ };
+ 
++/**
++ * Get cmdq ops for the given NIC device.
++ *
++ * @param[in] nic_dev
++ * Pointer to NIC device structure.
++ *
++ * @return
++ * Pointer to cmdq ops structure.
++ */
++const struct hinic3_nic_cmdq_ops *hinic3_cmdq_get_ops(struct hinic3_nic_dev *nic_dev);
++
+ /* Doorbell info. */
+ struct hinic3_db {
+ 	uint32_t db_info;
+diff --git a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
+index 634dfe7239..607fe2d0fe 100644
+--- a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
++++ b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
+@@ -152,16 +152,11 @@ static void cmd_buf_to_rss_indir_table(const struct hinic3_cmd_buf *cmd_buf, uin
+ 		indir_table[i] = *(indir_tbl + i);
+ }
+ 
+-struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_htn_ops(void)
+-{
+-	static struct hinic3_nic_cmdq_ops cmdq_ops = {
+-		.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
+-		.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
+-		.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
+-		.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
+-		.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
+-		.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
+-	};
+-
+-	return &cmdq_ops;
+-}
++const struct hinic3_nic_cmdq_ops hinic3_htn_cmdq_ops = {
++	.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
++	.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
++	.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
++	.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
++	.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
++	.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
++};
+diff --git a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h
+index 73f4922734..158cbc5f8e 100644
+--- a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h
++++ b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h
+@@ -53,11 +53,11 @@ struct hinic3_htn_vlan_ctx {
+ };
+ 
  /**
-  * Destroy security context
+- * Get cmdq ops hardware tile NIC(htn) supported.
++ * Cmdq ops hardware tile NIC(htn) supported.
+  *
+  * @return
+- * Pointer to ops.
++ * Ops.
   */
--int iavf_security_ctx_destroy(struct iavf_adapter *adapterv);
-+int iavf_security_ctx_destroy(struct iavf_adapter *adapter);
+-struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_htn_ops(void);
++extern const struct hinic3_nic_cmdq_ops hinic3_htn_cmdq_ops;
+ 
+ #endif /* _HINIC3_HTN_CMDQ_H_ */
+diff --git a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
+index f41f060d17..23adbc79f4 100644
+--- a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
++++ b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
+@@ -108,7 +108,7 @@ static uint8_t prepare_cmd_buf_set_rss_indir_table(struct hinic3_nic_dev *nic_de
+ 
+ 	for (i = 0; i < HINIC3_RSS_INDIR_SIZE; i++)
+ 		indir_tbl->entry[i] = (uint16_t)(*(indir_table + i));
+-	size = sizeof(indir_tbl->entry) / 4;
++	size = (size_t)sizeof(indir_tbl->entry) / sizeof(uint32_t);
+ 	temp = (uint32_t *)indir_tbl->entry;
+ 	for (i = 0; i < size; i++) {
+ 		rte_atomic_thread_fence(rte_memory_order_seq_cst);
+@@ -136,16 +136,11 @@ static void cmd_buf_to_rss_indir_table(const struct hinic3_cmd_buf *cmd_buf, uin
+ 		indir_table[i] = *(indir_tbl + i);
+ }
+ 
+-struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_stn_ops(void)
+-{
+-	static struct hinic3_nic_cmdq_ops cmdq_ops = {
+-		.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
+-		.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
+-		.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
+-		.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
+-		.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
+-		.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
+-	};
+-
+-	return &cmdq_ops;
+-}
++const struct hinic3_nic_cmdq_ops hinic3_stn_cmdq_ops = {
++	.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
++	.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
++	.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
++	.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
++	.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
++	.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
++};
+diff --git a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h
+index f1720c29c7..ab1c73a977 100644
+--- a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h
++++ b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h
+@@ -36,11 +36,11 @@ struct hinic3_stn_vlan_ctx {
+ };
  
  /**
-  * Verify that the inline IPsec Crypto action is valid for this device
+- * Get cmdq ops software tile NIC(stn) supported.
++ * Cmdq ops software tile NIC(stn) supported.
+  *
+  * @return
+- * Pointer to ops.
++ * Ops.
   */
- uint32_t
--iavf_ipsec_crypto_action_valid(struct rte_eth_dev *ethdev,
-+iavf_ipsec_crypto_action_valid(struct iavf_adapter *adapter,
- 	const struct rte_security_session *session, uint32_t spi);
+-struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_stn_ops(void);
++extern const struct hinic3_nic_cmdq_ops hinic3_stn_cmdq_ops;
  
- /**
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 57488512f4..26dae423a4 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -314,13 +314,14 @@ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
- 		    opcode, vf->cmd_retval);
- 
- 	if (opcode == VIRTCHNL_OP_EVENT) {
-+		struct rte_eth_dev *dev = iavf_get_eth_dev(adapter);
- 		struct virtchnl_pf_event *vpe =
- 			(struct virtchnl_pf_event *)event.msg_buf;
- 
- 		result = IAVF_MSG_SYS;
- 		switch (vpe->event) {
- 		case VIRTCHNL_EVENT_LINK_CHANGE:
--			iavf_handle_link_change_event(vf->eth_dev, vpe);
-+			iavf_handle_link_change_event(dev, vpe);
- 			break;
- 		case VIRTCHNL_EVENT_RESET_IMPENDING:
- 			/*
-@@ -335,8 +336,8 @@ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
- 				iavf_set_no_poll(adapter, false);
- 				iavf_dev_watchdog_enable(adapter);
- 				if (adapter->devargs.no_poll_on_link_down)
--					iavf_dev_tx_drain(vf->eth_dev);
--				iavf_dev_event_post(vf->eth_dev,
-+					iavf_dev_tx_drain(dev);
-+				iavf_dev_event_post(dev,
- 					RTE_ETH_EVENT_INTR_RESET,
- 					NULL, 0);
- 			}
+ #endif /* _HINIC3_STN_CMDQ_H_ */
 -- 
-2.52.0
+2.33.0
 
