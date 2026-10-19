@@ -1,30 +1,31 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB9E606A31B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 18:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A3B606A31A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 18:35:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7D35440698;
-	Mon, 19 Oct 2026 20:34:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5B98B40430;
+	Mon, 19 Oct 2026 20:35:12 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 68B3A40297
- for <dev@dpdk.org>; Mon, 19 Oct 2026 20:34:54 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8CE6B4065A
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 20:34:55 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4E0EB1A0019;
- Mon, 19 Oct 2026 20:34:54 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 65C511A0019;
+ Mon, 19 Oct 2026 20:34:55 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 10BB71A000C;
- Mon, 19 Oct 2026 20:34:54 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 258AF1A000C;
+ Mon, 19 Oct 2026 20:34:55 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id AD55E18000B1;
- Tue, 20 Oct 2026 02:34:52 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id BBEBF180006C;
+ Tue, 20 Oct 2026 02:34:53 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v13-S2 05/10] net/dpaa2: support flow drop action
-Date: Tue, 20 Oct 2026 00:04:38 +0530
-Message-ID: <20261019183443.176790-6-prashant.gupta_3@nxp.com>
+Subject: [PATCH v13-S2 06/10] net/dpaa2: set default flow miss action per
+ device
+Date: Tue, 20 Oct 2026 00:04:39 +0530
+Message-ID: <20261019183443.176790-7-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261019183443.176790-1-prashant.gupta_3@nxp.com>
 References: <20261016070339.3011744-1-prashant.gupta_3@nxp.com>
@@ -51,67 +52,73 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Gagandeep Singh <g.singh@nxp.com>
 
-Add support for the RTE_FLOW_ACTION_TYPE_DROP action in the dpaa2 flow
-engine. A flow rule with a drop action is programmed into the flow
-steering (FS) table with the DPNI_FS_OPT_DISCARD option so that matching
-frames are discarded by hardware.
+Remove the DPAA2_FLOW_CONTROL_MISS_FLOW environment variable and use
+the last entry in the configured Rx distribution table as the default
+flow steering miss action.
 
-The drop action is added to the supported action list, accepted during
-action verification, configured in the FS action path, handled in the
-generic flow-set action loop, and cleaned up in the flow destroy path.
+Users who relied on the environment variable must use the rte_flow API
+instead.
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_flow.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ doc/guides/rel_notes/release_26_11.rst |  4 ++++
+ drivers/net/dpaa2/dpaa2_flow.c         | 14 +-------------
+ 2 files changed, 5 insertions(+), 13 deletions(-)
 
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 934efaaf93..1b22d134ae 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -105,6 +105,10 @@ New Features
+ 
+   * Added the inner IP header to the RSS hash so tunneled traffic is
+     distributed across the Rx queues.
++  * Removed ``DPAA2_FLOW_CONTROL_MISS_FLOW`` environment variable. The
++    per-device FS table miss flow id now defaults to the lowest-priority
++    flow of the device. Users who previously redirected unmatched frames
++    to a specific queue via this variable must use the rte_flow API instead.
+ 
+ * **Updated NXP ENETC4 PMD.**
+ 
 diff --git a/drivers/net/dpaa2/dpaa2_flow.c b/drivers/net/dpaa2/dpaa2_flow.c
-index 1446b14bf2..f0748081b3 100644
+index f0748081b3..48f2861f83 100644
 --- a/drivers/net/dpaa2/dpaa2_flow.c
 +++ b/drivers/net/dpaa2/dpaa2_flow.c
-@@ -97,7 +97,8 @@ enum rte_flow_action_type dpaa2_supported_action_type[] = {
- 	RTE_FLOW_ACTION_TYPE_QUEUE,
- 	RTE_FLOW_ACTION_TYPE_PORT_ID,
- 	RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT,
--	RTE_FLOW_ACTION_TYPE_RSS
-+	RTE_FLOW_ACTION_TYPE_RSS,
-+	RTE_FLOW_ACTION_TYPE_DROP
- };
+@@ -24,7 +24,6 @@
+ #include <dpaa2_pmd_logs.h>
  
- #ifndef __cplusplus
-@@ -4421,6 +4422,7 @@ dpaa2_flow_verify_action(struct dpaa2_dev_priv *priv,
- 			break;
- 		case RTE_FLOW_ACTION_TYPE_PF:
- 			/* Skip this action, have to add for vxlan */
-+		case RTE_FLOW_ACTION_TYPE_DROP:
- 			break;
- 		case RTE_FLOW_ACTION_TYPE_END:
- 			end_of_list = 1;
-@@ -4468,6 +4470,8 @@ dpaa2_configure_flow_fs_action(struct dpaa2_dev_priv *priv,
- 		flow->fs_action_cfg.redirect_obj_token =
- 			dest_priv->token;
- 		flow->fs_action_cfg.flow_id = dest_q->flow_id;
-+	} else if (flow->action_type == RTE_FLOW_ACTION_TYPE_DROP) {
-+		flow->fs_action_cfg.options = DPNI_FS_OPT_DISCARD;
- 	}
+ static char *dpaa2_flow_control_log;
+-static uint16_t dpaa2_flow_miss_flow_id; /* Default miss flow id is 0. */
+ static int dpaa2_sp_loaded = -1;
  
- 	return 0;
-@@ -4945,6 +4949,7 @@ dpaa2_generic_flow_set(struct dpaa2_dev_flow *flow,
- 		case RTE_FLOW_ACTION_TYPE_QUEUE:
- 		case RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT:
- 		case RTE_FLOW_ACTION_TYPE_PORT_ID:
-+		case RTE_FLOW_ACTION_TYPE_DROP:
- 			ret = dpaa2_configure_flow_fs_action(priv, flow,
- 							     &actions[j]);
- 			if (ret)
-@@ -5346,6 +5351,7 @@ dpaa2_flow_destroy(struct rte_eth_dev *dev, struct rte_flow *_flow,
- 	case RTE_FLOW_ACTION_TYPE_QUEUE:
- 	case RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT:
- 	case RTE_FLOW_ACTION_TYPE_PORT_ID:
-+	case RTE_FLOW_ACTION_TYPE_DROP:
- 		if (priv->num_rx_tc > 1) {
- 			/* Remove entry from QoS table first */
- 			ret = dpni_remove_qos_entry(dpni, CMD_PRI_LOW,
+ enum dpaa2_flow_entry_size {
+@@ -4590,7 +4589,7 @@ dpaa2_configure_fs_rss_table(struct dpaa2_dev_priv *priv,
+ 		return 0;
+ 
+ 	tc_cfg.enable = true;
+-	tc_cfg.fs_miss_flow_id = dpaa2_flow_miss_flow_id;
++	tc_cfg.fs_miss_flow_id = dist_size - 1;
+ 	ret = dpni_set_rx_fs_dist(dpni, CMD_PRI_LOW,
+ 			priv->token, &tc_cfg);
+ 	if (ret < 0) {
+@@ -5224,17 +5223,6 @@ dpaa2_flow_create(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
+ 	dpaa2_flow_control_log =
+ 		getenv("DPAA2_FLOW_CONTROL_LOG");
+ 
+-	if (getenv("DPAA2_FLOW_CONTROL_MISS_FLOW")) {
+-		dpaa2_flow_miss_flow_id =
+-			(uint16_t)atoi(getenv("DPAA2_FLOW_CONTROL_MISS_FLOW"));
+-		if (dpaa2_flow_miss_flow_id >= priv->dist_queues) {
+-			DPAA2_PMD_ERR("Missed flow ID %d >= dist size(%d)",
+-				      dpaa2_flow_miss_flow_id,
+-				      priv->dist_queues);
+-			return NULL;
+-		}
+-	}
+-
+ 	flow = rte_zmalloc(NULL, sizeof(struct dpaa2_dev_flow),
+ 			   RTE_CACHE_LINE_SIZE);
+ 	if (!flow) {
 -- 
 2.43.0
 
