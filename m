@@ -1,42 +1,54 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A190460A7E6E
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 15:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6838060820F4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 15:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=QgkAQ5tM
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=O0EynMVa
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ADB0D40B92;
-	Mon, 19 Oct 2026 17:20:10 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.5])
- by mails.dpdk.org (Postfix) with ESMTP id CF9F84028E
- for <dev@dpdk.org>; Mon, 19 Oct 2026 17:19:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=QDEO5JYUNRp8OUfc5Rd5i9OZsdO9gCOTBHY4mN2DQCs=;
- b=QgkAQ5tMuPrMfm4L3gNVcj/RBsubPg9q9ghnQDk5Xq7X1Tl27vK03KdALipGct
- f1RxQlNFAa7bJ3WTMhM6NH8NavjY5UouBwqz3vrzvvswdcM+JdEiAsSEWcgmkwke
- /9khobhfkWmiSBqUw8y67ZHn5SHbOpDMfFfU6cLDRrHbI=
-From: Jiacheng Ye <yejiacheng4@h-partners.com>
-To: dev@dpdk.org
-Cc: Feifei Wang <wangfeifei40@huawei.com>,
- Thomas Monjalon <thomas@monjalon.net>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH 12/27] net/hinic3: add mbox message recording and debug dump
-Date: Mon, 19 Oct 2026 23:19:14 +0800
-Message-ID: <20261019151930.1572-13-yejiacheng4@h-partners.com>
-X-Mailer: git-send-email 2.53.0.windows.2
-In-Reply-To: <20261019151930.1572-1-yejiacheng4@h-partners.com>
-References: <20261014150923.838-1-yejiacheng4@h-partners.com>
- <20261019151930.1572-1-yejiacheng4@h-partners.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D34E84064F;
+	Mon, 19 Oct 2026 17:06:36 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 918384028E
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 17:06:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792422395; x=1823958395;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=NkIhjWtPN8x9I0qo0a4m7IYjSCPqqQluVWir4jHFSQg=;
+ b=O0EynMVaiCBXfkFRDId2joDde6InF/w9ipyZB/ARMKtdQlfD4gSFgBmx
+ b6+hY2L7MZ0CfPh7IUt6k6i0YFy6zzyhFXEy66HVs0hLluqZHV6JdX6II
+ aRItaKYieddZgaF4sB+mCo4tZhXph1TETS4pQh+4cn5hAanuxevUhg+wX
+ 3Htk/lrkASf7k9952jHtnCxHhtLxnC778lT86X7+PNWxifBrsapKMQY9U
+ TaytJWGi8Xcl/tm/quh7T7KqszdzSwmzvfWuWJIMmDmBn/tGLs35X/4Lc
+ dUcfHWWLgBGqpFmEnwwfPLvDkQxlisYpQDvvkvv/+kto1hHG6K6mBZ3K6 Q==;
+X-CSE-ConnectionGUID: fxK9CmBHT7OkiHCiWbG9hQ==
+X-CSE-MsgGUID: l7h5xpLbTF6fa4gaSe4rxQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1132164"
+X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
+   d="scan'208";a="1132164"
+Received: from fmviesa012.fm.intel.com ([10.60.135.152])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Oct 2026 08:06:35 -0700
+X-CSE-ConnectionGUID: yRsm1nylT16c3hIGM6+MyQ==
+X-CSE-MsgGUID: yrZR7VIwRP2lLS9MWqRKsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
+   d="scan'208";a="4319715"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa012.fm.intel.com with ESMTP; 19 Oct 2026 08:06:33 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>
+Subject: [PATCH v2 1/9] net/iavf: keep device stopped if start fails
+Date: Mon, 19 Oct 2026 16:06:20 +0100
+Message-ID: <c1ce4343efb1d7147c47fcc11d18b9eed8294129.1792422213.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1792422213.git.anatoly.burakov@intel.com>
+ <cover.1792422213.git.anatoly.burakov@intel.com>
+References: 
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgCXK5cUNdZqqgUkBA--.15723S14
-X-Coremail-Antispam: 1Uf129KBjvAXoW3tr47tryrXrWDKr4ftrykGrg_yoW8JFyUGo
- WfXFWakF4Fgrn7A34jvFn7ZFs7Xw1DGrn8J39xCanxXay7ury3JFn8Jrn3Ja47X34UCFnr
- AF97G3yktw47Xw4Dn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUzgAwUUUUU
-Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNh2krmrWNR3UpAAA3F
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,364 +58,68 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,RCVD_IN_DNSWL_BLOCKED,
-	RCVD_IN_ZEN_BLOCKED_OPENDNS,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_ZEN_BLOCKED_OPENDNS,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Provide recorded mbox send/receive history and a dump of it together with
-the AEQ state so mailbox timeouts and response mismatches can be diagnosed.
+Currently, `iavf_dev_start()` clears `adapter->stopped` before several
+operations that can fail. A subsequent `iavf_dev_stop()` then disables
+interrupts and stops and resets queues even though startup did not
+complete.
 
-Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
+Mark the adapter running only after startup succeeds, and return early
+from stop when it is already stopped.
+
+Fixes: 69dd4c3d0898 ("net/avf: enable queue and device")
+Cc: stable@dpdk.org
+
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- doc/guides/rel_notes/release_26_11.rst |  1 +
- drivers/net/hinic3/base/hinic3_eqs.c   | 66 ++++++++++++++++++++++++--
- drivers/net/hinic3/base/hinic3_eqs.h   |  6 ++-
- drivers/net/hinic3/base/hinic3_mbox.c  | 45 ++++++++++++++++++
- drivers/net/hinic3/base/hinic3_mbox.h  | 19 ++++++++
- drivers/net/hinic3/hinic3_ethdev.c     | 28 +++++++++++
- 6 files changed, 159 insertions(+), 6 deletions(-)
+ drivers/net/intel/iavf/iavf_ethdev.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 151adeed1a..1338241fa6 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -146,6 +146,7 @@ New Features
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 7f1ad3d88c..68aced0e31 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -1039,8 +1039,6 @@ iavf_dev_start(struct rte_eth_dev *dev)
+ 	if (adapter->closed)
+ 		return -1;
  
-   * Added CIR drop statistics and VF link aggregation (LAG) support.
-   * Added FEC mode get and set support.
-+  * Added mailbox message counter reporting through the device private dump API.
- 
- * **Updated Intel iavf driver.**
- 
-diff --git a/drivers/net/hinic3/base/hinic3_eqs.c b/drivers/net/hinic3/base/hinic3_eqs.c
-index 1fc78adc85..2aef7e4f3d 100644
---- a/drivers/net/hinic3/base/hinic3_eqs.c
-+++ b/drivers/net/hinic3/base/hinic3_eqs.c
-@@ -553,7 +553,7 @@ hinic3_aeqs_free(struct hinic3_hwdev *hwdev)
- }
- 
- void
--hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev)
-+hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev, FILE *file)
- {
- 	struct hinic3_aeq_elem *aeqe_pos = NULL;
- 	struct hinic3_eq *eq = NULL;
-@@ -580,10 +580,66 @@ hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev)
- 		addr = HINIC3_CSR_AEQ_PROD_IDX_ADDR;
- 		pi = hinic3_hwif_read_reg(hwdev->hwif, addr);
- 		aeqe_pos = GET_AEQ_ELEM(eq, eq->cons_idx);
--		PMD_DRV_LOG(ERR,
--			    "Aeq id: %d, idx: %u, ctrl0: 0x%08x, wrap: %d, pi: 0x%x, ci: 0x%08x, desc: 0x%x",
--			    q_id, idx, ctrl0, eq->wrapped, pi, ci,
--			    rte_be_to_cpu_32(aeqe_pos->desc));
-+		fprintf(file,
-+			"Aeq id: %d, idx: %u, ctrl0: 0x%08x, wrap: %d, pi: 0x%x, ci: 0x%08x, desc: 0x%x\n",
-+			q_id, idx, ctrl0, eq->wrapped, pi, ci,
-+			rte_be_to_cpu_32(aeqe_pos->desc));
-+	}
-+}
-+
-+void
-+hinic3_dump_aeq_mbox_info(struct hinic3_hwdev *hwdev, FILE *file)
-+{
-+	struct save_mbox_info *save_mbox = NULL;
-+	struct hinic3_eq *aeq = NULL;
-+	struct hinic3_aeq_elem *aeqe_pos = NULL;
-+	struct rte_pci_device *pci_dev = NULL;
-+	uint32_t i, pos;
-+	uint8_t src, size, wrapped, seq_id, seg_len, msg_id, mod;
-+	uint8_t data[HINIC3_AEQE_DATA_SIZE];
-+	uint16_t src_func_idx, cmd;
-+	uint32_t aeqe_desc;
-+	uint64_t mbox_header;
-+	enum hinic3_aeq_type event;
-+
-+	pci_dev = hwdev->pci_dev;
-+	save_mbox = hwdev->func_to_func->save_mbox;
-+	aeq = &hwdev->aeqs->aeq[HINIC3_MBOX_RSP_MSG_AEQ];
-+
-+	fprintf(file, "Sending the latest mbox messages:\n");
-+	for (i = 0; i < HINIC3_MBOX_SAVE_NUM; i++) {
-+		pos = (hwdev->func_to_func->save_mbox->start + i) % HINIC3_MBOX_SAVE_NUM;
-+		fprintf(file, "send_msg_id: %u, cmd: %u, mod: %u\n",
-+			save_mbox->send_info[pos].send_msg_id, save_mbox->send_info[pos].cmd,
-+			save_mbox->send_info[pos].mod);
-+	}
-+
-+	fprintf(file, "dump aeqe info:\n");
-+	fprintf(file, "port: %u, eq cid: %u, func id: %u, bus: %u, devid: %u, wrapped: %u\n",
-+		hwdev->port_id, aeq->cons_idx, pci_dev->addr.function, pci_dev->addr.bus,
-+		pci_dev->addr.devid, aeq->wrapped);
-+	for (i = 0; i < aeq->eq_len; i++) {
-+		/* Parsing the data field. */
-+		aeqe_pos = GET_AEQ_ELEM(aeq, i);
-+		aeqe_desc = rte_be_to_cpu_32(aeqe_pos->desc);
-+		memcpy(data, aeqe_pos->aeqe_data, HINIC3_AEQE_DATA_SIZE);
-+		hinic3_be32_to_cpu(data, HINIC3_AEQE_DATA_SIZE);
-+		memcpy(&mbox_header, data, sizeof(mbox_header));
-+		seq_id = HINIC3_MSG_HEADER_GET(mbox_header, SEQID);
-+		seg_len = HINIC3_MSG_HEADER_GET(mbox_header, SEG_LEN);
-+		src_func_idx = HINIC3_MSG_HEADER_GET(mbox_header, SRC_GLB_FUNC_IDX);
-+		msg_id = HINIC3_MSG_HEADER_GET(mbox_header, MSG_ID);
-+		mod = HINIC3_MSG_HEADER_GET(mbox_header, MODULE);
-+		cmd = HINIC3_MSG_HEADER_GET(mbox_header, CMD);
-+		/* Parsing the desc field. */
-+		event = EQ_ELEM_DESC_GET(aeqe_desc, TYPE);
-+		src = EQ_ELEM_DESC_GET(aeqe_desc, SRC);
-+		size = EQ_ELEM_DESC_GET(aeqe_desc, SIZE);
-+		wrapped = EQ_ELEM_DESC_GET(aeqe_desc, WRAPPED);
-+
-+		fprintf(file, "index: %d, msg_id: %u, mod: %u, cmd: %u, seq_id: %u, seg_len: %u,"
-+			"src_func_idx: %u, event: %u, src: %u, size: %u, wrapped: %u\n", i, msg_id,
-+			mod, cmd, seq_id, seg_len, src_func_idx, event, src, size, wrapped);
- 	}
- }
- 
-diff --git a/drivers/net/hinic3/base/hinic3_eqs.h b/drivers/net/hinic3/base/hinic3_eqs.h
-index 365c9cbf39..c0a7ca2290 100644
---- a/drivers/net/hinic3/base/hinic3_eqs.h
-+++ b/drivers/net/hinic3/base/hinic3_eqs.h
-@@ -5,6 +5,8 @@
- #ifndef _HINIC3_EQS_H_
- #define _HINIC3_EQS_H_
- 
-+#include <stdio.h>
-+
- #define HINIC3_MAX_AEQS	    4
- #define HINIC3_MIN_AEQS	    2
- #define HINIC3_EQ_MAX_PAGES 4
-@@ -83,7 +85,9 @@ int hinic3_aeqs_init(struct hinic3_hwdev *hwdev);
- 
- void hinic3_aeqs_free(struct hinic3_hwdev *hwdev);
- 
--void hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev);
-+void hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev, FILE *file);
-+
-+void hinic3_dump_aeq_mbox_info(struct hinic3_hwdev *hwdev, FILE *file);
- 
- int hinic3_aeq_poll_msg(struct hinic3_eq *eq, uint32_t timeout, void *param);
- 
-diff --git a/drivers/net/hinic3/base/hinic3_mbox.c b/drivers/net/hinic3/base/hinic3_mbox.c
-index c4ca2ed7ba..6d0d4cce2b 100644
---- a/drivers/net/hinic3/base/hinic3_mbox.c
-+++ b/drivers/net/hinic3/base/hinic3_mbox.c
-@@ -711,6 +711,27 @@ send_tlp_mbox_seg(struct hinic3_mbox *func_to_func, uint64_t header, uint16_t ds
- 	return 0;
- }
- 
-+static void hinic3_record_mbox_info(struct hinic3_mbox *func_to_func,
-+				    enum hinic3_mod_type mod, uint16_t cmd,
-+				    uint8_t msg_id)
-+{
-+	struct mbox_send_info send_mbox;
-+
-+	send_mbox.cmd = cmd;
-+	send_mbox.mod = mod;
-+	send_mbox.send_msg_id = msg_id;
-+
-+	uint8_t pos = (func_to_func->save_mbox->start + func_to_func->save_mbox->count) %
-+		      HINIC3_MBOX_SAVE_NUM;
-+	func_to_func->save_mbox->send_info[pos] = send_mbox;
-+
-+	if (func_to_func->save_mbox->count < HINIC3_MBOX_SAVE_NUM)
-+		func_to_func->save_mbox->count++;
-+	else
-+		func_to_func->save_mbox->start = (func_to_func->save_mbox->start + 1) %
-+						 HINIC3_MBOX_SAVE_NUM;
-+}
-+
- static int
- send_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
- 		struct hinic3_handler_info *handler_info, struct mbox_msg_info *msg_info)
-@@ -724,6 +745,9 @@ send_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
- 
- 	rsp_aeq_id = HINIC3_MBOX_RSP_MSG_AEQ;
- 
-+	hinic3_record_mbox_info(func_to_func, mod, handler_info->cmd,
-+				msg_info->msg_id);
-+
- 	/* Set the header message. */
- 	header = HINIC3_MSG_HEADER_SET(handler_info->in_size, MSG_LEN) |
- 		 HINIC3_MSG_HEADER_SET(mod, MODULE) |
-@@ -782,6 +806,9 @@ send_tlp_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod
- 
- 	rsp_aeq_id = HINIC3_MBOX_RSP_MSG_AEQ;
- 
-+	hinic3_record_mbox_info(func_to_func, mod, handler_info->cmd,
-+				msg_info->msg_id);
-+
- 	/* Set the header message. */
- 	header = HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, MSG_LEN) |
- 		 HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, SEG_LEN) |
-@@ -873,6 +900,7 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
- 		goto send_err;
+-	adapter->stopped = 0;
+-
+ 	vf->max_pkt_len = dev->data->mtu + IAVF_ETH_OVERHEAD;
+ 	vf->num_queue_pairs = RTE_MAX(dev->data->nb_rx_queues,
+ 				      dev->data->nb_tx_queues);
+@@ -1112,6 +1110,7 @@ iavf_dev_start(struct rte_eth_dev *dev)
  	}
  
-+	func_to_func->mbox_send_cnt++;
- 	/* Wait for the response message. */
- 	time = timeout ? timeout : HINIC3_MBOX_COMP_TIME;
- 	aeq = &func_to_func->hwdev->aeqs->aeq[HINIC3_MBOX_RSP_MSG_AEQ];
-@@ -884,6 +912,7 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
- 		goto send_err;
- 	}
+ 	iavf_phc_sync_alarm_start(dev);
++	adapter->stopped = 0;
  
-+	func_to_func->mbox_ack_cnt++;
- 	/* Check whether mod and command of the rsp message match the sent message. */
- 	if (mod != mbox_for_resp->mod || handler_info->cmd != mbox_for_resp->cmd) {
- 		PMD_DRV_LOG(ERR,
-@@ -917,6 +946,8 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
- 		*handler_info->out_size = mbox_for_resp->mbox_len;
- 	}
- send_err:
-+	if (err != 0)
-+		func_to_func->mbox_error = true;
- 	return err;
- }
+ 	/* An explicit start supersedes any pending deferred start */
+ 	vf->start_pending = false;
+@@ -1135,13 +1134,13 @@ iavf_dev_stop(struct rte_eth_dev *dev)
+ 	if (adapter->closed)
+ 		return -1;
  
-@@ -1129,6 +1160,16 @@ hinic3_func_to_func_init(struct hinic3_hwdev *hwdev)
- 
- 	hwdev->func_to_func = func_to_func;
- 	func_to_func->hwdev = hwdev;
-+
-+	struct save_mbox_info *save_mbox = rte_zmalloc("save_mbox_info",
-+						      sizeof(struct save_mbox_info), 0);
-+	if (!save_mbox) {
-+		err = -ENOMEM;
-+		goto alloc_save_mbox_err;
-+	}
-+
-+	func_to_func->save_mbox = save_mbox;
-+
- 	rte_spinlock_init(&func_to_func->mbox_lock);
- 
- 	/* Alloc the memory required by the mailbox. */
-@@ -1170,6 +1211,9 @@ hinic3_func_to_func_init(struct hinic3_hwdev *hwdev)
- 	free_mbox_info(func_to_func->mbox_send);
- 
- alloc_mbox_for_send_err:
-+	rte_free(save_mbox);
-+alloc_save_mbox_err:
-+	hwdev->func_to_func = NULL;
- 	rte_free(func_to_func);
- 
- 	return err;
-@@ -1184,5 +1228,6 @@ hinic3_func_to_func_free(struct hinic3_hwdev *hwdev)
- 	free_mbox_tlp_buffer(func_to_func);
- 	free_mbox_info(func_to_func->mbox_resp);
- 	free_mbox_info(func_to_func->mbox_send);
-+	rte_free(func_to_func->save_mbox);
- 	rte_free(func_to_func);
- }
-diff --git a/drivers/net/hinic3/base/hinic3_mbox.h b/drivers/net/hinic3/base/hinic3_mbox.h
-index df6de062e2..8797c19697 100644
---- a/drivers/net/hinic3/base/hinic3_mbox.h
-+++ b/drivers/net/hinic3/base/hinic3_mbox.h
-@@ -15,6 +15,8 @@
- 
- #define HINIC3_MAX_PF_FUNCS 32
- 
-+#define HINIC3_MBOX_SAVE_NUM          20
-+
- /* Message header define. */
- #define HINIC3_MSG_HEADER_SRC_GLB_FUNC_IDX_SHIFT 0
- #define HINIC3_MSG_HEADER_STATUS_SHIFT		 13
-@@ -150,8 +152,21 @@ enum hinic3_mbox_cb_state {
- 	HINIC3_PPF_TO_PF_MBOX_CB_RUNNING
- };
- 
-+struct mbox_send_info {
-+	uint16_t cmd;
-+	enum hinic3_mod_type mod;
-+	uint8_t send_msg_id;
-+};
-+
-+struct save_mbox_info {
-+	struct mbox_send_info send_info[HINIC3_MBOX_SAVE_NUM];
-+	uint8_t start;
-+	uint8_t count;
-+};
-+
- struct hinic3_mbox {
- 	struct hinic3_hwdev *hwdev;
-+	struct save_mbox_info *save_mbox;
- 
- 	struct hinic3_send_mbox send_mbox;
- 
-@@ -163,6 +178,10 @@ struct hinic3_mbox {
- 	enum mbox_event_state event_flag;
- 	/* Lock for mbox event flag. */
- 	rte_spinlock_t mbox_lock;
-+
-+	uint64_t mbox_send_cnt;
-+	uint64_t mbox_ack_cnt;
-+	bool mbox_error;
- };
- 
- int hinic3_mbox_func_aeqe_handler(struct hinic3_hwdev *hwdev, uint8_t *header,
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 33bffcca5a..0cfb023bb4 100644
---- a/drivers/net/hinic3/hinic3_ethdev.c
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -10,6 +10,7 @@
- #include "base/hinic3_eqs.h"
- #include "base/hinic3_cmdq.h"
- #include "base/hinic3_hwdev.h"
-+#include "base/hinic3_mbox.h"
- #include "base/hinic3_hwif.h"
- #include "base/hinic3_hw_cfg.h"
- #include "base/hinic3_hw_comm.h"
-@@ -3467,6 +3468,31 @@ hinic3_fec_capability_get(struct rte_eth_dev *dev,
- 	return HINIC3_FEC_CAPA_NUM_PER_SPEED;
- }
- 
-+static int
-+hinic3_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file)
-+{
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	struct hinic3_hwdev *hwdev;
-+
-+	if (file == NULL)
-+		return -EINVAL;
-+
-+	hwdev = nic_dev->hwdev;
-+	if (hwdev == NULL || hwdev->func_to_func == NULL)
++	if (adapter->stopped == 1)
 +		return 0;
 +
-+	fprintf(file, "mbox_send_cnt: %" PRIu64 "\n",
-+		hwdev->func_to_func->mbox_send_cnt);
-+	fprintf(file, "mbox_ack_cnt: %" PRIu64 "\n",
-+		hwdev->func_to_func->mbox_ack_cnt);
-+
-+	hinic3_dump_aeq_info(hwdev, file);
-+	if (hwdev->func_to_func->mbox_error)
-+		hinic3_dump_aeq_mbox_info(hwdev, file);
-+
-+	return 0;
-+}
-+
- static const struct eth_dev_ops hinic3_pmd_ops = {
- 	.dev_configure                 = hinic3_dev_configure,
- 	.dev_infos_get                 = hinic3_dev_infos_get,
-@@ -3516,6 +3542,7 @@ static const struct eth_dev_ops hinic3_pmd_ops = {
- 	.fec_get_capability            = hinic3_fec_capability_get,
- 	.fec_get                       = hinic3_fec_get,
- 	.fec_set                       = hinic3_fec_set,
-+	.eth_dev_priv_dump             = hinic3_eth_dev_priv_dump,
- };
+ 	if (!(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR) &&
+ 	    dev->data->dev_conf.intr_conf.rxq != 0)
+ 		rte_intr_disable(intr_handle);
  
- static const struct eth_dev_ops hinic3_pmd_vf_ops = {
-@@ -3560,6 +3587,7 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
- 	.mac_addr_add                  = hinic3_mac_addr_add,
- 	.set_mc_addr_list              = hinic3_set_mc_addr_list,
- 	.flow_ops_get                  = hinic3_dev_filter_ctrl,
-+	.eth_dev_priv_dump             = hinic3_eth_dev_priv_dump,
- };
+-	if (adapter->stopped == 1)
+-		return 0;
+-
+ 	iavf_phc_sync_alarm_stop(dev);
  
- static void hinic3_nic_tx_rx_ops_init(struct hinic3_nic_dev *nic_dev)
+ 	/* Disable the interrupt for Rx */
 -- 
-2.33.0
+2.52.0
 
