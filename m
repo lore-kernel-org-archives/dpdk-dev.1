@@ -1,96 +1,86 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECBD606A322
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 17:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30E0606A319
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 18:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20251104 header.b=tK+ntKyT
+	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=Iak0ttyC
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9079F40297;
-	Mon, 19 Oct 2026 19:36:05 +0200 (CEST)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com
- [209.85.218.52]) by mails.dpdk.org (Postfix) with ESMTP id 6599F4021E
- for <dev@dpdk.org>; Mon, 19 Oct 2026 19:36:03 +0200 (CEST)
-Received: by mail-ej1-f52.google.com with SMTP id
- a640c23a62f3a-c34bff61551so334700266b.2
- for <dev@dpdk.org>; Mon, 19 Oct 2026 10:36:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792431363; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 9EF8740297;
+	Mon, 19 Oct 2026 20:15:30 +0200 (CEST)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
+ [209.85.160.178])
+ by mails.dpdk.org (Postfix) with ESMTP id B38C74021E
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 20:15:29 +0200 (CEST)
+Received: by mail-qt1-f178.google.com with SMTP id
+ d75a77b69052e-53669f7b518so13346231cf.2
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 11:15:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792433729; cv=none;
  d=google.com; s=arc-20260327;
- b=qrSjD1LLJ9HTekbGGW30s9+L3UtJYoRaq0y5FNEnN2QyS5jQLLGqe7E6MUbdPSmHrE
- o4OVweRyQ1cxd1Yv3TQN+GWff7dovkIhm9Iwqtw5XTWO26EJ/FoBj5+fCe3r0adtcwbv
- yzK6gbWhut1PufWIKIhtM5gmdjgnL86fvF3pLX50aPPUkhJZ2dFROEmJlRtKASRE5vQi
- bUPlFKqEUK4ehj3d8GqZPfRbGKRKau2kegqq79sy1AGuCrfHPyOZxRItAdjAGEBobqEi
- je2RHmEzOW0/bFkpU9I2ft2fCsSoloN8uvr5dpn2MnXsYOjDjlpCxWKYdx+k18Y8itH/
- 3ihQ==
+ b=iR6fTl0YKpytKszSWmrJSkLH07GCciGBvjLZsbCtOVLlyLrptGUHR04G0KsoheDb6S
+ 6Ld52+I1Q6RMZMI+S/JxL9ve4eorq8/4Tc9u+juANZJW4sRaIoZgTK2viJuZMB/R8qD0
+ b9Te5LUgGEv5molql6QPbL21oIvzlpizv9go1Jt81ejxcHkfIjm/ZPrihP/ar7C9mrY4
+ isI7L2NiKSZJut+UZn0T9i7o+7vM6bRXje6Ibi+XdwLapZ7MEJaNOIb7XYbcRZtUFzJW
+ IPDVBi4I5HE7Ud9yP9GnzwiPSd83m8tKYplZiYFLR94HweBW9Yra1S8qtIkMgd75RwJT
+ zPJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=Tj/4kQetvWkcIiJAfQFR/h2ZfBxbpEBd6mY/QYFfG/A=;
- fh=fi57INd8zw8Au+xCgi/Pp29HGGsLtoE8i7oMl9G2xjE=;
- b=qN5bzBbmBS5ribXS10aizaqhARfluAjisoLpuz2WQD3iaSjrCOhsbXqu4kPIJ4MQib
- +ANvMWISIwy00I/HIv0itcI2gytIUQKUnUqVLFHTnuoQvn3fPve6t64tGwZJC1L4AdEK
- uoCfVZt/h/ijb7tafwqB2ea2cRlQGIQ40k1MSx+811GrXqnndmcVWrzHNj9N0WxXu9rg
- Eqjdfm6QoSMgPWv79JefA8+O0DjHLVcV5J+0pSmbIpfJX4UGbifGbXgzI5KqxntHVzFr
- /5KhOXEJE0DS2/X8WbeoPlS+cBulaE8GP16DSP2GORrVZ66LakOpz1RQULRqsG8yL4ND
- Go0w==; darn=dpdk.org
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=qqyAcjzQkWIVVksXzCj9o3b/TnZLkI/+o+hht5uW/rE=;
+ fh=erfZegFbk40Uj8wEwTKtU+7NWnEm87Bvz/Vv5TsA3dw=;
+ b=ILsxVJCYdlwdAw0QliAMzfk6rBmIyZLPtBjec2C2RuID/O4ukwaw8FFPWxI4nc+4WQ
+ 52kKaoKUh2bYqna/u9IsDBNrVMOeZPNjSxFyprj0IdpKdjxrJPazOHbmNFTn+b5CvHri
+ sLJH3ASRR6Xxz5NxQZx4OdGYuLdR5EbAsalLtAD20rasxyYugxFZux4MLZNm9yXl3jnK
+ 2/N0PbfjoJhr4PlhCo7C6W7ndPQCbvLJLP5YdXvLU+eamdqC/X7K72s8yM9pccKF5VoQ
+ eFJMzbzYkR2mHEck8meDDWofm42y9R2UmHzYm1PchWUtk7sTQKwNvsHYjoEcB1d/4zpW
+ fPWg==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1792431363; x=1793036163; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=Tj/4kQetvWkcIiJAfQFR/h2ZfBxbpEBd6mY/QYFfG/A=;
- b=tK+ntKyTIsZYsb1lmfEDEswjpJXYRA5AvjNzQObOp4oRxpnHUWPO8uRzhW4QzNy4rp
- SlSwBv0umbm9yBsESLqkHKwFbMcOoQBgQWqY7oC3AGDa84Xb50ScAVoI8YPs6643vu9i
- XTRqpqS6URZp86yZyu5EbWEixNQFkcAY3YwyO0UAvVs57UuEyocTodHf+lbrLaCW4H+s
- uy7hi7IifF8h2gvz+wuJcyN97T4bspH11EYkX2BSHmRZiJEYjdfvB+iK2sTudRXRrPnc
- IhAEGkaCJ5W8Ljv3YdCBw9D4lT32EVtEUGdPcGMD62fOb5wHJP+A34xybih2plcAdrEq
- y4HQ==
+ d=iol.unh.edu; s=unh-iol; t=1792433729; x=1793038529; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=qqyAcjzQkWIVVksXzCj9o3b/TnZLkI/+o+hht5uW/rE=;
+ b=Iak0ttyCUJB3k/KGcAQCQZDhsvNun1QF/+0oN59CtoIXdzZ3lqQPf6jvXn/zPFecrz
+ OJwfzSyBkq8+6xWnSs7OeE4A1mD69MUTwZoSg6lonFcxorX/ExSyMfwrGXjwU3BIdDU1
+ XHKtevYV+Z41zpmIpHCBuYTZ4LEJafw2+8Zio=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792431363; x=1793036163;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=Tj/4kQetvWkcIiJAfQFR/h2ZfBxbpEBd6mY/QYFfG/A=;
- b=ccFul+Qp3okwL5jIumM9RsTrkykduFw0MozijNwwsUMCuFGRbOTll5vCoAhssogdNa
- Ab1yjBtru8zz+HAszKk/7/BL2sPYEuGl5sGbxzPUw6MDFgnKrM4VzB5JnlprdnKJ1A+l
- OmKEK6XjtdGuLST5qfZr36xf5tyvKpHfBLDK5BG7HNoGlQY8OiBWwI/385wDExkB7wdd
- CDUG8UnH7QrzXUG+Bk+z9U6FvfWCr+x1G6Dd9P9Ba21FYR/0OmEXFsEc4rSin4MuUR7z
- qDjyA0mRDI7ViA3e+e0z+3AuWNb4Sn+xMNQggXIOSUQOw5VxnYBEjuVbiTAhCj3UfzXf
- ul4Q==
+ d=1e100.net; s=20260707; t=1792433729; x=1793038529;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=qqyAcjzQkWIVVksXzCj9o3b/TnZLkI/+o+hht5uW/rE=;
+ b=mZKZc9IQv0WA2Z/iXO7QnnLnmRt24M62WLPHaV88vClATEAJBDTmD0kuhXYI7iINBr
+ WDDFgCWSrNVq+j1AMyySdtpp/Jp7xwXJZmIVd1iZN+hQfR65rn/cBe/Chjm0WCzNBlLm
+ qhRGSPYnrsJMXXEdxS1UaLKBUv1JQ2k2nMIN0yNoG0S831KAGEntbcyR2U5GlsyboMjS
+ XyHw6AJSa39gqrel2EWdDESxbDNqTp27D+BhyFuElH6aawHHYnyWkPdMjACGzu9P5y63
+ MQoqfN7ueiWObRJpwrqaegWqd1U8YpZBAq9S75EziZHnT7Wfp7fv94Gdnf8vrpSP1tjO
+ 8pfQ==
 X-Forwarded-Encrypted: i=1;
- AKwUvBwgRFhTiadI3ccTxxOr2/zYfBfLjEMGldsbIGOkAhFc9tVYBIt4zakUaK0LLLMIPNLJv2o=@dpdk.org
-X-Gm-Message-State: AFq9FYKlbLcU/mihpka/j2gqLep6/oetmV54ySjGemX/zWOzTpsceF/d
- j6WMoLCik40rDHKC53HwdMnaSSsNtcgJXP+T2ljozlb0eKJVk3+IrTlR+Jt2tc3Ig6mMO+s1o1/
- IxObRIkrjSVyuZRSugKFvi46Lj5GgsFfr54oOlN+S
-X-Gm-Gg: AYBFou0rd21YLsmkPaStnMzMZMEvkkl27I/P/M4ahqv/DBHecjzQImSsFHpPw6USRPX
- 6fuxulydd5MY2ixUiU5Z/LLBafp+juyhe8ZN9bzvf2dtz0rGL17dp79OG912XNTnZki84VYzkHc
- +G2shPgtd0GzPiH/Xq0g9BeTZjE5WlHB+4SS3rbInLlIw9XrJAOtkbSmGIJpVxMleJy0Tpx5nIo
- zXWgFIlhpLLURm8yB8NugnPcfSLi9jbqeTVuJMjItvtQgii7CTutd2X8OA34Q1d0Z4DbQZzqbe3
- XcIZ2SH2NDIRSuwH8OY3faltlGYhOHaqhF034WkqbdMeJHSWlrjrSsGg
-X-Received: by 2002:a17:907:d08d:b0:c3f:98d4:dfe2 with SMTP id
- a640c23a62f3a-c419d8346eemr542365466b.18.1792431362264; Mon, 19 Oct 2026
- 10:36:02 -0700 (PDT)
+ AKwUvByNbFbjlKdR6tjzM8Dp1Ct3Ic2E2gcS8bHbvWS/iZwKVZeXtj/ObBcQOgqPhM4L+YcaASQ=@dpdk.org
+X-Gm-Message-State: AFq9FYJlYhZzCovnL7WCQjlJiFrPtw9JcqI2Xowy2obZVHDEw5Z610/l
+ h2KN0UkyILDVwAipCbB0xisCzn3PXD4PGGSRLZHFdln9Yi3QcoizWn8xKDYCMjFGMZqbj63kMs9
+ DpT7V4DcqelF7yEx1KsxurlqFVWeGIXyvWxhdVOomSQ==
+X-Gm-Gg: AYBFou3pjkU8HU9pVxclYT27GY5pxQtqVJu0f2RV5PBVxlMQgtbL/j7BzBoIYFfMe8c
+ buGYDiUxflrK2ZUBr9cN94VisPOES8zCrz7FwJP+s4cA+xRoq021G3VXwg6gw/0/9NcvxHDd2Vm
+ dZySdZxjD6BKMXrqqmPZi9HcvWF5W1oZkg2N1nWIzuLzJE5R/C9A5fz7O8Kih3qSfCtZM65GYP8
+ PmgDUSuoEUr9b3F7OZUWf/X+OSECMQIQZ7IjvlsKKTQ0bWjEoedgmmBB8vjtYuR3oOrdO9wPoww
+ dZroIIN/9Ss1wtff63+k1kXSkLvX5MQpVrMLZCK0J5Vpkvn4m0d0cpjBkVYpAzPoJ+NBNg==
+X-Received: by 2002:a05:622a:1906:b0:535:855e:6d15 with SMTP id
+ d75a77b69052e-5364600c568mr128776621cf.30.1792433728932; Mon, 19 Oct 2026
+ 11:15:28 -0700 (PDT)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <cover.1792170902.git.tathagat.dpdk@gmail.com>
- <af059fd5b4297695fc4f2fc84236f7d71a71a630.1792170902.git.tathagat.dpdk@gmail.com>
- <CALuQH+WpkTCK6jSgYc0RrdSmV_3MUJ0W8=mrn9wpgQGJRRongw@mail.gmail.com>
- <CA++LmPX3NA0=qOs=p7m8=4Zxq-=gLdgMJA=EKJy=SxNKysqfwQ@mail.gmail.com>
- <20261019095500.5b577674@phoenix.local>
-In-Reply-To: <20261019095500.5b577674@phoenix.local>
-From: Joshua Washington <joshwash@google.com>
-Date: Mon, 19 Oct 2026 10:35:50 -0700
-X-Gm-Features: AclHuK_l34zphqxssSu_axCx2hNgXYOGm28Xuz3ZTJactAni5gJ_cTSdEtTHqSo
-Message-ID: <CALuQH+UTdRV=PvGaDBC+VxfQ2Qx3O7LNWeOYuP52FFmqGm0NMQ@mail.gmail.com>
-Subject: Re: [PATCH v4 09/10] net/gve: enforce DQO Tx packet length limits
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>, dev <dev@dpdk.org>,
- dpdk stable <stable@dpdk.org>, 
- Jeroen de Borst <jeroendb@google.com>, Rushil Gupta <rushilg@google.com>, 
- Junfeng Guo <junfengg@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20260812194428.296334-1-knimoji@iol.unh.edu>
+ <20260929134920.330389-1-knimoji@iol.unh.edu>
+In-Reply-To: <20260929134920.330389-1-knimoji@iol.unh.edu>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Mon, 19 Oct 2026 14:15:16 -0400
+X-Gm-Features: AclHuK8QrgDIhwtJpNT8h_nHt_Cat_gKJNeNxp6EG8urmm5miSEuuQQdKz58E_4
+Message-ID: <CABJ3N2VMsFvTZ9eAnEzzLGiWr4Pve_CKfry3Y9xt7yR=XPYxpA@mail.gmail.com>
+Subject: Re: [PATCH v1] dts: restore unbinded ports to initial state
+To: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, patrickrobb1997@gmail.com, dev@dpdk.org, 
+ dladd@iol.unh.edu, lylavoie@iol.unh.edu
+Content-Type: multipart/alternative; boundary="000000000000b25dd5065e357f6b"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -100,37 +90,22 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Mon, Oct 19, 2026 at 9:55=E2=80=AFAM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Sun, 18 Oct 2026 13:24:03 +0530
-> Tathagat Priyadarshi <tathagat.dpdk@gmail.com> wrote:
->
-> > > > +static inline bool
-> > > > +gve_tx_validate_pkt(const struct rte_mbuf *tx_pkt, bool is_tso)
-> > >
-> > > Minor nit (not worth blocking over, but maybe can be done as the
-> > > patches are being merged): can this be renamed to
-> > > gve_tx_validate_pkt_len? This is one step of many in the packet
-> > > validation pipeline.
-> >
-> > Thanks for the review, Joshua. Agreed on renaming to gve_tx_validate_pk=
-t_len.
-> > This change impacts patches 9/10 and 10/10. I am happy to submit a v5
-> > series if preferred,
-> > or the maintainer can rename it upon applying.
->
-> Renames should go through patchwork. I can cleanup commit messages and
-> release notes, that is where I stop.
+--000000000000b25dd5065e357f6b
+Content-Type: text/plain; charset="UTF-8"
 
-In that case, would it be okay to merge as-is? I will be following up
-this series directly with some TX datapath fixes of my own which are
-kind of related to Tathagat's fixes, so I can probably update the
-function name in my patch series, rather than going to v5.
+Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
+
+--000000000000b25dd5065e357f6b
+Content-Type: text/html; charset="UTF-8"
+
+<div dir="ltr"><div dir="ltr">Reviewed-by: Andrew Bailey &lt;<a href="mailto:abailey@iol.unh.edu">abailey@iol.unh.edu</a>&gt;</div>
+</div>
+
+--000000000000b25dd5065e357f6b--
