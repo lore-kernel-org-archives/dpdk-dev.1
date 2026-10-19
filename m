@@ -1,28 +1,28 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1786360AA0F5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 15:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D7160A6F79
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 15:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=NXc/rep0
+	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=VIOFOEir
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9DAC40E44;
-	Mon, 19 Oct 2026 17:20:23 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
- by mails.dpdk.org (Postfix) with ESMTP id B36114067A;
- Mon, 19 Oct 2026 17:20:04 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7DA3640A8B;
+	Mon, 19 Oct 2026 17:20:06 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
+ by mails.dpdk.org (Postfix) with ESMTP id 13615406A2
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 17:19:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=n3tyPu+kdoPD0HPxvNo6m3HHB1LhA7SEAxk7i6BJ+bE=;
- b=NXc/rep0qEMzqNmoBifHDtVWaM8/wXx3P3URQFhcMyGQlgHeEGD30rTKHvOmXB
- h4gynUftX1hIkMgJIj4pNuDin/ZqHs0hm5eAntlmsbMgUo+3gHqI/3V5UUb4fRPS
- JSj3ys6Y3+Z8SARhCnBp82sLYbMRMrWCdd/8BOtdEFDr0=
+ MIME-Version; bh=kzWj+ziPrQ0bwf4UhXKlOR8xgocWsb3p6bBLTQnAi70=;
+ b=VIOFOEirPIdS3sr5o0LQPzOI90lgvbmZmv56f0ZIBuDN4WTKTEpsxbhhlSaJXD
+ cWC1Q7oD1AmufeDFfXSLkwpzogbShqp/A/YoC85ykGUU2Fv1v0BXmqZe/aVmiXqK
+ AWN/+81LUIfd7CjWg+6VecRZVWYhcsm1I5VE5A5+/VN2s=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
- Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
-Subject: [PATCH 27/27] net/hinic3: add pseudo-header checksum calculation
-Date: Mon, 19 Oct 2026 23:19:29 +0800
-Message-ID: <20261019151930.1572-28-yejiacheng4@h-partners.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH 10/27] net/hinic3: add CIR drop statistics and VF LAG support
+Date: Mon, 19 Oct 2026 23:19:12 +0800
+Message-ID: <20261019151930.1572-11-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261019151930.1572-1-yejiacheng4@h-partners.com>
 References: <20261014150923.838-1-yejiacheng4@h-partners.com>
@@ -30,13 +30,13 @@ References: <20261014150923.838-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgCXK5cUNdZqqgUkBA--.15723S29
-X-Coremail-Antispam: 1Uf129KBjvAXoW3tw4rKF4rCrW8XF1ktF1DWrg_yoW8Jr4kuo
- WSqr4fZr1Iqr1rJry8KryqvFZ0qws8t3yYkws0gw17tayfZr1jkwnxG3yfAayUXw1DAFsF
- va4IqF9ayrW7Jwsrn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU2GNtUUUUU
+X-CM-TRANSID: Ac8vCgCXK5cUNdZqqgUkBA--.15723S12
+X-Coremail-Antispam: 1Uf129KBjvJXoW3CryxKFy3XFW7uw1fuw4kJFb_yoWkCr1UpF
+ W5J3srArWDXF4xXwnIg3y8ua45twn3A34UK34xGF909F1kXr4kZa45trWjvr1aqrZrAFy7
+ Z3yYy3yDGa4YgaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UXmRUUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMwOlr2rWNSPMmgAA3G
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNRykrmrWNRzScAAA3U
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,335 +54,355 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-SP620/SP560 hardware requires the driver to precompute the L4
-pseudo-header checksum for TCP/UDP checksum and TSO offload; without it
-the offloaded checksum is wrong. Compute the inner/outer pseudo-header
-checksum in the Tx prepare path, deriving the L4 protocol from the
-offload flags, and fail mbufs that are shared or indirect instead of
-sending them with an incorrect checksum.
-
-Fixes: 7608f0367d5a ("net/hinic3: add basic ethdev operations")
-Cc: stable@dpdk.org
+Provide CIR drop counters and VF LAG configuration so that packets dropped
+for exceeding the committed information rate are visible and VFs can select
+the correct queue on an aggregated link.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/hinic3_ethdev.c |   1 +
- drivers/net/hinic3/hinic3_ethdev.h |   1 +
- drivers/net/hinic3/hinic3_tx.c     | 226 ++++++++++++++++++++++++++++-
- drivers/net/hinic3/hinic3_tx.h     |   1 +
- 4 files changed, 221 insertions(+), 8 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst   |  4 ++
+ drivers/net/hinic3/base/hinic3_cmd.h     |  2 +
+ drivers/net/hinic3/base/hinic3_nic_cfg.c | 62 +++++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_nic_cfg.h | 45 ++++++++++++++-
+ drivers/net/hinic3/hinic3_ethdev.c       | 71 +++++++++++++++++++++++-
+ drivers/net/hinic3/hinic3_ethdev.h       |  3 +
+ 6 files changed, 185 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 310eed6a0c..a10707fba9 100644
---- a/drivers/net/hinic3/hinic3_ethdev.c
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -817,6 +817,7 @@ hinic3_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *info)
- 		RTE_ETH_TX_OFFLOAD_UDP_CKSUM | RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
- 		RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |
- 		RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |
-+		RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM |
- 		RTE_ETH_TX_OFFLOAD_TCP_TSO | RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index be758a0c02..db3459a97b 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -142,6 +142,10 @@ New Features
+   * Raised the maximum Tx and Rx ring descriptor counts
+     from 4096/8192 to 16384 each.
  
- 	hinic3_dev_tnl_tso_support(info, nic_dev);
-diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index 21abea0668..f4533ae417 100644
---- a/drivers/net/hinic3/hinic3_ethdev.h
-+++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -47,6 +47,7 @@
- #define HINIC3_PKT_TX_OUTER_IP_CKSUM	RTE_MBUF_F_TX_OUTER_IP_CKSUM
- #define HINIC3_PKT_TX_OUTER_UDP_CKSUM	RTE_MBUF_F_TX_OUTER_UDP_CKSUM
- #define HINIC3_PKT_TX_OUTER_IPV6	RTE_MBUF_F_TX_OUTER_IPV6
-+#define HINIC3_PKT_TX_OUTER_IPV4	RTE_MBUF_F_TX_OUTER_IPV4
- #define HINIC3_PKT_RX_LRO		RTE_MBUF_F_RX_LRO
- #define HINIC3_PKT_TX_L4_NO_CKSUM	RTE_MBUF_F_TX_L4_NO_CKSUM
++* **Updated Huawei hinic3 ethernet driver.**
++
++  * Added CIR drop statistics and VF link aggregation (LAG) support.
++
+ * **Updated Intel iavf driver.**
  
-diff --git a/drivers/net/hinic3/hinic3_tx.c b/drivers/net/hinic3/hinic3_tx.c
-index 02d8802c0b..694d9487c6 100644
---- a/drivers/net/hinic3/hinic3_tx.c
-+++ b/drivers/net/hinic3/hinic3_tx.c
-@@ -365,6 +365,59 @@ hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt)
- 	return hinic3_xmit_mbuf_cleanup(tx_queue, try_free_cnt);
+   * Runtime Rx/Tx queue setup is now automatically disabled
+diff --git a/drivers/net/hinic3/base/hinic3_cmd.h b/drivers/net/hinic3/base/hinic3_cmd.h
+index f2d5d47522..ecce94690e 100644
+--- a/drivers/net/hinic3/base/hinic3_cmd.h
++++ b/drivers/net/hinic3/base/hinic3_cmd.h
+@@ -94,6 +94,8 @@ enum hinic3_nic_cmd {
+ 	/* PORT CFG */
+ 	HINIC3_NIC_CMD_CFG_PAUSE_INFO			= 101,
+ 	HINIC3_NIC_CMD_VF_COS				= 104,
++	HINIC3_NIC_CMD_GET_CIR_DROP			= 115,
++	HINIC3_NIC_CMD_CFG_VF_LAG			= 243,
+ };
+ 
+ /* COMM commands between driver to MPU. */
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+index 1057d4e777..1c0e6df081 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+@@ -603,6 +603,33 @@ hinic3_get_pause_info(struct hinic3_hwdev *hwdev, struct nic_pause_config *nic_p
+ 	return hinic3_cfg_hw_pause(hwdev, HINIC3_CMD_OP_GET, nic_pause);
  }
  
-+static uint8_t
-+hinic3_tx_l4_proto(uint64_t ol_flags)
++int
++hinic3_get_cir_drop(void *hwdev, struct hinic3_cir_drop *stats)
 +{
-+	if (ol_flags & (HINIC3_PKT_TX_TCP_CKSUM | HINIC3_PKT_TX_TCP_SEG))
-+		return IPPROTO_TCP;
++	struct hinic3_port_stats_info stats_info = { 0 };
++	struct hinic3_cmd_get_dp_info_resp vport_stats = { 0 };
++	uint16_t out_size = sizeof(vport_stats);
++	int err;
 +
-+	return IPPROTO_UDP;
-+}
++	if (!hwdev || !stats)
++		return -EINVAL;
 +
-+/*
-+ * Walk the IPv6 extension headers to obtain the real L3 length (including
-+ * extension headers) and the final upper-layer protocol number.
-+ */
-+static uint16_t
-+hinic3_get_ipv6_len_proto(const struct rte_ipv6_hdr *ipv6_hdr, uint8_t *proto)
-+{
-+	const uint8_t *p = (const uint8_t *)(ipv6_hdr + 1);
-+	uint16_t l3_len = sizeof(*ipv6_hdr);
-+	int next_proto;
-+	size_t ext_len;
-+
-+	*proto = ipv6_hdr->proto;
-+	while ((next_proto = rte_ipv6_get_next_ext(p, *proto, &ext_len)) >= 0) {
-+		*proto = (uint8_t)next_proto;
-+		p += ext_len;
-+		l3_len += ext_len;
++	stats_info.func_id = hinic3_global_func_id(hwdev);
++	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_L2NIC,
++				      HINIC3_NIC_CMD_GET_CIR_DROP,
++				      &stats_info, sizeof(stats_info),
++				      &vport_stats, &out_size);
++	if (err || !out_size || vport_stats.msg_head.status) {
++		PMD_DRV_LOG(ERR, "Get port stats failed, err: %d, status: 0x%x, out size: 0x%x",
++			    err, vport_stats.msg_head.status, out_size);
++		return -EIO;
 +	}
 +
-+	return l3_len;
++	memcpy(stats, vport_stats.value, sizeof(*stats));
++
++	return 0;
 +}
 +
-+static uint16_t
-+hinic3_ipv6_phdr_cksum(const struct rte_ipv6_hdr *ipv6_hdr, uint16_t l3_len,
-+		       uint8_t proto, uint64_t ol_flags)
-+{
-+	uint32_t sum;
-+	rte_be32_t l4_len;
-+	rte_be32_t l4_proto;
-+
-+	l4_proto = (uint32_t)proto << 24;
-+	if (ol_flags & HINIC3_PKT_TX_TCP_SEG)
-+		l4_len = 0;
-+	else
-+		l4_len = rte_cpu_to_be_16(rte_be_to_cpu_16(ipv6_hdr->payload_len) -
-+					  l3_len + sizeof(*ipv6_hdr));
-+
-+	sum = __rte_raw_cksum(ipv6_hdr->src_addr.a,
-+			      sizeof(ipv6_hdr->src_addr.a) + sizeof(ipv6_hdr->dst_addr.a), 0);
-+	sum = __rte_raw_cksum(&l4_len, sizeof(l4_len), sum);
-+	sum = __rte_raw_cksum(&l4_proto, sizeof(l4_proto), sum);
-+
-+	return __rte_raw_cksum_reduce(sum);
-+}
- /**
-  * Prepare the data packet to be sent and calculate the internal L3 offset.
-  *
-@@ -377,9 +430,108 @@ hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt)
-  * @return
-  * 0 as success, -EINVAL as failure.
-  */
-+static inline uint16_t
-+hinic3_calculate_l4_cksum(struct rte_mbuf *mbuf, uint16_t inner_l3_offset,
-+			  uint16_t l3_len, uint8_t l4_proto)
-+{
-+	struct rte_ipv4_hdr *ipv4_hdr;
-+	struct rte_ipv6_hdr *ipv6_hdr;
-+	uint64_t ol_flags = mbuf->ol_flags;
-+
-+	if (ol_flags & HINIC3_PKT_TX_IPV4) {
-+		ipv4_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv4_hdr *,
-+						   inner_l3_offset);
-+
-+		if (ol_flags & HINIC3_PKT_TX_IP_CKSUM)
-+			ipv4_hdr->hdr_checksum = 0;
-+
-+		return rte_ipv4_phdr_cksum(ipv4_hdr, ol_flags);
-+	}
-+
-+	ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv6_hdr *,
-+					   inner_l3_offset);
-+
-+	return hinic3_ipv6_phdr_cksum(ipv6_hdr, l3_len, l4_proto, ol_flags);
-+}
-+
-+static inline void hinic3_calculate_outer_udp_checksum(struct rte_mbuf *mbuf,
-+						       uint16_t outer_l3_offset)
-+{
-+	struct rte_ipv4_hdr *ipv4_hdr;
-+	struct rte_ipv6_hdr *ipv6_hdr;
-+	struct rte_udp_hdr *udp_hdr;
-+	uint64_t ol_flags = mbuf->ol_flags;
-+
-+	if (ol_flags & HINIC3_PKT_TX_OUTER_IPV4) {
-+		ipv4_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv4_hdr *, outer_l3_offset);
-+		if (ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM)
-+			ipv4_hdr->hdr_checksum = 0;
-+		udp_hdr = (struct rte_udp_hdr *)((char *)ipv4_hdr + mbuf->outer_l3_len);
-+		udp_hdr->dgram_cksum = rte_ipv4_phdr_cksum(ipv4_hdr, ol_flags);
-+	} else if (ol_flags & HINIC3_PKT_TX_OUTER_IPV6) {
-+		ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv6_hdr *, outer_l3_offset);
-+		udp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_udp_hdr *,
-+						  (outer_l3_offset + mbuf->outer_l3_len));
-+		udp_hdr->dgram_cksum = hinic3_ipv6_phdr_cksum(ipv6_hdr, mbuf->outer_l3_len,
-+							      IPPROTO_UDP, ol_flags);
-+	}
-+}
-+
-+static inline void hinic3_calculate_outer_phdr_checksum(struct rte_mbuf *mbuf,
-+							uint16_t outer_l3_offset)
-+{
-+	uint64_t ol_flags = mbuf->ol_flags;
-+
-+	if (ol_flags & HINIC3_PKT_TX_OUTER_UDP_CKSUM)
-+		hinic3_calculate_outer_udp_checksum(mbuf, outer_l3_offset);
-+}
-+
-+static inline void hinic3_calculate_phdr_checksum(struct rte_mbuf *mbuf,
-+						  uint16_t inner_l3_offset)
-+{
-+	uint64_t ol_flags = mbuf->ol_flags;
-+	struct rte_tcp_hdr *tcp_hdr;
-+	struct rte_udp_hdr *udp_hdr;
-+	struct rte_ipv6_hdr *ipv6_hdr;
-+	uint16_t l3_len = mbuf->l3_len;
-+	uint8_t l4_proto = hinic3_tx_l4_proto(ol_flags);
-+	uint16_t l4_offset;
-+
-+	if (ol_flags & HINIC3_PKT_TX_IPV6) {
-+		ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv6_hdr *,
-+						   inner_l3_offset);
-+		l3_len = hinic3_get_ipv6_len_proto(ipv6_hdr, &l4_proto);
-+	}
-+
-+	l4_offset = inner_l3_offset + l3_len;
-+
-+	switch (ol_flags & HINIC3_PKT_TX_L4_MASK) {
-+	case HINIC3_PKT_TX_UDP_CKSUM:
-+		udp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_udp_hdr *, l4_offset);
-+		udp_hdr->dgram_cksum = hinic3_calculate_l4_cksum(mbuf, inner_l3_offset,
-+							l3_len, l4_proto);
-+		break;
-+	case HINIC3_PKT_TX_TCP_CKSUM:
-+		tcp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_tcp_hdr *, l4_offset);
-+		tcp_hdr->cksum = hinic3_calculate_l4_cksum(mbuf, inner_l3_offset,
-+							 l3_len, l4_proto);
-+		break;
-+	case HINIC3_PKT_TX_SCTP_CKSUM:
-+		/* Sctp csum no need to calculate pseudo-header */
-+		break;
-+	default:
-+		if (ol_flags & HINIC3_PKT_TX_TCP_SEG) {
-+			tcp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_tcp_hdr *, l4_offset);
-+			tcp_hdr->cksum = hinic3_calculate_l4_cksum(mbuf, inner_l3_offset,
-+								 l3_len, l4_proto);
-+		}
-+		break;
-+	}
-+}
-+
- static int
--hinic3_tx_offload_pkt_prepare(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
--			      uint16_t *inner_l3_offset)
-+hinic3_get_inner_l3_offset(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
-+			   uint16_t *inner_l3_offset)
+ int
+ hinic3_get_vport_stats(struct hinic3_hwdev *hwdev, struct hinic3_vport_stats *stats)
  {
- 	uint64_t ol_flags = mbuf->ol_flags;
+@@ -1727,3 +1754,38 @@ hinic3_set_link_status_follow(struct hinic3_hwdev *hwdev,
  
-@@ -388,7 +540,7 @@ hinic3_tx_offload_pkt_prepare(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *m
- 				HINIC3_SUPPORT_VXLAN_OFFLOAD(nic_dev)) ||
- 		      ((ol_flags & HINIC3_PKT_TX_TUNNEL_GENEVE) &&
- 				HINIC3_SUPPORT_GENEVE_OFFLOAD(nic_dev)) ||
--		      ((ol_flags & HINIC3_PKT_TX_TUNNEL_IPIP) &&
-+		      (((ol_flags & HINIC3_PKT_TX_TUNNEL_IPIP) == HINIC3_PKT_TX_TUNNEL_IPIP) &&
- 				HINIC3_SUPPORT_IPXIP_OFFLOAD(nic_dev))))
- 			return -EINVAL;
+ 	return follow.head.status;
+ }
++
++bool
++hinic3_cmd_vf_lag(void *hwdev, uint16_t func_id, uint8_t opcode)
++{
++	struct hinic3_vf_lag_cmd vf_lag_info = {0};
++	uint16_t out_size = sizeof(struct hinic3_vf_lag_cmd);
++	int err;
++
++	if (!hwdev || func_id >= MAX_FUNCTION_NUM)
++		return false;
++	vf_lag_info.func_id = func_id;
++	vf_lag_info.opcode = opcode;
++	vf_lag_info.en_flag = 0;
++
++	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_L2NIC,
++				      HINIC3_NIC_CMD_CFG_VF_LAG,
++				      &vf_lag_info, sizeof(vf_lag_info),
++				      &vf_lag_info, &out_size);
++	if (vf_lag_info.msg_head.status == HINIC3_MGMT_CMD_UNSUPPORTED)
++		return false;
++
++	if (err || vf_lag_info.msg_head.status || !out_size) {
++		PMD_DRV_LOG(ERR,
++			    "Get vf_lag failed, err: %d, status: 0x%x, out size: 0x%x",
++			    err, vf_lag_info.msg_head.status, out_size);
++		return false;
++	}
++
++	if (opcode == HINIC3_CMD_OPCODE_GET) {
++		return !!(vf_lag_info.vf_lag_bitmap.vf_bit_map[func_id / VF_LAG_VF_NUM_PER_GROUP] &
++			  RTE_BIT32(func_id % VF_LAG_VF_NUM_PER_GROUP));
++	}
++
++	return false;
++}
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/base/hinic3_nic_cfg.h
+index 6d3eb433bd..6fb56fff4f 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.h
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h
+@@ -17,6 +17,7 @@
+ #define HINIC3_DCB_UP_MAX		0x8
+ 
+ #define HINIC3_MAX_NUM_RQ		256
++#define MAX_FUNCTION_NUM		4096
+ 
+ #define HINIC3_MAX_MTU_SIZE		9600
+ #define HINIC3_MIN_MTU_SIZE		256
+@@ -371,6 +372,18 @@ struct hinic3_port_stats_info {
+ 	uint16_t rsvd1;
+ };
+ 
++#define HINIC3_CMD_MAX_DP_DATA_NUM 50
++struct hinic3_cir_drop {
++	uint64_t rx_discard_phy;
++};
++
++struct hinic3_cmd_get_dp_info_resp {
++	struct mgmt_msg_head msg_head;
++	uint16_t length;
++	uint16_t rsvd;
++	uint64_t value[HINIC3_CMD_MAX_DP_DATA_NUM];
++};
++
+ struct hinic3_vport_stats {
+ 	uint64_t tx_unicast_pkts_vport;
+ 	uint64_t tx_unicast_bytes_vport;
+@@ -390,6 +403,8 @@ struct hinic3_vport_stats {
+ 	uint64_t rx_discard_vport;
+ 	uint64_t tx_err_vport;
+ 	uint64_t rx_err_vport;
++	uint64_t rx_mtu_err_vport;
++	uint64_t rx_out_of_buffer; /* fw: rx_nowqe */
+ };
+ 
+ struct hinic3_cmd_vport_stats {
+@@ -398,7 +413,7 @@ struct hinic3_cmd_vport_stats {
+ 	uint32_t stats_size;
+ 	uint32_t rsvd1;
+ 	struct hinic3_vport_stats stats;
+-	uint64_t rsvd2[6];
++	uint64_t rsvd2[4];
+ };
+ 
+ struct hinic3_phy_port_stats {
+@@ -1540,4 +1555,32 @@ int hinic3_set_feature_to_hw(struct hinic3_hwdev *hwdev, uint64_t *s_feature, ui
+ 
+ int hinic3_set_link_status_follow(struct hinic3_hwdev *hwdev,
+ 				  enum hinic3_link_follow_status status);
++
++/* VF LAG definitions */
++#define VF_LAG_VF_NUM_GROUP_NUM 128
++#define VF_LAG_VF_NUM_PER_GROUP 32
++#define HINIC3_CMD_OPCODE_SET 0
++#define HINIC3_CMD_OPCODE_GET 1
++
++typedef struct hinic3_vf_lag_bitmap_s {
++	uint32_t vf_bit_map[VF_LAG_VF_NUM_GROUP_NUM];
++} hinic3_vf_lag_bitmap;
++
++struct hinic3_vf_lag_cmd {
++	struct mgmt_msg_head msg_head;
++
++	uint16_t func_id;
++	uint8_t opcode; /* 0 -> set, 1 -> get */
++	uint8_t en_flag; /* 0 -> disable, 1 -> enable  */
++	uint8_t bond_active_num;
++	uint8_t bond_active_bitmap;
++	uint8_t mac_sync_flag;
++	uint8_t rsvd;
++	hinic3_vf_lag_bitmap vf_lag_bitmap;
++};
++
++int hinic3_get_cir_drop(void *hwdev, struct hinic3_cir_drop *stats);
++
++bool hinic3_cmd_vf_lag(void *hwdev, uint16_t func_id, uint8_t opcode);
++
+ #endif /* _HINIC3_NIC_CFG_H_ */
+diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
+index cdfb731322..81ec27210a 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.c
++++ b/drivers/net/hinic3/hinic3_ethdev.c
+@@ -80,12 +80,25 @@ struct hinic3_xstats_name_off {
+ 	uint32_t offset;
+ };
+ 
++#define HINIC3_CIR_DROP_STAT(_stat_item)                                   \
++	{                                                                  \
++		.name = #_stat_item,                                       \
++		.offset = offsetof(struct hinic3_cir_drop, _stat_item),    \
++	}
++
+ #define HINIC3_FUNC_STAT(_stat_item)                                       \
+ 	{                                                                  \
+ 		.name = #_stat_item,                                       \
+ 		.offset = offsetof(struct hinic3_vport_stats, _stat_item), \
  	}
-@@ -399,12 +551,27 @@ hinic3_tx_offload_pkt_prepare(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *m
- #endif
- 	/* Support tunnel. */
- 	if ((ol_flags & HINIC3_PKT_TX_TUNNEL_MASK)) {
--		if ((ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM) ||
--		    (ol_flags & HINIC3_PKT_TX_OUTER_IPV6) ||
--		    (ol_flags & HINIC3_PKT_TX_TCP_SEG)) {
-+		/*
-+		 * For IPv6-in-IPv6 packets, ol_flags cannot be used to determine
-+		 * whether the delivered port offload value contains UDP and IP
-+		 * hardware offload flags, so it is impossible to determine how
-+		 * l2_len is populated. Here, the property that l2_len is 0 for
-+		 * IP-in-IP is used to distinguish population modes. If
-+		 * mbuf->l2_len == 0, the upper layer has enabled UDP and IP
-+		 * hardware offload flags; the inner L3 offset is then
-+		 * outer_l2_len + outer_l3_len.
-+		 */
-+		if ((ol_flags & HINIC3_PKT_TX_TUNNEL_IPIP) == HINIC3_PKT_TX_TUNNEL_IPIP) {
-+			if (mbuf->l2_len == 0)
-+				*inner_l3_offset = mbuf->outer_l2_len + mbuf->outer_l3_len;
-+			else
-+				*inner_l3_offset = mbuf->l2_len;
-+		} else if ((ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM) ||
-+			  (ol_flags & HINIC3_PKT_TX_OUTER_UDP_CKSUM) ||
-+			  (ol_flags & HINIC3_PKT_TX_TCP_SEG)) {
- 			/*
- 			 * For this senmatic, l2_len of mbuf means
--			 * len(out_udp + vxlan + in_eth).
-+			 * len(out_udp + vxlan/geneve + in_eth).
- 			 */
- 			*inner_l3_offset = mbuf->l2_len + mbuf->outer_l2_len +
- 					   mbuf->outer_l3_len;
-@@ -423,6 +590,49 @@ hinic3_tx_offload_pkt_prepare(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *m
+ 
++
++static struct hinic3_xstats_name_off hinic3_cir_drop_stats_strings[] = {
++	HINIC3_CIR_DROP_STAT(rx_discard_phy),
++};
++
++#define HINIC3_CIR_DROP_XSTATS_NUM  RTE_DIM(hinic3_cir_drop_stats_strings)
++
+ static const struct hinic3_xstats_name_off hinic3_vport_stats_strings[] = {
+ 	HINIC3_FUNC_STAT(tx_unicast_pkts_vport),
+ 	HINIC3_FUNC_STAT(tx_unicast_bytes_vport),
+@@ -105,6 +118,8 @@ static const struct hinic3_xstats_name_off hinic3_vport_stats_strings[] = {
+ 	HINIC3_FUNC_STAT(rx_discard_vport),
+ 	HINIC3_FUNC_STAT(tx_err_vport),
+ 	HINIC3_FUNC_STAT(rx_err_vport),
++	HINIC3_FUNC_STAT(rx_mtu_err_vport),
++	HINIC3_FUNC_STAT(rx_out_of_buffer),
+ };
+ 
+ #define HINIC3_VPORT_XSTATS_NUM RTE_DIM(hinic3_vport_stats_strings)
+@@ -286,10 +301,12 @@ hinic3_xstats_calc_num(struct hinic3_nic_dev *nic_dev)
+ {
+ 	if (HINIC3_IS_VF(nic_dev->hwdev)) {
+ 		return (HINIC3_VPORT_XSTATS_NUM +
++			HINIC3_CIR_DROP_XSTATS_NUM +
+ 			HINIC3_RXQ_XSTATS_NUM * nic_dev->num_rqs +
+ 			HINIC3_TXQ_XSTATS_NUM * nic_dev->num_sqs);
+ 	} else {
+ 		return (HINIC3_VPORT_XSTATS_NUM + HINIC3_PHYPORT_XSTATS_NUM +
++			HINIC3_CIR_DROP_XSTATS_NUM +
+ 			HINIC3_RXQ_XSTATS_NUM * nic_dev->num_rqs +
+ 			HINIC3_TXQ_XSTATS_NUM * nic_dev->num_sqs);
+ 	}
+@@ -1260,7 +1277,14 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 	txq->wqebb_size = (uint16_t)RTE_BIT32(txq->wqebb_shift);
+ 	txq->tx_free_thresh = tx_free_thresh;
+ 	txq->owner = 1;
+-	txq->cos = nic_dev->default_cos;
++
++	if (!ODD_NUMBER_QUEUE_ID(qid) &&
++		hinic3_cmd_vf_lag(nic_dev->hwdev, hinic3_global_func_id(nic_dev->hwdev),
++				  HINIC3_CMD_OPCODE_GET))
++		txq->cos = SELECT_OTHER_COS_ID(nic_dev->default_cos);
++	else
++		txq->cos = nic_dev->default_cos;
++
+ 	txq->tx_deferred_start = tx_conf->tx_deferred_start;
+ 	txq->tx_wqe_compact_task = HINIC3_SUPPORT_TX_WQE_COMPACT_TASK(nic_dev);
+ 
+@@ -2872,6 +2896,40 @@ hinic3_dev_stats_reset(struct rte_eth_dev *dev)
  	return 0;
  }
  
-+uint16_t
-+hinic3_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++static uint16_t
++get_port_cir_drop(struct hinic3_nic_dev *nic_dev,
++		  struct rte_eth_xstat *xstats, uint32_t base)
 +{
-+	struct hinic3_txq *txq = tx_queue;
-+	struct hinic3_nic_dev *nic_dev = txq->nic_dev;
-+	struct rte_mbuf *mbuf;
-+	uint16_t inner_l3_offset;
-+	int ret;
-+	int i;
++	struct hinic3_cir_drop port_stats;
++	uint16_t i;
++	int err = 0;
 +
-+	for (i = 0; i != nb_pkts; i++) {
-+		mbuf = tx_pkts[i];
++	memset(&port_stats, 0, sizeof(port_stats));
 +
-+		if (!(mbuf->ol_flags & HINIC3_TX_OFFLOAD_MASK))
-+			continue;
++	if (HINIC3_IS_SP620_NIC(nic_dev)) {
++		err = hinic3_get_cir_drop(nic_dev->hwdev, &port_stats);
++		if (err) {
++			PMD_DRV_LOG(ERR, "Failed to get CPB cir drops from fw.");
 +
-+		ret = hinic3_get_inner_l3_offset(nic_dev, mbuf, &inner_l3_offset);
-+		if (unlikely(ret)) {
-+			rte_errno = -ret;
-+			return i;
-+		}
-+
-+		if (!HINIC3_IS_SP230_NIC(nic_dev)) {
-+			/*
-+			 * The pseudo-header checksum is written back into the
-+			 * packet's L3/L4 header, which would corrupt data still
-+			 * referenced by another consumer for a shared or indirect
-+			 * mbuf, so fail those packets instead.
-+			 */
-+			if (unlikely(rte_mbuf_refcnt_read(mbuf) > 1 || RTE_MBUF_CLONED(mbuf))) {
-+				rte_errno = EINVAL;
-+				return i;
++			for (i = 0; i < RTE_DIM(hinic3_cir_drop_stats_strings); i++) {
++				xstats[i].value = 0;
++				xstats[i].id = base + i;
 +			}
 +
-+			/* Process the outer and inner pseudo-header checksums. */
-+			hinic3_calculate_outer_phdr_checksum(mbuf, mbuf->outer_l2_len);
-+			hinic3_calculate_phdr_checksum(mbuf, inner_l3_offset);
++			return RTE_DIM(hinic3_cir_drop_stats_strings);
 +		}
 +	}
 +
-+	return i;
++	for (i = 0; i < RTE_DIM(hinic3_cir_drop_stats_strings); i++) {
++		memcpy(&xstats[i].value,
++		       (const char *)&port_stats + hinic3_cir_drop_stats_strings[i].offset,
++		       sizeof(uint64_t));
++		xstats[i].id = base + i;
++	}
++
++	return RTE_DIM(hinic3_cir_drop_stats_strings);
 +}
 +
- static inline void hinic3_set_vlan_tx_offload(struct hinic3_sq_task *task,
- 					      uint16_t vlan_tag, uint8_t vlan_type)
- {
-@@ -785,7 +995,7 @@ hinic3_get_tx_offload(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
+ /**
+  * Get device extended statistics.
+  *
+@@ -2960,6 +3018,9 @@ hinic3_dev_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
+ 		count++;
  	}
  
- 	wqe_info->offload = 1;
--	err = hinic3_tx_offload_pkt_prepare(nic_dev, mbuf, &inner_l3_offset);
-+	err = hinic3_get_inner_l3_offset(nic_dev, mbuf, &inner_l3_offset);
- 	if (err)
- 		return err;
++	/* Get stats from cir drop stats structure */
++	count += get_port_cir_drop(nic_dev, &xstats[count], count);
++
+ 	if (HINIC3_IS_VF(nic_dev->hwdev))
+ 		return count;
  
-diff --git a/drivers/net/hinic3/hinic3_tx.h b/drivers/net/hinic3/hinic3_tx.h
-index d66b6031c7..da89ab7983 100644
---- a/drivers/net/hinic3/hinic3_tx.h
-+++ b/drivers/net/hinic3/hinic3_tx.h
-@@ -392,6 +392,7 @@ void hinic3_free_txq_mbufs(struct hinic3_txq *txq);
- void hinic3_free_all_txq_mbufs(struct hinic3_nic_dev *nic_dev);
- uint16_t hinic3_xmit_pkts_compact_cqe(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
- uint16_t hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
-+uint16_t hinic3_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
- int hinic3_stop_sq(struct hinic3_txq *txq);
- int hinic3_start_all_sqs(struct rte_eth_dev *eth_dev);
- int hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt);
+@@ -3060,6 +3121,14 @@ hinic3_dev_xstats_get_names(struct rte_eth_dev *dev,
+ 		count++;
+ 	}
+ 
++	/* Get cir drop stats name. */
++	for (i = 0; i < HINIC3_CIR_DROP_XSTATS_NUM; i++) {
++		strlcpy(xstats_names[count].name,
++			hinic3_cir_drop_stats_strings[i].name,
++			sizeof(xstats_names[count].name));
++		count++;
++	}
++
+ 	if (HINIC3_IS_VF(nic_dev->hwdev))
+ 		return count;
+ 
+diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
+index c46fcfcbec..ef444680a5 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.h
++++ b/drivers/net/hinic3/hinic3_ethdev.h
+@@ -162,6 +162,9 @@ struct hinic3_nic_dev {
+ 
+ };
+ 
++#define SELECT_OTHER_COS_ID(cos_id) ((cos_id) ^ 4)
++#define ODD_NUMBER_QUEUE_ID(q_id) ((q_id) & 1)
++
+ #define HINIC3_IS_SP620_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP620)
+ #define HINIC3_IS_SP230_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP230)
+ 
 -- 
 2.33.0
 
