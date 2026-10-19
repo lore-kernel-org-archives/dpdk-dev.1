@@ -1,146 +1,77 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629C3606A31A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 16:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AB3606A31A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 16:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=SjJoQZCA
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=M2wuXe+z
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C251640609;
-	Mon, 19 Oct 2026 18:47:32 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 4309640608
- for <dev@dpdk.org>; Mon, 19 Oct 2026 18:47:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792428451; x=1823964451;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=QVu4ksUEDvlPO7tYIRK6RCnwbwzV3MtPA3HkVNnKU9Q=;
- b=SjJoQZCAxP+9eFArKIM/+yf+6GTi4DeskGCqIgxVvHPSg4H5h7WziaTC
- HK5TdxZyDotVmi1Vl//y6uR7/N9GIgC5qnPRxadui5jHgOIV7zoIrGRAS
- N3rp0GF0zlvsVR8hRddhlv+/qE7egbS7H9CvK6mVsLNqwRdzFTFXxZPM4
- XoG0eKeVSQl/3o7YZAb8uweib6NdSIHNaIVYN9hBiL3rDcluJMUUKr7tt
- xnNRrcNFIuKymV6HDDGBWRFb2aDPxn0tK12KET5JTp3NLDoH0EpFpaXRb
- IyGfbmBwSsDZY75LHBwOkQpLRkeYIrk5Wl1/jI0xtUg1ZBQigHdgeEDYs g==;
-X-CSE-ConnectionGUID: P6SiOLXwSX6C67KxNZfNIQ==
-X-CSE-MsgGUID: trREmM/dT5mK2hvLvl8i0g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1135316"
-X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
-   d="scan'208";a="1135316"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Oct 2026 09:47:30 -0700
-X-CSE-ConnectionGUID: I/hTb/n7TAePIXSzJelA9A==
-X-CSE-MsgGUID: pvkDt8C1SlOeztyMxrJBLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
-   d="scan'208";a="2651397"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Oct 2026 09:47:31 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Mon, 19 Oct 2026 09:47:30 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Mon, 19 Oct 2026 09:47:30 -0700
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.28) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Mon, 19 Oct 2026 09:47:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ymXkAmR+8Dd/Bb26HZLeaf2InPFvHLmeEFHnsejxdmxfe7RDt6tm9pB8nZeo5q+2WJx0I1XLYnNwF7TW6O0CgPQotieHhdagf8+j4mQ47iK6rOkit0+PaOCHwGUs1eRIQ2GCnxYrBLeaUSYgMYQ6ROSbAYzpji3gJ3ePxhKV+cToYH7bI54szp4BDoMYy/fSMZCZA9goN86VPenWhNVHoVJ3ctqk8JCfvduKWen4Vh+/wIM2co0nw54LE4Q2uMTwoTGGYQ3MKuBWzxirfSVvRD75mA9MuO+TR/ZHVbvwxf4Y2QSFsXNqBiTT3WCBTgyOOU1g2pAST3MOflU7sME4/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v+uDy2X5ixhd8DScYxQMo1JSJ2R/cZvYOR4stc+w4EE=;
- b=QpZ6KZQfBHWkNyI7dVvN2hYW9BytauXwvgYZvroib56wvAuu5E8YV/zUNUofhntoA9lNGNUZjSVMJQzaDHoLfHBVo8yzPMNGUOCZpo+V60eY6SUS3RjqcFZQmdfmbL7YyWph/YxSfIq2uIu0RBb0tmXJ4MIZv0/Eros8GnOqOYY9jkS7VfelSSukkSqOgjBsVkyAi2kzPxfkFGwC1uaoc+cwOGvPgc64B4MvObGR3ltmKyXhgiKe7NA+e667wRCO5H5al610DdhBUaPnwD2XY2TDYyusuJVvJsqfNjBzEcpC0YLVxCL086DMds9A2bXMSI2UrjeK79SqrlVJc4ct5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by PH0PR11MB5143.namprd11.prod.outlook.com (2603:10b6:510:3f::15)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Mon, 19 Oct
- 2026 16:47:21 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0522.017; Mon, 19 Oct 2026
- 16:47:21 +0000
-Date: Mon, 19 Oct 2026 17:47:16 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Dawid Wesierski <dawid.wesierski@intel.com>
-CC: <dev@dpdk.org>, <vladimir.medvedkin@intel.com>,
- <anatoly.burakov@intel.com>, <marek.kasiewicz@intel.com>
-Subject: Re: [PATCH 1/3] net/iavf: fix invalid free of queue TC map
-Message-ID: <atZJlMewvnJu781L@bricha3-mobl1.ger.corp.intel.com>
-References: <20261014122419.631288-1-dawid.wesierski@intel.com>
- <20261014122419.631288-2-dawid.wesierski@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20261014122419.631288-2-dawid.wesierski@intel.com>
-X-ClientProxiedBy: DU6P191CA0050.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:53e::13) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+	by mails.dpdk.org (Postfix) with ESMTP id 1F1B440297;
+	Mon, 19 Oct 2026 18:52:47 +0200 (CEST)
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com
+ [209.85.210.172])
+ by mails.dpdk.org (Postfix) with ESMTP id CD2134021E
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 18:52:45 +0200 (CEST)
+Received: by mail-pf1-f172.google.com with SMTP id
+ d2e1a72fcca58-8a058f74a54so540142b3a.1
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 09:52:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792428765;
+ x=1793033565; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=PxisqfGzucQy1nOEAPIAavjsfhJPVyt3pN7Xv0l0aSE=;
+ b=M2wuXe+zK5H5CzUqb5PfFNyww6f4m+3V857m+qkcw9I7h+zM2tDQSRcm0yRvVHqN8c
+ JwLV5mrNbWaMBOpkks3/ERXCB0xdYmQCWuGMrLMVYeLqh2GJ/Xy2DGt/dvDSprLxvuO+
+ ta2cSxbZZImwmOslp7+ljAupNzaIfK5Pg3wYlMtFHJ06c9QcxBGodb9aVfb68jpOXJzS
+ 9vGLJO2XXLXAc5PKzbWXHeocondmjXHyQhiy/yMhpp6rsj132Bxakbvn347SXEAqW43O
+ 2JEUR4OC35/pTxMdAdguSVZK71LGp8XDwXs+VNqBVou5RPCZ/PLPDiqF30OHfvIqB0cY
+ wAMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792428765; x=1793033565;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=PxisqfGzucQy1nOEAPIAavjsfhJPVyt3pN7Xv0l0aSE=;
+ b=2DXk42wPUREZ1DDACFklb14eFAPyVr9uBQIKnAvog5RxuVbNUDzAnC4fzzNrNNPVq6
+ eHuQvYcKzlkxsaN7LiL4Ywd//RJIs7DxhIA2etVQUkgujnIGrO9+8IFr0CtHQgL2Cjq1
+ RchliDcaxfeI4RTAw7aElMtS3heVFQGSH2wtBbzCto5KSFNnYgzfB7bMbom4xAwQvKmN
+ c2iRmSNzZsTJm5mncWTIQSzIpcitLbrodEvL3Rag9Ewp5qYG0H4Ta9SdCAR/pozxKCAU
+ QuL/CLMUbxu6P4geIrd4RVoDKhPbfGU91xH/0ogriM3qg13wBCaIlSewwXzSAGkvuA4w
+ hEIQ==
+X-Gm-Message-State: AFq9FYL2pPZCSjmjZQuqQRcXWLPQfLsVfH6qldTeZYVtJW4WQnKWQR0K
+ hk+n3d9GsgQeDqQcd81TWFB574AO05gHqnrIdc2uO0sI43NqQ3EJyn2M1OzNEXGNFo4=
+X-Gm-Gg: AYBFou1zM4Lu4rpdP2X1UAm/5u9GXehRK/YCAdaToF3UH8sj3MIbwWsRByno3yki2y5
+ 91Qt6A6XnYUwB8K+2uF8YXCombDHXLoh/TGwlwbodn+BWfxbzcxBl1ny58qlOBxypWZUbQncMqh
+ 62Kbk7QNNFR5C8JMiG+4HOi8cZGdzFh6CWpgEZjwk5oPJtOU7d9tc3P27Vk/YCZY8fsLcZ45lOV
+ OKXLrMiNSThng67DfOw8FQ1cKSrrqILkIdbVvblzuhJ4AWlaa/oa/NDtx3NDIqrpMxzyUqMZreg
+ F/k7WDK8KS8i+Frj0FCcIR8kZ44QiyHI1RiwBt4VFnYRAUKL4YckcsHjHBtC8MAKRgwT3swO9xR
+ 2FCkin/YHaCDnhrN9N0c46oIxpJ2Wq9bStj55qwrNHpODiN8c68cgo3ol0iqUlOjQxSrqRmm4AQ
+ WKsFQvotGDjm+Fp4Cswo1SdlqvTTOhL2T8OpvER+qidJZOGhCzCcbl4k0k6+dRohBqYdtZNFdTg
+ Djsgd8JazBkDxOGDvatcRt0SmvcqpuTJvuBwU2eBuKLmRf+xekmokS4HXtQwUGsFQBrTrGBhgUN
+ rByScigeVVzq62HDxh9vP5Y=
+X-Received: by 2002:a05:6a00:4f91:b0:89f:9ea6:1de6 with SMTP id
+ d2e1a72fcca58-8a04c80effcmr6723595b3a.24.1792428764702; 
+ Mon, 19 Oct 2026 09:52:44 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-8a056f3f2absm2378078b3a.25.2026.10.19.09.52.44
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 19 Oct 2026 09:52:44 -0700 (PDT)
+Date: Mon, 19 Oct 2026 09:52:41 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Jiacheng Ye <yejiacheng4@h-partners.com>
+Cc: dev@dpdk.org, Feifei Wang <wangfeifei40@huawei.com>, Thomas Monjalon
+ <thomas@monjalon.net>, Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: Re: [PATCH v3 00/27] net/hinic3: add PMD features and fixes
+Message-ID: <20261019095241.54d27257@phoenix.local>
+In-Reply-To: <20261019151930.1572-1-yejiacheng4@h-partners.com>
+References: <20261014150923.838-1-yejiacheng4@h-partners.com>
+ <20261019151930.1572-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|PH0PR11MB5143:EE_
-X-MS-Office365-Filtering-Correlation-Id: 14e246e2-3f3d-40b9-d609-08df2e00a4f2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|376014|1800799024|366016|18002099003|10067099003|22082099003|56012099006|11063799006|4143699003|261009223027099003;
-X-Microsoft-Antispam-Message-Info: rtCEbFDXI6uUDY2mRpQ2Rfm4PVpHgYD5U8/vcn2Su3/kn6nbeRSZfSacQrumdfL2uDEbqXkmWuXiq82yWPnkkxRgbc0X5o9otZ85T1hrekhj3FqaFrD4f7BRm6Nk2fl62+XabmGYHk3RAeruOBnt3NXauIyJ5CNjQN3GpIZGHvtbX8HGw9FtxeJ0UvVg2bf6Tu2FiXi1Z/DMptLlBPaup5zSEfbwh7OPeLe3vtkDAc4QXMSKocIHDxBekHkyd0rTG53C63v0vA6lfrfa5BtKTs28J2JDlXTkPiHQmkBLgk0lkwY6SGkkKx2Ci02woq4gIqY5WW/XFjlXXZgqbAvxawcanRl7TzegykxWzoxOLs9aRtyYfIGBXFd7m28efFv/NFstDQfECVMzSmPtPUpsVbauRHrs7i6JU35Fmd9eCZ6lYBATdoCwyTKsIAMY0vn0VD51xHAv1WvWqw9GSUlkD4pgHiVb+d0dx8OG9AuZbfnczAlZrVzyv3izZkh7srCcPA8EgaRHIo/n9Ux0rWDWRROWi40sb/nmu42+0NXsYY0LXakd8X8flX3hQZFQNTKaKIexdEjiK3emvNPsFLGigg4H4/azKSH/qw9pRzypU3lXEUMlaHUV6ImBYlOQURaQPwpzSp97SXv3y4OAYsNGo3+owJ1j8E8F1HK5zmwl+Us=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(18002099003)(10067099003)(22082099003)(56012099006)(11063799006)(4143699003)(261009223027099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kQbcLwbV2/0Hb/BRu9hDDblnPv/zuXwt8hsL87QCjFVOhtt+c1iEffX+630z?=
- =?us-ascii?Q?fKp3o1dSXntipynx4CxEz/JBIWTeyLl13oSPfbPC/z90xxaXgZSOSvgFTDBc?=
- =?us-ascii?Q?g63+e+RyRg/Kctk9y5KXDOIOulU4sxllhSzYcUuwLJLBwmNIxSylKIlRCYqZ?=
- =?us-ascii?Q?duartIfZ7QoXnqMo89h65f3dvV4S2P+jjo5XgSrBlf9GgWjS0Vg1cZ5G0qp2?=
- =?us-ascii?Q?Wha8q+Dj3fLNie05dbOZfnYo23JdeCDv2k4nhMb/iNBfvzmsNn/CGehCFpiD?=
- =?us-ascii?Q?A8wXPrSQgXl3EBAPqR04vjiiqYwPhBhXdKQK+hAIDIoo6jywJXov9dvsmzoU?=
- =?us-ascii?Q?6pkN1vgCzU5XRStEpt8TFysATjAZ4GCebZ+mSBE7BKBGZ0omhN9o52hIFW4A?=
- =?us-ascii?Q?45cWedW6EzNMCSCIpvN3ICnBzCu9EvL/f3MDYy+V7B5pMnUgn5+Pku3mR35C?=
- =?us-ascii?Q?Hv8MDbrs7wDy1knVgoLvc7K83LKN7ic3dJpUrThDAIJ//+qCAYFBstRL83i/?=
- =?us-ascii?Q?zJKTB0sUpUc9Zn10KriMa0cBDyMvn7zoXHHHjfbjIXOzm6084rgPSKjIGlvI?=
- =?us-ascii?Q?esB2iMrdqBxkCbCduXhXJmI11tRAMrHBBX46hb1xjgAR5mXFRAk+t+aQmY7/?=
- =?us-ascii?Q?wjxOQi0Tljb4gjANNG4wPWKpJRIzWjbMN5BkCrppCexfpvdxlGVuxdD7/Eyi?=
- =?us-ascii?Q?47WLzdonqq4AJgxiWNR9MD7bIydfld78DmQKnjEa49H5AFz9I+cV4XVP7li6?=
- =?us-ascii?Q?V0dLZT8QoSw6aBy5BzubTphrbpe5Vu2jzi6dNACqYG1Jtx/4ihnUp5qYx3nk?=
- =?us-ascii?Q?4zjpVHj+jTFBvhVf9/Bn80RnOMn1wo+b6ieR8q/aZcXs5o4BRCKVkbccCE7e?=
- =?us-ascii?Q?7U4dIpqQwX1Bbh0jXbXo9wDkskVS03CPrj2BE8HJ3Tyq7v4A5PlTNIJ0vhoV?=
- =?us-ascii?Q?Z+NJGdKzze84AzSCzvDYZipyavrx3J9svXfu53nRAWqbMmeTOUsY8oY4a8Ci?=
- =?us-ascii?Q?G7WZnCD1WaX0jMiPsLWzh7tRAvO7tRG6RDUniMRsQ7O9h2e+HKbBzTT/tVp4?=
- =?us-ascii?Q?2MctH8MNjUw3kZ2L7NoCYTCCRzKPqB/KwHubOHtnioDCQVuljEIOhwHm++LC?=
- =?us-ascii?Q?TgSM6D/w3koV3BgyAyE7Y0xFsaT4gx2xRkqwlQjCA5hpWQrPZmYPNE5cu/6t?=
- =?us-ascii?Q?5SLOEc6pnGjkgYdlwXYHKVLXGUTlICDEkLHcQhl8UNTIECIJNDa9PQ/KlDgx?=
- =?us-ascii?Q?b1MU+3gLgZ1Prfn9lRRI/BDT0mUpxGx0s2H6sVu733vCBSHrFCjSTOQZe6G7?=
- =?us-ascii?Q?SdtYYWScFzjTBMKCVM00tnYuyCr2OJfWk1zZ9QuCkQqvBu6JQmNCxRbmBek7?=
- =?us-ascii?Q?2kQipH327/EaJSPPAGSJ0nd0pBmuS5cQwGIKWC1IwLw/qBinGQwTjvHLrntH?=
- =?us-ascii?Q?ramlx7KStLuuWhHNPn7uQiAHnAMe5J0w6ncRD3aWzVJIaELGMruyh2GS0x7C?=
- =?us-ascii?Q?MLEq1sWOEmo1hCi9q+50wuYmbMKylXvoXQwa0P6rCZ5fT1moZfyB16BDK7Xf?=
- =?us-ascii?Q?w9QfRXOhRC9a6akN6T36SBG0EsU1KriXq9Rl67i+uaA/BP13SjK9zRkWlEBZ?=
- =?us-ascii?Q?RDn+rCgl5bFK5LXicmic/4Mv8Dth8LGO3SgHMg7K+vY/kZKfv+0anplmt1Q8?=
- =?us-ascii?Q?SryDutUnJXt4Wgc9Dhun9/CPb/JMkiXTFc9DfelAXL7o0GeE3oBNb43FCIBy?=
- =?us-ascii?Q?rcIik8SuxBiI+4XVU641hzuNjHFPWts=3D?=
-X-Exchange-RoutingPolicyChecked: V4HGSce5BYJVqKLhY5MU7UtzZ7tFawYMxgACV+cT0PxKQcjgh92RyS0SSyYf4rxRzvWtvbSrHbzwgC2evH/VsI3DwqilcY4YWaNEHf47E9jSdJsOOscmCxIbob27no3MU+ItyK8+Z+DIHpBxbJRCk80tBSEtqwPqukEP1E2DM9s3D7AuXwc/Zp5zm4ZSqy3AxEfBh+WH/6p4IQZYc8MG8YqDeezBr+AXklpivvrikmzodosojtH2XL2QyeAN5mO4Fpuzd65LTqkDLEDIOe8f7LgMHq/TAWT/w2DGyubLkWUDygg426XsW37Fc71mKHrIbMNehPCyTeDHsRsqFcztvw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14e246e2-3f3d-40b9-d609-08df2e00a4f2
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2026 16:47:21.5371 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BmqkdXYKPd2bKFCs/+4Yx0OlCZ9tcZt9iltWsYKTMFNbVs3S2doaAQQw4EuEKdMzAx3t9CLFqQdd1vImC0x9OFvoTkzOseZ+A4UZAMw3JVI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5143
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -150,48 +81,161 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	RCVD_IN_DNSWL_BLOCKED,RCVD_IN_ZEN_BLOCKED_OPENDNS,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Wed, Oct 14, 2026 at 12:24:16PM +0000, Dawid Wesierski wrote:
-> iavf_hierarchy_commit() allocates the queue TC map with calloc(), and
-> it frees the previous map with free(old_qtc_map) after a successful
-> commit. A later change added rte_free(vf->qtc_map) in front of that
-> free(), because it was written for a tree that still leaked the map.
+On Mon, 19 Oct 2026 23:19:02 +0800
+Jiacheng Ye <yejiacheng4@h-partners.com> wrote:
+
+> This series fixes offload capability advertisement, cmdq/compact CQE
+> configuration, and several defects found during review, and adds NIC
+> type identification, FEC, CIR drop statistics, VF LAG/link state, COS
+> mask/map, mbox recording, RSS hash configuration, compact CQE Rx/Tx
+> paths, TSO segment expansion, Tx burst mode reporting, queue statistics,
+> pseudo-header checksum, per-tile cmdq ops, SP560 NIC support, and device
+> kvargs tunables.
 > 
-> After the first commit, rte_free() gets a pointer from the libc
-> heap, and free() then releases the same pointer a second time.
-> rte_free() reads a malloc_elem header in the bytes in front of the
-> pointer. It usually logs "Invalid memory" and returns, but the result
-> depends on the contents of the libc heap.
-> 
-> Remove the rte_free() call. free(old_qtc_map) releases the old map.
-> 
-> Fixes: f6e33f09f766 ("net/iavf: disable runtime queue setup when rate limiting")
-> 
-> Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
-> ---
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
->  drivers/net/intel/iavf/iavf_tm.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/net/intel/iavf/iavf_tm.c b/drivers/net/intel/iavf/iavf_tm.c
-> index fc84bf7e6b..603da09bb5 100644
-> --- a/drivers/net/intel/iavf/iavf_tm.c
-> +++ b/drivers/net/intel/iavf/iavf_tm.c
-> @@ -913,7 +913,6 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
->  		goto fail_clear;
->  
->  	/* replace the previously committed mapping, if any */
-> -	rte_free(vf->qtc_map);
->  	vf->qtc_map = qtc_map;
->  	free(old_qtc_map);
->  	if (adapter->stopped == 1)
-> -- 
-> 2.43.0
-> 
+> v3:
+> - Move the ethertype-flow TCAM index leak fix out of the flow-refactor
+>   patch into its own patch with a Fixes tag and a stable Cc tag.
+> - Set burst function pointers and tx_pkt_prepare for both primary and
+>   secondary processes, and select the Tx path on its own feature bit.
+> - Zero the RQ/SQ context buffers and honour dp_intr_en for the STN CEQ
+>   attribute in compact CQE mode.
+> - Return the number of Tx packets consumed instead of the doorbell
+>   count, and guard the Tx prefetch against overreading the array.
+> - Validate device kvargs and reject values above the hardware field
+>   width; document the real defaults and units.
+> - Reject mismatched queue depths and reset saved depths in
+>   dev_configure(), and size the TSO copy pool per port.
+> - Report FEC capabilities per supported speed regardless of link state.
+> - Route the private dump through fprintf() on the provided FILE*.
+> - Derive the pseudo-header L4 protocol from the offload flags and fail
+>   shared or indirect mbufs; add Fixes and stable Cc tags.
+> - Drop stable Cc tags where the Fixes target is not in an LTS release
+>   and remove dead code and unused definitions.
+
+Still lots of AI feedback, biggest issue is the bisect break.
+You should run semi-automated incremental builds on any large
+patch series like this. CI does that.
+
+
+Subject: Re: [PATCH 00/27] net/hinic3: fixes and new features
+
+This is v3 of the series; please mark it as such in the subject, and
+put a changelog in the cover letter so reviewers can see what changed.
+
+Applies to main (26.11-rc1). Tip builds with -Dwerror=true. Most of
+the v2 comments are addressed: Tx burst return value, prefetch, kvargs
+error and bounds, secondary process burst setup, RQ/SQ context memset,
+queue depth checks, per-port copy pool, priv_dump to FILE, TCAM leak
+split out, Fixes/Cc tags.
+
+
+Errors
+======
+
+Series: bisect broken at 20 through 26.
+
+[PATCH 20/27] sets tx_pkt_prepare = hinic3_prep_pkts, which is not
+defined until 27/27, and uses hinic3_xmit_pkts_compact_cqe, which
+arrives in 22/27.
+[PATCH 21/27] uses nic_dev->txq_depth, which is added in 23/27.
+
+Every commit must build. Move 27/27 ahead of 20 (it is a Fixes: patch
+anyway), select only hinic3_xmit_pkts in 20 and add the compact
+choice in 22, and add txq_depth in 21 or move the pool sizing to 23.
+
+
+[PATCH 08/27] net/hinic3: add SP230 Rx queue interrupt handling
+
+On SP230 hinic3_init_rxq_intr() now runs the full Rx interrupt setup
+even when intr_conf.rxq is 0. That path requires
+rte_intr_cap_multiple(), so on igb_uio or uio_pci_generic dev_start
+fails with -ENOTSUP for an application that never asked for
+interrupts. It also creates eventfds and sets rxq->dp_intr_en = 1,
+so the RQ context is programmed with the CEQ interrupt enabled.
+
+Split the SP230 masking out of the interrupt setup:
+
+	if (!dev->data->dev_conf.intr_conf.rxq) {
+		if (HINIC3_IS_SP230_NIC(nic_dev))
+			return hinic3_sp230_mask_rxq_msix(dev);
+		return 0;
+	}
+
+where the helper only programs coalescing/auto-mask on vectors
+i + HINIC3_RX_VEC_START, with no efd, no intr_vec and no dp_intr_en.
+
+
+[PATCH 21/27] net/hinic3: expand TSO from 127 to 255 segments
+
+hinic3_copy_tx_mbuf_multi() always copies from the start of the source
+segment:
+
+	rte_memcpy((uint8_t *)cur_mbuf->buf_addr + copy_offset,
+		   (uint8_t *)mbuf->buf_addr + mbuf->data_off,
+		   copy_size);
+
+When a source segment spans two copy mbufs, the second copy repeats
+the first bytes of that segment, and the packet goes out corrupted.
+This was also in v2; I missed it there.
+
+	uint32_t src_off = mbuf->data_len - remaining_len;
+
+	rte_memcpy((uint8_t *)cur_mbuf->buf_addr + copy_offset,
+		   rte_pktmbuf_mtod_offset(mbuf, uint8_t *, src_off),
+		   copy_size);
+
+
+Warnings
+========
+
+[PATCH 18/27] net/hinic3: add SP560 NIC type identification and
+  handling
+
+The STN op still forces EN=1 (interrupt disabled) with SW compact CQE,
+and the commit marks Rx interrupt as "P". An application that sets
+intr_conf.rxq still gets success from configure and start, and then
+never gets an interrupt. Reject it:
+
+	if (dev->data->dev_conf.intr_conf.rxq &&
+	    nic_dev->config.rx_cqe_compact_en &&
+	    HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev))
+		return -ENOTSUP;
+
+
+[PATCH 21/27] net/hinic3: expand TSO from 127 to 255 segments
+
+The copy pool is now num_sqs * txq_depth 4 KB mbufs, created at every
+dev_start. With 16 queues of 4096 descriptors that is about 280 MB of
+hugepage memory per port, for a slow path that only fires on packets
+with too many segments. Cap it, for example:
+
+	depth = nic_dev->num_sqs * RTE_MIN(nic_dev->txq_depth, 256u);
+
+
+[PATCH 27/27] net/hinic3: add pseudo-header checksum calculation
+
+For IPv6 the L4 offset still comes from walking extension headers,
+while the descriptor (hinic3_get_tx_offload) uses mbuf->l3_len. When
+the two disagree, software writes the checksum in one place and the
+hardware computes it at another. mbuf->l3_len is the application's
+contract and includes extension headers; use it, and drop
+hinic3_get_ipv6_len_proto().
+
+
+Info
+====
+
+[PATCH 27/27] "l4_proto = (uint32_t)proto << 24" is only correct on
+little endian. The old rte_cpu_to_be_16(proto) was fine, since the
+ones' complement sum ignores word position. Use
+rte_cpu_to_be_32(proto).
+
+[PATCH 27/27] Has Cc: stable, but it depends on NIC type
+identification from 07/27. Put it right after 07, so the stable
+backport is the pair.
