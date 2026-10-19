@@ -1,69 +1,69 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B4C606A33B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 20:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25058606A31B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 20:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=cGmvhbIT
+	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=QeEbOCfX
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 79CDC40297;
-	Mon, 19 Oct 2026 22:14:08 +0200 (CEST)
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com
- [209.85.219.48]) by mails.dpdk.org (Postfix) with ESMTP id F32014021E
- for <dev@dpdk.org>; Mon, 19 Oct 2026 22:14:06 +0200 (CEST)
-Received: by mail-qv1-f48.google.com with SMTP id
- 6a1803df08f44-91986c5cb75so27025416d6.0
- for <dev@dpdk.org>; Mon, 19 Oct 2026 13:14:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 661E740297;
+	Mon, 19 Oct 2026 22:22:58 +0200 (CEST)
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com
+ [209.85.219.49]) by mails.dpdk.org (Postfix) with ESMTP id 5CCD74021E
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 22:22:57 +0200 (CEST)
+Received: by mail-qv1-f49.google.com with SMTP id
+ 6a1803df08f44-91986c5cb75so27113206d6.0
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 13:22:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1792440846; x=1793045646; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1792441376; x=1793046176; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=LwSXFnVn1xsUDGzaoQCUMD4DLSEfEdzsG51XQ2l3ncQ=;
- b=cGmvhbITGDkDCTY8bT/VJnaOuUfgjJS0o1VRA83XqVXO2Sq1CPprq4B73KKRe1nRJN
- cYF1A0WG2WBVNZSLy7pPNbFolEsjsXIXLVRcyMZ0Hlizh4buv340DtX9tvqEOT90LO01
- HIyKJUcE7zymk4LH27OxBbuxKMuFiskbG00yw=
+ bh=h/STup6nH7hwtN6j5TOswizARK6iStHGZ54sQzSt+2Q=;
+ b=QeEbOCfXHY6n+8N8C9tYSt1w90WfCFE+dsdiLORtpI+VooRk4BV+3TEC2QAL4IcKDH
+ 38yxXZfo658QlDVCeGPlzSamj2m+KQyiwe+wn9zcGqjWF0ZorC1hWCHsJFOf9FvImXlL
+ NF5b9QEhSZoKgWndynwUE5w1w7XM/Q/mTxP/M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792440846; x=1793045646;
+ d=1e100.net; s=20260707; t=1792441376; x=1793046176;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=LwSXFnVn1xsUDGzaoQCUMD4DLSEfEdzsG51XQ2l3ncQ=;
- b=chhcG85WdDfZGV8axzoe/6deiwsv4nW1JEYaZ55dBQyjiTgYnO/UWH27jj5CCOr0UC
- nYBDg3pkxIL7uG4sms3ooIJpXh4zXPF6JXpgdtLF8PCaDRV9pmDK40goKWnRQQgkKtM/
- MY0IFxsYYlB4PC2LhVeUgcwD4IpakARBXUro12VRcnOiRTlMx4QI7riuNM0jAjrz8wNk
- BZ+EXCY+OqKDiKFcoVreNapYfUjaH1OtLEH6cra1UnSsQlfYOGSZi1nmC+z9s/lqWzUr
- QXBY4dtQ6qEQa5LpDoJQ+/mtzhbRtgXKMfaYw8LlozLKKxMSAj51HoD6R2kvK2R9NESD
- GlZQ==
-X-Gm-Message-State: AFq9FYIgrmL6UDZAAYtpszpOPIaOIjchQ2h4dkD/Rbs1BVwG86QUJw4p
- WyQZ3F5+fJcL2OGqSMaBAekgCGqufmrku9lab/XsB0ak3zmpbk6nVmcRZRP254H3KzBpyOUVg4Q
- 30kU28orSK5jIIh+dLomj0zMqKq13/pzXZg8boTzB2qIVjQoLaVdz8ND7pSA2ZThsnLChqXjd1z
- GHvlUrYF21KMU3qptQlGAsxsp2Wf0=
-X-Gm-Gg: AYBFou0TBm2QNYXiROd0gO9P3hC88NloGWBTvtheFKSHEzHN1ODKotKbMbiZdUlindZ
- 75OokGv3Rb25DA8OwwppH3yvyFkJ9NVRRkaJunJ5ZNReLprfztuJcXCqUsGM+lqDXX6NNkTGBmk
- Kx5WezTBzjoaJqJMSth/53CYdH2vEXvDB+QSi2BzFoVDGs4sWPXJ9N3hKdxPVbWfBDaxrWnR6jQ
- Yh93W37nGAMmwPgG9iAHIVTtGvFcVETJO5S3licvY1wR+dLFCor6O/KPRGYtZJVvgkUyiLNcce6
- axiXQ1vJRjVgCgXuas2/y15Oc+tuESH1TLkpwkn/tRoz1wMkLYDjxWmrN1GNIdQtaOrBXWgr5Z5
- 9d82X6M+4G+RshPct3XX9UG/tR0kJqYwEkFuaX1ioT9LbEi2w/qknGS/bJmnvs8sBQBcXpeGFRl
- lLXshg9674tMI8+gGAiLIV48GqL33E1J+GhXQXv/STIIDQqEViEmprGnaEn/0Gyd+jwDvk5xDQl
- TzKsZE20GNCeGLUaq6I
-X-Received: by 2002:a05:620a:4042:b0:93e:fa30:f1ef with SMTP id
- af79cd13be357-93f29dc4771mr1525120585a.67.1792440845851; 
- Mon, 19 Oct 2026 13:14:05 -0700 (PDT)
+ bh=h/STup6nH7hwtN6j5TOswizARK6iStHGZ54sQzSt+2Q=;
+ b=AtmEgfiyxpx8TK9taNchJMr0mPOPvFZr50IjagtO/i0YLnU6ihFxYs+ohxbkvuHJKJ
+ F43wQcUdRRe9omhR3q+BREMuEi0cw0b5VHsTtQeamtmlxmFcb1XLtEbDs3JaWPVX4eJG
+ lyNaPzzOrnW43ELd8y8moQd55q8kUMlcKY3zXjSiGKrVHyiqyPkauO23BpE5jjoRzsfi
+ 6bF9zkfwbNKcpfpKv0wxyvct6HRjtY9ymQbsz40A9aTY/ez/O1hZiX9kiv+p37IuRTQ3
+ Wgty5pHrXnE5vKsZrdm35eN5aUzOxSQSm/HS3QweCUYNj39hFjqRESuxioHyZczT2O/m
+ vUNw==
+X-Gm-Message-State: AFq9FYJgxqhR9pXGLrzOMhIevx1hjAdAh6oC+yS6p5QunTzI1NuMTqvq
+ 4eK64FQx7N6FTPQ8t9o0yC2xhSxIIy6Io9iRDBrz69sMlhU8QlqjjOMgg3SxLy59ZO1ZH/fY21a
+ oORoZvf5p0o+vD8CxY7nFg592WymXiou0U8JdBamaxlAOK6ni3T/LYFslYzYyufhkyuegFpXlBM
+ xWQ1qSEXV7R2Dbj1PMUR0lHUZZLPk=
+X-Gm-Gg: AYBFou2JmeyaYymqaN9vvcIIA31nhiW3hGe5kOdnJxZoegCOH5S1ADWhAMC+4QLKEkU
+ rLliYOsOLN8uBCuPiXzKY7rQZ3FhQ8ootUSHre7Sgcx2j9PYFcyyFeWcpZ5acnGAhIVfo5nVnCp
+ jiWGeTZGGt+EKg5ws3ZZ9eC8tzluYcA+q3fcnd8IPepDjzqs8dGetSiuHfvRQWP+EYy0oQR58QN
+ bSc+rc5qwvE+xF60/YH33SdH9hgSICaVCUicgIJIxjhYCVyXCkBEMNQ2lGOfwFudpT1YJi7AJZ6
+ 8yb/ryQLEv2bgzBUJAzadMyAN8meh+mis+FIQSzHRZBTuFS4ZB2xiOcMxoTSuGIeKwFSNR6uWr6
+ 7L3sCS3vp3CBqvYmG1cSyEqkLp+O/VgIqgFjMRjELZx0g2wyAs37frjKfoz3lQhooe16iewkgHi
+ PKYxcotBUJs68ajUcOcb3DNbNd5uCCKmykQ1P7/4oQVCSVFRHOC6/m8fNCvUKgHxiUKq462Y4FH
+ nnWQ6ns2akB5RgSqwY/
+X-Received: by 2002:a05:6214:6342:b0:91b:f655:4e54 with SMTP id
+ 6a1803df08f44-91bf6555006mr52612706d6.52.1792441376565; 
+ Mon, 19 Oct 2026 13:22:56 -0700 (PDT)
 Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91c040e2ddesm5147486d6.36.2026.10.19.13.14.02
+ 6a1803df08f44-91c040b4915sm5510666d6.26.2026.10.19.13.22.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 19 Oct 2026 13:14:02 -0700 (PDT)
+ Mon, 19 Oct 2026 13:22:55 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: dev@dpdk.org, luca.vizzarro@arm.com, patrickrobb1997@gmail.com,
  dladd@iol.unh.edu
 Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu,
  Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v2] dts: remove crypto test type
-Date: Mon, 19 Oct 2026 16:13:42 -0400
-Message-ID: <20261019201342.903235-1-abailey@iol.unh.edu>
+Subject: [PATCH v4 1/3] dts: add directory for test resources
+Date: Mon, 19 Oct 2026 16:22:50 -0400
+Message-ID: <20261019202252.907692-1-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260806164505.642928-1-abailey@iol.unh.edu>
-References: <20260806164505.642928-1-abailey@iol.unh.edu>
+In-Reply-To: <20260514172553.191331-1-abailey@iol.unh.edu>
+References: <20260514172553.191331-1-abailey@iol.unh.edu>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -83,432 +83,91 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-When crypto tests were brought over to new DTS. The test type crypto was
-added in order to run without the overhead of a TG. In the last release,
-the support for no link topology was added to new DTS. When DTS is ran
-in this mode, no TG is made so there is no longer a need for the crypto
-test type. Crypto tests have been relabeled as performance tests and can
-be run in any topology. Running crypto tests in no link mode revealed
-some issues with writing NIC info when there no ports present, in this
-case an empty json file is written as a placeholder.
+The crypto verify test suite being added in this series requires an
+input vector file. The two vector files added in this commit are
+relocated from old DTS to new DTS. This will allow the crypto verify
+test suite to access the required vector files for verify testing.
 
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
-v2:
- * Rebased on main.
+ dts/api/cryptodev/__init__.py        |  2 +-
+ dts/test_resources/test_aes_cbc.data | 27 +++++++++++++++++++++++++++
+ dts/test_resources/test_aes_gcm.data | 19 +++++++++++++++++++
+ 3 files changed, 47 insertions(+), 1 deletion(-)
+ create mode 100644 dts/test_resources/test_aes_cbc.data
+ create mode 100644 dts/test_resources/test_aes_gcm.data
 
- dts/api/test_suite.py                       |  6 ----
- dts/framework/config/test_run.py            |  3 --
- dts/framework/test_run.py                   | 10 +++---
- dts/framework/testbed_model/topology.py     |  7 ++++-
- dts/tests/TestSuite_cryptodev_latency.py    | 32 +++++++++----------
- dts/tests/TestSuite_cryptodev_throughput.py | 34 ++++++++++-----------
- 6 files changed, 44 insertions(+), 48 deletions(-)
-
-diff --git a/dts/api/test_suite.py b/dts/api/test_suite.py
-index c30d447135..a9d502f316 100644
---- a/dts/api/test_suite.py
-+++ b/dts/api/test_suite.py
-@@ -173,8 +173,6 @@ def filter_test_cases(
-                     perf_test_cases.add(test_case)
-                 case TestCaseType.FUNCTIONAL:
-                     func_test_cases.add(test_case)
--                case TestCaseType.CRYPTO:
--                    pass
-
-         if test_case_sublist_copy:
-             raise ConfigurationError(
-@@ -280,8 +278,6 @@ class TestCaseType(Enum):
-     FUNCTIONAL = auto()
-     #:
-     PERFORMANCE = auto()
--    #:
--    CRYPTO = auto()
-
-
- class TestCase(TestProtocol, Protocol[TestSuiteMethodType]):
-@@ -334,8 +330,6 @@ def _decorator(func: TestSuiteMethodType) -> type[TestCase]:
- func_test: Callable[[Any], type["TestCase"]] = TestCase.make_decorator(TestCaseType.FUNCTIONAL)
- #: The decorator for performance test cases.
- perf_test: Callable[[Any], type["TestCase"]] = TestCase.make_decorator(TestCaseType.PERFORMANCE)
--#: The decorator for cryptography test cases.
--crypto_test: Callable[[Any], type["TestCase"]] = TestCase.make_decorator(TestCaseType.CRYPTO)
-
-
- @dataclass
-diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
-index 97c9a7417a..975451d925 100644
---- a/dts/framework/config/test_run.py
-+++ b/dts/framework/config/test_run.py
-@@ -483,8 +483,6 @@ class TestRunConfiguration(FrozenModel):
-     perf: bool
-     #: Whether to run functional tests.
-     func: bool
--    #: Whether to run cryptography tests.
--    crypto: bool
-     #: Whether to run the testing with virtual functions instead of physical functions
-     use_virtual_functions: bool
-     #: Whether to skip smoke tests.
-@@ -524,7 +522,6 @@ def filter_tests(
-                 for tt in t.test_cases
-                 if (tt.test_type is TestCaseType.FUNCTIONAL and self.func)
-                 or (tt.test_type is TestCaseType.PERFORMANCE and self.perf)
--                or (tt.test_type is TestCaseType.CRYPTO and self.crypto)
-             )
-             # Only include test suites that have at least one test case after filtering
-             if test_cases:
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index 210ff25af7..5faa006748 100644
---- a/dts/framework/test_run.py
-+++ b/dts/framework/test_run.py
-@@ -360,17 +360,17 @@ def next(self) -> State | None:
-         ctx.dpdk.setup()
-         ctx.topology.setup()
-
--        testrun_nic_info: list[dict[str, str]] = (
--            self.test_run.ctx.sut_node.main_session.get_nic_info()
--        )
-+        # Only collect NIC info if network ports exist.
-+        testrun_nic_info: list[dict[str, str]] = []
-+        if ctx.topology.sut_ports:
-+            testrun_nic_info = self.test_run.ctx.sut_node.main_session.get_nic_info()
-         with open(f"{SETTINGS.output_dir}/dut_info.json", "w") as file:
-             json.dump(testrun_nic_info, file, indent=3)
--
-         self.logger.info(f"DUT NIC info written to: {SETTINGS.output_dir}/dut_info.json")
-
-         if test_run.config.use_virtual_functions:
-             ctx.topology.instantiate_vf_ports()
--        if ctx.sut_node.cryptodevs and test_run.config.crypto:
-+        if ctx.sut_node.cryptodevs and test_run.config.perf:
-             ctx.topology.instantiate_crypto_ports()
-             ctx.topology.bind_cryptodevs("dpdk")
-
-diff --git a/dts/framework/testbed_model/topology.py b/dts/framework/testbed_model/topology.py
-index 25bcba4c12..2f85967528 100644
---- a/dts/framework/testbed_model/topology.py
-+++ b/dts/framework/testbed_model/topology.py
-@@ -142,9 +142,14 @@ def setup(self) -> None:
-
-         Binds all the ports to the right kernel driver to retrieve MAC addresses and logical names.
+diff --git a/dts/api/cryptodev/__init__.py b/dts/api/cryptodev/__init__.py
+index 496079c2af..a3ad59f7f0 100644
+--- a/dts/api/cryptodev/__init__.py
++++ b/dts/api/cryptodev/__init__.py
+@@ -76,7 +76,7 @@ def vector_directory(self) -> PurePath:
+         Returns:
+             The path to the cryptodev vector files.
          """
-+        from framework.context import get_ctx
+-        return get_ctx().dpdk_build.remote_dpdk_tree_path.joinpath("app/test-crypto-perf/data/")
++        return get_ctx().dpdk_build.remote_dpdk_tree_path.joinpath("dts/test_resources/")
+ 
+     def run_app(self, num_vfs: int = 1) -> list[CryptodevResults]:
+         """Run the cryptodev application with the given app parameters.
+diff --git a/dts/test_resources/test_aes_cbc.data b/dts/test_resources/test_aes_cbc.data
+new file mode 100644
+index 0000000000..ac7a89942f
+--- /dev/null
++++ b/dts/test_resources/test_aes_cbc.data
+@@ -0,0 +1,27 @@
++# Global Section
++plaintext =
++0xff, 0xca, 0xfb, 0xf1, 0x38, 0x20, 0x2f, 0x7b, 0x24, 0x98, 0x26, 0x7d, 0x1d, 0x9f, 0xb3, 0x93,
++0xd9, 0xef, 0xbd, 0xad, 0x4e, 0x40, 0xbd, 0x60, 0xe9, 0x48, 0x59, 0x90, 0x67, 0xd7, 0x2b, 0x7b
++ciphertext =
++0x77, 0xF9, 0xF7, 0x7A, 0xA3, 0xCB, 0x68, 0x1A, 0x11, 0x70, 0xD8, 0x7A, 0xB6, 0xE2, 0x37, 0x7E,
++0xD1, 0x57, 0x1C, 0x8E, 0x85, 0xD8, 0x08, 0xBF, 0x57, 0x1F, 0x21, 0x6C, 0xAD, 0xAD, 0x47, 0x1E
++cipher_key =
++0xE4, 0x23, 0x33, 0x8A, 0x35, 0x64, 0x61, 0xE2, 0x49, 0x03, 0xDD, 0xC6, 0xB8, 0xCA, 0x55, 0x7A,
++0xd0, 0xe7, 0x4b, 0xfb, 0x5d, 0xe5, 0x0c, 0xe7, 0x6f, 0x21, 0xb5, 0x52, 0x2a, 0xbb, 0xc7, 0xf7
++auth_key =
++0xaf, 0x96, 0x42, 0xf1, 0x8c, 0x50, 0xdc, 0x67, 0x1a, 0x43, 0x47, 0x62, 0xc7, 0x04, 0xab, 0x05,
++0xf5, 0x0c, 0xe7, 0xa2, 0xa6, 0x23, 0xd5, 0x3d, 0x95, 0xd8, 0xcd, 0x86, 0x79, 0xf5, 0x01, 0x47,
++0x4f, 0xf9, 0x1d, 0x9d, 0x36, 0xf7, 0x68, 0x1a, 0x64, 0x44, 0x58, 0x5d, 0xe5, 0x81, 0x15, 0x2a,
++0x41, 0xe4, 0x0e, 0xaa, 0x1f, 0x04, 0x21, 0xff, 0x2c, 0xf3, 0x73, 0x2b, 0x48, 0x1e, 0xd2, 0xf7
++cipher_iv =
++0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
++# Section sha 1 hmac buff 32
++[sha1_hmac_buff_32]
++digest =
++0x36, 0xCA, 0x49, 0x6A, 0xE3, 0x54, 0xD8, 0x4F, 0x0B, 0x76, 0xD8, 0xAA, 0x78, 0xEB, 0x9D, 0x65,
++0x2C, 0xCA, 0x1F, 0x97
++# Section sha 256 hmac buff 32
++[sha256_hmac_buff_32]
++digest =
++0x1C, 0xB2, 0x3D, 0xD1, 0xF9, 0xC7, 0x6C, 0x49, 0x2E, 0xDA, 0x94, 0x8B, 0xF1, 0xCF, 0x96, 0x43,
++0x67, 0x50, 0x39, 0x76, 0xB5, 0xA1, 0xCE, 0xA1, 0xD7, 0x77, 0x10, 0x07, 0x43, 0x37, 0x05, 0xB4
+diff --git a/dts/test_resources/test_aes_gcm.data b/dts/test_resources/test_aes_gcm.data
+new file mode 100644
+index 0000000000..034f4fa91a
+--- /dev/null
++++ b/dts/test_resources/test_aes_gcm.data
+@@ -0,0 +1,19 @@
++# Global Section
++plaintext =
++0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11,
++0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11
 +
-+        if self.type is not LinkTopology.NO_LINK or get_ctx().sut_node.cryptodevs:
-+            self._prepare_devbind_script()
++ciphertext =
++0x82, 0x7d, 0xb6, 0xdf, 0x77, 0x0a, 0xe6, 0x45, 0x5a, 0xc3, 0x70, 0x9b, 0x27, 0xb2, 0x61, 0x19,
++0xa2, 0x37, 0x0b, 0xf7, 0x42, 0xfc, 0xec, 0xe7, 0xf7, 0x30, 0xe0, 0x3c, 0x05, 0x55, 0xb3, 0x7d
 +
-         if self.type is LinkTopology.NO_LINK:
-             return
--        self._prepare_devbind_script()
++aead_key =
++0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
++aead_iv =
++0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
++aead_aad =
++0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
 +
-         self._setup_ports("sut")
-         self._setup_ports("tg")
-
-diff --git a/dts/tests/TestSuite_cryptodev_latency.py b/dts/tests/TestSuite_cryptodev_latency.py
-index 444a5b282c..63f5113cf7 100644
---- a/dts/tests/TestSuite_cryptodev_latency.py
-+++ b/dts/tests/TestSuite_cryptodev_latency.py
-@@ -31,7 +31,7 @@
-     CryptodevResults,
- )
- from api.test import skip, verify
--from api.test_suite import BaseConfig, TestSuite, crypto_test
-+from api.test_suite import BaseConfig, TestSuite, perf_test
- from api.testbed_model.virtual_device import VirtualDevice
-
- config_list: list[dict[str, int | float | str]] = [
-@@ -159,7 +159,7 @@ def _verify_latency(
-             )
-         return result_list
-
--    @crypto_test
-+    @perf_test
-     def aes_cbc(self) -> None:
-         """aes_cbc latency test.
-
-@@ -193,7 +193,7 @@ def aes_cbc(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def aes_cbc_sha1_hmac(self) -> None:
-         """aes_cbc_sha1_hmac latency test.
-
-@@ -230,7 +230,7 @@ def aes_cbc_sha1_hmac(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def aes_cbc_sha2_hmac(self) -> None:
-         """aes_cbc_sha2_hmac latency test.
-
-@@ -268,7 +268,7 @@ def aes_cbc_sha2_hmac(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def aes_docsisbpi(self) -> None:
-         """aes_docsisbpi latency test.
-
-@@ -301,7 +301,7 @@ def aes_docsisbpi(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def aes_gcm(self) -> None:
-         """aes_gcm latency test.
-
-@@ -337,7 +337,7 @@ def aes_gcm(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def kasumi_f8_kasumi_f9(self) -> None:
-         """kasumi_f8_kasumi_f9 latency test.
-
-@@ -375,7 +375,7 @@ def kasumi_f8_kasumi_f9(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def snow3g_uea2_snow3g_uia2(self) -> None:
-         """snow3g_uea2_snow3g_uia2 latency test.
-
-@@ -413,7 +413,7 @@ def snow3g_uea2_snow3g_uia2(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def zuc_eea3_zuc_eia3(self) -> None:
-         """zuc_eea3_zuc_eia3 cipher and auth latency test.
-
-@@ -453,7 +453,7 @@ def zuc_eea3_zuc_eia3(self) -> None:
-
-     # BEGIN VDEV TESTS
-
--    @crypto_test
-+    @perf_test
-     def aesni_gcm_vdev(self) -> None:
-         """aesni_gcm virtual device latency test.
-
-@@ -489,7 +489,7 @@ def aesni_gcm_vdev(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def aesni_mb_cipher_then_auth_vdev(self) -> None:
-         """aesni_mb vdev cipher and auth latency test.
-
-@@ -527,7 +527,7 @@ def aesni_mb_cipher_then_auth_vdev(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def aesni_mb_vdev(self) -> None:
-         """aesni_mb vdev latency test.
-
-@@ -562,7 +562,7 @@ def aesni_mb_vdev(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def kasumi_vdev(self) -> None:
-         """Kasumi vdev latency test.
-
-@@ -601,7 +601,7 @@ def kasumi_vdev(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def open_ssl_vdev(self) -> None:
-         """open_ssl vdev latency test.
-
-@@ -637,7 +637,7 @@ def open_ssl_vdev(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def snow3g_vdev(self) -> None:
-         """snow3g vdev latency test.
-
-@@ -677,7 +677,7 @@ def snow3g_vdev(self) -> None:
-                 "latency was greater than the delta tolerance above baseline",
-             )
-
--    @crypto_test
-+    @perf_test
-     def zuc_vdev(self) -> None:
-         """Zuc vdev latency test.
-
-diff --git a/dts/tests/TestSuite_cryptodev_throughput.py b/dts/tests/TestSuite_cryptodev_throughput.py
-index 59f64f2cd7..845d998291 100644
---- a/dts/tests/TestSuite_cryptodev_throughput.py
-+++ b/dts/tests/TestSuite_cryptodev_throughput.py
-@@ -31,7 +31,7 @@
-     CryptodevResults,
- )
- from api.test import skip, verify
--from api.test_suite import BaseConfig, TestSuite, crypto_test
-+from api.test_suite import BaseConfig, TestSuite, perf_test
- from api.testbed_model.virtual_device import VirtualDevice
-
- config_list: list[dict[str, int | float | str]] = [
-@@ -144,7 +144,7 @@ def _verify_throughput(
-             )
-         return result_list
-
--    @crypto_test
-+    @perf_test
-     def aes_cbc(self) -> None:
-         """aes_cbc test.
-
-@@ -171,7 +171,7 @@ def aes_cbc(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def aes_cbc_sha1(self) -> None:
-         """aes_cbc_sha1 test.
-
-@@ -203,7 +203,7 @@ def aes_cbc_sha1(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def aes_cbc_sha2(self) -> None:
-         """aes_cbc_sha2 test.
-
-@@ -234,7 +234,7 @@ def aes_cbc_sha2(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def aes_cbc_sha2_digest_16(self) -> None:
-         """aes_cbc_sha2_digest_16 test.
-
-@@ -265,7 +265,7 @@ def aes_cbc_sha2_digest_16(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def aead_aes_gcm(self) -> None:
-         """aead_aes_gcm test.
-
-@@ -294,7 +294,7 @@ def aead_aes_gcm(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def aes_docsisbpi(self) -> None:
-         """aes_docsisbpi test.
-
-@@ -321,7 +321,7 @@ def aes_docsisbpi(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def sha1_hmac(self) -> None:
-         """sha1_hmac test.
-
-@@ -349,7 +349,7 @@ def sha1_hmac(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def snow3g_uea2_snow3g_uia2(self) -> None:
-         """snow3g_uea2_snow3g_uia2 test.
-
-@@ -381,7 +381,7 @@ def snow3g_uea2_snow3g_uia2(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def zuc_eea3_zuc_eia3(self) -> None:
-         """zuc_eea3_zuc_eia3 test.
-
-@@ -413,7 +413,7 @@ def zuc_eea3_zuc_eia3(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def kasumi_f8_kasumi_f9(self) -> None:
-         """kasumi_f8 kasumi_f9 test.
-
-@@ -447,7 +447,7 @@ def kasumi_f8_kasumi_f9(self) -> None:
-
-     # BEGIN VDEV TESTS
-
--    @crypto_test
-+    @perf_test
-     def aesni_mb_vdev(self) -> None:
-         """aesni_mb virtual device test.
-
-@@ -481,7 +481,7 @@ def aesni_mb_vdev(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def aesni_gcm_vdev(self):
-         """aesni_gcm virtual device test.
-
-@@ -511,7 +511,7 @@ def aesni_gcm_vdev(self):
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def kasumi_vdev(self) -> None:
-         """Kasmumi virtual device test.
-
-@@ -544,7 +544,7 @@ def kasumi_vdev(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def snow3g_vdev(self) -> None:
-         """snow3g virtual device test.
-
-@@ -578,7 +578,7 @@ def snow3g_vdev(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def zuc_vdev(self) -> None:
-         """Zuc virtual device test.
-
-@@ -612,7 +612,7 @@ def zuc_vdev(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
-
--    @crypto_test
-+    @perf_test
-     def open_ssl_vdev(self) -> None:
-         """open_ssl virtual device test.
-
---
++[aes_gcm_buff_32]
++digest =
++0x0f, 0xb2, 0x98, 0x59, 0x48, 0xbf, 0x6c, 0x37, 0x5a, 0xad, 0xcd, 0x97, 0x9f, 0xbb, 0xc8, 0x2a
+-- 
 2.55.0
 
