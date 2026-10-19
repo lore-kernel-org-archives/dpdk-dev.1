@@ -2,45 +2,155 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09381CCF2DA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 08:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD4FACCF2DA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 09:25:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D583740613;
-	Mon, 19 Oct 2026 10:58:12 +0200 (CEST)
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
- [113.46.200.219])
- by mails.dpdk.org (Postfix) with ESMTP id AFB0640269
- for <dev@dpdk.org>; Mon, 19 Oct 2026 10:58:08 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=gRaKoq4AZGgcQyy2ehbB40ry4y53ihQk4Vy4yiMcElc=;
- b=nvVbCL14r9rz0GaxvJ6ExbaLwBrRMM8kn+P9wIY+2ODAx0VsbFBIijheBJUNiQr7M9fLSTKg2
- CSYYhXnFJAWoDNUChXPkSDEhaj/j9hcjEcHV5gZMNZDlj1PqNohBiAoy+denswE0RgOr3al8mH2
- C2f/o+Q16C6rSC7EOc0XTIw=
-Received: from mail.maildlp.com (unknown [172.19.162.144])
- by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4j7Tw63Y8Rz1prRJ;
- Mon, 19 Oct 2026 16:57:58 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id 378F34056E;
- Mon, 19 Oct 2026 16:58:01 +0800 (CST)
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id A3A034060B;
+	Mon, 19 Oct 2026 11:25:15 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 52D1140269
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 11:25:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792401915; x=1823937915;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=6aQwpJBfe5FqHoxgbzGbv4WdctqjT6vDxtLRhLzAchU=;
+ b=njjOkpAYoG53fuBB8ycJDM67OYo9Xqe4nE3uWCF0mQgUJm3fSVuJCutL
+ arhXaef9Qvg7uN9fnpHTlgFCOxXSMAbF0qAv0+QZNvUrqdnkHs812mDCD
+ aG7ZVfIKQ7Xan+/Lgy1z8gTB6xYAXO0nZtcfOWvp1pfIGr1jood7nX4CR
+ k8YUo5ujxHEqOiYodrTZVGT1wyzEal3ZGm17qMZ5A4w1k2LLM0RwiTYuG
+ 4THJoxFZZErgrxXbtu7NKlRqVyDeBv1s6Wcq7TfrcBQMHF6sq1t0IYw0+
+ enZYWA1RdoMJpxWYnskV139t5r9pKroe2EgvL3rIVaQN5sneqr9UjGNg6 A==;
+X-CSE-ConnectionGUID: WSo2UwMSRl2pIf7wZkJj7A==
+X-CSE-MsgGUID: uTwzRXyTT7OuNzBLOnzcaA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11939"; a="1095421"
+X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
+   d="scan'208";a="1095421"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Oct 2026 02:25:14 -0700
+X-CSE-ConnectionGUID: UbUPdPcnRkK3xVhXocmOQA==
+X-CSE-MsgGUID: 1m1QXcyTT1GUKB4ZV3dDXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
+   d="scan'208";a="2851071"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Oct 2026 02:25:13 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Mon, 19 Oct 2026 16:57:54 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>
-CC: <dev@dpdk.org>, <bruce.richardson@intel.com>
-Subject: [PATCH v2] argparse: support range step for corelist parsing
-Date: Mon, 19 Oct 2026 16:57:48 +0800
-Message-ID: <20261019085748.34787-1-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20261016093001.9067-1-fengchengwen@huawei.com>
-References: <20261016093001.9067-1-fengchengwen@huawei.com>
+ 15.2.2562.49; Mon, 19 Oct 2026 02:25:12 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Mon, 19 Oct 2026 02:25:12 -0700
+Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.34) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Mon, 19 Oct 2026 02:25:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nciEchN5fhHjGCQO8mGYTf7TkvK46RB9tmkrPvnbdKYpnFrmuxSo8G7HGInrrdg3bbzateHtH/imkhYQnLljy9Lx27WoKZT58XM3uDQDyrzrm7PKRYT4xutjP3grZ2Gf0jZVUVt9rSJ5jniDjVzcUOkf8pRyjYIEn5wK8b8CMB8u9vzbMnk5WVdArKo1+xNgl5+a0DPx8jZsGcc8UhT9vTUpX7rOZ2ffVg+cvHSTI1foWvEbZk69PUIyumxZI56kz9tqs56MtP2ErMaDUhYsLPR91INeetD8xKtka7A+0O5I40nLf/VeirgRJTCwvTw+W8FSrwbzBZVVHkCnjJMLhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=C/3A8siydIlpJjblASLqtqZkGkmaoa6KBR+tf35Pb2c=;
+ b=ihCuTSE2R3TJJ/e87KIs5RHkGlblmMYnyj3PfEb936YCH4/c4BKLPZnpGcVyitsbOZUEerg7b2ulidHvkbHecgMl3FXZPjZvaHabx8q4DnwS1CtE+5C1RowbMWUuiy/QZXhNRDWKWHp+p3hYHKZNplKeOtO95IqAsI/8SHgSQm1KpSgplQ2tA6byczYxxPWu2a7msdY+YN/MZ74VGwLUi9NJRVZymjmJP2Dqa7S9FxIRPDLfgOf/W36W6cBn7DCLG/L5g5BLv3hfCL08eWxH6uI8cAVBmtwz5NqvBeakVOS54uFkr2Zx9KGfyyAl4aZQketM3HjddXxXMdVFnqC0rA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
+ SJ0PR11MB5008.namprd11.prod.outlook.com (2603:10b6:a03:2d5::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Mon, 19 Oct
+ 2026 09:25:09 +0000
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::74e3:c0eb:29ee:fffa]) by DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::74e3:c0eb:29ee:fffa%3]) with mapi id 15.21.0522.017; Mon, 19 Oct 2026
+ 09:25:09 +0000
+Message-ID: <9c02cf79-6902-429e-a67d-e53ae203bb49@intel.com>
+Date: Mon, 19 Oct 2026 10:25:05 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] crypto/ipsec_mb: add support for IPsecMB 3.0
+To: Thomas Monjalon <thomas@monjalon.net>
+CC: <dev@dpdk.org>, Kai Ji <kai.ji@intel.com>
+References: <20261012135947.1895429-1-radu.nicolau@intel.com>
+ <Fb4CjKFWRziKn9hdw7IRLA@monjalon.net>
+Content-Language: en-US
+From: Radu Nicolau <radu.nicolau@intel.com>
+In-Reply-To: <Fb4CjKFWRziKn9hdw7IRLA@monjalon.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: DUZPR01CA0060.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::18) To DM8PR11MB5653.namprd11.prod.outlook.com
+ (2603:10b6:8:25::8)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemo500009.china.huawei.com (7.202.194.199)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|SJ0PR11MB5008:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac8d654a-5465-4468-6b64-08df2dc2de84
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|366016|23010399003|376014|56012099006|4143699003|11063799006|261009223027099003|10067099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: V7xkQAhd0kB4LdJhpr1NwNnLxxzi1nsRl+KlAhoOIPyBl2iON2bJKCVPKJ7Dvt4SzG2ajph6u44e31dJ4aakj1QDSW3QEDYhRB6P+4FRBkULkzCpsGICtGCfjsr/mYdDF1VBJZlBD7rMIqrZVurQD8JbywLPu8dRbUZB1b+wTTfdYoI3zL3BRY8Ip6dOrykSfAY3VsAao6IbNQBrcZdNje3E7xuId0r8nzExLSM++AZnRYAz+N+L5PTJg69vt8UkJLOcimU2rSUt84qE9PW4gMApNBhq8MehSSLrQUECnpl2HUoiLVfevww7k8IvyPv3m66T+8loDSIOXfi4RmlwsLhc8lV1SaSmfSMossJo9t4QiJjER3Kpsx1hjJa3tmprXTB7SG5Ldd7L4CmN8volZKRhDVHZ8OUD2mDrPrPlxlFDz58aCwpgacFwV+L+g/SpK7sseznAqgRj+eVuw8Tc0e5o2zzPdtGldMTeVjK4Vr05H/yuA0ZvJhUFzM4EiCm1N8riMKlQKi87FTx1As8xrnd2J7JVtGXtJSRf8oTZheD+9JAxZlt9ZyEqdamsmKkeYXlKFz2PfOeNxI7sVVy75/aJchE/aDXKnxrPncwwBXvt3KoqtC/DEFbUvGMV46f0R4xNN1u8P9axQ6kBGKgpVIjCFe37KwAlv4XPInwufFk=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(56012099006)(4143699003)(11063799006)(261009223027099003)(10067099003)(22082099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Z0RuV0JYMEVoQUYxd0ZaeTJSWW9wQ0NKQ2hVYytHQTZuSWlMMGV0U2g4MDVa?=
+ =?utf-8?B?ZERxK2VTeUVjWDBjL2gzUmtRYVEvUEt6VW9mQW9FUldxMk1pcElheUZhVDhr?=
+ =?utf-8?B?RHZKS3FoS0kxRm5YaXNjU1plT0dwc2R3bXV4TWl4ZGlnU25vYS9jak5ybFdD?=
+ =?utf-8?B?a21Ga3lJSytqZ0FUTkpwNWMwZ3E1c0hyN1FYbThmN0FnN3FRKzdzUXJTWEp0?=
+ =?utf-8?B?MElHcjBkREIzZTJVckJpZGhqWjIzTzhTOXRBZ2Z4NWtsUFY1TlBPUmJ0T0Fv?=
+ =?utf-8?B?d0RWT05EQ0tzTU9DSTVsQjF0dmh4TldzQVBNM0kzNlpDZXUzN0ZJaG5vYS9v?=
+ =?utf-8?B?Mit3UmpETm9OUmRtSUpwU0xlV1dVaVVCbStZZVpoTG01NkFLb2k3N2NRRm5s?=
+ =?utf-8?B?YUtxOS81WGREYjdKemhFdkRnQzVhTXVhcUg2TXBhVWtRdENlRktnNEtKMno3?=
+ =?utf-8?B?dko2Sm5ZTUlTM2JTaEtYWC83cmtId1p3NmI3b3JxUTA1dDFYYkwrSHBLaFFX?=
+ =?utf-8?B?L0c4cnVoZDdLNDBSRzlVV1JZQlRQRk1XQ0JUNW04OWU5NlFnWUluYURlQ1Fv?=
+ =?utf-8?B?Vnh4TVBFK09wVHQvM2VHbURpM1A3RjdxS0tlZUpGR1ovNCt4em0xcnVCWFZN?=
+ =?utf-8?B?RitPUzBsZmFrc2krUmxzUUNiaDlYZkJycWFlOWJtSmEzeUU1T2NwNmo2c1JP?=
+ =?utf-8?B?OG1LVEd0ZjEwYzlaN0hsZ0ZsRXVOR0d6ZmRsU2UwemYra2NHT3pCTUIvRGpH?=
+ =?utf-8?B?ZVV4VDFmUGwzQmc4WmVIcWtkOFlKVmg4WUtYRzRsazhnY2pCUHBZOVd5Lytr?=
+ =?utf-8?B?bUo5WWJCY3J4VTE5RFY1emRkSjBhc0RwT3ozM1dpZGlnc2ZhK0hNSElBN2lP?=
+ =?utf-8?B?SWdHeXhaNFNNS2dHMTF5L1RtVFN5MGE4Zm0xelB0TlREUnBRTFdPLzNPZitB?=
+ =?utf-8?B?M29GSG5uV3lweTlJcWFaNUtjRFNteWU5TG9xYS83S1l5MGFBd1E2K3ZJZFY3?=
+ =?utf-8?B?dWx1d1ZQWVk0L2cxd2dVQjlhbTE5dTJ5b2lEL1VaSzd6U2czaFU2dzhEaGtM?=
+ =?utf-8?B?Vzk2cENqc2kwMHdKMXZjcGpmbWczK3Vnb3h5NFQrVDNpYURzcDhXaUpNcGZI?=
+ =?utf-8?B?RVVEMlZMODlNV1Q5ZHBGV2ovWTFzTXNUcDNlMXoveUlaNU10akpaVXg4WGVp?=
+ =?utf-8?B?NkZabFN5SnhkcS9Lczd3U1ppUFFnRjl2YlNvb3NUSi9ybmlBVHNPVlpiVGh6?=
+ =?utf-8?B?WXlwMTY3MnRhMXBidVR3dUcrb3p0NHpiRjRwVEtrTUgrR3FGU1JhUzQ3bVhu?=
+ =?utf-8?B?eXNTNHNXSXp2ek0zbkJsOWZud2ZZZTVrYWcwRVRwOEpMRXVoUFFrbk55STlK?=
+ =?utf-8?B?YWNTWVlrdWZaNEhUMDFyRCs0em9jSGhtN1JDSFo1RjgwVFJvUWU2QTFPRS8y?=
+ =?utf-8?B?a3VVbmxjNURLNDJ5NFRQbWlvakQvWTRBMGhyWldVSklBdllMU0Zxc2pNUUZ1?=
+ =?utf-8?B?TmJ3Zm1kcnFFODZ6d2laMTlGNnpoUlloY1laVWxGNnF3Tm9CWDR0TVJXVEhF?=
+ =?utf-8?B?YnlxSkhrMjFTSHFFTzNRSUJwaXR0K09MZnRMT1k3WGZBVFJSYjJzUW80allY?=
+ =?utf-8?B?MFA3c1ZseGlNdlJEYmd4MVFtaUV3U2JSTlMxa1FHOTQ4b1V1QXI2VG01aWYv?=
+ =?utf-8?B?a0FzTEhRSmRvdVNnWmY0Y1d1cFNmMFc3ZXozeC9aQnBaemR2a0IzMkZVaVdT?=
+ =?utf-8?B?RWNXZE9kWDB3N04xODlNR2hRRTZTQ0ZPbXgxVStET2xNSndZaUNFemlVZGx1?=
+ =?utf-8?B?NlB1Z0d2YWduVDRrcElnQTB2d1RsSHVad0xUWFhpbytxeDU4TllYU1BDVC9I?=
+ =?utf-8?B?THd4N25WTVhBNk96Z3V0NDJGMzJ6VU5ndmc2K3hBaXZiQXFMQ0pCempMdzVa?=
+ =?utf-8?B?bklCWWlORS9ZY1llZzV5RWkwdWFjVkVrRkF4LzM3enRwRU5XQnZUaDBRMW9S?=
+ =?utf-8?B?dC9WNThsV3hwZDdmU2pjK2M1Y3A1ZEZWSGlqbVVvNVlpcG03Y3llS0lSN1FZ?=
+ =?utf-8?B?UnJ3YzBxdm83Q3N4OW5mWDQrbEU4ZEpqemtzRlNKekdzTFVXUXBiRGFaaDg4?=
+ =?utf-8?B?QXZPNG05K0Fsa0ptN0ppZmxjbVFYZURzeUxEWVlOL2tnWlh0eEhlbURyaWRE?=
+ =?utf-8?B?ZGZETDRBUEdFbmt3bFlRVVhiQXo1VGhYR3ZTSDdUTGNzZ0ZPeG9NeWRmY283?=
+ =?utf-8?B?bzlWZ0o1YkNjUjd5UUpPSDR4eTVaUFF0ZTZYOUFCUk1MVUVsbUtuTzdqNUN0?=
+ =?utf-8?B?a1g2SjV5LzlZRDNvQnBxR2hHcitGYXFXZFRYZzd6VHNXMGRydm1pdz09?=
+X-Exchange-RoutingPolicyChecked: CHvEoxkldlNy5ZDrqBZVPa0eogWUxhK8ZkJMpVXprgoS38CYgH8D49mGQx6NZd2EUdnTroSqebhxeGNbTF7B1yixNKF7nszzAsMFBvWUyrwA837F0Q2SP7Sj3NzSTyPiGcZSXEJ9h7Bdy10yvspnASSaOYaQcr9jh0qgadC+bi99Sup9tI5XVmiXbPrKBzfCdD8iXRggUxdGC3WuHK4XFQtvT6KNndXpUQqUomOfq6WmmE6a39eSKfhslyyaBsPAMUyzjxOCkhWoxZaYKsxNXbr+GAHnNEfqtuCHRKLJNzqPyU+RwnDRX2XdvLE0V3F39gPoi2PFvOWCx8X4Hf3OLA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac8d654a-5465-4468-6b64-08df2dc2de84
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2026 09:25:09.2722 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w622oTFG+4Gt7GVrnc0o9/aUB+EJEsyBDzZDjish2mp3rGxM8hhzLFAMhYnz52Fj116gAs1mVviDUkQgL3c/dA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5008
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,326 +164,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce a stride/step syntax ('-l start-end:step') to the EAL
-corelist parser implemented within the argparse library.
 
-On modern multi-core platforms, especially ARM architectures (such
-as Kunpeng) logical sibling cores are frequently laid out contiguously
-(e.g., physical core 0 maps to logical cores 0 and 1). When deploying
-high-performance DPDK data planes, pinning worker threads to adjacent
-sibling cores introduces Heavy L1/L2 cache contention and drastically
-degrades overall throughput.
-
-Previously, users had to explicitly expand core lists via commas
-(e.g., "-l 0,2,4,6...126") in orchestration scripts to skip
-hyperthreads, which is error-prone and hurts maintainability.
-
-This patch introduces the range step, so we could use "-l 0-126:2" in
-the same case.
-
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
-v2: add release note and more testcases
----
- app/test/test_argparse.c               | 123 +++++++++++++++++++++++++
- doc/guides/prog_guide/argparse_lib.rst |   2 +
- doc/guides/rel_notes/release_26_11.rst |   6 ++
- lib/argparse/rte_argparse.c            |  53 ++++++++---
- 4 files changed, 172 insertions(+), 12 deletions(-)
-
-diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
-index fdc6dd113c..c63380197f 100644
---- a/app/test/test_argparse.c
-+++ b/app/test/test_argparse.c
-@@ -822,8 +822,12 @@ test_argparse_parse_type_corelist(void)
- 	char *corelist_valid_single = test_strdup("5");
- 	char *corelist_valid_multiple = test_strdup("0,1,5");
- 	char *corelist_valid_range = test_strdup("1-5");
-+	char *corelist_valid_range_step = test_strdup("1-5:2");
-+	char *corelist_valid_range_step_big = test_strdup("1-5:10");
- 	char *corelist_valid_mixed = test_strdup("0,1,5-10,12-16,18,20");
-+	char *corelist_valid_mixed_step = test_strdup("0,1,5-10:2,12-16:3,18,20");
- 	char *corelist_valid_reverse_range = test_strdup("10-5");
-+	char *corelist_valid_reverse_range_step = test_strdup("10-5:2");
- 	char *corelist_valid_initial_spaces = test_strdup("   1,2,5-7");
- 	char *corelist_valid_empty = test_strdup("");
- 	char *corelist_invalid_spaces = test_strdup(" 1 , 2 , 5-7 ");
-@@ -831,6 +835,14 @@ test_argparse_parse_type_corelist(void)
- 	char *corelist_invalid_range_incomplete = test_strdup("1-");
- 	char *corelist_invalid_range_double_dash = test_strdup("1--5");
- 	char *corelist_invalid_range_double_range = test_strdup("1-3-5");
-+	char *corelist_invalid_range_step_incomplete1 = test_strdup("1:");
-+	char *corelist_invalid_range_step_incomplete2 = test_strdup("1:2");
-+	char *corelist_invalid_range_step_incomplete3 = test_strdup("1-5:");
-+	char *corelist_invalid_range_step_double = test_strdup("1-5::");
-+	char *corelist_invalid_range_step_zero = test_strdup("1-5:0");
-+	char *corelist_invalid_range_step_big = test_strdup("1-5:65536");
-+	char *corelist_invalid_range_step_negative = test_strdup("1-5:-2");
-+	char *corelist_invalid_range_step_more = test_strdup("1-5:2:");
- 	char *corelist_invalid_special_chars = test_strdup("1,2@3");
- 	char *corelist_invalid_comma_only = test_strdup(",");
- 	char *corelist_invalid_out_of_range = test_strdup("70000");
-@@ -867,6 +879,30 @@ test_argparse_parse_type_corelist(void)
- 	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5!");
- 	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5!");
- 
-+	/* test valid range step */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_range_step,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (range step) failed!");
-+	for (int i = 1; i <= 5; i += 2)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 1-5:2!", i);
-+	for (int i = 2; i <= 5; i += 2)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 1-5:2!", i);
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5:2!");
-+	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5:2!");
-+
-+	/* test valid range step big */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_range_step_big,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (range step big) failed!");
-+	for (int i = 1; i <= 5; i += 10)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 1-5:10!", i);
-+	for (int i = 2; i <= 5; i++)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 1-5:10!", i);
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5:10!");
-+	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5:10!");
-+
- 	/* test valid mixed corelist */
- 	CPU_ZERO(&val_cpuset);
- 	ret = rte_argparse_parse_type(corelist_valid_mixed,
-@@ -886,6 +922,31 @@ test_argparse_parse_type_corelist(void)
- 	TEST_ASSERT(!CPU_ISSET(17, &val_cpuset), "Core 17 should not be set in mixed corelist!");
- 	TEST_ASSERT(!CPU_ISSET(19, &val_cpuset), "Core 19 should not be set in mixed corelist!");
- 
-+	/* test valid mixed step corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_mixed_step,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (mixed step) failed!");
-+	TEST_ASSERT(CPU_ISSET(0, &val_cpuset), "Core 0 should be set in mixed step corelist!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in mixed step corelist!");
-+	for (int i = 5; i <= 10; i += 2)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 5-10:2!", i);
-+	for (int i = 6; i <= 10; i += 2)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 5-10:2!", i);
-+	for (int i = 12; i <= 16; i += 3)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 12-16:3!", i);
-+	for (int i = 13; i <= 16; i += 3)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 12-16:3!", i);
-+	for (int i = 14; i <= 16; i += 3)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset), "Core %d should not be set in range 12-16:3!", i);
-+	TEST_ASSERT(CPU_ISSET(18, &val_cpuset), "Core 18 should be set in mixed step corelist!");
-+	TEST_ASSERT(CPU_ISSET(20, &val_cpuset), "Core 20 should be set in mixed step corelist!");
-+	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in mixed step corelist!");
-+	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in mixed step corelist!");
-+	TEST_ASSERT(!CPU_ISSET(17, &val_cpuset), "Core 17 should not be set in mixed step corelist!");
-+	TEST_ASSERT(!CPU_ISSET(19, &val_cpuset), "Core 19 should not be set in mixed step corelist!");
-+
-+
- 	/* test valid reverse range (10-5 should be interpreted as 5-10) */
- 	CPU_ZERO(&val_cpuset);
- 	ret = rte_argparse_parse_type(corelist_valid_reverse_range,
-@@ -897,6 +958,20 @@ test_argparse_parse_type_corelist(void)
- 	TEST_ASSERT(!CPU_ISSET(4, &val_cpuset), "Core 4 should not be set in reverse range 10-5!");
- 	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in reverse range 10-5!");
- 
-+	/* test valid reverse range step (10-5:2 should be interpreted as 5-10:2) */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_reverse_range_step,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (reverse range) failed!");
-+	for (int i = 5; i <= 10; i += 2)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset),
-+				"Core %d should be set in reverse range 10-5:2!", i);
-+	for (int i = 6; i <= 10; i += 2)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset),
-+				"Core %d should not be set in reverse range 10-5:2!", i);
-+	TEST_ASSERT(!CPU_ISSET(4, &val_cpuset), "Core 4 should not be set in reverse range 10-5!");
-+	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in reverse range 10-5!");
-+
- 	/* test valid corelist with initial spaces only */
- 	CPU_ZERO(&val_cpuset);
- 	ret = rte_argparse_parse_type(corelist_valid_initial_spaces,
-@@ -948,6 +1023,54 @@ test_argparse_parse_type_corelist(void)
- 			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
- 	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (double range) should have failed!");
- 
-+	/* test invalid corelist with step complete1 */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete1,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete1) should have failed!");
-+
-+	/* test invalid corelist with step incomplete2 */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete2,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete2) should have failed!");
-+
-+	/* test invalid corelist with step incomplete3 */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_incomplete3,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step incomplete3) should have failed!");
-+
-+	/* test invalid corelist with step double */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_double,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step double) should have failed!");
-+
-+	/* test invalid corelist with step zero */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_zero,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step zero) should have failed!");
-+
-+	/* test invalid corelist with step big */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_big,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step big) should have failed!");
-+
-+	/* test invalid corelist with step negative */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_negative,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step negative) should have failed!");
-+
-+	/* test invalid corelist with step more */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_step_more,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (step more) should have failed!");
-+
- 	/* test invalid corelist with special characters */
- 	CPU_ZERO(&val_cpuset);
- 	ret = rte_argparse_parse_type(corelist_invalid_special_chars,
-diff --git a/doc/guides/prog_guide/argparse_lib.rst b/doc/guides/prog_guide/argparse_lib.rst
-index b0907cfc07..3d01406599 100644
---- a/doc/guides/prog_guide/argparse_lib.rst
-+++ b/doc/guides/prog_guide/argparse_lib.rst
-@@ -271,8 +271,10 @@ The corelist parsing supports the following input formats:
- - **Single core**: ``--cores 5`` (sets core 5)
- - **Multiple cores**: ``--cores 1,2,5`` (sets cores 1, 2, and 5)
- - **Core ranges**: ``--cores 1-5`` (sets cores 1, 2, 3, 4, and 5)
-+- **Core ranges with step**: ``--cores 1-5:2`` (sets cores 1, 3, and 5)
- - **Mixed format**: ``--cores 0,2-4,7`` (sets cores 0, 2, 3, 4, and 7)
- - **Reverse ranges**: ``--cores 5-1`` (equivalent to 1-5, sets cores 1, 2, 3, 4, and 5)
-+- **Reverse ranges with step**: ``--cores 5-1:2`` (equivalent to 1-5:2, sets cores 1, 3, and 5)
- - **Empty corelist**: ``--cores ""`` (sets no cores)
- 
- The parsed result is stored in an ``rte_cpuset_t`` structure that can be used
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index be758a0c02..1712007398 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -123,6 +123,12 @@ New Features
-   Added internal ``flow_graph`` API in ethdev
-   for PMD drivers to build graph-based flow pattern parsers.
- 
-+* **Added step syntax for corelist ranges parsing.**
-+
-+  The corelist parser now supports step syntax for core ranges.
-+  For example, ``-l 0-126:2`` selects cores 0, 2, 4, ..., 126.
-+  This is useful for skipping sibling cores on systems with SMT/hyperthreading.
-+
- * **Updated AF_XDP driver.**
- 
-   * Changed the default device plugin endpoint path used when
-diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
-index 88c3e7740c..f1e1fb9d20 100644
---- a/lib/argparse/rte_argparse.c
-+++ b/lib/argparse/rte_argparse.c
-@@ -573,6 +573,9 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
- {
- 	rte_cpuset_t *cpuset = arg->val_saver;
- 	const char *last = value;
-+	bool is_step = false;
-+	int32_t step = 1;
-+	int32_t max = -1;
- 	int min = -1;
- 
- 	if (value == NULL) {
-@@ -584,7 +587,6 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
- 	while (*last != '\0') {
- 		char *end;
- 		int64_t idx;
--		int32_t max;
- 
- 		while (isblank(*value))
- 			value++;
-@@ -603,6 +605,14 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
- 				arg->name_long);
- 			return -EINVAL;
- 		}
-+		if (is_step) {
-+			if (idx == 0) {
-+				ARGPARSE_LOG(ERR, "argument %s step value must be positive!",
-+					arg->name_long);
-+				return -EINVAL;
-+			}
-+			step = idx;
-+		}
- 
- 		if (*end == '-') {
- 			if (min != -1) { /* can't have '-' within a range */
-@@ -612,22 +622,41 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
- 			}
- 			min = idx; /* start of range, move to next loop stage */
- 		} else if (*end == ',' || *end == '\0') {
--			/* single value followed by comma or end (min is set only by '-') */
--			if (min == -1) {
--				min = max = idx;
--			} else if (min > idx) {
--				/* we have range from high to low */
-+			if (!is_step) {
-+				/* single value followed by comma or end (min is set only by '-') */
-+				if (min == -1) {
-+					min = max = idx;
-+				} else if (min > idx) {
-+					/* we have range from high to low */
-+					max = min;
-+					min = idx;
-+				} else {
-+					/* range from low to high */
-+					max = idx;
-+				}
-+			}
-+
-+			for (; min <= max; min += step)
-+				CPU_SET(min, cpuset);
-+
-+			/* no longer in a range */
-+			min = -1;
-+			max = -1;
-+			step = 1;
-+			is_step = false;
-+		} else if (*end == ':') {
-+			if (min == -1 || is_step) {
-+				ARGPARSE_LOG(ERR, "argument %s step can only be used after a range (start-end:step)!",
-+					arg->name_long);
-+				return -EINVAL;
-+			}
-+			if (min > idx) {
- 				max = min;
- 				min = idx;
- 			} else {
--				/* range from low to high */
- 				max = idx;
- 			}
--
--			for (; min <= max; min++)
--				CPU_SET(min, cpuset);
--
--			min = -1; /* no longer in a range */
-+			is_step = true;
- 		} else {
- 			/* end is an unexpected character, return error */
- 			ARGPARSE_LOG(ERR, "argument %s has an unexpected character!",
--- 
-2.17.1
-
+On 13-Oct-26 8:41 PM, Thomas Monjalon wrote:
+> 12/10/2026 15:58, Radu Nicolau:
+>> Intel(R) Multi-Buffer Crypto for IPsec Library released version 3.0.0
+>> codenamed Túnel Pablo
+>> https://github.com/intel/intel-ipsec-mb/releases/tag/v3.0.0
+>>
+>> This patchset adds support for the new library version and support
+>> for the new algorithms included in this release.
+>>
+>> Series-acked-by: Kai Ji <kai.ji@intel.com>
+>>
+>> Radu Nicolau (4):
+>>    crypto/ipsec_mb: add support for IPsecMB 3.0
+>>    crypto/ipsec_mb: add support for 256-NxA4/5/6 algorithms
+>>    crypto/ipsec_mb: add support for ML-KEM and ML-DSA
+>>    test/crypto: add asym test suite for AESNI_MB
+> Sorry I will give a defensive NACK
+> because you never fixed the problem with the Arm fork.
+> The crypto branch is already not compiling on Arm
+> because of your recent change for IPsec MB 2.0.
+Hi Thomas, with the latest changes and removal of minimum required 
+version these patches are now compiling on Arm, are we ok to withdraw 
+the NACK?
