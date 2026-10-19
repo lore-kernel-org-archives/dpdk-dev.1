@@ -2,46 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38158CCF2DB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 13:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1D0CCF2E3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 13:48:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71C6740430;
-	Mon, 19 Oct 2026 15:36:40 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id EA0D240297
- for <dev@dpdk.org>; Mon, 19 Oct 2026 15:36:39 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id C56A64D373; Mon, 19 Oct 2026 15:36:39 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 2061] [Debug][aarch64] test_stack_perf fails to build
- with GCC 13 due to memcpy overread/overflow warning
-Date: Mon, 19 Oct 2026 13:36:39 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 26.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: alialnu@nvidia.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-2061-3@https.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 74BFC40297;
+	Mon, 19 Oct 2026 15:48:32 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id C06E84028E
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 15:48:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1792417710;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=niy9Kf/Np90puAY6YlzPn3p7Np01RPgYBb7C/pyBZ5Q=;
+ b=bPq801lPutTdSN5e24CRRbYVyXT7gzm1o02XEZ7WPpQKyhQNPjvuqOQtZ1Fwf0TaxIkUT/
+ o3Qg/++PmfL0pHb3/fgwETnUlepfUpPa+5n7UyjbgJnQMuDbAwtt6mKDcJpIM9EtPjsNfi
+ JCXloZCqrroBUSpk6BZ07pY23Uy4SmQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-587-unLirvkkNraKvVdW4p3A2A-1; Mon,
+ 19 Oct 2026 13:48:27 +0000
+X-MC-Unique: unLirvkkNraKvVdW4p3A2A-1
+X-Mimecast-MFC-AGG-ID: unLirvkkNraKvVdW4p3A2A_1792417706
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 7434B1977505; Mon, 19 Oct 2026 13:48:14 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.44.32.201])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 88ABB1803A6F; Mon, 19 Oct 2026 13:48:10 +0000 (UTC)
+From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+Cc: dev@dpdk.org, mst@redhat.com, jasowangio@gmail.com, chenbox@nvidia.com,
+ david.marchand@redhat.com, Stephen Hemminger <stephen@networkplumber.org>,
+ Yongji Xie <xieyongji@bytedance.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v5 0/9] Add vduse live migration features
+Date: Mon, 19 Oct 2026 15:47:59 +0200
+Message-ID: <20261019134808.192525-1-eperezma@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: FpSmzikwq_LEQsyqRMTVflArNmbU-kEQDB-Q6l7h7U8_1792417706
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,92 +66,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2061
+This series introduces features to the VDUSE (vDPA Device in Userspace) driver
+to support Live Migration.
 
-            Bug ID: 2061
-           Summary: [Debug][aarch64] test_stack_perf fails to build with
-                    GCC 13 due to memcpy overread/overflow warning
-           Product: DPDK
-           Version: 26.11
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: core
-          Assignee: dev@dpdk.org
-          Reporter: alialnu@nvidia.com
-  Target Milestone: ---
+Currently, DPDK does not support VDUSE devices live migration because the
+driver lacks a mechanism to suspend the device and quiesce the rings to
+initiate the switchover.  This series implements the suspend operation to
+address this limitation.
 
-$ meson --werror --buildtype=3Ddebug build && ninja -C build
+Furthermore, enabling Live Migration for devices with control virtqueue
+requires two additional features.  Both of them are included in this series.
 
-[..]
-[3428/3451] Compiling C object app/dpdk-test.p/test_test_tailq.c.o
-[3429/3451] Compiling C object
-app/dpdk-test.p/test_test_security_inline_macsec.c.o
-[3430/3451] Compiling C object app/dpdk-test.p/test_test_stack_perf.c.o
-FAILED: app/dpdk-test.p/test_test_stack_perf.c.o=20
-[..]
-In file included from ../../root/dpdk/lib/eal/arm/include/rte_memcpy.h:9,
-                 from ../../root/dpdk/lib/stack/rte_stack_pile.h:8,
-                 from ../../root/dpdk/lib/stack/rte_stack.h:152,
-                 from ../../root/dpdk/app/test/test_stack_perf.c:12:
-In function '__rte_stack_pile_push',
-    inlined from 'rte_stack_push' at
-../../root/dpdk/lib/stack/rte_stack.h:179:10,
-    inlined from 'test_single_push_pop' at
-../../root/dpdk/app/test/test_stack_perf.c:261:3:
-../../root/dpdk/lib/eal/arm/include/rte_memcpy_64.h:365:33: error: 'memcpy'
-reading 256 bytes from a region of size 8 [-Werror=3Dstringop-overread]
-  365 | #define rte_memcpy(d, s, n)     memcpy((d), (s), (n))
-      |                                 ^~~~~~~~~~~~~~~~~~~~~
-../../root/dpdk/lib/stack/rte_stack_pile.h:160:17: note: in expansion of ma=
-cro
-'rte_memcpy'
-  160 |                 rte_memcpy(((struct rte_stack_pile_bulk_elem
-*)tmp)->objs,
-      |                 ^~~~~~~~~~
-../../root/dpdk/app/test/test_stack_perf.c: In function 'test_single_push_p=
-op':
-../../root/dpdk/app/test/test_stack_perf.c:255:15: note: source object 'obj=
-' of
-size 8
-  255 |         void *obj =3D NULL;
-      |               ^~~
-In function '__rte_stack_pile_bulk_pop_elems',
-    inlined from '__rte_stack_pile_pop' at
-../../root/dpdk/lib/stack/rte_stack_pile.h:274:15,
-    inlined from 'rte_stack_pop' at
-../../root/dpdk/lib/stack/rte_stack.h:205:10,
-    inlined from 'test_single_push_pop' at
-../../root/dpdk/app/test/test_stack_perf.c:262:3:
-../../root/dpdk/lib/eal/arm/include/rte_memcpy_64.h:365:33: error: 'memcpy'
-writing 256 bytes into a region of size 8 overflows the destination
-[-Werror=3Dstringop-overflow=3D]
-  365 | #define rte_memcpy(d, s, n)     memcpy((d), (s), (n))
-      |                                 ^~~~~~~~~~~~~~~~~~~~~
-../../root/dpdk/lib/stack/rte_stack_pile.h:75:25: note: in expansion of mac=
-ro
-'rte_memcpy'
-   75 |                         rte_memcpy(&obj_table[i *
-RTE_STACK_PILE_BULK_SIZE],
-      |                         ^~~~~~~~~~
-../../root/dpdk/app/test/test_stack_perf.c: In function 'test_single_push_p=
-op':
-../../root/dpdk/app/test/test_stack_perf.c:255:15: note: destination object
-'obj' of size 8
-  255 |         void *obj =3D NULL;
-      |               ^~~
-cc1: all warnings being treated as errors
-[..]
-ninja: build stopped: subcommand failed.
+* Address Spaces ID (ASID) support: This allows QEMU to isolate and intercept
+  the device's CVQ. By doing so, QEMU is able to migrate the device status
+  transparently, without requiring the device to support state save and
+  restore.
+* QUEUE_READY: This allows QEMU to control when the dataplane virtqueues are
+  enabled.  This ensures the dataplane is started after the device
+  configuration has been fully restored via the CVQ.
 
-git-bisect points to ee0822a0ef41 ("stack: introduce pile")
+It also enables the VIRTIO_NET_F_STATUS feature.  This allows the device to
+signal the driver that it needs to send gratuitous ARP with
+VIRTIO_NET_S_ANNOUNCE, reducing the Live Migration downtime.
 
-Meson: 1.3.2
-OS: Ubuntu 24.04.4 LTS
-Compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+v5:
+* Update headers to 7.3
+* Rebase on top of main, merge conflicts.
 
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+v4:
+* Rebase on top of origin/main, which already includes the __counted_by error
+fix.
+* Add VDUSE_SUSPEND to lib/vhost/vduse.c:vduse_reqs_str (Maxime).
+
+v3:
+* Include uapi/linux/stddef.h and revert the -D__counted_by from v2.
+
+v2:
+* Add -D__counted_by(X)= if the compiler does not support it. It is
+  pulled by the kernel headers.
+
+PATCH v1:
+* Move to VDUSE_SET_FEATURES ioctl instead of config space field.
+* Add a few bounds control.
+* Update kernel headers to v7.3-rc3.
+
+RFC v4:
+* Sync headers with Linux's latest existing and proposed UAPI.  Both
+  files constants and new ioctl VDUSE_SET_FEATURES.
+* Check for more error conditions and clarified some error messages in
+  ready message processing.
+* Add relevant release notes.
+* Fix cosmetic whitespaces & checkpath errors.
+* Fix error path of vhost_user_iotlb_init and vhost_user_iotlb_init_one.
+* Fix commits author.
+
+RFC v3:
+* Replace incorrect '%lx' DEBUG print format specifier with PRIx64
+
+RFC v2:
+* Following latest comments on kernel series about VDUSE features, not checking
+  API version but only check if VDUSE_GET_FEATURES success.
+* Move the start and last declarations in the braces as gcc 8 does not like
+  them interleaved with statements. Actually, I think the move was a mistake in
+  the first version.
+  https://mails.dpdk.org/archives/test-report/2026-February/958175.html
+
+Eugenio Pérez (3):
+  uapi: import VDUSE and VFIO header from v7.3 kernel
+  vhost: Support VDUSE QUEUE_READY feature
+  vhost: Support vduse suspend feature
+
+Maxime Coquelin (6):
+  vhost: introduce ASID support
+  vhost: add VDUSE API version negotiation
+  vhost: add virtqueues groups support to VDUSE
+  vhost: add ASID support to VDUSE IOTLB operations
+  vhost: claim VDUSE support for API version 1
+  vhost: add net status feature to VDUSE
+
+ kernel/linux/uapi/linux/iommufd.h | 105 +++++++++++-
+ kernel/linux/uapi/linux/stddef.h  |   4 +
+ kernel/linux/uapi/linux/vduse.h   | 113 ++++++++++++-
+ kernel/linux/uapi/linux/vfio.h    |  51 +++++-
+ kernel/linux/uapi/version         |   2 +-
+ lib/vhost/iotlb.c                 | 233 +++++++++++++++++----------
+ lib/vhost/iotlb.h                 |  14 +-
+ lib/vhost/vduse.c                 | 259 +++++++++++++++++++++++++++---
+ lib/vhost/vduse.h                 |   3 +-
+ lib/vhost/vhost.c                 |  16 +-
+ lib/vhost/vhost.h                 |  16 +-
+ lib/vhost/vhost_user.c            |  13 +-
+ 12 files changed, 676 insertions(+), 153 deletions(-)
+
+-- 
+2.56.0
+
