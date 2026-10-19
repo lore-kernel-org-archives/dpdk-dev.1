@@ -2,61 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 330D6CCF2D6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 11:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7D0CCF2DB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 Oct 2026 13:08:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A23040B9F;
-	Mon, 19 Oct 2026 13:47:12 +0200 (CEST)
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200])
- by mails.dpdk.org (Postfix) with ESMTP id 6AAE64028E
- for <dev@dpdk.org>; Mon, 19 Oct 2026 04:28:26 +0200 (CEST)
-Received: by mail-qk1-f200.google.com with SMTP id
- af79cd13be357-93f3969a2a7so125216985a.2
- for <dev@dpdk.org>; Sun, 18 Oct 2026 19:28:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1792376906; x=1792981706; darn=dpdk.org;
- h=content-type:cc:to:from:subject:message-id:mime-version:date:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=5gFjQ1TYXeEJawgbVi1bAPUGT6IqyrsDdV4x90UThPY=;
- b=u1VnEGLTpOcxFZ1JACQQzkEHcWbrj9auY0MtiSmGFlVKEaNtdOe7pybYGnu/Fij2IF
- +e3uluQvkkltOb0GWSmyDJ833I4OaQn4kGPXI5+3+a6TYYLlqJKYUecYcbgyB6+hWqxa
- YEol2Ef4jfWICC2wmDLodu5tkaqOvQAyISiEvMfrEOVR9ofIJiVpCmCwaDNDJD9sLltB
- ZDf3rK27567udQ4sZ32ukK3sh6lGN0w+QxQM3KcyHwlFRITavefYhSEuXYFIYgXfKFYl
- l9LNCnn4gnisA+F7b19zhkxaXZYY3diIw10P7xjHOTuINO/G+a6ENR1XWWTUI0UTmfZX
- 3ScQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792376906; x=1792981706;
- h=content-type:cc:to:from:subject:message-id:mime-version:date
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=5gFjQ1TYXeEJawgbVi1bAPUGT6IqyrsDdV4x90UThPY=;
- b=g+n5+0pfDhy5q/zLXVFzhxQme9XKiiKlUsIJ3e/vrMlZiMYSZroHmmUmjPtB/Sayx2
- 4VI2cACrLM+PTOgnOoyRt0fTylu+bg2+xxjLXc3TOvcKCJ7ySU94r/0BIb44ABgjlfw8
- LW25b41Y3CkNG5Slasgnd1XW1iTSBXHLbA8DE4Zul6KplTiKuDqH31OIG0J3kgL2cXpz
- 91ZEEmPWinNvXxdepuir0NloA1/QvYVKTOwqBfXBJbpcvpdCVw6HSCFCGDZe+33WJSGE
- znlGIN8qfomSuxe04kf49boyaJ0kDtT2CVhgFBnIAcRcduhPR8hKdhLyw484edKkUHe4
- Ku4g==
-X-Gm-Message-State: AFq9FYKqQ0ZjBqvzpi0YvXM40FxFxzBgpMTfYU0/zIByp4Iwc9lBuk3O
- Vhp8iyreKWCgGYUlBPQGIqJV3q0/xYEPhI8t6+9VJZITjbtcgqIH8xboAV/6h3hLUQVPCcIqs7e
- chvyCup7w5esvoEZPtCScRW/XhpIFKZNHScJpPzSYoMzO0UIq2ALdle8KSctA3lacjDgkVvF2Kb
- 5a+IreLimtEMCyD29G8ggwqFmOIcYA
-X-Received: from qknqj15.prod.google.com
- ([2002:a05:620a:880f:b0:93a:20b6:ebe5])
- (user=rnwolfe job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:620a:1a1b:b0:93e:c12c:43f7
- with SMTP id af79cd13be357-93f29de8891mr1150035485a.68.1792376905244; Sun, 18
- Oct 2026 19:28:25 -0700 (PDT)
-Date: Sun, 18 Oct 2026 22:28:24 -0400
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.56.0.176.g3575e65682-goog
-Message-ID: <20261019022824.189319-1-rnwolfe@google.com>
-Subject: [PATCH] net/gve: advertise Rx scatter in GQI queue format
-From: Ryan Wolfe <rnwolfe@google.com>
-To: dev@dpdk.org
-Cc: joshwash@google.com, stable@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-X-Mailman-Approved-At: Mon, 19 Oct 2026 13:47:02 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id F33974064A;
+	Mon, 19 Oct 2026 15:08:06 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 6FBDA40297
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 15:08:05 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 69J8ON0J242492 for <dev@dpdk.org>; Mon, 19 Oct 2026 06:08:04 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=rXaKnWq1nYZfrEdKIJQs416
+ F2fF6fQDGosAa7qh4THc=; b=hQZ7ppiNEKXWcKxqTlNNz8sD5d0YdiW81+EDacb
+ axqSM5L2IzWyi2nk5iFXJYWq5wVCXC03ek+xX0hFRIvrfuLjDuKNwR89LI7sWIxU
+ KfYmjd2Yq0VN1Mymhh96B05CejXwe+FNp0Xtyjl9JfDnZb2p2AxSMTXN9jskZPRI
+ uuZjEH1BGTYWGm6zpTAquBYnAePuao1n6PIXldOVcqNefBAqclvApTlhE7/ftIiY
+ xx8/UeEzkFd33NBpyv58h4O3V++xcBtCti37mKxx/31CYyz8+N6BpwH2P4d+6usc
+ pU5h3DTLhmk+ED8hY9BNfwkPq63GexBWgHKTO6b8o4KdnnQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4hcw98k3b3-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 06:08:04 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 19 Oct 2026 06:08:03 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Mon, 19 Oct 2026 06:08:02 -0700
+Received: from cavium-System-Product-Name.. (unknown [10.28.38.254])
+ by maili.marvell.com (Postfix) with ESMTP id 844C93F70B8;
+ Mon, 19 Oct 2026 06:08:00 -0700 (PDT)
+From: Tejasree Kondoj <ktejasree@marvell.com>
+To: Akhil Goyal <gakhil@marvell.com>
+CC: Anoob Joseph <anoobj@marvell.com>, Vidya Sagar Velumuri
+ <vvelumuri@marvell.com>, Ankur Dwivedi <adwivedi@marvell.com>,
+ Rupesh Chiluka <rchiluka@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, <dev@dpdk.org>
+Subject: [PATCH 00/16]  fixes and improvements to cnxk crypto PMD
+Date: Mon, 19 Oct 2026 18:37:41 +0530
+Message-ID: <20261019130759.2181566-1-ktejasree@marvell.com>
+X-Mailer: git-send-email 2.43.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: tMnmtf9xL6tnEOo71LQpXir2kOXyxlLp
+X-Proofpoint-ORIG-GUID: tMnmtf9xL6tnEOo71LQpXir2kOXyxlLp
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE5MDA1MiBTYWx0ZWRfXwIdUwewaRzAF
+ /iorqAvzZlnSp57I1LdiQSTrfjVPFS9/4T+jRZTwjD2NODqgnaFgshZ+dW2RRpWFBnsU6FJCRYG
+ PUaZLBRK9YZKN+8df2V89pRaylafNoQ=
+X-Authority-Analysis: v=2.4 cv=aKRlOr9m c=1 sm=1 tr=0 ts=6ad61634 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=TtqV-g6YmW1Jfm2GSLaY:22 a=1UHvJGfXtobXNyDZ0jwA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE5MDA1MiBTYWx0ZWRfXwQZL0WSeYBdB
+ grYDb/r0uzsQwWJOo40Nr2/AvDLtl57jamC1QdryY/PCxR9J5nn/1Xtvgpzwhjgzem1xXW8JqsR
+ PierFf0ORrCKgBQzjAZvqRZG1RdJadftPrb01YjsfUYyxe+yGnvOYCVAnDEWwc34xDEXjktoiop
+ b99A8GpqaG0lhwKz1pFbfFL5kynewJ43aVbQ+pUD160wYNN3yONhSlzuXCgKEAa6s0XY/+0NO9k
+ ZJO23dXF0iROV7r5SRBoz5iBzvrJYnAXsRHwcptP//VmUzE5HrDxNRWcqPrfxTKiO3tscHGITFU
+ kSnVORhTcDO4vz9zxlSqBeYZfIpIRkHzMqcJ+LgtoL3lZumbkXJhuXSrXnUAwol6y1rVRO3rm7F
+ VnKTxJIffp+Gv3kGGf9IW9SJswl5Xg5GRA4nxPTXv1uFq+YV+FUt94VR/CaWhttHajXOGmRvvYZ
+ /BIU3x6o4WdZyJGEyvg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-19_03,2026-10-14_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,67 +83,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Since jumbo frame support for GQI, a frame that does not fit in one Rx
-buffer arrives as several descriptors with GVE_RXF_PKT_CONT set on all
-but the last, and gve_rx_burst() chains them into one multi-segment
-mbuf. The driver never reports RTE_ETH_RX_OFFLOAD_SCATTER, though, so
-an application that enables multi-segment receive only when the port
-claims it treats every packet as one segment. VPP is one: it masks its
-requested Rx offloads with rx_offload_capa, so on a GQI gVNIC it never
-sets its multi-segment flag, reads only the first buffer of a jumbo
-frame and drops it as malformed. With 4 KB buffers that caps the usable
-MTU near 4000 bytes on a VPC whose MTU is 8896.
+This series adds improvements and fixes to cnxk crypto PMD.
 
-Report SCATTER for GQI. DQO posts one buffer per packet and does not
-chain, so it is unchanged.
+Rupesh Chiluka (11):
+  common/cnxk: validate cipher key length in IPsec SA fill
+  crypto/cnxk: reject truncated TLS records in decrypt
+  crypto/cnxk: validate TLS xform and keys before SA key copy
+  crypto/cnxk: reject oversized SG vectors in raw datapath
+  crypto/cnxk: guard trim len bounds in TLS 1.2 MAC trim
+  crypto/cnxk: guard trim len in TLS 1.2 MAC trim for CN20K
+  crypto/cnxk: validate TLS 1.2 MAC trim lengths
+  crypto/cnxk: bound SG segment count in packet iov builders
+  crypto/cnxk: bound SG iovec index in mbuf walk
+  crypto/cnxk: add cq_ena devarg for CPT CQ mode
+  crypto/cnxk: size CN20K IPsec SA by context length
 
-Fixes: 496d4d2c8b54 ("net/gve: support jumbo frame for GQI")
-Cc: stable@dpdk.org
+Tejasree Kondoj (5):
+  common/cnxk: use context invalidate for cn20k
+  crypto/cnxk: return HW CPTR from cptr_get for cn20k
+  crypto/cnxk: enable cq_all and allocate extra CQ line
+  crypto/cnxk: fix CN20K CPT error recovery
+  crypto/cnxk: enable ctx cache for cn20k crypto
 
-Signed-off-by: Ryan Wolfe <rnwolfe@google.com>
----
- .mailmap                         | 1 +
- doc/guides/nics/features/gve.ini | 1 +
- drivers/net/gve/gve_ethdev.c     | 5 +++++
- 3 files changed, 7 insertions(+)
+ doc/guides/cryptodevs/cnxk.rst               | 16 ++++
+ drivers/common/cnxk/cnxk_security.c          | 15 ++-
+ drivers/common/cnxk/roc_cpt.c                | 97 +++++++++++++++++---
+ drivers/common/cnxk/roc_cpt.h                |  3 +
+ drivers/crypto/cnxk/cn10k_cryptodev_ops.c    | 36 ++++++--
+ drivers/crypto/cnxk/cn10k_tls.c              | 33 ++++++-
+ drivers/crypto/cnxk/cn10k_tls_ops.h          | 12 +++
+ drivers/crypto/cnxk/cn20k_cryptodev_ops.c    | 39 ++++++--
+ drivers/crypto/cnxk/cn20k_ipsec.c            | 42 +++------
+ drivers/crypto/cnxk/cn20k_tls.c              | 73 +++++++--------
+ drivers/crypto/cnxk/cn20k_tls_ops.h          |  6 ++
+ drivers/crypto/cnxk/cnxk_cryptodev.h         |  1 +
+ drivers/crypto/cnxk/cnxk_cryptodev_devargs.c | 28 +++++-
+ drivers/crypto/cnxk/cnxk_cryptodev_ops.c     | 10 +-
+ drivers/crypto/cnxk/cnxk_cryptodev_ops.h     |  4 +-
+ drivers/crypto/cnxk/cnxk_se.h                | 84 +++++++++++++++--
+ 16 files changed, 389 insertions(+), 110 deletions(-)
 
-diff --git a/.mailmap b/.mailmap
-index 6d9e262cfb..87c544947c 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1477,6 +1477,7 @@ Ruifeng Wang <ruifeng.wang@arm.com>
- Rupesh Chiluka <rchiluka@marvell.com>
- Rushil Gupta <rushilg@google.com>
- Ryan E Hall <ryan.e.hall@intel.com>
-+Ryan Wolfe <rnwolfe@google.com>
- Sabyasachi Sengupta <sabyasg@hpe.com>
- Sachin Saxena <sachin.saxena@nxp.com> <sachin.saxena@oss.nxp.com>
- Sagar Abhang <sabhang@brocade.com>
-diff --git a/doc/guides/nics/features/gve.ini b/doc/guides/nics/features/gve.ini
-index 9f3835edf6..5566511b6b 100644
---- a/doc/guides/nics/features/gve.ini
-+++ b/doc/guides/nics/features/gve.ini
-@@ -7,6 +7,7 @@
- Speed capabilities   = Y
- Queue start/stop     = Y
- MTU update           = Y
-+Scattered Rx         = P
- TSO                  = Y
- RSS hash             = Y
- RSS key update       = Y
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index 3c8d1a76e4..92a5a7679f 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -897,6 +897,11 @@ gve_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
- 
- 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_RSS_HASH;
-+	/* GQI receives a frame larger than one Rx buffer as a chain of
-+	 * buffers (gve_rx_burst follows GVE_RXF_PKT_CONT).
-+	 */
-+	if (gve_is_gqi(priv))
-+		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_SCATTER;
- 	if (priv->clk_read_type != GVE_DEV_CLK_UNSUPPORTED &&
- 	    priv->nic_ts_report_mz != NULL)
- 		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
+-- 
+2.43.0
+
