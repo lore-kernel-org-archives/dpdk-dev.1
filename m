@@ -1,39 +1,52 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E914A606A31B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 09:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F86606A319
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 09:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=JP2M5Ypd
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 02C3640270;
-	Tue, 20 Oct 2026 11:01:10 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 2367B40144;
- Tue, 20 Oct 2026 11:01:09 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E69BE20678;
- Tue, 20 Oct 2026 11:01:08 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id D001640270;
+	Tue, 20 Oct 2026 11:11:39 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 7332140144
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 11:11:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792487499; x=1824023499;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=+wGyz/bKzwxFmxu+hyVdQw9LMNhoDkk4cMeIfigZHzo=;
+ b=JP2M5YpdTuGgsIWAHrGyYzVkUOgrf8lw1snujl4pzP9o2Rpef6NYgjNE
+ 91qjEhANR8gOUOhrxJRfuQ8Dh9jICST+zK/GvGHYMhF/erznYck1c5aEJ
+ UZJI/bLC9lWcaJJ0CqsrW/MSdakYFLXYVVjFaFpj/MoTuFLuAGm7d6fTs
+ wwYRn//0ODY84zkkcABVe/InzN3cyYH7G0lCgYQDRwtX34oIqF3TxHXFh
+ njxza8WbhhFyqCGlEKdvOU6A5qPcHe5bpM6PrPtgUpNOppWnC+9H2OqMB
+ x8K13sWkh5hl0hY3us8fOydFuP+L4fONKbU813lHabvdwpRbE0gbWlN2J A==;
+X-CSE-ConnectionGUID: x195kRvJRI6VVq32JfM1cA==
+X-CSE-MsgGUID: nlRwzSW9Th2vhyEr9HXBtw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1286804"
+X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
+   d="scan'208";a="1286804"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 20 Oct 2026 02:11:38 -0700
+X-CSE-ConnectionGUID: y40PLxhtQyCOZPAgGr5ifw==
+X-CSE-MsgGUID: kChRhS2kTiuH2UeXTLn8Cg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
+   d="scan'208";a="2879429"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa002.fm.intel.com with ESMTP; 20 Oct 2026 02:11:37 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v3 00/10] IAVF Fixes
+Date: Tue, 20 Oct 2026 10:11:23 +0100
+Message-ID: <cover.1792487374.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1791991100.git.anatoly.burakov@intel.com>
+References: <cover.1791991100.git.anatoly.burakov@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v3] net/vhost: fix SW checksum when zero
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 20 Oct 2026 11:01:06 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65AC8@smartserver.smartshare.dk>
-In-Reply-To: <CAO55csz5i1-b+7XYgVZad2ZxU1+_egNR+HkPCfD2=B3Q6zdErw@mail.gmail.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v3] net/vhost: fix SW checksum when zero
-Thread-Index: Ad1gBjPEYpJwSWABSDWDA7x7tc3pPgAaxZnA
-References: <20261017165952.3139535-1-mb@smartsharesystems.com>
- <20261018092037.3143058-1-mb@smartsharesystems.com>
- <CAO55csz5i1-b+7XYgVZad2ZxU1+_egNR+HkPCfD2=B3Q6zdErw@mail.gmail.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: <dev@dpdk.org>
-Cc: <stable@dpdk.org>,
-	"Maxime Coquelin" <maxime.coquelin@redhat.com>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,13 +56,56 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-PiBSZXZpZXdlZC1ieTsgTWF4aW1lIENvcXVlbGluIDxtYXhpbWUuY29xdWVsaW5AcmVkaGF0LmNv
-bT4NCg0KRm9yIFBhdGNod29yaywgcmVwbGFjaW5nIHNlbWljb2xvbiB3aXRoIGNvbG9uLi4uDQpS
-ZXZpZXdlZC1ieTogTWF4aW1lIENvcXVlbGluIDxtYXhpbWUuY29xdWVsaW5AcmVkaGF0LmNvbT4N
-Cg0K
+An assortment of IAVF flow-related memory leak fixes and cleanups.
+
+v2 -> v3:
+- Rebase on top of latest next-net-intel including Anurag's fix [1]
+- Dropped remnants of Anurag's patch [1] as it's now in the tree
+- Fixed PF reset path still tearing down RSS when it shouldn't
+- Fixed hash engine checking for VF reset when that's no longer necessary
+
+v1 -> v2:
+- Integrated Anurag's earlier fix [1] into the patchset
+- Reworked generic flow to have centralized memory management
+- Reordered some patches
+- Integrated the IRQ leaks patchset [2] [3]
+- Reworked IPsec fix
+
+[1] https://patches.dpdk.org/project/dpdk/patch/20261010121255.528329-1-anurag.mandal@intel.com/
+[2] https://patches.dpdk.org/project/dpdk/patch/809e0c5b2ab57f1b14c68be8ac34e70cbbe82233.1792053236.git.anatoly.burakov@intel.com/
+[3] https://patches.dpdk.org/project/dpdk/patch/5488d85c2ded08838becaee6de8328694ee00234.1792053236.git.anatoly.burakov@intel.com/
+
+Anatoly Burakov (10):
+  net/iavf: keep device stopped if start fails
+  net/iavf: do not store ethdev pointer
+  net/iavf: fix false success on flow validation
+  net/iavf: fix memory leaks around IRQ resources
+  net/iavf: fix generic flow error-path leaks
+  net/iavf: centralize memory management for flows
+  net/iavf: skip RSS teardown during PF-initiated reset
+  net/iavf: remove redundant reset checks from RSS engine
+  net/iavf: fix null engine for egress security flows
+  net/iavf: fix IPsec flow metadata leaks
+
+ drivers/net/intel/iavf/iavf.h              |  14 +-
+ drivers/net/intel/iavf/iavf_ethdev.c       |  50 +++---
+ drivers/net/intel/iavf/iavf_fdir.c         |  68 ++++----
+ drivers/net/intel/iavf/iavf_fsub.c         |  23 +--
+ drivers/net/intel/iavf/iavf_generic_flow.c |  95 ++++++------
+ drivers/net/intel/iavf/iavf_generic_flow.h |   4 +-
+ drivers/net/intel/iavf/iavf_hash.c         | 103 ++++---------
+ drivers/net/intel/iavf/iavf_ipsec_crypto.c | 171 +++++++++++++++++----
+ drivers/net/intel/iavf/iavf_ipsec_crypto.h |   4 +-
+ drivers/net/intel/iavf/iavf_vchnl.c        |   7 +-
+ 10 files changed, 303 insertions(+), 236 deletions(-)
+
+-- 
+2.52.0
+
