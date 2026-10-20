@@ -1,53 +1,52 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E94606A327
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C1A606A320
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=PM80prL8
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=K7TMSu+I
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2EF084068E;
-	Tue, 20 Oct 2026 17:21:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1FDB740A79;
+	Tue, 20 Oct 2026 17:21:44 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 3708440A67
- for <dev@dpdk.org>; Tue, 20 Oct 2026 17:21:40 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 49CF84069F;
+ Tue, 20 Oct 2026 17:21:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792509700; x=1824045700;
+ t=1792509702; x=1824045702;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=RaymeAWLux5G5szYZbVnUCJ8F7wAj4vKe6YV6dq+a0E=;
- b=PM80prL8F8vro0Fl0K7zKTEgAZ2S8JWkWZf9tGMVHx+WhjVuAoyIZ8up
- oXgHdDJODhpSewL4rxbyFUnDHZZdzRBRK2LacWu051eL2d8E4D0bjM+wE
- sIwbj4vXLxeFyH83NdHl+Gc73MT0bWCb8pHQGAEX205nLl0V0ym+r2Ojn
- kS2+jX0kcg8yfho3rRSVkBFTaZ7PtPmpW99rPoR2jW0oaCEzNP6dgZ7vx
- iiQkRB3BXd7bbx541F4V5WAYJ3rjFkrziLRw9Y9OfeGlAqDJ0VvPsHUXy
- /CTD2+fLMvAhh/kLEcI1EqvTikMPrCwMraj9j72vajgdELjDXOGoGNysw w==;
-X-CSE-ConnectionGUID: 8i9kRLHOTZa/edNjWP5MdA==
-X-CSE-MsgGUID: 8c0iFpYhQ3SHHENNV6DoyQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1226877"
+ bh=6jSh+U9Dkvnud8E9A09F9L9awcrFD+qjVlgW8tWUcEI=;
+ b=K7TMSu+IQcO72pDF880Q7YGjMziU89fcJQOHZkpLx3t/mosdsZz6tzRr
+ HVvH3riCIaI0jLUBJ/sn+Q1qgErxoeibGFv2UhN4WlICGvVznCE3cgs6R
+ uj0lcFsTS1Pd6484gtMrwOhQcIl4IzMGGCmRVI14inj1fa+DY4FPpWIPY
+ ECf3tXvrDIdp/LYU+nWrHCRqYRxjmuDTFHAgjb1V0Tt4otCX2IhsG6D0R
+ l+a8ZIsdie+vRJwGai8E343t9r1v5eB49bEsO8sCgjwwdEua2nvAy7P6P
+ UxVf2eXfaKei/kDEWbb5QiEz8/Y3BjXFu4Y7unu9wbwfkgG3nY+YFR143 Q==;
+X-CSE-ConnectionGUID: vjoxSGrPTmOY6lmFCoV65A==
+X-CSE-MsgGUID: M41AyDTWQWi0jWva/WhEXA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1226882"
 X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="1226877"
+   d="scan'208";a="1226882"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Oct 2026 08:21:39 -0700
-X-CSE-ConnectionGUID: BgIm/KkESJyy/ijuFf2qoA==
-X-CSE-MsgGUID: oXpQvr7HSVKfdRfdOAwxOA==
+ 20 Oct 2026 08:21:41 -0700
+X-CSE-ConnectionGUID: 7DyqWLU1TzmELTSTpDdsug==
+X-CSE-MsgGUID: +lhx74msQ/qDQ8NYEPTs5A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="3241036"
+   d="scan'208";a="3241044"
 Received: from mtldev4.igk.intel.com ([10.123.233.187])
- by orviesa010.jf.intel.com with ESMTP; 20 Oct 2026 08:21:38 -0700
+ by orviesa010.jf.intel.com with ESMTP; 20 Oct 2026 08:21:40 -0700
 From: Dawid Wesierski <dawid.wesierski@intel.com>
 To: Bruce Richardson <bruce.richardson@intel.com>
 Cc: dev@dpdk.org, vladimir.medvedkin@intel.com, anatoly.burakov@intel.com,
- marek.kasiewicz@intel.com
-Subject: Re: [PATCH 1/3] net/iavf: fix invalid free of queue TC map
-Date: Tue, 20 Oct 2026 15:22:27 +0000
-Message-ID: <20261020152227.2599008-1-dawid.wesierski@intel.com>
+ marek.kasiewicz@intel.com, stable@dpdk.org
+Subject: Re: [PATCH 2/3] net/iavf: fix bandwidth config of unshaped queues
+Date: Tue, 20 Oct 2026 15:22:29 +0000
+Message-ID: <20261020152229.2599038-1-dawid.wesierski@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <atZOKGtUlpulSC11@bricha3-mobl1.ger.corp.intel.com>
-References: <20261014122419.631288-2-dawid.wesierski@intel.com>
- <atZJlMewvnJu781L@bricha3-mobl1.ger.corp.intel.com>
- <atZOKGtUlpulSC11@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <atc1dgrGiIpn3APl@bricha3-mobl1.ger.corp.intel.com>
+References: <20261014122419.631288-3-dawid.wesierski@intel.com>
+ <atc1dgrGiIpn3APl@bricha3-mobl1.ger.corp.intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -68,20 +67,12 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Mon, Oct 19, 2026 at 06:06:48PM +0100, Bruce Richardson wrote:
-> AI review flags the fact that this commit also introduces an erroneous
-> rte_free call in iavf_uninit_vf() in iavf_ethdev.c. While the call is
-> harmless (and earler free is done and the pointer is set to NULL making
-> rte_free a no-op) it would be good to remove that too.
+On Tue, Oct 20, 2026 at 10:33:42AM +0100, Bruce Richardson wrote:
+> I find the commit log of this patch a bit confusing to read and understand.
+> I asked AI to try and make things clearer and it suggests this as a
+> rewording, which I personally find clearer. WDYT?
 
-Thanks, Bruce. Yes, f6e33f09f766 added that rte_free() after the
-free() and the NULL that the leak fix had put there. v2 removes it in
-the same patch, and the commit message tells it.
-
-I tested v2 with an ASan build of testpmd on an E830 VF: hierarchy
-commit, port stop, port reset, port start, and close. There is no ASan
-report, and the VF advertises runtime queue setup again after the
-reset.
+Agreed, your text is clearer. v2 uses it with no change.
 
 Dawid
 ---------------------------------------------------------------------
