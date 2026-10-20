@@ -1,98 +1,41 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE127606A319
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm2 header.b=eK79qMlm;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=bZh20JNK
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2E5606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:27:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4545340283;
-	Tue, 20 Oct 2026 17:25:17 +0200 (CEST)
-Received: from fout-a8-smtp.messagingengine.com
- (fout-a8-smtp.messagingengine.com [103.168.172.151])
- by mails.dpdk.org (Postfix) with ESMTP id 835A74025A
- for <dev@dpdk.org>; Tue, 20 Oct 2026 17:25:15 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id CC48CEC013B
- for <dev@dpdk.org>; Tue, 20 Oct 2026 11:25:14 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Tue, 20 Oct 2026 11:25:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1792509914;
- x=1792596314; bh=5H1KbbHcdcpDjmXKztl0np85lD+ORcxyloDZoTZP220=; b=
- eK79qMlm/0cOx0JT7hgMzwN3XMYu17mJmXwJsuW0nUEqacksCLzb8azP2S4QFb9L
- K4Ee38BBLXrFLXP9t8goN+u6+3CENokuqeKUcDFAS/9HMf5kaKRRwe+zGzBlh0MQ
- xP8ZlghT6QTY2bwhDFvCOGCOUE7Rlco9No+Gei7gWd7Kc+ZgUYcpJHp395mDTddh
- iyfrXyb3uaQc3KwQULWpyd68Q6obH/tG7UqufbSy890ixjZxjY8Exsp3P0AHpS1p
- t52wF8fS371jAgQ2/XNnsgvO+FgpIAfrJ5uJXDzBA5aRhV4lFOIii3Bz5DV63QIH
- hXxe28rmmWAB/pE6vcs+UQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792509914; x=
- 1792596314; bh=5H1KbbHcdcpDjmXKztl0np85lD+ORcxyloDZoTZP220=; b=b
- Zh20JNKPUcB+jiPPNySXorGOrco5P1EQbyfV570HgcQnsVB2cAtM42C5u1lEdRGz
- XsxDU1aPel4j3JbUEMS97PKdNNGy5no67ywMUugalM5Bhia+UT+z85oQrW6hJr0g
- MyZie8FIMKpbEAyoMUc/q+Vxswfv3r+ZGN61Ot+d1RnvtUYLdUpHVjCYQYrY6eDK
- MN9NQ/vzlUQA/mb0bFSGDR7w/q7cSOiPZvb746UZoGvPGWZVDJ5SMdp2Bscu31HC
- NGfZ4tagxGPv0Vz3c3gcty03lqE2YMzclHSpAKN3pZ2ziaWgcfQShUUL39edFzyc
- L9W/0k8d4eHA7Mwu0g3VA==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1792509914; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:kMQvOppPuopuDkw/VZYQKfO9cz6DdaXi1NPwBNQcajSkmcQ
- 1Bbf9rzsvbjhFr2L1xmCT8U4kNOoNOuXcQOqDT3sNDJalGGAEKSHckhRpyZeGUG5
- DJ+catQXMYd4Eg6W9TSCrdei+binmTvV89CMOXqiqvLc9ntgRNDma44WmX6yO+XK
- 4YoKg17JJOiBP+hXnZ79IttCmoMi70mWsn7nIPXY/Rms6Gj122EBmTaF2UWN2Ho6
- tL7U2pqv04AuTTyC8qmTPBUWSHZ0JMLbrG253P+5okZby5LgXFXbSomIIsk88iuS
- gt3MI7c24HKcI3JrH4fNl3g26oZvi+2OiKEKvBw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:JSYwdOz4jL0hJzHY/DKK6xXxQGkVrrQ+G7o0oUREdwg=:gcF41c4ODw4tEgMCPpJwnBQIvQM5Z1WLahbVQqHUuWI=;
-X-ME-Sender: <xms:2ofXah-gNXh3sFtZ57yQ1IIaw0idz-LYeRq5sXfxworWcGY5Xcdk7g>
- <xme:2ofXaiD075xlTIDEQPfh0hy0CRX9OuZydg9kKcF3tAvhVsk8IVOiRWi_-8qJKHDqK
- UDfVN1nSSVZsF1GkXsi1qRv_jU2K1BljuMfWJYX6aghZTk_LoKncXA>
-X-ME-Received: <xmr:2ofXahy7_kMyhVchvTaDHpc7iGJmbsjGg2Dzm2scDV4Z8w5qDojK96lWbw8I_tOQDQBRLcW5YKSnPCJzbzW7uUs>
-X-ME-Proxy-Cause: dmFkZTGUlhvhQLDTyhzUVPtIzrm4w8Hefhs4cNq/tQbjdei+4PIzAeQ9RbFUKmlagO+Fcl
- ILj8RP0xypPsUsV+wZp/yekmymzcz92MJkkeqGQZtnNGjrB3KgNQNACC30QSn+uImeateD
- P9aLJL1q3YkJl0hCnjJPJZgirpbiLVp7ktSjhSiqEk4wfMO3nCJJlTi9fyo7b5WW5ph10t
- 3ZTcFGlu5AEmnEdXaeZGzTzSZ31pp/RWNWYG8+a5h4L69qtXia/dAU5S8gwp428Al7IRcb
- NF4tHeTgmxCXUcBzy82bq3WPSvYoa65U3OMuPqV8ctD+WPfpbPXc08jqNTBUIB/ArzFYsl
- 1n6qo8g6XFOtHxwjLqj46a5lJDMZozE4Y/ajfc9nv/CRxK/yRG3OjbcrY/VHz4l2QQfDSc
- 3srSkLwPiTd5TZVLkRiUbkDJcNDTcaTw4G+nsiTJ4ZlXTlMxRwTDinGXYWef0QuYmPazu5
- bgaZvk9wH4oAnQoy+JYnShCtEpSjWysgcAtOcwwSE79h5fitqQk9nzAgUHaDZOiaFqqTkp
- 2VT6TaSeXeP5Ci+TyBv0xDxVgfwtVzPLpLVE3tpAk1U4v/stypUkR6wNb6/l6xsve9cskF
- UlJzo2dEu5WD4r0cE2jDWRYwPzuAKVm4UY7/bj5PtZOCMErNfsqN3kiz9umw
-X-ME-Proxy: <xmx:2ofXanRy9G1A-9wmfLat_JFAn2sUpVOvRzAI3TM-u36TH940JtbhQQ>
- <xmx:2ofXao_pIb97ocasMDN9GiqIKvRNksEnLxrFrBqSNwWqmK3-Y8x2vw>
- <xmx:2ofXauo09VJ38wNF6fBVQGdPtrj4FhK71ozzRNQ4eFUOyYWrLvLDNw>
- <xmx:2ofXallBcD2L9fN5KGlXPz2dhXX1fjrS5vPHNHhb_B04oOKA-rSJJw>
- <xmx:2ofXatgHM4bQCb8ZHiJ4EZyTaZ5Y5OQzroQPzF_03ebELXcxJDffePJi>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 20 Oct 2026 11:25:14 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] maintainers: update for next-net-brcm tree
-Date: Tue, 20 Oct 2026 17:25:11 +0200
-Message-ID: <lRZjk3DyTXKk4mD6lIGtug@monjalon.net>
-In-Reply-To: <CA+BST0mwb_r5JnNJBHzoYaOtYWYxoP1QveQjVzXCXwmCDiefwA@mail.gmail.com>
-References: <20261020095133.2811576-1-thomas@monjalon.net>
- <CA+BST0mwb_r5JnNJBHzoYaOtYWYxoP1QveQjVzXCXwmCDiefwA@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6F9DF40283;
+	Tue, 20 Oct 2026 17:27:06 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 5EF634025A
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 17:27:04 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 3914C2033E;
+ Tue, 20 Oct 2026 17:27:04 +0200 (CEST)
+Content-class: urn:content-classes:message
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] stack: fix pile GCC memcpy warnings
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Tue, 20 Oct 2026 17:27:02 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65ACE@smartserver.smartshare.dk>
+In-Reply-To: <20261020073430.04ce3bb4@phoenix.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] stack: fix pile GCC memcpy warnings
+Thread-Index: Ad1goCIfzH7sZ10gRdyZJQ2LtWha4gABl62A
+References: <20261020084944.3188987-1-mb@smartsharesystems.com>
+ <20261020073430.04ce3bb4@phoenix.local>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Ali Alnubani" <alialnu@nvidia.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -102,30 +45,43 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-20/10/2026 15:41, Kishore Padmanabha:
-> On Tue, Oct 20, 2026 at 5:51=E2=80=AFAM Thomas Monjalon <thomas@monjalon.=
-net> wrote:
->=20
-> > Kishore is the maintainer of the Broadcom tree
-> > since DPDK 26.07 cycle.
-> >
-> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> > ---
-> >  Next-net-brcm Tree
-> > -M: Ajit Khaparde <ajit.khaparde@broadcom.com>
-> > +M: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-> >  T: git://dpdk.org/next/dpdk-next-net-brcm
->=20
-> Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-
-Applied
-
-
-
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+DQo+
+IERhdGU6IFR1ZSwgMjAgT2N0IDIwMjYgMDc6MjY6NDIgLTA3MDANCj4gU3ViamVjdDogW1BBVENI
+XSBidWlsZDogZGlzYWJsZSBHQ0Mgc3RyaW5nIG9wIHdhcm5pbmdzIHdoZW4gdW5vcHRpbWl6ZWQN
+Cj4gDQo+IFdpdGhvdXQgb3B0aW1pemF0aW9uIEdDQydzIC1Xc3RyaW5nb3Atb3ZlcmZsb3cgYW5k
+IC1Xc3RyaW5nb3Atb3ZlcnJlYWQNCj4gYXJlIGZsb3ctaW5zZW5zaXRpdmU6IHRoZXkgY2hlY2sg
+YSBtZW1jcHkoKSBhZ2FpbnN0IHRoZSBvYmplY3Qgc2l6ZQ0KPiBldmVuIG9uIHBhdGhzIHRoYXQg
+YXJlIGRlYWQgZm9yIHRoZSBpbmxpbmVkIGFyZ3VtZW50cy4gVGhpcyBicmVha3MNCj4gZGVidWcg
+YnVpbGRzIG9mIGFwcC90ZXN0IHdpdGggLVdlcnJvciBvbiBsaWIvc3RhY2svcnRlX3N0YWNrX3Bp
+bGUuaCwNCj4gYW5kIGhhcyByZXF1aXJlZCBsb2NhbCBwcmFnbWEgd29ya2Fyb3VuZHMgZWxzZXdo
+ZXJlLg0KPiANCj4gRGlzYWJsZSBib3RoIHdhcm5pbmdzIHdoZW4gb3B0aW1pemF0aW9uIGlzIDAu
+IFRoZXkgc3RheSBlbmFibGVkIGZvcg0KPiBvcHRpbWl6ZWQgYnVpbGRzLCB3aGVyZSB0aGUgYW5h
+bHlzaXMgaXMgZmxvdy1zZW5zaXRpdmUuDQo+IA0KPiBCdWd6aWxsYSBJRDogMjA2MQ0KPiANCj4g
+UmVwb3J0ZWQtYnk6IEFsaSBBbG51YmFuaSA8YWxpYWxudUBudmlkaWEuY29tPg0KPiBTaWduZWQt
+b2ZmLWJ5OiBTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+DQo+
+IC0tLQ0KPiAgY29uZmlnL21lc29uLmJ1aWxkIHwgNiArKysrKysNCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCA2IGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9jb25maWcvbWVzb24uYnVpbGQg
+Yi9jb25maWcvbWVzb24uYnVpbGQNCj4gaW5kZXggNzQ1MDk3ZThhYS4uYWM5MGI5ZDRmYSAxMDA2
+NDQNCj4gLS0tIGEvY29uZmlnL21lc29uLmJ1aWxkDQo+ICsrKyBiL2NvbmZpZy9tZXNvbi5idWls
+ZA0KPiBAQCAtMzc4LDYgKzM3OCwxMiBAQCBpZiBjYy5oYXNfYXJndW1lbnQoJy1Xbm8tY29tbWEn
+KQ0KPiAgICAgIG5vX2NvbW1hX2NmbGFnID0gJy1Xbm8tY29tbWEnDQo+ICBlbmRpZg0KPiANCj4g
+KyMgR0NDJ3Mgc3RyaW5nL21lbW9yeSBhY2Nlc3Mgd2FybmluZ3MgYXJlIGZsb3ctaW5zZW5zaXRp
+dmUgd2l0aG91dA0KPiArIyBvcHRpbWl6YXRpb24gYW5kIHByb2R1Y2UgZmFsc2UgcG9zaXRpdmVz
+IG9uIGRlYWQgcGF0aHMgb2YgaW5saW5lZA0KPiBjb2RlLg0KPiAraWYgZ2V0X29wdGlvbignb3B0
+aW1pemF0aW9uJykgPT0gJzAnIGFuZCBjYy5nZXRfaWQoKSA9PSAnZ2NjJw0KPiArICAgIGdsb2Jh
+bF9jZmxhZ3MgKz0gWyctV25vLXN0cmluZ29wLW92ZXJmbG93JywgJy1Xbm8tc3RyaW5nb3AtDQo+
+IG92ZXJyZWFkJ10NCj4gKytlbmRpZg0KPiArDQo+ICBmb3JlYWNoIGFyZzogZ2xvYmFsX2NmbGFn
+cw0KPiAgICAgIGlmIGNjLmhhc19hcmd1bWVudChhcmcpDQo+ICAgICAgICAgIGFkZF9wcm9qZWN0
+X2FyZ3VtZW50cyhhcmcsIGxhbmd1YWdlOiAnYycpDQo+IC0tDQo+IDIuNTMuMA0KDQoNCkFsc28g
+Jy1XYXJyYXktYm91bmRzJz8NCg0KQ29uc2lkZXIgbWFraW5nIGl0IGEgc2VyaWVzLCBhbmQgYWxz
+byByZW1vdmUgZXhpc3Rpbmcgb3ZlcmZsb3cvb3ZlcnJlYWQgcHJhZ21hcyBpbiB0aGUgY29kZSAo
+aWYgdmlhYmxlKToNCmxpYi9yaW5nL3J0ZV9yaW5nX2VsZW1fcHZ0LmgNCmxpYi9lYWwvcHBjL2lu
+Y2x1ZGUvcnRlX21lbWNweS5oDQoNCldpdGggb3Igd2l0aG91dCBzdWdnZXN0ZWQgY2hhbmdlcywN
+CkFja2VkLWJ5OiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KDQo=
