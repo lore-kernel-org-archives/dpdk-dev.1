@@ -1,75 +1,75 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1DB606A319
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 09:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4B9606A323
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 09:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=eRZlKhbq
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=iqzGJ6+i
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 40CB44060A;
-	Tue, 20 Oct 2026 11:38:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 40D8F4060A;
+	Tue, 20 Oct 2026 11:39:09 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 418D540270
- for <dev@dpdk.org>; Tue, 20 Oct 2026 11:38:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 45EC140144
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 11:39:08 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792489116;
+ s=mimecast20190719; t=1792489147;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=jR1dCvbVJCC6BidN7hFhrg+SDQrGIgAdT0grDBOfZEo=;
- b=eRZlKhbqjmuEbGDBjbEj47EnvS70/t/G5E0nZ/cZETrEPtZrlqQbcINr68PivJR0klgr0U
- kxbOdAP5hEAWKAP5+vps/8HC8CMITT6Okn54zvANhE2Bc9u4DHa0b3AXiiBRORi40oUlvD
- B4uDogPtjnGNa1eSCnEE63AOZYz0bCk=
-Received: from mail-dl1-f69.google.com (mail-dl1-f69.google.com
- [74.125.82.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=e1qmBbK1oCpPEHSj/1vxZDOU1PM9K7U5yzbMME7884w=;
+ b=iqzGJ6+istCou5DsUOIkISo+It2e+HZM+990yEMPIrLKrt4aOkj7jNsp5Alvc2qqWygvNk
+ R/2RHF5MyhzMTjt018Fk+h9eDx2olnYhFh0ptp8bP+di+AWwKqJqt9nBMm7Bs7Y+KrK5sC
+ +RkVPQXHzRpoHUFkIkkEwtv0fiA0FGA=
+Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com
+ [74.125.82.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-86-60XHhkb9PxC-ZJ9b5fLQuw-1; Tue, 20 Oct 2026 05:38:35 -0400
-X-MC-Unique: 60XHhkb9PxC-ZJ9b5fLQuw-1
-X-Mimecast-MFC-AGG-ID: 60XHhkb9PxC-ZJ9b5fLQuw_1792489114
-Received: by mail-dl1-f69.google.com with SMTP id
- a92af1059eb24-139b62317d0so11502577c88.0
- for <dev@dpdk.org>; Tue, 20 Oct 2026 02:38:35 -0700 (PDT)
+ us-mta-564-LUaXPopQOLGKexN_TWMnoA-1; Tue, 20 Oct 2026 09:39:06 +0000
+X-MC-Unique: LUaXPopQOLGKexN_TWMnoA-1
+X-Mimecast-MFC-AGG-ID: LUaXPopQOLGKexN_TWMnoA_1792489145
+Received: by mail-dy1-f200.google.com with SMTP id
+ 5a478bee46e88-33c35f5ca6cso6260639eec.1
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 02:39:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792489114; x=1793093914;
+ d=1e100.net; s=20260707; t=1792489145; x=1793093945;
  h=content-transfer-encoding:content-type:cc:to:subject:message-id
  :date:from:in-reply-to:references:mime-version:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=jR1dCvbVJCC6BidN7hFhrg+SDQrGIgAdT0grDBOfZEo=;
- b=PH3DNPnZxWbuDf2ZQcFsflvH3AxV/TXsolFszyUn+ZGuZ7wj99myZEsOmLd8jvz+jS
- wSTDy/dyoEJnLFhxh7heme4Lwto6MGITFQ0BMC6Ne/8OCHfBLsOf/bI4XhR7oIrKvA+I
- thMruS+gw/eCaKx3zZhNEHFL3PxgqhAsdANUOgdpfiE7ZdQR53ud6J147EjXJJqOma35
- 4PY1kpIJEqb2XU+NjCy9vePlMHx+PwaiTtakFuzLC6HYzE8m6nmdCf/nBRxYVu+tF70D
- optYVv9QSfnmX+LVs/JYhY3EugmsWvxgQ/rqRkfFIqid0/ISvGa5MSQrsxkhr0lprvS8
- +tpg==
-X-Gm-Message-State: AFq9FYKIrJb+Zt1KWRGKyvznZJWEZ8G1X4JkSqcrtcE35L2AIkgXf6yj
- 1jEB/pwEh5G8pTWcL7iqiWRvZIMWOmp1o/XdQ5kKmOYYx9bRoRcFVnBZXU3sWh15C5k8wAKxGWw
- 5it0ti5pePft+VtCcqgzQ91M/hXrRx8D6iibUnJouoeblw5qvenkpZI5c2n2NwJn3NoVMU5a0NY
- SvUn3H3cCZJNeIYEs91p0=
-X-Gm-Gg: AYBFou29h7G1E50m6eLZB+vynHniNX5WTwxkrvQhW6OH9lGjw1Dq3+Iali/f62iBl0z
- FgzPoaagzyLfpRXNrl+tfaa+G+s+N4WyoxILY0jquKILzyqcpH7lBrfz4zsAndOBUe7bQG1SsSv
- GdQMW1qgz83yHwHDhQcWaabBKWhVCU4UR4rVxbNxAhaDGY0FqZy9eVJCzH2iAVE8892faUVYHhM
- 8AV3DOXV1vV9JGO+ndPThf/zS09qy3Tckh6uEVjIl9UFCQ4jvyk3HqldpoimpxcXtysgsw+5Bea
- e7Ix+MIQCFxYMrv7TXFzFyjXkfYF6T86XKj62tvbcto=
-X-Received: by 2002:a05:701b:4584:b0:158:1ed2:cb58 with SMTP id
- a92af1059eb24-18514634414mr13382042c88.39.1792489114129; 
- Tue, 20 Oct 2026 02:38:34 -0700 (PDT)
-X-Received: by 2002:a05:701b:4584:b0:158:1ed2:cb58 with SMTP id
- a92af1059eb24-18514634414mr13382011c88.39.1792489113471; Tue, 20 Oct 2026
- 02:38:33 -0700 (PDT)
+ bh=e1qmBbK1oCpPEHSj/1vxZDOU1PM9K7U5yzbMME7884w=;
+ b=r/FSaeqI9BoQ3llOCxId2KnvXygBQgpov2yktybi/fNCwLZY6Ih/LwxVIxcqDhCc+s
+ yv/ODKM6cZUqiRlXxNO3zJ0KNkGAue9cV8rFXYC9Zq60Eb03JHiQDgpKmHVwI+292M54
+ wYXGgY3uW5UgVXp0D1TNjX5dseEhVWRjYs/k1TkIulu8BtRuWN81XhQ0kvp+jECEYg6Q
+ o5ZmC01Zb8Io0h8b+ldJykxvzx4UsRLMNki2JYI2vVFzzmZwrOsPgF22EW1FAFI10Jje
+ NoJSLrkP9vUjkYFgYFWCtuSFuVQyqauPbx9xHew117FacFSBmcx3L+21Uw+V0GmbF371
+ cJHw==
+X-Gm-Message-State: AFq9FYJs9HNSVUOVTftsge4/IwrDZQhbG0OloZ3blKLZs3tQjB/ERCN4
+ y6JcperQb/pkE+0DGz408HtcstB676r0XDLmPBGHJdGnELpuen5udxI8sBzQnvl226F1Q4WQi5q
+ EhYNXDR4uiq/wLF2qPHpFClLnJdXtSyssLV67mVaBt50rD4+XQtLzq0NCrPbluTmLDD+fwzS9Mf
+ eX5wQLCWFvnnvQWFZptj2Gsa0r4312Ug==
+X-Gm-Gg: AYBFou113zoEkw8w2GnVVOktAzkY6tsZKvvVT96/fTPD8PEnspHWCJ7+n1h/0n0jAZg
+ yVaPUu812qhWWMFmVpBG7miU920RH9nlliY9o7kByL+MpkCRo/8r+dBRO54UxLSSBCD6T630ps9
+ cWEET4N6L9Ox4ykC18KE+fnTDnuXa5ZTNxpIotaiEl/rgSvU8oj7TxBcjY93ptC1Lw3i1UsOWuV
+ 8Rh8lNEefTn8qFx95mNbHyy+oTUynVQGC7rL6pyKkFNfa6CBevmHRfNOlg/lrQSkay96PVSHR4h
+ dExW2tm07gq0eU4wZlAmzMA+fW8vO8YIog4BLn/idhc=
+X-Received: by 2002:a05:701b:42c4:20b0:182:94d7:f76a with SMTP id
+ a92af1059eb24-18515c54aa2mr15675967c88.43.1792489144778; 
+ Tue, 20 Oct 2026 02:39:04 -0700 (PDT)
+X-Received: by 2002:a05:701b:42c4:20b0:182:94d7:f76a with SMTP id
+ a92af1059eb24-18515c54aa2mr15675926c88.43.1792489144047; Tue, 20 Oct 2026
+ 02:39:04 -0700 (PDT)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261019135643.3146303-1-mb@smartsharesystems.com>
-In-Reply-To: <20261019135643.3146303-1-mb@smartsharesystems.com>
+References: <20261019135814.3146545-1-mb@smartsharesystems.com>
+In-Reply-To: <20261019135814.3146545-1-mb@smartsharesystems.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Tue, 20 Oct 2026 11:38:20 +0200
-X-Gm-Features: AclHuK-TqjDcFOHn2myfzyReilXJ1DmO9eFs55LRwQOk-SMx18xY_n3Ux7KlCdA
-Message-ID: <CAO55cszwq=KAi9OugmZ96_yMAVgPg_N190DB7j38LJrx4WUffQ@mail.gmail.com>
-Subject: Re: [PATCH] net/virtio: fix checksum offset check in Rx path
+Date: Tue, 20 Oct 2026 11:38:52 +0200
+X-Gm-Features: AclHuK8G4WnPKnqgmi4mvFcUyw7uOMgP36t2kp6ck520qQc1M91KjJ7ByV27VOw
+Message-ID: <CAO55csw9OTh8QYDWF9Lxq_VDoSZ0q65prhG33bJUmhuoz-GEBg@mail.gmail.com>
+Subject: Re: [PATCH] vhost: fix checksum offset check in Rx path
 To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
 Cc: dev@dpdk.org, Chenbo Xia <chenbox@nvidia.com>, stable@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 8MKA6ut0uc4a6oO9rUK_WuGVV4j6rO5d-vHPDgEyPjA_1792489114
+X-Mimecast-MFC-PROC-ID: Rv7OVkMCRpt6-tHmnIsO641xnN5SS4Lz80Xuy8cQipM_1792489145
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -89,56 +89,37 @@ X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Mon, Oct 19, 2026 at 3:57=E2=80=AFPM Morten Br=C3=B8rup <mb@smartsharesy=
+On Mon, Oct 19, 2026 at 3:58=E2=80=AFPM Morten Br=C3=B8rup <mb@smartsharesy=
 stems.com> wrote:
 >
 > Writing the checksum in the packet needs room for 2 bytes, not 1 byte.
 >
-> Fixes: 96cb6711939e ("net/virtio: support Rx checksum offload")
-> Fixes: 0eaf7fc2fe8e ("net/virtio: separate AVX Rx/Tx")
+> Fixes: ca7036b4af3a ("vhost: fix offload flags in Rx path")
 > Cc: stable@dpdk.org
 >
 > Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
 > ---
->  drivers/net/virtio/virtio_rxtx.c        | 2 +-
->  drivers/net/virtio/virtio_rxtx_packed.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  lib/vhost/virtio_net.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/net/virtio/virtio_rxtx.c b/drivers/net/virtio/virtio=
-_rxtx.c
-> index edecd2011f..1afb68bc69 100644
-> --- a/drivers/net/virtio/virtio_rxtx.c
-> +++ b/drivers/net/virtio/virtio_rxtx.c
-> @@ -955,7 +955,7 @@ virtio_rx_offload(struct rte_mbuf *m, struct virtio_n=
-et_hdr *hdr)
+> diff --git a/lib/vhost/virtio_net.c b/lib/vhost/virtio_net.c
+> index 8bdddedccf..eb099d206b 100644
+> --- a/lib/vhost/virtio_net.c
+> +++ b/lib/vhost/virtio_net.c
+> @@ -2848,7 +2848,7 @@ vhost_dequeue_offload(struct virtio_net *dev, struc=
+t virtio_net_hdr *hdr,
 >                         if (likely(csum !=3D 0xffff))
 >                                 csum =3D ~csum;
 >                         off =3D hdr->csum_offset + hdr->csum_start;
 > -                       if (rte_pktmbuf_data_len(m) >=3D off + 1)
 > +                       if (rte_pktmbuf_data_len(m) >=3D off + sizeof(uin=
 t16_t))
->                                 *rte_pktmbuf_mtod_offset(m, uint16_t *,
->                                         off) =3D csum;
+>                                 *rte_pktmbuf_mtod_offset(m, uint16_t *, o=
+ff) =3D csum;
 >                 }
-> diff --git a/drivers/net/virtio/virtio_rxtx_packed.h b/drivers/net/virtio=
-/virtio_rxtx_packed.h
-> index f7cc60bb51..6501ede3f0 100644
-> --- a/drivers/net/virtio/virtio_rxtx_packed.h
-> +++ b/drivers/net/virtio/virtio_rxtx_packed.h
-> @@ -185,7 +185,7 @@ virtio_vec_rx_offload(struct rte_mbuf *m, struct virt=
-io_net_hdr *hdr)
->                         if (likely(csum !=3D 0xffff))
->                                 csum =3D ~csum;
->                         off =3D hdr->csum_offset + hdr->csum_start;
-> -                       if (rte_pktmbuf_data_len(m) >=3D off + 1)
-> +                       if (rte_pktmbuf_data_len(m) >=3D off + sizeof(uin=
-t16_t))
->                                 *rte_pktmbuf_mtod_offset(m, uint16_t *,
->                                         off) =3D csum;
->                 }
+>         }
 > --
 > 2.43.0
 >
-
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
