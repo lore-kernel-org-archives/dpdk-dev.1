@@ -1,85 +1,85 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B53606A31C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 11:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE823606A31A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 11:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=JFrMGQcf
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=D2GVBUZj
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D682940270;
-	Tue, 20 Oct 2026 13:20:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AD7FB40270;
+	Tue, 20 Oct 2026 13:20:26 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3147E40144
- for <dev@dpdk.org>; Tue, 20 Oct 2026 13:19:59 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id C892B40144
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 13:20:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792495198;
+ s=mimecast20190719; t=1792495224;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=z1StECkAyOQ4HDakSVZo2j31/a3Xs8cU+Q3/zBCFg7Q=;
- b=JFrMGQcfPLMYseW9j64H+PJ1kM7H6+jH6hNOU3NbR4iiMhMWVP5YimQtazefp3+VQ2EuMO
- FZivfleKgu9Efd0ROzPjT5JerD68WIKNM1vuXn7XXuR7WmpFDx+gvva2FHbF8vBHspFEYQ
- TJgBCYhKGNUZkI92wHFMY9NlZB087Rk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=62f2ZN3kGrZCaIAnpSYrysAZJZuRfvyC5uKJxK57bEc=;
+ b=D2GVBUZjFSeHKx1230LYb5iH3/7ybIVeMRad0ksgts++luX6Ie60xtPGSg9/T+6N4rH1mp
+ DAd5GYPB/kMoyx6Dvpi2Bw34h05CxuorUM55uGtMApDsu04B9wceNfdmSoBHZ97bP2sFvh
+ x2gVFr2Hv55N29t1AIrFppL6diZxg04=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-614-jrvKDgJvPwSHQIKvsZ41gw-1; Tue, 20 Oct 2026 11:19:57 +0000
-X-MC-Unique: jrvKDgJvPwSHQIKvsZ41gw-1
-X-Mimecast-MFC-AGG-ID: jrvKDgJvPwSHQIKvsZ41gw_1792495196
-Received: by mail-wm1-f70.google.com with SMTP id
- 5b1f17b1804b1-4a1d7663a4dso29457015e9.2
- for <dev@dpdk.org>; Tue, 20 Oct 2026 04:19:57 -0700 (PDT)
+ us-mta-235-Oktpk-NbNUGJq6vPnrbWFA-1; Tue, 20 Oct 2026 11:20:22 +0000
+X-MC-Unique: Oktpk-NbNUGJq6vPnrbWFA-1
+X-Mimecast-MFC-AGG-ID: Oktpk-NbNUGJq6vPnrbWFA_1792495222
+Received: by mail-wm1-f72.google.com with SMTP id
+ 5b1f17b1804b1-4a1de9dac94so20385995e9.2
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 04:20:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792495196; x=1793099996;
+ d=1e100.net; s=20260707; t=1792495221; x=1793100021;
  h=content-transfer-encoding:content-type:in-reply-to:from
  :content-language:references:cc:to:subject:user-agent:mime-version
  :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=z1StECkAyOQ4HDakSVZo2j31/a3Xs8cU+Q3/zBCFg7Q=;
- b=aGJpPOCbRy8QYbDLJpPIiAGnfp93qhegje1jzfLkgq3nIlnX1tCDJN5iJxvWEgBCBi
- 9YUDknBOSoR7xtca9XXhWnwlAF8eWvQ7vrmVXmiHHuiCcxYbeDu58L+aiX6JOc8DIj+G
- YbuotUZkhUNqomm96s4hbaymszJFqbSQM22aIv8uM09Wy+OaxckvZp9/I89QvSa9u3/s
- QRKKnylTFzvkuKIGt7y7bFd9AbpIrKuMTThf2pZq/mOPTH+Hg69sm6iSVP4QTc4qHN+e
- jsKifKwX5E3jJ0AC4k0pqA/H2Y41EfxT8s1753am/2SIDlBJ2RdwjMs9isIG6sVuySbp
- TRdg==
+ bh=62f2ZN3kGrZCaIAnpSYrysAZJZuRfvyC5uKJxK57bEc=;
+ b=H1h36QXjwYWwhnu5CbyU7KtL/onAdNTx/UfqKhnCrvLw/LpZkHZV5MBQeXBbff/iDB
+ W+Vh9PTFVyL5HIAfpFWZZki5+IMsXe3n8b2sFfGAIeNjDfp2pTZoKoiy+SmnW8YPSXFd
+ zJ8pRLnWT6WpU4kFRkhVjTIvWbw5+cD5+9mOv8TuQ2ExxPF0T/VyyLaG9jQSTpZE0lzo
+ AchB78SnHMu6/zQLzjIS/X+1mm/SVc7dG8Rzhp5SEmJVBJwVNaJ6b3I4ta+NmnRGRS0h
+ 16IbinrOsT1T6VYR+DDs8Mys5/eCx6GEbq1S2F0AisSffCYxE4no/yVvo7A7ZjsgoK+k
+ WolQ==
 X-Forwarded-Encrypted: i=1;
- AKwUvBxIKS8yvWjjm7dmUkcDTuAMNN1MBb0FFkA7mqh2aYZpRJktumH2BNIO/SPbZ1vo6i/VnxE=@dpdk.org
-X-Gm-Message-State: AFq9FYI2BvaNj6O/uc0qzkb2+ht3E25kjIysTswUIWUFKm7vc+LWN0+e
- rWuXvw5z9ju8Hm7U423dp1SQb/TM0DmhBybto31JHrS6gQdSxnPaRFqHjK9NYviNhYa7IweGke2
- sOqtZBDZLCI6BTicdXAYbT8KAM7LLknBhylBXqksFtqLASHUmvLUC
-X-Gm-Gg: AYBFou2AeHmH1pxeHhYcgMdCHybIapiQiYgn/vv/+F8ms8A+N+YpHzcatK5SHlY+Y7v
- +SLSwIUBVi8WQrWMBS92U4/LWSRqI5urqfVzTRr8w8Cqe9BHB5rEmEZ085gTEaoE01fLghUp+8g
- CBmErmCdkMU3mVSvYeXntdHo2RFD9HrT+JAab7Iv3vIDGHmdjkfhfxqRJh0qarRQwpOnxuK09TM
- 3lfbmPzptHz3FNN9Ie4M4fz1zLtEELo89z+48ks7DSSsdNpy8l81ON4IcOcsSBsgTFT8zCx65lJ
- 2GP6K6k/xHDXehe6NVkvMn17PVBBX04A/xXtpd8aA2S0kFWuSW2S1GtyIGQ1/8aQyknHO5bWsaT
- aWS8AAxOp21teDJCkC9v88+UyDFohHDQsw0vlr92jdHcXi5EReOhPH5jlaOF+P1NUkoAAx/85J8
- 8jWsaZpQZB3L/rOxbqwUjwpYkyhIao4gn8f3akYe5juwDC4vB80/h+WHJ/dPZzxD9IkPv9Rr2lD
- hTVJWaFr6xvTnuQn7eqqalHGA==
-X-Received: by 2002:a05:600c:8b28:b0:4a1:6c0c:ab93 with SMTP id
- 5b1f17b1804b1-4a1d7634d5dmr226801415e9.28.1792495196360; 
- Tue, 20 Oct 2026 04:19:56 -0700 (PDT)
-X-Received: by 2002:a05:600c:8b28:b0:4a1:6c0c:ab93 with SMTP id
- 5b1f17b1804b1-4a1d7634d5dmr226801125e9.28.1792495195957; 
- Tue, 20 Oct 2026 04:19:55 -0700 (PDT)
+ AKwUvBxLG1fyW2FGI37MbKm+GTzQdCT7j6GLlNfKb/IolJ6vcmuDUmm8IRNvtTcLR3vdKURh8dM=@dpdk.org
+X-Gm-Message-State: AFq9FYK06+QkQhNg8pMC8DEuhDLyg2qnLCVKCop7NZgXgT0rzRZY0NGQ
+ tJLLBU41aIEkC9CqkHx/kTdm0dOOWaGm289OlO8gXnDEO8uNsTTy8bBJdPZnuAq0FUVCk52fKUD
+ 1VyOzMsszqMJa3JKrzqPlt13j10gO0E8F7n9V0TtcvQ9K
+X-Gm-Gg: AYBFou1iUE2Lgr9szUUK7LVmOEMSo/+Wmn4F4LEPRT9reHkq5wzRmtci9QhDfcTbDRv
+ XiLrqQ0aW7fyM/MHUmE7x+Z4pqTJvY/eddiX7KhGdGxQTCH7UdNzAJzHOXrlHKsoUzLqlt9D8/H
+ btxGlpi+r+NHtxTq6iV4Rre+bwWjxiH/avzvvfXze+5Hr4DD/h9sAEXMit+esJ7OFmhCH0OBrYc
+ sdnD8pYoo4TA+6DJAH27cCFFFTond80dLmgq18gaefhb6aJNuKjY1quWjQhKBSnSD2XvzsezTpq
+ T6cEFuqVHuEPso/Lza1oRGVHbZ0KSUmo938WteWA2viqh/11xWdi+7SAgw8v6zW7+uSCQXLcPYA
+ QJ/Pv0PD/gY+0yUbBCWFiHavIRai7XvgXMhCvwFzNJf8AEXKDYT0vS8he3fhwELusrmbh9WhPkl
+ G69Z5izD5AAOuF/JDH2i1Pla8rN7xOJg2mP7YAUKgX66fNyA0uG0djB5F5De5ZN3SbbFIYPG5H8
+ Bfikx+tEWQsR1pZMCxL3z/dUA==
+X-Received: by 2002:a05:600c:a00d:b0:4a1:f736:79d1 with SMTP id
+ 5b1f17b1804b1-4a1f7367ac7mr26412425e9.16.1792495221557; 
+ Tue, 20 Oct 2026 04:20:21 -0700 (PDT)
+X-Received: by 2002:a05:600c:a00d:b0:4a1:f736:79d1 with SMTP id
+ 5b1f17b1804b1-4a1f7367ac7mr26412005e9.16.1792495221088; 
+ Tue, 20 Oct 2026 04:20:21 -0700 (PDT)
 Received: from [10.50.0.132] (82-66-145-51.subs.proxad.net. [82.66.145.51])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4a1cca26dc8sm248988205e9.3.2026.10.20.04.19.54
+ 5b1f17b1804b1-4a1f2cc8e98sm69739955e9.9.2026.10.20.04.20.19
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 20 Oct 2026 04:19:55 -0700 (PDT)
-Message-ID: <0f07925b-7862-4eed-8239-a33495758fe9@redhat.com>
-Date: Tue, 20 Oct 2026 13:19:54 +0200
+ Tue, 20 Oct 2026 04:20:20 -0700 (PDT)
+Message-ID: <b15805ba-69ef-4b58-b685-266646a6cd1e@redhat.com>
+Date: Tue, 20 Oct 2026 13:20:19 +0200
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vhost: fix checksum offset check in Rx path
+Subject: Re: [PATCH] net/virtio: fix checksum offset check in Rx path
 To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, dev@dpdk.org,
  Chenbo Xia <chenbox@nvidia.com>
 Cc: stable@dpdk.org
-References: <20261019135814.3146545-1-mb@smartsharesystems.com>
+References: <20261019135643.3146303-1-mb@smartsharesystems.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
-In-Reply-To: <20261019135814.3146545-1-mb@smartsharesystems.com>
+In-Reply-To: <20261019135643.3146303-1-mb@smartsharesystems.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: klnqAVjAS9HtUp4aUdNH64ZgdilPfPLOUNb_KT4_xgM_1792495196
+X-Mimecast-MFC-PROC-ID: bDswjhRloQvUGC1n9qU247mFU0kz1cCVrkLf155d8K8_1792495222
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -102,21 +102,22 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
 
-On 10/19/26 3:58 PM, Morten Brørup wrote:
+On 10/19/26 3:56 PM, Morten Brørup wrote:
 > Writing the checksum in the packet needs room for 2 bytes, not 1 byte.
 >
-> Fixes: ca7036b4af3a ("vhost: fix offload flags in Rx path")
+> Fixes: 96cb6711939e ("net/virtio: support Rx checksum offload")
+> Fixes: 0eaf7fc2fe8e ("net/virtio: separate AVX Rx/Tx")
 > Cc:stable@dpdk.org
 >
 > Signed-off-by: Morten Brørup<mb@smartsharesystems.com>
 > ---
->   lib/vhost/virtio_net.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/net/virtio/virtio_rxtx.c        | 2 +-
+>   drivers/net/virtio/virtio_rxtx_packed.h | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
 
 Applied to next-virtio/for-next-net.
 
 Thanks,
 
 Maxime
-
 
