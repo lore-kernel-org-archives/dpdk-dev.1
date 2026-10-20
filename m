@@ -1,76 +1,41 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8E0606A31A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=saruROhL
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EE4606A32D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:16:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A664040283;
-	Tue, 20 Oct 2026 17:11:34 +0200 (CEST)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id F0A694025A
- for <dev@dpdk.org>; Tue, 20 Oct 2026 17:11:32 +0200 (CEST)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-2e831e86ebfso15783885ad.1
- for <dev@dpdk.org>; Tue, 20 Oct 2026 08:11:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792509092;
- x=1793113892; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=B8vukYpHyB2qsXwfJ/Tm1+WEc4ztDK5YmKguh46nagQ=;
- b=saruROhLeMMkFHkO9rUmMKUc8mLrFVI4M9OWJC/Ak3UHfy3gRj3Y0peff15Ny48QiQ
- +T/stVh719AHGRrCfWFAb9Te5hmAdJw1K35dnAYqkQ2ZTo6ANVq4Cmay5ar+/5bZlWa9
- uYCYrcLmG8pUaWVTMZjZllK6Q5kFjKmzwi9nKGH9jy8jvOvVNY9aNme9sV2O9E0jJuAG
- N7Q3TUAE7rwkQcjdxT01260OKYXTg0js2LLnY6xQN7yOsV1w+2Fa2LtZN5lib0ENtl4W
- 6WHoP8eVysMa1YCEYADZSxJImbD101vTaQi2YgnMOffTl73kYo5VkcfToZN6LnBB6r4D
- mBnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792509092; x=1793113892;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=B8vukYpHyB2qsXwfJ/Tm1+WEc4ztDK5YmKguh46nagQ=;
- b=UN6ZFUv/36MJm6mLr9oCqbo8ZORfDpt88SPPIUS1kU5a+Fg1vokNsdi6byy5vrBUhl
- vuaP5TdcSGDMt0WIqOQGgTxuvPTqnX0RjW4AOdagi/O7nFT4XXDC3SfmG2wZJwSCYciT
- iFXJou3cIKfiUDepGPq3uEJJeXDoieu7iwY+M3RGI72kjd/k3SuhKjKM/ASPtnysH5jw
- xRMHbCPgrEiCs3EVdQbDZaCwNLIHS0rZa064JDjdCx7AoSbAzbLl9aUR8484ZKd9fO0h
- mOKdTRSq2IaPVmuFWHh2u+ejwmoHsEGh6N+Fq+riPpSAhAgIeLdnHz7uVxWK/prmi6Hk
- Lu9g==
-X-Gm-Message-State: AFq9FYJYIKqseSl7nMki4Z1tZbsT8Zao6wTnwWAkg+ImzufA2BEF90FW
- UeEDK4dM/tPb7cEuDHInc7/Vifer3jS943//dCkRw54W8oF2l62WMTJcbjvTv3TxHqg=
-X-Gm-Gg: AYBFou1THMfwyl/r6eexmIhR6WH2RQCFKixENwkTGfJCYi55+1D9H6pseHLUaiwFKG0
- BysRBsnkuE+hVzVuzmtvsnBVy9jcsMd3a74fnQdGkiqYtyaIlhFSI6yn/bCeFIc4GzBih1vqkoW
- Jke8srnY2llqL6mhi4WUElxFA2/8aEK+AwJLsG49bF7/5fOajr6aqHjg5EcnSHr8bvjRxo4baco
- S3Nymhg5PhlmFS9OVEd5PjBLgGnyAQJbsxexkNnDJ0EaAxe/crerV32A6oZRBpOHYPeq93YUCIL
- Worec7Aqg+3DFDJdaF5UIvXb2Nruh4iz1ds3oFuUkVkMFw2/0PivR1EclELHfeCISKlzQPmAFfP
- SQoems9q1fMAWEOK+fl9n3LDDsY9FRNf9odtg0yIIYUqVsNMKAIMnVvk0K2AQqsDQiWurV2snIp
- mIpCmIFdl3z/5oZ7VyTP3ZdrdgXP6xuxXiEUEB7kNfmlfuWliBB4NDmwuGnzTvNnnd9HlWdN8Vb
- JgqEH3PxbccV9x4ixrDmUHhWgdMj4LKFFqAJ9FCYIi5YNz1e0I=
-X-Received: by 2002:a17:902:ceca:b0:2e4:4eed:5cc5 with SMTP id
- d9443c01a7336-2e9a6c1df91mr96184295ad.38.1792509091744; 
- Tue, 20 Oct 2026 08:11:31 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2ea3b4a1762sm386925ad.71.2026.10.20.08.11.31
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 Oct 2026 08:11:31 -0700 (PDT)
-Date: Tue, 20 Oct 2026 08:11:30 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Zhang Tengfei <zhtfdev@gmail.com>
-Cc: dev@dpdk.org, jiawenwu@trustnetic.com, zaiyuwang@trustnetic.com
-Subject: Re: [PATCH 0/3] net/txgbe: fix FDIR Rx packet buffer handling
-Message-ID: <20261020081130.7241326b@phoenix.local>
-In-Reply-To: <3de75531-dd3f-4953-8fb8-1f654b74f050@gmail.com>
-References: <cover.1791898970.git.zhtfdev@gmail.com>
- <20261013074555.1ab5dc7c@phoenix.local>
- <3de75531-dd3f-4953-8fb8-1f654b74f050@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 08AB140283;
+	Tue, 20 Oct 2026 17:16:20 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id A318D4025A
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 17:16:18 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 77C3A2033E;
+ Tue, 20 Oct 2026 17:16:18 +0200 (CEST)
+Content-class: urn:content-classes:message
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] stack: fix pile GCC memcpy warnings
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Tue, 20 Oct 2026 17:16:14 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65ACD@smartserver.smartshare.dk>
+In-Reply-To: <20261020072333.30593486@phoenix.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] stack: fix pile GCC memcpy warnings
+Thread-Index: Ad1gnpsRv1FaSJlnQXmL3I17dDuMeQABD1gg
+References: <20261020084944.3188987-1-mb@smartsharesystems.com>
+ <20261020072333.30593486@phoenix.local>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Ali Alnubani" <alialnu@nvidia.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,61 +45,86 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Thu, 15 Oct 2026 00:45:00 +0800
-Zhang Tengfei <zhtfdev@gmail.com> wrote:
-
-> On 10/13/26 22:45, Stephen Hemminger wrote:
-> > On Tue, 13 Oct 2026 22:00:16 +0800
-> > Zhang Tengfei <zhtfdev@gmail.com> wrote:
-> > [PATCH 2/3] net/txgbe: do not enable flow director on flow validate
-> > 
-> > Warning: validate now accepts rules that create will always reject.
-> > 
-> > txgbe_parse_fdir_filter_normal() can set
-> > rule->mode = RTE_FDIR_MODE_PERFECT_MAC_VLAN. Before this patch, with
-> > mode NONE, parse called txgbe_fdir_configure() which returns -ENOSYS
-> > for anything other than SIGNATURE or PERFECT, so validate failed.
-> > Now parse only checks for a mode mismatch, validate succeeds, and
-> > create fails later in txgbe_fdir_configure().
-> > 
-> > Keep the cheap mode check in parse so validate and create agree:
-> > 
-> > 	if (rule->mode != RTE_FDIR_MODE_SIGNATURE &&
-> > 	    rule->mode != RTE_FDIR_MODE_PERFECT)
-> > 		return -ENOTSUP;
-> > 
-> > 	if (fdir_conf->mode != RTE_FDIR_MODE_NONE &&
-> > 	    fdir_conf->mode != rule->mode)
-> > 		return -ENOTSUP;
-> > 
-> > [PATCH 3/3] net/txgbe: disable flow director when no rule is left
-> > 
-> > Info: txgbe_fdir_disable() restores a single packet buffer layout
-> > (PB0 = rx_pb_size, PB1-7 = 0), not what txgbe_configure_dcb() set at
-> > dev_start. That matches what txgbe_fdir_configure() already does, so
-> > FDIR with DCB is already broken and this is not a new problem. If
-> > you respin, consider saving the PBRXSIZE values before enabling FDIR
-> > and restoring them on disable, or reject FDIR when DCB Rx is
-> > configured.  
-> 
-> Thanks for review.
-> 
-> Addressed in v2.
-> 
-> 2/3 now rejects modes other than signature and perfect while
-> parsing, so validate and create both fail for a MAC VLAN rule.
-> 
-> On 3/3 I left the DCB packet buffer as it is. Enabling FDIR
-> already clears PBRXSIZE(1..7). Rejecting FDIR when DCB Rx is
-> configured can be a separate patch.
-
-Still waiting for ACK from a maintainer of that driver.
-
-
-
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBUdWVzZGF5LCAyMCBPY3RvYmVyIDIwMjYgMTYuMjQNCj4gDQo+IE9uIFR1
+ZSwgMjAgT2N0IDIwMjYgMDg6NDk6NDQgKzAwMDANCj4gTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0
+c2hhcmVzeXN0ZW1zLmNvbT4gd3JvdGU6DQo+IA0KPiA+IE9uIGFyY2hpdGVjdHVyZXMgd2hlcmUg
+cnRlX21lbWNweSgpIGlzIGRlZmluZWQgYXMgbWVtY3B5KCksDQo+ID4gR0NDIHdhcm5zIGFib3V0
+IHNvdXJjZS9kZXN0aW5hdGlvbiBvdmVyZmxvdyB3aGVuIGNvcHlpbmcgbW9yZSB0aGFuDQo+IHRo
+ZQ0KPiA+IHNvdXJjZS9kZXN0aW5hdGlvbiBzaXplLCBldmVuIGZvciBjb2RlIHBhdGhzIHRoYXQg
+YXJlIG5vdCB0YWtlbiBpbg0KPiBjYXNlcw0KPiA+IHdoZXJlIHRoZSBzaXplcyBhcmUgc21hbGxl
+ci4NCj4gPg0KPiA+IFRoZSByZWxldmFudCBjb21waWxlciB3YXJuaW5ncyB3ZXJlIGRpc2FibGVk
+IGZvciBHQ0MgYXQgdGhlIHR3bw0KPiA+IG9jY3VycmVuY2VzLCBhbmQgY29tbWVudHMgZGVzY3Jp
+YmluZyB0aGUgcmVhc29uIHdlcmUgYWRkZWQuDQo+ID4NCj4gPiBOQjoNCj4gPiBJdCBoYXMgbm90
+IGJlZW4gaW52ZXN0aWdhdGVkIHdoaWNoIEdDQyB2ZXJzaW9ucyBhcmUgYWZmZWN0ZWQuDQo+ID4g
+R0NDIHZlcnNpb24gMTAgYW5kIHVwIHdhcyBjaG9zZW4gYmVjYXVzZSB0aGF0IHdhcyB3aGF0IHRo
+ZSBwcmV2aW91cw0KPiA+IHZlcnNpb25zIG9mIHg4NiBydGVfbWVtY3B5KCkgZGlzYWJsZWQgc2xp
+Z3RobHkgc2ltaWxhciB3YXJuaW5ncyBmb3IuDQo+ID4NCj4gPiBQUzoNCj4gPiBUaGUgYWx0ZXJu
+YXRpdmUgd2FzIHRvIG9iZnVzY2F0ZSB0aGUgY29kZSwgYnV0IHRoYXQgd291bGQgbWFrZSB0aGUN
+Cj4gY29kZQ0KPiA+IGxlc3MgcmVhZGFibGUsIGFuZCBtaWdodCBoYXZlIHVuaW50ZW5kZWQgZWZm
+ZWN0cyBvbiBhcmNoaXRlY3R1cmVzIGFuZA0KPiA+IGNvbXBpbGVycyBub3Qgc3VmZmVyaW5nIGJ5
+IHRoaXMgaXNzdWUuDQo+ID4NCj4gPiBCdWd6aWxsYSBJRDogMjA2MQ0KPiA+IEZpeGVzOiBlZTA4
+MjJhMGVmNDEgKCJzdGFjazogaW50cm9kdWNlIHBpbGUiKQ0KPiA+DQo+ID4gVGhlIHBpbGUgd2Fz
+IGludHJvZHVjZSB3aXRoIHRoaXMgRFBESyByZWxlYXNlLCBzbyBubyBuZWVkIHRvDQo+IGJhY2tw
+b3J0Lg0KPiA+DQo+ID4gUmVwb3J0ZWQtYnk6IEFsaSBBbG51YmFuaSA8YWxpYWxudUBudmlkaWEu
+Y29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lz
+dGVtcy5jb20+DQo+ID4gLS0tDQo+IA0KPiBJIGRvbid0IGxpa2UgdXNpbmcgY29tcGlsZXIgcHJh
+Z21hcyBmb3IgdGhpcy4gSXQgYWxzbyBtZWFucyB0aGF0IGlmDQo+IGNvbXBpbGVyIGdldHMgZml4
+ZWQgb3IgYmVoYXZlcyBkaWZmZXJlbnRseSB5b3Ugd2lsbCBuZXZlciBzZWUgaXQuDQo+IA0KPiAN
+Cj4gQUkgYW5hbHlzaXMgc2hvd3Mgc29tZSBvdGhlciBvcHRpb25zLg0KPiANCj4gUm9vdCBjYXVz
+ZSBpcyAtLWJ1aWxkdHlwZT1kZWJ1ZywgaS5lLiAtTzAsIG5vdCB0aGUgR0NDIHZlcnNpb24uIEF0
+IC1PMA0KPiBub3RoaW5nIHJlbW92ZXMgdGhlIGRlYWQgbl9idWxrID4gMCBwYXRoIGZvciBydGVf
+c3RhY2tfcHVzaChzLCAmb2JqLA0KPiAxKSwgc28gdGhlIGNvbnN0YW50IDI1Ni1ieXRlIG1lbWNw
+eSBpcyBjaGVja2VkIGFnYWluc3Qgb2JqICg4IGJ5dGVzKQ0KPiBhbmQgd2FybnMuIFJlcHJvZHVj
+ZWQgd2l0aCBHQ0MgMTMuMyBhbmQgMTQuMiBhdCAtTzA7IHNpbGVudCBhdCAtT2cgYW5kDQo+IGFi
+b3ZlLiBUaGF0IG1lYW5zIHRoZSBHQ0NfVkVSU0lPTiA+PSAxMDAwMDAgZ2F0ZSBpcyB3cm9uZyBh
+dCBib3RoIGVuZHM6DQo+IGFueSBHQ0Mgd2l0aCB0aGUgd2FybmluZyBmaXJlcyAob3ZlcmZsb3cg
+c2luY2UgOCwgb3ZlcnJlYWQgc2luY2UgMTEpLA0KPiBhbmQgb24gR0NDIDEwIHRoZSAtV3N0cmlu
+Z29wLW92ZXJyZWFkIHByYWdtYSBpdHNlbGYgaXMgYSAtV3ByYWdtYXMNCj4gZXJyb3IgdW5kZXIg
+LVdlcnJvci4gSWYgdGhlIHByYWdtYSBzdGF5cywgZHJvcCB0aGUgdmVyc2lvbiBnYXRlIChrZWVw
+DQo+IFJURV9UT09MQ0hBSU5fR0NDKSBhbmQgZml4IHRoZSBjb21tZW50OiBHQ0MgZG9lcyBub3Qg
+4oCca25vd+KAnSB0aGUgcGF0aCBpcw0KPiBkZWFkLCB0aGF0IGlzIHRoZSB3aG9sZSBwcm9ibGVt
+Lg0KDQpDb250aW51aW5nIHRoaXMgbGluZSBvZiB0aGlua2luZy4uLg0KR0NDIGRlZmluZXMgYW4g
+Il9fT1BUSU1JWkVfXyIgbWFjcm8gaWYgYW55IG9wdGltaXphdGlvbiBhYm92ZSBsZXZlbCAwIGlz
+IHR1cm5lZCBvbi4NCldlIGNvdWxkIGdhdGUgc3VjaCBwcmFnbWFzIHdpdGg6DQojaWYgZGVmaW5l
+ZChSVEVfVE9PTENIQUlOX0dDQykgJiYgIWRlZmluZWQoX19PUFRJTUlaRV9fKQ0KDQo+IA0KPiAN
+Cj4gVGhpcyBzaG91bGQgaGF2ZSBhIGJpZyBhc3MgY29tbWVudCwgYW5kIGl0IHNob3VsZCB1c2Ug
+c2FtZSBwcmFnbWEgc2V0DQo+IGFzIGV4aXN0aW5nIG9uZSBpbiBsaWIvcmluZy4NCg0KSSBnZW5l
+cmFsbHkgcHJlZmVyIGhhdmluZyB0aGUgcHJhZ21hIGNvdmVyYWdlIGFzIG5hcnJvdyBhcyBwb3Nz
+aWJsZSwgc28gdGhleSBkb24ndCBwcmV2ZW50IGNhdGNoaW5nIHVucmVsYXRlZCBidWdzIGluIHRo
+ZSBzYW1lIGZpbGUuDQoNCk9uIHRoZSBvdGhlciBoYW5kLA0KSSBhbHNvIGxpa2UgdGhlIHN1Z2dl
+c3Rpb24gaW4geW91ciBvdGhlciBlbWFpbCAtIGRpc2FibGluZyB0aGVzZSBmYWxzZS1wb3NpdGl2
+ZSBHQ0Mgd2FybmluZ3MgZ2xvYmFsbHkgYWNyb3NzIERQREsgZm9yIG5vbi1vcHRpbWl6ZWQgYnVp
+bGRzLg0KDQpBbmQgc2luY2UgdGhlIGRlZmF1bHQgYnVpbGQgdHlwZSBpcyBkZWJ1Z29wdGltaXpl
+ZCwgaXQgd2lsbCBub3QgcHJldmVudCBHQ0MgZnJvbSBlbWl0dGluZyByZWxldmFudCB3YXJuaW5n
+cyBkdXJpbmcgbm9ybWFsIGRldmVsb3BtZW50Lg0KDQo+IA0KPiBPdGhlciBhbHRlcm5hdGl2ZSBp
+cyB0byB1c2UgYnVsayBvYmplY3QgYXJyYXkgYXMgc3RydWN0dXJlIGFuZCBkbw0KPiBhc3NpZ25t
+ZW50Lg0KPiBCdXQgdGhhdCByZXBsYWNlcyB1Z2x5IHByYWdtYXMgd2l0aCB1Z2x5IGNhc3RzLi4u
+DQoNClllYWgsIGxldCdzIG5vdCBkbyB0aGF0Lg0KDQpCdXQgdGhhbmsgeW91IGZvciBleHBsb3Jp
+bmchDQoNCj4gDQo+IC0tLSBhL2xpYi9zdGFjay9ydGVfc3RhY2tfcGlsZS5oDQo+ICsrKyBiL2xp
+Yi9zdGFjay9ydGVfc3RhY2tfcGlsZS5oDQo+IEBADQo+ICsvKiBCdWxrIG9iamVjdCBhcnJheSBh
+cyBhIHNpbmdsZSBvYmplY3QsIHNvIGEgY29weSBpcyBvbmUgYXNzaWdubWVudC4NCj4gKi8NCj4g
+K3N0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX29ianMgew0KPiArCXZvaWQgKm9ianNbUlRFX1NU
+QUNLX1BJTEVfQlVMS19TSVpFXTsNCj4gK307DQo+ICsNCj4gQEAgX19ydGVfc3RhY2tfcGlsZV9i
+dWxrX3BvcF9lbGVtcw0KPiAgCQlmb3IgKHVuc2lnbmVkIGludCBpID0gMDsgaSA8IG51bTsgaSsr
+LCB0bXAgPSB0bXAtPm5leHQpDQo+IC0JCQlydGVfbWVtY3B5KCZvYmpfdGFibGVbaSAqIFJURV9T
+VEFDS19QSUxFX0JVTEtfU0laRV0sDQo+IC0JCQkJCSgoc3RydWN0IHJ0ZV9zdGFja19waWxlX2J1
+bGtfZWxlbSAqKXRtcCktDQo+ID5vYmpzLA0KPiAtCQkJCQlzaXplb2Yodm9pZCAqKSAqDQo+IFJU
+RV9TVEFDS19QSUxFX0JVTEtfU0laRSk7DQo+ICsJCQkqKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9i
+dWxrX29ianMgKikmb2JqX3RhYmxlW2kgKg0KPiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkVdID0N
+Cj4gKwkJCQkqKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX29ianMgKikoKHN0cnVjdA0KPiBy
+dGVfc3RhY2tfcGlsZV9idWxrX2VsZW0gKil0bXApLT5vYmpzOw0KPiBAQCBfX3J0ZV9zdGFja19w
+aWxlX3B1c2gNCj4gIAlmb3IgKGkgPSAwOyBpIDwgbl9idWxrOyBpKyssIHRtcCA9IHRtcC0+bmV4
+dCkNCj4gLQkJcnRlX21lbWNweSgoKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX2VsZW0gKil0
+bXApLT5vYmpzLA0KPiAtCQkJCSZvYmpfdGFibGVbKG5fYnVsayAtIGkgLSAxKSAqDQo+IFJURV9T
+VEFDS19QSUxFX0JVTEtfU0laRV0sDQo+IC0JCQkJc2l6ZW9mKHZvaWQgKikgKiBSVEVfU1RBQ0tf
+UElMRV9CVUxLX1NJWkUpOw0KPiArCQkqKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX29ianMg
+KikoKHN0cnVjdA0KPiBydGVfc3RhY2tfcGlsZV9idWxrX2VsZW0gKil0bXApLT5vYmpzID0NCj4g
+KwkJCSooY29uc3Qgc3RydWN0IHJ0ZV9zdGFja19waWxlX2J1bGtfb2Jqcw0KPiAqKSZvYmpfdGFi
+bGVbKG5fYnVsayAtIGkgLSAxKSAqIFJURV9TVEFDS19QSUxFX0JVTEtfU0laRV07DQo+IA0KDQo=
