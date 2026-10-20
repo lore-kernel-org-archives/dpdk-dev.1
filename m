@@ -1,84 +1,83 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540B1606A31F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 07:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5258D606A323
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 07:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=bch8zUSG
+	dkim=pass (1024-bit key, unprotected) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=BV6TCC9m
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C35340679;
-	Tue, 20 Oct 2026 08:59:56 +0200 (CEST)
-Received: from mail-ua1-f97.google.com (mail-ua1-f97.google.com
- [209.85.222.97]) by mails.dpdk.org (Postfix) with ESMTP id 4A1264060A
- for <dev@dpdk.org>; Tue, 20 Oct 2026 08:59:52 +0200 (CEST)
-Received: by mail-ua1-f97.google.com with SMTP id
- a1e0cc1a2514c-98febe968deso2043071241.0
- for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7C5004068A;
+	Tue, 20 Oct 2026 08:59:57 +0200 (CEST)
+Received: from mail-pj1-f97.google.com (mail-pj1-f97.google.com
+ [209.85.216.97]) by mails.dpdk.org (Postfix) with ESMTP id 6F15240283
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 08:59:54 +0200 (CEST)
+Received: by mail-pj1-f97.google.com with SMTP id
+ 98e67ed59e1d1-3ab4178ee33so2161165a91.3
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792479591; x=1793084391;
+ d=1e100.net; s=20260707; t=1792479593; x=1793084393;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=l4dPy0MRRo8cYHTupSl7aCthrr3tWz/ZDAbtw9GRm4U=;
- b=YNlBXx/LlGTqqLStA8XRN0pdJkgskwiJvdndSN5yGtSY+AIy0HM1QuARnGLAEOW/2j
- DEDyTKJFYyCDld5pQRm/sTH8l8mQLEy/x0ntvHaWUu0pwrVHOCZ6UthtLWCZpgCXzk5N
- cRHksZEF5fvFfOdCTTcXeQnNSjuNr8lKm+psf89akulRk7wWHXuc0qiy1MlZAoV75bm1
- NV5+BibDgancri0V4bglUAtMGFg7E8LMm1fCBgQ2EqKE7wIETv5Aqny0d7vKG4F9OUTJ
- PSBkCp0keye3OqPyOXjb0aC7FvirBJEtu89r5Zm+j5LxhR44aQc0qY9D8hEnVEjLUh1K
- tSww==
-X-Gm-Message-State: AFq9FYJewDisUHKVudpA8m8RncUuYL+0l3StN/tFd28w0E4Wtduu/W72
- Z8lQPMj2L+w5xvQl6dnbjNy9LtFpdrfMA3uT7VtQDvvrkP3Bx2wjXjEbjSL+k8weuSDri1hK+Xh
- ZikKUbZhdKDQOcLztEhvQtoGiwUCtBzdSy1g9vF6h/6mskWDz/+Gfzbp/6J21Tg24ApULx8gvDs
- p2Jg83LJZTaymKsf5OWwtt10uW8x8Sy9ynt9+nxBbcuNtFdN8VV9m3fq4VA4fdLaOBoFJaaA==
-X-Gm-Gg: AYBFou11Uqalw03bocXKesV9IxnAeNxFf5frKxBSIO0eC3+kXRnkck4AnDlYR1GtYeT
- Shju9nSuc017CSrR6dKFIF4qP95p54nom1DrblXdUVrBXwiwazy9H6L7YnIkqFXYgOuLjpquOgx
- nSlJ6brhg6SuOsS75Kh5pzG5rGII16mCjtLyqXcI5sTtZSDx2dnFlOyA0765z4XXNODqxUVXX8d
- V9zVvEW+dq9ETKY6fUjukHXeP7Eq7LuneQoPZRlxxH0POsMetzhYjitzJj+fdDp3uFVBk6Ef444
- WupHwIefM3+Tv4Wsd2fByeyqyg3r/PWSP6h3ygv38hXZTL9pLxs59pwJWE04GbWTUbzkq8h8Hxp
- FIY+XYrBoRN5/bLxgOvzOL1Q40t1kllo2PDxnlSIgeoTStsmA4jNi+nXyVOSuGQlXd4UjVhcQPx
- h3DUjXqh6Xaxz4xcZtWfwaCzwqF0+d5kHhQf3MAg==
-X-Received: by 2002:a05:6102:f9b:b0:7c3:7286:c28a with SMTP id
- ada2fe7eead31-7cc369a5511mr2861594137.19.1792479591399; 
- Mon, 19 Oct 2026 23:59:51 -0700 (PDT)
+ bh=8wxCwe73z9phI808yfncJpJNYWHE1iV/Iy0Ziaep91k=;
+ b=ZgULrASTBu5mekn071L/l8nZFQ43JiaGNDIUoCQaWmgsm0QSB56CArueqbs3W6E1JD
+ D9pFaeKEDSCZVLBRPCKwV+cUv012DaZMRjHGek0ZzRNBPs98cwFYIIcMKD8cyXyycPub
+ 7aMKzjQas6S7xHwRB2cy1YtD0mBtKw9JOwtHlLXeicKqZAJqU9uBC4E1sdIkiep3lT/1
+ SGzWtom5o5NtZXwdat5ILCNMLAeJ5FEmh/WnHV6D1gyql9dRSsZ0vQqGOuKUVyw/ITgk
+ Nof7m2l5+VrJnFVCJYOi+m/LdY0pi39UuYAckUHCyfxyqLyIa5JYj5rlNXD4JC7Ak1sZ
+ IqYw==
+X-Gm-Message-State: AFq9FYJGpBndxotjpIi6rJnFFSEnpiNqt23zRidhzUnkLEwqjQ34h9og
+ wYQL1aF9ZUp2PCikb6cH8Dw1AoXGouyJWziOnIQTsN+TNNyRycbWRRyTW0IHgONgW7C+l/2J2Tw
+ E0x8/nfil3wCRfQKToMdBMiWPofA+juJUoz6PFVJkY4ZD2zsADh/hzjLwA5iRMuhH96k0hWoO5T
+ IZCSDlT+7PLo+sBdruQquoLR3jGmcTXoOCsf3C8WFDXjLsxgvUd4h8eYEYTyANqyLRNWo2lA==
+X-Gm-Gg: AYBFou2VLok/fzFs+iHYr9WBIFxvPt8oEPqy9vPs8wB7Fsbp9u0WQcpNEBcFORIcMso
+ jjIGi4xsVu+BJgjyz20PzLXl5XgMrEAmHjMT/LUY/U6Sap0SfsCHgF75IxYdmgyQ6gMM6jx+x3j
+ viOUX6u8CDyH2x47oa4uiNhe4/HI19f6PxPduIC11hhAS5vP15RX680AfqYEX3Y+5wDLzKwjPlG
+ PzOlEocsEbrxHgW6PL2sWwhwmSKiYb+7AdMdN97H5TFinXiSAi+0NDqW+p3kDir8Lm9qS5mmo2s
+ x6YjUqs/NPLWqUq2v681u0YwfFrI09v7vxXmok5004FaA/g7/xOrX+Xot1jau/NSB2w9aD+FTVz
+ 1/HhDLwUve55do/JNvCFtqDMBjCZjkRhAay5MylWpn+uiwwiC0tL4sfuPxvfUL5kwivS7B+efiE
+ d/p1vi8MvSjUrx3FyJBfqvWoNqPsInb1nzg5+63g==
+X-Received: by 2002:a17:90b:4acb:b0:3ac:adce:60ad with SMTP id
+ 98e67ed59e1d1-3aceefbf7dfmr8131606a91.22.1792479593148; 
+ Mon, 19 Oct 2026 23:59:53 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
  by smtp-relay.gmail.com with ESMTPS id
- ada2fe7eead31-7cc85508bd5sm2413137.5.2026.10.19.23.59.50
+ 98e67ed59e1d1-3ad676a18absm1019511a91.0.2026.10.19.23.59.52
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 19 Oct 2026 23:59:51 -0700 (PDT)
+ Mon, 19 Oct 2026 23:59:53 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
 Received: by mail-qv1-f71.google.com with SMTP id
- 6a1803df08f44-9179a556c43so66530706d6.3
- for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:50 -0700 (PDT)
+ 6a1803df08f44-9179a556c43so66531226d6.3
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1792479590; x=1793084390; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1792479592; x=1793084392; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=l4dPy0MRRo8cYHTupSl7aCthrr3tWz/ZDAbtw9GRm4U=;
- b=bch8zUSGwg8ODhKArbYtbTXxAvPfOjEp1XaGblxwOlsahaFIsoWR8hebXiraEAEkIT
- jROqTW1JFB5cxgAqMepJ3wG0/rlEMhcibvMUVyz09MZQY3UobkWzSFMIFq20674Be6qX
- EiqONPTZoDFaeNdFYKjL5x4hGSfveT1u3d4QY=
-X-Received: by 2002:a05:6214:2f8b:b0:915:e5c8:5663 with SMTP id
- 6a1803df08f44-91bdec2e5d0mr149914916d6.4.1792479589967; 
- Mon, 19 Oct 2026 23:59:49 -0700 (PDT)
-X-Received: by 2002:a05:6214:2f8b:b0:915:e5c8:5663 with SMTP id
- 6a1803df08f44-91bdec2e5d0mr149914696d6.4.1792479589487; 
- Mon, 19 Oct 2026 23:59:49 -0700 (PDT)
+ bh=8wxCwe73z9phI808yfncJpJNYWHE1iV/Iy0Ziaep91k=;
+ b=BV6TCC9mjWYK55lI7Y6JIv7eF0noGsMxbZv0mfl7NFHuI/qzxS5UPEOnZ5a15i/b+B
+ dO9zrqX5+QhNMInh/2Ieza+lie8W6mtDA1/mGGH3Gq2b/iDjtRALIoTA84nhaXu1vCY9
+ iTwLDkslbeG53Tp2TXDEPxa1V2KFM5vf3zQUs=
+X-Received: by 2002:ad4:5fc8:0:b0:91b:5d3b:4ad0 with SMTP id
+ 6a1803df08f44-91bdf2dd13dmr181165586d6.57.1792479591606; 
+ Mon, 19 Oct 2026 23:59:51 -0700 (PDT)
+X-Received: by 2002:ad4:5fc8:0:b0:91b:5d3b:4ad0 with SMTP id
+ 6a1803df08f44-91bdf2dd13dmr181165336d6.57.1792479591035; 
+ Mon, 19 Oct 2026 23:59:51 -0700 (PDT)
 Received: from r740-105-132.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91c04f42afcsm15848096d6.18.2026.10.19.23.59.48
+ 6a1803df08f44-91c03f30bffsm18917616d6.5.2026.10.19.23.59.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 19 Oct 2026 23:59:48 -0700 (PDT)
+ Mon, 19 Oct 2026 23:59:50 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com,
 	stable@dpdk.org
-Subject: [PATCH v2] net/bnxt/tf_core: fix SRAM block allocation failure
- handling
-Date: Tue, 20 Oct 2026 01:59:47 -0500
-Message-Id: <20261020065947.1067997-1-manish.kurup@broadcom.com>
+Subject: [PATCH v2] net/bnxt/tf_core: validate TCAM entry get response
+Date: Tue, 20 Oct 2026 01:59:49 -0500
+Message-Id: <20261020065949.1068047-1-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20261005151720.1706054-1-manish.kurup@broadcom.com>
 References: <20261005151720.1706054-1-manish.kurup@broadcom.com>
@@ -103,51 +102,52 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-In tf_sram_mgr_alloc(), two sequential 64B blocks are allocated from
-the resource manager before the tf_sram_block tracking structure is
-created with tf_sram_alloc_block(). If that allocation fails it
-returns NULL, but the NULL result was not checked: the RM indices
-stayed marked in use and could never be reused, and the NULL block
-was then dereferenced via block->block_id.
+tf_msg_tcam_entry_get() copies the TCAM key, mask and result out of
+the firmware response using the key_size, result_offset and
+result_size values returned in the response, without checking them
+against the size of the dev_data[] array they index. The mask is
+read from dev_data[key_size] for key_size bytes and the result from
+dev_data[result_offset] for result_size bytes, so a bad value
+makes the copy read past the end of the 272 byte array in the
+response on the stack.
 
-Release both RM indices and return -ENOMEM when the block structure
-cannot be allocated, as is already done when the two indices are not
-sequential.
+Reject the response with -EINVAL if the key and mask (2 * key_size)
+or the result (result_offset + result_size) do not fit in dev_data[].
 
-Fixes: 37ff91c158a3 ("net/bnxt: add SRAM manager model")
+Fixes: a9597be79f66 ("net/bnxt: support L2 context TCAM operations")
 Cc: stable@dpdk.org
 
 Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
 ---
 v2:
 * Split out of "net/bnxt: fix multiple truflow defects" (one fix per
-  patch); this is the tf_sram_mgr_alloc() fix.
-* New subject and commit message (also notes the NULL dereference);
-  single Fixes: tag.
+  patch); this is the tf_msg_tcam_entry_get() response check.
+* New subject and commit message; single Fixes: tag.
 
- drivers/net/bnxt/tf_core/tf_sram_mgr.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/bnxt/tf_core/tf_msg.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/net/bnxt/tf_core/tf_sram_mgr.c b/drivers/net/bnxt/tf_core/tf_sram_mgr.c
-index 0dffd74cd5..70bdb0ba1b 100644
---- a/drivers/net/bnxt/tf_core/tf_sram_mgr.c
-+++ b/drivers/net/bnxt/tf_core/tf_sram_mgr.c
-@@ -710,6 +710,15 @@ int tf_sram_mgr_alloc(void *sram_handle,
- 		}
- 		block_id = index;
- 		block = tf_sram_alloc_block(slice_list, block_id);
-+		if (unlikely(!block)) {
-+			fparms.index = index;
-+			fparms.subtype = parms->tbl_type;
-+			fparms.rm_db = parms->rm_db;
-+			tf_rm_free(&fparms);
-+			fparms.index = next_index;
-+			tf_rm_free(&fparms);
-+			return -ENOMEM;
-+		}
- 
- 	} else {
- 		/* Block exists
+diff --git a/drivers/net/bnxt/tf_core/tf_msg.c b/drivers/net/bnxt/tf_core/tf_msg.c
+index aab8d05d81..c345d0a7ce 100644
+--- a/drivers/net/bnxt/tf_core/tf_msg.c
++++ b/drivers/net/bnxt/tf_core/tf_msg.c
+@@ -1243,6 +1243,16 @@ tf_msg_tcam_entry_get(struct tf *tfp,
+ 			    strerror(-rc));
+ 		return rc;
+ 	}
++	if (resp.key_size * 2 > sizeof(resp.dev_data) ||
++	    resp.result_offset + resp.result_size > sizeof(resp.dev_data)) {
++		rc = -EINVAL;
++		TFP_DRV_LOG(ERR,
++			    "%s: FW data out of bounds key_size(%d) result_offset(%d) result_size(%d), rc:%s\n",
++			    tf_dir_2_str(parms->dir), resp.key_size,
++			    resp.result_offset, resp.result_size,
++			    strerror(-rc));
++		return rc;
++	}
+ 	parms->key_size = resp.key_size;
+ 	parms->result_size = resp.result_size;
+ 	tfp_memcpy(parms->key, resp.dev_data, resp.key_size);
 -- 
 2.31.1
 
