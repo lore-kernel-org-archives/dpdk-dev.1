@@ -1,125 +1,90 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8BE606A32A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 10:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CFC606A31D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 11:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=i2xso0nW
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=ddXXm+7k
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4574E40270;
-	Tue, 20 Oct 2026 12:18:46 +0200 (CEST)
-Received: from CH5PR02CU005.outbound.protection.outlook.com
- (mail-northcentralusazon11012071.outbound.protection.outlook.com
- [40.107.200.71]) by mails.dpdk.org (Postfix) with ESMTP id 189A840144
- for <dev@dpdk.org>; Tue, 20 Oct 2026 12:18:45 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zGZ2aPRaz6+6e2mNoFlYwEyFTIlrzmwdGyyOssDFWMcpB3S46Amp1JW5WDYwYAuZDDgECbZL+Yo03jDHpm2Ai9zPre+OUBG4+QHGVUuyIonlOuvJC+zB1MwgcRG+e5URm/NctxPThnpbYwOD+RgfU3eKbjF2QfrkPJDKyN3OoUntl+g3l5V+GMplssLGilmNN92tZLAKgYEt85hMXrWyB9+K7AO5C1joD1YQyCaVScZold2V707SHfCFE2i0BRbPPoOt5ObDVFTY/dP86sDUWmAAFt6ItXoS93UGhHJrk+emOYxSt6BHdaN7khA1EGJWf2LFeYGSJ6wjnMeZcsg8Xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tYhPltSDoLWlfT+rHeODVzwZrV0/ghsYfSexbFJcFjc=;
- b=VKyAcfSNBhBChFzFyS8XTLGvacCwGz4X++7sZLdpzswpCyKyAdjogBFgNOta2Ya54qsc2xASH8oqcZArBxpG2csHexq7ytENYkf5cZbBKEsZyKFgk1+nkzbBrzEnnf//17yYkQQzdLcCPW73cxGk423unNxoNdW8EVrU2GmGKvYAo2QcoexeO0ol+TQ2OXg0msQXRr2TLGbevaQqgZOw74R9kAOwaJ1KNkPDknKMJ8v4HTM00jII3dCGhZ13FIjewbTyHUx5cIayoHrjOGsJDHqd/s9zvzYwEg1kXS76F3n0iunE8FBgCXw+WUHRTDCKss/9oUVLmyvLgxgJirqTjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tYhPltSDoLWlfT+rHeODVzwZrV0/ghsYfSexbFJcFjc=;
- b=i2xso0nWYWXS3nOO/NuNJ41X+5y0WvgQjABHX08RzAVbjIfHJDkvhrXxH3/xE3JiEbqe6rOwf35IALU/Fzx5M737tNnpQhveKwgnlQObDTkQ5LmohrCC2LkrYeKMPpN58+Nasl8t2vxTfcN5zyuRLGdwfhtXoriUsfW08gCYnjNSmr0b+UE4Lo8Z2DR1z8Rk99Sg5LKeP/8aWgNoyWpEfWwY5mLJycvUm7LG8Q9WWZLoMfnQTrq8mtEW48TTNvNTn7DjVUAtSZ7pAwJ8jVcvapzEFhGeazXQT482Nv/2IOqja24m8NX+jPxwdga9S+u+C1Kg7+qhezF8yLUsKCJ4Zw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9212.namprd12.prod.outlook.com (2603:10b6:a03:563::19)
- by IA0PPF316EEACD8.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bcb) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.15; Tue, 20 Oct
- 2026 10:18:42 +0000
-Received: from SJ2PR12MB9212.namprd12.prod.outlook.com
- ([fe80::af42:fef1:1367:7d1d]) by SJ2PR12MB9212.namprd12.prod.outlook.com
- ([fe80::af42:fef1:1367:7d1d%5]) with mapi id 15.21.0546.012; Tue, 20 Oct 2026
- 10:18:42 +0000
-Message-ID: <ce649de7-fac8-49c7-b756-9aafde5764e3@nvidia.com>
-Date: Tue, 20 Oct 2026 13:18:35 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] stack: fix pile GCC memcpy warnings
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, dev@dpdk.org,
- Thomas Monjalon <thomas@monjalon.net>
-Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-References: <20261020084944.3188987-1-mb@smartsharesystems.com>
-Content-Language: en-US
-From: Ali Alnubani <alialnu@nvidia.com>
-In-Reply-To: <20261020084944.3188987-1-mb@smartsharesystems.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0351.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f4::14) To SJ2PR12MB9212.namprd12.prod.outlook.com
- (2603:10b6:a03:563::19)
+	by mails.dpdk.org (Postfix) with ESMTP id 224DB4060A;
+	Tue, 20 Oct 2026 13:19:28 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id D42C540270
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 13:19:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1792495166;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=3lM4p3e9srqv1fo8smHnrnPI82mv32gFYrWgvYAFBFM=;
+ b=ddXXm+7ktyeNdzCyEdcfJlgh8KW+RrxatpW0OuFrrIVZDSDD0I3/Hlp0pJ0KijqIvzO8Wb
+ OR8Jtdokqkomz9Yg7JrQyGZgrz31ts7Z0jw64Ry531K2agzuhbTCl/4PJ/+///AdOOOLCj
+ XHydGeLpHmOyg2Yi6+JnmjtVrclyq0I=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-190-s8p0FX27NCmoPOYNR5JSbw-1; Tue, 20 Oct 2026 11:19:25 +0000
+X-MC-Unique: s8p0FX27NCmoPOYNR5JSbw-1
+X-Mimecast-MFC-AGG-ID: s8p0FX27NCmoPOYNR5JSbw_1792495164
+Received: by mail-wr1-f69.google.com with SMTP id
+ ffacd0b85a97d-48dfa054f26so2450127f8f.2
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 04:19:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792495163; x=1793099963;
+ h=content-transfer-encoding:content-type:in-reply-to:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=3lM4p3e9srqv1fo8smHnrnPI82mv32gFYrWgvYAFBFM=;
+ b=PhAoj2peMVa9YzY8TPLVKoU6iwDs/D6rTnHfEQReIEDpU/co/OF60IDMeZNNYG7Vv3
+ 3UQEaT/M+jl3iQz2YeaLtf0O0sT1pgiKFrhzukXpByaVYJYxB4CCrnCnUS5ADb7ucOnN
+ sf1ZwLA/iFs1ZQsWJbncXF5bvnaAz1xRZ/7u8tXsCNJ+64KLhV2YVQC0aim2BExR3aR5
+ +ddaj1jGdxF6+cTZv2YpQg5fAx4cQQ6TboSXtW1yap6HSD/64/qDJUAdTXNXE8sNbkxN
+ ALXQkmdE7JqMuX/U0cjPVB1KVtj46E8Hu6bMSZPqqVZRvohqC7gbegjZPhg8fJzvVdki
+ MZIA==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBw72IIXeY2Kh/5nA1IGBKF8D388ZaQZuVcjkihmV6kJxAh6ePweCTM+YObkA362QVutVSQ=@dpdk.org
+X-Gm-Message-State: AFq9FYJX1UvK6e3iq5u1m2OGBTb9k6uay9+FrxMmpWnJhPvsuhhoGcBE
+ AKugJvNoBSQd/NPXLu6TqY4z1RHeyyqGJu4E1cpsDjMs5o1loE7qEx5OH4kJWf4pT2OXEIt4cQw
+ BbBMr3pqhTXzsIV/odsmyiV4DZP9Bu0Zm4By+pQbgOrIV
+X-Gm-Gg: AYBFou3jrJHZHjSjOQNXDSewKt1iY+qwGNrT2LVdo0aLQ7wk93N/QmwiM1sUvMP9sfe
+ i5t+yfWvppqNAX7co4Kar6SEHp9EfImbclyZEHhEzjuw5bKbgaSs6ccw3NfmvQQ+6gv1cvytqtk
+ l+BSeIfPfTlm9cKTDLX9yVvEEW0OolZyf5RpBY/bjjKMuiLZJgPLqE4euVCdbQ+PR7g03AJVpyg
+ yBgBeq6meADy6X90kp4qVi7e1r6D2hqvOn2ebkBl/gaPUmRDLSvpYPgEB2b+WW/tfJmf2LzbciC
+ nEoJMsvHv67Oz+spziolEIRXjSyTsXyB4015JCm+h0hlllFVhLggYtRqF2fVxQ3XEsGf/mDU9Mr
+ kCjaL94Ij1fN37tOmSrDXNAOEFthkuT+39+U6D8FuQKtv/QZpWKSQqkYrKtKQ9J0HX7RT/fVtmy
+ g8ZrbULOJ20FmlYtjEmxD9wQtlbBfMCw0PIljEK22Ep3YMtYnmckFb2lJww+QNVR1OiT6+ZoqQI
+ GRDlmVGsQcs0LK/w4NlkdTS5A==
+X-Received: by 2002:a5d:4dc6:0:b0:487:1575:ebe2 with SMTP id
+ ffacd0b85a97d-48e07fa9d89mr16293831f8f.44.1792495163606; 
+ Tue, 20 Oct 2026 04:19:23 -0700 (PDT)
+X-Received: by 2002:a5d:4dc6:0:b0:487:1575:ebe2 with SMTP id
+ ffacd0b85a97d-48e07fa9d89mr16293775f8f.44.1792495163030; 
+ Tue, 20 Oct 2026 04:19:23 -0700 (PDT)
+Received: from [10.50.0.132] (82-66-145-51.subs.proxad.net. [82.66.145.51])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-48e1d817d69sm5502971f8f.22.2026.10.20.04.19.21
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Tue, 20 Oct 2026 04:19:22 -0700 (PDT)
+Message-ID: <e4ee33af-eda5-4896-accf-41daa47b3592@redhat.com>
+Date: Tue, 20 Oct 2026 13:19:21 +0200
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9212:EE_|IA0PPF316EEACD8:EE_
-X-MS-Office365-Filtering-Correlation-Id: da014e0f-ee29-430e-0428-08df2e938405
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|1800799024|376014|366016|56012099006|11063799006|10067099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: LarlJG86kDe4orkeKPa1ABIkNX9/CzipVJg60ffQAcKM+7rGwE9rkc7o0OqnXKi21jvmF4VphYIfGGlSgjQ8honTIzChDorqqDk9vgvOjBBJcmcIlBsHvtIlwEagzU8uftrV6OtHkAZTGb67UKwf1CLi1ZL0D184HZokvZp/As6EznwHDF7nIl4TW35qbcOKWog+ZR6d+8qVsom0n+W1tQSEJUhS0bQJ9eowUD/k98BMZLOU5y48KmJRwpF7tXa0Bi2TRwbT4fmiDjRmvPEJfUz2XWeNffhtO3hjvGvag/ZTT0O5y8nFOl1nt2IX5ENm6k2CZffDLrrck1hbG45SCGIHMsf8J4/LR2PKHQWiQip1gAslDrd7BhoaCYw8C9HCLgcyiCY4VeknyFssI9Et3xXVdoYG4MOcelP03cvREt/IHCZUW8Mcj0V0NW4Ue6G2mUZgHdfZAp6T0sJG8ruKdlcoRP4vj/xKX3pO57sx21X3zVDerhvkmyOgiHXe55lWaWiXh1UHacI3BZq+EqqyoLjmHlUzMj3+8aWo/uTdm3pNdneC3/e/0ZBIeabiioiJSRobKKvVvPyRtVUZGKNdxQWXFT43OTO3MXGK6GJdSgECj7GxYYwx3SGY87NZZpjVOJtQaRKR+0rkZbb5V9SuuAELo8pDoMYisgYzeIlIdJs=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SJ2PR12MB9212.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(56012099006)(11063799006)(10067099003)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VExFaHRKR1VjZ3FteTE0dDRuVUVyWVpxaWdxbitwV2o0ckdNeDRjam1FWEs3?=
- =?utf-8?B?RDR2akI3Y01CSFJWM2xLZDc0S1Fzd2dUTFgzSHBOeFAzQjA2dEY2MldsMWpn?=
- =?utf-8?B?UVNjMDZrM3puRGJJdmVwQ0RSd01hc1lRcGpzSmpiVjhBaklnN2FrcTJURmN0?=
- =?utf-8?B?VHkzaGQwNUtoVTVMWDFXNjJiZmUvNmQrVjQ4YW16UkxwK1hKcDZFSWZnVmJt?=
- =?utf-8?B?SVd6Zy8vWG9vRXVxcWFVK3VPelhUVkVCeU1BUXdXS3A2S2dlTnpBQVV6cHh6?=
- =?utf-8?B?QnhjNDYyaXJuU0o2UDNtck5KNWpnV2c3aTVXRERWUExoWGMza0UzSFpPRmpC?=
- =?utf-8?B?TEtyL1ZYeGF0c2NJWXdGTUdaaW1GOXBMOGkxU0dGS0EySE1nTzQvK0s0alo3?=
- =?utf-8?B?aklWc09yVmdXMnp3MWhOSEttZ3gvRnloSTVTWHpUTjU5b2grNDIrRWtkenJn?=
- =?utf-8?B?eTZBSXpnY0JrblNWV0dVZSs1VDdUa21uWmIva1BLQkNWNkUvbGFEWDJKVzVZ?=
- =?utf-8?B?L0daL3RhWGxxTDI5V1RodFhYRkcya3hrcjNrTmhFOXlWeTB3aVl3bXVuWHNx?=
- =?utf-8?B?TkFqWXE5ZjI5SGtXbDgvTlRuMjIydjR5TlJnMEZZVGdPbW1UV3IxTGpyN3lH?=
- =?utf-8?B?bWVzdFM2RStFT3M0ZG5LUXVZVGVJWVB0dnVsREZOeHZTLzVwaHdFQ1dEaTBN?=
- =?utf-8?B?OFhOclhYOW01bDhiQjFZT29aRXVmTVQrYzN3WDd1c2NYTGVDeWswM2VLSXdw?=
- =?utf-8?B?YStVT0lYT1NCUHd5TTE4RForbkpIRW9JNzdnRlVGd2c0aE41TEdpRWJqQ1pL?=
- =?utf-8?B?MVlDT2dOU2hBQmpoTmh1aGVzTXlnYytLbVFPdFBjU0N0K3EzQ1JiaFYyWTlt?=
- =?utf-8?B?eVJZNGhwRXpIcGo0dUZTMnhHMjBuYysyNFN2Vno0UzFOTUdLQWZBUkwzZ0ZF?=
- =?utf-8?B?UWNXUWtrUmlkWUlwMko0U2tnZDl4OEdlMjAwSjZMM3JTeDhuRG1vZDYwa0Rj?=
- =?utf-8?B?OVB5dzNOdm90bWI1M09FblhTQVJiTUNuNEsxN3QzcUdDU0VqS1ZaVzhKWDlB?=
- =?utf-8?B?elRpT3lhbm5uL2t0aEpUOUxYRHBYT254cnVqWDNNaEFOTnljVzBxcFBYemRM?=
- =?utf-8?B?cHVHNHZyc1cxUjJIdWM0YnNleFNKZk1sUysvTHM3RGxCVTJucjlWUW5MZ1dF?=
- =?utf-8?B?ZStNTDFGOTdtaEJpTFhvSDNVTGZ2bG5XRVB6ejlTQ3hQUXdhMUxuQXNCSmJ1?=
- =?utf-8?B?d0N4Smx0Q1VrU0ZpS01JclIzbzdheXhqcUxwWDIwVytwMjV5R3BNV0VnUUlF?=
- =?utf-8?B?eEdZNjVjNGtDTlFmOGdHMVo4d1hxMW9JSHhyS2tPcmV5eE9wNnZCbWV5SGVO?=
- =?utf-8?B?UUM5VCtUOFY4c3MwSll2dDFheVVrOEIvV1JxdGwvVEh4NDRVUmZWeGt1QTN5?=
- =?utf-8?B?NXEveW4xR0JYYWg0cEMyeE5KSzFuTk5QR2RPR2hEd1JxRzNKdnBnM0NRTXJL?=
- =?utf-8?B?SzIwb1EzaFdiL0xvRDR0clpnNVZoUlhuRXpwdUhnYlRkQ3cyMVhWNGx0R2RI?=
- =?utf-8?B?d3lYWnpLMDdReG4zY3RTYWJOWTdlZXZ6Zm5yZmMxRjMrRStKSFBycmxxalIr?=
- =?utf-8?B?cm1aM21SOGpUZzdlT2ozL0tSRTFPZ1h2ZnZzNENOMUFIL1lScVRCQzhNNkVo?=
- =?utf-8?B?blhvTmQ0eDFBM1hBQm9ZdmIzNEJNM1hmRFZ6OWhYZXY2TkpyN1ptUENMOWZL?=
- =?utf-8?B?Z2c5UStaTHlrbjRuMFcvbXk3UURkTTJIS2wwenpQS0J5OTlvdjZmaTJ4b3cz?=
- =?utf-8?B?SmJYSmF4bVAvUE5FdVJxVXFRTElab1hNamx1THFhN0d3a3hFUi9zSGRQRitB?=
- =?utf-8?B?NHNwSVlLOTQ2M0VFQmkxVmdaTC9ZbXNBOFlzdmZjdXhVT1pqdVY5aG1mMGI2?=
- =?utf-8?B?MHEyc3IycVBMSXdFWlg3bXc4YzJQVlFCUVM5eTR5czlvS1VLUzZQSmtPMUVn?=
- =?utf-8?B?QUhJRHhEWFNtaDZOWUxxWmduc254Ry9HekdtMmJGdEZZem4wRmt4UFVuR3lJ?=
- =?utf-8?B?R3NqN1FSZWc0c1BrcTFYTWlHZVdrekZuemRrdHc3ZHVOUTJoaGtjNy9jV0tL?=
- =?utf-8?B?Z2lzbkJPdTRZTUdJS2VhZUUwU0tma085QmtiNDlsQ29qZmFBaEJPUnRpaTVZ?=
- =?utf-8?B?cCtrNUlmb05BYUNOMExHTFhsV0kvMXJnMXhqOUJ2cG9lSVVOOG5lclg4UWpM?=
- =?utf-8?B?ek9qMXF5RGJDQUJPK0NKa3d2MHBlTHFuNnduSGxnbFlDQk5OZGxMQjZYaFZ1?=
- =?utf-8?B?OXlUOWtYYThQRjREWGdDQ0NnelRXWVRQbm1yNU96anBEeHNUWStIZz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da014e0f-ee29-430e-0428-08df2e938405
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9212.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2026 10:18:42.2258 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fel0L1KHf89sHBaMp4C0JDZUsLvHKk9LlilWz6aUKxra/zerVu0w5J8MZUEe13xb2o3fsFhB4RyzmFRnzjee1w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF316EEACD8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] net/vhost: fix SW checksum when zero
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, dev@dpdk.org,
+ Chenbo Xia <chenbox@nvidia.com>
+Cc: stable@dpdk.org
+References: <20261017165952.3139535-1-mb@smartsharesystems.com>
+ <20261018092037.3143058-1-mb@smartsharesystems.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+In-Reply-To: <20261018092037.3143058-1-mb@smartsharesystems.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: bcByott-iTh408sZD4U_LwYQ0oTiJd434hptvHBvh1M_1792495164
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -129,46 +94,63 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On 10/20/26 11:49 AM, Morten Brørup wrote:
 
-> On architectures where rte_memcpy() is defined as memcpy(),
-> GCC warns about source/destination overflow when copying more than the
-> source/destination size, even for code paths that are not taken in cases
-> where the sizes are smaller.
+On 10/18/26 11:20 AM, Morten Brørup wrote:
+> There is a special rule for UDP, where a checksum of zero is as 0xffff
+> instead of zero.
 >
-> The relevant compiler warnings were disabled for GCC at the two
-> occurrences, and comments describing the reason were added.
+> Identifying packet types requires masking with the mask, not the value,
+> before comparing to the value.
+> Identifying by masking with the L4 UDP packet type value (0x00000200)
+> instead of the L4 packet type mask caused other L4 packet types to match;
+> specifically IP fragments, IGMP packets, and certain non-fragments.
+> This meant that some non-UDP packets followed the special UDP checksum
+> rule, which they should not.
 >
-> NB:
-> It has not been investigated which GCC versions are affected.
-> GCC version 10 and up was chosen because that was what the previous
-> versions of x86 rte_memcpy() disabled sligthly similar warnings for.
+> Updated to mask the packet type with the L4 packet type mask and then
+> compare to the L4 UDP packet type value, so only UDP packets follow the
+> special UDP checksum rule.
 >
-> PS:
-> The alternative was to obfuscate the code, but that would make the code
-> less readable, and might have unintended effects on architectures and
-> compilers not suffering by this issue.
+> Furthermore, according to the mbuf documentation, Tx checksum offload
+> requires that "ol_flags" is set, and only mentions "packet_type" for Rx,
+> so use "ol_flags" instead of "packet_type" for checking the packet type
+> at Tx.
 >
-> Bugzilla ID: 2061
-> Fixes: ee0822a0ef41 ("stack: introduce pile")
+> Furthermore, writing the checksum needs room for 2 bytes, not 1 byte.
 >
-> The pile was introduce with this DPDK release, so no need to backport.
+> Note:
+> Using "if (unlikely(cksum == 0) && PTYPE_MATCH)" to advise the optimizer
+> about the need to evaluate PTYPE_MATCH being unlikely.
+> The probability of cksum being zero is only 1/65536, so it's better to
+> branch early.
 >
-> Reported-by: Ali Alnubani <alialnu@nvidia.com>
+> Fixes: 8ba1723783b2 ("net/vhost: perform SW checksum in Tx path")
+> Fixes: 8f1750f42e2d ("net/vhost: perform SW checksum in Rx path")
+> Cc: stable@dpdk.org
+>
 > Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 > ---
-
-Build passes with this patch.
-
-Tested-by: Ali Alnubani <alialnu@nvidia.com>
+> v3:
+> * Writing the checksum needs room for 2 bytes, not 1 byte.
+> v2:
+> * Use ol_flags instead of packet_type for Tx.
+> * Added note about the use of unlikely().
+> ---
+>   drivers/net/vhost/rte_eth_vhost.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+>
+Applied to next-virtio/for-next-net.
 
 Thanks,
-Ali
+
+Maxime
+
 
