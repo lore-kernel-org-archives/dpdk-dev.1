@@ -1,74 +1,77 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4F2606A31B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 17:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1281606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 17:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=m09/4L1q
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=bh8QNLD2
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 09EDE4068A;
-	Tue, 20 Oct 2026 19:57:38 +0200 (CEST)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
- [209.85.214.174])
- by mails.dpdk.org (Postfix) with ESMTP id 7EAA240151
- for <dev@dpdk.org>; Tue, 20 Oct 2026 19:57:36 +0200 (CEST)
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-2dd76b1361dso6910875ad.1
- for <dev@dpdk.org>; Tue, 20 Oct 2026 10:57:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CB23540689;
+	Tue, 20 Oct 2026 19:57:41 +0200 (CEST)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
+ [209.85.214.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 410A640151
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 19:57:37 +0200 (CEST)
+Received: by mail-pl1-f173.google.com with SMTP id
+ d9443c01a7336-2ea1e7fad99so6107675ad.1
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 10:57:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792519055;
- x=1793123855; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=7JQAsaPOpHcq4WORXTbL2AStabQRuBUwBD1yJgKTOkA=;
- b=m09/4L1q/TLDe910rF2pD60vGTC5GuyQpwKfHghc41rgzp9OgvFTUZdoFifvx+seU0
- xjFYosBQoqDZGeSzkaeVeghmLzodHtfC2zJSBR736CmyP84jfkTqwx05WL/K9LSpmmAf
- x45cP1RrRGxiURzRzR+sZR+QNdkfvBs/7JwMkoFMDGOtgyGHIlhMnppJoFbjq4SQb8QV
- 7NCwZEm7/E0mJUg6BcCyD4zljHmHK7g9+gaGp0/4Kwyc0b6Xpq0UKko0hT/MfwAgzHQ0
- I2sdUlXtNGem5j1Ge2ira46D2TBVBpzg+agP5PV9Ee7CHSDv0xP4YV9huRD1axO0t3QY
- NvSg==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792519056;
+ x=1793123856; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=uVBDL/+6hx3oX9Cae2SkkJvgG1d7++PR38SBIyJyEAU=;
+ b=bh8QNLD2l+kfe46Xgs4fGISwygycGpg2y4hIk0dWt8/z0op9OS3cva72dgP1Cs1zQb
+ udfSUHMc9WRKHNTUMtm1tVaBY1mohD0mIBes+Q3BCEcPo3vrXD/0KaDw8iuoOXrul+tC
+ vBJHHBa3Xz5NJte8dCBGZLZ7akImHdAHrynSugoKHmSH7TUgOjlKmUctZf/SnVGsC6Gi
+ GPoZ5UduSBbMR6AlSlDio3IJAkOjD4GThYaWFo5vBU0CtoDThHHbLf7UcnWuu2m7zGWY
+ hiJKboHymG7oWZyFdhxCMAm0XYPUzLvJcZdVxIrT5ww7iNumcvg2U/LJDnlKC0rk9stX
+ 4HyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792519055; x=1793123855;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=7JQAsaPOpHcq4WORXTbL2AStabQRuBUwBD1yJgKTOkA=;
- b=f6LnH1TR995FX9+TuBAc3RNgmP2edB8lifVC5ZONEuIdr+ZYJxURwCMwwziMASkODv
- m9CopVkYuyXMVZltQMVDHl1oi65FcJA5jJpxCCdU1E87LOGKDN0aumH3fVkFrhKWUvWW
- ivfcXK9ytmyC4aVWvti428TC/NrHZyJorQYhqUVtBuKUuJIKQ64sIVLTVSTdvUaOJoEv
- /7Fjewkkw8KQ9Vwpc0mBu2S2DgW7xemhp02lacNV77MdDrj5fHqli8VfB6tmKQ3Jk4/H
- wBqSNxFH01qb7DupRM/ZNCNp30NSQ0LmziHHv9KLR991xy6JHU2CK3S+I3MYDZlRqEcu
- /QCQ==
-X-Gm-Message-State: AFq9FYJHoP4fZL/rnC7ZuQP9RNG8UVGSSdTL1IJgxOAJxkMhyKCSepta
- UVEASlAC/ben7kitJ2haupnc8/JwO0PE5JSN3eq1fu3kMW1S44vgwuYBPq7w+ICu88jASZoUg8l
- REsU5zRw=
-X-Gm-Gg: AYBFou3uyuAl1TtFcRA2FZK7mSIyLNOMREdGdLVKLePNYhCE6jjubp227/ekiXyE3cd
- SN+/tByieAdTuD1ZOC5Ji0VMdQtoEk8Lmc9L19MV6Vzc7EQhI4lWz0i1ll06ATURHjyH3AO9z2K
- /LqyrYNzfeI3MJhGjNBWvYcjySDrqCiuwJFwpc20WyDZce0yQOY3uoHUL1ndyUwatYxnLDmnW0A
- Y79SmYIoBRqA0ULPMN/fUWBO0QdEAJoTEAluepurdkhmkJYRrBXzsLZmjFWs0iiOnCOkz7Xso+B
- ILuDUxdIq+pS2ccWAQXkMCzK82jYuqGqYiCVIPbzclzSKj6O4rnPptoa1Y3vanUBashC+P0HM6Y
- fuCn6I6SXMG6LGEeUv4pIH+lEziVYpLpSLnK2gH09+oklBAgftoF0vn+WZMAHoXP8qy1dOSCSfR
- ySHDHr1dHEXTlOFMcfQFIJ8WktC9sxA3ZgzG5NwAAcZ+8iT5Cc+bYoSH/ME6w9xY8CZBSNeg3Vq
- 5tWbta4iT4Dnd0mPu2/F/akzzHAdCdaXq/bpA==
-X-Received: by 2002:a17:903:2312:b0:2e4:b37a:d577 with SMTP id
- d9443c01a7336-2e9a6e45ae4mr88374735ad.43.1792519055001; 
- Tue, 20 Oct 2026 10:57:35 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1792519056; x=1793123856;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=uVBDL/+6hx3oX9Cae2SkkJvgG1d7++PR38SBIyJyEAU=;
+ b=f96v5H8AbGgJufIJ0PeNSAce6TDoiJTpsqsv+KWB7ynROJ7ZgCpU5tXsAywfG1QcSE
+ Clp2oQtzS9w5FXDcz0Vhzpltj7hX58PtGK1QoC816TC/6tsF6ENWt/sZM6a4tgevvgYg
+ ko8D8hj8RznNqC6V0IhBmaGscX+7dT9iK5nSDHZMhEmhtAkt/C8JEfbBb4ulY2eyDkF/
+ /BKwCkx4odIwYyX7g3AQD49zGTJXRPtRhtYd2+dy6OPvphI07fbNskyfEGv4lSOgq+Zi
+ VuQg7A0pB6KJ7WZhbZg/YEfhzTYYN/23d0U01WXeC7duTb/9MkUvlS+WAExhn5QHIEYT
+ vIEw==
+X-Gm-Message-State: AFq9FYLh3XaH1fKCaYwk6P3ZX4ExkFAZnRDcURAxMDV+CULZBpOO0vF6
+ taix7+IEplpi9WpA3hoDRYbIFf83OgNe4f2CJ1DqYWkUO6nY/XzYd4Mlh3AvW9zPn62oVDWKcPV
+ GlegRRqk=
+X-Gm-Gg: AYBFou3liLG1BwhkWwBhZmBzo605hfcj7PC72mKPEa/pjaEZuGih1kthMyqvsD6SRJJ
+ VG29reUG3jseIg17twkUu5jDWWyFQViZJWVBjzm9aX+8L3zFtfTPbgxLmkS5q/uC6u4ufsUK9Kl
+ umww/0UIB3gt9fo+ejT+TIQB5SBzzpXI3s+GvAIwRUNkdXEpveoUSpRNgZuynWX4IsFScnvicyG
+ kw/piI01FRH0yFIZ9CpIbdLBtRqbiXHEggebEk4TSpLid5ef9vuYiuqwFGtVko3RoxlMJuoFd48
+ pAbXvoz5Kn6JsJH4db91+iycb0o2rVJF6qhfQrXJazln5SR/VDy+gGJ3/mqbPeaKnL3Gu4Xq8ti
+ k/9PcnZ57GFvHMzxD8mt312Kw2d3i41arX+5duqUWS0+t36Gin4gO/Mltir3vwFin2gpl/Qxitg
+ 7rWrffdz7bEzD3Igdou7H+EgCgOMH6G+Dxz3CeOVJYNAGA66BiDekN7IA9Uf4hAcsjH21BtLa/7
+ N8qGyKAncEujVwp+560EjIXDMdqhjKJ82lFTy99/CZ6UxaS
+X-Received: by 2002:a17:903:41cf:b0:2d9:520c:38e7 with SMTP id
+ d9443c01a7336-2e9a68346e4mr98084735ad.1.1792519056324; 
+ Tue, 20 Oct 2026 10:57:36 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2ea3b43236esm1997875ad.29.2026.10.20.10.57.34
+ d9443c01a7336-2ea3b43236esm1997875ad.29.2026.10.20.10.57.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 Oct 2026 10:57:34 -0700 (PDT)
+ Tue, 20 Oct 2026 10:57:35 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 1/3] eal: add function to convert TSC to epoch time
-Date: Tue, 20 Oct 2026 10:55:42 -0700
-Message-ID: <20261020175732.1552406-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Reshma Pattan <reshma.pattan@intel.com>
+Subject: [PATCH 2/3] pcapng: use EAL TSC to epoch conversion
+Date: Tue, 20 Oct 2026 10:55:43 -0700
+Message-ID: <20261020175732.1552406-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261020175732.1552406-1-stephen@networkplumber.org>
 References: <20261020152907.2607513-1-dawid.wesierski@intel.com>
  <20261020175732.1552406-1-stephen@networkplumber.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -86,220 +89,166 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The pcapng library converts the TSC into nanoseconds since 1/1/1970,
-because that is what the pcapng file format records. Nothing about
-that conversion is specific to packet capture: it needs the TSC
-frequency and a reference point relating the TSC to the wall clock,
-both of which EAL already has or can take at init.
+The pcapng library carried its own TSC to nanoseconds conversion along
+with the reference point it needs: the TSC and wall clock sampled when
+the capture file was opened. EAL now records an equivalent reference
+point at init and exposes rte_tsc_to_ns(), so the local copy is
+redundant.
 
-Record the TSC alongside a CLOCK_REALTIME reading while the TSC
-frequency is being determined, and add rte_tsc_to_ns() to convert any
-TSC value using that reference point. The seconds are computed before
-the remainder is scaled, so the multiply by NS_PER_S cannot overflow.
-
-The reference point is taken per process rather than shared through the
-memory config, so a secondary process may differ from the primary by
-the sampling error.
+Convert timestamps with rte_tsc_to_ns() and drop the per-handle
+reference point. The interface statistics block still reports when the
+file was opened rather than when EAL started, so that time is kept in
+the handle, now derived from the TSC like every other timestamp.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/api/doxy-api-index.md              |  1 +
- doc/guides/rel_notes/release_26_11.rst |  6 +++
- lib/eal/common/eal_common_timer.c      | 59 ++++++++++++++++++++++++++
- lib/eal/include/rte_time.h             | 34 +++++++++++++++
- 4 files changed, 100 insertions(+)
+ app/test/test_pcapng.c  |  8 +++----
+ lib/pcapng/rte_pcapng.c | 52 +++++------------------------------------
+ 2 files changed, 10 insertions(+), 50 deletions(-)
 
-diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
-index 62390f7be3..97b908667c 100644
---- a/doc/api/doxy-api-index.md
-+++ b/doc/api/doxy-api-index.md
-@@ -73,6 +73,7 @@ The public API headers are grouped by topics:
+diff --git a/app/test/test_pcapng.c b/app/test/test_pcapng.c
+index 688b58794e..060c479ba2 100644
+--- a/app/test/test_pcapng.c
++++ b/app/test/test_pcapng.c
+@@ -648,8 +648,8 @@ test_write_before_open(void)
+ 	mbuf1_prepare(&mbfs);
+ 	mbuf1_resize(&mbfs, rte_rand_max(MAX_DATA_SIZE));
  
- - **timers**:
-   [cycles](@ref rte_cycles.h),
-+  [time](@ref rte_time.h),
-   [timer](@ref rte_timer.h),
-   [alarm](@ref rte_alarm.h)
- 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index be758a0c02..5f960692e2 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -73,6 +73,12 @@ New Features
-   Added the experimental ``rte_cpu_socket_id()`` function
-   to map an OS logical CPU ID to the NUMA socket containing that CPU.
- 
-+* **Added API to convert TSC to epoch time.**
-+
-+  Added the experimental ``rte_tsc_to_ns()`` function in ``rte_time.h``
-+  to convert a TSC value into nanoseconds since 1/1/1970,
-+  using a reference point recorded during EAL initialization.
-+
- * **Added pile stack and mempool driver.**
- 
-   Introduced pile, a lock-free, stack-like implementation,
-diff --git a/lib/eal/common/eal_common_timer.c b/lib/eal/common/eal_common_timer.c
-index 67ede70c62..4dfb7099b3 100644
---- a/lib/eal/common/eal_common_timer.c
-+++ b/lib/eal/common/eal_common_timer.c
-@@ -8,8 +8,10 @@
- #include <rte_common.h>
- #include <rte_log.h>
- #include <rte_cycles.h>
-+#include <rte_os_shim.h>
- #include <rte_pause.h>
- #include <rte_eal.h>
-+#include <rte_time.h>
- 
- #include <eal_export.h>
- #include "eal_private.h"
-@@ -18,6 +20,10 @@
- /* The frequency of the RDTSC timer resolution */
- static uint64_t eal_tsc_resolution_hz;
- 
-+/* Reference point relating the TSC to the wall clock, taken at init */
-+static uint64_t eal_tsc_base;
-+static uint64_t eal_epoch_ns;
-+
- /* Pointer to user delay function */
- RTE_EXPORT_SYMBOL(rte_delay_us)
- void (*rte_delay_us)(unsigned int) = NULL;
-@@ -39,6 +45,36 @@ rte_get_tsc_hz(void)
- 	return eal_tsc_resolution_hz;
- }
- 
-+/*
-+ * Convert a count of cycles to nanoseconds.
-+ *
-+ * Compute the whole seconds first, so that the remainder is always
-+ * less than the frequency and scaling it by NS_PER_S cannot overflow.
-+ */
-+static uint64_t
-+cycles_to_ns(uint64_t cycles)
-+{
-+	uint64_t secs = cycles / eal_tsc_resolution_hz;
-+	uint64_t rem = cycles % eal_tsc_resolution_hz;
-+
-+	return secs * NS_PER_S + (rem * NS_PER_S) / eal_tsc_resolution_hz;
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_tsc_to_ns, 26.11)
-+uint64_t
-+rte_tsc_to_ns(uint64_t tsc)
-+{
-+	/*
-+	 * A caller may convert a TSC value sampled before the reference
-+	 * point was taken, so handle both directions on an unsigned
-+	 * magnitude.
-+	 */
-+	if (unlikely(tsc < eal_tsc_base))
-+		return eal_epoch_ns - cycles_to_ns(eal_tsc_base - tsc);
-+
-+	return eal_epoch_ns + cycles_to_ns(tsc - eal_tsc_base);
-+}
-+
- static uint64_t
- estimate_tsc_freq(void)
- {
-@@ -52,6 +88,27 @@ estimate_tsc_freq(void)
- 	return RTE_ALIGN_MUL_NEAR(rte_rdtsc() - start, CYC_PER_10MHZ);
- }
- 
-+/*
-+ * Record the TSC value matching a wall clock reading, so that any TSC
-+ * value can later be expressed as nanoseconds since the Unix epoch.
-+ * Read the TSC either side of the clock to halve the sampling error.
-+ */
-+static void
-+init_tsc_base(void)
-+{
-+	struct timespec ts;
-+	uint64_t cycles;
-+
-+	cycles = rte_get_tsc_cycles();
-+	if (clock_gettime(CLOCK_REALTIME, &ts) < 0) {
-+		EAL_LOG(WARNING, "Could not read wall clock,"
-+			" TSC to epoch conversion unavailable");
-+		return;
-+	}
-+	eal_tsc_base = (cycles + rte_get_tsc_cycles()) / 2;
-+	eal_epoch_ns = rte_timespec_to_ns(&ts);
-+}
-+
- int
- init_tsc_freq(void)
- {
-@@ -71,6 +128,7 @@ init_tsc_freq(void)
+-	/* Copy packets BEFORE opening the pcapng file.
+-	 * This exercises the negative TSC delta path.
++	/* Copy packets BEFORE opening the pcapng file, so their
++	 * timestamps precede the capture start time.
+ 	 */
+ 	for (i = 0; i < (int)count; i++) {
+ 		clones[i] = rte_pcapng_copy(port_id, 0, &mbfs.mb[0], mp,
+@@ -662,7 +662,7 @@ test_write_before_open(void)
  		}
- 
- 		eal_tsc_resolution_hz = mcfg->tsc_hz;
-+		init_tsc_base();
- 		return 0;
  	}
  
-@@ -87,6 +145,7 @@ init_tsc_freq(void)
- 	EAL_LOG(DEBUG, "TSC frequency is ~%" PRIu64 " KHz", freq / 1000);
- 	eal_tsc_resolution_hz = freq;
- 	mcfg->tsc_hz = freq;
-+	init_tsc_base();
- 	return 0;
- }
+-	/* Small delay so fdopen's tsc_base is measurably after the copies */
++	/* Small delay so the capture start is measurably after the copies */
+ 	rte_delay_us_block(100);
  
-diff --git a/lib/eal/include/rte_time.h b/lib/eal/include/rte_time.h
-index c5c3a233e4..3122e062ab 100644
---- a/lib/eal/include/rte_time.h
-+++ b/lib/eal/include/rte_time.h
-@@ -5,9 +5,17 @@
- #ifndef _RTE_TIME_H_
- #define _RTE_TIME_H_
+ 	now = current_timestamp();
+@@ -689,7 +689,7 @@ test_write_before_open(void)
+ 		goto fail;
+ 	}
  
-+/**
-+ * @file
-+ *
-+ * Time and cycle counter conversion.
-+ */
-+
- #include <stdint.h>
- #include <time.h>
+-	/* Write the pre-captured packets — timestamps precede tsc_base */
++	/* Write the pre-captured packets */
+ 	len = rte_pcapng_write_packets(pcapng, clones, count);
+ 	rte_pktmbuf_free_bulk(clones, count);
+ 	if (len <= 0) {
+diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
+index df38e4819c..f910896a61 100644
+--- a/lib/pcapng/rte_pcapng.c
++++ b/lib/pcapng/rte_pcapng.c
+@@ -40,8 +40,7 @@
+ struct rte_pcapng {
+ 	int  outfd;		/* output file */
+ 	unsigned int ports;	/* number of interfaces added */
+-	uint64_t offset_ns;	/* ns since 1/1/1970 when initialized */
+-	uint64_t tsc_base;	/* TSC when started */
++	uint64_t start_time;	/* ns since 1/1/1970 when opened */
  
-+#include <rte_compat.h>
-+
- #ifdef __cplusplus
- extern "C" {
+ 	/* DPDK port id to interface index in file */
+ 	uint32_t port_index[RTE_MAX_ETHPORTS];
+@@ -97,39 +96,6 @@ static ssize_t writev(int fd, const struct iovec *iov, int iovcnt)
+ #define if_indextoname(ifindex, ifname) NULL
  #endif
-@@ -102,6 +110,32 @@ rte_ns_to_timespec(uint64_t nsec)
- 	return ts;
- }
  
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Convert a TSC value into nanoseconds since the Unix epoch.
-+ *
-+ * EAL records the TSC alongside a CLOCK_REALTIME reading during
-+ * initialization, and this converts using that reference point and the
-+ * TSC frequency.  Values sampled before initialization are also handled,
-+ * and the result tracks the wall clock as it was at init: later changes
-+ * to the system time are not reflected.
-+ *
-+ * Each process takes its own reference point, so values converted in a
-+ * secondary process may differ from the primary by the sampling error.
-+ *
-+ * Must be called after rte_eal_init(), which fails if the TSC frequency
-+ * cannot be determined.
-+ *
-+ * @param tsc
-+ *   A value read from rte_get_tsc_cycles() or rte_rdtsc().
-+ * @return
-+ *   Nanoseconds since 1/1/1970.
-+ */
-+__rte_experimental
-+uint64_t rte_tsc_to_ns(uint64_t tsc);
-+
- #ifdef __cplusplus
- }
- #endif
+-/*
+- * Convert a count of cycles to nanoseconds.
+- *
+- * Compute the whole seconds first, so that the remainder is always
+- * less than the frequency and scaling it by NS_PER_S cannot wrap.
+- */
+-static uint64_t
+-pcapng_cycles_to_ns(uint64_t delta)
+-{
+-	const uint64_t hz = rte_get_tsc_hz();
+-	uint64_t secs = delta / hz;
+-	uint64_t rem = delta % hz;
+-
+-	return secs * NS_PER_S + (rem * NS_PER_S) / hz;
+-}
+-
+-/* Convert from TSC (CPU cycles) to nanoseconds */
+-static uint64_t
+-pcapng_timestamp(const rte_pcapng_t *self, uint64_t cycles)
+-{
+-	/*
+-	 * A packet may be copied before the file was opened, so the TSC
+-	 * can be behind the reference point.  Handle both directions on
+-	 * an unsigned magnitude.
+-	 */
+-	if (unlikely(cycles < self->tsc_base))
+-		return self->offset_ns -
+-			pcapng_cycles_to_ns(self->tsc_base - cycles);
+-
+-	return self->offset_ns +
+-		pcapng_cycles_to_ns(cycles - self->tsc_base);
+-}
+-
+ /* length of option including padding */
+ static uint16_t pcapng_optlen(uint16_t len)
+ {
+@@ -361,7 +327,7 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
+ {
+ 	struct pcapng_statistics *hdr;
+ 	struct pcapng_option *opt;
+-	uint64_t start_time = self->offset_ns;
++	uint64_t start_time = self->start_time;
+ 	uint64_t sample_time;
+ 	uint32_t optlen, len;
+ 	uint32_t *buf;
+@@ -414,7 +380,7 @@ rte_pcapng_write_stats(rte_pcapng_t *self, uint16_t port_id,
+ 	hdr->block_length = len;
+ 	hdr->interface_id = self->port_index[port_id];
+ 
+-	sample_time = pcapng_timestamp(self, rte_get_tsc_cycles());
++	sample_time = rte_tsc_to_ns(rte_get_tsc_cycles());
+ 	hdr->timestamp_hi = sample_time >> 32;
+ 	hdr->timestamp_lo = (uint32_t)sample_time;
+ 
+@@ -702,7 +668,7 @@ rte_pcapng_write_packets(rte_pcapng_t *self,
+ 		/* adjust timestamp recorded in packet */
+ 		cycles = (uint64_t)epb->timestamp_hi << 32;
+ 		cycles += epb->timestamp_lo;
+-		timestamp = pcapng_timestamp(self, cycles);
++		timestamp = rte_tsc_to_ns(cycles);
+ 		epb->timestamp_hi = timestamp >> 32;
+ 		epb->timestamp_lo = (uint32_t)timestamp;
+ 
+@@ -748,8 +714,6 @@ rte_pcapng_fdopen(int fd,
+ {
+ 	unsigned int i;
+ 	rte_pcapng_t *self;
+-	struct timespec ts;
+-	uint64_t cycles;
+ 	int ret;
+ 
+ 	if ((osname && strlen(osname) > PCAPNG_STR_MAX) ||
+@@ -769,17 +733,13 @@ rte_pcapng_fdopen(int fd,
+ 	self->outfd = fd;
+ 	self->ports = 0;
+ 
+-	/* If Hz is zero, something is seriously broken. */
++	/* Timestamps come from the TSC; if Hz is zero it is unusable. */
+ 	if (rte_get_tsc_hz() == 0) {
+ 		rte_errno = ENODEV;
+ 		goto fail;
+ 	}
+ 
+-	/* record start time in ns since 1/1/1970 */
+-	cycles = rte_get_tsc_cycles();
+-	clock_gettime(CLOCK_REALTIME, &ts);
+-	self->tsc_base = (cycles + rte_get_tsc_cycles()) / 2;
+-	self->offset_ns = rte_timespec_to_ns(&ts);
++	self->start_time = rte_tsc_to_ns(rte_get_tsc_cycles());
+ 
+ 	for (i = 0; i < RTE_MAX_ETHPORTS; i++)
+ 		self->port_index[i] = UINT32_MAX;
 -- 
 2.53.0
 
