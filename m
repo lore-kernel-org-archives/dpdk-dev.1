@@ -1,39 +1,42 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8003D606A320
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3BB60A3822
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:39:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C8B7840283;
-	Tue, 20 Oct 2026 17:33:36 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1E08D40283;
+	Tue, 20 Oct 2026 17:39:23 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 8E8654025A
- for <dev@dpdk.org>; Tue, 20 Oct 2026 17:33:35 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 890DD4025A
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 17:39:21 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 63EAA2033E;
- Tue, 20 Oct 2026 17:33:35 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 5613A2033E;
+ Tue, 20 Oct 2026 17:39:21 +0200 (CEST)
 Content-class: urn:content-classes:message
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH 1/2] build: disable GCC string op warnings when unoptimized
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] stack: fix pile GCC memcpy warnings
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 20 Oct 2026 17:33:32 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65ACF@smartserver.smartshare.dk>
-In-Reply-To: <20261020145541.388371-1-stephen@networkplumber.org>
+Date: Tue, 20 Oct 2026 17:39:18 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65AD0@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65ACD@smartserver.smartshare.dk>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH 1/2] build: disable GCC string op warnings when
- unoptimized
-Thread-Index: Ad1goxx9mXv8OJYFSxCn+O7yY4l9fAABRZdw
-References: <20261020145541.388371-1-stephen@networkplumber.org>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>,
-	<dev@dpdk.org>
-Cc: "Ali Alnubani" <alialnu@nvidia.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>
+Thread-Topic: [PATCH] stack: fix pile GCC memcpy warnings
+Thread-Index: Ad1gnpsRv1FaSJlnQXmL3I17dDuMeQABD1ggAAFyMdA=
+References: <20261020084944.3188987-1-mb@smartsharesystems.com>
+ <20261020072333.30593486@phoenix.local>
+ <98CBD80474FA8B44BF855DF32C47DC35F65ACD@smartserver.smartshare.dk>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Ali Alnubani" <alialnu@nvidia.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,65 +46,100 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> Sent: Tuesday, 20 October 2026 16.56
->=20
-> Without optimization GCC produces warnings for unreachable code paths.
-> They check memcpy() against the object size even on paths that are =
-dead
-> for the inlined arguments. This breaks debug builds of app/test
-> with -Werror on lib/stack/rte_stack_pile.h,
-> and has required local pragma workarounds elsewhere.
->=20
-> Disable both warnings when optimization is 0. They stay enabled for
-> optimized builds, where the analysis is flow-sensitive.
->=20
-> Bugzilla ID: 2061
->=20
-> Reported-by: Ali Alnubani <alialnu@nvidia.com>
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  config/meson.build | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/config/meson.build b/config/meson.build
-> index 745097e8aa..bfac1cd93d 100644
-> --- a/config/meson.build
-> +++ b/config/meson.build
-> @@ -378,6 +378,12 @@ if cc.has_argument('-Wno-comma')
->      no_comma_cflag =3D '-Wno-comma'
->  endif
->=20
-> +# GCC's string/memory access warnings are flow-insensitive without
-> +# optimization and produce false positives on dead paths of inlined
-> code.
-> +if get_option('optimization') =3D=3D '0' and cc.get_id() =3D=3D 'gcc'
-> +    global_cflags +=3D ['-Wno-stringop-overflow', '-Wno-stringop-
-> overread']
-> +endif
-> +
->  foreach arg: global_cflags
->      if cc.has_argument(arg)
->          add_project_arguments(arg, language: 'c')
-> --
-> 2.53.0
-
-I replied in the wrong thread, here it comes again:
-
-Also '-Warray-bounds'?
-
-Consider making it a series, and also remove existing overflow/overread =
-pragmas in the code (if viable):
-lib/ring/rte_ring_elem_pvt.h - You did this already!
-lib/eal/ppc/include/rte_memcpy.h
-
-With or without suggested changes,
-Acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
-
+PiBGcm9tOiBNb3J0ZW4gQnLDuHJ1cCBbbWFpbHRvOm1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbV0N
+Cj4gU2VudDogVHVlc2RheSwgMjAgT2N0b2JlciAyMDI2IDE3LjE2DQo+IFRvOiBTdGVwaGVuIEhl
+bW1pbmdlcg0KPiBDYzogZGV2QGRwZGsub3JnOyBUaG9tYXMgTW9uamFsb247IEtvbnN0YW50aW4g
+QW5hbnlldjsgQW5kcmV3DQo+IFJ5YmNoZW5rbzsgQnJ1Y2UgUmljaGFyZHNvbjsgQWxpIEFsbnVi
+YW5pDQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0hdIHN0YWNrOiBmaXggcGlsZSBHQ0MgbWVtY3B5IHdh
+cm5pbmdzDQo+IA0KPiA+IEZyb206IFN0ZXBoZW4gSGVtbWluZ2VyIFttYWlsdG86c3RlcGhlbkBu
+ZXR3b3JrcGx1bWJlci5vcmddDQo+ID4gU2VudDogVHVlc2RheSwgMjAgT2N0b2JlciAyMDI2IDE2
+LjI0DQo+ID4NCj4gPiBPbiBUdWUsIDIwIE9jdCAyMDI2IDA4OjQ5OjQ0ICswMDAwDQo+ID4gTW9y
+dGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiA+
+IE9uIGFyY2hpdGVjdHVyZXMgd2hlcmUgcnRlX21lbWNweSgpIGlzIGRlZmluZWQgYXMgbWVtY3B5
+KCksDQo+ID4gPiBHQ0Mgd2FybnMgYWJvdXQgc291cmNlL2Rlc3RpbmF0aW9uIG92ZXJmbG93IHdo
+ZW4gY29weWluZyBtb3JlIHRoYW4NCj4gPiB0aGUNCj4gPiA+IHNvdXJjZS9kZXN0aW5hdGlvbiBz
+aXplLCBldmVuIGZvciBjb2RlIHBhdGhzIHRoYXQgYXJlIG5vdCB0YWtlbiBpbg0KPiA+IGNhc2Vz
+DQo+ID4gPiB3aGVyZSB0aGUgc2l6ZXMgYXJlIHNtYWxsZXIuDQo+ID4gPg0KPiA+ID4gVGhlIHJl
+bGV2YW50IGNvbXBpbGVyIHdhcm5pbmdzIHdlcmUgZGlzYWJsZWQgZm9yIEdDQyBhdCB0aGUgdHdv
+DQo+ID4gPiBvY2N1cnJlbmNlcywgYW5kIGNvbW1lbnRzIGRlc2NyaWJpbmcgdGhlIHJlYXNvbiB3
+ZXJlIGFkZGVkLg0KPiA+ID4NCj4gPiA+IE5COg0KPiA+ID4gSXQgaGFzIG5vdCBiZWVuIGludmVz
+dGlnYXRlZCB3aGljaCBHQ0MgdmVyc2lvbnMgYXJlIGFmZmVjdGVkLg0KPiA+ID4gR0NDIHZlcnNp
+b24gMTAgYW5kIHVwIHdhcyBjaG9zZW4gYmVjYXVzZSB0aGF0IHdhcyB3aGF0IHRoZSBwcmV2aW91
+cw0KPiA+ID4gdmVyc2lvbnMgb2YgeDg2IHJ0ZV9tZW1jcHkoKSBkaXNhYmxlZCBzbGlndGhseSBz
+aW1pbGFyIHdhcm5pbmdzDQo+IGZvci4NCj4gPiA+DQo+ID4gPiBQUzoNCj4gPiA+IFRoZSBhbHRl
+cm5hdGl2ZSB3YXMgdG8gb2JmdXNjYXRlIHRoZSBjb2RlLCBidXQgdGhhdCB3b3VsZCBtYWtlIHRo
+ZQ0KPiA+IGNvZGUNCj4gPiA+IGxlc3MgcmVhZGFibGUsIGFuZCBtaWdodCBoYXZlIHVuaW50ZW5k
+ZWQgZWZmZWN0cyBvbiBhcmNoaXRlY3R1cmVzDQo+IGFuZA0KPiA+ID4gY29tcGlsZXJzIG5vdCBz
+dWZmZXJpbmcgYnkgdGhpcyBpc3N1ZS4NCj4gPiA+DQo+ID4gPiBCdWd6aWxsYSBJRDogMjA2MQ0K
+PiA+ID4gRml4ZXM6IGVlMDgyMmEwZWY0MSAoInN0YWNrOiBpbnRyb2R1Y2UgcGlsZSIpDQo+ID4g
+Pg0KPiA+ID4gVGhlIHBpbGUgd2FzIGludHJvZHVjZSB3aXRoIHRoaXMgRFBESyByZWxlYXNlLCBz
+byBubyBuZWVkIHRvDQo+ID4gYmFja3BvcnQuDQo+ID4gPg0KPiA+ID4gUmVwb3J0ZWQtYnk6IEFs
+aSBBbG51YmFuaSA8YWxpYWxudUBudmlkaWEuY29tPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogTW9y
+dGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCj4gPiA+IC0tLQ0KPiA+DQo+
+ID4gSSBkb24ndCBsaWtlIHVzaW5nIGNvbXBpbGVyIHByYWdtYXMgZm9yIHRoaXMuIEl0IGFsc28g
+bWVhbnMgdGhhdCBpZg0KPiA+IGNvbXBpbGVyIGdldHMgZml4ZWQgb3IgYmVoYXZlcyBkaWZmZXJl
+bnRseSB5b3Ugd2lsbCBuZXZlciBzZWUgaXQuDQo+ID4NCj4gPg0KPiA+IEFJIGFuYWx5c2lzIHNo
+b3dzIHNvbWUgb3RoZXIgb3B0aW9ucy4NCj4gPg0KPiA+IFJvb3QgY2F1c2UgaXMgLS1idWlsZHR5
+cGU9ZGVidWcsIGkuZS4gLU8wLCBub3QgdGhlIEdDQyB2ZXJzaW9uLiBBdCAtDQo+IE8wDQo+ID4g
+bm90aGluZyByZW1vdmVzIHRoZSBkZWFkIG5fYnVsayA+IDAgcGF0aCBmb3IgcnRlX3N0YWNrX3B1
+c2gocywgJm9iaiwNCj4gPiAxKSwgc28gdGhlIGNvbnN0YW50IDI1Ni1ieXRlIG1lbWNweSBpcyBj
+aGVja2VkIGFnYWluc3Qgb2JqICg4IGJ5dGVzKQ0KPiA+IGFuZCB3YXJucy4gUmVwcm9kdWNlZCB3
+aXRoIEdDQyAxMy4zIGFuZCAxNC4yIGF0IC1PMDsgc2lsZW50IGF0IC1PZw0KPiBhbmQNCj4gPiBh
+Ym92ZS4gVGhhdCBtZWFucyB0aGUgR0NDX1ZFUlNJT04gPj0gMTAwMDAwIGdhdGUgaXMgd3Jvbmcg
+YXQgYm90aA0KPiBlbmRzOg0KPiA+IGFueSBHQ0Mgd2l0aCB0aGUgd2FybmluZyBmaXJlcyAob3Zl
+cmZsb3cgc2luY2UgOCwgb3ZlcnJlYWQgc2luY2UgMTEpLA0KPiA+IGFuZCBvbiBHQ0MgMTAgdGhl
+IC1Xc3RyaW5nb3Atb3ZlcnJlYWQgcHJhZ21hIGl0c2VsZiBpcyBhIC1XcHJhZ21hcw0KPiA+IGVy
+cm9yIHVuZGVyIC1XZXJyb3IuIElmIHRoZSBwcmFnbWEgc3RheXMsIGRyb3AgdGhlIHZlcnNpb24g
+Z2F0ZSAoa2VlcA0KPiA+IFJURV9UT09MQ0hBSU5fR0NDKSBhbmQgZml4IHRoZSBjb21tZW50OiBH
+Q0MgZG9lcyBub3Qg4oCca25vd+KAnSB0aGUgcGF0aA0KPiBpcw0KPiA+IGRlYWQsIHRoYXQgaXMg
+dGhlIHdob2xlIHByb2JsZW0uDQo+IA0KPiBDb250aW51aW5nIHRoaXMgbGluZSBvZiB0aGlua2lu
+Zy4uLg0KPiBHQ0MgZGVmaW5lcyBhbiAiX19PUFRJTUlaRV9fIiBtYWNybyBpZiBhbnkgb3B0aW1p
+emF0aW9uIGFib3ZlIGxldmVsIDANCj4gaXMgdHVybmVkIG9uLg0KPiBXZSBjb3VsZCBnYXRlIHN1
+Y2ggcHJhZ21hcyB3aXRoOg0KPiAjaWYgZGVmaW5lZChSVEVfVE9PTENIQUlOX0dDQykgJiYgIWRl
+ZmluZWQoX19PUFRJTUlaRV9fKQ0KPiANCj4gPg0KPiA+DQo+ID4gVGhpcyBzaG91bGQgaGF2ZSBh
+IGJpZyBhc3MgY29tbWVudCwgYW5kIGl0IHNob3VsZCB1c2Ugc2FtZSBwcmFnbWEgc2V0DQo+ID4g
+YXMgZXhpc3Rpbmcgb25lIGluIGxpYi9yaW5nLg0KPiANCj4gSSBnZW5lcmFsbHkgcHJlZmVyIGhh
+dmluZyB0aGUgcHJhZ21hIGNvdmVyYWdlIGFzIG5hcnJvdyBhcyBwb3NzaWJsZSwgc28NCj4gdGhl
+eSBkb24ndCBwcmV2ZW50IGNhdGNoaW5nIHVucmVsYXRlZCBidWdzIGluIHRoZSBzYW1lIGZpbGUu
+DQo+IA0KPiBPbiB0aGUgb3RoZXIgaGFuZCwNCj4gSSBhbHNvIGxpa2UgdGhlIHN1Z2dlc3Rpb24g
+aW4geW91ciBvdGhlciBlbWFpbCAtIGRpc2FibGluZyB0aGVzZSBmYWxzZS0NCj4gcG9zaXRpdmUg
+R0NDIHdhcm5pbmdzIGdsb2JhbGx5IGFjcm9zcyBEUERLIGZvciBub24tb3B0aW1pemVkIGJ1aWxk
+cy4NCj4gDQo+IEFuZCBzaW5jZSB0aGUgZGVmYXVsdCBidWlsZCB0eXBlIGlzIGRlYnVnb3B0aW1p
+emVkLCBpdCB3aWxsIG5vdCBwcmV2ZW50DQo+IEdDQyBmcm9tIGVtaXR0aW5nIHJlbGV2YW50IHdh
+cm5pbmdzIGR1cmluZyBub3JtYWwgZGV2ZWxvcG1lbnQuDQoNClRoZSAib3RoZXIgZW1haWwiIEkn
+bSByZWZlcnJpbmcgdG86DQpodHRwczovL3BhdGNod29yay5kcGRrLm9yZy9wcm9qZWN0L2RwZGsv
+cGF0Y2gvMjAyNjEwMjAxNDU1NDEuMzg4MzcxLTEtc3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmcv
+DQoNCkkgcHJlZmVyIHRoYXQgc29sdXRpb24gb3ZlciBteSBwYXRjaC4NCk1hcmtpbmcgbXkgcGF0
+Y2ggYXMgc3VwZXJzZWRlZC4NCg0KPiANCj4gPg0KPiA+IE90aGVyIGFsdGVybmF0aXZlIGlzIHRv
+IHVzZSBidWxrIG9iamVjdCBhcnJheSBhcyBzdHJ1Y3R1cmUgYW5kIGRvDQo+ID4gYXNzaWdubWVu
+dC4NCj4gPiBCdXQgdGhhdCByZXBsYWNlcyB1Z2x5IHByYWdtYXMgd2l0aCB1Z2x5IGNhc3RzLi4u
+DQo+IA0KPiBZZWFoLCBsZXQncyBub3QgZG8gdGhhdC4NCj4gDQo+IEJ1dCB0aGFuayB5b3UgZm9y
+IGV4cGxvcmluZyENCj4gDQo+ID4NCj4gPiAtLS0gYS9saWIvc3RhY2svcnRlX3N0YWNrX3BpbGUu
+aA0KPiA+ICsrKyBiL2xpYi9zdGFjay9ydGVfc3RhY2tfcGlsZS5oDQo+ID4gQEANCj4gPiArLyog
+QnVsayBvYmplY3QgYXJyYXkgYXMgYSBzaW5nbGUgb2JqZWN0LCBzbyBhIGNvcHkgaXMgb25lDQo+
+IGFzc2lnbm1lbnQuDQo+ID4gKi8NCj4gPiArc3RydWN0IHJ0ZV9zdGFja19waWxlX2J1bGtfb2Jq
+cyB7DQo+ID4gKwl2b2lkICpvYmpzW1JURV9TVEFDS19QSUxFX0JVTEtfU0laRV07DQo+ID4gK307
+DQo+ID4gKw0KPiA+IEBAIF9fcnRlX3N0YWNrX3BpbGVfYnVsa19wb3BfZWxlbXMNCj4gPiAgCQlm
+b3IgKHVuc2lnbmVkIGludCBpID0gMDsgaSA8IG51bTsgaSsrLCB0bXAgPSB0bXAtPm5leHQpDQo+
+ID4gLQkJCXJ0ZV9tZW1jcHkoJm9ial90YWJsZVtpICogUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpF
+XSwNCj4gPiAtCQkJCQkoKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX2VsZW0gKil0bXApLQ0K
+PiA+ID5vYmpzLA0KPiA+IC0JCQkJCXNpemVvZih2b2lkICopICoNCj4gPiBSVEVfU1RBQ0tfUElM
+RV9CVUxLX1NJWkUpOw0KPiA+ICsJCQkqKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX29ianMg
+Kikmb2JqX3RhYmxlW2kgKg0KPiA+IFJURV9TVEFDS19QSUxFX0JVTEtfU0laRV0gPQ0KPiA+ICsJ
+CQkJKihzdHJ1Y3QgcnRlX3N0YWNrX3BpbGVfYnVsa19vYmpzICopKChzdHJ1Y3QNCj4gPiBydGVf
+c3RhY2tfcGlsZV9idWxrX2VsZW0gKil0bXApLT5vYmpzOw0KPiA+IEBAIF9fcnRlX3N0YWNrX3Bp
+bGVfcHVzaA0KPiA+ICAJZm9yIChpID0gMDsgaSA8IG5fYnVsazsgaSsrLCB0bXAgPSB0bXAtPm5l
+eHQpDQo+ID4gLQkJcnRlX21lbWNweSgoKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX2VsZW0g
+Kil0bXApLT5vYmpzLA0KPiA+IC0JCQkJJm9ial90YWJsZVsobl9idWxrIC0gaSAtIDEpICoNCj4g
+PiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkVdLA0KPiA+IC0JCQkJc2l6ZW9mKHZvaWQgKikgKiBS
+VEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUpOw0KPiA+ICsJCSooc3RydWN0IHJ0ZV9zdGFja19waWxl
+X2J1bGtfb2JqcyAqKSgoc3RydWN0DQo+ID4gcnRlX3N0YWNrX3BpbGVfYnVsa19lbGVtICopdG1w
+KS0+b2JqcyA9DQo+ID4gKwkJCSooY29uc3Qgc3RydWN0IHJ0ZV9zdGFja19waWxlX2J1bGtfb2Jq
+cw0KPiA+ICopJm9ial90YWJsZVsobl9idWxrIC0gaSAtIDEpICogUlRFX1NUQUNLX1BJTEVfQlVM
+S19TSVpFXTsNCj4gPg0KDQo=
