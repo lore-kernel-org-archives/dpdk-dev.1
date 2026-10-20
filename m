@@ -1,46 +1,39 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8995606A319
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 08:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=yandex.ru header.i=@yandex.ru header.a=rsa-sha256 header.s=mail header.b=wPLLv8Ug
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F608606A31A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 08:49:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 845E240270;
-	Tue, 20 Oct 2026 10:01:55 +0200 (CEST)
-Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net
- [31.44.14.17]) by mails.dpdk.org (Postfix) with ESMTP id 8CB2C40144;
- Tue, 20 Oct 2026 10:01:53 +0200 (CEST)
-Received: from mail-nwsmtp-smtp-production-main-59.yp-c.yandex.net
- (mail-nwsmtp-smtp-production-main-59.yp-c.yandex.net)
- by forward501d.mail.yandex.net (postfix) with ESMTPS id AD63B813DB;
- Tue, 20 Oct 2026 11:01:50 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-59 with ESMTPSA id
- l1V2WLfdvCg0-f7oTNCJ1; Tue, 20 Oct 2026 11:01:50 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1792483310; bh=L+umtYbF+13Z5SYQtRH/nfFQmSwsJbxg8fYsm7l1yZA=;
- h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
- b=wPLLv8UgQxQ7bzjMaFAsetocrtfF17yjLk5X4OS8GvvY2bif97jero6d9a0B+bNaY
- GufUZKT1kJO0porxZwKMLGjthTehBZ3hIQoDOS+Vwanf6ToQ82KehuF6YRg4KNN4UJ
- JvjxbMHdtMcSGkK3wKbQ3fDjtVxLDozsF4UUGrZ4=
-Authentication-Results: mail-nwsmtp-smtp-production-main-59;
- dkim=pass header.i=@yandex.ru
-Message-ID: <6ccde5ff-f81c-4c2c-8bc6-e2ef64035129@yandex.ru>
-Date: Tue, 20 Oct 2026 09:01:47 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id 1402640270;
+	Tue, 20 Oct 2026 10:49:56 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 70E6640144
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 10:49:55 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 39BB320678;
+ Tue, 20 Oct 2026 10:49:54 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Tue, 20 Oct 2026 10:49:51 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org,
+	Thomas Monjalon <thomas@monjalon.net>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Ali Alnubani <alialnu@nvidia.com>
+Subject: [PATCH] stack: fix pile GCC memcpy warnings
+Date: Tue, 20 Oct 2026 08:49:44 +0000
+Message-ID: <20261020084944.3188987-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ip_frag: fix IPv6 fragmentation of short packets
-To: Alexey Simakov <bigalex934@gmail.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, stable@dpdk.org
-References: <20261019101333.71145-1-bigalex934@gmail.com>
-Content-Language: en-US, ru
-From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-In-Reply-To: <20261019101333.71145-1-bigalex934@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 20 Oct 2026 08:49:51.0231 (UTC)
+ FILETIME=[F82CE0F0:01DD606F]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,55 +43,93 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
+On architectures where rte_memcpy() is defined as memcpy(),
+GCC warns about source/destination overflow when copying more than the
+source/destination size, even for code paths that are not taken in cases
+where the sizes are smaller.
 
+The relevant compiler warnings were disabled for GCC at the two
+occurrences, and comments describing the reason were added.
 
+NB:
+It has not been investigated which GCC versions are affected.
+GCC version 10 and up was chosen because that was what the previous
+versions of x86 rte_memcpy() disabled sligthly similar warnings for.
 
-> rte_ipv6_fragment_packet() does not check that the first mbuf segment
-> is large enough to hold the IPv6 header, unlike the IPv4 version,
-> which validates data_len against the header length.
->
-> With data_len < 40, in_seg_data_pos starts past the end of the
-> segment, the expression (in_seg->data_len - in_seg_data_pos)
-> underflows and the loop never advances to the next segment, so it
-> keeps producing fragments and writing past the end of pkts_out.
->
-> Reject such packets with -EINVAL, as rte_ipv4_fragment_packet() does.
->
-> Fixes: 0aa31d7a5929 ("ip_frag: add IPv6 fragmentation support")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
-> ---
->   lib/ip_frag/rte_ipv6_fragmentation.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
->
-> diff --git a/lib/ip_frag/rte_ipv6_fragmentation.c b/lib/ip_frag/rte_ipv6_fragmentation.c
-> index c81f2402e3..fac72f84d2 100644
-> --- a/lib/ip_frag/rte_ipv6_fragmentation.c
-> +++ b/lib/ip_frag/rte_ipv6_fragmentation.c
-> @@ -89,6 +89,14 @@ rte_ipv6_fragment_packet(struct rte_mbuf *pkt_in,
->   	    unlikely(mtu_size < RTE_IPV6_MIN_MTU))
->   		return -EINVAL;
->   
-> +	/*
-> +	 * Check that the first segment is big enough to hold the IPv6
-> +	 * header; otherwise in_seg_data_pos starts past its end, the
-> +	 * difference below underflows and the loop never terminates.
-> +	 */
-> +	if (unlikely(pkt_in->data_len < sizeof(struct rte_ipv6_hdr)))
-> +		return -EINVAL;
-> +
->   	/*
->   	 * Ensure the IP payload length of all fragments (except the
->   	 * last fragment) are a multiple of 8 bytes per RFC2460.
+PS:
+The alternative was to obfuscate the code, but that would make the code
+less readable, and might have unintended effects on architectures and
+compilers not suffering by this issue.
 
-Acked-by: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+Bugzilla ID: 2061
+Fixes: ee0822a0ef41 ("stack: introduce pile")
+
+The pile was introduce with this DPDK release, so no need to backport.
+
+Reported-by: Ali Alnubani <alialnu@nvidia.com>
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ lib/stack/rte_stack_pile.h | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/lib/stack/rte_stack_pile.h b/lib/stack/rte_stack_pile.h
+index 819bd1d47a..69aa0cbf88 100644
+--- a/lib/stack/rte_stack_pile.h
++++ b/lib/stack/rte_stack_pile.h
+@@ -154,12 +154,25 @@ __rte_stack_pile_push(struct rte_stack *s,
+ 	 * Construct the bulk elements.
+ 	 * Copy bulks in reverse order, but ignore the object order within each bulk.
+ 	 */
++#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >= 100000)
++/*
++ * On architectures where rte_memcpy() is defined as memcpy(),
++ * although GCC knows that this code path is not taken when the source's size is smaller than
++ * RTE_STACK_PILE_BULK_SIZE, it still warns about memcpy() source overread.
++ * So we disable the compiler warning for this memcpy() instance.
++ */
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wstringop-overread"
++#endif
+ 	tmp = (struct rte_stack_lf_elem *)bulk_first;
+ 	__rte_assume(n_bulk > 0);
+ 	for (i = 0; i < n_bulk; i++, tmp = tmp->next)
+ 		rte_memcpy(((struct rte_stack_pile_bulk_elem *)tmp)->objs,
+ 				&obj_table[(n_bulk - i - 1) * RTE_STACK_PILE_BULK_SIZE],
+ 				sizeof(void *) * RTE_STACK_PILE_BULK_SIZE);
++#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >= 100000)
++#pragma GCC diagnostic pop
++#endif
+ 
+ 	/* Push them to the bulk list. */
+ 	__rte_stack_pile_bulk_push_elems(&pile->bulk, bulk_first, bulk_last, n_bulk);
+@@ -271,7 +284,20 @@ __rte_stack_pile_pop(struct rte_stack *s,
+ 
+ bulk:
+ 	/* Fetch n_bulk * RTE_STACK_PILE_BULK_SIZE objects as bulk elements. */
++#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >= 100000)
++/*
++ * On architectures where rte_memcpy() is defined as memcpy(),
++ * although GCC knows that this code path is not taken when the destination's size is smaller than
++ * RTE_STACK_PILE_BULK_SIZE, it still warns about memcpy() destination overflow.
++ * So we disable the compiler warning for this memcpy() instance.
++ */
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wstringop-overflow"
++#endif
+ 	bulk_first = __rte_stack_pile_bulk_pop_elems(&pile->bulk, n_bulk, obj_table, &bulk_last);
++#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >= 100000)
++#pragma GCC diagnostic pop
++#endif
+ 	if (unlikely(bulk_first == NULL)) {
+ 		/*
+ 		 * Not available.
+-- 
+2.43.0
 
