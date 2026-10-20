@@ -1,86 +1,86 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7358F606A31B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 06:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1BA606A319
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 06:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=TrR0IxB3
+	dkim=pass (1024-bit key, unprotected) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=bE1dx9GM
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D774F40270;
-	Tue, 20 Oct 2026 08:59:44 +0200 (CEST)
-Received: from mail-qv1-f99.google.com (mail-qv1-f99.google.com
- [209.85.219.99]) by mails.dpdk.org (Postfix) with ESMTP id BD57240144
- for <dev@dpdk.org>; Tue, 20 Oct 2026 08:59:43 +0200 (CEST)
-Received: by mail-qv1-f99.google.com with SMTP id
- 6a1803df08f44-91befbcad6dso35034616d6.3
- for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BFFCF40613;
+	Tue, 20 Oct 2026 08:59:54 +0200 (CEST)
+Received: from mail-qv1-f97.google.com (mail-qv1-f97.google.com
+ [209.85.219.97]) by mails.dpdk.org (Postfix) with ESMTP id 64DA74060A
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 08:59:50 +0200 (CEST)
+Received: by mail-qv1-f97.google.com with SMTP id
+ 6a1803df08f44-9178aabd30dso26664886d6.1
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792479583; x=1793084383;
+ d=1e100.net; s=20260707; t=1792479590; x=1793084390;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=eAMwCqetYmfjtW5fpefcG7ps24K3RWZnQ6JSNKYdHVA=;
- b=NLYKfUpQOG5ZMWMRukzs6Gyamd8po5mleUjZXmCYLyBuOSX5A2C1jFun/FzA/2c2D0
- HYyldYVJ7eXYEcHRkOkk8hEIzefGS8FC1KWZjUBK13dpxDmKFdR6A/onKqjzz2718zzc
- uZRIGEVszgOJ5c2nH5xPqoN7JzpqhxXvoXkr4Kyz0fXvd64YXrNU8jRj8zglF434ml/Z
- AlkFnJPEOxl0wNX/mZp7kfokEZuE0V4IASpGo6Tlf5vvI1SELmiMAguNCpdyTP0xZzFa
- 6GGh6ka8ssjVp2k1xVPVbzGpDGbXUv21oDBA2HvW6qz3HI/Sv80iI4RGQptiapfUS+dj
- gHGA==
-X-Gm-Message-State: AFq9FYLWBWgHaDuYZK9NivIiMhiZ5wLtUa5PHYeA0U6d5aAst7n5u5xe
- iCigz1BYVa6x8qpcOdOgogYmArNiA+dcntr7UEus4MFFbAp77VlKWsTzk1LFg6maeGXxzH3d5YG
- PJL9hjVdsBlYbjf0g4xiCLYc6ZBlGdydsgRL/SlD2blrI2pRd/J50U0um/1p4ZBViNrVsnqSbnE
- vaZqO+PZQnrTPlXTGZcexyaJLWSRAoANy7XhhLUJAzDnmw4LD8GnqGYQGbAZXuZaujJ2u4lQ==
-X-Gm-Gg: AYBFou3koMM2JGxJpVkYanEkgxJaujB5SC6RJuAdFwM5P6NzTJ7RwQhoYuvWCMvHV27
- U1Ek2C8G++SBmbwnqCoICM+M3ayLQI5OAYGe0e9cbxYKV+k+lUJpdKUh5AMMR4nL0sgKwP9XmkQ
- MLN0YUB3I3OqrNGTLiJTYvSra0JMO5hJE7LFxStcCONKA3LCQz3wkdJIS3WQU74rW/KMEfAO8eJ
- RSSEjYDQw68G6lEFdpsGu+sdgcaqPDggUlctMvItqOR/I0UYURocNG7gMoq1neLozQVXo+er3ln
- UFyW0L7hlpNdlRH6VAgmuIjNW4vhkLGexK/++P2ZpwmWPFBiQxiOMMRrpD++vxlLaXY8NqH9/rY
- 3bX6Y1Jyzh9TPKIuTldsN8OA7uR3iwaAJ5vRYdVIhkB0NNynEuQlAWcBDo4uT3OoSCOSXeoXYq+
- jOioqdowjY8CdE3wp1VN5UzuKsCM95/9kSMIXpRw==
-X-Received: by 2002:a05:6214:4687:b0:91b:8afd:84d5 with SMTP id
- 6a1803df08f44-91bdf0f2d62mr152220296d6.21.1792479582922; 
- Mon, 19 Oct 2026 23:59:42 -0700 (PDT)
+ bh=qW3apRMNEN0cfcD9ziqESlj/subn7kl3i5Q279uCLLE=;
+ b=y33m6fPd/Oa/yEafPf+8nwolXrgzg0l4MFdN2yZ/ZOcQOJ2g0izbJJcSOJwljoqDu/
+ w6QrL0xn9AvwdJXqVJC8mXtdsPFlYwe9XSsc68UnL10phtMRhIZ471G9zHaLKo7Q/x4I
+ TJwEo1DwQrwkl9yEY3hyOIe/Bj43hgSoviGwEAFSBeZDTg3kjM1MXr+288RT5MS5ufpa
+ xxK2K7iRt5mgsAcJi7EuUTGZvMRP7LlZmZk1xD/ydg6O7XB/sGEh4jmQ3JZZBDjYOYjE
+ mTMmlvBFgpWN1feqrHGsBLoDjJ8OAWonIr/8MibeW01U3ChanqFCErjCeNj9yX8kZhu8
+ EF1Q==
+X-Gm-Message-State: AFq9FYL8nwqaXAb2J2z+sDqL4a9VWRFwXhMORv4ggGs4taUMvezkDWJy
+ DxHX7iSG0YeQ77E6twgtOxPEWobRTRjEEdKhsl4sn0h5auqroqCn0lyW3ex5eZ1Z+Gr2ZgdDb5z
+ WfWtsnvJWXAly9UOOlf+I91c+dv6k4jP7fZ0Dn4IiLPwAcdgHgFpmemHlhtvwZ5CSigpzhfLb+C
+ +CE4Yy33I7ZvKdZhtQdeZ2eLgIhJyX7ojRerhxpqvAGuMGcQy9pEYxPmyL0Kb4XQS+ELLjSQ==
+X-Gm-Gg: AYBFou3rAcCO/1nz8algWRiqTWpi7ItX0aI4WBaB49f1q1E3R+a6AGVmeOtc0LwjY2d
+ rT6XuiZv2MX8i6mTFYflN5VlOervZwlueqs49J0VyZQULUKattPrE0H3KmF2OLEi6ai30lTptEu
+ LN8b7QKaIUM6eCmfqGwA5ge+Uz8EMNuhltJHJH9qVABhnt0n3gXdjbstsc+pUKAmmmbtfkPxZss
+ PrTUBza9DBzMUBmeb2yIY/Cs00cAlHToQy6jvq7Mo2KB7NGapQwOT2VjK/68EomHq5fg90db3vl
+ FCORX4y5QzTO0Z0xmcM9J6ts+tFIkI8AttscbvU2/70o62zfUhkzE7i6/6g0sm/j6FJ0dt5lxAO
+ ylvWyqhY8zpCVE+5D4cBYYnZMzFZ6tQAqPeyI8wduDleY8LWg0NdgUWyTgk85RtlQb2zDi8nBUP
+ RIy1G0IJG9jtl36yqOKiyCJcizLPPUBl2V5ASLBA==
+X-Received: by 2002:a05:620a:3196:b0:93e:4e27:359b with SMTP id
+ af79cd13be357-93f29c97a80mr1673740885a.24.1792479589567; 
+ Mon, 19 Oct 2026 23:59:49 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
  by smtp-relay.gmail.com with ESMTPS id
- 6a1803df08f44-91c040a2b3bsm243126d6.36.2026.10.19.23.59.42
+ af79cd13be357-93f4b02dc19sm21605285a.16.2026.10.19.23.59.49
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 19 Oct 2026 23:59:42 -0700 (PDT)
+ Mon, 19 Oct 2026 23:59:49 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-dy1-f198.google.com with SMTP id
- 5a478bee46e88-359b81ad4e8so5130964eec.0
- for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:42 -0700 (PDT)
+Received: by mail-dy1-f199.google.com with SMTP id
+ 5a478bee46e88-33c35f5ca6cso6029865eec.1
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1792479582; x=1793084382; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1792479588; x=1793084388; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=eAMwCqetYmfjtW5fpefcG7ps24K3RWZnQ6JSNKYdHVA=;
- b=TrR0IxB3uRqGNpB7D2U28GueZHarO7Af5QTO7DHIBi0iVmLTl6JmbPwpzW/F/KQOMN
- Ej39dtwMiaECIreO1PJcOBtjV+xDtOpGxKgybPEKiTKsrfSeCR7TbF/qSWmeMPY06qq/
- e+3y9Q3tzvyCHinZRCvKHyoh46F2qjyZyp4tk=
-X-Received: by 2002:a05:7022:1501:b0:16e:4723:5f86 with SMTP id
- a92af1059eb24-185131076e8mr16345829c88.29.1792479581734; 
- Mon, 19 Oct 2026 23:59:41 -0700 (PDT)
-X-Received: by 2002:a05:7022:1501:b0:16e:4723:5f86 with SMTP id
- a92af1059eb24-185131076e8mr16345790c88.29.1792479580829; 
- Mon, 19 Oct 2026 23:59:40 -0700 (PDT)
+ bh=qW3apRMNEN0cfcD9ziqESlj/subn7kl3i5Q279uCLLE=;
+ b=bE1dx9GM4KZv5QPXH2QFTCxpWEDy2809Ql/Re2RAYsOlq0tq8fE6I8xS0bDKZWp2IA
+ 8VM1+zs68ULSsVVsxBMje+0ENygCRj2c0tYcbs2m3qDSN4yPWSeiyU7Vstk10HdePE+u
+ mW3w/PKJ/BUWj4H/rgSuO/zcmLvIkGIBRBDJU=
+X-Received: by 2002:a05:693c:8946:10b0:35f:8c5d:5928 with SMTP id
+ 5a478bee46e88-361a1f567a5mr12772120eec.30.1792479588225; 
+ Mon, 19 Oct 2026 23:59:48 -0700 (PDT)
+X-Received: by 2002:a05:693c:8946:10b0:35f:8c5d:5928 with SMTP id
+ 5a478bee46e88-361a1f567a5mr12772084eec.30.1792479587300; 
+ Mon, 19 Oct 2026 23:59:47 -0700 (PDT)
 Received: from r740-105-132.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1831996071csm34840768c88.9.2026.10.19.23.59.39
+ 5a478bee46e88-36082a7b33bsm70169294eec.24.2026.10.19.23.59.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 19 Oct 2026 23:59:40 -0700 (PDT)
+ Mon, 19 Oct 2026 23:59:46 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com,
- Shuanglin Wang <shuanglin.wang@broadcom.com>, stable@dpdk.org
-Subject: [PATCH v2] net/bnxt: fix completion metadata format type for Thor
-Date: Tue, 20 Oct 2026 01:59:37 -0500
-Message-Id: <20261020065937.1067845-1-manish.kurup@broadcom.com>
+	stable@dpdk.org
+Subject: [PATCH v2] net/bnxt/tf_core: fix TCAM alloc-set key copy
+Date: Tue, 20 Oct 2026 01:59:44 -0500
+Message-Id: <20261020065944.1067945-1-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20261005235104.27284-1-manish.kurup@broadcom.com>
-References: <20261005235104.27284-1-manish.kurup@broadcom.com>
+In-Reply-To: <20261005151720.1706054-1-manish.kurup@broadcom.com>
+References: <20261005151720.1706054-1-manish.kurup@broadcom.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -101,45 +101,47 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-From: Shuanglin Wang <shuanglin.wang@broadcom.com>
+In tfc_msg_tcam_alloc_set(), the key, mask and remap are copied into
+the HWRM request with memcpy() using the address of the local
+pointer variables (&key, &mask, &remap) as the source instead of the
+data they point to. The copy lengths are also computed as
+size * sizeof(uint32_t), although key_size and remap_size are
+already byte counts, so each copy is four times too long and can run
+past the 2 * key_size + remap_size bytes reserved in the request.
 
-For Thor, the default RX completion record metadata format
-should be set to Type 1 instead of Type 3. Using the incorrect
-type causes the driver to misinterpret the completion records.
-Thor2 continues to use Type 3.
+Copy from the key, mask and remap buffers themselves, and use the
+byte sizes directly.
 
-Fixes: dd0191d5e70d ("net/bnxt/tf_ulp: support Thor2 ULP layer")
+Fixes: 80317ff6adfd ("net/bnxt/tf_core: support Thor2")
 Cc: stable@dpdk.org
 
-Signed-off-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
 Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
 ---
 v2:
-* Fix the Fixes: tag to point to the commit that introduced the
-  issue (dd0191d5e70d).
-* Restore original indentation of the unrelated bnxt_hwrm_vnic_update()
-  arguments.
-* Mention that Thor2 keeps Type 3 in the commit message.
+* Split out of "net/bnxt: fix multiple truflow defects" (one fix per
+  patch); this is the tfc_msg_tcam_alloc_set() fix.
+* New subject and commit message; single Fixes: tag.
 
- drivers/net/bnxt/tf_ulp/bnxt_ulp.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/bnxt/tf_core/v3/tfc_msg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp.c
-index a75da8aa19..99061f5c5e 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp.c
-@@ -480,7 +480,10 @@ bnxt_ulp_port_init(struct bnxt *bp)
- 	/* Make sure that custom header data is selected */
- 	if (dev_id > BNXT_ULP_DEVICE_ID_WH_PLUS) {
- 		struct bnxt_vnic_info *vnic = bp->vnic_info;
--		vnic->metadata_format = HWRM_VNIC_UPDATE_INPUT_METADATA_FORMAT_TYPE_3;
-+		if (dev_id == BNXT_ULP_DEVICE_ID_THOR2)
-+			vnic->metadata_format = HWRM_VNIC_UPDATE_INPUT_METADATA_FORMAT_TYPE_3;
-+		else
-+			vnic->metadata_format = HWRM_VNIC_UPDATE_INPUT_METADATA_FORMAT_TYPE_1;
- 		rc = bnxt_hwrm_vnic_update(bp,
- 					vnic,
- 					HWRM_VNIC_UPDATE_INPUT_ENABLES_METADATA_FORMAT_TYPE_VALID);
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_msg.c b/drivers/net/bnxt/tf_core/v3/tfc_msg.c
+index 89c256b810..af74007747 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_msg.c
++++ b/drivers/net/bnxt/tf_core/v3/tfc_msg.c
+@@ -1088,9 +1088,9 @@ tfc_msg_tcam_alloc_set(struct tfc *tfcp, uint16_t fid, uint16_t sid,
+ 		data = &req.dev_data[0];
+ 	}
+ 
+-	memcpy(&data[0], &key, key_size * sizeof(uint32_t));
+-	memcpy(&data[key_size], &mask, key_size * sizeof(uint32_t));
+-	memcpy(&data[key_size * 2], &remap, remap_size * sizeof(uint32_t));
++	memcpy(&data[0], key, key_size);
++	memcpy(&data[key_size], mask, key_size);
++	memcpy(&data[key_size * 2], remap, remap_size);
+ 	rc = bnxt_hwrm_tf_message_direct(bp, false, HWRM_TFC_TCAM_ALLOC_SET,
+ 					 &req, sizeof(req), &resp, sizeof(resp));
+ 
 -- 
 2.31.1
 
