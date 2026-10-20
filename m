@@ -1,47 +1,47 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C385F606A319
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 12:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B551606A319
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 12:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=d65syDh4
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=SKi7Dtkr
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4FE264069D;
-	Tue, 20 Oct 2026 14:11:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2CF0F406BC;
+	Tue, 20 Oct 2026 14:11:23 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 5E1EF4066C
- for <dev@dpdk.org>; Tue, 20 Oct 2026 14:11:18 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 948E34069D
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 14:11:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792498278; x=1824034278;
+ t=1792498279; x=1824034279;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=dDlEfQ5ECtXdubJpvgEAAX7ngdp0ht/sSex3q8bgHNc=;
- b=d65syDh4haeO9R9r2Oc6uONvMVSKKFhJsPcKcYJ1zzb7pb2V+7uosIAe
- +Dk+SS3H2LawRaXqzVg2bbW4n8GIAZeuxGM8aFOZRxs8Grq5t3FvZkeoR
- 3HrSMRpi3GHCfSVd2CwgQmESzJbMcVGqBUDVPLEOnHm0PR7/xO9Ww0VcM
- 62BdoggvlZNVE/k17iICsWMKw0Hj/ZbZ3XexEUeZzv0ao8ze4BOXgN4XC
- 1HOVr7edeOiyvQ2Et8axXLSnX900YAwyF55HvZrDhO7lQ6GVLk3M0STIe
- 2n4qhznZONQ4HDRTEUCAHOUlO2yehxYdDG5S+OltyAB4hfvk7J5ObG9pm Q==;
-X-CSE-ConnectionGUID: 9RUCkX9UQYy4PpfJCb9epQ==
-X-CSE-MsgGUID: tEsWKzTOTOmrbZCkk5foug==
-X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1101790"
+ bh=xoTLNZrrzDtMYTZ/WOfdhR+I9rlKkisYggpq6d9t6jc=;
+ b=SKi7DtkrW1OPpFMGyvXHuOiq6mapUpm5mT2tPTjZarsIX5r5ni+XbzOj
+ OrYacmtQ7uCj8luffesX/bZivW79EsafSPmH+ePT6C65b5v8e0dKrANXI
+ iAB14H8GYKoutenmLrsRqXwo1GMV+lQrmJIeCKw5vD8lVO0TG6FgXc0v7
+ JQXAZ3dFpQV4d4GAj+kLwzvkVXnHi6WvEE5ymxYK8S02bFCE5R6QlNHFs
+ 3c/zX67yoa/tlj39Dy0oip1YuBVdla6gFFf73CrIreJOwihWbUwnDc4CV
+ HmjdOzcItrP0Xp11ewreKwG7PVLp1XY6lWLMVZ4Irj67quq+CoigNP9Kx g==;
+X-CSE-ConnectionGUID: mdgMWZlqRBCCX82hYPCesw==
+X-CSE-MsgGUID: n666UbLfTTahm6xB9rzQPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1101792"
 X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="1101790"
+   d="scan'208";a="1101792"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Oct 2026 05:11:18 -0700
-X-CSE-ConnectionGUID: hlhz6r9BR5mfgkj0H6OQTQ==
-X-CSE-MsgGUID: QRGVWspyQSOoYb3XAo/uVA==
+ 20 Oct 2026 05:11:19 -0700
+X-CSE-ConnectionGUID: eA9mZRwfQmiCazoYKGquUQ==
+X-CSE-MsgGUID: cc180nMiQ9mkIe0KzVWmoA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="3253909"
+   d="scan'208";a="3253914"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa010.fm.intel.com with ESMTP; 20 Oct 2026 05:11:18 -0700
+ by fmviesa010.fm.intel.com with ESMTP; 20 Oct 2026 05:11:19 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v1 4/6] net/ice: remove temporary flow pattern buffer
-Date: Tue, 20 Oct 2026 13:11:07 +0100
-Message-ID: <51906e4e6f627746e057752ad7ea6b5f0f99fe08.1792498154.git.anatoly.burakov@intel.com>
+Subject: [PATCH v1 5/6] net/ice: use caller-owned pattern match storage
+Date: Tue, 20 Oct 2026 13:11:08 +0100
+Message-ID: <c28b60359f98c25af67e95d90d1f17d55d90309e.1792498154.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1792498154.git.anatoly.burakov@intel.com>
 References: 
@@ -64,139 +64,307 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Pattern lookup allocates a temporary copy of the flow pattern with
-VOID items removed. Pattern matching and engine parsing now skip VOID
-items directly, so this copy is no longer needed.
+Pattern lookup allocates a match item just to copy an entry from the
+engine's supported-pattern table. Each engine must then free this
+temporary object after parsing.
 
-Match against the original pattern and remove the temporary buffer,
-its allocation and cleanup paths, and the unused copying helpers.
+Make `ice_search_pattern_match_item()` fill caller-provided storage
+and return a status code. Use stack-local match items in all four
+engines, removing the allocation and corresponding cleanup paths.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ice/ice_generic_flow.c | 76 +-----------------------
- 1 file changed, 1 insertion(+), 75 deletions(-)
+ drivers/net/intel/ice/ice_acl_filter.c    | 22 ++++++++------------
+ drivers/net/intel/ice/ice_fdir_filter.c   | 18 ++++++++--------
+ drivers/net/intel/ice/ice_generic_flow.c  | 25 +++++------------------
+ drivers/net/intel/ice/ice_generic_flow.h  |  3 ++-
+ drivers/net/intel/ice/ice_hash.c          | 13 +++++-------
+ drivers/net/intel/ice/ice_switch_filter.c | 14 +++++--------
+ 6 files changed, 34 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_generic_flow.c b/drivers/net/intel/ice/ice_generic_flow.c
-index fee048e456..ebe986c469 100644
---- a/drivers/net/intel/ice/ice_generic_flow.c
-+++ b/drivers/net/intel/ice/ice_generic_flow.c
-@@ -2052,58 +2052,6 @@ ice_flow_uninit(struct ice_adapter *ad)
+diff --git a/drivers/net/intel/ice/ice_acl_filter.c b/drivers/net/intel/ice/ice_acl_filter.c
+index 91f684c9b9..fe1d03556c 100644
+--- a/drivers/net/intel/ice/ice_acl_filter.c
++++ b/drivers/net/intel/ice/ice_acl_filter.c
+@@ -998,7 +998,7 @@ ice_acl_parse(struct ice_adapter *ad,
+ 	};
+ 	struct ice_pf *pf = &ad->pf;
+ 	struct ice_acl_conf *filter = &pf->acl.conf;
+-	struct ice_pattern_match_item *item = NULL;
++	struct ice_pattern_match_item item;
+ 	uint64_t input_set;
+ 	int ret;
+ 
+@@ -1012,33 +1012,29 @@ ice_acl_parse(struct ice_adapter *ad,
+ 	if (ret)
+ 		return ret;
+ 
+-	item = ice_search_pattern_match_item(ad, pattern, array, array_len,
+-					     error);
+-	if (!item)
+-		return -rte_errno;
++	ret = ice_search_pattern_match_item(ad, pattern, array, array_len,
++					     &item, error);
++	if (ret != 0)
++		return ret;
+ 
+ 	ret = ice_acl_parse_pattern(ad, pattern, error, filter);
+ 	if (ret)
+-		goto error;
++		return ret;
+ 	input_set = filter->input_set;
+-	if (!input_set || input_set & ~item->input_set_mask_o) {
+-		rte_flow_error_set(error, EINVAL,
++	if (!input_set || input_set & ~item.input_set_mask_o) {
++		return rte_flow_error_set(error, EINVAL,
+ 				   RTE_FLOW_ERROR_TYPE_ITEM_SPEC,
+ 				   pattern,
+ 				   "Invalid input set");
+-		ret = -rte_errno;
+-		goto error;
  	}
+ 
+ 	ret = ice_acl_parse_action(&parsed_actions, filter, error);
+ 	if (ret)
+-		goto error;
++		return ret;
+ 
+ 	if (meta)
+ 		*meta = filter;
+ 
+-error:
+-	free(item);
+ 	return ret;
  }
  
--/* Find the first VOID or non-VOID item pointer */
--static const struct rte_flow_item *
--ice_find_first_item(const struct rte_flow_item *item, bool is_void)
--{
--	bool is_find;
--
--	while (item->type != RTE_FLOW_ITEM_TYPE_END) {
--		if (is_void)
--			is_find = item->type == RTE_FLOW_ITEM_TYPE_VOID;
--		else
--			is_find = item->type != RTE_FLOW_ITEM_TYPE_VOID;
--		if (is_find)
--			break;
--		item++;
--	}
--	return item;
--}
--
--/* Skip all VOID items of the pattern */
--static void
--ice_pattern_skip_void_item(struct rte_flow_item *items,
--			const struct rte_flow_item *pattern)
--{
--	uint32_t cpy_count = 0;
--	const struct rte_flow_item *pb = pattern, *pe = pattern;
--
--	for (;;) {
--		/* Find a non-void item first */
--		pb = ice_find_first_item(pb, false);
--		if (pb->type == RTE_FLOW_ITEM_TYPE_END) {
--			pe = pb;
--			break;
--		}
--
--		/* Find a void item */
--		pe = ice_find_first_item(pb + 1, true);
--
--		cpy_count = pe - pb;
--		memcpy(items, pb, sizeof(struct rte_flow_item) * cpy_count);
--
--		items += cpy_count;
--
--		if (pe->type == RTE_FLOW_ITEM_TYPE_END) {
--			break;
--		}
--
--		pb = pe + 1;
--	}
--	/* Copy the END item. */
--	memcpy(items, pe, sizeof(struct rte_flow_item));
--}
--
- /* Check if the pattern matches a supported item type array */
- static bool
- ice_match_pattern(enum rte_flow_item_type *item_array,
-@@ -2269,41 +2217,21 @@ ice_search_pattern_match_item(struct ice_adapter *ad,
- 			      struct rte_flow_error *error)
- {
- 	struct ice_pattern_match_item *pattern_match_item;
--	/* need free by each filter */
--	struct rte_flow_item *items; /* used for pattern without VOID items */
--	uint32_t item_num = 0; /* non-void item number */
- 	uint16_t i = 0;
+diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
+index b1a8753e90..a4bb33264c 100644
+--- a/drivers/net/intel/ice/ice_fdir_filter.c
++++ b/drivers/net/intel/ice/ice_fdir_filter.c
+@@ -3023,7 +3023,7 @@ ice_fdir_parse(struct ice_adapter *ad,
+ 	};
+ 	struct ice_pf *pf = &ad->pf;
+ 	struct ice_fdir_filter_conf *filter = &pf->fdir.conf;
+-	struct ice_pattern_match_item *item = NULL;
++	struct ice_pattern_match_item item;
+ 	uint64_t input_set;
+ 	bool raw = false;
+ 	int ret;
+@@ -3038,17 +3038,17 @@ ice_fdir_parse(struct ice_adapter *ad,
+ 	if (ret)
+ 		return ret;
  
--	/* Get the non-void item number of pattern */
--	while ((pattern + i)->type != RTE_FLOW_ITEM_TYPE_END) {
--		if ((pattern + i)->type != RTE_FLOW_ITEM_TYPE_VOID)
--			item_num++;
--		i++;
--	}
--	item_num++;
--
--	items = calloc(item_num, sizeof(struct rte_flow_item));
--	if (!items) {
--		rte_flow_error_set(error, ENOMEM, RTE_FLOW_ERROR_TYPE_ITEM_NUM,
--				   NULL, "No memory for PMD internal items.");
--		return NULL;
--	}
- 	pattern_match_item = calloc(1, sizeof(struct ice_pattern_match_item));
- 	if (!pattern_match_item) {
- 		rte_flow_error_set(error, ENOMEM, RTE_FLOW_ERROR_TYPE_HANDLE,
- 				NULL, "Failed to allocate memory.");
--		free(items);
- 		return NULL;
+-	item = ice_search_pattern_match_item(ad, pattern, array, array_len,
+-					     error);
++	ret = ice_search_pattern_match_item(ad, pattern, array, array_len,
++					     &item, error);
+ 
+-	if (!item)
+-		return -rte_errno;
++	if (ret != 0)
++		return ret;
+ 
+ 	ret = ice_fdir_parse_pattern(ad, pattern, error, filter);
+ 	if (ret)
+ 		goto error;
+ 
+-	if (item->pattern_list[0] == RTE_FLOW_ITEM_TYPE_RAW)
++	if (item.pattern_list[0] == RTE_FLOW_ITEM_TYPE_RAW)
+ 		raw = true;
+ 
+ 	input_set = filter->input_set_o | filter->input_set_i;
+@@ -3056,8 +3056,8 @@ ice_fdir_parse(struct ice_adapter *ad,
+ 
+ 	if (!input_set ||
+ 	    (filter->input_set_o &
+-	     ~(item->input_set_mask_o | ICE_INSET_ETHERTYPE)) ||
+-	    (filter->input_set_i & ~item->input_set_mask_i)) {
++	     ~(item.input_set_mask_o | ICE_INSET_ETHERTYPE)) ||
++	    (filter->input_set_i & ~item.input_set_mask_i)) {
+ 		rte_flow_error_set(error, EINVAL,
+ 				   RTE_FLOW_ERROR_TYPE_ITEM_SPEC,
+ 				   pattern,
+@@ -3077,11 +3077,9 @@ ice_fdir_parse(struct ice_adapter *ad,
+ 		rte_free(filter->pkt_buf);
  	}
  
--	ice_pattern_skip_void_item(items, pattern);
+-	free(item);
+ 	return ret;
+ error:
+ 	rte_free(filter->pkt_buf);
+-	free(item);
+ 	return ret;
+ }
+ 
+diff --git a/drivers/net/intel/ice/ice_generic_flow.c b/drivers/net/intel/ice/ice_generic_flow.c
+index ebe986c469..1a30327293 100644
+--- a/drivers/net/intel/ice/ice_generic_flow.c
++++ b/drivers/net/intel/ice/ice_generic_flow.c
+@@ -2209,45 +2209,30 @@ ice_pattern_is_supported(__rte_unused struct ice_adapter *ad,
+ 	return false;
+ }
+ 
+-struct ice_pattern_match_item *
++int
+ ice_search_pattern_match_item(struct ice_adapter *ad,
+ 			      const struct rte_flow_item pattern[],
+ 			      struct ice_pattern_match_item *array,
+ 			      uint32_t array_len,
++			      struct ice_pattern_match_item *match,
+ 			      struct rte_flow_error *error)
+ {
+-	struct ice_pattern_match_item *pattern_match_item;
+ 	uint16_t i = 0;
+ 
+-	pattern_match_item = calloc(1, sizeof(struct ice_pattern_match_item));
+-	if (!pattern_match_item) {
+-		rte_flow_error_set(error, ENOMEM, RTE_FLOW_ERROR_TYPE_HANDLE,
+-				NULL, "Failed to allocate memory.");
+-		return NULL;
+-	}
 -
  	if (!ice_pattern_is_supported(ad, pattern))
  		goto unsupported;
  
  	for (i = 0; i < array_len; i++) {
  		if (ice_match_pattern(array[i].pattern_list,
--				      items)) {
-+				      pattern)) {
- 			pattern_match_item->input_set_mask_o =
- 				array[i].input_set_mask_o;
- 			pattern_match_item->input_set_mask_i =
-@@ -2311,7 +2239,6 @@ ice_search_pattern_match_item(struct ice_adapter *ad,
- 			pattern_match_item->pattern_list =
- 				array[i].pattern_list;
- 			pattern_match_item->meta = array[i].meta;
--			free(items);
- 			return pattern_match_item;
+ 				      pattern)) {
+-			pattern_match_item->input_set_mask_o =
+-				array[i].input_set_mask_o;
+-			pattern_match_item->input_set_mask_i =
+-				array[i].input_set_mask_i;
+-			pattern_match_item->pattern_list =
+-				array[i].pattern_list;
+-			pattern_match_item->meta = array[i].meta;
+-			return pattern_match_item;
++			*match = array[i];
++			return 0;
  		}
  	}
-@@ -2319,7 +2246,6 @@ ice_search_pattern_match_item(struct ice_adapter *ad,
+ 
  unsupported:
- 	rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
+-	rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
++	return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
  			   pattern, "Unsupported pattern");
--	free(items);
- 	free(pattern_match_item);
- 	return NULL;
+-	free(pattern_match_item);
+-	return NULL;
+ }
+ 
+ static bool
+diff --git a/drivers/net/intel/ice/ice_generic_flow.h b/drivers/net/intel/ice/ice_generic_flow.h
+index 983f86a5ab..a801e0c704 100644
+--- a/drivers/net/intel/ice/ice_generic_flow.h
++++ b/drivers/net/intel/ice/ice_generic_flow.h
+@@ -583,11 +583,12 @@ ice_pattern_skip_void(const struct rte_flow_item *item)
+ 	     (item)->type != RTE_FLOW_ITEM_TYPE_END; \
+ 	     (item) = ice_pattern_skip_void((item) + 1))
+ 
+-struct ice_pattern_match_item *
++int
+ ice_search_pattern_match_item(struct ice_adapter *ad,
+ 			      const struct rte_flow_item pattern[],
+ 			      struct ice_pattern_match_item *array,
+ 			      uint32_t array_len,
++			      struct ice_pattern_match_item *match,
+ 			      struct rte_flow_error *error);
+ int
+ ice_flow_redirect(struct ice_adapter *ad,
+diff --git a/drivers/net/intel/ice/ice_hash.c b/drivers/net/intel/ice/ice_hash.c
+index 13bedfe90c..21545efefd 100644
+--- a/drivers/net/intel/ice/ice_hash.c
++++ b/drivers/net/intel/ice/ice_hash.c
+@@ -1201,7 +1201,7 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
+ 		.check = ice_hash_parse_action_check,
+ 	};
+ 	const struct rte_flow_action_rss *rss;
+-	struct ice_pattern_match_item *pattern_match_item;
++	struct ice_pattern_match_item pattern_match_item;
+ 	struct ice_rss_meta *rss_meta_ptr;
+ 	uint64_t phint = ICE_PHINT_NONE;
+ 	int ret = 0;
+@@ -1223,12 +1223,10 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
+ 	}
+ 
+ 	/* Check rss supported pattern and find matched pattern. */
+-	pattern_match_item = ice_search_pattern_match_item(ad, pattern, array,
+-							   array_len, error);
+-	if (!pattern_match_item) {
+-		ret = -rte_errno;
++	ret = ice_search_pattern_match_item(ad, pattern, array, array_len,
++					   &pattern_match_item, error);
++	if (ret != 0)
+ 		goto error;
+-	}
+ 
+ 	ret = ice_hash_parse_pattern(pattern, &phint, error);
+ 	if (ret)
+@@ -1248,7 +1246,7 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
+ 	}
+ 
+ 	rss = parsed_actions.actions[0]->conf;
+-	ret = ice_hash_parse_rss_action(pattern_match_item, rss, phint,
++	ret = ice_hash_parse_rss_action(&pattern_match_item, rss, phint,
+ 				rss_meta_ptr, error);
+ 
+ error:
+@@ -1256,7 +1254,6 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
+ 		*meta = rss_meta_ptr;
+ 	else
+ 		rte_free(rss_meta_ptr);
+-	free(pattern_match_item);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/net/intel/ice/ice_switch_filter.c b/drivers/net/intel/ice/ice_switch_filter.c
+index 6bc1bdd09f..5c34089b40 100644
+--- a/drivers/net/intel/ice/ice_switch_filter.c
++++ b/drivers/net/intel/ice/ice_switch_filter.c
+@@ -1755,7 +1755,7 @@ ice_switch_parse_pattern_action(struct ice_adapter *ad,
+ 	uint16_t vlan_num = 0;
+ 	enum ice_sw_tunnel_type tun_type =
+ 			ICE_NON_TUN;
+-	struct ice_pattern_match_item *pattern_match_item = NULL;
++	struct ice_pattern_match_item pattern_match_item;
+ 	struct ci_flow_attr_check_param attr_param = {
+ 		.allow_priority = true,
+ 	};
+@@ -1848,10 +1848,9 @@ ice_switch_parse_pattern_action(struct ice_adapter *ad,
+ 		goto error;
+ 	}
+ 
+-	pattern_match_item =
+-		ice_search_pattern_match_item(ad, pattern, array, array_len,
+-					      error);
+-	if (!pattern_match_item) {
++	ret = ice_search_pattern_match_item(ad, pattern, array, array_len,
++					    &pattern_match_item, error);
++	if (ret != 0) {
+ 		rte_flow_error_set(error, EINVAL,
+ 				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+ 				   "Invalid input pattern");
+@@ -1859,7 +1858,7 @@ ice_switch_parse_pattern_action(struct ice_adapter *ad,
+ 	}
+ 
+ 	if (!ice_switch_parse_pattern(pattern, error, list, &lkups_num,
+-				   &tun_type, pattern_match_item)) {
++				   &tun_type, &pattern_match_item)) {
+ 		rte_flow_error_set(error, EINVAL,
+ 				   RTE_FLOW_ERROR_TYPE_ITEM_SPEC,
+ 				   pattern,
+@@ -1890,14 +1889,11 @@ ice_switch_parse_pattern_action(struct ice_adapter *ad,
+ 		rte_free(sw_meta_ptr);
+ 	}
+ 
+-	free(pattern_match_item);
+-
+ 	return 0;
+ 
+ error:
+ 	rte_free(list);
+ 	rte_free(sw_meta_ptr);
+-	free(pattern_match_item);
+ 
+ 	return -rte_errno;
  }
 -- 
 2.52.0
