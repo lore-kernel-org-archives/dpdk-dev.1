@@ -1,41 +1,56 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EE4606A32D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313E0606A320
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=YsddpJJE
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 08AB140283;
-	Tue, 20 Oct 2026 17:16:20 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id A318D4025A
- for <dev@dpdk.org>; Tue, 20 Oct 2026 17:16:18 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 77C3A2033E;
- Tue, 20 Oct 2026 17:16:18 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 8574940283;
+	Tue, 20 Oct 2026 17:21:28 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 559084025A
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 17:21:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792509686; x=1824045686;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=QHJKSfEhYTGwi46Pt7U2D9dH1vVeyu69f0BSZ7WCWB4=;
+ b=YsddpJJEwuG111qeOgp+ofnKYhSkQO7AZFCzkNoy546AOr/5tjNtQ6CC
+ r20UCNaT07daGOIScWgw7+JPgpR1maLFxDxVoWQC8MhfG23YS+uNmW5Sn
+ B0pZkuM9tslZW0y+RcIVXyQI+DrkSjh6XZVzEDNeEgYHg+PAhLQ2ttYSe
+ 6p0SKe/3lQmlsu5Etd9vTd9vGsMTO/nacU2t7HBCIFUzrgKjywpIgWK00
+ H/RBcSQQMXfmW2L48ON4fq+66Oy1abDunQ8vWxWbPRxxPkBZWOliUIjQS
+ hDrUuvlay8LxFAnGEqCrGimVP1KcLumQBbU26+NfvQqVkUwVQk9f0tGtL A==;
+X-CSE-ConnectionGUID: GaKJeIO4Qy6UiUEgmaOUeg==
+X-CSE-MsgGUID: y8JNN/krSq2LhS+7ghHF2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1226842"
+X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
+   d="scan'208";a="1226842"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 20 Oct 2026 08:21:25 -0700
+X-CSE-ConnectionGUID: o+bU3i2NSZWJNbkMen5Lxw==
+X-CSE-MsgGUID: CNNNfFeYSYeO2Ip0qD0Ngw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
+   d="scan'208";a="3240939"
+Received: from mtldev4.igk.intel.com ([10.123.233.187])
+ by orviesa010.jf.intel.com with ESMTP; 20 Oct 2026 08:21:24 -0700
+From: Dawid Wesierski <dawid.wesierski@intel.com>
+To: dev@dpdk.org
+Cc: vladimir.medvedkin@intel.com, bruce.richardson@intel.com,
+ anatoly.burakov@intel.com, marek.kasiewicz@intel.com
+Subject: [PATCH v2 0/3] net/iavf: fix TM hierarchy commit and TM ops without
+ QoS
+Date: Tue, 20 Oct 2026 15:22:09 +0000
+Message-ID: <cover.1792504817.git.dawid.wesierski@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261014122419.631288-1-dawid.wesierski@intel.com>
+References: <20261014122419.631288-1-dawid.wesierski@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH] stack: fix pile GCC memcpy warnings
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 20 Oct 2026 17:16:14 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65ACD@smartserver.smartshare.dk>
-In-Reply-To: <20261020072333.30593486@phoenix.local>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] stack: fix pile GCC memcpy warnings
-Thread-Index: Ad1gnpsRv1FaSJlnQXmL3I17dDuMeQABD1gg
-References: <20261020084944.3188987-1-mb@smartsharesystems.com>
- <20261020072333.30593486@phoenix.local>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
- "Bruce Richardson" <bruce.richardson@intel.com>,
- "Ali Alnubani" <alialnu@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -45,86 +60,66 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
-b3JnXQ0KPiBTZW50OiBUdWVzZGF5LCAyMCBPY3RvYmVyIDIwMjYgMTYuMjQNCj4gDQo+IE9uIFR1
-ZSwgMjAgT2N0IDIwMjYgMDg6NDk6NDQgKzAwMDANCj4gTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0
-c2hhcmVzeXN0ZW1zLmNvbT4gd3JvdGU6DQo+IA0KPiA+IE9uIGFyY2hpdGVjdHVyZXMgd2hlcmUg
-cnRlX21lbWNweSgpIGlzIGRlZmluZWQgYXMgbWVtY3B5KCksDQo+ID4gR0NDIHdhcm5zIGFib3V0
-IHNvdXJjZS9kZXN0aW5hdGlvbiBvdmVyZmxvdyB3aGVuIGNvcHlpbmcgbW9yZSB0aGFuDQo+IHRo
-ZQ0KPiA+IHNvdXJjZS9kZXN0aW5hdGlvbiBzaXplLCBldmVuIGZvciBjb2RlIHBhdGhzIHRoYXQg
-YXJlIG5vdCB0YWtlbiBpbg0KPiBjYXNlcw0KPiA+IHdoZXJlIHRoZSBzaXplcyBhcmUgc21hbGxl
-ci4NCj4gPg0KPiA+IFRoZSByZWxldmFudCBjb21waWxlciB3YXJuaW5ncyB3ZXJlIGRpc2FibGVk
-IGZvciBHQ0MgYXQgdGhlIHR3bw0KPiA+IG9jY3VycmVuY2VzLCBhbmQgY29tbWVudHMgZGVzY3Jp
-YmluZyB0aGUgcmVhc29uIHdlcmUgYWRkZWQuDQo+ID4NCj4gPiBOQjoNCj4gPiBJdCBoYXMgbm90
-IGJlZW4gaW52ZXN0aWdhdGVkIHdoaWNoIEdDQyB2ZXJzaW9ucyBhcmUgYWZmZWN0ZWQuDQo+ID4g
-R0NDIHZlcnNpb24gMTAgYW5kIHVwIHdhcyBjaG9zZW4gYmVjYXVzZSB0aGF0IHdhcyB3aGF0IHRo
-ZSBwcmV2aW91cw0KPiA+IHZlcnNpb25zIG9mIHg4NiBydGVfbWVtY3B5KCkgZGlzYWJsZWQgc2xp
-Z3RobHkgc2ltaWxhciB3YXJuaW5ncyBmb3IuDQo+ID4NCj4gPiBQUzoNCj4gPiBUaGUgYWx0ZXJu
-YXRpdmUgd2FzIHRvIG9iZnVzY2F0ZSB0aGUgY29kZSwgYnV0IHRoYXQgd291bGQgbWFrZSB0aGUN
-Cj4gY29kZQ0KPiA+IGxlc3MgcmVhZGFibGUsIGFuZCBtaWdodCBoYXZlIHVuaW50ZW5kZWQgZWZm
-ZWN0cyBvbiBhcmNoaXRlY3R1cmVzIGFuZA0KPiA+IGNvbXBpbGVycyBub3Qgc3VmZmVyaW5nIGJ5
-IHRoaXMgaXNzdWUuDQo+ID4NCj4gPiBCdWd6aWxsYSBJRDogMjA2MQ0KPiA+IEZpeGVzOiBlZTA4
-MjJhMGVmNDEgKCJzdGFjazogaW50cm9kdWNlIHBpbGUiKQ0KPiA+DQo+ID4gVGhlIHBpbGUgd2Fz
-IGludHJvZHVjZSB3aXRoIHRoaXMgRFBESyByZWxlYXNlLCBzbyBubyBuZWVkIHRvDQo+IGJhY2tw
-b3J0Lg0KPiA+DQo+ID4gUmVwb3J0ZWQtYnk6IEFsaSBBbG51YmFuaSA8YWxpYWxudUBudmlkaWEu
-Y29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lz
-dGVtcy5jb20+DQo+ID4gLS0tDQo+IA0KPiBJIGRvbid0IGxpa2UgdXNpbmcgY29tcGlsZXIgcHJh
-Z21hcyBmb3IgdGhpcy4gSXQgYWxzbyBtZWFucyB0aGF0IGlmDQo+IGNvbXBpbGVyIGdldHMgZml4
-ZWQgb3IgYmVoYXZlcyBkaWZmZXJlbnRseSB5b3Ugd2lsbCBuZXZlciBzZWUgaXQuDQo+IA0KPiAN
-Cj4gQUkgYW5hbHlzaXMgc2hvd3Mgc29tZSBvdGhlciBvcHRpb25zLg0KPiANCj4gUm9vdCBjYXVz
-ZSBpcyAtLWJ1aWxkdHlwZT1kZWJ1ZywgaS5lLiAtTzAsIG5vdCB0aGUgR0NDIHZlcnNpb24uIEF0
-IC1PMA0KPiBub3RoaW5nIHJlbW92ZXMgdGhlIGRlYWQgbl9idWxrID4gMCBwYXRoIGZvciBydGVf
-c3RhY2tfcHVzaChzLCAmb2JqLA0KPiAxKSwgc28gdGhlIGNvbnN0YW50IDI1Ni1ieXRlIG1lbWNw
-eSBpcyBjaGVja2VkIGFnYWluc3Qgb2JqICg4IGJ5dGVzKQ0KPiBhbmQgd2FybnMuIFJlcHJvZHVj
-ZWQgd2l0aCBHQ0MgMTMuMyBhbmQgMTQuMiBhdCAtTzA7IHNpbGVudCBhdCAtT2cgYW5kDQo+IGFi
-b3ZlLiBUaGF0IG1lYW5zIHRoZSBHQ0NfVkVSU0lPTiA+PSAxMDAwMDAgZ2F0ZSBpcyB3cm9uZyBh
-dCBib3RoIGVuZHM6DQo+IGFueSBHQ0Mgd2l0aCB0aGUgd2FybmluZyBmaXJlcyAob3ZlcmZsb3cg
-c2luY2UgOCwgb3ZlcnJlYWQgc2luY2UgMTEpLA0KPiBhbmQgb24gR0NDIDEwIHRoZSAtV3N0cmlu
-Z29wLW92ZXJyZWFkIHByYWdtYSBpdHNlbGYgaXMgYSAtV3ByYWdtYXMNCj4gZXJyb3IgdW5kZXIg
-LVdlcnJvci4gSWYgdGhlIHByYWdtYSBzdGF5cywgZHJvcCB0aGUgdmVyc2lvbiBnYXRlIChrZWVw
-DQo+IFJURV9UT09MQ0hBSU5fR0NDKSBhbmQgZml4IHRoZSBjb21tZW50OiBHQ0MgZG9lcyBub3Qg
-4oCca25vd+KAnSB0aGUgcGF0aCBpcw0KPiBkZWFkLCB0aGF0IGlzIHRoZSB3aG9sZSBwcm9ibGVt
-Lg0KDQpDb250aW51aW5nIHRoaXMgbGluZSBvZiB0aGlua2luZy4uLg0KR0NDIGRlZmluZXMgYW4g
-Il9fT1BUSU1JWkVfXyIgbWFjcm8gaWYgYW55IG9wdGltaXphdGlvbiBhYm92ZSBsZXZlbCAwIGlz
-IHR1cm5lZCBvbi4NCldlIGNvdWxkIGdhdGUgc3VjaCBwcmFnbWFzIHdpdGg6DQojaWYgZGVmaW5l
-ZChSVEVfVE9PTENIQUlOX0dDQykgJiYgIWRlZmluZWQoX19PUFRJTUlaRV9fKQ0KDQo+IA0KPiAN
-Cj4gVGhpcyBzaG91bGQgaGF2ZSBhIGJpZyBhc3MgY29tbWVudCwgYW5kIGl0IHNob3VsZCB1c2Ug
-c2FtZSBwcmFnbWEgc2V0DQo+IGFzIGV4aXN0aW5nIG9uZSBpbiBsaWIvcmluZy4NCg0KSSBnZW5l
-cmFsbHkgcHJlZmVyIGhhdmluZyB0aGUgcHJhZ21hIGNvdmVyYWdlIGFzIG5hcnJvdyBhcyBwb3Nz
-aWJsZSwgc28gdGhleSBkb24ndCBwcmV2ZW50IGNhdGNoaW5nIHVucmVsYXRlZCBidWdzIGluIHRo
-ZSBzYW1lIGZpbGUuDQoNCk9uIHRoZSBvdGhlciBoYW5kLA0KSSBhbHNvIGxpa2UgdGhlIHN1Z2dl
-c3Rpb24gaW4geW91ciBvdGhlciBlbWFpbCAtIGRpc2FibGluZyB0aGVzZSBmYWxzZS1wb3NpdGl2
-ZSBHQ0Mgd2FybmluZ3MgZ2xvYmFsbHkgYWNyb3NzIERQREsgZm9yIG5vbi1vcHRpbWl6ZWQgYnVp
-bGRzLg0KDQpBbmQgc2luY2UgdGhlIGRlZmF1bHQgYnVpbGQgdHlwZSBpcyBkZWJ1Z29wdGltaXpl
-ZCwgaXQgd2lsbCBub3QgcHJldmVudCBHQ0MgZnJvbSBlbWl0dGluZyByZWxldmFudCB3YXJuaW5n
-cyBkdXJpbmcgbm9ybWFsIGRldmVsb3BtZW50Lg0KDQo+IA0KPiBPdGhlciBhbHRlcm5hdGl2ZSBp
-cyB0byB1c2UgYnVsayBvYmplY3QgYXJyYXkgYXMgc3RydWN0dXJlIGFuZCBkbw0KPiBhc3NpZ25t
-ZW50Lg0KPiBCdXQgdGhhdCByZXBsYWNlcyB1Z2x5IHByYWdtYXMgd2l0aCB1Z2x5IGNhc3RzLi4u
-DQoNClllYWgsIGxldCdzIG5vdCBkbyB0aGF0Lg0KDQpCdXQgdGhhbmsgeW91IGZvciBleHBsb3Jp
-bmchDQoNCj4gDQo+IC0tLSBhL2xpYi9zdGFjay9ydGVfc3RhY2tfcGlsZS5oDQo+ICsrKyBiL2xp
-Yi9zdGFjay9ydGVfc3RhY2tfcGlsZS5oDQo+IEBADQo+ICsvKiBCdWxrIG9iamVjdCBhcnJheSBh
-cyBhIHNpbmdsZSBvYmplY3QsIHNvIGEgY29weSBpcyBvbmUgYXNzaWdubWVudC4NCj4gKi8NCj4g
-K3N0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX29ianMgew0KPiArCXZvaWQgKm9ianNbUlRFX1NU
-QUNLX1BJTEVfQlVMS19TSVpFXTsNCj4gK307DQo+ICsNCj4gQEAgX19ydGVfc3RhY2tfcGlsZV9i
-dWxrX3BvcF9lbGVtcw0KPiAgCQlmb3IgKHVuc2lnbmVkIGludCBpID0gMDsgaSA8IG51bTsgaSsr
-LCB0bXAgPSB0bXAtPm5leHQpDQo+IC0JCQlydGVfbWVtY3B5KCZvYmpfdGFibGVbaSAqIFJURV9T
-VEFDS19QSUxFX0JVTEtfU0laRV0sDQo+IC0JCQkJCSgoc3RydWN0IHJ0ZV9zdGFja19waWxlX2J1
-bGtfZWxlbSAqKXRtcCktDQo+ID5vYmpzLA0KPiAtCQkJCQlzaXplb2Yodm9pZCAqKSAqDQo+IFJU
-RV9TVEFDS19QSUxFX0JVTEtfU0laRSk7DQo+ICsJCQkqKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9i
-dWxrX29ianMgKikmb2JqX3RhYmxlW2kgKg0KPiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkVdID0N
-Cj4gKwkJCQkqKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX29ianMgKikoKHN0cnVjdA0KPiBy
-dGVfc3RhY2tfcGlsZV9idWxrX2VsZW0gKil0bXApLT5vYmpzOw0KPiBAQCBfX3J0ZV9zdGFja19w
-aWxlX3B1c2gNCj4gIAlmb3IgKGkgPSAwOyBpIDwgbl9idWxrOyBpKyssIHRtcCA9IHRtcC0+bmV4
-dCkNCj4gLQkJcnRlX21lbWNweSgoKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX2VsZW0gKil0
-bXApLT5vYmpzLA0KPiAtCQkJCSZvYmpfdGFibGVbKG5fYnVsayAtIGkgLSAxKSAqDQo+IFJURV9T
-VEFDS19QSUxFX0JVTEtfU0laRV0sDQo+IC0JCQkJc2l6ZW9mKHZvaWQgKikgKiBSVEVfU1RBQ0tf
-UElMRV9CVUxLX1NJWkUpOw0KPiArCQkqKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX29ianMg
-KikoKHN0cnVjdA0KPiBydGVfc3RhY2tfcGlsZV9idWxrX2VsZW0gKil0bXApLT5vYmpzID0NCj4g
-KwkJCSooY29uc3Qgc3RydWN0IHJ0ZV9zdGFja19waWxlX2J1bGtfb2Jqcw0KPiAqKSZvYmpfdGFi
-bGVbKG5fYnVsayAtIGkgLSAxKSAqIFJURV9TVEFDS19QSUxFX0JVTEtfU0laRV07DQo+IA0KDQo=
+Three fixes in the iavf traffic manager.
+
+Patch 1 removes a second free of the queue TC map. The fault is in main
+only, after commit f6e33f09f766. No release has it.
+
+Patch 2 sets the queue ID and TC of each queue node in the queue
+bandwidth message. Without it, a queue node with no shaper profile
+resets queue 0, and its own queue keeps the rate limit that the PF
+holds from an earlier process.
+
+Patch 3 returns -ENOTSUP from the TM ops that read qos_cap when the PF
+does not grant VIRTCHNL_VF_OFFLOAD_QOS, for example the in-tree ice PF.
+These ops cause a segmentation fault now.
+
+Tested with testpmd on an E830 VF, out-of-tree ice PF:
+- Patch 1: three hierarchy commits on a started port. Without the
+  patch, an ASan build reports a heap-buffer-overflow in rte_free()
+  from iavf_hierarchy_commit() at the second commit. With it, there is
+  no report, also after port reset and close.
+- Patch 2: one process sets 100 Mbit/s on two queues and exits. The
+  next process commits two queue nodes without a shaper profile.
+  Without the patch, only queue 0 gets back its full rate. With it,
+  both queues do.
+- Patch 3: in-tree ice PF, so the VF has no QoS offload. Without the
+  patch, TM capabilities get, shaper profile add and node add give a
+  segmentation fault. With it, they return an error.
+
+v2:
+- Patch 1: also remove the rte_free() of the map in iavf_uninit_vf()
+  (Bruce Richardson).
+- Patch 2: commit message from Bruce Richardson.
+- Add the Acked-by of Bruce Richardson to the three patches.
+- Rebase on the current next-net-intel.
+
+Dawid Wesierski (3):
+  net/iavf: fix invalid free of queue TC map
+  net/iavf: fix bandwidth config of unshaped queues
+  net/iavf: fix crash in TM ops without QoS capability
+
+ drivers/net/intel/iavf/iavf_ethdev.c |  8 ------
+ drivers/net/intel/iavf/iavf_tm.c     | 42 ++++++++++++++++++++++++----
+ 2 files changed, 37 insertions(+), 13 deletions(-)
+
+
+base-commit: 1ca8f490fd725ccdd558654144b11777e37d68fe
+-- 
+2.43.0
+
+---------------------------------------------------------------------
+Intel Technology Poland sp. z o.o.
+ul. Slowackiego 173 | 80-298 Gdansk | Sad Rejonowy Gdansk Polnoc | VII Wydzial Gospodarczy Krajowego Rejestru Sadowego - KRS 101882 | NIP 957-07-52-316 | Kapital zakladowy 200.000 PLN.
+Spolka oswiadcza, ze posiada status duzego przedsiebiorcy w rozumieniu ustawy z dnia 8 marca 2013 r. o przeciwdzialaniu nadmiernym opoznieniom w transakcjach handlowych.
+
+Ta wiadomosc wraz z zalacznikami jest przeznaczona dla okreslonego adresata i moze zawierac informacje poufne. W razie przypadkowego otrzymania tej wiadomosci, prosimy o powiadomienie nadawcy oraz trwale jej usuniecie; jakiekolwiek przegladanie lub rozpowszechnianie jest zabronione.
+This e-mail and any attachments may contain confidential material for the sole use of the intended recipient(s). If you are not the intended recipient, please contact the sender and delete all copies; any review or distribution by others is strictly prohibited.
+
