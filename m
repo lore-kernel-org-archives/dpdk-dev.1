@@ -1,92 +1,41 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3274606A319
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 09:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm2 header.b=kTayGLw+;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=J9wsHqCo
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5755E606A31F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 09:59:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 276404060A;
-	Tue, 20 Oct 2026 11:51:39 +0200 (CEST)
-Received: from fhigh-b4-smtp.messagingengine.com
- (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
- by mails.dpdk.org (Postfix) with ESMTP id 2442640144
- for <dev@dpdk.org>; Tue, 20 Oct 2026 11:51:37 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 815FD7A0140
- for <dev@dpdk.org>; Tue, 20 Oct 2026 05:51:36 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Tue, 20 Oct 2026 05:51:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm2; t=1792489896; x=1792576296; bh=nnntIICM1XB1X5V+xmfqb
- 1O8hyOtiKfHw2ICnXwUHXw=; b=kTayGLw+7JMX86kXnUMZYmNvx0Gy1POe+sbw/
- U2Maxx9uC1Niwb0SsfTsTz3tMSD81/0UB9Nc08A5C78Qw3DgrT9mZx2P4gj1/Ff2
- gZbrAwjSPcW3/Nd1yMB2bzBzOOA4LXGydvHPSce2D3/ULDTIM71Tg3pNB6lUIkqN
- f/TCMoJvUsarUP00DJYPHJZxk3poc1kHmCCr6uo64mozlTpaYqwo5L06UAe9nQuk
- Ohrxt0sFpj0tEyLGIqYE1W5KiLN1GBHNaK7eWfMo+wFinUin5tVviPobQpZsZlHF
- ie9u2/A5LhJxPQmmqJwbLxX+c+X0KXtB9cW4lOlL9JMIPqg9A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:content-transfer-encoding:content-type
- :date:date:feedback-id:feedback-id:from:from:in-reply-to
- :message-id:mime-version:reply-to:subject:subject:to:to
- :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
- 1792489896; x=1792576296; bh=nnntIICM1XB1X5V+xmfqb1O8hyOtiKfHw2I
- CnXwUHXw=; b=J9wsHqCoWKGkaz8TWN16lbwItpWQt6jk066zjczqLeXKrCM36Hp
- oArtf1yH2bNDK3XKa1pzrSpm3LPyCiYljW0Ov78LCq/w7M+ZwTMmcqSyCtmwSOIG
- hzjVcGXcisNeShxpLwsa1T6DhCT7MsDglkb0c2qt8cqZWBoeMNstOrTDXIzvA8BO
- BuC50SZqjwuzYCV7/X7IRIInUBKf+03x+f+rG4VPZvYE2YqVAURLeKAwViR+nsyU
- BlQNU8fvPpz+uZhOtproYGxKup4A6T1gzD7//mAb5NLeCf1da4f6Elng0f/J+PP2
- jnAov4dOWsK9+JmWCNLRJNe0Z+hYGPue0JA==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1792489896; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:fLC8+b2pJ3j7C6ZLeJo5jg1CQLtRACTByUYuLca/6t/RtF3
- 5Xrg6/6deVywpXiOe653YCmuVMPHsKgeGSUKolnSJKAgWwyS7HpB/SzKunCn17AC
- b3PYn7l9UAoVYkdl8dNYimqU4e4PenWd8CKMZ4YUQZnEnZx53NjMisyrh4TsKxVv
- 1LA3PfMuGaR7j9p9s/4IAQauhk3O+4A1iX2qJ5QDlLWeOCgXCFKAodwVqT/LI9Fj
- MXDywpZf4wdFDGqnpodwnN91ZxR5nyp79Xt7oyY4L6NvkXBIiUAISzRKUYVARTfE
- tbUwAJciujCj/UmtuslrvCB+cfvc+SH9aB11Xmw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
- repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
- action=mi-m=1; hc=8;
- hn=content-transfer-encoding,date,feedback-id,from,message-id,
- mime-version,subject,to;
-Message-Instance: m=1;
- h=sha256:6HHoILV5X+yrypJOE48poraNkipHPBduLQeElA2jmRc=:mEWOc2pFX45jr8DxlKgwTlcpCW5XvGqkWl1P/uedCbE=;
-X-ME-Sender: <xms:qDnXalEDZkBY_ucsw6KmPorTbUOuWpBig11XwDYGImeKX__w5ygbAw>
- <xme:qDnXagPBs9FTqqzFGebOyoihXfjqIc1wiPE-i2TqA9pvPyXPV-6rYAe8QCI_YSZIy
- LEnPDDsQ9hOCGYP-JS6Z0FIfwCCiv1BYYeZbOBb7JzwXWF4suYxvN8>
-X-ME-Received: <xmr:qDnXaiOtZlqKuWVfMDuo0HFJN7zvrdcWmVkVWyIULc3uhhXfmUSuFKG4idhjp3Yi8lTuYJCKq5-biLqo-vCrgvIe2m-l>
-X-ME-Proxy-Cause: dmFkZTEy1+zqq5/Fv4BO+NssVDusb/QBLutGrzc1FoB6cMjMjnybQ86+ftLHO1TjIRFmqX
- qF8MQo4aqd6K7MIMplU2DH055f7vsBM4DEDQHIdzMlk6Sq0PT7I4Pp7PKWzjrCgz2+8Rt6
- kXQjynhAp21bUWKjAfM9e8qdbD26geW4chyl3w5Ht3vDbzCFVQvQY7lFXPLWy1K+uZcagP
- 24jP2iq45uJGjXCiweMaZvAMf5THNmSlszd6STyihIaZp/vP/0SgNPXgJpVQDmmRs2lADm
- iVOX5UkfeWVqs3VpmknvPugDbNm5J97hASFKCqg/KJsObNzgU5TNZxtVXkEiZMzVm5krbO
- 0PM9NetD0jtrSYV1R1ki9gjHO+QurAp1mdcpVwwa791YupZLrNj6qWaU8PPZLuyYzOTR1T
- XA+OH+xR2RvpMotxi9W8GJyp2QZop89MSsO+M/8TAg5hr7OpLkNDVCJYZEpedVjQb5IzNE
- DNk3MAoGzRQkwnQXe7b54cLB21XiLR6/zyDMwaYtdPs17ypuUageq5aNd8fHEwZYGODPGt
- 8cxFx+uU3jx8s/NUDiea7kI/yxIIWJQsDbbOBASlhjgpxdp4lGG3eDAqfexuYEktHPIqSY
- hw8sUQmsPatDnLJaQPwsp5QHEtBTJgF8zPHn77K7NiqwgP0yu+/zCO3QqbQQ
-X-ME-Proxy: <xmx:qDnXan4-KVpfCeWs_FSC41v8GNisEI6ScGv_2KZPoIxhiol4QZtMtg>
- <xmx:qDnXau46_82IC8ypr4f-CtFWPCnkWo7lheyvhnIMSNu4v3EbT4pyvQ>
- <xmx:qDnXan1seyRP4gdrqmOcnT8AA2ZNWu70XKwXWu5HB1el6E-QnQPOjg>
- <xmx:qDnXaqV0ZnbRWfc_2r2Zz3Uargm0pu2-b19QWN1LmDo90CkCYkIS5g>
- <xmx:qDnXaiEILuJBcA8MrleyQxxqMfXFaK4pMDTkyttOKUGZsTwzoP2MMMqz>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA for <dev@dpdk.org>; 
- Tue, 20 Oct 2026 05:51:35 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Subject: [PATCH] maintainers: update for next-net-brcm tree
-Date: Tue, 20 Oct 2026 11:51:20 +0200
-Message-ID: <20261020095133.2811576-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.55.0
+	by mails.dpdk.org (Postfix) with ESMTP id A531B40270;
+	Tue, 20 Oct 2026 11:59:19 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id B286040144
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 11:59:17 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7DE3C202D4;
+ Tue, 20 Oct 2026 11:59:17 +0200 (CEST)
+Content-class: urn:content-classes:message
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH] stack: fix pile GCC memcpy warnings
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Tue, 20 Oct 2026 11:59:14 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65ACB@smartserver.smartshare.dk>
+In-Reply-To: <atcx9-0kXa2XrzrB@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] stack: fix pile GCC memcpy warnings
+Thread-Index: Ad1gdA56FnO1rlJEQTiuz2EqEZGzkQAAsJSg
+References: <20261020084944.3188987-1-mb@smartsharesystems.com>
+ <atcx9-0kXa2XrzrB@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Ali Alnubani" <alialnu@nvidia.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,35 +45,108 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Kishore is the maintainer of the Broadcom tree
-since DPDK 26.07 cycle.
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Tuesday, 20 October 2026 11.19
+>=20
+> On Tue, Oct 20, 2026 at 08:49:44AM +0000, Morten Br=F8rup wrote:
+> > On architectures where rte_memcpy() is defined as memcpy(),
+> > GCC warns about source/destination overflow when copying more than
+> the
+> > source/destination size, even for code paths that are not taken in
+> cases
+> > where the sizes are smaller.
+> >
+> > The relevant compiler warnings were disabled for GCC at the two
+> > occurrences, and comments describing the reason were added.
+> >
+> > NB:
+> > It has not been investigated which GCC versions are affected.
+> > GCC version 10 and up was chosen because that was what the previous
+> > versions of x86 rte_memcpy() disabled sligthly similar warnings for.
+> >
+> > PS:
+> > The alternative was to obfuscate the code, but that would make the
+> code
+> > less readable, and might have unintended effects on architectures =
+and
+> > compilers not suffering by this issue.
+> >
+> > Bugzilla ID: 2061
+> > Fixes: ee0822a0ef41 ("stack: introduce pile")
+> >
+> > The pile was introduce with this DPDK release, so no need to
+> backport.
+> >
+> > Reported-by: Ali Alnubani <alialnu@nvidia.com>
+> > Signed-off-by: Morten Br=F8rup <mb@smartsharesystems.com>
+> > ---
+> >  lib/stack/rte_stack_pile.h | 26 ++++++++++++++++++++++++++
+> >  1 file changed, 26 insertions(+)
+> >
+> > diff --git a/lib/stack/rte_stack_pile.h b/lib/stack/rte_stack_pile.h
+> > index 819bd1d47a..69aa0cbf88 100644
+> > --- a/lib/stack/rte_stack_pile.h
+> > +++ b/lib/stack/rte_stack_pile.h
+> > @@ -154,12 +154,25 @@ __rte_stack_pile_push(struct rte_stack *s,
+> >  	 * Construct the bulk elements.
+> >  	 * Copy bulks in reverse order, but ignore the object order
+> within each bulk.
+> >  	 */
+> > +#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >=3D 100000)
+> > +/*
+> > + * On architectures where rte_memcpy() is defined as memcpy(),
+> > + * although GCC knows that this code path is not taken when the
+> source's size is smaller than
+> > + * RTE_STACK_PILE_BULK_SIZE, it still warns about memcpy() source
+> overread.
+> > + * So we disable the compiler warning for this memcpy() instance.
+> > + */
+> > +#pragma GCC diagnostic push
+> > +#pragma GCC diagnostic ignored "-Wstringop-overread"
+> > +#endif
+> >  	tmp =3D (struct rte_stack_lf_elem *)bulk_first;
+> >  	__rte_assume(n_bulk > 0);
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I also tried removing  this __rte_assume(). No effect.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93ad53027d..1720cff62e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -32,7 +32,7 @@ M: Stephen Hemminger <stephen@networkplumber.org>
- T: git://dpdk.org/next/dpdk-next-net
- 
- Next-net-brcm Tree
--M: Ajit Khaparde <ajit.khaparde@broadcom.com>
-+M: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
- T: git://dpdk.org/next/dpdk-next-net-brcm
- 
- Next-net-intel Tree
--- 
-2.55.0
+> >  	for (i =3D 0; i < n_bulk; i++, tmp =3D tmp->next)
+> >  		rte_memcpy(((struct rte_stack_pile_bulk_elem *)tmp)->objs,
+> >  				&obj_table[(n_bulk - i - 1) *
+> RTE_STACK_PILE_BULK_SIZE],
+> >  				sizeof(void *) * RTE_STACK_PILE_BULK_SIZE);
+>=20
+> An rte_assume before the memcpy asserting the sizes doesn't help?
 
+GCC complains about the size of the obj_table.
+memcpy() overruns it when n=3D=3D1, and thus the compiler knows that the =
+size of obj_table is only one object.
+Which is true, because this instance of memcpy() copies 32 =
+(RTE_STACK_PILE_BULK_SIZE) objects.
+But GCC ignores the fact that this code path is not taken when n=3D=3D1, =
+and warns anyway.
+
+GCC completely ignores that the code path is not taken.
+Referring to description in Bugzilla, it warns when called with =
+pushing/popping 1 object.
+
+For verifying that the compiler knows that the problematic code is part =
+of the code path when handling 1 object, and ignores this fact anyway, I =
+even tried something like:
+
+if (n >=3D RTE_STACK_PILE_BULK_SIZE) {
+	bulk copy loop;
+}
+
+And it still warns.
+
+>=20
+> > +#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >=3D 100000)
+> > +#pragma GCC diagnostic pop
+> > +#endif
