@@ -1,49 +1,52 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A663F606A31A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 13:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9B8606A319
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 13:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=lvIYsPwg
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=D9jydgV9
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9121740144;
-	Tue, 20 Oct 2026 15:22:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7829940679;
+	Tue, 20 Oct 2026 15:22:02 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 2C47640283;
+ by mails.dpdk.org (Postfix) with ESMTP id D9A3140283;
  Tue, 20 Oct 2026 15:21:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792502520; x=1824038520;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=Yr6HLboPssT/9o9ggIQbnIMs13B0ncCNe1cl7vxGwpw=;
- b=lvIYsPwgc24xNWG56sd+WkwembYV/C7K8vnY2YivzJFugI/HLboBvGzx
- QCCiBX7R8R+U8E/UxGberjMCGN8A08l95LtjVjq4KHeqDmMj3VYrqkoSo
- R0VM8MTwXemaKF308dTg1YWDmPTgZMrxH1tmpOKq/4tvXDJSd5GgonQNx
- zw0s1kbAfA38pqvxJeyG+zH6kEomFf73ZB92RhU+0iWh9fHdqer7p9xz1
- YkXYfiCRj6TzIWQmDMtRDpchqH8Vv8Dm2Zkpb2tfCDCx0JyqHK2nh7y1/
- EOBIrnFXKKrRnGJ0lD1xFM9/qBPoNv2WL6IowF5spbe2sTr4BfMerxj5O A==;
-X-CSE-ConnectionGUID: KlqeIZblQraOYLTiZKzAjQ==
-X-CSE-MsgGUID: vSrWX1VISMeGBZodZkACkQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1092340"
+ t=1792502521; x=1824038521;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=dyF+GGRI9DR4GgoI0Wzh+ZTU2nMxufNTatU2WRTX6nE=;
+ b=D9jydgV9vKL7mjjRslDqzTDYDGHIWsj6lAIzKSyP6HK+ijIjseACBrTZ
+ nFPd/UxScXS8wKgzGr+po030dwx95KYP3lUv3WdQN7X7DAeHIIHaQzLDN
+ NSwzPHLFNfTK6D9mGHnP83rVoZChNfrKPdn5+I4iVfrZxP31AXvNWE9jY
+ 3oXhc/LTMz166e8XaV8pGEW3IpsWunf7VuF6Szs5bS9wpeowcQ/msx7d2
+ gZLPQMf/NLOwBLzXO1ScGKs/0KTSbvShMHExDZtyh4/9Bv5jMuSkv+hfh
+ RXv2Jh0c7swQ6fKF6juG7+ymWWkExS+0cOnMdtGw+BNy02JUZniJFJ2Zd g==;
+X-CSE-ConnectionGUID: 8RNtgqU4S96jDt8X/23b0Q==
+X-CSE-MsgGUID: zDjDm7vQT9uNMTRJjuMo2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1092341"
 X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="1092340"
+   d="scan'208";a="1092341"
 Received: from fmviesa012.fm.intel.com ([10.60.135.152])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Oct 2026 06:21:59 -0700
-X-CSE-ConnectionGUID: Hjkf4HmMRjW6mAE8h1z1Dw==
-X-CSE-MsgGUID: T9BQVjC9QEWOHpXiBBOFqQ==
+ 20 Oct 2026 06:22:00 -0700
+X-CSE-ConnectionGUID: Pfd45PI+RyGbJlyJrK0Bww==
+X-CSE-MsgGUID: yMI4NeKVSsionsGyZZtGfw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="4561253"
+   d="scan'208";a="4561254"
 Received: from silpixa00401176.ir.intel.com ([10.20.224.212])
- by fmviesa012.fm.intel.com with ESMTP; 20 Oct 2026 06:21:57 -0700
+ by fmviesa012.fm.intel.com with ESMTP; 20 Oct 2026 06:21:58 -0700
 From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 To: dev@dpdk.org
 Cc: maxime@leroys.fr,
+	rjarry@redhat.com,
 	stable@dpdk.org
-Subject: [PATCH 1/3] fib6: fix temporary tbl8 for byte-aligned prefixes
-Date: Tue, 20 Oct 2026 13:21:53 +0000
-Message-ID: <20261020132155.980174-1-vladimir.medvedkin@intel.com>
+Subject: [PATCH 2/3] fib6: fix tbl8 reservation with RCU defer queue
+Date: Tue, 20 Oct 2026 13:21:54 +0000
+Message-ID: <20261020132155.980174-2-vladimir.medvedkin@intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261020132155.980174-1-vladimir.medvedkin@intel.com>
+References: <20261020132155.980174-1-vladimir.medvedkin@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -63,73 +66,98 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Currently, `install_to_dp()` builds one tbl8 level more than a route
-range needs when the range ends on a byte boundary. If the range
-spans a whole table at its first uncommon byte, e.g. a /32 or a /40,
-`build_common_root()` allocates a tbl8 one level too deep, all of
-its entries get the same next hop and `recycle_root_path()` frees it
-again. Below /24, an edge aligned on /24, e.g. of a /16, gets a tbl8 that
-`write_edge()` fills and recycles at once.
+Currently, `trie_modify()` admits an update when `rsvd_tbl8s`, the number
+of tbl8 levels the route set needs, fits the pool. The dataplane update
+then takes tbl8s only within this reservation and is not expected to
+fail half way.
 
-These temporary tbl8s are not covered by `rsvd_tbl8s`, which counts
-only the levels the route set keeps. With a nearly full pool, an add
-that passed the reservation check runs out of tbl8s in the middle of the
-install, the tbl8 already linked into the dataplane is leaked and a later
-add that fits is refused. A /32 can not be added to a pool of one tbl8,
-nor deleted from a full pool.
+In `RTE_FIB6_QSBR_MODE_DQ` mode, a tbl8 released by an update goes to the
+defer queue and returns to the pool only once readers report a quiescent
+state. Meanwhile `rsvd_tbl8s` already dropped if a prefix was deleted.
+The deferred tbl8s are out of the pool but not accounted for, so while a
+reader holds the grace period an add may run out of tbl8s inside
+`modify_dp()`.
 
-Fix it by not building these levels.
+Fix it by counting the tbl8s used by the dataplane in `cur_tbl8s`, which
+was unused so far. The tbl8s taken from the pool but not used,
+`tbl8_pool_pos - cur_tbl8s`, are those waiting in the defer queue. Take
+the reservation of an added prefix before writing the dataplane, and
+check at the start of `modify_dp()` that the reserved tbl8s plus the
+deferred ones fit the pool. If they do not, reclaim the defer queue once,
+and return `-ENOSPC` before touching the dataplane if they still do not
+fit.
 
 Bugzilla ID: 1970
-Fixes: c3e12e0f0354 ("fib: add dataplane algorithm for IPv6")
+Fixes: 200ccb9ebd8e ("fib6: implement RCU rule reclamation")
+Cc: rjarry@redhat.com
 Cc: stable@dpdk.org
 
 Reported-by: Maxime Leroy <maxime@leroys.fr>
 Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 ---
- lib/fib/trie.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ lib/fib/trie.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
 diff --git a/lib/fib/trie.c b/lib/fib/trie.c
-index 187360d1c8..0ae669c689 100644
+index 0ae669c689..9ede1a5bf7 100644
 --- a/lib/fib/trie.c
 +++ b/lib/fib/trie.c
-@@ -410,20 +410,33 @@ install_to_dp(struct rte_trie_tbl *dp, const struct rte_ipv6_addr *ledge,
- 			break;
+@@ -175,6 +175,7 @@ tbl8_alloc(struct rte_trie_tbl *dp, uint64_t nh)
+ 	/*Init tbl8 entries with nexthop from tbl24*/
+ 	write_to_dp((void *)tbl8_ptr, nh, dp->nh_sz,
+ 		TRIE_TBL8_GRP_NUM_ENT);
++	dp->cur_tbl8s++;
+ 	return tbl8_idx;
+ }
+ 
+@@ -243,6 +244,7 @@ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
+ 		break;
  	}
+ 
++	dp->cur_tbl8s--;
+ 	if (dp->v == NULL) {
+ 		tbl8_cleanup_and_free(dp, tbl8_idx);
+ 	} else if (dp->rcu_mode == RTE_FIB6_QSBR_MODE_SYNC) {
+@@ -508,6 +510,18 @@ modify_dp(struct rte_trie_tbl *dp, struct rte_rib6 *rib,
+ 	if (next_hop > get_max_nh(dp->nh_sz))
+ 		return -EINVAL;
  
 +	/*
-+	 * A range covering a whole tbl8 is a single entry one level up.
-+	 * Write that entry rather than build a tbl8 only to recycle it.
++	 * Check if we can safely allocate new tbl8s further in process of modifying the dataplane.
 +	 */
-+	if (common_bytes >= TBL24_BYTES) {
-+		for (i = common_bytes; i <= IPV6_MAX_IDX; i++) {
-+			if (ledge->a[i] != 0 || redge.a[i] != UINT8_MAX)
-+				break;
-+		}
-+		if (i > IPV6_MAX_IDX)
-+			common_bytes--;
++	uint32_t tbl8s_in_defer_queue = dp->tbl8_pool_pos - dp->cur_tbl8s;
++	if (dp->rsvd_tbl8s + tbl8s_in_defer_queue > dp->number_tbl8s) {
++		rte_rcu_qsbr_dq_reclaim(dp->dq, dp->tbl8_pool_pos - dp->cur_tbl8s,
++			NULL, NULL, NULL);
++		tbl8s_in_defer_queue = dp->tbl8_pool_pos - dp->cur_tbl8s;
++		if (dp->rsvd_tbl8s + tbl8s_in_defer_queue > dp->number_tbl8s)
++			return -ENOSPC;
 +	}
 +
- 	ret = build_common_root(dp, ledge, common_bytes, &common_root_tbl);
- 	if (unlikely(ret != 0))
- 		return ret;
- 	/*first uncommon tbl8 byte idx*/
- 	uint8_t first_tbl8_byte = RTE_MAX(common_bytes, TBL24_BYTES);
+ 	ledge = *ip;
+ 	do {
+ 		tmp = rte_rib6_get_nxt(rib, ip, depth, tmp,
+@@ -624,6 +638,7 @@ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ 			rte_rib6_remove(rib, &ip_masked, depth);
+ 			return -ENOSPC;
+ 		}
++		dp->rsvd_tbl8s += new_levels;
  
--	for (i = IPV6_MAX_IDX; i > first_tbl8_byte; i--) {
-+	for (i = IPV6_MAX_IDX; i >= first_tbl8_byte + !(common_bytes < 3); i--) {
- 		if (ledge->a[i] != 0)
- 			break;
- 	}
- 
- 	llen = i - first_tbl8_byte + (common_bytes < 3);
- 
--	for (i = IPV6_MAX_IDX; i > first_tbl8_byte; i--) {
-+	for (i = IPV6_MAX_IDX; i >= first_tbl8_byte + !(common_bytes < 3); i--) {
- 		if (redge.a[i] != UINT8_MAX)
- 			break;
- 	}
+ 		rte_rib6_set_nh(node, next_hop);
+ 		parent = rte_rib6_lookup_parent(node);
+@@ -634,11 +649,11 @@ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ 		}
+ 		ret = modify_dp(dp, rib, &ip_masked, depth, next_hop);
+ 		if (ret != 0) {
++			dp->rsvd_tbl8s -= new_levels;
+ 			rte_rib6_remove(rib, &ip_masked, depth);
+ 			return ret;
+ 		}
+ successfully_added:
+-		dp->rsvd_tbl8s += new_levels;
+ 		return 0;
+ 	case RTE_FIB6_DEL:
+ 		if (node == NULL)
 -- 
 2.43.0
 
