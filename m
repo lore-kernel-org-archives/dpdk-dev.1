@@ -1,104 +1,74 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70AE606A319
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 07:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F71E606A31A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 07:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=eTbNO9pJ
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=YMHEzOZx
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F1CF840264;
-	Thu, 22 Oct 2026 09:30:51 +0200 (CEST)
-Received: from BL0PR03CU003.outbound.protection.outlook.com
- (mail-eastusazon11012044.outbound.protection.outlook.com [52.101.53.44])
- by mails.dpdk.org (Postfix) with ESMTP id 0B3BE4003C;
- Thu, 22 Oct 2026 09:30:50 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DiLzQJX9VNW6Gz65RJvPNZAy5PWNOeMNInZesq9JTuo1AH6JAVEUmxcncJ7aXzrOH5pU+tuNRnVbUwZ+I3xqM2J4FH5D3K0B2tIdHNpFLMQFs5jweMGFEGvm7mVVILCuTIz+6ZhJuqOwh6jjZ8mTfGTVk0nEVocoJWw4WNMUsCSDiclPgthWPWva91atkOniwVWEqA7xk7SM2r1hyQ6hQnqKnNtkfoH5xPhpdm9achyc9j4kBdc747swGPOil2lhRc0FY5TApBqj4Qi2ijzbU10qeqmRpavfDKplA5WQfTFYZYCUS58r0fo1h8AFlkr16tPqVSgA1yTsFs7L9yYeHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nAB1AZFDPE9nSuDDowdwmHGvTytb+xAqhofq09WUKDY=;
- b=UDbbBDKRxDYVmnf9xWOeaWUFi5Jk9Gk6L97+hGj10tnvoI7y3qqEOVZ97ccuK9tdpWoUpWWhMA2U/SFhavxiWSHqjk1bjsSoW4bEtD37trG8qoo7ykXSwdEEycqCEecWcokGoOwQljZHBtqx04Jf5W/mZxtke654yXdM5DmOJP0n325OThghD5xm/8eHwr3rqbGvq+N9Gq4JUr2ItwW75u5DQ04nvg/UIPONyDIJmAkN2tR3zQI/MsiFZWykmS1mtI7CFi8RToEnmSDlMF8eFhA8Gle5ZIajpE8L38mH/5BE6wm0QUnUIDUkzrlvA5pncT9GsBYVGjLGlEjzzbXpyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nAB1AZFDPE9nSuDDowdwmHGvTytb+xAqhofq09WUKDY=;
- b=eTbNO9pJngH58QVLB/zZWjfYKqa7O64+La/7h3A7lkV4C/cFTfj6OHJzxyO7sQKedZNZF+phWpiWKyCUJHsk/itqT79WGlwuzjrLTmyyrlVD9mgrppnn58DmQc5U62yreiAeCVZ8jnBYE+glpCdVs8rMMySeMmMiQiSBzM4+0W/rciJ1TzkH9wSwKi+4SdEsv+M0mwVkHTILbsBoNhVxw3m1BRaTdZKmxtu2WOA612OD6+OEn/uyCZPRJTwcwHoPvVzbHtXkKYfCuU8QDR9m812knWFXyrbpQHnTOdT2uEKX50bW+2sfktrfEDrqBQLHWkPRedIiwIpbBe+SCLcQKg==
-Received: from SJ0PR03CA0370.namprd03.prod.outlook.com (2603:10b6:a03:3a1::15)
- by LV3PR12MB9142.namprd12.prod.outlook.com (2603:10b6:408:198::12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.15; Thu, 22 Oct
- 2026 07:30:46 +0000
-Received: from MW1PEPF00018893.namprd03.prod.outlook.com
- (2603:10b6:a03:3a1:cafe::1b) by SJ0PR03CA0370.outlook.office365.com
- (2603:10b6:a03:3a1::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.16 via Frontend Transport; Thu,
- 22 Oct 2026 07:30:46 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- MW1PEPF00018893.mail.protection.outlook.com (10.167.249.170) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.546.15 via Frontend Transport; Thu, 22 Oct 2026 07:30:45 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Thu, 22 Oct
- 2026 00:30:21 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Thu, 22 Oct
- 2026 00:30:21 -0700
-Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56 via Frontend
- Transport; Thu, 22 Oct 2026 00:30:18 -0700
-From: Maayan Kashani <mkashani@nvidia.com>
-To: <dev@dpdk.org>
-CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, <stable@dpdk.org>, Bing Zhao
- <bingz@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Viacheslav
- Ovsiienko" <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH] common/mlx5: fix mkey ordering enum
-Date: Thu, 22 Oct 2026 10:30:11 +0300
-Message-ID: <20261022073013.72607-1-mkashani@nvidia.com>
-X-Mailer: git-send-email 2.21.0
+	by mails.dpdk.org (Postfix) with ESMTP id 6504F40264;
+	Thu, 22 Oct 2026 09:36:19 +0200 (CEST)
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com
+ [209.85.222.178])
+ by mails.dpdk.org (Postfix) with ESMTP id D4326402CE
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 21:43:52 +0200 (CEST)
+Received: by mail-qk1-f178.google.com with SMTP id
+ af79cd13be357-93e503815adso1290185a.1
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 12:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1792525432; x=1793130232; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=om2EHJqDf2OlP6hUOpOmlHkzuzaftJeN+FWJoETTbII=;
+ b=YMHEzOZx5NgV7bpUyQPRMCo7BrBf3pzQfASYjVSP2r7Lf0cc4QUbkuqEeSElz5M6HL
+ 2rsBGRnPMbHOGzNQ8J0Jern85y35czbbhCq4msFg08DJ2CXJ4NMHjhdfMnD1gkVFVPlR
+ dYpRB8Je3Rep9BRUnrKDnRRKXMPh4vU5RSwL89cAvQrJfujN3VZWaW9pVYu8kjHRp85T
+ hvhNy65n9FRGvUVAzN3SPcr8RCLwLpsD7pGjzknbflvHQKOOIQ6405jCKOGl7/JTcIaU
+ nEK53aRqlh0LlzCDoE/3e6DIIPnp9INsJ+1eqHVRbHHcqwGF6fdCAYmpVqyPDGLoJDlD
+ 4GGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792525432; x=1793130232;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=om2EHJqDf2OlP6hUOpOmlHkzuzaftJeN+FWJoETTbII=;
+ b=0zuxltxAKpZBwIEm3hnS9bPA2hViMGOrNO7Odt97kmqAknUDJWoWTJsSh6Ne0KJzuz
+ eYkNJGdySebL6yJ/76dH4NZW1RyRz4zP+dwxCwk+qKhJBzZ7XfRUsCalpx6Il6z+xMj1
+ lLr/pjDZCNj4fdLblTQgLdDU/2f/ztJCl2XugSgTfBSUpYFMXJTDkOqukuaS04Y5NgZ1
+ HCzm3vjp/6GARu07fvt1jQWHa6qF1SHxi4ce/NmxRjxMfjugdy4DfY1ZwnarQ9Sgkyqs
+ TZc1lUr5r3IwFtds/LBHApaRZfgxJAkkOuxrity0fL04dsNbD8UHfy8l+Y3gqoeP90Jk
+ uLYg==
+X-Gm-Message-State: AFq9FYJmU1YIYKSY4vXLfxif3KKSis1wGVgmmVa6AMhdvjtOOra6ghU4
+ pg77b0mSf3EWUh7PCXmVs5vdtPJ0+oEwZTgL8VSJpVM73TC1LtHNZtj0PUH8Ix9Y
+X-Gm-Gg: AYBFou1u8eEeq+IzbIRWSr1Q6K+1HfuFMPmgUgaZM2IjQikO/7LA8g3Nxhc6WZNDl9C
+ m8ja+GNtkfXtyR7AC0a/kk46LJocl/s6ZeWaoZP4pQ0oFViQzGm3jJApCxA5UHzvdtMdJbNSaAB
+ GwZ03eRxvOF28rRc/lehln2AuCTUG9enhZUeQFo9RRDp8Wsiz03e3pn0+H0VfDT6GoE4gkcWh1Y
+ mOYPKc3C2PLKysG0YKi1YuBeQT3KHv5qrRnrPnydGZ7ReV2QkiUrrnsuy1dwhiZHKnbkhkbPtd8
+ gtOZbDXxcLyuiRnxF36iWVblT3qQKXJeNYaKQhMxN5lozAtTKRAOIm6q22GKrLUkNOjMrTm9w9W
+ xK8CqPgFkJbHlZidSETCFziLkGOL1jEeWBky9xPvJmxlCl+5G5Eeiq72jOyfB2ue4FIVtsUhLAa
+ CxK7xdJRoiEqD648Pmbf7MfOyehCwYTn2IiPMFTnFkAS+ghn4SoC0wp9NR5ctjy2Qow2aMfsrY2
+ fbMFwTAnU4oqCEGlCBJZFx+ofkO3ht9geoJ1xE7AST2aRIp6Aofbh5RPaS987dMrZtxE/UMrHxx
+ JnsQCAKbuXlTlFvViOYeQf7b2fUvyJYsQOYLoCWhBXZKD3Y=
+X-Received: by 2002:a05:620a:4398:b0:93e:c12c:f137 with SMTP id
+ af79cd13be357-93f5803fd22mr46372885a.82.1792525432023; 
+ Tue, 20 Oct 2026 12:43:52 -0700 (PDT)
+Received: from bos-lhvwah.bos01.corp.akamai.com
+ (g2001-4878-8037-0700-526b-8dff-fef6-cfbf.deploy.static.akamaitechnologies.com.
+ [2001:4878:8037:700:526b:8dff:fef6:cfbf])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-93f56e1db54sm61292485a.36.2026.10.20.12.43.51
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 20 Oct 2026 12:43:51 -0700 (PDT)
+From: Robert Sanford <rsanford2@gmail.com>
+To: dev@dpdk.org
+Cc: vladimir.medvedkin@intel.com, Robert Sanford <rsanford@akamai.com>,
+ stable@dpdk.org
+Subject: [PATCH] fib6: fix signedness in common root build
+Date: Tue, 20 Oct 2026 15:43:06 -0400
+Message-Id: <20261020194306.3276949-1-rsanford2@gmail.com>
+X-Mailer: git-send-email 2.34.1
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW1PEPF00018893:EE_|LV3PR12MB9142:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5f592cb-1cfd-44b8-1754-08df300e62d2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|82310400026|23010399003|36860700016|261009223027099003|261021123027099003|56012099006|11063799006|10067099003|18002099003|261021121427099003;
-X-Microsoft-Antispam-Message-Info: fefAm4uOAfyqB+QpjeZ/PGn8xG1S3pnGe3kpFrEd+srYF/6GEsw255gkHRdNL7gQDmsA5iRXI7jTpGkbwEQlnV37PfYP3yBaFURj4tRXzcWcoX0nQRZTmVlJUq553JI4HVfxHSndx544HtyWgDyzvV5pJmWx3pAW71dYCN622GoRrkrlvLjrysW/0k0YTlL9LH2Ap2vx7Ygvv8GaN0qvIll0MpmF04/3nYSopEIHumETSYOe9VqTjkToz8aMeQyAUF+Ibrzj4ecBTJlLAmoWGxSC+XsWrtafk5a8WR/zeDK5AVtIvNfVXCnlia55hTFR+vSGU9eGpZmiwwlJe69NDdbv2xzfwb5ognlXNaxk/iJ6L10fYyd0oc+EOIv+2kYwxbzvC+Rb4BX+GTnMlNqZlJui4PMXHxXmvMPC+cxxOpKLvxTO/flIyLbQAnzzdHZ8kfolAI1JdbmTYlK55R2Kd0g2pB7PGkAwY4eBlSTP8GvAqqwYx0T3MwAuL6NTFjPOdGZ71Sf9bx04CO5wn+npujBjmvTXgSbJ0SQLmNFPGpTcwD6ouJt7sMg+J87Cyrj+YI+MDLdDV0krxFdUGZpGGlJoBgj6dxe6pQWumJuXuJBGocE9tVTqqIAL+oZZoI4dW1snwWYO0xJWgGjMsumzB7zL0XMwaqCbXYyP+1S2K5DMS8vow+GS2Fv3NRn0U/2sgIldU5nsDppkRfuxw5EXkw==
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(82310400026)(23010399003)(36860700016)(261009223027099003)(261021123027099003)(56012099006)(11063799006)(10067099003)(18002099003)(261021121427099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 2Ow1FRdE2t5t9qyhlKHrkPbJPNPM0knHLetzI3wOpq8RuXimeb5WutuRMnHDEn5Az/oRWmo/Z9JvuxsVRyByYvRhNJnDc0yZGjG12Uckv1DCBj0XwptqK+0lLiGn9BTmsdkD5XAZ1odk62cWjEDQ7cQPcfS90+Mbfhf47qqrj6zDePIjY/4bwD7suKJ6hDZwm/SJGuKRevAFT6HaVegdhWv8XdCnAJGBCqN1eGtn/ht8udy9i8ZaiWbsgHr3VRXHGtA+B89v5UhmjPYoOoqlxeV9hSAY8XmbWJIGe08g4kMQkXwTXLzBx4EYohxax62NesuF+hUA4WPYW6+cJqy+400ZHK1BGSyQVskWr3bu85i7J3RL+MBwiLJaEx9qb2HVRt6XEDSWqye6rSibjLSJ/GKuTeu/kXPZIX4PIe+dvVoR1UTWrtyoq+RMU+q+G+kE
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2026 07:30:45.3976 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5f592cb-1cfd-44b8-1754-08df300e62d2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: MW1PEPF00018893.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9142
+X-Mailman-Approved-At: Thu, 22 Oct 2026 09:36:18 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -108,40 +78,76 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The updated device specification defines relaxed ordering as 0x1 and
-reserves 0x2. Update the mkey read-after-write ordering values
-accordingly.
+From: Robert Sanford <rsanford@akamai.com>
 
-Fixes: 5003eaab7e4 ("common/mlx5: update relaxed ordering policy for mkeys")
+In build_common_root(), get_idx() returns a uint32_t, but the result
+was stored in an int. When the high bit was set, the value became
+negative and was then sign-extended when passed as the uint64_t index
+to get_tbl_p_by_idx(), producing a bogus table pointer.
 
+Make idx and prev_idx unsigned, and use a separate signed tbl8_idx for
+the tbl8_alloc() result, since it returns a negative value on error.
+Widen to 64 bits before shifting or multiplying so the intermediate
+results cannot overflow.
+
+Fixes: c3e12e0f03 ("fib: add dataplane algorithm for IPv6")
 Cc: stable@dpdk.org
-Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-Acked-by: Bing Zhao <bingz@nvidia.com>
----
- drivers/common/mlx5/mlx5_prm.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/common/mlx5/mlx5_prm.h b/drivers/common/mlx5/mlx5_prm.h
-index c2810194f8e..7ae5ece6c32 100644
---- a/drivers/common/mlx5/mlx5_prm.h
-+++ b/drivers/common/mlx5/mlx5_prm.h
-@@ -1483,8 +1483,7 @@ enum {
- /* MKC read_after_write_ordering field (2-bit, dword 0x38 bits 9:8). */
- enum mlx5_mkc_raw_ordering {
- 	MLX5_MKC_RAW_ORDERING_SO = 0x0,
--	MLX5_MKC_RAW_ORDERING_SAO = 0x1,
--	MLX5_MKC_RAW_ORDERING_RO = 0x2,
-+	MLX5_MKC_RAW_ORDERING_RO = 0x1,
- };
+Signed-off-by: Robert Sanford <rsanford@akamai.com>
+---
+ lib/fib/trie.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/lib/fib/trie.c b/lib/fib/trie.c
+index 187360d1c8..dc57127dc9 100644
+--- a/lib/fib/trie.c
++++ b/lib/fib/trie.c
+@@ -317,7 +317,8 @@ build_common_root(struct rte_trie_tbl *dp, const struct rte_ipv6_addr *ip,
+ 	void *tbl_ptr = NULL;
+ 	uint64_t *cur_tbl;
+ 	uint64_t val;
+-	int i, j, idx, prev_idx = 0;
++	uint32_t idx, prev_idx = 0;
++	int i, j, tbl8_idx;
  
- struct mlx5_ifc_create_mkey_out_bits {
+ 	cur_tbl = dp->tbl24;
+ 	for (i = 3, j = 0; i <= common_bytes; i++) {
+@@ -325,20 +326,20 @@ build_common_root(struct rte_trie_tbl *dp, const struct rte_ipv6_addr *ip,
+ 		val = get_tbl_val_by_idx(cur_tbl, idx, dp->nh_sz);
+ 		tbl_ptr = get_tbl_p_by_idx(cur_tbl, idx, dp->nh_sz);
+ 		if ((val & TRIE_EXT_ENT) != TRIE_EXT_ENT) {
+-			idx = tbl8_alloc(dp, val);
+-			if (unlikely(idx < 0))
+-				return idx;
+-			write_to_dp(tbl_ptr, (idx << 1) |
++			tbl8_idx = tbl8_alloc(dp, val);
++			if (unlikely(tbl8_idx < 0))
++				return tbl8_idx;
++			write_to_dp(tbl_ptr, ((uint64_t)tbl8_idx << 1) |
+ 				TRIE_EXT_ENT, dp->nh_sz, 1);
+-			prev_idx = idx;
++			prev_idx = tbl8_idx;
+ 		} else
+ 			prev_idx = val >> 1;
+ 
+ 		j = i;
+ 		cur_tbl = dp->tbl8;
+ 	}
+-	*tbl = get_tbl_p_by_idx(cur_tbl, prev_idx * TRIE_TBL8_GRP_NUM_ENT,
+-		dp->nh_sz);
++	*tbl = get_tbl_p_by_idx(cur_tbl,
++		(uint64_t)prev_idx * TRIE_TBL8_GRP_NUM_ENT, dp->nh_sz);
+ 	return 0;
+ }
+ 
 -- 
-2.21.0
+2.34.1
 
