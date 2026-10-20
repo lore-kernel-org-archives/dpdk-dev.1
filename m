@@ -1,72 +1,72 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C471606A31F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8E0606A31A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=t+UezF7B
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=saruROhL
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E25140283;
-	Tue, 20 Oct 2026 17:09:02 +0200 (CEST)
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com
- [209.85.215.170])
- by mails.dpdk.org (Postfix) with ESMTP id 061894025A
- for <dev@dpdk.org>; Tue, 20 Oct 2026 17:09:01 +0200 (CEST)
-Received: by mail-pg1-f170.google.com with SMTP id
- 41be03b00d2f7-ccca948203aso1265540a12.3
- for <dev@dpdk.org>; Tue, 20 Oct 2026 08:09:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A664040283;
+	Tue, 20 Oct 2026 17:11:34 +0200 (CEST)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id F0A694025A
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 17:11:32 +0200 (CEST)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-2e831e86ebfso15783885ad.1
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 08:11:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792508940;
- x=1793113740; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792509092;
+ x=1793113892; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=EbJnLLCFh+eLP/02RE6Yct/O9pJ2Zr4Yl+q6FPQpbDI=;
- b=t+UezF7BIVhBX5WPrf8ixi13/NMt+Y1TNxQmbz5osDjqn6i8wLJ+f3g5COe4ri3Fcg
- T8H7smJZ5uB6cwJo/FOTHTZfXz0X4GUczaSbK1/1mOCxCYpAj4s601iOr0nawpNh0nXu
- CLnMd9Q7oOZ676WRbcbFd70Givpe7yvgrLKpV+71Tj/tMCQyRzSY/Y0XrmucwEyX/l7w
- zOPBCKW/YzCWqfbhNL2Cdl8ydG+/jbqnKYTGKuxeRPG4VkxeFXEWD4a147Jecy9N/RwT
- bWpWlqnxj7CzjiFbiBq9RvfM5M+lVw3+Vv2OThGESQ62UuFjV6ztbehwfTlpSMIvcpaz
- rJLw==
+ bh=B8vukYpHyB2qsXwfJ/Tm1+WEc4ztDK5YmKguh46nagQ=;
+ b=saruROhLeMMkFHkO9rUmMKUc8mLrFVI4M9OWJC/Ak3UHfy3gRj3Y0peff15Ny48QiQ
+ +T/stVh719AHGRrCfWFAb9Te5hmAdJw1K35dnAYqkQ2ZTo6ANVq4Cmay5ar+/5bZlWa9
+ uYCYrcLmG8pUaWVTMZjZllK6Q5kFjKmzwi9nKGH9jy8jvOvVNY9aNme9sV2O9E0jJuAG
+ N7Q3TUAE7rwkQcjdxT01260OKYXTg0js2LLnY6xQN7yOsV1w+2Fa2LtZN5lib0ENtl4W
+ 6WHoP8eVysMa1YCEYADZSxJImbD101vTaQi2YgnMOffTl73kYo5VkcfToZN6LnBB6r4D
+ mBnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792508940; x=1793113740;
+ d=1e100.net; s=20260707; t=1792509092; x=1793113892;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=EbJnLLCFh+eLP/02RE6Yct/O9pJ2Zr4Yl+q6FPQpbDI=;
- b=OUxYgW4jK+i2nHlmfADvHD+9HgA/wBV2H1CAvVHfRQLQmM8KcdgaFRcKjcBAspfv2M
- h46BWutwkxAlDjuSVHplu4BNduHlkNQxLfyTJ7zdqsc1+03E+oVySl6maslocZd413za
- COgpHSXdwWlAglP9yQGcnxG8jNFoBIwR6Hf9uEqWbzK0AI3m4Yne/MYtUmz4JoNqumd0
- 3mybZxmBchLxLoRHLlfYOLG6ZnbB7lgt8nQyxftQYBgszOXEFqPrjTH1u+X44f6e7LlJ
- 56DdGqU8jx4W66vhIpaN03W9Z32lH0r7S6Qsv/s7PioQwBDN1NIHL3vbXuGMI1TVrDW8
- Wyfg==
-X-Gm-Message-State: AFq9FYIArn25tHqsB7z39Q59fbjk9x4OMRYdiG1rnJhPvpDq+7MNRgUA
- Dfmn1uqV5hIE5Qpmyi1I1OWKNQNE+IT50dknNUa8dpOHJCe4yu3jOFzrxcAicerIOlM=
-X-Gm-Gg: AYBFou0emHFBjflRMb9MWqr1UTKTg2Sxze4AbeOCY95C+ro/qdBjVS6+9nPY5pgR44/
- 7PIGb458IbsvSZ8JMBrpIytmwZv2lb7CjpTszdRVuF9GTMmu/muj8tmzOkE+wxtAfnf/zjrVwbI
- bTA3CBDMokELtbP6uK3kii2//dGal8MhWRfXIfLkZu6kV1i0B9U6YF5fzxb+uqYx1sduVRQanZB
- oJjH1ly10Wd7v6ALlfUEikvM01V+CI7/EHcHcu/Q8Y3/CUgz77b8gCoZKlCYrDAd5kudSzYFlp9
- zxiOU+4xaCAOVr3ST8aC+H/HDBbnIBFE1hCRx7TJB3pJbRnDFInBlQw8cIFAK0rEWHnA88xSag2
- 0f5TELLcgEZvRtr5gmj8uAyRQQ4UQXqcWCnwtmYJ/JJA5NT5kfjDMIDaDqYMSOaLLTaChLkIiiK
- 5QO01TRop52Lei9MJXuRP2zo6Tev6h7HFI0wxOOZixZ85Os6XhM+G29eUKtpzUcCShr9U9DlbeP
- rUYr/rPt4E1lM4po3if+O/+UFhUdns6RtLEi6P3Gunl0BP9XxIdvMS6WdoRGktSqUiORvgzH0p+
- Xp+6SRuy6hIVcrCPwJeQtw==
-X-Received: by 2002:a05:6300:6cc5:20b0:3e2:3392:5408 with SMTP id
- adf61e73a8af0-3e233928588mr4783578637.79.1792508939943; 
- Tue, 20 Oct 2026 08:08:59 -0700 (PDT)
+ bh=B8vukYpHyB2qsXwfJ/Tm1+WEc4ztDK5YmKguh46nagQ=;
+ b=UN6ZFUv/36MJm6mLr9oCqbo8ZORfDpt88SPPIUS1kU5a+Fg1vokNsdi6byy5vrBUhl
+ vuaP5TdcSGDMt0WIqOQGgTxuvPTqnX0RjW4AOdagi/O7nFT4XXDC3SfmG2wZJwSCYciT
+ iFXJou3cIKfiUDepGPq3uEJJeXDoieu7iwY+M3RGI72kjd/k3SuhKjKM/ASPtnysH5jw
+ xRMHbCPgrEiCs3EVdQbDZaCwNLIHS0rZa064JDjdCx7AoSbAzbLl9aUR8484ZKd9fO0h
+ mOKdTRSq2IaPVmuFWHh2u+ejwmoHsEGh6N+Fq+riPpSAhAgIeLdnHz7uVxWK/prmi6Hk
+ Lu9g==
+X-Gm-Message-State: AFq9FYJYIKqseSl7nMki4Z1tZbsT8Zao6wTnwWAkg+ImzufA2BEF90FW
+ UeEDK4dM/tPb7cEuDHInc7/Vifer3jS943//dCkRw54W8oF2l62WMTJcbjvTv3TxHqg=
+X-Gm-Gg: AYBFou1THMfwyl/r6eexmIhR6WH2RQCFKixENwkTGfJCYi55+1D9H6pseHLUaiwFKG0
+ BysRBsnkuE+hVzVuzmtvsnBVy9jcsMd3a74fnQdGkiqYtyaIlhFSI6yn/bCeFIc4GzBih1vqkoW
+ Jke8srnY2llqL6mhi4WUElxFA2/8aEK+AwJLsG49bF7/5fOajr6aqHjg5EcnSHr8bvjRxo4baco
+ S3Nymhg5PhlmFS9OVEd5PjBLgGnyAQJbsxexkNnDJ0EaAxe/crerV32A6oZRBpOHYPeq93YUCIL
+ Worec7Aqg+3DFDJdaF5UIvXb2Nruh4iz1ds3oFuUkVkMFw2/0PivR1EclELHfeCISKlzQPmAFfP
+ SQoems9q1fMAWEOK+fl9n3LDDsY9FRNf9odtg0yIIYUqVsNMKAIMnVvk0K2AQqsDQiWurV2snIp
+ mIpCmIFdl3z/5oZ7VyTP3ZdrdgXP6xuxXiEUEB7kNfmlfuWliBB4NDmwuGnzTvNnnd9HlWdN8Vb
+ JgqEH3PxbccV9x4ixrDmUHhWgdMj4LKFFqAJ9FCYIi5YNz1e0I=
+X-Received: by 2002:a17:902:ceca:b0:2e4:4eed:5cc5 with SMTP id
+ d9443c01a7336-2e9a6c1df91mr96184295ad.38.1792509091744; 
+ Tue, 20 Oct 2026 08:11:31 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cd65497dfc8sm5000252a12.9.2026.10.20.08.08.59
+ d9443c01a7336-2ea3b4a1762sm386925ad.71.2026.10.20.08.11.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 Oct 2026 08:08:59 -0700 (PDT)
-Date: Tue, 20 Oct 2026 08:08:58 -0700
+ Tue, 20 Oct 2026 08:11:31 -0700 (PDT)
+Date: Tue, 20 Oct 2026 08:11:30 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ryan Wolfe <rnwolfe@google.com>
-Cc: dev@dpdk.org, joshwash@google.com, stable@dpdk.org
-Subject: Re: [PATCH v2 0/2] net/gve: Rx scatter for GQI
-Message-ID: <20261020080858.29d7e086@phoenix.local>
-In-Reply-To: <cover.1792439728.git.rnwolfe@google.com>
-References: <20261019022824.189319-1-rnwolfe@google.com>
- <cover.1792439728.git.rnwolfe@google.com>
+To: Zhang Tengfei <zhtfdev@gmail.com>
+Cc: dev@dpdk.org, jiawenwu@trustnetic.com, zaiyuwang@trustnetic.com
+Subject: Re: [PATCH 0/3] net/txgbe: fix FDIR Rx packet buffer handling
+Message-ID: <20261020081130.7241326b@phoenix.local>
+In-Reply-To: <3de75531-dd3f-4953-8fb8-1f654b74f050@gmail.com>
+References: <cover.1791898970.git.zhtfdev@gmail.com>
+ <20261013074555.1ab5dc7c@phoenix.local>
+ <3de75531-dd3f-4953-8fb8-1f654b74f050@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -86,78 +86,55 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Mon, 19 Oct 2026 16:20:02 -0400
-Ryan Wolfe <rnwolfe@google.com> wrote:
+On Thu, 15 Oct 2026 00:45:00 +0800
+Zhang Tengfei <zhtfdev@gmail.com> wrote:
 
-> GQI receives a frame larger than one Rx buffer as a chain of mbufs, but
-> the driver doesn't report RTE_ETH_RX_OFFLOAD_SCATTER, and it chains
-> whether or not the application enabled it. 1/2 reports SCATTER for GQI
-> so an application that gates multi-segment receive on the capability,
-> such as VPP, can turn it on. 2/2 refuses an Rx queue setup or an MTU
-> change that would need scatter when the application hasn't enabled it.
+> On 10/13/26 22:45, Stephen Hemminger wrote:
+> > On Tue, 13 Oct 2026 22:00:16 +0800
+> > Zhang Tengfei <zhtfdev@gmail.com> wrote:
+> > [PATCH 2/3] net/txgbe: do not enable flow director on flow validate
+> > 
+> > Warning: validate now accepts rules that create will always reject.
+> > 
+> > txgbe_parse_fdir_filter_normal() can set
+> > rule->mode = RTE_FDIR_MODE_PERFECT_MAC_VLAN. Before this patch, with
+> > mode NONE, parse called txgbe_fdir_configure() which returns -ENOSYS
+> > for anything other than SIGNATURE or PERFECT, so validate failed.
+> > Now parse only checks for a mode mismatch, validate succeeds, and
+> > create fails later in txgbe_fdir_configure().
+> > 
+> > Keep the cheap mode check in parse so validate and create agree:
+> > 
+> > 	if (rule->mode != RTE_FDIR_MODE_SIGNATURE &&
+> > 	    rule->mode != RTE_FDIR_MODE_PERFECT)
+> > 		return -ENOTSUP;
+> > 
+> > 	if (fdir_conf->mode != RTE_FDIR_MODE_NONE &&
+> > 	    fdir_conf->mode != rule->mode)
+> > 		return -ENOTSUP;
+> > 
+> > [PATCH 3/3] net/txgbe: disable flow director when no rule is left
+> > 
+> > Info: txgbe_fdir_disable() restores a single packet buffer layout
+> > (PB0 = rx_pb_size, PB1-7 = 0), not what txgbe_configure_dcb() set at
+> > dev_start. That matches what txgbe_fdir_configure() already does, so
+> > FDIR with DCB is already broken and this is not a new problem. If
+> > you respin, consider saving the PBRXSIZE values before enabling FDIR
+> > and restoring them on disable, or reject FDIR when DCB Rx is
+> > configured.  
 > 
-> Both patches change only the GQI queue format. DQO has a related
-> problem that this series leaves alone: its Rx path ignores
-> end_of_packet, so with Rx buffers smaller than the frame each buffer
-> is delivered as its own packet. DQO should either chain those buffers
-> or refuse that configuration too; that is left for a follow-up.
+> Thanks for review.
 > 
-> One more gap 2/2 doesn't close: the check reads dev->data->mtu, but gve
-> never pushes that value to the device. rte_eth_dev_configure() sets it
-> without calling mtu_set, so an application that never calls
-> rte_eth_dev_set_mtu() passes the check at 1500 while the device keeps
-> the MTU from its device descriptor, and on a jumbo VPC it can still get
-> chained frames. Applying dev->data->mtu at configure or start would fix
-> that but changes behavior and needs hardware to test, so it is left for
-> the same follow-up.
+> Addressed in v2.
 > 
-> v2:
-> - add 2/2 to refuse MTUs that need scatter when it isn't enabled
->   (Stephen)
-> - correct the DQO statement in 1/2
+> 2/3 now rejects modes other than signature and perfect while
+> parsing, so validate and create both fail for a MAC VLAN rule.
+> 
+> On 3/3 I left the DCB packet buffer as it is. Enabling FDIR
+> already clears PBRXSIZE(1..7). Rejecting FDIR when DCB Rx is
+> configured can be a separate patch.
 
-Applied to next-net
+Still waiting for ACK from a maintainer of that driver.
 
-AI review had a followup suggestion:
 
-Subject: Re: [PATCH v2 0/2] net/gve: Rx scatter for GQI
 
-Applies to main; both commits build with -Dwerror=true.
-
-Info
-
-[PATCH v2 2/2] net/gve: refuse an MTU that needs Rx scatter when it
-is off
-
-1. rte_eth_dev_configure() sets dev->data->mtu directly from
-   rxmode.mtu without calling mtu_set, and keeps already set up Rx
-   queues when the queue count is unchanged. So stop, reconfigure with
-   a larger MTU (or without SCATTER), and start without redoing queue
-   setup passes both checks. Moving the mtu_set loop into a helper and
-   calling it from gve_dev_start() as well covers that path:
-
-       static int
-       gve_rx_check_scatter(struct rte_eth_dev *dev, uint16_t mtu)
-       {
-               struct gve_priv *priv = dev->data->dev_private;
-               uint16_t i;
-
-               if (!gve_is_gqi(priv) ||
-                   (dev->data->dev_conf.rxmode.offloads &
-                    RTE_ETH_RX_OFFLOAD_SCATTER))
-                       return 0;
-
-               for (i = 0; i < dev->data->nb_rx_queues; i++) {
-                       struct gve_rx_queue *q = dev->data->rx_queues[i];
-
-                       if (q != NULL &&
-                           gve_rx_gqi_needs_scatter(mtu, q->rx_buf_len)) {
-                               PMD_DRV_LOG(ERR,
-                                       "MTU %u needs Rx scatter", mtu);
-                               return -EINVAL;
-                       }
-               }
-               return 0;
-       }
-
-   Not required for this series; can be a follow up.
