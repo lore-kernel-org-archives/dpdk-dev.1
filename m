@@ -1,64 +1,96 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CC4606A319
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 07:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A57606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 07:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20251104 header.b=DRbTAWCW
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=ce9BdiJ5
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DEBE540615;
-	Tue, 20 Oct 2026 09:40:23 +0200 (CEST)
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199])
- by mails.dpdk.org (Postfix) with ESMTP id 15D754021E
- for <dev@dpdk.org>; Mon, 19 Oct 2026 22:20:08 +0200 (CEST)
-Received: by mail-qt1-f199.google.com with SMTP id
- d75a77b69052e-536466909b7so40875891cf.0
- for <dev@dpdk.org>; Mon, 19 Oct 2026 13:20:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B260040663;
+	Tue, 20 Oct 2026 09:40:24 +0200 (CEST)
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com
+ [74.125.224.53]) by mails.dpdk.org (Postfix) with ESMTP id B7C8C40144
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 08:13:55 +0200 (CEST)
+Received: by mail-yx1-f53.google.com with SMTP id
+ 956f58d0204a3-675617e81f9so2463012d50.3
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 23:13:55 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792476835; cv=none;
+ d=google.com; s=arc-20260327;
+ b=MJubF47O4s1PLYDzlyuWhpgVVV5QKMilxR95k+vm24+i52OICpoR/UHpYuGb19cU65
+ oFLwA1SMdsX9h5IgG/LxLzV1hOFnVZfN28mF0ZbfBI6G3NLPzhhu2sI6OxpXEte85Uoo
+ zpEfhZP00y810eyxseH5nFTlJ28V62HD6zDAy8GxeMRzu38Zj1tyoG00WfpMtHwJJN1/
+ gm9Egm5FUkA8FUE3QwWYqxvVsnv3EI76I7teXWpJ81eIIsSNoxy4BJD1Go8qrOOCF27k
+ j0AteIOgYWCwf2nrlivsDCo6jBgsvkGI2UNbYOx+tPyBkUciuYoY2Ls/ufLzfw5XQIqh
+ uALw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=FnwM2BRPyOUplW/g0fKmJp2FaOrs90g6lSnJRe2n8k0=;
+ fh=zMJXq2AVYepUpuIAojy13HHEsWniU8QcPKbRb8cFLw0=;
+ b=qqPtVgh2lqOPbFQ06DakUeNoVMj+aPQIGI7/+5XdQ94/ImzJJRDAFuJEzbvb+8hkZz
+ a8decXuEpw0uaHmNY698wRdLZKZE3zE/CPKilR/rpq9iN8SuQvoQ7tr+6p1HIpyE5fbo
+ ULw4DMDbMNUmrxHGpFOsbSYIEG8Czg2lJnWXFs24MRJcIeKzSO1kL7+FvrSIlSmXkbKg
+ tlez0St6AMA4oGmRqwQ313XYf0SlUnlCE00PZ2Lahs/Ntycmx03fFpfgw8ziiZ9m6YVr
+ L+qybH/ARJ9FkFANZOfHm5A5N/nXinnX4e7QhlW0NZFGkjeXckww9BtL+BWMYb/iOlt+
+ MnhQ==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1792441207; x=1793046007; darn=dpdk.org;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=8BnoGlNYMYuEWfWr5hXhEpkcdzI1f1w787ECrLfRpjU=;
- b=DRbTAWCWBX1gZbbD92y77ZbFXK4doQNL6jGFk8JiXSyIDCtWCTadhhF/WvUpKHYTBP
- e25G/JbcbFdYSDfdO1VRRI22r+w9gaOkBogp0RvtWTqjjMCJhqvH4LYsCfBODbTd/Oha
- IVa4XYwNnGwuzvIjCcOU8rZzFRu7VNJc8NOlHEGWl4qLmLIR1Dqj3WWiH67/7WJIlYI9
- ntc4H+P/J9xqg7EP8LNlJIciXLZ3KdTNhOpgR4AIPmq7DMbO3TrP5k0dipkHiVwYaLHe
- iol0uPjvUinvdCyi9HQbFljt+FaYbYzKM48tviA4iHjgV5gkiKpiaxE3ZbPJNARAP/ra
- 5vEQ==
+ d=gmail.com; s=20251104; t=1792476835; x=1793081635; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=FnwM2BRPyOUplW/g0fKmJp2FaOrs90g6lSnJRe2n8k0=;
+ b=ce9BdiJ5sjFJVm0J80buZ2DvNCQxMi1ojGePE3qAMocfaffEj4c9Cur1961G2FvpLk
+ 1+HEInNCjIkHWvtuJsOA21w9ym3V1G/2wXp70cV9X/7oyNz3XGbHjlqOanLB6BQCiOqb
+ hgfMB+OpOSrt/VXguEfHWwKcBM0x199VENb33LQiV3aePSwpFqNhoPCwZ7KtFWvgGsC6
+ VfpCHl45g4rJcTBrhxMImeYUjoseoa11ohIIUReD3yWyzlsQksBcPUom7zZQ9+n9pUv/
+ bFSaLkwCEej1biyDSI1a4Bpe/f14jyOaZLr0x9V8pjSYsiAOPLRlsCLovMNU41/7PyjN
+ BduA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792441207; x=1793046007;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=8BnoGlNYMYuEWfWr5hXhEpkcdzI1f1w787ECrLfRpjU=;
- b=uEwTya2YwOCj0gWMVUgA45h+57ESFy01mWsJshvpW3+tCwFI2aRK1whqM4EzEj+/ax
- F4AvCAGItD9s6DmFRMWsURmyIXI08w0Dg0zmfXtWvMkUIpkH2tcWcx1p0T3wmEq5OvyN
- dx3QdS9zQXVxwR3YIg39yh4s6qxsTRxJmPuHu59csEB/isw3vMHCfCiUxzRjvBtZ5vMJ
- ehe2SxGkCsGQn1koqkQ9E0nNzdAekZIJO/pvdnSw9LIPmMjzZvMZOcZ4+fBJjsA+kG1G
- dChL/NVCiNkDWhh9NFZUH0MoLvvCGHfRxwZjwlaiYaK4V8NkVGXKtWgVFCJkm8qH8dSQ
- bE4Q==
-X-Gm-Message-State: AFq9FYKechlaRQP4bVByTuLnk4BLIA+5PaZ9YZWkl1koOL743noTemYS
- P/h44G1msaliAFssZyBZQpG//GBuBKbr6CfEpqtyR9YB+qZtK1JoOeJH5P1ggdLfnbuv1GHnND7
- XE+UH3tOqD8SBlRxFagqvV2Ui43mPLsCGWauiKSAOr3vlYfyKoYglFrfJ/aaOpPJ/lxYeULCs6b
- kYy8gGU+oHXN99BCBjAnRZUGEpSnPY
-X-Received: from qtpf3.prod.google.com ([2002:ac8:4703:0:b0:536:52e6:fd86])
- (user=rnwolfe job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:622a:581a:b0:535:28bf:5561
- with SMTP id d75a77b69052e-53645bfdc73mr126350551cf.6.1792441206697; Mon, 19
- Oct 2026 13:20:06 -0700 (PDT)
-Date: Mon, 19 Oct 2026 16:20:04 -0400
-In-Reply-To: <cover.1792439728.git.rnwolfe@google.com>
+ d=1e100.net; s=20260707; t=1792476835; x=1793081635;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=FnwM2BRPyOUplW/g0fKmJp2FaOrs90g6lSnJRe2n8k0=;
+ b=RcHJnXtVW3uH+wwm1n6f9puOQBdoRTsUIXZ4t9zojCOku30IgqTYnsmLQ0RZSKhY1A
+ LDhQPPH6UMIhWY8z5ZZU8ypGUhA2psfDgCpydO2wG94DN3FP3TVL8My2u66UNt6djb+d
+ uenCtBZrJyvS9q02WQe53+9IeR7krrl04dIF41SVkhTe0MUVBFo6WysS905i8GUezprp
+ IwYMdTqWo4Anq3VxWaq9wv2c2/05xtqgBBdhesYdxG+wuslPvHJLWfUaxOn5vflHXtQq
+ E8zCmyyjFOXUQUMDtaHzfCdECwn2I6FO4SoZZ14W4Fsx7tLysJoG2U53nkIoPJFN+ALi
+ RECg==
+X-Forwarded-Encrypted: i=1;
+ AKwUvByBukVeKrALydmpGQ+YYoOigfaqJBCaLVEZJRQLjsHfAfINHI4SQO/W0cBlAqaGU06BZGY=@dpdk.org
+X-Gm-Message-State: AFq9FYLfbrNQGvDpZfaEu0i3dA+w6MHiL+H3JMdBjZuTWDJBAe9OpDMY
+ dMFiHQyKAg6vcx8A9BKPeHkLRUbPpfDK8+Qt1xjZCbdCvXijYNZI8WtDGplzZHRTvdnktYag5fK
+ lnusR/qFIsbqy4EkusGjylkOwBGNU10s=
+X-Gm-Gg: AYBFou35pUhivaBSXeNTp02zt7BuccU9keSDlbaz2lV3UtLzOG5j6rs3l4alw3RuEUO
+ 4h1kvBvUgAUVqQ7hneW7QyoJ5Kh0BE2K4pmiPnHIZOdFa86f5MOAphBrmcjO631hxlbsLqhfF0f
+ Hruf0R/YM16lTHbmdNpGRdAqR7Ii963QE3y4iu61ljpTDjKi4ALw7h3p+eMrRRXT7EetaIrCRD6
+ o2CIlGQJ50QkQeSZyns9yffAwKO3Xo666+nuSshX/1XEl8OqAEStbCZc/MzGYtsICHu10Chji6M
+ S53Ve0ZtIjgG8jJKyakkCE3XN9BMz8oepfdfu2egRVeP6GO7zvr/BHg=
+X-Received: by 2002:a05:690e:12ce:b0:679:a3bc:c242 with SMTP id
+ 956f58d0204a3-679ca701a4fmr3229822d50.32.1792476834735; Mon, 19 Oct 2026
+ 23:13:54 -0700 (PDT)
 X-Archived-By: <archiver.kernel.org>
-Mime-Version: 1.0
-References: <20261019022824.189319-1-rnwolfe@google.com>
- <cover.1792439728.git.rnwolfe@google.com>
-X-Mailer: git-send-email 2.56.0.218.g1ec904b173-goog
-Message-ID: <81db29a41dd8190c95aa1ea977c59a3dfc87f062.1792439728.git.rnwolfe@google.com>
-Subject: [PATCH v2 2/2] net/gve: refuse an MTU that needs Rx scatter when it
- is off
-From: Ryan Wolfe <rnwolfe@google.com>
-To: dev@dpdk.org
-Cc: joshwash@google.com, stephen@networkplumber.org, stable@dpdk.org
+MIME-Version: 1.0
+References: <cover.1792170902.git.tathagat.dpdk@gmail.com>
+ <af059fd5b4297695fc4f2fc84236f7d71a71a630.1792170902.git.tathagat.dpdk@gmail.com>
+ <CALuQH+WpkTCK6jSgYc0RrdSmV_3MUJ0W8=mrn9wpgQGJRRongw@mail.gmail.com>
+ <CA++LmPX3NA0=qOs=p7m8=4Zxq-=gLdgMJA=EKJy=SxNKysqfwQ@mail.gmail.com>
+ <20261019095500.5b577674@phoenix.local>
+ <CALuQH+UTdRV=PvGaDBC+VxfQ2Qx3O7LNWeOYuP52FFmqGm0NMQ@mail.gmail.com>
+In-Reply-To: <CALuQH+UTdRV=PvGaDBC+VxfQ2Qx3O7LNWeOYuP52FFmqGm0NMQ@mail.gmail.com>
+From: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
+Date: Tue, 20 Oct 2026 11:43:43 +0530
+X-Gm-Features: AclHuK-G2leZ7K5ceaxQIG4GE7gJ_U2WbW1KgyUOoIbbXA058lxDiF5BH3nnZWM
+Message-ID: <CA++LmPXXcV=UYQJSRLnedPnW0wvXxanHcoOMnMjtdoBJQO1f_Q@mail.gmail.com>
+Subject: Re: [PATCH v4 09/10] net/gve: enforce DQO Tx packet length limits
+To: Joshua Washington <joshwash@google.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, dev <dev@dpdk.org>, 
+ dpdk stable <stable@dpdk.org>, Jeroen de Borst <jeroendb@google.com>,
+ Rushil Gupta <rushilg@google.com>, Junfeng Guo <junfengg@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Mailman-Approved-At: Tue, 20 Oct 2026 09:40:21 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -69,149 +101,45 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-GQI chains a frame larger than one Rx buffer into a multi-segment mbuf
-whether or not the application enabled RTE_ETH_RX_OFFLOAD_SCATTER, so
-an application that did not ask for scatter can still receive chained
-mbufs once the MTU exceeds the Rx buffer.
+Thanks, Joshua.
 
-Refuse such a configuration on GQI. Rx queue setup fails when the
-current MTU plus the Ethernet header and the GVE_RX_PAD bytes ahead of
-the frame does not fit in the queue's Rx buffer, and an MTU change
-fails on the same test against each configured Rx queue. The buffer
-length comes from one helper shared with queue setup, so the check
-matches the size the device is given. DQO is unchanged.
+Stephen, could you please merge these, or let me know if we still need a v5=
+?
 
-Fixes: 496d4d2c8b54 ("net/gve: support jumbo frame for GQI")
-Cc: stable@dpdk.org
-
-Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Ryan Wolfe <rnwolfe@google.com>
----
- drivers/net/gve/gve_ethdev.c | 18 ++++++++++++++++++
- drivers/net/gve/gve_ethdev.h |  9 +++++++++
- drivers/net/gve/gve_rx.c     | 31 +++++++++++++++++++++++++------
- 3 files changed, 52 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index 92a5a7679f..e47ec0c55b 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -1031,6 +1031,24 @@ gve_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
- 		return -EBUSY;
- 	}
- 
-+	/* GQI chains a frame larger than one Rx buffer into a multi-segment
-+	 * mbuf. No Rx offload is per-queue here, so check the port offloads.
-+	 */
-+	if (gve_is_gqi(priv) &&
-+	    !(dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_SCATTER)) {
-+		for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
-+			struct gve_rx_queue *rxq = dev->data->rx_queues[i];
-+
-+			if (rxq != NULL &&
-+			    gve_rx_gqi_needs_scatter(mtu, rxq->rx_buf_len)) {
-+				PMD_DRV_LOG(ERR,
-+					    "MTU %u needs Rx scatter with %u byte Rx buffers",
-+					    mtu, rxq->rx_buf_len);
-+				return -EINVAL;
-+			}
-+		}
-+	}
-+
- 	err = process_priv->ctrl_ops->set_mtu(priv, mtu);
- 	if (err) {
- 		PMD_DRV_LOG(ERR, "Failed to set mtu as %u err = %d", mtu, err);
-diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index 19eac9ec0b..f4b72a9159 100644
---- a/drivers/net/gve/gve_ethdev.h
-+++ b/drivers/net/gve/gve_ethdev.h
-@@ -454,6 +454,15 @@ gve_is_gqi(struct gve_priv *priv)
- 		priv->queue_format == GVE_GQI_QPL_FORMAT;
- }
- 
-+/* GQI places GVE_RX_PAD bytes ahead of the frame in its first Rx buffer
-+ * and chains the rest of a larger frame into further buffers.
-+ */
-+static inline bool
-+gve_rx_gqi_needs_scatter(uint16_t mtu, uint16_t rx_buf_len)
-+{
-+	return (uint32_t)mtu + RTE_ETHER_HDR_LEN + GVE_RX_PAD > rx_buf_len;
-+}
-+
- static inline bool
- gve_get_admin_queue_ok(struct gve_priv *priv)
- {
-diff --git a/drivers/net/gve/gve_rx.c b/drivers/net/gve/gve_rx.c
-index 09f9d8d480..4a455b3067 100644
---- a/drivers/net/gve/gve_rx.c
-+++ b/drivers/net/gve/gve_rx.c
-@@ -297,6 +297,16 @@ gve_rx_queue_release(struct rte_eth_dev *dev, uint16_t qid)
- 	dev->data->rx_queues[qid] = NULL;
- }
- 
-+static uint16_t
-+gve_rx_buf_len_gqi(struct rte_mempool *pool)
-+{
-+	uint32_t mbuf_len =
-+		rte_pktmbuf_data_room_size(pool) - RTE_PKTMBUF_HEADROOM;
-+
-+	return RTE_MIN((uint16_t)GVE_RX_MAX_BUF_SIZE_GQI,
-+		       RTE_ALIGN_FLOOR(mbuf_len, GVE_RX_BUF_ALIGN_GQI));
-+}
-+
- int
- gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
- 		uint16_t nb_desc, unsigned int socket_id,
-@@ -306,7 +316,8 @@ gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
- 	const struct rte_memzone *mz;
- 	struct gve_rx_queue *rxq;
- 	uint16_t free_thresh;
--	uint32_t mbuf_len;
-+	uint16_t rx_buf_len;
-+	uint64_t offloads;
- 	int err = 0;
- 
- 	/* Ring size is required to be a power of two. */
-@@ -316,6 +327,18 @@ gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
- 		return -EINVAL;
- 	}
- 
-+	/* A frame larger than one Rx buffer is chained into a multi-segment
-+	 * mbuf, which the application must have asked for.
-+	 */
-+	offloads = dev->data->dev_conf.rxmode.offloads | conf->offloads;
-+	rx_buf_len = gve_rx_buf_len_gqi(pool);
-+	if (!(offloads & RTE_ETH_RX_OFFLOAD_SCATTER) &&
-+	    gve_rx_gqi_needs_scatter(dev->data->mtu, rx_buf_len)) {
-+		PMD_DRV_LOG(ERR, "MTU %u needs Rx scatter with %u byte Rx buffers",
-+			    dev->data->mtu, rx_buf_len);
-+		return -EINVAL;
-+	}
-+
- 	/* Free memory if needed. */
- 	if (dev->data->rx_queues[queue_id]) {
- 		gve_rx_queue_release(dev, queue_id);
-@@ -351,11 +374,7 @@ gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
- 	rxq->hw = hw;
- 	rxq->ntfy_addr = &hw->db_bar[rte_be_to_cpu_32(hw->irq_dbs[rxq->ntfy_id].id)];
- 
--	mbuf_len =
--		rte_pktmbuf_data_room_size(rxq->mpool) - RTE_PKTMBUF_HEADROOM;
--	rxq->rx_buf_len =
--		RTE_MIN((uint16_t)GVE_RX_MAX_BUF_SIZE_GQI,
--			RTE_ALIGN_FLOOR(mbuf_len, GVE_RX_BUF_ALIGN_GQI));
-+	rxq->rx_buf_len = rx_buf_len;
- 
- 	/* Allocate software ring */
- 	rxq->sw_ring = rte_zmalloc_socket("gve rx sw ring", sizeof(struct rte_mbuf *) * nb_desc,
--- 
-2.56.0.218.g1ec904b173-goog
-
+On Mon, Oct 19, 2026 at 11:06=E2=80=AFPM Joshua Washington <joshwash@google=
+.com> wrote:
+>
+> On Mon, Oct 19, 2026 at 9:55=E2=80=AFAM Stephen Hemminger
+> <stephen@networkplumber.org> wrote:
+> >
+> > On Sun, 18 Oct 2026 13:24:03 +0530
+> > Tathagat Priyadarshi <tathagat.dpdk@gmail.com> wrote:
+> >
+> > > > > +static inline bool
+> > > > > +gve_tx_validate_pkt(const struct rte_mbuf *tx_pkt, bool is_tso)
+> > > >
+> > > > Minor nit (not worth blocking over, but maybe can be done as the
+> > > > patches are being merged): can this be renamed to
+> > > > gve_tx_validate_pkt_len? This is one step of many in the packet
+> > > > validation pipeline.
+> > >
+> > > Thanks for the review, Joshua. Agreed on renaming to gve_tx_validate_=
+pkt_len.
+> > > This change impacts patches 9/10 and 10/10. I am happy to submit a v5
+> > > series if preferred,
+> > > or the maintainer can rename it upon applying.
+> >
+> > Renames should go through patchwork. I can cleanup commit messages and
+> > release notes, that is where I stop.
+>
+> In that case, would it be okay to merge as-is? I will be following up
+> this series directly with some TX datapath fixes of my own which are
+> kind of related to Tathagat's fixes, so I can probably update the
+> function name in my patch series, rather than going to v5.
