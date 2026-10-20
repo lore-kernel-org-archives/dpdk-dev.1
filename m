@@ -1,48 +1,48 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A359B606A31A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C93A606A31D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=i18SmhMh
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=YnNic0J5
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4DA914068A;
-	Tue, 20 Oct 2026 17:21:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 104E740689;
+	Tue, 20 Oct 2026 17:21:35 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 5CA9740679
- for <dev@dpdk.org>; Tue, 20 Oct 2026 17:21:29 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id ED01F40679;
+ Tue, 20 Oct 2026 17:21:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792509689; x=1824045689;
+ t=1792509690; x=1824045690;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=Rde9TPO3Hhm1qexmocHQ8dFbHak553wy9YV5NdJuwWk=;
- b=i18SmhMhKUObV7gfej14jV+0ydXkNuQO9K44gy+AfXMTUe1VT8Ai1b8t
- BoP3JtWTf04x0HHoDNuHl5FdXwxQGqtaJVNc83529zqaEU0nj28pT3/jF
- kkoT3cCuW/dNzcMUAwy7KRz/LPwXDeIwwRlIpGAQosKIxJIyGFSdWu6HI
- ueWEMX3LhQCtU5TuvFIHlkYCN90FdKk5yY1b10+5YoKSF+4fWW97okPap
- GMbHKK4i1vZDazI5grTiwIkIjsYtMKvCoD3dGH65JyIShBYDysMOwFzAb
- lejrvcvcNJL7yvCm7LXFpav2tF7v5EB+OOB5aSWXDANsl6U77JbHwVekH Q==;
-X-CSE-ConnectionGUID: BrSlSdl+QmWdg+Ck9sDprA==
-X-CSE-MsgGUID: EN1uXE3sQ6SP2FCdEp3wGQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1226844"
+ bh=53SDwVorbbwWKBgklA0cPykeGeleBvbnCJJ9hkn50z0=;
+ b=YnNic0J5bHDM9GP43sbmj+7jPHhCD2X9ZyVhDJh2wNBHLdHi1Tu1DT+P
+ tEfGCWWegQ2xRR7C61JkvY29lIfCibAzO6Wm4Il+/uerOWZSfcjBnX+WE
+ SvceCEvOYEDsw6blb3Hc/qoLJqtza+5ddms7/Os9MtJjZCQTn7qf04TLO
+ wgPCAeTiXCcLBdj/LDrWIOvBsiMkwa+gPX1vHVIJw3+buvfkTdWcWzTx3
+ q3T2U8o95GtdhrFGPvxwOMmmXzqPrB8coyNidUDuUdEMrGr5RtqthJQMc
+ RK25opH5E+G2vbkvpxqKVmaDuWeTujWhWMygPFaFEBf88AHUqh57MVkk5 A==;
+X-CSE-ConnectionGUID: lRBN5fJlT5q0wmh6PtWxiA==
+X-CSE-MsgGUID: ji57iSo/RV+3XsyoirGm/g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1226845"
 X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="1226844"
+   d="scan'208";a="1226845"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  20 Oct 2026 08:21:29 -0700
-X-CSE-ConnectionGUID: Xj90X6EkTYie3DokYjfJMQ==
-X-CSE-MsgGUID: J3c0syKiToKEiaI8S49s9A==
+X-CSE-ConnectionGUID: lOdIqCO+S82x8zXqfjAuqQ==
+X-CSE-MsgGUID: PJxbwAH1S+qE5dIxM9KTfw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="3240942"
+   d="scan'208";a="3240948"
 Received: from mtldev4.igk.intel.com ([10.123.233.187])
- by orviesa010.jf.intel.com with ESMTP; 20 Oct 2026 08:21:25 -0700
+ by orviesa010.jf.intel.com with ESMTP; 20 Oct 2026 08:21:27 -0700
 From: Dawid Wesierski <dawid.wesierski@intel.com>
 To: dev@dpdk.org
 Cc: vladimir.medvedkin@intel.com, bruce.richardson@intel.com,
- anatoly.burakov@intel.com, marek.kasiewicz@intel.com
-Subject: [PATCH v2 1/3] net/iavf: fix invalid free of queue TC map
-Date: Tue, 20 Oct 2026 15:22:10 +0000
-Message-ID: <62e9fda7ef2214728abedd028d677505f464e6e7.1792504817.git.dawid.wesierski@intel.com>
+ anatoly.burakov@intel.com, marek.kasiewicz@intel.com, stable@dpdk.org
+Subject: [PATCH v2 2/3] net/iavf: fix bandwidth config of unshaped queues
+Date: Tue, 20 Oct 2026 15:22:11 +0000
+Message-ID: <c2447970c62fcb2136801bfcf06dd645b36f6f04.1792504817.git.dawid.wesierski@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1792504817.git.dawid.wesierski@intel.com>
 References: <20261014122419.631288-1-dawid.wesierski@intel.com>
@@ -67,67 +67,57 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-iavf_hierarchy_commit() allocates the queue TC map with calloc(), and
-it frees the previous map with free(old_qtc_map) after a successful
-commit. A later change added rte_free(vf->qtc_map) in front of that
-free(), because it was written for a tree that still leaked the map.
+When configuring queue bandwidth via virtchnl in iavf_hierarchy_commit(),
+an entry in the bandwidth configuration array is allocated for each queue
+node. However, the driver only populated queue_id and tc for nodes that
+had an active shaper profile.
 
-After the first commit, rte_free() gets a pointer from the libc
-heap, and free() then releases the same pointer a second time.
-rte_free() reads a malloc_elem header in the bytes in front of the
-pointer. It usually logs "Invalid memory" and returns, but the result
-depends on the contents of the libc heap.
+Because the configuration buffer is zero-initialized with calloc(), any
+unshaped queue node left its entry with queue_id 0, tc 0, and zero rate
+limits. Consequently, the PF interpreted each unshaped queue entry as a
+request to reset queue 0 to default bandwidth, leaving the actual target
+queue untouched on the PF. Any previously configured rate limit on that
+queue remained active, even across subsequent queue enables or process
+restarts.
 
-Remove the rte_free() call. free(old_qtc_map) releases the old map.
+Fix this by setting queue_id and tc for every queue node, ensuring
+unshaped queues properly send zeroed shaper rates for their own queue ID
+so the PF restores their default bandwidth.
 
-The same change also added rte_free(vf->qtc_map) to iavf_uninit_vf(),
-after the free(vf->qtc_map) that already releases the map and sets the
-pointer to NULL. That call has no effect, but it is the wrong allocator
-for this pointer. Remove it too.
-
-Fixes: f6e33f09f766 ("net/iavf: disable runtime queue setup when rate limiting")
+Fixes: 5779a8894d15 ("net/iavf: support queue rate limit configuration")
+Cc: stable@dpdk.org
 
 Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
 v2:
-- Also remove rte_free(vf->qtc_map) in iavf_uninit_vf() (Bruce).
+- Commit message from Bruce Richardson. No code change.
 - Add Acked-by.
- drivers/net/intel/iavf/iavf_ethdev.c | 8 --------
- drivers/net/intel/iavf/iavf_tm.c     | 1 -
- 2 files changed, 9 deletions(-)
+ drivers/net/intel/iavf/iavf_tm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 7f1ad3d88c..9e0e13d499 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -2794,14 +2794,6 @@ iavf_uninit_vf(struct rte_eth_dev *dev)
- 	rte_free(vf->proto_xtr);
- 	vf->proto_xtr = NULL;
- 
--	/*
--	 * Drop the committed queue/TC bandwidth mapping so a subsequent
--	 * iavf_init_vf() (e.g. after a device reset) starts with runtime
--	 * Rx/Tx queue setup available again (see iavf_dev_info_get()).
--	 */
--	rte_free(vf->qtc_map);
--	vf->qtc_map = NULL;
--
- 	rte_free(vf->rss_lut);
- 	vf->rss_lut = NULL;
- 	rte_free(vf->rss_key);
 diff --git a/drivers/net/intel/iavf/iavf_tm.c b/drivers/net/intel/iavf/iavf_tm.c
-index fc84bf7e6b..603da09bb5 100644
+index 603da09bb5..57075ee5b8 100644
 --- a/drivers/net/intel/iavf/iavf_tm.c
 +++ b/drivers/net/intel/iavf/iavf_tm.c
-@@ -913,7 +913,6 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
- 		goto fail_clear;
+@@ -867,15 +867,15 @@ static int iavf_hierarchy_commit(struct rte_eth_dev *dev,
+ 		}
+ 		q_tc_mapping->tc[tm_node->tc].req.queue_count++;
  
- 	/* replace the previously committed mapping, if any */
--	rte_free(vf->qtc_map);
- 	vf->qtc_map = qtc_map;
- 	free(old_qtc_map);
- 	if (adapter->stopped == 1)
++		q_bw->cfg[node_committed].queue_id = tm_node->id;
++		q_bw->cfg[node_committed].tc = tm_node->tc;
+ 		if (tm_node->shaper_profile) {
+-			q_bw->cfg[node_committed].queue_id = tm_node->id;
+ 			q_bw->cfg[node_committed].shaper.peak =
+ 			tm_node->shaper_profile->profile.peak.rate /
+ 			1000 * IAVF_BITS_PER_BYTE;
+ 			q_bw->cfg[node_committed].shaper.committed =
+ 			tm_node->shaper_profile->profile.committed.rate /
+ 			1000 * IAVF_BITS_PER_BYTE;
+-			q_bw->cfg[node_committed].tc = tm_node->tc;
+ 		}
+ 
+ 		node_committed++;
 -- 
 2.43.0
 
