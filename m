@@ -1,83 +1,84 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5258D606A323
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 07:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB58C606A320
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 07:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=BV6TCC9m
+	dkim=pass (1024-bit key, unprotected) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=U89aNKzY
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C5004068A;
-	Tue, 20 Oct 2026 08:59:57 +0200 (CEST)
-Received: from mail-pj1-f97.google.com (mail-pj1-f97.google.com
- [209.85.216.97]) by mails.dpdk.org (Postfix) with ESMTP id 6F15240283
- for <dev@dpdk.org>; Tue, 20 Oct 2026 08:59:54 +0200 (CEST)
-Received: by mail-pj1-f97.google.com with SMTP id
- 98e67ed59e1d1-3ab4178ee33so2161165a91.3
- for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:54 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0626E406B4;
+	Tue, 20 Oct 2026 09:00:05 +0200 (CEST)
+Received: from mail-pl1-f227.google.com (mail-pl1-f227.google.com
+ [209.85.214.227])
+ by mails.dpdk.org (Postfix) with ESMTP id A229D4067C
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 08:59:56 +0200 (CEST)
+Received: by mail-pl1-f227.google.com with SMTP id
+ d9443c01a7336-2e608cd460eso16043385ad.3
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792479593; x=1793084393;
+ d=1e100.net; s=20260707; t=1792479596; x=1793084396;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=8wxCwe73z9phI808yfncJpJNYWHE1iV/Iy0Ziaep91k=;
- b=ZgULrASTBu5mekn071L/l8nZFQ43JiaGNDIUoCQaWmgsm0QSB56CArueqbs3W6E1JD
- D9pFaeKEDSCZVLBRPCKwV+cUv012DaZMRjHGek0ZzRNBPs98cwFYIIcMKD8cyXyycPub
- 7aMKzjQas6S7xHwRB2cy1YtD0mBtKw9JOwtHlLXeicKqZAJqU9uBC4E1sdIkiep3lT/1
- SGzWtom5o5NtZXwdat5ILCNMLAeJ5FEmh/WnHV6D1gyql9dRSsZ0vQqGOuKUVyw/ITgk
- Nof7m2l5+VrJnFVCJYOi+m/LdY0pi39UuYAckUHCyfxyqLyIa5JYj5rlNXD4JC7Ak1sZ
- IqYw==
-X-Gm-Message-State: AFq9FYJGpBndxotjpIi6rJnFFSEnpiNqt23zRidhzUnkLEwqjQ34h9og
- wYQL1aF9ZUp2PCikb6cH8Dw1AoXGouyJWziOnIQTsN+TNNyRycbWRRyTW0IHgONgW7C+l/2J2Tw
- E0x8/nfil3wCRfQKToMdBMiWPofA+juJUoz6PFVJkY4ZD2zsADh/hzjLwA5iRMuhH96k0hWoO5T
- IZCSDlT+7PLo+sBdruQquoLR3jGmcTXoOCsf3C8WFDXjLsxgvUd4h8eYEYTyANqyLRNWo2lA==
-X-Gm-Gg: AYBFou2VLok/fzFs+iHYr9WBIFxvPt8oEPqy9vPs8wB7Fsbp9u0WQcpNEBcFORIcMso
- jjIGi4xsVu+BJgjyz20PzLXl5XgMrEAmHjMT/LUY/U6Sap0SfsCHgF75IxYdmgyQ6gMM6jx+x3j
- viOUX6u8CDyH2x47oa4uiNhe4/HI19f6PxPduIC11hhAS5vP15RX680AfqYEX3Y+5wDLzKwjPlG
- PzOlEocsEbrxHgW6PL2sWwhwmSKiYb+7AdMdN97H5TFinXiSAi+0NDqW+p3kDir8Lm9qS5mmo2s
- x6YjUqs/NPLWqUq2v681u0YwfFrI09v7vxXmok5004FaA/g7/xOrX+Xot1jau/NSB2w9aD+FTVz
- 1/HhDLwUve55do/JNvCFtqDMBjCZjkRhAay5MylWpn+uiwwiC0tL4sfuPxvfUL5kwivS7B+efiE
- d/p1vi8MvSjUrx3FyJBfqvWoNqPsInb1nzg5+63g==
-X-Received: by 2002:a17:90b:4acb:b0:3ac:adce:60ad with SMTP id
- 98e67ed59e1d1-3aceefbf7dfmr8131606a91.22.1792479593148; 
- Mon, 19 Oct 2026 23:59:53 -0700 (PDT)
+ bh=sTvTsAOLLDw5LO4GGIUQlHZGpsGBw1rfB+aUMX4qPO4=;
+ b=pU2vNRa2H2OirRG2SKFRYF0IcJzgusqaWO92WKCDZPnmd84fF6y++kOGAAXuluya8E
+ 1Rt9m86poVEcLJP2zjMqwPXxmYIU/JQcVoM+qkAb7Jg3DiOF1k6MOVz+JA/KtdgOgJPw
+ aRxDhtms0T2e5JFW5bUhEchSUNoEhTBQsOvhZVCLIzlpVCRYbzS52kHMLJSPZHd7vqly
+ 3Ab8wxnxJlZtB+Ow+DKfsJUlvdgLemF+w6umKW8bemzU9oPJf2DwuVmt1CJxAk1KVz5S
+ 16gfpWlIFBWOloMUwUCki6yJmp0u5TX0xCVJgzgsKXn4tQBV7C79YaJPxJ6N44yoeiYX
+ kY+w==
+X-Gm-Message-State: AFq9FYJZLxpHC4DXB1oRuTZKdRX2wFPiJTjUpiItLiKUovPc28upCkPj
+ 2LDNEogI3TzGtHTTsnCLDRc/c8pB1O5sZ9jOLlblVDpWXjQTlTbRmAURDcKGXQLx3xwYPzJtZ+B
+ hWfSWsyJX0WnbaX900Cj/o61GcmUbdVdJoK2wC8v79Pt/NL6hn+MmPV0igGzL6+jUufv2ej/k40
+ RMu1wROipMDUDmPJPQChU1uGvtqgsLhs1zalLYjZ/aTQepQjm40OZ5YarOVPgOM7HXqvtcTw==
+X-Gm-Gg: AYBFou11Vns99pVPpgCW+0mgT3p9Y25oyF/m6gdKXm0NtMgEjUNTEXNHnjPlf7xb2j7
+ bUt/Ugqa0mcwAhAmNIxSon3Z/0ZkqlD6HEB9emuw07ZFHKXEXYA79fUxadKgvNsUuZecWDUCXE1
+ 2nnxOnBdpmvUH/KvlX240NzLKZWVUE2EgdSXVGdrfENGTixWP7CZxhAwFCU4m1bPJ3O1uSVKpaX
+ Dhpvfp4I4xa8pE1odNwImWmDS1cNqqQ8cu3IzMmKdMd5Zvt9pVktoxeogReeQE3HzMbkJyZcj2T
+ 5KG5wRKGWMZk9aIpjPwAsYuGYb1DpI2tU0RTGvweLjzm9LgtdTZnYhPDgwQFpRn1WCF8WYJ3IRc
+ ByKtnQ8Tyng6q/PO1LRKNutV0UR/434LysqGGNEMw/sFwjyNiV49sb2FR244SrHJ5qzGw2LezK8
+ 4GUDldr7tfO7/wtTIhrHPeyATHxmlIy7V4zO08mA==
+X-Received: by 2002:a17:90b:3b8e:b0:3ab:c80:936f with SMTP id
+ 98e67ed59e1d1-3aceebc55efmr7705240a91.16.1792479595659; 
+ Mon, 19 Oct 2026 23:59:55 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
+ (address-144-49-247-125.dlp.protect.broadcom.com. [144.49.247.125])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3ad676a18absm1019511a91.0.2026.10.19.23.59.52
+ 98e67ed59e1d1-3ad273c2779sm1947589a91.5.2026.10.19.23.59.55
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 19 Oct 2026 23:59:53 -0700 (PDT)
+ Mon, 19 Oct 2026 23:59:55 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qv1-f71.google.com with SMTP id
- 6a1803df08f44-9179a556c43so66531226d6.3
- for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:52 -0700 (PDT)
+Received: by mail-qk1-f197.google.com with SMTP id
+ af79cd13be357-93cb6391e89so661083785a.1
+ for <dev@dpdk.org>; Mon, 19 Oct 2026 23:59:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1792479592; x=1793084392; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1792479594; x=1793084394; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=8wxCwe73z9phI808yfncJpJNYWHE1iV/Iy0Ziaep91k=;
- b=BV6TCC9mjWYK55lI7Y6JIv7eF0noGsMxbZv0mfl7NFHuI/qzxS5UPEOnZ5a15i/b+B
- dO9zrqX5+QhNMInh/2Ieza+lie8W6mtDA1/mGGH3Gq2b/iDjtRALIoTA84nhaXu1vCY9
- iTwLDkslbeG53Tp2TXDEPxa1V2KFM5vf3zQUs=
-X-Received: by 2002:ad4:5fc8:0:b0:91b:5d3b:4ad0 with SMTP id
- 6a1803df08f44-91bdf2dd13dmr181165586d6.57.1792479591606; 
- Mon, 19 Oct 2026 23:59:51 -0700 (PDT)
-X-Received: by 2002:ad4:5fc8:0:b0:91b:5d3b:4ad0 with SMTP id
- 6a1803df08f44-91bdf2dd13dmr181165336d6.57.1792479591035; 
- Mon, 19 Oct 2026 23:59:51 -0700 (PDT)
+ bh=sTvTsAOLLDw5LO4GGIUQlHZGpsGBw1rfB+aUMX4qPO4=;
+ b=U89aNKzYQuS4d0hexq3OfRoebOgkzu0YhPul9wh4myqsEhn4LDglYEdN8nlXF9kLgJ
+ 6mcyr/PWv2ZsewlNCpVjnnwPaJh/QRTT9vae/UGwIJ0X4XzG1cHzGx5joNmsmiWsjX+6
+ GMfLuaYREcWoJZPWSdRPZPBZ3Xov1FykNsH4c=
+X-Received: by 2002:a05:620a:4416:b0:93b:d79a:c462 with SMTP id
+ af79cd13be357-93f29d95c80mr1591881385a.58.1792479594321; 
+ Mon, 19 Oct 2026 23:59:54 -0700 (PDT)
+X-Received: by 2002:a05:620a:4416:b0:93b:d79a:c462 with SMTP id
+ af79cd13be357-93f29d95c80mr1591879385a.58.1792479593720; 
+ Mon, 19 Oct 2026 23:59:53 -0700 (PDT)
 Received: from r740-105-132.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91c03f30bffsm18917616d6.5.2026.10.19.23.59.50
+ af79cd13be357-93f4b058148sm154028885a.14.2026.10.19.23.59.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 19 Oct 2026 23:59:50 -0700 (PDT)
+ Mon, 19 Oct 2026 23:59:53 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com,
 	stable@dpdk.org
-Subject: [PATCH v2] net/bnxt/tf_core: validate TCAM entry get response
-Date: Tue, 20 Oct 2026 01:59:49 -0500
-Message-Id: <20261020065949.1068047-1-manish.kurup@broadcom.com>
+Subject: [PATCH v2] net/bnxt/tf_ulp: check EM key pad result
+Date: Tue, 20 Oct 2026 01:59:51 -0500
+Message-Id: <20261020065951.1068097-1-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20261005151720.1706054-1-manish.kurup@broadcom.com>
 References: <20261005151720.1706054-1-manish.kurup@broadcom.com>
@@ -97,57 +98,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=4.0.1
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-tf_msg_tcam_entry_get() copies the TCAM key, mask and result out of
-the firmware response using the key_size, result_offset and
-result_size values returned in the response, without checking them
-against the size of the dev_data[] array they index. The mask is
-read from dev_data[key_size] for key_size bytes and the result from
-dev_data[result_offset] for result_size bytes, so a bad value
-makes the copy read past the end of the 272 byte array in the
-response on the stack.
+ulp_mapper_tfc_em_tbl_process() pads the EM key to a record boundary
+with ulp_blob_pad_push() but ignores its return value. The function
+returns -1 and leaves the write index unchanged when the requested
+pad does not fit in the blob, so with a long dynamic key the key was
+used without its padding. The key length computed afterwards, and the
+position at which the result is appended, are then wrong, and a
+malformed EM entry is sent to the hardware.
 
-Reject the response with -EINVAL if the key and mask (2 * key_size)
-or the result (result_offset + result_size) do not fit in dev_data[].
+Check the return value and fail the flow with -EINVAL, as the other
+ulp_blob_pad_push() callers in the mapper already do.
 
-Fixes: a9597be79f66 ("net/bnxt: support L2 context TCAM operations")
+Fixes: dd0191d5e70d ("net/bnxt/tf_ulp: support Thor2 ULP layer")
 Cc: stable@dpdk.org
 
 Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
 ---
 v2:
 * Split out of "net/bnxt: fix multiple truflow defects" (one fix per
-  patch); this is the tf_msg_tcam_entry_get() response check.
-* New subject and commit message; single Fixes: tag.
+  patch); this is the EM key pad check in ulp_mapper_tfc.c.
+* Rewrote the commit message: ulp_blob_pad_push() does not overrun the
+  blob, it fails without advancing the write index, and the failure
+  was being ignored.
+* Use unlikely() and BNXT_DRV_DBG() like the rest of the file.
 
- drivers/net/bnxt/tf_core/tf_msg.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/bnxt/tf_core/tf_msg.c b/drivers/net/bnxt/tf_core/tf_msg.c
-index aab8d05d81..c345d0a7ce 100644
---- a/drivers/net/bnxt/tf_core/tf_msg.c
-+++ b/drivers/net/bnxt/tf_core/tf_msg.c
-@@ -1243,6 +1243,16 @@ tf_msg_tcam_entry_get(struct tf *tfp,
- 			    strerror(-rc));
- 		return rc;
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+index 2cba6fffa8..7ace08838f 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+@@ -519,7 +519,10 @@ ulp_mapper_tfc_em_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 		align_len_bits = dparms->em_blk_align_bits - key_len;
  	}
-+	if (resp.key_size * 2 > sizeof(resp.dev_data) ||
-+	    resp.result_offset + resp.result_size > sizeof(resp.dev_data)) {
-+		rc = -EINVAL;
-+		TFP_DRV_LOG(ERR,
-+			    "%s: FW data out of bounds key_size(%d) result_offset(%d) result_size(%d), rc:%s\n",
-+			    tf_dir_2_str(parms->dir), resp.key_size,
-+			    resp.result_offset, resp.result_size,
-+			    strerror(-rc));
-+		return rc;
+ 
+-	ulp_blob_pad_push(&key, align_len_bits);
++	if (unlikely(ulp_blob_pad_push(&key, align_len_bits) < 0)) {
++		BNXT_DRV_DBG(ERR, "Failed to pad EM key\n");
++		return -EINVAL;
 +	}
- 	parms->key_size = resp.key_size;
- 	parms->result_size = resp.result_size;
- 	tfp_memcpy(parms->key, resp.dev_data, resp.key_size);
+ 	key_len = ULP_BITS_2_BYTE(ulp_blob_data_len_get(&key));
+ 	ulp_blob_perform_byte_reverse(&key, key_len);
+ 	/* Create the result data blob */
 -- 
 2.31.1
 
