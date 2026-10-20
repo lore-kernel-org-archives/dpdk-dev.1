@@ -1,56 +1,98 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F24606A319
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE127606A319
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 15:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=f4UOR7J4
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm2 header.b=eK79qMlm;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=bZh20JNK
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A26FF4066C;
-	Tue, 20 Oct 2026 17:21:50 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id CA02E40A81
- for <dev@dpdk.org>; Tue, 20 Oct 2026 17:21:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792509707; x=1824045707;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=G/5rSN3Z/DorPhnKhrY0EizTvaeWiFvL8kzso8Pncrc=;
- b=f4UOR7J4BoHat4qtEq5fEhUijV8Tld/0kFUnyThshQES2Xs2hES4HZiP
- QJMVWNXuAzojw8qmneC04YF/35alZTM2k+KCEv4Ji+8xZcXfT1gd+pViV
- RXqpiisw94078KCP2AlO3tXWeMS3BYq10yQgHHRz9/7kd4N994IhzsuDB
- ye99kHR31RH7BYk315U/K3bwn+oX/WYg3PuO28u+BALrZ5Bs8jDghigXN
- QxDfv4zN2rvIzluUTGkSXeQgSP7anw0vyfv7oIdupkGfNTOry0Ctba6co
- w5l568V3nlM+YT7B/M2FQfSJ/TVlcP4phkkSsJeCwj2E+X07JUPg/UL8r Q==;
-X-CSE-ConnectionGUID: hVuQcl02TuilpRemddVlKw==
-X-CSE-MsgGUID: Cg9oIfxnQYOxN04biHbWkQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1226893"
-X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="1226893"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Oct 2026 08:21:46 -0700
-X-CSE-ConnectionGUID: Nt6LVZSGQjum2XKNJI4gUw==
-X-CSE-MsgGUID: uDHfNuMBQY6hlD6GNPlztA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="3241062"
-Received: from mtldev4.igk.intel.com ([10.123.233.187])
- by orviesa010.jf.intel.com with ESMTP; 20 Oct 2026 08:21:45 -0700
-From: Dawid Wesierski <dawid.wesierski@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, thomas@monjalon.net, reshma.pattan@intel.com,
- mb@smartsharesystems.com, marek.kasiewicz@intel.com
-Subject: Re: [PATCH v7] pcapng: add user-supplied timestamp support
-Date: Tue, 20 Oct 2026 15:22:34 +0000
-Message-ID: <20261020152234.2599119-1-dawid.wesierski@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261014103858.5a454dac@phoenix.local>
-References: <20261014172102.1090177-1-dawid.wesierski@intel.com>
- <20261014103858.5a454dac@phoenix.local>
+	by mails.dpdk.org (Postfix) with ESMTP id 4545340283;
+	Tue, 20 Oct 2026 17:25:17 +0200 (CEST)
+Received: from fout-a8-smtp.messagingengine.com
+ (fout-a8-smtp.messagingengine.com [103.168.172.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 835A74025A
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 17:25:15 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.phl.internal (Postfix) with ESMTP id CC48CEC013B
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 11:25:14 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Tue, 20 Oct 2026 11:25:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1792509914;
+ x=1792596314; bh=5H1KbbHcdcpDjmXKztl0np85lD+ORcxyloDZoTZP220=; b=
+ eK79qMlm/0cOx0JT7hgMzwN3XMYu17mJmXwJsuW0nUEqacksCLzb8azP2S4QFb9L
+ K4Ee38BBLXrFLXP9t8goN+u6+3CENokuqeKUcDFAS/9HMf5kaKRRwe+zGzBlh0MQ
+ xP8ZlghT6QTY2bwhDFvCOGCOUE7Rlco9No+Gei7gWd7Kc+ZgUYcpJHp395mDTddh
+ iyfrXyb3uaQc3KwQULWpyd68Q6obH/tG7UqufbSy890ixjZxjY8Exsp3P0AHpS1p
+ t52wF8fS371jAgQ2/XNnsgvO+FgpIAfrJ5uJXDzBA5aRhV4lFOIii3Bz5DV63QIH
+ hXxe28rmmWAB/pE6vcs+UQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1792509914; x=
+ 1792596314; bh=5H1KbbHcdcpDjmXKztl0np85lD+ORcxyloDZoTZP220=; b=b
+ Zh20JNKPUcB+jiPPNySXorGOrco5P1EQbyfV570HgcQnsVB2cAtM42C5u1lEdRGz
+ XsxDU1aPel4j3JbUEMS97PKdNNGy5no67ywMUugalM5Bhia+UT+z85oQrW6hJr0g
+ MyZie8FIMKpbEAyoMUc/q+Vxswfv3r+ZGN61Ot+d1RnvtUYLdUpHVjCYQYrY6eDK
+ MN9NQ/vzlUQA/mb0bFSGDR7w/q7cSOiPZvb746UZoGvPGWZVDJ5SMdp2Bscu31HC
+ NGfZ4tagxGPv0Vz3c3gcty03lqE2YMzclHSpAKN3pZ2ziaWgcfQShUUL39edFzyc
+ L9W/0k8d4eHA7Mwu0g3VA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1792509914; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm2:rsa-sha256:kMQvOppPuopuDkw/VZYQKfO9cz6DdaXi1NPwBNQcajSkmcQ
+ 1Bbf9rzsvbjhFr2L1xmCT8U4kNOoNOuXcQOqDT3sNDJalGGAEKSHckhRpyZeGUG5
+ DJ+catQXMYd4Eg6W9TSCrdei+binmTvV89CMOXqiqvLc9ntgRNDma44WmX6yO+XK
+ 4YoKg17JJOiBP+hXnZ79IttCmoMi70mWsn7nIPXY/Rms6Gj122EBmTaF2UWN2Ho6
+ tL7U2pqv04AuTTyC8qmTPBUWSHZ0JMLbrG253P+5okZby5LgXFXbSomIIsk88iuS
+ gt3MI7c24HKcI3JrH4fNl3g26oZvi+2OiKEKvBw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+ repo=github.com/dkim2wg/interop; date=2026-10-08; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:JSYwdOz4jL0hJzHY/DKK6xXxQGkVrrQ+G7o0oUREdwg=:gcF41c4ODw4tEgMCPpJwnBQIvQM5Z1WLahbVQqHUuWI=;
+X-ME-Sender: <xms:2ofXah-gNXh3sFtZ57yQ1IIaw0idz-LYeRq5sXfxworWcGY5Xcdk7g>
+ <xme:2ofXaiD075xlTIDEQPfh0hy0CRX9OuZydg9kKcF3tAvhVsk8IVOiRWi_-8qJKHDqK
+ UDfVN1nSSVZsF1GkXsi1qRv_jU2K1BljuMfWJYX6aghZTk_LoKncXA>
+X-ME-Received: <xmr:2ofXahy7_kMyhVchvTaDHpc7iGJmbsjGg2Dzm2scDV4Z8w5qDojK96lWbw8I_tOQDQBRLcW5YKSnPCJzbzW7uUs>
+X-ME-Proxy-Cause: dmFkZTGUlhvhQLDTyhzUVPtIzrm4w8Hefhs4cNq/tQbjdei+4PIzAeQ9RbFUKmlagO+Fcl
+ ILj8RP0xypPsUsV+wZp/yekmymzcz92MJkkeqGQZtnNGjrB3KgNQNACC30QSn+uImeateD
+ P9aLJL1q3YkJl0hCnjJPJZgirpbiLVp7ktSjhSiqEk4wfMO3nCJJlTi9fyo7b5WW5ph10t
+ 3ZTcFGlu5AEmnEdXaeZGzTzSZ31pp/RWNWYG8+a5h4L69qtXia/dAU5S8gwp428Al7IRcb
+ NF4tHeTgmxCXUcBzy82bq3WPSvYoa65U3OMuPqV8ctD+WPfpbPXc08jqNTBUIB/ArzFYsl
+ 1n6qo8g6XFOtHxwjLqj46a5lJDMZozE4Y/ajfc9nv/CRxK/yRG3OjbcrY/VHz4l2QQfDSc
+ 3srSkLwPiTd5TZVLkRiUbkDJcNDTcaTw4G+nsiTJ4ZlXTlMxRwTDinGXYWef0QuYmPazu5
+ bgaZvk9wH4oAnQoy+JYnShCtEpSjWysgcAtOcwwSE79h5fitqQk9nzAgUHaDZOiaFqqTkp
+ 2VT6TaSeXeP5Ci+TyBv0xDxVgfwtVzPLpLVE3tpAk1U4v/stypUkR6wNb6/l6xsve9cskF
+ UlJzo2dEu5WD4r0cE2jDWRYwPzuAKVm4UY7/bj5PtZOCMErNfsqN3kiz9umw
+X-ME-Proxy: <xmx:2ofXanRy9G1A-9wmfLat_JFAn2sUpVOvRzAI3TM-u36TH940JtbhQQ>
+ <xmx:2ofXao_pIb97ocasMDN9GiqIKvRNksEnLxrFrBqSNwWqmK3-Y8x2vw>
+ <xmx:2ofXauo09VJ38wNF6fBVQGdPtrj4FhK71ozzRNQ4eFUOyYWrLvLDNw>
+ <xmx:2ofXallBcD2L9fN5KGlXPz2dhXX1fjrS5vPHNHhb_B04oOKA-rSJJw>
+ <xmx:2ofXatgHM4bQCb8ZHiJ4EZyTaZ5Y5OQzroQPzF_03ebELXcxJDffePJi>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 20 Oct 2026 11:25:14 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] maintainers: update for next-net-brcm tree
+Date: Tue, 20 Oct 2026 17:25:11 +0200
+Message-ID: <lRZjk3DyTXKk4mD6lIGtug@monjalon.net>
+In-Reply-To: <CA+BST0mwb_r5JnNJBHzoYaOtYWYxoP1QveQjVzXCXwmCDiefwA@mail.gmail.com>
+References: <20261020095133.2811576-1-thomas@monjalon.net>
+ <CA+BST0mwb_r5JnNJBHzoYaOtYWYxoP1QveQjVzXCXwmCDiefwA@mail.gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,63 +102,30 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Wed, 14 Oct 2026 10:38:58 -0700
-Stephen Hemminger <stephen@networkplumber.org> wrote:
-> On Wed, 14 Oct 2026 17:21:01 +0000
-> Dawid Wesierski <dawid.wesierski@intel.com> wrote:
->
-> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pcapng_tsc_to_ns, 26.11)
-> > +uint64_t
-> > +rte_pcapng_tsc_to_ns(const rte_pcapng_t *self, uint64_t tsc)
-> > +{
-> > +	return pcapng_timestamp(self, tsc);
-> > +}
-> > +
->
-> Since the tsc_to_ns is independent of the pcapng handle, I had some
-> patches in other work which made it not require pcapng_open and/or move
-> it to EAL. What do you think?
+20/10/2026 15:41, Kishore Padmanabha:
+> On Tue, Oct 20, 2026 at 5:51=E2=80=AFAM Thomas Monjalon <thomas@monjalon.=
+net> wrote:
+>=20
+> > Kishore is the maintainer of the Broadcom tree
+> > since DPDK 26.07 cycle.
+> >
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> > ---
+> >  Next-net-brcm Tree
+> > -M: Ajit Khaparde <ajit.khaparde@broadcom.com>
+> > +M: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+> >  T: git://dpdk.org/next/dpdk-next-net-brcm
+>=20
+> Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-Agreed. The conversion uses only the TSC and wall clock reference that
-rte_pcapng_fdopen() takes. Nothing else in the handle is necessary.
-A helper in EAL is better: other code can use it too, for example
-rpcapd, to stamp a packet with its capture time and not with the
-time of the burst.
+Applied
 
-Our application does not need rte_pcapng_tsc_to_ns(). It gives the
-PTP time of the NIC to rte_pcapng_copy(). Thus I will send v8 without
-rte_pcapng_tsc_to_ns(), and the patch then does only the API change
-of rte_pcapng_copy(). Your helper can come in its own series, with
-its users.
 
-One point for your helper, and for any code that reads back the block
-from rte_pcapng_copy() before rte_pcapng_write_packets(): with this
-patch, the timestamp field holds the TSC with bit 63 set, or the
-caller time in nanoseconds with bit 63 clear.
-
-A question on the schedule. 26.11-rc1 is out, and this patch changes
-the API of rte_pcapng_copy(). v6 has the state Accepted in patchwork
-since June, but it is not in main. Can v8 go into 26.11? If it must
-wait for the next ABI version, please tell me. We will then keep it in
-our DPDK patch set until that release.
-
-v8 is tested with pcapng_autotest (also with ASan) on 26.11-rc1, and
-with dpdk-dumpcap on testpmd for the TSC path.
-
-Thanks,
-Dawid
----------------------------------------------------------------------
-Intel Technology Poland sp. z o.o.
-ul. Slowackiego 173 | 80-298 Gdansk | Sad Rejonowy Gdansk Polnoc | VII Wydzial Gospodarczy Krajowego Rejestru Sadowego - KRS 101882 | NIP 957-07-52-316 | Kapital zakladowy 200.000 PLN.
-Spolka oswiadcza, ze posiada status duzego przedsiebiorcy w rozumieniu ustawy z dnia 8 marca 2013 r. o przeciwdzialaniu nadmiernym opoznieniom w transakcjach handlowych.
-
-Ta wiadomosc wraz z zalacznikami jest przeznaczona dla okreslonego adresata i moze zawierac informacje poufne. W razie przypadkowego otrzymania tej wiadomosci, prosimy o powiadomienie nadawcy oraz trwale jej usuniecie; jakiekolwiek przegladanie lub rozpowszechnianie jest zabronione.
-This e-mail and any attachments may contain confidential material for the sole use of the intended recipient(s). If you are not the intended recipient, please contact the sender and delete all copies; any review or distribution by others is strictly prohibited.
 
