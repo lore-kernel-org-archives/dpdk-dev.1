@@ -1,48 +1,48 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB39606A319
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 09:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA1B606A31E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 09:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fnuluXBS
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=YZh84z47
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A6053406BC;
-	Tue, 20 Oct 2026 11:11:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5B96840A6C;
+	Tue, 20 Oct 2026 11:11:52 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 9145E4069F
- for <dev@dpdk.org>; Tue, 20 Oct 2026 11:11:47 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0503A4069F
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 11:11:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792487508; x=1824023508;
+ t=1792487510; x=1824023510;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=FJ1ZlvlawWT9QQOXyt3NMcZoaG/Vwx4oveEJ2m2NSdk=;
- b=fnuluXBSJOmd3Wnh2vR5YPVuwy84b+ucwlJz4bWlyOJX5pkUtp+T5dSx
- LUaaFtR17Fml5Vg0buh6OjsngdMyIdcLh5gfA8S5jIzsXehuN6Y/sEFDS
- kXQJ1tm6DJx/SRB1JWq4Huj6kePTh3nTF9Ex2xqgRAmSoKvKirzpVgRqh
- ar5Jy2rEczmeciGuuAic7tRoEV0prfHF42DCQNNs3PQTIUwtLU2w8tD/T
- qirfkgM2Cvxx+o6EMdfJLPxP7dP+ZxmW/U5BrOwAcTf5BVos6SkVZcJpt
- 8P1oLo3i7u8SXiBv1d1uCjWdlXHNz9QORAURkXL5csqY0vrk9TFYXF/39 Q==;
-X-CSE-ConnectionGUID: wyDpHlRDSe+sePRmCiC02Q==
-X-CSE-MsgGUID: 0oFeNulmSD+0V0NwGTJr6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1286818"
+ bh=xpOUM4iiK5z7Bw9nlEdF2zeYAyleYya0pZ27ylXEb7U=;
+ b=YZh84z47QawjMSoSc3P9rIRGI3cNuUL3i+RnQ0GmD+7x8+8piqcXlfj1
+ voM+60Z6rKH3iKPKkm8rJzZWxegpjnxWNSwB4M+1PAa0B3MCGXGKh7Upk
+ O5+Xxrp6XobmlpCcV+E/gfe8YPtKCdu/HDmrvhc2JL57xtI0cofiH1DpQ
+ Zbkvrlc57uEcpdNUhHyYq9K0m76A9pwUBwK6hxDTTmBDz5Zf19NaIAwPM
+ At2Q3ifCY5TCuPVTzNkIad2a9bJuHYdVr/95sGlhvuQEGpBc/o9uCPoBc
+ nUaoIJGuMbbZ2HdfWkTf7gLpBxaUy4aEVA6FgQ+yUp8VgyzGVcB8o88hT Q==;
+X-CSE-ConnectionGUID: UW+2TYKFSluq8rXRXImy0A==
+X-CSE-MsgGUID: nruHg+IKQXSUGG9O5kSrdw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1286819"
 X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="1286818"
+   d="scan'208";a="1286819"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Oct 2026 02:11:48 -0700
-X-CSE-ConnectionGUID: VB96r/uqSUWK7t+EIDFHNQ==
-X-CSE-MsgGUID: xgrrSGjjT86qn822fdhrjg==
+ 20 Oct 2026 02:11:49 -0700
+X-CSE-ConnectionGUID: yd+O9j3hTGShJwWJWulU3Q==
+X-CSE-MsgGUID: 47GYOk7KSBmgXIuOrukNag==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="2879463"
+   d="scan'208";a="2879466"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa002.fm.intel.com with ESMTP; 20 Oct 2026 02:11:46 -0700
+ by fmviesa002.fm.intel.com with ESMTP; 20 Oct 2026 02:11:48 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Anurag Mandal <anurag.mandal@intel.com>,
- Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH v3 07/10] net/iavf: skip RSS teardown during PF-initiated reset
-Date: Tue, 20 Oct 2026 10:11:30 +0100
-Message-ID: <ddced776cf0b081c3f93b26de8a4a720c153802b.1792487374.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v3 08/10] net/iavf: remove redundant reset checks from RSS
+ engine
+Date: Tue, 20 Oct 2026 10:11:31 +0100
+Message-ID: <6cbdceba96739699c4499dba8cafc6f10d9fac82.1792487374.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1792487374.git.anatoly.burakov@intel.com>
  <cover.1792487374.git.anatoly.burakov@intel.com>
@@ -66,44 +66,63 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-During PF-initiated reset recovery, `iavf_dev_close()` skips flow flush
-to avoid sending virtchnl messages to the PF. However, `iavf_hash_uninit()`
-is still called unconditionally, even though any existing RSS configuration
-is now invalid because of PF-initiated reset.
+The RSS engine checks `vf_reset` during init, destroy and uninit to avoid
+sending virtchnl commands while the VF is resetting. These checks are no
+longer needed:
 
-Move the RSS teardown under the same `pf_reset_in_progress` check as flow
-flush, so that no RSS configuration messages are sent during PF-initiated
-reset recovery.
+- `iavf_hash_init()` only registers the parser and sends no commands.
+- `iavf_dev_close()` skips both flow flush and RSS teardown during
+  PF-initiated reset recovery.
+- the generic flow layer frees rule memory without relying on engine
+  callbacks.
+- `iavf_execute_vf_cmd()` already refuses to send commands while
+  `vf_reset` is set.
 
-Fixes: 4dad1a6815d6 ("net/iavf: skip flow flush during PF-initiated reset")
-Cc: stable@dpdk.org
+Remove these checks as they are no longer needed.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/iavf/iavf_ethdev.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/intel/iavf/iavf_hash.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index bb97a89414..cfe5c45e72 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -3254,12 +3254,12 @@ iavf_dev_close(struct rte_eth_dev *dev)
- 	/* free iAVF security device context all related resources */
- 	iavf_security_ctx_destroy(adapter);
+diff --git a/drivers/net/intel/iavf/iavf_hash.c b/drivers/net/intel/iavf/iavf_hash.c
+index 6352bf28f9..fe5d725064 100644
+--- a/drivers/net/intel/iavf/iavf_hash.c
++++ b/drivers/net/intel/iavf/iavf_hash.c
+@@ -762,9 +762,6 @@ iavf_hash_init(struct iavf_adapter *ad)
+ 	struct iavf_flow_parser *parser;
+ 	int ret;
  
--	/* remove RSS configuration */
--	iavf_hash_uninit(adapter);
+-	if (vf->vf_reset)
+-		return -EIO;
 -
- 	/* Skip the virtchnl-emitting teardown on a PF-initiated reset */
--	if (!vf->pf_reset_in_progress)
-+	if (!vf->pf_reset_in_progress) {
-+		/* remove RSS configuration */
-+		iavf_hash_uninit(adapter);
- 		iavf_flow_flush(dev, NULL);
-+	}
- 	iavf_flow_uninit(adapter);
+ 	if (!vf->vf_res)
+ 		return -EINVAL;
  
- 	/*
+@@ -1601,13 +1598,9 @@ iavf_hash_destroy(__rte_unused struct iavf_adapter *ad,
+ 		  struct rte_flow *flow,
+ 		  __rte_unused struct rte_flow_error *error)
+ {
+-	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(ad);
+ 	struct virtchnl_rss_cfg *rss_cfg;
+ 	int ret = 0;
+ 
+-	if (vf->vf_reset)
+-		return 0;
+-
+ 	rss_cfg = (struct virtchnl_rss_cfg *)flow->rule;
+ 
+ 	ret = iavf_add_del_rss_cfg(ad, rss_cfg, false);
+@@ -1633,9 +1626,6 @@ iavf_hash_uninit(struct iavf_adapter *ad)
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(ad);
+ 	struct rte_eth_rss_conf *rss_conf;
+ 
+-	if (vf->vf_reset)
+-		return;
+-
+ 	if (!vf->vf_res)
+ 		return;
+ 
 -- 
 2.52.0
 
