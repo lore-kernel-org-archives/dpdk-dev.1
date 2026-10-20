@@ -1,75 +1,83 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC073606A31A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 14:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341F560A381A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 Oct 2026 14:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=hyx2laPs
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=PY25PgtQ
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA22C4067C;
-	Tue, 20 Oct 2026 16:55:52 +0200 (CEST)
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com
- [209.85.216.44]) by mails.dpdk.org (Postfix) with ESMTP id 29BB340283
- for <dev@dpdk.org>; Tue, 20 Oct 2026 16:55:51 +0200 (CEST)
-Received: by mail-pj1-f44.google.com with SMTP id
- 98e67ed59e1d1-3a4b9732d5aso3051569a91.3
- for <dev@dpdk.org>; Tue, 20 Oct 2026 07:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792508150;
- x=1793112950; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=GJxCLAn8Kye542CaLqD0rFTTnoPuTC/3j+FDiZFZWKw=;
- b=hyx2laPs+Ke4h8odTD71F9yvnByTwmYFJENHsUDgoVuBqPqHOWolIiRiphEnsO9oIz
- ScxlVfjd69lXJXMsaM4rbturkPQ+iaIJ8uXZOfE4c4xpBVLY7DN3dm+PinCx0XYwOBAn
- rRgY64R+WCgBfpDaicltT7DrMcSXZWLC1wxi0nSUI+9//iWacidFbfSXWXbDjSyfZb++
- W/J8Loqzba5+EtvwPaMQih8FhcOIPsrcx5sSI/Fv9Chqx7xNgYaBz4N7qg1zrvWqRW11
- p+l79H9AGJP630/zkiW/Ba8wjijW4k6lR0fenjNauaD/Gr3GtVIQwLxt3QLMpq8mRJDq
- 7E2A==
+	by mails.dpdk.org (Postfix) with ESMTP id 6D33E40679;
+	Tue, 20 Oct 2026 16:58:37 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id CC14040297
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 16:58:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1792508315;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=lpUAgrU4xLvpnYW1WQ4iAveM+qCsuWDiNxOzs+0Sydo=;
+ b=PY25PgtQdrA119A6XSXqOwW592ZWZ49lJPNNsX4pw99rW3e+7Qzo6WH37i4herxmXVDiEs
+ mvIsKSo7Mrg7GpuW8TWeA1N2uZ99pJKp6tM8uHNwg/g0Y6aLmMdihZBjpPSbqKMWV89L/k
+ h6XfJaUn9uqdeC6MAr3KJmOFRUJ1lrw=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-669-G0QM5fBEMNGy1Hgl2wRP4g-1; Tue, 20 Oct 2026 14:58:34 +0000
+X-MC-Unique: G0QM5fBEMNGy1Hgl2wRP4g-1
+X-Mimecast-MFC-AGG-ID: G0QM5fBEMNGy1Hgl2wRP4g_1792508313
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-3ab0972e5aaso15335401fa.0
+ for <dev@dpdk.org>; Tue, 20 Oct 2026 07:58:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792508150; x=1793112950;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=GJxCLAn8Kye542CaLqD0rFTTnoPuTC/3j+FDiZFZWKw=;
- b=tpbcwPKC8EAWCvra6vPnsIpClPQwEUz2NWU/sNAIq4hEXXk4Xh/EefY9WQVumBT4mx
- KakVm0jg5zlo5Zb/9YdiHb7mxFOm1eObxiGg9PBGfV7mXM/NeiKCsXENopxUQYnDtPEH
- C62YuLcfDeFNepB7WLYCRmSKr4yzXsgKzlkmwbjUKfpO7LAeWhklRo/0E8rQH2bsG5BD
- pKyxwtUkoyPOkyi1VWkvvxBgTIRZtMUZxPmsqZbt08z9W1mvkCYetGFzoqGLskcWG2oK
- Z+Yqv174/6IYSKnxW7He2lTaIk++l0mANIou+KAgF25ODThFVDP6wyq2WVDkXo6Hrtkv
- NnNQ==
-X-Gm-Message-State: AFq9FYIbAFWpp8Hi0MfO3ybJ5AlphlDouaPqnrP2DFItfCov8wiAMnLD
- siVjqHPPURPPFWk2uXs0pRh8HyNWQ9ercFGqZf4mCYhtWhv2BHnF/BWqPCLUGNeO32z+Mk7ohBq
- k6nWNrio=
-X-Gm-Gg: AYBFou39feYnZADb6uXiE1P9/1bp3MJtkyIyRGhpCRTfbWfmBo6LJxeFbNYobieoZ3S
- zqGUETVEVCVLE1cQnLU3xgOQ6A5aTPkFMB0WqeS0cm1zF0nmCcIIbvzyTUtgZwSZ9GLp1rg5luC
- I3g5grjpt9pUqa3xUB0nS0YncnxWq1IAg0Xey0duAJXjDBKlo7VNjXNhYgV0T2DcEVesGhbf5sd
- ZT7FQNKOUCVtk2ohWH3HfJ6KktTZcUyuqQveKC+VyuoBTo4qWYm7nKtQtYJ4WweNte1v0Ojgq00
- aVCt/QvjWLpTtMHS+AZxpcuBpIbJU6Hy1nkfP7IaCO1V4Oi/JU6jJoZ3x6w9uRb2JijjuaNsxFs
- iODkUeRvFU0TizSBrCyCQutiiGba0B2GQHnZ37Wi4djqIlSx3cxm2QwDN2S9poURsh4+J/9dSB1
- QJaGJiLty6Um9HLmqWuH4hrnyuOQW4cOqjDR+5EtmZzQ4gye9lwuCrzfN9a2LLBr2PsdLPNwc6h
- 80UJLr3tLXRUkiQQkrlmdkSVZQWZVqW5wvS+A==
-X-Received: by 2002:a17:90b:4fc2:b0:3ab:f2a9:cacd with SMTP id
- 98e67ed59e1d1-3acef5700abmr11120234a91.49.1792508150217; 
- Tue, 20 Oct 2026 07:55:50 -0700 (PDT)
-Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3acd093380dsm10467306a91.3.2026.10.20.07.55.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 Oct 2026 07:55:49 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: [PATCH 2/2] ring: remove GCC pragma
-Date: Tue, 20 Oct 2026 07:55:41 -0700
-Message-ID: <20261020145541.388371-2-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261020145541.388371-1-stephen@networkplumber.org>
-References: <20261020145541.388371-1-stephen@networkplumber.org>
+ d=1e100.net; s=20260707; t=1792508312; x=1793113112;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=lpUAgrU4xLvpnYW1WQ4iAveM+qCsuWDiNxOzs+0Sydo=;
+ b=FgTp9j+p0KYd7wZbNRLubGwQtljIsOWMsCLqKe1STnYUw0zoJS8p0dwQLkblGz4nIm
+ 8t8pgTCcctR4rFSMOK09ioA+qhyIJFC7sEpb5wrruWr28JCwMGVPZ7eAQcT3eWE9kKJV
+ DqqinVRaUEEa6/FZySwxMUs6tKeq89DfS9uwUVXGkFTtAP8mAg4qdMrMb5DQ5CfPvjfz
+ ZYjph/2o1SAd4miaUdVqrCflvodk+XANxO1xOMEd223nHrTbMYlYT4B++UtZAc/RoHbt
+ mjdcBnEco0PccSTxZZBUv8hpoU37zUBur2r5apJhYFp9kkHxjikIb0KWbaEdhDH/xiBg
+ GLVQ==
+X-Gm-Message-State: AFq9FYJ7FJk59txN487d80Osj55CqgZV8zNsjfk/6x9sQqFtgZKdZnHp
+ 0waRj0RivDnnxPeHAIh7bRP4pdoIOY1xpPImFIBwaxtcXZpAiNeRl9WZ1ZcVKRcaIjq2E6mO/wi
+ wiS+clR2pbQSAaqGqQDC0J+zcMOKeKSBqaUmqqybJdKVce6P3408Lp/PkrFMvtMwnuNBC9fG6yF
+ UBA6mAbo7jhU5yb1geS1Q=
+X-Gm-Gg: AYBFou3EYDvNMgk1p7IHf6QM2JZxuihbptGuEUzm1BOKuZmymcm0Li+bzG48k86pGgO
+ DsHIZzeI08Hz5ArAuBFFMaKBQ4PkWYdN4VE0Ovg5dfBdwOCrE3GSV7MSafGtAycIhOJbYVk6LEX
+ ajxRF1qA8NFUQIq/lahRw7IzBYEgZNVdzAJIqk9ZHuX/CxbTIf4fNWLnryjHJDDdrj2UGLjs3Bw
+ 7IFz4IjARJsz+aUMYffUCKGrfVZOo0IfsF31PM9nn9+q8Pl
+X-Received: by 2002:a05:651c:31da:b0:3ab:751:6ba8 with SMTP id
+ 38308e7fff4ca-3ab293fde35mr26250851fa.28.1792508312432; 
+ Tue, 20 Oct 2026 07:58:32 -0700 (PDT)
+X-Received: by 2002:a05:651c:31da:b0:3ab:751:6ba8 with SMTP id
+ 38308e7fff4ca-3ab293fde35mr26250721fa.28.1792508311930; Tue, 20 Oct 2026
+ 07:58:31 -0700 (PDT)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261017144747.2155513-1-david.marchand@redhat.com>
+ <20261019081602.2426732-1-david.marchand@redhat.com>
+In-Reply-To: <20261019081602.2426732-1-david.marchand@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 20 Oct 2026 16:58:20 +0200
+X-Gm-Features: AclHuK92lIetz-7U7fycRR6wftXm1V5Pib0NMRLkcTvjhyAZWYg9-xPLm3d_d3I
+Message-ID: <CAJFAV8ySktqoJ7KeicaJR3T4amMvNHDGghuQSDUALgRQRhrskQ@mail.gmail.com>
+Subject: Re: [PATCH v2] test: defer timer initialization
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, bruce.richardson@intel.com, 
+ stable@dpdk.org, =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
+ Anoob Joseph <anoobj@marvell.com>, Volodymyr Fialko <vfialko@marvell.com>, 
+ Erik Gabriel Carrillo <erik.g.carrillo@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>, 
+ Chengwen Feng <fengchengwen@huawei.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: dtJeWufkPU_wZm4OdTSFGJV56gdrARY0pp7akhAB-dE_1792508313
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,48 +87,31 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The original issue that required using pragma here to disable
-stringop warnings is now handled at in config/meson.build
-across all files.
+On Mon, 19 Oct 2026 at 10:16, David Marchand <david.marchand@redhat.com> wr=
+ote:
+>
+> Initialize timers only in unit tests that do require them.
+>
+> This removes an unconditional memzone allocation (3MB on ARM) and
+> avoids failures of the eal_flags_file_prefix_autotest unit test
+> that runs in legacy mem mode and has a tight 18MB memory budget.
+>
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- lib/ring/rte_ring_elem_pvt.h | 10 ----------
- 1 file changed, 10 deletions(-)
+Applied, thanks.
 
-diff --git a/lib/ring/rte_ring_elem_pvt.h b/lib/ring/rte_ring_elem_pvt.h
-index 29758d0bb8..3d680749ad 100644
---- a/lib/ring/rte_ring_elem_pvt.h
-+++ b/lib/ring/rte_ring_elem_pvt.h
-@@ -10,12 +10,6 @@
- #ifndef _RTE_RING_ELEM_PVT_H_
- #define _RTE_RING_ELEM_PVT_H_
- 
--#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >= 120000)
--#pragma GCC diagnostic push
--#pragma GCC diagnostic ignored "-Wstringop-overflow"
--#pragma GCC diagnostic ignored "-Wstringop-overread"
--#endif
--
- static __rte_always_inline void
- __rte_ring_enqueue_elems_32(void *ring_table, const void *obj_table,
- 	uint32_t size, uint32_t idx, uint32_t n)
-@@ -500,8 +494,4 @@ __rte_ring_do_dequeue_elem(struct rte_ring *r, void *obj_table,
- 	return n;
- }
- 
--#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >= 120000)
--#pragma GCC diagnostic pop
--#endif
--
- #endif /* _RTE_RING_ELEM_PVT_H_ */
--- 
-2.53.0
+
+--=20
+David Marchand
 
