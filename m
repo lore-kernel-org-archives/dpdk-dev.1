@@ -1,47 +1,47 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47749606A31E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Oct 2026 10:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D4F606A31B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Oct 2026 10:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Al6u7+QO
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=aKk5y/9D
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D58140A80;
+	by mails.dpdk.org (Postfix) with ESMTP id DCD0A40B91;
 	Wed, 21 Oct 2026 12:52:58 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id C77C040041
- for <dev@dpdk.org>; Wed, 21 Oct 2026 12:52:54 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0779740A7D
+ for <dev@dpdk.org>; Wed, 21 Oct 2026 12:52:55 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792579975; x=1824115975;
+ t=1792579976; x=1824115976;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=Z72ib0u8amqOxviJcBUdWK1JG+pWY207MnIK863HM4A=;
- b=Al6u7+QOhRHN3QG/2/mkEl4NSIqeGZfSlzyIN7RdN1kf/SKgu4aW4yiQ
- 4kHYnAujXwEpwcRWMaFp6sopkzvcW1F6evyaHCjQjm/e76HbYsrOwwMeV
- KvvuOSC2KPz1OkCMUbsngjCHCdXJeK1GEDAy3UAbQgGO2Kl+L+vU/PTYX
- Qmuex+8qhCQrmw9dsM7M9CBjeInDR7e8ANnnRipwdyZj/HG6lbmYU2oyE
- Q7FFyBGV3VnUfEZz6IfkpgEfN8WrB8Qh1bgzvbrq07bYWnokxDJsCayw3
- bhl2kUTPy2d8SY4AtteiCAZ5tHGLCUa6IPvPl4UkAXGw0gJmOGM0VCUtz g==;
-X-CSE-ConnectionGUID: cSZmv0JuTee+zifMwzFGiQ==
-X-CSE-MsgGUID: 8E9DnyliTQKuHwoCwVl/tw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1301048"
+ bh=6iWHSG/gGwIE+eSSm9F9duuzLCMagD/NBWQ7Wi9laNs=;
+ b=aKk5y/9DFFQ+cmP+6Zk21cqml9HXPRVh/m5fZ7/FnMLaWCPVPRYbaQQi
+ ZJlSrF5TpHjCOw75t+9k9iLCvQBJtrFpVzqkA+VJ4sKqKoG82DtkSzr2M
+ PX47KFrclEeYD9qOKpShQsxX1HD3MJ8cUIYeo9ZGKSv9SlkpgEO23ktFH
+ n/957iHFC5SyCGnlAh35MiNz/mpsBxlJ+mk/5HPCPAfJABL/GG6E6lnhN
+ uB1EFB/vtl9DKB0xtVXq5N0CL7bg61wKd+8ZceNIkoNL/eijvBDCYzzUA
+ 6u8NZGh6GzP7RuJpN0j0QilFJbH+emtAv6Z/TDfn5qgCGhUtWROeWaFso g==;
+X-CSE-ConnectionGUID: PUeDxfxVQh2H9VvbjDbVtA==
+X-CSE-MsgGUID: NKR1kpZBQ0OczIiPPQsDmQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1301050"
 X-IronPort-AV: E=Sophos;i="6.27,170,1787036400"; 
-   d="scan'208";a="1301048"
+   d="scan'208";a="1301050"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 Oct 2026 03:52:54 -0700
-X-CSE-ConnectionGUID: tAp9i8HcRrKjGn5jn2/S+g==
-X-CSE-MsgGUID: nnA1q6nkRoWuHlTfIoKvMA==
+ 21 Oct 2026 03:52:55 -0700
+X-CSE-ConnectionGUID: HU+cpezOSB2XTXrTy8jeEQ==
+X-CSE-MsgGUID: ErzOIDLZSCW0+19loN3lTg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,170,1787036400"; 
-   d="scan'208";a="3078887"
+   d="scan'208";a="3078890"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa004.fm.intel.com with ESMTP; 21 Oct 2026 03:52:53 -0700
+ by fmviesa004.fm.intel.com with ESMTP; 21 Oct 2026 03:52:54 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 2/3] net/ice: rename flow metadata parameter to rule
-Date: Wed, 21 Oct 2026 11:52:49 +0100
-Message-ID: <9bf36a97abcbbb5a624ce63b116da035dfe43a97.1792579964.git.anatoly.burakov@intel.com>
+Subject: [PATCH v2 3/3] net/ice: rename RSS flow configuration variables
+Date: Wed, 21 Oct 2026 11:52:50 +0100
+Message-ID: <09882fdcca7a467876582e530e4ec7c20b93466e.1792579964.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <3cbd41baf2db930276ce43893a787ea65770e1ff.1792579964.git.anatoly.burakov@intel.com>
 References: 
@@ -64,278 +64,129 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Parsers now return the final engine-specific rule rather than temporary
-metadata. The generic flow layer passes this object to engine creation
-and stores it in `flow->rule`.
+RSS parsing now constructs the final flow configuration rather than
+temporary metadata, but its variable names still describe metadata.
 
-Rename the `meta` parameters and related local variables to reflect
-their role as persistent rules.
+Rename `meta`, `rss_meta`, and `rss_meta_ptr` to `rss_conf` in the RSS
+flow parsing functions.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ice/ice_acl_filter.c    |  8 ++++----
- drivers/net/intel/ice/ice_fdir_filter.c   |  8 ++++----
- drivers/net/intel/ice/ice_generic_flow.c  | 16 ++++++++--------
- drivers/net/intel/ice/ice_generic_flow.h  |  6 +++---
- drivers/net/intel/ice/ice_hash.c          | 12 ++++++------
- drivers/net/intel/ice/ice_switch_filter.c |  8 ++++----
- 6 files changed, 29 insertions(+), 29 deletions(-)
+ drivers/net/intel/ice/ice_hash.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_acl_filter.c b/drivers/net/intel/ice/ice_acl_filter.c
-index 08695b554f1..21b48e10091 100644
---- a/drivers/net/intel/ice/ice_acl_filter.c
-+++ b/drivers/net/intel/ice/ice_acl_filter.c
-@@ -505,10 +505,10 @@ ice_acl_hw_rem_conf(struct ice_pf *pf, struct acl_rule *rule, int32_t entry_idx)
- 
- static int
- ice_acl_create_filter(struct ice_adapter *ad,
--		      void *meta,
-+		      void *flow_rule,
- 		      struct rte_flow_error *error)
- {
--	struct acl_rule *rule = meta;
-+	struct acl_rule *rule = flow_rule;
- 	struct ice_acl_conf *filter = &rule->conf;
- 	enum ice_fltr_ptype flow_type = filter->input.flow_type;
- 	struct ice_flow_action acts[1];
-@@ -948,7 +948,7 @@ ice_acl_parse(struct ice_adapter *ad,
- 	       const struct rte_flow_item pattern[],
- 	       const struct rte_flow_action actions[],
- 	       const struct rte_flow_attr *attr,
--	       void **meta,
-+	       void **flow_rule,
- 	       struct rte_flow_error *error)
- {
- 	struct ci_flow_actions parsed_actions = {0};
-@@ -1005,7 +1005,7 @@ ice_acl_parse(struct ice_adapter *ad,
- 	if (ret)
- 		goto error;
- 
--	*meta = rule;
-+	*flow_rule = rule;
- 	return 0;
- 
- error:
-diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
-index e3f2cf2e3dd..0ff9c567196 100644
---- a/drivers/net/intel/ice/ice_fdir_filter.c
-+++ b/drivers/net/intel/ice/ice_fdir_filter.c
-@@ -1537,11 +1537,11 @@ ice_fdir_entry_del(struct ice_pf *pf, struct ice_fdir_fltr_pattern *key)
- 
- static int
- ice_fdir_create_filter(struct ice_adapter *ad,
--		       void *meta,
-+		       void *flow_rule,
- 		       struct rte_flow_error *error)
- {
- 	struct ice_pf *pf = &ad->pf;
--	struct ice_fdir_filter_conf *filter = meta;
-+	struct ice_fdir_filter_conf *filter = flow_rule;
- 	struct ice_fdir_info *fdir_info = &pf->fdir;
- 	struct ice_fdir_filter_conf *node;
- 	struct ice_fdir_fltr_pattern key;
-@@ -2975,7 +2975,7 @@ ice_fdir_parse(struct ice_adapter *ad,
- 	       const struct rte_flow_item pattern[],
- 	       const struct rte_flow_action actions[],
- 	       const struct rte_flow_attr *attr,
--	       void **meta,
-+	       void **flow_rule,
- 	       struct rte_flow_error *error)
- {
- 	struct ci_flow_actions parsed_actions = {0};
-@@ -3047,7 +3047,7 @@ ice_fdir_parse(struct ice_adapter *ad,
- 	if (ret)
- 		goto error;
- 
--	*meta = filter;
-+	*flow_rule = filter;
- 
- 	return ret;
- error:
-diff --git a/drivers/net/intel/ice/ice_generic_flow.c b/drivers/net/intel/ice/ice_generic_flow.c
-index f5ae6f7d013..1602691b1cc 100644
---- a/drivers/net/intel/ice/ice_generic_flow.c
-+++ b/drivers/net/intel/ice/ice_generic_flow.c
-@@ -2251,7 +2251,7 @@ ice_parse_engine_create(struct ice_adapter *ad,
- 		const struct rte_flow_action actions[],
- 		struct rte_flow_error *error)
- {
--	void *meta = NULL;
-+	void *flow_rule = NULL;
- 
- 	if (ICE_FLOW_ENGINE_DISABLED(ad->disabled_engine_mask,
- 				     parser->engine->type)) {
-@@ -2264,17 +2264,17 @@ ice_parse_engine_create(struct ice_adapter *ad,
- 	if (parser->parse_pattern_action(ad,
- 					 parser->array,
- 					 parser->array_len,
--					 pattern, actions, attr, &meta, error) < 0)
-+					 pattern, actions, attr, &flow_rule, error) < 0)
- 		return false;
- 
- 	RTE_ASSERT(parser->engine->create != NULL);
- 
--	if (parser->engine->create(ad, meta, error) != 0) {
--		ice_flow_rule_free(parser->engine, meta);
-+	if (parser->engine->create(ad, flow_rule, error) != 0) {
-+		ice_flow_rule_free(parser->engine, flow_rule);
- 		return false;
- 	}
- 
--	flow->rule = meta;
-+	flow->rule = flow_rule;
- 	return true;
- }
- 
-@@ -2287,7 +2287,7 @@ ice_parse_engine_validate(struct ice_adapter *ad,
- 		const struct rte_flow_action actions[],
- 		struct rte_flow_error *error)
- {
--	void *meta = NULL;
-+	void *flow_rule = NULL;
- 	int ret;
- 
- 	if (ICE_FLOW_ENGINE_DISABLED(ad->disabled_engine_mask,
-@@ -2302,9 +2302,9 @@ ice_parse_engine_validate(struct ice_adapter *ad,
- 					    parser->array,
- 					    parser->array_len,
- 					    pattern, actions, attr,
--					    &meta, error);
-+					    &flow_rule, error);
- 	if (ret >= 0)
--		ice_flow_rule_free(parser->engine, meta);
-+		ice_flow_rule_free(parser->engine, flow_rule);
- 	return ret >= 0;
- }
- 
-diff --git a/drivers/net/intel/ice/ice_generic_flow.h b/drivers/net/intel/ice/ice_generic_flow.h
-index ca0f7abe9aa..b6eedaa202d 100644
---- a/drivers/net/intel/ice/ice_generic_flow.h
-+++ b/drivers/net/intel/ice/ice_generic_flow.h
-@@ -506,7 +506,7 @@ struct ice_flow_redirect {
- typedef int (*engine_init_t)(struct ice_adapter *ad);
- typedef void (*engine_uninit_t)(struct ice_adapter *ad);
- typedef int (*engine_create_t)(struct ice_adapter *ad,
--		void *meta,
-+		void *flow_rule,
- 		struct rte_flow_error *error);
- typedef int (*engine_destroy_t)(struct ice_adapter *ad,
- 		struct rte_flow *flow,
-@@ -521,7 +521,7 @@ typedef int(*engine_redirect_t)(struct ice_adapter *ad,
- /* Free nested rule allocations only, without accessing hardware resources. */
- typedef void (*engine_free_t)(void *rule);
- /*
-- * Parsers return an allocated final rule through meta on success, and clean up
-+ * Parsers return an allocated final rule through flow_rule on success, and clean up
-  * their own allocations on failure. The generic layer owns successful results,
-  * including during validation; engine create/destroy callbacks must not free them.
-  */
-@@ -531,7 +531,7 @@ typedef int (*parse_pattern_action_t)(struct ice_adapter *ad,
- 		const struct rte_flow_item pattern[],
- 		const struct rte_flow_action actions[],
- 		const struct rte_flow_attr *attr,
--		void **meta,
-+		void **flow_rule,
- 		struct rte_flow_error *error);
- 
- /* Struct to store engine created. */
 diff --git a/drivers/net/intel/ice/ice_hash.c b/drivers/net/intel/ice/ice_hash.c
-index 980abb58f3b..951a9d3aa2c 100644
+index 951a9d3aa2c..2930aca2287 100644
 --- a/drivers/net/intel/ice/ice_hash.c
 +++ b/drivers/net/intel/ice/ice_hash.c
-@@ -82,7 +82,7 @@ ice_hash_init(struct ice_adapter *ad);
- 
- static int
- ice_hash_create(struct ice_adapter *ad,
--		void *meta,
-+		void *flow_rule,
- 		struct rte_flow_error *error);
- 
- static int
-@@ -100,7 +100,7 @@ ice_hash_parse_pattern_action(struct ice_adapter *ad,
- 			const struct rte_flow_item pattern[],
- 			const struct rte_flow_action actions[],
- 			const struct rte_flow_attr *attr,
--			void **meta,
-+			void **flow_rule,
- 			struct rte_flow_error *error);
- 
- /* Rss configuration template */
-@@ -1176,7 +1176,7 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
- 			const struct rte_flow_item pattern[],
- 			const struct rte_flow_action actions[],
- 			const struct rte_flow_attr *attr,
--			void **meta,
-+			void **flow_rule,
- 			struct rte_flow_error *error)
+@@ -656,7 +656,7 @@ static int
+ ice_hash_parse_raw_pattern(struct ice_adapter *ad,
+ 				const struct rte_flow_item *item,
+ 				struct rte_flow_error *error,
+-				struct ice_hash_flow_cfg *meta)
++				struct ice_hash_flow_cfg *rss_conf)
  {
- 	struct ci_flow_actions parsed_actions = {0};
-@@ -1239,7 +1239,7 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
+ 	const struct rte_flow_item_raw *raw_spec, *raw_mask;
+ 	struct ice_parser_profile prof;
+@@ -744,7 +744,7 @@ ice_hash_parse_raw_pattern(struct ice_adapter *ad,
+ 	if (ret)
+ 		goto free_mem;
+ 
+-	memcpy(&meta->rss_cfg.raw.prof, &prof, sizeof(prof));
++	memcpy(&rss_conf->rss_cfg.raw.prof, &prof, sizeof(prof));
+ 
+ free_mem:
+ 	free(pkt_buf);
+@@ -1122,7 +1122,7 @@ ice_hash_parse_action_check(const struct ci_flow_actions *actions,
+ static int
+ ice_hash_parse_rss_action(struct ice_pattern_match_item *pattern_match_item,
+ 		const struct rte_flow_action_rss *rss,
+-		uint64_t pattern_hint, struct ice_hash_flow_cfg *rss_meta,
++		uint64_t pattern_hint, struct ice_hash_flow_cfg *rss_conf,
+ 		struct rte_flow_error *error)
+ {
+ 	struct ice_rss_hash_cfg *cfg = pattern_match_item->meta;
+@@ -1135,7 +1135,7 @@ ice_hash_parse_rss_action(struct ice_pattern_match_item *pattern_match_item,
+ 					RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
+ 					"XOR hash function is only supported for empty pattern");
+ 		}
+-		rss_meta->simple_xor = true;
++		rss_conf->simple_xor = true;
+ 		return 0;
+ 	}
+ 
+@@ -1145,7 +1145,7 @@ ice_hash_parse_rss_action(struct ice_pattern_match_item *pattern_match_item,
+ 
+ 	/* If pattern type is raw, no need to refine rss type */
+ 	if (pattern_hint == ICE_PHINT_RAW) {
+-		rss_meta->rss_cfg.raw.symm = symm;
++		rss_conf->rss_cfg.raw.symm = symm;
+ 		return 0;
+ 	}
+ 	cfg->symm = symm;
+@@ -1162,8 +1162,8 @@ ice_hash_parse_rss_action(struct ice_pattern_match_item *pattern_match_item,
+ 				RTE_FLOW_ERROR_TYPE_ACTION_CONF,
+ 				rss, "RSS type not supported");
+ 
+-	rss_meta->rss_cfg.hash = *cfg;
+-	ice_refine_hash_cfg(&rss_meta->rss_cfg.hash,
++	rss_conf->rss_cfg.hash = *cfg;
++	ice_refine_hash_cfg(&rss_conf->rss_cfg.hash,
+ 			    rss_type, pattern_hint);
+ 
+ 	return 0;
+@@ -1190,7 +1190,7 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
+ 	};
+ 	const struct rte_flow_action_rss *rss;
+ 	struct ice_pattern_match_item pattern_match_item;
+-	struct ice_hash_flow_cfg *rss_meta_ptr;
++	struct ice_hash_flow_cfg *rss_conf;
+ 	uint64_t phint = ICE_PHINT_NONE;
+ 	int ret = 0;
+ 
+@@ -1202,11 +1202,11 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
+ 	if (ret)
+ 		return ret;
+ 
+-	rss_meta_ptr = rte_zmalloc(NULL, sizeof(*rss_meta_ptr), 0);
+-	if (!rss_meta_ptr) {
++	rss_conf = rte_zmalloc(NULL, sizeof(*rss_conf), 0);
++	if (!rss_conf) {
+ 		rte_flow_error_set(error, EINVAL,
+ 				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+-				"No memory for rss_meta_ptr");
++				"No memory for RSS configuration");
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -1223,8 +1223,8 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
+ 	if (phint == ICE_PHINT_RAW) {
+ 		const struct rte_flow_item *raw_item = ice_pattern_skip_void(pattern);
+ 
+-		rss_meta_ptr->rss_cfg.raw.raw_ena = true;
+-		ret = ice_hash_parse_raw_pattern(ad, raw_item, error, rss_meta_ptr);
++		rss_conf->rss_cfg.raw.raw_ena = true;
++		ret = ice_hash_parse_raw_pattern(ad, raw_item, error, rss_conf);
+ 		if (ret) {
+ 			rte_flow_error_set(error, EINVAL,
+ 					   RTE_FLOW_ERROR_TYPE_ITEM, NULL,
+@@ -1235,13 +1235,13 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
+ 
+ 	rss = parsed_actions.actions[0]->conf;
+ 	ret = ice_hash_parse_rss_action(&pattern_match_item, rss, phint,
+-				rss_meta_ptr, error);
++				rss_conf, error);
  
  error:
  	if (!ret)
--		*meta = rss_meta_ptr;
-+		*flow_rule = rss_meta_ptr;
+-		*flow_rule = rss_meta_ptr;
++		*flow_rule = rss_conf;
  	else
- 		rte_free(rss_meta_ptr);
+-		rte_free(rss_meta_ptr);
++		rte_free(rss_conf);
  
-@@ -1313,7 +1313,7 @@ ice_hash_add_raw_cfg(struct ice_adapter *ad,
- 
- static int
- ice_hash_create(struct ice_adapter *ad,
--		void *meta,
-+		void *flow_rule,
- 		struct rte_flow_error *error)
- {
- 	struct ice_pf *pf = &ad->pf;
-@@ -1321,7 +1321,7 @@ ice_hash_create(struct ice_adapter *ad,
- 	struct ice_vsi *vsi = pf->main_vsi;
- 	int ret;
- 	uint32_t reg;
--	struct ice_hash_flow_cfg *filter_ptr = meta;
-+	struct ice_hash_flow_cfg *filter_ptr = flow_rule;
- 
- 	if (filter_ptr->simple_xor) {
- 		/* Enable registers for simple_xor hash function. */
-diff --git a/drivers/net/intel/ice/ice_switch_filter.c b/drivers/net/intel/ice/ice_switch_filter.c
-index 59e18269206..8a550ed4c86 100644
---- a/drivers/net/intel/ice/ice_switch_filter.c
-+++ b/drivers/net/intel/ice/ice_switch_filter.c
-@@ -285,14 +285,14 @@ ice_pattern_match_item ice_switch_supported_pattern[] = {
- 
- static int
- ice_switch_create(struct ice_adapter *ad,
--		void *meta,
-+		void *flow_rule,
- 		struct rte_flow_error *error)
- {
- 	int ret = 0;
- 	struct ice_pf *pf = &ad->pf;
- 	struct ice_hw *hw = ICE_PF_TO_HW(pf);
- 	struct ice_rule_query_data rule_added = {0};
--	struct ice_switch_filter_conf *filter_conf_ptr = meta;
-+	struct ice_switch_filter_conf *filter_conf_ptr = flow_rule;
- 	struct ice_adv_lkup_elem *list = filter_conf_ptr->lkups;
- 	uint16_t lkups_cnt = filter_conf_ptr->lkups_num;
- 	struct ice_adv_rule_info *rule_info = &filter_conf_ptr->rule_info;
-@@ -1705,7 +1705,7 @@ ice_switch_parse_pattern_action(struct ice_adapter *ad,
- 		const struct rte_flow_item pattern[],
- 		const struct rte_flow_action actions[],
- 		const struct rte_flow_attr *attr,
--		void **meta,
-+		void **flow_rule,
- 		struct rte_flow_error *error)
- {
- 	struct ice_pf *pf = &ad->pf;
-@@ -1845,7 +1845,7 @@ ice_switch_parse_pattern_action(struct ice_adapter *ad,
- 	filter->lkups = list;
- 	filter->lkups_num = lkups_num;
- 	filter->rule_info = rule_info;
--	*meta = filter;
-+	*flow_rule = filter;
- 
- 	return 0;
- 
+ 	return ret;
+ }
 -- 
 2.52.0
 
