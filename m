@@ -1,51 +1,50 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D833606A319
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Oct 2026 10:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA18F606A31D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Oct 2026 10:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=QuaJbHju
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=ex4o4RhE
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C90B406FF;
-	Wed, 21 Oct 2026 12:31:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1FA8240B98;
+	Wed, 21 Oct 2026 12:31:08 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8B3A4406FF
- for <dev@dpdk.org>; Wed, 21 Oct 2026 12:31:02 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 03A3340B92
+ for <dev@dpdk.org>; Wed, 21 Oct 2026 12:31:06 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792578662;
+ s=mimecast20190719; t=1792578666;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=gusEQ6QoliRbWLWQr2GTudIPwSFbhfvr55sYZX1iaek=;
- b=QuaJbHjuoZWzbdUctNJuVcoYFG6JD/GckIa973hvGYmi7GT4ZnivtqnLl2sN6Qr6aWIv6l
- YcJNuR6QFZ1TORN93Z/iFVB3Itnwdm7neKFM1XKT1Ql3pIsxQsS430cDSLtPsY556fKP4u
- SsYbWGkiWAewn/dsdojCy8zGayoTAH0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=bxNNdyU6cE+JhBrE6VW457J1EL4lFqNtGPFmNgCS87Q=;
+ b=ex4o4RhE1Vi6rVP7nZbjJT+tjQDSnvock7gQlpk4wopDJO7+kIp7Jv9jGDyz/LdV0Oxm4u
+ YsupfT0z+snly/paj6++nf7eGZUlv6ctODi3I5X40X4WPBYZ1UcAgDnC75VNc0rdfiny9u
+ NBdUhEc6S65pu7h5eH2QmU8DGYSWZD4=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-473-tbGIQeOTOxa-2RyLDP7pkA-1; Wed,
- 21 Oct 2026 10:30:58 +0000
-X-MC-Unique: tbGIQeOTOxa-2RyLDP7pkA-1
-X-Mimecast-MFC-AGG-ID: tbGIQeOTOxa-2RyLDP7pkA_1792578657
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-231-bZJoFF8iMKmG2eKoFgy_Mw-1; Wed,
+ 21 Oct 2026 06:31:02 -0400
+X-MC-Unique: bZJoFF8iMKmG2eKoFgy_Mw-1
+X-Mimecast-MFC-AGG-ID: bZJoFF8iMKmG2eKoFgy_Mw_1792578661
 Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 7AEC31955F14; Wed, 21 Oct 2026 10:30:57 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 20EE61800749; Wed, 21 Oct 2026 10:31:01 +0000 (UTC)
 Received: from dmarchan.home (headnet04.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.116])
  by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 5C151418; Wed, 21 Oct 2026 10:30:55 +0000 (UTC)
+ id D1F6C41B; Wed, 21 Oct 2026 10:30:59 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: thomas@monjalon.net, Xingui Yang <yangxingui@huawei.com>,
- Chengwen Feng <fengchengwen@huawei.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 06/12] drivers/net: remove check on VMDq modes
-Date: Wed, 21 Oct 2026 12:30:20 +0200
-Message-ID: <20261021103027.2050351-7-david.marchand@redhat.com>
+Cc: thomas@monjalon.net, Igor Russkikh <irusskikh@marvell.com>,
+ Potnuri Bharat Teja <bharat@chelsio.com>
+Subject: [PATCH v2 07/12] devtools: check VMDq capability
+Date: Wed, 21 Oct 2026 12:30:21 +0200
+Message-ID: <20261021103027.2050351-8-david.marchand@redhat.com>
 In-Reply-To: <20261021103027.2050351-1-david.marchand@redhat.com>
 References: <20261016130555.1685102-1-david.marchand@redhat.com>
  <20261021103027.2050351-1-david.marchand@redhat.com>
@@ -53,7 +52,7 @@ X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: LXx-cc7eedETuxfOraVUOWCjT4UzOLRIcVzbDgsgM68_1792578657
+X-Mimecast-MFC-PROC-ID: zMC9gGh-8U4TeGHfxW8Z5fBftOjgkxmE_BCEq1r4uHE_1792578661
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -73,121 +72,154 @@ X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-ethdev now validates requests for VMDq Rx and Tx modes.
-No need to validate again in the driver.
+Let's check that the code and the documentation are aligned for VMDq
+capability.
 
-Note:
-- for igb, max_vmdq_pools is already 0 for models that do not support
-  VMDq, so checking the VMDq modes is unneeded,
-- for i40e, the FW flag was already checked to populate max_vmdq_pools,
+Some driver directory hosts multiple drivers that have multiple
+corresponding entry in doc/guides/features/. For this case, only try to
+detect a discrepancy if all docs agree.
+
+Note: net/atlantic and net/cxgbe were forcibly setting some fields in
+dev_info to 0, which is unneeded since ethdev already clears the structure.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/net/hns3/hns3_dcb.c          |  9 -------
- drivers/net/intel/e1000/igb_rxtx.c   | 39 ----------------------------
- drivers/net/intel/i40e/i40e_ethdev.c |  5 ----
- 3 files changed, 53 deletions(-)
+Changes since v1:
+- added helper for checking mq capabilities,
+- added handling of multi drivers,
+- moved net/atlantic and net/cxgbe cleanups here,
 
-diff --git a/drivers/net/hns3/hns3_dcb.c b/drivers/net/hns3/hns3_dcb.c
-index 6d2945d9c5..e7912aebb2 100644
---- a/drivers/net/hns3/hns3_dcb.c
-+++ b/drivers/net/hns3/hns3_dcb.c
-@@ -1840,7 +1840,6 @@ int
- hns3_check_dev_mq_mode(struct rte_eth_dev *dev)
- {
- 	enum rte_eth_rx_mq_mode rx_mq_mode = dev->data->dev_conf.rxmode.mq_mode;
--	enum rte_eth_tx_mq_mode tx_mq_mode = dev->data->dev_conf.txmode.mq_mode;
- 	struct hns3_hw *hw = HNS3_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	struct hns3_adapter *hns = HNS3_DEV_HW_TO_ADAPTER(hw);
- 	struct rte_eth_dcb_rx_conf *dcb_rx_conf;
-@@ -1849,14 +1848,6 @@ hns3_check_dev_mq_mode(struct rte_eth_dev *dev)
- 	int max_tc = 0;
- 	int i;
- 
--	if (((uint32_t)rx_mq_mode & RTE_ETH_MQ_RX_VMDQ_FLAG) ||
--	    (tx_mq_mode == RTE_ETH_MQ_TX_VMDQ_DCB ||
--	     tx_mq_mode == RTE_ETH_MQ_TX_VMDQ_ONLY)) {
--		hns3_err(hw, "VMDQ is not supported, rx_mq_mode = %d, tx_mq_mode = %d.",
--			 rx_mq_mode, tx_mq_mode);
--		return -EOPNOTSUPP;
--	}
--
- 	dcb_rx_conf = &dev->data->dev_conf.rx_adv_conf.dcb_rx_conf;
- 	dcb_tx_conf = &dev->data->dev_conf.tx_adv_conf.dcb_tx_conf;
- 	if ((uint32_t)rx_mq_mode & RTE_ETH_MQ_RX_DCB_FLAG) {
-diff --git a/drivers/net/intel/e1000/igb_rxtx.c b/drivers/net/intel/e1000/igb_rxtx.c
-index 4fda5d57a0..ef531f1cd4 100644
---- a/drivers/net/intel/e1000/igb_rxtx.c
-+++ b/drivers/net/intel/e1000/igb_rxtx.c
-@@ -2113,41 +2113,6 @@ igb_rss_configure(struct rte_eth_dev *dev)
- 	igb_hw_rss_hash_set(hw, &rss_conf);
+---
+ devtools/check-doc-vs-code.sh     | 73 +++++++++++++++++++++++++++++++
+ drivers/net/atlantic/atl_ethdev.c |  2 -
+ drivers/net/cxgbe/cxgbe_ethdev.c  |  1 -
+ 3 files changed, 73 insertions(+), 3 deletions(-)
+
+diff --git a/devtools/check-doc-vs-code.sh b/devtools/check-doc-vs-code.sh
+index 4dacb78b2e..eeb235ae61 100755
+--- a/devtools/check-doc-vs-code.sh
++++ b/devtools/check-doc-vs-code.sh
+@@ -78,6 +78,28 @@ driver_code_dir() # <driver>
+ 	esac
  }
  
--/*
-- * Check if the mac type support VMDq or not.
-- * Return 1 if it supports, otherwise, return 0.
-- */
--static int
--igb_is_vmdq_supported(const struct rte_eth_dev *dev)
--{
--	const struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--
--	switch (hw->mac.type) {
--	case e1000_82576:
--	case e1000_82580:
--	case e1000_i350:
--		return 1;
--	case e1000_82540:
--	case e1000_82541:
--	case e1000_82542:
--	case e1000_82543:
--	case e1000_82544:
--	case e1000_82545:
--	case e1000_82546:
--	case e1000_82547:
--	case e1000_82571:
--	case e1000_82572:
--	case e1000_82573:
--	case e1000_82574:
--	case e1000_82583:
--	case e1000_i210:
--	case e1000_i211:
--	default:
--		PMD_INIT_LOG(ERR, "Cannot support VMDq feature");
--		return 0;
--	}
--}
--
- static int
- igb_vmdq_rx_hw_configure(struct rte_eth_dev *dev)
- {
-@@ -2161,10 +2126,6 @@ igb_vmdq_rx_hw_configure(struct rte_eth_dev *dev)
- 	hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	cfg = &dev->data->dev_conf.rx_adv_conf.vmdq_rx_conf;
++doc_code_map=","
++for d in $rootdir/doc/guides/nics/features/*.ini; do
++	drv=$(basename "$d" .ini)
++	code=$(driver_code_dir $drv)
++	case $doc_code_map in
++	*,$code:*)
++		before=${doc_code_map%,$code:*}
++		after=${doc_code_map#*,$code:}
++		drivers=${after%%,*}
++		rest=${after#*,}
++		doc_code_map="$before,$code:$drivers $drv,$rest" ;;
++	*)
++		doc_code_map="$doc_code_map$code: $drv," ;;
++	esac
++done
++
++docs_for_code() # <code_dir>
++{
++	tmp=${doc_code_map#*,$1:}
++	echo ${tmp%%,*}
++}
++
+ # compare doc vs code items:
+ # - if driver matches code dir: report differences in both directions
+ # - otherwise: only report doc items not in code (shared code directory)
+@@ -119,10 +141,55 @@ check_rte_flow() # <driver>
+ 	fi
+ }
  
--	/* Check if mac type can support VMDq, return value of 0 means NOT support */
--	if (igb_is_vmdq_supported(dev) == 0)
--		return -1;
--
- 	igb_rss_disable(dev);
++has_doc_feature() # <ini_file> <feature>
++{
++	grep -q "^$2[[:space:]]*=[[:space:]]*[YP]" "$1"
++}
++
++all_docs_agree() # <driver> <feature>
++{
++	code=$(driver_code_dir $1)
++	first=""
++	for drv in $(docs_for_code $code); do
++		d=$rootdir/doc/guides/nics/features/$drv.ini
++		has_doc_feature "$d" "$2" && val=true || val=false
++		[ -n "$first" ] || first=$val
++		[ "$first" = "$val" ] || return 1
++	done
++	return 0
++}
++
++check_mq_cap() # <driver> <feature> <indicator> <code_pattern> <mq_pattern>
++{
++	if all_docs_agree "$1" "$2"; then
++		if has_doc_feature "$doc" "$2"; then
++			git grep -qE "$4" -- "$code" ||
++				error "$2 documented but $3 not set for $1"
++		else
++			! git grep -qE "$4" -- "$code" ||
++				error "$3 set but $2 not documented for $1"
++			! git grep -qE "$5" -- "$code" ||
++				error "$2 mq_mode referenced but $2 not documented for $1"
++		fi
++	fi
++}
++
++check_mq_caps() # <driver>
++{
++	code=$(driver_code_dir $1)
++	doc=$rootdir/doc/guides/nics/features/$1.ini
++	[ -d $code ] || return 0
++	[ -f $doc ] || return 0
++
++	check_mq_cap $1 "VMDq" "max_vmdq_pools" 'max_vmdq_pools[[:space:]]*=' \
++		'RTE_ETH_MQ_(RX|TX).*VMDQ'
++}
++
+ if [ -z "$trusted_commit" ]; then
+ 	# check all
+ 	for driver in $(all_net_drivers); do
+ 		check_rte_flow $driver
++		check_mq_caps $driver
+ 	done
+ 	exit $result
+ fi
+@@ -134,4 +201,10 @@ if has_code_change 'RTE_FLOW_.*_TYPE_' ||
+ 		check_rte_flow $driver
+ 	done
+ fi
++if has_code_change 'max_vmdq_pools|RTE_ETH_MQ_.*VMDQ' ||
++		has_file_change 'doc/guides/nics/features'; then
++	for driver in $(changed_net_drivers); do
++		check_mq_caps $driver
++	done
++fi
+ exit $result
+diff --git a/drivers/net/atlantic/atl_ethdev.c b/drivers/net/atlantic/atl_ethdev.c
+index 24184bdb18..44a65d7557 100644
+--- a/drivers/net/atlantic/atl_ethdev.c
++++ b/drivers/net/atlantic/atl_ethdev.c
+@@ -1106,8 +1106,6 @@ atl_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 	dev_info->max_vfs = pci_dev->max_vfs;
  
- 	/* RCTL: enable VLAN filter */
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-index 41d5586403..2405d9e119 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.c
-+++ b/drivers/net/intel/i40e/i40e_ethdev.c
-@@ -6655,11 +6655,6 @@ i40e_vmdq_setup(struct rte_eth_dev *dev)
- 	 */
- 	i40e_pf_disable_irq0(hw);
+ 	dev_info->max_hash_mac_addrs = 0;
+-	dev_info->max_vmdq_pools = 0;
+-	dev_info->vmdq_queue_num = 0;
  
--	if ((pf->flags & I40E_FLAG_VMDQ) == 0) {
--		PMD_INIT_LOG(ERR, "FW doesn't support VMDQ");
--		return -ENOTSUP;
--	}
--
- 	conf_vsis = conf->rx_adv_conf.vmdq_rx_conf.nb_queue_pools;
- 	if (conf_vsis > pf->max_nb_vmdq_vsi) {
- 		PMD_INIT_LOG(ERR, "VMDQ config: %u, max support:%u",
+ 	dev_info->rx_offload_capa = ATL_RX_OFFLOADS;
+ 
+diff --git a/drivers/net/cxgbe/cxgbe_ethdev.c b/drivers/net/cxgbe/cxgbe_ethdev.c
+index 82e67eeff1..93554f354c 100644
+--- a/drivers/net/cxgbe/cxgbe_ethdev.c
++++ b/drivers/net/cxgbe/cxgbe_ethdev.c
+@@ -129,7 +129,6 @@ int cxgbe_dev_info_get(struct rte_eth_dev *eth_dev,
+ 	device_info->max_mac_addrs = 1;
+ 	/* XXX: For now we support one MAC/port */
+ 	device_info->max_vfs = adapter->params.arch.vfcount;
+-	device_info->max_vmdq_pools = 0; /* XXX: For now no support for VMDQ */
+ 
+ 	device_info->dev_capa &= ~RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP;
+ 
 -- 
 2.54.0
 
