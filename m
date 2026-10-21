@@ -1,22 +1,22 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725E9606A319
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Oct 2026 18:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23746606A319
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Oct 2026 18:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=lIBE9FL7
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=Wcaf8PK/
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 19600402D6;
-	Wed, 21 Oct 2026 20:17:43 +0200 (CEST)
-Received: from SA9PR02CU001.outbound.protection.outlook.com
- (mail-southcentralusazon11013020.outbound.protection.outlook.com
- [40.93.196.20]) by mails.dpdk.org (Postfix) with ESMTP id 545CB402B3;
- Wed, 21 Oct 2026 20:17:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 11C02402D6;
+	Wed, 21 Oct 2026 20:18:33 +0200 (CEST)
+Received: from PH8PR06CU001.outbound.protection.outlook.com
+ (mail-westus3azon11012026.outbound.protection.outlook.com [40.107.209.26])
+ by mails.dpdk.org (Postfix) with ESMTP id 56AA1402B3
+ for <dev@dpdk.org>; Wed, 21 Oct 2026 20:18:32 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DKteZ7thfCA0tTO6ho4pU8k+y4mCNSwWkMEKFpxsUg2bCMMf4S19o89fWH8wRB4IhBH53QUE+Sz2x3uqiVXLyxWkB/W8xHAev+BoglggdW2F/nWRe18rounFZUSt5oKBdlXuh+BcgdF/1jtgaGzgvqn2PagozNSGwibu8H50BbjkbQlJq/2OQyJlW7TgdC4Lrx9bYnu28aZ1yJakt9fz5EKn4q4akDB3JdT6IxPHhvnlQ6G5Br4T48pJHr/0sQIkmx7Vs8nQBt4AK8bkOF7Xoi0uy6MUClhffKg+ms066PvZDNbzqIWo196G2Em3XMPxOYJt7ZVUmceYpWmvCHywEQ==
+ b=atPam6nugIS6G5hXyD9TGvqbovmlKlRKU4q9MnGQc2seGWmEbuW4J3DHH07OMYlPzXAF6tAd2JpXYJwFWdajD4wNLXdm6p8rEo+KqWmdYKWbzz+LSSNj0pDRI2fZ+m8Lhs1i/mC7pFQ6Xd8k4YMOttPwpmofKrk4Et7nrL7GUPZGVO8OnB9+YfSQPINOFbZqGLDe6OO78vUV+1R+5qvAZs3K74wOqqqWL9KlRkxNt01R1bSd+dIENwFX8SxtIi1jsPenTDS1PUzBf0EGaE676LJgNUg1I3kGcLEuMk3oqbzWlRHPFgHQJb73LMfPo69PbkxomQxGdrfs1uojsBI/Aw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d/4b7ZamWy3TpqFWJjfRAqbaMs1dxlI8mG5xgcVT2As=;
- b=Nss3dldJKxl0+ZKK06/xgaa1F0Xv/l2PJ83VNg/6+JfQOlIkzgz3S1UodVWr1n8yBTQ0MpIyycifqv4rKcoseIU4ZAtWjK2dDYvlOerL8tpIoTOYdcRa0KFP3Yc0g/jsrzwA4pZ2aGzx/8A3HABIj1yLEDsAuMy4XZ1pKM089i9wgaUG4GNOyZS8obmHJGnWGa+g15ilODGKs49iOYCqtCj1VL/QHCKzgZPdD07Rryp8+EcvAWRkj/d+qA0Dka/4USFFRezkjGVFOdRndkvcsDTwm/h0HMGNUGVlKWSUsCFrjrjw3+CejZAudKBrNv3w2WAQzjy6Nc502150zki0Xw==
+ bh=nKkI1PscoEZv+lTgBp+BD/kwccEwl5/+JnXSHCxjK/U=;
+ b=Ipu0rsXRZXTlxIUKRyOivZFgKB1yBV9G8ewRNQ2BkjieFrqR18yjKEbzg+IfMsyjKYZWIiTNBSkYTGnG8RAVulg4HLX6uHkjE54AztNyWfOw8/mWpCfH0qXdg2i58xVUGgmnLeBeeXvbV8HcYrDCyWGYDRGemheTr0Illao3B21hF/hPn3TLVHJDIFDNckJiVOdzPHJsWvy78Jr//fRY5mlZWzz4w+nhA+q1zYE45gsdvMUI9D/Yszvq2kfeXnTWbiiNAp6bXFfAUaNLNRydzRuqMI1ssqe4e3WTnJlBlT6h0im627yfCxHVYi81fKYy45gvVrjjiASnELalU0wTnw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -24,18 +24,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d/4b7ZamWy3TpqFWJjfRAqbaMs1dxlI8mG5xgcVT2As=;
- b=lIBE9FL7URWURcwVFw1MRyvBBV+nOt0rQ/oZMBZBGeGhVrFfr3dYTQf48HS0zmZ2E1YtfECA3a7pYg0Hy0eWzrgFyA2UiABhgstCkxE/a2+q/qtNqXRdkfJkKQzikGPaIG221Tw8DkSbxKw3Ut9kV6+H4YOmPY6dbTLjdtIKuXOoMSBm0fTcLYqIQ3pJ81suu0V7cgl2KV6Yt3Q/RdZ8TxEGyMvsz+aOBh4qa+Yp0bY7kxP3mmDndpbXPoqXOEzl3w1PjtsR4fBwLzdyul0dy2RAa8O0vKQ60UTrAajooAkTb4qkYjjd2KkcyvxsaauSwpzQ5W1rR95CbWpFOe09Ig==
-Received: from BLAPR03CA0101.namprd03.prod.outlook.com (2603:10b6:208:32a::16)
- by SA0PR12MB7092.namprd12.prod.outlook.com (2603:10b6:806:2d5::20)
- with Microsoft SMTP Server (version=TLS1_2,
+ bh=nKkI1PscoEZv+lTgBp+BD/kwccEwl5/+JnXSHCxjK/U=;
+ b=Wcaf8PK/atY4P1S8+0bWIX52QI1pzMMQ4PxLmFx56XzGAlgkDkGxWdGVZvutM6stZ4La6cP5OQ+9m1dm/zyY3kHO9UQ2v30Cef0o/fekOJTGnsmJGcZUvrguWfBgN8pqWGnyMWQ68WWmQiGva4LhheQs3C1z9nGl3Oc1Mdt7QhjM6SiWAL5rqWghsovFb61FNCcuR2UkZfPofb3YjdFERaxb1DS+enRGtURwHMYqRm2Dv5x9uPPmmgqVaYezi15iN7+9dY7J6Hm0AmG6JupTq3PzL9Bn/13JDzeCVEXRJDE2MiJLuvSRRmvmbiIBW8ok+Lk1vEaemL7zWJOnWnmPVA==
+Received: from CH0PR07CA0002.namprd07.prod.outlook.com (2603:10b6:610:32::7)
+ by SA1PR12MB6993.namprd12.prod.outlook.com (2603:10b6:806:24c::22) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.18; Wed, 21 Oct
- 2026 18:17:35 +0000
-Received: from MN1PEPF000793FE.namprd05.prod.outlook.com
- (2603:10b6:208:32a:cafe::8b) by BLAPR03CA0101.outlook.office365.com
- (2603:10b6:208:32a::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.496.5 via Frontend Transport; Wed, 21
- Oct 2026 18:17:34 +0000
+ 2026 18:18:27 +0000
+Received: from MN1PEPF000793FA.namprd05.prod.outlook.com
+ (2603:10b6:610:32:cafe::83) by CH0PR07CA0002.outlook.office365.com
+ (2603:10b6:610:32::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.15 via Frontend Transport; Wed,
+ 21 Oct 2026 18:18:25 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
@@ -44,26 +44,25 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.160 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.160) by
- MN1PEPF000793FE.mail.protection.outlook.com (10.167.249.202) with Microsoft
+ MN1PEPF000793FA.mail.protection.outlook.com (10.167.249.196) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.546.15 via Frontend Transport; Wed, 21 Oct 2026 18:17:33 +0000
+ 15.21.546.15 via Frontend Transport; Wed, 21 Oct 2026 18:18:25 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Wed, 21 Oct
- 2026 11:17:04 -0700
-Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
+ 2026 11:17:59 -0700
+Received: from nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Wed, 21 Oct
- 2026 11:17:02 -0700
+ 2026 11:17:57 -0700
 From: Dariusz Sosnowski <dsosnowski@nvidia.com>
 To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
  <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Alexander Kozyrev
- <akozyrev@nvidia.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH] net/mlx5: fix mini CQE compression format log
-Date: Wed, 21 Oct 2026 20:16:45 +0200
-Message-ID: <20261021181646.1385008-1-dsosnowski@nvidia.com>
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH] net/mlx5: log Rx queue CQ number
+Date: Wed, 21 Oct 2026 20:17:38 +0200
+Message-ID: <20261021181738.1385097-1-dsosnowski@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
@@ -73,29 +72,29 @@ X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF000793FE:EE_|SA0PR12MB7092:EE_
-X-MS-Office365-Filtering-Correlation-Id: c37454d5-751c-4b5d-ad34-08df2f9f93f1
+X-MS-TrafficTypeDiagnostic: MN1PEPF000793FA:EE_|SA1PR12MB6993:EE_
+X-MS-Office365-Filtering-Correlation-Id: 540c38db-7db8-4308-1e2b-08df2f9fb2ab
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700016|82310400026|376014|1800799024|23010399003|18002099003|10067099003|261021123027099003|11063799006|261021135927099003|261009223027099003|261021121427099003|56012099006;
-X-Microsoft-Antispam-Message-Info: 3aqJP4Ca5hnGawdrpGstrvR+qj3rylLyhtCA4MopxHheFguhppHh+BbBz4S0vQP4pLp62FWIwA/wx9dl6CkjbSqW92VqiUl5dFxdZuvXgkuOrU08AsAIVOu0I23VSv5/pocbQxAgxFKVp3eDav3BPJHr9PSBUWgnWUkrbaT4qOZQ7+X/Pwr972ETwSV7p+h/CHt0e/esU+r4tqRBklvtaLT9JWqhBDf0GNRM+RHmI0TsdadorXo9YZaxjZ/WNqS3sVP4/3UxWPCVtztL9pqJX8E6d5TcIIa76fQYrFGx2vYHnA9qGuRRgtfPbsNk4gaZF/upiSAEA60fI/ZGM77KDOLnDMr5dNvmSg3kf3PW90WE6lOekCe+l3loN/x4Y1ZwBh7w81vZh60oZFSmsRGzSMiJ6ehmFuTwQsAL6aBKwU0oamAbPbH58VZI+IqAevkXLwbJWXvdFDowG1EFRxk9KLqUA4YaTvJcPLs7Ku3X8oGnoVeSveeSg8XOrGKxWZ1ZVVm3rlN/yPZpeVy7AGWGSoKSfy7UIEwwvlsr/2oHVEOPBQxRe6/sKE+rfnR424CTn0VOJ9cQxxUpOnjiHbzvmc6borbvvRFe/xNa9Iz0o40u5LaMdblUvRa9oyqVQdEjxyw29JgDZFWTcwgwZkKjvZ1H+ZhsBfG4UpV+krrCTvUS7Ud5q39alr2q57IEvXLYcR1C+2ablxLDm3q12c4zlQ==
+ ARA:13230040|36860700016|82310400026|376014|1800799024|23010399003|6133799003|10067099003|18002099003|11063799006|261009223027099003|261021121427099003|56012099006;
+X-Microsoft-Antispam-Message-Info: Ih1fELlw6Vs5TZhnXUFWq8CAhMNk51IH2gKqdFtMa0SdqwIcDt9RqEhNBGM5J6A17WPRGfK55CxmXjPM3Y77Z4s5SrTyHZXLBbE/tUkm5X2V43nxGpplIo3ciqJRg1OVYWNl1P9CbgGzDh5cUn7UyIZ76dvPRXfItJ5WVUZBGPLhXKq3UIJzqgO89DAttuFsHck/QWdjjtPotC+qJJ8VG5hTziR+77PqUrpG6AAv6TdtlN2O19z4uYUt+UZ8hiDZrbMA8HvXyNv95iAd7NCqB9oEw2BD++z5bUc8JHU811dYTIMo+zzJ3pDEkJYmrjYj1B0To9WAfhTqc9XnAoXqWMUJjAc2VYndHFJpfiJK7QzRrziOH6INcxOiCzses/GMv6xbCDBXSB7iv7+xqtrTJG2vgSX0xQp4WyqlWsfRAza4yiaudb5Dq0gWah8zd4QNFI9nyjBaMIzgKhAZ6cICWkpTcKs+5gmtc5NErfJjcsajFs96ITg1X6CHq2mlQf0YCx0OdhgTrpp9v8qRoLGI1CqDZDwP41rYuTgRRagOBeFu7h+2XnneZPSxKpoWnbBWSmyAKc63vMdgPGpbBGhrNMfYFMCzreJuvv6mSKTUwKvKbUU4n05EgjKjr9IBph3UpZyEnZc48awkZJ9HY3GtRGS/jZ2UC7ZRGmkyIiOs/ZVXc18Jq5BNvdtrLp/n0EbcmPa35on5sug/RX6BY6N7bQ==
 X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700016)(82310400026)(376014)(1800799024)(23010399003)(18002099003)(10067099003)(261021123027099003)(11063799006)(261021135927099003)(261009223027099003)(261021121427099003)(56012099006);
+ SFS:(13230040)(36860700016)(82310400026)(376014)(1800799024)(23010399003)(6133799003)(10067099003)(18002099003)(11063799006)(261009223027099003)(261021121427099003)(56012099006);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: j0qko69G3/XTMrGh7lMf8R+eTgv0EEj861VhjToSAX09vVFGdJ4H9Bqjab+dSlGhVDG+bwuTIx5h1xnOFqrKbc5TeHhTb9IhxoF9075zxko2i/JFRe67M6wmIp9/tgqVYmLxj8SzfzJmmG+d9scVhx3uDUUjbW9cjQpbsGsN+Q13lNP2Mt9ypNlKmXBHGNMRCNJcNiF5DWHsoUl5G2+09ZDCX2ejwyAVkHNzYUV4cNNpTxq7oGRYQ5jW7kZpxuSiLWv+C9J68M9A1e+RH5toRcaUFwVGFLqeh6CwIZQy0TahZRuWeBFERbVF6OBBirREduUIOLqkl0rhs1bh1OTy1p760SB5kMvwaFIz/hFEPjuHqmNjXApopFO2y+VlgtjrpzOUZ3BHWsDWGbmxn41qvD4yb/v9ZJHBM0GXUD1bBYu3JHMAyGM/Pvc33auPN8MM
+X-MS-Exchange-AntiSpam-MessageData-0: dmaeKxMqfhOxYlUSA//k+fr+UO5Fm7d+c+1IKLTJRbQf1e/di+GiNRFeVGTUuAQJPy3YI7jCDKtz0D50msZT8o6SV57BghD6VEyRtimoOL7TjA1l1RnkRlVGWBUNzmDSaSnH4BM+b/LeJEgaHorXNW2d5X/IxX/U0hG6A6P5jzUxVT/rA8wTiozxkwrO7iE2g5SkKkY63ZEF13CVQ/oohAUfNqeM1qYqVGRSReZCS/lru/piL++C8U/P9cnoETuyw3uzJ3MUmWGdPfvc3meB8y1jCC44ou1y6JFvLYZYtqaKtQXuNR6hv58chUR089EJ8f9jp+07G2P57nqUf/L5oeb1P2gtBftno3h2xrdAdsU5vNYDEeDqbbnAdTN2xI8V6uSZerD++moYW9sJzQraiH8s/WAEqIerAkS5XWKlV7hScQei5N4XJiscravhdjoD
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2026 18:17:33.6445 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c37454d5-751c-4b5d-ad34-08df2f9f93f1
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2026 18:18:25.1907 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 540c38db-7db8-4308-1e2b-08df2f9fb2ab
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: MN1PEPF000793FE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: MN1PEPF000793FA.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7092
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6993
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -112,34 +111,28 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Configured mini CQE compression format was logged on CQ creation,
-but not the actually used one. This patch adds logging of both.
-Also Rx queue index is added to the log.
-
-Fixes: 54c2d46b160f ("net/mlx5: support flow tag and packet header miniCQEs")
-Cc: stable@dpdk.org
+Log CQ number of the completion queue created through DevX
+for each Rx queue during port start,
+to allow easier debugging with FW tools.
 
 Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
 ---
- drivers/net/mlx5/mlx5_devx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/mlx5/mlx5_devx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/mlx5/mlx5_devx.c b/drivers/net/mlx5/mlx5_devx.c
-index 4b30a4fade..374d15a07c 100644
+index 374d15a07c..bec0aa8ca3 100644
 --- a/drivers/net/mlx5/mlx5_devx.c
 +++ b/drivers/net/mlx5/mlx5_devx.c
-@@ -478,8 +478,8 @@ mlx5_rxq_create_devx_cq_resources(struct mlx5_rxq_priv *rxq)
- 			break;
+@@ -526,6 +526,7 @@ mlx5_rxq_create_devx_cq_resources(struct mlx5_rxq_priv *rxq)
+ 			return -ret;
  		}
- 		DRV_LOG(DEBUG,
--			"Port %u Rx CQE compression is enabled, format %d.",
--			port_id, priv->config.cqe_comp_fmt);
-+			"Port %u Rx queue %u CQE compression is enabled, format %u (configured %u)",
-+			port_id, rxq->idx, rxq_data->mcqe_format, priv->config.cqe_comp_fmt);
- 		/*
- 		 * For vectorized Rx, it must not be doubled in order to
- 		 * make cq_ci and rq_ci aligned.
+ 	}
++	DRV_LOG(DEBUG, "Port %u Rx queue %u cqn=%u", port_id, rxq->idx, rxq_data->cqn);
+ 	return 0;
+ }
+
 --
 2.43.0
 
