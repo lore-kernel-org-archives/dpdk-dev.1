@@ -1,61 +1,61 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58945606A319
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Oct 2026 09:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F4A606A31A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Oct 2026 09:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Neh3ihq+
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ZqSTHcl4
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BD9DC40608;
-	Wed, 21 Oct 2026 11:17:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 863524064F;
+	Wed, 21 Oct 2026 11:18:21 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id EE19A40041
- for <dev@dpdk.org>; Wed, 21 Oct 2026 11:17:45 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id AE33440041
+ for <dev@dpdk.org>; Wed, 21 Oct 2026 11:18:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792574266; x=1824110266;
+ t=1792574300; x=1824110300;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=spoNNrbVZm3nt4jb9DZMKDiK2Eqw5WW8817az3MyvJU=;
- b=Neh3ihq+6zOjQpTXF1wm7bGhZema//TyXAfr0GsUIOrKnEr/f+HcRDVg
- SKPKZxwWISbT58LqdwIlhxUuHSiFWSevp2Bt9tDB3gZgm1WzkEVE2wfQ5
- rW37xTzBMBx9f36Zr6bfXl7X4vh6vk8KvXCrKCtnkzKO6pB+g6Cl0lJe2
- asbOfOyYFfogWJ3WgPFKbBQuaRZmPxDagemP+TTiNypgwOUnWCidyEjQA
- yXF/glDGfXziFfpIG+PylfFzoU6VduGCeaQzebhvo9rUrthJ8mt2QG21s
- MdFp+BsPq9Xlc/QhR9WVysM0U7Pn9tkKCY+ytJ6E1MlB91wudgmE+jrEw g==;
-X-CSE-ConnectionGUID: PM9nXe7bQtqFyWXAPG/Ylw==
-X-CSE-MsgGUID: k5PZThJwRQ2TaAXwJ7FASw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1192264"
+ bh=qpVRYefvHcQJSroC/Ajjyu/BrBzbut6dVqGW0nzQrzI=;
+ b=ZqSTHcl43JpqQBYkTeCk8F3hCtnftPig5nyoswCNbBW/4gij9XjqGdLO
+ YQMBEyY76qRuGagejBFcM3WQZ1bw9wqtHYZyVIfC+tyY6RIHulYjXHhsO
+ +LXQhkmUm+SXNyfvQdsRNxL1+4zEgBqSc9zHKPDJNFFc/pNE+i6DOU+7a
+ arnmWLHWG9cq0A+cZSftiQQPfYYR03eHxGyGJFjm/IDhwtaN3AlY/omnY
+ SNazIHys2xEiEmVF428y8VOWq9y12FMquUonGiEaFLqrcy2G6CFKlKqoy
+ omV7hEwJllN4iVxNRIRIOBLsaiIXSS65WE+nCKCacmYZucWiXxS7f6QYt g==;
+X-CSE-ConnectionGUID: 0yORhOnQQriZmD8zlPoCvg==
+X-CSE-MsgGUID: aAvGIxmiSSu9IL8S5diqrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1192297"
 X-IronPort-AV: E=Sophos;i="6.27,169,1787036400"; 
-   d="scan'208";a="1192264"
+   d="scan'208";a="1192297"
 Received: from fmviesa011.fm.intel.com ([10.60.135.151])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 Oct 2026 02:17:44 -0700
-X-CSE-ConnectionGUID: TM+NR5zERFOgS+JBdT0qOA==
-X-CSE-MsgGUID: sCWCdkP0QKStZP+VB0xDZQ==
+ 21 Oct 2026 02:18:19 -0700
+X-CSE-ConnectionGUID: bfyMDIU+QKOZHdUBbGv53A==
+X-CSE-MsgGUID: kVQPDYDQRXGBksW8bBrFbg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,169,1787036400"; 
-   d="scan'208";a="4876177"
+   d="scan'208";a="4876455"
 Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
  by fmviesa011.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 Oct 2026 02:17:44 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ 21 Oct 2026 02:18:19 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
  ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 21 Oct 2026 02:17:43 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ 15.2.2562.49; Wed, 21 Oct 2026 02:18:18 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Wed, 21 Oct 2026 02:17:43 -0700
-Received: from BN8PR05CU002.outbound.protection.outlook.com (52.101.57.44) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ 15.2.2562.49 via Frontend Transport; Wed, 21 Oct 2026 02:18:18 -0700
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.62) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Wed, 21 Oct 2026 02:17:43 -0700
+ 15.2.2562.49; Wed, 21 Oct 2026 02:18:18 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IdWc7icz25MFm3rGXxzWYAG8OOK6cFeBqDTBgmvScInE7asbF0LGESip2FX+Bgcaj7rScXdFf1eZ/rbb7qxUiBUIz9IGidj8sqZMH6bcKk7CFRAExV6gndI3uglvkPIavJiRXKQLwr6pzkoTwGVfOiszu5urJiirB8cpLkG2DV9NZEdqK+HXmvwW1T0KdNsxFabd2/VojdNKLLmn++5MokKxGwmf7AwffZ5Q1inrKRipu91NJ+0BSKtFHh6RRtk+pQacj6yKe+bthfrJL075Rucbku4o9q7Y3Z1hX6jeNy3heTY+SFjBwjU7hvxcdg+5UgKGpifEVVaHqWQvIH42MQ==
+ b=b18pF4AkOT/DOmNMeAMMdIqb2AVxo/+IyNWCkRqq3QtlLxxB9EtxFCAOf67hxNoBks7D2YmIVPINiln6saL+NEdTuxFpZUwkch4wuFVzuPJiokdHc1+SilGw4SY8fXJ7qUgr6huVDjq1xV7oD74kdUhSjDZoePjGWxcjTkPbdCbtwNgaMeG2Cz5iXeWeHNNxmqyczxIGZU+7PTEfAu2hFYUuVlm/YmClozyufwN0t9xE8b5IKULNwl5wtHwbYjt+87YOna62oMRrlIgVtzSJdP/EI/JjmqLQpOqClZ8QAUHAoT6qIdsyBkmmbdp4R0X5nsseYd5JjPy6WrZP6PP5RQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I7UdOcLmPcWGiYxmOhtzlm03xDUil9jyVN6lDYxHgF8=;
- b=pqQS25xBAEbO9qswLaast7DU+t0CAvJoKVL/QmYwOe5pikkXSfkgS/dRXvaOm1dPPYwXG8LuS4WzoOVc6wx2Fg840mDzngCPCUSoPkNwY6BwE82zy3hjYY73WBiUEnPWOQ+HuKbQZg+9L+tT3j1bWHOJe97+hdqJNRHvZw2IlnwbDLPj4fDDreAg6Yk+TKlhlQHjZQR/cZbY/X/iI5hvOOnTRNsCVZR7oYEbmozrpLgLvZuOUXDaF+7ELo0khOoACvHx2LOTEbbvcBxSB4q8JvQfFYC1tF3xlW/ZXtip28XzXmMCazA7QIkbdsaRy2tI3pve4iGy3Cfe04HBG+kDpw==
+ bh=2dRuFJZ4OqdX7rd/ZFwHe4rPZ+qjDCJ0l05mDOebQEg=;
+ b=bFprJNEBGWp3i7nG9My/qHMrcMhumLLhPwGzglDv1nLoHqSfGZHMgYDUxyiDFB8FmHyT54LNC396YGO+iWo6rdJtJ30ltZdNSzRbjwHIKFnBBE1pE/RlFnamp+tOGHF4ZRtnqwOfgbpDJg5wjArtfx7N9VFGiGToUT3wyLIXZZj6t/gtBGYxAYsHf9zKpyYna+F8pV3r3YpoVQOfyd1zBGfg71WE/5gWsBOw4zyDs9gst60z/jFEINyNN+5p1zMqylaI78Y3ouEp4w+anEyWhJRRbO90LazxrrTRpBouRzUEbFn8dyN+eIq1k8aIlFjF2KVLBUq/AEZLdLWsJ98jJg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -65,80 +65,79 @@ Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
  by BL3PR11MB6483.namprd11.prod.outlook.com (2603:10b6:208:3be::13)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.14; Wed, 21 Oct
- 2026 09:17:41 +0000
+ 2026 09:18:11 +0000
 Received: from SN7PR11MB8066.namprd11.prod.outlook.com
  ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
  ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0522.017; Wed, 21 Oct 2026
- 09:17:41 +0000
-Date: Wed, 21 Oct 2026 10:17:36 +0100
+ 09:18:11 +0000
+Date: Wed, 21 Oct 2026 10:18:06 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: Anatoly Burakov <anatoly.burakov@intel.com>
-CC: <dev@dpdk.org>, Xiaolong Ye <xiaolong.ye@intel.com>, Yahui Cao
- <yahui.cao@intel.com>, Qi Zhang <qi.z.zhang@intel.com>
-Subject: Re: [PATCH v1 2/6] net/ice: fix inconsistent state on FDIR failure
-Message-ID: <atiDMDdGHN3HrcS2@bricha3-mobl1.ger.corp.intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v1 3/6] net/ice: standardize VOID handling in flow parsers
+Message-ID: <atiDTvOdVy1Xw75b@bricha3-mobl1.ger.corp.intel.com>
 References: <cover.1792498154.git.anatoly.burakov@intel.com>
- <c1c40841ee6fba9e2d0322a2ae1fd7ae06cff891.1792498154.git.anatoly.burakov@intel.com>
+ <12811edcc0860be69711f2856fbab6fe82e27b57.1792498154.git.anatoly.burakov@intel.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <c1c40841ee6fba9e2d0322a2ae1fd7ae06cff891.1792498154.git.anatoly.burakov@intel.com>
-X-ClientProxiedBy: DUZPR01CA0257.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b5::29) To SN7PR11MB8066.namprd11.prod.outlook.com
+In-Reply-To: <12811edcc0860be69711f2856fbab6fe82e27b57.1792498154.git.anatoly.burakov@intel.com>
+X-ClientProxiedBy: DU7P191CA0014.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:54e::27) To SN7PR11MB8066.namprd11.prod.outlook.com
  (2603:10b6:806:2df::18)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|BL3PR11MB6483:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0b8d93f6-0c3d-4411-6e62-08df2f54288c
+X-MS-Office365-Filtering-Correlation-Id: 8bdd9ee6-52fc-4faa-9834-08df2f543a5b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|23010399003|1800799024|376014|366016|10067099003|22082099003|18002099003|4143699003|11063799006|261009223027099003|56012099006;
-X-Microsoft-Antispam-Message-Info: /oXjA5ZQ+4l8QlVwpjFsuk7jBr7GjFdqhb41K+OAMG4ovCqEVvftSK2OaQw6Kq+wc8Ib6zpT2thg82pvg/J/WhAqDqBy+AuwUuyfnCmgJkDjb91qfg8+6JnIFkuMaZF+YuYdJLy5pkcKWh5Kas6Gun7jhnJCXBzmuNDNcDZ9sZwYESbxxpd4OkAaCG84HsZUr6ZGieIjzWwA+DX5dByuUZQh/OCGjHhFnCsX5HSayXTeVR3j3GX5mHYgMhrZ86/LELRG6fzH8qLCdCaxbgXZpAZ8wXLHNNtZtXrsPku3DetCn/eOraM1qC4m4ZDYhAnrpctmfmrNeAk9773Ua0WF+aDPzru2+Me2ew5ArFg5aAHnn7g9uB3mg5FKK4lpm5QnEdO+mP5no4wI0JALl6gOOErqIONQHrtGlOzEtayUokYRA1UXknk5hytW2/bJZQDdKpk6R0Lj7r0wWXomZ57qHvcvP1Fv5k1qViROsq6QdTw5/cpp5ED3bUct8+IDIVj5wGpMv0bveMsIBFUSeiZSTJ22P67gRX3O8HWSMxJEJePCDOPDbZFkeWYszrF/1EwQiSSEpwwstEL14+5Y7FdM5BEbdnL66RBOBHAfivjaMJvrbe/aDtqo7KClztFbUmKgnUJigurGXdkJFtdIzKildlVRstlFi2TZQSmqF9LwA1Y=
+X-Microsoft-Antispam-Message-Info: pictmleRhdXLeN8/bMkYeCPMj+B0L4yaqmlk/LBqWQjus4msg1jkxUHDZ6k3HyE1y8WTmPhKar285DeFqTY0rEDm3FbRmYmOu0BA3cRTfjki7XW261Vh2MlE670w29DPMe3jvx0/Qim+i1E9tS6D03azC+tGlA371yDSSjMu+VYPJLqgS01l/XQVhCNDUUqA07RGy+Hp/7I1vzGoINr9XXd2nHiHgPtyaUKhDcJfPqwhfY2Dbrft+/JxCUsjUzxfpohD/kO5XVP55QC1v9DIRBCxTdUVjN7D8Azk8p26LqYZgm9GHfpJubkRcTpAFW/5rayeIavz1RL62DtkM7sw/1JsMZaE4TXjeWwp7+XTCa/F52Bsdg1nVyrtcoQszAkw1cf3k4EbWoQitWozPltr5as8AcO3Ua8zoqBLDg8Dr3Kb0kmkk8FuGBz6YqDuLA0OXZUWVzZuTkcHAnTMQqDQdCGFNn+O/yGtF3X0G+vPnhk+ZdTkZKuZ1Ny5eaiWZe45wg0I7VCuHdjl+wYZ9POgxEb7swxBQXp62IkX2sVjzIz3WCnS/klRq2/FUqhkH7vtYO2tEgyXH84CsGbzC0AM98i36apBhxgKpXqL18QvWU8umhibSaIF27fDqH+RoowJovP72sL7Lrt4kJHIFYQG6qib5ZZ/7DDPX/iiCD4bq1Q=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(10067099003)(22082099003)(18002099003)(4143699003)(11063799006)(261009223027099003)(56012099006);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KV6+8Y/88+z8oVXhq0wDuPBej4qIZq1MGTMFF/i/mOHemeJROpZLUDZ5jO5w?=
- =?us-ascii?Q?1r91ju0324+VV9QbPoUQj9ttIxWqpoY0SPVgwBbZbYkWP1EEUNOqrMb5x/9z?=
- =?us-ascii?Q?oeLN04r8OAkbk3sq/FrF5j17d4zxix9KIKJQdwORUqPTfB3IqrVspdGaRm+E?=
- =?us-ascii?Q?PVsLfPSDAiQHcnX29c9bIxR85+DFWR/eKZxsu5X3h2dNqyLOq//yCkm9T8aZ?=
- =?us-ascii?Q?pd1AgEFVYkBmuP1RNtdoYUNjVZJPkVZVJ4yuasWXF4O8ZWkZYo8/vuJx8aXh?=
- =?us-ascii?Q?A15QV/U1WBrDWrnGpDyAA2nSY2SjEThKZNq9Jsk5NuFF6F3HROGi4QiQrNsM?=
- =?us-ascii?Q?WulZQiE6ji1jCp6gDbwV3iZbEHwvd8f2zd8/PazOeRlQKzfBsly+bNbQRcaF?=
- =?us-ascii?Q?+pc4AEEYnQvhlRORztxpDTveb1oNV9U+DNK87Myaq6u8kMi3spMKfvVsIcLq?=
- =?us-ascii?Q?vwCXC55GalRjfxpjP8owUnQfe9D2UNWrkpsxon2iAYCpXb3hVJRljuDfPU/N?=
- =?us-ascii?Q?W1/zqqTfuXyxHgJRMYoKrWQKSnbc6QcG5AocbcPxPm8j45Cdy94Hcn2VBP5h?=
- =?us-ascii?Q?Qa8ZfgNFFAzhS7ma8TipxzOyLLrhB5Cx2V9lJ51PKGxBYt1v3npKoCEewlKA?=
- =?us-ascii?Q?PiRgtm8mnsC3LvhGD/Z5lpIEpP5Wmex80EktUsDPWCk77GwZ5bw/d8WkELw4?=
- =?us-ascii?Q?uEJLNNXqGSNutbecZ+uyJt5GYM8iH8tN/6EWX/EjV8fFXtTs5mAlqm5T5UEi?=
- =?us-ascii?Q?fA+xyEUVd0QwJQn392BdpnvJ5Ud/C6+Q95t+HFbcKb2ev6v5FjQmi8vrYtbu?=
- =?us-ascii?Q?MF1DN4iOTzuJmwiMVFLYJektKelViC2jnlKMQ5QAX4LimyKpg2953ppR9Bir?=
- =?us-ascii?Q?NpI3Clp3Yyxhp6EUVV0L8cOFTreuR/8WZmSgZCVV5YCLazxw2SNC6+Djj7Hh?=
- =?us-ascii?Q?BhSpMdEQDwX2eri1YyikNR+xWywEX7slLKM+36bKHNyIMPSV0l2aYXAfBFnS?=
- =?us-ascii?Q?qQgYAaOR1y3TYRUGbfPr7nmeK4UhWJoLOkppMThVpNe7P/4OQj46+B8nJb7Q?=
- =?us-ascii?Q?MOIqiUv+4tjrSjus1noHBHoPITi7X9E+WoMTehAB5g7AHsURStFWvw1VqIYP?=
- =?us-ascii?Q?MgyPj/fcMO/T9Ahg+xNWgnhhaz4xjyvB3XoxZrMmRjXdDaSAtdrdLnLfjej/?=
- =?us-ascii?Q?iOMQkGps2fcgHRLZCllhRrKJDGfjJIsSiFJr3EADum2kOry6X6T3l06Ud+Jc?=
- =?us-ascii?Q?IUI0uZzL8tXIce0U1JA7f9q3byXSd6gH5nDMj3KMDcSW6IU9Brf8dUAiWdDG?=
- =?us-ascii?Q?3DapqCFK1Tgz2PqyZeOEjGdKY5MPZffhY2LzCyixH+iBCK7MD9xkc/4gV2gx?=
- =?us-ascii?Q?JMMlv43LVWCvujHkj/Gxgp5uo7IRVK14jciDVIMoOZw+Cyrnsodu3+sbNQrq?=
- =?us-ascii?Q?aQ/XhoOJDHGFcOOnqggC6S1dpOfLeA/mjiuPFz8IfoiGm+l59hwwURXaRJJv?=
- =?us-ascii?Q?mGcxPkanI0HrjCn5T9QOa2Sz11CTy9P+bUlntI3WFsezyA92RTUpZTGl5rmQ?=
- =?us-ascii?Q?+sgY0L81GrH4JTE1rWVWohMivJBgx77SMuMlx8Goy6itcEs6w38JOVlWnKN9?=
- =?us-ascii?Q?d0ZplUrzo95Zq5nr3ddFB5xwgVj2k6qvcO7q2qqanUX+yRkHncrfDzLBTBiz?=
- =?us-ascii?Q?ZwHJ++Y7lk9KYMto8YPYWE7RyfW6P2QwItaj+ufMMkIrcttmGR3Grb7nplOH?=
- =?us-ascii?Q?o3VuM89G7K993V48Utp1zLMJhNaCXNY=3D?=
-X-Exchange-RoutingPolicyChecked: GeFCCRZ3v0VJqC9j1+fDgGgAAkfpt6dSf9KOiYNU/VKI/Gk2dnuwA1pQfAgVmrnS3hhnxJPD8krZ75HEOvkhua+QYw4DSNvyRw6w4QtTQ+pz+YiOXlvOZVqn5wvVA3kNzy6zZx5bu3SoGrI49QHM5VkYLWpWPdYejn1y6uWaKubZjmqepGtrt4GPBeTFaz6SPaRjzTClWKjGbdO2jMbRZm3sQdn1bBPf2yFF7vdKkE3zC2BoOTSWTjZ2pntd0dNtSq3AvddqC7WNUw2sdot11Njh+pXzZRLSdEOqlUts2XDyaFgO2DwiAU7JbLsKtezgGhaJjqVQr8q4cN+prBnIew==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b8d93f6-0c3d-4411-6e62-08df2f54288c
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MSpXNlz8Oewbsh9nzCbDuhbAHH13hHuqHPs67qfOP8M7i4SWgcEWli4SoF8k?=
+ =?us-ascii?Q?a1+v+mfzx5jW3sJwsQ5/DAPohqYb7CWSD+ESPWx2mz0YqHges9Vs/2vTPqdq?=
+ =?us-ascii?Q?8pFbfBeD14xApB06MczWvmrt5qyaWKRIwpdTaL9Ssg7Ni+wrTvRFveFVXTg+?=
+ =?us-ascii?Q?UyrHaU37owpV70qfGCmAWcbT3QUd+4MX4D/EPLV9ELOlZscG9A12DXBfzvqe?=
+ =?us-ascii?Q?4W9woFe412rIF1N8Yoy+dhonPduffViY6QJpU2JReE1XD8JKVOkU5PvNR/4C?=
+ =?us-ascii?Q?R2aSITfNkhhnq0bp8O3jcJoLbPec+SRkI6dc2KfG1rTVQNqVATz2JdVth3cK?=
+ =?us-ascii?Q?2o3CN6DG1EResZZI0E3Geeck9RDh8k+X15Ni2Ecci1yFBAdQawWL0sSz4dmL?=
+ =?us-ascii?Q?jk9Q3FVRXE4kgtS++Xvh08UZwIZSsWY6OsAADAWff0QdmnGTn3bMmm4iScwM?=
+ =?us-ascii?Q?voHJkPtaiMhcuGtzEBQjivnvHGjzJ42NziQnTPlOc5AbZs8UxyDClWRo6CL1?=
+ =?us-ascii?Q?4TaJp50o6mC6OdViQ1pQuK0ESyk4geNAXKTtx2fw5T53i4jdE2WiA3vB8wBj?=
+ =?us-ascii?Q?IyDZ/TL2ofVdZUP5JUAc1f6JvEw9lF9A+NzmYfOPk25oTqIGQAY/krIgLOwi?=
+ =?us-ascii?Q?PuRvDHSpSBiRHldkG972GKLtGoaMMMbw/kN8+/8gpc0wAfGgj2SR0emb9PH+?=
+ =?us-ascii?Q?AW3xozHSez/zE6sAPN5hC1uEfLMUkXqwZIvi0lE9GlXCBxkTqRNXot77M92B?=
+ =?us-ascii?Q?iyrYtcczgSiDXYq+pbBMwEESm7LFqD0UwAQA58j7GAlbRPXS7qie10/basjH?=
+ =?us-ascii?Q?V8qC6/BKS4FgmMmgzBz/J9iZXd3v6za/yKjbmqbAsW0CFFi01IteUwVy3FO4?=
+ =?us-ascii?Q?QqTNCnAbJe3KNIYXupFnFhIAhIizr0vduQgwQYx8UnQT3C3J+EXTNEoOSQZm?=
+ =?us-ascii?Q?12B7Ea0quKrWxq9ujylE6fqcMoinmeJLol4DGuxp+XA/XevuCmoojbstYYHE?=
+ =?us-ascii?Q?zTtvwo/dBnMSb3MXUpbg4Ua0goO+goyEEM5tygYrHqGUOsHwU/0gXwBxkFYK?=
+ =?us-ascii?Q?lchO2yZ6D0Jg19jO1v1IQ8Ik7ycbU0Xd3ggSfL+/un5zSR1jU3XiTSl8whpp?=
+ =?us-ascii?Q?9iqJDnV/3UOB2Qxj5Eq4zqaQoquQ1Mu4me8yzwaoWVMwMd26MjB6J0tDi6s1?=
+ =?us-ascii?Q?RB+YGrkpY29Zr9atckYNQfEQzp+q9Q2W34BeDAtLaqc2yNKX60UhIxAxgkh0?=
+ =?us-ascii?Q?73pB5a61LnmpHfet/aia2wFQSOh08Ust93E6qBb2D6aRk9kvpYOPaxvbJWBN?=
+ =?us-ascii?Q?XBs5VSfBkF3Ski1jrxybTkyfhRYm04Wv/4O/cISDudttPFymL8hdn0MDppol?=
+ =?us-ascii?Q?hhtAKROm66MoLHGQ0zPR75MHkB+9AiMxkfBxqCAJo2mAZWC0+G4/C8IsLAxF?=
+ =?us-ascii?Q?ZMIP8MwQmeWCobOCwUKf9ejNrsM3fGE1KD4tDJlNtbhNGG+Iz8b5OUJsdnY8?=
+ =?us-ascii?Q?SR+G45PhHidpM3gTNs1pZuELenoVlAvhEvPXWHBPW7scI7OwawWfir2ZbM3F?=
+ =?us-ascii?Q?LIPHhL8dXDe9pdyZb0hwtWQNMMGE/yXUADNRNeHK5L2jeDlVTXd42y7Y4Ky1?=
+ =?us-ascii?Q?Abjv3ZDzcYDPLvoNFqh7mpthKofwZJQLROKeJ2dixo0BRo1AnGUI1tgG6X4a?=
+ =?us-ascii?Q?m34ZsUzm6y94Jl+IvPTks6YyEcrg1bywyy05bfUq8Mf1+EIcAN8b7+4Sw1ut?=
+ =?us-ascii?Q?j88yYiydk92jlxgxWuiC7d5+JzLj5ZI=3D?=
+X-Exchange-RoutingPolicyChecked: Bv6koV5rSw0+Xt/iS3jVwUd5nNkRaRw3sliwj7K+hHOHTl4ebIWKJWdsxhTIIdDNPMWcE3p3ZYnBk2i+zlAI+SOJSQtflfZH+U422b4mV7VIBdXYhWye7lBUtXHrRMAyNa8QUXy4FDkQwcyBDv/yYDaUYR5mk7Lld+8FrPMVfMO928vHgfWCU3kpRx274c2fPc/LlsQe9HDORxA64Ptp4gTBaE3ETZa9+AVjE8fvjdD9DKDQdFdkaJgFklQWK0DvanqDyHvoY4ITLSgMirSEz0nhLOWiqXkPguwg/YEDchJ9oo+7t+4/9S92u7NOxuf4LJxYAl2vTKWi5chUOo2Ojg==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8bdd9ee6-52fc-4faa-9834-08df2f543a5b
 X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2026 09:17:41.5929 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2026 09:18:11.4693 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /Rka5UqpwbfFJ1ZhvOr7oOLU9LTOj6F63PcikbilFcbYCQJsxKveJ4oYblFvYL7rDxVhVafr2jF93y/YuMlfDwgsHO5EOxw2zzg2gS6XwLU=
+X-MS-Exchange-CrossTenant-UserPrincipalName: jl40PNeTJ3Te+ktSIxGO+2dl/iucs5YgPUk3498z5d0Q5RsHglDfm4j6sEpa3YVVCReFb4hqgJ7b2pPz+fM8oIMYICF1qbvRubHNWRmnVSE=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6483
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -157,63 +156,204 @@ X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Tue, Oct 20, 2026 at 01:11:05PM +0100, Anatoly Burakov wrote:
-> FDIR creation programs the hardware rule before inserting its software
-> hash entry. If insertion fails, creation returns without removing the
-> hardware rule or releasing its counter, and MARK parsing may remain
-> enabled despite no flow handle being returned.
+On Tue, Oct 20, 2026 at 01:11:06PM +0100, Anatoly Burakov wrote:
+> VOID handling differs between pattern matching and engine parsing.
+> Pattern matching relies on a temporary copy with VOID items removed,
+> while engines handle them independently. This temporary copy makes memory
+> management complicated, so we want to get rid of it.
 > 
-> Reserve the hash entry before programming the rule, and release the
-> counter if reservation fails. Remove the reserved entry if hardware
-> programming fails. Enable MARK parsing only after both steps succeed.
-> 
-> Fixes: 1a2fc1799f09 ("net/ice: reject duplicated flow for flow director")
-> Cc: stable@dpdk.org
+> However, before we can do that, we first need to standardize traversal of
+> the pattern so that all engines can skip over VOID items. Add shared
+> helpers to skip VOID items and iterate over non-VOID items, and use them
+> in pattern matching and all engines; also use them for item counting,
+> lookahead and RAW item lookup.
 > 
 > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 > ---
->  drivers/net/intel/ice/ice_fdir_filter.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
+
+This loop macro looks a very nice cleanup.
+
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+
+>  drivers/net/intel/ice/ice_acl_filter.c    |  4 +---
+>  drivers/net/intel/ice/ice_fdir_filter.c   |  8 +++-----
+>  drivers/net/intel/ice/ice_generic_flow.c  | 11 +++++------
+>  drivers/net/intel/ice/ice_generic_flow.h  | 14 ++++++++++++++
+>  drivers/net/intel/ice/ice_hash.c          |  6 ++++--
+>  drivers/net/intel/ice/ice_switch_filter.c |  8 ++------
+>  6 files changed, 29 insertions(+), 22 deletions(-)
 > 
+> diff --git a/drivers/net/intel/ice/ice_acl_filter.c b/drivers/net/intel/ice/ice_acl_filter.c
+> index eb5d88ccc5..91f684c9b9 100644
+> --- a/drivers/net/intel/ice/ice_acl_filter.c
+> +++ b/drivers/net/intel/ice/ice_acl_filter.c
+> @@ -664,7 +664,7 @@ ice_acl_parse_pattern(__rte_unused struct ice_adapter *ad,
+>  	uint64_t input_set = ICE_INSET_NONE;
+>  	uint8_t flow_type = ICE_FLTR_PTYPE_NONF_NONE;
+>  
+> -	for (item = pattern; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
+> +	ICE_FLOW_FOREACH_ITEM(item, pattern) {
+>  		item_type = item->type;
+>  
+>  		switch (item_type) {
+> @@ -897,8 +897,6 @@ ice_acl_parse_pattern(__rte_unused struct ice_adapter *ad,
+>  				}
+>  			}
+>  			break;
+> -		case RTE_FLOW_ITEM_TYPE_VOID:
+> -			break;
+>  		default:
+>  			rte_flow_error_set(error, EINVAL,
+>  				RTE_FLOW_ERROR_TYPE_ITEM,
 > diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
-> index 517c32cecf..63a0d9fb1f 100644
+> index 63a0d9fb1f..b1a8753e90 100644
 > --- a/drivers/net/intel/ice/ice_fdir_filter.c
 > +++ b/drivers/net/intel/ice/ice_fdir_filter.c
-> @@ -1654,8 +1654,18 @@ ice_fdir_create_filter(struct ice_adapter *ad,
->  		filter->input.cnt_index = filter->counter->hw_index;
+> @@ -1904,7 +1904,7 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
+>  	struct ice_parser_result rslt;
+>  	uint8_t item_num = 0;
+>  
+> -	for (item = pattern; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
+> +	ICE_FLOW_FOREACH_ITEM(item, pattern) {
+>  		if (item->type == RTE_FLOW_ITEM_TYPE_VXLAN)
+>  			tunnel_type = ICE_FDIR_TUNNEL_TYPE_VXLAN;
+>  		if (item->type == RTE_FLOW_ITEM_TYPE_L2TPV2)
+> @@ -1922,7 +1922,7 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
+>  	/* This loop parse flow pattern and distinguish Non-tunnel and tunnel
+>  	 * flow. input_set_i is used for inner part.
+>  	 */
+> -	for (item = pattern; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
+> +	ICE_FLOW_FOREACH_ITEM(item, pattern) {
+>  		item_type = item->type;
+>  
+>  		if (item->last && !(item_type == RTE_FLOW_ITEM_TYPE_IPV4 ||
+> @@ -2065,7 +2065,7 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
+>  			if (!rte_is_zero_ether_addr(&eth_mask->hdr.src_addr))
+>  				*input_set |= ICE_INSET_SMAC;
+>  
+> -			next_type = (item + 1)->type;
+> +			next_type = ice_pattern_skip_void(item + 1)->type;
+>  			/* Ignore this field except for ICE_FLTR_PTYPE_NON_IP_L2 */
+>  			if (eth_mask->hdr.ether_type == RTE_BE16(0xffff) &&
+>  			    next_type == RTE_FLOW_ITEM_TYPE_END) {
+> @@ -2471,8 +2471,6 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
+>  				p_v6->src_port = sctp_spec->hdr.src_port;
+>  			}
+>  			break;
+> -		case RTE_FLOW_ITEM_TYPE_VOID:
+> -			break;
+>  		case RTE_FLOW_ITEM_TYPE_VXLAN:
+>  			l3 = RTE_FLOW_ITEM_TYPE_END;
+>  			vxlan_spec = item->spec;
+> diff --git a/drivers/net/intel/ice/ice_generic_flow.c b/drivers/net/intel/ice/ice_generic_flow.c
+> index 76b3800545..fee048e456 100644
+> --- a/drivers/net/intel/ice/ice_generic_flow.c
+> +++ b/drivers/net/intel/ice/ice_generic_flow.c
+> @@ -2109,16 +2109,15 @@ static bool
+>  ice_match_pattern(enum rte_flow_item_type *item_array,
+>  		const struct rte_flow_item *pattern)
+>  {
+> -	const struct rte_flow_item *item = pattern;
+> +	const struct rte_flow_item *item;
+>  
+> -	while ((*item_array == item->type) &&
+> -	       (*item_array != RTE_FLOW_ITEM_TYPE_END)) {
+> +	ICE_FLOW_FOREACH_ITEM(item, pattern) {
+> +		if (*item_array != item->type)
+> +			return false;
+>  		item_array++;
+> -		item++;
 >  	}
 >  
-> +	/* Reserve the software entry before installing the hardware rule. */
-> +	ret = ice_fdir_entry_insert(pf, entry, &key);
-> +	if (ret) {
-> +		rte_flow_error_set(error, -ret,
-> +				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-> +				   "Insert entry to table failed.");
-> +		goto free_counter;
-> +	}
+> -	return (*item_array == RTE_FLOW_ITEM_TYPE_END &&
+> -		item->type == RTE_FLOW_ITEM_TYPE_END);
+> +	return *item_array == RTE_FLOW_ITEM_TYPE_END;
+>  }
+>  
+>  struct ice_ptype_match {
+> diff --git a/drivers/net/intel/ice/ice_generic_flow.h b/drivers/net/intel/ice/ice_generic_flow.h
+> index 650b43633f..983f86a5ab 100644
+> --- a/drivers/net/intel/ice/ice_generic_flow.h
+> +++ b/drivers/net/intel/ice/ice_generic_flow.h
+> @@ -569,6 +569,20 @@ struct ice_flow_parser_node {
+>  void ice_register_flow_engine(struct ice_flow_engine *engine);
+>  int ice_flow_init(struct ice_adapter *ad);
+>  void ice_flow_uninit(struct ice_adapter *ad);
 > +
->  	ret = ice_fdir_add_del_filter(pf, filter, true);
->  	if (ret) {
-> +		ice_fdir_entry_del(pf, &key);
->  		rte_flow_error_set(error, -ret,
->  				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
->  				   "Add filter rule failed.");
-> @@ -1666,14 +1676,6 @@ ice_fdir_create_filter(struct ice_adapter *ad,
->  		ice_fdir_rx_parsing_enable(ad, 1);
+> +static inline const struct rte_flow_item *
+> +ice_pattern_skip_void(const struct rte_flow_item *item)
+> +{
+> +	while (item->type == RTE_FLOW_ITEM_TYPE_VOID)
+> +		item++;
+> +	return item;
+> +}
+> +
+> +#define ICE_FLOW_FOREACH_ITEM(item, pattern) \
+> +	for ((item) = ice_pattern_skip_void(pattern); \
+> +	     (item)->type != RTE_FLOW_ITEM_TYPE_END; \
+> +	     (item) = ice_pattern_skip_void((item) + 1))
+> +
+>  struct ice_pattern_match_item *
+>  ice_search_pattern_match_item(struct ice_adapter *ad,
+>  			      const struct rte_flow_item pattern[],
+> diff --git a/drivers/net/intel/ice/ice_hash.c b/drivers/net/intel/ice/ice_hash.c
+> index 7a9a4f1a04..13bedfe90c 100644
+> --- a/drivers/net/intel/ice/ice_hash.c
+> +++ b/drivers/net/intel/ice/ice_hash.c
+> @@ -624,7 +624,7 @@ ice_hash_parse_pattern(const struct rte_flow_item pattern[], uint64_t *phint,
+>  	const struct rte_flow_item *item = pattern;
+>  	const struct rte_flow_item_gtp_psc *psc;
 >  
->  	memcpy(entry, filter, sizeof(*entry));
-> -	ret = ice_fdir_entry_insert(pf, entry, &key);
-> -	if (ret) {
-> -		rte_flow_error_set(error, -ret,
-> -				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-> -				   "Insert entry to table failed.");
-> -		goto free_entry;
-> -	}
+> -	for (item = pattern; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
+> +	ICE_FLOW_FOREACH_ITEM(item, pattern) {
+>  		if (item->last) {
+>  			rte_flow_error_set(error, EINVAL,
+>  					RTE_FLOW_ERROR_TYPE_ITEM, item,
+> @@ -1235,8 +1235,10 @@ ice_hash_parse_pattern_action(__rte_unused struct ice_adapter *ad,
+>  		goto error;
+>  
+>  	if (phint == ICE_PHINT_RAW) {
+> +		const struct rte_flow_item *raw_item = ice_pattern_skip_void(pattern);
+> +
+>  		rss_meta_ptr->raw.raw_ena = true;
+> -		ret = ice_hash_parse_raw_pattern(ad, pattern, error, rss_meta_ptr);
+> +		ret = ice_hash_parse_raw_pattern(ad, raw_item, error, rss_meta_ptr);
+>  		if (ret) {
+>  			rte_flow_error_set(error, EINVAL,
+>  					   RTE_FLOW_ERROR_TYPE_ITEM, NULL,
+> diff --git a/drivers/net/intel/ice/ice_switch_filter.c b/drivers/net/intel/ice/ice_switch_filter.c
+> index 6f5af03f6a..6bc1bdd09f 100644
+> --- a/drivers/net/intel/ice/ice_switch_filter.c
+> +++ b/drivers/net/intel/ice/ice_switch_filter.c
+> @@ -489,8 +489,7 @@ ice_switch_parse_pattern(const struct rte_flow_item pattern[],
+>  	    *tun_type == ICE_NON_TUN_QINQ)
+>  		qinq_valid = 1;
+>  
+> -	for (item = pattern; item->type !=
+> -			RTE_FLOW_ITEM_TYPE_END; item++) {
+> +	ICE_FLOW_FOREACH_ITEM(item, pattern) {
+>  		if (item->last) {
+>  			rte_flow_error_set(error, EINVAL,
+>  					RTE_FLOW_ERROR_TYPE_ITEM,
+> @@ -1378,9 +1377,6 @@ ice_switch_parse_pattern(const struct rte_flow_item pattern[],
+>  			gtpu_psc_valid = 1;
+>  			break;
+>  
+> -		case RTE_FLOW_ITEM_TYPE_VOID:
+> -			break;
 > -
->  	flow->rule = entry;
->  	ice_fdir_cnt_update(pf, filter->input.flow_type, is_tun, true);
+>  		default:
+>  			rte_flow_error_set(error, EINVAL,
+>  				   RTE_FLOW_ERROR_TYPE_ITEM, pattern,
+> @@ -1805,7 +1801,7 @@ ice_switch_parse_pattern_action(struct ice_adapter *ad,
+>  		return -rte_errno;
+>  	}
 >  
+> -	for (; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
+> +	ICE_FLOW_FOREACH_ITEM(item, pattern) {
+>  		item_num++;
+>  		if (item->type == RTE_FLOW_ITEM_TYPE_ETH) {
+>  			const struct rte_flow_item_eth *eth_mask;
 > -- 
 > 2.52.0
 > 
