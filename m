@@ -1,76 +1,45 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B46606A319
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 08:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=C0TcPBjP
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE773606A319
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 09:27:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4A45440264;
-	Thu, 22 Oct 2026 10:58:48 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8A16E4003C
- for <dev@dpdk.org>; Thu, 22 Oct 2026 10:58:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792659525;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=8+orOFfW2rz8A0PZCsWVgBV53+dQVxoA4gtrRpDiGj8=;
- b=C0TcPBjP5ERd2z3bPOd2EJsrPtRIt3cBe9UzrqvRTGL/nXnJ6Gl12fvMfhqzRVhfYOWA6K
- vaSWq4dXvs0N3uKUjfY5OQsOm+aK6DkUP04yDBYoJqWMHvJ7oQlU/b/x8P+UL6fhPgJPMR
- GkW23eEviZbx+TEVCsK9l6XLlmzui2o=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-5-1K8fKoqAOW6QUQXX5gM8Jg-1; Thu, 22 Oct 2026 04:58:44 -0400
-X-MC-Unique: 1K8fKoqAOW6QUQXX5gM8Jg-1
-X-Mimecast-MFC-AGG-ID: 1K8fKoqAOW6QUQXX5gM8Jg_1792659523
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-3a59ac42cd8so7811711fa.0
- for <dev@dpdk.org>; Thu, 22 Oct 2026 01:58:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792659522; x=1793264322;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=8+orOFfW2rz8A0PZCsWVgBV53+dQVxoA4gtrRpDiGj8=;
- b=tpbTHS0b1Stw8MgJxpjP+cbtOn0ZmiBpROgQXfqkESwmW7la6Sy/rOd1P1YGI2OOd3
- iismuzR4tcjwpyGdkG8TbBQOWlwsU+UuR7LettUyyKGGjqXna8zlFOT0kH1AiUGJjkLw
- O/ciZDSjd/LIMBw814LSioa8vNbM8PvjzLqzoKROgxXFYE71N04VQNPNGA5F0y29p+Er
- rGKBDszxha+aQ5KYyVNJZEyIdpBMC+eHBalnCcJL82vW62Kqj5+F2FMv6rWvR+zqUba6
- 9UIbW4TYQOz5mGTPfugSa76cM+1E1mkeHrkPNEj/LgmQHCdQx3Nb549YBDupHV6bJALn
- toAg==
-X-Gm-Message-State: AFq9FYKIqkoPZAIGcd8OS6Wpqhk+z+dIyiZrQBEZYBEFK0LDLev8229K
- i8V0kGSSuZvoJq2LZYd0AiJVHRssgg8VzlBK4caSjKsRP5dkDxhR+hISlXOrPPq8wMAb7/I5q1O
- E77JjtXlM3OA5h71pmTLzX4rCW7SjK/c4BSNhCgO1xBZbbe5J5p8W43IPx5+sbUNxjQzP/yfEyS
- OcUTtRZ9t0JdANy3SV2t3d1c5ue7Y=
-X-Gm-Gg: AYBFou1KFKa2v2wMCTZvX6PYkh44bJ+JhnXCBO98BD2LfwiFIGSo6olD/cC180pFFxx
- 6ussItYW0/MLuVHy/YwFsdD9vqURKhTiwWTcuNDrUreTGm+xJ6010DV2doAVkDI3WFS0J03vyhW
- D0NDYLLrBF2vOtJl+cUy4RmaAmdEFCRnaFV4lDM/w+6EbISEDRGr3AX/nkyf56bj2LM1xOSXQhn
- f4VIK1ctYZcnpsi+lyHDTJDCKxMibLg1gXz3+kTdLltwmy1
-X-Received: by 2002:a05:651c:2124:b0:3ac:471e:649f with SMTP id
- 38308e7fff4ca-3ac471e65d0mr10433341fa.28.1792659522027; 
- Thu, 22 Oct 2026 01:58:42 -0700 (PDT)
-X-Received: by 2002:a05:651c:2124:b0:3ac:471e:649f with SMTP id
- 38308e7fff4ca-3ac471e65d0mr10433251fa.28.1792659521530; Thu, 22 Oct 2026
- 01:58:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AE3F340264;
+	Thu, 22 Oct 2026 11:27:43 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 4000E4003C
+ for <dev@dpdk.org>; Thu, 22 Oct 2026 11:27:42 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 306F44CEF8; Thu, 22 Oct 2026 11:27:42 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/core Bug 2069] [dpdk 26.11-rc1]
+ multiprocess/test_multiprocess_symmetric_mp_packet second process coredump
+Date: Thu, 22 Oct 2026 09:27:42 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: core
+X-Bugzilla-Version: 26.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: daxuex.gao@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-2069-3@https.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261022082618.2730417-1-david.marchand@redhat.com>
-In-Reply-To: <20261022082618.2730417-1-david.marchand@redhat.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 22 Oct 2026 10:58:28 +0200
-X-Gm-Features: AclHuK_tW3UTOuHmDf2AEVxSi1ruz_9rHrFjd1-P2EWB0t6kEFvC_7oQ9syHfgE
-Message-ID: <CAJFAV8z9UMJ0an1FHgGjznpV2PSLL7jhAitq8kfY=btwTnC0eQ@mail.gmail.com>
-Subject: Re: [PATCH] bus/pci: fix interrupt setup for ioport in secondary
- process
-To: dev@dpdk.org
-Cc: Anatoly Burakov <anatoly.burakov@intel.com>,
- Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: adtNS19lqLAcDeY06pT4ywyi6JAyHHBFg9VoUnf7hYc_1792659523
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,35 +49,114 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Thu, 22 Oct 2026 at 10:26, David Marchand <david.marchand@redhat.com> wrote:
->
-> Now that the interrupt handle contains a -1 FD by default, the logic in
-> this code is wrong (yet, checking for a 0 FD was theoretically broken
-> even before).
->
-> The first invocation for a given PCI device will always have a FD < 0,
-> since no code allocated a interrupt handle in the life of this PCI
+https://bugs.dpdk.org/show_bug.cgi?id=3D2069
 
-Rather:
-since no VFIO setup happened in the life of this PCI device.
+            Bug ID: 2069
+           Summary: [dpdk 26.11-rc1]
+                    multiprocess/test_multiprocess_symmetric_mp_packet
+                    second process coredump
+           Product: DPDK
+           Version: 26.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: core
+          Assignee: dev@dpdk.org
+          Reporter: daxuex.gao@intel.com
+  Target Milestone: ---
 
-And this is specific to secondary process. Worth mentionning.
+Environment
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DPDK version: 26.11.0-rc1(9a45341f18a1a)
+OS: Fedora Linux 44 (Forty Four)/Linux 7.2.5-200.fc44.x86_64
+Compiler: gcc version 16.2.1
+Hardware platform: Intel(R) Xeon(R) Platinum 8490H
+NIC hardware: Ethernet Controller E810-C for QSFP 1592 [8086:1592 (rev 02)]
+NIC firmware: 5.01 0x80021f8b 1.4031.0
+NIC driver: ice-2.7.4
+DDP package:  ice comms 1.3.63.0
 
-> device.
->
-> Bugzilla ID: 2067
-> Fixes: 63a0dbf661e5 ("interrupts: mark FDs invalid on allocation")
->
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+Test Setup
+Steps to reproduce
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+1.Build dpdk=20
+CC=3Dgcc meson -Dlibdir=3Dlib
+-Dexamples=3D'multi_process/client_server_mp/mp_server,multi_process/client=
+_server_mp/mp_client,multi_process/simple_mp,multi_process/symmetric_mp'
+--default-library=3Dstatic x86_64-native-linuxapp-gcc -Dmax_lcores=3D240
+ninja -C x86_64-native-linuxapp-gcc/
 
+2.Start testpmd
+dpdk-devbind.py --force --bind=3Dvfio-pci 0000:45:00.0 -a 0000:47:00.0
+x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 2 -n 4 -a 0000:45:=
+00.0
+-a 0000:47:00.0  --file-prefix=3Ddpdk_6818_20261022163537     --proc-type=
+=3Dauto --
+-p 0x3 --num-procs=3D2 --proc-id=3D1
 
--- 
-David Marchand
+x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 2 -n 4 -a 0000:45:=
+00.0
+-a 0000:47:00.0  --file-prefix=3Ddpdk_6818_20261022163537     --proc-type=
+=3Dauto --
+-p 0x3 --num-procs=3D2 --proc-id=3D1
 
+After stopping the first testpmd process, the second process generated a co=
+re
+dump:
+Error result:
+Segmentation fault         (core dumped)
+x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 2 -n 4 -a 0000:45:=
+00.0
+-a 0000:47:00.0 --file-prefix=3Ddpdk_6818_20261022163537 --proc-type=3Dauto=
+ -- -p
+0x3 --num-procs=3D2 --proc-id=3D1
+
+Expected Result:
+The first testpmd process exits, but the second testpmd process does not ex=
+it
+automatically.
+# x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 2 -n 4 -a
+0000:45:00.0 -a 0000:47:00.0  --file-prefix=3Ddpdk_6818_20261022163537=20=
+=20=20=20
+--proc-type=3Dauto -- -p=20
+
+^CPort 0: RX - 0, TX - 0, Drop - 0
+Port 1: RX - 0, TX - 0, Drop - 0
+
+# x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 2 -n 4 -a
+0000:45:00.0 -a 0000:47:00.0  --file-prefix=3Ddpdk_6818_20261022163537=20=
+=20=20=20
+--proc-type=3Dauto -- -p=20
+
+^CPort 0: RX - 0, TX - 0, Drop - 0
+Port 1: RX - 0, TX - 0, Drop - 0
+
+Regression
+Is this issue a regression: N
+
+Bad commit:
+commit 9a0b3c409db1963a92d0a91868b1e45254845a8c
+Author: Stephen Hemminger <stephen@networkplumber.org>
+Date:   Mon Sep 7 10:03:22 2026 -0700
+
+    examples/symmetric_mp: do not print or exit in handler
+    The SIGINT and SIGTERM handler called printf() and exit() which are
+    not async-signal-safe.
+    Set a flag, let the forwarding loops return, and print the stats from
+    main() after joining the lcores.
+    Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+    Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+
+examples/multi_process/symmetric_mp/main.c | 24 ++++++++++++++++++------
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
