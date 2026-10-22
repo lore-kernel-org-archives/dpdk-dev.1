@@ -1,60 +1,59 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47F5606A31F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 17:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7934606A31D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 17:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=AzCv1UD+
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=TzwBmwYU
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5CAB540687;
-	Thu, 22 Oct 2026 19:45:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7AA57406BA;
+	Thu, 22 Oct 2026 19:45:32 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 17D544003C
- for <dev@dpdk.org>; Thu, 22 Oct 2026 19:45:21 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3BDFE40613
+ for <dev@dpdk.org>; Thu, 22 Oct 2026 19:45:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792691120;
+ s=mimecast20190719; t=1792691130;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=RRTFvULMnu9L+bcL4sy7Ws+9hyU/URfNT8o6wErCPT0=;
- b=AzCv1UD+cwwcfIrtsQpjPC9T8Vdl7i/8aQ67oSXLyCPWvcMkpQmU65r2bHxylhRfa3U03A
- BOnZIHZDLqJcKHFO9SDIhvfc9b3e99mk436R2hS/xGllYtN9T5s+GSLVelTf7cVKsjqNIj
- Y+f6OfuWTlx9QRceR+f5ljqSWu2Hh/0=
+ bh=hJqfWqJkO2RZIxxzAd2CSt+5yiPlTnmoejXUS3flJGY=;
+ b=TzwBmwYUQxdkixvYd4zx1E2rTn00aL6wbvXv4qZm6FaLn+IgP8ZEfpdg+w2NS1Haq0vndC
+ aNSmB1Kw7N7k94QC4gLUGZ8W9h5nDLESG1vo+1lTSwu138nGKs2+lkx5rf9CMGrD6T8l8C
+ mcKF+JZs0w3aYRqVttr0/AnFhl4bvUM=
 Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-596-HYW_4-DwPti6WFrACV_q8A-1; Thu,
- 22 Oct 2026 13:45:16 -0400
-X-MC-Unique: HYW_4-DwPti6WFrACV_q8A-1
-X-Mimecast-MFC-AGG-ID: HYW_4-DwPti6WFrACV_q8A_1792691114
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-_AEMeiqxPHqjEQ2RwhbnFg-1; Thu,
+ 22 Oct 2026 13:45:26 -0400
+X-MC-Unique: _AEMeiqxPHqjEQ2RwhbnFg-1
+X-Mimecast-MFC-AGG-ID: _AEMeiqxPHqjEQ2RwhbnFg_1792691125
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 77EB61954B05; Thu, 22 Oct 2026 17:45:14 +0000 (UTC)
+ id 41FEF1954B22; Thu, 22 Oct 2026 17:45:25 +0000 (UTC)
 Received: from dmarchan.home (headnet04.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.116])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id D6C713000735; Thu, 22 Oct 2026 17:45:12 +0000 (UTC)
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 8BD861955F03; Thu, 22 Oct 2026 17:45:23 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: thomas@monjalon.net, Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
- Keegan Freyhof <keegan.freyhof@broadcom.com>
-Subject: [PATCH v3 05/13] net/bnxt: remove leftover VMDq code in MAC helpers
-Date: Thu, 22 Oct 2026 19:44:32 +0200
-Message-ID: <20261022174447.412638-6-david.marchand@redhat.com>
+Cc: thomas@monjalon.net, Bruce Richardson <bruce.richardson@intel.com>,
+ Xingui Yang <yangxingui@huawei.com>,
+ Chengwen Feng <fengchengwen@huawei.com>
+Subject: [PATCH v3 07/13] drivers/net: remove check on VMDq modes
+Date: Thu, 22 Oct 2026 19:44:34 +0200
+Message-ID: <20261022174447.412638-8-david.marchand@redhat.com>
 In-Reply-To: <20261022174447.412638-1-david.marchand@redhat.com>
 References: <20261016130555.1685102-1-david.marchand@redhat.com>
  <20261022174447.412638-1-david.marchand@redhat.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: enNmT0-V7gO-CcN3L_7qXNmPq8M_k9RKHAmxZqOpFxw_1792691114
+X-Mimecast-MFC-PROC-ID: eAeouoXTnGV44Ui2vFwhkpRFQQGUtBlN6YLNuusm9ww_1792691125
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -74,219 +73,122 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The VMDq support removal left dead code in MAC address addition, removal
-and filter restore functions.
-Remove the VMDq flag checks and pool_mask logic that are no longer needed.
+ethdev now validates requests for VMDq Rx and Tx modes.
+No need to validate again in the driver.
 
-At the same time, remove unneeded reset to 0 of VMDq related field in
-the dev_info structure.
-
-Fixes: 582f971526da ("net/bnxt: remove VMDq support")
+Note:
+- for igb, max_vmdq_pools is already 0 for models that do not support
+  VMDq, so checking the VMDq modes is unneeded,
+- for i40e, the FW flag was already checked to populate max_vmdq_pools,
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
-Changes since v1:
-- cleaned up bnxt_mac_addr_add_op,
-- preferred bnxt_get_default_vnic() to direct access to bp->vnic_info[0],
+ drivers/net/hns3/hns3_dcb.c          |  9 -------
+ drivers/net/intel/e1000/igb_rxtx.c   | 39 ----------------------------
+ drivers/net/intel/i40e/i40e_ethdev.c |  5 ----
+ 3 files changed, 53 deletions(-)
 
----
- drivers/net/bnxt/bnxt_ethdev.c | 90 +++++++++-------------------------
- 1 file changed, 22 insertions(+), 68 deletions(-)
-
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index 23edd94444..4a4e9c1ea3 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -1252,12 +1252,6 @@ static int bnxt_dev_info_get_op(struct rte_eth_dev *eth_dev,
- 	 * TODO: default_rxconf, default_txconf, rx_desc_lim, and tx_desc_lim
- 	 *       need further investigation.
- 	 */
--	dev_info->max_vmdq_pools = 0;
--	dev_info->vmdq_queue_num = 0;
--
--	dev_info->vmdq_pool_base = 0;
--	dev_info->vmdq_queue_base = 0;
--
- 	dev_info->rx_seg_capa.max_nseg = BNXT_MAX_BUFFER_SPLIT_SEGS;
- 	dev_info->rx_seg_capa.multi_pools = BNXT_MULTI_POOL_BUF_SPLIT_CAP;
- 	dev_info->rx_seg_capa.offset_allowed = BNXT_BUF_SPLIT_OFFSET_CAP;
-@@ -1999,45 +1993,32 @@ static void bnxt_mac_addr_remove_op(struct rte_eth_dev *eth_dev,
- 				    uint32_t index)
+diff --git a/drivers/net/hns3/hns3_dcb.c b/drivers/net/hns3/hns3_dcb.c
+index 6d2945d9c5..e7912aebb2 100644
+--- a/drivers/net/hns3/hns3_dcb.c
++++ b/drivers/net/hns3/hns3_dcb.c
+@@ -1840,7 +1840,6 @@ int
+ hns3_check_dev_mq_mode(struct rte_eth_dev *dev)
  {
- 	struct bnxt *bp = eth_dev->data->dev_private;
--	uint64_t pool_mask;
- 	struct bnxt_vnic_info *vnic;
- 	struct bnxt_filter_info *filter, *temp_filter;
--	uint32_t i;
+ 	enum rte_eth_rx_mq_mode rx_mq_mode = dev->data->dev_conf.rxmode.mq_mode;
+-	enum rte_eth_tx_mq_mode tx_mq_mode = dev->data->dev_conf.txmode.mq_mode;
+ 	struct hns3_hw *hw = HNS3_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	struct hns3_adapter *hns = HNS3_DEV_HW_TO_ADAPTER(hw);
+ 	struct rte_eth_dcb_rx_conf *dcb_rx_conf;
+@@ -1849,14 +1848,6 @@ hns3_check_dev_mq_mode(struct rte_eth_dev *dev)
+ 	int max_tc = 0;
+ 	int i;
  
- 	if (is_bnxt_in_error(bp))
- 		return;
- 
--	if ((eth_dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_VMDQ_FLAG) == 0)
--		pool_mask = 1;
--	else
--		pool_mask = eth_dev->data->mac_pool_sel[index];
-+	if (bp->vnic_info == NULL)
-+		return;
- 
--	/*
--	 * Loop through all VNICs from the specified filter flow pools to
--	 * remove the corresponding MAC addr filter
--	 */
--	for (i = 0; i < bp->nr_vnics; i++) {
--		if (!(pool_mask & (1ULL << i)))
--			continue;
-+	vnic = bnxt_get_default_vnic(bp);
- 
--		vnic = &bp->vnic_info[i];
--		filter = STAILQ_FIRST(&vnic->filter);
--		while (filter) {
--			temp_filter = STAILQ_NEXT(filter, next);
--			if (filter->mac_index == index) {
--				STAILQ_REMOVE(&vnic->filter, filter,
--						bnxt_filter_info, next);
--				bnxt_hwrm_clear_l2_filter(bp, filter);
--				bnxt_free_filter(bp, filter);
--			}
--			filter = temp_filter;
-+	filter = STAILQ_FIRST(&vnic->filter);
-+	while (filter) {
-+		temp_filter = STAILQ_NEXT(filter, next);
-+		if (filter->mac_index == index) {
-+			STAILQ_REMOVE(&vnic->filter, filter,
-+					bnxt_filter_info, next);
-+			bnxt_hwrm_clear_l2_filter(bp, filter);
-+			bnxt_free_filter(bp, filter);
- 		}
-+		filter = temp_filter;
- 	}
- }
- 
- static int bnxt_add_mac_filter(struct bnxt *bp, struct bnxt_vnic_info *vnic,
--			       struct rte_ether_addr *mac_addr, uint32_t index,
--			       uint32_t pool)
-+			       struct rte_ether_addr *mac_addr, uint32_t index)
- {
- 	struct bnxt_filter_info *filter;
- 	int rc = 0;
-@@ -2045,9 +2026,7 @@ static int bnxt_add_mac_filter(struct bnxt *bp, struct bnxt_vnic_info *vnic,
- 	/* Attach requested MAC address to the new l2_filter */
- 	STAILQ_FOREACH(filter, &vnic->filter, next) {
- 		if (filter->mac_index == index) {
--			PMD_DRV_LOG_LINE(DEBUG,
--				    "MAC addr already existed for pool %d",
--				    pool);
-+			PMD_DRV_LOG_LINE(DEBUG, "MAC addr already exists");
- 			return 0;
- 		}
- 	}
-@@ -2082,10 +2061,9 @@ static int bnxt_add_mac_filter(struct bnxt *bp, struct bnxt_vnic_info *vnic,
- 
- static int bnxt_mac_addr_add_op(struct rte_eth_dev *eth_dev,
- 				struct rte_ether_addr *mac_addr,
--				uint32_t index, uint32_t pool)
-+				uint32_t index, uint32_t pool __rte_unused)
- {
- 	struct bnxt *bp = eth_dev->data->dev_private;
--	struct bnxt_vnic_info *vnic;
- 	int rc = 0;
- 
- 	rc = is_bnxt_in_error(bp);
-@@ -2097,11 +2075,6 @@ static int bnxt_mac_addr_add_op(struct rte_eth_dev *eth_dev,
- 		return -ENOTSUP;
- 	}
- 
--	if (pool >= bp->max_vnics) {
--		PMD_DRV_LOG_LINE(ERR, "Pool %u exceeds VNIC count %u!", pool, bp->max_vnics);
--		return -EINVAL;
+-	if (((uint32_t)rx_mq_mode & RTE_ETH_MQ_RX_VMDQ_FLAG) ||
+-	    (tx_mq_mode == RTE_ETH_MQ_TX_VMDQ_DCB ||
+-	     tx_mq_mode == RTE_ETH_MQ_TX_VMDQ_ONLY)) {
+-		hns3_err(hw, "VMDQ is not supported, rx_mq_mode = %d, tx_mq_mode = %d.",
+-			 rx_mq_mode, tx_mq_mode);
+-		return -EOPNOTSUPP;
 -	}
 -
- 	/* Filter settings will get applied when port is started */
- 	if (!eth_dev->data->dev_started)
- 		return 0;
-@@ -2109,9 +2082,7 @@ static int bnxt_mac_addr_add_op(struct rte_eth_dev *eth_dev,
- 	if (bp->vnic_info == NULL)
- 		return 0;
- 
--	vnic = &bp->vnic_info[pool];
--
--	rc = bnxt_add_mac_filter(bp, vnic, mac_addr, index, pool);
-+	rc = bnxt_add_mac_filter(bp, bnxt_get_default_vnic(bp), mac_addr, index);
- 
- 	return rc;
+ 	dcb_rx_conf = &dev->data->dev_conf.rx_adv_conf.dcb_rx_conf;
+ 	dcb_tx_conf = &dev->data->dev_conf.tx_adv_conf.dcb_tx_conf;
+ 	if ((uint32_t)rx_mq_mode & RTE_ETH_MQ_RX_DCB_FLAG) {
+diff --git a/drivers/net/intel/e1000/igb_rxtx.c b/drivers/net/intel/e1000/igb_rxtx.c
+index 4fda5d57a0..ef531f1cd4 100644
+--- a/drivers/net/intel/e1000/igb_rxtx.c
++++ b/drivers/net/intel/e1000/igb_rxtx.c
+@@ -2113,41 +2113,6 @@ igb_rss_configure(struct rte_eth_dev *dev)
+ 	igb_hw_rss_hash_set(hw, &rss_conf);
  }
-@@ -2953,7 +2924,7 @@ bnxt_config_vlan_hw_filter(struct bnxt *bp, uint64_t rx_offloads)
- 		for (i = 0; i < RTE_ETHER_MAX_VLAN_ID; i++)
- 			bnxt_del_vlan_filter(bp, i);
  
--		rc = bnxt_add_mac_filter(bp, vnic, NULL, 0, 0);
-+		rc = bnxt_add_mac_filter(bp, vnic, NULL, 0);
- 		if (rc)
- 			return rc;
- 	} else {
-@@ -3030,7 +3001,7 @@ bnxt_config_vlan_hw_stripping(struct bnxt *bp, uint64_t rx_offloads)
- 		if (rc)
- 			return rc;
- 	} else {
--		rc = bnxt_add_mac_filter(bp, vnic, NULL, 0, 0);
-+		rc = bnxt_add_mac_filter(bp, vnic, NULL, 0);
- 		if (rc)
- 			return rc;
- 	}
-@@ -3181,7 +3152,7 @@ bnxt_set_default_mac_addr_op(struct rte_eth_dev *dev,
- 		/* This filter will allow only untagged packets */
- 		rc = bnxt_add_vlan_filter(bp, 0);
- 	} else {
--		rc = bnxt_add_mac_filter(bp, vnic, addr, 0, 0);
-+		rc = bnxt_add_mac_filter(bp, vnic, addr, 0);
- 	}
- 
- 	PMD_DRV_LOG_LINE(DEBUG, "Set MAC addr");
-@@ -4528,10 +4499,7 @@ static int bnxt_restore_mac_filters(struct bnxt *bp)
- 	struct rte_eth_dev *dev = bp->eth_dev;
- 	struct rte_eth_dev_info dev_info;
- 	struct rte_ether_addr *addr;
--	uint64_t pool_mask;
--	uint32_t pool = 0;
- 	uint32_t i;
--	bool vmdq;
- 	int rc;
- 
- 	if (BNXT_VF(bp) && !BNXT_VF_IS_TRUSTED(bp))
-@@ -4541,8 +4509,6 @@ static int bnxt_restore_mac_filters(struct bnxt *bp)
- 	if (rc)
- 		return rc;
- 
--	vmdq = (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_VMDQ_FLAG) != 0;
+-/*
+- * Check if the mac type support VMDq or not.
+- * Return 1 if it supports, otherwise, return 0.
+- */
+-static int
+-igb_is_vmdq_supported(const struct rte_eth_dev *dev)
+-{
+-	const struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
 -
- 	/* replay MAC address configuration */
- 	for (i = 1; i < dev_info.max_mac_addrs; i++) {
- 		addr = &dev->data->mac_addrs[i];
-@@ -4551,21 +4517,9 @@ static int bnxt_restore_mac_filters(struct bnxt *bp)
- 		if (rte_is_zero_ether_addr(addr))
- 			continue;
- 
--		pool = 0;
--		if (!vmdq)
--			pool_mask = 1;
--		else
--			pool_mask = dev->data->mac_pool_sel[i];
+-	switch (hw->mac.type) {
+-	case e1000_82576:
+-	case e1000_82580:
+-	case e1000_i350:
+-		return 1;
+-	case e1000_82540:
+-	case e1000_82541:
+-	case e1000_82542:
+-	case e1000_82543:
+-	case e1000_82544:
+-	case e1000_82545:
+-	case e1000_82546:
+-	case e1000_82547:
+-	case e1000_82571:
+-	case e1000_82572:
+-	case e1000_82573:
+-	case e1000_82574:
+-	case e1000_82583:
+-	case e1000_i210:
+-	case e1000_i211:
+-	default:
+-		PMD_INIT_LOG(ERR, "Cannot support VMDq feature");
+-		return 0;
+-	}
+-}
 -
--		do {
--			if (pool_mask & 1ULL) {
--				rc = bnxt_mac_addr_add_op(dev, addr, i, pool);
--				if (rc)
--					return rc;
--			}
--			pool_mask >>= 1;
--			pool++;
--		} while (pool_mask);
-+		rc = bnxt_mac_addr_add_op(dev, addr, i, 0);
-+		if (rc)
-+			return rc;
- 	}
+ static int
+ igb_vmdq_rx_hw_configure(struct rte_eth_dev *dev)
+ {
+@@ -2161,10 +2126,6 @@ igb_vmdq_rx_hw_configure(struct rte_eth_dev *dev)
+ 	hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	cfg = &dev->data->dev_conf.rx_adv_conf.vmdq_rx_conf;
  
- 	return 0;
+-	/* Check if mac type can support VMDq, return value of 0 means NOT support */
+-	if (igb_is_vmdq_supported(dev) == 0)
+-		return -1;
+-
+ 	igb_rss_disable(dev);
+ 
+ 	/* RCTL: enable VLAN filter */
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+index 41d5586403..2405d9e119 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.c
++++ b/drivers/net/intel/i40e/i40e_ethdev.c
+@@ -6655,11 +6655,6 @@ i40e_vmdq_setup(struct rte_eth_dev *dev)
+ 	 */
+ 	i40e_pf_disable_irq0(hw);
+ 
+-	if ((pf->flags & I40E_FLAG_VMDQ) == 0) {
+-		PMD_INIT_LOG(ERR, "FW doesn't support VMDQ");
+-		return -ENOTSUP;
+-	}
+-
+ 	conf_vsis = conf->rx_adv_conf.vmdq_rx_conf.nb_queue_pools;
+ 	if (conf_vsis > pf->max_nb_vmdq_vsi) {
+ 		PMD_INIT_LOG(ERR, "VMDQ config: %u, max support:%u",
 -- 
 2.54.0
 
