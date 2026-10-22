@@ -1,28 +1,29 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09867606A319
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 11:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B340F606A319
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 11:11:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B4A0C40693;
-	Thu, 22 Oct 2026 13:10:56 +0200 (CEST)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTP id 6DDBE40A82;
- Thu, 22 Oct 2026 13:10:52 +0200 (CEST)
-X-QQ-mid: esmtpsz17t1792667447t7912379d
-X-QQ-Originating-IP: 99yoTVQZERatZrEOjWxTndKqGO5dUUUcGq6oYO0jOaI=
+	by mails.dpdk.org (Postfix) with ESMTP id A3B8640B91;
+	Thu, 22 Oct 2026 13:10:57 +0200 (CEST)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+ by mails.dpdk.org (Postfix) with ESMTP id A04AE40A82;
+ Thu, 22 Oct 2026 13:10:54 +0200 (CEST)
+X-QQ-mid: esmtpsz17t1792667452ta26c1a73
+X-QQ-Originating-IP: GemEtS2sC4haDB1ob25wgBUpcZG5ob8CT4uD5lLkJfA=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.205.193.71])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 22 Oct 2026 19:10:45 +0800 (CST)
+ id ; Thu, 22 Oct 2026 19:10:50 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4843577966528402815
+X-BIZMAIL-ID: 4824285560874952380
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v9 07/16] net/txgbe: fix link speed display info for 10G mode
-Date: Thu, 22 Oct 2026 19:03:13 +0800
-Message-ID: <2723C1B897067C17+20261022111017.3605-8-zaiyuwang@trustnetic.com>
+Subject: [PATCH v9 09/16] net/txgbe: fix SFP hot-plug when auto-negotiation is
+ on
+Date: Thu, 22 Oct 2026 19:03:15 +0800
+Message-ID: <6502EACE8C951FC4+20261022111017.3605-10-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261022111017.3605-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -32,23 +33,25 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NjuDfT6zrIZcY+yqO9u4erchpgUx+FvFeQZHGI1pmF/pk2ceM9Wx6WS2
- qLoEaLDOWGxEMgWgxz37wzoldAvdxXNvtLQSK6u6okncWl+Zow0TJps3MhNjQU4v/9N+FBV
- +IlopE9HFJh8BNlkdvh1Pf7L36BD5oB/wEBYUvlmprxNmuZWTXk7WIH4rrKcKshUPyqoKPU
- yyDoniz+EX6jsk16+By6Gz0cqZnKYAtsuP3blOWxOv5vCA37RVdyPCpRtIqdsUApLirICGm
- kogJHeS7FVTBaaZ2kBX1pNCG5FnWvxMaCwaDWSCKiiavqSl2ycF1WUz6vhjoEsV8ok+IRgF
- lBUyYZSTKPJzcxnYwFkDDkY9iXANNTrUgr07r+jJDG9DZtzdZ8d/MUrdpqw4m/IKDZ3lBsc
- vBv0k9puRxlVIKkxWNo+chN/ptldUprmd99nblKxUmRfSr6qL05rStiM78hvCqBiWGcrLwt
- gOA7bNI/5ug9nFhBhgBRYd0GqP0j7pxCdL7BwUIG8Vvzxj70RGZFNchOHHf+UVY478p/AWn
- slJqWgVAEXmAXoZhJD08TIFO6Njkc6Tvk6KBdLxniUA4WoZWB7fpV5Rw6svmStbAYl3Jdwo
- yLbKCNphA/QycxU79HRKWEWRGabV9XZdE3gHZp/cvo+SauhBE+C6aHbdN0mcHChIAL1Q+kD
- i88NQV4xb+A+nHHWebtKZGowNHkJXmPr2xVLmUGyAYfVI7KMx5qtqoZuftRTEkaU0Puv/4U
- 0S3tS5A8HVm9EawsoDUzwEljSjY+r8e9jtoUm6EOWu2TkKVEIh67VpiBcB5fVp3f7wb7aN7
- Gj/Z2beOxFv3TzQYhQPhPua093KbJGGmCIFIirlTP9zIg36695pDTJ4s5MAI2L+ePhpNWHP
- A7m9bB0RpC3sLWYUfG163Cf7pUi1AvkasD07a4UcZ6lj4vFFz+9z4/AyfIObKd8phxgs2wT
- euj0qro0NM9z8V3v8cYNkUAmnzj+wUPhH8WxZ8bsn0wrYLhK62IpLI3wmcfhmABja3GannI
- HzXYRzCTJ1sRxtYqn06OcnKPHfeTWYck/pIRNTh4p4+uJ6ibLk4EuMwwe+Ef4=
-X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
+X-QQ-XMAILINFO: MdCoEIBlWeFCInXQ7HAL0Zt7DAyqh8+si1/TGQNgYymIZD+BM2oZcwhv
+ q7Jrfu883URfW0n2pkqN6dWh+K8j89EziMnhei5QHhoSOOuu9SE+dYxaLY7CjH7h/KftcQu
+ bIGD8syT7BuURJo/12X33+HIDowQy6ra666V9H/UO5V+hH3CRpns2fMlhRi8wBrxFAUY6jn
+ EEyCBHOc8RLD7bxk4wKMrjserfHF7cC3mSI+NtJXfs81KAcYZnipS8Ix1Xq4IAaYU77WjlB
+ 30aOOH27FDOU2EEbwN2jv3Dwe4exaCQFvB9J3rZyYRfXjWwbJRVhr8CizUJfMg8rUvYPa4m
+ K6uU+QmdZfcqwrTlKVK6DYjuzpLWMaQbB2AC6UGqca6Qx3Eanlc0YpJ5+UU7gN0/piB52T+
+ T5No2BF9HRm/S91h5Ik/FKiAcY9iiT1JSEyALvYUoEvQBoe+ZY9id0ZGGmTX4WYv2HMn2FN
+ xU0PPTMg1ucqXuqLgOlwlL4kchRi1Z9Ci1bb/ltluIv2z0RNA0Ndq7TMmVbcJjRvqyukScx
+ k2JzUFd39jDl0UwGDDS5gw/rbQdvtDrK+XNGw+O834WIX3C8nyKgAi21Yk1V8PCxohzd2g+
+ MxK2nLqT+YpnbGZlIIfesY6B+jjrQwnijalmkffcW7yjrQLzpDLBU4ZCn0/96KoVYp3w/dH
+ zFCf69cHJNovaujG1zRAKAN6XEZ6r13yAD5PPA++Ca5rVuL+ydO8sRZaKlTYv3kk+s9zzPT
+ wLcnOLF08c/62sWcjyJrKZOOuquABnkdB1o1sQhBCPRjBSY0ypca4b0eMBVVpiUq6cLV86i
+ oE6U8GSQHAYKIdv2h4cg4D2zg8UdYa7peuuF21fpnZ4jNRzd7Y0RQ57ZvnVJgokj24UVPL+
+ qvQWrDbxdcwDGI6tjr1ryuRLRDM0oNcIrldgQLO70uve1xsdBT+LaaqV8aKNYjz/lK1w7dv
+ +jIwXIiTKBLUKTxbM8XdFlhLg/FiSHXJvzui9rvSdHuE6SmQn2+x/eKL28HG1cU0bsF0iXf
+ x4SDS+52pgLfLDQsoNsqiRtvcc2q/ww2qC8ReitST61XjrSlxB5OtqCR45eDO8XH33Mx9tx
+ 2bK+v3JR7t1nOB2SwLTUIC5uTWv89zqGPHYw+pFyXH633n9owx3hokI6tpq/4lI9QyUe48p
+ Z/ryw3A8fTacH98=
+X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,36 +69,195 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-When an AML40 port links up at 10G, DPDK reports the speed as 100M
-instead of 10G. The 10G link status bit is not recognized in
-txgbe_check_mac_link_aml40(), so any non-40G speed falls through to
-the default case (UNKNOWN) which is then reported as 100M.
+When a port is started before the DAC cable is plugged in,
+hot-plugging the cable never brings the link up and the port has to
+be stopped and started again.
 
-Add the 10G port status bit recognition, so a 10G link is reported
-as 10G.
+The AN73 watchdog txgbe_dev_e56_check_bp_event() is armed once in
+txgbe_dev_start(). Its first tick finds no module, so
+txgbe_xpcs_an_enabled() returns false and the handler returns without
+re-arming itself. Once the cable is inserted, nobody polls the AN73
+completion any more and the link stays down.
 
-Fixes: abf042d32b39 ("net/txgbe: add Amber-Lite 25G/40G NICs")
+Re-arm the watchdog from txgbe_dev_detect_sfp() once a module has
+been identified, cancelling any pending instance first so that only
+one of them is running at a time. On the removal path, drop the
+cached SFP type and cancel the watchdog. Also sample the
+module-present pin (GPIO_EXT bit 2 on 25G, bit 4 on 40G) on every
+watchdog tick, so that pulling the cable is noticed even if no GPIO
+interrupt is delivered.
+
+The SFP detection alarm and the AN73 watchdog are gated on a per-port
+flag, set in txgbe_dev_start() before arming and cleared in
+txgbe_dev_stop() before cancelling, so a handler already running on
+the alarm thread cannot re-arm on a port being stopped. The flag goes
+low first because hw->adapter_stopped is only set at the end of
+txgbe_dev_stop(). Cancel the AML link alarm again after joining the
+link thread, which can arm it while the stop is waiting.
+
+Fixes: 234ce0d1fa9d ("net/txgbe: fix link stability for Amber-Lite backplane mode")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml40.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/txgbe/txgbe_ethdev.c | 61 ++++++++++++++++++++++++++++++--
+ drivers/net/txgbe/txgbe_ethdev.h |  2 ++
+ 2 files changed, 61 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index 892dddd373..b52702b197 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -85,6 +85,9 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
- 		if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) ==
- 			TXGBE_CFG_PORT_ST_AML_LINK_40G)
- 			*speed = TXGBE_LINK_SPEED_40GB_FULL;
-+		else if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_10G) ==
-+			TXGBE_CFG_PORT_ST_AML_LINK_10G)
-+			*speed = TXGBE_LINK_SPEED_10GB_FULL;
- 	} else {
- 		*speed = TXGBE_LINK_SPEED_UNKNOWN;
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index 2f513e20b9..77e8b9dea7 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -1695,6 +1695,7 @@ txgbe_set_vf_rate_limit(struct rte_eth_dev *dev, uint16_t vf,
+ static int
+ txgbe_dev_start(struct rte_eth_dev *dev)
+ {
++	struct txgbe_adapter *adapter = TXGBE_DEV_ADAPTER(dev);
+ 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
+ 	struct txgbe_hw_stats *hw_stats = TXGBE_DEV_STATS(dev);
+ 	struct txgbe_vf_info *vfinfo = *TXGBE_DEV_VFDATA(dev);
+@@ -1961,6 +1962,8 @@ txgbe_dev_start(struct rte_eth_dev *dev)
+ 		txgbe_dev_rxq_interrupt_setup(dev);
+ 
+ 	/* enable uio/vfio intr/eventfd mapping */
++	rte_atomic_store_explicit(&adapter->sfp_an_alarm_enabled, 1,
++				  rte_memory_order_release);
+ 	rte_intr_enable(intr_handle);
+ 
+ 	/* resume enabled intr since hw reset */
+@@ -2018,15 +2021,22 @@ txgbe_dev_stop(struct rte_eth_dev *dev)
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
++	rte_atomic_store_explicit(&adapter->sfp_an_alarm_enabled, 0,
++				  rte_memory_order_release);
++
++	/* Stop the producer before the watchdog it can arm. */
++	rte_eal_alarm_cancel(txgbe_dev_detect_sfp, dev);
++
+ 	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
+ 		rte_eal_alarm_cancel(txgbe_dev_e56_check_bp_event, dev);
+ 		rte_eal_alarm_cancel(txgbe_dev_check_aml_temp_event, dev);
+ 		rte_eal_alarm_cancel(txgbe_dev_setup_link_alarm_handler_aml, hw);
  	}
+ 
+-	rte_eal_alarm_cancel(txgbe_dev_detect_sfp, dev);
+ 	rte_eal_alarm_cancel(txgbe_tx_queue_clear_error, dev);
+ 	txgbe_dev_wait_setup_link_complete(dev, 0);
++	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
++		rte_eal_alarm_cancel(txgbe_dev_setup_link_alarm_handler_aml, hw);
+ 
+ 	/* disable interrupts */
+ 	txgbe_disable_intr(hw);
+@@ -2917,6 +2927,7 @@ void txgbe_dev_check_aml_temp_event(void *param)
+ void txgbe_dev_e56_check_bp_event(void *param)
+ {
+ 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
++	struct txgbe_adapter *adapter = TXGBE_DEV_ADAPTER(dev);
+ 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
+ 	u32 an_int1 = 0, value = 0, fsm = 0;
+ 	u32 __rte_unused an_int = 0;
+@@ -2926,6 +2937,27 @@ void txgbe_dev_e56_check_bp_event(void *param)
+ 	if (!hw)
+ 		return;
+ 
++	if (rte_atomic_load_explicit(&adapter->sfp_an_alarm_enabled,
++				     rte_memory_order_acquire) == 0)
++		return;
++
++	/* Sample the module-present pin on every tick. When the cable is
++	 * pulled, drop the cached SFP type so that txgbe_xpcs_an_enabled()
++	 * turns false and this alarm stops re-arming itself.
++	 */
++	if (!txgbe_is_backplane(hw)) {
++		if (hw->mac.type == txgbe_mac_aml)
++			value = rd32(hw, TXGBE_GPIOEXT) & TXGBE_SFP1_MOD_ABS_LS;
++		else if (hw->mac.type == txgbe_mac_aml40)
++			value = rd32(hw, TXGBE_GPIOEXT) & TXGBE_SFP1_MOD_PRST_LS;
++
++		if (value != 0 &&
++		    hw->phy.sfp_type != txgbe_sfp_type_not_present) {
++			PMD_DRV_LOG(INFO, "SFP module removed, stop AN73 watchdog.");
++			hw->phy.sfp_type = txgbe_sfp_type_not_present;
++		}
++	}
++
+ 	if (!(txgbe_xpcs_an_enabled(hw)))
+ 		return;
+ 
+@@ -3013,7 +3045,10 @@ void txgbe_dev_e56_check_bp_event(void *param)
+ 		hw->bp_event_interval = 2000 * 1000;
+ 
+ out:
+-	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
++	if (rte_atomic_load_explicit(&adapter->sfp_an_alarm_enabled,
++				     rte_memory_order_acquire) != 0 &&
++	    (hw->mac.type == txgbe_mac_aml ||
++	     hw->mac.type == txgbe_mac_aml40))
+ 		rte_eal_alarm_set(hw->bp_event_interval, txgbe_dev_e56_check_bp_event, dev);
+ }
+ 
+@@ -3021,10 +3056,15 @@ static void
+ txgbe_dev_detect_sfp(void *param)
+ {
+ 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
++	struct txgbe_adapter *adapter = TXGBE_DEV_ADAPTER(dev);
+ 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
+ 	u32 value = 0;
+ 	s32 err;
+ 
++	if (rte_atomic_load_explicit(&adapter->sfp_an_alarm_enabled,
++				     rte_memory_order_acquire) == 0)
++		return;
++
+ 	if (hw->mac.type == txgbe_mac_aml40) {
+ 		value = rd32(hw, TXGBE_GPIOEXT);
+ 		if (value & TXGBE_SFP1_MOD_PRST_LS) {
+@@ -3047,14 +3087,31 @@ txgbe_dev_detect_sfp(void *param)
+ 
+ 	err = hw->phy.identify_sfp(hw);
+ out:
++	if (rte_atomic_load_explicit(&adapter->sfp_an_alarm_enabled,
++				     rte_memory_order_acquire) == 0)
++		return;
++
+ 	if (err == TXGBE_ERR_SFP_NOT_SUPPORTED) {
+ 		PMD_DRV_LOG(ERR, "Unsupported SFP+ module type was detected.");
+ 	} else if (err == TXGBE_ERR_SFP_NOT_PRESENT) {
+ 		PMD_DRV_LOG(INFO, "SFP not present.");
++		/* Module removed: drop the cached type and stop the watchdog. */
++		hw->phy.sfp_type = txgbe_sfp_type_not_present;
++		rte_eal_alarm_cancel(txgbe_dev_e56_check_bp_event, dev);
+ 	} else if (err == 0) {
+ 		hw->mac.setup_sfp(hw);
+ 		PMD_DRV_LOG(INFO, "detected SFP+: %d", hw->phy.sfp_type);
+ 		txgbe_dev_setup_link_alarm_handler(dev);
++		/* Re-arm the AN73 watchdog for the newly inserted module, so
++		 * that only one instance of it is running at a time.
++		 */
++		if (!hw->adapter_stopped &&
++		    (hw->mac.type == txgbe_mac_aml ||
++		     hw->mac.type == txgbe_mac_aml40)) {
++			rte_eal_alarm_cancel(txgbe_dev_e56_check_bp_event, dev);
++			rte_eal_alarm_set(hw->bp_event_interval,
++					  txgbe_dev_e56_check_bp_event, dev);
++		}
+ 		txgbe_dev_link_update(dev, 0);
+ 	}
+ }
+diff --git a/drivers/net/txgbe/txgbe_ethdev.h b/drivers/net/txgbe/txgbe_ethdev.h
+index a617b70e3c..08f41e628d 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.h
++++ b/drivers/net/txgbe/txgbe_ethdev.h
+@@ -368,6 +368,8 @@ struct txgbe_adapter {
+ 	uint8_t rss_reta_updated;
+ 
+ 	RTE_ATOMIC(uint32_t) link_thread_running;
++	/* SFP detection and AN73 watchdog alarm state. */
++	RTE_ATOMIC(uint32_t) sfp_an_alarm_enabled;
+ 	rte_thread_t link_thread_tid;
+ };
+ 
 -- 
 2.55.0.windows.2
 
