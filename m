@@ -1,147 +1,75 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9136D606A319
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 15:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15501606A31B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 15:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fj+Atlxt
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=XHNu7YwR
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC55640264;
-	Thu, 22 Oct 2026 17:35:55 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 53B184003C;
- Thu, 22 Oct 2026 17:35:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792683355; x=1824219355;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=dfmSe5ghoAC3SmXj2XXRMrUerTeINVtveRp0dP4rbug=;
- b=fj+Atlxt5jsJBUuNB/KS+fH0t7m6mj4+Ammimoya0Phft+Ke5r+pPpUX
- nRc24xJdJ2j8baSiKNNywsiscRQXH86ZX1KMkjZinlR5xb3teYtjDlK5k
- 5Nel4fQTOwlZsIXKB9s6gcgmgmaceiYLCfu3GKVdDjvt4ls7X5JvMBeOC
- lJRCqkKGX+5xs1xWBQlLPhUF5poGF352UyhrlAJafjiIuFJhd8pGfX+0d
- SUsdUAARJjs8oGdFu4jNteFDhm4/bfPeUdLcGJQUMoJTP2pCQp3eB/x5v
- YfCld5JIVwBT1WDGR7l6COucUQmeZsxzaciwyt89wT0kSG4tRixwgC4zx w==;
-X-CSE-ConnectionGUID: ZkzSFGUOQ02uXcizDPdJJA==
-X-CSE-MsgGUID: P5cJcB0wSZyUgn16cFvjhA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11942"; a="1324421"
-X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
-   d="scan'208";a="1324421"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Oct 2026 08:35:53 -0700
-X-CSE-ConnectionGUID: 8BYEwV8ASVC+f5cX7rOfPA==
-X-CSE-MsgGUID: QtpXmHuFRNWYSyUYYF8d2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
-   d="scan'208";a="3803669"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Oct 2026 08:35:53 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Thu, 22 Oct 2026 08:35:52 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Thu, 22 Oct 2026 08:35:52 -0700
-Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.41) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Thu, 22 Oct 2026 08:35:52 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hWysI2iMxqT+joNRQEu69OwGWq849ZoavBaFaoSrolh+pzNWkzdqDsipePtJZqwXiHkQAO6F5Uj2A46oWbn4723pzPieFsgR6a6jMe71apHKpVmHIkjPpJxBwdeEVvO+m6kZYPg+fIlAF+GUvC9QS49c0x4RP/shUKlo39KIHvTHNnEb5u3XNEV3jjjBtUwBRbNkVtJomlzOlzxKVqNHCRXFNbqMAZQnM8ea/1KrqAVNz1nvaY5z1navx5JuO10AltEnMDTl50weYJva04pPKRzRVhW4DaGyNljQN9QElhQkYhZWPgWKfa/AWG/Kjp14I21uQeEJAKgbGxMV1SqPbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iAw9Yoi/QRn7KKf1ePQUt4H3OFwwJd6zo4+lAmr6iUs=;
- b=fpe4RiAv94EPCAtFCKaal9Mv369jvVrhhetpAks6gcvBgKgu9CZYBdaOWno50RNxYPbdz1KH7V04MNCPYB2buST6kVQNZFTrK5uQtHhUIRCQTz+vSlIQ8hlcT1KFixX8WbHafQMcQ//EwwQaInI5NT0PM7jZwe/cb62tTqL2BQ8cnd6wQ5LOj3fwTAd/GvS+9NIGRNdHfnbStgKSvllaWutBFUZz241vW4XSTa8twqvCcVipgfDZTxf2wsGwaxE6ReYcaiosbW5Q6ry/8QLLt0dsmRKesKrLhoXKopp6wY/E5ootmLsyAkHeoPQqGlYx9L+eiUJm3HOO0Yi3uGxg1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by SJ0PR11MB5918.namprd11.prod.outlook.com (2603:10b6:a03:42c::22)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.15; Thu, 22 Oct
- 2026 15:35:50 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0522.017; Thu, 22 Oct 2026
- 15:35:49 +0000
-Date: Thu, 22 Oct 2026 16:35:44 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Dawid Wesierski <dawid.wesierski@intel.com>
-CC: <dev@dpdk.org>, <vladimir.medvedkin@intel.com>,
- <anatoly.burakov@intel.com>, <marek.kasiewicz@intel.com>, <stable@dpdk.org>,
- Jingjing Wu <jingjing.wu@intel.com>, Saurabh Singhal <saurabhs@arista.com>,
- Qi Zhang <qi.z.zhang@intel.com>
-Subject: Re: [PATCH] net/iavf: fix interrupt callback race on close
-Message-ID: <atotUOk-9s9IcsFv@bricha3-mobl1.ger.corp.intel.com>
-References: <20261014122427.631805-1-dawid.wesierski@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20261014122427.631805-1-dawid.wesierski@intel.com>
-X-ClientProxiedBy: DUZPR01CA0077.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:46a::15) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+	by mails.dpdk.org (Postfix) with ESMTP id 6B70540613;
+	Thu, 22 Oct 2026 17:54:16 +0200 (CEST)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 75DD940264
+ for <dev@dpdk.org>; Thu, 22 Oct 2026 17:54:15 +0200 (CEST)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-2db80fcdf8bso13115555ad.2
+ for <dev@dpdk.org>; Thu, 22 Oct 2026 08:54:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792684454;
+ x=1793289254; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=693lSklddI3fY04CZMSlUNh0NY6qowaodQRsUTCG4Bg=;
+ b=XHNu7YwR/dk0X2u0ZxaFM9/5n8EagBxOCJImTJnuaz10QsHcJm7mF5mxNfLOa6b3v4
+ aH863v513HrrHiaKrc0oqoE9JHB3/FwY48EzWkUnAkUTYmUwIzY7sO3NyCehogJT3TBz
+ +YptVlnMaE/AiCRLJrsZdvA1z3LhVubQcXmK6G/98rsJOUVP4kxqiabOd8muPtyPcHdf
+ 2EOb//DvyrLK93kR4Wmd2Rr0KlZVY6VthE8vKZZuZ/FBsGD6MtC41A+eoonRJQ/pJsSn
+ ChSZ7xBGZ7ghUdAoTUSCiFNK3oqo+JO7Fg4ptGpxCAZWMeXQT067sq3+8hHCJXTBYnXt
+ bE/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792684454; x=1793289254;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=693lSklddI3fY04CZMSlUNh0NY6qowaodQRsUTCG4Bg=;
+ b=CDUUzqj/AdfoilnAitfKggTWc/755n1l/sNwVTfJB988uk951NCTiqN2dPX2XWElrW
+ SbOO78oc2QQqLUwjG6a9kfXUM6yZKJvPLG+aiH6xW1n9RVOUFRrvZGHOFx6SAuM1k/xX
+ +BacTW10pI9Z5ke5TM4ouYaR3SYgIL830WREWhzn4yqYixSVkKd8WkIPdD1DbH21vFyf
+ QyJ1Udq7BN0V+qEWHXHiBZOU0jWwbwPbK4sfjWtRQy5/JpUzWNN+eFJPGC8cX61n+vd9
+ 885SQvbeVJ5HNEmxO+2ERIUHU8t4zl/hJr/AiDQgWn4OHR1uCwrP3mPRMSYRhIKgH/rz
+ 9Xcg==
+X-Gm-Message-State: AFq9FYKizx8J/wuCB5QcuEcvfhT5C/9J4MkPlJaPJk1w3j4l3oGVcLO8
+ 0VgBpwdcc10gEyrJdwlidiBXGYS8yPl3GzEMqmtty9ZddBQPsKA4chiG6C9S87G0b3Q=
+X-Gm-Gg: AYBFou3wiGX6A4Wx/64lGS8gcDk8iJqz+VRlI2jJ7GOHXb50BWRUZEUwZepf0VZjjY+
+ zIGNiauJZrH5WfNh8ujPqk1pT+pzeybLpbqMfONlQGr44blE/Vpnu9d0gQWxEPnoW8Icv7NdgPE
+ u1OV0ev/jpbF3Hh0t2K/paipTp74ypZMe8E4V4P1y5S2phsA0jnueiC6dXoew2IBj216euVUFYJ
+ vAbWxQVYI/89LjuMFQB+MjsSg/VfKzTGTDJjCIJTyddlFrvIQshRReNZOQ+JkGd5hWJj1HbVZVF
+ gL1AR1BJSS3ken/0lkMVBnTwCa2Bn1eRjYQvjd3HPfVL0/OPuVsOmFniQ2wsfd5r84WcXoAbI5P
+ d1N/9dJLApE8CutonFdgwJLu69I/L2U7Bi4OOjd7Zl/+IAbyAv5+sHAtle4jIYC/QtBS7ZWbUls
+ pS/IUbSVzCIiGWO9/VpCMC087ViEflaIXDXKNJ1MSVvE5nJdl7PEfHyolAdiPI6AKDT73oDhmvS
+ 0tEVUyPgsgrEOQyXwK2VEDGgi1UDh1gG6b6PwLkTvYzJUl6XdpT2+uAjxYRWjoE7AsSPkkEIcUh
+ z8EonxsB6K17AFsogSWRig==
+X-Received: by 2002:a17:902:d2c6:b0:2e9:9bac:2e90 with SMTP id
+ d9443c01a7336-2ea43d3a8fbmr42861495ad.65.1792684454317; 
+ Thu, 22 Oct 2026 08:54:14 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2ea7b3ba573sm149975ad.48.2026.10.22.08.54.13
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 22 Oct 2026 08:54:13 -0700 (PDT)
+Date: Thu, 22 Oct 2026 08:54:11 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Wei Chen <allen.chen@jaguarmicro.com>
+Cc: dev@dpdk.org, cristian.dumitrescu@intel.com, stable@dpdk.org
+Subject: Re: [PATCH] cfgfile: fix isspace() undefined behavior
+Message-ID: <20261022085411.6932d274@phoenix.local>
+In-Reply-To: <20261022122348.3467-1-allen.chen@jaguarmicro.com>
+References: <20261022122348.3467-1-allen.chen@jaguarmicro.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|SJ0PR11MB5918:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e56de25-e833-4ab4-e0aa-08df30522623
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|376014|23010399003|1800799024|18002099003|10067099003|261021121427099003|3023799007|261021135927099003|22082099003|261021123027099003|11063799006|261009223027099003|56012099006;
-X-Microsoft-Antispam-Message-Info: LcwOdA+d5G8iBoyBfOsrqHE+gfm8NwT1WhJzsTkCjL4tcdpvsKNXrZ7ReWD3IvsaPzFXZ1PziuFxf1rqR4Dq88EDmwaeh/J0XwSKhwG39HX9Baz/MKKjuat7rkNGsz0SiCF6mqaRD5mF5p5gcGys335EqFf2ICmqmULmYr120AAo4q3U+lkeP7nEwG/k8dMv2EdzqS6ukUM3UHYH8xi8c5UWuiiFUQbKD0joHALt95ZSILRB3+wrpcRmCMpyYCbkyKSVje4ySaI7plXbUswW+t19I6ZfCA3OfLresw6j4rTddSEvPFnqglasc19jDW597UpYI4IdNQ3v8oKKzJd7SOpARuF+2DajRc73uaNC4mxl34qNrQk7pxF5hDeGdSSS+GAiG+S3qE9NS+d8pfLkd2CgKQhsgKYa4VyEcOi8VFiw2KUz6Uz+aysb+IeRbfh+AnUtb7TSNx5+7F8aQaI5xAsK2RwXK4Qser+GRO9yY/4XQSuYE/AjWsx6253tej+9WpFxcvyWCqkJffuVCriBhCZ5kN52RBhHl9kHSun+GEznHTKEJg+skDbI4SieIrk5qalx5/jOSwwqiZH3bF7NvhK2SlF7QytoljqpnMDybKmymi/AVJjLm8E+Abp2XYBx/KmWesGhGoChfZXdyVxA4WepLqXmBJK8FlLAMl2aPRk=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(18002099003)(10067099003)(261021121427099003)(3023799007)(261021135927099003)(22082099003)(261021123027099003)(11063799006)(261009223027099003)(56012099006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qMd3rHnXB9rPAuF3seuZioANBj0rcVHt7kvljihX6XrXDVTT6dGLPArtuUZh?=
- =?us-ascii?Q?J91Hz6HUFdwKEjiJFhLkHVFTwsYgS2NWxLey7dwnN1zMVtD4OOyCQUfnZ372?=
- =?us-ascii?Q?s40Y+s3SZu/pi0RcpVgPv3KPgy85gykM1s5CiPvu0YS2pPHMPf2KDtVDeEuy?=
- =?us-ascii?Q?V5UEY8wYUCda5Aac25fz/RBV/mD+XxIJfu5utd7JlLB525waa85kw0hShu/K?=
- =?us-ascii?Q?99cHEO5joBv5ieNc+LWCVmz93wLxCkVdQbGZdxpjwmP20atHk/a6G/6vmy8K?=
- =?us-ascii?Q?hyt3WOxGohI8IiMvPfc6ujz8PrV+OcpHL8oTCn82zgdQRJ5vVX7dFoGSkoMF?=
- =?us-ascii?Q?qmakYsZpr4tWk97kqlyyE4mGF4crjVnUf05SRfXlbIr6sbqRSjvF/GLEHY2G?=
- =?us-ascii?Q?/y9ns+cHR3rHP73UGuzu4oXuiXuglphLJ020Y0qtyVPym5SHbESWRHjxzR7s?=
- =?us-ascii?Q?WDLSPjKfoSog2eGh5S+Rfz5dwQShO073VNuooo1Z6KxVBw8tN9H0/7o+iV18?=
- =?us-ascii?Q?jmmRTvgDpftlHa78z1BLnYIGGXH3XUvRaTzhpZ2jIF88qZKXS6D8TF2ReiBj?=
- =?us-ascii?Q?tsNIHqb8t4j1YTr46VztpGqc/Bi1Mki5xeJHbwtTnCnKa2rAFOdCpgb4Z5va?=
- =?us-ascii?Q?kST/E1+h0ZcmjahG1E5GBuz01cHf8ldP7GOaNOeqp8PSIqSQCr3rdlTYjI6h?=
- =?us-ascii?Q?7uMdLxIrVWzc1+Jrbniq96pvE3SIiCMsCafv9+uUxGO3dXWVaX1oV05rE/wy?=
- =?us-ascii?Q?UpSDeqd57wl3jrpdRq80mLwJ5nDoTclVRValN8iFw3NvgnUAPXtFJfoOomoB?=
- =?us-ascii?Q?AtUgNS7UszFN3H5wP+izJxJzmi7dSHnLW2fY7lZf2P8Il3pDTj3Xflk3nfWH?=
- =?us-ascii?Q?eoD0ERvmTwDEIam+Dtoc8dDkek12jwFMrXbsOnMDQ0BO1MpNRI+KN+jHDvFk?=
- =?us-ascii?Q?pNe6V1Y6WCMq1sfEK6xX3bxyBx3nsArA8hr4B9/Kg9u/EUPgGxLJ9wbICkF3?=
- =?us-ascii?Q?qIoGuNOrvj0QzA+yeThIQPwdMVgd7KKheQciPshz6thGw2nMQnmntiPmzImt?=
- =?us-ascii?Q?81J8XtBYy+Jk0/h7dmhRMbYK9mnbYMFqpssJBH6EooUEN8VUuvOWg+w4qYY1?=
- =?us-ascii?Q?bXnHDx5aqRTMUyrGxAxlianmV2HP9YuivXBN6bRZNz8ZSRoFc1N+LSXvN6g6?=
- =?us-ascii?Q?+IImMzf2JMsacrK3G++vD/StGz7YGnga/Gpqq8xfWeDIQWRpbe1/LgK/7KoM?=
- =?us-ascii?Q?m1BODkTAFzpi+roSXA6rSB8N2qlD/R+bUc5aV3uc2B3YpqMl/4amfW1lt7Cf?=
- =?us-ascii?Q?GL1XJ96TtxkHcPwik9npaxebCE+odzVWZpmic/4DhfWJptVkdSFx1ZeIVwH9?=
- =?us-ascii?Q?oWzSCsMqJGm+7O73vI8nTKqH2d1xI0IEjDbM60ZLn6m72bYGL9qZVuP8yZYh?=
- =?us-ascii?Q?KadFOpr7UfW2vTiGrbUAkV9MGcAeqZjbt8YAx2sLoFWEVCk4JEJnb531Flxo?=
- =?us-ascii?Q?xu1LHR7OYILFTp1wfe2xLsygsyoCu8KI/g5vCT3oUXzXtRUd6yaCtjlD6+Bv?=
- =?us-ascii?Q?B+92iJPu5t6U5x3nHa2RJkf7YjBlQKiDyh2V4w4NMGBICQ9sBmDNgiN66cp8?=
- =?us-ascii?Q?VRGorFpOv4DyN392wY2plF6GtNIUa7dbo04b5P7n/EDTbxFZ+Glxs6p27PZg?=
- =?us-ascii?Q?Lyqq73Xs0INjPX+sjk17Rn1Svmmpu1F4Q9BiofemsAqkAwEz2ZAoZYnbKCY1?=
- =?us-ascii?Q?7A5c5vGBlYUKRBuam6zZDEdPeKQUz0Q=3D?=
-X-Exchange-RoutingPolicyChecked: iOZORh0Vvr0o085kPp37eUTwBIDEenq+UkChtej1Sc5NCAF0jT9WTPrtjIp/7JntuLQohQHqT5tvx0+4MNddVvv6JCA8zLIafXENH+SqGVb+Rjx1VnB6cTNqrjei9Of8wpziVNVYfc0mwCCVC5IehZS2kw0FKAs0euTq8lQ1eujJ4GJInw8Ba0DaJEgaOA6q+2Neyu/Bveks/9Uzv4dBRR1pIDeCB+YWr9gTGxgm4NLxjPEALuz4lbvlpGcgtG5UU0VirGaE4AKXqwW/z6F8Hjap8BOAyzT0j93ApGkQrN6hSyaKRUq60MNg8rlFSqjB6Nf7ubxH5YvVvuV46fvAFw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e56de25-e833-4ab4-e0aa-08df30522623
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2026 15:35:49.8467 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uFATiwEFa3TQ9XagUAv+u+ajef7w5eT0pZesEgETDdC8yTFFpjgiZ1VZkImZmbtmb6/7bx+Z0SyvVUBbFzpZjmAnecb+P7kYa5wtw4BF/Vo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5918
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -151,61 +79,273 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Wed, Oct 14, 2026 at 12:24:27PM +0000, Dawid Wesierski wrote:
-> From: Marek Kasiewicz <marek.kasiewicz@intel.com>
-> 
-> iavf_dev_close() unregisters iavf_dev_interrupt_handler() with
-> rte_intr_callback_unregister() and ignores the result. That call
-> returns -EAGAIN, and leaves the callback registered, while the
-> interrupt thread is running a callback of the same source.
-> 
-> Close hits that window. It sends virtchnl commands (RSS, promiscuous
-> mode, flows), and iavf_dev_interrupt_handler() handles each response.
-> The handler clears the pending command before it returns, so the
-> thread waiting in iavf_wait_for_msg() can go on to the unregister
-> while the interrupt thread is still inside the callback. This is
-> likely when the two threads share a CPU.
-> 
-> Two failures follow:
-> - The interrupt thread resumes the callback after
->   rte_eth_dev_release_port() has set dev->data to NULL, and
->   iavf_handle_virtchnl_msg() dereferences it: segmentation fault.
-> - The callback returns, but its source stays registered after the
->   port is closed. At rte_eal_cleanup(),
->   pci_vfio_unmap_resource_primary() closes the interrupt eventfd, and
->   the next rebuild of the epoll set aborts the process:
->     EAL: PANIC in eal_intr_thread_main():
->     Error adding fd 49 epoll_ctl, Bad file descriptor
-> 
-> Use rte_intr_callback_unregister_sync(), as ice_dev_close() does. The
-> iavf_dev_init() error path has the same pattern; fix it too.
-> 
-> The sync variant waits for a running callback to return. It would
-> spin forever only if called from iavf_dev_interrupt_handler() itself,
-> and that handler never closes or re-initializes the port: it hands PF
-> events and resets to the iavf-event thread with iavf_dev_event_post().
-> A close from any other interrupt thread callback, such as an alarm,
-> returns at once, because the iavf source is not active then.
-> 
-> Fixes: 22b123a36d07 ("net/avf: initialize PMD")
-> Fixes: e35a5737a746 ("net/iavf: unregister interrupt handler before FD close")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
-> Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
-> ---
->  drivers/net/intel/iavf/iavf_ethdev.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+On Thu, 22 Oct 2026 20:23:48 +0800
+Wei Chen <allen.chen@jaguarmicro.com> wrote:
 
-Patch applied to dpdk-next-net-intel.
-Thanks,
-/Bruce
+> The _strip() function passes a char directly to isspace(), which is
+> undefined behavior. The ctype functions require an int argument that is
+> either an unsigned char value or EOF, but char is signed by default on
+> x86 and ARM, so any byte >=3D 0x80 in the input is promoted to a negative
+> int and indexes the ctype table out of bounds.
+>=20
+> Such bytes are reachable from a user-provided config file containing
+> UTF-8 or other non-ASCII content.
+>=20
+> Cast the argument to unsigned char, as is already done in
+> app/test-bbdev/test_bbdev_vector.c and elsewhere.
+>=20
+> Fixes: eaafbad419bf ("cfgfile: library to interpret config files")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Wei Chen <allen.chen@jaguarmicro.com>
+> ---
+
+Looks good, there seems to be lots of places with same issue.
+Perhaps putting helpers in rte_string_fns.h which handle the
+common ctype case and use comparisons to avoid pitfalls.
+
+   static inline bool
+   rte_isspace(char c)
+   {
+   	return c =3D=3D ' ' || c =3D=3D '\t' || c =3D=3D '\n' ||
+   	       c =3D=3D '\r' || c =3D=3D '\f' || c =3D=3D '\v';
+   }
+
+Quick AI doodle.
+
+=46rom 653b2204ef72a45e460ba557c6b765b1965154c5 Mon Sep 17 00:00:00 2001
+From: Stephen Hemminger <stephen@networkplumber.org>
+Date: Thu, 22 Oct 2026 08:52:58 -0700
+Subject: [PATCH] eal: add ASCII character classification functions
+
+The <ctype.h> functions take an int that must be EOF or an
+unsigned char value. Passing a plain char is undefined behavior
+for bytes >=3D 0x80 where char is signed. Most of the ctype calls
+in the tree do exactly that, including rte_str_skip_leading_spaces().
+
+The ctype functions are also locale dependent, which is not
+wanted when parsing devargs, config files and addresses.
+
+Add rte_isspace(), rte_isdigit(), rte_tolower() and friends.
+They take a char, use ASCII only, and never match bytes >=3D 0x80.
+Use rte_isspace() in rte_str_skip_leading_spaces().
+
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ app/test/test_string_fns.c             | 44 +++++++++++++
+ doc/guides/rel_notes/release_26_11.rst |  6 ++
+ lib/eal/include/rte_string_fns.h       | 89 +++++++++++++++++++++++++-
+ 3 files changed, 138 insertions(+), 1 deletion(-)
+
+diff --git a/app/test/test_string_fns.c b/app/test/test_string_fns.c
+index 213a9312ea..ba6b6fa8b2 100644
+--- a/app/test/test_string_fns.c
++++ b/app/test/test_string_fns.c
+@@ -2,6 +2,7 @@
+  * Copyright(c) 2010-2014 Intel Corporation
+  */
+=20
++#include <ctype.h>
+ #include <stdio.h>
+ #include <stdarg.h>
+ #include <stddef.h>
+@@ -378,6 +379,47 @@ test_rte_str_to_size(void)
+ 	return 0;
+ }
+=20
++static int
++test_rte_ctype(void)
++{
++	unsigned int i;
++
++	/* Must match <ctype.h> in the C locale for 7-bit ASCII */
++	for (i =3D 0; i < 0x80; i++) {
++		char c =3D (char)i;
++
++		if (rte_isspace(c) !=3D !!isspace(i) ||
++		    rte_isblank(c) !=3D !!isblank(i) ||
++		    rte_isdigit(c) !=3D !!isdigit(i) ||
++		    rte_isupper(c) !=3D !!isupper(i) ||
++		    rte_islower(c) !=3D !!islower(i) ||
++		    rte_isalpha(c) !=3D !!isalpha(i) ||
++		    rte_isalnum(c) !=3D !!isalnum(i) ||
++		    rte_isxdigit(c) !=3D !!isxdigit(i) ||
++		    rte_isprint(c) !=3D !!isprint(i) ||
++		    rte_tolower(c) !=3D (char)tolower(i) ||
++		    rte_toupper(c) !=3D (char)toupper(i)) {
++			LOG("FAIL: mismatch with ctype for 0x%02x\n", i);
++			return -1;
++		}
++	}
++
++	/* No byte outside 7-bit ASCII matches any class */
++	for (i =3D 0x80; i < 0x100; i++) {
++		char c =3D (char)i;
++
++		if (rte_isspace(c) || rte_isblank(c) || rte_isdigit(c) ||
++		    rte_isalpha(c) || rte_isxdigit(c) || rte_isprint(c) ||
++		    rte_tolower(c) !=3D c || rte_toupper(c) !=3D c) {
++			LOG("FAIL: non-ASCII byte 0x%02x matched\n", i);
++			return -1;
++		}
++	}
++
++	LOG("%s - PASSED\n", __func__);
++	return 0;
++}
++
+ static int
+ test_string_fns(void)
+ {
+@@ -391,6 +433,8 @@ test_string_fns(void)
+ 		return -1;
+ 	if (test_rte_str_to_size() < 0)
+ 		return -1;
++	if (test_rte_ctype() < 0)
++		return -1;
+ 	return 0;
+ }
+=20
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/=
+release_26_11.rst
+index be758a0c02..c6ccf6ae2d 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -60,6 +60,12 @@ New Features
+   Added the ``RTE_DIV_ROUND_UP`` macro in ``rte_common.h``
+   to divide dividend by divisor, rounding up to the nearest integer.
+=20
++* **Added ASCII character classification functions.**
++
++  Added ``rte_isspace()``, ``rte_isdigit()``, ``rte_tolower()`` and related
++  functions in ``rte_string_fns.h``. They take a ``char``, ignore locale,
++  and are safe for bytes >=3D 0x80, unlike the ``<ctype.h>`` functions.
++
+ * **Improved pointer arithmetic macros.**
+=20
+   Updated  the macros ``RTE_PTR_ADD``, ``RTE_PTR_SUB``,
+diff --git a/lib/eal/include/rte_string_fns.h b/lib/eal/include/rte_string_=
+fns.h
+index b3b5bdf275..1e3b2df9a1 100644
+--- a/lib/eal/include/rte_string_fns.h
++++ b/lib/eal/include/rte_string_fns.h
+@@ -12,6 +12,7 @@
+ #define _RTE_STRING_FNS_H_
+=20
+ #include <ctype.h>
++#include <stdbool.h>
+ #include <stdio.h>
+ #include <string.h>
+=20
+@@ -115,6 +116,92 @@ extern "C" {
+ ssize_t
+ rte_strscpy(char *dst, const char *src, size_t dsize);
+=20
++/*
++ * ASCII character classification.
++ *
++ * These are locale independent replacements for the <ctype.h> functions.
++ * Unlike the standard versions they take a char, so they are safe to call
++ * with any byte from a string, including values >=3D 0x80 on targets where
++ * char is signed. Characters outside the 7-bit ASCII range never match.
++ */
++
++/** Return true if c is ' ', '\t', '\n', '\v', '\f' or '\r'. */
++static inline bool
++rte_isspace(char c)
++{
++	return c =3D=3D ' ' || (c >=3D '\t' && c <=3D '\r');
++}
++
++/** Return true if c is ' ' or '\t'. */
++static inline bool
++rte_isblank(char c)
++{
++	return c =3D=3D ' ' || c =3D=3D '\t';
++}
++
++/** Return true if c is a decimal digit. */
++static inline bool
++rte_isdigit(char c)
++{
++	return c >=3D '0' && c <=3D '9';
++}
++
++/** Return true if c is an ASCII uppercase letter. */
++static inline bool
++rte_isupper(char c)
++{
++	return c >=3D 'A' && c <=3D 'Z';
++}
++
++/** Return true if c is an ASCII lowercase letter. */
++static inline bool
++rte_islower(char c)
++{
++	return c >=3D 'a' && c <=3D 'z';
++}
++
++/** Return true if c is an ASCII letter. */
++static inline bool
++rte_isalpha(char c)
++{
++	return rte_isupper(c) || rte_islower(c);
++}
++
++/** Return true if c is an ASCII letter or decimal digit. */
++static inline bool
++rte_isalnum(char c)
++{
++	return rte_isalpha(c) || rte_isdigit(c);
++}
++
++/** Return true if c is a hexadecimal digit. */
++static inline bool
++rte_isxdigit(char c)
++{
++	return rte_isdigit(c) || (c >=3D 'a' && c <=3D 'f') || (c >=3D 'A' && c <=
+=3D 'F');
++}
++
++/** Return true if c is a printable ASCII character, including space. */
++static inline bool
++rte_isprint(char c)
++{
++	return c >=3D ' ' && c <=3D '~';
++}
++
++/** Convert an ASCII uppercase letter to lowercase, else return c. */
++static inline char
++rte_tolower(char c)
++{
++	return rte_isupper(c) ? c - 'A' + 'a' : c;
++}
++
++/** Convert an ASCII lowercase letter to uppercase, else return c. */
++static inline char
++rte_toupper(char c)
++{
++	return rte_islower(c) ? c - 'a' + 'A' : c;
++}
++
+ /**
+  * @warning
+  * @b EXPERIMENTAL: this API may change without prior notice.
+@@ -133,7 +220,7 @@ rte_str_skip_leading_spaces(const char *src)
+ {
+ 	const char *p =3D src;
+=20
+-	while (isspace(*p))
++	while (rte_isspace(*p))
+ 		p++;
+=20
+ 	return p;
+--=20
+2.43.0
