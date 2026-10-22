@@ -1,52 +1,56 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1ED606A319
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 11:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30918606A319
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 11:10:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 33FBB402D3;
-	Thu, 22 Oct 2026 13:10:37 +0200 (CEST)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
- by mails.dpdk.org (Postfix) with ESMTP id E43784003C
- for <dev@dpdk.org>; Thu, 22 Oct 2026 13:10:34 +0200 (CEST)
-X-QQ-mid: esmtpsz17t1792667428t64c5ca09
-X-QQ-Originating-IP: au1aFaOKGY2mgcDG+TgCvNxbh6e0mamtMvdnd769Qwg=
+	by mails.dpdk.org (Postfix) with ESMTP id 1D65340658;
+	Thu, 22 Oct 2026 13:10:40 +0200 (CEST)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+ by mails.dpdk.org (Postfix) with ESMTP id 58E2B40264;
+ Thu, 22 Oct 2026 13:10:36 +0200 (CEST)
+X-QQ-mid: esmtpsz17t1792667430t2df215e9
+X-QQ-Originating-IP: h0J/6cKsyF2Htj89fdyuS4pVKS9kdR4X+N5e/v78Mgw=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.205.193.71])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 22 Oct 2026 19:10:23 +0800 (CST)
+ id ; Thu, 22 Oct 2026 19:10:29 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1877923981596231022
-EX-QQ-RecipientCnt: 2
+X-BIZMAIL-ID: 14442279594974848506
+EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Subject: [PATCH v9 00/16] Wangxun fixes and new features
-Date: Thu, 22 Oct 2026 19:03:06 +0800
-Message-ID: <7FB1146D440010CF+20261022111017.3605-1-zaiyuwang@trustnetic.com>
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
+ Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH v9 01/16] net/txgbe: fix failure to configure 10G on
+ dual-speed DAC
+Date: Thu, 22 Oct 2026 19:03:07 +0800
+Message-ID: <334DC8DAEC0EE0C7+20261022111017.3605-2-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
-In-Reply-To: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
+In-Reply-To: <20261022111017.3605-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
+ <20261022111017.3605-1-zaiyuwang@trustnetic.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NkL5+hAx9LE0vqnyvKueydhYMZAHg/4e1YP+/7UvjuornfrkPZT2VCAa
- 8JjlyRwzXfPRjeYSYV8iUoe/97EyUCmH0rnn6ANjGQOwykaAX04Zb71rqh7AJ7JYLgndgPE
- +yMG58PKU1+WgYHGbJVy6GcD1zol80Zbb+P6Mp3Yhr7kLoC8JgZwoszc1fHgrHZOVO4Wk8U
- v6U3EWMsYCl6N5CwTwODCCXekViZmzTJJAJaEJ0kiZIuyPKxLZtPyPJEu8uvWw+Vj8RSF/0
- m2GqvDJcbc1AOoeaXR+Uuf+94JFYZjWZx6CQ669Ihx5WtyOrPPsbYSgqCW3m0VNVHGWbKB7
- B4UwjgDBvOpa7kB65M3GEtqME8beKKtee0M5NfDxvEAJo5Ltc7gRrGLpTqIO8xbOyQ2Dx9F
- fO7e+Ws1hAwS+sIuDnR4k6OiCErASG3w4k+b/EPwaA4X+sDX4Am9C5ff07Ra7F7P0va3VRT
- 14vKp2WdUxjSn6UiNy4TyoRkvkkFeDU+WWqgpn7XDNqrzMyX87nuYGvYCpt+2KBRw5e8UEm
- o5FK6Klt/9ILiYiTxMXt6S6t0NOD27gy0X2TwM5s0LebsLuHAu5hd9V7CdzB59hpCbRNtKe
- LdFK28JpKmhj89dpmEygvSP5zt7/GeFOpjMrlg1kDw4WixcGqTdTUQpESzTGDV+T9zbLBT2
- jPFJLXMxTwAIUcyA6hBHjbaMK2Kmn+kGeBygkTkDZ9OQVkunIy+nXfbPb9LOOUlOk5ZBHai
- +a3vxCuP7+4sg+XsqoH7uc9F1I54U9Ia1szoNudYKZN09K9e7HlZLzOGOnUkCXkAFpWfUxD
- pS2Zgi9cT877juBmS2s39e65H/p7JaaDc44pCZ/E4q6rIUNToTVBy2dWL8Zz5P9KYeZ7Ns4
- gh2MTV1+h1JgGEYc4SebQTarnBUz1aYiGPkntDVvZ9RcI3gxkisaf4vwtxyeLds8Cz8WZg2
- tKc/CxZXZu3KGDMjMuI8IUvxiKFd0irAr6+4mM77JMvLc7shB34M34vFhM/399jkoiCyJpl
- r9lUXeG/KYMEuIGCS1r3jdSbaSdoOX4k3lJ4QaHMq4c42kODgQ
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
+X-QQ-XMAILINFO: NyNN0kiL8cx3qJF3EshZYNojk/3sxuPVJXAGHrYs4sTYX3liLrZkPTdX
+ GjVUFHfCWFE6Pa728Wyzck3/XsMEkse4GTHO7R5Q99/2yRmuFfHdO72gqO6E002DMdfUHJ1
+ e3PgY+U7xCGHB4hitGeyLzE8+ep699SWC37trbWJdAuIRfekAhxDtpOecm1XfRTgKqPAbyX
+ nPx6T4OL6uJviOGnAA6i3SRzYaB/SQASlDAJhNQn7zfhGSghhqVsSdCBADftqPoIExTIcse
+ 2/VtvTeozpZBKCIqrr1ki09eLEnCsrE6zrWSbfC2lm/QV9vDNrnoPUZT2mT8mMa7e7vEpDa
+ w8GKwIqigk2ECozwgOFPEMS4HFaDo+Vw9Xmp0s1K8gUO8VKJ9sQ/wW33qkXyrs9efyz92l+
+ iIKx8rUJd1sV7ShMAZCFUgjiXKKrvP6zAXeVmvNtSKzYOC9NMA0nspV12aYbV6pM4Kix+ua
+ xbX4v6N1Dd7aBQPEIp36SgdoyoUJ41Hl3IS2kbmEa1nIP/LicHNLWK1ecnmLmxAMpGE+Rhi
+ RLPyGIUol6yF7D+L69qA1WnRDqVxB+7CstX0Evz1zNwTVw1HnAouz0NZShRFvDiCa40Js8f
+ IrLS0Ih7iGjqyxtB1gHeEUQY+dR0GXCDx1X5LmAI+TiX5563BD06sfPh9RvlQ+PDZ5yizGu
+ ElenOqWID2XGZul+ZG9TCHSsrd+2rp/HFLFSNaD/C2e7vz9h84k52mGP9/nRmor+S+kpTvi
+ ITFPhmRB7oDB0YLQLAMOjS66CbveRWe23+/GJMz1C0jpUM3eR5uXFyrjYzh/U0/Dpsvg6Rz
+ XkTp/RqjXX/PnYtgJour7SQVOvDF47wq/Lu5vBU5hCZ9WuQuzJM/gdolo+YTQTRAJU7PG7t
+ cBHouEAK9cRCM/wiFX0/nubtgsLdKyLmkmzVQyH7YhxNQQrltGNBlrbxSKfxzuBbMb2rsS0
+ WXc17Df5mVpmcwPJPc86GBSHQT9OjATBAxumRd8DJu9sWZgD4i2ErZnQKI8AxgYlSaZllIe
+ LWPczWv/TAfM71wbuxGwRXbv6LCdFSlOnjzTooWXPcJ6w4cKpPPMI2FUS2xDZ/3ypA5BjdI
+ w==
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -57,115 +61,86 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=4.0.1
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-This series addresses link-related issues on Wangxun Amber-lite 25G/40G NICs (CR/KR training, hot-plug, 10G link state).
+Setting "port config speed 10000" on a 10G/40G dual-speed DAC cable
+fails with LINK_SETUP_ERR, and the AN base page always advertises
+only 40G.
 
+Two checks independently blocked 10G:
+
+1. allowed_speeds in dev_start was restricted to 40G, so the user
+   request was rejected before reaching setup_link.
+2. get_link_capabilities_aml40() returned only 40G for all DAC
+   cables, so the link_capabilities mask in setup_phy_link_aml40()
+   stripped any 10G bit from the caller speed.
+
+Remove both restrictions so 10G flows through from user
+configuration to the AN base page advertisement. On DAC cables the
+capability is read from hw->phy.fiber_suppport_speed, which reflects
+the actual SFP module.
+
+Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
+Cc: stable@dpdk.org
+
+Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
-v9:
- - P02: build autoneg_advertised from one mask instead of three ifs, and
-        drop the out-of-tree reference from the message.
- - P03: fix the same wrong RXS field in txgbe_e56_cfg_10g(), and add the
-        Fixes tag for the 25G commit that introduced that copy.
- - P10: report module removal and cancel the AN73 watchdog only on the
-        transition to not-present, so an empty cage no longer repeats both
-        on every poll.
- - P12: reset invalid bp_capa values to 0, log AML40 ffe_* values above
-	0xFF before their low bytes are replicated across the four lanes,
-        and document the applicable FFE value range.
- - P13: clarify that laser_off disables the E56 PHY PMD through PMD_CFG0
-        for DAC cables, while QSFP modules use the SFF-8636 Tx-disable byte.
- - P15: rewrite the unknown-module comment, drop the debug print that ran
-        on every watchdog tick, and drop a commit-message bullet for a branch
-        that is not in the parent tree.
- - P16: clear TXGBE_FLAG_NEED_LINK_CONFIG before the administrative-down
-        early return, so a 25G SFP port can recover after set_link_down() and
-        set_link_up().
+ drivers/net/txgbe/base/txgbe_aml40.c | 15 +++++++++++----
+ drivers/net/txgbe/txgbe_ethdev.c     |  2 +-
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
-Not handled in this revision:
- - P12: Range validation currently covers only bp_capa and the AML40 FFE
-        values. Consistent validation for all txgbe devargs will be added in
-        a follow-up after the ongoing community work on the common devarg
-        parsing and validation functions is finalized.
- - P13: keep the laser_off devarg. On AML40, forcing physical loss of signal
-        is a stronger operation than an administrative link-down. Bringing the
-        link back up then requires complete PHY configuration and restarts AN73
-        negotiation (if auto neg on). This has a visible link recovery cost on
-        high-speed ports. 
-	The default laser_off=0 preserves the existing behavior and link
-        stability for users that only need local link-down. Deployments which
-        need the peer to observe loss of signal, for example for peer-side
-        link-state tracking, can explicitly enable laser_off=1.
----
-v8:
- - P05: keep a retry from reconfiguring an established AN73 link, while
-        still restarting PHY configuration when the link is down or AN is
-        incomplete.
- - P10: on AML40, mark unsupported and unclassifiable QSFP modules as
-        unknown so the module poll does not repeatedly identify them or
-        rerun module and link setup.
- - P12: place the txgbe release-note entries between the Solarflare and
-        ZTE driver entries.
- - P13: rerun complete AML40 link setup on set_link_up() with laser_off
-        enabled, restoring the DAC configuration without adding a separate
-        state flag.
- - P14: correct the AN FSM condition described in the commit message
-        and remove the stray line after the Signed-off-by trailer.
- - P15: assign the detected 10G speed for passive and active-limiting
-        DACs, and remove the unreachable AML40 10G SFP capability branch.
- - P16: add a new patch to keep Amber-Lite ports administratively down
-        by preventing the AN73 watchdog and setup-link retry paths from
-        configuring PHY while hw->dev_start is cleared.
----
-v7:
- - P14: fix a TRAINING log-string typo.
-        move the variable declarations in txgbe_e56_get_txffe().
-        clarify the comment of page-exchange timeout budget.
----
-
-
-Zaiyu Wang (16):
-  net/txgbe: fix failure to configure 10G on dual-speed DAC
-  net/txgbe: use the requested speed in E56 AN setup
-  net/txgbe: fix e56 PHY configuration error
-  net/txgbe: fix incorrect link state in 10G forced mode
-  net/txgbe: do not force reconfig on link retry
-  net/txgbe: set i2c sda hold time
-  net/txgbe: fix link speed display info for 10G mode
-  net/txgbe: remove stale outer UDP checksum offload flag
-  net/txgbe: fix SFP hot-plug when auto-negotiation is on
-  net/txgbe: fix DAC hot-plug on 40G NIC with auto-negotiation
-  net/txgbe: fix 40G FFE tuning applied to first lane only
-  net/txgbe: add pre2 FFE tap and backplane capability devargs
-  net/txgbe: add devarg to turn off Tx laser for 40G NIC
-  net/txgbe: fix CR/KR link training and recovery
-  net/txgbe: align link capabilities and DAC classification
-  net/txgbe: respect manual link-down on Amber-Lite
-
- doc/guides/nics/txgbe.rst              |  32 +++-
- doc/guides/rel_notes/release_26_11.rst |  12 ++
- drivers/net/txgbe/base/txgbe_aml.c     |   9 +-
- drivers/net/txgbe/base/txgbe_aml40.c   |  78 +++++++--
- drivers/net/txgbe/base/txgbe_e56.c     |  16 +-
- drivers/net/txgbe/base/txgbe_e56.h     |   4 +
- drivers/net/txgbe/base/txgbe_e56_bp.c  | 196 +++++++++++++---------
- drivers/net/txgbe/base/txgbe_e56_bp.h  |   4 +-
- drivers/net/txgbe/base/txgbe_hw.c      |  33 ++++
- drivers/net/txgbe/base/txgbe_osdep.h   |  12 +-
- drivers/net/txgbe/base/txgbe_phy.c     |  38 ++++-
- drivers/net/txgbe/base/txgbe_phy.h     |   7 +
- drivers/net/txgbe/base/txgbe_regs.h    |   3 +
- drivers/net/txgbe/base/txgbe_type.h    |  17 +-
- drivers/net/txgbe/txgbe_ethdev.c       | 220 +++++++++++++++++++++++--
- drivers/net/txgbe/txgbe_ethdev.h       |   2 +
- drivers/net/txgbe/txgbe_rxtx.c         |   1 -
- 17 files changed, 549 insertions(+), 135 deletions(-)
-
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index 1098efe5e6..7c72b53f64 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -98,11 +98,12 @@ s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
+ {
+ 	if (hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core0 ||
+ 	    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1) {
+-		*speed = TXGBE_LINK_SPEED_40GB_FULL;
+-		*autoneg = true;
++		*speed = hw->phy.fiber_suppport_speed;
++		*autoneg = hw->devarg.auto_neg;
+ 	} else if (txgbe_is_backplane(hw)) {
+-		*speed = TXGBE_LINK_SPEED_40GB_FULL;
+-		*autoneg = true;
++		*speed = TXGBE_LINK_SPEED_40GB_FULL |
++			 TXGBE_LINK_SPEED_10GB_FULL;
++		*autoneg = hw->devarg.auto_neg;
+ 	} else {
+ 		/*
+ 		 * Temporary workaround: set speed to 40G even if sfp not present
+@@ -176,6 +177,12 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
+ 		return status;
+ 	}
+ 
++	/* setup the highest link when no autoneg */
++	if (speed & TXGBE_LINK_SPEED_40GB_FULL)
++		speed = TXGBE_LINK_SPEED_40GB_FULL;
++	else if (speed & TXGBE_LINK_SPEED_10GB_FULL)
++		speed = TXGBE_LINK_SPEED_10GB_FULL;
++
+ 	if (txgbe_is_backplane(hw) || txgbe_is_dac_cable(hw) ||
+ 	    hw->phy.ffe_set) {
+ 		rte_spinlock_lock(&hw->phy_lock);
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index 0734a1c63c..d4c635dc2f 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -1848,7 +1848,7 @@ txgbe_dev_start(struct rte_eth_dev *dev)
+ 		goto error;
+ 
+ 	if (hw->mac.type == txgbe_mac_aml40)
+-		allowed_speeds = RTE_ETH_LINK_SPEED_40G;
++		allowed_speeds = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_40G;
+ 	else if (hw->mac.type == txgbe_mac_aml)
+ 		allowed_speeds = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_25G;
+ 	else
 -- 
 2.55.0.windows.2
 
