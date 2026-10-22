@@ -1,48 +1,48 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3887606A31A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 16:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3659B606A31A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 16:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=GRUt3WrG
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=A11IWG1L
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F3F5E40698;
-	Thu, 22 Oct 2026 18:52:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2ACCC40A76;
+	Thu, 22 Oct 2026 18:52:22 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 0CB0540698
- for <dev@dpdk.org>; Thu, 22 Oct 2026 18:52:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 09E0F40664
+ for <dev@dpdk.org>; Thu, 22 Oct 2026 18:52:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792687937; x=1824223937;
+ t=1792687938; x=1824223938;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=RW8heQhpBsOVkOgYW0vX5GUYk0oxDHrZ1RR71pyHIeg=;
- b=GRUt3WrG6XSkSKj//LlAiH4m+ElPrlpDhgkF3DZupI5+6yeiV7WzXiZG
- nYHBU2SAdwbBpSRvVD0BIRZkJWBzlRokO2p3B2FjdJ5LviYFmJ1bwGXwk
- 4SLaNx4AaU/q+XKRPpOF1YIbXoO2Q/X6yHcX/HGAzDzuqtEP1ShyE3ji7
- gx0N9gm5028GJHFFyiUM5+wy1x/RQq9OtIALobCPaq4IM2nUwxj9gUGSX
- VLVi+I2KcY2w7A5z9f8qIl5LYV5M3RsPUyc93Z/XbLP6cuRZcaPJqeP8B
- 8RwKQ5u3H3hktwVfK4pFTxb5JxE55a157zEJfqrjKOLWqQ3/McEAUWuJG w==;
-X-CSE-ConnectionGUID: rT9Y+kqdSA6uw8HPQx5WNA==
-X-CSE-MsgGUID: msMq94RQSZmbsK0kYUQt0Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11942"; a="1341038"
+ bh=8zTrKAPT/Lmd1P8kuOFwltqJTTkpDePl6zEW8iGSJg8=;
+ b=A11IWG1LvXP5JqK8+hVdHnSQ0yOCoDE2JRdlL6Ac+ytcxzhf/yg2uk+d
+ ryLjwaVLUnH9IDAYq6hRc5BgBS+Fffr4iYKbwEjpaWOJBhHwwkxJYa6QO
+ HYWg+oY90imJTeM0Aqi/gxPQw95AxFJRZvqImOZw2DVIPk/OJjK8Yeb1e
+ ug4iXFQ5EQF8mJncstNVUumdHDoxLNwruCar4oYN8z8Hl+7Xdz2QmCxuV
+ VVhwTr/FA7sPumHmhp9SV7ArDmHvzlE86yT8H6b5SpSsGl9s4pjYc1nJl
+ 55w6c98mSSpfD6B5O8qemVXfYTAl5oJwkeszBQAWyiz0aJ9oxFZ2mCNg5 g==;
+X-CSE-ConnectionGUID: uaxDOfkpSsms5vJ8odO/TQ==
+X-CSE-MsgGUID: Lxo/Ta+4QI+dnjnuhLqWzw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11942"; a="1341041"
 X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
-   d="scan'208";a="1341038"
+   d="scan'208";a="1341041"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Oct 2026 09:52:16 -0700
-X-CSE-ConnectionGUID: ieW5oo/YS2OFQ6MwJJ3o5A==
-X-CSE-MsgGUID: 1n0BwiKKSZWz0oIsqz++9w==
+ 22 Oct 2026 09:52:17 -0700
+X-CSE-ConnectionGUID: 4+qXWBkpQdi2PsJ17ik+Ew==
+X-CSE-MsgGUID: 9lDhRBZ8T6uGGckEnoTlKA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
-   d="scan'208";a="3507838"
+   d="scan'208";a="3507843"
 Received: from silpixa00401176.ir.intel.com ([10.20.224.212])
- by fmviesa003.fm.intel.com with ESMTP; 22 Oct 2026 09:52:14 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 22 Oct 2026 09:52:15 -0700
 From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
- Chinh Cao <chinh.t.cao@intel.com>
-Subject: [PATCH 5/9] net/ice/base: add NVM definitions for Wake-on-LAN config
-Date: Thu, 22 Oct 2026 16:52:01 +0000
-Message-ID: <20261022165205.1830735-6-vladimir.medvedkin@intel.com>
+ Stefan Wegrzyn <stefan.wegrzyn@intel.com>
+Subject: [PATCH 6/9] net/ice/base: add NVM write flags for eRoT minSREV update
+Date: Thu, 22 Oct 2026 16:52:02 +0000
+Message-ID: <20261022165205.1830735-7-vladimir.medvedkin@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261022165205.1830735-1-vladimir.medvedkin@intel.com>
 References: <20261022165205.1830735-1-vladimir.medvedkin@intel.com>
@@ -65,43 +65,33 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-From: Chinh Cao <chinh.t.cao@intel.com>
+From: Stefan Wegrzyn <stefan.wegrzyn@intel.com>
 
-Add NVM definitions for reading the per-PF Wake-on-LAN configuration.
+Add NVM write command flags for the opt-in mode, and for updating the
+minimum security revision of the external Root of Trust (eRoT).
 
-Signed-off-by: Chinh Cao <chinh.t.cao@intel.com>
+Signed-off-by: Stefan Wegrzyn <stefan.wegrzyn@intel.com>
 Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 ---
- drivers/net/intel/ice/base/ice_type.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/intel/ice/base/ice_adminq_cmd.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/intel/ice/base/ice_type.h b/drivers/net/intel/ice/base/ice_type.h
-index 83d20358b9..28d0387608 100644
---- a/drivers/net/intel/ice/base/ice_type.h
-+++ b/drivers/net/intel/ice/base/ice_type.h
-@@ -1585,6 +1585,13 @@ struct ice_aq_get_set_rss_lut_params {
- #define ICE_SR_PBA_BLOCK_PTR			0x16
- #define ICE_SR_BOOT_CFG_PTR			0x132
- #define ICE_SR_NVM_WOL_CFG			0x19
-+/* WoL Feature Config - PFA TLV types, one per PF.
-+ * TLV IDs: 0x000E for PF0, 0x010E for PF1, ..., 0x070E for PF7.
-+ * Read via ice_get_pfa_module_tlv() + ice_read_sr_word().
-+ */
-+#define ICE_WOL_FEATURE_DISABLE			0x01
-+#define ICE_WOL_FEATURE_ENABLE			0x02
-+#define ICE_WOL_FEATURE(pf)			(0x0E + (pf) * 0x100)
- #define ICE_NVM_OROM_VER_OFF			0x02
- #define ICE_SR_NVM_DEV_STARTER_VER		0x18
- #define ICE_SR_ALTERNATE_SAN_MAC_ADDR_PTR	0x27
-@@ -1633,6 +1640,8 @@ struct ice_aq_get_set_rss_lut_params {
- #define ICE_SR_PQC_MANIFEST_BANK_SIZE		0x81
- #define ICE_SR_POR_REGISTERS_AUTOLOAD_PTR	0x118
- #define ICE_SR_LINK_DEFAULT_OVERRIDE_PTR	0x134
-+#define ICE_SR_HII_PORT_DISABLE_BY_FUNC_PTR	0x139
-+#define ICE_SR_HII_PORT_DISABLE_RDE_WOL_OVRD	BIT(8)
- 
- /* CSS Header words */
- #define ICE_NVM_CSS_HDR_LEN_L			0x02
+diff --git a/drivers/net/intel/ice/base/ice_adminq_cmd.h b/drivers/net/intel/ice/base/ice_adminq_cmd.h
+index 7b318b0a1b..473501a6b2 100644
+--- a/drivers/net/intel/ice/base/ice_adminq_cmd.h
++++ b/drivers/net/intel/ice/base/ice_adminq_cmd.h
+@@ -2019,6 +2019,11 @@ struct ice_aqc_nvm {
+ #define ICE_AQC_NVM_PRESERVE_ALL	BIT(1)
+ #define ICE_AQC_NVM_FACTORY_DEFAULT	(2 << ICE_AQC_NVM_PRESERVATION_S)
+ #define ICE_AQC_NVM_PRESERVE_SELECTED	(3 << ICE_AQC_NVM_PRESERVATION_S)
++#define ICE_AQC_NVM_OPT_IN_MODE_S		4 /* Used by NVM Write only */
++#define ICE_AQC_NVM_OPT_IN_MODE_M		(1 << ICE_AQC_NVM_OPT_IN_MODE_S)
++#define ICE_AQC_NVM_OPT_IN_MODE_ASYNC	0
++#define ICE_AQC_NVM_OPT_IN_MODE_SYNC	1
++#define ICE_AQC_NVM_EROT_MINSREV_UPDATE	BIT(5) /* Used by NVM Write only */
+ #define ICE_AQC_NVM_ACTIV_SEL_NVM	BIT(3) /* Write Activate/SR Dump only */
+ #define ICE_AQC_NVM_ACTIV_SEL_OROM	BIT(4)
+ #define ICE_AQC_NVM_ACTIV_SEL_NETLIST	BIT(5)
 -- 
 2.43.0
 
