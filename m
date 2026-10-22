@@ -1,78 +1,48 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45292606A31F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 Oct 2026 22:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=ZLwDsT4w
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2110E606A319
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 01:41:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2D61C40299;
-	Thu, 22 Oct 2026 00:52:11 +0200 (CEST)
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
- by mails.dpdk.org (Postfix) with ESMTP id F18F6400D7
- for <dev@dpdk.org>; Thu, 22 Oct 2026 00:52:09 +0200 (CEST)
-Received: by mail-dl1-f41.google.com with SMTP id
- a92af1059eb24-18cdcfc05ffso1312893c88.1
- for <dev@dpdk.org>; Wed, 21 Oct 2026 15:52:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1792623129; x=1793227929; darn=dpdk.org;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=K8st6DqPACy8Zh8UQnDvflOD/NrqYmRocaLFu/bHmJc=;
- b=ZLwDsT4wBXOeFM5cdYOp5zEEfN5UAleFmGXPgHEuu91JRllbiSoKEVZbn4Fdpk3d4K
- /C8hlDqEQW9opvcsQv/4t8UzTa8CH91moZvBljDlMVy99oe+LVj4Pi10r1wkGGMwcQZQ
- pH9pSF8mxX+56vIoSWAbjjmxaPdN7A/kelB+wDPVJ2H3BnCP+mPDvm/6qZTIAKufb5Y6
- m5pi7CXFTHKcbRcDefgfPLLrixyBKyy/qGrBKJSEF0BsqGflLrwp+zQy+j6JTjoKBaW8
- 4lWmzLrNFeMvoji3I8UBIJcT7a+pL27c1votAavTt0LI2oa7oCHPJGgSkr4cmFQ4F3Sl
- R2hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792623129; x=1793227929;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=K8st6DqPACy8Zh8UQnDvflOD/NrqYmRocaLFu/bHmJc=;
- b=s8j+nk4k9AGvqV2/gIYp1AZu0qZwdfahHnQoqWyHgoDrNNCwVf+hkC+e0GETdAo+Ks
- GvLjxdvGVKmmv8us0NHWFLxpAP824Qr3+/Y+rgBToZAELw4IaVMaPfZ2NFbgEmMZv3Qg
- 3ZsPWXhtEPaA+Jm5o5anM7VQnOW2DRw2QlWRZNt+xcdL8ori3Dt8ldGnt5ayrY1rVmwO
- 8zWCdmPQfr6xXWEnzkPbOqDIF7xU8ZAIH6Wx/YQk6T2NBSYATr918mxWBv8P7kexp3MK
- 09cKVUzxESZc89fBGavx+2tFItQb3gyTtD/Lk9AGVgj2BVLWx+hBl4MFflOtHsmzBNKN
- QJRA==
-X-Gm-Message-State: AFq9FYLo4RKaTvXUH505CXBIF8SyimIrz37NZSpnjO1z9tAetSpjSROk
- LIfF2qhhRh04AIs/xmRb8Q+mVkMAij4Oh6Ww/+v0/6bWyIfwzFfG2RkMxdALYICi
-X-Gm-Gg: AYBFou2kVWHcj6cOHKSOZLWBkLqWBm63la9kbemLWQyJHS0xDJKiC6sEWP8uBYc1WiE
- YNKOsJGHL7Q14rIdKgqNBuutZrckR6nZFERxyYiI0U58Vam+Oz8PqjGqfwmORFnguzw48eNUTXe
- uHUmupZa7OxtZTbwH89gzBzsguFTFTNZVgGgPTSrGaxfpameIjQBLQKCtlCznCshqVdQjDJHlE1
- su77qK4ZRkQgJaV7iysWOBLHOBgV/bTs7Mgvzm0AdeGuQjBur5D0mLLUdih1pRZLppXBTl7WXxz
- HPT/W3H269rsVUCGG+8JgC+uE+kvLN2e/ZIzvkdFjzEhUREqONv4uCYPhFRadi2ef7ZyC+CBQZO
- nH1VYZsUEpMwMpoaBZctIYZYLAYb8yRjGAPK1zgPJ0Ae3NWvCyHeXYmrPBPd7Qlg2Vz4HZC5kh4
- UbTlOcF0A1cOrIQ3GrH8KV0coMI71MEaP4kNwhB6TLn9yxB8wsYJUAfQdIKFBxIxCKtNxQ+iFMa
- Us/C5A9MYeI9BSdY/uZlKK0GHY6NvOJg2ekgL/oxejP//unrhRraa0OYfs34c5Vr4RQ/fPSsNus
- hJa5zETI6kJJGB6e8Hk=
-X-Received: by 2002:a05:7022:6b81:b0:15a:4155:3d9d with SMTP id
- a92af1059eb24-190a6dc116fmr5969893c88.31.1792623128537; 
- Wed, 21 Oct 2026 15:52:08 -0700 (PDT)
-Received: from [192.168.1.112] (mail.forbuysw.info. [66.175.223.235])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1903bf5d61csm9472447c88.15.2026.10.21.15.52.06
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Wed, 21 Oct 2026 15:52:08 -0700 (PDT)
-Message-ID: <e5a96ad2-83d5-493a-8826-68d221f27067@gmail.com>
-Date: Thu, 22 Oct 2026 06:52:04 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 1B3BD40299;
+	Thu, 22 Oct 2026 03:41:42 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 97EBD400D7
+ for <dev@dpdk.org>; Thu, 22 Oct 2026 03:41:40 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 70A664D25B; Thu, 22 Oct 2026 03:41:40 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: =?UTF-8?B?W0RQREsvdmhvc3QvdmlydGlvIEJ1ZyAyMDY3XSBbZHBkay0yNi4x?=
+ =?UTF-8?B?MV12bTJ2bV92aXJ0aW9fcG1kL3ZtMnZtX3Zob3N0X3VzZXJfdmlydGlvOTVf?=
+ =?UTF-8?B?cG1kX3dpdGhfbWVyZ2VhYmxlX3BhdGhfd2l0aF9wYXlsb2FkX3ZhbGlkX2No?=
+ =?UTF-8?B?ZWNrOiBzdGFydCBkcGRrLXBkdW1wIGluIFZNIHdpdGggdmlydGlvLTAuOTUg?=
+ =?UTF-8?B?cHJvdG9jb2wgZmFpbGVk?=
+Date: Thu, 22 Oct 2026 01:41:40 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: vhost/virtio
+X-Bugzilla-Version: 26.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: yux.jiang@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-2067-3@https.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] net/txgbe: fix FDIR Rx packet buffer handling
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, jiawenwu@trustnetic.com, zaiyuwang@trustnetic.com
-References: <cover.1791898970.git.zhtfdev@gmail.com>
- <20261013074555.1ab5dc7c@phoenix.local>
- <3de75531-dd3f-4953-8fb8-1f654b74f050@gmail.com>
- <20261020081130.7241326b@phoenix.local>
-Content-Language: en-US
-From: Zhang Tengfei <zhtfdev@gmail.com>
-In-Reply-To: <20261020081130.7241326b@phoenix.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,39 +52,172 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On 10/20/26 23:11, Stephen Hemminger wrote:
-> On Thu, 15 Oct 2026 00:45:00 +0800
+https://bugs.dpdk.org/show_bug.cgi?id=3D2067
 
->> Addressed in v2.
->>
->> 2/3 now rejects modes other than signature and perfect while
->> parsing, so validate and create both fail for a MAC VLAN rule.
->>
->> On 3/3 I left the DCB packet buffer as it is. Enabling FDIR
->> already clears PBRXSIZE(1..7). Rejecting FDIR when DCB Rx is
->> configured can be a separate patch.
-> 
-> Still waiting for ACK from a maintainer of that driver.
+            Bug ID: 2067
+           Summary: [dpdk-26.11]vm2vm_virtio_pmd/vm2vm_vhost_user_virtio95
+                    _pmd_with_mergeable_path_with_payload_valid_check:
+                    start dpdk-pdump in VM with virtio-0.95 protocol
+                    failed
+           Product: DPDK
+           Version: 26.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: vhost/virtio
+          Assignee: dev@dpdk.org
+          Reporter: yux.jiang@intel.com
+  Target Milestone: ---
 
-Hi Stephen,
+---------------------------------------------------------------------------=
+-----
+DPDK version: dpdk 9a45341f18 (HEAD -> main, tag: v26.11-rc1, origin/main,
+origin/HEAD) version: 26.11-rc1
+Other software versions: QEMU emulator version 11.1.2
+OS: Ubuntu26.04.1 LTS/7.0.0-38-generic
+Compiler: gcc version 13.3.0
+Hardware platform: Intel(R) Xeon(R) Platinum 8468H
+---------------------------------------------------------------------------=
+-----
+Test Setup
+Steps to reproduce
 
-Zaiyu tested v2 on hardware and provided an Acked-by on October 19.
+1. Use the following command to build DPDK:
 
-https://inbox.dpdk.org/dev/005101dd5fb5$9e9e80d0$dbdb8270$@trustnetic.com/
+rm -rf x86_64-native-linuxapp-gcc
+CC=3Dgcc meson -Dlibdir=3Dlib  --default-library=3Dstatic x86_64-native-lin=
+uxapp-gcc
+-Dmax_lcores=3D160
+ninja -C x86_64-native-linuxapp-gcc
 
-The reply is under the v1 thread,but explicitly confirms testing of the 
-v2 series.
+2.Use the following command to launch dpdk-testpmd in Host:
 
-Acked-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
+x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 1-2 -n 4
+--file-prefix=3Dvhost-user --no-pci \
+--vdev 'net_vhost0,iface=3Dvhost-net0,queues=3D1' \
+--vdev 'net_vhost1,iface=3Dvhost-net1,queues=3D1' \
+-- -i --nb-cores=3D1 --txd=3D1024 --rxd=3D1024
+testpmd> set fwd mac
+testpmd> start
 
-Thanks,
-Tengfei
+3.Use the following command to launch VM by QEMU with virtio95:
 
+taskset -c 20,21,22,23,24,25,26,27 /home/qemu-11.1/bin/qemu-system-x86_64 -=
+name
+vm0 -enable-kvm -pidfile /tmp/.vm0.pid -daemonize \
+-monitor unix:/tmp/vm0_monitor.sock,server,nowait \
+-netdev user,id=3Dnttsip1,hostfwd=3Dtcp:127.0.0.1:6000-:22 \
+-device e1000,netdev=3Dnttsip1 \
+-chardev socket,id=3Dchar0,path=3D/root/dpdk/vhost-net0 \
+-netdev type=3Dvhost-user,id=3Dnetdev0,chardev=3Dchar0,vhostforce \
+-device
+virtio-net-pci,netdev=3Dnetdev0,mac=3D52:54:00:00:00:01,disable-modern=3Dtr=
+ue,mrg_rxbuf=3Don,csum=3Don,guest_csum=3Don,host_tso4=3Don,guest_tso4=3Don,=
+guest_ecn=3Don
+\
+-cpu host -smp 8 -m 8192 \
+-object memory-backend-file,id=3Dmem,size=3D8192M,mem-path=3D/dev/hugepages=
+,share=3Don
+\
+-numa node,memdev=3Dmem -mem-prealloc \
+-chardev socket,path=3D/tmp/vm0_qga0.sock,server,nowait,id=3Dvm0_qga0 \
+-device virtio-serial \
+-device virtserialport,chardev=3Dvm0_qga0,name=3Dorg.qemu.guest_agent.0 -vn=
+c :4 \
+-drive file=3D/home/image/ubuntu1.img
+
+4.Use the following command to enter the VM, bind virtio-net-pci to vfio-pci
+and start dpdk-testpmd in VM:
+
+ssh root@127.0.0.1 -p 6000
+
+cd dpdk;./usertools/dpdk-hugepages.py -p 2M --setup 2G
+modprobe vfio-pci
+echo 1 > /sys/module/vfio/parameters/enable_unsafe_noiommu_mode
+./usertools/dpdk-devbind.py --force --bind=3Dvfio-pci 0000:00:04.0
+dpdk# ./usertools/dpdk-devbind.py -s
+
+Network devices using DPDK-compatible driver
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+0000:00:04.0 'Virtio network device 1000' drv=3Dvfio-pci unused=3Dvirtio_pci
+
+x86_64-native-linuxapp-gcc/app/dpdk-testpmd -c 0x3 -n 4 -a 0000:00:04.0
+--file-prefix=3Dvirtio_898526_20261020104610 \
+-- -i --rx-offloads=3D0x00002000 --txd=3D1024 --rxd=3D1024 --max-pkt-len=3D=
+9600
+testpmd> set fwd rxonly
+testpmd> start
+
+5.Use the following command to create a new SSH connection and start dpdk-p=
+dump
+APP in VM:
+
+ssh root@127.0.0.1 -p 6000
+x86_64-native-linuxapp-gcc/app/dpdk-pdump -v
+--file-prefix=3Dvirtio_898526_20261020104610 -- --pdump
+'port=3D0,queue=3D*,rx-dev=3D/root/pdump-rx.pcap,mbuf-size'
+
+Show the output from the previous commands=EF=BC=9A=EF=BC=9A
+dpdk# x86_64-native-linuxapp-gcc/app/dpdk-pdump -v
+--file-prefix=3Dvirtio_898526_20261020104610 -- --pdump
+'port=3D0,queue=3D*,rx-dev=3D/root/pdump-rx.pcap,mbuf-size=3D8000'
+EAL: Detected CPU lcores: 8
+EAL: Detected NUMA nodes: 1
+EAL: RTE Version: 'DPDK 26.11.0-rc0'
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket
+/var/run/dpdk/virtio_898526_20261020104610/mp_socket_1513_42ae79e13e
+EAL: VFIO support initialized: group mode, IOVA as PA
+EAL: Selected IOVA mode 'PA'
+VIRTIO_INIT: eth_virtio_pci_init(): Failed to remap PCI device
+EAL: Failed to probe device 0000:00:04.0
+EAL: Error - exiting with code: 1
+No Ethernet ports - bye
+root@ubuntu26:~/dpdk#
+
+---------------------------------------------------------------------------=
+-----
+Expected Result
+start dpdk-pdump successfully
+
+---------------------------------------------------------------------------=
+-----
+Is this issue a regression: (Y/N) Y
+
+Version the regression was introduced:=20
+commit 63a0dbf661e5b92ab1bef9c1b22f3477520e63c2 (HEAD ->
+8-63a0dbf661-F-badcommit)
+Author: David Marchand <david.marchand@redhat.com>
+Date:   Wed Oct 14 18:43:10 2026 +0200
+
+    interrupts: mark FDs invalid on allocation
+
+    Initialize fd, dev_fd, and all efds array elements as invalid in
+    rte_intr_instance_alloc().
+    This follows Unix convention, avoiding confusion with fd 0
+    which could result from zero-initialization.
+
+    Update the API documentation to reflect this behavior and add a
+    unit test check to verify the fd is invalid after allocation.
+
+    Update the FreeBSD PCI implementation that checked against a 0 FD.
+
+    Add a hack in the unit test to let the UIO simulated tests pass.
+
+    Remove now-redundant initialization calls that were setting the fd
+    invalid right after allocation.
+
+    Signed-off-by: David Marchand <david.marchand@redhat.com>
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
