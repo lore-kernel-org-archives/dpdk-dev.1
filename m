@@ -1,29 +1,28 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42493606A31B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 11:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09867606A319
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 11:11:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 05BA8409FA;
-	Thu, 22 Oct 2026 13:10:54 +0200 (CEST)
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
- by mails.dpdk.org (Postfix) with ESMTP id 0511240A7F;
- Thu, 22 Oct 2026 13:10:51 +0200 (CEST)
-X-QQ-mid: esmtpsz17t1792667449t37e5e383
-X-QQ-Originating-IP: 1tU4Zx7+6he8M2Cq5n7tL0hlKPyGB5+9p9e2jxWu1Vw=
+	by mails.dpdk.org (Postfix) with ESMTP id B4A0C40693;
+	Thu, 22 Oct 2026 13:10:56 +0200 (CEST)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+ by mails.dpdk.org (Postfix) with ESMTP id 6DDBE40A82;
+ Thu, 22 Oct 2026 13:10:52 +0200 (CEST)
+X-QQ-mid: esmtpsz17t1792667447t7912379d
+X-QQ-Originating-IP: 99yoTVQZERatZrEOjWxTndKqGO5dUUUcGq6oYO0jOaI=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.205.193.71])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 22 Oct 2026 19:10:48 +0800 (CST)
+ id ; Thu, 22 Oct 2026 19:10:45 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6357936663772176703
+X-BIZMAIL-ID: 4843577966528402815
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v9 08/16] net/txgbe: remove stale outer UDP checksum offload
- flag
-Date: Thu, 22 Oct 2026 19:03:14 +0800
-Message-ID: <DF3685B6CF839D2B+20261022111017.3605-9-zaiyuwang@trustnetic.com>
+Subject: [PATCH v9 07/16] net/txgbe: fix link speed display info for 10G mode
+Date: Thu, 22 Oct 2026 19:03:13 +0800
+Message-ID: <2723C1B897067C17+20261022111017.3605-8-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261022111017.3605-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -33,24 +32,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: Mwn+ACeyUjDMMUHxIw2xKtf9o2LmsQNSCFBg3UMF61O7A2NBMjGObUM+
- mYWyE23ylMOzQOw4Jok1S3Gm2oHQBMfH6rUlIjIggAJN5lobrEWWvh26kmMVbxLUR3uLqrT
- SIsss6FZCglvCg5UcBz+jly1+zRxeMfWEEc8WK3lhWA837WV2EYHAIAVGprKbuu3ZxU2jpb
- +4cHbj/7kVenEyg0RDUZ8OePdFvy+HWzqvHv+/aUtsIv1+9pOeIcHQCDZ1ta2KCbcMMChCz
- ftbab/ohuQGjn+kVz8/g7vam6anCTSQGJVXQcHa4qf+ADd6WhgiKn3jE7XJUXkJxUOV2/a7
- yoHUJGSImc4boaNZIjIt3kbFSkoDJRceDMSfrjQGqX7V7PIfs0RhxGSyoClTGMotzw97atF
- JFS46DNBolRuLZIhX7VxGa1LfP9/+Al2CyckVRbQTk5LP0xf8CPKzncJV49ccLtobtHl/+C
- ck5yKeE14nzzEPQ7yJDjEyftZVvRpKkfpXxv3nf05ZQUENUxVo/qstsg/GS4mO8WWC2nbJg
- MhJNnq6RhOpTLq0nG071SJmsC/344pU9Gb3y/DFncxDWM8F3MnBtIuKUAu1dKsu+mo9xYTu
- 5DLhh74fWhlPB8eyxbge7KG/QaAm/XyxkB9636Eq+s+YOZVqWUfAB91s1bYJTK0VdClQ/vh
- thLv9vti14HkrkPITNkh5sBj55WGfi77XLLL72UVa2qjvV1GIoBp2UcNYqoRcrJHHHoz9uy
- /Id+1lQXyNdi+Kg3nfkxS7UtAs9wxMDYgt56ntL22lWj5Yg8YZdipdRlECcZ/CutnMb198I
- DH3lKcltpbMhgJYGCm4l+2B5R9Dlq1KzYLpLw3qjBUFSBZHm43vyqkIul3U9spblsHmE8XP
- dNX7TtUPT+aY9S8KRJNdzCbaS1y8XrE9Y9QSkDm/Qtky3WZhOFDEd/KwDspOByc9UCT83ng
- 4EeyLZkoQi6AjXPS5co949gnEK5EnmNPI40G79gn6/4yKArqJXabfImhu/gZ9H++XeZuSBn
- 3kfqTi3SPsr+je3uHrgrJoVBAo7ICn5pd2gKK7OCv+lhmPbqh+rumYplDpyrerCuBVVYI5m
- RtCXWj1XP8iAnsWIEW1hUE=
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
+X-QQ-XMAILINFO: NjuDfT6zrIZcY+yqO9u4erchpgUx+FvFeQZHGI1pmF/pk2ceM9Wx6WS2
+ qLoEaLDOWGxEMgWgxz37wzoldAvdxXNvtLQSK6u6okncWl+Zow0TJps3MhNjQU4v/9N+FBV
+ +IlopE9HFJh8BNlkdvh1Pf7L36BD5oB/wEBYUvlmprxNmuZWTXk7WIH4rrKcKshUPyqoKPU
+ yyDoniz+EX6jsk16+By6Gz0cqZnKYAtsuP3blOWxOv5vCA37RVdyPCpRtIqdsUApLirICGm
+ kogJHeS7FVTBaaZ2kBX1pNCG5FnWvxMaCwaDWSCKiiavqSl2ycF1WUz6vhjoEsV8ok+IRgF
+ lBUyYZSTKPJzcxnYwFkDDkY9iXANNTrUgr07r+jJDG9DZtzdZ8d/MUrdpqw4m/IKDZ3lBsc
+ vBv0k9puRxlVIKkxWNo+chN/ptldUprmd99nblKxUmRfSr6qL05rStiM78hvCqBiWGcrLwt
+ gOA7bNI/5ug9nFhBhgBRYd0GqP0j7pxCdL7BwUIG8Vvzxj70RGZFNchOHHf+UVY478p/AWn
+ slJqWgVAEXmAXoZhJD08TIFO6Njkc6Tvk6KBdLxniUA4WoZWB7fpV5Rw6svmStbAYl3Jdwo
+ yLbKCNphA/QycxU79HRKWEWRGabV9XZdE3gHZp/cvo+SauhBE+C6aHbdN0mcHChIAL1Q+kD
+ i88NQV4xb+A+nHHWebtKZGowNHkJXmPr2xVLmUGyAYfVI7KMx5qtqoZuftRTEkaU0Puv/4U
+ 0S3tS5A8HVm9EawsoDUzwEljSjY+r8e9jtoUm6EOWu2TkKVEIh67VpiBcB5fVp3f7wb7aN7
+ Gj/Z2beOxFv3TzQYhQPhPua093KbJGGmCIFIirlTP9zIg36695pDTJ4s5MAI2L+ePhpNWHP
+ A7m9bB0RpC3sLWYUfG163Cf7pUi1AvkasD07a4UcZ6lj4vFFz+9z4/AyfIObKd8phxgs2wT
+ euj0qro0NM9z8V3v8cYNkUAmnzj+wUPhH8WxZ8bsn0wrYLhK62IpLI3wmcfhmABja3GannI
+ HzXYRzCTJ1sRxtYqn06OcnKPHfeTWYck/pIRNTh4p4+uJ6ibLk4EuMwwe+Ef4=
+X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -68,35 +66,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-RTE_MBUF_F_TX_OUTER_UDP_CKSUM is no longer advertised in
-dev_info->tx_offload_capa, but it is still listed in
-TXGBE_TX_OFFLOAD_MASK. The two are now inconsistent: a packet
-carrying the flag is accepted by the offload mask check although the
-driver no longer handles it.
+When an AML40 port links up at 10G, DPDK reports the speed as 100M
+instead of 10G. The 10G link status bit is not recognized in
+txgbe_check_mac_link_aml40(), so any non-40G speed falls through to
+the default case (UNKNOWN) which is then reported as 100M.
 
-Drop the flag from TXGBE_TX_OFFLOAD_MASK so the advertised
-capability and the accepted offload flags match.
+Add the 10G port status bit recognition, so a 10G link is reported
+as 10G.
 
-Fixes: 25fe1c780d39 ("net/txgbe: remove outer UDP checksum capability")
+Fixes: abf042d32b39 ("net/txgbe: add Amber-Lite 25G/40G NICs")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_rxtx.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/txgbe/base/txgbe_aml40.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
-index 794ba041a4..a295666f9d 100644
---- a/drivers/net/txgbe/txgbe_rxtx.c
-+++ b/drivers/net/txgbe/txgbe_rxtx.c
-@@ -61,7 +61,6 @@ static const u64 TXGBE_TX_OFFLOAD_MASK = (RTE_MBUF_F_TX_IP_CKSUM |
- 		RTE_MBUF_F_TX_UDP_SEG |
- 		RTE_MBUF_F_TX_TUNNEL_MASK |
- 		RTE_MBUF_F_TX_OUTER_IP_CKSUM |
--		RTE_MBUF_F_TX_OUTER_UDP_CKSUM |
- #ifdef RTE_LIB_SECURITY
- 		RTE_MBUF_F_TX_SEC_OFFLOAD |
- #endif
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index 892dddd373..b52702b197 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -85,6 +85,9 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
+ 		if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) ==
+ 			TXGBE_CFG_PORT_ST_AML_LINK_40G)
+ 			*speed = TXGBE_LINK_SPEED_40GB_FULL;
++		else if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_10G) ==
++			TXGBE_CFG_PORT_ST_AML_LINK_10G)
++			*speed = TXGBE_LINK_SPEED_10GB_FULL;
+ 	} else {
+ 		*speed = TXGBE_LINK_SPEED_UNKNOWN;
+ 	}
 -- 
 2.55.0.windows.2
 
