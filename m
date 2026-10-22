@@ -1,67 +1,75 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD91606A31A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 17:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED03606A320
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 17:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=QXx+GyBK
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=Y2RS8Hv+
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 854D240A87;
-	Thu, 22 Oct 2026 19:45:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5C28A40678;
+	Thu, 22 Oct 2026 19:46:13 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 02CDA4067B
- for <dev@dpdk.org>; Thu, 22 Oct 2026 19:45:51 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5555540613
+ for <dev@dpdk.org>; Thu, 22 Oct 2026 19:46:11 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792691151;
+ s=mimecast20190719; t=1792691170;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=jQqpfz7ht5/dnnO3+r/u/cLsA05Podez8ptYFOQIpPw=;
- b=QXx+GyBK4l5PdkGBbB0n/94l6Z5wJKHDYalyG7x+Vk0FvojUt/No4z9+iOI/uX01m8QKsd
- XCgLGKZHBZY4o8XLA575k+kZXRST7qou9eevdSegOCLexhe41z9M/xOHFmvBhivh4OPU8+
- Xsh0D2M8yKglyB7nOqwKEs0bcipufyg=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ bh=fjfzw6mpqqN9GaywUF7yR+6aNprMm3cerZqLNCTuKXA=;
+ b=Y2RS8Hv+haF/v2pXejtYqS2a0fH00eoWuDHw4BgpWjjAvxPn7qnmmlWXdT9rtQzO8qcbk0
+ fWiYFu0BDVzaQl4BKtZP//mfzHU1XlFtyW2OAW2CgOVvBpATxwVWnsHZnt6GYomm+Rel+V
+ pICesFcSm7r8lOB7ykenC1qIs6SYVfo=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-652-avzEMAksOEy-vNv8MtjPTQ-1; Thu,
- 22 Oct 2026 13:45:49 -0400
-X-MC-Unique: avzEMAksOEy-vNv8MtjPTQ-1
-X-Mimecast-MFC-AGG-ID: avzEMAksOEy-vNv8MtjPTQ_1792691147
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-349-wCIx5tccPOmNJ111intabQ-1; Thu,
+ 22 Oct 2026 13:45:57 -0400
+X-MC-Unique: wCIx5tccPOmNJ111intabQ-1
+X-Mimecast-MFC-AGG-ID: wCIx5tccPOmNJ111intabQ_1792691154
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 32AC21955DAE; Thu, 22 Oct 2026 17:45:46 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 342E3195419C; Thu, 22 Oct 2026 17:45:54 +0000 (UTC)
 Received: from dmarchan.home (headnet04.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.116])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id C51CB1955F22; Thu, 22 Oct 2026 17:45:39 +0000 (UTC)
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id B590A18000A3; Thu, 22 Oct 2026 17:45:48 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: thomas@monjalon.net, stable@dpdk.org, Renyong Wan <wanry@yunsilicon.com>,
- Gaetan Rivet <grive@u256.net>, Rosen Xu <rosen.xu@altera.com>,
- Dimon Zhao <dimon.zhao@nebula-matrix.com>,
- Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>,
- Wei Hu <weh@microsoft.com>, Praveen Shetty <praveen.shetty@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>, Na Na <nana@yunsilicon.com>,
- Rong Qian <qianr@yunsilicon.com>, Xiaoxiong Zhang <zhangxx@yunsilicon.com>,
- Dongwei Xu <xudw@yunsilicon.com>, Dan Wei <dan.wei@intel.com>,
- Andy Pei <andy.pei@intel.com>, Beilei Xing <beilei.xing@intel.com>,
- Junfeng Guo <junfengg@nvidia.com>, Xiaoyun Li <xiaoyun.li@intel.com>,
- Mingxia Liu <mingxia.liu@intel.com>
-Subject: [PATCH v3 11/13] drivers/net: fix reported RSS capability
-Date: Thu, 22 Oct 2026 19:44:38 +0200
-Message-ID: <20261022174447.412638-12-david.marchand@redhat.com>
+Cc: thomas@monjalon.net, Sunil Kumar Kori <skori@marvell.com>,
+ Rakesh Kudurumalla <rkudurumalla@marvell.com>,
+ Jerin Jacob <jerinj@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
+ Praveen Shetty <praveen.shetty@intel.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Chengwen Feng <fengchengwen@huawei.com>,
+ Kevin Laatz <kevin.laatz@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Radu Nicolau <radu.nicolau@intel.com>, Akhil Goyal <gakhil@marvell.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
+ Yipeng Wang <yipeng1.wang@intel.com>
+Subject: [PATCH v3 12/13] ethdev: check RSS availability
+Date: Thu, 22 Oct 2026 19:44:39 +0200
+Message-ID: <20261022174447.412638-13-david.marchand@redhat.com>
 In-Reply-To: <20261022174447.412638-1-david.marchand@redhat.com>
 References: <20261016130555.1685102-1-david.marchand@redhat.com>
  <20261022174447.412638-1-david.marchand@redhat.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 4FTvGRbRHcgzjx94rNg8-B2f_R2CwUhlwoDtf4Se8lA_1792691147
+X-Mimecast-MFC-PROC-ID: 5Z821R3Opr4iJMMa3eaA0a-CX6MPwE-riL2OMpZkRec_1792691154
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -81,167 +89,588 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Some drivers (idpf, cpfl) report RSS support even if lacking HW support.
-On the other hand, some driver do have support but do not advertise it
-(either in dev_info, or in the documentation).
+Add RSS capability check in rte_eth_dev_configure() using
+dev_info.flow_type_rss_offloads.
 
-failsafe may support RSS, as it only passes the requests to the ports
-attached to it, hence mark it as partial support.
+When zero, reject Rx modes with RTE_ETH_MQ_RX_RSS_FLAG
+unless only one queue was requested.
 
-Fixes: c01c748e4ae6 ("net/ipn3ke: add new driver")
-Fixes: 70675bcc3a57 ("net/idpf: support RSS")
-Fixes: cfbc66551a14 ("net/cpfl: support RSS")
-Fixes: 5fb899f4b225 ("net/xsc: support RSS configuration")
-Fixes: 9f75cad1287f ("net/xsc: add PCT interfaces")
-Fixes: ff8db3711b29 ("net/nbl: support infos query")
-Cc: stable@dpdk.org
+If a driver does not advertise RSS, don't request it in test
+applications or examples, as role model citizens.
+
+Remove redundant RSS checks from drivers.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
-Reviewed-by: Renyong Wan <wanry@yunsilicon.com>
 ---
+Changes since v2:
+- adjusted commitlog,
+
 Changes since v1:
-- fixed ip3nke,
-- moved all RSS capabilities under check for idpf and cpfl,
-- adjusted xsc RSS capabilities,
+- updated all test applications and examples,
+- relaxed check on RSS request for only one rxq,
+- cleaned up unreachable code in cnxk and sfc representor code,
 
 ---
- doc/guides/nics/features/failsafe.ini     | 1 +
- doc/guides/nics/features/ipn3ke.ini       | 3 ---
- doc/guides/nics/features/nbl.ini          | 1 +
- doc/guides/nics/features/netvsc.ini       | 1 +
- drivers/net/intel/cpfl/cpfl_ethdev.c      | 9 +++++----
- drivers/net/intel/cpfl/cpfl_representor.c | 4 +++-
- drivers/net/intel/idpf/idpf_ethdev.c      | 9 +++++----
- drivers/net/xsc/xsc_ethdev.c              | 4 ++++
- 8 files changed, 20 insertions(+), 12 deletions(-)
+ app/graph/ethdev.c                            |  7 +++--
+ app/test-eventdev/test_perf_common.c          |  2 ++
+ app/test-eventdev/test_pipeline_common.c      |  2 ++
+ devtools/check-doc-vs-code.sh                 |  4 ++-
+ doc/guides/rel_notes/release_26_11.rst        |  2 ++
+ drivers/net/cnxk/cnxk_rep_ops.c               | 21 ++------------
+ drivers/net/intel/cpfl/cpfl_ethdev.c          |  3 --
+ drivers/net/nfp/nfp_net_common.c              |  7 -----
+ drivers/net/octeontx/octeontx_ethdev.c        |  3 +-
+ drivers/net/sfc/sfc_repr.c                    | 29 ++++---------------
+ drivers/net/sfc/sfc_rx.c                      |  9 +-----
+ examples/distributor/main.c                   |  2 ++
+ examples/dma/dmafwd.c                         |  2 ++
+ .../pipeline_worker_generic.c                 |  2 ++
+ .../eventdev_pipeline/pipeline_worker_tx.c    |  2 ++
+ examples/ip_reassembly/main.c                 |  2 ++
+ examples/ipsec-secgw/ipsec-secgw.c            |  2 ++
+ examples/l2fwd-event/l2fwd_common.c           |  2 ++
+ examples/l3fwd-graph/main.c                   |  2 ++
+ examples/l3fwd/main.c                         |  3 +-
+ .../client_server_mp/mp_server/init.c         | 10 ++++++-
+ examples/multi_process/symmetric_mp/main.c    |  2 ++
+ examples/ntb/ntb_fwd.c                        |  2 ++
+ examples/pipeline/obj.c                       |  7 +++--
+ examples/qos_meter/main.c                     |  4 +++
+ examples/server_node_efd/efd_server/init.c    |  3 ++
+ lib/ethdev/rte_ethdev.c                       | 13 +++++++++
+ 27 files changed, 80 insertions(+), 69 deletions(-)
 
-diff --git a/doc/guides/nics/features/failsafe.ini b/doc/guides/nics/features/failsafe.ini
-index 09afdc1963..b778a40be6 100644
---- a/doc/guides/nics/features/failsafe.ini
-+++ b/doc/guides/nics/features/failsafe.ini
-@@ -18,6 +18,7 @@ Multicast MAC filter = Y
- VLAN filter          = Y
- Flow control         = Y
- Packet type parsing  = Y
-+RSS hash             = P
- Stats per queue      = Y
- ARMv7                = Y
- ARMv8                = Y
-diff --git a/doc/guides/nics/features/ipn3ke.ini b/doc/guides/nics/features/ipn3ke.ini
-index 6abaf9e4f9..1f9a28f198 100644
---- a/doc/guides/nics/features/ipn3ke.ini
-+++ b/doc/guides/nics/features/ipn3ke.ini
-@@ -15,9 +15,6 @@ Promiscuous mode     = Y
- Allmulticast mode    = Y
- Unicast MAC filter   = Y
- Multicast MAC filter = Y
--RSS hash             = Y
--RSS key update       = Y
--RSS reta update      = Y
- SR-IOV               = Y
- VLAN filter          = Y
- Flow control         = Y
-diff --git a/doc/guides/nics/features/nbl.ini b/doc/guides/nics/features/nbl.ini
-index 5935092a49..e799840e40 100644
---- a/doc/guides/nics/features/nbl.ini
-+++ b/doc/guides/nics/features/nbl.ini
-@@ -9,6 +9,7 @@ MTU update           = Y
- Scattered Rx         = Y
- Promiscuous mode     = Y
- Unicast MAC filter   = Y
-+RSS hash             = Y
- VLAN offload         = P
- Extended stats       = Y
- Stats per queue      = Y
-diff --git a/doc/guides/nics/features/netvsc.ini b/doc/guides/nics/features/netvsc.ini
-index fa8c2ac132..7bc7148f95 100644
---- a/doc/guides/nics/features/netvsc.ini
-+++ b/doc/guides/nics/features/netvsc.ini
-@@ -8,6 +8,7 @@ Speed capabilities   = P
- Free Tx mbuf on demand = Y
- Scattered Rx         = Y
- Promiscuous mode     = Y
-+RSS hash             = Y
- Allmulticast mode    = Y
- Stats per queue      = Y
- Extended stats       = Y
+diff --git a/app/graph/ethdev.c b/app/graph/ethdev.c
+index 2f4cf65c96..ee4b9014e8 100644
+--- a/app/graph/ethdev.c
++++ b/app/graph/ethdev.c
+@@ -426,8 +426,11 @@ ethdev_process(const char *name, struct ethdev_config *params)
+ 	if (rss) {
+ 		uint64_t rss_hf = RTE_ETH_RSS_IP | RTE_ETH_RSS_TCP | RTE_ETH_RSS_UDP;
+ 
+-		port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
+-		port_conf.rx_adv_conf.rss_conf.rss_hf = rss_hf & port_info.flow_type_rss_offloads;
++		rss_hf &= port_info.flow_type_rss_offloads;
++		if (rss_hf != 0) {
++			port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
++			port_conf.rx_adv_conf.rss_conf.rss_hf = rss_hf;
++		}
+ 	}
+ 
+ 	numa_node = rte_eth_dev_socket_id(port_id);
+diff --git a/app/test-eventdev/test_perf_common.c b/app/test-eventdev/test_perf_common.c
+index 8201f2351a..a7858854eb 100644
+--- a/app/test-eventdev/test_perf_common.c
++++ b/app/test-eventdev/test_perf_common.c
+@@ -1917,6 +1917,8 @@ perf_ethdev_setup(struct evt_test *test, struct evt_options *opt)
+ 
+ 		local_port_conf.rx_adv_conf.rss_conf.rss_hf &=
+ 			dev_info.flow_type_rss_offloads;
++		if (local_port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
++			local_port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 		if (local_port_conf.rx_adv_conf.rss_conf.rss_hf !=
+ 				port_conf.rx_adv_conf.rss_conf.rss_hf) {
+ 			evt_info("Port %u modified RSS hash function based on hardware support,"
+diff --git a/app/test-eventdev/test_pipeline_common.c b/app/test-eventdev/test_pipeline_common.c
+index eaf895869f..b6af0ad987 100644
+--- a/app/test-eventdev/test_pipeline_common.c
++++ b/app/test-eventdev/test_pipeline_common.c
+@@ -379,6 +379,8 @@ pipeline_ethdev_setup(struct evt_test *test, struct evt_options *opt)
+ 
+ 		local_port_conf.rx_adv_conf.rss_conf.rss_hf &=
+ 			dev_info.flow_type_rss_offloads;
++		if (local_port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
++			local_port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 		if (local_port_conf.rx_adv_conf.rss_conf.rss_hf !=
+ 				port_conf.rx_adv_conf.rss_conf.rss_hf) {
+ 			evt_info("Port %u modified RSS hash function based on hardware support,"
+diff --git a/devtools/check-doc-vs-code.sh b/devtools/check-doc-vs-code.sh
+index d2b7683c4f..4c45bc0bba 100755
+--- a/devtools/check-doc-vs-code.sh
++++ b/devtools/check-doc-vs-code.sh
+@@ -202,6 +202,8 @@ check_mq_caps() # <driver>
+ 
+ 	check_mq_cap $1 "DCB" "get_dcb_info" '\.get_dcb_info[[:space:]]*=' \
+ 		'RTE_ETH_MQ_(RX|TX).*DCB'
++	check_mq_cap $1 "RSS hash" "flow_type_rss_offloads" \
++		'flow_type_rss_offloads[[:space:]]*\|?=' 'RTE_ETH_MQ_RX.*RSS'
+ 	check_mq_cap $1 "VMDq" "max_vmdq_pools" 'max_vmdq_pools[[:space:]]*=' \
+ 		'RTE_ETH_MQ_(RX|TX).*VMDQ'
+ }
+@@ -222,7 +224,7 @@ if has_code_change 'RTE_FLOW_.*_TYPE_' ||
+ 		check_rte_flow $driver
+ 	done
+ fi
+-if has_code_change 'get_dcb_info|max_vmdq_pools|RTE_ETH_MQ_.*DCB|RTE_ETH_MQ_.*VMDQ' ||
++if has_code_change 'get_dcb_info|flow_type_rss_offloads|max_vmdq_pools|RTE_ETH_MQ_' ||
+ 		has_file_change 'doc/guides/nics/features'; then
+ 	for driver in $(changed_net_drivers); do
+ 		check_mq_caps $driver
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 9341769c32..caffd2a611 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -428,6 +428,8 @@ API Changes
+ 
+   * DCB modes (Rx ``RTE_ETH_MQ_RX_DCB_FLAG``, Tx ``RTE_ETH_MQ_TX_DCB``/``RTE_ETH_MQ_TX_VMDQ_DCB``)
+     are rejected if the driver has no ``get_dcb_info`` callback.
++  * RSS mode (Rx ``RTE_ETH_MQ_RX_RSS_FLAG``) is rejected if the driver reports no
++    ``flow_type_rss_offloads``.
+   * VMDq modes (Rx ``RTE_ETH_MQ_RX_VMDQ_FLAG``,
+     Tx ``RTE_ETH_MQ_TX_VMDQ_DCB``/``RTE_ETH_MQ_TX_VMDQ_ONLY``) are rejected
+     if the driver reports no VMDq pool.
+diff --git a/drivers/net/cnxk/cnxk_rep_ops.c b/drivers/net/cnxk/cnxk_rep_ops.c
+index 4a9c027bf5..d472cc4b08 100644
+--- a/drivers/net/cnxk/cnxk_rep_ops.c
++++ b/drivers/net/cnxk/cnxk_rep_ops.c
+@@ -133,9 +133,8 @@ cnxk_rep_representor_info_get(struct rte_eth_dev *ethdev, struct rte_eth_represe
+ }
+ 
+ static int
+-rep_eth_conf_chk(const struct rte_eth_conf *conf, uint16_t nb_rx_queues)
++rep_eth_conf_chk(const struct rte_eth_conf *conf)
+ {
+-	const struct rte_eth_rss_conf *rss_conf;
+ 	int ret = 0;
+ 
+ 	if (conf->link_speeds != 0) {
+@@ -144,24 +143,10 @@ rep_eth_conf_chk(const struct rte_eth_conf *conf, uint16_t nb_rx_queues)
+ 	}
+ 
+ 	switch (conf->rxmode.mq_mode) {
+-	case RTE_ETH_MQ_RX_RSS:
+-		if (nb_rx_queues != 1) {
+-			plt_err("Rx RSS is not supported with %u queues", nb_rx_queues);
+-			ret = -EINVAL;
+-			break;
+-		}
+-
+-		rss_conf = &conf->rx_adv_conf.rss_conf;
+-		if (rss_conf->rss_key != NULL || rss_conf->rss_key_len != 0 ||
+-		    rss_conf->rss_hf != 0) {
+-			plt_err("Rx RSS configuration is not supported");
+-			ret = -EINVAL;
+-		}
+-		break;
+ 	case RTE_ETH_MQ_RX_NONE:
+ 		break;
+ 	default:
+-		plt_err("Rx mode MQ modes other than RSS not supported");
++		plt_err("Rx mode MQ modes other than none not supported");
+ 		ret = -EINVAL;
+ 		break;
+ 	}
+@@ -205,7 +190,7 @@ cnxk_rep_dev_configure(struct rte_eth_dev *ethdev)
+ 	struct rte_eth_dev_data *ethdev_data = ethdev->data;
+ 	int rc = -1;
+ 
+-	rc = rep_eth_conf_chk(&ethdev_data->dev_conf, ethdev_data->nb_rx_queues);
++	rc = rep_eth_conf_chk(&ethdev_data->dev_conf);
+ 	if (rc)
+ 		goto fail;
+ 
 diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
-index 32e0f81d99..c235373daf 100644
+index c235373daf..57a46b0ecc 100644
 --- a/drivers/net/intel/cpfl/cpfl_ethdev.c
 +++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
-@@ -209,10 +209,11 @@ cpfl_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->max_mtu = vport->max_mtu;
- 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
+@@ -752,9 +752,6 @@ cpfl_dev_configure(struct rte_eth_dev *dev)
+ 			PMD_INIT_LOG(ERR, "Failed to init rss");
+ 			return ret;
+ 		}
+-	} else if (conf->rxmode.mq_mode == RTE_ETH_MQ_RX_RSS) {
+-		PMD_INIT_LOG(ERR, "RSS is not supported.");
+-		return -ENOTSUP;
+ 	}
  
--	dev_info->hash_key_size = vport->rss_key_size;
--	dev_info->reta_size = vport->rss_lut_size;
+ 	vport->max_pkt_len =
+diff --git a/drivers/net/nfp/nfp_net_common.c b/drivers/net/nfp/nfp_net_common.c
+index afa0bc0faf..f9957086d2 100644
+--- a/drivers/net/nfp/nfp_net_common.c
++++ b/drivers/net/nfp/nfp_net_common.c
+@@ -373,13 +373,6 @@ nfp_net_configure(struct rte_eth_dev *dev)
+ 		return -EINVAL;
+ 	}
+ 
+-	/* Checking RX mode */
+-	if ((rxmode->mq_mode & RTE_ETH_MQ_RX_RSS_FLAG) != 0 &&
+-			(hw->super.cap & NFP_NET_CFG_CTRL_RSS_ANY) == 0) {
+-		PMD_DRV_LOG(ERR, "RSS not supported.");
+-		return -EINVAL;
+-	}
 -
--	dev_info->flow_type_rss_offloads = CPFL_RSS_OFFLOAD_ALL;
-+	if (base->caps.rss_caps != 0) {
-+		dev_info->hash_key_size = vport->rss_key_size;
-+		dev_info->reta_size = vport->rss_lut_size;
-+		dev_info->flow_type_rss_offloads = CPFL_RSS_OFFLOAD_ALL;
-+	}
+ 	/* Checking MTU set */
+ 	if (rxmode->mtu > hw->max_mtu + NFP_ETH_OVERHEAD) {
+ 		PMD_DRV_LOG(ERR, "MTU (%u) larger than the maximum possible frame size (%u).",
+diff --git a/drivers/net/octeontx/octeontx_ethdev.c b/drivers/net/octeontx/octeontx_ethdev.c
+index e173535d29..e0df23049c 100644
+--- a/drivers/net/octeontx/octeontx_ethdev.c
++++ b/drivers/net/octeontx/octeontx_ethdev.c
+@@ -499,8 +499,7 @@ octeontx_dev_configure(struct rte_eth_dev *dev)
+ 		return -EINVAL;
+ 	}
  
- 	dev_info->rx_offload_capa =
- 		RTE_ETH_RX_OFFLOAD_IPV4_CKSUM           |
-diff --git a/drivers/net/intel/cpfl/cpfl_representor.c b/drivers/net/intel/cpfl/cpfl_representor.c
-index 60b72b5ec1..bb28c0b989 100644
---- a/drivers/net/intel/cpfl/cpfl_representor.c
-+++ b/drivers/net/intel/cpfl/cpfl_representor.c
-@@ -195,6 +195,7 @@ cpfl_repr_dev_info_get(struct rte_eth_dev *ethdev,
- 		       struct rte_eth_dev_info *dev_info)
+-	if (rxmode->mq_mode != RTE_ETH_MQ_RX_NONE &&
+-		rxmode->mq_mode != RTE_ETH_MQ_RX_RSS) {
++	if (rxmode->mq_mode != RTE_ETH_MQ_RX_NONE) {
+ 		octeontx_log_err("unsupported rx qmode %d", rxmode->mq_mode);
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/net/sfc/sfc_repr.c b/drivers/net/sfc/sfc_repr.c
+index 2be17d3c8f..079d02dff1 100644
+--- a/drivers/net/sfc/sfc_repr.c
++++ b/drivers/net/sfc/sfc_repr.c
+@@ -378,10 +378,8 @@ sfc_repr_dev_stop(struct rte_eth_dev *dev)
+ }
+ 
+ static int
+-sfc_repr_check_conf(struct sfc_repr *sr, uint16_t nb_rx_queues,
+-		    const struct rte_eth_conf *conf)
++sfc_repr_check_conf(struct sfc_repr *sr, const struct rte_eth_conf *conf)
  {
- 	struct cpfl_repr *repr = CPFL_DEV_TO_REPR(ethdev);
-+	struct cpfl_adapter_ext *adapter = repr->itf.adapter;
+-	const struct rte_eth_rss_conf *rss_conf;
+ 	int ret = 0;
  
- 	dev_info->device = ethdev->device;
- 	dev_info->max_mac_addrs = 1;
-@@ -203,7 +204,8 @@ cpfl_repr_dev_info_get(struct rte_eth_dev *ethdev,
- 	dev_info->min_rx_bufsize = CPFL_MIN_BUF_SIZE;
- 	dev_info->max_rx_pktlen = CPFL_MAX_FRAME_SIZE;
+ 	sfcr_info(sr, "entry");
+@@ -392,25 +390,10 @@ sfc_repr_check_conf(struct sfc_repr *sr, uint16_t nb_rx_queues,
+ 	}
  
--	dev_info->flow_type_rss_offloads = CPFL_RSS_OFFLOAD_ALL;
-+	if (adapter->base.caps.rss_caps != 0)
-+		dev_info->flow_type_rss_offloads = CPFL_RSS_OFFLOAD_ALL;
- 
- 	dev_info->rx_offload_capa =
- 		RTE_ETH_RX_OFFLOAD_VLAN_STRIP		|
-diff --git a/drivers/net/intel/idpf/idpf_ethdev.c b/drivers/net/intel/idpf/idpf_ethdev.c
-index e9e9781fdd..fbd50d0a91 100644
---- a/drivers/net/intel/idpf/idpf_ethdev.c
-+++ b/drivers/net/intel/idpf/idpf_ethdev.c
-@@ -166,10 +166,11 @@ idpf_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->max_mtu = vport->max_mtu;
- 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
- 
--	dev_info->hash_key_size = vport->rss_key_size;
--	dev_info->reta_size = vport->rss_lut_size;
+ 	switch (conf->rxmode.mq_mode) {
+-	case RTE_ETH_MQ_RX_RSS:
+-		if (nb_rx_queues != 1) {
+-			sfcr_err(sr, "Rx RSS is not supported with %u queues",
+-				 nb_rx_queues);
+-			ret = -EINVAL;
+-			break;
+-		}
 -
--	dev_info->flow_type_rss_offloads = IDPF_RSS_OFFLOAD_ALL;
-+	if (adapter->caps.rss_caps != 0) {
-+		dev_info->hash_key_size = vport->rss_key_size;
-+		dev_info->reta_size = vport->rss_lut_size;
-+		dev_info->flow_type_rss_offloads = IDPF_RSS_OFFLOAD_ALL;
-+	}
+-		rss_conf = &conf->rx_adv_conf.rss_conf;
+-		if (rss_conf->rss_key != NULL || rss_conf->rss_key_len != 0 ||
+-		    rss_conf->rss_hf != 0) {
+-			sfcr_err(sr, "Rx RSS configuration is not supported");
+-			ret = -EINVAL;
+-		}
+-		break;
+ 	case RTE_ETH_MQ_RX_NONE:
+ 		break;
+ 	default:
+-		sfcr_err(sr, "Rx mode MQ modes other than RSS not supported");
++		sfcr_err(sr, "Rx mode MQ modes other than none not supported");
+ 		ret = -EINVAL;
+ 		break;
+ 	}
+@@ -452,8 +435,7 @@ sfc_repr_check_conf(struct sfc_repr *sr, uint16_t nb_rx_queues,
  
- 	dev_info->rx_offload_capa =
- 		RTE_ETH_RX_OFFLOAD_IPV4_CKSUM           |
-diff --git a/drivers/net/xsc/xsc_ethdev.c b/drivers/net/xsc/xsc_ethdev.c
-index 5fbe68782e..20d6f58f68 100644
---- a/drivers/net/xsc/xsc_ethdev.c
-+++ b/drivers/net/xsc/xsc_ethdev.c
-@@ -469,6 +469,10 @@ xsc_ethdev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *info)
- 	info->if_index = priv->ifindex;
- 	info->speed_capa = priv->xdev->link_speed_capa;
- 	info->hash_key_size = XSC_RSS_HASH_KEY_LEN;
-+	info->flow_type_rss_offloads = RTE_ETH_RSS_IP | RTE_ETH_RSS_UDP |
-+		RTE_ETH_RSS_TCP | RTE_ETH_RSS_L3_SRC_ONLY |
-+		RTE_ETH_RSS_L3_DST_ONLY | RTE_ETH_RSS_L4_SRC_ONLY |
-+		RTE_ETH_RSS_L4_DST_ONLY | RTE_ETH_RSS_LEVEL_INNERMOST;
- 	info->tx_desc_lim.nb_seg_max = 8;
- 	info->tx_desc_lim.nb_mtu_seg_max = 8;
- 	info->switch_info.name = dev->data->name;
+ 
+ static int
+-sfc_repr_configure(struct sfc_repr *sr, uint16_t nb_rx_queues,
+-		   const struct rte_eth_conf *conf)
++sfc_repr_configure(struct sfc_repr *sr, const struct rte_eth_conf *conf)
+ {
+ 	int ret;
+ 
+@@ -461,7 +443,7 @@ sfc_repr_configure(struct sfc_repr *sr, uint16_t nb_rx_queues,
+ 
+ 	SFC_ASSERT(sfc_repr_lock_is_locked(sr));
+ 
+-	ret = sfc_repr_check_conf(sr, nb_rx_queues, conf);
++	ret = sfc_repr_check_conf(sr, conf);
+ 	if (ret != 0)
+ 		goto fail_check_conf;
+ 
+@@ -491,8 +473,7 @@ sfc_repr_dev_configure(struct rte_eth_dev *dev)
+ 	case SFC_ETHDEV_CONFIGURED:
+ 		/* FALLTHROUGH */
+ 	case SFC_ETHDEV_INITIALIZED:
+-		ret = sfc_repr_configure(sr, dev_data->nb_rx_queues,
+-					 &dev_data->dev_conf);
++		ret = sfc_repr_configure(sr, &dev_data->dev_conf);
+ 		break;
+ 	default:
+ 		sfcr_err(sr, "unexpected adapter state %u to configure",
+diff --git a/drivers/net/sfc/sfc_rx.c b/drivers/net/sfc/sfc_rx.c
+index 1d4101b9e9..aa59931f06 100644
+--- a/drivers/net/sfc/sfc_rx.c
++++ b/drivers/net/sfc/sfc_rx.c
+@@ -1668,21 +1668,14 @@ sfc_rx_qinit_info(struct sfc_adapter *sa, sfc_sw_index_t sw_index,
+ static int
+ sfc_rx_check_mode(struct sfc_adapter *sa, struct rte_eth_rxmode *rxmode)
+ {
+-	struct sfc_adapter_shared * const sas = sfc_sa2shared(sa);
+ 	uint64_t offloads_supported = sfc_rx_get_dev_offload_caps(sa) |
+ 				      sfc_rx_get_queue_offload_caps(sa);
+-	struct sfc_rss *rss = &sas->rss;
+ 	int rc = 0;
+ 
+ 	switch (rxmode->mq_mode) {
+ 	case RTE_ETH_MQ_RX_NONE:
+-		/* No special checks are required */
+-		break;
+ 	case RTE_ETH_MQ_RX_RSS:
+-		if (rss->context_type == EFX_RX_SCALE_UNAVAILABLE) {
+-			sfc_err(sa, "RSS is not available");
+-			rc = EINVAL;
+-		}
++		/* No special checks are required */
+ 		break;
+ 	default:
+ 		sfc_err(sa, "Rx multi-queue mode %u not supported",
+diff --git a/examples/distributor/main.c b/examples/distributor/main.c
+index 0905482cf0..344da03814 100644
+--- a/examples/distributor/main.c
++++ b/examples/distributor/main.c
+@@ -135,6 +135,8 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
+ 
+ 	port_conf.rx_adv_conf.rss_conf.rss_hf &=
+ 		dev_info.flow_type_rss_offloads;
++	if (port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
++		port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 	if (port_conf.rx_adv_conf.rss_conf.rss_hf !=
+ 			port_conf_default.rx_adv_conf.rss_conf.rss_hf) {
+ 		printf("Port %u modified RSS hash function based on hardware support,"
+diff --git a/examples/dma/dmafwd.c b/examples/dma/dmafwd.c
+index 8d195faddb..fea1c3e669 100644
+--- a/examples/dma/dmafwd.c
++++ b/examples/dma/dmafwd.c
+@@ -922,6 +922,8 @@ port_init(uint16_t portid, struct rte_mempool *mbuf_pool)
+ 
+ 	local_port_conf.rx_adv_conf.rss_conf.rss_hf &=
+ 		dev_info.flow_type_rss_offloads;
++	if (local_port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
++		local_port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 	ret = rte_eth_dev_configure(portid, nb_queues, 1, &local_port_conf);
+ 	if (ret < 0)
+ 		rte_exit(EXIT_FAILURE, "Cannot configure device:"
+diff --git a/examples/eventdev_pipeline/pipeline_worker_generic.c b/examples/eventdev_pipeline/pipeline_worker_generic.c
+index c0de5b1e11..77d9d91043 100644
+--- a/examples/eventdev_pipeline/pipeline_worker_generic.c
++++ b/examples/eventdev_pipeline/pipeline_worker_generic.c
+@@ -338,6 +338,8 @@ port_init(uint8_t port, struct rte_mempool *mbuf_pool)
+ 
+ 	port_conf.rx_adv_conf.rss_conf.rss_hf &=
+ 		dev_info.flow_type_rss_offloads;
++	if (port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
++		port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 	if (port_conf.rx_adv_conf.rss_conf.rss_hf !=
+ 			port_conf_default.rx_adv_conf.rss_conf.rss_hf) {
+ 		printf("Port %u modified RSS hash function based on hardware support,"
+diff --git a/examples/eventdev_pipeline/pipeline_worker_tx.c b/examples/eventdev_pipeline/pipeline_worker_tx.c
+index a3090e3b49..174976a1b5 100644
+--- a/examples/eventdev_pipeline/pipeline_worker_tx.c
++++ b/examples/eventdev_pipeline/pipeline_worker_tx.c
+@@ -683,6 +683,8 @@ port_init(uint8_t port, struct rte_mempool *mbuf_pool)
+ 
+ 	port_conf.rx_adv_conf.rss_conf.rss_hf &=
+ 		dev_info.flow_type_rss_offloads;
++	if (port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
++		port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 	if (port_conf.rx_adv_conf.rss_conf.rss_hf !=
+ 			port_conf_default.rx_adv_conf.rss_conf.rss_hf) {
+ 		printf("Port %u modified RSS hash function based on hardware support,"
+diff --git a/examples/ip_reassembly/main.c b/examples/ip_reassembly/main.c
+index 0814d47a66..321a50b1f6 100644
+--- a/examples/ip_reassembly/main.c
++++ b/examples/ip_reassembly/main.c
+@@ -1102,6 +1102,8 @@ main(int argc, char **argv)
+ 
+ 		local_port_conf.rx_adv_conf.rss_conf.rss_hf &=
+ 			dev_info.flow_type_rss_offloads;
++		if (local_port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
++			local_port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 		if (local_port_conf.rx_adv_conf.rss_conf.rss_hf !=
+ 				port_conf.rx_adv_conf.rss_conf.rss_hf) {
+ 			printf("Port %u modified RSS hash function based on hardware support,"
+diff --git a/examples/ipsec-secgw/ipsec-secgw.c b/examples/ipsec-secgw/ipsec-secgw.c
+index 4816bcdd82..2741faf04e 100644
+--- a/examples/ipsec-secgw/ipsec-secgw.c
++++ b/examples/ipsec-secgw/ipsec-secgw.c
+@@ -2016,6 +2016,8 @@ port_init(uint16_t portid, uint64_t req_rx_offloads, uint64_t req_tx_offloads,
+ 
+ 	local_port_conf.rx_adv_conf.rss_conf.rss_hf &=
+ 		dev_info.flow_type_rss_offloads;
++	if (local_port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
++		local_port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 	if (local_port_conf.rx_adv_conf.rss_conf.rss_hf !=
+ 			port_conf.rx_adv_conf.rss_conf.rss_hf) {
+ 		printf("Port %u modified RSS hash function based on hardware support,"
+diff --git a/examples/l2fwd-event/l2fwd_common.c b/examples/l2fwd-event/l2fwd_common.c
+index b4d5edfde0..caacf6cd63 100644
+--- a/examples/l2fwd-event/l2fwd_common.c
++++ b/examples/l2fwd-event/l2fwd_common.c
+@@ -48,6 +48,8 @@ l2fwd_event_init_ports(struct l2fwd_resources *rsrc)
+ 				  port_id, strerror(-ret));
+ 		local_port_conf.rx_adv_conf.rss_conf.rss_hf &=
+ 			dev_info.flow_type_rss_offloads;
++		if (local_port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
++			local_port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 		if (local_port_conf.rx_adv_conf.rss_conf.rss_hf !=
+ 				port_conf.rx_adv_conf.rss_conf.rss_hf) {
+ 			printf("Port %u modified RSS hash function based on hardware support,"
+diff --git a/examples/l3fwd-graph/main.c b/examples/l3fwd-graph/main.c
+index 4fa302f5b0..08fe177fc2 100644
+--- a/examples/l3fwd-graph/main.c
++++ b/examples/l3fwd-graph/main.c
+@@ -1092,6 +1092,8 @@ main(int argc, char **argv)
+ 
+ 		local_port_conf.rx_adv_conf.rss_conf.rss_hf &=
+ 			dev_info.flow_type_rss_offloads;
++		if (local_port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
++			local_port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 		if (local_port_conf.rx_adv_conf.rss_conf.rss_hf !=
+ 		    port_conf.rx_adv_conf.rss_conf.rss_hf) {
+ 			printf("Port %u modified RSS hash function based on "
+diff --git a/examples/l3fwd/main.c b/examples/l3fwd/main.c
+index 6866811526..9532150a47 100644
+--- a/examples/l3fwd/main.c
++++ b/examples/l3fwd/main.c
+@@ -1394,7 +1394,8 @@ l3fwd_poll_resource_setup(void)
+ 		local_port_conf.rx_adv_conf.rss_conf.rss_hf &=
+ 			dev_info.flow_type_rss_offloads;
+ 
+-		if (disable_rss == 1 || dev_info.max_rx_queues == 1)
++		if (disable_rss == 1 || dev_info.max_rx_queues == 1 ||
++				local_port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
+ 			local_port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 
+ 		if (local_port_conf.rx_adv_conf.rss_conf.rss_hf !=
+diff --git a/examples/multi_process/client_server_mp/mp_server/init.c b/examples/multi_process/client_server_mp/mp_server/init.c
+index f3b9b49380..09cb363ab8 100644
+--- a/examples/multi_process/client_server_mp/mp_server/init.c
++++ b/examples/multi_process/client_server_mp/mp_server/init.c
+@@ -91,7 +91,7 @@ static int
+ init_port(uint16_t port_num)
+ {
+ 	/* for port configuration all features are off by default */
+-	const struct rte_eth_conf port_conf = {
++	struct rte_eth_conf port_conf = {
+ 		.rxmode = {
+ 			.mq_mode = RTE_ETH_MQ_RX_RSS
+ 		}
+@@ -99,6 +99,7 @@ init_port(uint16_t port_num)
+ 	const uint16_t rx_rings = 1, tx_rings = num_clients;
+ 	uint16_t rx_ring_size = RTE_MP_RX_DESC_DEFAULT;
+ 	uint16_t tx_ring_size = RTE_MP_TX_DESC_DEFAULT;
++	struct rte_eth_dev_info dev_info;
+ 
+ 	uint16_t q;
+ 	int retval;
+@@ -106,6 +107,13 @@ init_port(uint16_t port_num)
+ 	printf("Port %u init ... ", port_num);
+ 	fflush(stdout);
+ 
++	retval = rte_eth_dev_info_get(port_num, &dev_info);
++	if (retval != 0)
++		return retval;
++
++	if (dev_info.flow_type_rss_offloads == 0)
++		port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
++
+ 	/* Standard DPDK port initialisation - config port, then set up
+ 	 * rx and tx rings */
+ 	if ((retval = rte_eth_dev_configure(port_num, rx_rings, tx_rings,
+diff --git a/examples/multi_process/symmetric_mp/main.c b/examples/multi_process/symmetric_mp/main.c
+index e2d185ab1b..d250a738f8 100644
+--- a/examples/multi_process/symmetric_mp/main.c
++++ b/examples/multi_process/symmetric_mp/main.c
+@@ -228,6 +228,8 @@ smp_port_init(uint16_t port, struct rte_mempool *mbuf_pool,
+ 
+ 	rss_hf_tmp = port_conf.rx_adv_conf.rss_conf.rss_hf;
+ 	port_conf.rx_adv_conf.rss_conf.rss_hf &= info.flow_type_rss_offloads;
++	if (port_conf.rx_adv_conf.rss_conf.rss_hf == 0)
++		port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 	if (port_conf.rx_adv_conf.rss_conf.rss_hf != rss_hf_tmp) {
+ 		printf("Port %u modified RSS hash function based on hardware support,"
+ 			"requested:%#"PRIx64" configured:%#"PRIx64"\n",
+diff --git a/examples/ntb/ntb_fwd.c b/examples/ntb/ntb_fwd.c
+index bbacce97db..30716d427d 100644
+--- a/examples/ntb/ntb_fwd.c
++++ b/examples/ntb/ntb_fwd.c
+@@ -1310,6 +1310,8 @@ main(int argc, char **argv)
+ 
+ 		eth_pconf.rx_adv_conf.rss_conf.rss_hf &=
+ 				ethdev_info.flow_type_rss_offloads;
++		if (eth_pconf.rx_adv_conf.rss_conf.rss_hf == 0)
++			eth_pconf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 		ret = rte_eth_dev_configure(eth_port_id, num_queues,
+ 					    num_queues, &eth_pconf);
+ 		if (ret)
+diff --git a/examples/pipeline/obj.c b/examples/pipeline/obj.c
+index d39034ec22..9f49df190e 100644
+--- a/examples/pipeline/obj.c
++++ b/examples/pipeline/obj.c
+@@ -118,8 +118,11 @@ ethdev_config(const char *name, struct ethdev_params *params)
+ 	if (rss) {
+ 		uint64_t rss_hf = RTE_ETH_RSS_IP | RTE_ETH_RSS_TCP | RTE_ETH_RSS_UDP;
+ 
+-		port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
+-		port_conf.rx_adv_conf.rss_conf.rss_hf = rss_hf & port_info.flow_type_rss_offloads;
++		rss_hf &= port_info.flow_type_rss_offloads;
++		if (rss_hf != 0) {
++			port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
++			port_conf.rx_adv_conf.rss_conf.rss_hf = rss_hf;
++		}
+ 	}
+ 
+ 	numa_node = rte_eth_dev_socket_id(port_id);
+diff --git a/examples/qos_meter/main.c b/examples/qos_meter/main.c
+index da1b0b2287..59759355cd 100644
+--- a/examples/qos_meter/main.c
++++ b/examples/qos_meter/main.c
+@@ -336,6 +336,8 @@ main(int argc, char **argv)
+ 		conf.txmode.offloads |= RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
+ 
+ 	conf.rx_adv_conf.rss_conf.rss_hf &= dev_info.flow_type_rss_offloads;
++	if (conf.rx_adv_conf.rss_conf.rss_hf == 0)
++		conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 	if (conf.rx_adv_conf.rss_conf.rss_hf !=
+ 			port_conf.rx_adv_conf.rss_conf.rss_hf) {
+ 		printf("Port %u modified RSS hash function based on hardware support,"
+@@ -382,6 +384,8 @@ main(int argc, char **argv)
+ 		conf.txmode.offloads |= RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
+ 
+ 	conf.rx_adv_conf.rss_conf.rss_hf &= dev_info.flow_type_rss_offloads;
++	if (conf.rx_adv_conf.rss_conf.rss_hf == 0)
++		conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+ 	if (conf.rx_adv_conf.rss_conf.rss_hf !=
+ 			port_conf.rx_adv_conf.rss_conf.rss_hf) {
+ 		printf("Port %u modified RSS hash function based on hardware support,"
+diff --git a/examples/server_node_efd/efd_server/init.c b/examples/server_node_efd/efd_server/init.c
+index 9a20831a0d..9644627219 100644
+--- a/examples/server_node_efd/efd_server/init.c
++++ b/examples/server_node_efd/efd_server/init.c
+@@ -118,6 +118,9 @@ init_port(uint16_t port_num)
+ 		port_conf.txmode.offloads |=
+ 			RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
+ 
++	if (dev_info.flow_type_rss_offloads == 0)
++		port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
++
+ 	/*
+ 	 * Standard DPDK port initialisation - config port, then set up
+ 	 * rx and tx rings.
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index 39a895c9e4..0988f69275 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -1526,6 +1526,19 @@ rte_eth_dev_configure(uint16_t port_id, uint16_t nb_rx_q, uint16_t nb_tx_q,
+ 		goto rollback;
+ 	}
+ 
++	if (dev_info.flow_type_rss_offloads == 0 &&
++			(dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG) != 0) {
++		if (nb_rx_q > 1) {
++			RTE_ETHDEV_LOG_LINE(ERR, "Ethdev port_id=%u does not support RSS rx mode",
++				port_id);
++			ret = -EINVAL;
++			goto rollback;
++		}
++		RTE_ETHDEV_LOG_LINE(NOTICE, "Ethdev port_id=%u does not support RSS rx mode, ignoring",
++			port_id);
++		dev->data->dev_conf.rxmode.mq_mode &= ~RTE_ETH_MQ_RX_RSS_FLAG;
++	}
++
+ 	dev->data->dev_conf.rx_adv_conf.rss_conf.rss_hf =
+ 		rte_eth_rss_hf_refine(dev_conf->rx_adv_conf.rss_conf.rss_hf);
+ 
 -- 
 2.54.0
 
