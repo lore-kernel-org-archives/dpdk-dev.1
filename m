@@ -1,153 +1,79 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B56F606A319
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 19:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAE3606A31F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 19:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=marvell.com header.i=@marvell.com header.a=rsa-sha256 header.s=selector1 header.b=GWIOg9hy
+	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=HnHg5dEk
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5929F4027D;
-	Thu, 22 Oct 2026 21:02:13 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id BF6474003C
- for <dev@dpdk.org>; Thu, 22 Oct 2026 21:02:11 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 69MHtJNG1864390; Thu, 22 Oct 2026 12:02:11 -0700
-Received: from byapr05cu005.outbound.protection.outlook.com
- (mail-westusazon11020110.outbound.protection.outlook.com [52.101.85.110])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4hfmdthmub-1
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Thu, 22 Oct 2026 12:02:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cnmTu1pYhvlUhixU9uAhmX7s+o+leO3We44Z+4kjJ+xxhShirYB9u6W8HUS+m2cbFPMOulFtpvfQKdpcFCMFICxkRL4tge46dmPnMG6XvtXuZmDXrc0VB69VKc6mFL2bmXAuBebx8CMA2qGIZhhHaujRjzGS3mf4s8I7hivUhQ5xlwWBBa6tGfmo87+MxoKyV1hy5TZlTe38llZlh0tigTBq/wQtsjLv1GpngxlTJ6cDLpkZUy0syCLivvmiQsVvoE1n1Y7hHVWCF7xyBjgUkIjNR2/gWZJt01YWwAJDJdQYK8LBkA9lnitsPQEaM9Cv2y+eFDkk/I1O4UB1Qf4QTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yzs6Zh7EiYNJgpKNTYJmx5oSoiMUvM6gDsuNKKuZzB4=;
- b=Ak6YKG5wspGFpWwT7dh1xXpsaSv+593tLFv3lNjpeitqcw8C/kkXFDsw4IgvNPIrbaklZxj7VIJVcrmC2BMZolHfBa0WADZ+5e3pUHAsy8x0i2V9axfCKiWs4mYV3qb5zyiv19uPZA0mmUiQBvJpv76J2RXtSxlLz4Uu0HmNgF4iIoSM0TrEyu+hY8t+KQRuJlqO2e8SJTIKRxX+1CUoF3SV76nF5KD/IJ/0GFDFCW70KgjHpNOOHaDP5GeWAGFcfLin8jw/CG8angMmaNHlnUPVOyfAwsYr2Z1MwYqAu6K/lPylgrYD5wmOoj/VM7OLAeodu+XpzkkjBy7kZ6Zu2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yzs6Zh7EiYNJgpKNTYJmx5oSoiMUvM6gDsuNKKuZzB4=;
- b=GWIOg9hyvuJvoyjv7jJkZsFsy3gJNw5MlaE8pycvR5Retb8sJE94xxm5k7ab4HB4HwIYjDscigF2MMcu4UOCQEOfQ7vGOCblXL/SeJOfIfjTcekmhjZJsqe/7i2xOiGbV+UC37TXLjEWzzt5us+/N8xPCQYYqf2yCXAmFrVbnKE=
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
- SA1PR18MB5993.namprd18.prod.outlook.com (2603:10b6:806:3dd::8) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.14; Thu, 22 Oct 2026 19:02:02 +0000
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::a2df:a596:cfe:17]) by CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::a2df:a596:cfe:17%6]) with mapi id 15.21.0546.012; Thu, 22 Oct 2026
- 19:02:01 +0000
-From: Akhil Goyal <gakhil@marvell.com>
-To: Pratik Senapati <psenapati@marvell.com>, Radu Nicolau
- <radu.nicolau@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, "Ji, Kai"
- <kai.ji@intel.com>
-Subject: RE: [EXTERNAL] [PATCH] test/crypto: add test vectors for more ML-KEM
- and ML-DSA variants
-Thread-Topic: [EXTERNAL] [PATCH] test/crypto: add test vectors for more ML-KEM
- and ML-DSA variants
-Thread-Index: AQHdRo2zz87Ht+1KnESQ1CQ7Vm3sv7bSma+AgAAEsICAAD7GAIAKxgoAgCpRsICAAi2BUA==
-Date: Thu, 22 Oct 2026 19:02:01 +0000
-Message-ID: <CO6PR18MB4484D4254B6B89239ED0F89ED8652@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <20260917101641.335926-1-radu.nicolau@intel.com>
- <SAWPR18MB988310BC52CC8B4B771E060556CBB82@SAWPR18MB988310.namprd18.prod.outlook.com>
- <5ac0b690-b340-4cfa-90e6-33cac4c30eac@intel.com>
- <29a23773-d16f-4065-859f-f85646442cbf@intel.com>
- <LV8PR18MB6078C87C7F16C9DA0692213CBD812@LV8PR18MB6078.namprd18.prod.outlook.com>
- <LV8PR18MB6078406BE61F93954524B0D9BD662@LV8PR18MB6078.namprd18.prod.outlook.com>
-In-Reply-To: <LV8PR18MB6078406BE61F93954524B0D9BD662@LV8PR18MB6078.namprd18.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=marvell.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|SA1PR18MB5993:EE_
-x-ms-office365-filtering-correlation-id: f156f3c2-e48a-47e4-afd7-08df306ef4ae
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|23010399003|1800799024|366016|22082099003|18002099003|10067099003|11063799006|56012099006|4143699003|38070700021;
-x-microsoft-antispam-message-info: 3kaehYwQbXYGN3XfquRKIXl1nvkq9skGQIr1SGoj7KcGj8Z4nGdGUk6QjLx6CIj0XSIp23M4vAnjdNZ5DnbNf+E1dqGmXyVPPnSwN7Z/dqkYGj5HdFmSIIr1vWwgoe+0z+OpFAYjXyGGk68AT/0ed0OutOEnqNWTJIpDCWBfYjYPrv72vIE+02syt5pm6TvNboAVM8lHKmN0OzWy84d89EN4Rr72GArc2aNuJ2oYhNOmC1aL/G1Ta+2b6WyyCxlbbFJaPv6gZ3eOSsKvbcFTCB1hxTrh/tIdccQ5zXVABb07k7qr6Xw+Dz+CNf9x77TvuYs1JFgkt9WfclzqMJILbcMSrwuCEDac+g6qS9vS0yLH+5T8j3heIlK7R51GnquKnvBrTA3A48Bb8UOQqtzsIJGfSaSDjY24Xw+nr69xuDjhYqEmVg7rC+u3ZnmnYNZyj1Vl6/URKAA4j+ZJCjrJysjXv7uxb4sbVJdHHIzrqg215YhvgTT7yxafZCiQcgsTonKTgFuSVIAOaCftx1jEn4lKS+YZsRc/cr1j7NuxH2+a2cf3A/6aobHsXYxUjTz8J4qzid5lV+0AMYC65zoMA5S8dvfM/bDr551P9OKFiBaD7W7UaTBaxbLNBgRAZdEeJx9gEyxayGMb+5KB4WxXDEaumuBAV8UVOqC7/gAUtSvtDFWQ6yYiyK6xmx/WYsxKSdyezp4YyUw0yx/e5YGlzEEhQJnSIzPixA/hiHGvxos=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(23010399003)(1800799024)(366016)(22082099003)(18002099003)(10067099003)(11063799006)(56012099006)(4143699003)(38070700021);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?W9JikFq92DSxPr1/ZRMRJajaD5OSQa6SKEylD++DrGx/n2jgzVREHGqRE5/o?=
- =?us-ascii?Q?vmva9M7vnBAnGdYurXBRBppkefE5Yjxcjlg4k/8lYcZOc7WSCDIlujiF8fzZ?=
- =?us-ascii?Q?SgOvL0/5pKDL+vI9VFRA67Ooki/QCgQnZHyL7enkYWgSKnjGW2toMukeJA0m?=
- =?us-ascii?Q?4M/ep3x57Tsx1iz316ih1tEzMs7rYFj7pymjy6rev4B6nnOD9MR7XMbwgpqR?=
- =?us-ascii?Q?mYRpCgg+ato6nZCO0IYMMilzp2ZoF45X3Lbgx5wYHc504zYskjWh8qWUvzdx?=
- =?us-ascii?Q?FAab0ZbL8ypa4+RsbPBvZQgZUl5LCHMj7j2CzZP9X47Uo3wCjozaX0tQTg+Z?=
- =?us-ascii?Q?xXU1zHQo6/g2NEYfU4l96/lwTDATss8WNdEdlFJWVyNUKxN7I80S7B4Qmf2a?=
- =?us-ascii?Q?kWsslTdY1waKryVcXEz4Ix08cGpsTXfc5HX87/zbhQOQT8kmLC+mIiDG30aH?=
- =?us-ascii?Q?zXOKG+9WniwxKgwrO/Rt7eeVqiz+TIWIMAlbipKZ4+sy779zKpkmxu98UBLl?=
- =?us-ascii?Q?yapcXn6XxKoY7QPZ2iSwbvGkxzNwYtYI5DwG7PRmiE6hPb3jlKRQdf4cs4tk?=
- =?us-ascii?Q?JvjWBzuZGm4jRt/x6WSDakFfAvP/yzhwJHXcKwYgt3O3g+r6GX7eehK/AH5f?=
- =?us-ascii?Q?SJF5dlGDFKc1WlLGsAqRu3RB9e7ufn3oKnVg1ezCsSfGrjrCNPlEDVUZVFZJ?=
- =?us-ascii?Q?QoQ7KLWbtRU8oH0vkefq4QFaku1fFOqrISOr8LqwGu8KUgBsWoya3x/doLnq?=
- =?us-ascii?Q?U6cF+QiLqHp3x2RMSLZ7RBlEAUAdFQ9kvq598XFsW6/CIElWP88CSkTSAl9S?=
- =?us-ascii?Q?5MqKyC/612X2usF8ZLzJWpQ2hzGUOHMmPShEEHQl7UpMC9T242Lyn42ccgk7?=
- =?us-ascii?Q?W9x7s/+xDOE+qgGglDkZcgAPQGsytPLhZIZbkKEe4+qSYfTfgYWgG4o1hLwj?=
- =?us-ascii?Q?rQ5pxmpT0EUkZg4nbepfbPPOysmYU24HIaaiICFbiY9yD82Og95r89yLI5GK?=
- =?us-ascii?Q?o9eqrPJs849XuezaSw33J+/7a/pLJc/CRVyP/Mo1NOxFDDd873ocKyrk08xa?=
- =?us-ascii?Q?c3wZ1gm0BHu1xkQOesJ0wuDPMoq3vsa6KLHhKMPZrkbmhRFudMIkUr9b0oCo?=
- =?us-ascii?Q?JgItt1gXy2wqQ40DXJ6EtBlbSUQHO+GGJ+o1+/F3OE/aLZ++k5G9Iq/Hhq2n?=
- =?us-ascii?Q?nN/o+QJ6lkj2Gh4FNJq8IkhGAPPxe/1n3B8NmqczDM9pSclYzsle84rvulrR?=
- =?us-ascii?Q?952BBMfHxcyLiuCcadZKbfw7Bh3xJbpEkcDClJMKhH8U+67mVipu+cc3lcF2?=
- =?us-ascii?Q?0jSAwxzmMiZsNOPge70+JIjpny2KYmF4+y5amgmWXxwTtDqKmAV8Xr52pSHc?=
- =?us-ascii?Q?YO1hFwkVfKrZlelymC8WLDuoqXIwOXEG3J9EHUybs1IK5hIQtSR9M0YL3vVP?=
- =?us-ascii?Q?5H+xmXzK+TjvJbTKQgiYX0QhmUfWo6KnXHYsQwZMc0FuxhSoJxzZE/lPFUHL?=
- =?us-ascii?Q?jG/DixyPIaoyMBMlxJuACQrgmBeNw74yfw6pLpAEGLkEFsOQZKC+E6/DXESO?=
- =?us-ascii?Q?BN0dGWaDkwYWB/2LvSOd9il5H+KQeCYQZiyBC7qmt3ku+dSTwHa6J55GyjUb?=
- =?us-ascii?Q?2S22PlwbiJA1mSlW2iNH50o3hkpf9exLxn6gwxxcUvT4EJfN/fHEHQGpLQQu?=
- =?us-ascii?Q?iN9LDL2lhUBZ/FlDuC9O3fypR+fHRUN9M0BG73wjUXWSgy/L?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id E2DB140264;
+	Thu, 22 Oct 2026 21:40:40 +0200 (CEST)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com
+ [209.85.128.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 7B6E44003C
+ for <dev@dpdk.org>; Thu, 22 Oct 2026 21:40:39 +0200 (CEST)
+Received: by mail-yw1-f175.google.com with SMTP id
+ 00721157ae682-8ac9d666d4eso2063067b3.3
+ for <dev@dpdk.org>; Thu, 22 Oct 2026 12:40:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792698039; cv=none;
+ d=google.com; s=arc-20260327;
+ b=bU8hycjT58oip/zVsSytO6M9xOqSHuUAgw1eRmVUoybWfA1la+vazYNlci4p9koTtl
+ PQavsOzzCZVzD8QLZEcwlt73uN+CjKiAR2XqMOYlGx7fJ8DlVJMDB+6gVcbsiU20KkLv
+ hid6GErs3qnlyP7IhKE+U1KvFuU7R9ae01vDJbEtwRn6FqqtZM8LHA4MNMz5gQVc393W
+ rw4fkx55oa0E+6RJ3/sEu7wEwYpVqL+RluXYwytwHqwHuKw4WEDJxKNeroTZ1iyb/GuU
+ JaPYfBqlW6SYeU2YlP3v/84pDNjzEZ3BpGFxIXPnDHZTpOscVM2HANyWjoaqTvH0bWHy
+ 18iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=to:subject:message-id:date:from:mime-version:dkim-signature;
+ bh=39d00c2ji8sQatt5ynoJN4xaH6fzywC1VfNJ8Rpjv34=;
+ fh=eUqWHLlhrxpykrabbQYbmT5B5FclN6p18glcXqrZikU=;
+ b=SQdrl9j9LgEU6ozrowzEplGmtdfZeEJfooynT4FUlyi2xNeuUG4GwLPcPEOJ1qhoPY
+ 701aM1JU6B1/2C+ITSR3xKznQvJdzCqSj9rYlsTogJN45K+k0Tt9o8ueImMtQSxZQJat
+ bqoY5zs7KvB5yXzolmJO9M/3nSAIK4FYTh+CFKMAwCJFlo6HZalEX4H5TmalYA3zg+Tw
+ dhMfcHPpTgk6fd8uDf4uY5BLWs6sZeAf+5mg5353Tri5whTstCkGanwMlztHTuY+712+
+ hBSIcech8lBKeWoJmJzWqozkMmyGgRAtiw6XKULGvZn5If5V+yUfuPtccUNIDH6wKnff
+ TwZA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1792698039; x=1793302839; darn=dpdk.org;
+ h=content-type:to:subject:message-id:date:from:mime-version:from:to
+ :cc:subject:date:message-id:reply-to:content-type;
+ bh=39d00c2ji8sQatt5ynoJN4xaH6fzywC1VfNJ8Rpjv34=;
+ b=HnHg5dEkXOiCcwo1B+sRT3e8Cqm0Fbwcw4INOjSUN1HhGJvMlGKx8/dKNBsky+C7BL
+ cbOwOuF6HSkyTGFQKTz1Ugu5rORw/Zzo+j/sLFMRqN86Nl36uO4onPMecFdZhaGSJhpd
+ cBOU7JEo+QPj0rmU5ZPuOsOHIN8YoHv4YkkY0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792698039; x=1793302839;
+ h=content-type:to:subject:message-id:date:from:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=39d00c2ji8sQatt5ynoJN4xaH6fzywC1VfNJ8Rpjv34=;
+ b=n/9mCVZczwBba3ApclxAmpvrBznkoX4DK8dW7ANu0ncPb4oklfrlpVgBNqLvQLL0ya
+ v/7/ySve/Yq/lfNsBOOSMFSbNZvkR6GaAKE34LsXeTkji/c1gJ2gWA/49piJ/3oAPlor
+ 5P9s9ViSqrUSCGpSVbCpCH/Y5MBFrGn1392abnwq7EowFYfEtEEJc7BLVrr1Xk9zBqVw
+ bcaGulM/W8pkRmatpiqMCuA7SWy7r+uCdbVof6RmbHzuKpjCTLscXpMDJJFzNNi3Sx5T
+ yLnjJIyym5u7twWooYNX8sQsCN6NczlE8XcIO2sPe2VNJDpLLAj/bDXKUefH434GXRcs
+ 0EHA==
+X-Gm-Message-State: AFq9FYILdMbO5x8M0BmxlV2gklKmpgfbZmnltH2xcFcwVFeHaAXh3olh
+ FoofbV/pmRywCaO6IjCBXavHeZg73ImNd445hXusJ4kTkBAeKceSum5hvSpbqdOiSin/T0TIhZL
+ oBR/3BDjPqkc/gmEl5kDjlxBF4B4H5RLr2rlc2yxFDEUhE7smjso2oZs5Zw==
+X-Gm-Gg: AYBFou12gGOzrral6WyLDL9DWQJBSMEog1sInLiyYV+QOdQz/LHdidiVGxuB2VG0JCa
+ hdr0LJZQlaYn7lK41tAGQSpI18q8S6LLPupKiAh7llJkXpu0BTzSgUsb2oXZU2nYVIK3e8Y0vWo
+ sUDxY1V1J+wegmXWUFWGjp1oLwDz/tXLHkLWj0bV9t0avy6JF8txWJDN0zql+Md3jq6t99R51uD
+ dA5GIP+JGpQwfvP5pC1CQJfAfoiXLz9byYHP6mkn8XjZsELTQFpQ8VqMFFb+5y0pi6cRwtnS+85
+ BhgIrQWsTJRuhD1ZyGA6W5+gkSDXIXGJcWFcrI9Gjj+G9TI4J+85rYwFH5NJpMsJWBkP3WD2zA0
+ 0O2pTwuCBUnT5rewQgm5KL+y6ceVjQW7Ckt5Yh5hUy+7D2/bJX7xPbZuF9aMx+Zk737I57cs=
+X-Received: by 2002:a05:690c:c512:b0:89a:63bc:8dd with SMTP id
+ 00721157ae682-8b157eb32f1mr96037b3.103.1792698038618; Thu, 22 Oct 2026
+ 12:40:38 -0700 (PDT)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: EHkAheCR2J7fMb+sS6HPOZ6bxzj8ssHyva04/xPmHvnRK4WqDrem6WHjgegYaBomjYFoRIpOfsymYGCBifORkoe/UrY8h7On2Xo8ByjF07ncAPp1EychJONCCQfss2RqdQgGH5nUjw2JYEKSoJIg5szbPYy8fdlBV3Ppoy04emgg3RJFs1nT0TFBxvGX4QRwY60T3ASJP9AN69FWE1wZX5hPgNbFVPeQ+F6gQYJoMsXPW9FNhgXjDbz1vieirHL0KhEL4nW77AqS2wAPekFX+vzJd7kqMDFE+T5orMll8HOF1cciGsVjXt9joD10v0MSIoCYKiKWRTdZVctfxf/FfQ==
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f156f3c2-e48a-47e4-afd7-08df306ef4ae
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2026 19:02:01.9427 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZYHXz7zXi5VcaJkbbqrzAABgVVnMBUukrq18VdZEgFQ+yYjfEJz/mKkKKjjLYT5X1CRRZTKEqSUGDzAudWUIjw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR18MB5993
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIyMDA3NSBTYWx0ZWRfX039KIPTjJ6ay
- skk3VJNKwomXiMDQZ+e04inIUh0o0IodhM1kcB+YA47fXygrHSIhs0x4gSD9qos8W7My4rRM600
- n3iTqhsw7Pf2ChEPo5GJ2ldtqZqoAnY=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIyMDA3NSBTYWx0ZWRfX9sICQVwX4US5
- FOqIYOPNhFDKhaikHCMVHGqinYRp2DQohYiPP/amEzZA2zAsl4CWNpnGrsY+ZjD/qc150hWnizO
- yS5NPyDNCK6cHsStMwDRr+t99we+zKv61tNolMrpOYhf/xwH1+fcnGHOxh9EMp9O/2YCxuyLccl
- 0GmHL1WV8Yh+MPbQ5QWvKfMAXeUw+cRfr6jFlnsQOMF0R9x536WXDcv/a3J8EHoRaDZEtgluBZW
- T/3YsRK8Z0SdsYRkHNFPleNFNLDbhWB11dhugVTIo0u1gQRj3TviA/5ZljuTfHTyCN7mYlr8gq+
- YB6hoSIGVNZC9ehZTFi+jA2pqx3LJKq+hVleMyXW9KYXA2njUd17LOJBJv/cfLFvIbxzaFxGuzZ
- YhprGjuWpV4E3+hQwjokvP3F0Q/jyY6W/WtrRiBQvqmIh2Hy1H1T723gKA9oZ18CTzbcSkfEYUE
- ybQDGe+Aic0XWw23w/g==
-X-Proofpoint-GUID: NwYk4cI3CGI74ud36HL08BkJDpilDW4u
-X-Proofpoint-ORIG-GUID: NwYk4cI3CGI74ud36HL08BkJDpilDW4u
-X-Authority-Analysis: v=2.4 cv=PalqFShd c=1 sm=1 tr=0 ts=6ada5db2 cx=c_pps
- a=54yuESksmrMaP3RwvbuPCA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=660iZSQnnn4A:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=l0iWHRpgs5sLHlkKQ1IR:22 a=EAYMVhzMl8SCOHhVQcBL:22 a=M5GUcnROAAAA:8
- a=Lv1jClmjWfryNBGNlNQA:9 a=CjuIK1q_8ugA:10 a=ysv77nodxO0A:10
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-22_06,2026-10-21_02,2025-10-01_01
+From: Dillon Ladd <dladd@iol.unh.edu>
+Date: Thu, 22 Oct 2026 15:40:01 -0400
+X-Gm-Features: AclHuK-HtORG1-Nk_Pm-ixkh0k3oQ43xzBiVaqo3UYsnr4PilnACJrB5_8R-MVw
+Message-ID: <CAJA6v3w0MtNsVNazB5-fhdPweeFLZ25AQ7tQCr8JcpU8kk9r=A@mail.gmail.com>
+Subject: October 22nd, 2026 DTS Working Group Meeting Notes
+To: dev@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000c81ccb065e7309c4"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -157,17 +83,191 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-> Subject: Re: [EXTERNAL] [PATCH] test/crypto: add test vectors for more ML=
--KEM
-> and ML-DSA variants
-> Acked-by : Pratik Senapati <psenapati@marvell.com>
+--000000000000c81ccb065e7309c4
+Content-Type: text/plain; charset="UTF-8"
 
-Applied to dpdk-next-crypto
-Thanks.
+Attendees
+################################################
+Dillon Ladd, UNH-IOL
+Koushik Bhargav Nimoji, UNH-IOL
+Andrew Bailey, UNH-IOL
+Luca Vizzarro
+
+General Discussions
+==============================================
+None
+
+Patch Discussions
+==============================================
+Andrew put together a list of patches ranked by priority for review:
+
+DTS Framework:
+--------------------------------------------------------------------------------
+New Suites:[RFC] dts: resolve trex driver binding issue
+https://patches.dpdk.org/project/dpdk/patch/20260811185509.1650102-1-knimoji@iol.unh.edu/
+Koushik needs to make adjustments.
+Specify version changes explicitly.
+
+New Suites
+--------------------------------------------------------------------------------
+[v3,1/3] dts: add directory for test resources
+https://patches.dpdk.org/project/dpdk/list/?series=39721
+Pending Review
+[v2] dts: add pvp multi paths vhost performance testsuite
+https://patches.dpdk.org/project/dpdk/patch/20261020173029.162255-1-knimoji@iol.unh.edu/
+Pending Review
+[v1] dts: add pvp multi paths virtio performance testsuite
+https://patches.dpdk.org/project/dpdk/patch/20261020173029.162255-2-knimoji@iol.unh.edu/
+Pending Review
+[v3] dts: add ipgre test suite
+https://patches.dpdk.org/project/dpdk/patch/20261019194841.890257-1-abailey@iol.unh.edu/
+Pending review
+
+Test Suite Extensions:
+--------------------------------------------------------------------------------
+[v1] dts: refactor cryptodev throughput test suite
+https://patches.dpdk.org/project/dpdk/patch/20261019200424.898640-1-abailey@iol.unh.edu/
+Pending Review
+[v1] dts: update configuration for performance test
+https://patchwork.dpdk.org/project/dpdk/patch/20260805153658.345207-1-abailey@iol.unh.edu/
+Pending review
+[v1] dts: add PVVP case to virtio suite
+https://patches.dpdk.org/project/dpdk/patch/20260811171235.519323-1-abailey@iol.unh.edu/
+Pending Review
+[v7] dts: refactor flow suite with generator pattern
+https://patches.dpdk.org/project/dpdk/patch/20260811170433.517663-1-abailey@iol.unh.edu/
+Pending Review
+
+
+Bug fixes:
+--------------------------------------------------------------------------------
+[RFC] dts: restore unbinded ports to initial state
+https://patches.dpdk.org/project/dpdk/patch/20260929134920.330389-1-knimoji@iol.unh.edu/
+Pending Review
+[v1] dts: remove crypto test type
+https://patches.dpdk.org/project/dpdk/patch/20261019201342.903235-1-abailey@iol.unh.edu/
+Pending Review
+dts: update verbose output regex for VXLAN packets
+https://patches.dpdk.org/project/dpdk/list/?series=38925
+Pending Review
+
+26.11 DTS Roadmap
+==============================================
+Finalized roadmap for 26.11 is out:
+https://mails.dpdk.org/archives/dev/2026-September/345096.html
+We are done with all items on the 26.11 roadmap except the EventDev test
+suite port from old-dts.
+Looking at possible work items for 2027
+Tech board showed most interest in:
+Finding gaps in ethdev coverage
+We found that there is little coverage for flow control and TCP
+Segmentation offload
+AI Skills files
+Moderate interest in adding testing support for L3 Forwarding.
+
+Any other business
+==============================================
+Next Meeting: November 5th, 2026
+
+-- 
+Dillon Ladd
+Technical Manager, Open Source
+UNH Interoperability Lab
+21 Madbury Rd., Ste. 100, Durham, NH 03824
+dladd@iol.unh.edu
+https://www.iol.unh.edu
+
+--000000000000c81ccb065e7309c4
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div><br></div><div>Attendees<br>#########################=
+#######################<br>Dillon Ladd, UNH-IOL<br>Koushik Bhargav Nimoji, =
+UNH-IOL<br>Andrew Bailey, UNH-IOL<br>Luca Vizzarro</div><div><br>General Di=
+scussions<br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D<br>None<br><br>Patch Discussions<br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Andrew put together a list of patches ran=
+ked by priority for review:<br><br>DTS Framework:<br>----------------------=
+----------------------------------------------------------</div><div><span =
+style=3D"background-color:transparent">New Suites:[RFC] dts: resolve trex d=
+river binding issue</span></div><div><a href=3D"https://patches.dpdk.org/pr=
+oject/dpdk/patch/20260811185509.1650102-1-knimoji@iol.unh.edu/">https://pat=
+ches.dpdk.org/project/dpdk/patch/20260811185509.1650102-1-knimoji@iol.unh.e=
+du/</a><br>Koushik needs to make adjustments. <br>Specify version changes e=
+xplicitly. <br><br>New Suites<br>------------------------------------------=
+--------------------------------------<br>[v3,1/3] dts: add directory for t=
+est resources<br><a href=3D"https://patches.dpdk.org/project/dpdk/list/?ser=
+ies=3D39721">https://patches.dpdk.org/project/dpdk/list/?series=3D39721</a>=
+<br>Pending Review <br>[v2] dts: add pvp multi paths vhost performance test=
+suite<br><a href=3D"https://patches.dpdk.org/project/dpdk/patch/20261020173=
+029.162255-1-knimoji@iol.unh.edu/">https://patches.dpdk.org/project/dpdk/pa=
+tch/20261020173029.162255-1-knimoji@iol.unh.edu/</a><br>Pending Review<br>[=
+v1] dts: add pvp multi paths virtio performance testsuite<br><a href=3D"htt=
+ps://patches.dpdk.org/project/dpdk/patch/20261020173029.162255-2-knimoji@io=
+l.unh.edu/">https://patches.dpdk.org/project/dpdk/patch/20261020173029.1622=
+55-2-knimoji@iol.unh.edu/</a><br>Pending Review<br>[v3] dts: add ipgre test=
+ suite<br><a href=3D"https://patches.dpdk.org/project/dpdk/patch/2026101919=
+4841.890257-1-abailey@iol.unh.edu/">https://patches.dpdk.org/project/dpdk/p=
+atch/20261019194841.890257-1-abailey@iol.unh.edu/</a> <br>Pending review</d=
+iv><div>=C2=A0<br></div><div>Test Suite Extensions:<br>--------------------=
+------------------------------------------------------------</div><div>[v1]=
+ dts: refactor cryptodev throughput test suite<br><a href=3D"https://patche=
+s.dpdk.org/project/dpdk/patch/20261019200424.898640-1-abailey@iol.unh.edu/"=
+>https://patches.dpdk.org/project/dpdk/patch/20261019200424.898640-1-abaile=
+y@iol.unh.edu/</a><br>Pending Review <br>[v1] dts: update configuration for=
+ performance test<br><a href=3D"https://patchwork.dpdk.org/project/dpdk/pat=
+ch/20260805153658.345207-1-abailey@iol.unh.edu/">https://patchwork.dpdk.org=
+/project/dpdk/patch/20260805153658.345207-1-abailey@iol.unh.edu/</a> <br>Pe=
+nding review<br>[v1] dts: add PVVP case to virtio suite<br><a href=3D"https=
+://patches.dpdk.org/project/dpdk/patch/20260811171235.519323-1-abailey@iol.=
+unh.edu/">https://patches.dpdk.org/project/dpdk/patch/20260811171235.519323=
+-1-abailey@iol.unh.edu/</a><br>Pending Review<br>[v7] dts: refactor flow su=
+ite with generator pattern<br><a href=3D"https://patches.dpdk.org/project/d=
+pdk/patch/20260811170433.517663-1-abailey@iol.unh.edu/">https://patches.dpd=
+k.org/project/dpdk/patch/20260811170433.517663-1-abailey@iol.unh.edu/</a><b=
+r>Pending Review</div><div><br></div><div>=C2=A0<br></div><div>Bug fixes:<b=
+r>-------------------------------------------------------------------------=
+-------</div><div>[RFC] dts: restore unbinded ports to initial state<br><a =
+href=3D"https://patches.dpdk.org/project/dpdk/patch/20260929134920.330389-1=
+-knimoji@iol.unh.edu/">https://patches.dpdk.org/project/dpdk/patch/20260929=
+134920.330389-1-knimoji@iol.unh.edu/</a><br>Pending Review <br>[v1] dts: re=
+move crypto test type<br><a href=3D"https://patches.dpdk.org/project/dpdk/p=
+atch/20261019201342.903235-1-abailey@iol.unh.edu/">https://patches.dpdk.org=
+/project/dpdk/patch/20261019201342.903235-1-abailey@iol.unh.edu/</a><br>Pen=
+ding Review<br>dts: update verbose output regex for VXLAN packets<br><a hre=
+f=3D"https://patches.dpdk.org/project/dpdk/list/?series=3D38925">https://pa=
+tches.dpdk.org/project/dpdk/list/?series=3D38925</a><br>Pending Review<br><=
+/div><div><br></div><div>26.11 DTS Roadmap<br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</div><div>Finalized roadmap for 26.11 =
+is out: <a href=3D"https://mails.dpdk.org/archives/dev/2026-September/34509=
+6.html">https://mails.dpdk.org/archives/dev/2026-September/345096.html</a><=
+br>We are done with all items on the 26.11 roadmap except the EventDev test=
+ suite port from old-dts.<br>Looking at possible work items for 2027<br>Tec=
+h board showed most interest in: <br>Finding gaps in ethdev coverage<br>We =
+found that there is little coverage for flow control and TCP Segmentation o=
+ffload<br>AI Skills files <br>Moderate interest in adding testing support f=
+or L3 Forwarding.=C2=A0<br></div><div><br></div><div>Any other business<br>=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</div><div>N=
+ext Meeting: November 5th, 2026</div><div><br></div><span class=3D"gmail_si=
+gnature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_signature" da=
+ta-smartmail=3D"gmail_signature"><div dir=3D"ltr">Dillon Ladd<div>Technical=
+ Manager, Open Source<br><font color=3D"#000000">UNH Interoperability Lab</=
+font></div>21 Madbury Rd., Ste. 100, Durham, NH 03824<div><a href=3D"mailto=
+:dladd@iol.unh.edu" target=3D"_blank">dladd@iol.unh.edu</a></div><div><a hr=
+ef=3D"https://www.iol.unh.edu/" style=3D"color:rgb(17,85,204)" target=3D"_b=
+lank">https://www.iol.unh.edu</a></div><div><img src=3D"https://www.iol.unh=
+.edu/sites/all/themes/custom/iol2013/img/logo.png" width=3D"200" height=3D"=
+52"><br></div></div></div></div>
+
+--000000000000c81ccb065e7309c4--
