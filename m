@@ -1,60 +1,58 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7E7606A31B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 17:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF69606A319
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 17:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=GsxdBuh4
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=FWloYf/o
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BB332406FF;
-	Thu, 22 Oct 2026 19:45:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7667840B91;
+	Thu, 22 Oct 2026 19:45:46 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id A354F40A73
- for <dev@dpdk.org>; Thu, 22 Oct 2026 19:45:40 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E54224027D
+ for <dev@dpdk.org>; Thu, 22 Oct 2026 19:45:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792691140;
+ s=mimecast20190719; t=1792691143;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=IWLiDeHo1A8mQs/jr+SyByVYQnC6zQo3TU1q+b4g2go=;
- b=GsxdBuh4rGmddBFvmAvMwdIK7Z2hN1AeQwn6cSxSuoVz2A4Lwpq0arIhQryCuMei28FxjJ
- Crw9PTMk9n3jdhPcOuJwugnr9GfSqqnw4Wgo7fRWKP1HGwYs39KzI0pK54O7XFmPnlx4yB
- rPZ8rDlSb6BIYb+R6TdEWzwhYhHfAcU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=i54waYVTn20+3HhdMmnErImHi6UJK2j5GqTeEyGwTjE=;
+ b=FWloYf/o1Br8/cthrRdslntt6FryGhvMYVZrypTbCV9fUUdSxmbc1jRJXQb1ScROIfclf5
+ aPZuJQgF/6VHxhmqQYjDe8Fs17vjoTuz0bjHc6hd6TICm81g2W3HpPGBadHdNkV6dXz5y7
+ A/7oDMQAOdRwdu6Q7JSHsJYPzyP31rA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-115-_JfdHi7eOm6SB4PJvBuTLw-1; Thu,
- 22 Oct 2026 13:45:34 -0400
-X-MC-Unique: _JfdHi7eOm6SB4PJvBuTLw-1
-X-Mimecast-MFC-AGG-ID: _JfdHi7eOm6SB4PJvBuTLw_1792691133
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-453-mAN0_BM6PMm3E8GJ5L5lVA-1; Thu,
+ 22 Oct 2026 13:45:38 -0400
+X-MC-Unique: mAN0_BM6PMm3E8GJ5L5lVA-1
+X-Mimecast-MFC-AGG-ID: mAN0_BM6PMm3E8GJ5L5lVA_1792691137
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 4D3891801352; Thu, 22 Oct 2026 17:45:33 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 51FE61954B22; Thu, 22 Oct 2026 17:45:37 +0000 (UTC)
 Received: from dmarchan.home (headnet04.pony-001.prod.iad2.dc.redhat.com
  [10.2.32.116])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 620173000738; Thu, 22 Oct 2026 17:45:31 +0000 (UTC)
+ by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 9078E7DA; Thu, 22 Oct 2026 17:45:35 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: thomas@monjalon.net, stable@dpdk.org,
- Bruce Richardson <bruce.richardson@intel.com>,
- Rosen Xu <rosen.xu@altera.com>, Wenzhuo Lu <wenzhuo.lu@intel.com>,
- Andy Pei <andy.pei@intel.com>, Dan Wei <dan.wei@intel.com>
-Subject: [PATCH v3 09/13] doc: fix DCB capability for some Intel drivers
-Date: Thu, 22 Oct 2026 19:44:36 +0200
-Message-ID: <20261022174447.412638-10-david.marchand@redhat.com>
+Cc: thomas@monjalon.net, Bruce Richardson <bruce.richardson@intel.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v3 10/13] ethdev: check DCB availability
+Date: Thu, 22 Oct 2026 19:44:37 +0200
+Message-ID: <20261022174447.412638-11-david.marchand@redhat.com>
 In-Reply-To: <20261022174447.412638-1-david.marchand@redhat.com>
 References: <20261016130555.1685102-1-david.marchand@redhat.com>
  <20261022174447.412638-1-david.marchand@redhat.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 1DRsT7P5Ei7MlZrho1kZ1ffKiixY4pylrOhc1Fq6C0A_1792691133
+X-Mimecast-MFC-PROC-ID: _63JMs0fT1F_XLT_bycHgSkcFUmrTy61NHLEQxKcyBM_1792691137
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -74,43 +72,131 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Those drivers never supported DCB.
+Add DCB capability check in rte_eth_dev_configure() using
+dev->dev_ops->get_dcb_info.
 
-Fixes: 83a4a15404ef ("doc: fill nics features matrix for e1000/igb and ixgbe")
-Fixes: c01c748e4ae6 ("net/ipn3ke: add new driver")
-Cc: stable@dpdk.org
+When NULL, reject Rx modes with RTE_ETH_MQ_RX_DCB_FLAG and
+Tx modes RTE_ETH_MQ_TX_DCB and RTE_ETH_MQ_TX_VMDQ_DCB.
+Remove redundant DCB checks from drivers.
+
+Check that documentation is aligned with driver code.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- doc/guides/nics/features/igb.ini    | 1 -
- doc/guides/nics/features/ipn3ke.ini | 1 -
- 2 files changed, 2 deletions(-)
+ devtools/check-doc-vs-code.sh          |  4 +++-
+ doc/guides/rel_notes/release_26_11.rst | 11 ++++++++---
+ drivers/net/intel/e1000/igb_ethdev.c   |  6 ------
+ drivers/net/intel/fm10k/fm10k_ethdev.c |  5 -----
+ lib/ethdev/rte_ethdev.c                | 16 ++++++++++++++++
+ 5 files changed, 27 insertions(+), 15 deletions(-)
 
-diff --git a/doc/guides/nics/features/igb.ini b/doc/guides/nics/features/igb.ini
-index 4ee500e114..451cf30948 100644
---- a/doc/guides/nics/features/igb.ini
-+++ b/doc/guides/nics/features/igb.ini
-@@ -20,7 +20,6 @@ RSS key update       = Y
- RSS reta update      = Y
- VMDq                 = Y
- SR-IOV               = Y
--DCB                  = Y
- VLAN filter          = Y
- Flow control         = Y
- CRC offload          = Y
-diff --git a/doc/guides/nics/features/ipn3ke.ini b/doc/guides/nics/features/ipn3ke.ini
-index ba43b9d91c..6abaf9e4f9 100644
---- a/doc/guides/nics/features/ipn3ke.ini
-+++ b/doc/guides/nics/features/ipn3ke.ini
-@@ -19,7 +19,6 @@ RSS hash             = Y
- RSS key update       = Y
- RSS reta update      = Y
- SR-IOV               = Y
--DCB                  = Y
- VLAN filter          = Y
- Flow control         = Y
- Traffic manager      = Y
+diff --git a/devtools/check-doc-vs-code.sh b/devtools/check-doc-vs-code.sh
+index e84b003a51..d2b7683c4f 100755
+--- a/devtools/check-doc-vs-code.sh
++++ b/devtools/check-doc-vs-code.sh
+@@ -200,6 +200,8 @@ check_mq_caps() # <driver>
+ 	[ -d $code ] || return 0
+ 	[ -f $doc ] || return 0
+ 
++	check_mq_cap $1 "DCB" "get_dcb_info" '\.get_dcb_info[[:space:]]*=' \
++		'RTE_ETH_MQ_(RX|TX).*DCB'
+ 	check_mq_cap $1 "VMDq" "max_vmdq_pools" 'max_vmdq_pools[[:space:]]*=' \
+ 		'RTE_ETH_MQ_(RX|TX).*VMDQ'
+ }
+@@ -220,7 +222,7 @@ if has_code_change 'RTE_FLOW_.*_TYPE_' ||
+ 		check_rte_flow $driver
+ 	done
+ fi
+-if has_code_change 'max_vmdq_pools|RTE_ETH_MQ_.*VMDQ' ||
++if has_code_change 'get_dcb_info|max_vmdq_pools|RTE_ETH_MQ_.*DCB|RTE_ETH_MQ_.*VMDQ' ||
+ 		has_file_change 'doc/guides/nics/features'; then
+ 	for driver in $(changed_net_drivers); do
+ 		check_mq_caps $driver
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index be758a0c02..9341769c32 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -424,11 +424,16 @@ API Changes
+   * Removed the ``unused`` field.
+   * Changed the ``objs`` array from fixed size to variable size.
+ 
++* ethdev: Updated multi-queue mode validation at port configuration time:
++
++  * DCB modes (Rx ``RTE_ETH_MQ_RX_DCB_FLAG``, Tx ``RTE_ETH_MQ_TX_DCB``/``RTE_ETH_MQ_TX_VMDQ_DCB``)
++    are rejected if the driver has no ``get_dcb_info`` callback.
++  * VMDq modes (Rx ``RTE_ETH_MQ_RX_VMDQ_FLAG``,
++    Tx ``RTE_ETH_MQ_TX_VMDQ_DCB``/``RTE_ETH_MQ_TX_VMDQ_ONLY``) are rejected
++    if the driver reports no VMDq pool.
++
+ * ethdev: Updated VMDq related API.
+ 
+-  * At port configuration time, the number of VMDq pools advertised by a driver
+-    is now used to validate VMDq related Rx and Tx modes
+-    (``RTE_ETH_MQ_RX_VMDQ_FLAG``, ``RTE_ETH_MQ_TX_VMDQ_DCB``, ``RTE_ETH_MQ_TX_VMDQ_ONLY``).
+   * A check was added in ``rte_eth_dev_mac_addr_add`` to validate that
+     the ``pool`` parameter is 0 when VMDq is not configured.
+   * The ``RTE_ETH_NUM_RECEIVE_MAC_ADDR`` and ``RTE_ETH_VMDQ_NUM_UC_HASH_ARRAY`` macros
+diff --git a/drivers/net/intel/e1000/igb_ethdev.c b/drivers/net/intel/e1000/igb_ethdev.c
+index 524c030be6..181af58169 100644
+--- a/drivers/net/intel/e1000/igb_ethdev.c
++++ b/drivers/net/intel/e1000/igb_ethdev.c
+@@ -1144,12 +1144,6 @@ igb_check_mq_mode(struct rte_eth_dev *dev)
+ 	uint16_t nb_rx_q = dev->data->nb_rx_queues;
+ 	uint16_t nb_tx_q = dev->data->nb_tx_queues;
+ 
+-	if ((rx_mq_mode & RTE_ETH_MQ_RX_DCB_FLAG) ||
+-	    tx_mq_mode == RTE_ETH_MQ_TX_DCB ||
+-	    tx_mq_mode == RTE_ETH_MQ_TX_VMDQ_DCB) {
+-		PMD_INIT_LOG(ERR, "DCB mode is not supported.");
+-		return -EINVAL;
+-	}
+ 	if (RTE_ETH_DEV_SRIOV(dev).active != 0) {
+ 		/* Check multi-queue mode.
+ 		 * To no break software we accept RTE_ETH_MQ_RX_NONE as this might
+diff --git a/drivers/net/intel/fm10k/fm10k_ethdev.c b/drivers/net/intel/fm10k/fm10k_ethdev.c
+index 9b123c0b2c..5aa15a8dba 100644
+--- a/drivers/net/intel/fm10k/fm10k_ethdev.c
++++ b/drivers/net/intel/fm10k/fm10k_ethdev.c
+@@ -416,11 +416,6 @@ fm10k_check_mq_mode(struct rte_eth_dev *dev)
+ 
+ 	vmdq_conf = &dev->data->dev_conf.rx_adv_conf.vmdq_rx_conf;
+ 
+-	if (rx_mq_mode & RTE_ETH_MQ_RX_DCB_FLAG) {
+-		PMD_INIT_LOG(ERR, "DCB mode is not supported.");
+-		return -EINVAL;
+-	}
+-
+ 	if (!(rx_mq_mode & RTE_ETH_MQ_RX_VMDQ_FLAG))
+ 		return 0;
+ 
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index f843e8808a..39a895c9e4 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -1573,6 +1573,22 @@ rte_eth_dev_configure(uint16_t port_id, uint16_t nb_rx_q, uint16_t nb_tx_q,
+ 		goto rollback;
+ 	}
+ 
++	if (dev->dev_ops->get_dcb_info == NULL) {
++		if ((dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_DCB_FLAG) != 0) {
++			RTE_ETHDEV_LOG_LINE(ERR, "Ethdev port_id=%u does not support DCB rx mode",
++				port_id);
++			ret = -EINVAL;
++			goto rollback;
++		}
++		if (dev_conf->txmode.mq_mode == RTE_ETH_MQ_TX_DCB ||
++				dev_conf->txmode.mq_mode == RTE_ETH_MQ_TX_VMDQ_DCB) {
++			RTE_ETHDEV_LOG_LINE(ERR, "Ethdev port_id=%u does not support DCB tx mode",
++				port_id);
++			ret = -EINVAL;
++			goto rollback;
++		}
++	}
++
+ 	if (dev_info.max_vmdq_pools == 0) {
+ 		if ((dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_VMDQ_FLAG) != 0) {
+ 			RTE_ETHDEV_LOG_LINE(ERR, "Ethdev port_id=%u does not support VMDq rx mode",
 -- 
 2.54.0
 
