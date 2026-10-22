@@ -1,55 +1,104 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA5D606A319
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 06:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70AE606A319
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 07:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=yunsilicon.com header.i=@yunsilicon.com header.a=rsa-sha256 header.s=feishu2403070942 header.b=T2/9KMXk
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=eTbNO9pJ
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A84C402A2;
-	Thu, 22 Oct 2026 08:17:59 +0200 (CEST)
-Received: from lf-1-14.ptr.blmpb.com (lf-1-14.ptr.blmpb.com [103.149.242.14])
- by mails.dpdk.org (Postfix) with ESMTP id 48BAE40299
- for <dev@dpdk.org>; Thu, 22 Oct 2026 08:17:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=feishu2403070942; d=yunsilicon.com; t=1792649871; h=from:subject:
- mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
- mime-version:in-reply-to:message-id;
- bh=kO9cfSyzqRjbgCPWMnr7ajehI3amFKT5D48tuqcUDxc=;
- b=T2/9KMXks3LYkD70JNiTfKXztTiZL2zsspWsq6iCaX+AA8HUJnMgIiyo2+4C6+4Y18wwkp
- Lnm4juCRTx5/wyn/VvdXxdv9zVHW8Fh4EvuLJqSGaEqbGZpb4u3doDykNhlSgdRx6HrOnH
- Ikhr2/Rwsrl1f6E346W4BE8gtnYSR5QSHCrwSj2TL0Jur13fGQoWuxROZNtFnDrrl6Ax1m
- B6GVukaGxxTK+j9x5dLobxRoarY/JHhMLPHefFFR7AR8aT/1PhAyX6k7UQOZKNeFw6sEo2
- e3zU97/Rm6/V9MiBuCPKyA2GD13iMALd63/+DzJ9Z+v7c+QvkOxihK1UC/EAeQ==
-In-Reply-To: <20261021103027.2050351-11-david.marchand@redhat.com>
-Cc: <thomas@monjalon.net>, "Gaetan Rivet" <grive@u256.net>, 
- "Rosen Xu" <rosen.xu@altera.com>, 
- "Dimon Zhao" <dimon.zhao@nebula-matrix.com>, 
- "Leon Yu" <leon.yu@nebula-matrix.com>, 
- "Sam Chen" <sam.chen@nebula-matrix.com>, "Wei Hu" <weh@microsoft.com>, 
- "Praveen Shetty" <praveen.shetty@intel.com>, 
- "Jingjing Wu" <jingjing.wu@intel.com>, "Na Na" <nana@yunsilicon.com>, 
- "Rong Qian" <qianr@yunsilicon.com>, 
- "Xiaoxiong Zhang" <zhangxx@yunsilicon.com>, 
- "Dongwei Xu" <xudw@yunsilicon.com>, "Andy Pei" <andy.pei@intel.com>, 
- "Dan Wei" <dan.wei@intel.com>, "Junfeng Guo" <junfengg@nvidia.com>, 
- "Beilei Xing" <beilei.xing@intel.com>, 
- "Xiaoyun Li" <xiaoyun.li@intel.com>, "Mingxia Liu" <mingxia.liu@intel.com>
-From: "Renyong Wan" <wanry@yunsilicon.com>
-Date: Thu, 22 Oct 2026 14:17:47 +0800
-Message-Id: <79cd25f4-593a-4e66-b3ac-0a08ce258744@yunsilicon.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F1CF840264;
+	Thu, 22 Oct 2026 09:30:51 +0200 (CEST)
+Received: from BL0PR03CU003.outbound.protection.outlook.com
+ (mail-eastusazon11012044.outbound.protection.outlook.com [52.101.53.44])
+ by mails.dpdk.org (Postfix) with ESMTP id 0B3BE4003C;
+ Thu, 22 Oct 2026 09:30:50 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DiLzQJX9VNW6Gz65RJvPNZAy5PWNOeMNInZesq9JTuo1AH6JAVEUmxcncJ7aXzrOH5pU+tuNRnVbUwZ+I3xqM2J4FH5D3K0B2tIdHNpFLMQFs5jweMGFEGvm7mVVILCuTIz+6ZhJuqOwh6jjZ8mTfGTVk0nEVocoJWw4WNMUsCSDiclPgthWPWva91atkOniwVWEqA7xk7SM2r1hyQ6hQnqKnNtkfoH5xPhpdm9achyc9j4kBdc747swGPOil2lhRc0FY5TApBqj4Qi2ijzbU10qeqmRpavfDKplA5WQfTFYZYCUS58r0fo1h8AFlkr16tPqVSgA1yTsFs7L9yYeHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nAB1AZFDPE9nSuDDowdwmHGvTytb+xAqhofq09WUKDY=;
+ b=UDbbBDKRxDYVmnf9xWOeaWUFi5Jk9Gk6L97+hGj10tnvoI7y3qqEOVZ97ccuK9tdpWoUpWWhMA2U/SFhavxiWSHqjk1bjsSoW4bEtD37trG8qoo7ykXSwdEEycqCEecWcokGoOwQljZHBtqx04Jf5W/mZxtke654yXdM5DmOJP0n325OThghD5xm/8eHwr3rqbGvq+N9Gq4JUr2ItwW75u5DQ04nvg/UIPONyDIJmAkN2tR3zQI/MsiFZWykmS1mtI7CFi8RToEnmSDlMF8eFhA8Gle5ZIajpE8L38mH/5BE6wm0QUnUIDUkzrlvA5pncT9GsBYVGjLGlEjzzbXpyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nAB1AZFDPE9nSuDDowdwmHGvTytb+xAqhofq09WUKDY=;
+ b=eTbNO9pJngH58QVLB/zZWjfYKqa7O64+La/7h3A7lkV4C/cFTfj6OHJzxyO7sQKedZNZF+phWpiWKyCUJHsk/itqT79WGlwuzjrLTmyyrlVD9mgrppnn58DmQc5U62yreiAeCVZ8jnBYE+glpCdVs8rMMySeMmMiQiSBzM4+0W/rciJ1TzkH9wSwKi+4SdEsv+M0mwVkHTILbsBoNhVxw3m1BRaTdZKmxtu2WOA612OD6+OEn/uyCZPRJTwcwHoPvVzbHtXkKYfCuU8QDR9m812knWFXyrbpQHnTOdT2uEKX50bW+2sfktrfEDrqBQLHWkPRedIiwIpbBe+SCLcQKg==
+Received: from SJ0PR03CA0370.namprd03.prod.outlook.com (2603:10b6:a03:3a1::15)
+ by LV3PR12MB9142.namprd12.prod.outlook.com (2603:10b6:408:198::12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.15; Thu, 22 Oct
+ 2026 07:30:46 +0000
+Received: from MW1PEPF00018893.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1:cafe::1b) by SJ0PR03CA0370.outlook.office365.com
+ (2603:10b6:a03:3a1::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.16 via Frontend Transport; Thu,
+ 22 Oct 2026 07:30:46 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ MW1PEPF00018893.mail.protection.outlook.com (10.167.249.170) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.546.15 via Frontend Transport; Thu, 22 Oct 2026 07:30:45 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Thu, 22 Oct
+ 2026 00:30:21 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Thu, 22 Oct
+ 2026 00:30:21 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56 via Frontend
+ Transport; Thu, 22 Oct 2026 00:30:18 -0700
+From: Maayan Kashani <mkashani@nvidia.com>
+To: <dev@dpdk.org>
+CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, <stable@dpdk.org>, Bing Zhao
+ <bingz@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Viacheslav
+ Ovsiienko" <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: [PATCH] common/mlx5: fix mkey ordering enum
+Date: Thu, 22 Oct 2026 10:30:11 +0300
+Message-ID: <20261022073013.72607-1-mkashani@nvidia.com>
+X-Mailer: git-send-email 2.21.0
 X-Archived-By: <archiver.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2 10/12] drivers/net: fix reported RSS capability
-Content-Type: text/plain; charset=UTF-8
-X-Lms-Return-Path: <lba+26ad9aa8d+5640bd+dpdk.org+wanry@yunsilicon.com>
-X-Original-From: Renyong Wan <wanry@yunsilicon.com>
-References: <20261016130555.1685102-1-david.marchand@redhat.com>
- <20261021103027.2050351-1-david.marchand@redhat.com>
- <20261021103027.2050351-11-david.marchand@redhat.com>
-User-Agent: Mozilla Thunderbird
-To: "David Marchand" <david.marchand@redhat.com>, <dev@dpdk.org>
-Received: from [127.0.0.1] ([180.152.18.210]) by smtp.feishu.cn with ESMTPS;
- Thu, 22 Oct 2026 14:17:48 +0800
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW1PEPF00018893:EE_|LV3PR12MB9142:EE_
+X-MS-Office365-Filtering-Correlation-Id: f5f592cb-1cfd-44b8-1754-08df300e62d2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|1800799024|82310400026|23010399003|36860700016|261009223027099003|261021123027099003|56012099006|11063799006|10067099003|18002099003|261021121427099003;
+X-Microsoft-Antispam-Message-Info: fefAm4uOAfyqB+QpjeZ/PGn8xG1S3pnGe3kpFrEd+srYF/6GEsw255gkHRdNL7gQDmsA5iRXI7jTpGkbwEQlnV37PfYP3yBaFURj4tRXzcWcoX0nQRZTmVlJUq553JI4HVfxHSndx544HtyWgDyzvV5pJmWx3pAW71dYCN622GoRrkrlvLjrysW/0k0YTlL9LH2Ap2vx7Ygvv8GaN0qvIll0MpmF04/3nYSopEIHumETSYOe9VqTjkToz8aMeQyAUF+Ibrzj4ecBTJlLAmoWGxSC+XsWrtafk5a8WR/zeDK5AVtIvNfVXCnlia55hTFR+vSGU9eGpZmiwwlJe69NDdbv2xzfwb5ognlXNaxk/iJ6L10fYyd0oc+EOIv+2kYwxbzvC+Rb4BX+GTnMlNqZlJui4PMXHxXmvMPC+cxxOpKLvxTO/flIyLbQAnzzdHZ8kfolAI1JdbmTYlK55R2Kd0g2pB7PGkAwY4eBlSTP8GvAqqwYx0T3MwAuL6NTFjPOdGZ71Sf9bx04CO5wn+npujBjmvTXgSbJ0SQLmNFPGpTcwD6ouJt7sMg+J87Cyrj+YI+MDLdDV0krxFdUGZpGGlJoBgj6dxe6pQWumJuXuJBGocE9tVTqqIAL+oZZoI4dW1snwWYO0xJWgGjMsumzB7zL0XMwaqCbXYyP+1S2K5DMS8vow+GS2Fv3NRn0U/2sgIldU5nsDppkRfuxw5EXkw==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(82310400026)(23010399003)(36860700016)(261009223027099003)(261021123027099003)(56012099006)(11063799006)(10067099003)(18002099003)(261021121427099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 2Ow1FRdE2t5t9qyhlKHrkPbJPNPM0knHLetzI3wOpq8RuXimeb5WutuRMnHDEn5Az/oRWmo/Z9JvuxsVRyByYvRhNJnDc0yZGjG12Uckv1DCBj0XwptqK+0lLiGn9BTmsdkD5XAZ1odk62cWjEDQ7cQPcfS90+Mbfhf47qqrj6zDePIjY/4bwD7suKJ6hDZwm/SJGuKRevAFT6HaVegdhWv8XdCnAJGBCqN1eGtn/ht8udy9i8ZaiWbsgHr3VRXHGtA+B89v5UhmjPYoOoqlxeV9hSAY8XmbWJIGe08g4kMQkXwTXLzBx4EYohxax62NesuF+hUA4WPYW6+cJqy+400ZHK1BGSyQVskWr3bu85i7J3RL+MBwiLJaEx9qb2HVRt6XEDSWqye6rSibjLSJ/GKuTeu/kXPZIX4PIe+dvVoR1UTWrtyoq+RMU+q+G+kE
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2026 07:30:45.3976 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5f592cb-1cfd-44b8-1754-08df300e62d2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: MW1PEPF00018893.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9142
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,66 +108,40 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On 10/21/2026 6:30 PM, David Marchand wrote:
-> Some drivers (idpf, cpfl) report RSS support even if lacking HW support.
-> On the other hand, some driver do have support but do not advertise it
-> (either in dev_info, or in the documentation).
-> 
-> failsafe may support RSS, as it only passes the requests to the ports
-> attached to it, hence mark it as partial support.
-> 
-> Fixes: c01c748e4ae6 ("net/ipn3ke: add new driver")
-> Fixes: 70675bcc3a57 ("net/idpf: support RSS")
-> Fixes: cfbc66551a14 ("net/cpfl: support RSS")
-> Fixes: 5fb899f4b225 ("net/xsc: support RSS configuration")
-> Fixes: 9f75cad1287f ("net/xsc: add PCT interfaces")
-> Fixes: ff8db3711b29 ("net/nbl: support infos query")
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
-> Changes since v1:
-> - fixed ip3nke,
-> - moved all RSS capabilities under check for idpf and cpfl,
-> - adjusted xsc RSS capabilities,
-> 
-> ---
->   doc/guides/nics/features/failsafe.ini     | 1 +
->   doc/guides/nics/features/ipn3ke.ini       | 3 ---
->   doc/guides/nics/features/nbl.ini          | 1 +
->   doc/guides/nics/features/netvsc.ini       | 1 +
->   drivers/net/intel/cpfl/cpfl_ethdev.c      | 9 +++++----
->   drivers/net/intel/cpfl/cpfl_representor.c | 4 +++-
->   drivers/net/intel/idpf/idpf_ethdev.c      | 9 +++++----
->   drivers/net/xsc/xsc_ethdev.c              | 4 ++++
->   8 files changed, 20 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/net/xsc/xsc_ethdev.c b/drivers/net/xsc/xsc_ethdev.c
-> index 5fbe68782e..20d6f58f68 100644
-> --- a/drivers/net/xsc/xsc_ethdev.c
-> +++ b/drivers/net/xsc/xsc_ethdev.c
-> @@ -469,6 +469,10 @@ xsc_ethdev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *info)
->   	info->if_index = priv->ifindex;
->   	info->speed_capa = priv->xdev->link_speed_capa;
->   	info->hash_key_size = XSC_RSS_HASH_KEY_LEN;
-> +	info->flow_type_rss_offloads = RTE_ETH_RSS_IP | RTE_ETH_RSS_UDP |
-> +		RTE_ETH_RSS_TCP | RTE_ETH_RSS_L3_SRC_ONLY |
-> +		RTE_ETH_RSS_L3_DST_ONLY | RTE_ETH_RSS_L4_SRC_ONLY |
-> +		RTE_ETH_RSS_L4_DST_ONLY | RTE_ETH_RSS_LEVEL_INNERMOST;
->   	info->tx_desc_lim.nb_seg_max = 8;
->   	info->tx_desc_lim.nb_mtu_seg_max = 8;
->   	info->switch_info.name = dev->data->name;
+The updated device specification defines relaxed ordering as 0x1 and
+reserves 0x2. Update the mkey read-after-write ordering values
+accordingly.
 
-Looks good for net/xsc,
+Fixes: 5003eaab7e4 ("common/mlx5: update relaxed ordering policy for mkeys")
 
-Reviewed-by: Renyong Wan <wanry@yunsilicon.com>
+Cc: stable@dpdk.org
+Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+Acked-by: Bing Zhao <bingz@nvidia.com>
+---
+ drivers/common/mlx5/mlx5_prm.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks,
-Renyong Wan
+diff --git a/drivers/common/mlx5/mlx5_prm.h b/drivers/common/mlx5/mlx5_prm.h
+index c2810194f8e..7ae5ece6c32 100644
+--- a/drivers/common/mlx5/mlx5_prm.h
++++ b/drivers/common/mlx5/mlx5_prm.h
+@@ -1483,8 +1483,7 @@ enum {
+ /* MKC read_after_write_ordering field (2-bit, dword 0x38 bits 9:8). */
+ enum mlx5_mkc_raw_ordering {
+ 	MLX5_MKC_RAW_ORDERING_SO = 0x0,
+-	MLX5_MKC_RAW_ORDERING_SAO = 0x1,
+-	MLX5_MKC_RAW_ORDERING_RO = 0x2,
++	MLX5_MKC_RAW_ORDERING_RO = 0x1,
+ };
+ 
+ struct mlx5_ifc_create_mkey_out_bits {
+-- 
+2.21.0
+
