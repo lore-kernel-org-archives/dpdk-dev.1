@@ -1,28 +1,28 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC458606A31F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 11:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DED606A31A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 Oct 2026 11:11:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7448040BA3;
-	Thu, 22 Oct 2026 13:11:07 +0200 (CEST)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
- by mails.dpdk.org (Postfix) with ESMTP id EE69D40689
- for <dev@dpdk.org>; Thu, 22 Oct 2026 13:11:03 +0200 (CEST)
-X-QQ-mid: esmtpsz17t1792667459t6e1e0405
-X-QQ-Originating-IP: 93Iq5M5iAgaJgUs5GbAcPqRnmp1SyGOO2INy54tiq6c=
+	by mails.dpdk.org (Postfix) with ESMTP id 32F0F40DCB;
+	Thu, 22 Oct 2026 13:11:09 +0200 (CEST)
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+ by mails.dpdk.org (Postfix) with ESMTP id 9A6C840689
+ for <dev@dpdk.org>; Thu, 22 Oct 2026 13:11:05 +0200 (CEST)
+X-QQ-mid: esmtpsz17t1792667461t39633935
+X-QQ-Originating-IP: c36JJGLGdxfHFLhZCZ8Cc/D8L5Uu1pKfv3TeM3+Bu2c=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.205.193.71])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 22 Oct 2026 19:10:58 +0800 (CST)
+ id ; Thu, 22 Oct 2026 19:11:00 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11873613499446895921
+X-BIZMAIL-ID: 5812380161896119624
 EX-QQ-RecipientCnt: 3
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v9 12/16] net/txgbe: add pre2 FFE tap and backplane capability
- devargs
-Date: Thu, 22 Oct 2026 19:03:18 +0800
-Message-ID: <9BD1080D88EF6493+20261022111017.3605-13-zaiyuwang@trustnetic.com>
+Subject: [PATCH v9 13/16] net/txgbe: add devarg to turn off Tx laser for 40G
+ NIC
+Date: Thu, 22 Oct 2026 19:03:19 +0800
+Message-ID: <748FDE95C9939A4F+20261022111017.3605-14-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261022111017.3605-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -32,24 +32,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NChuY+V9daHbaJlYsAX/TKQqxoI12QPRhiMnU3FPR80a7auEXckqrsik
- QCIbpoXeS32RdouUEQd3/aGIA6WLD+CW/aigvRNtaNd65YlRkIVg/rngCViWR9+yCwoH8Qp
- 76uKT8pzkUsMpllUo9yCJgUKM6iA4TeQxx/nksspHy2t+7YI+5fYvIv2Chkwy8Ba+T7NI9p
- UKH8fMUN8Az+53IZnK5PY+DaTthQP3uRiEDcVp8j+6zBexCZySC0KR0q2W5E9asOOivvbzg
- 2RuozRJp8LjLgl00ooLysZF3t3wXdYC1hmTcgsZ0JGaU27rQ39lbn84TK7E+WkyP/7JeSwt
- LhQvjGJ9Le+SsWH4ItG0jpIkUfCnhC40CeWlXFOLkCFsMkU0TkfwriwSDlJkcM6lYmLsaxF
- oSzc2UZmlsRas+gNnEpD+LEvYeyQQYkeSuqG5X+5f77s0v2jCV2UpT0RINParPxArtS0xEL
- 1qNmU4L5+fWjiI2gz6eoZT6ilWGXpbEjeDQzcUqIsJJEnn4WG6+Z6aTuTFk2QLsroaS2oVU
- 7H/DslMb+ZaQSE3+AeV6SU30hxOfebu5q0lmSPsDrjw/nwx/oaKXyy1zeqmicK/ek41NoBK
- W8RrgFDrucqkkMyuXklg8F6IxZmgyGdhmEoeqIi34wvvN32It0nkkQ9EkBsHOEB0L9n6Km6
- Ow0CGqBLQ9UrII+PtOAcdU98an2pA1mIyH4gmkQ0DkziFIv2Rf1tphI6zjqg6wg2HGDmRF/
- eo4QzNf3kbrRTNkFH/Tx594xo56/vnxWfYKh0+t7AVHFT1/E54JJIXmjW0z+R37DlBGQCDi
- PS45MLtw3cpDlExVZf1iW+VwTAwFA67o/uHrMn0xET2iHNNJN9PSXyAmFzPlJgLg6mCWWE6
- hTaXl++8qgk7G/dz24MaPcRmhDhacHGOG+9ADbyXYJGJhXQe+xqx7jU2YIcCxt0514ToA4k
- 53wXUUv1iVWlWrNB8LP3Kydqcs/pmsl6Jh7wT1hqfJVToFXgRnqtRW2cpd0EQL8GQWdC5AO
- WcAeJv8cNZKJUAHY8VvQAH6o2fu7pMTa93YgxE/jxcQXGPLk9teY5A04xJB5XGh4bk57Dex
- 0BTXwYVAwlz
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
+X-QQ-XMAILINFO: MkHPGCJDhue0KRdsCd1aq8pZ8K3If8bcfclGxp4YTDw8lTqAZtaIA8Nm
+ VZMMobjPhHOtQa2UZebhE0pQelu80LIw7Iavgv+NUxTwvpFbShnuFeD9YEUhQgFdvwOY/GR
+ zfomfOLI0AvTgIsCkeub5X0ThkdhS+k7DR/lKW0o61ofVhoHy1ScftWxfngTPgJM7n3mkPV
+ TGWPyXFH11+aDYfJU7ZsgmzP7Qve+X0SR72FpuG75UE5Qnfg8e5ZUS2CZxMJBJ3W4kL+k8i
+ FjmUeORpcx2KvMn7vP9mgcHRkg1X6aiEuCc/XFTWqaB+AjOzOBa2kkVDn0QJx2MRfQNwLcC
+ avkvt+OfhUj6Z5YxzLc+775sYL0zzYTGMeBWLMYI5BiXpoDLhOsqdQi/QcoOyZhITpkRbMC
+ kkmZh0RAFC995dTzkLKiAF7jW7oVRI87IJR+ENNj3iTT/j/w4tsqfL5W3xWFITrVXew0A9U
+ OMcAoHF+sy3oU6yJK4jIHh8ORrjZWQqaFUL3oFTTuVhM/JUO+PDZnQ7JGuq6aaROxyll3fx
+ dQ+MudNrbL+qwKyNXyHPR2Om8jNFurEjxmsR0XqkCMUiTI8+r4z+kimAk/yIBkBNErTTkKG
+ Smc9d6hQXB8+kVigO3glW0fH8APow8/9F9Bu2BwalbbzMOijuR1fLEqFI9qK/bVtLBQ/WMq
+ f6xTLt0jTkM4atgZNkar+9tGBcCvktIZwd5AcpD8zq6QwM3i9qCpAmHp8PpWtdX3YSTCzH1
+ XkChPnn1+4RdBGKjpkFvIe7I2mOaqarUlx5mdipLgi+I8xcats1pva3ALglZfgdsUqsbe9X
+ b9M89aqGe+DtOEPSXsaeV8uEqJ+F/CW1DKnDmDkJ4/1CQEgkcOfQesECUEB3/zCO9UDcFCx
+ 8dV0UrO196eNtkF90C38OEtUaPC4ZUVayHCmpyS3fXAfrFzdE18i/tD/CNZWIt26YbcgX9d
+ buLNZbGkIaRUGthfe2Lg6wW6FIQIVsRfmWPHGsnEmm8WcgXZiYgqWHtvMrd3j3XsqjTp1k3
+ SmXmKA2LjRXVsE374yo+s/7oi0Lrg4aFwy0mNDCpNT5z5mOAfGzhXNiBQJbqAzpzOW3nvA1
+ jSQZ1tVksSisK0/rpVkV90=
+X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,244 +67,249 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The Amber-Lite E56 PHY has per-MAC FFE defaults that differ from the
-Sapphire defaults. In particular, the second pre-cursor tap defaults
-to zero, but callers need a devarg to override it when ffe_set is
-enabled.
+When the port is brought down, the Tx laser stays on, so the peer
+keeps seeing a live signal and cannot detect the link loss, for
+example for link-state tracking at the peer.
 
-Add ffe_pre2 for the E56 second pre-cursor tap, and bp_capa for the
-40G backplane advertisement selection. The latter supports the
-existing default of both KR4 and CR4, or either capability alone.
-Some switches do not reach the mode the board is wired for when both
-are advertised, and then the NIC has to offer only one of them. The
-subsystem device ID cannot decide this: it only separates a backplane
-assembly from an SFP assembly, with no KR4-only or CR4-only value.
+Add a laser_off devarg: when enabled, bring the Tx laser down on port
+link-down -- for DAC cables disable the PCS through PMD_CFG0, for
+QSFP modules write the Tx disable bit via I2C -- and restore the Tx
+enable state when the link comes up. The SFF-8636 Tx disable register
+is only touched while the management semaphore is held, and the
+acquire_swfw_sync() result is checked so a failed acquire does not
+release a semaphore that is not held.
+
+For AML40, rerun normal link setup when link is brought up with
+laser_off enabled. Re-enabling the transmitter alone does not restore
+the configuration disabled for DAC on link-down. The setup is not
+gated on the current module classification because the module may have
+changed while the port was down.
+
+That setup resets the PHY and restarts the AN73 negotiation, so the
+additional disable is opt-in: a port that only has to report link
+down does not pay for it on the next link-up.
+
+Restoring the Tx enable state is deliberately not gated on laser_off
+in txgbe_enable_tx_laser_multispeed_fiber(). The SFF-8636 Tx disable
+byte keeps its value while the module stays powered, so a module left
+with Tx disabled by a run that exited with laser_off=1 is still
+disabled when the driver next starts with laser_off=0. Nothing else
+clears that byte when the link comes up, so gating this write would
+leave the laser off for good.
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- doc/guides/nics/txgbe.rst              | 25 ++++++++++++--
- doc/guides/rel_notes/release_26_11.rst |  8 +++++
- drivers/net/txgbe/base/txgbe_type.h    |  6 +++-
- drivers/net/txgbe/txgbe_ethdev.c       | 46 +++++++++++++++++++++++---
- 4 files changed, 76 insertions(+), 9 deletions(-)
+ doc/guides/nics/txgbe.rst              |  7 ++++++
+ doc/guides/rel_notes/release_26_11.rst |  4 ++++
+ drivers/net/txgbe/base/txgbe_hw.c      | 33 ++++++++++++++++++++++++++
+ drivers/net/txgbe/base/txgbe_phy.h     |  6 +++++
+ drivers/net/txgbe/base/txgbe_type.h    |  3 +++
+ drivers/net/txgbe/txgbe_ethdev.c       | 24 ++++++++++++++++++-
+ 6 files changed, 76 insertions(+), 1 deletion(-)
 
 diff --git a/doc/guides/nics/txgbe.rst b/doc/guides/nics/txgbe.rst
-index 90c55141f1..0f5b48683d 100644
+index 0f5b48683d..f45be2c6aa 100644
 --- a/doc/guides/nics/txgbe.rst
 +++ b/doc/guides/nics/txgbe.rst
-@@ -126,27 +126,40 @@ Please note that following ``devargs`` are only set for backplane NICs.
+@@ -196,6 +196,13 @@ Please note that following ``devargs`` are only set for Amber-Lite NICs.
+   40GBASE-KR4 and 40GBASE-CR4, set 1 for 40GBASE-KR4 only, set 2 for
+   40GBASE-CR4 only.
  
-   Special treatment for KX SGMII cards.
- 
-+The following ``devargs`` override the transmitter equalizer taps.
-+``ffe_main``, ``ffe_pre`` and ``ffe_post`` are used by the backplane link
-+tuning and by the Amber-Lite E56 PHY; ``ffe_pre2`` is used by the E56 PHY
-+only.
++- ``laser_off`` (default **0**)
 +
- - ``ffe_set`` (default **0**)
- 
-   Use to set PHY link mode and enable FFE parameters for user debugging.
-   If disabled, the FFE parameters will not take effect. Otherwise, set 1
-   for SFI mode, set 2 for KR mode, set 3 for KX4 mode, set 4 for KX mode.
- 
--- ``ffe_main`` (default **27**)
-+- ``ffe_main`` (default **42** on the 25G Amber-Lite, **43** on the 40G
-+  Amber-Lite, **27** otherwise)
- 
-   PHY parameter used for user debugging. Setting other values to
-   take effect requires setting the ``ffe_set``.
- 
--- ``ffe_pre`` (default **8**)
-+- ``ffe_pre`` (default **3** on Amber-Lite, **8** otherwise)
- 
-   PHY parameter used for user debugging. Setting other values to
-   take effect requires setting the ``ffe_set``.
- 
--- ``ffe_post`` (default **44**)
-+- ``ffe_pre2`` (default **0**)
-+
-+  PHY parameter used for user debugging, only for the Amber-Lite E56 PHY.
-+  Setting other values to take effect requires setting the ``ffe_set``.
-+
-+- ``ffe_post`` (default **17** on Amber-Lite, **44** otherwise)
- 
-   PHY parameter used for user debugging. Setting other values to
-   take effect requires setting the ``ffe_set``.
- 
-+The following ``devargs`` configure the flow director.
-+
- - ``pkt-filter-size`` (default **0**)
- 
-   Memory allocation for the flow director filter.
-@@ -177,6 +190,12 @@ Please note that following ``devargs`` are only set for Amber-Lite NICs.
-   In this mode, the hardware merges and writes back a group of RX descriptors
-   together to reduce memory access times, which helps improve performance.
- 
-+- ``bp_capa`` (default **0**)
-+
-+  Backplane capability selection for the 40G NIC. Set 0 for both
-+  40GBASE-KR4 and 40GBASE-CR4, set 1 for 40GBASE-KR4 only, set 2 for
-+  40GBASE-CR4 only.
++  Toggle behavior to disable the Tx laser when the port is brought down
++  on the 40G NIC. By default the Tx laser is left on. When enabled, for
++  DAC cables the PCS is disabled through PMD_CFG0, for QSFP modules the
++  Tx disable bit is written via I2C.
 +
  Driver compilation and testing
  ------------------------------
  
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index be758a0c02..7b6bf917a0 100644
+index 7b6bf917a0..4f6ff9ea62 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -200,6 +200,14 @@ New Features
+@@ -207,6 +207,10 @@ New Features
+   * Added the ``bp_capa`` device argument to select the advertised
+     backplane capability on the 40G NIC
+     (0 for 40GBASE-KR4 + 40GBASE-CR4, 1 for KR4 only, 2 for CR4 only).
++  * Added the ``laser_off`` device argument: when set, the 40G NIC
++    turns its Tx laser off on port down
++    (PCS disable through PMD_CFG0 for DAC cables, SFF-8636 Tx disable
++    for QSFP modules).
  
-   * Added VF support on AMD Solarflare X45xx adapters.
- 
-+* **Updated Wangxun txgbe driver.**
-+
-+  * Added the ``ffe_pre2`` device argument to tune the second pre-cursor
-+    tap of the Amber-Lite E56 PHY (requires ``ffe_set``).
-+  * Added the ``bp_capa`` device argument to select the advertised
-+    backplane capability on the 40G NIC
-+    (0 for 40GBASE-KR4 + 40GBASE-CR4, 1 for KR4 only, 2 for CR4 only).
-+
  * **Updated ZTE zxdh ethernet driver.**
  
-   * Added a fast single-segment Rx path (``zxdh_recv_single_pkts``)
+diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
+index 2650b8b7f1..cbf859c54f 100644
+--- a/drivers/net/txgbe/base/txgbe_hw.c
++++ b/drivers/net/txgbe/base/txgbe_hw.c
+@@ -11,6 +11,7 @@
+ #include "txgbe_eeprom.h"
+ #include "txgbe_mng.h"
+ #include "txgbe_hw.h"
++#include "txgbe_e56.h"
+ #include "txgbe_aml.h"
+ #include "txgbe_aml40.h"
+ 
+@@ -3259,6 +3260,30 @@ void txgbe_disable_tx_laser_multispeed_fiber(struct txgbe_hw *hw)
+ 	if (hw->mac.type == txgbe_mac_aml40) {
+ 		wr32m(hw, TXGBE_GPIODIR, TXGBE_GPIOBIT_1, TXGBE_GPIOBIT_1);
+ 		esdp_reg &= ~TXGBE_GPIOBIT_1;
++		if (hw->devarg.laser_off) {
++			if (txgbe_is_dac_cable(hw) ||
++			    hw->phy.sfp_type == txgbe_sfp_type_unknown ||
++			    hw->phy.sfp_type == txgbe_sfp_type_not_present) {
++				u32 rdata = 0;
++
++				rte_spinlock_lock(&hw->phy_lock);
++				rdata = rd32_ephy(hw, PMD_CFG0);
++				set_fields_e56(&rdata,
++					       E56PHY_PMD_CFG_0_RX_EN_CFG,
++					       0x0);
++				set_fields_e56(&rdata, 15, 12, 0x0);
++				set_fields_e56(&rdata, 1, 1, 0x0);
++				wr32_ephy(hw, PMD_CFG0, rdata);
++				rte_spinlock_unlock(&hw->phy_lock);
++			} else if (hw->mac.acquire_swfw_sync(hw,
++							    TXGBE_MNGSEM_SWPHY) == 0) {
++				hw->phy.write_i2c_eeprom(hw,
++					TXGBE_SFF_8636_TX_DISABLE,
++					TXGBE_SFF_8636_TX_DISABLE_ALL_LANES);
++				hw->mac.release_swfw_sync(hw,
++							TXGBE_MNGSEM_SWPHY);
++			}
++		}
+ 	} else if (hw->mac.type == txgbe_mac_aml) {
+ 		esdp_reg |= TXGBE_GPIOBIT_1;
+ 	} else {
+@@ -3288,6 +3313,14 @@ void txgbe_enable_tx_laser_multispeed_fiber(struct txgbe_hw *hw)
+ 	if (hw->mac.type == txgbe_mac_aml40) {
+ 		wr32m(hw, TXGBE_GPIODIR, TXGBE_GPIOBIT_1, TXGBE_GPIOBIT_1);
+ 		esdp_reg |= TXGBE_GPIOBIT_1;
++		if (!txgbe_is_dac_cable(hw) &&
++		    hw->phy.sfp_type != txgbe_sfp_type_unknown &&
++		    hw->phy.sfp_type != txgbe_sfp_type_not_present &&
++		    hw->mac.acquire_swfw_sync(hw, TXGBE_MNGSEM_SWPHY) == 0) {
++			hw->phy.write_i2c_eeprom(hw,
++				TXGBE_SFF_8636_TX_DISABLE, 0x0);
++			hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
++		}
+ 	} else {
+ 		esdp_reg &= ~(TXGBE_GPIOBIT_0 | TXGBE_GPIOBIT_1);
+ 	}
+diff --git a/drivers/net/txgbe/base/txgbe_phy.h b/drivers/net/txgbe/base/txgbe_phy.h
+index a5df015a4d..a06c0eb04e 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.h
++++ b/drivers/net/txgbe/base/txgbe_phy.h
+@@ -251,6 +251,12 @@
+ #define TXGBE_SFF_VENDOR_OUI_BYTE1	0x26
+ #define TXGBE_SFF_VENDOR_OUI_BYTE2	0x27
+ #define TXGBE_SFF_1GBE_COMP_CODES	0x06
++
++/* SFF-8636 PMD Tx disable register (byte 0x56); bit per lane,
++ * 0xF disables the transmitter on all four lanes.
++ */
++#define TXGBE_SFF_8636_TX_DISABLE		0x56
++#define TXGBE_SFF_8636_TX_DISABLE_ALL_LANES	0x0F
+ #define TXGBE_SFF_10GBE_COMP_CODES	0x03
+ #define TXGBE_SFF_25GBE_COMP_CODES	0x24
+ #define TXGBE_SFF_COPPER_LENGTH		0x12
 diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index 60298800ee..d65a50530f 100644
+index d65a50530f..33e306ac70 100644
 --- a/drivers/net/txgbe/base/txgbe_type.h
 +++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -741,7 +741,7 @@ struct txgbe_phy_info {
- 	u16 ffe_set;
- 	u32 ffe_main;
- 	u32 ffe_pre;
--	u32 ffe_pre2;
-+	u32 ffe_pre2; /* only for the Amber-Lite E56 PHY */
- 	u32 ffe_post;
- 	u16 fec_mode;
- 	u16 bp_capa;
-@@ -754,12 +754,14 @@ struct txgbe_phy_info {
- #define TXGBE_DEVARG_FFE_SET		"ffe_set"
- #define TXGBE_DEVARG_FFE_MAIN		"ffe_main"
- #define TXGBE_DEVARG_FFE_PRE		"ffe_pre"
-+#define TXGBE_DEVARG_FFE_PRE2		"ffe_pre2"
- #define TXGBE_DEVARG_FFE_POST		"ffe_post"
- #define TXGBE_DEVARG_FDIR_PBALLOC	"pkt-filter-size"
- #define TXGBE_DEVARG_FDIR_DROP_QUEUE	"pkt-filter-drop-queue"
- #define TXGBE_DEVARG_TX_HEAD_WB		"tx_headwb"
+@@ -762,6 +762,7 @@ struct txgbe_phy_info {
  #define TXGBE_DEVARG_TX_HEAD_WB_SIZE	"tx_headwb_size"
  #define TXGBE_DEVARG_RX_DESC_MERGE	"rx_desc_merge"
-+#define TXGBE_DEVARG_BP_CAPA		"bp_capa"
+ #define TXGBE_DEVARG_BP_CAPA		"bp_capa"
++#define TXGBE_DEVARG_LASER_OFF		"laser_off"
  
  static const char * const txgbe_valid_arguments[] = {
  	TXGBE_DEVARG_BP_AUTO,
-@@ -769,12 +771,14 @@ static const char * const txgbe_valid_arguments[] = {
- 	TXGBE_DEVARG_FFE_SET,
- 	TXGBE_DEVARG_FFE_MAIN,
- 	TXGBE_DEVARG_FFE_PRE,
-+	TXGBE_DEVARG_FFE_PRE2,
- 	TXGBE_DEVARG_FFE_POST,
- 	TXGBE_DEVARG_FDIR_PBALLOC,
- 	TXGBE_DEVARG_FDIR_DROP_QUEUE,
- 	TXGBE_DEVARG_TX_HEAD_WB,
+@@ -779,6 +780,7 @@ static const char * const txgbe_valid_arguments[] = {
  	TXGBE_DEVARG_TX_HEAD_WB_SIZE,
  	TXGBE_DEVARG_RX_DESC_MERGE,
-+	TXGBE_DEVARG_BP_CAPA,
+ 	TXGBE_DEVARG_BP_CAPA,
++	TXGBE_DEVARG_LASER_OFF,
  	NULL
  };
  
+@@ -834,6 +836,7 @@ struct txgbe_devargs {
+ 	u16 tx_headwb;
+ 	u16 tx_headwb_size;
+ 	u16 rx_desc_merge;
++	u16 laser_off;
+ };
+ 
+ struct txgbe_hw {
 diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 4529d34ca3..909457c536 100644
+index 909457c536..a72cb15d1a 100644
 --- a/drivers/net/txgbe/txgbe_ethdev.c
 +++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -492,13 +492,18 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
- 	u16 tx_headwb = 1;
+@@ -493,6 +493,7 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
  	u16 tx_headwb_size = 16;
  	u16 rx_desc_merge = 1;
-+	u16 bp_capa = 0;
+ 	u16 bp_capa = 0;
++	u16 laser_off = 0;
  
--	/* The 40G NIC holds one FFE byte per lane, so the E56 PHY defaults
--	 * below are later replicated over the four lanes.
--	 */
--	if (hw->mac.type == txgbe_mac_aml40) {
-+	/* The E56 PHY has its own FFE defaults; the ones above are Sapphire. */
-+	if (hw->mac.type == txgbe_mac_aml) {
-+		ffe_main = S25G_TX_FFE_CFG_DAC_MAIN;
-+		ffe_pre = S25G_TX_FFE_CFG_DAC_PRE1;
-+		ffe_pre2 = S25G_TX_FFE_CFG_DAC_PRE2;
-+		ffe_post = S25G_TX_FFE_CFG_DAC_POST;
-+	} else if (hw->mac.type == txgbe_mac_aml40) {
- 		ffe_main = S40G_TX_FFE_CFG_MAIN & 0xFF;
- 		ffe_pre = S40G_TX_FFE_CFG_PRE1 & 0xFF;
-+		ffe_pre2 = S40G_TX_FFE_CFG_PRE2 & 0xFF;
- 		ffe_post = S40G_TX_FFE_CFG_POST & 0xFF;
- 	}
- 
-@@ -523,6 +528,8 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
- 			   &txgbe_handle_devarg, &ffe_main);
- 	rte_kvargs_process(kvlist, TXGBE_DEVARG_FFE_PRE,
- 			   &txgbe_handle_devarg, &ffe_pre);
-+	rte_kvargs_process(kvlist, TXGBE_DEVARG_FFE_PRE2,
-+			   &txgbe_handle_devarg, &ffe_pre2);
- 	rte_kvargs_process(kvlist, TXGBE_DEVARG_FFE_POST,
- 			   &txgbe_handle_devarg, &ffe_post);
- 	rte_kvargs_process(kvlist, TXGBE_DEVARG_FDIR_PBALLOC,
-@@ -535,6 +542,8 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
- 			   &txgbe_handle_devarg, &tx_headwb_size);
- 	rte_kvargs_process(kvlist, TXGBE_DEVARG_RX_DESC_MERGE,
+ 	/* The E56 PHY has its own FFE defaults; the ones above are Sapphire. */
+ 	if (hw->mac.type == txgbe_mac_aml) {
+@@ -544,6 +545,8 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
  			   &txgbe_handle_devarg, &rx_desc_merge);
-+	rte_kvargs_process(kvlist, TXGBE_DEVARG_BP_CAPA,
-+			   &txgbe_handle_devarg, &bp_capa);
+ 	rte_kvargs_process(kvlist, TXGBE_DEVARG_BP_CAPA,
+ 			   &txgbe_handle_devarg, &bp_capa);
++	rte_kvargs_process(kvlist, TXGBE_DEVARG_LASER_OFF,
++			   &txgbe_handle_devarg, &laser_off);
  	rte_kvargs_free(kvlist);
  
  null:
-@@ -548,10 +557,35 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
+@@ -554,6 +557,7 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
+ 	hw->devarg.tx_headwb = tx_headwb;
+ 	hw->devarg.tx_headwb_size = tx_headwb_size;
+ 	hw->devarg.rx_desc_merge = rx_desc_merge;
++	hw->devarg.laser_off = laser_off;
  	hw->phy.ffe_set = ffe_set;
  	hw->phy.ffe_main = ffe_main;
  	hw->phy.ffe_pre = ffe_pre;
-+	hw->phy.ffe_pre2 = ffe_pre2;
- 	hw->phy.ffe_post = ffe_post;
+@@ -2170,6 +2174,9 @@ static int
+ txgbe_dev_set_link_up(struct rte_eth_dev *dev)
+ {
+ 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
++	bool autoneg = false;
++	u32 speed;
++	int err;
  
-+	/* The 40G backplane block takes 0, 1 or 2; any other value leaves
-+	 * it advertising nothing for 40G.
-+	 */
-+	if (bp_capa > 2) {
-+		PMD_INIT_LOG(ERR, "devarg '%s' value %u exceeds 2, using 0",
-+			     TXGBE_DEVARG_BP_CAPA, bp_capa);
-+		bp_capa = 0;
-+	}
-+	hw->phy.bp_capa = bp_capa;
+ 	if (hw->phy.media_type == txgbe_media_type_copper) {
+ 		/* Turn on the copper */
+@@ -2177,6 +2184,20 @@ txgbe_dev_set_link_up(struct rte_eth_dev *dev)
+ 	} else {
+ 		/* Turn on the laser */
+ 		hw->mac.enable_tx_laser(hw);
 +
- 	/* The 40G PHY expects one FFE byte per lane. */
- 	if (hw->mac.type == txgbe_mac_aml40) {
-+		/* S40G_TX_FFE_4LANE() keeps the low byte of each value. */
-+		if (ffe_main > 0xFF)
-+			PMD_INIT_LOG(ERR, "devarg '%s' value %u exceeds 0xFF",
-+				     TXGBE_DEVARG_FFE_MAIN, ffe_main);
-+		if (ffe_pre > 0xFF)
-+			PMD_INIT_LOG(ERR, "devarg '%s' value %u exceeds 0xFF",
-+				     TXGBE_DEVARG_FFE_PRE, ffe_pre);
-+		if (ffe_pre2 > 0xFF)
-+			PMD_INIT_LOG(ERR, "devarg '%s' value %u exceeds 0xFF",
-+				     TXGBE_DEVARG_FFE_PRE2, ffe_pre2);
-+		if (ffe_post > 0xFF)
-+			PMD_INIT_LOG(ERR, "devarg '%s' value %u exceeds 0xFF",
-+				     TXGBE_DEVARG_FFE_POST, ffe_post);
++		if (hw->mac.type == txgbe_mac_aml40 && hw->devarg.laser_off) {
++			speed = hw->phy.autoneg_advertised;
++			if (speed == 0) {
++				err = hw->mac.get_link_capabilities(hw, &speed, &autoneg);
++				if (err != 0)
++					return -EIO;
++			}
 +
- 		hw->phy.ffe_main = S40G_TX_FFE_4LANE(ffe_main);
- 		hw->phy.ffe_pre = S40G_TX_FFE_4LANE(ffe_pre);
- 		hw->phy.ffe_pre2 = S40G_TX_FFE_4LANE(ffe_pre2);
-@@ -6474,12 +6508,14 @@ RTE_PMD_REGISTER_PARAM_STRING(net_txgbe,
- 			      TXGBE_DEVARG_FFE_SET "=<0-4>"
- 			      TXGBE_DEVARG_FFE_MAIN "=<uint16>"
- 			      TXGBE_DEVARG_FFE_PRE "=<uint16>"
-+			      TXGBE_DEVARG_FFE_PRE2 "=<uint16>"
- 			      TXGBE_DEVARG_FFE_POST "=<uint16>"
- 			      TXGBE_DEVARG_FDIR_PBALLOC "=<0|1|2>"
- 			      TXGBE_DEVARG_FDIR_DROP_QUEUE "=<uint8>"
++			err = hw->mac.setup_link(hw, speed, true);
++			if (err != 0)
++				return -EIO;
++		}
++
+ 		hw->dev_start = true;
+ 		txgbe_dev_link_update(dev, 0);
+ 	}
+@@ -6515,7 +6536,8 @@ RTE_PMD_REGISTER_PARAM_STRING(net_txgbe,
  			      TXGBE_DEVARG_TX_HEAD_WB "=<0|1>"
  			      TXGBE_DEVARG_TX_HEAD_WB_SIZE "=<1|16>"
--			      TXGBE_DEVARG_RX_DESC_MERGE "=<0|1>");
-+			      TXGBE_DEVARG_RX_DESC_MERGE "=<0|1>"
-+			      TXGBE_DEVARG_BP_CAPA "=<0|1|2>");
+ 			      TXGBE_DEVARG_RX_DESC_MERGE "=<0|1>"
+-			      TXGBE_DEVARG_BP_CAPA "=<0|1|2>");
++			      TXGBE_DEVARG_BP_CAPA "=<0|1|2>"
++			      TXGBE_DEVARG_LASER_OFF "=<0|1>");
  
  RTE_LOG_REGISTER_SUFFIX(txgbe_logtype_init, init, NOTICE);
  RTE_LOG_REGISTER_SUFFIX(txgbe_logtype_driver, driver, NOTICE);
