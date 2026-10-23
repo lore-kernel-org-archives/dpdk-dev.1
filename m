@@ -1,92 +1,73 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287A2606A31B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 20:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AE1606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 21:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=VSsM8SgG
+	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=SlYw2Qki
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 124FE402C8;
-	Fri, 23 Oct 2026 22:52:48 +0200 (CEST)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com
- [209.85.219.53]) by mails.dpdk.org (Postfix) with ESMTP id BDD994021F
- for <dev@dpdk.org>; Fri, 23 Oct 2026 22:52:46 +0200 (CEST)
-Received: by mail-qv1-f53.google.com with SMTP id
- 6a1803df08f44-917997ab0d9so15093836d6.3
- for <dev@dpdk.org>; Fri, 23 Oct 2026 13:52:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792788766; cv=none;
- d=google.com; s=arc-20260327;
- b=ovgjU2rsilEcIb1vSX19au0B8+GKy+tyjeG+p3hWrzNV35Fvax1Lhcxd6MZomu+cnJ
- PA6iRRWNQX9XaBQrf5c+oIMNn1xtqiO55Sv0IXxzYCRfOvA5vb4sNFA9AzvqUPAw99+y
- 5xHtMi5vZf5So/AUTW1e9e6/8NPgaGYVGAsCVVQYCEfccDgAgw1vQ6KatBMsT0FvF+J6
- wJAHTdskJn07pS1p5AOV4H5Kt67Tk/v/I9Ci5gt+wua/wrRSNBhQ6oZx/d49xyzuTRi0
- Xqed+3UclMTYGUCmioIolrI/ewTsZu6tkENYE59LOE+6yOE4Xp+X4vLG8jwqUlP4Bdzm
- xA1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=aKHgkPrb6z/IYbMbIo1VxMOP/3D+5B+2RyWL79MBm2I=;
- fh=X+DPomYhbZ0AYSatKqwHqlxhIF/GWUOckr0V9ACP0fA=;
- b=RbSzL4xM+5nsZJco6kA15LRA3ki9S+LY1JurQMJuBbk3WSujjk0J19JN8j5hGvZUz6
- d5OgAOtuHfjBiGKuHdXvrpNVZ4Puoax+AtJXctdAfPEElL12LbVbuZXEOOzNYPtRH3VB
- LelWim6xWY6Mg7suxYdVfsCweqy7EDCiEWCAUypv3s2vpI3jwd1x4E8Vuk8OmroTOdS3
- lL4NLbV1XDO4EdXwhohbHWerGsgCics7oGjl+MChsuH/M3QepvZWiVg9KycqdvxFPpaL
- ywoydkyfJYyCbAYRDlveljz2fWWKfMuV0dnF8YEeIYzngow9GKai5J+8KDBS4LGm5xVC
- /jMQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 30B62402C8;
+	Fri, 23 Oct 2026 23:04:23 +0200 (CEST)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com
+ [209.85.160.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 776784021F
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 23:04:21 +0200 (CEST)
+Received: by mail-qt1-f182.google.com with SMTP id
+ d75a77b69052e-5365d26ccbdso13860681cf.0
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 14:04:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1792788766; x=1793393566; darn=dpdk.org;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=aKHgkPrb6z/IYbMbIo1VxMOP/3D+5B+2RyWL79MBm2I=;
- b=VSsM8SgGveaDGpgCeff0kqa9ZX8Ol/KVq+jH3MpzfgqBmdIduvO9NvLMBjnIyup7p+
- nFy0EyPvNrIL6VVUa1/GP7oGxd01e/b71gb8YGgPJF45XoYAwGOpfHQAUlYMkbP7WDD0
- sidF/mkZPq5oBAjk7WL2spNYouqIXr7GPFxXU=
+ d=iol.unh.edu; s=unh-iol; t=1792789461; x=1793394261; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=EWoSTvCiGU8t+NE6sBbnLWzeV8Pfw6Lg1qUUmFETRgc=;
+ b=SlYw2QkiiCY22WADOTpyru9FMhji+DYkTZvfqaMrsRCprZh+9D1ptP3AZAN+qSUxzA
+ mGmIvTHq17mBh1twVc+j4238theM/32U8wI6sUEdvo5WOlR2CJmDT7TuLxo9l0bMPoLh
+ SXSU10jF26PxbZ9VQb2pvjAqXO+hNQcb8R2dw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792788766; x=1793393566;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=aKHgkPrb6z/IYbMbIo1VxMOP/3D+5B+2RyWL79MBm2I=;
- b=tFO4F+zJayZvyrau3lgRWetDRUrAgazsF6LoUWTmXOJYae8+4V0/n7fMBOCytbwqm9
- wShHPyUn/yXQthe1o3+zR93tFNLuCloV38cGDuSGkuyio7ahu83cFvTfYw43ZG3JuMTv
- wlAi6/0DJLNt+8inALqTin4kmlFtxy42KilOUZuEtpoc4nwU9vxY2s86qrpx15aGUnJZ
- Vjb7JeDlpm/+szzFggSIL+DcbJNncMxFey+Dt9M+TvGuHCi7b5/ZmM4YF9RK+ZHW32Dw
- Oz5z+nXVEwFeO2Gaw/2hvAgd28LmOBcHFPbp5Y3ybfw37IaYzAATgWxzvspxDtWNoIrb
- gj/w==
-X-Forwarded-Encrypted: i=1;
- AKwUvBzinRiiOTeYnM4zXjHuUXEWYmmkmvM5HCcCYYKfPEhJaac/8Q/O9f0Kn/tD6Kd+bJhjd1U=@dpdk.org
-X-Gm-Message-State: AFq9FYJ2IKec7Ttvb9T+3UoOCCqdCUxZRBjg2/qhXxNoGHAckYWAv6kj
- Y4MwU71bDsQLX19Yr2vYnBJlQpB1XkD7gxC9ZA2l6jUJFJF06JHogwO+ZOhMLS3pc0vLj31jkkJ
- J2VbSZG2wKPaU6059pbfglrQgj8SHahxYHZx31qDD9g==
-X-Gm-Gg: AYBFou1M4bmS7kfNoS+74XGiU+g+8+ywgiin+tBB2RPij19wzEpgP8YB25XA14lCH5g
- L53Ma3xIpoK3/tyydK14xEJt+TtxW+cMGOAABq2NyJWizvHmMUqHZSp4jeWf8iKvKA33StNhr14
- fyZv31Dm3L1Hz8lt24n7/v8dx0oa9sWV2xPjxjezKHG8GLbE99o8SB9XqVW+xl/Djf9k57Zy2f2
- XEAlGawju4I7UvPt15UaM2ShnPf0k0CPbVGJoMrUz2aqK5U4UZnVbxzsubBM7WfgmDFICSl6jqL
- uDkDVZhlLISlWYeZAlkGkbnQTUuqX3PH6Qn2Eo1g9pkrkAsVvF/x0ILXLPslk5m4tpXNpZ/hQ7b
- ttSjRFB3TomtMTPJ2oIc7eO2nrJY3smfAsML8UuTrlIsqDtOfoD5eTka3mLtDfV+OB80q5mango
- sgQhe7FYf+zI+40JQlgqyyJ+NSOfPPXxZ7Y6H+B9pCT/MjmSmhqrWpueqyAujnvdWn0P4ZThS4K
- sXeULiIdmZwd/vKAK2G/T2jvW7aVZ6p
-X-Received: by 2002:a05:620a:1a18:b0:93e:6a4b:3ea6 with SMTP id
- af79cd13be357-940ef9141d2mr32154985a.24.1792788765941; Fri, 23 Oct 2026
- 13:52:45 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1792789461; x=1793394261;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=EWoSTvCiGU8t+NE6sBbnLWzeV8Pfw6Lg1qUUmFETRgc=;
+ b=U71oXziVvCMhUhAjRT1stG1rpEBjWtdgoOqTpk3vVEAK/I0jTFUQz0Sy6WurGOICYd
+ hMbdpElYyp41bGzqEHh4LKCSbOCiw1jWjxvHTHflMEjKCwFNSl5Bi6Hc6x8linKtk598
+ mz5tHpl0Oiwko6vaNciXgun8CjaVkBZOoUcOCs06vLNAXyCVIsAsmDsCKIUUTu2BBIa6
+ UNewewQsp/FSKT/KKvG7zl54Zqr6Z+QYWmRf0uPPhF2yZ8++B/xnuQGqt6hIDTZ0dr0S
+ vxDMiyBham2AqQVnzblxnwzqXwxsKcFqBfIMCxPSD49j2ULGUTHpmfVXQ6BRoBJO35M5
+ 4iKw==
+X-Gm-Message-State: AFq9FYI5pIePnhgcCQ7OUTTD/vjY3pM9WHKWVJ1DDmkFIIhdYwdfO6ld
+ IVRyesj11AxjhRScwChyHzsbMyp7i9P/nbe1tD6+4Rsrya5REDcEAkibwViDvYe0fHI=
+X-Gm-Gg: AYBFou3WEI2SbGDbJR59JxwboMDmdXWuK4opbCQxKhIHe/U7XdIUAxplXN0SO77/6rY
+ 5p2iO2keX+yl1s/R2e4ZfBsqTjWRulw4FyYek10w/74Ra65RlOwap2s/ONLfCimJ0rVojQUih1N
+ /mvkzckXowhJ385HOKl1saX5saHRP6I3IRbPQ1milsK2O+jfPL5bBuvP3qRKz9QFGBXvXTUfbFI
+ VoKFHKB53GeCweGQ4AojueXNspjStzFh12LrMgc5G+lRMU2kz4lRxJXcY9aAsHjC9/3jHG+9rVP
+ Ix2f1ihzA7pVBahOy/CIgiooN6WGjHMR5KkyJ8gck+Lx+uNXjNGUMfTCAHxYE5kRbl1a0D3c1ZX
+ b6SWGRqkZdCFJ/OyQAH3glon4T0XO2BXKxcMs5kx65ufHmDi7u4ZS9JiJsRoD3y0IIekJQxc0Dc
+ ksUo0q6pW2Wyts7g/FJRkBhdEGx7Z0S2Se6yTd88jbYp5uqrmZsT7v+j8+w3Fzp06FqvbRpn5zr
+ tenGGx+GNLlkw2M48zFLnyzqeH5uppGf8Dx9eRVR7huvFWcCygOw5JuQSrXpGXFRiY7JCPYHTp5
+ QDvtnOKWySeTOZrfqW+Azi/yWlI0L5kFQLal5AzgQKF0iaoovHZcnvhwauotePAsPCLpJky/AjA
+ DKcjG
+X-Received: by 2002:a05:622a:5595:b0:535:f9dd:cb97 with SMTP id
+ d75a77b69052e-5383b6bf0famr1054281cf.48.1792789460486; 
+ Fri, 23 Oct 2026 14:04:20 -0700 (PDT)
+Received: from fedora.iol.unh.edu ([2606:4100:3880:1257::1006])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-53839768d61sm2984201cf.29.2026.10.23.14.04.18
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 23 Oct 2026 14:04:20 -0700 (PDT)
+From: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+To: luca.vizzarro@arm.com,
+	patrickrobb1997@gmail.com
+Cc: dev@dpdk.org, dladd@iol.unh.edu, abailey@iol.unh.edu, lylavoie@iol.unh.edu,
+ Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+Subject: [PATCH v3] dts: resolve trex driver binding issue
+Date: Fri, 23 Oct 2026 17:04:15 -0400
+Message-ID: <20261023210415.28323-1-knimoji@iol.unh.edu>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20260811185509.1650102-1-knimoji@iol.unh.edu>
+References: <20260811185509.1650102-1-knimoji@iol.unh.edu>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20260811185509.1650102-1-knimoji@iol.unh.edu>
- <8811b276-3f46-484a-bffa-33accfe740b1@arm.com>
- <CAKYPG+wJOvzq0mUQ+R5MNuydaj_ROwHHgOqyF6K4nP_ewkO5_Q@mail.gmail.com>
- <b324fbdb-a6d0-4515-a499-7e76692feeb3@arm.com>
- <CAKYPG+xMM3jT_ME0qYtPctP6zc8kYXC88FMJeW12GidH12iD5g@mail.gmail.com>
- <7d00f6a1-5909-48d6-906b-e078eeb9a1c3@arm.com>
-In-Reply-To: <7d00f6a1-5909-48d6-906b-e078eeb9a1c3@arm.com>
-From: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
-Date: Fri, 23 Oct 2026 16:52:09 -0400
-X-Gm-Features: AclHuK-1hmTs4Bv8Iesruke-yJjLdQdx0K_am6g_GN5znWkXPF1m0qSBJYgEI98
-Message-ID: <CAKYPG+xyUbSoZzcG9pvJQxCct5kic5NY94NGkkTq7ytmnVZHHw@mail.gmail.com>
-Subject: Re: [RFC PATCH] dts: resolve trex driver binding issue
-To: Luca Vizzarro <Luca.Vizzarro@arm.com>
-Cc: patrickrobb1997@gmail.com, dev@dpdk.org, dladd@iol.unh.edu, 
- abailey@iol.unh.edu, lylavoie@iol.unh.edu
-Content-Type: multipart/alternative; boundary="0000000000008d3c58065e8829a2"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,270 +77,820 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
---0000000000008d3c58065e8829a2
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Previously, users were unable to run both functional and performance
+test suites in a single DTS run due to driver binding conflicts.
+This patch separates traffic generator setup by test suite, in
+order to allow running functional and performance test suites in
+the same DTS run.
 
-On Fri, Oct 23, 2026 at 1:38=E2=80=AFPM Luca Vizzarro <Luca.Vizzarro@arm.co=
-m> wrote:
+Signed-off-by: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
+---
+v2:
+     *Added TRex TG teardown to re-bind ports
+      to kernel driver
+v3:
+     *Added topology-based port binding upon
+      TRex setup to preserve internal port
+      config state, removed all manual bindings
+---
+ dts/api/test_suite.py                         | 40 +++++++++++++++++++
+ dts/framework/test_run.py                     | 24 ++++++++---
+ dts/framework/testbed_model/linux_session.py  |  6 ++-
+ .../testbed_model/traffic_generator/trex.py   |  1 +
+ dts/tests/TestSuite_blocklist.py              |  3 +-
+ dts/tests/TestSuite_buffer_scatter.py         |  3 +-
+ dts/tests/TestSuite_checksum_offload.py       |  3 +-
+ dts/tests/TestSuite_cryptodev_latency.py      |  3 +-
+ dts/tests/TestSuite_cryptodev_throughput.py   |  3 +-
+ dts/tests/TestSuite_dual_vlan.py              |  3 +-
+ dts/tests/TestSuite_dynamic_config.py         |  3 +-
+ dts/tests/TestSuite_dynamic_queue_conf.py     |  3 +-
+ dts/tests/TestSuite_flow_offload.py           |  3 +-
+ dts/tests/TestSuite_hello_world.py            |  3 +-
+ dts/tests/TestSuite_l2fwd.py                  |  3 +-
+ dts/tests/TestSuite_mac_filter.py             |  3 +-
+ dts/tests/TestSuite_mtu.py                    |  3 +-
+ dts/tests/TestSuite_packet_capture.py         |  3 +-
+ dts/tests/TestSuite_port_control.py           |  3 +-
+ ...stSuite_port_restart_config_persistency.py |  3 +-
+ dts/tests/TestSuite_port_stats.py             |  3 +-
+ dts/tests/TestSuite_promisc_support.py        |  3 +-
+ dts/tests/TestSuite_qinq.py                   |  3 +-
+ dts/tests/TestSuite_queue_toggle.py           |  3 +-
+ dts/tests/TestSuite_rss.py                    |  3 +-
+ dts/tests/TestSuite_rx_split.py               |  3 +-
+ dts/tests/TestSuite_rx_tx_offload.py          |  3 +-
+ .../TestSuite_single_core_forward_perf.py     |  3 +-
+ dts/tests/TestSuite_smoke_tests.py            |  3 +-
+ dts/tests/TestSuite_softnic.py                |  3 +-
+ dts/tests/TestSuite_speed_capabilities.py     |  3 +-
+ dts/tests/TestSuite_unified_packet.py         |  3 +-
+ dts/tests/TestSuite_virtio_forward.py         |  3 +-
+ dts/tests/TestSuite_vlan.py                   |  3 +-
+ 34 files changed, 123 insertions(+), 38 deletions(-)
 
-> On 22/10/2026 18:29, Koushik Bhargav Nimoji wrote:
-> >
-> >
-> > On Thu, Oct 22, 2026 at 9:51=E2=80=AFAM Luca Vizzarro <Luca.Vizzarro@ar=
-m.com
-> > <mailto:Luca.Vizzarro@arm.com>> wrote:
-> >
-> >     On 20/10/2026 17:06, Koushik Bhargav Nimoji wrote:
-> >      > On Fri, Oct 16, 2026 at 12:28=E2=80=AFPM Luca Vizzarro
-> >     <Luca.Vizzarro@arm.com <mailto:Luca.Vizzarro@arm.com>
-> >      > <mailto:Luca.Vizzarro@arm.com <mailto:Luca.Vizzarro@arm.com>>>
-> wrote:
-> >      >
-> >      >      > +        if (
-> >      >      > +            ctx.topology.type is not LinkTopology.NO_LIN=
-K
-> >      >      > +            and testsuite_type is not TestSuiteType.CRYP=
-TO
-> >      >      > +        ):
-> >      >      > +            if testsuite_type =3D=3D TestSuiteType.FUNC:
-> >      >      > +                required_tg, other_tg =3D ctx.func_tg,
-> >     ctx.perf_tg
-> >      >      > +            else:
-> >      >      > +                required_tg, other_tg =3D ctx.perf_tg,
-> >     ctx.func_tg
-> >      >      > +
-> >      >      > +            if other_tg and other_tg.is_setup:
-> >      >      > +                other_tg.teardown()
-> >      >      > +
-> >      >      > +                if testsuite_type =3D=3D TestSuiteType.F=
-UNC
-> and
-> >      >     ctx.tg_node:
-> >      >      > +                    for port in ctx.topology.tg_ports:
-> >      >      > +
-> >      >     ctx.tg_node.main_session.bind_ports_to_driver([port],
-> >      >     port.config.os_driver)
-> >      >
-> >      >     I am a bit confused why this happens here. The driver to be
-> >     bound to
-> >      >     should be governed by the TG that uses such ports. Could be
-> >     os_driver,
-> >      >     could be dpdk_driver, regardless of Scapy and TRex.
-> >      >
-> >      > This section exists because of how scapy and TRex handle port
-> driver
-> >      > bindings. TRex automatically binds ports to the required driver
-> when
-> >      > setup, but scapy requires it to be done manually. That's why if
-> >     the next
-> >      > test suite to be tested is a functional test suite, the TG ports
-> are
-> >      > rebound to the os_driver manually here.
-> >
-> >     So I think the original intention here was that TRex would
-> >     exceptionally
-> >     change the driver as the normal behaviour was that the TG was not
-> going
-> >     to be subject to driver binding. Therefore what would make sense is
-> for
-> >     the TG to control driver binding accordingly. So if Scapy is setup
-> that
-> >     it would be up to Scapy to "bind to kernel drivers" if needed. What
-> do
-> >     you think?
-> >
-> >
-> > I think you're definitely right here, it should be up to the TG to take
-> > care of port bindings instead of doing it manually. Scapy currently doe=
-s
-> > take care of that, but there's an issue with DTS's internal state being
-> > out of date after rebinding to the kernel driver. As a workaround for
-> > this, I have added a teardown method to trex.py that rebinds ports to
-> > the kernel driver before scapy is set up. I will send out a version
-> > shortly that reflects these changes, thanks for bringing this up.
->
-> So I think the problem with the state is because you are not using
-> Topology which is the ports manager/owner. Even if `main_session` is
-> public, it's an internal API which use should be limited to some. If you
-> look at the setup of Scapy:
->
->      def setup(self, topology: Topology) -> None:
->          super().setup(topology)
->          topology.configure_ports("tg", "kernel")
->
-> What I expect to see in the Trex class is:
->
->      def setup(self, topology: Topology) -> None:
->          super().setup(topology)
->          topology.configure_ports("tg", "dpdk")
->
-> If this doesn't work as intended, then there is a bug that needs resolvin=
-g.
->
-> Luca
->
+diff --git a/dts/api/test_suite.py b/dts/api/test_suite.py
+index c30d447135..11027344d0 100644
+--- a/dts/api/test_suite.py
++++ b/dts/api/test_suite.py
+@@ -44,6 +44,17 @@ class BaseConfig(FrozenModel):
+     """Base for a custom test suite configuration."""
+ 
+ 
++class TestSuiteType(Enum):
++    """Enum to specify test suite type."""
++
++    FUNC = auto()
++    PERF = auto()
++    CRYPTO = auto()
++
++
++TestSuiteClassType = TypeVar("TestSuiteClassType", bound=type["TestSuite"])
++
++
+ class TestSuite(TestProtocol):
+     """The base class with building blocks needed by most test cases.
+ 
+@@ -84,6 +95,30 @@ class TestSuite(TestProtocol):
+     _sut_ip_address_egress: Union[IPv4Interface, IPv6Interface]
+     _tg_ip_address_ingress: Union[IPv4Interface, IPv6Interface]
+     _tg_ip_address_egress: Union[IPv4Interface, IPv6Interface]
++    test_suite_type: ClassVar[TestSuiteType]
++
++    @classmethod
++    def make_decorator(
++        cls, test_suite_type: TestSuiteType
++    ) -> Callable[[TestSuiteClassType], TestSuiteClassType]:
++        """Creates a decorator for test suites.
++
++        The decorator casts the decorated function as :class:`TestSuite`,
++        sets it as `testsuite_type` and initializes a variable to
++        determine the type of test suite.
++
++        Args:
++            test_suite_type: A functional, performance, or cryptodev test suite.
++
++        Returns:
++            The decorator of a functional, performance, or cryptodev test suite.
++        """
++
++        def _decorator(test_suite_cls: TestSuiteClassType) -> TestSuiteClassType:
++            test_suite_cls.test_suite_type = test_suite_type
++            return test_suite_cls
++
++        return _decorator
+ 
+     def __init__(self, config: BaseConfig) -> None:
+         """Initialize the test suite testbed information and basic configuration.
+@@ -269,6 +304,11 @@ def _adjust_addresses(self, packets: list[Packet], expected: bool = False) -> li
+         return ret_packets
+ 
+ 
++#: Test suite type decorators
++func_suite: Callable[[Any], type["TestSuite"]] = TestSuite.make_decorator(TestSuiteType.FUNC)
++perf_suite: Callable[[Any], type["TestSuite"]] = TestSuite.make_decorator(TestSuiteType.PERF)
++crypto_suite: Callable[[Any], type["TestSuite"]] = TestSuite.make_decorator(TestSuiteType.CRYPTO)
++
+ #: The generic type for a method of an instance of TestSuite
+ TestSuiteMethodType = TypeVar("TestSuiteMethodType", bound=Callable[[TestSuite], None])
+ 
+diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
+index 210ff25af7..3890606512 100644
+--- a/dts/framework/test_run.py
++++ b/dts/framework/test_run.py
+@@ -110,7 +110,7 @@
+ from api.capabilities import LinkTopology
+ from api.context import Context, init_ctx
+ from api.exception import InternalError, SkippedTestException, TestCaseVerifyError
+-from api.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
++from api.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite, TestSuiteType
+ from api.testbed_model.capability import (
+     Capability,
+     get_supported_capabilities,
+@@ -375,11 +375,6 @@ def next(self) -> State | None:
+             ctx.topology.bind_cryptodevs("dpdk")
+ 
+         ctx.topology.configure_ports("sut", "dpdk")
+-        if ctx.func_tg and ctx.topology.type is not LinkTopology.NO_LINK:
+-            ctx.func_tg.setup(ctx.topology)
+-        if ctx.perf_tg and ctx.topology.type is not LinkTopology.NO_LINK:
+-            ctx.perf_tg.setup(ctx.topology)
+-
+         self.result.ports = [
+             port.to_dict() for port in ctx.topology.sut_ports + ctx.topology.tg_ports
+         ]
+@@ -512,6 +507,23 @@ def before(self) -> None:
+         super().before()
+         self.logger.set_custom_log_file(self.test_suite.name)
+ 
++        ctx = self.test_run.ctx
++        test_suite_type = self.test_suite.test_suite_type
++        if (
++            ctx.topology.type is not LinkTopology.NO_LINK
++            and test_suite_type is not TestSuiteType.CRYPTO
++        ):
++            if test_suite_type == TestSuiteType.FUNC:
++                required_tg, other_tg = ctx.func_tg, ctx.perf_tg
++            else:
++                required_tg, other_tg = ctx.perf_tg, ctx.func_tg
++
++            if other_tg and other_tg.is_setup:
++                other_tg.teardown()
++
++            if required_tg and not required_tg.is_setup:
++                required_tg.setup(ctx.topology)
++
+     @property
+     def description(self) -> str:
+         """State description."""
+diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework/testbed_model/linux_session.py
+index 8cc0d09d01..fe3f1a8fc3 100644
+--- a/dts/framework/testbed_model/linux_session.py
++++ b/dts/framework/testbed_model/linux_session.py
+@@ -278,7 +278,8 @@ def bind_ports_to_driver(self, ports: list[Port], driver_name: str) -> None:
+             verify=True,
+         )
+ 
+-        del self._lshw_net_info
++        if self._lshw_net_info:
++            del self._lshw_net_info
+ 
+     def bring_up_link(self, ports: Iterable[Port]) -> None:
+         """Overrides :meth:`~.os_session.OSSession.bring_up_link`."""
+@@ -287,7 +288,8 @@ def bring_up_link(self, ports: Iterable[Port]) -> None:
+                 f"ip link set dev {port.logical_name} up", privileged=True, verify=True
+             )
+ 
+-        del self._lshw_net_info
++        if self._lshw_net_info:
++            del self._lshw_net_info
+ 
+     def set_interface_link_up(self, name: str) -> None:
+         """Overrides :meth:`~.os_session.OSSession.set_interface_link_up`."""
+diff --git a/dts/framework/testbed_model/traffic_generator/trex.py b/dts/framework/testbed_model/traffic_generator/trex.py
+index 7ce1d40d79..055c22e121 100644
+--- a/dts/framework/testbed_model/traffic_generator/trex.py
++++ b/dts/framework/testbed_model/traffic_generator/trex.py
+@@ -110,6 +110,7 @@ def __init__(self, tg_node: Node, config: TrexTrafficGeneratorConfig) -> None:
+     def setup(self, topology: Topology):
+         """Initialize and start a TRex server process."""
+         super().setup(topology)
++        topology.configure_ports("tg", "dpdk")
+         self._topology = topology
+ 
+         self._shell = PythonShell(self._tg_node, "TRex-client", privileged=True)
+diff --git a/dts/tests/TestSuite_blocklist.py b/dts/tests/TestSuite_blocklist.py
+index 31e69c0de9..e32f31b383 100644
+--- a/dts/tests/TestSuite_blocklist.py
++++ b/dts/tests/TestSuite_blocklist.py
+@@ -11,11 +11,12 @@
+     requires_link_topology,
+ )
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testbed_model.port import Port
+ from api.testpmd import TestPmd
+ 
+ 
++@func_suite
+ class TestBlocklist(TestSuite):
+     """DPDK device blocklisting test suite."""
+ 
+diff --git a/dts/tests/TestSuite_buffer_scatter.py b/dts/tests/TestSuite_buffer_scatter.py
+index cd1a52ad5e..adc8e41700 100644
+--- a/dts/tests/TestSuite_buffer_scatter.py
++++ b/dts/tests/TestSuite_buffer_scatter.py
+@@ -28,13 +28,14 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_SCATTER)
++@func_suite
+ class TestBufferScatter(TestSuite):
+     """DPDK PMD packet scattering test suite.
+ 
+diff --git a/dts/tests/TestSuite_checksum_offload.py b/dts/tests/TestSuite_checksum_offload.py
+index a2ea13991b..8c16706f1b 100644
+--- a/dts/tests/TestSuite_checksum_offload.py
++++ b/dts/tests/TestSuite_checksum_offload.py
+@@ -25,7 +25,7 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import ChecksumOffloadOptions, PacketOffloadFlag
+@@ -34,6 +34,7 @@
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_IPV4_CKSUM)
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_UDP_CKSUM)
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_TCP_CKSUM)
++@func_suite
+ class TestChecksumOffload(TestSuite):
+     """Checksum offload test suite.
+ 
+diff --git a/dts/tests/TestSuite_cryptodev_latency.py b/dts/tests/TestSuite_cryptodev_latency.py
+index 444a5b282c..bf3b9b5761 100644
+--- a/dts/tests/TestSuite_cryptodev_latency.py
++++ b/dts/tests/TestSuite_cryptodev_latency.py
+@@ -31,7 +31,7 @@
+     CryptodevResults,
+ )
+ from api.test import skip, verify
+-from api.test_suite import BaseConfig, TestSuite, crypto_test
++from api.test_suite import BaseConfig, TestSuite, crypto_suite, crypto_test
+ from api.testbed_model.virtual_device import VirtualDevice
+ 
+ config_list: list[dict[str, int | float | str]] = [
+@@ -73,6 +73,7 @@ class Config(BaseConfig):
+ 
+ 
+ @requires_link_topology(LinkTopology.NO_LINK)
++@crypto_suite
+ class TestCryptodevLatency(TestSuite):
+     """DPDK Crypto Device Testing Suite."""
+ 
+diff --git a/dts/tests/TestSuite_cryptodev_throughput.py b/dts/tests/TestSuite_cryptodev_throughput.py
+index 59f64f2cd7..7a364a1dc4 100644
+--- a/dts/tests/TestSuite_cryptodev_throughput.py
++++ b/dts/tests/TestSuite_cryptodev_throughput.py
+@@ -31,7 +31,7 @@
+     CryptodevResults,
+ )
+ from api.test import skip, verify
+-from api.test_suite import BaseConfig, TestSuite, crypto_test
++from api.test_suite import BaseConfig, TestSuite, crypto_suite, crypto_test
+ from api.testbed_model.virtual_device import VirtualDevice
+ 
+ config_list: list[dict[str, int | float | str]] = [
+@@ -74,6 +74,7 @@ class Config(BaseConfig):
+ 
+ 
+ @requires_link_topology(LinkTopology.NO_LINK)
++@crypto_suite
+ class TestCryptodevThroughput(TestSuite):
+     """DPDK Crypto Device Testing Suite."""
+ 
+diff --git a/dts/tests/TestSuite_dual_vlan.py b/dts/tests/TestSuite_dual_vlan.py
+index f3347a6d52..6038899c5c 100644
+--- a/dts/tests/TestSuite_dual_vlan.py
++++ b/dts/tests/TestSuite_dual_vlan.py
+@@ -21,11 +21,12 @@
+ from api.capabilities import LinkTopology, requires_link_topology
+ from api.packet import send_packet_and_capture
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ 
+ 
++@func_suite
+ class TestDualVlan(TestSuite):
+     """DPDK Dual VLAN test suite.
+ 
+diff --git a/dts/tests/TestSuite_dynamic_config.py b/dts/tests/TestSuite_dynamic_config.py
+index b9e2c30da1..e071e63a6d 100644
+--- a/dts/tests/TestSuite_dynamic_config.py
++++ b/dts/tests/TestSuite_dynamic_config.py
+@@ -27,13 +27,14 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+ @requires_link_topology(LinkTopology.TWO_LINKS)
++@func_suite
+ class TestDynamicConfig(TestSuite):
+     """Dynamic config suite.
+ 
+diff --git a/dts/tests/TestSuite_dynamic_queue_conf.py b/dts/tests/TestSuite_dynamic_queue_conf.py
+index 24584c7d60..bc11d1ce1f 100644
+--- a/dts/tests/TestSuite_dynamic_queue_conf.py
++++ b/dts/tests/TestSuite_dynamic_queue_conf.py
+@@ -38,7 +38,7 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import send_packets
+ from api.test import fail, verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import PortTopology, SimpleForwardingModes
+ 
+@@ -121,6 +121,7 @@ def _wrap(self: "TestDynamicQueueConf", is_rx_testing: bool) -> None:
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
++@func_suite
+ class TestDynamicQueueConf(TestSuite):
+     """DPDK dynamic queue configuration test suite.
+ 
+diff --git a/dts/tests/TestSuite_flow_offload.py b/dts/tests/TestSuite_flow_offload.py
+index 09384b1983..624ff93b17 100644
+--- a/dts/tests/TestSuite_flow_offload.py
++++ b/dts/tests/TestSuite_flow_offload.py
+@@ -28,7 +28,7 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import fail, log, verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.types import FlowRule
+ 
+@@ -402,6 +402,7 @@ def generate(
+ 
+ 
+ @requires_nic_capability(NicCapability.FLOW_CTRL)
++@func_suite
+ class TestFlowOffload(TestSuite):
+     """Flow offload test suite.
+ 
+diff --git a/dts/tests/TestSuite_hello_world.py b/dts/tests/TestSuite_hello_world.py
+index cd62eb8f3e..9bc555aa08 100644
+--- a/dts/tests/TestSuite_hello_world.py
++++ b/dts/tests/TestSuite_hello_world.py
+@@ -9,7 +9,7 @@
+ """
+ 
+ from api.test import log
+-from api.test_suite import BaseConfig, TestSuite, func_test
++from api.test_suite import BaseConfig, TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ 
+ 
+@@ -20,6 +20,7 @@ class Config(BaseConfig):
+     msg: str = "Hello World!"
+ 
+ 
++@func_suite
+ class TestHelloWorld(TestSuite):
+     """Hello World test suite. One test case, which starts and stops a testpmd session."""
+ 
+diff --git a/dts/tests/TestSuite_l2fwd.py b/dts/tests/TestSuite_l2fwd.py
+index f237821a04..b987efbebf 100644
+--- a/dts/tests/TestSuite_l2fwd.py
++++ b/dts/tests/TestSuite_l2fwd.py
+@@ -19,7 +19,7 @@
+     match_all_packets,
+     send_packets_and_capture,
+ )
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testbed_model.cpu import LogicalCoreCount
+ from api.testpmd import TestPmd
+ from api.testpmd.config import EthPeer, SimpleForwardingModes
+@@ -28,6 +28,7 @@
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+ @requires_link_topology(LinkTopology.TWO_LINKS)
++@func_suite
+ class TestL2fwd(TestSuite):
+     """L2 forwarding test suite."""
+ 
+diff --git a/dts/tests/TestSuite_mac_filter.py b/dts/tests/TestSuite_mac_filter.py
+index eb1413f336..f244203593 100644
+--- a/dts/tests/TestSuite_mac_filter.py
++++ b/dts/tests/TestSuite_mac_filter.py
+@@ -26,11 +26,12 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import send_packet_and_capture
+ from api.test import fail, verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
++@func_suite
+ class TestMacFilter(TestSuite):
+     """Mac address allowlist filtering test suite.
+ 
+diff --git a/dts/tests/TestSuite_mtu.py b/dts/tests/TestSuite_mtu.py
+index c264db299e..f834be1818 100644
+--- a/dts/tests/TestSuite_mtu.py
++++ b/dts/tests/TestSuite_mtu.py
+@@ -23,7 +23,7 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ 
+ STANDARD_FRAME = 1518  # --max-pkt-len will subtract l2 information at a minimum of 18 bytes.
+@@ -37,6 +37,7 @@
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
++@func_suite
+ class TestMtu(TestSuite):
+     """DPDK PMD jumbo frames and MTU update test suite.
+ 
+diff --git a/dts/tests/TestSuite_packet_capture.py b/dts/tests/TestSuite_packet_capture.py
+index 07bfabb30b..f319d99ede 100644
+--- a/dts/tests/TestSuite_packet_capture.py
++++ b/dts/tests/TestSuite_packet_capture.py
+@@ -37,7 +37,7 @@
+ )
+ from api.params import Params
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testbed_model.cpu import LogicalCoreList
+ from api.testbed_model.traffic_generator.capturing_traffic_generator import PacketFilteringConfig
+ from api.testpmd import TestPmd
+@@ -65,6 +65,7 @@ class DumpcapParams(Params):
+ 
+ 
+ @requires_link_topology(LinkTopology.TWO_LINKS)
++@func_suite
+ class TestPacketCapture(TestSuite):
+     """Packet Capture TestSuite.
+ 
+diff --git a/dts/tests/TestSuite_port_control.py b/dts/tests/TestSuite_port_control.py
+index c2f2de3493..2aa613bc25 100644
+--- a/dts/tests/TestSuite_port_control.py
++++ b/dts/tests/TestSuite_port_control.py
+@@ -18,12 +18,13 @@
+ )
+ from api.packet import send_packets_and_capture
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
++@func_suite
+ class TestPortControl(TestSuite):
+     """DPDK Port Control Testing Suite."""
+ 
+diff --git a/dts/tests/TestSuite_port_restart_config_persistency.py b/dts/tests/TestSuite_port_restart_config_persistency.py
+index 88df35d33c..626baa2097 100644
+--- a/dts/tests/TestSuite_port_restart_config_persistency.py
++++ b/dts/tests/TestSuite_port_restart_config_persistency.py
+@@ -14,7 +14,7 @@
+     requires_nic_capability,
+ )
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.types import TestPmdPortFlowCtrl
+ 
+@@ -23,6 +23,7 @@
+ ALTERNATIVE_MAC_ADDRESS: str = "42:A6:B7:9E:B4:81"
+ 
+ 
++@func_suite
+ class TestPortRestartConfigPersistency(TestSuite):
+     """Port config persistency test suite."""
+ 
+diff --git a/dts/tests/TestSuite_port_stats.py b/dts/tests/TestSuite_port_stats.py
+index 0328c6718c..e2980d8d61 100644
+--- a/dts/tests/TestSuite_port_stats.py
++++ b/dts/tests/TestSuite_port_stats.py
+@@ -25,7 +25,7 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import RtePTypes, TestPmdVerbosePacket
+@@ -33,6 +33,7 @@
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+ @requires_link_topology(LinkTopology.TWO_LINKS)
++@func_suite
+ class TestPortStats(TestSuite):
+     """DPDK Port statistics testing suite.
+ 
+diff --git a/dts/tests/TestSuite_promisc_support.py b/dts/tests/TestSuite_promisc_support.py
+index c59c8c6078..adbdf77631 100644
+--- a/dts/tests/TestSuite_promisc_support.py
++++ b/dts/tests/TestSuite_promisc_support.py
+@@ -21,11 +21,12 @@
+     send_packets_and_capture,
+ )
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
++@func_suite
+ class TestPromiscSupport(TestSuite):
+     """Promiscuous mode support test suite."""
+ 
+diff --git a/dts/tests/TestSuite_qinq.py b/dts/tests/TestSuite_qinq.py
+index 5dde37d4db..67884a113c 100644
+--- a/dts/tests/TestSuite_qinq.py
++++ b/dts/tests/TestSuite_qinq.py
+@@ -18,10 +18,11 @@
+ from api.capabilities import NicCapability, requires_nic_capability
+ from api.packet import send_packet_and_capture
+ from api.test import log, verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ 
+ 
++@func_suite
+ class TestQinq(TestSuite):
+     """QinQ test suite.
+ 
+diff --git a/dts/tests/TestSuite_queue_toggle.py b/dts/tests/TestSuite_queue_toggle.py
+index a9ea356b22..0ad362d233 100644
+--- a/dts/tests/TestSuite_queue_toggle.py
++++ b/dts/tests/TestSuite_queue_toggle.py
+@@ -24,7 +24,7 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ 
+@@ -32,6 +32,7 @@
+ @requires_link_topology(LinkTopology.TWO_LINKS)
+ @requires_nic_capability(NicCapability.RUNTIME_RX_QUEUE_SETUP)
+ @requires_nic_capability(NicCapability.RUNTIME_TX_QUEUE_SETUP)
++@func_suite
+ class TestQueueToggle(TestSuite):
+     """DPDK Queue start/stop test suite.
+ 
+diff --git a/dts/tests/TestSuite_rss.py b/dts/tests/TestSuite_rss.py
+index b538e93af9..289c69d225 100644
+--- a/dts/tests/TestSuite_rss.py
++++ b/dts/tests/TestSuite_rss.py
+@@ -23,7 +23,7 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import send_packets_and_capture
+ from api.test import verify
+-from api.test_suite import BaseConfig, TestSuite, func_test
++from api.test_suite import BaseConfig, TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import (
+@@ -55,6 +55,7 @@ class HashAlgorithm(StrEnum):
+ 
+ @requires_link_topology(LinkTopology.ONE_LINK)
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_RSS_HASH)
++@func_suite
+ class TestRss(TestSuite):
+     """RSS test suite."""
+ 
+diff --git a/dts/tests/TestSuite_rx_split.py b/dts/tests/TestSuite_rx_split.py
+index 3b3e4cd620..eac377e93e 100644
+--- a/dts/tests/TestSuite_rx_split.py
++++ b/dts/tests/TestSuite_rx_split.py
+@@ -21,7 +21,7 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import adjust_addresses, send_packet_and_capture
+ from api.test import fail, verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import RxOffloadCapability, TxOffloadCapability
+@@ -35,6 +35,7 @@
+ 
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_BUFFER_SPLIT)
+ @requires_nic_capability(NicCapability.SELECTIVE_RX)
++@func_suite
+ class TestRxSplit(TestSuite):
+     """Rx split test suite.
+ 
+diff --git a/dts/tests/TestSuite_rx_tx_offload.py b/dts/tests/TestSuite_rx_tx_offload.py
+index c8d24baaae..cbf9a249b4 100644
+--- a/dts/tests/TestSuite_rx_tx_offload.py
++++ b/dts/tests/TestSuite_rx_tx_offload.py
+@@ -13,7 +13,7 @@
+     requires_nic_capability,
+ )
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.types import (
+     OffloadConfiguration,
+@@ -22,6 +22,7 @@
+ 
+ 
+ @requires_link_topology(LinkTopology.ONE_LINK)
++@func_suite
+ class TestRxTxOffload(TestSuite):
+     """RX/TX offload test suite."""
+ 
+diff --git a/dts/tests/TestSuite_single_core_forward_perf.py b/dts/tests/TestSuite_single_core_forward_perf.py
+index 4b22c5d091..c96411cf18 100644
+--- a/dts/tests/TestSuite_single_core_forward_perf.py
++++ b/dts/tests/TestSuite_single_core_forward_perf.py
+@@ -23,7 +23,7 @@
+ from api.packet import assess_performance_by_packet
+ from api.params.types import TestPmdParamsDict
+ from api.test import verify, write_performance_json
+-from api.test_suite import BaseConfig, TestSuite, perf_test
++from api.test_suite import BaseConfig, TestSuite, perf_suite, perf_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import RXRingParams, TXRingParams
+ 
+@@ -42,6 +42,7 @@ class Config(BaseConfig):
+     delta_tolerance: float = 0.05
+ 
+ 
++@perf_suite
+ @requires_link_topology(LinkTopology.TWO_LINKS)
+ class TestSingleCoreForwardPerf(TestSuite):
+     """Single core forwarding performance test suite."""
+diff --git a/dts/tests/TestSuite_smoke_tests.py b/dts/tests/TestSuite_smoke_tests.py
+index b3eb325fc0..993620641c 100644
+--- a/dts/tests/TestSuite_smoke_tests.py
++++ b/dts/tests/TestSuite_smoke_tests.py
+@@ -19,7 +19,7 @@
+     requires_link_topology,
+ )
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testbed_model.linux_session import LinuxSession
+ from api.testpmd import TestPmd
+ from api.utils import REGEX_FOR_PCI_ADDRESS
+@@ -28,6 +28,7 @@
+ 
+ 
+ @requires_link_topology(LinkTopology.NO_LINK)
++@func_suite
+ class TestSmokeTests(TestSuite):
+     """DPDK and infrastructure smoke test suite.
+ 
+diff --git a/dts/tests/TestSuite_softnic.py b/dts/tests/TestSuite_softnic.py
+index 05a6d3aa18..f601130d56 100644
+--- a/dts/tests/TestSuite_softnic.py
++++ b/dts/tests/TestSuite_softnic.py
+@@ -18,7 +18,7 @@
+     match_all_packets,
+     send_packets_and_capture,
+ )
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testbed_model.virtual_device import VirtualDevice
+ from api.testpmd import TestPmd
+ from api.testpmd.config import EthPeer
+@@ -27,6 +27,7 @@
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+ @requires_link_topology(LinkTopology.TWO_LINKS)
++@func_suite
+ class TestSoftnic(TestSuite):
+     """Softnic test suite."""
+ 
+diff --git a/dts/tests/TestSuite_speed_capabilities.py b/dts/tests/TestSuite_speed_capabilities.py
+index c9b0f74feb..56c0d0a51a 100644
+--- a/dts/tests/TestSuite_speed_capabilities.py
++++ b/dts/tests/TestSuite_speed_capabilities.py
+@@ -13,7 +13,7 @@
+     requires_link_topology,
+ )
+ from api.test import verify
+-from api.test_suite import BaseConfig, TestSuite, func_test
++from api.test_suite import BaseConfig, TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ 
+ 
+@@ -39,6 +39,7 @@ class Config(BaseConfig):
+ 
+ 
+ @requires_link_topology(LinkTopology.ONE_LINK)
++@func_suite
+ class TestSpeedCapabilities(TestSuite):
+     """Speed capabilities test suite."""
+ 
+diff --git a/dts/tests/TestSuite_unified_packet.py b/dts/tests/TestSuite_unified_packet.py
+index bf3654f0d7..006f124d19 100644
+--- a/dts/tests/TestSuite_unified_packet.py
++++ b/dts/tests/TestSuite_unified_packet.py
+@@ -25,12 +25,13 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import RtePTypes, TestPmdVerbosePacket
+ 
+ 
++@func_suite
+ class TestUnifiedPacket(TestSuite):
+     """DPDK Unified packet test suite.
+ 
+diff --git a/dts/tests/TestSuite_virtio_forward.py b/dts/tests/TestSuite_virtio_forward.py
+index a52c1a4402..52889a844b 100644
+--- a/dts/tests/TestSuite_virtio_forward.py
++++ b/dts/tests/TestSuite_virtio_forward.py
+@@ -12,13 +12,14 @@
+ from api.capabilities import LinkTopology, requires_link_topology
+ from api.packet import send_packets_and_capture
+ from api.test import log, verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testbed_model.linux_session import LinuxSession
+ from api.testbed_model.virtual_device import VirtualDevice
+ from api.testpmd import TestPmd
+ from api.testpmd.config import PortTopology, SimpleForwardingModes
+ 
+ 
++@func_suite
+ class TestVirtioForward(TestSuite):
+     """Virtio forwarding test suite."""
+ 
+diff --git a/dts/tests/TestSuite_vlan.py b/dts/tests/TestSuite_vlan.py
+index 975e87b128..edd93e3487 100644
+--- a/dts/tests/TestSuite_vlan.py
++++ b/dts/tests/TestSuite_vlan.py
+@@ -23,12 +23,13 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
+-from api.test_suite import TestSuite, func_test
++from api.test_suite import TestSuite, func_suite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ 
+ 
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_VLAN_FILTER)
++@func_suite
+ class TestVlan(TestSuite):
+     """DPDK VLAN test suite.
+ 
+-- 
+2.56.0
 
-After looking into it further, I've found the bug!. The setup for TRex
-never calls configure_ports() at all, instead letting TRex handle port
-bindings itself internally which leaves the port configurations in a stale
-state. I've added the configure_ports("tg", "dpdk") call to the setup
-method in trex.py and removed all manual port bindings and teardowns. I've
-tested the change and it works accurately on my end. I'll send out another
-version of my patch shortly. Thanks!
-
---0000000000008d3c58065e8829a2
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, Oct 23,=
- 2026 at 1:38=E2=80=AFPM Luca Vizzarro &lt;<a href=3D"mailto:Luca.Vizzarro@=
-arm.com">Luca.Vizzarro@arm.com</a>&gt; wrote:<br></div><blockquote class=3D=
-"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(2=
-04,204,204);padding-left:1ex">On 22/10/2026 18:29, Koushik Bhargav Nimoji w=
-rote:<br>
-&gt; <br>
-&gt; <br>
-&gt; On Thu, Oct 22, 2026 at 9:51=E2=80=AFAM Luca Vizzarro &lt;<a href=3D"m=
-ailto:Luca.Vizzarro@arm.com" target=3D"_blank">Luca.Vizzarro@arm.com</a> <b=
-r>
-&gt; &lt;mailto:<a href=3D"mailto:Luca.Vizzarro@arm.com" target=3D"_blank">=
-Luca.Vizzarro@arm.com</a>&gt;&gt; wrote:<br>
-&gt; <br>
-&gt;=C2=A0 =C2=A0 =C2=A0On 20/10/2026 17:06, Koushik Bhargav Nimoji wrote:<=
-br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt; On Fri, Oct 16, 2026 at 12:28=E2=80=AFPM Luca=
- Vizzarro<br>
-&gt;=C2=A0 =C2=A0 =C2=A0&lt;<a href=3D"mailto:Luca.Vizzarro@arm.com" target=
-=3D"_blank">Luca.Vizzarro@arm.com</a> &lt;mailto:<a href=3D"mailto:Luca.Viz=
-zarro@arm.com" target=3D"_blank">Luca.Vizzarro@arm.com</a>&gt;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt; &lt;mailto:<a href=3D"mailto:Luca.Vizzarro@ar=
-m.com" target=3D"_blank">Luca.Vizzarro@arm.com</a> &lt;mailto:<a href=3D"ma=
-ilto:Luca.Vizzarro@arm.com" target=3D"_blank">Luca.Vizzarro@arm.com</a>&gt;=
-&gt;&gt; wrote:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 if (<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 ctx.topology.type is not LinkTopology.NO_LINK<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 and testsuite_type is not TestSuiteType.CRYPTO<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 ):<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 if testsuite_type =3D=3D TestSuiteType.FUNC:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 required_tg, other_tg =3D ctx.func_t=
-g,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0ctx.perf_tg<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 else:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 required_tg, other_tg =3D ctx.perf_t=
-g,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0ctx.func_tg<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 if other_tg and other_tg.is_setup:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 other_tg.teardown()<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if testsuite_type =3D=3D TestSuiteTy=
-pe.FUNC and<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0ctx.tg_node:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for port in ctx.topolo=
-gy.tg_ports:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0 &gt; +<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0ctx.tg_node.main_session.b=
-ind_ports_to_driver([port],<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0port.config.os_driver)<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0I am a bit confused why th=
-is happens here. The driver to be<br>
-&gt;=C2=A0 =C2=A0 =C2=A0bound to<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0should be governed by the =
-TG that uses such ports. Could be<br>
-&gt;=C2=A0 =C2=A0 =C2=A0os_driver,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;=C2=A0 =C2=A0 =C2=A0could be dpdk_driver, rega=
-rdless of Scapy and TRex.<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt; This section exists because of how scapy and =
-TRex handle port driver<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt; bindings. TRex automatically binds ports to t=
-he required driver when<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt; setup, but scapy requires it to be done manua=
-lly. That&#39;s why if<br>
-&gt;=C2=A0 =C2=A0 =C2=A0the next<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt; test suite to be tested is a functional test =
-suite, the TG ports are<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 &gt; rebound to the os_driver manually here.<br>
-&gt; <br>
-&gt;=C2=A0 =C2=A0 =C2=A0So I think the original intention here was that TRe=
-x would<br>
-&gt;=C2=A0 =C2=A0 =C2=A0exceptionally<br>
-&gt;=C2=A0 =C2=A0 =C2=A0change the driver as the normal behaviour was that =
-the TG was not going<br>
-&gt;=C2=A0 =C2=A0 =C2=A0to be subject to driver binding. Therefore what wou=
-ld make sense is for<br>
-&gt;=C2=A0 =C2=A0 =C2=A0the TG to control driver binding accordingly. So if=
- Scapy is setup that<br>
-&gt;=C2=A0 =C2=A0 =C2=A0it would be up to Scapy to &quot;bind to kernel dri=
-vers&quot; if needed. What do<br>
-&gt;=C2=A0 =C2=A0 =C2=A0you think?<br>
-&gt; <br>
-&gt; <br>
-&gt; I think you&#39;re definitely right here, it should be up to the TG to=
- take <br>
-&gt; care of port bindings instead of doing it manually. Scapy currently do=
-es <br>
-&gt; take care of that, but there&#39;s an issue with DTS&#39;s internal st=
-ate being <br>
-&gt; out of date after rebinding to the kernel driver. As a workaround for =
-<br>
-&gt; this, I have added a teardown method to trex.py that rebinds ports to =
-<br>
-&gt; the kernel driver before scapy is set up. I will send out a version <b=
-r>
-&gt; shortly that reflects these changes, thanks for bringing this up.<br>
-<br>
-So I think the problem with the state is because you are not using <br>
-Topology which is the ports manager/owner. Even if `main_session` is <br>
-public, it&#39;s an internal API which use should be limited to some. If yo=
-u <br>
-look at the setup of Scapy:<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0def setup(self, topology: Topology) -&gt; None:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0super().setup(topology)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0topology.configure_ports(&quot;tg&quot;, =
-&quot;kernel&quot;)<br>
-<br>
-What I expect to see in the Trex class is:<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0def setup(self, topology: Topology) -&gt; None:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0super().setup(topology)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0topology.configure_ports(&quot;tg&quot;, =
-&quot;dpdk&quot;)<br>
-<br>
-If this doesn&#39;t work as intended, then there is a bug that needs resolv=
-ing.<br>
-<br>
-Luca<br></blockquote><div><br></div><div>After looking into it further, I&#=
-39;ve found the bug!. The setup for TRex never calls configure_ports() at a=
-ll, instead letting TRex handle port bindings itself internally which leave=
-s=C2=A0the port configurations in a stale state. I&#39;ve added the configu=
-re_ports(&quot;tg&quot;, &quot;dpdk&quot;) call to the setup method in trex=
-.py and removed all manual port bindings and teardowns. I&#39;ve tested the=
- change and it works accurately on my end. I&#39;ll send out another versio=
-n of my patch shortly. Thanks!</div></div></div>
-
---0000000000008d3c58065e8829a2--
