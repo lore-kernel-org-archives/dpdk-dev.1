@@ -1,31 +1,31 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0726E60A2609
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AE0606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:48:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2164D410EE;
-	Fri, 23 Oct 2026 15:44:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E9D1241156;
+	Fri, 23 Oct 2026 15:44:46 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 3ACD340693
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:35 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 456B340695
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:36 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1EF6120002B;
- Fri, 23 Oct 2026 15:44:35 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 25848200038;
+ Fri, 23 Oct 2026 15:44:36 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DEC41200020;
- Fri, 23 Oct 2026 15:44:34 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C79B1200031;
+ Fri, 23 Oct 2026 15:44:35 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 62AF318000B5;
- Fri, 23 Oct 2026 21:44:33 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6FF0418000BA;
+ Fri, 23 Oct 2026 21:44:34 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4-S3 39/65] event/dpaa2: limit attached Rx flows per event
- queue
-Date: Fri, 23 Oct 2026 19:13:19 +0530
-Message-ID: <20261023134346.37727-40-prashant.gupta_3@nxp.com>
+Subject: [PATCH v4-S3 40/65] eventdev: fix port link/unlink callback return
+ documentation
+Date: Fri, 23 Oct 2026 19:13:20 +0530
+Message-ID: <20261023134346.37727-41-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
 References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
@@ -52,75 +52,70 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Jun Yang <jun.yang@nxp.com>
 
-The array tracking Rx queues attached to an event queue used a
-separate DPAA2_EVENTQ_DPNI_RXQ_ATTACH_MAX (128) bound, which was
-unrelated to the event queue flow limit. Reuse the existing
-DPAA2_EVENT_MAX_QUEUE_FLOWS limit instead so a single value governs
-how many flows can target one event queue.
+The eventdev_port_link_t, eventdev_port_link_profile_t,
+eventdev_port_unlink_t and eventdev_port_unlink_profile_t PMD callbacks
+return the number of links (or unlinks) successfully established, and a
+negative value on failure. This matches the rte_event_port_link() and
+rte_event_port_unlink() public API contract and the existing driver
+implementations.
 
-Reduce DPAA2_EVENT_MAX_QUEUE_FLOWS from 2048 to 1024, size the
-dpni_rxqs[] array by that limit, and drop the now unused
-DPAA2_EVENTQ_DPNI_RXQ_ATTACH_MAX define. Widen dpni_rxq_num and the
-local attach index to uint16_t so they can hold the larger count, and
-update the attach error message to report the offending event queue.
+The Doxygen comments incorrectly stated that these callbacks "Returns 0
+on success", which is misleading for PMD authors and inconsistent with
+the actual behaviour. Update the documentation to describe the real
+return semantics.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/event/dpaa2/dpaa2_eventdev.c | 6 +++---
- drivers/event/dpaa2/dpaa2_eventdev.h | 7 +++----
- 2 files changed, 6 insertions(+), 7 deletions(-)
+ lib/eventdev/eventdev_pmd.h | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/event/dpaa2/dpaa2_eventdev.c b/drivers/event/dpaa2/dpaa2_eventdev.c
-index be6d8bc3da..cd2b00c3c9 100644
---- a/drivers/event/dpaa2/dpaa2_eventdev.c
-+++ b/drivers/event/dpaa2/dpaa2_eventdev.c
-@@ -48,11 +48,11 @@ dpaa2_eventdev_attach_eth_rxq(const struct rte_eth_dev *dev,
- {
- 	int ret;
- 	uint8_t ev_qid = queue_conf->ev.queue_id;
--	uint8_t idx = priv->evq_info[ev_qid].dpni_rxq_num;
-+	uint16_t idx = priv->evq_info[ev_qid].dpni_rxq_num;
- 	struct dpaa2_dpcon_dev *dpcon = priv->evq_info[ev_qid].dpcon;
- 
--	if (idx >= DPAA2_EVENTQ_DPNI_RXQ_ATTACH_MAX) {
--		DPAA2_EVENTDEV_ERR("Too many queues to attach.");
-+	if (idx >= DPAA2_EVENT_MAX_QUEUE_FLOWS) {
-+		DPAA2_EVENTDEV_ERR("Too many flows to attach eventq%d", ev_qid);
- 		return -ENOMEM;
- 	}
- 	ret = dpaa2_eth_eventq_attach(dev, rxq_id, dpcon, queue_conf);
-diff --git a/drivers/event/dpaa2/dpaa2_eventdev.h b/drivers/event/dpaa2/dpaa2_eventdev.h
-index 0a98088fe1..adeb22bda6 100644
---- a/drivers/event/dpaa2/dpaa2_eventdev.h
-+++ b/drivers/event/dpaa2/dpaa2_eventdev.h
-@@ -19,7 +19,7 @@
- #define DPAA2_EVENT_MIN_DEQUEUE_TIMEOUT		1
- #define DPAA2_EVENT_MAX_DEQUEUE_TIMEOUT		(UINT32_MAX - 1)
- #define DPAA2_EVENT_PORT_DEQUEUE_TIMEOUT_NS	100UL
--#define DPAA2_EVENT_MAX_QUEUE_FLOWS		2048
-+#define DPAA2_EVENT_MAX_QUEUE_FLOWS		1024
- #define DPAA2_EVENT_MAX_QUEUE_PRIORITY_LEVELS	8
- #define DPAA2_EVENT_MAX_EVENT_PRIORITY_LEVELS	0
- #define DPAA2_EVENT_MAX_NUM_EVENTS		(INT32_MAX - 1)
-@@ -52,7 +52,6 @@ enum {
+diff --git a/lib/eventdev/eventdev_pmd.h b/lib/eventdev/eventdev_pmd.h
+index 9309dce5e1..fcf9b6922d 100644
+--- a/lib/eventdev/eventdev_pmd.h
++++ b/lib/eventdev/eventdev_pmd.h
+@@ -1,5 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  * Copyright(c) 2016 Cavium, Inc
++ * Copyright 2026 NXP
   */
  
- #define DPAA2_EVENTQ_LINK_CONF_MAX 4 /** Max schedule type + 1.*/
--#define DPAA2_EVENTQ_DPNI_RXQ_ATTACH_MAX 128
- struct dpaa2_eventq {
- 	int valid;
- 	void *event_port;
-@@ -64,8 +63,8 @@ struct dpaa2_eventq {
- 	uint32_t event_queue_cfg;
- 	uint32_t event_queue_id;
- 	struct dpaa2_queue *dpci_txqs[DPAA2_EVENTQ_LINK_CONF_MAX];
--	uint8_t dpni_rxq_num;
--	struct dpaa2_queue *dpni_rxqs[DPAA2_EVENTQ_DPNI_RXQ_ATTACH_MAX];
-+	uint16_t dpni_rxq_num;
-+	struct dpaa2_queue *dpni_rxqs[DPAA2_EVENT_MAX_QUEUE_FLOWS];
- };
- 
- struct dpaa2_port {
+ #ifndef _RTE_EVENTDEV_PMD_H_
+@@ -441,7 +442,7 @@ typedef void (*eventdev_port_quiesce_t)(struct rte_eventdev *dev, void *port,
+  *   The number of links to establish
+  *
+  * @return
+- *   Returns 0 on success.
++ *   Number of links successfully established, or a negative value on failure.
+  */
+ typedef int (*eventdev_port_link_t)(struct rte_eventdev *dev, void *port,
+ 		const uint8_t queues[], const uint8_t priorities[],
+@@ -467,7 +468,7 @@ typedef int (*eventdev_port_link_t)(struct rte_eventdev *dev, void *port,
+  *   The profile ID to associate the links.
+  *
+  * @return
+- *   Returns 0 on success.
++ *   Number of links successfully established, or a negative value on failure.
+  */
+ typedef int (*eventdev_port_link_profile_t)(struct rte_eventdev *dev, void *port,
+ 					    const uint8_t queues[], const uint8_t priorities[],
+@@ -486,7 +487,7 @@ typedef int (*eventdev_port_link_profile_t)(struct rte_eventdev *dev, void *port
+  *   The number of unlinks to establish
+  *
+  * @return
+- *   Returns 0 on success.
++ *   Number of unlinks successfully established, or a negative value on failure.
+  */
+ typedef int (*eventdev_port_unlink_t)(struct rte_eventdev *dev, void *port,
+ 		uint8_t queues[], uint16_t nb_unlinks);
+@@ -507,7 +508,7 @@ typedef int (*eventdev_port_unlink_t)(struct rte_eventdev *dev, void *port,
+  *   The profile ID of the associated links.
+  *
+  * @return
+- *   Returns 0 on success.
++ *   Number of unlinks successfully established, or a negative value on failure.
+  */
+ typedef int (*eventdev_port_unlink_profile_t)(struct rte_eventdev *dev, void *port,
+ 					      uint8_t queues[], uint16_t nb_unlinks,
 -- 
 2.43.0
 
