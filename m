@@ -1,47 +1,49 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8892606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 09:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB5B606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 09:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ckFr8ehF
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NH1UUwW/
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 49C13406B8;
-	Fri, 23 Oct 2026 11:33:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1338340A76;
+	Fri, 23 Oct 2026 11:33:02 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 5CC8140299
- for <dev@dpdk.org>; Fri, 23 Oct 2026 11:32:50 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id DCC384069D
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 11:32:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792747971; x=1824283971;
+ t=1792747973; x=1824283973;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=OkljhXq1VoOyhIJoNeIUykuD42EJhWPvik+ef6avdqc=;
- b=ckFr8ehFwg45/ER4IHAz0wQ5bXst4gQL51Ekx8NOVHuChYR5GHhXIEbe
- IdTSvLd3p726tyVt5+lteoMt0fb+1mTFBHExw+DhWWeifzFvjg69lGkyz
- Xv4Bv3TPorxXRE1/kEGVyQmfOvZSbKk/z7P1osxCbGN1PaGW6qvE4NCFR
- 1Ik10R+eSp/VILyPmH8ul4BUIESMffZC0xQ+8dkrWiAZmtSAZmRj86Nae
- qBEvRjeQzyPL03xM0jdtEwcliQ1c+RuZIrQxSQ8w2wXbpPsLUsBU9bEeY
- OBFEq0H+2zBX3hVIIj40Sbv+kBcpj0NgdJfOROnYs3XetdJl2Vbqzn+vJ w==;
-X-CSE-ConnectionGUID: 3KHRMRMwT1m+/8o/xHXcPA==
-X-CSE-MsgGUID: HI1m4DIjSuKnuDlTOgAMGA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1498297"
+ bh=hq0P4ux0nQWP04k0XinORTQ9i6KtTjg8wnt7boQD5BE=;
+ b=NH1UUwW/8ucLcHduLHGjzjIoTyH4lMhTJkKbeiSyOaJ03OQ7pZKCTNGN
+ md92bL9or0ZzwswVEl2cj2CS/TN68vd6800wnfGh8dj9HslizElVnzYi7
+ 3N/eTBcBIY+6rRoOYCVoIxlrAAxZnMuVRbKQvtcPCAw7diSAcruzcLDpJ
+ SjuYIYP4ZKTfPTweZoaOxiPph1LCOsi2h+XrjLU7oCjzML64rdNSlDoum
+ mbUs6pwDPU5DnR/KAwHB9mM0fKJsIbfSWvMZMYQ1bEA7ry0CdtENqlcDo
+ gq7xFUp10An7oNc+byWUbNwnmCjc58L24OC4x94zgjvC2OJKlude+eEn/ A==;
+X-CSE-ConnectionGUID: TbgSmwzfQEGulEzL1wgqUQ==
+X-CSE-MsgGUID: 9+zp++CFThul8NXzVQHX1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1498301"
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="1498297"
+   d="scan'208";a="1498301"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Oct 2026 02:32:51 -0700
-X-CSE-ConnectionGUID: SvtSQD2tSXupBHgYYzZ7Jw==
-X-CSE-MsgGUID: 8SytSnYzTY2jGtIuMJWN0Q==
+ 23 Oct 2026 02:32:52 -0700
+X-CSE-ConnectionGUID: tyGwp2q0TPiCTK8lcHi2ug==
+X-CSE-MsgGUID: F80esuOWTaO6XDSSBeyn4g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="3509508"
+   d="scan'208";a="3509511"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 23 Oct 2026 02:32:49 -0700
+ by orviesa003.jf.intel.com with ESMTP; 23 Oct 2026 02:32:51 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Radu Nicolau <radu.nicolau@intel.com>
-Subject: [PATCH v5 09/10] net/iavf: fix null engine for egress security flows
-Date: Fri, 23 Oct 2026 10:32:29 +0100
-Message-ID: <3356ed0d8682e7a4677e44681d492fca2986b435.1792747917.git.anatoly.burakov@intel.com>
+ Declan Doherty <declan.doherty@intel.com>,
+ Radu Nicolau <radu.nicolau@intel.com>, Jingjing Wu <jingjing.wu@intel.com>,
+ Abhijit Sinha <abhijit.sinha@intel.com>
+Subject: [PATCH v5 10/10] net/iavf: fix IPsec flow metadata leaks
+Date: Fri, 23 Oct 2026 10:32:30 +0100
+Message-ID: <e502ec6f64df1b464c7b3c687af188a1a374bb2e.1792747917.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1792747916.git.anatoly.burakov@intel.com>
  <cover.1792747916.git.anatoly.burakov@intel.com>
@@ -65,311 +67,72 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Egress security flows bypass the flow parsers and are inserted with a
-NULL `engine` pointer. The create path then dereferences that pointer
-when logging the new flow, and other engine-based operations cannot
-handle the flow consistently.
+IPsec flow parsing leaves the pattern-match item allocated after
+extracting its metadata. It also leaves the parsed flow item allocated
+when no metadata output is requested.
 
-Register an egress security engine and route these flows through the
-normal parser and lifecycle callbacks. Egress flows own no rule and
-require no hardware teardown.
+Free the pattern-match item after parsing and free the parsed flow item
+when it cannot be returned to the caller. Propagate pattern-match failure
+and report a parsing error when no flow item was produced.
 
-Fixes: e783da175250 ("net/iavf: fix memory leak on egress IPsec flows")
+Fixes: 6bc987ecb860 ("net/iavf: support IPsec inline crypto")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 Acked-by: Radu Nicolau <radu.nicolau@intel.com>
 ---
- drivers/net/intel/iavf/iavf_generic_flow.c |  44 +++-----
- drivers/net/intel/iavf/iavf_generic_flow.h |   2 +-
- drivers/net/intel/iavf/iavf_ipsec_crypto.c | 120 +++++++++++++++++++--
- 3 files changed, 123 insertions(+), 43 deletions(-)
+ drivers/net/intel/iavf/iavf_ipsec_crypto.c | 28 +++++++++++++++-------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_generic_flow.c b/drivers/net/intel/iavf/iavf_generic_flow.c
-index 1593ea297c2..be7ddf5db63 100644
---- a/drivers/net/intel/iavf/iavf_generic_flow.c
-+++ b/drivers/net/intel/iavf/iavf_generic_flow.c
-@@ -1914,7 +1914,8 @@ iavf_register_parser(struct iavf_flow_parser *parser,
- 			}
- 		}
- 		TAILQ_INSERT_HEAD(list, parser_node, node);
--	} else if (parser->engine->type == IAVF_FLOW_ENGINE_IPSEC_CRYPTO) {
-+	} else if (parser->engine->type == IAVF_FLOW_ENGINE_IPSEC_CRYPTO ||
-+		   parser->engine->type == IAVF_FLOW_ENGINE_IPSEC_EGRESS) {
- 		list = &vf->ipsec_crypto_parser_list;
- 		TAILQ_INSERT_HEAD(list, parser_node, node);
- 	} else if (parser->engine->type == IAVF_FLOW_ENGINE_FSUB) {
-@@ -1943,7 +1944,8 @@ iavf_unregister_parser(struct iavf_flow_parser *parser,
- 	else if ((parser->engine->type == IAVF_FLOW_ENGINE_FDIR) ||
- 		 (parser->engine->type == IAVF_FLOW_ENGINE_FSUB))
- 		list = &vf->dist_parser_list;
--	else if (parser->engine->type == IAVF_FLOW_ENGINE_IPSEC_CRYPTO)
-+	else if (parser->engine->type == IAVF_FLOW_ENGINE_IPSEC_CRYPTO ||
-+		 parser->engine->type == IAVF_FLOW_ENGINE_IPSEC_EGRESS)
- 		list = &vf->ipsec_crypto_parser_list;
- 
- 	if (list == NULL)
-@@ -2250,12 +2252,6 @@ iavf_flow_create(struct rte_eth_dev *dev,
- 		return flow;
- 	}
- 
--	/* Special case for inline crypto egress flows */
--	if (attr->egress && actions[0].type == RTE_FLOW_ACTION_TYPE_SECURITY) {
--		flow->is_ipsec_egress_flow = true;
--		goto tailq_insert;
--	}
--
- 	ret = iavf_flow_process_filter(dev, flow, attr, pattern, actions,
- 			&engine, iavf_parse_engine_create, error);
- 	if (ret < 0) {
-@@ -2266,7 +2262,6 @@ iavf_flow_create(struct rte_eth_dev *dev,
- 	}
- 
- 	flow->engine = engine;
--tailq_insert:
- 	rte_spinlock_lock(&vf->flow_ops_lock);
- 	TAILQ_INSERT_TAIL(&vf->flow_list, flow, node);
- 	rte_spinlock_unlock(&vf->flow_ops_lock);
-@@ -2282,14 +2277,7 @@ iavf_flow_is_valid(struct rte_flow *flow)
- 	struct iavf_flow_engine *engine;
- 	void *temp;
- 
--	if (flow == NULL)
--		return false;
--
--	/* these flows don't use engines */
--	if (flow->is_ipsec_egress_flow)
--		return true;
--
--	if (flow->engine) {
-+	if (flow != NULL && flow->engine != NULL) {
- 		RTE_TAILQ_FOREACH_SAFE(engine, &engine_list, node, temp) {
- 			if (engine == flow->engine)
- 				return true;
-@@ -2307,26 +2295,17 @@ iavf_flow_destroy(struct rte_eth_dev *dev,
- 	struct iavf_adapter *ad =
- 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(ad);
--	bool need_destroy;
- 	int ret = 0;
- 
--	if (!iavf_flow_is_valid(flow)) {
-+	if (!iavf_flow_is_valid(flow) || flow->engine->destroy == NULL) {
- 		rte_flow_error_set(error, EINVAL,
- 				   RTE_FLOW_ERROR_TYPE_HANDLE,
- 				   NULL, "Invalid flow destroy");
- 		return -rte_errno;
- 	}
--	need_destroy = !flow->is_ipsec_egress_flow;
--
--	if (need_destroy && flow->engine->destroy == NULL) {
--		return rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
--				"Invalid flow destroy");
--	}
- 
- 	rte_spinlock_lock(&vf->flow_ops_lock);
--	if (need_destroy)
--		ret = flow->engine->destroy(ad, flow, error);
-+	ret = flow->engine->destroy(ad, flow, error);
- 
- 	if (!ret) {
- 		TAILQ_REMOVE(&vf->flow_list, flow, node);
-@@ -2444,16 +2423,17 @@ iavf_flow_dev_dump(struct rte_eth_dev *dev,
- 		if (flow != NULL && f != flow)
- 			continue;
- 
--		/* this should not happen */
--		if (f->engine == NULL || f->rule == NULL) {
-+		if (!iavf_flow_is_valid(f)) {
- 			PMD_DRV_LOG(DEBUG, "Invalid flow");
- 			continue;
- 		}
- 
- 		found = true;
- 
--		rule_size = f->engine->rule_size;
--		rule_data = f->rule;
-+		if (f->rule != NULL) {
-+			rule_size = f->engine->rule_size;
-+			rule_data = f->rule;
-+		}
- 
- 		iavf_flow_dump_blob(file,
- 			f->engine->name != NULL ?
-diff --git a/drivers/net/intel/iavf/iavf_generic_flow.h b/drivers/net/intel/iavf/iavf_generic_flow.h
-index 3a8f5f92e8b..75bb92900b8 100644
---- a/drivers/net/intel/iavf/iavf_generic_flow.h
-+++ b/drivers/net/intel/iavf/iavf_generic_flow.h
-@@ -481,6 +481,7 @@ enum iavf_flow_engine_type {
- 	IAVF_FLOW_ENGINE_FDIR,
- 	IAVF_FLOW_ENGINE_HASH,
- 	IAVF_FLOW_ENGINE_FSUB,
-+	IAVF_FLOW_ENGINE_IPSEC_EGRESS,
- 	IAVF_FLOW_ENGINE_MAX,
- };
- 
-@@ -503,7 +504,6 @@ TAILQ_HEAD(iavf_engine_list, iavf_flow_engine);
- /* Struct to store flow created. */
- struct rte_flow {
- 	TAILQ_ENTRY(rte_flow) node;
--	bool is_ipsec_egress_flow;
- 	struct iavf_flow_engine *engine;
- 	void *rule;
- };
 diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-index e9acd1bb1dd..f7e391a74a0 100644
+index f7e391a74a0..be0a0d0df6e 100644
 --- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
 +++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-@@ -1832,6 +1832,7 @@ iavf_ipsec_flow_item_parse(struct iavf_adapter *adapter,
+@@ -1942,6 +1942,7 @@ iavf_ipsec_flow_parse(struct iavf_adapter *ad,
+ 		.max_actions = 1,
+ 	};
+ 	struct iavf_pattern_match_item *item = NULL;
++	struct iavf_ipsec_flow_item *fi = NULL;
+ 	int ret = -1;
  
+ 	ret = ci_flow_check_attr(attr, NULL, error);
+@@ -1953,17 +1954,28 @@ iavf_ipsec_flow_parse(struct iavf_adapter *ad,
+ 		return ret;
  
- static struct iavf_flow_parser iavf_ipsec_flow_parser;
-+static struct iavf_flow_parser iavf_ipsec_egress_flow_parser;
- 
- static int
- iavf_ipsec_flow_init(struct iavf_adapter *ad)
-@@ -1922,16 +1923,6 @@ iavf_ipsec_flow_destroy(struct iavf_adapter *ad,
- 	return 0;
- }
- 
--static struct iavf_flow_engine iavf_ipsec_flow_engine = {
--	.init = iavf_ipsec_flow_init,
--	.uninit = iavf_ipsec_flow_uninit,
--	.create = iavf_ipsec_flow_create,
--	.destroy = iavf_ipsec_flow_destroy,
--	.name = "ipsec_crypto",
--	.type = IAVF_FLOW_ENGINE_IPSEC_CRYPTO,
--	.rule_size = sizeof(struct iavf_ipsec_flow_item),
--};
--
- static int
- iavf_ipsec_flow_parse(struct iavf_adapter *ad,
- 		      struct iavf_pattern_match_item *array,
-@@ -1975,6 +1966,105 @@ iavf_ipsec_flow_parse(struct iavf_adapter *ad,
- 	return ret;
- }
- 
-+/*
-+ * Inline crypto egress flows only associate Tx traffic with a security
-+ * session; nothing is programmed in hardware, so the engine owns no rule.
-+ */
-+static int
-+iavf_ipsec_egress_flow_init(struct iavf_adapter *ad)
-+{
-+	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(ad);
+ 	item = iavf_search_pattern_match_item(pattern, array, array_len, error);
+-	if (item && item->meta) {
++	if (item == NULL)
++		return -rte_errno;
 +
-+	if (!vf->vf_res)
-+		return -EINVAL;
++	if (item->meta != NULL) {
+ 		const struct rte_security_session *session = parsed_actions.actions[0]->conf;
+ 		uint32_t type = (uint64_t)(item->meta);
+-		struct iavf_ipsec_flow_item *fi =
+-				iavf_ipsec_flow_item_parse(ad, pattern, session, type);
+-		if (fi && meta) {
+-			*meta = fi;
+-			ret = 0;
+-		}
 +
-+	if (!(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_INLINE_IPSEC_CRYPTO))
-+		return -ENOTSUP;
++		fi = iavf_ipsec_flow_item_parse(ad, pattern, session, type);
+ 	}
+-	return ret;
++	rte_free(item);
 +
-+	return iavf_register_parser(&iavf_ipsec_egress_flow_parser, ad);
-+}
-+
-+static void
-+iavf_ipsec_egress_flow_uninit(struct iavf_adapter *ad)
-+{
-+	iavf_unregister_parser(&iavf_ipsec_egress_flow_parser, ad);
-+}
-+
-+static int
-+iavf_ipsec_egress_flow_create(__rte_unused struct iavf_adapter *ad,
-+		struct rte_flow *flow,
-+		__rte_unused void *meta,
-+		__rte_unused struct rte_flow_error *error)
-+{
-+	flow->rule = NULL;
-+	return 0;
-+}
-+
-+static int
-+iavf_ipsec_egress_flow_destroy(__rte_unused struct iavf_adapter *ad,
-+		__rte_unused struct rte_flow *flow,
-+		__rte_unused struct rte_flow_error *error)
-+{
-+	return 0;
-+}
-+
-+/* The pattern is not used, as there is nothing to match in hardware. */
-+static int
-+iavf_ipsec_egress_flow_parse(__rte_unused struct iavf_adapter *ad,
-+		__rte_unused struct iavf_pattern_match_item *array,
-+		__rte_unused uint32_t array_len,
-+		__rte_unused const struct rte_flow_item pattern[],
-+		const struct rte_flow_action actions[],
-+		const struct rte_flow_attr *attr,
-+		void **meta,
-+		struct rte_flow_error *error)
-+{
-+	struct ci_flow_actions parsed_actions = {0};
-+	struct ci_flow_actions_check_param param = {
-+		.allowed_types = (enum rte_flow_action_type[]){
-+			RTE_FLOW_ACTION_TYPE_SECURITY,
-+			RTE_FLOW_ACTION_TYPE_END,
-+		},
-+		.max_actions = 1,
-+	};
-+	struct ci_flow_attr_check_param attr_param = {
-+		.require_egress = true,
-+	};
-+	int ret;
-+
-+	ret = ci_flow_check_attr(attr, &attr_param, error);
-+	if (ret)
-+		return ret;
-+
-+	ret = ci_flow_check_actions(actions, &param, &parsed_actions, error);
-+	if (ret < 0)
-+		return ret;
++	if (fi == NULL)
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION, NULL,
++				"Invalid IPsec flow.");
 +
 +	if (meta != NULL)
-+		*meta = NULL;
++		*meta = fi;
++	else
++		rte_free(fi);
 +
 +	return 0;
-+}
-+
-+static struct iavf_flow_engine iavf_ipsec_flow_engine = {
-+	.init = iavf_ipsec_flow_init,
-+	.uninit = iavf_ipsec_flow_uninit,
-+	.create = iavf_ipsec_flow_create,
-+	.destroy = iavf_ipsec_flow_destroy,
-+	.name = "ipsec_crypto",
-+	.type = IAVF_FLOW_ENGINE_IPSEC_CRYPTO,
-+	.rule_size = sizeof(struct iavf_ipsec_flow_item),
-+};
-+
-+static struct iavf_flow_engine iavf_ipsec_egress_flow_engine = {
-+	.init = iavf_ipsec_egress_flow_init,
-+	.uninit = iavf_ipsec_egress_flow_uninit,
-+	.create = iavf_ipsec_egress_flow_create,
-+	.destroy = iavf_ipsec_egress_flow_destroy,
-+	.name = "ipsec_egress",
-+	.type = IAVF_FLOW_ENGINE_IPSEC_EGRESS,
-+};
-+
- static struct iavf_flow_parser iavf_ipsec_flow_parser = {
- 	.engine = &iavf_ipsec_flow_engine,
- 	.array = iavf_ipsec_flow_pattern,
-@@ -1982,7 +2072,17 @@ static struct iavf_flow_parser iavf_ipsec_flow_parser = {
- 	.parse_pattern_action = iavf_ipsec_flow_parse,
- };
- 
-+static struct iavf_flow_parser iavf_ipsec_egress_flow_parser = {
-+	.engine = &iavf_ipsec_egress_flow_engine,
-+	.parse_pattern_action = iavf_ipsec_egress_flow_parse,
-+};
-+
- RTE_INIT(iavf_ipsec_flow_engine_register)
- {
- 	iavf_register_flow_engine(&iavf_ipsec_flow_engine);
  }
-+
-+RTE_INIT(iavf_ipsec_egress_flow_engine_register)
-+{
-+	iavf_register_flow_engine(&iavf_ipsec_egress_flow_engine);
-+}
+ 
+ /*
 -- 
 2.52.0
 
