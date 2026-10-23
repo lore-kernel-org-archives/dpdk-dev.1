@@ -1,49 +1,47 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC94606A321
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58882606A31B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NKS55dLh
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=lBqFrLVr
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1AE5A4060B;
+	by mails.dpdk.org (Postfix) with ESMTP id E352C4067B;
 	Fri, 23 Oct 2026 15:39:28 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 1EFD440268
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:39:23 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3281440268
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:39:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792762765; x=1824298765;
+ t=1792762766; x=1824298766;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=lDvuLiB+ipses+Fl96CVScAjWYmbKkEH8POB5fTdTyQ=;
- b=NKS55dLh+D/4d7f/plZVhPoif6lyAUxSkc8GG4kz0KYsAMzjTdT+QQFP
- fRkGzSRFj2w6D4nrxwU50JHUcrg4KRJfaqGblhuxJaE1YbrOGA4eDSOex
- gbQoEX+OhGcLj4pVe9YW7pwpKpQaHIg8vsRz0Isux+JeoUWYduGqiPAqe
- hvQcWLA3SdFMYsBtDkHzh2bIGQ45QjMjKEDqtDT6pMxUudJ39XqpLP5sB
- AM0wcmVv4OPku3P0icDoDUoKVLmHt0R6eqCTppYx8YeiSqzHcydoSjHFj
- 8EWZdZw+PbF4m5jx4lrbCHidYM0bgHg0UJQhQuLgF9nZjuteN7asPwvG7 w==;
-X-CSE-ConnectionGUID: 2TqJlmjUR4SWXvRidiiaxw==
-X-CSE-MsgGUID: tv6QpMZUTq2u8Swp8+GxcQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1537423"
+ bh=EgAoCFJUJvPxPhDqJW0j/MdttX3bEoGzK7+mvbvdKfo=;
+ b=lBqFrLVrnOQLxQQAaUaPmT+K+JuDkw4aRgnVHiafoFC+jwbB7hdGaqCK
+ OaJCFm5AGFC55TGp4e7pvbWraC/7uwOEsZCL+aCCdWQ62AIVfUr54/D4O
+ dgH+ypJMUf21TLLUYMPiZBjbU8MSrCuAotlQhb5sprYhLJdub2C6cWl5h
+ /vqmhbLNMNZaW40Ezn7onoQrMxYnffNaFC+VRxUqi42TTOuOA/vu7hAJq
+ frloM0zcxDdz1kzMtaZ0ZUM2fWS5tlBU8ILffFmTp6SnTPpzl/GDrDE/V
+ WULDQ3fQHaZdBilMy0SWlRHCNmuPb3WPwiD3k5UHJNCRM8TILYWJf1gaG A==;
+X-CSE-ConnectionGUID: txv9PbZMQEWwaa2EKNRVlA==
+X-CSE-MsgGUID: E8sBX36eQOinxMTd4i5+zA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1537427"
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="1537423"
+   d="scan'208";a="1537427"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Oct 2026 06:39:24 -0700
-X-CSE-ConnectionGUID: axgZxYAhRkS6FSIg22GBeA==
-X-CSE-MsgGUID: 73gNARy8R9GwJkxn15JXUw==
+ 23 Oct 2026 06:39:25 -0700
+X-CSE-ConnectionGUID: 1HbNCe01Rmq8FgHSlLBbBQ==
+X-CSE-MsgGUID: ioKj0pPySbKJc6Ybd8+aLg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="3586578"
+   d="scan'208";a="3586586"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa005.jf.intel.com with ESMTP; 23 Oct 2026 06:39:22 -0700
+ by orviesa005.jf.intel.com with ESMTP; 23 Oct 2026 06:39:24 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org, Harman Kalra <hkalra@marvell.com>,
- Ray Kinsella <mdr@ashroe.eu>, David Marchand <david.marchand@redhat.com>,
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-Subject: [PATCH v3 2/8] interrupts: fix event arrays copy on instance
- duplication
-Date: Fri, 23 Oct 2026 14:39:09 +0100
-Message-ID: <3dbf6def031f8266a795f10a384acf2edd0c7a0e.1792762746.git.anatoly.burakov@intel.com>
+ Cunming Liang <cunming.liang@intel.com>
+Subject: [PATCH v3 3/8] eal/linux: fix closing of event FDs not owned by EAL
+Date: Fri, 23 Oct 2026 14:39:10 +0100
+Message-ID: <114fb88b2991c0e88b11d46b671d858c9e6cefdd.1792762746.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <e9eba9cd731a90f6e487a76bfe3bee84b1cdc3de.1792762746.git.anatoly.burakov@intel.com>
 References: 
@@ -66,35 +64,46 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The event FD and epoll event arrays are copied using the number of
-entries as a byte count, so only a fraction of the entries make it
-into the duplicate.
+rte_intr_efd_disable() decides whether to close the event FDs based on
+max_intr being greater than nb_efd. This is a side effect of how
+rte_intr_efd_enable() fills the handle for VFIO MSI-X, where an extra
+slot is reserved for the misc interrupt, and only indirectly identifies
+the eventfds that EAL created itself.
 
-Copy the arrays by element size.
+Any driver filling the event FD array for a VDEV or EXT handle and
+setting max_intr the same way gets its descriptors closed by EAL even
+though it owns them. The virtio-user driver does exactly this, so its
+callfds are closed by rte_intr_efd_disable() and then closed again by
+the driver on uninit.
 
-Fixes: b7c984291611 ("interrupts: add allocator and accessors")
+Check the interrupt handle type instead, so that only the eventfds
+created by rte_intr_efd_enable() for VFIO MSI-X are closed.
+
+Fixes: b9e0662a931d ("eal/linux: add interrupt API for drivers")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- lib/eal/common/eal_common_interrupts.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ lib/eal/linux/eal_interrupts.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/lib/eal/common/eal_common_interrupts.c b/lib/eal/common/eal_common_interrupts.c
-index 4520ff59bd7..cf56f967218 100644
---- a/lib/eal/common/eal_common_interrupts.c
-+++ b/lib/eal/common/eal_common_interrupts.c
-@@ -131,8 +131,8 @@ struct rte_intr_handle *rte_intr_instance_dup(const struct rte_intr_handle *src)
- 	intr_handle->max_intr = src->max_intr;
- 	intr_handle->nb_efd = src->nb_efd;
- 	intr_handle->efd_counter_size = src->efd_counter_size;
--	memcpy(intr_handle->efds, src->efds, src->nb_intr);
--	memcpy(intr_handle->elist, src->elist, src->nb_intr);
-+	memcpy(intr_handle->efds, src->efds, src->nb_intr * sizeof(*src->efds));
-+	memcpy(intr_handle->elist, src->elist, src->nb_intr * sizeof(*src->elist));
+diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
+index 4cfaeba7fe0..bdee1dd9777 100644
+--- a/lib/eal/linux/eal_interrupts.c
++++ b/lib/eal/linux/eal_interrupts.c
+@@ -1620,7 +1620,11 @@ rte_intr_efd_disable(struct rte_intr_handle *intr_handle)
+ 	uint32_t i;
  
- 	return intr_handle;
- }
+ 	rte_intr_free_epoll_fd(intr_handle);
+-	if (rte_intr_max_intr_get(intr_handle) > rte_intr_nb_efd_get(intr_handle)) {
++	/* Only eventfds created by rte_intr_efd_enable() for MSI-X are owned
++	 * by the handle. In other modes the entries reference fds owned by
++	 * the device or the driver and must not be closed here.
++	 */
++	if (rte_intr_type_get(intr_handle) == RTE_INTR_HANDLE_VFIO_MSIX) {
+ 		for (i = 0; i < (uint32_t)rte_intr_nb_efd_get(intr_handle); i++)
+ 			close(rte_intr_efds_index_get(intr_handle, i));
+ 	}
 -- 
 2.52.0
 
