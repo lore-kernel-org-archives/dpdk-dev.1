@@ -1,72 +1,71 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE4F606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 16:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4CB606A31E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 16:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=RtPH0CCL
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=lz/281r7
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D34D440A6C;
-	Fri, 23 Oct 2026 18:02:00 +0200 (CEST)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
- [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 37AB640A67
- for <dev@dpdk.org>; Fri, 23 Oct 2026 18:01:59 +0200 (CEST)
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-3ac5b090d16so601794a91.0
- for <dev@dpdk.org>; Fri, 23 Oct 2026 09:01:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8449340A6C;
+	Fri, 23 Oct 2026 18:04:22 +0200 (CEST)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 6DA90406BA
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 18:04:21 +0200 (CEST)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-2ea0efd636dso7367025ad.0
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 09:04:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792771318;
- x=1793376118; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792771460;
+ x=1793376260; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=u/d8YWL5vXKPHWBMPDV5PsiWtzfuRsOfcs+uirkPamw=;
- b=RtPH0CCLuUY1qcIM3ojCZIwJsVAn1UtLGzrv7NYiHOySmkGN8SKPr/lKAwFMuD4P4R
- SZSBXvKv5kKF6Tp4kVS0GNsP+/9WNG2r5efpVqZoz8eII5NhoaZPAl1EcenHgVMG18JV
- 0pNSHBjibD9ZJxqt7QV8xYQZ7JADa9uKFz5/2Fs37d/BHuYDTC4qu/hiYux6acaf+qoD
- 2wDn8a1h8Lp5STiqvPGq7ZI+3baSi7XG7CVZs0RuHa5lQa3AUrbM/J0+venQNQ+RVNjW
- WgZKZKUuaaXb1Vy0m92yDvNzGlaa7Dc16+0V+Rye4hHi30A2yNTKQbllzg70pYjY19Ak
- eztw==
+ bh=SkjyIQ28BbFNzHK7LEefqsCOx0prhcCT2+mL+ZBUelE=;
+ b=lz/281r7sv1BsaYq7aRoJ4k02lDYmYNc5577kN+ZdNSfo+r/jZ2zaJLmx/yUjxm0z2
+ vBbwqfbY5dykyPmt+nwhz8M9934sefxLXhncwf9UV/DntL3GTsFDTjMR389KpKSLqLei
+ M4+4yn14kYKmEjFLXkn46HB5Co1qOtYSzj++Qkwo12UkXYiJT/5IYs48U4D0ymuoHZLT
+ yD9/KeK5bywZznHvRlV7qeeARBNjc0X6X22QqgpiXXO4wM1t2ptCYWFNbD6c0hYS7zsV
+ 3yIemT//xH1doIyLHBcv7tt9tzegGWSw5zE22lx/jp5XeBjqj3J0IOOt5vZe/4uQ6WnX
+ oDxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792771318; x=1793376118;
+ d=1e100.net; s=20260707; t=1792771460; x=1793376260;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=u/d8YWL5vXKPHWBMPDV5PsiWtzfuRsOfcs+uirkPamw=;
- b=LEwtcxLyAOq3C6BjD1jsfg+A32HH8gUgVJSTOI/89Ym9TZJSVGJqvUp4+xySFPfeUp
- cCqEwNeH3HP52pcOzAMsO3Dx7sgQLqlNDywhdbr/8XPyKmGa1+b8018iHCF/T9420XE6
- O6Py/q7Dfn1nQeD13qaQhZAGUIUAo2BUohVsvLByR2AfsHDYe4qyvy6ejuw15ENf2XXo
- zX7/3kdq4FjHAMcfnH2oiDBUjZJiq75lAb7Hv8nibgmL9CRZiUQq7VklU/aAFdKZU5aQ
- OesVcFcuJBqUTzGxclop1R0tPZjGjJVX5+bdh2nLc9+urtkcnVZlSyjE+KHHECmFqsU3
- Wn8Q==
-X-Gm-Message-State: AFq9FYL0Eo4btUm9qT+aJ8zIOQ8p6m/liph7AadttcgHYdfvn3/+6rw+
- JUJ1cF90mggId6kGbJm+X9zAzMrBL8tNaf6kbC8VyVYM6A7PEvyR2HXN/lRtzybzOQWl1b+Ahpg
- l0OSUh24=
-X-Gm-Gg: AYBFou22Mu7dkAsbq6se2kC8zrVO6P3R5cnN18L7Gdfm4P2OOrua+KaFmRlHpKtQMIj
- SFUjQB0NInjVtD69RnDW9I8xMd+O1WcBSTJ/D2jueo2/rlKcgKfGi29e7oHPQUAb5E+eQfehhqc
- N3sX0sr8aZgGQ/MLzcL+utTS6kqGhwfK1Dgn/j4joK9z/ZNSLyvrmub3+CvUA7F/6aZjXRAPrK/
- XRnfVxOra8+cwahigE7BjiyiaayNJwbFW/RndLP5pvMWPkAoEf+oN+7eNA6pD3tx9fz1d1t0iQ+
- 9PJHiSURYg8k8ZQaB0CVZ0yed3sCLQeJssAW3BTW+0anx08YSRArKd2zE9S/QDDJAu5XHhH4w4y
- 21gFoBC/UebXYQvHbjwaHRx8F91XBgGMZdX+2VvRn0YZjnVHCFyHpuTkES7jWxa3Bj6A+9Fr9SA
- cVyew+u1CuWtWGGk2taDONG+gNgt0thV3v3D34ELA+TrPqmxpU4anP/JaoYnsJE/76bwscVpT/X
- 6mfpQIc4vG0un5u8MOnuVFqMkIAJ4u0XIVWo8xA+nlPJkcZZDf3JtrIQZi67ivV1VXn/rJ1IfiQ
- dlacou5Mvs0AuUWYel7Bzg==
-X-Received: by 2002:a17:90b:57e3:b0:3ac:b622:9638 with SMTP id
- 98e67ed59e1d1-3adce7eb02fmr1309631a91.42.1792771317999; 
- Fri, 23 Oct 2026 09:01:57 -0700 (PDT)
+ bh=SkjyIQ28BbFNzHK7LEefqsCOx0prhcCT2+mL+ZBUelE=;
+ b=IcCOyeNKa0v51sIyawMDAdF5I930DEKtQUObmo/OCz/p2Sb8Fs+pIOob2bggMTDnAP
+ qmjqru8XoAoR4vWifE6PcilmDzReQNrGlBbsafDTyTlV8KXPxZ3tej4s4bwHCsf9J9BX
+ K0gQ51r+FP9x6Bth03mR7EYx4Ji0DSKXuhHgjjzwcwiiDLVAIjn6gz0/clnrYVWKpF2o
+ gi9bdiWxlmobJt4t26VfHLfJY7gfaEA2ojd7FIjfoZt8CN/pUkGSOfvBdb6vvN3YtCov
+ RC5cRBypB1Oh5HzoGeUd3f1fPz94hUzPtBJkmT9R2uC9R40UUqTJF2619eEIlZ6tUOun
+ GP3A==
+X-Gm-Message-State: AFq9FYJMZe5eGLZwR2mCbge+Tb72UsjHp6R2ywb/9CRdJLdIhD6lCcwq
+ 5D+lyuwZ/boljEBzEM7Azl/1pgtja5R182DMYtgNiCqaL8A3Eh+F+I7zQncqY5z7b9w=
+X-Gm-Gg: AYBFou13Yammt9RWSKMNXE7ZLukkHT5gSVfG83gnKy+07Yq01nDX2t+Q4RmDwIUECUn
+ C98iaixRpgKQOtE3XlkrTFK6L9ac1qAMNMd6oBLZKgUQRqVfJug3yBe6jWHt8hAfJkaz6PlhNz9
+ n/sD0FBsOG8E5qfhDVdLdHCQqRed88QZUnHVis9rIrc5PK4sHL1TkEqJfycf6K/Rk/gU5LTCXMC
+ mrXRlceDwwnEgyDxITtKAnMiTLoCm+9ghdGXQiWWqtL++/VgVoTZQG+03bw8w+/mWJ0Qy9tRufg
+ NwS0+Ei7O+phu4OugfIXGDCV9FdnkY5JDvgB2XKKYDBUHMzIztjm0QM4Q7o1kLTuXugC7ZpRF3r
+ fgZxSY3bwLq3Q2cEHeqASRiykQ4nZlQbwV6ehr+mWneZGuxly8gal75inicyKy0xCjlU6oVNpuU
+ /ZEn2J/ON+QF7QpdWDf+WYT4SdrK9o5cjOHDKJrU4ltXeRh1FRFaM2M1FsfRSnxa2EvaA9Ryzp8
+ EJz7Mr04tVVAotFIe2dtGZQLq0Ia0/2NhB06md7aEQ81l5SgxFUEtzg+ftQkZZjc0z5L2YGTfkq
+ 4Oh2r57atbhnRwfpXihjUg==
+X-Received: by 2002:a17:902:d582:b0:2e2:da4f:b2bf with SMTP id
+ d9443c01a7336-2ea7d12c2d5mr26305255ad.44.1792771460330; 
+ Fri, 23 Oct 2026 09:04:20 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2ea94751ddasm2201055ad.28.2026.10.23.09.01.55
+ d9443c01a7336-2ea94751b9esm2221925ad.35.2026.10.23.09.04.19
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 23 Oct 2026 09:01:56 -0700 (PDT)
-Date: Fri, 23 Oct 2026 09:01:39 -0700
+ Fri, 23 Oct 2026 09:04:19 -0700 (PDT)
+Date: Fri, 23 Oct 2026 09:04:17 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Zaiyu Wang <zaiyuwang@trustnetic.com>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v10 00/17] Wangxun fixes and new features
-Message-ID: <20261023090117.34672036@phoenix.local>
-In-Reply-To: <3C29C180B4E33816+20261023110728.3975-1-zaiyuwang@trustnetic.com>
-References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
- <3C29C180B4E33816+20261023110728.3975-1-zaiyuwang@trustnetic.com>
+Subject: Re: [PATCH v1 1/1] ethdev: add flow item structure size query
+Message-ID: <20261023090417.219e1e91@phoenix.local>
+In-Reply-To: <8fa05595f3596e9355dd90df7fc278b104beb20b.1792757739.git.anatoly.burakov@intel.com>
+References: <8fa05595f3596e9355dd90df7fc278b104beb20b.1792757739.git.anatoly.burakov@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -80,98 +79,101 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Fri, 23 Oct 2026 19:03:38 +0800
-Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
+On Fri, 23 Oct 2026 13:15:46 +0100
+Anatoly Burakov <anatoly.burakov@intel.com> wrote:
 
-> This series addresses link-related issues on Wangxun Amber-lite 25G/40G NICs (CR/KR training, hot-plug, 10G link state).
+> Add RTE_FLOW_CONV_OP_ITEM_SIZE to retrieve the fixed specification
+> structure size for a flow item type using the existing descriptor table.
 > 
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 > ---
-> v10:
->  - P12: check the FFE taps against the register field width of the MAC in
->         use, instead of only for the 40G one. On the Sapphire the main and
->         pre taps are six-bit fields and the post tap is seven-bit, so a
->         larger value spills into the neighbouring field rather than being
->         truncated.
->  - P12/P13: say "Amber-Lite 40G NIC" for bp_capa and laser_off, the only
->         MAC that implements either.
->  - P17: add a new patch to rename fiber_suppport_speed to fiber_support_speed.
->         The field was added with the misspelling in 234ce0d1fa, copied from the
->         out-of-tree base driver.
 
-Most of it is fine, but you still are keeping a driver specific behavior around PHY
-control which was identified as not acceptable in an earlier review.
+I am not sure about the details AI is complaining about here,
+but it does look like it has a point. Also it should be possible
+to get some code coverage for this in a standalone test.
 
-I object to cases where driver writers treat their PMD as a unique and special case
-because that would end up tying the user application to a specific PMD
-and it makes it harder for users to manage and write code.
+[PATCH v1 1/1] ethdev: add flow item structure size query
 
-If there is a missing feature in the ethdev management layer, then control operations
-and offloads should be added there and drivers should all work against that.
+Warning
 
-The current AI review reflects that.
+RTE_FLOW_ITEM_TYPE_MACSEC has no entry in rte_flow_desc_item[]. The
+table uses designated initializers, so the MACSEC slot is zero filled.
+With this patch a size query for MACSEC fails with EINVAL "unknown
+item type", although it is a public item with a spec structure
+(struct rte_flow_item_macsec). The doc comment says only unknown and
+PMD-private types fail.
 
-Subject: Re: [PATCH v10 00/17] net/txgbe: Amber-Lite link fixes
+The hole predates this patch and hurts existing ops too:
+ - RTE_FLOW_CONV_OP_ITEM_NAME on MACSEC calls strlcpy(dst, NULL, size);
+   rte_flow_conv_name() has no NULL name check.
+ - rte_flow_conv_copy() sees desc[type].size == 0, so rte_flow_copy()
+   and RTE_FLOW_CONV_OP_PATTERN silently drop MACSEC spec/last/mask.
 
-Series applies cleanly to main and every commit builds with
--Dwerror=true. All Fixes: hashes resolve.
+Please send a separate fix ahead of this patch, in rte_flow_desc_item[]:
 
-The v8 comments on 02, 03, 10, 15 and 16 are addressed. The
-NEED_LINK_CONFIG fix in 16 is correct.
+	MK_FLOW_ITEM(MACSEC, sizeof(struct rte_flow_item_macsec)),
 
-Patches 01-11 and 14-17 look good. 12 and 13 still need work.
+	Fixes: 0aaf097585a6 ("ethdev: add MACsec flow item")
+	Cc: stable@dpdk.org
 
+Missing release note. RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR, also new
+in 26.11, has one. Extend that entry in release_26_11.rst:
 
-Errors
-------
+	* **Added flow item default mask and size lookup.**
 
-[PATCH v10 13/17] net/txgbe: add devarg to turn off Tx laser for AML40
+	  Added ``RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR`` and
+	  ``RTE_FLOW_CONV_OP_ITEM_SIZE`` conversion operations
+	  to ``rte_flow_conv()`` to retrieve the default mask
+	  and the spec structure size of a flow item type.
 
-NAK on the devarg still stands.
-
-The new paragraph says it is opt-in because link setup resets the
-PHY and restarts AN73 on the next link-up. set_link_up() is a
-control path operation, and the application asked for the link to
-come back up. Renegotiation is the expected cost of that.
-
-Leaving the transmitter on is the bug. With the laser on,
-rte_eth_dev_set_link_down() does not take the link down, and the
-peer cannot see the loss of signal. Drivers should not each pick
-their own meaning for set_link_down.
-
-Remove TXGBE_DEVARG_LASER_OFF and hw->devarg.laser_off. Disable the
-transmitter unconditionally on AML40 link down, and in
-txgbe_dev_set_link_up() run:
-
-	if (hw->mac.type == txgbe_mac_aml40) {
-		speed = hw->phy.autoneg_advertised;
-		...
-		err = hw->mac.setup_link(hw, speed, true);
-		...
-	}
-
-Drop the doc and release note entries with it.
-
+No user and no test. The commit message does not say what needs this.
+If the consumer is flow_graph or a driver parser, send it as part of
+that series. app/test has no rte_flow_conv() coverage at all; a short
+test checking END -> 0, ETH -> sizeof(struct rte_flow_item_eth),
+MACSEC -> sizeof(struct rte_flow_item_macsec), a negative type ->
+EINVAL, and size < sizeof(size_t) -> dst untouched would have caught
+the MACSEC hole.
 
 Info
-----
 
-[PATCH v10 12/17] net/txgbe: add pre2 FFE tap and backplane capability devargs
+The doc text "Writes the size of rte_flow_item_{name}" is wrong for
+GRE_KEY (rte_be32_t), GTPC/GTPU (struct rte_flow_item_gtp) and
+ICMP6_ECHO_REQUEST/REPLY (struct rte_flow_item_icmp6_echo). Suggest:
 
-The new FFE range checks log at ERR level but still store the value.
-On Sapphire an ffe_pre above 0x3F still runs into the main field
-through "ffe_main << 8 | ffe_pre". Fall back to the default, as is
-already done for bp_capa:
+	 * Writes the size of the item specification structure to
+	 * @p dst, or zero for known item types without one.
 
-	if (ffe_pre > 0x3F) {
-		PMD_INIT_LOG(ERR, "devarg '%s' value %u exceeds 0x3F",
-			     TXGBE_DEVARG_FFE_PRE, ffe_pre);
-		ffe_pre = 8;
+Every other op dispatches to a static helper. Move the braced case
+block next to rte_flow_conv_item_default_mask():
+
+	/** Retrieve the spec structure size of a flow item type. */
+	static int
+	rte_flow_conv_item_size(void *dst, const size_t size,
+				const void *src,
+				struct rte_flow_error *error)
+	{
+		unsigned int type = (uintptr_t)src;
+
+		if (type >= RTE_DIM(rte_flow_desc_item) ||
+		    rte_flow_desc_item[type].name == NULL)
+			return rte_flow_error_set(error, EINVAL,
+				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
+				"unknown item type to retrieve the size of");
+		if (size >= sizeof(size_t))
+			*(size_t *)dst = rte_flow_desc_item[type].size;
+		return sizeof(size_t);
 	}
 
-The bp_capa explanation in the commit message is fine.
+	case RTE_FLOW_CONV_OP_ITEM_SIZE:
+		ret = rte_flow_conv_item_size(dst, size, src, error);
+		break;
+
+The name == NULL check here is good; the same check belongs in
+rte_flow_conv_name() and rte_flow_conv_item_default_mask().
