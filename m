@@ -1,31 +1,31 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B0D606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35ED6606A320
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:50:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0D6C427D2;
-	Fri, 23 Oct 2026 15:45:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A33E4427D7;
+	Fri, 23 Oct 2026 15:45:17 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 47804427A7
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:45:01 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5A5CD40E37
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:45:02 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 277301A000A;
- Fri, 23 Oct 2026 15:45:01 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3E9AD1A0038;
+ Fri, 23 Oct 2026 15:45:02 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EE3241A0042;
- Fri, 23 Oct 2026 15:45:00 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 07EDF1A0021;
+ Fri, 23 Oct 2026 15:45:02 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id E58E81800068;
- Fri, 23 Oct 2026 21:44:59 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 03128180022D;
+ Fri, 23 Oct 2026 21:45:00 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4-S3 64/65] event/dpaa2: do not fail device creation on DPCI
- errors
-Date: Fri, 23 Oct 2026 19:13:44 +0530
-Message-ID: <20261023134346.37727-65-prashant.gupta_3@nxp.com>
+Subject: [PATCH v4-S3 65/65] net/dpaa2: add Tx fast path for no-confirmation
+ case
+Date: Fri, 23 Oct 2026 19:13:45 +0530
+Message-ID: <20261023134346.37727-66-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
 References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
@@ -52,137 +52,233 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Jun Yang <jun.yang@nxp.com>
 
-Event device creation aborted entirely whenever a DPCI object could not
-be allocated for an event queue, or when any of the parallel, atomic or
-ordered link attaches failed. A single failure rolled back every queue
-and made dpaa2_eventdev_create() return an error.
+Split a dedicated Tx fast path out of dpaa2_dev_tx() for the common
+no-confirmation configuration, keeping the hot enqueue loop free of the
+Tx-conf and timestamp bookkeeping needed only by the slow path.
 
-This is too strict. The DPNI and DPSEC event adapters can still be
-registered and used even when the DPCI-backed event queues are not
-available, so a DPCI shortage or attach failure must not bring the whole
-event device down.
+- Add dpaa2_dev_tx_fast() for the DPAA2_TX_NO_CONF case. dpaa2_dev_tx()
+  builds the enqueue descriptor and dispatches straight to it, so the
+  common path no longer runs the per-burst Tx-conf drain or the
+  per-packet timestamp accounting.
+- Factor the retry enqueue loop into dpaa2_dev_tx_enqueue_multiple() and
+  the ordered-queue tail into dpaa2_dev_tx_multi_ordered(), shared by
+  both the fast and slow paths to remove duplicated code.
+- Zero-initialise fd_arr in the slow path and mark the rarely taken
+  branches (congestion retry, VLAN insert, ordered, timestamp) unlikely.
+
+This reduces per-packet work on the common Tx path.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/event/dpaa2/dpaa2_eventdev.c | 68 +++++++++++++---------------
- 1 file changed, 31 insertions(+), 37 deletions(-)
+ drivers/net/dpaa2/dpaa2_rxtx.c | 158 +++++++++++++++++++++++++--------
+ 1 file changed, 122 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/event/dpaa2/dpaa2_eventdev.c b/drivers/event/dpaa2/dpaa2_eventdev.c
-index 011883bba8..5c36cb9dc9 100644
---- a/drivers/event/dpaa2/dpaa2_eventdev.c
-+++ b/drivers/event/dpaa2/dpaa2_eventdev.c
-@@ -1278,14 +1278,13 @@ dpaa2_eventdev_create(const char *name, struct rte_vdev_device *vdev)
- 	struct dpaa2_dpcon_dev *dpcon_dev = NULL;
- 	struct dpaa2_dpci_dev *dpci_dev = NULL;
- 	struct dpaa2_eventq *evq_info;
--	int ret = 0, i;
-+	int ret, i, success;
+diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
+index 2af5a4745d..312c9bd7d5 100644
+--- a/drivers/net/dpaa2/dpaa2_rxtx.c
++++ b/drivers/net/dpaa2/dpaa2_rxtx.c
+@@ -1511,6 +1511,114 @@ dpaa2_dev_tx_ordered(void *queue, struct rte_mbuf **bufs,
+ 	return dpaa2_dev_tx_multi_txq_ordered(mq, bufs, nb_pkts);
+ }
  
- 	eventdev = rte_event_pmd_vdev_init(name,
- 		sizeof(struct dpaa2_eventdev), rte_socket_id(), vdev);
- 	if (!eventdev) {
--		ret = -ENOMEM;
- 		DPAA2_EVENTDEV_ERR("Failed to create Event device %s", name);
--		goto done;
-+		return -ENOMEM;
- 	}
- 
- 	eventdev->dev_ops = &dpaa2_eventdev_ops;
-@@ -1312,66 +1311,61 @@ dpaa2_eventdev_create(const char *name, struct rte_vdev_device *vdev)
- 
- 		dpci_dev = rte_dpaa2_alloc_dpci_dev();
- 		if (!dpci_dev) {
--			rte_dpaa2_free_dpcon_dev(dpcon_dev);
--			break;
-+			DPAA2_EVENTDEV_WARN("No dpci available for evq.%d", i);
-+			goto skip_dpci_attach;
- 		}
--		evq_info->dpci = dpci_dev;
- 
-+		success = 0;
- 		ret = rte_dpaa2_dpci_link_attach(dpci_dev, DPCI_DEST_DPCON,
- 			dpcon_dev->dpcon_id, 0,
- 			dpaa2_eventdev_process_parallel, DPAA2_QUEUE_NONE_ORDER,
- 			&evq_info->dpci_txqs[RTE_SCHED_TYPE_PARALLEL]);
--		if (ret) {
--			DPAA2_EVENTDEV_ERR("DPCI attach parallel qp failed: err(%d)", ret);
--			goto err_break;
--		}
-+		if (ret)
-+			DPAA2_EVENTDEV_WARN("DPCI attach parallel qp failed: err(%d)", ret);
-+		else
-+			success++;
- 
- 		ret = rte_dpaa2_dpci_link_attach(dpci_dev, DPCI_DEST_DPCON,
- 			dpcon_dev->dpcon_id, 0,
- 			dpaa2_eventdev_process_atomic, DPAA2_QUEUE_HOLD_ACTIVE_ORDER,
- 			&evq_info->dpci_txqs[RTE_SCHED_TYPE_ATOMIC]);
--		if (ret) {
--			DPAA2_EVENTDEV_ERR("DPCI attach atomic qp failed: err(%d)", ret);
--			goto err_break;
--		}
-+		if (ret)
-+			DPAA2_EVENTDEV_WARN("DPCI attach atomic qp failed: err(%d)", ret);
-+		else
-+			success++;
- 
- 		ret = rte_dpaa2_dpci_link_attach(dpci_dev, DPCI_DEST_DPCON,
- 			dpcon_dev->dpcon_id, 0,
- 			dpaa2_eventdev_process_order, DPAA2_QUEUE_LOOSE_ORP_ORDER,
- 			&evq_info->dpci_txqs[RTE_SCHED_TYPE_ORDERED]);
--		if (ret) {
--			DPAA2_EVENTDEV_ERR("DPCI attach order qp failed: err(%d)", ret);
--			goto err_break;
--		}
-+		if (ret)
-+			DPAA2_EVENTDEV_WARN("DPCI attach order qp failed: err(%d)", ret);
-+		else
-+			success++;
++static __rte_always_inline uint16_t __rte_hot
++dpaa2_dev_tx_enqueue_multiple(struct qbman_swp *swp,
++	const struct qbman_fd *fd, uint16_t to_send,
++	const struct qbman_eq_desc *eqdesc)
++{
++	uint16_t loop = 0, retry_count = 0;
++	int eq_ret;
 +
-+		if (success)
-+			evq_info->dpci = dpci_dev;
-+		else
-+			rte_dpaa2_free_dpci_dev(dpci_dev);
++	while (loop < to_send) {
++		eq_ret = qbman_swp_enqueue_multiple(swp, eqdesc,
++			&fd[loop], NULL, to_send - loop);
++		if (unlikely(eq_ret < 0)) {
++			retry_count++;
++			if (retry_count > DPAA2_MAX_TX_RETRY_COUNT)
++				break;
++		} else {
++			loop += eq_ret;
++			retry_count = 0;
++		}
++	}
++
++	return loop;
++}
++
++static __rte_noinline uint16_t
++dpaa2_dev_tx_multi_ordered(struct dpaa2_queue *dpaa2_q,
++	struct rte_mbuf **bufs, uint16_t nb_pkts)
++{
++	uint16_t to_send, order_tx = 0, total = 0;
++
++order_tx_again:
++	to_send = (nb_pkts > dpaa2_eqcr_size) ? dpaa2_eqcr_size : nb_pkts;
++	order_tx = dpaa2_dev_tx_ordered(dpaa2_q, bufs, to_send);
++	bufs += order_tx;
++	nb_pkts -= order_tx;
++	total += order_tx;
++	if (nb_pkts && order_tx >= to_send)
++		goto order_tx_again;
++
++	return total;
++}
++
++static __rte_always_inline uint16_t __rte_hot
++dpaa2_dev_tx_fast(struct dpaa2_queue *dpaa2_q, struct rte_mbuf **bufs,
++	uint16_t nb_pkts, struct qbman_swp *swp, struct qbman_fd *fd_arr,
++	const struct qbman_eq_desc *eqdesc, struct rte_mempool *hw_mp)
++{
++	/* Function to transmit the frames to given device and VQ*/
++	uint32_t loop, retry_count, frames_to_send;
++	int32_t ret, order = false;
++	uint16_t num_tx = 0, eq_ret = 0;
++
++tx_again:
++	/*Check if the queue is congested*/
++	retry_count = 0;
++	while (qbman_result_SCN_state(dpaa2_q->cscn)) {
++		retry_count++;
++		/* Retry for some time before giving up */
++		if (retry_count > CONG_RETRY_COUNT)
++			goto skip_tx;
++	}
++
++	frames_to_send = (nb_pkts > dpaa2_eqcr_size) ? dpaa2_eqcr_size : nb_pkts;
++
++	for (loop = 0; loop < frames_to_send; loop++) {
++		if (unlikely(dpaa2_mbuf_seq_is_flag_set((*bufs),
++			(DPAA2_ENQUEUE_FLAG_ORP | QBMAN_ENQUEUE_FLAG_DCA)))) {
++			order = true;
++			break;
++		}
++
++		if (unlikely((*bufs)->ol_flags & RTE_MBUF_F_TX_VLAN)) {
++			ret = rte_vlan_insert(bufs);
++			if (ret)
++				break;
++		}
++		if (likely(RTE_MBUF_DIRECT(*bufs) &&
++			(*bufs)->pool->ops_index == hw_mp->ops_index &&
++			(*bufs)->nb_segs == 1 && rte_mbuf_refcnt_read(*bufs) == 1)) {
++			DPAA2_MBUF_TO_CONTIG_FD((*bufs), &fd_arr[loop],
++				mempool_to_bpid((*bufs)->pool));
++			ret = 0;
++		} else if (unlikely((*bufs)->nb_segs > 1)) {
++			ret = dpaa2_dev_tx_mbuf_to_sg_fd(hw_mp, *bufs, &fd_arr[loop],
++				dpaa2_q, DPAA2_TX_NO_CONF, false);
++		} else {
++			ret = dpaa2_dev_tx_mbuf_to_simple_fd(hw_mp, *bufs, &fd_arr[loop],
++				dpaa2_q, DPAA2_TX_NO_CONF, false);
++		}
++		if (ret)
++			break;
++		bufs++;
++	}
++
++	eq_ret = dpaa2_dev_tx_enqueue_multiple(swp, fd_arr, loop, eqdesc);
++	num_tx += eq_ret;
++	nb_pkts -= eq_ret;
++	if (unlikely(nb_pkts > 0 && !ret && !order))
++		goto tx_again;
++
++skip_tx:
++	dpaa2_q->tx_pkts += num_tx;
++	if (unlikely(order && eq_ret >= loop))
++		num_tx += dpaa2_dev_tx_multi_ordered(dpaa2_q, bufs, nb_pkts);
++
++	return num_tx;
++}
++
+ /*
+  * Callback to handle sending packets through WRIOP based interface
+  */
+@@ -1519,12 +1627,12 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ {
+ 	/* Function to transmit the frames to given device and VQ*/
+ 	uint32_t loop, retry_count, i, ptp_n, frames_to_send;
+-	int32_t ret, tstamp[MAX_TX_RING_SLOTS], ptp_set, order = false, eq_ret = 0;
+-	struct qbman_fd fd_arr[MAX_TX_RING_SLOTS];
++	int32_t ret, tstamp[MAX_TX_RING_SLOTS], ptp_set, order = false;
++	struct qbman_fd fd_arr[MAX_TX_RING_SLOTS] = {0};
+ 	struct qbman_eq_desc eqdesc;
+ 	struct dpaa2_queue *dpaa2_q = queue;
+ 	struct qbman_swp *swp;
+-	uint16_t num_tx = 0, order_tx;
++	uint16_t num_tx = 0, eq_ret = 0;
+ 	struct rte_eth_dev_data *eth_data = dpaa2_q->eth_data;
+ 	struct dpaa2_dev_priv *priv = eth_data->dev_private;
+ 	struct rte_mempool *hw_mp;
+@@ -1549,15 +1657,15 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	}
+ 	hw_mp = priv->bp_list->mp;
  
-+skip_dpci_attach:
- 		evq_info->valid = true;
- 		evq_info->event_queue_id = priv->max_event_queues;
+-	if (dpaa2_q->tx_conf_queue)
+-		dpaa2_dev_tx_conf(dpaa2_q->tx_conf_queue, false);
+-
+ 	/*Prepare enqueue descriptor*/
+ 	qbman_eq_desc_clear(&eqdesc);
+ 	qbman_eq_desc_set_no_orp(&eqdesc, DPAA2_EQ_RESP_ERR_FQ);
+ 	qbman_eq_desc_set_fq(&eqdesc, dpaa2_q->fqid);
++	if (likely(priv->tx_conf_type == DPAA2_TX_NO_CONF))
++		return dpaa2_dev_tx_fast(dpaa2_q, bufs, nb_pkts, swp, fd_arr, &eqdesc, hw_mp);
  
- 		priv->max_event_queues++;
--		continue;
--err_break:
--		if (evq_info->dpcon)
--			rte_dpaa2_free_dpcon_dev(evq_info->dpcon);
--		if (evq_info->dpci)
--			rte_dpaa2_free_dpci_dev(evq_info->dpci);
--		break;
+-	/*Clear the unused FD fields before sending*/
++	if (dpaa2_q->tx_conf_queue)
++		dpaa2_dev_tx_conf(dpaa2_q->tx_conf_queue, false);
+ 
+ tx_again:
+ 	/*Check if the queue is congested*/
+@@ -1617,27 +1725,13 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		bufs++;
  	}
  
- done:
--	if (ret && priv) {
--		for (i = 0; i < priv->max_event_queues; i++) {
--			evq_info = &priv->evq_info[i];
--			if (evq_info->dpcon)
--				rte_dpaa2_free_dpcon_dev(evq_info->dpcon);
--			if (evq_info->dpci)
--				rte_dpaa2_free_dpci_dev(evq_info->dpci);
+-	frames_to_send = loop;
+-	loop = 0;
+-	retry_count = 0;
+-	while (loop < frames_to_send) {
+-		eq_ret = qbman_swp_enqueue_multiple(swp, &eqdesc,
+-			&fd_arr[loop], NULL, frames_to_send - loop);
+-		if (unlikely(eq_ret < 0)) {
+-			retry_count++;
+-			if (retry_count > DPAA2_MAX_TX_RETRY_COUNT)
+-				break;
+-		} else {
+-			loop += eq_ret;
+-			retry_count = 0;
 -		}
 -	}
-+	ret = 0;
- 	event_dev_probing_finish(eventdev);
--	if (ret)
--		DPAA2_EVENTDEV_ERR("Failed(%d) to create event device(%s)", ret, name);
--	else
-+	if (priv && !priv->max_event_queues) {
-+		ret = -ENODEV;
-+		DPAA2_EVENTDEV_ERR("Failed to create event device(%s)", name);
-+	} else if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 		DPAA2_EVENTDEV_INFO("Create event device(%s)", name);
-+	} else {
-+		DPAA2_EVENTDEV_INFO("Attach event device(%s)", name);
-+	}
++	eq_ret = dpaa2_dev_tx_enqueue_multiple(swp, fd_arr, loop, &eqdesc);
++	num_tx += eq_ret;
++	nb_pkts -= eq_ret;
  
- 	return ret;
+-	num_tx += loop;
+-	nb_pkts -= loop;
+ 	if (priv->tx_conf_type != DPAA2_TX_NO_CONF) {
+-		for (i = 0; i < loop; i++) {
+-			if (tstamp[i]) {
++		for (i = 0; i < eq_ret; i++) {
++			if (unlikely(tstamp[i])) {
+ 				rte_atomic_fetch_add_explicit(&dpaa2_q->tx_conf_queue->ts_to_cnfd,
+ 					1, rte_memory_order_relaxed);
+ 			}
+@@ -1648,16 +1742,8 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 
+ skip_tx:
+ 	dpaa2_q->tx_pkts += num_tx;
+-	if (order && eq_ret >= 0) {
+-order_tx_again:
+-		frames_to_send = (nb_pkts > dpaa2_eqcr_size) ? dpaa2_eqcr_size : nb_pkts;
+-		nb_pkts -= frames_to_send;
+-		order_tx = dpaa2_dev_tx_ordered(queue, bufs, frames_to_send);
+-		num_tx += order_tx;
+-		bufs += frames_to_send;
+-		if (nb_pkts && order_tx >= frames_to_send)
+-			goto order_tx_again;
+-	}
++	if (unlikely(order && eq_ret >= loop))
++		num_tx += dpaa2_dev_tx_multi_ordered(dpaa2_q, bufs, nb_pkts);
+ 
+ 	return num_tx;
  }
 -- 
 2.43.0
