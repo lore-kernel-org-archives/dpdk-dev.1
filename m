@@ -1,28 +1,27 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9674606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 11:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAF8606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 11:09:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 029CA40B9F;
-	Fri, 23 Oct 2026 13:08:39 +0200 (CEST)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
- by mails.dpdk.org (Postfix) with ESMTP id 5041A40664;
- Fri, 23 Oct 2026 13:08:36 +0200 (CEST)
-X-QQ-mid: zesmtpgz4t1792753706t3a17ddcf
-X-QQ-Originating-IP: uLtSKt//MSY+1bjlxVthoMFAvVLaJt6JXEYlJPQLQl4=
+	by mails.dpdk.org (Postfix) with ESMTP id 543B840A77;
+	Fri, 23 Oct 2026 13:08:44 +0200 (CEST)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+ by mails.dpdk.org (Postfix) with ESMTP id 7A2F340B9C
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 13:08:38 +0200 (CEST)
+X-QQ-mid: zesmtpgz4t1792753715t02dd7d47
+X-QQ-Originating-IP: 4ixkZkxajciJMR1GXH4uuuZiAY1VN6t68Xt5vK6pNk0=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.205.193.71])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Fri, 23 Oct 2026 19:08:24 +0800 (CST)
+ id ; Fri, 23 Oct 2026 19:08:33 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1613906268812796446
-EX-QQ-RecipientCnt: 4
+X-BIZMAIL-ID: 14962215170824186352
+EX-QQ-RecipientCnt: 3
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v10 14/17] net/txgbe: fix CR/KR link training and recovery
-Date: Fri, 23 Oct 2026 19:03:52 +0800
-Message-ID: <ADF074A1720F6C01+20261023110728.3975-15-zaiyuwang@trustnetic.com>
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH v10 17/17] net/txgbe: fix typo in the fiber_support_speed field
+Date: Fri, 23 Oct 2026 19:03:55 +0800
+Message-ID: <EEF8C528798480C7+20261023110728.3975-18-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261023110728.3975-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -32,24 +31,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NP3iUBCWMtGbrEzwkcsz6JJrMeT1zYbfPRwGwYhWRYEGAhwVSFOIKzjL
- Z7l43eWUrgzqR7Qg8FlJvY798epkWMcQMLoyY7SMJUOHEqJMvMZzMaxGO4RhNgMhl4ZnLmX
- Kq4f4F7XHGxb6A0lS/VQrNG8UMSrv/myRhvxwZGBEG6a88FI+slts0GoP3TBMAKr6xr1xMu
- ZJ9gT52C02Y1ZIUihZMXAW6/nnRVbVBQ6o4lAasgRqwPCWGKhOX71M/rb9b+tvc6BrmK15l
- d3yHilrWNVHSu38kkaDysaml7+Wd57NzjPZ57AEJl/j0pWRkwuw0UfDDhs4QhZQC2zj0WvZ
- HT33ZBe4reBR9wV03TrNW3vovW4uP8NW9+xDMrt4LgCi39gxoSelLrUSq8u5kDibVHYo6bH
- Cxc6IGEd1gXIBpZBxEtqRUtdb04rnPwZJX2en3dnH1BSTit21ML7Ilh8MtbagkeY13ue3GQ
- o2/GzR8Pn8ROXzocyoWVWI2gEwiej5pXNO8A+HRf103oUdM/WsgBy1QaxUnYVZKB38B3maE
- mv9KzpvBEKiw/KGaQb1d5zrd09IfwMxqWN3vVb/kJVfnGacfviFShdM9gPtvDHh16W8nsaw
- w4iShbyxPoGrKqrwm+aIXEGDP4mbuFfn/1tBChkc1weZpo4h/otJlFpG9MfVryxATZ23laQ
- xZG3Hjjr84QYHTAA6JY6SwT5EZHFFHsvdtgI27GlM4rB7HjkjqHmGCvEimhr73VuPu0x1su
- 6nd47i6CNzFYXzwLPUUOChLrigflzYQMavCkz7E/aR9JGLWu0ueJXrF5+NOUzGhpnQ87Ut5
- qNWxquCrlBOISJP5aKhCOwEeNtnsTPVDABPOF1VedDtXTBEihLrQ2pHUpflrlZRvjrrviep
- QIOd+7dXVQPsQf7Agq3mH9+TXO3EpZqhjl2w99YlhnKLq7JXZn13oYWi0qYbC8BajM0EzTH
- AT5agmjB/ReGa5Dmbrfc9ag2yRvq6Q09jvy7Ywut54DtMxxgSmi2qBMveC0rNx6ieJGUPle
- JV59vkdvZk9AbaLCJepwxn27lct8+4jVZkl5ThH1F+RedMNVKa7gNdQU12gV4dbTS53zTPi
- 1tKOwY+5khq
-X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
+X-QQ-XMAILINFO: N9i10iaAV/LhMT7gZ0ULt2fsxe0yEfWvu7dJYorgXYbGmrVviiphybZG
+ 7yMBDzTf81cyTkLQ7rvcBgKBw/R/yhUO9n6uxjF25Wd+WU0sBN0njC3w0B+jWzIbokaBL0w
+ BvKWp0l+gv652J1AeqiYnDvBbOB3uoN3wBYL8D2HZkVcYkxI0m8JdYVGD91XLZ1JPkaS335
+ LtnbxA8TBXJIh5FmocvhnTWjGSUQ3Lr4+Is1xv0Tqv8j8yJtGr+PPeo1qHPxcHpXQAyzNE2
+ NKKNnWxG0Kxi/EhW8z5eB4FIdTwrcfNeX5WOjcKymJTqtWBP7Pt6OWdKsUkXgO+eYnmPBXl
+ x8EP9LImyoTymMNEEgJFqrQiboOys58/uKhDH6n3Ub+3prFDtYjCB2A7dhb13PwMCq4ZY+k
+ CPP5DcCoKFr81cgePRE3k6svEFbyWRguo7x4hBvYVAVSCiNHHfr8ERHnf6u8M9F4BRrEae/
+ toV57hTwi+23f7N9ZsCHk2ldRHV9WU2IxJrUK7lPX4q+2u5n1fdyIOVoh1HgOXLPsk/EdXj
+ akDTw9/NmRD24qC4JhQ3cvXOBJvMJ4dWZo+yD4RkB852+ov/M1jksJxUNpiAp8hgocY5+SA
+ SK7dXlW1PzPikR6YNmQfSB8gVUzDA1omgZ3nl3WkPNE692jXcU8eI3kBIosdvJga8DRlj88
+ l2to1gnkg1WV32uwCt02UT4iLDmv8wJjZ4ft0ZoA2uIFPgCG79G4yaxllEWxn0G0j6NzJpz
+ Ni5Q/KPyyo8nQhfQ3z+bgKsc3MQ3gOw6KnWnU1/CopSv9eZEo8rGt3VmWLBsKaERwYMwPbt
+ SbwsSQc415o8fmQsKdS7vY8g9EYK+IMssT6u4hBTJ13BZIKrsqVwD42V6724rRgNNTKjU1a
+ YwTzbq4P9Lj3XFugTrGSmB0ZlPeyDofikfxvv2q844r3wfUPePMeqMRLmt7ohCu66dNHtvE
+ mH2cgHcWEsC/R/nkLp3Gz1V7qNhcBn5jpFg0KP4kWnVlGC9R04NBZyR+T9dY1Ydl/ytNYoD
+ brMVCnHM/gsH/bLMFwlD+SSal3f7PkzmSy1kSPaTpFhd+sCCwV341db6GRhMJEEIiXq/Ni6
+ sQprvggD1j1Fq1hXceyMJaNAV5Jbu1ylA==
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,475 +66,108 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Backplane CR/KR link training on the E56 PHY is unreliable and does
-not recover after a link event: the completion poll can block for a
-second on a condition that never triggers, the page exchange is only
-run once and its result is assumed to stay valid, and the FFE init
-mode and calibration ordering are also wrong.
-
-- Poll the AN FSM (0x78010) for CL72 completion until bits 0 and 3
-  are set, ((rdata & 0x9) == 0x9), with a 1 ms step and a 400 ms
-  budget. This replaces the ephy 0x163c mask-0xe poll that tested the
-  wrong condition. The per-lane TX-FFE dumps move into
-  txgbe_e56_get_txffe(), called once AN completes.
-- Re-run the page exchange on every AN next-page interrupt (1 ms
-  step, 50 ms per exchange round, 200 ms total, explicit next-page
-  handshake, -ETIMEDOUT on expiry) and only enter training after it
-  succeeds. The inline exchange in the AN73 flow is removed and a
-  CL72 failure no longer aborts the flow, so every link event re-runs
-  the exchange instead of assuming the previous one is still valid.
-- Initialize the FFE init mode bits in cfg_40g()/cfg_10g(), run
-  txgbe_e56_set_rxs_ufine_le_max() after the RXS osc init, and write
-  0x78001 = 0x7 in the AN programming sequence.
-- Clear hw->bp_link_mode in txgbe_set_link_to_sfi() so a port that
-  trained on the backplane does not keep a stale backplane mode after
-  switching to SFI.
-- Avoid register reads that are only used by disabled BP debug logs,
-  and drop a leftover debug line in the watchdog.
+struct txgbe_phy_info spells this field fiber_suppport_speed, with
+three p. Rename it to fiber_support_speed.
 
 Fixes: 234ce0d1fa9d ("net/txgbe: fix link stability for Amber-Lite backplane mode")
-Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_e56.c    |   3 +
- drivers/net/txgbe/base/txgbe_e56.h    |   1 +
- drivers/net/txgbe/base/txgbe_e56_bp.c | 173 ++++++++++++++++----------
- drivers/net/txgbe/base/txgbe_e56_bp.h |   2 +
- drivers/net/txgbe/base/txgbe_osdep.h  |  12 +-
- drivers/net/txgbe/base/txgbe_phy.c    |   3 +
- drivers/net/txgbe/txgbe_ethdev.c      |  24 +++-
- 7 files changed, 146 insertions(+), 72 deletions(-)
+ drivers/net/txgbe/base/txgbe_aml.c   | 4 ++--
+ drivers/net/txgbe/base/txgbe_aml40.c | 4 ++--
+ drivers/net/txgbe/base/txgbe_phy.c   | 8 ++++----
+ drivers/net/txgbe/base/txgbe_type.h  | 2 +-
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_e56.c b/drivers/net/txgbe/base/txgbe_e56.c
-index c0e5cc3894..279c9740c1 100644
---- a/drivers/net/txgbe/base/txgbe_e56.c
-+++ b/drivers/net/txgbe/base/txgbe_e56.c
-@@ -551,6 +551,7 @@ u32 txgbe_e56_cfg_40g(struct txgbe_hw *hw)
- 
- 	addr  = E56PHY_FETX_FFE_TRAIN_CFG_0_ADDR;
- 	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_0, 0x2);
- 	set_fields_e56(&rdata, E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_2, 0x2);
- 	wr32_ephy(hw, addr, rdata);
- 
-@@ -1377,6 +1378,8 @@ txgbe_e56_cfg_10g(struct txgbe_hw *hw)
- 
- 	addr = E56PHY_FETX_FFE_TRAIN_CFG_0_ADDR;
- 	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_0,
-+		       0x2);
- 	set_fields_e56(&rdata, E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_2,
- 		       0x2);
- 	wr32_ephy(hw, addr, rdata);
-diff --git a/drivers/net/txgbe/base/txgbe_e56.h b/drivers/net/txgbe/base/txgbe_e56.h
-index a2ae7ccb7e..8897ddde62 100644
---- a/drivers/net/txgbe/base/txgbe_e56.h
-+++ b/drivers/net/txgbe/base/txgbe_e56.h
-@@ -435,6 +435,7 @@ typedef union {
- #define E56PHY_KRT_TFSM_CFGKRT_TFSM_HOLDOFF_TIMER_X256K 23, 16
- 
- #define E56PHY_FETX_FFE_TRAIN_CFG_0_ADDR   (E56PHY_PMD_BASE_ADDR + 0x2BC)
-+#define E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_0 1, 0
- #define E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_2 9, 8
- #define E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_3 13, 12
- 
-diff --git a/drivers/net/txgbe/base/txgbe_e56_bp.c b/drivers/net/txgbe/base/txgbe_e56_bp.c
-index 760101a05e..17fce56ced 100644
---- a/drivers/net/txgbe/base/txgbe_e56_bp.c
-+++ b/drivers/net/txgbe/base/txgbe_e56_bp.c
-@@ -813,6 +813,7 @@ static int txgbe_e56_phy_rxs_calib_adapt_seq(struct txgbe_hw *hw,
- 		status |= txgbe_e56_ctle_bypass_seq(hw, bp_link_mode);
- 
- 	status |= txgbe_e56_rxs_osc_init_for_temp_track_range(hw, bp_link_mode);
-+	txgbe_e56_set_rxs_ufine_le_max(hw, bp_link_mode);
- 
- 	/* Wait an fsm_rx_sts 25G */
- 	BP_LOG("Wait CTRL_FSM_RX_STAT[0]::ctrl_fsm_rx0_st to be ready ...\n");
-@@ -2121,6 +2122,7 @@ int txgbe_e56_set_phy_link_mode(struct txgbe_hw *hw,
- 	set_fields_e56(&rdata, 12, 12, 0x1);
- 	wr32_epcs(hw, 0x070000, rdata);
- 	wr32_epcs(hw, 0x078002, 0x0000);
-+	wr32_epcs(hw, 0x78001, 0x7);
- 	/* pcs case fec en to work around first */
- 	wr32_epcs(hw, 0x100ab, 1);
- 
-@@ -2350,24 +2352,35 @@ static int chk_bkp_ability(struct txgbe_hw *hw,
- 	return 0;
- }
- 
--static int txgbe_e56_exchange_page(struct txgbe_hw *hw)
-+#define AN_PAGE_EXCHANGE_TIMEOUT_MS 200
-+int txgbe_e56_exchange_page(struct txgbe_hw *hw)
- {
- 	struct txgbe_backplane_ability local_ability = {0}, lp_ability = {0};
- 	u32 an_int, base_page = 0;
--	int count = 0;
-+	int count = 0, count2 = 0;
- 
- 	an_int = rd32_epcs(hw, 0x78002);
--	/* 500ms timeout */
- 	if (!(an_int & VR_AN_INTR_PG_RCV))
- 		return -EINVAL;
- 
--	for (count = 0; count < 500; count++) {
-+	/* Allow up to 50 ms per page-exchange round, with a 200 ms total budget. */
-+	for (count = 0; count < 50; count++) {
- 		u32 fsm = rd32_epcs(hw, 0x78010);
--		u32 rdata = rd32_epcs(hw, 0x78002);
-+		u32 next_page = 0;
-+		u32 rdata;
-+
-+		count2++;
-+		if (count2 >= AN_PAGE_EXCHANGE_TIMEOUT_MS) {
-+			BP_LOG("Wait for next page timeout after %d ms\n",
-+			       count2);
-+			return -ETIMEDOUT;
-+		}
- 
- 		BP_LOG("-----count----- %d - fsm: %x\n", count, fsm);
--		BP_LOG("read 78002 data %0x and clear pacv\n", rdata);
-+		rdata = rd32_epcs(hw, 0x78002);
-+		/* clear an pacv int */
- 		an_int = rdata;
-+		BP_LOG("read 78002 data %0x and clear pacv\n", rdata);
- 		set_fields_e56(&rdata, 2, 2, 0x0);
- 		wr32_epcs(hw, 0x78002, rdata);
- 		if (an_int & VR_AN_INTR_PG_RCV) {
-@@ -2382,33 +2395,89 @@ static int txgbe_e56_exchange_page(struct txgbe_hw *hw)
- 					wr32_epcs(hw, 0x70016, 0x2001);
- 					BP_LOG("write 70016 0x%0x\n",
- 					       0x2001);
-+					next_page = 1;
-+					count = 0; /* reset count to wait next page */
-+				} else {
-+					next_page = 0;
- 				}
- 				base_page = 1;
- 			}
+diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
+index ae5c7d7f0d..89f281e116 100644
+--- a/drivers/net/txgbe/base/txgbe_aml.c
++++ b/drivers/net/txgbe/base/txgbe_aml.c
+@@ -104,13 +104,13 @@ s32 txgbe_get_link_capabilities_aml(struct txgbe_hw *hw,
+ 			 TXGBE_LINK_SPEED_25GB_FULL;
+ 		*autoneg = true;
+ 	} else if (txgbe_is_dac_cable(hw)) {
+-		if (hw->phy.fiber_suppport_speed ==
++		if (hw->phy.fiber_support_speed ==
+ 		    TXGBE_LINK_SPEED_10GB_FULL) {
+ 			*autoneg = false;
+ 		} else {
+ 			*autoneg = true;
  		}
--		if ((fsm & 0x8) == 0x8) {
--			hw->fsm = 0x8;
--			goto check_ability;
-+		if (!next_page) {
-+			if ((fsm & 0x8) == 0x8) {
-+				hw->fsm = 0x8;
-+				goto check_ability;
-+			}
+-		*speed = hw->phy.fiber_suppport_speed;
++		*speed = hw->phy.fiber_support_speed;
+ 	} else if (hw->phy.sfp_type == txgbe_sfp_type_25g_sr_core0 ||
+ 		hw->phy.sfp_type == txgbe_sfp_type_25g_sr_core1 ||
+ 		hw->phy.sfp_type == txgbe_sfp_type_25g_lr_core0 ||
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index a338880345..10a86e5095 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -123,13 +123,13 @@ s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
+ 
+ 	/* Fiber or DAC cable */
+ 	if (txgbe_is_dac_cable(hw)) {
+-		if (hw->phy.fiber_suppport_speed ==
++		if (hw->phy.fiber_support_speed ==
+ 		    TXGBE_LINK_SPEED_10GB_FULL) {
+ 			*autoneg = false;
+ 		} else {
+ 			*autoneg = hw->devarg.auto_neg;
  		}
--		usec_delay(100);
-+		usec_delay(1000);
- 	}
- 
- check_ability:
-+	if (count == 50) {
-+		BP_LOG("Wait for next page timeout\n");
-+		return -ETIMEDOUT;
-+	}
-+	BP_LOG("AN exchange page done in %d ms\n", count2);
- 	return chk_bkp_ability(hw, local_ability, lp_ability);
- }
- 
-+void txgbe_e56_get_txffe(struct txgbe_hw *hw)
-+{
-+	u32 rdata = 0, pmd_ctrl = 0, lane_idx = 0, lane_num = 0, txffe = 0;
-+
-+	if (!rte_log_can_log(RTE_LOGTYPE_TXGBE_BP, RTE_LOG_DEBUG))
-+		return;
-+
-+	/* 21. read txffe to check kr training status */
-+	switch (hw->bp_link_mode) {
-+	case 10:
-+		lane_num = 1;
-+		break;
-+	case 40:
-+		lane_num = 4;
-+		break;
-+	case 25:
-+		lane_num = 1;
-+		break;
-+	default:
-+		BP_LOG("%s %d :Invalid speed\n", __func__, __LINE__);
-+		return;
-+	}
-+
-+	BP_LOG("%dG phy kr training check.... fsm: %x\n",
-+	       hw->bp_link_mode, rd32_epcs(hw, 0x78010));
-+	rdata = rd32_ephy(hw, 0x163c) & GENMASK(lane_num, 1);
-+	pmd_ctrl = rd32_ephy(hw, 0x1644);
-+	BP_LOG("KR TRAINING CHECK = %x. pmd_ctrl:%lx-%lx-%lx-%lx\n",
-+	       rdata,
-+	       FIELD_GET_M(GENMASK(3, 0), pmd_ctrl),
-+	       FIELD_GET_M(GENMASK(7, 4), pmd_ctrl),
-+	       FIELD_GET_M(GENMASK(11, 8), pmd_ctrl),
-+	       FIELD_GET_M(GENMASK(15, 12), pmd_ctrl));
-+	BP_LOG("before: %x-%x-%x-%x\n",
-+	       rd32_ephy(hw, 0x141c), rd32_ephy(hw, 0x1420),
-+	       rd32_ephy(hw, 0x1424), rd32_ephy(hw, 0x1428));
-+	for (lane_idx = 0; lane_idx < lane_num; lane_idx++) {
-+		txffe = rd32_ephy(hw, 0x828 + lane_idx * 0x100);
-+		BP_LOG("after[%x]: %lx-%lx-%lx-%lx\n", lane_idx,
-+		       FIELD_GET_M(GENMASK(6, 0), txffe),
-+		       FIELD_GET_M(GENMASK(21, 16), txffe),
-+		       FIELD_GET_M(GENMASK(29, 24), txffe),
-+		       FIELD_GET_M(GENMASK(13, 8), txffe));
-+	}
-+}
-+
- static int txgbe_e56_cl72_training(struct txgbe_hw *hw)
- {
- 	u32 bylinkmode = hw->bp_link_mode;
- 	u8 bypass_ctle = hw->bypass_ctle;
- 	int status = 0, temp_data = 0;
--	u32 lane_num = 0, lane_idx = 0;
--	u32 __rte_unused pmd_ctrl = 0, txffe = 0;
- 	int ret = 0;
- 	u32 rdata;
--
-+	u32 lane_num = 0;
- 	u8 pll_en_cfg = 0;
- 	u8 pmd_mode = 0;
-+	u32 __rte_unused pmd_ctrl = 0;
- 
- 	switch (bylinkmode) {
- 	case 10:
-@@ -2436,6 +2505,7 @@ static int txgbe_e56_cl72_training(struct txgbe_hw *hw)
- 
- 	BP_LOG("2.3 Wait %dG KR phy mode init ....\n", bylinkmode);
- 	status = txgbe_set_phy_link_mode(hw, bylinkmode);
-+	ret |= status;
- 
- 	/* 13. set phy an status to 1 - AN_CFG[0]: 4-7 lane0-lane3 */
- 	rdata = rd32_ephy(hw, 0x1434);
-@@ -2462,51 +2532,49 @@ static int txgbe_e56_cl72_training(struct txgbe_hw *hw)
- 
- 	/* 18 */
- 	/* 19. rxs calibration and adaptation sequence */
--	BP_LOG("2.4 Wait %dG RXS.... fsm: %x\n",
--	       bylinkmode, rd32_epcs(hw, 0x78010));
-+	BP_LOG("2.4 Wait %dG RXS.... fsm: %x, an_int: %x\n",
-+	       bylinkmode, rd32_epcs(hw, 0x78010),
-+	       rd32_epcs(hw, 0x78002));
- 	status = txgbe_e56_phy_rxs_calib_adapt_seq(hw, bylinkmode, bypass_ctle);
- 	ret |= status;
- 	/* 20 */
--	BP_LOG("2.5 Wait %dG phy calibration.... fsm: %x\n",
--	       bylinkmode, rd32_epcs(hw, 0x78010));
--	txgbe_e56_set_rxs_ufine_le_max(hw, bylinkmode);
-+	BP_LOG("2.5 Wait %dG phy calibration.... fsm: %x, an_int: %x\n",
-+	       bylinkmode, rd32_epcs(hw, 0x78010),
-+	       rd32_epcs(hw, 0x78002));
- 	status = txgbe_e56_get_temp(hw, &temp_data);
-+	ret |= status;
- 	if (bylinkmode == 40)
- 		status = txgbe_temp_track_seq_40g(hw, TXGBE_LINK_SPEED_40GB_FULL);
- 	else
- 		status = txgbe_e56_rxs_post_cdr_lock_temp_track_seq(hw, bylinkmode);
-+
-+	ret |= status;
- 	/* 21 */
--	BP_LOG("2.6 Wait %dG phy kr training check.... fsm: %x\n",
--	       bylinkmode, rd32_epcs(hw, 0x78010));
--	status = kr_read_poll(rd32_ephy, rdata,
--				  ((rdata & 0xe) & GENMASK(lane_num, 1)) ==
--				  (0xe & GENMASK(lane_num, 1)), 100,
--				   10000, hw, 0x163c);
-+	BP_LOG("2.6 Wait %dG phy kr fsm check : %x, an_int: %x\n",
-+	       bylinkmode, rd32_epcs(hw, 0x78010),
-+	       rd32_epcs(hw, 0x78002));
-+	status = kr_read_poll(rd32_epcs, rdata,
-+			      (rdata & 0x9) == 0x9, 1000,
-+			      400, hw, 0x78010);
- 	pmd_ctrl = rd32_ephy(hw, 0x1644);
--	BP_LOG("KR TRAINING CHECK = %x, %s. pmd_ctrl:%lx-%lx-%lx-%lx\n",
-+	BP_LOG("KR FSM CHECK = %x, %s. pmd_ctrl:%lx-%lx-%lx-%lx\n",
- 	       rdata, status ? "FAILED" : "SUCCESS",
- 	       FIELD_GET_M(GENMASK(3, 0), pmd_ctrl),
- 	       FIELD_GET_M(GENMASK(7, 4), pmd_ctrl),
- 	       FIELD_GET_M(GENMASK(11, 8), pmd_ctrl),
- 	       FIELD_GET_M(GENMASK(15, 12), pmd_ctrl));
- 	ret |= status;
--	BP_LOG("before: %x-%x-%x-%x\n",
--	       rd32_ephy(hw, 0x141c), rd32_ephy(hw, 0x1420),
--	       rd32_ephy(hw, 0x1424), rd32_ephy(hw, 0x1428));
--
--	for (lane_idx = 0; lane_idx < lane_num; lane_idx++) {
--		txffe = rd32_ephy(hw, 0x828 + lane_idx * 0x100);
--		BP_LOG("after[%x]: %lx-%lx-%lx-%lx\n", lane_idx,
--		       FIELD_GET_M(GENMASK(6, 0), txffe),
--		       FIELD_GET_M(GENMASK(21, 16), txffe),
--		       FIELD_GET_M(GENMASK(29, 24), txffe),
--		       FIELD_GET_M(GENMASK(13, 8), txffe));
--	}
- 
- 	/* 22 */
--	BP_LOG("2.7 Wait %dG phy Rx adc.... fsm:%x\n",
--	       bylinkmode, rd32_epcs(hw, 0x78010));
-+	BP_LOG("2.7 Wait %dG phy Rx adc.... fsm:%x, an_int: %x\n",
-+	       bylinkmode, rd32_epcs(hw, 0x78010),
-+	       rd32_epcs(hw, 0x78002));
- 	status = txgbe_e56_rxs_adc_adapt_seq(hw, bypass_ctle);
-+	ret |= status;
-+
-+	BP_LOG("2.8 ===end ret : %d.... fsm:%x, an_int: %x\n",
-+	       ret, rd32_epcs(hw, 0x78010),
-+	       rd32_epcs(hw, 0x78002));
- 
- 	return ret;
- }
-@@ -2516,27 +2584,7 @@ int txgbe_handle_e56_bkp_an73_flow(struct txgbe_hw *hw)
- 	int status = 0;
- 	u32 rdata;
- 
--	BP_LOG("2.1 Wait page changed ....\n");
--	status = txgbe_e56_exchange_page(hw);
--	if (status) {
--		BP_LOG("Exchange page failed\n");
--		return status;
--	}
--
--	BP_LOG("2.2 Wait page changed ..done..\n");
--	wr32_epcs(hw, 0x100ab, 0);
--	if (AN_TRAINING_MODE) {
--		rdata = rd32_epcs(hw, 0x70000);
--		BP_LOG("read 0x70000 data %0x\n", rdata);
--		wr32_epcs(hw, 0x70000, 0);
--		BP_LOG("write 0x70000 0x%0x\n", 0);
--	}
--
--	rdata = rd32_epcs(hw, 0x78002);
--	BP_LOG("read 78002 data %0x and clear page int\n", rdata);
--	set_fields_e56(&rdata, 2, 2, 0x0);
--	wr32_epcs(hw, 0x78002, rdata);
--
-+	/* 10  RXS_DISABLE - TXS_DISABLE - CMS_DISABLE */
- 	/* dis phy tx/rx lane */
- 	rdata = rd32_ephy(hw, 0x1400);
- 	set_fields_e56(&rdata, 19, 16, 0x0);
-@@ -2582,11 +2630,6 @@ int txgbe_handle_e56_bkp_an73_flow(struct txgbe_hw *hw)
- 	}
- 
- 	status = txgbe_e56_cl72_training(hw);
--	if (status) {
--		BP_LOG("CL72 training failed, status = %d\n", status);
--		return status;
--	}
--
- 	rdata = rd32_ephy(hw, E56PHY_RXS_IDLE_DETECT_1_ADDR);
- 	set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MAX, 0x28);
- 	set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MIN, 0xa);
-diff --git a/drivers/net/txgbe/base/txgbe_e56_bp.h b/drivers/net/txgbe/base/txgbe_e56_bp.h
-index 8089e5b971..f667a052ec 100644
---- a/drivers/net/txgbe/base/txgbe_e56_bp.h
-+++ b/drivers/net/txgbe/base/txgbe_e56_bp.h
-@@ -279,4 +279,6 @@ typedef union {
- int txgbe_e56_set_phy_link_mode(struct txgbe_hw *hw,
- 				u32 speed, u32 need_restart);
- int txgbe_handle_e56_bkp_an73_flow(struct txgbe_hw *hw);
-+int txgbe_e56_exchange_page(struct txgbe_hw *hw);
-+void txgbe_e56_get_txffe(struct txgbe_hw *hw);
- #endif
-diff --git a/drivers/net/txgbe/base/txgbe_osdep.h b/drivers/net/txgbe/base/txgbe_osdep.h
-index da069e94f6..bb8e49a185 100644
---- a/drivers/net/txgbe/base/txgbe_osdep.h
-+++ b/drivers/net/txgbe/base/txgbe_osdep.h
-@@ -31,10 +31,14 @@
- extern int txgbe_logtype_bp;
- #define RTE_LOGTYPE_TXGBE_BP txgbe_logtype_bp
- #define BP_LOG(fmt, ...) \
--	RTE_LOG(DEBUG, TXGBE_BP, \
--		"[%"PRIu64".%"PRIu64"]%s(%d): " fmt, \
--		usec_stamp() / 1000000, usec_stamp() % 1000000, \
--		__func__, __LINE__, ## __VA_ARGS__)
-+	do { \
-+		if (rte_log_can_log(RTE_LOGTYPE_TXGBE_BP, RTE_LOG_DEBUG)) \
-+			RTE_LOG(DEBUG, TXGBE_BP, \
-+				"[%" PRIu64 ".%" PRIu64 "]%s(%d): " fmt, \
-+				usec_stamp() / 1000000, \
-+				usec_stamp() % 1000000, \
-+				__func__, __LINE__, ## __VA_ARGS__); \
-+	} while (0)
- 
- #define ASSERT(x) do {			\
- 	if (!(x))			\
+-		*speed = hw->phy.fiber_suppport_speed;
++		*speed = hw->phy.fiber_support_speed;
+ 	} else if (txgbe_is_40g_fiber_qsfp(hw)) {
+ 		*speed = TXGBE_LINK_SPEED_40GB_FULL;
+ 		*autoneg = false;
 diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
-index a50fa986b9..decfcbadd6 100644
+index 896fe7eecf..db4edbf411 100644
 --- a/drivers/net/txgbe/base/txgbe_phy.c
 +++ b/drivers/net/txgbe/base/txgbe_phy.c
-@@ -1956,6 +1956,9 @@ txgbe_set_link_to_sfi(struct txgbe_hw *hw,
- 	s32 err = 0;
- 	u32 value = 0;
- 
-+	/* Switching to SFI mode clears backplane link mode. */
-+	hw->bp_link_mode = 0;
-+
- 	/* Set the module link speed */
- 	hw->mac.set_rate_select_speed(hw, speed);
- 	/* 1. Wait xpcs power-up good */
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index df08332a3c..b5d8e34f87 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -3025,6 +3025,7 @@ void txgbe_dev_e56_check_bp_event(void *param)
- 	u32 __rte_unused an_int = 0;
- 	int ret = 0;
- 	bool need_link_update = false;
-+	bool exchange_done = false;
- 
- 	if (!hw)
- 		return;
-@@ -3050,7 +3051,7 @@ void txgbe_dev_e56_check_bp_event(void *param)
+@@ -913,11 +913,11 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 		if (comp_codes_25g == TXGBE_SFF_25GBASECR_91FEC ||
+ 		    comp_codes_25g == TXGBE_SFF_25GBASECR_74FEC ||
+ 		    comp_codes_25g == TXGBE_SFF_25GBASECR_NOFEC) {
+-			hw->phy.fiber_suppport_speed =
++			hw->phy.fiber_support_speed =
+ 				TXGBE_LINK_SPEED_25GB_FULL |
+ 				TXGBE_LINK_SPEED_10GB_FULL;
+ 		} else {
+-			hw->phy.fiber_suppport_speed =
++			hw->phy.fiber_support_speed =
+ 				TXGBE_LINK_SPEED_10GB_FULL;
  		}
- 	}
- 
--	if (!(txgbe_xpcs_an_enabled(hw)))
-+	if (!txgbe_xpcs_an_enabled(hw))
- 		return;
- 
- 	if (!hw->devarg.auto_neg)
-@@ -3070,6 +3071,7 @@ void txgbe_dev_e56_check_bp_event(void *param)
- 		need_link_update = true;
- 		value &= ~VR_AN_INTR_CMPLT;
- 		wr32_epcs(hw, VR_AN_INTR, value);
-+		txgbe_e56_get_txffe(hw);
- 	}
- 
- 	if (value & VR_AN_INTR_LINK) {
-@@ -3087,7 +3089,21 @@ void txgbe_dev_e56_check_bp_event(void *param)
- 	}
- 
- 	if (value & VR_AN_INTR_PG_RCV) {
--		BP_LOG("%d Enter training\n", hw->port_id);
-+		BP_LOG("%d 2.1 *** Wait page changed ....\n", hw->port_id);
-+		ret = txgbe_e56_exchange_page(hw);
-+		if (ret) {
-+			BP_LOG("%d 2.2 *** Exchange page failed\n", hw->port_id);
-+			goto an_status;
-+		} else {
-+			BP_LOG("%d 2.2 *** Wait page changed ..done..\n",
-+			       hw->port_id);
-+			wr32_epcs(hw, 0x100ab, 0);
-+			exchange_done = true;
-+		}
-+	}
-+
-+	if (exchange_done) {
-+		BP_LOG("%d 2.2.2 *** Enter training\n", hw->port_id);
- 		ret = txgbe_handle_e56_bkp_an73_flow(hw);
- 		if (!AN_TRAINING_MODE) {
- 			fsm = rd32_epcs(hw, 0x78010);
-@@ -3810,8 +3826,10 @@ txgbe_dev_interrupt_get_status(struct rte_eth_dev *dev,
- 	if (eicr & TXGBE_ICRMISC_LSC)
- 		intr->flags |= TXGBE_FLAG_NEED_LINK_UPDATE;
- 
--	if (eicr & TXGBE_ICRMISC_ANDONE)
-+	if (eicr & TXGBE_ICRMISC_ANDONE) {
-+		PMD_DRV_LOG(DEBUG, "an int eicr=0x%08x", eicr);
- 		intr->flags |= TXGBE_FLAG_NEED_AN_CONFIG;
-+	}
- 
- 	if (eicr & TXGBE_ICRMISC_VFMBX)
- 		intr->flags |= TXGBE_FLAG_MAILBOX;
+ 	} else if (comp_codes_25g == TXGBE_SFF_25GAUI_C2M_AOC_BER_5 ||
+@@ -938,7 +938,7 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 			hw->phy.sfp_type = (hw->bus.lan_id == 0
+ 				? txgbe_sfp_type_da_act_lmt_core0
+ 				: txgbe_sfp_type_da_act_lmt_core1);
+-			hw->phy.fiber_suppport_speed =
++			hw->phy.fiber_support_speed =
+ 				TXGBE_LINK_SPEED_10GB_FULL;
+ 		} else {
+ 			hw->phy.sfp_type = txgbe_sfp_type_unknown;
+@@ -1142,7 +1142,7 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
+ 				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core0;
+ 			else
+ 				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core1;
+-			hw->phy.fiber_suppport_speed =
++			hw->phy.fiber_support_speed =
+ 						TXGBE_LINK_SPEED_40GB_FULL |
+ 						TXGBE_LINK_SPEED_10GB_FULL;
+ 		}
+diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
+index a1ce78623b..28696cefce 100644
+--- a/drivers/net/txgbe/base/txgbe_type.h
++++ b/drivers/net/txgbe/base/txgbe_type.h
+@@ -724,7 +724,7 @@ struct txgbe_phy_info {
+ 	u32 addr;
+ 	u32 id;
+ 	enum txgbe_sfp_type sfp_type;
+-	u32 fiber_suppport_speed;
++	u32 fiber_support_speed;
+ 	bool sfp_setup_needed;
+ 	u32 revision;
+ 	u32 media_type;
 -- 
 2.55.0.windows.2
 
