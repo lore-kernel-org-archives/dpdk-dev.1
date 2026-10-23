@@ -1,75 +1,75 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A3B606A31B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 14:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6240B606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 14:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=KzMTbygc
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=KaUzJYgH
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BDD1240268;
-	Fri, 23 Oct 2026 16:16:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B258040268;
+	Fri, 23 Oct 2026 16:17:48 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id DB82040265
- for <dev@dpdk.org>; Fri, 23 Oct 2026 16:16:10 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 711B040265
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 16:17:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792764970;
+ s=mimecast20190719; t=1792765066;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=sYW5I7A1cxYf7Dr+Lk1JUKLIfMNHK7cU2Bni8iIGxKw=;
- b=KzMTbygcC9fFvIZF3VqSXW2Xny+tyFA8jlsn3yinnKurPlj8mNbrvaHHADDQyaCf4q6YeY
- /6LD5EgNMSfhdE2xiFBI8nXsvwRfNpkh8QVsAX8xzrLNHSUTdk0rAYhv8llGr52iSE01Y9
- p0lGmtgVGQQRka4B5D6F04Ygc86ZLjs=
+ bh=buK/fGzqfaJvwF2njfXsk0D1DDr+Dl4LxiT/eqH8eyw=;
+ b=KaUzJYgHsa7VlQnbD3wKBQdGA8OCrLsX7swJQzVVkai/QZhZvOY5oRZFPGyT7fNuKiwV2w
+ dyH+3Jn+aF3BkjxST6r1QUjCUfgVT+kczCc4A2aJxshV3SmFHhGoidJ5rYUG8Jh8g6KD9d
+ ra4dg3s3ISEW6q3pXcdDcIgxtpzPoNA=
 Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
  [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-679-z5oDIdYENHK2Nxs6a9qdRg-1; Fri, 23 Oct 2026 10:16:09 -0400
-X-MC-Unique: z5oDIdYENHK2Nxs6a9qdRg-1
-X-Mimecast-MFC-AGG-ID: z5oDIdYENHK2Nxs6a9qdRg_1792764967
+ us-mta-623-rxCrVUjkN2uZA1Ippal32A-1; Fri, 23 Oct 2026 10:17:45 -0400
+X-MC-Unique: rxCrVUjkN2uZA1Ippal32A-1
+X-Mimecast-MFC-AGG-ID: rxCrVUjkN2uZA1Ippal32A_1792765064
 Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-3ab2f8ce13dso11952851fa.1
- for <dev@dpdk.org>; Fri, 23 Oct 2026 07:16:08 -0700 (PDT)
+ 38308e7fff4ca-3ab353585f1so4472811fa.1
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 07:17:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792764967; x=1793369767;
+ d=1e100.net; s=20260707; t=1792765064; x=1793369864;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=sYW5I7A1cxYf7Dr+Lk1JUKLIfMNHK7cU2Bni8iIGxKw=;
- b=DcKHF2g8vDwZ2JrTggW6Aiztu7rQ3z+H6cwzEXS+2YrW375TAyuMhFVOnKv8sk/P7W
- 9XLurmk23GGffMmYSzPExtVWP4OOldKButZU27dlXYGPs8Pi4C24xg3sM0xEgoWSMhUT
- onelWLqWu7jdybGU6g0kvgGYMzq6pdZLqio4zm7k9DAAn353eJXNKQv1pQWT5srbUFt5
- /U7l1OEIfaPgj1kieqBpHUtHh5tqm5rNnwhW2sp9wB1wLhyWug1QuOW/w4PMKLmTS6mw
- TS9WnLaUJeQI1myfhHa09Cfro8r6JHkAxa6zhkpBOmmzmwYAUUH3YMO6rCrsKwWkynru
- yAQw==
-X-Gm-Message-State: AFq9FYJsyYLr9YPX7NONqOYFIl3+7zmBK0LRncfXt45Vjy9F9Vopk+RW
- ADFfR1cUs66PokVwtHGwSYqFTIEbyPEO27mVp5eh4bDgF9Swi4koDtBjyoVQEE5W84vo43q/z6D
- NkKTJdZrAeNRC6zZxH96NRD/90251EXBkSjkBm962v92XUm4b6JBw8NT5KExyMWO0Vk4FuFmxXy
- xq2RvpXwRs8xTeargQYRA=
-X-Gm-Gg: AYBFou1pmvXlaTRW993B13hOdrEDIPgT+Ko1bL1VQalef7i9v3sYS1ZdJFlUWNyu3mB
- 0eqoEvJYhkZ41+VGR5eGcglwCqBGkDfnTAst1SfepbKn230pP3rM8UkV8unOxzxli3HC+KKF4Hb
- uWvaCp6IegeoPFqQhYlP1eUwCyxUq/Lvb96HOXPgDR2lubtiMhEZuROU3HN/nlzPP3M06COFqSA
- Aeh7mabC7kfc+23ShqlyAtPO9er88mZVJncXneiIMgcZ4lZ
-X-Received: by 2002:a2e:be8d:0:b0:3ab:4e70:6959 with SMTP id
- 38308e7fff4ca-3ac51146c28mr16145041fa.19.1792764967273; 
- Fri, 23 Oct 2026 07:16:07 -0700 (PDT)
-X-Received: by 2002:a2e:be8d:0:b0:3ab:4e70:6959 with SMTP id
- 38308e7fff4ca-3ac51146c28mr16144951fa.19.1792764966825; Fri, 23 Oct 2026
- 07:16:06 -0700 (PDT)
+ bh=buK/fGzqfaJvwF2njfXsk0D1DDr+Dl4LxiT/eqH8eyw=;
+ b=r7XyWju2AWNFCJF3UqwaiE9dLZJqtc9Okrd3aIfjHf+76/Ld5WMCyTzhV+86kbQpB0
+ /P+EXpYYTtk1HTgSZUcX/IVpRQC2n3h/Ybv2mUFrhDKRT7IoVi237EW6Y/0h8fYPLGvu
+ FHNnVdYFjBlGdPNgGiaT7BHDEbSOK+p8H30afYNdPnqTPLcF7dE4oQYgBrs/eLoOCa5l
+ GevUnK/XdmwQt6DVS4hw8bsZXkVnU9DRwSQ3x/SYYX7zIib9ep/BCyKhBT9a3bOjnbc+
+ IKeyWQ/jBdWO9huM8OXkDOGWSQF4ji2hnKoV5+l2ajFrrx1u2WNY63CSsk1Jr9pwiYIz
+ pUIg==
+X-Gm-Message-State: AFq9FYLr+/rbTrAGEOQ7xAY0v1RN6ty1/uzTbAG6MhajH4M64TCl/bGE
+ QWEGXhBq8wa3IPmvjM5l74JZAHeWifzb4ipXxNY3uSr4LiV9Vmiiii0SpD/DYb3Y5Og2T9KhdMz
+ 9khWgIZYjvVn7W1X69/ao8UGHQs2YtM0SWWoGnZFRAAmP2/87vQDgrodPA3uqO+5lPmgoNSjdzp
+ IkLImaP8SQ4YqgObp6BwE=
+X-Gm-Gg: AYBFou05Q+SWJIQYIZKubjqdDYp3DzRTahgenGRg9DJKKkcv4yalgyj8pfhmeJxEGPJ
+ 8CxoSWUM9UdgPUCZgwjo4R+j3msKR+TXw2RV18vIde6pF3GDhxqZkAawHOcHvWlhH2UY0NH/Mul
+ x/g4lMfqe69vZMAC1/XzW5clHVOefdZluh5POtdLnrK/AF446x6E4NlXdVD382iyvm35Xo3ZB5h
+ jrf4iWsTa5EJEEd0PzmnOq1vP2Ff9C2ynVQauPU45ydxvl+
+X-Received: by 2002:a2e:bc1b:0:b0:3ab:690f:829f with SMTP id
+ 38308e7fff4ca-3ac6637c6efmr5404871fa.15.1792765063946; 
+ Fri, 23 Oct 2026 07:17:43 -0700 (PDT)
+X-Received: by 2002:a2e:bc1b:0:b0:3ab:690f:829f with SMTP id
+ 38308e7fff4ca-3ac6637c6efmr5404801fa.15.1792765063556; Fri, 23 Oct 2026
+ 07:17:43 -0700 (PDT)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 References: <5766e02ea3243de1f63eb68efc210719f11815b6.1792763492.git.anatoly.burakov@intel.com>
- <8e863c1aa5d265fa27560dd27ba61858c217ff3d.1792763492.git.anatoly.burakov@intel.com>
-In-Reply-To: <8e863c1aa5d265fa27560dd27ba61858c217ff3d.1792763492.git.anatoly.burakov@intel.com>
+ <61924e76b67043fb4b19c09bc60acd00ad26681d.1792763492.git.anatoly.burakov@intel.com>
+In-Reply-To: <61924e76b67043fb4b19c09bc60acd00ad26681d.1792763492.git.anatoly.burakov@intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 23 Oct 2026 16:15:54 +0200
-X-Gm-Features: AclHuK883xF7R6fHNgxXmV4MuGmI8RqoO6lZcckBxSEqfxX5S4C-d5Ct1Raeqws
-Message-ID: <CAJFAV8yi8VxCz8kyuw=Qz155KPzWw2OPGMPJ0nRH+HhBFTMHsw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/8] interrupts: fix event arrays copy on instance
- duplication
+Date: Fri, 23 Oct 2026 16:17:31 +0200
+X-Gm-Features: AclHuK_TYrBRy2QMocucL5_mQ_hS3lULcziGmTf7qlqFpzRdHIsEi0XzYl_6j6k
+Message-ID: <CAJFAV8xnDXmO_S11sqWTW6-s_FG3eUg8=a2BL8b0RgMoVmqaHg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/8] eal/linux: fix closing of event FDs not owned by
+ EAL
 To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Harman Kalra <hkalra@marvell.com>,
- Ray Kinsella <mdr@ashroe.eu>, Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+Cc: dev@dpdk.org, Harman Kalra <hkalra@marvell.com>, 
+ Cunming Liang <cunming.liang@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 3ejQhTeDOUwyrgp6M2td-1E-qakpp1esneMgL_qfyDo_1792764967
+X-Mimecast-MFC-PROC-ID: bKGVsrsi_VEyOM9wX2WkJKCw0wxGxdILjMBncevjZfw_1792765064
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -88,27 +88,30 @@ X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Fri, 23 Oct 2026 at 15:51, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+On Fri, 23 Oct 2026 at 15:52, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
 >
-> The event FD and epoll event arrays are copied using the number of
-> entries as a byte count, so only a fraction of the entries make it
-> into the duplicate.
+> rte_intr_efd_disable() decides whether to close the event FDs based on
+> max_intr being greater than nb_efd. This is a side effect of how
+> rte_intr_efd_enable() fills the handle for VFIO MSI-X, where an extra
+> slot is reserved for the misc interrupt, and only indirectly identifies
+> the eventfds that EAL created itself.
 >
-> Copy the arrays by element size.
+> Any driver filling the event FD array for a VDEV or EXT handle and
+> setting max_intr the same way gets its descriptors closed by EAL even
+> though it owns them. The virtio-user driver does exactly this, so its
+> callfds are closed by rte_intr_efd_disable() and then closed again by
+> the driver on uninit.
 >
-> Fixes: b7c984291611 ("interrupts: add allocator and accessors")
+> Check the interrupt handle type instead, so that only the eventfds
+> created by rte_intr_efd_enable() for VFIO MSI-X are closed.
+>
+> Fixes: b9e0662a931d ("eal/linux: add interrupt API for drivers")
 > Cc: stable@dpdk.org
 >
 > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-Thanks for working on those issues on such short notice.
-
-I already put a series for fixing a number of issues with interrupts.
-As part of it, I would remove the whole duplication principle.
-
-Could you perhaps test your series on top of mine?
-
-https://patchwork.dpdk.org/project/dpdk/list/?series=39749
+LGTM.
+Acked-by: David Marchand <david.marchand@redhat.com>
 
 
 -- 
