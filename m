@@ -1,31 +1,30 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE22C606A31B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2043606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:49:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F3D66427AA;
-	Fri, 23 Oct 2026 15:45:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AD37E40E37;
+	Fri, 23 Oct 2026 15:45:02 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id D508940A67
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:50 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1C8CF40DC9
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:52 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BAA7320002B;
- Fri, 23 Oct 2026 15:44:50 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EA7A3200031;
+ Fri, 23 Oct 2026 15:44:51 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8708220003C;
- Fri, 23 Oct 2026 15:44:50 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B680B20002B;
+ Fri, 23 Oct 2026 15:44:51 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 532EC18000B7;
- Fri, 23 Oct 2026 21:44:49 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6473F1800068;
+ Fri, 23 Oct 2026 21:44:50 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4-S3 54/65] event/dpaa2: fix DQRR held buffer accounting on
- enqueue
-Date: Fri, 23 Oct 2026 19:13:34 +0530
-Message-ID: <20261023134346.37727-55-prashant.gupta_3@nxp.com>
+Subject: [PATCH v4-S3 55/65] bus/fslmc: store dequeue dpio in mbuf seq dynfield
+Date: Fri, 23 Oct 2026 19:13:35 +0530
+Message-ID: <20261023134346.37727-56-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
 References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
@@ -52,70 +51,84 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Jun Yang <jun.yang@nxp.com>
 
-In the atomic enqueue path, the DQRR held-buffer state (dqrr_size and
-dqrr_held) was updated while building the enqueue descriptors, before
-the frames were actually enqueued to the hardware. If the subsequent
-qbman_swp_enqueue_multiple_desc() only accepted a subset of the frames
-(or none, requiring a retry), the accounting had already been cleared
-for frames that were never sent. This left the held-buffer bookkeeping
-out of sync with the DQRR entries still owned by the portal, leading to
-premature consumption of DQRR slots and incorrect atomic context
-release.
+The atomic scheduling context (DQRR index) is saved in the mbuf
+seq dynfield at dequeue time and consumed at enqueue time. However,
+the enqueue and dequeue may happen on different DPIO
+portals, so the context must remember which DPIO produced it.
 
-Defer the held-buffer update until after each enqueue reports how many
-frames were accepted. The per-slot DQRR size and bitmask are recorded
-while preparing the descriptors and applied only for the frames that
-were actually enqueued.
+Change the seqn dynfield from a bare uint32_t to a small struct that
+carries both the sequence value and the originating dequeue DPIO
+pointer. This is the base type change; additional changes are in the
+following patches.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/event/dpaa2/dpaa2_eventdev.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/bus/fslmc/bus_fslmc_driver.h | 28 +++++++++++++++++++++-------
+ drivers/bus/fslmc/fslmc_bus.c        |  4 ++--
+ 2 files changed, 23 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/event/dpaa2/dpaa2_eventdev.c b/drivers/event/dpaa2/dpaa2_eventdev.c
-index 01c71fc0d2..127397e681 100644
---- a/drivers/event/dpaa2/dpaa2_eventdev.c
-+++ b/drivers/event/dpaa2/dpaa2_eventdev.c
-@@ -129,8 +129,9 @@ dpaa2_eventdev_enqueue_burst(void *port, const struct rte_event ev[],
- 	struct qbman_fd fd_arr[MAX_TX_RING_SLOTS];
- 	struct qbman_eq_desc eqdesc[MAX_TX_RING_SLOTS];
- 	uint16_t num_tx = 0;
-+	uint64_t dqrr_held[MAX_TX_RING_SLOTS];
+diff --git a/drivers/bus/fslmc/bus_fslmc_driver.h b/drivers/bus/fslmc/bus_fslmc_driver.h
+index 40c9ba0699..ddde52d89c 100644
+--- a/drivers/bus/fslmc/bus_fslmc_driver.h
++++ b/drivers/bus/fslmc/bus_fslmc_driver.h
+@@ -43,21 +43,35 @@ struct vfio_device_info;
+ 
+ #define DPAA2_INVALID_MBUF_SEQN        0
+ 
+-typedef uint32_t dpaa2_seqn_t;
++struct dpaa2_seq_t {
++	uint32_t seqn;
++	void *seq_dpio_dq;
++};
++
+ extern int dpaa2_seqn_dynfield_offset;
+ 
+ /**
+- * Read dpaa2 sequence number from mbuf.
++ * Read dpaa2 sequence struct from mbuf.
+  *
+  * @param mbuf Structure to read from.
+- * @return pointer to dpaa2 sequence number.
++ * @return pointer to dpaa2 sequence struct.
+  */
+-__rte_internal
+-static inline dpaa2_seqn_t *
++static __rte_always_inline struct dpaa2_seq_t *
++dpaa2_seq(struct rte_mbuf *mbuf)
++{
++	return RTE_MBUF_DYNFIELD(mbuf, dpaa2_seqn_dynfield_offset, struct dpaa2_seq_t *);
++}
++
++static __rte_always_inline uint32_t *
+ dpaa2_seqn(struct rte_mbuf *mbuf)
+ {
+-	return RTE_MBUF_DYNFIELD(mbuf, dpaa2_seqn_dynfield_offset,
+-		dpaa2_seqn_t *);
++	return &(dpaa2_seq(mbuf)->seqn);
++}
++
++static __rte_always_inline void **
++dpaa2_seq_dpio_dq(struct rte_mbuf *mbuf)
++{
++	return &(dpaa2_seq(mbuf)->seq_dpio_dq);
+ }
+ 
+ /** Device driver supports link state interrupt */
+diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
+index d20103ee36..82b11176e1 100644
+--- a/drivers/bus/fslmc/fslmc_bus.c
++++ b/drivers/bus/fslmc/fslmc_bus.c
+@@ -651,8 +651,8 @@ rte_fslmc_probe(struct rte_bus *bus)
+ {
+ 	static const struct rte_mbuf_dynfield dpaa2_seqn_dynfield_desc = {
+ 		.name = DPAA2_SEQN_DYNFIELD_NAME,
+-		.size = sizeof(dpaa2_seqn_t),
+-		.align = alignof(dpaa2_seqn_t),
++		.size = sizeof(struct dpaa2_seq_t),
++		.align = alignof(struct dpaa2_seq_t),
+ 	};
  	int ret;
--	uint8_t dqrr_index;
-+	uint8_t dqrr_index, dqrr_size[MAX_TX_RING_SLOTS];
- 	const struct rte_event *event;
- 	struct dpaa2_queue *dpci_txq[MAX_TX_RING_SLOTS];
- 	struct rte_event *ev_tx[MAX_TX_RING_SLOTS];
-@@ -180,13 +181,15 @@ dpaa2_eventdev_enqueue_burst(void *port, const struct rte_event ev[],
- 			qbman_eq_desc_set_fq(&eqdesc[loop], dpci_txq[loop]->fqid);
- 			qbman_eq_desc_set_no_orp(&eqdesc[loop], 0);
- 			qbman_eq_desc_set_response(&eqdesc[loop], 0, 0);
-+			dqrr_held[loop] = 0;
-+			dqrr_size[loop] = 0;
  
- 			if (event->sched_type == RTE_SCHED_TYPE_ATOMIC &&
- 				*dpaa2_seqn(event->mbuf)) {
- 				dqrr_index = *dpaa2_seqn(event->mbuf) - 1;
- 				qbman_eq_desc_set_dca(&eqdesc[loop], 1, dqrr_index, 0);
--				dpio_dev->dpaa2_held_bufs.dqrr_size--;
--				dpio_dev->dpaa2_held_bufs.dqrr_held &= ~(1 << dqrr_index);
-+				dqrr_size[loop] = 1;
-+				dqrr_held[loop] = UINT64_C(1) << dqrr_index;
- 			}
- 
- 			memset(&fd_arr[loop], 0, sizeof(struct qbman_fd));
-@@ -218,6 +221,10 @@ dpaa2_eventdev_enqueue_burst(void *port, const struct rte_event ev[],
- 					goto quit;
- 				}
- 			} else {
-+				for (i = loop; i < (loop + ret); i++) {
-+					dpio_dev->dpaa2_held_bufs.dqrr_size -= dqrr_size[i];
-+					dpio_dev->dpaa2_held_bufs.dqrr_held &= ~dqrr_held[i];
-+				}
- 				loop += ret;
- 				retry_count = 0;
- 			}
 -- 
 2.43.0
 
