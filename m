@@ -1,31 +1,31 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76900606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87D9606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:46:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D29440E34;
-	Fri, 23 Oct 2026 15:44:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4148A40E39;
+	Fri, 23 Oct 2026 15:44:24 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id A632840DDC
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:12 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1CAFA40A82
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:14 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 86EB21A000A;
- Fri, 23 Oct 2026 15:44:12 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F31431A003D;
+ Fri, 23 Oct 2026 15:44:13 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 512BA1A0021;
- Fri, 23 Oct 2026 15:44:12 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BCD2A1A000A;
+ Fri, 23 Oct 2026 15:44:13 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 4627118000B7;
- Fri, 23 Oct 2026 21:44:11 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6174E180006C;
+ Fri, 23 Oct 2026 21:44:12 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4-S3 19/65] net/dpaa2: reimplement xstats_get() on top of
- xstats_get_by_id()
-Date: Fri, 23 Oct 2026 19:12:59 +0530
-Message-ID: <20261023134346.37727-20-prashant.gupta_3@nxp.com>
+Subject: [PATCH v4-S3 20/65] net/dpaa2: fetch only requested MAC xstats in one
+ MC call
+Date: Fri, 23 Oct 2026 19:13:00 +0530
+Message-ID: <20261023134346.37727-21-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
 References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
@@ -52,136 +52,177 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Jun Yang <jun.yang@nxp.com>
 
-dpaa2_dev_xstats_get() duplicated almost all of the logic already
-present in dpaa2_dev_xstats_get_by_id(): it walked the DPNI pages
-one by one with dpaa2_xstats_id_parse(), called dpni_get_statistics()
-per page, special-cased the DPMAC counter range with its own
-dpni_get_mac_statistics() path, handled per-page/per-MAC availability
-with inline zero-fill loops, etc. All of that behavior is already
-provided by dpaa2_dev_xstats_get_by_id(), so the standalone
-implementation was just a second place to keep in sync.
+dpaa2_dev_xstats_get_by_id() previously handled MAC counters by
+issuing dpni_get_mac_statistics() for all DPAA2_MAC_NUM_STATS
+counters on the first MAC id seen, caching the full result in
+priv->cnt_values_dma_mem, and indexing into it for the remaining
+MAC ids in the same call. That had two drawbacks:
 
-Rewrite dpaa2_dev_xstats_get() as a thin wrapper:
+- Every caller that asked for even a single MAC counter paid for a
+  full-block MC fetch.
+- The cnt_idx_dma_mem table was pre-populated at setup time with a
+  fixed 0..N-1 index list, so the MC command was effectively locked
+  to "read all counters in order".
 
-- Clamp the requested count to DPAA2_XSTAT_MAX_NUM (new helper
-  defined as sizeof(struct dpaa2_xstats_seq) / sizeof(uint64_t))
-  with a warning when the caller asks for more.
-- Build a trivial [0..n) id array, pre-zero the xstats[] entries,
-  and call dpaa2_dev_xstats_get_by_id() once.
-- Copy the returned values into xstats[].value and return the
-  number of entries dpaa2_dev_xstats_get_by_id() produced.
+Rework the MAC path to build the index list on the fly from the
+ids the caller actually requested:
 
-Also reuse DPAA2_XSTAT_MAX_NUM in dpaa2_dev_xstats_get_names() and
-dpaa2_dev_xstats_get_names_by_id() in place of the open-coded
-sizeof(struct dpaa2_xstats_seq) / sizeof(uint64_t) local array
-sizes, and move dpaa2_dev_xstats_get() below the _by_id variants
-to reflect the new dependency direction.
+- Drop the one-shot cnt_idx_dma_mem initialisation in
+  dpaa2_dev_xstat_mac_setup_mem(); it now only allocates and maps
+  the DMA buffers.
+- Call dpaa2_dev_xstat_mac_setup_mem() once at the top of
+  dpaa2_dev_xstats_get_by_id() so the DMA memory is always ready.
+- While walking ids[], for every id in the MAC range populate
+  mac_idx[mac_num] with the MAC counter index and remember the
+  destination slot in mac_val[mac_num]; zero values[i] up front
+  so unavailable MAC counters stay zero.
+- After the DPNI loop, if mac_num > 0 issue a single
+  dpni_get_mac_statistics() for exactly mac_num entries and
+  scatter the results back through mac_val[]. Removes the
+  mac_fetched flag and the dpmac_get_xstat / dpni_get_xstat
+  gotos.
 
-No functional change: availability gating (DPNI page / DPMAC MC
-version), per-page dpni_get_statistics() batching and the DPMAC
-dpni_get_mac_statistics() path are all still performed, now solely
-inside dpaa2_dev_xstats_get_by_id().
+Also replace the open-coded `priv->ep_dev_type == DPAA2_MAC`
+checks in dpaa2_dev_xstats_get_names(),
+dpaa2_dev_xstats_get_names_by_id() and _get_by_id() with the
+existing dpaa2_dev_mac_xstats_avail() helper, so MAC xstats are
+only exposed when both the endpoint is DPAA2_MAC and the MC
+version supports them.
+
+Introduce DPAA2_MAC_XSTAT_MAX_NUM (= DPAA2_MAC_NUM_STATS) and a
+static_assert that
+DPAA2_DPNI_XSTAT_MAX_NUM + DPAA2_MAC_XSTAT_MAX_NUM
+equals DPAA2_XSTAT_MAX_NUM, so the DPNI+MAC id space stays
+consistent with struct dpaa2_xstats_seq.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.c | 146 +++++++++----------------------
- 1 file changed, 42 insertions(+), 104 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 97 +++++++++++++++-----------------
+ 1 file changed, 44 insertions(+), 53 deletions(-)
 
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index b30a8e7b3d..a0c5eccf57 100644
+index a0c5eccf57..5dcdc6fa76 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.c
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -180,6 +180,9 @@ struct dpaa2_xstats_seq {
- 	struct dpni_dpmac_counters mac_cnt;
- };
- 
-+#define DPAA2_XSTAT_MAX_NUM \
-+	(sizeof(struct dpaa2_xstats_seq) / sizeof(uint64_t))
-+
+@@ -186,6 +186,10 @@ struct dpaa2_xstats_seq {
  #define DPAA2_DPNI_XSTAT_MAX_NUM \
  	(offsetof(struct dpaa2_xstats_seq, mac_cnt) / sizeof(uint64_t))
  
-@@ -2186,115 +2189,13 @@ dpaa2_dev_dpni_xstats_avail(struct rte_eth_dev *dev,
- 	return false;
- }
++#define DPAA2_MAC_XSTAT_MAX_NUM DPAA2_MAC_NUM_STATS
++
++static_assert((DPAA2_DPNI_XSTAT_MAX_NUM + DPAA2_MAC_XSTAT_MAX_NUM) == DPAA2_XSTAT_MAX_NUM);
++
+ #define DPAA2_DPNI_STAT_SET_PAGE_PARAM(param) \
+ ({ \
+ 	int ret = false; \
+@@ -2099,7 +2103,6 @@ static int
+ dpaa2_dev_xstat_mac_setup_mem(struct rte_eth_dev *dev)
+ {
+ 	struct dpaa2_dev_priv *priv = dev->data->dev_private;
+-	uint32_t *cnt_idx, i;
+ 	int ret = 0;
  
--/*
-- * dpaa2_dev_xstats_get(): Get counters of dpni and dpmac.
-- * MAC (mac_*) counters are supported on MC version > 10.39.0
-- * TC_x_policer_* counters are supported only when Policer is enable.
-- */
--static int
--dpaa2_dev_xstats_get(struct rte_eth_dev *dev,
--	struct rte_eth_xstat *xstats, uint32_t n)
--{
--	struct fsl_mc_io *dpni = dev->process_private;
--	uint16_t i, j, param, stat_cnt, size;
+ 	if (!priv->cnt_idx_dma_mem) {
+@@ -2118,9 +2121,6 @@ dpaa2_dev_xstat_mac_setup_mem(struct rte_eth_dev *dev)
+ 				__func__, priv->cnt_idx_dma_mem);
+ 			goto err_dma_map;
+ 		}
+-		cnt_idx = priv->cnt_idx_dma_mem;
+-		for (i = 0; i < DPAA2_MAC_NUM_STATS; i++)
+-			cnt_idx[i] = rte_cpu_to_le_32(i);
+ 	}
+ 
+ 	if (!priv->cnt_values_dma_mem) {
+@@ -2193,13 +2193,12 @@ static int
+ dpaa2_dev_xstats_get_names(struct rte_eth_dev *dev,
+ 	struct rte_eth_xstat_name *xstats_names, uint32_t limit)
+ {
 -	struct dpaa2_dev_priv *priv = dev->data->dev_private;
--	union dpni_statistics values;
--	uint8_t page_id, stat_id;
--	uint64_t *cnt_values;
--	int retcode;
--
--	stat_cnt = DPAA2_DPNI_XSTAT_MAX_NUM;
+ 	uint16_t i, stat_cnt;
+ 	uint64_t xstat_str[DPAA2_XSTAT_MAX_NUM];
+ 
+ 	stat_cnt = DPAA2_DPNI_XSTAT_MAX_NUM;
 -	if (priv->ep_dev_type == DPAA2_MAC)
 -		stat_cnt += DPAA2_MAC_NUM_STATS;
--
--	if (n > stat_cnt) {
--		DPAA2_PMD_ERR("%s: Expected number(%d) > max number(%d)",
--			__func__, n, stat_cnt);
--		return -EINVAL;
--	}
--
--	if (!xstats)
--		return 0;
--
--	i = 0;
--	while (i < n) {
--		if (i >= DPAA2_MAC_XSTATS_START_ID) {
++	if (dpaa2_dev_mac_xstats_avail(dev))
++		stat_cnt += DPAA2_MAC_XSTAT_MAX_NUM;
+ 
+ 	if (!limit)
+ 		return stat_cnt;
+@@ -2222,20 +2221,28 @@ static int
+ dpaa2_dev_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
+ 	uint64_t *values, uint32_t n)
+ {
+-	uint16_t i, id, stat_cnt;
++	uint16_t i, id, stat_cnt, mac_num = 0;
+ 	uint8_t page_id, stat_id;
+ 	uint16_t param;
+ 	struct dpaa2_dev_priv *priv = dev->data->dev_private;
+ 	struct fsl_mc_io *dpni = dev->process_private;
+ 	bool page_fetched[DPNI_MAX_STATISTICS_PAGE_ID][DPNI_STAT_MAX_PARAM];
+-	/* Fetch all MAC counters in a single MC command on first MAC xstat. */
+-	bool mac_fetched = false;
++	/* Fetch required MAC counters in a single MC command. */
+ 	int retcode;
+-	uint64_t *cnt_values;
++	uint32_t *mac_idx;
++	uint64_t *mac_val[DPAA2_MAC_XSTAT_MAX_NUM];
++
++	retcode = dpaa2_dev_xstat_mac_setup_mem(dev);
++	if (retcode) {
++		DPAA2_PMD_ERR("%s: Failed(%d) to setup %s's MAC statistics!",
++			__func__, retcode, dev->data->name);
++		return retcode;
++	}
++	mac_idx = priv->cnt_idx_dma_mem;
+ 
+ 	stat_cnt = DPAA2_DPNI_XSTAT_MAX_NUM;
+-	if (priv->ep_dev_type == DPAA2_MAC)
+-		stat_cnt += DPAA2_MAC_NUM_STATS;
++	if (dpaa2_dev_mac_xstats_avail(dev))
++		stat_cnt += DPAA2_MAC_XSTAT_MAX_NUM;
+ 
+ 	memset(page_fetched, 0, sizeof(page_fetched));
+ 
+@@ -2246,16 +2253,13 @@ dpaa2_dev_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
+ 		}
+ 		id = ids ? ids[i] : i;
+ 		if (id >= DPAA2_MAC_XSTATS_START_ID) {
 -			if (!dpaa2_dev_mac_xstats_avail(dev)) {
--				for (j = i; j < n; j++) {
--					xstats[j].id = j;
--					xstats[j].value = 0;
--				}
--				i = n;
--				break;
+-				values[i] = 0;
+-				continue;
 -			}
+-			if (mac_fetched) {
+-				cnt_values = priv->cnt_values_dma_mem;
+-				values[i] = cnt_values[id - DPAA2_MAC_XSTATS_START_ID];
+-				continue;
++			values[i] = 0;
++			if (dpaa2_dev_mac_xstats_avail(dev)) {
++				mac_idx[mac_num] = rte_cpu_to_le_32(id - DPAA2_MAC_XSTATS_START_ID);
++				mac_val[mac_num] = &values[i];
++				mac_num++;
+ 			}
 -			goto dpmac_get_xstat;
--		}
--
--		page_id = 0;
--		stat_id = 0;
--		param = 0;
--		retcode = dpaa2_xstats_id_parse(i, &page_id, &stat_id, &param, &size);
--		if (retcode)
--			return retcode;
--		if (!dpaa2_dev_dpni_xstats_avail(dev, page_id, param)) {
--			xstats[i].id = i;
--			xstats[i].value = 0;
--			i++;
--			continue;
--		}
--		retcode = dpni_get_statistics(dpni, CMD_PRI_LOW,
--			priv->token, page_id, param, &values);
--		if (retcode) {
--			DPAA2_PMD_ERR("%s: Failed(%d) to get %s's statistcis of page%d!",
--				__func__, retcode, dev->data->name, page_id);
--			return retcode;
--		}
--		cnt_values = (void *)&values;
--		j = stat_id;
--		while (i < n && j < size) {
--			xstats[i].id = i;
--			xstats[i].value = cnt_values[j];
--			i++;
--			j++;
--		}
++			continue;
+ 		}
+ 		page_id = 0;
+ 		stat_id = 0;
+@@ -2267,35 +2271,10 @@ dpaa2_dev_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
+ 			values[i] = 0;
+ 			continue;
+ 		}
+-		if (!page_fetched[page_id][param])
+-			goto dpni_get_xstat;
+-		values[i] = priv->pg_xstats[page_id][param].raw.counter[stat_id];
 -		continue;
 -
 -dpmac_get_xstat:
+-		/* Single MC call fetches all MAC counters at once;
+-		 * reuse the result for every subsequent MAC xstat.
+-		 */
 -		retcode = dpaa2_dev_xstat_mac_setup_mem(dev);
 -		if (retcode) {
--			DPAA2_PMD_ERR("%s: Failed(%d) to setup %s MAC statistics!",
+-			DPAA2_PMD_ERR("%s: Failed(%d) to setup %s's MAC statistics!",
 -				__func__, retcode, dev->data->name);
 -			return retcode;
 -		}
@@ -192,85 +233,55 @@ index b30a8e7b3d..a0c5eccf57 100644
 -			DPAA2_PMD_ERR("%s: Failed(%d) to get %s's MAC statistics!",
 -				__func__, retcode, dev->data->name);
 -			return retcode;
--		}
++		if (page_fetched[page_id][param]) {
++			values[i] = priv->pg_xstats[page_id][param].raw.counter[stat_id];
++			continue;
+ 		}
+-		mac_fetched = true;
 -		cnt_values = priv->cnt_values_dma_mem;
+-		values[i] = cnt_values[id - DPAA2_MAC_XSTATS_START_ID];
+-		continue;
 -
--		j = i - DPAA2_MAC_XSTATS_START_ID;
--		while (i < n && j < DPAA2_MAC_NUM_STATS) {
--			xstats[i].id = i;
--			xstats[i].value = cnt_values[j];
--			i++;
--			j++;
--		}
--	}
--
--	return i;
--}
--
- static int
- dpaa2_dev_xstats_get_names(struct rte_eth_dev *dev,
- 	struct rte_eth_xstat_name *xstats_names, uint32_t limit)
- {
- 	struct dpaa2_dev_priv *priv = dev->data->dev_private;
- 	uint16_t i, stat_cnt;
--	uint64_t xstat_str[sizeof(struct dpaa2_xstats_seq) / sizeof(uint64_t)];
-+	uint64_t xstat_str[DPAA2_XSTAT_MAX_NUM];
+-dpni_get_xstat:
+ 		/* Cache dpni page results: multiple xstats can share
+ 		 * the same (page_id, param), so only fetch each pair once.
+ 		 */
+@@ -2311,6 +2290,19 @@ dpaa2_dev_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
+ 		values[i] = priv->pg_xstats[page_id][param].raw.counter[stat_id];
+ 	}
  
- 	stat_cnt = DPAA2_DPNI_XSTAT_MAX_NUM;
- 	if (priv->ep_dev_type == DPAA2_MAC)
-@@ -2420,7 +2321,7 @@ dpaa2_dev_xstats_get_names_by_id(struct rte_eth_dev *dev,
- {
- 	struct dpaa2_dev_priv *priv = dev->data->dev_private;
- 	uint16_t i, stat_cnt;
--	uint64_t xstat_str[sizeof(struct dpaa2_xstats_seq) / sizeof(uint64_t)];
-+	uint64_t xstat_str[DPAA2_XSTAT_MAX_NUM];
- 
- 	stat_cnt = DPAA2_DPNI_XSTAT_MAX_NUM;
- 	if (priv->ep_dev_type == DPAA2_MAC)
-@@ -2442,6 +2343,43 @@ dpaa2_dev_xstats_get_names_by_id(struct rte_eth_dev *dev,
- 	return limit;
++	if (mac_num > 0) {
++		retcode = dpni_get_mac_statistics(dpni, CMD_PRI_LOW,
++			priv->token, priv->cnt_idx_iova,
++			priv->cnt_values_iova, mac_num);
++		if (retcode) {
++			DPAA2_PMD_ERR("%s: Failed(%d) to get %s's %d MAC statistics!",
++				__func__, retcode, dev->data->name, mac_num);
++			return retcode;
++		}
++		for (i = 0; i < mac_num; i++)
++			*mac_val[i] = priv->cnt_values_dma_mem[i];
++	}
++
+ 	return n;
  }
  
-+/*
-+ * dpaa2_dev_xstats_get(): Get counters of dpni and dpmac.
-+ * MAC (mac_*) counters are supported on MC version > 10.39.0
-+ * TC_x_policer_* counters are supported only when Policer is enable.
-+ */
-+static int
-+dpaa2_dev_xstats_get(struct rte_eth_dev *dev,
-+	struct rte_eth_xstat *xstats, uint32_t n)
-+{
-+	int retcode;
-+	uint32_t i;
-+	uint64_t ids[DPAA2_XSTAT_MAX_NUM], vals[DPAA2_XSTAT_MAX_NUM];
-+
-+	if (!xstats || !n)
-+		return 0;
-+
-+	if (n > DPAA2_XSTAT_MAX_NUM) {
-+		DPAA2_PMD_WARN("%s: Expected xstat number(%d) > max(%ld)",
-+			__func__, n, DPAA2_XSTAT_MAX_NUM);
-+		n = DPAA2_XSTAT_MAX_NUM;
-+	}
-+	for (i = 0; i < n; i++) {
-+		ids[i] = i;
-+		xstats[i].id = i;
-+		xstats[i].value = 0;
-+	}
-+
-+	retcode = dpaa2_dev_xstats_get_by_id(dev, ids, vals, n);
-+	if (retcode < 0)
-+		return retcode;
-+
-+	for (i = 0; i < (uint32_t)retcode; i++)
-+		xstats[i].value = vals[i];
-+
-+	return retcode;
-+}
-+
- static int
- dpaa2_dev_stats_get(struct rte_eth_dev *dev,
- 	struct rte_eth_stats *stats, struct eth_queue_stats *qstats)
+@@ -2319,13 +2311,12 @@ dpaa2_dev_xstats_get_names_by_id(struct rte_eth_dev *dev,
+ 	const uint64_t *ids, struct rte_eth_xstat_name *xstats_names,
+ 	uint32_t limit)
+ {
+-	struct dpaa2_dev_priv *priv = dev->data->dev_private;
+ 	uint16_t i, stat_cnt;
+ 	uint64_t xstat_str[DPAA2_XSTAT_MAX_NUM];
+ 
+ 	stat_cnt = DPAA2_DPNI_XSTAT_MAX_NUM;
+-	if (priv->ep_dev_type == DPAA2_MAC)
+-		stat_cnt += DPAA2_MAC_NUM_STATS;
++	if (dpaa2_dev_mac_xstats_avail(dev))
++		stat_cnt += DPAA2_MAC_XSTAT_MAX_NUM;
+ 
+ 	if (!ids)
+ 		return dpaa2_dev_xstats_get_names(dev, xstats_names, limit);
 -- 
 2.43.0
 
