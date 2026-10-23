@@ -1,74 +1,76 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82737606A31D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 11:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BB7606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 11:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=marvell.com header.i=@marvell.com header.a=rsa-sha256 header.s=pfpt0220 header.b=TGlGSnW9
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=WaadsBAe
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6FEC140299;
-	Fri, 23 Oct 2026 13:40:55 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id BCB0D40268
- for <dev@dpdk.org>; Fri, 23 Oct 2026 13:40:54 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 69NADY6e3273187 for <dev@dpdk.org>; Fri, 23 Oct 2026 04:40:54 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=vPsYDYme8/R5Hv1tEmXfVKB
- nTzkwp6/1glPzZZOOViM=; b=TGlGSnW93hOrOUg1Y2IprThVBvvt0LVZWZEV5D3
- UGMAAbeMcpd8C7s+RLOUWanYVwcd7dY4hRBRZpZ3LRtZASf592pvN20YtaZn8yZ6
- YFhb6jNxxK6jdKPTBTNwbu2O82PTsyMtyIy4XKY1xXnNyntbnTWGELIv+JvKWG9q
- I+968UMhM4FqTudalcM7YZV2PZvr4jERhLumltCtyTAS2ASvSx5D/4j1Ft63fzds
- taogq3BuNl9vOn9Z351WAPI+AJzCb3ZWuzhS7WkhR8N28sZGKF7gK/GbATCnF3VM
- 67t5SY4KGsq8cyU0pONBH1t7A+XtO3TnQqFqnbErXYSdRqQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4hf94b9k3y-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 23 Oct 2026 04:40:53 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 23 Oct 2026 04:40:53 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Fri, 23 Oct 2026 04:40:53 -0700
-Received: from cavium-System-Product-Name.. (unknown [10.28.37.42])
- by maili.marvell.com (Postfix) with ESMTP id 615253F7045;
- Fri, 23 Oct 2026 04:40:51 -0700 (PDT)
-From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
-To: <gakhil@marvell.com>
-CC: <anoobj@marvell.com>, <vvelumuri@marvell.com>, <ktejasree@marvell.com>,
- <dev@dpdk.org>
-Subject: [PATCH] crypto/cnxk: changes to align with zuc256 v2 auth
-Date: Fri, 23 Oct 2026 17:10:50 +0530
-Message-ID: <20261023114050.2939835-1-nkaithakadan@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 7AC2940299;
+	Fri, 23 Oct 2026 13:43:10 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 25FF440268
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 13:43:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1792755788;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=RVNBuf4HEeTaCWo8pGijcKw2ZgPM4pudEWB7q/D06UY=;
+ b=WaadsBAeZbXdGP9JL9OepMYBW1ZX6+WUqNnEKMuZglctcPkv/O8alZPPyc6fMOy96WAscA
+ ksi7pyeV8IAFtX8E+s/EuzLTAb7sjh38fHE6WIlLotbv2LLZ8hNz5wMnsHNnrd2v+b6mhF
+ i/MMLeejvQ96yDxsFnVgpfdDfzLtF+0=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-638-AuT_bhoAMYKMOqC9xM7sfQ-1; Fri, 23 Oct 2026 07:43:07 -0400
+X-MC-Unique: AuT_bhoAMYKMOqC9xM7sfQ-1
+X-Mimecast-MFC-AGG-ID: AuT_bhoAMYKMOqC9xM7sfQ_1792755786
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-3ab426be412so3352961fa.1
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 04:43:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1792755785; x=1793360585;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=RVNBuf4HEeTaCWo8pGijcKw2ZgPM4pudEWB7q/D06UY=;
+ b=eI0YS/lP1orCqIJXJ0iUfEwhzJnIj07jxoSA+Lrfq0pUVolEmFgXJcN/SwpLvMF8WW
+ ten3SohsR8pV2hdzqT8tnhzJB7CrJFpyXU5fLGZ0gxylObub1gEZyfum71LB+ToDt5rh
+ OV1Ui5IIq6l339iPNoD3ujaGOK1aR0GdqDh8X6VGvQA1rwx8UthjSWSRMeUWb2CfJmQD
+ dCBKWy9so1DQTDB+CU8TdVU4mU2ckeUxDOogkyBE8Zg12CGwMUAUowbK3amtgcOGh7pA
+ DyQchlhk+plIOL5VbgsePhnuVYev0CoJlt9/lorUYezoYcm3Cy6TOfal8Jqjfwo0qjho
+ kjeQ==
+X-Gm-Message-State: AFq9FYKdjXODwtF7wqN5YcI9cYeuDH+2a4LnSt3cj84NWZdUPjZ1hSHS
+ TVKd2ayE6KbEBEKXw5kFwgwGDgMPxyYreD1HgPWByqIRwu6x/yOKiMDPnp0bBknhXkbhZt1smep
+ OzPK08gr533MAH1MMNPJHf7ZAKhRIbsGgRcCXgQwYJ/wZ/N/RdaTWq5XXdiJCA5WnhHqNcZmWPG
+ Pb3eSRcLizMNtK2SNUHaE=
+X-Gm-Gg: AYBFou3cjLvQ1/LBB94Ig8lYBIgZYlcpMg0j3WJIXWdoDys/DgG3m4+A/ctKzyqo0W+
+ RjmrNhHtrkQWTsAkiZImECyJrM9CbHx2WKwvkr8X9b7opPF6YAIX7W/Y9G8hTYKG7trJxa8CXx2
+ OlFwHTJsBehx+9PRfWSnRAormMU85CePNk31hiJd5QHh8ZWbERCo1q8If9ewAUUJ3EtCEYI7MH+
+ 4TEV94m4d3prvihUaboNyNN2BqdvMYPAIlb283+Z5cW5cni
+X-Received: by 2002:a05:651c:150a:b0:3a6:6831:6e28 with SMTP id
+ 38308e7fff4ca-3ac66315d73mr4703181fa.6.1792755785499; 
+ Fri, 23 Oct 2026 04:43:05 -0700 (PDT)
+X-Received: by 2002:a05:651c:150a:b0:3a6:6831:6e28 with SMTP id
+ 38308e7fff4ca-3ac66315d73mr4703131fa.6.1792755784996; Fri, 23 Oct 2026
+ 04:43:04 -0700 (PDT)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: ZZVO7q5lRn6PIFfkssEiR6QqPz9Vww3o
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIzMDA0NSBTYWx0ZWRfX9YNmNOC79Qfe
- 7KRrl/jNbWUff6cRRo0VICHjFvOLS/GuEX+qeMDlLgwymDcp0QVAgh0Y5jgOUUhxJ5U9HF43bPL
- atTbR46tVvO1POuHJHRFtblAACEgNBkIS+M6afYiCWytYcrE4cIgvwxLE0hQUkBNDVbGgrFnvEZ
- kkI+d/8UoT7HGVnDrX3tv3Gzxf/rsXpQeFLMq+g61PyhyL2OIwQvWwzs4ibb8913iXhRBQlVBEe
- +ofgfume3Aj+eO5L2IO/jy8SFM4dgXVZHDHPnZkKFEF61hy1HnXTsHiMoKoc6nDyDH6nt8TTh8V
- Rrbk8jiRyZxbOZqMOL1v31veH/E2XmGsXkl/NGMPP+S/WuX3es5v6QGVDrF3VrsduTbuN8MlCtA
- CNPd6CNvIG4uKz3LHlBtrwn6l24KcTTbzPGxBt+n5ZSNJ2yN0v+dOCr+99Ze5+6G3cSIcRn9g/0
- PvVNRzk5JCQp3CCJsFA==
-X-Proofpoint-ORIG-GUID: ZZVO7q5lRn6PIFfkssEiR6QqPz9Vww3o
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIzMDA0NSBTYWx0ZWRfXyWLVv6CnpWh2
- 5f6tffq8+Q3459YlbhkEeZ5g6LFG+qYcyZ65qL8KPnps+i1AcXe70tvnaODlZ5Lk/2+hS6D3DXj
- l8R9EAzsQuwFPvsJYdJTTPrjCWvV2jo=
-X-Authority-Analysis: v=2.4 cv=OrDaWC/t c=1 sm=1 tr=0 ts=6adb47c5 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=QXcCYyLzdtTjyudCfB6f:22 a=M5GUcnROAAAA:8 a=pkbQFECsS2bYRWXtoVwA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-23_03,2026-10-21_02,2025-10-01_01
+References: <af76b0050fa71836d9663515f5efd66c8c910061.1792748199.git.anatoly.burakov@intel.com>
+In-Reply-To: <af76b0050fa71836d9663515f5efd66c8c910061.1792748199.git.anatoly.burakov@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 23 Oct 2026 13:42:53 +0200
+X-Gm-Features: AclHuK8JjRyn3MQnurc2NmTcIAWAZbVxPustzn9wLb1IT8QBMjV_rwCQJ73i8DQ
+Message-ID: <CAJFAV8y8OUGxGKshkO_3GKFc2GbE9a2XEZo6Cdh1QUQFS9fX2Q@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] eal/linux: fix eventfd leaks when enabling
+ interrupts
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Harman Kalra <hkalra@marvell.com>, 
+ Cunming Liang <cunming.liang@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: lP4FnzzdsJs1HRz20YJvsaVyLgnjeTDFE9D6TZNl6rI_1792755786
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,69 +80,135 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-This patch add changes to align with ZUC 256 V2
-authentication microcode support.
+Hello,
 
-Signed-off-by: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
----
- drivers/common/cnxk/roc_se.c                      | 5 +++++
- drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c | 5 ++++-
- drivers/crypto/cnxk/cnxk_cryptodev_ops.c          | 2 +-
- 3 files changed, 10 insertions(+), 2 deletions(-)
+On Fri, 23 Oct 2026 at 11:37, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+>
+> When enabling MSI-X eventfds, a failure after creating some descriptors
+> leaves them open. The eventfd count is recorded only after all allocations
+> succeed, so disabling eventfds cannot clean up a partial allocation.
+>
+> Calling enable again without disabling first also leaks descriptors by
+> overwriting the existing eventfd entries.
+>
+> Reject repeated MSI-X enable calls with EBUSY before modifying the handle.
+> On failure, close all eventfds created by the call, clear their entries
+> and reset the eventfd count while preserving the original error.
+>
+> Fixes: b9e0662a931d ("eal/linux: add interrupt API for drivers")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-diff --git a/drivers/common/cnxk/roc_se.c b/drivers/common/cnxk/roc_se.c
-index 1cec536169..ce0e7fe84a 100644
---- a/drivers/common/cnxk/roc_se.c
-+++ b/drivers/common/cnxk/roc_se.c
-@@ -255,6 +255,11 @@ cpt_pdcp_chain_key_type_get(uint16_t key_len)
- static void
- cpt_zuc_const_update(uint8_t *zuc_const, int key_len, int mac_len)
- {
-+	if (key_len == 32 && roc_model_is_cn20k()) {
-+		memcpy(zuc_const, zuc_key256_v2, 16);
-+		return;
-+	}
-+
- 	if (key_len == 16) {
- 		memcpy(zuc_const, zuc_key128, 32);
- 	} else if (key_len == 32) {
-diff --git a/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c b/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
-index 577f080ba7..b941567015 100644
---- a/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
-+++ b/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
-@@ -2091,7 +2091,10 @@ cn10k_20k_crypto_caps_update(struct rte_cryptodev_capabilities cnxk_caps[])
- 			caps->sym.auth.key_size.increment = 16;
- 			caps->sym.auth.digest_size.max = 16;
- 			caps->sym.auth.digest_size.increment = 4;
--			caps->sym.auth.iv_size.max = 25;
-+			if (roc_model_is_cn20k())
-+				caps->sym.auth.iv_size.max = 16;
-+			else
-+				caps->sym.auth.iv_size.max = 25;
- 			caps->sym.auth.iv_size.increment = 1;
- 		}
- 	}
-diff --git a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-index a5b8aff146..14a4b0fff9 100644
---- a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-+++ b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-@@ -672,8 +672,8 @@ cnxk_sess_fill(struct roc_cpt *roc_cpt, struct rte_crypto_sym_xform *xform,
- 	bool ciph_then_auth = false;
- 
- 	if (roc_model_is_cn20k()) {
--		sess->roc_se_ctx->pdcp_iv_len = 40;
- 		sess->roc_se_ctx->pdcp_iv_offset = 16;
-+		sess->roc_se_ctx->pdcp_iv_len = 32;
- 	} else if (roc_cpt->hw_caps[CPT_ENG_TYPE_SE].pdcp_chain_zuc256) {
- 		sess->roc_se_ctx->pdcp_iv_offset = 24;
- 		sess->roc_se_ctx->pdcp_iv_len = 48;
+Good catch.
+How did you find this issue?
+
+I did not put warnings on the efd side, but maybe worth extending
+d770ee9caed0 ("interrupts: warn on leaked FDs").
+
+One comment below.
+
+
+> ---
+>  lib/eal/linux/eal_interrupts.c | 39 +++++++++++++++++++++++++++-------
+>  1 file changed, 31 insertions(+), 8 deletions(-)
+>
+> diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
+> index 4cfaeba7fe0..ff05d649607 100644
+> --- a/lib/eal/linux/eal_interrupts.c
+> +++ b/lib/eal/linux/eal_interrupts.c
+> @@ -1570,30 +1570,43 @@ int
+>  rte_intr_efd_enable(struct rte_intr_handle *intr_handle, uint32_t nb_efd)
+>  {
+>         uint32_t i;
+> -       int fd;
+> +       int fd, ret;
+>         uint32_t n = RTE_MIN(nb_efd, (uint32_t)RTE_MAX_RXTX_INTR_VEC_ID);
+>
+>         assert(nb_efd != 0);
+>
+>         if (rte_intr_type_get(intr_handle) == RTE_INTR_HANDLE_VFIO_MSIX) {
+> +               if (rte_intr_nb_efd_get(intr_handle) != 0) {
+> +                       EAL_LOG(ERR, "Interrupt eventfds are already enabled");
+> +                       return -EBUSY;
+> +               }
+> +
+>                 for (i = 0; i < n; i++) {
+>                         fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+>                         if (fd < 0) {
+> +                               ret = -errno;
+>                                 EAL_LOG(ERR,
+>                                         "can't setup eventfd, error %i (%s)",
+>                                         errno, strerror(errno));
+> -                               return -errno;
+> +                               goto error;
+>                         }
+>
+> -                       if (rte_intr_efds_index_set(intr_handle, i, fd))
+> -                               return -rte_errno;
+> +                       if (rte_intr_efds_index_set(intr_handle, i, fd)) {
+> +                               ret = -rte_errno;
+> +                               close(fd);
+> +                               goto error;
+> +                       }
+>                 }
+>
+> -               if (rte_intr_nb_efd_set(intr_handle, n))
+> -                       return -rte_errno;
+> +               if (rte_intr_nb_efd_set(intr_handle, n)) {
+> +                       ret = -rte_errno;
+> +                       goto error;
+> +               }
+>
+> -               if (rte_intr_max_intr_set(intr_handle, NB_OTHER_INTR + n))
+> -                       return -rte_errno;
+> +               if (rte_intr_max_intr_set(intr_handle, NB_OTHER_INTR + n)) {
+> +                       ret = -rte_errno;
+> +                       goto error;
+> +               }
+>         } else if (rte_intr_type_get(intr_handle) == RTE_INTR_HANDLE_VDEV) {
+>                 /* only check, initialization would be done in vdev driver.*/
+>                 if ((uint64_t)rte_intr_efd_counter_size_get(intr_handle) >
+> @@ -1611,6 +1624,16 @@ rte_intr_efd_enable(struct rte_intr_handle *intr_handle, uint32_t nb_efd)
+>         }
+>
+>         return 0;
+> +
+> +error:
+> +       while (i > 0) {
+
+The i variable should have been declared only in the scope of VFIO
+type, in the first place.
+Using i here could blow up later when this error label is used for
+other interrupt types.
+
+As mentionned in the commitlog, could we accumulate the number of
+valid efds in the vfio setup loop?
+The cleanup code here could then loop on rte_intr_nb_efd_get.
+
+
+> +               i--;
+> +               close(rte_intr_efds_index_get(intr_handle, i));
+> +               rte_intr_efds_index_set(intr_handle, i, -1);
+> +       }
+> +       rte_intr_nb_efd_set(intr_handle, 0);
+> +
+> +       return ret;
+>  }
+>
+>  RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_efd_disable)
+> --
+> 2.52.0
+>
+
+
 -- 
-2.34.1
+David Marchand
 
