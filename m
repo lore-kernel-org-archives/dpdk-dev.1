@@ -1,53 +1,36 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A76606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fXuaROdx
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8FD606A31B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:43:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EB72A40A77;
-	Fri, 23 Oct 2026 15:39:35 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id BBEFA406B7
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:39:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792762772; x=1824298772;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=Gtz9ZjmuXtI6Cq8VQVzgKAZdR6bM7ko0O3EhyWyBVpo=;
- b=fXuaROdxN2KbHiN+ruLLH12OXC8sgrGNO07ts9ar/SZIWVDWEUKU3lGa
- quTrXA7QrrhFdZ+NRxPXjXTb7e/5ZPutXJP+GhEMOuRmeoKxt3Qr6gdQ+
- meS9nkZvMrdpgXOP3oO3a0evpAQ4hoxGKWnLXzde9umH4NuYcTQklkmcD
- +6sJMT+waILnLO2a8T/LXtIwmx0r74pr7+DtmYq+PRCE5B5kcHh0Qw1sf
- q7iUCmuPokriGNB3p56wvQFXGkqL4y4OspA7lPWd+Eeo/bWhiDT5OATqf
- 8XifRXmroVrZN+vY5fzMApZ3kCwZQNyEbd3t0uWZLQd4tmC72Q7MCfwPj A==;
-X-CSE-ConnectionGUID: lQth2qJgS/+H3TKPd2uqVQ==
-X-CSE-MsgGUID: UzlB1Q/hQrS5VuUQVknfzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1537448"
-X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="1537448"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Oct 2026 06:39:32 -0700
-X-CSE-ConnectionGUID: GGMGvqKBRguhATKeRDpm/g==
-X-CSE-MsgGUID: HfUqQizkSwOrDnmhdA3PZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="3586623"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa005.jf.intel.com with ESMTP; 23 Oct 2026 06:39:31 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Harman Kalra <hkalra@marvell.com>
-Subject: [PATCH v3 8/8] interrupts: warn on leaked event FDs
-Date: Fri, 23 Oct 2026 14:39:15 +0100
-Message-ID: <8f53967f2906f72609f2c3e8dd55157eaaa9e31f.1792762746.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <e9eba9cd731a90f6e487a76bfe3bee84b1cdc3de.1792762746.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id 6334540299;
+	Fri, 23 Oct 2026 15:43:52 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 8BE0F40268
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:43:51 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 45B7C200034;
+ Fri, 23 Oct 2026 15:43:51 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 111F5200020;
+ Fri, 23 Oct 2026 15:43:51 +0200 (CEST)
+Received: from lsv031405.swis.in-blr01.nxp.com
+ (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id CEF44180006C;
+ Fri, 23 Oct 2026 21:43:49 +0800 (+08)
+From: Prashant Gupta <prashant.gupta_3@nxp.com>
+To: stephen@networkplumber.org,
+	dev@dpdk.org
+Subject: [PATCH v4-S3 00/65] net/dpaa2, event/dpaa2 and fslmc rework
+Date: Fri, 23 Oct 2026 19:12:40 +0530
+Message-ID: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
+References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,91 +40,175 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Extend the leak warning in rte_intr_instance_free() to the event FD
-array, in the same way as the handle FD and device FD.
+This is the final DPAA2 upstreaming sub-series, applied on top of
+v7-S1 ("dpaa2: bus, DMA and mempool base fixes") and
+v14-S2 ("net/dpaa2 updates").
 
-rte_intr_efd_disable() used to close the eventfds it owns but left
-the stale descriptors in the array, and never cleared the entry that
-merely references the handle FD in the non-MSI-X case. Reset all
-entries in use to -1 so a properly disabled handle is not reported.
+The series reworks the DPAA2 datapath, flow steering, metering,
+eventdev integration and fslmc infrastructure. It consolidates
+device configuration handling, improves queue and portal management,
+and adds support for additional DPNI, eventdev and datapath
+capabilities.
 
-Drivers filling the event FD array themselves are expected to reset
-the entries once the descriptors are closed or no longer referenced.
+Highlights:
+  - add DMA bypass translation support and table-driven devargs parsing;
+  - optimize Tx queue, channel and dequeue processing paths;
+  - centralize MC version, SoC detection and endpoint handling;
+  - rework RSS, flow steering, QoS and default action programming;
+  - add rte_mtr support and meter rte_flow actions;
+  - improve eventdev scheduling, DPCI support and multi-port operation;
+  - support runtime IEEE1588 timestamping;
+  - rework xstats collection and MAC statistics handling;
+  - unify enqueue/dequeue datapaths across net, crypto and eventdev;
+  - add Tx fast paths and reduce confirmation overhead.
 
-Suggested-by: David Marchand <david.marchand@redhat.com>
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- lib/eal/common/eal_common_interrupts.c | 5 +++++
- lib/eal/include/rte_interrupts.h       | 7 ++++++-
- lib/eal/linux/eal_interrupts.c         | 2 ++
- 3 files changed, 13 insertions(+), 1 deletion(-)
+Every commit builds cleanly with arm64 and -Werror and the
+series remains bisectable.
 
-diff --git a/lib/eal/common/eal_common_interrupts.c b/lib/eal/common/eal_common_interrupts.c
-index cf56f967218..fa0e0ab961d 100644
---- a/lib/eal/common/eal_common_interrupts.c
-+++ b/lib/eal/common/eal_common_interrupts.c
-@@ -201,6 +201,11 @@ void rte_intr_instance_free(struct rte_intr_handle *intr_handle)
- 	if (rte_intr_dev_fd_get(intr_handle) >= 0)
- 		EAL_LOG(NOTICE, "Some interrupt handle is leaking a device FD: %d",
- 			rte_intr_dev_fd_get(intr_handle));
-+	for (int i = 0; i < intr_handle->nb_intr; i++) {
-+		if (intr_handle->efds[i] >= 0)
-+			EAL_LOG(NOTICE, "Some interrupt handle is leaking an event FD: %d (index %d)",
-+				intr_handle->efds[i], i);
-+	}
- 	if (RTE_INTR_INSTANCE_USES_RTE_MEMORY(intr_handle->alloc_flags)) {
- 		rte_free(intr_handle->efds);
- 		rte_free(intr_handle->elist);
-diff --git a/lib/eal/include/rte_interrupts.h b/lib/eal/include/rte_interrupts.h
-index d04c0c7b15f..3aeac9092ae 100644
---- a/lib/eal/include/rte_interrupts.h
-+++ b/lib/eal/include/rte_interrupts.h
-@@ -389,6 +389,7 @@ rte_intr_efd_enable(struct rte_intr_handle *intr_handle, uint32_t nb_efd);
-  * @internal
-  * It disables the packet I/O interrupt event.
-  * It deletes registered eventfds and closes the open fds.
-+ * All event fd entries in use are reset to -1.
-  *
-  * @param intr_handle
-  *   Pointer to the interrupt handle.
-@@ -620,12 +621,16 @@ rte_intr_efd_counter_size_get(const struct rte_intr_handle *intr_handle);
-  * @internal
-  * Set the event fd array index with the given fd.
-  *
-+ * Entries still holding a valid fd when the instance is freed are reported
-+ * as leaks, so callers managing the array themselves must reset entries
-+ * to -1 once the fd is closed or no longer referenced.
-+ *
-  * @param intr_handle
-  *  pointer to the interrupt handle.
-  * @param index
-  *  efds array index to be set
-  * @param fd
-- *  event fd
-+ *  event fd, or -1 to clear the entry
-  *
-  * @return
-  *  - On success, zero.
-diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
-index aadb7b84a22..f6f51ba53c0 100644
---- a/lib/eal/linux/eal_interrupts.c
-+++ b/lib/eal/linux/eal_interrupts.c
-@@ -1667,6 +1667,8 @@ rte_intr_efd_disable(struct rte_intr_handle *intr_handle)
- 		for (i = 0; i < (uint32_t)rte_intr_nb_efd_get(intr_handle); i++)
- 			close(rte_intr_efds_index_get(intr_handle, i));
- 	}
-+	for (i = 0; i < (uint32_t)rte_intr_nb_efd_get(intr_handle); i++)
-+		rte_intr_efds_index_set(intr_handle, i, -1);
- 	rte_intr_nb_efd_set(intr_handle, 0);
- 	rte_intr_max_intr_set(intr_handle, 0);
- }
+Breeson Francis (1):
+  net/dpaa2: rework xstats with page table and MAC support
+
+Hemant Agrawal (1):
+  net/dpaa2: reject Rx queue deferred start
+
+Jun Yang (63):
+  net/dpaa2: refactor and optimize Rx parser result decode
+  net/dpaa2: generate devargs table and string from one list
+  crypto/dpaa2_sec: use table-driven devargs parsing
+  dma/dpaa2: use table-driven devargs parsing
+  net/dpaa2: unify debug dump via log based helpers
+  net/dpaa2: expose Rx L3/L4/L5 offsets via mbuf dynfield
+  net/dpaa2: optimize dpaa2 Tx queue and channel mapping
+  bus/fslmc: split bus-level device walk from VFIO primitives
+  bus/fslmc: centralize MC version and SoC detection in the bus layer
+  net/dpaa2: remove unused soft parser loader
+  net/dpaa2: cache per-rxq DPNI queue cfg and share CGID per TC
+  The dpaa2 PMD so far supported only two Tx buffer release schemes:
+    direct release by hardware, and an absolute Tx confirmation mode
+    (drv_tx_conf=1) where every transmitted buffer is returned on a Tx
+    confirmation queue that software must poll to free the buffers.
+    Absolute confirmation adds a confirmation descriptor and a poll cost
+    for all packets, even those the hardware could free on its own.
+  net/dpaa2: support runtime IEEE1588 timestamping
+  bus/fslmc: consume dpaa2 DQRR entries in batches
+  bus/fslmc: align dpaa2 event port depths with hardware rings
+  net/dpaa2: support multi-DPNI FS redirect and QoS table v3
+  net/dpaa2: unify xstats layout and add DPMAC counter struct
+  net/dpaa2: reimplement xstats_get() on top of xstats_get_by_id()
+  net/dpaa2: fetch only requested MAC xstats in one MC call
+  net/dpaa2: rework flow with per-table profile and group types
+  net/dpaa2: reimplement RSS distribution via rte_flow
+  net/dpaa2: expand IP address extracts for RSS hashing
+  net/dpaa2: add policer v2 MC command and L2/L3 byte units
+  net/dpaa2: support rte_mtr and METER rte_flow action
+  net/dpaa2: program flow table miss actions via rte_flow
+  net/dpaa2: support DCB Rx mode via rte_flow
+  bus/fslmc: support DPCI peer and dynamic queues
+  bus/fslmc: add alloc/free DPIO API for non-affine portals
+  event/dpaa2: rework event port model and DPCI handling
+  event/dpaa2: fix Tx adapter enqueue for mixed destinations
+  event/dpaa2: rework self test for dynamic link and balance check
+  event/dpaa2: add DPCON based standalone Rx scheduler
+  event/dpaa2: add push mode to DPCON Rx scheduler
+  event/dpaa2: drain Rx scheduler queues on destroy
+  event/dpaa2: track and detach attached Rx queues
+  net/dpaa2: add multi-port Tx API
+  event/dpaa2: limit attached Rx flows per event queue
+  eventdev: fix port link/unlink callback return documentation
+  event/dpaa2: allow event queue link to multiple ports
+  event/dpaa2: report available DPIO count and fix create cleanup
+  event/dpaa2: use event port DPIO for dequeue wait
+  bus/fslmc: consolidate DPIO interrupt setup and bound coalescing
+  event/dpaa2: honor configured dequeue timeout
+  bus/fslmc: use EAL API for DPIO interrupt
+  bus/fslmc: defer DPIO interrupt setup and bind portal to worker core
+  bus/fslmc: move Tx SG mempool to fslmc bus
+  net/dpaa2: move DPNI endpoint lookup out of the fslmc bus
+  net/dpaa2: add APIs to query device info and set default action
+  net/dpaa2: consolidate dequeue paths and optimize fast path
+  net/dpaa2: bind per-queue DPIO for rx-queue interrupts
+  net/dpaa2: add API to clean Tx confirmation queue
+  event/dpaa2: fix DQRR held buffer accounting on enqueue
+  bus/fslmc: store dequeue dpio in mbuf seq dynfield
+  bus/fslmc: use explicit flags for mbuf seqn encoding
+  net/dpaa2: unify tx burst path for ordered and atomic enqueue
+  crypto/dpaa2_sec: unify enqueue burst path for ordered enqueue
+  bus/fslmc: track atomic DCA context per dequeue dpio
+  bus/fslmc: move enqueue response descriptors to per-queue
+  event/dpaa2: add ordered schedule type support
+  bus/fslmc: make DPAA2 ORP/ODP ordering per-queue instead of per-device
+  event/dpaa2: support multi-port enqueue in selftest random event
+    generator
+  event/dpaa2: do not fail device creation on DPCI errors
+  net/dpaa2: add Tx fast path for no-confirmation case
+
+ doc/guides/nics/dpaa2.rst                     |   29 +-
+ doc/guides/rel_notes/release_26_11.rst        |   10 +
+ drivers/bus/fslmc/bus_fslmc_driver.h          |   46 +-
+ drivers/bus/fslmc/fslmc_bus.c                 |  321 +-
+ drivers/bus/fslmc/fslmc_logs.h                |    2 +
+ drivers/bus/fslmc/fslmc_vfio.c                |  562 +-
+ drivers/bus/fslmc/fslmc_vfio.h                |   72 +-
+ drivers/bus/fslmc/mc/dpci.c                   |   37 +-
+ drivers/bus/fslmc/mc/fsl_dpci.h               |   12 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpci.c      |  304 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpcon.c     |   25 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  668 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.h      |   37 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dprc.c      |   52 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_pvt.h       |  305 +-
+ drivers/bus/fslmc/private.h                   |   15 +-
+ .../fslmc/qbman/include/fsl_qbman_portal.h    |   24 +-
+ drivers/bus/fslmc/qbman/qbman_portal.c        |  100 +-
+ drivers/bus/fslmc/qbman/qbman_portal.h        |   11 +-
+ drivers/bus/fslmc/qbman/qbman_sys.h           |    4 +-
+ drivers/common/dpaax/dpaax_devarg.h           |   69 +
+ drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c   |  559 +-
+ drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h     |   11 +-
+ drivers/dma/dpaa2/dpaa2_qdma.c                |   92 +-
+ drivers/dma/dpaa2/dpaa2_qdma.h                |   15 +-
+ drivers/event/dpaa2/dpaa2_eventdev.c          | 1266 ++-
+ drivers/event/dpaa2/dpaa2_eventdev.h          |   61 +-
+ drivers/event/dpaa2/dpaa2_eventdev_selftest.c |  370 +-
+ drivers/event/dpaa2/dpaa2_scheduler.c         |  673 ++
+ drivers/event/dpaa2/meson.build               |    3 +-
+ drivers/net/dpaa2/base/dpaa2_hw_dpni.c        |  544 --
+ drivers/net/dpaa2/base/dpaa2_hw_dpni_annot.h  |    6 +-
+ drivers/net/dpaa2/dpaa2_ethdev.c              | 3201 ++++---
+ drivers/net/dpaa2/dpaa2_ethdev.h              |  997 +-
+ drivers/net/dpaa2/dpaa2_flow.c                | 8426 ++++++++---------
+ drivers/net/dpaa2/dpaa2_meter.c               |  584 ++
+ drivers/net/dpaa2/dpaa2_parse_dump.h          |  707 +-
+ drivers/net/dpaa2/dpaa2_parser_decode.h       | 1148 +++
+ drivers/net/dpaa2/dpaa2_pmd_logs.h            |   34 +-
+ drivers/net/dpaa2/dpaa2_ptp.c                 |  177 +-
+ drivers/net/dpaa2/dpaa2_recycle.c             |   18 +-
+ drivers/net/dpaa2/dpaa2_rxtx.c                | 2818 +++---
+ drivers/net/dpaa2/dpaa2_sparser.c             |  137 -
+ drivers/net/dpaa2/dpaa2_sparser.h             |  202 -
+ drivers/net/dpaa2/mc/dpni.c                   |  127 +-
+ drivers/net/dpaa2/mc/fsl_dpni.h               |  378 +-
+ drivers/net/dpaa2/mc/fsl_dpni_cmd.h           |   30 +-
+ drivers/net/dpaa2/mc/fsl_net.h                |    4 +-
+ drivers/net/dpaa2/meson.build                 |    3 +-
+ drivers/net/dpaa2/rte_pmd_dpaa2.h             |  238 +-
+ lib/eventdev/eventdev_pmd.h                   |    9 +-
+ 51 files changed, 14514 insertions(+), 11029 deletions(-)
+ create mode 100644 drivers/common/dpaax/dpaax_devarg.h
+ create mode 100644 drivers/event/dpaa2/dpaa2_scheduler.c
+ delete mode 100644 drivers/net/dpaa2/base/dpaa2_hw_dpni.c
+ create mode 100644 drivers/net/dpaa2/dpaa2_meter.c
+ create mode 100644 drivers/net/dpaa2/dpaa2_parser_decode.h
+ delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.c
+ delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.h
+
 -- 
-2.52.0
+2.43.0
 
