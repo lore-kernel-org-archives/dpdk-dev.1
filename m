@@ -1,85 +1,75 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A85606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 22:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2AE606A31B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 23:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=aUWWWXCz
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=0L6cbnyk
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2D82C402B0;
-	Sat, 24 Oct 2026 00:57:02 +0200 (CEST)
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com
- [209.85.160.182])
- by mails.dpdk.org (Postfix) with ESMTP id 3FD664021F
- for <dev@dpdk.org>; Sat, 24 Oct 2026 00:57:00 +0200 (CEST)
-Received: by mail-qt1-f182.google.com with SMTP id
- d75a77b69052e-53639b8903bso16321501cf.0
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:57:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792796219; cv=none;
- d=google.com; s=arc-20260327;
- b=enRJ4S9qOrbCosZ9HgRVzl748WVuogadKivP+9mLbkQXwL/EoPK6tVl3GI2dJs4abr
- AdoVqA6gRA/RX2cRu/KHKlNQtCJlR+o4qWQubPQM9hrTi7gMEo5/xX8Ut0/TN0C2Mu0h
- Gob3Ms263m2GDHyQFWxR4fbhaC27xqIxFPo6B8lBqSCFvps1OiRl6dTt2lKSjj+YvCEr
- zfGwnj9JF9vynx25yT6QP2gSBxanGA81Sxvaf9UpyyzsadaNOIHHrl/vG2+ZTY0DjfJU
- V3wm7czy5V2IHI+avg8WbxEgOR07swW4VLdQM4TMBA1RK9MX3NMgabnqiPotns32tDUP
- MM2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=h/c0LY3BccCRZpJxoyjjuc2FQw34tnh8dWyAuTej3+g=;
- fh=EmSO+mASZJEB//NBChCw3BP04Ji/8HfIQSEuMxOsXfQ=;
- b=J5FHQHM3RVNbN7AWqxiVu7FWh+XE8klOMpFeh8BRzWHt0FxSSpgT/oiLLh7b7sufIC
- CH2IU/qD0ol67/xg0W9WE4YnChPAp5NXxFfbZe0c0wDHxhObFP9QnEUlVdLrUc6K8g9j
- 2ygopwHrwKJlVzp1c1w3KVfzalu8pM+QC68oRIWtGPagvSVjVhjPUBwSnq2u66b44lLH
- e9CZz2jdncuMDCk1hqE+Ika2775VpR7TDaTu6x+qpuFBndgMSzeCLHiSdMyCAiNDCz2/
- S1noUAQTKY0yomYnXGTwja3tJoRtSzg7rR7vSLjyzrkU6YE93mvyZ+tbzw7UqEpaZipl
- TscQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 4EE77402B0;
+	Sat, 24 Oct 2026 01:43:27 +0200 (CEST)
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
+ [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id 68E3A4021F
+ for <dev@dpdk.org>; Sat, 24 Oct 2026 01:43:26 +0200 (CEST)
+Received: by mail-pj1-f45.google.com with SMTP id
+ 98e67ed59e1d1-3ab60ff4273so1173486a91.0
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 16:43:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1792796219; x=1793401019; darn=dpdk.org;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=h/c0LY3BccCRZpJxoyjjuc2FQw34tnh8dWyAuTej3+g=;
- b=aUWWWXCzVsBMuakx7HHR7v/11EH8rKdCGUnmQy542B7vYWdHymOzc8XXLj6CRauTjg
- MiW7+88peS5+BIud2UMA2039SAdVSI/bx3TO2WWea7b/BQsJpsMVEeugJbRDcFVZlnni
- srS55T+/BVj24BM1V+qaPXW65v7HtXZbS1Fd4=
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792799005;
+ x=1793403805; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=M0Qcwx+fdMrR0yl0eKUB3jBIi8obMa42XJag91w1Vlc=;
+ b=0L6cbnykgRMLpdFeA5jLzx191bsARKRnMHyUdBvQy/i0zQRAwccu4ad4RMzQID0Yu5
+ AWvdeSW4ZRx7qFHMwvBWz8O7CWb3nKIhJuIjolVHHVcAPkq063HObrswsPvcV7vxkXmB
+ E4meZa9Ki47espt11zv2uU8AX9SPR2Tqtaf9SDML+/FxbdPS/jasH3cI706Zkmxj/zEi
+ F/6PO2jRHfBVAHc0vhAR4SHV8f1mdE0Pu1CDRAKUqqvlGu28VGe9+BNqlgS8R9eXsZ7K
+ 1Xg+ASgIbdbNBTMmciTw7zyW99MmJtM6TmZf0wKDNOJVLftr6ZTMpbyf9KL8N3M+8q9F
+ RloQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792796219; x=1793401019;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=h/c0LY3BccCRZpJxoyjjuc2FQw34tnh8dWyAuTej3+g=;
- b=YC7jfy6d/kbqvtAuUDHR7aUBCCrnYhgb/JfqvutNEht3663mTzt/VGBm0iGrkai4c0
- v7iNRlL/5EJ2qFjoB11VwE0o7US24NgYeLwWHxee60sW84MUZGHSa2vj9kFU8OGyaYoM
- A1J9c18cxkEpp1fcg29g+e8krOnXlQBzx9vPaXUnMrabIJRH74WUr/UE+x3qqqClEJ3m
- nYtCsw0LSVutZy7zfLh0UVjK/henKjY2p/LsZF4YxEmdxoUpQbCSkXZ2oUEy1FI/o4VV
- iekUje+62+x4oXTJf48+pxlef+G4Zj/WB2nmn7XKtD5ax43rOGU4miR3PiwGzwyjWzEu
- Gjow==
-X-Gm-Message-State: AFq9FYLJ2om4HJLEliNtAlT4Fh0vmQSZJWB1bHFOoo3jfjJDWgC2Hn6r
- pSgWbPFOJ0ZbAzZH2TLfIbgUi8UcvVRM70dojT04szfdFxFGKdjVZZ3qO3XFn4vuauuvYS8DfjF
- v1s5PO4v2ULlXVIXdMTlponloBE+OvNaKk1hKmTiV8w==
-X-Gm-Gg: AYBFou3/k9stnW6m1gy8U/XEBZY/L11HD3dFGd33Zd5fvgsYdnvAg+8eIe4XS3wJNVJ
- KncaiLsEH80bdWOZFoWSb1uNBY8FcaJQZBB1bDxtw3KUw5QCVKF5uhPKNkX/C7PX6+Yr/qZFN+/
- aDejKNG4nk8mce/TGTQ1JzzWwIFYkXTxPE6QHTzJWS8/8bfwhynS4Nrj4NbUB3WHGPnBTVZkObQ
- Em9n2zyweuJBKMaEtMWBY0nnbYhYrwxQpWBg/q4YFVAyE0wQAVrdQMZXEf/TlaKiPd0StWxjiSl
- fRmCvzAef3WrVXrKJKAK+WssNLUDnC8vRT282mZenLR29GGm7ks7w8NdkdCeNe5kISfhBiTL0RE
- IjDNQmAiadwblrNU21TnUfiU+vg19EhBcQ6k9HBYvO/Dc1fLLv1Ea3szHoZecpNPstDhAWObYxr
- nczLurw+kjWPUL3LmLbubNvtGL6CZsiMCmH6YN2eIeO99758Vz15M2vVqKyPGR88zRIwE=
-X-Received: by 2002:a05:622a:4e86:b0:535:1b18:211 with SMTP id
- d75a77b69052e-5383ba9da68mr3964981cf.19.1792796219332; Fri, 23 Oct 2026
- 15:56:59 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1792799005; x=1793403805;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=M0Qcwx+fdMrR0yl0eKUB3jBIi8obMa42XJag91w1Vlc=;
+ b=iBrHhlfDLeL/05yiTKvMqjgmK2ewhYYcsy5c1AobT1F7RS3IhDgQ9s3o+gZqHrnCmh
+ DY6rmS+tlEs5D5SteWG0gNoTv6dzTmQV75TwV8kOlLNnj6hTse9P5p2GEFAWGRTjpmDO
+ YgBxNBk9t2s8CI2xUUcWlNStSDLMrQY4VpOMxJjQN30paUYRsBbcU3zplDykDIoO/WTU
+ OEWcNorloSPUrIWfOvunVSgcokO2vQQJr4pGiK7yqANfNB2SI4GwhSwtIrULT8jS6DVJ
+ rva0zOYp+ojQuPTLMUdZsnfIsSMzdUrDCnOJVvwgquJJc6VwBIl5wN7G6VL91+tYenzW
+ cZkg==
+X-Gm-Message-State: AFq9FYKurwcrODjxchzt7SHeHSCwEEqf9+HXjc1UBXNrayl4B/ByQ1jM
+ uKkP5L54bYDrSSJRHxFwz/9dEc40t8T7Vp2BsrthlFD2B3iPPUO7YXWaFR8FUDtdbn0=
+X-Gm-Gg: AYBFou2eACnNYg+4XE80DDMc5MXXX11k47rjr6M9ireeinHmxR/Ec9Ve9PbeorWPuP8
+ 1TWVUgH4acB6NWkwqDfKLT4/BdMRgJIynwN6wZ2hobAPXNvBflHY+uLlkfMr7eKsvDWNZKi7A+8
+ Qa70yPGe8yoqalI3Tab5kcJ0BoQs1+aZW/VDPOJniPDOe0I5njTePeFiQAb5X4xFqvukP4HyVgo
+ /XSeEsler2/oESgaer/8qSEBjZaUHWNCH17qltirLNDiq4ipjRh9mxn3ItXWa4RT6ZFCZz5CAQj
+ OcQxH93u0hnIdb7E/pwyirCtrPIXqkB08jQtsi4vHgrz4PVnouRwoToR/pKwa1Hq62mmb2DT6WX
+ dSrqOF34Sr7l7M1CGQGIlpkGxNRQGlqT73wbxvQ/Eb5dHxLRnXItBQZYWACjJVhdPu8GMF23dNe
+ mxksbkOoLqrDwc58H1akrWzXrMQBvX0G5M9c5JfjvR71V0fbSbi7OeChqoDQjT/C8TckUy5NWP3
+ nzzv9aVxl9U0FHrh1ajP7qlj+1yd2VNgPxNhOlcWv4CSjSU4NYil4V3OuBSsLY7w0fZU0+rjl9e
+ N+JGcMQpOsZK8DbiC8NT6hodFCXjJcT71xuE1xsRQbpH
+X-Received: by 2002:a17:90a:d00e:b0:3a6:e99b:bbdb with SMTP id
+ 98e67ed59e1d1-3adeaf9857fmr569060a91.50.1792799004759; 
+ Fri, 23 Oct 2026 16:43:24 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3adebaca7casm759155a91.4.2026.10.23.16.43.24
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 23 Oct 2026 16:43:24 -0700 (PDT)
+Date: Fri, 23 Oct 2026 16:43:20 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Prashant Gupta <prashant.gupta_3@nxp.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v4-S3 00/65] net/dpaa2, event/dpaa2 and fslmc rework
+Message-ID: <20261023164320.7cd424e6@phoenix.local>
+In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
+References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
+ <20261023134346.37727-1-prashant.gupta_3@nxp.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20260811185509.1650102-1-knimoji@iol.unh.edu>
- <20261023210415.28323-1-knimoji@iol.unh.edu>
-In-Reply-To: <20261023210415.28323-1-knimoji@iol.unh.edu>
-From: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
-Date: Fri, 23 Oct 2026 18:56:23 -0400
-X-Gm-Features: AclHuK9vYcCjA8KNlr9A_r-ideDWZgBB_Ssj2K5fqC57JG_6A6rLB6ZRFJTKcs4
-Message-ID: <CAKYPG+zGiXfbb5TzwwSQfErXcHhvDyk-zyza4YBCMP45LzFEmQ@mail.gmail.com>
-Subject: Re: [PATCH v3] dts: resolve trex driver binding issue
-To: luca.vizzarro@arm.com, patrickrobb1997@gmail.com
-Cc: dev@dpdk.org, dladd@iol.unh.edu, abailey@iol.unh.edu, lylavoie@iol.unh.edu
-Content-Type: multipart/alternative; boundary="000000000000ceed42065e89e56c"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,1870 +79,764 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
---000000000000ceed42065e89e56c
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Fri, 23 Oct 2026 19:12:40 +0530
+Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
 
-Recheck-request: iol-unit-arm64-testing
+> This is the final DPAA2 upstreaming sub-series, applied on top of
+> v7-S1 ("dpaa2: bus, DMA and mempool base fixes") and
+> v14-S2 ("net/dpaa2 updates").
+> 
+> The series reworks the DPAA2 datapath, flow steering, metering,
+> eventdev integration and fslmc infrastructure. It consolidates
+> device configuration handling, improves queue and portal management,
+> and adds support for additional DPNI, eventdev and datapath
+> capabilities.
+> 
+> Highlights:
+>   - add DMA bypass translation support and table-driven devargs parsing;
+>   - optimize Tx queue, channel and dequeue processing paths;
+>   - centralize MC version, SoC detection and endpoint handling;
+>   - rework RSS, flow steering, QoS and default action programming;
+>   - add rte_mtr support and meter rte_flow actions;
+>   - improve eventdev scheduling, DPCI support and multi-port operation;
+>   - support runtime IEEE1588 timestamping;
+>   - rework xstats collection and MAC statistics handling;
+>   - unify enqueue/dequeue datapaths across net, crypto and eventdev;
+>   - add Tx fast paths and reduce confirmation overhead.
+> 
+> Every commit builds cleanly with arm64 and -Werror and the
+> series remains bisectable.
 
-On Fri, Oct 23, 2026 at 5:04=E2=80=AFPM Koushik Bhargav Nimoji <knimoji@iol=
-.unh.edu>
-wrote:
+AI review reports lots and lots of issues here.
+I assume you want this in next-net.
 
-> Previously, users were unable to run both functional and performance
-> test suites in a single DTS run due to driver binding conflicts.
-> This patch separates traffic generator setup by test suite, in
-> order to allow running functional and performance test suites in
-> the same DTS run.
->
-> Signed-off-by: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
-> ---
-> v2:
->      *Added TRex TG teardown to re-bind ports
->       to kernel driver
-> v3:
->      *Added topology-based port binding upon
->       TRex setup to preserve internal port
->       config state, removed all manual bindings
-> ---
->  dts/api/test_suite.py                         | 40 +++++++++++++++++++
->  dts/framework/test_run.py                     | 24 ++++++++---
->  dts/framework/testbed_model/linux_session.py  |  6 ++-
->  .../testbed_model/traffic_generator/trex.py   |  1 +
->  dts/tests/TestSuite_blocklist.py              |  3 +-
->  dts/tests/TestSuite_buffer_scatter.py         |  3 +-
->  dts/tests/TestSuite_checksum_offload.py       |  3 +-
->  dts/tests/TestSuite_cryptodev_latency.py      |  3 +-
->  dts/tests/TestSuite_cryptodev_throughput.py   |  3 +-
->  dts/tests/TestSuite_dual_vlan.py              |  3 +-
->  dts/tests/TestSuite_dynamic_config.py         |  3 +-
->  dts/tests/TestSuite_dynamic_queue_conf.py     |  3 +-
->  dts/tests/TestSuite_flow_offload.py           |  3 +-
->  dts/tests/TestSuite_hello_world.py            |  3 +-
->  dts/tests/TestSuite_l2fwd.py                  |  3 +-
->  dts/tests/TestSuite_mac_filter.py             |  3 +-
->  dts/tests/TestSuite_mtu.py                    |  3 +-
->  dts/tests/TestSuite_packet_capture.py         |  3 +-
->  dts/tests/TestSuite_port_control.py           |  3 +-
->  ...stSuite_port_restart_config_persistency.py |  3 +-
->  dts/tests/TestSuite_port_stats.py             |  3 +-
->  dts/tests/TestSuite_promisc_support.py        |  3 +-
->  dts/tests/TestSuite_qinq.py                   |  3 +-
->  dts/tests/TestSuite_queue_toggle.py           |  3 +-
->  dts/tests/TestSuite_rss.py                    |  3 +-
->  dts/tests/TestSuite_rx_split.py               |  3 +-
->  dts/tests/TestSuite_rx_tx_offload.py          |  3 +-
->  .../TestSuite_single_core_forward_perf.py     |  3 +-
->  dts/tests/TestSuite_smoke_tests.py            |  3 +-
->  dts/tests/TestSuite_softnic.py                |  3 +-
->  dts/tests/TestSuite_speed_capabilities.py     |  3 +-
->  dts/tests/TestSuite_unified_packet.py         |  3 +-
->  dts/tests/TestSuite_virtio_forward.py         |  3 +-
->  dts/tests/TestSuite_vlan.py                   |  3 +-
->  34 files changed, 123 insertions(+), 38 deletions(-)
->
-> diff --git a/dts/api/test_suite.py b/dts/api/test_suite.py
-> index c30d447135..11027344d0 100644
-> --- a/dts/api/test_suite.py
-> +++ b/dts/api/test_suite.py
-> @@ -44,6 +44,17 @@ class BaseConfig(FrozenModel):
->      """Base for a custom test suite configuration."""
->
->
-> +class TestSuiteType(Enum):
-> +    """Enum to specify test suite type."""
-> +
-> +    FUNC =3D auto()
-> +    PERF =3D auto()
-> +    CRYPTO =3D auto()
-> +
-> +
-> +TestSuiteClassType =3D TypeVar("TestSuiteClassType",
-> bound=3Dtype["TestSuite"])
-> +
-> +
->  class TestSuite(TestProtocol):
->      """The base class with building blocks needed by most test cases.
->
-> @@ -84,6 +95,30 @@ class TestSuite(TestProtocol):
->      _sut_ip_address_egress: Union[IPv4Interface, IPv6Interface]
->      _tg_ip_address_ingress: Union[IPv4Interface, IPv6Interface]
->      _tg_ip_address_egress: Union[IPv4Interface, IPv6Interface]
-> +    test_suite_type: ClassVar[TestSuiteType]
-> +
-> +    @classmethod
-> +    def make_decorator(
-> +        cls, test_suite_type: TestSuiteType
-> +    ) -> Callable[[TestSuiteClassType], TestSuiteClassType]:
-> +        """Creates a decorator for test suites.
-> +
-> +        The decorator casts the decorated function as :class:`TestSuite`=
-,
-> +        sets it as `testsuite_type` and initializes a variable to
-> +        determine the type of test suite.
-> +
-> +        Args:
-> +            test_suite_type: A functional, performance, or cryptodev tes=
-t
-> suite.
-> +
-> +        Returns:
-> +            The decorator of a functional, performance, or cryptodev tes=
-t
-> suite.
-> +        """
-> +
-> +        def _decorator(test_suite_cls: TestSuiteClassType) ->
-> TestSuiteClassType:
-> +            test_suite_cls.test_suite_type =3D test_suite_type
-> +            return test_suite_cls
-> +
-> +        return _decorator
->
->      def __init__(self, config: BaseConfig) -> None:
->          """Initialize the test suite testbed information and basic
-> configuration.
-> @@ -269,6 +304,11 @@ def _adjust_addresses(self, packets: list[Packet],
-> expected: bool =3D False) -> li
->          return ret_packets
->
->
-> +#: Test suite type decorators
-> +func_suite: Callable[[Any], type["TestSuite"]] =3D
-> TestSuite.make_decorator(TestSuiteType.FUNC)
-> +perf_suite: Callable[[Any], type["TestSuite"]] =3D
-> TestSuite.make_decorator(TestSuiteType.PERF)
-> +crypto_suite: Callable[[Any], type["TestSuite"]] =3D
-> TestSuite.make_decorator(TestSuiteType.CRYPTO)
-> +
->  #: The generic type for a method of an instance of TestSuite
->  TestSuiteMethodType =3D TypeVar("TestSuiteMethodType",
-> bound=3DCallable[[TestSuite], None])
->
-> diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-> index 210ff25af7..3890606512 100644
-> --- a/dts/framework/test_run.py
-> +++ b/dts/framework/test_run.py
-> @@ -110,7 +110,7 @@
->  from api.capabilities import LinkTopology
->  from api.context import Context, init_ctx
->  from api.exception import InternalError, SkippedTestException,
-> TestCaseVerifyError
-> -from api.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
-> +from api.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite=
-,
-> TestSuiteType
->  from api.testbed_model.capability import (
->      Capability,
->      get_supported_capabilities,
-> @@ -375,11 +375,6 @@ def next(self) -> State | None:
->              ctx.topology.bind_cryptodevs("dpdk")
->
->          ctx.topology.configure_ports("sut", "dpdk")
-> -        if ctx.func_tg and ctx.topology.type is not LinkTopology.NO_LINK=
-:
-> -            ctx.func_tg.setup(ctx.topology)
-> -        if ctx.perf_tg and ctx.topology.type is not LinkTopology.NO_LINK=
-:
-> -            ctx.perf_tg.setup(ctx.topology)
-> -
->          self.result.ports =3D [
->              port.to_dict() for port in ctx.topology.sut_ports +
-> ctx.topology.tg_ports
->          ]
-> @@ -512,6 +507,23 @@ def before(self) -> None:
->          super().before()
->          self.logger.set_custom_log_file(self.test_suite.name)
->
-> +        ctx =3D self.test_run.ctx
-> +        test_suite_type =3D self.test_suite.test_suite_type
-> +        if (
-> +            ctx.topology.type is not LinkTopology.NO_LINK
-> +            and test_suite_type is not TestSuiteType.CRYPTO
-> +        ):
-> +            if test_suite_type =3D=3D TestSuiteType.FUNC:
-> +                required_tg, other_tg =3D ctx.func_tg, ctx.perf_tg
-> +            else:
-> +                required_tg, other_tg =3D ctx.perf_tg, ctx.func_tg
-> +
-> +            if other_tg and other_tg.is_setup:
-> +                other_tg.teardown()
-> +
-> +            if required_tg and not required_tg.is_setup:
-> +                required_tg.setup(ctx.topology)
-> +
->      @property
->      def description(self) -> str:
->          """State description."""
-> diff --git a/dts/framework/testbed_model/linux_session.py
-> b/dts/framework/testbed_model/linux_session.py
-> index 8cc0d09d01..fe3f1a8fc3 100644
-> --- a/dts/framework/testbed_model/linux_session.py
-> +++ b/dts/framework/testbed_model/linux_session.py
-> @@ -278,7 +278,8 @@ def bind_ports_to_driver(self, ports: list[Port],
-> driver_name: str) -> None:
->              verify=3DTrue,
->          )
->
-> -        del self._lshw_net_info
-> +        if self._lshw_net_info:
-> +            del self._lshw_net_info
->
->      def bring_up_link(self, ports: Iterable[Port]) -> None:
->          """Overrides :meth:`~.os_session.OSSession.bring_up_link`."""
-> @@ -287,7 +288,8 @@ def bring_up_link(self, ports: Iterable[Port]) -> Non=
-e:
->                  f"ip link set dev {port.logical_name} up",
-> privileged=3DTrue, verify=3DTrue
->              )
->
-> -        del self._lshw_net_info
-> +        if self._lshw_net_info:
-> +            del self._lshw_net_info
->
->      def set_interface_link_up(self, name: str) -> None:
->          """Overrides
-> :meth:`~.os_session.OSSession.set_interface_link_up`."""
-> diff --git a/dts/framework/testbed_model/traffic_generator/trex.py
-> b/dts/framework/testbed_model/traffic_generator/trex.py
-> index 7ce1d40d79..055c22e121 100644
-> --- a/dts/framework/testbed_model/traffic_generator/trex.py
-> +++ b/dts/framework/testbed_model/traffic_generator/trex.py
-> @@ -110,6 +110,7 @@ def __init__(self, tg_node: Node, config:
-> TrexTrafficGeneratorConfig) -> None:
->      def setup(self, topology: Topology):
->          """Initialize and start a TRex server process."""
->          super().setup(topology)
-> +        topology.configure_ports("tg", "dpdk")
->          self._topology =3D topology
->
->          self._shell =3D PythonShell(self._tg_node, "TRex-client",
-> privileged=3DTrue)
-> diff --git a/dts/tests/TestSuite_blocklist.py
-> b/dts/tests/TestSuite_blocklist.py
-> index 31e69c0de9..e32f31b383 100644
-> --- a/dts/tests/TestSuite_blocklist.py
-> +++ b/dts/tests/TestSuite_blocklist.py
-> @@ -11,11 +11,12 @@
->      requires_link_topology,
->  )
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testbed_model.port import Port
->  from api.testpmd import TestPmd
->
->
-> +@func_suite
->  class TestBlocklist(TestSuite):
->      """DPDK device blocklisting test suite."""
->
-> diff --git a/dts/tests/TestSuite_buffer_scatter.py
-> b/dts/tests/TestSuite_buffer_scatter.py
-> index cd1a52ad5e..adc8e41700 100644
-> --- a/dts/tests/TestSuite_buffer_scatter.py
-> +++ b/dts/tests/TestSuite_buffer_scatter.py
-> @@ -28,13 +28,14 @@
->  )
->  from api.packet import send_packet_and_capture
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import SimpleForwardingModes
->
->
->  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
->  @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_SCATTER)
-> +@func_suite
->  class TestBufferScatter(TestSuite):
->      """DPDK PMD packet scattering test suite.
->
-> diff --git a/dts/tests/TestSuite_checksum_offload.py
-> b/dts/tests/TestSuite_checksum_offload.py
-> index a2ea13991b..8c16706f1b 100644
-> --- a/dts/tests/TestSuite_checksum_offload.py
-> +++ b/dts/tests/TestSuite_checksum_offload.py
-> @@ -25,7 +25,7 @@
->  )
->  from api.packet import send_packet_and_capture
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import SimpleForwardingModes
->  from api.testpmd.types import ChecksumOffloadOptions, PacketOffloadFlag
-> @@ -34,6 +34,7 @@
->  @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_IPV4_CKSUM)
->  @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_UDP_CKSUM)
->  @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_TCP_CKSUM)
-> +@func_suite
->  class TestChecksumOffload(TestSuite):
->      """Checksum offload test suite.
->
-> diff --git a/dts/tests/TestSuite_cryptodev_latency.py
-> b/dts/tests/TestSuite_cryptodev_latency.py
-> index 444a5b282c..bf3b9b5761 100644
-> --- a/dts/tests/TestSuite_cryptodev_latency.py
-> +++ b/dts/tests/TestSuite_cryptodev_latency.py
-> @@ -31,7 +31,7 @@
->      CryptodevResults,
->  )
->  from api.test import skip, verify
-> -from api.test_suite import BaseConfig, TestSuite, crypto_test
-> +from api.test_suite import BaseConfig, TestSuite, crypto_suite,
-> crypto_test
->  from api.testbed_model.virtual_device import VirtualDevice
->
->  config_list: list[dict[str, int | float | str]] =3D [
-> @@ -73,6 +73,7 @@ class Config(BaseConfig):
->
->
->  @requires_link_topology(LinkTopology.NO_LINK)
-> +@crypto_suite
->  class TestCryptodevLatency(TestSuite):
->      """DPDK Crypto Device Testing Suite."""
->
-> diff --git a/dts/tests/TestSuite_cryptodev_throughput.py
-> b/dts/tests/TestSuite_cryptodev_throughput.py
-> index 59f64f2cd7..7a364a1dc4 100644
-> --- a/dts/tests/TestSuite_cryptodev_throughput.py
-> +++ b/dts/tests/TestSuite_cryptodev_throughput.py
-> @@ -31,7 +31,7 @@
->      CryptodevResults,
->  )
->  from api.test import skip, verify
-> -from api.test_suite import BaseConfig, TestSuite, crypto_test
-> +from api.test_suite import BaseConfig, TestSuite, crypto_suite,
-> crypto_test
->  from api.testbed_model.virtual_device import VirtualDevice
->
->  config_list: list[dict[str, int | float | str]] =3D [
-> @@ -74,6 +74,7 @@ class Config(BaseConfig):
->
->
->  @requires_link_topology(LinkTopology.NO_LINK)
-> +@crypto_suite
->  class TestCryptodevThroughput(TestSuite):
->      """DPDK Crypto Device Testing Suite."""
->
-> diff --git a/dts/tests/TestSuite_dual_vlan.py
-> b/dts/tests/TestSuite_dual_vlan.py
-> index f3347a6d52..6038899c5c 100644
-> --- a/dts/tests/TestSuite_dual_vlan.py
-> +++ b/dts/tests/TestSuite_dual_vlan.py
-> @@ -21,11 +21,12 @@
->  from api.capabilities import LinkTopology, requires_link_topology
->  from api.packet import send_packet_and_capture
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import SimpleForwardingModes
->
->
-> +@func_suite
->  class TestDualVlan(TestSuite):
->      """DPDK Dual VLAN test suite.
->
-> diff --git a/dts/tests/TestSuite_dynamic_config.py
-> b/dts/tests/TestSuite_dynamic_config.py
-> index b9e2c30da1..e071e63a6d 100644
-> --- a/dts/tests/TestSuite_dynamic_config.py
-> +++ b/dts/tests/TestSuite_dynamic_config.py
-> @@ -27,13 +27,14 @@
->  )
->  from api.packet import send_packet_and_capture
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import SimpleForwardingModes
->
->
->  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
->  @requires_link_topology(LinkTopology.TWO_LINKS)
-> +@func_suite
->  class TestDynamicConfig(TestSuite):
->      """Dynamic config suite.
->
-> diff --git a/dts/tests/TestSuite_dynamic_queue_conf.py
-> b/dts/tests/TestSuite_dynamic_queue_conf.py
-> index 24584c7d60..bc11d1ce1f 100644
-> --- a/dts/tests/TestSuite_dynamic_queue_conf.py
-> +++ b/dts/tests/TestSuite_dynamic_queue_conf.py
-> @@ -38,7 +38,7 @@
->  from api.exception import InteractiveCommandExecutionError
->  from api.packet import send_packets
->  from api.test import fail, verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import PortTopology, SimpleForwardingModes
->
-> @@ -121,6 +121,7 @@ def _wrap(self: "TestDynamicQueueConf", is_rx_testing=
-:
-> bool) -> None:
->
->
->  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-> +@func_suite
->  class TestDynamicQueueConf(TestSuite):
->      """DPDK dynamic queue configuration test suite.
->
-> diff --git a/dts/tests/TestSuite_flow_offload.py
-> b/dts/tests/TestSuite_flow_offload.py
-> index 09384b1983..624ff93b17 100644
-> --- a/dts/tests/TestSuite_flow_offload.py
-> +++ b/dts/tests/TestSuite_flow_offload.py
-> @@ -28,7 +28,7 @@
->  )
->  from api.packet import send_packet_and_capture
->  from api.test import fail, log, verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.types import FlowRule
->
-> @@ -402,6 +402,7 @@ def generate(
->
->
->  @requires_nic_capability(NicCapability.FLOW_CTRL)
-> +@func_suite
->  class TestFlowOffload(TestSuite):
->      """Flow offload test suite.
->
-> diff --git a/dts/tests/TestSuite_hello_world.py
-> b/dts/tests/TestSuite_hello_world.py
-> index cd62eb8f3e..9bc555aa08 100644
-> --- a/dts/tests/TestSuite_hello_world.py
-> +++ b/dts/tests/TestSuite_hello_world.py
-> @@ -9,7 +9,7 @@
->  """
->
->  from api.test import log
-> -from api.test_suite import BaseConfig, TestSuite, func_test
-> +from api.test_suite import BaseConfig, TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->
->
-> @@ -20,6 +20,7 @@ class Config(BaseConfig):
->      msg: str =3D "Hello World!"
->
->
-> +@func_suite
->  class TestHelloWorld(TestSuite):
->      """Hello World test suite. One test case, which starts and stops a
-> testpmd session."""
->
-> diff --git a/dts/tests/TestSuite_l2fwd.py b/dts/tests/TestSuite_l2fwd.py
-> index f237821a04..b987efbebf 100644
-> --- a/dts/tests/TestSuite_l2fwd.py
-> +++ b/dts/tests/TestSuite_l2fwd.py
-> @@ -19,7 +19,7 @@
->      match_all_packets,
->      send_packets_and_capture,
->  )
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testbed_model.cpu import LogicalCoreCount
->  from api.testpmd import TestPmd
->  from api.testpmd.config import EthPeer, SimpleForwardingModes
-> @@ -28,6 +28,7 @@
->
->  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
->  @requires_link_topology(LinkTopology.TWO_LINKS)
-> +@func_suite
->  class TestL2fwd(TestSuite):
->      """L2 forwarding test suite."""
->
-> diff --git a/dts/tests/TestSuite_mac_filter.py
-> b/dts/tests/TestSuite_mac_filter.py
-> index eb1413f336..f244203593 100644
-> --- a/dts/tests/TestSuite_mac_filter.py
-> +++ b/dts/tests/TestSuite_mac_filter.py
-> @@ -26,11 +26,12 @@
->  from api.exception import InteractiveCommandExecutionError
->  from api.packet import send_packet_and_capture
->  from api.test import fail, verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->
->
->  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-> +@func_suite
->  class TestMacFilter(TestSuite):
->      """Mac address allowlist filtering test suite.
->
-> diff --git a/dts/tests/TestSuite_mtu.py b/dts/tests/TestSuite_mtu.py
-> index c264db299e..f834be1818 100644
-> --- a/dts/tests/TestSuite_mtu.py
-> +++ b/dts/tests/TestSuite_mtu.py
-> @@ -23,7 +23,7 @@
->  )
->  from api.packet import send_packet_and_capture
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->
->  STANDARD_FRAME =3D 1518  # --max-pkt-len will subtract l2 information at=
- a
-> minimum of 18 bytes.
-> @@ -37,6 +37,7 @@
->
->
->  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-> +@func_suite
->  class TestMtu(TestSuite):
->      """DPDK PMD jumbo frames and MTU update test suite.
->
-> diff --git a/dts/tests/TestSuite_packet_capture.py
-> b/dts/tests/TestSuite_packet_capture.py
-> index 07bfabb30b..f319d99ede 100644
-> --- a/dts/tests/TestSuite_packet_capture.py
-> +++ b/dts/tests/TestSuite_packet_capture.py
-> @@ -37,7 +37,7 @@
->  )
->  from api.params import Params
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testbed_model.cpu import LogicalCoreList
->  from api.testbed_model.traffic_generator.capturing_traffic_generator
-> import PacketFilteringConfig
->  from api.testpmd import TestPmd
-> @@ -65,6 +65,7 @@ class DumpcapParams(Params):
->
->
->  @requires_link_topology(LinkTopology.TWO_LINKS)
-> +@func_suite
->  class TestPacketCapture(TestSuite):
->      """Packet Capture TestSuite.
->
-> diff --git a/dts/tests/TestSuite_port_control.py
-> b/dts/tests/TestSuite_port_control.py
-> index c2f2de3493..2aa613bc25 100644
-> --- a/dts/tests/TestSuite_port_control.py
-> +++ b/dts/tests/TestSuite_port_control.py
-> @@ -18,12 +18,13 @@
->  )
->  from api.packet import send_packets_and_capture
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import SimpleForwardingModes
->
->
->  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-> +@func_suite
->  class TestPortControl(TestSuite):
->      """DPDK Port Control Testing Suite."""
->
-> diff --git a/dts/tests/TestSuite_port_restart_config_persistency.py
-> b/dts/tests/TestSuite_port_restart_config_persistency.py
-> index 88df35d33c..626baa2097 100644
-> --- a/dts/tests/TestSuite_port_restart_config_persistency.py
-> +++ b/dts/tests/TestSuite_port_restart_config_persistency.py
-> @@ -14,7 +14,7 @@
->      requires_nic_capability,
->  )
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.types import TestPmdPortFlowCtrl
->
-> @@ -23,6 +23,7 @@
->  ALTERNATIVE_MAC_ADDRESS: str =3D "42:A6:B7:9E:B4:81"
->
->
-> +@func_suite
->  class TestPortRestartConfigPersistency(TestSuite):
->      """Port config persistency test suite."""
->
-> diff --git a/dts/tests/TestSuite_port_stats.py
-> b/dts/tests/TestSuite_port_stats.py
-> index 0328c6718c..e2980d8d61 100644
-> --- a/dts/tests/TestSuite_port_stats.py
-> +++ b/dts/tests/TestSuite_port_stats.py
-> @@ -25,7 +25,7 @@
->  )
->  from api.packet import send_packet_and_capture
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import SimpleForwardingModes
->  from api.testpmd.types import RtePTypes, TestPmdVerbosePacket
-> @@ -33,6 +33,7 @@
->
->  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
->  @requires_link_topology(LinkTopology.TWO_LINKS)
-> +@func_suite
->  class TestPortStats(TestSuite):
->      """DPDK Port statistics testing suite.
->
-> diff --git a/dts/tests/TestSuite_promisc_support.py
-> b/dts/tests/TestSuite_promisc_support.py
-> index c59c8c6078..adbdf77631 100644
-> --- a/dts/tests/TestSuite_promisc_support.py
-> +++ b/dts/tests/TestSuite_promisc_support.py
-> @@ -21,11 +21,12 @@
->      send_packets_and_capture,
->  )
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->
->
->  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-> +@func_suite
->  class TestPromiscSupport(TestSuite):
->      """Promiscuous mode support test suite."""
->
-> diff --git a/dts/tests/TestSuite_qinq.py b/dts/tests/TestSuite_qinq.py
-> index 5dde37d4db..67884a113c 100644
-> --- a/dts/tests/TestSuite_qinq.py
-> +++ b/dts/tests/TestSuite_qinq.py
-> @@ -18,10 +18,11 @@
->  from api.capabilities import NicCapability, requires_nic_capability
->  from api.packet import send_packet_and_capture
->  from api.test import log, verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->
->
-> +@func_suite
->  class TestQinq(TestSuite):
->      """QinQ test suite.
->
-> diff --git a/dts/tests/TestSuite_queue_toggle.py
-> b/dts/tests/TestSuite_queue_toggle.py
-> index a9ea356b22..0ad362d233 100644
-> --- a/dts/tests/TestSuite_queue_toggle.py
-> +++ b/dts/tests/TestSuite_queue_toggle.py
-> @@ -24,7 +24,7 @@
->  )
->  from api.packet import send_packet_and_capture
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import SimpleForwardingModes
->
-> @@ -32,6 +32,7 @@
->  @requires_link_topology(LinkTopology.TWO_LINKS)
->  @requires_nic_capability(NicCapability.RUNTIME_RX_QUEUE_SETUP)
->  @requires_nic_capability(NicCapability.RUNTIME_TX_QUEUE_SETUP)
-> +@func_suite
->  class TestQueueToggle(TestSuite):
->      """DPDK Queue start/stop test suite.
->
-> diff --git a/dts/tests/TestSuite_rss.py b/dts/tests/TestSuite_rss.py
-> index b538e93af9..289c69d225 100644
-> --- a/dts/tests/TestSuite_rss.py
-> +++ b/dts/tests/TestSuite_rss.py
-> @@ -23,7 +23,7 @@
->  from api.exception import InteractiveCommandExecutionError
->  from api.packet import send_packets_and_capture
->  from api.test import verify
-> -from api.test_suite import BaseConfig, TestSuite, func_test
-> +from api.test_suite import BaseConfig, TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import SimpleForwardingModes
->  from api.testpmd.types import (
-> @@ -55,6 +55,7 @@ class HashAlgorithm(StrEnum):
->
->  @requires_link_topology(LinkTopology.ONE_LINK)
->  @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_RSS_HASH)
-> +@func_suite
->  class TestRss(TestSuite):
->      """RSS test suite."""
->
-> diff --git a/dts/tests/TestSuite_rx_split.py
-> b/dts/tests/TestSuite_rx_split.py
-> index 3b3e4cd620..eac377e93e 100644
-> --- a/dts/tests/TestSuite_rx_split.py
-> +++ b/dts/tests/TestSuite_rx_split.py
-> @@ -21,7 +21,7 @@
->  from api.exception import InteractiveCommandExecutionError
->  from api.packet import adjust_addresses, send_packet_and_capture
->  from api.test import fail, verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import SimpleForwardingModes
->  from api.testpmd.types import RxOffloadCapability, TxOffloadCapability
-> @@ -35,6 +35,7 @@
->
->  @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_BUFFER_SPLIT)
->  @requires_nic_capability(NicCapability.SELECTIVE_RX)
-> +@func_suite
->  class TestRxSplit(TestSuite):
->      """Rx split test suite.
->
-> diff --git a/dts/tests/TestSuite_rx_tx_offload.py
-> b/dts/tests/TestSuite_rx_tx_offload.py
-> index c8d24baaae..cbf9a249b4 100644
-> --- a/dts/tests/TestSuite_rx_tx_offload.py
-> +++ b/dts/tests/TestSuite_rx_tx_offload.py
-> @@ -13,7 +13,7 @@
->      requires_nic_capability,
->  )
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.types import (
->      OffloadConfiguration,
-> @@ -22,6 +22,7 @@
->
->
->  @requires_link_topology(LinkTopology.ONE_LINK)
-> +@func_suite
->  class TestRxTxOffload(TestSuite):
->      """RX/TX offload test suite."""
->
-> diff --git a/dts/tests/TestSuite_single_core_forward_perf.py
-> b/dts/tests/TestSuite_single_core_forward_perf.py
-> index 4b22c5d091..c96411cf18 100644
-> --- a/dts/tests/TestSuite_single_core_forward_perf.py
-> +++ b/dts/tests/TestSuite_single_core_forward_perf.py
-> @@ -23,7 +23,7 @@
->  from api.packet import assess_performance_by_packet
->  from api.params.types import TestPmdParamsDict
->  from api.test import verify, write_performance_json
-> -from api.test_suite import BaseConfig, TestSuite, perf_test
-> +from api.test_suite import BaseConfig, TestSuite, perf_suite, perf_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import RXRingParams, TXRingParams
->
-> @@ -42,6 +42,7 @@ class Config(BaseConfig):
->      delta_tolerance: float =3D 0.05
->
->
-> +@perf_suite
->  @requires_link_topology(LinkTopology.TWO_LINKS)
->  class TestSingleCoreForwardPerf(TestSuite):
->      """Single core forwarding performance test suite."""
-> diff --git a/dts/tests/TestSuite_smoke_tests.py
-> b/dts/tests/TestSuite_smoke_tests.py
-> index b3eb325fc0..993620641c 100644
-> --- a/dts/tests/TestSuite_smoke_tests.py
-> +++ b/dts/tests/TestSuite_smoke_tests.py
-> @@ -19,7 +19,7 @@
->      requires_link_topology,
->  )
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testbed_model.linux_session import LinuxSession
->  from api.testpmd import TestPmd
->  from api.utils import REGEX_FOR_PCI_ADDRESS
-> @@ -28,6 +28,7 @@
->
->
->  @requires_link_topology(LinkTopology.NO_LINK)
-> +@func_suite
->  class TestSmokeTests(TestSuite):
->      """DPDK and infrastructure smoke test suite.
->
-> diff --git a/dts/tests/TestSuite_softnic.py
-> b/dts/tests/TestSuite_softnic.py
-> index 05a6d3aa18..f601130d56 100644
-> --- a/dts/tests/TestSuite_softnic.py
-> +++ b/dts/tests/TestSuite_softnic.py
-> @@ -18,7 +18,7 @@
->      match_all_packets,
->      send_packets_and_capture,
->  )
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testbed_model.virtual_device import VirtualDevice
->  from api.testpmd import TestPmd
->  from api.testpmd.config import EthPeer
-> @@ -27,6 +27,7 @@
->
->  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
->  @requires_link_topology(LinkTopology.TWO_LINKS)
-> +@func_suite
->  class TestSoftnic(TestSuite):
->      """Softnic test suite."""
->
-> diff --git a/dts/tests/TestSuite_speed_capabilities.py
-> b/dts/tests/TestSuite_speed_capabilities.py
-> index c9b0f74feb..56c0d0a51a 100644
-> --- a/dts/tests/TestSuite_speed_capabilities.py
-> +++ b/dts/tests/TestSuite_speed_capabilities.py
-> @@ -13,7 +13,7 @@
->      requires_link_topology,
->  )
->  from api.test import verify
-> -from api.test_suite import BaseConfig, TestSuite, func_test
-> +from api.test_suite import BaseConfig, TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->
->
-> @@ -39,6 +39,7 @@ class Config(BaseConfig):
->
->
->  @requires_link_topology(LinkTopology.ONE_LINK)
-> +@func_suite
->  class TestSpeedCapabilities(TestSuite):
->      """Speed capabilities test suite."""
->
-> diff --git a/dts/tests/TestSuite_unified_packet.py
-> b/dts/tests/TestSuite_unified_packet.py
-> index bf3654f0d7..006f124d19 100644
-> --- a/dts/tests/TestSuite_unified_packet.py
-> +++ b/dts/tests/TestSuite_unified_packet.py
-> @@ -25,12 +25,13 @@
->  )
->  from api.packet import send_packet_and_capture
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import SimpleForwardingModes
->  from api.testpmd.types import RtePTypes, TestPmdVerbosePacket
->
->
-> +@func_suite
->  class TestUnifiedPacket(TestSuite):
->      """DPDK Unified packet test suite.
->
-> diff --git a/dts/tests/TestSuite_virtio_forward.py
-> b/dts/tests/TestSuite_virtio_forward.py
-> index a52c1a4402..52889a844b 100644
-> --- a/dts/tests/TestSuite_virtio_forward.py
-> +++ b/dts/tests/TestSuite_virtio_forward.py
-> @@ -12,13 +12,14 @@
->  from api.capabilities import LinkTopology, requires_link_topology
->  from api.packet import send_packets_and_capture
->  from api.test import log, verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testbed_model.linux_session import LinuxSession
->  from api.testbed_model.virtual_device import VirtualDevice
->  from api.testpmd import TestPmd
->  from api.testpmd.config import PortTopology, SimpleForwardingModes
->
->
-> +@func_suite
->  class TestVirtioForward(TestSuite):
->      """Virtio forwarding test suite."""
->
-> diff --git a/dts/tests/TestSuite_vlan.py b/dts/tests/TestSuite_vlan.py
-> index 975e87b128..edd93e3487 100644
-> --- a/dts/tests/TestSuite_vlan.py
-> +++ b/dts/tests/TestSuite_vlan.py
-> @@ -23,12 +23,13 @@
->  )
->  from api.packet import send_packet_and_capture
->  from api.test import verify
-> -from api.test_suite import TestSuite, func_test
-> +from api.test_suite import TestSuite, func_suite, func_test
->  from api.testpmd import TestPmd
->  from api.testpmd.config import SimpleForwardingModes
->
->
->  @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_VLAN_FILTER)
-> +@func_suite
->  class TestVlan(TestSuite):
->      """DPDK VLAN test suite.
->
-> --
-> 2.56.0
->
->
+The build warnings from AI are suspect since it probably didn't
+get correct dependencies but other issues are disconcerting to me.
+It is not ready for 26.11 given project timelines.
 
---000000000000ceed42065e89e56c
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4-S3 00/65] dpaa2 driver updates
 
-<div dir=3D"ltr">Recheck-request:=C2=A0<span style=3D"color:rgb(51,51,51);f=
-ont-family:&quot;Helvetica Neue&quot;,Helvetica,Arial,sans-serif;font-size:=
-14px">iol-unit-arm64-testing</span></div><br><div class=3D"gmail_quote gmai=
-l_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, Oct 23, 20=
-26 at 5:04=E2=80=AFPM Koushik Bhargav Nimoji &lt;<a href=3D"mailto:knimoji@=
-iol.unh.edu">knimoji@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=
-=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
-b(204,204,204);padding-left:1ex">Previously, users were unable to run both =
-functional and performance<br>
-test suites in a single DTS run due to driver binding conflicts.<br>
-This patch separates traffic generator setup by test suite, in<br>
-order to allow running functional and performance test suites in<br>
-the same DTS run.<br>
-<br>
-Signed-off-by: Koushik Bhargav Nimoji &lt;<a href=3D"mailto:knimoji@iol.unh=
-.edu" target=3D"_blank">knimoji@iol.unh.edu</a>&gt;<br>
----<br>
-v2:<br>
-=C2=A0 =C2=A0 =C2=A0*Added TRex TG teardown to re-bind ports<br>
-=C2=A0 =C2=A0 =C2=A0 to kernel driver<br>
-v3:<br>
-=C2=A0 =C2=A0 =C2=A0*Added topology-based port binding upon<br>
-=C2=A0 =C2=A0 =C2=A0 TRex setup to preserve internal port<br>
-=C2=A0 =C2=A0 =C2=A0 config state, removed all manual bindings<br>
----<br>
-=C2=A0dts/api/test_suite.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| 40 +++++++++++++++++++<br>
-=C2=A0dts/framework/test_run.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| 24 ++++++++---<br>
-=C2=A0dts/framework/testbed_model/linux_session.py=C2=A0 |=C2=A0 6 ++-<br>
-=C2=A0.../testbed_model/traffic_generator/trex.py=C2=A0 =C2=A0|=C2=A0 1 +<b=
-r>
-=C2=A0dts/tests/TestSuite_blocklist.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 |=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_buffer_scatter.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0|=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_checksum_offload.py=C2=A0 =C2=A0 =C2=A0 =C2=A0|=
-=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_cryptodev_latency.py=C2=A0 =C2=A0 =C2=A0 |=C2=A0 =
-3 +-<br>
-=C2=A0dts/tests/TestSuite_cryptodev_throughput.py=C2=A0 =C2=A0|=C2=A0 3 +-<=
-br>
-=C2=A0dts/tests/TestSuite_dual_vlan.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 |=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_dynamic_config.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0|=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_dynamic_queue_conf.py=C2=A0 =C2=A0 =C2=A0|=C2=A0 =
-3 +-<br>
-=C2=A0dts/tests/TestSuite_flow_offload.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0|=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_hello_world.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 |=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_l2fwd.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 |=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_mac_filter.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0|=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_mtu.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_packet_capture.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0|=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_port_control.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0|=C2=A0 3 +-<br>
-=C2=A0...stSuite_port_restart_config_persistency.py |=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_port_stats.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0|=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_promisc_support.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 |=
-=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_qinq.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_queue_toggle.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0|=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_rss.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_rx_split.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0|=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_rx_tx_offload.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 |=C2=A0 3 +-<br>
-=C2=A0.../TestSuite_single_core_forward_perf.py=C2=A0 =C2=A0 =C2=A0|=C2=A0 =
-3 +-<br>
-=C2=A0dts/tests/TestSuite_smoke_tests.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 |=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_softnic.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 |=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_speed_capabilities.py=C2=A0 =C2=A0 =C2=A0|=C2=A0 =
-3 +-<br>
-=C2=A0dts/tests/TestSuite_unified_packet.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0|=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_virtio_forward.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0|=C2=A0 3 +-<br>
-=C2=A0dts/tests/TestSuite_vlan.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 3 +-<br>
-=C2=A034 files changed, 123 insertions(+), 38 deletions(-)<br>
-<br>
-diff --git a/dts/api/test_suite.py b/dts/api/test_suite.py<br>
-index c30d447135..11027344d0 100644<br>
---- a/dts/api/test_suite.py<br>
-+++ b/dts/api/test_suite.py<br>
-@@ -44,6 +44,17 @@ class BaseConfig(FrozenModel):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Base for a custom test suite configur=
-ation.&quot;&quot;&quot;<br>
-<br>
-<br>
-+class TestSuiteType(Enum):<br>
-+=C2=A0 =C2=A0 &quot;&quot;&quot;Enum to specify test suite type.&quot;&quo=
-t;&quot;<br>
-+<br>
-+=C2=A0 =C2=A0 FUNC =3D auto()<br>
-+=C2=A0 =C2=A0 PERF =3D auto()<br>
-+=C2=A0 =C2=A0 CRYPTO =3D auto()<br>
-+<br>
-+<br>
-+TestSuiteClassType =3D TypeVar(&quot;TestSuiteClassType&quot;, bound=3Dtyp=
-e[&quot;TestSuite&quot;])<br>
-+<br>
-+<br>
-=C2=A0class TestSuite(TestProtocol):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;The base class with building blocks n=
-eeded by most test cases.<br>
-<br>
-@@ -84,6 +95,30 @@ class TestSuite(TestProtocol):<br>
-=C2=A0 =C2=A0 =C2=A0_sut_ip_address_egress: Union[IPv4Interface, IPv6Interf=
-ace]<br>
-=C2=A0 =C2=A0 =C2=A0_tg_ip_address_ingress: Union[IPv4Interface, IPv6Interf=
-ace]<br>
-=C2=A0 =C2=A0 =C2=A0_tg_ip_address_egress: Union[IPv4Interface, IPv6Interfa=
-ce]<br>
-+=C2=A0 =C2=A0 test_suite_type: ClassVar[TestSuiteType]<br>
-+<br>
-+=C2=A0 =C2=A0 @classmethod<br>
-+=C2=A0 =C2=A0 def make_decorator(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 cls, test_suite_type: TestSuiteType<br>
-+=C2=A0 =C2=A0 ) -&gt; Callable[[TestSuiteClassType], TestSuiteClassType]:<=
-br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Creates a decorator for test=
- suites.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 The decorator casts the decorated function as =
-:class:`TestSuite`,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 sets it as `testsuite_type` and initializes a =
-variable to<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 determine the type of test suite.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Args:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 test_suite_type: A functional, p=
-erformance, or cryptodev test suite.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Returns:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 The decorator of a functional, p=
-erformance, or cryptodev test suite.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 def _decorator(test_suite_cls: TestSuiteClassT=
-ype) -&gt; TestSuiteClassType:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 test_suite_cls.test_suite_type =
-=3D test_suite_type<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return test_suite_cls<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 return _decorator<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0def __init__(self, config: BaseConfig) -&gt; None:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Initialize the test sui=
-te testbed information and basic configuration.<br>
-@@ -269,6 +304,11 @@ def _adjust_addresses(self, packets: list[Packet], exp=
-ected: bool =3D False) -&gt; li<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret_packets<br>
-<br>
-<br>
-+#: Test suite type decorators<br>
-+func_suite: Callable[[Any], type[&quot;TestSuite&quot;]] =3D TestSuite.mak=
-e_decorator(TestSuiteType.FUNC)<br>
-+perf_suite: Callable[[Any], type[&quot;TestSuite&quot;]] =3D TestSuite.mak=
-e_decorator(TestSuiteType.PERF)<br>
-+crypto_suite: Callable[[Any], type[&quot;TestSuite&quot;]] =3D TestSuite.m=
-ake_decorator(TestSuiteType.CRYPTO)<br>
-+<br>
-=C2=A0#: The generic type for a method of an instance of TestSuite<br>
-=C2=A0TestSuiteMethodType =3D TypeVar(&quot;TestSuiteMethodType&quot;, boun=
-d=3DCallable[[TestSuite], None])<br>
-<br>
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py<br>
-index 210ff25af7..3890606512 100644<br>
---- a/dts/framework/test_run.py<br>
-+++ b/dts/framework/test_run.py<br>
-@@ -110,7 +110,7 @@<br>
-=C2=A0from api.capabilities import LinkTopology<br>
-=C2=A0from api.context import Context, init_ctx<br>
-=C2=A0from api.exception import InternalError, SkippedTestException, TestCa=
-seVerifyError<br>
--from api.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite<b=
-r>
-+from api.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite, =
-TestSuiteType<br>
-=C2=A0from api.testbed_model.capability import (<br>
-=C2=A0 =C2=A0 =C2=A0Capability,<br>
-=C2=A0 =C2=A0 =C2=A0get_supported_capabilities,<br>
-@@ -375,11 +375,6 @@ def next(self) -&gt; State | None:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ctx.topology.bind_cryptodev=
-s(&quot;dpdk&quot;)<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ctx.topology.configure_ports(&quot;sut&qu=
-ot;, &quot;dpdk&quot;)<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 if ctx.func_tg and ctx.topology.type is not Li=
-nkTopology.NO_LINK:<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ctx.func_tg.setup(ctx.topology)<=
-br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 if ctx.perf_tg and ctx.topology.type is not Li=
-nkTopology.NO_LINK:<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ctx.perf_tg.setup(ctx.topology)<=
-br>
--<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self.result.ports =3D [<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0port.to_dict() for port in =
-ctx.topology.sut_ports + ctx.topology.tg_ports<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0]<br>
-@@ -512,6 +507,23 @@ def before(self) -&gt; None:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0super().before()<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self.logger.set_custom_log_file(<a href=
-=3D"http://self.test_suite.name" rel=3D"noreferrer" target=3D"_blank">self.=
-test_suite.name</a>)<br>
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 ctx =3D self.test_run.ctx<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 test_suite_type =3D self.test_suite.test_suite=
-_type<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ctx.topology.type is not LinkTop=
-ology.NO_LINK<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 and test_suite_type is not TestS=
-uiteType.CRYPTO<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 ):<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if test_suite_type =3D=3D TestSu=
-iteType.FUNC:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 required_tg, other=
-_tg =3D ctx.func_tg, ctx.perf_tg<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 else:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 required_tg, other=
-_tg =3D ctx.perf_tg, ctx.func_tg<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if other_tg and other_tg.is_setu=
-p:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 other_tg.teardown(=
-)<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if required_tg and not required_=
-tg.is_setup:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 required_tg.setup(=
-ctx.topology)<br>
-+<br>
-=C2=A0 =C2=A0 =C2=A0@property<br>
-=C2=A0 =C2=A0 =C2=A0def description(self) -&gt; str:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;State description.&quot=
-;&quot;&quot;<br>
-diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework/t=
-estbed_model/linux_session.py<br>
-index 8cc0d09d01..fe3f1a8fc3 100644<br>
---- a/dts/framework/testbed_model/linux_session.py<br>
-+++ b/dts/framework/testbed_model/linux_session.py<br>
-@@ -278,7 +278,8 @@ def bind_ports_to_driver(self, ports: list[Port], drive=
-r_name: str) -&gt; None:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0verify=3DTrue,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0)<br>
-<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 del self._lshw_net_info<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if self._lshw_net_info:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 del self._lshw_net_info<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0def bring_up_link(self, ports: Iterable[Port]) -&gt; No=
-ne:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Overrides :meth:`~.os_s=
-ession.OSSession.bring_up_link`.&quot;&quot;&quot;<br>
-@@ -287,7 +288,8 @@ def bring_up_link(self, ports: Iterable[Port]) -&gt; No=
-ne:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0f&quot;ip lin=
-k set dev {port.logical_name} up&quot;, privileged=3DTrue, verify=3DTrue<br=
->
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0)<br>
-<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 del self._lshw_net_info<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if self._lshw_net_info:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 del self._lshw_net_info<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0def set_interface_link_up(self, name: str) -&gt; None:<=
-br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Overrides :meth:`~.os_s=
-ession.OSSession.set_interface_link_up`.&quot;&quot;&quot;<br>
-diff --git a/dts/framework/testbed_model/traffic_generator/trex.py b/dts/fr=
-amework/testbed_model/traffic_generator/trex.py<br>
-index 7ce1d40d79..055c22e121 100644<br>
---- a/dts/framework/testbed_model/traffic_generator/trex.py<br>
-+++ b/dts/framework/testbed_model/traffic_generator/trex.py<br>
-@@ -110,6 +110,7 @@ def __init__(self, tg_node: Node, config: TrexTrafficGe=
-neratorConfig) -&gt; None:<br>
-=C2=A0 =C2=A0 =C2=A0def setup(self, topology: Topology):<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Initialize and start a =
-TRex server process.&quot;&quot;&quot;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0super().setup(topology)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 topology.configure_ports(&quot;tg&quot;, &quot=
-;dpdk&quot;)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self._topology =3D topology<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self._shell =3D PythonShell(self._tg_node=
-, &quot;TRex-client&quot;, privileged=3DTrue)<br>
-diff --git a/dts/tests/TestSuite_blocklist.py b/dts/tests/TestSuite_blockli=
-st.py<br>
-index 31e69c0de9..e32f31b383 100644<br>
---- a/dts/tests/TestSuite_blocklist.py<br>
-+++ b/dts/tests/TestSuite_blocklist.py<br>
-@@ -11,11 +11,12 @@<br>
-=C2=A0 =C2=A0 =C2=A0requires_link_topology,<br>
-=C2=A0)<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testbed_model.port import Port<br>
-=C2=A0from api.testpmd import TestPmd<br>
-<br>
-<br>
-+@func_suite<br>
-=C2=A0class TestBlocklist(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK device blocklisting test suite.&=
-quot;&quot;&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_buffer_scatter.py b/dts/tests/TestSuite_bu=
-ffer_scatter.py<br>
-index cd1a52ad5e..adc8e41700 100644<br>
---- a/dts/tests/TestSuite_buffer_scatter.py<br>
-+++ b/dts/tests/TestSuite_buffer_scatter.py<br>
-@@ -28,13 +28,14 @@<br>
-=C2=A0)<br>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import SimpleForwardingModes<br>
-<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)<br>
-=C2=A0@requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_SCATTER)<br>
-+@func_suite<br>
-=C2=A0class TestBufferScatter(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK PMD packet scattering test suite=
-.<br>
-<br>
-diff --git a/dts/tests/TestSuite_checksum_offload.py b/dts/tests/TestSuite_=
-checksum_offload.py<br>
-index a2ea13991b..8c16706f1b 100644<br>
---- a/dts/tests/TestSuite_checksum_offload.py<br>
-+++ b/dts/tests/TestSuite_checksum_offload.py<br>
-@@ -25,7 +25,7 @@<br>
-=C2=A0)<br>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import SimpleForwardingModes<br>
-=C2=A0from api.testpmd.types import ChecksumOffloadOptions, PacketOffloadFl=
-ag<br>
-@@ -34,6 +34,7 @@<br>
-=C2=A0@requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_IPV4_CKSUM)<br=
->
-=C2=A0@requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_UDP_CKSUM)<br>
-=C2=A0@requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_TCP_CKSUM)<br>
-+@func_suite<br>
-=C2=A0class TestChecksumOffload(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Checksum offload test suite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_cryptodev_latency.py b/dts/tests/TestSuite=
-_cryptodev_latency.py<br>
-index 444a5b282c..bf3b9b5761 100644<br>
---- a/dts/tests/TestSuite_cryptodev_latency.py<br>
-+++ b/dts/tests/TestSuite_cryptodev_latency.py<br>
-@@ -31,7 +31,7 @@<br>
-=C2=A0 =C2=A0 =C2=A0CryptodevResults,<br>
-=C2=A0)<br>
-=C2=A0from api.test import skip, verify<br>
--from api.test_suite import BaseConfig, TestSuite, crypto_test<br>
-+from api.test_suite import BaseConfig, TestSuite, crypto_suite, crypto_tes=
-t<br>
-=C2=A0from api.testbed_model.virtual_device import VirtualDevice<br>
-<br>
-=C2=A0config_list: list[dict[str, int | float | str]] =3D [<br>
-@@ -73,6 +73,7 @@ class Config(BaseConfig):<br>
-<br>
-<br>
-=C2=A0@requires_link_topology(LinkTopology.NO_LINK)<br>
-+@crypto_suite<br>
-=C2=A0class TestCryptodevLatency(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK Crypto Device Testing Suite.&quo=
-t;&quot;&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_cryptodev_throughput.py b/dts/tests/TestSu=
-ite_cryptodev_throughput.py<br>
-index 59f64f2cd7..7a364a1dc4 100644<br>
---- a/dts/tests/TestSuite_cryptodev_throughput.py<br>
-+++ b/dts/tests/TestSuite_cryptodev_throughput.py<br>
-@@ -31,7 +31,7 @@<br>
-=C2=A0 =C2=A0 =C2=A0CryptodevResults,<br>
-=C2=A0)<br>
-=C2=A0from api.test import skip, verify<br>
--from api.test_suite import BaseConfig, TestSuite, crypto_test<br>
-+from api.test_suite import BaseConfig, TestSuite, crypto_suite, crypto_tes=
-t<br>
-=C2=A0from api.testbed_model.virtual_device import VirtualDevice<br>
-<br>
-=C2=A0config_list: list[dict[str, int | float | str]] =3D [<br>
-@@ -74,6 +74,7 @@ class Config(BaseConfig):<br>
-<br>
-<br>
-=C2=A0@requires_link_topology(LinkTopology.NO_LINK)<br>
-+@crypto_suite<br>
-=C2=A0class TestCryptodevThroughput(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK Crypto Device Testing Suite.&quo=
-t;&quot;&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_dual_vlan.py b/dts/tests/TestSuite_dual_vl=
-an.py<br>
-index f3347a6d52..6038899c5c 100644<br>
---- a/dts/tests/TestSuite_dual_vlan.py<br>
-+++ b/dts/tests/TestSuite_dual_vlan.py<br>
-@@ -21,11 +21,12 @@<br>
-=C2=A0from api.capabilities import LinkTopology, requires_link_topology<br>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import SimpleForwardingModes<br>
-<br>
-<br>
-+@func_suite<br>
-=C2=A0class TestDualVlan(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK Dual VLAN test suite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_dynamic_config.py b/dts/tests/TestSuite_dy=
-namic_config.py<br>
-index b9e2c30da1..e071e63a6d 100644<br>
---- a/dts/tests/TestSuite_dynamic_config.py<br>
-+++ b/dts/tests/TestSuite_dynamic_config.py<br>
-@@ -27,13 +27,14 @@<br>
-=C2=A0)<br>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import SimpleForwardingModes<br>
-<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)<br>
-=C2=A0@requires_link_topology(LinkTopology.TWO_LINKS)<br>
-+@func_suite<br>
-=C2=A0class TestDynamicConfig(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Dynamic config suite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_dynamic_queue_conf.py b/dts/tests/TestSuit=
-e_dynamic_queue_conf.py<br>
-index 24584c7d60..bc11d1ce1f 100644<br>
---- a/dts/tests/TestSuite_dynamic_queue_conf.py<br>
-+++ b/dts/tests/TestSuite_dynamic_queue_conf.py<br>
-@@ -38,7 +38,7 @@<br>
-=C2=A0from api.exception import InteractiveCommandExecutionError<br>
-=C2=A0from api.packet import send_packets<br>
-=C2=A0from api.test import fail, verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import PortTopology, SimpleForwardingModes<br=
->
-<br>
-@@ -121,6 +121,7 @@ def _wrap(self: &quot;TestDynamicQueueConf&quot;, is_rx=
-_testing: bool) -&gt; None:<br>
-<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)<br>
-+@func_suite<br>
-=C2=A0class TestDynamicQueueConf(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK dynamic queue configuration test=
- suite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_flow_offload.py b/dts/tests/TestSuite_flow=
-_offload.py<br>
-index 09384b1983..624ff93b17 100644<br>
---- a/dts/tests/TestSuite_flow_offload.py<br>
-+++ b/dts/tests/TestSuite_flow_offload.py<br>
-@@ -28,7 +28,7 @@<br>
-=C2=A0)<br>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import fail, log, verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.types import FlowRule<br>
-<br>
-@@ -402,6 +402,7 @@ def generate(<br>
-<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.FLOW_CTRL)<br>
-+@func_suite<br>
-=C2=A0class TestFlowOffload(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Flow offload test suite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_hello_world.py b/dts/tests/TestSuite_hello=
-_world.py<br>
-index cd62eb8f3e..9bc555aa08 100644<br>
---- a/dts/tests/TestSuite_hello_world.py<br>
-+++ b/dts/tests/TestSuite_hello_world.py<br>
-@@ -9,7 +9,7 @@<br>
-=C2=A0&quot;&quot;&quot;<br>
-<br>
-=C2=A0from api.test import log<br>
--from api.test_suite import BaseConfig, TestSuite, func_test<br>
-+from api.test_suite import BaseConfig, TestSuite, func_suite, func_test<br=
->
-=C2=A0from api.testpmd import TestPmd<br>
-<br>
-<br>
-@@ -20,6 +20,7 @@ class Config(BaseConfig):<br>
-=C2=A0 =C2=A0 =C2=A0msg: str =3D &quot;Hello World!&quot;<br>
-<br>
-<br>
-+@func_suite<br>
-=C2=A0class TestHelloWorld(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Hello World test suite. One test case=
-, which starts and stops a testpmd session.&quot;&quot;&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_l2fwd.py b/dts/tests/TestSuite_l2fwd.py<br=
->
-index f237821a04..b987efbebf 100644<br>
---- a/dts/tests/TestSuite_l2fwd.py<br>
-+++ b/dts/tests/TestSuite_l2fwd.py<br>
-@@ -19,7 +19,7 @@<br>
-=C2=A0 =C2=A0 =C2=A0match_all_packets,<br>
-=C2=A0 =C2=A0 =C2=A0send_packets_and_capture,<br>
-=C2=A0)<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testbed_model.cpu import LogicalCoreCount<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import EthPeer, SimpleForwardingModes<br>
-@@ -28,6 +28,7 @@<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)<br>
-=C2=A0@requires_link_topology(LinkTopology.TWO_LINKS)<br>
-+@func_suite<br>
-=C2=A0class TestL2fwd(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;L2 forwarding test suite.&quot;&quot;=
-&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_mac_filter.py b/dts/tests/TestSuite_mac_fi=
-lter.py<br>
-index eb1413f336..f244203593 100644<br>
---- a/dts/tests/TestSuite_mac_filter.py<br>
-+++ b/dts/tests/TestSuite_mac_filter.py<br>
-@@ -26,11 +26,12 @@<br>
-=C2=A0from api.exception import InteractiveCommandExecutionError<br>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import fail, verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)<br>
-+@func_suite<br>
-=C2=A0class TestMacFilter(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Mac address allowlist filtering test =
-suite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_mtu.py b/dts/tests/TestSuite_mtu.py<br>
-index c264db299e..f834be1818 100644<br>
---- a/dts/tests/TestSuite_mtu.py<br>
-+++ b/dts/tests/TestSuite_mtu.py<br>
-@@ -23,7 +23,7 @@<br>
-=C2=A0)<br>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-<br>
-=C2=A0STANDARD_FRAME =3D 1518=C2=A0 # --max-pkt-len will subtract l2 inform=
-ation at a minimum of 18 bytes.<br>
-@@ -37,6 +37,7 @@<br>
-<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)<br>
-+@func_suite<br>
-=C2=A0class TestMtu(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK PMD jumbo frames and MTU update =
-test suite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_packet_capture.py b/dts/tests/TestSuite_pa=
-cket_capture.py<br>
-index 07bfabb30b..f319d99ede 100644<br>
---- a/dts/tests/TestSuite_packet_capture.py<br>
-+++ b/dts/tests/TestSuite_packet_capture.py<br>
-@@ -37,7 +37,7 @@<br>
-=C2=A0)<br>
-=C2=A0from api.params import Params<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testbed_model.cpu import LogicalCoreList<br>
-=C2=A0from api.testbed_model.traffic_generator.capturing_traffic_generator =
-import PacketFilteringConfig<br>
-=C2=A0from api.testpmd import TestPmd<br>
-@@ -65,6 +65,7 @@ class DumpcapParams(Params):<br>
-<br>
-<br>
-=C2=A0@requires_link_topology(LinkTopology.TWO_LINKS)<br>
-+@func_suite<br>
-=C2=A0class TestPacketCapture(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Packet Capture TestSuite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_port_control.py b/dts/tests/TestSuite_port=
-_control.py<br>
-index c2f2de3493..2aa613bc25 100644<br>
---- a/dts/tests/TestSuite_port_control.py<br>
-+++ b/dts/tests/TestSuite_port_control.py<br>
-@@ -18,12 +18,13 @@<br>
-=C2=A0)<br>
-=C2=A0from api.packet import send_packets_and_capture<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import SimpleForwardingModes<br>
-<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)<br>
-+@func_suite<br>
-=C2=A0class TestPortControl(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK Port Control Testing Suite.&quot=
-;&quot;&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_port_restart_config_persistency.py b/dts/t=
-ests/TestSuite_port_restart_config_persistency.py<br>
-index 88df35d33c..626baa2097 100644<br>
---- a/dts/tests/TestSuite_port_restart_config_persistency.py<br>
-+++ b/dts/tests/TestSuite_port_restart_config_persistency.py<br>
-@@ -14,7 +14,7 @@<br>
-=C2=A0 =C2=A0 =C2=A0requires_nic_capability,<br>
-=C2=A0)<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.types import TestPmdPortFlowCtrl<br>
-<br>
-@@ -23,6 +23,7 @@<br>
-=C2=A0ALTERNATIVE_MAC_ADDRESS: str =3D &quot;42:A6:B7:9E:B4:81&quot;<br>
-<br>
-<br>
-+@func_suite<br>
-=C2=A0class TestPortRestartConfigPersistency(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Port config persistency test suite.&q=
-uot;&quot;&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_port_stats.py b/dts/tests/TestSuite_port_s=
-tats.py<br>
-index 0328c6718c..e2980d8d61 100644<br>
---- a/dts/tests/TestSuite_port_stats.py<br>
-+++ b/dts/tests/TestSuite_port_stats.py<br>
-@@ -25,7 +25,7 @@<br>
-=C2=A0)<br>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import SimpleForwardingModes<br>
-=C2=A0from api.testpmd.types import RtePTypes, TestPmdVerbosePacket<br>
-@@ -33,6 +33,7 @@<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)<br>
-=C2=A0@requires_link_topology(LinkTopology.TWO_LINKS)<br>
-+@func_suite<br>
-=C2=A0class TestPortStats(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK Port statistics testing suite.<b=
-r>
-<br>
-diff --git a/dts/tests/TestSuite_promisc_support.py b/dts/tests/TestSuite_p=
-romisc_support.py<br>
-index c59c8c6078..adbdf77631 100644<br>
---- a/dts/tests/TestSuite_promisc_support.py<br>
-+++ b/dts/tests/TestSuite_promisc_support.py<br>
-@@ -21,11 +21,12 @@<br>
-=C2=A0 =C2=A0 =C2=A0send_packets_and_capture,<br>
-=C2=A0)<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)<br>
-+@func_suite<br>
-=C2=A0class TestPromiscSupport(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Promiscuous mode support test suite.&=
-quot;&quot;&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_qinq.py b/dts/tests/TestSuite_qinq.py<br>
-index 5dde37d4db..67884a113c 100644<br>
---- a/dts/tests/TestSuite_qinq.py<br>
-+++ b/dts/tests/TestSuite_qinq.py<br>
-@@ -18,10 +18,11 @@<br>
-=C2=A0from api.capabilities import NicCapability, requires_nic_capability<b=
-r>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import log, verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-<br>
-<br>
-+@func_suite<br>
-=C2=A0class TestQinq(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;QinQ test suite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_queue_toggle.py b/dts/tests/TestSuite_queu=
-e_toggle.py<br>
-index a9ea356b22..0ad362d233 100644<br>
---- a/dts/tests/TestSuite_queue_toggle.py<br>
-+++ b/dts/tests/TestSuite_queue_toggle.py<br>
-@@ -24,7 +24,7 @@<br>
-=C2=A0)<br>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import SimpleForwardingModes<br>
-<br>
-@@ -32,6 +32,7 @@<br>
-=C2=A0@requires_link_topology(LinkTopology.TWO_LINKS)<br>
-=C2=A0@requires_nic_capability(NicCapability.RUNTIME_RX_QUEUE_SETUP)<br>
-=C2=A0@requires_nic_capability(NicCapability.RUNTIME_TX_QUEUE_SETUP)<br>
-+@func_suite<br>
-=C2=A0class TestQueueToggle(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK Queue start/stop test suite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_rss.py b/dts/tests/TestSuite_rss.py<br>
-index b538e93af9..289c69d225 100644<br>
---- a/dts/tests/TestSuite_rss.py<br>
-+++ b/dts/tests/TestSuite_rss.py<br>
-@@ -23,7 +23,7 @@<br>
-=C2=A0from api.exception import InteractiveCommandExecutionError<br>
-=C2=A0from api.packet import send_packets_and_capture<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import BaseConfig, TestSuite, func_test<br>
-+from api.test_suite import BaseConfig, TestSuite, func_suite, func_test<br=
->
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import SimpleForwardingModes<br>
-=C2=A0from api.testpmd.types import (<br>
-@@ -55,6 +55,7 @@ class HashAlgorithm(StrEnum):<br>
-<br>
-=C2=A0@requires_link_topology(LinkTopology.ONE_LINK)<br>
-=C2=A0@requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_RSS_HASH)<br>
-+@func_suite<br>
-=C2=A0class TestRss(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;RSS test suite.&quot;&quot;&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_rx_split.py b/dts/tests/TestSuite_rx_split=
-.py<br>
-index 3b3e4cd620..eac377e93e 100644<br>
---- a/dts/tests/TestSuite_rx_split.py<br>
-+++ b/dts/tests/TestSuite_rx_split.py<br>
-@@ -21,7 +21,7 @@<br>
-=C2=A0from api.exception import InteractiveCommandExecutionError<br>
-=C2=A0from api.packet import adjust_addresses, send_packet_and_capture<br>
-=C2=A0from api.test import fail, verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import SimpleForwardingModes<br>
-=C2=A0from api.testpmd.types import RxOffloadCapability, TxOffloadCapabilit=
-y<br>
-@@ -35,6 +35,7 @@<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_BUFFER_SPLIT)<=
-br>
-=C2=A0@requires_nic_capability(NicCapability.SELECTIVE_RX)<br>
-+@func_suite<br>
-=C2=A0class TestRxSplit(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Rx split test suite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_rx_tx_offload.py b/dts/tests/TestSuite_rx_=
-tx_offload.py<br>
-index c8d24baaae..cbf9a249b4 100644<br>
---- a/dts/tests/TestSuite_rx_tx_offload.py<br>
-+++ b/dts/tests/TestSuite_rx_tx_offload.py<br>
-@@ -13,7 +13,7 @@<br>
-=C2=A0 =C2=A0 =C2=A0requires_nic_capability,<br>
-=C2=A0)<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.types import (<br>
-=C2=A0 =C2=A0 =C2=A0OffloadConfiguration,<br>
-@@ -22,6 +22,7 @@<br>
-<br>
-<br>
-=C2=A0@requires_link_topology(LinkTopology.ONE_LINK)<br>
-+@func_suite<br>
-=C2=A0class TestRxTxOffload(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;RX/TX offload test suite.&quot;&quot;=
-&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_single_core_forward_perf.py b/dts/tests/Te=
-stSuite_single_core_forward_perf.py<br>
-index 4b22c5d091..c96411cf18 100644<br>
---- a/dts/tests/TestSuite_single_core_forward_perf.py<br>
-+++ b/dts/tests/TestSuite_single_core_forward_perf.py<br>
-@@ -23,7 +23,7 @@<br>
-=C2=A0from api.packet import assess_performance_by_packet<br>
-=C2=A0from api.params.types import TestPmdParamsDict<br>
-=C2=A0from api.test import verify, write_performance_json<br>
--from api.test_suite import BaseConfig, TestSuite, perf_test<br>
-+from api.test_suite import BaseConfig, TestSuite, perf_suite, perf_test<br=
->
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import RXRingParams, TXRingParams<br>
-<br>
-@@ -42,6 +42,7 @@ class Config(BaseConfig):<br>
-=C2=A0 =C2=A0 =C2=A0delta_tolerance: float =3D 0.05<br>
-<br>
-<br>
-+@perf_suite<br>
-=C2=A0@requires_link_topology(LinkTopology.TWO_LINKS)<br>
-=C2=A0class TestSingleCoreForwardPerf(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Single core forwarding performance te=
-st suite.&quot;&quot;&quot;<br>
-diff --git a/dts/tests/TestSuite_smoke_tests.py b/dts/tests/TestSuite_smoke=
-_tests.py<br>
-index b3eb325fc0..993620641c 100644<br>
---- a/dts/tests/TestSuite_smoke_tests.py<br>
-+++ b/dts/tests/TestSuite_smoke_tests.py<br>
-@@ -19,7 +19,7 @@<br>
-=C2=A0 =C2=A0 =C2=A0requires_link_topology,<br>
-=C2=A0)<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testbed_model.linux_session import LinuxSession<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.utils import REGEX_FOR_PCI_ADDRESS<br>
-@@ -28,6 +28,7 @@<br>
-<br>
-<br>
-=C2=A0@requires_link_topology(LinkTopology.NO_LINK)<br>
-+@func_suite<br>
-=C2=A0class TestSmokeTests(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK and infrastructure smoke test su=
-ite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_softnic.py b/dts/tests/TestSuite_softnic.p=
-y<br>
-index 05a6d3aa18..f601130d56 100644<br>
---- a/dts/tests/TestSuite_softnic.py<br>
-+++ b/dts/tests/TestSuite_softnic.py<br>
-@@ -18,7 +18,7 @@<br>
-=C2=A0 =C2=A0 =C2=A0match_all_packets,<br>
-=C2=A0 =C2=A0 =C2=A0send_packets_and_capture,<br>
-=C2=A0)<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testbed_model.virtual_device import VirtualDevice<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import EthPeer<br>
-@@ -27,6 +27,7 @@<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)<br>
-=C2=A0@requires_link_topology(LinkTopology.TWO_LINKS)<br>
-+@func_suite<br>
-=C2=A0class TestSoftnic(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Softnic test suite.&quot;&quot;&quot;=
-<br>
-<br>
-diff --git a/dts/tests/TestSuite_speed_capabilities.py b/dts/tests/TestSuit=
-e_speed_capabilities.py<br>
-index c9b0f74feb..56c0d0a51a 100644<br>
---- a/dts/tests/TestSuite_speed_capabilities.py<br>
-+++ b/dts/tests/TestSuite_speed_capabilities.py<br>
-@@ -13,7 +13,7 @@<br>
-=C2=A0 =C2=A0 =C2=A0requires_link_topology,<br>
-=C2=A0)<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import BaseConfig, TestSuite, func_test<br>
-+from api.test_suite import BaseConfig, TestSuite, func_suite, func_test<br=
->
-=C2=A0from api.testpmd import TestPmd<br>
-<br>
-<br>
-@@ -39,6 +39,7 @@ class Config(BaseConfig):<br>
-<br>
-<br>
-=C2=A0@requires_link_topology(LinkTopology.ONE_LINK)<br>
-+@func_suite<br>
-=C2=A0class TestSpeedCapabilities(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Speed capabilities test suite.&quot;&=
-quot;&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_unified_packet.py b/dts/tests/TestSuite_un=
-ified_packet.py<br>
-index bf3654f0d7..006f124d19 100644<br>
---- a/dts/tests/TestSuite_unified_packet.py<br>
-+++ b/dts/tests/TestSuite_unified_packet.py<br>
-@@ -25,12 +25,13 @@<br>
-=C2=A0)<br>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import SimpleForwardingModes<br>
-=C2=A0from api.testpmd.types import RtePTypes, TestPmdVerbosePacket<br>
-<br>
-<br>
-+@func_suite<br>
-=C2=A0class TestUnifiedPacket(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK Unified packet test suite.<br>
-<br>
-diff --git a/dts/tests/TestSuite_virtio_forward.py b/dts/tests/TestSuite_vi=
-rtio_forward.py<br>
-index a52c1a4402..52889a844b 100644<br>
---- a/dts/tests/TestSuite_virtio_forward.py<br>
-+++ b/dts/tests/TestSuite_virtio_forward.py<br>
-@@ -12,13 +12,14 @@<br>
-=C2=A0from api.capabilities import LinkTopology, requires_link_topology<br>
-=C2=A0from api.packet import send_packets_and_capture<br>
-=C2=A0from api.test import log, verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testbed_model.linux_session import LinuxSession<br>
-=C2=A0from api.testbed_model.virtual_device import VirtualDevice<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import PortTopology, SimpleForwardingModes<br=
->
-<br>
-<br>
-+@func_suite<br>
-=C2=A0class TestVirtioForward(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Virtio forwarding test suite.&quot;&q=
-uot;&quot;<br>
-<br>
-diff --git a/dts/tests/TestSuite_vlan.py b/dts/tests/TestSuite_vlan.py<br>
-index 975e87b128..edd93e3487 100644<br>
---- a/dts/tests/TestSuite_vlan.py<br>
-+++ b/dts/tests/TestSuite_vlan.py<br>
-@@ -23,12 +23,13 @@<br>
-=C2=A0)<br>
-=C2=A0from api.packet import send_packet_and_capture<br>
-=C2=A0from api.test import verify<br>
--from api.test_suite import TestSuite, func_test<br>
-+from api.test_suite import TestSuite, func_suite, func_test<br>
-=C2=A0from api.testpmd import TestPmd<br>
-=C2=A0from api.testpmd.config import SimpleForwardingModes<br>
-<br>
-<br>
-=C2=A0@requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_VLAN_FILTER)<b=
-r>
-+@func_suite<br>
-=C2=A0class TestVlan(TestSuite):<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;DPDK VLAN test suite.<br>
-<br>
--- <br>
-2.56.0<br>
-<br>
-</blockquote></div>
+Reviewed v4-S3 (65 patches) applied on main + S2 v14. S1 is already
+in main.
 
---000000000000ceed42065e89e56c--
+Series-level
+------------
+
+Build: does not build against current main.
+  - 08/65 adds #include <rte_vfio.h> to fslmc_vfio.h. That header was
+    renamed by cf88cd44aa ("vfio: make all functions internal"), and
+    fslmc was already decoupled from EAL VFIO by 487098bd8d. Drop
+    the include. 08..65 fail to compile as-is.
+  - 21/65 fails with -Werror (gcc 13, x86, -O3): array-bounds in
+    dpaa2_flow_extract_support(). rte_memcpy() copies a uint8_t
+    size into uint8_t mask[64] with no bound. Add
+    "if (size > sizeof(mask)) return -EINVAL;" and use memcpy()
+    in this control-path code. 21..65 fail.
+  - 42/65 and 43/65 fail: dpaa2_hw_dpio.c:476 uses
+    rte_atomic16_read() (implicit declaration, and deprecated) on
+    an RTE_ATOMIC(uint16_t). 44 fixes it. Use
+    rte_atomic_load_explicit() in 42.
+  With those three fixed locally, every commit builds (x86, gcc 13,
+  -Dwerror=true; fslmc, dpaa2 net/event/crypto/dma/mempool, all
+  event PMDs).
+  Please rebase onto current main and build every commit with
+  -Dwerror=true before resending.
+
+Size: 65 patches mixing fixes, refactors and new vendor API is
+too much to review or bisect. Split it:
+  - Send standalone fixes first, each with Fixes: and
+    Cc: stable@dpdk.org: 42 (create cleanup), 49 (ep_name and
+    speed capa were never set), 54 (DQRR held accounting, Fixes:
+    7b6edb640b), and the allocator CAS bug below (30/44).
+  - 40/65 is a lib/eventdev doc change; send it to the eventdev
+    maintainer on its own.
+  - 32/65 is not a fix. RTE_EVENT_ETH_TX_ADAPTER_ENQUEUE_SAME_DEST
+    is documented as "all packets destined for the same port and
+    Tx queue", so reading ev[0] was correct. Reword it as a
+    simplification or drop it.
+
+Bisect: several patches introduce a bug and a later patch in the
+series fixes it (01->13/51, 08->09, 12->13, 29->31, 43->44,
+44->52, 57->59, 61->62). Fold each fix into the patch that
+introduced the problem.
+
+Vendor-specific API: this series adds rte_pmd_dpaa2_/rte_dpaa2_
+APIs that duplicate generic ethdev, rte_flow and eventdev APIs:
+06 rx_get_offset, 21 flow wrappers/group bits, 22 RSS helper,
+31 EVENT_PORT_CFG_ATOMIC, 34 scheduler, 38 tx_multi_ports,
+50 dev_info/rxq_info/configure_default_action, 53 clean_tx_conf.
+I don't want to take PMD-specific API for things the generic API
+already does. Implement the generic op (e.g. tx_done_cleanup for
+53, rte_flow_group_set_miss_actions for 50) or justify each one.
+Any that stay need Doxygen, a release note, the rte_pmd_dpaa2_
+prefix and RTE_EXPORT_EXPERIMENTAL_SYMBOL(..., 26.11). Patches 21
+and 50 export with 23.11/24.11/25.11.
+
+Patch 12 has no subject line; the first paragraph of the body
+became the subject.
+
+
+Errors
+------
+
+[01/65] net/dpaa2: refactor and optimize Rx parser result decode
+
+dpaa2_parser_decode.h / dpaa2_rxtx.c:149
+  *packet_type |= RTE_PTYPE_L2_ETHER_VLAN;
+  The L2 ptype is an enum, not flags. ETHER(1)|VLAN(6) = 7 = QINQ,
+  so every single-tagged frame is reported as QinQ. The same
+  happens for VLAN+ARP and MPLS (0xe, invalid) in parse_frc.
+  Fix: clear RTE_PTYPE_L2_MASK, then assign.
+
+[02/65] net/dpaa2: generate devargs table and string from one list
+[03/65] crypto/dpaa2_sec: use table-driven devargs parsing
+[04/65] dma/dpaa2: use table-driven devargs parsing
+
+dpaa2_ethdev.c:3435
+  priv->flags = 0;
+  dpaax_get_devargs(s_dpaa2_devargs, eth_dev, &priv->flags);
+  This now runs before the primary-process check. A secondary
+  attaching wipes the primary's live flags in shared dev_private.
+  03 (dump_level, en_loose_ordered) and 04 (short_fd,
+  fle_pre_populate) have the same problem. Parse into a local and
+  write shared state only in the primary.
+
+dpaax_devarg.h:56
+  dev_args[arg_idx].handle(dev, pair);
+  The handler runs before the pair->value NULL check. A bare key
+  ("drv_strict_order") gives value == NULL, and the handlers call
+  atoi(pair->value), so probe crashes.
+  Fix: if (pair->value == NULL) continue;
+
+dpaa2_sec_dpseci.c:4366 (03/65)
+  internals->en_loose_ordered = true;
+  This runs after devargs are parsed, so drv_strict_order=1 no
+  longer has any effect. Set the default before
+  dpaax_get_devargs().
+
+[09/65] bus/fslmc: centralize MC version and SoC detection
+
+fslmc_vfio.c:172
+  int x = cpu_id / dpaa2_cluster_size;
+  This divides before the !dpaa2_cluster_size check below it.
+  Move the check first.
+
+[11/65] net/dpaa2: cache per-rxq DPNI queue cfg and share CGID per TC
+
+dpaa2_ethdev.c (dev_init)
+  for (i = 0; i < priv->max_cgs; i++)
+          priv->cgid_in_use[i] = 0;
+  cgid_in_use[] is now MAX_TCS (8) entries but max_cgs comes from
+  MC (uint8_t). This writes past the array into priv.
+  Fix: memset(priv->cgid_in_use, 0, sizeof(priv->cgid_in_use));
+  and bound every max_cgs loop by MAX_TCS.
+
+dpaa2_ethdev.c:1155 (rx_queue_setup err_quit)
+  if (dpaa2_q->napi_dpcon) {
+          rte_dpaa2_free_dpcon_dev(dpaa2_q->napi_dpcon);
+  With dpcon_allocated removed, the error path frees a DPCON that
+  was kept across reconfigure. The FQ stays scheduled to a DPCON
+  that is back in the pool. Restore a local "allocated" flag.
+
+dpaa2_ethdev.c (dpaa2_eth_eventq_detach)
+  dpaa2_ethq->options &= ~DPNI_QUEUE_OPT_DEST;
+  dpni_set_queue() applies the destination only when OPT_DEST is
+  set, so DEST_NONE is never written and the FQ stays on the
+  eventdev DPCON. Pass options | DPNI_QUEUE_OPT_DEST for this
+  call.
+
+[12/65] (no subject) Tx buffer release schemes
+
+dpaa2_rxtx.c:840
+  DPAA2_MBUF_TO_CONTIG_FD(mbuf, fd, mempool_to_bpid(mbuf->pool));
+  In no-conf mode, mbufs the fast path rejected (refcnt > 1,
+  extbuf) are sent with a valid BPID. HW then releases a buffer
+  the app still holds, or pushes an external buffer into BMan.
+  Use IVP plus a refcnt decrement as before.
+
+dpaa2_rxtx.c:822
+  rte_mbuf_refcnt_update(mbuf, -1);
+  ...
+  mbuf = mi;
+  The clone's reference is dropped and the direct mbuf is sent
+  without taking one. The FD is also built from mi's data_off/len,
+  not the clone's view. Keep the indirect mbuf's iova/off/len with
+  IVP.
+
+dpaa2_rxtx.c:775
+  sg_mbuf->next = cur_seg;
+  When the first segment is a clone, it is freed by
+  conf_mbuf_to_sge() while sg_mbuf->next still points at it, which
+  is a use-after-free on confirmation. rte_pktmbuf_init() also
+  forces refcnt to 1 on a shared clone.
+
+dpaa2_rxtx.c:1697
+  num_tx += loop; ... goto send_n_return;
+  On retry exhaustion, fd_arr[0..loop) is enqueued a second time,
+  so frames are transmitted twice and buffers released twice.
+
+[13/65] net/dpaa2: support runtime IEEE1588 timestamping
+
+dpaa2_rxtx.c:183
+  ts = RTE_MBUF_DYNFIELD(m, priv->rx_ts_offset, void *);
+  rx_ts_offset is only registered when the RX_OFFLOAD_TIMESTAMP
+  offload is set. timesync_enable without it writes word2 at mbuf
+  offset 0 (buf_addr). Initialise rx_ts_offset to -1 and check it.
+
+dpaa2_ptp.c:219
+  while (txq && rte_atomic_load_explicit(&txq->ts_to_cnfd,
+  The counter is updated on tx_conf_queue but read on the Tx
+  queue, where it is always 0. tx_timestamp is never cleared, so
+  stale values are returned. ts_to_cnfd also goes negative for
+  multi-seg or non-PTP TMST frames (rxtx.c:1567).
+
+[17/65] net/dpaa2: rework xstats with page table and MAC support
+[19/65] net/dpaa2: reimplement xstats_get() on top of xstats_get_by_id()
+
+dpaa2_ethdev.c:2249
+  if (n > stat_cnt) { ... return -EINVAL; }
+  if (!xstats) return 0;
+  This breaks the xstats_get contract. A NULL/0 size query must
+  return the count, and a larger buffer is legal. In 19,
+  "n = DPAA2_XSTAT_MAX_NUM" includes the MAC stats, so ports
+  without a MAC fail with -EINVAL.
+  Fix: if (n < stat_cnt || !xstats) return stat_cnt;
+
+[20/65] net/dpaa2: fetch only requested MAC xstats in one MC call
+
+dpaa2_ethdev.c:2258
+  mac_val[mac_num] = &values[i];
+  mac_num++;
+  Ids are not de-duplicated. With repeated MAC ids, mac_num goes
+  past the stack array and the DMA index buffer. Bound mac_num.
+
+[21/65] net/dpaa2: rework flow with per-table profile and group types
+
+dpaa2_flow.c:2872
+  new_pattern[num].item.type = RTE_FLOW_ITEM_TYPE_END;
+  The count loop does num++ before testing, and the allocation
+  has no room for END, so this is a heap overflow on every create.
+  Allocate num + 1.
+
+dpaa2_flow.c:2976
+  index = pattern[i].type;
+  if (!hd[index].name) {
+  The table has 64 entries, the enum goes to 70, and private
+  types are negative. This reads out of bounds and then calls a
+  garbage cb. Range-check the type.
+
+dpaa2_flow.c:2983
+  ret = hd[index].tunnel(flow, ...);
+  On success it falls through to hd[index].cb as well, adding
+  outer extracts with the inner spec. Inner-tunnel rules never
+  match. continue after the tunnel cb.
+
+dpaa2_flow.c:3592
+  if (items[i - 1].type != RTE_FLOW_ITEM_TYPE_END) {
+  items[i-1] is never END, so every RSS flow with a pattern fails.
+  An empty pattern reads items[-1].
+  Fix: test i == DPKG_MAX_NUM_OF_EXTRACTS + 1.
+
+dpaa2_flow.c:1075
+  flow->ip_src = NET_PROT_IPV4;
+  This is set for IPv6 too. remove_invalid_extract() then shrinks
+  the IP address slots to 4 bytes and corrupts the keys of the
+  remaining IPv6 rules.
+
+dpaa2_flow.c:3528
+  return update;
+  update excludes IP-address extracts, so removing only IP
+  extracts skips the table reprogram and the HW key layout goes
+  stale.
+
+dpaa2_flow.c:1022
+  key_profile->dpkg.extracts[raw_idx].type = DPKG_EXTRACT_FROM_DATA;
+  This overwrites the slot in place instead of shifting, so an
+  existing IP extract is lost. Use dpaa2_dpkg_insert_extract().
+
+dpaa2_flow.c:1302
+  memcpy((flow->key_addr + offset), key, size);
+  RAW length can reach 320 bytes into a 256-byte buffer, and
+  key_offset is uint8_t. Reject offset + length > DPNI_MAX_KEY_SIZE.
+
+dpaa2_flow.c:1081
+  A non-zero fragment_offset mask always installs the "is
+  fragment" FAF, so "match non-fragmented" (spec 0, mask 0x3fff)
+  is inverted. Only the first byte of the be16 mask is checked.
+
+dpaa2_flow.c:1666
+  DPAA2_PARSER_MPLS_ID, ... RTE_FLOW_ITEM_TYPE_PPPOES,
+  PPPoE uses the MPLS parser id, so PPPoE matches MPLS. fields_num
+  is 1, so session_id is never extracted.
+
+dpaa2_flow.c:4227
+  dpaa2_flow_steering_flow_action_update(dev, flow->qos_flow,
+  The FS update is passed qos_flow: a NULL dereference for
+  FS-only flows, and the wrong entry otherwise. Use fs_flow.
+
+dpaa2_flow.c:4163
+  struct rte_flow_action actions_update[DPAA2_MAX_ACTION_PER_FLOW_NUM];
+  check_actions_support() writes END with no capacity check, so
+  user actions can overflow the stack array. Pass the capacity.
+
+dpaa2_flow.c:3743
+  dpaa2_flow_clean(dev, flow->tc_id, DPAA2_FLOW_RSS_TYPE);
+  Creating a flow destroys the user's existing flows, whose
+  handles the application still holds, so a later destroy is a
+  use-after-free. It also happens before the new create is known
+  to succeed. Return -EEXIST instead.
+
+dpaa2_flow.c:3975
+  ret |= dpaa2_flow_destroy_rss_flow(...);
+  The flow is unlinked first. On partial failure it is leaked
+  with dangling sub-flow pointers, ORed errnos are meaningless,
+  and rte_flow_error is never set.
+
+dpaa2_flow.c:3022
+  idx = attr->group * priv->qos_entries_per_tc + attr->priority;
+  attr->group still carries the type bits (0x100+), and idx is
+  uint16_t so it wraps past the bound check. Lines 2401 and 3884
+  also use the converted group. Use the group id and a 32-bit
+  idx.
+
+dpaa2_flow.c:4394
+  key = flow->qos_flow->key_addr;
+  There is no NULL check, so rte_pmd_dpaa2_flow_table_query()
+  crashes on FS-only, QoS-only and RSS flows.
+
+dpaa2_flow.c:3747
+  if (error && error->type > RTE_FLOW_ERROR_TYPE_ACTION) {
+  This reads an uninitialised caller struct. On creation failure,
+  extracts already inserted into the shared profile are not
+  rolled back, which corrupts other flows' keys.
+
+[22/65] net/dpaa2: reimplement RSS distribution via rte_flow
+
+dpaa2_ethdev.c:565
+  rte_flow_actions_update(..., tbl_profile->rss_flow,
+  rss_flow is the internal dpaa2_generic_flow, not the rte_flow
+  handle. update returns -EINVAL, and rte_flow_destroy() on it at
+  line 531 does LIST_REMOVE on the wrong type, corrupting memory.
+  Store the handle returned by rte_flow_create().
+
+dpaa2_ethdev.c:2998
+  tc_index, priv->dist_queues);
+  rss_hash_update uses dist_queues for every TC, which loses the
+  last-TC clamp. When no RSS flow exists it returns 0 and does
+  nothing.
+
+rte_pmd_dpaa2.h:16
+  #include <ethdev_driver.h>
+  This is an installed header including a driver-SDK header, so
+  applications without the SDK cannot build. The helper also
+  discards the rte_flow handle it creates.
+
+[25/65] net/dpaa2: support rte_mtr and METER rte_flow action
+
+dpaa2_flow.c:4061
+  } else if (meter_action->type == RTE_FLOW_ACTION_TYPE_METER_MARK) {
+  This is the same condition as the first branch, so METER is
+  never handled and always returns -EINVAL. Use
+  RTE_FLOW_ACTION_TYPE_METER.
+
+dpaa2_flow.c:3078
+  policing_cfg.cir = dpaa2_profile->cir;
+  rte_mtr is bytes/s (uint64_t) and the MC field is Kbps
+  (uint32_t). The rate is 125x too high and truncates above 4G.
+  Convert, and reject values that do not fit.
+
+[27/65] net/dpaa2: support DCB Rx mode via rte_flow
+
+dpaa2_ethdev.c:1330
+  dcb_rx_conf.dcb_tc[tc_index], tc_index);
+  dcb_tc[] is indexed by priority and holds the TC. This treats it
+  the other way round and loops only nb_tcs times. Iterate over
+  RTE_ETH_DCB_NUM_USER_PRIORITIES.
+
+dpaa2_ethdev.c:596
+  priv->dcb_flow[prio] = qos_flow;
+  This is never cleared except in close, so a second configure
+  with DCB fails with -ENODATA. After flush the pointers dangle.
+
+[29/65] bus/fslmc: support DPCI peer and dynamic queues
+[30/65] bus/fslmc: add alloc/free DPIO API for non-affine portals
+
+dpaa2_hw_dpci.c:194, dpaa2_hw_dpio.c:430
+  uint16_t expected = 0;
+  TAILQ_FOREACH(...)
+          rte_atomic_compare_exchange_strong_explicit(..., &expected, 1,
+  expected is outside the loop. A failed CAS stores 1 into it, so
+  the next busy object is handed out a second time. Two owners on
+  one QBMan portal corrupt EQCR/DQRR. From 44 every per-lcore
+  portal goes through this allocator. Declare expected inside the
+  loop.
+
+dpaa2_eventdev.c:122 (29/65)
+  priv->evq_info[queue_id].event_port != dpaa2_portal)) {
+  At 29 event_port is never set, so every enqueue fails and jumps
+  to send_partial with frames_to_send uninitialised entries. This
+  is fixed in 31; fold it into 29.
+
+[31/65] event/dpaa2: rework event port model and DPCI handling
+
+dpaa2_eventdev.c:594
+  ret = rte_event_port_unlink(dev->data->dev_id, dpaa2_portal->port_id, NULL, 0);
+  if (ret)
+          return ret;
+  unlink returns a count (> 0), so link on an already-linked port
+  returns that count without linking anything. The lib then marks
+  queues[0..ret) as linked. link must not unlink.
+
+dpaa2_eventdev.c:607
+  if (evq_info->event_port) { ... return -ENODEV;
+  A queue can be linked to only one port, and enqueue only accepts
+  queues the port owns. Load-balanced workers and pipelines
+  (dequeue q0, enqueue q1) no longer work, yet DISTRIBUTED_SCHED
+  and MULTIPLE_QUEUE_PORT are still advertised.
+
+dpaa2_eventdev.c:126
+  goto send_partial;
+  A bad event is never consumed, so the outer while (nb_events)
+  retries it forever. Return num_tx and set rte_errno.
+
+dpaa2_eventdev.c:206
+  qbman_swp_interrupt_clear_status(DPAA2_PER_LCORE_PORTAL,
+  Dequeue uses the port's DPIO, but the wait uses the lcore
+  affine DPIO: NULL on a control thread (stop/drain), or the
+  wrong portal. Pass dpio_dev.
+
+dpaa2_rxtx.c:1696 (also dpaa2_sec)
+  DPAA2_PER_LCORE_DQRR_SIZE--;
+  Atomic events are held on the port's DPIO, but ethdev, Tx
+  adapter and dpaa2_sec issue the DCA and update held_bufs on the
+  lcore DPIO. The DQRR entry is consumed on the wrong portal.
+  59 addresses this with dpio-in-seqn, but see 59 below.
+
+dpaa2_ethdev.c:3403
+  dpaa2_ethq->ev.queue_id = eth_rx_queue_id;
+  This overwrites the event queue id in the Rx-adapter event
+  template. flow_id is also forced even with FLOW_ID_VALID set.
+
+[34/65] event/dpaa2: add DPCON based standalone Rx scheduler
+
+dpaa2_scheduler.c:216
+  dpaa2_qbman_pull_desc_channel_set(&pulldesc, nb_pkts,
+  This pulls nb_pkts into storage sized dqrr_size, so QBMan DMAs
+  past it. dq_sch_storage++ also carries into the next pull. Pull
+  min(nb_pkts, dqrr_size) and reset the pointer per pull.
+
+dpaa2_ethdev.h:933
+  priority_step = (RTE_EVENT_DEV_PRIORITY_LOWEST + 1 -
+          RTE_EVENT_DEV_PRIORITY_HIGHEST) / dpcon->num_priorities;
+  priority_step is uint8_t. With 1 priority, 256 truncates to 0
+  and the next line divides by zero. This is reached from every
+  Rx adapter queue_add. Use unsigned int.
+
+[35/65] event/dpaa2: add push mode to DPCON Rx scheduler
+
+dpaa2_scheduler.c:590
+  return sch_dev->dpcon_dev[0]->num_priorities;
+  In push mode dpcon_dev[] is filled lazily per lcore, so this is
+  NULL unless lcore 0 has received.
+
+dpaa2_scheduler.c:116
+  configured is global, so only the first lcore attaches queues.
+  A later add() re-attaches the same DPCI and re-adds the static
+  channel from the datapath.
+
+[37/65] event/dpaa2: track and detach attached Rx queues
+
+dpaa2_scheduler.c:616
+  dpaa2_scheduler_eventq_detach(sch_dev, attach_num);
+  In push mode attach_num counts lcores, not queues. Too few
+  queues are detached, or NULL entries are dereferenced.
+
+dpaa2_eventdev.c:525
+  if (!eth_dev || rx_queue_id < 0) {
+  queue_del(port, -1) detaches every Rx queue of every ethdev.
+  Only the given ethdev's queues should go.
+
+dpaa2_eventdev.c:932
+  dpaa2_eventdev_dequeue_drain(dev);
+  Rx adapter stop drains every port of the device, dropping other
+  sources' events, and untracks the queues, while start is a
+  no-op. stop then start loses traffic.
+
+dpaa2_ethdev.c:2368
+  DPAA2_PMD_WARN("%s's %d rxq(s) are not detached ...
+  close only warns, then frees queues that the eventdev still
+  references. A later eventdev close is a use-after-free and
+  dereferences a NULL priv->hw.
+
+[38/65] net/dpaa2: add multi-port Tx API
+
+dpaa2_rxtx.c:2028
+  txq[i] = data->tx_queues[txq_id[i]];
+  port_id and txq_id from the caller are not validated, and a
+  non-dpaa2 port's queue is cast to struct dpaa2_queue.
+  struct dpaa2_queue *txq[nb_pkts] is an unbounded VLA.
+
+[39/65] event/dpaa2: limit attached Rx flows per event queue
+
+dpaa2_eventdev.c:520
+  uint8_t i, j, k, found = false;
+  dpni_rxq_num is now uint16_t up to 1024, so these loops never
+  terminate past 255.
+
+[44/65] bus/fslmc: consolidate DPIO interrupt setup
+
+(the CAS bug from 30 becomes hot here; see above)
+
+[45/65] event/dpaa2: honor configured dequeue timeout
+
+dpaa2_eventdev.c:311
+  if (timeout_ticks)
+          timeout_ms = timeout_ticks * 1000 / priv->event_hz;
+  else
+          timeout_ms = priv->dequeue_timeout_ns / (1000 * 1000);
+  This is backwards. timeout_ticks == 0 means no wait. Without
+  PER_DEQUEUE_TIMEOUT, a non-zero value means use
+  dequeue_timeout_ns. Sub-ms values round to 0.
+
+[51/65] net/dpaa2: consolidate dequeue paths
+
+dpaa2_scheduler.c:334
+  if (likely(q_storage->active_dqs)) {
+  This is inverted. On the first call active_dqs is NULL and
+  qbman_check_command_complete(NULL) follows. Use
+  unlikely(!active_dqs).
+
+dpaa2_rxtx.c:1300
+  dq_storage = dpaa2_q->q_storage[0]->dq_storage[0];
+  rx_err_vq is shared by all Rx lcores, and they now all pull into
+  storage[0] at once. Use q_storage[rte_lcore_id()].
+
+[53/65] net/dpaa2: add API to clean Tx confirmation queue
+
+dpaa2_ethdev.c:1256
+  txq = dev->data->tx_queues[txq_id];
+  txq_id is not range-checked and txq is not NULL-checked.
+
+[57/65] net/dpaa2: unify tx burst path
+
+dpaa2_rxtx.c:1810
+  dqrr_held[loop] = ~(UINT64_C(1) << dqrr_index);
+  This is negated again at 1862, so HELD &= bit clears every other
+  held entry. It is fixed in 59; fold it here.
+
+dpaa2_rxtx.c:1871
+  *dpaa2_seqn(bufs[i]) = flags[i];
+  flags[] is uninitialised for non-DCA slots, so stack garbage
+  goes into seqn and can carry DCA/ORP bits. This is still in 65.
+  Set flags[loop] = 0 and save the ORP seqn too.
+
+dpaa2_rxtx.c:1813
+  *dpaa2_seqn(bufs[loop]) = DPAA2_INVALID_MBUF_SEQN;
+  This is cleared before the enqueue is known to succeed. A later
+  FD build failure returns the mbuf unsent with its atomic
+  context lost.
+
+dpaa2_rxtx.c:1654
+  if (nb_pkts > 0 && !ret && !order)
+  On retry exhaustion, bufs has already advanced past the unsent
+  frames. The next pass skips them and reads past the caller's
+  array. ret is uninitialised when order breaks at loop 0.
+
+[58/65] crypto/dpaa2_sec: unify enqueue burst path
+
+dpaa2_sec_dpseci.c:1665
+  int32_t ret, order = false;
+  ret is read at "if (ret >= 0 && order)" without being set when
+  the first op is ordered and the lcore already has a portal.
+  Initialise it to 0.
+
+dpaa2_sec_dpseci.c:1602
+  DPAA2_PER_LCORE_DQRR_HELD &= ~(UINT64_C(1) << dqrr_index);
+  This reintroduces the bug 54 fixes in eventdev: held state is
+  consumed before enqueue, and build_sec_fd() failure loses it.
+
+[59/65] bus/fslmc: track atomic DCA context per dequeue dpio
+
+dpaa2_hw_pvt.h:537
+  if (*dpaa2_seq_dpio_dq(mbuf) == dpio_eq) { \
+  The Tx adapter and crypto pass the lcore DPIO, not the port
+  DPIO, so this never matches. The held mbuf[] slot stays, and
+  the next dequeue writes seqn into an mbuf already given to HW
+  and possibly freed.
+
+[60/65] bus/fslmc: move enqueue response descriptors to per-queue
+
+dpaa2_rxtx.c:1736
+  ret = dpaa2_eq_set_order_desc(priv->tx_vq[0], bufs[loop], ...
+  Slots are taken from tx_vq[0] but reaped from dpaa2_q[loop], so
+  the ring fills and ORP Tx returns -EAGAIN forever. All lcores
+  update tx_vq[0]->eq_resp without a lock.
+
+dpaa2_hw_pvt.h:688
+  eq_resp->active_t = next;
+  The slot is consumed before enqueue. A frame not enqueued leaves
+  a slot that never completes, so process() stops there for good.
+
+dpaa2_hw_pvt.h:699
+  dpaa2_enq_rsp_process(queue, 1);
+  The free loop spins forever on such a slot. Bound it.
+
+dpaa2_sec_dpseci.c:1555
+  goto skip_tx;
+  On -EAGAIN the FLEs already built for this chunk leak, along
+  with their ORP/DCA state. Send the built frames instead.
+
+[65/65] net/dpaa2: add Tx fast path for no-confirmation case
+
+dpaa2_rxtx.c (dpaa2_dev_tx_fast)
+  DPAA2_MBUF_TO_CONTIG_FD((*bufs), &fd_arr[loop],
+  The fast path ignores RTE_MBUF_F_TX_IEEE1588_TMST, so one-step
+  PTP is lost in the default config. Send TMST frames to the slow
+  path.
+
+
+Warnings
+--------
+
+01: QinQ sets RX_QINQ without vlan_tci_outer. On LX2, parse_frc
+    never sets the GOOD cksum flags and sets IEEE1588_PTP without
+    TMST. PTP/UDP-ESP-IKE summaries end up as L4_NONFRAG. The
+    by_channel guard on the error-queue drain was dropped (S2
+    added it on purpose). FLC hash decode now runs on non-LX2
+    SoCs. sp_protocol is never set until 10.
+05: dumps log under RTE_LOGTYPE_USER1, not the PMD logtype, with
+    one log call per byte.
+06: the offsets dynfield is not filled on the eventdev Rx paths.
+    The new devarg is undocumented.
+07: the Tx queue to TC mapping changed from interleaved to blocked,
+    and channels > 0 are not reachable per TC. Neither is in the
+    commit message.
+08: the MC version check is removed and only restored in 09.
+10: every bus scan opens /dev/mem O_RDWR and maps CCSR writable,
+    logs ERR when that fails, and hex-dumps at NOTICE. Use
+    O_RDONLY/PROT_READ and DEBUG.
+11: cgid_in_use is incremented before setup and not decremented
+    on error.
+12: the FAEAD is written in place into buffers the PMD does not
+    own. tm_sw_td handling was removed. The tx_again loop
+    condition is inverted. drain never loops. tx_conf storage is
+    freed with a VDQ outstanding. The IEEE1588 producers are
+    removed until 13.
+13: rx_timestamp is overwritten by every packet, not only PTP.
+    tx_burst issues a blocking MC command
+    (dpni_set_single_step_cfg). read_tx_timestamp dequeues the conf
+    FQ from the control thread with q_storage[rte_lcore_id()].
+17: imissed/ierrors/rx_nombuf now double count. tc < MAX_TCS is
+    always true, so all 8 page-5 queries are issued.
+18: 16 PFC counters are added to the MAC request with no MC
+    revision gate.
+20: the MAC DMA buffers are allocated on every get_by_id, before
+    the MAC check.
+21: GTPU RSS and IPv6-only RSS always fail. Single-TC ports now
+    need a QoS entry (regression). An out-of-range group silently
+    becomes 0. validate accepts what create rejects, and item->last
+    is ignored. packet_id is advertised but not extracted. Action
+    update accumulates tokens. query returns success with no data.
+    Miss actions report success on old MC. dev_init returns success
+    on table allocation failure (ret still 0). drv_qos_entries_per_tc
+    is unchecked and undocumented. The commit message describes
+    an env var the code does not have.
+25: meter_lock is re-initialised on every mtr_ops_get. packet_mode
+    > 1 is overloaded. Duplicate ids are accepted, delete frees
+    meters in use, and update does not reprogram. A METER rule with
+    a pattern is applied to the whole TC. features/dpaa2.ini and
+    the release notes are not updated.
+26: miss-action programming errors are logged and dropped in
+    configure.
+27: get_dcb_info returns the init identity map, not the configured
+    one.
+29: DPCI rx_queue cb is never cleared, so a used DPCI is -EBUSY
+    forever. ORDERED was dropped while ALL_TYPES is still
+    advertised.
+31: 1024-entry env_pool with a 512 per-lcore cache drains across
+    lcores. Releasing a port does not reset held_bufs. close leaks
+    port DPIOs (until 37, and still when never started).
+34: q_storage[rte_lcore_id()] has no LCORE_ID_ANY check. destroy
+    leaks the dq storage and does not detach Rx queues. max_prio
+    returns a count, so it is off by one.
+35: push-mode DPCONs are never enabled but are disabled on destroy.
+36: drain runs before detach, and a VDQ is left outstanding.
+40: the new wording ("negative on failure") does not match the
+    public rte_event_port_link() contract or most PMDs.
+41: relinking an already-linked queue errors instead of updating
+    priority, and rte_errno is not set on a short count. unlink
+    pos[16] overflows with duplicate queue ids.
+42: probe failure does not uninit the vdev eventdev.
+    max_event_ports excludes the device's own DPIOs, so a second
+    configure fails.
+43: the event port DPIO has epoll_fd -1 until 44, so the timeout
+    never waits.
+44: interrupts are now armed on every ethrx portal (inverted
+    condition, reverted in 52). The stash error path leaks the
+    epoll fd.
+47: each intr_init creates an eventfd that deinit never closes.
+    The fast path rewrites IRQ affinity and the cpufreq governor
+    using the lcore id as the CPU. A PMD must not change system
+    cpufreq policy.
+48: the Rx SG walk lost its DPAA2_MAX_SGS bound (the commit
+    message says one was added). The sg pool create is unchecked
+    and is now created for every fslmc probe, including in
+    secondaries.
+49: this fixes ep_name and speed capability never being set
+    upstream. Say so and add Fixes:/Cc stable.
+52: rx-intr sets the governor to performance on the first burst,
+    which defeats the purpose. MC subscribe runs on every arm.
+    There is a stale comment block.
+54: missing Fixes: 7b6edb640b and Cc: stable@dpdk.org.
+57: DCA/ORP bursts bypass VLAN insert. A bad packet returns short
+    without being freed (tx_burst must free and continue). The
+    same applies in 65.
+58: ordered ops are counted in err_pkts.
+60: qp is allocated with rte_malloc (not zeroed) and stays in
+    queue_pairs[] on setup failure.
+61: ORDERED is advertised before the DPCI OPR exists (62). The ORP
+    flag leaks when forwarding to a non-ordered queue.
+    ordered_scheduling is missing from the eventdev ini.
+62: the DPAA2_STRICT_ORDERING_ENABLE env var was replaced by a
+    devarg; the commit message says it is still honoured.
+63: the teardown no longer stops the device after a failed test.
+    The commit message is wrong.
+64: queue_setup accepts sched types that have no DPCI txq.
+    Probe-failure return leaves the eventdev allocated.
+65: a 1 KiB fd_arr is zeroed on every fast-path burst.
+
+
+Info
+----
+
+01: flow-extract helpers are added with no caller (move them to
+    21). __rte_unused is stale. Use PRIx64, not %lx.
+02: the getenv DPAA2_DATA_STASHING_OFF path was removed silently.
+    dpaa2.rst documents drv_error_queue, but the key is
+    drv_err_queue (pre-existing).
+07: DPAA2_INVALID_FLOW_ID is orphaned.
+08: fslmc_vfio_core_cluster_sdest is declared before it is
+    defined (09).
+09: any newer MC major is accepted, and unknown SVRs now fail
+    probe. Neither is mentioned in the commit message.
+13: timesync_disable leaves single-step enabled in the DPNI.
+21: leftovers: DPAA2_FLOW_HDR_HEX_DUMP_SIZE, flow_profile
+    mempool[]/bp_idx[], tbl_profile.enabled. The IPv6 SRC/DST
+    mapping in dpaa2_extract_ip_convert is wrong (latent). AH is
+    logged as "esp". dead NULL check at flow.c:438. jump/geneve
+    are missing from features/dpaa2.ini.
+25: tc_mtr_profile[] is written but never read.
+39: max_event_queue_flows is halved for unrelated bookkeeping.
+42: DPAA2_EVENT_MAX_PORTS is unused.
+60: MAX_EQ_RESP_ENTRIES is unused.
+62: odpid is not masked with DPAA2_EQCR_OPRID_MASK.
+63: generate_random_events passes an index as the port id.
+
+Not adding Reviewed-by; there are Errors and Warnings throughout.
+Please split, rebase and resend.
