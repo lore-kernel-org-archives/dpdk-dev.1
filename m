@@ -1,30 +1,30 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF70606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2758D606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:44:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7305140A79;
-	Fri, 23 Oct 2026 15:44:00 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 6762B40698
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:43:56 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 438F41A003D;
+	by mails.dpdk.org (Postfix) with ESMTP id 3FE5F40A89;
+	Fri, 23 Oct 2026 15:44:01 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 1C8CE4069F
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:43:57 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EFB7B200034;
  Fri, 23 Oct 2026 15:43:56 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0D42F1A0021;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BBE4D200020;
  Fri, 23 Oct 2026 15:43:56 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9C23418000B6;
- Fri, 23 Oct 2026 21:43:54 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B87FF18000B7;
+ Fri, 23 Oct 2026 21:43:55 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4-S3 04/65] dma/dpaa2: use table-driven devargs parsing
-Date: Fri, 23 Oct 2026 19:12:44 +0530
-Message-ID: <20261023134346.37727-5-prashant.gupta_3@nxp.com>
+Subject: [PATCH v4-S3 05/65] net/dpaa2: unify debug dump via log based helpers
+Date: Fri, 23 Oct 2026 19:12:45 +0530
+Message-ID: <20261023134346.37727-6-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
 References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
@@ -51,274 +51,182 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Jun Yang <jun.yang@nxp.com>
 
-Convert the dpaa2 qdma devargs handling to the shared dpaax_devargs
-table so each argument key is declared once and drives both the parse
-table and the registered valid-args string.
+The dpaa2 PMD printed debug output through several unrelated paths: the
+flow dump used a raw printf, and the Rx error queue dump used
+rte_hexdump() straight to stderr with sprintf-built titles. None of
+these went through the DPDK logging framework, so they could not be
+filtered and bypassed any configured log stream.
 
-Remove the custom check_devargs_handler()/dpaa2_qdma_get_devargs()
-helpers and parse the arguments once at device init via
-dpaax_get_devargs(), storing the results in a single dpdmai_dev->flags
-bitfield (DPAA2_QDMA_FLE_PRE_POPULATE_FLAG, DPAA2_QDMA_DESC_DEBUG_FLAG,
-DPAA2_QDMA_SHORT_FD_FLAG).
-
-This drops the per-virtual-queue fle_pre_populate, using_short_fd and
-flags fields, which only mirrored device-wide devargs, and makes the
-copy paths read the device flags directly.
+Route all debug dumps through the dpaa2 dump helpers instead. Point
+DPAA2_FLOW_DUMP at dpaa2_dump_print(), and add a dpaa2_dump_hex_print()
+helper that emits a buffer as hex using the same path. Convert the Rx
+error packet dump to use these helpers, rename dump_err_pkts() to
+dpaa2_dev_rx_err_pkts_dump() for consistency with the other datapath
+helpers, use rte_pktmbuf_mtod() for the segment payload, and simplify
+the surrounding code.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/dma/dpaa2/dpaa2_qdma.c | 92 +++++++++-------------------------
- drivers/dma/dpaa2/dpaa2_qdma.h | 15 +++---
- 2 files changed, 33 insertions(+), 74 deletions(-)
+ drivers/net/dpaa2/dpaa2_flow.c     |  4 +--
+ drivers/net/dpaa2/dpaa2_pmd_logs.h | 17 ++++++++++
+ drivers/net/dpaa2/dpaa2_rxtx.c     | 51 +++++++++++++-----------------
+ 3 files changed, 41 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/dma/dpaa2/dpaa2_qdma.c b/drivers/dma/dpaa2/dpaa2_qdma.c
-index 8d10edfd04..e981bf3e6d 100644
---- a/drivers/dma/dpaa2/dpaa2_qdma.c
-+++ b/drivers/dma/dpaa2/dpaa2_qdma.c
+diff --git a/drivers/net/dpaa2/dpaa2_flow.c b/drivers/net/dpaa2/dpaa2_flow.c
+index 979ab4cae0..d9ca7211c7 100644
+--- a/drivers/net/dpaa2/dpaa2_flow.c
++++ b/drivers/net/dpaa2/dpaa2_flow.c
 @@ -1,5 +1,5 @@
  /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2018-2024 NXP
+- * Copyright 2018-2022 NXP
 + * Copyright 2018-2026 NXP
   */
  
- #include <rte_eal.h>
-@@ -11,56 +11,25 @@
- #include <mc/fsl_dpdmai.h>
+ #include <sys/queue.h>
+@@ -196,7 +196,7 @@ static const struct rte_flow_item_pppoe dpaa2_flow_item_pppoe_mask = {
+ #endif
  
- #include <rte_pmd_dpaax_qdma.h>
-+#include <dpaax_devarg.h>
- #include "dpaa2_hw_dpio.h"
- #include "dpaa2_qdma.h"
- #include "dpaa2_qdma_logs.h"
  
--#define DPAA2_QDMA_FLE_PRE_POPULATE "fle_pre_populate"
--#define DPAA2_QDMA_DESC_DEBUG "desc_debug"
--#define DPAA2_QDMA_USING_SHORT_FD "short_fd"
-+#define DPAA2_DEVARGS(ENTRY) \
-+	ENTRY("fle_pre_populate", NULL, DPAA2_QDMA_FLE_PRE_POPULATE_FLAG) \
-+	ENTRY("desc_debug", NULL, DPAA2_QDMA_DESC_DEBUG_FLAG) \
-+	ENTRY("short_fd", NULL, DPAA2_QDMA_SHORT_FD_FLAG)
+-#define DPAA2_FLOW_DUMP printf
++#define DPAA2_FLOW_DUMP dpaa2_dump_print
+ 
+ static inline void
+ dpaa2_prot_field_string(uint32_t prot, uint32_t field,
+diff --git a/drivers/net/dpaa2/dpaa2_pmd_logs.h b/drivers/net/dpaa2/dpaa2_pmd_logs.h
+index 8b699bb5af..51fdabf94b 100644
+--- a/drivers/net/dpaa2/dpaa2_pmd_logs.h
++++ b/drivers/net/dpaa2/dpaa2_pmd_logs.h
+@@ -51,4 +51,21 @@ dpaa2_dump_print(const char *fmt, ...)
+ 	rte_vlog(RTE_LOG_NOTICE, RTE_LOGTYPE_USER1, fmt, ap);
+ 	va_end(ap);
+ }
 +
-+static const struct dpaax_devargs s_dpaa2_qdma_devargs[] = {
-+	DPAA2_DEVARGS(DPAAX_DEVARG_TABLE_ENTRY)
-+};
- 
- static uint32_t dpaa2_coherent_no_alloc_cache;
- static uint32_t dpaa2_coherent_alloc_cache;
- 
- static struct fsl_mc_io s_proc_mc_reg;
- 
--static int
--check_devargs_handler(__rte_unused const char *key, const char *value,
--		      __rte_unused void *opaque)
--{
--	if (strcmp(value, "1"))
--		return -1;
--
--	return 0;
--}
--
--static int
--dpaa2_qdma_get_devargs(struct rte_devargs *devargs, const char *key)
--{
--	struct rte_kvargs *kvlist;
--
--	if (!devargs)
--		return 0;
--
--	kvlist = rte_kvargs_parse(devargs->args, NULL);
--	if (!kvlist)
--		return 0;
--
--	if (!rte_kvargs_count(kvlist, key)) {
--		rte_kvargs_free(kvlist);
--		return 0;
--	}
--
--	if (rte_kvargs_process(kvlist, key,
--			       check_devargs_handler, NULL) < 0) {
--		rte_kvargs_free(kvlist);
--		return 0;
--	}
--	rte_kvargs_free(kvlist);
--
--	return 1;
--}
--
- static inline int
- qdma_cntx_idx_ring_eq(struct qdma_cntx_idx_ring *ring,
- 	const uint16_t *elem, uint16_t nb,
-@@ -670,7 +639,7 @@ dpaa2_qdma_copy_sg(void *dev_private,
- 	DPAA2_SET_FD_COMPOUND_FMT(fd);
- 	DPAA2_SET_FD_FLC(fd, (uint64_t)cntx_sg);
- 
--	if (qdma_vq->fle_pre_populate) {
-+	if (dpdmai_dev->flags & DPAA2_QDMA_FLE_PRE_POPULATE_FLAG) {
- 		if (unlikely(!fle[DPAA2_QDMA_SRC_FLE].length)) {
- 			fle_sdd_sg_pre_populate(cntx_sg, qdma_vq);
- 			if (!qdma_dev->is_silent && cntx_sg && idx_addr) {
-@@ -698,7 +667,7 @@ dpaa2_qdma_copy_sg(void *dev_private,
- 			QBMAN_FLE_WORD4_FMT_SGE);
- 	}
- 
--	if (unlikely(qdma_vq->flags & DPAA2_QDMA_DESC_DEBUG_FLAG))
-+	if (unlikely(dpdmai_dev->flags & DPAA2_QDMA_DESC_DEBUG_FLAG))
- 		dpaa2_qdma_long_fmt_dump(cntx_sg->fle_sdd.fle);
- 
- 	dpaa2_qdma_fd_save_att(fd, 0, DPAA2_QDMA_FD_SG);
-@@ -844,7 +813,7 @@ dpaa2_qdma_short_copy(struct qdma_virt_queue *qdma_vq,
- static int
- dpaa2_qdma_long_copy(struct qdma_virt_queue *qdma_vq,
- 	rte_iova_t src, rte_iova_t dst, uint32_t length,
--	int is_silent, uint64_t flags)
-+	int is_silent, uint64_t flags, uint32_t dev_flags)
- {
- 	int ret = 0, expected;
- 	struct qbman_fd *fd = &qdma_vq->fd[qdma_vq->fd_idx];
-@@ -872,7 +841,7 @@ dpaa2_qdma_long_copy(struct qdma_virt_queue *qdma_vq,
- 	DPAA2_SET_FD_COMPOUND_FMT(fd);
- 	DPAA2_SET_FD_FLC(fd, (uint64_t)fle);
- 
--	if (qdma_vq->fle_pre_populate) {
-+	if (dev_flags & DPAA2_QDMA_FLE_PRE_POPULATE_FLAG) {
- 		if (unlikely(!fle[DPAA2_QDMA_SRC_FLE].length)) {
- 			fle_sdd_pre_populate(fle_sdd,
- 				&qdma_vq->rbp,
-@@ -888,7 +857,7 @@ dpaa2_qdma_long_copy(struct qdma_virt_queue *qdma_vq,
- 			QBMAN_FLE_WORD4_FMT_SBF);
- 	}
- 
--	if (unlikely(qdma_vq->flags & DPAA2_QDMA_DESC_DEBUG_FLAG))
-+	if (unlikely(dev_flags & DPAA2_QDMA_DESC_DEBUG_FLAG))
- 		dpaa2_qdma_long_fmt_dump(fle);
- 
- 	dpaa2_qdma_fd_save_att(fd, DPAA2_QDMA_IDX_FROM_FLAG(flags),
-@@ -921,12 +890,14 @@ dpaa2_qdma_copy(void *dev_private, uint16_t vchan,
- 	struct qdma_device *qdma_dev = dpdmai_dev->qdma_dev;
- 	struct qdma_virt_queue *qdma_vq = &qdma_dev->vqs[vchan];
- 
--	if (qdma_vq->using_short_fd)
-+	if (dpdmai_dev->flags & DPAA2_QDMA_SHORT_FD_FLAG) {
- 		return dpaa2_qdma_short_copy(qdma_vq, src, dst,
- 				length, qdma_dev->is_silent, flags);
--	else
-+	} else {
- 		return dpaa2_qdma_long_copy(qdma_vq, src, dst,
--				length, qdma_dev->is_silent, flags);
-+				length, qdma_dev->is_silent, flags,
-+				dpdmai_dev->flags);
++#define DPAA2_DUMP_HEX_LINE_SIZE 32
++
++static inline void
++dpaa2_dump_hex_print(const uint8_t *buf, size_t len)
++{
++	size_t i;
++
++	for (i = 0; i < len; i++) {
++		dpaa2_dump_print("%02x ", buf[i]);
++
++		if (!((i + 1) % DPAA2_DUMP_HEX_LINE_SIZE))
++			dpaa2_dump_print("\n");
 +	}
++	if (len % DPAA2_DUMP_HEX_LINE_SIZE)
++		dpaa2_dump_print("\n");
++}
+ #endif /* _DPAA2_PMD_LOGS_H_ */
+diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
+index d3512d56f9..060f525233 100644
+--- a/drivers/net/dpaa2/dpaa2_rxtx.c
++++ b/drivers/net/dpaa2/dpaa2_rxtx.c
+@@ -675,13 +675,14 @@ return 0;
  }
  
- static inline int
-@@ -1379,21 +1350,6 @@ dpaa2_qdma_vchan_setup(struct rte_dma_dev *dev, uint16_t vchan,
- 	if (ret)
- 		return ret;
+ static void
+-dump_err_pkts(struct dpaa2_queue *dpaa2_q)
++dpaa2_dev_rx_err_pkts_dump(struct dpaa2_queue *dpaa2_q)
+ {
+ 	/* Function receive frames for a given device and VQ */
+ 	struct qbman_result *dq_storage;
+ 	uint32_t fqid = dpaa2_q->fqid;
+-	int ret, num_rx = 0;
++	int ret, num_rx = 0, i;
+ 	uint8_t pending, status;
++	const uint8_t *buf;
+ 	struct qbman_swp *swp;
+ 	const struct qbman_fd *fd;
+ 	struct qbman_pull_desc pulldesc;
+@@ -689,15 +690,13 @@ dump_err_pkts(struct dpaa2_queue *dpaa2_q)
+ 	uint32_t lcore_id = rte_lcore_id();
+ 	void *v_addr, *hw_annot_addr;
+ 	struct dpaa2_fas *fas;
+-	struct rte_mbuf *mbuf;
+-	char title[32];
++	struct rte_mbuf *mbuf, *seg;
+ 	struct dpaa2_dev_priv *priv = eth_data->dev_private;
  
--	if (dpaa2_qdma_get_devargs(dev->device->devargs, DPAA2_QDMA_FLE_PRE_POPULATE))
--		qdma_dev->vqs[vchan].fle_pre_populate = 1;
--	else
--		qdma_dev->vqs[vchan].fle_pre_populate = 0;
+ 	if (unlikely(!DPAA2_PER_LCORE_DPIO)) {
+ 		ret = dpaa2_affine_qbman_swp();
+ 		if (ret) {
+-			DPAA2_PMD_ERR("Failed to allocate IO portal, tid: %d",
+-				rte_gettid());
++			DPAA2_PMD_ERR("Failed to allocate IO portal, tid: %d", rte_gettid());
+ 			return;
+ 		}
+ 	}
+@@ -738,8 +737,7 @@ dump_err_pkts(struct dpaa2_queue *dpaa2_q)
+ 			pending = 0;
+ 			/* Check for valid frame. */
+ 			status = qbman_result_DQ_flags(dq_storage);
+-			if (unlikely((status &
+-				QBMAN_DQ_STAT_VALIDFRAME) == 0))
++			if (unlikely(!(status & QBMAN_DQ_STAT_VALIDFRAME)))
+ 				continue;
+ 		}
+ 		fd = qbman_result_DQ_fd(dq_storage);
+@@ -759,27 +757,22 @@ dump_err_pkts(struct dpaa2_queue *dpaa2_q)
+ 			DPAA2_GET_FD_OFFSET(fd), DPAA2_GET_FD_ERR(fd),
+ 			fas->status);
+ 
+-		if (mbuf) {
+-			__rte_mbuf_sanity_check(mbuf, 1);
+-			if (mbuf->nb_segs > 1) {
+-				struct rte_mbuf *seg = mbuf;
+-				int i = 0;
 -
--	if (dpaa2_qdma_get_devargs(dev->device->devargs, DPAA2_QDMA_DESC_DEBUG))
--		qdma_dev->vqs[vchan].flags |= DPAA2_QDMA_DESC_DEBUG_FLAG;
--	else
--		qdma_dev->vqs[vchan].flags &= (~DPAA2_QDMA_DESC_DEBUG_FLAG);
--
--	if (dpaa2_qdma_get_devargs(dev->device->devargs, DPAA2_QDMA_USING_SHORT_FD))
--		qdma_dev->vqs[vchan].using_short_fd = 1;
--	else
--		qdma_dev->vqs[vchan].using_short_fd = 0;
--
- 	snprintf(pool_name, sizeof(pool_name),
- 		"qdma_fle_pool_dev%d_qid%d", dpdmai_dev->dpdmai_id, vchan);
- 	pool_size = sizeof(struct qdma_cntx_sg);
-@@ -1656,6 +1612,9 @@ dpaa2_dpdmai_dev_init(struct rte_dma_dev *dev, uint32_t dpdmai_id)
+-				while (seg) {
+-					sprintf(title, "Payload seg[%d]", i);
+-					rte_hexdump(stderr, title,
+-						(char *)seg->buf_addr + seg->data_off,
+-						seg->data_len);
+-					seg = seg->next;
+-					i++;
+-				}
+-			} else {
+-				rte_hexdump(stderr, "Payload",
+-					(char *)mbuf->buf_addr + mbuf->data_off,
+-					mbuf->data_len);
++		__rte_mbuf_sanity_check(mbuf, 1);
++		if (mbuf->nb_segs > 1) {
++			seg = mbuf;
++			i = 0;
++			while (seg) {
++				buf = rte_pktmbuf_mtod(seg, const uint8_t *);
++				dpaa2_dump_print("Payload seg[%d]\n", i);
++				dpaa2_dump_hex_print(buf, seg->data_len);
++				seg = seg->next;
++				i++;
+ 			}
+-			rte_pktmbuf_free(mbuf);
++		} else {
++			buf = rte_pktmbuf_mtod(mbuf, const uint8_t *);
++			dpaa2_dump_hex_print(buf, mbuf->data_len);
+ 		}
++		rte_pktmbuf_free(mbuf);
+ 		dq_storage++;
+ 		num_rx++;
+ 	} while (pending);
+@@ -812,7 +805,7 @@ dpaa2_dev_prefetch_rx_common(void *queue, struct rte_mbuf **bufs,
+ 	q_storage = dpaa2_q->q_storage[rte_lcore_id()];
  
- 	DPAA2_QDMA_FUNC_TRACE();
+ 	if (unlikely(priv->flags & DPAA2_RX_ERROR_QUEUE_FLAG))
+-		dump_err_pkts(priv->rx_err_vq);
++		dpaa2_dev_rx_err_pkts_dump(priv->rx_err_vq);
  
-+	dpdmai_dev->flags = 0;
-+	dpaax_get_devargs(s_dpaa2_qdma_devargs, dev, &dpdmai_dev->flags);
-+
- 	if (!dpaa2_coherent_no_alloc_cache) {
- 		if (dpaa2_svr_family == SVR_LX2160A) {
- 			dpaa2_coherent_no_alloc_cache =
-@@ -1801,7 +1760,6 @@ static struct rte_dpaa2_driver rte_dpaa2_qdma_pmd = {
+ 	if (unlikely(!DPAA2_PER_LCORE_ETHRX_DPIO)) {
+ 		ret = dpaa2_affine_qbman_ethrx_swp();
+@@ -1080,7 +1073,7 @@ dpaa2_dev_rx_common(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts,
+ 	struct dpaa2_dev_priv *priv = eth_data->dev_private;
  
- RTE_PMD_REGISTER_DPAA2(dpaa2_qdma, rte_dpaa2_qdma_pmd);
- RTE_PMD_REGISTER_PARAM_STRING(dpaa2_qdma,
--	DPAA2_QDMA_FLE_PRE_POPULATE "=<int>"
--	DPAA2_QDMA_DESC_DEBUG"=<int>"
--	DPAA2_QDMA_USING_SHORT_FD"=<int>");
-+	DPAA2_DEVARGS(DPAAX_DEVARG_STRING_ENTRY)
-+);
- RTE_LOG_REGISTER_DEFAULT(dpaa2_qdma_logtype, INFO);
-diff --git a/drivers/dma/dpaa2/dpaa2_qdma.h b/drivers/dma/dpaa2/dpaa2_qdma.h
-index e2d2eb4fa8..4a5d1056f0 100644
---- a/drivers/dma/dpaa2/dpaa2_qdma.h
-+++ b/drivers/dma/dpaa2/dpaa2_qdma.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2018-2024 NXP
-+ * Copyright 2018-2026 NXP
-  */
+ 	if (!by_channel && unlikely(priv->flags & DPAA2_RX_ERROR_QUEUE_FLAG))
+-		dump_err_pkts(priv->rx_err_vq);
++		dpaa2_dev_rx_err_pkts_dump(priv->rx_err_vq);
  
- #ifndef _DPAA2_QDMA_H_
-@@ -233,6 +233,12 @@ struct __rte_packed_begin qdma_cntx_sg {
- #define DPAA2_QDMA_IDX_FROM_FLAG(flag) \
- 	((flag) >> RTE_DPAAX_QDMA_COPY_IDX_OFFSET)
- 
-+enum dpaa2_dpdmai_dev_flags {
-+	DPAA2_QDMA_FLE_PRE_POPULATE_FLAG = RTE_BIT32(0),
-+	DPAA2_QDMA_DESC_DEBUG_FLAG = RTE_BIT32(1),
-+	DPAA2_QDMA_SHORT_FD_FLAG = RTE_BIT32(2)
-+};
-+
- /** Represents a DPDMAI device */
- struct dpaa2_dpdmai_dev {
- 	/** Pointer to Next device instance */
-@@ -247,6 +253,7 @@ struct dpaa2_dpdmai_dev {
- 	struct dpaa2_queue rx_queue[DPAA2_DPDMAI_MAX_QUEUES];
- 	/** TX queues */
- 	struct dpaa2_queue tx_queue[DPAA2_DPDMAI_MAX_QUEUES];
-+	uint32_t flags;
- 	struct qdma_device *qdma_dev;
- };
- 
-@@ -261,8 +268,6 @@ struct qdma_cntx_idx_ring {
- 	uint16_t nb_in_ring;
- };
- 
--#define DPAA2_QDMA_DESC_DEBUG_FLAG (1 << 0)
--
- /** Represents a QDMA virtual queue */
- struct qdma_virt_queue {
- 	/** Associated hw queue */
-@@ -273,8 +278,6 @@ struct qdma_virt_queue {
- 	void **fle_elem;
- 	/** Route by port */
- 	struct dpaa2_qdma_rbp rbp;
--	/** States if this vq is in use or not */
--	uint8_t fle_pre_populate;
- 	/** Number of descriptor for the virtual DMA channel */
- 	uint16_t nb_desc;
- 	/* Total number of enqueues on this VQ */
-@@ -284,7 +287,6 @@ struct qdma_virt_queue {
- 	uint64_t copy_num;
- 
- 	uint16_t vq_id;
--	uint32_t flags;
- 	struct qbman_fd fd[DPAA2_QDMA_MAX_DESC];
- 	uint16_t fd_idx;
- 	struct qdma_cntx_idx_ring *ring_cntx_idx;
-@@ -295,7 +297,6 @@ struct qdma_virt_queue {
- 	uint16_t silent_idx;
- 
- 	int num_valid_jobs;
--	int using_short_fd;
- 
- 	struct rte_dma_stats stats;
- };
+ 	if (by_channel) {
+ 		if (unlikely(!DPAA2_PER_LCORE_ETHRX_DPIO)) {
 -- 
 2.43.0
 
