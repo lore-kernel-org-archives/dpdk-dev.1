@@ -1,48 +1,48 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2285606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 10:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A1E606A31B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 10:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=FPQxSHKj
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Xgxyk0Ld
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BF72240658;
-	Fri, 23 Oct 2026 12:36:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 918FD40664;
+	Fri, 23 Oct 2026 12:36:19 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id 3ED8B40658
- for <dev@dpdk.org>; Fri, 23 Oct 2026 12:36:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7801C40664
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 12:36:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792751775; x=1824287775;
+ t=1792751779; x=1824287779;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=PBfwQ7ODG6cn/XHyVxP/i/AjJmiTTzR+ALDbzZwtNJY=;
- b=FPQxSHKj+suYMTI7+CQDFi9b7O7ndMiaqzDQwmBLTAJeh4pldwYFv+56
- llZtxNtn5QuWTvG0tjBnCNKWVi1PCi4BxqNzxm9kgbyp66AuAJdjSkBwX
- UFnnMVnA5jnJzs//DcEjmZpTFrhzUx8U54FeTQQkSJCjWIsJZbUWGkgwm
- Cbr6nFfQ9cYUjCysGdhU4iIASUgWemSpd7otJYtXMeNwpWYN2fEKC+FjA
- yPd/vDUJnvR+mouyMI6iTCOLX+5Xd9Rwl7wH1QBUqrzP1BlqNqiAOqQDt
- DeNsDqSEWLyn33GeFgAV26YXwObN4jiCuJjOWViP7L8luiOwPJPnLWjxX w==;
-X-CSE-ConnectionGUID: cXRTlRDPSLi5TLlwHfJQdw==
-X-CSE-MsgGUID: 8u+m4A6tRDGQLvlXtNrvBQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1522864"
+ bh=qoqJ0t7FCsuLQXR3+4aoGLnP+8SQSaelxa87vNwpUJQ=;
+ b=Xgxyk0LdAdZwmNRXyMwjwDjh4LpIA/JsgGi0bpoLP8jxGFPzAhUHVQA7
+ XLs8In9x6/weJDB7KuJXWMmpOxVScZzBQhngFjPzmy58pSIb07BYbn9S7
+ iOSn4w7S517SvMw3ZM/DlzxJAgQraUqE9A65cHs1nXMTE5hydD5AD/MMS
+ j2DZgZVF1wlHSOcNf6O8UXHXOMwunenknNEYtFmaDf4oyRAiSqKTj7Xun
+ rXU5LPnDEyY9py9xNWU+JU6Ab1t0yjku368af0Q2fBgDn35bfzuWBLOY1
+ g/+2Uf+bQHKNAXCwSK6Nb1effmIIjieIHJPVpU4rkMlZ5fu2ii9B/D7Ar w==;
+X-CSE-ConnectionGUID: I7ISi7vfSDu83dnCcKElUQ==
+X-CSE-MsgGUID: 0lRZrcVOQXWpAKvp9i5cDw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1522872"
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="1522864"
+   d="scan'208";a="1522872"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Oct 2026 03:36:15 -0700
-X-CSE-ConnectionGUID: iW/QK+QPS/6A76m48am+1A==
-X-CSE-MsgGUID: sR9l8034QFO8qVQjLPwP3A==
+ 23 Oct 2026 03:36:18 -0700
+X-CSE-ConnectionGUID: yJD4FelwTISXXJlwy5CmNw==
+X-CSE-MsgGUID: UQiI3cuxSfSTh8kC9Fspdw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="4098943"
+   d="scan'208";a="4098949"
 Received: from pae.iind.intel.com (HELO PAE-35.iind.intel.com) ([10.49.105.82])
- by fmviesa010.fm.intel.com with ESMTP; 23 Oct 2026 03:36:14 -0700
+ by fmviesa010.fm.intel.com with ESMTP; 23 Oct 2026 03:36:17 -0700
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com,
 	Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH 1/2] net/i40e: fix floating VEB leak
-Date: Fri, 23 Oct 2026 10:31:29 +0000
-Message-Id: <01b44debc0c280fe654d78aebeffd528abb42261.1792750212.git.anurag.mandal@intel.com>
+Subject: [PATCH 2/2] net/i40e: fix FDIR memzone leak
+Date: Fri, 23 Oct 2026 10:31:30 +0000
+Message-Id: <48c8a9473804319897f5d9655c5ff8d8941cae93.1792750212.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1792750212.git.anurag.mandal@intel.com>
 References: <cover.1792750212.git.anurag.mandal@intel.com>
@@ -65,32 +65,56 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-With floating VEB enabled, i40e_vsi_release() releases the VSIs
-attached to the floating VEB of the main VSI but not the floating
-VEB itself, leaking the VEB structure and its switch element.
+The memzone holding the flow director programming packets is reserved
+in i40e_fdir_setup() but never freed, as i40e_fdir_teardown() only
+releases the FDIR queues and VSI.
+It is therefore leaked when the port is closed.
 
-Release it once its VSIs are gone, as is already done for the
-regular VEB.
+Store the memzone pointer and free it on teardown.
 
-Fixes: 440499cf5376 ("net/i40e: support floating VEB")
+Fixes: a778a1fa2e4e ("i40e: set up and initialize flow director")
+Fixes: 71d35259ff67 ("i40e: tear down flow director")
 
 Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 ---
- drivers/net/intel/i40e/i40e_ethdev.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/intel/i40e/i40e_ethdev.h | 1 +
+ drivers/net/intel/i40e/i40e_fdir.c   | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-index e26a849764..9ca01ecd34 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.c
-+++ b/drivers/net/intel/i40e/i40e_ethdev.c
-@@ -5329,6 +5329,7 @@ i40e_vsi_release(struct i40e_vsi *vsi)
- 			if (i40e_vsi_release(vsi_list->vsi) != I40E_SUCCESS)
- 				return -1;
- 		}
-+		i40e_veb_release(vsi->floating_veb);
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.h b/drivers/net/intel/i40e/i40e_ethdev.h
+index 68bff99b5d..77f79fc7da 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.h
++++ b/drivers/net/intel/i40e/i40e_ethdev.h
+@@ -790,6 +790,7 @@ struct i40e_fdir_info {
+ 	struct ci_rx_queue *rxq;
+ 	void *prg_pkt[I40E_FDIR_PRG_PKT_CNT];     /* memory for fdir program packet */
+ 	uint64_t dma_addr[I40E_FDIR_PRG_PKT_CNT]; /* physic address of packet memory*/
++	const struct rte_memzone *prg_mz;         /* memzone backing prg_pkt */
+ 	/*
+ 	 * txq available buffer counter, indicates how many available buffers
+ 	 * for fdir programming, initialized as I40E_FDIR_PRG_PKT_CNT
+diff --git a/drivers/net/intel/i40e/i40e_fdir.c b/drivers/net/intel/i40e/i40e_fdir.c
+index 71cab77e83..2464eb47c2 100644
+--- a/drivers/net/intel/i40e/i40e_fdir.c
++++ b/drivers/net/intel/i40e/i40e_fdir.c
+@@ -241,6 +241,8 @@ i40e_fdir_setup(struct i40e_pf *pf)
+ 			I40E_FDIR_PKT_LEN * i;
  	}
  
- 	/* Remove all macvlan filters of the VSI */
++	pf->fdir.prg_mz = mz;
++
+ 	pf->fdir.match_counter_index = I40E_COUNTER_INDEX_FDIR(hw->pf_id);
+ 
+ 	PMD_DRV_LOG(INFO, "FDIR setup successfully, with programming queue %u.",
+@@ -297,6 +299,8 @@ i40e_fdir_teardown(struct i40e_pf *pf)
+ 	pf->fdir.rxq = NULL;
+ 	i40e_tx_queue_release(pf->fdir.txq);
+ 	pf->fdir.txq = NULL;
++	rte_memzone_free(pf->fdir.prg_mz);
++	pf->fdir.prg_mz = NULL;
+ 	i40e_vsi_release(vsi);
+ 	pf->fdir.fdir_vsi = NULL;
+ }
 -- 
 2.25.1
 
