@@ -1,77 +1,160 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6240B606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 14:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0614B606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 14:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=KaUzJYgH
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ihDGivsH
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B258040268;
-	Fri, 23 Oct 2026 16:17:48 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 711B040265
- for <dev@dpdk.org>; Fri, 23 Oct 2026 16:17:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792765066;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=buK/fGzqfaJvwF2njfXsk0D1DDr+Dl4LxiT/eqH8eyw=;
- b=KaUzJYgHsa7VlQnbD3wKBQdGA8OCrLsX7swJQzVVkai/QZhZvOY5oRZFPGyT7fNuKiwV2w
- dyH+3Jn+aF3BkjxST6r1QUjCUfgVT+kczCc4A2aJxshV3SmFHhGoidJ5rYUG8Jh8g6KD9d
- ra4dg3s3ISEW6q3pXcdDcIgxtpzPoNA=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-623-rxCrVUjkN2uZA1Ippal32A-1; Fri, 23 Oct 2026 10:17:45 -0400
-X-MC-Unique: rxCrVUjkN2uZA1Ippal32A-1
-X-Mimecast-MFC-AGG-ID: rxCrVUjkN2uZA1Ippal32A_1792765064
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-3ab353585f1so4472811fa.1
- for <dev@dpdk.org>; Fri, 23 Oct 2026 07:17:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792765064; x=1793369864;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=buK/fGzqfaJvwF2njfXsk0D1DDr+Dl4LxiT/eqH8eyw=;
- b=r7XyWju2AWNFCJF3UqwaiE9dLZJqtc9Okrd3aIfjHf+76/Ld5WMCyTzhV+86kbQpB0
- /P+EXpYYTtk1HTgSZUcX/IVpRQC2n3h/Ybv2mUFrhDKRT7IoVi237EW6Y/0h8fYPLGvu
- FHNnVdYFjBlGdPNgGiaT7BHDEbSOK+p8H30afYNdPnqTPLcF7dE4oQYgBrs/eLoOCa5l
- GevUnK/XdmwQt6DVS4hw8bsZXkVnU9DRwSQ3x/SYYX7zIib9ep/BCyKhBT9a3bOjnbc+
- IKeyWQ/jBdWO9huM8OXkDOGWSQF4ji2hnKoV5+l2ajFrrx1u2WNY63CSsk1Jr9pwiYIz
- pUIg==
-X-Gm-Message-State: AFq9FYLr+/rbTrAGEOQ7xAY0v1RN6ty1/uzTbAG6MhajH4M64TCl/bGE
- QWEGXhBq8wa3IPmvjM5l74JZAHeWifzb4ipXxNY3uSr4LiV9Vmiiii0SpD/DYb3Y5Og2T9KhdMz
- 9khWgIZYjvVn7W1X69/ao8UGHQs2YtM0SWWoGnZFRAAmP2/87vQDgrodPA3uqO+5lPmgoNSjdzp
- IkLImaP8SQ4YqgObp6BwE=
-X-Gm-Gg: AYBFou05Q+SWJIQYIZKubjqdDYp3DzRTahgenGRg9DJKKkcv4yalgyj8pfhmeJxEGPJ
- 8CxoSWUM9UdgPUCZgwjo4R+j3msKR+TXw2RV18vIde6pF3GDhxqZkAawHOcHvWlhH2UY0NH/Mul
- x/g4lMfqe69vZMAC1/XzW5clHVOefdZluh5POtdLnrK/AF446x6E4NlXdVD382iyvm35Xo3ZB5h
- jrf4iWsTa5EJEEd0PzmnOq1vP2Ff9C2ynVQauPU45ydxvl+
-X-Received: by 2002:a2e:bc1b:0:b0:3ab:690f:829f with SMTP id
- 38308e7fff4ca-3ac6637c6efmr5404871fa.15.1792765063946; 
- Fri, 23 Oct 2026 07:17:43 -0700 (PDT)
-X-Received: by 2002:a2e:bc1b:0:b0:3ab:690f:829f with SMTP id
- 38308e7fff4ca-3ac6637c6efmr5404801fa.15.1792765063556; Fri, 23 Oct 2026
- 07:17:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1033540268;
+	Fri, 23 Oct 2026 16:37:26 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 968C840265
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 16:37:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792766243; x=1824302243;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=wn0iWQQZIBBzR2c5alAozgfW8KjiWbwH7oEk0972SUs=;
+ b=ihDGivsHFKdGp196S872XfDL740GVvkibuJzXRIQPKJvwcMk3PWAkzfp
+ BZRBnwfoBYpaCpyxJYAhrrUwSTc8k8+JedUOsIgrDxgydwedhn7AHCkjr
+ mXFd2oW9kMHw0b/QK+8N+Obel5o6lI2ERVxrySZACtG8y+x3Pg6mhYEGv
+ paxIIocxJsZVHlR4v9THgXJpPUQMvlN5Q9/RquvTVo2LrObCdG40vjpe1
+ 71Up/CPySVIA/af3CZXdQE38zg2bctRgN3nWLqLaPLww7bGNmnV8RtY/k
+ bAtskmpQRsPjiTPEW5v5mvkATBncai7AunXHKO66lLx1BrJ5YRTPkmI9T A==;
+X-CSE-ConnectionGUID: WrnxswB8Q+SMKHAn6LDV+Q==
+X-CSE-MsgGUID: 9zGzExoZSPixW4ZhLB835Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1541665"
+X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
+   d="scan'208";a="1541665"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Oct 2026 07:37:22 -0700
+X-CSE-ConnectionGUID: NtdR8tKmSS2aoX0PXIFT8Q==
+X-CSE-MsgGUID: nTIFx80nSz6HXsyfbe8+Ww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
+   d="scan'208";a="3978769"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Oct 2026 07:37:23 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Fri, 23 Oct 2026 07:37:21 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Fri, 23 Oct 2026 07:37:21 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.60) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Fri, 23 Oct 2026 07:37:21 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ogKiujXc/VSpxZ9BF45a5cbrA2+P7J6OCCXeeCZ5/uwxZg/iNuYdUj+rh9ZfA84mIIOh+hua+IelfDVDn7Xogy6yCImW4WVD8psKq1N/eHUpctB+SvdPAosgSoK4xfI5h3sXWTrov9nSZ0Lr/UTuUEx7XJRP2zlSK9cqY6LQyj6xeJNhOCtIcc3dfkqP/hayKgXi+Yw2mxjupVIEAKQTCwDAvocHrxTRX8VlCybTRZ+8+3GfBC7ufhU94GXSjT8BqT/uIEL82TMnj0Ss2ObekjeR680L146ZNGMhwvLB7tPPiOPiBGlgydBfjd/HKZfbKrM0dbxze0B02gBDZrf1ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a4zJhuTUswswJgcCruCopW4DkH/xAVdJ1oWQEc4TAUI=;
+ b=Tx5LJDfJgKKx+d450HqsDh0faHqlNzEGIwmoAwAfbMjD0tJ3TlM0JKtjBcuy485yU+WqOSb28+MFAX7PcnNSm1InFHdNVkYW42Xw8In+WFZ0NJsSBkJHgKsohWZFL0m/CZrNqCkjpKZC0M/Kf6/Y913MrW9lYMrZm5NK9VIKJJ4rsTFWwKyoegFVVKWSm6jElTAnQ1CFfmO7E1k0CyQudFyH7RgNQ+kZIidYTpKKnx1o5zJXnL97AqJ6o/urUd3Fd9XdplixrcNBf3cizXIvK22bMQL3/L1th1idzriDJfeA3lPP4+cBW5k8hDi0AjCCZdzDWxrL9s0/Xzn6u7c8TA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ SA2PR11MB4923.namprd11.prod.outlook.com (2603:10b6:806:fa::10) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.522.13; Fri, 23 Oct 2026 14:36:42 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.21.0522.017; Fri, 23 Oct 2026
+ 14:36:41 +0000
+Message-ID: <0615fe20-ce56-4ce8-a7d6-be46f741949e@intel.com>
+Date: Fri, 23 Oct 2026 16:36:35 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/8] interrupts: fix event arrays copy on instance
+ duplication
+To: David Marchand <david.marchand@redhat.com>
+CC: <dev@dpdk.org>, Harman Kalra <hkalra@marvell.com>, Ray Kinsella
+ <mdr@ashroe.eu>, Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+References: <5766e02ea3243de1f63eb68efc210719f11815b6.1792763492.git.anatoly.burakov@intel.com>
+ <8e863c1aa5d265fa27560dd27ba61858c217ff3d.1792763492.git.anatoly.burakov@intel.com>
+ <CAJFAV8yi8VxCz8kyuw=Qz155KPzWw2OPGMPJ0nRH+HhBFTMHsw@mail.gmail.com>
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Content-Language: en-US
+In-Reply-To: <CAJFAV8yi8VxCz8kyuw=Qz155KPzWw2OPGMPJ0nRH+HhBFTMHsw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DB9PR01CA0023.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:1d8::28) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <5766e02ea3243de1f63eb68efc210719f11815b6.1792763492.git.anatoly.burakov@intel.com>
- <61924e76b67043fb4b19c09bc60acd00ad26681d.1792763492.git.anatoly.burakov@intel.com>
-In-Reply-To: <61924e76b67043fb4b19c09bc60acd00ad26681d.1792763492.git.anatoly.burakov@intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 23 Oct 2026 16:17:31 +0200
-X-Gm-Features: AclHuK_TYrBRy2QMocucL5_mQ_hS3lULcziGmTf7qlqFpzRdHIsEi0XzYl_6j6k
-Message-ID: <CAJFAV8xnDXmO_S11sqWTW6-s_FG3eUg8=a2BL8b0RgMoVmqaHg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/8] eal/linux: fix closing of event FDs not owned by
- EAL
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Harman Kalra <hkalra@marvell.com>, 
- Cunming Liang <cunming.liang@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: bKGVsrsi_VEyOM9wX2WkJKCw0wxGxdILjMBncevjZfw_1792765064
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|SA2PR11MB4923:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57acff2c-4a2f-4057-f6d6-08df31130dda
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|1800799024|376014|366016|56012099006|4143699003|11063799006|10067099003|22082099003|18002099003|261022075727099003;
+X-Microsoft-Antispam-Message-Info: R/g1HbmXJ8Z1KCBr/gmVHfxbmQ9biKjbaRtdIOK5LHHFcCW4BkF0avCq+mGblYC3pNq21vPU8q5dEY1lipoIB4PkEdhyvr82QFjuczxuZPWcBwkaIQcfaJHPtYskbefV55PNA6QroTUZLdyOcWSgCFlXhqezC6lRYdLgRGe1ih12g/qu6+hDurC3xqJvpxrgpBv4WjvAhRV35U4rvrGnFbcIS1KXY/7FgOpKg/JbPRiScRdH4vpKU6O6tpwHJQcPBpU4zAkdMUwiK5vSuSQtCld5BQuVrJsyNV+pB5CVsMgT0F2nnps+jPOZX4tSrbCd7+LEqNFiP+3GeO3i+GnEvGMbzo8ZPOhckMxOji/HAMwTaW3tknHaxR/ngJYlzO+RdZrItyBC9w3WGKhMwuTwTZTj9IiO+AfTkCywK0Njm0Cl1v5nMhui8BgOLmIYAdA8qc8kJZmRW/pOj1lctlPFyCijKFln26O6XyOHsIWd4m2sr+LCHMzlA8BSKu+4U3VeuGCsFv2CzC8rQfUjLP1zhUMFQmMRNjV5EiNdAV3zFuximX29dVWEhO9qV+tnLUO+0zciwOmbcXPrpxqfXeQ60pEMSKQcQX97RIPc0PGjEcrxV/iT8zjdYFguCk+H9lMK
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(56012099006)(4143699003)(11063799006)(10067099003)(22082099003)(18002099003)(261022075727099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZlNlSDd2aGlpeklXc2RRcDFXWlBWdE1HVnlqYVYyaVl0VmI3M0VkaGQxazIx?=
+ =?utf-8?B?d042M2hZSmh2SDVXQXBGeGZxaVpGQkRpUnJheFR2SGJIejF6QWdKTiswOSsz?=
+ =?utf-8?B?TDFZOEtXdGN6Uk5LcmJNQkF0Nng4a2gvRCtrL1VaQjRCYjkzN1YxT2tkV09F?=
+ =?utf-8?B?MFYrZnJiWkdMRGp6UGtqWWs0bDRnNk1Dd2tZcHluY2JrcXh3cTRLdG11UjZh?=
+ =?utf-8?B?RW1JeGZPcnhoeVd3M2FUbEYwNlN2U3l4NGZhZ2RyNmZaTHV2bXlndXZlZlBH?=
+ =?utf-8?B?RnV1N0FIeURWWXJWUWhNaGlXRUI2Y1FYNDNmYzkzWWd2dDVCWE8wUFFQc2xo?=
+ =?utf-8?B?U1pGNk5SWHkzc2pKUkJaOTlPc1FxcnRCTzVZS0dMQVBOTlNIdUErQkFXNytr?=
+ =?utf-8?B?Q0xtaEN6NGNlaTdXSzV0Mm5YdnJ1anFBQ2c1OVVqRklLUTA5NXNFd09jSDdQ?=
+ =?utf-8?B?aWU0aGVieGNqRnU0K203U1JJemJWNm5RcExGWnFMcjYvNERTbnpNUWlnSjJG?=
+ =?utf-8?B?dE1jNjdlS1dwWVExSUprMlpNanBYTzJlbStaK2FRaUUzd3NPQW5wV0U5elVU?=
+ =?utf-8?B?QjhJR1p2MVNEcENzZ08wdXMwc0JXamNNbnNOeHJKbGF1THFaSkUzOHRPRGV4?=
+ =?utf-8?B?cThDS0c1UEdUS1hta1dvelRjNXMwOE1zSS9USTRIbnR0Zktzb1hvd3RsRDlC?=
+ =?utf-8?B?QS9jdjZnOGtZb04rSFlYSHNsZyt2c0FCdlhDUUc4WW5HOEhBV0xEK2ZmREN4?=
+ =?utf-8?B?Zm9SeWFyWmVGb2oreVR5UCs1MWJjUFlqQUtMenlpNi85UnUwZVZ0OG1aVkVp?=
+ =?utf-8?B?cEorRFNmQlhmWFJkd0JIZEJmNEtRTzM0aGpsQ1pTV2FGMHdGczJ2eGR5TGl1?=
+ =?utf-8?B?a2d6a0FOb2Y0Rk1jOFUvWlkvZ3JOTndiZ20rMDhFMXRnL0JSdnpEeDcwcGJt?=
+ =?utf-8?B?RDVhaWI4VE1abkNzYWxmN2ZjalZXNFZqTWZPU0tjZk9xNW5Db2x5S2pvWHJl?=
+ =?utf-8?B?Rk51dFlGNEt2eFNtc0J4QWxCOXFvMktiSjRJdnlmMTFhVm9vREQ5SG95bW5H?=
+ =?utf-8?B?eE84am0wdEJIUEl2VCtGQmZUUTRsYzh1TU5xUDRQNmphTmgxcW1uWWxxdHpr?=
+ =?utf-8?B?di9tN3puWGJYNWRSN2V5SEEyVlcrMW1yRys5V2pYbm1mN3BocXNaQ3IwakJP?=
+ =?utf-8?B?NFNqS1QxK0E4RlhwWjVxZDNGcjNIQVlzNHB4Z2RLaW5iSkxFbnNNUDFyWExv?=
+ =?utf-8?B?OUNWSkYvdi9QTTlEcldYQWIzVmlnelB4QkhmVk5XM2trYnl5RlVoTGZaNk13?=
+ =?utf-8?B?NUJzQXdEZlBmamtBTkJWSnlTV2V0dnVEZjFWc2pZZmxnZ1AxNGF3dW0ySWov?=
+ =?utf-8?B?alRFaFFoOXRVMHpUeHAxell3TXVid0E3TFJHY2p4NUg2dFlzRENidndqd2lS?=
+ =?utf-8?B?ZlJXbjZPVC9WM1EyVUthZFRjam9YRlVjc3UrcGMxUDJFbm1OYXJmZFV5SXlE?=
+ =?utf-8?B?UnZWOXFFeHQ0ZExvMTFwZEtIbFdrTThWUnBJYTdBWUppaU9VdHRDTnhnTDc1?=
+ =?utf-8?B?bTRrdEpQL0Jwa3FKY1o1MkQ0UWxiS2x6c2Z4MlhpUFl4V2pqdjVoZU5pUXVR?=
+ =?utf-8?B?eGlZdkdScGZSOTdKV2RSdTBld1ZBL1krZ2pRc2ZxdWpoSSt5b0UyZFdONHdK?=
+ =?utf-8?B?d1U2YkcvVm1iY2RuK0QxT0s0QlpLMkFzUEpaZlV0MlVHeHJUcWFWSEkya0Z4?=
+ =?utf-8?B?VmtWUmRIUUtJdEJFaFFMMUowS0EzbUk1RCt6QmZhMVJKdHdRL2ZnYWtyRUhH?=
+ =?utf-8?B?VEEyejAvSDA1UXZtTmNvT1ExbHlyb1ZsTlhxcVF5dDViYjZVY2RqWENKYWVt?=
+ =?utf-8?B?YlE3empUUTN2eVRiKytvZ0t3RkJBN3dDcUhsRkMzb3pJTU9vL0c2cDI4NC9v?=
+ =?utf-8?B?ZlBQZGlBOEpZRmxKR0c4azM4T2FkWnZZS3RtV1ZTMWd1cDh6cUtIaFFLZUdk?=
+ =?utf-8?B?dnBJeU1Na2xjOXBkemdCU1JoSFpIRjRKM1JzMmRCRHlwT3VValh6ZG82UlNv?=
+ =?utf-8?B?a1V3VHVVanhxTGVnQzlwZGRZRW05Kys2RTdBdVlvY1l3c3NUdEdzMDVQWSto?=
+ =?utf-8?B?TDdBU2psNE5pdnBlcmtPYi8vY244OHk1NjZIU2xTeHJCZFQ5MGxDNDhWV3Y2?=
+ =?utf-8?B?U2srUDNXMnpyOEl3Kzd5K05tR1N2YmxuYUdYSThLNTV2bjdqVFVtM2MxaTRJ?=
+ =?utf-8?B?bnVRalRiNC9TY21GRnAzTnNpZ2l0eDlTZFBhOFl5KzVadzBucW8rWHQzOGV5?=
+ =?utf-8?B?N3lwa1BPYUVLbkIrcGJPSTJJRUx4WWlSdy92WHV6R2xhK09xaStwckFTTWJQ?=
+ =?utf-8?Q?00I0Z2L+9tFE+ZVQ=3D?=
+X-Exchange-RoutingPolicyChecked: 430qML57CIOITZbHTgNQFMIglLs2b/ArOBmcc/aIj+u811hAXmETyFPIZ4WD1/JErOYyKZZcvmufB1znqcvoSzRg40WXEViu5T0dzcZcGPiO4cwxvLQy2e+GYaKgcR3/+0L1QZlJ+nGEZlfxzSwQOL1v8srcCcLztEt49FEdizYDt9nnnPfduVWTQoyZeqclYeYVQtG3ArhrtQMuqkf3w4FRnVNqpnW/eT2WYmimrwnq4wCqf4Nfr1QcR1sELGkaydr0RM9kFFcW42uCjVdXEd/WyxMrzkEu9/rVKzhiDWXMT1YbS4daRORvwhv74zGHCzYaHv8kIKshYEyHafjoWQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57acff2c-4a2f-4057-f6d6-08df31130dda
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2026 14:36:41.8180 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BkcYV3f7shQ9okye4JtPmuq1Q2lnO+2Y7yqYvtY9yfK8eDEqiUQvAE0lm4VWi5NEK4gvlWkdRwS7C2eBb7J0X+dtJdvjYIpmYM6li+HTYQ8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4923
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,39 +164,44 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Fri, 23 Oct 2026 at 15:52, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
->
-> rte_intr_efd_disable() decides whether to close the event FDs based on
-> max_intr being greater than nb_efd. This is a side effect of how
-> rte_intr_efd_enable() fills the handle for VFIO MSI-X, where an extra
-> slot is reserved for the misc interrupt, and only indirectly identifies
-> the eventfds that EAL created itself.
->
-> Any driver filling the event FD array for a VDEV or EXT handle and
-> setting max_intr the same way gets its descriptors closed by EAL even
-> though it owns them. The virtio-user driver does exactly this, so its
-> callfds are closed by rte_intr_efd_disable() and then closed again by
-> the driver on uninit.
->
-> Check the interrupt handle type instead, so that only the eventfds
-> created by rte_intr_efd_enable() for VFIO MSI-X are closed.
->
-> Fixes: b9e0662a931d ("eal/linux: add interrupt API for drivers")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+On 10/23/2026 4:15 PM, David Marchand wrote:
+> On Fri, 23 Oct 2026 at 15:51, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+>>
+>> The event FD and epoll event arrays are copied using the number of
+>> entries as a byte count, so only a fraction of the entries make it
+>> into the duplicate.
+>>
+>> Copy the arrays by element size.
+>>
+>> Fixes: b7c984291611 ("interrupts: add allocator and accessors")
+>> Cc: stable@dpdk.org
+>>
+>> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> 
+> Thanks for working on those issues on such short notice.
+> 
+> I already put a series for fixing a number of issues with interrupts.
+> As part of it, I would remove the whole duplication principle.
+> 
+> Could you perhaps test your series on top of mine?
+> 
+> https://patchwork.dpdk.org/project/dpdk/list/?series=39749
+> 
+> 
 
-LGTM.
-Acked-by: David Marchand <david.marchand@redhat.com>
-
+It seems that your patchset makes most of mine obsolete, as only 3 
+commits survived the rebase (incidentally, the ones I had in v2), and 
+the conflicts were trivial enough to resolve on apply IMO. If you like I 
+can rebase my patchset on top of yours so that you may include it in 
+yours and take over?
 
 -- 
-David Marchand
-
+Thanks,
+Anatoly
