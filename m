@@ -1,30 +1,31 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B52606A31B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE48E606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:45:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A7F5B40DFB;
-	Fri, 23 Oct 2026 15:44:14 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6715F40E0F;
+	Fri, 23 Oct 2026 15:44:15 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 124AC40B8D
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:07 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 89BF840299
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:08 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E9C7B1A0040;
- Fri, 23 Oct 2026 15:44:06 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6C0621A0021;
+ Fri, 23 Oct 2026 15:44:08 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B27581A0043;
- Fri, 23 Oct 2026 15:44:06 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3581B1A000A;
+ Fri, 23 Oct 2026 15:44:08 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id AADB918000BF;
- Fri, 23 Oct 2026 21:44:05 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C85F218000B1;
+ Fri, 23 Oct 2026 21:44:06 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4-S3 14/65] bus/fslmc: consume dpaa2 DQRR entries in batches
-Date: Fri, 23 Oct 2026 19:12:54 +0530
-Message-ID: <20261023134346.37727-15-prashant.gupta_3@nxp.com>
+Subject: [PATCH v4-S3 15/65] bus/fslmc: align dpaa2 event port depths with
+ hardware rings
+Date: Fri, 23 Oct 2026 19:12:55 +0530
+Message-ID: <20261023134346.37727-16-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
 References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
@@ -51,229 +52,224 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Jun Yang <jun.yang@nxp.com>
 
-Each DQRR entry consumed by the software portal costs a write to the
-cache-invalidate DCAP register. The DCAP register also supports a vector
-mode where a bitmap of DQRR indices is consumed with a single write, so
-accumulate the indices and flush the vector once half the ring is
-pending. A smaller threshold gives little benefit, and a threshold close
-to the ring size starves WRIOP of DQRR space.
+The event port dequeue and enqueue depths were fixed at 8. A dequeue
+drains the portal DQRR and an enqueue fills the EQCR, so the real limits
+are the sizes of those two rings, which differ per SoC and are known at
+run time. Report them instead, adding qbman_swp_portal_dqrr_size() to
+query the DQRR size (the EQCR size is already available as
+dpaa2_eqcr_size).
 
-Because entries are now released in batches, a caller that stops polling
-a portal must flush the pending vector explicitly. Pass a NULL dequeue
-result to qbman_swp_dqrr_consume() to do that when the eventdev dequeue
-finds the portal dry, when the net PMD finishes draining a portal, and
-when a portal is released back to the bus.
+The Tx adapter enqueue helpers sized their on-stack mbuf arrays from the
+advertised enqueue depth, which no longer bounds the burst the adapter
+may hand them, so bound the copy by the array itself and transmit in
+chunks.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 ---
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  4 ++
- .../fslmc/qbman/include/fsl_qbman_portal.h    |  5 +-
- drivers/bus/fslmc/qbman/qbman_portal.c        | 63 +++++++++++++++++--
- drivers/bus/fslmc/qbman/qbman_portal.h        | 11 +++-
- drivers/event/dpaa2/dpaa2_eventdev.c          |  4 ++
- drivers/net/dpaa2/dpaa2_ethdev.c              |  2 +
- 6 files changed, 81 insertions(+), 8 deletions(-)
+ .../fslmc/qbman/include/fsl_qbman_portal.h    |  7 ++
+ drivers/bus/fslmc/qbman/qbman_portal.c        | 15 ++++
+ drivers/event/dpaa2/dpaa2_eventdev.c          | 72 ++++++++++++-------
+ drivers/event/dpaa2/dpaa2_eventdev.h          |  4 +-
+ 4 files changed, 69 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-index b1443f327a..8af8600935 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-@@ -305,6 +305,10 @@ dpaa2_configure_stashing(struct dpaa2_dpio_dev *dpio_dev, int cpu_id, bool ethrx
- static void dpaa2_put_qbman_swp(struct dpaa2_dpio_dev *dpio_dev)
- {
- 	if (dpio_dev) {
-+		/* consume indices may still be pending in the portal's DQRR
-+		 * consume vector; flush them before the portal is released.
-+		 */
-+		qbman_swp_dqrr_consume(dpio_dev->sw_portal, NULL);
- 		/* rx-queue interrupts (net PMD) can arm a portal without the
- 		 * event driver; tear it down unconditionally. Safe when never
- 		 * armed: intr_deinit returns early if intr is not enabled.
 diff --git a/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h b/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
-index b9e7789766..73e57bcdc1 100644
+index 73e57bcdc1..fb1c6046ae 100644
 --- a/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
 +++ b/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
-@@ -451,7 +451,10 @@ void qbman_swp_prefetch_dqrr_next(struct qbman_swp *s);
-  * qbman_swp_dqrr_consume() -  Consume DQRR entries previously returned from
-  * qbman_swp_dqrr_next().
-  * @s: the software portal object.
-- * @dq: the DQRR entry to be consumed.
-+ * @dq: the DQRR entry to be consumed, NULL to consume the entries accumulated
-+ * so far. Entries are accumulated and consumed in batches, so a caller which
-+ * stops polling the portal must call this with a NULL dq to release the
-+ * entries it has already processed.
-  */
- __rte_internal
- void qbman_swp_dqrr_consume(struct qbman_swp *s, const struct qbman_result *dq);
+@@ -1222,6 +1222,13 @@ __rte_internal
+ int qbman_swp_acquire(struct qbman_swp *s, uint16_t bpid, uint64_t *buffers,
+ 		      unsigned int num_buffers);
+ 
++/**
++ * qbman_swp_portal_dqrr_size() - Number of entries in a portal's DQRR.
++ * @p: the software portal object, NULL to query the SoC's DQRR size.
++ */
++__rte_internal
++uint32_t qbman_swp_portal_dqrr_size(struct qbman_swp *p);
++
+ 	/*****************/
+ 	/* FQ management */
+ 	/*****************/
 diff --git a/drivers/bus/fslmc/qbman/qbman_portal.c b/drivers/bus/fslmc/qbman/qbman_portal.c
-index 7b666d4ef9..28a9d87c3c 100644
+index 28a9d87c3c..307c0e3d24 100644
 --- a/drivers/bus/fslmc/qbman/qbman_portal.c
 +++ b/drivers/bus/fslmc/qbman/qbman_portal.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-  * Copyright (C) 2014-2016 Freescale Semiconductor, Inc.
-- * Copyright 2018-2020,2023-2024 NXP
-+ * Copyright 2018-2020,2023-2024,2026 NXP
-  *
-  */
+@@ -73,6 +73,11 @@ enum qbman_sdqcr_fc {
+ static struct qbman_swp *portal_idx_map[MAX_QBMAN_PORTALS];
  
-@@ -9,13 +9,20 @@
- #include "qbman_portal.h"
- 
- #include <eal_export.h>
-+#include <rte_bitops.h>
- 
- /* QBMan portal management command codes */
- #define QBMAN_MC_ACQUIRE       0x30
- #define QBMAN_WQCHAN_CONFIGURE 0x46
- 
- /* Reverse mapping of QBMAN_CENA_SWP_DQRR() */
--#define QBMAN_IDX_FROM_DQRR(p) (((unsigned long)p & 0x1ff) >> 6)
-+#define QBMAN_IDX_FROM_DQRR(p) (((unsigned long)(p) & 0x1ff) >> 6)
-+
-+/* DCAP consume-index-vector mode: the vector of DQRR indices to consume starts
-+ * at bit 16 of DCAP and bit 8 selects vector mode over single-index mode.
+ uint32_t qman_version;
++/* DQRR size of the portals initialised so far. All portals of a SoC have the
++ * same size, so this doubles as the SoC's DQRR size for callers that have no
++ * portal at hand.
 + */
-+#define DQRR_DCAP_CI_VEC_OFFSET 16
-+#define DQRR_DCAP_CI_VEC_SELECT 0x100
++static uint32_t dpaa2_portal_dqrr_size = 8;
  
- /* QBMan FQ management command codes */
- #define QBMAN_FQ_SCHEDULE	0x48
-@@ -284,6 +291,13 @@ struct qbman_swp *qbman_swp_init(const struct qbman_swp_desc *d)
- 		p->dqrr.dqrr_size = 8;
- 		p->dqrr.reset_bug = 0;
- 	}
-+	/* Consume DQRR entries in vector mode by default and flush the vector
-+	 * once half the ring is pending. A smaller threshold gives little
-+	 * benefit; a threshold close to the ring size starves WRIOP of DQRR
-+	 * space and slows its enqueues down.
-+	 */
-+	p->dqrr.ci_vec_en = p->dqrr.dqrr_size <= (32 - DQRR_DCAP_CI_VEC_OFFSET);
-+	p->dqrr.ci_flush_th = p->dqrr.dqrr_size / 2;
+ /* Internal Function declaration */
+ static int
+@@ -239,6 +244,15 @@ static int (*qbman_swp_release_ptr)(struct qbman_swp *s,
+ 			const uint64_t *buffers, unsigned int num_buffers)
+ 			= qbman_swp_release_direct;
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(qbman_swp_portal_dqrr_size)
++uint32_t qbman_swp_portal_dqrr_size(struct qbman_swp *p)
++{
++	if (p != NULL)
++		return p->dqrr.dqrr_size;
++
++	return dpaa2_portal_dqrr_size;
++}
++
+ /*********************************/
+ /* Portal constructor/destructor */
+ /*********************************/
+@@ -298,6 +312,7 @@ struct qbman_swp *qbman_swp_init(const struct qbman_swp_desc *d)
+ 	 */
+ 	p->dqrr.ci_vec_en = p->dqrr.dqrr_size <= (32 - DQRR_DCAP_CI_VEC_OFFSET);
+ 	p->dqrr.ci_flush_th = p->dqrr.dqrr_size / 2;
++	dpaa2_portal_dqrr_size = p->dqrr.dqrr_size;
  
  	ret = qbman_swp_sys_init(&p->sys, d, p->dqrr.dqrr_size);
  	if (ret) {
-@@ -2225,13 +2239,47 @@ const struct qbman_result *qbman_swp_dqrr_next_mem_back(struct qbman_swp *s)
- 	return p;
- }
- 
--/* Consume DQRR entries previously returned from qbman_swp_dqrr_next(). */
-+/* Write the pending consume vector to DCAP if it holds at least "threshold"
-+ * indices, consuming all of them with a single register access.
-+ */
-+static inline void
-+qbman_swp_dqrr_vec_flush(struct qbman_swp *s, uint8_t threshold)
-+{
-+	if (s->dqrr.ci_count < threshold)
-+		return;
-+
-+	qbman_cinh_write(&s->sys, QBMAN_CINH_SWP_DCAP,
-+			 s->dqrr.ci_vector | DQRR_DCAP_CI_VEC_SELECT);
-+	s->dqrr.ci_vector = 0;
-+	s->dqrr.ci_count = 0;
-+}
-+
-+/* Add a DQRR index to the pending consume vector, flushing it once the
-+ * configured threshold is reached.
-+ */
-+static inline void
-+qbman_swp_dqrr_vec_consume(struct qbman_swp *s, uint8_t idx)
-+{
-+	s->dqrr.ci_vector |= RTE_BIT32(idx + DQRR_DCAP_CI_VEC_OFFSET);
-+	s->dqrr.ci_count++;
-+	qbman_swp_dqrr_vec_flush(s, s->dqrr.ci_flush_th);
-+}
-+
-+/* Consume DQRR entries previously returned from qbman_swp_dqrr_next().
-+ * A NULL dq flushes any indices still pending in the consume vector, which
-+ * the caller must do before it stops polling the portal.
-+ */
- RTE_EXPORT_INTERNAL_SYMBOL(qbman_swp_dqrr_consume)
- void qbman_swp_dqrr_consume(struct qbman_swp *s,
- 			    const struct qbman_result *dq)
- {
--	qbman_cinh_write(&s->sys,
--			QBMAN_CINH_SWP_DCAP, QBMAN_IDX_FROM_DQRR(dq));
-+	if (unlikely(dq == NULL))
-+		qbman_swp_dqrr_vec_flush(s, 1);
-+	else if (s->dqrr.ci_vec_en)
-+		qbman_swp_dqrr_vec_consume(s, QBMAN_IDX_FROM_DQRR(dq));
-+	else
-+		qbman_cinh_write(&s->sys, QBMAN_CINH_SWP_DCAP,
-+				 QBMAN_IDX_FROM_DQRR(dq));
- }
- 
- /* Consume DQRR entries previously returned from qbman_swp_dqrr_next(). */
-@@ -2239,7 +2287,10 @@ RTE_EXPORT_INTERNAL_SYMBOL(qbman_swp_dqrr_idx_consume)
- void qbman_swp_dqrr_idx_consume(struct qbman_swp *s,
- 			    uint8_t dqrr_index)
- {
--	qbman_cinh_write(&s->sys, QBMAN_CINH_SWP_DCAP, dqrr_index);
-+	if (s->dqrr.ci_vec_en)
-+		qbman_swp_dqrr_vec_consume(s, dqrr_index);
-+	else
-+		qbman_cinh_write(&s->sys, QBMAN_CINH_SWP_DCAP, dqrr_index);
- }
- 
- /*********************************/
-diff --git a/drivers/bus/fslmc/qbman/qbman_portal.h b/drivers/bus/fslmc/qbman/qbman_portal.h
-index 1cf7918309..db74db5fe1 100644
---- a/drivers/bus/fslmc/qbman/qbman_portal.h
-+++ b/drivers/bus/fslmc/qbman/qbman_portal.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-  * Copyright (C) 2014-2016 Freescale Semiconductor, Inc.
-- * Copyright 2018-2020 NXP
-+ * Copyright 2018-2020, 2026 NXP
-  *
-  */
- 
-@@ -93,6 +93,15 @@ struct qbman_swp {
- 		uint32_t valid_bit;
- 		uint8_t dqrr_size;
- 		int reset_bug;
-+		/* Consume index vector: instead of writing DCAP once per
-+		 * consumed entry, the indices are accumulated in ci_vector
-+		 * and written with a single DCAP access once ci_count
-+		 * reaches ci_flush_th.
-+		 */
-+		bool ci_vec_en;
-+		uint8_t ci_count;
-+		uint8_t ci_flush_th;
-+		uint32_t ci_vector;
- 	} dqrr;
- 	struct {
- 		uint32_t pi;
 diff --git a/drivers/event/dpaa2/dpaa2_eventdev.c b/drivers/event/dpaa2/dpaa2_eventdev.c
-index 95d9154b11..5d32bd9fd6 100644
+index 5d32bd9fd6..ddcf7b3678 100644
 --- a/drivers/event/dpaa2/dpaa2_eventdev.c
 +++ b/drivers/event/dpaa2/dpaa2_eventdev.c
-@@ -320,6 +320,10 @@ dpaa2_eventdev_dequeue_burst(void *port, struct rte_event ev[],
- 	do {
- 		dq = qbman_swp_dqrr_next(swp);
- 		if (!dq) {
-+			/* portal is dry: consume whatever is still pending in
-+			 * the DQRR consume vector before leaving it idle.
-+			 */
-+			qbman_swp_dqrr_consume(swp, NULL);
- 			if (!num_pkts && timeout_ticks) {
- 				dpaa2_eventdev_dequeue_wait(timeout_ticks);
- 				timeout_ticks = 0;
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index f2ba6d2c7c..0fbc2c77b0 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -3083,6 +3083,8 @@ dpaa2_napi_drain_portal(struct dpaa2_dpio_dev *dpio)
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2017,2019-2022 NXP
++ * Copyright 2017,2019-2022,2026 NXP
+  */
  
- 	while ((dq = qbman_swp_dqrr_next(dpio->sw_portal)))
- 		qbman_swp_dqrr_consume(dpio->sw_portal, dq);
-+	/* flush the indices still pending in the DQRR consume vector */
-+	qbman_swp_dqrr_consume(dpio->sw_portal, NULL);
- 	qbman_swp_interrupt_clear_status(dpio->sw_portal, 0xffffffff);
+ #include <assert.h>
+@@ -389,10 +389,11 @@ dpaa2_eventdev_info_get(struct rte_eventdev *dev,
+ 	/* we only support dpio up to number of cores */
+ 	if (dev_info->max_event_ports > rte_lcore_count())
+ 		dev_info->max_event_ports = rte_lcore_count();
+-	dev_info->max_event_port_dequeue_depth =
+-		DPAA2_EVENT_MAX_PORT_DEQUEUE_DEPTH;
+-	dev_info->max_event_port_enqueue_depth =
+-		DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH;
++	/* A dequeue drains the portal DQRR and an enqueue fills the EQCR, so
++	 * the hardware ring sizes are the real limits.
++	 */
++	dev_info->max_event_port_dequeue_depth = qbman_swp_portal_dqrr_size(NULL);
++	dev_info->max_event_port_enqueue_depth = dpaa2_eqcr_size;
+ 	dev_info->max_num_events = DPAA2_EVENT_MAX_NUM_EVENTS;
+ 	dev_info->event_dev_cap = RTE_EVENT_DEV_CAP_DISTRIBUTED_SCHED |
+ 		RTE_EVENT_DEV_CAP_ATOMIC |
+@@ -527,12 +528,9 @@ dpaa2_eventdev_port_def_conf(struct rte_eventdev *dev, uint8_t port_id,
+ 	RTE_SET_USED(dev);
+ 	RTE_SET_USED(port_id);
+ 
+-	port_conf->new_event_threshold =
+-		DPAA2_EVENT_MAX_NUM_EVENTS;
+-	port_conf->dequeue_depth =
+-		DPAA2_EVENT_MAX_PORT_DEQUEUE_DEPTH;
+-	port_conf->enqueue_depth =
+-		DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH;
++	port_conf->new_event_threshold = DPAA2_EVENT_MAX_NUM_EVENTS;
++	port_conf->dequeue_depth = qbman_swp_portal_dqrr_size(NULL);
++	port_conf->enqueue_depth = dpaa2_eqcr_size;
+ 	port_conf->event_port_cfg = 0;
  }
  
+@@ -977,18 +975,31 @@ dpaa2_eventdev_txa_enqueue_same_dest(void *port,
+ 				     struct rte_event ev[],
+ 				     uint16_t nb_events)
+ {
+-	struct rte_mbuf *m[DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH], *m0;
+-	uint8_t qid, i;
++	struct rte_mbuf *m[MAX_TX_RING_SLOTS], *m0;
++	uint16_t sent = 0, burst, i, port_id;
++	uint8_t qid;
+ 
+ 	RTE_SET_USED(port);
+ 
+-	m0 = (struct rte_mbuf *)ev[0].mbuf;
++	m0 = ev[0].mbuf;
+ 	qid = rte_event_eth_tx_adapter_txq_get(m0);
++	port_id = m0->port;
++
++	/* The advertised enqueue depth is the EQCR size, which may exceed the
++	 * on-stack burst array, so transmit in ring-sized chunks.
++	 */
++	while (sent < nb_events) {
++		burst = RTE_MIN(nb_events - sent, (uint16_t)RTE_DIM(m));
++		for (i = 0; i < burst; i++)
++			m[i] = ev[sent + i].mbuf;
++
++		i = rte_eth_tx_burst(port_id, qid, m, burst);
++		sent += i;
++		if (i < burst)
++			break;
++	}
+ 
+-	for (i = 0; i < nb_events; i++)
+-		m[i] = (struct rte_mbuf *)ev[i].mbuf;
+-
+-	return rte_eth_tx_burst(m0->port, qid, m, nb_events);
++	return sent;
+ }
+ 
+ static uint16_t
+@@ -996,19 +1007,28 @@ dpaa2_eventdev_txa_enqueue(void *port,
+ 			   struct rte_event ev[],
+ 			   uint16_t nb_events)
+ {
+-	void *txq[DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH];
+-	struct rte_mbuf *m[DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH];
+-	uint8_t qid, i;
++	void *txq[MAX_TX_RING_SLOTS];
++	struct rte_mbuf *m[MAX_TX_RING_SLOTS];
++	uint16_t sent = 0, burst, i;
++	uint8_t qid;
+ 
+ 	RTE_SET_USED(port);
+ 
+-	for (i = 0; i < nb_events; i++) {
+-		m[i] = (struct rte_mbuf *)ev[i].mbuf;
+-		qid = rte_event_eth_tx_adapter_txq_get(m[i]);
+-		txq[i] = rte_eth_devices[m[i]->port].data->tx_queues[qid];
++	while (sent < nb_events) {
++		burst = RTE_MIN(nb_events - sent, (uint16_t)RTE_DIM(m));
++		for (i = 0; i < burst; i++) {
++			m[i] = ev[sent + i].mbuf;
++			qid = rte_event_eth_tx_adapter_txq_get(m[i]);
++			txq[i] = rte_eth_devices[m[i]->port].data->tx_queues[qid];
++		}
++
++		i = dpaa2_dev_tx_multi_txq_ordered(txq, m, burst);
++		sent += i;
++		if (i < burst)
++			break;
+ 	}
+ 
+-	return dpaa2_dev_tx_multi_txq_ordered(txq, m, nb_events);
++	return sent;
+ }
+ 
+ static struct eventdev_ops dpaa2_eventdev_ops = {
+diff --git a/drivers/event/dpaa2/dpaa2_eventdev.h b/drivers/event/dpaa2/dpaa2_eventdev.h
+index 3883a26c91..a054dfdbd7 100644
+--- a/drivers/event/dpaa2/dpaa2_eventdev.h
++++ b/drivers/event/dpaa2/dpaa2_eventdev.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2017 NXP
++ * Copyright 2017,2026 NXP
+  */
+ 
+ #ifndef __DPAA2_EVENTDEV_H__
+@@ -22,8 +22,6 @@
+ #define DPAA2_EVENT_MAX_QUEUE_FLOWS		2048
+ #define DPAA2_EVENT_MAX_QUEUE_PRIORITY_LEVELS	8
+ #define DPAA2_EVENT_MAX_EVENT_PRIORITY_LEVELS	0
+-#define DPAA2_EVENT_MAX_PORT_DEQUEUE_DEPTH	8
+-#define DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH	8
+ #define DPAA2_EVENT_MAX_NUM_EVENTS		(INT32_MAX - 1)
+ 
+ #define DPAA2_EVENT_QUEUE_ATOMIC_FLOWS		2048
 -- 
 2.43.0
 
