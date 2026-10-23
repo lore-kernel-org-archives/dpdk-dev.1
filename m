@@ -1,91 +1,76 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91947606A31B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 16:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CCA606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 17:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=KI/7a+8v
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=rwK30edX
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 74F1140DFB;
-	Fri, 23 Oct 2026 18:51:40 +0200 (CEST)
-Received: from mail-pj1-f99.google.com (mail-pj1-f99.google.com
- [209.85.216.99]) by mails.dpdk.org (Postfix) with ESMTP id 6E29640B8D
- for <dev@dpdk.org>; Fri, 23 Oct 2026 18:51:35 +0200 (CEST)
-Received: by mail-pj1-f99.google.com with SMTP id
- 98e67ed59e1d1-38d489b6b71so683483a91.0
- for <dev@dpdk.org>; Fri, 23 Oct 2026 09:51:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5329440268;
+	Fri, 23 Oct 2026 19:11:47 +0200 (CEST)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id A6A1040265
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 19:11:46 +0200 (CEST)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-2e8b20a899fso6747945ad.1
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 10:11:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792775506;
+ x=1793380306; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=wmdmKHBWGekbFIzBtCd0GEFVMx9QsEbYJHweKNbkVk4=;
+ b=rwK30edXBe49UQ0f73p4t/aPb53yw8rOnTvEzkN5yKe2+mcb5iGIYv0QRRwMkjq+Vk
+ wVd4N4L11G78KMdMRcvGM41KNHgdKgJ5SMSpnk3eeRDK6AJ5uvev0r9yymtapZ84JcoX
+ Dt8JjTGm7SzUHvLFTTmfRZNhEBHZDXv/+wgE4ZTk+ow4S1/LMd3Wyj4GCYJwcQUUkQKG
+ lAogi35DNxyLHxjXC/K2WPNZ9MMG2w/tfHmQFPy5TaBF2D9Esb7fUrgyYo3qMvUAxlxl
+ MlBr0VKL7errC7ptsJ/06j4vSf2TGI2HcbSwBhdu/BZE+kCJlamzRh23s5iKkBosaW7m
+ C2Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792774294; x=1793379094;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
+ d=1e100.net; s=20260707; t=1792775506; x=1793380306;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=bHypnYsTcqDh7oE4yncGcQ01vpZn9pvXgE95M1LZIMg=;
- b=OjZLNNxYZGPLLK34SKN50kd4ZqkA5tzXZb/VPpN461hqkWYAPCf1j7+Oqw+UmMdpgm
- +koi/MRwTjmhiQoxkRlZb0b5lQDRwqbqc3OObmrtznQO/1bLwfABrU84aHQdB2UXEDy+
- yGOmTy7I0wlZNbbeQe2mTYcvViv/w5noY3e5/Yf9Ai0hmxDMTVj4huT1ERYV0iXvvz0Y
- +CZ0oEKy1l5GGVdupIOO8wb39Zl6BCdv5i69XZW6z5e5F6Ok6qsBdmzGBf3bBA3HOwOJ
- GtrGRG3+wYEJyMDqH087Ck9mDp3fG7mY7MkuYBp+sy7uAivKccxTxiUEdoSfnL7spoB0
- RibA==
-X-Gm-Message-State: AFq9FYKopMlHi8fGACOTmg23Yubl23qxHNiIVAvuPOhyoWt54OL9cf6m
- 1kZ6l26K2s309sUUreo8L0mcr0K+NTxdI93ap0xShMTEM4DgLh+GO7BmkoH3NuOXOuRtSPKjdnY
- 1M9wetA+/3nUhVSHgyacNkxxjQip3v6resVfhXErk68ZLKKh4DBNWtZMxgtqpLq8Wcfaf9bxU46
- MktXdwFFelIrg5pW4pBtwEXEg/nfFjyulCtUDzqvRgJKE9DSP0XgCm8u49Kx30M3LyCE6B2Qdcw
- bQmXS9WCfJX
-X-Gm-Gg: AYBFou0vVWGYEi9pTwsMnzHM996UMY2mpa+kEEaazTPC+a6DfPTfcc9pWAoo3HnhoBj
- ZO0RsKmS8QksCQDDBV/17Wae5eDnFGAxbh16extZBm0SGEPhq1W2rv/fCaOCAm5+ugocQJnLRR7
- Kn++hx4rIMwA10NYMaLsdHtyKl9L93ZkMBrTG1AdZY39ziuJQOCCSWt0uPA/yj5mYvvYSwnSJ3h
- 2Gv8/5eiKJeWgXAsskuHizMgYaLn480rtoWy9WZkldu5J8BoLxZS2bnY7yHlHEFmDZ9APt2BdKg
- Br7lOvgioY+9vM4mnSo5wt3g770CwnUjUZNsgKDQ3LNsnLwpnJWegZ9DbqBhwTCZ5B5zrRqa5fg
- NCvFf/0NTkHDeucaa8nGSj2i9iaAuynhjDfIha87BOGTLVQATCqtsdGUfHgOfM4Cht5vKzKwBaM
- 6otJhF/uR8siQiVGTMeGNfTN27+sj6rD9InzNhUbK33uNkkUTB2JcB
-X-Received: by 2002:a17:90b:3d86:b0:3ac:9259:1234 with SMTP id
- 98e67ed59e1d1-3adce7a576fmr2237066a91.39.1792774294483; 
- Fri, 23 Oct 2026 09:51:34 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
- by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3ade216cafcsm124436a91.0.2026.10.23.09.51.33
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Fri, 23 Oct 2026 09:51:34 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qt1-f199.google.com with SMTP id
- d75a77b69052e-5337ed1ba44so21848421cf.3
- for <dev@dpdk.org>; Fri, 23 Oct 2026 09:51:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1792774293; x=1793379093; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=bHypnYsTcqDh7oE4yncGcQ01vpZn9pvXgE95M1LZIMg=;
- b=KI/7a+8v15DsBY1fwS/mF7sxlPAOfpSsRbYhg0GFLRGWgeIp/C2H+PptXI9LpAP2Zm
- wwc5bvvA/9fVuN27B13fyhQzUhUQtOTYhOw/LAlevXLCvvekmphdVDiImQB6JFZfPOZ9
- tB0oTmXURbltgNhWqjUnExrHNIvC0ezoh/oaQ=
-X-Received: by 2002:a05:622a:a0d:b0:532:e4bc:b80f with SMTP id
- d75a77b69052e-536c28f47camr35326601cf.60.1792774293185; 
- Fri, 23 Oct 2026 09:51:33 -0700 (PDT)
-X-Received: by 2002:a05:622a:a0d:b0:532:e4bc:b80f with SMTP id
- d75a77b69052e-536c28f47camr35326131cf.60.1792774292266; 
- Fri, 23 Oct 2026 09:51:32 -0700 (PDT)
-Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
+ bh=wmdmKHBWGekbFIzBtCd0GEFVMx9QsEbYJHweKNbkVk4=;
+ b=cG+o6LXHK47A81d+DZ0kAY5AIxdkR+sdfmMsI21rlmqZlueX3m6VCigaJh/q7pDOSm
+ /qR1VEQt0ilmsFlmWubsPwKeJJ8sLJNncsMg82AMiLnJPN1K5AsEL4/piD+DbnCXz1w3
+ UAjVyP809dxxdI6uDTpXVdlOPBavqc1gjMHfZ0e1b2e0R0IxEa4vVOw+axcmirs2yNEa
+ vojYsUkaw+NpSWzKLTt9lRjHN0gc0KfRNBs/vUvRdW2iW1NnmsgivJSkaeqpwwIj/j/F
+ mui7BxtG56SknNIWHWSnXZsvdoaxSSNXoT7L84zNrNcHm+m3xZLrQR5F7jgidlaqJd8o
+ Bv2g==
+X-Gm-Message-State: AFq9FYJnZbNfnr/c0cvTjhtXbk0prmhL74eqVzM/NlfR6bFvSp93rZqv
+ ZAWsQXm9sQeislYRnXYPvBmQ6I7WoZ+J5IF9VOUiAt/Ji/CvHUFBd4mfcaIN/6sAuvq+B06MKFw
+ ch1X15kY=
+X-Gm-Gg: AYBFou1hS1DXlvdy758/LrD6IXfTQnWMRFudc2iT/cr+qFDpwFALX033OJ85QCaGbet
+ 6Q9Kd2Wct7Q0pgpDug+zDFvZqXxnXphWpEhPC6StDZ66eG2Ib7EGdKhNGlC4ydhlAQMudFrze/A
+ u3HIv86fTjMEp/Gd3RZwMyaA2ZMjTT03zXnqYnhFjDfVAPBEyuXnlN1LV/ogtdegSzbjUZfYqbe
+ 2BCLwDNZtikd2q6BryM6eBVdX8xkMdnDOAYWEC59u2qPJM+fEF31vVvyiKPCeRA00vSqKg5IaGn
+ dp6PJ0WLFzgfVpZAOnxDMtnQIabehUTObOZVIC57Sa0pSCQzMnXdh6ZcAuHeruR5TeJH+UOx0di
+ b6lGuosuzapElj39pB80ll8mNCEqTk0k8gZUIUyLDr8xvpHtvjLyLUTiYhlazjReokUOOemB3aY
+ wI2diWZDrXLGrUU8F0eTVxoIuXtsvErDrfUustmXVclM05d6gzDBF9GoOUV5TcnwdXH8cQx8rqE
+ Dq1V0Nwq6FGU4Wllz6a36E8u7hzJT9Ct9zOVdO10EZ4mrvhr+Y0SVGXNgGv1Z5zV5OwqTcsqrBJ
+ 4pTAeUXljLF2OGijErFNUw==
+X-Received: by 2002:a17:902:e811:b0:2e9:514b:7a73 with SMTP id
+ d9443c01a7336-2ea7c341171mr27962215ad.48.1792775505701; 
+ Fri, 23 Oct 2026 10:11:45 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91c45228d8bsm5928056d6.21.2026.10.23.09.51.31
+ d9443c01a7336-2ea946778ccsm3124315ad.9.2026.10.23.10.11.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 23 Oct 2026 09:51:31 -0700 (PDT)
-From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com,
- Keegan Freyhof <keegan.freyhof@broadcom.com>, stable@dpdk.org
-Subject: [PATCH 7/7] net/bnxt: fix cache thrashing for vector Rx and Tx paths
-Date: Fri, 23 Oct 2026 10:54:56 -0600
-Message-ID: <20261023165457.1225312-8-mohammad-shuab.siddique@broadcom.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261023165457.1225312-1-mohammad-shuab.siddique@broadcom.com>
-References: <20261023165457.1225312-1-mohammad-shuab.siddique@broadcom.com>
+ Fri, 23 Oct 2026 10:11:45 -0700 (PDT)
+Date: Fri, 23 Oct 2026 10:11:43 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Frank Dressler <frank@dressler.pro>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 0/2] fix AF_PACKET PMD rollover fanout mode
+Message-ID: <20261023101143.6b47a0ea@phoenix.local>
+In-Reply-To: <20261023162247.276245-1-frank@dressler.pro>
+References: <20261023162247.276245-1-frank@dressler.pro>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,107 +80,33 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-From: Keegan Freyhof <keegan.freyhof@broadcom.com>
+On Fri, 23 Oct 2026 17:22:45 +0100
+Frank Dressler <frank@dressler.pro> wrote:
 
-On Thor2 with 256 byte packets, Rx throughput dropped by about 60
-percent. The AVX2 v3 Rx burst function rearmed the queue at the start
-of a burst once rx_free_thresh buffers were pending, so a large bulk
-of mbufs was fetched at once and pushed the Rx working set out of the
-L1 cache.
+> This series fixes a bug in the AF_PACKET PMD that prevented it from
+> running in rollover fanout mode.
+> 
+> History: 364e08f2bb introduced the AF_PACKET PMD in 2014 and
+> unconditionally set the rollover flag. In 2025, d3bc77ab05 added
+> code allowing the user to select the fanout mode, including rollover
+> mode. Both the flag and the mode were introduced in Linux in 2013
+> with 77f65ebdca but their combination has been rejected ever since.
+> Because of that, rollover mode has never worked in the PMD.
+> 
+> The first patch clears the rollover _flag_ when the rollover _mode_
+> is set.
+> 
+> The second patch adds a test that checks that each fanout mode the
+> PMD supports is accepted by the kernel.
+> 
+> Frank Dressler (2):
+>   net/af_packet: do not set rollover flag in rollover mode
+>   test/af_packet: add test for fanout modes
 
-Rearm once at the end of every Rx call instead, so that mbufs are
-fetched in smaller batches as packets are received. Remove the
-unlikely() hint on the early return in bnxt_rxq_rearm(), since it is
-now taken on most calls.
-
-Also bound the Tx completion loop in the vector Tx burst function by
-the number of packets requested, so that a single call does not
-reclaim an unbounded number of completions.
-
-Fixes: ae347ed1b27d ("net/bnxt: add AVX2 Rx for Thor2")
-Cc: stable@dpdk.org
-
-Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
-Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
----
- drivers/net/bnxt/bnxt_rxtx_vec_avx2.c   | 16 ++++++++++------
- drivers/net/bnxt/bnxt_rxtx_vec_common.h |  2 +-
- 2 files changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-index ee14fe2c5d..aee0d24d2b 100644
---- a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-+++ b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-@@ -831,7 +831,7 @@ bnxt_crx_pkts_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts,
- }
- 
- static void
--bnxt_handle_tx_cp_vec(struct bnxt_tx_queue *txq)
-+bnxt_handle_tx_cp_vec(struct bnxt_tx_queue *txq, uint16_t nb_pkts)
- {
- 	struct bnxt_cp_ring_info *cpr = txq->cp_ring;
- 	uint32_t raw_cons = cpr->cp_raw_cons;
-@@ -869,7 +869,7 @@ bnxt_handle_tx_cp_vec(struct bnxt_tx_queue *txq)
- 			nb_tx_pkts += txcmp->opaque;
- 		}
- 		raw_cons = NEXT_RAW_CMP(raw_cons);
--	} while (nb_tx_pkts < ring_mask);
-+	} while (nb_tx_pkts < nb_pkts && nb_tx_pkts < ring_mask);
- 
- 	if (nb_tx_pkts) {
- 		if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE)
-@@ -1025,7 +1025,7 @@ bnxt_xmit_pkts_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 
- 	/* Handle TX completions */
- 	if (bnxt_tx_bds_in_hw(txq) >= txq->tx_free_thresh)
--		bnxt_handle_tx_cp_vec(txq);
-+		bnxt_handle_tx_cp_vec(txq, nb_pkts);
- 
- 	while (nb_pkts) {
- 		uint16_t ret, num;
-@@ -1369,9 +1369,6 @@ bnxt_recv_pkts_vec_avx2_v3(void *rx_queue, struct rte_mbuf **rx_pkts,
- 	while (nb_pkts) {
- 		uint32_t cons, mbcons, valid_bit, num, num_vec, received = 0;
- 
--		if (rxq->rxrearm_nb >= rxq->rx_free_thresh)
--			bnxt_rxq_rearm(rxq, rxr);
--
- 		valid_bit = !!(cpr->cp_raw_cons & cp_ring_size);
- 		cons = cpr->cp_raw_cons & (cp_ring_size - 1);
- 		mbcons = (cpr->cp_raw_cons / 2) & (rx_ring_size - 1);
-@@ -1416,5 +1413,12 @@ bnxt_recv_pkts_vec_avx2_v3(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			break;
- 	}
- 
-+	/*
-+	 * Rearm after every burst so that mbufs are fetched in small
-+	 * batches rather than in one large bulk at rx_free_thresh, which
-+	 * evicts the Rx working set from the L1 cache.
-+	 */
-+	bnxt_rxq_rearm(rxq, rxr);
-+
- 	return cnt;
- }
-diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_common.h b/drivers/net/bnxt/bnxt_rxtx_vec_common.h
-index 37aa9fb854..bc387d333f 100644
---- a/drivers/net/bnxt/bnxt_rxtx_vec_common.h
-+++ b/drivers/net/bnxt/bnxt_rxtx_vec_common.h
-@@ -67,7 +67,7 @@ bnxt_rxq_rearm(struct bnxt_rx_queue *rxq, struct bnxt_rx_ring_info *rxr)
- 	 */
- 	nb = RTE_MIN(rxq->rxrearm_nb & ~0x3,
- 		     rxq->nb_rx_desc - rxq->rxrearm_start);
--	if (unlikely(nb == 0))
-+	if (nb == 0)
- 		return;
- 
- 	/* Allocate new mbufs into the software ring. */
--- 
-2.47.3
-
+LGTM - applied to next-net
