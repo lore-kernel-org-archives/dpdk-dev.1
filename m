@@ -1,39 +1,37 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A484606A31B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 16:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6390F606A324
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 16:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=dressler.pro header.i=@dressler.pro header.a=rsa-sha256 header.s=uddkim-202310 header.b=RQS86VqI
+	dkim=pass (2048-bit key, unprotected) header.d=dressler.pro header.i=@dressler.pro header.a=rsa-sha256 header.s=uddkim-202310 header.b=bu2W1LqG
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4CCAC406B4;
-	Fri, 23 Oct 2026 18:22:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1BBEA40A67;
+	Fri, 23 Oct 2026 18:22:57 +0200 (CEST)
 Received: from smtp03-ext2.udag.de (smtp03-ext2.udag.de [62.146.106.30])
- by mails.dpdk.org (Postfix) with ESMTP id B4DCA40268;
- Fri, 23 Oct 2026 18:22:54 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 112C540268
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 18:22:55 +0200 (CEST)
 Received: from machine (unknown [37.228.233.148])
- by smtp03-ext2.udag.de (Postfix) with ESMTPA id DD9D4E03BE;
- Fri, 23 Oct 2026 18:22:53 +0200 (CEST)
+ by smtp03-ext2.udag.de (Postfix) with ESMTPA id 7B152E018F;
+ Fri, 23 Oct 2026 18:22:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dressler.pro;
  s=uddkim-202310; t=1792772574;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=WKOkS9TVM8neBG5RCm/+L52nOI6IONiDHzUeguf4LX4=;
- b=RQS86VqILjirCDFfLY6hQYD0bAjlXiazIVR05cNEjFtCtbD3R1BbrYz3/wIlWsiJ0u0u2U
- vh8GT5nGAHnWVQeG9GDsxL/FCTAScyVlk3DFZR1ZYVwl09oLHm63MNylEFDeCiNKY10qNE
- B+FXCNPwdCmD0irzYrPZIJVO9L6sAkraMWHY65M6PftjVl1u986MJZOLbOMOc1XDQpF0SL
- Itg/XzyMp6dRUZl8c/0k838U1DkCPamZTUlp9U3rj8h5QwrNyN1gcA4qLeKjOV/0DqmWNY
- Hgkc85SRkFaICGOg/5O86r8Luwgy2fd9WWeXO1Hiqt5yvCWoDDYbzafqw1NjzQ==
+ bh=pfz4zFEiDpmrA7eqtV3FS0yDQdHIMBGl5LiF8gQk1Wo=;
+ b=bu2W1LqGq770sw2VNH77hFcSYbc8fS8+ukJoF4GH3vIFJvZbHZ+EjN79GevrZZVgtD9Fla
+ WilufhwfobWBvuyDZT7RIXS1Qzh8iMl/d0Icxj8+101KCFwfxuz+CvbHOnYCWPCb5vxkWI
+ ESc4yAb7KgH9krsrKB0kMKg8ptybKH0EdkImsk5sI69Dj6zHIpjwbeLTvKAhEHEFXcaqym
+ rjA/83k85TmNsrdZnE9A6AOGLvUeGvIC3comPUVSKCFlfzkEgFm29R9i/lYx0YH8cd8c9y
+ dO0D9gAM0nfOq1zAVF3FU09avLbkHSrfuxBlfOjVIiG7F5/hsTvWs/7nSyNP2Q==
 Authentication-Results: smtp03-ext2.udag.de;
  auth=pass smtp.auth=dressler-pro-0001 smtp.mailfrom=frank@dressler.pro
 From: Frank Dressler <frank@dressler.pro>
 To: stephen@networkplumber.org
-Cc: dev@dpdk.org,
-	tudor.cornea@gmail.com,
-	stable@dpdk.org
-Subject: [PATCH 1/2] net/af_packet: do not set rollover flag in rollover mode
-Date: Fri, 23 Oct 2026 17:22:46 +0100
-Message-ID: <20261023162247.276245-2-frank@dressler.pro>
+Cc: dev@dpdk.org
+Subject: [PATCH 2/2] test/af_packet: add test for fanout modes
+Date: Fri, 23 Oct 2026 17:22:47 +0100
+Message-ID: <20261023162247.276245-3-frank@dressler.pro>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261023162247.276245-1-frank@dressler.pro>
 References: <20261023162247.276245-1-frank@dressler.pro>
@@ -57,32 +55,73 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The kernel rejects fanout configurations in which both the rollover
-mode and the rollover flag are set. Because the PMD always set the
-flag, the mode never worked.
-
-Fixes: d3bc77ab05a4 ("net/af_packet: allow changing fanout mode")
-Cc: tudor.cornea@gmail.com
-Cc: stable@dpdk.org
+The added test checks if the kernel accepts each of the fanout
+modes the AF_PACKET PMD supports.
 
 Signed-off-by: Frank Dressler <frank@dressler.pro>
 ---
- drivers/net/af_packet/rte_eth_af_packet.c | 2 ++
- 1 file changed, 2 insertions(+)
+ app/test/test_pmd_af_packet.c | 41 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index ef57719803..870536a8b2 100644
---- a/drivers/net/af_packet/rte_eth_af_packet.c
-+++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -844,6 +844,8 @@ get_fanout_mode(const char *fanout_mode)
- 	} else if (!strcmp(fanout_mode, "cpu")) {
- 		load_balance |= PACKET_FANOUT_CPU;
- 	} else if (!strcmp(fanout_mode, "rollover")) {
-+		/* setting both is rejected by kernel */
-+		load_balance &= ~PACKET_FANOUT_FLAG_ROLLOVER;
- 		load_balance |= PACKET_FANOUT_ROLLOVER;
- 	} else if (!strcmp(fanout_mode, "rnd")) {
- 		load_balance |= PACKET_FANOUT_RND;
+diff --git a/app/test/test_pmd_af_packet.c b/app/test/test_pmd_af_packet.c
+index b668ca5b81..478a0a6355 100644
+--- a/app/test/test_pmd_af_packet.c
++++ b/app/test/test_pmd_af_packet.c
+@@ -992,6 +992,46 @@ test_af_packet_multi_queue(void)
+ 	return TEST_SUCCESS;
+ }
+ 
++/*
++ * Test: Fanout modes
++ */
++static int
++test_af_packet_fanout_modes(void)
++{
++	static const char * const modes[] = {
++		"hash", "lb", "cpu", "rollover", "rnd", "qm",
++	};
++	uint16_t test_port;
++	char devargs[256];
++	unsigned int i;
++	int ret;
++
++	if (!tap_created) {
++		printf("SKIPPED: TAP interface not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	for (i = 0; i < RTE_DIM(modes); i++) {
++		snprintf(devargs, sizeof(devargs), "iface=%s,qpairs=2,fanout_mode=%s",
++			 TAP_DEV_NAME, modes[i]);
++
++		ret = rte_vdev_init("net_af_packet_fanout", devargs);
++		TEST_ASSERT(ret == 0,
++			    "Failed to create af_packet sockets with fanout_mode=%s: %d",
++			    modes[i], ret);
++
++		ret = rte_eth_dev_get_port_by_name("net_af_packet_fanout", &test_port);
++		if (ret == 0)
++			rte_eth_dev_close(test_port);
++		rte_vdev_uninit("net_af_packet_fanout");
++		TEST_ASSERT(ret == 0,
++			    "af_packet port with fanout_mode=%s has no port id: %d",
++			    modes[i], ret);
++	}
++
++	return TEST_SUCCESS;
++}
++
+ /*
+  * Multi-threaded test context
+  */
+@@ -1108,6 +1148,7 @@ static struct unit_test_suite af_packet_test_suite = {
+ 		TEST_CASE(test_af_packet_frame_config),
+ 		TEST_CASE(test_af_packet_qdisc_bypass),
+ 		TEST_CASE(test_af_packet_multi_queue),
++		TEST_CASE(test_af_packet_fanout_modes),
+ 
+ 		TEST_CASES_END() /**< NULL terminate unit test array */
+ 	}
 -- 
 2.56.0
 
