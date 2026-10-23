@@ -1,53 +1,48 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB5B606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 09:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696D2606A31D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 09:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NH1UUwW/
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=lMrKw2CB
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1338340A76;
-	Fri, 23 Oct 2026 11:33:02 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id DCC384069D
- for <dev@dpdk.org>; Fri, 23 Oct 2026 11:32:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CC46240299;
+	Fri, 23 Oct 2026 11:36:51 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 50FD840268
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 11:36:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792747973; x=1824283973;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=hq0P4ux0nQWP04k0XinORTQ9i6KtTjg8wnt7boQD5BE=;
- b=NH1UUwW/8ucLcHduLHGjzjIoTyH4lMhTJkKbeiSyOaJ03OQ7pZKCTNGN
- md92bL9or0ZzwswVEl2cj2CS/TN68vd6800wnfGh8dj9HslizElVnzYi7
- 3N/eTBcBIY+6rRoOYCVoIxlrAAxZnMuVRbKQvtcPCAw7diSAcruzcLDpJ
- SjuYIYP4ZKTfPTweZoaOxiPph1LCOsi2h+XrjLU7oCjzML64rdNSlDoum
- mbUs6pwDPU5DnR/KAwHB9mM0fKJsIbfSWvMZMYQ1bEA7ry0CdtENqlcDo
- gq7xFUp10An7oNc+byWUbNwnmCjc58L24OC4x94zgjvC2OJKlude+eEn/ A==;
-X-CSE-ConnectionGUID: TbgSmwzfQEGulEzL1wgqUQ==
-X-CSE-MsgGUID: 9+zp++CFThul8NXzVQHX1w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1498301"
+ t=1792748210; x=1824284210;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=16H0/jcKx4x2GrXQ11Dhu/LPWxiPUdZGvWy9lqaOOkQ=;
+ b=lMrKw2CB67yldenmDa4iBkT0qoG9Wc/F+3AZBP36ormLzRWCVNqcapJu
+ hm/ffVfvbowJ2d/yxuedTKtks3exhXQtPGnZfQMY1W1lLNRyLxt87UspL
+ 9OAhuiBqSYI01zFwSIYGFu6p8t2jUGZTmm19TZCtfuahJQ/GkyixX0QhG
+ HrSCGqmiA7x85f8bqiOekROF1oKS+lv1nE9smYckde6FlWDL8ZYLDxNCR
+ sRGvWcMax9GBFKyZkGTMaOfn0MIafSbocE3ETN4MmgSHFwuxne5zsOA3I
+ /S8F27hzm7MjBbeGPPArwgvtm9SvbvYGfh+l/S2DJ3RER8souiaKa9x98 A==;
+X-CSE-ConnectionGUID: W52l5qe4RmaQKLNkJvzyFQ==
+X-CSE-MsgGUID: mTWlxGudSbaSonoFHjSVHQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1383123"
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="1498301"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Oct 2026 02:32:52 -0700
-X-CSE-ConnectionGUID: tyGwp2q0TPiCTK8lcHi2ug==
-X-CSE-MsgGUID: F80esuOWTaO6XDSSBeyn4g==
+   d="scan'208";a="1383123"
+Received: from fmviesa013.fm.intel.com ([10.60.135.153])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Oct 2026 02:36:49 -0700
+X-CSE-ConnectionGUID: YGrv7mEvSrONU24sEvF53Q==
+X-CSE-MsgGUID: spXswxrfSNiC/VZjQn5pWQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="3509511"
+   d="scan'208";a="5415807"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 23 Oct 2026 02:32:51 -0700
+ by fmviesa013.fm.intel.com with ESMTP; 23 Oct 2026 02:36:47 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Declan Doherty <declan.doherty@intel.com>,
- Radu Nicolau <radu.nicolau@intel.com>, Jingjing Wu <jingjing.wu@intel.com>,
- Abhijit Sinha <abhijit.sinha@intel.com>
-Subject: [PATCH v5 10/10] net/iavf: fix IPsec flow metadata leaks
-Date: Fri, 23 Oct 2026 10:32:30 +0100
-Message-ID: <e502ec6f64df1b464c7b3c687af188a1a374bb2e.1792747917.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Harman Kalra <hkalra@marvell.com>,
+ Cunming Liang <cunming.liang@intel.com>
+Subject: [PATCH v1 1/1] eal/linux: fix eventfd leaks when enabling interrupts
+Date: Fri, 23 Oct 2026 10:36:46 +0100
+Message-ID: <af76b0050fa71836d9663515f5efd66c8c910061.1792748199.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1792747916.git.anatoly.burakov@intel.com>
- <cover.1792747916.git.anatoly.burakov@intel.com>
-References: 
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -67,72 +62,98 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-IPsec flow parsing leaves the pattern-match item allocated after
-extracting its metadata. It also leaves the parsed flow item allocated
-when no metadata output is requested.
+When enabling MSI-X eventfds, a failure after creating some descriptors
+leaves them open. The eventfd count is recorded only after all allocations
+succeed, so disabling eventfds cannot clean up a partial allocation.
 
-Free the pattern-match item after parsing and free the parsed flow item
-when it cannot be returned to the caller. Propagate pattern-match failure
-and report a parsing error when no flow item was produced.
+Calling enable again without disabling first also leaks descriptors by
+overwriting the existing eventfd entries.
 
-Fixes: 6bc987ecb860 ("net/iavf: support IPsec inline crypto")
+Reject repeated MSI-X enable calls with EBUSY before modifying the handle.
+On failure, close all eventfds created by the call, clear their entries
+and reset the eventfd count while preserving the original error.
+
+Fixes: b9e0662a931d ("eal/linux: add interrupt API for drivers")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Radu Nicolau <radu.nicolau@intel.com>
 ---
- drivers/net/intel/iavf/iavf_ipsec_crypto.c | 28 +++++++++++++++-------
- 1 file changed, 20 insertions(+), 8 deletions(-)
+ lib/eal/linux/eal_interrupts.c | 39 +++++++++++++++++++++++++++-------
+ 1 file changed, 31 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-index f7e391a74a0..be0a0d0df6e 100644
---- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-+++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-@@ -1942,6 +1942,7 @@ iavf_ipsec_flow_parse(struct iavf_adapter *ad,
- 		.max_actions = 1,
- 	};
- 	struct iavf_pattern_match_item *item = NULL;
-+	struct iavf_ipsec_flow_item *fi = NULL;
- 	int ret = -1;
+diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
+index 4cfaeba7fe0..ff05d649607 100644
+--- a/lib/eal/linux/eal_interrupts.c
++++ b/lib/eal/linux/eal_interrupts.c
+@@ -1570,30 +1570,43 @@ int
+ rte_intr_efd_enable(struct rte_intr_handle *intr_handle, uint32_t nb_efd)
+ {
+ 	uint32_t i;
+-	int fd;
++	int fd, ret;
+ 	uint32_t n = RTE_MIN(nb_efd, (uint32_t)RTE_MAX_RXTX_INTR_VEC_ID);
  
- 	ret = ci_flow_check_attr(attr, NULL, error);
-@@ -1953,17 +1954,28 @@ iavf_ipsec_flow_parse(struct iavf_adapter *ad,
- 		return ret;
+ 	assert(nb_efd != 0);
  
- 	item = iavf_search_pattern_match_item(pattern, array, array_len, error);
--	if (item && item->meta) {
-+	if (item == NULL)
-+		return -rte_errno;
+ 	if (rte_intr_type_get(intr_handle) == RTE_INTR_HANDLE_VFIO_MSIX) {
++		if (rte_intr_nb_efd_get(intr_handle) != 0) {
++			EAL_LOG(ERR, "Interrupt eventfds are already enabled");
++			return -EBUSY;
++		}
 +
-+	if (item->meta != NULL) {
- 		const struct rte_security_session *session = parsed_actions.actions[0]->conf;
- 		uint32_t type = (uint64_t)(item->meta);
--		struct iavf_ipsec_flow_item *fi =
--				iavf_ipsec_flow_item_parse(ad, pattern, session, type);
--		if (fi && meta) {
--			*meta = fi;
--			ret = 0;
--		}
-+
-+		fi = iavf_ipsec_flow_item_parse(ad, pattern, session, type);
+ 		for (i = 0; i < n; i++) {
+ 			fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+ 			if (fd < 0) {
++				ret = -errno;
+ 				EAL_LOG(ERR,
+ 					"can't setup eventfd, error %i (%s)",
+ 					errno, strerror(errno));
+-				return -errno;
++				goto error;
+ 			}
+ 
+-			if (rte_intr_efds_index_set(intr_handle, i, fd))
+-				return -rte_errno;
++			if (rte_intr_efds_index_set(intr_handle, i, fd)) {
++				ret = -rte_errno;
++				close(fd);
++				goto error;
++			}
+ 		}
+ 
+-		if (rte_intr_nb_efd_set(intr_handle, n))
+-			return -rte_errno;
++		if (rte_intr_nb_efd_set(intr_handle, n)) {
++			ret = -rte_errno;
++			goto error;
++		}
+ 
+-		if (rte_intr_max_intr_set(intr_handle, NB_OTHER_INTR + n))
+-			return -rte_errno;
++		if (rte_intr_max_intr_set(intr_handle, NB_OTHER_INTR + n)) {
++			ret = -rte_errno;
++			goto error;
++		}
+ 	} else if (rte_intr_type_get(intr_handle) == RTE_INTR_HANDLE_VDEV) {
+ 		/* only check, initialization would be done in vdev driver.*/
+ 		if ((uint64_t)rte_intr_efd_counter_size_get(intr_handle) >
+@@ -1611,6 +1624,16 @@ rte_intr_efd_enable(struct rte_intr_handle *intr_handle, uint32_t nb_efd)
  	}
--	return ret;
-+	rte_free(item);
+ 
+ 	return 0;
 +
-+	if (fi == NULL)
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION, NULL,
-+				"Invalid IPsec flow.");
++error:
++	while (i > 0) {
++		i--;
++		close(rte_intr_efds_index_get(intr_handle, i));
++		rte_intr_efds_index_set(intr_handle, i, -1);
++	}
++	rte_intr_nb_efd_set(intr_handle, 0);
 +
-+	if (meta != NULL)
-+		*meta = fi;
-+	else
-+		rte_free(fi);
-+
-+	return 0;
++	return ret;
  }
  
- /*
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_efd_disable)
 -- 
 2.52.0
 
