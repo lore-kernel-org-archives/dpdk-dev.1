@@ -1,47 +1,47 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D52E606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C524606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=GttQmDhx
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Qp+iz01a
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 28AA44060B;
+	by mails.dpdk.org (Postfix) with ESMTP id DE0FA4067B;
 	Fri, 23 Oct 2026 15:07:52 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id DD17F40268
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:07:48 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 16344402ED
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:07:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792760869; x=1824296869;
+ t=1792760870; x=1824296870;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=rizb52r/24Ye5NCZX0QyqjleJxgVDB/5nExYSd/VFmk=;
- b=GttQmDhxF1dCZulOCvSzud3QI2JBDWSZnH6ui8q/7O4klbri4GEDt+co
- pNmpF9rXZjoEZj8syw4ZZ2yjF35M7kvukhO/+vNqK8hYYo5fp8ftJkLAV
- 45nf1XyraPLdCA5depyEHherfUaLgMHceO/7GhkUXG6AVmzHjyMIfLTQn
- j3cUoW+Rz47T/y7ZSjlERkQ60N+RjBJfsadq57zus2E8i4zHVtMGMYXHe
- VS4TvEgqtBVHHr6XtsXscMFfDNofeMpSPh6ECuFZ5yZh8KHVY3Tmiwvu5
- AKsR2T4thzESCjloxRIxH9b9kyjxqo4LIAyQ50caXVsl6ToihQ3O+ZTvo w==;
-X-CSE-ConnectionGUID: adG9FdpESWK8Khtoh2zBYQ==
-X-CSE-MsgGUID: ls6J555ERyyl8ReoqNXDwg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1419020"
+ bh=2OWHehFxhWkof2GJ3vLqIsOrV3jshHZTEWJZYCLv534=;
+ b=Qp+iz01aDP2xgzDhCAFpgVGV79f3XP1OU9NqtUedWSAYj4eQFwyx3s9o
+ jdnvT+ZVflMBfEMwEPFNgwaR31VA2x0i++A3uW4nlx5ubjOw+9EBPcNoD
+ wkKjoEfXe9CbJNtxJpsD8lsO2i8GRpUp+XXEyOaaV2l13Mio8zQCouAfJ
+ PCg9p6K34+lhdUCoguNgENC8iZUdSUzSVc5paM8xeSyGAihCl1X4FV+rw
+ EuakS6Mrd+OR3umq1khbo1AsCoIRCez/WktwHsV2CLCSkxSV/PH8sIijl
+ TPeZG6T21iAQkjluePEHlqpc7gl9fWwxQrArbbk64q/8c0ibbtam865ev w==;
+X-CSE-ConnectionGUID: ut/voEUjQgKD42ikEdxqzQ==
+X-CSE-MsgGUID: ellyImQVR7adWx0y6HpUzw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1419023"
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="1419020"
+   d="scan'208";a="1419023"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Oct 2026 06:07:49 -0700
-X-CSE-ConnectionGUID: dZRFqQkdTNe2ZPX/9FrljQ==
-X-CSE-MsgGUID: nC2Ot5BqTXa2sd5AKxQ1uA==
+ 23 Oct 2026 06:07:50 -0700
+X-CSE-ConnectionGUID: ewOGS+wWS8OsYBillUejXg==
+X-CSE-MsgGUID: /RytxxMZTzCWMRdQQvzzDw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="3582234"
+   d="scan'208";a="3582244"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa005.jf.intel.com with ESMTP; 23 Oct 2026 06:07:48 -0700
+ by orviesa005.jf.intel.com with ESMTP; 23 Oct 2026 06:07:49 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Harman Kalra <hkalra@marvell.com>
-Subject: [PATCH v2 2/3] interrupts: warn on leaked event FDs
-Date: Fri, 23 Oct 2026 14:07:43 +0100
-Message-ID: <b82bd46ea7264a4bc7d93802f5aee93803fecc6b.1792760857.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Harman Kalra <hkalra@marvell.com>,
+ Cunming Liang <cunming.liang@intel.com>
+Subject: [PATCH v2 3/3] eal/linux: fix eventfd leaks when enabling interrupts
+Date: Fri, 23 Oct 2026 14:07:44 +0100
+Message-ID: <fbd6510dc05a0f85a50fc1c1e3188ba05d9dc4e6.1792760857.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <e7b6be04a7ecc26e19a83237bad3753fb5430284.1792760857.git.anatoly.burakov@intel.com>
 References: 
@@ -64,84 +64,102 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Extend the leak warning in rte_intr_instance_free() to the event FD
-array, in the same way as the handle FD and device FD.
+When enabling MSI-X eventfds, a failure after creating some descriptors
+leaves them open. The eventfd count is recorded only after all allocations
+succeed, so disabling eventfds cannot clean up a partial allocation.
 
-rte_intr_efd_disable() used to close the eventfds it owns but left
-the stale descriptors in the array, and never cleared the entry that
-merely references the handle FD in the non-MSI-X case. Reset all
-entries in use to -1 so a properly disabled handle is not reported.
+Calling enable again without disabling first also leaks descriptors by
+overwriting the existing eventfd entries.
 
-Drivers filling the event FD array themselves are expected to reset
-the entries once the descriptors are closed or no longer referenced.
+Reject repeated MSI-X enable calls with EBUSY before modifying the handle.
+Update the eventfd count as each descriptor is created, so that on failure
+every eventfd created by the call can be closed, its entry cleared, and the
+count reset.
 
-Suggested-by: David Marchand <david.marchand@redhat.com>
+Fixes: b9e0662a931d ("eal/linux: add interrupt API for drivers")
+Cc: stable@dpdk.org
+
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- lib/eal/common/eal_common_interrupts.c | 5 +++++
- lib/eal/include/rte_interrupts.h       | 7 ++++++-
- lib/eal/linux/eal_interrupts.c         | 2 ++
- 3 files changed, 13 insertions(+), 1 deletion(-)
+ lib/eal/linux/eal_interrupts.c | 43 ++++++++++++++++++++++++++--------
+ 1 file changed, 33 insertions(+), 10 deletions(-)
 
-diff --git a/lib/eal/common/eal_common_interrupts.c b/lib/eal/common/eal_common_interrupts.c
-index 6368ef17714..41fe4286558 100644
---- a/lib/eal/common/eal_common_interrupts.c
-+++ b/lib/eal/common/eal_common_interrupts.c
-@@ -193,6 +193,11 @@ void rte_intr_instance_free(struct rte_intr_handle *intr_handle)
- 	if (rte_intr_dev_fd_get(intr_handle) >= 0)
- 		EAL_LOG(NOTICE, "Some interrupt handle is leaking a device FD: %d",
- 			rte_intr_dev_fd_get(intr_handle));
-+	for (int i = 0; i < intr_handle->nb_intr; i++) {
-+		if (intr_handle->efds[i] >= 0)
-+			EAL_LOG(NOTICE, "Some interrupt handle is leaking an event FD: %d (index %d)",
-+				intr_handle->efds[i], i);
-+	}
- 	if (RTE_INTR_INSTANCE_USES_RTE_MEMORY(intr_handle->alloc_flags)) {
- 		rte_free(intr_handle->efds);
- 		rte_free(intr_handle->elist);
-diff --git a/lib/eal/include/rte_interrupts.h b/lib/eal/include/rte_interrupts.h
-index d04c0c7b15f..3aeac9092ae 100644
---- a/lib/eal/include/rte_interrupts.h
-+++ b/lib/eal/include/rte_interrupts.h
-@@ -389,6 +389,7 @@ rte_intr_efd_enable(struct rte_intr_handle *intr_handle, uint32_t nb_efd);
-  * @internal
-  * It disables the packet I/O interrupt event.
-  * It deletes registered eventfds and closes the open fds.
-+ * All event fd entries in use are reset to -1.
-  *
-  * @param intr_handle
-  *   Pointer to the interrupt handle.
-@@ -620,12 +621,16 @@ rte_intr_efd_counter_size_get(const struct rte_intr_handle *intr_handle);
-  * @internal
-  * Set the event fd array index with the given fd.
-  *
-+ * Entries still holding a valid fd when the instance is freed are reported
-+ * as leaks, so callers managing the array themselves must reset entries
-+ * to -1 once the fd is closed or no longer referenced.
-+ *
-  * @param intr_handle
-  *  pointer to the interrupt handle.
-  * @param index
-  *  efds array index to be set
-  * @param fd
-- *  event fd
-+ *  event fd, or -1 to clear the entry
-  *
-  * @return
-  *  - On success, zero.
 diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
-index bdee1dd9777..17fe443982b 100644
+index 17fe443982b..59ab0904696 100644
 --- a/lib/eal/linux/eal_interrupts.c
 +++ b/lib/eal/linux/eal_interrupts.c
-@@ -1628,6 +1628,8 @@ rte_intr_efd_disable(struct rte_intr_handle *intr_handle)
- 		for (i = 0; i < (uint32_t)rte_intr_nb_efd_get(intr_handle); i++)
- 			close(rte_intr_efds_index_get(intr_handle, i));
+@@ -1569,31 +1569,45 @@ RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_efd_enable)
+ int
+ rte_intr_efd_enable(struct rte_intr_handle *intr_handle, uint32_t nb_efd)
+ {
+-	uint32_t i;
+-	int fd;
++	int fd, ret;
+ 	uint32_t n = RTE_MIN(nb_efd, (uint32_t)RTE_MAX_RXTX_INTR_VEC_ID);
+ 
+ 	assert(nb_efd != 0);
+ 
+ 	if (rte_intr_type_get(intr_handle) == RTE_INTR_HANDLE_VFIO_MSIX) {
++		uint32_t i;
++
++		if (rte_intr_nb_efd_get(intr_handle) != 0) {
++			EAL_LOG(ERR, "Interrupt eventfds are already enabled");
++			return -EBUSY;
++		}
++
+ 		for (i = 0; i < n; i++) {
+ 			fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+ 			if (fd < 0) {
++				ret = -errno;
+ 				EAL_LOG(ERR,
+ 					"can't setup eventfd, error %i (%s)",
+ 					errno, strerror(errno));
+-				return -errno;
++				goto error;
+ 			}
+ 
+-			if (rte_intr_efds_index_set(intr_handle, i, fd))
+-				return -rte_errno;
++			/* Record each eventfd as it is created so that the
++			 * error path can close exactly those that exist.
++			 */
++			if (rte_intr_efds_index_set(intr_handle, i, fd) ||
++					rte_intr_nb_efd_set(intr_handle, i + 1)) {
++				ret = -rte_errno;
++				close(fd);
++				rte_intr_efds_index_set(intr_handle, i, -1);
++				goto error;
++			}
+ 		}
+ 
+-		if (rte_intr_nb_efd_set(intr_handle, n))
+-			return -rte_errno;
+-
+-		if (rte_intr_max_intr_set(intr_handle, NB_OTHER_INTR + n))
+-			return -rte_errno;
++		if (rte_intr_max_intr_set(intr_handle, NB_OTHER_INTR + n)) {
++			ret = -rte_errno;
++			goto error;
++		}
+ 	} else if (rte_intr_type_get(intr_handle) == RTE_INTR_HANDLE_VDEV) {
+ 		/* only check, initialization would be done in vdev driver.*/
+ 		if ((uint64_t)rte_intr_efd_counter_size_get(intr_handle) >
+@@ -1611,6 +1625,15 @@ rte_intr_efd_enable(struct rte_intr_handle *intr_handle, uint32_t nb_efd)
  	}
-+	for (i = 0; i < (uint32_t)rte_intr_nb_efd_get(intr_handle); i++)
+ 
+ 	return 0;
++
++error:
++	for (int i = 0; i < rte_intr_nb_efd_get(intr_handle); i++) {
++		close(rte_intr_efds_index_get(intr_handle, i));
 +		rte_intr_efds_index_set(intr_handle, i, -1);
- 	rte_intr_nb_efd_set(intr_handle, 0);
- 	rte_intr_max_intr_set(intr_handle, 0);
++	}
++	rte_intr_nb_efd_set(intr_handle, 0);
++
++	return ret;
  }
+ 
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_efd_disable)
 -- 
 2.52.0
 
