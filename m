@@ -1,39 +1,157 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35ED6606A320
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C517606A31D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=DhUchTAu
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A33E4427D7;
-	Fri, 23 Oct 2026 15:45:17 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 5A5CD40E37
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:45:02 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3E9AD1A0038;
- Fri, 23 Oct 2026 15:45:02 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 07EDF1A0021;
- Fri, 23 Oct 2026 15:45:02 +0200 (CEST)
-Received: from lsv031405.swis.in-blr01.nxp.com
- (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 03128180022D;
- Fri, 23 Oct 2026 21:45:00 +0800 (+08)
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
-To: stephen@networkplumber.org,
-	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4-S3 65/65] net/dpaa2: add Tx fast path for no-confirmation
- case
-Date: Fri, 23 Oct 2026 19:13:45 +0530
-Message-ID: <20261023134346.37727-66-prashant.gupta_3@nxp.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
-References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
- <20261023134346.37727-1-prashant.gupta_3@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D715D40B8D;
+	Fri, 23 Oct 2026 15:49:46 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTP id EC7164068A
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:49:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792763383; x=1824299383;
+ h=message-id:date:subject:from:to:references:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=Qgkd1lPjapMclJe+HLP/QTQppWvTTsb/HzbeDwdUaP8=;
+ b=DhUchTAuJfawIwL163rbznJJ/pFYAdTj9ELP5/YwpLC4oEZlhPLUX5Z/
+ fMycs7UzBV6ljBwEZ2B9Iav03ddY28RLRZJFPtKF3TCs7HFukaUBeaDCK
+ SxOi/Qby3f7XErW8Bs7MFS8UvZi+hD/OMB/p9oC5YyBEuZ6Blkb+MCOws
+ qhvtcVUAwQ5/zfuhghLsqLF9Qf95x7pgHCfkja747Fr8ayXWp5Hi3H6Zb
+ khK6ySZvUPIEnZV4l6I1y8a8ZPSFr+kYsfdE8ICqWES99RfoSm7bMK/AI
+ XhPFboL4fYkekHv+q1xV5DFyuMR4WppZRbZAFEKHK4QyIM5DBKPGmR/jb A==;
+X-CSE-ConnectionGUID: LC29Sai/RjCwRQUdJ0AkRQ==
+X-CSE-MsgGUID: hExyXJyuQTGtYmDKLElqjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1414234"
+X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
+   d="scan'208";a="1414234"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Oct 2026 06:49:42 -0700
+X-CSE-ConnectionGUID: 9LbOFR7nQiK4HLlCldbu3w==
+X-CSE-MsgGUID: M3knvrmLQRG2xO/zCdPf5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
+   d="scan'208";a="3632623"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Oct 2026 06:49:42 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Fri, 23 Oct 2026 06:49:41 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49 via Frontend Transport; Fri, 23 Oct 2026 06:49:41 -0700
+Received: from CH4PR04CU002.outbound.protection.outlook.com (40.107.201.70) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.49; Fri, 23 Oct 2026 06:49:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wqe+gLC29/TcXLDf2uBZXSU6G35pPr1CST0Aci3ndQS63I7MMLIkFRjcApS97P1FUUCCDFGmSDWxRiOMX/y56ABtDD7zJeuVVWHl7DBxnvwB9giF+czyTuZ5FUMwpC3+9AiXyr0tmv0d+M9uz/oBmpM9+hTF7jUahSpPNyJwmi87hXfrBS6n4u1bWMCJs7Bvs02sZqJiTZ4HO6tMVwqBa2eynewcRmrqcCocfGQXt/FkXdUNsBiJAfJoiR7QFVafit2OWqKVpjd0182J9csEmghyPcNhEPzy+feN9BFYvzTnmbzAGrQd2BNQ2SzeC9asVlAT8sKAQQ4jEDADcwVGAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=veaGxgH49vBjBQNC3jf2/RGVe67yTmmqCQ9xPk42A9Y=;
+ b=m8FYjsQEClM+G6UmXZGQYLi2zDpyihxOAJCzH7PewDYCuyhG7PcichlpN4aQEYv1IcjjDsmb96bmv5yjUbq4q3RyVhI8GtBG1ELfn58D3iFvksDlYINmfotY/QXDc7tfZ9DYrK2xFTQKJCBvNXwdYJnQkjS2rvB5XTblorR1vDxojrLF/sOKe2cI039NAvgEcYfLEkJiNeYalugfZqjwb1bzymVe625J6tA5GJtMzeMKxHItQpQkcVuXAtF5X7o1OxZ9sf3LtvXGmmuX9vUcKBzkkgc4DR13DGFNwt0jz4iUv/ijSLxS3tda7sgshdn+7R77PY5knCPkhnD+RqApmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ SN7PR11MB6826.namprd11.prod.outlook.com (2603:10b6:806:2a1::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.19; Fri, 23 Oct
+ 2026 13:49:38 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.21.0522.017; Fri, 23 Oct 2026
+ 13:49:37 +0000
+Message-ID: <9b77587f-0b8c-477d-af32-7d69752b8a67@intel.com>
+Date: Fri, 23 Oct 2026 15:49:31 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] bus/pci: fix leaked device FD warning on VFIO unmap
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+To: <dev@dpdk.org>, Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta
+ <nipun.gupta@amd.com>, David Marchand <david.marchand@redhat.com>, "Thomas
+ Monjalon" <thomas@monjalon.net>
+References: <cc295d28b94c6b041c6dbecf0c2c963067bbce90.1792762746.git.anatoly.burakov@intel.com>
+Content-Language: en-US
+In-Reply-To: <cc295d28b94c6b041c6dbecf0c2c963067bbce90.1792762746.git.anatoly.burakov@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PA7P264CA0127.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:36e::19) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|SN7PR11MB6826:EE_
+X-MS-Office365-Filtering-Correlation-Id: 954f6b56-4600-42da-5b3f-08df310c7a34
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|366016|1800799024|23010399003|11063799006|56012099006|261021121427099003|261009223027099003|10067099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: AMSZ+SFKSSIZT6ah7mxnpnep/3eSQVCzhq6/H0MdbYtCcvhPmHYWIPuXXWdcqx9QyEV/vQughC3OMLmbVx2DE7IGyL1fYY4Zan9FqHEy/Q9gU35V/bBwWcEXdfaCCLFD3RmyofcvtX0sNUs/uirFKC6QQ3jmpxTmpeafPzJ0fmaBRwcvRXZ7aDMxT4cCZSNABwCgSDuLjwbT7s/NifzNTVSRBVewDUxAF5ycNL0yuX7Jl1+7/h29EOU4oxrhC84riSDAP3uoH1Yzr23lhtK0VFZSq9ZECKVkQseNfQVxxiAHpbK8N56rgANiut6cFUPYdffsxDFzIQUTHT2IC7nRmC1albg/5mMr9XL4HkN2nF3uBaQF/gGRL6lHHJ0jxEF4dUoBkZSyjjlgUk4+NOtNjPob+oYDAY2+ahXLeddWkox6YxCGMZjk5qyxbxO2rgnzHmdFlkclgcmr7pctsCkZyulUlOmosDAEYUKA9OH7cPk7KZcmHZN0dw8KPjrCPdDUKaqYHtpK4S4GD5SOQLAzoD4nwM5B5DUaPRHEFfFI7YKGIFzakKb64jOFM7M0OV0q04XRuEZNehXaJQ4e4a5Q5m60f5p3ANgrNqOHzlHb6SUHhzivH5vsLew/sGldjZx3piJgLT/E46escIQmdUrYxvPPCIiUNRZANCgaAdMTEEI=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(11063799006)(56012099006)(261021121427099003)(261009223027099003)(10067099003)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dStrRGFYZ3REVGFZSnBKQXBPTFI2R1dKQzBBS2Q0M25XdkhSUWFUZFIyOXVz?=
+ =?utf-8?B?WXdRRkpHZ2ViSkxtZnJWUG9lb0dqN08xNW1jM0ZRcThDL0FDN0FPV0VuZTQw?=
+ =?utf-8?B?SnppVDQxNHI4K1REWDJQWnAzbUYySmQyaVpMUjJDR2xURDZVWVI2cVBRU3Q2?=
+ =?utf-8?B?NXVVeDA0WjFRZTl1d0wrMm1ZcXF6djRhUlc5aDNZYTdlU3BCYW1VUjJUdEYw?=
+ =?utf-8?B?cVpObUMvVDR2WktoaGFreWVML2szN01YK0JMa0xqcnN3dzMyQUgxMWMvcFNq?=
+ =?utf-8?B?Q01CLzNMZU9OeXRta1h2OXlNVjNDeTVpN2FZZTRMTVhGYWtLOGVHaERObDdL?=
+ =?utf-8?B?UVdhaDBGZldlMjlvTDF4MlRHbUNVVkRzMXlLbFpUMW91Mm1GdVNSU3BPcmNo?=
+ =?utf-8?B?TDhHT2c2ODVxNE1weXZVTkVlaHcyMWpLd282MHg5YUkyUmQ4enJuWktzUG5S?=
+ =?utf-8?B?ZW52M21xaEVzc1pRM2ZUcnZCOVM2eDZ6cmZ6K245NW1XRjdLK3M0SzR6QmUz?=
+ =?utf-8?B?d2FEWEVxdExrK3doK1h5bGdqZEFHVmZpUXp4czdXV0ZYVVRKOXlPZGRiUG0w?=
+ =?utf-8?B?ZGVDd3NLSjl6RmFWTEJjT1RnSWQweitQSmNGcmJwQTNGMVNsOW9XQW9VRFJu?=
+ =?utf-8?B?MG1UY1pENERWdnJib2FPS2trQWNPSXhPZkdsbXY5aDdRbytPbXp3WkEvZktp?=
+ =?utf-8?B?TFJnOWZFdy9qMVpnaE1vazVQQ0dZREJUZDg2bVVuMmpteFZkZ0l6UEVCNjhM?=
+ =?utf-8?B?SU5MT3JUYTVBZi9XYVVIaC9ST2x2eVJ3OVZIYWRUZ2dmeUxhWURrYVJMSWw5?=
+ =?utf-8?B?ckhCeEF3cCszNStYSlB1c2pEc21YZXkwVUF3Z0k5ZHFVRDlrdDIvclpoVEVD?=
+ =?utf-8?B?RWYwbGlheHR0bnFWUkRGcGNPSlhyTlZORjhkeW9vUnM0VTZVVkdjNEwvSFhv?=
+ =?utf-8?B?Ly9HZVJVYnFxd2s3UStyT3piamk2K1N2cHpTNEhpV1dxMHkzeWFlMFFSbHpi?=
+ =?utf-8?B?SlhGeHM0UTdMY0h4WnZwZFpoQm95UDNhR3hZNHdNQ2EzYUJFOVlrN0JPY281?=
+ =?utf-8?B?MCtncy9rOWY1a1VlTHhLZWkrdzAzMCtiekZOSkFHSytnMXlLb2pQODFKSmI2?=
+ =?utf-8?B?T2VPRVN3QkdLL1ZKM28rT1hCUklYV29iOEJDZ2tWRy9WUC9nUkkvNkVleHVt?=
+ =?utf-8?B?eVRhWlZuc1N5RlE4Q284QnYxNlhmclY4dUh6QWJtams1ZGpXMXFFdm1MUnZl?=
+ =?utf-8?B?RUJmZ2gwNE9kQUo2eXluajZwbHJZbmFzcnQ4enRlWENRWDMwaTZ3ek9WWlJO?=
+ =?utf-8?B?L3hxcFk0UnJmdmRwT2c5emR5RFM0RThFRG5rSGNzRjl0VTNFcjEvNThzVjMr?=
+ =?utf-8?B?ZURNNUlRMytwVlR6YjkvaDI0dzZUUE52SFBNTEtwM3F5TkRKRTJ2ZUhIZXAx?=
+ =?utf-8?B?YUpEeUxPZDRZREtyVkdxVDZma3A2bFdKUEplTE9YRTNRMnBvcmJvUS95ME1i?=
+ =?utf-8?B?QUFFd0VTTGxOUk4vRnNzeHdBenJFenVCZHI4V2hTVmJidVJ5QTZiSjIzdTh4?=
+ =?utf-8?B?QXVxdjJYbVlWSStyYmFSbEtSS1poS3Q1SlFhZG4rdXBzTCtRaFNPVHBWUDRN?=
+ =?utf-8?B?WnFXdHJQZ0pUYW1tTG96N3Y4ZHd6OEVwMFk1YWtpeTIwM2JQSjRiZmV2R2RW?=
+ =?utf-8?B?c2hpQmNDVjZSa0xnRUxlZFE3SXRWais3UWRLOFBaQysraEtKZVc3YURuVTEw?=
+ =?utf-8?B?eTdzaWNLNHRHK0ZmejFTR3BmWWFkQm8ycms4cXVwZjJQOGZDdlFQVzEyZXJX?=
+ =?utf-8?B?eGMvQmpuYkNzVFcrYk5UTDBzNXhRZnI5K3lmWnBma1Rmd3F5TllkcnVZaldJ?=
+ =?utf-8?B?b0dpeSs0ZDJNN0haakRMSDNkdUNEYWJtSzVNZnJBR1RCTC9JRTZiQlBTVm01?=
+ =?utf-8?B?QU5EWjNleVR6WVRRSVVGRE53NjJmWWF1RnpVNVNKSDcxbmJFaUtISlludTdp?=
+ =?utf-8?B?cGZyUFlJUmd2bjFUVmVHYjhtMVZjZGp3MW12Q05EQWlSaHlTa2Y3OEZOaWVk?=
+ =?utf-8?B?bENGN2NtNk9IazQ1RUpSYmsyRUFNOGZiL1pqdmJDZkNCUFU3WTJCb1dUM2VL?=
+ =?utf-8?B?U1RFckpTeVZyRGllUk9pb3FKNXZGMTNQbk5zR1Jud2hjN1ZTRmZRSFNGNTFn?=
+ =?utf-8?B?dndQd055TGs2dkJIbXlkUU9DdlhpTlN3VFlncjRvVG05Y2FrK2V3dGQwaEhF?=
+ =?utf-8?B?TVhUV1NVOFd6ZnZ2bWlROTJJTDlPMldsUVIrNVU4d0lkaDdWazY2a1JuWkpM?=
+ =?utf-8?B?NUtEQzZISHhYbHlzbXdFbnp5b3pGaXppeWplamx1RWpaWGtydUhQYlhtMlBt?=
+ =?utf-8?Q?VcRAVx/RjVT0IhBk=3D?=
+X-Exchange-RoutingPolicyChecked: Lo7m9/dw5pYoCNUwbI29ORZYKqtj/c/HK2AOWcHoccmGE3U5Gsiw6b0uC2amx4VxesghOkqYqbadZEebz3VH7ZtFRZ5PKj24wfmsp33Yvb1q5CGedycakIfjXedTfEpWSIozLkePCGAbhSQaQT45mkejhJQIE4jbM1rsndfMdNPSZq95RhZTlHGN3KegAB+ZUvfsan/3rnvUGAiuFsxWcxAf7NAxgrMDqBnCxncrz+Xm0oME3Dwd+GU+bm8miZ1GSGe7SeUTFlInA407kTy1a+qcU9BkL8mUQptnAEOtEdeaOG9dcF6YHIwgXAHjL8Z07JDb072HZnf1eQ4xpzNU4w==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 954f6b56-4600-42da-5b3f-08df310c7a34
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2026 13:49:37.0908 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IEwtuQ0SOB+YHUIWXbclKUHk/pb2lTx49FHwdnsj9VAL/U/0aGJQaN/zdhhPg4IOe+MNfBIfNQ11f/2mCsgP0ulQoXaR/E0wVit+GfYSyxg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6826
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,243 +161,56 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-From: Jun Yang <jun.yang@nxp.com>
+On 10/23/2026 3:39 PM, Anatoly Burakov wrote:
+> When unmapping a VFIO device, the interrupt handle FD is closed but the
+> reference to the VFIO device FD is left in the handle. The device FD is
+> owned by the VFIO layer and released separately, so freeing the handle
+> later reports it as leaked.
+> 
+> Clear the reference once the device FD has been retrieved, as is already
+> done for the request notifier handle.
+> 
+> Fixes: d770ee9caed0 ("interrupts: warn on leaked FDs")
+> 
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> ---
+>   drivers/bus/pci/linux/pci_vfio.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
+> index fb35bc1d491..1116603f43f 100644
+> --- a/drivers/bus/pci/linux/pci_vfio.c
+> +++ b/drivers/bus/pci/linux/pci_vfio.c
+> @@ -1091,6 +1091,8 @@ pci_vfio_unmap_resource_primary(struct rte_pci_device *dev)
+>   	vfio_dev_fd = rte_intr_dev_fd_get(dev->intr_handle);
+>   	if (vfio_dev_fd < 0)
+>   		return -1;
+> +	/* vfio_dev_fd is managed by VFIO layer, only clear reference here. */
+> +	rte_intr_dev_fd_set(dev->intr_handle, -1);
+>   
+>   	if (rte_pci_set_bus_master(dev, false)) {
+>   		PCI_LOG(ERR, "%s cannot unset bus mastering for PCI device!", pci_addr);
+> @@ -1135,6 +1137,8 @@ pci_vfio_unmap_resource_secondary(struct rte_pci_device *dev)
+>   	vfio_dev_fd = rte_intr_dev_fd_get(dev->intr_handle);
+>   	if (vfio_dev_fd < 0)
+>   		return -1;
+> +	/* vfio_dev_fd is managed by VFIO layer, only clear reference here. */
+> +	rte_intr_dev_fd_set(dev->intr_handle, -1);
+>   
+>   	ret = dev_vfio_release_device(rte_pci_get_sysfs_path(), pci_addr,
+>   				      vfio_dev_fd);
 
-Split a dedicated Tx fast path out of dpaa2_dev_tx() for the common
-no-confirmation configuration, keeping the hot enqueue loop free of the
-Tx-conf and timestamp bookkeeping needed only by the slow path.
+Those intr_dev_fd_set's should've been put after the 
+dev_vfio_device_release. I'll send a v4 fixing that.
 
-- Add dpaa2_dev_tx_fast() for the DPAA2_TX_NO_CONF case. dpaa2_dev_tx()
-  builds the enqueue descriptor and dispatches straight to it, so the
-  common path no longer runs the per-burst Tx-conf drain or the
-  per-packet timestamp accounting.
-- Factor the retry enqueue loop into dpaa2_dev_tx_enqueue_multiple() and
-  the ordered-queue tail into dpaa2_dev_tx_multi_ordered(), shared by
-  both the fast and slow paths to remove duplicated code.
-- Zero-initialise fd_arr in the slow path and mark the rarely taken
-  branches (congestion retry, VLAN insert, ordered, timestamp) unlikely.
-
-This reduces per-packet work on the common Tx path.
-
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
----
- drivers/net/dpaa2/dpaa2_rxtx.c | 158 +++++++++++++++++++++++++--------
- 1 file changed, 122 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-index 2af5a4745d..312c9bd7d5 100644
---- a/drivers/net/dpaa2/dpaa2_rxtx.c
-+++ b/drivers/net/dpaa2/dpaa2_rxtx.c
-@@ -1511,6 +1511,114 @@ dpaa2_dev_tx_ordered(void *queue, struct rte_mbuf **bufs,
- 	return dpaa2_dev_tx_multi_txq_ordered(mq, bufs, nb_pkts);
- }
- 
-+static __rte_always_inline uint16_t __rte_hot
-+dpaa2_dev_tx_enqueue_multiple(struct qbman_swp *swp,
-+	const struct qbman_fd *fd, uint16_t to_send,
-+	const struct qbman_eq_desc *eqdesc)
-+{
-+	uint16_t loop = 0, retry_count = 0;
-+	int eq_ret;
-+
-+	while (loop < to_send) {
-+		eq_ret = qbman_swp_enqueue_multiple(swp, eqdesc,
-+			&fd[loop], NULL, to_send - loop);
-+		if (unlikely(eq_ret < 0)) {
-+			retry_count++;
-+			if (retry_count > DPAA2_MAX_TX_RETRY_COUNT)
-+				break;
-+		} else {
-+			loop += eq_ret;
-+			retry_count = 0;
-+		}
-+	}
-+
-+	return loop;
-+}
-+
-+static __rte_noinline uint16_t
-+dpaa2_dev_tx_multi_ordered(struct dpaa2_queue *dpaa2_q,
-+	struct rte_mbuf **bufs, uint16_t nb_pkts)
-+{
-+	uint16_t to_send, order_tx = 0, total = 0;
-+
-+order_tx_again:
-+	to_send = (nb_pkts > dpaa2_eqcr_size) ? dpaa2_eqcr_size : nb_pkts;
-+	order_tx = dpaa2_dev_tx_ordered(dpaa2_q, bufs, to_send);
-+	bufs += order_tx;
-+	nb_pkts -= order_tx;
-+	total += order_tx;
-+	if (nb_pkts && order_tx >= to_send)
-+		goto order_tx_again;
-+
-+	return total;
-+}
-+
-+static __rte_always_inline uint16_t __rte_hot
-+dpaa2_dev_tx_fast(struct dpaa2_queue *dpaa2_q, struct rte_mbuf **bufs,
-+	uint16_t nb_pkts, struct qbman_swp *swp, struct qbman_fd *fd_arr,
-+	const struct qbman_eq_desc *eqdesc, struct rte_mempool *hw_mp)
-+{
-+	/* Function to transmit the frames to given device and VQ*/
-+	uint32_t loop, retry_count, frames_to_send;
-+	int32_t ret, order = false;
-+	uint16_t num_tx = 0, eq_ret = 0;
-+
-+tx_again:
-+	/*Check if the queue is congested*/
-+	retry_count = 0;
-+	while (qbman_result_SCN_state(dpaa2_q->cscn)) {
-+		retry_count++;
-+		/* Retry for some time before giving up */
-+		if (retry_count > CONG_RETRY_COUNT)
-+			goto skip_tx;
-+	}
-+
-+	frames_to_send = (nb_pkts > dpaa2_eqcr_size) ? dpaa2_eqcr_size : nb_pkts;
-+
-+	for (loop = 0; loop < frames_to_send; loop++) {
-+		if (unlikely(dpaa2_mbuf_seq_is_flag_set((*bufs),
-+			(DPAA2_ENQUEUE_FLAG_ORP | QBMAN_ENQUEUE_FLAG_DCA)))) {
-+			order = true;
-+			break;
-+		}
-+
-+		if (unlikely((*bufs)->ol_flags & RTE_MBUF_F_TX_VLAN)) {
-+			ret = rte_vlan_insert(bufs);
-+			if (ret)
-+				break;
-+		}
-+		if (likely(RTE_MBUF_DIRECT(*bufs) &&
-+			(*bufs)->pool->ops_index == hw_mp->ops_index &&
-+			(*bufs)->nb_segs == 1 && rte_mbuf_refcnt_read(*bufs) == 1)) {
-+			DPAA2_MBUF_TO_CONTIG_FD((*bufs), &fd_arr[loop],
-+				mempool_to_bpid((*bufs)->pool));
-+			ret = 0;
-+		} else if (unlikely((*bufs)->nb_segs > 1)) {
-+			ret = dpaa2_dev_tx_mbuf_to_sg_fd(hw_mp, *bufs, &fd_arr[loop],
-+				dpaa2_q, DPAA2_TX_NO_CONF, false);
-+		} else {
-+			ret = dpaa2_dev_tx_mbuf_to_simple_fd(hw_mp, *bufs, &fd_arr[loop],
-+				dpaa2_q, DPAA2_TX_NO_CONF, false);
-+		}
-+		if (ret)
-+			break;
-+		bufs++;
-+	}
-+
-+	eq_ret = dpaa2_dev_tx_enqueue_multiple(swp, fd_arr, loop, eqdesc);
-+	num_tx += eq_ret;
-+	nb_pkts -= eq_ret;
-+	if (unlikely(nb_pkts > 0 && !ret && !order))
-+		goto tx_again;
-+
-+skip_tx:
-+	dpaa2_q->tx_pkts += num_tx;
-+	if (unlikely(order && eq_ret >= loop))
-+		num_tx += dpaa2_dev_tx_multi_ordered(dpaa2_q, bufs, nb_pkts);
-+
-+	return num_tx;
-+}
-+
- /*
-  * Callback to handle sending packets through WRIOP based interface
-  */
-@@ -1519,12 +1627,12 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- {
- 	/* Function to transmit the frames to given device and VQ*/
- 	uint32_t loop, retry_count, i, ptp_n, frames_to_send;
--	int32_t ret, tstamp[MAX_TX_RING_SLOTS], ptp_set, order = false, eq_ret = 0;
--	struct qbman_fd fd_arr[MAX_TX_RING_SLOTS];
-+	int32_t ret, tstamp[MAX_TX_RING_SLOTS], ptp_set, order = false;
-+	struct qbman_fd fd_arr[MAX_TX_RING_SLOTS] = {0};
- 	struct qbman_eq_desc eqdesc;
- 	struct dpaa2_queue *dpaa2_q = queue;
- 	struct qbman_swp *swp;
--	uint16_t num_tx = 0, order_tx;
-+	uint16_t num_tx = 0, eq_ret = 0;
- 	struct rte_eth_dev_data *eth_data = dpaa2_q->eth_data;
- 	struct dpaa2_dev_priv *priv = eth_data->dev_private;
- 	struct rte_mempool *hw_mp;
-@@ -1549,15 +1657,15 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	}
- 	hw_mp = priv->bp_list->mp;
- 
--	if (dpaa2_q->tx_conf_queue)
--		dpaa2_dev_tx_conf(dpaa2_q->tx_conf_queue, false);
--
- 	/*Prepare enqueue descriptor*/
- 	qbman_eq_desc_clear(&eqdesc);
- 	qbman_eq_desc_set_no_orp(&eqdesc, DPAA2_EQ_RESP_ERR_FQ);
- 	qbman_eq_desc_set_fq(&eqdesc, dpaa2_q->fqid);
-+	if (likely(priv->tx_conf_type == DPAA2_TX_NO_CONF))
-+		return dpaa2_dev_tx_fast(dpaa2_q, bufs, nb_pkts, swp, fd_arr, &eqdesc, hw_mp);
- 
--	/*Clear the unused FD fields before sending*/
-+	if (dpaa2_q->tx_conf_queue)
-+		dpaa2_dev_tx_conf(dpaa2_q->tx_conf_queue, false);
- 
- tx_again:
- 	/*Check if the queue is congested*/
-@@ -1617,27 +1725,13 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		bufs++;
- 	}
- 
--	frames_to_send = loop;
--	loop = 0;
--	retry_count = 0;
--	while (loop < frames_to_send) {
--		eq_ret = qbman_swp_enqueue_multiple(swp, &eqdesc,
--			&fd_arr[loop], NULL, frames_to_send - loop);
--		if (unlikely(eq_ret < 0)) {
--			retry_count++;
--			if (retry_count > DPAA2_MAX_TX_RETRY_COUNT)
--				break;
--		} else {
--			loop += eq_ret;
--			retry_count = 0;
--		}
--	}
-+	eq_ret = dpaa2_dev_tx_enqueue_multiple(swp, fd_arr, loop, &eqdesc);
-+	num_tx += eq_ret;
-+	nb_pkts -= eq_ret;
- 
--	num_tx += loop;
--	nb_pkts -= loop;
- 	if (priv->tx_conf_type != DPAA2_TX_NO_CONF) {
--		for (i = 0; i < loop; i++) {
--			if (tstamp[i]) {
-+		for (i = 0; i < eq_ret; i++) {
-+			if (unlikely(tstamp[i])) {
- 				rte_atomic_fetch_add_explicit(&dpaa2_q->tx_conf_queue->ts_to_cnfd,
- 					1, rte_memory_order_relaxed);
- 			}
-@@ -1648,16 +1742,8 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 
- skip_tx:
- 	dpaa2_q->tx_pkts += num_tx;
--	if (order && eq_ret >= 0) {
--order_tx_again:
--		frames_to_send = (nb_pkts > dpaa2_eqcr_size) ? dpaa2_eqcr_size : nb_pkts;
--		nb_pkts -= frames_to_send;
--		order_tx = dpaa2_dev_tx_ordered(queue, bufs, frames_to_send);
--		num_tx += order_tx;
--		bufs += frames_to_send;
--		if (nb_pkts && order_tx >= frames_to_send)
--			goto order_tx_again;
--	}
-+	if (unlikely(order && eq_ret >= loop))
-+		num_tx += dpaa2_dev_tx_multi_ordered(dpaa2_q, bufs, nb_pkts);
- 
- 	return num_tx;
- }
 -- 
-2.43.0
-
+Thanks,
+Anatoly
