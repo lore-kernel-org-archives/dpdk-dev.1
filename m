@@ -1,31 +1,30 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA660606A31D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147DB606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:45:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5F2C4060B;
-	Fri, 23 Oct 2026 15:44:07 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 0C48840B8D
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:02 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E078C1A000A;
- Fri, 23 Oct 2026 15:44:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B69AD40A6D;
+	Fri, 23 Oct 2026 15:44:10 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 4680140B92
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:03 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 258A2200041;
+ Fri, 23 Oct 2026 15:44:03 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 802451A0040;
- Fri, 23 Oct 2026 15:44:01 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BD23F200040;
+ Fri, 23 Oct 2026 15:44:02 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1E7271800068;
- Fri, 23 Oct 2026 21:43:59 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3D40D180006C;
+ Fri, 23 Oct 2026 21:44:01 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4-S3 09/65] bus/fslmc: centralize MC version and SoC
- detection in the bus layer
-Date: Fri, 23 Oct 2026 19:12:49 +0530
-Message-ID: <20261023134346.37727-10-prashant.gupta_3@nxp.com>
+Subject: [PATCH v4-S3 10/65] net/dpaa2: remove unused soft parser loader
+Date: Fri, 23 Oct 2026 19:12:50 +0530
+Message-ID: <20261023134346.37727-11-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
 References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
@@ -52,565 +51,806 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Jun Yang <jun.yang@nxp.com>
 
-MC-version and SoC-version detection used to be split across several
-places and done lazily. That meant SoC-dependent globals were only
-populated after the first DPIO was created (anything running before
-that saw zero), the MC compatibility check sat in the VFIO mapping
-function (wrong layer), and the per-SoC table was hard-coded with
-magic numbers inside dpio.c.
+The DPAA2 soft parser (SP) byte code has to be installed by the boot
+firmware before Linux starts; the WRIOP parser cannot be reprogrammed
+once the MC is up. Loading an SP image at run time from the PMD therefore
+never took effect, so the loader and its DPNI_SS_INGRESS plumbing were
+dead code and are removed, together with dpaa2_sparser.c/.h and the
+DPAA2_ENABLE_SOFT_PARSER environment hook.
 
-Collect it all once, at MCP map time, and publish it via a per-device
-rte_fslmc_bus_info handle. Benefits:
-
- - MC version and SoC identity are known as soon as the MCP is
-   mapped, not lazily on first DPIO probe. Code paths that run
-   before DPIO creation (e.g. memory pool / dma map / early
-   dpaa2_svr_family-sensitive logic) now see valid values.
- - The MC compatibility check lives at the right layer and runs for
-   both primary and secondary processes through a single code path.
- - Per-SoC quirks (cluster base/size, DQRR/EQCR ring sizes) are a
-   single table lookup instead of magic numbers scattered across
-   files; adding a new SoC becomes a one-line change.
- - Drivers get MC/SoC info via dpaa2_dev->bus_info and no longer
-   need to call MC commands themselves (dpaa2_fw_version_get() is
-   the first consumer).
+Instead of trying to load an SP image, the presence of a soft parser
+protocol is now detected once from the WRIOP parser CCSR at bus scan
+time (fslmc_soft_parser_protocol_supported()) and exposed through
+priv->sp_protocol. The rte_flow pattern checks that previously relied on
+the run-time dpaa2_soft_parser_loaded() probe now consume priv->sp_protocol
+instead.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 ---
- drivers/bus/fslmc/bus_fslmc_driver.h     |  11 +-
- drivers/bus/fslmc/fslmc_bus.c            |   4 +-
- drivers/bus/fslmc/fslmc_vfio.c           | 141 ++++++++++++++++++++++-
- drivers/bus/fslmc/fslmc_vfio.h           |  24 ++++
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c |  79 +------------
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.h |   9 +-
- drivers/bus/fslmc/private.h              |   3 +-
- drivers/net/dpaa2/dpaa2_ethdev.c         |  18 ++-
- drivers/net/dpaa2/dpaa2_ethdev.h         |   1 +
- drivers/net/dpaa2/dpaa2_rxtx.c           |   7 +-
- 10 files changed, 198 insertions(+), 99 deletions(-)
+ drivers/bus/fslmc/fslmc_bus.c     |  89 +++++++++++++
+ drivers/bus/fslmc/fslmc_logs.h    |   2 +
+ drivers/net/dpaa2/dpaa2_ethdev.c  |  28 +----
+ drivers/net/dpaa2/dpaa2_ethdev.h  |   1 -
+ drivers/net/dpaa2/dpaa2_flow.c    | 114 +++--------------
+ drivers/net/dpaa2/dpaa2_recycle.c |   3 +-
+ drivers/net/dpaa2/dpaa2_sparser.c | 137 --------------------
+ drivers/net/dpaa2/dpaa2_sparser.h | 202 ------------------------------
+ drivers/net/dpaa2/meson.build     |   1 -
+ 9 files changed, 107 insertions(+), 470 deletions(-)
+ delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.c
+ delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.h
 
-diff --git a/drivers/bus/fslmc/bus_fslmc_driver.h b/drivers/bus/fslmc/bus_fslmc_driver.h
-index 44f81cf662..3ba865e632 100644
---- a/drivers/bus/fslmc/bus_fslmc_driver.h
-+++ b/drivers/bus/fslmc/bus_fslmc_driver.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-- *   Copyright 2016,2021-2023 NXP
-+ *   Copyright 2016,2021-2026 NXP
-  *
-  */
- 
-@@ -89,6 +89,14 @@ enum rte_dpaa2_dev_type {
- 	DPAA2_DEVTYPE_MAX,
- };
- 
-+struct rte_fslmc_bus_info {
-+	void *mem_pool;
-+	int sp_protocol;
-+	uint64_t mc_rev;
-+	uint32_t svr;
-+	uint32_t pvr;
-+};
-+
- /**
-  * A structure describing a DPAA2 device.
-  */
-@@ -102,6 +110,7 @@ struct rte_dpaa2_device {
- 	char ep_name[RTE_DEV_NAME_MAX_LEN];
- 	struct rte_intr_handle *intr_handle; /**< Interrupt handle */
- 	char name[FSLMC_OBJECT_MAX_LEN];    /**< DPAA2 Object name*/
-+	const struct rte_fslmc_bus_info *bus_info;
- };
- 
- typedef int (*rte_dpaa2_obj_create_t)(int vdev_fd,
 diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index 7116817c75..de7e9b78c1 100644
+index de7e9b78c1..a418f9a420 100644
 --- a/drivers/bus/fslmc/fslmc_bus.c
 +++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -29,6 +29,7 @@
+@@ -8,6 +8,7 @@
+ #include <dirent.h>
+ #include <stdalign.h>
+ #include <stdbool.h>
++#include <sys/mman.h>
  
- struct rte_bus rte_fslmc_bus;
- static int fslmc_bus_device_count[DPAA2_DEVTYPE_MAX];
-+static struct rte_fslmc_bus_info fslmc_bus_info;
- 
- #define DPAA2_SEQN_DYNFIELD_NAME "dpaa2_seqn_dynfield"
+ #include <eal_export.h>
+ #include <rte_log.h>
+@@ -35,6 +36,93 @@ static struct rte_fslmc_bus_info fslmc_bus_info;
  RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_seqn_dynfield_offset)
-@@ -199,6 +200,7 @@ scan_one_fslmc_device(char *dev_name)
- 		goto cleanup;
- 	}
- 	dev->device.devargs = rte_bus_find_devargs(&rte_fslmc_bus, dev_name);
-+	dev->bus_info = &fslmc_bus_info;
+ int dpaa2_seqn_dynfield_offset = -1;
  
- 	/* Update the device found into the device_count table */
- 	fslmc_bus_device_count[dev->dev_type]++;
-@@ -429,7 +431,7 @@ fslmc_bus_process_iodevices(void)
- 			}
- 
- 			if (!found_mportal) {
--				ret = fslmc_vfio_process_mcp(dev);
-+				ret = fslmc_vfio_process_mcp(dev, &fslmc_bus_info);
- 				if (ret) {
- 					DPAA2_BUS_ERR("Unable to map MC Portal");
- 					return ret;
-diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
-index 5b22e985b1..4897d7a78b 100644
---- a/drivers/bus/fslmc/fslmc_vfio.c
-+++ b/drivers/bus/fslmc/fslmc_vfio.c
-@@ -110,6 +110,83 @@ enum {
- 	FSLMC_VFIO_SOCKET_REQ_MEM
- };
- 
-+/* Variable to store DPAA2 platform type */
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_svr_family)
-+uint32_t dpaa2_svr_family;
++/** For LX2160A, LS2088A and LS1088A*/
++#define WRIOP_CCSR_BASE 0x8b80000
++#define WRIOP_CCSR_CTLU_OFFSET 0
++#define WRIOP_CCSR_CTLU_PARSER_OFFSET 0
++#define WRIOP_CCSR_CTLU_PARSER_INGRESS_OFFSET 0
 +
-+/* Variable to store DPAA2 DQRR size */
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_dqrr_size)
-+uint32_t dpaa2_dqrr_size;
-+/* Variable to store DPAA2 EQCR size */
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_eqcr_size)
-+uint32_t dpaa2_eqcr_size;
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_cluster_base)
-+uint32_t dpaa2_cluster_base;
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_cluster_size)
-+uint32_t dpaa2_cluster_size;
++#define WRIOP_INGRESS_PARSER_PHY \
++	(WRIOP_CCSR_BASE + WRIOP_CCSR_CTLU_OFFSET + \
++	WRIOP_CCSR_CTLU_PARSER_OFFSET + \
++	WRIOP_CCSR_CTLU_PARSER_INGRESS_OFFSET)
 +
-+struct fslmc_soc_type {
-+	uint32_t svr;
-+	uint32_t cluster_base;
-+	uint32_t cluster_size;
-+	uint32_t qm_dq_size;
-+	uint32_t qm_eq_size;
-+};
++struct __rte_packed_begin dpaa2_parser_ccsr {
++	uint32_t psr_cfg;
++	uint32_t psr_idle;
++	uint32_t psr_pclm;
++	uint8_t psr_ver_min;
++	uint8_t psr_ver_maj;
++	uint8_t psr_id1_l;
++	uint8_t psr_id1_h;
++	uint32_t psr_rev2;
++	uint8_t rsv[0x2c];
++	uint8_t sp_ins[4032];
++} __rte_packed_end;
 +
-+/* For LS208X platform There are four clusters with following mapping:
-+ * Cluster 1 (ID = x04) : CPU0, CPU1;
-+ * Cluster 2 (ID = x05) : CPU2, CPU3;
-+ * Cluster 3 (ID = x06) : CPU4, CPU5;
-+ * Cluster 4 (ID = x07) : CPU6, CPU7;
-+ */
-+/* For LS108X platform There are two clusters with following mapping:
-+ * Cluster 1 (ID = x02) : CPU0, CPU1, CPU2, CPU3;
-+ * Cluster 2 (ID = x03) : CPU4, CPU5, CPU6, CPU7;
-+ */
-+/* For LX2160 platform There are four clusters with following mapping:
-+ * Cluster 1 (ID = x00) : CPU0, CPU1;
-+ * Cluster 2 (ID = x01) : CPU2, CPU3;
-+ * Cluster 3 (ID = x02) : CPU4, CPU5;
-+ * Cluster 4 (ID = x03) : CPU6, CPU7;
-+ * Cluster 1 (ID = x04) : CPU8, CPU9;
-+ * Cluster 2 (ID = x05) : CPU10, CP11;
-+ * Cluster 3 (ID = x06) : CPU12, CPU13;
-+ * Cluster 4 (ID = x07) : CPU14, CPU15;
-+ */
++#define SP_PROTOCOL_MAGIC_DATA 0xabcd
++#define SP_PROTOCOL_MAGIC_OFFSET 0x4
 +
-+int
-+fslmc_vfio_core_cluster_sdest(uint32_t cpu_id)
++/** Number of soft parser firmware bytes reported for debugging. */
++#define SP_PRINT_LEN 128
++/** Firmware bytes logged per debug line. */
++#define SP_DUMP_BYTES_PER_LINE 16
++
++static void
++fslmc_soft_parser_protocol_supported(void)
 +{
-+	int x = cpu_id / dpaa2_cluster_size;
++	int fd, i, pos = 0;
++	void *map_addr = NULL;
++	const struct dpaa2_parser_ccsr *parser_ccsr = NULL;
++	const uint16_t *magic_num;
++	char line[SP_DUMP_BYTES_PER_LINE * 3 + 1];
 +
-+	if (!dpaa2_cluster_size) {
-+		DPAA2_BUS_ERR("SoC type has not been initialized!");
-+
-+		return -ENODEV;
++	fd = open("/dev/mem", O_RDWR | O_SYNC);
++	if (fd < 0) {
++		DPAA2_BUS_ERR("open \"/dev/mem\" ERROR(%d)", fd);
++		goto exit;
 +	}
 +
-+	return dpaa2_cluster_base + x;
-+}
-+
-+static const struct fslmc_soc_type s_soc_type[] = {
-+	{
-+		SVR_LS2080A, 4, 2,
-+		DPAA2_DQRR_RING_SIZE, DPAA2_EQCR_RING_SIZE
-+	},
-+	{
-+		SVR_LS2088A, 4, 2,
-+		DPAA2_DQRR_RING_SIZE, DPAA2_EQCR_RING_SIZE
-+	},
-+	{
-+		SVR_LS1080A, 2, 4,
-+		DPAA2_DQRR_RING_SIZE, DPAA2_EQCR_RING_SIZE
-+	},
-+	{
-+		SVR_LX2160A, 0, 2,
-+		DPAA2_LX2_DQRR_RING_SIZE, DPAA2_LX2_EQCR_RING_SIZE
++	map_addr = mmap(NULL, sizeof(struct dpaa2_parser_ccsr),
++		PROT_READ | PROT_WRITE, MAP_SHARED, fd,
++		WRIOP_INGRESS_PARSER_PHY);
++	if (map_addr == MAP_FAILED) {
++		DPAA2_BUS_ERR("Map 0x%" PRIx64 "(size=0x%zx) failed",
++			(uint64_t)WRIOP_INGRESS_PARSER_PHY,
++			sizeof(struct dpaa2_parser_ccsr));
++		map_addr = NULL;
++		goto exit;
 +	}
-+};
++	parser_ccsr = map_addr;
 +
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_get_mcp_ptr)
- void *
- dpaa2_get_mcp_ptr(int portal_idx)
-@@ -191,6 +268,63 @@ rte_fslmc_object_register(struct rte_dpaa2_object *object)
- 	TAILQ_INSERT_TAIL(&dpaa2_obj_list, object, next);
- }
- 
-+static int
-+fslmc_vfio_get_bus_info(void *regs, struct rte_fslmc_bus_info *bus_info)
-+{
-+	struct fsl_mc_io mc_io;
-+	struct mc_version mc_ver_info = {0};
-+	struct mc_soc_version mc_plat_info;
-+	int ret;
-+	size_t i;
++	DPAA2_BUS_DEBUG("Soft ParserID:0x%02x%02x, Rev:maj(%02x), min(%02x)",
++		parser_ccsr->psr_id1_h, parser_ccsr->psr_id1_l,
++		parser_ccsr->psr_ver_maj, parser_ccsr->psr_ver_min);
 +
-+	mc_io.regs = regs;
-+
-+	ret = mc_get_version(&mc_io, CMD_PRI_LOW, &mc_ver_info);
-+	if (ret) {
-+		DPAA2_BUS_ERR("Failed(%d) to obtain MC version.", ret);
-+		return ret;
-+	}
-+	DPAA2_BUS_INFO("MC version is %d.%d.%d.", mc_ver_info.major,
-+		mc_ver_info.minor, mc_ver_info.revision);
-+
-+	bus_info->mc_rev = RTE_FSL_MC_REV(mc_ver_info.major,
-+		mc_ver_info.minor, mc_ver_info.revision);
-+
-+	if (bus_info->mc_rev < RTE_FSL_MC_REV(MC_VER_MAJOR, MC_VER_MINOR, 0)) {
-+		DPAA2_BUS_ERR("DPAA2 MC version not compatible! %d.%d.%d < %d.%d.0",
-+			mc_ver_info.major, mc_ver_info.minor, mc_ver_info.revision,
-+			MC_VER_MAJOR, MC_VER_MINOR);
-+		return -EPERM;
-+	}
-+
-+	memset(&mc_plat_info, 0, sizeof(struct mc_soc_version));
-+	ret = mc_get_soc_version(&mc_io, CMD_PRI_LOW, &mc_plat_info);
-+	if (ret) {
-+		DPAA2_BUS_ERR("Unable to get SoC version err:%d", ret);
-+		return ret;
-+	}
-+
-+	for (i = 0; i < RTE_DIM(s_soc_type); i++) {
-+		if ((mc_plat_info.svr & DPAA2_SVR_MASK) == s_soc_type[i].svr) {
-+			dpaa2_svr_family = s_soc_type[i].svr;
-+			dpaa2_cluster_base = s_soc_type[i].cluster_base;
-+			dpaa2_cluster_size = s_soc_type[i].cluster_size;
-+			dpaa2_dqrr_size = s_soc_type[i].qm_dq_size;
-+			dpaa2_eqcr_size = s_soc_type[i].qm_eq_size;
-+			break;
++	magic_num = (const void *)&parser_ccsr->sp_ins[SP_PROTOCOL_MAGIC_OFFSET];
++	if (*magic_num == SP_PROTOCOL_MAGIC_DATA) {
++		fslmc_bus_info.sp_protocol = true;
++		DPAA2_BUS_NOTICE("Soft parser protocol support.");
++		DPAA2_BUS_NOTICE("First %d bytes of sp protocol firmware:", SP_PRINT_LEN);
++		for (i = 0; i < SP_PRINT_LEN; i++) {
++			pos += snprintf(&line[pos], sizeof(line) - pos,
++				"%02x ", parser_ccsr->sp_ins[i]);
++			if ((i + 1) % SP_DUMP_BYTES_PER_LINE == 0) {
++				DPAA2_BUS_NOTICE("%s", line);
++				pos = 0;
++			}
 +		}
-+	}
-+	if (i == RTE_DIM(s_soc_type)) {
-+		DPAA2_BUS_ERR("Invalid SoC version: 0x%08x", mc_plat_info.svr);
-+		return -ENODEV;
++		if (pos)
++			DPAA2_BUS_NOTICE("%s", line);
 +	}
 +
-+	bus_info->svr = mc_plat_info.svr;
-+	bus_info->pvr = mc_plat_info.pvr;
-+
-+	return 0;
++exit:
++	if (map_addr)
++		munmap(map_addr, sizeof(struct dpaa2_parser_ccsr));
++	if (fd >= 0)
++		close(fd);
 +}
 +
- static const char *
- fslmc_vfio_get_group_name(void)
- {
-@@ -1522,7 +1656,8 @@ fslmc_vfio_process_iodevices(struct rte_dpaa2_device *dev)
- }
- 
- int
--fslmc_vfio_process_mcp(struct rte_dpaa2_device *dev)
-+fslmc_vfio_process_mcp(struct rte_dpaa2_device *dev,
-+	struct rte_fslmc_bus_info *bus_info)
- {
- 	int ret;
- 	void *v_addr;
-@@ -1541,6 +1676,10 @@ fslmc_vfio_process_mcp(struct rte_dpaa2_device *dev)
- 		goto cleanup;
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_fslmc_get_device_count)
+ uint32_t
+ rte_fslmc_get_device_count(enum rte_dpaa2_dev_type device_type)
+@@ -345,6 +433,7 @@ rte_fslmc_scan(void)
+ 		DPAA2_BUS_ERR("Unable to open VFIO group directory");
+ 		goto scan_fail;
  	}
++	fslmc_soft_parser_protocol_supported();
  
-+	ret = fslmc_vfio_get_bus_info(v_addr, bus_info);
-+	if (ret)
-+		goto cleanup;
-+
- 	/* In case of secondary processes, MC version check is no longer
- 	 * required.
- 	 */
-diff --git a/drivers/bus/fslmc/fslmc_vfio.h b/drivers/bus/fslmc/fslmc_vfio.h
-index 5403459a8b..34f2d7759c 100644
---- a/drivers/bus/fslmc/fslmc_vfio.h
-+++ b/drivers/bus/fslmc/fslmc_vfio.h
-@@ -15,6 +15,30 @@
- /* Pathname of FSL-MC devices directory. */
- #define SYSFS_FSL_MC_DEVICES	"/sys/bus/fsl-mc/devices"
+ 	/* Scan the DPRC container object */
+ 	ret = scan_one_fslmc_device(group_name);
+diff --git a/drivers/bus/fslmc/fslmc_logs.h b/drivers/bus/fslmc/fslmc_logs.h
+index 412d160d11..7e27ca4bf4 100644
+--- a/drivers/bus/fslmc/fslmc_logs.h
++++ b/drivers/bus/fslmc/fslmc_logs.h
+@@ -19,6 +19,8 @@ extern int dpaa2_logtype_bus;
  
-+extern uint32_t dpaa2_svr_family;
-+extern uint32_t dpaa2_dqrr_size;
-+extern uint32_t dpaa2_eqcr_size;
-+extern uint32_t dpaa2_cluster_base;
-+extern uint32_t dpaa2_cluster_size;
-+
-+#define DPAA2_SVR_MASK 0xffff0000
-+
-+#define SVR_LS1080A	0x87030000
-+#define SVR_LS2080A	0x87010000
-+#define SVR_LS2088A	0x87090000
-+#define SVR_LX2160A	0x87360000
-+
-+#define MC_MAJOR_OFFSET 32
-+#define MC_MINOR_OFFSET 16
-+#define MC_MINOR_MASK ((((uint64_t)1) << (MC_MAJOR_OFFSET - MC_MINOR_OFFSET)) - 1)
-+#define MC_REVISION_MASK ((((uint64_t)1) << MC_MINOR_OFFSET) - 1)
-+#define RTE_FSL_MC_REV(major, minor, revision) \
-+	((((uint64_t)(major)) << MC_MAJOR_OFFSET) + \
-+	(((uint64_t)(minor)) << MC_MINOR_OFFSET) + (revision))
-+#define RTE_FSL_MC_REV_MAJOR(rev) ((uint32_t)((rev) >> MC_MAJOR_OFFSET))
-+#define RTE_FSL_MC_REV_MINOR(rev) ((uint32_t)(((rev) >> MC_MINOR_OFFSET) & MC_MINOR_MASK))
-+#define RTE_FSL_MC_REV_REVISION(rev) ((uint32_t)((rev) & MC_REVISION_MASK))
-+
- __rte_internal
- int rte_dpaa2_intr_enable(struct rte_intr_handle *intr_handle, int index);
+ #define DPAA2_BUS_INFO(fmt, ...) \
+ 	DPAA2_BUS_LOG(INFO, fmt, ## __VA_ARGS__)
++#define DPAA2_BUS_NOTICE(fmt, ...) \
++	DPAA2_BUS_LOG(NOTICE, fmt, ## __VA_ARGS__)
+ #define DPAA2_BUS_ERR(fmt, ...) \
+ 	DPAA2_BUS_LOG(ERR, fmt, ## __VA_ARGS__)
+ #define DPAA2_BUS_WARN(fmt, ...) \
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index b40f973c4d..195cc922dc 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -29,7 +29,6 @@
+ #include <mc/fsl_dpmng.h>
+ #include <mc/fsl_dpcon.h>
+ #include "dpaa2_ethdev.h"
+-#include "dpaa2_sparser.h"
+ #include <fsl_qbman_debug.h>
+ #include <dpaax_devarg.h>
  
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-index 9fe449ed38..b1443f327a 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-  *   Copyright (c) 2016 Freescale Semiconductor, Inc. All rights reserved.
-- *   Copyright 2016-2022 NXP
-+ *   Copyright 2016-2026 NXP
-  *
-  */
- #include <uapi/linux/vfio.h>
-@@ -63,45 +63,9 @@ static struct dpio_dev_list dpio_dev_list
- 	= TAILQ_HEAD_INITIALIZER(dpio_dev_list); /*!< DPIO device list */
- static uint32_t io_space_count;
- 
--/* Variable to store DPAA2 platform type */
--RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_svr_family)
--uint32_t dpaa2_svr_family;
--
--/* Variable to store DPAA2 DQRR size */
--RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_dqrr_size)
--uint8_t dpaa2_dqrr_size;
--/* Variable to store DPAA2 EQCR size */
--RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_eqcr_size)
--uint8_t dpaa2_eqcr_size;
--
- /* Variable to hold the portal_key, once created.*/
- static pthread_key_t dpaa2_portal_key;
- 
--/*Stashing Macros default for LS208x*/
--static int dpaa2_core_cluster_base = 0x04;
--static int dpaa2_cluster_sz = 2;
--
--/* For LS208X platform There are four clusters with following mapping:
-- * Cluster 1 (ID = x04) : CPU0, CPU1;
-- * Cluster 2 (ID = x05) : CPU2, CPU3;
-- * Cluster 3 (ID = x06) : CPU4, CPU5;
-- * Cluster 4 (ID = x07) : CPU6, CPU7;
-- */
--/* For LS108X platform There are two clusters with following mapping:
-- * Cluster 1 (ID = x02) : CPU0, CPU1, CPU2, CPU3;
-- * Cluster 2 (ID = x03) : CPU4, CPU5, CPU6, CPU7;
-- */
--/* For LX2160 platform There are four clusters with following mapping:
-- * Cluster 1 (ID = x00) : CPU0, CPU1;
-- * Cluster 2 (ID = x01) : CPU2, CPU3;
-- * Cluster 3 (ID = x02) : CPU4, CPU5;
-- * Cluster 4 (ID = x03) : CPU6, CPU7;
-- * Cluster 1 (ID = x04) : CPU8, CPU9;
-- * Cluster 2 (ID = x05) : CPU10, CP11;
-- * Cluster 3 (ID = x06) : CPU12, CPU13;
-- * Cluster 4 (ID = x07) : CPU14, CPU15;
-- */
--
- static struct dpaa2_dpio_dev *get_dpio_dev_from_id(int32_t dpio_id)
- {
- 	struct dpaa2_dpio_dev *dpio_dev = NULL;
-@@ -141,14 +105,6 @@ dpaa2_get_core_id(void)
- 	return cpu_id;
- }
- 
--static int
--dpaa2_core_cluster_sdest(int cpu_id)
--{
--	int x = cpu_id / dpaa2_cluster_sz;
--
--	return dpaa2_core_cluster_base + x;
--}
--
- static void
- dpaa2_affine_dpio_intr_to_respective_core(int32_t dpio_id, int cpu_id)
- {
-@@ -307,15 +263,17 @@ dpaa2_configure_stashing(struct dpaa2_dpio_dev *dpio_dev, int cpu_id, bool ethrx
- 	/* Set the STASH Destination depending on Current CPU ID.
- 	 * Valid values of SDEST are 4,5,6,7. Where,
- 	 */
--	sdest = dpaa2_core_cluster_sdest(cpu_id);
-+	sdest = fslmc_vfio_core_cluster_sdest(cpu_id);
- 	DPAA2_BUS_DEBUG("Portal= %d  CPU= %u SDEST= %d",
- 			dpio_dev->index, cpu_id, sdest);
-+	if (sdest < 0)
-+		return sdest;
- 
- 	ret = dpio_set_stashing_destination(dpio_dev->dpio, CMD_PRI_LOW,
- 					    dpio_dev->token, sdest);
- 	if (ret) {
- 		DPAA2_BUS_ERR("%d ERROR in SDEST",  ret);
--		return -1;
-+		return ret;
+@@ -3688,33 +3687,8 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
  	}
+ 	eth_dev->data->mtu = RTE_ETHER_MTU;
  
- #ifdef RTE_EVENT_DPAA2
-@@ -548,33 +506,6 @@ dpaa2_create_dpio_device(int vdev_fd,
- 		goto err;
- 	}
- 
--	/* find the SoC type for the first time */
--	if (!dpaa2_svr_family) {
--		struct mc_soc_version mc_plat_info = {0};
--
--		if (mc_get_soc_version(dpio_dev->dpio,
--				       CMD_PRI_LOW, &mc_plat_info)) {
--			DPAA2_BUS_ERR("Unable to get SoC version information");
--		} else if ((mc_plat_info.svr & 0xffff0000) == SVR_LS1080A) {
--			dpaa2_core_cluster_base = 0x02;
--			dpaa2_cluster_sz = 4;
--			DPAA2_BUS_DEBUG("LS108x (A53) Platform Detected");
--		} else if ((mc_plat_info.svr & 0xffff0000) == SVR_LX2160A) {
--			dpaa2_core_cluster_base = 0x00;
--			dpaa2_cluster_sz = 2;
--			DPAA2_BUS_DEBUG("LX2160 Platform Detected");
+-	/*TODO To enable soft parser support DPAA2 driver needs to integrate
+-	 * with external entity to receive byte code for software sequence
+-	 * and same will be offload to the H/W using MC interface.
+-	 * Currently it is assumed that DPAA2 driver has byte code by some
+-	 * mean and same if offloaded to H/W.
+-	 */
+-	if (getenv("DPAA2_ENABLE_SOFT_PARSER")) {
+-		WRIOP_SS_INITIALIZER(priv);
+-		ret = dpaa2_eth_load_wriop_soft_parser(priv, DPNI_SS_INGRESS);
+-		if (ret < 0) {
+-			DPAA2_PMD_ERR(" Error(%d) in loading softparser",
+-				      ret);
+-			goto init_err;
 -		}
--		dpaa2_svr_family = (mc_plat_info.svr & 0xffff0000);
 -
--		if (dpaa2_svr_family == SVR_LX2160A) {
--			dpaa2_dqrr_size = DPAA2_LX2_DQRR_RING_SIZE;
--			dpaa2_eqcr_size = DPAA2_LX2_EQCR_RING_SIZE;
--		} else {
--			dpaa2_dqrr_size = DPAA2_DQRR_RING_SIZE;
--			dpaa2_eqcr_size = DPAA2_EQCR_RING_SIZE;
+-		ret = dpaa2_eth_enable_wriop_soft_parser(priv,
+-							 DPNI_SS_INGRESS);
+-		if (ret < 0) {
+-			DPAA2_PMD_ERR(" Error(%d) in enabling softparser",
+-				      ret);
+-			goto init_err;
+-		}
+-	}
++	priv->sp_protocol = dpaa2_dev->bus_info->sp_protocol;
+ 
+-	ret = dpaa2_soft_parser_loaded();
+-	if (ret > 0)
+-		DPAA2_PMD_INFO("soft parser is loaded");
+ 	DPAA2_PMD_INFO("%s: netdev created, connected to %s",
+ 		eth_dev->data->name, dpaa2_dev->ep_name);
+ 
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
+index 08d433a216..5d98c56fa4 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.h
++++ b/drivers/net/dpaa2/dpaa2_ethdev.h
+@@ -637,7 +637,6 @@ int dpaa2_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
+ 
+ int dpaa2_dev_recycle_config(struct rte_eth_dev *eth_dev);
+ int dpaa2_dev_recycle_deconfig(struct rte_eth_dev *eth_dev);
+-int dpaa2_soft_parser_loaded(void);
+ 
+ void
+ dpaa2_dev_mac_setup_stats(struct rte_eth_dev *dev);
+diff --git a/drivers/net/dpaa2/dpaa2_flow.c b/drivers/net/dpaa2/dpaa2_flow.c
+index d9ca7211c7..8e65faf75d 100644
+--- a/drivers/net/dpaa2/dpaa2_flow.c
++++ b/drivers/net/dpaa2/dpaa2_flow.c
+@@ -9,7 +9,6 @@
+ #include <string.h>
+ #include <unistd.h>
+ #include <stdarg.h>
+-#include <sys/mman.h>
+ 
+ #include <rte_ethdev.h>
+ #include <rte_log.h>
+@@ -22,9 +21,9 @@
+ 
+ #include <dpaa2_ethdev.h>
+ #include <dpaa2_pmd_logs.h>
++#include "dpaa2_parser_decode.h"
+ 
+ static char *dpaa2_flow_control_log;
+-static int dpaa2_sp_loaded = -1;
+ 
+ /* Default size of a key */
+ #define DPNI_DEFAULT_KEY_SIZE 24
+@@ -434,92 +433,6 @@ dpaa2_flow_fs_entry_log(const char *log_info,
+ 	DPAA2_FLOW_DUMP("\r\n");
+ }
+ 
+-/** For LX2160A, LS2088A and LS1088A*/
+-#define WRIOP_CCSR_BASE 0x8b80000
+-#define WRIOP_CCSR_CTLU_OFFSET 0
+-#define WRIOP_CCSR_CTLU_PARSER_OFFSET 0
+-#define WRIOP_CCSR_CTLU_PARSER_INGRESS_OFFSET 0
+-
+-#define WRIOP_INGRESS_PARSER_PHY \
+-	(WRIOP_CCSR_BASE + WRIOP_CCSR_CTLU_OFFSET + \
+-	WRIOP_CCSR_CTLU_PARSER_OFFSET + \
+-	WRIOP_CCSR_CTLU_PARSER_INGRESS_OFFSET)
+-
+-struct dpaa2_parser_ccsr {
+-	uint32_t psr_cfg;
+-	uint32_t psr_idle;
+-	uint32_t psr_pclm;
+-	uint8_t psr_ver_min;
+-	uint8_t psr_ver_maj;
+-	uint8_t psr_id1_l;
+-	uint8_t psr_id1_h;
+-	uint32_t psr_rev2;
+-	uint8_t rsv[0x2c];
+-	uint8_t sp_ins[4032];
+-};
+-
+-int
+-dpaa2_soft_parser_loaded(void)
+-{
+-	int fd, i, ret = 0;
+-	struct dpaa2_parser_ccsr *parser_ccsr = NULL;
+-
+-	dpaa2_flow_control_log = getenv("DPAA2_FLOW_CONTROL_LOG");
+-
+-	if (dpaa2_sp_loaded >= 0)
+-		return dpaa2_sp_loaded;
+-
+-	fd = open("/dev/mem", O_RDWR | O_SYNC);
+-	if (fd < 0) {
+-		DPAA2_PMD_ERR("open \"/dev/mem\" ERROR(%d)", fd);
+-		ret = fd;
+-		goto exit;
+-	}
+-
+-	parser_ccsr = mmap(NULL, sizeof(struct dpaa2_parser_ccsr),
+-		PROT_READ | PROT_WRITE, MAP_SHARED, fd,
+-		WRIOP_INGRESS_PARSER_PHY);
+-	if (!parser_ccsr) {
+-		DPAA2_PMD_ERR("Map 0x%" PRIx64 "(size=0x%x) failed",
+-			(uint64_t)WRIOP_INGRESS_PARSER_PHY,
+-			(uint32_t)sizeof(struct dpaa2_parser_ccsr));
+-		ret = -ENOBUFS;
+-		goto exit;
+-	}
+-
+-	DPAA2_PMD_INFO("Parser ID:0x%02x%02x, Rev:major(%02x), minor(%02x)",
+-		parser_ccsr->psr_id1_h, parser_ccsr->psr_id1_l,
+-		parser_ccsr->psr_ver_maj, parser_ccsr->psr_ver_min);
+-
+-	if (dpaa2_flow_control_log) {
+-		for (i = 0; i < 64; i++) {
+-			DPAA2_FLOW_DUMP("%02x ",
+-				parser_ccsr->sp_ins[i]);
+-			if (!((i + 1) % 16))
+-				DPAA2_FLOW_DUMP("\r\n");
 -		}
 -	}
 -
- 	if (dpaa2_svr_family == SVR_LX2160A)
- 		reg_info.index = DPAA2_SWP_CENA_MEM_REGION;
- 	else
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h
-index 7e2271cc35..0838254437 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-  *   Copyright (c) 2016 Freescale Semiconductor, Inc. All rights reserved.
-- *   Copyright 2016-2023 NXP
-+ *   Copyright 2016-2023, 2026 NXP
-  *
-  */
- 
-@@ -35,13 +35,6 @@ RTE_DECLARE_PER_LCORE(struct dpaa2_io_portal_t, _dpaa2_io);
- #define DPAA2_PER_LCORE_DQRR_MBUF(i) \
- 	RTE_PER_LCORE(_dpaa2_io).dpio_dev->dpaa2_held_bufs.mbuf[i]
- 
--/* Variable to store DPAA2 DQRR size */
--extern uint8_t dpaa2_dqrr_size;
--/* Variable to store DPAA2 EQCR size */
--extern uint8_t dpaa2_eqcr_size;
+-	for (i = 0; i < 16; i++) {
+-		if (parser_ccsr->sp_ins[i]) {
+-			dpaa2_sp_loaded = 1;
+-			break;
+-		}
+-	}
+-	if (dpaa2_sp_loaded < 0)
+-		dpaa2_sp_loaded = 0;
 -
--extern struct dpaa2_io_portal_t dpaa2_io_portal[RTE_MAX_LCORE];
+-	ret = dpaa2_sp_loaded;
 -
- /* Affine a DPIO portal to current processing thread */
- __rte_internal
- int dpaa2_affine_qbman_swp(void);
-diff --git a/drivers/bus/fslmc/private.h b/drivers/bus/fslmc/private.h
-index 841dc9c0c6..3586092529 100644
---- a/drivers/bus/fslmc/private.h
-+++ b/drivers/bus/fslmc/private.h
-@@ -9,7 +9,8 @@
+-exit:
+-	if (parser_ccsr)
+-		munmap(parser_ccsr, sizeof(struct dpaa2_parser_ccsr));
+-	if (fd >= 0)
+-		close(fd);
+-
+-	return ret;
+-}
+-
+ static int
+ dpaa2_flow_ip_address_extract(enum net_prot prot,
+ 	uint32_t field)
+@@ -4730,7 +4643,7 @@ dpaa2_configure_qos_table(struct dpaa2_dev_priv *priv,
  
- #include <bus_fslmc_driver.h>
- 
--int fslmc_vfio_process_mcp(struct rte_dpaa2_device *dev);
-+int fslmc_vfio_process_mcp(struct rte_dpaa2_device *dev,
-+	struct rte_fslmc_bus_info *bus_info);
- int fslmc_vfio_process_iodevices(struct rte_dpaa2_device *dev);
- 
- void fslmc_vfio_close_iodevices(struct rte_dpaa2_device *dev);
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index f697454d1a..b40f973c4d 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -369,24 +369,21 @@ dpaa2_fw_version_get(struct rte_eth_dev *dev,
- 	char *fw_version, size_t fw_size)
+ static int
+ dpaa2_flow_item_convert(const struct rte_flow_item pattern[],
+-			struct rte_dpaa2_flow_item **dpaa2_pattern)
++	struct rte_dpaa2_flow_item **dpaa2_pattern, int sp_protocol)
  {
- 	int ret;
-+	uint32_t major, minor, rev;
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
- 	struct fsl_mc_io *dpni = dev->process_private;
- 	struct mc_soc_version mc_plat_info = {0};
--	struct mc_version mc_ver_info = {0};
- 
- 	PMD_INIT_FUNC_TRACE();
- 
-+	major = RTE_FSL_MC_REV_MAJOR(priv->mc_rev);
-+	minor = RTE_FSL_MC_REV_MINOR(priv->mc_rev);
-+	rev = RTE_FSL_MC_REV_REVISION(priv->mc_rev);
- 	if (mc_get_soc_version(dpni, CMD_PRI_LOW, &mc_plat_info))
- 		DPAA2_PMD_WARN("\tmc_get_soc_version failed");
- 
--	if (mc_get_version(dpni, CMD_PRI_LOW, &mc_ver_info))
--		DPAA2_PMD_WARN("\tmc_get_version failed");
--
--	ret = snprintf(fw_version, fw_size,
--		       "%x-%d.%d.%d",
--		       mc_plat_info.svr,
--		       mc_ver_info.major,
--		       mc_ver_info.minor,
--		       mc_ver_info.revision);
-+	ret = snprintf(fw_version, fw_size, "%x-%d.%d.%d",
-+		mc_plat_info.svr, major, minor, rev);
- 	if (ret < 0)
- 		return -EINVAL;
- 
-@@ -3521,6 +3518,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 		goto init_err;
+ 	struct rte_dpaa2_flow_item *new_pattern;
+ 	int num = 0, tunnel_start = 0;
+@@ -4742,7 +4655,7 @@ dpaa2_flow_item_convert(const struct rte_flow_item pattern[],
  	}
  
-+	priv->mc_rev = dpaa2_dev->bus_info->mc_rev;
- 	priv->num_rx_tc = attr.num_rx_tcs;
- 	priv->num_tx_tc = attr.num_tx_tcs;
- 	priv->qos_entries = attr.qos_entries;
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index 16e55412db..08d433a216 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.h
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -505,6 +505,7 @@ struct dpaa2_dev_priv {
- 	uint32_t *cnt_idx_dma_mem;
- 	uint64_t *cnt_values_dma_mem;
- 	uint64_t cnt_idx_iova, cnt_values_iova;
-+	uint64_t mc_rev;
+ 	new_pattern = rte_malloc(NULL, sizeof(struct rte_dpaa2_flow_item) * num,
+-				 RTE_CACHE_LINE_SIZE);
++			RTE_CACHE_LINE_SIZE);
+ 	if (!new_pattern) {
+ 		DPAA2_PMD_ERR("Failed to alloc %d flow items", num);
+ 		return -ENOMEM;
+@@ -4750,13 +4663,13 @@ dpaa2_flow_item_convert(const struct rte_flow_item pattern[],
  
- 	struct dpaa2_dev_flow *curr;
- 	LIST_HEAD(, dpaa2_dev_flow) flows;
-diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-index 02494686d3..ebad66fd5e 100644
---- a/drivers/net/dpaa2/dpaa2_rxtx.c
-+++ b/drivers/net/dpaa2/dpaa2_rxtx.c
-@@ -1149,7 +1149,8 @@ dpaa2_dev_rx_common(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts,
- 	struct dpaa2_queue *dpaa2_q = queue;
- 	struct qbman_result *dq_storage;
- 	uint32_t fqid = dpaa2_q->fqid;
--	int ret, num_rx = 0, next_pull = nb_pkts, num_pulled;
-+	uint16_t num_rx = 0, next_pull = nb_pkts, num_pulled;
-+	int ret;
- 	uint8_t pending, status;
- 	struct qbman_swp *swp;
- 	const struct qbman_fd *fd;
-@@ -1293,8 +1294,8 @@ uint16_t dpaa2_dev_tx_conf(void *queue)
- 	/* Function receive frames for a given device and VQ */
- 	struct dpaa2_queue *dpaa2_q = (struct dpaa2_queue *)queue;
- 	struct qbman_result *dq_storage;
--	uint32_t fqid = dpaa2_q->fqid;
--	int ret, num_tx_conf = 0, num_pulled;
-+	uint32_t fqid = dpaa2_q->fqid, num_tx_conf = 0, num_pulled;
-+	int ret;
- 	uint8_t pending, status;
- 	struct qbman_swp *swp;
- 	const struct qbman_fd *fd;
+ 	num = 0;
+ 	while (pattern[num].type != RTE_FLOW_ITEM_TYPE_END) {
+-		memcpy(&new_pattern[num].generic_item, &pattern[num],
+-		       sizeof(struct rte_flow_item));
++		rte_memcpy(&new_pattern[num].generic_item, &pattern[num],
++			sizeof(struct rte_flow_item));
+ 		new_pattern[num].in_tunnel = 0;
+ 
+ 		if (pattern[num].type == RTE_FLOW_ITEM_TYPE_VXLAN)
+ 			tunnel_start = 1;
+-		else if (tunnel_start)
++		else if (tunnel_start && sp_protocol)
+ 			new_pattern[num].in_tunnel = 1;
+ 		num++;
+ 	}
+@@ -4793,7 +4706,8 @@ dpaa2_generic_flow_set(struct dpaa2_dev_flow *flow,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = dpaa2_flow_item_convert(pattern, &dpaa2_pattern);
++	ret = dpaa2_flow_item_convert(pattern, &dpaa2_pattern,
++		priv->sp_protocol);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -5134,9 +5048,10 @@ dpaa2_dev_verify_attr(struct dpni_attr *dpni_attr,
+ }
+ 
+ static inline int
+-dpaa2_dev_verify_patterns(const struct rte_flow_item pattern[])
++dpaa2_dev_verify_patterns(const struct rte_flow_item pattern[],
++	int sp_support)
+ {
+-	unsigned int i, j, is_found = 0;
++	uint32_t i, j, is_found = 0;
+ 	int ret = 0;
+ 	const enum rte_flow_item_type *hp_supported;
+ 	const enum rte_flow_item_type *sp_supported;
+@@ -5158,7 +5073,7 @@ dpaa2_dev_verify_patterns(const struct rte_flow_item pattern[])
+ 		}
+ 		if (is_found)
+ 			continue;
+-		if (dpaa2_sp_loaded > 0) {
++		if (sp_support) {
+ 			for (i = 0; i < sp_supported_num; i++) {
+ 				if (sp_supported[i] == pattern[j].type) {
+ 					is_found = 1;
+@@ -5167,8 +5082,7 @@ dpaa2_dev_verify_patterns(const struct rte_flow_item pattern[])
+ 			}
+ 		}
+ 		if (!is_found) {
+-			DPAA2_PMD_WARN("Flow type(%d) not supported",
+-				pattern[j].type);
++			DPAA2_PMD_WARN("Flow type(%d) not supported", pattern[j].type);
+ 			ret = -ENOTSUP;
+ 			break;
+ 		}
+@@ -5237,7 +5151,7 @@ dpaa2_flow_validate(struct rte_eth_dev *dev,
+ 		goto not_valid_params;
+ 	}
+ 	/* Verify input pattern list */
+-	ret = dpaa2_dev_verify_patterns(pattern);
++	ret = dpaa2_dev_verify_patterns(pattern, priv->sp_protocol);
+ 	if (ret < 0) {
+ 		DPAA2_PMD_ERR("Invalid pattern list is given");
+ 		rte_flow_error_set(error, EPERM,
+diff --git a/drivers/net/dpaa2/dpaa2_recycle.c b/drivers/net/dpaa2/dpaa2_recycle.c
+index 9b6ae3f515..48b531d847 100644
+--- a/drivers/net/dpaa2/dpaa2_recycle.c
++++ b/drivers/net/dpaa2/dpaa2_recycle.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2019-2021 NXP
++ * Copyright 2019-2026 NXP
+  */
+ 
+ #include <time.h>
+@@ -23,7 +23,6 @@
+ #include <dpaa2_hw_dpio.h>
+ #include <mc/fsl_dpmng.h>
+ #include "dpaa2_ethdev.h"
+-#include "dpaa2_sparser.h"
+ #include <fsl_qbman_debug.h>
+ 
+ #include <rte_io.h>
+diff --git a/drivers/net/dpaa2/dpaa2_sparser.c b/drivers/net/dpaa2/dpaa2_sparser.c
+deleted file mode 100644
+index 6c3e6eb573..0000000000
+--- a/drivers/net/dpaa2/dpaa2_sparser.c
++++ /dev/null
+@@ -1,137 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2018-2023 NXP
+- */
+-
+-#include <rte_mbuf.h>
+-#include <rte_ethdev.h>
+-#include <rte_malloc.h>
+-#include <rte_memcpy.h>
+-#include <rte_string_fns.h>
+-#include <dev_driver.h>
+-
+-#include <fslmc_logs.h>
+-#include <fslmc_vfio.h>
+-#include <dpaa2_hw_pvt.h>
+-#include <dpaa2_hw_dpio.h>
+-#include <dpaa2_hw_mempool.h>
+-#include <dpaa2_pmd_logs.h>
+-
+-#include "dpaa2_ethdev.h"
+-#include "dpaa2_sparser.h"
+-#include "base/dpaa2_hw_dpni_annot.h"
+-#define __STDC_FORMAT_MACROS
+-#include <stdint.h>
+-#include <inttypes.h>
+-
+-static uint8_t wriop_bytecode[] = {
+-	0x00, 0x04, 0x29, 0x42, 0x03, 0xe0, 0x12, 0x00, 0x29, 0x02,
+-	0x18, 0x00, 0x87, 0x3c, 0x00, 0x02, 0x18, 0x00, 0x00, 0x00
+-};
+-
+-int dpaa2_eth_load_wriop_soft_parser(struct dpaa2_dev_priv *priv,
+-				     enum dpni_soft_sequence_dest dest)
+-{
+-	struct fsl_mc_io *dpni = priv->hw;
+-	struct dpni_load_ss_cfg     cfg;
+-	struct dpni_drv_sparser_param	sp_param;
+-	uint8_t *addr;
+-	int ret;
+-
+-	memset(&sp_param, 0, sizeof(sp_param));
+-	sp_param.start_pc = priv->ss_offset;
+-	sp_param.byte_code = &wriop_bytecode[0];
+-	sp_param.size = sizeof(wriop_bytecode);
+-
+-	cfg.dest = dest;
+-	cfg.ss_offset = sp_param.start_pc;
+-	cfg.ss_size = sp_param.size;
+-
+-	addr = rte_malloc(NULL, sp_param.size, 64);
+-	if (!addr) {
+-		DPAA2_PMD_ERR("Memory unavailable for soft parser param");
+-		return -1;
+-	}
+-
+-	memcpy(addr, sp_param.byte_code, sp_param.size);
+-	cfg.ss_iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(addr, sp_param.size);
+-	if (cfg.ss_iova == RTE_BAD_IOVA) {
+-		DPAA2_PMD_ERR("No IOMMU map for soft sequence(%p), size=%d",
+-			addr, sp_param.size);
+-		rte_free(addr);
+-
+-		return -ENOBUFS;
+-	}
+-
+-	ret = dpni_load_sw_sequence(dpni, CMD_PRI_LOW, priv->token, &cfg);
+-	if (ret) {
+-		DPAA2_PMD_ERR("dpni_load_sw_sequence failed");
+-		rte_free(addr);
+-		return ret;
+-	}
+-
+-	priv->ss_iova = cfg.ss_iova;
+-	priv->ss_offset += sp_param.size;
+-	DPAA2_PMD_INFO("Soft parser loaded for dpni@%d", priv->hw_id);
+-
+-	rte_free(addr);
+-	return 0;
+-}
+-
+-int dpaa2_eth_enable_wriop_soft_parser(struct dpaa2_dev_priv *priv,
+-				       enum dpni_soft_sequence_dest dest)
+-{
+-	struct fsl_mc_io *dpni = priv->hw;
+-	struct dpni_enable_ss_cfg cfg;
+-	uint8_t pa[3];
+-	struct dpni_drv_sparser_param sp_param;
+-	uint8_t *param_addr = NULL;
+-	int ret;
+-
+-	memset(&sp_param, 0, sizeof(sp_param));
+-	pa[0] = 32;	/* Custom Header Length in bytes */
+-	sp_param.custom_header_first = 1;
+-	sp_param.param_offset = 32;
+-	sp_param.param_size = 1;
+-	sp_param.start_pc = priv->ss_offset;
+-	sp_param.param_array = (uint8_t *)&pa[0];
+-
+-	cfg.dest = dest;
+-	cfg.ss_offset = sp_param.start_pc;
+-	cfg.set_start = sp_param.custom_header_first;
+-	cfg.hxs = (uint16_t)sp_param.link_to_hard_hxs;
+-	cfg.param_offset = sp_param.param_offset;
+-	cfg.param_size = sp_param.param_size;
+-	if (cfg.param_size) {
+-		param_addr = rte_malloc(NULL, cfg.param_size, 64);
+-		if (!param_addr) {
+-			DPAA2_PMD_ERR("Memory unavailable for soft parser param");
+-			return -1;
+-		}
+-
+-		memcpy(param_addr, sp_param.param_array, cfg.param_size);
+-		cfg.param_iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(param_addr,
+-			cfg.param_size);
+-		if (cfg.param_iova == RTE_BAD_IOVA) {
+-			DPAA2_PMD_ERR("%s: No IOMMU map for %p, size=%d",
+-				__func__, param_addr, cfg.param_size);
+-			rte_free(param_addr);
+-
+-			return -ENOBUFS;
+-		}
+-		priv->ss_param_iova = cfg.param_iova;
+-	} else {
+-		cfg.param_iova = 0;
+-	}
+-
+-	ret = dpni_enable_sw_sequence(dpni, CMD_PRI_LOW, priv->token, &cfg);
+-	if (ret) {
+-		DPAA2_PMD_ERR("Soft parser enabled for dpni@%d failed",
+-			priv->hw_id);
+-		rte_free(param_addr);
+-		return ret;
+-	}
+-
+-	rte_free(param_addr);
+-	DPAA2_PMD_INFO("Soft parser enabled for dpni@%d", priv->hw_id);
+-	return 0;
+-}
+diff --git a/drivers/net/dpaa2/dpaa2_sparser.h b/drivers/net/dpaa2/dpaa2_sparser.h
+deleted file mode 100644
+index 0187cde113..0000000000
+--- a/drivers/net/dpaa2/dpaa2_sparser.h
++++ /dev/null
+@@ -1,202 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2018-2019 NXP
+- */
+-
+-/**
+- * @file	dpaa2_sparser.h
+- *
+- * @brief	Soft parser related macros & functions support for DPAA2 device
+- *	framework based applications.
+- *
+- */
+-
+-#ifndef _DPAA2_SPARSER_H
+-#define _DPAA2_SPARSER_H
+-
+-#define WRIOP_SS_INITIALIZER(priv)				\
+-do {								\
+-	/* Base offset of parse profile memory in WRIOP */	\
+-	(priv)->ss_offset = 0x20;				\
+-	(priv)->ss_iova	= (size_t)NULL;			\
+-	(priv)->ss_param_iova = (size_t)NULL;			\
+-} while (0)
+-
+-/**************************************************************************/
+-/*
+- * @enum   parser_starting_hxs_code
+- * @Description PARSER Starting HXS code
+- */
+-/***************************************************************************/
+-enum parser_starting_hxs_code {
+-	/** Ethernet Starting HXS coding */
+-	PARSER_ETH_STARTING_HXS = 0x0000,
+-	/** LLC+SNAP Starting HXS coding */
+-	PARSER_LLC_SNAP_STARTING_HXS = 0x0001,
+-	/** VLAN Starting HXS coding */
+-	PARSER_VLAN_STARTING_HXS = 0x0002,
+-	/** PPPoE+PPP Starting HXS coding */
+-	PARSER_PPPOE_PPP_STARTING_HXS = 0x0003,
+-	/** MPLS Starting HXS coding */
+-	PARSER_MPLS_STARTING_HXS = 0x0004,
+-	/** ARP Starting HXS coding */
+-	PARSER_ARP_STARTING_HXS = 0x0005,
+-	/** IP Starting HXS coding */
+-	PARSER_IP_STARTING_HXS  = 0x0006,
+-	/** IPv4 Starting HXS coding */
+-	PARSER_IPV4_STARTING_HXS = 0x0007,
+-	/** IPv6 Starting HXS coding */
+-	PARSER_IPV6_STARTING_HXS = 0x0008,
+-	/** GRE Starting HXS coding */
+-	PARSER_GRE_STARTING_HXS = 0x0009,
+-	/** MinEncap Starting HXS coding */
+-	PARSER_MINENCAP_STARTING_HXS = 0x000A,
+-	/** Other L3 Shell Starting HXS coding */
+-	PARSER_OTHER_L3_SHELL_STARTING_HXS = 0x000B,
+-	/** TCP Starting HXS coding */
+-	PARSER_TCP_STARTING_HXS = 0x000C,
+-	/** UDP Starting HXS coding */
+-	PARSER_UDP_STARTING_HXS = 0x000D,
+-	/** IPSec Starting HXS coding */
+-	PARSER_IPSEC_STARTING_HXS = 0x000E,
+-	/** SCTP Starting HXS coding */
+-	PARSER_SCTP_STARTING_HXS = 0x000F,
+-	/** DCCP Starting HXS coding */
+-	PARSER_DCCP_STARTING_HXS = 0x0010,
+-	/** Other L4 Shell Starting HXS coding */
+-	PARSER_OTHER_L4_SHELL_STARTING_HXS = 0x0011,
+-	/** GTP Starting HXS coding */
+-	PARSER_GTP_STARTING_HXS = 0x0012,
+-	/** ESP Starting HXS coding */
+-	PARSER_ESP_STARTING_HXS = 0x0013,
+-	/** VXLAN Starting HXS coding */
+-	PARSER_VXLAN_STARTING_HXS = 0x0014,
+-	/** L5 (and above) Shell Starting HXS coding */
+-	PARSER_L5_SHELL_STARTING_HXS = 0x001E,
+-	/** Final Shell Starting HXS coding */
+-	PARSER_FINAL_SHELL_STARTING_HXS = 0x001F
+-};
+-
+-/**************************************************************************/
+-/*
+- * @Description    struct dpni_drv_sparser_param - Structure representing the
+- *			information needed to activate(enable) a Soft Parser.
+- */
+-/***************************************************************************/
+-
+-struct dpni_drv_sparser_param {
+-	/* The "custom_header_first" must be set if the custom header to parse
+-	 * is the first header in the packet, otherwise "custom_header_first"
+-	 * must be cleared.
+-	 */
+-	uint8_t             custom_header_first;
+-	/* Hard HXS on which a soft parser is activated. This must be
+-	 * configured.
+-	 * if the header to parse is not the first header in the packet.
+-	 */
+-	enum parser_starting_hxs_code   link_to_hard_hxs;
+-	/* Soft Sequence Start PC */
+-	uint16_t            start_pc;
+-	/* Soft Sequence byte-code */
+-	uint8_t             *byte_code;
+-	/* Soft Sequence size */
+-	uint16_t            size;
+-	/* Pointer to the Parameters Array of the SP */
+-	uint8_t             *param_array;
+-	/* Parameters offset */
+-	uint8_t             param_offset;
+-	/* Parameters size */
+-	uint8_t             param_size;
+-};
+-
+-struct sp_parse_result {
+-	/* Next header */
+-	uint16_t    nxt_hdr;
+-	/* Frame Attribute Flags Extension */
+-	uint16_t    frame_attribute_flags_extension;
+-	/* Frame Attribute Flags (part 1) */
+-	uint32_t    frame_attribute_flags_1;
+-	/* Frame Attribute Flags (part 2) */
+-	uint32_t    frame_attribute_flags_2;
+-	/* Frame Attribute Flags (part 3) */
+-	uint32_t    frame_attribute_flags_3;
+-	/* Shim Offset 1 */
+-	uint8_t     shim_offset_1;
+-	/* Shim Offset 2 */
+-	uint8_t     shim_offset_2;
+-	/* Outer IP protocol field offset */
+-	uint8_t     ip_1_pid_offset;
+-	/* Ethernet offset */
+-	uint8_t     eth_offset;
+-	/* LLC+SNAP offset */
+-	uint8_t     llc_snap_offset;
+-	/* First VLAN's TCI field offset*/
+-	uint8_t     vlan_tci1_offset;
+-	/* Last VLAN's TCI field offset*/
+-	uint8_t     vlan_tcin_offset;
+-	/* Last Ethertype offset*/
+-	uint8_t     last_etype_offset;
+-	/* PPPoE offset */
+-	uint8_t     pppoe_offset;
+-	/* First MPLS offset */
+-	uint8_t     mpls_offset_1;
+-	/* Last MPLS offset */
+-	uint8_t     mpls_offset_n;
+-	/* Layer 3 (Outer IP, ARP, FCoE or FIP) offset */
+-	uint8_t     l3_offset;
+-	/* Inner IP or MinEncap offset*/
+-	uint8_t     ipn_or_minencap_offset;
+-	/* GRE offset */
+-	uint8_t     gre_offset;
+-	/* Layer 4 offset*/
+-	uint8_t     l4_offset;
+-	/* Layer 5 offset */
+-	uint8_t     l5_offset;
+-	/* Routing header offset of 1st IPv6 header */
+-	uint8_t     routing_hdr_offset1;
+-	/* Routing header offset of 2nd IPv6 header */
+-	uint8_t     routing_hdr_offset2;
+-	/* Next header offset */
+-	uint8_t     nxt_hdr_offset;
+-	/* IPv6 fragmentable part offset */
+-	uint8_t     ipv6_frag_offset;
+-	/* Frame's untouched running sum, input to parser */
+-	uint16_t    gross_running_sum;
+-	/* Running Sum */
+-	uint16_t    running_sum;
+-	/* Parse Error code */
+-	uint8_t     parse_error_code;
+-	/* Offset to the next header field before IPv6 fragment extension */
+-	uint8_t     nxt_hdr_before_ipv6_frag_ext;
+-	/* Inner IP Protocol field offset */
+-	uint8_t     ip_n_pid_offset;
+-	/* Reserved for Soft parsing context*/
+-	uint8_t     soft_parsing_context[21];
+-};
+-
+-struct frame_attr {
+-	const char *fld_name;
+-	uint8_t     faf_offset;
+-	uint32_t    fld_mask;
+-};
+-
+-struct frame_attr_ext {
+-	const char *fld_name;
+-	uint8_t     faf_ext_offset;
+-	uint16_t    fld_mask;
+-};
+-
+-
+-struct parse_err {
+-	uint16_t    code;
+-	const char *err_name;
+-};
+-
+-/* Macro definitions */
+-#define IS_ONE_BIT_FIELD(_mask)                 \
+-(!((_mask) & ((_mask) - 1)) || (_mask == 1))
+-
+-int dpaa2_eth_load_wriop_soft_parser(struct dpaa2_dev_priv *priv,
+-		enum dpni_soft_sequence_dest dest);
+-int dpaa2_eth_enable_wriop_soft_parser(struct dpaa2_dev_priv *priv,
+-		enum dpni_soft_sequence_dest dest);
+-#endif /* _DPAA2_SPARSER_H_ */
+diff --git a/drivers/net/dpaa2/meson.build b/drivers/net/dpaa2/meson.build
+index 4094ea02ba..b821f7bfad 100644
+--- a/drivers/net/dpaa2/meson.build
++++ b/drivers/net/dpaa2/meson.build
+@@ -16,7 +16,6 @@ sources = files(
+         'dpaa2_flow.c',
+         'dpaa2_recycle.c',
+         'dpaa2_rxtx.c',
+-        'dpaa2_sparser.c',
+         'dpaa2_ptp.c',
+         'mc/dprtc.c',
+         'mc/dpkg.c',
 -- 
 2.43.0
 
