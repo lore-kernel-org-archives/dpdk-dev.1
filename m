@@ -1,71 +1,72 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4CB606A31E
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 16:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E692606A31B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 16:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=lz/281r7
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=H3QVOAPO
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8449340A6C;
-	Fri, 23 Oct 2026 18:04:22 +0200 (CEST)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id 6DA90406BA
- for <dev@dpdk.org>; Fri, 23 Oct 2026 18:04:21 +0200 (CEST)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-2ea0efd636dso7367025ad.0
- for <dev@dpdk.org>; Fri, 23 Oct 2026 09:04:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8BA2840276;
+	Fri, 23 Oct 2026 18:21:28 +0200 (CEST)
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
+ [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 0AADF40268
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 18:21:26 +0200 (CEST)
+Received: by mail-pj1-f46.google.com with SMTP id
+ 98e67ed59e1d1-3acdcfa2bd3so847220a91.3
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 09:21:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792771460;
- x=1793376260; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792772485;
+ x=1793377285; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=SkjyIQ28BbFNzHK7LEefqsCOx0prhcCT2+mL+ZBUelE=;
- b=lz/281r7sv1BsaYq7aRoJ4k02lDYmYNc5577kN+ZdNSfo+r/jZ2zaJLmx/yUjxm0z2
- vBbwqfbY5dykyPmt+nwhz8M9934sefxLXhncwf9UV/DntL3GTsFDTjMR389KpKSLqLei
- M4+4yn14kYKmEjFLXkn46HB5Co1qOtYSzj++Qkwo12UkXYiJT/5IYs48U4D0ymuoHZLT
- yD9/KeK5bywZznHvRlV7qeeARBNjc0X6X22QqgpiXXO4wM1t2ptCYWFNbD6c0hYS7zsV
- 3yIemT//xH1doIyLHBcv7tt9tzegGWSw5zE22lx/jp5XeBjqj3J0IOOt5vZe/4uQ6WnX
- oDxw==
+ bh=S7ZoCSXjgBHJvvrAnJDY0jciPhJV5RnNRstDUSkKTvk=;
+ b=H3QVOAPO84okUJHfkKsxZjDzv3mp5KaTS63P49Q1irJSpOXR6AaBCloZiNBmUv8bEA
+ dimi4Q8jtQHf0bdQ4ZofNeBWW/CBsQ4QdhFpRbdwF3BFPT67XHrNci/4iw6L0i4K27Ii
+ ifeQcz41UHVNGXAGBD19fKQbxD9f4FpVBk85snyYG2DRn/BPxsOUhn5TE9pphvi5kj4m
+ CK13yl/G3sISNs10hJrRp66O2gj8zJ3eIQYUy+yQK2ZU4n0yb3a0jpz8AK9gEPSZFmcl
+ +MNnjKvLN4IpkS5skCLhKmdsztHjP4LEK4SokeePPjvWOlINZy+Vin51dhnRwDIBACG5
+ YvrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792771460; x=1793376260;
+ d=1e100.net; s=20260707; t=1792772485; x=1793377285;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=SkjyIQ28BbFNzHK7LEefqsCOx0prhcCT2+mL+ZBUelE=;
- b=IcCOyeNKa0v51sIyawMDAdF5I930DEKtQUObmo/OCz/p2Sb8Fs+pIOob2bggMTDnAP
- qmjqru8XoAoR4vWifE6PcilmDzReQNrGlBbsafDTyTlV8KXPxZ3tej4s4bwHCsf9J9BX
- K0gQ51r+FP9x6Bth03mR7EYx4Ji0DSKXuhHgjjzwcwiiDLVAIjn6gz0/clnrYVWKpF2o
- gi9bdiWxlmobJt4t26VfHLfJY7gfaEA2ojd7FIjfoZt8CN/pUkGSOfvBdb6vvN3YtCov
- RC5cRBypB1Oh5HzoGeUd3f1fPz94hUzPtBJkmT9R2uC9R40UUqTJF2619eEIlZ6tUOun
- GP3A==
-X-Gm-Message-State: AFq9FYJMZe5eGLZwR2mCbge+Tb72UsjHp6R2ywb/9CRdJLdIhD6lCcwq
- 5D+lyuwZ/boljEBzEM7Azl/1pgtja5R182DMYtgNiCqaL8A3Eh+F+I7zQncqY5z7b9w=
-X-Gm-Gg: AYBFou13Yammt9RWSKMNXE7ZLukkHT5gSVfG83gnKy+07Yq01nDX2t+Q4RmDwIUECUn
- C98iaixRpgKQOtE3XlkrTFK6L9ac1qAMNMd6oBLZKgUQRqVfJug3yBe6jWHt8hAfJkaz6PlhNz9
- n/sD0FBsOG8E5qfhDVdLdHCQqRed88QZUnHVis9rIrc5PK4sHL1TkEqJfycf6K/Rk/gU5LTCXMC
- mrXRlceDwwnEgyDxITtKAnMiTLoCm+9ghdGXQiWWqtL++/VgVoTZQG+03bw8w+/mWJ0Qy9tRufg
- NwS0+Ei7O+phu4OugfIXGDCV9FdnkY5JDvgB2XKKYDBUHMzIztjm0QM4Q7o1kLTuXugC7ZpRF3r
- fgZxSY3bwLq3Q2cEHeqASRiykQ4nZlQbwV6ehr+mWneZGuxly8gal75inicyKy0xCjlU6oVNpuU
- /ZEn2J/ON+QF7QpdWDf+WYT4SdrK9o5cjOHDKJrU4ltXeRh1FRFaM2M1FsfRSnxa2EvaA9Ryzp8
- EJz7Mr04tVVAotFIe2dtGZQLq0Ia0/2NhB06md7aEQ81l5SgxFUEtzg+ftQkZZjc0z5L2YGTfkq
- 4Oh2r57atbhnRwfpXihjUg==
-X-Received: by 2002:a17:902:d582:b0:2e2:da4f:b2bf with SMTP id
- d9443c01a7336-2ea7d12c2d5mr26305255ad.44.1792771460330; 
- Fri, 23 Oct 2026 09:04:20 -0700 (PDT)
+ bh=S7ZoCSXjgBHJvvrAnJDY0jciPhJV5RnNRstDUSkKTvk=;
+ b=AFZPE4xzuj8K/DfNTOj1q0emJBR05msQoX5BVB4F/TpFP9zinv5xtEZcF6FYj5j5n9
+ R1TBx9M7qP4bFC3DGsYt1Rkx5QoMYfU01v8IMEhgXPyPgNb60cxWvDxVbba47iFWtdAw
+ SIu9YvxPAb5AAyYGrmYEQBvEkds4qQAXJeVHDru2rUE1rIulSoI4Ttl8/zH+MnuBHl5q
+ IFU0G3PbUtZIrIBiqc3dVo1+wIpp2ILiboWN4mwYKZxpL+Ylovu4j+f7/kozgXY2tUCP
+ r91i6GejjWuU2t0M133pS7TV5PojGCHn58Z57Al+YFisLHiZMEZHFLNKsgziLhGxUqsB
+ KDtw==
+X-Gm-Message-State: AFq9FYI5cIdVWhzToykSM12yaRDT4qq8GkQWnZV6SSBVYV+Qb9jDqwqC
+ 7f1aPi+mkbI7BCpeKfvMn5tzyUv3yTalPAJpSNuSVcIb3NkPp1Lq9oXfrNbQ+r67CgE=
+X-Gm-Gg: AYBFou364VcyOZMApIhocSjC4ON+8QjwhQ6esvX58BvCHD8xVIUmNIjA2OAwvAb4DvO
+ 6Z80GNGNu2w0fbntQI6SMnqMWEzzVJ8+pDWlIbIIxYgd80xIOHr14mTb0YKXz6LntzNUMxNzjoE
+ qIQt2lUY9w023UYTO1mrT+8QukxMktnw+O0LmatbhX1oCBiSqB4POsFjP//J3pe8GYvfuX3tWzI
+ ZihaFn9s7t1QfZcjT4Hw2GL6jfOFOmfZTFmdNCSJKdsR3jn04kavDrCfanPDGccUXE93ZKaDUj/
+ 5URZOp+FJk4KdU8AUT9+dGWuYMbNpFUFzBEJIgFh8jBScrFJDw1nNF6iApqu9KymXfMMwm2Uq9g
+ w88NhmmrKtHc3G3byFiLGJ/EJq5IibU4jPbARzwQ8et57PDy4pGq4e10e2yRhJDzQ2AB52ChWWE
+ TQl/6GI0rENJ/EYrnU66UYxGgMSoweV5ReekAOLkD1urRTUKgoOI+PNFvTowhbCnZ0IW+HZP2+O
+ L2T4XOzerSgtJH0fXRt6HDoQzFiJyZRWKxF+LcBLfY5E8irrvwzsVXsaNbRgJphb8UXLXRIqm+5
+ WoQgYiPf8AR0vkpIGTUkZQ==
+X-Received: by 2002:a17:90b:4b84:b0:3ab:27f0:c90b with SMTP id
+ 98e67ed59e1d1-3adce13ab78mr2336650a91.53.1792772484957; 
+ Fri, 23 Oct 2026 09:21:24 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2ea94751b9esm2221925ad.35.2026.10.23.09.04.19
+ 98e67ed59e1d1-3addd676e49sm831078a91.1.2026.10.23.09.21.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 23 Oct 2026 09:04:19 -0700 (PDT)
-Date: Fri, 23 Oct 2026 09:04:17 -0700
+ Fri, 23 Oct 2026 09:21:24 -0700 (PDT)
+Date: Fri, 23 Oct 2026 09:21:21 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 1/1] ethdev: add flow item structure size query
-Message-ID: <20261023090417.219e1e91@phoenix.local>
-In-Reply-To: <8fa05595f3596e9355dd90df7fc278b104beb20b.1792757739.git.anatoly.burakov@intel.com>
-References: <8fa05595f3596e9355dd90df7fc278b104beb20b.1792757739.git.anatoly.burakov@intel.com>
+To: Jiacheng Ye <yejiacheng4@h-partners.com>
+Cc: dev@dpdk.org, Feifei Wang <wangfeifei40@huawei.com>, Thomas Monjalon
+ <thomas@monjalon.net>, Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: Re: [PATCH v4 00/27] net/hinic3: add PMD features and fixes
+Message-ID: <20261023092121.751fb6be@phoenix.local>
+In-Reply-To: <20261023155809.855-1-yejiacheng4@h-partners.com>
+References: <20261019151930.1572-1-yejiacheng4@h-partners.com>
+ <20261023155809.855-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -79,101 +80,81 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Fri, 23 Oct 2026 13:15:46 +0100
-Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+On Fri, 23 Oct 2026 23:57:41 +0800
+Jiacheng Ye <yejiacheng4@h-partners.com> wrote:
 
-> Add RTE_FLOW_CONV_OP_ITEM_SIZE to retrieve the fixed specification
-> structure size for a flow item type using the existing descriptor table.
-> 
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
+> This series fixes offload capability advertisement, cmdq/compact CQE
+> configuration, and several defects found during review, and adds NIC
+> type identification, FEC, CIR drop statistics, VF LAG/link state, COS
+> mask/map, mbox recording, RSS hash configuration, compact CQE Rx/Tx
+> paths, TSO segment expansion, Tx burst mode reporting, queue statistics,
+> pseudo-header checksum, per-tile cmdq ops, SP560 NIC support, and device
+> kvargs tunables.
 
-I am not sure about the details AI is complaining about here,
-but it does look like it has a point. Also it should be possible
-to get some code coverage for this in a standalone test.
 
-[PATCH v1 1/1] ethdev: add flow item structure size query
+AI review still sees some issues that need addressing before merge.
+PS: it is ok to respond with "AI is hallucinating about XXX"
 
-Warning
+Subject: Re: [PATCH v4 00/27] net/hinic3: fixes and new features
 
-RTE_FLOW_ITEM_TYPE_MACSEC has no entry in rte_flow_desc_item[]. The
-table uses designated initializers, so the MACSEC slot is zero filled.
-With this patch a size query for MACSEC fails with EINVAL "unknown
-item type", although it is a public item with a spec structure
-(struct rte_flow_item_macsec). The doc comment says only unknown and
-PMD-private types fail.
+Applies to main. Every commit builds with -Dwerror=true; bisect is
+fixed. The v3 comments on copy offset, IPv6 l3_len, SP230 interrupt
+masking, copy pool size and be32 proto are addressed.
 
-The hole predates this patch and hurts existing ops too:
- - RTE_FLOW_CONV_OP_ITEM_NAME on MACSEC calls strlcpy(dst, NULL, size);
-   rte_flow_conv_name() has no NULL name check.
- - rte_flow_conv_copy() sees desc[type].size == 0, so rte_flow_copy()
-   and RTE_FLOW_CONV_OP_PATTERN silently drop MACSEC spec/last/mask.
+Please include a changelog in the cover letter.
 
-Please send a separate fix ahead of this patch, in rte_flow_desc_item[]:
 
-	MK_FLOW_ITEM(MACSEC, sizeof(struct rte_flow_item_macsec)),
+Errors
+======
 
-	Fixes: 0aaf097585a6 ("ethdev: add MACsec flow item")
-	Cc: stable@dpdk.org
+[PATCH 08/27] net/hinic3: fix pseudo-header checksum calculation
 
-Missing release note. RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR, also new
-in 26.11, has one. Extend that entry in release_26_11.rst:
+The fix adds hinic3_prep_pkts(), but nothing installs it until 21/27
+sets tx_pkt_prepare. At 08 through 20, and in any stable backport of
+08, the code is dead and checksums are still wrong. Wire it up in the
+same patch:
 
-	* **Added flow item default mask and size lookup.**
+	eth_dev->rx_pkt_burst = hinic3_recv_pkts;
+	eth_dev->tx_pkt_burst = hinic3_xmit_pkts;
+	eth_dev->tx_pkt_prepare = hinic3_prep_pkts;
 
-	  Added ``RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR`` and
-	  ``RTE_FLOW_CONV_OP_ITEM_SIZE`` conversion operations
-	  to ``rte_flow_conv()`` to retrieve the default mask
-	  and the spec structure size of a flow item type.
+The commit message mentions SP560, which is not added until 19/27.
+Say SP620 here.
 
-No user and no test. The commit message does not say what needs this.
-If the consumer is flow_graph or a driver parser, send it as part of
-that series. app/test has no rte_flow_conv() coverage at all; a short
-test checking END -> 0, ETH -> sizeof(struct rte_flow_item_eth),
-MACSEC -> sizeof(struct rte_flow_item_macsec), a negative type ->
-EINVAL, and size < sizeof(size_t) -> dst untouched would have caught
-the MACSEC hole.
+
+Warnings
+========
+
+[PATCH 19/27] net/hinic3: add SP560 NIC type identification and
+  handling
+
+hinic3.ini now says "Rx interrupt = Y", and the explanation of partial
+support was dropped from the commit message, but the STN op still
+does:
+
+	if (wqe_type == HINIC3_COMPACT_RQ_WQE && support_rq_sw_compact_cqe) {
+		rq_ctxt->ceq_attr |= RQ_CTXT_CEQ_ATTR_SET(1, EN);
+
+In the same function EN is set from intr_disable. If EN=1 means
+interrupt disabled, Rx interrupts never fire on SP560 with compact
+CQE, and configure should reject intr_conf.rxq in that mode. If the
+bit means something else when SW compact CQE is on, add a comment
+saying so. Either way, the ini and the code must agree.
+
 
 Info
+====
 
-The doc text "Writes the size of rte_flow_item_{name}" is wrong for
-GRE_KEY (rte_be32_t), GTPC/GTPU (struct rte_flow_item_gtp) and
-ICMP6_ECHO_REQUEST/REPLY (struct rte_flow_item_icmp6_echo). Suggest:
+[PATCH 23/27] The new tso_segsz == 0 check logs at ERR for every bad
+packet in the Tx path. The drop is already counted in
+offload_errors; drop the log or use a rate-limited data path log.
 
-	 * Writes the size of the item specification structure to
-	 * @p dst, or zero for known item types without one.
-
-Every other op dispatches to a static helper. Move the braced case
-block next to rte_flow_conv_item_default_mask():
-
-	/** Retrieve the spec structure size of a flow item type. */
-	static int
-	rte_flow_conv_item_size(void *dst, const size_t size,
-				const void *src,
-				struct rte_flow_error *error)
-	{
-		unsigned int type = (uintptr_t)src;
-
-		if (type >= RTE_DIM(rte_flow_desc_item) ||
-		    rte_flow_desc_item[type].name == NULL)
-			return rte_flow_error_set(error, EINVAL,
-				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-				"unknown item type to retrieve the size of");
-		if (size >= sizeof(size_t))
-			*(size_t *)dst = rte_flow_desc_item[type].size;
-		return sizeof(size_t);
-	}
-
-	case RTE_FLOW_CONV_OP_ITEM_SIZE:
-		ret = rte_flow_conv_item_size(dst, size, src, error);
-		break;
-
-The name == NULL check here is good; the same check belongs in
-rte_flow_conv_name() and rte_flow_conv_item_default_mask().
+Series: a lot of v4 is splitting log format strings across lines and
+reindenting. DPDK checkpatch ignores long string lines, and split
+strings are harder to grep for. No need to do this.
