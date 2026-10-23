@@ -1,31 +1,30 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AF3606A31B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458A5606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:46:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 91E5840E4D;
-	Fri, 23 Oct 2026 15:44:29 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 3166540E19
+	by mails.dpdk.org (Postfix) with ESMTP id 791EC40E2A;
+	Fri, 23 Oct 2026 15:44:30 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id CD09840E19
  for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:21 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 13F55200020;
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A851D1A0047;
  Fri, 23 Oct 2026 15:44:21 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AB9A720002B;
- Fri, 23 Oct 2026 15:44:20 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 70E451A003D;
+ Fri, 23 Oct 2026 15:44:21 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 548C21800068;
- Fri, 23 Oct 2026 21:44:19 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6788F18000BF;
+ Fri, 23 Oct 2026 21:44:20 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4-S3 26/65] net/dpaa2: program flow table miss actions via
- rte_flow
-Date: Fri, 23 Oct 2026 19:13:06 +0530
-Message-ID: <20261023134346.37727-27-prashant.gupta_3@nxp.com>
+Subject: [PATCH v4-S3 27/65] net/dpaa2: support DCB Rx mode via rte_flow
+Date: Fri, 23 Oct 2026 19:13:07 +0530
+Message-ID: <20261023134346.37727-28-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
 References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
@@ -52,537 +51,228 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Jun Yang <jun.yang@nxp.com>
 
-Push the per-table "miss" behavior for the DPAA2 QoS and FS tables
-through the standard rte_flow_group_set_miss_actions() API instead
-of leaving it implicit, and tidy up the surrounding dev-ops code.
+Add DCB (Data Center Bridging) support to the DPAA2 PMD so that
+applications requesting RTE_ETH_MQ_RX_DCB map VLAN PCP priorities
+to receive TCs, and expose the per-port mapping through the
+standard rte_eth_dev_get_dcb_info() API.
+
+Reject QoS entries whose index collides with an already-installed
+DCB flow slot with -ENODATA, so user-added QoS rules cannot silently
+overwrite the DCB-generated ones.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.c | 440 +++++++++++++++++--------------
- 1 file changed, 243 insertions(+), 197 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 107 ++++++++++++++++++++++++++++---
+ drivers/net/dpaa2/dpaa2_ethdev.h |   3 +
+ drivers/net/dpaa2/dpaa2_flow.c   |   5 ++
+ 3 files changed, 105 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index 7cd83149dd..9f92789d4e 100644
+index 9f92789d4e..cca7aa0891 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.c
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -459,11 +459,52 @@ static const struct rte_eth_stats dpaa2_stats_xstat_ids = {
- #define DPAA2_MAC_XSTATS_START_ID DPAA2_DPNI_XSTAT_MAX_NUM
- 
- static struct rte_dpaa2_driver rte_dpaa2_pmd;
--static int dpaa2_dev_link_update(struct rte_eth_dev *dev,
--				 int wait_to_complete);
--static int dpaa2_dev_set_link_up(struct rte_eth_dev *dev);
--static int dpaa2_dev_set_link_down(struct rte_eth_dev *dev);
--static int dpaa2_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu);
-+
-+static int
-+dpaa2_setup_table_miss_action(struct rte_eth_dev *eth_dev,
-+	uint8_t tc_index)
-+{
-+	struct dpaa2_dev_priv *priv = eth_dev->data->dev_private;
-+	struct rte_flow_group_attr attr;
-+	struct rte_flow_action actions[2];
-+	struct dpaa2_flow_tbl_profile *tbl_profile;
-+
-+	memset(&attr, 0, sizeof(attr));
-+	attr.ingress = 1;
-+	if (tc_index < priv->num_rx_tc) {
-+		tbl_profile = &priv->flow_profile.tc_profile[tc_index];
-+		if (tbl_profile->default_drop) {
-+			actions[0].type = RTE_FLOW_ACTION_TYPE_DROP;
-+		} else if (tbl_profile->default_queue.index >= eth_dev->data->nb_rx_queues) {
-+			DPAA2_PMD_DEBUG("%s-tc%d-default-rxq(%d) >= max rxq(%d), Force to drop.",
-+				eth_dev->data->name, tc_index, tbl_profile->default_queue.index,
-+				eth_dev->data->nb_rx_queues);
-+			tbl_profile->default_drop = true;
-+			actions[0].type = RTE_FLOW_ACTION_TYPE_DROP;
-+		} else {
-+			actions[0].type = RTE_FLOW_ACTION_TYPE_QUEUE;
-+			actions[0].conf = &tbl_profile->default_queue;
-+		}
-+	} else {
-+		tbl_profile = &priv->flow_profile.qos_profile;
-+		if (tbl_profile->default_drop) {
-+			actions[0].type = RTE_FLOW_ACTION_TYPE_DROP;
-+		} else if (tbl_profile->default_jump.group >= priv->num_rx_tc) {
-+			DPAA2_PMD_DEBUG("%s-default-tc(%d) >= max tc(%d), Force to drop.",
-+				eth_dev->data->name, tbl_profile->default_jump.group,
-+				priv->num_rx_tc);
-+			tbl_profile->default_drop = true;
-+			actions[0].type = RTE_FLOW_ACTION_TYPE_DROP;
-+		} else {
-+			actions[0].type = RTE_FLOW_ACTION_TYPE_JUMP;
-+			actions[0].conf = &tbl_profile->default_jump;
-+		}
-+	}
-+	actions[1].type = RTE_FLOW_ACTION_TYPE_END;
-+
-+	return rte_flow_group_set_miss_actions(eth_dev->data->port_id,
-+			tc_index, &attr, actions, NULL);
-+}
+@@ -507,7 +507,7 @@ dpaa2_setup_table_miss_action(struct rte_eth_dev *eth_dev,
+ }
  
  static int
- dpaa2_setup_flow_dist(struct rte_eth_dev *eth_dev,
-@@ -1162,18 +1203,14 @@ dpaa2_eth_dev_configure(struct rte_eth_dev *dev)
+-dpaa2_setup_flow_dist(struct rte_eth_dev *eth_dev,
++dpaa2_setup_flow_rss_dist(struct rte_eth_dev *eth_dev,
+ 	uint64_t req_dist_set, int tc_index)
+ {
+ 	struct dpaa2_dev_priv *priv = eth_dev->data->dev_private;
+@@ -555,6 +555,49 @@ dpaa2_setup_flow_dist(struct rte_eth_dev *eth_dev,
+ 	return 0;
+ }
  
- 	/* Rx offloads which are enabled by default */
- 	if (dev_rx_offloads_nodis & ~rx_offloads) {
--		DPAA2_PMD_INFO(
--		"Some of rx offloads enabled by default - requested 0x%" PRIx64
--		" fixed are 0x%" PRIx64,
--		rx_offloads, dev_rx_offloads_nodis);
-+		DPAA2_PMD_INFO("RX offloads requested/fixed: 0x%" PRIx64 "/0x%" PRIx64,
-+			rx_offloads, dev_rx_offloads_nodis);
++static int
++dpaa2_setup_flow_dcb_dist(struct rte_eth_dev *eth_dev,
++	uint8_t prio, uint8_t tc)
++{
++	struct dpaa2_dev_priv *priv = eth_dev->data->dev_private;
++	struct rte_flow_attr attr;
++	struct rte_flow_action actions[2];
++	struct rte_flow_item_vlan vlan_item;
++	struct rte_flow_item_vlan vlan_mask;
++	struct rte_flow_item items[2];
++	struct rte_flow_action_jump action_jump;
++	struct rte_flow *qos_flow;
++
++	memset(&attr, 0, sizeof(struct rte_flow_attr));
++	attr.ingress = 1;
++
++	attr.group = priv->num_rx_tc;
++	attr.priority = prio;
++	memset(&vlan_item, 0, sizeof(struct rte_flow_item_vlan));
++	memset(&vlan_mask, 0, sizeof(struct rte_flow_item_vlan));
++	vlan_item.hdr.vlan_tci = rte_cpu_to_be_16(RTE_VLAN_TCI_MAKE(0, prio, 0));
++	vlan_mask.hdr.vlan_tci = rte_cpu_to_be_16(RTE_VLAN_PRI_MASK);
++	items[0].spec = &vlan_item;
++	items[0].mask = &vlan_mask;
++	items[0].type = RTE_FLOW_ITEM_TYPE_VLAN;
++	items[1].type = RTE_FLOW_ITEM_TYPE_END;
++
++	actions[0].type = RTE_FLOW_ACTION_TYPE_JUMP;
++	action_jump.group = tc;
++	actions[0].conf = &action_jump;
++	actions[1].type = RTE_FLOW_ACTION_TYPE_END;
++
++	qos_flow = rte_flow_create(eth_dev->data->port_id,
++		&attr, items, actions, NULL);
++	if (!qos_flow) {
++		DPAA2_PMD_WARN("Failed to direct vlan with prio(%d) to tc%d", prio, tc);
++		return -EIO;
++	}
++	priv->dcb_flow[prio] = qos_flow;
++
++	return 0;
++}
++
+ static int
+ dpaa2_remove_flow_rss_dist(struct rte_eth_dev *eth_dev,
+ 	uint8_t tc_index)
+@@ -1175,6 +1218,28 @@ dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
  	}
+ }
  
- 	/* Tx offloads which are enabled by default */
- 	if (dev_tx_offloads_nodis & ~tx_offloads) {
--		DPAA2_PMD_INFO(
--		"Some of tx offloads enabled by default - requested 0x%" PRIx64
--		" fixed are 0x%" PRIx64,
--		tx_offloads, dev_tx_offloads_nodis);
-+		DPAA2_PMD_INFO("TX offloads requested/fixed: 0x%" PRIx64 "/0x%" PRIx64,
-+			tx_offloads, dev_tx_offloads_nodis);
- 	}
- 
- 	max_rx_pktlen = eth_conf->rxmode.mtu + RTE_ETHER_HDR_LEN +
-@@ -1181,16 +1218,31 @@ dpaa2_eth_dev_configure(struct rte_eth_dev *dev)
- 	if (max_rx_pktlen <= DPAA2_MAX_RX_PKT_LEN) {
- 		ret = dpni_set_max_frame_length(dpni, CMD_PRI_LOW,
- 			priv->token, max_rx_pktlen - RTE_ETHER_CRC_LEN);
--		if (ret != 0) {
-+		if (ret) {
- 			DPAA2_PMD_ERR("Unable to set mtu. check config");
- 			return ret;
- 		}
- 		DPAA2_PMD_DEBUG("MTU configured for the device: %d",
- 				dev->data->mtu);
- 	} else {
--		DPAA2_PMD_ERR("Configured mtu %d and calculated max-pkt-len is %d which should be <= %d",
--			eth_conf->rxmode.mtu, max_rx_pktlen, DPAA2_MAX_RX_PKT_LEN);
--		return -1;
-+		DPAA2_PMD_ERR("MAX MTU(%d) to configure > %d",
-+			max_rx_pktlen, DPAA2_MAX_RX_PKT_LEN);
++static int
++dpaa2_dev_dcb_info(struct rte_eth_dev *dev,
++	struct rte_eth_dcb_info *dcb_info)
++{
++	struct dpaa2_dev_priv *priv = dev->data->dev_private;
++	int i;
++
++	if (!priv->nb_dcb_tcs)
 +		return -ENOTSUP;
++
++	memset(dcb_info, 0, sizeof(struct rte_eth_dcb_info));
++	dcb_info->nb_tcs = priv->nb_dcb_tcs;
++	rte_memcpy(dcb_info->prio_tc, priv->prio_dcb_tc,
++		sizeof(uint8_t) * RTE_ETH_DCB_NUM_USER_PRIORITIES);
++	for (i = 0; i < dcb_info->nb_tcs; i++) {
++		dcb_info->tc_queue.tc_rxq[0][i].base = priv->dist_queues * i;
++		dcb_info->tc_queue.tc_rxq[0][i].nb_queue = priv->dist_queues;
 +	}
 +
-+	if (priv->fs_entries) {
-+		for (tc_index = 0; tc_index < priv->num_rx_tc; tc_index++) {
-+			ret = dpaa2_setup_table_miss_action(dev, tc_index);
-+			if (ret) {
-+				DPAA2_PMD_ERR("Error(%d) to set miss action of %s-tc%d table",
-+					ret, dev->data->name, tc_index);
++	return 0;
++}
++
+ static int
+ dpaa2_eth_dev_configure(struct rte_eth_dev *dev)
+ {
+@@ -1187,7 +1252,7 @@ dpaa2_eth_dev_configure(struct rte_eth_dev *dev)
+ 	int rx_l4_csum_offload = false;
+ 	int tx_l3_csum_offload = false;
+ 	int tx_l4_csum_offload = false;
+-	int ret, tc_index;
++	int ret, tc_index, nb_tcs;
+ 	uint32_t max_rx_pktlen;
+ 
+ 	PMD_INIT_FUNC_TRACE();
+@@ -1245,15 +1310,26 @@ dpaa2_eth_dev_configure(struct rte_eth_dev *dev)
+ 			ret, dev->data->name);
+ 	}
+ 
+-	if (eth_conf->rxmode.mq_mode == RTE_ETH_MQ_RX_RSS) {
++	if (eth_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_RSS) {
+ 		for (tc_index = 0; tc_index < priv->num_rx_tc; tc_index++) {
+-			ret = dpaa2_setup_flow_dist(dev,
+-					eth_conf->rx_adv_conf.rss_conf.rss_hf,
+-					tc_index);
++			ret = dpaa2_setup_flow_rss_dist(dev,
++				eth_conf->rx_adv_conf.rss_conf.rss_hf, tc_index);
+ 			if (ret) {
+-				DPAA2_PMD_ERR(
+-					"Unable to set flow distribution on tc%d."
+-					"Check queue config", tc_index);
++				DPAA2_PMD_ERR("RSS dist on tc%d err(%d)", tc_index, ret);
++				return ret;
 +			}
 +		}
 +	}
-+	ret = dpaa2_setup_table_miss_action(dev, priv->num_rx_tc);
-+	if (ret) {
-+		DPAA2_PMD_ERR("Error(%d) to set miss action of %s-QoS table",
-+			ret, dev->data->name);
- 	}
- 
- 	if (eth_conf->rxmode.mq_mode == RTE_ETH_MQ_RX_RSS) {
-@@ -1784,6 +1836,171 @@ dpaa2_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
- 	return NULL;
- }
- 
-+/* return 0 means link status changed, -1 means not changed */
-+static int
-+dpaa2_dev_link_update(struct rte_eth_dev *dev,
-+	int wait_to_complete)
-+{
-+	int ret;
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	struct fsl_mc_io *dpni = dev->process_private;
-+	struct rte_eth_link link;
-+	struct dpni_link_state state = {0};
-+	uint8_t count;
 +
-+	if (!dpni) {
-+		DPAA2_PMD_ERR("dpni is NULL");
-+		return 0;
-+	}
-+
-+	for (count = 0; count <= MAX_REPEAT_TIME; count++) {
-+		ret = dpni_get_link_state(dpni, CMD_PRI_LOW, priv->token, &state);
-+		if (ret < 0) {
-+			DPAA2_PMD_DEBUG("error: dpni_get_link_state %d", ret);
-+			return ret;
-+		}
-+		if (state.up == RTE_ETH_LINK_DOWN &&
-+		    wait_to_complete)
-+			rte_delay_ms(CHECK_INTERVAL);
-+		else
-+			break;
-+	}
-+
-+	memset(&link, 0, sizeof(struct rte_eth_link));
-+	link.link_status = state.up;
-+	link.link_speed = state.rate;
-+
-+	if (state.options & DPNI_LINK_OPT_HALF_DUPLEX)
-+		link.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
-+	else
-+		link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
-+
-+	ret = rte_eth_linkstatus_set(dev, &link);
-+	if (ret < 0) {
-+		DPAA2_PMD_DEBUG("No change in status");
-+	} else {
-+		DPAA2_PMD_INFO("Port %d Link is %s", dev->data->port_id,
-+			link.link_status ? "Up" : "Down");
-+	}
-+
-+	return ret;
-+}
-+
-+/**
-+ * Toggle the DPNI to enable, if not already enabled.
-+ * This is not strictly PHY up/down - it is more of logical toggling.
-+ */
-+static int
-+dpaa2_dev_set_link_up(struct rte_eth_dev *dev)
-+{
-+	int ret, en = 0;
-+	struct dpaa2_dev_priv *priv;
-+	struct fsl_mc_io *dpni;
-+	struct dpni_link_state state = {0};
-+
-+	priv = dev->data->dev_private;
-+	dpni = dev->process_private;
-+
-+	if (!dpni) {
-+		DPAA2_PMD_ERR("dpni is NULL");
-+		return -ENODEV;
-+	}
-+
-+	/* Check if DPNI is currently enabled */
-+	ret = dpni_is_enabled(dpni, CMD_PRI_LOW, priv->token, &en);
-+	if (ret) {
-+		/* Unable to obtain dpni status; Not continuing */
-+		DPAA2_PMD_ERR("Interface Link UP failed (%d)", ret);
-+		return ret;
-+	}
-+
-+	/* Enable link if not already enabled */
-+	if (!en) {
-+		ret = dpni_enable(dpni, CMD_PRI_LOW, priv->token);
-+		if (ret) {
-+			DPAA2_PMD_ERR("Interface Link UP failed (%d)", ret);
-+			return ret;
-+		}
-+	}
-+	ret = dpni_get_link_state(dpni, CMD_PRI_LOW, priv->token, &state);
-+	if (ret < 0) {
-+		DPAA2_PMD_DEBUG("Unable to get link state (%d)", ret);
-+		return ret;
-+	}
-+
-+	/* changing tx burst function to start enqueues */
-+	dev->tx_pkt_burst = dpaa2_dev_tx;
-+	dev->data->dev_link.link_status = state.up;
-+	dev->data->dev_link.link_speed = state.rate;
-+
-+	if (state.options & DPNI_LINK_OPT_HALF_DUPLEX)
-+		dev->data->dev_link.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
-+	else
-+		dev->data->dev_link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
-+
-+	if (state.up)
-+		DPAA2_PMD_DEBUG("Port %d Link is Up", dev->data->port_id);
-+	else
-+		DPAA2_PMD_DEBUG("Port %d Link is Down", dev->data->port_id);
-+	return ret;
-+}
-+
-+/**
-+ * Toggle the DPNI to disable, if not already disabled.
-+ * This is not strictly PHY up/down - it is more of logical toggling.
-+ */
-+static int
-+dpaa2_dev_set_link_down(struct rte_eth_dev *dev)
-+{
-+	int ret, dpni_enabled = 0, retries = 10;
-+	struct dpaa2_dev_priv *priv;
-+	struct fsl_mc_io *dpni;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	priv = dev->data->dev_private;
-+	dpni = dev->process_private;
-+
-+	if (!dpni) {
-+		DPAA2_PMD_ERR("Device has not yet been configured");
-+		return -ENODEV;
-+	}
-+
-+	/*changing  tx burst function to avoid any more enqueues */
-+	dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
-+
-+	/* Loop while dpni_disable() attempts to drain the egress FQs
-+	 * and confirm them back to us.
-+	 */
-+	do {
-+		ret = dpni_disable(dpni, 0, priv->token);
-+		if (ret) {
-+			DPAA2_PMD_ERR("dpni disable failed (%d)", ret);
-+			return ret;
-+		}
-+		ret = dpni_is_enabled(dpni, 0, priv->token, &dpni_enabled);
-+		if (ret) {
-+			DPAA2_PMD_ERR("dpni enable check failed (%d)", ret);
-+			return ret;
-+		}
-+		if (dpni_enabled)
-+			/* Allow the MC some slack */
-+			rte_delay_ms(CHECK_INTERVAL);
-+	} while (dpni_enabled && --retries);
-+
-+	if (!retries) {
-+		DPAA2_PMD_WARN("Retry count exceeded disabling dpni");
-+		/* todo- we may have to manually cleanup queues.
-+		 */
-+	} else {
-+		DPAA2_PMD_INFO("Port %d Link DOWN successful", dev->data->port_id);
-+	}
-+
-+	dev->data->dev_link.link_status = 0;
-+
-+	return ret;
-+}
-+
- /**
-  * Dpaa2 link Interrupt handler
-  *
-@@ -1842,19 +2059,18 @@ dpaa2_eth_setup_irqs(struct rte_eth_dev *dev, int enable)
- 
- 	PMD_INIT_FUNC_TRACE();
- 
--	err = dpni_set_irq_mask(dpni, CMD_PRI_LOW, priv->token,
--				irq_index, mask);
-+	err = dpni_set_irq_mask(dpni, CMD_PRI_LOW, priv->token, irq_index, mask);
- 	if (err < 0) {
- 		DPAA2_PMD_ERR("Error: dpni_set_irq_mask():%d (%s)", err,
--			      strerror(-err));
-+			strerror(-err));
- 		return err;
- 	}
- 
--	err = dpni_set_irq_enable(dpni, CMD_PRI_LOW, priv->token,
--				  irq_index, enable);
--	if (err < 0)
-+	err = dpni_set_irq_enable(dpni, CMD_PRI_LOW, priv->token, irq_index, enable);
-+	if (err < 0) {
- 		DPAA2_PMD_ERR("Error: dpni_set_irq_enable():%d (%s)", err,
--			      strerror(-err));
-+			strerror(-err));
-+	}
- 
- 	return err;
- }
-@@ -2021,8 +2237,7 @@ dpaa2_dev_stop(struct rte_eth_dev *dev)
- 
- 		/* Unregistering LSC interrupt handler */
- 		rte_intr_callback_unregister(intr_handle,
--					     dpaa2_interrupt_handler,
--					     (void *)dev);
-+			dpaa2_interrupt_handler, (void *)dev);
- 	}
- 
- 	dpaa2_dev_set_link_down(dev);
-@@ -2233,14 +2448,14 @@ dpaa2_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
- 
- 	if (!dpni) {
- 		DPAA2_PMD_ERR("dpni is NULL");
--		return -EINVAL;
-+		return -ENODEV;
- 	}
- 
- 	/* Set the Max Rx frame length as 'mtu' +
- 	 * Maximum Ethernet header length
++	if ((eth_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_DCB) && priv->qos_entries) {
++		nb_tcs = eth_conf->rx_adv_conf.dcb_rx_conf.nb_tcs;
++		for (tc_index = 0; tc_index < nb_tcs; tc_index++) {
++			if (tc_index >= priv->num_rx_tc)
++				break;
++			ret = dpaa2_setup_flow_dcb_dist(dev,
++				eth_conf->rx_adv_conf.dcb_rx_conf.dcb_tc[tc_index], tc_index);
++			if (ret) {
++				DPAA2_PMD_ERR("DCB direct to tc%d err(%d)", tc_index, ret);
+ 				return ret;
+ 			}
+ 		}
+@@ -1320,7 +1396,7 @@ dpaa2_eth_dev_configure(struct rte_eth_dev *dev)
  	 */
- 	ret = dpni_set_max_frame_length(dpni, CMD_PRI_LOW, priv->token,
--					frame_size - RTE_ETHER_CRC_LEN);
-+			frame_size - RTE_ETHER_CRC_LEN);
- 	if (ret) {
- 		DPAA2_PMD_ERR("Setting the max frame length failed");
- 		return ret;
-@@ -2676,175 +2891,6 @@ dpaa2_dev_stats_reset(struct rte_eth_dev *dev)
- 	return retcode;
- };
+ 	if (dpaa2_svr_family == SVR_LX2160A) {
+ 		ret = dpni_set_offload(dpni, CMD_PRI_LOW, priv->token,
+-				       DPNI_FLCTYPE_HASH, true);
++				DPNI_FLCTYPE_HASH, true);
+ 		if (ret) {
+ 			DPAA2_PMD_ERR("Error setting FLCTYPE: Err = %d", ret);
+ 			return ret;
+@@ -2282,6 +2358,8 @@ dpaa2_dev_close(struct rte_eth_dev *dev)
  
--/* return 0 means link status changed, -1 means not changed */
--static int
--dpaa2_dev_link_update(struct rte_eth_dev *dev,
--		      int wait_to_complete)
--{
--	int ret;
--	struct dpaa2_dev_priv *priv = dev->data->dev_private;
--	struct fsl_mc_io *dpni = dev->process_private;
--	struct rte_eth_link link;
--	struct dpni_link_state state = {0};
--	uint8_t count;
--
--	if (!dpni) {
--		DPAA2_PMD_ERR("dpni is NULL");
--		return 0;
--	}
--
--	for (count = 0; count <= MAX_REPEAT_TIME; count++) {
--		ret = dpni_get_link_state(dpni, CMD_PRI_LOW, priv->token,
--					  &state);
--		if (ret < 0) {
--			DPAA2_PMD_DEBUG("error: dpni_get_link_state %d", ret);
--			return ret;
--		}
--		if (state.up == RTE_ETH_LINK_DOWN &&
--		    wait_to_complete)
--			rte_delay_ms(CHECK_INTERVAL);
--		else
--			break;
--	}
--
--	memset(&link, 0, sizeof(struct rte_eth_link));
--	link.link_status = state.up;
--	link.link_speed = state.rate;
--
--	if (state.options & DPNI_LINK_OPT_HALF_DUPLEX)
--		link.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
--	else
--		link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
--
--	ret = rte_eth_linkstatus_set(dev, &link);
--	if (ret < 0)
--		DPAA2_PMD_DEBUG("No change in status");
--	else
--		DPAA2_PMD_INFO("Port %d Link is %s", dev->data->port_id,
--			       link.link_status ? "Up" : "Down");
--
--	return ret;
--}
--
--/**
-- * Toggle the DPNI to enable, if not already enabled.
-- * This is not strictly PHY up/down - it is more of logical toggling.
-- */
--static int
--dpaa2_dev_set_link_up(struct rte_eth_dev *dev)
--{
--	int ret = -EINVAL;
--	struct dpaa2_dev_priv *priv;
--	struct fsl_mc_io *dpni;
--	int en = 0;
--	struct dpni_link_state state = {0};
--
--	priv = dev->data->dev_private;
--	dpni = dev->process_private;
--
--	if (!dpni) {
--		DPAA2_PMD_ERR("dpni is NULL");
--		return ret;
--	}
--
--	/* Check if DPNI is currently enabled */
--	ret = dpni_is_enabled(dpni, CMD_PRI_LOW, priv->token, &en);
--	if (ret) {
--		/* Unable to obtain dpni status; Not continuing */
--		DPAA2_PMD_ERR("Interface Link UP failed (%d)", ret);
--		return ret;
--	}
--
--	/* Enable link if not already enabled */
--	if (!en) {
--		ret = dpni_enable(dpni, CMD_PRI_LOW, priv->token);
--		if (ret) {
--			DPAA2_PMD_ERR("Interface Link UP failed (%d)", ret);
--			return ret;
--		}
--	}
--	ret = dpni_get_link_state(dpni, CMD_PRI_LOW, priv->token, &state);
--	if (ret < 0) {
--		DPAA2_PMD_DEBUG("Unable to get link state (%d)", ret);
--		return ret;
--	}
--
--	/* changing tx burst function to start enqueues */
--	dev->tx_pkt_burst = dpaa2_dev_tx;
--	dev->data->dev_link.link_status = state.up;
--	dev->data->dev_link.link_speed = state.rate;
--
--	if (state.options & DPNI_LINK_OPT_HALF_DUPLEX)
--		dev->data->dev_link.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
--	else
--		dev->data->dev_link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
--
--	if (state.up)
--		DPAA2_PMD_DEBUG("Port %d Link is Up", dev->data->port_id);
--	else
--		DPAA2_PMD_DEBUG("Port %d Link is Down", dev->data->port_id);
--	return ret;
--}
--
--/**
-- * Toggle the DPNI to disable, if not already disabled.
-- * This is not strictly PHY up/down - it is more of logical toggling.
-- */
--static int
--dpaa2_dev_set_link_down(struct rte_eth_dev *dev)
--{
--	int ret = -EINVAL;
--	struct dpaa2_dev_priv *priv;
--	struct fsl_mc_io *dpni;
--	int dpni_enabled = 0;
--	int retries = 10;
--
--	PMD_INIT_FUNC_TRACE();
--
--	priv = dev->data->dev_private;
--	dpni = dev->process_private;
--
--	if (!dpni) {
--		DPAA2_PMD_ERR("Device has not yet been configured");
--		return ret;
--	}
--
--	/*changing  tx burst function to avoid any more enqueues */
--	dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
--
--	/* Loop while dpni_disable() attempts to drain the egress FQs
--	 * and confirm them back to us.
--	 */
--	do {
--		ret = dpni_disable(dpni, 0, priv->token);
--		if (ret) {
--			DPAA2_PMD_ERR("dpni disable failed (%d)", ret);
--			return ret;
--		}
--		ret = dpni_is_enabled(dpni, 0, priv->token, &dpni_enabled);
--		if (ret) {
--			DPAA2_PMD_ERR("dpni enable check failed (%d)", ret);
--			return ret;
--		}
--		if (dpni_enabled)
--			/* Allow the MC some slack */
--			rte_delay_ms(CHECK_INTERVAL);
--	} while (dpni_enabled && --retries);
--
--	if (!retries) {
--		DPAA2_PMD_WARN("Retry count exceeded disabling dpni");
--		/* todo- we may have to manually cleanup queues.
--		 */
--	} else {
--		DPAA2_PMD_INFO("Port %d Link DOWN successful",
--			       dev->data->port_id);
--	}
--
--	dev->data->dev_link.link_status = 0;
--
--	return ret;
--}
--
- static int
- dpaa2_flow_ctrl_get(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
- {
+ 	dpaa2_tm_deinit(dev);
+ 	dpaa2_flow_clean(dev, MAX_TCS, DPAA2_FLOW_ALL_TYPE);
++	/** No matter dcb flows are created or not, they are destroyed in flow clean.*/
++	memset(priv->dcb_flow, 0, sizeof(void *) * RTE_ETH_DCB_NUM_USER_PRIORITIES);
+ 	/* Clean the device first */
+ 	ret = dpni_reset(dpni, CMD_PRI_LOW, priv->token);
+ 	if (ret) {
+@@ -3725,6 +3803,7 @@ static struct eth_dev_ops dpaa2_ethdev_ops = {
+ 	.txq_info_get	      = dpaa2_txq_info_get,
+ 	.tm_ops_get	      = dpaa2_tm_ops_get,
+ 	.mtr_ops_get = dpaa2_mtr_ops_get,
++	.get_dcb_info = dpaa2_dev_dcb_info,
+ 	.timesync_enable      = dpaa2_timesync_enable,
+ 	.timesync_disable     = dpaa2_timesync_disable,
+ 	.timesync_read_time   = dpaa2_timesync_read_time,
+@@ -4054,6 +4133,14 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 		tbl_profile->entry_map_size = entry_num / 8 + 1;
+ 	}
+ 
++	for (i = 0; i < priv->num_rx_tc; i++) {
++		if (i >= RTE_ETH_DCB_NUM_USER_PRIORITIES)
++			break;
++		if (i >= priv->qos_entries)
++			break;
++		priv->prio_dcb_tc[i] = i;
++	}
++	priv->nb_dcb_tcs = i;
+ 	ret = dpni_set_max_frame_length(dpni_dev, CMD_PRI_LOW, priv->token,
+ 		RTE_ETHER_MAX_LEN - RTE_ETHER_CRC_LEN + VLAN_TAG_SIZE);
+ 	if (ret) {
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
+index 0ad237a5cc..9ef6ee0e8c 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.h
++++ b/drivers/net/dpaa2/dpaa2_ethdev.h
+@@ -436,6 +436,9 @@ struct dpaa2_dev_priv {
+ 	char ep_name[RTE_DEV_NAME_MAX_LEN];
+ 
+ 	struct dpaa2_flow_profile flow_profile;
++	uint8_t nb_dcb_tcs;
++	uint8_t prio_dcb_tc[RTE_ETH_DCB_NUM_USER_PRIORITIES];
++	void *dcb_flow[RTE_ETH_DCB_NUM_USER_PRIORITIES];
+ 
+ 	uint16_t ss_offset;
+ 	uint64_t ss_iova;
+diff --git a/drivers/net/dpaa2/dpaa2_flow.c b/drivers/net/dpaa2/dpaa2_flow.c
+index 920e9edc51..d9f7391faf 100644
+--- a/drivers/net/dpaa2/dpaa2_flow.c
++++ b/drivers/net/dpaa2/dpaa2_flow.c
+@@ -3228,6 +3228,11 @@ dpaa2_flow_get_flow_index(struct dpaa2_dev_priv *priv,
+ 			DPAA2_PMD_ERR("QoS flow index(%d) >= max(%d)", idx, priv->qos_entries);
+ 			return -ENOSPC;
+ 		}
++
++		if (idx < RTE_ETH_DCB_NUM_USER_PRIORITIES && priv->dcb_flow[idx]) {
++			DPAA2_PMD_ERR("QoS flow[%d] added conflicts with dcb flow", idx);
++			return -ENODATA;
++		}
+ 	} else {
+ 		if (attr->priority >= priv->fs_entries) {
+ 			DPAA2_PMD_ERR("FS[%d].entry(%d) >= max(%d)",
 -- 
 2.43.0
 
