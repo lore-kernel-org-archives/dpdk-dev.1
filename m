@@ -1,84 +1,84 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B048E606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 16:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D61606A326
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 16:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=FDoXTLYM
+	dkim=pass (1024-bit key, unprotected) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=YJ7ALcrs
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AD6B40A81;
-	Fri, 23 Oct 2026 18:51:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A739940DCA;
+	Fri, 23 Oct 2026 18:51:37 +0200 (CEST)
 Received: from mail-pj1-f99.google.com (mail-pj1-f99.google.com
- [209.85.216.99]) by mails.dpdk.org (Postfix) with ESMTP id 9DB7D4069F
- for <dev@dpdk.org>; Fri, 23 Oct 2026 18:51:32 +0200 (CEST)
+ [209.85.216.99]) by mails.dpdk.org (Postfix) with ESMTP id 8F7D040A72
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 18:51:33 +0200 (CEST)
 Received: by mail-pj1-f99.google.com with SMTP id
- 98e67ed59e1d1-3acb11973c3so745560a91.3
- for <dev@dpdk.org>; Fri, 23 Oct 2026 09:51:32 -0700 (PDT)
+ 98e67ed59e1d1-3ade49a7ebdso113367a91.3
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 09:51:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792774292; x=1793379092;
+ d=1e100.net; s=20260707; t=1792774293; x=1793379093;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=0bPKflNIksPE5IuT0dWpN+ZbAcr2XXeg/3TtXLXrGV0=;
- b=j+iKfh5TuZYtkru7YAR7NgAQtf24pL3KWjNMogdhdKD/VSOsDYNo8hFuEUXjOwtJbd
- HVcomRuaeZ1AzdMejMxH++WAL7b5K7atAZ+BqP9PI3cHJue+IZBQRH/RySGpADbU2OjS
- KB1yHHTQOD3xTP7vmsT4GrQkkbLADU4pDdCtr/9U+LkRpLmxghxCPLmmUH4t0NExQlKW
- LHSwXD2P1F9rwji7KfRFB8Xr6Ra2jssx6pJPStoUhSwydIXOi3GLgSSMpO+7E4WtvLKg
- zSzen2JoK2lVgSkWrsIrYTgCzhEcGWNSprXUH45dXcmx2L5sfKcATuPo8kUzTNEarQB9
- 3lUA==
-X-Gm-Message-State: AFq9FYJsSxaAUJ2Qd2ZLuPCBMOFXcs26ZIPUC/NEAqnfpxWpDYN/ayv0
- VQ37Xp08euHxyeLtmFmOXkl4szoWF9SKR4k5bpkgp/AjESXV4VKjH424reFE3b1Njex/vMYNuVs
- hT4u98WO0M7NCItrKxjhaqiOQeYNt1yrQW0ulFEXDfrekm3MGBU1gE0HKBQCNtpfECtb/MOX2NV
- Ts9cyNDsbANnfSzBHwRFhfnvVnPGwPJnMxyhU+H254hrz2k+AKh2rLABr4NiSUzQzLO/3/8BypQ
- Grsb+fEuAx1
-X-Gm-Gg: AYBFou1Jlh2+1l/WX4vLSNp7CvKO9J4W6BLcLV2Luz04OBb1zZclLKjeNX2bcTPSuSu
- UABlyxdBDO4fEfdh6vsH+HM3yKsNHihXKo0TqEdjn5+dibhjHiGf0LDzSgEyn0QQvGg5VucgZ3y
- OrxH290MDDmlZ9c3y0TwU2KJHaYQvEihyvNneAiFCUwkD8QQYX5DmbCYA+hMKTkYWza8k+Yq2c4
- CtBZQ/piIQWTul3ia3M4oeIipTMZg7bhKHoPmrAR6dZQ71wfdNllrB9GkXYmOocQGMuu5JeG3mR
- bpvz6Jqg+/rLT4XqEiBt6bd11iK8iHPfPBZw76qu1Dih5AaIvdNDn3jp/agBcZyFThiSsDQWTop
- Dk0GUBcJ78STJxIq0W7WPpdPTZgvQHzMJKL6FUZGy4o3qnaZfDQHHlgJaNU2bqV2ftqR/mNmNXF
- SL/lj+Xg1QJCwIKa4fE0sFLTzjOf5J6odVUR1kIKH3jSxnL3pINNQp
-X-Received: by 2002:a17:90b:3985:b0:3ac:945c:7f69 with SMTP id
- 98e67ed59e1d1-3adce1191e4mr2353454a91.66.1792774291643; 
- Fri, 23 Oct 2026 09:51:31 -0700 (PDT)
+ bh=EVxtVUCgWU6DnA2DnSkduVXJQ5WBFQouoiO2AgAgi6c=;
+ b=ne3b/3gGMJWR8RiqDV6zhCLT/tY4/i5F/zZw56kv2h7ohCbr/QHaCDZFq3v7aVXEuf
+ zqNSFeQ/J678QvQBNpHD64lN7LRqaOsMBASMPXBBBa3rgPHR0F1TW71QSs26ouE5tIFk
+ cqwejOoHMivwdGXROo8C+W1sATJCBPAKBBI3Q4fgMjXabvqc/uXn3dudLlIPqll1KYih
+ UCBrTy1O+1ioWtEJmZvGi6znR/lmIEPivrQk1euk3jnMP8a0PJMYWMMrlE4elEumjvRl
+ vvwezm5NJXcDusw6r1voBO3wokSQyE4+IcoE45ZYBGFGLQwBKr7tMGDZjuE5ZT/ddQcG
+ hSpg==
+X-Gm-Message-State: AFq9FYLqHk8lFMhzyQxJwLMPLotSDquHlTZZ6JOgDkLCIZfUQtIWZtfp
+ 1Ev9rEKpT5yxZoUMGTjEt4sozl9NuEfE9Ze7u0sRueJ+r6DeAYAWIqdASiAi6NM7OU3z0DY+Mog
+ 3hgc3cGfIEzkeCjvYQdSrBgzz/sBbLxfncAGvcDH1Ma74Wyj2wpq85OD/Px0qSoBsg5adkcyBaG
+ OVkC0hAK0w+P4/sP6DjuGXwJsD8CQHYF2Y0YQS6KKabfOtejjxjybhQESnM5K2LqTEUNydXRE4u
+ +0juUOew+8A
+X-Gm-Gg: AYBFou2les287atip7pga0Mgk8xaLMnLh4powQpMBQZwmUG4MrijCjSERsOJHStN/fa
+ 8ZFCIKgk7dSES71EmZX1mASponqVqJQbkBqViTmluzwZJkOaeOYeHUC/TlYzQtDTSVstFo5VzIg
+ zgLKaXmmyOGfnQUnYixT5djy64r34bZ26ohe+cXi9coPrQPkfBgr1msjRHukWhXxblIdowicCrI
+ 1o6WhLW3nZIE2E7NYk4tgFZdNBWkHioIvWCvbj2ZH+m5NE2HDyPT2bxe3qeCAnuhUlQ5swrEfdl
+ tj+B01T5fUAb+vKF12CURnaknAi6WCYHFrFnBb3lJaLWMkueQMDfQsY3BZhoyXnUJIUmbolpAv+
+ vVpjAOAT/40Pym9UpywVnT14v/91Ek8lYh+fFUO2ZfiDiYlq/Y+3tcbmFjdyy9omdBdCdXtevHi
+ pB2Ev/ztztqaFjLBnppCeHxy9IQokOzcgHCv+V4D7X8CIfSTPAQ5Fr
+X-Received: by 2002:a17:90b:5246:b0:3ac:8fff:5a1b with SMTP id
+ 98e67ed59e1d1-3adce7dd700mr2241441a91.34.1792774292697; 
+ Fri, 23 Oct 2026 09:51:32 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-125.dlp.protect.broadcom.com. [144.49.247.125])
+ (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3addd7ba9d4sm490539a91.4.2026.10.23.09.51.31
+ 98e67ed59e1d1-3ade2231432sm126494a91.0.2026.10.23.09.51.32
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Fri, 23 Oct 2026 09:51:31 -0700 (PDT)
+ Fri, 23 Oct 2026 09:51:32 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qv1-f70.google.com with SMTP id
- 6a1803df08f44-91785bd637bso31786426d6.1
- for <dev@dpdk.org>; Fri, 23 Oct 2026 09:51:30 -0700 (PDT)
+Received: by mail-qt1-f200.google.com with SMTP id
+ d75a77b69052e-5376f1849bbso6738761cf.0
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 09:51:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1792774290; x=1793379090; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1792774291; x=1793379091; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=0bPKflNIksPE5IuT0dWpN+ZbAcr2XXeg/3TtXLXrGV0=;
- b=FDoXTLYMAR0Je7nMmRiPQgJqMRlmqYy5OXqYbXf0IkNAf1uNs6hEZB0b5pm+1ZDrjK
- TadaJMyKXk9bCy9p0CwnDzRKnzP9DRwbI0wwIp0E3OuFkqOGR994q47eb/+2Y4Qjxzbg
- PkrSwEqXZpl3tsunsvXF60zY0Qp2CB9RIb/8A=
-X-Received: by 2002:ad4:5dce:0:b0:912:517b:40f4 with SMTP id
- 6a1803df08f44-91c3ab0bcf8mr41215676d6.38.1792774289923; 
- Fri, 23 Oct 2026 09:51:29 -0700 (PDT)
-X-Received: by 2002:ad4:5dce:0:b0:912:517b:40f4 with SMTP id
- 6a1803df08f44-91c3ab0bcf8mr41215056d6.38.1792774289140; 
- Fri, 23 Oct 2026 09:51:29 -0700 (PDT)
+ bh=EVxtVUCgWU6DnA2DnSkduVXJQ5WBFQouoiO2AgAgi6c=;
+ b=YJ7ALcrs0q79ch7pKUdZsLF0rp51kWBCnta4uvOmjM3WLE+llQSLSlM4jXvDV5paNN
+ Nte3kFP8hDzkMmEabTzB7UrC6FzyKCVoi/3iRTpTBguSIo0alabYL4ZbSuTRjQNa/4Yi
+ isJjIaFU/rnE0xQboI6/Lu90MhIYo3lDGSNwA=
+X-Received: by 2002:a05:622a:5512:b0:536:65fb:fff5 with SMTP id
+ d75a77b69052e-536c298931dmr40184401cf.60.1792774291072; 
+ Fri, 23 Oct 2026 09:51:31 -0700 (PDT)
+X-Received: by 2002:a05:622a:5512:b0:536:65fb:fff5 with SMTP id
+ d75a77b69052e-536c298931dmr40183871cf.60.1792774290174; 
+ Fri, 23 Oct 2026 09:51:30 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91c45228d8bsm5928056d6.21.2026.10.23.09.51.28
+ 6a1803df08f44-91c45228d8bsm5928056d6.21.2026.10.23.09.51.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 23 Oct 2026 09:51:28 -0700 (PDT)
+ Fri, 23 Oct 2026 09:51:29 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com,
  Keegan Freyhof <keegan.freyhof@broadcom.com>, stable@dpdk.org
-Subject: [PATCH 4/7] net/bnxt: modify AVX2 v3 path to prevent OOB accesses
-Date: Fri, 23 Oct 2026 10:54:53 -0600
-Message-ID: <20261023165457.1225312-5-mohammad-shuab.siddique@broadcom.com>
+Subject: [PATCH 5/7] net/bnxt: modify AVX2 v2 path to prevent OOB accesses
+Date: Fri, 23 Oct 2026 10:54:54 -0600
+Message-ID: <20261023165457.1225312-6-mohammad-shuab.siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261023165457.1225312-1-mohammad-shuab.siddique@broadcom.com>
 References: <20261023165457.1225312-1-mohammad-shuab.siddique@broadcom.com>
@@ -104,7 +104,7 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Keegan Freyhof <keegan.freyhof@broadcom.com>
 
-The AVX2 Rx burst function for the Thor2 (v3) completion format always
+The AVX2 Rx burst function for the standard completion format always
 loads eight completion pairs and stores eight mbuf pointers per loop
 iteration. When the request was shorter than eight, or the end of the
 completion ring left fewer than eight entries, the extra descriptors
@@ -114,215 +114,230 @@ caller's array.
 
 Run the vector loop only for whole groups of eight that stay inside
 both rings, and receive the remaining packets one completion at a
-time with a new scalar helper, recv_one_vec_avx2_v3(). A call no
-longer wraps either ring.
+time with a scalar helper, recv_one_vec_avx2(). A call no longer wraps
+either ring.
 
 A request for fewer than eight packets is now served instead of
 returning none.
 
-The packet type of a tunneled packet is now taken from the tunnel bit
-of flags2, which is folded into the ptype index, so the vector path
-reports the inner L3/L4 packet type for such packets. The packet type
-of other packets is unchanged, and bnxt_parse_pkt_type_v3(), which
-the non-vector path uses, is not modified.
+Move bnxt_parse_pkt_type() to bnxt_rxr.h so the helper can use it.
 
-Fixes: ae347ed1b27d ("net/bnxt: add AVX2 Rx for Thor2")
+Fixes: c4e4c18963b0 ("net/bnxt: add AVX2 RX/Tx")
 Cc: stable@dpdk.org
 
 Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_rxr.h             |   4 +
- drivers/net/bnxt/bnxt_rxtx_vec_avx2.c   | 556 +++++++++++-------------
- drivers/net/bnxt/bnxt_rxtx_vec_common.h |  56 +++
- 3 files changed, 318 insertions(+), 298 deletions(-)
+ drivers/net/bnxt/bnxt_rxr.c             |  26 ---
+ drivers/net/bnxt/bnxt_rxr.h             |  26 +++
+ drivers/net/bnxt/bnxt_rxtx_vec_avx2.c   | 243 ++++++++++++++++--------
+ drivers/net/bnxt/bnxt_rxtx_vec_common.h |   1 -
+ 4 files changed, 192 insertions(+), 104 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_rxr.h b/drivers/net/bnxt/bnxt_rxr.h
-index f38fb4f0ba..0d05606fe3 100644
---- a/drivers/net/bnxt/bnxt_rxr.h
-+++ b/drivers/net/bnxt/bnxt_rxr.h
-@@ -463,6 +463,10 @@ bnxt_parse_pkt_type_v2(struct rte_mbuf *mbuf,
- #define RX_PKT_V3_CMPL_FLAGS2_IP_TYPE_SFT	8
- #define RX_PKT_V3_CMPL_METADATA1_VALID_SFT	15
- 
-+#define BNXT_V3_FLAGS2_TUN_MSK				\
-+	(RX_PKT_V3_CMPL_HI_FLAGS2_T_IP_CS_CALC |	\
-+	 RX_PKT_V3_CMPL_HI_FLAGS2_T_L4_CS_CALC)
-+
- #define BNXT_CMPL_V3_ITYPE_TO_IDX(ft) \
- 	(((ft) & RX_PKT_V3_CMPL_FLAGS_ITYPE_MASK) >> \
- 	 (RX_PKT_V3_CMPL_FLAGS_ITYPE_SFT - BNXT_PTYPE_TBL_TYPE_SFT))
-diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-index a953a4a928..dcbff3ca4b 100644
---- a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-+++ b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-@@ -948,116 +948,131 @@ bnxt_xmit_pkts_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	return nb_sent;
+diff --git a/drivers/net/bnxt/bnxt_rxr.c b/drivers/net/bnxt/bnxt_rxr.c
+index 559c208437..43b13790f8 100644
+--- a/drivers/net/bnxt/bnxt_rxr.c
++++ b/drivers/net/bnxt/bnxt_rxr.c
+@@ -540,32 +540,6 @@ bnxt_init_ptype_table(void)
+ 	initialized = true;
  }
  
-+static uint16_t
-+recv_one_vec_avx2_v3(struct rte_mbuf **rx_pkts, uint32_t cons, uint32_t mbcons,
-+		      uint32_t valid_bit, uint64_t mbuf_init,
-+		      struct cmpl_base *cp_desc_ring, struct rte_mbuf **rx_buf_ring)
+-static uint32_t
+-bnxt_parse_pkt_type(struct rx_pkt_cmpl *rxcmp, struct rx_pkt_cmpl_hi *rxcmp1)
+-{
+-	uint32_t flags_type, flags2;
+-	uint8_t index;
+-
+-	flags_type = rte_le_to_cpu_16(rxcmp->flags_type);
+-	flags2 = rte_le_to_cpu_32(rxcmp1->flags2);
+-
+-	/* Validate ptype table indexing at build time. */
+-	bnxt_check_ptype_constants();
+-
+-	/*
+-	 * Index format:
+-	 *     bit 0: Set if IP tunnel encapsulated packet.
+-	 *     bit 1: Set if IPv6 packet, clear if IPv4.
+-	 *     bit 2: Set if VLAN tag present.
+-	 *     bits 3-6: Four-bit hardware packet type field.
+-	 */
+-	index = BNXT_CMPL_ITYPE_TO_IDX(flags_type) |
+-		BNXT_CMPL_VLAN_TUN_TO_IDX(flags2) |
+-		BNXT_CMPL_IP_VER_TO_IDX(flags2);
+-
+-	return bnxt_ptype_table[index];
+-}
+-
+ static void
+ bnxt_parse_pkt_type_v3(struct rte_mbuf *mbuf,
+ 		       struct rx_pkt_cmpl *rxcmp_v1,
+diff --git a/drivers/net/bnxt/bnxt_rxr.h b/drivers/net/bnxt/bnxt_rxr.h
+index 0d05606fe3..4e745bd7b7 100644
+--- a/drivers/net/bnxt/bnxt_rxr.h
++++ b/drivers/net/bnxt/bnxt_rxr.h
+@@ -254,6 +254,32 @@ bnxt_check_ptype_constants(void)
+ 
+ extern uint32_t bnxt_ptype_table[BNXT_PTYPE_TBL_DIM];
+ 
++static inline uint32_t
++bnxt_parse_pkt_type(struct rx_pkt_cmpl *rxcmp, struct rx_pkt_cmpl_hi *rxcmp1)
 +{
-+	struct rx_pkt_v3_cmpl *rxcmp = (struct rx_pkt_v3_cmpl *)&cp_desc_ring[cons];
-+	struct rx_pkt_v3_cmpl_hi *rxcmp1 = (struct rx_pkt_v3_cmpl_hi *)&cp_desc_ring[cons + 1];
-+	uint64_t hi, pkt_type, ol_flags = RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN;
-+	uint64_t flags_type, flags2, meta, vlan_tci = 0, rss;
-+	uint32_t tun, tun_ip6, vlan, type, im, im2;
++	uint32_t flags_type, flags2;
++	uint8_t index;
++
++	flags_type = rte_le_to_cpu_16(rxcmp->flags_type);
++	flags2 = rte_le_to_cpu_32(rxcmp1->flags2);
++
++	/* Validate ptype table indexing at build time. */
++	bnxt_check_ptype_constants();
++
++	/*
++	 * Index format:
++	 *     bit 0: Set if IP tunnel encapsulated packet.
++	 *     bit 1: Set if IPv6 packet, clear if IPv4.
++	 *     bit 2: Set if VLAN tag present.
++	 *     bits 3-6: Four-bit hardware packet type field.
++	 */
++	index = BNXT_CMPL_ITYPE_TO_IDX(flags_type) |
++		BNXT_CMPL_VLAN_TUN_TO_IDX(flags2) |
++		BNXT_CMPL_IP_VER_TO_IDX(flags2);
++
++	return bnxt_ptype_table[index];
++}
++
+ static inline void bnxt_set_vlan(struct rx_pkt_cmpl_hi *rxcmp1,
+ 				 struct rte_mbuf *mbuf)
+ {
+diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
+index dcbff3ca4b..d8031232bb 100644
+--- a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
++++ b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
+@@ -19,25 +19,99 @@
+ #include "bnxt_rxtx_vec_common.h"
+ #include <unistd.h>
+ 
++/*
++ * Scalar tail handler for the V2 completion format. Processes a
++ * single completion pair so that the caller can drain the packets left over
++ * once the eight-wide vector loop can no longer be run without stepping past
++ * the end of either ring.
++ */
+ static uint16_t
+-recv_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++recv_one_vec_avx2(struct bnxt_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++		  uint32_t cons, uint32_t mbcons, uint32_t valid_bit,
++		  uint64_t mbuf_init, struct cmpl_base *cp_desc_ring,
++		  struct rte_mbuf **rx_buf_ring)
++{
++	struct rx_pkt_cmpl *rxcmp = (struct rx_pkt_cmpl *)&cp_desc_ring[cons];
++	struct rx_pkt_cmpl_hi *rxcmp1 = (struct rx_pkt_cmpl_hi *)&cp_desc_ring[cons + 1];
++	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
++	uint32_t flags_type, flags2, index, errors;
 +	struct rte_mbuf *mbuf;
-+	uint64_t *rearm;
-+	uint16_t error_v2;
++	uint16_t errors_v2;
++	uint64_t ol_flags;
 +
-+	error_v2 = rxcmp1->errors_v2;
++	errors_v2 = rxcmp1->errors_v2;
 +
-+	if (!((error_v2 & CMPL_BASE_V) ^ valid_bit))
++	if (!((errors_v2 & CMPL_BASE_V) ^ valid_bit))
 +		return 0;
 +
 +	rte_compiler_barrier();
 +
 +	mbuf = rx_buf_ring[mbcons];
 +	RTE_ASSERT(mbuf != NULL);
-+	rx_pkts[0] = mbuf;
-+	rearm = (uint64_t *)&mbuf->rearm_data[0];
 +
-+	error_v2 &= RX_PKT_CMPL_ERRORS_MASK;
-+	flags2 = rxcmp1->flags2;
 +	flags_type = rxcmp->flags_type;
-+	meta = rxcmp->metadata1_payload_offset;
++	/* The vector loop only ever consumes the low 16 bits of flags2. */
++	flags2 = rxcmp1->flags2 & 0xffff;
 +
-+	im = (error_v2 >> 4) & 0xf;
-+	ol_flags = errors_to_olflags_v3[1 + im];
-+	ol_flags &= -(uint64_t)!!(flags2 & RX_PKT_CMPL_CALC);
++	/*
++	 * Build the ol_flags and checksum error table indices exactly as the
++	 * vector loop does: the tunnel bit (RX_PKT_CMPL_FLAGS2_T_IP_CS_CALC)
++	 * is folded into bit 5 of the ol_flags index and bit 4 of the error
++	 * index. ol_flags_err_table[] is zero for every entry with no error
++	 * bit set, so the lookup is unconditional here as well.
++	 */
++	errors = ((errors_v2 >> 4) & 0xf) & flags2;
++	index = (flags2 & 0x1f) & ~errors;
++	index |= (flags2 & RX_PKT_CMPL_FLAGS2_T_IP_CS_CALC) << 3;
++	errors |= (flags2 & RX_PKT_CMPL_FLAGS2_T_IP_CS_CALC) << 2;
 +
-+	rss = rxcmp->rss_hash;
-+	if (flags_type & RX_PKT_V3_CMPL_FLAGS_RSS_VALID)
++	ol_flags = rxr->ol_flags_table[index];
++	ol_flags |= rxr->ol_flags_err_table[errors];
++
++	mbuf->hash.rss = rxcmp->rss_hash;
++	if (flags_type & RX_PKT_CMPL_FLAGS_RSS_VALID)
 +		ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
 +
-+	tun_ip6 = (flags2 & RX_PKT_V3_CMPL_HI_FLAGS2_IP_TYPE) >>
-+		   RX_PKT_V3_CMPL_FLAGS2_IP_TYPE_SFT;
-+	tun = (flags2 & BNXT_V3_FLAGS2_TUN_MSK) >> 1;
-+	tun_ip6 |= tun;
-+	type = (flags_type & RX_PKT_V3_CMPL_FLAGS_ITYPE_MASK) >>
-+		RX_PKT_V3_CMPL_FLAGS_ITYPE_SFT;
++	/*
++	 * ol_flags_table already carries RX_VLAN|RX_VLAN_STRIPPED when strip
++	 * offload is enabled; mirror the vector loop and OR them in from the
++	 * per-packet VLAN metadata bit so that the two sources agree.
++	 */
++	if ((flags2 & RX_PKT_CMPL_FLAGS2_META_FORMAT_VLAN) &&
++	    BNXT_RX_VLAN_STRIP_EN(rxq->bp))
++		ol_flags |= RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED;
 +
-+	im = tun_ip6_lut[tun_ip6];
-+	im2 = l3_type_lut[type & 0x7];
++	mbuf->ol_flags = ol_flags;
 +
-+	vlan = (meta >> RX_PKT_V3_CMPL_METADATA1_VALID_SFT) & 1;
-+	pkt_type = RTE_PTYPE_L2_ETHER + 5 * vlan;
-+
-+	im &= im2;
-+
-+	pkt_type |= -(uint64_t)!(type & 0x8) & im;
-+
-+	if (vlan) {
-+		vlan_tci = RX_CMP_V3_METADATA0_VID(rxcmp1);
-+		ol_flags |= RTE_MBUF_F_RX_VLAN;
-+		if (rxcmp1->flags2 & RX_PKT_V3_CMPL_HI_FLAGS2_META_FORMAT_MASK)
-+			ol_flags |= RTE_MBUF_F_RX_VLAN_STRIPPED;
-+	}
 +	mbuf->next = NULL;
-+	hi = rxcmp->len;
-+	pkt_type |= hi << 32;
-+	hi |= vlan_tci << 16;
-+	hi |= rss << 32;
++	mbuf->pkt_len = rxcmp->len;
++	mbuf->data_len = mbuf->pkt_len;
++	mbuf->rearm_data[0] = mbuf_init;
++	mbuf->packet_type = bnxt_parse_pkt_type(rxcmp, rxcmp1);
++	mbuf->vlan_tci = rxcmp1->metadata;
 +
-+	rearm[0] = mbuf_init;
-+	rearm[1] = ol_flags;
-+	rearm[2] = pkt_type;
-+	rearm[3] = hi;
++	rx_pkts[0] = mbuf;
 +	return 1;
 +}
 +
- /*
-  * V3 (Thor2) RX burst processing - AVX2 vectorized implementation
-  *
-  * V3 completions have a different layout for checksum and VLAN handling
-  * compared to the standard and compressed completion formats.
-+ * The function will always consume 8 cpr bds and write 8 packets given valid.
-+ * Bounds are enforced by bnxt_recv_pkts_vec_avx2_v3.
-  */
- static uint16_t
--recv_burst_vec_avx2_v3(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
-+recv_burst_vec_avx2_v3(struct rte_mbuf **rx_pkts, uint16_t nb_pkts,
-+			uint32_t cons, uint32_t mbcons, uint32_t valid_bit, uint64_t mbuf_init,
-+			struct cmpl_base *cp_desc_ring, struct rte_mbuf **rx_buf_ring)
++/*
++ * AVX2 V2 RX burst processing
++ *
++ * The function will always consume 2 * nb_pkts cpr bds and write nb_pkts
++ * packets given valid. Bounds are enforced by bnxt_recv_pkts_vec_avx2.
++ */
++static uint16_t
++recv_burst_vec_avx2(struct bnxt_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++		    uint16_t nb_pkts, uint32_t cons, uint32_t mbcons,
++		    uint32_t valid_bit, uint64_t mbuf_init,
++		    struct cmpl_base *cp_desc_ring, struct rte_mbuf **rx_buf_ring)
  {
 -	struct bnxt_rx_queue *rxq = rx_queue;
 -	const __m256i mbuf_init =
 -		_mm256_set_epi64x(0, 0, 0, rxq->mbuf_initializer);
 -	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
--	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
 -	uint32_t cp_ring_size = cpr->cp_ring_struct->ring_size;
 -	uint32_t rx_ring_size = rxr->rx_ring_struct->ring_size;
 -	struct cmpl_base *cp_desc_ring = cpr->cp_desc_ring;
 -	uint64_t valid, desc_valid_mask = ~0ULL;
+ 	const __m256i info3_v_mask = _mm256_set1_epi32(CMPL_BASE_V);
 -	uint32_t raw_cons = cpr->cp_raw_cons;
 -	uint32_t cons, mbcons;
 -	int nb_rx_pkts = 0;
 -	int i;
--	const __m256i valid_target =
--		_mm256_set1_epi32(!!(raw_cons & cp_ring_size));
--
--	/*
--	 * Shuffle mask for V3 descriptors to rearrange fields into mbuf layout.
--	 */
--	const __m256i shuf_msk =
--		_mm256_set_epi8(15, 14, 13, 12,          /* rss */
--				11, 10,                  /* vlan_tci */
--				3, 2,                    /* data_len */
--				0xFF, 0xFF, 3, 2,        /* pkt_len */
--				0xFF, 0xFF, 0xFF, 0xFF,  /* pkt_type (zeroes) */
--				15, 14, 13, 12,          /* rss */
--				11, 10,                  /* vlan_tci */
--				3, 2,                    /* data_len */
--				0xFF, 0xFF, 3, 2,        /* pkt_len */
--				0xFF, 0xFF, 0xFF, 0xFF); /* pkt_type (zeroes) */
--
--	/* Shuffle mask for high completion to extract metadata0 and errors */
--	const __m256i dsc_shuf_msk =
--		_mm256_set_epi8(0xff, 0xff, 0xff, 0xff,  /* Zeroes */
--				11, 10,                  /* metadata0 (vlan_tci) */
--				9, 8,                    /* errors_v2 */
--				5, 4,                    /* metadata2 */
--				1, 0,                    /* flags2 low */
--				0xff, 0xff, 0xff, 0xff,  /* Zeroes */
--				0xff, 0xff, 0xff, 0xff,  /* Zeroes */
--				11, 10,                  /* metadata0 (vlan_tci) */
--				9, 8,                    /* errors_v2 */
--				5, 4,                    /* metadata2 */
--				1, 0,                    /* flags2 low */
--				0xff, 0xff, 0xff, 0xff); /* Zeroes */
- 	const __m256i mask_1s =
- 		_mm256_set1_epi32(0x1);
- 	const __m256i mask_fs =
- 		_mm256_set1_epi32(0xf);
 +	const __m256i mbuf_init_v =
-+		_mm256_set1_epi64x(mbuf_init);
-+	const __m256i tun_ip6_v =
-+		_mm256_load_si256((const __m256i *)tun_ip6_lut);
-+	const __m256i l3_type_v =
-+		_mm256_load_si256((const __m256i *)l3_type_lut);
-+	const __m256i olflags_v3_v =
-+		_mm256_load_si256((const __m256i *)olflags_v3_lut);
++		_mm256_set_epi64x(0, 0, 0, mbuf_init);
+ 	const __m256i valid_target =
+-		_mm256_set1_epi32(!!(raw_cons & cp_ring_size));
++		_mm256_set1_epi32(valid_bit);
+ 	const __m256i dsc_shuf_msk =
+ 		_mm256_set_epi8(0xff, 0xff, 0xff, 0xff,  /* Zeroes. */
+ 				7, 6,                    /* metadata type */
+@@ -88,42 +162,13 @@ recv_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 	__m256i ol_flags, ol_flags_hi;
+ 	__m256i rss_flags;
  
- 	__m256i rearm0, rearm1, rearm2, rearm3, rearm4, rearm5, rearm6, rearm7;
--	__m256i t0, t1, flags_type, flags2, errors_csum_idx, metadata1;
--	__m256i mbuf01, mbuf23, mbuf45, mbuf67;
--	__m256i ptype_idx, ptypes, vlan_flags;
--	__m256i ol_flags, ol_flags_hi;
--	__m256i rss_flags;
-+	__m256i ptypes, cs_mask, vlan_mask, vlan_s_mask, type, tun_ip6, tun;
-+	__m256i third_64_0145, third_64_2367, last_64_0145, last_64_2367;
-+	__m256i lo_0123, lo_4567, hi_0123, hi_4567, rss_0123, rss_4567;
-+	__m256i ol_flags, ol_flags_0145, ol_flags_2367;
-+	__m256i t0, t1, vlan_flags, rss_flags;
++	int nb_rx_pkts = 0;
++	uint64_t valid;
++	int i;
++
+ 	/* Validate ptype table indexing at build time. */
+ 	bnxt_check_ptype_constants();
  
--	/* Validate ptype table indexing at build time. */
--	bnxt_check_ptype_constants();
-+	const uint32_t valid_mask8 = valid_bit ? 0xffu : 0u;
- 
+-	/* If Rx Q was stopped return */
 -	if (unlikely(!rxq->rx_started))
 -		return 0;
 -
@@ -334,14 +349,18 @@ index a953a4a928..dcbff3ca4b 100644
 -	cons = raw_cons & (cp_ring_size - 1);
 -	mbcons = (raw_cons / 2) & (rx_ring_size - 1);
 -
+-	/* Return immediately if there is not at least one completed packet. */
 -	if (!bnxt_cpr_cmp_valid(&cp_desc_ring[cons], raw_cons, cp_ring_size))
 -		return 0;
 -
+-	/* Ensure that we do not go past the ends of the rings. */
 -	nb_pkts = RTE_MIN(nb_pkts, RTE_MIN(rx_ring_size - mbcons,
 -					   (cp_ring_size - cons) / 2));
 -	/*
 -	 * If we are at the end of the ring, ensure that descriptors after the
--	 * last valid entry are not treated as valid.
+-	 * last valid entry are not treated as valid. Otherwise, force the
+-	 * maximum number of packets to receive to be a multiple of the per-
+-	 * loop count.
 -	 */
 -	if (nb_pkts < BNXT_RX_DESCS_PER_LOOP_VEC256) {
 -		desc_valid_mask >>=
@@ -350,20 +369,14 @@ index a953a4a928..dcbff3ca4b 100644
 -		nb_pkts =
 -			RTE_ALIGN_FLOOR(nb_pkts, BNXT_RX_DESCS_PER_LOOP_VEC256);
 -	}
-+	int nb_rx_pkts = 0;
-+	uint32_t valid;
-+	int i;
- 
+-
+ 	/* Handle RX burst request */
  	for (i = 0; i < nb_pkts; i += BNXT_RX_DESCS_PER_LOOP_VEC256,
  				  cons += BNXT_RX_DESCS_PER_LOOP_VEC256 * 2,
- 				  mbcons += BNXT_RX_DESCS_PER_LOOP_VEC256) {
-+		__m256i vlan_tci_len, flags_type, flags2, errors_v2, metadata1, rss, len;
- 		__m256i desc0, desc1, desc2, desc3, desc4, desc5, desc6, desc7;
--		__m256i rxcmp0_1, rxcmp2_3, rxcmp4_5, rxcmp6_7, info3_v;
--		__m256i errors_v2, cs_calc, cs_valid, meta_format;
--		__m256i md1_0123, lo2_3, md1_4567, lo6_7;
+@@ -134,10 +179,10 @@ recv_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
  		uint32_t num_valid;
  
+ 		/* Copy eight mbuf pointers to output array. */
 -		t0 = _mm256_loadu_si256((void *)&rxr->rx_buf_ring[mbcons]);
 +		t0 = _mm256_loadu_si256((void *)&rx_buf_ring[mbcons]);
  		_mm256_storeu_si256((void *)&rx_pkts[i], t0);
@@ -373,337 +386,52 @@ index a953a4a928..dcbff3ca4b 100644
  		_mm256_storeu_si256((void *)&rx_pkts[i + 4], t0);
  #endif
  
-@@ -1081,207 +1096,127 @@ recv_burst_vec_avx2_v3(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pk
- 		rte_compiler_barrier();
- 		desc0 = _mm256_load_si256((void *)&cp_desc_ring[cons + 0]);
- 
--		/*
--		 * Pack needed fields from each descriptor pair.
--		 * extract rxcmp (low) for flags_type, len, rss
--		 * and rxcmp1 (hi) for flags2, metadata0, metadata1, errors_v2
--		 * metadata1 is incrementally extracted to save on
--		 * register pressure
--		 */
--		t0 = _mm256_permute2f128_si256(desc6, desc7, 0x20);
--		t1 = _mm256_permute2f128_si256(desc6, desc7, 0x31);
--		t1 = _mm256_shuffle_epi8(t1, dsc_shuf_msk);
--		rxcmp6_7 = _mm256_blend_epi32(t0, t1, 0x66);
--		lo6_7 = t0;
-+		t0 = _mm256_unpacklo_epi32(desc6, desc7);
-+		t1 = _mm256_unpacklo_epi32(desc4, desc5);
-+		lo_4567 = _mm256_unpacklo_epi64(t1, t0);
- 
--		t0 = _mm256_permute2f128_si256(desc4, desc5, 0x20);
--		t1 = _mm256_permute2f128_si256(desc4, desc5, 0x31);
--		t1 = _mm256_shuffle_epi8(t1, dsc_shuf_msk);
--		rxcmp4_5 = _mm256_blend_epi32(t0, t1, 0x66);
--		md1_4567 = _mm256_unpackhi_epi32(t0, lo6_7);
-+		t0 = _mm256_unpackhi_epi32(desc6, desc7);
-+		t1 = _mm256_unpackhi_epi32(desc4, desc5);
-+		hi_4567 = _mm256_unpacklo_epi64(t1, t0);
-+		rss_4567 = _mm256_unpackhi_epi64(t1, t0);
- 
--		t0 = _mm256_permute2f128_si256(desc2, desc3, 0x20);
--		t1 = _mm256_permute2f128_si256(desc2, desc3, 0x31);
--		t1 = _mm256_shuffle_epi8(t1, dsc_shuf_msk);
--		rxcmp2_3 = _mm256_blend_epi32(t0, t1, 0x66);
--		lo2_3 = t0;
-+		t0 = _mm256_unpacklo_epi32(desc2, desc3);
-+		t1 = _mm256_unpacklo_epi32(desc0, desc1);
-+		lo_0123 = _mm256_unpacklo_epi64(t1, t0);
- 
--		t0 = _mm256_permute2f128_si256(desc0, desc1, 0x20);
--		t1 = _mm256_permute2f128_si256(desc0, desc1, 0x31);
--		t1 = _mm256_shuffle_epi8(t1, dsc_shuf_msk);
--		rxcmp0_1 = _mm256_blend_epi32(t0, t1, 0x66);
--		md1_0123 = _mm256_unpackhi_epi32(t0, lo2_3);
--		metadata1 = _mm256_unpacklo_epi64(md1_0123, md1_4567);
-+		t0 = _mm256_unpackhi_epi32(desc2, desc3);
-+		t1 = _mm256_unpackhi_epi32(desc0, desc1);
-+		hi_0123 = _mm256_unpacklo_epi64(t1, t0);
-+		rss_0123 = _mm256_unpackhi_epi64(t1, t0);
- 
--		/* Extract flags2 from high completion for eight packets */
--		t0 = _mm256_unpacklo_epi32(rxcmp0_1, rxcmp2_3);
--		t1 = _mm256_unpacklo_epi32(rxcmp4_5, rxcmp6_7);
--		flags2 = _mm256_unpackhi_epi64(t0, t1);
--		/* fs mask used for RX_PKT_CMPL_CALC */
--		cs_calc = _mm256_and_si256(flags2, mask_fs);
--		/* Add the meta_format to cs_calc */
--		cs_calc = _mm256_or_si256(cs_calc, _mm256_and_si256(flags2,
--							_mm256_slli_epi32(mask_fs, 4)));
-+		errors_v2 = _mm256_permute2f128_si256(hi_0123, hi_4567, 0x31);
-+		metadata1 = _mm256_permute2f128_si256(hi_0123, hi_4567, 0x20);
-+		flags2 = _mm256_permute2f128_si256(lo_0123, lo_4567, 0x31);
-+		flags_type = _mm256_permute2f128_si256(lo_0123, lo_4567, 0x20);
-+		rss = _mm256_permute2f128_si256(rss_0123, rss_4567, 0x20);
- 
--		/* Extract metadata0 and errors from high completion */
--		t0 = _mm256_unpackhi_epi32(rxcmp0_1, rxcmp2_3);
--		t1 = _mm256_unpackhi_epi32(rxcmp4_5, rxcmp6_7);
--		errors_v2 = _mm256_unpacklo_epi64(t0, t1);
--		/* mask_fs used in place of RX_PKT_CMPL_ERRORS_T_L4_CS_ERROR |
--		 * RX_PKT_CMPL_ERRORS_T_IP_CS_ERROR | RX_PKT_CMPL_ERRORS_L4_CS_ERROR |
--		 * RX_PKT_CMPL_ERRORS_IP_CS_ERROR
--		 */
--		errors_csum_idx = _mm256_and_si256(_mm256_srli_epi32(errors_v2, 4),
--						   mask_fs);
--		meta_format = _mm256_cmpeq_epi32(_mm256_and_si256(cs_calc,
--						 _mm256_slli_epi32(mask_fs, 4)),
--						 _mm256_setzero_si256());
--		cs_valid = _mm256_cmpeq_epi32(_mm256_and_si256(cs_calc, mask_fs),
--					      _mm256_setzero_si256());
--		errors_csum_idx = _mm256_add_epi32(_mm256_andnot_si256(cs_valid, mask_1s),
--						   _mm256_andnot_si256(cs_valid,
--								       errors_csum_idx));
--
--		/*
--		 * Load ol_flags for eight packets using gather. Gather
--		 * operations have extremely high latency (~19 cycles),
--		 * execution and use of result should be separated as much
--		 * as possible.
--		 */
--		ol_flags = _mm256_i32gather_epi32((const int *)errors_to_olflags_v3,
--						  errors_csum_idx, sizeof(uint32_t));
-+		len = _mm256_srli_epi32(flags_type, 16);
- 
--		/* Extract if the packet is VLAN and the VLAN tci */
--		metadata1 = _mm256_srli_epi32(metadata1, 16);
--		/* mask_1s used in place of RX_PKT_V3_CMPL_METADATA1_VALID */
--		ptype_idx = _mm256_srli_epi32(_mm256_and_si256(metadata1,
--					      _mm256_slli_epi32(mask_1s, 15)),
--					      RX_PKT_V3_CMPL_METADATA1_VALID_SFT -
--					      BNXT_PTYPE_TBL_VLAN_SFT);
-+		valid = _mm256_movemask_ps(_mm256_castsi256_ps(_mm256_slli_epi32(errors_v2, 31))) ^
-+			valid_mask8;
-+		num_valid = rte_popcount32(valid);
- 
--		vlan_flags = _mm256_and_si256(metadata1, _mm256_slli_epi32(mask_1s, 15));
--		vlan_flags = _mm256_min_epu32(vlan_flags, mask_1s);
--
--		/*
--		 * VLAN present in mbuf when metadata valid (vlan_flags) and
--		 * meta_format is non-zero in flags2. andnot(cmpeq(tci,0), vlan_flags) is
--		 * (~zero_mask) & vlan_flags.
--		 */
--		t0 = _mm256_andnot_si256(meta_format, vlan_flags);
--		/* RTE_MBUF_F_RX_VLAN + STRIPPED when hardware reports valid VLAN. */
--		vlan_flags = _mm256_or_si256(vlan_flags, _mm256_slli_epi32(t0, 6));
--
--		/* Extract flags_type from low completion for eight packets */
--		t0 = _mm256_unpacklo_epi32(rxcmp0_1, rxcmp2_3);
--		t1 = _mm256_unpacklo_epi32(rxcmp4_5, rxcmp6_7);
--		flags_type = _mm256_unpacklo_epi64(t0, t1);
-+		if (num_valid == 0)
-+			break;
- 
--		/* Compute ptype_idx from flags_type itype field
--		 * mask_fs is used in place of
--		 * RX_PKT_V3_CMPL_FLAGS_ITYPE_MASK
--		 */
--		t0 = _mm256_and_si256(flags_type,
--				      _mm256_slli_epi32(mask_fs, 12));
--		t0 = _mm256_srli_epi32(t0, RX_PKT_V3_CMPL_FLAGS_ITYPE_SFT -
--				       BNXT_PTYPE_TBL_TYPE_SFT);
--		ptype_idx = _mm256_or_si256(ptype_idx, t0);
-+		rte_compiler_barrier();
- 
--		/* Extract flags2 from low completion for eight packets
--		 * flags2 is re-extracted to save on registers
--		 */
--		t0 = _mm256_unpacklo_epi32(rxcmp0_1, rxcmp2_3);
--		t1 = _mm256_unpacklo_epi32(rxcmp4_5, rxcmp6_7);
--		flags2 = _mm256_unpackhi_epi64(t0, t1);
-+		t0 = _mm256_srli_epi32(errors_v2, 4);
-+		t0 = _mm256_permutevar8x32_epi32(olflags_v3_v, t0);
- 
--		/* mask_fs is being used in place of
--		 * RX_PKT_CMPL_CALC
--		 */
--		cs_calc = _mm256_and_si256(flags2, mask_fs);
--		cs_valid = _mm256_cmpeq_epi32(cs_calc, _mm256_setzero_si256());
--		ol_flags = _mm256_andnot_si256(cs_valid, ol_flags);
-+		t1 = _mm256_and_si256(errors_v2,
-+				      _mm256_set1_epi32(RX_PKT_CMPL_ERRORS_T_L4_CS_ERROR));
-+		t1 = _mm256_slli_epi32(t1, 14);
-+		ol_flags = _mm256_sub_epi32(_mm256_set1_epi32(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD),
-+					    t1);
-+		ol_flags = _mm256_or_si256(ol_flags, t0);
- 
--		/* mask_1s is being used in place of
--		 * RX_PKT_V3_CMPL_HI_FLAGS2_IP_TYPE
--		 */
--		t0 = _mm256_srli_epi32(_mm256_and_si256(flags2,
--				       _mm256_slli_epi32(mask_1s, 8)),
--				       RX_PKT_V3_CMPL_FLAGS2_IP_TYPE_SFT -
--				       BNXT_PTYPE_TBL_IP_VER_SFT);
--		ptype_idx = _mm256_or_si256(ptype_idx, t0);
-+		/* mask_fs is used in place of RX_PKT_V3_CMPL_FLAGS_ITYPE_MASK */
-+		type = _mm256_and_si256(_mm256_srli_epi32(flags_type,
-+					RX_PKT_V3_CMPL_FLAGS_ITYPE_SFT), mask_fs);
- 
--		/*
--		 * Load ptypes for eight packets using gather. Gather operations
--		 * have extremely high latency (~19 cycles), execution and use
--		 * of result should be separated as much as possible.
--		 */
--		ptypes = _mm256_i32gather_epi32((int *)bnxt_ptype_table,
--						ptype_idx, sizeof(uint32_t));
-+		rss_flags = _mm256_and_si256(flags_type,
-+					     _mm256_set1_epi32(RX_PKT_V3_CMPL_FLAGS_RSS_VALID));
-+		rss_flags = _mm256_srli_epi32(rss_flags, 9);
-+		t1 = _mm256_cmpgt_epi32(_mm256_set1_epi32(8), type);
-+		type = _mm256_permutevar8x32_epi32(l3_type_v, type);
-+
-+		/* mask_fs used for RX_PKT_CMPL_CALC */
-+		cs_mask = _mm256_and_si256(flags2, mask_fs);
-+		cs_mask = _mm256_slli_epi32(cs_mask, 1);
-+		cs_mask = _mm256_cmpgt_epi32(cs_mask, mask_1s);
-+		ol_flags = _mm256_and_si256(ol_flags, cs_mask);
-+		ol_flags = _mm256_or_si256(ol_flags, rss_flags);
- 
--		/*
--		 * Pack the 128-bit array of valid descriptor flags into 64
--		 * bits and count the number of set bits in order to determine
--		 * the number of valid descriptors.
--		 * mask_1s is used in place of CMPL_BASE_V
--		 */
--		info3_v = _mm256_and_si256(errors_v2, mask_1s);
--		info3_v = _mm256_xor_si256(info3_v, valid_target);
-+		vlan_s_mask = _mm256_and_si256(flags2,
-+				_mm256_set1_epi32(RX_PKT_V3_CMPL_HI_FLAGS2_META_FORMAT_MASK));
-+		/* mask_1s is used in place of RX_PKT_V3_CMPL_HI_FLAGS2_IP_TYPE */
-+		tun_ip6 = _mm256_and_si256(_mm256_srli_epi32(flags2,
-+					   RX_PKT_V3_CMPL_FLAGS2_IP_TYPE_SFT), mask_1s);
-+		tun = _mm256_and_si256(flags2, _mm256_set1_epi32(BNXT_V3_FLAGS2_TUN_MSK));
-+		tun = _mm256_srli_epi32(tun, 1);
-+		tun_ip6 = _mm256_or_si256(tun_ip6, tun);
-+		tun_ip6 = _mm256_permutevar8x32_epi32(tun_ip6_v, tun_ip6);
-+		vlan_mask = _mm256_srai_epi32(metadata1, 31);
-+		vlan_tci_len = _mm256_and_si256(vlan_mask, errors_v2);
-+		vlan_tci_len = _mm256_blend_epi16(len, vlan_tci_len, 0xaa);
-+		vlan_s_mask = _mm256_cmpgt_epi32(vlan_s_mask, mask_1s);
-+		ptypes = _mm256_blendv_epi8(_mm256_set1_epi32(RTE_PTYPE_L2_ETHER),
-+			_mm256_set1_epi32(RTE_PTYPE_L2_ETHER_VLAN), vlan_mask);
-+		vlan_s_mask = _mm256_and_si256(vlan_s_mask,
-+					       _mm256_set1_epi32(RTE_MBUF_F_RX_VLAN_STRIPPED));
-+		/* mask_1s is used in place of RTE_MBUF_F_RX_VLAN */
-+		vlan_flags = _mm256_or_si256(mask_1s, vlan_s_mask);
-+		vlan_flags = _mm256_and_si256(vlan_mask, vlan_flags);
-+		t0 = _mm256_and_si256(type, tun_ip6);
-+		t0 = _mm256_and_si256(t0, t1);
-+		ptypes = _mm256_or_si256(t0, ptypes);
-+		ol_flags = _mm256_or_si256(ol_flags, vlan_flags);
- 
--		info3_v = _mm256_packs_epi32(info3_v, _mm256_setzero_si256());
--		valid = _mm_cvtsi128_si64(_mm256_extracti128_si256(info3_v, 1));
--		valid = (valid << CHAR_BIT) |
--			_mm_cvtsi128_si64(_mm256_castsi256_si128(info3_v));
+@@ -266,11 +311,13 @@ recv_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 		valid = _mm_cvtsi128_si64(_mm256_extracti128_si256(info3_v, 1));
+ 		valid = (valid << CHAR_BIT) |
+ 			_mm_cvtsi128_si64(_mm256_castsi256_si128(info3_v));
 -		num_valid = rte_popcount64(valid & desc_valid_mask);
-+		third_64_0145 = _mm256_unpacklo_epi32(ptypes, len);
-+		third_64_2367 = _mm256_unpackhi_epi32(ptypes, len);
++		num_valid = rte_popcount64(valid);
  
--		if (num_valid == 0)
--			break;
-+		last_64_0145 = _mm256_unpacklo_epi32(vlan_tci_len, rss);
-+		last_64_2367 = _mm256_unpackhi_epi32(vlan_tci_len, rss);
+ 		if (num_valid == 0)
+ 			break;
  
--		/* Extract flags_type from low completion for eight packets*/
--		t0 = _mm256_unpacklo_epi32(rxcmp0_1, rxcmp2_3);
--		t1 = _mm256_unpacklo_epi32(rxcmp4_5, rxcmp6_7);
--		flags_type = _mm256_unpacklo_epi64(t0, t1);
-+		t1 = _mm256_setzero_si256();
-+		ol_flags_0145 = _mm256_unpacklo_epi32(ol_flags, t1);
-+		ol_flags_2367 = _mm256_unpackhi_epi32(ol_flags, t1);
++		rte_compiler_barrier();
++
+ 		/* Update mbuf rearm_data for eight packets. */
+ 		mbuf01 = _mm256_shuffle_epi8(rxcmp0_1, shuf_msk);
+ 		mbuf23 = _mm256_shuffle_epi8(rxcmp2_3, shuf_msk);
+@@ -287,10 +334,10 @@ recv_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 					_mm256_srli_si256(ptypes, 12), 0x11);
  
--		mbuf01 = _mm256_shuffle_epi8(rxcmp0_1, shuf_msk);
--		mbuf23 = _mm256_shuffle_epi8(rxcmp2_3, shuf_msk);
--		mbuf45 = _mm256_shuffle_epi8(rxcmp4_5, shuf_msk);
--		mbuf67 = _mm256_shuffle_epi8(rxcmp6_7, shuf_msk);
-+		ol_flags_0145 = _mm256_permute2f128_si256(ol_flags_0145,
-+							  ol_flags_0145, 0x01);
-+		ol_flags_2367 = _mm256_permute2f128_si256(ol_flags_2367,
-+							  ol_flags_2367, 0x01);
- 
--		mbuf01 = _mm256_blend_epi32(mbuf01, ptypes, 0x11);
--		mbuf23 = _mm256_blend_epi32(mbuf23,
--					_mm256_srli_si256(ptypes, 4), 0x11);
--		mbuf45 = _mm256_blend_epi32(mbuf45,
--					_mm256_srli_si256(ptypes, 8), 0x11);
--		mbuf67 = _mm256_blend_epi32(mbuf67,
--					_mm256_srli_si256(ptypes, 12), 0x11);
-+		rearm4 = _mm256_unpacklo_epi64(mbuf_init_v, ol_flags_0145);
-+		t1 = _mm256_unpacklo_epi64(third_64_0145, last_64_0145);
-+		rearm0 = _mm256_permute2f128_si256(rearm4, t1, 0x21);
-+		rearm4 = _mm256_blend_epi32(rearm4, t1, 0xf0);
- 
+ 		/* Unpack rearm data, set fixed fields for first four mbufs. */
 -		rearm0 = _mm256_permute2f128_si256(mbuf_init, mbuf01, 0x20);
 -		rearm1 = _mm256_blend_epi32(mbuf_init, mbuf01, 0xF0);
 -		rearm2 = _mm256_permute2f128_si256(mbuf_init, mbuf23, 0x20);
 -		rearm3 = _mm256_blend_epi32(mbuf_init, mbuf23, 0xF0);
-+		rearm5 = _mm256_unpackhi_epi64(mbuf_init_v, ol_flags_0145);
-+		t1 = _mm256_unpackhi_epi64(third_64_0145, last_64_0145);
-+		rearm1 = _mm256_permute2f128_si256(rearm5, t1, 0x21);
-+		rearm5 = _mm256_blend_epi32(rearm5, t1, 0xf0);
++		rearm0 = _mm256_permute2f128_si256(mbuf_init_v, mbuf01, 0x20);
++		rearm1 = _mm256_blend_epi32(mbuf_init_v, mbuf01, 0xF0);
++		rearm2 = _mm256_permute2f128_si256(mbuf_init_v, mbuf23, 0x20);
++		rearm3 = _mm256_blend_epi32(mbuf_init_v, mbuf23, 0xF0);
  
--		/* Extract RSS valid flags for eight packets
--		 * mask_1s is being used in place of
--		 * RX_PKT_V3_CMPL_FLAGS_RSS_VALID
--		 */
--		rss_flags = _mm256_and_si256(flags_type,
--					     _mm256_slli_epi32(mask_1s, 10));
--		rss_flags = _mm256_srli_epi32(rss_flags, 9);
--		ol_flags = _mm256_or_si256(ol_flags, rss_flags);
--		ol_flags = _mm256_or_si256(ol_flags, vlan_flags);
--		ol_flags_hi = _mm256_permute2f128_si256(ol_flags,
--							ol_flags, 0x11);
-+		rearm6 = _mm256_unpacklo_epi64(mbuf_init_v, ol_flags_2367);
-+		t1 = _mm256_unpacklo_epi64(third_64_2367, last_64_2367);
-+		rearm2 = _mm256_permute2f128_si256(rearm6, t1, 0x21);
-+		rearm6 = _mm256_blend_epi32(rearm6, t1, 0xf0);
- 
--		rearm0 = _mm256_blend_epi32(rearm0,
--					    _mm256_slli_si256(ol_flags, 8),
--					    0x04);
--		rearm1 = _mm256_blend_epi32(rearm1,
--					    _mm256_slli_si256(ol_flags_hi, 8),
--					    0x04);
--		rearm2 = _mm256_blend_epi32(rearm2,
--					    _mm256_slli_si256(ol_flags, 4),
--					    0x04);
--		rearm3 = _mm256_blend_epi32(rearm3,
--					    _mm256_slli_si256(ol_flags_hi, 4),
--					    0x04);
-+		rearm7 = _mm256_unpackhi_epi64(mbuf_init_v, ol_flags_2367);
-+		t1 = _mm256_unpackhi_epi64(third_64_2367, last_64_2367);
-+		rearm3 = _mm256_permute2f128_si256(rearm7, t1, 0x21);
-+		rearm7 = _mm256_blend_epi32(rearm7, t1, 0xf0);
- 
- 		_mm256_storeu_si256((void *)&rx_pkts[i + 0]->rearm_data,
- 				    rearm0);
-@@ -1291,21 +1226,6 @@ recv_burst_vec_avx2_v3(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pk
- 				    rearm2);
- 		_mm256_storeu_si256((void *)&rx_pkts[i + 3]->rearm_data,
+ 		/* Compute final ol_flags values for eight packets. */
+ 		rss_flags = _mm256_and_si256(flags_type, rss_mask);
+@@ -344,10 +391,10 @@ recv_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
  				    rearm3);
--
+ 
+ 		/* Unpack rearm data, set fixed fields for final four mbufs. */
 -		rearm4 = _mm256_permute2f128_si256(mbuf_init, mbuf45, 0x20);
 -		rearm5 = _mm256_blend_epi32(mbuf_init, mbuf45, 0xF0);
 -		rearm6 = _mm256_permute2f128_si256(mbuf_init, mbuf67, 0x20);
 -		rearm7 = _mm256_blend_epi32(mbuf_init, mbuf67, 0xF0);
--
--		rearm4 = _mm256_blend_epi32(rearm4, ol_flags, 0x04);
--		rearm5 = _mm256_blend_epi32(rearm5, ol_flags_hi, 0x04);
--		rearm6 = _mm256_blend_epi32(rearm6,
--					    _mm256_srli_si256(ol_flags, 4),
--					    0x04);
--		rearm7 = _mm256_blend_epi32(rearm7,
--					    _mm256_srli_si256(ol_flags_hi, 4),
--					    0x04);
--
- 		_mm256_storeu_si256((void *)&rx_pkts[i + 4]->rearm_data,
- 				    rearm4);
- 		_mm256_storeu_si256((void *)&rx_pkts[i + 5]->rearm_data,
-@@ -1320,14 +1240,6 @@ recv_burst_vec_avx2_v3(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pk
++		rearm4 = _mm256_permute2f128_si256(mbuf_init_v, mbuf45, 0x20);
++		rearm5 = _mm256_blend_epi32(mbuf_init_v, mbuf45, 0xF0);
++		rearm6 = _mm256_permute2f128_si256(mbuf_init_v, mbuf67, 0x20);
++		rearm7 = _mm256_blend_epi32(mbuf_init_v, mbuf67, 0xF0);
+ 
+ 		/* Set ol_flags fields for final four packets. */
+ 		rearm4 = _mm256_blend_epi32(rearm4, ol_flags, 0x04);
+@@ -374,14 +421,6 @@ recv_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
  			break;
  	}
  
@@ -718,47 +446,56 @@ index a953a4a928..dcbff3ca4b 100644
  	return nb_rx_pkts;
  }
  
-@@ -1336,20 +1248,68 @@ bnxt_recv_pkts_vec_avx2_v3(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			   uint16_t nb_pkts)
+@@ -680,27 +719,76 @@ crx_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 	return nb_rx_pkts;
+ }
+ 
++
+ uint16_t
+ bnxt_recv_pkts_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			 uint16_t nb_pkts)
  {
  	struct bnxt_rx_queue *rxq = rx_queue;
--	uint32_t expected_burst = (uint16_t)RTE_MAX((uint32_t)rxq->rx_free_thresh,
--						     BNXT_RX_DESCS_PER_LOOP_VEC256);
+-	uint32_t brst = (uint16_t)RTE_MAX((uint32_t)rxq->rx_free_thresh,
++	uint16_t brst = (uint16_t)RTE_MAX((uint32_t)rxq->rx_free_thresh,
+ 					   BNXT_RX_DESCS_PER_LOOP_VEC256);
 +	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
 +	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
 +	uint32_t cp_ring_size = cpr->cp_ring_struct->ring_size;
 +	uint32_t rx_ring_size = rxr->rx_ring_struct->ring_size;
 +	struct cmpl_base *cp_desc_ring = cpr->cp_desc_ring;
 +	struct rte_mbuf **rx_buf_ring = rxr->rx_buf_ring;
-+	uint32_t chunk = RTE_MAX((uint32_t)rxq->rx_free_thresh,
-+				 BNXT_RX_DESCS_PER_LOOP_VEC256);
  	uint16_t cnt = 0;
  
--	while (nb_pkts > expected_burst) {
+-	while (nb_pkts > brst) {
 -		uint16_t burst;
 +	if (unlikely(!rxq->rx_started))
 +		return 0;
  
--		burst = recv_burst_vec_avx2_v3(rx_queue, rx_pkts + cnt, expected_burst);
+-		burst = recv_burst_vec_avx2(rx_queue, rx_pkts + cnt, brst);
 +	while (nb_pkts) {
 +		uint32_t cons, mbcons, valid_bit, num, num_vec, received = 0;
-+
+ 
+-		cnt += burst;
+-		nb_pkts -= burst;
 +		if (rxq->rxrearm_nb >= rxq->rx_free_thresh)
 +			bnxt_rxq_rearm(rxq, rxr);
-+
+ 
+-		if (burst < brst)
+-			return cnt;
 +		valid_bit = !!(cpr->cp_raw_cons & cp_ring_size);
 +		cons = cpr->cp_raw_cons & (cp_ring_size - 1);
 +		mbcons = (cpr->cp_raw_cons / 2) & (rx_ring_size - 1);
 +
 +		/* Never wrap either ring within one pass. */
-+		num = RTE_MIN((uint32_t)nb_pkts, chunk);
++		num = RTE_MIN((uint32_t)nb_pkts, brst);
 +		num = RTE_MIN(num, rx_ring_size - mbcons);
 +		num = RTE_MIN(num, (cp_ring_size - cons) / 2);
 +
 +		num_vec = RTE_ALIGN_FLOOR(num, BNXT_RX_DESCS_PER_LOOP_VEC256);
 +
 +		if (num_vec)
-+			received = recv_burst_vec_avx2_v3(rx_pkts + cnt,
++			received = recv_burst_vec_avx2(rxq, rx_pkts + cnt,
 +						     num_vec, cons, mbcons,
 +						     valid_bit,
 +						     rxq->mbuf_initializer,
@@ -767,21 +504,17 @@ index a953a4a928..dcbff3ca4b 100644
 +		/* Only chase the tail if the vector loops all filled. */
 +		if (received == num_vec) {
 +			while (received < num &&
-+				recv_one_vec_avx2_v3(rx_pkts + cnt + received,
++				recv_one_vec_avx2(rxq, rx_pkts + cnt + received,
 +						     cons + 2 * received, mbcons + received,
 +						     valid_bit,
 +						     rxq->mbuf_initializer,
 +						     cp_desc_ring, rx_buf_ring))
 +				received++;
 +		}
- 
--		cnt += burst;
--		nb_pkts -= burst;
++
 +		if (received == 0)
 +			break;
- 
--		if (burst < expected_burst)
--			return cnt;
++
 +		rxr->rx_raw_prod = RING_ADV(rxr->rx_raw_prod, received);
 +		rxq->rxrearm_nb += received;
 +		cpr->cp_raw_cons += 2 * received;
@@ -793,75 +526,50 @@ index a953a4a928..dcbff3ca4b 100644
 +		if (received < num)
 +			break;
  	}
--	return cnt + recv_burst_vec_avx2_v3(rx_queue, rx_pkts + cnt, nb_pkts);
+-	return cnt + recv_burst_vec_avx2(rx_queue, rx_pkts + cnt, nb_pkts);
 +
 +	return cnt;
  }
+ 
+ uint16_t
+@@ -948,7 +1036,7 @@ bnxt_xmit_pkts_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	return nb_sent;
+ }
+ 
+-static uint16_t
++static inline uint16_t
+ recv_one_vec_avx2_v3(struct rte_mbuf **rx_pkts, uint32_t cons, uint32_t mbcons,
+ 		      uint32_t valid_bit, uint64_t mbuf_init,
+ 		      struct cmpl_base *cp_desc_ring, struct rte_mbuf **rx_buf_ring)
+@@ -1031,7 +1119,7 @@ recv_one_vec_avx2_v3(struct rte_mbuf **rx_pkts, uint32_t cons, uint32_t mbcons,
+  * The function will always consume 8 cpr bds and write 8 packets given valid.
+  * Bounds are enforced by bnxt_recv_pkts_vec_avx2_v3.
+  */
+-static uint16_t
++static inline uint16_t
+ recv_burst_vec_avx2_v3(struct rte_mbuf **rx_pkts, uint16_t nb_pkts,
+ 			uint32_t cons, uint32_t mbcons, uint32_t valid_bit, uint64_t mbuf_init,
+ 			struct cmpl_base *cp_desc_ring, struct rte_mbuf **rx_buf_ring)
+@@ -1160,6 +1248,7 @@ recv_burst_vec_avx2_v3(struct rte_mbuf **rx_pkts, uint16_t nb_pkts,
+ 
+ 		vlan_s_mask = _mm256_and_si256(flags2,
+ 				_mm256_set1_epi32(RX_PKT_V3_CMPL_HI_FLAGS2_META_FORMAT_MASK));
++		/* mask_1s used in place of RX_PKT_V3_CMPL_HI_FLAGS2_IP_TYPE*/
+ 		/* mask_1s is used in place of RX_PKT_V3_CMPL_HI_FLAGS2_IP_TYPE */
+ 		tun_ip6 = _mm256_and_si256(_mm256_srli_epi32(flags2,
+ 					   RX_PKT_V3_CMPL_FLAGS2_IP_TYPE_SFT), mask_1s);
 diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_common.h b/drivers/net/bnxt/bnxt_rxtx_vec_common.h
-index bca18f936f..df20e7280c 100644
+index df20e7280c..3a095682d1 100644
 --- a/drivers/net/bnxt/bnxt_rxtx_vec_common.h
 +++ b/drivers/net/bnxt/bnxt_rxtx_vec_common.h
-@@ -216,4 +216,60 @@ static const uint32_t errors_to_olflags_v3[17] = {
- 	RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_BAD
+@@ -227,7 +227,6 @@ static const alignas(32) uint32_t olflags_v3_lut[8] = {
+ 	RTE_MBUF_F_RX_IP_CKSUM_BAD | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
  };
  
-+static const alignas(32) uint32_t olflags_v3_lut[8] = {
-+	RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD,
-+	RTE_MBUF_F_RX_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_GOOD,
-+	RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD,
-+	RTE_MBUF_F_RX_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
-+	RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_GOOD,
-+	RTE_MBUF_F_RX_IP_CKSUM_BAD | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_GOOD,
-+	RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
-+	RTE_MBUF_F_RX_IP_CKSUM_BAD | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD,
-+};
-+
-+
-+/* Split tables to reduce the latency from the old ptypes table look up as most
-+ * of the ptypes table isn't needed.
-+ * Because the hotpath code does not incur any cost from having all of the
-+ * macros ORed together on compile, the tun ip6 table can put in some of the
-+ * work needed for the type table as the type table can only have 8 but would
-+ * need 16 to factor in tun.
-+ */
-+#define BNXT_RTE_PTYPE_L3_ALL (RTE_PTYPE_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_L3_IPV6_EXT_UNKNOWN |	\
-+			       RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN |				\
-+			       RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN)
-+
-+static const alignas(32) uint32_t tun_ip6_lut[8] = {
-+	RTE_PTYPE_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_L4_TCP |
-+	RTE_PTYPE_L4_UDP | RTE_PTYPE_L4_ICMP, /* !ip6 !tun */
-+	RTE_PTYPE_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_L4_TCP |
-+	RTE_PTYPE_L4_UDP | RTE_PTYPE_L4_ICMP, /* ip6 !tun */
-+	RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP |
-+	RTE_PTYPE_INNER_L4_UDP | RTE_PTYPE_INNER_L4_ICMP, /* !ip6 tun */
-+	RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP |
-+	RTE_PTYPE_INNER_L4_UDP | RTE_PTYPE_INNER_L4_ICMP, /* ip6 tun */
-+	RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP |
-+	RTE_PTYPE_INNER_L4_UDP | RTE_PTYPE_INNER_L4_ICMP, /* !ip6 tun */
-+	RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP |
-+	RTE_PTYPE_INNER_L4_UDP | RTE_PTYPE_INNER_L4_ICMP, /* ip6 tun */
-+	RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP |
-+	RTE_PTYPE_INNER_L4_UDP | RTE_PTYPE_INNER_L4_ICMP, /* !ip6 tun */
-+	RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN | RTE_PTYPE_INNER_L4_TCP |
-+	RTE_PTYPE_INNER_L4_UDP | RTE_PTYPE_INNER_L4_ICMP, /* ip6 tun */
-+};
-+
-+static const alignas(32) uint32_t l3_type_lut[8] = {
-+	0,
-+	BNXT_RTE_PTYPE_L3_ALL, /* RTE_PTYPE_INNER_L4_TCP */
-+	BNXT_RTE_PTYPE_L3_ALL |
-+	RTE_PTYPE_INNER_L4_TCP | RTE_PTYPE_L4_TCP, /* BNXT_PTYPE_TBL_TYPE_TCP */
-+	BNXT_RTE_PTYPE_L3_ALL |
-+	RTE_PTYPE_INNER_L4_UDP | RTE_PTYPE_L4_UDP, /* BNXT_PTYPE_TBL_TYPE_UDP */
-+	0,
-+	0,
-+	0,
-+	BNXT_RTE_PTYPE_L3_ALL |
-+	RTE_PTYPE_INNER_L4_ICMP | RTE_PTYPE_L4_ICMP, /* BNXT_PTYPE_TBL_TYPE_ICMP */
-+};
-+
- #endif /* _BNXT_RXTX_VEC_COMMON_H_ */
+-
+ /* Split tables to reduce the latency from the old ptypes table look up as most
+  * of the ptypes table isn't needed.
+  * Because the hotpath code does not incur any cost from having all of the
 -- 
 2.47.3
 
