@@ -1,73 +1,77 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97D9606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 14:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B2A606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 14:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=TmBVIZki
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=CXzgjGB8
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4DA2940276;
-	Fri, 23 Oct 2026 16:42:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5130640276;
+	Fri, 23 Oct 2026 16:44:46 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 672A340265
- for <dev@dpdk.org>; Fri, 23 Oct 2026 16:42:00 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id A133540265
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 16:44:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792766519;
+ s=mimecast20190719; t=1792766684;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=08AobnvrXy81RxnWm49OWnn6w1HO/bpH9Wzh6w9iopw=;
- b=TmBVIZkiM7NUsH1wj36guf1Oz3TD26B7iiU0D6buRneporM01EC/CbtDUsvVFmuqvLFNzA
- zbnX2YYhMmbqnJy52rCOeWddLR40cZo0k593FheuzgtLGjhgNjqXeJGZ2biM3UIaq5gd6W
- Kjx31sAesABO4jh36Fsmd7mLZBmLLCE=
+ bh=OtTbh8GQ+12a0pdPpDc8wXdXmFrTZ+nXbQgS2NrEy+Y=;
+ b=CXzgjGB81FEl0TLEn1lUw9x/Z+S+9oM9sR36DsdXI+QrzN37mZe3vVSfQaXJbU5gujvrOx
+ HZC0EMmKcfCTUvSvl6weiaX0OZrtFISOkBTs3ojunhMDVyBKTHR8vOWBAsyO6+bzx0TNu4
+ Ryt0ksnCIsco8GVdsMwSLfXvFLLTy64=
 Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
  [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-398-8QcRFKtaNPSrIdIQLqiU2w-1; Fri, 23 Oct 2026 10:41:58 -0400
-X-MC-Unique: 8QcRFKtaNPSrIdIQLqiU2w-1
-X-Mimecast-MFC-AGG-ID: 8QcRFKtaNPSrIdIQLqiU2w_1792766517
+ us-mta-533-zWNesPEKM86cBFFeZ_Ca9A-1; Fri, 23 Oct 2026 10:44:42 -0400
+X-MC-Unique: zWNesPEKM86cBFFeZ_Ca9A-1
+X-Mimecast-MFC-AGG-ID: zWNesPEKM86cBFFeZ_Ca9A_1792766681
 Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-3ab3089df39so3990081fa.0
- for <dev@dpdk.org>; Fri, 23 Oct 2026 07:41:58 -0700 (PDT)
+ 38308e7fff4ca-3ab426be412so4339481fa.1
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 07:44:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792766517; x=1793371317;
+ d=1e100.net; s=20260707; t=1792766681; x=1793371481;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=08AobnvrXy81RxnWm49OWnn6w1HO/bpH9Wzh6w9iopw=;
- b=ej1rTr4iYljfVsPcpCxHw3leZBMW3Txk2WKUqCybnT/xwo8giTM5C2GmSXh2tsHu8q
- BG5Q91IP2x2JNw63Vkk2gnlFkizGslpU7pDOn6mkgj+kLagJoEDd0PBSkvoeVLznmQm0
- eR+D224zRL9ZbeZnsmnj3qpZSwwgy/zfGcRLkRKsUmTDehwKFmPZXydq2d5ytQglKsca
- CLtbPCfLZMAxK8B7qdr6iPpj+TOq23TC81Dhe0JD8waDBvdmsh9mLd4iteVKOZoSJygW
- z+ZrKqwhO2N860oJkZI/8dGxgxjU4eswQCf8kx24kjO818LJfcSy/qv/y2KYV2QT8tt3
- 3oxw==
-X-Gm-Message-State: AFq9FYIZXaSYSce5G9C6sD0TUrIRBhHlct6wIVuUzuNKkRs+IbnFrlIl
- XP3WuTVbZoQNPjs98Q1heRWEyi6a6zIQV3bta0SznsmaulkN06j37AZCgtISXcdclRg/EoGcVY3
- +BV+TyvHUhZaSNsnA0BFYoedPuzWxc4M1bTzlR0dsDOnod9+8WsKP+6DGv3R3bfIoJcUY1mBnCz
- GiSP2t234CIoXm6GSTWTY=
-X-Gm-Gg: AYBFou3K5VlUaWf26XNBrxHclyRSnlandMvu0k63h3W6QamTn5hTJ3xErA/0SWLXOVl
- tYG0tC2RV64UuhYT40g2RqMJwFUbh28aNYjg70ID1YTFfqPsiPZLyayF5oScXpG7E+IIcdNCaVj
- 1o9/woJFhT/vw+KMz5vUcpxo2SjOwy0Hua0pJoQk0ee3z0KciYkaCJhBgxCieu9z5CWlZaGC6Oj
- SQfOrkjzbtpp+n+MhoXw6XM3u+RkN0fQ6Z6A4p7wbtatT43
-X-Received: by 2002:a05:651c:1b0f:b0:3ab:48e6:6789 with SMTP id
- 38308e7fff4ca-3ac6632e1fcmr6181621fa.8.1792766516741; 
- Fri, 23 Oct 2026 07:41:56 -0700 (PDT)
-X-Received: by 2002:a05:651c:1b0f:b0:3ab:48e6:6789 with SMTP id
- 38308e7fff4ca-3ac6632e1fcmr6181531fa.8.1792766516235; Fri, 23 Oct 2026
- 07:41:56 -0700 (PDT)
+ bh=OtTbh8GQ+12a0pdPpDc8wXdXmFrTZ+nXbQgS2NrEy+Y=;
+ b=f7I82OhNU/bWBremtw2p/aw6+6oK88XWzFZOYW0QBolU04pE0btO3gg1TRSL60n76s
+ kzrVMAqTLYmnDzOHMHxP+erbFlEgm9YeVbM+RdZ5TtfUvYY3Dq5U5ENKyEcPGIaM6l1c
+ D860rzJPNK5BU2fRAqAnjI/T82qXYE3xbAn2zf/BpdaPSvt2jjt8HCEMjI3/6EW5obaj
+ Ees9TDm/aLHUgHng7F62D1LPCgogtrExlaQNd431Qw9BfuGLM0Uj6p+oLa+Nfeb5j209
+ 1EXe889u+Zv/wxzRFRgqmogbAfDhhJwL0z3euvX1gqbUhn2LfDvHXYqLobwexaW6GNlh
+ VG9Q==
+X-Gm-Message-State: AFq9FYKLXYg0du1a/zH5DYhP6rNH5xAgKG4DRif3dhbAuA28EK1K4Zh8
+ u/bqIoa/ZRBhpZnCG3bu6HB4fsvRykVOBTOgg5M2OC9OiW6xE3b/wD5MYe/mCItH12eWECorBFC
+ j4oDu+YhYPqbMovuzY04UKPkvPYP6Uc7pK19kdqKtexwYyWs1uvr3nUVYIopeohf/PcuYsjWevb
+ H6pjw189wSlWT9aIkluGU=
+X-Gm-Gg: AYBFou3tNumCiWAnBB+P3T5pQNgOGnUXMgW2V1tN3CyiNEBqKi4nZnKTjNCNycWkVs4
+ LOhSG2RfkPatoKgMK5lKJFBt34JufUi7cLeZZ8RK7q8wgYUIi92JrYpgAeLUXNjlFlPPV4TjLgP
+ aoR3cdOyrw0XKdFdfMLyavNnZ9nkGBd+h0cTLlejDrfJ/0qEHeonu4RntXx9tSMGa4gkC8NemUD
+ WJeMlVEziady3KGr5K30j/11oSX1Bj45h+Ybpt301vbpL8Y
+X-Received: by 2002:a05:651c:1441:b0:3a3:7682:49a1 with SMTP id
+ 38308e7fff4ca-3ac663711e0mr5968171fa.22.1792766681034; 
+ Fri, 23 Oct 2026 07:44:41 -0700 (PDT)
+X-Received: by 2002:a05:651c:1441:b0:3a3:7682:49a1 with SMTP id
+ 38308e7fff4ca-3ac663711e0mr5968131fa.22.1792766680610; Fri, 23 Oct 2026
+ 07:44:40 -0700 (PDT)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 References: <5766e02ea3243de1f63eb68efc210719f11815b6.1792763492.git.anatoly.burakov@intel.com>
- <6313a2be1e6288e2844cb13e0c8523f7296c5b98.1792763492.git.anatoly.burakov@intel.com>
-In-Reply-To: <6313a2be1e6288e2844cb13e0c8523f7296c5b98.1792763492.git.anatoly.burakov@intel.com>
+ <8e863c1aa5d265fa27560dd27ba61858c217ff3d.1792763492.git.anatoly.burakov@intel.com>
+ <CAJFAV8yi8VxCz8kyuw=Qz155KPzWw2OPGMPJ0nRH+HhBFTMHsw@mail.gmail.com>
+ <0615fe20-ce56-4ce8-a7d6-be46f741949e@intel.com>
+In-Reply-To: <0615fe20-ce56-4ce8-a7d6-be46f741949e@intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 23 Oct 2026 16:41:44 +0200
-X-Gm-Features: AclHuK_wycYYhKY43atK-vNSJqU_9l2ORHylkBPI1sctTuKvM7XvQ-hrXYCVPw8
-Message-ID: <CAJFAV8zHmbL99Xi3REFd6P0WEewstUZ29=imnbVoxym9KTWA+w@mail.gmail.com>
-Subject: Re: [PATCH v4 8/8] interrupts: warn on leaked event FDs
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Harman Kalra <hkalra@marvell.com>
+Date: Fri, 23 Oct 2026 16:44:28 +0200
+X-Gm-Features: AclHuK_LNfikJQ05h5KZoZCCH7A4Adrrw2f-OHCtsPwWH13tA8HcQ4u6mdJPo-4
+Message-ID: <CAJFAV8ypGhAUU_XvFrxe9nMrxCWXwRmYL6sqzPjT0UKrYQLw1g@mail.gmail.com>
+Subject: Re: [PATCH v4 2/8] interrupts: fix event arrays copy on instance
+ duplication
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Harman Kalra <hkalra@marvell.com>,
+ Ray Kinsella <mdr@ashroe.eu>, Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 7zov71JlJkb_RGg963CY-ShzLbfz26uGkWN5If1doyM_1792766517
+X-Mimecast-MFC-PROC-ID: ywL004Yp7QWZP2EztUPdwrrlzDc5eVI_tcJQPyxd4Ek_1792766681
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -81,31 +85,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Fri, 23 Oct 2026 at 15:52, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
-> diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
-> index aadb7b84a22..f6f51ba53c0 100644
-> --- a/lib/eal/linux/eal_interrupts.c
-> +++ b/lib/eal/linux/eal_interrupts.c
-> @@ -1667,6 +1667,8 @@ rte_intr_efd_disable(struct rte_intr_handle *intr_handle)
->                 for (i = 0; i < (uint32_t)rte_intr_nb_efd_get(intr_handle); i++)
->                         close(rte_intr_efds_index_get(intr_handle, i));
->         }
-> +       for (i = 0; i < (uint32_t)rte_intr_nb_efd_get(intr_handle); i++)
-> +               rte_intr_efds_index_set(intr_handle, i, -1);
+On Fri, 23 Oct 2026 at 16:37, Burakov, Anatoly
+<anatoly.burakov@intel.com> wrote:
+>
+> On 10/23/2026 4:15 PM, David Marchand wrote:
+> > On Fri, 23 Oct 2026 at 15:51, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+> >>
+> >> The event FD and epoll event arrays are copied using the number of
+> >> entries as a byte count, so only a fraction of the entries make it
+> >> into the duplicate.
+> >>
+> >> Copy the arrays by element size.
+> >>
+> >> Fixes: b7c984291611 ("interrupts: add allocator and accessors")
+> >> Cc: stable@dpdk.org
+> >>
+> >> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> >
+> > Thanks for working on those issues on such short notice.
+> >
+> > I already put a series for fixing a number of issues with interrupts.
+> > As part of it, I would remove the whole duplication principle.
+> >
+> > Could you perhaps test your series on top of mine?
+> >
+> > https://patchwork.dpdk.org/project/dpdk/list/?series=39749
+> >
+> >
+>
+> It seems that your patchset makes most of mine obsolete, as only 3
+> commits survived the rebase (incidentally, the ones I had in v2), and
+> the conflicts were trivial enough to resolve on apply IMO. If you like I
 
-We don't want to waive for types != VFIO_MSIX, do we?
+Indeed.
 
+> can rebase my patchset on top of yours so that you may include it in
+> yours and take over?
 
->         rte_intr_nb_efd_set(intr_handle, 0);
->         rte_intr_max_intr_set(intr_handle, 0);
->  }
+I don't mind taking over.
+We just need to agree on my comment on the last patch.
 
-The rest lgtm.
+The other two fixes lgtm.
 
 
 -- 
