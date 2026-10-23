@@ -1,49 +1,51 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4411606A31D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 10:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2285606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 10:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=f2/5XdUI
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=FPQxSHKj
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 179AE40299;
-	Fri, 23 Oct 2026 12:36:14 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BF72240658;
+	Fri, 23 Oct 2026 12:36:16 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id EDACD40268
- for <dev@dpdk.org>; Fri, 23 Oct 2026 12:36:12 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3ED8B40658
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 12:36:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792751773; x=1824287773;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=QF+3UHODnk2M0zLNnpXBwYdg40vjQmh/NJXELW6LwHs=;
- b=f2/5XdUIE07M/07/amWNeWSlxulZMxY0IcYFMThi97okm1R5Av/Y5Q5g
- 0JkLq7JwnGzaShpNcRhYmEX0ghZ5H+pQtx/MbY4KTW6ymsbhZCIZl5rMf
- 35c0NSz3ObZQI/Z1IMFgVX/sI3PC1MBnQUDfw+pcVAw62XdI8mW4NpZ5k
- 6jlBrA+J8H1r1E4+818iDIwdKPdjrkAB256EYr414qKv6ncF7Qy2xVkYA
- 206+QFrQ1Z5WvMcb36htla5/8l0QgxrlLnV99pfTm+jng6lxEbmnWCjyV
- yAtQoTKulv1lKBtIWoAwsl+TvrBcolgGLDrdkVqrFjJdaBLAa+oYuT4PH w==;
-X-CSE-ConnectionGUID: 2n3nMtoGTRaiyGbv4gQUGw==
-X-CSE-MsgGUID: Z0VBG0QgRtG1OOpIKVwXOQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1522861"
+ t=1792751775; x=1824287775;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=PBfwQ7ODG6cn/XHyVxP/i/AjJmiTTzR+ALDbzZwtNJY=;
+ b=FPQxSHKj+suYMTI7+CQDFi9b7O7ndMiaqzDQwmBLTAJeh4pldwYFv+56
+ llZtxNtn5QuWTvG0tjBnCNKWVi1PCi4BxqNzxm9kgbyp66AuAJdjSkBwX
+ UFnnMVnA5jnJzs//DcEjmZpTFrhzUx8U54FeTQQkSJCjWIsJZbUWGkgwm
+ Cbr6nFfQ9cYUjCysGdhU4iIASUgWemSpd7otJYtXMeNwpWYN2fEKC+FjA
+ yPd/vDUJnvR+mouyMI6iTCOLX+5Xd9Rwl7wH1QBUqrzP1BlqNqiAOqQDt
+ DeNsDqSEWLyn33GeFgAV26YXwObN4jiCuJjOWViP7L8luiOwPJPnLWjxX w==;
+X-CSE-ConnectionGUID: cXRTlRDPSLi5TLlwHfJQdw==
+X-CSE-MsgGUID: 8u+m4A6tRDGQLvlXtNrvBQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1522864"
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="1522861"
+   d="scan'208";a="1522864"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Oct 2026 03:36:12 -0700
-X-CSE-ConnectionGUID: w5GfJwJgThS0AwzXy39J9g==
-X-CSE-MsgGUID: b6GRTsI0RAWYb25DzwmZZQ==
+ 23 Oct 2026 03:36:15 -0700
+X-CSE-ConnectionGUID: iW/QK+QPS/6A76m48am+1A==
+X-CSE-MsgGUID: sR9l8034QFO8qVQjLPwP3A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="4098938"
+   d="scan'208";a="4098943"
 Received: from pae.iind.intel.com (HELO PAE-35.iind.intel.com) ([10.49.105.82])
- by fmviesa010.fm.intel.com with ESMTP; 23 Oct 2026 03:36:10 -0700
+ by fmviesa010.fm.intel.com with ESMTP; 23 Oct 2026 03:36:14 -0700
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com,
 	Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH 0/2] net/i40e: fix memory leaks
-Date: Fri, 23 Oct 2026 10:31:28 +0000
-Message-Id: <cover.1792750212.git.anurag.mandal@intel.com>
+Subject: [PATCH 1/2] net/i40e: fix floating VEB leak
+Date: Fri, 23 Oct 2026 10:31:29 +0000
+Message-Id: <01b44debc0c280fe654d78aebeffd528abb42261.1792750212.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1792750212.git.anurag.mandal@intel.com>
+References: <cover.1792750212.git.anurag.mandal@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -56,33 +58,39 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-This series fixes few memory leaks in the i40e PMD:
+With floating VEB enabled, i40e_vsi_release() releases the VSIs
+attached to the floating VEB of the main VSI but not the floating
+VEB itself, leaking the VEB structure and its switch element.
 
-1. When the main VSI was released, only the VSIs attached 
-   to the floating VEB were released, not the VEB itself,
-   leaking the VEB structure and its switch element. 
-   This only affects setups with floating VEB enabled.
+Release it once its VSIs are gone, as is already done for the
+regular VEB.
 
-2. The flow director programming packet memzone was reserved
-   at setup but never freed, so it leaked whenever the port 
-   was closed.
+Fixes: 440499cf5376 ("net/i40e: support floating VEB")
 
-Anurag Mandal (2):
-  net/i40e: fix floating VEB leak
-  net/i40e: fix FDIR memzone leak
-
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+---
  drivers/net/intel/i40e/i40e_ethdev.c | 1 +
- drivers/net/intel/i40e/i40e_ethdev.h | 1 +
- drivers/net/intel/i40e/i40e_fdir.c   | 4 ++++
- 3 files changed, 6 insertions(+)
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+index e26a849764..9ca01ecd34 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.c
++++ b/drivers/net/intel/i40e/i40e_ethdev.c
+@@ -5329,6 +5329,7 @@ i40e_vsi_release(struct i40e_vsi *vsi)
+ 			if (i40e_vsi_release(vsi_list->vsi) != I40E_SUCCESS)
+ 				return -1;
+ 		}
++		i40e_veb_release(vsi->floating_veb);
+ 	}
+ 
+ 	/* Remove all macvlan filters of the VSI */
 -- 
 2.25.1
 
