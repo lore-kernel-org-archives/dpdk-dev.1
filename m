@@ -1,30 +1,31 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0710A606A326
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88F1606A327
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:49:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 672714278E;
-	Fri, 23 Oct 2026 15:44:57 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id A3FA4410F6
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:44 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 889ED1A0042;
- Fri, 23 Oct 2026 15:44:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 305C242793;
+	Fri, 23 Oct 2026 15:44:58 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id ABB4C40E2F
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:45 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8F4B2200038;
+ Fri, 23 Oct 2026 15:44:45 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 520D21A0021;
- Fri, 23 Oct 2026 15:44:44 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5AF7820003E;
+ Fri, 23 Oct 2026 15:44:45 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id EF0A9180006C;
- Fri, 23 Oct 2026 21:44:42 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 093B818000BA;
+ Fri, 23 Oct 2026 21:44:43 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4-S3 48/65] bus/fslmc: move Tx SG mempool to fslmc bus
-Date: Fri, 23 Oct 2026 19:13:28 +0530
-Message-ID: <20261023134346.37727-49-prashant.gupta_3@nxp.com>
+Subject: [PATCH v4-S3 49/65] net/dpaa2: move DPNI endpoint lookup out of the
+ fslmc bus
+Date: Fri, 23 Oct 2026 19:13:29 +0530
+Message-ID: <20261023134346.37727-50-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
 References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
@@ -51,253 +52,278 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Jun Yang <jun.yang@nxp.com>
 
-The scatter-gather mbuf pool used to build multi-segment Tx frames was
-a global owned by the dpaa2 net PMD (dpaa2_tx_sg_pool), created lazily
-on first probe and reference-counted with dpaa2_valid_dev. This tied a
-bus-wide resource to the net driver and duplicated primary/secondary
-lookup logic.
+The fslmc bus scan was doing a DPNI-specific endpoint lookup for every
+DPAA2 device inside rte_dpaa2_create_dprc_device(): for each DPAA2_ETH
+object it issued dprc_get_connection(dpni.<id>) and stored the result
+(ep_dev_type / ep_object_id / ep_name) directly on the generic
+rte_dpaa2_device. This had several problems:
 
-Create the SG pool once on the fslmc bus instead:
+  - It made the generic bus device carry DPNI-specific knowledge.
+    Non-eth DPAA2 object types (DPCI, DPIO, DPSECI, DPDMAI, ...) that
+    may also have endpoints never populated these fields, so the
+    "endpoint" of any non-DPNI device was silently wrong.
+  - DPDMUX and DPSW endpoints are per-interface (identified by
+    endpoint.if_id in addition to the object id), but the bus code
+    only ever formatted "<type>.<id>" and dropped if_id, producing
+    an ambiguous ep_name for those connection types.
+  - A dprc_get_connection() failure on any single DPNI aborted the
+    whole DPRC scan and freed the dprc node, even if the failing
+    DPNI was never going to be used by this process.
+  - It coupled the bus scan to the MC command set exposed by
+    fsl_dprc.h, and forced every DPAA2 user of the bus to carry
+    those symbols even if it did not care about endpoints.
 
-  - Allocate "dpaa2_sg_pool" in rte_fslmc_probe() and free it in
-    rte_fslmc_close(), storing the handle in fslmc_bus_info.mem_pool.
-  - Expose the pool sizing via DPAA2_TX_SG_POOL_SIZE,
-    DPAA2_TX_SG_POOL_CACHE_SIZE and DPAA2_TX_SG_POOL_ELEM_SIZE in the
-    bus driver header.
-
-Update the net PMD to consume it:
-
-  - dpaa2_dev_init() takes the pool from the device's bus_info and
-    stores it in priv->tx_sg_pool; dpaa2_dev_close() clears the
-    reference.
-  - Remove dpaa2_tx_sg_pool_init(), the dpaa2_tx_sg_pool /
-    dpaa2_valid_dev globals, and the now-unused DPAA2_MAX_SGS,
-    DPAA2_POOL_SIZE, DPAA2_POOL_CACHE_SIZE and struct sw_buf_free
-    definitions.
-  - Bound the SG receive walk by the pool element size instead of
-    DPAA2_MAX_SGS.
+Move the DPNI endpoint lookup where it belongs: into the DPAA2 net
+PMD, which is the only consumer today. The bus layer now just assigns
+each device to its parent DPRC container during the scan and lets each
+object driver decide whether (and how) to resolve its endpoint.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/bus/fslmc/bus_fslmc_driver.h |  4 +++
- drivers/bus/fslmc/fslmc_bus.c        |  9 ++++++
- drivers/net/dpaa2/dpaa2_ethdev.c     | 44 ++--------------------------
- drivers/net/dpaa2/dpaa2_ethdev.h     | 20 ++-----------
- drivers/net/dpaa2/dpaa2_rxtx.c       |  9 +++---
- 5 files changed, 22 insertions(+), 64 deletions(-)
+ drivers/bus/fslmc/bus_fslmc_driver.h     |  3 --
+ drivers/bus/fslmc/portal/dpaa2_hw_dprc.c | 49 +++-----------------
+ drivers/net/dpaa2/dpaa2_ethdev.c         | 59 +++++++++++++++++++++++-
+ drivers/net/dpaa2/dpaa2_recycle.c        | 15 +++---
+ 4 files changed, 71 insertions(+), 55 deletions(-)
 
 diff --git a/drivers/bus/fslmc/bus_fslmc_driver.h b/drivers/bus/fslmc/bus_fslmc_driver.h
-index 3ba865e632..4d56da45b3 100644
+index 4d56da45b3..40c9ba0699 100644
 --- a/drivers/bus/fslmc/bus_fslmc_driver.h
 +++ b/drivers/bus/fslmc/bus_fslmc_driver.h
-@@ -89,6 +89,10 @@ enum rte_dpaa2_dev_type {
- 	DPAA2_DEVTYPE_MAX,
- };
+@@ -108,10 +108,7 @@ struct rte_dpaa2_device {
+ 	struct rte_device device;           /**< Inherit core device */
+ 	enum rte_dpaa2_dev_type dev_type;   /**< Device Type */
+ 	uint16_t object_id;                 /**< DPAA2 Object ID */
+-	enum rte_dpaa2_dev_type ep_dev_type;   /**< Endpoint Device Type */
+ 	struct dpaa2_dprc_dev *container;
+-	uint16_t ep_object_id;                 /**< Endpoint DPAA2 Object ID */
+-	char ep_name[RTE_DEV_NAME_MAX_LEN];
+ 	struct rte_intr_handle *intr_handle; /**< Interrupt handle */
+ 	char name[FSLMC_OBJECT_MAX_LEN];    /**< DPAA2 Object name*/
+ 	const struct rte_fslmc_bus_info *bus_info;
+diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dprc.c b/drivers/bus/fslmc/portal/dpaa2_hw_dprc.c
+index 2234da0975..92238c174e 100644
+--- a/drivers/bus/fslmc/portal/dpaa2_hw_dprc.c
++++ b/drivers/bus/fslmc/portal/dpaa2_hw_dprc.c
+@@ -28,7 +28,6 @@ rte_dpaa2_create_dprc_device(int vdev_fd __rte_unused,
+ 	struct rte_dpaa2_device *obj)
+ {
+ 	struct dpaa2_dprc_dev *dprc_node;
+-	struct dprc_endpoint endpoint1, endpoint2;
+ 	struct rte_dpaa2_device *dev;
+ 	int ret, dprc_id = obj->object_id;
  
-+#define DPAA2_TX_SG_POOL_SIZE 2048
-+#define DPAA2_TX_SG_POOL_CACHE_SIZE 256
-+#define DPAA2_TX_SG_POOL_ELEM_SIZE 2048
-+
- struct rte_fslmc_bus_info {
- 	void *mem_pool;
- 	int sp_protocol;
-diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index a418f9a420..d20103ee36 100644
---- a/drivers/bus/fslmc/fslmc_bus.c
-+++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -690,6 +690,10 @@ rte_fslmc_probe(struct rte_bus *bus)
+@@ -50,50 +49,14 @@ rte_dpaa2_create_dprc_device(int vdev_fd __rte_unused,
  		return ret;
  	}
  
-+	fslmc_bus_info.mem_pool = rte_pktmbuf_pool_create("dpaa2_sg_pool",
-+		DPAA2_TX_SG_POOL_SIZE, DPAA2_TX_SG_POOL_CACHE_SIZE, 0,
-+		DPAA2_TX_SG_POOL_ELEM_SIZE, rte_socket_id());
-+
- 	return rte_bus_generic_probe(bus);
- }
+-	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
+-		/** DPRC is always created before it's children are created.*/
++	/* DPRC is always created before its children are created, so every
++	 * device scanned so far belongs to this container. Endpoint lookup is
++	 * left to the object drivers, which know how many interfaces their
++	 * object has and can report a failure to their own caller.
++	 */
++	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus)
+ 		dev->container = dprc_node;
  
-@@ -750,6 +754,11 @@ rte_fslmc_close(struct rte_bus *bus __rte_unused)
- {
- 	int ret = 0;
- 
-+	if (fslmc_bus_info.mem_pool) {
-+		rte_mempool_free(fslmc_bus_info.mem_pool);
-+		fslmc_bus_info.mem_pool = NULL;
-+	}
-+
- 	ret = fslmc_bus_close_group();
- 	if (ret)
- 		DPAA2_BUS_INFO("Unable to close devices %d", ret);
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index 88a0f9bdbb..995e0db1f2 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -203,9 +203,6 @@ dpaa2_dist_size_is_supported(uint16_t n)
- 	return false;
- }
- 
--int dpaa2_valid_dev;
--struct rte_mempool *dpaa2_tx_sg_pool;
+-		if (rte_bus_device_is_ignored(&rte_fslmc_bus, dev->device.name))
+-			continue;
 -
- struct dpaa2_xstats_seq {
- 	struct dpni_statistics_page_0 pg0;
- 	struct dpni_statistics_page_1 pg1;
-@@ -2402,6 +2399,7 @@ dpaa2_dev_close(struct rte_eth_dev *dev)
- 
- 	/* Free the allocated memory for ethernet private data and dpni*/
- 	priv->hw = NULL;
-+	priv->tx_sg_pool = NULL;
- 	dev->process_private = NULL;
- 	rte_free(dpni);
- 
-@@ -4195,6 +4193,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 		eth_dev->data->name, dpaa2_dev->ep_name);
- 
- 	priv->speed_capa = dpaa2_dev_get_speed_capability(eth_dev);
-+	priv->tx_sg_pool = dpaa2_dev->bus_info->mem_pool;
+-		if (dev->dev_type == DPAA2_ETH) {
+-			int link_state;
+-
+-			memset(&endpoint1, 0, sizeof(struct dprc_endpoint));
+-			memset(&endpoint2, 0, sizeof(struct dprc_endpoint));
+-			strcpy(endpoint1.type, "dpni");
+-			endpoint1.id = dev->object_id;
+-			ret = dprc_get_connection(&dprc_node->dprc,
+-						CMD_PRI_LOW,
+-						dprc_node->token,
+-						&endpoint1, &endpoint2,
+-						&link_state);
+-			if (ret) {
+-				DPAA2_BUS_ERR("dpni.%d connection failed!",
+-					dev->object_id);
+-				dprc_close(&dprc_node->dprc, CMD_PRI_LOW,
+-					   dprc_node->token);
+-				rte_free(dprc_node);
+-				return ret;
+-			}
+-
+-			if (!strcmp(endpoint2.type, "dpmac"))
+-				dev->ep_dev_type = DPAA2_MAC;
+-			else if (!strcmp(endpoint2.type, "dpni"))
+-				dev->ep_dev_type = DPAA2_ETH;
+-			else if (!strcmp(endpoint2.type, "dpdmux"))
+-				dev->ep_dev_type = DPAA2_MUX;
+-			else
+-				dev->ep_dev_type = DPAA2_UNKNOWN;
+-
+-			dev->ep_object_id = endpoint2.id;
+-		} else {
+-			dev->ep_dev_type = DPAA2_UNKNOWN;
+-		}
+-		sprintf(dev->ep_name, "%s.%d", endpoint2.type, endpoint2.id);
+-	}
+-
+ 	TAILQ_INSERT_TAIL(&dprc_dev_list, dprc_node, next);
  
  	return 0;
- init_err:
-@@ -4244,35 +4243,6 @@ rte_pmd_dpaa2_ep_name(uint32_t eth_id)
- 	return priv->ep_name;
- }
- 
--static int dpaa2_tx_sg_pool_init(void)
--{
--	char name[RTE_MEMZONE_NAMESIZE];
--
--	if (dpaa2_tx_sg_pool)
--		return 0;
--
--	sprintf(name, "dpaa2_mbuf_tx_sg_pool");
--	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
--		dpaa2_tx_sg_pool = rte_pktmbuf_pool_create(name,
--			DPAA2_POOL_SIZE,
--			DPAA2_POOL_CACHE_SIZE, 0,
--			DPAA2_MAX_SGS * sizeof(struct qbman_sge),
--			rte_socket_id());
--		if (!dpaa2_tx_sg_pool) {
--			DPAA2_PMD_ERR("SG pool creation failed");
--			return -ENOMEM;
--		}
--	} else {
--		dpaa2_tx_sg_pool = rte_mempool_lookup(name);
--		if (!dpaa2_tx_sg_pool) {
--			DPAA2_PMD_ERR("SG pool lookup failed");
--			return -ENOMEM;
--		}
--	}
--
--	return 0;
--}
--
- static int
- rte_dpaa2_probe(struct rte_dpaa2_driver *dpaa2_drv,
- 		struct rte_dpaa2_device *dpaa2_dev)
-@@ -4326,11 +4296,7 @@ rte_dpaa2_probe(struct rte_dpaa2_driver *dpaa2_drv,
- 	/* Invoke PMD device initialization function */
- 	diag = dpaa2_dev_init(eth_dev);
- 	if (!diag) {
--		diag = dpaa2_tx_sg_pool_init();
--		if (diag)
--			return diag;
- 		rte_eth_dev_probing_finish(eth_dev);
--		dpaa2_valid_dev++;
- 		return 0;
- 	}
- 
-@@ -4353,12 +4319,6 @@ rte_dpaa2_remove(struct rte_dpaa2_device *dpaa2_dev)
- 		ret = rte_eth_dev_release_port(eth_dev);
- 	}
- 
--	dpaa2_valid_dev--;
--	if (!dpaa2_valid_dev) {
--		rte_mempool_free(dpaa2_tx_sg_pool);
--		dpaa2_tx_sg_pool = NULL;
--	}
--
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index 995e0db1f2..572fcca91a 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -26,6 +26,7 @@
+ #include <dpaa2_hw_pvt.h>
+ #include <dpaa2_hw_mempool.h>
+ #include <dpaa2_hw_dpio.h>
++#include <fsl_dprc.h>
+ #include <mc/fsl_dpmng.h>
+ #include <mc/fsl_dpcon.h>
+ #include "dpaa2_ethdev.h"
+@@ -3919,6 +3920,55 @@ populate_mac_addr(struct fsl_mc_io *dpni_dev,
  	return ret;
  }
  
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index e4dc7b7e4f..91414114ac 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.h
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -223,24 +223,6 @@
- #define DPAA2_MAC_STATS_INDEX_DMA_SIZE (DPAA2_MAC_NUM_STATS * sizeof(uint32_t))
- #define DPAA2_MAC_STATS_VALUE_DMA_SIZE (DPAA2_MAC_NUM_STATS * sizeof(uint64_t))
- 
--/* Global pool used by driver for SG list TX */
--extern struct rte_mempool *dpaa2_tx_sg_pool;
--/* Maximum SG segments */
--#define DPAA2_MAX_SGS 128
--/* SG pool size */
--#define DPAA2_POOL_SIZE 2048
--/* SG pool cache size */
--#define DPAA2_POOL_CACHE_SIZE 256
--/* structure to free external and indirect
-- * buffers.
-- */
--struct sw_buf_free {
--	/* To which packet this segment belongs */
--	uint16_t pkt_id;
--	/* The actual segment */
--	struct rte_mbuf *seg;
--};
--
- /* Externally defined */
- extern const struct rte_flow_ops dpaa2_flow_ops;
- 
-@@ -478,6 +460,8 @@ struct dpaa2_dev_priv {
- 	 */
- 	union dpni_statistics pg_xstats[DPNI_MAX_STATISTICS_PAGE_ID][DPNI_STAT_MAX_PARAM];
- 
-+	struct rte_mempool *tx_sg_pool;
++/* Resolve the object this DPNI is wired to inside its DPRC container. The
++ * endpoint decides whether MAC-level operations (link, promisc, flow control)
++ * are available, and it is reported to the application by
++ * rte_pmd_dpaa2_ep_name().
++ */
++static int
++dpaa2_dev_ep_init(struct rte_dpaa2_device *dpaa2_dev,
++	struct dpaa2_dev_priv *priv)
++{
++	struct dpaa2_dprc_dev *dprc_node = dpaa2_dev->container;
++	struct dprc_endpoint endpoint1, endpoint2;
++	int link_state, ret;
 +
- 	LIST_HEAD(, dpaa2_dev_flow) flows;
- 	LIST_HEAD(, dpaa2_dev_meter_profile) profiles;
- 	LIST_HEAD(, dpaa2_dev_meter_policy) policies;
-diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-index a44b991d1b..6d12e6818d 100644
---- a/drivers/net/dpaa2/dpaa2_rxtx.c
-+++ b/drivers/net/dpaa2/dpaa2_rxtx.c
-@@ -456,7 +456,7 @@ dpaa2_eth_sg_fd_to_mbuf(struct dpaa2_dev_priv *priv, const struct qbman_fd *fd)
- 		(void **)&first_seg, 1, 1);
- #endif
- 	cur_seg = first_seg;
--	while (!DPAA2_SG_IS_FINAL(sge) && i < DPAA2_MAX_SGS) {
-+	while (!DPAA2_SG_IS_FINAL(sge)) {
- 		sge = &sgt[i++];
- 		sg_addr = DPAA2_IOVA_TO_VADDR(DPAA2_GET_FLE_ADDR(sge));
- 		next_seg = DPAA2_INLINE_MBUF_FROM_BUF(sg_addr,
-@@ -746,6 +746,7 @@ dpaa2_dev_tx_mbuf_to_sg_fd(struct rte_mempool *hw_mp,
- 	uint16_t nb_segs = mbuf->nb_segs;
- 	uint32_t sg_size = nb_segs * sizeof(struct qbman_sge);
- 	struct rte_mempool *mp;
-+	struct dpaa2_dev_priv *priv = txq->eth_data->dev_private;
++	memset(&endpoint1, 0, sizeof(endpoint1));
++	memset(&endpoint2, 0, sizeof(endpoint2));
++	strlcpy(endpoint1.type, "dpni", sizeof(endpoint1.type));
++	endpoint1.id = dpaa2_dev->object_id;
++	ret = dprc_get_connection(&dprc_node->dprc, CMD_PRI_LOW,
++		dprc_node->token, &endpoint1, &endpoint2, &link_state);
++	if (ret)
++		return ret;
++
++	if (strcmp(endpoint2.type, "dpmac") == 0)
++		priv->ep_dev_type = DPAA2_MAC;
++	else if (strcmp(endpoint2.type, "dpni") == 0)
++		priv->ep_dev_type = DPAA2_ETH;
++	else if (strcmp(endpoint2.type, "dpdmux") == 0)
++		priv->ep_dev_type = DPAA2_MUX;
++	else if (strcmp(endpoint2.type, "dpsw") == 0)
++		priv->ep_dev_type = DPAA2_SW;
++	else
++		priv->ep_dev_type = DPAA2_UNKNOWN;
++
++	priv->ep_object_id = endpoint2.id;
++
++	/* dpdmux and dpsw endpoints are per-interface, so the interface index
++	 * is part of the name.
++	 */
++	if (priv->ep_dev_type == DPAA2_MUX || priv->ep_dev_type == DPAA2_SW) {
++		snprintf(priv->ep_name, sizeof(priv->ep_name), "%s.%d.%d",
++			endpoint2.type, endpoint2.id, endpoint2.if_id);
++	} else {
++		snprintf(priv->ep_name, sizeof(priv->ep_name), "%s.%d",
++			endpoint2.type, endpoint2.id);
++	}
++
++	return 0;
++}
++
+ static int
+ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ {
+@@ -3991,6 +4041,13 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 		goto init_err;
+ 	}
  
- 	if (conf == DPAA2_TX_DYNAMIC_CONF) {
- 		while (cur_seg) {
-@@ -789,8 +790,8 @@ dpaa2_dev_tx_mbuf_to_sg_fd(struct rte_mempool *hw_mp,
- 		DPAA2_SET_FD_OFFSET(fd, offset);
- 	} else {
- 		sg_mbuf = NULL;
--		if (dpaa2_tx_sg_pool)
--			sg_mbuf = rte_pktmbuf_alloc(dpaa2_tx_sg_pool);
-+		if (priv->tx_sg_pool)
-+			sg_mbuf = rte_pktmbuf_alloc(priv->tx_sg_pool);
- 		if (!sg_mbuf) {
- 			DPAA2_PMD_DP_DEBUG("No memory to allocate S/G table");
- 			return -ENOMEM;
-@@ -803,7 +804,7 @@ dpaa2_dev_tx_mbuf_to_sg_fd(struct rte_mempool *hw_mp,
- 			DPAA2_SET_ONLY_FD_BPID(fd, MAX_BPID);
- 			DPAA2_SET_FD_IVP(fd);
- 		} else {
--			DPAA2_SET_ONLY_FD_BPID(fd, mempool_to_bpid(dpaa2_tx_sg_pool));
-+			DPAA2_SET_ONLY_FD_BPID(fd, mempool_to_bpid(priv->tx_sg_pool));
- 		}
- 		DPAA2_SET_FD_OFFSET(fd, sg_mbuf->data_off);
- 		offset = sg_mbuf->data_off;
++	ret = dpaa2_dev_ep_init(dpaa2_dev, priv);
++	if (ret) {
++		DPAA2_PMD_ERR("Failure in get dpni@%d endpoint, err code %d",
++			hw_id, ret);
++		goto init_err;
++	}
++
+ 	ret = dpni_get_api_version(dpni_dev, CMD_PRI_LOW, &priv->dpni_ver_major,
+ 			&priv->dpni_ver_minor);
+ 	if (ret) {
+@@ -4190,7 +4247,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 	priv->sp_protocol = dpaa2_dev->bus_info->sp_protocol;
+ 
+ 	DPAA2_PMD_INFO("%s: netdev created, connected to %s",
+-		eth_dev->data->name, dpaa2_dev->ep_name);
++		eth_dev->data->name, priv->ep_name);
+ 
+ 	priv->speed_capa = dpaa2_dev_get_speed_capability(eth_dev);
+ 	priv->tx_sg_pool = dpaa2_dev->bus_info->mem_pool;
+diff --git a/drivers/net/dpaa2/dpaa2_recycle.c b/drivers/net/dpaa2/dpaa2_recycle.c
+index 48b531d847..4a693cfe04 100644
+--- a/drivers/net/dpaa2/dpaa2_recycle.c
++++ b/drivers/net/dpaa2/dpaa2_recycle.c
+@@ -626,18 +626,18 @@ dpaa2_dev_recycle_config(struct rte_eth_dev *eth_dev)
+ 		return 0;
+ 	}
+ 
+-	if (dpaa2_dev->ep_dev_type == DPAA2_MAC) {
++	if (priv->ep_dev_type == DPAA2_MAC) {
+ 		/** For dpmac-dpni connection,
+ 		 * try setting serdes loopback as recycle device at first.
+ 		 */
+ 		if (dpaa2_svr_family == SVR_LS2088A) {
+-			ret = ls_serdes_eth_lpbk(dpaa2_dev->ep_object_id, 1);
++			ret = ls_serdes_eth_lpbk(priv->ep_object_id, 1);
+ 			if (!ret) {
+ 				priv->flags |= DPAA2_TX_SERDES_LOOPBACK_MODE;
+ 				return 0;
+ 			}
+ 		} else if (dpaa2_svr_family == SVR_LX2160A) {
+-			ret = lx_serdes_eth_lpbk(dpaa2_dev->ep_object_id, 1);
++			ret = lx_serdes_eth_lpbk(priv->ep_object_id, 1);
+ 			if (!ret) {
+ 				priv->flags |= DPAA2_TX_SERDES_LOOPBACK_MODE;
+ 				return 0;
+@@ -666,8 +666,8 @@ dpaa2_dev_recycle_config(struct rte_eth_dev *eth_dev)
+ 		return 0;
+ 	}
+ 
+-	if (dpaa2_dev->ep_dev_type == DPAA2_ETH &&
+-		dpaa2_dev->object_id == dpaa2_dev->ep_object_id) {
++	if (priv->ep_dev_type == DPAA2_ETH &&
++		dpaa2_dev->object_id == priv->ep_object_id) {
+ 		priv->flags |= DPAA2_TX_DPNI_LOOPBACK_MODE;
+ 
+ 		return 0;
+@@ -680,7 +680,6 @@ int
+ dpaa2_dev_recycle_deconfig(struct rte_eth_dev *eth_dev)
+ {
+ 	struct dpaa2_dev_priv *priv = eth_dev->data->dev_private;
+-	struct rte_dpaa2_device *dpaa2_dev = RTE_CLASS_TO_BUS_DEVICE(eth_dev, *dpaa2_dev);
+ 	struct fsl_mc_io *dpni_dev = eth_dev->process_private;
+ 	struct dpni_port_cfg port_cfg;
+ 	int ret = 0;
+@@ -690,7 +689,7 @@ dpaa2_dev_recycle_deconfig(struct rte_eth_dev *eth_dev)
+ 
+ 	if (priv->flags & DPAA2_TX_SERDES_LOOPBACK_MODE) {
+ 		if (dpaa2_svr_family == SVR_LS2088A) {
+-			ret = ls_serdes_eth_lpbk(dpaa2_dev->ep_object_id, 0);
++			ret = ls_serdes_eth_lpbk(priv->ep_object_id, 0);
+ 			if (ret) {
+ 				DPAA2_PMD_WARN("Error(%d) to disable Serdes loopback",
+ 					ret);
+@@ -698,7 +697,7 @@ dpaa2_dev_recycle_deconfig(struct rte_eth_dev *eth_dev)
+ 				priv->flags &= ~DPAA2_TX_SERDES_LOOPBACK_MODE;
+ 			}
+ 		} else if (dpaa2_svr_family == SVR_LX2160A) {
+-			ret = lx_serdes_eth_lpbk(dpaa2_dev->ep_object_id, 0);
++			ret = lx_serdes_eth_lpbk(priv->ep_object_id, 0);
+ 			if (ret) {
+ 				DPAA2_PMD_WARN("Error(%d) to disable Serdes loopback",
+ 					ret);
 -- 
 2.43.0
 
