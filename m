@@ -1,30 +1,30 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A3F606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4E3606A31B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 13:48:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44E8342670;
+	by mails.dpdk.org (Postfix) with ESMTP id F1EE642708;
 	Fri, 23 Oct 2026 15:44:55 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 71267410D4
- for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:41 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 30D28410DF
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 15:44:42 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 56A1F200040;
- Fri, 23 Oct 2026 15:44:41 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 13A8D200031;
+ Fri, 23 Oct 2026 15:44:42 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 225F720002B;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D3BF6200044;
  Fri, 23 Oct 2026 15:44:41 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C125018000B1;
- Fri, 23 Oct 2026 21:44:39 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D256618000BF;
+ Fri, 23 Oct 2026 21:44:40 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v4-S3 45/65] event/dpaa2: honor configured dequeue timeout
-Date: Fri, 23 Oct 2026 19:13:25 +0530
-Message-ID: <20261023134346.37727-46-prashant.gupta_3@nxp.com>
+Subject: [PATCH v4-S3 46/65] bus/fslmc: use EAL API for DPIO interrupt
+Date: Fri, 23 Oct 2026 19:13:26 +0530
+Message-ID: <20261023134346.37727-47-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
 References: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
@@ -51,164 +51,166 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Jun Yang <jun.yang@nxp.com>
 
-The dequeue timeout handling used a fixed 1ms-per-tick scale and a
-hardcoded DPAA2_EVENT_PORT_DEQUEUE_TIMEOUT_NS default, and reported
-that constant from info_get() regardless of the value the application
-configured. It also passed raw timeout_ticks straight to epoll_wait(),
-which expects a value in milliseconds.
+The DPIO interrupt path created a private epoll instance with the raw
+epoll_create/epoll_ctl/epoll_wait syscalls and cached its fd in
+dpaa2_dpio_dev::epoll_fd. This duplicated the epoll bookkeeping already
+provided by the EAL interrupt handle and split the interrupt state
+across two owners.
 
-Convert timeouts using the timer frequency. Cache rte_get_timer_hz()
-in priv->event_hz at configure time, compute timeout_ticks in
-timeout_ticks() from the requested ns, and convert ticks back to
-milliseconds before calling epoll_wait(). info_get() now reports the
-configured dequeue_timeout_ns, and configure() no longer overrides a
-zero timeout with the removed default constant.
+Switch to the EAL rte_epoll wrappers. dpaa2_dpio_intr_init() now arms
+the interrupt handle's epoll event via rte_epoll_ctl(),
+dpaa2_dpio_intr_deinit() removes it, and the event PMD dequeue wait
+uses rte_epoll_wait() on the handle's epoll fd. The now redundant
+epoll_fd field is removed from struct dpaa2_dpio_dev.
+
+While converting, tidy the init/deinit error handling to use goto
+labels so the interrupt is disabled and the epoll fd closed on every
+failure path.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/event/dpaa2/dpaa2_eventdev.c | 36 ++++++++++++++++------------
- drivers/event/dpaa2/dpaa2_eventdev.h |  2 +-
- 2 files changed, 22 insertions(+), 16 deletions(-)
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c | 58 ++++++++++++++++--------
+ drivers/bus/fslmc/portal/dpaa2_hw_pvt.h  |  1 -
+ drivers/event/dpaa2/dpaa2_eventdev.c     |  7 ++-
+ 3 files changed, 43 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/event/dpaa2/dpaa2_eventdev.c b/drivers/event/dpaa2/dpaa2_eventdev.c
-index 30a3119e62..592b3bf4a4 100644
---- a/drivers/event/dpaa2/dpaa2_eventdev.c
-+++ b/drivers/event/dpaa2/dpaa2_eventdev.c
-@@ -231,12 +231,12 @@ dpaa2_eventdev_enqueue_burst(void *port, const struct rte_event ev[],
+diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
+index 4affd4e0b4..e95345627d 100644
+--- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
++++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
+@@ -184,7 +184,7 @@ int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, int threshold,
+ 	int timeout, bool build_epoll)
+ {
+ 	int eventfd, dpio_epoll_fd, ret;
+-	struct epoll_event epoll_ev;
++	struct rte_epoll_event *epoll_ev;
+ 
+ 	if (dpio_dev->intr_enabled)
+ 		return 0;
+@@ -201,8 +201,6 @@ int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, int threshold,
+ 	qbman_swp_dqrr_thrshld_write(dpio_dev->sw_portal, threshold);
+ 	qbman_swp_intr_timeout_write(dpio_dev->sw_portal, timeout);
+ 
+-	dpio_dev->epoll_fd = -1;
+-
+ 	/* The event PMD dequeues by sleeping on a private epoll instance owned
+ 	 * by the portal, so build it here. The net rx-queue-interrupt path
+ 	 * exposes the raw eventfd through the generic ethdev API and waits on
+@@ -212,45 +210,65 @@ int dpaa2_dpio_intr_init(struct dpaa2_dpio_dev *dpio_dev, int threshold,
+ 		dpio_epoll_fd = epoll_create1(EPOLL_CLOEXEC);
+ 		if (dpio_epoll_fd < 0) {
+ 			DPAA2_BUS_ERR("epoll_create failed");
+-			rte_dpaa2_intr_disable(dpio_dev->intr_handle, 0);
+-			return -errno;
++			ret = -errno;
++			goto int_disable_err;
+ 		}
+ 
+ 		eventfd = rte_intr_fd_get(dpio_dev->intr_handle);
+-		epoll_ev.events = EPOLLIN | EPOLLPRI | EPOLLET;
+-		epoll_ev.data.fd = eventfd;
+-
+-		ret = epoll_ctl(dpio_epoll_fd, EPOLL_CTL_ADD, eventfd, &epoll_ev);
++		if (eventfd < 0) {
++			ret = eventfd;
++			goto epoll_close_err;
++		}
++		epoll_ev = rte_intr_elist_index_get(dpio_dev->intr_handle, 0);
++		if (rte_atomic_load_explicit(&epoll_ev->status,
++			rte_memory_order_relaxed) != RTE_EPOLL_INVALID) {
++			DPAA2_BUS_ERR("Event already been added.");
++			ret = -EEXIST;
++			goto epoll_close_err;
++		}
++		epoll_ev->epdata.event = EPOLLIN | EPOLLPRI | EPOLLET;
++		ret = rte_epoll_ctl(dpio_epoll_fd, EPOLL_CTL_ADD, eventfd, epoll_ev);
+ 		if (ret < 0) {
+-			DPAA2_BUS_ERR("epoll_ctl failed");
+-			rte_dpaa2_intr_disable(dpio_dev->intr_handle, 0);
+-			close(dpio_epoll_fd);
+-			return -1;
++			DPAA2_BUS_ERR("Epoll control add failed(%d)", ret);
++			goto epoll_close_err;
+ 		}
+-		dpio_dev->epoll_fd = dpio_epoll_fd;
+ 	}
+ 
+ 	dpio_dev->intr_enabled = 1;
+ 
+ 	return 0;
++
++epoll_close_err:
++	close(dpio_epoll_fd);
++int_disable_err:
++	rte_dpaa2_intr_disable(dpio_dev->intr_handle, 0);
++	return ret;
  }
  
- static void dpaa2_eventdev_dequeue_wait(struct dpaa2_dpio_dev *dpio_dev,
--	uint64_t timeout_ticks)
-+	uint32_t timeout_ms)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_dpio_intr_deinit)
+ void dpaa2_dpio_intr_deinit(struct dpaa2_dpio_dev *dpio_dev)
  {
- 	struct epoll_event epoll_ev;
+-	int ret;
++	int ret, epfd;
++	struct rte_epoll_event *epoll_ev;
+ 
+ 	if (!dpio_dev->intr_enabled)
+ 		return;
+ 
++	epoll_ev = rte_intr_elist_index_get(dpio_dev->intr_handle, 0);
++	if (rte_atomic_load_explicit(&epoll_ev->status,
++		rte_memory_order_relaxed) != RTE_EPOLL_INVALID) {
++		epoll_ev->epdata.event = EPOLLIN | EPOLLPRI | EPOLLET;
++		epfd = epoll_ev->epfd;
++		ret = rte_epoll_ctl(epfd, EPOLL_CTL_DEL, epoll_ev->fd, epoll_ev);
++		if (ret < 0)
++			DPAA2_BUS_ERR("Epoll control delete failed(%d)", ret);
++		close(epfd);
++	}
++
+ 	ret = rte_dpaa2_intr_disable(dpio_dev->intr_handle, 0);
+ 	if (ret)
+-		DPAA2_BUS_ERR("DPIO interrupt disable failed");
++		DPAA2_BUS_ERR("DPIO interrupt disable failed(%d)", ret);
+ 
+-	if (dpio_dev->epoll_fd >= 0) {
+-		close(dpio_dev->epoll_fd);
+-		dpio_dev->epoll_fd = -1;
+-	}
+ 	dpio_dev->intr_enabled = 0;
+ }
+ 
+diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
+index f67f2283db..52ec660fb9 100644
+--- a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
++++ b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
+@@ -133,7 +133,6 @@ struct dpaa2_dpio_dev {
+ 		/**< Physical address of Cache Inhibit Area */
+ 	uintptr_t ci_size; /**< Size of the CI region */
+ 	struct rte_intr_handle *intr_handle; /* Interrupt related info */
+-	int32_t	epoll_fd; /**< File descriptor created for interrupt polling */
+ 	int32_t hw_id; /**< An unique ID of this DPIO device instance */
+ 	uint8_t intr_enabled; /**< DQRI portal interrupt already set up */
+ 	int32_t cpu_affine;
+diff --git a/drivers/event/dpaa2/dpaa2_eventdev.c b/drivers/event/dpaa2/dpaa2_eventdev.c
+index 592b3bf4a4..f4dbf47b18 100644
+--- a/drivers/event/dpaa2/dpaa2_eventdev.c
++++ b/drivers/event/dpaa2/dpaa2_eventdev.c
+@@ -233,10 +233,13 @@ dpaa2_eventdev_enqueue_burst(void *port, const struct rte_event ev[],
+ static void dpaa2_eventdev_dequeue_wait(struct dpaa2_dpio_dev *dpio_dev,
+ 	uint32_t timeout_ms)
+ {
+-	struct epoll_event epoll_ev;
++	int ret;
++	struct rte_epoll_event *epoll_event;
  
  	qbman_swp_interrupt_clear_status(dpio_dev->sw_portal, QBMAN_SWP_INTERRUPT_DQRI);
--	epoll_wait(dpio_dev->epoll_fd, &epoll_ev, 1, timeout_ticks);
-+	epoll_wait(dpio_dev->epoll_fd, &epoll_ev, 1, timeout_ms);
+-	epoll_wait(dpio_dev->epoll_fd, &epoll_ev, 1, timeout_ms);
++	epoll_event = rte_intr_elist_index_get(dpio_dev->intr_handle, 0);
++	ret = rte_epoll_wait(epoll_event->epfd, epoll_event, 1, timeout_ms);
++	DPAA2_PMD_DP_DEBUG("%s: poll return(%d)", __func__, ret);
  }
  
  static void dpaa2_eventdev_process_parallel(struct dpaa2_dpio_dev *dpio_dev,
-@@ -274,10 +274,12 @@ dpaa2_eventdev_dequeue_burst(void *port, struct rte_event ev[],
- 	const struct qbman_result *dq;
- 	struct dpaa2_dpio_dev *dpio_dev;
- 	struct dpaa2_port *dpaa2_portal = port;
-+	struct dpaa2_eventdev *priv;
- 	struct qbman_swp *swp;
- 	const struct qbman_fd *fd;
- 	struct dpaa2_queue *rxq;
- 	uint16_t num_pkts = 0, i = 0;
-+	uint32_t timeout_ms;
- 
- 	if (unlikely(dpaa2_portal->port_atomic))
- 		rte_spinlock_lock(&dpaa2_portal->port_lock);
-@@ -287,6 +289,7 @@ dpaa2_eventdev_dequeue_burst(void *port, struct rte_event ev[],
- 		goto quit;
- 
- 	swp = dpio_dev->sw_portal;
-+	priv = dpaa2_portal->eventdev->data->dev_private;
- 
- 	/* Check if there are atomic contexts to be released */
- 
-@@ -305,6 +308,10 @@ dpaa2_eventdev_dequeue_burst(void *port, struct rte_event ev[],
- 		i++;
- 	}
- 	dpio_dev->dpaa2_held_bufs.dqrr_held = 0;
-+	if (timeout_ticks)
-+		timeout_ms = timeout_ticks * 1000 / priv->event_hz;
-+	else
-+		timeout_ms = priv->dequeue_timeout_ns / (1000 * 1000);
- 
- 	do {
- 		dq = qbman_swp_dqrr_next(swp);
-@@ -313,9 +320,9 @@ dpaa2_eventdev_dequeue_burst(void *port, struct rte_event ev[],
- 			 * the DQRR consume vector before leaving it idle.
- 			 */
- 			qbman_swp_dqrr_consume(swp, NULL);
--			if (!num_pkts && timeout_ticks) {
--				dpaa2_eventdev_dequeue_wait(dpio_dev, timeout_ticks);
--				timeout_ticks = 0;
-+			if (!num_pkts && timeout_ms) {
-+				dpaa2_eventdev_dequeue_wait(dpio_dev, timeout_ms);
-+				timeout_ms = 0;
- 				continue;
- 			}
- 			goto quit;
-@@ -390,8 +397,7 @@ dpaa2_eventdev_info_get(struct rte_eventdev *dev,
- 		DPAA2_EVENT_MIN_DEQUEUE_TIMEOUT;
- 	dev_info->max_dequeue_timeout_ns =
- 		DPAA2_EVENT_MAX_DEQUEUE_TIMEOUT;
--	dev_info->dequeue_timeout_ns =
--		DPAA2_EVENT_PORT_DEQUEUE_TIMEOUT_NS;
-+	dev_info->dequeue_timeout_ns = priv->dequeue_timeout_ns;
- 	dev_info->max_event_queues = priv->max_event_queues;
- 	dev_info->max_event_queue_flows =
- 		DPAA2_EVENT_MAX_QUEUE_FLOWS;
-@@ -437,6 +443,7 @@ dpaa2_eventdev_configure(const struct rte_eventdev *dev)
- 	priv->nb_event_port_dequeue_depth = conf->nb_event_port_dequeue_depth;
- 	priv->nb_event_port_enqueue_depth = conf->nb_event_port_enqueue_depth;
- 	priv->event_dev_cfg = conf->event_dev_cfg;
-+	priv->event_hz = rte_get_timer_hz();
- 
- 	/* Check dequeue timeout method is per dequeue or global */
- 	if (priv->event_dev_cfg & RTE_EVENT_DEV_CFG_PER_DEQUEUE_TIMEOUT) {
-@@ -446,14 +453,11 @@ dpaa2_eventdev_configure(const struct rte_eventdev *dev)
- 		 */
- 		priv->dequeue_timeout_ns = 0;
- 
--	} else if (conf->dequeue_timeout_ns == 0) {
--		priv->dequeue_timeout_ns = DPAA2_EVENT_PORT_DEQUEUE_TIMEOUT_NS;
- 	} else {
- 		priv->dequeue_timeout_ns = conf->dequeue_timeout_ns;
- 	}
- 
--	DPAA2_EVENTDEV_DEBUG("Configured eventdev devid=%d",
--			     dev->data->dev_id);
-+	DPAA2_EVENTDEV_DEBUG("Configured eventdev devid=%d", dev->data->dev_id);
- 	return 0;
- }
- 
-@@ -869,14 +873,16 @@ dpaa2_eventdev_port_setup(struct rte_eventdev *dev, uint8_t port_id,
- 
- static int
- dpaa2_eventdev_timeout_ticks(struct rte_eventdev *dev, uint64_t ns,
--			     uint64_t *timeout_ticks)
-+	uint64_t *timeout_ticks)
- {
--	uint32_t scale = 1000 * 1000;
-+	struct dpaa2_eventdev *priv = dev->data->dev_private;
- 
- 	EVENTDEV_INIT_FUNC_TRACE();
- 
--	RTE_SET_USED(dev);
--	*timeout_ticks = ns / scale;
-+	if (!priv->event_hz)
-+		priv->event_hz = rte_get_timer_hz();
-+
-+	*timeout_ticks = ns * priv->event_hz / 1000000000ULL;
- 
- 	return 0;
- }
-diff --git a/drivers/event/dpaa2/dpaa2_eventdev.h b/drivers/event/dpaa2/dpaa2_eventdev.h
-index af1c831b92..30911382f3 100644
---- a/drivers/event/dpaa2/dpaa2_eventdev.h
-+++ b/drivers/event/dpaa2/dpaa2_eventdev.h
-@@ -22,7 +22,6 @@
- #define DPAA2_EVENT_MAX_QUEUES			16
- #define DPAA2_EVENT_MIN_DEQUEUE_TIMEOUT		1
- #define DPAA2_EVENT_MAX_DEQUEUE_TIMEOUT		(UINT32_MAX - 1)
--#define DPAA2_EVENT_PORT_DEQUEUE_TIMEOUT_NS	100UL
- #define DPAA2_EVENT_MAX_QUEUE_FLOWS		1024
- #define DPAA2_EVENT_MAX_QUEUE_PRIORITY_LEVELS	8
- #define DPAA2_EVENT_MAX_EVENT_PRIORITY_LEVELS	0
-@@ -124,6 +123,7 @@ struct dpaa2_eventdev {
- 	uint32_t nb_event_port_dequeue_depth;
- 	uint32_t nb_event_port_enqueue_depth;
- 	uint32_t event_dev_cfg;
-+	uint64_t event_hz;
- };
- 
- int test_eventdev_dpaa2(void);
 -- 
 2.43.0
 
