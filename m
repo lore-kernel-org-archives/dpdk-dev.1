@@ -1,49 +1,51 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B75606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 09:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEA8606A31B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 Oct 2026 09:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=cVYCxb+9
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=DDH+Ikng
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F120402B6;
-	Fri, 23 Oct 2026 11:32:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4DC2F40647;
+	Fri, 23 Oct 2026 11:32:44 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 18A1040268
- for <dev@dpdk.org>; Fri, 23 Oct 2026 11:32:39 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8332A40299
+ for <dev@dpdk.org>; Fri, 23 Oct 2026 11:32:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1792747961; x=1824283961;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=2pRSFyzcdD/TdaSI4fguieCfs6e4kBgK6ezSm6b5L+s=;
- b=cVYCxb+9jTpy3dDPhkwqoDPGmdR8HQzf6i6uLViInvetrIn6uZs5ykRC
- IfjP+rL+vrFvZwk5l+iX4pm6z2KhXLzdeaAL7bdTWeHmzFgCpcSFI2tFZ
- hkJirT1Bqr4TSTerfMc6/UmbKpIUlSKytoquZwD8pwz2pOpTip/91qenA
- Ilk/rr8n3mVIieYTv0fS3p6Y6Tm+dRDzNWVAeeoxmtcWuyVJCQ4j4wYx4
- Fue8UbsxBhIu7Q2m8InWQ6UjMqq8uEi8Vnh6Ycre6gtMCFly3TUtOIKVe
- PQK+RJFSvbj9fAJbGCSNRDD9oO10P9QfU2JHmQzFI+vJxeZ2WXOdHT3Ni w==;
-X-CSE-ConnectionGUID: CUHlFKNFSPi/fjN9OZheEg==
-X-CSE-MsgGUID: fKMcNt2dR2qcnxFfZJidjw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1498261"
+ bh=AN6rTwbirWWLUDfzJzvMtaLpljy3Xd/35AYlNb+gt38=;
+ b=DDH+IkngJ86XqPYsAAFb1w5qGP+gh2KapnqfxbawyAWd5ediEsQ5g+Hw
+ 8X4DEqEpNOdecf0IJm+jWbZpF6SMz+d8wcWqIY532lxRyMDJ9qyTrD4CY
+ jFMkHLqJG7Jb4Z+v4K3ie4uiXeIZtcMiuvgB4Tm1AbPIFAYu+fxpE3GWd
+ 4IBzQv3FDSMPROd7vb7g/H6SqnH0hlopfzAF0od+f35KROXMGD9YPxv+x
+ 6dS/OEeYaDKQ8gDUULAHACcah+3p0Zzt2dSyDarvHfsy4Nws4JWQGEfaL
+ 31zJj0jeKX1XiFBYtuS0z8dc50PJv4CZ4kVBeHRXR6860Y3R9AlknSFaq g==;
+X-CSE-ConnectionGUID: VDK9q1aPT86+Fws/RjIAIA==
+X-CSE-MsgGUID: 0IjUWhGdQmuNiKR6A1SBLg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1498263"
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="1498261"
+   d="scan'208";a="1498263"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Oct 2026 02:32:39 -0700
-X-CSE-ConnectionGUID: eQpQg1JoSt+CyUo9xLO31w==
-X-CSE-MsgGUID: m3OXwo2YS4GQphhuW8/9lQ==
+ 23 Oct 2026 02:32:40 -0700
+X-CSE-ConnectionGUID: yMI/RQjUTcSQUIRUN2SZXQ==
+X-CSE-MsgGUID: lbZVOeatRmunbiS5y9Eg1w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,174,1787036400"; 
-   d="scan'208";a="3509438"
+   d="scan'208";a="3509446"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 23 Oct 2026 02:32:38 -0700
+ by orviesa003.jf.intel.com with ESMTP; 23 Oct 2026 02:32:39 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Subject: [PATCH v5 00/10] IAVF Fixes
-Date: Fri, 23 Oct 2026 10:32:20 +0100
-Message-ID: <cover.1792747916.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>
+Subject: [PATCH v5 01/10] net/iavf: keep device stopped if start fails
+Date: Fri, 23 Oct 2026 10:32:21 +0100
+Message-ID: <5849bad0174d725710f0ac2166264a05d32f0b76.1792747916.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1791991100.git.anatoly.burakov@intel.com>
-References: <cover.1791991100.git.anatoly.burakov@intel.com>
+In-Reply-To: <cover.1792747916.git.anatoly.burakov@intel.com>
+ <cover.1792747916.git.anatoly.burakov@intel.com>
+References: 
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -56,62 +58,68 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-An assortment of IAVF flow-related memory leak fixes and cleanups.
+Currently, `iavf_dev_start()` clears `adapter->stopped` before several
+operations that can fail. A subsequent `iavf_dev_stop()` then disables
+interrupts and stops and resets queues even though startup did not
+complete.
 
-v4 -> v5:
-- Dropped the unnecessary EFD disable from patch 4
+Mark the adapter running only after startup succeeds, and return early
+from stop when it is already stopped.
 
-v3 -> v4:
-- Fixed watchdog crash in commit 2
+Fixes: 69dd4c3d0898 ("net/avf: enable queue and device")
+Cc: stable@dpdk.org
 
-v2 -> v3:
-- Rebase on top of latest next-net-intel including Anurag's fix [1]
-- Dropped remnants of Anurag's patch [1] as it's now in the tree
-- Fixed PF reset path still tearing down RSS when it shouldn't
-- Fixed hash engine checking for VF reset when that's no longer necessary
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ drivers/net/intel/iavf/iavf_ethdev.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-v1 -> v2:
-- Integrated Anurag's earlier fix [1] into the patchset
-- Reworked generic flow to have centralized memory management
-- Reordered some patches
-- Integrated the IRQ leaks patchset [2] [3]
-- Reworked IPsec fix
-
-[1] https://patches.dpdk.org/project/dpdk/patch/20261010121255.528329-1-anurag.mandal@intel.com/
-[2] https://patches.dpdk.org/project/dpdk/patch/809e0c5b2ab57f1b14c68be8ac34e70cbbe82233.1792053236.git.anatoly.burakov@intel.com/
-[3] https://patches.dpdk.org/project/dpdk/patch/5488d85c2ded08838becaee6de8328694ee00234.1792053236.git.anatoly.burakov@intel.com/
-
-Anatoly Burakov (10):
-  net/iavf: keep device stopped if start fails
-  net/iavf: do not store ethdev pointer
-  net/iavf: fix false success on flow validation
-  net/iavf: fix memory leaks around IRQ resources
-  net/iavf: fix generic flow error-path leaks
-  net/iavf: centralize memory management for flows
-  net/iavf: skip RSS teardown during PF-initiated reset
-  net/iavf: remove redundant reset checks from RSS engine
-  net/iavf: fix null engine for egress security flows
-  net/iavf: fix IPsec flow metadata leaks
-
- drivers/net/intel/iavf/iavf.h              |  14 +-
- drivers/net/intel/iavf/iavf_ethdev.c       |  45 ++++--
- drivers/net/intel/iavf/iavf_fdir.c         |  68 ++++----
- drivers/net/intel/iavf/iavf_fsub.c         |  23 +--
- drivers/net/intel/iavf/iavf_generic_flow.c |  95 ++++++------
- drivers/net/intel/iavf/iavf_generic_flow.h |   4 +-
- drivers/net/intel/iavf/iavf_hash.c         | 103 ++++---------
- drivers/net/intel/iavf/iavf_ipsec_crypto.c | 171 +++++++++++++++++----
- drivers/net/intel/iavf/iavf_ipsec_crypto.h |   4 +-
- drivers/net/intel/iavf/iavf_vchnl.c        |   7 +-
- 10 files changed, 300 insertions(+), 234 deletions(-)
-
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 9e0e13d4992..1ec9e946fc4 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -1039,8 +1039,6 @@ iavf_dev_start(struct rte_eth_dev *dev)
+ 	if (adapter->closed)
+ 		return -1;
+ 
+-	adapter->stopped = 0;
+-
+ 	vf->max_pkt_len = dev->data->mtu + IAVF_ETH_OVERHEAD;
+ 	vf->num_queue_pairs = RTE_MAX(dev->data->nb_rx_queues,
+ 				      dev->data->nb_tx_queues);
+@@ -1112,6 +1110,7 @@ iavf_dev_start(struct rte_eth_dev *dev)
+ 	}
+ 
+ 	iavf_phc_sync_alarm_start(dev);
++	adapter->stopped = 0;
+ 
+ 	/* An explicit start supersedes any pending deferred start */
+ 	vf->start_pending = false;
+@@ -1135,13 +1134,13 @@ iavf_dev_stop(struct rte_eth_dev *dev)
+ 	if (adapter->closed)
+ 		return -1;
+ 
++	if (adapter->stopped == 1)
++		return 0;
++
+ 	if (!(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR) &&
+ 	    dev->data->dev_conf.intr_conf.rxq != 0)
+ 		rte_intr_disable(intr_handle);
+ 
+-	if (adapter->stopped == 1)
+-		return 0;
+-
+ 	iavf_phc_sync_alarm_stop(dev);
+ 
+ 	/* Disable the interrupt for Rx */
 -- 
 2.52.0
 
