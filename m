@@ -1,49 +1,49 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E320606A31B
-	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 13:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78875606A31A
+	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 13:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=GsaGZqCj
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=jWfgYHCr
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A27240269;
-	Sat, 24 Oct 2026 15:50:49 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 604C54060C;
+	Sat, 24 Oct 2026 15:50:51 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 1EC4B40269
- for <dev@dpdk.org>; Sat, 24 Oct 2026 15:50:47 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 53224402EF
+ for <dev@dpdk.org>; Sat, 24 Oct 2026 15:50:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792849848; x=1824385848;
+ t=1792849850; x=1824385850;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=pegr5QMqtRM94m0YzDL9EuV1Tm4ysploZPWQjBstMi8=;
- b=GsaGZqCjNhx+rOdgjiCSNm/CYvBoIPW7H9Pz/bQnayJH74Bf9OfmMTUF
- 2KasumCjzEv+3LEhyGgeWaNmNkb8FAzZha75XZ0dG0wJj5BbhaKBoVKOe
- PgIermDzbCPhw0N05qUP4H2T83vKfPVkOwygTkVrNQolEg05PzShN5unF
- MjQp9t0nAmBF54RGynKZhhwBoT5jwoNGMPn/1FKTNFhqmBJfE6ZdnH/Yo
- kv7fx1LX7Uql2udYjqIVCIlL5JTUnigNGvrPEv7AYR/YHJADIlcnFhmfZ
- 6L5O/DedULDUkKfzxLCx7J6tlQVO48sCKUrTShqcHm3FpGiN6O7ezU+4D g==;
-X-CSE-ConnectionGUID: sC4TzZL5RnyHFOWJYU2T4g==
-X-CSE-MsgGUID: UDrEQ1n6TZ2wqdOR/KheEg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11944"; a="1600814"
+ bh=1j86D6xWsg3rNC1cneCy9m5moPc/pi5UGWmdbrg5Vdg=;
+ b=jWfgYHCrg6BrPPPd8wOpDmXERcOfg5FbyId7hLCVIE7J2Xta6duQEKie
+ 6F+i/Uaq8ScprCpsK3f9gSbyDfX1fQgiO16ThrdR7TxlYB6CbJef5qW3d
+ 5ZUeY9WohdE/fZvg1Ds3W73vB4qk+Y9aQOcjUfFbbG0tzA9O5PH7j71nV
+ cGpX+BTL8XE1YxCO50pkRFIzeYxM71BH5I1dm90/U6u0LWy1Pg3xpsC74
+ PCeHz3TuK/SNvnnK8P8BQeHoweUk6Y6hko9Ck5qwBp9MZgvriBRCT00xi
+ B80UYHEs+uU7aG/2KE3KHcBI2PNpjVjMhGO8L48+FxJoTJO9ln8WaswSV A==;
+X-CSE-ConnectionGUID: cRwwwzO4SjGb6rkvY5Maaw==
+X-CSE-MsgGUID: DIRn6B8IRBWBiKfEHZRvHA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11944"; a="1600817"
 X-IronPort-AV: E=Sophos;i="6.27,176,1787036400"; 
-   d="scan'208";a="1600814"
+   d="scan'208";a="1600817"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Oct 2026 06:50:47 -0700
-X-CSE-ConnectionGUID: ug2qda/iSraeByK2ihLTHg==
-X-CSE-MsgGUID: qnJ4DgYkQImiE06stXkbXg==
+ 24 Oct 2026 06:50:50 -0700
+X-CSE-ConnectionGUID: ZfIZY7SHSEigIYaF7Hd1lA==
+X-CSE-MsgGUID: oRaS+qPLS2SLi2th38eTAw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,176,1787036400"; 
-   d="scan'208";a="4216672"
+   d="scan'208";a="4216674"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa008.fm.intel.com with ESMTP; 24 Oct 2026 06:50:47 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 24 Oct 2026 06:50:50 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v3 1/5] ethdev: fix flow conversion with null buffer
-Date: Sat, 24 Oct 2026 14:50:28 +0100
-Message-ID: <5698ccb3daeebd1d50346d5a3bd8471468056463.1792849824.git.anatoly.burakov@intel.com>
+Subject: [PATCH v3 2/5] ethdev: fix missing MACsec flow item descriptor
+Date: Sat, 24 Oct 2026 14:50:29 +0100
+Message-ID: <c1524fc4107c9b8823350ca837d329b19d75658a.1792849824.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <8fa05595f3596e9355dd90df7fc278b104beb20b.1792757739.git.anatoly.burakov@intel.com>
-References: <8fa05595f3596e9355dd90df7fc278b104beb20b.1792757739.git.anatoly.burakov@intel.com>
+In-Reply-To: <5698ccb3daeebd1d50346d5a3bd8471468056463.1792849824.git.anatoly.burakov@intel.com>
+References: 
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -63,153 +63,37 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-rte_flow_conv_pattern() and rte_flow_conv_actions() document that the
-destination buffer may be NULL when the size is zero, which is how
-callers query the number of bytes required before allocating. Both
-functions nonetheless walked the destination with ++dst in the first
-pass and dst -= num before the second, regardless of size.
+RTE_FLOW_ITEM_TYPE_MACSEC was never added to rte_flow_desc_item[].
+The table uses designated initializers, so the MACSEC slot is zero
+filled: its name is NULL and its size is zero.
 
-Pointer arithmetic on a NULL pointer is undefined behavior, and is
-reported by UBSan as "applying non-zero offset to null pointer" for
-every RTE_FLOW_CONV_OP_PATTERN and RTE_FLOW_CONV_OP_ACTIONS size query.
+As a result, RTE_FLOW_CONV_OP_ITEM_NAME on MACSEC passes a NULL
+source to strlcpy(), and rte_flow_copy() as well as the pattern
+conversion operations reject any pattern containing a MACSEC item
+as an unknown item type.
 
-Keep the destination pointer fixed and index it only inside the
-size-guarded writes, which are never reached when size is zero.
+Add the missing descriptor entry.
 
-Fixes: 063911ee1df4 ("ethdev: add flow API object converter")
+Fixes: 0aaf097585a6 ("ethdev: add MACsec flow item")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- lib/ethdev/rte_flow.c | 42 +++++++++++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 19 deletions(-)
+ lib/ethdev/rte_flow.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
-index 0ebf59165d4..704ed663c5f 100644
+index 704ed663c5f..6e544f4bc91 100644
 --- a/lib/ethdev/rte_flow.c
 +++ b/lib/ethdev/rte_flow.c
-@@ -921,7 +921,12 @@ rte_flow_conv_pattern(struct rte_flow_item *dst,
- 	size_t ret;
- 	unsigned int i;
- 
--	for (i = 0, off = 0; !num || i != num; ++i, ++src, ++dst) {
-+	/*
-+	 * dst may be NULL when size is zero, so it is only ever indexed
-+	 * inside the size-guarded writes below; pointer arithmetic on a
-+	 * NULL pointer is undefined behavior.
-+	 */
-+	for (i = 0, off = 0; !num || i != num; ++i, ++src) {
- 		/**
- 		 * allow PMD private flow item
- 		 */
-@@ -932,7 +937,7 @@ rte_flow_conv_pattern(struct rte_flow_item *dst,
- 				(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_ITEM, src,
- 				 "cannot convert unknown item type");
- 		if (size >= off + sizeof(*dst))
--			*dst = (struct rte_flow_item){
-+			dst[i] = (struct rte_flow_item){
- 				.type = src->type,
- 			};
- 		off += sizeof(*dst);
-@@ -941,8 +946,7 @@ rte_flow_conv_pattern(struct rte_flow_item *dst,
- 	}
- 	num = i;
- 	src -= num;
--	dst -= num;
--	do {
-+	for (i = 0; i != num; ++i, ++src) {
- 		if (src->spec) {
- 			off = RTE_ALIGN_CEIL(off, sizeof(double));
- 			ret = rte_flow_conv_item_spec
-@@ -950,7 +954,7 @@ rte_flow_conv_pattern(struct rte_flow_item *dst,
- 				 size > off ? size - off : 0, src,
- 				 RTE_FLOW_CONV_ITEM_SPEC);
- 			if (size && size >= off + ret)
--				dst->spec = (void *)(data + off);
-+				dst[i].spec = (void *)(data + off);
- 			off += ret;
- 
- 		}
-@@ -961,7 +965,7 @@ rte_flow_conv_pattern(struct rte_flow_item *dst,
- 				 size > off ? size - off : 0, src,
- 				 RTE_FLOW_CONV_ITEM_LAST);
- 			if (size && size >= off + ret)
--				dst->last = (void *)(data + off);
-+				dst[i].last = (void *)(data + off);
- 			off += ret;
- 		}
- 		if (src->mask) {
-@@ -971,12 +975,10 @@ rte_flow_conv_pattern(struct rte_flow_item *dst,
- 				 size > off ? size - off : 0, src,
- 				 RTE_FLOW_CONV_ITEM_MASK);
- 			if (size && size >= off + ret)
--				dst->mask = (void *)(data + off);
-+				dst[i].mask = (void *)(data + off);
- 			off += ret;
- 		}
--		++src;
--		++dst;
--	} while (--num);
-+	}
- 	return off;
- }
- 
-@@ -1014,7 +1016,12 @@ rte_flow_conv_actions(struct rte_flow_action *dst,
- 	size_t ret;
- 	unsigned int i;
- 
--	for (i = 0, off = 0; !num || i != num; ++i, ++src, ++dst) {
-+	/*
-+	 * dst may be NULL when size is zero, so it is only ever indexed
-+	 * inside the size-guarded writes below; pointer arithmetic on a
-+	 * NULL pointer is undefined behavior.
-+	 */
-+	for (i = 0, off = 0; !num || i != num; ++i, ++src) {
- 		/**
- 		 * allow PMD private flow action
- 		 */
-@@ -1025,7 +1032,7 @@ rte_flow_conv_actions(struct rte_flow_action *dst,
- 				(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_ACTION,
- 				 src, "cannot convert unknown action type");
- 		if (size >= off + sizeof(*dst))
--			*dst = (struct rte_flow_action){
-+			dst[i] = (struct rte_flow_action){
- 				.type = src->type,
- 			};
- 		off += sizeof(*dst);
-@@ -1034,8 +1041,7 @@ rte_flow_conv_actions(struct rte_flow_action *dst,
- 	}
- 	num = i;
- 	src -= num;
--	dst -= num;
--	do {
-+	for (i = 0; i != num; ++i, ++src) {
- 		if (src->type == RTE_FLOW_ACTION_TYPE_INDIRECT) {
- 			/*
- 			 * Indirect action conf fills the indirect action
-@@ -1043,19 +1049,17 @@ rte_flow_conv_actions(struct rte_flow_action *dst,
- 			 * of duplicating the pointer memory.
- 			 */
- 			if (size)
--				dst->conf = src->conf;
-+				dst[i].conf = src->conf;
- 		} else if (src->conf) {
- 			off = RTE_ALIGN_CEIL(off, sizeof(double));
- 			ret = rte_flow_conv_action_conf
- 				((void *)(data + off),
- 				 size > off ? size - off : 0, src);
- 			if (size && size >= off + ret)
--				dst->conf = (void *)(data + off);
-+				dst[i].conf = (void *)(data + off);
- 			off += ret;
- 		}
--		++src;
--		++dst;
--	} while (--num);
-+	}
- 	return off;
- }
- 
+@@ -229,6 +229,7 @@ static const struct rte_flow_desc_data rte_flow_desc_item[] = {
+ 			rte_flow_item_l2tpv2_mask),
+ 	MK_FLOW_ITEM_MASK(PPP, sizeof(struct rte_flow_item_ppp),
+ 			rte_flow_item_ppp_mask),
++	MK_FLOW_ITEM(MACSEC, sizeof(struct rte_flow_item_macsec)),
+ 	MK_FLOW_ITEM_MASK(METER_COLOR, sizeof(struct rte_flow_item_meter_color),
+ 			rte_flow_item_meter_color_mask),
+ 	MK_FLOW_ITEM(IPV6_ROUTING_EXT, sizeof(struct rte_flow_item_ipv6_routing_ext)),
 -- 
 2.52.0
 
