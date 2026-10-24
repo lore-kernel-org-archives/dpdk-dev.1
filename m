@@ -1,27 +1,27 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07216606A31D
-	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 10:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94F6606A31A
+	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 10:49:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DCDA6402C9;
-	Sat, 24 Oct 2026 12:36:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B276402C9;
+	Sat, 24 Oct 2026 12:49:25 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 62B0B4021F;
- Sat, 24 Oct 2026 12:36:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 25C344021F;
+ Sat, 24 Oct 2026 12:49:24 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 3387120B93;
- Sat, 24 Oct 2026 12:36:43 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id EA88720B93;
+ Sat, 24 Oct 2026 12:49:23 +0200 (CEST)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sat, 24 Oct 2026 12:36:42 +0200
+ Sat, 24 Oct 2026 12:49:23 +0200
 From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
 To: dev@dpdk.org
 Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
  stable@dpdk.org
-Subject: [PATCH v3] examples/l3fwd: fix RFC 1812 checks
-Date: Sat, 24 Oct 2026 10:36:41 +0000
-Message-ID: <20261024103641.3232414-1-mb@smartsharesystems.com>
+Subject: [PATCH v4] examples/l3fwd: fix RFC 1812 checks
+Date: Sat, 24 Oct 2026 10:49:21 +0000
+Message-ID: <20261024104921.3232641-1-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260915105822.988106-1-mb@smartsharesystems.com>
 References: <20260915105822.988106-1-mb@smartsharesystems.com>
@@ -29,8 +29,8 @@ X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 24 Oct 2026 10:36:42.0653 (UTC)
- FILETIME=[8F553CD0:01DD63A3]
+X-OriginalArrivalTime: 24 Oct 2026 10:49:23.0528 (UTC)
+ FILETIME=[54D98C80:01DD63A5]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -102,6 +102,8 @@ Cc: stable@dpdk.org
 
 Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
+v4:
+* When CKSUM_NONE, don't update checksum field. (AI)
 v3:
 * Simplified the checksum check. No need to modify the packet for
   checking the checksum.
@@ -116,16 +118,16 @@ v2:
 * Added (5): Link Layer length vs. IP header Total Length check.
 * Added the Fixes tag going back to the first public release.
 ---
- examples/l3fwd/l3fwd.h     | 31 +++++++++++++++++++++++--------
+ examples/l3fwd/l3fwd.h     | 29 +++++++++++++++++++++--------
  examples/l3fwd/l3fwd_em.h  |  3 ++-
  examples/l3fwd/l3fwd_lpm.h |  3 ++-
- 3 files changed, 27 insertions(+), 10 deletions(-)
+ 3 files changed, 25 insertions(+), 10 deletions(-)
 
 diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
-index 349fc37c79..f8f5cc5b34 100644
+index 349fc37c79..45d9cc8362 100644
 --- a/examples/l3fwd/l3fwd.h
 +++ b/examples/l3fwd/l3fwd.h
-@@ -170,14 +170,21 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
+@@ -170,14 +170,19 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
  		return -1;
  
  	/* 2. The IP checksum must be correct. */
@@ -147,14 +149,12 @@ index 349fc37c79..f8f5cc5b34 100644
 +	case RTE_MBUF_F_RX_IP_CKSUM_BAD:
 +		return -2;
 +	case RTE_MBUF_F_RX_IP_CKSUM_NONE:
-+		/* Packet integrity known good, header field unset; set it. */
-+		pkt->hdr_checksum = 0;
-+		pkt->hdr_checksum = rte_ipv4_cksum(pkt);
++		/* Packet integrity known good, checksum field unset; don't check it. */
 +		break;
  	}
  
  	/*
-@@ -199,9 +206,17 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
+@@ -199,9 +204,17 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
  	 * datagram header, whose length is specified in the IP header length
  	 * field.
  	 */
