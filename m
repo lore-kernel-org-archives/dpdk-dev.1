@@ -1,63 +1,71 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E650B606A322
-	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 16:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C42606A31A
+	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 17:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20251104 header.b=OHu6EGUf
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=mn2XSOiK
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C5F7D40658;
-	Sat, 24 Oct 2026 18:47:09 +0200 (CEST)
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200])
- by mails.dpdk.org (Postfix) with ESMTP id 1FA6240264
- for <dev@dpdk.org>; Thu, 22 Oct 2026 23:28:21 +0200 (CEST)
-Received: by mail-qk1-f200.google.com with SMTP id
- af79cd13be357-93dd3c3badbso48612485a.2
- for <dev@dpdk.org>; Thu, 22 Oct 2026 14:28:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B9E740269;
+	Sat, 24 Oct 2026 19:41:27 +0200 (CEST)
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
+ [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 2186F4021F
+ for <dev@dpdk.org>; Sat, 24 Oct 2026 19:41:26 +0200 (CEST)
+Received: by mail-dy1-f177.google.com with SMTP id
+ 5a478bee46e88-35943f55c06so2367094eec.0
+ for <dev@dpdk.org>; Sat, 24 Oct 2026 10:41:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1792704500; x=1793309300; darn=dpdk.org;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=lKdZZQ5SB0CGE+MGLIsJYiV+DX4PkR5deVC3mLoGoVo=;
- b=OHu6EGUfCzt0RIPoGFG3cIk4SKnYNjYineJ8aosZQ13ORsSSNb7vvfvLS4ph9cthaL
- 5XaH++ToIOJhxE+L/cFbgqa23LGsca9W6y0hpLiOCgGitwBhttlxLQEW/1VhZpO16+Om
- A1UxWA+N/dEFOgXJ3VadH3QH1Gzg8Eo9jKpEbNTm/dDfYKv9Fj8sU2w6ABkHF3EZZ7oy
- lZCASRUhROjyenRCJ7cF1h4bl+iDOAGkR5xrehcRdJL0+AOVlc0PSuIjhUVhXK1f3iRC
- OD7o7gLW60UiGmBsrWqw1Dpy79WO7kypaZB6nxL4lvHKNxTWLSxdAi2KaiSSTXy5quHa
- uJMQ==
+ d=gmail.com; s=20251104; t=1792863685; x=1793468485; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=1dXYAWQjqOtAOG5MT/ocBZzSImbWKU6FUdqmmGV8A9U=;
+ b=mn2XSOiK1cC/JErrBQC51lh1Cx2bZIVcEQLQjjYrFdrrjma+F5Phw7GPYRXKcZQYSN
+ +rarJzkHnRuN0iyDLb+r3ceo1JnjChjwNvXs8QsjYN5XjTtpsF0hLkx8PCaPlciT5GS/
+ ZZU/V/cBv4QF+s7K6pTd/YTcP4Py2/3SMV7zVLY3JZx6hgQ+kEUvTSNr54dTK/EaUXbw
+ 0o/w624Ytza2pUGk+3uwA+XQWyEdXut262s9aol6lUrvuVRGe1fpAclDxhANTiUBUdax
+ FaPx56ddEk48x7+auC9wA9KLj616mOXOgMoQOgVhmojw3JIES98/EThyR+/i669xABo1
+ ZdVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792704500; x=1793309300;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20260707; t=1792863685; x=1793468485;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=lKdZZQ5SB0CGE+MGLIsJYiV+DX4PkR5deVC3mLoGoVo=;
- b=ylIuBw+LpKYzOgJTMTAEFhShxVi2pY71eWT4tOyo7rdNDYNqLDVN+b+k6KXvGRk5xQ
- m6e/4IoNg7pLF49faphKoIqJWnllqPo3MgHvaiY59laYm/tTdkg0e+WQVEe5oG9gMgBB
- rONtfU7dwpCMuRyYpxXor11kHzMQyuPFwhOTd3jmNeEzLjIKtAkhCBkJ6feG1R2cjOv9
- TkL26UKxTA+UgZTMhXz6iwhXJmo/BcHPWcNKftXo7dzEeHZGxW0rOe5lR0VBTxP2NOwl
- ByYHb+wuQ5JoGYoWbgNDbXjHYTz0tbBX59hZhBbrkL2B0wGIFbxapati8I7DOc+KeGFW
- Zu9w==
-X-Gm-Message-State: AFq9FYL0Ax2zTpoPHYrW+Z+l7kTJftf6cOBqU3+vBdQiC3bpFtCiek0i
- E2pQFUMFU8AYfKJckCkexEpiBl+CbOUwI1HaxsgEsEQHvqfJJWopxaXMq9BhYQJQsJekBWtL0nC
- FGfn0V1z2fsV+MXdGyQZStR2ZfM68fVJRLUX9aC+H8FxvuOPoeENbzuVRSm+jak4wjOliyMgktR
- Gocv4vR/8HlVTquw0v6TNIGTvHa/gi
-X-Received: from qvbm18.prod.google.com ([2002:a05:6214:8412:b0:918:74d8:1f24])
- (user=rnwolfe job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:620a:2b4e:b0:93f:3285:1f38
- with SMTP id af79cd13be357-93f6f868069mr123966385a.77.1792704499825; Thu, 22
- Oct 2026 14:28:19 -0700 (PDT)
-Date: Thu, 22 Oct 2026 17:28:18 -0400
-In-Reply-To: <20261022100049.7a318767@phoenix.local>
+ bh=1dXYAWQjqOtAOG5MT/ocBZzSImbWKU6FUdqmmGV8A9U=;
+ b=Pygc+1QdNh1Sd0u4t7bng3MvLvGmTwdp3G1j8oNoncSvMXcH1fe6QeDTuQKH3rOIDH
+ geFyP2968vlDOJGsVrv5tdHwsSO+wa/+IE7E8XwFxbjIhBu/VfKzdHJO4Onvo969z792
+ Xf3mmJtODHjxMGcZrT07I9L9PWEPoUaBfLAD7AXtaMhYRcr6nxvq5bY7No4HtH24jPX8
+ /vHYyNPDNZt4xh5+gbAEVJSvuU7e0sNDfjSQEj9dXZnXvtx47qAWtLiZ+5xBBYnXdtl+
+ peW/GuhMuZs9hrae034hsqGmkgvXc4yTHNKNZQMpVgTTF4CThsqec19kFCYtXaRtMeZx
+ WqHA==
+X-Gm-Message-State: AFq9FYLFWrrN5Qx8xydB9gGUgEr2L8mfS73W7HXVdGQPEaDE4HeD8wAC
+ uCk++LND+c6o6QS9BqarLWetJ88X79121tY7jnoUey/SuRmyCXx0IwPy
+X-Gm-Gg: AYBFou0y3XX3HnRG5HTmhwr+CNRboODbzAPV18elFtT8ez0wb598YN0lTKD9vxp55sB
+ ds1NJDL7vWeB74Iq5rMmixqTY9nCpA/kCpYSsaYyFK4YFRIrAcrzVpfO6LilQ0rImkKGVnSatuY
+ Y2mkHDSRCQa4pJcnfRsVUpd52PgCzwuC22S+ym70E99A3es7jmDI0ogltZFYG5q16BRrOF04YuM
+ jeBr+Ub+keHKOfdLwK1y4skXhT0vLw3UAxR3pfhR3MFWCZC6M4MOOCbAXSe/5VufuXkxTGeWfPk
+ qJiAytBQ4BXNN8AgI0mMpbrRhwssg65WDV1Tx6wuM4GHs0OZIVlHFvp010K0tH4tVC24h82AiYq
+ Wa+0rHOE5LmnygQHaanZW30BpOmEtkrfYiXXr3BSvNLXQHK1d+wx169WyU6HXl0xOmblAJSsQUv
+ /blc+dISFgqjmo539kWUG4//6BjdZOmsDtXrzG1vW6pEz1aFArAfqtZ2pqyIIkLobWUnpOEqad8
+ Bxjt1U16asznAGi7rjtYzZP4sSJ/2bFuDMW/SsUU0+fDP518Is3+V5+m3N6zrVnYsEwhinP4MVN
+ 2HXCxqfmdh8=
+X-Received: by 2002:a05:693c:4146:10b0:351:2f0a:cb2a with SMTP id
+ 5a478bee46e88-369e83607admr3921969eec.2.1792863684774; 
+ Sat, 24 Oct 2026 10:41:24 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:282:47e8:88ea:d50:a914])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-369f27d5bf8sm3745996eec.4.2026.10.24.10.41.24
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 24 Oct 2026 10:41:24 -0700 (PDT)
+From: Kumar Sanghvi <divinekumar@gmail.com>
+To: Thomas Monjalon <thomas@monjalon.net>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org,
+	ksanghvi@zscaler.com
+Subject: [PATCH] kernel/freebsd: add NUMA domain selection for contigmem
+Date: Sat, 24 Oct 2026 10:41:17 -0700
+Message-Id: <20261024174117.804304-1-divinekumar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 X-Archived-By: <archiver.kernel.org>
-Mime-Version: 1.0
-References: <20261022100049.7a318767@phoenix.local>
-X-Mailer: git-send-email 2.56.0.257.gf7497c7d27-goog
-Message-ID: <20261022212819.1750996-1-rnwolfe@google.com>
-Subject: [PATCH v2] net/gve: enforce the Rx scatter offload in GQI
-From: Ryan Wolfe <rnwolfe@google.com>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, joshwash@google.com
-Content-Type: text/plain; charset="UTF-8"
-X-Mailman-Approved-At: Sat, 24 Oct 2026 18:47:07 +0200
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -67,234 +75,198 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-rte_eth_dev_configure() sets the MTU from rxmode.mtu without calling
-mtu_set, and keeps Rx queues that are already set up. Stopping the port
-and reconfiguring it with a larger MTU, or without
-RTE_ETH_RX_OFFLOAD_SCATTER, therefore skipped both the MTU change check
-and the Rx queue setup check. gve also never gave the device that MTU.
+From: Kumar Sanghvi <ksanghvi@zscaler.com>
 
-Even with the MTU programmed, a GQI device does not limit what it
-receives to it: on a network with a larger MTU it still delivers
-bigger frames, chained over several Rx buffers. So the configuration
-checks alone cannot keep chained mbufs from an application that did
-not enable scatter.
+On multi-socket systems, DPDK applications pin their threads to cores
+on the socket local to the NIC, but the FreeBSD EAL reports all lcores
+and all contigmem memory as socket 0, so an application has no way to
+ask for local buffers. Physical placement is decided entirely by
+contigmem, which allocates its buffers at module load with
+contigmalloc(). That uses a round-robin domain policy, so the buffers
+can land on a remote domain, and every DMA transfer and packet copy
+then crosses the inter-socket interconnect.
 
-Move the configuration check into gve_rx_check_scatter() and call it
-from gve_dev_start() as well as gve_dev_mtu_set(), program the
-configured MTU into the device at start, and have the GQI Rx path drop
-a frame that spans more than one buffer, counted in the Rx errors,
-when the port has not enabled scatter. A dropped descriptor's mbuf is
-now freed, since the refill replaces it.
+Add a hw.contigmem.numa_domain loader tunable. When it is set to a
+domain number, every buffer is allocated from that domain with
+contigmalloc_domainset(DOMAINSET_FIXED()).
 
-Fixes: cffdca824388 ("net/gve: refuse an MTU that needs Rx scatter when it is off")
+The placement is strict. If the domain cannot provide a buffer, the
+module load fails and the requested domain is reported, rather than
+buffers being silently placed elsewhere. An out-of-range value also
+fails the load. The default, -1, keeps the existing behaviour of
+allocating from any domain.
 
-Reported-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Ryan Wolfe <rnwolfe@google.com>
+The tunable takes effect only at module load and is exposed read-only
+through sysctl. EAL socket reporting is unchanged.
+
+Usage:
+  kenv hw.contigmem.numa_domain=1
+  kldload contigmem
+
+Tested on FreeBSD 13.2, dual-socket Intel Xeon Gold 6442Y (Sapphire
+Rapids, 2 x 24 cores) with Intel E810 25G NICs attached to socket 1.
+A DPDK application on socket 1 received packets with a poll-mode
+driver and copied them to three packet-processing applications, also
+on socket 1, driven by httperf TCP traffic (1000 connections, 128 KB
+objects). Measured with Intel PCM (pcm, pcm-memory, pcm-numa) at
+steady state, default round-robin placement vs. all buffers in
+domain 1:
+  - remote memory bandwidth of the poll-mode thread:
+    ~1800 MB/s -> ~0 MB/s
+  - incoming UPI traffic: 2340 MB/s -> 77 MB/s (-97%)
+  - power: 7 W lower (5 W CPU + 2 W DIMM)
+
+Signed-off-by: Kumar Sanghvi <ksanghvi@zscaler.com>
 ---
-v2:
-- program the configured MTU into the device at start (Stephen)
-- on GQI-QPL hardware the device does not enforce the driver MTU on Rx:
-  8000-byte frames still arrive chained over 4 buffers at MTU 1500, so
-  also drop and count chained frames in the Rx path when scatter is off,
-  and free a dropped descriptor's mbuf
-- retitled from "net/gve: check the Rx scatter MTU at device start"
-- commit message fix and no Cc: stable (Stephen)
+ .mailmap                               |  2 +-
+ doc/guides/freebsd_gsg/build_dpdk.rst  | 23 +++++++++++++++++
+ doc/guides/rel_notes/release_26_11.rst |  5 ++++
+ kernel/freebsd/contigmem/contigmem.c   | 34 +++++++++++++++++++++++---
+ 4 files changed, 60 insertions(+), 4 deletions(-)
 
-Tested on a GQI-QPL gVNIC with testpmd. At MTU 1500 without scatter,
-25000 8000-byte and 25000 1000-byte UDP datagrams, interleaved, gave
-25000 Rx errors and 25000 packets received, with no nombuf on a
-16384-mbuf pool and traffic still flowing afterwards; with scatter on,
-the 8042-byte frames arrive as 4-segment mbufs. A small ethdev program
-that reconfigures a started-and-stopped port to MTU 8000 without
-scatter, keeping its Rx queues, now gets -EINVAL from
-rte_eth_dev_start() (it started before).
-
- drivers/net/gve/gve_ethdev.c | 75 +++++++++++++++++++++++++++---------
- drivers/net/gve/gve_ethdev.h |  2 +
- drivers/net/gve/gve_rx.c     | 20 +++++++++-
- 3 files changed, 76 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index 7506c46d9a..8ee52fdd47 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -459,11 +459,38 @@ gve_start_queues(struct rte_eth_dev *dev)
- 	return ret;
- }
+diff --git a/.mailmap b/.mailmap
+index 6d9e262cfb..e1c99d2ba7 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -915,7 +915,7 @@ Krzysztof Witek <krzysztof.witek@6wind.com>
+ Kuan Xu <kuanx.xu@intel.com>
+ Kuba Kozak <kubax.kozak@intel.com>
+ Kumar Amber <kumar.amber@intel.com>
+-Kumar Sanghvi <kumaras@chelsio.com>
++Kumar Sanghvi <ksanghvi@zscaler.com> <kumaras@chelsio.com>
+ Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
+ Kyle Larose <klarose@sandvine.com>
+ Kyo Liu <kyo.liu@nebula-matrix.com>
+diff --git a/doc/guides/freebsd_gsg/build_dpdk.rst b/doc/guides/freebsd_gsg/build_dpdk.rst
+index 9dafa64e84..509e06a6ac 100644
+--- a/doc/guides/freebsd_gsg/build_dpdk.rst
++++ b/doc/guides/freebsd_gsg/build_dpdk.rst
+@@ -107,6 +107,29 @@ Mapped buffers can be included in core dump using the following tunable::
+    Buffers typically hold data processed by the application,
+    like network packets, which may contain sensitive information.
  
-+/* GQI chains a frame larger than one Rx buffer into a multi-segment
-+ * mbuf. No Rx offload is per-queue here, so check the port offloads.
-+ */
-+static int
-+gve_rx_check_scatter(struct rte_eth_dev *dev, uint16_t mtu)
-+{
-+	struct gve_priv *priv = dev->data->dev_private;
-+	uint16_t i;
++On multi-socket systems, the buffers can be allocated from a specific
++NUMA domain using the following tunable::
 +
-+	if (!gve_is_gqi(priv) ||
-+	    (dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_SCATTER))
-+		return 0;
++   hw.contigmem.numa_domain=d
 +
-+	for (i = 0; i < dev->data->nb_rx_queues; i++) {
-+		struct gve_rx_queue *rxq = dev->data->rx_queues[i];
++Where d is a domain number from 0 to ``vm.ndomains`` - 1.
++Placing the buffers in the domain local to the NIC and to the cores
++running the DPDK application avoids cross-socket memory traffic.
++The default, -1, allocates buffers from any domain.
++The placement is strict: the module fails to load
++if the requested domain cannot provide all buffers
++or if the value is out of range.
++The tunable takes effect only when the module is loaded.
++The NUMA domain of a device can be found using
++``sysctl dev.<driver>.<unit>.%domain``,
++for example ``sysctl dev.ice.0.%domain``.
 +
-+		if (rxq != NULL && gve_rx_gqi_needs_scatter(mtu, rxq->rx_buf_len)) {
-+			PMD_DRV_LOG(ERR, "MTU %u needs Rx scatter with %u byte Rx buffers",
-+				    mtu, rxq->rx_buf_len);
-+			return -EINVAL;
-+		}
-+	}
++.. note::
 +
-+	return 0;
-+}
++   The FreeBSD EAL reports all lcores and all contigmem memory as socket 0.
++   This tunable changes only the physical placement of the buffers;
++   applications should keep requesting memory from socket 0 or ``SOCKET_ID_ANY``.
 +
- static int
- gve_dev_start(struct rte_eth_dev *dev)
- {
- 	struct gve_process_private *process_priv = dev->process_private;
--	struct gve_priv *priv;
-+	struct gve_priv *priv = dev->data->dev_private;
-+	uint16_t i;
- 	int ret;
+ The kernel environment variables can also be specified during boot by placing the
+ following in ``/boot/loader.conf``:
  
- 	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
-@@ -471,6 +498,31 @@ gve_dev_start(struct rte_eth_dev *dev)
- 		return -EPERM;
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index be758a0c02..9e66c6907f 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -55,6 +55,11 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Added NUMA domain selection to the FreeBSD contigmem module.**
++
++  Added the ``hw.contigmem.numa_domain`` tunable
++  to allocate contigmem buffers from a chosen NUMA domain.
++
+ * **Added division round up macro.**
+ 
+   Added the ``RTE_DIV_ROUND_UP`` macro in ``rte_common.h``
+diff --git a/kernel/freebsd/contigmem/contigmem.c b/kernel/freebsd/contigmem/contigmem.c
+index cb9298c9c6..441ce51644 100644
+--- a/kernel/freebsd/contigmem/contigmem.c
++++ b/kernel/freebsd/contigmem/contigmem.c
+@@ -20,6 +20,7 @@ __FBSDID("$FreeBSD$");
+ #include <sys/sysctl.h>
+ #include <sys/vmmeter.h>
+ #include <sys/eventhandler.h>
++#include <sys/domainset.h>
+ 
+ #include <machine/bus.h>
+ 
+@@ -59,10 +60,14 @@ static struct contigmem_buffer contigmem_buffers[RTE_CONTIGMEM_MAX_NUM_BUFS];
+ static struct cdev     *contigmem_cdev = NULL;
+ static int              contigmem_refcnt;
+ 
++/* -1 = any domain (default) */
++static int contigmem_numa_domain = -1;
++
+ TUNABLE_INT("hw.contigmem.num_buffers", &contigmem_num_buffers);
+ TUNABLE_QUAD("hw.contigmem.buffer_size", &contigmem_buffer_size);
+ TUNABLE_QUAD("hw.contigmem.buffer_size_MB", &contigmem_buffer_size_MB);
+ TUNABLE_BOOL("hw.contigmem.coredump_enable", &contigmem_coredump_enable);
++TUNABLE_INT("hw.contigmem.numa_domain", &contigmem_numa_domain);
+ 
+ static SYSCTL_NODE(_hw, OID_AUTO, contigmem, CTLFLAG_RD, 0, "contigmem");
+ 
+@@ -77,6 +82,9 @@ SYSCTL_INT(_hw_contigmem, OID_AUTO, num_references, CTLFLAG_RD,
+ 	&contigmem_refcnt, 0, "Number of references to contigmem");
+ SYSCTL_BOOL(_hw_contigmem, OID_AUTO, coredump_enable, CTLFLAG_RD,
+ 	&contigmem_coredump_enable, 0, "Include mapped buffers in core dump");
++SYSCTL_INT(_hw_contigmem, OID_AUTO, numa_domain, CTLFLAG_RD,
++	&contigmem_numa_domain, 0,
++	"NUMA domain for buffer allocation (-1 = any domain)");
+ 
+ static SYSCTL_NODE(_hw_contigmem, OID_AUTO, physaddr, CTLFLAG_RD, 0,
+ 	"physaddr");
+@@ -150,11 +158,31 @@ contigmem_load(void)
+ 		goto error;
  	}
  
-+	/* rte_eth_dev_configure() sets the MTU and the Rx offloads without
-+	 * calling mtu_set, and keeps Rx queues already set up, so check them
-+	 * again and give the device the MTU the check was made against.
-+	 */
-+	ret = gve_rx_check_scatter(dev, dev->data->mtu);
-+	if (ret != 0)
-+		return ret;
-+
-+	ret = process_priv->ctrl_ops->set_mtu(priv, dev->data->mtu);
-+	if (ret != 0) {
-+		PMD_DRV_LOG(ERR, "Failed to set MTU %u: %d", dev->data->mtu, ret);
-+		return ret;
++	if (contigmem_numa_domain < -1 ||
++			contigmem_numa_domain >= vm_ndomains) {
++		printf("contigmem: invalid numa_domain %d (valid: -1 to %d)\n",
++				contigmem_numa_domain, vm_ndomains - 1);
++		error = EINVAL;
++		goto error;
 +	}
 +
-+	/* The device chains frames up to its own MTU, not the one it was
-+	 * given; the Rx path drops them unless scatter is on.
-+	 */
-+	for (i = 0; i < dev->data->nb_rx_queues; i++) {
-+		struct gve_rx_queue *rxq = dev->data->rx_queues[i];
-+
-+		if (rxq != NULL)
-+			rxq->scatter = !!(dev->data->dev_conf.rxmode.offloads &
-+					  RTE_ETH_RX_OFFLOAD_SCATTER);
-+	}
-+
- 	ret = gve_start_queues(dev);
- 	if (ret != 0) {
- 		PMD_DRV_LOG(ERR, "Failed to start queues");
-@@ -480,7 +532,6 @@ gve_dev_start(struct rte_eth_dev *dev)
- 	dev->data->dev_started = 1;
- 	gve_link_update(dev, 0);
- 
--	priv = dev->data->dev_private;
- 	/* No stats available yet for Dqo. */
- 	if (gve_is_gqi(priv)) {
- 		ret = gve_alloc_stats_report(priv,
-@@ -1031,23 +1082,9 @@ gve_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
- 		return -EBUSY;
- 	}
- 
--	/* GQI chains a frame larger than one Rx buffer into a multi-segment
--	 * mbuf. No Rx offload is per-queue here, so check the port offloads.
--	 */
--	if (gve_is_gqi(priv) &&
--	    !(dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_SCATTER)) {
--		for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
--			struct gve_rx_queue *rxq = dev->data->rx_queues[i];
--
--			if (rxq != NULL &&
--			    gve_rx_gqi_needs_scatter(mtu, rxq->rx_buf_len)) {
--				PMD_DRV_LOG(ERR,
--					    "MTU %u needs Rx scatter with %u byte Rx buffers",
--					    mtu, rxq->rx_buf_len);
--				return -EINVAL;
--			}
--		}
--	}
-+	err = gve_rx_check_scatter(dev, mtu);
-+	if (err != 0)
-+		return err;
- 
- 	err = process_priv->ctrl_ops->set_mtu(priv, mtu);
- 	if (err) {
-diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index 26c6a304a6..3a8ddfbbb6 100644
---- a/drivers/net/gve/gve_ethdev.h
-+++ b/drivers/net/gve/gve_ethdev.h
-@@ -263,6 +263,8 @@ struct gve_rx_queue {
- 	struct rte_mbuf **refill_bufs;
- 
- 	uint8_t is_gqi_qpl;
-+	/* the port enabled RTE_ETH_RX_OFFLOAD_SCATTER (GQI) */
-+	bool scatter;
- 	bool timestamp_enabled;
- };
- 
-diff --git a/drivers/net/gve/gve_rx.c b/drivers/net/gve/gve_rx.c
-index 4a455b3067..31c187ca83 100644
---- a/drivers/net/gve/gve_rx.c
-+++ b/drivers/net/gve/gve_rx.c
-@@ -139,12 +139,21 @@ gve_rx(struct gve_rx_queue *rxq, volatile struct gve_rx_desc *rxd, uint16_t rx_i
- 	struct rte_mbuf *rxe;
- 
- 	if (ctx->drop_pkt)
--		goto finish_frag;
-+		goto drop_frag;
- 
- 	if (rxd->flags_seq & GVE_RXF_ERR) {
- 		ctx->drop_pkt = true;
- 		rxq->stats.errors++;
--		goto finish_frag;
-+		goto drop_frag;
-+	}
-+
-+	/* The device chains a frame larger than one Rx buffer whatever MTU
-+	 * it was given, so drop it unless the application enabled scatter.
-+	 */
-+	if (is_first_frag && !is_last_frag && !rxq->scatter) {
-+		ctx->drop_pkt = true;
-+		rxq->stats.errors++;
-+		goto drop_frag;
- 	}
- 
- 	if (is_first_frag)
-@@ -171,6 +180,12 @@ gve_rx(struct gve_rx_queue *rxq, volatile struct gve_rx_desc *rxd, uint16_t rx_i
+ 	for (i = 0; i < contigmem_num_buffers; i++) {
+-		addr = contigmalloc(contigmem_buffer_size, M_CONTIGMEM, M_ZERO,
+-			0, BUS_SPACE_MAXADDR, contigmem_buffer_size, 0);
++		if (contigmem_numa_domain >= 0)
++			addr = contigmalloc_domainset(contigmem_buffer_size,
++				M_CONTIGMEM,
++				DOMAINSET_FIXED(contigmem_numa_domain),
++				M_ZERO, 0, BUS_SPACE_MAXADDR,
++				contigmem_buffer_size, 0);
++		else
++			addr = contigmalloc(contigmem_buffer_size, M_CONTIGMEM,
++				M_ZERO, 0, BUS_SPACE_MAXADDR,
++				contigmem_buffer_size, 0);
+ 		if (addr == NULL) {
+-			printf("contigmalloc failed for buffer %d\n", i);
++			if (contigmem_numa_domain >= 0)
++				printf("contigmem: buffer %d: no contiguous memory in NUMA domain %d\n",
++						i, contigmem_numa_domain);
++			else
++				printf("contigmalloc failed for buffer %d\n", i);
+ 			error = ENOMEM;
+ 			goto error;
  		}
- 	}
- 
-+	goto finish_frag;
-+
-+drop_frag:
-+	/* The refill puts a new mbuf in this slot, so free the old one. */
-+	rte_pktmbuf_free(rxq->sw_ring[rx_id]);
-+	rxq->sw_ring[rx_id] = NULL;
- finish_frag:
- 	ctx->total_frags++;
- 	return is_last_frag;
-@@ -375,6 +390,7 @@ gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
- 	rxq->ntfy_addr = &hw->db_bar[rte_be_to_cpu_32(hw->irq_dbs[rxq->ntfy_id].id)];
- 
- 	rxq->rx_buf_len = rx_buf_len;
-+	rxq->scatter = !!(offloads & RTE_ETH_RX_OFFLOAD_SCATTER);
- 
- 	/* Allocate software ring */
- 	rxq->sw_ring = rte_zmalloc_socket("gve rx sw ring", sizeof(struct rte_mbuf *) * nb_desc,
 -- 
-2.56.0.257.gf7497c7d27-goog
+2.50.1 (Apple Git-155)
 
