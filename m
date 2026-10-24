@@ -1,54 +1,36 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED96606A31F
-	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 12:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=De7vMgpQ
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD2F606A31A
+	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 12:36:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 47BAC4067A;
-	Sat, 24 Oct 2026 14:04:27 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 4598E40663
- for <dev@dpdk.org>; Sat, 24 Oct 2026 14:04:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1792843466; x=1824379466;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=jcLhNAXfu3VPheeKUOcn6+qSxE6YNE6WZgK8jjguC34=;
- b=De7vMgpQQQYmsUwd4bybCWMalk14iRpJLwDDUBlwv+UjQmOrx/QF/k+g
- 7rCGScwzMqM3AFDark+AYf9Ha1C2kJjFD+zOLLvF09IPeyiRZw62IGoLU
- 5byU9bJLakEQG0TBXZ3Y0Eyv7+J2+6VGqR5zowkr4rCTto7tAPcfuthWS
- HIilQ0XkxSRps9QRHC/Nxk0om1dr6iaDZR4XtPVSBcBnQg97Qx6CG5PjP
- uTxh2CuxClkO5xGH/yX5Fpjxy5S87uRgw33HdZDtIj8h//ROvaUQztxBY
- owf2GN/7IyXgcC0FJLKKBKGhqqBmM9+QDWdA2bqZhZLra8VnG+b40rXCr w==;
-X-CSE-ConnectionGUID: AZYTfOmNQAmgHVkWZWxeuQ==
-X-CSE-MsgGUID: TtrKxrTVSuemsk2eqTsg0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11944"; a="1569172"
-X-IronPort-AV: E=Sophos;i="6.27,176,1787036400"; 
-   d="scan'208";a="1569172"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Oct 2026 05:04:25 -0700
-X-CSE-ConnectionGUID: Ykuct7lsTi6g+lRkPq7Ocw==
-X-CSE-MsgGUID: LcPBr/dMQAGf72jgM+WXTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,176,1787036400"; 
-   d="scan'208";a="4203831"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa008.fm.intel.com with ESMTP; 24 Oct 2026 05:04:24 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Ori Kam <orika@nvidia.com>
-Subject: [PATCH v2 4/4] ethdev: add flow item structure size query
-Date: Sat, 24 Oct 2026 13:04:10 +0100
-Message-ID: <340981a9cbb3703c1e5062beeb02dd6bf43243ee.1792843433.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <8ccaee11fc265b812abd75ef7defdfdd47e65c3d.1792843432.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id D71B3402D8;
+	Sat, 24 Oct 2026 14:36:07 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id C359940269;
+ Sat, 24 Oct 2026 14:36:06 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 977A520B93;
+ Sat, 24 Oct 2026 14:36:06 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Sat, 24 Oct 2026 14:36:04 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ stable@dpdk.org
+Subject: [PATCH v5] examples/l3fwd: fix RFC 1812 checks
+Date: Sat, 24 Oct 2026 12:35:57 +0000
+Message-ID: <20261024123557.3234240-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260915105822.988106-1-mb@smartsharesystems.com>
+References: <20260915105822.988106-1-mb@smartsharesystems.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 24 Oct 2026 12:36:04.0450 (UTC)
+ FILETIME=[3C18BC20:01DD63B4]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,261 +40,170 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Add RTE_FLOW_CONV_OP_ITEM_SIZE to retrieve the fixed specification
-structure size for a flow item type using the existing descriptor table.
+Four bug fixes and an enhancement.
 
-Lookups by type now also reject item types that have no descriptor
-entry, instead of returning a NULL name or passing NULL to strlcpy().
+1.
+If the PMD didn't check the IP header checksum, the
+offload value is RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN,
+not RTE_MBUF_F_RX_IP_CKSUM_NONE.
+CKSUM_NONE means that the packet integrity is good, but the checksum
+field has not been set.
+CKSUM_UNKNOWN means that the checksum has not been investigated.
+(BTW, no PMD currently sets RTE_MBUF_F_RX_IP_CKSUM_NONE, so this part
+of the check was effectively dead code.)
 
-Extend the flow conversion unit test to cover the new operation.
+Fixed this by processing all four RTE_MBUF_F_RX_IP_CKSUM enum values.
+All four values may not actually occur in this application,
+but it serves an educational purpose.
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+2.
+When checking the checksum, the checksum field in the packet was zeroed
+for calculating the checksum.
+If the checksum was correct, the zero value remained in the packet.
+
+Fixed this by simply calculating the checksum of the packet without
+modifying the checksum field.
+If the calculated checksum is zero, the checksum is correct.
+
+3.
+When checking the Link Layer length of an IP packet, the length did
+not omit the length of the preceding Layer 2 headers.
+
+Fixed this by subtracting the Ethernet header length when calling the
+IPv4 validation function.
+
+4.
+In the 5th bullet check,
+"5. The IP total length field must be large enough to hold the IP
+datagram header, whose length is specified in the IP header length
+field."
+the comparison did not use the IP header length field, but the size
+of the IP header structure, which did not account for IP header
+options.
+
+Fixed this by using the IP header length field instead of the
+size of the structure.
+
+5.
+Added the additional check recommended in RFC 1812 section 5.2.2,
+verifying that the packet length reported by the Link Layer is at least
+as large as the IP total length recorded in the packet's IP header.
+
+Fixes: 4b01cabfb09b ("examples/l3fwd: add option to relax Rx offload")
+Fixes: af75078fece3 ("first public release")
+Cc: stable@dpdk.org
+
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- app/test/test_ethdev_flow_conv.c       | 92 ++++++++++++++++++++++++++
- doc/guides/rel_notes/release_26_11.rst |  8 ++-
- lib/ethdev/rte_flow.c                  | 27 +++++++-
- lib/ethdev/rte_flow.h                  | 18 +++++
- 4 files changed, 140 insertions(+), 5 deletions(-)
+v5:
+* Use rte_be_to_cpu_16(), not rte_cpu_to_be_16(), for reading
+  IP header total_length field. (AI)
+v4:
+* When CKSUM_NONE, don't update checksum field. (AI)
+v3:
+* Simplified the checksum check. No need to modify the packet for
+  checking the checksum.
+v2:
+* Rebased.
+* Improved (1): Process all four checksum offload enum values, not just
+  CKSUM_UNKNOWN instead of CKSUM_NONE.
+* Added (2): Restore checksum field value in packet after checking.
+* Added (3): Subtract Layer 2 header length when passing Link Layer
+  length.
+* Added (4): Fix IP header Total Length vs. IP Header Length check.
+* Added (5): Link Layer length vs. IP header Total Length check.
+* Added the Fixes tag going back to the first public release.
+---
+ examples/l3fwd/l3fwd.h     | 29 +++++++++++++++++++++--------
+ examples/l3fwd/l3fwd_em.h  |  3 ++-
+ examples/l3fwd/l3fwd_lpm.h |  3 ++-
+ 3 files changed, 25 insertions(+), 10 deletions(-)
 
-diff --git a/app/test/test_ethdev_flow_conv.c b/app/test/test_ethdev_flow_conv.c
-index 104b02dbeb6..79fded8c55f 100644
---- a/app/test/test_ethdev_flow_conv.c
-+++ b/app/test/test_ethdev_flow_conv.c
-@@ -21,6 +21,92 @@
- /* Guaranteed to be out of range of every descriptor table. */
- #define BOGUS_TYPE INT32_MAX
+diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
+index 349fc37c79..db59611464 100644
+--- a/examples/l3fwd/l3fwd.h
++++ b/examples/l3fwd/l3fwd.h
+@@ -170,14 +170,19 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
+ 		return -1;
  
-+static int
-+item_size(int type, size_t *size, struct rte_flow_error *error)
-+{
-+	return rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_SIZE, size, sizeof(*size),
-+			     RTE_CAST_PTR(const void *, type), error);
-+}
-+
-+static int
-+test_flow_conv_item_size(void)
-+{
-+	struct rte_flow_error error;
-+	size_t size;
-+	int ret;
-+
-+	struct {
-+		int type;
-+		size_t expected;
-+	} const known[] = {
-+		{ RTE_FLOW_ITEM_TYPE_END, 0 },
-+		{ RTE_FLOW_ITEM_TYPE_VOID, 0 },
-+		{ RTE_FLOW_ITEM_TYPE_INVERT, 0 },
-+		{ RTE_FLOW_ITEM_TYPE_ETH, sizeof(struct rte_flow_item_eth) },
-+		{ RTE_FLOW_ITEM_TYPE_IPV4, sizeof(struct rte_flow_item_ipv4) },
-+		{ RTE_FLOW_ITEM_TYPE_GRE_KEY, sizeof(rte_be32_t) },
-+		{ RTE_FLOW_ITEM_TYPE_GTPC, sizeof(struct rte_flow_item_gtp) },
-+		{ RTE_FLOW_ITEM_TYPE_MACSEC,
-+		  sizeof(struct rte_flow_item_macsec) },
-+		{ RTE_FLOW_ITEM_TYPE_COMPARE,
-+		  sizeof(struct rte_flow_item_compare) },
-+	};
-+
-+	for (unsigned int i = 0; i < RTE_DIM(known); i++) {
-+		size = SIZE_MAX;
-+		ret = item_size(known[i].type, &size, &error);
-+		TEST_ASSERT_EQUAL(ret, (int)sizeof(size_t),
-+				  "item type %d: unexpected return %d",
-+				  known[i].type, ret);
-+		TEST_ASSERT_EQUAL(size, known[i].expected,
-+				  "item type %d: size %zu, expected %zu",
-+				  known[i].type, size, known[i].expected);
-+	}
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_conv_item_size_errors(void)
-+{
-+	struct rte_flow_error error;
-+	size_t size;
-+	int ret;
-+
-+	/* Out of range type. */
-+	memset(&error, 0, sizeof(error));
-+	rte_errno = 0;
-+	ret = item_size(BOGUS_TYPE, &size, &error);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "unexpected return %d", ret);
-+	TEST_ASSERT_EQUAL(rte_errno, EINVAL, "rte_errno %d", rte_errno);
-+	TEST_ASSERT_EQUAL(error.type, RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
-+			  "unexpected error type %d", error.type);
-+	TEST_ASSERT_NOT_NULL(error.message, "error message not set");
-+
-+	/* PMD private type. */
-+	rte_errno = 0;
-+	ret = item_size(-1, &size, &error);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "unexpected return %d", ret);
-+	TEST_ASSERT_EQUAL(rte_errno, EINVAL, "rte_errno %d", rte_errno);
-+
-+	/* Destination too small: nothing written, size still reported. */
-+	size = SIZE_MAX;
-+	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_SIZE, &size,
-+			    sizeof(size) - 1,
-+			    RTE_CAST_PTR(const void *, RTE_FLOW_ITEM_TYPE_ETH), &error);
-+	TEST_ASSERT_EQUAL(ret, (int)sizeof(size_t), "unexpected return %d",
-+			  ret);
-+	TEST_ASSERT_EQUAL(size, SIZE_MAX, "destination was written");
-+
-+	/* NULL destination with zero size is a pure size query. */
-+	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_SIZE, NULL, 0,
-+			    RTE_CAST_PTR(const void *, RTE_FLOW_ITEM_TYPE_ETH), &error);
-+	TEST_ASSERT_EQUAL(ret, (int)sizeof(size_t), "unexpected return %d",
-+			  ret);
-+
-+	return TEST_SUCCESS;
-+}
-+
- static int
- test_flow_conv_item_name(void)
- {
-@@ -158,6 +244,7 @@ test_flow_conv_tables_complete(void)
- {
- 	struct rte_flow_error error;
- 	const char *name;
-+	size_t size;
- 	int ret;
- 
- 	for (int type = 0; type <= LAST_ITEM_TYPE; type++) {
-@@ -167,6 +254,9 @@ test_flow_conv_tables_complete(void)
- 		TEST_ASSERT_EQUAL(ret, (int)sizeof(const char **),
- 				  "item type %d has no descriptor", type);
- 		TEST_ASSERT_NOT_NULL(name, "item type %d has no name", type);
-+		ret = item_size(type, &size, &error);
-+		TEST_ASSERT_EQUAL(ret, (int)sizeof(size_t),
-+				  "item type %d (%s) has no size", type, name);
+ 	/* 2. The IP checksum must be correct. */
+-	/* if this is not checked in H/W, check it. */
+-	if ((ol_flags & RTE_MBUF_F_RX_IP_CKSUM_MASK) == RTE_MBUF_F_RX_IP_CKSUM_NONE) {
+-		uint16_t actual_cksum, expected_cksum;
+-		actual_cksum = pkt->hdr_checksum;
+-		pkt->hdr_checksum = 0;
+-		expected_cksum = rte_ipv4_cksum(pkt);
+-		if (actual_cksum != expected_cksum)
++	switch (ol_flags & RTE_MBUF_F_RX_IP_CKSUM_MASK) {
++	case RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN:
++		/* Not checked in H/W; check it. */
++		if (rte_ipv4_cksum(pkt) != 0)
+ 			return -2;
++		break;
++	case RTE_MBUF_F_RX_IP_CKSUM_GOOD:
++		break;
++	case RTE_MBUF_F_RX_IP_CKSUM_BAD:
++		return -2;
++	case RTE_MBUF_F_RX_IP_CKSUM_NONE:
++		/* Packet integrity known good, checksum field unset; don't check it. */
++		break;
  	}
  
- 	for (int type = 0; type <= LAST_ACTION_TYPE; type++) {
-@@ -341,6 +431,8 @@ static struct unit_test_suite flow_conv_testsuite = {
- 	.setup = NULL,
- 	.teardown = NULL,
- 	.unit_test_cases = {
-+		TEST_CASE(test_flow_conv_item_size),
-+		TEST_CASE(test_flow_conv_item_size_errors),
- 		TEST_CASE(test_flow_conv_item_name),
- 		TEST_CASE(test_flow_conv_action_name),
- 		TEST_CASE(test_flow_conv_item_default_mask),
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 9259954c0f7..f3755bf7ab5 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -113,10 +113,12 @@ New Features
-   loss of lock and Tx fault flags.
-   The SFF-8472 decoder also reports the Rx loss of signal and Tx fault state.
- 
--* **Added flow item default mask lookup.**
-+* **Added flow item default mask and size lookup.**
- 
--  Added ``RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR`` conversion operation
--  to ``rte_flow_conv()`` to retrieve the default mask of a flow item type.
-+  Added ``RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR`` and
-+  ``RTE_FLOW_CONV_OP_ITEM_SIZE`` conversion operations
-+  to ``rte_flow_conv()`` to retrieve the default mask
-+  and the specification structure size of a flow item type.
- 
- * **Added internal ethdev flow graph parser helper API.**
- 
-diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
-index 8a4833695c0..d9ee5277480 100644
---- a/lib/ethdev/rte_flow.c
-+++ b/lib/ethdev/rte_flow.c
-@@ -1178,7 +1178,7 @@ rte_flow_conv_name(int is_action,
- 	const struct desc_info *const info = &info_rep[!!is_action];
- 	unsigned int type = (uintptr_t)src;
- 
--	if (type >= info->num)
-+	if (type >= info->num || info->data[type].name == NULL)
- 		return rte_flow_error_set
- 			(error, EINVAL, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
- 			 "unknown object type to retrieve the name of");
-@@ -1198,7 +1198,8 @@ rte_flow_conv_item_default_mask(void *dst,
- {
- 	unsigned int type = (uintptr_t)src;
- 
--	if (type >= RTE_DIM(rte_flow_desc_item))
-+	if (type >= RTE_DIM(rte_flow_desc_item) ||
-+	    rte_flow_desc_item[type].name == NULL)
- 		return rte_flow_error_set
- 			(error, EINVAL, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
- 			 "unknown item type to retrieve the default mask of");
-@@ -1207,6 +1208,25 @@ rte_flow_conv_item_default_mask(void *dst,
- 	return sizeof(const void **);
- }
- 
-+/** Retrieve the specification structure size of a flow item type. */
-+static int
-+rte_flow_conv_item_size(void *dst,
-+			const size_t size,
-+			const void *src,
-+			struct rte_flow_error *error)
-+{
-+	unsigned int type = (uintptr_t)src;
-+
-+	if (type >= RTE_DIM(rte_flow_desc_item) ||
-+	    rte_flow_desc_item[type].name == NULL)
-+		return rte_flow_error_set
-+			(error, EINVAL, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-+			 "unknown item type to retrieve the size of");
-+	if (size >= sizeof(size_t))
-+		*(size_t *)dst = rte_flow_desc_item[type].size;
-+	return sizeof(size_t);
-+}
-+
- /** Helper function to convert flow API objects. */
- RTE_EXPORT_SYMBOL(rte_flow_conv)
- int
-@@ -1271,6 +1291,9 @@ rte_flow_conv(enum rte_flow_conv_op op,
- 	case RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR:
- 		ret = rte_flow_conv_item_default_mask(dst, size, src, error);
- 		break;
-+	case RTE_FLOW_CONV_OP_ITEM_SIZE:
-+		ret = rte_flow_conv_item_size(dst, size, src, error);
-+		break;
- 	default:
- 		ret = rte_flow_error_set
- 		(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-diff --git a/lib/ethdev/rte_flow.h b/lib/ethdev/rte_flow.h
-index df8101e4395..ff1ffd03e73 100644
---- a/lib/ethdev/rte_flow.h
-+++ b/lib/ethdev/rte_flow.h
-@@ -4426,6 +4426,24 @@ enum rte_flow_conv_op {
- 	 *   @code const void ** @endcode
+ 	/*
+@@ -199,9 +204,17 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
+ 	 * datagram header, whose length is specified in the IP header length
+ 	 * field.
  	 */
- 	RTE_FLOW_CONV_OP_ITEM_DEFAULT_MASK_PTR,
-+
-+	/**
-+	 * Retrieve the fixed size of an item specification structure.
-+	 *
-+	 * Writes the size of the item specification structure to @p dst,
-+	 * or zero for known item types without one. Does not include
-+	 * variable-length or externally referenced data (for example, RAW
-+	 * pattern bytes). Unknown and PMD-private item types return an error.
-+	 *
-+	 * No output is written if @p size is smaller than sizeof(size_t).
-+	 * The return value is sizeof(size_t), not the item structure size.
-+	 *
-+	 * - @p src type:
-+	 *   @code (const void *)(uintptr_t)enum rte_flow_item_type @endcode
-+	 * - @p dst type:
-+	 *   @code size_t * @endcode
-+	 */
-+	RTE_FLOW_CONV_OP_ITEM_SIZE,
- };
+-	if (rte_cpu_to_be_16(pkt->total_length) < sizeof(struct rte_ipv4_hdr))
++	if (rte_be_to_cpu_16(pkt->total_length) < rte_ipv4_hdr_len(pkt))
+ 		return -5;
  
- /**
++	/*
++	 * Additionally, the router SHOULD verify that the packet length
++	 * reported by the Link Layer is at least as large as the IP total
++	 * length recorded in the packet's IP header.
++	 */
++	if (link_len < rte_be_to_cpu_16(pkt->total_length))
++		return -6;
++
+ 	return 0;
+ }
+ #endif /* DO_RFC_1812_CHECKS */
+diff --git a/examples/l3fwd/l3fwd_em.h b/examples/l3fwd/l3fwd_em.h
+index 1fee2e2e6c..34801fba2b 100644
+--- a/examples/l3fwd/l3fwd_em.h
++++ b/examples/l3fwd/l3fwd_em.h
+@@ -20,7 +20,8 @@ l3fwd_em_handle_ipv4(struct rte_mbuf *m, uint16_t portid,
+ 
+ #ifdef DO_RFC_1812_CHECKS
+ 	/* Check to make sure the packet is valid (RFC1812) */
+-	if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len, m->ol_flags) < 0) {
++	if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len - sizeof(struct rte_ether_hdr),
++			m->ol_flags) < 0) {
+ 		rte_pktmbuf_free(m);
+ 		return BAD_PORT;
+ 	}
+diff --git a/examples/l3fwd/l3fwd_lpm.h b/examples/l3fwd/l3fwd_lpm.h
+index 4ee61e8d88..1731ebb2a8 100644
+--- a/examples/l3fwd/l3fwd_lpm.h
++++ b/examples/l3fwd/l3fwd_lpm.h
+@@ -22,7 +22,8 @@ l3fwd_lpm_simple_forward(struct rte_mbuf *m, uint16_t portid,
+ 
+ #ifdef DO_RFC_1812_CHECKS
+ 		/* Check to make sure the packet is valid (RFC1812) */
+-		if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len, m->ol_flags) < 0) {
++		if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len - sizeof(struct rte_ether_hdr),
++				m->ol_flags) < 0) {
+ 			rte_pktmbuf_free(m);
+ 			return;
+ 		}
 -- 
-2.52.0
+2.43.0
 
