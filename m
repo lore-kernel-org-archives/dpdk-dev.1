@@ -1,58 +1,63 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96629606A31B
-	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 13:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39AF606A31A
+	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 13:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=Gj+MNXht
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=ewtOQc4Q
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA766402ED;
-	Sat, 24 Oct 2026 15:21:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 90CF040679;
+	Sat, 24 Oct 2026 15:22:04 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 884844060C
- for <dev@dpdk.org>; Sat, 24 Oct 2026 15:21:57 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C3DA640663
+ for <dev@dpdk.org>; Sat, 24 Oct 2026 15:22:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1792848117;
+ s=mimecast20190719; t=1792848120;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=NaMcw1Angmy/gxhXbItzEi6jPvWM8hCa6vG+st19HX4=;
- b=Gj+MNXhtAOlVx9I2vTrL56y6v+bgrcCp7fZA8ZGHy9nGDv84P9VO37Ut+dCIb1uWWfDZEa
- gApZY0gISiSRIr16CAI7k3o06rZ49iB2BbL79qTjOLL6OyrA92P54/gJQ39AbkDy5iKcG+
- e533dCP+klgcws0YxJY9Vm0V+7CDDaY=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=oynGA8XjIrNwbC3k8ZYBxceMHEGGeOCDs8rqU26FFqY=;
+ b=ewtOQc4QFmgDle6J1YMjV22qhB4hgnYPvzOoLjCJuea1mjOSZF2XieCBCJILgpbnleTe79
+ JK9m0SgEVc5RBTX/3R+5TzyHS3a6dQ3VXZ4xu/a4gnaB434vW2rXDYq3MGoSvYlI8+Wy7B
+ RUVJ+F09vDssCMP5LiBbf1Q9eC5xQ8I=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-215-Tj0c2PIzNjmcgIDU0kDp_w-1; Sat,
- 24 Oct 2026 09:21:53 -0400
-X-MC-Unique: Tj0c2PIzNjmcgIDU0kDp_w-1
-X-Mimecast-MFC-AGG-ID: Tj0c2PIzNjmcgIDU0kDp_w_1792848112
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-117-U2_obikYMKG2QWmHHp6ofw-1; Sat,
+ 24 Oct 2026 09:21:58 -0400
+X-MC-Unique: U2_obikYMKG2QWmHHp6ofw-1
+X-Mimecast-MFC-AGG-ID: U2_obikYMKG2QWmHHp6ofw_1792848117
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id E38561800646; Sat, 24 Oct 2026 13:21:51 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id EF2E61956058; Sat, 24 Oct 2026 13:21:56 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 37CFC1956087; Sat, 24 Oct 2026 13:21:50 +0000 (UTC)
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 3DFA1300019F; Sat, 24 Oct 2026 13:21:54 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: stephen@networkplumber.org, hkalra@marvell.com, anatoly.burakov@intel.com,
- Thomas Monjalon <thomas@monjalon.net>
-Subject: [PATCH v2 02/12] eal/linux: reset FD in interrupt handle for uevent
-Date: Sat, 24 Oct 2026 15:21:27 +0200
-Message-ID: <20261024132138.7239-3-david.marchand@redhat.com>
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>,
+ Jakub Grajciar <jgrajcia@cisco.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 03/12] interrupts: do not duplicate interrupt handles
+Date: Sat, 24 Oct 2026 15:21:28 +0200
+Message-ID: <20261024132138.7239-4-david.marchand@redhat.com>
 In-Reply-To: <20261024132138.7239-1-david.marchand@redhat.com>
 References: <20261021092318.1554295-1-david.marchand@redhat.com>
  <20261024132138.7239-1-david.marchand@redhat.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 2RWNhfZ3HCmAjNsegW2-C9CrqAXSKvR1Xf6OXOJfR9Q_1792848112
+X-Mimecast-MFC-PROC-ID: 48NhQVtnXJV_CQuDZjOauQ9HgZYR1GI16cm0J-UuWcw_1792848117
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -72,38 +77,323 @@ X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Clear the warning when freeing the interrupt handle used for the uevent
-handler.
+The FD leak warnings recently added have revealed an interesting issue.
 
-Fixes: d770ee9caed0 ("interrupts: warn on leaked FDs")
+An interrupt handle is allocated and living usually in a bus device object
+(or some standalone code, like the alarm code).
+All the logic around the referenced FDs in this object are specific to
+the callers, and those FDs must then be closed in the callers context.
+
+On the other hand, the interrupt subsystem works with copies of interrupt
+handle objects passed to it via rte_intr_callback_register/unregister.
+
+When releasing this clone of the interrupt handle, the FDs are reported
+as leaked, though there is no way for the interrupt subsystem itself to
+know what to do with those FDs.
+
+Instead of creating a clone, reference the interrupt handle directly.
+The callers are responsible for unregistering those handles,
+closing the FDs and freeing the handles.
+
+This change also switches the interrupt source lookup from FD based
+matching to pointer based matching.
+The original FD based matching allowed different intr_handle objects
+with the same FD to share an interrupt source.
+However, this was problematic:
+* the cloned handle stored in the source came from the first registrant,
+* the ucb_fn callback would receive this clone, not the (const)
+  caller's handle,
+* with multiple handles for the same FD, later registrants would get
+  the wrong handle in their callback,
+
+In practice, DPDK components use one intr_handle per FD, so pointer
+based matching simply enforces this existing invariant.
+The interrupt dispatch code continues to use FD based matching since
+epoll returns the FD, not the handle pointer.
+
+The unregister callback (ucb_fn) signature is updated to take a const
+pointer, reflecting that the interrupt subsystem no longer owns the
+handle. Note that with this change, the intr_handle parameter passed
+to ucb_fn is the same pointer the caller registered with, callers
+can simply use their own handle from cb_arg instead.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- lib/eal/linux/eal_dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst |  1 +
+ drivers/common/cnxk/roc_platform.h     |  1 -
+ drivers/net/memif/memif_socket.c       |  5 ++--
+ lib/eal/common/eal_common_interrupts.c | 26 --------------------
+ lib/eal/freebsd/eal_interrupts.c       | 17 ++++---------
+ lib/eal/include/rte_interrupts.h       | 17 +------------
+ lib/eal/linux/eal_interrupts.c         | 33 ++++++++------------------
+ 7 files changed, 20 insertions(+), 80 deletions(-)
 
-diff --git a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c
-index 35223b6b26..1c8ae1d60b 100644
---- a/lib/eal/linux/eal_dev.c
-+++ b/lib/eal/linux/eal_dev.c
-@@ -366,7 +366,7 @@ rte_dev_event_monitor_start(void)
- 	ret = rte_intr_callback_register(intr_handle, dev_uev_handler, NULL);
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index be758a0c02..78f9bb54aa 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -404,6 +404,7 @@ API Changes
+     to invalid values instead of zero.
+   * Added ``rte_intr_fd_close()`` and ``rte_intr_dev_fd_close()``
+     helpers to close file descriptors and reset them to -1.
++  * ``rte_intr_unregister_callback_fn`` now receives a ``const`` interrupt handle.
  
- 	if (ret) {
--		close(rte_intr_fd_get(intr_handle));
-+		rte_intr_fd_close(intr_handle);
- 		goto exit;
+ * mempool: When creating a mempool, the cache size can be freely specified
+   (although still not exceed the number of elements),
+diff --git a/drivers/common/cnxk/roc_platform.h b/drivers/common/cnxk/roc_platform.h
+index aba9782023..149522608e 100644
+--- a/drivers/common/cnxk/roc_platform.h
++++ b/drivers/common/cnxk/roc_platform.h
+@@ -178,7 +178,6 @@ plt_thread_is_valid(plt_thread_t thr)
+ #define plt_intr_type_get		rte_intr_type_get
+ #define plt_intr_type_set		rte_intr_type_set
+ #define plt_intr_instance_alloc		rte_intr_instance_alloc
+-#define plt_intr_instance_dup		rte_intr_instance_dup
+ #define plt_intr_instance_free		rte_intr_instance_free
+ #define plt_intr_event_list_update	rte_intr_event_list_update
+ #define plt_intr_max_intr_get		rte_intr_max_intr_get
+diff --git a/drivers/net/memif/memif_socket.c b/drivers/net/memif/memif_socket.c
+index 87b23aa8b4..2d16decbef 100644
+--- a/drivers/net/memif/memif_socket.c
++++ b/drivers/net/memif/memif_socket.c
+@@ -572,13 +572,14 @@ memif_msg_enq_connected(struct rte_eth_dev *dev)
+ }
+ 
+ static void
+-memif_intr_unregister_handler(struct rte_intr_handle *intr_handle, void *arg)
++memif_intr_unregister_handler(const struct rte_intr_handle *intr_handle, void *arg)
+ {
+ 	struct memif_msg_queue_elt *elt;
+ 	struct memif_control_channel *cc = arg;
+ 
++	RTE_SET_USED(intr_handle);
+ 	/* close control channel fd */
+-	rte_intr_fd_close(intr_handle);
++	rte_intr_fd_close(cc->intr_handle);
+ 	/* clear message queue */
+ 	while ((elt = TAILQ_FIRST(&cc->msg_queue)) != NULL) {
+ 		TAILQ_REMOVE(&cc->msg_queue, elt, next);
+diff --git a/lib/eal/common/eal_common_interrupts.c b/lib/eal/common/eal_common_interrupts.c
+index 6368ef1771..1208a2597d 100644
+--- a/lib/eal/common/eal_common_interrupts.c
++++ b/lib/eal/common/eal_common_interrupts.c
+@@ -103,32 +103,6 @@ struct rte_intr_handle *rte_intr_instance_alloc(uint32_t flags)
+ 	return NULL;
+ }
+ 
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_instance_dup)
+-struct rte_intr_handle *rte_intr_instance_dup(const struct rte_intr_handle *src)
+-{
+-	struct rte_intr_handle *intr_handle;
+-
+-	if (src == NULL) {
+-		EAL_LOG(DEBUG, "Source interrupt instance unallocated");
+-		rte_errno = EINVAL;
+-		return NULL;
+-	}
+-
+-	intr_handle = rte_intr_instance_alloc(src->alloc_flags);
+-	if (intr_handle != NULL) {
+-		intr_handle->fd = src->fd;
+-		intr_handle->dev_fd = src->dev_fd;
+-		intr_handle->type = src->type;
+-		intr_handle->max_intr = src->max_intr;
+-		intr_handle->nb_efd = src->nb_efd;
+-		intr_handle->efd_counter_size = src->efd_counter_size;
+-		memcpy(intr_handle->efds, src->efds, src->nb_intr);
+-		memcpy(intr_handle->elist, src->elist, src->nb_intr);
+-	}
+-
+-	return intr_handle;
+-}
+-
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_event_list_update)
+ int rte_intr_event_list_update(struct rte_intr_handle *intr_handle, int size)
+ {
+diff --git a/lib/eal/freebsd/eal_interrupts.c b/lib/eal/freebsd/eal_interrupts.c
+index bb2bc529f2..b29a2b174e 100644
+--- a/lib/eal/freebsd/eal_interrupts.c
++++ b/lib/eal/freebsd/eal_interrupts.c
+@@ -41,7 +41,7 @@ struct rte_intr_callback {
+ 
+ struct rte_intr_source {
+ 	TAILQ_ENTRY(rte_intr_source) next;
+-	struct rte_intr_handle *intr_handle; /**< interrupt handle */
++	const struct rte_intr_handle *intr_handle; /**< interrupt handle */
+ 	struct rte_intr_cb_list callbacks;  /**< user callbacks */
+ 	uint32_t active;
+ };
+@@ -105,7 +105,7 @@ rte_intr_callback_register(const struct rte_intr_handle *intr_handle,
+ 
+ 	/* find the source for this intr_handle */
+ 	TAILQ_FOREACH(src, &intr_sources, next) {
+-		if (rte_intr_fd_get(src->intr_handle) == rte_intr_fd_get(intr_handle))
++		if (src->intr_handle == intr_handle)
+ 			break;
  	}
  
-@@ -406,7 +406,7 @@ rte_dev_event_monitor_stop(void)
- 		goto exit;
+@@ -138,14 +138,7 @@ rte_intr_callback_register(const struct rte_intr_handle *intr_handle,
+ 				ret = -ENOMEM;
+ 				goto fail;
+ 			} else {
+-				src->intr_handle = rte_intr_instance_dup(intr_handle);
+-				if (src->intr_handle == NULL) {
+-					EAL_LOG(ERR, "Can not create intr instance");
+-					ret = -ENOMEM;
+-					free(src);
+-					src = NULL;
+-					goto fail;
+-				}
++				src->intr_handle = intr_handle;
+ 				TAILQ_INIT(&src->callbacks);
+ 				TAILQ_INSERT_TAIL(&intr_sources, src, next);
+ 			}
+@@ -239,7 +232,7 @@ rte_intr_callback_unregister_pending(const struct rte_intr_handle *intr_handle,
+ 
+ 	/* check if the interrupt source for the fd is existent */
+ 	TAILQ_FOREACH(src, &intr_sources, next)
+-		if (rte_intr_fd_get(src->intr_handle) == rte_intr_fd_get(intr_handle))
++		if (src->intr_handle == intr_handle)
+ 			break;
+ 
+ 	/* No interrupt source registered for the fd */
+@@ -294,7 +287,7 @@ rte_intr_callback_unregister(const struct rte_intr_handle *intr_handle,
+ 
+ 	/* check if the interrupt source for the fd is existent */
+ 	TAILQ_FOREACH(src, &intr_sources, next)
+-		if (rte_intr_fd_get(src->intr_handle) == rte_intr_fd_get(intr_handle))
++		if (src->intr_handle == intr_handle)
+ 			break;
+ 
+ 	/* No interrupt source registered for the fd */
+diff --git a/lib/eal/include/rte_interrupts.h b/lib/eal/include/rte_interrupts.h
+index d04c0c7b15..bb06180bea 100644
+--- a/lib/eal/include/rte_interrupts.h
++++ b/lib/eal/include/rte_interrupts.h
+@@ -70,7 +70,7 @@ typedef void (*rte_intr_callback_fn)(void *cb_arg);
+  * Function to call after a callback is unregistered.
+  * Can be used to close fd and free cb_arg.
+  */
+-typedef void (*rte_intr_unregister_callback_fn)(struct rte_intr_handle *intr_handle,
++typedef void (*rte_intr_unregister_callback_fn)(const struct rte_intr_handle *intr_handle,
+ 						void *cb_arg);
+ 
+ /**
+@@ -432,21 +432,6 @@ __rte_internal
+ int
+ rte_intr_cap_multiple(struct rte_intr_handle *intr_handle);
+ 
+-/**
+- * @internal
+- * Creates a clone of src by allocating a new handle and copying src content.
+- *
+- * @param src
+- *  Source interrupt handle to be cloned.
+- *
+- * @return
+- *  - On success, address of interrupt handle.
+- *  - On failure, NULL.
+- */
+-__rte_internal
+-struct rte_intr_handle *
+-rte_intr_instance_dup(const struct rte_intr_handle *src);
+-
+ /**
+  * @internal
+  * Set the device fd field of interrupt handle with user
+diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
+index 4cfaeba7fe..dcc2c0efdb 100644
+--- a/lib/eal/linux/eal_interrupts.c
++++ b/lib/eal/linux/eal_interrupts.c
+@@ -78,7 +78,7 @@ struct rte_intr_callback {
+ 
+ struct rte_intr_source {
+ 	TAILQ_ENTRY(rte_intr_source) next;
+-	struct rte_intr_handle *intr_handle; /**< interrupt handle */
++	const struct rte_intr_handle *intr_handle; /**< interrupt handle */
+ 	struct rte_intr_cb_list callbacks;  /**< user callbacks */
+ 	uint32_t active;
+ };
+@@ -511,7 +511,7 @@ rte_intr_callback_register(const struct rte_intr_handle *intr_handle,
+ 
+ 	/* check if there is at least one callback registered for the fd */
+ 	TAILQ_FOREACH(src, &intr_sources, next) {
+-		if (rte_intr_fd_get(src->intr_handle) == rte_intr_fd_get(intr_handle)) {
++		if (src->intr_handle == intr_handle) {
+ 			/* we had no interrupts for this */
+ 			if (TAILQ_EMPTY(&src->callbacks))
+ 				wake_thread = 1;
+@@ -531,22 +531,12 @@ rte_intr_callback_register(const struct rte_intr_handle *intr_handle,
+ 			free(callback);
+ 			callback = NULL;
+ 		} else {
+-			src->intr_handle = rte_intr_instance_dup(intr_handle);
+-			if (src->intr_handle == NULL) {
+-				EAL_LOG(ERR, "Can not create intr instance");
+-				ret = -ENOMEM;
+-				free(callback);
+-				callback = NULL;
+-				free(src);
+-				src = NULL;
+-			} else {
+-				TAILQ_INIT(&src->callbacks);
+-				TAILQ_INSERT_TAIL(&(src->callbacks), callback,
+-						  next);
+-				TAILQ_INSERT_TAIL(&intr_sources, src, next);
+-				wake_thread = 1;
+-				ret = 0;
+-			}
++			src->intr_handle = intr_handle;
++			TAILQ_INIT(&src->callbacks);
++			TAILQ_INSERT_TAIL(&(src->callbacks), callback, next);
++			TAILQ_INSERT_TAIL(&intr_sources, src, next);
++			wake_thread = 1;
++			ret = 0;
+ 		}
  	}
  
--	close(rte_intr_fd_get(intr_handle));
-+	rte_intr_fd_close(intr_handle);
- 	rte_intr_instance_free(intr_handle);
- 	intr_handle = NULL;
- 	ret = 0;
+@@ -584,7 +574,7 @@ rte_intr_callback_unregister_pending(const struct rte_intr_handle *intr_handle,
+ 
+ 	/* check if the interrupt source for the fd is existent */
+ 	TAILQ_FOREACH(src, &intr_sources, next) {
+-		if (rte_intr_fd_get(src->intr_handle) == rte_intr_fd_get(intr_handle))
++		if (src->intr_handle == intr_handle)
+ 			break;
+ 	}
+ 
+@@ -635,7 +625,7 @@ rte_intr_callback_unregister(const struct rte_intr_handle *intr_handle,
+ 
+ 	/* check if the interrupt source for the fd is existent */
+ 	TAILQ_FOREACH(src, &intr_sources, next)
+-		if (rte_intr_fd_get(src->intr_handle) == rte_intr_fd_get(intr_handle))
++		if (src->intr_handle == intr_handle)
+ 			break;
+ 
+ 	/* No interrupt source registered for the fd */
+@@ -666,7 +656,6 @@ rte_intr_callback_unregister(const struct rte_intr_handle *intr_handle,
+ 		/* all callbacks for that source are removed. */
+ 		if (TAILQ_EMPTY(&src->callbacks)) {
+ 			TAILQ_REMOVE(&intr_sources, src, next);
+-			rte_intr_instance_free(src->intr_handle);
+ 			free(src);
+ 		}
+ 	}
+@@ -922,7 +911,6 @@ eal_intr_source_remove_and_free(struct rte_intr_source *src)
+ 	}
+ 
+ 	/* Free the interrupt source */
+-	rte_intr_instance_free(src->intr_handle);
+ 	free(src);
+ }
+ 
+@@ -1067,7 +1055,6 @@ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
+ 		/* all callbacks for that source are removed. */
+ 		if (TAILQ_EMPTY(&src->callbacks)) {
+ 			TAILQ_REMOVE(&intr_sources, src, next);
+-			rte_intr_instance_free(src->intr_handle);
+ 			free(src);
+ 		}
+ 
 -- 
 2.54.0
 
