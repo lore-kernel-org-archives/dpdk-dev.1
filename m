@@ -1,36 +1,59 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD2F606A31A
-	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 12:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48209606A31A
+	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 13:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=RCMg1obM
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D71B3402D8;
-	Sat, 24 Oct 2026 14:36:07 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id C359940269;
- Sat, 24 Oct 2026 14:36:06 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 977A520B93;
- Sat, 24 Oct 2026 14:36:06 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sat, 24 Oct 2026 14:36:04 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0A1B4402C8;
+	Sat, 24 Oct 2026 15:21:53 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 8EA1A4021F
+ for <dev@dpdk.org>; Sat, 24 Oct 2026 15:21:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1792848108;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=IsSM+lLCBvzaQpNLQsgP/JWhy/FN1TMXleaWFm7/0qI=;
+ b=RCMg1obM+o9jRT/bdJDPaGiZOfWKhq+YCR0TlcF9TTXWEtibX5rA/T/lyAFkm8TgoYbZ8S
+ a+V4BPpUVgR0k3HTGYjw3Mo9KKZUAH6egIosBq74hj/Xss1sSl1nKAz1Td9JnYirUvvqK+
+ wc64Sp7IePgybZtalwYft/R7+omX5Ac=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-222-tcixOWXfP3CFj_Y1yFrSCA-1; Sat,
+ 24 Oct 2026 09:21:44 -0400
+X-MC-Unique: tcixOWXfP3CFj_Y1yFrSCA-1
+X-Mimecast-MFC-AGG-ID: tcixOWXfP3CFj_Y1yFrSCA_1792848103
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 600381955F02; Sat, 24 Oct 2026 13:21:43 +0000 (UTC)
+Received: from dmarchan.redhat.corp
+ (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
+ by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id A2CFF472; Sat, 24 Oct 2026 13:21:41 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- stable@dpdk.org
-Subject: [PATCH v5] examples/l3fwd: fix RFC 1812 checks
-Date: Sat, 24 Oct 2026 12:35:57 +0000
-Message-ID: <20261024123557.3234240-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260915105822.988106-1-mb@smartsharesystems.com>
-References: <20260915105822.988106-1-mb@smartsharesystems.com>
+Cc: stephen@networkplumber.org, hkalra@marvell.com, anatoly.burakov@intel.com
+Subject: [PATCH v2 00/12] Interrupt fixes for leaks and warnings
+Date: Sat, 24 Oct 2026 15:21:25 +0200
+Message-ID: <20261024132138.7239-1-david.marchand@redhat.com>
+In-Reply-To: <20261021092318.1554295-1-david.marchand@redhat.com>
+References: <20261021092318.1554295-1-david.marchand@redhat.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: u7k1tY-wY3rs625TvJa-9b2Jhis7kemsEFSu3Ri6dKg_1792848103
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 24 Oct 2026 12:36:04.0450 (UTC)
- FILETIME=[3C18BC20:01DD63B4]
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -40,170 +63,63 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Four bug fixes and an enhancement.
+Following commit d770ee9caed0 ("interrupts: warn on leaked FDs"), a
+number of leaks, but also false positive warnings have been identified.
 
-1.
-If the PMD didn't check the IP header checksum, the
-offload value is RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN,
-not RTE_MBUF_F_RX_IP_CKSUM_NONE.
-CKSUM_NONE means that the packet integrity is good, but the checksum
-field has not been set.
-CKSUM_UNKNOWN means that the checksum has not been investigated.
-(BTW, no PMD currently sets RTE_MBUF_F_RX_IP_CKSUM_NONE, so this part
-of the check was effectively dead code.)
+The most notable change in this series is the removal of the interrupt
+handle duplication. I concluded the principle is wrong (see patch 2
+commitlog).
+This will need some careful reviews.
 
-Fixed this by processing all four RTE_MBUF_F_RX_IP_CKSUM enum values.
-All four values may not actually occur in this application,
-but it serves an educational purpose.
 
-2.
-When checking the checksum, the checksum field in the packet was zeroed
-for calculating the checksum.
-If the checksum was correct, the zero value remained in the packet.
-
-Fixed this by simply calculating the checksum of the packet without
-modifying the checksum field.
-If the calculated checksum is zero, the checksum is correct.
-
-3.
-When checking the Link Layer length of an IP packet, the length did
-not omit the length of the preceding Layer 2 headers.
-
-Fixed this by subtracting the Ethernet header length when calling the
-IPv4 validation function.
-
-4.
-In the 5th bullet check,
-"5. The IP total length field must be large enough to hold the IP
-datagram header, whose length is specified in the IP header length
-field."
-the comparison did not use the IP header length field, but the size
-of the IP header structure, which did not account for IP header
-options.
-
-Fixed this by using the IP header length field instead of the
-size of the structure.
-
-5.
-Added the additional check recommended in RFC 1812 section 5.2.2,
-verifying that the packet length reported by the Link Layer is at least
-as large as the IP total length recorded in the packet's IP header.
-
-Fixes: 4b01cabfb09b ("examples/l3fwd: add option to relax Rx offload")
-Fixes: af75078fece3 ("first public release")
-Cc: stable@dpdk.org
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
-v5:
-* Use rte_be_to_cpu_16(), not rte_cpu_to_be_16(), for reading
-  IP header total_length field. (AI)
-v4:
-* When CKSUM_NONE, don't update checksum field. (AI)
-v3:
-* Simplified the checksum check. No need to modify the packet for
-  checking the checksum.
-v2:
-* Rebased.
-* Improved (1): Process all four checksum offload enum values, not just
-  CKSUM_UNKNOWN instead of CKSUM_NONE.
-* Added (2): Restore checksum field value in packet after checking.
-* Added (3): Subtract Layer 2 header length when passing Link Layer
-  length.
-* Added (4): Fix IP header Total Length vs. IP Header Length check.
-* Added (5): Link Layer length vs. IP header Total Length check.
-* Added the Fixes tag going back to the first public release.
----
- examples/l3fwd/l3fwd.h     | 29 +++++++++++++++++++++--------
- examples/l3fwd/l3fwd_em.h  |  3 ++-
- examples/l3fwd/l3fwd_lpm.h |  3 ++-
- 3 files changed, 25 insertions(+), 10 deletions(-)
-
-diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
-index 349fc37c79..db59611464 100644
---- a/examples/l3fwd/l3fwd.h
-+++ b/examples/l3fwd/l3fwd.h
-@@ -170,14 +170,19 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
- 		return -1;
- 
- 	/* 2. The IP checksum must be correct. */
--	/* if this is not checked in H/W, check it. */
--	if ((ol_flags & RTE_MBUF_F_RX_IP_CKSUM_MASK) == RTE_MBUF_F_RX_IP_CKSUM_NONE) {
--		uint16_t actual_cksum, expected_cksum;
--		actual_cksum = pkt->hdr_checksum;
--		pkt->hdr_checksum = 0;
--		expected_cksum = rte_ipv4_cksum(pkt);
--		if (actual_cksum != expected_cksum)
-+	switch (ol_flags & RTE_MBUF_F_RX_IP_CKSUM_MASK) {
-+	case RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN:
-+		/* Not checked in H/W; check it. */
-+		if (rte_ipv4_cksum(pkt) != 0)
- 			return -2;
-+		break;
-+	case RTE_MBUF_F_RX_IP_CKSUM_GOOD:
-+		break;
-+	case RTE_MBUF_F_RX_IP_CKSUM_BAD:
-+		return -2;
-+	case RTE_MBUF_F_RX_IP_CKSUM_NONE:
-+		/* Packet integrity known good, checksum field unset; don't check it. */
-+		break;
- 	}
- 
- 	/*
-@@ -199,9 +204,17 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
- 	 * datagram header, whose length is specified in the IP header length
- 	 * field.
- 	 */
--	if (rte_cpu_to_be_16(pkt->total_length) < sizeof(struct rte_ipv4_hdr))
-+	if (rte_be_to_cpu_16(pkt->total_length) < rte_ipv4_hdr_len(pkt))
- 		return -5;
- 
-+	/*
-+	 * Additionally, the router SHOULD verify that the packet length
-+	 * reported by the Link Layer is at least as large as the IP total
-+	 * length recorded in the packet's IP header.
-+	 */
-+	if (link_len < rte_be_to_cpu_16(pkt->total_length))
-+		return -6;
-+
- 	return 0;
- }
- #endif /* DO_RFC_1812_CHECKS */
-diff --git a/examples/l3fwd/l3fwd_em.h b/examples/l3fwd/l3fwd_em.h
-index 1fee2e2e6c..34801fba2b 100644
---- a/examples/l3fwd/l3fwd_em.h
-+++ b/examples/l3fwd/l3fwd_em.h
-@@ -20,7 +20,8 @@ l3fwd_em_handle_ipv4(struct rte_mbuf *m, uint16_t portid,
- 
- #ifdef DO_RFC_1812_CHECKS
- 	/* Check to make sure the packet is valid (RFC1812) */
--	if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len, m->ol_flags) < 0) {
-+	if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len - sizeof(struct rte_ether_hdr),
-+			m->ol_flags) < 0) {
- 		rte_pktmbuf_free(m);
- 		return BAD_PORT;
- 	}
-diff --git a/examples/l3fwd/l3fwd_lpm.h b/examples/l3fwd/l3fwd_lpm.h
-index 4ee61e8d88..1731ebb2a8 100644
---- a/examples/l3fwd/l3fwd_lpm.h
-+++ b/examples/l3fwd/l3fwd_lpm.h
-@@ -22,7 +22,8 @@ l3fwd_lpm_simple_forward(struct rte_mbuf *m, uint16_t portid,
- 
- #ifdef DO_RFC_1812_CHECKS
- 		/* Check to make sure the packet is valid (RFC1812) */
--		if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len, m->ol_flags) < 0) {
-+		if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len - sizeof(struct rte_ether_hdr),
-+				m->ol_flags) < 0) {
- 			rte_pktmbuf_free(m);
- 			return;
- 		}
 -- 
-2.43.0
+David Marchand
+
+Changes since v1:
+- added Anatoly fixes which also extend the interrupt check to efds
+  https://patchwork.dpdk.org/project/dpdk/list/?series=39788&state=*
+
+
+Anatoly Burakov (3):
+  eal/linux: fix closing of event FDs not owned by EAL
+  eal/linux: fix eventfd leaks when enabling interrupts
+  interrupts: warn on leaked event FDs
+
+David Marchand (7):
+  eal/linux: reset FD in interrupt handle for uevent
+  interrupts: do not duplicate interrupt handles
+  net/mana: reset FD in interrupt handle
+  net/memif: fix some interrupt FD leaks
+  net/memif: reset FD in interrupt handle
+  net/sxe2: reset FD in interrupt handle
+  raw/ifpga: reset FD in interrupt handle
+
+Stephen Hemminger (2):
+  eal/linux: fix FD leak in alarm subsystem
+  bus/pci: reset VFIO device FD after release
+
+ doc/guides/rel_notes/release_26_11.rst |  1 +
+ drivers/bus/pci/linux/pci_vfio.c       |  4 +-
+ drivers/common/cnxk/roc_platform.h     |  1 -
+ drivers/net/mana/mana.c                |  4 ++
+ drivers/net/memif/memif_socket.c       | 28 ++++++--
+ drivers/net/sxe2/sxe2_irq.c            |  2 +
+ drivers/raw/ifpga/ifpga_rawdev.c       |  2 +
+ lib/eal/common/eal_common_interrupts.c | 31 ++-------
+ lib/eal/freebsd/eal_interrupts.c       | 17 ++---
+ lib/eal/include/rte_interrupts.h       | 24 ++-----
+ lib/eal/linux/eal_alarm.c              |  1 +
+ lib/eal/linux/eal_dev.c                |  4 +-
+ lib/eal/linux/eal_interrupts.c         | 94 +++++++++++++++-----------
+ 13 files changed, 109 insertions(+), 104 deletions(-)
+
+-- 
+2.54.0
 
