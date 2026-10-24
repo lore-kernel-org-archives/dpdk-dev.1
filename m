@@ -1,36 +1,55 @@
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94F6606A31A
-	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 10:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD92D606A31A
+	for <dpdk-dev@archiver.kernel.org>; Sat, 24 Oct 2026 12:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=AJ2IaScD
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3B276402C9;
-	Sat, 24 Oct 2026 12:49:25 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 25C344021F;
- Sat, 24 Oct 2026 12:49:24 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id EA88720B93;
- Sat, 24 Oct 2026 12:49:23 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sat, 24 Oct 2026 12:49:23 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- stable@dpdk.org
-Subject: [PATCH v4] examples/l3fwd: fix RFC 1812 checks
-Date: Sat, 24 Oct 2026 10:49:21 +0000
-Message-ID: <20261024104921.3232641-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260915105822.988106-1-mb@smartsharesystems.com>
-References: <20260915105822.988106-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9342B402B0;
+	Sat, 24 Oct 2026 14:04:22 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id DDE3C4021F
+ for <dev@dpdk.org>; Sat, 24 Oct 2026 14:04:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1792843461; x=1824379461;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=EONec5t6CiA/AQFi3VClVjW3+T4B9dMhn0gPrzijG4Q=;
+ b=AJ2IaScD0LCRMjGnB++VnLgsnvqWs/lc3BO4T1lEHbDzlqlCf4XaVUum
+ KuLieAhf8nog/rd05f9S9y3sptJJMiyBWhR1YS3UwIZrEr0SPpr1G1eGJ
+ P39fLLCimTvqGa9+njLtLWxOcKsNdjTC/gWqXY+5N5FAefH29uMc81rRf
+ SDzhlVCUbZJqfuiDm3j8O8WsiExROnOc2MCXL5PqN7qbjVs2nnnOy6/aC
+ wo2k0nlJL8tDxN2EEhQSRRn/tESBxixOqRfpozox/v6+nb/9tOkVB3QrS
+ Rpzr1n4iX76Cw7xN9MNpuxsGrYoGmAbq4dOOImudOFwcNne7uTgU/enBf w==;
+X-CSE-ConnectionGUID: EPnqXlC9R6++1w6ucUiy0A==
+X-CSE-MsgGUID: /cKgZHySS9GK/UftJ2l8AQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11944"; a="1569156"
+X-IronPort-AV: E=Sophos;i="6.27,176,1787036400"; 
+   d="scan'208";a="1569156"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Oct 2026 05:04:20 -0700
+X-CSE-ConnectionGUID: Uw9EPZTRTsqeHTEk3x2CPQ==
+X-CSE-MsgGUID: GcM4CTsqTO2681SLtzpWZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,176,1787036400"; 
+   d="scan'208";a="4203811"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa008.fm.intel.com with ESMTP; 24 Oct 2026 05:04:18 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org, Ori Kam <orika@nvidia.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Akhil Goyal <gakhil@marvell.com>
+Subject: [PATCH v2 1/4] ethdev: fix missing MACsec flow item descriptor
+Date: Sat, 24 Oct 2026 13:04:07 +0100
+Message-ID: <8ccaee11fc265b812abd75ef7defdfdd47e65c3d.1792843432.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <8fa05595f3596e9355dd90df7fc278b104beb20b.1792757739.git.anatoly.burakov@intel.com>
+References: <8fa05595f3596e9355dd90df7fc278b104beb20b.1792757739.git.anatoly.burakov@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 24 Oct 2026 10:49:23.0528 (UTC)
- FILETIME=[54D98C80:01DD63A5]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -40,167 +59,44 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Four bug fixes and an enhancement.
+RTE_FLOW_ITEM_TYPE_MACSEC was never added to rte_flow_desc_item[].
+The table uses designated initializers, so the MACSEC slot is zero
+filled: its name is NULL and its size is zero.
 
-1.
-If the PMD didn't check the IP header checksum, the
-offload value is RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN,
-not RTE_MBUF_F_RX_IP_CKSUM_NONE.
-CKSUM_NONE means that the packet integrity is good, but the checksum
-field has not been set.
-CKSUM_UNKNOWN means that the checksum has not been investigated.
-(BTW, no PMD currently sets RTE_MBUF_F_RX_IP_CKSUM_NONE, so this part
-of the check was effectively dead code.)
+As a result, RTE_FLOW_CONV_OP_ITEM_NAME on MACSEC passes a NULL
+source to strlcpy(), and rte_flow_copy() as well as the pattern
+conversion operations reject any pattern containing a MACSEC item
+as an unknown item type.
 
-Fixed this by processing all four RTE_MBUF_F_RX_IP_CKSUM enum values.
-All four values may not actually occur in this application,
-but it serves an educational purpose.
+Add the missing descriptor entry.
 
-2.
-When checking the checksum, the checksum field in the packet was zeroed
-for calculating the checksum.
-If the checksum was correct, the zero value remained in the packet.
-
-Fixed this by simply calculating the checksum of the packet without
-modifying the checksum field.
-If the calculated checksum is zero, the checksum is correct.
-
-3.
-When checking the Link Layer length of an IP packet, the length did
-not omit the length of the preceding Layer 2 headers.
-
-Fixed this by subtracting the Ethernet header length when calling the
-IPv4 validation function.
-
-4.
-In the 5th bullet check,
-"5. The IP total length field must be large enough to hold the IP
-datagram header, whose length is specified in the IP header length
-field."
-the comparison did not use the IP header length field, but the size
-of the IP header structure, which did not account for IP header
-options.
-
-Fixed this by using the IP header length field instead of the
-size of the structure.
-
-5.
-Added the additional check recommended in RFC 1812 section 5.2.2,
-verifying that the packet length reported by the Link Layer is at least
-as large as the IP total length recorded in the packet's IP header.
-
-Fixes: 4b01cabfb09b ("examples/l3fwd: add option to relax Rx offload")
-Fixes: af75078fece3 ("first public release")
+Fixes: 0aaf097585a6 ("ethdev: add MACsec flow item")
 Cc: stable@dpdk.org
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
-v4:
-* When CKSUM_NONE, don't update checksum field. (AI)
-v3:
-* Simplified the checksum check. No need to modify the packet for
-  checking the checksum.
-v2:
-* Rebased.
-* Improved (1): Process all four checksum offload enum values, not just
-  CKSUM_UNKNOWN instead of CKSUM_NONE.
-* Added (2): Restore checksum field value in packet after checking.
-* Added (3): Subtract Layer 2 header length when passing Link Layer
-  length.
-* Added (4): Fix IP header Total Length vs. IP Header Length check.
-* Added (5): Link Layer length vs. IP header Total Length check.
-* Added the Fixes tag going back to the first public release.
----
- examples/l3fwd/l3fwd.h     | 29 +++++++++++++++++++++--------
- examples/l3fwd/l3fwd_em.h  |  3 ++-
- examples/l3fwd/l3fwd_lpm.h |  3 ++-
- 3 files changed, 25 insertions(+), 10 deletions(-)
+ lib/ethdev/rte_flow.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
-index 349fc37c79..45d9cc8362 100644
---- a/examples/l3fwd/l3fwd.h
-+++ b/examples/l3fwd/l3fwd.h
-@@ -170,14 +170,19 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
- 		return -1;
- 
- 	/* 2. The IP checksum must be correct. */
--	/* if this is not checked in H/W, check it. */
--	if ((ol_flags & RTE_MBUF_F_RX_IP_CKSUM_MASK) == RTE_MBUF_F_RX_IP_CKSUM_NONE) {
--		uint16_t actual_cksum, expected_cksum;
--		actual_cksum = pkt->hdr_checksum;
--		pkt->hdr_checksum = 0;
--		expected_cksum = rte_ipv4_cksum(pkt);
--		if (actual_cksum != expected_cksum)
-+	switch (ol_flags & RTE_MBUF_F_RX_IP_CKSUM_MASK) {
-+	case RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN:
-+		/* Not checked in H/W; check it. */
-+		if (rte_ipv4_cksum(pkt) != 0)
- 			return -2;
-+		break;
-+	case RTE_MBUF_F_RX_IP_CKSUM_GOOD:
-+		break;
-+	case RTE_MBUF_F_RX_IP_CKSUM_BAD:
-+		return -2;
-+	case RTE_MBUF_F_RX_IP_CKSUM_NONE:
-+		/* Packet integrity known good, checksum field unset; don't check it. */
-+		break;
- 	}
- 
- 	/*
-@@ -199,9 +204,17 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
- 	 * datagram header, whose length is specified in the IP header length
- 	 * field.
- 	 */
--	if (rte_cpu_to_be_16(pkt->total_length) < sizeof(struct rte_ipv4_hdr))
-+	if (rte_cpu_to_be_16(pkt->total_length) < rte_ipv4_hdr_len(pkt))
- 		return -5;
- 
-+	/*
-+	 * Additionally, the router SHOULD verify that the packet length
-+	 * reported by the Link Layer is at least as large as the IP total
-+	 * length recorded in the packet's IP header.
-+	 */
-+	if (link_len < rte_cpu_to_be_16(pkt->total_length))
-+		return -6;
-+
- 	return 0;
- }
- #endif /* DO_RFC_1812_CHECKS */
-diff --git a/examples/l3fwd/l3fwd_em.h b/examples/l3fwd/l3fwd_em.h
-index 1fee2e2e6c..34801fba2b 100644
---- a/examples/l3fwd/l3fwd_em.h
-+++ b/examples/l3fwd/l3fwd_em.h
-@@ -20,7 +20,8 @@ l3fwd_em_handle_ipv4(struct rte_mbuf *m, uint16_t portid,
- 
- #ifdef DO_RFC_1812_CHECKS
- 	/* Check to make sure the packet is valid (RFC1812) */
--	if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len, m->ol_flags) < 0) {
-+	if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len - sizeof(struct rte_ether_hdr),
-+			m->ol_flags) < 0) {
- 		rte_pktmbuf_free(m);
- 		return BAD_PORT;
- 	}
-diff --git a/examples/l3fwd/l3fwd_lpm.h b/examples/l3fwd/l3fwd_lpm.h
-index 4ee61e8d88..1731ebb2a8 100644
---- a/examples/l3fwd/l3fwd_lpm.h
-+++ b/examples/l3fwd/l3fwd_lpm.h
-@@ -22,7 +22,8 @@ l3fwd_lpm_simple_forward(struct rte_mbuf *m, uint16_t portid,
- 
- #ifdef DO_RFC_1812_CHECKS
- 		/* Check to make sure the packet is valid (RFC1812) */
--		if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len, m->ol_flags) < 0) {
-+		if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len - sizeof(struct rte_ether_hdr),
-+				m->ol_flags) < 0) {
- 			rte_pktmbuf_free(m);
- 			return;
- 		}
+diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
+index 0ebf59165d4..eeab79aa5d9 100644
+--- a/lib/ethdev/rte_flow.c
++++ b/lib/ethdev/rte_flow.c
+@@ -229,6 +229,7 @@ static const struct rte_flow_desc_data rte_flow_desc_item[] = {
+ 			rte_flow_item_l2tpv2_mask),
+ 	MK_FLOW_ITEM_MASK(PPP, sizeof(struct rte_flow_item_ppp),
+ 			rte_flow_item_ppp_mask),
++	MK_FLOW_ITEM(MACSEC, sizeof(struct rte_flow_item_macsec)),
+ 	MK_FLOW_ITEM_MASK(METER_COLOR, sizeof(struct rte_flow_item_meter_color),
+ 			rte_flow_item_meter_color_mask),
+ 	MK_FLOW_ITEM(IPV6_ROUTING_EXT, sizeof(struct rte_flow_item_ipv6_routing_ext)),
 -- 
-2.43.0
+2.52.0
 
