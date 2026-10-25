@@ -2,71 +2,39 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06C5606A31D
-	for <dpdk-dev@archiver.kernel.org>; Sun, 25 Oct 2026 11:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3562B606A31A
+	for <dpdk-dev@archiver.kernel.org>; Sun, 25 Oct 2026 12:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=tMCBc6OM
+	dkim=pass (1024-bit key, unprotected) header.d=yandex.ru header.i=@yandex.ru header.a=rsa-sha256 header.s=mail header.b=ExeBS4+N
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 957C9402B9;
-	Sun, 25 Oct 2026 12:00:50 +0100 (CET)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52])
- by mails.dpdk.org (Postfix) with ESMTPS id B38C14025F
- for <dev@dpdk.org>; Sun, 25 Oct 2026 12:00:48 +0100 (CET)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-4a59100fa83so1780915e9.0
- for <dev@dpdk.org>; Sun, 25 Oct 2026 04:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1792926048; x=1793530848; darn=dpdk.org;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=4z0BGmrv2dEtQl6zlsDWBubFxu/Rg35c4jbHXPVa03w=;
- b=tMCBc6OMKoJz2YMqmuVexkvdb5iNuWy9DbDgdxLonM4l8vdXjNsZZ9u6m+08i9G8rA
- lhCYtQInhEa0nkQJQKZJDADT+qBQXq1AEOKjLIcc99iMGRPze/FmFuwKM5h81AvKhTvz
- iDI/zflc00vcQ0+UHkbRX/0DkufaTfU/M1Da1i3GtXoVucWyVxQnRom4l77Ehf0tvLZd
- QgJKIF8QBgO9ndcUB52wDcnj9dttaHPHk6sAAib5CPBR0G9UBBPOyx1k5MX+wAjw9O6R
- 1jLJ9CJT1Hgog9BSaNm4iflPNd6BwWJWYwvNPXkdSkaTGkRSuG92rf/3FcU2Y3vPdipQ
- eRxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792926048; x=1793530848;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=4z0BGmrv2dEtQl6zlsDWBubFxu/Rg35c4jbHXPVa03w=;
- b=E5pws5tGHe8UwXA87h58ygdIt8grDrgbYv+uCjbxv1HvmT2FKEgOKItFM25q6zfKh9
- oatJFdsKm3rYhvNtHLhWF/CImJldrFrdEX4qzK5aPZsQH5DZlBhJg+aFpJr80k9LwqwM
- Fth/YNQnoHr9I1yhTHKBD4Irnyr2dEyHvvgvKCUteHZt1YoFJQsqRvbrQY72hU80ojLT
- TEKqhYVNA9XVPf24bmMpDuXznvKl1jHYP0BllZmXKFMSIaG8vey54GFODRKroO9S7oot
- nxUgQXlz1G8LdWNRJgrQIbOyZK5rKS6yIZTUoPO4JNrn0eVzBqOIu3bRTA/XaXG/Gxr3
- pe5Q==
-X-Gm-Message-State: AFq9FYKNwEopCN/jd6uv7T1K1wmSajWc6U92WBIJzW94E/vzEFOanmZb
- Ob15C1ExOmdQUC3FQSL5u8RSPVXdcgWiIrjlOcWORZg3PlNPP6jonJVo
-X-Gm-Gg: AYBFou2Yu6+mEuQ6DHy0CPBcxIkV+F6QHqzWcjPt4try9NEhemNon2h0KPsWZdPKxp9
- z6bDFuUB+uMiPhUxJFrxoJ/hTMca+//ZXEGVy1ig1So5uZlm73CPJ1AWKn5IxsIjgZPKss/bQyL
- 0sT/iGLJdI4uiC6vKGtbM7HfyP1O8urKskFapuQkwYuESbr7GL0OuGOGdRLYiSWAQeAXRa3LN7C
- koK5aIBshf79hcTlRj3Qxdpsih4O90btFoIXFuUFAgO5eZnDudGF6ZNxIT/VQRQJNyXuKVxfcsD
- 9R8WOzgUs1G5nlsyjbdZnHtdCeraUCW7ww6cZJSO/Z9VJVp6Zg+x5MS1qdiL24JXBd1tSHs3VcH
- m16HcXFbEayvD7ozYheyOy4Kfx8JViSLZfNSoO3PETpXLwC76HAqIk8mAysjiM9e0/7oeyrzam+
- JHMJuU/SrCQX9t8Owm51gfoGgadpMiM3OYuYOUo7TY0KOozbGmzV5ZnqJUmzqFzRvJKE17IfxWz
- SinFdl1T8UcpBkaqfG4wFKQ6pOZOI0y1od/fj+JfG3tDvohYTw=
-X-Received: by 2002:a05:600c:5397:b0:4a2:a9:ed56 with SMTP id
- 5b1f17b1804b1-4a35ac99b8fmr65428355e9.8.1792926048180; 
- Sun, 25 Oct 2026 04:00:48 -0700 (PDT)
-Received: from [192.168.0.78] ([80.233.35.34])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4a35a5697a7sm110880415e9.7.2026.10.25.04.00.47
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Sun, 25 Oct 2026 04:00:47 -0700 (PDT)
-Message-ID: <8f9739ce-ad47-48d4-9a62-e4280b42bfd8@gmail.com>
-Date: Sun, 25 Oct 2026 11:00:46 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 162E6402B9;
+	Sun, 25 Oct 2026 13:38:45 +0100 (CET)
+Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net
+ [31.44.14.17]) by mails.dpdk.org (Postfix) with ESMTPS id AAAE24025F
+ for <dev@dpdk.org>; Sun, 25 Oct 2026 13:38:43 +0100 (CET)
+Received: from mail-nwsmtp-smtp-production-main-58.yp-c.yandex.net
+ (mail-nwsmtp-smtp-production-main-58.yp-c.yandex.net)
+ by forward501d.mail.yandex.net (postfix) with ESMTPS id 4FED181087;
+ Sun, 25 Oct 2026 15:38:41 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-58 with ESMTPSA id
+ bce1wuYdO4Y0-KKrIIxgm; Sun, 25 Oct 2026 15:38:40 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+ t=1792931920; bh=49vPgHl/41RFEMt0a54IyqySNbyH7xvwTjaMNuWgvds=;
+ h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+ b=ExeBS4+NOVeWycZn82U2Pvr/N5b4n9bj1QmDX6uhy6Iea77Fp2F4Ms7unrSJxVxIT
+ CBrCz/+6fRN/0928Qf2aLPi2FhtkoZR8W4oGJ5FLuH1R2ZW9OFl/t8XWA85Mnn/rJ4
+ 9AmI6Za+YWJ9uIT/zW98difiU5uWRtZiYgYr8LYE=
+Authentication-Results: mail-nwsmtp-smtp-production-main-58;
+ dkim=pass header.i=@yandex.ru
+Message-ID: <e889a968-3a42-4b80-8fba-85e79ca1592e@yandex.ru>
+Date: Sun, 25 Oct 2026 12:38:37 +0000
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 5/9] bpf: simplify callback inuse tracking to boolean
  flag
-To: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+To: Marat Khalili <qm2k21@gmail.com>,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>
 Cc: dev@dpdk.org, stephen@networkplumber.org
 References: <20261011182158.124246-1-qm2k21@gmail.com>
@@ -77,9 +45,10 @@ References: <20261011182158.124246-1-qm2k21@gmail.com>
  <5b66ff13-47f0-46e6-82ed-df4034e31bcc@yandex.ru>
  <3b8e6fc9-b747-4d52-a4ba-f4803bea04ce@gmail.com>
  <e564b858-832e-492e-9e1b-3fd2a254c30b@yandex.ru>
-Content-Language: en-US
-From: Marat Khalili <qm2k21@gmail.com>
-In-Reply-To: <e564b858-832e-492e-9e1b-3fd2a254c30b@yandex.ru>
+ <8f9739ce-ad47-48d4-9a62-e4280b42bfd8@gmail.com>
+Content-Language: en-US, ru
+From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+In-Reply-To: <8f9739ce-ad47-48d4-9a62-e4280b42bfd8@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -94,47 +63,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=4.0.1
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
 
-On 25/10/2026 10:50, Konstantin Ananyev wrote:
->>>        /* in use, busy wait till current RX/TX iteration is finished */
->>>         if ((puse & BPF_ETH_CBI_INUSE) != 0) {
->>>                 RTE_WAIT_UNTIL_MASKED((__rte_atomic uint32_t 
->>> *)(uintptr_t)&cbi->use,
->>>                         UINT32_MAX, !=, puse, 
->>> rte_memory_order_acquire);
->>>         }
+
+>
+> On 25/10/2026 10:50, Konstantin Ananyev wrote:
+>>>>        /* in use, busy wait till current RX/TX iteration is 
+>>>> finished */
+>>>>         if ((puse & BPF_ETH_CBI_INUSE) != 0) {
+>>>>                 RTE_WAIT_UNTIL_MASKED((__rte_atomic uint32_t 
+>>>> *)(uintptr_t)&cbi->use,
+>>>>                         UINT32_MAX, !=, puse, 
+>>>> rte_memory_order_acquire);
+>>>>         }
+>>>>
+>>>> Here, we are waiting when 'puse' will become not equal to 'cbi->use'.
+>>>> So, any value except current puse is good.
 >>>
->>> Here, we are waiting when 'puse' will become not equal to 'cbi->use'.
->>> So, any value except current puse is good.
+>>> If you look a the sequence diagram, there is no way to arrive here 
+>>> without the callback being removed and `cb` cleared in the DP 
+>>> thread, no matter how you move the arrows around.  So the DP thread 
+>>> will increment `use` once to make it even, and then will never ever 
+>>> reach the callback or increment anything again. We allow any value 
+>>> except current puse, but there are never any values except the 
+>>> current puse and the one after it. It's just these two values we can 
+>>> possibly see.
 >>
->> If you look a the sequence diagram, there is no way to arrive here 
->> without the callback being removed and `cb` cleared in the DP thread, 
->> no matter how you move the arrows around.  So the DP thread will 
->> increment `use` once to make it even, and then will never ever reach 
->> the callback or increment anything again. We allow any value except 
->> current puse, but there are never any values except the current puse 
->> and the one after it. It's just these two values we can possibly see.
->
-> DP can (and most likely will) call rx/tx_burst again.
-> Just to give you an example:
-> --- DP thread:
-> cbi->use = 1;
->                          --- CP thread:
->                             read cbi->use (1)
-By this time the callback is removed and `cb` is cleared.
-> --DP thread:
-> cbi->use = 2;
-> ...
-> next rx burst:
-> cbi->use = 3;
-How did we reach hear if `cb` is NULL?
->                 read cbi->use (3)
->
-> So CP sees an odd value (3), but it is ok to proceed, as previoud RX 
-> iteration (quiscent period) had already finished,
-> and in new one rx_burst will not see removed call-back.
+>> DP can (and most likely will) call rx/tx_burst again.
+>> Just to give you an example:
+>> --- DP thread:
+>> cbi->use = 1;
+>>                          --- CP thread:
+>>                             read cbi->use (1)
+> By this time the callback is removed and `cb` is cleared.
+
+from CP thread perspective:
+  a) bc->cb is removed from ethdev callback list
+  b) bc->cb = NULL
+But there is no guarantee that DP thread will see these changes till next
+bpf_eth_cbi_inuse()->rte_atomic_thread_fence(rte_memory_order_seq_cst);
+So it can still (at least once) invoke bpf callback and read and update 
+cbi->use.
+
+Thinking about that once again - it seems that could happen only once
+(i.e. in that example CP thread will see just one of {1,2,3,4} after 
+that point.
+So I probably was too pessimistic about 'live-lock'.
+But anyway, I don't see any point to change existing code to what you 
+propose (boolean value).
+ From my perspective it doesn't make it safer (or faster) in any way.
+
+>> --DP thread:
+>> cbi->use = 2;
+>> ...
+>> next rx burst:
+>> cbi->use = 3;
+> How did we reach hear if `cb` is NULL?
+>>                 read cbi->use (3)
+>>
+>> So CP sees an odd value (3), but it is ok to proceed, as previoud RX 
+>> iteration (quiscent period) had already finished,
+>> and in new one rx_burst will not see removed call-back.
+
