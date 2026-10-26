@@ -2,85 +2,103 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5AA606A31B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 15:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2C8606A31A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 15:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=L+sM1dZS
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=i0mZVm+S
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BB430402A3;
-	Mon, 26 Oct 2026 16:39:48 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTPS id AE5A640275
- for <dev@dpdk.org>; Mon, 26 Oct 2026 16:39:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1793029185;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=R/3qYIToffbOZiBZxpvPHxvu9IkRlgR28PgVZaApimQ=;
- b=L+sM1dZSPJrU0dCUQ94x07RUxzMavcZEq4NIyaiyLdzUkQw/gCHhtBfmhR4KLKDf3GaeCl
- gLBhxBQn/Sstptg703z/T0OGhgiLBMqx7odm9eYM2rWgO5JnfoiJD2V47gbNa51QgNs6Fk
- jSOXpcvDqyLlECaJos2JwhU9KQBPogQ=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-139-XQNj86cUN3Odb8AMWB5qVA-1; Mon, 26 Oct 2026 11:39:37 -0400
-X-MC-Unique: XQNj86cUN3Odb8AMWB5qVA-1
-X-Mimecast-MFC-AGG-ID: XQNj86cUN3Odb8AMWB5qVA_1793029176
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-5bcd2b01d17so1388065e87.0
- for <dev@dpdk.org>; Mon, 26 Oct 2026 08:39:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793029176; x=1793633976;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=R/3qYIToffbOZiBZxpvPHxvu9IkRlgR28PgVZaApimQ=;
- b=UMY6c+5JM+dH/5KVQtCVH5uOWTwbdH9kf6Wew9jjE4yNuXhdDD7vXAHyVB5Zgk8bQ2
- KMcidE9s696TII6MJsZtPHQbiiEU+BipJ7Ss9Qc7Ahl4J2qXaSaaV1672yKF78lyrtOu
- WxckYKNBg73bl7pgxmGCgIFhvNmyDWiwMMMpdhztMRLpKgC5ocFyJZ8G6PA7Z2xwAurt
- RzE8IVbDru3GZFtHOuKauvXWNqX4XYA4xU8/ReixTKpam1qBZM31OWtpnELZHn+gs/JA
- Jc1eTsh+2Y8fbk3mr6d1ZCkyBJaFpJzlFL8OmV8FoHPaj7aUQtItdLD2CE3aYOyJ/yNF
- KCEg==
-X-Gm-Message-State: AFq9FYKuw8mNdja6J3LlWzhOaAc8CquBfTmn8rFMJyJEOmAUhdmW4BsN
- WLoC6VWPvO+Y54jJi/SpnF56s3EmkuHB4YrV5qMxwWAQwv0YBeSfTXWKwueFJAFiRDFor1/+pvi
- YSyDl583wT7muTD+lxh3R/2KBu9sqE7TgNcNVDXn71uHFzdkJfUFsbeY7gQkhrxx/U/eB9GdzPa
- P0p+xX/V5wQz9OwvP6Lb8=
-X-Gm-Gg: AYBFou3grT696jZRpRfAfLx44m3nz/KPSEnVCuyhC20JkqGy0r9m8ktvKGm95QNsxwx
- 9Xtq4vywxESILtqQngv/u3+fOv2WSBZi5rdsXej7nUUp2PcEMggeta34ZTgAqVQ8Jji4MlM0lTN
- 82TX03QBeb17vfxXHn25F3JG3oUpKvulopUpQoW3OiSn+JKn1OfKr14qrswrBA960BYxV472u3I
- jlKY7de/IJhAqcdA+VgkNoXFTNnUYUL4Tjw6K0wNFYVdTkA
-X-Received: by 2002:a05:6512:4013:b0:5b8:f960:1bd8 with SMTP id
- 2adb3069b0e04-5bfb71fe1cdmr2368863e87.61.1793029176053; 
- Mon, 26 Oct 2026 08:39:36 -0700 (PDT)
-X-Received: by 2002:a05:6512:4013:b0:5b8:f960:1bd8 with SMTP id
- 2adb3069b0e04-5bfb71fe1cdmr2368860e87.61.1793029175582; Mon, 26 Oct 2026
- 08:39:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 07847402A3;
+	Mon, 26 Oct 2026 16:58:52 +0100 (CET)
+Received: from BYAPR05CU005.outbound.protection.outlook.com
+ (mail-westusazon11010022.outbound.protection.outlook.com [52.101.85.22])
+ by mails.dpdk.org (Postfix) with ESMTPS id 34B3040275;
+ Mon, 26 Oct 2026 16:58:50 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y+ljN7PhJUx5Z0JSpG6ybJBZhry4cO0gKDHc3IyCNopLPLDI8xxvMQbZCMI7iodAG3dECQCrboGOisRB/BK9nr+p/acQlfBKcGVWeGXFGh1M80JXEakt4+IcACflIcHm3jTSYRiMUhC2Z8nJ1OYk9qLh/FM//w+b7l9kOuh+WUQ8Om5k/peqB4Rl85DCn0KISLKawm0cPpYeH6U0jVSYvmQP29Ee5fox3ys79ttpm7Pkpa1PSEBiqyUY6r/YBCTt7WGV8lfYrz8jAbp/g8KjjnGPbQdml5BJEZ1kV800YeoecOujJeJTGLsg8xTGDXKgNccKMpglONpx6Vu3Nx13sw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N4I8g25kZ5Uo0wCfTkkuoPLuoinGXjzHwx0IPxx2oHU=;
+ b=KvBF8ZYT7ycZtPYyVtNp2YKkiYEFK1LtJ3A7s2QT0R3WMm/Fgi9VUKDLqmFrD7BPPbkPj327NFI71Gk5RXiit7DTYcXH+W+cM8yWkFdbth9OmxluxQkAGd2WoqFY/Xqz7IN5hW3YICa0kqX1g0B0kaWILlQttVLbKWvixbzuvAY0GAYBVnpdcwSOhKEnXi0adkdlCv9W2SjHXTAQ8mhmSLy6uqvHYEBKuvaLTL5VI1/gJDfnuZQx0V9UCQ5Sm3B+TVKo84Y4JLXRB+jjiP5vX6kyGa8PRTLCNPsT/W2wP0w3QMLhGMx8xBWsd7uJLuwghXOGXMmag3oZKQADcEIBhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N4I8g25kZ5Uo0wCfTkkuoPLuoinGXjzHwx0IPxx2oHU=;
+ b=i0mZVm+SbuSuMFHyXexl+5j9Xh7hjiy7nRJ0RNU4GG4aXeHYl3X70mbDKOd8Smk0U4C9CSIbbhpo3sDfcSx8kpxjKTyUU6LekMepE0TUky23tIl55DDde9I6IHWVjI4Mt8D0n5cEPby0+e7zZ/XUvqLEMIvBSjO7711SsP1UsOvM7VVErWdwLNr6oM423eWh2In1g+kGgg7NATdEWjHRGx0rf5+ShQOVCogegq22y7D/AXrSnYzt50kXsYe+AyThF0gWeaf97Gt8PW0Sx5omPro7+D3Ema8VeMcGW6JzhWFKn6nTuSGBUfWTbpm01nsVrM+BP832QHLZpO9D2u/Irw==
+Received: from CH0PR03CA0118.namprd03.prod.outlook.com (2603:10b6:610:cd::33)
+ by SN7PR12MB7274.namprd12.prod.outlook.com (2603:10b6:806:2ad::18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.21; Mon, 26 Oct
+ 2026 15:58:43 +0000
+Received: from CH01EPF000BE940.namprd02.prod.outlook.com
+ (2603:10b6:610:cd:cafe::7e) by CH0PR03CA0118.outlook.office365.com
+ (2603:10b6:610:cd::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.22 via Frontend Transport; Mon,
+ 26 Oct 2026 15:58:43 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH01EPF000BE940.mail.protection.outlook.com (10.167.244.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.569.4 via Frontend Transport; Mon, 26 Oct 2026 15:58:43 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 26 Oct
+ 2026 08:58:21 -0700
+Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 26 Oct
+ 2026 08:58:18 -0700
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Tal Shnaiderman
+ <talshn@nvidia.com>, Ophir Munk <ophirmu@nvidia.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: [PATCH] net/mlx5: fix LSC interrupt device flags
+Date: Mon, 26 Oct 2026 16:58:05 +0100
+Message-ID: <20261026155805.1288318-1-dsosnowski@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261021092318.1554295-1-david.marchand@redhat.com>
- <20261024132138.7239-1-david.marchand@redhat.com>
- <20261024132138.7239-4-david.marchand@redhat.com>
- <b0870d53-0555-43a2-a5e8-8b4cf5917048@intel.com>
-In-Reply-To: <b0870d53-0555-43a2-a5e8-8b4cf5917048@intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 26 Oct 2026 11:39:23 -0400
-X-Gm-Features: AclHuK_Rh9cXsoTwR-LXgYS8ek98TrCC4fIuNjDx-NIr_c_SoIMCPhwxhNemP4A
-Message-ID: <CAJFAV8w+__2squsVhXhVi5qzJBSpK0hdies7ZLmZRu+eyqGm1A@mail.gmail.com>
-Subject: Re: [PATCH v2 03/12] interrupts: do not duplicate interrupt handles
-To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, stephen@networkplumber.org, hkalra@marvell.com, 
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>, 
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, 
- Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>,
- Jakub Grajciar <jgrajcia@cisco.com>, 
- Bruce Richardson <bruce.richardson@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -K_YpEovo7ALfgkuoz-KEIzc2ZVasqlYDRBHgu5oJwo_1793029176
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH01EPF000BE940:EE_|SN7PR12MB7274:EE_
+X-MS-Office365-Filtering-Correlation-Id: b5da7fdb-9c93-48cb-068a-08df337a0297
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|1800799024|82310400026|36860700016|23010399003|261026140227099003|56012099006|11063799006|261021123027099003|261021135927099003|261022105027099003|261021121427099003|261009223027099003|10067099003|261026121527099003|18002099003;
+X-Microsoft-Antispam-Message-Info: D7soxtfqEvbn6kCEGSK6hk0bI7ZbPQVUQdAeY3xk7sIRWyzz1UjOkDVRhBGJpm17ca0rZpxXg/uadyoxo8dddJMgu/pB+LNkAh9gDYvAA672K/jZPdRcfWbTLUb6aQogMwweCejm6DCojTaS2g2Qtz57QxvcA8Eksoj0NE3LFXq3OSPH1upB8G4gTqwhKwHFW7ALqITTXpnbdHmUcb+8l50lOeZI9iwZivdL5P6GQSciBXVoFgmA3eFb5jJ4tMaBkLNIUoufq7o/nXf8S/k1bGJrv+tAIzf/ZjMMe3KWeuxPAplJxAnC9+hAb5O651JJYuZ7XTLVsdQYQD/HV7t+WperJ5fFftf4mweoPdXyayb9Rx6pQMGYY1oR9YK/YchYyF1V4HacG2eNGcxUzBBCHtHv58frtyWLQCFR5KU5jEKIO/UnHMG7ret7lpW63eSFV9mf+c5LDBNZP2wZC4gmGPczuzke6EGP4XvuMxIXl8IoG0ikPSWMe5nAcLVNFgXK/NcnzPOAfqNmUGYuAwxUxrir57jElhEa5/78dLdgtoTZ138/WSAOQLWkB2i/XxeoD4mqX57+PNR/X0JQ3Z/bYXYrfsps707SKdKRsQBgFVsKTTtuSwnwQIrMzDQ0gb6aAihy1xRH7sPwSmNU6sfcC9PVSg92bPSxW2xg0EXWaXddeba4TPfvHaLOFrU6CflHnX/uBaJvqYKp9YKYpxMKfQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(82310400026)(36860700016)(23010399003)(261026140227099003)(56012099006)(11063799006)(261021123027099003)(261021135927099003)(261022105027099003)(261021121427099003)(261009223027099003)(10067099003)(261026121527099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: ffrHWuZMfxS/8Acrqy1OyvijWycJX0+0jYxG6J/uGiZkBNYJbYJOBjcDPOsaDyNbK/LNo6cCA6bhZDyCdRO9zVdeYvwL4/RZsJWDnl6mtZbVXtXxyZkcCclGspmX/QIHB+Vvjs/d6arfurx70XH4/X52++nY2ifn6Zj8XSn6kw9U5NwDPgXTRxy8Mle6YOJI9/biEn/ETdxHn74E2RQD7onrN3CeMdKdLKwcQox5tzo3lWQJANBGFpLS0VGeh2TtiupqLN073BgcXxR8a8Jg0s3F1yzXMAF/YMmzSJxvbwNMw7eW1iXG+grnTXG5nipVHEwFbmwxkdzUVdtowi2K09Hxpb6CUW4E4k/3gUlLu4R9HcUMcUL9GI18ksOn25VSm9RYUQRbZGqM5eh5jSLNLlu+/3arqEDhyVyK8nH6cEhEoO0VPat/Qd9nzBiiBYT1
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2026 15:58:43.0815 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5da7fdb-9c93-48cb-068a-08df337a0297
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CH01EPF000BE940.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7274
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,74 +108,81 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Sat, 24 Oct 2026 at 16:11, Burakov, Anatoly
-<anatoly.burakov@intel.com> wrote:
->
-> On 10/24/2026 3:21 PM, David Marchand wrote:
-> > The FD leak warnings recently added have revealed an interesting issue.
-> >
-> > An interrupt handle is allocated and living usually in a bus device object
-> > (or some standalone code, like the alarm code).
-> > All the logic around the referenced FDs in this object are specific to
-> > the callers, and those FDs must then be closed in the callers context.
-> >
-> > On the other hand, the interrupt subsystem works with copies of interrupt
-> > handle objects passed to it via rte_intr_callback_register/unregister.
-> >
-> > When releasing this clone of the interrupt handle, the FDs are reported
-> > as leaked, though there is no way for the interrupt subsystem itself to
-> > know what to do with those FDs.
-> >
-> > Instead of creating a clone, reference the interrupt handle directly.
-> > The callers are responsible for unregistering those handles,
-> > closing the FDs and freeing the handles.
-> >
-> > This change also switches the interrupt source lookup from FD based
-> > matching to pointer based matching.
-> > The original FD based matching allowed different intr_handle objects
-> > with the same FD to share an interrupt source.
-> > However, this was problematic:
-> > * the cloned handle stored in the source came from the first registrant,
-> > * the ucb_fn callback would receive this clone, not the (const)
-> >    caller's handle,
-> > * with multiple handles for the same FD, later registrants would get
-> >    the wrong handle in their callback,
-> >
-> > In practice, DPDK components use one intr_handle per FD, so pointer
-> > based matching simply enforces this existing invariant.
-> > The interrupt dispatch code continues to use FD based matching since
-> > epoll returns the FD, not the handle pointer.
-> >
-> > The unregister callback (ucb_fn) signature is updated to take a const
-> > pointer, reflecting that the interrupt subsystem no longer owns the
-> > handle. Note that with this change, the intr_handle parameter passed
-> > to ucb_fn is the same pointer the caller registered with, callers
-> > can simply use their own handle from cb_arg instead.
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > ---
->
-> Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
->
-> However, my patches fixed the issue in instance_dup without removing the
-> API. Those fixes should probably be backported to stable in some form.
+mlx5 networking driver supports LSC interrupts only on Linux.
+Driver falsely reported RTE_ETH_DEV_INTR_LSC in its device flags
+on Windows.
 
-Indeed.
-I can take your first two patches right after the 2 first fixes in
-this series, right before removing the duplicate API.
-That's just a little rebase for me (I'll double check compilation is
-not broken between patches).
+This patch fixes the device flags and updates the documentation.
 
-WDYT?
+Fixes: 93f4ece91a1f ("net/mlx5: spawn ethdev ports on Windows")
+Cc: stable@dpdk.org
 
+Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+ doc/guides/nics/mlx5.rst           | 1 +
+ drivers/net/mlx5/linux/mlx5_os.h   | 2 ++
+ drivers/net/mlx5/mlx5.c            | 2 +-
+ drivers/net/mlx5/windows/mlx5_os.h | 2 ++
+ 4 files changed, 6 insertions(+), 1 deletion(-)
 
+diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
+index c7bb6eb182..11b33f89f8 100644
+--- a/doc/guides/nics/mlx5.rst
++++ b/doc/guides/nics/mlx5.rst
+@@ -1107,6 +1107,7 @@ Port/Queue Feature                        Linux   Windows
+ :ref:`statistics <mlx5_net_stats>`          X        P
+ link flow control (pause frame)             X
+ Rx interrupt                                X
++Link state interrupt                        X
+ :ref:`shared Rx queue <mlx5_shared_rx>`     X
+ :ref:`Rx threshold <mlx5_rx_threshold>`     X        X
+ :ref:`Rx drop delay <mlx5_drop>`            X        X
+diff --git a/drivers/net/mlx5/linux/mlx5_os.h b/drivers/net/mlx5/linux/mlx5_os.h
+index 4d073048fb..9deef72527 100644
+--- a/drivers/net/mlx5/linux/mlx5_os.h
++++ b/drivers/net/mlx5/linux/mlx5_os.h
+@@ -8,6 +8,8 @@
+ 
+ #include <net/if.h>
+ 
++#define MLX5_NET_INTR_LSC_SUPPORTED (1)
++
+ /* Maximal data of sendmsg message(in bytes). */
+ #define MLX5_SENDMSG_MAX 64
+ 
+diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
+index 19491b9dc9..a04884fb4b 100644
+--- a/drivers/net/mlx5/mlx5.c
++++ b/drivers/net/mlx5/mlx5.c
+@@ -3959,7 +3959,7 @@ static struct mlx5_class_driver mlx5_net_driver = {
+ 	.probe = mlx5_os_net_probe,
+ 	.remove = mlx5_net_remove,
+ 	.probe_again = 1,
+-	.intr_lsc = 1,
++	.intr_lsc = MLX5_NET_INTR_LSC_SUPPORTED,
+ 	.intr_rmv = 1,
+ };
+ 
+diff --git a/drivers/net/mlx5/windows/mlx5_os.h b/drivers/net/mlx5/windows/mlx5_os.h
+index 57d147bd8c..c5b7008053 100644
+--- a/drivers/net/mlx5/windows/mlx5_os.h
++++ b/drivers/net/mlx5/windows/mlx5_os.h
+@@ -7,6 +7,8 @@
+ 
+ #include "mlx5_win_ext.h"
+ 
++#define MLX5_NET_INTR_LSC_SUPPORTED (0)
++
+ #define MLX5_NAMESIZE MLX5_FS_NAME_MAX
+ 
+ enum mlx5_sw_parsing_offloads {
 -- 
-David Marchand
+2.43.0
 
