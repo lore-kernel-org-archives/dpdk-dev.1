@@ -2,62 +2,81 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6107B606A31D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 18:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B2A606A31A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 18:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=Muksv1xL
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=h2Zo7dOm
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CD97402A3;
-	Mon, 26 Oct 2026 19:11:01 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0CA05406BA;
+	Mon, 26 Oct 2026 19:11:04 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTPS id 7898C402A3
- for <dev@dpdk.org>; Mon, 26 Oct 2026 19:10:58 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id ACE364068A
+ for <dev@dpdk.org>; Mon, 26 Oct 2026 19:11:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1793038257;
+ s=mimecast20190719; t=1793038261;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=G07uum+0qbLJ4kF7L4MPeGk/hsOiY1rspm7cORIU3q0=;
- b=Muksv1xLjxlM2HTD7k5B64UmB5E1qSwjJ4Dkm3fv96Lh4poiQg2ZAsyqCDhmN0x0jcGlm+
- /o9SZLJO7krB6kaxdG4/1le2G2Mj3jaTp57sOCSb+yp9FDmTPViC+nMGDgW2S0mWjyJaqd
- x+eJhZIMwQE+QOgLnSCCnubiC1+652k=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-436-iHO_wL-pP5qMxYdT0MltSg-1; Mon,
- 26 Oct 2026 14:10:55 -0400
-X-MC-Unique: iHO_wL-pP5qMxYdT0MltSg-1
-X-Mimecast-MFC-AGG-ID: iHO_wL-pP5qMxYdT0MltSg_1793038255
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id ED2EC1955EA9; Mon, 26 Oct 2026 18:10:54 +0000 (UTC)
-Received: from dmarchan.redhat.corp
- (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 235001800480; Mon, 26 Oct 2026 18:10:53 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: hemant.agrawal@nxp.com,
-	dev@dpdk.org
-Subject: [PATCH v2 06/16] bus/fslmc: fix memory leaks in scan
-Date: Mon, 26 Oct 2026 19:10:20 +0100
-Message-ID: <20261026181031.304100-7-david.marchand@redhat.com>
-In-Reply-To: <20261026181031.304100-1-david.marchand@redhat.com>
-References: <20260723135400.3621271-1-david.marchand@redhat.com>
- <20261026181031.304100-1-david.marchand@redhat.com>
+ bh=PYc6TKYL1SDrgyBd5B+4Nwd0yrY1TVVs8dEoQ1GxWVo=;
+ b=h2Zo7dOmZfxqq07TBROS5XFY+PlKMN5znM2B9tvauJa9iTs2oaXRFbrldCgr4B2Oqz0Grq
+ ZOrjd2esMHYnr/1TLhBxhoHm1wFuNd/zMXjZdVs7YCnk7bffqt7nG1UYknEIocRkMk08vu
+ hY2/kbYPYatPAeQ/AOjfeVsifsVNCdA=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-8-0salXWQpPNmINUmjkmMACw-1; Mon, 26 Oct 2026 14:10:54 -0400
+X-MC-Unique: 0salXWQpPNmINUmjkmMACw-1
+X-Mimecast-MFC-AGG-ID: 0salXWQpPNmINUmjkmMACw_1793038253
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-3ab3650ca2cso15483261fa.2
+ for <dev@dpdk.org>; Mon, 26 Oct 2026 11:10:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793038252; x=1793643052;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=PYc6TKYL1SDrgyBd5B+4Nwd0yrY1TVVs8dEoQ1GxWVo=;
+ b=ICF+oePEAUUt5MaJkIFxSvtQ1eh63I43I0mqhgvLpvQ6PKpyCw7++KC1toanjlcswu
+ 62fJcLMzJQaTsNOo3y9iBqWOQdn5N06waUmyo872E+Pyv8k75SvBLTrquS3MQPLcQcWT
+ WcIqPDT9SdehZQqmwc4qiOJtNTTPb7sIlYdmuVrXw8o2ykERYM4beNXdAwTRDHEyHkna
+ +nAebElf8tLJuQ5Nuuu1d2p2QWgXSVXInTHQLKF7DsObVxfrLThEBrK+9aLddi0Gyqcq
+ 4p8+/LzxqEJiFsoACDukAy3D5eYg09j/plzfgru5V0CFPV8/l3d+fAtsmfZoJWOuUAdA
+ N1GQ==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBwZ711+tKFWSoLITdGdgVKVd/AzHmcD5QwKq1pvwhzCStoH7UmkGIg9gvMiU7C/wC6EUcM=@dpdk.org
+X-Gm-Message-State: AFq9FYLTuHBOJoclprLLMmsfbyg3GjD8Ounu2bzKQ2FIyvSbbYA/sqq9
+ m7Cg4wYocfAe8IfvVP9B61iH3ahVnFxXdG4akQVwMHCf6uoGl559Noh4XsnPf6kEytgFTz+hgmC
+ JvmzJGwoyrXXEeAgR3N95lWMI2hzq/ZKCJu208q9wffOZKXU/kODgtI9TssgfsG2lGi08nMK3L7
+ x43fIzd6q77/Fdn49asG4=
+X-Gm-Gg: AYBFou1VQ2zX0eO99nzo8jzrgbAvXnRgMTdx7s5/zXAq2Nb1Tx3fl1mx9ZBPa1XulCe
+ BqiBc1lcW9Y8tqsVWYnb4OBiZs7WJ772JrckIanUVBu86A9EEhXmSI0CwecV/jAEHgijclrstnz
+ Sngb5IyW65h2ok7KIhZOCDupR+AJfgqMuFmS5I3fUW6KaF1tmq3PRc+DBCESlAbSR0n4WdQaGOQ
+ hjwf52/esFyi6LpLwh/aRf3TYDLsjd3npeCj02N5RhF6Ofm
+X-Received: by 2002:a05:651c:1a08:b0:3ac:48a0:e253 with SMTP id
+ 38308e7fff4ca-3ac6fd1e270mr20713361fa.23.1793038252545; 
+ Mon, 26 Oct 2026 11:10:52 -0700 (PDT)
+X-Received: by 2002:a05:651c:1a08:b0:3ac:48a0:e253 with SMTP id
+ 38308e7fff4ca-3ac6fd1e270mr20713261fa.23.1793038252015; Mon, 26 Oct 2026
+ 11:10:52 -0700 (PDT)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20260723135400.3621271-1-david.marchand@redhat.com>
+ <20261014174001.1830726-1-david.marchand@redhat.com>
+ <GV1PR04MB10750AE0102EC1FDDC8E2E0C389992@GV1PR04MB10750.eurprd04.prod.outlook.com>
+ <AS8PR04MB82937F10CD26FDD07AA3AFABE5612@AS8PR04MB8293.eurprd04.prod.outlook.com>
+In-Reply-To: <AS8PR04MB82937F10CD26FDD07AA3AFABE5612@AS8PR04MB8293.eurprd04.prod.outlook.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 26 Oct 2026 14:10:39 -0400
+X-Gm-Features: AclHuK9Sa7VoXmeUU_ddXPoVhEwR26-8-CTpW3Z2qeNgJDnnfBGWWSPW-ykFD-I
+Message-ID: <CAJFAV8yKvC3rzwvK1LfraGx+ztV3Y_WNqiscom3JQTTj7uiPFg@mail.gmail.com>
+Subject: Re: [PATCH 00/16] Device unplug and bus cleanup refactoring for NXP
+To: Prashant Gupta <prashant.gupta_3@nxp.com>
+Cc: Hemant Agrawal <hemant.agrawal@nxp.com>, "dev@dpdk.org" <dev@dpdk.org>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -ycjhTIPp7lUjIGjL2C9qOtaWQNRWdePJ1ac9vfQDVQ_1793038255
+X-Mimecast-MFC-PROC-ID: j9JbW1lkwdgGrShBqAXyTzCYQ2CC4-Oo-7KO8BrnneU_1793038253
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -67,190 +86,30 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-During the scan phase (more precisely, during device filtering),
-device pointers were leaked.
+Hello,
 
-Add a simple helper so a device pointer is fully freed.
+On Mon, 26 Oct 2026 at 10:41, Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
+>
+> I am not able to apply these patches on next-net-main.
+> Could you please check if rebase is required?
 
-As a consequence of the filtering during scan, all blocklisted devices
-are freed from the bus list during scan: there is no need for
-reevaluating if a device is blocklisted during cleanup.
+The only conflict I see with next-net is the macro changes on dpaa_bus.c.
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
-Changes since RFC v1:
-- fixed interrupt handle leak by adding fslmc_free_device helper
-  sooner in the series,
+Sending a series based on next-net-main will likely fail in the CI as
+it will try to apply on main.
+(bus drivers updates are supposed to go through main)
 
----
- drivers/bus/fslmc/fslmc_bus.c  | 23 ++++++++++++++++++-----
- drivers/bus/fslmc/fslmc_vfio.c | 33 +++++++++------------------------
- drivers/bus/fslmc/private.h    |  2 ++
- 3 files changed, 29 insertions(+), 29 deletions(-)
+I'll respin for the rte_intr_fd_close changes in main, I push a
+rebased branch in my GH.
 
-diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index 632142d128..38dd8afe34 100644
---- a/drivers/bus/fslmc/fslmc_bus.c
-+++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -85,6 +85,22 @@ insert_in_device_list(struct rte_dpaa2_device *newdev)
- 		rte_bus_add_device(&rte_fslmc_bus, &newdev->device);
- }
- 
-+static void
-+fslmc_free_device(struct rte_device *rte_dev)
-+{
-+	struct rte_dpaa2_device *dev = RTE_BUS_DEVICE(rte_dev, *dev);
-+
-+	rte_intr_instance_free(dev->intr_handle);
-+	free(dev);
-+}
-+
-+void
-+fslmc_bus_remove_device(struct rte_dpaa2_device *dev)
-+{
-+	rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
-+	fslmc_free_device(&dev->device);
-+}
-+
- static void
- dump_device_list(void)
- {
-@@ -369,11 +385,8 @@ rte_fslmc_scan(void)
- 	closedir(dir);
- 
- 	/* Remove all devices in the list */
--	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
--		rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
--		rte_intr_instance_free(dev->intr_handle);
--		free(dev);
--	}
-+	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus)
-+		fslmc_bus_remove_device(dev);
- scan_fail:
- 	DPAA2_BUS_DEBUG("FSLMC Bus Not Available. Skipping (%d)", ret);
- 	/* Irrespective of failure, scan only return success */
-diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
-index c8b5518956..2a3d022d2e 100644
---- a/drivers/bus/fslmc/fslmc_vfio.c
-+++ b/drivers/bus/fslmc/fslmc_vfio.c
-@@ -1568,13 +1568,6 @@ fslmc_vfio_close_group(void)
- 	}
- 
- 	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
--		if (dev->device.devargs &&
--		    dev->device.devargs->policy == RTE_DEV_BLOCKED) {
--			DPAA2_BUS_LOG(DEBUG, "%s Blacklisted, skipping",
--				      dev->device.name);
--			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
--				continue;
--		}
- 		switch (dev->dev_type) {
- 		case DPAA2_ETH:
- 		case DPAA2_CRYPTO:
-@@ -1636,8 +1629,7 @@ fslmc_vfio_process_group(void)
- 			    dev->device.devargs->policy == RTE_DEV_BLOCKED) {
- 				DPAA2_BUS_LOG(DEBUG, "%s Blocked, skipping",
- 					      dev->device.name);
--				rte_bus_remove_device(&rte_fslmc_bus,
--						&dev->device);
-+				fslmc_bus_remove_device(dev);
- 				continue;
- 			}
- 
-@@ -1645,8 +1637,7 @@ fslmc_vfio_process_group(void)
- 			    !is_dpmcp_in_blocklist) {
- 				if (dpmcp_count == 1 ||
- 				    current_device != dpmcp_count) {
--					rte_bus_remove_device(&rte_fslmc_bus,
--						     &dev->device);
-+					fslmc_bus_remove_device(dev);
- 					continue;
- 				}
- 			}
-@@ -1660,9 +1651,7 @@ fslmc_vfio_process_group(void)
- 				found_mportal = 1;
- 			}
- 
--			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
--			free(dev);
--			dev = NULL;
-+			fslmc_bus_remove_device(dev);
- 			/* Ideally there is only a single dpmcp, but in case
- 			 * multiple exists, looping on remaining devices.
- 			 */
-@@ -1686,7 +1675,7 @@ fslmc_vfio_process_group(void)
- 				DPAA2_BUS_ERR("Unable to process dprc");
- 				return ret;
- 			}
--			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
-+			fslmc_bus_remove_device(dev);
- 		}
- 	}
- 
-@@ -1698,7 +1687,7 @@ fslmc_vfio_process_group(void)
- 		    dev->device.devargs->policy == RTE_DEV_BLOCKED) {
- 			DPAA2_BUS_LOG(DEBUG, "%s Blocked, skipping",
- 				      dev->device.name);
--			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
-+			fslmc_bus_remove_device(dev);
- 			continue;
- 		}
- 		if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
-@@ -1706,7 +1695,7 @@ fslmc_vfio_process_group(void)
- 		    dev->dev_type != DPAA2_CRYPTO &&
- 		    dev->dev_type != DPAA2_QDMA &&
- 		    dev->dev_type != DPAA2_IO) {
--			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
-+			fslmc_bus_remove_device(dev);
- 			continue;
- 		}
- 		switch (dev->dev_type) {
-@@ -1748,14 +1737,12 @@ fslmc_vfio_process_group(void)
- 			if (!is_dpio_in_blocklist && dpio_count > 1) {
- 				if (rte_eal_process_type() == RTE_PROC_SECONDARY
- 				    && current_device != dpio_count) {
--					rte_bus_remove_device(&rte_fslmc_bus,
--						     &dev->device);
-+					fslmc_bus_remove_device(dev);
- 					break;
- 				}
- 				if (rte_eal_process_type() == RTE_PROC_PRIMARY
- 				    && current_device == dpio_count) {
--					rte_bus_remove_device(&rte_fslmc_bus,
--						     &dev->device);
-+					fslmc_bus_remove_device(dev);
- 					break;
- 				}
- 			}
-@@ -1773,9 +1760,7 @@ fslmc_vfio_process_group(void)
- 			/* Unknown - ignore */
- 			DPAA2_BUS_DEBUG("Found unknown device (%s)",
- 					dev->device.name);
--			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
--			free(dev);
--			dev = NULL;
-+			fslmc_bus_remove_device(dev);
- 		}
- 	}
- 
-diff --git a/drivers/bus/fslmc/private.h b/drivers/bus/fslmc/private.h
-index 20a454c3fc..825a364f1b 100644
---- a/drivers/bus/fslmc/private.h
-+++ b/drivers/bus/fslmc/private.h
-@@ -11,4 +11,6 @@
- 
- extern struct rte_bus rte_fslmc_bus;
- 
-+void fslmc_bus_remove_device(struct rte_dpaa2_device *dev);
-+
- #endif /* BUS_FSLMC_PRIVATE_H */
+
 -- 
-2.54.0
+David Marchand
 
