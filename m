@@ -2,30 +2,31 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64903606A31F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 12:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8508606A31B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 12:27:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2181C40663;
+	by mails.dpdk.org (Postfix) with ESMTP id E8ECB40693;
 	Mon, 26 Oct 2026 13:27:02 +0100 (CET)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTPS id 9358E402A3;
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+ by mails.dpdk.org (Postfix) with ESMTPS id 1E3F340659;
  Mon, 26 Oct 2026 13:26:57 +0100 (CET)
-X-QQ-mid: esmtpgz15t1793017611tbe9424a2
-X-QQ-Originating-IP: ym8fqsmmBibv9z8dXUzuBimny4v/JX0rBW3prcAhu84=
+X-QQ-mid: esmtpgz15t1793017614tab2d953c
+X-QQ-Originating-IP: yI2idDVmRz6zYEHZct5JiMUxoWWcxXTjNY5rppeykb8=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.227.112.25])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 26 Oct 2026 20:26:50 +0800 (CST)
+ id ; Mon, 26 Oct 2026 20:26:52 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17384804331859703571
+X-BIZMAIL-ID: 4752019684146268001
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v11 03/17] net/txgbe: fix E56 PHY configuration error
-Date: Mon, 26 Oct 2026 20:21:49 +0800
-Message-ID: <61C17DCF3BF570CF+20261026122638.9198-4-zaiyuwang@trustnetic.com>
+Subject: [PATCH v11 04/17] net/txgbe: fix incorrect link state in 10G forced
+ mode
+Date: Mon, 26 Oct 2026 20:21:50 +0800
+Message-ID: <36DC8DC7B372CBE2+20261026122638.9198-5-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261026122638.9198-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -35,23 +36,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: M3vv73qU6a4ugfXNK3/vcp/gBAk86Qk59U6F08c1kjKO1Y+X+0N0aelR
- I6djsA79YhW6GRIGetlwnk33h6JvVyXDHyC9EFG8st7ZWV0jgrIvyeBJUg1J2q1l45SUAQ+
- 3gIXTiFyBEWJxXUyR2hINIP8hcQetFhdQdbYRsyrgljw4JWCLBkKkGbOmTaDfGfCxCofugG
- lYl6Ojs+li3YDS0e+fEknZ9jJTgfQ0LDweEo9YmYNse6yZhjg+ItEBwEIONl/+5aTVitAlC
- Qsp9V71GIm9/zA6+DAZu+EAG7phJkDUDTuiuMZ9+QIcM1WD60AddyD9wxhDKKXokKqkydQ0
- HemO0gfuXlXPx6L7VjFmgkM6ipDoNSJ7uAULKQI7x5jW/CJDgKybT3p1imWqNCXyaIWOCVP
- eYxYqglL6ElXrXCsz1kZEAqkSyPdjvf/047i5vuJFRD2g06R7QJM0YFlt7D66OuytZ+/A+n
- 9GLXlcU1lejro62A9A1K+l6o7o0317a+YxKI6jIyvMfdRRQHeBOZowrXWVs4W6Lrm9Qo0Qy
- B1waxzOPn+n5Vo1xQ57PoPGrQIR9TV3PLIx7R7NKuO58/+PBEdxbTQo6m1BXlGV2DtkhgDz
- lmmKq45QJVJS2+Ti2QeOnsxtYIIf6qW9zsKltUnJGc+YUe87gzYRb9pBDgVIdQo02oKX1ve
- zbI+cRnkO6bTtQJ3iGnDsEyDtbYh7/iISAvKo4AlPcNo4mjZU04HPyrs2MMM/6XtxHNGGxw
- MSlseUzfhj1yDTVoL5mvT1MpGSnYymTorZvUw8bbdWbssQn7sHKKMPEal+vL09gq7E9f8B7
- 3l9aErbnQV0d+o33DMFlMd/rLVNd+r9kY7IDnsw0QnHmcwpTtde3ZTU1tJXRLuAPofweGBw
- eSqr2fHStfC6Op/3Yrzb3+wg6GWXQb6CnxW+RbTtDX39smbkqXT9CH0MGhEzNps8kzXiRnH
- 1d5ndTBbab2zCfZV6+oOwNrl/AFBJBkeQ1z1uvlB3qSve2azluJL7gZ8kYP0DvRUD6ZaTAz
- NRkO0+QT4OZ/QspGbmV7tOMwCrHOCcTMsmRCA2raLs/cPahGqIlW3V3hwBNKzsijczJeutZ
- w==
+X-QQ-XMAILINFO: MH7t2Urb3BzzOH4mhJdRPDAbJfeShcCBB6p3mnlxUnYEDpSzrxaagwff
+ Xl/Yn2J23Z0wkz9bmNEhCCCPzokTD/UMwsiD+Ku2H16U/xp+PESVjBjG6CuzxPg5iqHECJc
+ cTJUwJzDFAauxmWEPjRrMQNW9u21pLjqb0pe+2FQacXZ/QDNMk+M5u2h+pe4xrMD3HsEZ2R
+ qooWXObqH1c7+TM//zdjb16HDMnWYZU66L9QSwr3I3QW4LtnCps0cF5CE453qv3OXP9bxxr
+ YmiE/D4d8Tx626Si5yawTE5fXLzMCC2XZ75ax8E3OPimgVUAAx4RlcK3jSV84nWvHQm27Ui
+ XXoff+V4St5WdiGdvhO1+UJyBpPw1O3JYK9E/8sMNTiRUkr0Ix+hjAmSKQ4kXhJt6Wk2Fhh
+ SdKOXL73R3stabIakwXsz5FUEvPk6RPZzL4fLywVxIQ26S99AajZ2qIMvx7kDwycAAxWfYl
+ kcldWYDVpwkuKz1VnjcBoKv+R0iLkDpbyLnwkmDnTcjy0mtjKHHwd8gJpdUVjSvPXx43M4Y
+ o4mHyRw5e2aCBO6LjH/b0XLwc49LZiVETtMzpKHB2EUUA0NQ1ZFJsESNh2N84Z3JnyvZkwl
+ OHyVC1K/bvIrIfB9GRhP1NO84nHOYWRcMpsDq2EpRcIzw3/eJdZ0gfR8Vmb21m+r6ZBbzau
+ 5KcMqRjzSgJMNdf8udWVo2ZlaSvm5FfY3wlETZeYctuYGsTmQ8c8o9/2xkhQB5p/hhXtFuY
+ C4k3uFjU5MXHta1wlrfpM09Ez5qjwhSfp31yTK+wsR2PF8kb/2jgnopUbEJHy81bkIS2hCD
+ NKTuLQYVmiWoi5sIEwnxb0V3HrZ58XjAaJrxMvcBlHuZR90PUlewh1JO+hwwa1wBZSFdWMH
+ zUHbECbWFRA4smTiZWR45rTtt1KKPNCPrxCyfgnxP6W5Z6vz1db1stwRkY2WXRsERLrgYRB
+ XuwmTAMf7N4X/Hc6qKQyKwmIZzH4JjJqQlla9/iwIWgdWHWPl/qOSJrrpQLN/d+dZQsBHFq
+ UmHSw7GRmZHABGNVGqBuCz1Tm/JrdajGTbBpXUo2Z42tqKRmu+kQa5iH+ouZSjNKyIVXI9n
+ nj0nMSCNAKTxLOYPJpWAtZkJLj9/FRDcSwVwgBXiVUA
 X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
@@ -70,46 +71,51 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The E56 PHY RXS ring equalizer/tap configuration is written to the
-wrong bit field: set_fields_e56(&rdata, 9, 4, 0x366) targets the
-unrelated lower bits, so the configured tap values are never applied
-and the equalizer stays at its default setting, which can degrade
-the received signal on both the 40G and 10G paths.
+When an AML40 port is configured in 10G forced mode (auto_neg=0),
+the hardware can link up but the driver keeps reporting link down
+after a peer link failure: link_valid is cleared on timeout but
+never restored when the peer recovers, so the link stays down until
+the port is restarted.
 
-Fix the field range to (21, 12), so the equalizer/tap configuration
-takes effect.
+Restore hw->link_valid = true in the success path of
+txgbe_setup_phy_link_aml40(), symmetric to the 40G path. Handle
+TXGBE_ERR_PHY_INIT_NOT_DONE before the timeout split and leave
+link_valid untouched, matching the 25G path in
+txgbe_setup_phy_link_aml(); the alarm retry then attempts the
+setup again.
 
 Fixes: f7cfc21e9f75 ("net/txgbe: fix link stability for 40G NIC")
-Fixes: 6104fd11086e ("net/txgbe: fix link stability for 25G NIC")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_e56.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/txgbe/base/txgbe_aml40.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_e56.c b/drivers/net/txgbe/base/txgbe_e56.c
-index cbcc05333e..c0e5cc3894 100644
---- a/drivers/net/txgbe/base/txgbe_e56.c
-+++ b/drivers/net/txgbe/base/txgbe_e56.c
-@@ -423,7 +423,7 @@ u32 txgbe_e56_cfg_40g(struct txgbe_hw *hw)
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index 7476759d4d..5fa7c6a243 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -202,9 +202,18 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
  
- 		addr  = E56PHY_RXS_RINGO_0_ADDR + (E56PHY_RXS_OFFSET * i);
- 		rdata = rd32_ephy(hw, addr);
--		set_fields_e56(&rdata, 9, 4, 0x366);
-+		set_fields_e56(&rdata, 21, 12, 0x366);
- 		wr32_ephy(hw, addr, rdata);
- 	}
+ 	rte_spinlock_lock(&hw->phy_lock);
+ 	ret_status = txgbe_set_link_to_amlite(hw, speed);
++	rte_spinlock_unlock(&hw->phy_lock);
++
++	/* The PHY did not come out of reset; leave link_valid alone and
++	 * let the retry in the alarm handler attempt the setup again.
++	 */
++	if (ret_status == TXGBE_ERR_PHY_INIT_NOT_DONE)
++		goto out;
++
+ 	if (ret_status == TXGBE_ERR_TIMEOUT)
+ 		hw->link_valid = false;
+-	rte_spinlock_unlock(&hw->phy_lock);
++	else
++		hw->link_valid = true;
  
-@@ -1251,7 +1251,7 @@ txgbe_e56_cfg_10g(struct txgbe_hw *hw)
- 
- 	addr = E56PHY_RXS_RINGO_0_ADDR;
- 	rdata = rd32_ephy(hw, addr);
--	set_fields_e56(&rdata, 9, 4, 0x366);
-+	set_fields_e56(&rdata, 21, 12, 0x366);
- 	wr32_ephy(hw, addr, rdata);
- 
- 	addr = E56PHY_PMD_CFG_3_ADDR;
+ 	for (i = 0; i < 4; i++) {
+ 		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
 -- 
 2.55.0.windows.2
 
