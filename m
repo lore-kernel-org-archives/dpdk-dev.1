@@ -2,84 +2,77 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17242606A31D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 18:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C7F606A31A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 19:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=S51AKywY
+	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=TiaQSrmX
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9FC2540151;
-	Mon, 26 Oct 2026 19:38:56 +0100 (CET)
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
- [209.85.215.173])
- by mails.dpdk.org (Postfix) with ESMTPS id 970AF40041
- for <dev@dpdk.org>; Mon, 26 Oct 2026 19:38:55 +0100 (CET)
-Received: by mail-pg1-f173.google.com with SMTP id
- 41be03b00d2f7-ccca948203aso1024983a12.3
- for <dev@dpdk.org>; Mon, 26 Oct 2026 11:38:55 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E739F40151;
+	Mon, 26 Oct 2026 20:08:34 +0100 (CET)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com
+ [209.85.160.173])
+ by mails.dpdk.org (Postfix) with ESMTPS id 2634F40041
+ for <dev@dpdk.org>; Mon, 26 Oct 2026 20:08:34 +0100 (CET)
+Received: by mail-qt1-f173.google.com with SMTP id
+ d75a77b69052e-53381e53b80so36465281cf.1
+ for <dev@dpdk.org>; Mon, 26 Oct 2026 12:08:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1793039934;
- x=1793644734; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=SrUL0djQ25tHPUZMC4LUGc7E9HYNiF2etZHNdwtguy4=;
- b=S51AKywYuYFYlJgRp0+Kp5bd75MlrcZ1Jh0NZ9xhxaaFeOiKcQ5mlD6yxboK5tZu0/
- 8vgk/J72D9Fi46dIAkSsjuG84s8PmWHYczdjo01Hpys8bELVWRrB5ZSnsJ91IfHsOWie
- sCCOq2afmp60zUoftVVzXioODrp2/bp98y8O6H6BhxeVOSJW4yJIyms+SZ5rkoto2OIT
- BK4Obf0p0/JYlWDpf65hEfr3/V6SdUznygnPe9J0JKhLhafavYlH+9LTHOEAWnWTugXp
- iif9tO9otQYoR/CbnNPPxeO7rqp1lk85yhomastGRNybAuOlckJbRYie9yeSrrVT8Jmq
- SbSQ==
+ d=iol.unh.edu; s=unh-iol; t=1793041713; x=1793646513; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=exdWz+DS2DFnzq1fXwKvN5FpCy9j+VgmmNUVMbkBAiA=;
+ b=TiaQSrmXxz4XrVAmb0o4l9jujrBsQ5KuHRJ00bAMzLurjQnt5qZGlAfSWeqBqvooPP
+ a56mboPvwr3W4PawPg2sR3e8GloAA6JgXtYu+8MNTbehz3qBv7YlgRufE29IQGY72vC0
+ C38DlguN6uR2CkFljbqATjjK7Ry9Pt4oDbu/g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793039934; x=1793644734;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=SrUL0djQ25tHPUZMC4LUGc7E9HYNiF2etZHNdwtguy4=;
- b=NdJlm55yIDFX5F6Bd5oBKYL7RWoFBhKJ5BTJm3o9uELLmYcBUlUzYmQstLEJn2Kjx1
- StAcD57NItr+3id+nQ8Ohtus8tM+HjBW1GLr2DpS2wnv5zkxejD4Q4vldtlPgebVq9dg
- ZaD4ahWd328MR0zIjdLcltq6KLzIxE4NQFNQblieXRiK7PFM/oaWv2Vu16hgX3cX0mK8
- 3b9+YFIsUAYLV1hziry/lNkI6AJfmUXJT/2fRKeuUMobyGgi9aygEp5Cb3/GLOgNdAqG
- ed/yEyek5ViPRgY9n3H82ygTXaGVtAIDMD4puorZJiGlvotYZzDJvMlvd0N1RZr+Y7r5
- UKEA==
-X-Forwarded-Encrypted: i=1;
- AKwUvByumNzSdQOsIKTl/nCiSAr9qxf3qkC3qPkenCdRA3cvBb0jXVQAq0QhFEKRY2Ncvi2LQcY=@dpdk.org
-X-Gm-Message-State: AFq9FYIlWbDlVTprQzGlcrzzlGdgVFmBeD0n1Ys3RhuRpzspdd8lJjx4
- fKK8vqx+4iPrBnbg6HSNydFT0GiOJG2xDdAp+HdOeJHQb9FH+zESRSsFmwiBpv4eIHw=
-X-Gm-Gg: AYBFou3Kr6jLXjSdXYFOGp603/C0BunPCkYMdGKdMFm1Hesm1BEYzpMIl2YdEyzKxtO
- ABVFt88UDo/1zupn0VjinggRvaJggak2ukBRWQj8MvTo7bVqptweWeITHxPt2Nxiwz+ojuObolC
- 0KsDkGGEiBfKARGdhcHoe4aftZ/eHildRe4gAVmywTM1TYpxjULgULNumYS4T39+dV9w3COPsNw
- 3kMZlqgVv6QEMgiiDKQ9CRSYSJbf4GfSktXyG3ECTwc8UOGjlxo0k9/bYzRXj4sDnoYEMXZF30z
- I4KU18yEtJC18fmcvVpt44/IUEkN/QStjqdXtpTFQ2U8Wks+Yn5Mvqwte+KJzjLUkAKO2skDlan
- 5/FQey/SsMnbUARp5ohJAupf/5pOobrlEIlfTx866O0ejP6sEZzzD7Sih4SbsaRPSVBNrgyyfFY
- WiePiRkng4aC+yXzfMB738DXmNjpON216JN1tY0F4Ax5TqHJ1ZG6mA5dOWQE4vAnt+jBSzDoVky
- soCS96u6hA7DuZxBCExhYj8Z27hQLdjjtHfrMvttTeySHmkyM3NStHmpIvSDqnorAoixQfqvyZL
- JPsI5vyM+DXifoanCeN2Og==
-X-Received: by 2002:a17:90a:e705:b0:3ab:c80:9365 with SMTP id
- 98e67ed59e1d1-3adeae772f3mr6055788a91.42.1793039933795; 
- Mon, 26 Oct 2026 11:38:53 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ d=1e100.net; s=20260707; t=1793041713; x=1793646513;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=exdWz+DS2DFnzq1fXwKvN5FpCy9j+VgmmNUVMbkBAiA=;
+ b=TRHIkpcSEemu9oTdzHzu9SbYcHzvYmzpn2U8cSXGcDfZxSegSuv9igGToc3xmRbuHm
+ PhYRM66o+pPbvu8CxHXWDSpBOOqhPKQAaykw/Ch+g8achAo46TFkzwLH1ASTqappV0Tx
+ ezgVFok3JPeirKnLCpaqR2JuzRwuGKAnF4h68SkQr2e51xBlf+8yuObwVc0izD2x/4t1
+ L4mtoNI29q7hJYtXtHJ+CcbocSrlOlNb5gPThn8+1ymImpvHorSqCpm3REr/fDs6XXxz
+ aI8mavCV8KD7k587ym1y82/U1RpaWHI7mq34duZy64aaKR1KwoSSbxHZ1AOKg3O7XYGp
+ SlMw==
+X-Gm-Message-State: AFq9FYK6pvTffwlsQdZXJyJRXBZ4mJLzqSkkg3fDmxKRCEGsxGsWw1t/
+ EV5Bm/5dBoq4egnY/plaDCIn0NA07BZorVq9aOnJ7kPoh6erZEKLj+ZRwqozM6BOpHqmlKPblHt
+ J9KMGQz75702YKnbF2irLsAwITujchhVkMq0dKkQeMtS1LYGMeSANTjBppxcHRr9Bi0RzA6e9mR
+ 3agCpsM8KU1cGOII8EnmEghpwxFeM=
+X-Gm-Gg: AYBFou3f9f0+6kXkbDMGUoVKuuc5KPCw4BS71rU8p5HkXoZqJAZfsHBOTmGhsV/8Vk/
+ T3iZ0E9JbiqMlVqpz2n93gmZWjDle3tlJszX9k56TnPvP3aDDGEzAVjfxyOPmTcNqIhcmHABazD
+ MeixNygPET8pxW5OeJMOV55mCHrOqK5cuH8eDIa1mYEA1jTkymNLsSrp5/XhC8P6jc+NGpeTMw4
+ VmQiFGcRT4w1uyIUeb0tpuy9goTCJn68EaJetMBIw545BhLeS6Y1OmgEtZSARgvOubqWkL0r+Q7
+ DF1WusM10uMxEYBj0g9QPcZRH2ykQArjau9Sfw44Q6YzLpeuaeqEmye5w1Z0S6TUudwYRl+Oqsl
+ UStksg8eW9QpWbkm+gJsBvxbUKkfA/kpvuWulZuYcwGDSrSaYDBFs07XYUbdHlB6HaMTDuRgbjM
+ ZsTWWgbC9VeHnEQ7c48XTK2XuatCuY91Co5wm9e2ZIujBzJOqytrzMLYZQHJgZlwgfdaFVvaMXP
+ evDgXeLLK+bBjdae7perefyFV1+fCa6kJlsWfMfKbYKG0jHJcIbjH5KGD+kwYUiPFkcC7FtKqTE
+ 1b+UnKKVPTJOFf8OpCkYi7s=
+X-Received: by 2002:a05:622a:451:b0:536:725f:588 with SMTP id
+ d75a77b69052e-5383b780a50mr117623081cf.76.1793041712584; 
+ Mon, 26 Oct 2026 12:08:32 -0700 (PDT)
+Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ae40427bf1sm544643a91.6.2026.10.26.11.38.52
+ 6a1803df08f44-91c47bda586sm79951016d6.8.2026.10.26.12.08.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 26 Oct 2026 11:38:53 -0700 (PDT)
-Date: Mon, 26 Oct 2026 11:38:50 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: Hemant Agrawal <hemant.agrawal@nxp.com>, "thomas@monjalon.net"
- <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [PATCH v27 00/25] NXP DPAA driver enhancements and fixes
-Message-ID: <20261026113850.47e25a8d@phoenix.local>
-In-Reply-To: <CAJFAV8xx=ZM3M-DKWRtn-08zyTFhp5FC-2UptcLpZzrK7+7L1Q@mail.gmail.com>
-References: <20261015141144.3140281-1-hemant.agrawal@nxp.com>
- <20261016111958.163060-1-hemant.agrawal@nxp.com>
- <20261016093848.7dbe6c73@phoenix.local>
- <GV1PR04MB10750670E599D034FA89E627A899B2@GV1PR04MB10750.eurprd04.prod.outlook.com>
- <CAJFAV8xx=ZM3M-DKWRtn-08zyTFhp5FC-2UptcLpZzrK7+7L1Q@mail.gmail.com>
+ Mon, 26 Oct 2026 12:08:32 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: dev@dpdk.org,
+	luca.vizzarro@arm.com,
+	patrickrobb1997@gmail.com
+Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v2] dts: update single core performance test configuration
+Date: Mon, 26 Oct 2026 15:08:18 -0400
+Message-ID: <20261026190818.45530-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20260805153658.345207-1-abailey@iol.unh.edu>
+References: <20260805153658.345207-1-abailey@iol.unh.edu>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,118 +82,226 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Mon, 26 Oct 2026 14:27:53 -0400
-David Marchand <david.marchand@redhat.com> wrote:
+The single core forward performance test suite can run a variety of
+combinations of buffer sizes and number of descriptors. It would be
+beneficial if any possible combination of these parameters could be
+tested against a specific delta tolerance, rather than a globally
+defined tolerance for all testing. Along with this, adjusting
+traffic duration and test repetitions helps users define a more accurate
+test run if they wish to get a more refined average. Furthermore, the
+cores allotted to TREX can vary among systems and should be defined by
+the user.
 
-> > > Series applies cleanly to 26.11-rc1 and every commit builds with -
-> > > Dwerror=3Dtrue. The fixes are now first. 08 cherry-picks cleanly onto
-> > > v24.11 and v25.11, and 06 applies there once 01-05 are in.
-> > >
-> > > v26 Warnings on 12 (now 14) and 20 are addressed. The 24 Warning is o=
-nly
-> > > partly fixed.
-> > > =20
-> >
-> > I see only one warning in this patchset 24/25 -   is it possible that y=
-ou drop this patch and apply rest of the series? =20
->=20
-> IIUC, next-net does not build in GHA since this series was merged:
-> https://github.com/DPDK/dpdk/actions/runs/38964568382/job/117187710778
->=20
->=20
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+v2:
+ * Updated commit description.
+ * Made TREX cores optional with a default of 10.
+ * Updated the config examples with new descriptions.
 
-CI shows:
+ dts/configurations/test_run.example.yaml      |  3 ++
+ dts/configurations/tests_config.example.yaml  | 14 +++++
+ dts/framework/config/test_run.py              |  1 +
+ .../testbed_model/traffic_generator/trex.py   |  3 +-
+ .../TestSuite_single_core_forward_perf.py     | 52 ++++++++++++++-----
+ 5 files changed, 60 insertions(+), 13 deletions(-)
 
- FAILED: [code=3D1] drivers/libtmp_rte_bus_dpaa.a.p/bus_dpaa_base_qbman_bma=
-n.c.o=20
-ccache powerpc64le-linux-gnu-gcc -Idrivers/libtmp_rte_bus_dpaa.a.p -Idriver=
-s -I../drivers -Idrivers/bus/dpaa -I../drivers/bus/dpaa -I../drivers/bus/dp=
-aa/base -I../drivers/bus/dpaa/include -I../drivers/bus/dpaa/base/qbman -Ili=
-b/eal/common -I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/in=
-clude -I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/inclu=
-de -Ilib/eal/ppc/include -I../lib/eal/ppc/include -I../kernel/linux -Ilib/e=
-al -I../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/m=
-etrics -I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/argparse -=
-I../lib/argparse -Idrivers/common/dpaax -I../drivers/common/dpaax -I../driv=
-ers/common/dpaax/caamflib -Ilib/eventdev -I../lib/eventdev -Ilib/ring -I../=
-lib/ring -Ilib/ethdev -I../lib/ethdev -Ilib/net -I../lib/net -Ilib/mbuf -I.=
-./lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/meter -I../lib/meter -Ilib/=
-hash -I../lib/hash -Ilib/rcu -I../lib/rcu -Ilib/timer -I../lib/timer -Ilib/=
-cryptodev -I../lib/cryptodev -Ilib/dmadev -I../lib/dmadev -fdiagnostics-col=
-or=3Dalways -D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextra -Werror -s=
-td=3Dc11 -O2 -g -include rte_config.h -Wvla -Wcast-qual -Wdeprecated -Wform=
-at -Wformat-nonliteral -Wformat-security -Wmissing-declarations -Wmissing-p=
-rototypes -Wnested-externs -Wold-style-definition -Wpointer-arith -Wshadow =
--Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings -Wno-packed-not-=
-aligned -Wno-missing-field-initializers -Wno-psabi -D_GNU_SOURCE -fPIC -mcp=
-u=3Dpower8 -mtune=3Dpower8 -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -W=
-no-format-truncation -Wno-address-of-packed-member -Wno-cast-qual -Wno-poin=
-ter-arith -DRTE_COMPONENT_CLASS=3Dpmd_bus -DRTE_COMPONENT_NAME=3Ddpaa -DRTE=
-_LOG_DEFAULT_LOGTYPE=3Dbus.dpaa -MD -MQ drivers/libtmp_rte_bus_dpaa.a.p/bus=
-_dpaa_base_qbman_bman.c.o -MF drivers/libtmp_rte_bus_dpaa.a.p/bus_dpaa_base=
-_qbman_bman.c.o.d -o drivers/libtmp_rte_bus_dpaa.a.p/bus_dpaa_base_qbman_bm=
-an.c.o -c ../drivers/bus/dpaa/base/qbman/bman.c
-../drivers/bus/dpaa/base/qbman/bman.c: In function =E2=80=98bman_release_fa=
-st=E2=80=99:
-../drivers/bus/dpaa/base/qbman/bman.c:289:51: error: =E2=80=98bm_bufs[0].<U=
-6b48>.be_desc.hi=E2=80=99 may be used uninitialized [-Werror=3Dmaybe-uninit=
-ialized]
-  289 |         r->bufs[0].be_desc.hi =3D bm_bufs[0].be_desc.hi;
-      |                                 ~~~~~~~~~~~~~~~~~~^~~
-../drivers/bus/dpaa/base/qbman/bman.c:265:26: note: =E2=80=98bm_bufs=E2=80=
-=99 declared here
-  265 |         struct bm_buffer bm_bufs[FSL_BM_BURST_MAX];
-      |                          ^~~~~~~
-../drivers/bus/dpaa/base/qbman/bman.c:290:51: error: =E2=80=98bm_bufs[0].<U=
-6b48>.be_desc.lo=E2=80=99 may be used uninitialized [-Werror=3Dmaybe-uninit=
-ialized]
-  290 |         r->bufs[0].be_desc.lo =3D bm_bufs[0].be_desc.lo;
-      |                                 ~~~~~~~~~~~~~~~~~~^~~
-../drivers/bus/dpaa/base/qbman/bman.c:265:26: note: =E2=80=98bm_bufs=E2=80=
-=99 declared here
-  265 |         struct bm_buffer bm_bufs[FSL_BM_BURST_MAX];
-      |                          ^~~~~~~
+diff --git a/dts/configurations/test_run.example.yaml b/dts/configurations/test_run.example.yaml
+index 182ee377aa..cf169e88ea 100644
+--- a/dts/configurations/test_run.example.yaml
++++ b/dts/configurations/test_run.example.yaml
+@@ -33,6 +33,8 @@
+ #   `traffic_generator_node`:
+ #   	This field may be None When `port_topology` is specified as a no link topology, Otherwise it
+ #   	is required.
++#   `cores`:
++#     The number of core to provide TREX traffic generator. If not provided, 10 will be used by default.
+
+ # Define the test run environment
+ dpdk:
+@@ -65,6 +67,7 @@ func_traffic_generator:
+ #   type: TREX
+ #   remote_path: "/opt/trex/v3.03" # The remote path of the traffic generator application.
+ #   config: "/opt/trex_config/trex_config.yaml" # Additional configuration files. (Leave blank if not required)
++#   cores: 10 # The number of cores to run TRex with.
+ perf: false # disable performance testing
+ func: true # enable functional testing
+ crypto: false # disable cryptographic testing
+diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurations/tests_config.example.yaml
+index ce67385b0b..a59fb9ca33 100644
+--- a/dts/configurations/tests_config.example.yaml
++++ b/dts/configurations/tests_config.example.yaml
+@@ -2,6 +2,17 @@
+
+ # Optional Fields:
+ #   All fields are optional, uncomment a test suite to run it with a specific configuration.
++#   `single_core_forward_perf`:
++#     `delta_tolerance`:
++#       Can be provided under `single_core_forward_perf` to apply to each configuration.
++#       Additionally, it can be provided within one list item to apply a unique delta tolerance
++#       to only that `frame_size` + `num_descriptors` combination.
++#     `test_duration`:
++#       Can be provided to define a duration in seconds to send traffic to the TG per config. If
++#       this field is not provided, 5 is used by default.
++#     `test_repetitions`:
++#       Can be provided to define how many times to repeat the performance test to calculate a more
++#       precise average. If this field is not provided, 5 is used by default.
+
+ # Define the custom test suite configurations
+ hello_world:
+@@ -11,12 +22,15 @@ hello_world:
+ #     - frame_size: 64
+ #       num_descriptors: 512
+ #       expected_mpps: 1.0 # Set millions of packets per second according to your devices expected throughput for this given frame size / descriptor count
++#       delta_tolerance: 0.06 # See `Optional Fields`
+ #     - frame_size: 64
+ #       num_descriptors: 1024
+ #       expected_mpps: 1.0
+ #     - frame_size: 512
+ #       num_descriptors: 1024
+ #       expected_mpps: 1.0
++#   test_duration: 5 # See `Optional Fields`
++#   test_repetitions: 5 # See `Optional Fields`
+ #   delta_tolerance: 0.05
+ # pmd_rss:
+ #   NUM_QUEUES: 4
+diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
+index 97c9a7417a..b8eb5c888b 100644
+--- a/dts/framework/config/test_run.py
++++ b/dts/framework/config/test_run.py
+@@ -422,6 +422,7 @@ class TrexTrafficGeneratorConfig(TrafficGeneratorConfig):
+     type: Literal[TrafficGeneratorType.TREX]
+     remote_path: PurePath
+     config: PurePath
++    cores: int = Field(default=10)
 
 
-AI analysis says:
+ #: A union type discriminating traffic generators by the `type` field.
+diff --git a/dts/framework/testbed_model/traffic_generator/trex.py b/dts/framework/testbed_model/traffic_generator/trex.py
+index 7ce1d40d79..b698b91c30 100644
+--- a/dts/framework/testbed_model/traffic_generator/trex.py
++++ b/dts/framework/testbed_model/traffic_generator/trex.py
+@@ -81,7 +81,7 @@ class TrexTrafficGenerator(PerformanceTrafficGenerator):
 
-The loop at line 282 starts at i =3D 0 and is bounded only by num. Without =
-RTE_LIBRTE_DPAA_HWDEBUG nothing guarantees num >=3D 1, so GCC sees a num =
-=3D=3D 0 path where bm_bufs[0] is never written but lines 289-290 still rea=
-d it. The warning is real, not a codegen artifact; ppc/riscv inlining just =
-exposes it. bman_release() and the main version of this function both write=
- entry 0 unconditionally, so restore that:
-diff
+     _streaming_mode: TrexStatelessTXModes = TrexStatelessTXModes.STLTXCont
+
+-    _tg_cores: int = 10
++    _tg_cores: int
+
+     _trex_app: BlockingApp
+
+@@ -104,6 +104,7 @@ def __init__(self, tg_node: Node, config: TrexTrafficGeneratorConfig) -> None:
+         super().__init__(tg_node=tg_node, config=config)
+         self._tg_node_config = tg_node.config
+         self._tg_config = config
++        self._tg_cores = config.cores
+
+         self._os_session = create_session(self._tg_node.config, "TRex", self._logger)
+
+diff --git a/dts/tests/TestSuite_single_core_forward_perf.py b/dts/tests/TestSuite_single_core_forward_perf.py
+index 4b22c5d091..ee54eeef59 100644
+--- a/dts/tests/TestSuite_single_core_forward_perf.py
++++ b/dts/tests/TestSuite_single_core_forward_perf.py
+@@ -32,14 +32,37 @@ class Config(BaseConfig):
+     """Performance test metrics."""
+
+     test_parameters: list[dict[str, int | float]] = [
+-        {"frame_size": 64, "num_descriptors": 1024, "expected_mpps": 1.00},
+-        {"frame_size": 128, "num_descriptors": 1024, "expected_mpps": 1.00},
+-        {"frame_size": 256, "num_descriptors": 1024, "expected_mpps": 1.00},
+-        {"frame_size": 512, "num_descriptors": 1024, "expected_mpps": 1.00},
+-        {"frame_size": 1024, "num_descriptors": 1024, "expected_mpps": 1.00},
+-        {"frame_size": 1518, "num_descriptors": 1024, "expected_mpps": 1.00},
++        {"frame_size": 64, "num_descriptors": 1024, "expected_mpps": 1.00, "delta_tolerance": 0.05},
++        {
++            "frame_size": 128,
++            "num_descriptors": 1024,
++            "expected_mpps": 1.00,
++        },
++        {
++            "frame_size": 256,
++            "num_descriptors": 1024,
++            "expected_mpps": 1.00,
++        },
++        {
++            "frame_size": 512,
++            "num_descriptors": 1024,
++            "expected_mpps": 1.00,
++        },
++        {
++            "frame_size": 1024,
++            "num_descriptors": 1024,
++            "expected_mpps": 1.00,
++            "delta_tolerance": 0.05,
++        },
++        {
++            "frame_size": 1518,
++            "num_descriptors": 1024,
++            "expected_mpps": 1.00,
++        },
+     ]
+-    delta_tolerance: float = 0.05
++    traffic_duration: int = 5
++    test_repetitions: int = 5
++    delta_tolerance: float | None = 0.05
 
 
-bus/dpaa: fix maybe-uninitialized in bman_release_fast
+ @requires_link_topology(LinkTopology.TWO_LINKS)
+@@ -51,6 +74,8 @@ class TestSingleCoreForwardPerf(TestSuite):
+     def set_up_suite(self):
+         """Set up the test suite."""
+         self.test_parameters = self.config.test_parameters
++        self.traffic_duration = self.config.traffic_duration
++        self.test_repetitions = self.config.test_repetitions
+         self.delta_tolerance = self.config.delta_tolerance
 
-The conversion loop is bounded only by num, which is not checked
-unless RTE_LIBRTE_DPAA_HWDEBUG is set. GCC on ppc64le and riscv
-therefore warns that bm_bufs[0] may be read uninitialized when
-copying the first entry into the RCR.
+     def _transmit(self, testpmd: TestPmd, frame_size: int, repetitions: int = 1) -> float:
+@@ -76,8 +101,7 @@ def _transmit(self, testpmd: TestPmd, frame_size: int, repetitions: int = 1) ->
+         rx_avg = 0.0
 
-Convert entry 0 unconditionally, as bman_release() does.
+         for _ in range(repetitions):
+-            # Transmit for 5 seconds.
+-            stats = assess_performance_by_packet(packet=packet, duration=5)
++            stats = assess_performance_by_packet(packet=packet, duration=self.traffic_duration)
+             rx_avg += stats.rx_pps
+         return rx_avg / (repetitions * 1_000_000)
 
-Fixes: <sha> ("<subject of the next-net commit>")
+@@ -134,21 +158,25 @@ def single_core_forward_perf(self) -> None:
+                 **driver_specific_testpmd_args,
+             ) as testpmd:
+                 params["measured_mpps"] = round(
+-                    self._transmit(testpmd, frame_size, repetitions=5), 3
++                    self._transmit(testpmd, frame_size, repetitions=self.test_repetitions), 3
+                 )
+                 params["performance_delta"] = round(
+                     (float(params["measured_mpps"]) - float(params["expected_mpps"]))
+                     / float(params["expected_mpps"]),
+                     3,
+                 )
+-                params["pass"] = float(params["performance_delta"]) >= -self.delta_tolerance
++                params["pass"] = float(params["performance_delta"]) >= -params.get(
++                    "delta_tolerance", self.delta_tolerance
++                )
 
---- a/drivers/bus/dpaa/base/qbman/bman.c
-+++ b/drivers/bus/dpaa/base/qbman/bman.c
-@@ -279,7 +279,8 @@ bman_release_fast(struct bman_pool *pool, const uint64_=
-t *bufs,
- 	if (unlikely(!r))
- 		return -EBUSY;
-=20
--	for (i =3D 0; i < num; i++)
-+	bm_buffer_set64_to_be(&bm_bufs[0], bufs[0]);
-+	for (i =3D 1; i < num; i++)
- 		bm_buffer_set64_to_be(&bm_bufs[i], bufs[i]);
-=20
- 	/* bufs[0] overlaps the verb, which bm_rcr_pvb_commit() writes last
+         self._produce_stats_table(self.test_parameters)
+
+         for params in self.test_parameters:
+             verify(
+                 params["pass"] is True,
+-                f"""Packets forwarded is less than {(1 - self.delta_tolerance) * 100}%
++                f"""Packets forwarded is less than {
++                    (1 - params.get("delta_tolerance", self.delta_tolerance)) * 100
++                }%
+                 of the expected baseline.
+                 Measured MPPS = {params["measured_mpps"]}
+                 Expected MPPS = {params["expected_mpps"]}""",
+--
+2.56.0
+
