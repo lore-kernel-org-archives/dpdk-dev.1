@@ -2,56 +2,56 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD221606A31A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 12:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8CA606A31D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 12:29:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37B6040695;
-	Mon, 26 Oct 2026 13:27:36 +0100 (CET)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
- by mails.dpdk.org (Postfix) with ESMTPS id 8FAA040BA2;
- Mon, 26 Oct 2026 13:27:30 +0100 (CET)
-X-QQ-mid: esmtpgz15t1793017645te3971799
-X-QQ-Originating-IP: gcKPDIG1LD0/hXl+Q7deymkpHVeRwMULubE8BA60Xds=
-Received: from DSK-zaiyuwang.trustnetic.com ( [115.227.112.25])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 26 Oct 2026 20:27:23 +0800 (CST)
+	by mails.dpdk.org (Postfix) with ESMTP id 46ACD40658;
+	Mon, 26 Oct 2026 13:27:39 +0100 (CET)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+ by mails.dpdk.org (Postfix) with ESMTPS id 0C66140A8A
+ for <dev@dpdk.org>; Mon, 26 Oct 2026 13:27:36 +0100 (CET)
+X-QQ-mid: tivesync4t1793017652tb22959b5
+Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
+ [115.227.112.25])
 X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4166407300100462057
-EX-QQ-RecipientCnt: 4
-From: Zaiyu Wang <zaiyuwang@trustnetic.com>
-To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v11 17/17] net/txgbe: fix typo in the fiber support speed field
-Date: Mon, 26 Oct 2026 20:22:03 +0800
-Message-ID: <D0E1DBB6ACA7E6B0+20261026122638.9198-18-zaiyuwang@trustnetic.com>
-X-Mailer: git-send-email 2.55.0.windows.2
-In-Reply-To: <20261026122638.9198-1-zaiyuwang@trustnetic.com>
-References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
- <20261026122638.9198-1-zaiyuwang@trustnetic.com>
+From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
+X-BIZMAIL-ID: 14846046250546651095
+To: "'Stephen Hemminger'" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>
+References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>	<3C29C180B4E33816+20261023110728.3975-1-zaiyuwang@trustnetic.com>
+ <20261023090117.34672036@phoenix.local>
+In-Reply-To: <20261023090117.34672036@phoenix.local>
+Subject: RE: [PATCH v10 00/17] Wangxun fixes and new features
+Date: Mon, 26 Oct 2026 20:27:30 +0800
+Message-ID: <00b001dd6545$5ef75840$1ce608c0$@trustnetic.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ8QNehdnXO5ExpIOsSsHb9Qgxp5wHIlCMqAgOLsn61s6R7YA==
+Content-Language: zh-cn
 X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: ODape9HLJUgbh+Tlaq9A4yYgXpLVKW0Xf8jdP4OX6tjNetBVXs6KHQbf
- A01JHlKxle2MM+G1HRLTemVg0g9H0OqZqM6Gha3kcwetfSoWT2MGXxvzBPMYsEwWUUlp3Ot
- 1VsElQgx8/Rqr9Wt/65nxn4BfHvHogfMWfYuLiH/elUQ6/yQsm8ixZd85lhgKEmuz41wTD2
- 2u9hltyUhD7rqC56rVsxEOi8LryfKg9LzaLvIIKeB3qK+7kNruz/gG5pLRdh3oF8uJ8XtLk
- JQAblB7EP/mXBXrGjaX9XcKKyAaxIxXiNKX1BvO0E5GGYtKYXeYYHIZ+GwbahAtDT2LJim0
- yKRx/1l6cko6fLB8OV7Ye+W05hS3rkd2++kjvI0ifqVBaj1s7VZbGTVJTtwhDvRoDvUVLtv
- m0skD0BagYtxLWML6JFDRZ/vOpSTQ0QSFobzaEOXJ3mjXcSqDIYqv8+5UdgmD3SPilMEVFm
- /1ifYGddq9WGNWbG+8ifZRuMGyunEbn+pXicLBoDJVieNaTtPcczxAblwTvvIft5bVrc1VC
- hdxPZIh8Yt8c2Neim53XbTJinAJOMIzeRvusiVwLHHyNjpNxjkhCmNcA2v+rzEM7YDghTNa
- 26IaQKHBgrpxLU//mQ5JI8HpFR+I/edZJDYwTmgMYYx5Xp0TsjaDOUfynyGPsQuWq3v+NuN
- zqAkd+s2d6UWYi1obU+/+ir8LLefk37lHG/oHdFKKllC1/KJhI4uW/Ruqki91fRjII7mv9M
- EWK0RDncVoMOuhKRXzGGqrtV1p6pe5hgJ9BGU9oO3PpX3qJfLj6bad6WLiDbldkJ0jAgDG0
- zQ+v+17OVWk6ZiU5DixJbKxr9/si3JuW+tlO1Rln2O7tPf81+0Y/0VjbL0PQqlOc2mGTifu
- GovyMnSF41ODMu1vLMn+rijqQQ9cl79M0VLWBhTT6gK1pUexXN7ICJgF2g2mi5qRm0oLgpy
- UajG+61rQA1VRi2ivkFFu14MF1ljQzlYZKjanL/muj3NvaOo9lUr2GJUc5tOkrx4gY/7JH0
- 8/B1xsUSCaYlvrZP0PcoyUNcA1GwJevh++zdnJelst0WnuHo7kpSUX0Kj3lvnhC2y7j57n/
- ezNKCiGPG43YDsMYMKwY63/2man9SPX125xtbdKOIo0
+Feedback-ID: tivesync:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: MmzhuZHLEAbbY25Z2xWmGok9nNJF9m7Am6ElzBvnK2pP3zsYI61J2WqY
+ tgo6zbcmyCrb7NVmZ0zrDrQgNNI4/PvTHlM4rzeBpcqX1df9s88fvgmUJqkbAQzpm+srvkp
+ KTB/qzDVPSX83aM3th6eJzNWPEkwujw0rsooBF+Jiiv+WHlzXNqT7PUUKTbKJZNhLy1O5kb
+ To+/5JtD3lx0cOhh428vUMAb8ScgqjT3Eb7M1p+zn+LKRGm+AZBByxY9UBLlUcDzQtuifg5
+ p2rr8//v9Y8twv0m7YHjKhAn/HEwmz1FLpVq8LLdF885+zLOyM68FUyF5FjOkz3CMoRLOU5
+ x6OfEPajroae0zUysHokW9GMHuMfpZ7rshAI26hwbtBIus/oS3YxgrIgQVm3yqPb52TFFm3
+ gemMWvanF5+Nh2JcUGP1Xus6VlJFAtsfhFdudh6OmvsqX3nEZ5KmF+cP4y9rL1dKtfl7RO9
+ lJahyEWzseZVWpGXi52wMmfhyCyir+n9qlJ/HmuB0udIfitaN7rHikvdQ1BMrA5R5ewZldF
+ x9V1u9j6xo9OzJDkVqghyNg4OFP2EWiGjotOY9fLewNhdedFg/+ZvYiqFlEAInfijXSJZ+5
+ SH/xn2eL1nteG1w/6NaOpLCmaplo5jGAA5f2eangaUGwYN9Zh/8Iamm0/y3kjyzAmMehi0R
+ 394y3YxwFq7eugAvZ0sQUEoTj77mfukYvIasvaR9GA81aE+X/4AxpvJvi+5PKCki1qSzlKt
+ LfJY3xREJBRsOBkbezk0JMUBQT7Y/cDP4HMkTCoRI8RuwUQezLdI4BFdOyVcovbFM5043G9
+ bHOrioyWfBAw3+6fs3WBori7xy26PMXK+cmDbFadLitYXoCpaKTZtAIKr3LpRByjfWjw+ks
+ Z4yGivYY6CKMCjOAOO0XISaRq/WHQMGM/3QQq2qNdzIR/JeXs6INqW36V2WBo96MImPLw/h
+ LYzI2VI65gZZL8HBCzM6RyKwt7eNmSfOgVgH9NFoYfz6LLiMc2AHtVVXl1n78hmLUZZOmMj
+ 5aQul/SJNJuEOeNERD2oM21wl1po0F97qVTVjgQtahWLh7SgxEMvMzYry0nU0NPGX1Wyr3U
+ P8jvYq3ZaqxBHYWqS5/onQGlLJ60cEcm1GOrAmj+BTy5ffIbQ4aMXKnkvFdAh4Jm73CZkuz
+ zk/W
 X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
@@ -63,119 +63,41 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=no autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-struct txgbe_phy_info spells this field fiber_suppport_speed, with
-three p. Rename it to fiber_support_speed.
+> Most of it is fine, but you still are keeping a driver specific behavior around PHY control which was identified as not acceptable
+in an earlier review.
+> 
+> I object to cases where driver writers treat their PMD as a unique and special case because that would end up tying the user
+application to a
+> specific PMD and it makes it harder for users to manage and write code.
+> 
+> If there is a missing feature in the ethdev management layer, then control operations and offloads should be added there and
+drivers should all
+> work against that.
+> 
+> The current AI review reflects that.
+> 
+Hi Stephen,
 
-The name came from the out-of-tree base driver, which spells it the
-same way.
+Thanks for your review. I accept both points, and v11 has been posted with
+the corresponding fixes.
 
-Fixes: 234ce0d1fa9d ("net/txgbe: fix link stability for Amber-Lite backplane mode")
-Cc: stable@dpdk.org
+Now the laser_off devarg is gone, along with its documentation and release
+note entry. Tx is now disabled unconditionally when an AML40 port goes
+down, and link setup runs again on link-up to restore what link-down disabled. 
 
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
----
- drivers/net/txgbe/base/txgbe_aml.c   | 4 ++--
- drivers/net/txgbe/base/txgbe_aml40.c | 4 ++--
- drivers/net/txgbe/base/txgbe_phy.c   | 8 ++++----
- drivers/net/txgbe/base/txgbe_type.h  | 2 +-
- 4 files changed, 9 insertions(+), 9 deletions(-)
+You are right that set_link_up() is a control operation and the application asked
+for the link to come back up so renegotiation is the cost of that. There is nothing
+missing in ethdev here either. set_link_down() already defines what should
+happen; the driver simply was not doing it. 
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
-index ae5c7d7f0d..89f281e116 100644
---- a/drivers/net/txgbe/base/txgbe_aml.c
-+++ b/drivers/net/txgbe/base/txgbe_aml.c
-@@ -104,13 +104,13 @@ s32 txgbe_get_link_capabilities_aml(struct txgbe_hw *hw,
- 			 TXGBE_LINK_SPEED_25GB_FULL;
- 		*autoneg = true;
- 	} else if (txgbe_is_dac_cable(hw)) {
--		if (hw->phy.fiber_suppport_speed ==
-+		if (hw->phy.fiber_support_speed ==
- 		    TXGBE_LINK_SPEED_10GB_FULL) {
- 			*autoneg = false;
- 		} else {
- 			*autoneg = true;
- 		}
--		*speed = hw->phy.fiber_suppport_speed;
-+		*speed = hw->phy.fiber_support_speed;
- 	} else if (hw->phy.sfp_type == txgbe_sfp_type_25g_sr_core0 ||
- 		hw->phy.sfp_type == txgbe_sfp_type_25g_sr_core1 ||
- 		hw->phy.sfp_type == txgbe_sfp_type_25g_lr_core0 ||
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index a338880345..10a86e5095 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -123,13 +123,13 @@ s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
- 
- 	/* Fiber or DAC cable */
- 	if (txgbe_is_dac_cable(hw)) {
--		if (hw->phy.fiber_suppport_speed ==
-+		if (hw->phy.fiber_support_speed ==
- 		    TXGBE_LINK_SPEED_10GB_FULL) {
- 			*autoneg = false;
- 		} else {
- 			*autoneg = hw->devarg.auto_neg;
- 		}
--		*speed = hw->phy.fiber_suppport_speed;
-+		*speed = hw->phy.fiber_support_speed;
- 	} else if (txgbe_is_40g_fiber_qsfp(hw)) {
- 		*speed = TXGBE_LINK_SPEED_40GB_FULL;
- 		*autoneg = false;
-diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
-index 896fe7eecf..db4edbf411 100644
---- a/drivers/net/txgbe/base/txgbe_phy.c
-+++ b/drivers/net/txgbe/base/txgbe_phy.c
-@@ -913,11 +913,11 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
- 		if (comp_codes_25g == TXGBE_SFF_25GBASECR_91FEC ||
- 		    comp_codes_25g == TXGBE_SFF_25GBASECR_74FEC ||
- 		    comp_codes_25g == TXGBE_SFF_25GBASECR_NOFEC) {
--			hw->phy.fiber_suppport_speed =
-+			hw->phy.fiber_support_speed =
- 				TXGBE_LINK_SPEED_25GB_FULL |
- 				TXGBE_LINK_SPEED_10GB_FULL;
- 		} else {
--			hw->phy.fiber_suppport_speed =
-+			hw->phy.fiber_support_speed =
- 				TXGBE_LINK_SPEED_10GB_FULL;
- 		}
- 	} else if (comp_codes_25g == TXGBE_SFF_25GAUI_C2M_AOC_BER_5 ||
-@@ -938,7 +938,7 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
- 			hw->phy.sfp_type = (hw->bus.lan_id == 0
- 				? txgbe_sfp_type_da_act_lmt_core0
- 				: txgbe_sfp_type_da_act_lmt_core1);
--			hw->phy.fiber_suppport_speed =
-+			hw->phy.fiber_support_speed =
- 				TXGBE_LINK_SPEED_10GB_FULL;
- 		} else {
- 			hw->phy.sfp_type = txgbe_sfp_type_unknown;
-@@ -1142,7 +1142,7 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
- 				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core0;
- 			else
- 				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core1;
--			hw->phy.fiber_suppport_speed =
-+			hw->phy.fiber_support_speed =
- 						TXGBE_LINK_SPEED_40GB_FULL |
- 						TXGBE_LINK_SPEED_10GB_FULL;
- 		}
-diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index b030275141..492fb98a64 100644
---- a/drivers/net/txgbe/base/txgbe_type.h
-+++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -724,7 +724,7 @@ struct txgbe_phy_info {
- 	u32 addr;
- 	u32 id;
- 	enum txgbe_sfp_type sfp_type;
--	u32 fiber_suppport_speed;
-+	u32 fiber_support_speed;
- 	bool sfp_setup_needed;
- 	u32 revision;
- 	u32 media_type;
--- 
-2.55.0.windows.2
+Thanks again for the review.
+Zaiyu Wang
+
 
