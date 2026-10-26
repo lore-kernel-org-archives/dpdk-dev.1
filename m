@@ -2,65 +2,79 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB36606A323
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 20:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F4A606A31A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 21:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20251104 header.b=LPgA2xPC
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=Vdo03Taq
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1901140687;
-	Mon, 26 Oct 2026 21:23:40 +0100 (CET)
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71])
- by mails.dpdk.org (Postfix) with ESMTPS id EA81440431
- for <dev@dpdk.org>; Mon, 26 Oct 2026 21:23:35 +0100 (CET)
-Received: by mail-pj1-f71.google.com with SMTP id
- 98e67ed59e1d1-3adcb81f487so5446328a91.3
- for <dev@dpdk.org>; Mon, 26 Oct 2026 13:23:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7BDB8402A3;
+	Mon, 26 Oct 2026 22:17:33 +0100 (CET)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTPS id 5482440151
+ for <dev@dpdk.org>; Mon, 26 Oct 2026 22:17:30 +0100 (CET)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-2e987b4a710so1422685ad.1
+ for <dev@dpdk.org>; Mon, 26 Oct 2026 14:17:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1793046214; x=1793651014; darn=dpdk.org;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=q8HYsWvFvtGOt5wNGoEfTPaDTsAmt9IXR+U1av+4FuE=;
- b=LPgA2xPCxWLYfuSagftEwbek6a8LS6FhqiIBHlPYgZ2MdG7UBRb9VXOTIvv4L3VsOB
- Rd3fBgkUMkNW/+deNA4ZWCmrlK+vga4sHzoA0mgees5gpNJ6mFuhyZCz8gGXpzhxdf51
- ICPpGX2X0AJ3GlDQ7Q/E75xrmI3KZgCFtOkPg+43bJqIIpKNq1XCabc3upolMCeQ60le
- 6BnswHn8FifPUoZE2HZ0zJGH+ERvBrLwAMi21IRXmfC14P58/5ZY5M+je6fiw0CbBAWm
- 07riUAd+AR7iR+nxlmT1ukWLfA5fT1O+e1FWp4cKuEuBS27Fk7xuH3ihRJgH886PSBFE
- gcOA==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1793049449;
+ x=1793654249; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=mmOzLbpjP5qdWndvbPdcZRS/1pi2xYoEDuEoCQQIHhU=;
+ b=Vdo03Taqg23c+1vRUJD5ivTFzyQrvswdZmQ/OByUjGQOKkny24xCBvPUDz40sKxLSk
+ dwmUJBNFKIuLBtM0YcjjR1TchfmsqrssQMLyiyR5WENGOgUIzL5HLNkWnYP4LY0MBBDw
+ k2pWvJusVcuh55C0wcqwuNZQQl4rYyLUcWbnIn/3YEMTOknjBat4I6HUdB45BeFa0KUf
+ 8rX4HbkMHA8qux/ocRi6+qzRThEcZpigOF5j7QnVAB02o38keqbsv9KN6yL0r1IRwnlv
+ Kmqb9C3M4e1sZW9HQdq4J3vZr4KrqDKIkRYrZFkc/8D+7BRH8vj1aENAyRUvw228XSxz
+ 7X7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793046214; x=1793651014;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20260707; t=1793049449; x=1793654249;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=q8HYsWvFvtGOt5wNGoEfTPaDTsAmt9IXR+U1av+4FuE=;
- b=OO/JUogsnVFaB3ESNzM9s+Ar8WN9IXkog2pA353iR8IXvEUgFuFw1ZWbkyTrf2rsWb
- 0gu0jX1XZVeTdsKdyL0fSPyy8Ls+IsiBV57OLtCCBP6YxayDk2ISl+hVJCW7CkOS2Am8
- 8zuBLs8UpFq/2Q6sOKXkFTQoDILVKydJofBwImx8iLMKstkOe8zfuwNNTCdENhlw5uWv
- 8Vgjx5Qilq3WIipFrMoCNy2gZU53SVMtOK9AaIH0M1iqLtMpnAoqxUuIGBr4fwcGS9iq
- u5wENHaNaSLigWhIcvdMpKqlSas0xCnBweLatOISaWCG+KLGdGCZuKJj+GD/ARPw67KR
- ckdA==
-X-Gm-Message-State: AFq9FYJTZ/gteWgJEIO0wfIePL1T4pIF4Yy1EIfDSn4TUdokXd8fhPdT
- 894wwAYSyQ2/z0T+vyKkZIc4o4ewCFMVz0Jxlx7VMycY8PcGS1MAyedeHYalKEmjukLhP3VE2Im
- ZnlfywEp32AxlBw==
-X-Received: from pjbkb13.prod.google.com ([2002:a17:90a:e7cd:b0:3ab:d5d:f278])
- (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:28c4:b0:3ac:9d14:fe9f with SMTP id
- 98e67ed59e1d1-3adead57ca8mr6209373a91.31.1793046214177; 
- Mon, 26 Oct 2026 13:23:34 -0700 (PDT)
-Date: Mon, 26 Oct 2026 13:23:27 -0700
-In-Reply-To: <20261026202327.3897802-1-joshwash@google.com>
+ bh=mmOzLbpjP5qdWndvbPdcZRS/1pi2xYoEDuEoCQQIHhU=;
+ b=UWKeIDmcBXCErYKRuGhVgCk4Qv2kpnex8o4G/TuVR9btjdbcZrIK98Jv/U6dfzeB3h
+ ZFqtBQrhIP2sFLiGz1PDFXmGaXhR1Pfqsahe2wXjcun1aY8pFL1BZgU3qTfFVzNGbMHy
+ n+4yG9qppwuZxcboXhhGdpaAjsU9LVQAUhkkPdUXCma87tnu+uNwTGrzSusnyeSEdp7B
+ luEqgImr1Tzg4uWwqiR+6uCXUTVM8rn8vJrdwgTYpLN5WAtmbPzwGw6WblNYZq8/HzmY
+ Tyf/iKMKQZVjubu9qVam/6YjZsx782TxUeLCqjLIys9qkw5WooKfPZjjNnD62ai7bXAx
+ /UFA==
+X-Gm-Message-State: AFq9FYKJJIwtFTt+7RfrrwL/WLPxwHSB6EKuNZiOJORbdtaW55pkKnOJ
+ gyUPe2pCT9GaxfYylg4Js59mxvgwCcePT3uyAyv/DJtg8zHVyC8pxozexFFBw6GQh6mWKyED3yc
+ eLVDPB04=
+X-Gm-Gg: AYBFou2Gg92zaKnlaxObfDatouT32cWCQ75OsZGIICmqE36VQgl2EiIX+cCLM0PhO8Z
+ mC3Mo4dU7e1zANpXEdjQ5BnIi1VMTKsuO02JhXJTbDRoLyItXZwp5l1IWYiZXvLr3wxD6LPZSZR
+ BRBDq8lxgan1TI2v5qSn+gvJG8Z4pqSFSTY/T2EIkZeDIdpIvv+h6qxVZoZsMzAfG/Cpx+MxFZf
+ O3ZjnwPOD4E6z2ar9I0OTURuQJctJsi8pPa9u2EdWnjDrLH0+vXIgpiMvM3/bAmhcv5na/4vtbY
+ TrpAQyafgx6vBqvgteHKM6LKQNRgZ/Y6s6y8iEOlJ3X4wFR7fvvN9370c8sFhlVfBFH6y7/0m2r
+ UZaHhwtr7MUseIzEhpLtAGJ8Ii3t14iVZrS75UXKNrJYOq47/xDLEj/vM0p9MlTWwbmV166P3mE
+ gVDwN9f39/UDN2LaSBV2/BcbLeyoGqdNLX8Z8Ej9g4v6KNutDkIkLcfQfX/4NfZR2jdRDtbm41a
+ qvUeNvNxHpSiwaYHsGEW/bI3WmDgJiorn7kE13QBCb/F/RVZ3DMYM74u5bqPBse/0vFmvaB/kXT
+ 7hGa9qtm7naVWRVY074=
+X-Received: by 2002:a17:903:32ce:b0:2e8:95d8:6423 with SMTP id
+ d9443c01a7336-2eae4072774mr4669375ad.38.1793049448748; 
+ Mon, 26 Oct 2026 14:17:28 -0700 (PDT)
+Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2eae6c3d17csm893295ad.53.2026.10.26.14.17.27
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 26 Oct 2026 14:17:28 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Piotr Kwapulinski <piotr.kwapulinski@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] net/ixgbe/base: fix string truncation warning in ACI debug
+ dump
+Date: Mon, 26 Oct 2026 14:17:26 -0700
+Message-ID: <20261026211726.2319112-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 X-Archived-By: <archiver.kernel.org>
-Mime-Version: 1.0
-References: <20261026202327.3897802-1-joshwash@google.com>
-X-Mailer: git-send-email 2.56.0.307.g5fe7bd680c-goog
-Message-ID: <20261026202327.3897802-4-joshwash@google.com>
-Subject: [PATCH 3/3] net/gve: introduce Tx packet preparation for DQO format
-From: Joshua Washington <joshwash@google.com>
-To: Joshua Washington <joshwash@google.com>,
- Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
-Cc: dev@dpdk.org, stable@dpdk.org, 
- Praveen Kaligineedi <pkaligineedi@google.com>, Ankit Garg <nktgrg@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,152 +84,94 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Before this patch, packets that are invalid in the DQO format with
-respect to offloads, descriptor limits, or packet size limits, are
-dropped by the driver without any form of recourse for the application,
-potentially leading to a disruption in traffic that can be hard to
-debug.
+Building with ASAN and -Werror fails:
 
-Introduce tx_pkt_prepare for the DQ queue format to avoid dropping
-packets without first giving the application a way to know that they
-are invalid.
+  ixgbe_e610.c:59:41: error: 'strncat' output may be truncated
+  copying between 43 and 118 bytes from a string of length 127
+  [-Werror=stringop-truncation]
 
-Fixes: 84472d3edffa ("net/gve: fix Tx stall on invalid packets")
+The hex dump used snprintf into a scratch buffer followed by strncat
+with a signed remaining-space count, which could also go negative and
+be passed to strncat as a huge size_t. Format each row directly with
+snprintf at an offset instead, and handle the partial last row in the
+same loop.
+
+Fixes: 12648d0a5afc ("net/ixgbe/base: add admin interface debug printouts")
 Cc: stable@dpdk.org
 
-Signed-off-by: Joshua Washington <joshwash@google.com>
-Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
-Reviewed-by: Ankit Garg <nktgrg@google.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
-Depends-on: series-39707 ("net/gve: fix DQO Tx queue stalls")
----
- drivers/net/gve/gve_ethdev.h |  3 ++
- drivers/net/gve/gve_tx_dqo.c | 64 ++++++++++++++++++++++++++++++++++--
- 2 files changed, 65 insertions(+), 2 deletions(-)
+ drivers/net/intel/ixgbe/base/ixgbe_e610.c | 48 +++++++----------------
+ 1 file changed, 15 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index 26c6a304a6..ab5af33ca9 100644
---- a/drivers/net/gve/gve_ethdev.h
-+++ b/drivers/net/gve/gve_ethdev.h
-@@ -649,6 +649,9 @@ gve_rx_burst_dqo(void *rxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- uint16_t
- gve_tx_burst_dqo(void *txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
- 
-+uint16_t
-+gve_tx_pkt_prepare_dqo(void *txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
-+
- void
- gve_set_rx_function_dqo(struct rte_eth_dev *dev);
- 
-diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
-index 00a4ea9d27..67ad41d618 100644
---- a/drivers/net/gve/gve_tx_dqo.c
-+++ b/drivers/net/gve/gve_tx_dqo.c
-@@ -3,6 +3,8 @@
-  * Copyright (c) 2022-2023 Intel Corporation
-  */
- 
-+#include <rte_net.h>
-+
- #include "gve_ethdev.h"
- #include "base/gve_adminq.h"
- #include "rte_malloc.h"
-@@ -125,7 +127,7 @@ gve_tx_clean_descs_dqo(struct gve_tx_queue *txq, uint16_t nb_descs) {
- 
- /* Validate packet lengths against the device limits. */
- static inline bool
--gve_tx_validate_pkt(const struct rte_mbuf *tx_pkt, bool is_tso)
-+gve_tx_validate_pkt_limits(const struct rte_mbuf *tx_pkt, bool is_tso)
+diff --git a/drivers/net/intel/ixgbe/base/ixgbe_e610.c b/drivers/net/intel/ixgbe/base/ixgbe_e610.c
+index 06a69d1d62..dc5e668edc 100644
+--- a/drivers/net/intel/ixgbe/base/ixgbe_e610.c
++++ b/drivers/net/intel/ixgbe/base/ixgbe_e610.c
+@@ -42,41 +42,23 @@ void ixgbe_shutdown_aci(struct ixgbe_hw *hw)
+ STATIC void ixgbe_aci_debug_array(struct ixgbe_hw *hw, u16 row_size, u8 *buf,
+ 				  u16 buf_size)
  {
- 	uint32_t headlen;
- 
-@@ -303,6 +305,63 @@ gve_fill_tx_pkt_desc(struct gve_tx_queue *txq, uint16_t *tx_id,
+-	char debug_portion[IXGBE_ACI_MAX_DEBUG_STRING_LENGTH] = {'\0'};
+-	char debug_string[IXGBE_ACI_MAX_DEBUG_STRING_LENGTH] = {'\0'};
+-	u16 i = 0, j = 0;
+-	s16 remaining_space = IXGBE_ACI_MAX_DEBUG_STRING_LENGTH - 1;
+-	s16 nbytes = 0;
+-	if (!hw)
++	char line[IXGBE_ACI_MAX_DEBUG_STRING_LENGTH];
++	u32 i, j;
++
++	if (!hw || !buf || !row_size)
+ 		return;
+-	if (buf && buf_size && row_size) {
+-		if (buf_size >= row_size) {
+-			for (i = 0; i < (buf_size - row_size); i += row_size) {
+-				nbytes = snprintf(debug_string, sizeof(debug_string), "0x%04X : ", i);
+-				remaining_space = IXGBE_ACI_MAX_DEBUG_STRING_LENGTH - nbytes - 1;
+-				for (j = 0; j < row_size; j++) {
+-					nbytes = snprintf(debug_portion, sizeof(debug_portion), "0x%02X ", buf[i + j]);
+-					strncat(debug_string, debug_portion, remaining_space);
+-					remaining_space -= nbytes;
+-					if (remaining_space <= 0) break;
+-				}
+-				strncat(debug_string, "\n", remaining_space);
+-				DEBUGOUT1("%s", debug_string);
+-				memset(debug_string, 0, IXGBE_ACI_MAX_DEBUG_STRING_LENGTH);
+-			}
+-		}
+-		if (i < buf_size) {
+-			nbytes = snprintf(debug_string, sizeof(debug_string), "0x%04X : ", i);
+-			remaining_space = IXGBE_ACI_MAX_DEBUG_STRING_LENGTH - nbytes - 1;
+-			for (j = 0; j < (buf_size - i); j++) {
+-				nbytes = snprintf(debug_portion, sizeof(debug_portion), "0x%02X ", buf[i + j]);
+-				strncat(debug_string, debug_portion, remaining_space);
+-				remaining_space -= nbytes;
+-				if (remaining_space <= 0) break;
+-			}
+-			strncat(debug_string, "\n", remaining_space);
+-			DEBUGOUT1("%s", debug_string);
++
++	for (i = 0; i < buf_size; i += row_size) {
++		size_t len;
++
++		len = snprintf(line, sizeof(line), "0x%04X : ", i);
++		for (j = 0; j < row_size && i + j < buf_size; j++) {
++			if (len >= sizeof(line))
++				break;
++			len += snprintf(line + len, sizeof(line) - len,
++					"0x%02X ", buf[i + j]);
+ 		}
++		DEBUGOUT1("%s\n", line);
  	}
  }
  
-+uint16_t
-+gve_tx_pkt_prepare_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+{
-+	struct gve_tx_queue *txq = tx_queue;
-+	uint16_t i;
-+
-+	for (i = 0; i < nb_pkts; i++) {
-+		struct rte_mbuf *tx_pkt;
-+		uint16_t nb_descs;
-+		bool tso;
-+		int err;
-+
-+		tx_pkt = tx_pkts[i];
-+
-+#ifdef RTE_ETHDEV_DEBUG_TX
-+		const char *reason;
-+
-+		if (rte_mbuf_check(tx_pkt, true, &reason)) {
-+			rte_errno = EINVAL;
-+			return i;
-+		}
-+
-+		err = rte_validate_tx_offload(tx_pkt);
-+		if (err != 0) {
-+			rte_errno = -err;
-+			return i;
-+		}
-+#endif
-+
-+		tso = !!(tx_pkt->ol_flags & RTE_MBUF_F_TX_TCP_SEG);
-+		if (!gve_tx_validate_pkt_limits(tx_pkt, tso)) {
-+			rte_errno = EINVAL;
-+			return i;
-+		}
-+
-+		/* Handle non-TSO packets with a direct check of nb_segs. We
-+		 * already validated that the packet is no larger than 9728B, so
-+		 * every segment is guaranteed to only require a single
-+		 * descriptor.
-+		 */
-+		nb_descs = tso ? gve_tx_pkt_nb_data_descs(tx_pkt) + 1 :
-+			tx_pkt->nb_segs;
-+		if (!gve_tx_validate_descs(txq, tx_pkt, nb_descs, tso)) {
-+			rte_errno = ENOTSUP;
-+			return i;
-+		}
-+
-+		err = rte_net_intel_cksum_prepare(tx_pkt);
-+		if (err != 0) {
-+			rte_errno = -err;
-+			return i;
-+		}
-+	}
-+
-+	return nb_pkts;
-+}
-+
- uint16_t
- gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- {
-@@ -349,7 +408,7 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		tso = !!(ol_flags & RTE_MBUF_F_TX_TCP_SEG);
- 		csum = !!(ol_flags & GVE_TX_CKSUM_OFFLOAD_MASK_DQO);
- 
--		if (!gve_tx_validate_pkt(tx_pkt, tso)) {
-+		if (!gve_tx_validate_pkt_limits(tx_pkt, tso)) {
- 			txq->stats.invalid_pkts++;
- 			rte_pktmbuf_free(tx_pkt);
- 			continue;
-@@ -703,4 +762,5 @@ void
- gve_set_tx_function_dqo(struct rte_eth_dev *dev)
- {
- 	dev->tx_pkt_burst = gve_tx_burst_dqo;
-+	dev->tx_pkt_prepare = gve_tx_pkt_prepare_dqo;
- }
 -- 
-2.56.0.307.g5fe7bd680c-goog
+2.53.0
 
