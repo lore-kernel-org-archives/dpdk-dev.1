@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74883606A31A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 12:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F20606A31A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 12:27:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BB25C406B4;
-	Mon, 26 Oct 2026 13:27:04 +0100 (CET)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
- by mails.dpdk.org (Postfix) with ESMTPS id 6B6FC4067C;
- Mon, 26 Oct 2026 13:27:00 +0100 (CET)
-X-QQ-mid: esmtpgz15t1793017616t87a32c94
-X-QQ-Originating-IP: 2Mvf4nJvQ0YnT97xo+2zRWwCOXIcA/HAWqq83jtSRL8=
+	by mails.dpdk.org (Postfix) with ESMTP id 7DA71406BA;
+	Mon, 26 Oct 2026 13:27:05 +0100 (CET)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+ by mails.dpdk.org (Postfix) with ESMTPS id B2F2540685;
+ Mon, 26 Oct 2026 13:27:02 +0100 (CET)
+X-QQ-mid: esmtpgz15t1793017618tdb773a1b
+X-QQ-Originating-IP: bty1TOGKPfUr8GUNVwqYJOycjam5zDv+O3J+VlOhDXg=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.227.112.25])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 26 Oct 2026 20:26:55 +0800 (CST)
+ id ; Mon, 26 Oct 2026 20:26:57 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11310143547835627393
+X-BIZMAIL-ID: 6856373591760128043
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v11 05/17] net/txgbe: do not force reconfig on link retry
-Date: Mon, 26 Oct 2026 20:21:51 +0800
-Message-ID: <B019BC7CB653D341+20261026122638.9198-6-zaiyuwang@trustnetic.com>
+Subject: [PATCH v11 06/17] net/txgbe: set i2c sda hold time
+Date: Mon, 26 Oct 2026 20:21:52 +0800
+Message-ID: <C8A89010BB97082E+20261026122638.9198-7-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261026122638.9198-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -35,24 +35,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NCjYbQ0FTrEVNI5lvHIiDmPaACpZBeztsvjOv1R0WjxPMB54nqHG5N55
- ELZUOnjLD0+1P4vPlzHLxfwDszRWRFHWxRYPcWzBpWf22V+85feAV1EfaZyQjZ1Zdbsw7MX
- Iq0hCEkdQyxUb8XEsM6HNtMSUcdmtEIo9+0O2nR/pOATOLgvEr4Ficz+KDWB6uQdKyJvN0n
- +l7CkagnOSgE/AiphR/fdmVg2fUYc08zSCoUYwS2kBlCp4V5oqL6pBFVV7LejOwnas8Crrg
- AobpFLn+mm9MFjksxU/bv4mGdvX5OiTN4SHupWZ2C56XRXm9DyqD2A+7drP0jxEegmse3KX
- NwK8ySfkWK9U0MHdposWAIj+r6P9rxJWSNo236HBDy0koNIiz+5XbMfYxb/W2Q3KSzHsCkI
- iL+po0oU4k4C1dnLSkFXnE/isFpuS1b6utSnj9NBTVzFdBzPMp8X2ldYwpA9MMIpPJ19QJD
- p/oncqbdDyku1vitrGe7ZATgQ1LHIQoQHNa/y8p/AFhYldcGe55kXjXFqeo7BEPA2sidotw
- uQgPaXmfHpVNZhp0i73TlTau2h0CDOLSV91vsrVzI4EB0mN3UtotNsfLLqoRl4//05TD/et
- FSp2CxzI2Ar+qDx8C5dwM7MsF3j2rNb9BZkLQVfTA5lce3eB0eC1bn083Q2xxvQ6VfS/YRy
- G4fbUrJZs+LtQ6zB4wgYs1tkvgg+Gvn5tokkeFi/d80L5NR9EFmiRsbBfb8rT1ewmgO4eRk
- Qtzt9gOeRdQWEWXIzhb249JKXnyRmUqMbpMOYSFYD0tWmT1S7/UT4vzke+5VBO+hxrynljc
- Qsu71ld6+jgD+rbZrKuRmFWfPvAtFjDbpm+Tky9SxdqrPlmWvdk/SxU/lMBFNBwIbkqoIOH
- EBZagpqYSWNRrozbkNuxljpuEBAjrnVdORr6rgreY9kBnFHV8H603K/MsFQbTxKy4U3l3yX
- znbFP0qiAAml1jBCbqTvLVbdl0pXhlD7Lr1weoYWVu+aIW19hfV93SHO7FzMaYdFwDevGyU
- wYtu5CNQvYVSmhXhFJAiSK9ahmWWi+i28O2jDiSEVfIot1k/QWj7Amgb2YyZGPJfjYH6kQj
- mMIzZhcQHDipJ+uWQk5dUU=
-X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
+X-QQ-XMAILINFO: MoCey8H5NsCihJXxy7VFgd9rsEUzMxpX2brEILHnqjinUqWOUEtGaOrI
+ Y5PhD1F4LJv8XDFEhdMWjFSkpoOQA62RWL2RgI/mX3J57jzVvTl80H5nRiDU8XPn1pV+z4F
+ eye2kD1P/1DuyeR4b8r9jqGSI2G0GLQ/iwdeL3r0IdElRNRiQi65cEGGkbLlYVMwjcMLmu5
+ X3CROh5fyOQFmf2il0GURIdpcRKhmGadg+Sm1wrr3zHTg5FYZQ37i5e7wgtGWAwMzxqyugX
+ iUtSecvGYo6d3Gnh1W4gJToj7VneCIaJEg1f39wo2sY0ITl/88XDSAeOngj4kGEFndmhcBf
+ AMg/jQ1pK022VtK2Z82YODsPTTqMMpfB9gcprrJWvfAwFZ+F77cVucKWnFiR6Uw12tkRteu
+ 7+B7NLeUT0Os2jp0GpTGnjFCy7Oc3ilMpaejReExhSMrnT80n9qZMuAiqCFPoyG93dofpjM
+ vp3NUetvwWMFA0co/gBaAk16eN/QCc7XNqfX9DEv5oZ6TAzAotDts6qjL7Xe1Y2+4byjd4o
+ FcwR4eGZQT7js3m4jkXzkG9tsJVHLItEjWcIEt1Ga8/k8p0y+dadNS/jAQvJAi14iBiBxBR
+ FkGowGxO6RgCr+iX0gfNaVvb+iG4KRp5Uv4F6JmjxX+SHTkSUQR7zDu2AtQ2LeJNSKD0ik6
+ gtoMXzqOWJV6gVwAzNC4U2ohOWCdhw3aj98caXOVvYkizcySvoCwIaRj0okGbbXVBJbhEgj
+ op24nS9vGG9hxDBqFAg3kokgkacwFx+i0+nF6E2W+MHLfqJSA+LJ6seI3hssa9SNfznqOW8
+ qxfyxGCxOQgzHCPkBTjDkJ+oOlIs3nTBtYb1CmvbMjJ8/QDluOZ8BRJXhQh46QOJAq8Sl8K
+ OtGfU0O7P1Bgb0MHE3AIlj7GPa7DYB+a9yHLnd/XiQGdx8RcWdo47vYs5LcKApjVvw8BhL1
+ gmP6DOSwkvqMoDyFmLQLVbyPdb9+k6MXHnpKF9K1Mg17nGOhasYid1vMm8nuhhjPU5P4XRo
+ VGft5YF5dXaZQjrBdJU6CSAPmATgGzV7qFuGn95L8GWMkT4qe0kIUwmBH5X3M6fVq2I9/he
+ TDD8H2KL1Hi5+kiHbdrhn7QMlbshT7MLw==
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -70,90 +70,49 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The link alarm retry calls mac.setup_link() with
-autoneg_wait_to_complete = false. On the AN73/xpcs path, this skips
-reconfiguration once the link is up and AN is complete. Passing true
-from the retry path instead resets an established AN73 link, which
-then drops and may not recover after DAC hot-plug.
+The data_in_hold_time measured on the oscilloscope does not meet the
+hardware requirement, which can corrupt SFP EEPROM reads over I2C.
 
-The setup flag is also passed to txgbe_e56_set_phy_link_mode() as its
-need_restart argument. Passing false unchanged would make a retry a
-no-op while the link is down or AN is incomplete if the PHY is already
-in 10G mode. Derive need_restart from the current link and AN state so
-retries recover an incomplete setup without reconfiguring an
-established link.
+Set the I2C SDA hold time to 100 (0x64) I2C clock periods for both
+RX and TX in txgbe_i2c_start().
 
-Fixes: 6104fd11086e ("net/txgbe: fix link stability for 25G NIC")
+Fixes: 00970f6398c8 ("net/txgbe: fix reading SFP module SFF-8472 data")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml.c   | 5 ++++-
- drivers/net/txgbe/base/txgbe_aml40.c | 5 ++++-
- drivers/net/txgbe/txgbe_ethdev.c     | 2 +-
- 3 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/net/txgbe/base/txgbe_phy.c  | 3 +++
+ drivers/net/txgbe/base/txgbe_regs.h | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
-index ac80d85f08..7a0839a7d1 100644
---- a/drivers/net/txgbe/base/txgbe_aml.c
-+++ b/drivers/net/txgbe/base/txgbe_aml.c
-@@ -213,6 +213,7 @@ s32 txgbe_setup_phy_link_aml(struct txgbe_hw *hw,
- 	s32 ret_status = 0;
- 	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
- 	bool link_up = false;
-+	bool need_restart;
- 	int i;
- 	u32 link_capabilities = TXGBE_LINK_SPEED_UNKNOWN;
- 	u32 value;
-@@ -246,8 +247,10 @@ s32 txgbe_setup_phy_link_aml(struct txgbe_hw *hw,
- 		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
- 		if (link_up && hw->an_done && !autoneg_wait_to_complete)
- 			return status;
-+
-+		need_restart = autoneg_wait_to_complete || !link_up || !hw->an_done;
- 		rte_spinlock_lock(&hw->phy_lock);
--		txgbe_e56_set_phy_link_mode(hw, speed, autoneg_wait_to_complete);
-+		txgbe_e56_set_phy_link_mode(hw, speed, need_restart);
- 		rte_spinlock_unlock(&hw->phy_lock);
- 		return 0;
- 	}
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index 5fa7c6a243..892dddd373 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -148,6 +148,7 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
- 	s32 ret_status = 0;
- 	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
- 	bool link_up = false;
-+	bool need_restart;
- 	int i;
- 	u32 link_capabilities = TXGBE_LINK_SPEED_UNKNOWN;
- 	u32 value;
-@@ -171,8 +172,10 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
- 		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
- 		if (link_up && hw->an_done && !autoneg_wait_to_complete)
- 			return status;
-+
-+		need_restart = autoneg_wait_to_complete || !link_up || !hw->an_done;
- 		rte_spinlock_lock(&hw->phy_lock);
--		txgbe_e56_set_phy_link_mode(hw, speed, autoneg_wait_to_complete);
-+		txgbe_e56_set_phy_link_mode(hw, speed, need_restart);
- 		rte_spinlock_unlock(&hw->phy_lock);
- 		return status;
- 	}
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index f20e57125d..2f513e20b9 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -3228,7 +3228,7 @@ txgbe_dev_setup_link_alarm_handler_aml(void *param)
- 		return;
- 	}
+diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
+index 2fbe50e242..8b653f0aeb 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.c
++++ b/drivers/net/txgbe/base/txgbe_phy.c
+@@ -1334,6 +1334,9 @@ static void txgbe_i2c_start(struct txgbe_hw *hw, u8 dev_addr)
+ 	wr32(hw, TXGBE_I2CSCLTMOUT, 0xFFFFFF);
+ 	wr32(hw, TXGBE_I2CSDATMOUT, 0xFFFFFF);
  
--	hw->mac.setup_link(hw, speed, true);
-+	hw->mac.setup_link(hw, speed, false);
++	wr32m(hw, TXGBE_I2C_SDA_HOLD,
++		TXGBE_I2C_SDA_RX_HOLD | TXGBE_I2C_SDA_TX_HOLD, 0x640064);
++
+ 	wr32(hw, TXGBE_I2CICM, 0);
+ 	wr32(hw, TXGBE_I2CENA, 1);
+ }
+diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
+index bf46a80862..b0042dc0d6 100644
+--- a/drivers/net/txgbe/base/txgbe_regs.h
++++ b/drivers/net/txgbe/base/txgbe_regs.h
+@@ -1610,6 +1610,9 @@ enum txgbe_5tuple_protocol {
+ #define   TXGBE_I2CSTAT_MST          ((1U << 5))
+ #define TXGBE_I2CSCLTMOUT            0x0149AC
+ #define TXGBE_I2CSDATMOUT            0x0149B0 /*I2C SDA Stuck at Low Timeout*/
++#define TXGBE_I2C_SDA_HOLD              0x1497C /* SDA hold time length reg */
++#define TXGBE_I2C_SDA_RX_HOLD           0xff0000 /* SDA rx hold time length reg */
++#define TXGBE_I2C_SDA_TX_HOLD           0xffff /* SDA tx hold time length reg */
  
- 	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
- 	bool link_up = false;
+ /* port cfg Registers */
+ #define TXGBE_PORTSTAT                  0x014404
 -- 
 2.55.0.windows.2
 
