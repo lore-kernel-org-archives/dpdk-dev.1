@@ -2,51 +2,52 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CFC606A334
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 18:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2BF606A31A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 18:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=gY4t74/q
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=UHW7lIqd
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0FC534067B;
-	Mon, 26 Oct 2026 19:10:55 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1226440693;
+	Mon, 26 Oct 2026 19:10:58 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTPS id 2C5A24067B
- for <dev@dpdk.org>; Mon, 26 Oct 2026 19:10:54 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 30FB84068E
+ for <dev@dpdk.org>; Mon, 26 Oct 2026 19:10:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1793038253;
+ s=mimecast20190719; t=1793038256;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=J/fF4Qb8ePRVaLTeuqUQEBG/QQZYK3gKHJaeMc1NOA4=;
- b=gY4t74/q3mEK4iVE3gt8zD00lwOaWE1Ai4X0tkGyIkMNRSG+ZK1GG+kc+aGrxTKSKXvpnJ
- 4DMe1u2ywFcUnbGEOtB9jlt3/OusO1QS5/eZlqyx6E2daMfIeitxuixVFaj+mIOiH7PMqQ
- K8SU0GC+LkMIAKfPQZFsOp0Cbj/m8Ro=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=9oP6c0YglF09Sin4q06QITxLT5UiOI3G8SiK1mhaPrg=;
+ b=UHW7lIqdfjXoyZ71xuTcaRkgmqQcTWTQh+fECpfcA8pYOV6JvCzZbu9AqStIvaKW0y+lqH
+ JZQ8lAmY8uGl01z3/q9Z7r5PWn6tYmOBcND9E61YNssfj+JPs9zNfuh1CV8zm4IRTxQ7z5
+ UL1jOBFrptdiYyj2WntU/J1+dVuCb1g=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-355-HNZ5tSayOdCBvl2WmyWt3Q-1; Mon,
- 26 Oct 2026 14:10:49 -0400
-X-MC-Unique: HNZ5tSayOdCBvl2WmyWt3Q-1
-X-Mimecast-MFC-AGG-ID: HNZ5tSayOdCBvl2WmyWt3Q_1793038248
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-393-Hh6wuI0KOLCkmDJcqnGY-Q-1; Mon,
+ 26 Oct 2026 14:10:52 -0400
+X-MC-Unique: Hh6wuI0KOLCkmDJcqnGY-Q-1
+X-Mimecast-MFC-AGG-ID: Hh6wuI0KOLCkmDJcqnGY-Q_1793038251
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3868A1800D8C; Mon, 26 Oct 2026 18:10:48 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 9E4DE1955BD3; Mon, 26 Oct 2026 18:10:51 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
  by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 53E561956087; Mon, 26 Oct 2026 18:10:47 +0000 (UTC)
+ id A2C021956087; Mon, 26 Oct 2026 18:10:50 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: hemant.agrawal@nxp.com,
 	dev@dpdk.org
-Subject: [PATCH v2 04/16] bus/dpaa: support unplug and use generic cleanup
-Date: Mon, 26 Oct 2026 19:10:18 +0100
-Message-ID: <20261026181031.304100-5-david.marchand@redhat.com>
+Cc: stable@dpdk.org
+Subject: [PATCH v2 05/16] bus/fslmc: fix device name leak
+Date: Mon, 26 Oct 2026 19:10:19 +0100
+Message-ID: <20261026181031.304100-6-david.marchand@redhat.com>
 In-Reply-To: <20261026181031.304100-1-david.marchand@redhat.com>
 References: <20260723135400.3621271-1-david.marchand@redhat.com>
  <20261026181031.304100-1-david.marchand@redhat.com>
@@ -54,7 +55,7 @@ X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ODbKbVvStgl912nmQzZ53wuXsNN5BJhvkNIQXOjAhcw_1793038248
+X-Mimecast-MFC-PROC-ID: Fgqad8oDwdc3yggYHS_bSTM4qFhE88HehOys8pnQgUc_1793038251
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -74,125 +75,63 @@ X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Add .unplug callback to handle driver removal and interrupt cleanup.
-This enables use of the generic bus cleanup helper while preserving
-bus-specific cleanup (portal finish, global init reset).
+The device name allocated during scan was never freed.
+Store it to the (unused) name field in the rte_dpaa2_device.
 
-The cleanup function was already performing these operations, so it
-seems safe to expose them through the unplug operation.
+This simplifies the device freeing to a simple free() call later.
+
+Fixes: 828d51d8fc3e ("bus/fslmc: refactor scan and probe functions")
+Cc: stable@dpdk.org
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- doc/guides/rel_notes/release_26_11.rst |  4 ++
- drivers/bus/dpaa/dpaa_bus.c            | 56 +++++++++++++++-----------
- 2 files changed, 37 insertions(+), 23 deletions(-)
+ drivers/bus/fslmc/bus_fslmc_driver.h | 4 +---
+ drivers/bus/fslmc/fslmc_bus.c        | 8 ++++----
+ 2 files changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index be758a0c02..96dc64816d 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -82,6 +82,10 @@ New Features
-   but objects within each bulk are not ordered as expected by a stack.
-   Furthermore, it is not strictly bounded by its size, but might hold more objects.
+diff --git a/drivers/bus/fslmc/bus_fslmc_driver.h b/drivers/bus/fslmc/bus_fslmc_driver.h
+index 44f81cf662..ead9d6613c 100644
+--- a/drivers/bus/fslmc/bus_fslmc_driver.h
++++ b/drivers/bus/fslmc/bus_fslmc_driver.h
+@@ -39,8 +39,6 @@ extern "C" {
  
-+* **Added unplug operation support to DPAA bus.**
-+
-+  Implemented device unplug operation to allow runtime removal of DPAA devices.
-+
- * **Added TPID support to VLAN tag insertion.**
+ struct vfio_device_info;
  
-   Added ``rte_vlan_insert_tpid()`` to the net library.
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index f6f24a4def..1ce68bf494 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -788,38 +788,46 @@ dpaa_bus_probe_device(struct rte_driver *drv, struct rte_device *dev)
- }
+-#define FSLMC_OBJECT_MAX_LEN 32   /**< Length of each device on bus */
+-
+ #define DPAA2_INVALID_MBUF_SEQN        0
  
- static int
--dpaa_bus_cleanup(struct rte_bus *bus)
-+dpaa_bus_unplug_device(struct rte_device *rte_dev)
- {
--	struct rte_dpaa_device *dev;
--	int error = 0;
-+	const struct rte_dpaa_driver *drv = RTE_BUS_DRIVER(rte_dev->driver, *drv);
-+	struct rte_dpaa_device *dev = RTE_BUS_DEVICE(rte_dev, *dev);
- 
--	BUS_INIT_FUNC_TRACE();
--	RTE_BUS_FOREACH_DEV(dev, bus) {
--		const struct rte_dpaa_driver *drv;
-+	if (drv->remove != NULL) {
- 		int ret;
- 
--		if (!rte_dev_is_probed(&dev->device))
--			goto next;
--		drv = RTE_BUS_DRIVER(dev->device.driver, *drv);
--		if (drv->remove == NULL)
--			goto next;
- 		ret = drv->remove(dev);
--		if (ret < 0) {
--			rte_errno = errno;
--			error = -1;
--			goto next;
--		}
--		dev->device.driver = NULL;
--next:
--		rte_intr_fd_close(dev->intr_handle);
--		rte_intr_instance_free(dev->intr_handle);
--		dev->intr_handle = NULL;
-+		if (ret < 0)
-+			return ret;
- 	}
-+
-+	rte_intr_fd_close(dev->intr_handle);
-+	rte_intr_instance_free(dev->intr_handle);
-+	dev->intr_handle = NULL;
-+
-+	return 0;
-+}
-+
-+static void
-+dpaa_bus_free_device(struct rte_device *dev)
-+{
-+	free(RTE_BUS_DEVICE(dev, struct rte_dpaa_device));
-+}
-+
-+static int
-+dpaa_bus_cleanup(struct rte_bus *bus)
-+{
-+	int ret;
-+
-+	BUS_INIT_FUNC_TRACE();
-+
-+	ret = rte_bus_generic_cleanup(bus);
-+
- 	dpaa_portal_finish((void *)DPAA_PER_LCORE_PORTAL);
- 	dpaa_bus_global_init = 0;
- 	DPAA_BUS_DEBUG("Bus cleanup done");
- 
--	return error;
-+	return ret;
- }
- 
- /* Adding destructor for double check in case non-gracefully
-@@ -845,14 +853,16 @@ RTE_FINI_PRIO(dpaa_cleanup, 102)
- static struct rte_bus rte_dpaa_bus = {
- 	.scan = rte_dpaa_bus_scan,
- 	.probe = rte_bus_generic_probe,
-+	.free_device = dpaa_bus_free_device,
-+	.cleanup = dpaa_bus_cleanup,
- 	.parse = rte_dpaa_bus_parse,
- 	.dev_compare = dpaa_bus_dev_compare,
- 	.find_device = rte_bus_generic_find_device,
- 	.get_iommu_class = rte_dpaa_get_iommu_class,
- 	.match = dpaa_bus_match,
- 	.probe_device = dpaa_bus_probe_device,
-+	.unplug_device = dpaa_bus_unplug_device,
- 	.dev_iterate = rte_bus_generic_dev_iterate,
--	.cleanup = dpaa_bus_cleanup,
+ typedef uint32_t dpaa2_seqn_t;
+@@ -101,7 +99,7 @@ struct rte_dpaa2_device {
+ 	uint16_t ep_object_id;                 /**< Endpoint DPAA2 Object ID */
+ 	char ep_name[RTE_DEV_NAME_MAX_LEN];
+ 	struct rte_intr_handle *intr_handle; /**< Interrupt handle */
+-	char name[FSLMC_OBJECT_MAX_LEN];    /**< DPAA2 Object name*/
++	char name[RTE_DEV_NAME_MAX_LEN];
  };
  
- static struct rte_dpaa_bus_private dpaa_bus = {
+ typedef int (*rte_dpaa2_obj_create_t)(int vdev_fd,
+diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
+index 98bd898acb..632142d128 100644
+--- a/drivers/bus/fslmc/fslmc_bus.c
++++ b/drivers/bus/fslmc/fslmc_bus.c
+@@ -179,12 +179,12 @@ scan_one_fslmc_device(char *dev_name)
+ 	}
+ 
+ 	sscanf(t_ptr, "%hu", &dev->object_id);
+-	dev->device.name = strdup(dev_name);
+-	if (!dev->device.name) {
+-		DPAA2_BUS_ERR("Unable to clone device name. Out of memory");
+-		ret = -ENOMEM;
++	if (rte_strscpy(dev->name, dev_name, sizeof(dev->name)) < 0) {
++		DPAA2_BUS_ERR("Unable to copy device name: %s", rte_strerror(rte_errno));
++		ret = -rte_errno;
+ 		goto cleanup;
+ 	}
++	dev->device.name = dev->name;
+ 	dev->device.devargs = rte_bus_find_devargs(&rte_fslmc_bus, dev_name);
+ 
+ 	/* Update the device found into the device_count table */
 -- 
 2.54.0
 
