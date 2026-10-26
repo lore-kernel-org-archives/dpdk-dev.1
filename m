@@ -2,79 +2,48 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B89606A31B
-	for <dpdk-dev@archiver.kernel.org>; Sun, 25 Oct 2026 17:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=LZo6/vSM
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A159D606A31A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 03:28:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 526094025F;
-	Sun, 25 Oct 2026 18:23:40 +0100 (CET)
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
- [209.85.215.173])
- by mails.dpdk.org (Postfix) with ESMTPS id 6455440150
- for <dev@dpdk.org>; Sun, 25 Oct 2026 18:23:38 +0100 (CET)
-Received: by mail-pg1-f173.google.com with SMTP id
- 41be03b00d2f7-cd8ba7c2694so640774a12.1
- for <dev@dpdk.org>; Sun, 25 Oct 2026 10:23:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1792949016;
- x=1793553816; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:to:from:date:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=Up4WfzmFdXMoOIIyU9zwJfiX4v0aKaLy8mXXRXjDYbE=;
- b=LZo6/vSMcfwETaGrssPcyhInJpQGVBODC/gvU6Prl4MvCTy9nQ5qGW6IJA9S2g2SMT
- ZFijNBzls34is3jaodfk65fuiDLzLQWusG2AMJmxQ3Q9NJjna6gOakz0lM2U96ABi92F
- 5PBTOHmpO+dVPABwoWn+ulZNYXzWlVEjx5dRcQbcFAGYrMARjonImqinAeEKNLCBIhT5
- l/U2uUXcafbnvN2N9cNFShH4AtZOBAr+kaO6vrv9MkLZDR0ytNYtNMMTyB63XAztzUCt
- 9N4jeUTyoPDceX9JSKfP5cDCJfzkFQHwgYZkDfm00bhycPiwkM5ca8IOe463C6G8jhcx
- FkGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1792949016; x=1793553816;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=Up4WfzmFdXMoOIIyU9zwJfiX4v0aKaLy8mXXRXjDYbE=;
- b=Cs0H8KJsff8GFbDb0QLm4nlQFM2m+Ma7foAlIQHSqvAs5SL94ExHfMTIQVVbgNE99b
- /ZEmwaZ6xKhHV8QBiWtSG5VN9KwMjkkS4DHYUIvNbLal1b7TxHWOr2qy8P6s0lE5Ydpa
- TxOlngoM+UqkQNcJgxJ7OsbDrgrNgxnEcozjHo71kBxqEnydG3iYHEwam5LRwLbAZcLV
- SeNVYU5TO3+/D0AO3I/fy3mXc1EELWbgd8J+BwbGLz1K2iR31fTiU6zVIYPATmnk1JKd
- qHLRNU685XdSZUI+LVFvUVM28SPpZPd+LCv30hEycvzcYVgLoQgW3YGwfKXUlWoAkeq8
- rxWQ==
-X-Gm-Message-State: AFq9FYK29Bss9TYteAZN8gLiuyxOyUiF9ujcO51hk/sgLgFDs5IJgqPc
- TAP3QPabyUml5JQy0mWfBRAiV4qmg5bbHW3YR5Skmy9hXks05ipaggSq8Bi6BCLqGC/gDbL3fk1
- P6UFb
-X-Gm-Gg: AYBFou1zYC+Xc/hNBnpw3Cy/IOrx+FbMj1L/wThCFBJVYSH7+5ircmzW3doBAhoDQdE
- dQH5a3sEbjApHZ4JaxoSjw2kFRUjn3746bT7bzcVo2Qky6dufF05Y4zcvUaQ2Jz6nBHd64qAaTz
- euDNDI+9ErSSpe1jgSvmeElpv4zEZi2bjWlXnA27KHRkJiof07a4549vbVcxkoBNA6fehWFVJaU
- 9QeGjfe/G5LMkl90Di3Nr/pHyq0NqomVAQhtbBixJKMrGzyDk5bbUeOLgmbZYhBN4oCyz2NnIW2
- RDTBctzmwTt/AXPlouDdHUNoYy7Pz2DI0WUN7DzJV5PqIRtkL2sRu3DebNBzuu6zfV44Sou/uLF
- PYma6IekL7HB9ZDkYtuv4o7sVYZ8LQChPaMAK+ax+gzKMCGPTylgWavPxRoMg2a6ZIQjyldmjSW
- +3zIAwzpfLJrm1pQ9Y7CitT9whu0SYdi4eDopv1RlQ92pVck5ARAque8cCRSzEUhMYeX6KseXYx
- G9xKIzEO9OkKABxjktJJbzgz8ohfzwmyto/9Kvos00WymdvqknWaB37wBYbPxM2YzVS67va37Th
- Oo/3kAbQEskjnKcSrYM0c78=
-X-Received: by 2002:a17:90b:534b:b0:3aa:fc22:8aac with SMTP id
- 98e67ed59e1d1-3adeae5dcdbmr4252445a91.51.1792949016486; 
- Sun, 25 Oct 2026 10:23:36 -0700 (PDT)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3adebe6946dsm5332428a91.4.2026.10.25.10.23.35
- for <dev@dpdk.org>
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 25 Oct 2026 10:23:35 -0700 (PDT)
-Date: Sun, 25 Oct 2026 10:23:33 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 9398A40151;
+	Mon, 26 Oct 2026 04:28:29 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTPS id B7EBF40150
+ for <dev@dpdk.org>; Mon, 26 Oct 2026 04:28:28 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 7F67A4D26C; Mon, 26 Oct 2026 04:28:28 +0100 (CET)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: Re: [PATCH v5 0/4] wireshark extcap support
-Message-ID: <20261025102333.3ef59446@phoenix.local>
-In-Reply-To: <20261016223201.608942-1-stephen@networkplumber.org>
-References: <20260727224417.1419663-1-stephen@networkplumber.org>
- <20261016223201.608942-1-stephen@networkplumber.org>
+Subject: [DPDK/testpmd Bug 2074] [26.11]i40e:
+ mac_filter/test_add_remove_mac_address, remove_mac the change did not take
+ effect.
+Date: Mon, 26 Oct 2026 03:28:27 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: testpmd
+X-Bugzilla-Version: 26.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: hailinx.gou@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-2074-3@https.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,31 +53,155 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Fri, 16 Oct 2026 15:30:30 -0700
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+https://bugs.dpdk.org/show_bug.cgi?id=3D2074
 
-> This series adds live packet capture from a running DPDK application
-> over the telemetry socket which is usable as a source of Wireshark
-> external capture (https://www.wireshark.org/docs/man-pages/extcap.html)
-> 
-> Capture is avaliable by default but can be disabled on the command
-> line with --no-capture. It works on Linux and FreeBSD.
-> 
-> How it works:
->  - The capture library registers telemetry commands (/ethdev/capture/*)
->  - Callbacks are installed on the specified port/queues to copy packets
->  - Packets are formatted as pcapng and written to the specified output
->  - No packet data passes through the telemetry socket itself
+            Bug ID: 2074
+           Summary: [26.11]i40e: mac_filter/test_add_remove_mac_address,
+                    remove_mac the change did not take effect.
+           Product: DPDK
+           Version: 26.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: testpmd
+          Assignee: dev@dpdk.org
+          Reporter: hailinx.gou@intel.com
+  Target Milestone: ---
+
+Environment
+Fill in all the following as completely as possible. Use "Unknown" or "N/A"=
+ if
+required. Use {{braces}} to create fixed width text like this: braces.
 
 
-I am going to suggest deferring this to 27.03.
-Not happy with the security model, and using telemetry as the control
-channel. It needs to have its own control channel, and the destination
-file needs to come from the helper not get opened by DPDK process (primary).
 
+DPDK version: Use make showversion or for a non-released version: git remot=
+e -v
+&& git show-ref --heads
+dpdk-26.11-rc1: 9a45341f18a1ab47af7123e63d942b90c1b79f38
+Other software versions: name/version for QEMU, OVS, etc. Repeat as require=
+d.
+OS: Use uname -a
+Ubuntu 26.04.1 LTS
+Compiler: Use gcc --version or similar
+gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+Hardware platform: Purley/IceLake etc.
+NIC hardware: Niantic/Fortville etc.
+NIC firmware: if applicable
+driver: i40e
+version: 2.30.18
+firmware-version: 6.51 0x80004430 1.4002.0
+Test Setup
+Steps to reproduce
+List the steps to reproduce the issue.
+
+x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 1-2 -n 4 -a 0000:1f:00.0 -a
+0000:1f:00.1 --file-prefix=3Ddpdk_1862818_20261018044623    -- -i --portmas=
+k=3D0x1
+
+set verbose 1
+
+set fwd rxonly
+
+start
+
+show port info 0
+
+set promisc 0 off
+
+clear port stats all
+
+mac_addr add 0 00:01:01:00:00:00=20
+
+start scapy:
+sendp([Ether(dst=3D'00:01:01:00:00:00',
+src=3D'52:00:00:00:00:00')/IP()/UDP()/Raw(load=3Db'XXXXXXXXXXXXXXXXXX')],if=
+ace=3D"ens64f0",count=3D4,inter=3D0,verbose=3DFalse)=20
+Show the output from the previous commands.
+
+ tester_scapy: sendp([Ether(dst=3D'00:01:01:00:00:00',
+src=3D'52:00:00:00:00:00')/IP()/UDP()/Raw(load=3Db'XXXXXXXXXXXXXXXXXX')],if=
+ace=3D"ens2f0",count=3D4,inter=3D0,verbose=3DFalse)
+ tester_scapy:
+       dut.10.239.252.191:6022:  port 0/queue 0: received 1 packets
+  src=3D52:00:00:00:00:00 - dst=3D00:01:01:00:00:00 - pool=3Dmb_pool_0 - ty=
+pe=3D0x0800
+- length=3D60 - nb_segs=3D1 - hw ptype: L2_ETHER L3_IPV4_EXT_UNKNOWN L4_UDP=
+  - sw
+ptype: L2_ETHER L3_IPV4 L4_UDP  - l2_len=3D14 - l3_len=3D20 - l4_len=3D8 -
+Destination UDP port=3D53 - Receive queue=3D0x0
+  ol_flags: RTE_MBUF_F_RX_L4_CKSUM_GOOD RTE_MBUF_F_RX_IP_CKSUM_GOOD
+RTE_MBUF_F_RX_OUTER_L4_CKSUM_UNKNOWN
+port 0/queue 0: received 1 packets
+  src=3D52:00:00:00:00:00 - dst=3D00:01:01:00:00:00 - pool=3Dmb_pool_0 - ty=
+pe=3D0x0800
+- length=3D60 - nb_segs=3D1 - hw ptype: L2_ETHER L3_IPV4_EXT_UNKNOWN L4_UDP=
+  - sw
+ptype: L2_ETHER L3_IPV4 L4_UDP  - l2_len=3D14 - l3_len=3D20 - l4_len=3D8 -
+Destination UDP port=3D53 - Receive queue=3D0x0
+  ol_flags: RTE_MBUF_F_RX_L4_CKSUM_GOOD RTE_MBUF_F_RX_IP_CKSUM_GOOD
+RTE_MBUF_F_RX_OUTER_L4_CKSUM_UNKNOWN
+port 0/queue 0: received 1 packets
+  src=3D52:00:00:00:00:00 - dst=3D00:01:01:00:00:00 - pool=3Dmb_pool_0 - ty=
+pe=3D0x0800
+- length=3D60 - nb_segs=3D1 - hw ptype: L2_ETHER L3_IPV4_EXT_UNKNOWN L4_UDP=
+  - sw
+ptype: L2_ETHER L3_IPV4 L4_UDP  - l2_len=3D14 - l3_len=3D20 - l4_len=3D8 -
+Destination UDP port=3D53 - Receive queue=3D0x0
+  ol_flags: RTE_MBUF_F_RX_L4_CKSUM_GOOD RTE_MBUF_F_RX_IP_CKSUM_GOOD
+RTE_MBUF_F_RX_OUTER_L4_CKSUM_UNKNOWN
+port 0/queue 0: received 1 packets
+  src=3D52:00:00:00:00:00 - dst=3D00:01:01:00:00:00 - pool=3Dmb_pool_0 - ty=
+pe=3D0x0800
+- length=3D60 - nb_segs=3D1 - hw ptype: L2_ETHER L3_IPV4_EXT_UNKNOWN L4_UDP=
+  - sw
+ptype: L2_ETHER L3_IPV4 L4_UDP  - l2_len=3D14 - l3_len=3D20 - l4_len=3D8 -
+Destination UDP port=3D53 - Receive queue=3D0x0
+  ol_flags: RTE_MBUF_F_RX_L4_CKSUM_GOOD RTE_MBUF_F_RX_IP_CKSUM_GOOD
+RTE_MBUF_F_RX_OUTER_L4_CKSUM_UNKNOWN                 TestMacFilter: Test Ca=
+se
+test_add_remove_mac_address Result FAILED: 'Packet has been received on a n=
+ew
+MAC address that has been removed from the port'
+
+Expected Result
+Explain what is the expected result in text or as an example output:
+
+Unable to receive packets=20
+Regression
+Is this issue a regression: (Y)
+
+Bad commit:
+
+commit 74533d1a8b28d297e70cc0ade3e6c79962d9cff3 (HEAD)
+Author: David Marchand <david.marchand@redhat.com>
+Date:   Mon Aug 24 13:42:06 2026 +0200
+
+
+
+    ethdev: skip VMDq pools unless configured
+
+    The mac_addr_add API describes that only the 0 pool should be passed
+    unless VMDq has been enabled, though there was no validation so far.
+    Add such a check, then cleanup the MAC related operations (adding,
+    removing, restoring).
+
+    As a side effect, the net/cnxk does not need to manually reset the
+    mac_pool_sel[] array.
+
+    Signed-off-by: David Marchand <david.marchand@redhat.com>
+    Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+
+Version the regression was introduced: Specify git id if known.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
