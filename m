@@ -2,147 +2,58 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B630606A329
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=DZyVFPsZ
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE041606A31B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:42:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5712E400D7;
-	Tue, 27 Oct 2026 12:33:20 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTPS id DEB7C400D5
- for <dev@dpdk.org>; Tue, 27 Oct 2026 12:33:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793100799; x=1824636799;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=vzxj636nf0B/zivaA1J3Oda7kmQZt5YOWSxcL7liptc=;
- b=DZyVFPsZQev+avgCodPUSm6lyO3KbSpPOeLxrjQhsMsWCWjmjmooJzDP
- QTHzbndQMlzmZ6xbbSTx7DvSssy5lAWu2U5wIzB2Mb4090IkYW3FVU8Ki
- UbJUAQa0WM95n4t10wvt6Ar3ttZ+EKNK2NNguXpXVmffS+8ObJR0CsOaB
- n+tb9Ef683qi/LWPxx6pst8m586pfxe59S8pJ4sMyPVEVMwwHYFa2h9i2
- +tKpte9QjZM/qM/tV9EF8IWVq/WSyg3h0sPiZOOcJKBezX2MbJSL1WSCA
- YeTbRygFCwd5ifxePcybaBYTB3aNsc/1wPRcncJOHfYiN1gh6lT4RKgzL Q==;
-X-CSE-ConnectionGUID: KnYGxGTfQMqdgAu+VvN/lg==
-X-CSE-MsgGUID: dFb/e2YBRbaVNc5jgcU8rg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11947"; a="1792201"
-X-IronPort-AV: E=Sophos;i="6.27,181,1787036400"; 
-   d="scan'208";a="1792201"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Oct 2026 04:33:17 -0700
-X-CSE-ConnectionGUID: Z/T38pcbRGC7ByfJ1SoSGQ==
-X-CSE-MsgGUID: SJ8bPaTtT+iJl8tbk9F2iQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,181,1787036400"; 
-   d="scan'208";a="4672272"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Oct 2026 04:33:17 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Tue, 27 Oct 2026 04:33:16 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Tue, 27 Oct 2026 04:33:16 -0700
-Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.29) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Tue, 27 Oct 2026 04:33:16 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DwBuydFIqMQPR0a28NsWUamaqcBxH+IWGpCCXNfErHx63+eSgBaKTj7WJ4iHD/YiSga/FBMQY5UdDpddko5X+JiAmVMRMAHajsf1hzknrBhG8fOP9m0k8xjafiduAKZglRJ0txxnBruLCXx5od37j2CriQQSuxfxOnW7+sJR79HqEi6gIarndX9yhbugGc6WzN4YtEhlBLLS9cAsLoZfBL01fYGDH6uBvlLcsYxxPH+Rxs8PAc/ffv2Pga5gt9dsm5WvN5qxMK13QsjiKlVoHHdbdnZ2cIqfazOrmGlXSkJaaBggmeEmTs9VpCnHoCJoZS2o7Rtg2U0z5uiF9qz98A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KiBrE8LdyC6JzDVnaF5rKEm39Jqtnz7JLj7c/OCc8IU=;
- b=ee/qjB37htr0QeVk/uGx3CmMaH/IfMVAGbvxvG1vbpCjGzQ+1rjF1WCXDhZxlpwVbqK1JqcTC9WjA/ns79QV1KqPMFi32mQMidDs5OAqSi88HAMfnalSdAj6ZsiGCfEbqpFKU4AVplt3hwImHYXluX9pNjrF1aWsYkRcOuulJlVtx8+42/XCzlkFJIeIRxqw8vnT79qG6MyB/5mujeQ7Gx5bmtny53+zvK7LYGlCsPeXS2tVawiDptRTzqx2XXuvlsVI9sxsXSExDjLhnphQNwx2yNfQ4Hnu9nVLA51xgrqaN9wXDN4txW9UlcjtneCq75QWthU/p+Og1egPFZ9Hwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by FT1PR11MB981990.namprd11.prod.outlook.com (2603:10b6:170:36::16)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Tue, 27 Oct
- 2026 11:33:09 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0546.016; Tue, 27 Oct 2026
- 11:33:09 +0000
-Date: Tue, 27 Oct 2026 11:33:03 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Andrey Mokrushin <a.mokrushin@ideco.ru>
-CC: <dev@dpdk.org>, <anatoly.burakov@intel.com>,
- <vladimir.medvedkin@intel.com>, <sdl.dpdk@linuxtesting.org>
-Subject: Re: [PATCH] net/ixgbe: remove unreachable WFQ weight mode check
-Message-ID: <auCL7yjzLo5I_fJh@bricha3-mobl1.ger.corp.intel.com>
-References: <20261022130724.17371-1-a.mokrushin@ideco.ru>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20261022130724.17371-1-a.mokrushin@ideco.ru>
-X-ClientProxiedBy: DB9PR02CA0007.eurprd02.prod.outlook.com
- (2603:10a6:10:1d9::12) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+	by mails.dpdk.org (Postfix) with ESMTP id A152540611;
+	Tue, 27 Oct 2026 12:42:25 +0100 (CET)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+ by mails.dpdk.org (Postfix) with ESMTPS id 15843400D5;
+ Tue, 27 Oct 2026 12:42:22 +0100 (CET)
+X-QQ-mid: esmtpsz17t1793101338t45ef3226
+X-QQ-Originating-IP: odYBp37NNu+8IQNgSyR6DJde+L5r2WlTtpt85fzjdQM=
+Received: from DSK-zaiyuwang.trustnetic.com ( [115.227.112.25])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Tue, 27 Oct 2026 19:42:17 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 2294157718085051839
+EX-QQ-RecipientCnt: 4
+From: Zaiyu Wang <zaiyuwang@trustnetic.com>
+To: dev@dpdk.org
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
+ Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH v12 01/17] net/txgbe: fix failure to configure 10G on
+ dual-speed DAC
+Date: Tue, 27 Oct 2026 19:38:17 +0800
+Message-ID: <3335DBEBB0A509F0+20261027114218.9724-2-zaiyuwang@trustnetic.com>
+X-Mailer: git-send-email 2.55.0.windows.2
+In-Reply-To: <20261027114218.9724-1-zaiyuwang@trustnetic.com>
+References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
+ <20261027114218.9724-1-zaiyuwang@trustnetic.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|FT1PR11MB981990:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66253f18-3838-4edf-a015-08df341e1367
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|376014|1800799024|366016|261026140227099003|11063799006|56012099006|261022105027099003|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: L1J/cZjpGHMfxTDCsU9VlEBwR3Yt4JAUWtgT/pHPYObuxY86UnYiOpYDsm0hoThrH6T3OOj66kg3NIJ0Q2rGFbBqIaiXIz8HGadJZAa4voMsgOtpORYZ6ZPsCqrOF8Zee0tJdx11et6SGkCsaTUcAVyqfM/7TDR0Dda4X0Njeu0d8+IC/rZfF+PrjqFDN7uOes83tTdQuDouFTdSv+LBldB9WZ7HJd0EYGB6XHbZPS+PIr79jPySojBGjRHXZbstWlFPw8rumoJxpVEAAZ/0M4jtlENEjKOLpUGu5GXFJX0EDS7g7Vr46sBCWUboOjbi2/HShGD9etzCJKNSt18vvbv1e1Z99kfsW2D7DNPAiHlSu2nCFA2PJ8ovrAhUuUMhK7fuHW+keWoAcU1h/Blq7iwf9HncENzLmIOzZ/TkJgLdnI79pXMaPld9lXxQ4CTUoAWuj0cdNt/Qt/cETJdcrwm5H54Kk5qwnk6eATum5d1i6+RNPy5CyK43oIf/Dz44xqlQoqjjOJ0oztEF1GG64JzjfULBO4AIlr1U/r4zmPtK5QezHEcQovUhlnuJAtNQf8c8Uu2qDZOWwVTTqmaDKk1rHCfzZs+5lS3OkLZD7Pmg+QXuuNoZKvZ/+IPcC4YM0er/33WS9IGgGN19TAGL+yRiVuoNriE4mk+38q/ZKc4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(261026140227099003)(11063799006)(56012099006)(261022105027099003)(10067099003)(22082099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?uFexiI0m2sRMhAzR8DhkHql5c6HY3jqc5sHKuQkhKtrathBgTMPR67Ct1UtU?=
- =?us-ascii?Q?O6whqtxfOnWxAOFD3Mb62vkgTP8/QEnI4VW4Q5GjCd74uUZchExevmz70C92?=
- =?us-ascii?Q?eyBDx8emoeEy/TKBVZANBh3WQWiKtCSZ7xmKUWgOSwQXLSMZBqcBZMniG2GB?=
- =?us-ascii?Q?jkxH6nmE1BZjirmrGVsakYgPPg5kwFfXJfleaawKi1IT84iGOYN70EbmQiwR?=
- =?us-ascii?Q?vSazsVTrEXRI2v6TePpnqU82RgVv2gu6w4IQykHs86ZqGa+6kbjudD4Riry5?=
- =?us-ascii?Q?3PaJxuLpmtT5Us2Nx5jZwAcO7SiwPJgWcu5n8XaVXD4noIZewvrsOlj3lSEV?=
- =?us-ascii?Q?Qd7He4Ai1rIY8nn2uAZjgf7eKRGkHT1oB7yio+DCO54xwXRuGa0/Gm6rvlXL?=
- =?us-ascii?Q?6IBmQMFkscJg/idEpcSNKCmmIk/casSns/ae5WAjFiwTTf7O78F1HOr8nS4X?=
- =?us-ascii?Q?ixmyLk/Nv4hwVhoXUmx/6x5Yq3levJVN0+42a9ZpP8jOzlvbR7o5q2iE5rBP?=
- =?us-ascii?Q?1qQ5ruGd+6cUOu25c5vMdARxKlX2pLBuvJIWWKyFHIRs8pbboi6vTJ55peAi?=
- =?us-ascii?Q?BKzKyW/bYcMZkz6SbBZNAddtSgTJuDH12w4+p0ZuPbgguiCuo7QRJzf91raP?=
- =?us-ascii?Q?NCZho8+cRjRxDUz+rD5KG9/14p1C2JRvhoIpDfAWjcZdHN1toccOKhrvd4tP?=
- =?us-ascii?Q?Nk3lecfv/vRQP+ffSVZxff8KAHEPMIlUU26t9aob1vehMkX+Vd4qoWlROY19?=
- =?us-ascii?Q?adazPunQsjC/muwtUtMxf0QbUFctE5+tf2CNxeg5tHwCmDOYm01tMlhMgz/h?=
- =?us-ascii?Q?5eVgvnnO9Rqe9fDERghG4WNsF/LrZpD6PHfFC6E/C5RssEFz3dQs0mOAelAB?=
- =?us-ascii?Q?TmT980EA367hs5/J3C4xlfQmKCcp7SkrOdwCwyb0M/2nP0fx9nE78lZU3D3f?=
- =?us-ascii?Q?buocwJqeIoY4R64uCPFiYE6kNNT1lm6HV8RisjSQoMSIl7lAnBz25awvfYO8?=
- =?us-ascii?Q?1q1w24yhToFxGQWXNZW3G1jM+tKJfNuROg8LXH6YCCkuYadrYA0dfAnZITSV?=
- =?us-ascii?Q?jC3OV6deUKjnVeXNkm8h892pj5sPh/NfGtw8Gpmn5RY98WzY3ozMIOBzITg4?=
- =?us-ascii?Q?q7NoyGS1KH9wrG8JpQIBWTEW5D6qgVsSx4UisVOpSwpZXotgq9IfwPfKzUB4?=
- =?us-ascii?Q?0DsYo5FHzCYO5AO/vvEf4l6pfZQ/UDBiUGyBx3CtxBCaB6NL8zUShfF84ktF?=
- =?us-ascii?Q?cngmLdrvU8pIoVE6HteOc1ak5oxMVOvoUyenxmncUjVSgO0OWQQzCuBVwkaS?=
- =?us-ascii?Q?dDhzXIY6XXEo3v4kT/ax2KtzTv/2KXg8I1HVCcUSmXhz9uIoLr8TGLRA4nG3?=
- =?us-ascii?Q?ihlhWvQ1nQSS/3fDCsTG57BevdpwbtHoAwg8BW4UQgFEF5ebPFeg6NDUH+3K?=
- =?us-ascii?Q?2ri5r73O9qYoUa30H5j+eA92MSL/Ywpy41AhoWOZ78fdAv1pwNxJCZFt0Utr?=
- =?us-ascii?Q?rHcrQqrF8BDgKbfvoesgOEkJaEx/RqbZOm+eav0avTvnm9rL+I3mlTqoNVHK?=
- =?us-ascii?Q?Kg26TuxcANUzpVdnRBSv1UApVYLHFOi3jJSXhPrGckshoDnZRBm3k6EE31lS?=
- =?us-ascii?Q?ljivWhxLjYu8yQV7rpZ4RG861yFlmCtHIdWl+/dOfeKs9nIE16Tkf6N0Y3Va?=
- =?us-ascii?Q?hrJ9e0WbAyQP805KZNa2yFKAshDnRRvQvGbDH1R+ZdBacq6GGro2qxezSZYK?=
- =?us-ascii?Q?OuUFES94IQeemPMmdpqg7PKRTDZ3Yv8=3D?=
-X-Exchange-RoutingPolicyChecked: fQ/uwUEO+p2QVej3CY4MwOGNKp8sAImVsNCcJZSe9myj4JfRttxWQ6r0d1s0q4KIC6EgNRH25HV59xlagKUmRwukbC50NRcbj6zMUlhpvdHgO24gLjio1QDNfQ6ok7P6HRSvFALKUHA0Rd+nMvfAzZjH9UBQaQhh33Gyg4he/mv+3+VUhLffsWnfNhSbBJ4Ii+Db9RCzu3bGdz5K2abvOzAlvmo2bpyJ/sII1+ZRGr92izce9Lr/MNeqgux1pujzeQhJezKwRvt755aeZiUd+Fd5msNKH+8gPtZVOrnJyZ/pNneO5uvFygX8/zm/hNG8CXPoKbEIfII74z4jcT+ReA==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66253f18-3838-4edf-a015-08df341e1367
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2026 11:33:09.1199 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UlGWoQ9PULDAyvhUFEit67ZlFv4qfPiVBTu/nhSSCqwn4es1ITrLz0zvkjneSIwGtWTxv+gZh89GlSFYsmZKCFMixGRRxLkjtstMNzKm7oc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FT1PR11MB981990
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: MfPhJ3En0/NFd3iri2ayT0r7QSM729ZslqqmL/kFXXyW/G878z5aU3/G
+ 2d8o2F+ZMi7XQdOPkIle2im7dBY1eHv5cPzgzaWcWX+Y6Du8UgTl0zopSj8C/63pd3E5KMD
+ K3P81H+mwH9e2xcxkH+Z9jOOLVTYC14+u2n9iHCjTfxJQemjSC6cQt3X3GAsPGc4RKN9HVN
+ YC3f0MG7A+oi/8ReNf+afJLQJTSA8S8zBprsLaXC19+v0XjC54nu52GMM84lbOCi5RYyRFf
+ +pw5lPEAbCJd3yxM0k0lP41VS1aOqqVZN3km2gVUrqtZ1TOptyAZ9uqUrVfjb9wC2YuAh4J
+ NRTiuPzCZIWMqx5wRXmiqz1bbc+KFpcOhNCuKCxMFx8MdFOZiHI/z5Ly9I5AxY4Ice04gxr
+ nGtRwoXS1Uhs4TQxdSsr0EXkUfxFts4HNLB5QPyQka9mjwYARfYs9B0w91n4Nlux6YrssIz
+ XrXIoomehSoY/Jp07MsWm2Emq1nSVvD/om6WRcl53RBJ/36PuFguHD9t/ZzmgFy7Mt951V1
+ mTHAnj3Lx2OH3MjG6wYVLE6U4uZ7bMijz7FOJgqAnU5rWElHX0rn7shpxUr5qUWbg2h2xBS
+ kOKHUgVNUw089rajCpgDNsX8xc9U9Ga98OXYdMsiS/NZryTMxSPhmwio2pGpbgfBQPwQwJi
+ NAdYfjKn7/kY1hA173QJ8TwnUorVgLq6zBQNspJ6DpiXwBH/z7crqxSBq4Y0iJoY563K0tc
+ qruDsbjbOUfiPbXMmuYIJMGVFAOyoZID4jxjBDABJjNDW3cQFIFaV6uYtB5d1Qv3hCNyQYQ
+ ZNYNSKXXMsCIBm31SNv6a78baAmBZctvhZslj1Jhw4M03jHDCgN9IGtBwn3PNRoufPGYGai
+ QBsaxHcXoFd7FD8tVEbZWSHuvQQ01uSq8nObHNqSWeeCni/08lwx8PMKFDlVIcdImcA8B96
+ PJUxOL8fvFa1qQyD0CwEtL4lxoS8Aue+LUm/O75tx96W9mkOfN1XqkGRc96/ryemF6waMWv
+ sXUSbBTOrQcf9OTSj/FIOaomVC/GIs/flOEeqA4pi8BP/bBdbD3V1ICtUNNh0=
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,26 +63,86 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Thu, Oct 22, 2026 at 06:07:24PM +0500, Andrey Mokrushin wrote:
-> In ixgbe_node_param_check(), a non-NULL nonleaf.wfq_weight_mode
-> of a non-leaf node is already rejected with "WFQ not supported"
-> before the n_sp_priorities check. The pointer is not modified
-> afterwards, so the following else-if branch that checks it again
-> ("WFP should be byte mode") can never be taken.
-> 
-> Remove the dead branch. No functional change.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Signed-off-by: Andrey Mokrushin <a.mokrushin@ideco.ru>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Setting "port config speed 10000" on a 10G/40G dual-speed DAC cable
+fails with LINK_SETUP_ERR, and the AN base page always advertises
+only 40G.
 
-Applied to dpdk-next-net-intel.
-/Bruce
+Two checks independently blocked 10G:
+
+1. allowed_speeds in dev_start was restricted to 40G, so the user
+   request was rejected before reaching setup_link.
+2. get_link_capabilities_aml40() returned only 40G for all DAC
+   cables, so the link_capabilities mask in setup_phy_link_aml40()
+   stripped any 10G bit from the caller speed.
+
+Remove both restrictions so 10G flows through from user
+configuration to the AN base page advertisement. On DAC cables the
+capability is read from hw->phy.fiber_suppport_speed, which reflects
+the actual SFP module.
+
+Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
+Cc: stable@dpdk.org
+
+Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
+---
+ drivers/net/txgbe/base/txgbe_aml40.c | 15 +++++++++++----
+ drivers/net/txgbe/txgbe_ethdev.c     |  2 +-
+ 2 files changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index 1098efe5e6..7c72b53f64 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -98,11 +98,12 @@ s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
+ {
+ 	if (hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core0 ||
+ 	    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1) {
+-		*speed = TXGBE_LINK_SPEED_40GB_FULL;
+-		*autoneg = true;
++		*speed = hw->phy.fiber_suppport_speed;
++		*autoneg = hw->devarg.auto_neg;
+ 	} else if (txgbe_is_backplane(hw)) {
+-		*speed = TXGBE_LINK_SPEED_40GB_FULL;
+-		*autoneg = true;
++		*speed = TXGBE_LINK_SPEED_40GB_FULL |
++			 TXGBE_LINK_SPEED_10GB_FULL;
++		*autoneg = hw->devarg.auto_neg;
+ 	} else {
+ 		/*
+ 		 * Temporary workaround: set speed to 40G even if sfp not present
+@@ -176,6 +177,12 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
+ 		return status;
+ 	}
+ 
++	/* setup the highest link when no autoneg */
++	if (speed & TXGBE_LINK_SPEED_40GB_FULL)
++		speed = TXGBE_LINK_SPEED_40GB_FULL;
++	else if (speed & TXGBE_LINK_SPEED_10GB_FULL)
++		speed = TXGBE_LINK_SPEED_10GB_FULL;
++
+ 	if (txgbe_is_backplane(hw) || txgbe_is_dac_cable(hw) ||
+ 	    hw->phy.ffe_set) {
+ 		rte_spinlock_lock(&hw->phy_lock);
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index 0734a1c63c..d4c635dc2f 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -1848,7 +1848,7 @@ txgbe_dev_start(struct rte_eth_dev *dev)
+ 		goto error;
+ 
+ 	if (hw->mac.type == txgbe_mac_aml40)
+-		allowed_speeds = RTE_ETH_LINK_SPEED_40G;
++		allowed_speeds = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_40G;
+ 	else if (hw->mac.type == txgbe_mac_aml)
+ 		allowed_speeds = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_25G;
+ 	else
+-- 
+2.55.0.windows.2
+
