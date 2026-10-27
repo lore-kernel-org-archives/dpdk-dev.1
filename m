@@ -2,57 +2,55 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE041606A31B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEE9606A31B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:42:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A152540611;
-	Tue, 27 Oct 2026 12:42:25 +0100 (CET)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
- by mails.dpdk.org (Postfix) with ESMTPS id 15843400D5;
- Tue, 27 Oct 2026 12:42:22 +0100 (CET)
-X-QQ-mid: esmtpsz17t1793101338t45ef3226
-X-QQ-Originating-IP: odYBp37NNu+8IQNgSyR6DJde+L5r2WlTtpt85fzjdQM=
+	by mails.dpdk.org (Postfix) with ESMTP id 5E7E240658;
+	Tue, 27 Oct 2026 12:42:27 +0100 (CET)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+ by mails.dpdk.org (Postfix) with ESMTPS id 513EA400D5
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 12:42:24 +0100 (CET)
+X-QQ-mid: esmtpsz17t1793101335tdc56bed6
+X-QQ-Originating-IP: 5i+0U5dVuT6vQddI67wlNvvRDWGs93YDz9rT7Fs0xt8=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.227.112.25])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 27 Oct 2026 19:42:17 +0800 (CST)
+ id ; Tue, 27 Oct 2026 19:42:11 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2294157718085051839
-EX-QQ-RecipientCnt: 4
+X-BIZMAIL-ID: 11146231481677314982
+EX-QQ-RecipientCnt: 2
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v12 01/17] net/txgbe: fix failure to configure 10G on
- dual-speed DAC
-Date: Tue, 27 Oct 2026 19:38:17 +0800
-Message-ID: <3335DBEBB0A509F0+20261027114218.9724-2-zaiyuwang@trustnetic.com>
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Subject: [PATCH v12 00/17] Wangxun fixes and new features
+Date: Tue, 27 Oct 2026 19:38:16 +0800
+Message-ID: <37BE95FD3C16A889+20261027114218.9724-1-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
-In-Reply-To: <20261027114218.9724-1-zaiyuwang@trustnetic.com>
+In-Reply-To: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
- <20261027114218.9724-1-zaiyuwang@trustnetic.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MfPhJ3En0/NFd3iri2ayT0r7QSM729ZslqqmL/kFXXyW/G878z5aU3/G
- 2d8o2F+ZMi7XQdOPkIle2im7dBY1eHv5cPzgzaWcWX+Y6Du8UgTl0zopSj8C/63pd3E5KMD
- K3P81H+mwH9e2xcxkH+Z9jOOLVTYC14+u2n9iHCjTfxJQemjSC6cQt3X3GAsPGc4RKN9HVN
- YC3f0MG7A+oi/8ReNf+afJLQJTSA8S8zBprsLaXC19+v0XjC54nu52GMM84lbOCi5RYyRFf
- +pw5lPEAbCJd3yxM0k0lP41VS1aOqqVZN3km2gVUrqtZ1TOptyAZ9uqUrVfjb9wC2YuAh4J
- NRTiuPzCZIWMqx5wRXmiqz1bbc+KFpcOhNCuKCxMFx8MdFOZiHI/z5Ly9I5AxY4Ice04gxr
- nGtRwoXS1Uhs4TQxdSsr0EXkUfxFts4HNLB5QPyQka9mjwYARfYs9B0w91n4Nlux6YrssIz
- XrXIoomehSoY/Jp07MsWm2Emq1nSVvD/om6WRcl53RBJ/36PuFguHD9t/ZzmgFy7Mt951V1
- mTHAnj3Lx2OH3MjG6wYVLE6U4uZ7bMijz7FOJgqAnU5rWElHX0rn7shpxUr5qUWbg2h2xBS
- kOKHUgVNUw089rajCpgDNsX8xc9U9Ga98OXYdMsiS/NZryTMxSPhmwio2pGpbgfBQPwQwJi
- NAdYfjKn7/kY1hA173QJ8TwnUorVgLq6zBQNspJ6DpiXwBH/z7crqxSBq4Y0iJoY563K0tc
- qruDsbjbOUfiPbXMmuYIJMGVFAOyoZID4jxjBDABJjNDW3cQFIFaV6uYtB5d1Qv3hCNyQYQ
- ZNYNSKXXMsCIBm31SNv6a78baAmBZctvhZslj1Jhw4M03jHDCgN9IGtBwn3PNRoufPGYGai
- QBsaxHcXoFd7FD8tVEbZWSHuvQQ01uSq8nObHNqSWeeCni/08lwx8PMKFDlVIcdImcA8B96
- PJUxOL8fvFa1qQyD0CwEtL4lxoS8Aue+LUm/O75tx96W9mkOfN1XqkGRc96/ryemF6waMWv
- sXUSbBTOrQcf9OTSj/FIOaomVC/GIs/flOEeqA4pi8BP/bBdbD3V1ICtUNNh0=
-X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-XMAILINFO: MzNwb/pqyJTksdJc5kce6JSdTrXgCwR4DtnR1ynHXs/HQStP57xZBQ/i
+ rP37y/skyMwICLULlrscR86JHVH3Gxb5UqJHfIVxjwF+3tTdQJb5sd6k21ZYCD7BkqY7wm1
+ Dezc08HrkGfH0z+y/kvQ8J7cD4P64chSsmDaqE/A3O5Mv4se1xN/QUkSUNaxz83JFiwdJGL
+ 4YstgXLXsq8rdGX51Qhk2wGOUhYz4mdGzQDCvdbA4grHDeWH0kuopAlzEnt7oT11BwXopON
+ UbLNs+C5OlYy9JrtaZMuqbAsCEva82rBsgKUTa9L/K2di4hxVFehWyU8Rzq8h2lmVSAOwgS
+ 61Lu9A3IP5UThXqnQMmIXZUGXOnYFO8DgVXkQL7Za7rT5xhZ3U7q+7f+9HIS0FvrU9urbqB
+ gGuUwJS7ikjA2YdKOO8J4B5SztG8hdJ5jQzxqOHuMPWzQLkzgvIeUvKy/JqkRdPG5b0yxu5
+ k+nHkRzSHeeOZakMP+2DYdFbZbk3RoAn6rYLaVoiRNnkV5MMngLOLLnZt4YQd6s3RbD9c+A
+ TarXqt2n2YXIXoCu8/CPO0m6NzEjDDf3q5BS4/pfLCMy3pShQPRJlWGhUgZWHGMaVO03Rbu
+ TcZnX2XMKSTT1VCdr0xpx4s0FBr0nkQRhdhL/6A3LrcTgjtdgGhUDbiQunHvnjiwEYpovf/
+ y04LGeRSclxP2Auebz4ysfki1rvpJz/UwVn3dZYvPbbr+FTsfa13AiHQAhy82Q7OtsUkZvC
+ c53uv1XsCn/dzSrRzpzLnbXAgLQmLjsnxpKVgo5WdXFagNrSC0kX58IhcYLRZfmfOLdrrlZ
+ X0ZFkH9WszCRIblU7GPwlFAfZNSj77jL7OjlI1Uir5jZlx6WYPKn51FaqiTOjykpfVAkMlU
+ z+oYNJ3ZBbfojYwrf2s7gDnQUQWLmE7x5B6g9TLaW8xEgRbi4396Ip3RYYWmaB5d4jnmc/H
+ S/nFrV+MxTg1jl6+3cGSCCg/ahhDizJJUW+5LNrjo5txVdoV5dYq9nwQeatUYcYLiwol5RC
+ RobCTkND3PNJyKqieh5v/tpU9wtp51Cndn88hMTAhdHtDM3Xee+elvL+DY3nw75czXfDO/D
+ RMj3hC1Cl9P
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -63,86 +61,91 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Setting "port config speed 10000" on a 10G/40G dual-speed DAC cable
-fails with LINK_SETUP_ERR, and the AN base page always advertises
-only 40G.
+This series addresses link-related issues on Wangxun Amber-lite 25G/40G NICs (CR/KR training, hot-plug, 10G link state).
 
-Two checks independently blocked 10G:
-
-1. allowed_speeds in dev_start was restricted to 40G, so the user
-   request was rejected before reaching setup_link.
-2. get_link_capabilities_aml40() returned only 40G for all DAC
-   cables, so the link_capabilities mask in setup_phy_link_aml40()
-   stripped any 10G bit from the caller speed.
-
-Remove both restrictions so 10G flows through from user
-configuration to the AN base page advertisement. On DAC cables the
-capability is read from hw->phy.fiber_suppport_speed, which reflects
-the actual SFP module.
-
-Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
-Cc: stable@dpdk.org
-
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml40.c | 15 +++++++++++----
- drivers/net/txgbe/txgbe_ethdev.c     |  2 +-
- 2 files changed, 12 insertions(+), 5 deletions(-)
+v12:
+ - P05: pass true as the restart argument to txgbe_e56_set_phy_link_mode()
+        instead of deriving it from the link and AN state.
+ - P12: declare the per-MAC default copies where they are taken, instead of
+        initialising them to 0 and overwriting them.
+ - P13: limit the enable_tx_laser() call in the PHY init failure path of
+        txgbe_set_link_to_amlite() to the 25G MAC.
+ - P15: drop txgbe_is_40g_fiber_qsfp(); its branch was identical to the
+        else branch that follows it.
+ - P16: cancel the AN73 watchdog before arming it again on link-up.
+---
+v11:
+ - P12: fall back to the default value when an FFE tap does not fit the
+        register field, instead of only logging it.
+ - P13: change the patch from a new feature to a fix:
+        take the transmitter down on AML40 link down. Clearing GPIO bit 1,
+        which holds the module in reset, does not stop the transmitter for
+        every DAC cable and QSFP module. The laser_off devarg and its
+        documentation are dropped; link setup runs again on link-up to
+        restore what link-down disabled.
+ - P17: fix warnings in check-git-log, and add the Cc: stable tag that
+        belongs with the Fixes line.
+---
+v10:
+ - P12: check the FFE taps against the register field width of the MAC in
+        use, instead of only for the 40G one. On the Sapphire the main and
+        pre taps are six-bit fields and the post tap is seven-bit, so a
+        larger value spills into the neighbouring field rather than being
+        truncated.
+ - P12/P13: say "Amber-Lite 40G NIC" for bp_capa and laser_off, the only
+        MAC that implements either.
+ - P17: add a new patch to rename fiber_suppport_speed to fiber_support_speed.
+        The field was added with the misspelling in 234ce0d1fa, copied from the
+        out-of-tree base driver.
+---
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index 1098efe5e6..7c72b53f64 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -98,11 +98,12 @@ s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
- {
- 	if (hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core0 ||
- 	    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1) {
--		*speed = TXGBE_LINK_SPEED_40GB_FULL;
--		*autoneg = true;
-+		*speed = hw->phy.fiber_suppport_speed;
-+		*autoneg = hw->devarg.auto_neg;
- 	} else if (txgbe_is_backplane(hw)) {
--		*speed = TXGBE_LINK_SPEED_40GB_FULL;
--		*autoneg = true;
-+		*speed = TXGBE_LINK_SPEED_40GB_FULL |
-+			 TXGBE_LINK_SPEED_10GB_FULL;
-+		*autoneg = hw->devarg.auto_neg;
- 	} else {
- 		/*
- 		 * Temporary workaround: set speed to 40G even if sfp not present
-@@ -176,6 +177,12 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
- 		return status;
- 	}
- 
-+	/* setup the highest link when no autoneg */
-+	if (speed & TXGBE_LINK_SPEED_40GB_FULL)
-+		speed = TXGBE_LINK_SPEED_40GB_FULL;
-+	else if (speed & TXGBE_LINK_SPEED_10GB_FULL)
-+		speed = TXGBE_LINK_SPEED_10GB_FULL;
-+
- 	if (txgbe_is_backplane(hw) || txgbe_is_dac_cable(hw) ||
- 	    hw->phy.ffe_set) {
- 		rte_spinlock_lock(&hw->phy_lock);
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 0734a1c63c..d4c635dc2f 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -1848,7 +1848,7 @@ txgbe_dev_start(struct rte_eth_dev *dev)
- 		goto error;
- 
- 	if (hw->mac.type == txgbe_mac_aml40)
--		allowed_speeds = RTE_ETH_LINK_SPEED_40G;
-+		allowed_speeds = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_40G;
- 	else if (hw->mac.type == txgbe_mac_aml)
- 		allowed_speeds = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_25G;
- 	else
+
+Zaiyu Wang (17):
+  net/txgbe: fix failure to configure 10G on dual-speed DAC
+  net/txgbe: use the requested speed in E56 AN setup
+  net/txgbe: fix E56 PHY configuration error
+  net/txgbe: fix incorrect link state in 10G forced mode
+  net/txgbe: do not force reconfig on link retry
+  net/txgbe: set i2c sda hold time
+  net/txgbe: fix link speed display info for 10G mode
+  net/txgbe: remove stale outer UDP checksum offload flag
+  net/txgbe: fix SFP hot-plug when auto-negotiation is on
+  net/txgbe: fix DAC hot-plug on AML40 with auto-negotiation
+  net/txgbe: fix 40G FFE tuning applied to first lane only
+  net/txgbe: add pre2 FFE tap and backplane capability devargs
+  net/txgbe: fix Tx laser left on at AML40 link down
+  net/txgbe: fix CR/KR link training and recovery
+  net/txgbe: align link capabilities and DAC classification
+  net/txgbe: respect manual link-down on Amber-Lite
+  net/txgbe: fix typo in the fiber support speed field
+
+ doc/guides/nics/txgbe.rst              |  25 ++-
+ doc/guides/rel_notes/release_26_11.rst |   8 +
+ drivers/net/txgbe/base/txgbe_aml.c     |  11 +-
+ drivers/net/txgbe/base/txgbe_aml40.c   |  62 ++++--
+ drivers/net/txgbe/base/txgbe_e56.c     |  19 +-
+ drivers/net/txgbe/base/txgbe_e56.h     |   4 +
+ drivers/net/txgbe/base/txgbe_e56_bp.c  | 196 +++++++++++-------
+ drivers/net/txgbe/base/txgbe_e56_bp.h  |   4 +-
+ drivers/net/txgbe/base/txgbe_hw.c      |  31 +++
+ drivers/net/txgbe/base/txgbe_osdep.h   |  12 +-
+ drivers/net/txgbe/base/txgbe_phy.c     |  42 +++-
+ drivers/net/txgbe/base/txgbe_phy.h     |   7 +
+ drivers/net/txgbe/base/txgbe_regs.h    |   3 +
+ drivers/net/txgbe/base/txgbe_type.h    |  16 +-
+ drivers/net/txgbe/txgbe_ethdev.c       | 272 +++++++++++++++++++++++--
+ drivers/net/txgbe/txgbe_ethdev.h       |   2 +
+ drivers/net/txgbe/txgbe_rxtx.c         |   1 -
+ 17 files changed, 572 insertions(+), 143 deletions(-)
+
 -- 
 2.55.0.windows.2
 
