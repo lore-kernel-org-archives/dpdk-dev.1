@@ -2,26 +2,26 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEACC60A260C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 16:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E433F606A31A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 16:07:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9D2B5400D7;
-	Tue, 27 Oct 2026 17:05:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A27E3400D7;
+	Tue, 27 Oct 2026 17:07:38 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id 290BD400D5
- for <dev@dpdk.org>; Tue, 27 Oct 2026 17:05:39 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id A826E400D5
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 17:07:37 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 17DA84D45F; Tue, 27 Oct 2026 17:05:39 +0100 (CET)
+ id 9A2D44D3D0; Tue, 27 Oct 2026 17:07:37 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/other Bug 2079] compress/zlib: out-of-bounds read in UDC
- checksum after stream reset
-Date: Tue, 27 Oct 2026 16:05:39 +0000
+Subject: [DPDK/cryptodev Bug 2080] crypto/openssl: BN_CTX memory grows with
+ every modexp and modinv op
+Date: Tue, 27 Oct 2026 16:07:37 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: other
+X-Bugzilla-Component: cryptodev
 X-Bugzilla-Version: 26.11
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -35,7 +35,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone attachments.created
-Message-ID: <bug-2079-3@https.bugs.dpdk.org/>
+Message-ID: <bug-2080-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -52,16 +52,17 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2079
+https://bugs.dpdk.org/show_bug.cgi?id=3D2080
 
-            Bug ID: 2079
-           Summary: compress/zlib: out-of-bounds read in UDC checksum
-                    after stream reset
+            Bug ID: 2080
+           Summary: crypto/openssl: BN_CTX memory grows with every modexp
+                    and modinv op
            Product: DPDK
            Version: 26.11
           Hardware: All
@@ -69,341 +70,339 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D2079
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: other
+         Component: cryptodev
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Created attachment 427
-  --> https://bugs.dpdk.org/attachment.cgi?id=3D427&action=3Dedit
+Created attachment 428
+  --> https://bugs.dpdk.org/attachment.cgi?id=3D428&action=3Dedit
 AI proposed patch
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-ANT-2026-ISGDYAIV  [NOT SECURITY: ordinary bug]
-compress/zlib: out-of-bounds read in UDC checksum after stream reset
-Location: drivers/compress/zlib/zlib_pmd.c:102  in
-process_zlib_inflate_chksum()
-Commit:   9a45341f18a1ab47af7123e63d942b90c1b79f38
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
+Every modexp and modinv op processed by the `crypto_openssl` PMD permanently
+adds two BIGNUMs to the session's `BN_CTX`. A long-lived session therefore
+grows the process heap by a fixed amount per op (1124 bytes per 2048-bit
+modexp, 628 per modinv) until the session is freed. An application that kee=
+ps
+one of these sessions and runs many ops on it will eventually see ops compl=
+ete
+with `RTE_CRYPTO_OP_STATUS_ERROR` once allocation fails inside `BN_mod_exp(=
+)`,
+or the kernel kills the process if no memory limit is set.
 
+The cause is in `process_openssl_modexp_op()` and `process_openssl_modinv_o=
+p()`
+in `drivers/crypto/openssl/rte_openssl_pmd.c`. Each calls `BN_CTX_get()` tw=
+ice
+on the session context without its own `BN_CTX_start()`/`BN_CTX_end()` pair.
+The only open frame on that context is the one
+`openssl_set_asym_session_parameters()` opens at session creation, and
+`openssl_reset_asym_session()` closes it at session release, so every op ta=
+kes
+two new entries from the pool and none are ever reused. `BN_clear()` only
+zeroes the values. The default build is affected, no special input is invol=
+ved,
+and ASan/LSan report nothing because the memory is released with the sessio=
+n.
+The attached reproducer runs 2 =C3=97 10000 modexp ops on one session and s=
+hows
+about 11 MB of growth per batch, nearly all of it returned by
+`rte_cryptodev_asym_session_free()`. `dpdk-test-crypto-perf --optype modex
+--total-ops 1000000` peaks around 631 MiB RSS for the same reason. The atta=
+ched
+patch wraps each op in its own nested `BN_CTX_start()`/`BN_CTX_end()` frame,
+which brings per-op growth to zero. It would carry `Fixes: 3e9d6bd447fb` and
+`Cc: stable`, like the earlier per-op leak fixes in this driver.
 
-The UDC checksum in the zlib compress PMD is computed from stray heap memory
-instead of the UDC buffer on every stateless op after the first one on a
-private xform, and on every op when the xform has no dictionary. Depending =
-on
-what that memory holds, a valid PDU can be rejected on decompression with
-`RTE_COMP_OP_STATUS_CHECKSUM_VALIDATION_FAILED`, or compression can return a
-wrong nibble in `op->output_chksum`. Nothing crashes in a normal build. Und=
-er
-ASan, the checksum step reads 4 bytes before its `malloc()`'d history buffe=
-r.
-
-In `process_zlib_inflate_chksum()` and `process_zlib_deflate_chksum()`
-(`drivers/compress/zlib/zlib_pmd.c`, lines 101=E2=80=93102 and 51=E2=80=935=
-2), the code reads
-`*(uint32_t *)dictionary` and `*(uint32_t *)(dictionary + dictionary_len - =
-4)`
-without checking that `dictionary_len >=3D 4`. The history becomes empty in=
- two
-cases. First, any op whose flush flag is not `RTE_COMP_FLUSH_SYNC` ends in
-`inflateReset()`/`deflateReset()`, which discards the dictionary installed =
-from
-the xform; that includes `FLUSH_FULL`/`FLUSH_FINAL`, the flags `rte_comp.h`
-asks for on stateless ops. Second, the xform may have no dictionary, or one
-shorter than 4 bytes. The bad value comes from the uninitialised first read;
-the read before the buffer lands in glibc's chunk header and is zero in
-practice. On a fresh heap the nibble happens to come out right (0xf), but o=
-n a
-used heap it varies from run to run.
-
-The attached reproducer decompresses the same valid UDC PDU twice on one
-`compress_zlib` xform with an 8192-byte dictionary and `RTE_COMP_FLUSH_FINA=
-L`.
-The first op succeeds, and ASan reports the 4-byte read before the buffer at
-line 102 on the second. Only applications that use a dictionary of at least=
- 4
-bytes and `RTE_COMP_FLUSH_SYNC` on every op are unaffected. The unchecked r=
-ead
-dates from the commit that added the feature, 0dc314debb22 ("compress/zlib:
-support dictionaries and PDCP checksum").
-
-This is an ordinary bug, not a security issue: the short history that trigg=
-ers
-it comes only from the flush flag and
-xform the application chooses, never from packet contents, and the only eff=
-ect
-is a wrong 4-bit UDC checksum.
+This is an ordinary bug, not a security issue: the ops that trigger it are
+well-formed, nothing in DPDK lets an
+outside party drive modexp or modinv ops on a `crypto_openssl` session, and=
+ an
+application's own ordinary load hits
+it just the same.
 
 ## Details
 
-The UDC checksum helpers of the zlib PMD read the last four bytes of the
-history that zlib returns without checking
-that the history holds four bytes. When it is empty the read starts four by=
-tes
-before the heap buffer, and the "first four
-bytes" are uninitialised `malloc()` memory.
+Every modexp or modinv op processed by the `crypto_openssl` PMD takes two
+BIGNUMs from the session's `BN_CTX` and
+never returns them. The memory is held by the session and grows by a fixed
+amount per op until the session is freed.
 
-`drivers/compress/zlib/zlib_pmd.c:80` (`process_zlib_inflate_chksum()`;
-`process_zlib_deflate_chksum()` has the same
-code at lines 29-52):
+Commit tested: `9a45341f18a1ab47af7123e63d942b90c1b79f38` (26.11-rc1), defa=
+ult
+build (`/src/build`), OpenSSL 3.5.5.
+A small program creates one `RTE_CRYPTO_ASYM_XFORM_MODEX` session (2048-bit
+modulus, exponent 65537), reuses one op
+and one result buffer for N successful exponentiations, and reads glibc's
+`mallinfo2().uordblks` before the ops,
+after them, and after `rte_cryptodev_asym_session_free()`:
+
+| ops on the session | heap growth | returned by freeing the session |
+|---|---|---|
+| 1000 | 1 127 120 bytes | 1 100 720 bytes |
+| 2000 | 2 251 120 bytes | 2 224 720 bytes |
+| 20000 | 22 483 120 bytes | 22 456 720 bytes |
+
+That is 1124 bytes per op. The same is visible without any custom code: the
+in-tree perf tool run as below peaks at
+about 631 MiB RSS, against about 106 MiB with `--total-ops 100000`:
+
+```
+/src/build/app/dpdk-test-crypto-perf -l 0-1 --no-huge -m 512 --no-pci --vdev
+crypto_openssl -- \
+    --devtype crypto_openssl --ptest throughput --optype modex --total-ops
+1000000 --silent
+```
+
+The ASan build prints nothing for this: the memory stays owned by the sessi=
+on
+and is released with it, so
+LeakSanitizer has nothing to report.
+
+The op handler, `drivers/crypto/openssl/rte_openssl_pmd.c:2263`:
 
 ```c
-        uint32_t dictionary_len =3D 0;
-        uint8_t *dictionary =3D malloc(ZLIB_MAX_DICT_SIZE);
+static int
+process_openssl_modexp_op(struct rte_crypto_op *cop,
+                struct openssl_asym_session *sess)
+{
+        struct rte_crypto_asym_op *op =3D cop->asym;
+        BIGNUM *base =3D BN_CTX_get(sess->u.e.ctx);
+        BIGNUM *res =3D BN_CTX_get(sess->u.e.ctx);
         =E2=80=A6
-                if (inflateGetDictionary(strm, dictionary, &dictionary_len)=
-) {
+        base =3D BN_bin2bn((const unsigned char *)op->modex.base.data,
+                        op->modex.base.length, base);
+
+        if (BN_mod_exp(res, base, sess->u.e.exp,
+                                sess->u.e.mod, sess->u.e.ctx)) {
         =E2=80=A6
-                dictionary_start =3D *(uint32_t *)dictionary;
-                dictionary_end =3D *(uint32_t *)(dictionary + dictionary_le=
-n -
-4);      /* line 102 */
+        BN_clear(res);
+        BN_clear(base);
+
+        return 0;
+}
 ```
 
-An application that decompresses two valid UDC PDUs on one private xform
-(DEFLATE, `RTE_COMP_CHECKSUM_3GPP_PDCP_UDC`,
-8192-byte zero dictionary, stateless ops with `RTE_COMP_FLUSH_FINAL`) gets =
-this
-from `/src/build-asan` on the second op:
+`BN_CTX_get()` hands out the next unused BIGNUM of the context's pool. A BI=
+GNUM
+obtained this way becomes reusable
+only when `BN_CTX_end()` closes the frame that the enclosing `BN_CTX_start(=
+)`
+opened. For `sess->u.e.ctx` there is
+exactly one such frame, and it spans the whole life of the session:
 
-```
-ERROR: AddressSanitizer: heap-buffer-overflow =E2=80=A6 READ of size 4
-    #0 process_zlib_inflate_chksum drivers/compress/zlib/zlib_pmd.c:102:20
-    #1 process_zlib_op drivers/compress/zlib/zlib_pmd.c:337:3
-    #2 zlib_pmd_enqueue_burst drivers/compress/zlib/zlib_pmd.c:481:9
-=E2=80=A6 is located 4 bytes before 32768-byte region =E2=80=A6 allocated b=
-y =E2=80=A6
-process_zlib_inflate_chksum zlib_pmd.c:81
-```
+- `openssl_set_asym_session_parameters()` opens it when the session is crea=
+ted
+  (`drivers/crypto/openssl/rte_openssl_pmd_ops.c:1475`, and `:1506` for mod=
+inv)
+and takes the modulus and exponent
+  from it;
+- `openssl_reset_asym_session()` closes it and frees the context when the
+session is cleared
+  (`rte_openssl_pmd_ops.c:1937`, `:1943`).
 
-`process_zlib_op()` runs the checksum step before the (de)compression step
-(`zlib_pmd.c:337`, `:341`), so the checksum is
-taken over the history left by the previous op. On the first op that is the
-dictionary installed from the xform by
-`zlib_set_stream_parameters()` (`zlib_pmd.c:458-464`): `inflateGetDictionar=
-y()`
-reports 8192 bytes and both reads are in
-bounds.
+Each op in between runs inside that one open frame.
+`openssl_pmd_enqueue_burst()` (`rte_openssl_pmd.c:4113`) calls
+`process_asym_op()`, which dispatches to `process_openssl_modexp_op()`
+(`:3968`); the two `BN_CTX_get()` calls move the
+pool forward by two entries, `BN_bin2bn()` and `BN_mod_exp()` allocate digit
+arrays for them, and `BN_clear()` at
+the end only zeroes the values. Nothing rewinds the pool, so the next op ge=
+ts
+two further entries and the pool
+allocates a new block of BIGNUMs whenever it runs out. The session ends up
+holding two BIGNUMs and their digits for
+every op it has ever processed. The same sequence in a stand-alone OpenSSL
+program grows by the same 1124 bytes per
+iteration, and by 0 once the two `BN_CTX_get()` calls sit between
+`BN_CTX_start()` and `BN_CTX_end()`.
 
-The first op then ends with
-
-```c
-        if (op->flush_flag !=3D RTE_COMP_FLUSH_SYNC)
-                inflateReset(strm);                                       /*
-zlib_pmd.c:318 */
-```
-
-`inflateReset()` discards the sliding window, including the dictionary, and
-nothing installs it again. On the second op
-`inflateGetDictionary()` returns success, sets `dictionary_len` to 0 and co=
-pies
-nothing (checked with the zlib 1.3.1 of
-the image). Line 101 reads four bytes that nobody wrote and line 102 reads
-`dictionary - 4`.
-
-The flush flag that leads here is the one the API asks for. The PMD accepts
-only stateless ops (`zlib_pmd.c:328`), and
-for those `lib/compressdev/rte_comp.h:225` says "Flush flag must be set to
-either FLUSH_FULL or FLUSH_FINAL".
-`lib/compressdev/rte_compressdev.h:425` adds that the flush flag "has no
-meaning for decompression", and an op fresh
-from `rte_comp_op_alloc()` carries `RTE_COMP_FLUSH_NONE`
-(`lib/compressdev/rte_comp.c:75` zeroes it), which takes the
-same branch. `app/test-compress-perf/comp_perf_test_verify.c:218-225` prepa=
-res
-UDC decompress ops this way too
-(`RTE_COMP_FLUSH_FINAL`, `input_chksum` from the header byte), although its
-xform (line 130) always selects
-`RTE_COMP_CHECKSUM_NONE`, so the tool itself never reaches the read.
-
-Other ways to the same read, each confirmed with the ASan build:
-
-* Compression: `deflateReset()` at `zlib_pmd.c:226-227` empties the history=
- in
-the same way; the second op with
-  `RTE_COMP_FLUSH_FINAL` or `RTE_COMP_FLUSH_FULL` reports the read at
-`zlib_pmd.c:52`.
-* No dictionary in the xform: the history is empty on the first op already,=
- in
-both directions and with any flush flag.
-* A dictionary shorter than four bytes: with `dictionary_len =3D 2` the read
-starts two bytes before the buffer.
-
-With an 8192-byte dictionary and `RTE_COMP_FLUSH_SYNC` on every op the hist=
-ory
-never shrinks and three consecutive ops
-run without a report in either direction.
+`process_openssl_modinv_op()` (`rte_openssl_pmd.c:2231`) is the same code w=
+ith
+`BN_mod_inverse()` on
+`sess->u.m.ctx`; it grows by 628 bytes per op with a 2048-bit modulus.
 
 ## Impact
 
-An application that uses UDC checksums on this PMD gets a checksum computed
-from heap memory instead of from the UDC
-buffer: on every UDC-checksummed op after the first one of a private xform
-unless the ops use `RTE_COMP_FLUSH_SYNC`, and
-on the first op when the xform has no dictionary (or one under four bytes).=
- The
-eight bytes read are folded into the
-4-bit value that is compared with the nibble from the PDU header on
-decompression, or returned in `op->output_chksum` on
-compression.
+Any application that keeps a modexp or modinv session on `crypto_openssl` a=
+nd
+runs many ops on it sees its process
+memory grow steadily. A session is bound to a modulus (and exponent), so an
+application keeps it for as long as that
+key or group is in use, and every op on it adds to the process heap for the
+life of the session: 1124 bytes per
+2048-bit modexp, about 950 000 ops per GiB. How fast that adds up depends on
+the exponent: with exponent 65537 the
+test program runs about 40 000 ops/s on one core and holds 214 MiB after 200
+000 ops (about 5 seconds); with a
+2048-bit exponent it runs about 600 ops/s per core, about 0.5 MiB/s. All ops
+succeed until memory runs out; then the
+allocation fails inside `BN_mod_exp()` and the op comes back
+`RTE_CRYPTO_OP_STATUS_ERROR` (under a 1 GiB data limit,
+after about 0.9 to 1.1 million ops), or, without a limit, the kernel kills =
+the
+process. Freeing and recreating the
+session is the only way to get the memory back.
 
-Nothing crashes in the default build. With glibc the four bytes below the
-buffer belong to the chunk header, are always
-mapped and are always zero there, so the out-of-bounds read at line 102 (52=
- for
-compression) does not change the
-result. The value that varies comes from the uninitialised read one line
-earlier. On a fresh heap those bytes are zero
-as well, the nibble comes out 0xf, and the application built against
-`/src/build` processes six copies of the PDU with
-status 0. Once the heap has been used they hold the low half of a libc arena
-pointer: the nibble changes from run to run,
-a valid second PDU is rejected with status 7
-(`RTE_COMP_OP_STATUS_CHECKSUM_VALIDATION_FAILED`), and compression returns
-a wrong nibble in `output_chksum`.
-
-Every application that does stateless UDC with `RTE_COMP_FLUSH_FULL` or
-`RTE_COMP_FLUSH_FINAL` (the flags the API asks
-for), or without a dictionary, meets this, and its UDC checking is unreliab=
-le
-from the second op on. An application
-that installs a dictionary of four or more bytes and uses `RTE_COMP_FLUSH_S=
-YNC`
-on every op, in both directions, never
-does; that is also the only setup in which UDC works on this PMD, since the
-buffer must carry over between packets. The
-PDUs themselves play no part: offset and length are fixed, and the empty
-history comes from the flush flag and the
-xform.
+The in-tree users of modexp are `dpdk-test-crypto-perf`, `dpdk-test-eventde=
+v`
+and the unit tests; vhost-crypto
+forwards only RSA requests from a guest, and RSA does not take this path. T=
+he
+default build is affected; no
+configuration beyond using the OpenSSL PMD for these two op types is needed.
+The code dates from the introduction of
+the asym ops in 3e9d6bd447fb (2018). Earlier per-op leaks in this driver we=
+re
+fixed in b7b06b3fa4 ("crypto/openssl:
+fix memory leak in auth processing") and 9d91c3047d ("crypto/openssl: fix
+memory leaks in asym operations").
 
 ## Reproducing
 
-`repro` compiles a small compressdev application with ASan against
-`/src/build-asan`, writes one valid UDC PDU, and
-runs the application with that PDU twice on `--vdev compress_zlib` (`--no-h=
-uge
--m 512 --no-pci`). ASan is only there to
-make the read visible. The default build does not crash (see Impact).
+`repro` builds `repro.d/modexp_session.c` against the prebuilt default tree
+(`/src/build`, no sanitizer) with
+`pkg-config`, runs it once with `--vdev crypto_openssl`, and decides from t=
+he
+heap counters it prints. About
+2 seconds.
 
-Files:
+- `repro.d/modexp_session.c` is the application, the part an ordinary devel=
+oper
+writes: it configures cryptodev 0
+  with one queue pair, creates one `RTE_CRYPTO_ASYM_XFORM_MODEX` session
+(modulus 256 bytes of `0xc5`, exponent
+  65537), attaches it to one `rte_crypto_op`, and enqueues and dequeues tha=
+t op
+for two batches of 10000
+  modexps, a different base each time. Any op that does not come back
+`RTE_CRYPTO_OP_STATUS_SUCCESS` stops it with
+  an error. It prints glibc's `mallinfo2().uordblks` before the ops, after =
+each
+batch, and after
+  `rte_cryptodev_asym_session_free()`.
+- There is no crafted input: every op is a well-formed modexp. The growth
+depends only on how many ops the
+  application runs on the session.
+- `repro` is the setup and the verdict. It prints the application's four he=
+ap
+lines, then the growth in each batch
+  and how much of the total growth freeing the session gave back. It prints
+`BUG` when the second batch still grows
+  the heap by at least 512 bytes per op (the digits of the two 2048-bit BIG=
+NUMs
+that each op takes from the
+  session's `BN_CTX`), and freeing the session gives back at least 90 % of =
+the
+growth, which ties the memory to the
+  session.
 
-* `repro` (setup and verdict) builds the application, writes the PDU to
-`/tmp/udc_pdu.bin`, runs the application with
-  `-- /tmp/udc_pdu.bin /tmp/udc_pdu.bin` and checks the result. The shared =
-DPDK
-libraries load no drivers on their
-  own, so the script passes `-d librte_mempool_ring.so -d
-librte_compress_zlib.so`. It sets
-  `ASAN_OPTIONS=3Ddetect_leaks=3D0` so that allocations EAL leaves behind a=
-t exit
-do not add noise.
-* `repro.d/udc_decompress_app.c` (the ordinary developer's program) is the
-receiver for one PDCP bearer. It creates one
-  private xform (DEFLATE, window 13, `RTE_COMP_CHECKSUM_3GPP_PDCP_UDC`,
-8192-byte all-zero dictionary as the initial
-  UDC buffer). For each PDU file it enqueues one stateless op with
-`RTE_COMP_FLUSH_FINAL` (the flag `rte_comp.h`
-  requires for stateless ops), `src.offset =3D 1`, and `input_chksum` set t=
-o the
-low nibble of the UDC header. It then
-  prints `PDU n: status S, N bytes`.
-* The PDU (the sender's part) is built in `repro` from named parts: UDC hea=
-der
-`0x80 | 0xf`, meaning "compressed" plus
-  checksum 0xf (the UDC checksum of the all-zero buffer), followed by `hell=
-o`
-as raw DEFLATE. The PDU is valid, and
-  nothing in it is malformed. Any PDU that reaches the second op of such an
-xform triggers the read.
-
-Expected output on this tree:
+Expected output on the tested commit:
 
 ```
-CONTROL PDU 1: status 0, 5 bytes
-OBSERVED
-heap-buffer-overflow on address 0x=E2=80=A6 at pc 0x=E2=80=A6 bp 0x=E2=80=
-=A6 sp 0x=E2=80=A6
-READ of size 4 at 0x=E2=80=A6 thread T0
-    #0 0x=E2=80=A6 in process_zlib_inflate_chksum
-/src/build-asan/../drivers/compress/zlib/zlib_pmd.c:102:20
-    #1 0x=E2=80=A6 in process_zlib_op
-/src/build-asan/../drivers/compress/zlib/zlib_pmd.c:337:3
-0x=E2=80=A6 is located 4 bytes before 32768-byte region [0x=E2=80=A6,0x=E2=
-=80=A6)
+after 0 ops: heap_in_use=3D255920
+after 10000 ops: heap_in_use=3D11503216
+after 20000 ops: heap_in_use=3D22743216
+after session free: heap_in_use=3D285664
+OBSERVED first 10000 ops:  heap +11247296 bytes (1125 per op)
+OBSERVED second 10000 ops: heap +11240000 bytes (1124 per op)
+OBSERVED freeing the session released 22457552 of the 22487296 bytes
 BUG
 ```
 
-The first op on the xform decompresses the PDU (status 0, 5 bytes). The sec=
-ond
-op is the same PDU on the same xform,
-and it never gets to decompress: ASan stops it in the checksum step. `BUG` =
-is
-printed only when both of these hold: the
-first PDU succeeded, and ASan reports a heap-buffer-overflow `READ of size =
-4`
-with frame #0 in
-`process_zlib_inflate_chksum`, located 4 bytes before the buffer. With the
-attached patch applied and
-`librte_compress_zlib` rebuilt, no ASan report appears and the script prints
-`OK`.
+With the attached patch applied and `drivers/librte_crypto_openssl.so.27.0`
+rebuilt, the same script shows a one-off
+growth of 8032 bytes in the first batch, `+0` in the second, and prints `OK=
+`.
 
 ## Suggested fix
 
-The attached patch adds a length check to both helpers,
-`process_zlib_deflate_chksum()` and
-`process_zlib_inflate_chksum()`, right after
-`deflateGetDictionary()`/`inflateGetDictionary()` return the history and
-before either read. When `dictionary_len` is under `sizeof(uint32_t)` it lo=
-gs
-"Dictionary too short for checksum", sets
-`RTE_COMP_OP_STATUS_CHECKSUM_VALIDATION_FAILED`, frees the buffer and retur=
-ns,
-the same path the helpers already take
-when fetching the dictionary fails, so `process_zlib_op()` fails the op ins=
-tead
-of producing a nibble from heap memory.
-Ops with a history of four or more bytes (the first op with a dictionary,
-`RTE_COMP_FLUSH_SYNC` streams) are unchanged.
-With it applied and `librte_compress_zlib` rebuilt in `build-asan`, the sec=
-ond
-op of the reproducer ends with status 7,
-there is no ASan report and `repro` prints `OK`.
+The attached patch changes `process_openssl_modinv_op()` and
+`process_openssl_modexp_op()` in
+`drivers/crypto/openssl/rte_openssl_pmd.c` so that each op opens its own fr=
+ame
+on the session context with
+`BN_CTX_start()` before taking its two BIGNUMs and closes it with
+`BN_CTX_end()` on both the success path and the
+`BN_CTX_get()` failure path. OpenSSL frames nest, so the session's own frame
+holding the modulus and exponent is
+untouched. The patch also replaces the `BN_free()` calls on the failure pat=
+h,
+which act on BIGNUMs the context owns
+(harmless in practice, since a BIGNUM just handed out by the context has
+nothing to free), with `BN_CTX_end()`,
+which also clears the context's `too_many` flag.
 
-The patch does not make stateless UDC work: it makes visible that a statele=
-ss
-xform with a dictionary only works for its
-first op, because every later op starts from an empty history. Two follow-u=
-ps
-are left to the maintainers:
+```diff
+--- a/drivers/crypto/openssl/rte_openssl_pmd.c
++++ b/drivers/crypto/openssl/rte_openssl_pmd.c
+@@ -2233,12 +2233,14 @@ process_openssl_modinv_op(struct rte_crypto_op *cop,
+                struct openssl_asym_session *sess)
+ {
+        struct rte_crypto_asym_op *op =3D cop->asym;
+-       BIGNUM *base =3D BN_CTX_get(sess->u.m.ctx);
+-       BIGNUM *res =3D BN_CTX_get(sess->u.m.ctx);
++       BIGNUM *base, *res;
++
++       BN_CTX_start(sess->u.m.ctx);
++       base =3D BN_CTX_get(sess->u.m.ctx);
++       res =3D BN_CTX_get(sess->u.m.ctx);
 
-* Keep the xform's dictionary in `struct zlib_stream` and call
-`inflateSetDictionary()`/`deflateSetDictionary()` again
-  after the reset at `zlib_pmd.c:227` and `:318`. With that on top of the p=
-atch
-(tried with the stream holding the
-  xform's pointer), both PDUs of the reproducer decompress with status 0 and
-ASan stays silent. It needs a decision on
-  whether the PMD copies the dictionary or requires the application to keep=
- it
-allocated for the lifetime of the xform.
-  The alternative is to document that UDC needs `RTE_COMP_FLUSH_SYNC` on ev=
-ery
-op, decompression included, which
-  `rte_compressdev.h` currently contradicts.
-* Reject a UDC-checksum xform with no dictionary, or one under four bytes, =
-in
-`zlib_set_stream_parameters()`, so the
-  error shows at setup rather than on every op.
+        if (unlikely(base =3D=3D NULL || res =3D=3D NULL)) {
+-               BN_free(base);
+-               BN_free(res);
++               BN_CTX_end(sess->u.m.ctx);
+                cop->status =3D RTE_CRYPTO_OP_STATUS_NOT_PROCESSED;
+                return -1;
+        }
+@@ -2255,6 +2257,7 @@ process_openssl_modinv_op(struct rte_crypto_op *cop,
 
-The unchecked read was introduced with the feature, so the tag is
-`Fixes: 0dc314debb22 ("compress/zlib: support dictionaries and PDCP
-checksum")`.
+        BN_clear(res);
+        BN_clear(base);
++       BN_CTX_end(sess->u.m.ctx);
+
+        return 0;
+ }
+@@ -2265,12 +2268,14 @@ process_openssl_modexp_op(struct rte_crypto_op *cop,
+                struct openssl_asym_session *sess)
+ {
+        struct rte_crypto_asym_op *op =3D cop->asym;
+-       BIGNUM *base =3D BN_CTX_get(sess->u.e.ctx);
+-       BIGNUM *res =3D BN_CTX_get(sess->u.e.ctx);
++       BIGNUM *base, *res;
++
++       BN_CTX_start(sess->u.e.ctx);
++       base =3D BN_CTX_get(sess->u.e.ctx);
++       res =3D BN_CTX_get(sess->u.e.ctx);
+
+        if (unlikely(base =3D=3D NULL || res =3D=3D NULL)) {
+-               BN_free(base);
+-               BN_free(res);
++               BN_CTX_end(sess->u.e.ctx);
+                cop->status =3D RTE_CRYPTO_OP_STATUS_NOT_PROCESSED;
+                return -1;
+        }
+@@ -2288,6 +2293,7 @@ process_openssl_modexp_op(struct rte_crypto_op *cop,
+
+        BN_clear(res);
+        BN_clear(base);
++       BN_CTX_end(sess->u.e.ctx);
+
+        return 0;
+ }
+```
+
+With the patch applied to a clean checkout and the driver rebuilt, the
+reproducer prints `OK`, a modinv variant no
+longer grows with the op count, and `cryptodev_openssl_asym_autotest` passe=
+s.
+The patch file is a bare diff; its
+commit message should carry:
+
+```
+Fixes: 3e9d6bd447fb ("crypto/openssl: add RSA and mod asym operations")
+Cc: stable@dpdk.org
+```
 
 --=20
 You are receiving this mail because:
