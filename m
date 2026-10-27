@@ -2,30 +2,31 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D76606A7D9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D1F606A7F6
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:43:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F6BE40A79;
-	Tue, 27 Oct 2026 12:42:40 +0100 (CET)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTPS id 9312B406BA;
- Tue, 27 Oct 2026 12:42:37 +0100 (CET)
-X-QQ-mid: esmtpsz17t1793101353t3229d17a
-X-QQ-Originating-IP: k2BpxvqaUrgWTdBc4iCeAeaJ9d1Y88WYoW1e2nO1JN4=
+	by mails.dpdk.org (Postfix) with ESMTP id 86E8340A76;
+	Tue, 27 Oct 2026 12:42:42 +0100 (CET)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+ by mails.dpdk.org (Postfix) with ESMTPS id 9FA7F406BA;
+ Tue, 27 Oct 2026 12:42:39 +0100 (CET)
+X-QQ-mid: esmtpsz17t1793101356ta31db9fc
+X-QQ-Originating-IP: A4DWh7i+MWomkKbBmh9ZP+KMXE+k0N84CYjnsnuswxk=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.227.112.25])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 27 Oct 2026 19:42:32 +0800 (CST)
+ id ; Tue, 27 Oct 2026 19:42:34 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17800596175833570588
+X-BIZMAIL-ID: 2298930864543746168
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v12 07/17] net/txgbe: fix link speed display info for 10G mode
-Date: Tue, 27 Oct 2026 19:38:23 +0800
-Message-ID: <68976B22FBBC02BA+20261027114218.9724-8-zaiyuwang@trustnetic.com>
+Subject: [PATCH v12 08/17] net/txgbe: remove stale outer UDP checksum offload
+ flag
+Date: Tue, 27 Oct 2026 19:38:24 +0800
+Message-ID: <2111DCF2108302B5+20261027114218.9724-9-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261027114218.9724-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -35,24 +36,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NXz8NrbNT+i24YU0SeikzWY15GsEtepR2zzhqatbJmwJY760vYufNu0U
- ZUoQVvj6MQbTXv4m9CQ/pknyS2MRRnpiMXh5+Oq0HWfdTCvwAHWP9RmvJbJO/YyVF2ycbDY
- QrNdG6d/wtulyb9Bg8fxJoz0XBpRw354J4cLUzE1yarFUxTUF4F8NQQXa5Ew7PwQ9Qcqf1g
- fh2t1bufNDU67LyeWp6c9CnYmnYLYr6LhQbuNzc1eVD+nJV2Ozc4qa7YwwLbePl5lwYVqmc
- HYtq1uXXmrhiM6kvU4xrHQ3UpCI2QvNjWOkb8KS7GqSLDTTuLWXMt9LZL8uZP26tY/zju2c
- gk2MOHXB15VskUNMG5NwgD194jh9xU51JVN6rYlmMfKiFwkX7iGhEpadS2zSt6DFHQXHDcJ
- +PABdQ7FzKhcrb6I9iH0es3dFZ8zcVL9Hv031hzEH0QG+57/iZsOw9Ead7YqO4DYsstPUtw
- uBLQcgN/ufKBicrX5KEXERQ1E4QrLV/0aejBoH6ZVv1km+7ONvFkoORBCe3jV1gbL58fTLu
- 7cepCDlbb91bu35z4W7v8IH59IESw/XYe9AGZQAwMuGzCAPjW7UAx+LZOcWr3UWjclxvfbX
- C1x1XE+qqmjtjNB1hOi1YJibeaGgcaqy1bua5rhL8pgRbZwMh5S84njVNuwud1E1MIRyzfd
- QU07XO3wNmEErC9AzBKrpCMK3ZwQwF/vf7VQfgLXRKJRLJduD+1qBrIw9xhh7q/E6QNQneg
- ho5fxX6XSylbesl07sVm7RAy8xns0lIRP8sAyPSdr7/VQaOi7uDh8OjvgQMGWwMKNwepA4y
- aePxsKUh/oeGvb+Bif9QrfQBQ0SPHIwqVKKyOiXX0vvoxGouH1iRpFt0C+4E1XUgStlJLZj
- VAHLRRa3Je/0wLj1LnHLFyIQZUmn5j4/R71k5gMts+q4ANqz9wbtqQ2vVXgpvL0rzhcRQFz
- QFn/T+JzF21D4HCaJAEjUxAWxIMBHKvB1qoAFo2wXfJDNuoLox1ey3/UAy3zq18XQ/NkA27
- 9P8xRWo1xmxfIyspjq1Yk2F5Eh7y1x85xhgTlXlc1utd+zqvmJ/80EQ8MHPOfrVZKtTZqWh
- IM1pKV4pKOxw5qEsAIHi9UP0I9L359tHLlToq4b3vSUh8CJT4VUqvk59BfKBvBJ3v6MkETE
- +jTt34sgpNWPSZo=
+X-QQ-XMAILINFO: NnmGsxoOL8VFy5M3ShpXbYuyineVGootYHM/7SHG6XKlF9HPLDzrt8WJ
+ yNzjTjlumBy5YSo9bTg5CNsZAqngzGUsufKtGIb4u4+UzGR4cO9bdF5AbA0ttDx8zTfPzxv
+ Ja2qS5PHOSURhFziZE5riUaAdi/yEWFlaTjXtlmUkwpGGEtnLW3nFxIbhHG9pevSdf+ZSor
+ nte19zU5hMf1CT5y3h1WC/E4YXoH6qVD7K4ZOCim3Kq+S3hnAfqAfWB0trIRFG94tzuJJQQ
+ Ts2bqnKV7XPTRSI/sCtoOGoyn/I3UlmBCUNm991wacQ22L9nbDNLBtL0234q+aaoPWXtrwG
+ VXyxc78SVxC3eW9ElCBIY4ub1ZovPs151Fk72tJFT+WW21OLx/P2+DcWCEqoj9q4GqchDSC
+ 99uYqhGauQFgRHJM7OwhSXq7jCitIsTfmBx0VcGzneDiMmvMgJCZ6yA9UUazKDARjhzwBhJ
+ PLTg1BB+666nXHE9PVr8CGS+ZtaTU/Uohe0LzU7/iH9UzuBPdwLyFQlULwZwA+ELFDMzD2V
+ rUFYEQ9svhwmc38nH03es14CMJVKhayV4m8AxWEvEB6tS2wvmI9Lvek+wbXpWDjCEcPJGrH
+ Q8KRnaMEBt+h3s+j1U3C9f7v8Qoo3HZVz+OXfma1CsiM5GBGx7vAwpbqAjRUkPJmn0WvA3a
+ EbPWE+AVJzPJrQRzJctHTCzDe7fNYqqGezRBf6aqhj69zuyRTTfs9steTHBVBKErYinmLFj
+ VGviuVNPjxx4x8juC0rsas1KJUZXDcayDwpJoZi5wirEmDsMX5+TgiL+5ObSz1Fh4P59dZM
+ hlcL5De+iZnuRL8vUpkvxjpo8GzE3YKQwvh+gVL7o6ehiBC0aj0257kEA0aiHaqCJCcD3VI
+ pEZzNRF34r49EWWGvhP87uzwITpCS2xNRi5Vt/QLckBx3JItphQmHLh0QugOPPCF2Ib/1xC
+ SfSCSMAdhn1EZEokHx4V98i+TvhBiYZXogu9aNpDRtohaXlkoOQgaE44XCWSsYcon4+Xpmf
+ IytCdn4LgjFaTr/YwTj5NRq/xQOiu+GZrY12Gz1ucHzouBJSg2OetN8ZIDQFky6j8P0M8L7
+ 5nP3iULq0341UAOpfSEoZQ=
 X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
@@ -71,36 +71,35 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-When an AML40 port links up at 10G, DPDK reports the speed as 100M
-instead of 10G. The 10G link status bit is not recognized in
-txgbe_check_mac_link_aml40(), so any non-40G speed falls through to
-the default case (UNKNOWN) which is then reported as 100M.
+RTE_MBUF_F_TX_OUTER_UDP_CKSUM is no longer advertised in
+dev_info->tx_offload_capa, but it is still listed in
+TXGBE_TX_OFFLOAD_MASK. The two are now inconsistent: a packet
+carrying the flag is accepted by the offload mask check although the
+driver no longer handles it.
 
-Add the 10G port status bit recognition, so a 10G link is reported
-as 10G.
+Drop the flag from TXGBE_TX_OFFLOAD_MASK so the advertised
+capability and the accepted offload flags match.
 
-Fixes: abf042d32b39 ("net/txgbe: add Amber-Lite 25G/40G NICs")
+Fixes: 25fe1c780d39 ("net/txgbe: remove outer UDP checksum capability")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml40.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/txgbe/txgbe_rxtx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index ab7012608f..4b63810b16 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -85,6 +85,9 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
- 		if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) ==
- 			TXGBE_CFG_PORT_ST_AML_LINK_40G)
- 			*speed = TXGBE_LINK_SPEED_40GB_FULL;
-+		else if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_10G) ==
-+			TXGBE_CFG_PORT_ST_AML_LINK_10G)
-+			*speed = TXGBE_LINK_SPEED_10GB_FULL;
- 	} else {
- 		*speed = TXGBE_LINK_SPEED_UNKNOWN;
- 	}
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index 794ba041a4..a295666f9d 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -61,7 +61,6 @@ static const u64 TXGBE_TX_OFFLOAD_MASK = (RTE_MBUF_F_TX_IP_CKSUM |
+ 		RTE_MBUF_F_TX_UDP_SEG |
+ 		RTE_MBUF_F_TX_TUNNEL_MASK |
+ 		RTE_MBUF_F_TX_OUTER_IP_CKSUM |
+-		RTE_MBUF_F_TX_OUTER_UDP_CKSUM |
+ #ifdef RTE_LIB_SECURITY
+ 		RTE_MBUF_F_TX_SEC_OFFLOAD |
+ #endif
 -- 
 2.55.0.windows.2
 
