@@ -2,31 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346F5606A328
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B44606A330
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:43:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E6D140695;
-	Tue, 27 Oct 2026 12:42:36 +0100 (CET)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
- by mails.dpdk.org (Postfix) with ESMTPS id F1D5740693;
- Tue, 27 Oct 2026 12:42:32 +0100 (CET)
-X-QQ-mid: esmtpsz17t1793101346t82693a31
-X-QQ-Originating-IP: 3N3wKbrp2PPZZrf1VPFwXgoI6otpvZDmm1s9kiYzfRk=
+	by mails.dpdk.org (Postfix) with ESMTP id 9F8784060C;
+	Tue, 27 Oct 2026 12:42:38 +0100 (CET)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+ by mails.dpdk.org (Postfix) with ESMTPS id DE38D400D5;
+ Tue, 27 Oct 2026 12:42:34 +0100 (CET)
+X-QQ-mid: esmtpsz17t1793101349t4793629a
+X-QQ-Originating-IP: t6KBBJ+KcO+qWaQ+Ko2kiOb6jbXVonCUDvBTs2VJ+lg=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.227.112.25])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 27 Oct 2026 19:42:25 +0800 (CST)
+ id ; Tue, 27 Oct 2026 19:42:27 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13504157135055106097
+X-BIZMAIL-ID: 12888587346072829179
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v12 04/17] net/txgbe: fix incorrect link state in 10G forced
- mode
-Date: Tue, 27 Oct 2026 19:38:20 +0800
-Message-ID: <FAC265FDAF0D2C4C+20261027114218.9724-5-zaiyuwang@trustnetic.com>
+Subject: [PATCH v12 05/17] net/txgbe: do not force reconfig on link retry
+Date: Tue, 27 Oct 2026 19:38:21 +0800
+Message-ID: <ACAF4DED64E0E17F+20261027114218.9724-6-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261027114218.9724-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -36,24 +35,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OLAm9mAwKyf5nj5cPRYeDq1+m6zgp/5AaBykXbqO8/KI9v31H5sMosQy
- hJuvjhsgC4xJCiA6uzUe3+vd0FeMtjWOX8oupA64Fh24QtC3IvxrCd4wrJT2cfCfcbPWPXk
- w3UsrsEwwTQeBU5Oe+QqK1Yse6tEPOTattmeDmkx2oeipBggnpIOkpywWwc9xZAUsi/lP4N
- 9wixlTCcy7BwBL+EoUx5lW5V50q/guh9IVEuNsU0EUf/3caDDFBKRQ9CPWqH7lOJWGaZsxa
- 4jHX1hpEQjz6ws5Eo/j4O4sPwmilOqZaWe2a7xYFgrXo7TKRS/YrykfirWjeE/8Pbvl2Nw3
- IclkBL9uHLlhTCqCs0fpxTevwoWUjdWEcwFMusFVw17g4MjQrV/OhkPPIyqC87RtLjNxQrr
- 6VOlpexpsayk3cI+EjrnAQD54e5hU6i6oghugrYobGkOD9NRxOULGxVPDNLIWE/Dz3a3AKh
- TbyGMjmiREeXIvkeb/Dzt8bTwknHcYHpBx7ZzUP0Fuaqpb43byEXmjrWSyvXU/FZGXOHcEN
- Qq6WMPFB9my0tLQ2NFtwL55DXGwb/SdXHmmezperl4TAB3yiAsESEBYF3DNJVsJRCGTFsWH
- VE/iAeOraWPcTVJSZN2WnKjGD+W8tVhKS7VrUZIS5DrIthDFb58VMV7ji+XbJxt2hZ5yCgM
- C4A6Zbz+afmFGWyQf4rZtIVGvBrkhRyxaJV7W4WF1qm5q50YQu43263AekcGjQsVECzAd8c
- 5min3GQzhCgtqLeelwF/3oqqzBu1SvkOw5UWmdU5QlWeG2jXPg2ZH5HzCP6WoBUZPVU/BBC
- quswL6IghkY0Su+jt45PLGYjcrv7Lu7MjorByFQRNYx8m1GLUoq+bLD5iS64Bsvdjqu9qPk
- 0PwHGsLDBhm3fXw5tRq45+7GY/HT0T0pN9HqgTc0rNecHpMvWfCsViZVhINfsFaTG31Qq/w
- LcB5xn0sHK9m9Xf918t9iJxDn4AYbXEGn3R7TDlcVGKU4iQJhZ2RcYGbK7v9jKvWgZLnVyI
- USPIgRJW0y42GWcW5hj+JxtxY+eL3/RitkB7ni6TcUczvjy1c/yZ/Dm25mcRCOPHdo2BAeN
- 63hqkMuIO4IK8APjIfXd72EneGGMVuGdw==
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
+X-QQ-XMAILINFO: MAV4M+M/KN870vzaw7jhB+lF/ZR7gObnW2zplLwwo56rqHsPScm2xjis
+ rjlPwiL6Q/FbmUNU2HvFRE+oEepqHV7iro/ssbz8JLmTWwTY1QzcjccTi9oEtSu9gXdfWoZ
+ R/UKrsD/yur0AgPkZ8lUlS+BxwZ885CAY4llEd72L2HqZuT1W/oJcYnLj8XdnnnktNl3nMg
+ qA1i3LSYzeRpZaTb/lxrhndm/HPd7u9WjsGKSI/sTZbsb6758ChX2xdFtdEf7fxs3dAUEX/
+ Sa14h+v/tr3arK2eWkRr5IHfJdUYEc/5VW7QrMPLLZlbtZkt4IVwql3HWKKmJkgq0TsKLBL
+ kEfEoYw//HM+lovpZDlLy0fePfPuX+MrCsosRcjfNzMAHTT7jhIB7lxsYAURHDEVditwDFS
+ wSVSNCc3GOFbPuoM3GHm9RSmrt7VVY9cQmrrBLPRiM0KY0R4oB+JVvtflvYudvPeqM6Wkgo
+ pbaCsPKJO3q8k/w39lefWmrRCp+upVcusF5kHHUaVXlcrSbf1bTG/i4JHJ+pgM90gGsjrOE
+ v9+iAc9Ox4Mdmt4yi4WRoMOcIofVMU1GDiKID90ptrl9N7Y83iWi9lHATWyaPbGYTcMYcXI
+ Gi3CNRot3wnYBdu9Havsa3HPKsYz1o+FIJVKN/q8NpOt7SNgG+ZfA1acFdtiIxaxCDs25JO
+ KMJgxACXXRaU/U01EsnP//dvXmKo3QzucYWA2X7kwtj6Hr2hejzFlPd9DxZvVrQ7RJANBjH
+ YJXRqzZfXSZPBY4aoqiaD7BbMaVtbvX15W9W5dXsD0rYleSuKVLZ+zYiDNPolq0RYXe5lfP
+ VhJDe3qTjuGuQltZoXlnFGMT6ZdbUbUCduSNdZoZCTdbnwkiZOQW1WEjW1qBUugXkPj4HyW
+ s6g5L9GQFHTM5IcqRBAscWsMN6AAp9mMMv9C2bvY2PYNyU6w3dxizYDlpfYMuMJdVzMfOuH
+ nzc7VtQJiqQXOj0uGe5yVFmKaq/WJYyM0vUkQ//dPIrFtgGIARUTTyyZdPecz/nA0Ri1MZX
+ dvCjREgjWzdRLex0IvDMPo0YVYdumcbFhrIE14YSxprWAMCix7iS68lUrEt7VUQLFdJOEY3
+ A==
+X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -71,51 +70,72 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-When an AML40 port is configured in 10G forced mode (auto_neg=0),
-the hardware can link up but the driver keeps reporting link down
-after a peer link failure: link_valid is cleared on timeout but
-never restored when the peer recovers, so the link stays down until
-the port is restarted.
+The link alarm retry calls mac.setup_link() with
+autoneg_wait_to_complete = false. On the AN73/xpcs path, this skips
+reconfiguration once the link is up and AN is complete. Passing true
+from the retry path instead resets an established AN73 link, which
+then drops and may not recover after DAC hot-plug.
 
-Restore hw->link_valid = true in the success path of
-txgbe_setup_phy_link_aml40(), symmetric to the 40G path. Handle
-TXGBE_ERR_PHY_INIT_NOT_DONE before the timeout split and leave
-link_valid untouched, matching the 25G path in
-txgbe_setup_phy_link_aml(); the alarm retry then attempts the
-setup again.
+The setup flag is also passed to txgbe_e56_set_phy_link_mode() as its
+need_restart argument. Passing false unchanged would make a retry a
+no-op while the link is down or AN is incomplete if the PHY is already
+in 10G mode. Pass true there: the early return above already covers an
+established link, so every path that reaches this point needs the
+restart.
 
-Fixes: f7cfc21e9f75 ("net/txgbe: fix link stability for 40G NIC")
+Fixes: 6104fd11086e ("net/txgbe: fix link stability for 25G NIC")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml40.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/net/txgbe/base/txgbe_aml.c   | 3 ++-
+ drivers/net/txgbe/base/txgbe_aml40.c | 3 ++-
+ drivers/net/txgbe/txgbe_ethdev.c     | 2 +-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
+index ac80d85f08..de4db31cf8 100644
+--- a/drivers/net/txgbe/base/txgbe_aml.c
++++ b/drivers/net/txgbe/base/txgbe_aml.c
+@@ -246,8 +246,9 @@ s32 txgbe_setup_phy_link_aml(struct txgbe_hw *hw,
+ 		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
+ 		if (link_up && hw->an_done && !autoneg_wait_to_complete)
+ 			return status;
++
+ 		rte_spinlock_lock(&hw->phy_lock);
+-		txgbe_e56_set_phy_link_mode(hw, speed, autoneg_wait_to_complete);
++		txgbe_e56_set_phy_link_mode(hw, speed, true);
+ 		rte_spinlock_unlock(&hw->phy_lock);
+ 		return 0;
+ 	}
 diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index 7476759d4d..5fa7c6a243 100644
+index 5fa7c6a243..ab7012608f 100644
 --- a/drivers/net/txgbe/base/txgbe_aml40.c
 +++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -202,9 +202,18 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
- 
- 	rte_spinlock_lock(&hw->phy_lock);
- 	ret_status = txgbe_set_link_to_amlite(hw, speed);
-+	rte_spinlock_unlock(&hw->phy_lock);
-+
-+	/* The PHY did not come out of reset; leave link_valid alone and
-+	 * let the retry in the alarm handler attempt the setup again.
-+	 */
-+	if (ret_status == TXGBE_ERR_PHY_INIT_NOT_DONE)
-+		goto out;
-+
- 	if (ret_status == TXGBE_ERR_TIMEOUT)
- 		hw->link_valid = false;
--	rte_spinlock_unlock(&hw->phy_lock);
-+	else
-+		hw->link_valid = true;
- 
- 	for (i = 0; i < 4; i++) {
+@@ -171,8 +171,9 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
  		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
+ 		if (link_up && hw->an_done && !autoneg_wait_to_complete)
+ 			return status;
++
+ 		rte_spinlock_lock(&hw->phy_lock);
+-		txgbe_e56_set_phy_link_mode(hw, speed, autoneg_wait_to_complete);
++		txgbe_e56_set_phy_link_mode(hw, speed, true);
+ 		rte_spinlock_unlock(&hw->phy_lock);
+ 		return status;
+ 	}
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index f20e57125d..2f513e20b9 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -3228,7 +3228,7 @@ txgbe_dev_setup_link_alarm_handler_aml(void *param)
+ 		return;
+ 	}
+ 
+-	hw->mac.setup_link(hw, speed, true);
++	hw->mac.setup_link(hw, speed, false);
+ 
+ 	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
+ 	bool link_up = false;
 -- 
 2.55.0.windows.2
 
