@@ -2,134 +2,54 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAEF606A32F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=nxp.com header.i=@nxp.com header.a=rsa-sha256 header.s=selector1 header.b=Pqs6TvfL
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B90560A2607
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:32:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1CE64400D7;
-	Tue, 27 Oct 2026 12:20:57 +0100 (CET)
-Received: from AS8PR04CU009.outbound.protection.outlook.com
- (mail-westeuropeazon11011002.outbound.protection.outlook.com [52.101.70.2])
- by mails.dpdk.org (Postfix) with ESMTPS id D476E400D5
- for <dev@dpdk.org>; Tue, 27 Oct 2026 12:20:55 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F3mtuThOCjP+cr7MBzHUyGPz9XGD98PcjqNrX1OikVBJwQK91L/0iR9iChVgqpKsLZAkz/krnYI/Ijfe6uzFvHXeTJj8fccv+PFgvmT4gzJxSP+aj23OI0+UQE2yDzfsWV1JA3zw5hGFq+gskd0NZA1OZSlvXGZGGLgANgs6z0IyCSGtiVb1qkAdfit2VNbWinekwS4tzrtTVzuntXthTSa7+cX0U4/504iCNAVZ8vFAe4GjrVtv6ap38+LmUn7Vqrq9u8eufxuSq9uGoezss4XVGjjwKrd8LUWXIGhDG8BihLJSfvFU1ROo0NSZ1+qFBg10VjkPOLVxMI5NaXEeUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Jkf1ZHovo3fbAJVVHIlzq6RN8sqlk4/KTlNSPmlS/Q=;
- b=R0bJ4lZwKMP/8BPaqU3KetREoLCMZk5e6tDucIJnd5+WWCKRAUahNJpOf6XqTUltObpPdS3MhvmIV3Ld+Yh321OyBcrk/XyZEGp8vQtVBHsMXHj+RzLqBadHWW/gHF0XDuf2IULR89s6J3v3fV+WAXcRuS2ZJcXme8ABQ0FrMQfR4wUmiy6XESy7xRIf6jhCaz1oC4mhFPsbQ1wOc3VpKv3lHPfY2kOOnjvnGf393C4daZvKdSzurb2vpFUFX9gkbK7tKsXb0Xa5lfNvAKnaPxnPpLAZLHVQFIQadabOPsw+vcpDCrUfQQIOZCZO0+uezVfv8/mlolUcQrwthPcskg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Jkf1ZHovo3fbAJVVHIlzq6RN8sqlk4/KTlNSPmlS/Q=;
- b=Pqs6TvfLGIw5DFAufXkdJ3RQb9CVdBnD0q1aHI2WHqq1FHFZ7fHPLA0n/hcpAvXCZtQMJY2FRwlADzqTIIY3gUzf4pNI5z+RRyrcm02O/834T/9dBFfAKBnM3qhs2IxKvDZs27dYxFZH3euawA44Rh0brXz6MNolDuc9pPnG7azWZJzPjYX4UtU3+DG67km1DSQFi1mNO1VYslHhWvSKgK4Piq54KMy6qCtFR4sY8AlIpzEko331nJ4qDgQuU0EflZFqYC2511j4efC4XFeXb/eXKL5TqVkBY0KygTmLz/Ac0RlagaMUcHxsoxIiyTeaB3SsyPlFHMz/WH/FT7YxbA==
-Received: from AS8PR04MB8293.eurprd04.prod.outlook.com (2603:10a6:20b:3fa::19)
- by GV1PR04MB058055.eurprd04.prod.outlook.com (2603:10a6:150:3c0::16)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Tue, 27 Oct
- 2026 11:20:54 +0000
-Received: from AS8PR04MB8293.eurprd04.prod.outlook.com
- ([fe80::44ae:6a51:3b80:4418]) by AS8PR04MB8293.eurprd04.prod.outlook.com
- ([fe80::44ae:6a51:3b80:4418%5]) with mapi id 15.21.0546.021; Tue, 27 Oct 2026
- 11:20:54 +0000
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: Hemant Agrawal <hemant.agrawal@nxp.com>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [EXT] Re: [PATCH 00/16] Device unplug and bus cleanup refactoring
- for NXP
-Thread-Topic: [EXT] Re: [PATCH 00/16] Device unplug and bus cleanup
- refactoring for NXP
-Thread-Index: AQHdXAMSNSOrYyw/Ckauj6Ac8xGWwrcDIIOwgAyDayCAAI6ogIABHRGA
-Date: Tue, 27 Oct 2026 11:20:53 +0000
-Message-ID: <AS8PR04MB8293761B787C44B139BFE8F1E5602@AS8PR04MB8293.eurprd04.prod.outlook.com>
-References: <20260723135400.3621271-1-david.marchand@redhat.com>
- <20261014174001.1830726-1-david.marchand@redhat.com>
- <GV1PR04MB10750AE0102EC1FDDC8E2E0C389992@GV1PR04MB10750.eurprd04.prod.outlook.com>
- <AS8PR04MB82937F10CD26FDD07AA3AFABE5612@AS8PR04MB8293.eurprd04.prod.outlook.com>
- <CAJFAV8yKvC3rzwvK1LfraGx+ztV3Y_WNqiscom3JQTTj7uiPFg@mail.gmail.com>
-In-Reply-To: <CAJFAV8yKvC3rzwvK1LfraGx+ztV3Y_WNqiscom3JQTTj7uiPFg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Enabled=True;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SiteId=686ea1d3-bc2b-4c6f-a92c-d99c5c301635;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SetDate=2026-10-27T11:10:56.0000000Z;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Name=NXP
- Confidential; MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_ContentBits=3;
- MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Method=Standard
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8293:EE_|GV1PR04MB058055:EE_
-x-ms-office365-filtering-correlation-id: c20af682-03dd-402b-7393-08df341c5d59
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|23010399003|376014|366016|19092799006|1800799024|261022075727099003|261022105027099003|10067099003|56012099006|261026140227099003|18002099003|22082099003|261026121527099003|11063799006|4143699003|38070700021;
-x-microsoft-antispam-message-info: EjrrZ4LiE4SxKy3YWqvCork1sNsSJL2f92lpQSDsQqsIgHyIqLwc/LH90j8lx5tYjULi0MPw0o7rYgE1c7yQZeps8aOtxXBL1I0w93KKuQRk8t0c3BBHvkyl/gaE7DU+KUZsRuUwCH/nDOEG3D7gZT77jlDn0k4yirtD7m1+nuNNYXHPYwj+uadxayKFBwVS/1Jhr5NPRC2VMO8Od+T/9oAC4kkZoR49nFUYRrAYbVM3RZjlvMHCd/9dm5UQgOVuvD8/HeDD3o53Rw1XEFtcHwolUWA/WGAxNjSAfvdqRL/aFR0T6Fwo69h9Lj3zmxiU3HIrpz95p8XZ7DLS5t/QCnOSfdlE+dyYAtVgyhq89UT01950S9UjKOVjqxELaSpdtCSdFIVOdwGJxCmlPDmVxFw1NMde87OoUyfwa9eDgsVvU6Hz8XtGkIgRA60iw1sPGFF5skLSy7m6FWCqF7NVBXZFHJlOcyy4bBg3KXKW/rfIsr4qjRu5B1CA0ofzjXfXapV0jyRXfCdGYACwf3rvL17EZjUS/uT3/iM9q7R5kLOrItSUS1CVyUPrv9AhPfe3DazDJdhlkei3SBa4By/M4+JYg4WxzoXHO+i5KtmBk5K+TbiYyIujlKJ5gB8Chm6F1+u2QDy4AllHy6YrYe0tIQyfsZCmpb7GtIJrUqE2a4DLRc47mOnCPMQxfCq6S3Ab/KLUQW4RyMREKo3uD3zR2s49mQHrYD9W2/IW00ZaEcw=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:AS8PR04MB8293.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(366016)(19092799006)(1800799024)(261022075727099003)(261022105027099003)(10067099003)(56012099006)(261026140227099003)(18002099003)(22082099003)(261026121527099003)(11063799006)(4143699003)(38070700021);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?L1d4UWVSMm4xSytjZWJrbmVxZEhIWE1yM3NRZEpUejFhMVZ5Y1JDOWxXMGwr?=
- =?utf-8?B?Y3ZpRTdMbVBOMkRVV3NqaUFxMlVQbzcwb093SUtvTXBuYzhmQjZnLytVbXJX?=
- =?utf-8?B?ekNIVGhKeHRJNjBsRGJ6clNZSlRwWFUvSjdBR1Fnc3pwT2NoTDl5MkdjSGl4?=
- =?utf-8?B?S0k0UnBtcXdhR0l3WmRmOW5EeGVYUytLb2c1S3hVVVcxSnBTYktqVHJCMUd6?=
- =?utf-8?B?dWZxYjlsK2FTVGF5ZXZxdHNZZlRLemFMU1lyZzIzeWllME1heENoWHdOMnRh?=
- =?utf-8?B?czY4aEJWMm0vdEVBcjcrMXovcHJRbllRVWh0U01OTHNVcHhpYTVFQUNvYWFZ?=
- =?utf-8?B?QnVzN3Nxak1EWGZyRVltVnNvTkx2a1JWNG9najdPaFI0b2xvaFVMcVJ4NDVD?=
- =?utf-8?B?V2wzMURRTERVKzJzV3BNN2JtakJ5NHNXZUp3b1ZKUFRsM1hmbzdFN0F1U1gw?=
- =?utf-8?B?MWtqTElsN1RmeUsrbjM2cERMZ0tUb2lQR1ZtVHJrSGE4WkdMM2xMTGlXUVlF?=
- =?utf-8?B?K3RyOWJZOHNlbGtqZkkrNUlrTGFrb0xJUXIrcnczaUdDNWtGN1E0aDRKQ1o2?=
- =?utf-8?B?WDU2RmtQUllmcFp4N0ZpWmh0Q0hvUnV3OW4yMGdGOVk1R0F3OFcxVDU2Y0Nt?=
- =?utf-8?B?eEN3UjYrU0k1SGRVeEZJa0ZDQ2Q4eVRWd2dyS1RjQWhIU2lkaFZiaU9hU0dJ?=
- =?utf-8?B?L3JFWjlEaE1MUklGZFZ0Tjh3UjlVTG1hQVNHd3dGNlhvbGFhMDdWT1VnWHhh?=
- =?utf-8?B?d3RoK1JJZk4yMGlZdW5QY2pDMXFta3N6ZS9JL2NJektsaE4ya3BMSDR6eGhi?=
- =?utf-8?B?Rjl4bitxcGtiZjhxZDBIV05zMUt1ZXd5Zmd5NVhmQmlXa1N3QVI1NjBkVTZR?=
- =?utf-8?B?eFRWRldQb3piWWE2MzNZcXF3WkxSRStEUTZLVERPK3lMRHEyMi9vc1JhT2NS?=
- =?utf-8?B?NTM0ODRyZXZkeUhXYWdxVzQ0OW1qbFZ4Vk1vWFNreWlKV0IwcXNjekE0Nkdi?=
- =?utf-8?B?b1BwZDRvcmRiRFZrWjdkQ3Y1bVd5WWtqeWFrd3djcUlOT25HM0p3aytqVUhW?=
- =?utf-8?B?cDc4Z0RrQXUxa0lhNG95K0FKOVhoTTBWZnlzOWNSK1dxbk1QRk5SeEhlOTFX?=
- =?utf-8?B?VjVQbjNMUzBJcDloVFR6NFl2WUNuT0pXb2tETFF5YVM2K1ZUdjd3STNBRG4y?=
- =?utf-8?B?dnZrb3hjUjlqWS9sTWFpZDNHbVJxRUVuYWt3VEQveTJhbWd4SDMvTkJVMmg1?=
- =?utf-8?B?ZUh6eXV4UEx3RUdVNTZscFFKblM2dnY2NEFpaEV4cmhkOTZUSUpvNnRXbXZv?=
- =?utf-8?B?OW9STHNSaDBwenFlNFA3UTBuRE1PRm12eHRDWXo5NWp3ZGN0d0lsL0FUekxD?=
- =?utf-8?B?RzE1YWRkY3RWbnlMVlJtQ1NjbmJBR2NQMVJaL2ZYOXFDRmtydU80SmY4L3Qx?=
- =?utf-8?B?N21GSHBOa3E5dlBDVUdSSDFQWEM3TmRKbDh3V0p0SUpiY1hDN2hsQkNGd3Uv?=
- =?utf-8?B?OUpqZHFXVEk0SW9oYnlFZy9iU0xFZUFoVStHRldPUExpeU16WXRuMEdHUXlz?=
- =?utf-8?B?M3liRWMyckpzNmkzU0kzdkZQVE91L2R0N1VROE1VYVhENVpjaXpLWGVvQXNQ?=
- =?utf-8?B?ellRbStFU2FEQlY4MVVpaXN0WllLeXo0TytoWnlZSVA2S20rTUdlK3lyMHlw?=
- =?utf-8?B?RGlDNGxuMmdRbHh2M3JKM3NRcjVVcWxrODFVRFZsNWw4WGo5clZScm1xQXdS?=
- =?utf-8?B?cEtIbWNqdTE0RXZiTm45aDVUSnMyZElidFBReWpWUXpnVFFzTXl5MndtZ0hj?=
- =?utf-8?B?T1hzS0lxQk9NNU9YSmVxVERMNTBoYlorZVQ2NFVwNUZpT25UM3RSOThLRU1v?=
- =?utf-8?B?aHhKbTl1U2hhaE5yWHEyeEtSS2wrUFlleXpXU09WeEVTVGRiZ3hqYjdORXMx?=
- =?utf-8?B?VHRscnBjcGdZR2pwbTJEWDJBZGRwMXNmamZER040R0F6M1F6aTNYVGQ0UmxL?=
- =?utf-8?B?dkptZDFWOXNwRlhETGFhNWk4OVdPVXFaSk1rd3FpRHlOOENTZVZkWTRqL2I1?=
- =?utf-8?B?YVl2SWExZ2wrY2RuN3pPUHpNdFN6UlVENEgxc0RFbTl4OFlVMEtveHptM0lz?=
- =?utf-8?B?a0dPMVkxSmpYRTVxRVpieDhJQU9RcExxaDk0SlNvb3VhS0FaL1I4VTNRa1ZV?=
- =?utf-8?B?Mm02VXJmV0ppaHVOblBTZmVpOVhvaGlrSUdxMEFoOGgvYnJYc3JlWmNJTW5V?=
- =?utf-8?B?R2cxK2dKTkVnNnJabnJnTWd4UFFyYnJaMjk2UHFNaTlTVUpTNTRvVUtTYkU0?=
- =?utf-8?B?V3NUYmhBTTBrdXZVVEJPVmxTRlRJeU9OZm5sczcvWmVnQkJGT0RSZz09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 743AF400D7;
+	Tue, 27 Oct 2026 12:32:52 +0100 (CET)
+Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com
+ [113.46.200.220])
+ by mails.dpdk.org (Postfix) with ESMTPS id 7E695400D5
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 12:32:50 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=A98YjQc70iXRxHRRlKMsgqs2QLXJM740tnYtvc0cWVM=;
+ b=nGVrC3262cU7DIBe7fI0FipdBFM+qpIrCsfbzW5t3bDJxjvm+R3ISmhZ0f4PI1LGl0y3eQ7/i
+ whv/p8CXPjj8f7dPMYge864/47Q5t1WDvT3rUgj8QjSRPP6xZMGSsq0Gg7EgX4V7culSKn6jTH9
+ teuJuiqp1SsofICK/5WToQ4=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+ by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4jDSz22hn5z12LGd;
+ Tue, 27 Oct 2026 19:32:46 +0800 (CST)
+Received: from dggpemr100003.china.huawei.com (unknown [7.185.36.150])
+ by mail.maildlp.com (Postfix) with ESMTPS id B2DE54056D;
+ Tue, 27 Oct 2026 19:32:41 +0800 (CST)
+Received: from [10.67.121.46] (10.67.121.46) by dggpemr100003.china.huawei.com
+ (7.185.36.150) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Tue, 27 Oct
+ 2026 19:32:40 +0800
+Message-ID: <c0e9bea1-5fd5-4bed-be68-1d639ccb694c@h-partners.com>
+Date: Tue, 27 Oct 2026 19:32:39 +0800
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8293.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c20af682-03dd-402b-7393-08df341c5d59
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Oct 2026 11:20:53.9326 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /1avOoHGyjReDMC2uiYuoRNc1D8VbSx9Qy2BN040dnwgBG1s1CpMJLoV18NH4PBbvs91TOPxWS/THaMZVi6gWe9JJT7caZuh5UQ0M77+/Vg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB058055
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] common/mlx5: fix high SMMU TLB miss with mempool
+ alignment
+To: yangxingui <yangxingui@huawei.com>, <viacheslavo@nvidia.com>,
+ <david.marchand@redhat.com>, <dsosnowski@nvidia.com>, <bingz@nvidia.com>,
+ <orika@nvidia.com>, <suanmingm@nvidia.com>
+CC: <dev@dpdk.org>, <stephen@networkplumber.org>, <thomas@monjalon.net>,
+ <dmitry.kozliuk@gmail.com>, <fengchengwen@huawei.com>,
+ <lihuisong@huawei.com>, <liuyonglong@huawei.com>, <kangfenglong@huawei.com>,
+ yangshuaisong <yangshuaisong@h-partners.com>
+References: <20260811085231.2260761-1-yangxingui@huawei.com>
+ <4a35e332-d89e-af61-03bb-3b72f3f230c7@huawei.com>
+Content-Language: en-GB
+From: Shuaisong Yang <yangshuaisong@h-partners.com>
+In-Reply-To: <4a35e332-d89e-af61-03bb-3b72f3f230c7@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemr100003.china.huawei.com (7.185.36.150)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -139,32 +59,185 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-SGkgRGF2aWQsDQoNCkkgdGVzdGVkIHRoZSBwYXRjaGVzIG9uIG15IHNpZGUuIFRoZXkgd29yayBj
-b3JyZWN0bHksIGFuZCBJIGRvbid0IHNlZSBhbnkgaXNzdWVzIGR1cmluZyBhcHBsaWNhdGlvbiBj
-bGVhbnVwIG9yIGNsb3N1cmUuDQpUaGUgY2hhbmdlcyBsb29rIGdvb2QgZnJvbSBteSB0ZXN0aW5n
-Lg0KDQpUaGFua3MsDQpQcmFzaGFudA0KDQoNCk5YUCBDb25maWRlbnRpYWwNCi0tLS0tT3JpZ2lu
-YWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBEYXZpZCBNYXJjaGFuZCA8ZGF2aWQubWFyY2hhbmRAcmVk
-aGF0LmNvbT4NClNlbnQ6IDI2IE9jdG9iZXIgMjAyNiAyMzo0MQ0KVG86IFByYXNoYW50IEd1cHRh
-IDxwcmFzaGFudC5ndXB0YV8zQG54cC5jb20+DQpDYzogSGVtYW50IEFncmF3YWwgPGhlbWFudC5h
-Z3Jhd2FsQG54cC5jb20+OyBkZXZAZHBkay5vcmcNClN1YmplY3Q6IFtFWFRdIFJlOiBbUEFUQ0gg
-MDAvMTZdIERldmljZSB1bnBsdWcgYW5kIGJ1cyBjbGVhbnVwIHJlZmFjdG9yaW5nIGZvciBOWFAN
-Cg0KQ2F1dGlvbjogVGhpcyBpcyBhbiBleHRlcm5hbCBlbWFpbC4gUGxlYXNlIHRha2UgY2FyZSB3
-aGVuIGNsaWNraW5nIGxpbmtzIG9yIG9wZW5pbmcgYXR0YWNobWVudHMuIFdoZW4gaW4gZG91YnQs
-IHJlcG9ydCB0aGUgbWVzc2FnZSB1c2luZyB0aGUgJ1JlcG9ydCB0aGlzIGVtYWlsJyBidXR0b24N
-Cg0KDQpIZWxsbywNCg0KT24gTW9uLCAyNiBPY3QgMjAyNiBhdCAxMDo0MSwgUHJhc2hhbnQgR3Vw
-dGEgPHByYXNoYW50Lmd1cHRhXzNAbnhwLmNvbT4gd3JvdGU6DQo+DQo+IEkgYW0gbm90IGFibGUg
-dG8gYXBwbHkgdGhlc2UgcGF0Y2hlcyBvbiBuZXh0LW5ldC1tYWluLg0KPiBDb3VsZCB5b3UgcGxl
-YXNlIGNoZWNrIGlmIHJlYmFzZSBpcyByZXF1aXJlZD8NCg0KVGhlIG9ubHkgY29uZmxpY3QgSSBz
-ZWUgd2l0aCBuZXh0LW5ldCBpcyB0aGUgbWFjcm8gY2hhbmdlcyBvbiBkcGFhX2J1cy5jLg0KDQpT
-ZW5kaW5nIGEgc2VyaWVzIGJhc2VkIG9uIG5leHQtbmV0LW1haW4gd2lsbCBsaWtlbHkgZmFpbCBp
-biB0aGUgQ0kgYXMgaXQgd2lsbCB0cnkgdG8gYXBwbHkgb24gbWFpbi4NCihidXMgZHJpdmVycyB1
-cGRhdGVzIGFyZSBzdXBwb3NlZCB0byBnbyB0aHJvdWdoIG1haW4pDQoNCkknbGwgcmVzcGluIGZv
-ciB0aGUgcnRlX2ludHJfZmRfY2xvc2UgY2hhbmdlcyBpbiBtYWluLCBJIHB1c2ggYSByZWJhc2Vk
-IGJyYW5jaCBpbiBteSBHSC4NCg0KDQotLQ0KRGF2aWQgTWFyY2hhbmQNCg0K
+Hi mlx5 team, just a gentle ping on this patch when you have a moment. Thanks!
+
+On 2026/9/11 14:33, yangxingui wrote:
+> Kindly ping for review...
+> 
+> On 2026/8/11 16:52, Xingui Yang wrote:
+>> From: Shuaisong Yang <yangshuaisong@h-partners.com>
+>>
+>> On Kunpeng SoC with mlx CX7, dpdk-l3fwd with intra-NUMA core pinning
+>> under SMMU nonstrict/strict mode shows about 30% performance degradation
+>> compared to cross-NUMA pinning. With SMMU disabled or passthrough mode,
+>> intra-NUMA performs as expected (slightly better than cross-NUMA).
+>>
+>> CX7 in NUMA1
+>> NUMA node0 CPU(s):    0-39
+>> NUMA node1 CPU(s):    40-79
+>>
+>> intra-NUMA:
+>> dpdk-l3fwd -l 40-55 -n 4 -a 0000:17:00.1,mprq_en=1 -- -p 0x1 -P \
+>>     --config='(0,0,40),(0,1,41),(0,2,42),(0,3,43),(0,4,44),\
+>>               (0,5,45),(0,6,46),(0,7,47),(0,8,48),(0,9,49),\
+>>               (0,10,50),(0,11,51),(0,12,52),(0,13,53),\
+>>               (0,14,54),(0,15,55)' \
+>>     --rx-queue-size=4096 --tx-queue-size=4096 --rx-burst=64
+>>
+>> cross-NUMA:
+>> dpdk-l3fwd -l 11-26 -n 4 -a 0000:17:00.1,mprq_en=1 -- -p 0x1 -P \
+>>     --config='(0,0,11),(0,1,12),(0,2,13),(0,3,14),(0,4,15),\
+>>               (0,5,16),(0,6,17),(0,7,18),(0,8,19),(0,9,20),\
+>>               (0,10,21),(0,11,22),(0,12,23),(0,13,24),\
+>>               (0,14,25),(0,15,26)' \
+>>     --rx-queue-size=4096 --tx-queue-size=4096 --rx-burst=64
+>>
+>> The root cause is that under SMMU enabled mode, the mempool allocated
+>> for intra-NUMA pinning is aligned to system page size instead of
+>> hugepage size, while cross-NUMA pinning correctly uses hugepage size
+>> alignment. This causes high TLB miss rates under SMMU.
+>>
+>> Align all memory ranges to hugepage boundaries during mempool
+>> registration to ensure hugepage_sz alignment, thereby reducing TLB
+>> misses and fixing the intra-NUMA performance degradation.
+>>
+>> Fixes: 690b2a88c2f7 ("common/mlx5: add mempool registration facilities")
+>> Cc: stable@dpdk.org
+>>
+>> Signed-off-by: Shuaisong Yang <yangshuaisong@h-partners.com>
+>> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+>> ---
+>> v2:
+>> - Address review comments from Slava:
+>>    - Call rte_mem_virt2memseg_list() in a single point inside the loop.
+>>    - Skip the alignment block when hugepage_sz equals rte_mem_page_size(),
+>>      since mlx5_mempool_get_chunks() has already done the alignment.
+>>    - Skip the alignment for external memory with early goto, since ranges
+>>      are already aligned to the correct page size.
+>> ---
+>>   .mailmap                             |  1 +
+>>   drivers/common/mlx5/mlx5_common_mr.c | 72 +++++++++++++++++++---------
+>>   2 files changed, 51 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/.mailmap b/.mailmap
+>> index fcb3d1bb3f..c8ba648d3c 100644
+>> --- a/.mailmap
+>> +++ b/.mailmap
+>> @@ -1999,3 +1999,4 @@ Zongyu Wu <wuzongyu1@huawei.com>
+>>   Zorik Machulsky <zorik@amazon.com>
+>>   Zyta Szpak <zyta@marvell.com> <zr@semihalf.com>
+>>   Zyta Szpak <zyta@marvell.com> <zyta.szpak@semihalf.com>
+>> +Shuaisong Yang <yangshuaisong@h-partners.com>
+>> diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5/mlx5_common_mr.c
+>> index aa2d5e88a4..f9e1ec7468 100644
+>> --- a/drivers/common/mlx5/mlx5_common_mr.c
+>> +++ b/drivers/common/mlx5/mlx5_common_mr.c
+>> @@ -1524,7 +1524,11 @@ mlx5_get_mempool_ranges(struct rte_mempool *mp, bool is_extmem,
+>>    * @param[in] is_extmem
+>>    *   Whether the pool is contains only external pinned buffers.
+>>    * @param[out] out
+>> - *   Receives memory ranges to register, aligned to the system page size.
+>> + *   Receives memory ranges to register. For non-external memory, ranges
+>> + *   are aligned to the hugepage size if all ranges are on hugepages
+>> + *   of the same size, otherwise aligned to the system page size.
+>> + *   For external memory, ranges are kept as returned by
+>> + *   mlx5_get_mempool_ranges() (already aligned to the page size).
+>>    *   The caller must release them with free().
+>>    * @param[out] out_n
+>>    *   Receives the number of @p out items.
+>> @@ -1541,7 +1545,8 @@ mlx5_mempool_reg_analyze(struct rte_mempool *mp, bool is_extmem,
+>>   {
+>>       struct mlx5_range *ranges = NULL;
+>>       unsigned int i, ranges_n = 0;
+>> -    struct rte_memseg_list *msl;
+>> +    bool same_hugepage_sz = true;
+>> +    uint64_t hugepage_sz = 0;
+>>         if (mlx5_get_mempool_ranges(mp, is_extmem, &ranges, &ranges_n) < 0) {
+>>           DRV_LOG(ERR, "Cannot get address ranges for mempool %s",
+>> @@ -1550,34 +1555,57 @@ mlx5_mempool_reg_analyze(struct rte_mempool *mp, bool is_extmem,
+>>       }
+>>       /* Check if the hugepage of the pool can be shared. */
+>>       *share_hugepage = false;
+>> -    msl = rte_mem_virt2memseg_list((void *)ranges[0].start);
+>> -    if (msl != NULL) {
+>> -        uint64_t hugepage_sz = 0;
+>> +    if (is_extmem)
+>> +        goto out;
+>> +    /* Check that all ranges are on pages of the same size. */
+>> +    for (i = 0; i < ranges_n; i++) {
+>> +        struct rte_memseg_list *range_msl =
+>> +            rte_mem_virt2memseg_list((void *)ranges[i].start);
+>> +
+>> +        if (range_msl == NULL) {
+>> +            same_hugepage_sz = false;
+>> +            break;
+>> +        }
+>> +        if (hugepage_sz == 0) {
+>> +            hugepage_sz = range_msl->page_sz;
+>> +        } else if (range_msl->page_sz != hugepage_sz) {
+>> +            same_hugepage_sz = false;
+>> +            break;
+>> +        }
+>> +    }
+>> +    /*
+>> +     * Align ranges to the hugepage boundaries and merge adjacent ones.
+>> +     * If the entire pool fits in a single hugepage, the MR for this
+>> +     * hugepage can be shared across mempools.
+>> +     */
+>> +    if (same_hugepage_sz && hugepage_sz > rte_mem_page_size()) {
+>> +        unsigned int orig_ranges_n = ranges_n;
+>>   -        /* Check that all ranges are on pages of the same size. */
+>>           for (i = 0; i < ranges_n; i++) {
+>> -            if (hugepage_sz != 0 && hugepage_sz != msl->page_sz)
+>> -                break;
+>> -            hugepage_sz = msl->page_sz;
+>> +            ranges[i].start = RTE_ALIGN_FLOOR(ranges[i].start,
+>> +                              hugepage_sz);
+>> +            ranges[i].end = RTE_ALIGN_CEIL(ranges[i].end,
+>> +                            hugepage_sz);
+>>           }
+>> -        if (i == ranges_n) {
+>> -            /*
+>> -             * If the entire pool is within one hugepage,
+>> -             * combine all ranges into one of the hugepage size.
+>> -             */
+>> -            uintptr_t reg_start = ranges[0].start;
+>> -            uintptr_t reg_end = ranges[ranges_n - 1].end;
+>> -            uintptr_t hugepage_start =
+>> -                RTE_ALIGN_FLOOR(reg_start, hugepage_sz);
+>> -            uintptr_t hugepage_end = hugepage_start + hugepage_sz;
+>> -            if (reg_end < hugepage_end) {
+>> -                ranges[0].start = hugepage_start;
+>> +        ranges_n = 1;
+>> +        for (i = 1; i < orig_ranges_n; i++) {
+>> +            if (ranges[ranges_n - 1].end >= ranges[i].start)
+>> +                ranges[ranges_n - 1].end =
+>> +                    RTE_MAX(ranges[ranges_n - 1].end,
+>> +                        ranges[i].end);
+>> +            else
+>> +                ranges[ranges_n++] = ranges[i];
+>> +        }
+>> +        if (ranges_n == 1) {
+>> +            uintptr_t hugepage_end = ranges[0].start + hugepage_sz;
+>> +
+>> +            if (ranges[0].end <= hugepage_end) {
+>>                   ranges[0].end = hugepage_end;
+>> -                ranges_n = 1;
+>>                   *share_hugepage = true;
+>>               }
+>>           }
+>>       }
+>> +out:
+>>       *out = ranges;
+>>       *out_n = ranges_n;
+>>       return 0;
+>>
+
