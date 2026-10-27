@@ -2,76 +2,73 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F4A606A31A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 Oct 2026 21:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30C8606A31A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 00:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20251104.gappssmtp.com header.i=@networkplumber-org.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=Vdo03Taq
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=JY3be5Uu
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7BDB8402A3;
-	Mon, 26 Oct 2026 22:17:33 +0100 (CET)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTPS id 5482440151
- for <dev@dpdk.org>; Mon, 26 Oct 2026 22:17:30 +0100 (CET)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-2e987b4a710so1422685ad.1
- for <dev@dpdk.org>; Mon, 26 Oct 2026 14:17:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 050B5400D5;
+	Tue, 27 Oct 2026 01:14:51 +0100 (CET)
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
+ [209.85.219.45])
+ by mails.dpdk.org (Postfix) with ESMTPS id 7738E40041
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 01:14:50 +0100 (CET)
+Received: by mail-qv1-f45.google.com with SMTP id
+ 6a1803df08f44-91b83459526so44348016d6.2
+ for <dev@dpdk.org>; Mon, 26 Oct 2026 17:14:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1793049449;
- x=1793654249; darn=dpdk.org; 
+ d=gmail.com; s=20251104; t=1793060089; x=1793664889; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=mmOzLbpjP5qdWndvbPdcZRS/1pi2xYoEDuEoCQQIHhU=;
- b=Vdo03Taqg23c+1vRUJD5ivTFzyQrvswdZmQ/OByUjGQOKkny24xCBvPUDz40sKxLSk
- dwmUJBNFKIuLBtM0YcjjR1TchfmsqrssQMLyiyR5WENGOgUIzL5HLNkWnYP4LY0MBBDw
- k2pWvJusVcuh55C0wcqwuNZQQl4rYyLUcWbnIn/3YEMTOknjBat4I6HUdB45BeFa0KUf
- 8rX4HbkMHA8qux/ocRi6+qzRThEcZpigOF5j7QnVAB02o38keqbsv9KN6yL0r1IRwnlv
- Kmqb9C3M4e1sZW9HQdq4J3vZr4KrqDKIkRYrZFkc/8D+7BRH8vj1aENAyRUvw228XSxz
- 7X7w==
+ bh=mOmWEJxiLFKvYyaktbJ32wbBNC7jMKSFf+RcAQ58Oyg=;
+ b=JY3be5Uu6wKlL74CiEW7JI9bh98Djn2rSNPLgZTkz/AQE/vRnj7VevL1ngD0ECb6rZ
+ nwy3K/iCZ9m/MeXVxe768BGly8xPrIwzXVpTEW+bVNEhIVn67Y3EhNbOH1udga2+M18n
+ VzmT+CKiXmzntiYNp3dpr/7Nwt/z/dGP7qS3oKl6rmGEkzhwtniDde1bHlGb5YzpgoZb
+ 4kC6q/lDZFT8HtIVEoVpHeXmvBiscC2kHMu6rw5htiRSzBDxZeNTOhKXP8RIi4Wr0uKQ
+ vnvAUdJd+M9VQ3kOZ/i04cR3OaoK96rsKZz8ioJiVfgZSXJK3FKi6xj0txrjBLWu2yOU
+ 0zhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793049449; x=1793654249;
+ d=1e100.net; s=20260707; t=1793060089; x=1793664889;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=mmOzLbpjP5qdWndvbPdcZRS/1pi2xYoEDuEoCQQIHhU=;
- b=UWKeIDmcBXCErYKRuGhVgCk4Qv2kpnex8o4G/TuVR9btjdbcZrIK98Jv/U6dfzeB3h
- ZFqtBQrhIP2sFLiGz1PDFXmGaXhR1Pfqsahe2wXjcun1aY8pFL1BZgU3qTfFVzNGbMHy
- n+4yG9qppwuZxcboXhhGdpaAjsU9LVQAUhkkPdUXCma87tnu+uNwTGrzSusnyeSEdp7B
- luEqgImr1Tzg4uWwqiR+6uCXUTVM8rn8vJrdwgTYpLN5WAtmbPzwGw6WblNYZq8/HzmY
- Tyf/iKMKQZVjubu9qVam/6YjZsx782TxUeLCqjLIys9qkw5WooKfPZjjNnD62ai7bXAx
- /UFA==
-X-Gm-Message-State: AFq9FYKJJIwtFTt+7RfrrwL/WLPxwHSB6EKuNZiOJORbdtaW55pkKnOJ
- gyUPe2pCT9GaxfYylg4Js59mxvgwCcePT3uyAyv/DJtg8zHVyC8pxozexFFBw6GQh6mWKyED3yc
- eLVDPB04=
-X-Gm-Gg: AYBFou2Gg92zaKnlaxObfDatouT32cWCQ75OsZGIICmqE36VQgl2EiIX+cCLM0PhO8Z
- mC3Mo4dU7e1zANpXEdjQ5BnIi1VMTKsuO02JhXJTbDRoLyItXZwp5l1IWYiZXvLr3wxD6LPZSZR
- BRBDq8lxgan1TI2v5qSn+gvJG8Z4pqSFSTY/T2EIkZeDIdpIvv+h6qxVZoZsMzAfG/Cpx+MxFZf
- O3ZjnwPOD4E6z2ar9I0OTURuQJctJsi8pPa9u2EdWnjDrLH0+vXIgpiMvM3/bAmhcv5na/4vtbY
- TrpAQyafgx6vBqvgteHKM6LKQNRgZ/Y6s6y8iEOlJ3X4wFR7fvvN9370c8sFhlVfBFH6y7/0m2r
- UZaHhwtr7MUseIzEhpLtAGJ8Ii3t14iVZrS75UXKNrJYOq47/xDLEj/vM0p9MlTWwbmV166P3mE
- gVDwN9f39/UDN2LaSBV2/BcbLeyoGqdNLX8Z8Ej9g4v6KNutDkIkLcfQfX/4NfZR2jdRDtbm41a
- qvUeNvNxHpSiwaYHsGEW/bI3WmDgJiorn7kE13QBCb/F/RVZ3DMYM74u5bqPBse/0vFmvaB/kXT
- 7hGa9qtm7naVWRVY074=
-X-Received: by 2002:a17:903:32ce:b0:2e8:95d8:6423 with SMTP id
- d9443c01a7336-2eae4072774mr4669375ad.38.1793049448748; 
- Mon, 26 Oct 2026 14:17:28 -0700 (PDT)
-Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
+ bh=mOmWEJxiLFKvYyaktbJ32wbBNC7jMKSFf+RcAQ58Oyg=;
+ b=FoIU+3mFpLl+Kl07tnBpaWiYkTcM1c/W20FoK1yv2cfb3f+oGD1jwpOUYOBXroQW6W
+ 4Mw/y5czKigL3/T4Q0lo9zKl8pjv80pady18BcARNbyOiVklPAFrsHP3bW2E55OfzoyP
+ e4oyFd4PyhSNeMU5ua9XEhUP7Q68ty94/QUlFylGZhM6YLm4zat8UjlmDSm1uh6JGeZ4
+ OrH+D/Km4feJhZkXSbt0kbusCD5BrhFuoxvR8Gzox4m5/HfklQLZVR7Gl0kUa5G3Lwiu
+ DARnPF9CRyY2jxtwHoDc+AqnPdVU4r7pPs8GbP7mknM0P0fPqxF7qxHsBkWDv0cFN70r
+ j8wA==
+X-Gm-Message-State: AFq9FYINdsRZ/Kr6//LfPcPCRyF2gzCa/sBdej41ugr+ENw6KSCzCmtS
+ ulCAWZ7ilQJ4WyH++9+lpUvDrOEVVsMlsfAwxWpkBajV0QPIufmBlNnFWDlk2Q==
+X-Gm-Gg: AYBFou1HSV6N//+a7te4/Q6FAR62wyceilcQAjOhs391O25WYqPuca0BJTZNQzxLpTT
+ drkoVbwpeeFaMCJQ4x7hJB47sg5E8iAbYp7qyXDvc/Kd3w1dpLSW8pO28b/qpnRKsSAcUd6KmAs
+ LehxCiq4e/WE4iM5ZZrdoBYSK1as1QLdx4J707OLEL4K97Oq19zxJVuicUMoMhi/N9GSdPD8Ff/
+ +UMnYZtuoTNuW8Gd/Wk/qrIuHIjBz0G1ra67DZ9D+zdVARB4YdWOM5VwBLY2aKHtDJbr2YGhpV/
+ mBf6qkYCZmT6xkQbGEGj//wRczkAYXzmFDhMISQt9Uv19jCshppYwDkTJ7nZfVZw4kwDhgXWxyB
+ NwZpvgGxvc4aAmouPYI5SqAWn5XuFSv3Bvz39YHrrTbtOi7K8tCxv3ffRtJa5XcBdkYeH24DpLi
+ VinU8uQ2WfMrVaBopNrcfQJDJk1mRzOAxbDOwCNb/ZBecqIdGG1o5QCVwFNBylm3dir7RjnCpMc
+ PRECMAIfIY+7urKH802HWergDMS32xzs9zzOiDLhUtgrlg4O2R+YG0734qscFYr17RWWWFeBgva
+ rZQfYRDLltOHUUz08GOxFevZLpQCDDK+/c6iJqrf/azhYPK2L8MLOQTQ5oN2E3Ao8xBaGYOJswO
+ 8F43+WZ4jkDRMhPafTFFvgcBGtgpp
+X-Received: by 2002:a05:6214:262f:b0:91b:9496:6a18 with SMTP id
+ 6a1803df08f44-91c48e85405mr153090736d6.37.1793060089163; 
+ Mon, 26 Oct 2026 17:14:49 -0700 (PDT)
+Received: from bos-lhvwah.bos01.corp.akamai.com
+ (g2001-4878-8037-0700-526b-8dff-fef6-cfbf.deploy.static.akamaitechnologies.com.
+ [2001:4878:8037:700:526b:8dff:fef6:cfbf])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2eae6c3d17csm893295ad.53.2026.10.26.14.17.27
+ 6a1803df08f44-91c65ef7b0fsm31449136d6.19.2026.10.26.17.14.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 26 Oct 2026 14:17:28 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
+ Mon, 26 Oct 2026 17:14:46 -0700 (PDT)
+From: Robert Sanford <rsanford2@gmail.com>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Piotr Kwapulinski <piotr.kwapulinski@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH] net/ixgbe/base: fix string truncation warning in ACI debug
- dump
-Date: Mon, 26 Oct 2026 14:17:26 -0700
-Message-ID: <20261026211726.2319112-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+Cc: vladimir.medvedkin@intel.com,
+	Robert Sanford <rsanford@akamai.com>
+Subject: [PATCH v1 0/4] fib: fix full table overwrite on address wraparound
+Date: Mon, 26 Oct 2026 20:14:19 -0400
+Message-Id: <20261027001423.3028072-1-rsanford2@gmail.com>
+X-Mailer: git-send-email 2.34.1
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -84,94 +81,45 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Building with ASAN and -Werror fails:
+From: Robert Sanford <rsanford@akamai.com>
 
-  ixgbe_e610.c:59:41: error: 'strncat' output may be truncated
-  copying between 43 and 118 bytes from a string of length 127
-  [-Werror=stringop-truncation]
+Both FIB dataplanes can overwrite their entire lookup table when a
+prefix whose range ends at the top of the address space is added,
+deleted, or has its next hop changed, while more-specific routes cover
+its range up to that point. The call returns 0, so the corruption is
+silent.
 
-The hex dump used snprintf into a scratch buffer followed by strncat
-with a signed remaining-space count, which could also go negative and
-be passed to strncat as a huge size_t. Format each row directly with
-snprintf at an offset instead, and handle the partial last row in the
-same loop.
+One real-world trigger is a default route coexisting with explicit /1
+routes: with 0.0.0.0/0, 0.0.0.0/1 and 128.0.0.0/1 installed, deleting
+0.0.0.0/0 makes every lookup miss. IPv6 behaves the same with ::/0,
+::/1 and 8000::/1.
 
-Fixes: 12648d0a5afc ("net/ixgbe/base: add admin interface debug printouts")
-Cc: stable@dpdk.org
+In modify_fib() (dir24_8.c) and modify_dp() (trie.c), the branch that
+skips a route starting exactly at the current left edge has no
+wraparound check, while the branch that installs a gap does. Patches 1
+and 2 add the missing check. Patches 3 and 4 add unit tests that fail
+without the fixes and pass with them.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/intel/ixgbe/base/ixgbe_e610.c | 48 +++++++----------------
- 1 file changed, 15 insertions(+), 33 deletions(-)
+Robert Sanford (4):
+  fib: fix full table overwrite on address wraparound
+  fib6: fix full table overwrite on address wraparound
+  test/fib: reproduce table overwrite on address wraparound
+  test/fib6: reproduce table overwrite on address wraparound
 
-diff --git a/drivers/net/intel/ixgbe/base/ixgbe_e610.c b/drivers/net/intel/ixgbe/base/ixgbe_e610.c
-index 06a69d1d62..dc5e668edc 100644
---- a/drivers/net/intel/ixgbe/base/ixgbe_e610.c
-+++ b/drivers/net/intel/ixgbe/base/ixgbe_e610.c
-@@ -42,41 +42,23 @@ void ixgbe_shutdown_aci(struct ixgbe_hw *hw)
- STATIC void ixgbe_aci_debug_array(struct ixgbe_hw *hw, u16 row_size, u8 *buf,
- 				  u16 buf_size)
- {
--	char debug_portion[IXGBE_ACI_MAX_DEBUG_STRING_LENGTH] = {'\0'};
--	char debug_string[IXGBE_ACI_MAX_DEBUG_STRING_LENGTH] = {'\0'};
--	u16 i = 0, j = 0;
--	s16 remaining_space = IXGBE_ACI_MAX_DEBUG_STRING_LENGTH - 1;
--	s16 nbytes = 0;
--	if (!hw)
-+	char line[IXGBE_ACI_MAX_DEBUG_STRING_LENGTH];
-+	u32 i, j;
-+
-+	if (!hw || !buf || !row_size)
- 		return;
--	if (buf && buf_size && row_size) {
--		if (buf_size >= row_size) {
--			for (i = 0; i < (buf_size - row_size); i += row_size) {
--				nbytes = snprintf(debug_string, sizeof(debug_string), "0x%04X : ", i);
--				remaining_space = IXGBE_ACI_MAX_DEBUG_STRING_LENGTH - nbytes - 1;
--				for (j = 0; j < row_size; j++) {
--					nbytes = snprintf(debug_portion, sizeof(debug_portion), "0x%02X ", buf[i + j]);
--					strncat(debug_string, debug_portion, remaining_space);
--					remaining_space -= nbytes;
--					if (remaining_space <= 0) break;
--				}
--				strncat(debug_string, "\n", remaining_space);
--				DEBUGOUT1("%s", debug_string);
--				memset(debug_string, 0, IXGBE_ACI_MAX_DEBUG_STRING_LENGTH);
--			}
--		}
--		if (i < buf_size) {
--			nbytes = snprintf(debug_string, sizeof(debug_string), "0x%04X : ", i);
--			remaining_space = IXGBE_ACI_MAX_DEBUG_STRING_LENGTH - nbytes - 1;
--			for (j = 0; j < (buf_size - i); j++) {
--				nbytes = snprintf(debug_portion, sizeof(debug_portion), "0x%02X ", buf[i + j]);
--				strncat(debug_string, debug_portion, remaining_space);
--				remaining_space -= nbytes;
--				if (remaining_space <= 0) break;
--			}
--			strncat(debug_string, "\n", remaining_space);
--			DEBUGOUT1("%s", debug_string);
-+
-+	for (i = 0; i < buf_size; i += row_size) {
-+		size_t len;
-+
-+		len = snprintf(line, sizeof(line), "0x%04X : ", i);
-+		for (j = 0; j < row_size && i + j < buf_size; j++) {
-+			if (len >= sizeof(line))
-+				break;
-+			len += snprintf(line + len, sizeof(line) - len,
-+					"0x%02X ", buf[i + j]);
- 		}
-+		DEBUGOUT1("%s\n", line);
- 	}
- }
- 
+ app/test/test_fib.c  |  94 +++++++++++++++++++++++++++++++++++++++
+ app/test/test_fib6.c | 103 +++++++++++++++++++++++++++++++++++++++++++
+ lib/fib/dir24_8.c    |   6 +++
+ lib/fib/trie.c       |   6 +++
+ 4 files changed, 209 insertions(+)
+
 -- 
-2.53.0
+2.34.1
 
