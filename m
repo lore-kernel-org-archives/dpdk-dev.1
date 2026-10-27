@@ -2,146 +2,97 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28C6606A33E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 15:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1953606A321
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 15:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=KUnp+weC
+	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=qyRnZ4x0
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8E78140151;
-	Tue, 27 Oct 2026 16:28:30 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTPS id 0F781400D5
- for <dev@dpdk.org>; Tue, 27 Oct 2026 16:28:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793114908; x=1824650908;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=sIxLcU49wK1Y+heADXn5enrPvES4y6GwqSapAF8Cdgg=;
- b=KUnp+weCwL4MmRU8a+m6yqPsDlxHAng4vJETK/yXGWxRiNzFPZvELZTh
- lflTcw9xZP+nf0XAzl4JuewAHOiAL5mG3VLIZoDbHxS19FGaoyzyf1tCM
- OGLXp+25SNWBjfZvILnslFM72+waLV5PBf82hTYD4uPTUhwLGZlV20B/p
- N36xUI6kRvPy7mgF57YBsAnL2ORQMCV+vBFmVPzonaaDqUpoATLexHeA6
- 4PGQ5QL1w0t9swOhsnXUQjAL33fXHhfXy4JOD7NcbPcgvqplqGQtjz1Bi
- ahD1YTYDJXh85Lci11PhMr5EDSLAOPBhFyyxzRFmjNFzhslUQZGGXq4U9 Q==;
-X-CSE-ConnectionGUID: 1Q3Spz2DR0q4HvCQ5Qa/uw==
-X-CSE-MsgGUID: bsYmvfWYSCiT1qcuLT5mmA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11948"; a="1848734"
-X-IronPort-AV: E=Sophos;i="6.27,181,1787036400"; 
-   d="scan'208";a="1848734"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Oct 2026 08:28:26 -0700
-X-CSE-ConnectionGUID: agZ3SrLVQZ2p09xK4Ta5Cg==
-X-CSE-MsgGUID: dtOyUzDjTqC93sBe5AT3Ag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,181,1787036400"; 
-   d="scan'208";a="4643715"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Oct 2026 08:28:26 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Tue, 27 Oct 2026 08:28:25 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49 via Frontend Transport; Tue, 27 Oct 2026 08:28:25 -0700
-Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.3) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.49; Tue, 27 Oct 2026 08:28:25 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ld+EYNDTJ6W999O96qBU4QKTWimRq+NahSD5/FL/vFtvcHFhgJmH9yH5byDF1sCKR9EzmbnXkXtU8zhaf1C0ZSWFKAPDNtje6fRyTe82HQ0RNNX9AsUQGOuU3jjytdDpyNsnHpo36KUEk+hQb1hO3tQRR6A0ehUHGThjO4K7v3uOsaWOSf9ujlp9Z0+T0msPmh5g/VNzHWxVIIcFCY1OZMrW0VaRFLSqqbEHDLEmy6eRD6/+WnhJ8lgf7GM34UbxR0f7GUk69EA1wuXjB27IvF2CRFHKsCkQzog/MZn7JLFrC072vVvApbk+uHK5QbvSqcIq7utVCWoFmnlSghoE8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HkpFLr2wjo8AvcXdZzkoPKDP6/NYu2Fz2KqN66ZoAdE=;
- b=nBeQRflqqTFrUvccLD2SP0vMaeLYU4uMIvvdGjhlnL96lOOnsfINk9ElBYhkfrixqUh3yeLMiF9Mmna8GEcz2pjAhdZlQ+kU/E5A99NAeGQY/L5aR2yZTMevsjGO8PACFpnBgrmWBlbAZ+I+6b9AmYzS/y9eyz3X6gpgujmk24mLDxSOzhdKVbMOK6DZNL5xcMcJ/EJZrL0JHUcI7OhJPQypo1BoW0j7fUe+2Fc++MqZK588LtxNls3VjcAkbb6wuvmd/TQprMjOQ8AaXoFhmujyOxGkjUhFzva1Nepl51i1ZY+N0/kisKrN6nAFVuIYE6cm2o0YSxRFaucvWF2xJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by SN7PR11MB7996.namprd11.prod.outlook.com (2603:10b6:806:2e3::9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Tue, 27 Oct
- 2026 15:28:22 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0546.016; Tue, 27 Oct 2026
- 15:28:21 +0000
-Date: Tue, 27 Oct 2026 15:28:16 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Anurag Mandal <anurag.mandal@intel.com>
-CC: <dev@dpdk.org>, <anatoly.burakov@intel.com>
-Subject: Re: [PATCH 0/7] net/ice: fix memory leaks
-Message-ID: <auDDEHcNNiQTXCQC@bricha3-mobl1.ger.corp.intel.com>
-References: <cover.1793097896.git.anurag.mandal@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cover.1793097896.git.anurag.mandal@intel.com>
-X-ClientProxiedBy: DUZPR01CA0324.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4ba::29) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+	by mails.dpdk.org (Postfix) with ESMTP id 8FA25400D7;
+	Tue, 27 Oct 2026 16:39:55 +0100 (CET)
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com
+ [148.163.156.1])
+ by mails.dpdk.org (Postfix) with ESMTPS id B356C400D5
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 16:39:53 +0100 (CET)
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 69REE8ai1050341; Tue, 27 Oct 2026 15:39:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+ content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pp1; bh=foGnV5
+ AAaTHMFlLRyXzAL5eK4X5/qBxx3soVdfDoFok=; b=qyRnZ4x07JUxOu6MKs8Gz7
+ cx+cTW+//2HLGyJOG/ns2Z94YCOtGIl4O89sdSasP0Nxf1O5gY8P4nJ/ExMly+eS
+ WPd3y63ULeZVFv0SacIyBGyYxoiJUWWsAq1RfbxIFGbmNCObMDeFM7zbFYutnEJ1
+ qwPT0S+7SILGe9CJOgpGBDmVktf1InIeqAWBQbDEIUjyHppGCSkhxDjYoWadY15a
+ 3enm/Zwt4tvvPP96mwqVIP4jmyuCVxZ2dKf8OFbwOp/Y+Fc34g/4GdssGc8sSXwm
+ oE9isqwdUE8qbRcPcBqDrF6f0CEss2MlFGb2l4iAk1dYpCEa8DAbXQhjZhzc6bnA
+ ==
+Received: from ppma11.dal12v.mail.ibm.com
+ (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+ by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hgmbt094a-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+ Tue, 27 Oct 2026 15:39:51 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+ by ppma11.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 69RDoMOx098143; Tue, 27 Oct 2026 15:39:50 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+ by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4hjvh1rn12-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 27 Oct 2026 15:39:50 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com
+ [10.241.53.100])
+ by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
+ 69RFdoY730016046
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Tue, 27 Oct 2026 15:39:50 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id 5E0BF58059;
+ Tue, 27 Oct 2026 15:39:50 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id 4B74558058;
+ Tue, 27 Oct 2026 15:39:50 +0000 (GMT)
+Received: from li-4c4c4544-0048-3510-8036-cac04f563434.ibm.com (unknown
+ [9.16.50.223]) by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+ Tue, 27 Oct 2026 15:39:50 +0000 (GMT)
+Message-ID: <4eae20d874bb4a6e347320cf8655eb2adbe755b1.camel@linux.ibm.com>
+Subject: Re: DPDK release candidate 26.11-rc1
+From: Riley Fletcher <rileyf@linux.ibm.com>
+To: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
+Date: Tue, 27 Oct 2026 10:39:49 -0500
+In-Reply-To: <MhL9-e6MSdueACnSJljpbA@monjalon.net>
+References: <MhL9-e6MSdueACnSJljpbA@monjalon.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.60.2 (3.60.2-2.fc44) 
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|SN7PR11MB7996:EE_
-X-MS-Office365-Filtering-Correlation-Id: 08e6fbba-90a5-4360-81ee-08df343eeee7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|23010399003|261022113327099003|261022105027099003|261021121427099003|261022075727099003|10067099003|56012099006|261026121527099003|6133799003|22082099003|18002099003|11063799006|261026140227099003;
-X-Microsoft-Antispam-Message-Info: pzZpuPw5pF4KsuMPIGFMr7UBqhvmA8M9S4f5GHAMKoG4PmUr99IGBL0exzw9hvo+SNEjDsqFiXm8UHeVrtd54HNAY7jBsRGaZat4f+SPULhdGGTx8BxTGWJ06sWdoUJTCH+q8Dq5FoiGVhtrGv2MVGOkBbJ6YnMrKs0y2+FIzSw2KvepbvE5mOF9fSgTqSCG3S7cAtW1ztotqyS61sCaBZjt7MnZWUbnfTsv3oeoukYTlxLUXukwleSvdm4vvi4iOKXIECFeRgnVYyvNFXBIx3hSldRY4NmAG7r5EHDD3jAs5ItGOCBsjmsvLl6pjTW0SLaA2mzcq5zbZ4+XXRLFXFdLi0YzjmVspPZpYvCugkf7UKW2C8OEd6FNzPnd0KoEKyL5Kuekadc6hjlMGsJ4ZGedHm6RElT00HSJJyG6mqGCJA6noRubkHINLLlZdQ9VCoaAp5/ZCHmU8M5AgBlycRzNZ9EUY1tTMtyZ0bD6PWf6WhoVD9GwpFAvW2wmNtd1Upl9MK0N0cRpE0rmn74t0WCwyqh1Xbe4atGWCIRrRnYHt8Cm3v6lK8hwIjMLSbsM3HJFIjA14qocxaNzP3BJbH4+I53N8sRI6Kb9GpwsCtwoBemJHyF+iHoLulfdQNGqOOmep+Z/rL6FF9kRYqfmC9wUGRwxACLK1/LSAJl8AkQ=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(261022113327099003)(261022105027099003)(261021121427099003)(261022075727099003)(10067099003)(56012099006)(261026121527099003)(6133799003)(22082099003)(18002099003)(11063799006)(261026140227099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Dfywg6nB6RPZGeMGFlyXzhKF8jgFV5v3Pfy2Zoqiox7tfEkVf4fo6Df8XCbI?=
- =?us-ascii?Q?Qmqp2hTb5FeH2wWs2QSqNG0x9hjUzP1M+fcGjsjrJem1b2HRa1f3vuIP8kh5?=
- =?us-ascii?Q?bcG0Tgw8wmJL8t7UEtTrEMkvDIp0ZAvQlGpBkXdoaTXFqr7+95YaV+lHYPNG?=
- =?us-ascii?Q?zedJGnS/9y3sx61thfKToZot3b0ZVm9Ofomakwcz56EgebkDUKSMH1pnq59O?=
- =?us-ascii?Q?2cZ1QcM8uvoz5igp/y1xcecT6/xzwjFICy8FiSeO6XQJvGMJFm1NSl+FFITt?=
- =?us-ascii?Q?NTFIw4DzBiz6GI8oZf2LtPsA7Ns9EvxMsFUT96fadNbtmU/z0OcymX5NzvhK?=
- =?us-ascii?Q?IRKkA6OC2vfmy2/ZG4dGZkFmEazF9gW0q4kRyhp97joov7CZChO0U6x2SWEB?=
- =?us-ascii?Q?OmJTzL7gijQtcLH7h7FkG81i79SHlYZQ0f7VQ08x24WkH36pO8EigoTXUzid?=
- =?us-ascii?Q?dSNNIXBUKyg10lN/9whwCHFNacrUkBE5yUnf4OvylUFGSRhSn/pA8ADsUDWX?=
- =?us-ascii?Q?rwZmUVyu9ZH+/ofFSgJmGjm03X8ovu47lWCCUgSUyjprFZvSzOCnlSbzOq9/?=
- =?us-ascii?Q?CDoco98uAvWup++d7izBJMQZnWLX9lNNylWZ+qGqWDNO5rby5Pdwq8uhwd8b?=
- =?us-ascii?Q?SpdDPp0f1RlClZplz6Sa2GD87bH12LJ8ztZeSp9mN/Qra32IPO/fNQpky7PS?=
- =?us-ascii?Q?K0vo/MUxi3lhx8K6uXLqj0dB09OkMIHwxPm4ImXcRLj3cLmVBgcxq5yI8ltr?=
- =?us-ascii?Q?5AWCMz2T+4T5W4uiDt1KPd5ZixNCQAI7DKkRkhrF7uY+7jyQvsvYqizBo9uH?=
- =?us-ascii?Q?VdFUNvTA9zaE4v/UIrhvrkp0Pjh2DBAy6b5aVRE564qQpDiHmhxuPS9I01G6?=
- =?us-ascii?Q?UaiU4KvU8lQTVoHTCllzndLEK28vw7IOAJGZ23z5DEy1McoIXmALxeA+fUCp?=
- =?us-ascii?Q?4HApeapP3rZNcZg+1OdKPfXClpTN0241um/HL64GKE+diWyYyKKVKtMrxRYP?=
- =?us-ascii?Q?EHkkNkWT2s87/1s6zB7hgrskxj9eChRAzdN3OW7fnVqUZiKQm9SdEbCBsQnp?=
- =?us-ascii?Q?xdBrZMw7ogyrLJS7IsVI/l5pZWMVBiLkQTy5/n8qnpJ3ISAZYqRUcWiAOfZP?=
- =?us-ascii?Q?uypE1IbgDB/ggNoxegh6crGYBjU/g8JICJK5rAmaRVV1r62KF62P54HH2YFQ?=
- =?us-ascii?Q?ogK3Qzmlzu+eCNr0TjGhfB08zEQyJy1lrdK8+QYhY3AmN0532OJnRGI2+L0H?=
- =?us-ascii?Q?SJukfqCJbjpGCmPna9xnCjnyBTuAfDdJ+zcnI4SBCxeWCsfD8hRRkFHsZ2kA?=
- =?us-ascii?Q?vNT9TXO1n+iqCQm6+z+ABvCh0G9tRwIs8TFBL/Y32hEHIU2tWEpFkxBAmx6e?=
- =?us-ascii?Q?iCA7E7DVCmU8X0zPT93xHgo/PSuA7KqBLl+Xo5fCpNp/6KI+vMTlf1bnzwiB?=
- =?us-ascii?Q?GGdlgyfJsuwlY4riyyu7sR/zQqfz/0boGzIX+asharet6PiHQoM6RMLk99gK?=
- =?us-ascii?Q?YzQdkltEouwRhHbEkK8Pb6sQiHNeoYuYCIo5lUKEwBlTdVdOt0nEDlsZysyQ?=
- =?us-ascii?Q?v4UoXUvdLQ0EKxwnPmw6LrBzOU/spLtScCou7uUqOgZw0jGap93sARocu1aL?=
- =?us-ascii?Q?eACfaupVDJCmq/CongBxIJFOlE3OzuReLjFNvXFT6OTQIsk/7Z2C6EYVljcT?=
- =?us-ascii?Q?xKGDjMEwv6pZZoPVeo2pi1GipSSZieIkeypycMe2GxvwBPIspquzgfxCIroZ?=
- =?us-ascii?Q?NpQNOEOT2X6VPM3CzZA9Dx2DBIav5lE=3D?=
-X-Exchange-RoutingPolicyChecked: V3T5PdOIlImtHqVXp/IndYH8juR4NgrWuK9cGXSiM5SqhY6phBIHdxV3IDA3vEnTBB3wL5tjXZKiG/+MdrKvBEKrtY3KBAdv9TDcRqj6idHkccaXvx1o3goE2FVYNs8ymVP9BcDAv61smFpFyU+1pxl+GE9H/ZPBtck+abzaBCWe1FHGjvcmjGBgSdzIOCorESoOfZpv/+KwqdS2RolFqvkNtG9+5MMLP2H19w/VPxq7r0/YEN1FSfmypSqW3ppGXETmTx/YNx8ZWnZTSfkYc7DZ6MZypfeFpr9uhOqVESZYrZpZBkntOvwwaDYUs+LDBz2666gK5qi7ozGoSspq5Q==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08e6fbba-90a5-4360-81ee-08df343eeee7
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2026 15:28:21.2735 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wOU6Evs6iV5P97VRkwDHoZHeAqnz/GPwe5wJ8cFtKuoD0iEAa549WambuqhA4884pf5/NsGhzOzUKiPf//oRp7zBxXFBmL5lJMSQjyn387c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7996
-X-OriginatorOrg: intel.com
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI3MDA2MCBTYWx0ZWRfXyV7PaCI8kHHr
+ aBtiCmbxipnWXxr2LHplPzviXPZYJMRJ13iz+AI540VP/bN4n3AUwBXbEQ9Zt49F8fLec+hy2nw
+ NxhBbzPbeF6/xiQydXRbLh7A0uxf5v/5B8y/6C/483uBIuzFfcWzIfG9Ad9+pca6d+w+H1k4Ro1
+ CTJCTlKx/+pwzTNO5WKw9Q6dEUYM21T7NnCok3yiGkSoU9g4OUYAQNt69A5kegNhUn5FkF5IzCX
+ +LFLyJoIMt08RNPhp9M4LgVbCqKHClJOQsYkUUIL0hdfqz0WfnFI0wCdWOCbDVcGl9VzNAKc+T7
+ DcaiMNrmZZ2XONM5ry1ivzc9wbvM8BbyP5LcqHvDUGPLuqr+NAOYyWhKJble5bZ2LOI3s8X1Pgl
+ Y1LS2pDfJsYrHBeMdbvJpaKIUpO5JVqgtMTDMljKMV0BbNPu0mOkLRpi7EZ2FzNlhuGnAMVEa6Y
+ cqINOhquJgkm/xGdDQw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI3MDA2MCBTYWx0ZWRfXyy1E/SjfBuri
+ 4PU5ws67/eHOgTFMOklnoi731MaifXnjehlavbnGgWfsygv46N+WcSQlEKAdms8/uDmaeqViKiQ
+ /qWLu+7lgk5M8l2xw0nYsQ+neOQ+OW0=
+X-Proofpoint-ORIG-GUID: aaQEUQBs0ci0AEBhUzf2CDx0do2TC4cP
+X-Proofpoint-GUID: aaQEUQBs0ci0AEBhUzf2CDx0do2TC4cP
+X-Authority-Analysis: v=2.4 cv=CeKdd7rl c=1 sm=1 tr=0 ts=6ae0c5c7 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=8rWy6zfcAAAA:8
+ a=o0H6PxKc5kZCS8mi02EA:9 a=QEXdDO2ut3YA:10 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-27_03,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 suspectscore=0 malwarescore=0 phishscore=0 clxscore=1015
+ adultscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610190000
+ definitions=main-2610270060
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -151,49 +102,72 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Tue, Oct 27, 2026 at 10:51:30AM +0000, Anurag Mandal wrote:
-> This series fixes memory leaks, and one double free, in the ice PMD.
-> 
-> a. The DDP package copy was freed twice when hardware table
->    initialization failed during probe.
-> 
-> b. The switch filter management structures, the DDP package copy and
->    any remaining VSI contexts were never freed on port close or
->    reset.
-> 
-> c. The DDP filename devarg string leaked on probe failure, and when
->    the devarg was given more than once.
-> 
-> d. The main VSI leaked when probe failed after PF setup.
-> 
-> e. MAC and VLAN filter entries could stay allocated when a VSI was
->    released.
-> 
-> f. A failed flow director setup leaked the FDIR VSI, hash table, hash
->    map and counter pools.
-> 
-> g. The flow segment used to create the ACL profiles leaked on every
->    ACL engine init.
-> 
-> Anurag Mandal (7):
->   net/ice: fix DDP package double free on init failure
->   net/ice: fix memory leaks on port close
->   net/ice: fix DDP filename leak
->   net/ice: fix main VSI leak on init failure
->   net/ice: fix MAC and VLAN filter leak on VSI release
->   net/ice: fix FDIR resource leak on setup failure
->   net/ice: fix ACL profile segment leak
-> 
-See comments inline on each patch. Please respin with all patches CC'ed to
-stable for backport, since all the underlying issues are present in earlier
-releases.
+IBM - Power Systems Testing
+DPDK v26.11-rc1
 
-Thanks,
-/Bruce
+* Build CI on Fedora 40, 41, 42 and 43 container images for ppc64le
+* Basic PF on Mellanox: No issues found
+* Performance: TestPMD throughput single core tests
+* OS:- RHEL 10.2  kernel: 6.12.0-211.64.1.el10_2.ppc64le
+         with gcc (GCC) 14.3.1 20251022 (Red Hat 14.3.1-4)
+
+Systems tested:
+  - LPARs on IBM Power11 CHRP IBM, 9105-22A
+     NICs:
+     - Mellanox Technologies MT4129 Family [ConnectX-7 100 GbE 2-Port]
+     - Firmware Version: 28.48.1000 (MT_0000000834)
+     - OFED 26.07-0.7.7
+
+Regards,
+
+Riley Fletcher
+
+On Fri, 2026-10-16 at 03:45 +0200, Thomas Monjalon wrote:
+> A new DPDK release candidate is ready for testing:
+> 	https://git.dpdk.org/dpdk/tag/?id=3Dv26.11-rc1
+>=20
+> There are 698 new patches in this snapshot.
+>=20
+> Release notes:
+> 	https://doc.dpdk.org/guides/rel_notes/release_26_11.html
+>=20
+> Highlights of 26.11-rc1:
+> 	- pile stack-like container and mempool driver
+> 	- interrupt FD leak detection
+> 	- VFIO API made internal
+> 	- VFIO character device
+> 	- Device Tree matching in platform bus
+> 	- module EEPROM decoding
+> 	- flow graph parser for drivers
+> 	- RSA capability parameters
+> 	- AMD AE4DMA driver
+> 	- NXP i.MX95 eDMA5 driver
+> 	- baseband statistics per queue
+> 	- auto-detection of uncore power driver
+> 	- graph profiling
+> 	- eBPF validation tool
+> 	- removal of deprecated API
+>=20
+> Please test and report issues on bugs.dpdk.org.
+>=20
+> We'll try to release -rc2 before the end of the month.
+> That leaves us less than 2 weeks to add more driver features.
+> Adding library features after -rc1 would be an exception,
+> but it's still possible.
+>=20
+> Note: Security updates for several LTS branches were released this
+> week.
+> To receive advance notice of future security releases, you can
+> request
+> to be added to security-prerelease@dpdk.org=C2=A0by emailing
+> techboard@dpdk.org.
+>=20
+> Thank you everyone
+>=20
