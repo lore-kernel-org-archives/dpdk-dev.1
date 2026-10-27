@@ -2,60 +2,60 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D04606A31A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 18:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C09B606A31A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 18:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=ije0niE+
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=hSpakj4i
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 306004067D;
-	Tue, 27 Oct 2026 19:56:25 +0100 (CET)
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198])
- by mails.dpdk.org (Postfix) with ESMTPS id 16B594067D
- for <dev@dpdk.org>; Tue, 27 Oct 2026 19:56:24 +0100 (CET)
-Received: by mail-pg1-f198.google.com with SMTP id
- 41be03b00d2f7-cd8b299b05fso240899a12.0
- for <dev@dpdk.org>; Tue, 27 Oct 2026 11:56:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 50FBD4068A;
+	Tue, 27 Oct 2026 19:56:27 +0100 (CET)
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71])
+ by mails.dpdk.org (Postfix) with ESMTPS id 9E72C40613
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 19:56:26 +0100 (CET)
+Received: by mail-pj1-f71.google.com with SMTP id
+ 98e67ed59e1d1-3adc5b185bfso197196a91.3
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 11:56:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20260707; t=1793127382; x=1793732182; darn=dpdk.org;
+ d=google.com; s=20260707; t=1793127385; x=1793732185; darn=dpdk.org;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=n7IjgU3lDtnbsAZtFZMpPi9/UU3A/HvHXl+s7ywJeDM=;
- b=ije0niE+X5Y4PzaXR7/ok2+dPnfg1VbORKCWDDG7mcQfkYEPoJL0ha1zr5nSSIzkxO
- Z1QqwQNC0Z4pxlWb28WqtVOoS29o2juQirki9nUUS4fJeD9RHRwsIB4K4cfT8yhMtfAt
- qyMB0LDAOhZOwFUuPcP5ZRYQ+ikXDR/Y4DzMj7kyCyqd8Gw8L/hIMwp1k7Rzi9wQU+dG
- 1GkQZ7xPxKP9mf5feYdzowwcFq8TSnvkfujqqE66YyznKecDNnL8Bs6Aj+H8MeoUAFCi
- SubePUgPIkcIeyYawyogzYkEjpE4I9kPOYQURdDwcOttceBtR0T3xmRj/L8jTzGcKmPF
- syvw==
+ :content-type; bh=dZ8P2s5a+XHA/v2AnHqsndoysZPxoVQybr9HY7Ydcpc=;
+ b=hSpakj4iFxSeNG2HdNgkVxhwq7kNXpN6MDLNkjmpo6Cmp2mH6R+kG9TnJ/W4LZUAOB
+ iMjnNuUYxPD15oXqAg7Jm7k+9h7Z6jjRZrQ1KRuwLns8EVqxCyDXHP4MBmjQvITKwV3P
+ hNtfP7EIcc0XounpJGgq+kofmei8ElRgI9lsXrM/Zn+fMwLnNIj89YXv7ioMbR7rU+PS
+ pVD/WyzBRelolE9f7IIiWg7h+BAx3mVoiV4OiaKrHxUeiDaFBQrHXAeC1e9aIWacC9wL
+ 4hsPhWcybqsccKLb3vmLI4dJbi50kfyMxidA2HhfaasCKnbcB5vIBoTOxyWqZTl0fnEc
+ v6pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793127382; x=1793732182;
+ d=1e100.net; s=20260707; t=1793127385; x=1793732185;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=n7IjgU3lDtnbsAZtFZMpPi9/UU3A/HvHXl+s7ywJeDM=;
- b=mRVMKv8NmdSXXqzwl8dYp689AmIPUDUIJc7/72LdhxkWvNbZTa6SIVmeTcyGpMuC3Y
- d0jpuZNtdorbYLMIgu+dWlo7r3g1V1QMcTkMoM04YKlVTWUJz/ouG8G/dPBjcdL9XQS6
- 0U2hQmJZe1twX8LSbMpZEsRmOjYDXU2eVipLL+/zND9QoP14clZ7PVrHcOyJ0WqwXrFQ
- 4yhGvPJ6rVHsJnK30/YJA3DQwTQ+xYLJvUuR8UjsGHI7iF85dKajEhza9lf3ry8EekcR
- ViPmq3ifDEOASgisY8xEM9n0bAAXYa68UhoULA0wAuLhp+/DvhkHv/SEYYK2QEGvWb4/
- rZQA==
-X-Gm-Message-State: AFq9FYIDNchJK/BAwKplfCPYbKYUsksBlmJdz8mDCpwdqh2FkX06Fafk
- EJtILXt91Q0K7dgMU6onfyFUNELXKoBpT2xiA07SIsjAhlaFJXat5bdcU/8d5+k3lTU892Cufwh
- fKKIjGJ+xhyAKRAcqWqes+LSZSuOsTH8eqyx8oez6tc/VEBlaa/u962c+Lruv9Kyg3X/ANNtYM4
- 4KX9B5m+T6sr/OJUqdaYNIXIzxxbzvjO3JNlKnzpVJDrrimxoIsw==
-X-Received: from pgx30.prod.google.com ([2002:a63:175e:0:b0:cc7:492f:3ac1])
+ bh=dZ8P2s5a+XHA/v2AnHqsndoysZPxoVQybr9HY7Ydcpc=;
+ b=gwbahj2+kzOdWzaGEB18xxK/DwijflX4EV0lyWHxL27Tpi7s8zEvdjxtN5CYAPXur1
+ is3hjpva/e798JA7cJvIOijA+UEr3BFDhO0x804VIWCUXlty54Egz2p3a65Lr16gh+fH
+ FJt70ynsQlllu3cwWgM4JUcg6SZrEzMgnTgwb76V02hTpyMjrogw7HyilnIVrTA6dVBz
+ fwdEjvpVqI8UhBNyKDG8zjJUV+MnDQ9JGMZUOfNMyTlW/cqNQFzFlPP4NEVlzebiAA7R
+ y/cjqmzO1RcbCTUuH8Bygeq7L078wf9mtOCvlC9QCNtT1tSbV8Iu0XV5x5u7M138ZykG
+ 5OBg==
+X-Gm-Message-State: AFq9FYIT8S6+EuyipFb/H35+2hF+9QuWjAmOl9UbyJ6iyRFwq5XLiNby
+ kXvRyZ7ZnuxYttfXx0xN633MD7nihdxuHr6IaDIzMwmxZakREK0vJXPIoFeZ/MafIfSdfpn8zHC
+ KzML+9JYNCpxDxvzqc6dCiBDgqhcnt3loLb2jTrwZVCs+4WHfeI20GCzVSvFHkhqdYHQna/My3u
+ xdtcaLZTOGSR4l1umKs1MmbQBeqPce4TuJ57PctukbGmikpdZwsg==
+X-Received: from pjbqb1.prod.google.com ([2002:a17:90b:2801:b0:3ad:cde0:ea04])
  (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:4849:b0:3e8:ea76:9825 with SMTP id
- adf61e73a8af0-3e9020dbaa4mr125549637.4.1793127382333; 
- Tue, 27 Oct 2026 11:56:22 -0700 (PDT)
-Date: Tue, 27 Oct 2026 18:54:14 +0000
+ 2002:a17:90a:e7ca:b0:3a8:59d3:5317 with SMTP id
+ 98e67ed59e1d1-3adeaf98405mr9772578a91.32.1793127384829; 
+ Tue, 27 Oct 2026 11:56:24 -0700 (PDT)
+Date: Tue, 27 Oct 2026 18:54:15 +0000
 In-Reply-To: <20261027185420.724684-1-jtranoleary@google.com>
 X-Archived-By: <archiver.kernel.org>
 Mime-Version: 1.0
 References: <20261027185420.724684-1-jtranoleary@google.com>
 X-Mailer: git-send-email 2.56.0.307.g5fe7bd680c-goog
-Message-ID: <20261027185420.724684-6-jtranoleary@google.com>
-Subject: [PATCH 5/9] net/gve: add dedicated mutex for device reset
+Message-ID: <20261027185420.724684-7-jtranoleary@google.com>
+Subject: [PATCH 6/9] net/gve: add check for device reset to AQ ctrl ops
 From: "Jasper Tran O'Leary" <jtranoleary@google.com>
 To: dev@dpdk.org, Joshua Washington <joshwash@google.com>
 Cc: "Jasper Tran O'Leary" <jtranoleary@google.com>
@@ -77,161 +77,69 @@ X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-During a proactive device reset, a polling thread may attempt to stop
-and start the device outside of the main EAL thread. Guard against
-contention by having device start, stop, and reset callbacks acquire
-and release the mutex.
+Refactor the check for the device needing a reset into a control plane
+operation. This will make it easier to add a corresponding Mailbox
+operation in subsequent patches.
 
 Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
 Reviewed-by: Joshua Washington <joshwash@google.com>
 ---
- drivers/net/gve/gve_ethdev.c | 35 +++++++++++++++++++++++++------
- drivers/net/gve/gve_ethdev.h |  2 ++
- 2 files changed, 31 insertions(+), 6 deletions(-)
+ drivers/net/gve/gve_ethdev.c | 14 +++++++++++---
+ drivers/net/gve/gve_ethdev.h |  1 +
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index 44810b864..391e7923f 100644
+index 391e7923f..cfd043dbf 100644
 --- a/drivers/net/gve/gve_ethdev.c
 +++ b/drivers/net/gve/gve_ethdev.c
-@@ -558,16 +558,19 @@ gve_dev_start(struct rte_eth_dev *dev)
- 		return -EPERM;
- 	}
- 
-+	priv = dev->data->dev_private;
-+
-+	pthread_mutex_lock(&priv->reset_lock);
-+
- 	ret = gve_start_queues(dev);
- 	if (ret != 0) {
- 		PMD_DRV_LOG(ERR, "Failed to start queues");
--		return ret;
-+		goto unlock_and_return;
- 	}
- 
- 	dev->data->dev_started = 1;
- 	gve_link_update(dev, 0);
- 
--	priv = dev->data->dev_private;
- 	/* No stats available yet for Dqo. */
- 	if (gve_is_gqi(priv)) {
- 		ret = gve_alloc_stats_report(priv,
-@@ -576,7 +579,7 @@ gve_dev_start(struct rte_eth_dev *dev)
- 		if (ret != 0) {
- 			PMD_DRV_LOG(ERR,
- 				"Failed to allocate region for stats reporting.");
--			return ret;
-+			goto unlock_and_return;
- 		}
- 		ret = process_priv->ctrl_ops->setup_stats_report(priv,
- 				priv->stats_report_len,
-@@ -584,13 +587,16 @@ gve_dev_start(struct rte_eth_dev *dev)
- 				GVE_STATS_REPORT_TIMER_PERIOD);
- 		if (ret != 0) {
- 			PMD_DRV_LOG(ERR, "setup_stats_report command failed.");
--			return ret;
-+			goto unlock_and_return;
- 		}
- 	}
- 
- 	gve_start_dev_status_polling(dev);
-+	ret = 0;
- 
--	return 0;
-+unlock_and_return:
-+	pthread_mutex_unlock(&priv->reset_lock);
-+	return ret;
- }
- 
+@@ -1711,14 +1711,14 @@ gve_set_default_ring_size_bounds(struct gve_priv *priv)
  static void
-@@ -700,10 +706,14 @@ gve_dev_stop(struct rte_eth_dev *dev)
+ gve_check_device_status(void *arg)
+ {
++	struct gve_process_private *process_priv;
+ 	struct rte_eth_dev *dev = arg;
+ 	struct gve_priv *priv = dev->data->dev_private;
+-	uint32_t dev_status;
+ 	int ret;
  
- 	/*
- 	 * Block until all polling callbacks have concluded before tearing down
--	 * any device resources.
-+	 * any device resources. Do so before trying to acquire the reset lock
-+	 * because a polling callback could be invoking a reset which will
-+	 * itself try to acquire the lock.
- 	 */
- 	gve_stop_dev_status_polling(dev);
+-	dev_status = ioread32be(&priv->reg_bar0->device_status);
++	process_priv = rte_eth_devices[priv->port_id].process_private;
  
-+	pthread_mutex_lock(&priv->reset_lock);
-+
- 	dev->data->dev_started = 0;
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
- 
-@@ -719,6 +729,8 @@ gve_dev_stop(struct rte_eth_dev *dev)
- 	if (gve_is_gqi(dev->data->dev_private))
- 		gve_free_stats_report(dev);
- 
-+	pthread_mutex_unlock(&priv->reset_lock);
-+
- 	return 0;
- }
- 
-@@ -880,6 +892,7 @@ gve_dev_close(struct rte_eth_dev *dev)
- 
- 	pthread_mutex_destroy(&priv->flow_rule_lock);
- 	pthread_mutex_destroy(&priv->nic_ts_lock);
-+	pthread_mutex_destroy(&priv->reset_lock);
- 
- 	rte_free(priv->rxq_configs);
- 	priv->rxq_configs = NULL;
-@@ -908,6 +921,8 @@ gve_dev_reset(struct rte_eth_dev *dev)
- 		return -EPERM;
- 	}
- 
-+	pthread_mutex_lock(&priv->reset_lock);
-+
- 	/* Tear down all device resources before re-initializing. */
- 	if (gve_get_flow_subsystem_ok(priv))
- 		gve_teardown_flow_subsystem(priv);
-@@ -927,9 +942,12 @@ gve_dev_reset(struct rte_eth_dev *dev)
- 		PMD_DRV_LOG(ERR,
- 			"Failed to re-init device on port %u after reset.",
+-	if (dev_status & GVE_DEVICE_STATUS_RESET_MASK) {
++	if (process_priv->ctrl_ops->check_device_needs_reset(priv)) {
+ 		PMD_DRV_LOG(INFO,
+ 			"Device on port %u requests a reset. Stopping device status polling.",
  			dev->data->port_id);
-+		pthread_mutex_unlock(&priv->reset_lock);
- 		return err;
- 	}
- 
-+	pthread_mutex_unlock(&priv->reset_lock);
-+
- 	return 0;
+@@ -1783,9 +1783,17 @@ gve_adminq_get_device_properties(struct gve_priv *priv)
+ 	return gve_adminq_describe_device(priv);
  }
  
-@@ -1971,8 +1989,12 @@ gve_dev_init(struct rte_eth_dev *eth_dev)
- 
- 	pthread_mutexattr_init(&mutexattr);
- 	pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);
-+	pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE);
++static bool
++gve_adminq_check_device_needs_reset(struct gve_priv *priv)
++{
++	uint32_t dev_status = ioread32be(&priv->reg_bar0->device_status);
++	return (dev_status & GVE_DEVICE_STATUS_RESET_MASK) != 0;
++}
 +
- 	pthread_mutex_init(&priv->flow_rule_lock, &mutexattr);
- 	pthread_mutex_init(&priv->nic_ts_lock, &mutexattr);
-+	pthread_mutex_init(&priv->reset_lock, &mutexattr);
-+
- 	pthread_mutexattr_destroy(&mutexattr);
- 
- 	priv->mbuf_timestamp_offset = -1;
-@@ -1980,6 +2002,7 @@ gve_dev_init(struct rte_eth_dev *eth_dev)
- 	if (err) {
- 		pthread_mutex_destroy(&priv->flow_rule_lock);
- 		pthread_mutex_destroy(&priv->nic_ts_lock);
-+		pthread_mutex_destroy(&priv->reset_lock);
- 		goto free_process_priv;
- 	}
- 
+ static const struct gve_ctrl_ops gve_adminq_ops = {
+ 	.init_ctrl_plane = gve_adminq_alloc,
+ 	.free_ctrl_plane = gve_adminq_free,
++	.check_device_needs_reset = gve_adminq_check_device_needs_reset,
+ 	.get_device_properties = gve_adminq_get_device_properties,
+ 	.get_ptype_map = gve_adminq_get_ptype_map_dqo,
+ 	.get_interrupt_dbs = gve_adminq_configure_device_resources,
 diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index c56a8a693..d16db54a8 100644
+index d16db54a8..495b60c11 100644
 --- a/drivers/net/gve/gve_ethdev.h
 +++ b/drivers/net/gve/gve_ethdev.h
-@@ -385,6 +385,8 @@ struct gve_priv {
- 	struct gve_tx_queue **zombie_tx_queues;
- 	rte_spinlock_t zombie_lock;
- 
-+	pthread_mutex_t reset_lock;
-+
- 	struct gve_registers __iomem *reg_bar0; /* see gve_register.h */
- 	rte_be32_t __iomem *db_bar; /* "array" of doorbells */
- 	struct rte_pci_device *pci_dev;
+@@ -307,6 +307,7 @@ struct gve_txq_config {
+ struct gve_ctrl_ops {
+ 	int (*init_ctrl_plane)(struct gve_priv *priv);
+ 	void (*free_ctrl_plane)(struct gve_priv *priv);
++	bool (*check_device_needs_reset)(struct gve_priv *priv);
+ 	int (*get_device_properties)(struct gve_priv *priv);
+ 	int (*get_ptype_map)(struct gve_priv *priv);
+ 	int (*get_interrupt_dbs)(struct gve_priv *priv);
 -- 
 2.56.0.307.g5fe7bd680c-goog
 
