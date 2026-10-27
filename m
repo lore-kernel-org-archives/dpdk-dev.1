@@ -2,81 +2,76 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80418606A31B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 16:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1568B606A31A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 17:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=Q0kMOfVr
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=VJsDT2Bd
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DD7E5400D7;
-	Tue, 27 Oct 2026 17:45:09 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTPS id DB1D0400D5
- for <dev@dpdk.org>; Tue, 27 Oct 2026 17:45:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1793119507;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=i/TgrILhFEG3BBrwJ4BsrHcIH9ZvYHcwgpUgsx61pmw=;
- b=Q0kMOfVr0wHP7+BHa4NQbWvObr2aPplHpFJg+i+Lf5IglMZ/CaT54m13+O2v3Vq279Bf2J
- XLZwSnAalJZI88ml0AcQm7oYGzEBkY3byZY6lWfXuxr1ibMN9DY5fTeZ3S56dnU9dKIQ4s
- Jp5IMzcpnmqUTk2VgCfhQBKvMgShCGU=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-512-Y_9phRNoMXml4ScNLhl8Ig-1; Tue, 27 Oct 2026 12:45:06 -0400
-X-MC-Unique: Y_9phRNoMXml4ScNLhl8Ig-1
-X-Mimecast-MFC-AGG-ID: Y_9phRNoMXml4ScNLhl8Ig_1793119505
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-3ab3ab11921so20230911fa.3
- for <dev@dpdk.org>; Tue, 27 Oct 2026 09:45:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0460C40151;
+	Tue, 27 Oct 2026 18:06:25 +0100 (CET)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTPS id C7195400D7
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 18:06:23 +0100 (CET)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-2ea1e7fad99so88095ad.1
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 10:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793120782;
+ x=1793725582; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=Vy0PFNc5x1sp1B1gflVkkKZC4MAkmSdF0vmyaVGm4uc=;
+ b=VJsDT2BdKbL0pX4ii8zT3nqqJjTn8kt4lhLrPl9UTuZ11gQxkuFL0ub/3r/y8h2mur
+ OWmu5VIylrTwvjMGp5lY5Q6pSPxT1988oPcEjqA16+Y+jLE0xohjmGNrik5dPShnQzfk
+ YjSDQPxqevScipAS0xP/7jOIBdqhVQtujgreRvB00cf6pfMLG5L3BiMj0EXTfeStPoPl
+ UwtKyjAvA+rj3/hnbp+B5+hv9PFV5DNeHopj0l8BlesIV+QdzS9Okt8zFiB7wIEejCL6
+ XGfNl+qkv6/vpxE1GgIwdwEWpZ0HLBHyezugirQLXp0soPahB0gayVzBSTQ58FB9Bn0j
+ PGCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793119505; x=1793724305;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=i/TgrILhFEG3BBrwJ4BsrHcIH9ZvYHcwgpUgsx61pmw=;
- b=mcyv6fRfn6TBOE6KWhd7ZqCZ4QRuOfLc1U+zET6SF/0xd+Pi16o+XTMAL4F2PzBoY2
- RCM1+6xE+pcYMPvYpVujToaWCLVFkDxPMNJNfOUBco+IzcZf8ikzEFqpoGWcaYMXJNIw
- +SHHzU2Ww/LSqLgMUsKcz0oXwSuHnSfP53GMPizL2s47k83b5G8nwUuoUUc35otMbTQM
- NEfPZplLTVpOTRA9rGUnar9fjIG1kPODKg5qaRe6wyS+Y2Qh0+WsjYfZXhTileKTaTwp
- OXgvSe7f2ZM14eBIC9y+08P5GO2fEmy+oMQ0VOukfIvlIW8mUVoYN0W6SKdxVwlM/uua
- ADzA==
-X-Gm-Message-State: AFq9FYI/Hpr1zAKSxIkSUr/sgZf38z0PBiDzKm9n4AJgGEha8GuT1ZSS
- SQmc3S9r818lAlBkynIhe20gLRZjlE1jl694TdOlrtDexBL4dhFZDUzCSm2TLfAeBw4Teb9bzJ6
- xr4RN+8kU4quG+2ZtCGrC7GCm8mbt1WWsrqurvcyVgcaiQIb6E3iAq78MoYxbtzZmNpg17xsXsG
- /gipL6o6ZP8GpTzWlEd+Q=
-X-Gm-Gg: AYBFou0GPKpU8m4cf9eUrji9vsmxPXD/gofyCgcsPW/DNAQ02xwRhio/I/1cOI22+vR
- Nu2Cna6MM0BDlI9TWQefPNbFE+/Rqa77ef0ui5LozCEOsaLL10gt8IVB14ncdjNfkfPoVLVUBgw
- JEPMGGe4i5/7CPBaFVdPQAB/7ky0cOTyuATHxeXeuoPrrwYuGfBL/e3kXWzpc8UprB6cjvyQMOz
- gP52cwF3qEcVjfOnmKvpee1UMMEgRmMX9XUfTDhz8LQw1t1
-X-Received: by 2002:a05:651c:1141:b0:3a7:81c4:190b with SMTP id
- 38308e7fff4ca-3ac6fd68b88mr27052991fa.25.1793119504913; 
- Tue, 27 Oct 2026 09:45:04 -0700 (PDT)
-X-Received: by 2002:a05:651c:1141:b0:3a7:81c4:190b with SMTP id
- 38308e7fff4ca-3ac6fd68b88mr27052951fa.25.1793119504424; Tue, 27 Oct 2026
- 09:45:04 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1793120782; x=1793725582;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=Vy0PFNc5x1sp1B1gflVkkKZC4MAkmSdF0vmyaVGm4uc=;
+ b=vycLmDAc5E6IZifj1KJTu0XUhHFDkolRHWo5Bt+tTU1OqYpc1MY0HpoSjK1/C3sPx4
+ mF0i2DdQD8j4bj03zRXyDmwUZaVFq8CioedsTr8Et3ktbWmSAZbWZ1NdzCjs+7BdAuk2
+ sRSh0Pttc5Pfq2rrmBfKb4ndX1tcCt9tZFzUObzde2eE9V3v898sYxOjIQ3335qACOlm
+ 0u2bpE13PVfucjHqr3cweaijgcSPdaPSV5ImR8l+DUztiu4oEFf02bCE4K5YJUtwHeT4
+ tuccTCy4JtqqeIbA6JiDwCds4TNIIGiVzV0wcR8Z9gatr3QrUv0wdYB1XtRJHxJKXHCB
+ W2Kg==
+X-Gm-Message-State: AFq9FYKFcb1gUuaO/wK+3RjQeTAX9vmNCZGojZjUh5toHG/vPmhd9uTn
+ 8DJmvRxZNJOu9lupDbVfCm4R2dKExXtdQinHTX3I2FQi+zFdX0qqNUafDS4hO6kWLA3JOe1OnwI
+ jW1s2yIg=
+X-Gm-Gg: AYBFou09zv6dBiGNv/t8kjf1TvvCFeohnoM3DbyiqSLj2ZBt0ARt7HLI1U4LB4rh7KA
+ l+YUvDmnStVF777cNSAvAPWQYAFx+a/aPuayfJsI9Zmab6gE5CZjwn7liTzFx03Kb6jzmN38kVd
+ 7HzhjZg2Stuhbd2ByjLX1JFeDmf1AFDXxDPiRNeAl3CgMsYgrV0V8aKMQgzHE23uwrhUMqzoJ8a
+ 69SwXWDcTptlwBLFeF9rY6TrY8WIy75CQLAPsv/ihJBCd4JXHITgedbCiD5+N6M7XTKhmEh8z0N
+ 46YwKpzBkjI4rHdNVps9zcNrsIAaAxYONfGOK3p2WK1vcLoMUCTAmLrGkUe5jS1QOR2R2/MGIdL
+ lCENPJHt3eUYnRXRBTdhTMkWVwLB1qGzfe9hWa/tfyJcnTAXT7FIonqWlpuekn+QGSleVpMTAOM
+ Cr8bA3eTNaHqMd7/A+j9pv/XDmqPetv/DtGsr2GvcZXYBGOGNLc4as/Hh56ZhIf3y36YdEvICc5
+ UAUCW8I6EjpY0T3sLpXy5gGhlQl5bOH1IpoElmxpRXnhumPkOa96AarfUNB4HY2UjIrg4icGKaU
+ Vxbt8Btyosj8DfFuJxA=
+X-Received: by 2002:a17:902:ef48:b0:2e9:6788:937e with SMTP id
+ d9443c01a7336-2eb004e9a69mr39505ad.42.1793120782126; 
+ Tue, 27 Oct 2026 10:06:22 -0700 (PDT)
+Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 41be03b00d2f7-cd8cc9b216asm3234270a12.3.2026.10.27.10.06.21
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 27 Oct 2026 10:06:21 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Marat Khalili <qm2k21@gmail.com>, Ray Kinsella <mdr@ashroe.eu>
+Subject: [PATCH] bpf: fix index register for classic BPF indirect loads
+Date: Tue, 27 Oct 2026 10:06:19 -0700
+Message-ID: <20261027170619.2193021-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20260723135400.3621271-1-david.marchand@redhat.com>
- <20261026181031.304100-1-david.marchand@redhat.com>
- <GV1PR04MB10750EE7246351EBD7792D46189602@GV1PR04MB10750.eurprd04.prod.outlook.com>
-In-Reply-To: <GV1PR04MB10750EE7246351EBD7792D46189602@GV1PR04MB10750.eurprd04.prod.outlook.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 27 Oct 2026 17:44:52 +0100
-X-Gm-Features: AclHuK-OuifUfCxxPGkVx6mU2IUqr2XXjtihJ7kOU4q5VAQkv454tekPpRZNMbE
-Message-ID: <CAJFAV8yXxkH5j3TqHfVsUtAAQ5a6rk=2KKoQ9iBEfNZbZh=R9Q@mail.gmail.com>
-Subject: Re: [PATCH v2 00/16] Device unplug and bus cleanup refactoring for NXP
-To: Hemant Agrawal <hemant.agrawal@nxp.com>,
- Prashant Gupta <prashant.gupta_3@nxp.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>,
- Stephen Hemminger <stephen@networkplumber.org>, 
- Thomas Monjalon <thomas@monjalon.net>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Dta5x46xKQ51foQ3uZQqyZQqJUjV0mCDbk7ORSeElZc_1793119505
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,40 +81,65 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Tue, 27 Oct 2026 at 13:36, Hemant Agrawal <hemant.agrawal@nxp.com> wrote:
-> > Hello Hemant,
-> >
-> > This is a followup to the refactoring started in 26.07.
-> >
-> > Like the last time, only compilation has been checked.
-> > I have no hardware to test runtime.
-> >
-> > One thing that could be broken is either the order of devices initialisation, or
-> > bugs in the device filtering that I tried to simplify.
-> >
-> > I went with the approach of splitting the device list between internal bus
-> > object (that I called "control" devices, maybe a better name can be found), and
-> > normal bus device object for which DPDK has a driver.
->
-> Series-
-> Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+Classic BPF filters using a variable offset into the packet, such as
+"tcp[tcpflags] & tcp-syn != 0" or "tcp[0:4] = ...", read the wrong bytes.
 
-Thanks for testing the series!
+The indirect loads ldb/ld [x + k] were handled in the same case as the
+arithmetic instructions, which take the source register from
+BPF_SRC(code), that is bit 0x08. In a load opcode that bit is part of
+the size field, not a K/X selector, so BPF_LD|BPF_IND|BPF_B (0x50) and
+BPF_LD|BPF_IND|BPF_W (0x40) both yield BPF_K and the index register
+becomes R0 (A) instead of R7 (X). The halfword form works only because
+BPF_H and BPF_X are both 0x08.
 
-Series applied in main.
+Give the indirect loads their own case next to the absolute loads and
+emit X as the index register. The interpreter and the JITs already
+take the index from src_reg, so this fixes all engines.
 
-A rebase will be needed at some point for other work touching the
-fslmc bus like:
-https://patchwork.dpdk.org/project/dpdk/list/?series=39787
+Bugzilla ID: 2085
+Fixes: 2eccf6afbea9 ("bpf: add function to convert classic BPF to DPDK BPF")
+Cc: stable@dpdk.org
 
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/bpf/bpf_convert.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
+diff --git a/lib/bpf/bpf_convert.c b/lib/bpf/bpf_convert.c
+index 37095eea52..a32e1cdd8a 100644
+--- a/lib/bpf/bpf_convert.c
++++ b/lib/bpf/bpf_convert.c
+@@ -301,6 +301,13 @@ static int bpf_convert_filter(const struct bpf_insn *prog, size_t len,
+ 			*insn = BPF_RAW_INSN(fp->code, 0, 0, 0, fp->k);
+ 			break;
+ 
++			/* Indirect loads index the packet with X: A = P[X + k] */
++		case BPF_LD | BPF_IND | BPF_W:
++		case BPF_LD | BPF_IND | BPF_H:
++		case BPF_LD | BPF_IND | BPF_B:
++			*insn = BPF_RAW_INSN(fp->code, 0, BPF_REG_X, 0, fp->k);
++			break;
++
+ 		case BPF_ALU | BPF_DIV | BPF_X:
+ 		case BPF_ALU | BPF_MOD | BPF_X:
+ 			/* For cBPF, don't cause floating point exception */
+@@ -328,9 +335,6 @@ static int bpf_convert_filter(const struct bpf_insn *prog, size_t len,
+ 		case BPF_ALU | BPF_DIV | BPF_K:
+ 		case BPF_ALU | BPF_MOD | BPF_K:
+ 		case BPF_ALU | BPF_NEG:
+-		case BPF_LD | BPF_IND | BPF_W:
+-		case BPF_LD | BPF_IND | BPF_H:
+-		case BPF_LD | BPF_IND | BPF_B:
+ 			/* All arithmetic insns map as-is. */
+ 			insn->code = fp->code;
+ 			insn->dst_reg = BPF_REG_A;
 -- 
-David Marchand
+2.53.0
 
