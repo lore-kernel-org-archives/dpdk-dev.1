@@ -2,75 +2,75 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C808A606A31E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 20:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B459E606A31A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 21:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=JxIADrer
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=nBCPfU/C
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 880F240151;
-	Tue, 27 Oct 2026 21:52:50 +0100 (CET)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52])
- by mails.dpdk.org (Postfix) with ESMTPS id D1B5B400D7
- for <dev@dpdk.org>; Tue, 27 Oct 2026 21:52:48 +0100 (CET)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-3ac91ac8924so215738a91.1
- for <dev@dpdk.org>; Tue, 27 Oct 2026 13:52:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 609A740151;
+	Tue, 27 Oct 2026 22:00:55 +0100 (CET)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTPS id 141D1400D7
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 22:00:53 +0100 (CET)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-2ea138a3497so1138965ad.2
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 14:00:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793134367;
- x=1793739167; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793134852;
+ x=1793739652; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=nt2bQooFmsnSJox6mokdjhNTGk7gC5fLCCN+6ciSMRU=;
- b=JxIADrerNuoYJHZuNOLbP5R6E9Pv09shiVhsVE/WWqHdqGN2vP+/S591icdUnWbC9L
- XrAewHzDnbAvnRGlXl+a+gwn+EjrI8iaawami/T0beaSp1tlHld8tGLmZNxHGqCJs16h
- QIrmK8L0uj30LGeG9WbPLX6r7c0NVpSBMz0hC9c4OmAnps8S5joRVEUxviMxnlgJqawS
- zNBODHhpesrXvvWB6XnUcjZ2gO3wWAcw9I7yyMvvw3ZA6MRH6D1GAGiOMgGE4AG8sQsd
- /U8JHIxl6UbyF0oSYyTCEkZLQaZOrb4DGQPqtE8fmXSiDIRuD8wIhsHtYs/lizPRyj6b
- qoKQ==
+ bh=yayDtzb4kyCAxyOtXb/kMBxOh6mnW205+LmhElPm3WM=;
+ b=nBCPfU/C0a43vW71WkMTk4lggenEvlHjMvAsnis6tKmQeRzqQRDl3yV4aJl+CFit1g
+ 95OWkVTDfoKN7ZRTKmlQVYI3m8C3VSd0OQUaLBRVQc/bQ5A1w7+qI9wPAHrAwKFZ8hO9
+ 3ac0iqKwB1wGg4MCH/i9S3XMXaMirU+uqBpPhPyFJd81Eqdes4pCR4i3qCCIbltDn3ev
+ OWyr/kd4f0CUG6EPYtG6K6P+Q7SgIh8Dgy3LIEGKrPBY/cJOjW0n9Oo7lyB8ZCvGg6dS
+ LWbDthUYsTCXTzpuyXGRj/j0cJKmCnmnHOWCxc75NJZkouNPQOmxn2ZxJoA3lABmEoFu
+ blrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793134367; x=1793739167;
+ d=1e100.net; s=20260707; t=1793134852; x=1793739652;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=nt2bQooFmsnSJox6mokdjhNTGk7gC5fLCCN+6ciSMRU=;
- b=ridrER8JOJg87IkM/+puPqUfxnvhErPWZUJGJR+kmxo5WzrSz1DvoaCrFN76W2v2cH
- PgoheoBfX+Hm5qrmozC/Gs1HUfah4YNUHProMErjWqFJHGHZmcokoP2qV0MWSQbUwQiY
- tWOf2OrlbEsQpE8Q6FeN1s7E6Xfn8Ipf5hXds6MvViEKeGC6M4u500TNw5dTAPADR75W
- 9Glgb2GfDa32R1qC2CKp0VKht0wqvsFJ5BsksNbVg1rWo4sv+YsXhMPBxIhMR6oxuvli
- V7y/gI+VXjqCweSWitPuiNAkrBw8hCTDd/N0OlXmm92N0Ts7sLI+oxgzgGCbRAPyzcNb
- PNVw==
-X-Gm-Message-State: AFq9FYIhowaheOoACYNIK8alc9zBE/sQm0inZxSfzBHvbUuFcWNtOeXJ
- kFjk2CWW04BaHe5Y1eTU6/iB+Cmfs/56X5f5PIjAep7ZZQtyrCtOyAqxG2KF4Y+9nVQwbwvJ3y4
- Nn4yH
-X-Gm-Gg: AYBFou0jA2dq0n9aFSPNjsqcbd0nCnz87WsdwLQpAJRh4DU6Q8NSk7/ri8yWqlHKK5k
- QPWDUbudflyraWSA5l8QvQDr1Sbph+Gm5LDBr4YCZCEaO8UAtxVZfcrtoTrRYfzcUm26BSU60HM
- diF6T2H3nte7sntWDfpj+MRdu+lTY56o5ajMoyIFP1wLdlTQoR43fHemuedASAqBN0xi2djNkjN
- ulNYP/OXCumd6t8XW2iI70m9uhzmVNSTUbG2dYRy7FEeGEozlC1WgkdeMM0yyJTezl9v1FuwcP3
- UNLjbDt5o1XcBfP4UiOzUP0zz17ZOVWY0adNdKBdFS67wUsnzuIU+/BcUwxLfk77YJ9EgOvEqsp
- i3wIwUrTR9xqKhvZYZpYH1zCi3dUmieUm1EA6y9Yv8v2KXd4hAhZwg3TjPlcFijyqZ8gYbDU4sX
- kPlj+QdkFF/IjTy8Bv8dz68NeboUmjSeDCYhlEb9oJajDsd+RXGDkA6/YizrPgr6Ngr6S0VSXKo
- UMY83TDij4CF6yFD3fRjEjeWct4EmcpZ8whFOOyolICXwk5KnUJC6jUeTU2MndCRzDZkUjSyP5V
- hAiKhOETM3B0CQv+ThkK/Q==
-X-Received: by 2002:a17:90b:4f8e:b0:3ad:1b0b:1246 with SMTP id
- 98e67ed59e1d1-3ae5814f7ffmr178582a91.32.1793134367175; 
- Tue, 27 Oct 2026 13:52:47 -0700 (PDT)
+ bh=yayDtzb4kyCAxyOtXb/kMBxOh6mnW205+LmhElPm3WM=;
+ b=kG45hzKbCcZvknFTm4D2FYcW5LcbnsEJiIgh/Xo95lH56DEw0bI9+G555rmL5y+LCE
+ z7tVR2hAvKS1Z9GNpTsdFtIptPONhmSZuHhyvMmlnwK8eFKGDFP8Ue8+xbnuJ+5elWYd
+ kk1+xTeQX5lOD1D/5E7CA1WxUpVqhUbopOEim2lLdlgERUBwNPOAYVbRzJKm/YgxC9Wh
+ 5muuWZD++F0Ir+jl5gshhwrMTMyTDF2cDf0DJ9I8taUrQvpWyj5tm+UodBCIdsEoY1T/
+ MAsyl3PnOSeCWe3wuub7iOyh5KwcIysNzlid6dJng3ro/4qjUqaQNfFgwqZ3K321EpqN
+ 3Cxg==
+X-Gm-Message-State: AFq9FYLsEr7HX25GCYjyYIsIUzygAJK4Sjqx0k4NBfmHdR8g7DKrKCKi
+ bq0n7E5EsqKa+Q7NzCEfC9A2a53SBTsbzx3Uc44YGcZjEGLNd+SfMshD+50RaXbYjE0=
+X-Gm-Gg: AYBFou2PqDytGfHzvdgoAQGJTxncRb2P+Kzf9wLFmiKN9vB9gRn941O7Ru0JCdce6YV
+ 2xqyJf+fO7rSUauw7T0osqDRNTiI7isV57/4/Y8DojP86egc3gtDThrKGdYxbYHBRiR36LTW8Be
+ XJWIbeKonrlCW8nqbO1+pZ5R9QlvkrGJISet4FwqoUePEUuAiFJCGlW5XLaad1Vx1F7Plj8+Q+4
+ WUoyTMrcVU0WBEfK2ggGeLHxCMKtaODFLq/S6qz544q4QpP95OftwfCyMOr/uUPDwnMC4rHOx3k
+ MeATPI+Cleicf0SB4lrZTqWwxx+6MulchiKyFGfZKXTLBibXeiBr31VrOe9JxvESYGbcSLurP8t
+ dqm4flJmJ7ttmmoU2davewnaFOnoE43vGDefZtWQ/1N9vX1lBc2kZK7zip6uianXCcZM3Gxi7ce
+ 29/dwemlE2n3WOfOWWN/+dk5M0XqH0PCIG0/e9+zvHxFhe12rpLjgWrp8Gbpimi1pP7iZCPaxiq
+ 5qkuLSFJjkPmwAzumS1joK7PkbkcEn55i4NUNbfT+NK+8hWX3OxyrHOAF1gh5eGXZ/kZmL351GL
+ PWN5hVrD5lqarT2rYTwlMbmiQ39kAyihBq3XoKAibD1/BVwjBkuKTqGsIMhpc+iXQLOdQO0=
+X-Received: by 2002:a17:903:1cb:b0:2e9:5714:608e with SMTP id
+ d9443c01a7336-2eb00487c87mr4548405ad.49.1793134852114; 
+ Tue, 27 Oct 2026 14:00:52 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3ae57a1609esm390734a91.2.2026.10.27.13.52.46
+ d9443c01a7336-2eae6c9ea8asm14478685ad.66.2026.10.27.14.00.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 27 Oct 2026 13:52:46 -0700 (PDT)
-Date: Tue, 27 Oct 2026 13:52:41 -0700
+ Tue, 27 Oct 2026 14:00:49 -0700 (PDT)
+Date: Tue, 27 Oct 2026 14:00:42 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, thomas@monjalon.net
-Subject: Re: [PATCH v3 00/13] Validate multiqueue configuration in ethdev
-Message-ID: <20261027135241.68182f95@phoenix.local>
-In-Reply-To: <20261022174447.412638-1-david.marchand@redhat.com>
-References: <20261016130555.1685102-1-david.marchand@redhat.com>
- <20261022174447.412638-1-david.marchand@redhat.com>
+To: Pravin Pathak <pravinpathakdev@gmail.com>
+Cc: dev@dpdk.org, jerinj@marvell.com, tirthendu.sarkar@intel.com,
+ bruce.richardson@intel.com, thomas@monjalon.net, david.marchand@redhat.com,
+ pravin.pathak.dev@gmail.com
+Subject: Re: [PATCH v1] event/dlb2: race condition during dynamic linking
+Message-ID: <20261027140042.2741b628@phoenix.local>
+In-Reply-To: <20261021172041.433881-1-pravin.pathak.dev@gmail.com>
+References: <20261021172041.433881-1-pravin.pathak.dev@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -84,24 +84,92 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Thu, 22 Oct 2026 19:44:27 +0200
-David Marchand <david.marchand@redhat.com> wrote:
+On Wed, 21 Oct 2026 13:20:41 -0400
+Pravin Pathak <pravinpathakdev@gmail.com> wrote:
 
-> We have various checks in drivers about Rx and Tx multiqueue
-> configuration.
-> This series is a followup of the VMDq cleanup, finishing the job with
-> DCB and RSS, and then rejecting invalid multiqueue configuration (useful
-> from an ABI point of view).
+> dlb2 handles dynamic linking and linking asynchronously if queues
+> being linked/unlinked have traffic. It starts a thread if not already
+> started to handle the process. This change avoids the race condition
+> in thread creation where sometimes the thread starts immediately,
+> descheduling the calling thread and finishes the job and exits, and then
+> caller sets worker launched true when the thread is not running.
 > 
-> Some drivers misreported their capabilities.
-> It is important drivers maintainers review carefully those changes.
+> Signed-off-by: Pravin Pathak <pravin.pathak.dev@gmail.com>
+> ---
 
+Ran a more detailed AI review on this.
 
-Applied to next-net.
-Modified the release note slight with more exact wording the AI review proposed.
+Subject: Re: [PATCH] event/dlb2: fix race condition during dynamic linking
+
+The fix is correct and worth having in stable. Some notes on what it
+does and does not cover, since two related problems remain in this
+code.
+
+What the patch fixes
+--------------------
+
+os_schedule_work() set worker_launched = true after
+rte_thread_create_internal_control() returned, but the worker thread
+(dlb2_complete_queue_map_unmap()) clears that flag as its last act
+before exiting. If the new thread ran to completion before the creator
+was scheduled again, the creator stamped true over the worker's false.
+
+The flag is then stuck true for the life of the device:
+
+  - os_worker_active() always reports an active worker
+  - all three call sites in dlb2_resource.c (2336, 2370, 6037) are
+    guarded by if (!os_worker_active(hw)), so no worker is ever
+    launched again
+  - deferred map/unmap work is stranded, leaving ports in
+    DLB2_QUEUE_MAP_IN_PROG / UNMAP_IN_PROG indefinitely
+
+Setting the flag before thread creation closes that window: creation is
+a synchronization point, so the worker is guaranteed to observe true and
+its own clear is the last write. Resetting to false on the create-failure
+path is right.
+
+Remaining issues
+----------------
+
+Both of these predate the patch, so they are follow-up material rather
+than objections, but they are in the same few lines and should probably
+be cleaned up while the context is fresh.
+
+1. Missed wakeup. resource_mutex is only ever taken inside the worker
+loop:
+
+  drivers/event/dlb2/pf/dlb2_main.h:46   rte_spinlock_t resource_mutex
+  drivers/event/dlb2/pf/base/dlb2_osdep.h:172,178,190  worker only
+  drivers/event/dlb2/pf/dlb2_main.c:34   rte_spinlock_init()
+
+No caller holds it across the check-and-schedule pair, so for one
+control thread against the worker:
+
+  - worker's final iteration scans, finds nothing pending
+  - control thread marks a new unmap in progress
+  - control thread reads worker_launched as true, skips
+    os_schedule_work()
+  - worker sets worker_launched = false and exits
+
+The work is stranded until the next link/unlink happens to launch a new
+worker. This needs no MT-unsafe API use to hit: eventdev link/unlink is
+not MT-safe by contract, and a single conforming control thread racing
+the worker is enough.
+
+The kernel driver this base code was ported from holds resource_mutex
+around the check and the schedule; the DPDK port dropped that. Before
+this patch the resulting failure was permanent, now it is transient.
+
+2. worker_launched is a plain bool with mixed access. The worker writes
+it under the spinlock, callers read and write it with no
+synchronization, which is a C11 data race. The practical impact is
+small since the worst case is a duplicate worker and two workers
+looping under the same mutex are safe, but it should be
+RTE_ATOMIC(bool) with release/acquire.
