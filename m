@@ -2,50 +2,50 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C71606A31B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 10:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F8C606A31A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 10:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=GRQzZkWD
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=YGQiQef+
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8AA8740679;
-	Tue, 27 Oct 2026 11:56:35 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 668C240685;
+	Tue, 27 Oct 2026 11:56:37 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTPS id C4D594064E
- for <dev@dpdk.org>; Tue, 27 Oct 2026 11:56:33 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 051CD4067C
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 11:56:35 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793098594; x=1824634594;
+ t=1793098597; x=1824634597;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=Ae9PBJgpZD72SAV2Hls8QIXoN8fvptcnwjJGjYP2duM=;
- b=GRQzZkWDqN4eTgwf3fOZxtLzU5S520Kdjr8ZNQfSdL0lQqi8Nr9tdAEK
- ouuAkA1VIcAQ+8ZruZpRXnb2+pcr5ryWIocmJ+NMQqU3UwiREwSEmkKGV
- GyI0BoPQikBmn1GbMsL18u7P8EjQihQawkismuwjQ7i3k0BkP+iuCNyzw
- 1tZpTsMnFEdP+J+Fkg6sSC+h+seKg0OeDT/nh6IyedFRM/yCUd9i2BRNV
- iOyiGFQWg/tC8fgzFicahbSLv5kiz49UIw9zD7RL+flW2n7eGdVtR6TDE
- PssLUNHk10ubDhlZrfMKhmjmzkg16NwBXxWo+0/OlcTWjkO4jcvju/aLJ A==;
-X-CSE-ConnectionGUID: rxjiNiv4Spu+2HRmNXJeJg==
-X-CSE-MsgGUID: 7gyGdWzfR4iTbIP19KoUZA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11947"; a="1679300"
+ bh=7Z19iOAXuG+JyU8SM9kkUcS2dJEVLS/mw97XOOYY+ls=;
+ b=YGQiQef+Deq5VRxi2B9f0etBoTgxFewZ4e6ayFG+duMCh5hs5ASnCwb7
+ T4lpXc9Plv7PxMcNkZlYO6MgHcpvCpFBIHTgbo/qm70u6ceVPn8EuTP1D
+ X+dxQL3o6uU736Er6yPmpoQ7b6pAc1ndoNMoCyhj4dDlfweLvSjICXMnJ
+ UMzPW7pKsbVnIh5/j9nZHxQP13Rb8aGVUZO04UHt1h8ZZvdKWcJDeuywP
+ jumtR613G2lmgkuoI6kajYxyaTRz4KGZe0CMsR1bYoUZnLflxETzE6pQo
+ xadq5ITVyQ83m4KrTzF3ag6LbPJ1Yk41sOoSlV3+uVF/ZDlWEMxQSNN/c Q==;
+X-CSE-ConnectionGUID: 5iN1sZEvQR2PdC2C07SxfQ==
+X-CSE-MsgGUID: Gu6FoLSrT4iAiOi0nXN47A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11947"; a="1679303"
 X-IronPort-AV: E=Sophos;i="6.27,181,1787036400"; 
-   d="scan'208";a="1679300"
+   d="scan'208";a="1679303"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Oct 2026 03:56:34 -0700
-X-CSE-ConnectionGUID: Bqb8xAPcQCuy+XGSIMtWDg==
-X-CSE-MsgGUID: xDdlh8WNRpSUM5F3qr7fTQ==
+ 27 Oct 2026 03:56:36 -0700
+X-CSE-ConnectionGUID: s39i7FgCS96ejKHw9F0bsg==
+X-CSE-MsgGUID: 1nZZOw9MSc2VWkbU6uN9Qw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,181,1787036400"; 
-   d="scan'208";a="4901468"
+   d="scan'208";a="4901471"
 Received: from pae.iind.intel.com (HELO PAE-35.iind.intel.com) ([10.49.105.82])
- by fmviesa009.fm.intel.com with ESMTP; 27 Oct 2026 03:56:33 -0700
+ by fmviesa009.fm.intel.com with ESMTP; 27 Oct 2026 03:56:35 -0700
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
  Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH 4/7] net/ice: fix main VSI leak on init failure
-Date: Tue, 27 Oct 2026 10:51:34 +0000
-Message-Id: <3202bac42d40ee1450967ab209625d1c3849b30a.1793097896.git.anurag.mandal@intel.com>
+Subject: [PATCH 5/7] net/ice: fix MAC and VLAN filter leak on VSI release
+Date: Tue, 27 Oct 2026 10:51:35 +0000
+Message-Id: <7e0d6afa7e1737e7a9172b3898bc95f0d2e2c718.1793097896.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1793097896.git.anurag.mandal@intel.com>
 References: <cover.1793097896.git.anurag.mandal@intel.com>
@@ -68,44 +68,48 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-When ice_send_driver_ver(), ice_flow_init() or ice_reset_fxp_resource()
-fails in ice_dev_init(), the error path skips releasing the main VSI
-created by ice_pf_setup(). This leaks the VSI structure, its MAC
-filters and the VSI in hardware.
+ice_release_vsi() relies on ice_remove_all_mac_vlan_filters() to free
+the MAC and VLAN filter entries. That function returns early when the
+VSI has no MAC filter, or when removing a filter from hardware fails,
+leaving entries in the lists. The VSI is then freed with them still
+allocated.
 
-Release the main VSI on these error paths.
+Free any entries left in the lists before freeing the VSI.
 
-Fixes: 9481b0902efe ("net/ice: send driver version to firmware")
-Fixes: 96b25c496aad ("net/ice: fix memzone leak after device init failure")
+Fixes: e0dcf94a0d7f ("net/ice: support VLAN ops")
 
 Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 ---
- drivers/net/intel/ice/ice_ethdev.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/intel/ice/ice_ethdev.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index ec4d021ec6..73fa016066 100644
+index 73fa016066..90e3663287 100644
 --- a/drivers/net/intel/ice/ice_ethdev.c
 +++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -2833,7 +2833,7 @@ ice_dev_init(struct rte_eth_dev *dev)
- 	ret = ice_send_driver_ver(hw);
- 	if (ret) {
- 		PMD_INIT_LOG(ERR, "Failed to send driver version");
--		goto err_pf_setup;
-+		goto err_release_vsi;
- 	}
+@@ -2931,6 +2931,9 @@ ice_release_vsi(struct ice_vsi *vsi)
+ {
+ 	struct ice_hw *hw;
+ 	struct ice_vsi_ctx vsi_ctx;
++	struct ice_mac_filter *m_f;
++	struct ice_vlan_filter *v_f;
++	void *temp;
+ 	int ret, error = 0;
  
- 	vsi = pf->main_vsi;
-@@ -2905,6 +2905,9 @@ ice_dev_init(struct rte_eth_dev *dev)
- 	ice_pf_disable_irq0(hw);
- 	rte_intr_callback_unregister(intr_handle,
- 				     ice_interrupt_handler, dev);
-+err_release_vsi:
-+	ice_release_vsi(pf->main_vsi);
-+	pf->main_vsi = NULL;
- err_pf_setup:
- 	ice_res_pool_destroy(&pf->msix_pool);
- err_msix_pool_init:
+ 	if (!vsi)
+@@ -2940,6 +2943,12 @@ ice_release_vsi(struct ice_vsi *vsi)
+ 
+ 	ice_remove_all_mac_vlan_filters(vsi);
+ 
++	/* filters whose HW removal failed or was skipped are still listed */
++	RTE_TAILQ_FOREACH_SAFE(m_f, &vsi->mac_list, next, temp)
++		rte_free(m_f);
++	RTE_TAILQ_FOREACH_SAFE(v_f, &vsi->vlan_list, next, temp)
++		rte_free(v_f);
++
+ 	memset(&vsi_ctx, 0, sizeof(vsi_ctx));
+ 
+ 	vsi_ctx.vsi_num = vsi->vsi_id;
 -- 
 2.25.1
 
