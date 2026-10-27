@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1C9606A33C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6877E606A33F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 11:44:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 194CA4068E;
+	by mails.dpdk.org (Postfix) with ESMTP id EFD0840DDC;
 	Tue, 27 Oct 2026 12:43:05 +0100 (CET)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTPS id 1822840DD5;
- Tue, 27 Oct 2026 12:43:00 +0100 (CET)
-X-QQ-mid: esmtpsz17t1793101377tbc1974be
-X-QQ-Originating-IP: I2B8NNsGISFlzn9kzdg90y0UDYPH1kodkjahD4g45Hc=
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+ by mails.dpdk.org (Postfix) with ESMTPS id A825540A87;
+ Tue, 27 Oct 2026 12:43:02 +0100 (CET)
+X-QQ-mid: esmtpsz17t1793101379ta80c537d
+X-QQ-Originating-IP: 3By5HmqH636UMTEy9FWdy0hiTChF1yT91FAqbs3YdfU=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.227.112.25])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 27 Oct 2026 19:42:55 +0800 (CST)
+ id ; Tue, 27 Oct 2026 19:42:58 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7614391868193185871
+X-BIZMAIL-ID: 4275244788979904637
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v12 16/17] net/txgbe: respect manual link-down on Amber-Lite
-Date: Tue, 27 Oct 2026 19:38:32 +0800
-Message-ID: <7DFF83FB89E01083+20261027114218.9724-17-zaiyuwang@trustnetic.com>
+Subject: [PATCH v12 17/17] net/txgbe: fix typo in the fiber support speed field
+Date: Tue, 27 Oct 2026 19:38:33 +0800
+Message-ID: <3584C072589B9465+20261027114218.9724-18-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261027114218.9724-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -35,24 +35,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: M5/msJgRun51eDknJ+UOTkbwlUXq0embAdC8EoVhY5aA7+a2qBgEjEcv
- Lcsf2u9HfAZW5plh5apC0GDFA015Ek9HRHshU2Q/hmP63VPEwgWssfn3de3heAHdW0CHa+r
- 4IaRR4IstttFGyhIbZ/pkpTA4uTYZcADqd1FyxAysPQs/IbxhRcvE2v1ZCAgNHxiTAKECcX
- zGgTNHPlJ0/nxWky3RMNv+BGAfGBrAu7pQfSQ73l0BqzdXfYySnAB96ZDilgU/lIjMnPM8q
- gs+Ra3TxLCjXPEoCHQGr7cmuJIMD3R+whWGO5so70BA+keUbEbulrmKrzoj63pwkOgIVtJ7
- FVuQbGGIbod1hEWZRiPaFnuDyByFBPjyAsAXrvLgUbGJFbZBNdbbqnMjblFHeCm+gxmwDvN
- K2DezrSeGsgV9XmxGNCeyvfXAnF6hVKQaAJ38vbvTuUmkOkDBdjNxpyS96TTMN/Uhr/cVoG
- +YzPMsxa8fTJ+d7ZXzXc7oXiy+xglK9JiqGNPoFUS3XisI5sevr1UbKFgihfNDrwFWLMMIy
- lmK4XRTNF9K6qpTzcA5T7eHLqQKqUjDPm2TfVwOeHgxUA118wVB3V6XWbMzPGsh2bkrN3IJ
- uY4EYnRvuU/HU8yn7Nfi5GLplK54BRTu3Pmp8eLHOGA8qsTihdFBng2IHcUY85cMU1afYch
- JcpM9IU6A78YQo61FfwGU4LGxM3kZ6eMRgVGmHAvj4K6LG8MV4JQY3IL28dWxqWgZPwWUfb
- 6L7dU+CRyTJvBSgcHqyxD2LozdbEnkiCe0t5CRtpOs4TwW4xfoR4MEJBOXvrSvdhJyxjd30
- P5egp8MS7AcExfPkOPD0tHxTYjimy0oZeMc1W4V3fs1TADySofd1DN2R0ZPlhgfAlmsoUvp
- H8DktHa2up9OZiwrNVU9tDAXX8Y8689U8mhTdZ6gpaoxyvYnGo0+BLxdMmOGTfbvGcf9ve7
- buyul3cpAOOqrbyrF1zfrsSFcY1vBTdf0oPI5souBmA4bUor64BNRKfq3lSU2uKnPNNgtvC
- ZrGgtUqeU+MRploXPngvk5CaIMkTj6IhaBT4NzaKZ6NPAjMRo3VIAdhdQja/Oc1FQYj4cJD
- Pz6zBiJEfXoib185MoIIbfDL7WLsIUvsurPIZItnWtqXYp3lImZiqQ=
-X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
+X-QQ-XMAILINFO: MlsYLnHA0UVjuRdd+TCSH4tcLh/AQAENlkrn+FVlsElpAbUKdtQ9V96p
+ SFV3DHLvUbdXTPSpi1GcGwcyuqDKuJmVuqpqVKUtBMM72ExBDJGovK2aRdWdeqZWpg93BhN
+ kq9orfqMG+HEl7Z0tpeC8v/BLK45fRBtWWIKu5SEw3BpsXzvY6yvScr51dlUgn8M6P4qDxt
+ qcsQcgFtxcXtbDmai9Zk68+GchW3aQP6kQ97jcsiYhFy+wfW3MuF9tMqdWYsyqZIXFUheW3
+ KfPHSC5wZvG1iEembI9XHxVd85qtDaJf161nwOcfsPBg4Qwcn9foA1RVrJTNnfjaI/Yhbwp
+ KDpPpH2mWvEkOYo8eKJ2qwgAnFqGIQfQaAHVq+HnghuNJzxUcCPRzUcl/KrQG1C0Q60K3M4
+ VtuP4HdKbgISE8179okTa/6dvplBAwdeIQ6a5nxLEIjpkH7h3xzdZkAPVA9SVq9EUZ/cy1W
+ PdLQc9SwASW733AA1qdZGUQwVPfcyvoVkMxFShdQzTnXapiqOwLlhWfMgVG4vFdoBNy0UZG
+ TpuemU189FWSrMloX33sVJGS5qvoJO6ssXpXnRrUiDzEyAg1QYi4GnXLDVWSihIBxD+mo+O
+ wTdKsxNtryCzenb9wTMUA86q7gGzCKcpRO/EvuQ3B3eUbjPzwMdBXDiliEU5D2x1tkD1+te
+ 8Cw8etXCCSvyS8TBmXO7uRPj1Xd5v9fw3rJRYMRwIOPiqyX5W2Zz1ah/BKiMQNSrsjKmbXu
+ TKSe6/N/S25TYS0nMgmcAGEDcPO0AsWihvkaD370rJ1x92TlDDXj36CA6rs5sP+3JCogK41
+ 7ZyWQzW4452XYK6S8gRMzs2SOm+KZ4TNPH0IVKrI2TMncy0WyuTPwmCAdWFv7k/z71LF2DQ
+ y9CkRGkLnW2wjaCJjN6faPisgc6TX5qiPRFSZkZ/7tS4g+EXkqT9pqRARv/M9ARyD01cr6f
+ VjBddgkECRv+ueVxgbsqwPmvbG7b8bpoO5EOHgumebX8uV2mYiCVYGGvYCeAB8LXurLlklw
+ cjQ4ylmVPYcPBqe6MMot+L0PaY48kXe7K0fPCbdSe05pTn5BwkjeGDZ08sJN2MCs0sYfTIv
+ k057RxjXoGyy/qr8QJe3uRU5w8ugIB3eQ==
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -70,115 +70,109 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-txgbe_dev_set_link_down() clears hw->dev_start, but the Amber-Lite
-AN73 watchdog treats a down link as a recovery condition and can start
-negotiation again. The setup-link alarm handler can likewise configure
-the PHY after a link update or a previous setup retry.
-
-As a result, a port brought down through rte_eth_dev_set_link_down()
-can link up again without a matching rte_eth_dev_set_link_up() call.
-
-Use hw->dev_start as the administrative link gate, and skip link
-recovery while the port is administratively down.
-
-The gate alone is not enough. A setup-link run that started before
-link-down keeps going and rewrites the PMD transmit and receive
-enables, so the port reports down while the peer still sees a signal.
-Stop the AN73 watchdog and the setup-link alarm, wait for a running
-link thread to finish, and only then drop the transmitter.
-
-Arm the watchdog again on link-up so that monitoring resumes, and
-cancel it first. The alarm list keeps every entry registered for the
-same callback, and each entry re-arms itself, so arming without
-cancelling would leave two watchdog chains running.
-
-This keeps the link down until rte_eth_dev_set_link_up() explicitly
-re-enables it. The link-up path then restores the required PHY
-configuration.
+struct txgbe_phy_info spells this field fiber_suppport_speed, with
+three p. Rename it to fiber_support_speed.
 
 Fixes: 234ce0d1fa9d ("net/txgbe: fix link stability for Amber-Lite backplane mode")
-Fixes: 6104fd11086e ("net/txgbe: fix link stability for 25G NIC")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_ethdev.c | 34 +++++++++++++++++++++++++++++---
- 1 file changed, 31 insertions(+), 3 deletions(-)
+ drivers/net/txgbe/base/txgbe_aml.c   | 4 ++--
+ drivers/net/txgbe/base/txgbe_aml40.c | 4 ++--
+ drivers/net/txgbe/base/txgbe_phy.c   | 8 ++++----
+ drivers/net/txgbe/base/txgbe_type.h  | 2 +-
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 043c96b747..fc3c5539c2 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -2227,12 +2227,33 @@ txgbe_dev_set_link_up(struct rte_eth_dev *dev)
+diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
+index 8ee4c1264c..059105b609 100644
+--- a/drivers/net/txgbe/base/txgbe_aml.c
++++ b/drivers/net/txgbe/base/txgbe_aml.c
+@@ -104,13 +104,13 @@ s32 txgbe_get_link_capabilities_aml(struct txgbe_hw *hw,
+ 			 TXGBE_LINK_SPEED_25GB_FULL;
+ 		*autoneg = true;
+ 	} else if (txgbe_is_dac_cable(hw)) {
+-		if (hw->phy.fiber_suppport_speed ==
++		if (hw->phy.fiber_support_speed ==
+ 		    TXGBE_LINK_SPEED_10GB_FULL) {
+ 			*autoneg = false;
+ 		} else {
+ 			*autoneg = true;
  		}
+-		*speed = hw->phy.fiber_suppport_speed;
++		*speed = hw->phy.fiber_support_speed;
+ 	} else if (hw->phy.sfp_type == txgbe_sfp_type_25g_sr_core0 ||
+ 		hw->phy.sfp_type == txgbe_sfp_type_25g_sr_core1 ||
+ 		hw->phy.sfp_type == txgbe_sfp_type_25g_lr_core0 ||
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index a415c8f4a2..747d29b170 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -110,13 +110,13 @@ s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
  
- 		hw->dev_start = true;
-+		if (hw->mac.type == txgbe_mac_aml ||
-+		    hw->mac.type == txgbe_mac_aml40) {
-+			rte_eal_alarm_cancel(txgbe_dev_e56_check_bp_event, dev);
-+			rte_eal_alarm_set(hw->bp_event_interval,
-+					  txgbe_dev_e56_check_bp_event, dev);
-+		}
- 		txgbe_dev_link_update(dev, 0);
- 	}
- 
- 	return 0;
- }
- 
-+static void
-+txgbe_stop_link_handlers(struct rte_eth_dev *dev)
-+{
-+	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
-+
-+	if (hw->mac.type != txgbe_mac_aml &&
-+	    hw->mac.type != txgbe_mac_aml40)
-+		return;
-+
-+	rte_eal_alarm_cancel(txgbe_dev_e56_check_bp_event, dev);
-+	rte_eal_alarm_cancel(txgbe_dev_setup_link_alarm_handler_aml, hw);
-+	txgbe_dev_wait_setup_link_complete(dev, 0);
-+	rte_eal_alarm_cancel(txgbe_dev_setup_link_alarm_handler_aml, hw);
-+}
-+
- /*
-  * Set device link down: disable tx.
-  */
-@@ -2245,9 +2266,11 @@ txgbe_dev_set_link_down(struct rte_eth_dev *dev)
- 		/* Turn off the copper */
- 		hw->phy.set_phy_power(hw, false);
+ 	/* Fiber or DAC cable */
+ 	if (txgbe_is_dac_cable(hw)) {
+-		if (hw->phy.fiber_suppport_speed ==
++		if (hw->phy.fiber_support_speed ==
+ 		    TXGBE_LINK_SPEED_10GB_FULL) {
+ 			*autoneg = false;
+ 		} else {
+ 			*autoneg = hw->devarg.auto_neg;
+ 		}
+-		*speed = hw->phy.fiber_suppport_speed;
++		*speed = hw->phy.fiber_support_speed;
  	} else {
-+		hw->dev_start = false;
-+		txgbe_stop_link_handlers(dev);
-+
- 		/* Turn off the laser */
- 		hw->mac.disable_tx_laser(hw);
--		hw->dev_start = false;
- 		txgbe_dev_link_update(dev, 0);
- 	}
- 
-@@ -3073,8 +3096,8 @@ void txgbe_dev_e56_check_bp_event(void *param)
- 	if (!hw->devarg.auto_neg)
- 		return;
- 
--	/* only continue if link is down */
--	if (dev->data->dev_link.link_status)
-+	/* Continue only for an administratively up port with link down. */
-+	if (!hw->dev_start || dev->data->dev_link.link_status)
- 		goto out;
- 
- 	value = rd32_epcs(hw, VR_AN_INTR);
-@@ -3412,6 +3435,11 @@ txgbe_dev_setup_link_alarm_handler_aml(void *param)
- 	bool autoneg = false;
- 	u32 gssr = hw->phy.phy_semaphore_mask;
- 
-+	if (!hw->dev_start) {
-+		intr->flags &= ~TXGBE_FLAG_NEED_LINK_CONFIG;
-+		return;
-+	}
-+
- 	speed = hw->phy.autoneg_advertised;
- 	if (!speed)
- 		hw->mac.get_link_capabilities(hw, &speed, &autoneg);
+ 		/* Unknown module: report 40G so setup_mac_link() does not
+ 		 * fail with TXGBE_ERR_LINK_SETUP.
+diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
+index 896fe7eecf..db4edbf411 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.c
++++ b/drivers/net/txgbe/base/txgbe_phy.c
+@@ -913,11 +913,11 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 		if (comp_codes_25g == TXGBE_SFF_25GBASECR_91FEC ||
+ 		    comp_codes_25g == TXGBE_SFF_25GBASECR_74FEC ||
+ 		    comp_codes_25g == TXGBE_SFF_25GBASECR_NOFEC) {
+-			hw->phy.fiber_suppport_speed =
++			hw->phy.fiber_support_speed =
+ 				TXGBE_LINK_SPEED_25GB_FULL |
+ 				TXGBE_LINK_SPEED_10GB_FULL;
+ 		} else {
+-			hw->phy.fiber_suppport_speed =
++			hw->phy.fiber_support_speed =
+ 				TXGBE_LINK_SPEED_10GB_FULL;
+ 		}
+ 	} else if (comp_codes_25g == TXGBE_SFF_25GAUI_C2M_AOC_BER_5 ||
+@@ -938,7 +938,7 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 			hw->phy.sfp_type = (hw->bus.lan_id == 0
+ 				? txgbe_sfp_type_da_act_lmt_core0
+ 				: txgbe_sfp_type_da_act_lmt_core1);
+-			hw->phy.fiber_suppport_speed =
++			hw->phy.fiber_support_speed =
+ 				TXGBE_LINK_SPEED_10GB_FULL;
+ 		} else {
+ 			hw->phy.sfp_type = txgbe_sfp_type_unknown;
+@@ -1142,7 +1142,7 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
+ 				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core0;
+ 			else
+ 				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core1;
+-			hw->phy.fiber_suppport_speed =
++			hw->phy.fiber_support_speed =
+ 						TXGBE_LINK_SPEED_40GB_FULL |
+ 						TXGBE_LINK_SPEED_10GB_FULL;
+ 		}
+diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
+index b030275141..492fb98a64 100644
+--- a/drivers/net/txgbe/base/txgbe_type.h
++++ b/drivers/net/txgbe/base/txgbe_type.h
+@@ -724,7 +724,7 @@ struct txgbe_phy_info {
+ 	u32 addr;
+ 	u32 id;
+ 	enum txgbe_sfp_type sfp_type;
+-	u32 fiber_suppport_speed;
++	u32 fiber_support_speed;
+ 	bool sfp_setup_needed;
+ 	u32 revision;
+ 	u32 media_type;
 -- 
 2.55.0.windows.2
 
