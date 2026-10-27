@@ -2,60 +2,60 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A182B606A323
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 18:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17B7606A31A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 18:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=JeIGvEjO
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=TAF5dhKe
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 51E4A40613;
-	Tue, 27 Oct 2026 19:58:24 +0100 (CET)
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72])
- by mails.dpdk.org (Postfix) with ESMTPS id 603B1400D7
- for <dev@dpdk.org>; Tue, 27 Oct 2026 19:58:23 +0100 (CET)
-Received: by mail-pj1-f72.google.com with SMTP id
- 98e67ed59e1d1-3ada6ccd402so159682a91.2
- for <dev@dpdk.org>; Tue, 27 Oct 2026 11:58:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7630F40611;
+	Tue, 27 Oct 2026 19:58:28 +0100 (CET)
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198])
+ by mails.dpdk.org (Postfix) with ESMTPS id 6D24C40698
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 19:58:27 +0100 (CET)
+Received: by mail-pg1-f198.google.com with SMTP id
+ 41be03b00d2f7-cd61bdc8683so124435a12.3
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 11:58:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20260707; t=1793127502; x=1793732302; darn=dpdk.org;
+ d=google.com; s=20260707; t=1793127506; x=1793732306; darn=dpdk.org;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=FCQ8/kFxTFnnvGx0ZriExN0mNVdrwBp/Fojef2YRiP8=;
- b=JeIGvEjOoijspxMVjm0iud7MxZZUrNm2gkyUoNNqDVr1Yo1P2dqlLQRq4ic84tJZtf
- zQSq45Eo6VXh/PzautSGhjpkNtZu2FRY14QVFNSStGlQpBakuWnWLomTtaoFLfLBiMbR
- ibNKPyFYUUczu7UYMSPtvvb6SwM1vTy/0nu7aneXWLLtSyHXsxL6OygAQYpSoAP8JiZh
- 1W1Ut5ow9CxUXNFEe4Z8GTorswGcu2xS4ivdRFjKceeRYa2M2CTkURq7X+tCCPkSQ3IS
- cIYg/7Aqe1a6lVtewg1rq5eGQegjTKYKHJFNWp9vtcD6QiPOJQlnnruYpyqESexD5pQX
- Uk6A==
+ :content-type; bh=ywtheBdE6lXWGVFGZQuqE5rZ3uFBebM1bdIsruQcvk4=;
+ b=TAF5dhKe4CM5NHty9Ae60XzSYA4fcOIfXXIV24EFy9sfsHVTgkj10JmJp71/HANCvs
+ wGi4RAtgDPlmaoSLEi5F8UlMbXv0FSoqBUuuXNsFAQwjBc9/njGr8ersUHK649kk1LCi
+ fhMfsx5TTueCdjX7hoIlKs3Nuh9SJX4mK2W/YVZh4Q8i9BQvjT01JfeLw/xcMOyeEeR0
+ nfKA7CAgPHq1DSKcoQ/BSfCF7U63ZGxL3Lht9JBJDtgjEaaQcyYXiv0CYQAgIBjsWF23
+ RI9dpno0AhGq4bunEhOUADLiL8GYfKEny+GRBkPLSqff+szgY0jHEwRsVlKV8qa1S+Ke
+ 4yPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793127502; x=1793732302;
+ d=1e100.net; s=20260707; t=1793127506; x=1793732306;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=FCQ8/kFxTFnnvGx0ZriExN0mNVdrwBp/Fojef2YRiP8=;
- b=ex9HriId9vRFE1YMVD0gMSmDPxbKHaz+Oh9y0eScfBNolXOgQ2/4NrhQ6RVTYXuSHk
- 3M5BSWZ6iSZbEiCp7ABc1WnNGw9pA4lNfrvZkcFc4eW/KOsSUNWdEwkzObyF7vNh/6lg
- uj6BwWiRsEJvPywvbbRtg0Fqaf4ftE0nKTf9S/NEUh7IQnADws3y/IV886rIZVdKk6OE
- 6eU2mr9BjNcl2cNWILSaAiWcF7IDx/RohHbuPehiqdPF/GbWpuIQOD3HvBsiF5ooJR5L
- bRJKQ6lhVAgzn9W6YXLZ+zBTfxRlFERAFid7bQMnenmRFMRF5afM7Oosyx+obufrL9BK
- 2x0w==
-X-Gm-Message-State: AFq9FYKRFhXnQMSmSkukoKFIFGkLTpJhJZJLid9k2wtMTvWA5FrxLiZM
- fGeunXJgZv1phGQz7xHJHufQSEcOsQYkmSvib/VuD2hPtUIcxAxNtlibEbgPSbOpBdnPK9KpgQR
- 1Ft5JMePMVtF4uC+vXIs55o3LLHm37s3RgZUkcG2fl/+jYLOy1jUhc1Eh5x7QcuREFtfjxkPN4w
- +EuaEgrsTlCtqdedUCg/UN9X2aDFUd+H7a1pfKZ0jjq4m8UXAcIA==
-X-Received: from pjdw9.prod.google.com ([2002:a17:90a:15c9:b0:3ac:a379:dc7c])
+ bh=ywtheBdE6lXWGVFGZQuqE5rZ3uFBebM1bdIsruQcvk4=;
+ b=lGZobw8vJWMH4kIdC3MfRydIGovExtzngzIOb9gwO4N5ZZQKCOFh1H5SN5rl/bMOcb
+ +SrFKx+FT/thkS0VWKuvCd24qlAMXdexD7uHRr0O0NDpQsKn5jWgnmSE3ZjESYfOhYS+
+ vTfoyti386I+nG91bLBYjgaQB6A4SarbuIhLyyueZvmkKkifuNLWXNFmaxRM/nWWHNjf
+ j7MTDXazcYeHWMofn/fSYwvoP/5wz2FtzN4Js4owFpr19U7MXAhiGl1ujZ0hrMHWUUb3
+ W6YjkG0hpaZX5SgivfB/vG+zOntDFzFPCt97Ypc1pCvgWBfJ3D906G5o6bOjnCr6LWpH
+ ziZg==
+X-Gm-Message-State: AFq9FYIj5hYo2ygdA9hrBnpvh9xXZnlx0NqM7nstTxHiN4YbbEqmAejf
+ jci6t4ziZqrJuavgtydHmRC+XdAiATkSolLOVrUmmcemMQ8tRTQU4zyEOKGEToczgDqLHQbiy2k
+ mt3/Mvijabv3ShHYY2n46i9+zGhKrclVInV934+rZjlYIbxdG6x/kzq6KuLvQb8NvRojhNZ/zuy
+ 0w1cro9HKXwDC9g5CX0SHWutjECAOa7rG34mwPtoLbRTAckin95g==
+X-Received: from pghg7.prod.google.com ([2002:a63:e607:0:b0:cc7:d4f0:846d])
  (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:1c12:b0:3ac:6e91:3f22 with SMTP id
- 98e67ed59e1d1-3adeafca234mr7439642a91.52.1793127501385; 
- Tue, 27 Oct 2026 11:58:21 -0700 (PDT)
-Date: Tue, 27 Oct 2026 18:54:17 +0000
+ 2002:a05:6a21:a0a:b0:3e2:d68:e8f6 with SMTP id
+ adf61e73a8af0-3e902421a58mr108634637.63.1793127505504; 
+ Tue, 27 Oct 2026 11:58:25 -0700 (PDT)
+Date: Tue, 27 Oct 2026 18:54:18 +0000
 In-Reply-To: <20261027185420.724684-1-jtranoleary@google.com>
 X-Archived-By: <archiver.kernel.org>
 Mime-Version: 1.0
 References: <20261027185420.724684-1-jtranoleary@google.com>
 X-Mailer: git-send-email 2.56.0.307.g5fe7bd680c-goog
-Message-ID: <20261027185420.724684-9-jtranoleary@google.com>
-Subject: [PATCH 8/9] net/gve: remove unused device reset parameter
+Message-ID: <20261027185420.724684-10-jtranoleary@google.com>
+Subject: [PATCH 9/9] net/gve: move dev status poller to its own thread
 From: "Jasper Tran O'Leary" <jtranoleary@google.com>
 To: dev@dpdk.org, Joshua Washington <joshwash@google.com>
 Cc: "Jasper Tran O'Leary" <jtranoleary@google.com>
@@ -77,82 +77,277 @@ X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-With proactive device reset introduced, gve_init_priv is now only called
-during initial device probe with skip_describe_device set to false.
-Remove the unused skip_describe_device parameter and its associated
-conditional branches.
+From: Joshua Washington <joshwash@google.com>
 
+The DPDK alarm and interrupts infrastructure make use of the same global
+thread for processing. This causes problems in GVE related to the device
+status poller, as the reset path invoked by that poller sends mailbox
+messages and blocks waiting for their completion.
+
+When the device status poller is on the alarm thread, that blocking call
+leads to a temporary lockup, as the mailbox interrupt cannot come in
+while the status poller holds the global alarm thread, causing message
+timeouts. Because the interrupts infrastructure is managed by DPDK
+itself, that leaves moving the device status poller off of the shared
+global alarm/interrupt thread as the only viable option.
+
+Spin off a device status thread on initialization that checks for
+resets. The single thread will stay alive until the driver is torn down
+in gve_dev_close.
+
+Update the polling frequency to every 100ms for quicker error recovery,
+since the poller is no longer on the shared thread.
+
+Signed-off-by: Joshua Washington <joshwash@google.com>
 Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
-Reviewed-by: Joshua Washington <joshwash@google.com>
 ---
- drivers/net/gve/gve_ethdev.c | 26 ++++++++++----------------
- 1 file changed, 10 insertions(+), 16 deletions(-)
+ drivers/net/gve/base/gve.h   |  1 +
+ drivers/net/gve/gve_ethdev.c | 81 ++++++++++++++++---------------
+ drivers/net/gve/gve_ethdev.h | 30 +++++++++++-
+ 3 files changed, 72 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index 66a77c123..c2cfd18dc 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -1973,7 +1973,7 @@ static const struct gve_ctrl_ops gve_adminq_ops = {
+diff --git a/drivers/net/gve/base/gve.h b/drivers/net/gve/base/gve.h
+index 18363fae3..4d9890625 100644
+--- a/drivers/net/gve/base/gve.h
++++ b/drivers/net/gve/base/gve.h
+@@ -52,6 +52,7 @@ enum gve_state_flags_bit {
+ 	GVE_PRIV_FLAGS_DEVICE_RINGS_OK		= 3,
+ 	GVE_PRIV_FLAGS_FLOW_SUBSYSTEM_OK	= 4,
+ 	GVE_PRIV_FLAGS_NAPI_ENABLED		= 5,
++	GVE_PRIV_FLAGS_STATUS_POLLER_OK		= 7,
  };
  
- static int
--gve_init_priv(struct gve_priv *priv, bool skip_describe_device)
-+gve_init_priv(struct gve_priv *priv)
+ enum gve_rss_hash_algorithm {
+diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
+index c2cfd18dc..7c335a72d 100644
+--- a/drivers/net/gve/gve_ethdev.c
++++ b/drivers/net/gve/gve_ethdev.c
+@@ -590,7 +590,6 @@ gve_dev_start(struct rte_eth_dev *dev)
+ 		}
+ 	}
+ 
+-	gve_start_dev_status_polling(dev);
+ 	ret = 0;
+ 
+ unlock_and_return:
+@@ -703,14 +702,6 @@ gve_dev_stop(struct rte_eth_dev *dev)
+ 		return -EPERM;
+ 	}
+ 
+-	/*
+-	 * Block until all polling callbacks have concluded before tearing down
+-	 * any device resources. Do so before trying to acquire the reset lock
+-	 * because a polling callback could be invoking a reset which will
+-	 * itself try to acquire the lock.
+-	 */
+-	gve_stop_dev_status_polling(dev);
+-
+ 	pthread_mutex_lock(&priv->reset_lock);
+ 
+ 	dev->data->dev_started = 0;
+@@ -869,6 +860,16 @@ gve_dev_close(struct rte_eth_dev *dev)
+ 		return 0;
+ 	}
+ 
++	/*
++	 * Block until all polling callbacks have concluded before tearing down
++	 * any device resources. Do so before trying to acquire the reset lock
++	 * in gve_dev_stop() because a polling callback could be invoking a
++	 * reset which will itself try to acquire the lock, leading to a
++	 * deadlock.
++	 */
++	if (gve_get_dev_status_poller_ok(priv))
++		gve_stop_dev_status_polling(dev);
++
+ 	if (dev->data->dev_started) {
+ 		err = gve_dev_stop(dev);
+ 		if (err != 0)
+@@ -1691,8 +1692,6 @@ gve_internal_recover_device(struct rte_eth_dev *dev)
+ 		}
+ 	}
+ 
+-	gve_stop_dev_status_polling(dev);
+-
+ 	if (gve_is_gqi(priv))
+ 		gve_free_stats_report(dev);
+ 
+@@ -1772,63 +1771,59 @@ recover_fail:
+ 	return ret;
+ }
+ 
+-static void
++static unsigned int
+ gve_check_device_status(void *arg)
  {
  	struct gve_process_private *process_priv;
- 	int num_ntfy;
-@@ -1987,9 +1987,6 @@ gve_init_priv(struct gve_priv *priv, bool skip_describe_device)
- 		return err;
- 	}
+ 	struct rte_eth_dev *dev = arg;
+ 	struct gve_priv *priv = dev->data->dev_private;
+-	int ret;
  
--	if (skip_describe_device)
--		goto setup_device;
+ 	process_priv = dev->process_private;
+ 
+-	gve_clean_zombie_queues(priv, false);
++	while (gve_get_dev_status_poller_ok(priv)) {
++		gve_clean_zombie_queues(priv, false);
++
++		if (!process_priv->ctrl_ops->check_device_needs_reset(priv))
++			goto sleep;
+ 
+-	if (process_priv->ctrl_ops->check_device_needs_reset(priv)) {
+ 		pthread_mutex_lock(&priv->reset_lock);
+ 
+ 		/*
+ 		 * Defend against TOCTOU by checking if a reset is still needed
+ 		 * after acquiring the lock.
+ 		 */
+-		if (process_priv->ctrl_ops->check_device_needs_reset(priv)) {
+-			PMD_DRV_LOG(NOTICE,
+-				    "Port %u: Device requested reset. Executing proactive recovery.",
+-				    dev->data->port_id);
 -
- 	/* Set default descriptor counts */
- 	gve_set_default_ring_size_bounds(priv);
+-			ret = gve_internal_recover_device(dev);
+-			if (ret == 0) {
+-				pthread_mutex_unlock(&priv->reset_lock);
+-				return;
+-			}
+-		}
++		if (!process_priv->ctrl_ops->check_device_needs_reset(priv))
++			goto unlock;
++
++		PMD_DRV_LOG(NOTICE,
++			    "Port %u: Device requested reset. Executing proactive recovery.",
++			    dev->data->port_id);
  
-@@ -2057,7 +2054,6 @@ gve_init_priv(struct gve_priv *priv, bool skip_describe_device)
- 		goto free_queue_configs;
++		gve_internal_recover_device(dev);
++unlock:
+ 		pthread_mutex_unlock(&priv->reset_lock);
++sleep:
++		rte_delay_us_sleep(GVE_DEV_POLL_INTERVAL_US);
  	}
  
--setup_device:
- 	if (process_priv->ctrl_ops->query_rss != NULL)
- 		priv->rss_cache_dirty = true;
- 	if (priv->max_flow_rules) {
-@@ -2080,16 +2076,14 @@ free_flow_subsystem:
- 	if (gve_get_flow_subsystem_ok(priv))
- 		gve_teardown_flow_subsystem(priv);
- free_queue_configs:
--	if (!skip_describe_device) {
--		rte_free(priv->zombie_tx_queues);
--		priv->zombie_tx_queues = NULL;
--		rte_free(priv->zombie_rx_queues);
--		priv->zombie_rx_queues = NULL;
--		rte_free(priv->txq_configs);
--		priv->txq_configs = NULL;
--		rte_free(priv->rxq_configs);
--		priv->rxq_configs = NULL;
+-	if (dev->data->dev_started) {
+-		ret = rte_eal_alarm_set(GVE_DEV_POLL_INTERVAL_US,
+-					gve_check_device_status, dev);
+-		if (ret != 0)
+-			PMD_DRV_LOG(ERR,
+-				    "Port %u: Failed to re-arm alarm poller!",
+-				    dev->data->port_id);
 -	}
-+	rte_free(priv->zombie_tx_queues);
-+	priv->zombie_tx_queues = NULL;
-+	rte_free(priv->zombie_rx_queues);
-+	priv->zombie_rx_queues = NULL;
-+	rte_free(priv->txq_configs);
-+	priv->txq_configs = NULL;
-+	rte_free(priv->rxq_configs);
-+	priv->rxq_configs = NULL;
- free_ctrl_plane:
- 	process_priv->ctrl_ops->free_ctrl_plane(priv);
- 	gve_free_device_resources(priv);
-@@ -2164,7 +2158,7 @@ gve_dev_init(struct rte_eth_dev *eth_dev)
- 	pthread_mutexattr_destroy(&mutexattr);
++	return 0;
+ }
  
- 	priv->mbuf_timestamp_offset = -1;
--	err = gve_init_priv(priv, false);
-+	err = gve_init_priv(priv);
- 	if (err) {
- 		pthread_mutex_destroy(&priv->flow_rule_lock);
- 		pthread_mutex_destroy(&priv->nic_ts_lock);
+ static void
+ gve_start_dev_status_polling(struct rte_eth_dev *dev)
+ {
++	struct gve_priv *priv = dev->data->dev_private;
+ 	int ret;
+ 
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
+ 		return;
+ 
+-	ret = rte_eal_alarm_set(GVE_DEV_POLL_INTERVAL_US,
+-				gve_check_device_status,
+-				dev);
+-
++	gve_set_dev_status_poller_ok(priv);
++	ret = rte_thread_create_internal_control(&priv->dev_status_thread,
++						 "gve-dev-status",
++						 gve_check_device_status, dev);
+ 	if (ret != 0) {
++		gve_clear_dev_status_poller_ok(priv);
+ 		PMD_DRV_LOG(ERR,
+ 			"Port %u: Failed to arm device reset polling alarm! Err=%d",
+ 			dev->data->port_id, ret);
+@@ -1842,8 +1837,12 @@ gve_start_dev_status_polling(struct rte_eth_dev *dev)
+ static void
+ gve_stop_dev_status_polling(struct rte_eth_dev *dev)
+ {
++	struct gve_priv *priv = dev->data->dev_private;
++
+ 	/* Blocks until all in-progress callbacks have completed. */
+-	rte_eal_alarm_cancel(gve_check_device_status, dev);
++	gve_clear_dev_status_poller_ok(priv);
++
++	rte_thread_join(priv->dev_status_thread, NULL);
+ }
+ 
+ static int
+@@ -1859,9 +1858,11 @@ gve_dev_reset(struct rte_eth_dev *dev)
+ 		return -EPERM;
+ 	}
+ 
++	gve_stop_dev_status_polling(dev);
+ 	pthread_mutex_lock(&priv->reset_lock);
+ 	ret = gve_internal_recover_device(dev);
+ 	pthread_mutex_unlock(&priv->reset_lock);
++	gve_start_dev_status_polling(dev);
+ 
+ 	return ret;
+ }
+@@ -2178,6 +2179,8 @@ gve_dev_init(struct rte_eth_dev *eth_dev)
+ 
+ 	eth_dev->data->mac_addrs = &priv->dev_addr;
+ 
++	gve_start_dev_status_polling(eth_dev);
++
+ 	return 0;
+ 
+ free_process_priv:
+diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
+index 495b60c11..560a9501b 100644
+--- a/drivers/net/gve/gve_ethdev.h
++++ b/drivers/net/gve/gve_ethdev.h
+@@ -66,7 +66,7 @@
+ 	RTE_ETH_RSS_NONFRAG_IPV6_UDP |	\
+ 	RTE_ETH_RSS_IPV6_UDP_EX)
+ 
+-#define GVE_DEV_POLL_INTERVAL_US (1 * 1000 * 1000) /* 1 second in microseconds */
++#define GVE_DEV_POLL_INTERVAL_US (100 * 1000) /* 100ms in microseconds */
+ 
+ /* A list of pages registered with the device during setup and used by a queue
+  * as buffers
+@@ -386,6 +386,7 @@ struct gve_priv {
+ 	struct gve_tx_queue **zombie_tx_queues;
+ 	rte_spinlock_t zombie_lock;
+ 
++	rte_thread_t dev_status_thread;
+ 	pthread_mutex_t reset_lock;
+ 
+ 	struct gve_registers __iomem *reg_bar0; /* see gve_register.h */
+@@ -581,6 +582,33 @@ gve_clear_flow_subsystem_ok(struct gve_priv *priv)
+ 				&priv->state_flags);
+ }
+ 
++static inline bool
++gve_get_dev_status_poller_ok(struct gve_priv *priv)
++{
++	bool ret;
++
++	ret = !!rte_bit_relaxed_get32(GVE_PRIV_FLAGS_STATUS_POLLER_OK,
++				      &priv->state_flags);
++	rte_atomic_thread_fence(rte_memory_order_acquire);
++	return ret;
++}
++
++static inline void
++gve_set_dev_status_poller_ok(struct gve_priv *priv)
++{
++	rte_atomic_thread_fence(rte_memory_order_release);
++	rte_bit_relaxed_set32(GVE_PRIV_FLAGS_STATUS_POLLER_OK,
++			      &priv->state_flags);
++}
++
++static inline void
++gve_clear_dev_status_poller_ok(struct gve_priv *priv)
++{
++	rte_atomic_thread_fence(rte_memory_order_release);
++	rte_bit_relaxed_clear32(GVE_PRIV_FLAGS_STATUS_POLLER_OK,
++				&priv->state_flags);
++}
++
+ int
+ gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_desc,
+ 		   unsigned int socket_id, const struct rte_eth_rxconf *conf,
 -- 
 2.56.0.307.g5fe7bd680c-goog
 
