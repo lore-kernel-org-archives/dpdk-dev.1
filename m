@@ -2,73 +2,73 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BA7606A31A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 14:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD09606A323
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 14:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=K6bmTQJk
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=bWKB4vOt
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4A05A402E0;
-	Tue, 27 Oct 2026 15:54:30 +0100 (CET)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com
- [209.85.222.172])
- by mails.dpdk.org (Postfix) with ESMTPS id 7076A400D5
- for <dev@dpdk.org>; Tue, 27 Oct 2026 15:54:28 +0100 (CET)
-Received: by mail-qk1-f172.google.com with SMTP id
- af79cd13be357-93efc0452b5so276669085a.0
- for <dev@dpdk.org>; Tue, 27 Oct 2026 07:54:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4088540613;
+	Tue, 27 Oct 2026 15:54:32 +0100 (CET)
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com
+ [209.85.222.176])
+ by mails.dpdk.org (Postfix) with ESMTPS id E3621400D7
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 15:54:29 +0100 (CET)
+Received: by mail-qk1-f176.google.com with SMTP id
+ af79cd13be357-93cb9e9405fso202083885a.2
+ for <dev@dpdk.org>; Tue, 27 Oct 2026 07:54:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1793112867; x=1793717667; darn=dpdk.org;
+ d=gmail.com; s=20260707; t=1793112869; x=1793717669; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=I3NldxUGgLy3GtQUO8VfUmfmKF3tqYiAXrQ6shKBTkM=;
- b=K6bmTQJkuuAFD79dmN7avCHHUOBYF4xH5TVQ57tSKkYNQ09ikHdFBZp4w4wVkZyanG
- JB10vvfqkfXE7qL0T98hTTi3FqcPEab+oIpVSER9GNWoWtO2ABRDjZAhGRGuK3SPi3+R
- E5gfD/XxfJ8sGM3A3UJS7tZE6PaDWuDbouvb+w/B32UQLZ355GhNG8Q8ifgItJXJANzO
- C/eoEq5YqyhIFTvyxGSdrE0vGzei6O8uHAyocDttuQ9Sv4Lglt22ZHYfgsVk0C5mZUkp
- VkZTtFVFdB2hpWktrYug2rppU8IoBm71d4BzowaCqQJWkoANZXQxvss9Movp+uSEx3EP
- BCGg==
+ bh=5bGa/Fa+3u8Cyn2+veSZ4YhVkLmKZq+lU5tX5fXoIZI=;
+ b=bWKB4vOtJrbfJOlZTF3STMaEun5OyFwifmIJmQMCSmblWgZlpsMbAYw6Du76PQSPug
+ a5D4uUUcbGocP4xOK4DCDDQnQ674/O9iO6EQDXhc1RViGM4Atujo/H/QFdmTnN8Pk1DK
+ yqE2KkArmrjw8X9CFSqdRHOAAy4nShw1wM8Lto9otovAArXKJ5AphXMY4CTlzfIzelyV
+ BOYYh4G05hWAO2sfhIKjygtL4vZOBLiApaAOAgRiGeEGjGj/HoSG97a7DbpaDgqY9kBZ
+ vqG5LiLoTSLpZ8jL3GOnsTnICck0/Ya4bP8PlwGDpfg1YQkO2Y7T1SImj8OQcq6r/fCk
+ r0cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793112867; x=1793717667;
+ d=1e100.net; s=20260707; t=1793112869; x=1793717669;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=I3NldxUGgLy3GtQUO8VfUmfmKF3tqYiAXrQ6shKBTkM=;
- b=yPSqZrspm5eiatJzel/0jJYKlZjcljGOqLK3HGmzqc05z3/o3vBbspFTSEfNb37xED
- WAbTfFlJDKzdovO9zyGXy0he+LxQlHgFa+U4yh59AUY6WiZBp1cu51oB8O1WJfi7MQy1
- pG3l4mDwNHQgaRheRX8eFVeYiwc6ULnZOJsoGylErvOkJLMd7IsoT1zW1vppo6x5+hlL
- Ozi62Ys8+Ti+zzMnhKD7ukj8/gZqUqp2u/Uf65VhhEiDuQEFCx7qjC09MPqki6LPVj6p
- /8JlKtD8BI36EHFIJpY58ecISEskJdfQMlOdy++R2uA3TJHhDGB7e7oL7jc/dUQdsDMv
- dgOg==
-X-Gm-Message-State: AFq9FYKMlK2e7KktDXAOjwloqVAQzRb7+5fuDdVZlIn97SvXEvEyLARq
- E7C86ygMec9er+raw7oZCm8nl48TA55N/SBKUHPkb8wRCQzjnexk5ULdrop+Jg==
-X-Gm-Gg: AYBFou06UeSaPejhFSOeg1QpQzV849DFE4KQn/NotlexZo0oUxAfuLsxqckugWOx+A8
- in1IuNJmtn+Q8G8ljJH5hYM0u7YuHoGgdfAA3l9OeOV3rKa/OcA9uuZapqhKEBBTGubOWEQcBQ8
- M+TxVKbZoDpKDt3h9JKeN7IAp7KYiv/imuQ+cHYl53yIt1x1m8+XiyS91Ws+6My08UGxFKfWRU0
- 4M62D/XYD4tsRDw2lslMJoXHLkVB2d7NSelW1fwqceYpFXCRdxPdvopDqixegySB2erCF7kNVec
- r0b+06r2s3FdSQI9FGoGJv+7u559KVLTIBdTw98ATD2k9Jhx8qw7hlHQH6trb1Pryqi/RhB6ec3
- JB38x3mLQVigayE/0+1cXestZ7d/wMDDpQG5dnHdIe2C/+5+78UNBVYTlZqCVQWSJ7hyxnTLGIP
- hkQKXQegH3vijkFjw+TBX501zS/z7w+fbmCcXLuiohfaHLjjgCub59JQ/Gn5OwCPovIowa2oTmo
- BJipA5V7q5VX4X3TkYgKKjPk4UMyoNHpgDJYNUVw3qkcBGdgYeFpEtMoa3/BpecALDdUS9blP0s
- jJ8iwY0KoXiNQyo5f0Bj0hNW4HCXaxaGR45oxZZsKReK9IfAFIviS88gQEtSTnospMZCAwnx2q1
- VfBWmAszY2Mqvx4ip/yNkUj5fWcE=
-X-Received: by 2002:a05:620a:25c7:b0:93c:ba88:cd65 with SMTP id
- af79cd13be357-940ef7d30a8mr1456869385a.7.1793112867286; 
- Tue, 27 Oct 2026 07:54:27 -0700 (PDT)
+ bh=5bGa/Fa+3u8Cyn2+veSZ4YhVkLmKZq+lU5tX5fXoIZI=;
+ b=GlQYbMIPqK69Fm7ZLbhtsKzRV8IQAt+CVb3oGIN+4t/En+MAMjk5tpi+2S6wzD1nTH
+ R9EpYfD48fRi8L7Uk+dO/+qVWjXgdFPdVKD8p4k9CNop1nBJIE/tCb1iKVq6TzRq0zKy
+ 6M2emGJR9urractYTDaCj4TflXINWsyQE7Oq4MBzp5m1gsurSVPbFTuiPC4JDuzX8t3k
+ iYGc/hrQwRKSKyizOJinoxKOT0D3sxFNNrJnSS37Ak9ucgWTvXUmWQufBsDzXp7IMTe+
+ uiiS6glMmEs8HUe8851sXiDGSpAS57GulPOxXpzZ/bPYPzRKhukEyYz5OsTWJWzGzuK5
+ /e4A==
+X-Gm-Message-State: AFq9FYJu7nVDnRzBLvnUb6PHwBarIcVFIsLu9+dgbp2hqvnjIJb1HfUZ
+ OEpC3TeNxDqm5dpHVsDPp7d9JfViOtCDkAApkjGo7LVvELxeXV1iV/EL0LcFRA==
+X-Gm-Gg: AYBFou0jBTOtNyaxUFuu7P9yhTV6SYbx0YQ9EZd2S3JI6MFGWbt0W+8fSn3rb1YSimI
+ xfYnx0jAwQs5fqxr93Eu5qFxhdneyi61GtTeDDUOOWOn/Fs+6gigrJ37dMRHN1AjdV8aVksKXS1
+ WXmwDRXTB54PMOZU3wC0VnR8dIowgoQpPBZAPXVR8ZbxKlQ4NjC14QADsz9ZE6IHKixPcxZYFru
+ 60Ra/yh7kqGQswFuV0eXi278qOKk5wP2JhPhhAcxFay4vyS5Cuyu3uMZ5ArhtG8dn4eb7Pjuv6F
+ Hv/oKwhkAgFmnpqwLZlis6ZvYW8+yEOc1tVmCpDdY83s8yYFmfgzAnmpuzx0YvNaIB0PdU07O8D
+ K+CniOiEjaLTM5PH2ifvPUnime26pDR7f4UQM3HH4tnk+xtbBU7Lo2hg6wAY2BgZK/p6hItPDYB
+ 5awW7M1KcHn0HysxcuHQghs/9FmzEdOCY62yrpcrHXv6eyVHEeLgm3B7yxM4gq2ZlYIGVWz2o17
+ 3WtmO80xzMRhiHRSCttQiQSBtN7uPA831CO4CYU+jtH03vETi9ltM0wjfgKY3ausXeANzvhZ036
+ VfvCJ2a8rrlfY7Dia6R2gwnFWVVOnN8RUYf181rPNQBvGKS//McKHiscOI+EHbykIFXXe1DwMyK
+ cA5le9hUg5SFhfEPS0rVFR10mBcU=
+X-Received: by 2002:a05:620a:440d:b0:93f:211b:a7a with SMTP id
+ af79cd13be357-940ef914a0dmr1473113385a.29.1793112868562; 
+ Tue, 27 Oct 2026 07:54:28 -0700 (PDT)
 Received: from bos-lhvwah.bos01.corp.akamai.com
  (g2001-4878-8037-0700-526b-8dff-fef6-cfbf.deploy.static.akamaitechnologies.com.
  [2001:4878:8037:700:526b:8dff:fef6:cfbf])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-940f0789b18sm996910385a.29.2026.10.27.07.54.26
+ af79cd13be357-940f0789b18sm996910385a.29.2026.10.27.07.54.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 27 Oct 2026 07:54:26 -0700 (PDT)
+ Tue, 27 Oct 2026 07:54:27 -0700 (PDT)
 From: Robert Sanford <rsanford2@gmail.com>
 To: dev@dpdk.org
 Cc: vladimir.medvedkin@intel.com, Robert Sanford <rsanford@akamai.com>,
  stable@dpdk.org
-Subject: [PATCH v2 1/5] rib: fix undefined behavior in bit test
-Date: Tue, 27 Oct 2026 10:54:01 -0400
-Message-Id: <20261027145405.3454251-2-rsanford2@gmail.com>
+Subject: [PATCH v2 2/5] fib: fix full table overwrite on address wraparound
+Date: Tue, 27 Oct 2026 10:54:02 -0400
+Message-Id: <20261027145405.3454251-3-rsanford2@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261027145405.3454251-1-rsanford2@gmail.com>
 References: <20261027001423.3028072-1-rsanford2@gmail.com>
@@ -95,72 +95,53 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Robert Sanford <rsanford@akamai.com>
 
-The tree walk in rte_rib.c tests the bit below a node's depth with
-1 << (31 - depth). For a node at depth 0, which exists for a default
-route or for a common parent of routes in both halves of the address
-space, that is 1 << 31 on a signed int, which is undefined behavior.
-UBSan reports:
+When a prefix whose range ends at 255.255.255.255 is added, deleted,
+or has its next hop changed, modify_fib() walks the more-specific
+routes under it and installs the next hop into the gaps. If the last
+of those routes starts exactly at the current left edge and ends at
+255.255.255.255, the equal-edges branch advances ledge past it, and
+ledge wraps to 0. That branch has no wraparound check, so the loop
+continues. With no more routes, the final branch computes redge,
+which also wraps to 0. Its ledge != 0 exception, which exists for a
+default route added as the first route, lets the call through, and
+install_to_fib(dp, 0, 0, nh) overwrites the entire table. The call
+returns 0, so the corruption is silent.
 
-  rte_rib.c:82:18: runtime error: left shift of 1 by 31 places
-  cannot be represented in type 'int'
+For example, with 0.0.0.0/0, 0.0.0.0/1 and 128.0.0.0/1 installed,
+deleting 0.0.0.0/0 makes every lookup miss. With 10.0.0.0/8,
+255.255.255.0/25 and 255.255.255.128/25 installed, adding
+255.255.255.0/24 makes every address, including 10.1.1.1, return the
+/24's next hop.
 
-and the same at lines 311 and 343. No existing unit test adds a
-depth-0 route, so this was not caught before. The new test/fib
-wraparound test in this series does.
+Commit ab1b927cd73e ("fib: fix adding default route overwriting
+entire table") added the wraparound check to the other branch only.
+Add the same check to the equal-edges branch.
 
-Use an unsigned constant in all four bit tests. The shift count is
-between 0 and 31 at each of them.
-
-Fixes: 5a5793a5ffa2 ("rib: add RIB library")
+Fixes: 880bc2b5f3bd ("fib: fix adding default route")
 Cc: stable@dpdk.org
 
 Signed-off-by: Robert Sanford <rsanford@akamai.com>
 ---
-v2: new patch in this series.
+ lib/fib/dir24_8.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- lib/rib/rte_rib.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
-index 046db131ca..43d5ab1498 100644
---- a/lib/rib/rte_rib.c
-+++ b/lib/rib/rte_rib.c
-@@ -79,7 +79,7 @@ get_nxt_node(struct rte_rib_node *node, uint32_t ip)
- {
- 	if (node->depth == RIB_MAXDEPTH)
- 		return NULL;
--	return (ip & (1 << (31 - node->depth))) ? node->right : node->left;
-+	return (ip & (1U << (31 - node->depth))) ? node->right : node->left;
- }
- 
- static struct rte_rib_node *
-@@ -308,7 +308,7 @@ rte_rib_insert(struct rte_rib *rib, uint32_t ip, uint8_t depth)
- 		if ((d >= depth) || !is_covered(ip, (*tmp)->ip, d))
- 			break;
- 		prev = *tmp;
--		tmp = (ip & (1 << (31 - d))) ? &(*tmp)->right : &(*tmp)->left;
-+		tmp = (ip & (1U << (31 - d))) ? &(*tmp)->right : &(*tmp)->left;
- 	}
- 	/* closest node found, new_node should be inserted in the middle */
- 	common_depth = RTE_MIN(depth, (*tmp)->depth);
-@@ -319,7 +319,7 @@ rte_rib_insert(struct rte_rib *rib, uint32_t ip, uint8_t depth)
- 	common_prefix = ip & rte_rib_depth_to_mask(common_depth);
- 	if ((common_prefix == ip) && (common_depth == depth)) {
- 		/* insert as a parent */
--		if ((*tmp)->ip & (1 << (31 - depth)))
-+		if ((*tmp)->ip & (1U << (31 - depth)))
- 			new_node->right = *tmp;
- 		else
- 			new_node->left = *tmp;
-@@ -340,7 +340,7 @@ rte_rib_insert(struct rte_rib *rib, uint32_t ip, uint8_t depth)
- 		common_node->parent = (*tmp)->parent;
- 		new_node->parent = common_node;
- 		(*tmp)->parent = common_node;
--		if ((new_node->ip & (1 << (31 - common_depth))) == 0) {
-+		if ((new_node->ip & (1U << (31 - common_depth))) == 0) {
- 			common_node->left = new_node;
- 			common_node->right = *tmp;
- 		} else {
+diff --git a/lib/fib/dir24_8.c b/lib/fib/dir24_8.c
+index c135285a65..68029c6165 100644
+--- a/lib/fib/dir24_8.c
++++ b/lib/fib/dir24_8.c
+@@ -436,6 +436,12 @@ modify_fib(struct dir24_8_tbl *dp, struct rte_rib *rib, uint32_t ip,
+ 			if (ledge == redge) {
+ 				ledge = redge +
+ 					(uint32_t)(1ULL << (32 - tmp_depth));
++				/*
++				 * we got to the end of address space
++				 * and wrapped around
++				 */
++				if (ledge == 0)
++					break;
+ 				continue;
+ 			}
+ 			ret = install_to_fib(dp, ledge, redge,
 -- 
 2.34.1
 
