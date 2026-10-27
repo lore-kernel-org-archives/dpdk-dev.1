@@ -2,33 +2,32 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C29606A328
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 09:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72F1606A31B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 Oct 2026 09:33:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 32AA340609;
-	Tue, 27 Oct 2026 10:33:44 +0100 (CET)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTPS id 185CF400D5
+	by mails.dpdk.org (Postfix) with ESMTP id 0F3B14064E;
+	Tue, 27 Oct 2026 10:33:45 +0100 (CET)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTPS id 78B3D4025A
  for <dev@dpdk.org>; Tue, 27 Oct 2026 10:33:41 +0100 (CET)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D07CB20015E;
- Tue, 27 Oct 2026 10:33:40 +0100 (CET)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3480C1A015B;
+ Tue, 27 Oct 2026 10:33:41 +0100 (CET)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9C1D620016D;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F34731A0161;
  Tue, 27 Oct 2026 10:33:40 +0100 (CET)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A14511800068;
- Tue, 27 Oct 2026 17:33:39 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 223FB18000B1;
+ Tue, 27 Oct 2026 17:33:40 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
-Cc: david.marchand@redhat.com, hemant.agrawal@nxp.com, jun.yang@nxp.com,
- Gagandeep Singh <g.singh@nxp.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 1/2] bus/dpaa: fix maybe-uninitialized in bman_release_fast
-Date: Tue, 27 Oct 2026 15:03:34 +0530
-Message-Id: <20261027093335.4109017-2-g.singh@nxp.com>
+Cc: david.marchand@redhat.com, hemant.agrawal@nxp.com,
+ Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v3 2/2] bus/dpaa: fix unneeded conditional in bman_release
+Date: Tue, 27 Oct 2026 15:03:35 +0530
+Message-Id: <20261027093335.4109017-3-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20261027093335.4109017-1-g.singh@nxp.com>
 References: <20261027063131.3979699-2-g.singh@nxp.com>
@@ -53,38 +52,52 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+bman_release() computed i = num - 1 before the num == 0 bounds check,
+which only exists under RTE_LIBRTE_DPAA_HWDEBUG. With that debug flag
+disabled and num == 0, i wraps to UINT32_MAX, and the subsequent
+'if (i)' guard is then always taken regardless of num, relying on the
+for loop's own bound to do nothing. The indirection added no value and
+obscured the num == 0 handling.
 
-The conversion loop is bounded only by num, which is not checked
-unless RTE_LIBRTE_DPAA_HWDEBUG is set. GCC on ppc64le and riscv
-therefore warns that bm_bufs[0] may be read uninitialized when
-copying the first entry into the RCR.
+Drop the i = num - 1 initializer and the if (i) wrapper, relying
+solely on the for (i = 1; i < num; i++) loop condition, matching the
+simpler pattern already used in bman_release_fast().
 
-Convert entry 0 unconditionally, as bman_release() does.
-
-Fixes: e55e2e2d0c66 ("bus/dpaa: optimize DPAA multi-entry buffer pool operations")
-Cc: jun.yang@nxp.com
+Fixes: f38f61e982f8 ("bus/dpaa: add BMAN hardware interfaces")
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/bus/dpaa/base/qbman/bman.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/bus/dpaa/base/qbman/bman.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/bus/dpaa/base/qbman/bman.c b/drivers/bus/dpaa/base/qbman/bman.c
-index 2b081cb78a..76e612662f 100644
+index 76e612662f..31114b2d57 100644
 --- a/drivers/bus/dpaa/base/qbman/bman.c
 +++ b/drivers/bus/dpaa/base/qbman/bman.c
-@@ -279,7 +279,8 @@ bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
- 	if (unlikely(!r))
- 		return -EBUSY;
+@@ -304,7 +304,7 @@ int bman_release(struct bman_pool *pool, const struct bm_buffer *bufs, u8 num,
+ {
+ 	struct bman_portal *p;
+ 	struct bm_rcr_entry *r;
+-	u32 i = num - 1;
++	u32 i;
+ 	u8 avail;
  
--	for (i = 0; i < num; i++)
-+	bm_buffer_set64_to_be(&bm_bufs[0], bufs[0]);
+ #ifdef RTE_LIBRTE_DPAA_HWDEBUG
+@@ -329,11 +329,9 @@ int bman_release(struct bman_pool *pool, const struct bm_buffer *bufs, u8 num,
+ 	r->bufs[0].opaque =
+ 		cpu_to_be64(((u64)pool->params.bpid << 48) |
+ 			    (bufs[0].opaque & MAX_U48));
+-	if (i) {
+-		for (i = 1; i < num; i++)
+-			r->bufs[i].opaque =
+-				cpu_to_be64(bufs[i].opaque & MAX_U48);
+-	}
 +	for (i = 1; i < num; i++)
- 		bm_buffer_set64_to_be(&bm_bufs[i], bufs[i]);
++		r->bufs[i].opaque =
++			cpu_to_be64(bufs[i].opaque & MAX_U48);
  
- 	/* bufs[0] overlaps the verb, which bm_rcr_pvb_commit() writes last
+ 	bm_rcr_pvb_commit(&p->p, BM_RCR_VERB_CMD_BPID_SINGLE |
+ 			  (num & BM_RCR_VERB_BUFCOUNT_MASK));
 -- 
 2.25.1
 
