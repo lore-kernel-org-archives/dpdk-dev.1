@@ -2,59 +2,78 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0BF606A31F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Oct 2026 13:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D351606A31A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Oct 2026 14:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=g2WIhlux
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=KHmhfMXx
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1AF184064F;
-	Wed, 28 Oct 2026 14:24:03 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTPS id 5AD9B4064E;
- Wed, 28 Oct 2026 14:24:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793193841; x=1824729841;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=FMjS97OjZhptiXjwXyM3w1h1usATUUe0QpmGaGKcORA=;
- b=g2WIhlux8XT0WxB5WVp4DZ2qiUN8jh7KxXhwCLzmRJajmTqjpk7jJhRL
- pDrbAC9KhfOMXixexOqwKF4PQ+yPnkPH2uxzItPskbXwn6NXSf9VCQaaE
- +pGn+Unwp8dR91CKnWBF9XnuVM+VXcp+aJOKspYmNF1Fgkf7TZU94oDDT
- sg4PnawWFFF+/OprSKttYycfKgA9iqyugBDv9G/tzkGqCZTcW3qnkwHdG
- E4gVvcuHFsZJDG8POQPstIPwb94rXHiQjV0lhG+CVQOCt39aP86Q6MjNh
- 2iHnu5eAXUkyFSqFYC9cUuoyQv1hOtT65mb19xgocJM7mlYWI+QEjprgK Q==;
-X-CSE-ConnectionGUID: /+s4ds0PQsyNDz1BQzmhWA==
-X-CSE-MsgGUID: x69sEH7dTAqChdTPFCSdpA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11949"; a="1917436"
-X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
-   d="scan'208";a="1917436"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Oct 2026 06:24:01 -0700
-X-CSE-ConnectionGUID: CXc53eH4QJeD/d3qkkDA+g==
-X-CSE-MsgGUID: SHzIVrQbSK6L61nyj7jSaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
-   d="scan'208";a="4778825"
-Received: from mtldev4.igk.intel.com ([10.123.233.187])
- by orviesa003.jf.intel.com with ESMTP; 28 Oct 2026 06:23:59 -0700
-From: Dawid Wesierski <dawid.wesierski@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
- soumyadeep.hore@intel.com, grzegorz.nitka@intel.com,
- marek.kasiewicz@intel.com, stable@dpdk.org,
- Michal Michalik <michal.michalik@intel.com>,
- Ian Stokes <ian.stokes@intel.com>
-Subject: [PATCH 2/2] net/ice/base: fix E830 PHY timer command
-Date: Wed, 28 Oct 2026 13:24:34 +0000
-Message-ID: <20261028132435.2113321-3-dawid.wesierski@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261028132435.2113321-1-dawid.wesierski@intel.com>
-References: <20261028132435.2113321-1-dawid.wesierski@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id CA9F340151;
+	Wed, 28 Oct 2026 15:00:57 +0100 (CET)
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com
+ [209.85.210.174])
+ by mails.dpdk.org (Postfix) with ESMTPS id 244DB400D7
+ for <dev@dpdk.org>; Wed, 28 Oct 2026 15:00:55 +0100 (CET)
+Received: by mail-pf1-f174.google.com with SMTP id
+ d2e1a72fcca58-8a06454116eso548696b3a.1
+ for <dev@dpdk.org>; Wed, 28 Oct 2026 07:00:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793196053;
+ x=1793800853; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=uHwfh0xvbTZGU94DRVt6YCbLzpFElZuiA1msHaGhS5s=;
+ b=KHmhfMXxponv6e4M8v7WpGhci/4WWNPlJplsbzuxMWipYqbqbh3KrjoZaTB1ijyKEP
+ qHRx1uv0bX0JuTRP8vY07MFBbaZMbqQpOIFDDX1pe35ghe71eZivCj0IXZRuEZGUiMzh
+ xGa4Kzj3MK8OfjkVOUxvw4akJdxi6mk18HwzxgwsHrsIS1W3Um2P5B6K6tnderdQzKLF
+ jw0stRSKRBmYyv2zFCBZZ7dRc8T59TJJE7Nj0/fu2T14su1ZIccZtGR10E1iR+qlRS0o
+ wCCQOciYlFsFfnIUQM9TsGcJutQXO0aRcrxYfGxesobSSqn5tIuHo/2pYL3Q6RtgK2BZ
+ qMxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793196053; x=1793800853;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=uHwfh0xvbTZGU94DRVt6YCbLzpFElZuiA1msHaGhS5s=;
+ b=wC0w8JU3drr+kfQPBgQFcYWK5nZidSbQ4SxjPEn+uqunTSbA2H3/saEXLgwrw+XdUO
+ YM/+n3pGKCjTRhC2frXcQZZxQLBBuycAoxdv0oAvWE3fzxNTIpHfZ4mXqs+F32xbjJ/U
+ I2tQzwkrLKlji6mQ8iXwf0SIv4coOSNcDHaviI8qWPpzqtuVrEWL4rH0/agNTZx/skNr
+ nD/874ar8rrwXpfBcrSTjgFG8VUpTj2xLGauoNfFRfSlVaivaH/NyCZwLuDLAy2OFJTk
+ MAOcYnyohj4cvE95+tP8bstwHvKHWCU7tAUVpG3VoRDEuESssTrLglNbc9+dA/b4lnKK
+ xwhw==
+X-Gm-Message-State: AFq9FYK2vtFD42E3GXFp5h7uF9yi1FSTZOWn7V/dmdEJfmKoNKUpS1rv
+ nR6jSiSf/wmiOUmqHrZzESjAZPXnfXYtvTehfiigtB3U/ZUFS8kKnFAD+NT/M7/HZaM=
+X-Gm-Gg: AYBFou1SuVXS+dZ9GF/si5bX3ouDPkAo1JR0DBfZI/MYLBgibllUQCkA9NG3/lOYHsR
+ TQV/7BKEqbtAQfnvdBlA8J9ns/hmawCdW0l19RP/MPqaofliyiPdX1HbvjNZZHnbA0daYsaw9Mc
+ 4AiaFXQysHZc6O6AHNfyb5nyF2To2glV0KBokYYzriFKkbZNuoZqcgj4vI6M2UYNTU4GzvOwOPV
+ bcw30ib9fY8IjEK4eQ3Gj0iugkll/9Cy65d+3ADGGP/xpU49//mPSFdelqVG0d8Ro1IwQjy8PLX
+ ag79Dn/RnvKC1cjGeVkHvwYxd7f+T9foSMRXgcyv7CxIKbQ7ur/aFEqMqNj0+31cAmN/iygYojR
+ 0SaDLjzpZSMtHFhjHYvLVG+3hQhM4rGz2RRo25mYpToE5GnRX4KJbNhfM0dLwp/7gspNHmLMQ1g
+ SD8RrQr16t6EkD9cesYuKNBI/OtbNKHCSvTOTtVgd56EfRa9TF09XI1B1+ivItGqRtW1tSijcLo
+ 3y+32FGmHzVvpTMOK6pK9XvTPX+Ac3ixmiP9iloIBSfQ3ME0L1blF7iI3HE+ght8AeYglpCV2bi
+ oP5AU97oOfE+NPK+zKelnzRDAyHXrsJ5Q23JxrOOfCsIVg/mvmvEMUJG8AzJR1i8U7VyXnM=
+X-Received: by 2002:a05:6a00:9292:b0:89e:a4f5:3f1 with SMTP id
+ d2e1a72fcca58-8a6e7acaf1dmr2156220b3a.15.1793196053202; 
+ Wed, 28 Oct 2026 07:00:53 -0700 (PDT)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-8a6a5f660b3sm1220707b3a.10.2026.10.28.07.00.51
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 28 Oct 2026 07:00:51 -0700 (PDT)
+Date: Wed, 28 Oct 2026 07:00:48 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
+Cc: dev@dpdk.org, weh@microsoft.com, longli@microsoft.com
+Subject: Re: [PATCH v3 0/2] net/mana: fix tx burst error handling and add
+ TSO support
+Message-ID: <20261028070048.168f3605@phoenix.local>
+In-Reply-To: <20261027182115.3666158-1-tathagat.dpdk@gmail.com>
+References: <20261012073626.642397-1-tathagat.dpdk@gmail.com>
+ <20261027182115.3666158-1-tathagat.dpdk@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -65,109 +84,126 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-ice_ptp_tmr_cmd() prepares the source timer, then the PHY ports, and
-then starts the command with a write to GLTSYN_CMD_SYNC. For E830,
-ice_ptp_port_cmd_e830() writes the command to E830_ETH_GLTSYN_CMD with
-a sideband queue message. E810 and E830 have no sideband queue, so the
-message goes to firmware on the admin queue as a neighbor device
-request. The firmware rejects it with ICE_ERR_AQ_ERROR (-100).
+On Tue, 27 Oct 2026 18:21:13 +0000
+Tathagat Priyadarshi <tathagat.dpdk@gmail.com> wrote:
 
-E830 has an internal PHY, and its port timers follow the source timer.
-On E830, ice_ptp_init_time() and ice_ptp_write_incval() write only the
-source timer, and ice_ptp_adj_clock() prepares no PHY adjustment.
-Also, E830_ETH_GLTSYN_CMD (0x00088814) is the address of
-GLTSYN_CMD_SYNC, and the only command that gets to this function,
-ADJ_TIME (0x04), leaves the SYNC field of that register at 0.
+> This series fixes transmit burst error handling and adds hardware TCP
+> segmentation offload (TSO) for the Microsoft Azure MANA PMD.
+> 
+> Patch 1 drops packets that fail validation, counting them in
+> stats.errors and consuming them, so rte_eth_tx_burst() maintains a
+> contiguous prefix and short returns reflect only ring backpressure.
+> It also clamps segment limits to MAX_SGL_ENTRIES_FOR_TRANSMIT.
+> 
+> Patch 2 implements hardware TSO for IPv4 and IPv6 TCP traffic,
+> formatting SGE0 for headers and subsequent SGEs for payload, handling
+> GDMA work request flags, advertising RTE_ETH_TX_OFFLOAD_TCP_TSO, and
+> handling non-TSO fallback checksums.
+> 
+> Hardware TSO segmentation was verified on Azure Standard_D8ds_v6 (kernel
+> 6.8.0-1067-azure, MANA PCI 7870:00:00.0; driver reports no firmware
+> version) between two VMs on one subnet using an earlier revision of
+> this series:
+> - VM A ran testpmd txonly, modified locally to emit TCP packets with
+>   RTE_MBUF_F_TX_TCP_SEG set (not part of this series), after
+>   "csum set ip hw 0", "csum set tcp hw 0" and "tso set 1460 0".
+> - VM B captured the frames with tcpdump on its kernel interface, GRO off.
+> - A 4000-byte IPv4 packet in a single mbuf, in mbufs with a header-only
+>   first segment, and in mbufs with payload in the first segment, each
+>   arrived as 1514, 1514 and 1080 byte frames with consecutive TCP
+>   sequence numbers, per-segment IP IDs and valid IP and TCP checksums.
+> - Plain UDP with "tso set 0" was unaffected.
+> - The drop paths (packets exceeding segment limit, oversized MSS or
+>   header) and IPv6 TSO were not exercised on hardware.
+> 
+> The v3 changes (hardware field bounds for MSS and header length,
+> loop bound, unsegmented fallback checksum masking, and dev_info limit
+> advertisement) were compile-tested but have not been re-run on hardware.
+> 
+> v3:
+> - Patch 1: no changes.
+> - Patch 2:
+>   * Mask RTE_MBUF_F_TX_TCP_SEG in the non-TSO fallback branch so
+>     rte_ipv4_phdr_cksum / rte_ipv6_phdr_cksum calculate the full L4
+>     length into the pseudo-header checksum.
+>   * Reject invalid TSO packets (tso_segsz > MANA_TSO_MAX_SEGSZ or
+>     gso_hs > UINT8_MAX) to prevent hardware bitfield truncations.
+>   * Reflect the extra SGE for TSO in dev_info by setting nb_seg_max to
+>     max_sge - 1 (keeping nb_mtu_seg_max as max_sge) instead of a mana.rst
+>     limitation note.
+>   * Bound the TSO segment walk by expected_sge and verify SGE count.
+>   * Streamline commit message and cover letter.
+> 
+> v2:
+> - Patch 1:
+>   * Drop unsendable packets and return a separate consumed count (nb_done)
+>     instead of breaking out of the burst; break only when the ring is full.
+>   * Move MAX_SGL_ENTRIES_FOR_TRANSMIT clamp from patch 2 to patch 1, and
+>     clamp dev_info nb_seg_max and nb_mtu_seg_max.
+> - Patch 2:
+>   * Use the drop path for all per-packet TSO validation failures.
+>   * Honour implied TCP checksum when RTE_MBUF_F_TX_TCP_SEG is set but the
+>     packet is unsegmented.
+>   * Move GDMA_WR_OOB_IN_SGL and GDMA_WR_PAD_BY_SGE0 adjacent to
+>     struct gdma_work_request.
+>   * Add release notes entry and update mana.ini feature matrix.
+> 
+> Tathagat Priyadarshi (2):
+>   net/mana: fix transmit burst error handling
+>   net/mana: add hardware TSO support
+> 
+>  doc/guides/nics/features/mana.ini      |   1 +
+>  doc/guides/rel_notes/release_26_11.rst |   4 +
+>  drivers/net/mana/gdma.c                |   5 +
+>  drivers/net/mana/mana.c                |   9 +-
+>  drivers/net/mana/mana.h                |   9 +-
+>  drivers/net/mana/tx.c                  | 206 +++++++++++++++++++++----
+>  6 files changed, 195 insertions(+), 39 deletions(-)
+> 
 
-Do not prepare a port command on E830, and remove the unused
-function and register define.
+I can apply it as is. But you may want to look at the length issues
+reported in AI review 
 
-Before commit f9767f70cb73 ("net/ice/base: fix adjust timer
-programming for E830"), ice_ptp_adj_clock() returned early on E830,
-and nothing called ice_ptp_port_cmd_e830(). Since that commit,
-each rte_eth_timesync_adjust_time() with a delta in the 32-bit range
-fails with "PTP adj clock failed, err -100", and the PHC does not
-change. A PTP client then cannot discipline the clock.
+Subject: Re: [PATCH v3 0/2] net/mana: tx burst fixes and TSO
 
-Fixes: 881169950d80 ("net/ice/base: implement initial PTP support for E830")
-Fixes: f9767f70cb73 ("net/ice/base: fix adjust timer programming for E830")
-Cc: stable@dpdk.org
+Applied to main (e3e29ed), net/mana builds clean with -Dwerror=true
+at each commit. Fixes: hashes verified.
 
-Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
-Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
----
- drivers/net/intel/ice/base/ice_ptp_hw.c | 22 ++--------------------
- drivers/net/intel/ice/base/ice_ptp_hw.h |  2 --
- 2 files changed, 2 insertions(+), 22 deletions(-)
+Patch 1 drops invalid packets and counts them in the returned value,
+which is the right tx_burst contract. The SGL bound fix is correct.
+No findings on patch 1.
 
-diff --git a/drivers/net/intel/ice/base/ice_ptp_hw.c b/drivers/net/intel/ice/base/ice_ptp_hw.c
-index 5688f969ce..84b2486c49 100644
---- a/drivers/net/intel/ice/base/ice_ptp_hw.c
-+++ b/drivers/net/intel/ice/base/ice_ptp_hw.c
-@@ -5612,25 +5612,6 @@ ice_ptp_write_direct_phc_time_e830(struct ice_hw *hw, u64 time)
- 	return 0;
- }
- 
--/**
-- * ice_ptp_port_cmd_e830 - Prepare all external PHYs for a timer command
-- * @hw: pointer to HW struct
-- * @cmd: Command to be sent to the port
-- * @lock_sbq: true if the sideband queue lock must be acquired
-- *
-- * Prepare the external PHYs connected to this device for a timer sync
-- * command.
-- */
--static int
--ice_ptp_port_cmd_e830(struct ice_hw *hw, enum ice_ptp_tmr_cmd cmd,
--		      bool lock_sbq)
--{
--	u32 val = ice_ptp_tmr_cmd_to_port_reg(hw, cmd);
--
--	return ice_write_phy_reg_e810_lp(hw, E830_ETH_GLTSYN_CMD, val,
--					   lock_sbq);
--}
--
- /**
-  * ice_read_phy_tstamp_e830 - Read a PHY timestamp out of the external PHY
-  * @hw: pointer to the HW struct
-@@ -5881,7 +5862,8 @@ static int ice_ptp_port_cmd(struct ice_hw *hw, enum ice_ptp_tmr_cmd cmd,
- 	/* PHY models which can program all ports simultaneously */
- 	switch (hw->phy_model) {
- 	case ICE_PHY_E830:
--		return ice_ptp_port_cmd_e830(hw, cmd, lock_sbq);
-+		/* The internal PHY follows the source timer command */
-+		return 0;
- 	case ICE_PHY_E810:
- 		return ice_ptp_port_cmd_e810(hw, cmd, lock_sbq);
- 	default:
-diff --git a/drivers/net/intel/ice/base/ice_ptp_hw.h b/drivers/net/intel/ice/base/ice_ptp_hw.h
-index 534e05a8dd..31cbcc39d0 100644
---- a/drivers/net/intel/ice/base/ice_ptp_hw.h
-+++ b/drivers/net/intel/ice/base/ice_ptp_hw.h
-@@ -617,8 +617,6 @@ ice_get_base_incval(struct ice_hw *hw, enum ice_src_tmr_mode src_tmr_mode)
- 
- /* E810 timer command register */
- #define E810_ETH_GLTSYN_CMD		0x03000344
--/* E830 timer command register */
--#define E830_ETH_GLTSYN_CMD		0x00088814
- 
- /* Source timer incval macros */
- #define INCVAL_HIGH_M			0xFF
--- 
-2.43.0
+Patch 2 follows the Linux mana TSO path (header in SGE0,
+OOB_IN_SGL | PAD_BY_SGE0, tot_len/payload_len zeroed, pseudo-header
+seeded without length). Field widths match: last_v_bytes is 8 bits,
+client_data_unit is 14 bits.
 
----------------------------------------------------------------------
-Intel Technology Poland sp. z o.o.
-ul. Slowackiego 173 | 80-298 Gdansk | Sad Rejonowy Gdansk Polnoc | VII Wydzial Gospodarczy Krajowego Rejestru Sadowego - KRS 101882 | NIP 957-07-52-316 | Kapital zakladowy 200.000 PLN.
-Spolka oswiadcza, ze posiada status duzego przedsiebiorcy w rozumieniu ustawy z dnia 8 marca 2013 r. o przeciwdzialaniu nadmiernym opoznieniom w transakcjach handlowych.
+[PATCH v3 2/2] net/mana: add hardware TSO support
 
-Ta wiadomosc wraz z zalacznikami jest przeznaczona dla okreslonego adresata i moze zawierac informacje poufne. W razie przypadkowego otrzymania tej wiadomosci, prosimy o powiadomienie nadawcy oraz trwale jej usuniecie; jakiekolwiek przegladanie lub rozpowszechnianie jest zabronione.
-This e-mail and any attachments may contain confidential material for the sole use of the intended recipient(s). If you are not the intended recipient, please contact the sender and delete all copies; any review or distribution by others is strictly prohibited.
+Info: l4_len is not validated. tcp_hdr->cksum is written at
+l2_len + l3_len + 16, so with l4_len < 20 the write can land past
+data_len, and SGE0 would split the TCP header. Cheap to reject:
 
+	if (unlikely(m_pkt->l4_len < sizeof(struct rte_tcp_hdr) ||
+		     m_pkt->data_len < gso_hs ||
+		     gso_hs > UINT8_MAX)) {
+
+Info: total TSO length is not bounded. pkt_len can exceed 64K with
+a long chain. If the hardware has a limit on TSO payload, check
+pkt_len - gso_hs against it and drop.
+
+Info: the header fixups (IPv4 total_length/hdr_checksum, IPv6
+payload_len, TCP cksum) write into packet data from tx_burst. An
+application holding a reference to the mbuf (e.g. for retransmit)
+sees the modified headers. tx_pkt_prepare is the ethdev hook for
+this; the existing checksum path already does the same thing, so
+not a blocker for this series.
+
+Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
