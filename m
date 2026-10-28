@@ -2,51 +2,53 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BEE606A31C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Oct 2026 13:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0BF606A31F
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Oct 2026 13:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=hwulq55b
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=g2WIhlux
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1C3F9402EE;
-	Wed, 28 Oct 2026 14:24:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1AF184064F;
+	Wed, 28 Oct 2026 14:24:03 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTPS id A8835402E0;
- Wed, 28 Oct 2026 14:23:57 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 5AD9B4064E;
+ Wed, 28 Oct 2026 14:24:01 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793193838; x=1824729838;
+ t=1793193841; x=1824729841;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=UBBtas6qRkM3eaCen7+cKol3mqmK+KPNCm2kXzODHNQ=;
- b=hwulq55bWYT6SjsQb/hCtUDJx8Iyout41yiyBBbo2DQ17LOjgBiwuWkC
- HRGJ3ba8mOEvV7qhmsYpvXCv8Jq2m5Z0DzH2ekX7vFXeNyCRQd5jpDBbV
- Qij1X1vCqgLAOa8LIb1CTf3lyIrMnbjb5a6y6cetlwdgfqkCpVc7upLH0
- PlVBeNu09ws5tB/e+T2fo3IkoHzoiQcLRmiadfnwTrCozv6P6EKX6f6qo
- aqL+lIzVZqEwNDjBD4spoti7yTqdHoDO00pALutBr9eSBmoKmuDrympNm
- PmJ2vJ57BvlQw5OCh7Hw/tCd+iugYvyifoItAX5VfrZW5+RbbmYjRSRxr A==;
-X-CSE-ConnectionGUID: ho0wUdskQ4+B/j0+CXx/2g==
-X-CSE-MsgGUID: nSFXIJyqQnO7Lbdrks14PQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11949"; a="1917434"
+ bh=FMjS97OjZhptiXjwXyM3w1h1usATUUe0QpmGaGKcORA=;
+ b=g2WIhlux8XT0WxB5WVp4DZ2qiUN8jh7KxXhwCLzmRJajmTqjpk7jJhRL
+ pDrbAC9KhfOMXixexOqwKF4PQ+yPnkPH2uxzItPskbXwn6NXSf9VCQaaE
+ +pGn+Unwp8dR91CKnWBF9XnuVM+VXcp+aJOKspYmNF1Fgkf7TZU94oDDT
+ sg4PnawWFFF+/OprSKttYycfKgA9iqyugBDv9G/tzkGqCZTcW3qnkwHdG
+ E4gVvcuHFsZJDG8POQPstIPwb94rXHiQjV0lhG+CVQOCt39aP86Q6MjNh
+ 2iHnu5eAXUkyFSqFYC9cUuoyQv1hOtT65mb19xgocJM7mlYWI+QEjprgK Q==;
+X-CSE-ConnectionGUID: /+s4ds0PQsyNDz1BQzmhWA==
+X-CSE-MsgGUID: x69sEH7dTAqChdTPFCSdpA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11949"; a="1917436"
 X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
-   d="scan'208";a="1917434"
+   d="scan'208";a="1917436"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Oct 2026 06:23:57 -0700
-X-CSE-ConnectionGUID: 9pYcd6daRV2Kjoh9Q9xjjg==
-X-CSE-MsgGUID: D0CoRa8sS3qNnJKXTa+4Yw==
+ 28 Oct 2026 06:24:01 -0700
+X-CSE-ConnectionGUID: CXc53eH4QJeD/d3qkkDA+g==
+X-CSE-MsgGUID: SHzIVrQbSK6L61nyj7jSaw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
-   d="scan'208";a="4778806"
+   d="scan'208";a="4778825"
 Received: from mtldev4.igk.intel.com ([10.123.233.187])
- by orviesa003.jf.intel.com with ESMTP; 28 Oct 2026 06:23:56 -0700
+ by orviesa003.jf.intel.com with ESMTP; 28 Oct 2026 06:23:59 -0700
 From: Dawid Wesierski <dawid.wesierski@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
  soumyadeep.hore@intel.com, grzegorz.nitka@intel.com,
- marek.kasiewicz@intel.com, stable@dpdk.org
-Subject: [PATCH 1/2] net/ice: fix TxPP launch time encoding
-Date: Wed, 28 Oct 2026 13:24:33 +0000
-Message-ID: <20261028132435.2113321-2-dawid.wesierski@intel.com>
+ marek.kasiewicz@intel.com, stable@dpdk.org,
+ Michal Michalik <michal.michalik@intel.com>,
+ Ian Stokes <ian.stokes@intel.com>
+Subject: [PATCH 2/2] net/ice/base: fix E830 PHY timer command
+Date: Wed, 28 Oct 2026 13:24:34 +0000
+Message-ID: <20261028132435.2113321-3-dawid.wesierski@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261028132435.2113321-1-dawid.wesierski@intel.com>
 References: <20261028132435.2113321-1-dawid.wesierski@intel.com>
@@ -70,55 +72,94 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The Tx time descriptor holds the launch time in a 19-bit field, in
-units of 128 ns. The hardware compares it with the low 19 bits of the
-PHC time in the same units, so the field wraps every 2^19 * 128 ns
-(about 67.1 ms).
+ice_ptp_tmr_cmd() prepares the source timer, then the PHY ports, and
+then starts the command with a write to GLTSYN_CMD_SYNC. For E830,
+ice_ptp_port_cmd_e830() writes the command to E830_ETH_GLTSYN_CMD with
+a sideband queue message. E810 and E830 have no sideband queue, so the
+message goes to firmware on the admin queue as a neighbor device
+request. The firmware rejects it with ICE_ERR_AQ_ERROR (-100).
 
-ice_write_ts_desc() takes the launch time modulo one second before
-the shift. One second is 7812500 units of 128 ns, and that is not a
-multiple of 2^19. Thus in second k of the PHC, the encoded value is
-k * 51820 units (k * 6.63 ms) after the launch time, modulo 67.1 ms.
-At each second boundary, the launch time that the hardware sees moves
-6.63 ms later. The error goes through the full 67.1 ms range every
-10.1 s. In half of that time it is more than half of the range, and
-the queued packets look late.
+E830 has an internal PHY, and its port timers follow the source timer.
+On E830, ice_ptp_init_time() and ice_ptp_write_incval() write only the
+source timer, and ice_ptp_adj_clock() prepares no PHY adjustment.
+Also, E830_ETH_GLTSYN_CMD (0x00088814) is the address of
+GLTSYN_CMD_SYNC, and the only command that gets to this function,
+ADJ_TIME (0x04), leaves the SYNC field of that register at 0.
 
-The result is a pacing fault that comes and goes: the queue holds
-packets too long, or sends them at line rate. Because the phase
-depends on the absolute PHC time, some runs start in the bad half of
-the cycle and some do not.
+Do not prepare a port command on E830, and remove the unused
+function and register define.
 
-Encode the full launch time, and let FIELD_PREP() keep the low 19
-bits.
+Before commit f9767f70cb73 ("net/ice/base: fix adjust timer
+programming for E830"), ice_ptp_adj_clock() returned early on E830,
+and nothing called ice_ptp_port_cmd_e830(). Since that commit,
+each rte_eth_timesync_adjust_time() with a delta in the 32-bit range
+fails with "PTP adj clock failed, err -100", and the PHC does not
+change. A PTP client then cannot discipline the clock.
 
-On E830, with one ST 2110-20 video stream on a 1024-entry Tx ring,
-6 of 13 runs lost pacing with the modulo encoding. With this patch,
-32 of 32 runs paced correctly, with burst sizes of 1, 4 and 16.
-
-Fixes: 0b6ff09a1f19 ("net/intel: support Tx packet pacing for E830")
+Fixes: 881169950d80 ("net/ice/base: implement initial PTP support for E830")
+Fixes: f9767f70cb73 ("net/ice/base: fix adjust timer programming for E830")
 Cc: stable@dpdk.org
 
 Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
 Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
 ---
- drivers/net/intel/ice/ice_rxtx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/intel/ice/base/ice_ptp_hw.c | 22 ++--------------------
+ drivers/net/intel/ice/base/ice_ptp_hw.h |  2 --
+ 2 files changed, 2 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 6f19e070ee..7c299618c5 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -3095,7 +3095,8 @@ ice_write_ts_desc(struct ci_tx_queue *txq,
- 		  uint16_t ts_id)
- {
- 	uint64_t txtime = *RTE_MBUF_DYNFIELD(tx_pkt, txq->tsq->ts_offset, uint64_t *);
--	uint32_t tstamp = (uint32_t)(txtime % NS_PER_S) >> ICE_TXTIME_CTX_RESOLUTION_128NS;
-+	/* The hardware compares the low 19 bits of PHC time in 128ns units. */
-+	uint32_t tstamp = (uint32_t)(txtime >> ICE_TXTIME_CTX_RESOLUTION_128NS);
- 	const uint32_t desc_tx_id = (tx_id == 0) ? txq->nb_tx_desc : tx_id;
- 	__le32 ts_desc = rte_cpu_to_le_32(FIELD_PREP(ICE_TXTIME_TX_DESC_IDX_M, desc_tx_id) |
- 			FIELD_PREP(ICE_TXTIME_STAMP_M, tstamp));
+diff --git a/drivers/net/intel/ice/base/ice_ptp_hw.c b/drivers/net/intel/ice/base/ice_ptp_hw.c
+index 5688f969ce..84b2486c49 100644
+--- a/drivers/net/intel/ice/base/ice_ptp_hw.c
++++ b/drivers/net/intel/ice/base/ice_ptp_hw.c
+@@ -5612,25 +5612,6 @@ ice_ptp_write_direct_phc_time_e830(struct ice_hw *hw, u64 time)
+ 	return 0;
+ }
+ 
+-/**
+- * ice_ptp_port_cmd_e830 - Prepare all external PHYs for a timer command
+- * @hw: pointer to HW struct
+- * @cmd: Command to be sent to the port
+- * @lock_sbq: true if the sideband queue lock must be acquired
+- *
+- * Prepare the external PHYs connected to this device for a timer sync
+- * command.
+- */
+-static int
+-ice_ptp_port_cmd_e830(struct ice_hw *hw, enum ice_ptp_tmr_cmd cmd,
+-		      bool lock_sbq)
+-{
+-	u32 val = ice_ptp_tmr_cmd_to_port_reg(hw, cmd);
+-
+-	return ice_write_phy_reg_e810_lp(hw, E830_ETH_GLTSYN_CMD, val,
+-					   lock_sbq);
+-}
+-
+ /**
+  * ice_read_phy_tstamp_e830 - Read a PHY timestamp out of the external PHY
+  * @hw: pointer to the HW struct
+@@ -5881,7 +5862,8 @@ static int ice_ptp_port_cmd(struct ice_hw *hw, enum ice_ptp_tmr_cmd cmd,
+ 	/* PHY models which can program all ports simultaneously */
+ 	switch (hw->phy_model) {
+ 	case ICE_PHY_E830:
+-		return ice_ptp_port_cmd_e830(hw, cmd, lock_sbq);
++		/* The internal PHY follows the source timer command */
++		return 0;
+ 	case ICE_PHY_E810:
+ 		return ice_ptp_port_cmd_e810(hw, cmd, lock_sbq);
+ 	default:
+diff --git a/drivers/net/intel/ice/base/ice_ptp_hw.h b/drivers/net/intel/ice/base/ice_ptp_hw.h
+index 534e05a8dd..31cbcc39d0 100644
+--- a/drivers/net/intel/ice/base/ice_ptp_hw.h
++++ b/drivers/net/intel/ice/base/ice_ptp_hw.h
+@@ -617,8 +617,6 @@ ice_get_base_incval(struct ice_hw *hw, enum ice_src_tmr_mode src_tmr_mode)
+ 
+ /* E810 timer command register */
+ #define E810_ETH_GLTSYN_CMD		0x03000344
+-/* E830 timer command register */
+-#define E830_ETH_GLTSYN_CMD		0x00088814
+ 
+ /* Source timer incval macros */
+ #define INCVAL_HIGH_M			0xFF
 -- 
 2.43.0
 
