@@ -2,73 +2,74 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A1D606A31E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Oct 2026 14:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298B2606A31A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Oct 2026 14:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=pM8Zj945
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=VYD3mwic
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 600CD4067B;
-	Wed, 28 Oct 2026 15:17:59 +0100 (CET)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTPS id 6C4FD402DC
- for <dev@dpdk.org>; Wed, 28 Oct 2026 15:17:56 +0100 (CET)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-2e9f6a16aedso6693325ad.2
- for <dev@dpdk.org>; Wed, 28 Oct 2026 07:17:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A15440611;
+	Wed, 28 Oct 2026 15:18:03 +0100 (CET)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTPS id 89F26402DC
+ for <dev@dpdk.org>; Wed, 28 Oct 2026 15:17:57 +0100 (CET)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-2e60f9af6e6so8377955ad.3
+ for <dev@dpdk.org>; Wed, 28 Oct 2026 07:17:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793197075;
- x=1793801875; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793197076;
+ x=1793801876; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=5xRXofaK7NSJa7qVEpbGkynT4mf7M/fYWWFAMXXcv5g=;
- b=pM8Zj945qNaLNNCBjo1JnyknMuul2qOEUIVAuZWF/vy9BXSn8/gWsB9E1boLXY0q7R
- 617IDESQIseys0gY0LoulOsXjQKIwHJsiiSoy7ShGq7Y2vaDDQ8w0WlQdaj7l9T/QGgM
- +Dk9Y8q5vW0JF/y5Yn9XiJe4UEsKaVefL5PTAvVI5a0kBKltoedMStqJIBtzklN0xjyw
- obAk7ZVJorpnLFWL5nxsw8Gs/GmzdTC6D7CxIzzlIZLKu8hzwBH6gllXKCSkrIc2zVs8
- heWQYczTb5avO4Hos/D0IE4JazKN1+7vkp6/mWU/AkKkBQhdK3APDTpcAtjz/edsLnHv
- xhbg==
+ bh=JLDdbdHzjosSGNO199R2scIwXBBHNFU1zqk2xqakWoA=;
+ b=VYD3mwicDpahL1FmiA6HNUvSS01mWbPAonVMs1XA8aAdDH+Yx8Y8+gn2VckR86rLLk
+ JobWa0qZB0L5mdRwvY9VYckgn/7MMFYyj9HQfw/NZrZgPoqq2a0uoOjggajHviixg2/+
+ iRfWzV9VFA5PNuOmez60pURW0zCMfeBTEEsQOn53qsFIOlF5dLo6OQBowKwuZhB5O9I4
+ 5rl2X6onofCre3WYHgozgynYFjCDyUSIA7dC2ukagFVenL0XGPW66Gd0UNZlfK3zBfOH
+ FHbZcMpgg8NBy6CyIWl16Na8sZLNVJt40tt6i11IM1y0otUwV++jnq4QSDJy2dILd/fh
+ OyLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793197075; x=1793801875;
+ d=1e100.net; s=20260707; t=1793197076; x=1793801876;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=5xRXofaK7NSJa7qVEpbGkynT4mf7M/fYWWFAMXXcv5g=;
- b=O28jzl5PBzcriDriGuTcdSHxn0CPj7d4atll+AhrjJHEzlfBRKzVE39/iM1gmOngmF
- sXempgJ8t3Vs10xZqixIjxsG5aQa9tjBDdv3FYtHktLJ8Memhd8Am5eDktW7I0KxzNMn
- bax2fAnV8qK51ZoMEPtYboYJ22Cj0MFoaXr23h20l0pe52W0yoaWa2n3/sb2EhxIxV9/
- GCLNlzc5fSN/gtcPtlbPWFqsyHi0rGeV1hj1bFf4Ut9PY4OOMeBTJTSwGLaMqgkRA8gH
- ZPiyYP1NWeWZXKBPjmZm0Zl7hWF8FL5Kbk/Hwr7yp/Lyjt9zlgV5hwbHHSBb7KVXbggj
- BKCw==
-X-Gm-Message-State: AFq9FYJn2r6FX0ebEAqf0DlRyigi8C8KYe84HWR0HFs+XyP/novN6l9B
- PQJp75Fs2X9Z8n/zACSdpjYbmIChEs5VXxperasUBa70HHzd5/d9ChyQU84AfGSEaZLxnE854sn
- 6o73fTds=
-X-Gm-Gg: AYBFou0ev+Qh0wC6lxAKZsxAU4ApCeJ9ElEjHeVG+gscLxd318xHB32sV8qaXgjn7YM
- bnN4JQGmPmW8pNfaYY4Rt8F6y93aviPPm6C8Wn4w0u7kQkm28pdQSVBGI+pCIdbl9aFJWLgPs6T
- xRl5uJfTA8WefMSlXE37h3doq34/ZaxD5RMQV1J8sNRCbQJ/NzFIyi58/JXgqyZafrv6C13c3y7
- v7xE9gAUJnLOu44XnoqVbSMtr2FevM7HUZeA9W3IJfaD/n5kZjPf3TTV4SE1y0B+iDamqDHTSKh
- YxHqJUupYNJSKoNKv/tjw6Fnh0K5xX5qBOeljL6Qo8eyQAkEGukVDig+wlNkzGJGoJCWbPLcGAb
- ojTG1CU9Jp7DuA2Gn6V5EK0In/o8hBBOZVMnbHziCgi5zo+q/C5mueaSlWYrJ92oRY2e7rRQqWV
- ueCmu0IuTY2fJxSE82Z96M+6CXpsi6G/WyM1BOXAgOr+Y2vDw0FkUVYC4f+3DtOrTqN8hzsGVUj
- 3lVFk7QfcV+GjLVFGrlVuznMYYkUw49kUS2lK/FHEpxe8g0Gd7doQRBHcdxUW1rzguOwUBMaAr4
- jBSxivJ94uhXn0vCy3tbSOUn2UuOd97uGzexvI1EtWGP/a7FdUeqvjKN7Hv41z8ttn14
-X-Received: by 2002:a17:902:d50a:b0:2ea:1016:27fb with SMTP id
- d9443c01a7336-2eb003ffe7dmr23407825ad.13.1793197074933; 
- Wed, 28 Oct 2026 07:17:54 -0700 (PDT)
+ bh=JLDdbdHzjosSGNO199R2scIwXBBHNFU1zqk2xqakWoA=;
+ b=0siFXPfsAbSAmtU1SDvz/vEJ6rcUPE+JQfalozHldTLPGfL5Zz8OQXT3hnaPmb5myj
+ MkRiU2rhPHdUqKYIA20VW+BBYHRktmy6BCAt/y0qxmDlHDVvqU3BOBgarIfinIiZMHCN
+ xlOxn86MjssJlmFC0fEOgegRRyDAdF3fKikiDLvghMtLF4ciRXm92JxLEbocIL60jD4V
+ 6QK78aMNrvo7ppALmHd3fAvNb6cXagN6vi84YbwDRm/Kg6lnMA9Bme+vvTgguBLdqRGc
+ 45NGS36Jzq/fJEUU83Jmas6qtI50NuUXtuPasE3DuobwRqzKL4l+GMbZZH2ZiYOppj/o
+ JO2Q==
+X-Gm-Message-State: AFq9FYJmKfA7vy3OzxugINYfjvBppKI3JJzupmUgVjV5QWyfMzBcXcWl
+ kkOAeWDOQ6LPjqKWBbuIzhozJe6ESllDN0iLZDnZLqCqt6joDMaBjl9JHQ5767U3zfE4Xx/Ocih
+ kVQDcPFU=
+X-Gm-Gg: AYBFou1z2Rl/4VL4OMsUFtJNBEhrvxNCgwZWyKOCZ3GSpT7uSXM40kHiLtN+4DyXJi+
+ yjImdOBdjF3Kd3Oxvkrgz9LkpauSPtjmAPz+I1bYCxjEVN5vK9XzJiuYGdg9jZ236j81zDQfiGd
+ cWnYmltXjcwS5ypHob/NnM6nIBsdpNk9BD8Iv/6c7hJKlrZnPGQSEBnawrKU+o8kH51zW+WL8px
+ our9rNDcllc4BhEZgoW/GWvBy3abO10JzZFof0GHyA61o4fc4GpVesONSgdHmCm0goquahPNAba
+ mTR9GcinQjaQzg8Csu9XkJjI8F455LSSwKVdcUK2qd8PI00DQXoZEKyXmEzY0Siutky/7qeo6du
+ dZqqNLdoEJUNlfW96mYTfpTv7tuxNWQwySt6wrcHemwLoFntrfIBiP9JIcCaCRJQz8YxbiHPb3v
+ W6IX3qrrPowwEfJx3ph9o1gBC11Zp3Q9On0zYDvNOsalQTvdFmQ10wzpOjlDFmgjsqOO8muHPOO
+ 358u2FF6O2PLxE+3Pc4PgnwxoerK/LwlVjSskZ5sTohboslPMrnIJ79fiUl298g1DynlGSqIcL+
+ 5Jej/vHSsjJP/asp/d/HYSsBI3ouJ0PkyG8OhC5Kajx6c9wE9+q/Nk2l6LDBoM0QxGqgu/L8s7o
+ Pm0wDij2R6Ur2Gg==
+X-Received: by 2002:a17:902:d987:b0:2e9:3dd0:c8d with SMTP id
+ d9443c01a7336-2eb0051d0damr25128505ad.14.1793197075980; 
+ Wed, 28 Oct 2026 07:17:55 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2eae6c3b67bsm22182415ad.52.2026.10.28.07.17.54
+ d9443c01a7336-2eae6c3b67bsm22182415ad.52.2026.10.28.07.17.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 28 Oct 2026 07:17:54 -0700 (PDT)
+ Wed, 28 Oct 2026 07:17:55 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Reshma Pattan <reshma.pattan@intel.com>, Ori Kam <orika@nvidia.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH 3/4] pdump: skip hairpin queues
-Date: Wed, 28 Oct 2026 07:16:52 -0700
-Message-ID: <20261028141750.310963-4-stephen@networkplumber.org>
+ Reshma Pattan <reshma.pattan@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH 4/4] pdump: undo partial enable on failure
+Date: Wed, 28 Oct 2026 07:16:53 -0700
+Message-ID: <20261028141750.310963-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261028141750.310963-1-stephen@networkplumber.org>
 References: <20261028141750.310963-1-stephen@networkplumber.org>
@@ -91,68 +92,221 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-When capturing on all queues, pdump walks nb_rx_queues and
-nb_tx_queues, which include hairpin queues. Adding a Tx callback
-to a hairpin queue fails, so capture could not be enabled on any
-port with hairpin queues configured.
+If enabling capture failed partway, the callbacks already installed
+were left in place. They still reference the ring and mempool of the
+client that requested capture, and every later enable on that port
+fails with EEXIST until the application is restarted.
 
-Skip hairpin queues when capturing all queues, and reject an
-explicit request for a hairpin queue.
+Remove callbacks installed by the failed request, on the failing
+direction and on Rx when Tx fails. Also release the BPF filter on
+the error paths.
 
-Fixes: cf5516696d77 ("ethdev: add hairpin queue")
+Fixes: 278f945402c5 ("pdump: add new library for packet capture")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pdump/rte_pdump.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ lib/pdump/rte_pdump.c | 91 ++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 72 insertions(+), 19 deletions(-)
 
 diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
-index 9c368bcfd7..3261876d29 100644
+index 3261876d29..644c6bee68 100644
 --- a/lib/pdump/rte_pdump.c
 +++ b/lib/pdump/rte_pdump.c
-@@ -8,6 +8,7 @@
- #include <rte_alarm.h>
- #include <rte_mbuf.h>
- #include <rte_ethdev.h>
-+#include <ethdev_driver.h>
- #include <rte_lcore.h>
- #include <rte_log.h>
- #include <rte_memzone.h>
-@@ -263,6 +264,16 @@ pdump_register_rx_callbacks(enum pdump_version ver,
- 	for (; qid < end_q; qid++) {
+@@ -251,6 +251,39 @@ pdump_tx(uint16_t port, uint16_t queue,
+ }
+ 
+ 
++/* Remove callbacks on queues [first, last) after a failed enable */
++static void
++pdump_unwind_rx_callbacks(uint16_t port, uint16_t first, uint16_t last)
++{
++	uint16_t qid;
++
++	for (qid = first; qid < last; qid++) {
++		struct pdump_rxtx_cbs *cbs = &rx_cbs[port][qid];
++
++		if (cbs->cb == NULL)
++			continue;
++		rte_eth_remove_rx_callback(port, qid, cbs->cb);
++		pdump_cb_wait(cbs);
++		cbs->cb = NULL;
++	}
++}
++
++static void
++pdump_unwind_tx_callbacks(uint16_t port, uint16_t first, uint16_t last)
++{
++	uint16_t qid;
++
++	for (qid = first; qid < last; qid++) {
++		struct pdump_rxtx_cbs *cbs = &tx_cbs[port][qid];
++
++		if (cbs->cb == NULL)
++			continue;
++		rte_eth_remove_tx_callback(port, qid, cbs->cb);
++		pdump_cb_wait(cbs);
++		cbs->cb = NULL;
++	}
++}
++
+ static int
+ pdump_register_rx_callbacks(enum pdump_version ver,
+ 			    uint16_t end_q, uint16_t port, uint16_t queue,
+@@ -258,10 +291,11 @@ pdump_register_rx_callbacks(enum pdump_version ver,
+ 			    struct rte_bpf *filter,
+ 			    uint16_t operation, uint32_t snaplen)
+ {
+-	uint16_t qid;
++	uint16_t first, qid;
++	int ret;
+ 
+-	qid = (queue == RTE_PDUMP_ALL_QUEUES) ? 0 : queue;
+-	for (; qid < end_q; qid++) {
++	first = (queue == RTE_PDUMP_ALL_QUEUES) ? 0 : queue;
++	for (qid = first; qid < end_q; qid++) {
  		struct pdump_rxtx_cbs *cbs = &rx_cbs[port][qid];
  
-+		/* hairpin queues do not pass through rx burst */
-+		if (rte_eth_dev_is_rx_hairpin_queue(&rte_eth_devices[port], qid)) {
-+			if (queue == RTE_PDUMP_ALL_QUEUES)
-+				continue;
-+			PDUMP_LOG_LINE(ERR,
-+				"cannot capture on hairpin rx queue port=%d queue=%d",
-+				port, qid);
-+			return -EINVAL;
-+		}
-+
- 		if (operation == ENABLE) {
- 			if (cbs->cb) {
+ 		/* hairpin queues do not pass through rx burst */
+@@ -279,6 +313,7 @@ pdump_register_rx_callbacks(enum pdump_version ver,
  				PDUMP_LOG_LINE(ERR,
-@@ -325,6 +336,16 @@ pdump_register_tx_callbacks(enum pdump_version ver,
- 	for (; qid < end_q; qid++) {
+ 					"rx callback for port=%d queue=%d, already exists",
+ 					port, qid);
++				pdump_unwind_rx_callbacks(port, first, qid);
+ 				return -EEXIST;
+ 			}
+ 			cbs->use_count = 0;
+@@ -294,13 +329,13 @@ pdump_register_rx_callbacks(enum pdump_version ver,
+ 				PDUMP_LOG_LINE(ERR,
+ 					"failed to add rx callback, errno=%d",
+ 					rte_errno);
+-				return -rte_errno;
++				ret = -rte_errno;
++				pdump_unwind_rx_callbacks(port, first, qid);
++				return ret;
+ 			}
+ 
+ 			memset(&pdump_stats->rx[port][qid], 0, sizeof(struct rte_pdump_stats));
+ 		} else if (operation == DISABLE) {
+-			int ret;
+-
+ 			if (cbs->cb == NULL) {
+ 				PDUMP_LOG_LINE(ERR,
+ 					"no existing rx callback for port=%d queue=%d",
+@@ -330,10 +365,11 @@ pdump_register_tx_callbacks(enum pdump_version ver,
+ 			    uint16_t operation, uint32_t snaplen)
+ {
+ 
+-	uint16_t qid;
++	uint16_t first, qid;
++	int ret;
+ 
+-	qid = (queue == RTE_PDUMP_ALL_QUEUES) ? 0 : queue;
+-	for (; qid < end_q; qid++) {
++	first = (queue == RTE_PDUMP_ALL_QUEUES) ? 0 : queue;
++	for (qid = first; qid < end_q; qid++) {
  		struct pdump_rxtx_cbs *cbs = &tx_cbs[port][qid];
  
-+		/* hairpin queues do not pass through tx burst */
-+		if (rte_eth_dev_is_tx_hairpin_queue(&rte_eth_devices[port], qid)) {
-+			if (queue == RTE_PDUMP_ALL_QUEUES)
-+				continue;
-+			PDUMP_LOG_LINE(ERR,
-+				"cannot capture on hairpin tx queue port=%d queue=%d",
-+				port, qid);
-+			return -EINVAL;
-+		}
-+
- 		if (operation == ENABLE) {
- 			if (cbs->cb) {
+ 		/* hairpin queues do not pass through tx burst */
+@@ -351,6 +387,7 @@ pdump_register_tx_callbacks(enum pdump_version ver,
  				PDUMP_LOG_LINE(ERR,
+ 					"tx callback for port=%d queue=%d, already exists",
+ 					port, qid);
++				pdump_unwind_tx_callbacks(port, first, qid);
+ 				return -EEXIST;
+ 			}
+ 			cbs->use_count = 0;
+@@ -366,12 +403,12 @@ pdump_register_tx_callbacks(enum pdump_version ver,
+ 				PDUMP_LOG_LINE(ERR,
+ 					"failed to add tx callback, errno=%d",
+ 					rte_errno);
+-				return -rte_errno;
++				ret = -rte_errno;
++				pdump_unwind_tx_callbacks(port, first, qid);
++				return ret;
+ 			}
+ 			memset(&pdump_stats->tx[port][qid], 0, sizeof(struct rte_pdump_stats));
+ 		} else if (operation == DISABLE) {
+-			int ret;
+-
+ 			if (cbs->cb == NULL) {
+ 				PDUMP_LOG_LINE(ERR,
+ 					"no existing tx callback for port=%d queue=%d",
+@@ -440,7 +477,8 @@ set_pdump_rxtx_cbs(const struct pdump_request *p)
+ 		PDUMP_LOG_LINE(ERR,
+ 			  "failed to get port id for device id=%s",
+ 			  p->device);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto free_filter;
+ 	}
+ 
+ 	/* validation if packet capture is for all queues */
+@@ -452,7 +490,7 @@ set_pdump_rxtx_cbs(const struct pdump_request *p)
+ 			PDUMP_LOG_LINE(ERR,
+ 				"Error during getting device (port %u) info: %s",
+ 				port, strerror(-ret));
+-			return ret;
++			goto free_filter;
+ 		}
+ 
+ 		nb_rx_q = dev_info.nb_rx_queues;
+@@ -460,18 +498,21 @@ set_pdump_rxtx_cbs(const struct pdump_request *p)
+ 		if (nb_rx_q == 0 && flags & RTE_PDUMP_FLAG_RX) {
+ 			PDUMP_LOG_LINE(ERR,
+ 				"number of rx queues cannot be 0");
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto free_filter;
+ 		}
+ 		if (nb_tx_q == 0 && flags & RTE_PDUMP_FLAG_TX) {
+ 			PDUMP_LOG_LINE(ERR,
+ 				"number of tx queues cannot be 0");
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto free_filter;
+ 		}
+ 		if ((nb_tx_q == 0 || nb_rx_q == 0) &&
+ 			flags == RTE_PDUMP_FLAG_RXTX) {
+ 			PDUMP_LOG_LINE(ERR,
+ 				"both tx&rx queues must be non zero");
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto free_filter;
+ 		}
+ 	}
+ 
+@@ -482,7 +523,7 @@ set_pdump_rxtx_cbs(const struct pdump_request *p)
+ 						  ring, mp, filter,
+ 						  operation, p->snaplen);
+ 		if (ret < 0)
+-			return ret;
++			goto free_filter;
+ 	}
+ 
+ 	/* register TX callback */
+@@ -492,8 +533,20 @@ set_pdump_rxtx_cbs(const struct pdump_request *p)
+ 						  ring, mp, filter,
+ 						  operation, p->snaplen);
+ 		if (ret < 0)
+-			return ret;
++			goto unwind_rx;
++	}
++
++	return 0;
++
++unwind_rx:
++	if (operation == ENABLE && (flags & RTE_PDUMP_FLAG_RX)) {
++		end_q = (queue == RTE_PDUMP_ALL_QUEUES) ? nb_rx_q : queue + 1;
++		pdump_unwind_rx_callbacks(port,
++			(queue == RTE_PDUMP_ALL_QUEUES) ? 0 : queue, end_q);
+ 	}
++free_filter:
++	if (filter != NULL)
++		rte_bpf_destroy(filter);
+ 
+ 	return ret;
+ }
 -- 
 2.53.0
 
