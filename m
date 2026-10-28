@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8D6606A31C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Oct 2026 10:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6267C606A31D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Oct 2026 10:41:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 07334406A2;
-	Wed, 28 Oct 2026 11:40:24 +0100 (CET)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
- by mails.dpdk.org (Postfix) with ESMTPS id 8068E406FF;
- Wed, 28 Oct 2026 11:40:15 +0100 (CET)
-X-QQ-mid: esmtpgz13t1793184009t11b3b3c5
-X-QQ-Originating-IP: KZlT44Roksc3LTCMyQ5rN/meiXjiG7Qu4dIHF3Jp7zU=
+	by mails.dpdk.org (Postfix) with ESMTP id 192A740A6D;
+	Wed, 28 Oct 2026 11:40:26 +0100 (CET)
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+ by mails.dpdk.org (Postfix) with ESMTPS id 9DEB440613;
+ Wed, 28 Oct 2026 11:40:17 +0100 (CET)
+X-QQ-mid: esmtpgz13t1793184014t131fa74c
+X-QQ-Originating-IP: 4hY4ttu0S0h75mbBuo1tXm/2lBPwSRLjFFUw9apuAjk=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.251.223])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 28 Oct 2026 18:40:08 +0800 (CST)
+ id ; Wed, 28 Oct 2026 18:40:12 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7342653453248070877
+X-BIZMAIL-ID: 18200269728715611971
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v13 05/17] net/txgbe: do not force reconfig on link retry
-Date: Wed, 28 Oct 2026 18:33:54 +0800
-Message-ID: <5B6566703762811E+20261028103913.10188-6-zaiyuwang@trustnetic.com>
+Subject: [PATCH v13 07/17] net/txgbe: fix link speed display info for 10G mode
+Date: Wed, 28 Oct 2026 18:33:56 +0800
+Message-ID: <9539EE11BBFF478F+20261028103913.10188-8-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261028103913.10188-1-zaiyuwang@trustnetic.com>
 References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -35,24 +35,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MOfwHzgDpc8IqXj7UhWFvsY1ZvbECvMdYSVVa9rP8At9Rt7PTZ9fB5FU
- SMBuScDfNdZUAGNlL4jmCkRENIdqem//8JoLRrQs/0ZtAI73xaGh2S9BSTTLYW+xQmL8ORM
- fvSGIRliglgcQCXsG8ieIGtkIAYpDc0ScRKGfbdxds4Ax2AXzFGjgEpsvIkE5bHmkLf2aPZ
- iFDiAcNZ8f7b+nXr93rlKqvMQgD6L8HjxIJad4rJO9moJXviPZmzjAadYD4M4URLl+CutFV
- 1PQe841ZG0BQl2S014PifdfPCyxUXyeAu+9Fkfi57aV6fVJkGeSiGfXp+cpb8IcyuafQjDn
- KK0xxqhIkzSt30+b5p41GZj9Srs/X2Nst9ReIMR0oBIZ4/4bKqpxHBC1IPrQ+b8jmvDPspJ
- BAjJrmm9WYcvk5PMwfKHqpbqTQi+PfznG86PMiIZbVcYzKCjYwAqRLFirr2xefaScSCAlhb
- 8muPc5khZLtfoO35lrPzDGXzV8pkEWR5qdnFgqUuiUp/2et8JUdf9bFRgTel8cdIgGBQg0s
- Gq5wGfcCbB/mXn9jKlzacwvYqhF8TvTBFZTLNlvsTCuBKMg1HsYvzx9s4yYT/cZT+1bUZNM
- pgfPZYkhnWavKLM3NGe1Jz3xlNIMmXrV+Kj0mufH2sQC+hHzHGovdq8wFyRFGqbXQQuUVCH
- J5zyDJuo1o1GtR/8zWQGbuU2mvPnvlt6RJvqjXTRresJkppXu8xoRzsYdRZYgnP80k5IcT6
- Z+k0MZDxk3aeAJbhPE0zLPi5rHCpaE5nhM6+E3HwgA9abz7q8QbaZ68/wOXGaMnwC2GdU1a
- qYMWW9KBH8peDr8Q9jnd0yO/Gmm0d/EqtzKhH3VguMFyllGNRdAIGITMXrfmlv7xM8PTA0p
- Btx3O4DmCX83ZGcguA8WY8AztQT7TJR5BvOs3UZcMuSQlCo1NBXoP2DtqmVqPl2K472yx/N
- mD550ztu0dCewo36VIgI1gZK1vb+aubODqZEdx3xasyBYU/I2idSPwAYic4gqaZT0rML6dt
- 6tmU3fKW3UVuCxSwvlzKK5l07mH1GXEQJPKsCH5zuswG7Xgzz7c16tZ2E9kWuWFKFZeH54R
- Q==
-X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
+X-QQ-XMAILINFO: NEJQrEAwC9KXgHExtFgMezt/ZLs1VZKMqm384KHPgO/vDEjKryfRfQNl
+ v1vIM2JpqB3lx07dIbUVplkj/iR2HSMR7plz1gsDBbQrqbsLUiJW0Ffs2ydMLW8VBfAOcz8
+ iEuRglE40m/nGUafMMwSvN9rJVLvasvG0FXeaBEjs10LMgUjUh6rzgV8S2IMouFQq9/TSI3
+ Sabsh8W2yl/zXcvGz8L3qn4cQJrP+UDwMf5k1CjHybFQXHkJadOYO/F/32MGK0n+mqgtjXV
+ SLdf/vq1ms1HNcYVOS2i7cX8XCxHpEe/6aK/GVF/w+Pr0b8LtLIcbmyAw3Ab91RjT25UEPY
+ W8WNJuzs3EyyglPmUPJQRWcb8KnPIm69jPqyWaVy4zEG2kmWsU2FK48iopUdiQM5kAHLzHP
+ LwZqXizkAuK7BII5gWNkiWw2W4IuFAhaQBKf/hFOxUHaDxcAeZbJNBnh4IqcO5lIu+DlRba
+ br4g6E/JuwZ8mgo7VBZazgh5hvIrWxHAhrPUjUPXpeK7oWhoUPVLqB1LvrVVRqJXaqJb+1q
+ fegR1KNqi44a6EEObS+Ra5la9/213yavdKVRUHRwzEUqooux7Uid+HSkHFaYRiiX87bl/OZ
+ v8HWzyxCuXRjPF8UmBLN4CSV7jZEz5UfsbAm44yKcTvZrztdRSY/9KbDV6XTXOgc4f2bA+b
+ FKlKu/MpeNDqf8xvoEWGvq6Rdybis120lQGDpCCp+27OrfHCUEuKxCKMVSNtkN/bfi/hLEf
+ nNvArjlNKPO1iYBmDtKkxS74pi2Y/ExmAS0SFzFIUJffw8fN0KEyDiw0TRAmu/UCmdKlWrk
+ u5yQAeK+vAzD7lP5BII7yVlfmFxjWqG6yWILOoAD/5zW+VWvOkW7WZGBHncAw4avrb3KlO7
+ ETbpjYyxzh77GgiBMHD4vzJGLcOU/ZjmfbkagBwAdHRqxACO1cG+Wu5bO/OjggDnw70dOIk
+ EJeCEE47td4/0+Pzzo20SwnnoUBdLw6DpPOzBHoGNaaaIOWHx0EWKso41TIisLBQIRcKGEd
+ lnM7I8AGEc2ujJpi/mAXRyWKnYA773xCt9n1ABNfY4cxBOI6v55h78ubYMwcQ0r16iWDpbv
+ OrFnoB2q4LVaagYbOIydPuj67UigIZVJkyCWBnrTKzzf1XCairun9uDfB1iuFM+vw==
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -70,72 +70,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The link alarm retry calls mac.setup_link() with
-autoneg_wait_to_complete = false. On the AN73/xpcs path, this skips
-reconfiguration once the link is up and AN is complete. Passing true
-from the retry path instead resets an established AN73 link, which
-then drops and may not recover after DAC hot-plug.
+When an AML40 port links up at 10G, DPDK reports the speed as 100M
+instead of 10G. The 10G link status bit is not recognized in
+txgbe_check_mac_link_aml40(), so any non-40G speed falls through to
+the default case (UNKNOWN) which is then reported as 100M.
 
-The setup flag is also passed to txgbe_e56_set_phy_link_mode() as its
-need_restart argument. Passing false unchanged would make a retry a
-no-op while the link is down or AN is incomplete if the PHY is already
-in 10G mode. Pass true there: the early return above already covers an
-established link, so every path that reaches this point needs the
-restart.
+Add the 10G port status bit recognition, so a 10G link is reported
+as 10G.
 
-Fixes: 6104fd11086e ("net/txgbe: fix link stability for 25G NIC")
+Fixes: abf042d32b39 ("net/txgbe: add Amber-Lite 25G/40G NICs")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml.c   | 3 ++-
- drivers/net/txgbe/base/txgbe_aml40.c | 3 ++-
- drivers/net/txgbe/txgbe_ethdev.c     | 2 +-
- 3 files changed, 5 insertions(+), 3 deletions(-)
+ drivers/net/txgbe/base/txgbe_aml40.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
-index ac80d85f08..de4db31cf8 100644
---- a/drivers/net/txgbe/base/txgbe_aml.c
-+++ b/drivers/net/txgbe/base/txgbe_aml.c
-@@ -246,8 +246,9 @@ s32 txgbe_setup_phy_link_aml(struct txgbe_hw *hw,
- 		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
- 		if (link_up && hw->an_done && !autoneg_wait_to_complete)
- 			return status;
-+
- 		rte_spinlock_lock(&hw->phy_lock);
--		txgbe_e56_set_phy_link_mode(hw, speed, autoneg_wait_to_complete);
-+		txgbe_e56_set_phy_link_mode(hw, speed, true);
- 		rte_spinlock_unlock(&hw->phy_lock);
- 		return 0;
- 	}
 diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index 5fa7c6a243..ab7012608f 100644
+index ab7012608f..4b63810b16 100644
 --- a/drivers/net/txgbe/base/txgbe_aml40.c
 +++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -171,8 +171,9 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
- 		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
- 		if (link_up && hw->an_done && !autoneg_wait_to_complete)
- 			return status;
-+
- 		rte_spinlock_lock(&hw->phy_lock);
--		txgbe_e56_set_phy_link_mode(hw, speed, autoneg_wait_to_complete);
-+		txgbe_e56_set_phy_link_mode(hw, speed, true);
- 		rte_spinlock_unlock(&hw->phy_lock);
- 		return status;
+@@ -85,6 +85,9 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
+ 		if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) ==
+ 			TXGBE_CFG_PORT_ST_AML_LINK_40G)
+ 			*speed = TXGBE_LINK_SPEED_40GB_FULL;
++		else if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_10G) ==
++			TXGBE_CFG_PORT_ST_AML_LINK_10G)
++			*speed = TXGBE_LINK_SPEED_10GB_FULL;
+ 	} else {
+ 		*speed = TXGBE_LINK_SPEED_UNKNOWN;
  	}
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index f20e57125d..2f513e20b9 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -3228,7 +3228,7 @@ txgbe_dev_setup_link_alarm_handler_aml(void *param)
- 		return;
- 	}
- 
--	hw->mac.setup_link(hw, speed, true);
-+	hw->mac.setup_link(hw, speed, false);
- 
- 	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
- 	bool link_up = false;
 -- 
 2.55.0.windows.2
 
