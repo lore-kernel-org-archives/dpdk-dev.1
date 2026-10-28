@@ -2,74 +2,73 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99384606A31A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Oct 2026 14:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978F6606A31A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 Oct 2026 14:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=AxL87jiv
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=oizfKAXp
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CFA6740609;
-	Wed, 28 Oct 2026 15:17:57 +0100 (CET)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTPS id 7FA2240151
- for <dev@dpdk.org>; Wed, 28 Oct 2026 15:17:54 +0100 (CET)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-2ea7190aea1so4601815ad.1
- for <dev@dpdk.org>; Wed, 28 Oct 2026 07:17:54 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 83B0140613;
+	Wed, 28 Oct 2026 15:17:58 +0100 (CET)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
+ [209.85.216.43])
+ by mails.dpdk.org (Postfix) with ESMTPS id 624D7402DC
+ for <dev@dpdk.org>; Wed, 28 Oct 2026 15:17:55 +0100 (CET)
+Received: by mail-pj1-f43.google.com with SMTP id
+ 98e67ed59e1d1-3ad787e0593so490882a91.3
+ for <dev@dpdk.org>; Wed, 28 Oct 2026 07:17:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793197073;
- x=1793801873; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793197074;
+ x=1793801874; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=NfNaRxeSiTRk0nNaoduYbA1DIml+FPlns9ZlFhSOlws=;
- b=AxL87jiv/neb2wopFLynYuJkvkqtE1FBmkn5u5IjwN+Ocpxjubc0KssmI1yW4vLpOb
- wv1Ib5W2VMD/6Q2k+iXV5TT2EsY1pLX7I9aIi5JPXOf5Np8VzWZh34FRa+TA7mEqt83F
- 763a737PsooRpsbnOibaG92tkruInJrg13YEo7dR2ai+gjVX/E2f3FhyCtEtbiTIng0O
- OL+P7hBSlQPJSZhxlgzU8EkSnYSpGySAUK6DPMbGOlTBUWjnn1EdRmIpCsM94w8moz+L
- SucGYU4EGRoiSTDAxl3YMlQNwbwnicmqoVfL+535KZk0h1wBgkrbLUCKgH6kiHcGJsaQ
- 2+6Q==
+ bh=JcVwfOjx6FTL0QugL5nsGQEMdHw/febxoYqN846zOtA=;
+ b=oizfKAXplIPukRjxnSknQewlK2R/psnJyVSBneLVDYl2+K3dq1gJ+5RTxh2V6s63bb
+ qVbc4RfWW0d++MoyOa1F0YlxOsb/mdZGtFr1ReCVmifGuuXOEge85d8f5s/lDtZlsd1c
+ o+DAJso04BzG2gYLbwt1+35tzox0ylvEU5U1LHIjRg6+HD3WDEn0sTXOXQQpDX/ffo7i
+ uekXVIiTQSWWAyU6sXznXqctzwQligdFW1+hNCbCdehBZLMskOjA2XFRPjFp5AYOPGpa
+ Tp65UyCZgZO0onTTO2GrX3zUVExuyxDiF3NA+2CJeZYODKXNb/6i1om1uAtrclY7KgD8
+ iJrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793197073; x=1793801873;
+ d=1e100.net; s=20260707; t=1793197074; x=1793801874;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=NfNaRxeSiTRk0nNaoduYbA1DIml+FPlns9ZlFhSOlws=;
- b=R+BpVJJhUOQ3p6cl9umV3Wk9BXKOWvpUXJdQf3hZMNeBE7h+IcFd1jBL4zvTUr5ztc
- bfx/p5329SW3xY5jxHyosWN33BDZ4MnnI+dK89ZOL+D4R2q+kczB1YFlAJ+8K0+dN9lC
- GCKYCdF4FUOiL9roYpYaSK4WFkDZXeQR8xTPobFVlMRRsFr2I3Jx1mQG4DWNqigbWtX6
- xcOAW9/gipgh/DxKCJ1fb/JrbpJML0OiMsvd4WtwXH94+MbWfEla7sjUq8KgToQjmC2M
- Oug64/Z/wEFMMDHRyOgn1pIUgW7vt83KhZlKo5Q07EoK3ZuUAK6vHTtbYblS4hGs0dxS
- KQFw==
-X-Gm-Message-State: AFq9FYJ8UKm1jZpqlmSIQ9KlrlU+HIVflQs1mOL3Vjr/HgTyxI2nvr2L
- /QqADPzSLaC8oBRppV/O2vqDVey3M9qN/kCQGogpw7oc6tHb7me206D8Yb9qC91TKkJRF9QsMJC
- Bs28boRI=
-X-Gm-Gg: AYBFou2BysFVaLSgApTEIpV9Wp5zJwjhLmS26ziPZTSCCWF4GCAtTSK5kymUwoeZ2qS
- Yr748NcWdhD9eySC0gNd+N0Uw8iSWgwnstQqf8ykLkIGfVa9VGMHPotTmyqHDFdxge0tvTfaUaJ
- hKsjcJvYSbERBaRqQTZcTR1+AxQoHWEonzXVupLxy+MMuYH5BU+omwwvLdjSTKdT62oJ+UMhl4B
- Ta/xhZ2ckQr6PlBCB7W9I61xaydJf9GLqxyo047XpGO1wQy53UBVwkJhJtaVR99MNlJDMIOWAt2
- jeY4It0xJa8yrdqn43ELy29JqbbM8tAr0XIJPzKVoPov97I1w5j8rfQJFingaV3mWIPkyHAQr9C
- cESWuUi7nvs10E54ZJxXA7bysg0Ocm9UYi70C3t33mFGyjiMYGUX+Zept/8oKoBW9Q0Dsfscl3b
- I/ZwN7VzeTOmERHht77pQ83STCCuGzPUK2HTYFVJ1kBSUphiMOoLsA7eQuWRJfbcYRmMWE/kv/P
- 9udkw+kCHY+TeGsEqNoCLYgG/HMC/WbGLBr9SBAC1b0hnoM/RGLdPoDvWogZ8BUxBVNG7nEj5JU
- bqN6OjiINTFoY5hsM8WjK5TLjDEXre1S8bzP26z7j4Tk67tWmZKduiCTfazFAOGftXYm
-X-Received: by 2002:a17:903:13d0:b0:2e9:492e:1688 with SMTP id
- d9443c01a7336-2eb001418bfmr21544725ad.8.1793197072974; 
- Wed, 28 Oct 2026 07:17:52 -0700 (PDT)
+ bh=JcVwfOjx6FTL0QugL5nsGQEMdHw/febxoYqN846zOtA=;
+ b=Gmqcqx5bR44lUcZUhfTvXT7UhwxqBR+hyZH4SESvPa53JAZgUuw+v5Za19LBrrSPei
+ njvGlJQsQu92hTXQQ3E2mahlKwkEAXd8cv6nfB5HQDfci7X52E/ZfUfyUDwPn5mM1E9r
+ vzoQTLUcbT3GzUSAwWxcztZhkDLq3zGopR3yxeyYdfd3t3qH6w5x0iQjxeJW/56LfU+z
+ K+cDhFkEgD19lkOnqNT0awO42dVt7yQk2ZbCtte2RHiLjMVK4ZxEB4lD0GGsHEwc25Rf
+ tdDzMO5aju5IycCR9EB+meOMKnWhhmsZ8gh2FNzVL0E+2B2m7pJIFJ5US/Dpf4VDigaf
+ vitQ==
+X-Gm-Message-State: AFq9FYIqJ9V7Ug2K6wcE6467Rr14dJqNCYYL4eVoULdBoLRDlQnwAAAI
+ g6h8/WU+PMrEx0sehvGC4XO7VT2tPiR0D7HhO3D/FB5mHCQw/TC+Ebg8rZ2xbdUW92R2F5TFbyC
+ PPn0dJYE=
+X-Gm-Gg: AYBFou03sqZFKivngSyumRihYAk3M88PBRXDkRIMvjXGO6tg/hnNeO7fpoc+gck8szA
+ j+CvyWg4QuTyWN6tZFcRm9xSWtNg6711IDKXZ3HBLnSU8U0YCcjy/vcZZOKksXzedvwQ4znQZd1
+ oTNcBBVjgoYL88OwkkxdOY1PwyomsdLrGsUILAY8ub7/BvFlwvYfIRf2o9PYQZgoEGbgRCOjiBZ
+ +RJr+F96bukjLbQiIgLYd1TYx91TKxDhawxXkQ6icsK/fKW40TsOR0CGUKeewC8efD1hWr6I35f
+ nCfcyUlMahL+76i5dx6G3vqsHTUzNXGo+NxYBgNRTmFjxIOEKGu5+WeBYiQHdvpBv4+zw0kJ+yb
+ d+K24CFfCr18L5fYrGLYr4NxB8JgHCXjU9mxZUJPUhKNpLIINPkIB/nRkUZ5FeaL1nmTNZUxzsB
+ oQQt4nMj+8g8Pn8qkZVeh95UalSBUxmr5FFl16UIkdXjdbHLTtkDuRpZ3MzCUlHDGRYntqSqziC
+ r2yjRrrikx1hDuHTMcnH6Za4/EPtBMtn1UViWtYbrjLV6yMHU4sK+lq4jLoSUv2053v4gYZU3QW
+ Er8UX9PfrzkzBn5MJsi3JNyu12rs6mHWgRyezn1sQA12uwqs80GYDYv97D/oEOAcq5x7
+X-Received: by 2002:a17:90b:2887:b0:3a8:6045:5a24 with SMTP id
+ 98e67ed59e1d1-3ae581555dcmr1629662a91.38.1793197073809; 
+ Wed, 28 Oct 2026 07:17:53 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2eae6c3b67bsm22182415ad.52.2026.10.28.07.17.52
+ d9443c01a7336-2eae6c3b67bsm22182415ad.52.2026.10.28.07.17.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 28 Oct 2026 07:17:52 -0700 (PDT)
+ Wed, 28 Oct 2026 07:17:53 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Ori Kam <orika@nvidia.com>
-Subject: [PATCH 1/4] ethdev: reject hairpin queue in add first Rx callback
-Date: Wed, 28 Oct 2026 07:16:50 -0700
-Message-ID: <20261028141750.310963-2-stephen@networkplumber.org>
+ Reshma Pattan <reshma.pattan@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH 2/4] pdump: fix error code when adding callback fails
+Date: Wed, 28 Oct 2026 07:16:51 -0700
+Message-ID: <20261028141750.310963-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261028141750.310963-1-stephen@networkplumber.org>
 References: <20261028141750.310963-1-stephen@networkplumber.org>
@@ -92,34 +91,41 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-rte_eth_add_rx_callback() and rte_eth_add_tx_callback() refuse
-hairpin queues, but rte_eth_add_first_rx_callback() was missed.
-A callback installed on a hairpin queue is never invoked.
+The register functions returned positive rte_errno on failure.
+The caller only checks for negative values, so a failed Rx enable
+fell through to Tx, and the positive value sent back to the client
+was negated into rte_errno, giving messages like "Unknown error -22".
 
-Fixes: cf5516696d77 ("ethdev: add hairpin queue")
+Fixes: 278f945402c5 ("pdump: add new library for packet capture")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/ethdev/rte_ethdev.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ lib/pdump/rte_pdump.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index f843e8808a..562a24d559 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -6173,6 +6173,11 @@ rte_eth_add_first_rx_callback(uint16_t port_id, uint16_t queue_id,
- 		return NULL;
- 	}
+diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
+index ac94efe7ff..9c368bcfd7 100644
+--- a/lib/pdump/rte_pdump.c
++++ b/lib/pdump/rte_pdump.c
+@@ -283,7 +283,7 @@ pdump_register_rx_callbacks(enum pdump_version ver,
+ 				PDUMP_LOG_LINE(ERR,
+ 					"failed to add rx callback, errno=%d",
+ 					rte_errno);
+-				return rte_errno;
++				return -rte_errno;
+ 			}
  
-+	if (rte_eth_dev_is_rx_hairpin_queue(&rte_eth_devices[port_id], queue_id)) {
-+		rte_errno = EINVAL;
-+		return NULL;
-+	}
-+
- 	struct rte_eth_rxtx_callback *cb = rte_zmalloc(NULL, sizeof(*cb), 0);
- 
- 	if (cb == NULL) {
+ 			memset(&pdump_stats->rx[port][qid], 0, sizeof(struct rte_pdump_stats));
+@@ -345,7 +345,7 @@ pdump_register_tx_callbacks(enum pdump_version ver,
+ 				PDUMP_LOG_LINE(ERR,
+ 					"failed to add tx callback, errno=%d",
+ 					rte_errno);
+-				return rte_errno;
++				return -rte_errno;
+ 			}
+ 			memset(&pdump_stats->tx[port][qid], 0, sizeof(struct rte_pdump_stats));
+ 		} else if (operation == DISABLE) {
 -- 
 2.53.0
 
