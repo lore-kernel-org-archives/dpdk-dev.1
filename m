@@ -2,135 +2,100 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F80606A31C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Oct 2026 15:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB356606A320
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Oct 2026 16:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=GxCbuHcc
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm2 header.b=N6WNcuFP;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=tgwGEm64
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0526240655;
-	Thu, 29 Oct 2026 16:48:44 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTPS id 1B5DA402D4
- for <dev@dpdk.org>; Thu, 29 Oct 2026 16:48:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1793288921;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=KseZJTcVHFfPtaIGqI66Mq/Ujzj8PsHXkDDB5NmSBTE=;
- b=GxCbuHccpbJ6830bhs52DmKwwboPg4vDHJpAW0XzjiYPCVvGQs9w2S1Bb5HVhfH2at/DaK
- Ns0l+SnvsimLrNlIV1wOiAjuqdES/HcaouX1l1ivnwHIyodoUR+ieZVYEXyMqWCWP+PZGB
- B/h+3EmRYnAC2DqhW8NqSd6BuAhXayI=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-328-eNi8K78pOJ2Ti1KD1_0a3A-1; Thu, 29 Oct 2026 11:48:38 -0400
-X-MC-Unique: eNi8K78pOJ2Ti1KD1_0a3A-1
-X-Mimecast-MFC-AGG-ID: eNi8K78pOJ2Ti1KD1_0a3A_1793288917
-Received: by mail-ed1-f72.google.com with SMTP id
- 4fb4d7f45d1cf-6b1d35e3c0fso2480020a12.3
- for <dev@dpdk.org>; Thu, 29 Oct 2026 08:48:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793288917; x=1793893717;
- h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=KseZJTcVHFfPtaIGqI66Mq/Ujzj8PsHXkDDB5NmSBTE=;
- b=goTLJN7IGU9mqqIbfgi4NsvgiOBYLMLd2gwppVeBvpP82QvSh5Rr8+cGKdCfWpWIBc
- E6MFek4etUQC1rKBe+EbQVDopmNA0JZUXw6aWZT6MKUgtFCOroKJeCdqONAPt/YuSFFT
- slxlq4h9blvDvaP8nVEGwIrtFQ2GZznGjMcMds1/aLjn4frqCItQMiubg1WO3GaScw8v
- 3sse91hucx3gWv9tSbmhcjfouAwW9eAMENbLM5OfkalsxKXhoURNorq8mmZnIbH/ZMBT
- U5WIcXlCwd3+og40+iEA9uJBoEW0qEXV3kLuXFHr1GWWDeFxUnikWiqSL4TY2d9YhpRp
- jB9Q==
-X-Forwarded-Encrypted: i=1;
- AKwUvBzdBTLDRJJvcsyCtUsEJiajPhTOipuzPA9l1gmcZY9HH859HTJml7B5eEcUhDA7bxl50MU=@dpdk.org
-X-Gm-Message-State: AFq9FYLPydC6Ulkkw7wdskxN7+y/g3oZBf35zrNVVhLaaImqF9BV8i9y
- 3R+B8jxOfTT5Pneg7RregEY2jwo3rYQgnaEkthcuBKG7lYoZqWh9jsW+cMguHriVUjxnn/nT38Q
- rtX19ZLZLJPXifGBsM4JIWm5kk4ckW0VVT0PAZ8EKkPLs
-X-Gm-Gg: AYBFou119JrmLHWalfKdVXZs7l/HTitkohzzmDj+KfueocmV6DgYrQCS+HwT7+iSBQH
- IHobD8cTH5y3VcIge77giR1wEWk8r5MBdSqGIPTLNcRhNW4CG/44+9lC0eubGui7BXKcSkfAiPy
- ukkChkHy9P4C/Os19jHLJtlD/AqLQ4gVYiFfDIbCYoWpHHSF31+kF7uLTRahHhp41ds0wRiksc5
- izn8Q0ynOSFBomYRUz9Br/08iJ/G/F7ihiUluMU+Z8Tbj1VZQvFJae7m2vBgwkD6Fo+ZyKH4P9d
- BgmceHmQDLzjJMC88JC6eb+y3cD+8SyIDFbohkO6SQiQGT86I4rpOTN+UcIMhwryOOcwUkpxMhw
- vxwRiflFR4UPUe2YH19fUWZhfczOWlXQp/O9/GZ1lSKCvsr+yXUpWZbFip3bzh5aY1CEyOAor4L
- K5VaQelRDrJYZPB5LtU2dOa9ImeL+D9b2OusADPZx2XDfBl4LZzYp8h9mCJyPb2Gq2w42MmLusj
- Vu6bsUqm85Y/6TUjwkWVtI0/iR5foa5iLITcULoVoXEZ1lM2XaLMONzF72WQVnJScY6/tU5sPU=
-X-Received: by 2002:a05:6402:1d4a:b0:6ae:fc0f:e19 with SMTP id
- 4fb4d7f45d1cf-6b49cc2815bmr4308857a12.42.1793288916968; 
- Thu, 29 Oct 2026 08:48:36 -0700 (PDT)
-X-Received: by 2002:a05:6402:1d4a:b0:6ae:fc0f:e19 with SMTP id
- 4fb4d7f45d1cf-6b49cc2815bmr4308840a12.42.1793288916372; 
- Thu, 29 Oct 2026 08:48:36 -0700 (PDT)
-Received: from [10.50.0.157] (82-66-145-51.subs.proxad.net. [82.66.145.51])
- by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-6b4994c23b6sm2487977a12.8.2026.10.29.08.48.34
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 29 Oct 2026 08:48:34 -0700 (PDT)
-Message-ID: <92444640-e79d-400c-9eaf-b63ba799c783@redhat.com>
-Date: Thu, 29 Oct 2026 16:48:33 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id 205F7402D4;
+	Thu, 29 Oct 2026 17:11:05 +0100 (CET)
+Received: from fout-a2-smtp.messagingengine.com
+ (fout-a2-smtp.messagingengine.com [103.168.172.145])
+ by mails.dpdk.org (Postfix) with ESMTPS id BACC540284
+ for <dev@dpdk.org>; Thu, 29 Oct 2026 17:11:03 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.phl.internal (Postfix) with ESMTP id CFE29EC0223
+ for <dev@dpdk.org>; Thu, 29 Oct 2026 12:11:02 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Thu, 29 Oct 2026 12:11:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1793290262;
+ x=1793376662; bh=hqtTDsPFD20nE3MPGGdHYPu6Roz6jN3SmfjHaFWaow0=; b=
+ N6WNcuFPK4PfRBBku/Kjdz68WUhIuLmSaHfWNaMwyWvHZRpniQ69FVMmYqeLuk62
+ krj0iXhwvnIbt2ozADCgwiagdAo9vqQhor7P8DchgIaga/VYXzZjvbfkADmJQG4T
+ tvERhMijZc978QXJLC53DlhuvP07h/QLNc/3EH3MTc65GD0i1WqQhZI0VaijLhkH
+ WuS27tnRaqsRN0e4T5GFxaL4mNGktk5hCcPEg53Wajexb7I/CUdIms+gcfV1L+jj
+ ZS+K5r3anVy18I8woUEReVwfoiP3nrBpJ9/yFIbPUXKj7yJPBMCZ/gsyVPEfunq9
+ vWKANGPel94OEWqatDdm6w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1793290262; x=
+ 1793376662; bh=hqtTDsPFD20nE3MPGGdHYPu6Roz6jN3SmfjHaFWaow0=; b=t
+ gwGEm64rh0k9PBEh9qKcqTvDM9Nhnsy6Kgr/wDi5vaPDbGFMnR56P47TyPDAVYAK
+ +ktUEAv5vDNEK+IUOIviEflo/9ELGD787uOApOUzT50WZkLBSSuUOOpeG86/yiv2
+ wSvXkaqPaN2iTzEJIa+xo70FhW2FZJByP80akGppiir2qQRy9pshlCvarNxGLPZq
+ YHlbSN6RPFv4m/9hfeKAWo4VzwE0+ps4M6gA1fBjEi/z5mEw60iKRRrDD03quioq
+ TKAMIRAXO8ki71ctsUFq79ozA5SyGoVB52FuYngbFV4dfs3r0ZR8g19ikvMw8RSn
+ GbSo0GgFsTO6+pCPfDI6w==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+ repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1793290262; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm2:rsa-sha256:GJOMQlaHoK9aWNOtcskBsly5EjtLIUoej8hbcNaFU3HY9NP
+ XuT+USgesyTUhOAmCHEVhQ2wlhuNfGZeDyysEPenLsYhG0n7T4lp3yNbnkSGuTJH
+ XgCEdfQIcKt92pSod+dwfFXdaVYBMNdtjEGpFP5lZcm0JHpHit/48VBq3sWjEZaC
+ NU/MpnYS+e6AA5UD+ksfSwJkqqpNdQuVml1oKT2I+Dsh2qAJXN6nv1GLDS1Qm/HG
+ qjM74dI2Z874dGAe1jP+K/ArbueYvJMUUAo4cCR3Li4amjs6GBQRvvMYW9r6fvpV
+ 9mBBVwo2g3ZjG7FC7x4CaHgp7+AreE2daK2UW0g==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+ repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:CiVIBjIJOPsUM0m9TA+7dgmBwnV9KWClIVE9bNgcFdQ=:+ecCtN4BtdL4cK0Iqj03F9hyDPo+CkSQsOMP4vn9fZo=;
+X-ME-Sender: <xms:FnDjavZlp83owt6SAOxqI-BsDOmFWS8sRHM0YfQt57QRYiPs4Sz3mQ>
+ <xme:FnDjaujuOlMOYMVqC1HAA3jQO7Yr8tiZu1TxLTYKSNFVaACp6JozlxDsIumKaRSLO
+ 1fCQpBhq6eLBoqkWOio4vbb3pZVf1EebE-nqmQvcmi8Vc5jkpqyh-D2>
+X-ME-Received: <xmr:FnDjap4ybz7kZKV6GwEgZ6HwcWfK8gcCxvYE_95HW_IhKC4sFmF7x0NM_84fDP_JF8ulrdkbmunubs36_nWphCA>
+X-ME-Proxy-Cause: dmFkZTGyRed1wTYC6C8V0KDjvd6STxtPUYk1JHytVdK4WwRYUWiXu6QFT1mwQBXAHO6utv
+ XCnwcwBMLo+le0k1E99Z/OSQicu8EtsyBcjEOHCpLytomtFmAx7/DkJPNK4Y1MYdyDsdsY
+ 1IihxhmLWCoEfB8t93vPUZEo+6oHCWep+FHabJxjkrtRJKfdAO3eMTnIFKUmd7Y5gCs1d/
+ bdVxOr3dXQoeG5TdFJy6a9w4OK5VtpOxBSadnl3wAGKyvfV7LT6R0gNwhJt87/G6uVREHd
+ R9Y8zNObEPrJzeXz8IatNrgkF0vrWxIrIvaXfk0jTDsTpwQ4/BnlhE4/ueGesabptJLlt5
+ 1UMtOYG2UsQJB4Liw5/ryt09oojbLd/YF+iT1JmCEY2PWMUbfulciPgwEnwL6x4niUkG87
+ 0CQLQpOwU0jLetYvAcx5EHhUnZo+G+tuiKDlvfvHRL785wNNtEQFW6cw6Vo/Jak7tvXV70
+ ueqFhOZ8Nww0PH7QejHDQQbH4h2+LLJGjV5RDwkihsKCkRepThLjzZHRpOguhqAia9Snpg
+ ZCjuJtV5j6aC3ArctqpCL0vkFgIOudoRQiVBtuQnif9yGPF2KSn0zs4HzkglE7K3f+i2aT
+ L15GKkVA3MpCBS3GmvRhbYClRjV6KtjAMYvHr9/8mw0GSOrjFL5x3QOC+Qfw
+X-ME-Proxy: <xmx:FnDjat5BqY2agO-rP1zMfEV55oZhFhYuo5HQnrTvFyUCAkR3orC9GQ>
+ <xmx:FnDjaleN0Axwg37pLOPLQRzis0P94vVGeuwC9srxHS4vgD_jJLli_A>
+ <xmx:FnDjahBmHGuiBliZQS2VUdJxXCrcqEmo0T6o7O8wLW9pJdts-STMAg>
+ <xmx:FnDjao8Ky8K0brrgJydOuDP1KRNq4LMLIk6gSMuobZgu-JgTsYgxQA>
+ <xmx:FnDjak8m8ioGi46dJ4zrkWs6PwPxLQ42dNrRZFPxzyhKZf-C0GAIWJhM>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 29 Oct 2026 12:11:01 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Roman Khromenok <roma55592@yandex.ru>
+Cc: dev@dpdk.org, andrew.rybchenko@oktetlabs.ru, stephen@networkplumber.org
+Subject: Re: [RFC 0/2] move module EEPROM decoding to a transceiver library
+Date: Thu, 29 Oct 2026 17:11:00 +0100
+Message-ID: <1jOljJRtTQqpabyIXToQtw@monjalon.net>
+In-Reply-To: <20261026200950.1094549-1-roma55592@yandex.ru>
+References: <20261014071245.2323258-1-roma55592@yandex.ru>
+ <20261026200950.1094549-1-roma55592@yandex.ru>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] examples/vhost: fix hang on exit
-To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
-Cc: stable@dpdk.org, Yu Jiang <yux.jiang@intel.com>,
- Chenbo Xia <chenbox@nvidia.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-References: <20261029144727.119072-1-stephen@networkplumber.org>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
- kLgBQUki3voWhUbMb69ybqdMUHOl21DGCj0BTU3lXwapYXOAnsh8q6RRM+deUpasyT+Jvf3a
- gU35dgZcomRh5HPmKMU4KfeA38cVUebsFec1HuJAWzOb/UdtQkYyZR4rbzw8SbsOemtMtwOx
- YdXodneQD7KuRU9IhJKiEfipwqk2pufm2VSGl570l5ANyWMA/XADNhcEXhpkZ1Iwj3TWO7XR
- uH4xfvPl8nBsLo/EbEI7fbuUULcAnHfowQslPUm6/yaGv6cT5160SPXT1t8U9QDO6aTSo59N
- jH519JS8oeKZB1n1eLDslCfBpIpWkW8ZElGkOGWAN0vmpLfdyiqBNNyS3eGAfMkJ6b1A24un
- /TKc6j2QxM0QK4yZGfAxDxtvDv9LFXec8ENJYsbiR6WHRHq7wXl/n8guyh5AuBNQ3LIK44x0
- KjGXP1FJkUhUuruGyZsMrDLBRHYi+hhDAgRjqHgoXi5XGETA1PAiNBNnQwMf5aubt+mE2Q5r
- qLNTgwSo2dpTU3+mJ3y3KlsIfoaxYI7XNsPRXGnZi4hbxmeb2NSXgdCXhX3nELUNYm4ArKBP
- LugOIT/zRwk0H0+RVwL2zHdMO1Tht1UOFGfOZpvuBF60jhMzbQARAQABzSxNYXhpbWUgQ29x
- dWVsaW4gPG1heGltZS5jb3F1ZWxpbkByZWRoYXQuY29tPsLBeAQTAQIAIgUCV3u/5QIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQyjiNKEaHD4ma2g/+P+Hg9WkONPaY1J4AR7Uf
- kBneosS4NO3CRy0x4WYmUSLYMLx1I3VH6SVjqZ6uBoYy6Fs6TbF6SHNc7QbB6Qjo3neqnQR1
- 71Ua1MFvIob8vUEl3jAR/+oaE1UJKrxjWztpppQTukIk4oJOmXbL0nj3d8dA2QgHdTyttZ1H
- xzZJWWz6vqxCrUqHU7RSH9iWg9R2iuTzii4/vk1oi4Qz7y/q8ONOq6ffOy/t5xSZOMtZCspu
- Mll2Szzpc/trFO0pLH4LZZfz/nXh2uuUbk8qRIJBIjZH3ZQfACffgfNefLe2PxMqJZ8mFJXc
- RQO0ONZvwoOoHL6CcnFZp2i0P5ddduzwPdGsPq1bnIXnZqJSl3dUfh3xG5ArkliZ/++zGF1O
- wvpGvpIuOgLqjyCNNRoR7cP7y8F24gWE/HqJBXs1qzdj/5Hr68NVPV1Tu/l2D1KMOcL5sOrz
- 2jLXauqDWn1Okk9hkXAP7+0Cmi6QwAPuBT3i6t2e8UdtMtCE4sLesWS/XohnSFFscZR6Vaf3
- gKdWiJ/fW64L6b9gjkWtHd4jAJBAIAx1JM6xcA1xMbAFsD8gA2oDBWogHGYcScY/4riDNKXi
- lw92d6IEHnSf6y7KJCKq8F+Jrj2BwRJiFKTJ6ChbOpyyR6nGTckzsLgday2KxBIyuh4w+hMq
- TGDSp2rmWGJjASrOwU0EVPSbkwEQAMkaNc084Qvql+XW+wcUIY+Dn9A2D1gMr2BVwdSfVDN7
- 0ZYxo9PvSkzh6eQmnZNQtl8WSHl3VG3IEDQzsMQ2ftZn2sxjcCadexrQQv3Lu60Tgj7YVYRM
- H+fLYt9W5YuWduJ+FPLbjIKynBf6JCRMWr75QAOhhhaI0tsie3eDsKQBA0w7WCuPiZiheJaL
- 4MDe9hcH4rM3ybnRW7K2dLszWNhHVoYSFlZGYh+MGpuODeQKDS035+4H2rEWgg+iaOwqD7bg
- CQXwTZ1kSrm8NxIRVD3MBtzp9SZdUHLfmBl/tLVwDSZvHZhhvJHC6Lj6VL4jPXF5K2+Nn/Su
- CQmEBisOmwnXZhhu8ulAZ7S2tcl94DCo60ReheDoPBU8PR2TLg8rS5f9w6mLYarvQWL7cDtT
- d2eX3Z6TggfNINr/RTFrrAd7NHl5h3OnlXj7PQ1f0kfufduOeCQddJN4gsQfxo/qvWVB7PaE
- 1WTIggPmWS+Xxijk7xG6x9McTdmGhYaPZBpAxewK8ypl5+yubVsE9yOOhKMVo9DoVCjh5To5
- aph7CQWfQsV7cd9PfSJjI2lXI0dhEXhQ7lRCFpf3V3mD6CyrhpcJpV6XVGjxJvGUale7+IOp
- sQIbPKUHpB2F+ZUPWds9yyVxGwDxD8WLqKKy0WLIjkkSsOb9UBNzgRyzrEC9lgQ/ABEBAAHC
- wV8EGAECAAkFAlT0m5MCGwwACgkQyjiNKEaHD4nU8hAAtt0xFJAy0sOWqSmyxTc7FUcX+pbD
- KVyPlpl6urKKMk1XtVMUPuae/+UwvIt0urk1mXi6DnrAN50TmQqvdjcPTQ6uoZ8zjgGeASZg
- jj0/bJGhgUr9U7oG7Hh2F8vzpOqZrdd65MRkxmc7bWj1k81tOU2woR/Gy8xLzi0k0KUa8ueB
- iYOcZcIGTcs9CssVwQjYaXRoeT65LJnTxYZif2pfNxfINFzCGw42s3EtZFteczClKcVSJ1+L
- +QUY/J24x0/ocQX/M1PwtZbB4c/2Pg/t5FS+s6UB1Ce08xsJDcwyOPIH6O3tccZuriHgvqKP
- yKz/Ble76+NFlTK1mpUlfM7PVhD5XzrDUEHWRTeTJSvJ8TIPL4uyfzhjHhlkCU0mw7Pscyxn
- DE8G0UYMEaNgaZap8dcGMYH/96EfE5s/nTX0M6MXV0yots7U2BDb4soLCxLOJz4tAFDtNFtA
- wLBhXRSvWhdBJZiig/9CG3dXmKfi2H+wdUCSvEFHRpgo7GK8/Kh3vGhgKmnnxhl8ACBaGy9n
- fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
- UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
- Mwqu3GQ=
-In-Reply-To: <20261029144727.119072-1-stephen@networkplumber.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: gLXdqH4kwO9I6mSuRYvjmu0WM1BcWXMe9cXPuhm9cjg_1793288917
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -140,56 +105,30 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=4.0.1
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
+26/10/2026 21:09, Roman Khromenok:
+> Hello,
+> 
+> Gentle ping on this RFC for 27.03.
+> 
+> I would like to agree on the direction before working on the next
+> step, CMIS decoding, which I plan to add to this library. The open
+> points are in the cover letter:
+> 
+> 1. The library name: "transceiver" or "xcvr".
 
-On 10/29/26 3:47 PM, Stephen Hemminger wrote:
-> destroy_device() waits for the worker lcore to ack device removal.
-> Since the signal handler rework, the workers exit before the vhost
-> drivers are unregistered, so the destroy callback spins forever.
->
-> Unregister the drivers while the workers are still polling, then
-> stop and join them.
->
-> Bugzilla ID: 2071
-> Fixes: 5ffa8fafcbd3 ("examples/vhost: make signal handler safe")
-> Cc: stable@dpdk.org
->
-> Reported-by: Yu Jiang <yux.jiang@intel.com>
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->   examples/vhost/main.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/examples/vhost/main.c b/examples/vhost/main.c
-> index 523195f5c4..16c9387f8f 100644
-> --- a/examples/vhost/main.c
-> +++ b/examples/vhost/main.c
-> @@ -69,6 +69,8 @@ static uint32_t enabled_port_mask = 0;
->   /* Set by the SIGINT handler to stop the worker loops. */
->   static volatile sig_atomic_t quit;
->   
-> +static RTE_ATOMIC(bool) stop_workers;
-> +
->   /* Promiscuous mode */
->   static uint32_t promiscuous;
->   
-> @@ -1242,7 +1244,7 @@ switch_worker(void *arg)
->   		}
->   	}
->   
-> -	while (!quit) {
-> +	while (!rte_atomic_load_explicit(&stop_workers, rte_memory_order_relaxed)) {
->   		drain_mbuf_table(tx_q);
->   		drain_vhost_table();
->   		/*
+"transceiver" reads better, but "xcvr" is shorter.
+I cannot decide.
 
-Are you sure you committed all the changes? I don't see a store of true 
-to stop_workers.
+> 2. Whether rte_eth_module_eeprom_parse() stays as a wrapper
+>    or is deprecated in favor of rte_transceiver_decode().
+
+rte_eth_module_eeprom_parse() is experimental so it can be removed.
+
 
