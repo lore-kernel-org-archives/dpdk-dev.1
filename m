@@ -2,100 +2,53 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB356606A320
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Oct 2026 16:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF88D60A2600
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 Oct 2026 16:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm2 header.b=N6WNcuFP;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=tgwGEm64
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=SHAMHDgU
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 205F7402D4;
-	Thu, 29 Oct 2026 17:11:05 +0100 (CET)
-Received: from fout-a2-smtp.messagingengine.com
- (fout-a2-smtp.messagingengine.com [103.168.172.145])
- by mails.dpdk.org (Postfix) with ESMTPS id BACC540284
- for <dev@dpdk.org>; Thu, 29 Oct 2026 17:11:03 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id CFE29EC0223
- for <dev@dpdk.org>; Thu, 29 Oct 2026 12:11:02 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Thu, 29 Oct 2026 12:11:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1793290262;
- x=1793376662; bh=hqtTDsPFD20nE3MPGGdHYPu6Roz6jN3SmfjHaFWaow0=; b=
- N6WNcuFPK4PfRBBku/Kjdz68WUhIuLmSaHfWNaMwyWvHZRpniQ69FVMmYqeLuk62
- krj0iXhwvnIbt2ozADCgwiagdAo9vqQhor7P8DchgIaga/VYXzZjvbfkADmJQG4T
- tvERhMijZc978QXJLC53DlhuvP07h/QLNc/3EH3MTc65GD0i1WqQhZI0VaijLhkH
- WuS27tnRaqsRN0e4T5GFxaL4mNGktk5hCcPEg53Wajexb7I/CUdIms+gcfV1L+jj
- ZS+K5r3anVy18I8woUEReVwfoiP3nrBpJ9/yFIbPUXKj7yJPBMCZ/gsyVPEfunq9
- vWKANGPel94OEWqatDdm6w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1793290262; x=
- 1793376662; bh=hqtTDsPFD20nE3MPGGdHYPu6Roz6jN3SmfjHaFWaow0=; b=t
- gwGEm64rh0k9PBEh9qKcqTvDM9Nhnsy6Kgr/wDi5vaPDbGFMnR56P47TyPDAVYAK
- +ktUEAv5vDNEK+IUOIviEflo/9ELGD787uOApOUzT50WZkLBSSuUOOpeG86/yiv2
- wSvXkaqPaN2iTzEJIa+xo70FhW2FZJByP80akGppiir2qQRy9pshlCvarNxGLPZq
- YHlbSN6RPFv4m/9hfeKAWo4VzwE0+ps4M6gA1fBjEi/z5mEw60iKRRrDD03quioq
- TKAMIRAXO8ki71ctsUFq79ozA5SyGoVB52FuYngbFV4dfs3r0ZR8g19ikvMw8RSn
- GbSo0GgFsTO6+pCPfDI6w==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1793290262; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:GJOMQlaHoK9aWNOtcskBsly5EjtLIUoej8hbcNaFU3HY9NP
- XuT+USgesyTUhOAmCHEVhQ2wlhuNfGZeDyysEPenLsYhG0n7T4lp3yNbnkSGuTJH
- XgCEdfQIcKt92pSod+dwfFXdaVYBMNdtjEGpFP5lZcm0JHpHit/48VBq3sWjEZaC
- NU/MpnYS+e6AA5UD+ksfSwJkqqpNdQuVml1oKT2I+Dsh2qAJXN6nv1GLDS1Qm/HG
- qjM74dI2Z874dGAe1jP+K/ArbueYvJMUUAo4cCR3Li4amjs6GBQRvvMYW9r6fvpV
- 9mBBVwo2g3ZjG7FC7x4CaHgp7+AreE2daK2UW0g==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:CiVIBjIJOPsUM0m9TA+7dgmBwnV9KWClIVE9bNgcFdQ=:+ecCtN4BtdL4cK0Iqj03F9hyDPo+CkSQsOMP4vn9fZo=;
-X-ME-Sender: <xms:FnDjavZlp83owt6SAOxqI-BsDOmFWS8sRHM0YfQt57QRYiPs4Sz3mQ>
- <xme:FnDjaujuOlMOYMVqC1HAA3jQO7Yr8tiZu1TxLTYKSNFVaACp6JozlxDsIumKaRSLO
- 1fCQpBhq6eLBoqkWOio4vbb3pZVf1EebE-nqmQvcmi8Vc5jkpqyh-D2>
-X-ME-Received: <xmr:FnDjap4ybz7kZKV6GwEgZ6HwcWfK8gcCxvYE_95HW_IhKC4sFmF7x0NM_84fDP_JF8ulrdkbmunubs36_nWphCA>
-X-ME-Proxy-Cause: dmFkZTGyRed1wTYC6C8V0KDjvd6STxtPUYk1JHytVdK4WwRYUWiXu6QFT1mwQBXAHO6utv
- XCnwcwBMLo+le0k1E99Z/OSQicu8EtsyBcjEOHCpLytomtFmAx7/DkJPNK4Y1MYdyDsdsY
- 1IihxhmLWCoEfB8t93vPUZEo+6oHCWep+FHabJxjkrtRJKfdAO3eMTnIFKUmd7Y5gCs1d/
- bdVxOr3dXQoeG5TdFJy6a9w4OK5VtpOxBSadnl3wAGKyvfV7LT6R0gNwhJt87/G6uVREHd
- R9Y8zNObEPrJzeXz8IatNrgkF0vrWxIrIvaXfk0jTDsTpwQ4/BnlhE4/ueGesabptJLlt5
- 1UMtOYG2UsQJB4Liw5/ryt09oojbLd/YF+iT1JmCEY2PWMUbfulciPgwEnwL6x4niUkG87
- 0CQLQpOwU0jLetYvAcx5EHhUnZo+G+tuiKDlvfvHRL785wNNtEQFW6cw6Vo/Jak7tvXV70
- ueqFhOZ8Nww0PH7QejHDQQbH4h2+LLJGjV5RDwkihsKCkRepThLjzZHRpOguhqAia9Snpg
- ZCjuJtV5j6aC3ArctqpCL0vkFgIOudoRQiVBtuQnif9yGPF2KSn0zs4HzkglE7K3f+i2aT
- L15GKkVA3MpCBS3GmvRhbYClRjV6KtjAMYvHr9/8mw0GSOrjFL5x3QOC+Qfw
-X-ME-Proxy: <xmx:FnDjat5BqY2agO-rP1zMfEV55oZhFhYuo5HQnrTvFyUCAkR3orC9GQ>
- <xmx:FnDjaleN0Axwg37pLOPLQRzis0P94vVGeuwC9srxHS4vgD_jJLli_A>
- <xmx:FnDjahBmHGuiBliZQS2VUdJxXCrcqEmo0T6o7O8wLW9pJdts-STMAg>
- <xmx:FnDjao8Ky8K0brrgJydOuDP1KRNq4LMLIk6gSMuobZgu-JgTsYgxQA>
- <xmx:FnDjak8m8ioGi46dJ4zrkWs6PwPxLQ42dNrRZFPxzyhKZf-C0GAIWJhM>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 29 Oct 2026 12:11:01 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Roman Khromenok <roma55592@yandex.ru>
-Cc: dev@dpdk.org, andrew.rybchenko@oktetlabs.ru, stephen@networkplumber.org
-Subject: Re: [RFC 0/2] move module EEPROM decoding to a transceiver library
-Date: Thu, 29 Oct 2026 17:11:00 +0100
-Message-ID: <1jOljJRtTQqpabyIXToQtw@monjalon.net>
-In-Reply-To: <20261026200950.1094549-1-roma55592@yandex.ru>
-References: <20261014071245.2323258-1-roma55592@yandex.ru>
- <20261026200950.1094549-1-roma55592@yandex.ru>
+	by mails.dpdk.org (Postfix) with ESMTP id DCB1940262;
+	Thu, 29 Oct 2026 17:41:24 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTPS id C88D7400D6
+ for <dev@dpdk.org>; Thu, 29 Oct 2026 17:41:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1793292083; x=1824828083;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=obOgP9PmVhajCX47Vb4rzGhy3p5LTFDcifjmQ3p510A=;
+ b=SHAMHDgUaFIO+jPBN+03H2G0Pq/4LlgGxpoRfs8LOgmVtIbeatTUvffD
+ qDkoMlqqOiokaqeRqmWTAi3dZFoK/D5g65O6oc6oHKQ7xZQTxVfuGoXCh
+ 7xYOddmxljdNnIuBKcB3JvjURXDsS8bqDLEAlL7YDyOElbnsY7QoA7vPE
+ VCvGEqPXsBEVwL0fcT7wQ+uIvexOV8+Kpd+4LvDWzjgDvQLvJNXWEWJkY
+ cjHuRGHthkhrb0RjK/rBLBCAGk9Ot8kNQmWHIOF2uRkvQhQpRmQRjR8Rz
+ 1Vatcw7LQo0q8GkkmMbuzPCBdrO5TlQ3iXohYQ3AzyA0CwtW6NH1AvsVQ w==;
+X-CSE-ConnectionGUID: 3+ffBvJrQGmF3mrGR3facw==
+X-CSE-MsgGUID: KwZNNdBaTgS5VsFjjgRWsw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11950"; a="1954951"
+X-IronPort-AV: E=Sophos;i="6.27,184,1787036400"; 
+   d="scan'208";a="1954951"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Oct 2026 09:41:02 -0700
+X-CSE-ConnectionGUID: 9msVMfXtQa6K8kzHYBXSdg==
+X-CSE-MsgGUID: IA3bDPVmT7i4YL0B4c6RMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,184,1787036400"; 
+   d="scan'208";a="5280308"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa009.jf.intel.com with ESMTP; 29 Oct 2026 09:41:00 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v1 1/4] net/ixgbe: fix FDIR reconfiguration after port start
+Date: Thu, 29 Oct 2026 16:40:55 +0000
+Message-ID: <9c545ac681db1bd835a88516322c1441951e3ed6.1793292050.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -105,30 +58,42 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-26/10/2026 21:09, Roman Khromenok:
-> Hello,
-> 
-> Gentle ping on this RFC for 27.03.
-> 
-> I would like to agree on the direction before working on the next
-> step, CMIS decoding, which I plan to add to this library. The open
-> points are in the cover letter:
-> 
-> 1. The library name: "transceiver" or "xcvr".
+The flow director configuration is invalidated in dev_stop after the
+hardware reset, but dev_start resets the hardware again. A flow created
+while the port is stopped configures flow director and marks it as
+configured, so the flow replay in dev_start does not reprogram it after
+the reset.
 
-"transceiver" reads better, but "xcvr" is shorter.
-I cannot decide.
+Invalidate the flow director configuration after the reset in dev_start
+as well.
 
-> 2. Whether rte_eth_module_eeprom_parse() stays as a wrapper
->    or is deprecated in favor of rte_transceiver_decode().
+Fixes: ea0f9067b2cf ("net/ixgbe: reimplement FDIR parser")
 
-rte_eth_module_eeprom_parse() is experimental so it can be removed.
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+index 46db8c49d09..1c9f22ffc31 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+@@ -2537,6 +2537,8 @@ ixgbe_dev_start(struct rte_eth_dev *dev)
+ 	 * this calls reset and start
+ 	 */
+ 	status = ixgbe_pf_reset_hw(hw);
++	/* reset wipes flow director setup, reinit it on next flow replay */
++	ixgbe_fdir_hw_invalidate(dev);
+ 	if (status != 0)
+ 		return -1;
+ 	hw->mac.ops.start_hw(hw);
+-- 
+2.52.0
 
