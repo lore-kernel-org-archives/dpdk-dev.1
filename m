@@ -2,48 +2,49 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8E0606A323
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 09:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328F2606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 09:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fbSTnanR
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Mnam68Uh
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D7C1940BA0;
-	Fri, 30 Oct 2026 10:41:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CB4B440299;
+	Fri, 30 Oct 2026 10:41:08 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTPS id 747DF40B9D
- for <dev@dpdk.org>; Fri, 30 Oct 2026 10:41:04 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 7B6EC40BA4
+ for <dev@dpdk.org>; Fri, 30 Oct 2026 10:41:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793353264; x=1824889264;
+ t=1793353267; x=1824889267;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=I1J84hhaCI0TON8ZRbgjI2OCanHBsCnFB0aJDZlLf0s=;
- b=fbSTnanRj+wmVb6wC75vyq0jylWWbWH9zmO67+DR8vosXLu1OWfJom1Y
- Pfy0EJ0KIwvd0CGBMR8WDlIGCTsyhCM4T9tRsbyzfVHL9YEEOc/Wt+HyG
- XgiM2VqeUK+d1zn6KIqpni7WTl2bbK1kxtU+VXZXyB1tp1ZNd+BaxsCR0
- wteIg5CBEDYi6ML2a41pyJNsO5DyzCRIert6Yjv1ZkdTuMKduhB78P4ys
- XuZxfo+MTv87b1nwu26UGyxxoosKCbg8M9MctN3xFFIyHExHEgRqYcV6c
- ws0SkaOI671JJnvQQmTAr0yLEnhNuqBmvE40/T+zbq0SmyqJ35oLhTUTU A==;
-X-CSE-ConnectionGUID: 0Lpdtp+FTH22LvlQVp4kdg==
-X-CSE-MsgGUID: BJSP2nXmS8OCRwjILYVkEg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11950"; a="2126071"
+ bh=5kgvgGk2Kp18qphWqESRKm9zyCObp6jxe0KuiGgyObI=;
+ b=Mnam68UhD3s7czZqZOtGkMIbnQZHW+pPKTtQy6SSU3ZnKHM1Pu99H2p1
+ l2d9HiF1ab5KfPXDEbRvl1EdNeuDamlU2qUw13sntO74SF73SH0YIRsXD
+ My+BJo69IlJxbDXCmX7CejviMEs9vD1hJhvjsyGonJH8MpgdiqclPwjMv
+ kEtc29vgK8/fzRYdLKoYr6soG5g0z7yW4Vmjd4KcpDw5dOZxpkVWsXUxt
+ MErlnY5zqwhH56R68nJu6T3bjGBwsMOcxp33YwNd+EJrY3u92r7D0gs1o
+ ZTbcb6cW8JLoKQjEzEopvwgQ14ZUotowuOGuKE1XM6XfoLn9hRZDmXHzO g==;
+X-CSE-ConnectionGUID: PYijPOY/SRe18tXf0STqmg==
+X-CSE-MsgGUID: 8339pMePRiy3oBDxCJTG3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11950"; a="2126080"
 X-IronPort-AV: E=Sophos;i="6.27,186,1787036400"; 
-   d="scan'208";a="2126071"
+   d="scan'208";a="2126080"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Oct 2026 02:41:04 -0700
-X-CSE-ConnectionGUID: qsBToxC9TgOGHzYxYfR2Gw==
-X-CSE-MsgGUID: 3s9spZcFSw6uA3RJX98YOA==
+ 30 Oct 2026 02:41:07 -0700
+X-CSE-ConnectionGUID: 0wdOi4ziS/KnuqFPcgGLIQ==
+X-CSE-MsgGUID: 23Awx5y3QSOCewwvj/ElgA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,186,1787036400"; 
-   d="scan'208";a="5299661"
+   d="scan'208";a="5299676"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 30 Oct 2026 02:41:03 -0700
+ by orviesa003.jf.intel.com with ESMTP; 30 Oct 2026 02:41:06 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v1 7/9] net/i40e: validate raw FDIR offsets and lengths
-Date: Fri, 30 Oct 2026 09:40:20 +0000
-Message-ID: <2b0130f65f1553dafc9d1432c94b29705a289e74.1793353214.git.anatoly.burakov@intel.com>
+Subject: [PATCH v1 8/9] net/i40e: disable tunnel replacement in multi-driver
+ mode
+Date: Fri, 30 Oct 2026 09:40:21 +0000
+Message-ID: <49b2bbaec2f222b9d289adb39378484e1af56b22.1793353215.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <5e64cc416c8ab3b038eee6bb55836e0b8ed507ab.1793353214.git.anatoly.burakov@intel.com>
 References: 
@@ -66,63 +67,101 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The FDIR RAW node only rejected absolute offsets when the relative
-field was masked, and otherwise treated the offset as relative. It also
-accepted odd lengths, but flexible payload is extracted in 2-byte
-words, so the last byte was dropped from the match and the data of any
-following RAW item was misaligned.
+Cloud filter replacement is not supported in multi-driver mode, so
+tunnel flows that need it (MPLS, GTP, QinQ, L4 port) always failed to
+install. The failure also marked the tunnel state as needing a device
+reset, which blocked all other tunnel flows.
 
-Reject absolute offsets regardless of the mask, and reject odd lengths.
+Do not initialize the engines for these tunnel types in multi-driver
+mode.
 
-Fixes: 05432a6e4676 ("net/i40e: reimplement FDIR parser")
+Fixes: 28a3d1c89167 ("net/i40e: reimplement tunnel parsers")
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/i40e_flow_fdir.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/intel/i40e/i40e_flow_tunnel.c | 34 ++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_flow_fdir.c b/drivers/net/intel/i40e/i40e_flow_fdir.c
-index b1dcc4b6fad..41298508582 100644
---- a/drivers/net/intel/i40e/i40e_flow_fdir.c
-+++ b/drivers/net/intel/i40e/i40e_flow_fdir.c
-@@ -754,7 +754,7 @@ i40e_fdir_node_raw_validate(const void *ctx, const struct rte_flow_item *item,
- 	size_t spec_size, spec_offset;
- 	size_t total_size, i;
- 	size_t new_src_offset;
--	bool wants_offset, wants_search, wants_limit, wants_absolute;
-+	bool wants_offset, wants_search, wants_limit;
+diff --git a/drivers/net/intel/i40e/i40e_flow_tunnel.c b/drivers/net/intel/i40e/i40e_flow_tunnel.c
+index 237678ab8c2..d74f46705f7 100644
+--- a/drivers/net/intel/i40e/i40e_flow_tunnel.c
++++ b/drivers/net/intel/i40e/i40e_flow_tunnel.c
+@@ -1883,6 +1883,20 @@ i40e_tunnel_flow_engine_init(const struct ci_flow_engine *engine __rte_unused,
+ 	return tunnel_priv->state == NULL ? -ENOMEM : 0;
+ }
  
- 	if (raw_mask == NULL) {
- 		return rte_flow_error_set(error, EINVAL,
-@@ -788,6 +788,11 @@ i40e_fdir_node_raw_validate(const void *ctx, const struct rte_flow_item *item,
- 				RTE_FLOW_ERROR_TYPE_ITEM, item,
- 				"RAW mask length must match spec length or be 0xffff");
- 	}
-+	if (raw_spec->length % sizeof(uint16_t) != 0) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"RAW length must be a multiple of 2 bytes");
-+	}
++static int
++i40e_tunnel_replace_flow_engine_init(const struct ci_flow_engine *engine,
++		struct rte_eth_dev_data *dev_data,
++		void *priv)
++{
++	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev_data->dev_private);
++
++	/* tunnel filter replacement is not supported in multi-driver mode */
++	if (pf->support_multi_driver)
++		return -ENOTSUP;
++
++	return i40e_tunnel_flow_engine_init(engine, dev_data, priv);
++}
++
+ static void
+ i40e_tunnel_flow_engine_uninit(const struct ci_flow_engine *engine __rte_unused,
+ 		void *priv)
+@@ -1903,6 +1917,18 @@ static const struct ci_flow_engine_ops i40e_flow_engine_tunnel_ops = {
+ 	.flow_uninstall = i40e_tunnel_flow_uninstall,
+ };
  
- 	/* control field masks must be all zero or all one */
- 	if (!CI_FIELD_IS_ZERO_OR_MASKED(&raw_mask->offset) ||
-@@ -799,7 +804,6 @@ i40e_fdir_node_raw_validate(const void *ctx, const struct rte_flow_item *item,
- 	wants_offset = raw_mask->offset != 0;
- 	wants_search = raw_mask->search != 0 && raw_spec->search != 0;
- 	wants_limit = raw_mask->limit != 0 && raw_spec->limit != 0;
--	wants_absolute = raw_mask->relative != 0 && raw_spec->relative == 0;
++/* for tunnel types that require tunnel filter replacement */
++static const struct ci_flow_engine_ops i40e_flow_engine_tunnel_replace_ops = {
++	.engine_init = i40e_tunnel_replace_flow_engine_init,
++	.engine_uninit = i40e_tunnel_flow_engine_uninit,
++	.ctx_init = i40e_tunnel_ctx_init,
++	.ctx_to_flow = i40e_tunnel_ctx_to_flow,
++	.flow_register = i40e_tunnel_flow_register,
++	.flow_unregister = i40e_tunnel_flow_unregister,
++	.flow_install = i40e_tunnel_flow_install,
++	.flow_uninstall = i40e_tunnel_flow_uninstall,
++};
++
+ const struct ci_flow_engine i40e_flow_engine_tunnel_nvgre = {
+ 	.name = "i40e_tunnel_nvgre",
+ 	.ops = &i40e_flow_engine_tunnel_ops,
+@@ -1923,7 +1949,7 @@ const struct ci_flow_engine i40e_flow_engine_tunnel_vxlan = {
  
- 	/* Offset must be 16-bit aligned */
- 	if (wants_offset && (raw_spec->offset % sizeof(uint16_t) != 0)) {
-@@ -823,7 +827,7 @@ i40e_fdir_node_raw_validate(const void *ctx, const struct rte_flow_item *item,
- 	}
+ const struct ci_flow_engine i40e_flow_engine_tunnel_mpls = {
+ 	.name = "i40e_tunnel_mpls",
+-	.ops = &i40e_flow_engine_tunnel_ops,
++	.ops = &i40e_flow_engine_tunnel_replace_ops,
+ 	.ctx_size = sizeof(struct i40e_tunnel_ctx),
+ 	.flow_size = sizeof(struct i40e_tunnel_flow),
+ 	.priv_size = sizeof(struct i40e_tunnel_priv),
+@@ -1932,7 +1958,7 @@ const struct ci_flow_engine i40e_flow_engine_tunnel_mpls = {
  
- 	/* only relative offsets are supported */
--	if (wants_absolute) {
-+	if (raw_spec->relative == 0) {
- 		return rte_flow_error_set(error, EINVAL,
- 				RTE_FLOW_ERROR_TYPE_ITEM, item,
- 				"RAW absolute offset not supported");
+ const struct ci_flow_engine i40e_flow_engine_tunnel_gtp = {
+ 	.name = "i40e_tunnel_gtp",
+-	.ops = &i40e_flow_engine_tunnel_ops,
++	.ops = &i40e_flow_engine_tunnel_replace_ops,
+ 	.ctx_size = sizeof(struct i40e_tunnel_ctx),
+ 	.flow_size = sizeof(struct i40e_tunnel_flow),
+ 	.priv_size = sizeof(struct i40e_tunnel_priv),
+@@ -1941,7 +1967,7 @@ const struct ci_flow_engine i40e_flow_engine_tunnel_gtp = {
+ 
+ const struct ci_flow_engine i40e_flow_engine_tunnel_l4 = {
+ 	.name = "i40e_tunnel_l4",
+-	.ops = &i40e_flow_engine_tunnel_ops,
++	.ops = &i40e_flow_engine_tunnel_replace_ops,
+ 	.ctx_size = sizeof(struct i40e_tunnel_ctx),
+ 	.flow_size = sizeof(struct i40e_tunnel_flow),
+ 	.priv_size = sizeof(struct i40e_tunnel_priv),
+@@ -1950,7 +1976,7 @@ const struct ci_flow_engine i40e_flow_engine_tunnel_l4 = {
+ 
+ const struct ci_flow_engine i40e_flow_engine_tunnel_qinq = {
+ 	.name = "i40e_tunnel_qinq",
+-	.ops = &i40e_flow_engine_tunnel_ops,
++	.ops = &i40e_flow_engine_tunnel_replace_ops,
+ 	.ctx_size = sizeof(struct i40e_tunnel_ctx),
+ 	.flow_size = sizeof(struct i40e_tunnel_flow),
+ 	.priv_size = sizeof(struct i40e_tunnel_priv),
 -- 
 2.52.0
 
