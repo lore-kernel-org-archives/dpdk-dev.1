@@ -2,90 +2,147 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367A5606A31F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 16:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680C6606A31C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 16:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=hnZP7Bas
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=OuV/LhDQ
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A1AC40288;
-	Fri, 30 Oct 2026 17:30:59 +0100 (CET)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com
- [209.85.222.50])
- by mails.dpdk.org (Postfix) with ESMTPS id 36C7240285
- for <dev@dpdk.org>; Fri, 30 Oct 2026 17:30:58 +0100 (CET)
-Received: by mail-ua1-f50.google.com with SMTP id
- a1e0cc1a2514c-990835cec4bso638431241.1
- for <dev@dpdk.org>; Fri, 30 Oct 2026 09:30:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793377857; cv=none;
- d=google.com; s=arc-20260327;
- b=L5AFKdC9vMK0PUUvXppoL71Uv/ZR6Q+HGBV33ZKRZ+kfOS+7qyRieklPaLPxEkWx5e
- 48bDbzctRiRnoUO0VBaLLdKdIHn1CV3tqgI1QvkRxSmwb9KDqTyH/T+2bEo/hR3lHz7I
- 8ighI4d2p86VFo7uElEOcjP2iJU4ryL6l3pux68Ak5zntu4ar8pXK2XVfBSNlb3klhgL
- Prz9kNJLJ/i6GNKkN1zN55hLWhlnDhwSgJKobSWoPcN6vehF5LOBxEz6TMyDbcDAPQqp
- h1lB0VQ6InwwIlRycB5Fs6pC7AcBJD/Wvoi9+EVgF5lZBaBPmCDZnS3vASGdgNRihWV2
- Sl9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=jKdRg3HlEXEP/oCtUKkymjHlm2oP40wJndeclANxtvY=;
- fh=b3D9sFwRmXoX2gcCqVb9wOeVa1PHmwwBkbD+Y0jF334=;
- b=RadVcsYei7btvTHGVh9CDHyo2b64ds5Awp7H5EQa+8PtKGwn2WvbiG58LJlrlRvahA
- vaAu/u4BsVe+gNg6ds7Mq+WL9C/HRltJ7r5PGE79p4dAwYnX8HRyZrrvlQ/mg04L7pYd
- ga/1YLKAXLpwjcPb4YPT4o8QuWnEfcBw25IuydTrpBBi2Gk65H+Cxdd0gDwW85UY1K+u
- C8KmzNZ1UxM9e5U0vXQbrrr+L77ddI4yJ/D1WhH6ekSv4gTGXInwxOGR3h3DvqMT4TUq
- 8tTWIEplK4l3j9iD1+9FYehgTKj4bncAnP77OEfQ+vWiV/fYqVzZQa3iLKwthLXuylEe
- 4zlw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793377857;
- x=1793982657; darn=dpdk.org; 
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=jKdRg3HlEXEP/oCtUKkymjHlm2oP40wJndeclANxtvY=;
- b=hnZP7BasQsmC0AxSsJBB9/gnjVlUSLPH8mtQZ7ydwUDpLF6M7PB5g7lOtJ/s5BAfgm
- rVWuDvhMoro4ar5Jl5EHUrPqhY2lrr7RftqApLo+RZ97vZ+/wGSImRLvwFzksOwoAg9i
- 8OZw2U+2VRgzaxnSE4T34wfwuFY6ehv4YhiLSP2nzuzgVX8vCf3Bbyr0DkJsx0qsdBXU
- YD26mihzP0xvLrPhuKRnHwfSq6/TOJcCshrqBgeX0LKT9gdV3lQ/BVIHkCpG/aYwsg6Z
- 5VFOVFCLL6qHRGcL9CWvNewBDaH+0Hz0+eT45jLd7fNK6T8GCZ8fKkT4nMUtdg3T1VOv
- cL4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793377857; x=1793982657;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=jKdRg3HlEXEP/oCtUKkymjHlm2oP40wJndeclANxtvY=;
- b=X3uh/R6T77ge7T2eY/JdO3MF4SIlnsYbBOHgMieAEPTIqNR3X+clw0f+tkgYervbBn
- 8tStAsgJnDSly3U36wNLZOhGvzZbE4iq2bvOlrzCaj94xr8KckRRWwPIF36/PuxDc8KS
- bgUd7TehjF9BZ8ZrKkjYmIig2g4G73YnXo/wOSjMqvf4DpRPnl7pptxyf+0FtH6RcZQA
- 8Qflk+9NyrS6HQ+fzjxggM9Di9ug/AJecYUZjtze3Jp50ADhYKQx9KsmqUnw48/XNQom
- 7d+Y9UNDgX38BWVLvyEOvFw7Ze5UrdXE2VL/+R/06VIH1p53etyYJeIwykaIrVRsOl30
- OByA==
-X-Gm-Message-State: AFq9FYIYu1GaJwjzSC1Xv5JGuViigrYk/imvVV/WFBOJ/HJ4z/flDkuB
- OCoJhNfyNjKyhftdGBUJp09n4G5wjjy4eoBUnWyswIefWR/Ey3E+4N/PBd3qst06GpaLJhVu1W6
- e6u8MwpEdjaoI5H9Ui53D9Nrh7P58hWGZg2m8lNJeFg==
-X-Gm-Gg: AYBFou3qyaGxsUbOeYDwWw1QH4KpbMrRKQR0iH6su7ocOCzFkv35fuAWfJak6KCaD8F
- UeVJdL1w3FsWHQIe7XDpMSOB8FBz3JaFq6tt5aatuycK03RCRsuK8rlm487igK4sKXO5n7Bhcrq
- WN1ckklvIiNksgXXwZ43Z34k9uNNkLsXaOwfR9mjO6M6e7NO9c/K1aibsVm3gDmP83SFztFLn4n
- LGfxM0dx7YFrw/7+sX2SBmj4QTMEkOQImNMIbwagIUjrc410M/+KBHiwOD7HHBVJhCaTMRtJ5gA
- bVftlZrYEP3Vksl4lWsiOywRn2EwLstunJQXDZKSJah3JLzP2sRTr7c2qevV4zv275uVtEAQhu8
- cabomMnXucEKGy6i9D2euCEq6ZgnmbpO9qeZqZOZUR1ATQGs7SimLZhz4rsuafUL87s/al5w=
-X-Received: by 2002:a05:6102:c01:b0:7c3:c0b9:8d50 with SMTP id
- ada2fe7eead31-7d072c89051mr1343274137.21.1793377856925; Fri, 30 Oct 2026
- 09:30:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0AD6140288;
+	Fri, 30 Oct 2026 17:50:11 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+ by mails.dpdk.org (Postfix) with ESMTPS id 1689640285
+ for <dev@dpdk.org>; Fri, 30 Oct 2026 17:50:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1793379009; x=1824915009;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=w1zutLzVMr9Q/L4yAzC4ZGqSt5PXJRtTvWIj+IfeSp4=;
+ b=OuV/LhDQLUrMDtRV2k5L1HLye6HVZCbqqkuvmyvOBGMoWPFlWzc/iouX
+ XqjzVBNCb0tJU5RFvGDhz1yZg/lPvdxDejSrA14K7juonwjB2iu2PA5zX
+ cIgYVQahYgHE4hrb8f7mWROv1cQl9U9TRzD/un449m/YL6ciEM8cbAKiH
+ KY5O3JOsF2S15XecCRxUl3PHC8aOgabzERzjqxAUQBVoyKj0FFdp+SiTK
+ 8tJAePA4JTjrqBP0ymZux7fU1zCS5ocHhM0jbZ90rtbGWeo2rXtGfWXqz
+ PrdreFgqsRRiTaxsOEf1i7Lb3wZWcuZmJ++uswORDn+vL32E2t4/YBuic Q==;
+X-CSE-ConnectionGUID: /IPbh/6nRTGEqqo1Ywe0Uw==
+X-CSE-MsgGUID: LNENCNYMRR+oPhh494NOcQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11951"; a="2150821"
+X-IronPort-AV: E=Sophos;i="6.27,186,1787036400"; 
+   d="scan'208";a="2150821"
+Received: from fmviesa011.fm.intel.com ([10.60.135.151])
+ by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 30 Oct 2026 09:49:45 -0700
+X-CSE-ConnectionGUID: ZvAahkDXTxKJgNJjvh4+pw==
+X-CSE-MsgGUID: Ln/Dah+xQm290g26ZEOC6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,186,1787036400"; 
+   d="scan'208";a="7323502"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa011.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 30 Oct 2026 09:49:45 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Fri, 30 Oct 2026 09:49:44 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56 via Frontend Transport; Fri, 30 Oct 2026 09:49:44 -0700
+Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.5) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Fri, 30 Oct 2026 09:49:43 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n+5Mkhpdy07kAbBd7Vq0aqIKR8wlbSSBGE/Qbuh2D1JseniQyAsPbqDlbIViwHj6sP5ciUsaYTP7HN5USHrSNo5WhjAO1+b6ZS5kjF2mJu+gXuBorTtiKlU+47eoTo57C/ADah4M47f7b7Nvas1XiTreRaZ2/L5SjFJogodj62iF+kgZYovUf+4x3uRwSAmCmPRDG0ZdZ2ELtOob4sAtlEiVkJjjRWGEwAy+x+i9RadGQxTUkz9qFyCsOsNNCl3+v0nzgSnK7uhmkOzYtMleSfP1HSbNRFsV+OpR2Tqj7bHWYkljhsoLS1Z/v6F+Vj3sQjO7rdNebLLPzVTnva0z7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fOwxGr9XhAIrYOkKDTtPpZhsJfzfLo6kqhQhnDkGmY8=;
+ b=JTDA1xDITWXRCA5Az/3ShSzyAx4gh7AxcFZ16yJpIjrqLfjFR0WtmNylVKBTviH48lskj8RxegrTeZnmzpAX3ZCnxHjDB878NyE6NVaWhzuXG0cxD0LMla+eJA8g9aOVpta8HOBAKJqIYYBbYaynHeEnWMjuIpvTEdRk4XuZIgkRt6YOigfCSD+t4rs+37sjfdVK1GXvLLkxz709SSYh1U8fBNX+yoQGmGz5J03HDxwDYr5rdaXI6MNc/wGnVq2z2+KrnvcdQ7ZUn9VrIFv+VVl2zP595ZgMaiJWJD7xhWeXm6eehTWYxVfGmdEdvp1EpcxtIb8QRx1GFemWZ1g0cg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by IA3PR11MB715720.namprd11.prod.outlook.com (2603:10b6:208:714::20)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.10; Fri, 30 Oct
+ 2026 16:49:42 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0546.016; Fri, 30 Oct 2026
+ 16:49:42 +0000
+Date: Fri, 30 Oct 2026 16:49:37 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v1 1/9] net/i40e: skip FDIR flow engine when FDIR is
+ unavailable
+Message-ID: <auTKoYngTHype9Fq@bricha3-mobl1.ger.corp.intel.com>
+References: <5e64cc416c8ab3b038eee6bb55836e0b8ed507ab.1793353214.git.anatoly.burakov@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5e64cc416c8ab3b038eee6bb55836e0b8ed507ab.1793353214.git.anatoly.burakov@intel.com>
+X-ClientProxiedBy: DU6P191CA0004.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:540::21) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261030051726.898902-1-nkishor@marvell.com>
-In-Reply-To: <20261030051726.898902-1-nkishor@marvell.com>
-From: Stephen Hemminger <stephen@networkplumber.org>
-Date: Fri, 30 Oct 2026 09:30:48 -0700
-X-Gm-Features: AclHuK_GdCONONivH-8-_9HMaNfQ3AAQNxCBN5BKfkgpMEu_KG94cFDH3clJd7U
-Message-ID: <CAOaVG17Zkb+0Tn7VxF8SuGpoULYU_W64vC=KnLM7YCXGGq3+Pg@mail.gmail.com>
-Subject: Re: [PATCH] mempool/cnxk: fix halo enable devarg parsing
-To: Nawal Kishor <nkishor@marvell.com>
-Cc: dev <dev@dpdk.org>, Ashwin Sekhar T K <asekhar@marvell.com>, 
- Pavan Nikhilesh <pbhagavatula@marvell.com>, Jerin Jacob <jerinj@marvell.com>
-Content-Type: multipart/alternative; boundary="0000000000001c40d1065f115246"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|IA3PR11MB715720:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb3bed2f-7b5e-49fb-8282-08df36a5cb6b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|376014|1800799024|366016|11063799006|56012099006|261009223027099003|261026140227099003|261026121527099003|261028144727099003|261021121427099003|261022105027099003|10067099003|18002099003|22082099003|3023799007;
+X-Microsoft-Antispam-Message-Info: vqn98+hFivLkm+wAwqbvRhQrOLHM2Iv3OcaD9lxCtfNa7NOcm+7vHuw29hTHWTkYmFS6HRJagmqWMElTgTge8BiCCzfAkUYPeo8ySaARrkfmCuYoBeLBG2r4GbY9buJap3SbT39B4yjp4E+U9OMK6rsq10Ua5B/sTQ5qTCjwpuxt2BTVPbksZhMGU/wyOzi4DUQgABT2RzhiX28ubxAUEJNeXO0LSwBpWlVknRQKqOLYcCnMGLbSLJ21ZjswbwGB9zTL5rzWAHS4Hkugu5U+j1+t3zbMgePEbpG8dLLsPSR2dk2jumXIQOCjtVYfjhSmZ2/dxrLVrPmJD8yj75BODsVvHRVCx8F6lZ4YgbI/Mn4Ou8PmcgMkD/a2BQZM/IcAbm6qZ7WSOgVu4ZSoYcMAfaxTmEpxdltKwEOsoBymjgicpBUYX0/utQJx57cPXUNXh8LCHYzYt0/Mcia2+VukwL1q+1r4s+wvgnL1KqqHI7QqtoIaaKhGYySfg27vDnBjoDym5m5fzOqDDnDCCIZ2eZP1pMMDZfonC4fUrhqpBjZB2SqPbpvgKTCOEz5EFlK1f3LEQyr1RCExSlnU2R9brU6BuSbV1WJimm7rJanFAeMNJ+4G+RvVclHXn6VrXVHC7KSN8M+qUVPA8amj5/iMT+OBikI0G3TRa69JZUes1Do=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(11063799006)(56012099006)(261009223027099003)(261026140227099003)(261026121527099003)(261028144727099003)(261021121427099003)(261022105027099003)(10067099003)(18002099003)(22082099003)(3023799007);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xSVHzwXolo/SwH+WjVoUYzx/W3CC4mrtUDEgW7dOgqiZac7pAgqFLglRb9lI?=
+ =?us-ascii?Q?fZ6L/n/Jx/lXm0DC7D5slQyUqjLfEB/1ThMqPtYSD3v6kntxiTQFKC8dObkc?=
+ =?us-ascii?Q?bWGJUVha+tGZ7GGcFNCFLSgadQz9woc/1ZNrmnj4fbFTKd1LSMXzap9kjPfY?=
+ =?us-ascii?Q?ozY2rRbX7g2P2uP0r1sebmr0pZJj5WjEDCexvkt1rR9QpdTuHCbo7U8VPS93?=
+ =?us-ascii?Q?gFRd9FTTEFlzcS9YHh/HcYFPBoMoI4z5c7qKPITwKnwF+o9EZxetsj8rVime?=
+ =?us-ascii?Q?gAGnZvfMeid0UC6AYQ3GFe87eEY+EeEzVHx7Lo5+hhTOSQXssPzJfZmGHw2r?=
+ =?us-ascii?Q?2tQmemMowPEycvch9sTjc4k4QrOVJ723H6F81JJTS1OsiQvI1ZnU1ye6PWN4?=
+ =?us-ascii?Q?oVMuGo6aV62i+rl3uhVEOT5RWLxQ6jRdEC8D0d+LLG/fToCGvZWpj/je/ov/?=
+ =?us-ascii?Q?i/voaAVW732OTh9WtfgJQlIyB7DGqou6YjrgBwR7jEivEkLTJ9klM9Q7YsHJ?=
+ =?us-ascii?Q?QRWePHEa/lBt0zGFy7wE8bYZiGxllbQNa57YaTHh5DwTwyGpassV/iu5aic+?=
+ =?us-ascii?Q?Dpxv2frag5oVbyd5en4hFmkksII2Er9TKB5wkTmd3PSS3ROk4M9Td0Lho8RF?=
+ =?us-ascii?Q?pYcZVXcBfy25o45+H+xYmf62cOaj/x0SnT2vyXCMhH3/+YQv4p1uHXZPEX7r?=
+ =?us-ascii?Q?JTa8b8J9SPXJHsnfHPHA3mvbR9yg/lpRO4btvkPpsXhKToKKn+PeYS24Gutg?=
+ =?us-ascii?Q?tXpG5nsdZ+b8JtV4NVWsRE1+dxvKWoCeP4122iKS4Xq1FcRxA40PWL9O2qqk?=
+ =?us-ascii?Q?iudPImvRvsSEf8eig3WtYgr2WH30fTxSimoYDfltxW4RYLJv20GfAwMjoCyA?=
+ =?us-ascii?Q?cikLt9vUdsXcccLzkGDqypogADj9JA9AS2JckNfjQzsaRv6BsmO/RLfIyGWu?=
+ =?us-ascii?Q?czxSdex6xuGF8ftSWIEd/OrpNyT6gRLFg+fwGPXMUHDVhuZO0ot/R30L+Pfl?=
+ =?us-ascii?Q?t1E/EREgoHyvBv29c9A6rZmGndsn+VyqrLUBEkafch/XtJIOCSvdOIRz240k?=
+ =?us-ascii?Q?mjJthRPdofXtHrFAeIMTWMFL4+WrkT3XW01I48T92LvUjzKXkw0e5aKY5rHX?=
+ =?us-ascii?Q?nTCCiVgiSqLka089mjukhS9O4nDAaqmLM8DqVIxHF6BXqV8y0NyK/vgnDTJ3?=
+ =?us-ascii?Q?xDOcZ6oo64AapOJcV4es/uM2hpDhP1dFRR6P/XCnbIkimcA/pqqatPpaWpZz?=
+ =?us-ascii?Q?7jJk6WPMLJLAVYYGccnGnLHWW+MJ5Do1lc9Gl1IPwup2SOwquRqtV0q+GuW4?=
+ =?us-ascii?Q?QUx21OiWmrvQgDCaTtS4CoN9c66kBug/G2i2jAtsNH3W2hebgxEy/aoePJH7?=
+ =?us-ascii?Q?C62BDCrJDOmpsCkIsFRuPZipFu6Bsg5zld6rFP7D+j7HhNVLyvf82CB8s/Ph?=
+ =?us-ascii?Q?KjfybYueVuzlun294PFiehS6/lgl+RJqFUnJXb5Zi0nj9qiNuzVVaOv52eQl?=
+ =?us-ascii?Q?tqqnpEyhIl3poRHHkwY/OOCm9VuWdpeJu6I40CkXLUceoPWD8G1EkRjLg8OP?=
+ =?us-ascii?Q?FAZXSt6pw2zbB4F8nbEy7hnax3gXybWS+2AVbfCAqyFjm2nIAUkTwhvdUO4L?=
+ =?us-ascii?Q?lRl4GHzCAl8K37eDS89UaGUStb3v/EYDnFJzpvoNRsUD7Fs9d3dYDgwPNsX/?=
+ =?us-ascii?Q?GbE2Th8O8AjtxuZTMySrsG6O3PG1YTFYW9Xjvkt6MUOqKLkBPXllg7DOk/4z?=
+ =?us-ascii?Q?WIAtNjYJVBxC868tqz/fd+Deyy+/QTc=3D?=
+X-Exchange-RoutingPolicyChecked: p19uQZ+Rbe8mNGQxZzcx4M5VC0P0nY9K5822I+fy6onhkKEWf4Yh4RHO2co7Fh3BG/6o9vmGgcusA4gKYvzcWnKLRFX2XXPDsURxk7E+6hJ0vPh7hsZg4FjCPc99iveWyZstVTY5O8vNmqlyiTPEFq1DNVGJAObAqABVOm0vRanEJu/jgGqFMalrWM/xxKgxRhIp+mPxQk+jd8DW0WYAb+jEKdgKpoNKJ7V/Gq8nLX5RecSBux+p2jvQ6QbHPd7Zp0RdSBTtuo6rM8Bt4qmcQF64InP2q6n59kd0dLrRKzyrA1SrOv/+PaPJwLhzwbBOWoqiKqvxp6T45bJEg3r5qA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb3bed2f-7b5e-49fb-8282-08df36a5cb6b
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2026 16:49:42.2776 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7PnFFpsGw0JduuBQmrDxvrNMbrQlI8p9zKgfPONnMNocNZm94J3BN28eAIJu4v/II/qRL+YZDWT/zuyJ9AFTCVrVubwhI4Eucch/7FaXkrQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB715720
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,119 +152,58 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
---0000000000001c40d1065f115246
-Content-Type: text/plain; charset="UTF-8"
+On Fri, Oct 30, 2026 at 09:40:14AM +0000, Anatoly Burakov wrote:
+> The FDIR flow engine was initialized even when flow director was not
+> usable. With no FDIR filter space, engine init failed and logged an
+> error. When FDIR was disabled because its queue could not be allocated,
+> the engine was initialized and FDIR flows only failed at install.
+> 
 
-one more reason to have common code for boolean flags. there is a bigish
-series to do that
+This commit log is not entirely clear, for example, when you talk about cases
+where the engine init already fails - given that you are adding code to
+make the engine init fail.
 
-On Thu, Oct 29, 2026, 22:17 Nawal Kishor <nkishor@marvell.com> wrote:
+> Return -ENOTSUP in both cases so that the engine is skipped.
 
-> parse_halo_ena_handler() kept the parsed value in a uint8_t and stored
-> it through a uint8_t pointer, while the caller passes a uint32_t. The
-> narrowing happened before the 0/1 check, so 256 was accepted as 0 and
-> 257 as 1. The one-byte store also updated only the first byte of that
-> uint32_t, which is correct only on a little-endian host when the local
-> is already zero.
->
-> Parse and store a uint32_t so the check sees the full value and the
-> caller's object is written completely.
->
-> Fixes: 45abbfc836b1 ("mempool/cnxk: support HALO in mempool")
->
-> Signed-off-by: Nawal Kishor <nkishor@marvell.com>
+You actually refer to 3 cases, I think: fdir not usable, no filter space,
+and no queue allocation. From the patch, I don't see the third case being
+relevant, so maybe drop the mention of it?
+
+> 
+> Fixes: 05432a6e4676 ("net/i40e: reimplement FDIR parser")
+> 
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 > ---
->  drivers/mempool/cnxk/cnxk_mempool.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mempool/cnxk/cnxk_mempool.c
-> b/drivers/mempool/cnxk/cnxk_mempool.c
-> index 6939fccff4..f1cdf9cbb5 100644
-> --- a/drivers/mempool/cnxk/cnxk_mempool.c
-> +++ b/drivers/mempool/cnxk/cnxk_mempool.c
-> @@ -51,13 +51,13 @@ static int
->  parse_halo_ena_handler(const char *key, const char *value, void
-> *extra_args)
->  {
->         RTE_SET_USED(key);
-> -       uint8_t val;
-> +       uint32_t val;
->
->         val = atoi(value);
->         if (val != 0 && val != 1)
->                 return -EINVAL;
->
-> -       *(uint8_t *)extra_args = val;
-> +       *(uint32_t *)extra_args = val;
->         return 0;
->  }
->
-> --
-> 2.48.1
->
->
+>  drivers/net/intel/i40e/i40e_flow_fdir.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
---0000000000001c40d1065f115246
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Code change looks reasonable, though, so with commit log cleanup:
 
-<div dir=3D"auto">one more reason to have common code for boolean flags. th=
-ere is a bigish series to do that</div><br><div class=3D"gmail_quote gmail_=
-quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Oct 29, 2026=
-, 22:17 Nawal Kishor &lt;<a href=3D"mailto:nkishor@marvell.com">nkishor@mar=
-vell.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D=
-"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-le=
-ft:1ex">parse_halo_ena_handler() kept the parsed value in a uint8_t and sto=
-red<br>
-it through a uint8_t pointer, while the caller passes a uint32_t. The<br>
-narrowing happened before the 0/1 check, so 256 was accepted as 0 and<br>
-257 as 1. The one-byte store also updated only the first byte of that<br>
-uint32_t, which is correct only on a little-endian host when the local<br>
-is already zero.<br>
-<br>
-Parse and store a uint32_t so the check sees the full value and the<br>
-caller&#39;s object is written completely.<br>
-<br>
-Fixes: 45abbfc836b1 (&quot;mempool/cnxk: support HALO in mempool&quot;)<br>
-<br>
-Signed-off-by: Nawal Kishor &lt;<a href=3D"mailto:nkishor@marvell.com" targ=
-et=3D"_blank" rel=3D"noreferrer">nkishor@marvell.com</a>&gt;<br>
----<br>
-=C2=A0drivers/mempool/cnxk/cnxk_mempool.c | 4 ++--<br>
-=C2=A01 file changed, 2 insertions(+), 2 deletions(-)<br>
-<br>
-diff --git a/drivers/mempool/cnxk/cnxk_mempool.c b/drivers/mempool/cnxk/cnx=
-k_mempool.c<br>
-index 6939fccff4..f1cdf9cbb5 100644<br>
---- a/drivers/mempool/cnxk/cnxk_mempool.c<br>
-+++ b/drivers/mempool/cnxk/cnxk_mempool.c<br>
-@@ -51,13 +51,13 @@ static int<br>
-=C2=A0parse_halo_ena_handler(const char *key, const char *value, void *extr=
-a_args)<br>
-=C2=A0{<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 RTE_SET_USED(key);<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0uint8_t val;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0uint32_t val;<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 val =3D atoi(value);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (val !=3D 0 &amp;&amp; val !=3D 1)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -EINVAL;<br>
-<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0*(uint8_t *)extra_args =3D val;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0*(uint32_t *)extra_args =3D val;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 return 0;<br>
-=C2=A0}<br>
-<br>
--- <br>
-2.48.1<br>
-<br>
-</blockquote></div>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
---0000000000001c40d1065f115246--
+
+> diff --git a/drivers/net/intel/i40e/i40e_flow_fdir.c b/drivers/net/intel/i40e/i40e_flow_fdir.c
+> index 55997295edb..197b93f3746 100644
+> --- a/drivers/net/intel/i40e/i40e_flow_fdir.c
+> +++ b/drivers/net/intel/i40e/i40e_flow_fdir.c
+> @@ -2010,6 +2010,9 @@ i40e_fdir_flow_engine_init(const struct ci_flow_engine *engine,
+>  	uint32_t i;
+>  	int ret;
+>  
+> +	if ((pf->flags & I40E_FLAG_FDIR) == 0 || fdir_info->fdir_space_size == 0)
+> +		return -ENOTSUP;
+> +
+>  	snprintf(fdir_hash_name, sizeof(fdir_hash_name), "fdir_%s", dev_data->name);
+>  
+>  	struct rte_hash_parameters fdir_hash_params = {
+> -- 
+> 2.52.0
+> 
