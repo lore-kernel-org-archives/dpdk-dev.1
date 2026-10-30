@@ -2,31 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F30D606A31C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 14:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1DA606A331
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 14:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=h7731rGx
+	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=BGGvCJzd
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F6D340E4A;
-	Fri, 30 Oct 2026 15:48:14 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
- by mails.dpdk.org (Postfix) with ESMTPS id 63F5D40B9C;
- Fri, 30 Oct 2026 15:47:57 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0DCA640E50;
+	Fri, 30 Oct 2026 15:48:15 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
+ by mails.dpdk.org (Postfix) with ESMTPS id 59FEF40285
+ for <dev@dpdk.org>; Fri, 30 Oct 2026 15:47:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=P2OXV5zkKjQcmm0c+fv48aNjNeYlWfvAWDyF75UHpDw=;
- b=h7731rGxcbv3bVGunnsI0sOtt8BBSl5MunBa0Bc+9Z7VBokplJdZki++i3Axic
- dFDUbSD0g0VcQV9ki2MQ7P/R0VTdOP1MOp6EQ6ilAESRNHq/ZsOMp9YlWRHWW9M/
- LBLNnoyQyfxm3IolRcly6TJc/IZopaippjHFerCmf3KSw=
+ MIME-Version; bh=1/X+1VZxX4uqCe9rKcaVoSSTGmI00iXMjz8zd/aeu0Q=;
+ b=BGGvCJzdykerYoXY59DXWP4TgrvBtU3xLRLzUxgmNlvmOTjYWUSr+FA+pNPbZC
+ qkYUsQKWqcsAY3II0dfKYW1jF5J5wDyalUg8hQj05ngxrjgNIbfgFPYOCstKgaWe
+ h65330w24b3+Q6bbj6IWS2y1Cq31ZjnIPpdIOdX8bepDQ=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
- Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
-Subject: [PATCH v5 07/28] net/hinic3: attach ethdev and set ops in secondary
- process
-Date: Fri, 30 Oct 2026 22:47:11 +0800
-Message-ID: <20261030144733.2120-8-yejiacheng4@h-partners.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v5 16/28] net/hinic3: add VF link state and promiscuous support
+Date: Fri, 30 Oct 2026 22:47:20 +0800
+Message-ID: <20261030144733.2120-17-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261030144733.2120-1-yejiacheng4@h-partners.com>
 References: <20261023155809.855-1-yejiacheng4@h-partners.com>
@@ -34,13 +33,13 @@ References: <20261023155809.855-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDHb_EUruRqpJ41BA--.59781S9
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tw45WFy5JF1DJryUAFykuFg_yoW8Wr4kpF
- Wjga95ArykJF47A3Z3Ca1fAa4ruw4xJ34UKry3Ga45C34rXF409343J3yjvrs8trZxAF17
- ZF4UCrWv9r12qaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jzrWrUUUUU=
+X-CM-TRANSID: As8vCgDHb_EUruRqpJ41BA--.59781S18
+X-Coremail-Antispam: 1Uf129KBjvJXoW3JrWUtw45WrW7trWUuw13CFg_yoW7CF1rpa
+ yUGa93tFyDWF47X3Z8Cw47uF15X3WxG347K3s3C3WYv3W5Xr98A348Gry2vr13t3srJa12
+ vF48ur4q93W8KrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uio7tUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNRiFj2rkrhhghAAA37
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMxuFj2rkrhtTjgAA3E
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,52 +56,153 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The secondary process probe path returns early without attaching the
-already-created ethdev or assigning its dev_ops, leaving the device
-unusable in secondary processes. Attach the ethdev and set the matching
-PF/VF ops.
+Every VF link previously followed the PF, so a VF could not be brought down
+while the PF stayed up. Track vf_valid_status and combine it with the
+physical link so the VF link can be set down independently.
 
-Fixes: 468368457681 ("net/hinic3: add device initialization")
-Cc: stable@dpdk.org
+Register the promiscuous callbacks in the VF eth_dev_ops so a VF can enter
+promiscuous mode independently as well.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/hinic3_ethdev.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/net/hinic3/base/hinic3_hwdev.h     |  3 +-
+ drivers/net/hinic3/base/hinic3_nic_cfg.c   |  2 ++
+ drivers/net/hinic3/base/hinic3_nic_event.c |  6 ++++
+ drivers/net/hinic3/hinic3_ethdev.c         | 32 ++++++++++++++++++++--
+ 4 files changed, 40 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 6c09d6e80d..4e9e936b10 100644
---- a/drivers/net/hinic3/hinic3_ethdev.c
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -2137,6 +2137,9 @@ hinic3_dev_close(struct rte_eth_dev *eth_dev)
- 		HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
- 	int ret;
+diff --git a/drivers/net/hinic3/base/hinic3_hwdev.h b/drivers/net/hinic3/base/hinic3_hwdev.h
+index c6661aa1a6..87ca18e571 100644
+--- a/drivers/net/hinic3/base/hinic3_hwdev.h
++++ b/drivers/net/hinic3/base/hinic3_hwdev.h
+@@ -157,7 +157,8 @@ struct hinic3_hwdev {
+ 	char mgmt_ver[MGMT_VERSION_MAX_LEN];
  
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return 0;
-+
- 	if (hinic3_test_and_set_bit(HINIC3_DEV_CLOSE, &nic_dev->dev_status)) {
- 		PMD_DRV_LOG(WARNING, "Device %s already closed",
- 			    nic_dev->dev_name);
-@@ -3410,6 +3413,18 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
- 		PMD_DRV_LOG(INFO, "Initialize %s in secondary process",
- 			    eth_dev->data->name);
+ 	uint16_t max_vfs;
+-	uint16_t link_status;
++	uint8_t link_status;
++	uint8_t vf_valid_status; /* vport_enable: 1, vport_disable: 0 */
+ 	uint64_t features[HINIC3_MAX_FEATURE_QWORD];
+ };
  
-+		nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
-+		if (nic_dev == NULL) {
-+			PMD_DRV_LOG(ERR, "nic_dev hwdev is NULL, dev_name: %s",
-+				    eth_dev->data->name);
-+			return -ENOMEM;
-+		}
-+
-+		if (HINIC3_FUNC_TYPE(nic_dev->hwdev) == TYPE_VF)
-+			eth_dev->dev_ops = &hinic3_pmd_vf_ops;
-+		else
-+			eth_dev->dev_ops = &hinic3_pmd_ops;
-+
- 		return 0;
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+index 34f4384ee9..60175c72ce 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+@@ -470,6 +470,8 @@ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)
+ 		return -EIO;
  	}
  
++	hwdev->vf_valid_status = enable;
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/net/hinic3/base/hinic3_nic_event.c b/drivers/net/hinic3/base/hinic3_nic_event.c
+index 981a5f5083..787b4b0739 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_event.c
++++ b/drivers/net/hinic3/base/hinic3_nic_event.c
+@@ -111,6 +111,12 @@ link_status_event_handler(struct hinic3_hwdev *hwdev, struct hinic3_handler_info
+ 
+ 	/* Link event reported only after set vport enable. */
+ 	hinic3_get_link_port_info(hwdev, link_status->state, &link);
++
++	if (HINIC3_IS_VF(hwdev)) {
++		hwdev->link_status = link.link_status;
++		link.link_status = hwdev->link_status & hwdev->vf_valid_status;
++	}
++
+ 	err = rte_eth_linkstatus_set(hwdev->eth_dev, &link);
+ 	if (!err && hwdev->eth_dev->data->dev_conf.intr_conf.lsc != 0)
+ 		rte_eth_dev_callback_process(hwdev->eth_dev,
+diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
+index e6b7d0d231..658c192ce3 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.c
++++ b/drivers/net/hinic3/hinic3_ethdev.c
+@@ -832,6 +832,7 @@ static int
+ hinic3_dev_set_link_up(struct rte_eth_dev *dev)
+ {
+ 	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct rte_eth_link link = { 0 };
+ 	int err;
+ 
+ 	/*
+@@ -856,6 +857,14 @@ hinic3_dev_set_link_up(struct rte_eth_dev *dev)
+ 		return err;
+ 	}
+ 
++	if (HINIC3_IS_VF(nic_dev->hwdev)) {
++		link = dev->data->dev_link;
++		link.link_status = nic_dev->hwdev->link_status &
++					nic_dev->hwdev->vf_valid_status;
++
++		(void)rte_eth_linkstatus_set(dev, &link);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -872,6 +881,7 @@ static int
+ hinic3_dev_set_link_down(struct rte_eth_dev *dev)
+ {
+ 	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct rte_eth_link link = { 0 };
+ 	int err;
+ 
+ 	err = hinic3_set_vport_enable(nic_dev->hwdev, false);
+@@ -885,11 +895,19 @@ hinic3_dev_set_link_down(struct rte_eth_dev *dev)
+ 	err = hinic3_set_port_enable(nic_dev->hwdev, false);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR,
+-			"Set MAC link down failed, dev_name: %s, port_id: %d",
+-			nic_dev->dev_name, dev->data->port_id);
++			    "Set MAC link down failed, dev_name: %s, port_id: %d",
++			    nic_dev->dev_name, dev->data->port_id);
+ 		return err;
+ 	}
+ 
++	if (HINIC3_IS_VF(nic_dev->hwdev)) {
++		link = dev->data->dev_link;
++		link.link_status = nic_dev->hwdev->link_status &
++					nic_dev->hwdev->vf_valid_status;
++
++		(void)rte_eth_linkstatus_set(dev, &link);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -937,6 +955,12 @@ hinic3_link_update(struct rte_eth_dev *dev, int wait_to_complete)
+ 	} while (rep_cnt--);
+ 
+ out:
++	if (HINIC3_IS_VF(nic_dev->hwdev)) {
++		nic_dev->hwdev->link_status = link.link_status;
++		link.link_status = nic_dev->hwdev->link_status &
++					nic_dev->hwdev->vf_valid_status;
++	}
++
+ 	return rte_eth_linkstatus_set(dev, &link);
+ }
+ 
+@@ -3628,6 +3652,8 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
+ 	.dev_configure                 = hinic3_dev_configure,
+ 	.dev_infos_get                 = hinic3_dev_infos_get,
+ 	.fw_version_get                = hinic3_fw_version_get,
++	.dev_set_link_up               = hinic3_dev_set_link_up,
++	.dev_set_link_down             = hinic3_dev_set_link_down,
+ 	.rx_queue_setup                = hinic3_rx_queue_setup,
+ 	.tx_queue_setup                = hinic3_tx_queue_setup,
+ 	.rx_queue_intr_enable          = hinic3_dev_rx_queue_intr_enable,
+@@ -3649,6 +3675,8 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
+ 	.vlan_offload_set              = hinic3_vlan_offload_set,
+ 	.allmulticast_enable           = hinic3_dev_allmulticast_enable,
+ 	.allmulticast_disable          = hinic3_dev_allmulticast_disable,
++	.promiscuous_enable            = hinic3_dev_promiscuous_enable,
++	.promiscuous_disable           = hinic3_dev_promiscuous_disable,
+ 	.rss_hash_update               = hinic3_rss_hash_update,
+ 	.rss_hash_conf_get             = hinic3_rss_conf_get,
+ 	.reta_update                   = hinic3_rss_reta_update,
 -- 
 2.33.0
 
