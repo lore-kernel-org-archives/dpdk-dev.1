@@ -2,51 +2,49 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE656606A31D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 09:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0CD606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 10:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Rm4I31fc
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=nztTdIaf
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B099040BA4;
-	Fri, 30 Oct 2026 10:41:12 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTPS id 79E5240DCA
- for <dev@dpdk.org>; Fri, 30 Oct 2026 10:41:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 65DBF40299;
+	Fri, 30 Oct 2026 11:02:09 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTPS id B94A440285
+ for <dev@dpdk.org>; Fri, 30 Oct 2026 11:02:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793353271; x=1824889271;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=icbouuFRNUUwJxNTDRRjOxgKQpDCPNMUB9RH/PRyi9g=;
- b=Rm4I31fc2KwbU1MOn7EKG8k/M7HO7et6vme3OmK/CzKVtTenWNWaIZVv
- b1dW5vXcpejjTzQmfX5QxuZb8q9BWKGEJWfYg0iFv9ctMr/hX87lhZ22D
- +7wRNFUysn1G8f/ZBAv6nK55HXWOxhA/m4QOxvMXFRdI6jvVV5WGYEcOy
- 2FJqKcqY18xB4Jz292COa/kmKpCeg6mV3I3FCmGLSR4ChrALXLTi0FkTG
- +oMJDLtOSQ1GtStZeZHWdPkSpnmvoTdQk2ZFnuc+PLaCNgvBanvzXesIH
- Nc6fcMWlWTuXp42RvT0RjCw2i5iKX2+t6lcHYOtRCQSF7PVxbb+c6GVpi w==;
-X-CSE-ConnectionGUID: EWGl7pPyRHCJVEv7x2av7A==
-X-CSE-MsgGUID: 3qD3vepKQGKvqYCZwsXqiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11950"; a="2126089"
+ t=1793354528; x=1824890528;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=XGDCRAHKn12Vu1RYlGQAzSlCnHorwPi81EnFxeyocJw=;
+ b=nztTdIafzM7v8gz3tmXl4lpZ1UD+6tdONSlwmNIBl49UmUlp0gcZSOvo
+ i/3uYHf8l2MjNcMCH0spj9UL3YzRYIUOqhrfz+R16uZ9jLRKP2gwgOgp9
+ Luxe+SMg87Q5086rfOFJy7lDd2Qx2YjiNrvglllKDUHwnRGYAqYY/CqmE
+ EX2xiqqv0QlbBfMHTC18Iv/Leab0aW4mFLhwYME5oseDi7LNXMWMQNMsA
+ xpGjYFAmYoFyR4OnArBuzs52/y7RGiON/HgwETxV45W/4XAXLidc/hJyM
+ jSzAePkvY2JsgSKolH37I/phXyyjZtnU6nbQb+Ln+4Queignp1L+Qxm63 A==;
+X-CSE-ConnectionGUID: 7DldNX1GSzyPJUcOU3RChA==
+X-CSE-MsgGUID: VfXCEyYOTF2JM9B0mOcEVQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11950"; a="1992158"
 X-IronPort-AV: E=Sophos;i="6.27,186,1787036400"; 
-   d="scan'208";a="2126089"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Oct 2026 02:41:10 -0700
-X-CSE-ConnectionGUID: CBNHWqQ0RJ+0RVAqzEopVA==
-X-CSE-MsgGUID: 84mAlP5ATymRPq98nQ2qzA==
+   d="scan'208";a="1992158"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 30 Oct 2026 03:02:06 -0700
+X-CSE-ConnectionGUID: QYRlD4DlTLe8N6cTbMsgEA==
+X-CSE-MsgGUID: cq4pn9yVRruuXUhfFca1DQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,186,1787036400"; 
-   d="scan'208";a="5299694"
+   d="scan'208";a="5479450"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 30 Oct 2026 02:41:09 -0700
+ by orviesa009.jf.intel.com with ESMTP; 30 Oct 2026 03:02:06 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v1 9/9] net/i40e: allow L2 and L3 only hash patterns
-Date: Fri, 30 Oct 2026 09:40:22 +0000
-Message-ID: <4f5228934ad64d1eb663ccd852d30fe4dfe79d18.1793353215.git.anatoly.burakov@intel.com>
+Subject: [PATCH v1 1/1] net/ixgbe: fix EEPROM read callback check
+Date: Fri, 30 Oct 2026 10:02:00 +0000
+Message-ID: <1877a0177de01bc832f96c8fe99f05fea7370bf1.1793354493.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <5e64cc416c8ab3b038eee6bb55836e0b8ed507ab.1793353214.git.anatoly.burakov@intel.com>
-References: 
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -66,60 +64,42 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The hash pattern graph had no END edge after ETH, IPv4 and IPv6, so RSS
-rules with patterns ending in one of those items were rejected. They
-were supported before the rework.
+The NULL check added for the E610 EEPROM write path was placed in the
+EEPROM read handler, so a missing write callback rejects reads while the
+write handler still dereferences it. Check the read callback in the read
+handler and move the write callback check to the write handler.
 
-Add the missing END edges.
-
-Fixes: 3332d0afdb61 ("net/i40e: reimplement hash parser")
+Fixes: 04c3e44b4aee ("net/ixgbe: fix null dereference on EEPROM write for E610")
+Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/i40e_flow_hash.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_flow_hash.c b/drivers/net/intel/i40e/i40e_flow_hash.c
-index 78b0544be63..28f2dd0e708 100644
---- a/drivers/net/intel/i40e/i40e_flow_hash.c
-+++ b/drivers/net/intel/i40e/i40e_flow_hash.c
-@@ -168,8 +168,10 @@ i40e_hash_get_inset(uint64_t rss_types, bool symmetric_enable)
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+index 46db8c49d09..9b43619bb79 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+@@ -7016,7 +7016,7 @@ ixgbe_get_eeprom(struct rte_eth_dev *dev,
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
+ 		return -E_RTE_SECONDARY;
  
- /*
-  * Hash pattern graph implementation
-- * Pattern: START -> ETH -> [VLAN] -> [VLAN] -> (IPv4|IPv6) -> (TCP|UDP|SCTP|ESP|L2TPV3OIP|AH)
-- *          START -> ETH -> [VLAN] -> [VLAN] -> (IPv4|IPv6) frag
-+ * Pattern: START -> ETH
-+ *          START -> ETH -> [VLAN] -> [VLAN] -> (IPv4|IPv6)
-+ *          START -> ETH -> [VLAN] -> [VLAN] -> (IPv4|IPv6) -> (TCP|UDP|SCTP|ESP|L2TPV3OIP|AH)
-+ *          START -> ETH -> [VLAN] -> [VLAN] -> IPv6 -> IPV6_FRAG_EXT
-  *          START -> ETH -> [VLAN] -> [VLAN] -> (IPv4|IPv6) -> UDP -> (GTPC|ESP|GTPU)
-  *          START -> ETH -> [VLAN] -> [VLAN] -> (IPv4|IPv6) -> UDP -> GTPU -> (IPv4|IPv6)
-  */
-@@ -491,6 +493,7 @@ static const struct flow_graph i40e_hash_pattern_graph = {
- 				I40E_HASH_PATTERN_NODE_OUTER_VLAN,
- 				I40E_HASH_PATTERN_NODE_IPV4,
- 				I40E_HASH_PATTERN_NODE_IPV6,
-+				I40E_HASH_PATTERN_NODE_END,
- 				FLOW_GRAPH_NODE_EDGE_END
- 			}
- 		},
-@@ -517,6 +520,7 @@ static const struct flow_graph i40e_hash_pattern_graph = {
- 				I40E_HASH_PATTERN_NODE_ESP,
- 				I40E_HASH_PATTERN_NODE_L2TPV3OIP,
- 				I40E_HASH_PATTERN_NODE_AH,
-+				I40E_HASH_PATTERN_NODE_END,
- 				FLOW_GRAPH_NODE_EDGE_END
- 			}
- 		},
-@@ -529,6 +533,7 @@ static const struct flow_graph i40e_hash_pattern_graph = {
- 				I40E_HASH_PATTERN_NODE_ESP,
- 				I40E_HASH_PATTERN_NODE_L2TPV3OIP,
- 				I40E_HASH_PATTERN_NODE_AH,
-+				I40E_HASH_PATTERN_NODE_END,
- 				FLOW_GRAPH_NODE_EDGE_END
- 			}
- 		},
+-	if (eeprom->ops.write_buffer == NULL)
++	if (eeprom->ops.read_buffer == NULL)
+ 		return -ENOTSUP;
+ 
+ 	first = in_eeprom->offset >> 1;
+@@ -7047,6 +7047,9 @@ ixgbe_set_eeprom(struct rte_eth_dev *dev,
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
+ 		return -E_RTE_SECONDARY;
+ 
++	if (eeprom->ops.write_buffer == NULL)
++		return -ENOTSUP;
++
+ 	first = in_eeprom->offset >> 1;
+ 	length = in_eeprom->length >> 1;
+ 	if ((first > hw->eeprom.word_size) ||
 -- 
 2.52.0
 
