@@ -2,48 +2,48 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA22606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 09:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514D6606A32F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 09:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=RLN2PQP/
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ZZ6URcLU
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59B0240A89;
-	Fri, 30 Oct 2026 10:41:01 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 244BC40B8F;
+	Fri, 30 Oct 2026 10:41:04 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTPS id C2DC040A89
- for <dev@dpdk.org>; Fri, 30 Oct 2026 10:40:58 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id A234E40B9E
+ for <dev@dpdk.org>; Fri, 30 Oct 2026 10:41:01 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793353259; x=1824889259;
+ t=1793353261; x=1824889261;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=Tizyz8qkSABDp63hCmH6Lxzfsc+65fE230C5u2GGmb8=;
- b=RLN2PQP/q8XJqx7bxBxIOL7pJnJDdC3xao945DNi1xsOmlEezpRfTdnR
- C+rWQlh4ZE6n7INNlhjMKS8Tq4kLpFOJgAX/U1xmr4Oqdm4h7vvfqY0TD
- FpfC2TZ4Ps+2rGCbrbIpheUw1+R/UDn8NoBAF6Hpw+I29X6q51P1OiqpG
- P3ITFFzHT+r5GuEtfxKiLGqsozkoz2Zj049lYUP/2jYA7WnthyJDGqsuz
- 53xC/bKi/hWsusfLfuYIH+Hxh0UWbTufPERgZ+OoeM4wg4+onYVnFx1oR
- 3R6uSM3NuPjCy3Uuf2fYOTkoNXcqu3rLjW0ljYBQsH+S2Y34ImFxVKwi9 w==;
-X-CSE-ConnectionGUID: jvrfDpb2RqKQcSDwxiJNHQ==
-X-CSE-MsgGUID: 2qlH1g7SQJarcFbvYGztuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11950"; a="2126050"
+ bh=yEuq8JdEAWeec2PeJ6EC6BgiOk2TGnCmGfX2QR9gB5M=;
+ b=ZZ6URcLU4m9+4o7oh4qxVzJviwZ2wYs64fZLvjlzs18WvJPWl/7Sc/vj
+ Ay8H0ESRC41QDCaFri5Q2cjBsKm7+/VZ1xauvM+5jF9DAJY1wvEayYX8r
+ 50jR0845aAdmTxtIuxwYbS9ol9MTu1cKcgt7+6X6oKcMewbl5I8zyDHV+
+ IaJlog+CyXRcmcNGNyedu1yt8RFVKJAoMMZ5CpL4bHsmlW5fmO8YeZw7l
+ MaS20wiD3obNK6yBcYxnPTEsgsEDjqZ56rvQp1OnCWOFQ7mDIJeuYYiiM
+ nXRj7YQ+NXGDIpmMQHsuzw8PnOPQoNolyXu88W3I3YGhOMkK+uIif4uPa Q==;
+X-CSE-ConnectionGUID: WKVrx87QSqKUHNUMTmAy5w==
+X-CSE-MsgGUID: fKsTEBcfTs2S43Hll8rOQw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11950"; a="2126059"
 X-IronPort-AV: E=Sophos;i="6.27,186,1787036400"; 
-   d="scan'208";a="2126050"
+   d="scan'208";a="2126059"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Oct 2026 02:40:58 -0700
-X-CSE-ConnectionGUID: ePsHLE2mRT+CkVFob2chgA==
-X-CSE-MsgGUID: wp2CJxiZTZO+4ErHA06nwQ==
+ 30 Oct 2026 02:41:01 -0700
+X-CSE-ConnectionGUID: 42x9/iz1Q2GV8WTYnWhrjw==
+X-CSE-MsgGUID: ZifuHaq3TeKLl9aHtOBkfg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,186,1787036400"; 
-   d="scan'208";a="5299619"
+   d="scan'208";a="5299636"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 30 Oct 2026 02:40:58 -0700
+ by orviesa003.jf.intel.com with ESMTP; 30 Oct 2026 02:41:00 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v1 5/9] net/i40e: validate IPv4 fragment offset without range
-Date: Fri, 30 Oct 2026 09:40:18 +0000
-Message-ID: <1fe69edc69542560f60b3e0399ff1b36882337cf.1793353214.git.anatoly.burakov@intel.com>
+Subject: [PATCH v1 6/9] net/i40e: fix SCTP verification tag truncation in FDIR
+Date: Fri, 30 Oct 2026 09:40:19 +0000
+Message-ID: <371a3ee9a8b844772c3ed68eb5409ac6edc2ab17.1793353214.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <5e64cc416c8ab3b038eee6bb55836e0b8ed507ab.1793353214.git.anatoly.burakov@intel.com>
 References: 
@@ -66,67 +66,31 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The FDIR IPv4 node only checked fragment_offset when the item had a
-range. Without one, any fragment_offset mask and spec were accepted and
-then ignored, so the rule was installed as a non-fragmented IPv4 rule.
-The old parser rejected these.
-
-Check fragment_offset whether or not a range is given.
+The SCTP verification tag is a 32-bit field, but the FDIR SCTP node
+stored its spec and mask in 16-bit variables, truncating the tag
+programmed into the filter.
 
 Fixes: 05432a6e4676 ("net/i40e: reimplement FDIR parser")
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/i40e_flow_fdir.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/net/intel/i40e/i40e_flow_fdir.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/intel/i40e/i40e_flow_fdir.c b/drivers/net/intel/i40e/i40e_flow_fdir.c
-index ba8c18250c8..0c9dce6fd9d 100644
+index 0c9dce6fd9d..b1dcc4b6fad 100644
 --- a/drivers/net/intel/i40e/i40e_flow_fdir.c
 +++ b/drivers/net/intel/i40e/i40e_flow_fdir.c
-@@ -257,11 +257,9 @@ i40e_fdir_node_ipv4_validate(const void *ctx __rte_unused, const struct rte_flow
- 				"Invalid IPv4 header mask");
- 	}
+@@ -684,7 +684,8 @@ i40e_fdir_node_sctp_process(void *ctx, const struct rte_flow_item *item,
+ 	struct i40e_fdir_filter *fdir_filter = &fdir_ctx->fdir_filter;
+ 	const struct rte_flow_item_sctp *sctp_spec = item->spec;
+ 	const struct rte_flow_item_sctp *sctp_mask = ci_flow_item_mask(item);
+-	rte_be16_t src_spec, dst_spec, src_mask, dst_mask, tag_spec, tag_mask;
++	rte_be16_t src_spec, dst_spec, src_mask, dst_mask;
++	rte_be32_t tag_spec, tag_mask;
+ 	bool is_ipv4;
  
--	if (ipv4_last == NULL)
--		return 0;
--
- 	/* Only fragment_offset supports range */
--	if (ipv4_last->hdr.version_ihl ||
-+	if (ipv4_last != NULL &&
-+	    (ipv4_last->hdr.version_ihl ||
- 	    ipv4_last->hdr.type_of_service ||
- 	    ipv4_last->hdr.total_length ||
- 	    ipv4_last->hdr.packet_id ||
-@@ -269,16 +267,25 @@ i40e_fdir_node_ipv4_validate(const void *ctx __rte_unused, const struct rte_flow
- 	    ipv4_last->hdr.next_proto_id ||
- 	    ipv4_last->hdr.hdr_checksum ||
- 	    ipv4_last->hdr.src_addr ||
--	    ipv4_last->hdr.dst_addr) {
-+	    ipv4_last->hdr.dst_addr)) {
- 		return rte_flow_error_set(error, EINVAL,
- 				RTE_FLOW_ERROR_TYPE_ITEM, item,
- 				"IPv4 range only supported for fragment_offset");
- 	}
- 
--	/* Validate fragment_offset range values */
-+	/* Validate fragment_offset values */
- 	uint16_t frag_mask = rte_be_to_cpu_16(ipv4_mask->hdr.fragment_offset);
- 	uint16_t frag_spec = rte_be_to_cpu_16(ipv4_spec->hdr.fragment_offset);
--	uint16_t frag_last = rte_be_to_cpu_16(ipv4_last->hdr.fragment_offset);
-+	uint16_t frag_last = ipv4_last != NULL ?
-+			rte_be_to_cpu_16(ipv4_last->hdr.fragment_offset) : 0;
-+
-+	if (frag_mask == 0) {
-+		if (ipv4_last == NULL)
-+			return 0; /* fragment_offset not matched */
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"IPv4 fragment_offset range requires a mask");
-+	}
- 
- 	/* Mask must be 0x3fff (fragment offset + MF flag) */
- 	if (frag_mask != (RTE_IPV4_HDR_OFFSET_MASK | RTE_IPV4_HDR_MF_FLAG)) {
+ 	/* Set layer index for L4 flexible payload */
 -- 
 2.52.0
 
