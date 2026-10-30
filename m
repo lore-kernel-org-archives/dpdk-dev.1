@@ -2,31 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666FB606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 14:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2002A606A31E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 14:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=UdmiMzsw
+	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=iFMlYN/A
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 70E6C40ED9;
-	Fri, 30 Oct 2026 15:48:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4C0DB40EDF;
+	Fri, 30 Oct 2026 15:48:18 +0100 (CET)
 Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.5])
- by mails.dpdk.org (Postfix) with ESMTPS id A3EC140285
+ by mails.dpdk.org (Postfix) with ESMTPS id 5966E40B94
  for <dev@dpdk.org>; Fri, 30 Oct 2026 15:48:00 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=v6s3Wk8KHL+MClHh6N6MTISSgMyTy6jPZvckk+XzwKM=;
- b=UdmiMzswZS4XOZA0yIWiMlXyEBCxyJ5lfWH8aSMUrmozm/LqzC0JVpsVlYpt7e
- LKnDS095wy1gyrOdTrzYy5r+t+jrOWudOgmOeN7y0KeIlCI8awGW9enCKO1AzrHZ
- S7CLddQ55cbFcfzaRqSqKsytcoCl7zKcq4oMt/Em3fThE=
+ MIME-Version; bh=Whf+Vg3kDfYtCTOrTOa8dMDlXXhh8y+MEy3CWY7wH5o=;
+ b=iFMlYN/AZU2ouNDJuVu9zY+ay4uV47xghTwzN4dt97hqYLpRz4tInABFrqLxqM
+ xcJVTvXXigNWF0X1SveWNnLslDtJLZSZEMc0O2yRPN80BHw8Yv3GyVMuDRmnH2S3
+ 0CbVqC0oCOJNEK8HRpMTdiQRrDYbngxdsblQoni/y6iaw=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v5 17/28] net/hinic3: convert cmdq ops to static global
- variables
-Date: Fri, 30 Oct 2026 22:47:21 +0800
-Message-ID: <20261030144733.2120-18-yejiacheng4@h-partners.com>
+Subject: [PATCH v5 21/28] net/hinic3: add device kvargs parameters support
+Date: Fri, 30 Oct 2026 22:47:25 +0800
+Message-ID: <20261030144733.2120-22-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261030144733.2120-1-yejiacheng4@h-partners.com>
 References: <20261023155809.855-1-yejiacheng4@h-partners.com>
@@ -34,13 +33,13 @@ References: <20261023155809.855-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDHb_EUruRqpJ41BA--.59781S19
-X-Coremail-Antispam: 1Uf129KBjvAXoW3Cry7Zr45JF45JFW5Xry5urg_yoW8Gry7Co
- WfJr9YyF1ftry8GF9xKFnYkay7X3srJFZ8Jan5Kr9rXa9rJFy7GF9xXw4F9a4YvayrAanr
- Aay7J3Wqga4xXw18n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUzgAwUUUUU
+X-CM-TRANSID: As8vCgDHb_EUruRqpJ41BA--.59781S23
+X-Coremail-Antispam: 1Uf129KBjvJXoW3uryxZr4fZFW8JrW8Jw48Xrb_yoWkGr4fpF
+ W3GF9rAFyDJrsrXFn0ka1xua45Xws3G3y2vay8JayF9r1rZryUA34DKrW7ZFsxGrZrAa47
+ Zr4jgayjk3Z0q3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07URMKZUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNByGkGrkrhxZQAAA3b
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMx2GkGrkrh1TlQAA3D
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,310 +56,319 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Replace the per-device dynamically allocated cmdq_ops with static global
-instances (hinic3_htn_cmdq_ops and hinic3_stn_cmdq_ops) selected by NIC
-type, avoiding per-device allocation and freeing.
+Expose the TX completion index coalescing and RX CQE coalescing tunables
+through device key/value arguments so they can be configured per
+deployment without recompiling the driver, and feed them to the hardware
+when the contexts are programmed.
 
-Select the ops by NIC type via hinic3_cmdq_get_ops(), falling back to the
-STN ops for unknown IDs, instead of the NIC_F_HTN_CMDQ capability bit used
-previously.
-
-Dropping the dynamic allocation also removes an init-path leak: the old
-code allocated a cmdq_ops block with rte_zmalloc(), then overwrote the
-pointer with the static ops instance, leaking the allocation and
-rte_free()'ing the static pointer on the error path.
-
-Fixes: 9204b6b7bb1a ("net/hinic3: split new/old command queue operations")
+The defaults are lower than the previous fixed values (3/16 for the TX
+coalescing and 63/15 for the RX CQE coalescing) to cut completion
+latency while keeping enough packets in flight to sustain line rate.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/base/hinic3_nic_cfg.c      |  7 ++--
- drivers/net/hinic3/hinic3_ethdev.c            | 37 +++++++++++--------
- drivers/net/hinic3/hinic3_ethdev.h            |  1 -
- drivers/net/hinic3/hinic3_nic_io.c            | 11 +++---
- drivers/net/hinic3/hinic3_nic_io.h            | 11 ++++++
- .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    | 21 ++++-------
- .../net/hinic3/htn_adapt/hinic3_htn_cmdq.h    |  6 +--
- .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    | 23 +++++-------
- .../net/hinic3/stn_adapt/hinic3_stn_cmdq.h    |  6 +--
- 9 files changed, 65 insertions(+), 58 deletions(-)
+ doc/guides/nics/hinic3.rst             |  19 ++++
+ doc/guides/rel_notes/release_26_11.rst |   1 +
+ drivers/net/hinic3/hinic3_ethdev.c     | 125 ++++++++++++++++++++++++-
+ drivers/net/hinic3/hinic3_ethdev.h     |  17 ++++
+ drivers/net/hinic3/hinic3_nic_io.c     |  14 +--
+ 5 files changed, 165 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-index 60175c72ce..5e2d874275 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-@@ -1214,7 +1214,7 @@ hinic3_rss_get_indir_tbl(struct hinic3_hwdev *hwdev, uint32_t *indir_table)
- 	cmd_buf->size = sizeof(struct nic_rss_indirect_tbl);
- 	nic_dev = (struct hinic3_nic_dev *)hwdev->dev_handle;
+diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst
+index bc518ce7fc..18b2e615d7 100644
+--- a/doc/guides/nics/hinic3.rst
++++ b/doc/guides/nics/hinic3.rst
+@@ -48,6 +48,25 @@ Driver compilation and testing
+ Refer to the document :doc:`build_and_test` for details.
  
--	cmd = nic_dev->cmdq_ops->prepare_cmd_buf_get_rss_indir_table(nic_dev, cmd_buf);
-+	cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_get_rss_indir_table(nic_dev, cmd_buf);
- 	err = hinic3_cmdq_detail_resp(hwdev, HINIC3_MOD_L2NIC, cmd, cmd_buf, cmd_buf, 0);
- 	if (err) {
- 		PMD_DRV_LOG(ERR, "Get rss indir table failed");
-@@ -1222,7 +1222,7 @@ hinic3_rss_get_indir_tbl(struct hinic3_hwdev *hwdev, uint32_t *indir_table)
- 		return err;
- 	}
  
--	nic_dev->cmdq_ops->cmd_buf_to_rss_indir_table(cmd_buf, indir_table);
-+	hinic3_cmdq_get_ops(nic_dev)->cmd_buf_to_rss_indir_table(cmd_buf, indir_table);
++Runtime Configuration
++---------------------
++
++The driver can be configured at initialization via EAL device parameters.
++The following parameters are supported:
++
++- ``tx_pending_limit`` (default **2**): TX completion index coalescing
++  pending limit, in units of 8 packets.
++
++- ``tx_coalescing_time`` (default **2**): TX completion index coalescing
++  time, in microseconds.
++
++- ``rx_cqe_coalesce_num`` (default **7**): RX CQE coalescing count, in
++  units of 8 packets.
++
++- ``rx_cqe_timer_loop`` (default **5**): RX CQE coalescing timer loop, in
++  microseconds.
++
++
+ Limitations or Known issues
+ ---------------------------
  
- 	hinic3_free_cmd_buf(cmd_buf);
- 	return 0;
-@@ -1247,7 +1247,8 @@ hinic3_rss_set_indir_tbl(struct hinic3_hwdev *hwdev, const uint32_t *indir_table
- 	}
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index b8e3c3c03e..590294a1c7 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -154,6 +154,7 @@ New Features
+   * Updated RSS hash type configuration.
+   * Added mailbox message counter reporting through the device private dump API.
+   * Added support for the SP560 NIC.
++  * Added device parameters for runtime configuration.
  
- 	nic_dev = (struct hinic3_nic_dev *)hwdev->dev_handle;
--	cmd = nic_dev->cmdq_ops->prepare_cmd_buf_set_rss_indir_table(nic_dev, indir_table, cmd_buf);
-+	cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_set_rss_indir_table(nic_dev,
-+		indir_table, cmd_buf);
- 	err = hinic3_cmdq_direct_resp(hwdev, HINIC3_MOD_L2NIC, cmd, cmd_buf, &out_param, 0);
- 	if (err || out_param != 0) {
- 		PMD_DRV_LOG(ERR, "Set rss indir table failed");
+ * **Updated Intel iavf driver.**
+ 
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 658c192ce3..4949b08ed7 100644
+index 604c908a99..bee2a2fc85 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -556,6 +556,27 @@ hinic3_get_nic_type(struct rte_pci_device *pci_dev)
- 	}
+@@ -3974,10 +3974,107 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
+ 	return err;
  }
  
-+/**
-+ * Get cmdq ops for the given NIC device.
-+ *
-+ * @param[in] nic_dev
-+ * Pointer to NIC device structure.
-+ *
-+ * @return
-+ * Pointer to cmdq ops structure.
-+ */
-+const struct hinic3_nic_cmdq_ops *
-+hinic3_cmdq_get_ops(struct hinic3_nic_dev *nic_dev)
++static int
++hinic3_nic_common_args_check_handler(const char *key, const char *val, void *opaque)
 +{
-+	static const struct hinic3_nic_cmdq_ops *cmdq_ops[] = {
-+		[NIC_SP620]   = &hinic3_stn_cmdq_ops,
-+		[NIC_SP230]   = &hinic3_htn_cmdq_ops,
-+		[NIC_UNKNOWN] = &hinic3_stn_cmdq_ops,
-+	};
++	struct hinic3_nic_common_dev_config *config = opaque;
++	char *end;
++	signed long tmp;
 +
-+	return cmdq_ops[nic_dev->nic_type];
++	if (val == NULL || *val == '\0') {
++		PMD_DRV_LOG(ERR, "Key %s is missing value.", key);
++		return -EINVAL;
++	}
++
++	errno = 0;
++	tmp = strtol(val, &end, 10);
++	if (errno != 0 || *end != '\0' || tmp < 0) {
++		PMD_DRV_LOG(ERR, "%s: \"%s\" is an invalid integer.", key, val);
++		return -EINVAL;
++	}
++
++	if (strcmp(key, "tx_pending_limit") == 0) {
++		if (tmp > UINT8_MAX)
++			goto out_of_range;
++		config->tx_pending_limit = tmp;
++	} else if (strcmp(key, "tx_coalescing_time") == 0) {
++		if (tmp > UINT8_MAX)
++			goto out_of_range;
++		config->tx_coalescing_time = tmp;
++	} else if (strcmp(key, "rx_cqe_coalesce_num") == 0) {
++		if (tmp > UINT8_MAX)
++			goto out_of_range;
++		config->rx_cqe_coalesce_num = tmp;
++	} else if (strcmp(key, "rx_cqe_timer_loop") == 0) {
++		if (tmp > UINT8_MAX)
++			goto out_of_range;
++		config->rx_cqe_timer_loop = tmp;
++	} else {
++		PMD_DRV_LOG(ERR, "Unknown parameter: %s", key);
++		return -EINVAL;
++	}
++
++	return 0;
++
++out_of_range:
++	PMD_DRV_LOG(ERR, "%s: value exceeds the maximum allowed value.", key);
++	return -EINVAL;
 +}
 +
- /**
-  * Initialize Class of Service (CoS). For PF devices, it also sync the link
-  * status with the physical port.
-@@ -3775,13 +3796,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
- 		goto alloc_eth_addr_fail;
- 	}
++static const char *const hinic3_nic_common_valid_args[] = {
++	"tx_pending_limit",
++	"tx_coalescing_time",
++	"rx_cqe_coalesce_num",
++	"rx_cqe_timer_loop",
++	NULL
++};
++
++static int
++hinic3_nic_common_config_get(struct rte_pci_device *pci_dev,
++			     struct hinic3_nic_common_dev_config *config)
++{
++	int ret = 0;
++	struct rte_kvargs *kvlist;
++	struct rte_device *eal_dev = &pci_dev->device;
++
++	/* Set private param defaults. */
++	config->tx_pending_limit = HINIC3_DEFAULT_TX_CI_PENDING_LIMIT;
++	config->tx_coalescing_time = HINIC3_DEFAULT_TX_CI_COALESCING_TIME;
++	config->rx_cqe_coalesce_num = HINIC3_RX_CQE_COALESCE_NUM;
++	config->rx_cqe_timer_loop = HINIC3_RX_CQE_TIMER_LOOP;
++
++	if (eal_dev->devargs == NULL)
++		return 0;
++
++	kvlist = rte_kvargs_parse(eal_dev->devargs->args,
++				  hinic3_nic_common_valid_args);
++	if (kvlist == NULL) {
++		PMD_DRV_LOG(ERR, "nic private parameter err, the format must be '-a dev,[key]=[value]'.");
++		return -EINVAL;
++	}
++
++	ret = rte_kvargs_process(kvlist, NULL, hinic3_nic_common_args_check_handler, config);
++	if (ret < 0)
++		ret = -EINVAL;
++
++	rte_kvargs_free(kvlist);
++
++	PMD_DRV_LOG(INFO, "tx_pending_limit:%upkt, tx_coalescing_time:%uus, "
++		"rx_cqe_coalesce_num:%upkt, rx_cqe_timer_loop:%uus.",
++		config->tx_pending_limit * HINIC3_COALESCING_UNIT_PKTS,
++		config->tx_coalescing_time,
++		config->rx_cqe_coalesce_num * HINIC3_COALESCING_UNIT_PKTS,
++		config->rx_cqe_timer_loop);
++	return ret;
++}
++
+ static int
+ hinic3_dev_init(struct rte_eth_dev *eth_dev)
+ {
+ 	struct rte_pci_device *pci_dev;
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
++	struct hinic3_nic_common_dev_config config;
++	int err = 0;
  
--	nic_dev->cmdq_ops = rte_zmalloc("cmdq_ops", sizeof(struct hinic3_nic_cmdq_ops), 0);
--	if (!nic_dev->cmdq_ops) {
--		PMD_DRV_LOG(ERR, "Allocate cmdq_ops memory failed");
--		err = -ENOMEM;
--		goto alloc_cmdq_ops_fail;
--	}
--
- 	nic_dev->rx_ops = rte_zmalloc("rx_ops", sizeof(struct hinic3_nic_rx_ops), 0);
- 	if (!nic_dev->rx_ops) {
- 		PMD_DRV_LOG(ERR, "Allocate rx_ops memory failed");
-@@ -3849,11 +3863,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
- 		goto get_cap_fail;
- 	}
+ 	pci_dev = RTE_CLASS_TO_BUS_DEVICE(eth_dev, *pci_dev);
  
--	if (!(nic_dev->feature_cap & NIC_F_HTN_CMDQ))
--		nic_dev->cmdq_ops = hinic3_nic_cmdq_get_stn_ops();
--	else
--		nic_dev->cmdq_ops = hinic3_nic_cmdq_get_htn_ops();
--
- 	hinic3_nic_tx_rx_ops_init(nic_dev);
+@@ -3990,11 +4087,32 @@ hinic3_dev_init(struct rte_eth_dev *eth_dev)
+ 	PMD_DRV_LOG(DEBUG, "Network Interface pmd driver version: %s",
+ 		    HINIC3_PMD_DRV_VERSION);
  
- 	err = hinic3_init_sw_rxtxqs(nic_dev);
-@@ -3952,10 +3961,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
- 	nic_dev->rx_ops = NULL;
++	/*
++	 * Parse device arguments before allocating any resources so that an
++	 * invalid argument fails the probe without leaking memory. Secondary
++	 * processes re-use the primary's configuration and must not re-parse
++	 * devargs or overwrite the primary's settings.
++	 */
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++		err = hinic3_nic_common_config_get(pci_dev, &config);
++		if (err < 0) {
++			PMD_DRV_LOG(ERR, "Failed to get nic device arguments.");
++			return err;
++		}
++	}
++
++	err = hinic3_func_init(eth_dev);
++	if (err)
++		return err;
++
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
++		nic_dev->config = config;
++
+ 	eth_dev->rx_pkt_burst = hinic3_recv_pkts;
+ 	eth_dev->tx_pkt_burst = hinic3_xmit_pkts;
+ 	eth_dev->tx_pkt_prepare = hinic3_prep_pkts;
  
- alloc_rx_ops_fail:
--	rte_free(nic_dev->cmdq_ops);
--	nic_dev->cmdq_ops = NULL;
--
--alloc_cmdq_ops_fail:
- 	rte_free(eth_dev->data->mac_addrs);
- 	eth_dev->data->mac_addrs = NULL;
+-	return hinic3_func_init(eth_dev);
++	return 0;
+ }
  
+ static int
+@@ -4049,6 +4167,11 @@ static struct rte_pci_driver rte_hinic3_pmd = {
+ 
+ RTE_PMD_REGISTER_PCI(net_hinic3, rte_hinic3_pmd);
+ RTE_PMD_REGISTER_PCI_TABLE(net_hinic3, pci_id_hinic3_map);
++RTE_PMD_REGISTER_PARAM_STRING(net_hinic3,
++	"tx_pending_limit=<int> "
++	"tx_coalescing_time=<int> "
++	"rx_cqe_coalesce_num=<int> "
++	"rx_cqe_timer_loop=<int>");
+ 
+ RTE_INIT(hinic3_init_log)
+ {
 diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index ed5995200e..0061051bb2 100644
+index 6eba934a12..0d8b91e164 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.h
 +++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -158,7 +158,6 @@ struct hinic3_nic_dev {
- 	struct hinic3_ethertype_filter_list filter_ethertype_list;
- 	struct hinic3_fdir_rule_filter_list filter_fdir_rule_list;
- 	uint8_t cos_map[HINIC3_COS_NUM_MAX];
--	struct hinic3_nic_cmdq_ops *cmdq_ops;
- 	struct hinic3_nic_rx_ops *rx_ops;
- 	struct hinic3_nic_tx_ops *tx_ops;
- 	enum nic_type nic_type; /**< NIC type. */
+@@ -6,6 +6,8 @@
+ #define _HINIC3_ETHDEV_H_
+ 
+ #include <rte_ethdev.h>
++#include <rte_kvargs.h>
++#include <rte_devargs.h>
+ #include <rte_ethdev_core.h>
+ 
+ #include "hinic3_fdir.h"
+@@ -61,6 +63,12 @@
+ #define HINIC3_VFTA_SIZE		(4096 / HINIC3_UINT32_BIT_SIZE)
+ #define HINIC3_MAX_QUEUE_NUM		256
+ 
++#define HINIC3_DEFAULT_TX_CI_PENDING_LIMIT	2
++#define HINIC3_DEFAULT_TX_CI_COALESCING_TIME	2
++#define HINIC3_RX_CQE_TIMER_LOOP		5
++#define HINIC3_RX_CQE_COALESCE_NUM		7
++#define HINIC3_COALESCING_UNIT_PKTS		8 /**< Coalescing unit: 8 packets. */
++
+ #define HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev) \
+ 	((struct hinic3_nic_dev *)(dev)->data->dev_private)
+ 
+@@ -108,6 +116,14 @@ enum nic_feature_cap {
+ TAILQ_HEAD(hinic3_ethertype_filter_list, rte_flow);
+ TAILQ_HEAD(hinic3_fdir_rule_filter_list, rte_flow);
+ 
++struct hinic3_nic_common_dev_config {
++	unsigned int tx_pending_limit; /**< TX CI coalescing parameter pending_limit. */
++	unsigned int tx_coalescing_time; /**< TX CI coalescing parameter coalescing_time. */
++	unsigned int rx_cqe_compact_en; /**< cqe mode, 0 -- separate cqe, 1 -- compact cqe. */
++	unsigned int rx_cqe_coalesce_num; /**< RX CQE parameter coalesce_num. */
++	unsigned int rx_cqe_timer_loop; /**< RX CQE parameter time_loop. */
++};
++
+ enum nic_type {
+ 	NIC_SP620 = 0,
+ 	NIC_SP230 = 1,
+@@ -147,6 +163,7 @@ struct hinic3_nic_dev {
+ 
+ 	uint8_t pause_set; /**< Flag of PAUSE frame setting. */
+ 	struct nic_pause_config nic_pause;
++	struct hinic3_nic_common_dev_config config;
+ 
+ 	struct rte_ether_addr default_addr;
+ 	struct rte_ether_addr *mc_list;
 diff --git a/drivers/net/hinic3/hinic3_nic_io.c b/drivers/net/hinic3/hinic3_nic_io.c
-index 9203dcce40..361586868e 100644
+index d4c53645c4..c66748da2a 100644
 --- a/drivers/net/hinic3/hinic3_nic_io.c
 +++ b/drivers/net/hinic3/hinic3_nic_io.c
-@@ -391,8 +391,8 @@ init_sq_ctxts(struct hinic3_nic_dev *nic_dev)
- 		max_ctxts = (nic_dev->num_sqs - q_id) > HINIC3_Q_CTXT_MAX
- 				    ? HINIC3_Q_CTXT_MAX
- 				    : (nic_dev->num_sqs - q_id);
--		cmd = nic_dev->cmdq_ops->prepare_cmd_buf_qp_context_multi_store(nic_dev, cmd_buf,
--			HINIC3_QP_CTXT_TYPE_SQ, q_id, max_ctxts);
-+		cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_qp_context_multi_store(nic_dev,
-+			cmd_buf, HINIC3_QP_CTXT_TYPE_SQ, q_id, max_ctxts);
- 		rte_atomic_thread_fence(rte_memory_order_seq_cst);
- 		err = hinic3_cmdq_direct_resp(nic_dev->hwdev, HINIC3_MOD_L2NIC,
- 					      cmd, cmd_buf, &out_param, 0);
-@@ -443,8 +443,8 @@ init_rq_ctxts(struct hinic3_nic_dev *nic_dev)
- 		max_ctxts = (nic_dev->num_rqs - q_id) > HINIC3_Q_CTXT_MAX
- 				    ? HINIC3_Q_CTXT_MAX
- 				    : (nic_dev->num_rqs - q_id);
--		cmd = nic_dev->cmdq_ops->prepare_cmd_buf_qp_context_multi_store(nic_dev, cmd_buf,
--			HINIC3_QP_CTXT_TYPE_RQ, q_id, max_ctxts);
-+		cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_qp_context_multi_store(nic_dev,
-+			cmd_buf, HINIC3_QP_CTXT_TYPE_RQ, q_id, max_ctxts);
- 		rte_atomic_thread_fence(rte_memory_order_seq_cst);
- 		err = hinic3_cmdq_direct_resp(nic_dev->hwdev, HINIC3_MOD_L2NIC,
- 					      cmd, cmd_buf, &out_param, 0);
-@@ -491,7 +491,8 @@ clean_queue_offload_ctxt(struct hinic3_nic_dev *nic_dev,
- 		return -ENOMEM;
- 	}
+@@ -11,9 +11,6 @@
+ #include "hinic3_rx.h"
+ #include "hinic3_tx.h"
  
--	cmd = nic_dev->cmdq_ops->prepare_cmd_buf_clean_tso_lro_space(nic_dev, cmd_buf, ctxt_type);
-+	cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_clean_tso_lro_space(nic_dev,
-+		cmd_buf, ctxt_type);
+-#define HINIC3_DEAULT_TX_CI_PENDING_LIMIT	3
+-#define HINIC3_DEAULT_TX_CI_COALESCING_TIME	16
+-
+ #define CI_IDX_HIGH_SHIFH			12
  
- 	/* Send a command to hardware to clean up queue offload context. */
- 	err = hinic3_cmdq_direct_resp(nic_dev->hwdev, HINIC3_MOD_L2NIC,
-diff --git a/drivers/net/hinic3/hinic3_nic_io.h b/drivers/net/hinic3/hinic3_nic_io.h
-index e1741d1156..d7ec81f2e6 100644
---- a/drivers/net/hinic3/hinic3_nic_io.h
-+++ b/drivers/net/hinic3/hinic3_nic_io.h
-@@ -79,6 +79,17 @@ struct hinic3_nic_cmdq_ops {
- 	cmd_buf_to_rss_indir_table_t			cmd_buf_to_rss_indir_table;
- };
- 
-+/**
-+ * Get cmdq ops for the given NIC device.
-+ *
-+ * @param[in] nic_dev
-+ * Pointer to NIC device structure.
-+ *
-+ * @return
-+ * Pointer to cmdq ops structure.
-+ */
-+const struct hinic3_nic_cmdq_ops *hinic3_cmdq_get_ops(struct hinic3_nic_dev *nic_dev);
-+
- /* Doorbell info. */
- struct hinic3_db {
- 	uint32_t db_info;
-diff --git a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
-index 634dfe7239..607fe2d0fe 100644
---- a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
-+++ b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
-@@ -152,16 +152,11 @@ static void cmd_buf_to_rss_indir_table(const struct hinic3_cmd_buf *cmd_buf, uin
- 		indir_table[i] = *(indir_tbl + i);
+ #define CI_HIGN_IDX(val) ((val) >> CI_IDX_HIGH_SHIFH)
+@@ -456,9 +453,6 @@ hinic3_get_func_rx_buf_size(struct hinic3_nic_dev *nic_dev)
+ 	nic_dev->rx_buff_len = buf_size;
  }
  
--struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_htn_ops(void)
--{
--	static struct hinic3_nic_cmdq_ops cmdq_ops = {
--		.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
--		.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
--		.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
--		.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
--		.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
--		.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
--	};
+-#define HINIC3_RX_CQE_TIMER_LOOP		15
+-#define HINIC3_RX_CQE_COALESCE_NUM		63
 -
--	return &cmdq_ops;
--}
-+const struct hinic3_nic_cmdq_ops hinic3_htn_cmdq_ops = {
-+	.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
-+	.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
-+	.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
-+	.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
-+	.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
-+	.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
-+};
-diff --git a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h
-index 73f4922734..158cbc5f8e 100644
---- a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h
-+++ b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h
-@@ -53,11 +53,11 @@ struct hinic3_htn_vlan_ctx {
- };
- 
- /**
-- * Get cmdq ops hardware tile NIC(htn) supported.
-+ * Cmdq ops hardware tile NIC(htn) supported.
-  *
-  * @return
-- * Pointer to ops.
-+ * Ops.
-  */
--struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_htn_ops(void);
-+extern const struct hinic3_nic_cmdq_ops hinic3_htn_cmdq_ops;
- 
- #endif /* _HINIC3_HTN_CMDQ_H_ */
-diff --git a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
-index f41f060d17..23adbc79f4 100644
---- a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
-+++ b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
-@@ -108,7 +108,7 @@ static uint8_t prepare_cmd_buf_set_rss_indir_table(struct hinic3_nic_dev *nic_de
- 
- 	for (i = 0; i < HINIC3_RSS_INDIR_SIZE; i++)
- 		indir_tbl->entry[i] = (uint16_t)(*(indir_table + i));
--	size = sizeof(indir_tbl->entry) / 4;
-+	size = (size_t)sizeof(indir_tbl->entry) / sizeof(uint32_t);
- 	temp = (uint32_t *)indir_tbl->entry;
- 	for (i = 0; i < size; i++) {
- 		rte_atomic_thread_fence(rte_memory_order_seq_cst);
-@@ -136,16 +136,11 @@ static void cmd_buf_to_rss_indir_table(const struct hinic3_cmd_buf *cmd_buf, uin
- 		indir_table[i] = *(indir_tbl + i);
- }
- 
--struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_stn_ops(void)
--{
--	static struct hinic3_nic_cmdq_ops cmdq_ops = {
--		.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
--		.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
--		.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
--		.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
--		.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
--		.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
--	};
--
--	return &cmdq_ops;
--}
-+const struct hinic3_nic_cmdq_ops hinic3_stn_cmdq_ops = {
-+	.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
-+	.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
-+	.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
-+	.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
-+	.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
-+	.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
-+};
-diff --git a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h
-index f1720c29c7..ab1c73a977 100644
---- a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h
-+++ b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h
-@@ -36,11 +36,11 @@ struct hinic3_stn_vlan_ctx {
- };
- 
- /**
-- * Get cmdq ops software tile NIC(stn) supported.
-+ * Cmdq ops software tile NIC(stn) supported.
-  *
-  * @return
-- * Pointer to ops.
-+ * Ops.
-  */
--struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_stn_ops(void);
-+extern const struct hinic3_nic_cmdq_ops hinic3_stn_cmdq_ops;
- 
- #endif /* _HINIC3_STN_CMDQ_H_ */
+ int
+ hinic3_init_rq_cqe_ctxts(struct hinic3_nic_dev *nic_dev)
+ {
+@@ -487,8 +481,8 @@ hinic3_init_rq_cqe_ctxts(struct hinic3_nic_dev *nic_dev)
+ 			rq_ci_paddr = rxq->rq_ci_paddr >> CQE_CTX_CI_ADDR_SHIFT;
+ 			cqe_ctx.ci_addr_hi = upper_32_bits(rq_ci_paddr);
+ 			cqe_ctx.ci_addr_lo = lower_32_bits(rq_ci_paddr);
+-			cqe_ctx.threshold_cqe_num = HINIC3_RX_CQE_COALESCE_NUM;
+-			cqe_ctx.timer_loop = HINIC3_RX_CQE_TIMER_LOOP;
++			cqe_ctx.threshold_cqe_num = nic_dev->config.rx_cqe_coalesce_num;
++			cqe_ctx.timer_loop = nic_dev->config.rx_cqe_timer_loop;
+ 		} else {
+ 			cqe_ctx.threshold_cqe_num = 0;
+ 			cqe_ctx.timer_loop = 0;
+@@ -562,8 +556,8 @@ hinic3_init_qp_ctxts(struct hinic3_nic_dev *nic_dev)
+ 	/* Configure CI tables for each SQ. */
+ 	for (q_id = 0; q_id < nic_dev->num_sqs; q_id++) {
+ 		sq_attr.ci_dma_base = nic_dev->txqs[q_id]->ci_dma_base >> 0x2;
+-		sq_attr.pending_limit = HINIC3_DEAULT_TX_CI_PENDING_LIMIT;
+-		sq_attr.coalescing_time = HINIC3_DEAULT_TX_CI_COALESCING_TIME;
++		sq_attr.pending_limit = nic_dev->config.tx_pending_limit;
++		sq_attr.coalescing_time = nic_dev->config.tx_coalescing_time;
+ 		sq_attr.intr_en = 0;
+ 		sq_attr.intr_idx = 0; /**< Tx doesn't need interrupt. */
+ 		sq_attr.l2nic_sqn = q_id;
 -- 
 2.33.0
 
