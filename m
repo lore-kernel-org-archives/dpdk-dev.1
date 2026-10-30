@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED8B606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 14:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A78606A31C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 14:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=l+xDYjF6
+	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=qD6F4w5/
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CCE2740289;
-	Fri, 30 Oct 2026 15:48:02 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AB8DE40DD5;
+	Fri, 30 Oct 2026 15:48:03 +0100 (CET)
 Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.220])
- by mails.dpdk.org (Postfix) with ESMTPS id 527D040299;
+ by mails.dpdk.org (Postfix) with ESMTPS id 630C740B90;
  Fri, 30 Oct 2026 15:47:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=/Jp/qNjmNdWGe1vmrDFnwDLCkzrHUkbIZknsC9dQLyA=;
- b=l+xDYjF66zw2rhz479hSu0SkvNrK0QNr5c07Vv5WhOFH6I9EvgZpXkD67Caww1
- kLeno/tCOlpQKKRQAkPbumsiSwXUPfj+3yH+ny/a66neb3Ha7PsEC84oK6OkYga2
- /wctxqGe9iyLDuFagUx3SkRa+IBiOHvxtoXQA/N9+edIg=
+ MIME-Version; bh=YJJVbT3Y/dnkT6R9lbCE34qvqJf09bLFJvbLTotep5M=;
+ b=qD6F4w5/A+AfliMW5sTNRsplJ58FEruNndBWq4i4x/6UdCCRqCZ3I+riYBhsAE
+ BhQv3FjiNIVLrPTGAbU7xAwncC+F0P3UNB3COGzjsoTHHRJFehjwe1+2sY9uQKyc
+ fJs2Bqkm1mRdsVvd5p/nAzEcqFYeVp5YOdDebWoaJas9k=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
-Subject: [PATCH v5 05/28] net/hinic3: fix vport enable null dereference
-Date: Fri, 30 Oct 2026 22:47:09 +0800
-Message-ID: <20261030144733.2120-6-yejiacheng4@h-partners.com>
+Subject: [PATCH v5 03/28] net/hinic3: fix TCAM index leak on ethertype flow set
+Date: Fri, 30 Oct 2026 22:47:07 +0800
+Message-ID: <20261030144733.2120-4-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261030144733.2120-1-yejiacheng4@h-partners.com>
 References: <20261023155809.855-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261023155809.855-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDHb_EUruRqpJ41BA--.59781S7
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Gr45Xr47Xr1UJF4kurWxJFb_yoW8Jr4DpF
- W7Ka92kr98KF4xtw1DJw18Aa4Y9w1xCa48Ka45A3WYvFn5XF1Yy3y7trZ2vr1avrWxAFW2
- 9F4I9a1qvryDt37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jzrWrUUUUU=
+X-CM-TRANSID: As8vCgDHb_EUruRqpJ41BA--.59781S5
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KF43KrWkGFWDZr1UAr47urg_yoW8Gr1UpF
+ ZxuayvyFyvy3yUC3WkJa10vFZ8Ca12y34DKan7u34Uurs8Xa1rA34YkFWrWr1kZrW7Aa42
+ vF4DCr9Fg3WDt37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7CztUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNReEjmrkrhdggwAA38
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMhaEjmrkrhZfAQAA3G
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,39 +56,33 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-hinic3_set_vport_enable() dereferences hwdev->dev_handle before checking
-hwdev, and then uses nic_dev without validating it. Guard both pointers to
-avoid a NULL dereference during early PF initialization.
+When adding an ethertype filter on an HTN NIC, a TCAM index is allocated
+before the firmware command is sent. If the command fails, the index is
+never freed, leaking a dynamic TCAM slot and eventually exhausting the
+dynamic TCAM pool. Free the index on the error path.
 
-Fixes: de490215f74a ("net/hinic3: add NIC configuration module")
+Fixes: efa3b9b36fc7 ("net/hinic3: add flow control and filters")
 Cc: stable@dpdk.org
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/base/hinic3_nic_cfg.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/hinic3/hinic3_fdir.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-index 5387626b98..d64a123c56 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-@@ -443,12 +443,15 @@ int
- hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)
- {
- 	struct hinic3_vport_state en_state;
--	struct hinic3_nic_dev *nic_dev = hwdev->dev_handle;
-+	struct hinic3_nic_dev *nic_dev;
- 	uint16_t out_size = sizeof(en_state);
- 	int err;
- 
- 	if (!hwdev)
- 		return -EINVAL;
-+	nic_dev = hwdev->dev_handle;
-+	if (!nic_dev)
-+		return -EINVAL;
- 
- 	memset(&en_state, 0, sizeof(en_state));
- 	en_state.func_id = hinic3_global_func_id(hwdev);
+diff --git a/drivers/net/hinic3/hinic3_fdir.c b/drivers/net/hinic3/hinic3_fdir.c
+index 71d50a3d22..95ce7cfe16 100644
+--- a/drivers/net/hinic3/hinic3_fdir.c
++++ b/drivers/net/hinic3/hinic3_fdir.c
+@@ -1001,6 +1001,9 @@ hinic3_set_fdir_ethertype_filter(void *hwdev, uint8_t pkt_type, void *filter, ui
+ 		PMD_DRV_LOG(ERR,
+ 			    "set fdir ethertype rule failed, err: %d, status: 0x%x, out size: 0x%x, func_id %d",
+ 			    err, ethertype_cmd.head.status, out_size, ethertype_cmd.func_id);
++		if ((hinic3_get_driver_feature(nic_dev) & NIC_F_HTN_FDIR) != 0 && en != 0)
++			hinic3_tcam_index_free(nic_dev, HINIC3_TCAM_GET_INDEX_IN_BLOCK(index),
++				HINIC3_TCAM_GET_DYNAMIC_BLOCK_INDEX(index));
+ 		return -EIO;
+ 	}
+ 	if ((hinic3_get_driver_feature(nic_dev) & NIC_F_HTN_FDIR) != 0) {
 -- 
 2.33.0
 
