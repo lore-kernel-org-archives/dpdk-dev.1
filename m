@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51968606A31E
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 14:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1334C606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 14:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=JeXBqg6p
+	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=b1IT559a
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 89ED240E0F;
-	Fri, 30 Oct 2026 15:48:05 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.220])
- by mails.dpdk.org (Postfix) with ESMTPS id 192F740B94
- for <dev@dpdk.org>; Fri, 30 Oct 2026 15:47:55 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6A6EA40E13;
+	Fri, 30 Oct 2026 15:48:06 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
+ by mails.dpdk.org (Postfix) with ESMTPS id BA0C040B9D
+ for <dev@dpdk.org>; Fri, 30 Oct 2026 15:47:56 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=CxGcEzBvnTpmB09PZBqYCNFRAyzJDdj/bGa4S11VEqg=;
- b=JeXBqg6pTw5aliufNEwNep6ONjrBpHOvWIEPcCbp1BACYhg+l/SUuBjn8ykuwS
- TfG0ZLZ25RJ0zomgk0InBjr4SuvhSk8rvYrAdp4aXjd6IBKE5w2ZznBvKZTVDLcP
- GMwtkd5If8K1E0HGeZiDEbradaqGEceGyXVLdvdPtt7GQ=
+ MIME-Version; bh=wl5UA7JxsXF0a+slT7xMzToBGjk01qrPNHMXnnvNjZ0=;
+ b=b1IT559aLhnon4uba52qSfc6q7xbtsz/dd5QM52OptqIu2j3UgO7nSnBuVy95Q
+ YtBxqeuQXNcEaHO8VW9psfQjaEtbRJ8ctJDshfP4HJqwifOCpQ2qRpPc45T/THoC
+ R120KcVtEgXSCf/NKCuqEhGHlyHJ1Dj/vpClMv2eWwR7I=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v5 08/28] net/hinic3: add NIC type identification
-Date: Fri, 30 Oct 2026 22:47:12 +0800
-Message-ID: <20261030144733.2120-9-yejiacheng4@h-partners.com>
+Subject: [PATCH v5 11/28] net/hinic3: fix offload and cmdq/compact CQE config
+Date: Fri, 30 Oct 2026 22:47:15 +0800
+Message-ID: <20261030144733.2120-12-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261030144733.2120-1-yejiacheng4@h-partners.com>
 References: <20261023155809.855-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261023155809.855-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDHb_EUruRqpJ41BA--.59781S10
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCryUKF4DAr4kZF18AFy8uFg_yoW5Xr13pa
- y7Ka97ZFWDGw4vv3ZxGa9IyF15Za1xu34jga4kAas09F15Zr1UAa4UJrWSyrnxKrW7uFy2
- vF12kw1v93Wjqw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UtsqAUUUUU=
+X-CM-TRANSID: As8vCgDHb_EUruRqpJ41BA--.59781S13
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZry3AFyfXrW7trWUWryxuFg_yoWrXF1rpF
+ WDGFWxJryDJF4jq3Wkua1xua45Xw1fK3yjka4Fya4Y9Fy5ZF17Z343KFZ7ZryagryxJF12
+ vr4q9rZFy3W0qwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uio7tUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMxiFj2rkrhhThAAA3O
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNBmFj2rkrhlZPAAA37
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,82 +56,88 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Identify the NIC type from its PCI device ID at initialization and store it
-in the NIC private data, so per-model behaviour can be selected without
-scattered PCI device ID comparisons.
+Some offload capabilities are reported based on the wrong conditions:
+VXLAN TNL TSO is never advertised, and GENEVE/IPIP TSO is gated by the
+HTN cmdq flag instead of those features' own flags. The cmdq mode/depth
+are also set in the wrong helper and the compact CQE flag is not written
+to firmware at vport enable.
+
+Advertise the missing offloads, gate tunnel TSO by the correct flags, set
+cmdq mode/depth in hinic3_set_cmdq_depth(), and forward the compact CQE
+flag.
+
+Fixes: aa31be38544e ("net/hinic3: enhance command queue for new SPx series NIC")
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/hinic3_ethdev.c | 17 +++++++++++++++++
- drivers/net/hinic3/hinic3_ethdev.h | 10 ++++++++++
- 2 files changed, 27 insertions(+)
+ drivers/net/hinic3/base/hinic3_hw_comm.c | 9 +++++----
+ drivers/net/hinic3/base/hinic3_nic_cfg.c | 1 +
+ drivers/net/hinic3/hinic3_ethdev.c       | 6 ++++--
+ 3 files changed, 10 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/net/hinic3/base/hinic3_hw_comm.c b/drivers/net/hinic3/base/hinic3_hw_comm.c
+index 6541bc0428..2749faeba1 100644
+--- a/drivers/net/hinic3/base/hinic3_hw_comm.c
++++ b/drivers/net/hinic3/base/hinic3_hw_comm.c
+@@ -276,10 +276,6 @@ hinic3_set_root_ctxt(struct hinic3_hwdev *hwdev, uint32_t rq_depth,
+ 	root_ctxt.rq_depth = (uint16_t)rte_log2_u32(rq_depth);
+ 	root_ctxt.rx_buf_sz = get_hw_rx_buf_size(hwdev, rx_buf_sz);
+ 	root_ctxt.sq_depth = (uint16_t)rte_log2_u32(sq_depth);
+-	root_ctxt.cmdq_mode = hwdev->cmdqs->cmdq_mode;
+-
+-	if (hwdev->cmdqs->cmdq_mode == HINIC3_ENHANCE_CMDQ)
+-		root_ctxt.cmdq_depth--;
+ 
+ 	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_COMM,
+ 				      HINIC3_MGMT_CMD_SET_VAT,
+@@ -334,6 +330,11 @@ hinic3_set_cmdq_depth(struct hinic3_hwdev *hwdev, uint16_t cmdq_depth)
+ 	root_ctxt.set_cmdq_depth = 1;
+ 	root_ctxt.cmdq_depth = (uint8_t)rte_log2_u32(cmdq_depth);
+ 
++	root_ctxt.cmdq_mode = hwdev->cmdqs->cmdq_mode;
++
++	if (root_ctxt.cmdq_mode == HINIC3_ENHANCE_CMDQ)
++		root_ctxt.cmdq_depth--;
++
+ 	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_COMM,
+ 				      HINIC3_MGMT_CMD_SET_VAT,
+ 				      &root_ctxt, sizeof(root_ctxt),
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+index d64a123c56..1057d4e777 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+@@ -457,6 +457,7 @@ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)
+ 	en_state.func_id = hinic3_global_func_id(hwdev);
+ 	en_state.state = enable ? 1 : 0;
+ 	en_state.num_qps = nic_dev->num_rqs;
++	en_state.rx_compact_wqe_en = HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev);
+ 
+ 	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_L2NIC,
+ 				      HINIC3_NIC_CMD_SET_VPORT_ENABLE,
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 4e9e936b10..69b7a23d6a 100644
+index 978e1b0a22..e934d8dcfb 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -482,6 +482,22 @@ hinic3_init_default_cos(struct hinic3_nic_dev *nic_dev)
- 	return 0;
+@@ -672,6 +672,8 @@ hinic3_dev_tnl_tso_support(struct rte_eth_dev_info *info, struct hinic3_nic_dev
+ 		info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO;
+ 	if (HINIC3_SUPPORT_IPXIP_OFFLOAD(nic_dev))
+ 		info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO;
++	if (HINIC3_SUPPORT_VXLAN_OFFLOAD(nic_dev))
++		info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO;
  }
  
-+static enum nic_type
-+hinic3_get_nic_type(struct rte_pci_device *pci_dev)
-+{
-+	switch (pci_dev->id.device_id) {
-+	case HINIC3_DEV_ID_SP620:
-+	case HINIC3_DEV_ID_VF_SP620:
-+	case HINIC3_DEV_ID_SP920: /* SP920 is the DPU card of SP620. */
-+		return NIC_SP620;
-+	case HINIC3_DEV_ID_SP230:
-+	case HINIC3_DEV_ID_VF_SP230:
-+		return NIC_SP230;
-+	default:
-+		return NIC_UNKNOWN;
-+	}
-+}
-+
  /**
-  * Initialize Class of Service (CoS). For PF devices, it also sync the link
-  * status with the physical port.
-@@ -3430,6 +3446,7 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
- 
- 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
- 	memset(nic_dev, 0, sizeof(*nic_dev));
-+	nic_dev->nic_type = hinic3_get_nic_type(pci_dev);
- 	snprintf(nic_dev->dev_name, sizeof(nic_dev->dev_name),
- 		"dbdf-%.4x:%.2x:%.2x.%x", pci_dev->addr.domain,
- 		pci_dev->addr.bus, pci_dev->addr.devid,
-diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index 9061e2b217..c46fcfcbec 100644
---- a/drivers/net/hinic3/hinic3_ethdev.h
-+++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -106,6 +106,12 @@ enum nic_feature_cap {
- TAILQ_HEAD(hinic3_ethertype_filter_list, rte_flow);
- TAILQ_HEAD(hinic3_fdir_rule_filter_list, rte_flow);
- 
-+enum nic_type {
-+	NIC_SP620 = 0,
-+	NIC_SP230 = 1,
-+	NIC_UNKNOWN = 2,
-+};
+@@ -715,8 +717,8 @@ hinic3_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *info)
+ 		RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |
+ 		RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM |
+ 		RTE_ETH_TX_OFFLOAD_TCP_TSO | RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
+-	if (nic_dev->feature_cap & NIC_F_HTN_CMDQ)
+-		hinic3_dev_tnl_tso_support(info, nic_dev);
 +
- struct hinic3_nic_dev {
- 	struct hinic3_hwdev *hwdev; /**< Hardware device. */
- 	struct hinic3_txq **txqs;
-@@ -152,9 +158,13 @@ struct hinic3_nic_dev {
- 	struct hinic3_nic_cmdq_ops *cmdq_ops;
- 	struct hinic3_nic_rx_ops *rx_ops;
- 	struct hinic3_nic_tx_ops *tx_ops;
-+	enum nic_type nic_type; /**< NIC type. */
++	hinic3_dev_tnl_tso_support(info, nic_dev);
  
- };
- 
-+#define HINIC3_IS_SP620_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP620)
-+#define HINIC3_IS_SP230_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP230)
-+
- extern const struct rte_flow_ops hinic3_flow_ops;
- 
- /**
+ 	info->hash_key_size = HINIC3_RSS_KEY_SIZE;
+ 	info->reta_size = HINIC3_RSS_INDIR_SIZE;
 -- 
 2.33.0
 
