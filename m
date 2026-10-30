@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21964606A31D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 14:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9659606A31A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 14:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=c1wksRor
+	dkim=pass (1024-bit key, unprotected) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=S1dfVuZI
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 489F140FDE;
-	Fri, 30 Oct 2026 15:48:20 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
- by mails.dpdk.org (Postfix) with ESMTPS id 2A0E540299
- for <dev@dpdk.org>; Fri, 30 Oct 2026 15:48:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 39AD540E03;
+	Fri, 30 Oct 2026 15:48:21 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8D7D840B90
+ for <dev@dpdk.org>; Fri, 30 Oct 2026 15:47:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=ZFGLyRzinfd0e9SguXPdAygCwMVLdNVX+mCbn08pLoU=;
- b=c1wksRor0HRYZVAWa5bXrRZ9KUEyvGR1qgKXDepBrK0eHTiKobFwCsXA37JiUI
- BN4ryNG0KHQScHiZipqXeaHNSJarRF317Z96oUJgwX9QMat0nXtkBMVcgU8aE/gU
- DMsS1rseqKmT8J/torRxS6iBU99ICfl8B98UFSh0ujZfk=
+ MIME-Version; bh=DbU8Z8pY/bmtd3sVn15b17o6daD1rMcHF19rDB1SgzY=;
+ b=S1dfVuZIrOpiL6yG+kqTXXrItc64L94taL9uoUuYS4s24EX/abM8bGWtKR6NOy
+ zOVpMA01kmiwOkrlmswR0Jij7OdsfY3FGGDwtWYtg2GMtGFibpQh/bvnQMxAA9RB
+ fb5fQ8EksBGLpfLiXrsrt9xBElCzWOkNpjjOTS6J4cO0Q=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v5 24/28] net/hinic3: expand TSO from 127 to 255 segments
-Date: Fri, 30 Oct 2026 22:47:28 +0800
-Message-ID: <20261030144733.2120-25-yejiacheng4@h-partners.com>
+Subject: [PATCH v5 19/28] net/hinic3: refactor flow rule parsing
+Date: Fri, 30 Oct 2026 22:47:23 +0800
+Message-ID: <20261030144733.2120-20-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261030144733.2120-1-yejiacheng4@h-partners.com>
 References: <20261023155809.855-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261023155809.855-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDHb_EUruRqpJ41BA--.59781S26
-X-Coremail-Antispam: 1Uf129KBjvAXoWfZrW7try8tr1rAFyUKry5twb_yoW8ZF48Co
- WfXrn3tr1Yvry8Gr409w4kuFs7twsxZFs8A3y0krsFyFW8Wr1UCwnxJw1xJa4rXwnYv3Zr
- AasxJF1Sy3s7X343n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUwb10UUUUU
+X-CM-TRANSID: As8vCgDHb_EUruRqpJ41BA--.59781S21
+X-Coremail-Antispam: 1Uf129KBjvAXoWDZr1kGw4fWF1fuF43uryrXrb_yoWrKr1UCo
+ Z7XF4rtr1Fyr4rGw409rWIy3srX3yq9w4SvFWagwsFqa1Ut34Fyrs3XF4rA3yj93y5JrnI
+ yFy8Jan8tanrX3Z8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUzgAwUUUUU
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMx6GkGrkrh5TmAAA3O
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNhyGkGrkrhxgewAA3b
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,580 +56,1262 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Raise the TSO segment limit to 255 so the largest jumbo frames can be sent,
-reworking the SGE copy path to build multiple copy mbufs instead of a
-single one. 255 is the number of buffer descriptors a WQE can carry, so it
-is the limit the copy path has to compress the input segments into.
+The flow rule parser was based on a fixed hardcoded pattern table that was
+hard to extend. Replace it with a simpler protocol-graph classifier, and
+add IP-in-IP and Geneve tunnel patterns.
 
-Raise the non-TSO SGE limit from 32 to 38 to match the number of buffer
-descriptors the hardware accepts in a non-TSO WQE.
-
-Size the per-port copy pool from the cached Tx queue depth, capped at 256
-per queue to bound the hugepage memory a port can pin, and advance the
-per-segment copy source offset so a segment that spans several copy mbufs
-is not copied repeatedly from its start.
-
-Keep the copy mbuf chain consistent by updating nb_segs and pkt_len while
-the chain is built, and reject packets without a valid tso_segsz instead
-of dividing by it when the segment count is computed.
+While refactoring, the parser behaviour changes in a few places: IPv4 and
+VXLAN TCAM keys no longer set the vlan_flag mask, so these rules now match
+tagged packets too; the STN dynamic TCAM limit is raised from 1024 to
+2048; RTE_ETHER_TYPE_CNM and RTE_ETHER_TYPE_ECP are now accepted; and
+rules with multiple actions are now rejected.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/rel_notes/release_26_11.rst |   1 +
- drivers/net/hinic3/hinic3_ethdev.c     |  40 +++-
- drivers/net/hinic3/hinic3_ethdev.h     |   1 -
- drivers/net/hinic3/hinic3_tx.c         | 287 ++++++++++++++-----------
- drivers/net/hinic3/hinic3_tx.h         |  15 +-
- 5 files changed, 197 insertions(+), 147 deletions(-)
+ doc/guides/nics/features/hinic3.ini |   2 +
+ drivers/net/hinic3/hinic3_fdir.c    |  36 +-
+ drivers/net/hinic3/hinic3_fdir.h    |   8 +-
+ drivers/net/hinic3/hinic3_flow.c    | 577 ++++++++++++++++++++--------
+ drivers/net/hinic3/hinic3_flow.h    | 196 ----------
+ 5 files changed, 450 insertions(+), 369 deletions(-)
+ delete mode 100644 drivers/net/hinic3/hinic3_flow.h
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 05d83ca69f..cc363608e3 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -156,6 +156,7 @@ New Features
-   * Added support for the SP560 NIC.
-   * Added device parameters for runtime configuration.
-   * Added a compact CQE receive data path.
-+  * Extended TCP segmentation offload (TSO) to 255 segments.
+diff --git a/doc/guides/nics/features/hinic3.ini b/doc/guides/nics/features/hinic3.ini
+index 8083dc63d1..e47907aa22 100644
+--- a/doc/guides/nics/features/hinic3.ini
++++ b/doc/guides/nics/features/hinic3.ini
+@@ -43,12 +43,14 @@ ARMv8                = Y
+ [rte_flow items]
+ any                  = Y
+ eth                  = P
++geneve               = Y
+ icmp                 = Y
+ ipv4                 = Y
+ ipv6                 = Y
+ tcp                  = Y
+ udp                  = Y
+ vxlan                = Y
++vxlan_gpe            = P
  
- * **Updated Intel iavf driver.**
+ [rte_flow actions]
+ queue                = Y
+diff --git a/drivers/net/hinic3/hinic3_fdir.c b/drivers/net/hinic3/hinic3_fdir.c
+index 95ce7cfe16..87216170aa 100644
+--- a/drivers/net/hinic3/hinic3_fdir.c
++++ b/drivers/net/hinic3/hinic3_fdir.c
+@@ -77,8 +77,6 @@ hinic3_fdir_tcam_ipv4_init(struct hinic3_fdir_filter *rule,
+ 	/* Fill type of ip. */
+ 	tcam_key->key_mask.ip_type = HINIC3_UINT1_MAX;
+ 	tcam_key->key_info.ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
+-	tcam_key->key_mask.vlan_flag = HINIC3_UINT1_MAX;
+-	tcam_key->key_info.vlan_flag = 0;
  
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 5ef966838f..525dc95509 100644
---- a/drivers/net/hinic3/hinic3_ethdev.c
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -668,24 +668,37 @@ hinic3_deinit_sw_rxtxqs(struct hinic3_nic_dev *nic_dev)
- static int
- hinic3_copy_mempool_init(struct hinic3_nic_dev *nic_dev)
+ 	/* Fill src IPv4. */
+ 	tcam_key->key_mask.sipv4_h =
+@@ -101,8 +99,9 @@ hinic3_fdir_tcam_ipv4_init(struct hinic3_fdir_filter *rule,
+ 		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv4.dst_ip);
+ }
+ 
+-static void hinic3_fdir_ipv6_tcam_key_init_sip(struct hinic3_fdir_filter *rule,
+-					       struct hinic3_tcam_key *tcam_key)
++static inline void
++hinic3_fdir_ipv6_tcam_key_init_sip(struct hinic3_fdir_filter *rule,
++				   struct hinic3_tcam_key *tcam_key)
  {
--	nic_dev->cpy_mpool = rte_mempool_lookup(HINCI3_CPY_MEMPOOL_NAME);
-+	char name[RTE_MEMPOOL_NAMESIZE];
-+	unsigned int depth;
+ 	tcam_key->key_mask_ipv6.sipv6_key0 =
+ 		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.src_ip[0]);
+@@ -138,8 +137,9 @@ static void hinic3_fdir_ipv6_tcam_key_init_sip(struct hinic3_fdir_filter *rule,
+ 		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.src_ip[0x3]);
+ }
+ 
+-static void hinic3_fdir_ipv6_tcam_key_init_dip(struct hinic3_fdir_filter *rule,
+-					       struct hinic3_tcam_key *tcam_key)
++static inline void
++hinic3_fdir_ipv6_tcam_key_init_dip(struct hinic3_fdir_filter *rule,
++				   struct hinic3_tcam_key *tcam_key)
+ {
+ 	tcam_key->key_mask_ipv6.dipv6_key0 =
+ 		HINIC3_32_UPPER_16_BITS(rule->key_mask.ipv6.dst_ip[0]);
+@@ -175,8 +175,9 @@ static void hinic3_fdir_ipv6_tcam_key_init_dip(struct hinic3_fdir_filter *rule,
+ 		HINIC3_32_LOWER_16_BITS(rule->key_spec.ipv6.dst_ip[0x3]);
+ }
+ 
+-static void hinic3_fdir_ipv6_tcam_key_init(struct hinic3_fdir_filter *rule,
+-					   struct hinic3_tcam_key *tcam_key)
++static void
++hinic3_fdir_ipv6_tcam_key_init(struct hinic3_fdir_filter *rule,
++			       struct hinic3_tcam_key *tcam_key)
+ {
+ 	hinic3_fdir_ipv6_tcam_key_init_sip(rule, tcam_key);
+ 	hinic3_fdir_ipv6_tcam_key_init_dip(rule, tcam_key);
+@@ -240,15 +241,11 @@ hinic3_fdir_tcam_notunnel_init(struct rte_eth_dev *dev,
+ }
+ 
+ static void
+-hinic3_fdir_tcam_vxlan_ipv4_init(struct hinic3_fdir_filter *rule,
++hinic3_fdir_tcam_vxlan_geneve_ipv4_init(struct hinic3_fdir_filter *rule,
+ 				 struct hinic3_tcam_key *tcam_key)
+ {
+-	/* Fill type of ip. */
+ 	tcam_key->key_mask.ip_type = HINIC3_UINT1_MAX;
+ 	tcam_key->key_info.ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
+-	tcam_key->key_mask.vlan_flag = HINIC3_UINT1_MAX;
+-	tcam_key->key_info.vlan_flag = 0;
+-
+ 	/* Fill src ipv4. */
+ 	tcam_key->key_mask.sipv4_h =
+ 		HINIC3_32_UPPER_16_BITS(rule->key_mask.inner_ipv4.src_ip);
+@@ -271,7 +268,7 @@ hinic3_fdir_tcam_vxlan_ipv4_init(struct hinic3_fdir_filter *rule,
+ }
+ 
+ static void
+-hinic3_fdir_tcam_vxlan_ipv6_init(struct hinic3_fdir_filter *rule,
++hinic3_fdir_tcam_vxlan_geneve_ipv6_init(struct hinic3_fdir_filter *rule,
+ 				 struct hinic3_tcam_key *tcam_key)
+ {
+ 	/* Fill type of ip. */
+@@ -359,7 +356,7 @@ hinic3_fdir_tcam_ipv6_vxlan_init(struct rte_eth_dev *dev,
+  * Pointer to the TCAM key.
+  */
+ static void
+-hinic3_fdir_tcam_vxlan_init(struct rte_eth_dev *dev,
++hinic3_fdir_tcam_vxlan_geneve_init(struct rte_eth_dev *dev,
+ 			    struct hinic3_fdir_filter *rule,
+ 			    struct hinic3_tcam_key *tcam_key)
+ {
+@@ -416,10 +413,10 @@ hinic3_fdir_tcam_vxlan_init(struct rte_eth_dev *dev,
+ 					 HINIC3_UINT15_MAX;
+ 
+ 	if (rule->ip_type == HINIC3_FDIR_IP_TYPE_IPV4)
+-		hinic3_fdir_tcam_vxlan_ipv4_init(rule, tcam_key);
++		hinic3_fdir_tcam_vxlan_geneve_ipv4_init(rule, tcam_key);
+ 
+ 	else if (rule->ip_type == HINIC3_FDIR_IP_TYPE_IPV6)
+-		hinic3_fdir_tcam_vxlan_ipv6_init(rule, tcam_key);
++		hinic3_fdir_tcam_vxlan_geneve_ipv6_init(rule, tcam_key);
+ }
+ 
+ static void
+@@ -432,7 +429,7 @@ hinic3_fdir_tcam_info_init(struct rte_eth_dev *dev,
+ 	if (rule->tunnel_type == HINIC3_FDIR_TUNNEL_MODE_NORMAL)
+ 		hinic3_fdir_tcam_notunnel_init(dev, rule, tcam_key);
+ 	else
+-		hinic3_fdir_tcam_vxlan_init(dev, rule, tcam_key);
++		hinic3_fdir_tcam_vxlan_geneve_init(dev, rule, tcam_key);
+ 
+ 	/* Set the queue index. */
+ 	fdir_tcam_rule->data.qid = rule->rq_index;
+@@ -841,7 +838,7 @@ hinic3_dynamic_lookup_tcam_filter(struct hinic3_nic_dev *nic_dev,
+ 	 * capacity of dynamic TCAM blocks.
+ 	 */
+ 	if (rule_nums >= block_cnt * HINIC3_TCAM_DYNAMIC_BLOCK_SIZE) {
+-		if (block_cnt >= (HINIC3_TCAM_DYNAMIC_MAX_FILTERS /
++		if (block_cnt >= (HINIC3_TCAM_DYNAMIC_MAX_FILTERS(nic_dev) /
+ 				  HINIC3_TCAM_DYNAMIC_BLOCK_SIZE)) {
+ 			PMD_DRV_LOG(ERR,
+ 				"Dynamic tcam block is full, alloc failed!");
+@@ -1597,6 +1594,7 @@ hinic3_flow_add_del_ethertype_filter(struct rte_eth_dev *dev,
+ 	/* Get dev private info. */
+ 	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
+ 	int ret;
++
+ 	/* Add or remove an Ethernet type filter rule. */
+ 	ret = hinic3_flow_add_del_ethertype_filter_rule(dev, ethertype_filter, add);
+ 
+diff --git a/drivers/net/hinic3/hinic3_fdir.h b/drivers/net/hinic3/hinic3_fdir.h
+index 277d89d4fd..05bd9c515b 100644
+--- a/drivers/net/hinic3/hinic3_fdir.h
++++ b/drivers/net/hinic3/hinic3_fdir.h
+@@ -8,8 +8,13 @@
+ #define HINIC3_FLOW_MAX_PATTERN_NUM 16
+ 
+ #define HINIC3_TCAM_DYNAMIC_BLOCK_SIZE 16
++#define HINIC3_TCAM_DYNAMIC_MAX_FILTERS(nic_dev)         \
++		(HINIC3_IS_SP230_NIC(nic_dev)            \
++		? HINIC3_TCAM_DYNAMIC_MAX_FILTERS_HTN    \
++		: HINIC3_TCAM_DYNAMIC_MAX_FILTERS_STN)
+ 
+-#define HINIC3_TCAM_DYNAMIC_MAX_FILTERS 1024
++#define HINIC3_TCAM_DYNAMIC_MAX_FILTERS_STN 2048
++#define HINIC3_TCAM_DYNAMIC_MAX_FILTERS_HTN 1024
+ 
+ #define HINIC3_PKT_TCAM_DYNAMIC_INDEX_START(block_index) \
+ 	(HINIC3_TCAM_DYNAMIC_BLOCK_SIZE * (block_index))
+@@ -96,6 +101,7 @@ enum hinic3_fdir_tunnel_mode {
+ 	HINIC3_FDIR_TUNNEL_MODE_GENEVE = 5,
+ 	HINIC3_FDIR_TUNNEL_MODE_NSH    = 6,
+ 	HINIC3_FDIR_TUNNEL_MODE_IPIP   = 7,
++	HINIC3_FDIR_TUNNEL_MODE_MAX    = 8,
+ };
+ 
+ enum hinic3_fdir_ip_type {
+diff --git a/drivers/net/hinic3/hinic3_flow.c b/drivers/net/hinic3/hinic3_flow.c
+index 1f686d4675..448a20c04b 100644
+--- a/drivers/net/hinic3/hinic3_flow.c
++++ b/drivers/net/hinic3/hinic3_flow.c
+@@ -8,7 +8,6 @@
+ #include "base/hinic3_hwdev.h"
+ #include "base/hinic3_nic_cfg.h"
+ #include "hinic3_ethdev.h"
+-#include "hinic3_flow.h"
+ 
+ #define HINIC3_UINT8_MAX 0xff
+ 
+@@ -19,12 +18,6 @@ typedef int (*hinic3_parse_filter_t)(struct rte_eth_dev *dev,
+ 				     struct rte_flow_error *error,
+ 				     struct hinic3_filter_t *filter);
+ 
+-/* Indicate valid filter mode . */
+-struct hinic3_valid_pattern {
+-	enum rte_flow_item_type *items;
+-	hinic3_parse_filter_t parse_filter;
+-};
+-
+ static int hinic3_flow_parse_fdir_filter(struct rte_eth_dev *dev,
+ 					 const struct rte_flow_attr *attr,
+ 					 const struct rte_flow_item pattern[],
+@@ -39,65 +32,12 @@ static int hinic3_flow_parse_ethertype_filter(struct rte_eth_dev *dev,
+ 					      struct rte_flow_error *error,
+ 					      struct hinic3_filter_t *filter);
+ 
+-static int hinic3_flow_parse_fdir_vxlan_filter(struct rte_eth_dev *dev,
+-					       const struct rte_flow_attr *attr,
+-					       const struct rte_flow_item pattern[],
+-					       const struct rte_flow_action actions[],
+-					       struct rte_flow_error *error,
+-					       struct hinic3_filter_t *filter);
+-
+-/*
+- * Define a supported pattern array, including the matching patterns of
+- * various network protocols and corresponding parsing functions.
+- */
+-static const struct hinic3_valid_pattern hinic3_supported_patterns[] = {
+-	/* Support ethertype. */
+-	{pattern_ethertype, hinic3_flow_parse_ethertype_filter},
+-	/* Support ipv4 but not tunnel, and any field can be masked. */
+-	{pattern_ipv4, hinic3_flow_parse_fdir_filter},
+-	{pattern_ipv4_any, hinic3_flow_parse_fdir_filter},
+-	/* Support ipv4 + l4 but not tunnel, and any field can be masked. */
+-	{pattern_ipv4_udp, hinic3_flow_parse_fdir_filter},
+-	{pattern_ipv4_tcp, hinic3_flow_parse_fdir_filter},
+-	/* Support ipv4 + icmp not tunnel, and any field can be masked. */
+-	{pattern_ipv4_icmp, hinic3_flow_parse_fdir_filter},
+-
+-	/* Support ipv4 + l4 but not tunnel, and any field can be masked. */
+-	{pattern_ethertype_udp, hinic3_flow_parse_fdir_filter},
+-	{pattern_ethertype_tcp, hinic3_flow_parse_fdir_filter},
+-
+-	/* Support ipv4 + vxlan + any, and any field can be masked. */
+-	{pattern_ipv4_vxlan, hinic3_flow_parse_fdir_vxlan_filter},
+-	/* Support ipv4 + vxlan + ipv4, and any field can be masked. */
+-	{pattern_ipv4_vxlan_ipv4, hinic3_flow_parse_fdir_vxlan_filter},
+-	/* Support ipv4 + vxlan + ipv4 + l4, and any field can be masked. */
+-	{pattern_ipv4_vxlan_ipv4_tcp, hinic3_flow_parse_fdir_vxlan_filter},
+-	{pattern_ipv4_vxlan_ipv4_udp, hinic3_flow_parse_fdir_vxlan_filter},
+-	/* Support ipv4 + vxlan + ipv6, and any field can be masked. */
+-	{pattern_ipv4_vxlan_ipv6, hinic3_flow_parse_fdir_vxlan_filter},
+-	/* Support ipv4 + vxlan + ipv6 + l4, and any field can be masked. */
+-	{pattern_ipv4_vxlan_ipv6_tcp, hinic3_flow_parse_fdir_vxlan_filter},
+-	{pattern_ipv4_vxlan_ipv6_udp, hinic3_flow_parse_fdir_vxlan_filter},
+-	/* Support ipv4 + vxlan + l4, and any field can be masked. */
+-	{pattern_ipv4_vxlan_tcp, hinic3_flow_parse_fdir_vxlan_filter},
+-	{pattern_ipv4_vxlan_udp, hinic3_flow_parse_fdir_vxlan_filter},
+-	{pattern_ipv4_vxlan_any, hinic3_flow_parse_fdir_vxlan_filter},
+-
+-	/* Support ipv6 but not tunnel, and any field can be masked. */
+-	{pattern_ipv6, hinic3_flow_parse_fdir_filter},
+-	/* Support ipv6 + l4 but not tunnel, and any field can be masked. */
+-	{pattern_ipv6_udp, hinic3_flow_parse_fdir_filter},
+-	{pattern_ipv6_tcp, hinic3_flow_parse_fdir_filter},
+-
+-	/* Support ipv6 + vxlan + any, and any field can be masked. */
+-	{pattern_ipv6_vxlan, hinic3_flow_parse_fdir_vxlan_filter},
+-	{pattern_ipv6_vxlan_any, hinic3_flow_parse_fdir_vxlan_filter},
+-
+-	/* Support ipv6 + vxlan + l4, and any field can be masked. */
+-	{pattern_ipv6_vxlan_tcp, hinic3_flow_parse_fdir_vxlan_filter},
+-	{pattern_ipv6_vxlan_udp, hinic3_flow_parse_fdir_vxlan_filter},
+-
+-};
++static int hinic3_flow_parse_fdir_vxlan_geneve_filter(struct rte_eth_dev *dev,
++						      const struct rte_flow_attr *attr,
++						      const struct rte_flow_item pattern[],
++						      const struct rte_flow_action actions[],
++						      struct rte_flow_error *error,
++						      struct hinic3_filter_t *filter);
+ 
+ static inline void
+ net_addr_to_host(uint32_t *dst, const uint32_t *src, size_t len)
+@@ -107,30 +47,243 @@ net_addr_to_host(uint32_t *dst, const uint32_t *src, size_t len)
+ 		dst[i] = rte_be_to_cpu_32(src[i]);
+ }
+ 
+-static bool
+-hinic3_match_pattern(enum rte_flow_item_type *item_array,
+-		     const struct rte_flow_item *pattern)
+-{
+-	const struct rte_flow_item *item = pattern;
++/* IPINIP and GPE are split out due to chip support differences. */
++enum hinic3_flow_filter_kind {
++	HINIC3_FLOW_KIND_ETHERTYPE,	/* [ETH]. */
++	HINIC3_FLOW_KIND_NON_TUNNEL,	/* single L3/L4 or ethertype L4. */
++	HINIC3_FLOW_KIND_VXLAN_GENEVE,	/* vxlan/geneve. */
++	HINIC3_FLOW_KIND_GPE,		/* vxlan-gpe. */
++	HINIC3_FLOW_KIND_IPINIP,	/* ip-in-ip. */
++	HINIC3_FLOW_KIND_INVALID,
++};
+ 
+-	/* skip the first void item. */
++/*
++ * The pattern is parsed as a small protocol graph. Every supported pattern
++ * starts with ETH and then follows one of the supported encapsulation paths
++ * (plain L3/L4, tunneled, or ip-in-ip). VOID items are transparent.
++ */
++
++/* Peek at the next non-VOID item type. */
++static enum rte_flow_item_type
++hinic3_flow_next(const struct rte_flow_item *item)
++{
+ 	while (item->type == RTE_FLOW_ITEM_TYPE_VOID)
+ 		item++;
+ 
+-	/* Find no void item. */
+-	while (((*item_array == item->type) &&
+-		(*item_array != RTE_FLOW_ITEM_TYPE_END)) ||
+-	       (item->type == RTE_FLOW_ITEM_TYPE_VOID)) {
+-		if (item->type == RTE_FLOW_ITEM_TYPE_VOID) {
+-			item++;
+-		} else {
+-			item_array++;
+-			item++;
++	return item->type;
++}
++
++/* Consume the next non-VOID item when it matches @p type. */
++static bool
++hinic3_flow_take(const struct rte_flow_item **item,
++		 enum rte_flow_item_type type)
++{
++	while ((*item)->type == RTE_FLOW_ITEM_TYPE_VOID)
++		(*item)++;
++
++	if ((*item)->type != type)
++		return false;
++
++	(*item)++;
++	return true;
++}
++
++/* Return true when only the END item remains. */
++static bool
++hinic3_flow_at_end(const struct rte_flow_item *item)
++{
++	return hinic3_flow_next(item) == RTE_FLOW_ITEM_TYPE_END;
++}
++
++/* Finish a branch, which is valid only when END is reached. */
++static enum hinic3_flow_filter_kind
++hinic3_flow_finish(const struct rte_flow_item *item,
++		   enum hinic3_flow_filter_kind kind)
++{
++	return hinic3_flow_at_end(item) ? kind : HINIC3_FLOW_KIND_INVALID;
++}
++
++/* Classify an inner L3 (IPv4/IPv6) with an optional L4, returning @p kind. */
++static enum hinic3_flow_filter_kind
++hinic3_flow_classify_inner(const struct rte_flow_item **item,
++			   enum hinic3_flow_filter_kind kind,
++			   enum rte_flow_item_type outer_ip)
++{
++	enum rte_flow_item_type next = hinic3_flow_next(*item);
++
++	if (next != RTE_FLOW_ITEM_TYPE_IPV4 &&
++	    next != RTE_FLOW_ITEM_TYPE_IPV6)
++		return HINIC3_FLOW_KIND_INVALID;
 +
 +	/*
-+	 * Give each port its own copy pool sized from its Tx queue depth so
-+	 * that in-flight copy mbufs from one port cannot starve another. A
-+	 * copied packet pins its copy mbufs until Tx completion, so the pool
-+	 * must be able to cover a full ring of in-flight packets. Cap the
-+	 * per-queue depth at 256 to bound the hugepage memory a port can pin.
++	 * An outer IPv6 plus any inner L3 does not fit in the TCAM, so only
++	 * an IPv4 outer (or no outer at all) may carry an inner L3.
 +	 */
-+	depth = nic_dev->num_sqs * RTE_MIN(nic_dev->txq_depth, 256u);
-+	if (depth < HINIC3_COPY_MEMPOOL_DEPTH)
-+		depth = HINIC3_COPY_MEMPOOL_DEPTH;
++	if (outer_ip == RTE_FLOW_ITEM_TYPE_IPV6)
++		return HINIC3_FLOW_KIND_INVALID;
 +
-+	snprintf(name, sizeof(name), "hinic3_cpy_%u",
-+		 (unsigned int)nic_dev->hwdev->eth_dev->data->port_id);
-+	nic_dev->cpy_mpool = rte_pktmbuf_pool_create(name, depth,
-+			HINIC3_COPY_MEMPOOL_CACHE, 0, HINIC3_COPY_MBUF_SIZE,
-+			nic_dev->hwdev->pci_dev->device.numa_node);
- 	if (nic_dev->cpy_mpool == NULL) {
--		nic_dev->cpy_mpool = rte_pktmbuf_pool_create(HINCI3_CPY_MEMPOOL_NAME,
--			HINIC3_COPY_MEMPOOL_DEPTH, HINIC3_COPY_MEMPOOL_CACHE,
--			0, HINIC3_COPY_MBUF_SIZE, rte_socket_id());
--		if (nic_dev->cpy_mpool == NULL) {
--			PMD_DRV_LOG(ERR,
--				    "Create copy mempool failed, errno: %d, dev_name: %s",
--				    rte_errno, HINCI3_CPY_MEMPOOL_NAME);
--			return -ENOMEM;
--		}
-+		PMD_DRV_LOG(ERR,
-+			    "Create copy mempool %s failed, errno: %d, dev_name: %s",
-+			    name, rte_errno, nic_dev->dev_name);
-+		return -ENOMEM;
++	hinic3_flow_take(item, next);
++
++	switch (hinic3_flow_next(*item)) {
++	case RTE_FLOW_ITEM_TYPE_END:
++		return kind;
++	case RTE_FLOW_ITEM_TYPE_TCP:
++	case RTE_FLOW_ITEM_TYPE_UDP:
++		hinic3_flow_take(item, hinic3_flow_next(*item));
++		return hinic3_flow_finish(*item, kind);
++	default:
++		return HINIC3_FLOW_KIND_INVALID;
++	}
++}
++
++/* Consume a tunnel header and classify the payload that follows it. */
++static enum hinic3_flow_filter_kind
++hinic3_flow_classify_tunnel(const struct rte_flow_item **item,
++			    enum rte_flow_item_type tunnel_type,
++			    enum rte_flow_item_type outer_ip)
++{
++	enum hinic3_flow_filter_kind kind =
++		tunnel_type == RTE_FLOW_ITEM_TYPE_VXLAN_GPE ?
++			HINIC3_FLOW_KIND_GPE : HINIC3_FLOW_KIND_VXLAN_GENEVE;
++	enum rte_flow_item_type next;
++
++	if (!hinic3_flow_take(item, tunnel_type))
++		return HINIC3_FLOW_KIND_INVALID;
++
++	next = hinic3_flow_next(*item);
++
++	/* A bare tunnel with nothing after the header is valid. */
++	if (next == RTE_FLOW_ITEM_TYPE_END)
++		return kind;
++
++	/* GPE: an optional inner ETH (which may be terminal), then an L3(+L4). */
++	if (tunnel_type == RTE_FLOW_ITEM_TYPE_VXLAN_GPE) {
++		if (next == RTE_FLOW_ITEM_TYPE_ETH) {
++			hinic3_flow_take(item, RTE_FLOW_ITEM_TYPE_ETH);
++			if (hinic3_flow_at_end(*item))
++				return kind;
++		}
++		return hinic3_flow_classify_inner(item, kind, outer_ip);
++	}
++
++	/* vxlan/geneve: a bare L4/ANY, or an inner L3(+L4). */
++	switch (next) {
++	case RTE_FLOW_ITEM_TYPE_TCP:
++	case RTE_FLOW_ITEM_TYPE_UDP:
++	case RTE_FLOW_ITEM_TYPE_ANY:
++		hinic3_flow_take(item, next);
++		return hinic3_flow_finish(*item, kind);
++	case RTE_FLOW_ITEM_TYPE_ETH:
++	case RTE_FLOW_ITEM_TYPE_IPV4:
++	case RTE_FLOW_ITEM_TYPE_IPV6:
++		if (next == RTE_FLOW_ITEM_TYPE_ETH) {
++			hinic3_flow_take(item, RTE_FLOW_ITEM_TYPE_ETH);
++			break;
++		}
++		/* Geneve accepts a bare inner L3; vxlan requires the inner ETH. */
++		if (tunnel_type != RTE_FLOW_ITEM_TYPE_GENEVE)
++			return HINIC3_FLOW_KIND_INVALID;
++		break;
++	default:
++		return HINIC3_FLOW_KIND_INVALID;
++	}
++
++	return hinic3_flow_classify_inner(item, kind, outer_ip);
++}
++
++/* Classify the payload that follows the outer L3. */
++static enum hinic3_flow_filter_kind
++hinic3_flow_classify_ip(const struct rte_flow_item **item,
++			enum rte_flow_item_type ip_type)
++{
++	enum rte_flow_item_type next = hinic3_flow_next(*item);
++
++	switch (next) {
++	case RTE_FLOW_ITEM_TYPE_END:
++		return HINIC3_FLOW_KIND_NON_TUNNEL;
++	case RTE_FLOW_ITEM_TYPE_TCP:
++		hinic3_flow_take(item, RTE_FLOW_ITEM_TYPE_TCP);
++		return hinic3_flow_finish(*item, HINIC3_FLOW_KIND_NON_TUNNEL);
++	case RTE_FLOW_ITEM_TYPE_UDP:
++		hinic3_flow_take(item, RTE_FLOW_ITEM_TYPE_UDP);
++		next = hinic3_flow_next(*item);
++		switch (next) {
++		case RTE_FLOW_ITEM_TYPE_END:
++			return HINIC3_FLOW_KIND_NON_TUNNEL;
++		case RTE_FLOW_ITEM_TYPE_VXLAN:
++		case RTE_FLOW_ITEM_TYPE_GENEVE:
++		case RTE_FLOW_ITEM_TYPE_VXLAN_GPE:
++			return hinic3_flow_classify_tunnel(item, next, ip_type);
++		default:
++			return HINIC3_FLOW_KIND_INVALID;
++		}
++	case RTE_FLOW_ITEM_TYPE_ICMP:
++	case RTE_FLOW_ITEM_TYPE_ANY:
++		/* ICMP and ANY are valid only right after an IPv4 outer. */
++		if (ip_type != RTE_FLOW_ITEM_TYPE_IPV4)
++			return HINIC3_FLOW_KIND_INVALID;
++		hinic3_flow_take(item, next);
++		return hinic3_flow_finish(*item, HINIC3_FLOW_KIND_NON_TUNNEL);
++	case RTE_FLOW_ITEM_TYPE_IPV4:
++	case RTE_FLOW_ITEM_TYPE_IPV6:
++		/* Ip-in-ip: a second L3 with an optional L4 (or ANY). */
++		hinic3_flow_take(item, next);
++		switch (hinic3_flow_next(*item)) {
++		case RTE_FLOW_ITEM_TYPE_END:
++			return HINIC3_FLOW_KIND_IPINIP;
++		case RTE_FLOW_ITEM_TYPE_TCP:
++		case RTE_FLOW_ITEM_TYPE_UDP:
++		case RTE_FLOW_ITEM_TYPE_ANY:
++			hinic3_flow_take(item, hinic3_flow_next(*item));
++			return hinic3_flow_finish(*item, HINIC3_FLOW_KIND_IPINIP);
++		default:
++			return HINIC3_FLOW_KIND_INVALID;
+ 		}
++	default:
++		return HINIC3_FLOW_KIND_INVALID;
  	}
++}
  
- 	return 0;
+-	return (*item_array == RTE_FLOW_ITEM_TYPE_END &&
+-		item->type == RTE_FLOW_ITEM_TYPE_END);
++/* Classify a pattern into one of the supported filter kinds. */
++static enum hinic3_flow_filter_kind
++hinic3_flow_classify(const struct rte_flow_item *pattern)
++{
++	const struct rte_flow_item *item = pattern;
++	enum rte_flow_item_type next;
++
++	if (!hinic3_flow_take(&item, RTE_FLOW_ITEM_TYPE_ETH))
++		return HINIC3_FLOW_KIND_INVALID;
++
++	switch (hinic3_flow_next(item)) {
++	case RTE_FLOW_ITEM_TYPE_END:
++		return HINIC3_FLOW_KIND_ETHERTYPE;
++	case RTE_FLOW_ITEM_TYPE_TCP:
++		hinic3_flow_take(&item, RTE_FLOW_ITEM_TYPE_TCP);
++		return hinic3_flow_finish(item, HINIC3_FLOW_KIND_NON_TUNNEL);
++	case RTE_FLOW_ITEM_TYPE_UDP:
++		hinic3_flow_take(&item, RTE_FLOW_ITEM_TYPE_UDP);
++		next = hinic3_flow_next(item);
++		switch (next) {
++		case RTE_FLOW_ITEM_TYPE_END:
++			return HINIC3_FLOW_KIND_NON_TUNNEL;
++		case RTE_FLOW_ITEM_TYPE_VXLAN:
++		case RTE_FLOW_ITEM_TYPE_GENEVE:
++		case RTE_FLOW_ITEM_TYPE_VXLAN_GPE:
++			/* No outer IP: pass END so classify_inner allows it. */
++			return hinic3_flow_classify_tunnel(&item, next,
++							    RTE_FLOW_ITEM_TYPE_END);
++		default:
++			return HINIC3_FLOW_KIND_INVALID;
++		}
++	case RTE_FLOW_ITEM_TYPE_IPV4:
++		hinic3_flow_take(&item, RTE_FLOW_ITEM_TYPE_IPV4);
++		return hinic3_flow_classify_ip(&item, RTE_FLOW_ITEM_TYPE_IPV4);
++	case RTE_FLOW_ITEM_TYPE_IPV6:
++		hinic3_flow_take(&item, RTE_FLOW_ITEM_TYPE_IPV6);
++		return hinic3_flow_classify_ip(&item, RTE_FLOW_ITEM_TYPE_IPV6);
++	default:
++		return HINIC3_FLOW_KIND_INVALID;
++	}
  }
  
  /**
-- * Clear the reference to the copy memory pool without freeing it.
-+ * Free the copy memory pool.
-  *
-  * @param[in] nic_dev
-  * Pointer to NIC device structure.
-@@ -693,6 +706,9 @@ hinic3_copy_mempool_init(struct hinic3_nic_dev *nic_dev)
- static void
- hinic3_copy_mempool_uninit(struct hinic3_nic_dev *nic_dev)
- {
-+	if (nic_dev->cpy_mpool != NULL)
-+		rte_mempool_free(nic_dev->cpy_mpool);
-+
- 	nic_dev->cpy_mpool = NULL;
- }
- 
-@@ -1389,6 +1405,8 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 	txq->wqebb_size = (uint16_t)RTE_BIT32(txq->wqebb_shift);
- 	txq->tx_free_thresh = tx_free_thresh;
- 	txq->owner = 1;
-+	txq->non_tso_max_pkt_len =
-+		HINIC3_IS_SP230_NIC(nic_dev) ? HINIC3_MAX_JUMBO_FRAME_SIZE : MAX_SINGLE_SGE_SIZE;
- 
- 	if (!ODD_NUMBER_QUEUE_ID(qid) &&
- 		hinic3_cmd_vf_lag(nic_dev->hwdev, hinic3_global_func_id(nic_dev->hwdev),
-diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index 4597d9d133..0a9e522232 100644
---- a/drivers/net/hinic3/hinic3_ethdev.h
-+++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -51,7 +51,6 @@
- #define HINIC3_PKT_RX_LRO		RTE_MBUF_F_RX_LRO
- #define HINIC3_PKT_TX_L4_NO_CKSUM	RTE_MBUF_F_TX_L4_NO_CKSUM
- 
--#define HINCI3_CPY_MEMPOOL_NAME "cpy_mempool"
- /* Mbuf pool for copy invalid mbuf segs. */
- #define HINIC3_COPY_MEMPOOL_DEPTH	1024
- #define HINIC3_COPY_MEMPOOL_CACHE	128
-diff --git a/drivers/net/hinic3/hinic3_tx.c b/drivers/net/hinic3/hinic3_tx.c
-index a10789e0f5..b8bdd4addb 100644
---- a/drivers/net/hinic3/hinic3_tx.c
-+++ b/drivers/net/hinic3/hinic3_tx.c
-@@ -645,122 +645,118 @@ hinic3_set_tx_offload(struct hinic3_nic_dev *nic_dev,
-  * true as valid, false as invalid.
+@@ -142,20 +295,27 @@ hinic3_match_pattern(enum rte_flow_item_type *item_array,
+  * Matched resolution filter. If no resolution filter is found, return NULL.
   */
- static bool
--hinic3_is_tso_sge_valid(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wqe_info)
-+hinic3_is_tso_sge_valid(struct rte_mbuf *mbuf,
-+			struct hinic3_wqe_info *wqe_info)
+ static hinic3_parse_filter_t
+-hinic3_find_parse_filter_func(const struct rte_flow_item *pattern)
++hinic3_find_parse_filter_func(struct rte_eth_dev *dev,
++			      const struct rte_flow_item *pattern)
  {
--	uint32_t total_len, limit_len, checked_len, left_len, adjust_mss;
--	uint32_t max_sges, left_sges, first_len;
--	uint32_t payload_len, frag_num;
--	uint32_t i;
--	struct rte_mbuf *mbuf_head, *mbuf_first;
--	struct rte_mbuf *mbuf_pre = mbuf;
--
--	left_sges = mbuf->nb_segs;
--	mbuf_head = mbuf;
--	mbuf_first = mbuf;
-+	uint32_t payload_len, frag_num, adjust_mss, limit_len;
-+	uint32_t i = 0, window_len = 0, no_copy_total_len = 0;
-+	uint8_t copy_mbuf_num;
-+	struct rte_mbuf *mbuf_pkt;
-+
-+	if (unlikely(mbuf->data_len < wqe_info->payload_offset &&
-+		     mbuf->nb_segs > HINIC3_NONTSO_PKT_MAX_SGE)) {
-+		PMD_DRV_LOG(WARNING, "illegal pkt, payload offset (%u) > data len (%u).",
-+			    wqe_info->payload_offset, mbuf->data_len);
-+		return false;
-+	}
- 
- 	/* Calculate the number of message payload frag,
- 	 * if it exceeds the hardware limit of 10 bits,
- 	 * packet will be discarded.
- 	 */
--	payload_len = mbuf_head->pkt_len - wqe_info->payload_offset;
--	frag_num = (payload_len + mbuf_head->tso_segsz - 1) / mbuf_head->tso_segsz;
-+	payload_len = mbuf->pkt_len - wqe_info->payload_offset;
-+
-+	frag_num = (payload_len + mbuf->tso_segsz - 1) / mbuf->tso_segsz;
- 	if (frag_num > MAX_TSO_NUM_FRAG) {
--		PMD_DRV_LOG(WARNING, "tso frag num over hw limit, frag_num:0x%x.", frag_num);
-+		PMD_DRV_LOG(WARNING, "tso frag num over hw limit, frag_num: 0x%x", frag_num);
- 		return false;
- 	}
- 
--	/* Tso sge number validation. */
--	if (unlikely(left_sges >= HINIC3_NONTSO_PKT_MAX_SGE)) {
--		checked_len = 0;
--		total_len = 0;
--		first_len = 0;
--		adjust_mss = mbuf->tso_segsz >= TX_MSS_MIN ? mbuf->tso_segsz
--							   : TX_MSS_MIN;
--		max_sges = HINIC3_NONTSO_PKT_MAX_SGE - 1;
--		limit_len = adjust_mss + wqe_info->payload_offset;
--
--		for (i = 0; (i < max_sges) && (total_len < limit_len); i++) {
--			total_len += mbuf->data_len;
--			mbuf_pre = mbuf;
--			mbuf = mbuf->next;
+-	hinic3_parse_filter_t parse_filter = NULL;
+-	uint8_t i;
+-	/* Traverse all supported patterns. */
+-	for (i = 0; i < RTE_DIM(hinic3_supported_patterns); i++) {
+-		if (hinic3_match_pattern(hinic3_supported_patterns[i].items, pattern)) {
+-			parse_filter =
+-				hinic3_supported_patterns[i].parse_filter;
+-			break;
 -		}
-+	/* TSO SGE <= HINIC3_NONTSO_PKT_MAX_SGE: no processing */
-+	if (likely(mbuf->nb_segs <= HINIC3_NONTSO_PKT_MAX_SGE))
-+		return true;
+-	}
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
  
--		/* Each continues 38 mbufs segmust do one check. */
--		while (left_sges >= HINIC3_NONTSO_PKT_MAX_SGE) {
--			if (total_len >= limit_len) {
--				/* Update the limit len. */
--				limit_len = adjust_mss;
--				/* Update checked len. */
--				checked_len += first_len;
--				/* Record the first len. */
--				first_len = mbuf_first->data_len;
--				/* First mbuf move to the next. */
--				mbuf_first = mbuf_first->next;
--				/* Update total len. */
--				total_len -= first_len;
--				left_sges--;
--				i--;
--				for (;
--				     (i < max_sges) && (total_len < limit_len);
--				     i++) {
--					total_len += mbuf->data_len;
--					mbuf_pre = mbuf;
--					mbuf = mbuf->next;
--				}
--			} else {
--				/* Try to copy if not valid. */
--				checked_len += (total_len - mbuf_pre->data_len);
-+	adjust_mss = mbuf->tso_segsz >= TX_MSS_MIN ? mbuf->tso_segsz : TX_MSS_MIN;
- 
--				left_len = mbuf_head->pkt_len - checked_len;
--				if (left_len > HINIC3_COPY_MBUF_SIZE)
--					return false;
--				wqe_info->sge_cnt = (uint16_t)(mbuf_head->nb_segs +
--							  i - left_sges);
--				wqe_info->cpy_mbuf_cnt = 1;
-+	/* TSO SGE > HINIC3_TSO_PKT_MAX_SGE: skip MSS check, directly trigger copy */
-+	if (unlikely(mbuf->nb_segs > HINIC3_TSO_PKT_MAX_SGE))
-+		goto copy;
-+
-+	/* Check sum of 38 SGEs < MSS (First segment < header + MSS) */
-+	limit_len = adjust_mss + wqe_info->payload_offset;
-+	mbuf_pkt = mbuf;
-+	while (mbuf_pkt) {
-+		window_len += mbuf_pkt->data_len;
-+		i++;
-+		mbuf_pkt = mbuf_pkt->next;
- 
--				return true;
-+		if (i > HINIC3_NONTSO_PKT_MAX_SGE)
-+			goto copy;
-+
-+		if (window_len >= limit_len) {
-+			if (limit_len == adjust_mss + wqe_info->payload_offset) {
-+				window_len -= limit_len;
-+				limit_len = adjust_mss;
- 			}
--		} /**< End of while. */
-+			window_len %= adjust_mss;
-+			i = (window_len == 0) ? 0 : 1;
-+		}
- 	}
-+	return true;
-+
-+copy:
-+	mbuf_pkt = mbuf;
-+	for (i = 0; i < HINIC3_NON_COPY_SGE_NUM; i++) {
-+		no_copy_total_len += mbuf_pkt->data_len;
-+		mbuf_pkt = mbuf_pkt->next;
+-	return parse_filter;
++	switch (hinic3_flow_classify(pattern)) {
++	case HINIC3_FLOW_KIND_ETHERTYPE:
++		return hinic3_flow_parse_ethertype_filter;
++	case HINIC3_FLOW_KIND_NON_TUNNEL:
++		return hinic3_flow_parse_fdir_filter;
++	case HINIC3_FLOW_KIND_VXLAN_GENEVE:
++		return hinic3_flow_parse_fdir_vxlan_geneve_filter;
++	case HINIC3_FLOW_KIND_GPE:
++		return HINIC3_IS_SP620_NIC(nic_dev) ?
++		hinic3_flow_parse_fdir_vxlan_geneve_filter : NULL;
++	case HINIC3_FLOW_KIND_IPINIP:
++		return HINIC3_IS_SP620_NIC(nic_dev) ? NULL :
++		hinic3_flow_parse_fdir_vxlan_geneve_filter;
++	default:
++		return NULL;
 +	}
-+
-+	/* TSO payload must fit in HINIC3_TSO_MBUF_NUM_MAX copy mbufs. */
-+	if (unlikely(mbuf->pkt_len - no_copy_total_len >
-+		     HINIC3_TSO_MBUF_NUM_MAX * HINIC3_COPY_MBUF_SIZE)) {
-+		PMD_DRV_LOG(WARNING, "TSO payload over hardware limit.");
-+		return false;
-+	}
-+
-+	copy_mbuf_num = (mbuf->pkt_len - no_copy_total_len +
-+			 HINIC3_COPY_MBUF_SIZE - 1) / HINIC3_COPY_MBUF_SIZE;
- 
--	wqe_info->sge_cnt = mbuf_head->nb_segs;
-+	/* Total SGE = 28 normal SGEs + copy mbufs */
-+	wqe_info->sge_cnt = HINIC3_NON_COPY_SGE_NUM + copy_mbuf_num;
-+	wqe_info->cpy_mbuf_cnt = copy_mbuf_num;
- 
- 	return true;
- }
- 
- static int
--hinic3_non_tso_pkt_pre_process(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wqe_info)
-+hinic3_non_tso_pkt_pre_process(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wqe_info,
-+			       uint32_t non_tso_max_pkt_len)
- {
- 	struct rte_mbuf *mbuf_pkt = mbuf;
- 	uint32_t total_len = 0;
--	uint16_t i;
-+	uint16_t i, copy_mbuf_num = 0;
-+
-+	/* Non-tso packet length must less than HINIC3_MAX_JUMBO_FRAME_SIZE */
-+	if (unlikely(mbuf->pkt_len > non_tso_max_pkt_len))
-+		return -EINVAL;
- 
- 	if (likely(HINIC3_NONTSO_SEG_NUM_VALID(mbuf->nb_segs)))
- 		return 0;
- 
--	/* Non-tso packet length must less than 64KB. */
--	if (unlikely(mbuf->pkt_len > MAX_SINGLE_SGE_SIZE))
--		return -EINVAL;
--
--	/*
--	 * Mbuf number of non-tso packet must less than the sge number
--	 * that nic can support. The excess part will be copied to another
--	 * mbuf.
--	 */
--	for (i = 0; i < (HINIC3_NONTSO_PKT_MAX_SGE - 1); i++) {
-+	for (i = 0; i < HINIC3_NON_COPY_SGE_NUM; i++) {
- 		total_len += mbuf_pkt->data_len;
- 		mbuf_pkt = mbuf_pkt->next;
- 	}
- 
--	/*
--	 * Max copy mbuf size is 4KB, packet will be dropped directly,
--	 * if total copy length is more than it.
--	 */
--	if ((total_len + HINIC3_COPY_MBUF_SIZE) < mbuf->pkt_len)
-+	/* Calculate required mbuf number */
-+	copy_mbuf_num = (mbuf->pkt_len - total_len +
-+			 HINIC3_COPY_MBUF_SIZE - 1) / HINIC3_COPY_MBUF_SIZE;
-+	if (copy_mbuf_num > HINIC3_NONTSO_MBUF_NUM_MAX)
- 		return -EINVAL;
- 
--	wqe_info->sge_cnt = HINIC3_NONTSO_PKT_MAX_SGE;
--	wqe_info->cpy_mbuf_cnt = 1;
-+	/* Total SGE = 28 normal SGEs + copy mbufs */
-+	wqe_info->sge_cnt = HINIC3_NON_COPY_SGE_NUM + copy_mbuf_num;
-+	wqe_info->cpy_mbuf_cnt = copy_mbuf_num;
- 
- 	return 0;
- }
-@@ -779,7 +775,7 @@ hinic3_non_tso_pkt_pre_process(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wq
-  */
- static int
- hinic3_get_tx_offload(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
--		      struct hinic3_wqe_info *wqe_info)
-+		      struct hinic3_wqe_info *wqe_info, uint32_t non_tso_max_pkt_len)
- {
- 	uint64_t ol_flags = mbuf->ol_flags;
- 	uint16_t inner_l3_offset = 0;
-@@ -790,7 +786,7 @@ hinic3_get_tx_offload(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
- 	/* Check if the packet set available offload flags. */
- 	if (!(ol_flags & HINIC3_TX_OFFLOAD_MASK)) {
- 		wqe_info->offload = 0;
--		return hinic3_non_tso_pkt_pre_process(mbuf, wqe_info);
-+		return hinic3_non_tso_pkt_pre_process(mbuf, wqe_info, non_tso_max_pkt_len);
- 	}
- 
- 	wqe_info->offload = 1;
-@@ -800,16 +796,15 @@ hinic3_get_tx_offload(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
- 
- 	/* Non-tso mbuf only check sge num. */
- 	if (likely(!(mbuf->ol_flags & HINIC3_PKT_TX_TCP_SEG)))
--		return hinic3_non_tso_pkt_pre_process(mbuf, wqe_info);
-+		return hinic3_non_tso_pkt_pre_process(mbuf, wqe_info, non_tso_max_pkt_len);
- 
- 	/* Tso mbuf. */
-+	if (unlikely(mbuf->tso_segsz == 0))
-+		return -EINVAL;
-+
- 	wqe_info->payload_offset =
- 		inner_l3_offset + mbuf->l3_len + mbuf->l4_len;
- 
--	/* Too many mbuf segs. */
--	if (unlikely(HINIC3_TSO_SEG_NUM_INVALID(mbuf->nb_segs)))
--		return -EINVAL;
--
- 	/* Check whether can cover all tso mbuf segs or not. */
- 	if (unlikely(!hinic3_is_tso_sge_valid(mbuf, wqe_info)))
- 		return -EINVAL;
-@@ -845,33 +840,70 @@ hinic3_alloc_cpy_mbuf(struct hinic3_nic_dev *nic_dev)
-  * The address of the copied mbuf.
-  */
- static void *
--hinic3_copy_tx_mbuf(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
--		    uint16_t sge_cnt)
-+hinic3_copy_tx_mbuf_multi(struct hinic3_nic_dev *nic_dev,
-+			  struct rte_mbuf *mbuf, struct hinic3_wqe_info *wqe_info)
- {
--	struct rte_mbuf *dst_mbuf;
--	uint32_t offset = 0;
--	uint16_t i;
-+	uint8_t i;
-+	uint32_t remaining_len, dst_mbuf_space, copy_size, copy_offset = 0;
-+	uint32_t src_off;
-+	struct rte_mbuf *prev_mbuf = NULL;
-+	struct rte_mbuf *head_mbuf = NULL;
-+	struct rte_mbuf *cur_mbuf;
- 
- 	if (unlikely(!nic_dev->cpy_mpool))
- 		return NULL;
- 
--	dst_mbuf = hinic3_alloc_cpy_mbuf(nic_dev);
--	if (unlikely(!dst_mbuf))
--		return NULL;
-+	/* Allocate all copy mbufs and build linked list */
-+	for (i = 0; i < wqe_info->cpy_mbuf_cnt; i++) {
-+		cur_mbuf = hinic3_alloc_cpy_mbuf(nic_dev);
-+		if (unlikely(!cur_mbuf))
-+			goto err_free;
-+
-+		cur_mbuf->data_off = 0;
-+		cur_mbuf->data_len = 0;
-+		cur_mbuf->pkt_len = 0;
-+		cur_mbuf->next = NULL;
-+
-+		if (prev_mbuf == NULL)
-+			head_mbuf = cur_mbuf;
-+		else
-+			prev_mbuf->next = cur_mbuf;
-+		prev_mbuf = cur_mbuf;
-+		head_mbuf->nb_segs = i + 1;
-+	}
- 
--	dst_mbuf->data_off = 0;
--	dst_mbuf->data_len = 0;
--	for (i = 0; i < sge_cnt; i++) {
--		memcpy((uint8_t *)dst_mbuf->buf_addr + offset,
--			   (uint8_t *)mbuf->buf_addr + mbuf->data_off,
--			   mbuf->data_len);
--		dst_mbuf->data_len += mbuf->data_len;
--		offset += mbuf->data_len;
-+	/* Copy data to mbufs - mbuf already points to first SGE to copy */
-+	cur_mbuf = head_mbuf;
-+	while (mbuf != NULL) {
-+		remaining_len = mbuf->data_len;
-+		while (remaining_len > 0 && cur_mbuf != NULL) {
-+			dst_mbuf_space = HINIC3_COPY_MBUF_SIZE - copy_offset;
-+			copy_size = RTE_MIN(remaining_len, dst_mbuf_space);
-+			src_off = mbuf->data_len - remaining_len;
-+
-+			rte_memcpy((uint8_t *)cur_mbuf->buf_addr + copy_offset,
-+				   rte_pktmbuf_mtod_offset(mbuf, uint8_t *, src_off),
-+				   copy_size);
-+
-+			cur_mbuf->data_len += copy_size;
-+			head_mbuf->pkt_len += copy_size;
-+			copy_offset += copy_size;
-+			remaining_len -= copy_size;
-+
-+			if (copy_offset >= HINIC3_COPY_MBUF_SIZE) {
-+				copy_offset = 0;
-+				cur_mbuf = cur_mbuf->next;
-+			}
-+		}
- 		mbuf = mbuf->next;
- 	}
--	dst_mbuf->pkt_len = dst_mbuf->data_len;
- 
--	return dst_mbuf;
-+	return head_mbuf;
-+
-+err_free:
-+	/* Free all allocated mbufs on error */
-+	hinic3_free_cpy_mbuf(nic_dev, head_mbuf);
-+	return NULL;
  }
  
  /**
-@@ -897,9 +929,9 @@ hinic3_mbuf_dma_map_sge(struct hinic3_txq *txq, struct rte_mbuf *mbuf,
- 	struct hinic3_sq_wqe_desc *wqe_desc = wqe_combo->hdr;
- 	struct hinic3_sq_bufdesc *buf_desc = wqe_combo->bds_head;
- 	uint16_t nb_segs = wqe_info->sge_cnt - wqe_info->cpy_mbuf_cnt;
--	uint16_t real_segs = mbuf->nb_segs;
- 	rte_iova_t dma_addr;
- 	uint32_t i;
-+	uint8_t mbuf_idx;
+@@ -182,12 +342,36 @@ hinic3_flow_parse_action(struct rte_eth_dev *dev,
+ 	const struct rte_flow_action_queue *act_q;
+ 	const struct rte_flow_action *act = actions;
  
- 	for (i = 0; i < nb_segs; i++) {
- 		if (unlikely(mbuf == NULL)) {
-@@ -938,40 +970,34 @@ hinic3_mbuf_dma_map_sge(struct hinic3_txq *txq, struct rte_mbuf *mbuf,
- 		mbuf = mbuf->next;
+-	/* skip the first void item. */
+-	while (act->type == RTE_FLOW_ACTION_TYPE_VOID)
+-		act++;
++	/* Only one non-VOID action before END is supported. */
++	const struct rte_flow_action *last_act = NULL;
++	for (act = actions; act->type != RTE_FLOW_ACTION_TYPE_END; act++) {
++		if (act->type == RTE_FLOW_ACTION_TYPE_VOID)
++			continue;
++		if (last_act != NULL) {
++			rte_flow_error_set(error, EINVAL,
++					   RTE_FLOW_ERROR_TYPE_ACTION, act,
++					   "Multiple actions not supported.");
++			return -rte_errno;
++		}
++		last_act = act;
++	}
++	if (last_act == NULL) {
++		rte_flow_error_set(error, EINVAL,
++				   RTE_FLOW_ERROR_TYPE_ACTION, actions,
++				   "No valid action.");
++		return -rte_errno;
++	}
++
++	act = last_act;
+ 
+ 	switch (act->type) {
+ 	case RTE_FLOW_ACTION_TYPE_QUEUE:
++		if (act->conf == NULL) {
++			rte_flow_error_set(error, EINVAL,
++					   RTE_FLOW_ERROR_TYPE_ACTION,
++					   act, "Invalid action queue config.");
++			return -rte_errno;
++		}
+ 		act_q = (const struct rte_flow_action_queue *)act->conf;
+ 		filter->fdir_filter.rq_index = act_q->index;
+ 		if (filter->fdir_filter.rq_index >= dev->data->nb_rx_queues) {
+@@ -230,6 +414,14 @@ hinic3_flow_fdir_ipv4(const struct rte_flow_item *flow_item,
+ 
+ 	mask_ipv4 = (const struct rte_flow_item_ipv4 *)flow_item->mask;
+ 	spec_ipv4 = (const struct rte_flow_item_ipv4 *)flow_item->spec;
++
++	filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
++	filter->fdir_filter.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_NORMAL;
++
++	/* When both L3 mask and spec are empty, return 0, then proceed to evaluate L4. */
++	if (!mask_ipv4 && !spec_ipv4)
++		return 0;
++
+ 	if (!mask_ipv4 || !spec_ipv4) {
+ 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
+ 				   flow_item,
+@@ -251,9 +443,6 @@ hinic3_flow_fdir_ipv4(const struct rte_flow_item *flow_item,
+ 		return -rte_errno;
  	}
  
--	/* For now: support over 38 sge, copy the last 2 mbuf. */
- 	if (unlikely(wqe_info->cpy_mbuf_cnt != 0)) {
+-	/* Set the filter information. */
+-	filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
+-	filter->fdir_filter.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_NORMAL;
+ 	filter->fdir_filter.key_mask.ipv4.src_ip =
+ 		rte_be_to_cpu_32(mask_ipv4->hdr.src_addr);
+ 	filter->fdir_filter.key_spec.ipv4.src_ip =
+@@ -277,6 +466,14 @@ hinic3_flow_fdir_ipv6(const struct rte_flow_item *flow_item,
+ 
+ 	mask_ipv6 = (const struct rte_flow_item_ipv6 *)flow_item->mask;
+ 	spec_ipv6 = (const struct rte_flow_item_ipv6 *)flow_item->spec;
++
++	filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV6;
++	filter->fdir_filter.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_NORMAL;
++
++	/* When both L3 mask and spec are empty, return 0, then proceed to evaluate L4. */
++	if (!mask_ipv6 && !spec_ipv6)
++		return 0;
++
+ 	if (!mask_ipv6 || !spec_ipv6) {
+ 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
+ 				   flow_item,
+@@ -293,9 +490,6 @@ hinic3_flow_fdir_ipv6(const struct rte_flow_item *flow_item,
+ 		return -rte_errno;
+ 	}
+ 
+-	/* Set the filter information. */
+-	filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV6;
+-	filter->fdir_filter.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_NORMAL;
+ 	net_addr_to_host(filter->fdir_filter.key_mask.ipv6.src_ip,
+ 			 (const uint32_t *)mask_ipv6->hdr.src_addr.a, 4);
+ 	net_addr_to_host(filter->fdir_filter.key_spec.ipv6.src_ip,
+@@ -639,6 +833,12 @@ hinic3_flow_parse_ethertype_pattern(__rte_unused struct rte_eth_dev *dev,
+ 			case RTE_ETHER_TYPE_LLDP:
+ 				break;
+ 
++			case RTE_ETHER_TYPE_CNM:
++				break;
++
++			case RTE_ETHER_TYPE_ECP:
++				break;
++
+ 			default:
+ 				rte_flow_error_set(error, EINVAL,
+ 						   RTE_FLOW_ERROR_TYPE_ITEM,
+@@ -686,14 +886,15 @@ static int
+ hinic3_flow_fdir_tunnel_ipv4(struct rte_flow_error *error,
+ 			     struct hinic3_filter_t *filter,
+ 			     const struct rte_flow_item *flow_item,
+-			     enum hinic3_fdir_tunnel_mode tunnel_mode)
++			     enum hinic3_fdir_tunnel_mode *tunnel_mode)
+ {
+ 	const struct rte_flow_item_ipv4 *spec_ipv4, *mask_ipv4;
+ 	mask_ipv4 = (const struct rte_flow_item_ipv4 *)flow_item->mask;
+ 	spec_ipv4 = (const struct rte_flow_item_ipv4 *)flow_item->spec;
+ 
+-	if (tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_NORMAL) {
++	if (*tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_MAX) {
+ 		filter->fdir_filter.outer_ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
++		*tunnel_mode = HINIC3_FDIR_TUNNEL_MODE_NORMAL;
+ 
+ 		if (!mask_ipv4 && !spec_ipv4)
+ 			return 0;
+@@ -702,7 +903,7 @@ hinic3_flow_fdir_tunnel_ipv4(struct rte_flow_error *error,
+ 			rte_flow_error_set(error, EINVAL,
+ 					   RTE_FLOW_ERROR_TYPE_ITEM,
+ 					   flow_item,
+-					   "Invalid fdir filter, vxlan outer ipv4 mask or spec");
++					   "Invalid fdir filter, vxlan/geneve outer ipv4 mask or spec");
+ 			return -rte_errno;
+ 		}
+ 
+@@ -718,7 +919,7 @@ hinic3_flow_fdir_tunnel_ipv4(struct rte_flow_error *error,
+ 		    mask_ipv4->hdr.next_proto_id ||
+ 		    mask_ipv4->hdr.hdr_checksum) {
+ 			rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM, flow_item,
+-				"Not supported by fdir filter, vxlan outer ipv4 only support src ip, dst ip");
++				"Not supported by fdir filter, vxlan/geneve outer ipv4 only support src ip,dst ip");
+ 			return -rte_errno;
+ 		}
+ 
+@@ -733,6 +934,10 @@ hinic3_flow_fdir_tunnel_ipv4(struct rte_flow_error *error,
+ 			rte_be_to_cpu_32(spec_ipv4->hdr.dst_addr);
+ 	} else {
+ 		filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
++		if (*tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_NORMAL) {
++			*tunnel_mode = HINIC3_FDIR_TUNNEL_MODE_IPIP;
++			filter->fdir_filter.tunnel_type = *tunnel_mode;
++		}
+ 
+ 		if (!mask_ipv4 && !spec_ipv4)
+ 			return 0;
+@@ -741,7 +946,7 @@ hinic3_flow_fdir_tunnel_ipv4(struct rte_flow_error *error,
+ 			rte_flow_error_set(error, EINVAL,
+ 					   RTE_FLOW_ERROR_TYPE_ITEM,
+ 					   flow_item,
+-					   "Invalid fdir filter, vxlan inner ipv4 mask or spec");
++					   "Invalid fdir filter, vxlan/geneve inner ipv4 mask or spec");
+ 			return -rte_errno;
+ 		}
+ 
+@@ -758,7 +963,7 @@ hinic3_flow_fdir_tunnel_ipv4(struct rte_flow_error *error,
+ 			rte_flow_error_set(error, EINVAL,
+ 					   RTE_FLOW_ERROR_TYPE_ITEM,
+ 					   flow_item,
+-					   "Not supported by fdir filter, vxlan inner ipv4 only support src ip, dst ip, proto");
++					   "Not supported by fdir filter, vxlan/geneve inner ipv4 only support src ip,dst ip, proto");
+ 			return -rte_errno;
+ 		}
+ 
+@@ -783,15 +988,16 @@ static int
+ hinic3_flow_fdir_tunnel_ipv6(struct rte_flow_error *error,
+ 			     struct hinic3_filter_t *filter,
+ 			     const struct rte_flow_item *flow_item,
+-			     enum hinic3_fdir_tunnel_mode tunnel_mode)
++			     enum hinic3_fdir_tunnel_mode *tunnel_mode)
+ {
+ 	const struct rte_flow_item_ipv6 *spec_ipv6, *mask_ipv6;
+ 
+ 	mask_ipv6 = (const struct rte_flow_item_ipv6 *)flow_item->mask;
+ 	spec_ipv6 = (const struct rte_flow_item_ipv6 *)flow_item->spec;
+ 
+-	if (tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_NORMAL) {
++	if (*tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_MAX) {
+ 		filter->fdir_filter.outer_ip_type = HINIC3_FDIR_IP_TYPE_IPV6;
++		*tunnel_mode = HINIC3_FDIR_TUNNEL_MODE_NORMAL;
+ 
+ 		if (!mask_ipv6 && !spec_ipv6)
+ 			return 0;
+@@ -822,7 +1028,10 @@ hinic3_flow_fdir_tunnel_ipv6(struct rte_flow_error *error,
+ 				 (const uint32_t *)spec_ipv6->hdr.dst_addr.a, 4);
+ 	} else {
+ 		filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV6;
+-
++		if (*tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_NORMAL) {
++			*tunnel_mode = HINIC3_FDIR_TUNNEL_MODE_IPIP;
++			filter->fdir_filter.tunnel_type = *tunnel_mode;
++		}
+ 		if (!mask_ipv6 && !spec_ipv6)
+ 			return 0;
+ 
+@@ -869,7 +1078,7 @@ hinic3_flow_fdir_tunnel_tcp(struct rte_flow_error *error,
+ 	if (tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_NORMAL) {
+ 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
+ 				   flow_item,
+-				   "Not supported by fdir filter, vxlan only support inner tcp");
++				   "Not supported by fdir filter, vxlan/geneve only support inner tcp");
+ 		return -rte_errno;
+ 	}
+ 
+@@ -894,7 +1103,7 @@ hinic3_flow_fdir_tunnel_tcp(struct rte_flow_error *error,
+ 	    mask_tcp->hdr.tcp_urp) {
+ 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
+ 				   flow_item,
+-				   "Not supported by fdir filter, vxlan inner tcp only support src port,dst port");
++				   "Not supported by fdir filter, vxlan/geneve inner tcp only support src port,dst port");
+ 		return -rte_errno;
+ 	}
+ 
+@@ -921,7 +1130,8 @@ hinic3_flow_fdir_tunnel_udp(struct rte_flow_error *error,
+ 	mask_udp = (const struct rte_flow_item_udp *)flow_item->mask;
+ 	spec_udp = (const struct rte_flow_item_udp *)flow_item->spec;
+ 
+-	if (tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_NORMAL) {
++	if (tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_MAX ||
++	    tunnel_mode == HINIC3_FDIR_TUNNEL_MODE_NORMAL) {
  		/*
- 		 * Copy invalid mbuf segs to a valid buffer, lost performance.
- 		 */
- 		txq->txq_stats.cpy_pkts += 1;
--		mbuf = hinic3_copy_tx_mbuf(txq->nic_dev, mbuf,
--					   real_segs - nb_segs);
-+		mbuf = hinic3_copy_tx_mbuf_multi(txq->nic_dev, mbuf, wqe_info);
- 		if (unlikely(!mbuf))
- 			return -EINVAL;
- 
- 		txq->tx_info[wqe_info->pi].cpy_mbuf = mbuf;
- 
--		/* Deal with the last mbuf. */
--		dma_addr = rte_mbuf_data_iova(mbuf);
--		if (unlikely(mbuf->data_len == 0)) {
--			txq->txq_stats.sge_len0++;
--			return -EINVAL;
--		}
--		/*
--		 * Parts of wqe is in sq bottom while parts
--		 * of wqe is in sq head.
--		 */
--		if (i == 0) {
--			wqe_desc->hi_addr =
--				hinic3_hw_be32(upper_32_bits(dma_addr));
--			wqe_desc->lo_addr =
--				hinic3_hw_be32(lower_32_bits(dma_addr));
--			wqe_desc->ctrl_len = mbuf->data_len;
--		} else {
--			if (unlikely(((uint64_t)buf_desc == txq->sq_bot_sge_addr)))
-+		/* Set DMA descriptors for all copy mbufs */
-+		for (mbuf_idx = 0; mbuf_idx < wqe_info->cpy_mbuf_cnt; mbuf_idx++) {
-+			dma_addr = rte_mbuf_data_iova(mbuf);
-+			if (unlikely(mbuf->data_len == 0)) {
-+				txq->txq_stats.sge_len0++;
-+				hinic3_free_cpy_mbuf(txq->nic_dev,
-+						     txq->tx_info[wqe_info->pi].cpy_mbuf);
-+				txq->tx_info[wqe_info->pi].cpy_mbuf = NULL;
-+				return -EINVAL;
-+			}
-+
-+			if (unlikely((uint64_t)buf_desc == txq->sq_bot_sge_addr))
- 				buf_desc = (struct hinic3_sq_bufdesc *)txq->sq_head_addr;
- 
- 			hinic3_set_buf_desc(buf_desc, dma_addr, mbuf->data_len);
-+			buf_desc++;
-+			mbuf = mbuf->next;
+ 		 * UDP is used to describe protocol,
+ 		 * spec and mask should be NULL.
+@@ -942,7 +1152,7 @@ hinic3_flow_fdir_tunnel_udp(struct rte_flow_error *error,
+ 			rte_flow_error_set(error, EINVAL,
+ 					   RTE_FLOW_ERROR_TYPE_ITEM,
+ 					   flow_item,
+-					   "Invalid fdir filter vxlan inner udp mask or spec");
++					   "Invalid fdir filter vxlan/geneve inner udp mask or spec");
+ 			return -rte_errno;
  		}
+ 
+@@ -960,57 +1170,118 @@ hinic3_flow_fdir_tunnel_udp(struct rte_flow_error *error,
+ 	return 0;
+ }
+ 
++static inline enum hinic3_fdir_tunnel_mode
++hinic3_flow_tunnel_mode(enum rte_flow_item_type type)
++{
++	switch (type) {
++	case RTE_FLOW_ITEM_TYPE_GENEVE:
++		return HINIC3_FDIR_TUNNEL_MODE_GENEVE;
++	case RTE_FLOW_ITEM_TYPE_VXLAN_GPE:
++		return HINIC3_FDIR_TUNNEL_MODE_GPE;
++	default:
++		return HINIC3_FDIR_TUNNEL_MODE_VXLAN;
++	}
++}
++
+ static int
+-hinic3_flow_fdir_vxlan(struct rte_flow_error *error,
+-		       struct hinic3_filter_t *filter,
+-		       const struct rte_flow_item *flow_item)
++hinic3_flow_fdir_vxlan_geneve(struct rte_flow_error	  *error,
++			      struct hinic3_filter_t	  *filter,
++			      enum hinic3_fdir_tunnel_mode tunnel_mode,
++			      const struct rte_flow_item  *flow_item)
+ {
+-	const struct rte_flow_item_vxlan *spec_vxlan, *mask_vxlan;
++	const uint8_t *vni;
++	const uint8_t *vni_mask;
+ 	uint32_t vxlan_vni_id = 0;
+ 	uint32_t vxlan_vni_id_mask = 0;
+ 
+-	spec_vxlan = (const struct rte_flow_item_vxlan *)flow_item->spec;
+-	mask_vxlan = (const struct rte_flow_item_vxlan *)flow_item->mask;
+-
+-	filter->fdir_filter.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_VXLAN;
++	filter->fdir_filter.tunnel_type = tunnel_mode;
+ 
+-	if (!spec_vxlan && !mask_vxlan) {
++	if (!flow_item->spec && !flow_item->mask)
+ 		return 0;
+-	} else if (filter->fdir_filter.outer_ip_type == HINIC3_FDIR_IP_TYPE_IPV6) {
++
++	if (filter->fdir_filter.outer_ip_type == HINIC3_FDIR_IP_TYPE_IPV6) {
+ 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
+ 				   flow_item,
+-				   "Invalid fdir filter vxlan mask or spec, ipv6 vxlan, don't support vni");
++				   "Invalid fdir filter vxlan/geneve mask or spec, ipv6 vxlan/geneve, don't support vni");
+ 		return -rte_errno;
  	}
  
-@@ -1072,7 +1098,8 @@ hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	/* Tx loop routine. */
- 	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
- 		mbuf_pkt = *tx_pkts++;
--		if (unlikely(hinic3_get_tx_offload(txq->nic_dev, mbuf_pkt, &wqe_info))) {
-+		if (unlikely(hinic3_get_tx_offload(txq->nic_dev, mbuf_pkt, &wqe_info,
-+						   txq->non_tso_max_pkt_len))) {
- 			txq->txq_stats.offload_errors++;
- 			break;
- 		}
-diff --git a/drivers/net/hinic3/hinic3_tx.h b/drivers/net/hinic3/hinic3_tx.h
-index 3b1580dd3a..e5aa0a6f8e 100644
---- a/drivers/net/hinic3/hinic3_tx.h
-+++ b/drivers/net/hinic3/hinic3_tx.h
-@@ -6,11 +6,17 @@
- #define _HINIC3_TX_H_
+-	if (!spec_vxlan || !mask_vxlan) {
++	if (!flow_item->spec || !flow_item->mask) {
+ 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
+ 				   flow_item,
+-				   "Invalid fdir filter vxlan mask or spec");
++				   "Invalid fdir filter vxlan/geneve mask or spec");
+ 		return -rte_errno;
+ 	}
  
- #define MAX_SINGLE_SGE_SIZE		 65536
--#define HINIC3_NONTSO_PKT_MAX_SGE	 32 /**< non-tso max sge 32. */
-+#define HINIC3_NONTSO_PKT_MAX_SGE	 38 /**< non-tso max sge 38. */
- #define HINIC3_NONTSO_SEG_NUM_VALID(num) ((num) <= HINIC3_NONTSO_PKT_MAX_SGE)
- 
--#define HINIC3_TSO_PKT_MAX_SGE		127 /**< tso max sge 127. */
--#define HINIC3_TSO_SEG_NUM_INVALID(num) ((num) > HINIC3_TSO_PKT_MAX_SGE)
-+#define HINIC3_TSO_PKT_MAX_SGE		255 /**< tso max sge 255. */
+-	memcpy(((uint8_t *)&vxlan_vni_id + 1), spec_vxlan->vni, 3);
++	switch (tunnel_mode) {
++	case HINIC3_FDIR_TUNNEL_MODE_GENEVE: {
++		const struct rte_flow_item_geneve *spec =
++			(const struct rte_flow_item_geneve *)flow_item->spec;
++		const struct rte_flow_item_geneve *mask =
++			(const struct rte_flow_item_geneve *)flow_item->mask;
 +
-+/* Non-copy SGE configuration: 28 SGEs are not copied */
-+#define HINIC3_NON_COPY_SGE_NUM	28
-+#define HINIC3_NONTSO_MBUF_NUM_MAX \
-+	(HINIC3_NONTSO_PKT_MAX_SGE - HINIC3_NON_COPY_SGE_NUM)
-+#define HINIC3_TSO_MBUF_NUM_MAX \
-+	(HINIC3_TSO_PKT_MAX_SGE - HINIC3_NON_COPY_SGE_NUM)
++		/* Only VNI is matched; option length and protocol are not. */
++		if (mask->ver_opt_len_o_c_rsvd0 || mask->protocol)
++			goto unsupported;
++		vni = spec->vni;
++		vni_mask = mask->vni;
++		break;
++	}
++	case HINIC3_FDIR_TUNNEL_MODE_GPE: {
++		const struct rte_flow_item_vxlan_gpe *spec =
++			(const struct rte_flow_item_vxlan_gpe *)flow_item->spec;
++		const struct rte_flow_item_vxlan_gpe *mask =
++			(const struct rte_flow_item_vxlan_gpe *)flow_item->mask;
++
++		/* Only VNI is matched; flags, reserved bits and protocol are not. */
++		if (mask->flags || mask->rsvd0[0] || mask->rsvd0[1] ||
++		    mask->protocol || mask->rsvd1)
++			goto unsupported;
++		vni = spec->vni;
++		vni_mask = mask->vni;
++		break;
++	}
++	default:
++		vni = ((const struct rte_flow_item_vxlan *)flow_item->spec)->vni;
++		vni_mask =
++			((const struct rte_flow_item_vxlan *)flow_item->mask)->vni;
++		break;
++	}
++
++	memcpy(((uint8_t *)&vxlan_vni_id + 1), vni, 3);
+ 	filter->fdir_filter.key_spec.tunnel.tunnel_id =
+ 		rte_be_to_cpu_32(vxlan_vni_id);
+-	memcpy(((uint8_t *)&vxlan_vni_id_mask + 1), mask_vxlan->vni, 3);
++	memcpy(((uint8_t *)&vxlan_vni_id_mask + 1), vni_mask, 3);
+ 	filter->fdir_filter.key_mask.tunnel.tunnel_id =
+ 		rte_be_to_cpu_32(vxlan_vni_id_mask);
+ 	return 0;
++
++unsupported:
++	rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM, flow_item,
++			   "Not supported by fdir filter, only vni is supported");
++	return -rte_errno;
+ }
  
- /* Tx wqe queue info */
- struct hinic3_queue_info {
-@@ -57,7 +63,6 @@ struct hinic3_wqe_info {
- 	uint16_t pi;
+ static int
+-hinic3_flow_parse_fdir_vxlan_pattern(__rte_unused struct rte_eth_dev *dev,
+-				     const struct rte_flow_item *pattern,
+-				     struct rte_flow_error *error,
+-				     struct hinic3_filter_t *filter)
++hinic3_flow_parse_fdir_vxlan_geneve_pattern(__rte_unused struct rte_eth_dev *dev,
++					    const struct rte_flow_item *pattern,
++					    struct rte_flow_error *error,
++					    struct hinic3_filter_t *filter)
+ {
+ 	const struct rte_flow_item *flow_item = pattern;
+-	enum hinic3_fdir_tunnel_mode tunnel_mode =
+-		HINIC3_FDIR_TUNNEL_MODE_NORMAL;
++	/* Pass tunnel_mode by pointer so the inner L3 parser can promote it
++	 * to IPIP when a second IPv4/IPv6 header is recognized.
++	 */
++	enum hinic3_fdir_tunnel_mode tunnel_mode = HINIC3_FDIR_TUNNEL_MODE_MAX;
+ 	enum rte_flow_item_type type;
+ 	int err;
  
- 	uint16_t wqebb_cnt;
--	uint16_t rsvd2; /**< Reserved field 2. */
++	if (pattern == NULL) {
++		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM, NULL,
++				   "Invalid pattern");
++		return -rte_errno;
++	}
++
+ 	/* Inner and outer ip type, set it to any by default */
+ 	filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_ANY;
+ 	filter->fdir_filter.outer_ip_type = HINIC3_FDIR_IP_TYPE_ANY;
+@@ -1038,14 +1309,14 @@ hinic3_flow_parse_fdir_vxlan_pattern(__rte_unused struct rte_eth_dev *dev,
  
- 	struct hinic3_queue_info queue_info;
- 	struct hinic3_offload_info offload_info;
-@@ -375,7 +380,7 @@ struct __rte_cache_aligned hinic3_txq {
- 	uint64_t sq_bot_sge_addr;
- 	uint32_t cos;
- 	uint8_t tx_wqe_compact_task;
--	uint8_t rsvd[3];
-+	uint32_t non_tso_max_pkt_len;
- 	struct hinic3_txq_stats txq_stats;
- #ifdef HINIC3_XSTAT_PROF_TX
- 	uint64_t prof_tx_end_tsc;
+ 		case RTE_FLOW_ITEM_TYPE_IPV4:
+ 			err = hinic3_flow_fdir_tunnel_ipv4(error,
+-				filter, flow_item, tunnel_mode);
++				filter, flow_item, &tunnel_mode);
+ 			if (err)
+ 				return -rte_errno;
+ 			break;
+ 
+ 		case RTE_FLOW_ITEM_TYPE_IPV6:
+ 			err = hinic3_flow_fdir_tunnel_ipv6(error,
+-				filter, flow_item, tunnel_mode);
++				filter, flow_item, &tunnel_mode);
+ 			if (err)
+ 				return -rte_errno;
+ 			break;
+@@ -1065,10 +1336,12 @@ hinic3_flow_parse_fdir_vxlan_pattern(__rte_unused struct rte_eth_dev *dev,
+ 			break;
+ 
+ 		case RTE_FLOW_ITEM_TYPE_VXLAN:
+-			err = hinic3_flow_fdir_vxlan(error, filter, flow_item);
++		case RTE_FLOW_ITEM_TYPE_GENEVE:
++		case RTE_FLOW_ITEM_TYPE_VXLAN_GPE:
++			tunnel_mode = hinic3_flow_tunnel_mode(type);
++			err = hinic3_flow_fdir_vxlan_geneve(error, filter, tunnel_mode, flow_item);
+ 			if (err)
+ 				return -rte_errno;
+-			tunnel_mode = HINIC3_FDIR_TUNNEL_MODE_VXLAN;
+ 			break;
+ 
+ 		default:
+@@ -1099,16 +1372,16 @@ hinic3_flow_parse_fdir_vxlan_pattern(__rte_unused struct rte_eth_dev *dev,
+  * 0 on success, non-zero on failure.
+  */
+ static int
+-hinic3_flow_parse_fdir_vxlan_filter(struct rte_eth_dev *dev,
+-				    const struct rte_flow_attr *attr,
+-				    const struct rte_flow_item pattern[],
+-				    const struct rte_flow_action actions[],
+-				    struct rte_flow_error *error,
+-				    struct hinic3_filter_t *filter)
++hinic3_flow_parse_fdir_vxlan_geneve_filter(struct rte_eth_dev *dev,
++					   const struct rte_flow_attr *attr,
++					   const struct rte_flow_item pattern[],
++					   const struct rte_flow_action actions[],
++					   struct rte_flow_error *error,
++					   struct hinic3_filter_t *filter)
+ {
+ 	int ret;
+ 
+-	ret = hinic3_flow_parse_fdir_vxlan_pattern(dev, pattern, error, filter);
++	ret = hinic3_flow_parse_fdir_vxlan_geneve_pattern(dev, pattern, error, filter);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1153,6 +1426,7 @@ hinic3_flow_parse(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
+ 	hinic3_parse_filter_t parse_filter;
+ 	uint32_t pattern_num = 0;
+ 	int ret = 0;
++
+ 	/* Check whether the parameter is valid. */
+ 	if (!pattern || !actions || !attr) {
+ 		rte_flow_error_set(error, EINVAL,
+@@ -1174,7 +1448,7 @@ hinic3_flow_parse(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
+ 	 * The corresponding filter is returned. If the filter is not found,
+ 	 * NULL is returned.
+ 	 */
+-	parse_filter = hinic3_find_parse_filter_func(pattern);
++	parse_filter = hinic3_find_parse_filter_func(dev, pattern);
+ 	if (!parse_filter) {
+ 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
+ 				   pattern, "Unsupported pattern");
+@@ -1303,9 +1577,7 @@ hinic3_flow_create(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
+ 				   NULL, "Unsupported filter type.");
+ 		goto free_flow;
+ 	}
+-
+ 	return flow;
+-
+ free_flow:
+ 	rte_free(flow);
+ 	rte_free(filter_rules);
+@@ -1467,7 +1739,6 @@ hinic3_flow_flush(struct rte_eth_dev *dev, struct rte_flow_error *error)
+ 	return ret;
+ }
+ 
+-/* Structure for managing flow table operations. */
+ const struct rte_flow_ops hinic3_flow_ops = {
+ 	.validate = hinic3_flow_validate,
+ 	.create = hinic3_flow_create,
+diff --git a/drivers/net/hinic3/hinic3_flow.h b/drivers/net/hinic3/hinic3_flow.h
+deleted file mode 100644
+index c4b38e44e7..0000000000
+--- a/drivers/net/hinic3/hinic3_flow.h
++++ /dev/null
+@@ -1,196 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2025 Huawei Technologies Co., Ltd
+- */
+-
+-#ifndef _HINIC3_FLOW_H_
+-#define _HINIC3_FLOW_H_
+-
+-#include <rte_flow.h>
+-
+-/* Indicate the type of the IPv4 ICPM matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_icmp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_ICMP,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 any protocol matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_any[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_ANY,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the Ether matching pattern. */
+-static enum rte_flow_item_type pattern_ethertype[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the TCP matching pattern. */
+-static enum rte_flow_item_type pattern_ethertype_tcp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_TCP,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the UDP matching pattern. */
+-static enum rte_flow_item_type pattern_ethertype_udp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_UDP,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 vxlan matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_vxlan[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 vxlan any protocol matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_vxlan_any[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_ANY, RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 vxlan TCP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_vxlan_tcp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_TCP, RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 vxlan UDP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_vxlan_udp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 vxlan IPv4 matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_vxlan_ipv4[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 vxlan IPv4 TCP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_vxlan_ipv4_tcp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_TCP, RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 vxlan IPv4 UDP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_vxlan_ipv4_udp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 vxlan IPv6 matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_vxlan_ipv6[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV6,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 vxlan IPv6 TCP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_vxlan_ipv6_tcp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV6,
+-	RTE_FLOW_ITEM_TYPE_TCP, RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 vxlan IPv6 UDP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_vxlan_ipv6_udp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV6,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 UDP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_udp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_UDP,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv4 TCP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv4_tcp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_IPV4,
+-	RTE_FLOW_ITEM_TYPE_TCP,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv6 matching pattern. */
+-static enum rte_flow_item_type pattern_ipv6[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_IPV6,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv6 UDP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv6_udp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_IPV6,
+-	RTE_FLOW_ITEM_TYPE_UDP,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv6 TCP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv6_tcp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_IPV6,
+-	RTE_FLOW_ITEM_TYPE_TCP,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv6 TCP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv6_vxlan[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV6,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv6 VXLAN any protocol matching pattern. */
+-static enum rte_flow_item_type pattern_ipv6_vxlan_any[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV6,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_ANY, RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv6 VXLAN TCP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv6_vxlan_tcp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV6,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_TCP, RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-/* Indicate the type of the IPv6 VXLAN UDP matching pattern. */
+-static enum rte_flow_item_type pattern_ipv6_vxlan_udp[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH, RTE_FLOW_ITEM_TYPE_IPV6,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_VXLAN,
+-	RTE_FLOW_ITEM_TYPE_UDP, RTE_FLOW_ITEM_TYPE_END,
+-};
+-
+-#endif /**< _HINIC3_FLOW_H_ */
 -- 
 2.33.0
 
