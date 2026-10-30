@@ -2,32 +2,32 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC00A606A31C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 05:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60149606A323
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 05:20:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C8A4540A6F;
-	Fri, 30 Oct 2026 06:20:26 +0100 (CET)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTPS id 7FCFC406FF
- for <dev@dpdk.org>; Fri, 30 Oct 2026 06:20:24 +0100 (CET)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 473231A00C0;
- Fri, 30 Oct 2026 06:20:24 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 141AF40A89;
+	Fri, 30 Oct 2026 06:20:28 +0100 (CET)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTPS id 5C235406FF
+ for <dev@dpdk.org>; Fri, 30 Oct 2026 06:20:25 +0100 (CET)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 277EC2000C9;
+ Fri, 30 Oct 2026 06:20:25 +0100 (CET)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DBA9F1A00BF;
- Fri, 30 Oct 2026 06:20:23 +0100 (CET)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E6E802000BC;
+ Fri, 30 Oct 2026 06:20:24 +0100 (CET)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 824021800068;
- Fri, 30 Oct 2026 13:20:22 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 92E3E1800226;
+ Fri, 30 Oct 2026 13:20:23 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v5-S3 02/14] drivers: net/dpaa2 centralize devargs definitions
-Date: Fri, 30 Oct 2026 10:50:04 +0530
-Message-ID: <20261030052016.3301766-3-prashant.gupta_3@nxp.com>
+Subject: [PATCH v5-S3 03/14] crypto/dpaa2_sec: use table-driven devargs parsing
+Date: Fri, 30 Oct 2026 10:50:05 +0530
+Message-ID: <20261030052016.3301766-4-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261030052016.3301766-1-prashant.gupta_3@nxp.com>
 References: <20261023134346.37727-1-prashant.gupta_3@nxp.com>
@@ -54,424 +54,339 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Jun Yang <jun.yang@nxp.com>
 
-Add a common dpaax_devarg.h header providing the dpaax_devargs type, the
-dpaax_get_devargs() parse helper, and two X-macro operators:
+Convert the dpaa2_sec devargs handling to the shared dpaax_devargs
+table so each argument key is declared once and drives both the parse
+table and the registered valid-args string.
 
-  DPAAX_DEVARG_TABLE_ENTRY(key, handle, flag)  -> {key, handle, flag},
-  DPAAX_DEVARG_STRING_ENTRY(key, handle, flag) -> key "=<int> "
+Replace the custom check_devargs_handler()/dpaa2_sec_get_devargs()
+pair with the generic dpaax_get_devargs() helper, and attach per-arg
+callbacks (dpaa2_sec_devarg_dump_set, dpaa2_sec_devarg_order_set) for
+the value-carrying arguments.
 
-Convert the dpaa2 net driver to declare its device arguments once via a
-single DPAA2_DEVARGS(ENTRY) list. The same list now builds both the
-parse table (s_dpaa2_devargs) and the RTE_PMD_REGISTER_PARAM_STRING
-valid-args string, so every key is spelled exactly once. The per-arg
-string defines and the hand-written dpaa2_get_devargs()/
-check_devargs_handler() lookups are replaced by a single
-dpaax_get_devargs() call that sets priv->flags.
+Move the dump level out of the global dpaa2_sec_dp_dump variable into
+the per-device private data (priv->dump_level) so the dump setting is
+scoped per device instead of being process-global, and move the
+dpaa2_sec_dump_levels enum into dpaa2_sec_priv.h.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- doc/guides/nics/dpaa2.rst           |   4 +
- drivers/common/dpaax/dpaax_devarg.h | 112 +++++++++++++++++
- drivers/net/dpaa2/dpaa2_ethdev.c    | 188 +++++++++-------------------
- 3 files changed, 177 insertions(+), 127 deletions(-)
- create mode 100644 drivers/common/dpaax/dpaax_devarg.h
+ drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 146 ++++++++------------
+ drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h   |  10 +-
+ 2 files changed, 68 insertions(+), 88 deletions(-)
 
-diff --git a/doc/guides/nics/dpaa2.rst b/doc/guides/nics/dpaa2.rst
-index 60ca695f59..826eb4340c 100644
---- a/doc/guides/nics/dpaa2.rst
-+++ b/doc/guides/nics/dpaa2.rst
-@@ -494,6 +494,10 @@ Refer to the document :doc:`build_and_test` for details.
-   packets, so that user can check what is wrong with those packets.
-   e.g. ``fslmc:dpni.1,drv_error_queue=1``
+diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
+index 3d980d096f..613273969d 100644
+--- a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
++++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+  *   Copyright (c) 2016 Freescale Semiconductor, Inc. All rights reserved.
+- *   Copyright 2016-2025 NXP
++ *   Copyright 2016-2026 NXP
+  *
+  */
  
-+* Use dev arg option ``drv_strict_order=1`` to enable strict ordering.
-+  By default, loose ordering is set for ordered schedule type event.
-+  e.g. ``fslmc:dpni.1,drv_strict_order=1``
-+
- Enabling logs
- -------------
- 
-diff --git a/drivers/common/dpaax/dpaax_devarg.h b/drivers/common/dpaax/dpaax_devarg.h
-new file mode 100644
-index 0000000000..cd91d286e2
---- /dev/null
-+++ b/drivers/common/dpaax/dpaax_devarg.h
-@@ -0,0 +1,112 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2026 NXP
-+ */
-+
-+#ifndef _DPAAX_DEVARG_H_
-+#define _DPAAX_DEVARG_H_
-+#include <stdlib.h>
-+#include <rte_kvargs.h>
-+#include <ethdev_driver.h>
-+#include <rte_log.h>
-+
-+static inline __rte_format_printf(2, 3) void
-+dpaax_devargs_dump(uint32_t level, const char *fmt, ...)
-+{
-+	va_list ap;
-+
-+	va_start(ap, fmt);
-+	rte_vlog(level, RTE_LOGTYPE_USER1, fmt, ap);
-+	va_end(ap);
-+}
-+
-+struct dpaax_devargs {
-+	const char *arg_key;
-+	void (*handle)(void *vdev, const char *key, int val);
-+	uint64_t flag_bit;
-+};
-+
-+/* Shared expansions for a driver's devargs X-macro list.
-+ *
-+ * A driver declares its argument list once as a list-macro that takes the
-+ * per-entry operator as a parameter, for example:
-+ *
-+ *   #define MY_DEVARGS(ENTRY) \
-+ *     ENTRY("drv_foo", foo_handler, 0) \
-+ *     ENTRY("drv_bar", NULL, MY_BAR_FLAG)
-+ *
-+ * The same list then generates both the parse table and the registered
-+ * valid-args string by passing the matching operator below:
-+ *
-+ *   static const struct dpaax_devargs s_my_devargs[] = {
-+ *     MY_DEVARGS(DPAAX_DEVARG_TABLE_ENTRY)
-+ *   };
-+ *   RTE_PMD_REGISTER_PARAM_STRING(name, MY_DEVARGS(DPAAX_DEVARG_STRING_ENTRY));
-+ *
-+ * This keeps each key spelled exactly once.
-+ */
-+#define DPAAX_DEVARG_TABLE_ENTRY(key, handle, flag) {key, handle, flag},
-+#define DPAAX_DEVARG_STRING_ENTRY(key, handle, flag) key "=<int> "
-+
-+static inline void
-+dpaax_get_devargs_impl(const struct dpaax_devargs *dev_args,
-+	uint32_t arg_num, struct rte_device *rdev, void *dev, void *flags)
-+{
-+	struct rte_kvargs *kvlist = NULL;
-+	struct rte_kvargs_pair *pair;
-+	uint32_t arg_idx, kv_idx;
-+	uint32_t flag_bit;
-+	char *end = NULL;
-+	int val;
-+
-+	if (rdev->devargs)
-+		kvlist = rte_kvargs_parse(rdev->devargs->args, NULL);
-+
-+	if (!kvlist)
-+		return;
-+
-+	for (arg_idx = 0; arg_idx < arg_num; arg_idx++) {
-+		for (kv_idx = 0; kv_idx < kvlist->count; kv_idx++) {
-+			pair = &kvlist->pairs[kv_idx];
-+			if (strcmp(pair->key, dev_args[arg_idx].arg_key))
-+				continue;
-+
-+			if (!pair->value) {
-+				dpaax_devargs_dump(RTE_LOG_WARNING,
-+					"Argument(%s)'s val is not set\n", pair->key);
-+				continue;
-+			}
-+			errno = 0;
-+			val = (int)strtoul(pair->value, &end, 0);
-+			if (errno || end == pair->value || *end != '\0') {
-+				dpaax_devargs_dump(RTE_LOG_WARNING,
-+					"Failed to get value of %s", pair->key);
-+				continue;
-+			}
-+
-+			if ((!dev_args[arg_idx].flag_bit || !flags) &&
-+			    !dev_args[arg_idx].handle) {
-+				dpaax_devargs_dump(RTE_LOG_WARNING,
-+					"No action for argument(%s)\n", pair->key);
-+				continue;
-+			}
-+
-+			if (flags) {
-+				flag_bit = dev_args[arg_idx].flag_bit;
-+				if (val)
-+					*((uint32_t *)flags) |= flag_bit;
-+				else
-+					*((uint32_t *)flags) &= ~flag_bit;
-+			}
-+
-+			if (dev_args[arg_idx].handle)
-+				dev_args[arg_idx].handle(dev, pair->key, val);
-+		}
-+	}
-+
-+	rte_kvargs_free(kvlist);
-+}
-+
-+#define dpaax_get_devargs(dev_args, dev, flags) \
-+	dpaax_get_devargs_impl((dev_args), RTE_DIM(dev_args), \
-+		(dev)->device, (dev), (flags))
-+#endif /* _DPAAX_DEVARG_H_ */
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index e69dc5b9a2..fb3757aaeb 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -31,18 +31,44 @@
- #include "dpaa2_ethdev.h"
- #include "dpaa2_sparser.h"
- #include <fsl_qbman_debug.h>
+@@ -31,6 +31,7 @@
+ #include <fsl_dpseci.h>
+ #include <fsl_mc_sys.h>
+ #include <rte_hexdump.h>
 +#include <dpaax_devarg.h>
-+
+ 
+ #include "dpaa2_sec_priv.h"
+ #include "dpaa2_sec_event.h"
+@@ -55,18 +56,41 @@
+ #define DPAA2_DEFAULT_NAT_T_PORT 4500
+ #define NO_PREFETCH 0
+ 
+-#define DRIVER_DUMP_MODE "drv_dump_mode"
+-#define DRIVER_STRICT_ORDER "drv_strict_order"
 +static void
-+dpaa2_dev_args_set_strict_order(void *vdev, const char *key, int val)
++dpaa2_sec_devarg_order_set(void *vdev, const char *key, int val)
 +{
-+	struct rte_eth_dev *dev = vdev;
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
++	struct rte_cryptodev *dev = vdev;
++	struct dpaa2_sec_dev_private *priv = dev->data->dev_private;
 +
 +	RTE_SET_USED(key);
-+
 +	priv->en_loose_ordered = !val;
 +}
 +
-+/* Single source of truth for dpaa2 devargs:
-+ *   ENTRY(key-string, handle, flag-bit)
-+ * handle is an optional per-arg callback (NULL if the arg only sets a flag).
-+ * Both the parse table (s_dpaa2_devargs) and the registered valid-args
-+ * string are generated from this list, so each key is spelled once. The
-+ * ENTRY operator (table vs string form) is provided by dpaax_devarg.h.
-+ */
-+#define DPAA2_DEVARGS(ENTRY) \
-+	ENTRY("drv_loopback", NULL, DPAA2_RX_LOOPBACK_MODE) \
-+	ENTRY("drv_no_prefetch", NULL, DPAA2_NO_PREFETCH_RX) \
-+	ENTRY("drv_tx_conf", NULL, DPAA2_TX_CONF_ENABLE) \
-+	ENTRY("drv_rx_parse_drop", NULL, DPAA2_PARSE_ERR_DROP) \
-+	ENTRY("drv_rx_print_parser_result", NULL, DPAA2_RX_PRINT_PSR_RESULT_FLAG) \
-+	ENTRY("drv_error_queue", NULL, DPAA2_RX_ERROR_QUEUE_FLAG) \
-+	ENTRY("drv_no_taildrop", NULL, DPAA2_RX_TAILDROP_OFF) \
-+	ENTRY("drv_no_data_stashing", NULL, DPAA2_RX_DATA_STASHING_OFF_FLAG) \
-+	ENTRY("drv_strict_order", dpaa2_dev_args_set_strict_order, 0)
- 
--#define DRIVER_LOOPBACK_MODE "drv_loopback"
--#define DRIVER_NO_PREFETCH_MODE "drv_no_prefetch"
--#define DRIVER_TX_CONF "drv_tx_conf"
--#define DRIVER_RX_PARSE_ERR_DROP "drv_rx_parse_drop"
--#define DRIVER_RX_PRINT_PARSER_RESULT "drv_rx_print_parser_result"
--#define DRIVER_ERROR_QUEUE  "drv_err_queue"
--#define DRIVER_NO_TAILDROP  "drv_no_taildrop"
--#define DRIVER_NO_DATA_STASHING "drv_no_data_stashing"
- #define CHECK_INTERVAL         100  /* 100ms */
- #define MAX_REPEAT_TIME        90   /* 9s (90 * 100ms) in total */
- 
-+static const struct dpaax_devargs s_dpaa2_devargs[] = {
-+	DPAA2_DEVARGS(DPAAX_DEVARG_TABLE_ENTRY)
-+};
++static void
++dpaa2_sec_devarg_dump_set(void *vdev, const char *key, int _val)
++{
++	struct rte_cryptodev *dev = vdev;
++	struct dpaa2_sec_dev_private *priv = dev->data->dev_private;
++	enum dpaa2_sec_dump_levels val = (enum dpaa2_sec_dump_levels)_val;
 +
- /* Supported Rx offloads */
- static uint64_t dev_rx_offloads_sup =
- 		RTE_ETH_RX_OFFLOAD_CHECKSUM |
-@@ -2877,13 +2903,7 @@ int dpaa2_eth_eventq_attach(const struct rte_eth_dev *dev,
- 		/* ORL resource exhaustion advance NESN disabled */
- 		ocfg.oeane = 0;
- 		/* Loose ordering enabled */
--		ocfg.oloe = 1;
--		eth_priv->en_loose_ordered = 1;
--		/* Strict ordering enabled if explicitly set */
--		if (getenv("DPAA2_STRICT_ORDERING_ENABLE")) {
--			ocfg.oloe = 0;
--			eth_priv->en_loose_ordered = 0;
--		}
-+		ocfg.oloe = eth_priv->en_loose_ordered ? 1 : 0;
++	RTE_SET_USED(key);
++	if (val > DPAA2_SEC_DP_FULL_DUMP) {
++		DPAA2_SEC_WARN("%s: val(%d) > full dump(%d), changing to full dump",
++			__func__, val, DPAA2_SEC_DP_FULL_DUMP);
++		val = DPAA2_SEC_DP_FULL_DUMP;
++	}
++	priv->dump_level = val;
++}
  
- 		ret = dpni_set_opr(dpni, CMD_PRI_LOW, eth_priv->token,
- 				   dpaa2_ethq->tc_index, flow_id,
-@@ -3398,47 +3418,9 @@ populate_mac_addr(struct fsl_mc_io *dpni_dev,
- 	return ret;
+-/* DPAA2_SEC_DP_DUMP levels */
+-enum dpaa2_sec_dump_levels {
+-	DPAA2_SEC_DP_NO_DUMP,
+-	DPAA2_SEC_DP_ERR_DUMP,
+-	DPAA2_SEC_DP_FULL_DUMP
++#define DPAA2_DEVARGS(ENTRY) \
++	ENTRY("drv_dump_mode", dpaa2_sec_devarg_dump_set, 0) \
++	ENTRY("drv_strict_order", dpaa2_sec_devarg_order_set, 0)
++
++static const struct dpaax_devargs s_dpaa2_sec_devargs[] = {
++	DPAA2_DEVARGS(DPAAX_DEVARG_TABLE_ENTRY)
+ };
+ 
+ uint8_t cryptodev_driver_id;
+-uint8_t dpaa2_sec_dp_dump = DPAA2_SEC_DP_ERR_DUMP;
+ 
+ static int s_dpaa2_sec_cntx_pos = -1;
+ 
+@@ -1701,10 +1725,9 @@ dpaa2_sec_fd_to_mbuf(const struct qbman_fd *fd,
+ static void
+ dpaa2_sec_dump(struct rte_crypto_op *op, FILE *f)
+ {
+-	int i;
+ 	dpaa2_sec_session *sess = NULL;
+ 	struct ctxt_priv *priv;
+-	uint8_t bufsize;
++	uint8_t bufsize, i;
+ 	struct rte_crypto_sym_op *sym_op;
+ 
+ 	if (op->sess_type == RTE_CRYPTO_OP_WITH_SESSION)
+@@ -1717,7 +1740,7 @@ dpaa2_sec_dump(struct rte_crypto_op *op, FILE *f)
+ 	if (sess == NULL)
+ 		goto mbuf_dump;
+ 
+-	priv = (struct ctxt_priv *)sess->ctxt;
++	priv = sess->ctxt;
+ 	fprintf(f, "\n****************************************\n"
+ 		"session params:\n\tContext type:\t%d\n\tDirection:\t%s\n"
+ 		"\tCipher alg:\t%d\n\tAuth alg:\t%d\n\tAead alg:\t%d\n"
+@@ -1746,7 +1769,7 @@ dpaa2_sec_dump(struct rte_crypto_op *op, FILE *f)
+ 		sess->pdcp.hfn_threshold);
+ 
+ #endif
+-	bufsize = (uint8_t)priv->flc_desc[0].flc.word1_sdl;
++	bufsize = priv->flc_desc[0].flc.word1_sdl;
+ 	fprintf(f, "Descriptor Dump:\n");
+ 	for (i = 0; i < bufsize; i++)
+ 		fprintf(f, "\tDESC[%d]:0x%x\n", i, priv->flc_desc[0].desc[i]);
+@@ -1950,10 +1973,10 @@ dpaa2_sec_enqueue_burst_ordered(void *qp, struct rte_crypto_op **ops,
+ 
+ static uint16_t
+ dpaa2_sec_dequeue_burst(void *qp, struct rte_crypto_op **ops,
+-			uint16_t nb_ops)
++	uint16_t nb_ops)
+ {
+ 	/* Function is responsible to receive frames for a given device and VQ*/
+-	struct dpaa2_sec_qp *dpaa2_qp = (struct dpaa2_sec_qp *)qp;
++	struct dpaa2_sec_qp *dpaa2_qp = qp;
+ 	struct qbman_result *dq_storage;
+ 	uint32_t fqid = dpaa2_qp->rx_vq.fqid;
+ 	int ret, num_rx = 0;
+@@ -1961,12 +1984,12 @@ dpaa2_sec_dequeue_burst(void *qp, struct rte_crypto_op **ops,
+ 	struct qbman_swp *swp;
+ 	const struct qbman_fd *fd;
+ 	struct qbman_pull_desc pulldesc;
++	struct dpaa2_sec_dev_private *priv = dpaa2_qp->rx_vq.crypto_data->dev_private;
+ 
+ 	if (!DPAA2_PER_LCORE_DPIO) {
+ 		ret = dpaa2_affine_qbman_swp();
+ 		if (ret) {
+-			DPAA2_SEC_ERR(
+-				"Failed to allocate IO portal, tid: %d",
++			DPAA2_SEC_ERR("Failed to allocate IO portal, tid: %d",
+ 				rte_gettid());
+ 			return 0;
+ 		}
+@@ -1976,18 +1999,15 @@ dpaa2_sec_dequeue_burst(void *qp, struct rte_crypto_op **ops,
+ 
+ 	qbman_pull_desc_clear(&pulldesc);
+ 	qbman_pull_desc_set_numframes(&pulldesc,
+-				      (nb_ops > dpaa2_dqrr_size) ?
+-				      dpaa2_dqrr_size : nb_ops);
++		(nb_ops > dpaa2_dqrr_size) ? dpaa2_dqrr_size : nb_ops);
+ 	qbman_pull_desc_set_fq(&pulldesc, fqid);
+ 	qbman_pull_desc_set_storage(&pulldesc, dq_storage,
+-				    (dma_addr_t)DPAA2_VADDR_TO_IOVA(dq_storage),
+-				    1);
++		(dma_addr_t)DPAA2_VADDR_TO_IOVA(dq_storage), 1);
+ 
+ 	/*Issue a volatile dequeue command. */
+ 	while (1) {
+ 		if (qbman_swp_pull(swp, &pulldesc)) {
+-			DPAA2_SEC_WARN(
+-				"SEC VDQ command is not issued : QBMAN busy");
++			DPAA2_SEC_WARN("SEC VDQ command is not issued : QBMAN busy");
+ 			/* Portal was busy, try again */
+ 			continue;
+ 		}
+@@ -2017,8 +2037,7 @@ dpaa2_sec_dequeue_burst(void *qp, struct rte_crypto_op **ops,
+ 			is_last = 1;
+ 			/* Check for valid frame. */
+ 			status = (uint8_t)qbman_result_DQ_flags(dq_storage);
+-			if (unlikely(
+-				(status & QBMAN_DQ_STAT_VALIDFRAME) == 0)) {
++			if (unlikely(!(status & QBMAN_DQ_STAT_VALIDFRAME))) {
+ 				DPAA2_SEC_DP_DEBUG("No frame is delivered");
+ 				continue;
+ 			}
+@@ -2029,10 +2048,9 @@ dpaa2_sec_dequeue_burst(void *qp, struct rte_crypto_op **ops,
+ 
+ 		if (unlikely(fd->simple.frc)) {
+ 			/* TODO Parse SEC errors */
+-			if (dpaa2_sec_dp_dump > DPAA2_SEC_DP_NO_DUMP) {
+-				DPAA2_SEC_DP_ERR("SEC returned Error - %x",
+-						 fd->simple.frc);
+-				if (dpaa2_sec_dp_dump > DPAA2_SEC_DP_ERR_DUMP)
++			if (priv->dump_level > DPAA2_SEC_DP_NO_DUMP) {
++				DPAA2_SEC_DP_ERR("SEC returned Error - %x", fd->simple.frc);
++				if (priv->dump_level > DPAA2_SEC_DP_ERR_DUMP)
+ 					dpaa2_sec_dump(ops[num_rx], stdout);
+ 			}
+ 
+@@ -2049,7 +2067,7 @@ dpaa2_sec_dequeue_burst(void *qp, struct rte_crypto_op **ops,
+ 	dpaa2_qp->rx_vq.rx_pkts += num_rx;
+ 
+ 	DPAA2_SEC_DP_DEBUG("SEC RX pkts %d err pkts %" PRIu64, num_rx,
+-				dpaa2_qp->rx_vq.err_pkts);
++		dpaa2_qp->rx_vq.err_pkts);
+ 	/*Return the total number of packets received to DPAA2 app*/
+ 	return num_rx;
+ }
+@@ -4332,53 +4350,6 @@ dpaa2_sec_uninit(const struct rte_cryptodev *dev)
+ 	return 0;
  }
  
 -static int
--check_devargs_handler(__rte_unused const char *key, const char *value,
--		      __rte_unused void *opaque)
+-check_devargs_handler(const char *key, const char *value,
+-		      void *opaque)
 -{
--	if (strcmp(value, "1"))
+-	struct rte_cryptodev *dev = (struct rte_cryptodev *)opaque;
+-	struct dpaa2_sec_dev_private *priv = dev->data->dev_private;
+-
+-	if (!strcmp(key, "drv_strict_order")) {
+-		priv->en_loose_ordered = false;
+-	} else if (!strcmp(key, "drv_dump_mode")) {
+-		dpaa2_sec_dp_dump = atoi(value);
+-		if (dpaa2_sec_dp_dump > DPAA2_SEC_DP_FULL_DUMP) {
+-			DPAA2_SEC_WARN("WARN: DPAA2_SEC_DP_DUMP_LEVEL is not "
+-				      "supported, changing to FULL error"
+-				      " prints");
+-			dpaa2_sec_dp_dump = DPAA2_SEC_DP_FULL_DUMP;
+-		}
+-	} else
 -		return -1;
 -
 -	return 0;
 -}
 -
--static int
--dpaa2_get_devargs(struct rte_devargs *devargs, const char *key)
+-static void
+-dpaa2_sec_get_devargs(struct rte_cryptodev *cryptodev, const char *key)
 -{
 -	struct rte_kvargs *kvlist;
+-	struct rte_devargs *devargs;
 -
+-	devargs = cryptodev->device->devargs;
 -	if (!devargs)
--		return 0;
+-		return;
 -
 -	kvlist = rte_kvargs_parse(devargs->args, NULL);
 -	if (!kvlist)
--		return 0;
+-		return;
 -
 -	if (!rte_kvargs_count(kvlist, key)) {
 -		rte_kvargs_free(kvlist);
--		return 0;
+-		return;
 -	}
 -
--	if (rte_kvargs_process(kvlist, key,
--			       check_devargs_handler, NULL) < 0) {
--		rte_kvargs_free(kvlist);
--		return 0;
--	}
+-	rte_kvargs_process(kvlist, key,
+-			check_devargs_handler, (void *)cryptodev);
 -	rte_kvargs_free(kvlist);
--
--	return 1;
 -}
 -
  static int
- dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ dpaa2_sec_dev_init(struct rte_cryptodev *cryptodev)
  {
--	struct rte_device *dev = eth_dev->device;
- 	struct rte_dpaa2_device *dpaa2_dev;
- 	struct fsl_mc_io *dpni_dev;
- 	struct dpni_attr attr;
-@@ -3456,42 +3438,35 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 	dpni_dev->regs = dpaa2_get_mcp_ptr(MC_PORTAL_INDEX);
- 	eth_dev->process_private = dpni_dev;
+@@ -4412,12 +4383,15 @@ dpaa2_sec_dev_init(struct rte_cryptodev *cryptodev)
  
--	/* RX no prefetch mode? */
--	if (dpaa2_get_devargs(dev->devargs, DRIVER_NO_PREFETCH_MODE)) {
--		priv->flags |= DPAA2_NO_PREFETCH_RX;
--		DPAA2_PMD_INFO("No RX prefetch mode");
--	}
--
--	if (dpaa2_get_devargs(dev->devargs, DRIVER_LOOPBACK_MODE)) {
--		priv->flags |= DPAA2_RX_LOOPBACK_MODE;
--		DPAA2_PMD_INFO("Rx loopback mode");
--	}
--
--	if (dpaa2_get_devargs(dev->devargs, DRIVER_NO_TAILDROP)) {
--		priv->flags |= DPAA2_RX_TAILDROP_OFF;
--		DPAA2_PMD_INFO("Rx taildrop disabled");
+ 	internals = cryptodev->data->dev_private;
+ 
+-	/*
+-	 * For secondary processes, we don't initialise any further as primary
+-	 * has already done this work. Only check we don't need a different
+-	 * RX function
+-	 */
+-	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
 +	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
-+		priv->flags = 0;
-+		priv->en_loose_ordered = 1;
-+		dpaax_get_devargs(s_dpaa2_devargs, eth_dev, &priv->flags);
-+		/** Preserve support for the legacy environment variables.
-+		 * The equivalent devargs control already exists, but existing
-+		 * deployments may still rely on the environment variable.
-+		 * Keep honoring it to avoid silently changing user-visible behavior.
++		internals->dump_level = DPAA2_SEC_DP_ERR_DUMP;
++		dpaax_get_devargs(s_dpaa2_sec_devargs, cryptodev, NULL);
++	} else {
++		/*
++		 * For secondary processes, we don't initialise any further as primary
++		 * has already done this work. Only check we don't need a different
++		 * RX function
 +		 */
-+		if (getenv("DPAA2_DATA_STASHING_OFF"))
-+			priv->flags |= DPAA2_RX_DATA_STASHING_OFF_FLAG;
-+		if (getenv("DPAA2_STRICT_ORDERING_ENABLE"))
-+			priv->en_loose_ordered = 0;
- 	}
- 
--	if (dpaa2_get_devargs(dev->devargs, DRIVER_NO_DATA_STASHING) ||
--	    getenv("DPAA2_DATA_STASHING_OFF")) {
--		priv->flags |= DPAA2_RX_DATA_STASHING_OFF_FLAG;
--		DPAA2_PMD_INFO("Data stashing disabled");
--	}
-+	eth_dev->dev_ops = &dpaa2_ethdev_ops;
-+	eth_dev->rx_queue_count = dpaa2_dev_rx_queue_count;
-+	if (priv->flags & DPAA2_RX_LOOPBACK_MODE)
-+		eth_dev->rx_pkt_burst = dpaa2_dev_loopback_rx;
-+	else if (priv->flags & DPAA2_NO_PREFETCH_RX)
-+		eth_dev->rx_pkt_burst = dpaa2_dev_rx;
-+	else
-+		eth_dev->rx_pkt_burst = dpaa2_dev_prefetch_rx;
-+	eth_dev->tx_pkt_burst = dpaa2_dev_tx;
- 
- 	/* For secondary processes, the primary has done all the work */
- 	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
--		/* In case of secondary, only burst and ops API need to be
--		 * plugged.
-+		/* In case of secondary, everything is done here.
- 		 */
--		eth_dev->dev_ops = &dpaa2_ethdev_ops;
--		eth_dev->rx_queue_count = dpaa2_dev_rx_queue_count;
--		if (priv->flags & DPAA2_RX_LOOPBACK_MODE)
--			eth_dev->rx_pkt_burst = dpaa2_dev_loopback_rx;
--		else if (priv->flags & DPAA2_NO_PREFETCH_RX)
--			eth_dev->rx_pkt_burst = dpaa2_dev_rx;
--		else
--			eth_dev->rx_pkt_burst = dpaa2_dev_prefetch_rx;
--		eth_dev->tx_pkt_burst = dpaa2_dev_tx;
+ 		DPAA2_SEC_DEBUG("Device already init by primary process");
  		return 0;
  	}
+@@ -4462,8 +4436,6 @@ dpaa2_sec_dev_init(struct rte_cryptodev *cryptodev)
+ 	internals->token = token;
+ 	internals->en_loose_ordered = true;
  
-@@ -3564,30 +3539,10 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 	priv->options = attr.options;
- 	priv->max_mac_filters = attr.mac_filter_entries;
- 	priv->max_vlan_filters = attr.vlan_filter_entries;
--	priv->flags = 0;
- #if defined(RTE_LIBRTE_IEEE1588)
- 	DPAA2_PMD_INFO("DPDK IEEE1588 is enabled");
- 	priv->flags |= DPAA2_TX_CONF_ENABLE;
- #endif
--	/* Used with ``fslmc:dpni.1,drv_tx_conf=1`` */
--	if (dpaa2_get_devargs(dev->devargs, DRIVER_TX_CONF)) {
--		priv->flags |= DPAA2_TX_CONF_ENABLE;
--		DPAA2_PMD_INFO("TX_CONF Enabled");
--	}
--
--	if (dpaa2_get_devargs(dev->devargs, DRIVER_ERROR_QUEUE)) {
--		priv->flags |= DPAA2_RX_ERROR_QUEUE_FLAG;
--		DPAA2_PMD_INFO("Enable error queue");
--	}
--
--	/* Packets with parse error to be dropped in hw */
--	if (dpaa2_get_devargs(dev->devargs, DRIVER_RX_PARSE_ERR_DROP)) {
--		priv->flags |= DPAA2_PARSE_ERR_DROP;
--		DPAA2_PMD_INFO("Drop parse error packets in hw");
--	}
--
--	if (dpaa2_get_devargs(dev->devargs, DRIVER_RX_PRINT_PARSER_RESULT))
--		priv->flags |= DPAA2_RX_PRINT_PSR_RESULT_FLAG;
+-	dpaa2_sec_get_devargs(cryptodev, DRIVER_DUMP_MODE);
+-	dpaa2_sec_get_devargs(cryptodev, DRIVER_STRICT_ORDER);
+ 	DPAA2_SEC_INFO("driver %s: created", cryptodev->data->name);
+ 	return 0;
  
- 	/* Allocate memory for hardware structure for queues */
- 	ret = dpaa2_alloc_rx_tx_queues(eth_dev);
-@@ -3666,20 +3621,6 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 		goto init_err;
- 	}
- 
--	eth_dev->dev_ops = &dpaa2_ethdev_ops;
--	eth_dev->rx_queue_count = dpaa2_dev_rx_queue_count;
--
--	if (dpaa2_get_devargs(dev->devargs, DRIVER_LOOPBACK_MODE)) {
--		eth_dev->rx_pkt_burst = dpaa2_dev_loopback_rx;
--		DPAA2_PMD_INFO("Loopback mode");
--	} else if (dpaa2_get_devargs(dev->devargs, DRIVER_NO_PREFETCH_MODE)) {
--		eth_dev->rx_pkt_burst = dpaa2_dev_rx;
--		DPAA2_PMD_INFO("No Prefetch mode");
--	} else {
--		eth_dev->rx_pkt_burst = dpaa2_dev_prefetch_rx;
--	}
--	eth_dev->tx_pkt_burst = dpaa2_dev_tx;
--
- 	/* Init fields w.r.t. classification */
- 	memset(&priv->extract.qos_key_extract, 0,
- 		sizeof(struct dpaa2_key_extract));
-@@ -3704,8 +3645,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 	}
- 
- 	ret = dpni_set_max_frame_length(dpni_dev, CMD_PRI_LOW, priv->token,
--					RTE_ETHER_MAX_LEN - RTE_ETHER_CRC_LEN
--					+ VLAN_TAG_SIZE);
-+		RTE_ETHER_MAX_LEN - RTE_ETHER_CRC_LEN + VLAN_TAG_SIZE);
- 	if (ret) {
- 		DPAA2_PMD_ERR("Unable to set mtu. check config");
- 		goto init_err;
-@@ -3985,12 +3925,6 @@ static struct rte_dpaa2_driver rte_dpaa2_pmd = {
- 
- RTE_PMD_REGISTER_DPAA2(NET_DPAA2_PMD_DRIVER_NAME, rte_dpaa2_pmd);
- RTE_PMD_REGISTER_PARAM_STRING(NET_DPAA2_PMD_DRIVER_NAME,
--		DRIVER_LOOPBACK_MODE "=<int> "
--		DRIVER_NO_PREFETCH_MODE "=<int>"
--		DRIVER_TX_CONF "=<int>"
--		DRIVER_RX_PARSE_ERR_DROP "=<int>"
--		DRIVER_RX_PRINT_PARSER_RESULT "=<int>"
--		DRIVER_ERROR_QUEUE "=<int>"
--		DRIVER_NO_TAILDROP "=<int>"
--		DRIVER_NO_DATA_STASHING "=<int>");
+@@ -4547,6 +4519,6 @@ RTE_PMD_REGISTER_DPAA2(CRYPTODEV_NAME_DPAA2_SEC_PMD, rte_dpaa2_sec_driver);
+ RTE_PMD_REGISTER_CRYPTO_DRIVER(dpaa2_sec_crypto_drv,
+ 		rte_dpaa2_sec_driver.driver, cryptodev_driver_id);
+ RTE_PMD_REGISTER_PARAM_STRING(CRYPTODEV_NAME_DPAA2_SEC_PMD,
+-		DRIVER_STRICT_ORDER "=<int>"
+-		DRIVER_DUMP_MODE "=<int>");
 +		DPAA2_DEVARGS(DPAAX_DEVARG_STRING_ENTRY)
 +);
- RTE_LOG_REGISTER_DEFAULT(dpaa2_logtype_pmd, NOTICE);
+ RTE_LOG_REGISTER(dpaa2_logtype_sec, pmd.crypto.dpaa2, NOTICE);
+diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h b/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
+index 755c8e9cc3..f29817f456 100644
+--- a/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
++++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+  *   Copyright (c) 2016 Freescale Semiconductor, Inc. All rights reserved.
+- *   Copyright 2016,2020-2024 NXP
++ *   Copyright 2016,2020-2026 NXP
+  *
+  */
+ 
+@@ -21,6 +21,13 @@ extern uint8_t cryptodev_driver_id;
+ #define FLE_POOL_CACHE_SIZE	512
+ #define FLE_SG_MEM_SIZE(num)	(FLE_POOL_BUF_SIZE + ((num) * 32))
+ 
++/* DPAA2_SEC_DP_DUMP levels */
++enum dpaa2_sec_dump_levels {
++	DPAA2_SEC_DP_NO_DUMP,
++	DPAA2_SEC_DP_ERR_DUMP,
++	DPAA2_SEC_DP_FULL_DUMP
++};
++
+ #define MAX_QUEUES		64
+ #define MAX_DESC_SIZE		64
+ /** private data structure for each DPAA2_SEC device */
+@@ -34,6 +41,7 @@ struct dpaa2_sec_dev_private {
+ 	/**< Max number of queue pairs supported by device */
+ 	uint8_t en_ordered;
+ 	uint8_t en_loose_ordered;
++	enum dpaa2_sec_dump_levels dump_level;
+ };
+ 
+ struct dpaa2_sec_qp {
 -- 
 2.43.0
 
