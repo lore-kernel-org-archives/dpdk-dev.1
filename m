@@ -2,41 +2,129 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569A2606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 04:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8792606A31C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 04:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=nxp.com header.i=@nxp.com header.a=rsa-sha256 header.s=selector1 header.b=bpqr6tkr
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A40940A7F;
-	Fri, 30 Oct 2026 05:43:33 +0100 (CET)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTPS id D86A840151;
- Fri, 30 Oct 2026 05:43:24 +0100 (CET)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A0CEA200094;
- Fri, 30 Oct 2026 05:43:24 +0100 (CET)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4437C2000C9;
- Fri, 30 Oct 2026 05:43:24 +0100 (CET)
-Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
- [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6C81A1800226;
- Fri, 30 Oct 2026 12:43:23 +0800 (+08)
-From: Gagandeep Singh <g.singh@nxp.com>
-To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com,
-	stable@dpdk.org,
-	Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v2 4/4] drivers: add DPAA cgrid cleanup support
-Date: Fri, 30 Oct 2026 10:13:18 +0530
-Message-Id: <20261030044318.1892998-5-g.singh@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20261030044318.1892998-1-g.singh@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6E82740B98;
+	Fri, 30 Oct 2026 05:43:35 +0100 (CET)
+Received: from OSPPR02CU001.outbound.protection.outlook.com
+ (mail-norwayeastazon11013065.outbound.protection.outlook.com [40.107.159.65])
+ by mails.dpdk.org (Postfix) with ESMTPS id 3B2F340B91
+ for <dev@dpdk.org>; Fri, 30 Oct 2026 05:43:34 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wbgrpX0QGniMRoxopEM48WZMkcQUO5Hf3glf8gLabRyCyLLN2yhYFGDRFBo71zXOCDFXpIEGK09pZxTa8nmlzLlSoa9j9mRh1MuJ3MY+/m80B7Qwr9I6coiE+wRngNbCWTKzCrwFFFwc7G6+JPx5r7jj0jAprayjtw77RkjzIdHrOZcfceSKc5pwm/qGxlAyuHpKqBBaaz0z7ur5m6/sCI6Hcu8kWL4/ozvuc0m//OCYDWP1OE3Biyivgfq6XPjZdV+i+alUZvFPqpNY8TusW3uXAddo4VvheZ8CE291wox566PcdEkcBGSy4Acd2t1Vg9UcRVkgDN5LDRP+hQmH1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+ZiWb4Ien32Omoogv8QR13Rre9/7NvI0NXgl8YhR7vE=;
+ b=q7597RDauEYwKe/+5Z2D5FXqjs7QUSDtrl7AkWYwBn4Cu1dokEk+MQNkMm/9w2dmbBuspb2QADFHlq7X5QCaMGWhO4sS0pQ1BHpBR52yB1SRlqVn7SbNEVmgOIQ0IHtN1P6DMSyP2vY+/9tLzf8MgNV9Mw+QlBOeWvmR2pT4iBET4/9NtV5ukvXFLdm3hod9qk5PRjotBaR0TWbGh3PbxDzl9iXYocYc6zG+TxEHQ7cC4BNTluR+YpcWOu8/XabJAC/xKvu7TArByFTeLdfRFIXd9m+EUYkauptkUmcKnncOzOdquTQZLsZVW7AqIXk+iCD74ma+5ysEsRHy6NHfDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+ZiWb4Ien32Omoogv8QR13Rre9/7NvI0NXgl8YhR7vE=;
+ b=bpqr6tkrDp0XUazQtC+clIelHbRQTABNgUdFzIzS+opeQ2V2m4l9+h0t5Tp5lqNWxLeZQCDWzXptduX3QoUCrgOIHrd05AulP0z8X1/KV+IsaeNV25S+VwrWe/rLL7IlkEFgIMldOiv+mHn6hjFUrM1Sx4QzRuk33dqSi4UmXq/XDhJHKGjvjYg0w77c7gGco+pxOC/VrVi8v67s0vcLVcGEdArsJkT9LNTE4Q4W4Yq4g57yfMrlmefO+sYziBVZOGBAD+T8YZa1qjrFzZVmdtRxrrHyFB8HtooXFKWb62pdfcYZ+3JdFhTfw0mjLWY+fbKhpBPz6Sh6UeGlq79d0Q==
+Received: from AMBPR04MB12281.eurprd04.prod.outlook.com
+ (2603:10a6:20b:725::21) by DB9PR04MB9723.eurprd04.prod.outlook.com
+ (2603:10a6:10:4ce::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.10; Fri, 30 Oct
+ 2026 04:43:31 +0000
+Received: from AMBPR04MB12281.eurprd04.prod.outlook.com
+ ([fe80::7fd7:1292:c69b:6cf]) by AMBPR04MB12281.eurprd04.prod.outlook.com
+ ([fe80::7fd7:1292:c69b:6cf%4]) with mapi id 15.21.0569.008; Fri, 30 Oct 2026
+ 04:43:31 +0000
+From: Gagandeep Singh <G.Singh@nxp.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: RE: [PATCH v1 0/3] DPAA driver changes
+Thread-Topic: [PATCH v1 0/3] DPAA driver changes
+Thread-Index: AQHdZroUFkL5KsdE40eS16CHDgDhbbcTB0oAgAJ9BsA=
+Date: Fri, 30 Oct 2026 04:43:31 +0000
+Message-ID: <AMBPR04MB122819CA0889C048AE98E817AE16D2@AMBPR04MB12281.eurprd04.prod.outlook.com>
 References: <20261028085517.705621-1-g.singh@nxp.com>
- <20261030044318.1892998-1-g.singh@nxp.com>
+ <20261028074110.4d3b901f@phoenix.local>
+In-Reply-To: <20261028074110.4d3b901f@phoenix.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Enabled=True;
+ MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SiteId=686ea1d3-bc2b-4c6f-a92c-d99c5c301635;
+ MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_SetDate=2026-10-30T04:41:09.0000000Z;
+ MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Name=NXP
+ Confidential; MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_ContentBits=3;
+ MSIP_Label_0d9c909a-577b-4ba2-96de-69ada94b137a_Method=Standard
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AMBPR04MB12281:EE_|DB9PR04MB9723:EE_
+x-ms-office365-filtering-correlation-id: be374b41-c779-4149-d7b2-08df3640595a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|19092799006|23010399003|376014|366016|1800799024|3023799007|6133799003|18002099003|22082099003|38070700021|56012099006|11063799006|4143699003|5023799004|261026140227099003|261026121527099003|261026130827099003|261028144727099003|10067099003|261021135927099003|261021130227099003|261021123027099003|261021121427099003|261022115727099003|261022113327099003|261022075727099003|261022105027099003|261009223027099003;
+x-microsoft-antispam-message-info: w3/uQXYcoQ1GideN6JcnzU/2rQTZYY0cH1cjs77o2Omi8+EZzf+fP3hrXAukxdm3IwJmtaybcvLTAG7oLxHxWYcExel2SlT1xOrctCjAv8ieHfLycua2vH3OJ3Eu2UIOg8EnGzGtRYos+EComJmSpUhqT1EmM7L7Px2+vGRLNucFqQ+txHEztrL3FBZEsTORRZsLAmvhWxBquWeJ32Fkd3kAdovJ/9DDGVf3CTKBZQbFZ+lrhb0ljcsFKBD/tVSEaR4EOB33QTuUvNTsmfT/HlgZCESEaSdwJk0izH2/JGtlLXA58N9YwyjVoIfcU0elfARaK7VK/4xzJsaEVAbAAdd2084JtdyWg2WBNM0v2csNJXH49Ze577rY5ZfYjfAMvWj6Ll+GgJxK4b6LxY3ftjX6Z9yEm4gZhUmKugdxL535kKQZ8Gn4ZBBTaw0lOnYGxNzSEu+IXeHWx4Q/BqAFVIbGyrjgx6w+uhq4lpvQcN6kuoK2RO7kAjyTImrOBSKG8TUiae5juqIYXALU0VFAMUoXePJkaTUIyGe+rjN8jjsyFmIdKEfVbgPaw4NvmTfLOazOoLD38JQQTmZQb5soDZ11pilBMaYWsvQE/nZKvmiMDIysYQ2Q6gltoy48vEax93BGZ+twtsy05PYys18M2lir6rGq/gAOqodHjRxCn2HwbvcamhoSuLCRXqDo6eTmrZBZhUxmaWbBOauUEixvbepO0THtKBCPiBwukF83Yik=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:AMBPR04MB12281.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(19092799006)(23010399003)(376014)(366016)(1800799024)(3023799007)(6133799003)(18002099003)(22082099003)(38070700021)(56012099006)(11063799006)(4143699003)(5023799004)(261026140227099003)(261026121527099003)(261026130827099003)(261028144727099003)(10067099003)(261021135927099003)(261021130227099003)(261021123027099003)(261021121427099003)(261022115727099003)(261022113327099003)(261022075727099003)(261022105027099003)(261009223027099003);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?emR4RFAzbFhWSE83NGhBaW11YUhXbVh6SldBZ3lYMFA0Q3BtUm44WGk1UHJ2?=
+ =?utf-8?B?ODN6bmF6Uk40TzBGR2RvMFlUcEcwcy92ZmdqQWtEUEI2RDFGZzdoWW9EaHhx?=
+ =?utf-8?B?WDh1NGRLTGxQSnlLRHBLNFVJMEQwWDRKRVRFcGM2LzBkVEI0TEMrYjdPaGFr?=
+ =?utf-8?B?UGxVMTIzSGxya2YwTzlhTy9jQWdLbUlwbzNDaW05YlBiMVd3K2FxSWE3YVB3?=
+ =?utf-8?B?d2wybWtaUTJhaHIxTnFCMTU5Ym9VcTErVWY3cy92czZtVzUwK0FNNVFyMUlz?=
+ =?utf-8?B?ZGdmNCt3aW1VNURuLzh3RlVFQlRnSmI0WjU1anNuczNpK2cxNklzZVNIakZ3?=
+ =?utf-8?B?WHlpYmFwN3lIZldod1NHRU9TaThiNkxmTUllSVlhZWtTZ1RFSndKTUNxdldX?=
+ =?utf-8?B?blZTSnprcFBPand4TFpJTGk5UHdpYWVQL2ZZN2ppMmUvSk0ydXFkYVJyWWdU?=
+ =?utf-8?B?dHVFTFAwU0dKRldHVmtLRlBOWkljdVVQUFVGV05mTXBzczNrNTgzaURsVmw5?=
+ =?utf-8?B?MWNCbDNvMzIrVUt6MDQ1WU1SMHIxa21aYWRBTTJiN2VyV0ZkeTA3Vyt6ZWwx?=
+ =?utf-8?B?Y2pHT096VWZLaWw2WVh6azlPU0FuNFdUZmJMTWJZeUxCcXBKdDZuQ2c5OUs5?=
+ =?utf-8?B?RVNoMEpOUGJkSXhKcUFMRlYxRjZKT3ptSTNDOXRJZnJzT1FTSEY0a2Y1VVBt?=
+ =?utf-8?B?dzYyNVROSkdTZ0lLTmx2S1hBbWpxQXg2TVlHVVdSK2hhdlNheGl5K0NoQlF3?=
+ =?utf-8?B?TGFXNWxuSm1EdlFYblpWV25Vekg2Sm93RVFvTmtwQXVHQU10aHBIY3ZuNHBs?=
+ =?utf-8?B?V1dWN1lFN3llUEZKbmpFSVlNMU5BR09uaW1WdEh0L01tTTZLd2xrV3h3c3NR?=
+ =?utf-8?B?blVDNFo5aFlySU1abjFEUGY2N050a2syYnoycy9GUnp4Y1RaTzIxZzI1cmNi?=
+ =?utf-8?B?UEQ3UGNWSFQ2WFFPVTVWYnR4OG1kejlFbEc4a1JrU296N1N2UTM5MGdpZm9L?=
+ =?utf-8?B?aVk1bjRzM2lNNFd4cEhHTUNZWWFnUXk0SWliTVJnYTBZa2JjWjlKbmJlSnRj?=
+ =?utf-8?B?czZQbEU0WFU0MjNYeFh2R2o5NXBwYkx0VUxGZWc3S2xYa2xCd3FQcSs0dlpC?=
+ =?utf-8?B?Yk9aU0RXanRJZDUySEVmeDljMDNFbU9Dc05aSHVLK0hIY0xhaDFYb3JWcTJn?=
+ =?utf-8?B?am5LTStuWDhnY1IyRVNlZkxYZ3VaQklvOTVvUk0yajVkMi9jdGNVendpL2JB?=
+ =?utf-8?B?WlIyT1ZNalhvUk9OYk50bTg4UVo1WHFsWForMEJWdDBmcnQyVnozSXllOWNL?=
+ =?utf-8?B?UmR1ZFY0eDNiMmR1M3g3b25maVVObmZSalVrWWtyTnY0dlpVRThBNW1YUGU4?=
+ =?utf-8?B?VytjMWppUFdhQzJHVTFTdVEzMlQ4WlNvdlBqMDJEVHpxbDdTN3pCZTA3RTd0?=
+ =?utf-8?B?V2k4K1lQRklwVHJWdGtZNEhodFd5WVRwVnZjWWxIdFZ4QXQ4b2xBcnFPVk9T?=
+ =?utf-8?B?NW1OOGRpeHhoejRkTjNFUE1YaEV1N1VMNURTTGhpcEFYUHFUZ0xITVFQWWp4?=
+ =?utf-8?B?aHlFRFJzY1VSQzczSm56QWdoM245RGVBQUlWWG8xL1VGTHhNV0pUNmVBazNT?=
+ =?utf-8?B?Y0EvTWI2ZmY4TTBwakFhRitiTmpINjVHbUJ6ZDF2TUdaQitWdGtHTEE5RFRh?=
+ =?utf-8?B?NHVMUWc2U0FaS3ByMzRVTUNJV1FEQ0swM09BRFBDdnhCSHFTdTQ3cW1Md3lp?=
+ =?utf-8?B?VGwwZ2NJMzZKdDN2WUFaNWV6RHBtYzdyakc3cnhSTFE5cHlaUi9ZemlKUUc4?=
+ =?utf-8?B?U3dOc0thUE9tZUpqbWNlUVQ2dVVHTWNHOE5mZm5SRFZXV0RyaHVIUlV2d2c5?=
+ =?utf-8?B?elFQRkp0ejdiTnY4aDBSUVo5RXhHdFlycTRyRDlCODZ5WExFQkJ5WDVWZzRq?=
+ =?utf-8?B?RjFZK0NNbVFqNDh6eThPK21VTUMzanpON0RBNWhnQlNwd1NLRUI2dUtkNXlH?=
+ =?utf-8?B?aFgxNzZna1d1SFprZkNhYkJlemx1SU5SZmNTU1QwWDhpTEp4U0x1QWpWbnhV?=
+ =?utf-8?B?SUc4K2ROUkY5N3owbGdwWDc2L3FiUEdxdG94R01CU1V0b1NmV1M5V0I2cmdv?=
+ =?utf-8?B?TlluV2g1SFd1UlV2OG9qbEZveGx0T2Y3cmpVaEU5ZXl0SHR1a2d3NWg4SjNP?=
+ =?utf-8?B?Q1M0R29IYkYzQWpIZzFoNmNqb0FVUGxoVVl0YUFqZjcrS3Vnemp1ai9Cczlk?=
+ =?utf-8?B?WVdCYnE3Wk1CbjJPSURnblhhQ3lXVXRrTXNOM0pTa2NpRHY0K0xhUnoxUmF3?=
+ =?utf-8?Q?JjK3sWYfjpJRUCibBx?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AMBPR04MB12281.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be374b41-c779-4149-d7b2-08df3640595a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2026 04:43:31.4820 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uy1HKNA+pqZG2TlLWQCi8QwoOp9KlivLRFQTGJGqfjwl8ZqWb4j7vomLTUdIGrnX
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9723
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,477 +134,191 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-From: Jun Yang <jun.yang@nxp.com>
-
-A congestion group must have no member frame queues left when it is
-deleted, and its CGRID must be returned to the allocator once the group
-is gone. Neither was handled on the net/dpaa close and probe-failure
-paths.
-
-This also changes probe behaviour: a qman_create_cgr() failure in
-dpaa_rx_queue_init() or dpaa_tx_queue_init() now fails the probe
-instead of continuing without tail drop on that queue. The probe error
-path deletes one CGR per initialised queue, and a CGR whose creation
-failed was never linked into the portal list.
-
-Fixes: 62f53995caaf ("net/dpaa: add frame count based tail drop with CGR")
-Fixes: 9124e65dd3eb ("net/dpaa: enable Tx queue taildrop")
-Cc: stable@dpdk.org
-
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
----
- drivers/bus/dpaa/base/qbman/qman.c       |  61 ++++++++
- drivers/bus/dpaa/dpaa_bus_base_symbols.c |   1 +
- drivers/bus/dpaa/include/fsl_qman.h      |  27 ++++
- drivers/net/dpaa/dpaa_ethdev.c           | 173 +++++++++++++++++++++--
- 4 files changed, 250 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index 3c056e4547..fa3387c6bd 100644
---- a/drivers/bus/dpaa/base/qbman/qman.c
-+++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -2993,3 +2993,64 @@ qman_shutdown_fq(struct qman_fq *fq)
- out:
- 	return ret;
- }
-+
-+int qman_pending_fq_by_cgrid_range(u32 cgrid_start, u32 cgrid_num,
-+	u32 start_fqid, u32 *fqid, u32 *cgrid)
-+{
-+	struct qman_fq fq = {
-+		.fqid = start_fqid ? start_fqid : 1
-+	};
-+	struct qm_mcr_queryfq_np np;
-+	struct qm_fqd fqd;
-+	int err;
-+
-+	/*
-+	 * Do not use the CGR byte count to decide whether to scan. An FQ is a
-+	 * member of the group whenever it is scheduled with CGE set and a
-+	 * matching cgid, whether or not it currently holds any frames, and the
-+	 * group cannot be deleted while such a member exists. Skipping the
-+	 * scan for an empty CGR would let an idle stale FQ survive and its
-+	 * CGRID be released while still referenced. This runs from the device
-+	 * close path only, so the scan cost is acceptable.
-+	 *
-+	 * The whole CGRID range of a port is matched in a single pass, so a
-+	 * port with many congestion groups does not need one full FQID space
-+	 * scan per group.
-+	 */
-+	DPAA_BUS_DEBUG("Scanning FQs for cgrid(0x%x..0x%x)",
-+		cgrid_start, cgrid_start + cgrid_num - 1);
-+
-+	/* FQID space is 24 bits wide; stop before wrapping. */
-+	for (; fq.fqid <= QMAN_MAX_FQID; fq.fqid++) {
-+		err = qman_query_fq_np(&fq, &np);
-+		if (err == -ERANGE) {
-+			/*
-+			 * FQID is not implemented on this device, so there is
-+			 * nothing beyond it either.
-+			 */
-+			break;
-+		} else if (err) {
-+			DPAA_BUS_WARN("Failed(%d) to Query np FQ(fqid=0x%x)",
-+				err, fq.fqid);
-+			return err;
-+		}
-+		if ((np.state & QM_MCR_NP_STATE_MASK) != QM_MCR_NP_STATE_OOS) {
-+			err = qman_query_fq(&fq, &fqd);
-+			if (err) {
-+				DPAA_BUS_WARN("Failed(%d) to Query FQ(fqid=0x%x)",
-+					err, fq.fqid);
-+			} else if ((fqd.fq_ctrl & QM_FQCTRL_CGE) &&
-+				fqd.cgid >= cgrid_start &&
-+				fqd.cgid < cgrid_start + cgrid_num) {
-+				if (fqid)
-+					*fqid = fq.fqid;
-+				if (cgrid)
-+					*cgrid = fqd.cgid;
-+				return 0;
-+			}
-+		}
-+	}
-+	DPAA_BUS_DEBUG("No FQ left in cgrid(0x%x..0x%x)",
-+		cgrid_start, cgrid_start + cgrid_num - 1);
-+	return -ERANGE;
-+}
-diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-index aaa9f9bec2..4da43f293d 100644
---- a/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-+++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-@@ -57,6 +57,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(qman_reserve_fqid_range)
- RTE_EXPORT_INTERNAL_SYMBOL(qman_alloc_pool_range)
- RTE_EXPORT_INTERNAL_SYMBOL(qman_alloc_cgrid_range)
- RTE_EXPORT_INTERNAL_SYMBOL(qman_release_cgrid_range)
-+RTE_EXPORT_INTERNAL_SYMBOL(qman_pending_fq_by_cgrid_range)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_enable)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_disable)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_ioctl_version_number)
-diff --git a/drivers/bus/dpaa/include/fsl_qman.h b/drivers/bus/dpaa/include/fsl_qman.h
-index b2674ce5d0..6d76722275 100644
---- a/drivers/bus/dpaa/include/fsl_qman.h
-+++ b/drivers/bus/dpaa/include/fsl_qman.h
-@@ -1284,6 +1284,9 @@ struct qman_cgr {
-  */
- #define QMAN_FQRN_WAIT_MAX		10000000u
- 
-+/* Maximum FQID value: frame queue IDs are 24 bits wide. */
-+#define QMAN_MAX_FQID			0x00FFFFFFu
-+
- /* Flags to qman_create_fq() */
- #define QMAN_FQ_FLAG_NO_ENQUEUE      0x00000001 /* can't enqueue */
- #define QMAN_FQ_FLAG_NO_MODIFY       0x00000002 /* can only enqueue */
-@@ -1916,6 +1919,30 @@ static inline int qman_shutdown_fq_by_fqid(u32 fqid)
- 	return qman_shutdown_fq(&fq);
- }
- 
-+/**
-+ * qman_pending_fq_by_cgrid_range - Find an FQ still attached to a CGR range.
-+ *
-+ * @cgrid_start: first congestion group id of the range to search for.
-+ * @cgrid_num: number of consecutive congestion group ids in the range.
-+ * @start_fqid: FQID to begin the scan from (0 or 1 means scan from the
-+ *   start). A caller shutting down several stale FQs can pass the previously
-+ *   returned FQID + 1 to resume the scan instead of restarting from the
-+ *   beginning each time.
-+ * @fqid: on success, holds the FQID that is still attached to the range.
-+ * @cgrid: on success, holds the congestion group id that FQ belongs to.
-+ *   May be NULL.
-+ *
-+ * Matching a whole range in one pass lets a caller with many congestion
-+ * groups, such as a port releasing all of its Rx or Tx CGRs, avoid one full
-+ * FQID space scan per group.
-+ *
-+ * Return 0 and set *fqid when a matching FQ is found, -ERANGE when none is
-+ * left, or a negative error code on query failure.
-+ */
-+__rte_internal
-+int qman_pending_fq_by_cgrid_range(u32 cgrid_start, u32 cgrid_num,
-+		u32 start_fqid, u32 *fqid, u32 *cgrid);
-+
- /**
-  * qman_reserve_fqid_range - Reserve the specified range of frame queue IDs
-  * @fqid: the base FQID of the range to deallocate
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index a821e68807..1f5e03a8ac 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -114,6 +114,9 @@ dpaa_get_kernel_ifname(const char *node_path, char *name, size_t size)
- 	return ret;
- }
- 
-+/* Maximum number of stale frame queues cleaned up per congestion group. */
-+#define DPAA_CGR_STALE_FQ_MAX     64
-+
- /* Supported Rx offloads */
- static uint64_t dev_rx_offloads_sup =
- 		RTE_ETH_RX_OFFLOAD_SCATTER;
-@@ -585,6 +588,49 @@ static int dpaa_eth_dev_stop(struct rte_eth_dev *dev)
- 	return 0;
- }
- 
-+/* Shut down any frame queue still linked to this CGR.
-+ *
-+ * A CGR must have no members left when it is deleted. FQs left behind by a
-+ * previous run of the application are not owned by this process, so they can
-+ * only be found by asking QMan. There may be more than one, hence the loop.
-+ *
-+ * Returns true if the FQID range was fully scanned (i.e. no stale FQ was
-+ * left behind), false if an FQ refused to shut down and the scan had to
-+ * stop early.
-+ */
-+static bool
-+dpaa_cgr_stale_fq_cleanup(struct rte_eth_dev *dev, uint32_t cgrid_start,
-+			  uint32_t cgrid_num, const char *dir)
-+{
-+	uint32_t start_fqid = 1;
-+	uint32_t fqid, cgrid;
-+	uint32_t loop, max_loop;
-+	int ret;
-+
-+	max_loop = cgrid_num * DPAA_CGR_STALE_FQ_MAX;
-+	for (loop = 0; loop < max_loop; loop++) {
-+		if (qman_pending_fq_by_cgrid_range(cgrid_start, cgrid_num,
-+						   start_fqid, &fqid, &cgrid))
-+			return true;
-+		/* Should be FQ not cleaned in previous program. */
-+		DPAA_PMD_DEBUG("FQ(fqid=0x%x) with %s cgid=%u is still alive?",
-+			fqid, dir, cgrid);
-+		ret = qman_shutdown_fq_by_fqid(fqid);
-+		if (ret) {
-+			DPAA_PMD_WARN("%s: Failed(%d) to shutdown %s cgid=%u's fq(fqid=0x%x)",
-+				dev->data->name, ret, dir, cgrid, fqid);
-+			/* Do not spin on an FQ that refuses to shut down. */
-+			return false;
-+		}
-+		/* Resume the scan past the FQ just handled instead of
-+		 * restarting from the beginning, which would be O(N^2) for
-+		 * N stale FQs.
-+		 */
-+		start_fqid = fqid + 1;
-+	}
-+	return true;
-+}
-+
- static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- {
- 	struct fman_if *fif = dev->process_private;
-@@ -594,7 +640,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 	struct rte_eth_link *link = &dev->data->dev_link;
- 	struct dpaa_if *dpaa_intf = dev->data->dev_private;
- 	struct qman_fq *fq;
--	int loop;
-+	uint32_t loop;
- 	int ret;
- 
- 	PMD_INIT_FUNC_TRACE();
-@@ -669,26 +715,81 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 	/* Release congestion Groups after releasing FQIDs */
- 	/* Release RX congestion Groups */
- 	if (dpaa_intf->cgr_rx) {
-+		bool cgrid_ok;
-+
-+		/* The CGRIDs are a contiguous range, so one scan of the FQID
-+		 * space covers all of them. This catches any FQ left behind
-+		 * by a previous, non-gracefully-terminated run of this
-+		 * process that is still linked to one of these CGRs.
-+		 */
-+		cgrid_ok = dpaa_cgr_stale_fq_cleanup(dev, dpaa_intf->cgr_rx[0].cgrid,
-+					  dpaa_intf->nb_rx_queues, "rx");
-+
-+		/* These are this port's own Rx FQs from the current run, so
-+		 * their FQIDs are already known. Shut each one down so it is
-+		 * no longer a member of its CGR, since a CGR must have no
-+		 * members left when it is deleted.
-+		 */
-+		for (loop = 0; loop < dpaa_intf->nb_rx_queues; loop++) {
-+			ret = qman_shutdown_fq(&dpaa_intf->rx_queues[loop]);
-+			if (ret) {
-+				DPAA_PMD_WARN("%s: shutdown rxq%d err(%d)",
-+					dev->data->name, loop, ret);
-+				cgrid_ok = false;
-+			}
-+		}
- 		for (loop = 0; loop < dpaa_intf->nb_rx_queues; loop++) {
- 			ret = qman_delete_cgr(&dpaa_intf->cgr_rx[loop]);
- 			if (ret) {
- 				DPAA_PMD_WARN("%s: delete rxq%d's cgr err(%d)",
- 					dev->data->name, loop, ret);
-+				cgrid_ok = false;
- 			}
- 		}
-+		/* Only hand the CGRIDs back to the allocator if every member
-+		 * FQ was confirmed shut down and every CGR deleted; otherwise
-+		 * deliberately leak them rather than reuse a CGRID that may
-+		 * still be referenced by a live FQ.
-+		 */
-+		if (cgrid_ok)
-+			qman_release_cgrid_range(dpaa_intf->cgr_rx[0].cgrid,
-+					dpaa_intf->nb_rx_queues);
- 		rte_free(dpaa_intf->cgr_rx);
- 		dpaa_intf->cgr_rx = NULL;
- 	}
- 
- 	/* Release TX congestion Groups */
- 	if (dpaa_intf->cgr_tx) {
-+		bool cgrid_ok;
-+
-+		/* See the equivalent comment for the Rx CGRs above about
-+		 * cleaning up stale FQs left behind by a previous run.
-+		 */
-+		cgrid_ok = dpaa_cgr_stale_fq_cleanup(dev, dpaa_intf->cgr_tx[0].cgrid,
-+					  MAX_DPAA_CORES, "tx");
-+
-+		/* See the equivalent comment for the Rx CGRs above about
-+		 * shutting down this port's own FQs.
-+		 */
-+		for (loop = 0; loop < MAX_DPAA_CORES; loop++) {
-+			ret = qman_shutdown_fq(&dpaa_intf->tx_queues[loop]);
-+			if (ret) {
-+				DPAA_PMD_WARN("%s: shutdown txq%d err(%d)",
-+					dev->data->name, loop, ret);
-+				cgrid_ok = false;
-+			}
-+		}
- 		for (loop = 0; loop < MAX_DPAA_CORES; loop++) {
- 			ret = qman_delete_cgr(&dpaa_intf->cgr_tx[loop]);
- 			if (ret) {
- 				DPAA_PMD_WARN("%s: delete txq%d's cgr err(%d)",
- 					dev->data->name, loop, ret);
-+				cgrid_ok = false;
- 			}
- 		}
-+		if (cgrid_ok)
-+			qman_release_cgrid_range(dpaa_intf->cgr_tx[0].cgrid,
-+						 MAX_DPAA_CORES);
- 		rte_free(dpaa_intf->cgr_tx);
- 		dpaa_intf->cgr_tx = NULL;
- 	}
-@@ -2039,19 +2140,32 @@ static int dpaa_rx_queue_init(struct qman_fq *fq, struct qman_cgr *cgr_rx,
- 		ret = qman_create_cgr(cgr_rx, QMAN_CGR_FLAG_USE_INIT,
- 				      &cgr_opts);
- 		if (ret) {
--			DPAA_PMD_WARN(
--				"rx taildrop init fail on rx fqid 0x%x(ret=%d)",
-+			/* Do not fall back to running without the CGR. The
-+			 * caller counts one CGR per queue it initialised and
-+			 * deletes cgr_rx[0..n) on its error path, so a queue
-+			 * without a CGR would make it delete an object that
-+			 * was never added to the portal list, whose node is
-+			 * still zeroed from rte_zmalloc().
-+			 */
-+			DPAA_PMD_ERR("rx taildrop init fail on rx fqid 0x%x(ret=%d)",
- 				fq->fqid, ret);
--			goto without_cgr;
-+			return ret;
- 		}
- 		opts.we_mask |= QM_INITFQ_WE_CGID;
- 		opts.fqd.cgid = cgr_rx->cgrid;
- 		opts.fqd.fq_ctrl |= QM_FQCTRL_CGE;
- 	}
--without_cgr:
-+
- 	ret = qman_init_fq(fq, 0, &opts);
--	if (ret)
-+	if (ret) {
- 		DPAA_PMD_ERR("init rx fqid 0x%x failed with ret:%d", fqid, ret);
-+		/* The caller only counts this CGR once this function returns
-+		 * success, so its error path will not delete it. Unlink it here
-+		 * or the portal keeps a pointer into memory the caller frees.
-+		 */
-+		if (cgr_rx)
-+			qman_delete_cgr(cgr_rx);
-+	}
- 	return ret;
- }
- 
-@@ -2130,10 +2244,12 @@ static int dpaa_tx_queue_init(struct qman_fq *fq,
- 		ret = qman_create_cgr(cgr_tx, QMAN_CGR_FLAG_USE_INIT,
- 				      &cgr_opts);
- 		if (ret) {
--			DPAA_PMD_WARN(
--				"rx taildrop init fail on rx fqid 0x%x(ret=%d)",
-+			/* See the equivalent comment in
-+			 * dpaa_rx_queue_init().
-+			 */
-+			DPAA_PMD_ERR("tx taildrop init fail on tx fqid 0x%x(ret=%d)",
- 				fq->fqid, ret);
--			goto without_cgr;
-+			return ret;
- 		}
- 		opts.we_mask |= QM_INITFQ_WE_CGID;
- 		opts.fqd.cgid = cgr_tx->cgrid;
-@@ -2141,10 +2257,14 @@ static int dpaa_tx_queue_init(struct qman_fq *fq,
- 		DPAA_PMD_DEBUG("Tx FQ tail drop enabled, threshold = %d",
- 				td_tx_threshold);
- 	}
--without_cgr:
-+
- 	ret = qman_init_fq(fq, QMAN_INITFQ_FLAG_SCHED, &opts);
--	if (ret)
-+	if (ret) {
- 		DPAA_PMD_ERR("init tx fqid 0x%x failed %d", fq->fqid, ret);
-+		/* See the equivalent comment in dpaa_rx_queue_init(). */
-+		if (cgr_tx)
-+			qman_delete_cgr(cgr_tx);
-+	}
- 	return ret;
- }
- 
-@@ -2316,6 +2436,8 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 	int num_rx_fqs, fqid;
- 	int loop, ret = 0;
- 	int dev_id;
-+	int nb_rx_cgr = 0, nb_tx_cgr = 0;
-+	bool rx_cgrid_allocated = false, tx_cgrid_allocated = false;
- 	struct rte_dpaa_device *dpaa_device;
- 	struct dpaa_if *dpaa_intf;
- 	struct fm_eth_port_cfg *cfg;
-@@ -2437,6 +2559,7 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 			ret = -EINVAL;
- 			goto free_rx;
- 		}
-+		rx_cgrid_allocated = true;
- 	} else {
- 		dpaa_intf->cgr_rx = NULL;
- 	}
-@@ -2471,6 +2594,8 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 			fqid);
- 		if (ret)
- 			goto free_rx;
-+		if (dpaa_intf->cgr_rx)
-+			nb_rx_cgr++;
- 		dpaa_intf->rx_queues[loop].vsp_id = vsp_id;
- 		dpaa_intf->rx_queues[loop].dpaa_intf = dpaa_intf;
- 	}
-@@ -2511,11 +2636,11 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 			ret = -EINVAL;
- 			goto free_tx;
- 		}
-+		tx_cgrid_allocated = true;
- 	} else {
- 		dpaa_intf->cgr_tx = NULL;
- 	}
- 
--
- 	for (loop = 0; loop < MAX_DPAA_CORES; loop++) {
- 		if (dpaa_intf->cgr_tx)
- 			dpaa_intf->cgr_tx[loop].cgrid = cgrid_tx[loop];
-@@ -2526,6 +2651,8 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 			dpaa_intf->cgr_tx ? &dpaa_intf->cgr_tx[loop] : NULL);
- 		if (ret)
- 			goto free_tx;
-+		if (dpaa_intf->cgr_tx)
-+			nb_tx_cgr++;
- 
- 		if (dpaa_intf->ts_enable) {
- 			ret = dpaa_tx_conf_queue_init(&dpaa_intf->tx_conf_queues[loop]);
-@@ -2605,6 +2732,17 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 	return 0;
- 
- free_tx:
-+	/* A CGR must have no members when deleted, so shut down the FQs
-+	 * already linked to it first. Each CGR was also linked into the
-+	 * QMan portal's cgr_cbs list by qman_create_cgr(), so deleting it
-+	 * here avoids leaving the portal with dangling pointers.
-+	 */
-+	for (loop = 0; loop < nb_tx_cgr; loop++)
-+		qman_shutdown_fq(&dpaa_intf->tx_queues[loop]);
-+	for (loop = 0; loop < nb_tx_cgr; loop++)
-+		qman_delete_cgr(&dpaa_intf->cgr_tx[loop]);
-+	if (tx_cgrid_allocated)
-+		qman_release_cgrid_range(cgrid_tx[0], MAX_DPAA_CORES);
- 	rte_free(dpaa_intf->tx_conf_queues);
- 	dpaa_intf->tx_conf_queues = NULL;
- 	rte_free(dpaa_intf->tx_queues);
-@@ -2612,8 +2750,19 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 	dpaa_intf->nb_tx_queues = 0;
- 
- free_rx:
-+	/* Same as above for the Rx CGRs: shut down the FQs still linked to
-+	 * their CGR before deleting it.
-+	 */
-+	for (loop = 0; loop < nb_rx_cgr; loop++)
-+		qman_shutdown_fq(&dpaa_intf->rx_queues[loop]);
-+	for (loop = 0; loop < nb_rx_cgr; loop++)
-+		qman_delete_cgr(&dpaa_intf->cgr_rx[loop]);
-+	if (rx_cgrid_allocated)
-+		qman_release_cgrid_range(cgrid[0], num_rx_fqs);
- 	rte_free(dpaa_intf->cgr_rx);
-+	dpaa_intf->cgr_rx = NULL;
- 	rte_free(dpaa_intf->cgr_tx);
-+	dpaa_intf->cgr_tx = NULL;
- 	rte_free(dpaa_intf->rx_queues);
- 	dpaa_intf->rx_queues = NULL;
- 	dpaa_intf->nb_rx_queues = 0;
--- 
-2.25.1
-
+SGksDQoNCg0KTlhQIENvbmZpZGVudGlhbA0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0K
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+DQo+
+IFNlbnQ6IFdlZG5lc2RheSwgT2N0b2JlciAyOCwgMjAyNiA4OjExIFBNDQo+IFRvOiBHYWdhbmRl
+ZXAgU2luZ2ggPEcuU2luZ2hAbnhwLmNvbT4NCj4gQ2M6IGRldkBkcGRrLm9yZzsgSGVtYW50IEFn
+cmF3YWwgPGhlbWFudC5hZ3Jhd2FsQG54cC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjEg
+MC8zXSBEUEFBIGRyaXZlciBjaGFuZ2VzDQo+DQo+IE9uIFdlZCwgMjggT2N0IDIwMjYgMTQ6MjU6
+MTQgKzA1MzANCj4gR2FnYW5kZWVwIFNpbmdoIDxnLnNpbmdoQG54cC5jb20+IHdyb3RlOg0KPg0K
+PiA+ICAtIEFkZGluZyBPSCBwb3J0IHN1cHBvcnQuDQo+ID4gIC0gVXBkYXRlcyBpbiBzaGFyZWQg
+ZXRoZXJuZXQgY29kZS4NCj4gPiAgLSBDb25nZXN0aW9uIHJlbGF0ZWQgY29kZSBjbGVhbnVwLg0K
+PiA+DQo+ID4gR2FnYW5kZWVwIFNpbmdoICgxKToNCj4gPiAgIGRyaXZlcnM6IGFkZCBvZmZsaW5l
+IChPL0gpIHBvcnQgZGV2aWNlIHN1cHBvcnQNCj4gPg0KPiA+IEhlbWFudCBBZ3Jhd2FsICgxKToN
+Cj4gPiAgIG5ldC9kcGFhOiBzdXBwb3J0IG5vbiBmbVgtbWFjWSB0eXBlIG9mIHNoYXJlZCBFdGhl
+cm5ldCBuYW1lDQo+ID4NCj4gPiBKdW4gWWFuZyAoMSk6DQo+ID4gICBkcml2ZXJzOiBhZGQgRFBB
+QSBjZ3JpZCBjbGVhbnVwIHN1cHBvcnQNCj4gPg0KPiA+ICBkb2MvYXBpL2RveHktYXBpLWluZGV4
+Lm1kICAgICAgICAgICAgICAgIHwgICAxICsNCj4gPiAgZG9jL2d1aWRlcy9uaWNzL2RwYWEucnN0
+ICAgICAgICAgICAgICAgICB8ICAzMiArDQo+ID4gIGRyaXZlcnMvYnVzL2RwYWEvYmFzZS9mbWFu
+L2ZtYW4uYyAgICAgICAgfCAgMTkgKw0KPiA+ICBkcml2ZXJzL2J1cy9kcGFhL2Jhc2UvcWJtYW4v
+cW1hbi5jICAgICAgIHwgIDYxICsrDQo+ID4gIGRyaXZlcnMvYnVzL2RwYWEvYnVzX2RwYWFfZHJp
+dmVyLmggICAgICAgfCAgIDQgKy0NCj4gPiAgZHJpdmVycy9idXMvZHBhYS9kcGFhX2J1cy5jICAg
+ICAgICAgICAgICB8IDEwMCArKy0NCj4gPiAgZHJpdmVycy9idXMvZHBhYS9kcGFhX2J1c19iYXNl
+X3N5bWJvbHMuYyB8ICAgMiArDQo+ID4gIGRyaXZlcnMvYnVzL2RwYWEvaW5jbHVkZS9mbWFuLmgg
+ICAgICAgICAgfCAgIDYgKy0NCj4gPiAgZHJpdmVycy9idXMvZHBhYS9pbmNsdWRlL2ZzbF9xbWFu
+LmggICAgICB8ICAyOCArDQo+ID4gIGRyaXZlcnMvbmV0L2RwYWEvZHBhYV9ldGhkZXYuYyAgICAg
+ICAgICAgfCAxNzYgKysrKy0NCj4gPiAgZHJpdmVycy9uZXQvZHBhYS9kcGFhX2V0aGRldi5oICAg
+ICAgICAgICB8ICAgMyArDQo+ID4gIGRyaXZlcnMvbmV0L2RwYWEvZHBhYV9mbG93LmMgICAgICAg
+ICAgICAgfCAgIDcgKy0NCj4gPiAgZHJpdmVycy9uZXQvZHBhYS9kcGFhX29sZGV2LmMgICAgICAg
+ICAgICB8IDg3NSArKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICBkcml2ZXJzL25ldC9kcGFh
+L21lc29uLmJ1aWxkICAgICAgICAgICAgIHwgIDExICstDQo+ID4gIGRyaXZlcnMvbmV0L2RwYWEv
+cnRlX3BtZF9kcGFhX29sZGV2LmggICAgfCAxNTggKysrKw0KPiA+ICAxNSBmaWxlcyBjaGFuZ2Vk
+LCAxNDU0IGluc2VydGlvbnMoKyksIDI5IGRlbGV0aW9ucygtKSAgY3JlYXRlIG1vZGUNCj4gPiAx
+MDA2NDQgZHJpdmVycy9uZXQvZHBhYS9kcGFhX29sZGV2LmMgIGNyZWF0ZQ0KPg0KPiBBSSByZXZp
+ZXcgZm91bmQgaXNzdWVzLiBUaGUgYmlnZ2VzdCBvbmUgaXMgY2FycnlpbmcgdmVuZG9yIHByaXZh
+dGUgaW9jdGwgZGF0YQ0KPiBzdHJ1Y3R1cmVzIGluIERQREsuDQo+DQo+IFJldmlldyBvZiBbUEFU
+Q0ggdjEgMC8zXSBEUEFBIG9mZmxpbmUgcG9ydCwgc2hhcmVkIE1BQywgY2dyaWQgY2xlYW51cA0K
+Pg0KPiBTZXJpZXMNCj4gLS0tLS0tDQo+DQo+IFRoZSBydGVfcG1kX2RwYWFfb2xfKiBmdW5jdGlv
+bnMgZG8gbm90IG9wZXJhdGUgb24gYSBEUERLIHBvcnQuIFRoZXkgdGFrZSBubw0KPiBwb3J0X2lk
+IGFuZCBvbmx5IGZvcndhcmQgYSBjYWxsZXItZmlsbGVkIHN0cnVjdCB0byBhbiBvdXQtb2YtdHJl
+ZSBrZXJuZWwgZHJpdmVyDQo+IHRocm91Z2ggaW9jdGwoKSBvbiAvZGV2L2NkeF9jdHJsLiBUaGF0
+IHB1dHMgYSB2ZW5kb3Iga2VybmVsIGlvY3RsIEFCSSAoR1RQDQo+IGNsYXNzaWZpY2F0aW9uLCAi
+dGVsZWNvbSBhcHBsaWNhdGlvbiINCj4gZmxhZ3MpIGludG8gYW4gaW5zdGFsbGVkIERQREsgaGVh
+ZGVyIHVuZGVyIERQREsgQVBJL0FCSSBydWxlcy4gQW4gYXBwbGljYXRpb24gY2FuDQo+IGlzc3Vl
+IHRoZXNlIGlvY3RscyBpdHNlbGY7IHRoaXMgYmVsb25ncyBpbiB0aGUgdmVuZG9yIHVzZXJzcGFj
+ZSBsaWJyYXJ5IGZvciB0aGF0IGtlcm5lbA0KPiBtb2R1bGUsIG5vdCBpbiBEUERLLiBQbGVhc2Ug
+ZHJvcCBydGVfcG1kX2RwYWFfb2xkZXYuaCBhbmQgdGhlIGZvdXIgZXhwb3J0ZWQNCj4gZnVuY3Rp
+b25zLg0KVG8gY2xhcmlmeSB0aGUgZGVzaWduIGludGVudDogdGhlIERQQUEgb2ZmbGluZSAoT0wp
+IHBvcnQgaXMgb25lIGhhbGYgb2YgYSBzcGxpdC1kcml2ZXIgbW9kZWwuIFRoZSBvdGhlciBoYWxm
+IGlzIHRoZSBBU0svQ0RYIGtlcm5lbCBtb2R1bGUsIHdoaWNoIGlzIHBhcnQgb2YgdGhlIE5YUCBT
+REsgYW5kIGlzIHJlbGVhc2VkIHRvZ2V0aGVyIHdpdGggdGhpcyBQTUQuIFRoZSBPTCBwb3J0J3Mg
+UngvVHggcGF0aCBydW5zIGVudGlyZWx5IGluIERQREsgdmlhIFFNYW4gRlFzLCBidXQgdGhlIGNs
+YXNzaWZpY2F0aW9uIHBvbGljeSBkZWNpZGluZyB3aGljaCBHVFAvSVAgdHJhZmZpYyBpcyBzdGVl
+cmVkIHRvIHRoZSBEUERLIGZhc3QgcGF0aCB2ZXJzdXMgaGFuZGxlZCBieSB0aGUga2VybmVsIG1v
+ZHVsZSBpcyBjb25maWd1cmVkIHRocm91Z2ggQVNLL0NEWCwgc2luY2UgdGhhdCBtb2R1bGUgb3du
+cyB0aGUgY29udHJvbC1wbGFuZSBzaWRlIG9mIHRoaXMgc3BsaXQuDQoNCmBydGVfcG1kX2RwYWFf
+b2xfc2V0X2NsYXNzaWZfaW5mbygpYCwgYF9yZXNldF9jbGFzc2lmX2luZm8oKWAsIGBfc2V0X2xn
+d19pbmZvKClgLCBhbmQgYF9yZXNldF9sZ3dfaW5mbygpYCBhcmUgdGhlIGNvbmZpZ3VyYXRpb24g
+Y29udHJhY3QgZm9yIHRoaXMgc3BlY2lmaWMsIGNvLWRldmVsb3BlZCBrZXJuZWwgbW9kdWxlIOKA
+lCBub3QgYSBnZW5lcmljIGlvY3RsLXdyYXBwaW5nIGNvbnZlbmllbmNlIEFQSS4gVGhlIHN0cnVj
+dHMgbWlycm9yIHRoZSBBU0svQ0RYIGtlcm5lbCBBQkkgYnkgbmVjZXNzaXR5LCBzaW5jZSB0aGF0
+IGlzIHRoZSBkYXRhIGJlaW5nIGNvbmZpZ3VyZWQgZm9yIHRoaXMgc2hhcmVkIGludGVyZmFjZS4g
+U28gV2UnZCBsaWtlIHRvIGtlZXAgdGhlc2UgQVBJcyBpbi10cmVlIGFzIHRoZXkgYXJlIHJlcXVp
+cmVkIGZvciB0aGUgT0wgcG9ydCBmZWF0dXJlLg0KDQo+DQo+IFRoZSBkcnZfb2xkZXYgYnVzIGFy
+Z3VtZW50IGlzIHJlZHVuZGFudC4gVGhlIG9mZmxpbmUgcG9ydCBpcyBvbmx5IHByb2JlZCBpZiAi
+LWENCj4gZHBhYV9idXM6b2xkZXYxIiBpcyBnaXZlbiBhbnl3YXksIHNvIGNyZWF0ZSB0aGUgb2xk
+ZXYxIGRldmljZSB3aGVuIGl0cyBkZXZhcmdzDQo+IGV4aXN0IGFuZCBkcm9wIGRydl9vbGRldiwg
+dGhlIGJ1c19zdHIgcGFyc2luZywgYW5kIHRoZSBhbGxvd2xpc3QgY2F2ZWF0cyBpbg0KPiBkcGFh
+LnJzdDoNCj4NCj4gICAgICAgaWYgKHJ0ZV9idXNfZmluZF9kZXZhcmdzKCZydGVfZHBhYV9idXMs
+ICJvbGRldjEiKSAhPSBOVUxMKSB7DQo+ICAgICAgICAgICAgICAgLyogY3JlYXRlIG9sZGV2MSAq
+Lw0KPiAgICAgICB9DQo+DQo+IE5vIHJlbGVhc2Ugbm90ZXMgZm9yIHRoZSBuZXcgcG9ydCB0eXBl
+LiBkcGFhLnJzdCBkb2VzIG5vdCBzYXkgdGhlIG9mZmxpbmUgcG9ydA0KPiBuZWVkcyB0aGUgL2Rl
+di9jZHhfY3RybCBrZXJuZWwgZHJpdmVyIG9yIHdoZXJlIHRvIGdldCBpdC4NCj4NCj4NCj4gUGF0
+Y2ggMS8zIGRyaXZlcnM6IGFkZCBvZmZsaW5lIChPL0gpIHBvcnQgZGV2aWNlIHN1cHBvcnQNCj4g
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0N
+Cj4NCj4gRXJyb3INCj4NCj4gZHBhYV9vbGRldl9pbml0KCkgbmV2ZXIgc2V0cyB0eF9xdWV1ZXNb
+MF0uZHBhYV9pbnRmLCBhbmQgdGhlIHF1ZXVlIGFycmF5IGNvbWVzDQo+IGZyb20gcnRlX3ptYWxs
+b2MoKSwgc28gaXQgaXMgTlVMTC4gZHBhYV9ldGhfcXVldWVfdHgoKSBzdGFydHMgd2l0aDoNCj4N
+Cj4gICAgICAgc3RydWN0IGRwYWFfaWYgKmRwYWFfaW50ZiA9IGZxLT5kcGFhX2ludGY7DQo+ICAg
+ICAgIC4uLg0KPiAgICAgICBpZiAodW5saWtlbHkoZHBhYV9pbnRmLT50c19lbmFibGUpKSB7DQo+
+DQo+IHNvIHRoZSBmaXJzdCBUeCBidXJzdCBhZnRlciBkZXZfc3RhcnQgZGVyZWZlcmVuY2VzIE5V
+TEwuIFNldCBpdCBhZnRlciB0aGUgVHggRlEgaXMNCj4gaW5pdGlhbGlzZWQ6DQo+DQo+ICAgICAg
+IHJldCA9IGRwYWFfb2xfdHhfcXVldWVfaW5pdCgmZHBhYV9pbnRmLT50eF9xdWV1ZXNbMF0sIDAp
+Ow0KPiAgICAgICBpZiAocmV0KQ0KPiAgICAgICAgICAgICAgIGdvdG8gZnJlZV9yeDsNCj4gICAg
+ICAgZHBhYV9pbnRmLT50eF9xdWV1ZXNbMF0uZHBhYV9pbnRmID0gZHBhYV9pbnRmOw0KPg0KPiBX
+YXJuaW5nDQo+DQo+IHJ0ZV9rdmFyZ3NfY291bnQoKSBvbmx5IHRlc3RzIGZvciBwcmVzZW5jZSwg
+c28gImRydl9vbGRldj0wIiBlbmFibGVzIHRoZSBvZmZsaW5lDQo+IHBvcnQuIE1vb3QgaWYgZHJ2
+X29sZGV2IGlzIHJlbW92ZWQgYXMgYWJvdmU7IG90aGVyd2lzZSBwYXJzZSB0aGUgdmFsdWUgd2l0
+aA0KPiBydGVfa3ZhcmdzX3Byb2Nlc3MoKS4NCj4NCj4gZGV2X2Nsb3NlKCkgc2h1dHMgZG93biB0
+aGUgUngvVHggRlFzIGFuZCByZXR1cm5zIHRoZWlyIEZRSURzIHRvIHRoZSBhbGxvY2F0b3IsIGJ1
+dA0KPiB0aGUga2VybmVsIHdhcyBnaXZlbiB0aG9zZSBGUUlEcyBhbmQgdGhlIGJwaWQgdGhyb3Vn
+aA0KPiBBU0tfQ1RSTF9TRVRfRFBES19JTkZPIGFuZCBpcyBuZXZlciB0b2xkIHRoZXkgYXJlIGdv
+bmUuIFRoZSBuZXh0DQo+IHFtYW5fYWxsb2NfZnFpZCgpIHVzZXIgY2FuIHJlY2VpdmUgZnJhbWVz
+IHRoZSBrZXJuZWwgZW5xdWV1ZXMgdG8gYSByZXVzZWQgRlFJRC4NCj4gVGhlIGtlcm5lbCBzaWRl
+IG5lZWRzIGEgcmVzZXQgaW9jdGwgaXNzdWVkIGJlZm9yZSB0aGUgRlFJRHMgYXJlIHJlbGVhc2Vk
+Lg0KPg0KPiBUaGUgY2VsbC1pbmRleCByYW5nZSBjaGVja3MgaW4gZm1hbl9pZl9pbml0KCkgYW5k
+IGZtYW5faWZfaW5pdF9vbmljKCkgZml4IGFuIG91dC1vZi0NCj4gYm91bmRzIHJlYWQgb2YgbWFj
+X2lkeFtdIGFuZCBoYXZlIG5vdGhpbmcgdG8gZG8gd2l0aCB0aGUgb2ZmbGluZSBwb3J0LiBUaGUN
+Cj4gY29tbWl0IG1lc3NhZ2UgZG9lcyBub3QgbWVudGlvbiB0aGVtLCBub3IgdGhlIE1FTU1BQ19S
+RUdfT0ZGU0VUDQo+IHJlbW92YWwuIFNwbGl0IHRoZSBib3VuZHMgY2hlY2tzIGludG8gdGhlaXIg
+b3duIHBhdGNoDQo+IHdpdGg6DQo+DQo+ICAgICAgIEZpeGVzOiBhMGVkYmI4YThlNTIgKCJidXMv
+ZHBhYTogYWRkIE9IIHBvcnQgbW9kZSIpDQo+ICAgICAgIEZpeGVzOiA3ZTVmNDlhZTc2N2QgKCJi
+dXMvZHBhYTogYWRkIE9OSUMgcG9ydCBtb2RlIikNCj4gICAgICAgQ2M6IHN0YWJsZUBkcGRrLm9y
+Zw0KPg0KPiBkcnZfYmhfcG9ydCBpcyByZXF1aXJlZCwgYnV0IGl0IGlzIHBhcnNlZCBvbiBldmVy
+eSBkZXZfc3RhcnQoKSB3aXRoIGEgTlVMTCBrZXkgbGlzdCwNCj4gc28gYSBtaXNzcGVsbGVkIGtl
+eSBpcyBhY2NlcHRlZCBhdCBwcm9iZSBhbmQgdGhlIHBvcnQgb25seSBmYWlscyBhdCBzdGFydC4g
+UGFyc2UgaXQNCj4gb25jZSBpbiBkcGFhX29sX3Byb2JlKCkgd2l0aCBhIHZhbGlkIGtleSBsaXN0
+LCBzdG9yZSBpdCBpbiB0aGUgcHJpdmF0ZSBkYXRhLCBhbmQgZmFpbA0KPiBwcm9iZSBpZiBpdCBp
+cyBtaXNzaW5nLg0KPg0KPiBJZiBydGVfcG1kX2RwYWFfb2xkZXYuaCBzdGF5cywgdGhlIGluc3Rh
+bGxlZCBoZWFkZXIgZGVmaW5lcyBEUEFfSVNDXyosDQo+IERQREtfT0xERVZfKiwgRFBES19DTEFT
+U0lGXyosIERQREtfVEVMRUNPTV8qIGFuZCBzdHJ1Y3QgZHBhXyogd2l0aG91dA0KPiBhbiBSVEVf
+L3J0ZV8gcHJlZml4LCBhbmQgbm9uZSBvZiB0aGUgc3RydWN0cyBvciBmaWVsZHMgaGF2ZSBEb3h5
+Z2VuLg0KPg0KPiBJbmZvDQo+DQo+IGRwYWFfb2xfcnhfcXVldWVfc2V0dXAoKSBjaGVja3MgcXVl
+dWVfaWR4IGFnYWluc3QgbmJfcnhfcXVldWVzOyBldGhkZXYNCj4gYWxyZWFkeSBkb2VzIHRoYXQg
+YmVmb3JlIGNhbGxpbmcgdGhlIFBNRC4NCj4NCj4gb3BlbihBU0tfUEFUSCwgT19SRFdSKSBzaG91
+bGQgdXNlIE9fUkRXUiB8IE9fQ0xPRVhFQy4NCj4NCj4gSW4gZHBhYV9jcmVhdGVfZGV2aWNlX2xp
+c3QoKSwgdXNlIHNucHJpbnRmKCkgcmF0aGVyIHRoYW4gc3ByaW50ZigpLCBhbmQgZHJvcCB0aGUN
+Cj4gbWVtc2V0KCkgYWZ0ZXIgY2FsbG9jKCkgYW5kIHRoZSAiaW50IGkgPSAwIiBpbml0aWFsaXNl
+ci4NCj4NCj4gcnRlX2RwYWFfYnVzX2Rldl9idWlsZCgpIGdhdGVzIHRoZSBudW1fZXRocG9ydHMg
+bWVzc2FnZXMgb24gb2xkZXZfZW5hYmxlZDsNCj4gdGhlIGNvbmRpdGlvbiB0aGF0IG1hdHRlcnMg
+aXMgZHBhYV9uZXRjZmcgIT0gTlVMTC4NCj4NCj4gVGhlIGRwYWFfYnVzX3BhcnNlX2J1c19hcmdz
+KCkgY29tbWVudCByZWZlcnMgdG8gYSBwcmV2aW91cyBlbnZpcm9ubWVudC0NCj4gdmFyaWFibGUg
+Y29uZmlndXJhdGlvbiB0aGF0IG5ldmVyIGV4aXN0ZWQgdXBzdHJlYW0uIFRoZSBiaF9wb3J0X25h
+bWUgZmllbGQNCj4gY29tbWVudCBzYXlzICJmb3IgdGVzdGluZyBwdXJwb3NlIiBidXQgdGhlIGZp
+ZWxkIGlzIG1hbmRhdG9yeS4NCj4NCj4NCj4gUGF0Y2ggMi8zIG5ldC9kcGFhOiBzdXBwb3J0IG5v
+biBmbVgtbWFjWSB0eXBlIG9mIHNoYXJlZCBFdGhlcm5ldCBuYW1lDQo+IC0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
+Pg0KPiBXYXJuaW5nDQo+DQo+IFBsYXRmb3JtIGRldmljZXMgY3JlYXRlZCBmcm9tIGRldmljZS10
+cmVlIG5vZGVzIHdpdGhvdXQgYSByZWcgcHJvcGVydHkgYXJlDQo+IG5hbWVkIGFmdGVyIHRoZSB3
+aG9sZSBwYXJlbnQgY2hhaW4sIHdoaWNoIGlzIHdoeSBkcGFhX2J1cy5jIHVzZXMNCj4gIi9zeXMv
+ZGV2aWNlcy9wbGF0Zm9ybS9zb2Mvc29jOmZzbCxkcGFhIi4gQSBkcGEtZXRoZXJuZXQgY2hpbGQg
+b2YgdGhhdCBub2RlIGlzIG5vdA0KPiAiZXRoZXJuZXRATiIgdW5kZXIgL3N5cy9idXMvcGxhdGZv
+cm0vZGV2aWNlcywgc28NCj4NCj4gICAgICAgbm9kZSA9IHN0cnJjaHIobm9kZV9wYXRoLCAnLycp
+Ow0KPiAgICAgICAuLi4NCj4gICAgICAgIi9zeXMvYnVzL3BsYXRmb3JtL2RldmljZXMvJXMvbmV0
+Iiwgbm9kZQ0KPg0KPiBtaXNzZXMgYW5kIHNpbGVudGx5IGZhbGxzIGJhY2sgdG8gdGhlIHBvcnQg
+bmFtZSwgd2hpY2ggaXMgdGhlIGNhc2UgdGhlIHBhdGNoIGlzDQo+IG1lYW50IHRvIGZpeC4gTWF0
+Y2ggb24gdGhlIG5ldGRldidzIG9mX25vZGUgaW5zdGVhZDoNCj4NCj4gICAgICAgLyogZm9yIGVh
+Y2ggL3N5cy9jbGFzcy9uZXQvPGlmPiAqLw0KPiAgICAgICBzbnByaW50ZihwYXRoLCBzaXplb2Yo
+cGF0aCksICIvc3lzL2NsYXNzL25ldC8lcy9kZXZpY2Uvb2Zfbm9kZSIsDQo+ICAgICAgICAgICAg
+ICAgIGlmbmFtZSk7DQo+ICAgICAgIGlmIChyZWFscGF0aChwYXRoLCByZXNvbHZlZCkgIT0gTlVM
+TCAmJg0KPiAgICAgICAgICAgc3RyY21wKHJlc29sdmVkICsgc3RybGVuKCIvc3lzL2Zpcm13YXJl
+L2RldmljZXRyZWUvYmFzZSIpLA0KPiAgICAgICAgICAgICAgICAgIG5vZGVfcGF0aCkgPT0gMCkN
+Cj4gICAgICAgICAgICAgICAvKiBmb3VuZCAqLw0KPg0KPiBJbmZvDQo+DQo+IFRoZSBuZXcgZHBh
+YS5yc3QgYnVsbGV0IGxhbmRzIGF0IHRoZSBlbmQgb2YgdGhlIGJ1cyBkZXZhcmdzIGJsb2NrOyBp
+dCBiZWxvbmdzIHdpdGgNCj4gdGhlIHNoYXJlZCBNQUMgZGVzY3JpcHRpb24uDQo+DQo+DQo+IFBh
+dGNoIDMvMyBkcml2ZXJzOiBhZGQgRFBBQSBjZ3JpZCBjbGVhbnVwIHN1cHBvcnQNCj4gLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPg0KPiBXYXJuaW5n
+DQo+DQo+IFRoaXMgZml4ZXMgYSBDR1JJRCBsZWFrIG9uIGNsb3NlIGFuZCBhIHN0YWxlIHBvcnRh
+bCBsaXN0IGVudHJ5IG9uIHByb2JlIGZhaWx1cmUsIGJ1dA0KPiBoYXMgbm8gRml4ZXM6IHRhZyBv
+ciBzdGFibGUgQ2M6DQo+DQo+ICAgICAgIEZpeGVzOiA2MmY1Mzk5NWNhYWYgKCJuZXQvZHBhYTog
+YWRkIGZyYW1lIGNvdW50IGJhc2VkIHRhaWwgZHJvcCB3aXRoDQo+IENHUiIpDQo+ICAgICAgIEZp
+eGVzOiA5MTI0ZTY1ZGQzZWIgKCJuZXQvZHBhYTogZW5hYmxlIFR4IHF1ZXVlIHRhaWxkcm9wIikN
+Cj4gICAgICAgQ2M6IHN0YWJsZUBkcGRrLm9yZw0KPg0KPiBPbiB0aGUgcHJvYmUgZXJyb3IgcGF0
+aCB0aGUgaW5pdGlhbGlzZWQgUnggRlFzIChhbmQgVHggRlFzIG9uIGZyZWVfdHgpIHdlcmUNCj4g
+c2NoZWR1bGVkIHdpdGggUU1fRlFDVFJMX0NHRSBhbmQgdGhlaXIgY2dpZCwgYW5kIGFyZSBuZXZl
+ciBzaHV0IGRvd24gYmVmb3JlDQo+DQo+ICAgICAgIGZvciAobG9vcCA9IDA7IGxvb3AgPCBuYl9y
+eF9jZ3I7IGxvb3ArKykNCj4gICAgICAgICAgICAgICBxbWFuX2RlbGV0ZV9jZ3IoJmRwYWFfaW50
+Zi0+Y2dyX3J4W2xvb3BdKTsNCj4gICAgICAgaWYgKHJ4X2NncmlkX2FsbG9jYXRlZCkNCj4gICAg
+ICAgICAgICAgICBxbWFuX3JlbGVhc2VfY2dyaWRfcmFuZ2UoY2dyaWRbMF0sIG51bV9yeF9mcXMp
+Ow0KPg0KPiBUaGF0IGRlbGV0ZXMgQ0dScyB0aGF0IHN0aWxsIGhhdmUgbWVtYmVycywgd2hpY2gg
+dGhlIGNvbW1pdCBtZXNzYWdlIHNheXMgbXVzdA0KPiBub3QgaGFwcGVuLCBhbmQgaGFuZHMgdGhl
+IENHUklEcyB0byB0aGUgbmV4dCBwcm9iZSB3aGlsZSBsaXZlIEZRcyByZWZlcmVuY2UNCj4gdGhl
+bS4gU2h1dCBkb3duIHRoZSBGUXMgaW5pdGlhbGlzZWQgc28gZmFyIGJlZm9yZSBkZWxldGluZyB0
+aGUgQ0dScy4NCj4NCj4gZGV2X2Nsb3NlKCkgcmVsZWFzZXMgdGhlIENHUklEIHJhbmdlIHVuY29u
+ZGl0aW9uYWxseSwgZXZlbiB3aGVuDQo+IGRwYWFfY2dyX3N0YWxlX2ZxX2NsZWFudXAoKSBoaXQg
+YW4gRlEgdGhhdCB3b3VsZCBub3Qgc2h1dCBkb3duIG9yDQo+IHFtYW5fZGVsZXRlX2NncigpIGZh
+aWxlZC4gMS8zIGRlbGliZXJhdGVseSBsZWFrcyBGUUlEcyBpbiB0aGF0IGNhc2U7IGRvIHRoZSBz
+YW1lDQo+IGhlcmUgYW5kIHNraXAgcW1hbl9yZWxlYXNlX2NncmlkX3JhbmdlKCkgaWYgYW55IGRl
+bGV0ZSBvciBzaHV0ZG93biBmYWlsZWQuDQo+DQo+IGRwYWFfZXRoX2Rldl9zdG9wKCkgYW5kIGRw
+YWFfZXRoX2Rldl9jbG9zZSgpIG5ldmVyIHNodXQgZG93biB0aGUgcG9ydCdzIG93bg0KPiBSeC9U
+eCBGUXMsIHNvIHRoZSBGUXMgZHBhYV9jZ3Jfc3RhbGVfZnFfY2xlYW51cCgpIGZpbmRzIGF0IGNs
+b3NlIGFyZSB0aGlzIHBvcnQncw0KPiBsaXZlIHF1ZXVlcywgbm90IG9uZXMgIm5vdCBjbGVhbmVk
+IGluIHByZXZpb3VzIHByb2dyYW0iLiBUaGUgZHJpdmVyIGFscmVhZHkgaG9sZHMNCj4gdGhlaXIg
+RlFJRHMuIFNodXQgdGhlbSBkb3duIGRpcmVjdGx5IGJlZm9yZSBkZWxldGluZyB0aGUgQ0dScywg
+ZHJvcCB0aGUgRlFJRA0KPiBzcGFjZSBzY2FuLCBhbmQgd2l0aCBpdCB0aGUgbmV3DQo+IHFtYW5f
+cGVuZGluZ19mcV9ieV9jZ3JpZF9yYW5nZSgpIGV4cG9ydDoNCj4NCj4gICAgICAgZm9yIChsb29w
+ID0gMDsgbG9vcCA8IGRwYWFfaW50Zi0+bmJfcnhfcXVldWVzOyBsb29wKyspDQo+ICAgICAgICAg
+ICAgICAgcW1hbl9zaHV0ZG93bl9mcSgmZHBhYV9pbnRmLT5yeF9xdWV1ZXNbbG9vcF0pOw0KPiAg
+ICAgICBmb3IgKGxvb3AgPSAwOyBsb29wIDwgTUFYX0RQQUFfQ09SRVM7IGxvb3ArKykNCj4gICAg
+ICAgICAgICAgICBxbWFuX3NodXRkb3duX2ZxKCZkcGFhX2ludGYtPnR4X3F1ZXVlc1tsb29wXSk7
+DQo+DQo+IFRoZSBleGlzdGluZyAiUmVsZWFzZSBjb25nZXN0aW9uIEdyb3VwcyBhZnRlciByZWxl
+YXNpbmcgRlFJRHMiIGNvbW1lbnQgaXMgdGhlbg0KPiB0cnVlLg0KPg0KPiBJbmZvDQo+DQo+IGNn
+cmlkIGlzIHUzMjsgdXNlICV1LCBub3QgJWQsIGluIHRoZSBEUEFBX1BNRF9ERUJVRy9XQVJOIGNh
+bGxzLg0KQWxsIEFJIGNvbW1lbnRzIGFyZSBoYW5kbGVkIGluIFYyLg0K
