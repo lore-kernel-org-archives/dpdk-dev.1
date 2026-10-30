@@ -2,65 +2,64 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E323606A31A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 18:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6832E606A31C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 Oct 2026 18:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=L2lUjqqK
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=DXg9oSHi
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0E15440E1E;
+	by mails.dpdk.org (Postfix) with ESMTP id DEC0D40E22;
 	Fri, 30 Oct 2026 19:43:13 +0100 (CET)
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199])
- by mails.dpdk.org (Postfix) with ESMTPS id 7590340DD1
- for <dev@dpdk.org>; Fri, 30 Oct 2026 19:43:11 +0100 (CET)
-Received: by mail-pl1-f199.google.com with SMTP id
- d9443c01a7336-2e987ec84afso9407375ad.3
- for <dev@dpdk.org>; Fri, 30 Oct 2026 11:43:11 -0700 (PDT)
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71])
+ by mails.dpdk.org (Postfix) with ESMTPS id 5EAE640E21
+ for <dev@dpdk.org>; Fri, 30 Oct 2026 19:43:13 +0100 (CET)
+Received: by mail-pj1-f71.google.com with SMTP id
+ 98e67ed59e1d1-3ab7f1efe5dso1830846a91.1
+ for <dev@dpdk.org>; Fri, 30 Oct 2026 11:43:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20260707; t=1793385790; x=1793990590; darn=dpdk.org;
+ d=google.com; s=20260707; t=1793385792; x=1793990592; darn=dpdk.org;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=sru5Zsjh98rLg6AlVqZjG+A/iWi8eQw0d80JZzVNkuc=;
- b=L2lUjqqKLdb/6D41krXilgsdvhumhkG1ixCgxaP+lhVFcZTInaKm0GYQiJYcJxuUw4
- QCx077bFR/g3uc+P2winvc+obiRjNW7EFoJcoiE8YqYsMQbd8PjtXa+viOuf3QszlH52
- mmZ+zdXLvnFv0wqZ4T3og2vfAbBkh99V6vzt3jxovrXox0wbwqd4csIO6QqNeklyycSb
- zCzwCF3lozZTbo0XrR4n0NIuU1XwkPcn/UINj6UzuTfdKXAiZFLVf9TdtGI4uWHfxyU9
- fDMITDppQKa95l6AEiou1/W2Eq9nElnWBUlGpwIPTT3SI/TzDjH6EDHxeyovFRffrgyY
- Ec4Q==
+ :content-type; bh=CoN7pvjk+RPvVPqmn5YZgavCrNkbO/BWGSUNJEMa4M0=;
+ b=DXg9oSHixlN/eO3PQwyMnmkgtFOXMaTtb1a0uoUAmYdrDS/iZiweaQvwBtbbXt3fFC
+ kUtmR5EqSFEjG1OEOJ1TtIABoioznfbQJL4xxnhSc++h5fdyaUoaz/HQwNxjHlFkC7yr
+ 4EBuCX3eMbUKbyuMoEi6iUfbJUv1jICFSea/Yz6I4A+8OOSKO/dX9c0PdmkGKothZ8Hx
+ j9s2f468qDPBbrnS79EJ7Z5ucj6LkjkjQcALAygjcG/StmmWoKg+tpahbUOUlPMaxygn
+ fXcOSxlWbhUM44LZhdO3PdPg0LRBFlB+/ZL7gbFQfKwNu2zsS6/0tJD7aYbU/FAnjIGj
+ OFww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793385790; x=1793990590;
+ d=1e100.net; s=20260707; t=1793385792; x=1793990592;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=sru5Zsjh98rLg6AlVqZjG+A/iWi8eQw0d80JZzVNkuc=;
- b=L3BYYLBNcHh4aPLVsgA6j/zXuhO/hBW+4ogWEFWX3DCsOUMFKHUpfdTXJpLhnDDHZJ
- pV7SzwJYP4dzz8RGcq6sJlhLQqsVkDk/yEDTj7/v+NcHPXpzfNSfziDQHIcoHkOxV3w9
- 45V49RnQzNGhJpttaMa2u2sRgCyhg65VmvzpNEdeYcTA9qL0OjCkwJKiHXYcz+x6DqpI
- zUz9dGQhtEyxSFR3AwsNcYk6dUyT0zrkn0kO99KyHsneYWhtuBwZZLZJXK2A+D41t5Z2
- F3090bDY3DaeQWHf9bNKfkeq8s3pnt/hha0/7F51UqDS/x+914ODHBHUxPQqMdbX+w2Q
- zp1Q==
-X-Gm-Message-State: AFq9FYKvby27r8MsNct1qRyRHrLmiwO26ieD3OKa+d3JdlecqjBS74UL
- 6IQL1sPvqxQTipSX39kPppnImlfQKFors+d6hnwil+2pnyZmJCh6GIrMqmyZBAoimTiodb38JKZ
- hRPjOwa39dGGAaA==
-X-Received: from plha18.prod.google.com ([2002:a17:902:ecd2:b0:2e8:8642:f035])
+ bh=CoN7pvjk+RPvVPqmn5YZgavCrNkbO/BWGSUNJEMa4M0=;
+ b=MbV6bsn4a8PlC/k8rJg/4SN3JduXBb2qkito+WQQSYLY8M8q2r+0Kci5xwHmr8zeMc
+ E+H0sfw1H70ii6G5HZd4S6yHYULi/NbB3Es46nQ5/at9Odx0o0hLdMyAgbwZz2wJO9KD
+ bAAYSkfBJzPo0GWnGu4qPZBN9sas043oM+yQfq0XW8XD2/AOpNnDf+kxPWPOOtQ15869
+ z4K26BPhI1CPKE6TV+c+X1sgyyDWujc5F/HNteJbW55Bmgez9pMxLulkDqL3JV1JRN0Q
+ jqR6ikw7+kmQbliE5hvtxqaMMMA6abCSVkvs5KC3C9PirTgXIH8EOZc9798yqLJgXIfe
+ ixhQ==
+X-Gm-Message-State: AFq9FYIcarj1LC0dt0Mmqx865XxssibdhKym9vnVsyd5dneauSx2D6kJ
+ mhxwzVRkZiX6GkrhdzsIX9NaWtzLTeOivZZ973tT3sd83P7M2oe8Z/FiZnvi3VE/w6Wp5nPW2Up
+ EGDk79sm5I99QpQ==
+X-Received: from pjbcq4.prod.google.com ([2002:a17:90a:f984:b0:3ad:ce09:ff3])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:f691:b0:2e2:d39f:182f with SMTP id
- d9443c01a7336-2eb3643d489mr33291055ad.28.1793385789787; 
- Fri, 30 Oct 2026 11:43:09 -0700 (PDT)
-Date: Fri, 30 Oct 2026 11:43:01 -0700
+ 2002:a17:90b:380c:b0:3ad:13fe:41ba with SMTP id
+ 98e67ed59e1d1-3ae897c8968mr2432830a91.52.1793385791642; 
+ Fri, 30 Oct 2026 11:43:11 -0700 (PDT)
+Date: Fri, 30 Oct 2026 11:43:02 -0700
 In-Reply-To: <20261030184304.508282-1-joshwash@google.com>
 X-Archived-By: <archiver.kernel.org>
 Mime-Version: 1.0
 References: <20261030184304.508282-1-joshwash@google.com>
 X-Mailer: git-send-email 2.56.0.317.g454f8302e1-goog
-Message-ID: <20261030184304.508282-3-joshwash@google.com>
-Subject: [PATCH v2 2/4] net/gve: account for multi-mbuf headers when
- validating TSO
+Message-ID: <20261030184304.508282-4-joshwash@google.com>
+Subject: [PATCH v2 3/4] net/gve: introduce Tx packet preparation for DQO format
 From: Joshua Washington <joshwash@google.com>
-To: Joshua Washington <joshwash@google.com>, Ankit Garg <nktgrg@google.com>, 
+To: Joshua Washington <joshwash@google.com>,
  Tathagat Priyadarshi <tathagat.dpdk@gmail.com>
 Cc: dev@dpdk.org, stable@dpdk.org, 
- Praveen Kaligineedi <pkaligineedi@google.com>
+ Praveen Kaligineedi <pkaligineedi@google.com>, Ankit Garg <nktgrg@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -79,132 +78,170 @@ X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The DQ queue format allows TSO headers to span up to 3 descriptors.
-Before this patch, the TSO descriptor limit check logic assumed that
-headers would only be in a single descriptor. This can cause under
-counting when processing descriptors, which can lead to hardware
-failures.
+Before this patch, packets that are invalid in the DQO format with
+respect to offloads, descriptor limits, or packet size limits, are
+dropped by the driver without any form of recourse for the application,
+potentially leading to a disruption in traffic that can be hard to
+debug.
 
-As an example: suppose a header spans 3 mbufs. In that case, 3
-descriptors will need to be reserved per TSO segment. Now imagine that
-there is a TSO segment whose payload spans 8 buffers. The previous logic
-would add one for the headers, making a total of 9, which would be
-considered valid. In actuality, since the header spans 3 descriptors
-themselves, there are actually 11 descriptors for the one wire segment,
-which is invalid.
+Introduce tx_pkt_prepare for the DQ queue format to avoid dropping
+packets without first giving the application a way to know that they
+are invalid. For TSO packets, this method also computes the TCP
+pseudo-header for packets with checksum offloading enabled. Note that
+in this case, such packets must have L2/L3/L4 headers in the same mbuf
+segment to pass tx_pkt_prepare.
 
-Compute the number of descriptors needed for the TSO header, reject
-mbufs in which the headers span more than 3 buffers, and count the
-number of descriptors needed against the descriptor budget per wire
-packet/TSO segment.
-
-Also, relax the strong restriction that all headers be in the same
-buffer, as this is not a requirement by the hardware.
-
-Fixes: be8f0eb81f98 ("net/gve: fix DQO TSO descriptor limit")
-Fixes: 6b0452f76bf0 ("net/gve: enforce DQO Tx packet length limits")
+Fixes: 84472d3edffa ("net/gve: fix Tx stall on invalid packets")
 Cc: stable@dpdk.org
 
 Signed-off-by: Joshua Washington <joshwash@google.com>
-Reviewed-by: Ankit Garg <nktgrg@google.com>
 Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
+Reviewed-by: Ankit Garg <nktgrg@google.com>
 ---
 Depends-on: series-39707 ("net/gve: fix DQO Tx queue stalls")
----
- drivers/net/gve/base/gve_desc_dqo.h |  1 +
- drivers/net/gve/gve_tx_dqo.c        | 38 ++++++++++++++++++++++-------
- 2 files changed, 30 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/gve/base/gve_desc_dqo.h b/drivers/net/gve/base/gve_desc_dqo.h
-index 53e394f01c..b7d8b27d68 100644
---- a/drivers/net/gve/base/gve_desc_dqo.h
-+++ b/drivers/net/gve/base/gve_desc_dqo.h
-@@ -45,6 +45,7 @@ GVE_CHECK_STRUCT_LEN(16, gve_tx_pkt_desc_dqo);
+Changes in v2:
+- Rely on tx_pkt->nb_segs for descriptor limit calculation only as a
+  precursor, falling back to the traditional gve_tx_pkt_nb_data_descs()
+  if that optimization fails.
+- Only call rte_net_intel_cksum_preapre on TSO packets that request
+  checksum offloading. This enforces the additional requirement that
+  headers are all in the same mbuf segment.
+---
+ drivers/net/gve/gve_ethdev.h |  3 ++
+ drivers/net/gve/gve_tx_dqo.c | 79 +++++++++++++++++++++++++++++++++++-
+ 2 files changed, 80 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
+index 26c6a304a6..ab5af33ca9 100644
+--- a/drivers/net/gve/gve_ethdev.h
++++ b/drivers/net/gve/gve_ethdev.h
+@@ -649,6 +649,9 @@ gve_rx_burst_dqo(void *rxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+ uint16_t
+ gve_tx_burst_dqo(void *txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
  
- /* Maximum number of data descriptors allowed per packet, or per-TSO segment. */
- #define GVE_TX_MAX_DATA_DESCS 10
-+#define GVE_TX_MAX_HEADER_DESCS_TSO 3
++uint16_t
++gve_tx_pkt_prepare_dqo(void *txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
++
+ void
+ gve_set_rx_function_dqo(struct rte_eth_dev *dev);
  
- /* Min gap between tail and head to avoid cacheline overlap */
- #define GVE_TX_MIN_DESC_PREVENT_CACHE_OVERLAP 4
 diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
-index 3a20109a5d..00a4ea9d27 100644
+index 00a4ea9d27..d6ed238849 100644
 --- a/drivers/net/gve/gve_tx_dqo.c
 +++ b/drivers/net/gve/gve_tx_dqo.c
-@@ -138,7 +138,7 @@ gve_tx_validate_pkt(const struct rte_mbuf *tx_pkt, bool is_tso)
- 	 */
- 	headlen = tx_pkt->l2_len + tx_pkt->l3_len + tx_pkt->l4_len;
- 	if (tx_pkt->l4_len == 0 || headlen > GVE_TX_MAX_HDR_SIZE_DQO ||
--	    tx_pkt->data_len < headlen || tx_pkt->pkt_len <= headlen)
-+	    tx_pkt->pkt_len <= headlen)
- 		return false;
+@@ -3,6 +3,8 @@
+  * Copyright (c) 2022-2023 Intel Corporation
+  */
  
- 	return tx_pkt->pkt_len - headlen <= GVE_TX_MAX_TSO_LEN_DQO &&
-@@ -167,20 +167,41 @@ static inline bool
- gve_tx_validate_descs(const struct gve_tx_queue *txq, struct rte_mbuf *tx_pkt,
- 		      uint16_t nb_descs, bool is_tso)
++#include <rte_net.h>
++
+ #include "gve_ethdev.h"
+ #include "base/gve_adminq.h"
+ #include "rte_malloc.h"
+@@ -125,7 +127,7 @@ gve_tx_clean_descs_dqo(struct gve_tx_queue *txq, uint16_t nb_descs) {
+ 
+ /* Validate packet lengths against the device limits. */
+ static inline bool
+-gve_tx_validate_pkt(const struct rte_mbuf *tx_pkt, bool is_tso)
++gve_tx_validate_pkt_limits(const struct rte_mbuf *tx_pkt, bool is_tso)
  {
-+	int headlen = tx_pkt->l2_len + tx_pkt->l3_len + tx_pkt->l4_len;
-+	int num_descs, seg_offset, mbuf_len;
-+	int tso_segsz = tx_pkt->tso_segsz;
-+	int header_remain = headlen;
-+	uint16_t num_header_descs;
-+
- 	if (nb_descs > gve_tx_max_pkt_descs(txq))
- 		return false;
+ 	uint32_t headlen;
  
- 	if (!is_tso)
- 		return nb_descs <= GVE_TX_MAX_DATA_DESCS;
- 
--	int tso_segsz = tx_pkt->tso_segsz;
--	int num_descs, seg_offset, mbuf_len;
--	int headlen = tx_pkt->l2_len + tx_pkt->l3_len + tx_pkt->l4_len;
-+	/* Process headers. Headers can span up to 3 descriptors. */
-+	if (headlen == 0)
-+		return false;
-+
-+	num_header_descs = 1;
-+	while (tx_pkt != NULL) {
-+		if (header_remain <= tx_pkt->data_len)
-+			break;
-+
-+		if (likely(tx_pkt->data_len > 0)) {
-+			header_remain -= tx_pkt->data_len;
-+			num_header_descs++;
-+		}
- 
--	/* Headers will be split into their own buffer. */
--	num_descs = 1;
-+		tx_pkt = tx_pkt->next;
-+	}
-+
-+	if (tx_pkt == NULL || num_header_descs > GVE_TX_MAX_HEADER_DESCS_TSO)
-+		return false;
-+
-+	num_descs = num_header_descs;
- 	seg_offset = 0;
--	mbuf_len = tx_pkt->data_len - headlen;
-+	mbuf_len = tx_pkt->data_len - header_remain;
- 
- 	while (tx_pkt) {
- 		if (!mbuf_len)
-@@ -207,7 +228,7 @@ gve_tx_validate_descs(const struct gve_tx_queue *txq, struct rte_mbuf *tx_pkt,
- 			 * segment in this mbuf is divided between two
- 			 * descriptors, both must be counted.
- 			 */
--			num_descs = 1 + !!(seg_offset) +
-+			num_descs = num_header_descs + !!(seg_offset) +
- 				(mbuf_remain < seg_offset && mbuf_remain);
- 		} else {
- 			seg_offset += mbuf_len;
-@@ -220,7 +241,6 @@ gve_tx_validate_descs(const struct gve_tx_queue *txq, struct rte_mbuf *tx_pkt,
- 			mbuf_len = tx_pkt->data_len;
+@@ -303,6 +305,78 @@ gve_fill_tx_pkt_desc(struct gve_tx_queue *txq, uint16_t *tx_id,
  	}
- 
--
- 	return true;
  }
  
++uint16_t
++gve_tx_pkt_prepare_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++{
++	struct gve_tx_queue *txq = tx_queue;
++	uint16_t i;
++
++	for (i = 0; i < nb_pkts; i++) {
++		struct rte_mbuf *tx_pkt;
++		uint16_t nb_descs;
++		bool tso, csum;
++		int err;
++
++		tx_pkt = tx_pkts[i];
++
++#ifdef RTE_ETHDEV_DEBUG_TX
++		const char *reason;
++
++		if (rte_mbuf_check(tx_pkt, true, &reason)) {
++			rte_errno = EINVAL;
++			return i;
++		}
++
++		err = rte_validate_tx_offload(tx_pkt);
++		if (err != 0) {
++			rte_errno = -err;
++			return i;
++		}
++#endif
++
++		tso = !!(tx_pkt->ol_flags & RTE_MBUF_F_TX_TCP_SEG);
++		if (!gve_tx_validate_pkt_limits(tx_pkt, tso)) {
++			rte_errno = EINVAL;
++			return i;
++		}
++
++		if (tso) {
++			nb_descs = gve_tx_pkt_nb_data_descs(tx_pkt) + 1;
++		} else {
++			/* Handle non-TSO packets by directly checking nb_segs.
++			 * The packet has already been validated to be no larger
++			 * than 9728B, so every descriptor is guaranteed to only
++			 * require a single descriptor.
++			 * If the packet does not meet the hardware descriptor
++			 * limits, fall back to the mbuf walk in case the
++			 * mbuf has empty segments.
++			 */
++			if (tx_pkt->nb_segs <= GVE_TX_MAX_DATA_DESCS)
++				continue;
++			nb_descs = gve_tx_pkt_nb_data_descs(tx_pkt);
++		}
++		if (!gve_tx_validate_descs(txq, tx_pkt, nb_descs, tso)) {
++			rte_errno = ENOTSUP;
++			return i;
++		}
++
++		/* If checksum offloading is requested, the L4 pseudo header
++		 * checksum must be seeded. In this case, headers must all be in
++		 * the same buffer.
++		 */
++		csum = !!(tx_pkt->ol_flags & GVE_TX_CKSUM_OFFLOAD_MASK_DQO);
++		if (csum && tso) {
++			err = rte_net_intel_cksum_prepare(tx_pkt);
++			if (err != 0) {
++				rte_errno = -err;
++				return i;
++			}
++		}
++	}
++
++	return nb_pkts;
++}
++
+ uint16_t
+ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ {
+@@ -349,7 +423,7 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		tso = !!(ol_flags & RTE_MBUF_F_TX_TCP_SEG);
+ 		csum = !!(ol_flags & GVE_TX_CKSUM_OFFLOAD_MASK_DQO);
+ 
+-		if (!gve_tx_validate_pkt(tx_pkt, tso)) {
++		if (!gve_tx_validate_pkt_limits(tx_pkt, tso)) {
+ 			txq->stats.invalid_pkts++;
+ 			rte_pktmbuf_free(tx_pkt);
+ 			continue;
+@@ -703,4 +777,5 @@ void
+ gve_set_tx_function_dqo(struct rte_eth_dev *dev)
+ {
+ 	dev->tx_pkt_burst = gve_tx_burst_dqo;
++	dev->tx_pkt_prepare = gve_tx_pkt_prepare_dqo;
+ }
 -- 
 2.56.0.317.g454f8302e1-goog
 
