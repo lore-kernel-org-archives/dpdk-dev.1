@@ -2,102 +2,104 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41C5606A324
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Nov 2026 14:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08650606A326
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Nov 2026 16:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm2 header.b=fHsODiES;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=sLTNiQkQ
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=mu9KXfOp
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B688C4027A;
-	Sun,  1 Nov 2026 15:26:26 +0100 (CET)
-Received: from fout-a5-smtp.messagingengine.com
- (fout-a5-smtp.messagingengine.com [103.168.172.148])
- by mails.dpdk.org (Postfix) with ESMTPS id D01DB40279
- for <dev@dpdk.org>; Sun,  1 Nov 2026 15:26:25 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.phl.internal (Postfix) with ESMTP id D3BB2EC01C7
- for <dev@dpdk.org>; Sun,  1 Nov 2026 09:26:24 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Sun, 01 Nov 2026 09:26:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1793543184;
- x=1793629584; bh=OEklmuET+4fudcjn+2LlBL8jzGymIir0maXAHshrawo=; b=
- fHsODiEShFYRiRmA4CBSg+hNbVe1sdtwO83YCKdpteLLp4hL1Co5eXAAWB/qZqmg
- r7P7jBziG3Sx7xYnFoUB3daqwJtxhu2kv3JnPHP5tJRJvJ7ExIs4xgQRJQu0GIFB
- VecsfgQUfNgj65FYISWdGDQCDRacXtqTKEoFQCExtHNhKN0PNSxUf6HlWkmgsUpz
- UcWMMHZjTULqrkUQZkx22TeI79SRoqzlXUUFmugq60DlZc5iclECGGBrpUOTQx1A
- SkvGyvKLJmHiuW7vj24wBKa1NNb50PW9CCHqyEBM6yWOvMHmyS3N68K+3PRLK+Gc
- Qilf5wseKpMDW0xtkSISGA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1793543184; x=
- 1793629584; bh=OEklmuET+4fudcjn+2LlBL8jzGymIir0maXAHshrawo=; b=s
- LTNiQkQtPNInz/PU9I3TLfPjO+m7yRJRAwtwfV/MqRyVqNQRG8rkk4rABE22d64D
- 8c1koL96Udxg8x7lkKYqXQ9T1mNKuq5U79KG/iYjktkrCzUgCYhJ4GjHgOqK8bPI
- CDp2U8gFpreJcqs3r3N1s6aU04u1TVaQA1HxnSOHC0cEWH6ZqKLCWuJfK8ukZiqo
- 2Rzz8pGCCFDN7ve2gpX7BWgO1Tv6KnEcjebfMNVi517YP/UEe36lRfpNiEUX1dYG
- JEyayx/7kbNT0r2owoshzgnJeEFJez+mxvtH4RViSLO9tTgGXlZVLc9fGxT2N8/+
- USDb7s7Br0shTy9oszTiw==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1793543184; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:jxbrt5MA7OeoIUQjKX65LY2/BnncAU0XJTmDV5rgZ6V60uZ
- w63/1+TWtaQcOQmtmSTxCNiQGZmKN8k12Lc/mmmRsPEKnQvjoQKl38FZcIJrtKqh
- N6qwIpUv7xXZMa5QV7q2bT0W+g5D8ilu5LT6JxCc4A2TCD82Qf3eOp+X1zErN9It
- f4mkzIjiEKpa/JxX5D8BYpgUfrfTiNOyY6PlBOJMVHm5TEqMQIyLPEbOrzPZ5voW
- 7M2ZJLkmwwYEZbAljwafqYwS58uT9kPm9DB0gdjQE0Kk0nq3luHuiPknBgjoiDVu
- lPHzUh5zdqKULASL9osRGRekuJO/m5FwhuIbK8Q==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:IIWpHWWHykHK55YYr0YzJQ0JvbBvGImb/pwaYVpsjd4=:nObdiJiI2p0r9xBIF3zfqtlC2M1+ckah4W8kZiJA79E=;
-X-ME-Sender: <xms:D0znamVo80Lag7tuQGvOqKH_v1sfow6gw4c6kZVyAklKxJnCSnESMw>
- <xme:D0znaiuyGw84poEneOSe8zBkC-lWVeZJmhppn9Qf1oJLNrG4RX4ktKKjebpoEDPER
- om1mqM11-1p0caoHutNsqz1863gb2U1BjgprlHGAgRMRY9E8VMMwx8>
-X-ME-Received: <xmr:D0znaiWIVEjNPu2m2QTYykundiy5m2oOAGDANUDzzFDw8A7wljmxhbWmQbbCJg3VdhJWiwGt1dM17m0ivQ>
-X-ME-Proxy-Cause: dmFkZTGQFypPAJWWjLoo5lRi81J4G8KKBQ0fJ6OV/mrX7SGJhl2sU4rqBWIE+KweHYnzIX
- pf4N29dGcNAV7eRb76fJSqU3O0by4tCH+GsOz8RMISbA9LK4nSPT6Sz4NOPAwpwMb9eyh4
- qc7dT0dCEPFWaw/ufiQwbirPoTivOtKuwA7dVnnxUiQmM3c+F5Rg2RyX9ed7uI25LqTcEr
- J2wToDo5OGx0sVc4NMeuUTPn/GyT7viEbT4PIi6o2KU17F4heuXj1eqBTf3veUgp4h1jos
- 6TTNfhc2QeWCVOpgFE4WFsKTktzE1jC+f8k7TKHDqU2X1EH6d03gbxIiCVLNSjB5HYFbj1
- fs6lyeGOJwXiTKYoc2br9MwXk+i8FGoMCiB2l5m9dHrkWbHl4NUwVJJ3d7DBlmWaiNO4ek
- kPgMMj87YTMDx4CwpEtqpNw9zHTnG9n62d9K6w7OYmXMrsfSxBhtZj53TGlMzA8rrW6iUf
- HfRG0puE1qKgXvFwVO0dKxlB+w7dYyeZ/rWyC41ItIlKrDyVYphWsEtR54J7G8Rd6D9wDj
- q7Ygx8+InxVvhj42IOwbe99ozxIgSlpdH8I+CIYNAwVhS75xj6X5aRagBTQth3cLue1vQR
- tUQzyXugbYUIm6NPsgCx7VR7G8+oRbvUYJvnIBX6mhHFFzg8/QXzyTkyvVzA
-X-ME-Proxy: <xmx:D0znaln2mbnoP1VJlHSXG2qE_vvJGnWalw_eI_4_jVWm7YLhVIHHQg>
- <xmx:D0znarbn1w_EIqJ3Vm4tGWyM9mI7_SavbNPpjrZ7862r0kQkqcruAQ>
- <xmx:D0znaoM6AwKWY9ra3tOKCaP0WwyooYgOucawnF-pq_P07jUsH35hVQ>
- <xmx:D0znaobR9vlC1ooTrBFV7KDD3xuiUuSL8BoOloeSy7EdY8-AoLwWRQ>
- <xmx:EEznauHheYY2HajqVa17Ukz8M8ZXAgjdp775I5nX_zclFUXDhx0Ss1W1>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 1 Nov 2026 09:26:22 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- fengchengwen <fengchengwen@huawei.com>
-Cc: stephen@networkplumber.org, dev@dpdk.org
-Subject: Re: [PATCH v3] examples/l3fwd: dynamic NUMA-aware alloc lcore_conf
-Date: Sun, 01 Nov 2026 15:26:20 +0100
-Message-ID: <ksiekRtOSqOSIIkKFdXdAw@monjalon.net>
-In-Reply-To: <4687e093-ac82-4ac7-aac5-838be6c52433@huawei.com>
-References: <20260623032301.17570-1-fengchengwen@huawei.com>
- <xvTXknUbSMSD_Fg-tQD_aw@monjalon.net>
- <4687e093-ac82-4ac7-aac5-838be6c52433@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1E6DE40279;
+	Sun,  1 Nov 2026 17:05:11 +0100 (CET)
+Received: from CY7PR03CU001.outbound.protection.outlook.com
+ (mail-westcentralusazon11010031.outbound.protection.outlook.com
+ [40.93.198.31]) by mails.dpdk.org (Postfix) with ESMTPS id 194C740264
+ for <dev@dpdk.org>; Sun,  1 Nov 2026 17:05:09 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KJs0/UPpv2jqQPIpjlc75+211Bha2K0YsLtQDgMnoJwXQYkNXHGsCUKYPhv+IIjMGB3ep8zqpYVRohSk81cYwwhVbTDVPTQ4+ehGO+kE1lafjmw3b2GMkN05cOJK3yFpdvsFIiYdBVYv6oBPYuqYYPYLsHte5v5R8Ua8A3oPu3G9JTDJmHoqObLyLYUtuA10wcQf3pZDAfvSY9luCC1sxhq/D4Q3lZwENR8GGHNM7w966dFiSVrYkOWd+OW/Zmuf5fou0S6r3YQV5S24TO5AjU7J0ud/tty6dnr/0Di5Ohwi66ibR6iZrtZjjWhf/gChjlAYJB4V4Q5LY+7pKGVD4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1p/ETtxwGMeOdsHSfNNphd0FwA6D3aYNwGcwszKccKM=;
+ b=sCZuHfhixcG/Poyf3PjewwxfscoRb+nJgZZCjUzjLbpTAjW+PwEA0rk5UV+K2BsYf8qSD6Bl9cJnBSllp9ww/CMtqT1SmGyBdbvFy6GoKsebhEKX+ax/v3y63xxG45fv5NvVDRBjYRih43GQG7FD6LR1pCzb8+HPbqw00KjD9ZKbzzxbl2zW9J0sFCB18DggXcYqDYTS3TnydXX5LrMBy8cN99Hi3Q2GFxbVHLMrAqiUyo4y0iKqF/DDa2gQEmskJvNdNc3D2obNFV8oLbrSyYbOZP8BSQFiWjAt6nSdUd1cvDUf1ZQIx2wEGIqe5t41Gts+lmMzTwAU884uaWzhjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1p/ETtxwGMeOdsHSfNNphd0FwA6D3aYNwGcwszKccKM=;
+ b=mu9KXfOpUhIhom1LXOEUB3j+K+J4MvMBnULad9KUS5YOKnhS2kdK0fTzMQyhsU+LGcu2zL5gckhgQw9JqTiTo3yS0lydswqq58tWaHKrFPTTtaexQMvEEs3ky/vMGyx27ZAYq8jvGKKu8A+hGWqEHTHXASoya6YpylSzuzzpSWDOvReIHtMxi0wbBOluRzevPt52M8asKffLsJRH0qe6ARx84tMYNwKbGJUP1S/+u+jaOMUb4On7FhO7g1lEztZZMJG3trMFJ31NyjYBVE5rJ9GRYphi7jin9KzzdirtApUdrqU8csaymMWRDMh0PhOTeJjmXbMbqbr8vcZPkAmlvQ==
+Received: from PH7P220CA0005.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:326::22)
+ by MW6PR12MB8734.namprd12.prod.outlook.com (2603:10b6:303:249::11)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.9; Sun, 1 Nov 2026
+ 16:05:04 +0000
+Received: from CY7PEPF000000EB.namprd04.prod.outlook.com
+ (2603:10b6:510:326:cafe::40) by PH7P220CA0005.outlook.office365.com
+ (2603:10b6:510:326::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.22 via Frontend Transport; Sun, 1
+ Nov 2026 16:05:04 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY7PEPF000000EB.mail.protection.outlook.com (10.167.247.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.592.5 via Frontend Transport; Sun, 1 Nov 2026 16:05:03 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Sun, 1 Nov
+ 2026 08:04:47 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Sun, 1 Nov
+ 2026 08:04:47 -0800
+Received: from nvidia.com (10.127.8.11) by mail.nvidia.com (10.129.68.9) with
+ Microsoft SMTP Server id 15.2.2562.56 via Frontend Transport;
+ Sun, 1 Nov 2026 08:04:45 -0800
+From: Maayan Kashani <mkashani@nvidia.com>
+To: <dev@dpdk.org>
+CC: <rasland@nvidia.com>, <dsosnowski@nvidia.com>, <viacheslavo@nvidia.com>,
+ <bingz@nvidia.com>, <orika@nvidia.com>, <suanmingm@nvidia.com>,
+ <matan@nvidia.com>, Maayan Kashani <mkashani@nvidia.com>
+Subject: [PATCH] doc: document group 0 IPv6 fragment VLAN limitation
+Date: Sun, 1 Nov 2026 18:04:43 +0200
+Message-ID: <20261101160443.3216180-1-mkashani@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY7PEPF000000EB:EE_|MW6PR12MB8734:EE_
+X-MS-Office365-Filtering-Correlation-Id: 115976ea-b566-44f6-5fa3-08df3831e3c1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700016|82310400026|23010399003|1800799024|376014|18002099003|56012099006|11063799006|261021121427099003|261021135927099003|261026121527099003|261009223027099003|10067099003;
+X-Microsoft-Antispam-Message-Info: 91ADeQ2cR39J4cn8O+1F0Vg2XpIrazuBC03ws6UJNI+FNYxCPDvD2kk4+rYM9+v2eUDTue/P/uGgKPiocDDwxqaiOpIWMSqexNjTOo8SbhZp7iSerxpmvAGGauQVjTbbMVOm8NvvovAZYEQjpuyBI+brUTWM+QnhVFIarIdD1ET2KhtjCjwfjGPi8Gknp+m1FHWh/Gf9xgP1KOmLJf2uY9saIQvFu0KepiiUFJ1crzquHHBgke/X4OcHanIpZ4twalgUM/XmfVgsOQdMliAyUwVCt3RwsI1tM12ycfHMJf0ultJAJ/fgen2f5qrK0kJcy9V6gEu7eB/ZmrML8ImiQLjNvHlTiWXIog23/LGjwOWFd3ZgtiqyJYJ00uycddf8OAfVk6WhkNsQSAFHf89713RqWFZ5vu268rO05TZ6Gkqz8gwMMdK+PFXOll9SWSFKtVc16GLYzqMenYLrn88+ziJMdP8L1AS0ojWnhH0IZ24PQqkeg7OJvGLWaIuW+mGVmQL/dRGNp9u5oLRxcqw4KdWh9VhRA0pY4vwKcimXb9tKUxH88sBGvbNoCRsnSbdzb9tdgcyNFMZtAhW1g4vwIdr6BdvW9Ku2i91t2Y6kSnbF7krcoAQEmPatx+ZTilY24jvTDtooSZ8Su2LlVyVAN2CMiyj7biylTo0OJJDcSJzY0D1DYeF7cUzOH6Y2LpJ+Z6NgTZ7+FmTlNmnY0NvNKg==
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700016)(82310400026)(23010399003)(1800799024)(376014)(18002099003)(56012099006)(11063799006)(261021121427099003)(261021135927099003)(261026121527099003)(261009223027099003)(10067099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: ARNSbslMOe7siiA6nTd6IEmPhTE13SR7NZwc4v9+9TwFvR+94+7qupsxf/ny0/HIYISHRTJodfUQ9uxEQIXKyAKL18jOVkJPrCYbS8O7SJ3mPOfMLn5W31v413Mj2b/168lbNBUwXFsJAw9Dv9GlMrhOzvEii9WHIx13UhFD+A8B2X5Ks6Zsdc6mLsg3hiDoHFQt+b6CqX+Le4Wi6xw4NTfgNhP69tTJjp3fUh7mfsfG4rIPE+/I1ZZuCBZ70JL4B2dv0wsWMzCNbJcOvShUaMGMsaSXvFqg5XLPXmzDwXt8hUClnfmvY+GNzrvP4E6yghXWyjbZyasyX8e9NWCU4l9p9IQgfmsNghgacn2JRk8crjvdEoisO8VunPLisStdlq4RBZ9vF/3BgnQUO6IRUR5u2qRfYMQnNaHOfW1U7F4Qlk1apUOhpUn3MEwcM09Z
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2026 16:05:03.4588 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 115976ea-b566-44f6-5fa3-08df3831e3c1
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY7PEPF000000EB.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8734
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -107,45 +109,43 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-31/10/2026 02:37, fengchengwen:
-> On 10/30/2026 8:59 PM, Thomas Monjalon wrote:
-> > 30/10/2026 11:52, Konstantin Ananyev:
-> >>> BTW: SOCKET_ID_ANY seemed need redefined as RTE_SOCKET_ID_ANY, If there is no
-> >>>       objection, I will make the changes in the next independent patch.
-> >>
-> >> Yep, that's probably a good thing to do, and probably 26.11 is a good 
-> >> time to do that.
-> >> BTW, I think it was discussed before, but I can't remember why we didn't 
-> >> fix it so far.
-> > 
-> > 1/ We should not break this API easily as it is used a lot.
-> > If we do the change we need to keep the compat alias for some time.
-> > 
-> > 2/ The term SOCKET is used in many places instead of NUMA.
-> > There is a confusion between CPU and memory which deserves to be fixed.
-> > 
-> 
-> My plan is a 3-patch series:
-> 1. Add RTE_SOCKET_ID_ANY and deprecation documentation.
-> 2. Replace all in-tree SOCKET_ID_ANY with RTE_SOCKET_ID_ANY.
-> 3. Mark SOCKET_ID_ANY with RTE_DEPRECATED after in-tree migration completes,
->    so warnings only hit out-of-tree users while DPDK itself builds cleanly.
-> 
-> I will avoid the bigger "socket -> NUMA node" terminology refactor in this series.
-> That would be a massive semantic change with large churn, better handled via separate
-> RFC later.
-> 
-> If this plan looks acceptable, I will start the implementation.
+Matching a VLAN item together with an exact IPv6 fragment next_hdr
+misses on the hardware root table, while the same pattern matches
+in a non-root group. Document the limitation and the supported
+group 0 alternatives.
 
-My doubt is that while introducing a new API,
-it may be better to apply it in correct places with correct definition,
-avoiding mixing CPU and memory.
+Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+ doc/guides/nics/mlx5.rst | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
+diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
+index c7bb6eb182e..8dd7ee9a969 100644
+--- a/doc/guides/nics/mlx5.rst
++++ b/doc/guides/nics/mlx5.rst
+@@ -3731,6 +3731,14 @@ Limitations
+      and the first IP fragment is received,
+      then this IP fragment will miss on that flow rule.
+ 
++#. Matching ``RTE_FLOW_ITEM_TYPE_VLAN`` together with an exact
++   ``next_hdr`` of ``RTE_FLOW_ITEM_TYPE_IPV6_FRAG_EXT``
++   is not supported on group 0 (HW root table).
++   The rule is accepted, but matching packets do not hit it.
++   Create this pattern in a non-root group.
++   On group 0, a VLAN item with a wildcard fragment ``next_hdr``,
++   and an exact ``next_hdr`` without a VLAN item, are supported.
++
+ 
+ .. _mlx5_nat64:
+ 
+-- 
+2.25.1
 
