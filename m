@@ -2,69 +2,69 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D10606A324
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Nov 2026 23:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4356C606A326
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Nov 2026 23:22:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD71F40274;
-	Mon,  2 Nov 2026 00:21:45 +0100 (CET)
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
- [74.125.82.174])
- by mails.dpdk.org (Postfix) with ESMTPS id C214940264
- for <dev@dpdk.org>; Mon,  2 Nov 2026 00:21:43 +0100 (CET)
-Received: by mail-dy1-f174.google.com with SMTP id
- 5a478bee46e88-36a18fc7a38so3826951eec.1
- for <dev@dpdk.org>; Sun, 01 Nov 2026 15:21:43 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 282A340E1F;
+	Mon,  2 Nov 2026 00:21:59 +0100 (CET)
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
+ by mails.dpdk.org (Postfix) with ESMTPS id C622240264
+ for <dev@dpdk.org>; Mon,  2 Nov 2026 00:21:57 +0100 (CET)
+Received: by mail-dl1-f49.google.com with SMTP id
+ a92af1059eb24-1ae18eb9b69so1415007c88.0
+ for <dev@dpdk.org>; Sun, 01 Nov 2026 15:21:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=kev009.com; s=google; t=1793575302; x=1794180102; darn=dpdk.org;
+ d=kev009.com; s=google; t=1793575316; x=1794180116; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=NzVS8cSzOPZvbIh2JnyIkdgoEcdX9sLEKihuwt86nZo=;
- b=oH9/MTLXWCiW5K5rTbyv/wiQIAnT1OvYJoIvPfg0+gofEvRjCo2dh2E4RX7CZK8fXe
- eGtk1kAuYpOmvALYQPUnML0dH7L1HqkJVe4A2bkqrzZbos/YdkRO1j7nJNGAoG9rmfVr
- XV7uv3Lj5X8sl8jfV6kbHxCfNUySUeNkVjltY=
+ bh=lrv31dvGEjQib7HjgqBVNFqgqTmwLEEbLEUh3fPIHNM=;
+ b=nVS3gXaX0EBKE5t8Ot/ZVkhe6N5GE/92PJtgATvXXZKfhlsDdjTHnMSI540fJ7aMhh
+ JAeyBXvNFWXZfAIaYVNCzkFlJLDrzAlILBwCyel7TBUxeLNLSE5QM32f22tgAnlKRNp+
+ 7aXSjIkMOUfcQSac8VYfnxaaXiPNuo9gggJ3Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793575302; x=1794180102;
+ d=1e100.net; s=20260707; t=1793575316; x=1794180116;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=NzVS8cSzOPZvbIh2JnyIkdgoEcdX9sLEKihuwt86nZo=;
- b=szoxIF2NeGwGZgR0dDK26ofaF22M4vIytwU304WYyQuLiCObUUiFrYJnQwPFCSGHPU
- KsvbTQ0hkyRcs8JAyFvqLX3A4oTjIl6r/bTTJnLX41bKRW7sp/1e8rfaiEELeFVuWRBs
- sKcPEP2fFsL4sXqlZlm1EtB+kRyRgnm7YpTFo0LlSf1H3nfy17DH2z/dQs5Z9E9kL6Sm
- 1gEUCAkXDvOHp14BBE4QOMuyl0S6sKJ6ItBJr4PYB+elkdP6kJNhR+KfKgjQUuXGDvMZ
- 5K15APlNfeNIBYzRsiJpq/Tj+qHGBPVEnuDh6JSM6kziJns2GNYWzUiERgcprx25KXm3
- o8+w==
-X-Gm-Message-State: APuU4Z/o1qHTsT5eaqtDyPktuF/3+30y+Rv+XqkfsUwlb7RO5SIzLYDW
- BMLgeHbWrV6B0WEppgf6p5VpB01wsVoCDGVD/xz/rC0EvA2lX9Vu/lm4i2CYnPT8YAM9B9PgqC3
- mWj06HGLe
-X-Gm-Gg: AYBFou21L02qB31AlEpV2gJ1rPvYtd1FZbhUuQSG14onC1NVzUR2xY3JI48rewMPsEB
- UpLGMja0hxI1VvqGk8FYhx7tfNGpSDl1HLnwLiRxAO1giMQs2B7VilDS/C6fVBj1x7oUm2PYsHM
- aqw0I8VEfW+pMoSP6f4hrDfR3sgT7+Nftc1zxcpX6ro/q/Fr4riR4wPwVeAD3GFk08Mt8mb/X0d
- SqulwzLXntci36VSqVVKv332J66LB+9HkTtrsppXDJ9SeHrezHCiOnVPr004wBBVeCXte92AxhM
- 5PW5/th+RsgLlTidtEUTPydtPmg4jo8NoFjC1ntm8Ql6cHTiHo6MfZ2OGrzB0JOYb4kSwceKiM5
- jRwssep8MhtvJkfpC8xH15KT1BiYjmvJOm86QF4lI84BEJWacr2vg3R118A1cCCEDDBV2d1kd/a
- XLWF+7nLiBwdvgaKe5No2WK1FCmdIjcqfqzvyTvl3xjBn0hc+9yqYRN6TArUB2ZECfVMgzKXgCW
- S8MveJoR5NySPyIDRufNIqhBIwGk9922NxAqFCrdxqzh5DDCpDWTWEVS2S9ePdqUa72hSoYNZvq
- NQJRt8XepZGD8Wif3p+N+IqWF5ghEMEFOKIWhUMVl71pDPfrcG9z2FHKneOOs51OBvOpASa/Yax
- 1z3xIQIgvLHvtg3cO1LC8MuDP3Meeb6wfP6dAhrviVN3PIXrIl1Ij4Uo/FLUkbaqvWSYjFmsema
- rpNuqfvY8=
-X-Received: by 2002:a05:7300:c01c:20b0:36a:54a0:6b4c with SMTP id
- 5a478bee46e88-36a54a06b95mr9006090eec.25.1793575301764; 
- Sun, 01 Nov 2026 15:21:41 -0800 (PST)
+ bh=lrv31dvGEjQib7HjgqBVNFqgqTmwLEEbLEUh3fPIHNM=;
+ b=tmV1W4DT3VlkqKt1pkVCY9yeGSz6zqMZpiCfbf0KusO5jYcEyrYD08wV0gnKbjc04H
+ 3zSUg/ixAix9CAS686QlxMp9B1IzqM5KlUWLryOeOVUMvo4n681iC51eeF2UrvY7BB9Z
+ jojQqTt56Xti670ML3WCxRT+MILszHPf+0S63d1PIvKwwwG/Rv99cowxY/WxtBPHiF7q
+ 2R0bINLgGN7RR2JdPmBak7AbK+kpaJgOY3+W66DpssWLAI+r0nqGM0lD1VxgvodabPs3
+ yUL4nlsjpEYZeHUEL/oUXpRnrJ+PPVKiZC06HSLlcF9EtqJ1AIyOaO+0JziTVlEZ8SSp
+ nbJQ==
+X-Gm-Message-State: AFq9FYJmsoIBBCEt7OG4hb9qv/KmHMhosCACRptDY1iN472Np4CPGHip
+ sjZ85o7bv4b/6unLjL/T1J9Sm9UBy6iDz+NTiiev1Bzk7ivZoeKkTeGoLN+frOFlnY3nx8yV1ys
+ 2K1kzA5C9
+X-Gm-Gg: AYBFou254jidpxwOi08708C+YP525/Vn8AqUA7fNfEYL925vy2kDnECR2HTn3yKphMG
+ GDd3Ic6JwJlf2EoDSzTC3KY+EdwRIHthKcG0h4PtrbCtS++WWA9wfvd3BAKBcHtFImNJCfxX4yL
+ Pvy3NQYzmBju+Bd254Xm1bKMwJLwj+8c/kevR4ykyGL4uHkCZ3EcS1Ve39m/Ng9iBJrG4XPAfwn
+ ck7gqvqKuJQHEU7YLP/GAh78eyFS9kzkP9KC8+FF5trSv1MrVAQ2f4DaJzWKLEuUO0H0iYVZ7jY
+ 7ZFZf/Ml+JvPkxssh06aZ6BdLtUHl/AiOJt5esnTcnhJRUzLmyZaUTlGy92Uyd6IJlKecAx770M
+ uMmyahQytOBRdjOzhMVJ3MYUUJuCUeq2Ono6TTV+vwIo74jH9YCgCRA4Zj8M7lralX+ndoyiOtj
+ EbPCkPg4EwabOU/LDw5TP3n89ypUoFF9dYA8VVk5VY74TFeuRzhLHIQ0hMYEcA+JmFfCGhAtHQ1
+ Gbwjoex+yJdpAMxoS49LvRARDWdG51/7Y7cZkZGyYimmYBfsR95JZq903k0T92IWuqvH1KnjBza
+ xZ9YGkQzqGDlH3Rue7/YSsegl4zRHYreCNnhYIx7fGkxNhB+Fr6pQuozLzfGoeUnCaj/U4muujq
+ TWZRbVJ+szNbeU6n74Ee7aTZdA+H7Uy6fT6BU18C6QwrallsntrAF/fdQNBG4XpZyGf70MnBtPc
+ 0bGks14Nc=
+X-Received: by 2002:a05:701b:2087:20b0:144:fdf0:9d91 with SMTP id
+ a92af1059eb24-1ac5da7ad99mr13857952c88.24.1793575315889; 
+ Sun, 01 Nov 2026 15:21:55 -0800 (PST)
 Received: from kev-ws-aurora.cv0.bbox.io ([172.83.102.10])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-36a42a77c0dsm36318950eec.26.2026.11.01.15.21.40
+ a92af1059eb24-1ac194b5437sm31982675c88.13.2026.11.01.15.21.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 01 Nov 2026 15:21:41 -0800 (PST)
+ Sun, 01 Nov 2026 15:21:55 -0800 (PST)
 From: Kevin Bowling <kevin.bowling@kev009.com>
 To: dev@dpdk.org
 Cc: Thomas Monjalon <thomas@monjalon.net>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
  Bruce Richardson <bruce.richardson@intel.com>,
- Soumyadeep Hore <soumyadeep.hore@intel.com>, stable@dpdk.org
-Subject: [PATCH] net/iavf: fix AdminQ polling after interrupt setup failure
-Date: Sun,  1 Nov 2026 16:21:40 -0700
-Message-ID: <20261101232140.94324-1-kevin.bowling@kev009.com>
+ Harman Kalra <hkalra@marvell.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>
+Subject: [PATCH RESEND 0/3] FreeBSD: add MSI-X control interrupts to nic_uio
+Date: Sun,  1 Nov 2026 16:21:50 -0700
+Message-ID: <20261101232154.94354-1-kevin.bowling@kev009.com>
 X-Mailer: git-send-email 2.56.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
@@ -78,111 +78,83 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,TVD_FROM_1,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-15.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	TVD_FROM_1,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The device alarm skips AdminQ processing when the PF advertises WB_ON_ITR.
-However, this capability does not guarantee that interrupt registration
-succeeds. FreeBSD nic_uio cannot register device interrupts, so the VF
-still needs alarm polling. Without it, commands such as RSS configuration
-and statistics queries time out and device configuration fails.
+Resending unchanged after subscribing to the mailing lists.
 
-Record whether AdminQ uses alarm polling instead of deriving that choice
-from the PF capability. Initialize polling on each device initialization
-and disable it only after interrupt registration and enablement succeed.
-If enablement fails, unregister the callback before retaining polling.
-Keep the shared PHC alarm and unconditional alarm cancellation unchanged.
+FreeBSD nic_uio currently supplies BAR mappings without interrupt
+delivery. This series adds an optional single-vector MSI-X interface and
+connects it to the FreeBSD kqueue dispatcher for AdminQ and link events.
 
-Validated the backport to 25.11.4 on FreeBSD with an E810 ice PF: the stock
-PMD failed configuration in three trials, while the correction passed 45
-queue restarts, 42 full device resets and 6,432 exactly received frames.
+The first patch fixes a pre-existing dispatch cleanup bug and is suitable
+for stable backport. The second implements the module interface with
+serialized IRQ/resource lifetime, writable-only control ioctls, and bus
+mastering tied to writable open file descriptions. The third integrates
+the interface with EAL. Both EAL and hardware lifecycle tests are included.
 
-Fixes: 388f0b348065 ("net/iavf: reuse device alarm for PHC sync")
-Cc: stable@dpdk.org
+The series is based directly on main at c981dcfe134e. Older applications
+retain BAR-only operation; older modules remain usable with PMDs that
+support polling fallback. The separate iavf polling fix in PR #125 was
+present in the hardware-tested application but is not part of this series:
+https://github.com/DPDK/dpdk/pull/125
 
-Signed-off-by: Kevin Bowling <kevin.bowling@kev009.com>
----
-GitHub review: https://github.com/DPDK/dpdk/pull/125
+The polling fix was sent first in a separate thread:
+Message-ID: <20261101232140.94324-1-kevin.bowling@kev009.com>
 
- .mailmap                             |  1 +
- drivers/net/intel/iavf/iavf.h        |  1 +
- drivers/net/intel/iavf/iavf_ethdev.c | 17 +++++++++++------
- 3 files changed, 13 insertions(+), 6 deletions(-)
+Validation includes Clang 21/GCC 14 static and shared EAL, PCI and iavf
+builds with -Werror; normal and INVARIANTS/WITNESS module builds; and the
+FreeBSD interrupt and alarm tests. E810 VF hardware tests on FreeBSD
+16-CURRENT cover 300 software interrupts, 60 masked/pending deliveries,
+ownership and descriptor lifetime, and three active-traffic SIGKILL cases
+including both primary/secondary exit orders. Bus mastering is checked
+after the final writer exits; reopening needs no external PCI reset.
+Follow-up current-DPDK runs deliver exactly 4,512 frames across 45 queue
+restarts and 21 device resets. Older polling-application runs deliver
+exactly 2,688 frames across 36 queue restarts.
 
-diff --git a/.mailmap b/.mailmap
-index 492bb56acb..5c666ba171 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -889,6 +889,7 @@ Keith Wiles <keith.wiles@intel.com> <keith.wiles@windriver.com>
- Kent Wires <kent.wires@intel.com>
- Kerem Aksu <kerem.aksu@i2i-systems.com>
- Keunhong Lee <dlrmsghd@gmail.com>
-+Kevin Bowling <kevin.bowling@kev009.com>
- Kevin Laatz <kevin.laatz@intel.com>
- Kevin Lampis <klampis@solarflare.com>
- Kevin Liu <kevinx.liu@intel.com>
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 8b826662c6..5550e57c35 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -399,6 +399,7 @@ struct iavf_adapter {
- 	bool phc_sync_paused;
- 	struct iavf_devargs devargs;
- 	bool mac_primary_set;
-+	bool adminq_polling; /* Interrupt setup fell back to alarm polling. */
- 	uint16_t tpid;  /* VLAN tag identifier */
- };
- 
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index fd1067c252..47aa6ecb6f 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -2924,15 +2924,15 @@ void
- iavf_dev_alarm_handler(void *param)
- {
- 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
--	struct iavf_info *vf;
-+	struct iavf_adapter *adapter;
- 	if (dev == NULL || dev->data == NULL || dev->data->dev_private == NULL)
- 		return;
- 
--	vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
-+	adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	struct iavf_hw *hw = IAVF_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	uint32_t icr0;
- 
--	if (!(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR)) {
-+	if (adapter->adminq_polling) {
- 		iavf_disable_irq0(hw);
- 
- 		/* read out interrupt causes */
-@@ -3107,13 +3107,18 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
- 	rte_ether_addr_copy((struct rte_ether_addr *)hw->mac.addr,
- 			&eth_dev->data->mac_addrs[0]);
- 
-+	adapter->adminq_polling = true;
- 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR &&
- 			/* register callback func to eal lib */
- 			rte_intr_callback_register(pci_dev->intr_handle,
--				   iavf_dev_interrupt_handler, (void *)eth_dev) == 0)
--
-+				   iavf_dev_interrupt_handler, (void *)eth_dev) == 0) {
- 		/* enable uio intr after callback register */
--		rte_intr_enable(pci_dev->intr_handle);
-+		if (rte_intr_enable(pci_dev->intr_handle) == 0)
-+			adapter->adminq_polling = false;
-+		else
-+			rte_intr_callback_unregister_sync(pci_dev->intr_handle,
-+						  iavf_dev_interrupt_handler, eth_dev);
-+	}
- 
- 	rte_eal_alarm_set(IAVF_ALARM_INTERVAL,
- 			  iavf_dev_alarm_handler, eth_dev);
+Checkpatch has no errors. Its eight negative-errno warnings concern
+positive errno returns required by FreeBSD cdev methods. Full-tree builds
+encounter an existing contigmem SYSCTL_NODE_CHILDREN API mismatch; focused
+builds pass. Optional Clang C11 atomics encounter existing EAL type errors;
+validation uses the default non-stdatomic configuration.
+
+Scope is one control-event vector, not per-queue Rx, MSI or INTx. There is
+no IOMMU isolation or guarantee of draining transactions already issued
+before PCI bus mastering is cleared. Hardware coverage is E810/FreeBSD
+16-CURRENT.
+
+GitHub review and CI:
+https://github.com/DPDK/dpdk/pull/126
+
+Kevin Bowling (3):
+  eal/freebsd: fix active interrupt source cleanup
+  kernel/freebsd: add single-vector MSI-X support
+  eal/freebsd: support UIO MSI-X interrupts
+
+ .mailmap                               |   1 +
+ MAINTAINERS                            |   4 +-
+ app/test/meson.build                   |   4 +
+ app/test/test_interrupts_freebsd.c     | 203 ++++++++++++++
+ app/test/test_nic_uio.py               | 140 ++++++++++
+ doc/guides/freebsd_gsg/build_dpdk.rst  |  25 ++
+ doc/guides/rel_notes/release_26_11.rst |  10 +
+ drivers/bus/pci/bsd/pci.c              |   2 +-
+ kernel/freebsd/nic_uio/meson.build     |   2 +-
+ kernel/freebsd/nic_uio/nic_uio.c       | 364 ++++++++++++++++++++++---
+ kernel/freebsd/nic_uio/nic_uio.h       |  33 +++
+ lib/eal/freebsd/eal_interrupts.c       |  46 +++-
+ lib/eal/freebsd/meson.build            |   2 +
+ 13 files changed, 787 insertions(+), 49 deletions(-)
+ create mode 100644 app/test/test_interrupts_freebsd.c
+ create mode 100644 app/test/test_nic_uio.py
+ create mode 100644 kernel/freebsd/nic_uio/nic_uio.h
+
 
 base-commit: c981dcfe134e4c641951ee15a76de0b56aafb05a
 -- 
