@@ -2,81 +2,47 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9265606A31F
-	for <dpdk-dev@archiver.kernel.org>; Sat, 31 Oct 2026 18:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XrK/YT88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD403606A325
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Nov 2026 08:04:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 09C04402E3;
-	Sat, 31 Oct 2026 19:58:42 +0100 (CET)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
- [209.85.128.46])
- by mails.dpdk.org (Postfix) with ESMTPS id C15BA40279
- for <dev@dpdk.org>; Sat, 31 Oct 2026 19:58:40 +0100 (CET)
-Received: by mail-wm1-f46.google.com with SMTP id
- 5b1f17b1804b1-4a208d93758so19004585e9.3
- for <dev@dpdk.org>; Sat, 31 Oct 2026 11:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1793473120; x=1794077920; darn=dpdk.org;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=aKyI78D+uLT5WgFGR550c2XBL5aL8YklpeHC1DPBFgo=;
- b=XrK/YT88R1FZUvK4CKpdEMrnk1gFz0v0WjgEC3tveRwiI9dDe6QD2s0K6YEZRob7Lr
- vGxfdPhBkhHRuDss+xM4v9210B/EsKd0m/I5Fy3KmoeaRiv9hDrtm4ybwh1q3Xc4R37b
- 1UHVbTxty5q6u8XgocdqflVHI6Z7equMsJX0RoO291kuCUP+9E1TQJ9YzwxYc1rwliWa
- nGCzqG91ceMTFe20Vd8df+FRG7I3ymqC8nRAHHdsAtkDVVAEZcvg8Wf4j0Xe7EGhvSa4
- f9JXPRtr/R7ZsYbIRWpSoe+0XF/L/n3mn8OV1V5qmpj5cPcrN0kxXnagow2fnC0VZ33e
- LSIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793473120; x=1794077920;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=aKyI78D+uLT5WgFGR550c2XBL5aL8YklpeHC1DPBFgo=;
- b=J5TNI/5jZZfM6MxKWoH8txl6nmAY66wufNYQjcBM35EZAVtsu0CR4mzTihz/p8RtME
- F79n3GpJm2wzb6R/CIgwggBW0Fk/JFz7ZBhxv2+MQHulQnSmT9wDkSN4X9/0mk2x1CcP
- 5XobmZt5+eGs82j6p65eyHPwWvOKZbig/xqZH8sa4nL3Mcm59/b7oT6nZbZ6B9BbwKBc
- RMnLbvNHeTUuBwuFgnz6k2hpFIX2bPHpRb7DfCaVbmxLfUyqlcKT8IuvftOVDWe93CVz
- 8oKRapWPG/FWIiJmCuEkYYkLm1P+4hXPOTBisipiIV9XMxh7s8GxKKRUSrNHG/0m4nGK
- yeUQ==
-X-Forwarded-Encrypted: i=1;
- AKwUvBwouZxJzghzQsnRR5oj34vBtPTtQUIleksH6jWJjUbZITOWcPX7AuoEr4pJp53pmaQ9YUA=@dpdk.org
-X-Gm-Message-State: AFq9FYLPogdGpNpZBHUq9a2yxVKQBCX2j7lVinXBMDYUC73A1fQcunKn
- iZ/b/a00EXcz+H5nIN/wLA2Cs+2wrEXv4yP+u8gKxmRNO8AyoFKsOjfR
-X-Gm-Gg: AYBFou1sTikhK1V3puoMSWWJJzQxTKKqXtOGvesG+0a2LzycxFPJQbAR5eESxjKsssL
- kqMsJWngbSgJsRJAmzgxxaP8V+JSp1GgvJQ1twAA02XqcCwjmZxYfeKBzmwb2kZK8LPBym+6Cs9
- Bc7aPycefv13SBYCQf7cXZx6+qhpq3X2wmUXjvZqyEe6d22PWLna+lc90RxfGZufmtp8DGiJUs2
- 0F2ZIyY3BoEd/4cdhzHCZIzpJByLAdddh7BEs6DSdr4ZMCXydni7xmH3a2GYxIDzUxkM/c5j2Di
- KbcdnoLQHOIA3EEwChq2o0PhR4dPtk3mpp34kfX35w3uxeJKjlyhAjm1XeimuN+lRI0Xvq0wFtr
- Lt51JJI+4wwV4mu9NLw58cY7KHKZNl+nUvq4qE+LHmfW/m6nVZWU5jGXgyeXoNpQxoo97QPEp9R
- 7JvKXUNT65iWzgB/CppMwXoYt/ympWX+DZsSn46lsoLW8PHvrUkExwCmrVdEOW4gNcvOnbyaJ1y
- voB9bPwOrJW5jRJfpYC69MpVHRpUpgABoSmH8pV/tnY1DvtxOj/26Eh1AlybBDqKtDQte3ib9hK
- EFG8fyooZCMl7528wHZP6rpB7Q==
-X-Received: by 2002:a05:600c:3b0e:b0:4a7:7d22:c50c with SMTP id
- 5b1f17b1804b1-4ac150b2243mr144528305e9.2.1793473119998; 
- Sat, 31 Oct 2026 11:58:39 -0700 (PDT)
-Received: from [192.168.0.78] ([80.233.55.245])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-48e71b7246fsm10192700f8f.19.2026.10.31.11.58.38
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Sat, 31 Oct 2026 11:58:38 -0700 (PDT)
-Message-ID: <ab83280e-4e1d-41d7-8c26-5617bdb84a13@gmail.com>
-Date: Sat, 31 Oct 2026 18:58:37 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id DE7F54027A;
+	Sun,  1 Nov 2026 09:04:30 +0100 (CET)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+ by mails.dpdk.org (Postfix) with ESMTPS id D008640279
+ for <dev@dpdk.org>; Sun,  1 Nov 2026 09:04:28 +0100 (CET)
+Received: from ar (unknown [113.239.72.160])
+ by APP-03 (Coremail) with SMTP id rQCowACXp5iJ8uZqxp0dAA--.24995S2;
+ Sun, 01 Nov 2026 16:04:26 +0800 (CST)
+From: Sun Yuechi <sunyuechi@iscas.ac.cn>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: dev@dpdk.org,
+	Sun Yuechi <sunyuechi@iscas.ac.cn>
+Subject: [PATCH 2/2] acl: inline the match checks into the RVV search loops
+Date: Sun,  1 Nov 2026 01:04:23 -0700
+Message-ID: <1dcea3d3b0b7fab108f3096a9585383d36417099.1793520104.git.sunyuechi@iscas.ac.cn>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <cover.1793520104.git.sunyuechi@iscas.ac.cn>
+References: <cover.1793520104.git.sunyuechi@iscas.ac.cn>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bpf: fix index register for classic BPF indirect loads
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: stable@dpdk.org, Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Ray Kinsella <mdr@ashroe.eu>, dev@dpdk.org
-References: <20261027170619.2193021-1-stephen@networkplumber.org>
-Content-Language: en-US
-From: Marat Khalili <qm2k21@gmail.com>
-In-Reply-To: <20261027170619.2193021-1-stephen@networkplumber.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: rQCowACXp5iJ8uZqxp0dAA--.24995S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF48KrWxWr4UCF48Kw15Jwb_yoW8GF1rpa
+ n5Gr13Gr48tFyS9ayUtr4kAF45Ga1Fy3y2k3Z8KwnIvFs8Jrn8WFyrK34UCF1a9rWrAay2
+ qa1akw4Uu3ZxAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUym14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+ 6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+ 0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+ 2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+ W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij64vI
+ r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+ xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+ cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+ AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+ 14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JU9189UUUUU=
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAISAmrmtxJ4tQAAs6
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,16 +52,49 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=4.0.1
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Converter code fix looks ok, is there any way to have a test?
+The match checks are called inside the search loops, between the
+transitions; -O3 inlines them and is unchanged, at -O2 they are not.
+Flatten the search functions so the loops hold no call.
 
-BTW x86 JIT seems to still allow negative offsets in indirect mode (we 
-only fixed it in ARM).
+Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
+---
+ lib/acl/acl_run_rvv.h | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/lib/acl/acl_run_rvv.h b/lib/acl/acl_run_rvv.h
+index 1d6fdff045..c4daf10224 100644
+--- a/lib/acl/acl_run_rvv.h
++++ b/lib/acl/acl_run_rvv.h
+@@ -182,9 +182,11 @@ transition_vec(vuint32m1_t v_next_input, const uint64_t *trans,
+ }
+ 
+ /*
+- * Execute trie traversal with 8 traversals in parallel
++ * Execute trie traversal with 8 traversals in parallel.
++ * Flattened: a vector value live across a call is spilled, and the
++ * frame is then addressed through vlenb.
+  */
+-static inline int
++static inline __rte_flatten int
+ search_rvv_8(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ 	uint32_t *results, uint32_t total_packets, uint32_t categories)
+ {
+@@ -270,7 +272,7 @@ search_rvv_8(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ /*
+  * Execute trie traversal with 4 traversals in parallel
+  */
+-static inline int
++static inline __rte_flatten int
+ search_rvv_4(const struct rte_acl_ctx *ctx, const uint8_t **data,
+ 	uint32_t *results, uint32_t total_packets, uint32_t categories)
+ {
+-- 
+2.56.0
 
