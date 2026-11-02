@@ -2,98 +2,97 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36926606A905
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 17:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4C3606A90F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 17:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm2 header.b=FN1vWCwW;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=ykrWYWIo
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm2 header.b=n6xK8AEX;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=LJeleu6/
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4799E402E3;
-	Mon,  2 Nov 2026 18:07:47 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2F34E402E3;
+	Mon,  2 Nov 2026 18:09:38 +0100 (CET)
 Received: from fhigh-b4-smtp.messagingengine.com
  (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
- by mails.dpdk.org (Postfix) with ESMTPS id 1838A4028D
- for <dev@dpdk.org>; Mon,  2 Nov 2026 18:07:46 +0100 (CET)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.stl.internal (Postfix) with ESMTP id E57887A012D
- for <dev@dpdk.org>; Mon,  2 Nov 2026 12:07:44 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Mon, 02 Nov 2026 12:07:44 -0500
+ by mails.dpdk.org (Postfix) with ESMTPS id 128D44028D
+ for <dev@dpdk.org>; Mon,  2 Nov 2026 18:09:36 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 071D87A012F
+ for <dev@dpdk.org>; Mon,  2 Nov 2026 12:09:35 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Mon, 02 Nov 2026 12:09:35 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1793639264;
- x=1793725664; bh=Z3HC2A+AwuUcqmmhrHbHz7WwAdP2e2JVcwNCh0GsnK8=; b=
- FN1vWCwWkTc6tvE2KaTC6h+HFnAAoSo22K1QhYHDmvbZWiuognfFmv0nx/Gx5znI
- I5glUCenfBGvGq6wGfkGumGARahMdWYCuG3ZIri7LrOk81zzMp4US1B2pdUMl0zO
- XSsy2nIAjhY9SIerED8ptXszSs7iLQqbwVVw1L+6qmvi9PqUjdVeWYZ2qlYOCQAt
- fA6X28/khB11iWEWNKTA34NyuXaDMAd6eMoemWu2vA7EO6Cd75BaoOdd6wCif6qP
- Ov6H0BlMGhsXk42G7DpzE/7p7/kn/Ge1RsXUMPyrgdZz92PxVZ4jRaxTpOeH8LTh
- uVz9ZYkzeIMQxQ6ZzwmUhg==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1793639374;
+ x=1793725774; bh=NI+GINGWWSv0N0vLHyqXOLtTRjPct9XDgCd1If5v0PQ=; b=
+ n6xK8AEXYGSUiS4afzouBSA5TXvjdDF1B4ylOk+FbG69q97gDE6EVpCi1AWeOuPv
+ +LXKjk53ra6nSVS4VvVwgleOibox+J0Gd0n7kDLMu77A7yxpYQx4gaXcLfwHVRXt
+ +KE0c8pG5hVKecY2zDIoddajsI0QYl5gGOP0eI8YBGsQ+o5XZqimhGBoGOoiz8Cf
+ c5em2gBwu1KUgb+YwjxhVjUd9MpR4rFOSX30cvBXAXOF9IbDN9jn8B3XkouJJyTJ
+ fFOOX3MP8DftiXDfnOYuAckUh883SUKR/d4DAeaw1u4qXZy0Hs3vi/i4VL4sB4Za
+ hSqjbrNXKacAXTjv3o4rKg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1793639264; x=
- 1793725664; bh=Z3HC2A+AwuUcqmmhrHbHz7WwAdP2e2JVcwNCh0GsnK8=; b=y
- krWYWIoH5wr72s+tKWbhvmPJO9Q2lDz3ZpugYqv1ZAXiWoqA9eBa1+uekVWKKgUZ
- aG1ExYmg/bLXVKVCLMjDzlSZVtk5HZjNW7HbPsd4hg88AE87vPlP55J3QXdBKfKn
- jqB0kzKiA5fExYI9XJedMYeJsO9mTl53nfExO/LP0wueFIVNq8/sarGKuQTJkW4F
- DbAe2jiTFBfINFF8QlBcGxVMWWT4Zz8qPvmz5bLuRGIMUjN3FTkW+5XpFw0W4oPr
- Bvx9rSpfcWHTE0eNooAu2V3b8ifkOO+eePuQISuugtJQ6w4lFXCh8rnAUGeu4FR4
- 4f0N4kj5hTW3qaz/huIvg==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1793639374; x=
+ 1793725774; bh=NI+GINGWWSv0N0vLHyqXOLtTRjPct9XDgCd1If5v0PQ=; b=L
+ Jeleu6/J6rIX2P+ArT7l/86nU6Eqs8p2dCkynTJapyBBNApY73OUfcLzOiXLhZAG
+ u6/vdQ4mmoWRJ0Ctd5RAn0/FydX//XEkKRYYOltZ27YAhg3JHC8ESJac09iHXWts
+ 46IZ95F+rSotJVil5aRLPkBD41kUAlQbawsoaQ7zFemfnYGsnfuqEOB09XuMkuBa
+ G5MxxP2EPUYFLR+EO++nF6rx2JrzbPjuB3PXcOfS4DYgkKbclztAsb5+CzbXtnsH
+ +11KJ6mohQo9HHLK4saeqGGelUFbm6rFGQTwthMYGDnARmRCKkN/TP7qaETF+98w
+ 9udXkosbJ7OoHZXnWOQvQ==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
  repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1793639264; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1793639374; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:U7dNNdKS0aT8H2NopofvhjPuEujTj5ezn2JLGtZSCteiyVo
- hiBA9OFJi8ac/C7a3bdq2BCu92lV53Mxot0aIUILBdM1EZVeZFFjJFJTQ6/D3rsO
- Ji8l7G+Be/tnjVXEp5cXktf1s4EgdQVthLWVkLNly7JAcd0ZQViPjiIs4ZVJ0xLR
- GrCbdSgONAa23Bc4aCGamVvgLIMBXdsBjrZYBIIztonShiQOVbXZg9lfuCwPF+6S
- ix2CGCLWx79OCzFjVbhh0LzfdHyycNbhqtzXJ6qcS1Wn4rRzLw9YNrDtCXsjwAwy
- PrRWYZtC8JpVYcaSYfGTa7Awfq4HhC3QMCa3kcA==;
+ s=fm2:rsa-sha256:lH3Zxq2LS3d0oHAXvLaFwC7KCfoXZoiiayBjGw+WngjLbOU
+ /LREzR3MlXbrcwaCzSbRWwHsJPl09gEWBBOpd4w2iblH85LuX035eTjDv8LXZOs9
+ CRn0GE89LfXNkUNwcxXCXtHXijVVRZL18ZcBMB3xpI9BtEStt6VIEFtrhgM3LRsd
+ L1g5bgGSBXzYhE5xzyvRyGQxRdEpFGanSfg/InPHQvseKMyBk7aqVqBuJtfHtBKP
+ gc45mK/rG9+L4IC7pZ/A8KnZPwGVgovVMV5oFctrQrd0OZvUFx3UY50SMsgSh7+o
+ CTkb+DmcUpYPReDckWf/hZuvoK3Zp/lcpOsP+LA==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
  repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:of/uWI1etF8QGTktzXTj/pSRa5f0GIGN5nYuiUKqoaU=:Z3HC2A+AwuUcqmmhrHbHz7WwAdP2e2JVcwNCh0GsnK8=;
-X-ME-Sender: <xms:YMPoav3w17kwgs8fBIOIhehBUTt-R8eZwKtE4oqcXf1CHHNTn6y9pA>
- <xme:YMPoauNqQr22vw-t9nhjRbC6pi9wth2Ppo22pzSMlD8ykuE2-kNjELBIYpLRhAuej
- W6_FMOWL6grq4rCuBqkM8RSc_JSpLchMGfd7UqmL0U-QNsdfZZLbZY>
-X-ME-Received: <xmr:YMPoan1-ZhIFWt6G0nvSQypty7ReqDh0ceE8d7fbFmWmfh8jjiY5MUO0SzdrdjBNJ50Y2v0fRVfcX4hvlKS3CKI>
+ h=sha256:H8o/pGUWqgWqaWvZbPhG2rBhytkUBhH8kxNfi/UTQoo=:CwocaI0RdILATuWVToYyQAJk3JcKWTnlFiKFlM30XS4=;
+X-ME-Sender: <xms:zsPoaioNbX853vTj6AWaDSRh6jhn1k1Z6mRWbxjlHatwwJLcSQN3EA>
+ <xme:zsPoagzYi9QDjntPwVufsQA-x0-HBg-ayXBe4tbD3oS5SoMpmOQpwHaEs_nSy3NuH
+ -EdBYJn5nVLVWCD2qa3JTvAz42bxCuDnuepPBVtb8F35FgaTGAVUruf>
+X-ME-Received: <xmr:zsPoavLOiCTQ3jvEHUiyP643azR_jTJWKVe-yGOFa4-9hcfzbR7dQytXvEdz3iUf_wLVylcNWl0UNVkeuLSZv6c>
 X-ME-Proxy-Cause: dmFkZTFdIrzqH5WY4XQMBI2Xt0oNq7SS+vrButsz7Bkqx43q3OfwqL94NZVxccLySO/0Vd
  pgTKWBdGG9M+3hGBi3ruix+Nt+b6sMTsx4MWJg7IsCv4sl3Q8tkknEaaFGPQb35Xchq0+T
  ZU5eGwxJo8sR+y7requP424ew/7AatoDyKKC4k7cUBBj55+6gaqfSqpQZUfXZrMUESUHmg
  GqCkc5/MPwOq5/033RuUvkRd3UNB8v8/6C0tzeAyzqt6HF+FOsnXsC9PpgRdyDFHMut0et
- SUwDaiBAJHA0qNI8wI5J38vmQP0SDmf5qbmSa5qb/u5/yEFU62lTlMRDC1VRMlJXEBsnS9
- 0eTxHwNepspAee4YbtdZytwmPo2HLPUHuNUEwmq1UeY+p7Dk5EoMO133ohCTfzvKuHCx+x
- B6H1g1B8eD206rhJyEqXZLfo+Qiaw1h3uW3c0xIzE9aheyjzHtXVd0ivowtavdgzKrupzb
- Q3N9EqD/7/uLMiaQVYePy6gRkNLygVm+oC+b7YmTYrDlK0jWx8oFjWr40N3uGAjleAJQMD
- J5FTPg6mJNNBpCsHDAwQ0jMH5WMLKPcfICgSPzOt//mktmcdHVKddg9O7BpIIw+pro/AOq
- MJQdM37tq9rmDDMqha1QJ6/dTWlVIVLbblP+M8d8USZ9A6OoEEGa696fIOAg
-X-ME-Proxy: <xmx:YMPoatHpsk_o5AsXBH11QXKVAs02jY5q7LwM8zlsRlYI-iBRVJcfqw>
- <xmx:YMPoas5h1eUO6nu4F9-Jl74mhiGEOfJ5OqzQNpya2sM452dMfl0_zw>
- <xmx:YMPoarvGwThzBJT9vAJiHbQ5mhmLrowVIDGORToQeD-OTk45DXCahA>
- <xmx:YMPoal7Vsk4gf2w3nWbSfSuJRZNlqi6fVdkTJsvN-ItkQxFc_4W-9g>
- <xmx:YMPoar-uUx3FC9GfY4HhWthcXe0eePMvcpjAmLLLh-zhVdMNjoHMCfTo>
+ SUwDaiBAJHA0qNI8wI5J38vmQP0SDmf5qbmSa5qb/u5/yEFU62lTlMRDC1VRMlJXEBsnte
+ n7hgzV1RTmHGyHUHYcPFCWGEAUKc/7gxMy6dtbj7Di8p/AKcwnv8XCSuqcRIf702/cgd2D
+ s8Mc99uBd3CftxjDlK9EXOnDmqiUvvxZ6jlPUd/VxD/KWrZoZcBrhtw0MIoItiDGIyDqJQ
+ 0VeldLGVrGuup84oXPLxIx1Bsjr5Hos9V29BLC6lpKA3l129Itk2hA4KWf0ssUSGr+jrO/
+ IxtLlcKFDoAQM3WRXBlHNBGB4fvMAXUp1ZNLgSKvmuo6kMUdRfMJD76bxup/1+v+ZUJWRP
+ kAMXva80af4tavfZOE4e/+Gq7V/KqT5CSwYSwOsQ9up7ZaBtUvBZUabpvtiA
+X-ME-Proxy: <xmx:zsPoaqJJdH7y5NlHfwqcLPa8yEYt1BghXnqC-mPKqcXszoOC6geWWg>
+ <xmx:zsPoasvz7BzvM4dGb-JG7OugCrdHwCKVY9gNkCiuunRladQWZ1Qi1A>
+ <xmx:zsPoanQ9MNaiy3vFvIDBLoUzIZ94c24WGB1abYw8uCkjkiBjSH1afQ>
+ <xmx:zsPoaiOY8XVkm-Vy7rjZtsWxzcsIFVLcG1dw-cDn4MYY_McKYDEmIg>
+ <xmx:zsPoamnPp1A4nQcdjVtq7IyonvQ35XhPr3b3MD8eXjxrMPY8bW7_xDy->
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 2 Nov 2026 12:07:43 -0500 (EST)
+ 2 Nov 2026 12:09:33 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Bruce Richardson <bruce.richardson@intel.com>, dev <dev@dpdk.org>,
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>,
  David Marchand <david.marchand@redhat.com>
-Subject: Re: [PATCH v3 0/9] consolidate sysfs access
-Date: Mon, 02 Nov 2026 18:07:41 +0100
-Message-ID: <fKza-eV-SI6WeOnGQFC4kQ@monjalon.net>
-In-Reply-To: <CAOaVG14kRvQjQLANeGU_mJMc0Lz74i8XEuC7_qdNcMw6gM6dyA@mail.gmail.com>
-References: <20260912063319.4117869-1-stephen@networkplumber.org>
- <tR3-FNBgRxOW6UbyTMi5jA@monjalon.net>
- <CAOaVG14kRvQjQLANeGU_mJMc0Lz74i8XEuC7_qdNcMw6gM6dyA@mail.gmail.com>
+Subject: Re: [PATCH] vfio: fix cdev build with old Linux headers
+Date: Mon, 02 Nov 2026 18:09:31 +0100
+Message-ID: <fEk3CF5PRNmGFEuo4obfhA@monjalon.net>
+In-Reply-To: <auitnhsTX1eYCuFm@bricha3-mobl1.ger.corp.intel.com>
+References: <20261102152805.644416-1-thomas@monjalon.net>
+ <auitnhsTX1eYCuFm@bricha3-mobl1.ger.corp.intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
@@ -114,19 +113,32 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-02/11/2026 16:58, Stephen Hemminger:
-> On Mon, Nov 2, 2026, 15:49 Thomas Monjalon <thomas@monjalon.net> wrote:
-> > > Series-acked-by: Bruce Richardson <bruce.richardson@intel.com>
-> > >
-> > > I double-checked this v3 again (as with v2) by running the unit tests
-> > > against a device using idxd driver which reads parameters from sysfs. No
-> > > issues seen.
-> >
-> > Why is it marked as rejected in patchwork?
-> >
-> There were just so many other patches for 26.11 and didn't want to rebase
-> this one of mine
+02/11/2026 16:34, Bruce Richardson:
+> On Mon, Nov 02, 2026 at 04:27:59PM +0100, Thomas Monjalon wrote:
+> > System headers may indirectly include linux/stddef.h
+> > before the imported UAPI headers.
+> > Both versions share the _LINUX_STDDEF_H include guard,
+> > so the imported header is then skipped.
+> > 
+> > If the system header lacks __counted_by,
+> > its fallback definition in the imported header is not processed,
+> > causing a compilation failure in vfio.h:
+> > 
+> > In file included from lib/eal/linux/eal_vfio_cdev.c:14:
+> > kernel/linux/uapi/linux/vfio.h:1524:51: error:
+> > expected ':', ',', ';', '}' or '__attribute__' before '__counted_by'
+> > 
+> > Include the imported UAPI headers before the system headers
+> > so their compatibility definitions are available.
+> > 
+> > Fixes: d129414711aa ("vfio: introduce cdev mode")
+> > 
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> > ---
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: David Marchand <david.marchand@redhat.com>
 
-So I can mark it Deffered.
+Applied
+
 
 
