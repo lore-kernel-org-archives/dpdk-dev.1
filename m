@@ -2,56 +2,76 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C177606A324
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 10:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B15606A324
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 10:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=lp329+PN
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=MCIXQ0nb
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 97E4F40264;
-	Mon,  2 Nov 2026 11:35:20 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTPS id E93DC4003C
- for <dev@dpdk.org>; Mon,  2 Nov 2026 11:35:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793615719; x=1825151719;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=Ap0VIthrOb/O06g6e5ymyIcWnfLZg/P8vKG60LruhMY=;
- b=lp329+PNMlTAvOaDiuKOfv9vDwp5xfH2gftfV6J/HmZmf6I6VxZGalOx
- s4C2RdQCaHs/ir6Je3oz4ykkfZnRiVw67VK4cj89XiY9R+ypNzNCOi6zG
- aOItPB9kVj0eUpTQScEk1TYMSp1fXCKjL6IohX6DEelw74UHnlSYi1+Sh
- CqtrivptUOPlJrY7R2Qoe+7SDcqpcAg0MTvM0NqNkUq+CSEiTOly6Ea+K
- H4MOnnqX3Cmlil7mcORLh2qokY7HTW5GnlIY6VHDXRbnunsh4EfnSflP8
- QmcPnbSidJtRjdBsnLmKnyCjCvjHquhjaExsX96RLo9ikQLBCQpgY1+TS A==;
-X-CSE-ConnectionGUID: vOSqXngBQeehRl/D61/+yQ==
-X-CSE-MsgGUID: MHF7bgmuS1CSlvMaC/+R5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11953"; a="2295634"
-X-IronPort-AV: E=Sophos;i="6.27,191,1787036400"; 
-   d="scan'208";a="2295634"
-Received: from fmviesa011.fm.intel.com ([10.60.135.151])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Nov 2026 02:35:17 -0800
-X-CSE-ConnectionGUID: eAI4hLZQQJ+P6trCkLMIcg==
-X-CSE-MsgGUID: IdPowMwWRimeuEe8ztjpFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,191,1787036400"; 
-   d="scan'208";a="7881900"
-Received: from mtldev4.igk.intel.com ([10.123.233.187])
- by fmviesa011.fm.intel.com with ESMTP; 02 Nov 2026 02:35:16 -0800
-From: Dawid Wesierski <dawid.wesierski@intel.com>
-To: dev@dpdk.org
-Cc: stephen@networkplumber.org
-Subject: Re: [PATCH 3/3] pcapng: add user-supplied timestamp support
-Date: Mon,  2 Nov 2026 10:35:57 +0000
-Message-ID: <20261102103557.2059495-1-dawid.wesierski@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261020175732.1552406-4-stephen@networkplumber.org>
-References: <20261020175732.1552406-4-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 8B2A640E37;
+	Mon,  2 Nov 2026 11:37:59 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTPS id B41EF40264
+ for <dev@dpdk.org>; Mon,  2 Nov 2026 11:37:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1793615876;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=IeduznZS4L0djvpYBRbWmBxnkRyLRcZ1OBOQytYFvsM=;
+ b=MCIXQ0nbR/QF6Y176uBJk+cq360abNrAkMVKtTlNvfpKMfDpYv+8Bhc6FoOGyMIVgFvn5m
+ AqZDOxa1iB5kFA0TMG1ffHhAWc2ZvAFchKz+et6hOBv0hlzs7sSEms+fibNNyillaS91oI
+ 5/njScBd85fJLAA7znS7KgLLdu32Wtg=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-504-0yx9gVh_PP2kS9IJZe6pSg-1; Mon, 02 Nov 2026 05:37:55 -0500
+X-MC-Unique: 0yx9gVh_PP2kS9IJZe6pSg-1
+X-Mimecast-MFC-AGG-ID: 0yx9gVh_PP2kS9IJZe6pSg_1793615874
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-3ab442d8d13so12153321fa.1
+ for <dev@dpdk.org>; Mon, 02 Nov 2026 02:37:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793615874; x=1794220674;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=IeduznZS4L0djvpYBRbWmBxnkRyLRcZ1OBOQytYFvsM=;
+ b=JvSgqsH/a0+XRgp9SeWmfgoIw6YUK3f2i3bkf7ho1haqpqtwmJnYKAVxWeKh0Pil6N
+ GRWvPAdNpKpp/kT/9S8pehPoYxLtaUDGcvu1WaISkvalPnOHok1PtFzcrf8KA5UpYvmD
+ 8Soggcw67K6GRHK9E9/K+A210ZAfo4y9ROj6ZVYk2LXZ4vAymJioREK08LkDvHTbgohO
+ 4AneoX6uWU4eMbXqF3+x7b9c81QMUePCZQTpZL3GfO3DLa87t4zSvU8zSwsMuR+Rngr3
+ bUJkUEJaXDK7vb3fnY9ohXa9t9MotLTbZmzyBwHR4dPigYHcro5DC0vg6dZjKFyeZvfr
+ bSzA==
+X-Gm-Message-State: APuU4Z+xN8jNwXPZ6h6HoBH7VMTTmFUiYqMjNbts9xHE7cfA3D+skheX
+ d5PF7FlG2OeBEVbOzGFdhZ2FIDbNAQFD/OqHjSI8IRd0oaS5hrBQUPgMPWhIkw2IhwJ0rjNV4sn
+ cSw9ObX10of+TzAtJz34pFoHz9kZ8Aeh6wApMpw2nocaPnWRjt2j4+2vaLm0V2QK7nPj0pbV4m5
+ H4uRnFyMC8AZ45+CXahT4=
+X-Gm-Gg: AYBFou0WvyMEwtGl7ck3STnYZsbUQucIxCx87Zb0pH8SH/dch/Hn+xR8S9fEXpbgYmC
+ fkbF0zQNtpTFIGevJ1iUzJXw/5eM0rHtOkP49hCGoIECyrNpZ/BhrjMEq3w+lJ8KJYYKBq5Rmpx
+ xKlvnjH1C8Vg7D/bsNSNHtvTM78lveJZkR6QgT9UCRX406cTVXWfEEsroWuS3C9XAx0a+M2dBC1
+ Q8bmdKmDOJzlljtVsV7XjCnxJ1JEm1svB1I/IgtuZUp/1hS
+X-Received: by 2002:a05:651c:a114:20b0:3a9:a2fd:5931 with SMTP id
+ 38308e7fff4ca-3acbf811634mr13481491fa.6.1793615873830; 
+ Mon, 02 Nov 2026 02:37:53 -0800 (PST)
+X-Received: by 2002:a05:651c:a114:20b0:3a9:a2fd:5931 with SMTP id
+ 38308e7fff4ca-3acbf811634mr13481421fa.6.1793615873408; Mon, 02 Nov 2026
+ 02:37:53 -0800 (PST)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20260909144631.1122673-1-bruce.richardson@intel.com>
+In-Reply-To: <20260909144631.1122673-1-bruce.richardson@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 2 Nov 2026 11:37:40 +0100
+X-Gm-Features: AclHuK8E2i3rY4yf8x1d16XUf0IBAcEPDRnKXu-T7F2qqf2B7S6uy133wSkUpwM
+Message-ID: <CAJFAV8wni-RRh2indV+-ShJ1uby4KygWkDD3To9b2Ny_9-BwwA@mail.gmail.com>
+Subject: Re: [PATCH] usertools/telemetry-watcher: fix hang on startup
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, stable@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: COgDF9mtwWPujMcTmZ61mGiCkJKLU5xhsdjpspUJ02I_1793615874
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,23 +81,30 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Thanks, Stephen.
+On Wed, 9 Sept 2026 at 16:47, Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+>
+> Commit cbfdffb1083d ("usertools/telemetry: load aliases from config
+> directory") added an extra printed output line to startup of the
+> dpdk-telemetry script when an alias file was loaded. This confuses the
+> wrapper script dpdk-telemetry-watcher, causing it to hang on startup.
+> Only print out the message when script is run interactively.
+>
+> Fixes: cbfdffb1083d ("usertools/telemetry: load aliases from config directory")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
-The proposed rte_pcapng_copy_ts() API matches the interface used by MTL. OpenVisualCloud/Media-Transport-Library#1849 checks MTL's packet timestamp output.
+Applied, thanks.
 
-I have no objections to patch 3/3.
----------------------------------------------------------------------
-Intel Technology Poland sp. z o.o.
-ul. Slowackiego 173 | 80-298 Gdansk | Sad Rejonowy Gdansk Polnoc | VII Wydzial Gospodarczy Krajowego Rejestru Sadowego - KRS 101882 | NIP 957-07-52-316 | Kapital zakladowy 200.000 PLN.
-Spolka oswiadcza, ze posiada status duzego przedsiebiorcy w rozumieniu ustawy z dnia 8 marca 2013 r. o przeciwdzialaniu nadmiernym opoznieniom w transakcjach handlowych.
 
-Ta wiadomosc wraz z zalacznikami jest przeznaczona dla okreslonego adresata i moze zawierac informacje poufne. W razie przypadkowego otrzymania tej wiadomosci, prosimy o powiadomienie nadawcy oraz trwale jej usuniecie; jakiekolwiek przegladanie lub rozpowszechnianie jest zabronione.
-This e-mail and any attachments may contain confidential material for the sole use of the intended recipient(s). If you are not the intended recipient, please contact the sender and delete all copies; any review or distribution by others is strictly prohibited.
+-- 
+David Marchand
 
