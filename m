@@ -2,104 +2,81 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4D8606D822
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 11:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE858606A31B
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 12:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=nXyF/m9Q;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=rsA1HkJU
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PATxp9cY
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5DB3E40281;
-	Wed,  4 Nov 2026 12:40:56 +0100 (CET)
-Received: from fhigh-a5-smtp.messagingengine.com
- (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
- by mails.dpdk.org (Postfix) with ESMTPS id D58154025A
- for <dev@dpdk.org>; Wed,  4 Nov 2026 12:40:54 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.phl.internal (Postfix) with ESMTP id E46481400141
- for <dev@dpdk.org>; Wed,  4 Nov 2026 06:40:53 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Wed, 04 Nov 2026 06:40:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1793792453;
- x=1793878853; bh=iz9YbxdWG9aDdDRpVNBb/kmnJHXQn3bI4pvuKW7Dqs0=; b=
- nXyF/m9QHb9ScSvdCNL5CO76munveoxcnLtZPLXRH9rBfu/DVL7epcn2aD5HxLHn
- NJV9tTmKb5XtaHxvf9WhhtXyBYdT++yfy1JNF8wmEIDJ3W+oYLiBRY/XC61uKEpv
- eizkRDv+GvwBVIQDjK+ltLvNufHQHDzRDlXZP9i+AfAQ0JpZaqnx17t3NzuE+F2Y
- qfE33/zkb+KmpXggOpXXURZj+eXPX5GVMqU7ApPXLv5vpeBIYVQUGbzGC9qAKXoD
- YCNs4ek2IwTKo5MPRdAwVahJUbaC7REVbzeB24iokWKKbexPDaN0uUg6InQqbqzY
- RgegTUWpu0L66Rr+kk+huA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1793792453; x=
- 1793878853; bh=iz9YbxdWG9aDdDRpVNBb/kmnJHXQn3bI4pvuKW7Dqs0=; b=r
- sA1HkJULl8fBwD+KsozFnAy3qSaHekb+L6fDa5NPpwZUb8c1FI5shTDHG340xfiO
- HW2cu85i5orCAr6nf33ybFXnV3qiBT5NGhKjgz4/KUZw+LDd9YyfZZAJh0yRxzaC
- FtFqFFKZnH4QD4Tq5up8Np6Rb7Yif4C7I5qQK5sfUvFbq1YLEUuZ+/pKeBtMcAel
- nRjH0XmwX4lozdMuxPirqpSKKxajd75Nw2NWK39khvuoJMwbBoknFKq7YVXqdnoh
- 2LKDA4/VeyNppLMs86BAKU9u/tBjUBqeP3Eh2r85Pk5p1AvgOTco1yuFKfa0rO1F
- BE1sa+TVfnds7tPVHAmXQ==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1793792453; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:WqE367ib15DYlxLxyUdgYgQjNUstnNyMNe29mL7oaozwhnh
- NMV2aLvvoULMPTRUJol76SHenaJb456vHUm8kjoq6ULUjRylgtSbnT0YPm6LTNBy
- n4tleoney8oAnHzwFCB1OUCskOG5dpWqb+aWviNXZKsOuzDpqi5PFnFj+AvEZ5d/
- KAbMDhn+k6nszIggCmQOxzmdbz+bVa2B6h5cvUqB9fmswzfeTP72j39yCN1GBMsV
- a44chDu0fUjSUekAX4AG4NcNw6oKmdjtcr3rAZ4oGx2YNWgOhdaqgzoa6dddVveO
- 0eFnu9lCKguuP4iKa8Kjal436K9/wKU7F2Cyu9A==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:S6BK0Jo3mhUv2ZJFwhTBDKAt5JgatQVdF89c8pxAU3U=:ugPCfhDJZUUDK3+cugNfo5Qq/IkjYJtY/IBnB1Alq8Y=;
-X-ME-Sender: <xms:xRnrasyxXiVRo9c0onNZ3dByXntAp8Ru-0b4izhKKoh5G1gIhrokIw>
- <xme:xRnrarMaT1yBR0jOZfPJxaExB_pu1w9LBoWtWzfK8zlkQDlznTvzuVMdTIUU3ETAa
- FuGPIiehkq8z2yzvUqMc9U82LPcuxo95X3dAiaEY6hJ3rj5g0AIlw>
-X-ME-Received: <xmr:xRnratWmt0SH8RoAmxu_dJZYES7SeBBO2qBoc7hq2UmcJ_ZKixXUZ1f0p2Ooh_xmojos1dt3f8PCScRkCDyNFMQ>
-X-ME-Proxy-Cause: dmFkZTFdtyuH8BkhviV/jTs3gRj3/QyUPXLDHG7ix/bq+VnqqpzHfOnawWUjZK5+Kf7pHW
- YkKDSv2abh/q2fG7ESbxsT6mbUhfzYnbT1JbrnSyOdboaCGONnv6LvcW3mju6HY//6195u
- RKfCG4kpP5VO2IY+kwjHPRr0CznilZ2xAj+C68nkt+N1DazIEc+cnL01B9MDCnoTirMvYT
- j18fWW2BAEUReZGN4SU+WkgIVGuqqkDUdB093vQ9Odv8nTGjCcIK9jXYMf9A19bheUtpdv
- qzvYkLU4hNFQ0uEZV40CSjryhkIvLJGGf51Y6zK99WGUivEzo04+Igxx8PJn58hlaG00pY
- 1mCIUkv6c8i5CvnES85afdFFM+ng7cLV02HXyCfyQOHXv13TRpufkJTz1BGOPQOPzcJuU3
- Rsb5sQaw8izpJGaJJe6Xx3uiK5vp3Bk+vrMcu7WsHj8EJCzYtn6Z/9IsgUqYI85c6Zcb3/
- 6GEitq0RAsUsd4AE4f5ZAsPoeW0+1OV+AIdgg9+B0U472CeG/S2zQczGRNUFMMCRGKJxPR
- hkngHrK3MKVeavTGmcGMNiJxHtcqpnKzgDWEeeVAKB/Msm1K6B0aYVrAef850+E38kApqI
- OXA9Rtvoi6/2TF/ApaGIbVS/So6rPWEwoyd1+Jqn9XmoaJneV1QY0dgEjF1w
-X-ME-Proxy: <xmx:xRnrav1qP8N4KnLS_jUa5xhH2Ctu8hD6YccpZG3mGEtnwdxh4Z_4ow>
- <xmx:xRnrarq3nw5bF_Bx-ay5OjhL6imttLFU-STAyEVgOzWgoTkm-etgpw>
- <xmx:xRnramXEOfPlnbPfFiYiR3037iAtqySKMiOBOAsgncJy1nHrsUKRTA>
- <xmx:xRnramYx3GAL3ITcD7Dfn0Aqi8fneoglmjZAEpIz8hyPtIZ-hE_VTA>
- <xmx:xRnragGT2M6Ftw3-0e-iJPfh2yGJflscfDFJgOE11csXlvApNcoWm2Gv>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Nov 2026 06:40:52 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: fengchengwen <fengchengwen@huawei.com>
-Cc: David Marchand <david.marchand@redhat.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Chengwen Feng <chengwen.feng@linux.dev>, konstantin.v.ananyev@yandex.ru,
- dev@dpdk.org, Aaron Conole <aconole@redhat.com>
-Subject: Re: [PATCH 000/227] use NUMA node terminology across the tree
-Date: Wed, 04 Nov 2026 12:40:49 +0100
-Message-ID: <DxcOTN1IQyaIHHadU1FREg@monjalon.net>
-In-Reply-To: <CAJFAV8w0rALL5A7BoewJRcEqY-=ZGyMONTTFbgo_OSuf3k7S+A@mail.gmail.com>
-References: <20261103145306.487255-1-chengwen.feng@linux.dev>
- <7add359d-c77c-42ed-8e92-d5d496b8bcb4@huawei.com>
- <CAJFAV8w0rALL5A7BoewJRcEqY-=ZGyMONTTFbgo_OSuf3k7S+A@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F3E4D40281;
+	Wed,  4 Nov 2026 13:08:38 +0100 (CET)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
+ [209.85.221.54])
+ by mails.dpdk.org (Postfix) with ESMTPS id 3C04340264
+ for <dev@dpdk.org>; Mon,  2 Nov 2026 09:27:59 +0100 (CET)
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-48dfaa3fa12so2137280f8f.0
+ for <dev@dpdk.org>; Mon, 02 Nov 2026 00:27:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1793608078; x=1794212878; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=0b16BCym5uh3OBHLyc4s8TTeMHTvhn2Gy0TvDiQPC/c=;
+ b=PATxp9cYIA+3d8aKOChPdRduewEN25Uiu0PUV6JuHTso4UynrWhO7iNmhlMHZZWymE
+ Exwwc5N5oqZEOp5xrQUHEGMtbFn0+ZseDN8CwJvi8okRo2iLnngrqfr5iNKcB9FfXsFf
+ r6z+MjrvS7vdHCiQ5Hjy6Ng3AbmgZmFK8HKGYAvKc0xlWd5N81+5kX+I332Dm8ICc0Lf
+ kH3V5HE6JLrXBhXdcCHukzXn02PGnYwQ3PQlaIzChe4BfMYVQBckpxh0cn2X+ZShaao3
+ Rt38z9i5qjPcPEb6i8wfCjzGLvaW1aYI5dJRtMZSc6CB4gkfh1tp/2PfPBuAompV/Of1
+ DOjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793608078; x=1794212878;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=0b16BCym5uh3OBHLyc4s8TTeMHTvhn2Gy0TvDiQPC/c=;
+ b=zwVklFa38mETE5Pry9MdUY/FjH1O2e0EEZP1zlz1WUQGBJOwdhQj/cpTDOJTrhQkSs
+ V3193jbCFm6IlH3N4++NjPe/Hfb8MXaFM5FoABDSZ4G/MrBDQ9R5QlPsOpWQ8gCsgjzC
+ c0a3I666W53zZRD/xBBIhDBhqPDTCbsOAH55jZWoGh9c0ic1brMcTOAlNvDcZ+t4/D7C
+ VyVdF8eY60MSkM58IfbIggZGmC5G7hVR9JsBhmQPHIqT6Q1+xU3Q0OlhOc1BbtK5KdXf
+ jsaF9IW64yBDyFexqlde1t/Wh6WIxVy/xbc8tTrXX2QrzajZrpuBAjjrfwgPbRn4u56R
+ ppaQ==
+X-Gm-Message-State: APuU4Z/HB3tP3a8YMyMay6qCtjTDznzTV45pjd/k/+Jea9p8uO1Dj36N
+ CgjVH1RzeNuRgnFiq5iXDpWfy320/ztARZnCiFWrb8t4Yf86wzDG5uEk
+X-Gm-Gg: AYBFou10liy0Q6qXE72PG1fjZhQdVfr72X1LfADOc9VVvoXozlnUHvVuIoWWjlS6ggu
+ R09YjhrjnzcoPX4J/k86YzBc3q2zTkdYQFKgR2/O9kk4tCerZROhu4ZzDku3Q2urPkfhzQx5XY5
+ QcQ7z5Q8u+Ej+Tj0a4/A9DGTJdV8l3a+ZD4Gpf+ukwfb2xZax4v5zjvCdi1Reu5d1gJtVjGYL9J
+ j3/EzXNS9+YRH98PhZxrguYOa5DDDIzpXfaHbzeM6Zn0k88cHGvSbrpjnCW2/YSAsj4NjySVAfa
+ 5kNBXXDyxu06sE3zGcVcoHn77FXfFHNT/HA15BhLMZGTZ2Am4pMdyu90YVilYvq/Htt4yAxpT6b
+ 1+E4DVlEdvrBGTMsOnQD+6j+HXczc2N+9ml5GXmjxv6q1gQgn45gEA2fQ+msNR/Ma5rTTSYGvNJ
+ f0jidgBqiW7IF4NVz7Zv37WApgNtS5bF6AGiY+nkLKCSNvQP9syETq3hNyieigzNyWuheEOLYlI
+ +8c3Tpq8J96DmNQtot4XIMDinOLHv+BwdO9nFY2XoTUS/5+ZtgKShF61Izk0tDqdDR1AH3Jc67X
+ tRMpGRcghqT1kpxOpDPr/XNV7h7t4pvA4lWcpCIy4yGmbdRVpppoSD2eeL7z66A24mhPiMalquF
+ wTAcmfYabyS2zP4voE5eWvE9rpZx45Bm8LcnrTbf4/Hv/cGw=
+X-Received: by 2002:a5d:5d0c:0:b0:48e:7833:2e56 with SMTP id
+ ffacd0b85a97d-48e7833321dmr13664168f8f.23.1793608078282; 
+ Mon, 02 Nov 2026 00:27:58 -0800 (PST)
+Received: from center.jhjvjihww5qejoy14qwv1cc4td.frax.internal.cloudapp.net
+ ([131.189.143.225]) by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-48e71a4d3e9sm21002425f8f.6.2026.11.02.00.27.57
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 02 Nov 2026 00:27:57 -0800 (PST)
+From: Orgad Shaneh <orgads@gmail.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Wei Hu <weh@microsoft.com>, Long Li <longli@kernel.org>,
+ stable@dpdk.org
+Subject: Re: [PATCH 2/2] net/mana: fix Rx interrupt enable failing on lock
+ contention
+Date: Mon,  2 Nov 2026 08:27:56 +0000
+Message-ID: <20261102082756.835327-1-orgads@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261102091202.180b9eb5@stephen-xps.local>
+References: <20261102070809.813033-1-orgads@gmail.com>
+ <20261102070809.813033-2-orgads@gmail.com>
+ <20261102091202.180b9eb5@stephen-xps.local>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailman-Approved-At: Wed, 04 Nov 2026 13:08:38 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -109,54 +86,35 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_GMAIL_RCVD,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-04/11/2026 10:29, David Marchand:
-> On Wed, 4 Nov 2026 at 09:56, fengchengwen <fengchengwen@huawei.com> wrote:
-> > On 11/4/2026 3:34 PM, Stephen Hemminger wrote:
-> > >> From: Chengwen Feng <fengchengwen@huawei.com>
-> > >>  905 files changed, 6113 insertions(+), 5439 deletions(-)
-> > >
-> > > Maybe a single coccinelle script would help here? Rather than trying to look
-> > > at so many patches.
-> >
-> > A coccinelle script is a helpful idea. I will try to prepare one.
-> 
-> Well, maybe.
-> But never a 200+ patches series again.
-> 
-> Putting aside the way it was submitted, it seems this change is only
-> cosmetic, and it was not announced in a *previous* deprecation notice.
-> 
-> Why do we need this change?
-> Why now, in this release?
+Stephen Hemminger <stephen@networkplumber.org> wrote:
+> > Fixes: 077ca514d641 ("net/mana: support device reset")
+> > Cc: stable@dpdk.org
+>
+> Since this code didnt go into a previous stable release
+> doing cc to stable is not needed
 
-I assume it is not for 26.11.
-Chengwen wanted to fix the namespace of SOCKET_ID_ANY, adding RTE_.
-And I told him that we should avoid changing this API 2 times
-when we will want to fix the terminology
-around CPU socket and NUMA memory domain.
-I think we should do both at once.
-That's why we see this big change.
+Right, reset support is only in 26.07. Please drop the Cc: stable
+when applying, or I can send a v2 without it if you prefer.
 
-BUT
+1/2 fixes code from 22.11, so I left Cc: stable there.
 
-It would be more efficient for such a change to discuss it first.
-Then once we agree on the names and usage,
-we should make it in a way it can be reproduced, maintained
-and ease future backport of patches containing the new terminology.
-A coccinelle script looks appropriate.
-And of course, the patch series should not have so many patches,
-it does not make sense.
-A mechanical change should come in one patch.
-If the series deserves several different mechanical changes,
-few patches should be sent for them, not hundreds.
+On the AI review of this patch: reset_ops_lock is a default-type,
+non-robust mutex, so pthread_mutex_lock() cannot return an error
+here, and the existing calls in the reset path do not check it
+either.
 
-Sorry for not giving these advices earlier.
+The iol-unit-arm64 failure is memif_pmd_autotest crashing on
+Fedora 44, which this patch does not touch.
 
+Recheck-request: iol-unit-arm64-testing
 
+Thanks,
+Orgad
