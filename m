@@ -2,94 +2,57 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025AF6072208
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 16:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC3F606B1F6
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 16:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=qUi3tDX8
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Ib+1Ooen
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CBECF402E3;
-	Mon,  2 Nov 2026 17:26:37 +0100 (CET)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com
- [209.85.217.50])
- by mails.dpdk.org (Postfix) with ESMTPS id 079B14028D
- for <dev@dpdk.org>; Mon,  2 Nov 2026 17:26:35 +0100 (CET)
-Received: by mail-vs1-f50.google.com with SMTP id
- ada2fe7eead31-7cb6dc850c7so736120137.0
- for <dev@dpdk.org>; Mon, 02 Nov 2026 08:26:35 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793636794; cv=none;
- d=google.com; s=arc-20260327;
- b=jm47L+GZ42+LLtrK/jkSgagaiFxjK6fbgbj9Tlxw0B2uD9V/skYGkWZkObXoKAILQJ
- vjsaBP1kGKxgwJHq6enwDp+5e0DbmwRP+DtZ6hyph6fW4Usy4X7gqcx1VIxDT9eiYdut
- Rh21Wrw3BoOsbewOu6KxiljtXJSB5g4wIWgHrXpsING64GHF/XAZpXVhCYU3MSc5X7o/
- cKu8N8FE+FFIUvs9l/eE61DcDraj7HMVNQvjnmIGgJTbYo3S2iPooTb7igyH33GT1tcF
- ABvJ693onen477Snft2+Qbsc4OwyL1JUisbnd+On4aI4eCK1BGYmCE7AjithBfxcHJxM
- 5icw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=UJdtZeDzyD74l5RyxzOseiEAaGngpZKjTVyBHkE4nuU=;
- fh=nH8RhrhNzfSaQKhsN8myeyQ6TL8yGGUAJGHYwHec1e8=;
- b=Bxrv+7/WsrDCUocANLzoyZP84vct+RgUw9DXAFCDd6+//ThOfPr5Say+4LWKIMsZkv
- 3YeqvBPgnhQVzN/ygNwNi96IJ5qETeGsDRn2IFsgYqd2+np/AY5WCYtaQgbo60gPGyFh
- QcKLIVX4LE2xTonuF18tkxGUZNGadj05U2PviSx3X6J1EkQxaz3GBnPOzVnXBQJIWdCm
- f06WzjmBsWTbn/0xixmrvAmglG37cbbxRnv2TabX/I9fQBmAa/DeqIyCVpuwXj0rPp/r
- hT3esai0BPdPMjXwVp8ljQ+cKbLLGt/JzLeD48jNjtqS5t4p+jF9HOpRa7Xn+U3DdIQ3
- KloQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793636794;
- x=1794241594; darn=dpdk.org; 
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=UJdtZeDzyD74l5RyxzOseiEAaGngpZKjTVyBHkE4nuU=;
- b=qUi3tDX8sHRfReyisYinbFJmK4411VlA15rj/BqZDgZfrtsXU2jIwANJfWix1oM+7K
- P5u2AGfe85TYYa8W8FgrHU13MElqRdTufNo5PRjPDKtLKYABEtdDlBYjCnJF+GQv2KPa
- z1NjqI3Mi9fFgONyukjltbvb7wDCVsTOfqZTDSLk5ZtydGiJy6obqReUkjqEYAeQtD4Y
- nNfL9OuaHXrIg5OZQ+ZyDZyzmj2LXCgDgwNWqzYGUIslnLYFWYJ+E9vdOHQEjDwXC6Rq
- hTkIYw7ddDLCCAVsgiqS6jYp0fhHKWIBvjCDhkCs213wt2dynWpF/9lyKJm/WwKIZHbc
- infw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793636794; x=1794241594;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=UJdtZeDzyD74l5RyxzOseiEAaGngpZKjTVyBHkE4nuU=;
- b=04Ub7fErY9bOBJUoAdpQ8jDSzNaZqWGSucN9NheEwWMr7MxLHUf74GS1Nah3sjo2bX
- fyfK55NhT9QAG0vgDtcPHRSuGKxfC0d2PaSkdtd6A/y+h4zZr0PWPbh+7TryygRnn41X
- I1F3uuaGpTJMuPK5yJkryAzgLP29xgyEL5SMLsRxc/DmM+TOyqB8pkZ0XGJvooZHZt72
- kEx/JXY34FKF5x9kQAJxCa8LTV2tBBxzsKYbr9MpDXbSM6nw1i6ExlyL2nvwbnY4Zq7B
- LPxazThHTLPKuwF0M6e6zOcyGm+3TpK/Dp883kCTGSuV4skYI/EjFNn9TC5lO8G9Mu7Y
- IG+A==
-X-Forwarded-Encrypted: i=1;
- AKwUvBz56Kke8yYyGdZAaEFKjo9UbWDKFhsvqYw6aKoT+UpmqcsmK5/mYh3Nfv1jp2Jg6JhN8lg=@dpdk.org
-X-Gm-Message-State: APuU4Z9a8pMKVlvmWrnAdlFddPuxbBf+jbn0RuZyTJBczlVh6ZkIgYpH
- LgUvOySoYfBh5kYN+Gje89NsciRJlWx/kRqCa9FHq1Ebis7AeKYh4aFJCtPix3yLr2LKbOlAffh
- c8LzPYHWWJ81ewkdsmW8VZu7WTDIs5gBwmTcNgCehgg==
-X-Gm-Gg: AYBFou1KHHAUxLqj6Kz1zGCtjMvFseAdr8R0yw/eCtDOG1oEJ5bZ1IkMwFoSMxPrZnz
- wDlJOribpZDHLRsgm1SJrwirkyNOuhJdmbijPMBwVCa30xKpuwdjvSF89gI6o4vCt+MyVPnHTez
- kLnaFfxICC7H7QPHa0xGXHgi4x7Igs/51YLiark9f6sEacgtl4DSD2T+qC7sWdpgKBuQ0wBJ9uC
- m/8H8VTBPRwGO/QF+lieTXEYN1QwpYmWg09/PRZM5H/o7lRDvRoxyjM6TL8mT4UpY0Gc8WG/XAV
- mNYn0yoTYgDC5pTz6WhrZ7Sg0QJh3jg5la+xVjY89ekbb3ugbcStiKbZ2J2OHLOSpoOn2756vuG
- zVJYAKiwH+Z8zw+einjWqRn+GJodEDU2deHav
-X-Received: by 2002:a05:6102:5809:b0:7ae:c2ca:8e1 with SMTP id
- ada2fe7eead31-7d0725528ccmr4103754137.11.1793636793868; Mon, 02 Nov 2026
- 08:26:33 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A2367402E3;
+	Mon,  2 Nov 2026 17:48:33 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8A3EF4028D
+ for <dev@dpdk.org>; Mon,  2 Nov 2026 17:48:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1793638112; x=1825174112;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=MjLGO0rTaq1gKsMsxcES0aOFAFtEwbo7LetRsieiP2M=;
+ b=Ib+1OoentXTscz+/GLrhBn5YizUrlHqnylxGVOaDrk2eujER+ANJpywp
+ TnumNIcDvyRMFjLq1JiXLM/RAG0ATnPBKoz7/VQrnjxIQPPdm2uL0Wj1u
+ sBIXrSmfTqh4bx4ppgJEaFJIftEmZCiPmv8I07NSgGDDSCwVtFrT1WtOa
+ YHx0u+81WZGdVAoXYWGuitdUYy+IHtTHoEy9xIl6VaqjQF9QjHlCxu4+d
+ wgGvQ5WYqeDQsZQsfgo9LTEjDxpTFQivJxax+ToDlE7lFIN7+SrMLnLsh
+ ghpd9lbm3halJjS0DZdaDbq+jUhblUK935Kezc2R6WC8aCV3bY5LIUCfp w==;
+X-CSE-ConnectionGUID: yepit+InQMqQkTHMy1hPdg==
+X-CSE-MsgGUID: CRFs/0jISbqrLXZB2tP0mQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11954"; a="2217853"
+X-IronPort-AV: E=Sophos;i="6.27,191,1787036400"; 
+   d="scan'208";a="2217853"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Nov 2026 08:48:29 -0800
+X-CSE-ConnectionGUID: 7N1KwjjLTF+273IzaQuMnQ==
+X-CSE-MsgGUID: p1InXgrHTjCvNk9//w19Jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,191,1787036400"; 
+   d="scan'208";a="6268798"
+Received: from silpixa00401385.ir.intel.com (HELO
+ localhost.ger.corp.intel.com) ([10.20.224.226])
+ by orviesa009.jf.intel.com with ESMTP; 02 Nov 2026 08:48:28 -0800
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Anurag Mandal <anurag.mandal@intel.com>
+Subject: [PATCH v3] net/i40e: add IEEE1588 handling to AVX vector paths
+Date: Mon,  2 Nov 2026 16:48:16 +0000
+Message-ID: <20261102164816.3067808-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261009053449.843546-1-anurag.mandal@intel.com>
+References: <20261009053449.843546-1-anurag.mandal@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261030132616.2066712-1-bruce.richardson@intel.com>
- <IA4PR11MB927804496D3ED9C0A512C97F8E6A2@IA4PR11MB9278.namprd11.prod.outlook.com>
- <auiuHAy8DjGUbaXm@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <auiuHAy8DjGUbaXm@bricha3-mobl1.ger.corp.intel.com>
-From: Stephen Hemminger <stephen@networkplumber.org>
-Date: Mon, 2 Nov 2026 17:26:24 +0100
-X-Gm-Features: AclHuK8f3oejGc4UwqsdQLitLctJn8yhUiB4tYX5zWa5KyXdK2x5a3j7sihKbzc
-Message-ID: <CAOaVG15Ft8dr43T+NOoiLLQOa+4HNsg+SJmAJj08+uZUPzq70A@mail.gmail.com>
-Subject: Re: [PATCH] net/ice: add explicit control of link auto-negotiation
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: "Loftus, Ciara" <ciara.loftus@intel.com>, dev <dev@dpdk.org>, 
- "Burakov, Anatoly" <anatoly.burakov@intel.com>
-Content-Type: multipart/alternative; boundary="000000000000f476e8065f4d9b7b"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,193 +62,221 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
---000000000000f476e8065f4d9b7b
-Content-Type: text/plain; charset="UTF-8"
+The IEEE1588 timesync support was only supported on the scalar RX paths,
+but is, in a number of ways, quite similar to how FDIR support works: we
+read and process values from the various per-packet flags and then do a
+single store to the mbuf. Add support for IEEE1588 to the AVX2 and
+AVX-512 vector functions inline in the main descriptor processing loop,
+as well as the appropriate one-line fix for the case of scattered
+packets.
 
-why is auto negotiation disable a devarg rather than extending relevant
-part of ethdev? my opinion is every time a devarg like this gets added it
-means the ethdev abstraction is the real issue
+Suggested-by: Anurag Mandal <anurag.mandal@intel.com>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Tested-by: Anurag Mandal <anurag.mandal@intel.com>
+---
+ drivers/net/intel/common/rx.h                 |  3 +
+ drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c   | 61 ++++++++++++++++++
+ drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c | 63 +++++++++++++++++++
+ drivers/net/intel/i40e/i40e_rxtx_vec_common.h | 12 ++--
+ 4 files changed, 135 insertions(+), 4 deletions(-)
 
-On Mon, Nov 2, 2026, 16:37 Bruce Richardson <bruce.richardson@intel.com>
-wrote:
+diff --git a/drivers/net/intel/common/rx.h b/drivers/net/intel/common/rx.h
+index e0bf520ebd..8f4454d477 100644
+--- a/drivers/net/intel/common/rx.h
++++ b/drivers/net/intel/common/rx.h
+@@ -167,6 +167,9 @@ ci_rx_reassemble_packets(struct rte_mbuf **rx_bufs, uint16_t nb_bufs, uint8_t *s
+ 				start->hash = end->hash;
+ 				start->vlan_tci = end->vlan_tci;
+ 				start->ol_flags = end->ol_flags;
++#ifdef RTE_LIBRTE_IEEE1588
++				start->timesync = end->timesync;
++#endif
+ 				/* we need to strip crc for the whole packet */
+ 				start->pkt_len -= crc_len;
+ 				if (end->data_len > crc_len) {
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c b/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
+index dd06e258ad..c87ae92bba 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
+@@ -494,6 +494,67 @@ _recv_raw_pkts_vec_avx2(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 
+ 		} /* if() on FDIR enabled */
+ 
++#ifdef RTE_LIBRTE_IEEE1588
++		/* The TSYNVALID and TSYNINDX bits are already present in
++		 * status0_7, so the PTP timestamp flags can be built with
++		 * no extra descriptor reads, the same way the RSS/FDIR flags
++		 * are above. Only the 2-bit timestamp register index has to
++		 * land in a specific mbuf field, so it still needs a
++		 * per-packet store, done the same way as the FDIR ID above.
++		 */
++		const __m256i tsyn_valid_mask = _mm256_set1_epi32(
++				1 << I40E_RXD_QW1_STATUS_TSYNVALID_SHIFT);
++		const __m256i tsyn_valid = _mm256_cmpeq_epi32(
++				_mm256_and_si256(status0_7, tsyn_valid_mask),
++				tsyn_valid_mask);
++		const __m256i tmst_flags = _mm256_and_si256(tsyn_valid,
++				_mm256_set1_epi32(RTE_MBUF_F_RX_IEEE1588_TMST));
++		mbuf_flags = _mm256_or_si256(mbuf_flags, tmst_flags);
++
++		/* zero the index unless TSYNVALID is set, to match the
++		 * scalar driver, which only ever assigns tsyn & 0x03
++		 */
++		const __m256i tsyn_indx = _mm256_and_si256(tsyn_valid,
++				_mm256_srli_epi32(_mm256_and_si256(status0_7,
++					_mm256_set1_epi32(0x3 << I40E_RXD_QW1_STATUS_TSYNINDX_SHIFT)),
++					I40E_RXD_QW1_STATUS_TSYNINDX_SHIFT));
++
++		/* status0_7 packet order is (hi->lo): [1, 3, 5, 7, 0, 2, 4, 6] */
++		if (!_mm256_testz_si256(tsyn_valid, tsyn_valid)) {
++			rx_pkts[i + 1]->timesync = _mm256_extract_epi32(tsyn_indx, 7);
++			rx_pkts[i + 3]->timesync = _mm256_extract_epi32(tsyn_indx, 6);
++			rx_pkts[i + 5]->timesync = _mm256_extract_epi32(tsyn_indx, 5);
++			rx_pkts[i + 7]->timesync = _mm256_extract_epi32(tsyn_indx, 4);
++			rx_pkts[i + 0]->timesync = _mm256_extract_epi32(tsyn_indx, 3);
++			rx_pkts[i + 2]->timesync = _mm256_extract_epi32(tsyn_indx, 2);
++			rx_pkts[i + 4]->timesync = _mm256_extract_epi32(tsyn_indx, 1);
++			rx_pkts[i + 6]->timesync = _mm256_extract_epi32(tsyn_indx, 0);
++		}
++
++		/* the PTP flag only depends on packet_type, which was already
++		 * looked up above for each packet, so again no extra reads
++		 * are needed to build it
++		 */
++		const __m256i ptp_flags = _mm256_set_epi32(
++			(ptype_tbl[ptype1] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype3] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype5] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype7] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype0] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype2] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype4] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype6] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0);
++		mbuf_flags = _mm256_or_si256(mbuf_flags, ptp_flags);
++#endif /* RTE_LIBRTE_IEEE1588 */
++
+ 		/*
+ 		 * At this point, we have the 8 sets of flags in the low 16-bits
+ 		 * of each 32-bit value in vlan0.
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c b/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
+index ea2e6dc024..657745b225 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
+@@ -543,6 +543,69 @@ _recv_raw_pkts_vec_avx512(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 
+ 		} /* if() on FDIR enabled */
+ 
++#ifdef RTE_LIBRTE_IEEE1588
++		/* The TSYNVALID and TSYNINDX bits are already present in
++		 * status0_7, so the PTP timestamp flags can be built with
++		 * no extra descriptor reads, the same way the RSS/FDIR flags
++		 * are above. Only the 2-bit timestamp register index has to
++		 * land in a specific mbuf field, so it still needs a
++		 * per-packet store, done the same way as the FDIR ID above.
++		 */
++		const __m256i tsyn_valid_mask = _mm256_set1_epi32(
++				1 << I40E_RXD_QW1_STATUS_TSYNVALID_SHIFT);
++		const __m256i tsyn_valid = _mm256_cmpeq_epi32(
++				_mm256_and_si256(status0_7, tsyn_valid_mask),
++				tsyn_valid_mask);
++		const __m256i tmst_flags = _mm256_and_si256(tsyn_valid,
++				_mm256_set1_epi32(RTE_MBUF_F_RX_IEEE1588_TMST));
++
++		mbuf_flags = _mm256_or_si256(mbuf_flags, tmst_flags);
++
++		/* zero the index unless TSYNVALID is set, to match the
++		 * scalar driver, which only ever assigns tsyn & 0x03
++		 */
++		const __m256i tsyn_indx = _mm256_and_si256(tsyn_valid,
++				_mm256_srli_epi32(_mm256_and_si256(status0_7,
++					_mm256_set1_epi32(0x3 << I40E_RXD_QW1_STATUS_TSYNINDX_SHIFT)),
++					I40E_RXD_QW1_STATUS_TSYNINDX_SHIFT));
++
++		/* status0_7 packet order is (hi->lo): [1, 3, 5, 7, 0, 2, 4, 6] */
++		if (!_mm256_testz_si256(tsyn_valid, tsyn_valid)) {
++			rx_pkts[i + 1]->timesync = _mm256_extract_epi32(tsyn_indx, 7);
++			rx_pkts[i + 3]->timesync = _mm256_extract_epi32(tsyn_indx, 6);
++			rx_pkts[i + 5]->timesync = _mm256_extract_epi32(tsyn_indx, 5);
++			rx_pkts[i + 7]->timesync = _mm256_extract_epi32(tsyn_indx, 4);
++			rx_pkts[i + 0]->timesync = _mm256_extract_epi32(tsyn_indx, 3);
++			rx_pkts[i + 2]->timesync = _mm256_extract_epi32(tsyn_indx, 2);
++			rx_pkts[i + 4]->timesync = _mm256_extract_epi32(tsyn_indx, 1);
++			rx_pkts[i + 6]->timesync = _mm256_extract_epi32(tsyn_indx, 0);
++		}
++
++		/* the PTP flag only depends on packet_type, which was already
++		 * looked up above for each packet, so again no extra reads
++		 * are needed to build it
++		 */
++		const __m256i ptp_flags = _mm256_set_epi32(
++			(ptype_tbl[ptype1] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype3] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype5] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype7] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype0] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype2] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype4] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0,
++			(ptype_tbl[ptype6] & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_TIMESYNC ?
++				RTE_MBUF_F_RX_IEEE1588_PTP : 0);
++
++		mbuf_flags = _mm256_or_si256(mbuf_flags, ptp_flags);
++#endif /* RTE_LIBRTE_IEEE1588 */
++
+ 		/* At this point, we have the 8 sets of flags in the low 16-bits
+ 		 * of each 32-bit value in vlan0.
+ 		 * We want to extract these, and merge them with the mbuf init data
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_common.h b/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
+index 292a39501e..521e206438 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
+@@ -53,7 +53,14 @@ _i40e_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
+ static inline int
+ i40e_rx_vec_dev_conf_condition_check_default(struct rte_eth_dev *dev)
+ {
+-#ifndef RTE_LIBRTE_IEEE1588
++#if defined(RTE_LIBRTE_IEEE1588) && !defined(RTE_ARCH_X86)
++	/* Only the AVX2/AVX512 Rx paths propagate the IEEE1588 PTP flags and
++	 * the hardware timestamp register index, so other architectures
++	 * still have to fall back to the scalar Rx path.
++	 */
++	RTE_SET_USED(dev);
++	return -1;
++#else
+ 	/**
+ 	 * Vector mode is allowed only when number of Rx queue
+ 	 * descriptor is power of 2.
+@@ -67,9 +74,6 @@ i40e_rx_vec_dev_conf_condition_check_default(struct rte_eth_dev *dev)
+ 	}
+ 
+ 	return 0;
+-#else
+-	RTE_SET_USED(dev);
+-	return -1;
+ #endif
+ }
+ 
+-- 
+2.55.0
 
-> On Mon, Nov 02, 2026 at 10:55:43AM +0000, Loftus, Ciara wrote:
-> > > Subject: [PATCH] net/ice: add explicit control of link auto-negotiation
-> > >
-> > > When selecting a fixed speed of the link, whether or not
-> > > autonegotiation (e.g. AN Clause 37, etc.), needs to be enabled depends
-> > > on the peer link. While commit 3dc2933866d9 ("net/ice: disable link
-> > > negotiation for fixed speed selection") would allow link setup when the
-> > > remote side also has a fixed link without AN37 auto-negotiation, it
-> > > causes the link to flap up and down when e.g. two ports are connected
-> > > back to back and only one is set to a fixed speed.
-> > >
-> > > Support both scenarios of auto-negotiation supported or unsupported on
-> > > the remote end by adding an explicit driver option for disabling
-> > > auto-negotiation when a fixed speed is selected. If no fixed speed
-> > > setting, then new option does nothing.
-> > >
-> > > Fixes: 3dc2933866d9 ("net/ice: disable link negotiation for fixed speed
-> > > selection")
-> > >
-> > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> > > ---
-> > >  doc/guides/nics/ice.rst                | 10 ++++++++++
-> > >  doc/guides/rel_notes/release_26_11.rst |  2 ++
-> > >  drivers/net/intel/ice/ice_ethdev.c     | 12 +++++++++++-
-> > >  drivers/net/intel/ice/ice_ethdev.h     |  1 +
-> > >  4 files changed, 24 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
-> > > index ca3a94655b..af36341c9a 100644
-> > > --- a/doc/guides/nics/ice.rst
-> > > +++ b/doc/guides/nics/ice.rst
-> > > @@ -107,6 +107,16 @@ Configuration
-> > >  Runtime Configuration
-> > >  ~~~~~~~~~~~~~~~~~~~~~
-> > >
-> > > +``auto_neg_disable`` (default ``0``)
-> > > +   Control hardware link negotiation when a fixed speed is requested
-> with
-> > > ``RTE_ETH_LINK_SPEED_FIXED``.
-> > > +   By default, the firmware's negotiation settings are preserved,
-> > > +   allowing a fixed-speed link to use negotiation such as Clause 37
-> when
-> > > required by its peer.
-> > > +   Set ``auto_neg_disable=1`` to disable Clause 28, Clause 37 and
-> Clause 73
-> > > negotiation.
-> > > +   This option has no effect when automatic speed selection is
-> requested.
-> > > +   For example::
-> > > +
-> > > +      -a 80:00.0,auto_neg_disable=1
-> > > +
-> >
-> > The approach looks good to me.
-> > Something my AI review flagged was the setting of "link.link_autoneg"
-> > in ice_link_update() - your patch doesn't update that setting, and it's
-> still
-> > just based off the dev_conf.link_speeds value, and doesn't take into
-> account
-> > the value of the devarg (unlike ice_apply_link_speed() which accounts for
-> > both). Perhaps it's not necessary, just something to check.
-> > Once that is addressed or ruled out:
-> >
-> > Acked-by: Ciara Loftus <ciara.loftus@intel.com>
->
-> Yes, good catch. That is fixed in v2, but I've dropped your ack as some of
-> the logic has been moved to a subfunction to avoid copy-pasting too much.
->
-
---000000000000f476e8065f4d9b7b
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"auto">why is auto negotiation disable a devarg rather than exte=
-nding relevant part of ethdev? my opinion is every time a devarg like this =
-gets added it means the ethdev abstraction is the real issue=C2=A0</div><br=
-><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D=
-"gmail_attr">On Mon, Nov 2, 2026, 16:37 Bruce Richardson &lt;<a href=3D"mai=
-lto:bruce.richardson@intel.com">bruce.richardson@intel.com</a>&gt; wrote:<b=
-r></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border=
--left:1px #ccc solid;padding-left:1ex">On Mon, Nov 02, 2026 at 10:55:43AM +=
-0000, Loftus, Ciara wrote:<br>
-&gt; &gt; Subject: [PATCH] net/ice: add explicit control of link auto-negot=
-iation<br>
-&gt; &gt; <br>
-&gt; &gt; When selecting a fixed speed of the link, whether or not<br>
-&gt; &gt; autonegotiation (e.g. AN Clause 37, etc.), needs to be enabled de=
-pends<br>
-&gt; &gt; on the peer link. While commit 3dc2933866d9 (&quot;net/ice: disab=
-le link<br>
-&gt; &gt; negotiation for fixed speed selection&quot;) would allow link set=
-up when the<br>
-&gt; &gt; remote side also has a fixed link without AN37 auto-negotiation, =
-it<br>
-&gt; &gt; causes the link to flap up and down when e.g. two ports are conne=
-cted<br>
-&gt; &gt; back to back and only one is set to a fixed speed.<br>
-&gt; &gt; <br>
-&gt; &gt; Support both scenarios of auto-negotiation supported or unsupport=
-ed on<br>
-&gt; &gt; the remote end by adding an explicit driver option for disabling<=
-br>
-&gt; &gt; auto-negotiation when a fixed speed is selected. If no fixed spee=
-d<br>
-&gt; &gt; setting, then new option does nothing.<br>
-&gt; &gt; <br>
-&gt; &gt; Fixes: 3dc2933866d9 (&quot;net/ice: disable link negotiation for =
-fixed speed<br>
-&gt; &gt; selection&quot;)<br>
-&gt; &gt; <br>
-&gt; &gt; Signed-off-by: Bruce Richardson &lt;<a href=3D"mailto:bruce.richa=
-rdson@intel.com" target=3D"_blank" rel=3D"noreferrer">bruce.richardson@inte=
-l.com</a>&gt;<br>
-&gt; &gt; ---<br>
-&gt; &gt;=C2=A0 doc/guides/nics/ice.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 | 10 ++++++++++<br>
-&gt; &gt;=C2=A0 doc/guides/rel_notes/release_26_11.rst |=C2=A0 2 ++<br>
-&gt; &gt;=C2=A0 drivers/net/intel/ice/ice_ethdev.c=C2=A0 =C2=A0 =C2=A0| 12 =
-+++++++++++-<br>
-&gt; &gt;=C2=A0 drivers/net/intel/ice/ice_ethdev.h=C2=A0 =C2=A0 =C2=A0|=C2=
-=A0 1 +<br>
-&gt; &gt;=C2=A0 4 files changed, 24 insertions(+), 1 deletion(-)<br>
-&gt; &gt; <br>
-&gt; &gt; diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst<br=
->
-&gt; &gt; index ca3a94655b..af36341c9a 100644<br>
-&gt; &gt; --- a/doc/guides/nics/ice.rst<br>
-&gt; &gt; +++ b/doc/guides/nics/ice.rst<br>
-&gt; &gt; @@ -107,6 +107,16 @@ Configuration<br>
-&gt; &gt;=C2=A0 Runtime Configuration<br>
-&gt; &gt;=C2=A0 ~~~~~~~~~~~~~~~~~~~~~<br>
-&gt; &gt; <br>
-&gt; &gt; +``auto_neg_disable`` (default ``0``)<br>
-&gt; &gt; +=C2=A0 =C2=A0Control hardware link negotiation when a fixed spee=
-d is requested with<br>
-&gt; &gt; ``RTE_ETH_LINK_SPEED_FIXED``.<br>
-&gt; &gt; +=C2=A0 =C2=A0By default, the firmware&#39;s negotiation settings=
- are preserved,<br>
-&gt; &gt; +=C2=A0 =C2=A0allowing a fixed-speed link to use negotiation such=
- as Clause 37 when<br>
-&gt; &gt; required by its peer.<br>
-&gt; &gt; +=C2=A0 =C2=A0Set ``auto_neg_disable=3D1`` to disable Clause 28, =
-Clause 37 and Clause 73<br>
-&gt; &gt; negotiation.<br>
-&gt; &gt; +=C2=A0 =C2=A0This option has no effect when automatic speed sele=
-ction is requested.<br>
-&gt; &gt; +=C2=A0 =C2=A0For example::<br>
-&gt; &gt; +<br>
-&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 -a 80:00.0,auto_neg_disable=3D1<br>
-&gt; &gt; +<br>
-&gt; <br>
-&gt; The approach looks good to me.<br>
-&gt; Something my AI review flagged was the setting of &quot;link.link_auto=
-neg&quot;<br>
-&gt; in ice_link_update() - your patch doesn&#39;t update that setting, and=
- it&#39;s still<br>
-&gt; just based off the dev_conf.link_speeds value, and doesn&#39;t take in=
-to account<br>
-&gt; the value of the devarg (unlike ice_apply_link_speed() which accounts =
-for<br>
-&gt; both). Perhaps it&#39;s not necessary, just something to check.<br>
-&gt; Once that is addressed or ruled out:<br>
-&gt; <br>
-&gt; Acked-by: Ciara Loftus &lt;<a href=3D"mailto:ciara.loftus@intel.com" t=
-arget=3D"_blank" rel=3D"noreferrer">ciara.loftus@intel.com</a>&gt;<br>
-<br>
-Yes, good catch. That is fixed in v2, but I&#39;ve dropped your ack as some=
- of<br>
-the logic has been moved to a subfunction to avoid copy-pasting too much.<b=
-r>
-</blockquote></div>
-
---000000000000f476e8065f4d9b7b--
