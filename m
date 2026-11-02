@@ -2,102 +2,102 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17841606A793
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 12:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70A7606A324
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 13:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=PxG1oTdz
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm2 header.b=kvcMTuYJ;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=vNQWyX64
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D277240274;
-	Mon,  2 Nov 2026 13:23:59 +0100 (CET)
-Received: from SA9PR02CU001.outbound.protection.outlook.com
- (mail-southcentralusazon11013004.outbound.protection.outlook.com
- [40.93.196.4]) by mails.dpdk.org (Postfix) with ESMTPS id B21F04003C;
- Mon,  2 Nov 2026 13:23:58 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vgCjUb4bQVAFEYsIGcBcYNGWdmn7d/wXJU3giSVRcERsR4QigGSlvGkAbqJpREoJFKWHF2Wi0IT7Ur59q7zHA8BbW2AyPUx607eCdx6Z2OOz3pk/W41Z1m7blwyZwhj1f3COO8yOuK15Z26kJ+No0dVAVoIfrwLMbQQhOpH1Ig5mCi+z816r5IVbC/itPzq3rY8Si/sHJXJ7eacmpsbqco/ZtxetRtDSQSwHr9KCxv9BP+Sf+7oh147mmQIFcjkPKr9wmT1CUrfLuAcEc6NN3YfR1uX9qXEClizKh7mhCVZgjCeS2WSHoP1aDgvOo/wqU3XKgrX2UexhJRleGmZWmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CHcqoFynBwt2qJPrEYYROnilP9MCwzzUb/i0okgau/U=;
- b=lG/y+nZ/C9Nmfatb4Aek7wMLuoYVFG8CGfSBtNKs51SjfdmNBtT5Bxl9ugIUxnHhC1IxiywjbL53T8yoKUYfuBhwIl3M/qJ8Ahsibnc3rzFsHbmucObKR9vdYC1B0fwg0TBrApBuXzfdX0U8Kt8XVVWydpxwaAOSkelPGGv2OQCn+gz5pgQ2OagJvZWvoU966eNH+odL+ZANJ///rvmW5k69UelSJwd9Vi3qsoIxA3KYTVkkMJd84pCB4S9mIa4SODe1CBT7Ggi/FaCaDF6LjCgPdqd3TnnfsBAFi38qXuBM6lsg7X0kMZArtOhyP3tXyzTwF0o33GwloXXMS707zA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CHcqoFynBwt2qJPrEYYROnilP9MCwzzUb/i0okgau/U=;
- b=PxG1oTdzCuSraOjlrSlnRv+kZKP/y5UbgkH92GjHZcBdyBoqrBtPAWDDJF2sxmznBk3m5QmymwwvbkgTlza0wOHuTWfvCe7AXMN90rMociMgg8u7dMEFXXH47dzuermkMEwhMMFwcRSh9EJ19EVzYBml3exApm3Z7YIJEOMta6sPg7eSTRRuLWaOOgrfB2u8Is0yIUdRWDhPGkA6iWibEz9HCHzZOaHuAUzHVH4mHWCEzcmUlfGQ1p9o4FIgXbPmTOo4Wihin1Z/LJlcRCF4KmM3ud8jI/kcFVFwUg8EazMgaQPDIAPxKgKv19UNSK37Su0F/omu3UGWzpeqT7KhPA==
-Received: from PH8PR20CA0004.namprd20.prod.outlook.com (2603:10b6:510:23c::12)
- by DM4PR12MB7528.namprd12.prod.outlook.com (2603:10b6:8:110::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Mon, 2 Nov
- 2026 12:23:54 +0000
-Received: from PH2PEPF00048914.namprd05.prod.outlook.com
- (2603:10b6:510:23c:cafe::32) by PH8PR20CA0004.outlook.office365.com
- (2603:10b6:510:23c::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.569.12 via Frontend Transport; Mon, 2
- Nov 2026 12:23:54 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- PH2PEPF00048914.mail.protection.outlook.com (10.167.243.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.592.5 via Frontend Transport; Mon, 2 Nov 2026 12:23:54 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 2 Nov
- 2026 04:23:40 -0800
-Received: from nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 2 Nov
- 2026 04:23:37 -0800
-From: Bing Zhao <bingz@nvidia.com>
-To: <dev@dpdk.org>
-CC: <rasland@nvidia.com>, <dsosnowski@nvidia.com>, <viacheslavo@nvidia.com>,
- <orika@nvidia.com>, <suanmingm@nvidia.com>, <matan@nvidia.com>,
- <stable@dpdk.org>
-Subject: [PATCH] net/mlx5: fix local and host representor name collision
-Date: Mon, 2 Nov 2026 12:23:16 +0000
-Message-ID: <20261102122316.2504667-1-bingz@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id D5D9E40E41;
+	Mon,  2 Nov 2026 14:18:45 +0100 (CET)
+Received: from fhigh-b1-smtp.messagingengine.com
+ (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+ by mails.dpdk.org (Postfix) with ESMTPS id E478A4003C
+ for <dev@dpdk.org>; Mon,  2 Nov 2026 14:18:43 +0100 (CET)
+Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id C3BDC7A0168
+ for <dev@dpdk.org>; Mon,  2 Nov 2026 08:18:42 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-08.internal (MEProxy); Mon, 02 Nov 2026 08:18:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1793625522;
+ x=1793711922; bh=3Bpd7yNLSmMqBT82JM9DH/VzMUnzsTlWfCojRkA/+IE=; b=
+ kvcMTuYJYp+9s3tvoPGg7hPPM6tCM552wPHpJD/9u9WzGX2cHlxoiKkfbGddGSub
+ VTLg0oTU6hguZVEhWyi9FDPcLLy0+bfm8rGxMWN1ko6oBMQpwOpZslNiO2ebdFLf
+ XaDqBveMsmcdkpTutV9iVFNaPsoCnCfWCFvmcNBsM1k5DTpCfV/Fq60O0SUHVOIe
+ pxw33TGO0SY+jZAmtih0v2cudfjjMI/sHp12aIo7CyIdi7j7L2COXQsih2H4aOvE
+ tTUHc97ibPQzQ1RLLvkVtp8Cyp2/KxjyEOkJreQA9y7FpuEPfdsfbqo3voNK3wPq
+ Z3YCRRZDTiWwal05+XDNGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1793625522; x=
+ 1793711922; bh=3Bpd7yNLSmMqBT82JM9DH/VzMUnzsTlWfCojRkA/+IE=; b=v
+ NQWyX643wOSJWQGMLSMWUN4GF2s3df+A9dsFc+GXfSWpxj17Nsw4d/S0N7NY9Z3J
+ 7xRE4vJceeTFLK438ZMwMn4vqkRgY42Fl/HHg/k6h+Hs2ugo4+xHJY91nnvozusT
+ +D4bRJbun2N3SVzEclU1GQMZSfgq6koljnehexANZ6Ddsk0eyvlvPTFrjJKrhBe2
+ ZoG8pUWyz95bZMaqbk/IAiQeAqeukleKyHf6FyLur+9uwWttgrbP1120xRPT1+mR
+ O4zEt5z/8CdB3C8KrBNYj+H5CQn8fqe9oIlC3t1EFMsL5PScEOsaA+W492CO2swR
+ F8wliz98t8O8tIwyDAQ6w==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+ repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1793625522; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm2:rsa-sha256:eR4Qx6YotXu9en8RVht1z6TnRQ1bJ0mCNGvIjXazj2VXPDd
+ Pvu7QEcx03WMaAeOh6AQM4jJH815wMdOKZfSR+3rAnzaiWcxFCwZV6KYK0Ks/9Dn
+ 5j5ca4CYZM8EQsfamhdDTRmzAHbN8njz7fSg3n0ziDPjbQuO7NeaLSu6hgKOFeit
+ uurxDRlXFA9QCzC7JS6A0DTNpxdOWOgU9SihNeu4fQSxTn2If5gtk48HqFH2Nxb7
+ CsYyzOUy46XMsvAFBJUu0YPL5FWj/lrL5FtBOZSzrDreZtCpHBNbD38JxNLPQhKl
+ 9s/FhgobKoPuiziD5id8ILS4M9UgVvevSGQChQA==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+ repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:TWePYLkGN9oura29vzyh+jqZWYddc0IFmMCen3dM8Xw=:Xxm8VuKqW7Svg0o8rD4QI29hAHk94SPv8a69TOAbmfw=;
+X-ME-Sender: <xms:sY3oagccW_6OCUWH2a-IXpLCE8imOLm-hFE25-UIHkVl0VmJa_PvuA>
+ <xme:sY3oarKSaRSZf709Cbh4aC-ACncCcU_ZxdxVmnSJ4uR4pfTNdhcgJEUzjZytoFM05
+ Ey1--3illukGIy7scWKsEyhW-bZSt33To2YEix8CB5-X6ZE5r8XOf8>
+X-ME-Received: <xmr:sY3oatGpEHl0f5kmQV269ETjEvmJbRq57ECK5sXQqqz1h5FK9YSOGwBE__TW9FH0t3wQAOGqVGiSGojhHfRlSR0>
+X-ME-Proxy-Cause: dmFkZTEqz9uDl/IA8cc9gk734szg//7V7/T8V+hVmUSVP/plQ8f8YPYBnH2AThvckjyI0X
+ pxbJcCtyMCpXMFNBE+BTUlbZRTpSYZ7kY7c9WBn2+lFIODjTQmDTHRizuDZxp/Yt1H+Sme
+ RRrDBUThzzaucdMJ6nyAukq/hS9ptkZmvavd5huqtClqkBVzz1z0M6TkhJ2dYOZHT9behY
+ kSR+txrEJ96T7HiX2VLHqFIRcaQ+8POQw+z+1oKr1URmTfMuQz+CjBCFrBmNb8CZwTRV/p
+ 6qkfjGy/+7MflEjnXqY3UeA1pC+EhXhwGHXeIubh5zAr/rLqmgfun7ZM9zYIATqsj/XAi7
+ aoOiglYM+iC0ZCyP4lEqShc1V58XFmug8Lbfm7gFDFxpzGwa0+kbzT5clhitEGOMiFr/ec
+ y7rJdod5cpl8WF2c1W89Coa7NVW/FDrF2YozTKCgVFDfLAUS1XBySKRKOaQ1CcC5LfSMyD
+ 1gKc4WchtdEnksyRdl0Tittq7z1bMZkVdQRf5KF3CIR6MQ2npQ5GBy0IVTi0IhdprAiYTX
+ TRnfSAQTow4fi+CxyERqIUZy8DIpZ1F8HeNnt0fIYz4g5FS4ynyp604mj9hNaB9igiVXTf
+ qyQmh04CwiBTpcSb26FVDqUxUAGQsKHDwcmB8sC0rCvVzurjlbovL0r44jVA
+X-ME-Proxy: <xmx:sY3oamBVx0Y_wocsyykLhdlV8hEh1QVDCbudKEcdTZJ9oQFQB4jWZg>
+ <xmx:sY3oao_01nZaxrilcMqWNKAYE_LjOHv4vegf-4jNUyX-66JxQe83pw>
+ <xmx:sY3oaqAKABOPodd3qXUKD2gfaDgP73_yDqoi1jS7g7SqaCpRntJndA>
+ <xmx:sY3oalQVhhLCLzZZlWxU3uixx4MQndzE6AtfkWIZMnDOjHRvLyER_A>
+ <xmx:so3oanR3kTCgwE1E6GAIBtJVmRpDEiia2fgNoAeaMmxba4Ay64WhjKCC>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 2 Nov 2026 08:18:40 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Alexey Simakov <bigalex934@gmail.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>, dev@dpdk.org, stable@dpdk.org,
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+Subject: Re: [PATCH] ip_frag: fix IPv6 fragmentation of short packets
+Date: Mon, 02 Nov 2026 14:18:38 +0100
+Message-ID: <YPo18bbNQc-cAvqus_0ltg@monjalon.net>
+In-Reply-To: <6ccde5ff-f81c-4c2c-8bc6-e2ef64035129@yandex.ru>
+References: <20261019101333.71145-1-bigalex934@gmail.com>
+ <6ccde5ff-f81c-4c2c-8bc6-e2ef64035129@yandex.ru>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH2PEPF00048914:EE_|DM4PR12MB7528:EE_
-X-MS-Office365-Filtering-Correlation-Id: 418b6ebf-d478-485c-ff64-08df38dc296b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|23010399003|376014|36860700016|82310400026|261021123027099003|11063799006|56012099006|261009223027099003|261028144727099003|261021121427099003|261026140227099003|261022105027099003|10067099003|18002099003;
-X-Microsoft-Antispam-Message-Info: j07U3+tvkGMGQ0Gg5agVWmPLv91bEF+2tH/wmY8Rlf4TQhzVHtTkw+uVGoBQCJ+wMK5n3qcE/7Z/K4SGhySJu3zoVAQEPm2M46mxhd7aqBE2XfE9M9I2jbN229s0riWuK0YWjH+yqBWx0gnLrQhWDIOisI3osrhKUsWXYGn6pY/wXsqJsvN6n56i194IfDa1JEwjMSZ2vvYu1n1cEVf/Xlik/yzPcKtEm435snyqcg8rzNLUg+WxNp244xMcOMFh2xYautwRBd1XRTAJmr2PniG4xzGxJOv7BIqpLxpytXG7evd8fNRwPNgfwNCilZSrejGDMl1IX5cZZqNqWhuBotSVIhgdy/DyGw9ROVQa4MG6+DXVnZrdxxh4JBzvEfxqcRG/j5jhqP3rpEXWqpjtdUtSyRf6F4gqN1YoDOSN3D6yqR7hJ1CdfUTZf61QV1nmJMGDYFSZVyU8h9tWMeLowOgle+vyLfq7fL9l6RiQ0q/joiqk56QB5Q+TycZX4sWyJJXA1phyEsfguhuUN5n37fX33SFDDDCKRKYJBNiuCYTI6jJA36cgD8vXgGjEwk9MfDS1BmMf8qjn9oeY3NdzYpRo1o0vC0ETyh7AiOmkrHLyprV1LFwiSyOvXf/BO20AN9+7+Pv3M+Czj7LQkA9nUxMoUpyzXriSwonXERgfqiXNHZVZgQNarlqyJ8LqgGXTqgT/iqKoUlHSu2f2G759tw==
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(23010399003)(376014)(36860700016)(82310400026)(261021123027099003)(11063799006)(56012099006)(261009223027099003)(261028144727099003)(261021121427099003)(261026140227099003)(261022105027099003)(10067099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: AQsqPSqONSAk4vqTQwh6iU1UebBYPQqzlsjjnmI25h7QVsem7Uz+TFaVS9YWDSnr4Mnf7muqZ5SczJuYsJmqCjQutGk7O/0BBwuS+u+sr19RLEBky7oNWRFEy884arR8pCXO7O4OV4CmrnCVswjbogRjWg+OQq4f7MjBL2GkP5Hq32isGf/yUFobnem4kVeY1W+jLOItP+AtDq2tteufN+9/ChyiqKWNubj+qmT7wpkP+uYsut9i4oJQNpWDhkIiWQ/MREJM197TZ6qgxDdGpTGD5OJ72K73E749clm7KE8oLq6u3LKeer3+QNQvhZICAQ5mD81dGNLKoMTOmpgmAqJeZIBN9sqafnK3jqWVDP9O6oZOKls9IDlHcujOaD3DAoQIIZx6Ng4kjqdvhB2mMF4HsRJvNwLqBke0mDuAbu1fEOWFqViw9cHjCv22ncWH
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2026 12:23:54.7888 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 418b6ebf-d478-485c-ff64-08df38dc296b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: PH2PEPF00048914.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7528
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -107,80 +107,34 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On BlueField with a single uplink and host PF, representor port names
-omit the controller index. A local representor (pf0vf0, controller 0)
-and a host representor (c1pf0vf0, controller 1) with the same index
-were both named <BDF>_representor_vf0. Whichever was probed first took
-the name. Probing the other one returned EEXIST, which is treated as
-already spawned, so the attach succeeded silently without a new port.
+20/10/2026 10:01, Konstantin Ananyev:
+> 
+> > rte_ipv6_fragment_packet() does not check that the first mbuf segment
+> > is large enough to hold the IPv6 header, unlike the IPv4 version,
+> > which validates data_len against the header length.
+> >
+> > With data_len < 40, in_seg_data_pos starts past the end of the
+> > segment, the expression (in_seg->data_len - in_seg_data_pos)
+> > underflows and the loop never advances to the next segment, so it
+> > keeps producing fragments and writing past the end of pkts_out.
+> >
+> > Reject such packets with -EINVAL, as rte_ipv4_fragment_packet() does.
+> >
+> > Fixes: 0aa31d7a5929 ("ip_frag: add IPv6 fragmentation support")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
+> 
+> Acked-by: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
 
-Add controller and PF indexes to the names of local representors on
-BlueField, detected by the presence of a host PF, for example
-<BDF>_representor_c0pf0vf0 and <BDF>_representor_c0pf0sf0.
-Host representor names are unchanged.
+Applied, thanks.
 
-Also log a notice when a requested representor is already spawned,
-so that probing it again is no longer silent.
 
-Fixes: cb95feefdd03 ("net/mlx5: support sub-function representor")
-Cc: stable@dpdk.org
-
-Signed-off-by: Bing Zhao <bingz@nvidia.com>
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
----
- drivers/net/mlx5/linux/mlx5_os.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
-index 4c35737292..82a8ad549b 100644
---- a/drivers/net/mlx5/linux/mlx5_os.c
-+++ b/drivers/net/mlx5/linux/mlx5_os.c
-@@ -1081,6 +1081,12 @@ is_hpf(const struct mlx5_dev_spawn_data *spawn)
- 	       spawn->info.name_type == MLX5_PHYS_PORT_NAME_TYPE_PFHPF;
- }
- 
-+static bool
-+is_bluefield_local_representor(const struct mlx5_dev_spawn_data *spawn)
-+{
-+	return spawn->info.representor && spawn->info.ctrl_num == 0 && spawn->nb_hpfs > 0;
-+}
-+
- static int
- build_port_name(struct rte_device *dpdk_dev,
- 		struct mlx5_dev_spawn_data *spawn,
-@@ -1130,12 +1136,14 @@ build_port_name(struct rte_device *dpdk_dev,
- 		 * 1. Device is a bond (VF-LAG).
- 		 * 2. There are multiple uplinks (MPESW).
- 		 * 3. There are multiple host PFs (BlueField socket direct).
-+		 * 4. Port is a local (controller 0) representor on BlueField. Local and
-+		 *    host representors with the same index would otherwise share a name.
- 		 *
- 		 * If none of these conditions apply, then it is assumed that
- 		 * this device manages a single non-shared E-Switch with single controller,
- 		 * where there is only one uplink/PF and one host PF (on BlueField).
- 		 */
--		if (!is_standard_eswitch(spawn))
-+		if (!is_standard_eswitch(spawn) || is_bluefield_local_representor(spawn))
- 			ret = snprintf(name + written, name_sz - written,
- 				       "_representor_c%dpf%d%s%u",
- 				       spawn->info.ctrl_num,
-@@ -1359,6 +1367,9 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
- 		 */
- 		if (mkvlist)
- 			mlx5_port_args_set_used(name, port_id, mkvlist);
-+		if (switch_info->representor)
-+			DRV_LOG(NOTICE, "representor \"%s\" is already spawned as port %u",
-+				name, port_id);
- 		rte_errno = EEXIST;
- 		return NULL;
- 	}
--- 
-2.34.1
 
