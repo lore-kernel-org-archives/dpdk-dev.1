@@ -2,81 +2,102 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED6760A3827
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 12:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17841606A793
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 12:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=marvell.com header.i=@marvell.com header.a=rsa-sha256 header.s=pfpt0220 header.b=a07WCGJL
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=PxG1oTdz
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C1B6440E3B;
-	Mon,  2 Nov 2026 13:22:48 +0100 (CET)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTPS id 9C84A4003C;
- Mon,  2 Nov 2026 13:22:46 +0100 (CET)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6A29Dcb0545941; Mon, 2 Nov 2026 04:22:45 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=X
- qBhALBEc4AFIumChLedbDMvBdIy21dM+XtdkmlrNrc=; b=a07WCGJL2BPwagpFc
- y4c+tvRBJLXqRc601CRyKciE0KoBoUNxKG/FXqbPaUWWP/aiQkjIE20sDhM2Y7b+
- hJ8dyzOwTwuOX2sHubzW0ZBdTLKB7lYg+Xx0kzdPThOKOuM4bMNtDEEncndKeh0L
- 8/DWffV3eD5G5HZSpe5CDhsL8rSF0Q73S8azNVEH687O3RqbC0kK5ZUU3wKXxuO3
- kW42MV3PlGsXC+RAhx59goehg64eZxlE5he9nloTPDAmv1iT+g55jHJhNoToGn5/
- NxanycrGpXSgV8rKF92XTIbns+5Prw7QAnLAQ/5QBYZFkjv6Tb+wO+Qn0zhjXFVU
- 0WQQQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4hp5fd35ms-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 02 Nov 2026 04:22:44 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 2 Nov 2026 04:22:43 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 2 Nov 2026 04:22:43 -0800
-Received: from cavium-System-Product-Name.. (unknown [10.28.40.118])
- by maili.marvell.com (Postfix) with ESMTP id B84843F7078;
- Mon,  2 Nov 2026 04:22:40 -0800 (PST)
-From: Aarnav JP <ajp@marvell.com>
-To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, <rbhansali@marvell.com>, Aarnav JP
- <ajp@marvell.com>, <stable@dpdk.org>
-Subject: [PATCH 5/5] common/cnxk: fix OOB write in rep count copy
-Date: Mon, 2 Nov 2026 17:51:53 +0530
-Message-ID: <20261102122154.2611710-5-ajp@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261102122154.2611710-1-ajp@marvell.com>
-References: <20261102122154.2611710-1-ajp@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D277240274;
+	Mon,  2 Nov 2026 13:23:59 +0100 (CET)
+Received: from SA9PR02CU001.outbound.protection.outlook.com
+ (mail-southcentralusazon11013004.outbound.protection.outlook.com
+ [40.93.196.4]) by mails.dpdk.org (Postfix) with ESMTPS id B21F04003C;
+ Mon,  2 Nov 2026 13:23:58 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vgCjUb4bQVAFEYsIGcBcYNGWdmn7d/wXJU3giSVRcERsR4QigGSlvGkAbqJpREoJFKWHF2Wi0IT7Ur59q7zHA8BbW2AyPUx607eCdx6Z2OOz3pk/W41Z1m7blwyZwhj1f3COO8yOuK15Z26kJ+No0dVAVoIfrwLMbQQhOpH1Ig5mCi+z816r5IVbC/itPzq3rY8Si/sHJXJ7eacmpsbqco/ZtxetRtDSQSwHr9KCxv9BP+Sf+7oh147mmQIFcjkPKr9wmT1CUrfLuAcEc6NN3YfR1uX9qXEClizKh7mhCVZgjCeS2WSHoP1aDgvOo/wqU3XKgrX2UexhJRleGmZWmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CHcqoFynBwt2qJPrEYYROnilP9MCwzzUb/i0okgau/U=;
+ b=lG/y+nZ/C9Nmfatb4Aek7wMLuoYVFG8CGfSBtNKs51SjfdmNBtT5Bxl9ugIUxnHhC1IxiywjbL53T8yoKUYfuBhwIl3M/qJ8Ahsibnc3rzFsHbmucObKR9vdYC1B0fwg0TBrApBuXzfdX0U8Kt8XVVWydpxwaAOSkelPGGv2OQCn+gz5pgQ2OagJvZWvoU966eNH+odL+ZANJ///rvmW5k69UelSJwd9Vi3qsoIxA3KYTVkkMJd84pCB4S9mIa4SODe1CBT7Ggi/FaCaDF6LjCgPdqd3TnnfsBAFi38qXuBM6lsg7X0kMZArtOhyP3tXyzTwF0o33GwloXXMS707zA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CHcqoFynBwt2qJPrEYYROnilP9MCwzzUb/i0okgau/U=;
+ b=PxG1oTdzCuSraOjlrSlnRv+kZKP/y5UbgkH92GjHZcBdyBoqrBtPAWDDJF2sxmznBk3m5QmymwwvbkgTlza0wOHuTWfvCe7AXMN90rMociMgg8u7dMEFXXH47dzuermkMEwhMMFwcRSh9EJ19EVzYBml3exApm3Z7YIJEOMta6sPg7eSTRRuLWaOOgrfB2u8Is0yIUdRWDhPGkA6iWibEz9HCHzZOaHuAUzHVH4mHWCEzcmUlfGQ1p9o4FIgXbPmTOo4Wihin1Z/LJlcRCF4KmM3ud8jI/kcFVFwUg8EazMgaQPDIAPxKgKv19UNSK37Su0F/omu3UGWzpeqT7KhPA==
+Received: from PH8PR20CA0004.namprd20.prod.outlook.com (2603:10b6:510:23c::12)
+ by DM4PR12MB7528.namprd12.prod.outlook.com (2603:10b6:8:110::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Mon, 2 Nov
+ 2026 12:23:54 +0000
+Received: from PH2PEPF00048914.namprd05.prod.outlook.com
+ (2603:10b6:510:23c:cafe::32) by PH8PR20CA0004.outlook.office365.com
+ (2603:10b6:510:23c::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.569.12 via Frontend Transport; Mon, 2
+ Nov 2026 12:23:54 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ PH2PEPF00048914.mail.protection.outlook.com (10.167.243.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.592.5 via Frontend Transport; Mon, 2 Nov 2026 12:23:54 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 2 Nov
+ 2026 04:23:40 -0800
+Received: from nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 2 Nov
+ 2026 04:23:37 -0800
+From: Bing Zhao <bingz@nvidia.com>
+To: <dev@dpdk.org>
+CC: <rasland@nvidia.com>, <dsosnowski@nvidia.com>, <viacheslavo@nvidia.com>,
+ <orika@nvidia.com>, <suanmingm@nvidia.com>, <matan@nvidia.com>,
+ <stable@dpdk.org>
+Subject: [PATCH] net/mlx5: fix local and host representor name collision
+Date: Mon, 2 Nov 2026 12:23:16 +0000
+Message-ID: <20261102122316.2504667-1-bingz@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAyMDA0OCBTYWx0ZWRfXwFLw2wrRTso+
- s1yzbENLqjbb3o83pOQmAJ1BnuH6elnlkCELWeesDBx25D+IrPzSChYBvAYcA3cg8jtt5Qd/qa3
- VBqgxF+cS+SaP60T9lJfhZIfZzbltKQWWBJv2KLnMDjnLu/hb8DlsQCsTkPxMYrxKmrHwGbkB+5
- iU9NF7V5RgD5OaUqGq14ROLq6KWuU4tnQPdtX9Npa9b54zSFnDK5KXK18xIFSOUf2tB5ngKgzxr
- YeLqvzsdaYpa4D/H/BrTh1JlU2coZDwOT8X1b6y1DXdWyilrBk8bahHHaBJ6wtrT0iJIFvpLaBs
- sAAaoZmA/rRVgBysrEpjEt4uEECnLkYpJDGqJPbbZs6k1CQirXi+fzcGjzaCVBsM4wDff7djuwB
- cNxdJRG2KJa6IS9QoAN1MxQvrVAzHWNLF1P8Dv2zWjtXCXfQX+D9CsaylKal2ldrNufis9xwC2M
- ARsFgeDp6Fr9ycIXCxQ==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAyMDA0OCBTYWx0ZWRfX1f7nRJxi9kp6
- RIXqIITeshz7kf+p2+5gTU3+lDBH/ihQo15rTzhWWmIDqHlY0nEyD2lAboSjqt05qzYsn0BrCZ3
- nObobs5c1JFiE7TF3bW9Kml5YdkCHWw=
-X-Proofpoint-GUID: ncY3VC6aq48sTbWp9_qbo0jH4LRbAbcz
-X-Authority-Analysis: v=2.4 cv=bszZl0ai c=1 sm=1 tr=0 ts=6ae88094 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=TtqV-g6YmW1Jfm2GSLaY:22 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8
- a=3HoEVw3OMNDcHY79bEsA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: ncY3VC6aq48sTbWp9_qbo0jH4LRbAbcz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-02_03,2026-10-21_02,2025-10-01_01
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH2PEPF00048914:EE_|DM4PR12MB7528:EE_
+X-MS-Office365-Filtering-Correlation-Id: 418b6ebf-d478-485c-ff64-08df38dc296b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|23010399003|376014|36860700016|82310400026|261021123027099003|11063799006|56012099006|261009223027099003|261028144727099003|261021121427099003|261026140227099003|261022105027099003|10067099003|18002099003;
+X-Microsoft-Antispam-Message-Info: j07U3+tvkGMGQ0Gg5agVWmPLv91bEF+2tH/wmY8Rlf4TQhzVHtTkw+uVGoBQCJ+wMK5n3qcE/7Z/K4SGhySJu3zoVAQEPm2M46mxhd7aqBE2XfE9M9I2jbN229s0riWuK0YWjH+yqBWx0gnLrQhWDIOisI3osrhKUsWXYGn6pY/wXsqJsvN6n56i194IfDa1JEwjMSZ2vvYu1n1cEVf/Xlik/yzPcKtEm435snyqcg8rzNLUg+WxNp244xMcOMFh2xYautwRBd1XRTAJmr2PniG4xzGxJOv7BIqpLxpytXG7evd8fNRwPNgfwNCilZSrejGDMl1IX5cZZqNqWhuBotSVIhgdy/DyGw9ROVQa4MG6+DXVnZrdxxh4JBzvEfxqcRG/j5jhqP3rpEXWqpjtdUtSyRf6F4gqN1YoDOSN3D6yqR7hJ1CdfUTZf61QV1nmJMGDYFSZVyU8h9tWMeLowOgle+vyLfq7fL9l6RiQ0q/joiqk56QB5Q+TycZX4sWyJJXA1phyEsfguhuUN5n37fX33SFDDDCKRKYJBNiuCYTI6jJA36cgD8vXgGjEwk9MfDS1BmMf8qjn9oeY3NdzYpRo1o0vC0ETyh7AiOmkrHLyprV1LFwiSyOvXf/BO20AN9+7+Pv3M+Czj7LQkA9nUxMoUpyzXriSwonXERgfqiXNHZVZgQNarlqyJ8LqgGXTqgT/iqKoUlHSu2f2G759tw==
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(23010399003)(376014)(36860700016)(82310400026)(261021123027099003)(11063799006)(56012099006)(261009223027099003)(261028144727099003)(261021121427099003)(261026140227099003)(261022105027099003)(10067099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: AQsqPSqONSAk4vqTQwh6iU1UebBYPQqzlsjjnmI25h7QVsem7Uz+TFaVS9YWDSnr4Mnf7muqZ5SczJuYsJmqCjQutGk7O/0BBwuS+u+sr19RLEBky7oNWRFEy884arR8pCXO7O4OV4CmrnCVswjbogRjWg+OQq4f7MjBL2GkP5Hq32isGf/yUFobnem4kVeY1W+jLOItP+AtDq2tteufN+9/ChyiqKWNubj+qmT7wpkP+uYsut9i4oJQNpWDhkIiWQ/MREJM197TZ6qgxDdGpTGD5OJ72K73E749clm7KE8oLq6u3LKeer3+QNQvhZICAQ5mD81dGNLKoMTOmpgmAqJeZIBN9sqafnK3jqWVDP9O6oZOKls9IDlHcujOaD3DAoQIIZx6Ng4kjqdvhB2mMF4HsRJvNwLqBke0mDuAbu1fEOWFqViw9cHjCv22ncWH
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2026 12:23:54.7888 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 418b6ebf-d478-485c-ff64-08df38dc296b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: PH2PEPF00048914.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7528
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,46 +107,80 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-roc_nix_max_rep_count() copied rsp->rep_cnt entries from the get_rep_cnt
-mailbox response into the fixed 64-entry roc_nix->rep_pfvf_map[] without
-validating the AF-supplied count. rep_cnt is a uint16_t, so a malformed
-or malicious AF response could overrun the array (and read past the
-response's 64-entry map), corrupting adjacent driver state.
+On BlueField with a single uplink and host PF, representor port names
+omit the controller index. A local representor (pf0vf0, controller 0)
+and a host representor (c1pf0vf0, controller 1) with the same index
+were both named <BDF>_representor_vf0. Whichever was probed first took
+the name. Probing the other one returned EEXIST, which is treated as
+already spawned, so the attach succeeded silently without a new port.
 
-Reject responses with rep_cnt greater than MAX_PFVF_REP before copying.
+Add controller and PF indexes to the names of local representors on
+BlueField, detected by the presence of a host PF, for example
+<BDF>_representor_c0pf0vf0 and <BDF>_representor_c0pf0sf0.
+Host representor names are unchanged.
 
-Fixes: 162c77c18838 ("common/cnxk: add support for representors")
+Also log a notice when a requested representor is already spawned,
+so that probing it again is no longer silent.
+
+Fixes: cb95feefdd03 ("net/mlx5: support sub-function representor")
 Cc: stable@dpdk.org
 
-Signed-off-by: Aarnav JP <ajp@marvell.com>
+Signed-off-by: Bing Zhao <bingz@nvidia.com>
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 ---
- drivers/common/cnxk/roc_nix.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/mlx5/linux/mlx5_os.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/common/cnxk/roc_nix.c b/drivers/common/cnxk/roc_nix.c
-index 8e3903051d..ae6a918682 100644
---- a/drivers/common/cnxk/roc_nix.c
-+++ b/drivers/common/cnxk/roc_nix.c
-@@ -589,6 +589,12 @@ roc_nix_max_rep_count(struct roc_nix *roc_nix)
- 	if (rc)
- 		goto exit;
+diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
+index 4c35737292..82a8ad549b 100644
+--- a/drivers/net/mlx5/linux/mlx5_os.c
++++ b/drivers/net/mlx5/linux/mlx5_os.c
+@@ -1081,6 +1081,12 @@ is_hpf(const struct mlx5_dev_spawn_data *spawn)
+ 	       spawn->info.name_type == MLX5_PHYS_PORT_NAME_TYPE_PFHPF;
+ }
  
-+	if (rsp->rep_cnt > MAX_PFVF_REP) {
-+		plt_err("Invalid rep_cnt %u in get_rep_cnt rsp", rsp->rep_cnt);
-+		rc = -EIO;
-+		goto exit;
-+	}
++static bool
++is_bluefield_local_representor(const struct mlx5_dev_spawn_data *spawn)
++{
++	return spawn->info.representor && spawn->info.ctrl_num == 0 && spawn->nb_hpfs > 0;
++}
 +
- 	roc_nix->rep_cnt = rsp->rep_cnt;
- 	for (i = 0; i < rsp->rep_cnt; i++)
- 		roc_nix->rep_pfvf_map[i] = rsp->rep_pfvf_map[i];
+ static int
+ build_port_name(struct rte_device *dpdk_dev,
+ 		struct mlx5_dev_spawn_data *spawn,
+@@ -1130,12 +1136,14 @@ build_port_name(struct rte_device *dpdk_dev,
+ 		 * 1. Device is a bond (VF-LAG).
+ 		 * 2. There are multiple uplinks (MPESW).
+ 		 * 3. There are multiple host PFs (BlueField socket direct).
++		 * 4. Port is a local (controller 0) representor on BlueField. Local and
++		 *    host representors with the same index would otherwise share a name.
+ 		 *
+ 		 * If none of these conditions apply, then it is assumed that
+ 		 * this device manages a single non-shared E-Switch with single controller,
+ 		 * where there is only one uplink/PF and one host PF (on BlueField).
+ 		 */
+-		if (!is_standard_eswitch(spawn))
++		if (!is_standard_eswitch(spawn) || is_bluefield_local_representor(spawn))
+ 			ret = snprintf(name + written, name_sz - written,
+ 				       "_representor_c%dpf%d%s%u",
+ 				       spawn->info.ctrl_num,
+@@ -1359,6 +1367,9 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
+ 		 */
+ 		if (mkvlist)
+ 			mlx5_port_args_set_used(name, port_id, mkvlist);
++		if (switch_info->representor)
++			DRV_LOG(NOTICE, "representor \"%s\" is already spawned as port %u",
++				name, port_id);
+ 		rte_errno = EEXIST;
+ 		return NULL;
+ 	}
 -- 
-2.43.0
+2.34.1
 
