@@ -2,77 +2,78 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB0B606AA2A
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 12:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0EC606AA28
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 12:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=marvell.com header.i=@marvell.com header.a=rsa-sha256 header.s=pfpt0220 header.b=Twh/i+Hr
+	dkim=pass (2048-bit key, unprotected) header.d=marvell.com header.i=@marvell.com header.a=rsa-sha256 header.s=pfpt0220 header.b=Dej4OVJ1
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C054640264;
-	Mon,  2 Nov 2026 13:22:24 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AB63840E3B;
+	Mon,  2 Nov 2026 13:22:31 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTPS id 09E884003C;
- Mon,  2 Nov 2026 13:22:22 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 4E0EF4003C;
+ Mon,  2 Nov 2026 13:22:29 +0100 (CET)
 Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
  by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6A29FDNE1926057; Mon, 2 Nov 2026 04:22:21 -0800
+ 6A29FAs21925907; Mon, 2 Nov 2026 04:22:27 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=F/N6e2db/GWlaoJTRF/JUL5
- o28dvZWNraQ1h+eGw09k=; b=Twh/i+HrMx/6dVunP339ToP8FOYdS66DYqZ9Sp3
- 53oaz2LZOV9IEw9/5d6sxg/5+Mlly0zr2Cu+oIqCO8sm8mLlFJ1C4DZfa4hcfZve
- DYT8Qu03h/DJegQ2KX8Vj12/KBbdJoaV/MAs9+xp8rZJnjYHeP2BDSPAYdrYWiN5
- wgwxGyGPMpIw3Evax+zNx/A2pp/t19AwH7FhqQSLBlArwzwGy33nVYkNyXOauA9V
- 9/5p8EW6ltblx+0jIT+pQmwxuTzHoc8LKxzZElANEfjNmQr2fAJJNh1e4TkHIEnB
- KWWyjLZg7z37zEbcFJGoefu7m3wXiP5LWcBfKjvDBTr2C0Q==
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=b
+ 4k6iH4JER2/itPxwJgwLcLElZivJGvjjrrKWS0riBY=; b=Dej4OVJ1pGnw2pbyF
+ 0CpX2akp/hNnz7UsG1ONCPS6blkuS1gd5YlZ5APa4I1iPi1EBdNt+QUEd/dV5gYB
+ 7M3DXJdDA0cmADWlMO9E8ZJ9S9nkeQa4tnt3z8kJ5tWxG/5Je9661mubHThB5l6M
+ 6rNSFDZ/ly3dz82crdl14JSYbGDYwEdEXVfE2twrk4W1qJiqH0L6l1+saIXURvsR
+ zz63sdyMui8S0drpELS4mwOiqa1gBfDCBHA0M9AKkXIGTLzHhLHDb3sPwNmJZfF6
+ RX7Ncnrkg+OBOxMEeaulrT4YiQzc93NCsT5qDpnqrwzhhLb6Xv4XNr/hLzYSMn+d
+ YJmrA==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4hndpmnsa8-1
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4hndpmnsae-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 02 Nov 2026 04:22:21 -0800 (PST)
+ Mon, 02 Nov 2026 04:22:27 -0800 (PST)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 2 Nov 2026 04:22:20 -0800
+ 15.2.1544.25; Mon, 2 Nov 2026 04:22:27 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 2 Nov 2026 04:22:20 -0800
+ Transport; Mon, 2 Nov 2026 04:22:27 -0800
 Received: from cavium-System-Product-Name.. (unknown [10.28.40.118])
- by maili.marvell.com (Postfix) with ESMTP id 9445A3F7078;
- Mon,  2 Nov 2026 04:22:16 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id 1FCD43F7078;
+ Mon,  2 Nov 2026 04:22:23 -0800 (PST)
 From: Aarnav JP <ajp@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, Ankur Dwivedi
- <adwivedi@marvell.com>, Akhil Goyal <gakhil@marvell.com>, Vamsi Attunuru
- <vattunuru@marvell.com>
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <jerinj@marvell.com>, <rbhansali@marvell.com>, Aarnav JP
  <ajp@marvell.com>, <stable@dpdk.org>
-Subject: [PATCH 1/5] common/cnxk: fix macsec teardown use-after-free
-Date: Mon, 2 Nov 2026 17:51:49 +0530
-Message-ID: <20261102122154.2611710-1-ajp@marvell.com>
+Subject: [PATCH 2/5] common/cnxk: fix TM schq alloc OOB write
+Date: Mon, 2 Nov 2026 17:51:50 +0530
+Message-ID: <20261102122154.2611710-2-ajp@marvell.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261102122154.2611710-1-ajp@marvell.com>
+References: <20261102122154.2611710-1-ajp@marvell.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=VOZIDNPX c=1 sm=1 tr=0 ts=6ae8807d cx=c_pps
+X-Authority-Analysis: v=2.4 cv=VOZIDNPX c=1 sm=1 tr=0 ts=6ae88083 cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
  a=EAYMVhzMl8SCOHhVQcBL:22 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8
- a=FAAhV8DvIT9rjqnw1pEA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAyMDA0OCBTYWx0ZWRfX47nsImPNguPM
- O+nghBS+V0Yz7G3g9XvoO08LJl7spb/gosgm7uRumoZF51njZdtXhfAggNp2pcHZrYfsYRwLMdd
- R7hek16thVS+b6a+XTnSPhX3XAvyOjQ=
-X-Proofpoint-ORIG-GUID: 3HIqj63_HhmRoAxzT0kOJqpluN1initt
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAyMDA0OCBTYWx0ZWRfXw6Gtiq5n2gyJ
- TXTU7FTiEFZe29Wwrtkexg2GOwNv28tVAvuPpEDFt4mOs3QjvBfEpy/onS/8w/7k4vGDOb2KjeY
- Uh+yXR5KOzq1QONEAtYIpyFSnJLuvsO63EjEpB3GmaGqwwlIYzvBKuPJYJAOzRq68mq3h/HPu/e
- FIDZlr7ph45XBSxpxr+/V+rsGrCguhX0WYAIvm8vCe1RGCMzvPF/WtRI8YoRLt6SRhU9z/lBMv7
- I9/lRj+AEzcr24n8tIFslFdEtcaugClkQTMC5wGRsSS0nfXJ8eVQepwfZ1+uO/cU8uGbkqLFEDJ
- KlmJj0W/okYNFeOyBq6Kf9i+uP5HlBIvxripgDYLuMZfHoaICbocGvQN6dCl1GxxSeXfy2crG4f
- AN1pWyBskyVUxvrB5sT8UJHUP13iFgv5CKcr9wMSW6iRXkoAcu2hZT1yKuJoQuTYFahurEPgG9u
- HHhPH9QYD+WKDZ6a6dA==
-X-Proofpoint-GUID: 3HIqj63_HhmRoAxzT0kOJqpluN1initt
+ a=zzUvz5twnary-Ko6D3kA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAyMDA0OCBTYWx0ZWRfX12hAWsMROXFJ
+ 6ZBLyY9C4N30KOcNCT0aymCG8f9yw4d9T4Slyhy0S9nXbX9eqUHR9fD3SgFtzYslkzeleyZRezT
+ GVqIHqucYl6px9dodfEy/XZJfM4NbaM=
+X-Proofpoint-ORIG-GUID: PuOD4ET2hvtAy9XaYq8XDmrBoVL91yXn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAyMDA0OCBTYWx0ZWRfXz2/YldzVZ5tX
+ hdnsqieVPtG34MCOEzq8SMVmUWt2PT6xZH8QTr97eW2NKr6OJz1puVbpM9qzJLqhhdzy3YM/7xf
+ 2cRGudE251Q1k/u8RKtjnFi3Z44eKbLqnx4aobXOf5nFEkz9y3WGrFONe5zrzFS2op7+S78w+xm
+ vGKMb+a4wTNyV6CDVhm8nj6fHy86+IdE5a1bkm/QldtsqlyN1tUUGFL59u88LnMF4cPD+HG7yZ+
+ d9ehjMvzYvMkwIFXInV9VffYYeA/0+U3qpcI3t6hA8rDqnsiU7O00FFUOk4jQ538a4XHKNWqmGV
+ cIXeb+4ggSK0cTVg13BoC04QtjbtMFT1NcR9Z//gcQlZanHbV/Ul/iefIhXwXOnbUaLAXZeHNED
+ PtaFpwQNiLbPxKJ0wqkna7lBKSnAs8B9GurF4vbdctB98KPZlzgUTh1/fKRisAi7s1FhvyaW5E8
+ EhiKrgoAnFJ7Gf4KPWQ==
+X-Proofpoint-GUID: PuOD4ET2hvtAy9XaYq8XDmrBoVL91yXn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-11-02_03,2026-10-21_02,2025-10-01_01
@@ -92,169 +93,133 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The idev mcs_list is walked from the mailbox interrupt thread via
-roc_idev_mcs_get() and dereferenced in mcs_event_cb_process(), while
-the control thread can concurrently free the mcs in roc_mcs_dev_fini().
-With no lock on the list, an MCS interrupt during teardown could read
-freed memory or corrupt the TAILQ mid-splice.
+nix_tm_copy_rsp_to_nix() consumes the txsch alloc response verbatim.
+The count rsp->schq[lvl] is not bounded to the 128-entry list, so a
+large count over-reads schq_list[lvl][]; and the schq id is passed
+to plt_bitmap_set() as the bit position without checking it against
+NIX_TM_MAX_HW_TXSCHQ (2048). rte_bitmap_set() does not bound-check
+pos, so an id >= 2048 writes outside the bitmap and corrupts memory.
 
-Add a dedicated idev mcs_lock, held across the lookup+callback in the
-interrupt handler, the list insert in roc_mcs_dev_init(), and the
-TAILQ_REMOVE in roc_mcs_dev_fini() (which drains any in-flight
-interrupt before mcs and sa_port_map are freed). List helpers stay
-lock-free to avoid recursive locking.
+Clamp the count to MAX_TXSCHQ_PER_FUNC and reject any id >=
+NIX_TM_MAX_HW_TXSCHQ with -EINVAL, propagating the error out of
+nix_tm_alloc_txschq() so setup fails cleanly. Applied to both the
+discontiguous and contiguous lists.
 
-Fixes: f752780f30dc ("common/cnxk: add ROC MACsec initialization")
+Fixes: df405df95eeb ("common/cnxk: add NIX TM helper to alloc/free resource")
 Cc: stable@dpdk.org
 
 Signed-off-by: Aarnav JP <ajp@marvell.com>
 ---
- drivers/common/cnxk/roc_dev.c       | 11 +++++++++--
- drivers/common/cnxk/roc_idev.c      |  1 +
- drivers/common/cnxk/roc_idev_priv.h |  1 +
- drivers/common/cnxk/roc_mcs.c       | 30 +++++++++++++++++++++--------
- 4 files changed, 33 insertions(+), 10 deletions(-)
+ drivers/common/cnxk/roc_nix_priv.h   |  2 +-
+ drivers/common/cnxk/roc_nix_tm.c     | 37 ++++++++++++++++++++++------
+ drivers/common/cnxk/roc_nix_tm_ops.c |  8 ++++--
+ 3 files changed, 36 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_dev.c b/drivers/common/cnxk/roc_dev.c
-index a432fb8710..6d918bf17b 100644
---- a/drivers/common/cnxk/roc_dev.c
-+++ b/drivers/common/cnxk/roc_dev.c
-@@ -669,15 +669,20 @@ static int
- mbox_up_handler_mcs_intr_notify(struct dev *dev, struct mcs_intr_info *info, struct msg_rsp *rsp)
+diff --git a/drivers/common/cnxk/roc_nix_priv.h b/drivers/common/cnxk/roc_nix_priv.h
+index d4b3c7c1af..9779b336b0 100644
+--- a/drivers/common/cnxk/roc_nix_priv.h
++++ b/drivers/common/cnxk/roc_nix_priv.h
+@@ -421,7 +421,7 @@ int nix_tm_alloc_txschq(struct nix *nix, enum roc_nix_tm_tree tree);
+ int nix_tm_assign_resources(struct nix *nix, enum roc_nix_tm_tree tree);
+ int nix_tm_release_resources(struct nix *nix, uint8_t hw_lvl, bool contig,
+ 			     bool above_thresh);
+-void nix_tm_copy_rsp_to_nix(struct nix *nix, struct nix_txsch_alloc_rsp *rsp);
++int nix_tm_copy_rsp_to_nix(struct nix *nix, struct nix_txsch_alloc_rsp *rsp);
+ 
+ int nix_tm_txsch_reg_config(struct nix *nix, enum roc_nix_tm_tree tree);
+ int nix_tm_update_parent_info(struct nix *nix, enum roc_nix_tm_tree tree);
+diff --git a/drivers/common/cnxk/roc_nix_tm.c b/drivers/common/cnxk/roc_nix_tm.c
+index 76c0f01884..2f38b042f9 100644
+--- a/drivers/common/cnxk/roc_nix_tm.c
++++ b/drivers/common/cnxk/roc_nix_tm.c
+@@ -1483,21 +1483,40 @@ nix_tm_assign_resources(struct nix *nix, enum roc_nix_tm_tree tree)
+ 	return 0;
+ }
+ 
+-void
++int
+ nix_tm_copy_rsp_to_nix(struct nix *nix, struct nix_txsch_alloc_rsp *rsp)
  {
- 	struct roc_mcs_event_desc desc = {0};
-+	struct idev_cfg *idev = idev_get_cfg();
- 	struct roc_mcs *mcs;
+ 	uint8_t lvl;
+ 	uint16_t i;
  
- 	plt_base_dbg("pf:%d/vf:%d msg id 0x%x (%s) from: pf:%d/vf:%d", dev_get_pf(dev->pf_func),
- 		     dev_get_vf(dev->pf_func), info->hdr.id, mbox_id2name(info->hdr.id),
- 		     dev_get_pf(info->hdr.pcifunc), dev_get_vf(info->hdr.pcifunc));
+ 	for (lvl = 0; lvl < NIX_TXSCH_LVL_CNT; lvl++) {
+-		for (i = 0; i < rsp->schq[lvl]; i++)
+-			plt_bitmap_set(nix->schq_bmp[lvl],
+-				       rsp->schq_list[lvl][i]);
  
-+	if (idev == NULL)
-+		goto exit;
+-		for (i = 0; i < rsp->schq_contig[lvl]; i++)
+-			plt_bitmap_set(nix->schq_contig_bmp[lvl],
+-				       rsp->schq_contig_list[lvl][i]);
++		uint16_t cnt = PLT_MIN(rsp->schq[lvl], (uint16_t)MAX_TXSCHQ_PER_FUNC);
 +
-+	plt_spinlock_lock(&idev->mcs_lock);
- 	mcs = roc_idev_mcs_get(info->mcs_id);
- 	if (!mcs)
--		goto exit;
-+		goto unlock;
++		for (i = 0; i < cnt; i++) {
++			uint16_t id = rsp->schq_list[lvl][i];
++
++			if (id >= NIX_TM_MAX_HW_TXSCHQ) {
++				plt_err("Invalid schq %u for lvl %u in alloc rsp", id, lvl);
++				return -EINVAL;
++			}
++			plt_bitmap_set(nix->schq_bmp[lvl], id);
++		}
++
++		cnt = PLT_MIN(rsp->schq_contig[lvl], (uint16_t)MAX_TXSCHQ_PER_FUNC);
++
++		for (i = 0; i < cnt; i++) {
++			uint16_t id = rsp->schq_contig_list[lvl][i];
++
++			if (id >= NIX_TM_MAX_HW_TXSCHQ) {
++				plt_err("Invalid contig schq %u for lvl %u in alloc rsp", id, lvl);
++				return -EINVAL;
++			}
++			plt_bitmap_set(nix->schq_contig_bmp[lvl], id);
++		}
+ 	}
++
++	return 0;
+ }
  
- 	if (info->intr_mask) {
- 		switch (info->intr_mask) {
-@@ -739,12 +744,14 @@ mbox_up_handler_mcs_intr_notify(struct dev *dev, struct mcs_intr_info *info, str
- 			desc.metadata.lmac_id = info->lmac_id;
- 			break;
- 		default:
--			goto exit;
-+			goto unlock;
+ int
+@@ -1563,8 +1582,10 @@ nix_tm_alloc_txschq(struct nix *nix, enum roc_nix_tm_tree tree)
+ 			goto alloc_err;
  		}
  
- 		mcs_event_cb_process(mcs, &desc);
+-		nix_tm_copy_rsp_to_nix(nix, rsp);
++		rc = nix_tm_copy_rsp_to_nix(nix, rsp);
+ 		mbox_put(mbox);
++		if (rc)
++			goto alloc_err;
+ 	} while (pend);
+ 
+ 	nix->tm_link_cfg_lvl = rsp->link_cfg_lvl;
+diff --git a/drivers/common/cnxk/roc_nix_tm_ops.c b/drivers/common/cnxk/roc_nix_tm_ops.c
+index 230e9b72f6..1086f471e6 100644
+--- a/drivers/common/cnxk/roc_nix_tm_ops.c
++++ b/drivers/common/cnxk/roc_nix_tm_ops.c
+@@ -778,8 +778,10 @@ roc_nix_tm_prealloc_res(struct roc_nix *roc_nix, uint8_t lvl,
+ 			return rc;
+ 		}
+ 
+-		nix_tm_copy_rsp_to_nix(nix, rsp);
++		rc = nix_tm_copy_rsp_to_nix(nix, rsp);
+ 		mbox_put(mbox);
++		if (rc)
++			return rc;
  	}
  
-+unlock:
-+	plt_spinlock_unlock(&idev->mcs_lock);
- exit:
- 	rsp->hdr.rc = 0;
- 	return 0;
-diff --git a/drivers/common/cnxk/roc_idev.c b/drivers/common/cnxk/roc_idev.c
-index 6aa5b10ee9..17b99682fd 100644
---- a/drivers/common/cnxk/roc_idev.c
-+++ b/drivers/common/cnxk/roc_idev.c
-@@ -45,6 +45,7 @@ idev_set_defaults(struct idev_cfg *idev)
- 	TAILQ_INIT(&idev->roc_nix_list);
- 	plt_spinlock_init(&idev->nix_inl_dev_lock);
- 	plt_spinlock_init(&idev->npa_dev_lock);
-+	plt_spinlock_init(&idev->mcs_lock);
- 	__atomic_store_n(&idev->npa_refcnt, 0, __ATOMIC_RELEASE);
- }
+ 	/* Preallocate contiguous */
+@@ -797,8 +799,10 @@ roc_nix_tm_prealloc_res(struct roc_nix *roc_nix, uint8_t lvl,
+ 			return rc;
+ 		}
  
-diff --git a/drivers/common/cnxk/roc_idev_priv.h b/drivers/common/cnxk/roc_idev_priv.h
-index dde555535b..ca47f6948e 100644
---- a/drivers/common/cnxk/roc_idev_priv.h
-+++ b/drivers/common/cnxk/roc_idev_priv.h
-@@ -45,6 +45,7 @@ struct idev_cfg {
- 	struct idev_nix_inl_rx_inj_cfg inl_rx_inj_cfg;
- 	plt_spinlock_t nix_inl_dev_lock;
- 	plt_spinlock_t npa_dev_lock;
-+	plt_spinlock_t mcs_lock;
- 	uint8_t dma_cs_offset;
- };
- 
-diff --git a/drivers/common/cnxk/roc_mcs.c b/drivers/common/cnxk/roc_mcs.c
-index 0ae5618c09..1b45f5dad9 100644
---- a/drivers/common/cnxk/roc_mcs.c
-+++ b/drivers/common/cnxk/roc_mcs.c
-@@ -839,17 +839,24 @@ struct roc_mcs *
- roc_mcs_dev_init(uint8_t mcs_idx)
- {
- 	struct mcs_event_cb_list *cb_list;
-+	struct idev_cfg *idev;
- 	struct roc_mcs *mcs;
- 	struct npa_lf *npa;
- 
- 	if (!(roc_feature_bphy_has_macsec() || roc_feature_nix_has_macsec()))
- 		return NULL;
- 
--	mcs = roc_idev_mcs_get(mcs_idx);
--	if (mcs) {
--		plt_info("Skipping device, mcs device already probed");
--		mcs->refcount++;
--		return mcs;
-+	idev = idev_get_cfg();
-+	if (idev) {
-+		plt_spinlock_lock(&idev->mcs_lock);
-+		mcs = roc_idev_mcs_get(mcs_idx);
-+		if (mcs) {
-+			plt_info("Skipping device, mcs device already probed");
-+			mcs->refcount++;
-+			plt_spinlock_unlock(&idev->mcs_lock);
-+			return mcs;
-+		}
-+		plt_spinlock_unlock(&idev->mcs_lock);
+-		nix_tm_copy_rsp_to_nix(nix, rsp);
++		rc = nix_tm_copy_rsp_to_nix(nix, rsp);
+ 		mbox_put(mbox);
++		if (rc)
++			return rc;
  	}
  
- 	mcs = plt_zmalloc(sizeof(struct roc_mcs), PLT_CACHE_LINE_SIZE);
-@@ -870,8 +877,11 @@ roc_mcs_dev_init(uint8_t mcs_idx)
- 	cb_list = (struct mcs_event_cb_list *)roc_mcs_to_mcs_cb_list(mcs);
- 	TAILQ_INIT(cb_list);
- 
-+	idev = idev_get_cfg();
-+	plt_spinlock_lock(&idev->mcs_lock);
- 	roc_idev_mcs_set(mcs);
- 	mcs->refcount++;
-+	plt_spinlock_unlock(&idev->mcs_lock);
- 
- 	return mcs;
- exit:
-@@ -882,12 +892,18 @@ roc_mcs_dev_init(uint8_t mcs_idx)
- void
- roc_mcs_dev_fini(struct roc_mcs *mcs)
- {
-+	struct idev_cfg *idev = idev_get_cfg();
- 	struct mcs_priv *priv;
- 	int i;
- 
-+	plt_spinlock_lock(&idev->mcs_lock);
- 	mcs->refcount--;
--	if (mcs->refcount > 0)
-+	if (mcs->refcount > 0) {
-+		plt_spinlock_unlock(&idev->mcs_lock);
- 		return;
-+	}
-+	roc_idev_mcs_free(mcs);
-+	plt_spinlock_unlock(&idev->mcs_lock);
- 
- 	priv = roc_mcs_to_mcs_priv(mcs);
- 
-@@ -902,7 +918,5 @@ roc_mcs_dev_fini(struct roc_mcs *mcs)
- 
- 	plt_free(mcs->sa_port_map);
- 
--	roc_idev_mcs_free(mcs);
--
- 	plt_free(mcs);
- }
+ 	/* Save thresholds */
 -- 
 2.43.0
 
