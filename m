@@ -2,103 +2,80 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41848606A326
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 13:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBE8606A324
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 13:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm2 header.b=PiOT9p1N;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm2 header.b=r6c+mf5Q
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=InuOgJYu
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4F7340E34;
-	Mon,  2 Nov 2026 14:22:51 +0100 (CET)
-Received: from fhigh-b1-smtp.messagingengine.com
- (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
- by mails.dpdk.org (Postfix) with ESMTPS id C58B54003C
- for <dev@dpdk.org>; Mon,  2 Nov 2026 14:22:50 +0100 (CET)
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
- by mailfhigh.stl.internal (Postfix) with ESMTP id CA37A7A017E
- for <dev@dpdk.org>; Mon,  2 Nov 2026 08:22:49 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-08.internal (MEProxy); Mon, 02 Nov 2026 08:22:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1793625769;
- x=1793712169; bh=9cYy/NdMWAt+A8hLTtTBxwjpyj6M+erFu3ks4nItgV4=; b=
- PiOT9p1NXpx3Q1o1Vho3cwoAkrxAcjm/T/L/0CO1nF3ydBvLFw8SfHcqVC/NcGJ4
- otqM8Ou/4LnOGKDSxQt/1+zC2YLQt1AZjJMemuntr+kK04GdmJN54XUg/azabnkQ
- /GxdyJoU8NdSBcUiwli/5DeO2LlaZ9MdEHxThgFp1qBub/BXZblMHsyAvkxEY3ia
- 7R+TD6hPQYbwjNlWy5Ve8sWG21p6QtxVzGimLXje47j6PXurxpcWxxep9zcguflw
- PQbCWQbuSuO0tmPaRFLf2WPvV46eMCI/5wlpLJrZkqN/C0beTBV+WaIFp7ZfBrtV
- rdxvZdsQQc/XJ3zhBw+uuQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1793625769; x=
- 1793712169; bh=9cYy/NdMWAt+A8hLTtTBxwjpyj6M+erFu3ks4nItgV4=; b=r
- 6c+mf5QA6HYy4zx+YvywlChE7onhvV9Q0j5Il48Onz0cqfKTuZh/9mwwZ2kdqm/w
- wqFNwLZPNrDdzT3siym+3umIoMHT0IfFnMhYKAt7SaxlHa8SVe8qxzAtaMoVuMtg
- RVxlrec0N8RdGCKci2fI/OJtbwky0jP0A1FttSSVUZcOlW6BYvS535XgrLVC88o7
- u26JUjW0MNU+ninzXXzdizMEDVRTRwEqd/GoLkWpd+qDdWeJl9MTC+mk79iuxkzS
- T3B2diws2JM0wwEXevnxlyWkV/4CmIJeCheB7YXO1lNKrdiIndtHaQEnV49qjNcV
- 4kbInU/zxcv0hWr7IjBPg==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1793625769; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm2:rsa-sha256:RPK7bIpKJ32nTKC2OseX7wIZy2/rIob8k/FbvrOTrcJwfJO
- Z/K5mbNv3MPP1gBsAkmqtRD6DbGTCq7HP7Gv4+zu66p2ib9ZVAZ0c/y2qTl1zkhp
- qz6GGyMrsHvugZJH8SuhxM0riWsIwCdMvEjIKH1siGmGQ5GGoaURpvwKN/adn0wV
- dJyV9EDRwvZJQgYo1tAvhS6j0J4UWbNox/IlUsfoaqlMZTMsollGkQ3rDthAVgFF
- 7jdU0RAcVNavbua7Yhj/rImQkHGeF5DlZQbRDc8O0f1BKHfuKYUWPOMnGHLtVWi7
- pA55s928PpXoiVunRFN5ephHtlrt1pvOIAWHa6w==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:3z1DMXZDsKr9qVeEogKeu6x4VMz2kI1nk/ntVLnlKDw=:kAwISg4k/ka5VSYH4oE10Dgl82MrTP8r1Lugm6O2j4o=;
-X-ME-Sender: <xms:qI7oap2gFnFnpU5TU-kEis1V9ckVSXTUIwmazly_a85wroksX_8xMQ>
- <xme:qI7oaggnTcO2QYv92awyPc7zGI-uPdCnoTnvIcGATUsp2-hwI3nouwskXBIvrMLZL
- Tb05_lhdX93oMMcIYiAgyZYRKXqOQvcEtLW0YsYz1q_f1Dljz-PAQc>
-X-ME-Received: <xmr:qI7oaqnKUS21SVgbRb61BTYj8zALvndN6hNSfe0DgKddJMhoqZLXa9f60HH0G1zXsT0pE9J2nAeSdJj6MmTwFxU>
-X-ME-Proxy-Cause: dmFkZTEM+jM9tqD6X6kwl4Na76dkx1GQrLtP4RDDl1UScI00z1rBjG/jT4iblUiJIIfGhN
- 38JGQvABY2oEqXW2Q/g1zZFtULNGA7D/Ma/Imq2oS9nyMw3HhDn4itMtx+2Q6ScZHZfhXd
- tCZPkNx+oM9VOTQQ9fEnPX/0sLrtIiIWawZUeYP0MBa6WgiMY+T+0hT0Crl0KQuza/sd4Y
- NSUO1gB1cadgbZxtOj25uPixKySkQq84/Cm3CV10jYYu8MWx+daU9gempVQ25Vrcc9LZr3
- RvvvnGyHAgKch5i0I4C4I4C1Jx/476qcB6z95YJ0kGOi6CmZNRsQLJYrJHNwhmgJ0E8jt1
- rhCJO/KJCzdCVdpmGn2Hs2XVPTbxlh7LltIibc7ao4n/x5HTnkvtPnT7SLKcVK4vFltNQa
- QXTVSPr6cUJuqSN1dDcydDbE0vMcUkgz635wjJB99Ro4qZbTbuHmLRZN/bUpWczNQ5vBXB
- bHfwg9V+pgoh7JFkd06KPwtF2ILz5xmxDR0VBNgVCMu/9yLBTLX+6eH+2NGdAjByFmV7GB
- DsbxbKW0PNAbKRUWlwlNK4VqQa1p40jL2x/a7TnmTtIRtlCplRsuR99nZ4ioxzZHDX/Vj3
- BvI6XQ/eDFMQPSYtX0+fMYVN39XYB1VYGRyQXuPPhNXQSn0uT3GLzWhxyr4Q
-X-ME-Proxy: <xmx:qI7oauYGf6HlWYHrlXkP6V6xQQn4qMjJCocx4rm1JAATnbGrvrBl3w>
- <xmx:qI7oatHM9iZwxhh2JpGCnnF4XtKmTK3oOew9AjWfAlnqJOcrDNJJPw>
- <xmx:qI7oalb8OZJaYcSBItLMVZVeXYfiReV2VY0sQajv0uxu8o-rZM13mg>
- <xmx:qI7oapyMy-phH9hA0z21q9qE3eTkaZwrAXYHB7gzAcrzITe8aDLUEQ>
- <xmx:qY7oahNzAYK4aTkWSwcuCW3XcJf8QN4zZI6FnJcu-EAhB3ymIS-9q81a>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 2 Nov 2026 08:22:47 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Rupesh Chiluka <rchiluka@marvell.com>
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Ruifeng Wang <ruifeng.wang@arm.com>, dev@dpdk.org, anoobj@marvell.com,
- ktejasree@marvell.com, jerinj@marvell.com, gakhil@marvell.com,
- stable@dpdk.org
-Subject: Re: [PATCH] lpm: fix SVE bulk lookup loop bound for small bursts
-Date: Mon, 02 Nov 2026 14:22:45 +0100
-Message-ID: <Kdxy9QrvTX-PNS1QkBj3GA@monjalon.net>
-In-Reply-To: <20261027161436.231088-1-rchiluka@marvell.com>
-References: <20261027161436.231088-1-rchiluka@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B60A640E34;
+	Mon,  2 Nov 2026 14:23:13 +0100 (CET)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
+ [209.85.128.54])
+ by mails.dpdk.org (Postfix) with ESMTPS id EB0EB40274
+ for <dev@dpdk.org>; Mon,  2 Nov 2026 14:23:12 +0100 (CET)
+Received: by mail-wm1-f54.google.com with SMTP id
+ 5b1f17b1804b1-4a2153c8525so19161645e9.3
+ for <dev@dpdk.org>; Mon, 02 Nov 2026 05:23:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793625792;
+ x=1794230592; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=SrIZ2HitwIg+pvQsGW3veOJsX/KQ0+ktyLqjWvBcodk=;
+ b=InuOgJYuOtieQkKUyMWI1EvTL/pWvhvFipKuKPIh9H9VjohTjUJltTU9YXldz0vxFJ
+ 4YPhQB7RUz9COeQrbjTPhmTDbcDy0qiHbSABUPW9t78JNjVNHOQl0G4TtCWAhnAizdUs
+ /mHvJ4KQuOeZ15EXPH69DCZczLgS3o7o09npgW8HXkYp8HsmncATSlOaSWC67OWMtVzD
+ YApNgVnFlsWKJdrEfl2yyMuOMG/aF4Z/OJF0imhKAQYrP6UMDMF6C8+gZnX+zwXVg8NR
+ 0pxlAn2DG6JWwcBoECtVsQltpWRU7mFKzR1GZca2Ytf658rfygLVmNKJYVAlSlPfjimT
+ sXqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793625792; x=1794230592;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=SrIZ2HitwIg+pvQsGW3veOJsX/KQ0+ktyLqjWvBcodk=;
+ b=KjCaO6RI6zJrM3TeOwiSdt60lmbfON2elZCJgwhWRpDa+iSmFSionST4mObT87uoxF
+ Lbq9i04Mts7dhI3CRrNPddx97UlkQU50fXHWLA4Hq7es9h8D1uXnJgf/i+ZliyeDMwr0
+ VuwTeNYE7gG7mj1VwF09ttOX2tDfofij/T3TFKS1BZChzGQzYKQGzGKbfj+72V3lZOv9
+ evWB53FgtHgSDZnXLwrhqZQq8DwVE0PKbruMhLngMTtZY1kr6rRifY4Va35iqIXDinbV
+ N8LspVGFXYIbsmkYMy5c8YpGWdlRFBT4JbeSLZqNb+hmb0/o2lZrjLnCj9wvetEQPV3m
+ zDLg==
+X-Gm-Message-State: AFq9FYJHKX15FkY+USNwObyue9WzeG6VqcJK/KPgQZxTBf3FPdRY0WDl
+ jGU/mLpcKXfxe22VeMWZhEtmuNPNa/gh2FojbDOm3gvkxop4ZwtW/Tmt2ldSWwwjXUJvpRYfCkr
+ ghpTpYG70Hw==
+X-Gm-Gg: AYBFou0/5issbyJt4wzwVZwOcb73i2zcYuMv6iQXwz+UVrBK8aeB+eukLSkIv14CU8o
+ 6p+57Y1Bhm8LR3XcVFXDid1zGogOKYyD/7x4Y6FiwPNHXUfJXFX8wffdE6dkIpBuX/SB0xh1Jf6
+ vqWEpje4VYmcBG7m+XJZ/Jbgmj/44ov5Sff0C48AdVxRDqPpNsz1WMMuPMle+XRgJbe/tuoOTdO
+ 57Fu6zZDqZQbhtqRp1PC1z1MwNX1yK7eJ1orW1KfJL0PWMRDv51+yoEt4+6cDBQm15PjxjUF8wz
+ mSck/BsjzG0CpM1QkYDzVJsFsnqawqeHUQFfG1UVsPCm5hTfFOMlOsepQ/L5ZV0FB/MPBHmjtpH
+ xtxqyUeE9pGb7zfsJotpYWCP9wxjOQw02N/g6NdN2UceCbVpUiY3KcyNAeI6wK8RW3k55mVpyRf
+ HAxAbubdNCz2mVzp5SsB4KAUtV4JmATSNWJ8uqsIN6PrTrRdBvw9M4BXQ7FnMl7uECGHW1X0qZE
+ KgiRhWFWbuaUN/44SksmAzSpeyTXgYuTOeVOfRXZYToFAx0lSvxxXCO5MNCZ0tT2PX9O18U2Bqp
+ XP30Imqu1cDGy8N2sBdz8I91kj6lBYknf6y9nCPK/i9imUw5cDlednO7MIydCOs/0wBoaVs9TCa
+ uo7w2zljmPs7QhKQ=
+X-Received: by 2002:a05:600c:8709:b0:4a1:9078:911 with SMTP id
+ 5b1f17b1804b1-4ac181e75b7mr244821535e9.31.1793625792066; 
+ Mon, 02 Nov 2026 05:23:12 -0800 (PST)
+Received: from stephen-xps.local (93.224-78-194.adsl-static.isp.belgacom.be.
+ [194.78.224.93]) by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-4aa80f04723sm390066695e9.5.2026.11.02.05.23.11
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 02 Nov 2026 05:23:11 -0800 (PST)
+Date: Mon, 2 Nov 2026 14:23:07 +0100
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Gagandeep Singh <g.singh@nxp.com>
+Cc: dev@dpdk.org, hemant.agrawal@nxp.com
+Subject: Re: [PATCH v2 0/4] DPAA driver changes
+Message-ID: <20261102142307.35553cf1@stephen-xps.local>
+In-Reply-To: <20261030044318.1892998-1-g.singh@nxp.com>
+References: <20261028085517.705621-1-g.singh@nxp.com>
+ <20261030044318.1892998-1-g.singh@nxp.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -108,32 +85,134 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-27/10/2026 17:14, Rupesh Chiluka:
-> In __rte_lpm_lookup_vec() (SVE), the main loop condition was
-> 
->     for (i = 0; i < n - vl; i += vl)
-> 
-> where n is uint32_t and vl is uint64_t. When n < vl the subtraction
-> is done in 64-bit unsigned arithmetic and wraps to a very large
-> value, so the loop does not terminate at the end of the input array.
-> It reads past the end of ips[] resulting in a segmentation fault.
-> 
-> Rewrite the condition as "i + vl < n" so no unsigned wrap occurs. The
-> existing tail handling with svwhilelt_b32() covers the remaining
-> elements, including n == 0.
-> 
-> Fixes: b29ccbea24 ("lpm: use SVE for bulk lookup")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
+On Fri, 30 Oct 2026 10:13:14 +0530
+Gagandeep Singh <g.singh@nxp.com> wrote:
 
-Applied, thanks.
+> V2-changes:
+>  - Fixed most of the AI comments.
+>  - added new patch:
+>    fix out-of-bounds read of mac_idx
+>  - removed drv_oldev, updated comments and notes.
+>  - fixes FQ shutdown
+>  - removed unwanted checks, updated open, updated snprintf.
+>  - updated commit messages.
+> 
+> V1:
+>  - Adding OH port support.
+>  - Updates in shared ethernet code.
+>  - Congestion related code cleanup.
+> 
+> Gagandeep Singh (2):
+>   bus/dpaa: fix out-of-bounds read of mac_idx array
+>   drivers: add offline (O/H) port device support
+> 
+> Hemant Agrawal (1):
+>   net/dpaa: support non fmX-macY type of shared Ethernet name
+> 
+> Jun Yang (1):
+>   drivers: add DPAA cgrid cleanup support
+> 
+>  doc/api/doxy-api-index.md                |   1 +
+>  doc/guides/nics/dpaa.rst                 |  35 +
+>  drivers/bus/dpaa/base/fman/fman.c        |  19 +
+>  drivers/bus/dpaa/base/qbman/qman.c       |  61 ++
+>  drivers/bus/dpaa/bus_dpaa_driver.h       |   4 +-
+>  drivers/bus/dpaa/dpaa_bus.c              |  66 +-
+>  drivers/bus/dpaa/dpaa_bus_base_symbols.c |   2 +
+>  drivers/bus/dpaa/include/fman.h          |   6 +-
+>  drivers/bus/dpaa/include/fsl_qman.h      |  28 +
+>  drivers/net/dpaa/dpaa_ethdev.c           | 241 ++++++-
+>  drivers/net/dpaa/dpaa_ethdev.h           |   3 +
+>  drivers/net/dpaa/dpaa_flow.c             |   7 +-
+>  drivers/net/dpaa/dpaa_oldev.c            | 875 +++++++++++++++++++++++
+>  drivers/net/dpaa/meson.build             |  11 +-
+>  drivers/net/dpaa/rte_pmd_dpaa_oldev.h    | 188 +++++
+>  15 files changed, 1517 insertions(+), 30 deletions(-)
+>  create mode 100644 drivers/net/dpaa/dpaa_oldev.c
+>  create mode 100644 drivers/net/dpaa/rte_pmd_dpaa_oldev.h
+>
+
+Review of [PATCH v2 0/4] DPAA offline port, shared MAC, cgrid cleanup
+
+Applied to next-net for-main (3b51e2e2f0). Each commit builds with
+-Dwerror=true.
+
+Series
+------
+
+The rte_pmd_dpaa_ol_* API is unchanged from v1 apart from renames and
+Doxygen. The four functions still take no port_id and only pass a
+caller-filled struct to ioctl() on the out-of-tree /dev/cdx_ctrl
+driver. The dpaa.rst text added in v2 confirms the API is configuration
+for that kernel module, not for the DPDK port. It belongs in the vendor
+userspace library for cdx. Please drop rte_pmd_dpaa_oldev.h and the
+exports.
+
+There are still no release notes for the offline port.
+
+
+Patch 2/4 drivers: add offline (O/H) port device support
+--------------------------------------------------------
+
+Warning
+
+The commit message still says the port is "selected through the
+'drv_oldev' bus device argument". v2 removed drv_oldev; the port is
+created when "-a dpaa_bus:oldev1" is given.
+
+With only oldev1 present, dpaa_netcfg is NULL. v2 handles that in the
+two log statements but not in the debug dump:
+
+	#ifdef RTE_LIBRTE_DPAA_DEBUG_DRIVER
+		dump_netcfg(dpaa_netcfg, stdout);
+	#endif
+
+dump_netcfg() dereferences cfg_ptr->num_ethports unconditionally. Fold
+it into the existing check:
+
+	if (dpaa_netcfg) {
+	#ifdef RTE_LIBRTE_DPAA_DEBUG_DRIVER
+		dump_netcfg(dpaa_netcfg, stdout);
+	#endif
+		DPAA_BUS_DEBUG("Number of ethernet devices = %d",
+			     dpaa_netcfg->num_ethports);
+	}
+
+Not addressed from v1: dpaa_oldev_queues_release() returns both FQIDs
+to the allocator with qman_release_fqid(), but the kernel received them
+through ASK_CTRL_SET_DPDK_INFO and is never told they are gone. There
+is no reset ioctl for that. Until cdx provides one, do not release the
+two FQIDs on close.
+
+Info
+
+drv_bh_port is now checked against a key list, but it is still parsed
+in dev_start(). A missing drv_bh_port is only reported at start. Parse
+it once in dpaa_ol_probe() and fail probe if it is absent.
+
+The static_assert and comment added to dpaa_flow.c, and the
+MEMMAC_REG_OFFSET removal in fman.h, are not part of the offline port.
+Move the dpaa_flow.c change to 1/4, and mention the fman.h removal in
+the commit message.
+
+
+Patch 4/4 drivers: add DPAA cgrid cleanup support
+-------------------------------------------------
+
+Info
+
+dev_close() runs dpaa_cgr_stale_fq_cleanup() before shutting down the
+port's own FQs. The scan therefore finds this port's live queues, logs
+each one as "still alive?", and shuts it down by FQID. The
+qman_shutdown_fq() loop that follows then only sees FQs that are
+already OOS. Shut down rx_queues[]/tx_queues[] first, then scan, so the
+scan only reports FQs left by a previous run.
 
 
