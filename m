@@ -2,79 +2,78 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3FB60A2600
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 07:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F4C606A32C
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 07:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=eB8pk35G
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=gV8c8W8J
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2480240E1F;
-	Mon,  2 Nov 2026 08:22:38 +0100 (CET)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41])
- by mails.dpdk.org (Postfix) with ESMTPS id ED9E84003C
- for <dev@dpdk.org>; Mon,  2 Nov 2026 08:08:12 +0100 (CET)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-4a3517554f7so19641235e9.2
- for <dev@dpdk.org>; Sun, 01 Nov 2026 23:08:12 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B281740264;
+	Mon,  2 Nov 2026 08:46:03 +0100 (CET)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
+ [209.85.221.49])
+ by mails.dpdk.org (Postfix) with ESMTPS id 086734003C
+ for <dev@dpdk.org>; Mon,  2 Nov 2026 08:46:02 +0100 (CET)
+Received: by mail-wr1-f49.google.com with SMTP id
+ ffacd0b85a97d-48c4be28b82so2792099f8f.2
+ for <dev@dpdk.org>; Sun, 01 Nov 2026 23:46:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1793603292; x=1794208092; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=0Q4gTNnnTyB1PGx/t9t06vAmjv/cfxlKKtHLRP02n3E=;
- b=eB8pk35GuEY3Q1J998QG6Xb/R8Z7x+Ek5ftW39gsqRm7K56fAJpZocLFhjOmFdinU2
- BIW14QRqxWgUdAIp1i6nMiraL15G8r32qGnQzFIoR2BRBjOIdf/ETfP5bFM7Qmk+JF4W
- esONp+xYx4xfHFHWymcjI3nH/KZ/++xtBClI6+PSWokCAHoEcVWEKasIjB3grjxP+Btc
- BIS90/STyHBpbjfZIgy8/6Hh1WEMKJ7TPs8TumtvDNxZoLWUK8EtmjM0Gl1mNW6TCoTu
- RIng1ADiXBj0CrKSpO4nZ7E1e1iN8EqZi1CjyIKWCwKCYkzqXOmZrtGzihSUCihfjhbP
- QB4g==
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793605562;
+ x=1794210362; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=3M6jk92987mfLg+ZmR1rIINWMDkD24U5iibdg42yEbM=;
+ b=gV8c8W8J0KcJmgy6Y4EPC52XFMP1mFq+zsoEl05cifc9rrwIVTsFQx+JS9hBs4H4Fm
+ 6RH4ZNZD6ODEHXx9XFiQnG7RO8Mi3Y0fu8Z9ubKM8/cQFiZAIvBRqs960wvnXx9TkY6N
+ CMLavCAZRAzxhxEAyRkuHFttnWXOnPlG4RCL6u1LJzK3SQP0d6bLOrGpA16YFcqZSIhZ
+ gUUVNxN9/8EBpCZueypquDmYI54fbsePhdwqbeTllWOaEfT0YhzYz8qj7je9W1q9ayY3
+ Con+2iU8lU4jn7NT+IgwQfhrliPIE/VhnnRxUoivsFpli2cp5Ol7wtTRrB50qx5O/jZ1
+ 4OLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793603292; x=1794208092;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=0Q4gTNnnTyB1PGx/t9t06vAmjv/cfxlKKtHLRP02n3E=;
- b=EaAvaA7q4DS2dn+lbSn6zw8kMFJR7dSe3QnjmcJEbkIfNCEr1tpd3MD9IzTbrMb+0R
- LLU20G+SsdM3PQ1N60OWImpxS3xct2yRwBzCXy5+vc1Ut/ARfZt7mNmeXAEd4NlBqP5S
- HH/r6WRezqDwmTlinOgd+UPrGbYVBg1qSZ6VaZ/28HH5Y+dB2FsJll+j00NO/4AFZ/R4
- sYir4IVs8afTRW6JZ/UMowb8lryNWogE6eTALGGsGKjzxAm0S6RXyO9hmJ0Ozztj2ZaU
- F05sL3fyVS5pTOynPWGFXcEzgt9cz9022Ry7B/w6W1Xictz6ayTNGIV73Y5G6ZbJnNG4
- TL5A==
-X-Gm-Message-State: AFq9FYIdYZ+/6x/bKtawzmG6PCO6IWujOB0yyb+qv7DWRgnc6dj1/WQ4
- upNEGAM4ZeAc6tXordQ6piMSLCTmr3sNOQEn+ofChNxfVjws4O7Gih7jknOuf3kk/Tw=
-X-Gm-Gg: AYBFou1wY40tJiH4G2T0SSyU47OFP7BpFHtE9FF6HzuQIMpC3hy7nfZl8AEOa2k1HSZ
- mNRgFzQdQyxvYGgHT9eqOjRQAb2LPo/VHSHEc40dcDkmmImMILL2lg+QCLZRnQpPmW9Bjvr5GEE
- qdNf/7n3Sz4CodGWcHhJTXsC7bgAtfF9w2uqQJBswRjTNULFo8472TX/neK6C0JUfMBxw7IYSI9
- Tb7hypR3Y+jSEPAN623NGYGX/EoeiaHThIgyyuYC2xvLqSWQQAMbRW+O/4+iqpaDqabBJXhPr3e
- lTmQZZI6aPuOSQhksUKmnDf/PKbeONic2mYCbNGLJIvoge3zKvCTD9oq3xel0Ubjr9vafa0Py3N
- AEP+XCj3KbUhru1jKzM+CDdbwygATDepcHc+eirqTicHRLh4qBl3AkoPrYdSUQ18LfiUbCgsPZF
- MTbe1HGvkkvvaD8vR9qYgC9og5AgZtScCK/bhP9Vp3DAOn/HRIF9aFD5lrfoDegqI+kXr4DeUx5
- 1pFeOL9IichySAqax9JTxYACM+BxX+mVxjfm9hQha/Z08vj6lX6YJYx5D/RPBnwukbh3hsaiNK6
- 8iZ8IHguAy0nbR5DvMY5STjXnULQbEKazHbKjDm7C6WmEP8fge1lppQ62Qg29+EIgV/FZ0x66D6
- AOQmSuIC31xy1HXkBEJ8PbMahhDUwUjcQ2i6WTBisxFSGf4s4
-X-Received: by 2002:a05:600c:3510:b0:4a1:dec1:4e1 with SMTP id
- 5b1f17b1804b1-4ac1765d674mr209675965e9.22.1793603292436; 
- Sun, 01 Nov 2026 23:08:12 -0800 (PST)
-Received: from center.jhjvjihww5qejoy14qwv1cc4td.frax.internal.cloudapp.net
- ([131.189.143.225]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4aa81a896ecsm339616535e9.9.2026.11.01.23.08.11
+ d=1e100.net; s=20260707; t=1793605562; x=1794210362;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=3M6jk92987mfLg+ZmR1rIINWMDkD24U5iibdg42yEbM=;
+ b=fiqeGGL72vaFyed5wjBYI8Fb2cVoKKusN+paMKNkiZ3qchXsSkLh2CID0pAAcv64Pw
+ FBe1gsnRQP8iUtkBM2M25cyuSWeZe5CwSyRRd7TQm5jXZMnEaY3iWcTrmCxv0oblri7v
+ YqP/Nf+gDIAxjL3T1AWSwdNkDUCpscDTfxEmN34BfJ7YdYF+mpvg2dbUGQst/pzZOhND
+ 9z1ATUllEb7NH8RS4VuHyCTX0amXcmPri//mKFQ9TJeFCx3DwxSyYNFq6sLGYDeLRfWF
+ 8acpfKgtHzeVi6r96RD/fcY+zS8AgcsRW93tv5+6aP0m2vdF8qXVKptLUmJqw97REQqZ
+ ZSKw==
+X-Gm-Message-State: APuU4Z8F2ia+eUCNkItJSU9+rrER0C64yPHKJ+t0FWr88moccsVYJ0+0
+ qDk/qiqYXGArr4S7bMERSfqHyvL5knMP9S/mzl/44cf23KTYTbKG6rzanyY2/Ik6h/M=
+X-Gm-Gg: AYBFou1CNsuRWkJZFrZ2VJNFhSw99BgHrtVuL8EThyndiv9d8KlfyHPQkBoFLwkhmgG
+ samV0ebth34AJa3y94sqncWsNTYs6zYQK9B38XUzvDXLw+zBzjPyMdZ74N3a6yzjkdEMBRc+jbv
+ jwOrMU7D53LsksThFjn34wCvf+UiXmHPu9udYHmvt7Mpja4LEh1gYsVCXAW3pJXw0INi4U4mdeU
+ fESfDNlzf4G8XlVMSTt0sHuG9CpIu1Q4Wr4CGg40hTMkbUlsgQw/uETJG8uumYXPRRRlfXNqudL
+ 4zu0OLYctAD76V3BFTs50EiiTENMBmZAfF1v1gIeqbH64g6Mom9j6mVlNWbawX3kvb4rBMNChjZ
+ GCEttL2BdNn7n+trI1pDl3h6ot63lcANyq17WBq/FoL11T1JK+fkwTc5g1lIUjvr51rfbgzE+dB
+ av00LTbhVAMjiGVMK5xuC0xhccPWwstAyJsY4QxGy7RyK4tWDe5EINPhuIoO8njmAEmHcsywkMa
+ MwPIk+0otu9F7sEC5Ctb6lxBLLPfI/SEQxbSpyuJUQt51xsT8VS1An+/FlucbDrMbQAHxV64oZk
+ B74xGCSMm9RnxLLQycZJ5IZHH9y8b3iBAbB6nA2ErILiPK9md40JP6hXcxTr9fgIbGe3gi9Ek4j
+ JaTVzP9+uTkiRcQ==
+X-Received: by 2002:a05:6000:250a:b0:48e:c84:5be6 with SMTP id
+ ffacd0b85a97d-48e6e303c68mr20347860f8f.14.1793605562326; 
+ Sun, 01 Nov 2026 23:46:02 -0800 (PST)
+Received: from stephen-xps.local (93.224-78-194.adsl-static.isp.belgacom.be.
+ [194.78.224.93]) by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-48e71a4d425sm18924636f8f.1.2026.11.01.23.46.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 01 Nov 2026 23:08:11 -0800 (PST)
-From: Orgad Shaneh <orgads@gmail.com>
-To: dev@dpdk.org
-Cc: Wei Hu <weh@microsoft.com>, Long Li <longli@kernel.org>,
- Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org
-Subject: [PATCH 2/2] net/mana: fix Rx interrupt enable failing on lock
- contention
-Date: Mon,  2 Nov 2026 07:08:09 +0000
-Message-ID: <20261102070809.813033-2-orgads@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261102070809.813033-1-orgads@gmail.com>
-References: <20261102070809.813033-1-orgads@gmail.com>
+ Sun, 01 Nov 2026 23:46:02 -0800 (PST)
+Date: Mon, 2 Nov 2026 08:45:59 +0100
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Joshua Washington <joshwash@google.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v2 0/4] net/gve: TSO descriptor count fixes for GVE DQO
+Message-ID: <20261102084559.1e58036c@stephen-xps.local>
+In-Reply-To: <20261030184304.508282-1-joshwash@google.com>
+References: <20261030184304.508282-1-joshwash@google.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Mon, 02 Nov 2026 08:22:35 +0100
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,108 +83,96 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Rx interrupt enable and disable take the per-device reset_ops_lock
-with a trylock and return -EBUSY when it is held. Every Rx queue
-takes that lock on each enable and disable, so with two or more
-queues on different lcores the calls collide routinely. A failed
-enable leaves the CQ unarmed, and a thread that then sleeps in
-rte_epoll_wait() is not woken by the next packet; it sleeps until
-its timeout with packets in the ring. A failed disable leaves the
-event unconsumed. Applications do not expect -EBUSY from these
-calls outside a reset, and l3fwd-power ignores the return value.
+On Fri, 30 Oct 2026 11:42:59 -0700
+Joshua Washington <joshwash@google.com> wrote:
 
-Seen on Azure (MANA VF) with 2 queues and a 10 ms epoll timeout:
-about 550 lost wakeups per queue in one run, p99 latency 9.9 ms,
-and 22.7% packet loss at the higher rate tested. With one queue
-there was no loss.
+> https://inbox.dpdk.org/dev/20250707231812.1937260-7-joshwash@google.com/
+> introduced descriptor limit checks for TSO packets in DPDK.
+> Unfortunately, a couple of bugs have been found in the implementation.
+> 
+> This patch series introduces fixes for those bugs while correcting the
+> overly restrictive behavior recently introduced mandating that all
+> headers be in the same buffer.
+> 
+> The final patch in the series introduces tx_pkt_prepare as an option to
+> ensure that there is a way to get a clear signal of when packets violate
+> hardware limitations. Before a recently introduced patch, the GVE
+> behavior was to stop transmitting at the first invalid packet, which
+> would allow the application to do any necessary linearization or packet
+> modification before attempting to transmit again. It turns out that that
+> behavior is considered incorrect, so offer tx_pkt_prepare as an
+> alternative.
+> 
+> Depends-on: series-39707 ("net/gve: fix DQO Tx queue stalls")
 
-The section under the lock is a doorbell write or a non-blocking
-read of the completion channel, so wait for the lock instead.
-The device state check is kept, so the calls still return -EBUSY
-while a reset is in progress; a caller that arrives while the reset
-thread holds the lock waits for that step to finish first.
+You dont need Fixes for anything that changed during 26.11 development
+window. Only for changes that need backports.
 
-Fixes: 077ca514d641 ("net/mana: support device reset")
-Cc: stable@dpdk.org
+AI review also mentioned.
 
-Signed-off-by: Orgad Shaneh <orgads@gmail.com>
----
-Builds on main (meson -Dwerror=true, gcc 14, rdma-core 56).
-Tested on Azure D2s_v6 (MANA VF, Debian 13, kernel 7.2.11), main + 1/2
-with and without this patch, 2 Rx queues, 10 ms epoll timeout, no
-retry in the application, one 12 s run per rate:
+Review: [PATCH v2 0/4] net/gve: DQO TSO validation fixes
 
-  pps each way   without: loss / p99 / lost wakeups / -EBUSY   with
-  25k            0 %     /  8.3 ms /  300 /   913             0 % / 78 us / 0 / 0
-  100k           0.047 % /  9.9 ms / 2232 /  7733             0 % / 88 us / 0 / 0
-  200k           22.8 %  / 10.0 ms / 2472 / 10093             0 % / 87 us / 0 / 0
+Applied to next-net (339c992f25) with no conflicts. Each commit
+builds with -Dwerror=true.
 
-With the patch, 400k pps on 2 queues and 100k on 1 queue are also clean.
+Patches 1/4 and 4/4 look correct. The seg_offset change in 1/4
+matches the descriptor layout: the first seg_remain bytes close out
+the open segment, and only the rest is divided by tso_segsz.
 
-An alternative that never blocks is to guard these two calls with the
-per-queue burst_state gate instead of the device mutex (the reset path
-already blocks and drains it before teardown). It is a larger change,
-and the dev_state check would still be needed after a failed reset,
-which clears burst_state. Happy to switch if you prefer it.
 
- drivers/net/mana/mana.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+Patch 2/4: net/gve: account for multi-mbuf headers when validating TSO
 
-diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
-index 0ea6d9a54a..a25c7590ef 100644
---- a/drivers/net/mana/mana.c
-+++ b/drivers/net/mana/mana.c
-@@ -449,6 +449,24 @@ mana_reset_trylock(struct mana_priv *priv)
- 	return 0;
- }
- 
-+/*
-+ * Like mana_reset_trylock(), but wait for the lock. Used by Rx interrupt
-+ * enable/disable, which every queue calls on each sleep and wakeup: they
-+ * must not fail just because another queue holds the lock for a moment.
-+ */
-+static int
-+mana_reset_lock(struct mana_priv *priv)
-+{
-+	pthread_mutex_lock(&priv->reset_ops_lock);
-+
-+	if (rte_atomic_load_explicit(&priv->dev_state,
-+	    rte_memory_order_acquire) != MANA_DEV_ACTIVE) {
-+		pthread_mutex_unlock(&priv->reset_ops_lock);
-+		return -EBUSY;
-+	}
-+	return 0;
-+}
-+
- static int
- mana_dev_info_get_lock(struct rte_eth_dev *dev,
- 		       struct rte_eth_dev_info *dev_info)
-@@ -1126,7 +1144,7 @@ mana_rx_intr_enable_lock(struct rte_eth_dev *dev, uint16_t rx_queue_id)
- 	struct mana_priv *priv = dev->data->dev_private;
- 	int ret;
- 
--	if (mana_reset_trylock(priv))
-+	if (mana_reset_lock(priv))
- 		return -EBUSY;
- 	ret = mana_rx_intr_enable(dev, rx_queue_id);
- 	pthread_mutex_unlock(&priv->reset_ops_lock);
-@@ -1139,7 +1157,7 @@ mana_rx_intr_disable_lock(struct rte_eth_dev *dev, uint16_t rx_queue_id)
- 	struct mana_priv *priv = dev->data->dev_private;
- 	int ret;
- 
--	if (mana_reset_trylock(priv))
-+	if (mana_reset_lock(priv))
- 		return -EBUSY;
- 	ret = mana_rx_intr_disable(dev, rx_queue_id);
- 	pthread_mutex_unlock(&priv->reset_ops_lock);
--- 
-2.53.0
+Warning: stale comment in gve_tx_validate_pkt_limits().
 
+The data_len < headlen check is gone, but the comment above it
+still says the headers must be "contained in the first segment".
+Update it:
+
+	/* TSO headers may span up to GVE_TX_MAX_HEADER_DESCS_TSO
+	 * buffers; the payload must not be empty.
+	 */
+
+
+Patch 3/4: net/gve: introduce Tx packet preparation for DQO format
+
+Warning: tx_prepare rejects every TSO packet whose headers span
+mbufs, which makes the relaxation in 2/4 unreachable for apps that
+call rte_eth_tx_prepare().
+
+GVE_TX_CKSUM_OFFLOAD_MASK_DQO includes RTE_MBUF_F_TX_TCP_SEG through
+GVE_TX_CKSUM_OFFLOAD_MASK, so "csum && tso" is just "tso". Every TSO
+packet therefore goes through rte_net_intel_cksum_prepare(), and
+that returns -ENOTSUP when
+
+	rte_pktmbuf_data_len(m) < l2_len + l3_len + l4_len
+
+The commit message says "in this case" as if some TSO packets skip
+the call. None do. Pick one of these:
+
+ - State it plainly: TSO packets that go through tx_prepare must
+   have all headers in the first segment. Split headers are only
+   accepted from apps that call tx_burst directly. Then drop the
+   dead csum variable:
+
+	if (tso) {
+		err = rte_net_intel_cksum_prepare(tx_pkt);
+		if (err != 0) {
+			rte_errno = -err;
+			return i;
+		}
+	}
+
+ - Or seed the pseudo-header for split headers too: read the
+   L3/L4 headers with rte_pktmbuf_read() and write the TCP checksum
+   field into whichever segment holds it.
+
+Info: this adds a tx_pkt_prepare op and tags it Cc: stable. That is
+a new driver op, not a bug fix. Stable maintainers may want it
+dropped from the backport, or want the commit message to say why
+existing apps need it.
