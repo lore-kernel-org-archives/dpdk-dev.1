@@ -2,53 +2,53 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A43606A327
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 08:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FC5606A32C
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 08:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=aYzY7bLV
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Q+ihbv6T
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9BFDD40264;
-	Mon,  2 Nov 2026 09:15:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 60F6140E32;
+	Mon,  2 Nov 2026 09:15:37 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTPS id F25ED4003C
- for <dev@dpdk.org>; Mon,  2 Nov 2026 09:15:29 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 5F3EB4003C;
+ Mon,  2 Nov 2026 09:15:35 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793607330; x=1825143330;
+ t=1793607335; x=1825143335;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=fmDKmr4wXexYwGKkKhP4Na3LTqcCNeIIoUhNWboLYnw=;
- b=aYzY7bLVmlMrj1AZpFbyNKbLtrRFFXt6yQ2e6+ZQUeCZRjuwGnMbtOyx
- 3Gim37LBGCWD8joArH7dS2IWMA1GCDMcRM/q6rsCxcpH1RX9uf7l5btMy
- Q0C9xRKKMrVynJVqR5sYhiNB9TkcIeBthLo4z0Al4+/fa+glQyRRrR1ca
- BMHZZG5KmPnUL+mR3LjC+p8Zzy6ShPM1s2orNVnSE4VJbKjk2q+xap7Qr
- cgzSd/NzSC7Oxko4O/tX0UhpEPg4w7tGvWUNVVT7ElPQFf0/+p2nOvU8p
- ftTt+xAOAmJMssRkEWnQUQFxdQEU3hJYxUKpLuE6QgEWlNhb1+h0U4wRa A==;
-X-CSE-ConnectionGUID: gBxNUyzlRYGY9yqVrzb+jw==
-X-CSE-MsgGUID: uw1atYFCQjO5hqdsePHvGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11953"; a="2283621"
+ bh=Ssk9s5SXIZpEHGyrrgO8HNaVIWk7e4iB29Xao9YDnTE=;
+ b=Q+ihbv6TMErunkmrhtsNBuw3Cddgc27NrEmqtSqE0dv+J3Bo8D6EJCAK
+ Koh7qiHRwA/8rHUXiMSYZ7tRqFA/HEjPWXLJlQMpCx7UKwwVlDIPR1pjy
+ Ywo56+GFpqflp/SMBSevubYUZ/D/XsO6f67D9uCKkRCj5HnK++WXIxg3y
+ ujGOwCt1zX+O/z6nMdf10u2NExii5s3zAX7lhmWw9v6Ga4FYHY63eBOGj
+ tAMr1RT7i/uHxIB0FNd4cRnYIGyhdyvcgTFcP3tc5Rn0zB24+10E7VTid
+ 9F+4ZDUXHTi2vkLhUme3wlFa7S6mqCL0GpIPwQyn8Pw/ysv5jWNaTRpDL w==;
+X-CSE-ConnectionGUID: y7kaTXFsT/OXLGrrxYJusA==
+X-CSE-MsgGUID: 9wcIEAObSg6Ecr2Vn540fA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11953"; a="2283629"
 X-IronPort-AV: E=Sophos;i="6.27,191,1787036400"; 
-   d="scan'208";a="2283621"
+   d="scan'208";a="2283629"
 Received: from fmviesa012.fm.intel.com ([10.60.135.152])
  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Nov 2026 00:15:28 -0800
-X-CSE-ConnectionGUID: PGDcbo7xRSW0RofLi0rQgQ==
-X-CSE-MsgGUID: x9ZkyVqBSUm+snHmRaczmQ==
+ 02 Nov 2026 00:15:35 -0800
+X-CSE-ConnectionGUID: vY5Gj8BMTLmJrEiqpqvajA==
+X-CSE-MsgGUID: IYEDsDu0RFaGJ5Whbt+xxA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,191,1787036400"; 
-   d="scan'208";a="7818556"
+   d="scan'208";a="7818592"
 Received: from pae.iind.intel.com (HELO PAE-35.iind.intel.com) ([10.49.105.82])
- by fmviesa012.fm.intel.com with ESMTP; 02 Nov 2026 00:15:27 -0800
+ by fmviesa012.fm.intel.com with ESMTP; 02 Nov 2026 00:15:33 -0800
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH v2 0/7] net/ice: fix memory leaks
-Date: Mon,  2 Nov 2026 08:10:30 +0000
-Message-Id: <cover.1793605751.git.anurag.mandal@intel.com>
+ Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
+Subject: [PATCH v2 1/7] net/ice: fix DDP package double free on init failure
+Date: Mon,  2 Nov 2026 08:10:31 +0000
+Message-Id: <5e161b80a142253efe517b810a195d2812a6d3d0.1793605752.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1793097896.git.anurag.mandal@intel.com>
-References: <cover.1793097896.git.anurag.mandal@intel.com>
+In-Reply-To: <cover.1793605751.git.anurag.mandal@intel.com>
+References: <cover.1793605751.git.anurag.mandal@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -61,64 +61,43 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-V2-changes:
- - Addressed Bruce Richardson's review comments.
- - Added "Cc: stable@dpdk.org" in all patches.
- - Use ice_deinit_hw() on close instead of open-coding it,
-   which also returns the FD counter block to firmware
-   on Patch-2.
- - Declare the devarg handler argument as char ** so the
-   filename it points to is char * and can be freed without
-   a cast on Patch-3.
- - use RTE_CAST_PTR when freeing the filename in ice_dev_init()
-   on Patch-3.
- - allocate the flow segment on the stack instead of
-   freeing it on Patch-7.
+When ice_init_hw_tbls() fails, ice_dev_init() frees the DDP package
+copy but leaves hw->pkg_copy and hw->seg pointing into it. Without
+safe mode, the error path then calls ice_deinit_hw(), which frees
+the package copy again through ice_free_seg().
 
-This series fixes memory leaks, and one double free, in the ice PMD.
+Use ice_free_seg(), which also clears these pointers.
 
-a. The DDP package copy was freed twice when hardware table
-   initialization failed during probe.
+Fixes: 9c4f15901ada ("net/ice: free memory with matching allocator")
+Fixes: 7f7cbf80bdb7 ("net/ice: factorize firmware loading")
+Cc: stable@dpdk.org
 
-b. The switch filter management structures, the DDP package copy and
-   any remaining VSI contexts were never freed on port close or
-   reset.
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ drivers/net/intel/ice/ice_ethdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-c. The DDP filename devarg string leaked on probe failure, and when
-   the devarg was given more than once.
-
-d. The main VSI leaked when probe failed after PF setup.
-
-e. MAC and VLAN filter entries could stay allocated when a VSI was
-   released.
-
-f. A failed flow director setup leaked the FDIR VSI, hash table, hash
-   map and counter pools.
-
-g. The flow segment used to create the ACL profiles leaked on every
-   ACL engine init.
-
-Anurag Mandal (7):
-  net/ice: fix DDP package double free on init failure
-  net/ice: fix resource leaks on port close
-  net/ice: fix DDP filename leak
-  net/ice: fix main VSI leak on init failure
-  net/ice: fix MAC and VLAN filter leak on VSI release
-  net/ice: fix FDIR resource leak on setup failure
-  net/ice: fix ACL profile segment leak
-
- drivers/net/intel/ice/ice_acl_filter.c  | 46 +++++++++++--------------
- drivers/net/intel/ice/ice_ethdev.c      | 37 ++++++++++++++------
- drivers/net/intel/ice/ice_fdir_filter.c | 10 ++++--
- 3 files changed, 54 insertions(+), 39 deletions(-)
-
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index d2ba64efb6..4c21356736 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -2785,7 +2785,7 @@ ice_dev_init(struct rte_eth_dev *dev)
+ 		ret = ice_init_hw_tbls(hw);
+ 		if (ret) {
+ 			PMD_INIT_LOG(ERR, "ice_init_hw_tbls failed: %d", ret);
+-			ice_free(hw, hw->pkg_copy);
++			ice_free_seg(hw);
+ 		}
+ 	}
+ 
 -- 
 2.25.1
 
