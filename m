@@ -2,157 +2,149 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7EF606B924
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 17:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B58A606D83C
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 17:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=AxbT6lLX
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=N0RcXXLX
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 80D2D402E3;
-	Mon,  2 Nov 2026 18:24:43 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTPS id A4DEE4028D
- for <dev@dpdk.org>; Mon,  2 Nov 2026 18:24:41 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CD6A5402E3;
+	Mon,  2 Nov 2026 18:27:54 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTPS id C330B4028D
+ for <dev@dpdk.org>; Mon,  2 Nov 2026 18:27:52 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793640282; x=1825176282;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=EEguCfX3Ihco6AM/eK6Gw8VDg4HX9QFjMV+ok2P08k4=;
- b=AxbT6lLXQ0hjyyYKctR1Ra0K6Elb3t1omHYNHJFEch6Xo2tEnpQKkb3I
- 8bKnVGa8W1CIjvogq+prPga4MeEbWPgktpOSUKGR56mbjlmXFv/aDDBCu
- oPRE9dHYFUXXIOMTigZ8EK9fcLbwMPXXmGOnKkJoPqNKlkxp0ePCZbkuW
- PD2zn28l3IUXHmGVVWYwNSisHSDq6SxqZfy9rqTtijOY73Kme8WzK7hXL
- pTfuF3l68l26BtIIwJyhvGsWt6sWF1DyStaPsp7gYdqIoBvrkkWXFqb3f
- yW+hTSWEhgJ9uhfkU5v94SOw7jUCuMGv1hOOWe4tzF3Np19QzTSa+fxA/ Q==;
-X-CSE-ConnectionGUID: xFeFXGXURl+rCEaMxo27Rg==
-X-CSE-MsgGUID: LVkoZNtHTpmN6HcDznGRaw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11954"; a="2354825"
+ t=1793640473; x=1825176473;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=4WWOdk7ynM1HQsQAQP6dRAXeohbDNz/k2K8U55ZrasQ=;
+ b=N0RcXXLXa36he2aawc3UEFjeFc8F2jlFjoN1Q1w4pOA17IUqqtLYtxup
+ unOpdvBHfWLHRif901BHJkpBK0ogFW6Sim4KXxDyV/y0TizdEeUNlf6s2
+ jO7cl6M3EQyX6L6RZnfPbZZYDy3XbK4XWEae4fjaFwmmnsvagMPiOD3OZ
+ yJeL483dfdWeTbxeHzz//RgyZRBgvQcUKTZ6DBbMdCs9/dSCXR8DxK202
+ s7V5xLZAAD64DgQb17Q7ZFC2c/89B2y3r0m5H6zdBWQ0dqKPZrsmZENa7
+ PQzOvNMZbt2D6kdzy12B5G7du1ICe+8KCwROqsS6oYPUqYVnsuEbSsOx9 w==;
+X-CSE-ConnectionGUID: 1SdLjz55TomrznEio2iSOg==
+X-CSE-MsgGUID: r/AWBbvqQ+qg5RglH7zTmA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11954"; a="2222951"
 X-IronPort-AV: E=Sophos;i="6.27,191,1787036400"; 
-   d="scan'208";a="2354825"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Nov 2026 09:24:40 -0800
-X-CSE-ConnectionGUID: rkZVtgIMTNGutRnYm/CWtA==
-X-CSE-MsgGUID: ipLafolOScaCcZa+6/ZoCA==
+   d="scan'208";a="2222951"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Nov 2026 09:27:51 -0800
+X-CSE-ConnectionGUID: u5TUahHDRhiV/0MGd5YEoA==
+X-CSE-MsgGUID: ig6+4vC2QoaFN/J7ca9d3A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,191,1787036400"; 
-   d="scan'208";a="6193005"
+   d="scan'208";a="6513981"
 Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Nov 2026 09:24:40 -0800
+ by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Nov 2026 09:27:51 -0800
 Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
  ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Mon, 2 Nov 2026 09:24:39 -0800
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ 15.2.2562.56; Mon, 2 Nov 2026 09:27:50 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
  ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56 via Frontend Transport; Mon, 2 Nov 2026 09:24:39 -0800
-Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.9) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ 15.2.2562.56 via Frontend Transport; Mon, 2 Nov 2026 09:27:50 -0800
+Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.33) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Mon, 2 Nov 2026 09:24:39 -0800
+ 15.2.2562.56; Mon, 2 Nov 2026 09:27:50 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RalfORaeL3CjuxqXk07JVghKMsASZb4OAPH+PtzVgZqiW2yVUYyxq9nSM7oB2APYTP7bycRCZJyRxAR1VXoeeyJZ9MHKr+uSOFKwNXcT6fjAtpRAwWOPQY7F7NpcWCLoW2ak12n1XsThHRc54giQiIg0ttDFf5ja5XAr5PlEam7z0ctfiM60YcJuNMiubf4u0Yx6LqZOuuxhiMqQZGB6txHJ7/Xh4wDQA16hqo11oriG5gOYEej8H0F5a638znxo9WaZO3kaCeq3gaL7JBOiNsAc/wpPN8rZ3GMwU8dAyPIhPJabw1leOShpNH5oxIWt0iJ/6W9gmfYW9Tk0iBF+tg==
+ b=gR3a0xagK4g/FXl/xNeiSNVgojVrLbBS6sp44qbodmuKTlYIfZ8X4sDNP+/G/35v8l4nIQxq3OOgBQ5Do1ZHwRUJNhKh/g4I2xwu483m5ArxCb2UYAMbdIUcK2iA3RRyLm06M3TC4iAZoWAXNcYxIhslQz0MRcwy5SmGO42/UhS1HOT17CEawb9fxsMhkIaGGVHW/1nC1YyB9Ft4F7NMGvkmVFSt8KSmk/uxV1RTPsD1uIxc0NtGI34QBTadx4g0VA2U1OQKCpv7Ai9NFi+iW2A0j/Yrx/8txuMfCRZOA0/9uOxVbACKfMMH8io+0EzSfNI9H0lai3JKCX+/b+ncAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FEiEeKyeRyOTFGj/o/LRrIVKYbbVcgnG0RNQMzrhfH4=;
- b=Vq7XqKpLwv2VtoNLpqPeviA+h7HcPkc+8NGMRfdF2zPrOCo8jrUxpNK+EXUQJO07JTyCKDHwq0Dcu1y1/BcU7Y8jLelcIzUawcad/YlcQgjhiEpRBeYeIxookteiwVQ1XJq+IapTjlXtxlsAYyE6MDpKgDgdMsBNxanzReA4GuX1AZssjwM7sJItTaQFQmfJ0tsB+Pbe7mNWLn6SuI/GfyjPwYsf0h6hZI+KYkYeFa2Ktna1sIv+5JTxU7DJm5pujC/CHNgWRjFZ/kYJzN9YTY1jjANcCgU9Z84eCUHtlM+ysffCX3S69UTZyLprk8qadR43/W33kq9R6Ao3ky6fIw==
+ bh=AePbywJkxI/NnNWiXlO1fV0QqbzlW+OBIaQMoDtQNYk=;
+ b=fmLmB0elQE+ZQAUv3N5Fe/MbZin3Qq1rsMzFs6QE8ydRfwU2i+0Dknnoxw0yBnYgfB30Nri/MaPmCaDaHPFn4+ZlhoeDupngRMbP9ts+VVgL8vf/v1BAicQCoqG2LaKLq7QcqPMR+lFxUwfXAyU9+GAhMBH617CXBcMsZlYI5T5tnzaD/Df9Gb9esd1jdcsF/cYxvVEz8qcvGlpFfmGqXpqVBhz0jGMQ9tRddTFtO8AyDCeUfjvGTuGK4R74gofUIlLKR4q+AnRam3aAltiYAJJrwzVHjVKXMrlmHfBWEQfEm5EYhWzbnFKFzksgd8kqkLLGIKPU5wT25BVS+S4BwQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA4PR11MB9444.namprd11.prod.outlook.com (2603:10b6:208:563::22)
- by MN0PR11MB6060.namprd11.prod.outlook.com (2603:10b6:208:378::8)
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by SJ1PR11MB6130.namprd11.prod.outlook.com (2603:10b6:a03:45f::9)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Mon, 2 Nov
- 2026 17:24:35 +0000
-Received: from IA4PR11MB9444.namprd11.prod.outlook.com
- ([fe80::8b6d:87bf:4926:f0c1]) by IA4PR11MB9444.namprd11.prod.outlook.com
- ([fe80::8b6d:87bf:4926:f0c1%5]) with mapi id 15.21.0569.011; Mon, 2 Nov 2026
- 17:24:35 +0000
-Message-ID: <86bc4512-892f-4b7e-95cf-f9fd322b92db@intel.com>
-Date: Mon, 2 Nov 2026 17:24:32 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] rib: reduce node mempool memory footprint
-To: Robert Sanford <rsanford2@gmail.com>, <dev@dpdk.org>
-CC: Robert Sanford <rsanford@akamai.com>
-References: <20261030161926.1185112-1-rsanford2@gmail.com>
-Content-Language: en-US
-From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
-In-Reply-To: <20261030161926.1185112-1-rsanford2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DB8P191CA0009.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:130::19) To IA4PR11MB9444.namprd11.prod.outlook.com
- (2603:10b6:208:563::22)
+ 2026 17:27:48 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0569.011; Mon, 2 Nov 2026
+ 17:27:48 +0000
+Date: Mon, 2 Nov 2026 17:27:43 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "Loftus, Ciara" <ciara.loftus@intel.com>, dev <dev@dpdk.org>, "Burakov,
+ Anatoly" <anatoly.burakov@intel.com>
+Subject: Re: [PATCH] net/ice: add explicit control of link auto-negotiation
+Message-ID: <aujIDqccaREkWHG_@bricha3-mobl1.ger.corp.intel.com>
+References: <20261030132616.2066712-1-bruce.richardson@intel.com>
+ <IA4PR11MB927804496D3ED9C0A512C97F8E6A2@IA4PR11MB9278.namprd11.prod.outlook.com>
+ <auiuHAy8DjGUbaXm@bricha3-mobl1.ger.corp.intel.com>
+ <CAOaVG15Ft8dr43T+NOoiLLQOa+4HNsg+SJmAJj08+uZUPzq70A@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAOaVG15Ft8dr43T+NOoiLLQOa+4HNsg+SJmAJj08+uZUPzq70A@mail.gmail.com>
+X-ClientProxiedBy: DUZPR01CA0350.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b8::22) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA4PR11MB9444:EE_|MN0PR11MB6060:EE_
-X-MS-Office365-Filtering-Correlation-Id: d846c05c-726f-4601-9760-08df39062a56
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|SJ1PR11MB6130:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53551f5b-e4c5-4504-9c4c-08df39069d27
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|376014|23010399003|1800799024|10067099003|22082099003|261102123227099003|18002099003|56012099006|11063799006|261022105027099003|261021123027099003|261021121427099003|261026140227099003|261026121527099003|261009223027099003|261028144727099003;
-X-Microsoft-Antispam-Message-Info: FGnPxmR6UElQt4p5D2OzQNsqeS7zYzxqT4wGpqAIohAuaLhzgHuh2KbRumOx+NlSwYRuEioDt334hHDb1KkIudd/ZEazVDIFpN+yO+MZsI+4uzYTP8tmCBO0y0bBuRfh0hZuTJcDnpewFdZoS8nm3lJStxBBv0Z7eJIOyQKegJFpdGw3wCUSgjsE4uvx7iKp0OODdlgEDgr41l1tk4Mwg/RVCQ6ENKSyN5s/Pmt3eMqIOPbXK57/PoPgnj36zsge8w5fjBlQD+C4V2bk1kJDCF5qOMuOC00HlASkMNscXmUUBGyrJNLZfAvuCDMSAAjUHCKDy6zDaNMlzwYPpZjml7usxa1JEofIme1MeC5mM8mYaiAfVBMJDGtz93wJx8tVGEhn/GU/PNUNsvKXd9Dfi7XnVPS6bu1988HUHneADCSUGeSrIpQKo7UyGppg1bgIFC15i119uG7gq7b+0vXA1s6GMbliBYRDoCcQMQhgyIrb7Ya85MONXekKb59ly5ZqQxGJbrH8ZNeS36MZA3BEmqkd6x9m0CZbN9aSS7pxxWsSmxoNC7NAR7f57IC9NXbbcHTrAsqxd7x4LEgZeyR9xo4XqhH0XeK0+VpNZu5Lb5gmWViJxgoqLVGmXTPOuRSvLNWW7IkqE5d1tdcdyW0Squ2mNXQ2kGvAMgtDdJ+ejJQ=
+ ARA:13230040|376014|1800799024|366016|23010399003|6133799003|10067099003|18002099003|22082099003|261102123227099003|56012099006|4143699003|261021130227099003|261026121527099003|261022115727099003|261021135927099003|11063799006|261026130827099003|261022105027099003|261022113327099003|261022075727099003|261026140227099003|261009223027099003|261028144727099003|261021123027099003|261021121427099003;
+X-Microsoft-Antispam-Message-Info: 6AJikhZ/Y+9XXESKcbfoWC5Hsa7Hjf4HVVB7eNdcE7hpl4F4rQRLiYHxTmnbdOWZIJFwPy+3M5FnnfQ+8Plb/YbqiSlX1naiIKusRj13F5hyLi7v6V7eBOJhGrD3TZPayFjYCpdqhoi4ez/wbTG6qCp4hPLMaMCObVPHrU+zhGF8XWS7MI6Um/c9O3zcYojfF8GaqA/EzyAtt0kmyaKyGRiuuOb+bzwI7HSAnP8SrJlskABGdUo33mby9G0ufQkQjSbZYoJEZ5B0SBuIvqkVWfG21dsXJXIPZgdaM4t1IqC95KJ8wM99+25EzAXJdS6dQhG7XbTUZBaJA8xsOgFJ2njUvAew1Tzh85nVokvrkZVUdJhdr46l6vJFaNFq6QvTMqFIcwgG4YPN1/Qz1YMWWdblfLbwtY9x2H1HB5XIKGE/CBn+fg637bMfW44rAm4N2eyw81fFaW8Ex/aQcrrjfrKLx4yxuKnv4uEKjR1bdyjSeeaCU/d671PdM8mEw9nDLH+znhQlN9JvT95XSot6XRuy5SPBTFoz+v7FUJLAojC5dkJfDyccYsuDVGS+pYtXEMvtmYxWQWpolsXGcNORmF12ArcFH/6krU87PSDlijFivkril7TnQCfpafqXwy2GtSEZJI5PWxI0mw6y4nAKRfg1Mz/YpQDsCoCUE8cmhb8=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:IA4PR11MB9444.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(10067099003)(22082099003)(261102123227099003)(18002099003)(56012099006)(11063799006)(261022105027099003)(261021123027099003)(261021121427099003)(261026140227099003)(261026121527099003)(261009223027099003)(261028144727099003);
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(6133799003)(10067099003)(18002099003)(22082099003)(261102123227099003)(56012099006)(4143699003)(261021130227099003)(261026121527099003)(261022115727099003)(261021135927099003)(11063799006)(261026130827099003)(261022105027099003)(261022113327099003)(261022075727099003)(261026140227099003)(261009223027099003)(261028144727099003)(261021123027099003)(261021121427099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eUpjRDA3U2lockZlMDlyd2R5RXRVaDlaK1NrK09tUlVVandxRUdBbVZOTndD?=
- =?utf-8?B?Umg1eFhUcUNva2l4SFRHbVdXenJ6ZENqcS9xa25uYlFBbzhML3RVTE5INCtC?=
- =?utf-8?B?TEplSFMyc0hQNXBJQ1FhKzZybVVGaEhkRVNJbExUTkx0aHMrWmZNL1ZSdVpF?=
- =?utf-8?B?MnZ6dllRa3l5VVk0cWpINVhUbm5PVW5qUWV3OVJZS3NnQm0rNDIwMENSa3M0?=
- =?utf-8?B?UDl3ZGkzWXFZdlY5NG9XUGpuS245Z0FXYytVU0o5azdDb0tmUkxBS3EvOElC?=
- =?utf-8?B?dzRqTEdUVVhSanlBM3ZJRkVWUit6b2YyYkpmd1pmdUdDTVpiWXlkeXR6RVhp?=
- =?utf-8?B?V3N6dHJ0aDNiMnc4bW84dmR5QkF3RHBmTlZTeVRyeU9ud2ZIdm5wVHpLMm9j?=
- =?utf-8?B?ZXlZVW5MakFHR0M5SS9hb2VtRjFpbyt6dHhjNmlIRzVVTU1vMGZZZlZiYTFB?=
- =?utf-8?B?TmpiNjBBQm5oSjU1Q09vZ3ExREFObC93bXk4enBucG45cFkrS1o0am9ldk1Z?=
- =?utf-8?B?dEMvdkJua2wxSm01eFBnK0dCV3ptMDNUOGdXZ0gveVkzMC92cG15TGlUR0tQ?=
- =?utf-8?B?dGZDODhVbFBRb3R0UU1vQzdURE95SSs2ODdUM0dTcUgzMTdTSjh4ZFNvQ1A2?=
- =?utf-8?B?NlFiVDVhcGpHWnNGY1pYSnpaTXhwcHhmdkdPblBvay9teUZwK1QrUWMxRS8w?=
- =?utf-8?B?TFVCazQ4TU9KTnJVZzI0Uy96emFBbG56cDg4VjMyUlAvdHdwckdHZW5QcHNn?=
- =?utf-8?B?WWp1Z3Z4TnZwOEpjOVNuTW5tYkUvRXQ2WERFSnpJRVB0eWhhREZmSUlrRW41?=
- =?utf-8?B?SzE3Rmc2ZlZmTElSWFVIS0lGamM5VzNpcXBtOWIrUU5ISlBOazR4SExXR0pB?=
- =?utf-8?B?R2U5Q2NGTi9QMWwyZytwaDdSUVlkMDFGVHJROEI2bVlXZXJKVng2cjV4bGl0?=
- =?utf-8?B?eHJkU0ZCaDdQYmF3U0JNVnIyS0JNZ1RSbkc4MzlrWEp1Q29UT3Z1UVhNMzVW?=
- =?utf-8?B?eUN0Z010RnNzTnBGMUowbFh0Kzk1cm1pZEZsZEZXU095d1dkM0R6MkdNY2Nn?=
- =?utf-8?B?cEJKSitCSWVsZGFaZlJzUzVVMFJMczhrNlk0QlNacHdpcE9qL05tU2pQQkh3?=
- =?utf-8?B?QU9KMm5iME9MUVQ3bDRqSGtyY0VrVURQUEFzWlgxUEFmUFFKSWdRRUpCbWVQ?=
- =?utf-8?B?TFNOUHhoOU9NRGMxYlNQMmxmSHFKZEJudXFFa1UxdjAvSVVuQVdKRDlON09M?=
- =?utf-8?B?ZjBFZ2JBR1djVGp3YkswRWxORzg1VU9LWGlTR3Y2Vi8wVGFwZHljdHlxT3Vw?=
- =?utf-8?B?UHdQeEdCRXd6enNYY3dLTmRSSnlnU1g5MisyZkpySEo0NTg3VEdDMkRtVjFV?=
- =?utf-8?B?Z3ZpcDdvNGh4Z0VQWHUvUDNtdk5SZ0lzZk1tZURCaU9kaHlOYzdnL2x0UzF6?=
- =?utf-8?B?TEFmRXNWcUFORDNwWWY3STdHSGhoNVc0OEtJMVl2ajZONkI3U3hlWXdtaSs1?=
- =?utf-8?B?S2gxRXExWGNkNi9jdzRNY1E1T1h2UktnOXoyRncrMDlnLy9FY2IwSWxLTzZo?=
- =?utf-8?B?dnhUVDQ4NDh3TTBHQlhiWXhKUUE4ZmNyOUJpWFYrdHFramNKRUlXK3pGbzhS?=
- =?utf-8?B?VFhaT1R5K0RJQzBUV09NZi8wRm91S283VUl0RE5KSzFrcTlYYWpKUUh0dEpC?=
- =?utf-8?B?NjAzeDZ0SlFMNDFGWE1lNTQ1TU9uSnJhZ21IbmdtY29Bc3VUY1NVbWVKNmlX?=
- =?utf-8?B?dFhuRW5IR3RTREw0ZllwK2FYa1hnUDNXcDFnYkhuTWkyV2svYmdQdE9GTG9o?=
- =?utf-8?B?M09JejF5Tm9hTVBVcWNOTURYbWJxbEk3Yzl6RVBNckJPZHR5SUVzYS9Dam1o?=
- =?utf-8?B?Mk5EVEFGUEZoS0prMTUxTm12aWxoOWY0cXpxK1VDOUx2ZnB1NGc2ZTNFYkVr?=
- =?utf-8?B?dnZSNld4eGgyMVpyVE1WMlVLK3FLYkltRFVrR0pxNHpiYTF1MEtnOS8yZWtr?=
- =?utf-8?B?ZGV5bEx6K3p2bGdmVVhMMU9uaWZKRHJEQVJMUGZiRURVbVprS3lLTDNZcm1V?=
- =?utf-8?B?UWs5KzNEWmxLSCtON3lOLzFFVTMzekUvaVUxLzJFanBWQXdBSnNjSTFKbTc4?=
- =?utf-8?B?Zm9wVUJjZmpRNDlEbGdaejMyME5vOEI0M0VjZW1UdUJJaWlvRkpBM3ZjOWJY?=
- =?utf-8?B?ZGRybEU4eGpkYm05MVJDZ20yMmppYSt3Qzd0aUdReTY1QkE4bHhTa2czNjNk?=
- =?utf-8?B?eTZVMld5cUl1NEU4ZXVRRElwWkt6b3NuQURsc3I2bk1HL0lHcnBPcVh3R2x3?=
- =?utf-8?B?RmlSREFBRVUzZzZtaXVuYXh2VmloalQ3aFRab0QyT3hFSWtrWGw3dlhMdFdJ?=
- =?utf-8?Q?zP5wXotsFRw2u+KY=3D?=
-X-Exchange-RoutingPolicyChecked: yio3McE9ERS91R+HV4PbxHe7x/nntgzmMdNmK+nf64NuxjInv/iSANaw/9dslRGqyNIv9z5GpEzoRaVwHpxZFJ9flmDyeGWGKq9dtUpxxGSioygPJHa7bphzGCV2pemBC+5E3JppfE6wa/sxXvxTGT10pXLT8vQZDValwfFgP/T6ku0oINiuAHcYDK9Cyjf03OIZAysPaYJDXwB/OGaUYIegp+wkr4DZ0M+aGPpjaXvOV/+KF+CriwRWzt6BzXTd/I7qTRfRqcW/XvnP1CgrmoZSVqyQMvo1p6KSUxDCt0v+FkHxXvzr08Hwyl6QOyYl53a/gvbjWW6t8jNFqIkBQA==
-X-MS-Exchange-CrossTenant-Network-Message-Id: d846c05c-726f-4601-9760-08df39062a56
-X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9444.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?D2qGKZsJfDXZ2a3ShdgCEP+n3I3GGhottTDcBbg/KeC40EYlODCk8LKPXTSs?=
+ =?us-ascii?Q?kyMTxC8LzwZuOVJDJh0KL/5z08EHrqxtcaUjoV7UvdOfXdCIb3C/5VgEkMnf?=
+ =?us-ascii?Q?60ywIkd95/RAMhQna4KCwU1XKHP0s34g4+WvvRAHCWwL5DYv3cK4MEejexlo?=
+ =?us-ascii?Q?stqvb2hc78XYMCnRJgC16culqMe1TxEFFaSZSR0ZGnJgAUcq1dJL9IUG+7fm?=
+ =?us-ascii?Q?/M1roDO+2S10Ru6l9372Eg1H92vi03rKXQ+2uVCJUNBnskbQFnkpshNwBl24?=
+ =?us-ascii?Q?SgwykmjdOJFEAKgoOEt0YaHZqzVY0XsYST1r45l4NP1NtIQaCt+5Kut0Rxf0?=
+ =?us-ascii?Q?1JahfTr0qWVDGCRV37Q1iG4XfsHJdQfPPToXyRzuXZEVWoZpBY4JKeVPiU5V?=
+ =?us-ascii?Q?DwL72Ww0/w91Gdc15kdWMvrmxK3c/It/rPYTCHD0Ak4TjgatKL9eEoEDyGMa?=
+ =?us-ascii?Q?uzWl6l/HumBnUwGk0XHifB62fR70eay+Nwg4CH9hEsNBolbFmjehvEz6deRF?=
+ =?us-ascii?Q?HRhVW9yB0CVvK+nubwvWMe19e1Ago1iqsjBMVPALa7dnTmOZ4EXbjGG7cYvK?=
+ =?us-ascii?Q?HpJHnNEDnMjCZVUWkhPouYW4FUy2EADUO2fHnXjFiI8DFS04BKFxIEZ2v+7M?=
+ =?us-ascii?Q?Zvl0aCudQjmI/uJSjsHfaJEsbVNZ/iC4/L1fIq/NEAco0caZg+W7BA5HUzZP?=
+ =?us-ascii?Q?CI1iwmhgnL3TSkkbG9xu6H8m+3sNbw9wS4SZOxe9zaAVgCtykPzmKwgQNZbp?=
+ =?us-ascii?Q?dNMxcUxXidXDADM4SY1dygIuI9fMZ7t7sqLleG3wxMzd4ZKsLjpUB3LkVDEt?=
+ =?us-ascii?Q?Rk7wukj2XPTirRaXf87nUq8VuGyf0GhGFhN25b7QxE+3R6m3zb08QEn4He9u?=
+ =?us-ascii?Q?iTEjy7ohPjmYLsl+FiJz1vh21gV9YMTpDqjkHRB+oecUmaGpmRNTpZC2HQiQ?=
+ =?us-ascii?Q?dTi60xS6tooFOohu3qiTqfcXX4gqgUdFRqUvD28LFCg+eBNsSx0cWmpsEHDg?=
+ =?us-ascii?Q?vJv4gsGV8M7c7d3e2EMdjVfMGA2AaDZ6CwBmr4+LA+QnDLneeTJS5imG2rU8?=
+ =?us-ascii?Q?6t3IJ6Sp+u3GKQ0BoT8PPuAz+/ngbbHwAqJQugcR/OrH393+T94wo1oqoD3y?=
+ =?us-ascii?Q?CVN4C05LN0oFSvGDAxtOlQfl++cl2DIkR7SBqtRtCr/r3B0HXckxlpFYfe1V?=
+ =?us-ascii?Q?+V6FtRcSmoXXyaInsHZ29a+yWDW1hU2UutZe3SL2FKVU3Aeyb+zOoCIAzHJl?=
+ =?us-ascii?Q?7bJUBHu4pAItotrkEbp3ZVa6O+1czcuYy16FJmlXp84xj2uZmW7kftWjOoe8?=
+ =?us-ascii?Q?zlqKaL55AQRI+M+Zz66iqFpON7UA2g+XOhPstkjT0+tvpkoSyyyWesi8dOMz?=
+ =?us-ascii?Q?eIr7v9dr9vuflbdybCZsGoiUucSyM0u/OvS1wwTnh+9HLO0/P4xOcUokRUbC?=
+ =?us-ascii?Q?SrFTgthQu3rmQ+p9V+CgEw/BWGi207lhB3SMhNj6Nl1km3Ks+Att+uZMN8Lw?=
+ =?us-ascii?Q?yFWp/miRsv0+xXWNMJ1KJm26EIwxpyRiKmbJhbVaqSI85jUq3i/4s4s0/4v+?=
+ =?us-ascii?Q?4pRiX7I+ppOC/IMe+J032gbWSFQkkUaP+zYmN7PuFmdE/x0RNxS2eZ+uFM8L?=
+ =?us-ascii?Q?6qpEDUNY3c5jPdyf9HzQeHwnFl8IhG6sngnFQXDn9puquH7QdiDc6xwiZPtS?=
+ =?us-ascii?Q?kKe+mE7PsAPAG5dSqcHLFRgM6z3f0/kIfjRsse7BEWwbFFMfQVmy11N0RFE8?=
+ =?us-ascii?Q?A1ifEBK/H3a5i0rSkJok51KH5uYfJ3A=3D?=
+X-Exchange-RoutingPolicyChecked: 0SVchXb/jAqdxMvFNH8mVxaYyeVayda+xOCYl+i1ssNE8CQxyC8FyKgdb5pXvKHqh6iGcfvhrJ6ZC9yCvD029Ffa/ZzjPGSkgIwIpOo/g8f0dD7+Jxomb3o/ivtVXpODBBFsAjt83U/vVmym3xWQb3Usy31cRHXtLfh5GhctN+Ww2Sy4iKe6WYccZNh4la3fKK3ol9kXbraN+U4vYab2S2y9l2Busohi3ZFNHOadcSNQWYp38YLbqyeCWCaMq8Ho+DNUuKM4kfUr0MJOCt6fabSn5MleexOFQb4kau/nTRldt8+NfY3yyMuKiQrOWwhlnPpnRRPySAmvJFL2/eRixA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53551f5b-e4c5-4504-9c4c-08df39069d27
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2026 17:24:35.4995 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2026 17:27:48.1204 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sSDyXpt5prGVljKq69dTIjGzb7jkW5IrpZQwEvCQnhV7I1nf/4iz5BWCjNDVQWJ7JYO8jgPdif/SK0V0oYdkzkz4E5oOEooeeFpg5QckTCY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6060
+X-MS-Exchange-CrossTenant-UserPrincipalName: SRv7g1pCari1fOYy2nh/lywxXW6v30z7vDZ32h1+/eOcNUwOcMgHN6WVsfmaMLbmK8vMl8ivFw5oClrf7ER3nRxEP4Oam4J/dljC5xPvpIQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6130
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -163,95 +155,54 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+On Mon, Nov 02, 2026 at 05:26:24PM +0100, Stephen Hemminger wrote:
+>    why is auto negotiation disable a devarg rather than extending relevant
+>    part of ethdev? my opinion is every time a devarg like this gets added
+>    it means the ethdev abstraction is the real issue
+> 
+Yes, it could well be.
 
-On 10/30/2026 4:19 PM, Robert Sanford wrote:
-> From: Robert Sanford <rsanford@akamai.com>
->
-> RIB nodes are allocated from a mempool created with no flags, so each
-> object is cache-line aligned and padded for memory-channel spreading.
-> On x86-64, an object takes 192 bytes for a 40-byte rte_rib_node or a
-> 56-byte rte_rib6_node. Nodes are small and only accessed by the CPU,
-> so the padding is wasted. The whole pool is reserved up front, and
-> rte_fib and rte_fib6 size it at twice max_routes nodes.
->
-> Create the node pools with RTE_MEMPOOL_F_NO_CACHE_ALIGN,
-> RTE_MEMPOOL_F_NO_SPREAD and RTE_MEMPOOL_F_NO_IOVA_CONTIG.
-> RTE_MEMPOOL_F_NO_SPREAD is implied by RTE_MEMPOOL_F_NO_CACHE_ALIGN,
-> but is passed explicitly to document the intent. Nodes remain 8-byte
-> aligned, which is all the node structures need. The extension area
-> returned by rte_rib_get_ext() and rte_rib6_get_ext() was only 8-byte
-> aligned before as well.
->
-> With 2M nodes (1M routes), the pool shrinks from 390 MiB to 128 MiB
-> for IPv4 and to 160 MiB for IPv6. On an AMD EPYC 7643 with 1 GiB
-> hugepages, fib_perf_autotest (about 1M IPv4 routes) shows average add
-> and delete times 13 and 29 percent lower. Lookup times, and the add
-> and delete times in fib6_perf_autotest, which uses 1000 routes, are
-> unchanged.
->
-> Signed-off-by: Robert Sanford <rsanford@akamai.com>
-> ---
->   lib/rib/rte_rib.c  | 10 +++++++++-
->   lib/rib/rte_rib6.c | 10 +++++++++-
->   2 files changed, 18 insertions(+), 2 deletions(-)
->
-> diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
-> index 046db131ca..2ba46393ed 100644
-> --- a/lib/rib/rte_rib.c
-> +++ b/lib/rib/rte_rib.c
-> @@ -425,9 +425,17 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
->   	}
->   
->   	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
-> +	/*
-> +	 * Nodes are small, CPU-only objects: skip cache-line alignment and
-> +	 * memory-channel spreading, which otherwise grow each object well
-> +	 * beyond sizeof(struct rte_rib_node), and IOVA contiguity, which
-> +	 * only matters for device access.
-> +	 */
->   	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
->   		sizeof(struct rte_rib_node) + conf->ext_sz, 0, 0,
-> -		NULL, NULL, NULL, NULL, socket_id, 0);
-> +		NULL, NULL, NULL, NULL, socket_id,
-> +		RTE_MEMPOOL_F_NO_SPREAD | RTE_MEMPOOL_F_NO_CACHE_ALIGN |
-> +		RTE_MEMPOOL_F_NO_IOVA_CONTIG);
->   
->   	if (node_pool == NULL) {
->   		RIB_LOG(ERR,
-> diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
-> index 918ddbdfd3..808aac79ce 100644
-> --- a/lib/rib/rte_rib6.c
-> +++ b/lib/rib/rte_rib6.c
-> @@ -488,9 +488,17 @@ rte_rib6_create(const char *name, int socket_id,
->   	}
->   
->   	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
-> +	/*
-> +	 * Nodes are small, CPU-only objects: skip cache-line alignment and
-> +	 * memory-channel spreading, which otherwise grow each object well
-> +	 * beyond sizeof(struct rte_rib6_node), and IOVA contiguity, which
-> +	 * only matters for device access.
-> +	 */
->   	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
->   		sizeof(struct rte_rib6_node) + conf->ext_sz, 0, 0,
-> -		NULL, NULL, NULL, NULL, socket_id, 0);
-> +		NULL, NULL, NULL, NULL, socket_id,
-> +		RTE_MEMPOOL_F_NO_SPREAD | RTE_MEMPOOL_F_NO_CACHE_ALIGN |
-> +		RTE_MEMPOOL_F_NO_IOVA_CONTIG);
->   
->   	if (node_pool == NULL) {
->   		RIB_LOG(ERR,
+Digging more into the ethdev API and drivers, it may just be that the
+limitation is simply one of documentation clarity and testpmd's use of the
+APIS.
 
--- 
-Regards,
-Vladimir
+Specifically, what does it mean to specify the RTE_ETH_LINK_SPEED_FIXED
+flag, and what does it mean to specify a particular speed without the flag
+being given. From what I see we have 3 options:
 
+1. autonegotiate speed setting, e.g. choose highest supported of 10G, 2.5G
+   or 1G for a given 10G NIC
+2. allow only one particular speed but leave negotiation still enabled, e.g.
+   set speed to 1G but leave AN37 enabled. This allows setting to 1G when
+   other side has auto-negotiation enabled
+3. set to a single speed and disable negotiation, e.g. set 1G fixed with
+   AN37 disabled. This would be for compatibility with links not supporting
+   negotiation, or where both sides explicitly set the speed.
+
+Setting #1 is default and well understood. However, the difference between
+settings #2 and #3 doesn't seem to be called out anywhere explicitly in our
+docs for ethdev. I would imagine that #2 is where we specify a given link
+speed (or maybe speeds), but without RTE_LINK_SPEED_FIXED set in the bitmap.
+That would mean that #3 would be a single speed setting passed and
+RTE_LINK_SPEED_FIXED set.
+
+Unfortunately, though, testpmd always sets the FIXED flag when we specify a
+link speed, meaning that scenarios #2 and #3 are indistinguishable. Asking
+AI to do a quick scan of the drivers indicates that some will leave
+negotiation on with a fixed speed, others keep it off. Some ignore the
+fixed flag and never check for it, and some just don't support disabling
+autonegotiation completely.
+
+Would a good solution be to extend the testpmd command to allow the FIXED
+flag setting to be configurable rather than assumed as part of the speed
+setting? That would at least clarify the behaviour and allow testing the
+various options
+
+/Bruce
