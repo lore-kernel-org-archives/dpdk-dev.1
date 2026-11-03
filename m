@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B3D606A327
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE1D606A32E
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=ihNXEPU/
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=nw7/Nyrb
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C43BF42F73;
-	Tue,  3 Nov 2026 16:20:06 +0100 (CET)
-Received: from mta0.migadu.com (out-226.mta0.migadu.com [91.218.175.226])
- by mails.dpdk.org (Postfix) with ESMTPS id D148542F73
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:20:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 95EA642F7D;
+	Tue,  3 Nov 2026 16:20:17 +0100 (CET)
+Received: from mta1.migadu.com (out-158.mta1.migadu.com [95.215.58.158])
+ by mails.dpdk.org (Postfix) with ESMTPS id ECF1042F76
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:20:16 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=LItoHsxz5NHbAltPStdS52PLhRwS4EfwJUUUN23n8eY=; 
+DKIM-Signature: a=rsa-sha256; bh=Glh4XqgQevyihBlIqyx9z7wMeTQIJRogSM5plc2XkeU=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719205; v=1; x=1794324005;
- b=ihNXEPU/xh//9nS9w7OcWF16B3fsRcaSCxDolOcYiuhP7VqFFOvokv6/8EJ8dPWv0Ndrc8Ev
- 8JOthpwPB/EOGQQHA4dzFr7TGVEgcXwLAM0GxpIeZ5Fi45az43UB34p+VwzizYi+HmBQ/rWKQOk
- 2H7rkV4tJsMdbDn5LE19LkXQ=
+ t=1793719213; v=1; x=1794324013;
+ b=nw7/NyrbgJOhorS9Mm+zIBExEkhiIiQxLYKqcfg2bMoXw1gsfk0rvSCBA/PHLUwEu1jNCszp
+ yvq/go1HGcWkVHVbpQBIfaF6kN1M7U56GfHib0rm/R4QLx7pGUM9cAbUeR/DeiWEqrEtauILYel
+ l5o2xMgJ/iu9kpDZSNntGANI=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id 93c2d8b3c31ee0a6;
- Tue, 03 Nov 2026 15:20:05 +0000
-X-Mizu-Trace-ID: 93c2d8b3c31ee0a6
+Received: by mta11.migadu.com with ESMTPS id 012bb67b27f17801;
+ Tue, 03 Nov 2026 15:20:13 +0000
+X-Mizu-Trace-ID: 012bb67b27f17801
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 172/227] app/proc-info: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:10 +0800
-Message-ID: <20261103145306.487255-173-chengwen.feng@linux.dev>
+Subject: [PATCH 173/227] app/graph: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:52:11 +0800
+Message-ID: <20261103145306.487255-174-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,31 +62,24 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/proc-info/main.c | 4 ++--
+ app/graph/ethdev.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/app/proc-info/main.c b/app/proc-info/main.c
-index 1e5eee6787..8e8cc923ce 100644
---- a/app/proc-info/main.c
-+++ b/app/proc-info/main.c
-@@ -1034,7 +1034,7 @@ show_port(void)
+diff --git a/app/graph/ethdev.c b/app/graph/ethdev.c
+index ee4b9014e8..1e978ec267 100644
+--- a/app/graph/ethdev.c
++++ b/app/graph/ethdev.c
+@@ -433,8 +433,8 @@ ethdev_process(const char *name, struct ethdev_config *params)
+ 		}
+ 	}
  
- 		printf("\t  -- driver %s device %s socket %d\n",
- 		       dev_info.driver_name, rte_dev_name(dev_info.device),
--		       rte_eth_dev_socket_id(i));
-+		       rte_eth_dev_numa_id(i));
+-	numa_node = rte_eth_dev_socket_id(port_id);
+-	if (numa_node == SOCKET_ID_ANY)
++	numa_node = rte_eth_dev_numa_id(port_id);
++	if (numa_node == RTE_NUMA_ID_ANY)
+ 		numa_node = 0;
  
- 		ret = rte_eth_dev_owner_get(i, &owner);
- 		if (ret == 0 && owner.id != RTE_ETH_DEV_NO_OWNER)
-@@ -1631,7 +1631,7 @@ show_mempool(char *name)
- 				"\t  -- No IOVA config (%c)\n"
- 				"\t  -- Not used for IO (%c)\n",
- 				ptr->name,
--				ptr->socket_id,
-+				ptr->numa_id,
- 				(flags & RTE_MEMPOOL_F_NO_SPREAD) ? 'y' : 'n',
- 				(flags & RTE_MEMPOOL_F_NO_CACHE_ALIGN) ? 'y' : 'n',
- 				(flags & RTE_MEMPOOL_F_SP_PUT) ? 'y' : 'n',
+ 	if (params->mtu)
 -- 
 2.55.0
 
