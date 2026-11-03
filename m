@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CD9606A326
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EBA606C85A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=cnN5odx2
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=licb6dbl
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F60441157;
-	Tue,  3 Nov 2026 15:54:14 +0100 (CET)
-Received: from mta1.migadu.com (out-141.mta1.migadu.com [95.215.58.141])
- by mails.dpdk.org (Postfix) with ESMTPS id 545DA4111B
- for <dev@dpdk.org>; Tue,  3 Nov 2026 15:54:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E2ADD4114B;
+	Tue,  3 Nov 2026 15:54:20 +0100 (CET)
+Received: from mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+ by mails.dpdk.org (Postfix) with ESMTPS id 91D9A4111B
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 15:54:19 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=PayNnsJQKgu/aqpvWqUDVsqP5DbkoWDSvnQTgEoFlaY=; 
+DKIM-Signature: a=rsa-sha256; bh=DGTCS+ZvBsmCtqJ7IZtRJCgDg5Z/XN+2L17gCmJow40=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793717652; v=1; x=1794322452;
- b=cnN5odx2KqnKIBrY5BOV23i/tKcvccH4vXgZLng7TjiuosNtoiQb3qHMpWtaQy4m1kezy/Os
- WV4/4oEJRI/T4Z6yL7TUi3f651xsi2RvKysh5Q4e9QmSo3RwXiFmkMOX6S5rKFkguI8zJ/ysnLR
- yWRibw0zh+FX6a+90Od3AOp4=
+ t=1793717659; v=1; x=1794322459;
+ b=licb6dblv+e9msGR22fX/7RJkygMseuYDwCAvJ9cFYep3ci7i5Qsqk/6Iy4emEbsyCv4I0sk
+ lMCaIgCCxLQ5SpHHCEym8usfi/+iJzHKY+XyR0zPa/xnryMLPtc8gPV75DhL3gfanNvv4wNr1YZ
+ W7BnewRzjGwFz4yo4jEb7EQw=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id 3558cb458b1f8363;
- Tue, 03 Nov 2026 14:54:12 +0000
-X-Mizu-Trace-ID: 3558cb458b1f8363
+Received: by mta11.migadu.com with ESMTPS id 3d9333e66d5a154f;
+ Tue, 03 Nov 2026 14:54:19 +0000
+X-Mizu-Trace-ID: 3d9333e66d5a154f
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 007/227] cryptodev: rename device socket API to NUMA node API
-Date: Tue,  3 Nov 2026 22:49:25 +0800
-Message-ID: <20261103145306.487255-8-chengwen.feng@linux.dev>
+Subject: [PATCH 008/227] compressdev: rename device socket API to NUMA node API
+Date: Tue,  3 Nov 2026 22:49:26 +0800
+Message-ID: <20261103145306.487255-9-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -57,830 +57,440 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Chengwen Feng <fengchengwen@huawei.com>
 
-Rename the exported function rte_cryptodev_socket_id() to
-rte_cryptodev_numa_id(), keeping the old name as a functional
+Rename the exported function rte_compressdev_socket_id() to
+rte_compressdev_numa_id(), keeping the old name as a functional
 alias to be deprecated once the in-tree migration completes.
 
-Rename the numa_id field of rte_cryptodev_config (was socket_id),
+Rename the numa_id field of rte_compressdev_config (was socket_id),
 keeping socket_id as a deprecated union alias, and update in-tree
 users accordingly.
 
-Also rename internal parameters, the device data field, trace
-points and comments to the NUMA node terminology. The legacy
-devarg key value is kept unchanged for CLI compatibility.
+Also rename internal parameters and comments to the NUMA node
+terminology.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test/test_cryptodev.c                     |  4 +-
- app/test/test_cryptodev_asym.c                |  4 +-
- app/test/test_cryptodev_crosscheck.c          |  2 +-
- drivers/crypto/bcmfs/bcmfs_sym_pmd.c          |  2 +-
- drivers/crypto/ccp/rte_ccp_pmd.c              |  2 +-
- drivers/crypto/cnxk/cn10k_cryptodev.c         |  2 +-
- drivers/crypto/cnxk/cn20k_cryptodev.c         |  2 +-
- drivers/crypto/cnxk/cn9k_cryptodev.c          |  2 +-
- drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c   |  2 +-
- drivers/crypto/dpaa_sec/dpaa_sec.c            |  2 +-
- drivers/crypto/ipsec_mb/ipsec_mb_private.c    |  2 +-
- drivers/crypto/mlx5/mlx5_crypto_gcm.c         |  2 +-
- drivers/crypto/mlx5/mlx5_crypto_xts.c         |  2 +-
- drivers/crypto/mvsam/rte_mrvl_pmd.c           |  4 +-
- drivers/crypto/nitrox/nitrox_sym.c            |  2 +-
- drivers/crypto/scheduler/scheduler_pmd.c      |  2 +-
- drivers/crypto/virtio/virtio_cryptodev.c      |  2 +-
- drivers/crypto/virtio/virtio_user_cryptodev.c |  2 +-
- drivers/crypto/zsda/zsda_crypto_pmd.c         |  2 +-
- lib/cryptodev/cryptodev_pmd.c                 | 14 ++---
- lib/cryptodev/cryptodev_pmd.h                 | 24 +++----
- lib/cryptodev/cryptodev_trace.h               | 18 +++---
- lib/cryptodev/cryptodev_trace_points.c        |  4 +-
- lib/cryptodev/rte_crypto.h                    |  4 +-
- lib/cryptodev/rte_cryptodev.c                 | 63 ++++++++++---------
- lib/cryptodev/rte_cryptodev.h                 | 55 +++++++++++-----
- 26 files changed, 128 insertions(+), 98 deletions(-)
+ doc/guides/rel_notes/deprecation.rst          |  2 +-
+ drivers/compress/isal/isal_compress_pmd_ops.c |  2 +-
+ drivers/compress/mlx5/mlx5_compress.c         |  4 +--
+ drivers/compress/nitrox/nitrox_comp.c         |  8 ++---
+ drivers/compress/qat/qat_comp_pmd.c           | 16 ++++-----
+ drivers/compress/zlib/zlib_pmd_ops.c          |  4 +--
+ drivers/compress/zsda/zsda_comp_pmd.c         |  4 +--
+ lib/compressdev/rte_comp.c                    |  4 +--
+ lib/compressdev/rte_comp.h                    |  4 +--
+ lib/compressdev/rte_compressdev.c             | 35 +++++++++++--------
+ lib/compressdev/rte_compressdev.h             | 34 ++++++++++++++----
+ lib/compressdev/rte_compressdev_internal.h    |  2 +-
+ lib/compressdev/rte_compressdev_pmd.c         | 10 +++---
+ lib/compressdev/rte_compressdev_pmd.h         | 12 +++----
+ 14 files changed, 85 insertions(+), 56 deletions(-)
 
-diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
-index fd02107baf..aa689b297a 100644
---- a/app/test/test_cryptodev.c
-+++ b/app/test/test_cryptodev.c
-@@ -716,7 +716,7 @@ testsuite_setup(void)
- 	rte_cryptodev_info_get(dev_id, &info);
+diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
+index a6ff573d18..297ce8415c 100644
+--- a/doc/guides/rel_notes/deprecation.rst
++++ b/doc/guides/rel_notes/deprecation.rst
+@@ -22,7 +22,7 @@ Deprecation Notices
+   as a deprecated union alias.
+   The following structures are affected: ``rte_hash_parameters``,
+   ``rte_fbk_hash_params``, ``rte_member_parameters`` /
+-  ``rte_member_setsum`` and ``rte_mempool``
++  ``rte_member_setsum``, ``rte_mempool`` and ``rte_compressdev_config``
+   (more structures will follow in this release).
+   Applications should switch to ``numa_id``.
  
- 	ts_params->conf.nb_queue_pairs = info.max_nb_queue_pairs;
--	ts_params->conf.socket_id = SOCKET_ID_ANY;
-+	ts_params->conf.numa_id = SOCKET_ID_ANY;
- 	ts_params->conf.ff_disable = RTE_CRYPTODEV_FF_SECURITY;
- 
- 	unsigned int session_size =
-@@ -1512,7 +1512,7 @@ dev_configure_and_start(uint64_t ff_disable)
- 	memset(ut_params, 0, sizeof(*ut_params));
- 
- 	/* Reconfigure device to default parameters */
--	ts_params->conf.socket_id = SOCKET_ID_ANY;
-+	ts_params->conf.numa_id = SOCKET_ID_ANY;
- 	ts_params->conf.ff_disable = ff_disable;
- 	ts_params->qp_conf.nb_descriptors = MAX_NUM_OPS_INFLIGHT;
- 	ts_params->qp_conf.mp_session = ts_params->session_mpool;
-diff --git a/app/test/test_cryptodev_asym.c b/app/test/test_cryptodev_asym.c
-index d9807f34e0..d68fe84cde 100644
---- a/app/test/test_cryptodev_asym.c
-+++ b/app/test/test_cryptodev_asym.c
-@@ -1185,7 +1185,7 @@ testsuite_setup(void)
- 
- 	/* configure device with num qp */
- 	ts_params->conf.nb_queue_pairs = info.max_nb_queue_pairs;
--	ts_params->conf.socket_id = SOCKET_ID_ANY;
-+	ts_params->conf.numa_id = RTE_NUMA_ID_ANY;
- 	ts_params->conf.ff_disable = RTE_CRYPTODEV_FF_SECURITY |
- 			RTE_CRYPTODEV_FF_SYMMETRIC_CRYPTO;
- 	TEST_ASSERT_SUCCESS(rte_cryptodev_configure(dev_id,
-@@ -1251,7 +1251,7 @@ ut_setup_asym(void)
- 	);
- 
- 	/* Reconfigure device to default parameters */
--	ts_params->conf.socket_id = SOCKET_ID_ANY;
-+	ts_params->conf.numa_id = RTE_NUMA_ID_ANY;
- 
- 	TEST_ASSERT_SUCCESS(rte_cryptodev_configure(ts_params->valid_devs[0],
- 			&ts_params->conf),
-diff --git a/app/test/test_cryptodev_crosscheck.c b/app/test/test_cryptodev_crosscheck.c
-index bb21c3bc50..d0ff3e0b35 100644
---- a/app/test/test_cryptodev_crosscheck.c
-+++ b/app/test/test_cryptodev_crosscheck.c
-@@ -425,7 +425,7 @@ crosscheck_init(void)
- 
- 	/* Setup queue pair conf params */
- 	ts_params->conf.nb_queue_pairs = nb_queue_pairs;
--	ts_params->conf.socket_id = SOCKET_ID_ANY;
-+	ts_params->conf.numa_id = SOCKET_ID_ANY;
- 	ts_params->conf.ff_disable = RTE_CRYPTODEV_FF_SECURITY;
- 	ts_params->qp_conf.nb_descriptors = MAX_NUM_OPS_INFLIGHT;
- 	ts_params->qp_conf.mp_session = ts_params->session_mpool;
-diff --git a/drivers/crypto/bcmfs/bcmfs_sym_pmd.c b/drivers/crypto/bcmfs/bcmfs_sym_pmd.c
-index d3b1e25d57..3f2ff40cd8 100644
---- a/drivers/crypto/bcmfs/bcmfs_sym_pmd.c
-+++ b/drivers/crypto/bcmfs/bcmfs_sym_pmd.c
-@@ -355,7 +355,7 @@ bcmfs_sym_dev_create(struct bcmfs_device *fsdev)
- {
- 	struct rte_cryptodev_pmd_init_params init_params = {
- 		.name = "",
--		.socket_id = rte_socket_id(),
-+		.numa_id = rte_numa_id(),
- 		.private_data_size = sizeof(struct bcmfs_sym_dev_private)
- 	};
- 	char name[RTE_CRYPTODEV_NAME_MAX_LEN];
-diff --git a/drivers/crypto/ccp/rte_ccp_pmd.c b/drivers/crypto/ccp/rte_ccp_pmd.c
-index 700e141667..ab19f8fd9c 100644
---- a/drivers/crypto/ccp/rte_ccp_pmd.c
-+++ b/drivers/crypto/ccp/rte_ccp_pmd.c
-@@ -288,7 +288,7 @@ cryptodev_ccp_probe(struct rte_pci_driver *pci_drv __rte_unused,
- 	init_params.def_p.max_nb_queue_pairs = CCP_PMD_MAX_QUEUE_PAIRS;
- 
- 	CCP_LOG_INFO("Initialising %s on NUMA node %d", name,
--		init_params.def_p.socket_id);
-+		init_params.def_p.numa_id);
- 	CCP_LOG_INFO("Max number of queue pairs = %d",
- 		init_params.def_p.max_nb_queue_pairs);
- 	CCP_LOG_INFO("Authentication offload to %s",
-diff --git a/drivers/crypto/cnxk/cn10k_cryptodev.c b/drivers/crypto/cnxk/cn10k_cryptodev.c
-index 598def51a5..1c1478ad80 100644
---- a/drivers/crypto/cnxk/cn10k_cryptodev.c
-+++ b/drivers/crypto/cnxk/cn10k_cryptodev.c
-@@ -34,7 +34,7 @@ cn10k_cpt_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
- {
- 	struct rte_cryptodev_pmd_init_params init_params = {
- 		.name = "",
--		.socket_id = rte_socket_id(),
-+		.numa_id = rte_numa_id(),
- 		.private_data_size = sizeof(struct cnxk_cpt_vf)
- 	};
- 	char name[RTE_CRYPTODEV_NAME_MAX_LEN];
-diff --git a/drivers/crypto/cnxk/cn20k_cryptodev.c b/drivers/crypto/cnxk/cn20k_cryptodev.c
-index 7b8293cc05..36f2a615dd 100644
---- a/drivers/crypto/cnxk/cn20k_cryptodev.c
-+++ b/drivers/crypto/cnxk/cn20k_cryptodev.c
-@@ -31,7 +31,7 @@ static int
- cn20k_cpt_pci_probe(struct rte_pci_driver *pci_drv __rte_unused, struct rte_pci_device *pci_dev)
- {
- 	struct rte_cryptodev_pmd_init_params init_params = {.name = "",
--							    .socket_id = rte_socket_id(),
-+							    .numa_id = rte_numa_id(),
- 							    .private_data_size =
- 								    sizeof(struct cnxk_cpt_vf)};
- 	char name[RTE_CRYPTODEV_NAME_MAX_LEN];
-diff --git a/drivers/crypto/cnxk/cn9k_cryptodev.c b/drivers/crypto/cnxk/cn9k_cryptodev.c
-index 818458bd6f..bb5c837b0a 100644
---- a/drivers/crypto/cnxk/cn9k_cryptodev.c
-+++ b/drivers/crypto/cnxk/cn9k_cryptodev.c
-@@ -39,7 +39,7 @@ cn9k_cpt_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
- {
- 	struct rte_cryptodev_pmd_init_params init_params = {
- 		.name = "",
--		.socket_id = rte_socket_id(),
-+		.numa_id = rte_numa_id(),
- 		.private_data_size = sizeof(struct cnxk_cpt_vf)
- 	};
- 	char name[RTE_CRYPTODEV_NAME_MAX_LEN];
-diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-index d83698f1ad..7bcb472838 100644
---- a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-+++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-@@ -4551,7 +4551,7 @@ cryptodev_dpaa2_sec_probe(struct rte_dpaa2_driver *dpaa2_drv __rte_unused,
- 	struct rte_cryptodev_pmd_init_params init_params = {
- 		.name = "",
- 		.private_data_size = sizeof(struct dpaa2_sec_dev_private),
--		.socket_id = rte_socket_id(),
-+		.numa_id = rte_numa_id(),
- 		.max_nb_queue_pairs =
- 			RTE_CRYPTODEV_PMD_DEFAULT_MAX_NB_QUEUE_PAIRS,
- 			/* setting default, will be updated in init. */
-diff --git a/drivers/crypto/dpaa_sec/dpaa_sec.c b/drivers/crypto/dpaa_sec/dpaa_sec.c
-index f03efb316d..65b3573a1a 100644
---- a/drivers/crypto/dpaa_sec/dpaa_sec.c
-+++ b/drivers/crypto/dpaa_sec/dpaa_sec.c
-@@ -3777,7 +3777,7 @@ cryptodev_dpaa_sec_probe(struct rte_dpaa_driver *dpaa_drv __rte_unused,
- 	struct rte_cryptodev_pmd_init_params init_params = {
- 		.name = "",
- 		.private_data_size = sizeof(struct dpaa_sec_dev_private),
--		.socket_id = rte_socket_id(),
-+		.numa_id = rte_numa_id(),
- 		.max_nb_queue_pairs =
- 			RTE_DPAA_MAX_NB_SEC_QPS,
- 	};
-diff --git a/drivers/crypto/ipsec_mb/ipsec_mb_private.c b/drivers/crypto/ipsec_mb/ipsec_mb_private.c
-index 468d77fead..23ec99004b 100644
---- a/drivers/crypto/ipsec_mb/ipsec_mb_private.c
-+++ b/drivers/crypto/ipsec_mb/ipsec_mb_private.c
-@@ -101,7 +101,7 @@ ipsec_mb_create(struct rte_vdev_device *vdev,
- 		pmd_data->internals_priv_size;
- 	init_params.max_nb_queue_pairs =
- 		RTE_CRYPTODEV_PMD_DEFAULT_MAX_NB_QUEUE_PAIRS;
--	init_params.socket_id = rte_socket_id();
-+	init_params.numa_id = rte_socket_id();
- 
- 	name = rte_vdev_device_name(vdev);
- 	if (name == NULL)
-diff --git a/drivers/crypto/mlx5/mlx5_crypto_gcm.c b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-index 1a2600655a..d0f01dab4a 100644
---- a/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-+++ b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-@@ -342,7 +342,7 @@ mlx5_crypto_gcm_qp_setup(struct rte_cryptodev *dev, uint16_t qp_id,
- 	qp->priv = priv;
- 	qp->entries_n = entries;
- 	if (mlx5_mr_ctrl_init(&qp->mr_ctrl, &priv->cdev->mr_scache.dev_gen,
--				  priv->dev_config.socket_id)) {
-+				  priv->dev_config.numa_id)) {
- 		DRV_LOG(ERR, "Cannot allocate MR Btree for qp %u.",
- 			(uint32_t)qp_id);
- 		rte_errno = ENOMEM;
-diff --git a/drivers/crypto/mlx5/mlx5_crypto_xts.c b/drivers/crypto/mlx5/mlx5_crypto_xts.c
-index 1c914caa85..badde267a7 100644
---- a/drivers/crypto/mlx5/mlx5_crypto_xts.c
-+++ b/drivers/crypto/mlx5/mlx5_crypto_xts.c
-@@ -515,7 +515,7 @@ mlx5_crypto_xts_queue_pair_setup(struct rte_cryptodev *dev, uint16_t qp_id,
- 		goto error;
+diff --git a/drivers/compress/isal/isal_compress_pmd_ops.c b/drivers/compress/isal/isal_compress_pmd_ops.c
+index 9b42147a0b..be32a4c998 100644
+--- a/drivers/compress/isal/isal_compress_pmd_ops.c
++++ b/drivers/compress/isal/isal_compress_pmd_ops.c
+@@ -73,7 +73,7 @@ isal_comp_pmd_config(struct rte_compressdev *dev,
+ 				NULL, /* obj initialization constructor arg */
+ 				NULL, /**< obj constructor*/
+ 				NULL, /* obj constructor arg */
+-				config->socket_id, /* socket id */
++				config->numa_id, /* socket id */
+ 				0); /* flags */
  	}
+ 
+diff --git a/drivers/compress/mlx5/mlx5_compress.c b/drivers/compress/mlx5/mlx5_compress.c
+index 1361dab630..d122715672 100644
+--- a/drivers/compress/mlx5/mlx5_compress.c
++++ b/drivers/compress/mlx5/mlx5_compress.c
+@@ -179,7 +179,7 @@ mlx5_compress_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+ 	}
+ 	dev->data->queue_pairs[qp_id] = qp;
  	if (mlx5_mr_ctrl_init(&qp->mr_ctrl, &priv->cdev->mr_scache.dev_gen,
--			      priv->dev_config.socket_id) != 0) {
-+			      priv->dev_config.numa_id) != 0) {
+-			      priv->dev_config.socket_id)) {
++			      priv->dev_config.numa_id)) {
  		DRV_LOG(ERR, "Cannot allocate MR Btree for qp %u.",
  			(uint32_t)qp_id);
  		rte_errno = ENOMEM;
-diff --git a/drivers/crypto/mvsam/rte_mrvl_pmd.c b/drivers/crypto/mvsam/rte_mrvl_pmd.c
-index 65a63c9d62..c69f526c52 100644
---- a/drivers/crypto/mvsam/rte_mrvl_pmd.c
-+++ b/drivers/crypto/mvsam/rte_mrvl_pmd.c
-@@ -1178,7 +1178,7 @@ mrvl_pmd_parse_input_args(struct mrvl_pmd_init_params *params,
- 		ret = rte_kvargs_process(kvlist,
- 					 RTE_CRYPTODEV_PMD_SOCKET_ID_ARG,
- 					 &parse_integer_arg,
--					 &params->common.socket_id);
-+					 &params->common.numa_id);
- 		if (ret < 0)
- 			goto free_kvlist;
+@@ -369,7 +369,7 @@ mlx5_compress_xform_create(struct rte_compressdev *dev,
+ 	if (ret < 0)
+ 		return ret;
+ 	xfrm = rte_zmalloc_socket(__func__, sizeof(*xfrm), 0,
+-						    priv->dev_config.socket_id);
++						    priv->dev_config.numa_id);
+ 	if (xfrm == NULL)
+ 		return -ENOMEM;
+ 	xfrm->opcode = MLX5_OPCODE_MMO;
+diff --git a/drivers/compress/nitrox/nitrox_comp.c b/drivers/compress/nitrox/nitrox_comp.c
+index 41a3ee0de8..56a90a35c5 100644
+--- a/drivers/compress/nitrox/nitrox_comp.c
++++ b/drivers/compress/nitrox/nitrox_comp.c
+@@ -68,7 +68,7 @@ static int nitrox_comp_dev_configure(struct rte_compressdev *dev,
+ 	comp_dev->xform_pool = rte_mempool_create(name,
+ 			xform_cnt, sizeof(struct nitrox_comp_xform),
+ 			0, 0, NULL, NULL, NULL, NULL,
+-			config->socket_id, 0);
++			config->numa_id, 0);
+ 	if (comp_dev->xform_pool == NULL) {
+ 		NITROX_LOG_LINE(ERR, "Failed to create xform pool, err %d",
+ 			   rte_errno);
+@@ -411,7 +411,7 @@ static int nitrox_comp_stream_create(struct rte_compressdev *dev,
+ 	}
  
-@@ -1219,7 +1219,7 @@ cryptodev_mrvl_crypto_init(struct rte_vdev_device *vdev)
- 				sizeof(struct mrvl_crypto_private),
- 			.max_nb_queue_pairs =
- 				sam_get_num_inst() * sam_get_num_cios(0),
--			.socket_id = rte_socket_id()
-+			.numa_id = rte_numa_id()
- 		},
- 		.max_nb_sessions = MRVL_PMD_DEFAULT_MAX_NB_SESSIONS
- 	};
-diff --git a/drivers/crypto/nitrox/nitrox_sym.c b/drivers/crypto/nitrox/nitrox_sym.c
-index 7c2dc98a4b..510d6059b1 100644
---- a/drivers/crypto/nitrox/nitrox_sym.c
-+++ b/drivers/crypto/nitrox/nitrox_sym.c
-@@ -749,7 +749,7 @@ nitrox_sym_pmd_create(struct nitrox_device *ndev)
- 	char name[RTE_CRYPTODEV_NAME_MAX_LEN];
- 	struct rte_cryptodev_pmd_init_params init_params = {
+ 	nxform->history_window = rte_zmalloc_socket(NULL, nxform->window_size,
+-					8, comp_dev->xform_pool->socket_id);
++					8, comp_dev->xform_pool->numa_id);
+ 	if (unlikely(nxform->history_window == NULL)) {
+ 		err = -ENOMEM;
+ 		goto err_exit;
+@@ -422,7 +422,7 @@ static int nitrox_comp_stream_create(struct rte_compressdev *dev,
+ 
+ 	nxform->context = rte_zmalloc_socket(NULL,
+ 					NITROX_DECOMP_CTX_SIZE, 8,
+-					comp_dev->xform_pool->socket_id);
++					comp_dev->xform_pool->numa_id);
+ 	if (unlikely(nxform->context == NULL)) {
+ 		err = -ENOMEM;
+ 		goto err_exit;
+@@ -553,7 +553,7 @@ nitrox_comp_pmd_create(struct nitrox_device *ndev)
+ 	char name[RTE_COMPRESSDEV_NAME_MAX_LEN];
+ 	struct rte_compressdev_pmd_init_params init_params = {
  			.name = "",
 -			.socket_id = ndev->pdev->device.numa_node,
 +			.numa_id = ndev->pdev->device.numa_node,
- 			.private_data_size = sizeof(struct nitrox_sym_device)
  	};
- 	struct rte_cryptodev *cdev;
-diff --git a/drivers/crypto/scheduler/scheduler_pmd.c b/drivers/crypto/scheduler/scheduler_pmd.c
-index ceaefa329b..8ca09ba3d0 100644
---- a/drivers/crypto/scheduler/scheduler_pmd.c
-+++ b/drivers/crypto/scheduler/scheduler_pmd.c
-@@ -533,7 +533,7 @@ scheduler_parse_init_params(struct scheduler_init_params *params,
+ 	struct rte_compressdev *cdev;
  
- 		ret = rte_kvargs_process(kvlist, RTE_CRYPTODEV_VDEV_SOCKET_ID,
- 				&parse_integer_arg,
--				&params->def_p.socket_id);
-+				&params->def_p.numa_id);
- 		if (ret < 0)
- 			goto free_kvlist;
+diff --git a/drivers/compress/qat/qat_comp_pmd.c b/drivers/compress/qat/qat_comp_pmd.c
+index 92dac79423..5ac49318da 100644
+--- a/drivers/compress/qat/qat_comp_pmd.c
++++ b/drivers/compress/qat/qat_comp_pmd.c
+@@ -160,13 +160,13 @@ qat_comp_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+ 					sizeof(struct qat_sgl) +
+ 					sizeof(struct qat_flat_buf) *
+ 					QAT_PMD_COMP_SGL_DEF_SEGMENTS,
+-					64, dev->data->socket_id);
++					64, dev->data->numa_id);
  
-diff --git a/drivers/crypto/virtio/virtio_cryptodev.c b/drivers/crypto/virtio/virtio_cryptodev.c
-index d70651646e..d0fe21947c 100644
---- a/drivers/crypto/virtio/virtio_cryptodev.c
-+++ b/drivers/crypto/virtio/virtio_cryptodev.c
-@@ -1691,7 +1691,7 @@ crypto_virtio_pci_probe(
- {
- 	struct rte_cryptodev_pmd_init_params init_params = {
+ 		cookie->qat_sgl_dst_d = rte_zmalloc_socket(NULL,
+ 					sizeof(struct qat_sgl) +
+ 					sizeof(struct qat_flat_buf) *
+ 					QAT_PMD_COMP_SGL_DEF_SEGMENTS,
+-					64, dev->data->socket_id);
++					64, dev->data->numa_id);
+ 
+ 		if (cookie->qat_sgl_src_d == NULL ||
+ 				cookie->qat_sgl_dst_d == NULL) {
+@@ -185,7 +185,7 @@ qat_comp_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+ 		cookie->dst_nb_elems = cookie->src_nb_elems =
+ 				QAT_PMD_COMP_SGL_DEF_SEGMENTS;
+ 
+-		cookie->socket_id = dev->data->socket_id;
++		cookie->socket_id = dev->data->numa_id;
+ 
+ 		cookie->error = 0;
+ 	}
+@@ -240,7 +240,7 @@ qat_comp_setup_inter_buffers(struct qat_comp_dev_private *comp_dev,
+ 
+ 	memzone = rte_memzone_reserve_aligned(inter_buff_mz_name,
+ 			size_of_ptr_array,
+-			comp_dev->compressdev->data->socket_id,
++			comp_dev->compressdev->data->numa_id,
+ 			RTE_MEMZONE_IOVA_CONTIG, QAT_64_BYTE_ALIGN);
+ 	if (memzone == NULL) {
+ 		QAT_LOG(ERR,
+@@ -268,7 +268,7 @@ qat_comp_setup_inter_buffers(struct qat_comp_dev_private *comp_dev,
+ 		if (mz == NULL) {
+ 			mz = rte_memzone_reserve_aligned(inter_buff_mz_name,
+ 					full_size,
+-					comp_dev->compressdev->data->socket_id,
++					comp_dev->compressdev->data->numa_id,
+ 					RTE_MEMZONE_IOVA_CONTIG,
+ 					QAT_64_BYTE_ALIGN);
+ 			if (mz == NULL) {
+@@ -355,7 +355,7 @@ qat_comp_create_xform_pool(struct qat_comp_dev_private *comp_dev,
+ 		mp = rte_mempool_create(xform_pool_name,
+ 				num_elements,
+ 				qat_comp_xform_size(), 0, 0,
+-				NULL, NULL, NULL, NULL, config->socket_id,
++				NULL, NULL, NULL, NULL, config->numa_id,
+ 				0);
+ 	if (mp == NULL) {
+ 		QAT_LOG(ERR, "Err creating mempool %s w %d elements of size %d",
+@@ -534,7 +534,7 @@ qat_comp_dev_config(struct rte_compressdev *dev,
+ 
+ 	if (config->max_nb_streams) {
+ 		comp_dev->streampool = qat_comp_create_stream_pool(comp_dev,
+-				     config->socket_id, config->max_nb_streams);
++				     config->numa_id, config->max_nb_streams);
+ 		if (comp_dev->streampool == NULL) {
+ 			ret = -ENOMEM;
+ 			goto error_out;
+@@ -678,7 +678,7 @@ qat_comp_dev_create(struct qat_pci_device *qat_pci_dev)
+ 			&qat_pci_devs[qat_pci_dev->qat_dev_id];
+ 	struct rte_compressdev_pmd_init_params init_params = {
  		.name = "",
--		.socket_id = pci_dev->device.numa_node,
-+		.numa_id = pci_dev->device.numa_node,
- 		.private_data_size = sizeof(struct virtio_crypto_hw)
+-		.socket_id = qat_dev_instance->pci_dev->device.numa_node,
++		.numa_id = qat_dev_instance->pci_dev->device.numa_node,
  	};
- 	char name[RTE_CRYPTODEV_NAME_MAX_LEN];
-diff --git a/drivers/crypto/virtio/virtio_user_cryptodev.c b/drivers/crypto/virtio/virtio_user_cryptodev.c
-index 4daa188e1d..4cddb964e2 100644
---- a/drivers/crypto/virtio/virtio_user_cryptodev.c
-+++ b/drivers/crypto/virtio/virtio_user_cryptodev.c
-@@ -374,7 +374,7 @@ virtio_user_cryptodev_alloc(struct rte_vdev_device *vdev)
- 	struct virtio_user_dev *dev;
- 	struct virtio_crypto_hw *hw;
+ 	char name[RTE_COMPRESSDEV_NAME_MAX_LEN];
+ 	char capa_memz_name[RTE_COMPRESSDEV_NAME_MAX_LEN];
+diff --git a/drivers/compress/zlib/zlib_pmd_ops.c b/drivers/compress/zlib/zlib_pmd_ops.c
+index a530d15119..fb9cec8488 100644
+--- a/drivers/compress/zlib/zlib_pmd_ops.c
++++ b/drivers/compress/zlib/zlib_pmd_ops.c
+@@ -45,11 +45,11 @@ zlib_pmd_config(struct rte_compressdev *dev,
+ 				config->max_nb_streams,
+ 				sizeof(struct zlib_priv_xform),
+ 				0, 0, NULL, NULL, NULL,
+-				NULL, config->socket_id,
++				NULL, config->numa_id,
+ 				0);
+ 		if (mp == NULL) {
+ 			ZLIB_PMD_ERR("Cannot create private xform pool on socket %d",
+-				config->socket_id);
++				config->numa_id);
+ 			return -ENOMEM;
+ 		}
+ 		internals->mp = mp;
+diff --git a/drivers/compress/zsda/zsda_comp_pmd.c b/drivers/compress/zsda/zsda_comp_pmd.c
+index 80d92a47dd..6d857be2f0 100644
+--- a/drivers/compress/zsda/zsda_comp_pmd.c
++++ b/drivers/compress/zsda/zsda_comp_pmd.c
+@@ -55,7 +55,7 @@ zsda_comp_xform_pool_create(struct zsda_comp_dev_private *comp_dev,
+ 	} else {
+ 		mp = rte_mempool_create(xform_pool_name, num_elements,
+ 					zsda_comp_xform_size(), 0, 0, NULL,
+-					NULL, NULL, NULL, config->socket_id, 0);
++					NULL, NULL, NULL, config->numa_id, 0);
+ 		if (mp == NULL) {
+ 			ZSDA_LOG(ERR, "Failed! mp is NULL");
+ 			return NULL;
+@@ -332,7 +332,7 @@ zsda_comp_dev_create(struct zsda_pci_device *zsda_pci_dev)
  
--	init_params.socket_id = vdev->device.numa_node;
-+	init_params.numa_id = vdev->device.numa_node;
- 	init_params.private_data_size = sizeof(struct virtio_user_dev);
- 	cryptodev = rte_cryptodev_pmd_create(vdev->device.name, &vdev->device, &init_params);
- 	if (cryptodev == NULL) {
-diff --git a/drivers/crypto/zsda/zsda_crypto_pmd.c b/drivers/crypto/zsda/zsda_crypto_pmd.c
-index 181e19f9f2..d1cdfcce0b 100644
---- a/drivers/crypto/zsda/zsda_crypto_pmd.c
-+++ b/drivers/crypto/zsda/zsda_crypto_pmd.c
-@@ -260,7 +260,7 @@ zsda_crypto_dev_create(struct zsda_pci_device *zsda_pci_dev)
- 
- 	struct rte_cryptodev_pmd_init_params init_params = {
+ 	struct rte_compressdev_pmd_init_params init_params = {
  		.name = "",
 -		.socket_id = (int)rte_socket_id(),
 +		.numa_id = (int)rte_numa_id(),
- 		.private_data_size = sizeof(struct zsda_crypto_dev_private)
  	};
  
-diff --git a/lib/cryptodev/cryptodev_pmd.c b/lib/cryptodev/cryptodev_pmd.c
-index d79d561bf6..d82128ce26 100644
---- a/lib/cryptodev/cryptodev_pmd.c
-+++ b/lib/cryptodev/cryptodev_pmd.c
-@@ -81,9 +81,9 @@ rte_cryptodev_pmd_parse_input_args(
- 			goto free_kvlist;
- 
- 		ret = rte_kvargs_process(kvlist,
--				RTE_CRYPTODEV_PMD_SOCKET_ID_ARG,
-+				RTE_CRYPTODEV_PMD_NUMA_ID_ARG,
- 				&rte_cryptodev_pmd_parse_uint_arg,
--				&params->socket_id);
-+				&params->numa_id);
- 		if (ret < 0)
- 			goto free_kvlist;
- 
-@@ -116,11 +116,11 @@ rte_cryptodev_pmd_create(const char *name,
- 	CDEV_LOG_INFO("Creating cryptodev %s", name);
- 
- 	CDEV_LOG_INFO("Initialisation parameters - name: %s,"
--			"socket id: %d, max queue pairs: %u",
--			name, params->socket_id, params->max_nb_queue_pairs);
-+			"NUMA node id: %d, max queue pairs: %u",
-+			name, params->numa_id, params->max_nb_queue_pairs);
- 
- 	/* allocate device structure */
--	cryptodev = rte_cryptodev_pmd_allocate(name, params->socket_id);
-+	cryptodev = rte_cryptodev_pmd_allocate(name, params->numa_id);
- 	if (cryptodev == NULL) {
- 		CDEV_LOG_ERR("Failed to allocate crypto device for %s", name);
- 		return NULL;
-@@ -129,10 +129,10 @@ rte_cryptodev_pmd_create(const char *name,
- 	/* allocate private device structure */
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 		cryptodev->data->dev_private =
--				rte_zmalloc_socket("cryptodev device private",
-+				rte_zmalloc_numa("cryptodev device private",
- 						params->private_data_size,
- 						RTE_CACHE_LINE_SIZE,
--						params->socket_id);
-+						params->numa_id);
- 
- 		if (cryptodev->data->dev_private == NULL) {
- 			CDEV_LOG_ERR("Cannot allocate memory for cryptodev %s"
-diff --git a/lib/cryptodev/cryptodev_pmd.h b/lib/cryptodev/cryptodev_pmd.h
-index 929c6defe9..1677fbf3c2 100644
---- a/lib/cryptodev/cryptodev_pmd.h
-+++ b/lib/cryptodev/cryptodev_pmd.h
-@@ -33,13 +33,13 @@ extern "C" {
- 
- #define RTE_CRYPTODEV_PMD_NAME_ARG			("name")
- #define RTE_CRYPTODEV_PMD_MAX_NB_QP_ARG			("max_nb_queue_pairs")
--#define RTE_CRYPTODEV_PMD_SOCKET_ID_ARG			("socket_id")
-+#define RTE_CRYPTODEV_PMD_NUMA_ID_ARG			("numa_id")
- 
- 
- static const char * const cryptodev_pmd_valid_params[] = {
- 	RTE_CRYPTODEV_PMD_NAME_ARG,
- 	RTE_CRYPTODEV_PMD_MAX_NB_QP_ARG,
--	RTE_CRYPTODEV_PMD_SOCKET_ID_ARG,
-+	RTE_CRYPTODEV_PMD_NUMA_ID_ARG,
- 	NULL
- };
- 
-@@ -50,7 +50,7 @@ static const char * const cryptodev_pmd_valid_params[] = {
- struct rte_cryptodev_pmd_init_params {
- 	char name[RTE_CRYPTODEV_NAME_MAX_LEN];
- 	size_t private_data_size;
--	int socket_id;
-+	int numa_id;
- 	unsigned int max_nb_queue_pairs;
- };
- 
-@@ -65,7 +65,7 @@ struct __rte_cache_aligned rte_cryptodev_data {
- 	/** Device ID for this instance */
- 	uint8_t dev_id;
- 	/** Socket ID where memory is allocated */
--	int socket_id;
-+	int numa_id;
- 	/** Unique identifier name */
- 	char name[RTE_CRYPTODEV_NAME_MAX_LEN];
- 
-@@ -269,13 +269,13 @@ typedef void (*cryptodev_info_get_t)(struct rte_cryptodev *dev,
-  * @param	dev		Crypto device pointer
-  * @param	qp_id		Queue Pair Index
-  * @param	qp_conf		Queue configuration structure
-- * @param	socket_id	Socket Index
-+ * @param	numa_id	Socket Index
-  *
-  * @return	Returns 0 on success.
-  */
- typedef int (*cryptodev_queue_pair_setup_t)(struct rte_cryptodev *dev,
- 		uint16_t qp_id,	const struct rte_cryptodev_qp_conf *qp_conf,
--		int socket_id);
-+		int numa_id);
- 
- /**
-  * Release memory resources allocated by given queue pair.
-@@ -296,7 +296,7 @@ typedef int (*cryptodev_queue_pair_release_t)(struct rte_cryptodev *dev,
-  * @param	dev		Crypto device pointer
-  * @param	qp_id		Queue pair index
-  * @param	qp_conf		Queue configuration structure
-- * @param	socket_id	Socket index
-+ * @param	numa_id	Socket index
-  *
-  * @return
-  *  - 0: on success.
-@@ -304,7 +304,7 @@ typedef int (*cryptodev_queue_pair_release_t)(struct rte_cryptodev *dev,
-  */
- typedef int (*cryptodev_queue_pair_reset_t)(struct rte_cryptodev *dev,
- 		uint16_t qp_id,	const struct rte_cryptodev_qp_conf *qp_conf,
--		int socket_id);
-+		int numa_id);
- 
- /**
-  * Create a session mempool to allocate sessions from
-@@ -312,7 +312,7 @@ typedef int (*cryptodev_queue_pair_reset_t)(struct rte_cryptodev *dev,
-  * @param	dev		Crypto device pointer
-  * @param	nb_objs		number of sessions objects in mempool
-  * @param	obj_cache_size	l-core object cache size, see *rte_ring_create*
-- * @param	socket_id	Socket Id to allocate  mempool on.
-+ * @param	numa_id	Socket Id to allocate  mempool on.
-  *
-  * @return
-  * - On success returns a pointer to a rte_mempool
-@@ -320,7 +320,7 @@ typedef int (*cryptodev_queue_pair_reset_t)(struct rte_cryptodev *dev,
-  */
- typedef int (*cryptodev_sym_create_session_pool_t)(
- 		struct rte_cryptodev *dev, unsigned nb_objs,
--		unsigned obj_cache_size, int socket_id);
-+		unsigned int obj_cache_size, int numa_id);
- 
- 
- /**
-@@ -534,13 +534,13 @@ struct rte_cryptodev_ops {
-  * to that slot for the driver to use.
-  *
-  * @param	name		Unique identifier name for each device
-- * @param	socket_id	Socket to allocate resources on.
-+ * @param	numa_id	Socket to allocate resources on.
-  * @return
-  *   - Slot in the rte_dev_devices array for a new device;
-  */
- __rte_internal
- struct rte_cryptodev *
--rte_cryptodev_pmd_allocate(const char *name, int socket_id);
-+rte_cryptodev_pmd_allocate(const char *name, int numa_id);
- 
- /**
-  * Function for internal use by dummy drivers primarily, e.g. ring-based
-diff --git a/lib/cryptodev/cryptodev_trace.h b/lib/cryptodev/cryptodev_trace.h
-index 788790432a..0a16c5a824 100644
---- a/lib/cryptodev/cryptodev_trace.h
-+++ b/lib/cryptodev/cryptodev_trace.h
-@@ -61,11 +61,11 @@ RTE_TRACE_POINT(
- RTE_TRACE_POINT(
- 	rte_cryptodev_trace_queue_pair_reset,
- 	RTE_TRACE_POINT_ARGS(uint8_t dev_id, uint16_t queue_pair_id,
--		const struct rte_cryptodev_qp_conf *conf, int socket_id),
-+		const struct rte_cryptodev_qp_conf *conf, int numa_id),
- 	rte_trace_point_emit_u8(dev_id);
- 	rte_trace_point_emit_u16(queue_pair_id);
- 	rte_trace_point_emit_u32(conf->nb_descriptors);
--	rte_trace_point_emit_int(socket_id);
-+	rte_trace_point_emit_int(numa_id);
- )
- 
- RTE_TRACE_POINT(
-@@ -267,20 +267,20 @@ RTE_TRACE_POINT(
- RTE_TRACE_POINT(
- 	rte_cryptodev_trace_queue_pair_count,
- 	RTE_TRACE_POINT_ARGS(const void *dev, const char *name,
--		uint8_t socket_id, uint8_t dev_id, uint16_t nb_queue_pairs),
-+		uint8_t numa_id, uint8_t dev_id, uint16_t nb_queue_pairs),
- 	rte_trace_point_emit_ptr(dev);
- 	rte_trace_point_emit_string(name);
--	rte_trace_point_emit_u8(socket_id);
-+	rte_trace_point_emit_u8(numa_id);
- 	rte_trace_point_emit_u8(dev_id);
- 	rte_trace_point_emit_u16(nb_queue_pairs);
- )
- 
- RTE_TRACE_POINT(
--	rte_cryptodev_trace_socket_id,
--	RTE_TRACE_POINT_ARGS(uint8_t dev_id, const char *name, int socket_id),
-+	rte_cryptodev_trace_numa_id,
-+	RTE_TRACE_POINT_ARGS(uint8_t dev_id, const char *name, int numa_id),
- 	rte_trace_point_emit_u8(dev_id);
- 	rte_trace_point_emit_string(name);
--	rte_trace_point_emit_int(socket_id);
-+	rte_trace_point_emit_int(numa_id);
- )
- 
- RTE_TRACE_POINT(
-@@ -512,10 +512,10 @@ RTE_TRACE_POINT(
- 
- RTE_TRACE_POINT(
- 	rte_cryptodev_trace_op_pool_create,
--	RTE_TRACE_POINT_ARGS(const char *name, int socket_id, int type,
-+	RTE_TRACE_POINT_ARGS(const char *name, int numa_id, int type,
- 		uint32_t nb_elts, const void *mp),
- 	rte_trace_point_emit_string(name);
--	rte_trace_point_emit_int(socket_id);
-+	rte_trace_point_emit_int(numa_id);
- 	rte_trace_point_emit_int(type);
- 	rte_trace_point_emit_u32(nb_elts);
- 	rte_trace_point_emit_ptr(mp);
-diff --git a/lib/cryptodev/cryptodev_trace_points.c b/lib/cryptodev/cryptodev_trace_points.c
-index 69737adcbe..cecd203634 100644
---- a/lib/cryptodev/cryptodev_trace_points.c
-+++ b/lib/cryptodev/cryptodev_trace_points.c
-@@ -108,8 +108,8 @@ RTE_TRACE_POINT_REGISTER(rte_cryptodev_trace_name_get,
- RTE_TRACE_POINT_REGISTER(rte_cryptodev_trace_queue_pair_count,
- 	lib.cryptodev.queue.pair.count)
- 
--RTE_TRACE_POINT_REGISTER(rte_cryptodev_trace_socket_id,
--	lib.cryptodev.socket.id)
-+RTE_TRACE_POINT_REGISTER(rte_cryptodev_trace_numa_id,
-+	lib.cryptodev.numa_id)
- 
- RTE_TRACE_POINT_REGISTER(rte_cryptodev_trace_stats_get,
- 	lib.cryptodev.stats.get)
-diff --git a/lib/cryptodev/rte_crypto.h b/lib/cryptodev/rte_crypto.h
-index dcf4a36fb2..fced5d99cf 100644
---- a/lib/cryptodev/rte_crypto.h
-+++ b/lib/cryptodev/rte_crypto.h
-@@ -254,7 +254,7 @@ __rte_crypto_op_get_priv_data_size(struct rte_mempool *mempool)
-  *				cache size
-  * @param	priv_size	Size of private data to allocate with each
-  *				operation
-- * @param	socket_id	Socket to allocate memory on
-+ * @param	numa_id	Socket to allocate memory on
-  *
-  * @return
-  *  - On success pointer to mempool
-@@ -263,7 +263,7 @@ __rte_crypto_op_get_priv_data_size(struct rte_mempool *mempool)
+ 	char name[RTE_COMPRESSDEV_NAME_MAX_LEN];
+diff --git a/lib/compressdev/rte_comp.c b/lib/compressdev/rte_comp.c
+index 662691796a..d15af0aac3 100644
+--- a/lib/compressdev/rte_comp.c
++++ b/lib/compressdev/rte_comp.c
+@@ -129,7 +129,7 @@ RTE_EXPORT_SYMBOL(rte_comp_op_pool_create)
  struct rte_mempool *
- rte_crypto_op_pool_create(const char *name, enum rte_crypto_op_type type,
- 		unsigned nb_elts, unsigned cache_size, uint16_t priv_size,
--		int socket_id);
-+		int numa_id);
- 
- /**
-  * Bulk allocate raw element from mempool and return as crypto operations
-diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
-index 829a5d0846..2362d72dec 100644
---- a/lib/cryptodev/rte_cryptodev.c
-+++ b/lib/cryptodev/rte_cryptodev.c
-@@ -1088,9 +1088,9 @@ rte_cryptodev_get_sec_ctx(uint8_t dev_id)
- 	return sec_ctx;
- }
- 
--RTE_EXPORT_SYMBOL(rte_cryptodev_socket_id)
-+RTE_EXPORT_SYMBOL(rte_cryptodev_numa_id)
- int
--rte_cryptodev_socket_id(uint8_t dev_id)
-+rte_cryptodev_numa_id(uint8_t dev_id)
+ rte_comp_op_pool_create(const char *name,
+ 		unsigned int nb_elts, unsigned int cache_size,
+-		uint16_t user_size, int socket_id)
++		uint16_t user_size, int numa_id)
  {
- 	struct rte_cryptodev *dev;
+ 	struct rte_comp_op_pool_private *priv;
  
-@@ -1099,14 +1099,21 @@ rte_cryptodev_socket_id(uint8_t dev_id)
- 
- 	dev = rte_cryptodev_pmd_get_dev(dev_id);
- 
--	rte_cryptodev_trace_socket_id(dev_id, dev->data->name,
--		dev->data->socket_id);
--	return dev->data->socket_id;
-+	rte_cryptodev_trace_numa_id(dev_id, dev->data->name,
-+		dev->data->numa_id);
-+	return dev->data->numa_id;
-+}
-+
-+RTE_EXPORT_SYMBOL(rte_cryptodev_socket_id)
-+int
-+rte_cryptodev_socket_id(uint8_t dev_id)
-+{
-+	return rte_cryptodev_numa_id(dev_id);
- }
- 
- static inline int
- rte_cryptodev_data_alloc(uint8_t dev_id, struct rte_cryptodev_data **data,
--		int socket_id)
-+		int numa_id)
- {
- 	char mz_name[RTE_MEMZONE_NAMESIZE];
- 	const struct rte_memzone *mz;
-@@ -1120,7 +1127,7 @@ rte_cryptodev_data_alloc(uint8_t dev_id, struct rte_cryptodev_data **data,
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 		mz = rte_memzone_reserve(mz_name,
- 				sizeof(struct rte_cryptodev_data),
--				socket_id, 0);
-+				numa_id, 0);
- 		CDEV_LOG_DEBUG("PRIMARY:reserved memzone for %s (%p)",
- 				mz_name, mz);
- 	} else {
-@@ -1206,7 +1213,7 @@ rte_cryptodev_find_device_by_name(const char *name)
- 
- RTE_EXPORT_INTERNAL_SYMBOL(rte_cryptodev_pmd_allocate)
- struct rte_cryptodev *
--rte_cryptodev_pmd_allocate(const char *name, int socket_id)
-+rte_cryptodev_pmd_allocate(const char *name, int numa_id)
- {
- 	struct rte_cryptodev *cryptodev;
- 	uint8_t dev_id;
-@@ -1238,7 +1245,7 @@ rte_cryptodev_pmd_allocate(const char *name, int socket_id)
- 				&cryptodev_globals.data[dev_id];
- 
- 		int retval = rte_cryptodev_data_alloc(dev_id, cryptodev_data,
--				socket_id);
-+				numa_id);
- 
- 		if (retval < 0 || *cryptodev_data == NULL)
- 			return NULL;
-@@ -1250,7 +1257,7 @@ rte_cryptodev_pmd_allocate(const char *name, int socket_id)
- 				RTE_CRYPTODEV_NAME_MAX_LEN);
- 
- 			cryptodev->data->dev_id = dev_id;
--			cryptodev->data->socket_id = socket_id;
-+			cryptodev->data->numa_id = numa_id;
- 			cryptodev->data->dev_started = 0;
- 			CDEV_LOG_DEBUG("PRIMARY:init data");
- 		}
-@@ -1258,7 +1265,7 @@ rte_cryptodev_pmd_allocate(const char *name, int socket_id)
- 		CDEV_LOG_DEBUG("Data for %s: dev_id %d, socket %d, started %d",
- 				cryptodev->data->name,
- 				cryptodev->data->dev_id,
--				cryptodev->data->socket_id,
-+				cryptodev->data->numa_id,
- 				cryptodev->data->dev_started);
- 
- 		/* init user callbacks */
-@@ -1315,7 +1322,7 @@ rte_cryptodev_queue_pair_count(uint8_t dev_id)
- 
- 	dev = &rte_crypto_devices[dev_id];
- 	rte_cryptodev_trace_queue_pair_count(dev, dev->data->name,
--		dev->data->socket_id, dev->data->dev_id,
-+		dev->data->numa_id, dev->data->dev_id,
- 		dev->data->nb_queue_pairs);
- 
- 	return dev->data->nb_queue_pairs;
-@@ -1323,7 +1330,7 @@ rte_cryptodev_queue_pair_count(uint8_t dev_id)
- 
- static int
- rte_cryptodev_queue_pairs_config(struct rte_cryptodev *dev, uint16_t nb_qpairs,
--		int socket_id)
-+		int numa_id)
- {
- 	struct rte_cryptodev_info dev_info;
- 	void **qp;
-@@ -1351,11 +1358,11 @@ rte_cryptodev_queue_pairs_config(struct rte_cryptodev *dev, uint16_t nb_qpairs,
- 	}
- 
- 	if (dev->data->queue_pairs == NULL) { /* first time configuration */
--		dev->data->queue_pairs = rte_zmalloc_socket(
-+		dev->data->queue_pairs = rte_zmalloc_numa(
- 				"cryptodev->queue_pairs",
- 				sizeof(dev->data->queue_pairs[0]) *
- 				dev_info.max_nb_queue_pairs,
--				RTE_CACHE_LINE_SIZE, socket_id);
-+				RTE_CACHE_LINE_SIZE, numa_id);
- 
- 		if (dev->data->queue_pairs == NULL) {
- 			dev->data->nb_queue_pairs = 0;
-@@ -1388,7 +1395,7 @@ rte_cryptodev_queue_pairs_config(struct rte_cryptodev *dev, uint16_t nb_qpairs,
- RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_cryptodev_queue_pair_reset, 24.11)
- int
- rte_cryptodev_queue_pair_reset(uint8_t dev_id, uint16_t queue_pair_id,
--		const struct rte_cryptodev_qp_conf *qp_conf, int socket_id)
-+		const struct rte_cryptodev_qp_conf *qp_conf, int numa_id)
- {
- 	struct rte_cryptodev *dev;
- 
-@@ -1406,8 +1413,8 @@ rte_cryptodev_queue_pair_reset(uint8_t dev_id, uint16_t queue_pair_id,
- 	if (dev->dev_ops->queue_pair_reset == NULL)
- 		return -ENOTSUP;
- 
--	rte_cryptodev_trace_queue_pair_reset(dev_id, queue_pair_id, qp_conf, socket_id);
--	return dev->dev_ops->queue_pair_reset(dev, queue_pair_id, qp_conf, socket_id);
-+	rte_cryptodev_trace_queue_pair_reset(dev_id, queue_pair_id, qp_conf, numa_id);
-+	return dev->dev_ops->queue_pair_reset(dev, queue_pair_id, qp_conf, numa_id);
- }
- 
- RTE_EXPORT_SYMBOL(rte_cryptodev_configure)
-@@ -1439,7 +1446,7 @@ rte_cryptodev_configure(uint8_t dev_id, struct rte_cryptodev_config *config)
- 
- 	/* Setup new number of queue pairs and reconfigure device. */
- 	diag = rte_cryptodev_queue_pairs_config(dev, config->nb_queue_pairs,
--			config->socket_id);
-+			config->numa_id);
- 	if (diag != 0) {
- 		CDEV_LOG_ERR("dev%d rte_crypto_dev_queue_pairs_config = %d",
- 				dev_id, diag);
-@@ -1627,7 +1634,7 @@ rte_cryptodev_sym_is_valid_session_pool(struct rte_mempool *mp,
- RTE_EXPORT_SYMBOL(rte_cryptodev_queue_pair_setup)
- int
- rte_cryptodev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
--		const struct rte_cryptodev_qp_conf *qp_conf, int socket_id)
-+		const struct rte_cryptodev_qp_conf *qp_conf, int numa_id)
- 
- {
- 	struct rte_cryptodev *dev;
-@@ -1675,7 +1682,7 @@ rte_cryptodev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
- 		return -ENOTSUP;
- 
- 	rte_cryptodev_trace_queue_pair_setup(dev_id, queue_pair_id, qp_conf);
--	return dev->dev_ops->queue_pair_setup(dev, queue_pair_id, qp_conf, socket_id);
-+	return dev->dev_ops->queue_pair_setup(dev, queue_pair_id, qp_conf, numa_id);
- }
- 
- RTE_EXPORT_SYMBOL(rte_cryptodev_add_enq_callback)
-@@ -2190,7 +2197,7 @@ RTE_EXPORT_SYMBOL(rte_cryptodev_sym_session_pool_create)
- struct rte_mempool *
- rte_cryptodev_sym_session_pool_create(const char *name, uint32_t nb_elts,
- 	uint32_t elt_size, uint32_t cache_size, uint16_t user_data_size,
--	int socket_id)
-+	int numa_id)
- {
- 	struct rte_mempool *mp;
- 	struct rte_cryptodev_sym_session_pool_private_data *pool_priv;
-@@ -2202,7 +2209,7 @@ rte_cryptodev_sym_session_pool_create(const char *name, uint32_t nb_elts,
- 	mp = rte_mempool_create(name, nb_elts, obj_sz, cache_size,
- 			(uint32_t)(sizeof(*pool_priv)), NULL, NULL,
- 			NULL, NULL,
--			socket_id, 0);
-+			numa_id, 0);
- 	if (mp == NULL) {
- 		CDEV_LOG_ERR("%s(name=%s) failed, rte_errno=%d",
- 			__func__, name, rte_errno);
-@@ -2228,7 +2235,7 @@ rte_cryptodev_sym_session_pool_create(const char *name, uint32_t nb_elts,
- RTE_EXPORT_SYMBOL(rte_cryptodev_asym_session_pool_create)
- struct rte_mempool *
- rte_cryptodev_asym_session_pool_create(const char *name, uint32_t nb_elts,
--	uint32_t cache_size, uint16_t user_data_size, int socket_id)
-+	uint32_t cache_size, uint16_t user_data_size, int numa_id)
- {
- 	struct rte_mempool *mp;
- 	struct rte_cryptodev_asym_session_pool_private_data *pool_priv;
-@@ -2254,7 +2261,7 @@ rte_cryptodev_asym_session_pool_create(const char *name, uint32_t nb_elts,
- 	mp = rte_mempool_create(name, nb_elts, obj_sz_aligned, cache_size,
- 			(uint32_t)(sizeof(*pool_priv)),
- 			NULL, NULL, NULL, NULL,
--			socket_id, 0);
-+			numa_id, 0);
- 	if (mp == NULL) {
- 		CDEV_LOG_ERR("%s(name=%s) failed, rte_errno=%d",
- 			__func__, name, rte_errno);
-@@ -2820,7 +2827,7 @@ RTE_EXPORT_SYMBOL(rte_crypto_op_pool_create)
- struct rte_mempool *
- rte_crypto_op_pool_create(const char *name, enum rte_crypto_op_type type,
- 		unsigned nb_elts, unsigned cache_size, uint16_t priv_size,
--		int socket_id)
-+		int numa_id)
- {
- 	struct rte_crypto_op_pool_private *priv;
- 
-@@ -2868,7 +2875,7 @@ rte_crypto_op_pool_create(const char *name, enum rte_crypto_op_type type,
+@@ -165,7 +165,7 @@ rte_comp_op_pool_create(const char *name,
  			NULL,
- 			rte_crypto_op_init,
- 			&type,
+ 			rte_comp_op_init,
+ 			NULL,
 -			socket_id,
 +			numa_id,
  			0);
  
  	if (mp == NULL) {
-@@ -2882,7 +2889,7 @@ rte_crypto_op_pool_create(const char *name, enum rte_crypto_op_type type,
- 	priv->priv_size = priv_size;
- 	priv->type = type;
+diff --git a/lib/compressdev/rte_comp.h b/lib/compressdev/rte_comp.h
+index 6384a388d4..92ce76e0da 100644
+--- a/lib/compressdev/rte_comp.h
++++ b/lib/compressdev/rte_comp.h
+@@ -527,7 +527,7 @@ rte_comp_op_free(struct rte_comp_op *op);
+  *   *rte_mempool_create* for further details about cache size
+  * @param user_size
+  *   Size of private data to allocate for user with each operation
+- * @param socket_id
++ * @param numa_id
+  *   Socket to identifier allocate memory on
+  * @return
+  *  - On success pointer to mempool
+@@ -536,7 +536,7 @@ rte_comp_op_free(struct rte_comp_op *op);
+ struct rte_mempool *
+ rte_comp_op_pool_create(const char *name,
+ 		unsigned int nb_elts, unsigned int cache_size,
+-		uint16_t user_size, int socket_id)
++		uint16_t user_size, int numa_id)
+ 	__rte_malloc __rte_dealloc(rte_comp_op_free, 1);
  
--	rte_cryptodev_trace_op_pool_create(name, socket_id, type, nb_elts, mp);
-+	rte_cryptodev_trace_op_pool_create(name, numa_id, type, nb_elts, mp);
- 	return mp;
+ /**
+diff --git a/lib/compressdev/rte_compressdev.c b/lib/compressdev/rte_compressdev.c
+index 790b2cd658..b23f83a103 100644
+--- a/lib/compressdev/rte_compressdev.c
++++ b/lib/compressdev/rte_compressdev.c
+@@ -184,9 +184,9 @@ rte_compressdev_devices_get(const char *driver_name, uint8_t *devices,
+ 	return count;
  }
  
-diff --git a/lib/cryptodev/rte_cryptodev.h b/lib/cryptodev/rte_cryptodev.h
-index bdbd11ace5..a1afb7e927 100644
---- a/lib/cryptodev/rte_cryptodev.h
-+++ b/lib/cryptodev/rte_cryptodev.h
-@@ -833,8 +833,23 @@ uint8_t
- rte_cryptodev_devices_get(const char *driver_name, uint8_t *devices,
+-RTE_EXPORT_SYMBOL(rte_compressdev_socket_id)
++RTE_EXPORT_SYMBOL(rte_compressdev_numa_id)
+ int
+-rte_compressdev_socket_id(uint8_t dev_id)
++rte_compressdev_numa_id(uint8_t dev_id)
+ {
+ 	struct rte_compressdev *dev;
+ 
+@@ -195,12 +195,19 @@ rte_compressdev_socket_id(uint8_t dev_id)
+ 
+ 	dev = rte_compressdev_get_dev(dev_id);
+ 
+-	return dev->data->socket_id;
++	return dev->data->numa_id;
++}
++
++RTE_EXPORT_SYMBOL(rte_compressdev_socket_id)
++int
++rte_compressdev_socket_id(uint8_t dev_id)
++{
++	return rte_compressdev_numa_id(dev_id);
+ }
+ 
+ static inline int
+ rte_compressdev_data_alloc(uint8_t dev_id, struct rte_compressdev_data **data,
+-		int socket_id)
++		int numa_id)
+ {
+ 	char mz_name[RTE_COMPRESSDEV_NAME_MAX_LEN];
+ 	const struct rte_memzone *mz;
+@@ -215,7 +222,7 @@ rte_compressdev_data_alloc(uint8_t dev_id, struct rte_compressdev_data **data,
+ 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+ 		mz = rte_memzone_reserve(mz_name,
+ 				sizeof(struct rte_compressdev_data),
+-				socket_id, 0);
++				numa_id, 0);
+ 	} else
+ 		mz = rte_memzone_lookup(mz_name);
+ 
+@@ -244,7 +251,7 @@ rte_compressdev_find_free_device_index(void)
+ 
+ RTE_EXPORT_SYMBOL(rte_compressdev_pmd_allocate)
+ struct rte_compressdev *
+-rte_compressdev_pmd_allocate(const char *name, int socket_id)
++rte_compressdev_pmd_allocate(const char *name, int numa_id)
+ {
+ 	struct rte_compressdev *compressdev;
+ 	uint8_t dev_id;
+@@ -267,7 +274,7 @@ rte_compressdev_pmd_allocate(const char *name, int socket_id)
+ 				compressdev_globals.data[dev_id];
+ 
+ 		int retval = rte_compressdev_data_alloc(dev_id,
+-				&compressdev_data, socket_id);
++				&compressdev_data, numa_id);
+ 
+ 		if (retval < 0 || compressdev_data == NULL)
+ 			return NULL;
+@@ -278,7 +285,7 @@ rte_compressdev_pmd_allocate(const char *name, int socket_id)
+ 			RTE_COMPRESSDEV_NAME_MAX_LEN);
+ 
+ 		compressdev->data->dev_id = dev_id;
+-		compressdev->data->socket_id = socket_id;
++		compressdev->data->numa_id = numa_id;
+ 		compressdev->data->dev_started = 0;
+ 
+ 		compressdev->attached = RTE_COMPRESSDEV_ATTACHED;
+@@ -322,7 +329,7 @@ rte_compressdev_queue_pair_count(uint8_t dev_id)
+ 
+ static int
+ rte_compressdev_queue_pairs_config(struct rte_compressdev *dev,
+-		uint16_t nb_qpairs, int socket_id)
++		uint16_t nb_qpairs, int numa_id)
+ {
+ 	struct rte_compressdev_info dev_info;
+ 	void **qp;
+@@ -351,10 +358,10 @@ rte_compressdev_queue_pairs_config(struct rte_compressdev *dev,
+ 	}
+ 
+ 	if (dev->data->queue_pairs == NULL) { /* first time configuration */
+-		dev->data->queue_pairs = rte_zmalloc_socket(
++		dev->data->queue_pairs = rte_zmalloc_numa(
+ 				"compressdev->queue_pairs",
+ 				sizeof(dev->data->queue_pairs[0]) * nb_qpairs,
+-				RTE_CACHE_LINE_SIZE, socket_id);
++				RTE_CACHE_LINE_SIZE, numa_id);
+ 
+ 		if (dev->data->queue_pairs == NULL) {
+ 			dev->data->nb_queue_pairs = 0;
+@@ -461,7 +468,7 @@ rte_compressdev_configure(uint8_t dev_id, struct rte_compressdev_config *config)
+ 
+ 	/* Setup new number of queue pairs and reconfigure device. */
+ 	diag = rte_compressdev_queue_pairs_config(dev, config->nb_queue_pairs,
+-			config->socket_id);
++			config->numa_id);
+ 	if (diag != 0) {
+ 		COMPRESSDEV_LOG(ERR,
+ 			"dev%d rte_comp_dev_queue_pairs_config = %d",
+@@ -572,7 +579,7 @@ rte_compressdev_close(uint8_t dev_id)
+ RTE_EXPORT_SYMBOL(rte_compressdev_queue_pair_setup)
+ int
+ rte_compressdev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
+-		uint32_t max_inflight_ops, int socket_id)
++		uint32_t max_inflight_ops, int numa_id)
+ {
+ 	struct rte_compressdev *dev;
+ 
+@@ -602,7 +609,7 @@ rte_compressdev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
+ 	if (dev->dev_ops->queue_pair_setup == NULL)
+ 		return -ENOTSUP;
+ 
+-	return dev->dev_ops->queue_pair_setup(dev, queue_pair_id, max_inflight_ops, socket_id);
++	return dev->dev_ops->queue_pair_setup(dev, queue_pair_id, max_inflight_ops, numa_id);
+ }
+ 
+ RTE_EXPORT_SYMBOL(rte_compressdev_dequeue_burst)
+diff --git a/lib/compressdev/rte_compressdev.h b/lib/compressdev/rte_compressdev.h
+index ec0dc09e5f..e96d2b328a 100644
+--- a/lib/compressdev/rte_compressdev.h
++++ b/lib/compressdev/rte_compressdev.h
+@@ -169,8 +169,23 @@ rte_compressdev_devices_get(const char *driver_name, uint8_t *devices,
  		uint8_t nb_devices);
+ 
  /*
-+ * Return the NUMA node to which a device is connected
++ * Return the NUMA node to which a device is connected.
 + *
 + * @param dev_id
-+ *   The identifier of the device
++ *   Compress device identifier
 + * @return
 + *   The NUMA node ID to which the device is connected or
 + *   a default of zero if the NUMA node could not be determined.
 + *   -1 if returned is the dev_id value is out of range.
 + */
 +int
-+rte_cryptodev_numa_id(uint8_t dev_id);
++rte_compressdev_numa_id(uint8_t dev_id);
 +
 +/**
-  * Return the NUMA socket to which a device is connected
+  * Return the NUMA socket to which a device is connected.
   *
-+ * This is a legacy alias of rte_cryptodev_numa_id().
++ * This is a legacy alias of rte_compressdev_numa_id().
 + *
   * @param dev_id
-  *   The identifier of the device
+  *   Compress device identifier
   * @return
-@@ -848,7 +863,15 @@ rte_cryptodev_socket_id(uint8_t dev_id);
- /** Crypto device configuration structure */
- /* Structure rte_cryptodev_config 8< */
- struct rte_cryptodev_config {
--	int socket_id;			/**< Socket to allocate resources on */
+@@ -183,8 +198,15 @@ rte_compressdev_socket_id(uint8_t dev_id);
+ 
+ /** Compress device configuration structure */
+ struct rte_compressdev_config {
+-	int socket_id;
+-	/**< Socket on which to allocate resources */
 +	union {
-+		/** NUMA node to allocate resources on */
++		/** NUMA node on which to allocate resources */
 +		int numa_id;
 +		/**
 +		 * Deprecated alias of numa_id.
@@ -889,94 +499,136 @@ index bdbd11ace5..a1afb7e927 100644
 +		int socket_id;
 +	};
  	uint16_t nb_queue_pairs;
- 	/**< Number of queue pairs to configure on device */
- 	uint64_t ff_disable;
-@@ -928,9 +951,9 @@ rte_cryptodev_close(uint8_t dev_id);
-  *				rte_cryptodev_configure().
-  * @param	qp_conf		The pointer to the configuration data to be
-  *				used for the queue pair.
-- * @param	socket_id	The *socket_id* argument is the socket
-- *				identifier in case of NUMA. The value can be
-- *				*SOCKET_ID_ANY* if there is no NUMA constraint
-+ * @param	numa_id	The *numa_id* argument is the NUMA node
-+ *				ID in case of NUMA. The value can be
-+ *				*RTE_NUMA_ID_ANY* if there is no NUMA constraint
-  *				for the DMA memory allocated for the receive
-  *				queue pair.
-  *
-@@ -940,7 +963,7 @@ rte_cryptodev_close(uint8_t dev_id);
+ 	/**< Total number of queue pairs to configure on a device */
+ 	uint16_t max_nb_priv_xforms;
+@@ -270,9 +292,9 @@ rte_compressdev_close(uint8_t dev_id);
+  * @param max_inflight_ops
+  *   Max number of ops which the qp will have to
+  *   accommodate simultaneously
+- * @param socket_id
+- *   The *socket_id* argument is the socket identifier
+- *   in case of NUMA. The value can be *SOCKET_ID_ANY*
++ * @param numa_id
++ *   The *numa_id* argument is the NUMA node ID
++ *   in case of NUMA. The value can be *RTE_NUMA_ID_ANY*
+  *   if there is no NUMA constraint for the DMA memory
+  *   allocated for the receive queue pair
+  * @return
+@@ -281,7 +303,7 @@ rte_compressdev_close(uint8_t dev_id);
   */
  int
- rte_cryptodev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
--		const struct rte_cryptodev_qp_conf *qp_conf, int socket_id);
-+		const struct rte_cryptodev_qp_conf *qp_conf, int numa_id);
+ rte_compressdev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
+-		uint32_t max_inflight_ops, int socket_id);
++		uint32_t max_inflight_ops, int numa_id);
  
  /**
-  * @warning
-@@ -957,8 +980,8 @@ rte_cryptodev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
-  *				rte_cryptodev_configure().
-  * @param	qp_conf		The pointer to configuration data to be used for the queue pair.
-  *				It should be NULL, if the API is called from an interrupt context.
-- * @param	socket_id	The *socket_id* argument is the socket identifier in case of NUMA.
-- *				The value can be *SOCKET_ID_ANY* if there is no NUMA constraint
-+ * @param	numa_id	The *numa_id* argument is the NUMA node ID in case of NUMA.
-+ *				The value can be *RTE_NUMA_ID_ANY* if there is no NUMA constraint
-  *				for the DMA memory allocated for the queue pair.
-  *
-  * @return
-@@ -969,7 +992,7 @@ rte_cryptodev_queue_pair_setup(uint8_t dev_id, uint16_t queue_pair_id,
- __rte_experimental
- int
- rte_cryptodev_queue_pair_reset(uint8_t dev_id, uint16_t queue_pair_id,
--		const struct rte_cryptodev_qp_conf *qp_conf, int socket_id);
-+		const struct rte_cryptodev_qp_conf *qp_conf, int numa_id);
+  * Get the number of queue pairs on a specific comp device
+diff --git a/lib/compressdev/rte_compressdev_internal.h b/lib/compressdev/rte_compressdev_internal.h
+index a980d74cbf..54224c164f 100644
+--- a/lib/compressdev/rte_compressdev_internal.h
++++ b/lib/compressdev/rte_compressdev_internal.h
+@@ -99,7 +99,7 @@ struct __rte_cache_aligned rte_compressdev {
+ struct __rte_cache_aligned rte_compressdev_data {
+ 	uint8_t dev_id;
+ 	/**< Compress device identifier */
+-	int socket_id;
++	int numa_id;
+ 	/**< Socket identifier where memory is allocated */
+ 	char name[RTE_COMPRESSDEV_NAME_MAX_LEN];
+ 	/**< Unique identifier name */
+diff --git a/lib/compressdev/rte_compressdev_pmd.c b/lib/compressdev/rte_compressdev_pmd.c
+index 7e11ad7148..df03722f33 100644
+--- a/lib/compressdev/rte_compressdev_pmd.c
++++ b/lib/compressdev/rte_compressdev_pmd.c
+@@ -76,7 +76,7 @@ rte_compressdev_pmd_parse_input_args(
+ 		ret = rte_kvargs_process(kvlist,
+ 				RTE_COMPRESSDEV_PMD_SOCKET_ID_ARG,
+ 				&rte_compressdev_pmd_parse_uint_arg,
+-				&params->socket_id);
++				&params->numa_id);
+ 		if (ret < 0)
+ 			goto free_kvlist;
  
- /**
-  * Get the status of queue pairs setup on a specific crypto device
-@@ -1153,9 +1176,9 @@ rte_cryptodev_get_sec_ctx(uint8_t dev_id);
-  *   The number of per-lcore cache elements
-  * @param priv_size
-  *   The private data size of each session.
-- * @param socket_id
-- *   The *socket_id* argument is the socket identifier in the case of
-- *   NUMA. The value can be *SOCKET_ID_ANY* if there is no NUMA
-+ * @param numa_id
-+ *   The *numa_id* argument is the NUMA node ID in the case of
-+ *   NUMA. The value can be *RTE_NUMA_ID_ANY* if there is no NUMA
-  *   constraint for the reserved zone.
-  *
-  * @return
-@@ -1165,7 +1188,7 @@ rte_cryptodev_get_sec_ctx(uint8_t dev_id);
- struct rte_mempool *
- rte_cryptodev_sym_session_pool_create(const char *name, uint32_t nb_elts,
- 	uint32_t elt_size, uint32_t cache_size, uint16_t priv_size,
--	int socket_id);
-+	int numa_id);
+@@ -111,10 +111,10 @@ rte_compressdev_pmd_create(const char *name,
+ 	COMPRESSDEV_LOG(INFO, "Creating compressdev %s", name);
  
+ 	COMPRESSDEV_LOG(INFO, "Init parameters - name: %s, socket id: %d",
+-			name, params->socket_id);
++			name, params->numa_id);
  
- /**
-@@ -1179,9 +1202,9 @@ rte_cryptodev_sym_session_pool_create(const char *name, uint32_t nb_elts,
-  *   The number of per-lcore cache elements
-  * @param user_data_size
-  *   The size of user data to be placed after session private data.
-- * @param socket_id
-- *   The *socket_id* argument is the socket identifier in the case of
-- *   NUMA. The value can be *SOCKET_ID_ANY* if there is no NUMA
-+ * @param numa_id
-+ *   The *numa_id* argument is the NUMA node ID in the case of
-+ *   NUMA. The value can be *RTE_NUMA_ID_ANY* if there is no NUMA
-  *   constraint for the reserved zone.
-  *
-  * @return
-@@ -1190,7 +1213,7 @@ rte_cryptodev_sym_session_pool_create(const char *name, uint32_t nb_elts,
+ 	/* allocate device structure */
+-	compressdev = rte_compressdev_pmd_allocate(name, params->socket_id);
++	compressdev = rte_compressdev_pmd_allocate(name, params->numa_id);
+ 	if (compressdev == NULL) {
+ 		COMPRESSDEV_LOG(ERR, "Failed to allocate comp device %s", name);
+ 		return NULL;
+@@ -123,10 +123,10 @@ rte_compressdev_pmd_create(const char *name,
+ 	/* allocate private device structure */
+ 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+ 		compressdev->data->dev_private =
+-				rte_zmalloc_socket("compressdev device private",
++				rte_zmalloc_numa("compressdev device private",
+ 						private_data_size,
+ 						RTE_CACHE_LINE_SIZE,
+-						params->socket_id);
++						params->numa_id);
+ 
+ 		if (compressdev->data->dev_private == NULL) {
+ 			COMPRESSDEV_LOG(ERR,
+diff --git a/lib/compressdev/rte_compressdev_pmd.h b/lib/compressdev/rte_compressdev_pmd.h
+index ea721f014d..ce30262ec0 100644
+--- a/lib/compressdev/rte_compressdev_pmd.h
++++ b/lib/compressdev/rte_compressdev_pmd.h
+@@ -25,7 +25,7 @@ extern "C" {
+ #endif
+ 
+ #define RTE_COMPRESSDEV_PMD_NAME_ARG			("name")
+-#define RTE_COMPRESSDEV_PMD_SOCKET_ID_ARG		("socket_id")
++#define RTE_COMPRESSDEV_PMD_SOCKET_ID_ARG		("numa_id")
+ 
+ static const char * const compressdev_pmd_valid_params[] = {
+ 	RTE_COMPRESSDEV_PMD_NAME_ARG,
+@@ -38,7 +38,7 @@ static const char * const compressdev_pmd_valid_params[] = {
   */
- struct rte_mempool *
- rte_cryptodev_asym_session_pool_create(const char *name, uint32_t nb_elts,
--	uint32_t cache_size, uint16_t user_data_size, int socket_id);
-+	uint32_t cache_size, uint16_t user_data_size, int numa_id);
+ struct rte_compressdev_pmd_init_params {
+ 	char name[RTE_COMPRESSDEV_NAME_MAX_LEN];
+-	int socket_id;
++	int numa_id;
+ };
+ 
+ /** Global structure used for maintaining state of allocated comp devices */
+@@ -151,13 +151,13 @@ typedef void (*compressdev_info_get_t)(struct rte_compressdev *dev,
+  *   Queue pair identifier
+  * @param max_inflight_ops
+  *   Max inflight ops which qp must accommodate
+- * @param socket_id
++ * @param numa_id
+  *   Socket identifier
+  * @return
+  *   Returns 0 on success.
+  */
+ typedef int (*compressdev_queue_pair_setup_t)(struct rte_compressdev *dev,
+-		uint16_t qp_id,	uint32_t max_inflight_ops, int socket_id);
++		uint16_t qp_id,	uint32_t max_inflight_ops, int numa_id);
  
  /**
-  * Create symmetric crypto session and fill out private data for the device id,
+  * Release memory resources allocated by given queue pair.
+@@ -285,13 +285,13 @@ struct rte_compressdev_ops {
+  *
+  * @param name
+  *   Unique identifier name for each device
+- * @param socket_id
++ * @param numa_id
+  *   Socket to allocate resources on
+  * @return
+  *   - Slot in the rte_dev_devices array for a new device;
+  */
+ struct rte_compressdev *
+-rte_compressdev_pmd_allocate(const char *name, int socket_id);
++rte_compressdev_pmd_allocate(const char *name, int numa_id);
+ 
+ /**
+  * @internal
 -- 
 2.55.0
 
