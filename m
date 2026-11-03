@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8478606A32E
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839B1606A7AA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=OJHJtYIz
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=bKGbKNrE
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1624B43278;
-	Tue,  3 Nov 2026 16:24:17 +0100 (CET)
-Received: from mta0.migadu.com (out-78.mta0.migadu.com [91.218.175.78])
- by mails.dpdk.org (Postfix) with ESMTPS id B9C784325B
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:24:15 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4CA8143278;
+	Tue,  3 Nov 2026 16:24:54 +0100 (CET)
+Received: from mta0.migadu.com (out-98.mta0.migadu.com [91.218.175.98])
+ by mails.dpdk.org (Postfix) with ESMTPS id CAD9942E9A
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:24:52 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=CZGqdS9e8uNturqTIUMsNugcvec5MROTQNkJj3HRdD8=; 
+DKIM-Signature: a=rsa-sha256; bh=USbSGHsqiP8zH/mnaFifYgY4mSZE47BGc9NcZMaEy4A=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719455; v=1; x=1794324255;
- b=OJHJtYIzFjrQkl4FATQ0vLrdlPnMUS+9gqwijHMiSrW58CkCM4WfRakKuFN09Qia9PcLyB+l
- GrZAFf3rAGkS446Tn+Ew4H8/dWBQdaNbkPQdaXWK5wL9bLVlS96KyPM6pljBRDDIZf+Qe5KdUJc
- KAO5ZEUux5ZkozVR5sTzW1Vc=
+ t=1793719492; v=1; x=1794324292;
+ b=bKGbKNrEQlT1SyzUxC3hZHVFdjS29CO95GxKfy1DCKXCYbnU5e2ok3T1Qfy0vrH05wQp21Y8
+ 2ZChUzjYF/bDV/07Na7Ey9jOotmOcawsApU9G6trVPyRLjCKvZUR234U5pzOKHoniHT+yqECjWV
+ NIiHqf2kjKZCE8UzyPaakHkE=
 X-Envelope-To: dev@dpdk.org
-Received: by mta12.migadu.com with ESMTPS id a066a67e2b99cb62;
- Tue, 03 Nov 2026 15:24:15 +0000
-X-Mizu-Trace-ID: a066a67e2b99cb62
+Received: by mta10.migadu.com with ESMTPS id 4075d8cee6052fad;
+ Tue, 03 Nov 2026 15:24:52 +0000
+X-Mizu-Trace-ID: 4075d8cee6052fad
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 199/227] examples/l2fwd-event: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:37 +0800
-Message-ID: <20261103145306.487255-200-chengwen.feng@linux.dev>
+Subject: [PATCH 200/227] examples/l2fwd-jobstats: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:52:38 +0800
+Message-ID: <20261103145306.487255-201-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,71 +62,52 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- examples/l2fwd-event/l2fwd_common.c | 4 ++--
- examples/l2fwd-event/l2fwd_poll.c   | 4 ++--
- examples/l2fwd-event/main.c         | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ examples/l2fwd-jobstats/main.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/examples/l2fwd-event/l2fwd_common.c b/examples/l2fwd-event/l2fwd_common.c
-index caacf6cd63..9b636724b7 100644
---- a/examples/l2fwd-event/l2fwd_common.c
-+++ b/examples/l2fwd-event/l2fwd_common.c
-@@ -83,7 +83,7 @@ l2fwd_event_init_ports(struct l2fwd_resources *rsrc)
+diff --git a/examples/l2fwd-jobstats/main.c b/examples/l2fwd-jobstats/main.c
+index f654831897..0f5117f587 100644
+--- a/examples/l2fwd-jobstats/main.c
++++ b/examples/l2fwd-jobstats/main.c
+@@ -781,7 +781,7 @@ main(int argc, char **argv)
+ 	/* Create the mbuf pool. 8< */
+ 	l2fwd_pktmbuf_pool =
+ 		rte_pktmbuf_pool_create("mbuf_pool", NB_MBUF, 32,
+-			0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
++			0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_numa_id());
+ 	if (l2fwd_pktmbuf_pool == NULL)
+ 		rte_exit(EXIT_FAILURE, "Cannot init mbuf pool\n");
+ 	/* >8 End of creation of mbuf pool. */
+@@ -897,7 +897,7 @@ main(int argc, char **argv)
  		rxq_conf.offloads = local_port_conf.rxmode.offloads;
- 		/* Using lcore to poll one or several ports. 8< */
- 		ret = rte_eth_rx_queue_setup(port_id, 0, nb_rxd,
--					     rte_eth_dev_socket_id(port_id),
-+					     rte_eth_dev_numa_id(port_id),
+ 		/* RX queue initialization. 8< */
+ 		ret = rte_eth_rx_queue_setup(portid, 0, nb_rxd,
+-					     rte_eth_dev_socket_id(portid),
++					     rte_eth_dev_numa_id(portid),
  					     &rxq_conf,
- 					     rsrc->pktmbuf_pool);
+ 					     l2fwd_pktmbuf_pool);
  		if (ret < 0)
-@@ -97,7 +97,7 @@ l2fwd_event_init_ports(struct l2fwd_resources *rsrc)
- 		txq_conf = dev_info.default_txconf;
+@@ -910,7 +910,7 @@ main(int argc, char **argv)
  		txq_conf.offloads = local_port_conf.txmode.offloads;
- 		ret = rte_eth_tx_queue_setup(port_id, 0, nb_txd,
--				rte_eth_dev_socket_id(port_id),
-+				rte_eth_dev_numa_id(port_id),
+ 		fflush(stdout);
+ 		ret = rte_eth_tx_queue_setup(portid, 0, nb_txd,
+-				rte_eth_dev_socket_id(portid),
++				rte_eth_dev_numa_id(portid),
  				&txq_conf);
  		if (ret < 0)
- 			rte_panic("rte_eth_tx_queue_setup:err=%d, port=%u\n",
-diff --git a/examples/l2fwd-event/l2fwd_poll.c b/examples/l2fwd-event/l2fwd_poll.c
-index 73fefac67b..432d80e311 100644
---- a/examples/l2fwd-event/l2fwd_poll.c
-+++ b/examples/l2fwd-event/l2fwd_poll.c
-@@ -147,9 +147,9 @@ l2fwd_poll_init_tx_buffers(struct l2fwd_resources *rsrc)
+ 			rte_exit(EXIT_FAILURE,
+@@ -919,9 +919,9 @@ main(int argc, char **argv)
+ 		/* >8 End of init one TX queue on each port. */
  
- 	RTE_ETH_FOREACH_DEV(port_id) {
  		/* Initialize TX buffers */
--		poll_rsrc->tx_buffer[port_id] = rte_zmalloc_socket("tx_buffer",
-+		poll_rsrc->tx_buffer[port_id] = rte_zmalloc_numa("tx_buffer",
+-		tx_buffer[portid] = rte_zmalloc_socket("tx_buffer",
++		tx_buffer[portid] = rte_zmalloc_numa("tx_buffer",
  				RTE_ETH_TX_BUFFER_SIZE(MAX_PKT_BURST), 0,
--				rte_eth_dev_socket_id(port_id));
-+				rte_eth_dev_numa_id(port_id));
- 		if (poll_rsrc->tx_buffer[port_id] == NULL)
- 			rte_panic("Cannot allocate buffer for tx on port %u\n",
- 				  port_id);
-diff --git a/examples/l2fwd-event/main.c b/examples/l2fwd-event/main.c
-index 6ab59eb4ef..c011ec61db 100644
---- a/examples/l2fwd-event/main.c
-+++ b/examples/l2fwd-event/main.c
-@@ -664,7 +664,7 @@ main(int argc, char **argv)
- 	/* Create the mbuf pool. 8< */
- 	rsrc->pktmbuf_pool = rte_pktmbuf_pool_create("mbuf_pool",
- 			nb_mbufs, MEMPOOL_CACHE_SIZE, 0,
--			RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
-+			RTE_MBUF_DEFAULT_BUF_SIZE, rte_numa_id());
- 	if (rsrc->pktmbuf_pool == NULL)
- 		rte_panic("Cannot init mbuf pool\n");
- 	/* >8 End of creation of mbuf pool. */
-@@ -677,7 +677,7 @@ main(int argc, char **argv)
- 		nb_vec = RTE_MAX(512U, nb_vec);
- 		nb_vec += rte_lcore_count() * 32;
- 		rsrc->evt_vec_pool = rte_event_vector_pool_create(
--			"vector_pool", nb_vec, 32, vec_size, rte_socket_id());
-+			"vector_pool", nb_vec, 32, vec_size, rte_numa_id());
- 		if (rsrc->evt_vec_pool == NULL)
- 			rte_panic("Cannot init event vector pool\n");
- 	}
+-				rte_eth_dev_socket_id(portid));
++				rte_eth_dev_numa_id(portid));
+ 		if (tx_buffer[portid] == NULL)
+ 			rte_exit(EXIT_FAILURE, "Cannot allocate buffer for tx on port %u\n",
+ 					portid);
 -- 
 2.55.0
 
