@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827C4606BA19
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B56A606B277
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=cjDUq+Hg
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=Hj7YCN3e
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C0E7942F0B;
-	Tue,  3 Nov 2026 16:17:33 +0100 (CET)
-Received: from mta0.migadu.com (out-150.mta0.migadu.com [91.218.175.150])
- by mails.dpdk.org (Postfix) with ESMTPS id 0D25342EF1
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:17:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A914F42F08;
+	Tue,  3 Nov 2026 16:17:41 +0100 (CET)
+Received: from mta1.migadu.com (out-30.mta1.migadu.com [95.215.58.30])
+ by mails.dpdk.org (Postfix) with ESMTPS id 57585427C7
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:17:40 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=eb1x0W8vf8dJMpcQnYOKCrNs2ry6eL/ajTG8IgDympU=; 
+DKIM-Signature: a=rsa-sha256; bh=h5jFOhy7a3xWZs4dHy15ezhZor3g3zuFV//ucx/G/BU=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719051; v=1; x=1794323851;
- b=cjDUq+HggmRnPdyMsqFeV5VH5effN7I9f0KKDNZ8CEckeTXpARz4jV49M7DsFLleewoi2bId
- cEX5zFYmug5Wob0yPOVj8PX8gzWdT3Oj/EU60b/1tHT7GxlpSb0cKsM9IpvMzqyKFicY3u2Rvuk
- 2zM0tNcT90fDVy+WKIECPGjY=
+ t=1793719060; v=1; x=1794323860;
+ b=Hj7YCN3ehODsTCeE7MqEyuOQlQqel2KbuyGH4mKNDpsj90hpA/FC3eNOaXAj3QBBUHQmm1yj
+ 22pKgBsaARhIq9HbxgpzaHrPIW51r5imiAmdAuU9Z2ubE+I2hM0u5CxRjEFGgTAeGKUyMRaBxCp
+ e0onoMZXSbs5MHiEHfjsdL5Y=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id 25722988471e73c7;
- Tue, 03 Nov 2026 15:17:31 +0000
-X-Mizu-Trace-ID: 25722988471e73c7
+Received: by mta12.migadu.com with ESMTPS id cb8ea8750e40662a;
+ Tue, 03 Nov 2026 15:17:40 +0000
+X-Mizu-Trace-ID: cb8ea8750e40662a
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 157/227] raw/cnxk_bphy: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:51:55 +0800
-Message-ID: <20261103145306.487255-158-chengwen.feng@linux.dev>
+Subject: [PATCH 158/227] raw/cnxk_gpio: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:51:56 +0800
+Message-ID: <20261103145306.487255-159-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,36 +63,31 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/raw/cnxk_bphy/cnxk_bphy.c     | 2 +-
- drivers/raw/cnxk_bphy/cnxk_bphy_cgx.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/raw/cnxk_gpio/cnxk_gpio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/raw/cnxk_bphy/cnxk_bphy.c b/drivers/raw/cnxk_bphy/cnxk_bphy.c
-index ea30a7100c..3e5e3e0154 100644
---- a/drivers/raw/cnxk_bphy/cnxk_bphy.c
-+++ b/drivers/raw/cnxk_bphy/cnxk_bphy.c
-@@ -343,7 +343,7 @@ bphy_rawdev_probe(struct rte_pci_driver *pci_drv,
+diff --git a/drivers/raw/cnxk_gpio/cnxk_gpio.c b/drivers/raw/cnxk_gpio/cnxk_gpio.c
+index 8a5dda68dc..ed4e533740 100644
+--- a/drivers/raw/cnxk_gpio/cnxk_gpio.c
++++ b/drivers/raw/cnxk_gpio/cnxk_gpio.c
+@@ -147,7 +147,7 @@ cnxk_gpio_params_reserve(size_t len)
+ {
+ 	const struct rte_memzone *mz;
  
- 	bphy_rawdev_get_name(name, pci_dev);
- 	bphy_rawdev = rte_rawdev_pmd_allocate(name, sizeof(*bphy_dev),
--					      rte_socket_id());
-+					      rte_numa_id());
- 	if (bphy_rawdev == NULL) {
- 		CNXK_BPHY_LOG(ERR, "Failed to allocate rawdev");
+-	mz = rte_memzone_reserve(CNXK_GPIO_PARAMS_MZ_NAME, len, rte_socket_id(), 0);
++	mz = rte_memzone_reserve(CNXK_GPIO_PARAMS_MZ_NAME, len, rte_numa_id(), 0);
+ 	if (!mz)
+ 		return NULL;
+ 
+@@ -879,7 +879,7 @@ cnxk_gpio_probe(struct rte_vdev_device *dev)
+ 	int ret;
+ 
+ 	cnxk_gpio_format_name(name, sizeof(name));
+-	rawdev = rte_rawdev_pmd_allocate(name, sizeof(*gpiochip), rte_socket_id());
++	rawdev = rte_rawdev_pmd_allocate(name, sizeof(*gpiochip), rte_numa_id());
+ 	if (!rawdev) {
+ 		CNXK_GPIO_LOG(ERR, "failed to allocate %s rawdev", name);
  		return -ENOMEM;
-diff --git a/drivers/raw/cnxk_bphy/cnxk_bphy_cgx.c b/drivers/raw/cnxk_bphy/cnxk_bphy_cgx.c
-index e0c7257027..d4712ed4ca 100644
---- a/drivers/raw/cnxk_bphy/cnxk_bphy_cgx.c
-+++ b/drivers/raw/cnxk_bphy/cnxk_bphy_cgx.c
-@@ -313,7 +313,7 @@ cnxk_bphy_cgx_rawdev_probe(struct rte_pci_driver *pci_drv,
- 		return ret;
- 
- 	cnxk_bphy_cgx_format_name(name, sizeof(name), pci_dev);
--	rawdev = rte_rawdev_pmd_allocate(name, sizeof(*cgx), rte_socket_id());
-+	rawdev = rte_rawdev_pmd_allocate(name, sizeof(*cgx), rte_numa_id());
- 	if (!rawdev)
- 		return -ENOMEM;
- 
 -- 
 2.55.0
 
