@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC790606FCF4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4DF606A789
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=pudgWKIk
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=oFyfyvw0
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 81F3742E6E;
-	Tue,  3 Nov 2026 16:12:43 +0100 (CET)
-Received: from mta0.migadu.com (out-251.mta0.migadu.com [91.218.175.251])
- by mails.dpdk.org (Postfix) with ESMTPS id BC04442E68
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:12:42 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9378442E81;
+	Tue,  3 Nov 2026 16:12:54 +0100 (CET)
+Received: from mta1.migadu.com (out-235.mta1.migadu.com [95.215.58.235])
+ by mails.dpdk.org (Postfix) with ESMTPS id 9BA1D42E81
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:12:52 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=lkWST5IhNRJ5Gv3IQYtFQ9m3d2b4FkakdsR1ba//xyw=; 
+DKIM-Signature: a=rsa-sha256; bh=qrhQqMouoj2xj/WTXJHGNxhq73TBtORg7Sk2dpHWg24=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718762; v=1; x=1794323562;
- b=pudgWKIk5jgpsdL0h4RasmdJ/coT1Wo+NUOtoODEkJrOPUFeh3+mXm3od04XwHl9FRvI8SWG
- EjR2Z5uU6oh+NvaNL+uzgF10U5H6VlY6CSE62P7+2pqhG0mLYW++ZGNGgbKhb5hkld163MWSwH0
- qEtC9XrLPKfrBG6iwp1p5ox8=
+ t=1793718772; v=1; x=1794323572;
+ b=oFyfyvw0Nb6a3D4Y0XP5MzodQKmPFeEp2iAMAuo7tLGPFNIuHYP7xLVis6vYOmjQzrNFjCB2
+ n10V29M2LxkRKEs4Y3yWC6aoTSfluKqZyJZTKTZt2zNDu+jRy4fgCaCB2EuaFfa1b31pUwU2mwD
+ 1mEmvvXZ/8ZWYHwNetwk9HU4=
 X-Envelope-To: dev@dpdk.org
-Received: by mta12.migadu.com with ESMTPS id 4f81d5a8e5e24b35;
- Tue, 03 Nov 2026 15:12:42 +0000
-X-Mizu-Trace-ID: 4f81d5a8e5e24b35
+Received: by mta12.migadu.com with ESMTPS id f56fd3470221cdb7;
+ Tue, 03 Nov 2026 15:12:52 +0000
+X-Mizu-Trace-ID: f56fd3470221cdb7
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 120/227] net/gve: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:51:18 +0800
-Message-ID: <20261103145306.487255-121-chengwen.feng@linux.dev>
+Subject: [PATCH 121/227] net/hinic: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:51:19 +0800
+Message-ID: <20261103145306.487255-122-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,411 +63,468 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/net/gve/base/gve_osdep.h |  2 +-
- drivers/net/gve/gve_ethdev.c     | 14 +++++++-------
- drivers/net/gve/gve_ethdev.h     |  8 ++++----
- drivers/net/gve/gve_rx.c         | 16 ++++++++--------
- drivers/net/gve/gve_rx_dqo.c     | 24 ++++++++++++------------
- drivers/net/gve/gve_tx.c         | 18 +++++++++---------
- drivers/net/gve/gve_tx_dqo.c     | 16 ++++++++--------
- 7 files changed, 49 insertions(+), 49 deletions(-)
+ drivers/net/hinic/base/hinic_compat.h      |  6 ++---
+ drivers/net/hinic/base/hinic_pmd_api_cmd.c |  6 ++---
+ drivers/net/hinic/base/hinic_pmd_eqs.c     |  2 +-
+ drivers/net/hinic/base/hinic_pmd_hwdev.c   | 18 +++++++--------
+ drivers/net/hinic/base/hinic_pmd_mbox.c    |  2 +-
+ drivers/net/hinic/base/hinic_pmd_wq.c      | 10 ++++-----
+ drivers/net/hinic/base/hinic_pmd_wq.h      |  2 +-
+ drivers/net/hinic/hinic_pmd_ethdev.c       | 26 +++++++++++-----------
+ drivers/net/hinic/hinic_pmd_rx.c           | 16 ++++++-------
+ drivers/net/hinic/hinic_pmd_rx.h           |  4 ++--
+ drivers/net/hinic/hinic_pmd_tx.c           |  8 +++----
+ drivers/net/hinic/hinic_pmd_tx.h           |  4 ++--
+ 12 files changed, 52 insertions(+), 52 deletions(-)
 
-diff --git a/drivers/net/gve/base/gve_osdep.h b/drivers/net/gve/base/gve_osdep.h
-index 55629a0e1a..c9e3272881 100644
---- a/drivers/net/gve/base/gve_osdep.h
-+++ b/drivers/net/gve/base/gve_osdep.h
-@@ -184,7 +184,7 @@ gve_alloc_dma_mem(struct gve_dma_mem *mem, u64 size)
+diff --git a/drivers/net/hinic/base/hinic_compat.h b/drivers/net/hinic/base/hinic_compat.h
+index c37d970f59..a93def90a7 100644
+--- a/drivers/net/hinic/base/hinic_compat.h
++++ b/drivers/net/hinic/base/hinic_compat.h
+@@ -113,13 +113,13 @@ extern int hinic_logtype;
+ #define HINIC_PAGE_SIZE_DPDK	6
  
- 	snprintf(z_name, sizeof(z_name), "gve_dma_%" PRIu64,
- 		 rte_atomic_fetch_add_explicit(&gve_dma_memzone_id, 1, rte_memory_order_relaxed));
--	mz = rte_memzone_reserve_aligned(z_name, size, SOCKET_ID_ANY,
-+	mz = rte_memzone_reserve_aligned(z_name, size, RTE_NUMA_ID_ANY,
- 					 RTE_MEMZONE_IOVA_CONTIG,
- 					 PAGE_SIZE);
- 	if (!mz)
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index 8ee52fdd47..045692437e 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -32,7 +32,7 @@ gve_alloc_using_mz(const char *name, uint32_t num_pages)
- {
- 	const struct rte_memzone *mz;
- 	mz = rte_memzone_reserve_aligned(name, num_pages * PAGE_SIZE,
--					 rte_socket_id(),
-+					 rte_numa_id(),
- 					 RTE_MEMZONE_IOVA_CONTIG, PAGE_SIZE);
- 	if (mz == NULL)
- 		PMD_DRV_LOG(ERR, "Failed to alloc memzone %s.", name);
-@@ -45,7 +45,7 @@ gve_alloc_using_malloc(void **bufs, uint32_t num_entries)
- 	uint32_t i;
+ void *dma_zalloc_coherent(void *dev, size_t size, dma_addr_t *dma_handle,
+-			  unsigned int socket_id);
++			  unsigned int numa_id);
  
- 	for (i = 0; i < num_entries; i++) {
--		bufs[i] = rte_malloc_socket(NULL, PAGE_SIZE, PAGE_SIZE, rte_socket_id());
-+		bufs[i] = rte_malloc_numa(NULL, PAGE_SIZE, PAGE_SIZE, rte_numa_id());
- 		if (bufs[i] == NULL) {
- 			PMD_DRV_LOG(ERR, "Failed to malloc");
- 			goto free_bufs;
-@@ -339,7 +339,7 @@ gve_alloc_stats_report(struct gve_priv *priv,
- 			priv->pci_dev->device.name);
- 	priv->stats_report_mem = rte_memzone_reserve_aligned(z_name,
- 			priv->stats_report_len,
--			rte_socket_id(),
-+			rte_numa_id(),
- 			RTE_MEMZONE_IOVA_CONTIG, PAGE_SIZE);
+ void *dma_zalloc_coherent_aligned(void *hwdev, size_t size,
+-		dma_addr_t *dma_handle, unsigned int socket_id);
++		dma_addr_t *dma_handle, unsigned int numa_id);
  
- 	if (!priv->stats_report_mem)
-@@ -629,7 +629,7 @@ gve_alloc_nic_ts_report(struct gve_priv *priv)
- 	snprintf(z_name, sizeof(z_name), "gve_%s_nic_ts_report",
- 		 priv->pci_dev->device.name);
- 	priv->nic_ts_report_mz = rte_memzone_reserve_aligned(z_name,
--			sizeof(struct gve_nic_ts_report), rte_socket_id(),
-+			sizeof(struct gve_nic_ts_report), rte_numa_id(),
- 			RTE_MEMZONE_IOVA_CONTIG, PAGE_SIZE);
+ void *dma_zalloc_coherent_aligned256k(void *hwdev, size_t size,
+-			      dma_addr_t *dma_handle, unsigned int socket_id);
++			      dma_addr_t *dma_handle, unsigned int numa_id);
  
- 	if (!priv->nic_ts_report_mz) {
-@@ -886,7 +886,7 @@ gve_verify_driver_compatibility(struct gve_priv *priv)
+ void dma_free_coherent(void *dev, size_t size, void *virt, dma_addr_t phys);
  
- 	driver_info_mem = rte_memzone_reserve_aligned("verify_driver_compatibility",
- 			sizeof(struct gve_driver_info),
--			rte_socket_id(),
-+			rte_numa_id(),
- 			RTE_MEMZONE_IOVA_CONTIG, PAGE_SIZE);
+diff --git a/drivers/net/hinic/base/hinic_pmd_api_cmd.c b/drivers/net/hinic/base/hinic_pmd_api_cmd.c
+index b72edc0652..ef1798485f 100644
+--- a/drivers/net/hinic/base/hinic_pmd_api_cmd.c
++++ b/drivers/net/hinic/base/hinic_pmd_api_cmd.c
+@@ -658,7 +658,7 @@ static int alloc_cmd_buf(struct hinic_api_cmd_chain *chain,
  
- 	if (driver_info_mem == NULL) {
-@@ -1575,7 +1575,7 @@ gve_setup_device_resources(struct gve_priv *priv)
- 	snprintf(z_name, sizeof(z_name), "gve_%s_cnt_arr", priv->pci_dev->device.name);
- 	mz = rte_memzone_reserve_aligned(z_name,
- 					 priv->num_event_counters * sizeof(*priv->cnt_array),
--					 rte_socket_id(), RTE_MEMZONE_IOVA_CONTIG,
-+					 rte_numa_id(), RTE_MEMZONE_IOVA_CONTIG,
- 					 PAGE_SIZE);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Could not alloc memzone for count array");
-@@ -1587,7 +1587,7 @@ gve_setup_device_resources(struct gve_priv *priv)
- 	snprintf(z_name, sizeof(z_name), "gve_%s_irqmz", priv->pci_dev->device.name);
- 	mz = rte_memzone_reserve_aligned(z_name,
- 					 sizeof(*priv->irq_dbs) * (priv->num_ntfy_blks),
--					 rte_socket_id(), RTE_MEMZONE_IOVA_CONTIG,
-+					 rte_numa_id(), RTE_MEMZONE_IOVA_CONTIG,
- 					 PAGE_SIZE);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Could not alloc memzone for irq_dbs");
-diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index 3a8ddfbbb6..60375598c3 100644
---- a/drivers/net/gve/gve_ethdev.h
-+++ b/drivers/net/gve/gve_ethdev.h
-@@ -560,11 +560,11 @@ gve_clear_flow_subsystem_ok(struct gve_priv *priv)
- 
- int
- gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_desc,
--		   unsigned int socket_id, const struct rte_eth_rxconf *conf,
-+		   unsigned int numa_id, const struct rte_eth_rxconf *conf,
- 		   struct rte_mempool *pool);
- int
- gve_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_desc,
--		   unsigned int socket_id, const struct rte_eth_txconf *conf);
-+		   unsigned int numa_id, const struct rte_eth_txconf *conf);
- 
- void
- gve_tx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
-@@ -613,12 +613,12 @@ gve_teardown_queue_page_list(struct gve_priv *priv,
- 
- int
- gve_rx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
--		       uint16_t nb_desc, unsigned int socket_id,
-+		       uint16_t nb_desc, unsigned int numa_id,
- 		       const struct rte_eth_rxconf *conf,
- 		       struct rte_mempool *pool);
- int
- gve_tx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
--		       uint16_t nb_desc, unsigned int socket_id,
-+		       uint16_t nb_desc, unsigned int numa_id,
- 		       const struct rte_eth_txconf *conf);
- 
- void
-diff --git a/drivers/net/gve/gve_rx.c b/drivers/net/gve/gve_rx.c
-index 31c187ca83..b21cd175be 100644
---- a/drivers/net/gve/gve_rx.c
-+++ b/drivers/net/gve/gve_rx.c
-@@ -324,7 +324,7 @@ gve_rx_buf_len_gqi(struct rte_mempool *pool)
- 
- int
- gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
--		uint16_t nb_desc, unsigned int socket_id,
-+		uint16_t nb_desc, unsigned int numa_id,
- 		const struct rte_eth_rxconf *conf, struct rte_mempool *pool)
- {
- 	struct gve_priv *hw = dev->data->dev_private;
-@@ -361,10 +361,10 @@ gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
- 	}
- 
- 	/* Allocate the RX queue data structure. */
--	rxq = rte_zmalloc_socket("gve rxq",
-+	rxq = rte_zmalloc_numa("gve rxq",
- 				 sizeof(struct gve_rx_queue),
- 				 RTE_CACHE_LINE_SIZE,
--				 socket_id);
-+				 numa_id);
- 	if (!rxq) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate memory for rx queue structure");
- 		err = -ENOMEM;
-@@ -393,8 +393,8 @@ gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
- 	rxq->scatter = !!(offloads & RTE_ETH_RX_OFFLOAD_SCATTER);
- 
- 	/* Allocate software ring */
--	rxq->sw_ring = rte_zmalloc_socket("gve rx sw ring", sizeof(struct rte_mbuf *) * nb_desc,
--					  RTE_CACHE_LINE_SIZE, socket_id);
-+	rxq->sw_ring = rte_zmalloc_numa("gve rx sw ring", sizeof(struct rte_mbuf *) * nb_desc,
-+					  RTE_CACHE_LINE_SIZE, numa_id);
- 	if (!rxq->sw_ring) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate memory for SW RX ring");
- 		err = -ENOMEM;
-@@ -403,7 +403,7 @@ gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
- 
- 	mz = rte_eth_dma_zone_reserve(dev, "rx_ring", queue_id,
- 				      nb_desc * sizeof(struct gve_rx_desc),
--				      PAGE_SIZE, socket_id);
-+				      PAGE_SIZE, numa_id);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to reserve DMA memory for RX");
- 		err = -ENOMEM;
-@@ -415,7 +415,7 @@ gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
- 
- 	mz = rte_eth_dma_zone_reserve(dev, "gve rx data ring", queue_id,
- 				      sizeof(union gve_rx_data_slot) * nb_desc,
--				      PAGE_SIZE, socket_id);
-+				      PAGE_SIZE, numa_id);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate memory for RX data ring");
- 		err = -ENOMEM;
-@@ -439,7 +439,7 @@ gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id,
- 
- 	mz = rte_eth_dma_zone_reserve(dev, "rxq_res", queue_id,
- 				      sizeof(struct gve_queue_resources),
--				      PAGE_SIZE, socket_id);
-+				      PAGE_SIZE, numa_id);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to reserve DMA memory for RX resource");
- 		err = -ENOMEM;
-diff --git a/drivers/net/gve/gve_rx_dqo.c b/drivers/net/gve/gve_rx_dqo.c
-index 03c62edee6..50e26af229 100644
---- a/drivers/net/gve/gve_rx_dqo.c
-+++ b/drivers/net/gve/gve_rx_dqo.c
-@@ -320,7 +320,7 @@ gve_reset_rx_ring_state_dqo(struct gve_rx_queue *rxq)
- 
- int
- gve_rx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
--		       uint16_t nb_desc, unsigned int socket_id,
-+		       uint16_t nb_desc, unsigned int numa_id,
- 		       const struct rte_eth_rxconf *conf,
- 		       struct rte_mempool *pool)
- {
-@@ -338,10 +338,10 @@ gve_rx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 	}
- 
- 	/* Allocate the RX queue data structure. */
--	rxq = rte_zmalloc_socket("gve rxq",
-+	rxq = rte_zmalloc_numa("gve rxq",
- 				 sizeof(struct gve_rx_queue),
- 				 RTE_CACHE_LINE_SIZE,
--				 socket_id);
-+				 numa_id);
- 	if (rxq == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate memory for rx queue structure");
+ 	cmd_vaddr_alloc = dma_zalloc_coherent(dev, (API_CMD_BUF_SIZE +
+ 					      API_PAYLOAD_ALIGN_SIZE),
+-					      &cmd_paddr, SOCKET_ID_ANY);
++					      &cmd_paddr, RTE_NUMA_ID_ANY);
+ 	if (!cmd_vaddr_alloc) {
+ 		PMD_DRV_LOG(ERR, "Allocate API CMD dma memory failed");
  		return -ENOMEM;
-@@ -379,9 +379,9 @@ gve_rx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 			RTE_ALIGN_FLOOR(mbuf_len, GVE_RX_BUF_ALIGN_DQO));
+@@ -712,7 +712,7 @@ static int api_cmd_create_cell(struct hinic_api_cmd_chain *chain,
  
- 	/* Allocate software ring */
--	rxq->sw_ring = rte_zmalloc_socket("gve rx sw ring",
-+	rxq->sw_ring = rte_zmalloc_numa("gve rx sw ring",
- 					  nb_desc * sizeof(struct rte_mbuf *),
--					  RTE_CACHE_LINE_SIZE, socket_id);
-+					  RTE_CACHE_LINE_SIZE, numa_id);
- 	if (rxq->sw_ring == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate memory for SW RX ring");
- 		err = -ENOMEM;
-@@ -389,9 +389,9 @@ gve_rx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 	}
+ 	node_vaddr_alloc = dma_zalloc_coherent(dev, (chain->cell_size +
+ 					       API_CMD_NODE_ALIGN_SIZE),
+-					       &node_paddr, SOCKET_ID_ANY);
++					       &node_paddr, RTE_NUMA_ID_ANY);
+ 	if (!node_vaddr_alloc) {
+ 		PMD_DRV_LOG(ERR, "Allocate dma API CMD cell failed");
+ 		return -ENOMEM;
+@@ -889,7 +889,7 @@ static int api_chain_init(struct hinic_api_cmd_chain *chain,
  
- 	/* Allocate completed bufs list */
--	rxq->completed_buf_list = rte_zmalloc_socket("gve completed buf list",
-+	rxq->completed_buf_list = rte_zmalloc_numa("gve completed buf list",
- 		nb_desc * sizeof(*rxq->completed_buf_list), RTE_CACHE_LINE_SIZE,
--		socket_id);
-+		numa_id);
- 	if (rxq->completed_buf_list == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate completed buffer list.");
+ 	chain->wb_status = (struct hinic_api_cmd_status *)
+ 			   dma_zalloc_coherent(dev, sizeof(*chain->wb_status),
+-				&chain->wb_status_paddr, SOCKET_ID_ANY);
++				&chain->wb_status_paddr, RTE_NUMA_ID_ANY);
+ 	if (!chain->wb_status) {
+ 		PMD_DRV_LOG(ERR, "Allocate DMA wb status failed");
  		err = -ENOMEM;
-@@ -399,9 +399,9 @@ gve_rx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 	}
+diff --git a/drivers/net/hinic/base/hinic_pmd_eqs.c b/drivers/net/hinic/base/hinic_pmd_eqs.c
+index f0e1139a98..ebd05c7585 100644
+--- a/drivers/net/hinic/base/hinic_pmd_eqs.c
++++ b/drivers/net/hinic/base/hinic_pmd_eqs.c
+@@ -240,7 +240,7 @@ static int alloc_eq_pages(struct hinic_eq *eq)
+ 		eq->virt_addr[pg_num] =
+ 			(u8 *)dma_zalloc_coherent_aligned(eq->hwdev,
+ 					eq->page_size, &eq->dma_addr[pg_num],
+-					SOCKET_ID_ANY);
++					RTE_NUMA_ID_ANY);
+ 		if (!eq->virt_addr[pg_num]) {
+ 			err = -ENOMEM;
+ 			goto dma_alloc_err;
+diff --git a/drivers/net/hinic/base/hinic_pmd_hwdev.c b/drivers/net/hinic/base/hinic_pmd_hwdev.c
+index 3aca40d17d..ac65b8ce29 100644
+--- a/drivers/net/hinic/base/hinic_pmd_hwdev.c
++++ b/drivers/net/hinic/base/hinic_pmd_hwdev.c
+@@ -114,7 +114,7 @@ void hinic_be32_to_cpu(void *data, u32 len)
  
- 	/* Allocate buffer for reallocating mbufs */
--	rxq->refill_bufs = rte_zmalloc_socket("gve rx refill bufs",
-+	rxq->refill_bufs = rte_zmalloc_numa("gve rx refill bufs",
- 		nb_desc * sizeof(*rxq->refill_bufs), RTE_CACHE_LINE_SIZE,
--		socket_id);
-+		numa_id);
- 	if (rxq->refill_bufs == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate rx refill bufs.");
- 		err = -ENOMEM;
-@@ -411,7 +411,7 @@ gve_rx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 	/* Allocate RX buffer queue */
- 	mz = rte_eth_dma_zone_reserve(dev, "rx_ring", queue_id,
- 				      nb_desc * sizeof(struct gve_rx_desc_dqo),
--				      PAGE_SIZE, socket_id);
-+				      PAGE_SIZE, numa_id);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to reserve DMA memory for RX buffer queue");
- 		err = -ENOMEM;
-@@ -424,7 +424,7 @@ gve_rx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 	/* Allocate RX completion queue */
- 	mz = rte_eth_dma_zone_reserve(dev, "compl_ring", queue_id,
- 				      nb_desc * sizeof(struct gve_rx_compl_desc_dqo),
--				      PAGE_SIZE, socket_id);
-+				      PAGE_SIZE, numa_id);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to reserve DMA memory for RX completion queue");
- 		err = -ENOMEM;
-@@ -438,7 +438,7 @@ gve_rx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 
- 	mz = rte_eth_dma_zone_reserve(dev, "rxq_res", queue_id,
- 				      sizeof(struct gve_queue_resources),
--				      PAGE_SIZE, socket_id);
-+				      PAGE_SIZE, numa_id);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to reserve DMA memory for RX resource");
- 		err = -ENOMEM;
-diff --git a/drivers/net/gve/gve_tx.c b/drivers/net/gve/gve_tx.c
-index 279669165f..6cb31a0b80 100644
---- a/drivers/net/gve/gve_tx.c
-+++ b/drivers/net/gve/gve_tx.c
-@@ -561,7 +561,7 @@ gve_tx_queue_release(struct rte_eth_dev *dev, uint16_t qid)
- 
- int
- gve_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_desc,
--		   unsigned int socket_id, const struct rte_eth_txconf *conf)
-+		   unsigned int numa_id, const struct rte_eth_txconf *conf)
+ static void *hinic_dma_mem_zalloc(struct hinic_hwdev *hwdev, size_t size,
+ 			   dma_addr_t *dma_handle, unsigned int align,
+-			   unsigned int socket_id)
++			   unsigned int numa_id)
  {
- 	struct gve_priv *hw = dev->data->dev_private;
- 	const struct rte_memzone *mz;
-@@ -583,8 +583,8 @@ gve_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_desc,
+ 	int rc;
+ 	uint32_t alloc_cnt;
+@@ -131,7 +131,7 @@ static void *hinic_dma_mem_zalloc(struct hinic_hwdev *hwdev, size_t size,
+ 	snprintf(z_name, sizeof(z_name), "%s_%u",
+ 		 hwdev->pcidev_hdl->name, alloc_cnt);
+ 
+-	mz = rte_memzone_reserve_aligned(z_name, size, socket_id,
++	mz = rte_memzone_reserve_aligned(z_name, size, numa_id,
+ 					 RTE_MEMZONE_IOVA_CONTIG, align);
+ 	if (!mz) {
+ 		PMD_DRV_LOG(ERR, "Alloc dma able memory failed, errno: %d, ma_name: %s, size: 0x%zx",
+@@ -212,25 +212,25 @@ hinic_dma_mem_free(struct hinic_hwdev *hwdev, size_t size,
+ }
+ 
+ void *dma_zalloc_coherent(void *hwdev, size_t size, dma_addr_t *dma_handle,
+-			  unsigned int socket_id)
++			  unsigned int numa_id)
+ {
+ 	return hinic_dma_mem_zalloc(hwdev, size, dma_handle,
+-				    RTE_CACHE_LINE_SIZE, socket_id);
++				    RTE_CACHE_LINE_SIZE, numa_id);
+ }
+ 
+ void *dma_zalloc_coherent_aligned(void *hwdev, size_t size,
+-				dma_addr_t *dma_handle, unsigned int socket_id)
++				dma_addr_t *dma_handle, unsigned int numa_id)
+ {
+ 	return hinic_dma_mem_zalloc(hwdev, size, dma_handle, HINIC_PAGE_SIZE,
+-				    socket_id);
++				    numa_id);
+ }
+ 
+ void *dma_zalloc_coherent_aligned256k(void *hwdev, size_t size,
+ 				      dma_addr_t *dma_handle,
+-				      unsigned int socket_id)
++				      unsigned int numa_id)
+ {
+ 	return hinic_dma_mem_zalloc(hwdev, size, dma_handle,
+-				    HINIC_PAGE_SIZE * 64, socket_id);
++				    HINIC_PAGE_SIZE * 64, numa_id);
+ }
+ 
+ void dma_free_coherent(void *hwdev, size_t size, void *virt, dma_addr_t phys)
+@@ -314,7 +314,7 @@ void *dma_pool_alloc(struct pci_pool *pool, dma_addr_t *dma_addr)
+ 	void *buf;
+ 
+ 	buf = hinic_dma_mem_zalloc(pool->hwdev, pool->elem_size, dma_addr,
+-				(u32)pool->align, SOCKET_ID_ANY);
++				(u32)pool->align, RTE_NUMA_ID_ANY);
+ 	if (buf)
+ 		rte_atomic_fetch_add_explicit(&pool->inuse, 1, rte_memory_order_relaxed);
+ 
+diff --git a/drivers/net/hinic/base/hinic_pmd_mbox.c b/drivers/net/hinic/base/hinic_pmd_mbox.c
+index 7418c9b602..270bed05c3 100644
+--- a/drivers/net/hinic/base/hinic_pmd_mbox.c
++++ b/drivers/net/hinic/base/hinic_pmd_mbox.c
+@@ -443,7 +443,7 @@ static int alloc_mbox_wb_status(struct hinic_mbox_func_to_func *func_to_func)
+ 	u32 addr_h, addr_l;
+ 
+ 	send_mbox->wb_vaddr = dma_zalloc_coherent(hwdev, MBOX_WB_STATUS_LEN,
+-					&send_mbox->wb_paddr, SOCKET_ID_ANY);
++					&send_mbox->wb_paddr, RTE_NUMA_ID_ANY);
+ 	if (!send_mbox->wb_vaddr) {
+ 		PMD_DRV_LOG(ERR, "Allocating memory for mailbox wb status failed");
+ 		return -ENOMEM;
+diff --git a/drivers/net/hinic/base/hinic_pmd_wq.c b/drivers/net/hinic/base/hinic_pmd_wq.c
+index 345248c3ea..1197ec0082 100644
+--- a/drivers/net/hinic/base/hinic_pmd_wq.c
++++ b/drivers/net/hinic/base/hinic_pmd_wq.c
+@@ -16,13 +16,13 @@ static void free_wq_pages(struct hinic_hwdev *hwdev, struct hinic_wq *wq)
+ }
+ 
+ static int alloc_wq_pages(struct hinic_hwdev *hwdev, struct hinic_wq *wq,
+-			unsigned int socket_id)
++			unsigned int numa_id)
+ {
+ 	dma_addr_t dma_addr = 0;
+ 
+ 	wq->queue_buf_vaddr = (u64)(u64 *)
+ 		dma_zalloc_coherent_aligned256k(hwdev, wq->wq_buf_size,
+-						&dma_addr, socket_id);
++						&dma_addr, numa_id);
+ 	if (!wq->queue_buf_vaddr) {
+ 		PMD_DRV_LOG(ERR, "Failed to allocate wq page");
+ 		return -ENOMEM;
+@@ -41,7 +41,7 @@ static int alloc_wq_pages(struct hinic_hwdev *hwdev, struct hinic_wq *wq,
+ }
+ 
+ int hinic_wq_allocate(struct hinic_hwdev *hwdev, struct hinic_wq *wq,
+-		      u32 wqebb_shift, u16 q_depth, unsigned int socket_id)
++		      u32 wqebb_shift, u16 q_depth, unsigned int numa_id)
+ {
+ 	int err;
+ 
+@@ -61,7 +61,7 @@ int hinic_wq_allocate(struct hinic_hwdev *hwdev, struct hinic_wq *wq,
+ 		return -EINVAL;
  	}
  
- 	/* Allocate the TX queue data structure. */
--	txq = rte_zmalloc_socket("gve txq", sizeof(struct gve_tx_queue),
+-	err = alloc_wq_pages(hwdev, wq, socket_id);
++	err = alloc_wq_pages(hwdev, wq, numa_id);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR, "Failed to allocate wq pages");
+ 		return err;
+@@ -115,7 +115,7 @@ int hinic_cmdq_alloc(struct hinic_wq *wq, struct hinic_hwdev *hwdev,
+ 		wq[i].wq_buf_size = wq_buf_size;
+ 		wq[i].q_depth = q_depth;
+ 
+-		err = alloc_wq_pages(hwdev, &wq[i], SOCKET_ID_ANY);
++		err = alloc_wq_pages(hwdev, &wq[i], RTE_NUMA_ID_ANY);
+ 		if (err) {
+ 			PMD_DRV_LOG(ERR, "Failed to alloc CMDQ blocks");
+ 			goto cmdq_block_err;
+diff --git a/drivers/net/hinic/base/hinic_pmd_wq.h b/drivers/net/hinic/base/hinic_pmd_wq.h
+index 354d0338de..80bcfc43ec 100644
+--- a/drivers/net/hinic/base/hinic_pmd_wq.h
++++ b/drivers/net/hinic/base/hinic_pmd_wq.h
+@@ -122,7 +122,7 @@ void hinic_cmdq_free(struct hinic_hwdev *hwdev, struct hinic_wq *wq,
+ 		     int cmdq_blocks);
+ 
+ int hinic_wq_allocate(struct hinic_hwdev *hwdev, struct hinic_wq *wq,
+-		      u32 wqebb_shift, u16 q_depth, unsigned int socket_id);
++		      u32 wqebb_shift, u16 q_depth, unsigned int numa_id);
+ 
+ void hinic_wq_free(struct hinic_hwdev *hwdev, struct hinic_wq *wq);
+ 
+diff --git a/drivers/net/hinic/hinic_pmd_ethdev.c b/drivers/net/hinic/hinic_pmd_ethdev.c
+index 016d632e64..e552c471d0 100644
+--- a/drivers/net/hinic/hinic_pmd_ethdev.c
++++ b/drivers/net/hinic/hinic_pmd_ethdev.c
+@@ -361,7 +361,7 @@ static int hinic_dev_configure(struct rte_eth_dev *dev)
+  *   RX queue index.
+  * @param nb_desc
+  *   Number of descriptors for receive queue.
+- * @param socket_id
++ * @param numa_id
+  *   NUMA socket on which memory must be allocated.
+  * @param rx_conf
+  *   Thresholds parameters (unused_).
+@@ -372,7 +372,7 @@ static int hinic_dev_configure(struct rte_eth_dev *dev)
+  *   0 on success, negative error value otherwise.
+  */
+ static int hinic_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+-			 uint16_t nb_desc, unsigned int socket_id,
++			 uint16_t nb_desc, unsigned int numa_id,
+ 			 __rte_unused const struct rte_eth_rxconf *rx_conf,
+ 			 struct rte_mempool *mp)
+ {
+@@ -423,8 +423,8 @@ static int hinic_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		return -EINVAL;
+ 	}
+ 
+-	rxq = rte_zmalloc_socket("hinic_rx_queue", sizeof(struct hinic_rxq),
 -				 RTE_CACHE_LINE_SIZE, socket_id);
-+	txq = rte_zmalloc_numa("gve txq", sizeof(struct gve_tx_queue),
++	rxq = rte_zmalloc_numa("hinic_rx_queue", sizeof(struct hinic_rxq),
++				 RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (!rxq) {
+ 		PMD_DRV_LOG(ERR, "Allocate rxq[%d] failed, dev_name: %s",
+ 			    queue_idx, dev->data->name);
+@@ -433,7 +433,7 @@ static int hinic_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	nic_dev->rxqs[queue_idx] = rxq;
+ 
+ 	/* alloc rx sq hw wqe page */
+-	rc = hinic_create_rq(hwdev, queue_idx, rq_depth, socket_id);
++	rc = hinic_create_rq(hwdev, queue_idx, rq_depth, numa_id);
+ 	if (rc) {
+ 		PMD_DRV_LOG(ERR, "Create rxq[%d] failed, dev_name: %s, rq_depth: %d",
+ 			    queue_idx, dev->data->name, rq_depth);
+@@ -460,7 +460,7 @@ static int hinic_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	rxq->q_depth = rq_depth;
+ 	rxq->buf_len = (u16)buf_size;
+ 	rxq->rx_free_thresh = rx_free_thresh;
+-	rxq->socket_id = socket_id;
++	rxq->numa_id = numa_id;
+ 
+ 	/* the last point cant do mbuf rearm in bulk */
+ 	rxq->rxinfo_align_end = rxq->q_depth - rxq->rx_free_thresh;
+@@ -521,7 +521,7 @@ static void hinic_reset_rx_queue(struct rte_eth_dev *dev)
+  *   Transmit queue index.
+  * @param nb_desc
+  *   Number of descriptors for transmit queue.
+- * @param socket_id
++ * @param numa_id
+  *   NUMA socket on which memory must be allocated.
+  * @param tx_conf
+  *   Tx queue configuration parameters.
+@@ -530,7 +530,7 @@ static void hinic_reset_rx_queue(struct rte_eth_dev *dev)
+  *   0 on success, negative error value otherwise.
+  */
+ static int hinic_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+-			 uint16_t nb_desc, unsigned int socket_id,
++			 uint16_t nb_desc, unsigned int numa_id,
+ 			 __rte_unused const struct rte_eth_txconf *tx_conf)
+ {
+ 	int rc;
+@@ -578,8 +578,8 @@ static int hinic_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		return -EINVAL;
+ 	}
+ 
+-	txq = rte_zmalloc_socket("hinic_tx_queue", sizeof(struct hinic_txq),
+-				 RTE_CACHE_LINE_SIZE, socket_id);
++	txq = rte_zmalloc_numa("hinic_tx_queue", sizeof(struct hinic_txq),
 +				 RTE_CACHE_LINE_SIZE, numa_id);
  	if (!txq) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate memory for tx queue structure");
- 		err = -ENOMEM;
-@@ -609,9 +609,9 @@ gve_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_desc,
- 	txq->ntfy_addr = &hw->db_bar[rte_be_to_cpu_32(hw->irq_dbs[txq->ntfy_id].id)];
+ 		PMD_DRV_LOG(ERR, "Allocate txq[%d] failed, dev_name: %s",
+ 			    queue_idx, dev->data->name);
+@@ -588,7 +588,7 @@ static int hinic_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	nic_dev->txqs[queue_idx] = txq;
  
- 	/* Allocate software ring */
--	txq->sw_ring = rte_zmalloc_socket("gve tx sw ring",
-+	txq->sw_ring = rte_zmalloc_numa("gve tx sw ring",
- 					  sizeof(struct rte_mbuf *) * nb_desc,
--					  RTE_CACHE_LINE_SIZE, socket_id);
-+					  RTE_CACHE_LINE_SIZE, numa_id);
- 	if (!txq->sw_ring) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate memory for SW TX ring");
- 		err = -ENOMEM;
-@@ -620,7 +620,7 @@ gve_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_desc,
+ 	/* alloc tx sq hw wqepage */
+-	rc = hinic_create_sq(hwdev, queue_idx, sq_depth, socket_id);
++	rc = hinic_create_sq(hwdev, queue_idx, sq_depth, numa_id);
+ 	if (rc) {
+ 		PMD_DRV_LOG(ERR, "Create txq[%d] failed, dev_name: %s, sq_depth: %d",
+ 			    queue_idx, dev->data->name, sq_depth);
+@@ -607,7 +607,7 @@ static int hinic_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	txq->sq_bot_sge_addr = HINIC_GET_WQ_TAIL(txq) -
+ 					sizeof(struct hinic_sq_bufdesc);
+ 	txq->cos = nic_dev->default_cos;
+-	txq->socket_id = socket_id;
++	txq->numa_id = numa_id;
  
- 	mz = rte_eth_dma_zone_reserve(dev, "tx_ring", queue_id,
- 				      nb_desc * sizeof(union gve_tx_desc),
--				      PAGE_SIZE, socket_id);
-+				      PAGE_SIZE, numa_id);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to reserve DMA memory for TX");
- 		err = -ENOMEM;
-@@ -632,9 +632,9 @@ gve_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_desc,
+ 	/* alloc software txinfo */
+ 	rc = hinic_setup_tx_resources(txq);
+@@ -2678,7 +2678,7 @@ static int hinic_copy_mempool_init(struct hinic_nic_dev *nic_dev)
+ 					HINIC_COPY_MEMPOOL_DEPTH,
+ 					0, 0,
+ 					HINIC_COPY_MBUF_SIZE,
+-					rte_socket_id());
++					rte_numa_id());
+ 		if (!nic_dev->cpy_mpool) {
+ 			PMD_DRV_LOG(ERR, "Create copy mempool failed, errno: %d, dev_name: %s",
+ 				    rte_errno, nic_dev->proc_dev_name);
+diff --git a/drivers/net/hinic/hinic_pmd_rx.c b/drivers/net/hinic/hinic_pmd_rx.c
+index c2cd295033..5df252e789 100644
+--- a/drivers/net/hinic/hinic_pmd_rx.c
++++ b/drivers/net/hinic/hinic_pmd_rx.c
+@@ -210,7 +210,7 @@ void hinic_get_func_rx_buf_size(struct hinic_nic_dev *nic_dev)
+ }
  
- 	/* QPL-specific allocations. */
- 	if (txq->is_gqi_qpl) {
--		txq->iov_ring = rte_zmalloc_socket("gve tx iov ring",
-+		txq->iov_ring = rte_zmalloc_numa("gve tx iov ring",
- 						   sizeof(struct gve_tx_iovec) * nb_desc,
--						   RTE_CACHE_LINE_SIZE, socket_id);
-+						   RTE_CACHE_LINE_SIZE, numa_id);
- 		if (!txq->iov_ring) {
- 			PMD_DRV_LOG(ERR, "Failed to allocate memory for SW TX ring");
- 			err = -ENOMEM;
-@@ -652,7 +652,7 @@ gve_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_desc,
- 	}
- 
- 	mz = rte_eth_dma_zone_reserve(dev, "txq_res", queue_id, sizeof(struct gve_queue_resources),
--				      PAGE_SIZE, socket_id);
-+				      PAGE_SIZE, numa_id);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to reserve DMA memory for TX resource");
- 		err = -ENOMEM;
-diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
-index 52fcdb285a..93a595188f 100644
---- a/drivers/net/gve/gve_tx_dqo.c
-+++ b/drivers/net/gve/gve_tx_dqo.c
-@@ -511,7 +511,7 @@ gve_reset_tx_ring_state_dqo(struct gve_tx_queue *txq)
- 
- int
- gve_tx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
--		       uint16_t nb_desc, unsigned int socket_id,
-+		       uint16_t nb_desc, unsigned int numa_id,
- 		       const struct rte_eth_txconf *conf)
+ int hinic_create_rq(struct hinic_hwdev *hwdev, u16 q_id,
+-			u16 rq_depth, unsigned int socket_id)
++			u16 rq_depth, unsigned int numa_id)
  {
- 	struct gve_priv *hw = dev->data->dev_private;
-@@ -529,9 +529,9 @@ gve_tx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 	}
+ 	int err;
+ 	struct hinic_nic_io *nic_io = hwdev->nic_io;
+@@ -224,7 +224,7 @@ int hinic_create_rq(struct hinic_hwdev *hwdev, u16 q_id,
+ 	nic_io->rq_depth = rq_depth;
  
- 	/* Allocate the TX queue data structure. */
--	txq = rte_zmalloc_socket("gve txq",
-+	txq = rte_zmalloc_numa("gve txq",
- 				 sizeof(struct gve_tx_queue),
--				 RTE_CACHE_LINE_SIZE, socket_id);
-+				 RTE_CACHE_LINE_SIZE, numa_id);
- 	if (txq == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate memory for tx queue structure");
+ 	err = hinic_wq_allocate(hwdev, &nic_io->rq_wq[q_id],
+-			HINIC_RQ_WQEBB_SHIFT, nic_io->rq_depth, socket_id);
++			HINIC_RQ_WQEBB_SHIFT, nic_io->rq_depth, numa_id);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR, "Failed to allocate WQ for RQ");
+ 		return err;
+@@ -232,7 +232,7 @@ int hinic_create_rq(struct hinic_hwdev *hwdev, u16 q_id,
+ 	rq->wq = &nic_io->rq_wq[q_id];
+ 
+ 	rq->pi_virt_addr = (volatile u16 *)dma_zalloc_coherent(hwdev,
+-			HINIC_PAGE_SIZE, &rq->pi_dma_addr, socket_id);
++			HINIC_PAGE_SIZE, &rq->pi_dma_addr, numa_id);
+ 	if (!rq->pi_virt_addr) {
+ 		PMD_DRV_LOG(ERR, "Failed to allocate rq pi virt addr");
+ 		err = -ENOMEM;
+@@ -304,13 +304,13 @@ void hinic_rxq_stats_reset(struct hinic_rxq *rxq)
+ 	memset(rxq_stats, 0, sizeof(*rxq_stats));
+ }
+ 
+-static int hinic_rx_alloc_cqe(struct hinic_rxq *rxq, unsigned int socket_id)
++static int hinic_rx_alloc_cqe(struct hinic_rxq *rxq, unsigned int numa_id)
+ {
+ 	size_t cqe_mem_size;
+ 
+ 	cqe_mem_size = sizeof(struct hinic_rq_cqe) * rxq->q_depth;
+ 	rxq->cqe_start_vaddr = dma_zalloc_coherent(rxq->nic_dev->hwdev,
+-				cqe_mem_size, &rxq->cqe_start_paddr, socket_id);
++				cqe_mem_size, &rxq->cqe_start_paddr, numa_id);
+ 	if (!rxq->cqe_start_vaddr) {
+ 		PMD_DRV_LOG(ERR, "Allocate cqe dma memory failed");
  		return -ENOMEM;
-@@ -557,9 +557,9 @@ gve_tx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
+@@ -366,12 +366,12 @@ int hinic_setup_rx_resources(struct hinic_rxq *rxq)
+ 	int err, pkts;
  
- 	/* Allocate software ring */
- 	sw_size = nb_desc;
--	txq->pkt_ring_dqo = rte_zmalloc_socket("gve tx sw ring",
-+	txq->pkt_ring_dqo = rte_zmalloc_numa("gve tx sw ring",
- 					  sw_size * sizeof(struct gve_tx_pkt),
--					  RTE_CACHE_LINE_SIZE, socket_id);
-+					  RTE_CACHE_LINE_SIZE, numa_id);
- 	if (txq->pkt_ring_dqo == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate memory for SW TX ring");
- 		err = -ENOMEM;
-@@ -570,7 +570,7 @@ gve_tx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 	/* Allocate TX hardware ring descriptors. */
- 	mz = rte_eth_dma_zone_reserve(dev, "tx_ring", queue_id,
- 				      nb_desc * sizeof(union gve_tx_desc_dqo),
--				      PAGE_SIZE, socket_id);
-+				      PAGE_SIZE, numa_id);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to reserve DMA memory for TX");
- 		err = -ENOMEM;
-@@ -583,7 +583,7 @@ gve_tx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
- 	/* Allocate TX completion ring descriptors. */
- 	mz = rte_eth_dma_zone_reserve(dev, "tx_compl_ring", queue_id,
- 				       txq->nb_complq_desc * sizeof(struct gve_tx_compl_desc),
--				      PAGE_SIZE, socket_id);
-+				      PAGE_SIZE, numa_id);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to reserve DMA memory for TX completion queue");
- 		err = -ENOMEM;
-@@ -595,7 +595,7 @@ gve_tx_queue_setup_dqo(struct rte_eth_dev *dev, uint16_t queue_id,
+ 	rx_info_sz = rxq->q_depth * sizeof(*rxq->rx_info);
+-	rxq->rx_info = rte_zmalloc_socket("rx_info", rx_info_sz,
+-				RTE_CACHE_LINE_SIZE, rxq->socket_id);
++	rxq->rx_info = rte_zmalloc_numa("rx_info", rx_info_sz,
++				RTE_CACHE_LINE_SIZE, rxq->numa_id);
+ 	if (!rxq->rx_info)
+ 		return -ENOMEM;
  
- 	mz = rte_eth_dma_zone_reserve(dev, "txq_res", queue_id,
- 				      sizeof(struct gve_queue_resources),
--				      PAGE_SIZE, socket_id);
-+				      PAGE_SIZE, numa_id);
- 	if (mz == NULL) {
- 		PMD_DRV_LOG(ERR, "Failed to reserve DMA memory for TX resource");
- 		err = -ENOMEM;
+-	err = hinic_rx_alloc_cqe(rxq, rxq->socket_id);
++	err = hinic_rx_alloc_cqe(rxq, rxq->numa_id);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR, "Allocate rx cqe failed");
+ 		goto rx_cqe_err;
+diff --git a/drivers/net/hinic/hinic_pmd_rx.h b/drivers/net/hinic/hinic_pmd_rx.h
+index 43c236b46c..88a0c09950 100644
+--- a/drivers/net/hinic/hinic_pmd_rx.h
++++ b/drivers/net/hinic/hinic_pmd_rx.h
+@@ -86,7 +86,7 @@ struct hinic_rxq {
+ 	u16 rx_free_thresh;
+ 	u16 rxinfo_align_end;
+ 
+-	u32 socket_id;
++	u32 numa_id;
+ 
+ 	unsigned long status;
+ 	struct hinic_rxq_stats rxq_stats;
+@@ -128,7 +128,7 @@ void hinic_rx_remove_configure(struct rte_eth_dev *dev);
+ void hinic_get_func_rx_buf_size(struct hinic_nic_dev *nic_dev);
+ 
+ int hinic_create_rq(struct hinic_hwdev *hwdev, u16 q_id,
+-			u16 rq_depth, unsigned int socket_id);
++			u16 rq_depth, unsigned int numa_id);
+ 
+ void hinic_destroy_rq(struct hinic_hwdev *hwdev, u16 q_id);
+ 
+diff --git a/drivers/net/hinic/hinic_pmd_tx.c b/drivers/net/hinic/hinic_pmd_tx.c
+index 22fb0bffaf..e4987c2e14 100644
+--- a/drivers/net/hinic/hinic_pmd_tx.c
++++ b/drivers/net/hinic/hinic_pmd_tx.c
+@@ -1279,8 +1279,8 @@ int hinic_setup_tx_resources(struct hinic_txq *txq)
+ 	u64 tx_info_sz;
+ 
+ 	tx_info_sz = txq->q_depth * sizeof(*txq->tx_info);
+-	txq->tx_info = rte_zmalloc_socket("tx_info", tx_info_sz,
+-			RTE_CACHE_LINE_SIZE, txq->socket_id);
++	txq->tx_info = rte_zmalloc_numa("tx_info", tx_info_sz,
++			RTE_CACHE_LINE_SIZE, txq->numa_id);
+ 	if (!txq->tx_info)
+ 		return -ENOMEM;
+ 
+@@ -1297,7 +1297,7 @@ void hinic_free_tx_resources(struct hinic_txq *txq)
+ }
+ 
+ int hinic_create_sq(struct hinic_hwdev *hwdev, u16 q_id,
+-			u16 sq_depth, unsigned int socket_id)
++			u16 sq_depth, unsigned int numa_id)
+ {
+ 	int err;
+ 	struct hinic_nic_io *nic_io = hwdev->nic_io;
+@@ -1312,7 +1312,7 @@ int hinic_create_sq(struct hinic_hwdev *hwdev, u16 q_id,
+ 	/* alloc wq */
+ 	err = hinic_wq_allocate(nic_io->hwdev, &nic_io->sq_wq[q_id],
+ 				HINIC_SQ_WQEBB_SHIFT, nic_io->sq_depth,
+-				socket_id);
++				numa_id);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR, "Failed to allocate WQ for SQ");
+ 		return err;
+diff --git a/drivers/net/hinic/hinic_pmd_tx.h b/drivers/net/hinic/hinic_pmd_tx.h
+index 152f7abc53..939c82730a 100644
+--- a/drivers/net/hinic/hinic_pmd_tx.h
++++ b/drivers/net/hinic/hinic_pmd_tx.h
+@@ -115,7 +115,7 @@ struct hinic_txq {
+ 	u16 q_id;
+ 	u16 q_depth;
+ 	u32 cos;
+-	u32 socket_id;
++	u32 numa_id;
+ 
+ 	/* cacheline1 */
+ 	struct hinic_txq_stats txq_stats;
+@@ -140,7 +140,7 @@ void hinic_txq_get_stats(struct hinic_txq *txq, struct hinic_txq_stats *stats);
+ void hinic_txq_stats_reset(struct hinic_txq *txq);
+ 
+ int hinic_create_sq(struct hinic_hwdev *hwdev, u16 q_id,
+-			u16 sq_depth, unsigned int socket_id);
++			u16 sq_depth, unsigned int numa_id);
+ 
+ void hinic_destroy_sq(struct hinic_hwdev *hwdev, u16 q_id);
+ 
 -- 
 2.55.0
 
