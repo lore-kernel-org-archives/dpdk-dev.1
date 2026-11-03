@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657736071A3E
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EED606C84E
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=pPnOzSj6
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=En+97ir9
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2A62B427AC;
-	Tue,  3 Nov 2026 15:59:42 +0100 (CET)
-Received: from mta0.migadu.com (out-87.mta0.migadu.com [91.218.175.87])
- by mails.dpdk.org (Postfix) with ESMTPS id CE67C410FC
- for <dev@dpdk.org>; Tue,  3 Nov 2026 15:59:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 58687427B2;
+	Tue,  3 Nov 2026 15:59:55 +0100 (CET)
+Received: from mta0.migadu.com (out-96.mta0.migadu.com [91.218.175.96])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8D775410FC
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 15:59:54 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=IuRRPQqfYeRU2NRce0kZjulyTXZJ5QXzTOWSEL6VnDQ=; 
+DKIM-Signature: a=rsa-sha256; bh=qZJJgk2Z1o4mpQQaKYcMAqTRr/dgsA0dJMopMGOMbKg=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793717980; v=1; x=1794322780;
- b=pPnOzSj6uiqCQ03peiwRQYDzvie4ZSqyByw8//VdX74PjAvNpgLuzQYWr4TlbAsvff9BXbcD
- giS6u5vVjYMBEQeRnrYW8YlWWVEM7JWNc1AijJ14uIrl4eUHjqDj0fWtBDVxNwaj3xuQoC3rQul
- Ed+lT++QrJqcHL67hNVdYvXc=
+ t=1793717994; v=1; x=1794322794;
+ b=En+97ir9IQDFUis9eKMQfB7DMhc/ELYTAFOU3gGJkkqBJ92ErncO/qnnaq5469hYtimvM6VE
+ vmo8iDOQ0/tCqyXML8GaSFeTEsXb3r6FdfJdjOO4vONuW4tV12Gi/v1Lxo26WB42TRy2eui8eiv
+ Nq15MKaS20C70qVe2O3XhxQg=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id d66f76fbe8efa7c5;
- Tue, 03 Nov 2026 14:59:40 +0000
-X-Mizu-Trace-ID: d66f76fbe8efa7c5
+Received: by mta11.migadu.com with ESMTPS id 34cae37ae93d7c82;
+ Tue, 03 Nov 2026 14:59:54 +0000
+X-Mizu-Trace-ID: 34cae37ae93d7c82
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 040/227] baseband/fpga_5gnr_fec: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:49:58 +0800
-Message-ID: <20261103145306.487255-41-chengwen.feng@linux.dev>
+Subject: [PATCH 041/227] baseband/fpga_lte_fec: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:49:59 +0800
+Message-ID: <20261103145306.487255-42-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,46 +63,46 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- .../fpga_5gnr_fec/rte_fpga_5gnr_fec.c         | 20 +++++++++----------
+ drivers/baseband/fpga_lte_fec/fpga_lte_fec.c | 20 ++++++++++----------
  1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c b/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c
-index e14581cd48..cabf0a0ce9 100644
---- a/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c
-+++ b/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c
-@@ -377,7 +377,7 @@ fpga_5gnr_get_queue_map(struct fpga_5gnr_fec_device *d, uint32_t q_id)
- }
+diff --git a/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c b/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c
+index dc1394930f..27697c9b59 100644
+--- a/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c
++++ b/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c
+@@ -475,7 +475,7 @@ print_dma_dec_desc_debug_info(union fpga_dma_desc *desc)
+ #endif
  
  static int
--fpga_5gnr_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
-+fpga_5gnr_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int numa_id)
+-fpga_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
++fpga_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int numa_id)
  {
  	/* Number of queues bound to a PF/VF */
  	uint32_t hw_q_num = 0;
-@@ -438,9 +438,9 @@ fpga_5gnr_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id
+@@ -536,9 +536,9 @@ fpga_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
  	RTE_BUILD_BUG_ON((RTE_CACHE_LINE_SIZE % 32) != 0);
  
  	/* Allocate memory for SW descriptor rings */
--	d->sw_rings = rte_zmalloc_socket(dev->device->driver->name,
-+	d->sw_rings = rte_zmalloc_numa(dev->device->driver->name,
+-	fpga_dev->sw_rings = rte_zmalloc_socket(dev->device->driver->name,
++	fpga_dev->sw_rings = rte_zmalloc_numa(dev->device->driver->name,
  			num_queues * ring_size, RTE_CACHE_LINE_SIZE,
 -			socket_id);
 +			numa_id);
- 	if (d->sw_rings == NULL) {
+ 	if (fpga_dev->sw_rings == NULL) {
  		rte_bbdev_log(ERR,
  				"Failed to allocate memory for %s:%u sw_rings",
-@@ -453,8 +453,8 @@ fpga_5gnr_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id
- 	d->sw_ring_max_depth = FPGA_5GNR_RING_MAX_SIZE;
+@@ -551,8 +551,8 @@ fpga_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
+ 	fpga_dev->sw_ring_max_depth = FPGA_RING_MAX_SIZE;
  
  	/* Allocate memory for ring flush status */
--	d->flush_queue_status = rte_zmalloc_socket(NULL,
+-	fpga_dev->flush_queue_status = rte_zmalloc_socket(NULL,
 -			sizeof(uint64_t), RTE_CACHE_LINE_SIZE, socket_id);
-+	d->flush_queue_status = rte_zmalloc_numa(NULL,
++	fpga_dev->flush_queue_status = rte_zmalloc_numa(NULL,
 +			sizeof(uint64_t), RTE_CACHE_LINE_SIZE, numa_id);
- 	if (d->flush_queue_status == NULL) {
+ 	if (fpga_dev->flush_queue_status == NULL) {
  		rte_bbdev_log(ERR,
  				"Failed to allocate memory for %s:%u flush_queue_status",
-@@ -678,8 +678,8 @@ fpga_5gnr_queue_setup(struct rte_bbdev *dev, uint16_t queue_id,
+@@ -714,8 +714,8 @@ fpga_queue_setup(struct rte_bbdev *dev, uint16_t queue_id,
  		return -1;
  
  	/* Allocate the queue data structure. */
@@ -113,8 +113,8 @@ index e14581cd48..cabf0a0ce9 100644
  	if (q == NULL) {
  		/* Mark queue as un-assigned */
  		d->q_assigned_bit_map &= (0xFFFFFFFF - (1ULL << q_idx));
-@@ -699,8 +699,8 @@ fpga_5gnr_queue_setup(struct rte_bbdev *dev, uint16_t queue_id,
- 	q->ring_ctrl_reg.ring_base_addr = d->sw_rings_phys + (d->sw_ring_size * queue_id);
+@@ -732,8 +732,8 @@ fpga_queue_setup(struct rte_bbdev *dev, uint16_t queue_id,
+ 			(d->sw_ring_size * queue_id);
  
  	/* Allocate memory for Completion Head variable*/
 -	q->ring_head_addr = rte_zmalloc_socket(dev->device->driver->name,
@@ -124,15 +124,15 @@ index e14581cd48..cabf0a0ce9 100644
  	if (q->ring_head_addr == NULL) {
  		/* Mark queue as un-assigned */
  		d->q_assigned_bit_map &= (0xFFFFFFFF - (1ULL << q_idx));
-@@ -2933,7 +2933,7 @@ fpga_5gnr_fec_probe(struct rte_pci_driver *pci_drv,
+@@ -2357,7 +2357,7 @@ fpga_lte_fec_probe(struct rte_pci_driver *pci_drv,
  		return -ENODEV;
  
  	/* allocate device private memory */
 -	bbdev->data->dev_private = rte_zmalloc_socket(dev_name,
 +	bbdev->data->dev_private = rte_zmalloc_numa(dev_name,
- 			sizeof(struct fpga_5gnr_fec_device),
- 			RTE_CACHE_LINE_SIZE,
+ 			sizeof(struct fpga_lte_fec_device), RTE_CACHE_LINE_SIZE,
  			pci_dev->device.numa_node);
+ 
 -- 
 2.55.0
 
