@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64466070A86
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75589606C85B
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=ByekMLsi
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=Au3nI5pN
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 656CF427B5;
-	Tue,  3 Nov 2026 15:58:54 +0100 (CET)
-Received: from mta1.migadu.com (out-7.mta1.migadu.com [95.215.58.7])
- by mails.dpdk.org (Postfix) with ESMTPS id C9B97427AC
- for <dev@dpdk.org>; Tue,  3 Nov 2026 15:58:52 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 50476427BA;
+	Tue,  3 Nov 2026 15:59:04 +0100 (CET)
+Received: from mta0.migadu.com (out-72.mta0.migadu.com [91.218.175.72])
+ by mails.dpdk.org (Postfix) with ESMTPS id 4562D427B0
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 15:59:03 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=tcA8WxpnC0aNzwGBNCxBvMe+dWNP+fvsemhmZzkn4rE=; 
+DKIM-Signature: a=rsa-sha256; bh=ZoBXbzsuRuzlKu3vsqik8QV51EqzzdVzA89frFmTKxs=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793717932; v=1; x=1794322732;
- b=ByekMLsiZ+fBnYaCHIipq3p7d/58Tmoi36I8/IoT2AWrkLKepTh9JuDl64z3DxBNumNuynDB
- jWVEJ1OqYDxVoRx+DxFQzoxLLli9j5tHoMAO9TPWyT3fg46IGfpBlcl5uscKM4L/onmsRH4RPn7
- wU1Yzb22qis5VCNfKGgq7C5Y=
+ t=1793717943; v=1; x=1794322743;
+ b=Au3nI5pNHjmXUHUdkJRtgBz0S+1NYfw0YddgVThE7k+3L8YIt9rsXHM0VIplrJyhnkiyEkQz
+ HJx6wTwajqgG0gCOzu4SA+MXrQGuXY0r10Yl5funFJ7cH1WgSFLl3mXEX/eHFjZ/S5sHY9q1Z2N
+ WnANXzsftLOX8H62+t1Oa/CI=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id c350708b3a7ad9fd;
- Tue, 03 Nov 2026 14:58:52 +0000
-X-Mizu-Trace-ID: c350708b3a7ad9fd
+Received: by mta12.migadu.com with ESMTPS id 5a5ad2149ed7877c;
+ Tue, 03 Nov 2026 14:59:03 +0000
+X-Mizu-Trace-ID: 5a5ad2149ed7877c
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 038/227] vhost: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:49:56 +0800
-Message-ID: <20261103145306.487255-39-chengwen.feng@linux.dev>
+Subject: [PATCH 039/227] baseband/acc: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:49:57 +0800
+Message-ID: <20261103145306.487255-40-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -57,248 +57,297 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Chengwen Feng <fengchengwen@huawei.com>
 
-Rename socket_id parameters, internal variables and comments to
-the NUMA node terminology, and switch internal calls to
-rte_zmalloc_numa(), rte_numa_id() and RTE_NUMA_ID_ANY.
+Rename socket_id parameters, internal structure fields, variables
+and comments to the NUMA node terminology, and switch calls to
+the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- lib/vhost/iotlb.c            |  2 +-
- lib/vhost/rte_vhost_crypto.h |  4 ++--
- lib/vhost/vhost.c            |  4 ++--
- lib/vhost/vhost_crypto.c     | 16 ++++++++--------
- lib/vhost/vhost_user.c       | 22 +++++++++++-----------
- 5 files changed, 24 insertions(+), 24 deletions(-)
+ drivers/baseband/acc/acc_common.h     |  4 +--
+ drivers/baseband/acc/rte_acc100_pmd.c | 36 ++++++++++++-------------
+ drivers/baseband/acc/rte_vrb_pmd.c    | 38 +++++++++++++--------------
+ 3 files changed, 39 insertions(+), 39 deletions(-)
 
-diff --git a/lib/vhost/iotlb.c b/lib/vhost/iotlb.c
-index 4c405388f2..32334c5df2 100644
---- a/lib/vhost/iotlb.c
-+++ b/lib/vhost/iotlb.c
-@@ -433,7 +433,7 @@ vhost_user_iotlb_init_one(struct virtio_net *dev, int asid)
- 	TAILQ_INIT(&dev->iotlb[asid]->pending_list);
- 
- 	if (dev->flags & VIRTIO_DEV_SUPPORT_IOMMU) {
--		dev->iotlb[asid]->pool = rte_calloc_socket("iotlb_pool", IOTLB_CACHE_SIZE,
-+		dev->iotlb[asid]->pool = rte_calloc_numa("iotlb_pool", IOTLB_CACHE_SIZE,
- 			sizeof(struct vhost_iotlb_entry), 0, socket);
- 		if (!dev->iotlb[asid]->pool) {
- 			VHOST_CONFIG_LOG(dev->ifname, ERR, "Failed to create IOTLB cache pool");
-diff --git a/lib/vhost/rte_vhost_crypto.h b/lib/vhost/rte_vhost_crypto.h
-index adfd5cfab0..0d96f0dae5 100644
---- a/lib/vhost/rte_vhost_crypto.h
-+++ b/lib/vhost/rte_vhost_crypto.h
-@@ -51,7 +51,7 @@ rte_vhost_crypto_driver_start(const char *path);
-  *  multiple Vhost-crypto devices.
-  * @param sess_pool
-  *  The pointer to the created cryptodev session pool.
-- * @param socket_id
-+ * @param numa_id
-  *  NUMA Socket ID to allocate resources on. *
-  * @return
-  *  0 if the Vhost Crypto Instance is created successfully.
-@@ -60,7 +60,7 @@ rte_vhost_crypto_driver_start(const char *path);
- int
- rte_vhost_crypto_create(int vid, uint8_t cryptodev_id,
- 		struct rte_mempool *sess_pool,
--		int socket_id);
-+		int numa_id);
- 
- /**
-  *  Free the Vhost-crypto instance
-diff --git a/lib/vhost/vhost.c b/lib/vhost/vhost.c
-index 454fc8174c..ecd5067203 100644
---- a/lib/vhost/vhost.c
-+++ b/lib/vhost/vhost.c
-@@ -635,7 +635,7 @@ static void
- init_vring_queue(struct virtio_net *dev __rte_unused, struct vhost_virtqueue *vq,
- 	uint32_t vring_idx)
+diff --git a/drivers/baseband/acc/acc_common.h b/drivers/baseband/acc/acc_common.h
+index 3d411cd25f..100730fe5d 100644
+--- a/drivers/baseband/acc/acc_common.h
++++ b/drivers/baseband/acc/acc_common.h
+@@ -787,7 +787,7 @@ alloc_2x64mb_sw_rings_mem(struct rte_bbdev *dev, struct acc_device *d,
+ 		int socket)
  {
--	int numa_node = SOCKET_ID_ANY;
-+	int numa_node = RTE_NUMA_ID_ANY;
+ 	uint32_t sw_ring_size = ACC_SIZE_64MBYTE;
+-	d->sw_rings_base = rte_zmalloc_socket(dev->device->driver->name,
++	d->sw_rings_base = rte_zmalloc_numa(dev->device->driver->name,
+ 			2 * sw_ring_size, RTE_CACHE_LINE_SIZE, socket);
+ 	if (d->sw_rings_base == NULL) {
+ 		rte_acc_log(ERR, "Failed to allocate memory for %s:%u",
+@@ -830,7 +830,7 @@ alloc_sw_rings_min_mem(struct rte_bbdev *dev, struct acc_device *d,
+ 		 * the variable 'alignment' at the condition that the requested
+ 		 * size is less than the page size
+ 		 */
+-		sw_rings_base = rte_zmalloc_socket(
++		sw_rings_base = rte_zmalloc_numa(
+ 				dev->device->driver->name,
+ 				dev_sw_ring_size, alignment, socket);
  
- 	memset(vq, 0, sizeof(struct vhost_virtqueue));
+diff --git a/drivers/baseband/acc/rte_acc100_pmd.c b/drivers/baseband/acc/rte_acc100_pmd.c
+index 67b969fc71..f63beb9d2d 100644
+--- a/drivers/baseband/acc/rte_acc100_pmd.c
++++ b/drivers/baseband/acc/rte_acc100_pmd.c
+@@ -410,7 +410,7 @@ allocate_info_ring(struct rte_bbdev *dev)
+ 	else
+ 		reg_addr = &vf_reg_addr;
+ 	/* Allocate InfoRing */
+-	d->info_ring = rte_zmalloc_socket("Info Ring",
++	d->info_ring = rte_zmalloc_numa("Info Ring",
+ 		ACC_INFO_RING_NUM_ENTRIES *
+ 		sizeof(*d->info_ring), RTE_CACHE_LINE_SIZE,
+ 		dev->data->numa_id);
+@@ -437,7 +437,7 @@ allocate_info_ring(struct rte_bbdev *dev)
  
-@@ -648,7 +648,7 @@ init_vring_queue(struct virtio_net *dev __rte_unused, struct vhost_virtqueue *vq
- 	if (get_mempolicy(&numa_node, NULL, 0, vq, MPOL_F_NODE | MPOL_F_ADDR)) {
- 		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to query numa node: %s",
- 			rte_strerror(errno));
--		numa_node = SOCKET_ID_ANY;
-+		numa_node = RTE_NUMA_ID_ANY;
- 	}
- #endif
- 	vq->numa_node = numa_node;
-diff --git a/lib/vhost/vhost_crypto.c b/lib/vhost/vhost_crypto.c
-index 6c851c173a..69ad4e74cc 100644
---- a/lib/vhost/vhost_crypto.c
-+++ b/lib/vhost/vhost_crypto.c
-@@ -217,7 +217,7 @@ struct __rte_cache_aligned vhost_crypto {
- 	uint64_t last_session_id;
- 
- 	/** socket id for the device */
--	int socket_id;
-+	int numa_id;
- 
- 	struct virtio_net *dev;
- 
-@@ -1806,7 +1806,7 @@ RTE_EXPORT_SYMBOL(rte_vhost_crypto_create)
- int
- rte_vhost_crypto_create(int vid, uint8_t cryptodev_id,
- 		struct rte_mempool *sess_pool,
--		int socket_id)
-+		int numa_id)
+ /* Allocate 64MB memory used for all software rings */
+ static int
+-acc100_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
++acc100_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int numa_id)
  {
- 	struct virtio_net *dev = get_device(vid);
- 	struct rte_hash_parameters params = {0};
-@@ -1819,8 +1819,8 @@ rte_vhost_crypto_create(int vid, uint8_t cryptodev_id,
- 		return -EINVAL;
+ 	uint32_t phys_low, phys_high, value;
+ 	struct acc_device *d = dev->data->dev_private;
+@@ -451,13 +451,13 @@ acc100_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
+ 		return -ENODEV;
  	}
  
--	vcrypto = rte_zmalloc_socket(NULL, sizeof(*vcrypto),
+-	alloc_sw_rings_min_mem(dev, d, num_queues, socket_id);
++	alloc_sw_rings_min_mem(dev, d, num_queues, numa_id);
+ 
+ 	/* If minimal memory space approach failed, then allocate
+ 	 * the 2 * 64MB block for the sw rings
+ 	 */
+ 	if (d->sw_rings == NULL)
+-		alloc_2x64mb_sw_rings_mem(dev, d, socket_id);
++		alloc_2x64mb_sw_rings_mem(dev, d, numa_id);
+ 
+ 	if (d->sw_rings == NULL) {
+ 		rte_bbdev_log(NOTICE,
+@@ -508,10 +508,10 @@ acc100_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
+ 
+ 	/* Configure tail pointer for use when SDONE enabled */
+ 	if (d->tail_ptrs == NULL)
+-		d->tail_ptrs = rte_zmalloc_socket(
++		d->tail_ptrs = rte_zmalloc_numa(
+ 			dev->device->driver->name,
+ 			ACC100_NUM_QGRPS * ACC100_NUM_AQS * sizeof(uint32_t),
 -			RTE_CACHE_LINE_SIZE, socket_id);
-+	vcrypto = rte_zmalloc_numa(NULL, sizeof(*vcrypto),
 +			RTE_CACHE_LINE_SIZE, numa_id);
- 	if (!vcrypto) {
- 		VC_LOG_ERR("Insufficient memory");
+ 	if (d->tail_ptrs == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate tail ptr for %s:%u",
+ 				dev->device->driver->name,
+@@ -541,7 +541,7 @@ acc100_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
+ 	}
+ 
+ 	if (d->harq_layout == NULL)
+-		d->harq_layout = rte_zmalloc_socket("HARQ Layout",
++		d->harq_layout = rte_zmalloc_numa("HARQ Layout",
+ 			ACC_HARQ_LAYOUT * sizeof(*d->harq_layout),
+ 			RTE_CACHE_LINE_SIZE, dev->data->numa_id);
+ 	if (d->harq_layout == NULL) {
+@@ -693,8 +693,8 @@ acc100_queue_setup(struct rte_bbdev *dev, uint16_t queue_id,
+ 		return -ENODEV;
+ 	}
+ 	/* Allocate the queue data structure. */
+-	q = rte_zmalloc_socket(dev->device->driver->name, sizeof(*q),
+-			RTE_CACHE_LINE_SIZE, conf->socket);
++	q = rte_zmalloc_numa(dev->device->driver->name, sizeof(*q),
++			RTE_CACHE_LINE_SIZE, conf->numa_id);
+ 	if (q == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate queue memory");
  		return -ENOMEM;
-@@ -1837,7 +1837,7 @@ rte_vhost_crypto_create(int vid, uint8_t cryptodev_id,
- 	params.entries = VHOST_CRYPTO_SESSION_MAP_ENTRIES;
- 	params.hash_func = rte_jhash;
- 	params.key_len = sizeof(uint64_t);
--	params.numa_id = socket_id;
-+	params.numa_id = numa_id;
- 	vcrypto->session_map = rte_hash_create(&params);
- 	if (!vcrypto->session_map) {
- 		VC_LOG_ERR("Failed to creath session map");
-@@ -1850,7 +1850,7 @@ rte_vhost_crypto_create(int vid, uint8_t cryptodev_id,
- 			VHOST_CRYPTO_MBUF_POOL_SIZE, 512,
- 			sizeof(struct vhost_crypto_data_req),
- 			VHOST_CRYPTO_MAX_DATA_SIZE + RTE_PKTMBUF_HEADROOM,
--			rte_socket_id());
-+			rte_numa_id());
- 	if (!vcrypto->mbuf_pool) {
- 		VC_LOG_ERR("Failed to creath mbuf pool");
+@@ -740,35 +740,35 @@ acc100_queue_setup(struct rte_bbdev *dev, uint16_t queue_id,
+ 		desc->req.fcw_ld.gain_h = 1;
+ 	}
+ 
+-	q->lb_in = rte_zmalloc_socket(dev->device->driver->name,
++	q->lb_in = rte_zmalloc_numa(dev->device->driver->name,
+ 			RTE_CACHE_LINE_SIZE,
+-			RTE_CACHE_LINE_SIZE, conf->socket);
++			RTE_CACHE_LINE_SIZE, conf->numa_id);
+ 	if (q->lb_in == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate lb_in memory");
  		ret = -ENOMEM;
-@@ -1862,7 +1862,7 @@ rte_vhost_crypto_create(int vid, uint8_t cryptodev_id,
- 			VHOST_CRYPTO_MBUF_POOL_SIZE,
- 			sizeof(struct vhost_crypto_writeback_data),
- 			128, 0, NULL, NULL, init_wb_data, NULL,
--			rte_socket_id(), 0);
-+			rte_numa_id(), 0);
- 	if (!vcrypto->wb_pool) {
- 		VC_LOG_ERR("Failed to creath mempool");
+ 		goto free_q;
+ 	}
+ 	q->lb_in_addr_iova = rte_malloc_virt2iova(q->lb_in);
+-	q->lb_out = rte_zmalloc_socket(dev->device->driver->name,
++	q->lb_out = rte_zmalloc_numa(dev->device->driver->name,
+ 			RTE_CACHE_LINE_SIZE,
+-			RTE_CACHE_LINE_SIZE, conf->socket);
++			RTE_CACHE_LINE_SIZE, conf->numa_id);
+ 	if (q->lb_out == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate lb_out memory");
  		ret = -ENOMEM;
-@@ -1955,7 +1955,7 @@ rte_vhost_crypto_set_zero_copy(int vid, enum rte_vhost_crypto_zero_copy option)
- 				VHOST_CRYPTO_MBUF_POOL_SIZE,
- 				sizeof(struct vhost_crypto_writeback_data),
- 				128, 0, NULL, NULL, init_wb_data, NULL,
--				rte_socket_id(), 0);
-+				rte_numa_id(), 0);
- 		if (!vcrypto->wb_pool) {
- 			VC_LOG_ERR("Failed to creath mbuf pool");
- 			return -ENOMEM;
-diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
-index f77af4f4f7..e6ec0207d5 100644
---- a/lib/vhost/vhost_user.c
-+++ b/lib/vhost/vhost_user.c
-@@ -1382,7 +1382,7 @@ static int
- vhost_user_initialize_memory(struct virtio_net **pdev)
+ 		goto free_lb_in;
+ 	}
+ 	q->lb_out_addr_iova = rte_malloc_virt2iova(q->lb_out);
+-	q->companion_ring_addr = rte_zmalloc_socket(dev->device->driver->name,
++	q->companion_ring_addr = rte_zmalloc_numa(dev->device->driver->name,
+ 			d->sw_ring_max_depth * sizeof(*q->companion_ring_addr),
+-			RTE_CACHE_LINE_SIZE, conf->socket);
++			RTE_CACHE_LINE_SIZE, conf->numa_id);
+ 	if (q->companion_ring_addr == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate companion_ring memory");
+ 		ret = -ENOMEM;
+ 		goto free_lb_out;
+ 	}
+-	q->derm_buffer = rte_zmalloc_socket(dev->device->driver->name,
++	q->derm_buffer = rte_zmalloc_numa(dev->device->driver->name,
+ 			RTE_BBDEV_TURBO_MAX_CB_SIZE * 10,
+-			RTE_CACHE_LINE_SIZE, conf->socket);
++			RTE_CACHE_LINE_SIZE, conf->numa_id);
+ 	if (q->derm_buffer == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate derm_buffer memory");
+ 		ret = -ENOMEM;
+@@ -4043,7 +4043,7 @@ static int acc100_pci_probe(struct rte_pci_driver *pci_drv,
+ 		return -ENODEV;
+ 
+ 	/* allocate device private memory */
+-	bbdev->data->dev_private = rte_zmalloc_socket(dev_name,
++	bbdev->data->dev_private = rte_zmalloc_numa(dev_name,
+ 			sizeof(struct acc_device), RTE_CACHE_LINE_SIZE,
+ 			pci_dev->device.numa_node);
+ 
+diff --git a/drivers/baseband/acc/rte_vrb_pmd.c b/drivers/baseband/acc/rte_vrb_pmd.c
+index 8d86694b80..d46ec72aea 100644
+--- a/drivers/baseband/acc/rte_vrb_pmd.c
++++ b/drivers/baseband/acc/rte_vrb_pmd.c
+@@ -512,7 +512,7 @@ allocate_info_ring(struct rte_bbdev *dev)
+ 		return 0; /* Already configured. */
+ 
+ 	/* Allocate InfoRing */
+-	d->info_ring = rte_zmalloc_socket("Info Ring", ACC_INFO_RING_NUM_ENTRIES *
++	d->info_ring = rte_zmalloc_numa("Info Ring", ACC_INFO_RING_NUM_ENTRIES *
+ 			sizeof(*d->info_ring), RTE_CACHE_LINE_SIZE, dev->data->numa_id);
+ 	if (d->info_ring == NULL) {
+ 		rte_bbdev_log(ERR,
+@@ -540,7 +540,7 @@ allocate_info_ring(struct rte_bbdev *dev)
+ 
+ /* Allocate 64MB memory used for all software rings. */
+ static int
+-vrb_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
++vrb_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int numa_id)
  {
- 	struct virtio_net *dev = *pdev;
--	int numa_node = SOCKET_ID_ANY;
-+	int numa_node = RTE_NUMA_ID_ANY;
- 
- 	if (dev->mem != NULL) {
- 		VHOST_CONFIG_LOG(dev->ifname, ERR,
-@@ -1400,7 +1400,7 @@ vhost_user_initialize_memory(struct virtio_net **pdev)
- 	dev->nr_guest_pages = 0;
- 	if (dev->guest_pages == NULL) {
- 		dev->max_guest_pages = 8;
--		dev->guest_pages = rte_zmalloc_socket(NULL,
-+		dev->guest_pages = rte_zmalloc_numa(NULL,
- 					dev->max_guest_pages *
- 					sizeof(struct guest_page),
- 					RTE_CACHE_LINE_SIZE,
-@@ -1412,7 +1412,7 @@ vhost_user_initialize_memory(struct virtio_net **pdev)
- 		}
+ 	uint32_t phys_low, phys_high, value;
+ 	struct acc_device *d = dev->data->dev_private;
+@@ -567,13 +567,13 @@ vrb_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
  	}
  
--	dev->mem = rte_zmalloc_socket("vhost-mem-table", sizeof(struct rte_vhost_memory) +
-+	dev->mem = rte_zmalloc_numa("vhost-mem-table", sizeof(struct rte_vhost_memory) +
- 		sizeof(struct rte_vhost_mem_region) * VHOST_MEMORY_MAX_NREGIONS, 0, numa_node);
- 	if (dev->mem == NULL) {
- 		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to allocate memory for dev->mem");
-@@ -1919,7 +1919,7 @@ vhost_user_get_inflight_fd(struct virtio_net **pdev,
- 	uint16_t num_queues, queue_size;
- 	struct virtio_net *dev = *pdev;
- 	int fd, i, j;
--	int numa_node = SOCKET_ID_ANY;
-+	int numa_node = RTE_NUMA_ID_ANY;
- 	void *addr;
+ 	if (d->device_variant == VRB1_VARIANT) {
+-		alloc_sw_rings_min_mem(dev, d, num_queues, socket_id);
++		alloc_sw_rings_min_mem(dev, d, num_queues, numa_id);
  
- 	if (ctx->msg.size != sizeof(ctx->msg.payload.inflight)) {
-@@ -1937,7 +1937,7 @@ vhost_user_get_inflight_fd(struct virtio_net **pdev,
- 		numa_node = dev->virtqueue[0]->numa_node;
+ 		/* If minimal memory space approach failed, then allocate
+ 		 * the 2 * 64MB block for the sw rings.
+ 		 */
+ 		if (d->sw_rings == NULL)
+-			alloc_2x64mb_sw_rings_mem(dev, d, socket_id);
++			alloc_2x64mb_sw_rings_mem(dev, d, numa_id);
  
- 	if (dev->inflight_info == NULL) {
--		dev->inflight_info = rte_zmalloc_socket("inflight_info",
-+		dev->inflight_info = rte_zmalloc_numa("inflight_info",
- 				sizeof(struct inflight_mem_info), 0, numa_node);
- 		if (!dev->inflight_info) {
- 			VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to alloc dev inflight area");
-@@ -2022,7 +2022,7 @@ vhost_user_set_inflight_fd(struct virtio_net **pdev,
- 	struct vhost_virtqueue *vq;
- 	void *addr;
- 	int fd, i;
--	int numa_node = SOCKET_ID_ANY;
-+	int numa_node = RTE_NUMA_ID_ANY;
+ 		if (d->sw_rings == NULL) {
+ 			rte_bbdev_log(NOTICE, "Failure allocating sw_rings memory");
+@@ -582,7 +582,7 @@ vrb_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
+ 	} else if (d->device_variant == VRB2_VARIANT) {
+ 		queues_per_op = RTE_MIN(VRB2_MAX_Q_PER_OP, num_queues);
+ 		for (i = 0; i <= RTE_BBDEV_OP_MLDTS; i++) {
+-			alloc_sw_rings_min_mem(dev, d, queues_per_op, socket_id);
++			alloc_sw_rings_min_mem(dev, d, queues_per_op, numa_id);
+ 			if (d->sw_rings == NULL) {
+ 				rte_bbdev_log(NOTICE, "Failure allocating sw_rings memory %d", i);
+ 				return -ENOMEM;
+@@ -679,9 +679,9 @@ vrb_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
  
- 	if (validate_msg_fds(dev, ctx, 1) != 0)
- 		return RTE_VHOST_MSG_RESULT_ERR;
-@@ -2070,7 +2070,7 @@ vhost_user_set_inflight_fd(struct virtio_net **pdev,
- 		numa_node = dev->virtqueue[0]->numa_node;
- 
- 	if (!dev->inflight_info) {
--		dev->inflight_info = rte_zmalloc_socket("inflight_info",
-+		dev->inflight_info = rte_zmalloc_numa("inflight_info",
- 				sizeof(struct inflight_mem_info), 0, numa_node);
- 		if (dev->inflight_info == NULL) {
- 			VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to alloc dev inflight area");
-@@ -2235,7 +2235,7 @@ vhost_check_queue_inflights_split(struct virtio_net *dev,
- 	vhost_virtqueue_reconnect_log_split(vq);
- 
- 	if (resubmit_num) {
--		resubmit = rte_zmalloc_socket("resubmit", sizeof(struct rte_vhost_resubmit_info),
-+		resubmit = rte_zmalloc_numa("resubmit", sizeof(struct rte_vhost_resubmit_info),
- 				0, vq->numa_node);
- 		if (!resubmit) {
- 			VHOST_CONFIG_LOG(dev->ifname, ERR,
-@@ -2243,7 +2243,7 @@ vhost_check_queue_inflights_split(struct virtio_net *dev,
- 			return RTE_VHOST_MSG_RESULT_ERR;
- 		}
- 
--		resubmit->resubmit_list = rte_zmalloc_socket("resubmit_list",
-+		resubmit->resubmit_list = rte_zmalloc_numa("resubmit_list",
- 				resubmit_num * sizeof(struct rte_vhost_resubmit_desc),
- 				0, vq->numa_node);
- 		if (!resubmit->resubmit_list) {
-@@ -2331,7 +2331,7 @@ vhost_check_queue_inflights_packed(struct virtio_net *dev,
+ 	/* Configure tail pointer for use when SDONE enabled. */
+ 	if (d->tail_ptrs == NULL)
+-		d->tail_ptrs = rte_zmalloc_socket(dev->device->driver->name,
++		d->tail_ptrs = rte_zmalloc_numa(dev->device->driver->name,
+ 				max_queues * sizeof(uint32_t),
+-				RTE_CACHE_LINE_SIZE, socket_id);
++				RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (d->tail_ptrs == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate tail ptr for %s:%u",
+ 				dev->device->driver->name,
+@@ -719,7 +719,7 @@ vrb_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
  	}
  
- 	if (resubmit_num) {
--		resubmit = rte_zmalloc_socket("resubmit", sizeof(struct rte_vhost_resubmit_info),
-+		resubmit = rte_zmalloc_numa("resubmit", sizeof(struct rte_vhost_resubmit_info),
- 				0, vq->numa_node);
- 		if (resubmit == NULL) {
- 			VHOST_CONFIG_LOG(dev->ifname, ERR,
-@@ -2339,7 +2339,7 @@ vhost_check_queue_inflights_packed(struct virtio_net *dev,
- 			return RTE_VHOST_MSG_RESULT_ERR;
- 		}
+ 	if (d->harq_layout == NULL)
+-		d->harq_layout = rte_zmalloc_socket("HARQ Layout",
++		d->harq_layout = rte_zmalloc_numa("HARQ Layout",
+ 				ACC_HARQ_LAYOUT * sizeof(*d->harq_layout),
+ 				RTE_CACHE_LINE_SIZE, dev->data->numa_id);
+ 	if (d->harq_layout == NULL) {
+@@ -970,8 +970,8 @@ vrb_queue_setup(struct rte_bbdev *dev, uint16_t queue_id,
+ 		return -ENODEV;
+ 	}
+ 	/* Allocate the queue data structure. */
+-	q = rte_zmalloc_socket(dev->device->driver->name, sizeof(*q),
+-			RTE_CACHE_LINE_SIZE, conf->socket);
++	q = rte_zmalloc_numa(dev->device->driver->name, sizeof(*q),
++			RTE_CACHE_LINE_SIZE, conf->numa_id);
+ 	if (q == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate queue memory");
+ 		return -ENOMEM;
+@@ -1046,27 +1046,27 @@ vrb_queue_setup(struct rte_bbdev *dev, uint16_t queue_id,
+ 		desc->req.fcw_ld.gain_h = 1;
+ 	}
  
--		resubmit->resubmit_list = rte_zmalloc_socket("resubmit_list",
-+		resubmit->resubmit_list = rte_zmalloc_numa("resubmit_list",
- 				resubmit_num * sizeof(struct rte_vhost_resubmit_desc),
- 				0, vq->numa_node);
- 		if (resubmit->resubmit_list == NULL) {
+-	q->lb_in = rte_zmalloc_socket(dev->device->driver->name,
++	q->lb_in = rte_zmalloc_numa(dev->device->driver->name,
+ 			RTE_CACHE_LINE_SIZE,
+-			RTE_CACHE_LINE_SIZE, conf->socket);
++			RTE_CACHE_LINE_SIZE, conf->numa_id);
+ 	if (q->lb_in == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate lb_in memory");
+ 		ret = -ENOMEM;
+ 		goto free_q;
+ 	}
+ 	q->lb_in_addr_iova = rte_malloc_virt2iova(q->lb_in);
+-	q->lb_out = rte_zmalloc_socket(dev->device->driver->name,
++	q->lb_out = rte_zmalloc_numa(dev->device->driver->name,
+ 			RTE_CACHE_LINE_SIZE,
+-			RTE_CACHE_LINE_SIZE, conf->socket);
++			RTE_CACHE_LINE_SIZE, conf->numa_id);
+ 	if (q->lb_out == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate lb_out memory");
+ 		ret = -ENOMEM;
+ 		goto free_lb_in;
+ 	}
+ 	q->lb_out_addr_iova = rte_malloc_virt2iova(q->lb_out);
+-	q->companion_ring_addr = rte_zmalloc_socket(dev->device->driver->name,
++	q->companion_ring_addr = rte_zmalloc_numa(dev->device->driver->name,
+ 			d->sw_ring_max_depth * sizeof(*q->companion_ring_addr),
+-			RTE_CACHE_LINE_SIZE, conf->socket);
++			RTE_CACHE_LINE_SIZE, conf->numa_id);
+ 	if (q->companion_ring_addr == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate companion_ring memory");
+ 		ret = -ENOMEM;
+@@ -1095,9 +1095,9 @@ vrb_queue_setup(struct rte_bbdev *dev, uint16_t queue_id,
+ 		goto free_companion_ring_addr;
+ 	}
+ 
+-	q->fcw_ring = rte_zmalloc_socket(dev->device->driver->name,
++	q->fcw_ring = rte_zmalloc_numa(dev->device->driver->name,
+ 			ACC_MAX_FCW_SIZE * d->sw_ring_max_depth,
+-			RTE_CACHE_LINE_SIZE, conf->socket);
++			RTE_CACHE_LINE_SIZE, conf->numa_id);
+ 	if (q->fcw_ring == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate fcw_ring memory");
+ 		ret = -ENOMEM;
+@@ -4421,7 +4421,7 @@ static int vrb_pci_probe(struct rte_pci_driver *pci_drv,
+ 		return -ENODEV;
+ 
+ 	/* allocate device private memory. */
+-	bbdev->data->dev_private = rte_zmalloc_socket(dev_name,
++	bbdev->data->dev_private = rte_zmalloc_numa(dev_name,
+ 			sizeof(struct acc_device), RTE_CACHE_LINE_SIZE,
+ 			pci_dev->device.numa_node);
+ 
 -- 
 2.55.0
 
