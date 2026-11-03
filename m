@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B61606D2DF
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18C0606D82A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=hj1DyNkf
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=ZLAQrUgg
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1CB6C42686;
-	Tue,  3 Nov 2026 15:54:34 +0100 (CET)
-Received: from mta1.migadu.com (out-167.mta1.migadu.com [95.215.58.167])
- by mails.dpdk.org (Postfix) with ESMTPS id 98FCD4111B
- for <dev@dpdk.org>; Tue,  3 Nov 2026 15:54:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id F2BF44111C;
+	Tue,  3 Nov 2026 15:54:46 +0100 (CET)
+Received: from mta0.migadu.com (out-198.mta0.migadu.com [91.218.175.198])
+ by mails.dpdk.org (Postfix) with ESMTPS id 717594111C
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 15:54:45 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=An+dXzOmhEuBOnGtoQHiaADq35Xwdqy9+RMVMpUbvmU=; 
+DKIM-Signature: a=rsa-sha256; bh=iSbMgt0i5U8QyzyjvohQe50oTqbiTd07xU2tNe/3Vjk=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793717672; v=1; x=1794322472;
- b=hj1DyNkfFDYaXdNY3VMkvJ1o9UJDBF5bk8BUI36mXO2dwCmsMryKjpqFG+oBSe7ZHGmrEcGC
- fB46ZqVJjwuT3iHRKu7EB7spTnZ8D+D/BZXkVvuvW5c5uz28XG/oyVDsgPZIP4HGQXvtiDSjDd3
- 0GrgQB2/DE0wUPo/9V8WsWSU=
+ t=1793717685; v=1; x=1794322485;
+ b=ZLAQrUgghupJSHeuzMh404uxs6LOtRnrBNK+KYncfxJTf096wzh7Ad6zZ6P9U7He4QqDSBHZ
+ JWHi1CB6VtJmmx5yLmrJyKfT/1oPUmeT59Tz+hU1ojlLBFk7fRH0y2o+Xa5vKEGURAc1SIfTi8e
+ Z3SIu5cYGnzzz/E1URicJIVg=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id aeff6d19b84222d3;
- Tue, 03 Nov 2026 14:54:32 +0000
-X-Mizu-Trace-ID: aeff6d19b84222d3
+Received: by mta10.migadu.com with ESMTPS id 3bac5411c15b6f91;
+ Tue, 03 Nov 2026 14:54:45 +0000
+X-Mizu-Trace-ID: 3bac5411c15b6f91
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 010/227] mldev: rename device socket API to NUMA node API
-Date: Tue,  3 Nov 2026 22:49:28 +0800
-Message-ID: <20261103145306.487255-11-chengwen.feng@linux.dev>
+Subject: [PATCH 011/227] bbdev: rename device socket API to NUMA node API
+Date: Tue,  3 Nov 2026 22:49:29 +0800
+Message-ID: <20261103145306.487255-12-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -57,224 +57,474 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Chengwen Feng <fengchengwen@huawei.com>
 
-Rename the experimental function rte_ml_dev_socket_id() to
-rte_ml_dev_numa_id() (experimental API may change without
-compatibility alias), and rename the device data field to
-numa_id.
+Rename the numa_id fields of rte_bbdev_info, rte_bbdev_data and
+rte_bbdev_queue_conf (were socket_id and socket), keeping the old
+names as deprecated union aliases, and update in-tree users
+accordingly.
 
-Rename the numa_id field of rte_ml_dev_config (was socket_id),
-keeping socket_id as a deprecated union alias, and update
-in-tree users accordingly.
-
-Also rename internal parameters and comments to the NUMA node
-terminology.
+Also rename socket_id parameters, trace arguments, internal
+variables, log messages and comments to the NUMA node
+terminology, and switch internal calls to rte_calloc_numa(),
+rte_numa_id() and RTE_NUMA_ID_ANY.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-mldev/test_common.c     |  4 ++--
- app/test-mldev/test_device_ops.c |  2 +-
- drivers/ml/cnxk/cn10k_ml_dev.c   |  2 +-
- drivers/ml/cnxk/mvtvm_ml_dev.c   |  2 +-
- lib/mldev/rte_mldev.c            | 24 +++++++++++------------
- lib/mldev/rte_mldev.h            | 33 +++++++++++++++++++-------------
- lib/mldev/rte_mldev_core.h       | 10 +++++-----
- lib/mldev/rte_mldev_pmd.c        | 10 +++++-----
- lib/mldev/rte_mldev_pmd.h        | 10 +++++-----
- 9 files changed, 52 insertions(+), 45 deletions(-)
+ app/test-bbdev/test_bbdev.c                   | 12 +++----
+ app/test-bbdev/test_bbdev_perf.c              |  6 ++--
+ drivers/baseband/acc/rte_acc100_pmd.c         |  8 ++---
+ drivers/baseband/acc/rte_vrb_pmd.c            |  8 ++---
+ .../fpga_5gnr_fec/rte_fpga_5gnr_fec.c         |  4 +--
+ drivers/baseband/fpga_lte_fec/fpga_lte_fec.c  |  4 +--
+ drivers/baseband/la12xx/bbdev_la12xx.c        |  2 +-
+ drivers/baseband/null/bbdev_null.c            |  4 +--
+ .../baseband/turbo_sw/bbdev_turbo_software.c  |  4 +--
+ examples/bbdev_app/main.c                     |  4 +--
+ lib/bbdev/bbdev_trace.h                       |  4 +--
+ lib/bbdev/rte_bbdev.c                         | 26 +++++++-------
+ lib/bbdev/rte_bbdev.h                         | 36 +++++++++++++++----
+ lib/bbdev/rte_bbdev_op.h                      |  6 ++--
+ lib/bbdev/rte_bbdev_pmd.h                     |  2 +-
+ 15 files changed, 77 insertions(+), 53 deletions(-)
 
-diff --git a/app/test-mldev/test_common.c b/app/test-mldev/test_common.c
-index 90e591f205..2f5e6156cf 100644
---- a/app/test-mldev/test_common.c
-+++ b/app/test-mldev/test_common.c
-@@ -101,7 +101,7 @@ ml_test_opt_check(struct ml_options *opt)
- 		return -EINVAL;
- 	}
+diff --git a/app/test-bbdev/test_bbdev.c b/app/test-bbdev/test_bbdev.c
+index 2422312f6b..1f4246a6fa 100644
+--- a/app/test-bbdev/test_bbdev.c
++++ b/app/test-bbdev/test_bbdev.c
+@@ -66,7 +66,7 @@ ut_setup(void)
  
--	socket_id = rte_ml_dev_socket_id(opt->dev_id);
-+	socket_id = rte_ml_dev_numa_id(opt->dev_id);
- 	if ((opt->socket_id != SOCKET_ID_ANY) && (opt->socket_id != socket_id)) {
- 		ml_err("Invalid option, socket_id = %d\n", opt->socket_id);
- 		return -EINVAL;
-@@ -140,7 +140,7 @@ ml_test_device_configure(struct ml_test *test, struct ml_options *opt)
- 	}
+ 	/* Valid queue configuration */
+ 	ts_params->qconf.priority = 0;
+-	ts_params->qconf.socket = SOCKET_ID_ANY;
++	ts_params->qconf.numa_id = RTE_NUMA_ID_ANY;
+ 	ts_params->qconf.deferred_start = 1;
  
- 	/* configure device */
--	dev_config.socket_id = opt->socket_id;
-+	dev_config.numa_id = opt->socket_id;
- 	dev_config.nb_models = t->dev_info.max_models;
- 	dev_config.nb_queue_pairs = opt->queue_pairs;
- 	ret = rte_ml_dev_configure(opt->dev_id, &dev_config);
-diff --git a/app/test-mldev/test_device_ops.c b/app/test-mldev/test_device_ops.c
-index dacc0232a2..6111bb106b 100644
---- a/app/test-mldev/test_device_ops.c
-+++ b/app/test-mldev/test_device_ops.c
-@@ -128,7 +128,7 @@ test_device_reconfigure(struct ml_test *test, struct ml_options *opt)
- 	}
+ 	num_queues = 1;
+@@ -316,9 +316,9 @@ test_bbdev_configure_stop_queue(void)
+ 			"invalid return value from "
+ 			"rte_bbdev_queue_info_get function: %i", return_value);
  
- 	/* reconfigure device based on dev_info */
--	dev_config.socket_id = opt->socket_id;
-+	dev_config.numa_id = opt->socket_id;
- 	dev_config.nb_models = t->cmn.dev_info.max_models;
- 	dev_config.nb_queue_pairs = t->cmn.dev_info.max_queue_pairs;
- 	ret = rte_ml_dev_configure(opt->dev_id, &dev_config);
-diff --git a/drivers/ml/cnxk/cn10k_ml_dev.c b/drivers/ml/cnxk/cn10k_ml_dev.c
-index c35895dc14..cda8cee330 100644
---- a/drivers/ml/cnxk/cn10k_ml_dev.c
-+++ b/drivers/ml/cnxk/cn10k_ml_dev.c
-@@ -324,7 +324,7 @@ cn10k_ml_pci_probe(struct rte_pci_driver *pci_drv, struct rte_pci_device *pci_de
- 	}
+-	TEST_ASSERT(qinfo.conf.socket == ts_params->qconf.socket,
++	TEST_ASSERT(qinfo.conf.numa_id == ts_params->qconf.numa_id,
+ 			"Failed test for rte_bbdev_queue_info_get: "
+-			"invalid queue_size:%u", qinfo.conf.socket);
++			"invalid queue_size:%u", qinfo.conf.numa_id);
  
- 	init_params = (struct rte_ml_dev_pmd_init_params){
--		.socket_id = rte_socket_id(), .private_data_size = sizeof(struct cnxk_ml_dev)};
-+		.numa_id = rte_numa_id(), .private_data_size = sizeof(struct cnxk_ml_dev)};
+ 	TEST_ASSERT(qinfo.conf.queue_size == ts_params->qconf.queue_size,
+ 			"Failed test for rte_bbdev_queue_info_get: "
+@@ -426,13 +426,13 @@ test_bbdev_configure_invalid_queue_configure(void)
+ 			"Failed test for rte_bbdev_queue_configure: "
+ 			"NULL qconf structure ");
  
- 	ret = roc_plt_init();
+-	ts_params->qconf.socket = RTE_MAX_NUMA_NODES;
++	ts_params->qconf.numa_id = RTE_MAX_NUMA_NODES;
+ 	TEST_ASSERT_FAIL(rte_bbdev_queue_configure(dev_id, queue_id,
+ 			&ts_params->qconf),
+ 			"Failed test for rte_bbdev_queue_configure: "
+ 			"invalid socket number ");
+ 
+-	ts_params->qconf.socket = SOCKET_ID_ANY;
++	ts_params->qconf.numa_id = RTE_NUMA_ID_ANY;
+ 	TEST_ASSERT_SUCCESS(rte_bbdev_queue_configure(dev_id, queue_id,
+ 			&ts_params->qconf),
+ 			"Failed test for rte_bbdev_queue_configure: "
+@@ -1125,7 +1125,7 @@ test_bbdev_invalid_driver(void)
+ 			"NULL queue_release ");
+ 	dev2->dev_ops = dev1.dev_ops;
+ 
+-	dev2->data->socket_id = SOCKET_ID_ANY;
++	dev2->data->numa_id = RTE_NUMA_ID_ANY;
+ 	TEST_ASSERT_SUCCESS(rte_bbdev_setup_queues(dev_id, 1,
+ 			SOCKET_ID_ANY), "Failed to configure bbdev %u", dev_id);
+ 
+diff --git a/app/test-bbdev/test_bbdev_perf.c b/app/test-bbdev/test_bbdev_perf.c
+index b75d8387bd..8e2a26905d 100644
+--- a/app/test-bbdev/test_bbdev_perf.c
++++ b/app/test-bbdev/test_bbdev_perf.c
+@@ -897,10 +897,10 @@ add_bbdev_dev(uint8_t dev_id, struct rte_bbdev_info *info,
+ 	nb_queues = RTE_MIN(nb_queues, (unsigned int) MAX_QUEUES);
+ 
+ 	/* setup device */
+-	ret = rte_bbdev_setup_queues(dev_id, nb_queues, info->socket_id);
++	ret = rte_bbdev_setup_queues(dev_id, nb_queues, info->numa_id);
  	if (ret < 0) {
-diff --git a/drivers/ml/cnxk/mvtvm_ml_dev.c b/drivers/ml/cnxk/mvtvm_ml_dev.c
-index 74959a12fc..7b490d000a 100644
---- a/drivers/ml/cnxk/mvtvm_ml_dev.c
-+++ b/drivers/ml/cnxk/mvtvm_ml_dev.c
-@@ -131,7 +131,7 @@ mvtvm_ml_vdev_probe(struct rte_vdev_device *vdev)
+ 		printf("rte_bbdev_setup_queues(%u, %u, %d) ret %i\n",
+-				dev_id, nb_queues, info->socket_id, ret);
++				dev_id, nb_queues, info->numa_id, ret);
+ 		return TEST_FAILED;
  	}
  
- 	init_params = (struct rte_ml_dev_pmd_init_params){
--		.socket_id = rte_socket_id(), .private_data_size = sizeof(struct cnxk_ml_dev)};
-+		.numa_id = rte_numa_id(), .private_data_size = sizeof(struct cnxk_ml_dev)};
- 
- 	name = rte_vdev_device_name(vdev);
- 	if (name == NULL)
-diff --git a/lib/mldev/rte_mldev.c b/lib/mldev/rte_mldev.c
-index 7fae867882..16f3087580 100644
---- a/lib/mldev/rte_mldev.c
-+++ b/lib/mldev/rte_mldev.c
-@@ -51,7 +51,7 @@ rte_ml_dev_pmd_get_named_dev(const char *name)
- 
- RTE_EXPORT_INTERNAL_SYMBOL(rte_ml_dev_pmd_allocate)
- struct rte_ml_dev *
--rte_ml_dev_pmd_allocate(const char *name, uint8_t socket_id)
-+rte_ml_dev_pmd_allocate(const char *name, uint8_t numa_id)
- {
- 	char mz_name[RTE_MEMZONE_NAMESIZE];
- 	const struct rte_memzone *mz;
-@@ -85,7 +85,7 @@ rte_ml_dev_pmd_allocate(const char *name, uint8_t socket_id)
- 		/* Reserve memzone name */
- 		sprintf(mz_name, "rte_ml_dev_data_%d", dev_id);
- 		if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
--			mz = rte_memzone_reserve(mz_name, sizeof(struct rte_ml_dev_data), socket_id,
-+			mz = rte_memzone_reserve(mz_name, sizeof(struct rte_ml_dev_data), numa_id,
- 						 0);
- 			RTE_MLDEV_LOG(DEBUG, "PRIMARY: reserved memzone for %s (%p)", mz_name, mz);
- 		} else {
-@@ -105,13 +105,13 @@ rte_ml_dev_pmd_allocate(const char *name, uint8_t socket_id)
- 		if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 			strlcpy(dev->data->name, name, RTE_ML_STR_MAX);
- 			dev->data->dev_id = dev_id;
--			dev->data->socket_id = socket_id;
-+			dev->data->numa_id = numa_id;
- 			dev->data->dev_started = 0;
- 			RTE_MLDEV_LOG(DEBUG, "PRIMARY: init mldev data");
- 		}
- 
--		RTE_MLDEV_LOG(DEBUG, "Data for %s: dev_id %d, socket %u", dev->data->name,
--			      dev->data->dev_id, dev->data->socket_id);
-+		RTE_MLDEV_LOG(DEBUG, "Data for %s: dev_id %d, numa node %u", dev->data->name,
-+			      dev->data->dev_id, dev->data->numa_id);
- 
- 		dev->attached = ML_DEV_ATTACHED;
- 		ml_dev_globals.nb_devs++;
-@@ -218,9 +218,9 @@ rte_ml_dev_is_valid_dev(int16_t dev_id)
- 		return 1;
- }
- 
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_ml_dev_socket_id, 22.11)
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_ml_dev_numa_id, 22.11)
- int
--rte_ml_dev_socket_id(int16_t dev_id)
-+rte_ml_dev_numa_id(int16_t dev_id)
- {
- 	struct rte_ml_dev *dev;
- 
-@@ -231,7 +231,7 @@ rte_ml_dev_socket_id(int16_t dev_id)
- 
- 	dev = rte_ml_dev_pmd_get_dev(dev_id);
- 
--	return dev->data->socket_id;
-+	return dev->data->numa_id;
- }
- 
- RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_ml_dev_info_get, 22.11)
-@@ -397,7 +397,7 @@ rte_ml_dev_queue_pair_count(int16_t dev_id)
- RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_ml_dev_queue_pair_setup, 22.11)
- int
- rte_ml_dev_queue_pair_setup(int16_t dev_id, uint16_t queue_pair_id,
--			    const struct rte_ml_dev_qp_conf *qp_conf, int socket_id)
-+			    const struct rte_ml_dev_qp_conf *qp_conf, int numa_id)
- {
- 	struct rte_ml_dev *dev;
- 
-@@ -425,7 +425,7 @@ rte_ml_dev_queue_pair_setup(int16_t dev_id, uint16_t queue_pair_id,
- 		return -EBUSY;
+@@ -915,7 +915,7 @@ add_bbdev_dev(uint8_t dev_id, struct rte_bbdev_info *info,
  	}
  
--	return dev->dev_ops->dev_queue_pair_setup(dev, queue_pair_id, qp_conf, socket_id);
-+	return dev->dev_ops->dev_queue_pair_setup(dev, queue_pair_id, qp_conf, numa_id);
- }
+ 	/* setup device queues */
+-	qconf.socket = info->socket_id;
++	qconf.numa_id = info->numa_id;
+ 	qconf.queue_size = info->drv.default_queue_conf.queue_size;
+ 	qconf.priority = 0;
+ 	qconf.deferred_start = 0;
+diff --git a/drivers/baseband/acc/rte_acc100_pmd.c b/drivers/baseband/acc/rte_acc100_pmd.c
+index cbcacc7aa3..67b969fc71 100644
+--- a/drivers/baseband/acc/rte_acc100_pmd.c
++++ b/drivers/baseband/acc/rte_acc100_pmd.c
+@@ -413,7 +413,7 @@ allocate_info_ring(struct rte_bbdev *dev)
+ 	d->info_ring = rte_zmalloc_socket("Info Ring",
+ 		ACC_INFO_RING_NUM_ENTRIES *
+ 		sizeof(*d->info_ring), RTE_CACHE_LINE_SIZE,
+-		dev->data->socket_id);
++		dev->data->numa_id);
+ 	if (d->info_ring == NULL) {
+ 		rte_bbdev_log(ERR,
+ 				"Failed to allocate Info Ring for %s:%u",
+@@ -543,7 +543,7 @@ acc100_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
+ 	if (d->harq_layout == NULL)
+ 		d->harq_layout = rte_zmalloc_socket("HARQ Layout",
+ 			ACC_HARQ_LAYOUT * sizeof(*d->harq_layout),
+-			RTE_CACHE_LINE_SIZE, dev->data->socket_id);
++			RTE_CACHE_LINE_SIZE, dev->data->numa_id);
+ 	if (d->harq_layout == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate harq_layout for %s:%u",
+ 				dev->device->driver->name,
+@@ -978,7 +978,7 @@ acc100_dev_info_get(struct rte_bbdev *dev,
+ 	};
  
- RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_ml_dev_stats_get, 22.11)
-@@ -808,7 +808,7 @@ ml_op_init(struct rte_mempool *mempool, __rte_unused void *opaque_arg, void *_op
- RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_ml_op_pool_create, 22.11)
+ 	static struct rte_bbdev_queue_conf default_queue_conf;
+-	default_queue_conf.socket = dev->data->socket_id;
++	default_queue_conf.numa_id = dev->data->numa_id;
+ 	default_queue_conf.queue_size = ACC_MAX_QUEUE_DEPTH;
+ 
+ 	dev_info->driver_name = dev->device->driver->name;
+@@ -4058,7 +4058,7 @@ static int acc100_pci_probe(struct rte_pci_driver *pci_drv,
+ 	/* Fill HW specific part of device structure */
+ 	bbdev->device = &pci_dev->device;
+ 	bbdev->intr_handle = pci_dev->intr_handle;
+-	bbdev->data->socket_id = pci_dev->device.numa_node;
++	bbdev->data->numa_id = pci_dev->device.numa_node;
+ 
+ 	/* Invoke ACC100 device initialization function */
+ 	acc100_bbdev_init(bbdev, pci_drv);
+diff --git a/drivers/baseband/acc/rte_vrb_pmd.c b/drivers/baseband/acc/rte_vrb_pmd.c
+index 1f85e33462..8d86694b80 100644
+--- a/drivers/baseband/acc/rte_vrb_pmd.c
++++ b/drivers/baseband/acc/rte_vrb_pmd.c
+@@ -513,7 +513,7 @@ allocate_info_ring(struct rte_bbdev *dev)
+ 
+ 	/* Allocate InfoRing */
+ 	d->info_ring = rte_zmalloc_socket("Info Ring", ACC_INFO_RING_NUM_ENTRIES *
+-			sizeof(*d->info_ring), RTE_CACHE_LINE_SIZE, dev->data->socket_id);
++			sizeof(*d->info_ring), RTE_CACHE_LINE_SIZE, dev->data->numa_id);
+ 	if (d->info_ring == NULL) {
+ 		rte_bbdev_log(ERR,
+ 				"Failed to allocate Info Ring for %s:%u",
+@@ -721,7 +721,7 @@ vrb_setup_queues(struct rte_bbdev *dev, uint16_t num_queues, int socket_id)
+ 	if (d->harq_layout == NULL)
+ 		d->harq_layout = rte_zmalloc_socket("HARQ Layout",
+ 				ACC_HARQ_LAYOUT * sizeof(*d->harq_layout),
+-				RTE_CACHE_LINE_SIZE, dev->data->socket_id);
++				RTE_CACHE_LINE_SIZE, dev->data->numa_id);
+ 	if (d->harq_layout == NULL) {
+ 		rte_bbdev_log(ERR, "Failed to allocate harq_layout for %s:%u",
+ 				dev->device->driver->name,
+@@ -1429,7 +1429,7 @@ vrb_dev_info_get(struct rte_bbdev *dev, struct rte_bbdev_driver_info *dev_info)
+ 	};
+ 
+ 	static struct rte_bbdev_queue_conf default_queue_conf;
+-	default_queue_conf.socket = dev->data->socket_id;
++	default_queue_conf.numa_id = dev->data->numa_id;
+ 	default_queue_conf.queue_size = ACC_MAX_QUEUE_DEPTH;
+ 
+ 	dev_info->driver_name = dev->device->driver->name;
+@@ -4436,7 +4436,7 @@ static int vrb_pci_probe(struct rte_pci_driver *pci_drv,
+ 	/* Fill HW specific part of device structure. */
+ 	bbdev->device = &pci_dev->device;
+ 	bbdev->intr_handle = pci_dev->intr_handle;
+-	bbdev->data->socket_id = pci_dev->device.numa_node;
++	bbdev->data->numa_id = pci_dev->device.numa_node;
+ 
+ 	/* Invoke device initialization function. */
+ 	vrb_bbdev_init(bbdev, pci_drv);
+diff --git a/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c b/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c
+index e804be4cea..e14581cd48 100644
+--- a/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c
++++ b/drivers/baseband/fpga_5gnr_fec/rte_fpga_5gnr_fec.c
+@@ -589,7 +589,7 @@ fpga_5gnr_dev_info_get(struct rte_bbdev *dev, struct rte_bbdev_driver_info *dev_
+ 			FPGA_5GNR_FEC_HARQ_BUF_SIZE_REGS);
+ 
+ 	static struct rte_bbdev_queue_conf default_queue_conf;
+-	default_queue_conf.socket = dev->data->socket_id;
++	default_queue_conf.numa_id = dev->data->numa_id;
+ 	default_queue_conf.queue_size = FPGA_5GNR_RING_MAX_SIZE;
+ 
+ 	dev_info->driver_name = dev->device->driver->name;
+@@ -2949,7 +2949,7 @@ fpga_5gnr_fec_probe(struct rte_pci_driver *pci_drv,
+ 	/* Fill HW specific part of device structure */
+ 	bbdev->device = &pci_dev->device;
+ 	bbdev->intr_handle = pci_dev->intr_handle;
+-	bbdev->data->socket_id = pci_dev->device.numa_node;
++	bbdev->data->numa_id = pci_dev->device.numa_node;
+ 
+ 	/* Invoke FPGA 5GNR FEC device initialization function */
+ 	fpga_5gnr_fec_init(bbdev, pci_drv);
+diff --git a/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c b/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c
+index cb3f29c10b..dc1394930f 100644
+--- a/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c
++++ b/drivers/baseband/fpga_lte_fec/fpga_lte_fec.c
+@@ -631,7 +631,7 @@ fpga_dev_info_get(struct rte_bbdev *dev,
+ 	};
+ 
+ 	static struct rte_bbdev_queue_conf default_queue_conf;
+-	default_queue_conf.socket = dev->data->socket_id;
++	default_queue_conf.numa_id = dev->data->numa_id;
+ 	default_queue_conf.queue_size = FPGA_RING_MAX_SIZE;
+ 
+ 
+@@ -2372,7 +2372,7 @@ fpga_lte_fec_probe(struct rte_pci_driver *pci_drv,
+ 	/* Fill HW specific part of device structure */
+ 	bbdev->device = &pci_dev->device;
+ 	bbdev->intr_handle = pci_dev->intr_handle;
+-	bbdev->data->socket_id = pci_dev->device.numa_node;
++	bbdev->data->numa_id = pci_dev->device.numa_node;
+ 
+ 	/* Invoke FEC FPGA device initialization function */
+ 	fpga_lte_fec_init(bbdev, pci_drv);
+diff --git a/drivers/baseband/la12xx/bbdev_la12xx.c b/drivers/baseband/la12xx/bbdev_la12xx.c
+index 1116dacc4b..6db9192d1d 100644
+--- a/drivers/baseband/la12xx/bbdev_la12xx.c
++++ b/drivers/baseband/la12xx/bbdev_la12xx.c
+@@ -1037,7 +1037,7 @@ la12xx_bbdev_create(struct rte_vdev_device *vdev,
+ 	}
+ 	bbdev->dev_ops = &pmd_ops;
+ 	bbdev->device = &vdev->device;
+-	bbdev->data->socket_id = 0;
++	bbdev->data->numa_id = 0;
+ 	bbdev->intr_handle = NULL;
+ 
+ 	/* register rx/tx burst functions for data path */
+diff --git a/drivers/baseband/null/bbdev_null.c b/drivers/baseband/null/bbdev_null.c
+index d359bdcb5e..10d02da856 100644
+--- a/drivers/baseband/null/bbdev_null.c
++++ b/drivers/baseband/null/bbdev_null.c
+@@ -66,7 +66,7 @@ info_get(struct rte_bbdev *dev, struct rte_bbdev_driver_info *dev_info)
+ 		.queue_size = RTE_BBDEV_QUEUE_SIZE_LIMIT,
+ 	};
+ 
+-	default_queue_conf.socket = dev->data->socket_id;
++	default_queue_conf.numa_id = dev->data->numa_id;
+ 
+ 	dev_info->driver_name = RTE_STR(DRIVER_NAME);
+ 	dev_info->max_num_queues = internals->max_nb_queues;
+@@ -280,7 +280,7 @@ null_bbdev_create(struct rte_vdev_device *vdev,
+ 
+ 	bbdev->dev_ops = &pmd_ops;
+ 	bbdev->device = &vdev->device;
+-	bbdev->data->socket_id = init_params->socket_id;
++	bbdev->data->numa_id = init_params->socket_id;
+ 	bbdev->intr_handle = NULL;
+ 
+ 	/* register rx/tx burst functions for data path */
+diff --git a/drivers/baseband/turbo_sw/bbdev_turbo_software.c b/drivers/baseband/turbo_sw/bbdev_turbo_software.c
+index 9d5c505943..12d168666c 100644
+--- a/drivers/baseband/turbo_sw/bbdev_turbo_software.c
++++ b/drivers/baseband/turbo_sw/bbdev_turbo_software.c
+@@ -244,7 +244,7 @@ info_get(struct rte_bbdev *dev, struct rte_bbdev_driver_info *dev_info)
+ #else
+ 	dev_info->cpu_flag_reqs = NULL;
+ #endif
+-	default_queue_conf.socket = dev->data->socket_id;
++	default_queue_conf.numa_id = dev->data->numa_id;
+ 
+ 	dev_info->driver_name = RTE_STR(DRIVER_NAME);
+ 	dev_info->max_num_queues = internals->max_nb_queues;
+@@ -1912,7 +1912,7 @@ turbo_sw_bbdev_create(struct rte_vdev_device *vdev,
+ 
+ 	bbdev->dev_ops = &pmd_ops;
+ 	bbdev->device = &vdev->device;
+-	bbdev->data->socket_id = init_params->socket_id;
++	bbdev->data->numa_id = init_params->socket_id;
+ 	bbdev->intr_handle = NULL;
+ 
+ 	/* register rx/tx burst functions for data path */
+diff --git a/examples/bbdev_app/main.c b/examples/bbdev_app/main.c
+index 5ac70dab59..8c16d7c556 100644
+--- a/examples/bbdev_app/main.c
++++ b/examples/bbdev_app/main.c
+@@ -941,14 +941,14 @@ prepare_bbdev_device(unsigned int dev_id, struct rte_bbdev_info *info,
+ 	uint16_t enc_qs_nb = app_params->num_enc_cores;
+ 	uint16_t tot_qs = dec_qs_nb + enc_qs_nb;
+ 
+-	ret = rte_bbdev_setup_queues(dev_id, tot_qs, info->socket_id);
++	ret = rte_bbdev_setup_queues(dev_id, tot_qs, info->numa_id);
+ 	if (ret < 0)
+ 		rte_exit(EXIT_FAILURE,
+ 				"ERROR(%d): BBDEV %u not configured properly\n",
+ 				ret, dev_id);
+ 
+ 	/* setup device DEC queues */
+-	qconf.socket = info->socket_id;
++	qconf.numa_id = info->numa_id;
+ 	qconf.queue_size = info->drv.queue_size_lim;
+ 	qconf.op_type = RTE_BBDEV_OP_TURBO_DEC;
+ 
+diff --git a/lib/bbdev/bbdev_trace.h b/lib/bbdev/bbdev_trace.h
+index 0b640a4b3d..ca769fea46 100644
+--- a/lib/bbdev/bbdev_trace.h
++++ b/lib/bbdev/bbdev_trace.h
+@@ -21,10 +21,10 @@ extern "C" {
+ 
+ RTE_TRACE_POINT(
+ 	rte_bbdev_trace_setup_queues,
+-	RTE_TRACE_POINT_ARGS(uint8_t dev_id, uint16_t num_queues, int socket_id),
++	RTE_TRACE_POINT_ARGS(uint8_t dev_id, uint16_t num_queues, int numa_id),
+ 	rte_trace_point_emit_u8(dev_id);
+ 	rte_trace_point_emit_u16(num_queues);
+-	rte_trace_point_emit_int(socket_id);
++	rte_trace_point_emit_int(numa_id);
+ )
+ RTE_TRACE_POINT(
+ 	rte_bbdev_trace_queue_configure,
+diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
+index ab570f2b0d..31ef9c6b4a 100644
+--- a/lib/bbdev/rte_bbdev.c
++++ b/lib/bbdev/rte_bbdev.c
+@@ -124,7 +124,7 @@ rte_bbdev_data_alloc(void)
+ 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+ 		mz = rte_memzone_reserve(MZ_RTE_BBDEV_DATA,
+ 				RTE_BBDEV_MAX_DEVS * sizeof(*rte_bbdev_data),
+-				rte_socket_id(), flags);
++				rte_numa_id(), flags);
+ 	} else
+ 		mz = rte_memzone_lookup(MZ_RTE_BBDEV_DATA);
+ 	if (mz == NULL) {
+@@ -322,7 +322,7 @@ rte_bbdev_find_next(uint16_t dev_id)
+ 
+ RTE_EXPORT_SYMBOL(rte_bbdev_setup_queues)
+ int
+-rte_bbdev_setup_queues(uint16_t dev_id, uint16_t num_queues, int socket_id)
++rte_bbdev_setup_queues(uint16_t dev_id, uint16_t num_queues, int numa_id)
+ {
+ 	unsigned int i;
+ 	int ret;
+@@ -332,7 +332,7 @@ rte_bbdev_setup_queues(uint16_t dev_id, uint16_t num_queues, int socket_id)
+ 
+ 	VALID_DEV_OPS_OR_RET_ERR(dev, dev_id);
+ 
+-	rte_bbdev_trace_setup_queues(dev_id, num_queues, socket_id);
++	rte_bbdev_trace_setup_queues(dev_id, num_queues, numa_id);
+ 
+ 	if (dev->data->started) {
+ 		rte_bbdev_log(ERR,
+@@ -379,13 +379,13 @@ rte_bbdev_setup_queues(uint16_t dev_id, uint16_t num_queues, int socket_id)
+ 	}
+ 
+ 	/* Allocate queue pointers */
+-	dev->data->queues = rte_calloc_socket(DEV_NAME, num_queues,
++	dev->data->queues = rte_calloc_numa(DEV_NAME, num_queues,
+ 			sizeof(dev->data->queues[0]), RTE_CACHE_LINE_SIZE,
+-				dev->data->socket_id);
++				dev->data->numa_id);
+ 	if (dev->data->queues == NULL) {
+ 		rte_bbdev_log(ERR,
+-				"calloc of %u queues for device %u on socket %i failed",
+-				num_queues, dev_id, dev->data->socket_id);
++				"calloc of %u queues for device %u on NUMA node %i failed",
++				num_queues, dev_id, dev->data->numa_id);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -393,7 +393,7 @@ rte_bbdev_setup_queues(uint16_t dev_id, uint16_t num_queues, int socket_id)
+ 
+ 	/* Call optional device configuration */
+ 	if (dev->dev_ops->setup_queues) {
+-		ret = dev->dev_ops->setup_queues(dev, num_queues, socket_id);
++		ret = dev->dev_ops->setup_queues(dev, num_queues, numa_id);
+ 		if (ret < 0) {
+ 			rte_bbdev_log(ERR,
+ 					"Device %u memory configuration failed",
+@@ -854,7 +854,7 @@ rte_bbdev_info_get(uint16_t dev_id, struct rte_bbdev_info *dev_info)
+ 	dev_info->dev_name = dev->data->name;
+ 	dev_info->num_queues = dev->data->num_queues;
+ 	dev_info->device = dev->device;
+-	dev_info->socket_id = dev->data->socket_id;
++	dev_info->numa_id = dev->data->numa_id;
+ 	dev_info->started = dev->data->started;
+ 
+ 	/* Copy data maintained by device driver layer */
+@@ -955,7 +955,7 @@ RTE_EXPORT_SYMBOL(rte_bbdev_op_pool_create)
  struct rte_mempool *
- rte_ml_op_pool_create(const char *name, unsigned int nb_elts, unsigned int cache_size,
--		      uint16_t user_size, int socket_id)
-+		      uint16_t user_size, int numa_id)
+ rte_bbdev_op_pool_create(const char *name, enum rte_bbdev_op_type type,
+ 		unsigned int num_elements, unsigned int cache_size,
+-		int socket_id)
++		int numa_id)
  {
- 	struct rte_ml_op_pool_private *priv;
+ 	struct rte_bbdev_op_pool_private *priv;
  	struct rte_mempool *mp;
-@@ -833,7 +833,7 @@ rte_ml_op_pool_create(const char *name, unsigned int nb_elts, unsigned int cache
+@@ -975,7 +975,7 @@ rte_bbdev_op_pool_create(const char *name, enum rte_bbdev_op_type type,
  
- 	mp = rte_mempool_create(name, nb_elts, elt_size, cache_size,
- 				sizeof(struct rte_ml_op_pool_private), NULL, NULL, ml_op_init, NULL,
--				socket_id, 0);
-+				numa_id, 0);
+ 	mp = rte_mempool_create(name, num_elements, get_bbdev_op_size(type),
+ 			cache_size, sizeof(struct rte_bbdev_op_pool_private),
+-			NULL, NULL, bbdev_op_init, &type, socket_id, 0);
++			NULL, NULL, bbdev_op_init, &type, numa_id, 0);
  	if (mp == NULL) {
- 		RTE_MLDEV_LOG(ERR, "Failed to create mempool %s", name);
+ 		rte_bbdev_log(ERR,
+ 				"Failed to create op pool %s (num ops=%u, op size=%u) with error: %s",
+@@ -989,8 +989,8 @@ rte_bbdev_op_pool_create(const char *name, enum rte_bbdev_op_type type,
  		return NULL;
-diff --git a/lib/mldev/rte_mldev.h b/lib/mldev/rte_mldev.h
-index 594c46cf72..2f90f45499 100644
---- a/lib/mldev/rte_mldev.h
-+++ b/lib/mldev/rte_mldev.h
-@@ -199,19 +199,19 @@ int
- rte_ml_dev_is_valid_dev(int16_t dev_id);
  
- /**
-- * Return the NUMA socket to which a device is connected.
-+ * Return the NUMA node to which a device is connected.
-  *
-  * @param dev_id
+ 	rte_bbdev_log_debug(
+-			"Op pool %s created for %u ops (type=%s, cache=%u, socket=%u, size=%u)",
+-			name, num_elements, op_type_str, cache_size, socket_id,
++			"Op pool %s created for %u ops (type=%s, cache=%u, numa node=%u, size=%u)",
++			name, num_elements, op_type_str, cache_size, numa_id,
+ 			get_bbdev_op_size(type));
+ 
+ 	priv = (struct rte_bbdev_op_pool_private *)rte_mempool_get_priv(mp);
+diff --git a/lib/bbdev/rte_bbdev.h b/lib/bbdev/rte_bbdev.h
+index 9fcfbf4c69..4c55d174d7 100644
+--- a/lib/bbdev/rte_bbdev.h
++++ b/lib/bbdev/rte_bbdev.h
+@@ -101,8 +101,8 @@ rte_bbdev_find_next(uint16_t dev_id);
   *   The identifier of the device.
+  * @param num_queues
+  *   Number of queues to configure on device.
+- * @param socket_id
+- *   ID of a socket which will be used to allocate memory.
++ * @param numa_id
++ *   ID of a NUMA node which will be used to allocate memory.
   *
   * @return
-- *   - The NUMA socket id to which the device is connected
-- *   - 0 If the socket could not be determined.
-+ *   - The NUMA node ID to which the device is connected
-+ *   - 0 If the NUMA node could not be determined.
-  *   - -EINVAL: if the dev_id value is not valid.
+  *   - 0 on success
+@@ -112,7 +112,7 @@ rte_bbdev_find_next(uint16_t dev_id);
+  *   - -ENOMEM if unable to allocate memory
   */
- __rte_experimental
  int
--rte_ml_dev_socket_id(int16_t dev_id);
-+rte_ml_dev_numa_id(int16_t dev_id);
+-rte_bbdev_setup_queues(uint16_t dev_id, uint16_t num_queues, int socket_id);
++rte_bbdev_setup_queues(uint16_t dev_id, uint16_t num_queues, int numa_id);
  
- /**  ML device information */
- struct rte_ml_dev_info {
-@@ -257,8 +257,15 @@ rte_ml_dev_info_get(int16_t dev_id, struct rte_ml_dev_info *dev_info);
+ /**
+  * Enable interrupts.
+@@ -133,7 +133,15 @@ rte_bbdev_intr_enable(uint16_t dev_id);
  
- /** ML device configuration structure */
- struct rte_ml_dev_config {
--	int socket_id;
--	/**< Socket to allocate resources on. */
+ /** Device queue configuration structure */
+ struct rte_bbdev_queue_conf {
+-	int socket;  /**< NUMA socket used for memory allocation */
 +	union {
-+		/** NUMA node to allocate resources on. */
++		/** NUMA node used for memory allocation */
++		int numa_id;
++		/**
++		 * Deprecated alias of numa_id.
++		 */
++		__rte_deprecated_msg("use numa_id")
++		int socket;
++	};
+ 	uint32_t queue_size;  /**< Size of queue */
+ 	uint8_t priority;  /**< Queue priority */
+ 	bool deferred_start; /**< Do not start queue when device is started. */
+@@ -391,7 +399,15 @@ struct rte_bbdev_driver_info {
+ 
+ /* Structure rte_bbdev_info 8< */
+ struct rte_bbdev_info {
+-	int socket_id;  /**< NUMA socket that device is on */
++	union {
++		/** NUMA node that device is on */
 +		int numa_id;
 +		/**
 +		 * Deprecated alias of numa_id.
@@ -282,150 +532,63 @@ index 594c46cf72..2f90f45499 100644
 +		__rte_deprecated_msg("use numa_id")
 +		int socket_id;
 +	};
- 	uint16_t nb_models;
- 	/**< Number of models to be loaded on the device.
- 	 * This value cannot exceed the max_models which is previously provided in
-@@ -340,9 +347,9 @@ rte_ml_dev_queue_pair_count(int16_t dev_id);
-  * previously supplied to rte_ml_dev_configure().
-  * @param qp_conf
-  *   The pointer to the configuration data to be used for the queue pair.
+ 	const char *dev_name;  /**< Unique device name */
+ 	const struct rte_device *device; /**< Device Information */
+ 	uint16_t num_queues;  /**< Number of queues currently configured */
+@@ -510,7 +526,15 @@ struct rte_bbdev_data {
+ 	uint16_t num_queues;  /**< Number of currently configured queues */
+ 	struct rte_bbdev_queue_data *queues;  /**< Queue structures */
+ 	uint16_t dev_id;  /**< Device ID */
+-	int socket_id;  /**< NUMA socket that device is on */
++	union {
++		/** NUMA node that device is on */
++		int numa_id;
++		/**
++		 * Deprecated alias of numa_id.
++		 */
++		__rte_deprecated_msg("use numa_id")
++		int socket_id;
++	};
+ 	bool started;  /**< Device run-time state */
+ 	RTE_ATOMIC(uint16_t) process_cnt;  /** Counter of processes using the device */
+ };
+diff --git a/lib/bbdev/rte_bbdev_op.h b/lib/bbdev/rte_bbdev_op.h
+index 02d157ada8..45e8ad6e9a 100644
+--- a/lib/bbdev/rte_bbdev_op.h
++++ b/lib/bbdev/rte_bbdev_op.h
+@@ -1046,8 +1046,8 @@ rte_bbdev_op_type_str(enum rte_bbdev_op_type op_type);
+  * @param cache_size
+  *   Number of elements to cache on an lcore, see rte_mempool_create() for
+  *   further details about cache size.
 - * @param socket_id
-- *   The *socket_id* argument is the socket identifier in case of NUMA.
-- * The value can be *SOCKET_ID_ANY* if there is no NUMA constraint for the memory allocated
+- *   Socket to allocate memory on.
 + * @param numa_id
-+ *   The *numa_id* argument is the socket identifier in case of NUMA.
-+ * The value can be *RTE_NUMA_ID_ANY* if there is no NUMA constraint for the memory allocated
-  * for the queue pair.
++ *   NUMA node ID to allocate memory on.
   *
   * @return
-@@ -352,7 +359,7 @@ rte_ml_dev_queue_pair_count(int16_t dev_id);
- __rte_experimental
- int
- rte_ml_dev_queue_pair_setup(int16_t dev_id, uint16_t queue_pair_id,
--			    const struct rte_ml_dev_qp_conf *qp_conf, int socket_id);
-+			    const struct rte_ml_dev_qp_conf *qp_conf, int numa_id);
- 
- /**
-  * Start an ML device.
-@@ -1555,8 +1562,8 @@ rte_ml_io_dequantize(int16_t dev_id, uint16_t model_id, struct rte_ml_buff_seg *
-  *   *rte_mempool_create* for further details about cache size
-  * @param user_size
-  *   Size of private data to allocate for user with each operation
-- * @param socket_id
-- *   Socket to identifier allocate memory on
-+ * @param numa_id
-+ *   NUMA node ID to allocate memory on
-  * @return
-  *  - On success pointer to mempool
-  *  - On failure NULL
-@@ -1564,7 +1571,7 @@ rte_ml_io_dequantize(int16_t dev_id, uint16_t model_id, struct rte_ml_buff_seg *
- __rte_experimental
+  *   - Pointer to a mempool on success,
+@@ -1056,7 +1056,7 @@ rte_bbdev_op_type_str(enum rte_bbdev_op_type op_type);
  struct rte_mempool *
- rte_ml_op_pool_create(const char *name, unsigned int nb_elts, unsigned int cache_size,
--		      uint16_t user_size, int socket_id);
-+		      uint16_t user_size, int numa_id);
+ rte_bbdev_op_pool_create(const char *name, enum rte_bbdev_op_type type,
+ 		unsigned int num_elements, unsigned int cache_size,
+-		int socket_id);
++		int numa_id);
  
  /**
-  * Free an ML operation pool
-diff --git a/lib/mldev/rte_mldev_core.h b/lib/mldev/rte_mldev_core.h
-index 75d3466bc7..1fdb061a18 100644
---- a/lib/mldev/rte_mldev_core.h
-+++ b/lib/mldev/rte_mldev_core.h
-@@ -179,8 +179,8 @@ typedef int (*mldev_stop_t)(struct rte_ml_dev *dev);
-  *	Queue pair index.
-  * @param queue_pair_conf
-  *	Queue pair configuration structure.
-- * @param socket_id
-- *	Socket index.
-+ * @param numa_id
-+ *	NUMA node index.
-  *
-  * @return
-  *	- 0 on success.
-@@ -188,7 +188,7 @@ typedef int (*mldev_stop_t)(struct rte_ml_dev *dev);
-  */
- typedef int (*mldev_queue_pair_setup_t)(struct rte_ml_dev *dev, uint16_t queue_pair_id,
- 					const struct rte_ml_dev_qp_conf *queue_pair_conf,
--					int socket_id);
-+					int numa_id);
+  * Bulk allocate encode operations from a mempool with parameter defaults reset.
+diff --git a/lib/bbdev/rte_bbdev_pmd.h b/lib/bbdev/rte_bbdev_pmd.h
+index 4f14909e22..0fc94c86c5 100644
+--- a/lib/bbdev/rte_bbdev_pmd.h
++++ b/lib/bbdev/rte_bbdev_pmd.h
+@@ -76,7 +76,7 @@ rte_bbdev_get_named_dev(const char *name);
  
- /**
-  * @internal
-@@ -592,8 +592,8 @@ struct rte_ml_dev_data {
- 	/** Device ID for this instance. */
- 	int16_t dev_id;
+ /** @internal Function used to configure device memory. */
+ typedef int (*rte_bbdev_setup_queues_t)(struct rte_bbdev *dev,
+-		uint16_t num_queues, int socket_id);
++		uint16_t num_queues, int numa_id);
  
--	/** Socket ID where memory is allocated. */
--	int16_t socket_id;
-+	/** NUMA node ID where memory is allocated. */
-+	int16_t numa_id;
- 
- 	/** Device state: STOPPED(0) / STARTED(1) */
- 	__extension__ uint8_t dev_started : 1;
-diff --git a/lib/mldev/rte_mldev_pmd.c b/lib/mldev/rte_mldev_pmd.c
-index 434360f2d3..50d7224064 100644
---- a/lib/mldev/rte_mldev_pmd.c
-+++ b/lib/mldev/rte_mldev_pmd.c
-@@ -16,11 +16,11 @@ rte_ml_dev_pmd_create(const char *name, struct rte_device *device,
- {
- 	struct rte_ml_dev *dev;
- 
--	RTE_MLDEV_LOG(INFO, "ML device initialisation - name: %s, socket_id: %u", name,
--		      params->socket_id);
-+	RTE_MLDEV_LOG(INFO, "ML device initialisation - name: %s, numa_id: %u", name,
-+		      params->numa_id);
- 
- 	/* Allocate device structure */
--	dev = rte_ml_dev_pmd_allocate(name, params->socket_id);
-+	dev = rte_ml_dev_pmd_allocate(name, params->numa_id);
- 	if (dev == NULL) {
- 		RTE_MLDEV_LOG(ERR, "Failed to allocate ML device for %s", name);
- 		return NULL;
-@@ -29,8 +29,8 @@ rte_ml_dev_pmd_create(const char *name, struct rte_device *device,
- 	/* Allocate private device structure */
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 		dev->data->dev_private =
--			rte_zmalloc_socket("ml_dev_private", params->private_data_size,
--					   RTE_CACHE_LINE_SIZE, params->socket_id);
-+			rte_zmalloc_numa("ml_dev_private", params->private_data_size,
-+					   RTE_CACHE_LINE_SIZE, params->numa_id);
- 
- 		if (dev->data->dev_private == NULL) {
- 			RTE_MLDEV_LOG(ERR, "Cannot allocate memory for mldev %s private data",
-diff --git a/lib/mldev/rte_mldev_pmd.h b/lib/mldev/rte_mldev_pmd.h
-index 47c0f23223..674e4b7a3a 100644
---- a/lib/mldev/rte_mldev_pmd.h
-+++ b/lib/mldev/rte_mldev_pmd.h
-@@ -31,8 +31,8 @@ extern "C" {
-  * Initialisation parameters for ML devices.
-  */
- struct rte_ml_dev_pmd_init_params {
--	/** Socket to use for memory allocation. */
--	uint8_t socket_id;
-+	/** NUMA node to use for memory allocation. */
-+	uint8_t numa_id;
- 
- 	/** Size of device private data. */
- 	uint64_t private_data_size;
-@@ -78,15 +78,15 @@ rte_ml_dev_pmd_get_named_dev(const char *name);
-  *
-  * @param name
-  *	Unique identifier name for each device.
-- * @param socket_id
-- *	Socket to allocate resources.
-+ * @param numa_id
-+ *	NUMA node to allocate resources.
-  *
-  * @return
-  *	Slot in the rte_ml_dev_devices array for a new device.
-  */
- __rte_internal
- struct rte_ml_dev *
--rte_ml_dev_pmd_allocate(const char *name, uint8_t socket_id);
-+rte_ml_dev_pmd_allocate(const char *name, uint8_t numa_id);
- 
- /**
-  * @internal
+ /** @internal Function used to configure interrupts for a device. */
+ typedef int (*rte_bbdev_intr_enable_t)(struct rte_bbdev *dev);
 -- 
 2.55.0
 
