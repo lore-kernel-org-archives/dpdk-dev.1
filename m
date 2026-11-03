@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69711606A79C
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87834606A79C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=E/s6HY6L
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=JL5fyCDr
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8020742E9E;
-	Tue,  3 Nov 2026 16:23:15 +0100 (CET)
-Received: from mta1.migadu.com (out-67.mta1.migadu.com [95.215.58.67])
- by mails.dpdk.org (Postfix) with ESMTPS id B846642EA9
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:23:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 47E1943249;
+	Tue,  3 Nov 2026 16:23:23 +0100 (CET)
+Received: from mta1.migadu.com (out-74.mta1.migadu.com [95.215.58.74])
+ by mails.dpdk.org (Postfix) with ESMTPS id 51C3642EC7
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:23:22 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=Fx9Fpn0wMyMtlAi5FslvZdSHcIMQJB/o5jZ1XWXVjDk=; 
+DKIM-Signature: a=rsa-sha256; bh=enEwZpRhMpFB7oGqV7VD1W6Zbt4CrXWhbo9/YvrQ1k4=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719393; v=1; x=1794324193;
- b=E/s6HY6L58opsiWkkW0Z9D2xTwC5Z2kvvFUD0IVxD+dq9Qfu/z7IRByA/P7eSfpv3icMQbtm
- gPaL3cMmr01cqeDH84ocLLvaeqGJ4pb6UpVArToeYgHnNW2NHwIQvK6jYGvSYDZszTNTN3VMVFQ
- RkQpMsNokABMM6SRgtBZtoFA=
+ t=1793719400; v=1; x=1794324200;
+ b=JL5fyCDr/YWsF5g1UlM8tQhVJY2952yschQW9cI01GaVmd+MPSCdRElK4i0HdYRX2WDC4fUE
+ 2er4TLrMagRhaID7Gcp1VgedOSMKs+sdnpbW+f7FAIrqTkKOgmb2fZIKlOeUfSh6N3msObIy045
+ UKkREu9pMv7vHOwRlVF+RZUA=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id b0c372083c217028;
- Tue, 03 Nov 2026 15:23:13 +0000
-X-Mizu-Trace-ID: b0c372083c217028
+Received: by mta10.migadu.com with ESMTPS id 2a6b159f838ae413;
+ Tue, 03 Nov 2026 15:23:20 +0000
+X-Mizu-Trace-ID: 2a6b159f838ae413
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 191/227] examples/flow_filtering: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:29 +0800
-Message-ID: <20261103145306.487255-192-chengwen.feng@linux.dev>
+Subject: [PATCH 192/227] examples/ip_fragmentation: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:52:30 +0800
+Message-ID: <20261103145306.487255-193-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,40 +62,45 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- examples/flow_filtering/main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ examples/ip_fragmentation/main.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/examples/flow_filtering/main.c b/examples/flow_filtering/main.c
-index b4ccaacea1..b29feeb5ab 100644
---- a/examples/flow_filtering/main.c
-+++ b/examples/flow_filtering/main.c
-@@ -191,7 +191,7 @@ init_port(void)
- 	/* Configuring number of RX and TX queues connected to single port. */
- 	for (i = 0; i < NR_QUEUES; i++) {
- 		ret = rte_eth_rx_queue_setup(port_id, i, 512,
--					 rte_eth_dev_socket_id(port_id),
-+					 rte_eth_dev_numa_id(port_id),
- 					 &rxq_conf,
- 					 mbuf_pool);
- 		if (ret < 0) {
-@@ -206,7 +206,7 @@ init_port(void)
+diff --git a/examples/ip_fragmentation/main.c b/examples/ip_fragmentation/main.c
+index 132550e497..d429f526e1 100644
+--- a/examples/ip_fragmentation/main.c
++++ b/examples/ip_fragmentation/main.c
+@@ -788,9 +788,9 @@ init_mem(void)
+ 		if (rte_lcore_is_enabled(lcore_id) == 0)
+ 			continue;
  
- 	for (i = 0; i < NR_QUEUES; i++) {
- 		ret = rte_eth_tx_queue_setup(port_id, i, 512,
--				rte_eth_dev_socket_id(port_id),
-+				rte_eth_dev_numa_id(port_id),
- 				&txq_conf);
- 		if (ret < 0) {
- 			rte_exit(EXIT_FAILURE,
-@@ -334,7 +334,7 @@ main(int argc, char **argv)
- 	/* Allocates a mempool to hold the mbufs. 8< */
- 	mbuf_pool = rte_pktmbuf_pool_create("mbuf_pool", 4096, 128, 0,
- 						RTE_MBUF_DEFAULT_BUF_SIZE,
--						rte_socket_id());
-+						rte_numa_id());
- 	/* >8 End of allocating a mempool to hold the mbufs. */
- 	if (mbuf_pool == NULL)
- 		rte_exit(EXIT_FAILURE, "Cannot init mbuf pool\n");
+-		socket = rte_lcore_to_socket_id(lcore_id);
++		socket = rte_lcore_to_numa_id(lcore_id);
+ 
+-		if (socket == SOCKET_ID_ANY)
++		if (socket == RTE_NUMA_ID_ANY)
+ 			socket = 0;
+ 
+ 		if (socket_direct_pool[socket] == NULL) {
+@@ -928,8 +928,8 @@ main(int argc, char **argv)
+ 			qconf = &lcore_queue_conf[rx_lcore_id];
+ 		}
+ 
+-		socket = (int) rte_lcore_to_socket_id(rx_lcore_id);
+-		if (socket == SOCKET_ID_ANY)
++		socket = (int) rte_lcore_to_numa_id(rx_lcore_id);
++		if (socket == RTE_NUMA_ID_ANY)
+ 			socket = 0;
+ 
+ 		rxq = &qconf->rx_queue_list[qconf->n_rx_queue];
+@@ -1011,7 +1011,7 @@ main(int argc, char **argv)
+ 			if (queueid >= dev_info.nb_tx_queues)
+ 				break;
+ 
+-			socket = (int) rte_lcore_to_socket_id(lcore_id);
++			socket = (int) rte_lcore_to_numa_id(lcore_id);
+ 			printf("txq=%u,%d ", lcore_id, queueid);
+ 			fflush(stdout);
+ 
 -- 
 2.55.0
 
