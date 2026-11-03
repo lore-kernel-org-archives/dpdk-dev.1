@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61F3606BA1B
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C24606A32C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=olgFr4t+
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=xkMZ51Qp
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8BE4642DD1;
-	Tue,  3 Nov 2026 16:09:53 +0100 (CET)
-Received: from mta1.migadu.com (out-34.mta1.migadu.com [95.215.58.34])
- by mails.dpdk.org (Postfix) with ESMTPS id 3749840616
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:09:52 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8E305427DD;
+	Tue,  3 Nov 2026 16:10:01 +0100 (CET)
+Received: from mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+ by mails.dpdk.org (Postfix) with ESMTPS id BC086427BC
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:09:59 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=RGZCMFcP8sJfYzfP/VzwZxRzwRmwu6HNw3NUE/DJnmE=; 
+DKIM-Signature: a=rsa-sha256; bh=NvraiIVnXmxmVngeWvgnjXFVepmPaK89mnEh0Uwe9Tw=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718592; v=1; x=1794323392;
- b=olgFr4t+HYa8jNWHchLsMNw9kUX3CC7tuK4k/32OKq0p8hSHndiGwQmUEBB6s586NpAAiOm/
- iU9uP0ij+r1PaJ0QzLa9hBDnr1ohvOMOcJ5SJ10EUQDigDH6pgLugkgXDMdHL6a/mEdei5FHjL1
- A0JvphdGJufJqKLFOxHPSmfA=
+ t=1793718599; v=1; x=1794323399;
+ b=xkMZ51QphLJTlKpzBLt0f9Ik/OyE/GIoQHisyJti8lWBFe2/bexgySQTJ80P+2MBxaBMA2cC
+ G2gRfBLfqk1iVhuxUU3QfP6afxTPfevYnpp2kDbW9dt39hZRRsR1TJfe3N0/Yttkt/L+L2zNVJK
+ jIO+V4VHZ3/C+cFOftE/ySBI=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id ae80aaac13eeffed;
- Tue, 03 Nov 2026 15:09:51 +0000
-X-Mizu-Trace-ID: ae80aaac13eeffed
+Received: by mta11.migadu.com with ESMTPS id b72d7885b0893b88;
+ Tue, 03 Nov 2026 15:09:59 +0000
+X-Mizu-Trace-ID: b72d7885b0893b88
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 101/227] ml/cnxk: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:59 +0800
-Message-ID: <20261103145306.487255-102-chengwen.feng@linux.dev>
+Subject: [PATCH 102/227] net/af_packet: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:51:00 +0800
+Message-ID: <20261103145306.487255-103-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,60 +63,99 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/ml/cnxk/cnxk_ml_ops.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/af_packet/rte_eth_af_packet.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/ml/cnxk/cnxk_ml_ops.c b/drivers/ml/cnxk/cnxk_ml_ops.c
-index dc05764306..c47c58e4d0 100644
---- a/drivers/ml/cnxk/cnxk_ml_ops.c
-+++ b/drivers/ml/cnxk/cnxk_ml_ops.c
-@@ -73,7 +73,7 @@ cnxk_ml_dev_queue_pair_release(struct rte_ml_dev *dev, uint16_t queue_pair_id)
- }
+diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
+index 44f82c0309..ad59d3dd7d 100644
+--- a/drivers/net/af_packet/rte_eth_af_packet.c
++++ b/drivers/net/af_packet/rte_eth_af_packet.c
+@@ -599,7 +599,7 @@ eth_dev_close(struct rte_eth_dev *dev)
+ 		return 0;
  
- static struct cnxk_ml_qp *
--cnxk_ml_qp_create(const struct rte_ml_dev *dev, uint16_t qp_id, uint32_t nb_desc, int socket_id)
-+cnxk_ml_qp_create(const struct rte_ml_dev *dev, uint16_t qp_id, uint32_t nb_desc, int numa_id)
+ 	PMD_LOG(INFO, "Closing AF_PACKET ethdev on NUMA socket %u",
+-		rte_socket_id());
++		rte_numa_id());
+ 
+ 	internals = dev->data->dev_private;
+ 	req = &internals->req;
+@@ -656,7 +656,7 @@ static int
+ eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 		   uint16_t rx_queue_id,
+ 		   uint16_t nb_rx_desc __rte_unused,
+-		   unsigned int socket_id __rte_unused,
++		   unsigned int numa_id __rte_unused,
+ 		   const struct rte_eth_rxconf *rx_conf __rte_unused,
+ 		   struct rte_mempool *mb_pool)
  {
- 	const struct rte_memzone *qp_mem;
- 	char name[RTE_MEMZONE_NAMESIZE];
-@@ -85,8 +85,8 @@ cnxk_ml_qp_create(const struct rte_ml_dev *dev, uint16_t qp_id, uint32_t nb_desc
- 	cnxk_mldev = dev->data->dev_private;
- 
- 	/* Allocate queue pair */
--	qp = rte_zmalloc_socket("cnxk_ml_pmd_queue_pair", sizeof(struct cnxk_ml_qp), ROC_ALIGN,
--				socket_id);
-+	qp = rte_zmalloc_numa("cnxk_ml_pmd_queue_pair", sizeof(struct cnxk_ml_qp), ROC_ALIGN,
-+				numa_id);
- 	if (qp == NULL) {
- 		plt_err("Could not allocate queue pair");
- 		return NULL;
-@@ -96,7 +96,7 @@ cnxk_ml_qp_create(const struct rte_ml_dev *dev, uint16_t qp_id, uint32_t nb_desc
- 	len = nb_desc * sizeof(struct cnxk_ml_req);
- 	qp_memzone_name_get(name, RTE_MEMZONE_NAMESIZE, dev->data->dev_id, qp_id);
- 	qp_mem = rte_memzone_reserve_aligned(
--		name, len, socket_id, RTE_MEMZONE_SIZE_HINT_ONLY | RTE_MEMZONE_256MB, ROC_ALIGN);
-+		name, len, numa_id, RTE_MEMZONE_SIZE_HINT_ONLY | RTE_MEMZONE_256MB, ROC_ALIGN);
- 	if (qp_mem == NULL) {
- 		plt_err("Could not reserve memzone: %s", name);
- 		goto qp_free;
-@@ -837,7 +837,7 @@ cnxk_ml_dev_selftest(struct rte_ml_dev *dev)
- 
- static int
- cnxk_ml_dev_queue_pair_setup(struct rte_ml_dev *dev, uint16_t queue_pair_id,
--			     const struct rte_ml_dev_qp_conf *qp_conf, int socket_id)
-+			     const struct rte_ml_dev_qp_conf *qp_conf, int numa_id)
+@@ -694,7 +694,7 @@ static int
+ eth_tx_queue_setup(struct rte_eth_dev *dev,
+ 		   uint16_t tx_queue_id,
+ 		   uint16_t nb_tx_desc __rte_unused,
+-		   unsigned int socket_id __rte_unused,
++		   unsigned int numa_id __rte_unused,
+ 		   const struct rte_eth_txconf *tx_conf __rte_unused)
  {
- 	struct rte_ml_dev_info dev_info;
- 	struct cnxk_ml_qp *qp;
-@@ -870,7 +870,7 @@ cnxk_ml_dev_queue_pair_setup(struct rte_ml_dev *dev, uint16_t queue_pair_id,
- 	 */
- 	nb_desc =
- 		(qp_conf->nb_desc == dev_info.max_desc) ? dev_info.max_desc : qp_conf->nb_desc + 1;
--	qp = cnxk_ml_qp_create(dev, queue_pair_id, nb_desc, socket_id);
-+	qp = cnxk_ml_qp_create(dev, queue_pair_id, nb_desc, numa_id);
- 	if (qp == NULL) {
- 		plt_err("Could not create queue pair %u", queue_pair_id);
- 		return -ENOMEM;
+ 
+@@ -933,17 +933,17 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ 		"%s: creating AF_PACKET-backed ethdev on numa socket %u",
+ 		name, numa_node);
+ 
+-	*internals = rte_zmalloc_socket(name, sizeof(**internals),
++	*internals = rte_zmalloc_numa(name, sizeof(**internals),
+ 					0, numa_node);
+ 	if (*internals == NULL)
+ 		return -1;
+ 
+ 
+-	(*internals)->rx_queue = rte_calloc_socket("af_packet_rx",
++	(*internals)->rx_queue = rte_calloc_numa("af_packet_rx",
+ 						nb_queues,
+ 						sizeof(struct pkt_rx_queue),
+ 						0, numa_node);
+-	(*internals)->tx_queue = rte_calloc_socket("af_packet_tx",
++	(*internals)->tx_queue = rte_calloc_numa("af_packet_tx",
+ 						nb_queues,
+ 						sizeof(struct pkt_tx_queue),
+ 						0, numa_node);
+@@ -979,7 +979,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ 		PMD_LOG_ERRNO(ERR, "%s: ioctl failed (SIOCGIFINDEX)", name);
+ 		goto free_internals;
+ 	}
+-	(*internals)->if_name = rte_malloc_socket(name, ifnamelen + 1, 0, numa_node);
++	(*internals)->if_name = rte_malloc_numa(name, ifnamelen + 1, 0, numa_node);
+ 	if ((*internals)->if_name == NULL)
+ 		goto free_internals;
+ 	strlcpy((*internals)->if_name, pair->value, ifnamelen + 1);
+@@ -1098,7 +1098,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ 		/* rdsize is same for both Tx and Rx */
+ 		rdsize = req->tp_frame_nr * sizeof(*(rx_queue->rd));
+ 
+-		rx_queue->rd = rte_zmalloc_socket(name, rdsize, 0, numa_node);
++		rx_queue->rd = rte_zmalloc_numa(name, rdsize, 0, numa_node);
+ 		if (rx_queue->rd == NULL)
+ 			goto error;
+ 		for (i = 0; i < req->tp_frame_nr; ++i) {
+@@ -1115,7 +1115,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ 
+ 		tx_queue->map = rx_queue->map + req->tp_block_size * req->tp_block_nr;
+ 
+-		tx_queue->rd = rte_zmalloc_socket(name, rdsize, 0, numa_node);
++		tx_queue->rd = rte_zmalloc_numa(name, rdsize, 0, numa_node);
+ 		if (tx_queue->rd == NULL)
+ 			goto error;
+ 		for (i = 0; i < req->tp_frame_nr; ++i) {
+@@ -1406,8 +1406,8 @@ rte_pmd_af_packet_probe(struct rte_vdev_device *dev)
+ 			goto exit;
+ 	}
+ 
+-	if (dev->device.numa_node == SOCKET_ID_ANY)
+-		dev->device.numa_node = rte_socket_id();
++	if (dev->device.numa_node == RTE_NUMA_ID_ANY)
++		dev->device.numa_node = rte_numa_id();
+ 
+ 	ret = rte_eth_from_packet(dev, &sockfd, kvlist);
+ 	close(sockfd); /* no longer needed */
 -- 
 2.55.0
 
