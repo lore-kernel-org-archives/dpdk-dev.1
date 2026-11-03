@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E767606A324
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F9E606A327
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=Ibfk+M09
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=Et9QI7JG
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7083043270;
-	Tue,  3 Nov 2026 16:24:08 +0100 (CET)
-Received: from mta0.migadu.com (out-74.mta0.migadu.com [91.218.175.74])
- by mails.dpdk.org (Postfix) with ESMTPS id 89E834325E
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:24:06 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 406614325E;
+	Tue,  3 Nov 2026 16:24:12 +0100 (CET)
+Received: from mta0.migadu.com (out-77.mta0.migadu.com [91.218.175.77])
+ by mails.dpdk.org (Postfix) with ESMTPS id C1DB643278
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:24:10 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=CLr6l36xtGcCVjzphYhUoQFvdpKe4ikmQQkmuQLoM00=; 
+DKIM-Signature: a=rsa-sha256; bh=oa6IIDztnZDWhVTggZeSxOEK8vVwjCza2Hd1AX3i8J8=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719446; v=1; x=1794324246;
- b=Ibfk+M09z5bHxrf9izADrzc8Zwcz9T89LKa3a/l5Q6ivHruB27inskg8jw997tgIqaoej4P4
- TSgSypt33ws3wCBOsJUOU4W/0pP0KrdOloUTjms15SNCd6grm7QdO4uGgb+13R9niPDvMt0x1NZ
- BnnHoRNFNoeq2X4m2jRCc4ts=
+ t=1793719450; v=1; x=1794324250;
+ b=Et9QI7JG/noaISklgc0sye1qjf17elWKrpAtmqdmtLYp6/ZsNkIZUNP7k0OHqPL+lZOjBoSI
+ StxNuqihim0aJfcNTCGMOuK595Mw6B21sb1cbmtlx8cWzlNIi0aYxiHrgfEzZfaKTl6V2Tb55EY
+ PhKzfI5WgcI+f4e6cFp7u2Zc=
 X-Envelope-To: dev@dpdk.org
-Received: by mta12.migadu.com with ESMTPS id f164fed2470e6939;
- Tue, 03 Nov 2026 15:24:06 +0000
-X-Mizu-Trace-ID: f164fed2470e6939
+Received: by mta12.migadu.com with ESMTPS id 7e2e243c5a44e4e1;
+ Tue, 03 Nov 2026 15:24:10 +0000
+X-Mizu-Trace-ID: 7e2e243c5a44e4e1
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 197/227] examples/l2fwd-cat: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:35 +0800
-Message-ID: <20261103145306.487255-198-chengwen.feng@linux.dev>
+Subject: [PATCH 198/227] examples/l2fwd-crypto: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:52:36 +0800
+Message-ID: <20261103145306.487255-199-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,53 +62,138 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- examples/l2fwd-cat/l2fwd-cat.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ examples/l2fwd-crypto/main.c | 38 ++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/examples/l2fwd-cat/l2fwd-cat.c b/examples/l2fwd-cat/l2fwd-cat.c
-index 6e16705e99..cf5772fac5 100644
---- a/examples/l2fwd-cat/l2fwd-cat.c
-+++ b/examples/l2fwd-cat/l2fwd-cat.c
-@@ -52,7 +52,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
- 	/* Allocate and set up 1 RX queue per Ethernet port. */
- 	for (q = 0; q < rx_rings; q++) {
- 		retval = rte_eth_rx_queue_setup(port, q, nb_rxd,
--				rte_eth_dev_socket_id(port), NULL, mbuf_pool);
-+				rte_eth_dev_numa_id(port), NULL, mbuf_pool);
- 		if (retval < 0)
- 			return retval;
- 	}
-@@ -60,7 +60,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
- 	/* Allocate and set up 1 TX queue per Ethernet port. */
- 	for (q = 0; q < tx_rings; q++) {
- 		retval = rte_eth_tx_queue_setup(port, q, nb_txd,
--				rte_eth_dev_socket_id(port), NULL);
-+				rte_eth_dev_numa_id(port), NULL);
- 		if (retval < 0)
- 			return retval;
- 	}
-@@ -102,9 +102,9 @@ lcore_main(void)
- 	 * for best performance.
- 	 */
- 	RTE_ETH_FOREACH_DEV(port)
--		if (rte_eth_dev_socket_id(port) >= 0 &&
--				rte_eth_dev_socket_id(port) !=
--						(int)rte_socket_id())
-+		if (rte_eth_dev_numa_id(port) >= 0 &&
-+				rte_eth_dev_numa_id(port) !=
-+						(int)rte_numa_id())
- 			printf("WARNING, port %u is on remote NUMA node to "
- 					"polling thread.\n\tPerformance will "
- 					"not be optimal.\n", port);
-@@ -183,7 +183,7 @@ main(int argc, char *argv[])
+diff --git a/examples/l2fwd-crypto/main.c b/examples/l2fwd-crypto/main.c
+index 84399463da..1b195a816e 100644
+--- a/examples/l2fwd-crypto/main.c
++++ b/examples/l2fwd-crypto/main.c
+@@ -672,12 +672,12 @@ static void *
+ initialize_crypto_session(struct l2fwd_crypto_options *options, uint8_t cdev_id)
+ {
+ 	struct rte_crypto_sym_xform *first_xform;
+-	int retval = rte_cryptodev_socket_id(cdev_id);
++	int retval = rte_cryptodev_numa_id(cdev_id);
  
- 	/* Creates a new mempool in memory to hold the mbufs. */
- 	mbuf_pool = rte_pktmbuf_pool_create("MBUF_POOL", NUM_MBUFS * nb_ports,
--		MBUF_CACHE_SIZE, 0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
-+		MBUF_CACHE_SIZE, 0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_numa_id());
+ 	if (retval < 0)
+ 		return NULL;
  
- 	if (mbuf_pool == NULL)
+-	uint8_t socket_id = (uint8_t) retval;
++	uint8_t numa_id = (uint8_t) retval;
+ 
+ 	if (options->xform_chain == L2FWD_CRYPTO_AEAD) {
+ 		first_xform = &options->aead_xform;
+@@ -694,7 +694,7 @@ initialize_crypto_session(struct l2fwd_crypto_options *options, uint8_t cdev_id)
+ 	}
+ 
+ 	return rte_cryptodev_sym_session_create(cdev_id, first_xform,
+-			session_pool_socket[socket_id].sess_mp);
++			session_pool_socket[numa_id].sess_mp);
+ }
+ /* >8 End of creation of session. */
+ 
+@@ -2350,18 +2350,18 @@ initialize_cryptodevs(struct l2fwd_crypto_options *options, unsigned nb_ports,
+ 		if (check_capabilities(options, cdev_id) < 0)
+ 			continue;
+ 
+-		retval = rte_cryptodev_socket_id(cdev_id);
++		retval = rte_cryptodev_numa_id(cdev_id);
+ 
+ 		if (retval < 0) {
+ 			printf("Invalid crypto device id used\n");
+ 			return -1;
+ 		}
+ 
+-		uint8_t socket_id = (uint8_t) retval;
++		uint8_t numa_id = (uint8_t) retval;
+ 
+ 		struct rte_cryptodev_config conf = {
+ 			.nb_queue_pairs = 1,
+-			.socket_id = socket_id,
++			.numa_id = numa_id,
+ 			.ff_disable = RTE_CRYPTODEV_FF_SECURITY,
+ 		};
+ 
+@@ -2379,23 +2379,23 @@ initialize_cryptodevs(struct l2fwd_crypto_options *options, unsigned nb_ports,
+ 		} else
+ 			sessions_needed = enabled_cdev_count;
+ 
+-		if (session_pool_socket[socket_id].sess_mp == NULL) {
++		if (session_pool_socket[numa_id].sess_mp == NULL) {
+ 			char mp_name[RTE_MEMPOOL_NAMESIZE];
+ 			snprintf(mp_name, RTE_MEMPOOL_NAMESIZE,
+-				"sess_mp_%u", socket_id);
++				"sess_mp_%u", numa_id);
+ 
+-			session_pool_socket[socket_id].sess_mp =
++			session_pool_socket[numa_id].sess_mp =
+ 				rte_cryptodev_sym_session_pool_create(
+ 					mp_name, sessions_needed, max_sess_sz,
+-					0, 0, socket_id);
+-			if (session_pool_socket[socket_id].sess_mp == NULL) {
++					0, 0, numa_id);
++			if (session_pool_socket[numa_id].sess_mp == NULL) {
+ 				printf("Cannot create pool on socket %d\n",
+-					socket_id);
++					numa_id);
+ 				return -ENOMEM;
+ 			}
+ 
+ 			printf("Allocated pool \"%s\" on socket %d\n",
+-				mp_name, socket_id);
++				mp_name, numa_id);
+ 		}
+ 
+ 		/* Set AEAD parameters */
+@@ -2537,10 +2537,10 @@ initialize_cryptodevs(struct l2fwd_crypto_options *options, unsigned nb_ports,
+ 		}
+ 
+ 		qp_conf.nb_descriptors = 2048;
+-		qp_conf.mp_session = session_pool_socket[socket_id].sess_mp;
++		qp_conf.mp_session = session_pool_socket[numa_id].sess_mp;
+ 
+ 		retval = rte_cryptodev_queue_pair_setup(cdev_id, 0, &qp_conf,
+-				socket_id);
++				numa_id);
+ 		if (retval < 0) {
+ 			printf("Failed to setup queue pair %u on cryptodev %u",
+ 					0, cdev_id);
+@@ -2619,7 +2619,7 @@ initialize_ports(struct l2fwd_crypto_options *options)
+ 		rxq_conf = dev_info.default_rxconf;
+ 		rxq_conf.offloads = local_port_conf.rxmode.offloads;
+ 		retval = rte_eth_rx_queue_setup(portid, 0, nb_rxd,
+-					     rte_eth_dev_socket_id(portid),
++					     rte_eth_dev_numa_id(portid),
+ 					     &rxq_conf, l2fwd_pktmbuf_pool);
+ 		if (retval < 0) {
+ 			printf("rte_eth_rx_queue_setup:err=%d, port=%u\n",
+@@ -2632,7 +2632,7 @@ initialize_ports(struct l2fwd_crypto_options *options)
+ 		txq_conf = dev_info.default_txconf;
+ 		txq_conf.offloads = local_port_conf.txmode.offloads;
+ 		retval = rte_eth_tx_queue_setup(portid, 0, nb_txd,
+-				rte_eth_dev_socket_id(portid),
++				rte_eth_dev_numa_id(portid),
+ 				&txq_conf);
+ 		if (retval < 0) {
+ 			printf("rte_eth_tx_queue_setup:err=%d, port=%u\n",
+@@ -2766,14 +2766,14 @@ main(int argc, char **argv)
+ 	l2fwd_pktmbuf_pool = rte_pktmbuf_pool_create("mbuf_pool", NB_MBUF, 512,
+ 			RTE_ALIGN(sizeof(struct rte_crypto_op),
+ 				RTE_CACHE_LINE_SIZE),
+-			RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
++			RTE_MBUF_DEFAULT_BUF_SIZE, rte_numa_id());
+ 	if (l2fwd_pktmbuf_pool == NULL)
  		rte_exit(EXIT_FAILURE, "Cannot create mbuf pool\n");
+ 
+ 	/* create crypto op pool */
+ 	l2fwd_crypto_op_pool = rte_crypto_op_pool_create("crypto_op_pool",
+ 			RTE_CRYPTO_OP_TYPE_SYMMETRIC, NB_MBUF, 128, MAXIMUM_IV_LENGTH,
+-			rte_socket_id());
++			rte_numa_id());
+ 	if (l2fwd_crypto_op_pool == NULL)
+ 		rte_exit(EXIT_FAILURE, "Cannot create crypto op pool\n");
+ 
 -- 
 2.55.0
 
