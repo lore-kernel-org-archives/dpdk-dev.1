@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080C6606A794
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE65606A794
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=ekme3GL+
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=MjDMXRNB
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC37141104;
-	Tue,  3 Nov 2026 15:55:45 +0100 (CET)
-Received: from mta0.migadu.com (out-227.mta0.migadu.com [91.218.175.227])
- by mails.dpdk.org (Postfix) with ESMTPS id 703304111C
- for <dev@dpdk.org>; Tue,  3 Nov 2026 15:55:44 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A047442708;
+	Tue,  3 Nov 2026 15:55:50 +0100 (CET)
+Received: from mta0.migadu.com (out-230.mta0.migadu.com [91.218.175.230])
+ by mails.dpdk.org (Postfix) with ESMTPS id B57F74270A
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 15:55:48 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=emFxiu+vOwwZ1JzAYcDxHrrex5ADs/zamHRQDVGxxCA=; 
+DKIM-Signature: a=rsa-sha256; bh=yZNxyFcmRY2EIB9lIjsMO1xdFHVqA6wTZeEzBi8ojcQ=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793717744; v=1; x=1794322544;
- b=ekme3GL+WMDwl+utOHfiIU2FdYXsjLR6cryvsSeNNoiSP2F1Wi6ppAxB4NpHColrp/HPYkvi
- hLL78bt1akw0GgBqfClDRc64rPrzL9WyoC1rY7YXJedokXrdo871M93xlODxm6LrG9h5agG7Fi5
- ePUMlC8z1c11G496eYg4kSJw=
+ t=1793717748; v=1; x=1794322548;
+ b=MjDMXRNBcc3YRp0kNo5E8uqWBkHTLdHVEEYXp+XbZKCKQZp0EUqUBVEU6awIt3JFK28O2+X7
+ XkLgemr1kd4h2SwNQZ4wa1p3XHUovhQ+EF+Zy28iAXzor7cbjwPoTpcIMIDGfZGfJjMJ0dgZDBk
+ K5pdJeN4lrhVU3Iv9Fx0zrio=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id 5f3a4461cba2b929;
- Tue, 03 Nov 2026 14:55:44 +0000
-X-Mizu-Trace-ID: 5f3a4461cba2b929
+Received: by mta10.migadu.com with ESMTPS id f307d7298c38dd0e;
+ Tue, 03 Nov 2026 14:55:48 +0000
+X-Mizu-Trace-ID: f307d7298c38dd0e
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 016/227] gro: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:49:34 +0800
-Message-ID: <20261103145306.487255-17-chengwen.feng@linux.dev>
+Subject: [PATCH 017/227] fib: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:49:35 +0800
+Message-ID: <20261103145306.487255-18-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -57,472 +57,355 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Chengwen Feng <fengchengwen@huawei.com>
 
-Rename the numa_id field of rte_gro_param (was socket_id),
-keeping socket_id as a deprecated union alias, and update
-in-tree users accordingly.
-
-Also rename socket_id parameters, internal variables and
-comments to the NUMA node terminology, and switch internal
-calls to rte_zmalloc_numa() and rte_numa_id().
+Rename socket_id parameters, internal variables and comments to
+the NUMA node terminology, and switch internal calls to
+rte_zmalloc_numa(), rte_numa_id() and RTE_NUMA_ID_ANY.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-pmd/testpmd.c   |  2 +-
- lib/gro/gro_tcp4.c       | 14 +++++++-------
- lib/gro/gro_tcp4.h       |  6 +++---
- lib/gro/gro_tcp6.c       | 14 +++++++-------
- lib/gro/gro_tcp6.h       |  6 +++---
- lib/gro/gro_udp4.c       | 14 +++++++-------
- lib/gro/gro_udp4.h       |  6 +++---
- lib/gro/gro_vxlan_tcp4.c | 14 +++++++-------
- lib/gro/gro_vxlan_tcp4.h |  6 +++---
- lib/gro/gro_vxlan_udp4.c | 14 +++++++-------
- lib/gro/gro_vxlan_udp4.h |  6 +++---
- lib/gro/rte_gro.c        |  8 ++++----
- lib/gro/rte_gro.h        | 17 ++++++++++++-----
- 13 files changed, 67 insertions(+), 60 deletions(-)
+ app/test/test_fib6.c | 10 +++++-----
+ lib/fib/dir24_8.c    | 14 +++++++-------
+ lib/fib/dir24_8.h    |  2 +-
+ lib/fib/rte_fib.c    | 14 +++++++-------
+ lib/fib/rte_fib.h    |  6 +++---
+ lib/fib/rte_fib6.c   | 14 +++++++-------
+ lib/fib/rte_fib6.h   |  6 +++---
+ lib/fib/trie.c       | 14 +++++++-------
+ lib/fib/trie.h       |  2 +-
+ 9 files changed, 41 insertions(+), 41 deletions(-)
 
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index c99b54a003..bbef4a8580 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -1886,7 +1886,7 @@ init_config(void)
- 	gro_param.max_flow_num = GRO_MAX_FLUSH_CYCLES;
- 	gro_param.max_item_per_flow = MAX_PKT_BURST;
- 	for (lc_id = 0; lc_id < nb_lcores; lc_id++) {
--		gro_param.socket_id = rte_lcore_to_socket_id(
-+		gro_param.numa_id = rte_lcore_to_numa_id(
- 				fwd_lcores_cpuids[lc_id]);
- 		fwd_lcores[lc_id]->gro_ctx = rte_gro_ctx_create(&gro_param);
- 		if (fwd_lcores[lc_id]->gro_ctx == NULL) {
-diff --git a/lib/gro/gro_tcp4.c b/lib/gro/gro_tcp4.c
-index 855cc7a71d..e4956c7618 100644
---- a/lib/gro/gro_tcp4.c
-+++ b/lib/gro/gro_tcp4.c
-@@ -10,7 +10,7 @@
- #include "gro_tcp_internal.h"
+diff --git a/app/test/test_fib6.c b/app/test/test_fib6.c
+index cc120a01f7..d33226d016 100644
+--- a/app/test/test_fib6.c
++++ b/app/test/test_fib6.c
+@@ -955,7 +955,7 @@ test_tbl8_install_peak(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 1;
+ 
+-	fib = rte_fib6_create("peak", SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("peak", RTE_NUMA_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	ret = rte_fib6_add(fib, &aligned, 33, 1);
+@@ -1029,11 +1029,11 @@ test_tbl8_install_peak_dq(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 2;
+ 
+-	fib = rte_fib6_create("peak_dq", SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("peak_dq", RTE_NUMA_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	sz = rte_rcu_qsbr_get_memsize(1);
+-	v = rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
++	v = rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE, RTE_NUMA_ID_ANY);
+ 	RTE_TEST_ASSERT(v != NULL, "Can not allocate RCU\n");
+ 	ret = rte_rcu_qsbr_init(v, 1);
+ 	RTE_TEST_ASSERT(ret == 0, "Can not init RCU\n");
+@@ -1102,11 +1102,11 @@ test_tbl8_dq_modify(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 3;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create(__func__, RTE_NUMA_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	sz = rte_rcu_qsbr_get_memsize(1);
+-	v = rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
++	v = rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE, RTE_NUMA_ID_ANY);
+ 	RTE_TEST_ASSERT(v != NULL, "Can not allocate RCU\n");
+ 	ret = rte_rcu_qsbr_init(v, 1);
+ 	RTE_TEST_ASSERT(ret == 0, "Can not init RCU\n");
+diff --git a/lib/fib/dir24_8.c b/lib/fib/dir24_8.c
+index c135285a65..dfca06b3aa 100644
+--- a/lib/fib/dir24_8.c
++++ b/lib/fib/dir24_8.c
+@@ -556,7 +556,7 @@ dir24_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
+ }
  
  void *
--gro_tcp4_tbl_create(uint16_t socket_id,
-+gro_tcp4_tbl_create(uint16_t numa_id,
- 		uint16_t max_flow_num,
- 		uint16_t max_item_per_flow)
+-dir24_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
++dir24_8_create(const char *name, int numa_id, struct rte_fib_conf *fib_conf)
  {
-@@ -24,18 +24,18 @@ gro_tcp4_tbl_create(uint16_t socket_id,
- 	if (entries_num == 0)
+ 	char mem_name[DIR24_8_NAMESIZE];
+ 	struct dir24_8_tbl *dp;
+@@ -582,9 +582,9 @@ dir24_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
+ 			BITMAP_SLAB_BIT_SIZE);
+ 
+ 	snprintf(mem_name, sizeof(mem_name), "DP_%s", name);
+-	dp = rte_zmalloc_socket(name, sizeof(struct dir24_8_tbl) +
++	dp = rte_zmalloc_numa(name, sizeof(struct dir24_8_tbl) +
+ 		DIR24_8_TBL24_NUM_ENT * (1 << nh_sz) + sizeof(uint32_t),
+-		RTE_CACHE_LINE_SIZE, socket_id);
++		RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (dp == NULL) {
+ 		rte_errno = ENOMEM;
  		return NULL;
+@@ -596,8 +596,8 @@ dir24_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
+ 	snprintf(mem_name, sizeof(mem_name), "TBL8_%p", dp);
+ 	uint64_t tbl8_sz = DIR24_8_TBL8_GRP_NUM_ENT * (1ULL << nh_sz) *
+ 			(num_tbl8 + 1);
+-	dp->tbl8 = rte_zmalloc_socket(mem_name, tbl8_sz,
+-			RTE_CACHE_LINE_SIZE, socket_id);
++	dp->tbl8 = rte_zmalloc_numa(mem_name, tbl8_sz,
++			RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (dp->tbl8 == NULL) {
+ 		rte_errno = ENOMEM;
+ 		rte_free(dp);
+@@ -608,9 +608,9 @@ dir24_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
+ 	dp->number_tbl8s = num_tbl8;
  
--	tbl = rte_zmalloc_socket(__func__,
-+	tbl = rte_zmalloc_numa(__func__,
- 			sizeof(struct gro_tcp4_tbl),
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl == NULL)
- 		return NULL;
- 
- 	size = sizeof(struct gro_tcp_item) * entries_num;
--	tbl->items = rte_zmalloc_socket(__func__,
-+	tbl->items = rte_zmalloc_numa(__func__,
- 			size,
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl->items == NULL) {
- 		rte_free(tbl);
- 		return NULL;
-@@ -43,10 +43,10 @@ gro_tcp4_tbl_create(uint16_t socket_id,
- 	tbl->max_item_num = entries_num;
- 
- 	size = sizeof(struct gro_tcp4_flow) * entries_num;
--	tbl->flows = rte_zmalloc_socket(__func__,
-+	tbl->flows = rte_zmalloc_numa(__func__,
- 			size,
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl->flows == NULL) {
- 		rte_free(tbl->items);
- 		rte_free(tbl);
-diff --git a/lib/gro/gro_tcp4.h b/lib/gro/gro_tcp4.h
-index 245e5da486..a55814970c 100644
---- a/lib/gro/gro_tcp4.h
-+++ b/lib/gro/gro_tcp4.h
-@@ -46,8 +46,8 @@ struct gro_tcp4_tbl {
- /**
-  * This function creates a TCP/IPv4 reassembly table.
-  *
-- * @param socket_id
-- *  Socket index for allocating the TCP/IPv4 reassemble table
-+ * @param numa_id
-+ *  NUMA node index for allocating the TCP/IPv4 reassemble table
-  * @param max_flow_num
-  *  The maximum number of flows in the TCP/IPv4 GRO table
-  * @param max_item_per_flow
-@@ -57,7 +57,7 @@ struct gro_tcp4_tbl {
-  *  - Return the table pointer on success.
-  *  - Return NULL on failure.
-  */
--void *gro_tcp4_tbl_create(uint16_t socket_id,
-+void *gro_tcp4_tbl_create(uint16_t numa_id,
- 		uint16_t max_flow_num,
- 		uint16_t max_item_per_flow);
- 
-diff --git a/lib/gro/gro_tcp6.c b/lib/gro/gro_tcp6.c
-index ab4cd6c68b..3d8914d1c7 100644
---- a/lib/gro/gro_tcp6.c
-+++ b/lib/gro/gro_tcp6.c
-@@ -10,7 +10,7 @@
- #include "gro_tcp_internal.h"
+ 	snprintf(mem_name, sizeof(mem_name), "TBL8_idxes_%p", dp);
+-	dp->tbl8_idxes = rte_zmalloc_socket(mem_name,
++	dp->tbl8_idxes = rte_zmalloc_numa(mem_name,
+ 			RTE_ALIGN_CEIL(dp->number_tbl8s, 64) >> 3,
+-			RTE_CACHE_LINE_SIZE, socket_id);
++			RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (dp->tbl8_idxes == NULL) {
+ 		rte_errno = ENOMEM;
+ 		rte_free(dp->tbl8);
+diff --git a/lib/fib/dir24_8.h b/lib/fib/dir24_8.h
+index b343b5d686..ac2de1694d 100644
+--- a/lib/fib/dir24_8.h
++++ b/lib/fib/dir24_8.h
+@@ -287,7 +287,7 @@ DECLARE_BE_LOOKUP_FN(dir24_8_lookup_bulk_3)
+ DECLARE_BE_LOOKUP_FN(dir24_8_lookup_bulk_uni)
  
  void *
--gro_tcp6_tbl_create(uint16_t socket_id,
-+gro_tcp6_tbl_create(uint16_t numa_id,
- 		uint16_t max_flow_num,
- 		uint16_t max_item_per_flow)
+-dir24_8_create(const char *name, int socket_id, struct rte_fib_conf *conf);
++dir24_8_create(const char *name, int numa_id, struct rte_fib_conf *conf);
+ 
+ void
+ dir24_8_free(void *p);
+diff --git a/lib/fib/rte_fib.c b/lib/fib/rte_fib.c
+index 184210f380..c6d6e28564 100644
+--- a/lib/fib/rte_fib.c
++++ b/lib/fib/rte_fib.c
+@@ -92,7 +92,7 @@ dummy_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
+ }
+ 
+ static int
+-init_dataplane(struct rte_fib *fib, __rte_unused int socket_id,
++init_dataplane(struct rte_fib *fib, __rte_unused int numa_id,
+ 	struct rte_fib_conf *conf)
  {
-@@ -24,18 +24,18 @@ gro_tcp6_tbl_create(uint16_t socket_id,
- 	if (entries_num == 0)
- 		return NULL;
+ 	char dp_name[sizeof(void *)];
+@@ -105,7 +105,7 @@ init_dataplane(struct rte_fib *fib, __rte_unused int socket_id,
+ 		fib->modify = dummy_modify;
+ 		return 0;
+ 	case RTE_FIB_DIR24_8:
+-		fib->dp = dir24_8_create(dp_name, socket_id, conf);
++		fib->dp = dir24_8_create(dp_name, numa_id, conf);
+ 		if (fib->dp == NULL)
+ 			return -rte_errno;
+ 		fib->lookup = dir24_8_get_lookup_fn(fib->dp,
+@@ -152,7 +152,7 @@ rte_fib_lookup_bulk(struct rte_fib *fib, uint32_t *ips,
  
--	tbl = rte_zmalloc_socket(__func__,
-+	tbl = rte_zmalloc_numa(__func__,
- 			sizeof(struct gro_tcp6_tbl),
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl == NULL)
- 		return NULL;
- 
- 	size = sizeof(struct gro_tcp_item) * entries_num;
--	tbl->items = rte_zmalloc_socket(__func__,
-+	tbl->items = rte_zmalloc_numa(__func__,
- 			size,
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl->items == NULL) {
- 		rte_free(tbl);
- 		return NULL;
-@@ -43,10 +43,10 @@ gro_tcp6_tbl_create(uint16_t socket_id,
- 	tbl->max_item_num = entries_num;
- 
- 	size = sizeof(struct gro_tcp6_flow) * entries_num;
--	tbl->flows = rte_zmalloc_socket(__func__,
-+	tbl->flows = rte_zmalloc_numa(__func__,
- 			size,
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl->flows == NULL) {
- 		rte_free(tbl->items);
- 		rte_free(tbl);
-diff --git a/lib/gro/gro_tcp6.h b/lib/gro/gro_tcp6.h
-index acf3971bb6..8e9f628c26 100644
---- a/lib/gro/gro_tcp6.h
-+++ b/lib/gro/gro_tcp6.h
-@@ -49,8 +49,8 @@ struct gro_tcp6_tbl {
- /**
-  * This function creates a TCP/IPv6 reassembly table.
-  *
-- * @param socket_id
-- *  Socket index for allocating the TCP/IPv6 reassemble table
-+ * @param numa_id
-+ *  NUMA node index for allocating the TCP/IPv6 reassemble table
-  * @param max_flow_num
-  *  The maximum number of flows in the TCP/IPv6 GRO table
-  * @param max_item_per_flow
-@@ -60,7 +60,7 @@ struct gro_tcp6_tbl {
-  *  - Return the table pointer on success.
-  *  - Return NULL on failure.
-  */
--void *gro_tcp6_tbl_create(uint16_t socket_id,
-+void *gro_tcp6_tbl_create(uint16_t numa_id,
- 		uint16_t max_flow_num,
- 		uint16_t max_item_per_flow);
- 
-diff --git a/lib/gro/gro_udp4.c b/lib/gro/gro_udp4.c
-index 019e05bcde..7313a96246 100644
---- a/lib/gro/gro_udp4.c
-+++ b/lib/gro/gro_udp4.c
-@@ -9,7 +9,7 @@
- #include "gro_udp4.h"
- 
- void *
--gro_udp4_tbl_create(uint16_t socket_id,
-+gro_udp4_tbl_create(uint16_t numa_id,
- 		uint16_t max_flow_num,
- 		uint16_t max_item_per_flow)
+ RTE_EXPORT_SYMBOL(rte_fib_create)
+ struct rte_fib *
+-rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
++rte_fib_create(const char *name, int numa_id, struct rte_fib_conf *conf)
  {
-@@ -23,18 +23,18 @@ gro_udp4_tbl_create(uint16_t socket_id,
- 	if (entries_num == 0)
- 		return NULL;
+ 	char mem_name[RTE_FIB_NAMESIZE];
+ 	int ret;
+@@ -173,7 +173,7 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
+ 	rib_conf.ext_sz = conf->rib_ext_sz;
+ 	rib_conf.max_nodes = conf->max_routes * 2;
  
--	tbl = rte_zmalloc_socket(__func__,
-+	tbl = rte_zmalloc_numa(__func__,
- 			sizeof(struct gro_udp4_tbl),
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl == NULL)
- 		return NULL;
+-	rib = rte_rib_create(name, socket_id, &rib_conf);
++	rib = rte_rib_create(name, numa_id, &rib_conf);
+ 	if (rib == NULL) {
+ 		FIB_LOG(ERR,
+ 			"Can not allocate RIB %s", name);
+@@ -207,8 +207,8 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
+ 	}
  
- 	size = sizeof(struct gro_udp4_item) * entries_num;
--	tbl->items = rte_zmalloc_socket(__func__,
-+	tbl->items = rte_zmalloc_numa(__func__,
- 			size,
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl->items == NULL) {
- 		rte_free(tbl);
- 		return NULL;
-@@ -42,10 +42,10 @@ gro_udp4_tbl_create(uint16_t socket_id,
- 	tbl->max_item_num = entries_num;
- 
- 	size = sizeof(struct gro_udp4_flow) * entries_num;
--	tbl->flows = rte_zmalloc_socket(__func__,
-+	tbl->flows = rte_zmalloc_numa(__func__,
- 			size,
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl->flows == NULL) {
- 		rte_free(tbl->items);
- 		rte_free(tbl);
-diff --git a/lib/gro/gro_udp4.h b/lib/gro/gro_udp4.h
-index 6467d7bc3b..d6e1b0cd95 100644
---- a/lib/gro/gro_udp4.h
-+++ b/lib/gro/gro_udp4.h
-@@ -87,8 +87,8 @@ struct gro_udp4_tbl {
- /**
-  * This function creates a UDP/IPv4 reassembly table.
+ 	/* Allocate memory to store the FIB data structures. */
+-	fib = rte_zmalloc_socket(mem_name,
+-		sizeof(struct rte_fib),	RTE_CACHE_LINE_SIZE, socket_id);
++	fib = rte_zmalloc_numa(mem_name,
++		sizeof(struct rte_fib),	RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (fib == NULL) {
+ 		FIB_LOG(ERR, "FIB %s memory allocation failed", name);
+ 		rte_errno = ENOMEM;
+@@ -220,7 +220,7 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
+ 	fib->type = conf->type;
+ 	fib->flags = conf->flags;
+ 	fib->def_nh = conf->default_nh;
+-	ret = init_dataplane(fib, socket_id, conf);
++	ret = init_dataplane(fib, numa_id, conf);
+ 	if (ret < 0) {
+ 		FIB_LOG(ERR,
+ 			"FIB dataplane struct %s memory allocation failed "
+diff --git a/lib/fib/rte_fib.h b/lib/fib/rte_fib.h
+index b16a653535..35ce1f3c09 100644
+--- a/lib/fib/rte_fib.h
++++ b/lib/fib/rte_fib.h
+@@ -147,8 +147,8 @@ rte_fib_free(struct rte_fib *fib);
   *
+  * @param name
+  *  FIB name
 - * @param socket_id
-- *  Socket index for allocating the UDP/IPv4 reassemble table
+- *  NUMA socket ID for FIB table memory allocation
 + * @param numa_id
-+ *  NUMA node index for allocating the UDP/IPv4 reassemble table
-  * @param max_flow_num
-  *  The maximum number of flows in the UDP/IPv4 GRO table
-  * @param max_item_per_flow
-@@ -98,7 +98,7 @@ struct gro_udp4_tbl {
-  *  - Return the table pointer on success.
-  *  - Return NULL on failure.
++ *  NUMA node ID for FIB table memory allocation
+  * @param conf
+  *  Structure containing the configuration
+  * @return
+@@ -156,7 +156,7 @@ rte_fib_free(struct rte_fib *fib);
+  *  NULL otherwise with rte_errno set to an appropriate values.
   */
--void *gro_udp4_tbl_create(uint16_t socket_id,
-+void *gro_udp4_tbl_create(uint16_t numa_id,
- 		uint16_t max_flow_num,
- 		uint16_t max_item_per_flow);
- 
-diff --git a/lib/gro/gro_vxlan_tcp4.c b/lib/gro/gro_vxlan_tcp4.c
-index 29d4a2e13d..d3b9412269 100644
---- a/lib/gro/gro_vxlan_tcp4.c
-+++ b/lib/gro/gro_vxlan_tcp4.c
-@@ -10,7 +10,7 @@
- #include "gro_vxlan_tcp4.h"
- 
- void *
--gro_vxlan_tcp4_tbl_create(uint16_t socket_id,
-+gro_vxlan_tcp4_tbl_create(uint16_t numa_id,
- 		uint16_t max_flow_num,
- 		uint16_t max_item_per_flow)
- {
-@@ -24,18 +24,18 @@ gro_vxlan_tcp4_tbl_create(uint16_t socket_id,
- 	if (entries_num == 0)
- 		return NULL;
- 
--	tbl = rte_zmalloc_socket(__func__,
-+	tbl = rte_zmalloc_numa(__func__,
- 			sizeof(struct gro_vxlan_tcp4_tbl),
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl == NULL)
- 		return NULL;
- 
- 	size = sizeof(struct gro_vxlan_tcp4_item) * entries_num;
--	tbl->items = rte_zmalloc_socket(__func__,
-+	tbl->items = rte_zmalloc_numa(__func__,
- 			size,
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl->items == NULL) {
- 		rte_free(tbl);
- 		return NULL;
-@@ -43,10 +43,10 @@ gro_vxlan_tcp4_tbl_create(uint16_t socket_id,
- 	tbl->max_item_num = entries_num;
- 
- 	size = sizeof(struct gro_vxlan_tcp4_flow) * entries_num;
--	tbl->flows = rte_zmalloc_socket(__func__,
-+	tbl->flows = rte_zmalloc_numa(__func__,
- 			size,
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl->flows == NULL) {
- 		rte_free(tbl->items);
- 		rte_free(tbl);
-diff --git a/lib/gro/gro_vxlan_tcp4.h b/lib/gro/gro_vxlan_tcp4.h
-index 662db01a88..6dcae3a32d 100644
---- a/lib/gro/gro_vxlan_tcp4.h
-+++ b/lib/gro/gro_vxlan_tcp4.h
-@@ -66,8 +66,8 @@ struct gro_vxlan_tcp4_tbl {
-  * This function creates a VxLAN reassembly table for VxLAN packets
-  * which have an outer IPv4 header and an inner TCP/IPv4 packet.
-  *
-- * @param socket_id
-- *  Socket index for allocating the table
-+ * @param numa_id
-+ *  NUMA node index for allocating the table
-  * @param max_flow_num
-  *  The maximum number of flows in the table
-  * @param max_item_per_flow
-@@ -77,7 +77,7 @@ struct gro_vxlan_tcp4_tbl {
-  *  - Return the table pointer on success.
-  *  - Return NULL on failure.
-  */
--void *gro_vxlan_tcp4_tbl_create(uint16_t socket_id,
-+void *gro_vxlan_tcp4_tbl_create(uint16_t numa_id,
- 		uint16_t max_flow_num,
- 		uint16_t max_item_per_flow);
- 
-diff --git a/lib/gro/gro_vxlan_udp4.c b/lib/gro/gro_vxlan_udp4.c
-index ca8cee270d..7895fa8e3d 100644
---- a/lib/gro/gro_vxlan_udp4.c
-+++ b/lib/gro/gro_vxlan_udp4.c
-@@ -10,7 +10,7 @@
- #include "gro_vxlan_udp4.h"
- 
- void *
--gro_vxlan_udp4_tbl_create(uint16_t socket_id,
-+gro_vxlan_udp4_tbl_create(uint16_t numa_id,
- 		uint16_t max_flow_num,
- 		uint16_t max_item_per_flow)
- {
-@@ -24,18 +24,18 @@ gro_vxlan_udp4_tbl_create(uint16_t socket_id,
- 	if (entries_num == 0)
- 		return NULL;
- 
--	tbl = rte_zmalloc_socket(__func__,
-+	tbl = rte_zmalloc_numa(__func__,
- 			sizeof(struct gro_vxlan_udp4_tbl),
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl == NULL)
- 		return NULL;
- 
- 	size = sizeof(struct gro_vxlan_udp4_item) * entries_num;
--	tbl->items = rte_zmalloc_socket(__func__,
-+	tbl->items = rte_zmalloc_numa(__func__,
- 			size,
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl->items == NULL) {
- 		rte_free(tbl);
- 		return NULL;
-@@ -43,10 +43,10 @@ gro_vxlan_udp4_tbl_create(uint16_t socket_id,
- 	tbl->max_item_num = entries_num;
- 
- 	size = sizeof(struct gro_vxlan_udp4_flow) * entries_num;
--	tbl->flows = rte_zmalloc_socket(__func__,
-+	tbl->flows = rte_zmalloc_numa(__func__,
- 			size,
- 			RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (tbl->flows == NULL) {
- 		rte_free(tbl->items);
- 		rte_free(tbl);
-diff --git a/lib/gro/gro_vxlan_udp4.h b/lib/gro/gro_vxlan_udp4.h
-index d045221243..38a3b6a6f6 100644
---- a/lib/gro/gro_vxlan_udp4.h
-+++ b/lib/gro/gro_vxlan_udp4.h
-@@ -67,8 +67,8 @@ struct gro_vxlan_udp4_tbl {
-  * This function creates a VxLAN reassembly table for VxLAN packets
-  * which have an outer IPv4 header and an inner UDP/IPv4 packet.
-  *
-- * @param socket_id
-- *  Socket index for allocating the table
-+ * @param numa_id
-+ *  NUMA node index for allocating the table
-  * @param max_flow_num
-  *  The maximum number of flows in the table
-  * @param max_item_per_flow
-@@ -78,7 +78,7 @@ struct gro_vxlan_udp4_tbl {
-  *  - Return the table pointer on success.
-  *  - Return NULL on failure.
-  */
--void *gro_vxlan_udp4_tbl_create(uint16_t socket_id,
-+void *gro_vxlan_udp4_tbl_create(uint16_t numa_id,
- 		uint16_t max_flow_num,
- 		uint16_t max_item_per_flow);
- 
-diff --git a/lib/gro/rte_gro.c b/lib/gro/rte_gro.c
-index 578cc9b801..15d4830b69 100644
---- a/lib/gro/rte_gro.c
-+++ b/lib/gro/rte_gro.c
-@@ -14,7 +14,7 @@
- #include "gro_vxlan_tcp4.h"
- #include "gro_vxlan_udp4.h"
- 
--typedef void *(*gro_tbl_create_fn)(uint16_t socket_id,
-+typedef void *(*gro_tbl_create_fn)(uint16_t numa_id,
- 		uint16_t max_flow_num,
- 		uint16_t max_item_per_flow);
- typedef void (*gro_tbl_destroy_fn)(void *tbl);
-@@ -99,10 +99,10 @@ rte_gro_ctx_create(const struct rte_gro_param *param)
- 	uint64_t gro_types = 0;
- 	uint8_t i;
- 
--	gro_ctx = rte_zmalloc_socket(__func__,
-+	gro_ctx = rte_zmalloc_numa(__func__,
- 			sizeof(struct gro_ctx),
- 			RTE_CACHE_LINE_SIZE,
--			param->socket_id);
-+			param->numa_id);
- 	if (gro_ctx == NULL)
- 		return NULL;
- 
-@@ -115,7 +115,7 @@ rte_gro_ctx_create(const struct rte_gro_param *param)
- 		if (create_tbl_fn == NULL)
- 			continue;
- 
--		gro_ctx->tbls[i] = create_tbl_fn(param->socket_id,
-+		gro_ctx->tbls[i] = create_tbl_fn(param->numa_id,
- 				param->max_flow_num,
- 				param->max_item_per_flow);
- 		if (gro_ctx->tbls[i] == NULL) {
-diff --git a/lib/gro/rte_gro.h b/lib/gro/rte_gro.h
-index c83dfd9ad1..b9d1a7d424 100644
---- a/lib/gro/rte_gro.h
-+++ b/lib/gro/rte_gro.h
-@@ -53,11 +53,18 @@ struct rte_gro_param {
- 	/**< max flow number */
- 	uint16_t max_item_per_flow;
- 	/**< max packet number per flow */
--	uint16_t socket_id;
--	/**< socket index for allocating GRO related data structures,
--	 * like reassembly tables. When use rte_gro_reassemble_burst(),
--	 * applications don't need to set this value.
--	 */
-+	union {
-+		/** NUMA node index for allocating GRO related data structures,
-+		 * like reassembly tables. When use rte_gro_reassemble_burst(),
-+		 * applications don't need to set this value.
-+		 */
-+		uint16_t numa_id;
-+		/**
-+		 * Deprecated alias of numa_id.
-+		 */
-+		__rte_deprecated_msg("use numa_id")
-+		uint16_t socket_id;
-+	};
- };
+ struct rte_fib *
+-rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
++rte_fib_create(const char *name, int numa_id, struct rte_fib_conf *conf)
+ 	__rte_malloc __rte_dealloc(rte_fib_free, 1);
  
  /**
+diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
+index 770becdb61..5ba84d142c 100644
+--- a/lib/fib/rte_fib6.c
++++ b/lib/fib/rte_fib6.c
+@@ -91,7 +91,7 @@ dummy_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ }
+ 
+ static int
+-init_dataplane(struct rte_fib6 *fib, __rte_unused int socket_id,
++init_dataplane(struct rte_fib6 *fib, __rte_unused int numa_id,
+ 	struct rte_fib6_conf *conf)
+ {
+ 	char dp_name[sizeof(void *)];
+@@ -104,7 +104,7 @@ init_dataplane(struct rte_fib6 *fib, __rte_unused int socket_id,
+ 		fib->modify = dummy_modify;
+ 		return 0;
+ 	case RTE_FIB6_TRIE:
+-		fib->dp = trie_create(dp_name, socket_id, conf);
++		fib->dp = trie_create(dp_name, numa_id, conf);
+ 		if (fib->dp == NULL)
+ 			return -rte_errno;
+ 		fib->lookup = trie_get_lookup_fn(fib->dp, RTE_FIB6_LOOKUP_DEFAULT);
+@@ -152,7 +152,7 @@ rte_fib6_lookup_bulk(struct rte_fib6 *fib,
+ 
+ RTE_EXPORT_SYMBOL(rte_fib6_create)
+ struct rte_fib6 *
+-rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
++rte_fib6_create(const char *name, int numa_id, struct rte_fib6_conf *conf)
+ {
+ 	char mem_name[RTE_FIB6_NAMESIZE];
+ 	int ret;
+@@ -172,7 +172,7 @@ rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
+ 	rib_conf.ext_sz = conf->rib_ext_sz;
+ 	rib_conf.max_nodes = conf->max_routes * 2;
+ 
+-	rib = rte_rib6_create(name, socket_id, &rib_conf);
++	rib = rte_rib6_create(name, numa_id, &rib_conf);
+ 	if (rib == NULL) {
+ 		FIB_LOG(ERR,
+ 			"Can not allocate RIB %s", name);
+@@ -206,8 +206,8 @@ rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
+ 	}
+ 
+ 	/* Allocate memory to store the FIB data structures. */
+-	fib = rte_zmalloc_socket(mem_name,
+-		sizeof(struct rte_fib6), RTE_CACHE_LINE_SIZE, socket_id);
++	fib = rte_zmalloc_numa(mem_name,
++		sizeof(struct rte_fib6), RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (fib == NULL) {
+ 		FIB_LOG(ERR, "FIB %s memory allocation failed", name);
+ 		rte_errno = ENOMEM;
+@@ -218,7 +218,7 @@ rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
+ 	fib->rib = rib;
+ 	fib->type = conf->type;
+ 	fib->def_nh = conf->default_nh;
+-	ret = init_dataplane(fib, socket_id, conf);
++	ret = init_dataplane(fib, numa_id, conf);
+ 	if (ret < 0) {
+ 		FIB_LOG(ERR,
+ 			"FIB dataplane struct %s memory allocation failed",
+diff --git a/lib/fib/rte_fib6.h b/lib/fib/rte_fib6.h
+index fcbd10de15..f8fb9b6597 100644
+--- a/lib/fib/rte_fib6.h
++++ b/lib/fib/rte_fib6.h
+@@ -129,8 +129,8 @@ rte_fib6_free(struct rte_fib6 *fib);
+  *
+  * @param name
+  *  FIB name
+- * @param socket_id
+- *  NUMA socket ID for FIB table memory allocation
++ * @param numa_id
++ *  NUMA node ID for FIB table memory allocation
+  * @param conf
+  *  Structure containing the configuration
+  * @return
+@@ -138,7 +138,7 @@ rte_fib6_free(struct rte_fib6 *fib);
+  *  NULL otherwise with rte_errno set to an appropriate values.
+  */
+ struct rte_fib6 *
+-rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
++rte_fib6_create(const char *name, int numa_id, struct rte_fib6_conf *conf)
+ 	__rte_malloc __rte_dealloc(rte_fib6_free, 1);
+ 
+ /**
+diff --git a/lib/fib/trie.c b/lib/fib/trie.c
+index 9ede1a5bf7..58b0d5d472 100644
+--- a/lib/fib/trie.c
++++ b/lib/fib/trie.c
+@@ -683,7 +683,7 @@ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ }
+ 
+ void *
+-trie_create(const char *name, int socket_id,
++trie_create(const char *name, int numa_id,
+ 	struct rte_fib6_conf *conf)
+ {
+ 	char mem_name[TRIE_NAMESIZE];
+@@ -710,9 +710,9 @@ trie_create(const char *name, int socket_id,
+ 	num_tbl8 = conf->trie.num_tbl8;
+ 
+ 	snprintf(mem_name, sizeof(mem_name), "DP_%s", name);
+-	dp = rte_zmalloc_socket(name, sizeof(struct rte_trie_tbl) +
++	dp = rte_zmalloc_numa(name, sizeof(struct rte_trie_tbl) +
+ 		TRIE_TBL24_NUM_ENT * (1 << nh_sz) + sizeof(uint32_t),
+-		RTE_CACHE_LINE_SIZE, socket_id);
++		RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (dp == NULL) {
+ 		rte_errno = ENOMEM;
+ 		return dp;
+@@ -721,9 +721,9 @@ trie_create(const char *name, int socket_id,
+ 	write_to_dp(&dp->tbl24, (def_nh << 1), nh_sz, 1 << 24);
+ 
+ 	snprintf(mem_name, sizeof(mem_name), "TBL8_%p", dp);
+-	dp->tbl8 = rte_zmalloc_socket(mem_name, TRIE_TBL8_GRP_NUM_ENT *
++	dp->tbl8 = rte_zmalloc_numa(mem_name, TRIE_TBL8_GRP_NUM_ENT *
+ 			(1ll << nh_sz) * (num_tbl8 + 1),
+-			RTE_CACHE_LINE_SIZE, socket_id);
++			RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (dp->tbl8 == NULL) {
+ 		rte_errno = ENOMEM;
+ 		rte_free(dp);
+@@ -734,9 +734,9 @@ trie_create(const char *name, int socket_id,
+ 	dp->number_tbl8s = num_tbl8;
+ 
+ 	snprintf(mem_name, sizeof(mem_name), "TBL8_idxes_%p", dp);
+-	dp->tbl8_pool = rte_zmalloc_socket(mem_name,
++	dp->tbl8_pool = rte_zmalloc_numa(mem_name,
+ 			sizeof(uint32_t) * dp->number_tbl8s,
+-			RTE_CACHE_LINE_SIZE, socket_id);
++			RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (dp->tbl8_pool == NULL) {
+ 		rte_errno = ENOMEM;
+ 		rte_free(dp->tbl8);
+diff --git a/lib/fib/trie.h b/lib/fib/trie.h
+index c34cc2c057..e4a2677865 100644
+--- a/lib/fib/trie.h
++++ b/lib/fib/trie.h
+@@ -137,7 +137,7 @@ void
+ trie_free(void *p);
+ 
+ void *
+-trie_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
++trie_create(const char *name, int numa_id, struct rte_fib6_conf *conf)
+ 	__rte_malloc __rte_dealloc(trie_free, 1);
+ 
+ rte_fib6_lookup_fn_t
 -- 
 2.55.0
 
