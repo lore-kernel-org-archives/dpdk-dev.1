@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1D9606A33D
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B3B606A33D
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=Cu2DKWxs
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=goytAU6B
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 655D342FA9;
-	Tue,  3 Nov 2026 16:20:59 +0100 (CET)
-Received: from mta1.migadu.com (out-209.mta1.migadu.com [95.215.58.209])
- by mails.dpdk.org (Postfix) with ESMTPS id 9347B42FAD
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:20:57 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8042142FB1;
+	Tue,  3 Nov 2026 16:21:04 +0100 (CET)
+Received: from mta0.migadu.com (out-1.mta0.migadu.com [91.218.175.1])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8954B42FA7
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:21:02 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=/ZoT93A+Mz6Bcdat5vgVz7Eoz+vaQ8AaZ7ZUpiT8U0A=; 
+DKIM-Signature: a=rsa-sha256; bh=vl+8DpjN39D7UPI2xDDt7rdGXjy3jDQGAK2B8Ruue+8=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719257; v=1; x=1794324057;
- b=Cu2DKWxsY5foErTrIyHF1jlP0AygoY5zqFDBH7CuyCBx7A0GYStwbQgMa41LBkqgbA7SURfC
- Ne3rQ790mqKbaYyjp+cfG/Rm26v6CLsFznPnAvuYLiQVysMpqxJj2xLISs+H3QvWHFv4G4QjK24
- OMniKGaSQq5wx6ysBICHwKfU=
+ t=1793719262; v=1; x=1794324062;
+ b=goytAU6B9ZnSkQBljZwRwOUvdrwCB0ClORDuHCUyeU5ZgnbAFprGexsWOts9rhYPthzzKEvp
+ 7el86FP0mW8iaCYc4f85XTRVXC4JP+V0HsCXs7ZrG65fCLJSlc0PfPf4w5yrKVtUKhPJseCseyk
+ FmxUJd+UZyI0l2MeT/SPTXuU=
 X-Envelope-To: dev@dpdk.org
-Received: by mta12.migadu.com with ESMTPS id 843a23a5a2740382;
- Tue, 03 Nov 2026 15:20:56 +0000
-X-Mizu-Trace-ID: 843a23a5a2740382
+Received: by mta12.migadu.com with ESMTPS id 01111dd21f98b4bf;
+ Tue, 03 Nov 2026 15:21:02 +0000
+X-Mizu-Trace-ID: 01111dd21f98b4bf
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 177/227] app/test-eventdev: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:15 +0800
-Message-ID: <20261103145306.487255-178-chengwen.feng@linux.dev>
+Subject: [PATCH 178/227] app/test-compress-perf: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:52:16 +0800
+Message-ID: <20261103145306.487255-179-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,325 +62,303 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-eventdev/evt_common.h           |  2 +-
- app/test-eventdev/evt_options.c          |  8 +++---
- app/test-eventdev/evt_options.h          |  2 +-
- app/test-eventdev/test_order_common.c    | 14 +++++-----
- app/test-eventdev/test_perf_common.c     | 34 ++++++++++++------------
- app/test-eventdev/test_pipeline_common.c | 14 +++++-----
- 6 files changed, 37 insertions(+), 37 deletions(-)
+ .../comp_perf_test_common.c                   | 44 +++++++++----------
+ .../comp_perf_test_cyclecount.c               |  6 +--
+ .../comp_perf_test_throughput.c               |  6 +--
+ .../comp_perf_test_verify.c                   |  4 +-
+ app/test-compress-perf/main.c                 | 22 +++++-----
+ 5 files changed, 41 insertions(+), 41 deletions(-)
 
-diff --git a/app/test-eventdev/evt_common.h b/app/test-eventdev/evt_common.h
-index ec824f2454..c6503b736e 100644
---- a/app/test-eventdev/evt_common.h
-+++ b/app/test-eventdev/evt_common.h
-@@ -57,7 +57,7 @@ struct evt_options {
- 	bool wlcores[RTE_MAX_LCORE];
- 	bool crypto_cipher_bit_mode;
- 	int pool_sz;
--	int socket_id;
-+	int numa_id;
- 	int nb_stages;
- 	int verbose_level;
- 	uint8_t dev_id;
-diff --git a/app/test-eventdev/evt_options.c b/app/test-eventdev/evt_options.c
-index 1da0aba386..1a7257cbad 100644
---- a/app/test-eventdev/evt_options.c
-+++ b/app/test-eventdev/evt_options.c
-@@ -25,7 +25,7 @@ evt_options_default(struct evt_options *opt)
- 	opt->dev_id = 0;
- 	strlcpy(opt->test_name, "order_queue", sizeof(opt->test_name));
- 	opt->nb_flows = 1024;
--	opt->socket_id = SOCKET_ID_ANY;
-+	opt->numa_id = RTE_NUMA_ID_ANY;
- 	opt->pool_sz = 16 * 1024;
- 	opt->prod_enq_burst_sz = 0;
- 	opt->wkr_deq_dep = 16;
-@@ -291,7 +291,7 @@ evt_parse_test_name(struct evt_options *opt, const char *arg)
- static int
- evt_parse_socket_id(struct evt_options *opt, const char *arg)
+diff --git a/app/test-compress-perf/comp_perf_test_common.c b/app/test-compress-perf/comp_perf_test_common.c
+index 53685cd57d..a15c26fab3 100644
+--- a/app/test-compress-perf/comp_perf_test_common.c
++++ b/app/test-compress-perf/comp_perf_test_common.c
+@@ -121,19 +121,19 @@ static const struct rte_memzone *
+ comp_perf_make_memzone(const char *name, struct cperf_mem_resources *mem,
+ 		       unsigned int number, size_t size)
  {
--	opt->socket_id = atoi(arg);
-+	opt->numa_id = atoi(arg);
- 	return 0;
- }
+-	unsigned int socket_id = rte_socket_id();
++	unsigned int numa_id = rte_numa_id();
+ 	char mz_name[RTE_MEMZONE_NAMESIZE];
+ 	const struct rte_memzone *memzone;
  
-@@ -482,7 +482,7 @@ usage(char *program)
- 	printf("\t--verbose          : verbose level\n"
- 		"\t--dev              : device id of the event device\n"
- 		"\t--test             : name of the test application to run\n"
--		"\t--socket_id        : socket_id of application resources\n"
-+		"\t--numa_id        : numa_id of application resources\n"
- 		"\t--pool_sz          : pool size of the mempool\n"
- 		"\t--plcores          : list of lcore ids for producers\n"
- 		"\t--wlcores          : list of lcore ids for workers\n"
-@@ -720,7 +720,7 @@ evt_options_dump(struct evt_options *opt)
- 	evt_dump("test", "%s", opt->test_name);
- 	evt_dump("dev", "%d", opt->dev_id);
- 	evt_dump("verbose_level", "%d", opt->verbose_level);
--	evt_dump("socket_id", "%d", opt->socket_id);
-+	evt_dump("numa_id", "%d", opt->numa_id);
- 	evt_dump("pool_sz", "%d", opt->pool_sz);
- 	evt_dump("main lcore", "%d", rte_get_main_lcore());
- 	evt_dump("nb_pkts", "%"PRIu64, opt->nb_pkts);
-diff --git a/app/test-eventdev/evt_options.h b/app/test-eventdev/evt_options.h
-index 4bf712bd19..e4d2e31150 100644
---- a/app/test-eventdev/evt_options.h
-+++ b/app/test-eventdev/evt_options.h
-@@ -24,7 +24,7 @@
- #define EVT_PROD_LCORES          ("plcores")
- #define EVT_WORK_LCORES          ("wlcores")
- #define EVT_NB_FLOWS             ("nb_flows")
--#define EVT_SOCKET_ID            ("socket_id")
-+#define EVT_SOCKET_ID            ("numa_id")
- #define EVT_POOL_SZ              ("pool_sz")
- #define EVT_WKR_DEQ_DEP          ("worker_deq_depth")
- #define EVT_NB_PKTS              ("nb_pkts")
-diff --git a/app/test-eventdev/test_order_common.c b/app/test-eventdev/test_order_common.c
-index c0b47fa1d7..1d1765cea4 100644
---- a/app/test-eventdev/test_order_common.c
-+++ b/app/test-eventdev/test_order_common.c
-@@ -149,8 +149,8 @@ order_test_setup(struct evt_test *test, struct evt_options *opt)
- 		.align = alignof(seqn_t),
- 	};
+ 	snprintf(mz_name, RTE_MEMZONE_NAMESIZE, "%s_s%u_d%u_q%u_%d", name,
+-		 socket_id, mem->dev_id, mem->qp_id, number);
++		 numa_id, mem->dev_id, mem->qp_id, number);
+ 	memzone = rte_memzone_lookup(mz_name);
+ 	if (memzone != NULL && memzone->len != size) {
+ 		rte_memzone_free(memzone);
+ 		memzone = NULL;
+ 	}
+ 	if (memzone == NULL) {
+-		memzone = rte_memzone_reserve_aligned(mz_name, size, socket_id,
++		memzone = rte_memzone_reserve_aligned(mz_name, size, numa_id,
+ 				RTE_MEMZONE_IOVA_CONTIG, RTE_CACHE_LINE_SIZE);
+ 		if (memzone == NULL)
+ 			RTE_LOG(ERR, USER1, "Can't allocate memory zone %s\n",
+@@ -148,9 +148,9 @@ comp_perf_allocate_external_mbufs(struct comp_test_data *test_data,
+ {
+ 	uint32_t i;
  
--	test_order = rte_zmalloc_socket(test->name, sizeof(struct test_order),
--				RTE_CACHE_LINE_SIZE, opt->socket_id);
-+	test_order = rte_zmalloc_numa(test->name, sizeof(struct test_order),
-+				RTE_CACHE_LINE_SIZE, opt->numa_id);
- 	if (test_order  == NULL) {
- 		evt_err("failed to allocate test_order memory");
- 		goto nomem;
-@@ -172,18 +172,18 @@ order_test_setup(struct evt_test *test, struct evt_options *opt)
- 		return -rte_errno;
+-	mem->comp_memzones = rte_zmalloc_socket(NULL,
++	mem->comp_memzones = rte_zmalloc_numa(NULL,
+ 		test_data->total_segs * sizeof(struct rte_memzone *),
+-		0, rte_socket_id());
++		0, rte_numa_id());
+ 
+ 	if (mem->comp_memzones == NULL) {
+ 		RTE_LOG(ERR, USER1,
+@@ -158,9 +158,9 @@ comp_perf_allocate_external_mbufs(struct comp_test_data *test_data,
+ 		return -1;
  	}
  
--	t->producer_flow_seq = rte_zmalloc_socket("test_producer_flow_seq",
-+	t->producer_flow_seq = rte_zmalloc_numa("test_producer_flow_seq",
- 				 sizeof(*t->producer_flow_seq) * opt->nb_flows,
--				RTE_CACHE_LINE_SIZE, opt->socket_id);
-+				RTE_CACHE_LINE_SIZE, opt->numa_id);
+-	mem->decomp_memzones = rte_zmalloc_socket(NULL,
++	mem->decomp_memzones = rte_zmalloc_numa(NULL,
+ 		test_data->total_segs * sizeof(struct rte_memzone *),
+-		0, rte_socket_id());
++		0, rte_numa_id());
  
- 	if (t->producer_flow_seq  == NULL) {
- 		evt_err("failed to allocate t->producer_flow_seq memory");
- 		goto prod_nomem;
+ 	if (mem->decomp_memzones == NULL) {
+ 		RTE_LOG(ERR, USER1,
+@@ -168,9 +168,9 @@ comp_perf_allocate_external_mbufs(struct comp_test_data *test_data,
+ 		return -1;
  	}
  
--	t->expected_flow_seq = rte_zmalloc_socket("test_expected_flow_seq",
-+	t->expected_flow_seq = rte_zmalloc_numa("test_expected_flow_seq",
- 				 sizeof(*t->expected_flow_seq) * opt->nb_flows,
--				RTE_CACHE_LINE_SIZE, opt->socket_id);
-+				RTE_CACHE_LINE_SIZE, opt->numa_id);
+-	mem->comp_buf_infos = rte_zmalloc_socket(NULL,
++	mem->comp_buf_infos = rte_zmalloc_numa(NULL,
+ 		test_data->total_segs * sizeof(struct rte_mbuf_ext_shared_info),
+-		0, rte_socket_id());
++		0, rte_numa_id());
  
- 	if (t->expected_flow_seq  == NULL) {
- 		evt_err("failed to allocate t->expected_flow_seq memory");
-@@ -224,7 +224,7 @@ order_mempool_setup(struct evt_test *test, struct evt_options *opt)
- 	t->pool  = rte_pktmbuf_pool_create(test->name, opt->pool_sz,
- 					256 /* Cache */, 0,
- 					512, /* Use very small mbufs */
--					opt->socket_id);
-+					opt->numa_id);
- 	if (t->pool == NULL) {
- 		evt_err("failed to create mempool");
- 		return -ENOMEM;
-diff --git a/app/test-eventdev/test_perf_common.c b/app/test-eventdev/test_perf_common.c
-index cb69ed7f1b..9556203824 100644
---- a/app/test-eventdev/test_perf_common.c
-+++ b/app/test-eventdev/test_perf_common.c
-@@ -1521,9 +1521,9 @@ perf_event_dev_port_setup(struct evt_test *test, struct evt_options *opt,
- 			p->queue_id = prod * stride;
- 			p->ca.cdev_id = cdev_id;
- 			p->ca.cdev_qp_id = qp_id;
--			p->ca.crypto_sess = rte_zmalloc_socket(
-+			p->ca.crypto_sess = rte_zmalloc_numa(
- 				NULL, sizeof(void *) * t->nb_flows,
--				RTE_CACHE_LINE_SIZE, opt->socket_id);
-+				RTE_CACHE_LINE_SIZE, opt->numa_id);
- 			p->t = t;
- 
- 			ret = perf_event_crypto_adapter_setup(t, p);
-@@ -1649,7 +1649,7 @@ perf_event_dev_port_setup(struct evt_test *test, struct evt_options *opt,
- 		conf.event_dev_id = opt->dev_id;
- 		conf.vector_sz = opt->vector_size;
- 		conf.vector_timeout_ns = opt->vector_tmo_nsec;
--		conf.numa_id = opt->socket_id;
-+		conf.numa_id = opt->numa_id;
- 		conf.vector_mp = t->pool;
- 
- 		conf.ev.sched_type = opt->sched_type_list[0];
-@@ -1934,14 +1934,14 @@ perf_ethdev_setup(struct evt_test *test, struct evt_options *opt)
- 		}
- 
- 		if (rte_eth_rx_queue_setup(i, 0, NB_RX_DESC,
--				rte_socket_id(), NULL, t->pool) < 0) {
-+				rte_numa_id(), NULL, t->pool) < 0) {
- 			evt_err("Failed to setup eth port [%d] rx_queue: %d.",
- 					i, 0);
- 			return -EINVAL;
- 		}
- 
- 		if (rte_eth_tx_queue_setup(i, 0, NB_TX_DESC,
--					rte_socket_id(), NULL) < 0) {
-+					rte_numa_id(), NULL) < 0) {
- 			evt_err("Failed to setup eth port [%d] tx_queue: %d.",
- 					i, 0);
- 			return -EINVAL;
-@@ -2010,7 +2010,7 @@ perf_cryptodev_setup(struct evt_test *test, struct evt_options *opt)
- 	t->ca_op_pool = rte_crypto_op_pool_create(
- 		"crypto_op_pool", opt->crypto_op_type, opt->pool_sz,
- 		128, sizeof(union rte_event_crypto_metadata) + EVT_CRYPTO_MAX_IV_SIZE,
--		rte_socket_id());
-+		rte_numa_id());
- 	if (t->ca_op_pool == NULL) {
- 		evt_err("Failed to create crypto op pool");
- 		return -ENOMEM;
-@@ -2019,7 +2019,7 @@ perf_cryptodev_setup(struct evt_test *test, struct evt_options *opt)
- 	nb_sessions = evt_nr_active_lcores(opt->plcores) * t->nb_flows;
- 	t->ca_asym_sess_pool = rte_cryptodev_asym_session_pool_create(
- 		"ca_asym_sess_pool", nb_sessions, 0,
--		sizeof(union rte_event_crypto_metadata), SOCKET_ID_ANY);
-+		sizeof(union rte_event_crypto_metadata), RTE_NUMA_ID_ANY);
- 	if (t->ca_asym_sess_pool == NULL) {
- 		evt_err("Failed to create sym session pool");
- 		ret = -ENOMEM;
-@@ -2038,7 +2038,7 @@ perf_cryptodev_setup(struct evt_test *test, struct evt_options *opt)
- 
- 	t->ca_sess_pool = rte_cryptodev_sym_session_pool_create(
- 		"ca_sess_pool", nb_sessions, max_session_size, 0,
--		sizeof(union rte_event_crypto_metadata), SOCKET_ID_ANY);
-+		sizeof(union rte_event_crypto_metadata), RTE_NUMA_ID_ANY);
- 	if (t->ca_sess_pool == NULL) {
- 		evt_err("Failed to create sym session pool");
- 		ret = -ENOMEM;
-@@ -2050,7 +2050,7 @@ perf_cryptodev_setup(struct evt_test *test, struct evt_options *opt)
- 		nb_elem = RTE_MAX(512U, nb_elem);
- 		nb_elem += evt_nr_active_lcores(opt->wlcores) * 32;
- 		t->ca_vector_pool = rte_event_vector_pool_create("vector_pool", nb_elem, 32,
--				opt->vector_size, opt->socket_id);
-+				opt->vector_size, opt->numa_id);
- 		if (t->ca_vector_pool == NULL) {
- 			evt_err("Failed to create event vector pool");
- 			ret = -ENOMEM;
-@@ -2097,7 +2097,7 @@ perf_cryptodev_setup(struct evt_test *test, struct evt_options *opt)
- 		for (qp_id = 0; qp_id < conf.nb_queue_pairs; qp_id++) {
- 			ret = rte_cryptodev_queue_pair_setup(
- 				cdev_id, qp_id, &qp_conf,
--				rte_cryptodev_socket_id(cdev_id));
-+				rte_cryptodev_numa_id(cdev_id));
- 			if (ret) {
- 				evt_err("Failed to setup queue pairs on cryptodev %u\n",
- 					cdev_id);
-@@ -2237,7 +2237,7 @@ perf_mempool_setup(struct evt_test *test, struct evt_options *opt)
- 				cache_sz, /* cache size*/
- 				0, NULL, NULL,
- 				perf_elt_init, /* obj constructor */
--				NULL, opt->socket_id, 0); /* flags */
-+				NULL, opt->numa_id, 0); /* flags */
- 	} else if (opt->prod_type == EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR &&
- 		   opt->crypto_op_type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC) {
- 		t->pool = rte_mempool_create(test->name, /* mempool name */
-@@ -2247,7 +2247,7 @@ perf_mempool_setup(struct evt_test *test, struct evt_options *opt)
- 				cache_sz, /* cache size*/
- 				0, NULL, NULL,
- 				NULL, /* obj constructor */
--				NULL, opt->socket_id, 0); /* flags */
-+				NULL, opt->numa_id, 0); /* flags */
- 	} else if (opt->prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
- 		t->pool = rte_mempool_create(test->name,   /* mempool name */
- 					     opt->pool_sz, /* number of elements*/
-@@ -2255,17 +2255,17 @@ perf_mempool_setup(struct evt_test *test, struct evt_options *opt)
- 						     (sizeof(struct rte_dma_sge) * 2),
- 					     cache_sz,		       /* cache size*/
- 					     0, NULL, NULL, NULL,      /* obj constructor */
--					     NULL, opt->socket_id, 0); /* flags */
-+					     NULL, opt->numa_id, 0); /* flags */
- 	} else if (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR) {
- 		t->pool = rte_event_vector_pool_create(test->name, opt->pool_sz, cache_sz,
--						       opt->vector_size, opt->socket_id);
-+						       opt->vector_size, opt->numa_id);
- 	} else {
- 		t->pool = rte_pktmbuf_pool_create(test->name, /* mempool name */
- 				opt->pool_sz, /* number of elements*/
- 				cache_sz, /* cache size*/
- 				0,
- 				RTE_MBUF_DEFAULT_BUF_SIZE,
--				opt->socket_id); /* flags */
-+				opt->numa_id); /* flags */
+ 	if (mem->comp_buf_infos == NULL) {
+ 		RTE_LOG(ERR, USER1,
+@@ -178,9 +178,9 @@ comp_perf_allocate_external_mbufs(struct comp_test_data *test_data,
+ 		return -1;
  	}
  
- 	if (t->pool == NULL) {
-@@ -2290,8 +2290,8 @@ perf_test_setup(struct evt_test *test, struct evt_options *opt)
- {
- 	void *test_perf;
+-	mem->decomp_buf_infos = rte_zmalloc_socket(NULL,
++	mem->decomp_buf_infos = rte_zmalloc_numa(NULL,
+ 		test_data->total_segs * sizeof(struct rte_mbuf_ext_shared_info),
+-		0, rte_socket_id());
++		0, rte_numa_id());
  
--	test_perf = rte_zmalloc_socket(test->name, sizeof(struct test_perf),
--				RTE_CACHE_LINE_SIZE, opt->socket_id);
-+	test_perf = rte_zmalloc_numa(test->name, sizeof(struct test_perf),
-+				RTE_CACHE_LINE_SIZE, opt->numa_id);
- 	if (test_perf  == NULL) {
- 		evt_err("failed to allocate test_perf memory");
- 		goto nomem;
-diff --git a/app/test-eventdev/test_pipeline_common.c b/app/test-eventdev/test_pipeline_common.c
-index b6af0ad987..56d648c4ea 100644
---- a/app/test-eventdev/test_pipeline_common.c
-+++ b/app/test-eventdev/test_pipeline_common.c
-@@ -398,7 +398,7 @@ pipeline_ethdev_setup(struct evt_test *test, struct evt_options *opt)
+ 	if (mem->decomp_buf_infos == NULL) {
+ 		RTE_LOG(ERR, USER1,
+@@ -272,7 +272,7 @@ comp_perf_allocate_memory(struct comp_test_data *test_data,
+ 				test_data->total_segs,
+ 				0, 0,
+ 				comp_mbuf_size,
+-				rte_socket_id());
++				rte_numa_id());
+ 	if (mem->comp_buf_pool == NULL) {
+ 		RTE_LOG(ERR, USER1, "Mbuf mempool could not be created\n");
+ 		return -1;
+@@ -284,7 +284,7 @@ comp_perf_allocate_memory(struct comp_test_data *test_data,
+ 				test_data->total_segs,
+ 				0, 0,
+ 				decomp_mbuf_size,
+-				rte_socket_id());
++				rte_numa_id());
+ 	if (mem->decomp_buf_pool == NULL) {
+ 		RTE_LOG(ERR, USER1, "Mbuf mempool could not be created\n");
+ 		return -1;
+@@ -299,7 +299,7 @@ comp_perf_allocate_memory(struct comp_test_data *test_data,
+ 	/* one mempool for both src and dst mbufs */
+ 	mem->op_pool = rte_comp_op_pool_create(pool_name,
+ 				mem->total_bufs * 2,
+-				0, 0, rte_socket_id());
++				0, 0, rte_numa_id());
+ 	if (mem->op_pool == NULL) {
+ 		RTE_LOG(ERR, USER1, "Comp op mempool could not be created\n");
+ 		return -1;
+@@ -317,34 +317,34 @@ comp_perf_allocate_memory(struct comp_test_data *test_data,
+ 		decomp_data_size = output_data_sz;
+ 	}
  
- 		for (j = 0; j < opt->eth_queues; j++) {
- 			if (rte_eth_rx_queue_setup(
--				    i, j, NB_RX_DESC, rte_socket_id(), &rx_conf,
-+				    i, j, NB_RX_DESC, rte_numa_id(), &rx_conf,
- 				    opt->per_port_pool ? t->pool[i] :
- 							      t->pool[0]) < 0) {
- 				evt_err("Failed to setup eth port [%d] rx_queue: %d.",
-@@ -408,7 +408,7 @@ pipeline_ethdev_setup(struct evt_test *test, struct evt_options *opt)
- 		}
+-	mem->compressed_data = rte_zmalloc_socket(NULL, comp_data_size, 0,
+-						  rte_socket_id());
++	mem->compressed_data = rte_zmalloc_numa(NULL, comp_data_size, 0,
++						  rte_numa_id());
+ 	if (mem->compressed_data == NULL) {
+ 		RTE_LOG(ERR, USER1, "Memory to hold the data from the input "
+ 				"file could not be allocated\n");
+ 		return -1;
+ 	}
  
- 		if (rte_eth_tx_queue_setup(i, 0, NB_TX_DESC,
--					rte_socket_id(), NULL) < 0) {
-+					rte_numa_id(), NULL) < 0) {
- 			evt_err("Failed to setup eth port [%d] tx_queue: %d.",
- 					i, 0);
- 			return -EINVAL;
-@@ -481,7 +481,7 @@ pipeline_event_rx_adapter_setup(struct evt_options *opt, uint8_t stride,
- 		nb_elem += evt_nr_active_lcores(opt->wlcores) * 32;
- 		vector_pool = rte_event_vector_pool_create(
- 			"vector_pool", nb_elem, 32, opt->vector_size,
--			opt->socket_id);
-+			opt->numa_id);
- 		if (vector_pool == NULL) {
- 			evt_err("failed to create event vector pool");
- 			return -ENOMEM;
-@@ -776,7 +776,7 @@ pipeline_mempool_setup(struct evt_test *test, struct evt_options *opt)
- 				name,	      /* mempool name */
- 				opt->pool_sz, /* number of elements*/
- 				0,	      /* cache size*/
--				0, opt->mbuf_sz, opt->socket_id); /* flags */
-+				0, opt->mbuf_sz, opt->numa_id); /* flags */
+-	mem->decompressed_data = rte_zmalloc_socket(NULL, decomp_data_size, 0,
+-						    rte_socket_id());
++	mem->decompressed_data = rte_zmalloc_numa(NULL, decomp_data_size, 0,
++						    rte_numa_id());
+ 	if (mem->decompressed_data == NULL) {
+ 		RTE_LOG(ERR, USER1, "Memory to hold the data from the input "
+ 				"file could not be allocated\n");
+ 		return -1;
+ 	}
  
- 			if (t->pool[i] == NULL) {
- 				evt_err("failed to create mempool %s", name);
-@@ -790,7 +790,7 @@ pipeline_mempool_setup(struct evt_test *test, struct evt_options *opt)
- 			test->name,   /* mempool name */
- 			opt->pool_sz, /* number of elements*/
- 			0,	      /* cache size*/
--			0, opt->mbuf_sz, opt->socket_id); /* flags */
-+			0, opt->mbuf_sz, opt->numa_id); /* flags */
+-	mem->comp_bufs = rte_zmalloc_socket(NULL,
++	mem->comp_bufs = rte_zmalloc_numa(NULL,
+ 			mem->total_bufs * sizeof(struct rte_mbuf *),
+-			0, rte_socket_id());
++			0, rte_numa_id());
+ 	if (mem->comp_bufs == NULL) {
+ 		RTE_LOG(ERR, USER1, "Memory to hold the compression mbufs"
+ 				" could not be allocated\n");
+ 		return -1;
+ 	}
  
- 		if (t->pool[0] == NULL) {
- 			evt_err("failed to create mempool");
-@@ -821,9 +821,9 @@ pipeline_test_setup(struct evt_test *test, struct evt_options *opt)
- {
- 	void *test_pipeline;
+-	mem->decomp_bufs = rte_zmalloc_socket(NULL,
++	mem->decomp_bufs = rte_zmalloc_numa(NULL,
+ 			mem->total_bufs * sizeof(struct rte_mbuf *),
+-			0, rte_socket_id());
++			0, rte_numa_id());
+ 	if (mem->decomp_bufs == NULL) {
+ 		RTE_LOG(ERR, USER1, "Memory to hold the decompression mbufs"
+ 				" could not be allocated\n");
+diff --git a/app/test-compress-perf/comp_perf_test_cyclecount.c b/app/test-compress-perf/comp_perf_test_cyclecount.c
+index 64e8faa55a..cd4de6c0ff 100644
+--- a/app/test-compress-perf/comp_perf_test_cyclecount.c
++++ b/app/test-compress-perf/comp_perf_test_cyclecount.c
+@@ -176,10 +176,10 @@ main_loop(struct cperf_cyclecount_ctx *ctx, enum rte_comp_xform_type type)
+ 	ctx->ops_deq_retries = 0;
  
--	test_pipeline = rte_zmalloc_socket(test->name,
-+	test_pipeline = rte_zmalloc_numa(test->name,
- 			sizeof(struct test_pipeline), RTE_CACHE_LINE_SIZE,
--			opt->socket_id);
-+			opt->numa_id);
- 	if (test_pipeline  == NULL) {
- 		evt_err("failed to allocate test_pipeline memory");
- 		goto nomem;
+ 	/* one array for both enqueue and dequeue */
+-	ops = rte_zmalloc_socket(NULL,
++	ops = rte_zmalloc_numa(NULL,
+ 		(test_data->burst_sz + mem->total_bufs) *
+ 		sizeof(struct rte_comp_op *),
+-		0, rte_socket_id());
++		0, rte_numa_id());
+ 
+ 	if (ops == NULL) {
+ 		RTE_LOG(ERR, USER1,
+@@ -510,7 +510,7 @@ cperf_cyclecount_test_runner(void *test_ctx)
+ 			ctx->ver.options->driver_name,
+ 			rte_compressdev_name_get(ctx->ver.mem.dev_id),
+ 			ctx->ver.mem.dev_id,
+-			rte_compressdev_socket_id(ctx->ver.mem.dev_id),
++			rte_compressdev_numa_id(ctx->ver.mem.dev_id),
+ 			ctx->ver.mem.qp_id);
+ 
+ 	/*
+diff --git a/app/test-compress-perf/comp_perf_test_throughput.c b/app/test-compress-perf/comp_perf_test_throughput.c
+index 089d19c4d4..057e3574bb 100644
+--- a/app/test-compress-perf/comp_perf_test_throughput.c
++++ b/app/test-compress-perf/comp_perf_test_throughput.c
+@@ -68,9 +68,9 @@ main_loop(struct cperf_benchmark_ctx *ctx, enum rte_comp_xform_type type)
+ 		return -1;
+ 	}
+ 
+-	ops = rte_zmalloc_socket(NULL,
++	ops = rte_zmalloc_numa(NULL,
+ 		2 * mem->total_bufs * sizeof(struct rte_comp_op *),
+-		0, rte_socket_id());
++		0, rte_numa_id());
+ 
+ 	if (ops == NULL) {
+ 		RTE_LOG(ERR, USER1,
+@@ -357,7 +357,7 @@ cperf_throughput_test_runner(void *test_ctx)
+ 			ctx->ver.options->driver_name,
+ 			rte_compressdev_name_get(ctx->ver.mem.dev_id),
+ 			ctx->ver.mem.dev_id,
+-			rte_compressdev_socket_id(ctx->ver.mem.dev_id),
++			rte_compressdev_numa_id(ctx->ver.mem.dev_id),
+ 			ctx->ver.mem.qp_id);
+ 
+ 	/*
+diff --git a/app/test-compress-perf/comp_perf_test_verify.c b/app/test-compress-perf/comp_perf_test_verify.c
+index 66425d7e3c..d7e9fd143c 100644
+--- a/app/test-compress-perf/comp_perf_test_verify.c
++++ b/app/test-compress-perf/comp_perf_test_verify.c
+@@ -88,9 +88,9 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
+ 	}
+ 
+ 
+-	ops = rte_zmalloc_socket(NULL,
++	ops = rte_zmalloc_numa(NULL,
+ 		2 * mem->total_bufs * sizeof(struct rte_comp_op *),
+-		0, rte_socket_id());
++		0, rte_numa_id());
+ 
+ 	if (ops == NULL) {
+ 		RTE_LOG(ERR, USER1,
+diff --git a/app/test-compress-perf/main.c b/app/test-compress-perf/main.c
+index bc2b185da4..eb104d9f04 100644
+--- a/app/test-compress-perf/main.c
++++ b/app/test-compress-perf/main.c
+@@ -196,7 +196,7 @@ comp_perf_initialize_compressdev(struct comp_test_data *td,
+ 		cdev_id = enabled_cdevs[i];
+ 
+ 		struct rte_compressdev_info cdev_info;
+-		int socket_id = rte_compressdev_socket_id(cdev_id);
++		int numa_id = rte_compressdev_numa_id(cdev_id);
+ 
+ 		rte_compressdev_info_get(cdev_id, &cdev_info);
+ 		if (cdev_info.max_nb_queue_pairs &&
+@@ -216,7 +216,7 @@ comp_perf_initialize_compressdev(struct comp_test_data *td,
+ 
+ 		/* Configure compressdev */
+ 		struct rte_compressdev_config config = {
+-			.socket_id = socket_id,
++			.numa_id = numa_id,
+ 			.nb_queue_pairs = nb_lcores > td->nb_qps
+ 					? td->nb_qps : nb_lcores,
+ 			.max_nb_priv_xforms = NUM_MAX_XFORMS,
+@@ -231,7 +231,7 @@ comp_perf_initialize_compressdev(struct comp_test_data *td,
+ 
+ 		for (j = 0; j < td->nb_qps; j++) {
+ 			ret = rte_compressdev_queue_pair_setup(cdev_id, j,
+-					NUM_MAX_INFLIGHT_OPS, socket_id);
++					NUM_MAX_INFLIGHT_OPS, numa_id);
+ 			if (ret < 0) {
+ 				RTE_LOG(ERR, USER1,
+ 			      "Failed to setup queue pair %u on compressdev %u",
+@@ -291,8 +291,8 @@ comp_perf_dump_input_data(struct comp_test_data *td)
+ 		goto end;
+ 	}
+ 
+-	td->input_data = rte_zmalloc_socket(NULL,
+-				td->input_data_sz, 0, rte_socket_id());
++	td->input_data = rte_zmalloc_numa(NULL,
++				td->input_data_sz, 0, rte_numa_id());
+ 
+ 	if (td->input_data == NULL) {
+ 		RTE_LOG(ERR, USER1, "Memory to hold the data from the input "
+@@ -375,8 +375,8 @@ comp_perf_dump_dictionary_data(struct comp_test_data *td)
+ 		goto end;
+ 	}
+ 
+-	td->dictionary_data = rte_zmalloc_socket(NULL,
+-				td->dictionary_data_sz, 0, rte_socket_id());
++	td->dictionary_data = rte_zmalloc_numa(NULL,
++				td->dictionary_data_sz, 0, rte_numa_id());
+ 
+ 	if (td->dictionary_data == NULL) {
+ 		RTE_LOG(ERR, USER1, "Memory to hold the data from the dictionary "
+@@ -457,12 +457,12 @@ main(int argc, char **argv)
+ 	argc -= ret;
+ 	argv += ret;
+ 
+-	test_data = rte_zmalloc_socket(NULL, sizeof(struct comp_test_data),
+-					0, rte_socket_id());
++	test_data = rte_zmalloc_numa(NULL, sizeof(struct comp_test_data),
++					0, rte_numa_id());
+ 
+ 	if (test_data == NULL)
+ 		rte_exit(EXIT_FAILURE, "Cannot reserve memory in socket %d\n",
+-				rte_socket_id());
++				rte_numa_id());
+ 
+ 	comp_perf_register_cleanup_on_signal();
+ 
+@@ -510,7 +510,7 @@ main(int argc, char **argv)
+ 	else
+ 		test_data->level = test_data->level_lst.list[0];
+ 
+-	printf("\nApp uses socket: %u\n", rte_socket_id());
++	printf("\nApp uses socket: %u\n", rte_numa_id());
+ 	printf("Burst size = %u\n", test_data->burst_sz);
+ 	printf("Input data size = %zu\n", test_data->input_data_sz);
+ 	if (test_data->test == CPERF_TEST_TYPE_PMDCC)
 -- 
 2.55.0
 
