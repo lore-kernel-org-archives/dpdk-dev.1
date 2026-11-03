@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7017606A32F
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F627606A782
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=bNUJCIS8
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=NKbyrNZj
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A43474161A;
-	Tue,  3 Nov 2026 15:55:58 +0100 (CET)
-Received: from mta1.migadu.com (out-26.mta1.migadu.com [95.215.58.26])
- by mails.dpdk.org (Postfix) with ESMTPS id C29D040430
- for <dev@dpdk.org>; Tue,  3 Nov 2026 15:55:56 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 68DA54114B;
+	Tue,  3 Nov 2026 15:56:05 +0100 (CET)
+Received: from mta1.migadu.com (out-38.mta1.migadu.com [95.215.58.38])
+ by mails.dpdk.org (Postfix) with ESMTPS id 756EE40430
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 15:56:04 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=xt3ZAwgQI0kzG0tIWCbuTooC9jF9nfMXfgdcQzszoJc=; 
+DKIM-Signature: a=rsa-sha256; bh=pLyGB8Q56Xy/7Hi0NQs16ipmNdBcYDI1JETYyoea8uQ=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793717756; v=1; x=1794322556;
- b=bNUJCIS8tidf9s2iiIB0rvuqnH3ndBRiOdNHIgROjFkHCjyO63EHgim5RJk0d+p5DvCvLB2v
- ASeJtu/Kpd8d1mRt85jxmyJ5NPj+An49kAn04EP6QBGLxTy7+MSVtK65y57U+8oYMapxHCVMjFD
- 1YuYVb9HGxv+v/AfVFcHhcjY=
+ t=1793717764; v=1; x=1794322564;
+ b=NKbyrNZjXNKL2/Cdqq3I36JvvilxBbXDSwWLC9HGaXcIkleOZrvG+KtiUyAigrBqenwaS6uf
+ cP9gNUWsvUItsNVXHFJcS4TL7n0mFSxSn+72P0CxaqG06wcsvEbbDTK442iu5n4ZjMC1nJZ4j5z
+ JFD9TCefNjQ6yAZWAYQ+QK6w=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id 08df29b4d640cb2e;
- Tue, 03 Nov 2026 14:55:56 +0000
-X-Mizu-Trace-ID: 08df29b4d640cb2e
+Received: by mta10.migadu.com with ESMTPS id f01a88f5c8434a2d;
+ Tue, 03 Nov 2026 14:56:03 +0000
+X-Mizu-Trace-ID: f01a88f5c8434a2d
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 018/227] rib: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:49:36 +0800
-Message-ID: <20261103145306.487255-19-chengwen.feng@linux.dev>
+Subject: [PATCH 019/227] lpm: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:49:37 +0800
+Message-ID: <20261103145306.487255-20-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,125 +63,156 @@ rte_zmalloc_numa(), rte_numa_id() and RTE_NUMA_ID_ANY.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- lib/rib/rte_rib.c  | 8 ++++----
- lib/rib/rte_rib.h  | 6 +++---
- lib/rib/rte_rib6.c | 8 ++++----
- lib/rib/rte_rib6.h | 6 +++---
- 4 files changed, 14 insertions(+), 14 deletions(-)
+ lib/lpm/rte_lpm.c  | 16 ++++++++--------
+ lib/lpm/rte_lpm.h  |  6 +++---
+ lib/lpm/rte_lpm6.c | 10 +++++-----
+ lib/lpm/rte_lpm6.h |  6 +++---
+ 4 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
-index 046db131ca..e6cf27b68e 100644
---- a/lib/rib/rte_rib.c
-+++ b/lib/rib/rte_rib.c
-@@ -410,7 +410,7 @@ rte_rib_set_nh(struct rte_rib_node *node, uint64_t nh)
- 
- RTE_EXPORT_SYMBOL(rte_rib_create)
- struct rte_rib *
--rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
-+rte_rib_create(const char *name, int numa_id, const struct rte_rib_conf *conf)
+diff --git a/lib/lpm/rte_lpm.c b/lib/lpm/rte_lpm.c
+index 0d1afe0ca1..8bee4be101 100644
+--- a/lib/lpm/rte_lpm.c
++++ b/lib/lpm/rte_lpm.c
+@@ -149,7 +149,7 @@ rte_lpm_find_existing(const char *name)
+  */
+ RTE_EXPORT_SYMBOL(rte_lpm_create)
+ struct rte_lpm *
+-rte_lpm_create(const char *name, int socket_id,
++rte_lpm_create(const char *name, int numa_id,
+ 		const struct rte_lpm_config *config)
  {
- 	char mem_name[RTE_RIB_NAMESIZE];
- 	struct rte_rib *rib = NULL;
-@@ -427,7 +427,7 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
- 	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
- 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
- 		sizeof(struct rte_rib_node) + conf->ext_sz, 0, 0,
--		NULL, NULL, NULL, NULL, socket_id, 0);
-+		NULL, NULL, NULL, NULL, numa_id, 0);
+ 	char mem_name[RTE_LPM_NAMESIZE + sizeof("LPM_")];
+@@ -164,7 +164,7 @@ rte_lpm_create(const char *name, int socket_id,
+ 	RTE_BUILD_BUG_ON(sizeof(struct rte_lpm_tbl_entry) != 4);
  
- 	if (node_pool == NULL) {
- 		RIB_LOG(ERR,
-@@ -462,8 +462,8 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
+ 	/* Check user arguments. */
+-	if ((name == NULL) || (socket_id < -1) || (config->max_rules == 0)
++	if ((name == NULL) || (numa_id < -1) || (config->max_rules == 0)
+ 			|| config->number_tbl8s > RTE_LPM_MAX_TBL8_NUM_GROUPS) {
+ 		rte_errno = EINVAL;
+ 		return NULL;
+@@ -206,8 +206,8 @@ rte_lpm_create(const char *name, int socket_id,
  	}
  
- 	/* Allocate memory to store the RIB data structures. */
--	rib = rte_zmalloc_socket(mem_name,
--		sizeof(struct rte_rib),	RTE_CACHE_LINE_SIZE, socket_id);
-+	rib = rte_zmalloc_numa(mem_name,
-+		sizeof(struct rte_rib),	RTE_CACHE_LINE_SIZE, numa_id);
- 	if (unlikely(rib == NULL)) {
- 		RIB_LOG(ERR, "RIB %s memory allocation failed", name);
- 		rte_errno = ENOMEM;
-diff --git a/lib/rib/rte_rib.h b/lib/rib/rte_rib.h
-index c325b3e361..2d3d965d68 100644
---- a/lib/rib/rte_rib.h
-+++ b/lib/rib/rte_rib.h
-@@ -246,8 +246,8 @@ rte_rib_free(struct rte_rib *rib);
-  *
-  * @param name
-  *  RIB name
-- * @param socket_id
-- *  NUMA socket ID for RIB table memory allocation
-+ * @param numa_id
-+ *  NUMA node ID for RIB table memory allocation
-  * @param conf
-  *  Structure containing the configuration
-  * @return
-@@ -255,7 +255,7 @@ rte_rib_free(struct rte_rib *rib);
-  *  NULL otherwise with rte_errno indicating reason for failure.
-  */
- struct rte_rib *
--rte_rib_create(const char *name, int socket_id,
-+rte_rib_create(const char *name, int numa_id,
- 	       const struct rte_rib_conf *conf)
- 	__rte_malloc __rte_dealloc(rte_rib_free, 1);
- 
-diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
-index 918ddbdfd3..834ad08dad 100644
---- a/lib/rib/rte_rib6.c
-+++ b/lib/rib/rte_rib6.c
-@@ -472,7 +472,7 @@ rte_rib6_set_nh(struct rte_rib6_node *node, uint64_t nh)
- 
- RTE_EXPORT_SYMBOL(rte_rib6_create)
- struct rte_rib6 *
--rte_rib6_create(const char *name, int socket_id,
-+rte_rib6_create(const char *name, int numa_id,
- 		const struct rte_rib6_conf *conf)
- {
- 	char mem_name[RTE_RIB6_NAMESIZE];
-@@ -490,7 +490,7 @@ rte_rib6_create(const char *name, int socket_id,
- 	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
- 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
- 		sizeof(struct rte_rib6_node) + conf->ext_sz, 0, 0,
--		NULL, NULL, NULL, NULL, socket_id, 0);
-+		NULL, NULL, NULL, NULL, numa_id, 0);
- 
- 	if (node_pool == NULL) {
- 		RIB_LOG(ERR,
-@@ -525,8 +525,8 @@ rte_rib6_create(const char *name, int socket_id,
+ 	/* Allocate memory to store the LPM data structures. */
+-	i_lpm = rte_zmalloc_socket(mem_name, mem_size,
+-			RTE_CACHE_LINE_SIZE, socket_id);
++	i_lpm = rte_zmalloc_numa(mem_name, mem_size,
++			RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (i_lpm == NULL) {
+ 		LPM_LOG(ERR, "LPM memory allocation failed");
+ 		rte_free(te);
+@@ -215,8 +215,8 @@ rte_lpm_create(const char *name, int socket_id,
+ 		goto exit;
  	}
  
- 	/* Allocate memory to store the RIB6 data structures. */
--	rib = rte_zmalloc_socket(mem_name,
--		sizeof(struct rte_rib6), RTE_CACHE_LINE_SIZE, socket_id);
-+	rib = rte_zmalloc_numa(mem_name,
-+		sizeof(struct rte_rib6), RTE_CACHE_LINE_SIZE, numa_id);
- 	if (unlikely(rib == NULL)) {
- 		RIB_LOG(ERR, "RIB6 %s memory allocation failed", name);
- 		rte_errno = ENOMEM;
-diff --git a/lib/rib/rte_rib6.h b/lib/rib/rte_rib6.h
-index e3fb464ae6..83ac8aa4a3 100644
---- a/lib/rib/rte_rib6.h
-+++ b/lib/rib/rte_rib6.h
-@@ -235,8 +235,8 @@ rte_rib6_free(struct rte_rib6 *rib);
+-	i_lpm->rules_tbl = rte_zmalloc_socket(NULL,
+-			(size_t)rules_size, RTE_CACHE_LINE_SIZE, socket_id);
++	i_lpm->rules_tbl = rte_zmalloc_numa(NULL,
++			(size_t)rules_size, RTE_CACHE_LINE_SIZE, numa_id);
+ 
+ 	if (i_lpm->rules_tbl == NULL) {
+ 		LPM_LOG(ERR, "LPM rules_tbl memory allocation failed");
+@@ -227,8 +227,8 @@ rte_lpm_create(const char *name, int socket_id,
+ 		goto exit;
+ 	}
+ 
+-	i_lpm->lpm.tbl8 = rte_zmalloc_socket(NULL,
+-			(size_t)tbl8s_size, RTE_CACHE_LINE_SIZE, socket_id);
++	i_lpm->lpm.tbl8 = rte_zmalloc_numa(NULL,
++			(size_t)tbl8s_size, RTE_CACHE_LINE_SIZE, numa_id);
+ 
+ 	if (i_lpm->lpm.tbl8 == NULL) {
+ 		LPM_LOG(ERR, "LPM tbl8 memory allocation failed");
+diff --git a/lib/lpm/rte_lpm.h b/lib/lpm/rte_lpm.h
+index bcd3da9706..720e944d77 100644
+--- a/lib/lpm/rte_lpm.h
++++ b/lib/lpm/rte_lpm.h
+@@ -167,8 +167,8 @@ rte_lpm_free(struct rte_lpm *lpm);
   *
   * @param name
-  *  RIB name
+  *   LPM object name
 - * @param socket_id
-- *  NUMA socket ID for RIB table memory allocation
+- *   NUMA socket ID for LPM table memory allocation
 + * @param numa_id
-+ *  NUMA node ID for RIB table memory allocation
-  * @param conf
-  *  Structure containing the configuration
++ *   NUMA node ID for LPM table memory allocation
+  * @param config
+  *   Structure containing the configuration
   * @return
-@@ -244,7 +244,7 @@ rte_rib6_free(struct rte_rib6 *rib);
-  *  NULL otherwise with rte_errno indicating reason for failure.
+@@ -183,7 +183,7 @@ rte_lpm_free(struct rte_lpm *lpm);
+  *    - ENAMETOOLONG - LPM object name greater than RTE_LPM_NAMESIZE
   */
- struct rte_rib6 *
--rte_rib6_create(const char *name, int socket_id,
-+rte_rib6_create(const char *name, int numa_id,
- 		const struct rte_rib6_conf *conf)
- 	__rte_malloc __rte_dealloc(rte_rib6_free, 1);
+ struct rte_lpm *
+-rte_lpm_create(const char *name, int socket_id,
++rte_lpm_create(const char *name, int numa_id,
+ 	       const struct rte_lpm_config *config)
+ 	__rte_malloc __rte_dealloc(rte_lpm_free, 1);
+ 
+diff --git a/lib/lpm/rte_lpm6.c b/lib/lpm/rte_lpm6.c
+index 5eb2f3761d..413ac4d464 100644
+--- a/lib/lpm/rte_lpm6.c
++++ b/lib/lpm/rte_lpm6.c
+@@ -210,7 +210,7 @@ rebuild_lpm(struct rte_lpm6 *lpm)
+  */
+ RTE_EXPORT_SYMBOL(rte_lpm6_create)
+ struct rte_lpm6 *
+-rte_lpm6_create(const char *name, int socket_id,
++rte_lpm6_create(const char *name, int numa_id,
+ 		const struct rte_lpm6_config *config)
+ {
+ 	char mem_name[RTE_LPM6_NAMESIZE];
+@@ -229,7 +229,7 @@ rte_lpm6_create(const char *name, int socket_id,
+ 		sizeof(uint32_t) != 0);
+ 
+ 	/* Check user arguments. */
+-	if ((name == NULL) || (socket_id < -1) || (config == NULL) ||
++	if ((name == NULL) || (numa_id < -1) || (config == NULL) ||
+ 			(config->max_rules == 0) ||
+ 			config->number_tbl8s > RTE_LPM6_TBL8_MAX_NUM_GROUPS) {
+ 		rte_errno = EINVAL;
+@@ -246,7 +246,7 @@ rte_lpm6_create(const char *name, int socket_id,
+ 		.hash_func_init_val = 0,
+ 		.name = mem_name,
+ 		.reserved = 0,
+-		.numa_id = socket_id,
++		.numa_id = numa_id,
+ 		.extra_flag = 0
+ 	};
+ 
+@@ -308,8 +308,8 @@ rte_lpm6_create(const char *name, int socket_id,
+ 	}
+ 
+ 	/* Allocate memory to store the LPM data structures. */
+-	lpm = rte_zmalloc_socket(mem_name, (size_t)mem_size,
+-			RTE_CACHE_LINE_SIZE, socket_id);
++	lpm = rte_zmalloc_numa(mem_name, (size_t)mem_size,
++			RTE_CACHE_LINE_SIZE, numa_id);
+ 
+ 	if (lpm == NULL) {
+ 		LPM_LOG(ERR, "LPM memory allocation failed");
+diff --git a/lib/lpm/rte_lpm6.h b/lib/lpm/rte_lpm6.h
+index c5928b9d88..91a385b7c1 100644
+--- a/lib/lpm/rte_lpm6.h
++++ b/lib/lpm/rte_lpm6.h
+@@ -45,8 +45,8 @@ rte_lpm6_free(struct rte_lpm6 *lpm);
+  *
+  * @param name
+  *   LPM object name
+- * @param socket_id
+- *   NUMA socket ID for LPM table memory allocation
++ * @param numa_id
++ *   NUMA node ID for LPM table memory allocation
+  * @param config
+  *   Structure containing the configuration
+  * @return
+@@ -60,7 +60,7 @@ rte_lpm6_free(struct rte_lpm6 *lpm);
+  *    - ENOMEM - no appropriate memory area found in which to create memzone
+  */
+ struct rte_lpm6 *
+-rte_lpm6_create(const char *name, int socket_id,
++rte_lpm6_create(const char *name, int numa_id,
+ 		const struct rte_lpm6_config *config)
+ 	__rte_malloc __rte_dealloc(rte_lpm6_free, 1);
  
 -- 
 2.55.0
