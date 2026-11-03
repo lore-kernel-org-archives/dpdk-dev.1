@@ -2,54 +2,57 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB25606A324
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 06:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC85606A324
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 07:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=N2baIe82
+	dkim=pass (1024-bit key, unprotected) header.d=h-partners.com header.i=@h-partners.com header.a=rsa-sha256 header.s=dkim header.b=ppG/bAd9
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D995941060;
-	Tue,  3 Nov 2026 07:49:42 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTPS id 478E340278;
- Tue,  3 Nov 2026 07:49:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793688582; x=1825224582;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=ebzX+96N0s8oXWSoMCfhtkmGOiQQ3NTGyhwMT+39z4o=;
- b=N2baIe82X1BrJ7S9kv+TgU3IdLa0WWrffu7ArP+MzXjS1e4ifGyYpPSJ
- RafZecWz6Kgm6nQjm6iYBwY+czzVE4WqcP6y3ulCZcacoCT3k1Pun0Rvr
- 8g0MzUf6pYDZyRSRtGIjgdVgGraN79OL45gq2TNQe6kG9ic+uvXssZDY+
- pEbQUlZNM4NdYrBMGX9etcSA5ffatv69oIUePdvIVONNiwg2vrVDIfOZG
- JhxBtTBG8feauefpPT9FXMLMddB5PYXin66IvuX/rCGvVTsWvyI0S0SzC
- yjaAjSPh3rPrxa/AcJrEZ1C45m7jTtjEFQeGQAtagMNgjQJ0ZyxCbOwuJ A==;
-X-CSE-ConnectionGUID: m5I3HTzsQLqIWb5oS35U5A==
-X-CSE-MsgGUID: YJQrcNZ6S6ihQN+GvKRcWQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11954"; a="2414707"
-X-IronPort-AV: E=Sophos;i="6.27,192,1787036400"; 
-   d="scan'208";a="2414707"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Nov 2026 22:49:27 -0800
-X-CSE-ConnectionGUID: tdALLb+KR5STrQM8+KO8ag==
-X-CSE-MsgGUID: tRva3uszQYySkKUGDqHfSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,192,1787036400"; 
-   d="scan'208";a="6450588"
-Received: from pae.iind.intel.com (HELO PAE-35.iind.intel.com) ([10.49.105.82])
- by fmviesa003.fm.intel.com with ESMTP; 02 Nov 2026 22:49:24 -0800
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
-Subject: [PATCH] net/ice: fix RSS rule overwriting an existing one
-Date: Tue,  3 Nov 2026 06:44:38 +0000
-Message-Id: <20261103064438.390149-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.25.1
+	by mails.dpdk.org (Postfix) with ESMTP id 551C54028B;
+	Tue,  3 Nov 2026 08:35:52 +0100 (CET)
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
+ [113.46.200.223])
+ by mails.dpdk.org (Postfix) with ESMTPS id 4D26740278
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 08:35:50 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=mApthuH8GQe1n0uKIxKT3m6/LS6fZDmR9jUcqehSv30=;
+ b=ppG/bAd90Wk9KobbDQ+GzVCkYWX6javY0s4AH5rfKIIXquGu9fu5fxgAXavhgjbY2AySUzHlT
+ Djf2kjkPoit9VDBz/K0XVFVHZ4E1FrCoTtLH+V6sWmTPXBnsBidVDBfDYhcoiur2/aV/KT7nZVR
+ YSz0sQiLx8OVIvShgzQpGSQ=
+Received: from mail.maildlp.com (unknown [172.19.163.163])
+ by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4jJgN163qDzmV6r;
+ Tue,  3 Nov 2026 15:35:29 +0800 (CST)
+Received: from dggpemr100003.china.huawei.com (unknown [7.185.36.150])
+ by mail.maildlp.com (Postfix) with ESMTPS id DC4024058D;
+ Tue,  3 Nov 2026 15:35:39 +0800 (CST)
+Received: from [10.67.121.46] (10.67.121.46) by dggpemr100003.china.huawei.com
+ (7.185.36.150) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Tue, 3 Nov
+ 2026 15:35:38 +0800
+Message-ID: <8d86f620-a641-48d0-839b-1b04710139ae@h-partners.com>
+Date: Tue, 3 Nov 2026 15:35:37 +0800
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] common/mlx5: fix high SMMU TLB miss with mempool
+ alignment
+To: yangxingui <yangxingui@huawei.com>, <viacheslavo@nvidia.com>,
+ <david.marchand@redhat.com>, <dsosnowski@nvidia.com>, <bingz@nvidia.com>,
+ <orika@nvidia.com>, <suanmingm@nvidia.com>
+CC: <dev@dpdk.org>, <stephen@networkplumber.org>, <thomas@monjalon.net>,
+ <dmitry.kozliuk@gmail.com>, <david.marchand@redhat.com>,
+ <fengchengwen@huawei.com>, <liuyonglong@huawei.com>,
+ <kangfenglong@huawei.com>, yangshuaisong <yangshuaisong@h-partners.com>
+References: <20260811085231.2260761-1-yangxingui@huawei.com>
+ <4a35e332-d89e-af61-03bb-3b72f3f230c7@huawei.com>
+ <c0e9bea1-5fd5-4bed-be68-1d639ccb694c@h-partners.com>
+Content-Language: en-GB
+From: Shuaisong Yang <yangshuaisong@h-partners.com>
+In-Reply-To: <c0e9bea1-5fd5-4bed-be68-1d639ccb694c@h-partners.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemr100003.china.huawei.com (7.185.36.150)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,105 +62,211 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-An RSS flow rule only selects the hash input set of a packet type,
-& the hardware keeps a single RSS profile per packet type for a
-port or the PF VSI.
-When a second rule is created for a packet type already used by
-another rule, the existing profile is silently replaced, while both
-flow handles remain valid.
-For example:
-  flow create 0 ingress pattern eth / vlan vid is 1500 / ipv6 / end
-    actions rss types ipv6 l3-dst-only end queues end / end
-  flow create 0 ingress pattern eth / vlan vid is 2640 / ipv6 / end
-    actions rss types ipv6 l3-src-only end queues end / end
+> Hi Slava,
+>
+> Gentle ping on this patch, following up on the earlier pings from
+> Sep 11 and Oct 27.
+>
+> In the v1 discussion you mentioned the patch mostly looked good to
+> you and gave three suggestions — all of them are incorporated in v2
+> (see the changelog):
+> https://patches.dpdk.org/project/dpdk/patch/20260811085231.2260761-1-yangxingui@huawei.com/
+>
+> Our replies to your v1 comments, including the root cause analysis
+> (reg_end == hugepage_end causing the alignment to be skipped), are
+> here:
+> https://patches.dpdk.org/project/dpdk/patch/20260612071434.2722918-1-yangxingui@huawei.com/
+>
+> The patch fixes a ~30% performance regression with CX7 under SMMU
+> (intra-NUMA pinning on Kunpeng SoC). It has been pending for about
+> three months — we'd really appreciate your final review. Happy to
+> dig further into why the hugepage placement differs between pinning
+> configurations, or provide more test data, if that helps.
+>
+> Thanks!
+> Shuaisong & Xingui
 
-Only the second rule is applied, whatever the VLAN ID of the packet,
-and destroying it, leaves the first rule without any hardware
-configuration.
-
-Reject the creation of an RSS rule when another RSS rule of the port
-already uses the same protocol header stack.
-An outer VLAN header is ignored in the comparison, as it does not
-change the packet type.
-The existing rule has to be destroyed first to change the hash input
-set of that packet type.
-
-Fixes: 5ad3db8d4bdd ("net/ice: enable advanced RSS")
-Cc: stable@dpdk.org
-
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
- drivers/net/intel/ice/ice_hash.c | 43 ++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
-
-diff --git a/drivers/net/intel/ice/ice_hash.c b/drivers/net/intel/ice/ice_hash.c
-index 2930aca228..6643820ae3 100644
---- a/drivers/net/intel/ice/ice_hash.c
-+++ b/drivers/net/intel/ice/ice_hash.c
-@@ -1311,6 +1311,40 @@ ice_hash_add_raw_cfg(struct ice_adapter *ad,
- 	return 0;
- }
- 
-+/* Check duplicate packet type RSS rule in same port */
-+static bool
-+ice_hash_ptype_in_use(struct ice_adapter *ad,
-+		      const struct ice_hash_flow_cfg *new_cfg)
-+{
-+	const struct ice_rss_hash_cfg *hash = &new_cfg->rss_cfg.hash;
-+	const struct ice_rss_raw_cfg *raw = &new_cfg->rss_cfg.raw;
-+	const struct ice_hash_flow_cfg *cfg;
-+	struct rte_flow *flow;
-+
-+	/* flow_ops_lock is held by ice_flow_create() */
-+	TAILQ_FOREACH(flow, &ad->pf.flow_list, node) {
-+		cfg = flow->rule;
-+		if (flow->engine != &ice_hash_engine || cfg->simple_xor ||
-+		    cfg->rss_cfg.raw.raw_ena != raw->raw_ena)
-+			continue;
-+
-+		if (raw->raw_ena) {
-+			if (ice_find_first_bit(cfg->rss_cfg.raw.prof.ptypes, ICE_FLOW_PTYPE_MAX) ==
-+			    ice_find_first_bit(raw->prof.ptypes, ICE_FLOW_PTYPE_MAX))
-+				return true;
-+			continue;
-+		}
-+
-+		/* an outer VLAN header does not change the packet type */
-+		if (cfg->rss_cfg.hash.hdr_type == hash->hdr_type &&
-+		    !((cfg->rss_cfg.hash.addl_hdrs ^ hash->addl_hdrs) &
-+		      ~ICE_FLOW_SEG_HDR_VLAN))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- static int
- ice_hash_create(struct ice_adapter *ad,
- 		void *flow_rule,
-@@ -1332,6 +1366,15 @@ ice_hash_create(struct ice_adapter *ad,
- 
- 		goto out;
- 	} else {
-+		/* Reject duplicate packet type rule in same port */
-+		if (ice_hash_ptype_in_use(ad, filter_ptr)) {
-+			PMD_DRV_LOG(ERR, "RSS rule for this packet type already exists");
-+			rte_flow_error_set(error, EEXIST,
-+					   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+					   "RSS rule for this packet type already exists");
-+			goto error;
-+		}
-+
- 		if (filter_ptr->rss_cfg.raw.raw_ena) {
- 			ret = ice_hash_add_raw_cfg(ad, &filter_ptr->rss_cfg.raw,
- 						   pf->main_vsi->idx);
--- 
-2.25.1
+On 2026/10/27 19:32, Shuaisong Yang wrote:
+> Hi mlx5 team, just a gentle ping on this patch when you have a moment. Thanks!
+> 
+> On 2026/9/11 14:33, yangxingui wrote:
+>> Kindly ping for review...
+>>
+>> On 2026/8/11 16:52, Xingui Yang wrote:
+>>> From: Shuaisong Yang <yangshuaisong@h-partners.com>
+>>>
+>>> On Kunpeng SoC with mlx CX7, dpdk-l3fwd with intra-NUMA core pinning
+>>> under SMMU nonstrict/strict mode shows about 30% performance degradation
+>>> compared to cross-NUMA pinning. With SMMU disabled or passthrough mode,
+>>> intra-NUMA performs as expected (slightly better than cross-NUMA).
+>>>
+>>> CX7 in NUMA1
+>>> NUMA node0 CPU(s):    0-39
+>>> NUMA node1 CPU(s):    40-79
+>>>
+>>> intra-NUMA:
+>>> dpdk-l3fwd -l 40-55 -n 4 -a 0000:17:00.1,mprq_en=1 -- -p 0x1 -P \
+>>>     --config='(0,0,40),(0,1,41),(0,2,42),(0,3,43),(0,4,44),\
+>>>               (0,5,45),(0,6,46),(0,7,47),(0,8,48),(0,9,49),\
+>>>               (0,10,50),(0,11,51),(0,12,52),(0,13,53),\
+>>>               (0,14,54),(0,15,55)' \
+>>>     --rx-queue-size=4096 --tx-queue-size=4096 --rx-burst=64
+>>>
+>>> cross-NUMA:
+>>> dpdk-l3fwd -l 11-26 -n 4 -a 0000:17:00.1,mprq_en=1 -- -p 0x1 -P \
+>>>     --config='(0,0,11),(0,1,12),(0,2,13),(0,3,14),(0,4,15),\
+>>>               (0,5,16),(0,6,17),(0,7,18),(0,8,19),(0,9,20),\
+>>>               (0,10,21),(0,11,22),(0,12,23),(0,13,24),\
+>>>               (0,14,25),(0,15,26)' \
+>>>     --rx-queue-size=4096 --tx-queue-size=4096 --rx-burst=64
+>>>
+>>> The root cause is that under SMMU enabled mode, the mempool allocated
+>>> for intra-NUMA pinning is aligned to system page size instead of
+>>> hugepage size, while cross-NUMA pinning correctly uses hugepage size
+>>> alignment. This causes high TLB miss rates under SMMU.
+>>>
+>>> Align all memory ranges to hugepage boundaries during mempool
+>>> registration to ensure hugepage_sz alignment, thereby reducing TLB
+>>> misses and fixing the intra-NUMA performance degradation.
+>>>
+>>> Fixes: 690b2a88c2f7 ("common/mlx5: add mempool registration facilities")
+>>> Cc: stable@dpdk.org
+>>>
+>>> Signed-off-by: Shuaisong Yang <yangshuaisong@h-partners.com>
+>>> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+>>> ---
+>>> v2:
+>>> - Address review comments from Slava:
+>>>    - Call rte_mem_virt2memseg_list() in a single point inside the loop.
+>>>    - Skip the alignment block when hugepage_sz equals rte_mem_page_size(),
+>>>      since mlx5_mempool_get_chunks() has already done the alignment.
+>>>    - Skip the alignment for external memory with early goto, since ranges
+>>>      are already aligned to the correct page size.
+>>> ---
+>>>   .mailmap                             |  1 +
+>>>   drivers/common/mlx5/mlx5_common_mr.c | 72 +++++++++++++++++++---------
+>>>   2 files changed, 51 insertions(+), 22 deletions(-)
+>>>
+>>> diff --git a/.mailmap b/.mailmap
+>>> index fcb3d1bb3f..c8ba648d3c 100644
+>>> --- a/.mailmap
+>>> +++ b/.mailmap
+>>> @@ -1999,3 +1999,4 @@ Zongyu Wu <wuzongyu1@huawei.com>
+>>>   Zorik Machulsky <zorik@amazon.com>
+>>>   Zyta Szpak <zyta@marvell.com> <zr@semihalf.com>
+>>>   Zyta Szpak <zyta@marvell.com> <zyta.szpak@semihalf.com>
+>>> +Shuaisong Yang <yangshuaisong@h-partners.com>
+>>> diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5/mlx5_common_mr.c
+>>> index aa2d5e88a4..f9e1ec7468 100644
+>>> --- a/drivers/common/mlx5/mlx5_common_mr.c
+>>> +++ b/drivers/common/mlx5/mlx5_common_mr.c
+>>> @@ -1524,7 +1524,11 @@ mlx5_get_mempool_ranges(struct rte_mempool *mp, bool is_extmem,
+>>>    * @param[in] is_extmem
+>>>    *   Whether the pool is contains only external pinned buffers.
+>>>    * @param[out] out
+>>> - *   Receives memory ranges to register, aligned to the system page size.
+>>> + *   Receives memory ranges to register. For non-external memory, ranges
+>>> + *   are aligned to the hugepage size if all ranges are on hugepages
+>>> + *   of the same size, otherwise aligned to the system page size.
+>>> + *   For external memory, ranges are kept as returned by
+>>> + *   mlx5_get_mempool_ranges() (already aligned to the page size).
+>>>    *   The caller must release them with free().
+>>>    * @param[out] out_n
+>>>    *   Receives the number of @p out items.
+>>> @@ -1541,7 +1545,8 @@ mlx5_mempool_reg_analyze(struct rte_mempool *mp, bool is_extmem,
+>>>   {
+>>>       struct mlx5_range *ranges = NULL;
+>>>       unsigned int i, ranges_n = 0;
+>>> -    struct rte_memseg_list *msl;
+>>> +    bool same_hugepage_sz = true;
+>>> +    uint64_t hugepage_sz = 0;
+>>>         if (mlx5_get_mempool_ranges(mp, is_extmem, &ranges, &ranges_n) < 0) {
+>>>           DRV_LOG(ERR, "Cannot get address ranges for mempool %s",
+>>> @@ -1550,34 +1555,57 @@ mlx5_mempool_reg_analyze(struct rte_mempool *mp, bool is_extmem,
+>>>       }
+>>>       /* Check if the hugepage of the pool can be shared. */
+>>>       *share_hugepage = false;
+>>> -    msl = rte_mem_virt2memseg_list((void *)ranges[0].start);
+>>> -    if (msl != NULL) {
+>>> -        uint64_t hugepage_sz = 0;
+>>> +    if (is_extmem)
+>>> +        goto out;
+>>> +    /* Check that all ranges are on pages of the same size. */
+>>> +    for (i = 0; i < ranges_n; i++) {
+>>> +        struct rte_memseg_list *range_msl =
+>>> +            rte_mem_virt2memseg_list((void *)ranges[i].start);
+>>> +
+>>> +        if (range_msl == NULL) {
+>>> +            same_hugepage_sz = false;
+>>> +            break;
+>>> +        }
+>>> +        if (hugepage_sz == 0) {
+>>> +            hugepage_sz = range_msl->page_sz;
+>>> +        } else if (range_msl->page_sz != hugepage_sz) {
+>>> +            same_hugepage_sz = false;
+>>> +            break;
+>>> +        }
+>>> +    }
+>>> +    /*
+>>> +     * Align ranges to the hugepage boundaries and merge adjacent ones.
+>>> +     * If the entire pool fits in a single hugepage, the MR for this
+>>> +     * hugepage can be shared across mempools.
+>>> +     */
+>>> +    if (same_hugepage_sz && hugepage_sz > rte_mem_page_size()) {
+>>> +        unsigned int orig_ranges_n = ranges_n;
+>>>   -        /* Check that all ranges are on pages of the same size. */
+>>>           for (i = 0; i < ranges_n; i++) {
+>>> -            if (hugepage_sz != 0 && hugepage_sz != msl->page_sz)
+>>> -                break;
+>>> -            hugepage_sz = msl->page_sz;
+>>> +            ranges[i].start = RTE_ALIGN_FLOOR(ranges[i].start,
+>>> +                              hugepage_sz);
+>>> +            ranges[i].end = RTE_ALIGN_CEIL(ranges[i].end,
+>>> +                            hugepage_sz);
+>>>           }
+>>> -        if (i == ranges_n) {
+>>> -            /*
+>>> -             * If the entire pool is within one hugepage,
+>>> -             * combine all ranges into one of the hugepage size.
+>>> -             */
+>>> -            uintptr_t reg_start = ranges[0].start;
+>>> -            uintptr_t reg_end = ranges[ranges_n - 1].end;
+>>> -            uintptr_t hugepage_start =
+>>> -                RTE_ALIGN_FLOOR(reg_start, hugepage_sz);
+>>> -            uintptr_t hugepage_end = hugepage_start + hugepage_sz;
+>>> -            if (reg_end < hugepage_end) {
+>>> -                ranges[0].start = hugepage_start;
+>>> +        ranges_n = 1;
+>>> +        for (i = 1; i < orig_ranges_n; i++) {
+>>> +            if (ranges[ranges_n - 1].end >= ranges[i].start)
+>>> +                ranges[ranges_n - 1].end =
+>>> +                    RTE_MAX(ranges[ranges_n - 1].end,
+>>> +                        ranges[i].end);
+>>> +            else
+>>> +                ranges[ranges_n++] = ranges[i];
+>>> +        }
+>>> +        if (ranges_n == 1) {
+>>> +            uintptr_t hugepage_end = ranges[0].start + hugepage_sz;
+>>> +
+>>> +            if (ranges[0].end <= hugepage_end) {
+>>>                   ranges[0].end = hugepage_end;
+>>> -                ranges_n = 1;
+>>>                   *share_hugepage = true;
+>>>               }
+>>>           }
+>>>       }
+>>> +out:
+>>>       *out = ranges;
+>>>       *out_n = ranges_n;
+>>>       return 0;
+>>>
+> 
 
