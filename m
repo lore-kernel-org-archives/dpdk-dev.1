@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D898606A789
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474F2606A789
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=U90nkGEy
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=GPDK1ojD
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 202CA41143;
-	Tue,  3 Nov 2026 15:57:07 +0100 (CET)
-Received: from mta0.migadu.com (out-16.mta0.migadu.com [91.218.175.16])
- by mails.dpdk.org (Postfix) with ESMTPS id C578541143
- for <dev@dpdk.org>; Tue,  3 Nov 2026 15:57:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E59DA42790;
+	Tue,  3 Nov 2026 15:57:15 +0100 (CET)
+Received: from mta0.migadu.com (out-22.mta0.migadu.com [91.218.175.22])
+ by mails.dpdk.org (Postfix) with ESMTPS id 9436D40430
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 15:57:14 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=tD7BkZADIc5W+Xa3uP5pHtTxrOdoyEg1D6GsXKS2QpI=; 
+DKIM-Signature: a=rsa-sha256; bh=FtJjyIDNA4AlUeKzzeOh24g0tXu1o/ki1j+Vq5d/YAg=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793717825; v=1; x=1794322625;
- b=U90nkGEyXPgsEtPJhm8TjbGDvrgDXkc+7ynZr4xxGbQ6fac74vky0yxGR9b+0yU6zIzXmqg4
- wbT+aR4ZV+R+YAB9RlGKlvV2OJR20Gundw8Mh8urlNyer+npsCD6AgrO73P0Y/cyjcQRblYR0Wr
- +WaDfD4yzmo9TejvxMPW2deo=
+ t=1793717834; v=1; x=1794322634;
+ b=GPDK1ojDe43eDOT5pyB22GOzNKAH3j1bO1BzuTz4K4X9KLUZDtYq82KpNI303szngCHtcVkm
+ /O0Znq3si+siejcBo0hB4uNvLyA2L7o02Bz4ynl9lBeToIRcPh4YeBlW33TjucSvuTOMrVHT6mG
+ dgPSsswAmy0etInT6ehUg6f8=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id e0931faf593311f5;
- Tue, 03 Nov 2026 14:57:05 +0000
-X-Mizu-Trace-ID: e0931faf593311f5
+Received: by mta10.migadu.com with ESMTPS id 601e6298d6b10278;
+ Tue, 03 Nov 2026 14:57:14 +0000
+X-Mizu-Trace-ID: 601e6298d6b10278
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 024/227] reorder: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:49:42 +0800
-Message-ID: <20261103145306.487255-25-chengwen.feng@linux.dev>
+Subject: [PATCH 025/227] stack: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:49:43 +0800
+Message-ID: <20261103145306.487255-26-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,52 +63,56 @@ rte_zmalloc_numa(), rte_numa_id() and RTE_NUMA_ID_ANY.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- lib/reorder/rte_reorder.c | 4 ++--
- lib/reorder/rte_reorder.h | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ lib/stack/rte_stack.c | 4 ++--
+ lib/stack/rte_stack.h | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/lib/reorder/rte_reorder.c b/lib/reorder/rte_reorder.c
-index af5a6d9f01..daa871a39e 100644
---- a/lib/reorder/rte_reorder.c
-+++ b/lib/reorder/rte_reorder.c
-@@ -160,7 +160,7 @@ rte_reorder_entry_insert(struct rte_tailq_entry *new_te)
+diff --git a/lib/stack/rte_stack.c b/lib/stack/rte_stack.c
+index a4bbf8a4d7..51f70f0960 100644
+--- a/lib/stack/rte_stack.c
++++ b/lib/stack/rte_stack.c
+@@ -52,7 +52,7 @@ rte_stack_get_memsize(unsigned int count, uint32_t flags)
  
- RTE_EXPORT_SYMBOL(rte_reorder_create)
- struct rte_reorder_buffer*
--rte_reorder_create(const char *name, unsigned socket_id, unsigned int size)
-+rte_reorder_create(const char *name, unsigned int numa_id, unsigned int size)
+ RTE_EXPORT_SYMBOL(rte_stack_create)
+ struct rte_stack *
+-rte_stack_create(const char *name, unsigned int count, int socket_id,
++rte_stack_create(const char *name, unsigned int count, int numa_id,
+ 		 uint32_t flags)
  {
- 	struct rte_reorder_buffer *b = NULL;
- 	struct rte_tailq_entry *te, *te_inserted;
-@@ -190,7 +190,7 @@ rte_reorder_create(const char *name, unsigned socket_id, unsigned int size)
- 	}
+ 	char mz_name[RTE_MEMZONE_NAMESIZE];
+@@ -108,7 +108,7 @@ rte_stack_create(const char *name, unsigned int count, int socket_id,
  
- 	/* Allocate memory to store the reorder buffer structure. */
--	b = rte_zmalloc_socket("REORDER_BUFFER", bufsize, 0, socket_id);
-+	b = rte_zmalloc_numa("REORDER_BUFFER", bufsize, 0, numa_id);
- 	if (b == NULL) {
- 		REORDER_LOG(ERR, "Memzone allocation failed");
- 		rte_errno = ENOMEM;
-diff --git a/lib/reorder/rte_reorder.h b/lib/reorder/rte_reorder.h
-index 5bcb32b164..483a260e99 100644
---- a/lib/reorder/rte_reorder.h
-+++ b/lib/reorder/rte_reorder.h
-@@ -59,7 +59,7 @@ rte_reorder_free(struct rte_reorder_buffer *b);
-  *
-  * @param name
-  *   The name to be given to the reorder buffer instance.
+ 	rte_mcfg_tailq_write_lock();
+ 
+-	mz = rte_memzone_reserve_aligned(mz_name, sz, socket_id,
++	mz = rte_memzone_reserve_aligned(mz_name, sz, numa_id,
+ 					 0, alignof(typeof(*s)));
+ 	if (mz == NULL) {
+ 		STACK_LOG_ERR("Cannot reserve stack memzone!");
+diff --git a/lib/stack/rte_stack.h b/lib/stack/rte_stack.h
+index 14983516bf..23a739912d 100644
+--- a/lib/stack/rte_stack.h
++++ b/lib/stack/rte_stack.h
+@@ -254,9 +254,9 @@ rte_stack_free_count(struct rte_stack *s)
+  *   The name of the stack.
+  * @param count
+  *   The size of the stack.
 - * @param socket_id
+- *   The *socket_id* argument is the socket identifier in case of
+- *   NUMA. The value can be *SOCKET_ID_ANY* if there is no NUMA
 + * @param numa_id
-  *   The NUMA node on which the memory for the reorder buffer
-  *   instance is to be reserved.
-  * @param size
-@@ -71,7 +71,7 @@ rte_reorder_free(struct rte_reorder_buffer *b);
-  *    - EINVAL - invalid parameters
++ *   The *numa_id* argument is the NUMA node ID in case of
++ *   NUMA. The value can be *RTE_NUMA_ID_ANY* if there is no NUMA
+  *   constraint for the reserved zone.
+  * @param flags
+  *   An OR of the following:
+@@ -273,7 +273,7 @@ rte_stack_free_count(struct rte_stack *s)
+  *    - ENOTSUP - platform does not support given flags combination.
   */
- struct rte_reorder_buffer *
--rte_reorder_create(const char *name, unsigned int socket_id, unsigned int size)
-+rte_reorder_create(const char *name, unsigned int numa_id, unsigned int size)
- 	__rte_malloc __rte_dealloc(rte_reorder_free, 1);
+ struct rte_stack *
+-rte_stack_create(const char *name, unsigned int count, int socket_id,
++rte_stack_create(const char *name, unsigned int count, int numa_id,
+ 		 uint32_t flags);
  
  /**
 -- 
