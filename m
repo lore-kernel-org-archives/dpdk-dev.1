@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E78C606A326
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC3A606D2D2
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=WIUailZS
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=rb82a2lM
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B2FB42DA1;
-	Tue,  3 Nov 2026 16:05:28 +0100 (CET)
-Received: from mta1.migadu.com (out-231.mta1.migadu.com [95.215.58.231])
- by mails.dpdk.org (Postfix) with ESMTPS id 54C6B42DA1
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:05:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4A75642D83;
+	Tue,  3 Nov 2026 16:05:39 +0100 (CET)
+Received: from mta0.migadu.com (out-3.mta0.migadu.com [91.218.175.3])
+ by mails.dpdk.org (Postfix) with ESMTPS id 2D0F44113D
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:05:38 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=GPuO1rmXBfV/FFmxv0jWMY3PJbEIZL+tKqIzYNDbyAc=; 
+DKIM-Signature: a=rsa-sha256; bh=vNLoK9qnZCkmoav/ZUnW4cJhI6I2uvqIynyvUqOiVBM=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718327; v=1; x=1794323127;
- b=WIUailZSg9MBCtnL75RYL19xN1vW/EXh4zeXEDNNa6Sb+ocH5XMR/4Lb1fFIHREFYNxf2jkh
- X0EAajTCIh2po3aJbfNkt0Kl1LB2PG7/f8Fd5Z2RiCheGNJDbbtDpamUmW0n3iGO0O0KrEueHzc
- suDMpdCq4ZNVsqVL++LYmQT0=
+ t=1793718337; v=1; x=1794323137;
+ b=rb82a2lMm8hz7X13I3w6N+DZvG5f9rGRG1kMQAHpVl3KmMKG8Q66Q1sihXxr6L40yPIrNRDy
+ 46OencgaUlGc4dRrr0zis1/SRePPq3wDh26xqD3pYW6i21ev9CtEdMfY6rImWcuICtyOFf7eC5C
+ UjGjKnAPE7X1GCp+m0fG+zeQ=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id 7eb56481519edd25;
- Tue, 03 Nov 2026 15:05:26 +0000
-X-Mizu-Trace-ID: 7eb56481519edd25
+Received: by mta12.migadu.com with ESMTPS id 2b09cf95399ce67e;
+ Tue, 03 Nov 2026 15:05:37 +0000
+X-Mizu-Trace-ID: 2b09cf95399ce67e
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 074/227] crypto/null: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:32 +0800
-Message-ID: <20261103145306.487255-75-chengwen.feng@linux.dev>
+Subject: [PATCH 075/227] crypto/octeontx: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:50:33 +0800
+Message-ID: <20261103145306.487255-76-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,83 +63,62 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/crypto/null/null_crypto_pmd.c     |  4 ++--
- drivers/crypto/null/null_crypto_pmd_ops.c | 12 ++++++------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/crypto/octeontx/otx_cryptodev.c           | 2 +-
+ drivers/crypto/octeontx/otx_cryptodev_hw_access.c | 2 +-
+ drivers/crypto/octeontx/otx_cryptodev_ops.c       | 6 +++---
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/crypto/null/null_crypto_pmd.c b/drivers/crypto/null/null_crypto_pmd.c
-index 6db9deaee8..a32eca5514 100644
---- a/drivers/crypto/null/null_crypto_pmd.c
-+++ b/drivers/crypto/null/null_crypto_pmd.c
-@@ -186,7 +186,7 @@ cryptodev_null_probe(struct rte_vdev_device *dev)
- 	struct rte_cryptodev_pmd_init_params init_params = {
- 		"",
- 		sizeof(struct null_crypto_private),
--		rte_socket_id(),
-+		rte_numa_id(),
- 		RTE_CRYPTODEV_PMD_DEFAULT_MAX_NB_QUEUE_PAIRS
- 	};
- 	const char *name, *args;
-@@ -237,7 +237,7 @@ static struct cryptodev_driver null_crypto_drv;
- RTE_PMD_REGISTER_VDEV(CRYPTODEV_NAME_NULL_PMD, cryptodev_null_pmd_drv);
- RTE_PMD_REGISTER_PARAM_STRING(CRYPTODEV_NAME_NULL_PMD,
- 	"max_nb_queue_pairs=<int> "
--	"socket_id=<int>");
-+	"numa_id=<int>");
- RTE_PMD_REGISTER_CRYPTO_DRIVER(null_crypto_drv, cryptodev_null_pmd_drv.driver,
- 		cryptodev_driver_id);
- RTE_LOG_REGISTER_DEFAULT(null_logtype_driver, INFO);
-diff --git a/drivers/crypto/null/null_crypto_pmd_ops.c b/drivers/crypto/null/null_crypto_pmd_ops.c
-index f07e9c2ea0..27bc9231b3 100644
---- a/drivers/crypto/null/null_crypto_pmd_ops.c
-+++ b/drivers/crypto/null/null_crypto_pmd_ops.c
-@@ -161,7 +161,7 @@ null_crypto_pmd_qp_set_unique_name(struct rte_cryptodev *dev,
- /** Create a ring to place process packets on */
- static struct rte_ring *
- null_crypto_pmd_qp_create_processed_pkts_ring(struct null_crypto_qp *qp,
--		unsigned ring_size, int socket_id)
-+		unsigned int ring_size, int numa_id)
+diff --git a/drivers/crypto/octeontx/otx_cryptodev.c b/drivers/crypto/octeontx/otx_cryptodev.c
+index b2f6f53ee3..8ddfa28865 100644
+--- a/drivers/crypto/octeontx/otx_cryptodev.c
++++ b/drivers/crypto/octeontx/otx_cryptodev.c
+@@ -42,7 +42,7 @@ otx_cpt_pci_probe(struct rte_pci_driver *pci_drv,
+ 
+ 	rte_pci_device_name(&pci_dev->addr, name, sizeof(name));
+ 
+-	cryptodev = rte_cryptodev_pmd_allocate(name, rte_socket_id());
++	cryptodev = rte_cryptodev_pmd_allocate(name, rte_numa_id());
+ 	if (cryptodev == NULL)
+ 		return -ENOMEM;
+ 
+diff --git a/drivers/crypto/octeontx/otx_cryptodev_hw_access.c b/drivers/crypto/octeontx/otx_cryptodev_hw_access.c
+index 27604459e4..6c91a82564 100644
+--- a/drivers/crypto/octeontx/otx_cryptodev_hw_access.c
++++ b/drivers/crypto/octeontx/otx_cryptodev_hw_access.c
+@@ -458,7 +458,7 @@ otx_cpt_metabuf_mempool_create(const struct rte_cryptodev *dev,
+ 
+ 	pool = rte_mempool_create_empty(mempool_name, mb_pool_sz, max_mlen,
+ 					METABUF_POOL_CACHE_SIZE, 0,
+-					rte_socket_id(), 0);
++					rte_numa_id(), 0);
+ 
+ 	if (pool == NULL) {
+ 		CPT_LOG_ERR("Could not create mempool for metabuf");
+diff --git a/drivers/crypto/octeontx/otx_cryptodev_ops.c b/drivers/crypto/octeontx/otx_cryptodev_ops.c
+index 40f565cd78..abb94bf8d1 100644
+--- a/drivers/crypto/octeontx/otx_cryptodev_ops.c
++++ b/drivers/crypto/octeontx/otx_cryptodev_ops.c
+@@ -137,7 +137,7 @@ static int
+ otx_cpt_que_pair_setup(struct rte_cryptodev *dev,
+ 		       uint16_t que_pair_id,
+ 		       const struct rte_cryptodev_qp_conf *qp_conf,
+-		       int socket_id __rte_unused)
++		       int numa_id __rte_unused)
  {
- 	struct rte_ring *r;
+ 	struct cpt_instance *instance = NULL;
+ 	struct rte_pci_device *pci_dev;
+@@ -1017,9 +1017,9 @@ otx_cpt_dev_create(struct rte_cryptodev *c_dev)
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
+ 		return 0;
  
-@@ -180,7 +180,7 @@ null_crypto_pmd_qp_create_processed_pkts_ring(struct null_crypto_qp *qp,
- 		return NULL;
- 	}
+-	cptvf = rte_zmalloc_socket("otx_cryptodev_private_mem",
++	cptvf = rte_zmalloc_numa("otx_cryptodev_private_mem",
+ 			sizeof(struct cpt_vf), RTE_CACHE_LINE_SIZE,
+-			rte_socket_id());
++			rte_numa_id());
  
--	return rte_ring_create(qp->name, ring_size, socket_id,
-+	return rte_ring_create(qp->name, ring_size, numa_id,
- 			RING_F_SP_ENQ | RING_F_SC_DEQ);
- }
- 
-@@ -188,7 +188,7 @@ null_crypto_pmd_qp_create_processed_pkts_ring(struct null_crypto_qp *qp,
- static int
- null_crypto_pmd_qp_setup(struct rte_cryptodev *dev, uint16_t qp_id,
- 		const struct rte_cryptodev_qp_conf *qp_conf,
--		int socket_id)
-+		int numa_id)
- {
- 	struct null_crypto_private *internals = dev->data->dev_private;
- 	struct null_crypto_qp *qp;
-@@ -206,8 +206,8 @@ null_crypto_pmd_qp_setup(struct rte_cryptodev *dev, uint16_t qp_id,
- 		null_crypto_pmd_qp_release(dev, qp_id);
- 
- 	/* Allocate the queue pair data structure. */
--	qp = rte_zmalloc_socket("Null Crypto PMD Queue Pair", sizeof(*qp),
--					RTE_CACHE_LINE_SIZE, socket_id);
-+	qp = rte_zmalloc_numa("Null Crypto PMD Queue Pair", sizeof(*qp),
-+					RTE_CACHE_LINE_SIZE, numa_id);
- 	if (qp == NULL) {
- 		NULL_LOG(ERR, "Failed to allocate queue pair memory");
- 		return (-ENOMEM);
-@@ -225,7 +225,7 @@ null_crypto_pmd_qp_setup(struct rte_cryptodev *dev, uint16_t qp_id,
- 	}
- 
- 	qp->processed_pkts = null_crypto_pmd_qp_create_processed_pkts_ring(qp,
--			qp_conf->nb_descriptors, socket_id);
-+			qp_conf->nb_descriptors, numa_id);
- 	if (qp->processed_pkts == NULL) {
- 		NULL_LOG(ERR, "Failed to create unique name for null "
- 				"crypto device");
+ 	if (cptvf == NULL) {
+ 		CPT_LOG_ERR("Cannot allocate memory for device private data");
 -- 
 2.55.0
 
