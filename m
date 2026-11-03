@@ -2,41 +2,41 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD71D606A31B
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 17:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82242606A31B
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 17:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=X5KvPbpH
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=PkWoVKbZ
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9AB9940678;
-	Tue,  3 Nov 2026 18:30:47 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 97EB540265;
+	Tue,  3 Nov 2026 18:30:49 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTPS id ABA6C400D6;
- Tue,  3 Nov 2026 18:30:45 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id ED89E400D6;
+ Tue,  3 Nov 2026 18:30:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793727047; x=1825263047;
+ t=1793727048; x=1825263048;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=8xr0D3JAUwmBHvv7+ON8lETwgXZ7YUGsHMGIMO0UkBU=;
- b=X5KvPbpHyMlR0z4qpvuqqJA8m1sXiLzN227gnmLG15sJYvDY/KUcCzWP
- qJajZS5JCjaRpeRpKCsx1Ij4KJlMDdm6lzonHYntgCt5hupXoPvorp3yK
- BHVif0jQAwqy4eN47rAuoGnzclwUv/ii7rvs6JiX4ZoYC4hPu8MqRZ2zd
- Ul5nE/ParIImUFjfUx+1OUEFPpXPjGi/DW96A7TRleuDRiBwOu63C8UYu
- a1KFICP36qMCX8sDahXrT0jqGYCVfjpX15kfUIcC3rb+VuSU8dE3CGyQA
- qOsERDmeljfehxRHdO23GrJWg6AbOJeOYy9VLD5NkwWqMg9T9TwJiWRwl A==;
-X-CSE-ConnectionGUID: GPFSuyHsQnWHBEyHFP4TfQ==
-X-CSE-MsgGUID: CroxkKKrQAS5hA/XToJCAA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11955"; a="2553269"
+ bh=RGCMmoZEsQqtWn/vfLZmay9Bjk81qBIYwOilztuh30w=;
+ b=PkWoVKbZkGfStiHF/T1glMGzXIcmYOhtrXCBRSA0J0AVRkiyD3pGunt2
+ 1dup61/kldMyngMPxmzhgG4ApkYtP2keVw963XyRCn0SVoZKVkurnkS+/
+ 92WWMxWd5mRp+mYID8IonCQGWFmBgsi2g05qPptmQaI7uv1SOTBvi0Ixr
+ Oske+RUUfeD/TOQF/U5T8wRbuWhvT148cwjr7/0rpNBWlhMyqDtu/pedW
+ 3ubLlyfwQyvwGR7jPnGCozxio8egMzSSiGvZLhPI4DwXmFlwCX8gqEJ0H
+ vKnMF41YUJj3I8Q6FMGIsRDibo/4t1ASJiDDKsnuKMRhFXnLsU/QegBLI A==;
+X-CSE-ConnectionGUID: 9A/wvhv8QySETiURe6SnKQ==
+X-CSE-MsgGUID: aU17HVVBQPGiO87GJdd81w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11955"; a="2553274"
 X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="2553269"
+   d="scan'208";a="2553274"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  03 Nov 2026 09:28:58 -0800
-X-CSE-ConnectionGUID: h+8+TliWQ/yloTauErFCXQ==
-X-CSE-MsgGUID: C9Yn37LkTOiqVRdvKIxhdA==
+X-CSE-ConnectionGUID: uHDq/uNIQM+wURhdFQ694w==
+X-CSE-MsgGUID: u6QSUX67SEmR77hDdQ+0ag==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="6495698"
+   d="scan'208";a="6495702"
 Received: from unknown (HELO an4-swa15-spr.example.org) ([10.241.130.94])
  by fmviesa004.fm.intel.com with ESMTP; 03 Nov 2026 09:28:57 -0800
 From: Hernan Vargas <hernan.vargas@intel.com>
@@ -44,9 +44,9 @@ To: dev@dpdk.org, gakhil@marvell.com, trix@redhat.com,
  maxime.coquelin@redhat.com
 Cc: nicolas.chautru@intel.com, qi.z.zhang@intel.com,
  Hernan Vargas <hernan.vargas@intel.com>, stable@dpdk.org
-Subject: [PATCH v1 1/5] bbdev: fix status error for ops dump
-Date: Tue,  3 Nov 2026 09:28:58 -0800
-Message-Id: <20261103172902.4152956-2-hernan.vargas@intel.com>
+Subject: [PATCH v1 2/5] baseband/acc: fix queue depth computation error
+Date: Tue,  3 Nov 2026 09:28:59 -0800
+Message-Id: <20261103172902.4152956-3-hernan.vargas@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261103172902.4152956-1-hernan.vargas@intel.com>
 References: <20261103172902.4152956-1-hernan.vargas@intel.com>
@@ -69,30 +69,31 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The error log being reported by rte_bbdev_enqueue_status_str is
-displayed even without an actual error. The function may be called for
-such index (notably for queue dump) for valid reasons.
+Fix to the computation of available dequeue size.
+Protects notably for possible negative scenarios when dequeuing
+descriptors.
 
-Fixes: 4f08028c5e24 ("bbdev: expose queue related warning and status")
+Fixes: e640f6cdfa84 ("baseband/acc200: add LDPC processing")
 Cc: stable@dpdk.org
 
 Signed-off-by: Hernan Vargas <hernan.vargas@intel.com>
 ---
- lib/bbdev/rte_bbdev.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/baseband/acc/acc_common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
-index ea644c1f9b..3961c9deb3 100644
---- a/lib/bbdev/rte_bbdev.c
-+++ b/lib/bbdev/rte_bbdev.c
-@@ -1236,7 +1236,6 @@ rte_bbdev_enqueue_status_str(enum rte_bbdev_enqueue_status status)
- 	if ((uint8_t)status < sizeof(enq_sta_string) / sizeof(char *))
- 		return enq_sta_string[status];
- 
--	rte_bbdev_log(ERR, "Invalid enqueue status");
- 	return NULL;
+diff --git a/drivers/baseband/acc/acc_common.h b/drivers/baseband/acc/acc_common.h
+index 3d411cd25f..255e0971b8 100644
+--- a/drivers/baseband/acc/acc_common.h
++++ b/drivers/baseband/acc/acc_common.h
+@@ -1602,7 +1602,7 @@ acc_ring_avail_enq(struct acc_queue *q)
+ static inline uint32_t
+ acc_ring_avail_deq(struct acc_queue *q)
+ {
+-	return (q->sw_ring_depth + q->sw_ring_head - q->sw_ring_tail) & q->sw_ring_wrap_mask;
++	return (q->sw_ring_head - q->sw_ring_tail) & q->sw_ring_wrap_mask;
  }
  
+ /* Check room in AQ for the enqueues batches into Qmgr */
 -- 
 2.34.1
 
