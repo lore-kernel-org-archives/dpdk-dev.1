@@ -2,94 +2,60 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36074606A328
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 17:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49AD606A31B
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 17:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=ii10myLK;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=AitugBnE
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=QcCcIVqd
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8212B40265;
-	Tue,  3 Nov 2026 18:07:22 +0100 (CET)
-Received: from fhigh-a8-smtp.messagingengine.com
- (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
- by mails.dpdk.org (Postfix) with ESMTPS id 5D3C3400D6
- for <dev@dpdk.org>; Tue,  3 Nov 2026 18:07:21 +0100 (CET)
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 770CC14000B2
- for <dev@dpdk.org>; Tue,  3 Nov 2026 12:07:20 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-07.internal (MEProxy); Tue, 03 Nov 2026 12:07:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm3; t=1793725640; x=1793812040; bh=pVkeqLIh92XMz+3DS/n/p
- rfXHhnc0GRHtOJ/SEbLy7U=; b=ii10myLKvsIVR6al06K7R5fKxBZDLY3b4WWdx
- oOZAH2Lp7tHwZ0Ax0O3SlfE8Spo5cydrLY2ChyytxSobqsMbvXzr5DLU68IQiPRh
- KmKCP2RjREkpDgk9xLpwEwL5IDUSgIxlJcN7jDITAXBKUFHEi/FM9+h2lC+as+ld
- LQQ04p15gPCVEstNUVF8fqkTgkcgvJUWw/LsE2Z4sa16H/uzRnra/MWcwZYadzsj
- 6SHcRbRzsD7jWJPmGjbQiW8kJ4RsJ6njGy9q9awvItpx4tePQLURmxx2etaIYGHp
- qje1yR0K9aQyDGw9vCsWGSdA7sdzU7HKpzbmkyGYA+p1ZTB4g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:content-transfer-encoding:content-type
- :date:date:feedback-id:feedback-id:from:from:in-reply-to
- :message-id:mime-version:reply-to:subject:subject:to:to
- :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
- 1793725640; x=1793812040; bh=pVkeqLIh92XMz+3DS/n/prfXHhnc0GRHtOJ
- /SEbLy7U=; b=AitugBnEz+PZ5mYQxQWlzU9P1+jcrTZAMTA9LS0wY1T0OwFJADm
- mcp1IRjK53ElA7Ric0EyPyz3h6o0mdnH+76kL6S311bJOsHq7eGyHfO8gKgnIiHY
- hNxIJxuoRb2u+msVTLdqVgmr7zWTaVjFVgBxwvhwUUts41FJyvD2cdCPHiUFiflZ
- 0Sc4dZC9PxZ3f5HraiE7CK78WBrFzCauR8xkFY4DcDnhzdo0hFCHOtWzMHsqmr9d
- eaZ+Fe5te/Eqy5Nn2eCW48ae/M4R6i/qdUcSqTc/6feaQJtvFI/nXuKnt2GRVgmn
- RgBbKjwWPJdakIy7l3YeBCrEb+81UWzAi3A==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1793725640; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:TEvgxoZruk/7jOTh/Y9ooR8HlPEppy6dtn9r9Y610kyRXG2
- IGAaxEnhI5qgIbhWKVawhjTmnYIITvqm6lbJmfkZSsPbvtFl2vuYgmQtyJlFXLDb
- VmhbsMbx7356qpPTL6eUq9H1NVc1wkO1VzTwfkbAHoiJai1/1fSD3EiOtUQaBIR/
- NWhgxaJ20OeFwyfMl9WZ4f02oxybe9uCc2NXsY2+fVl3XyXbjZWha4Mu32J7an25
- It42Or94rhusDh9QcdqO/SJl0yFEsJmB+etLH4SM01SruVzkPwRhVW3A9IVDgyPW
- keHjpmqRVwk10Xm1H8f/8VxZFvvlZSqcHBXnBNA==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=mi-m=1; hc=8;
- hn=content-transfer-encoding,date,feedback-id,from,message-id,
- mime-version,subject,to;
-Message-Instance: m=1;
- h=sha256:/EutjMJHAmM7PX09HREZMN6B/9onEmspZYR97RAqzvs=:Yi+GmtpT2x8rhpycL0yPS37EE63Wu88jMSyS1XiGjmI=;
-X-ME-Sender: <xms:yBTqavlORP9wZg3Vc-ndhadZwUExDSBT7HLd8FwGtbLHh-n_L30C4g>
- <xme:yBTqaovnMj3X5VJF4w-ePHb_Fk275xmhRh1-FEYOvrmS0bL9fzbGHz09GmnI_fiLy
- a1frPUnGFiZBh8OqbuaF7jY8s1_uJr1SfTqsYffDSxJNbEgellOrQ>
-X-ME-Received: <xmr:yBTqagtFiNFIWY7_7fnYa4_mqBohPLtmc3xw68XlkcYOaNoVvyiHOr1Oq5foZ1VQBUsOthWm3kgwZYmliOTfnHjvraa_>
-X-ME-Proxy-Cause: dmFkZTEmquxfNF9a35ljCdtNje/T1r4zphZnHQBORE9RqsnzKgIh1HTj7A/T5zDmbAw1V/
- d8gneEX+NQU5cnDECO/QmQDbzH0Msw6QWGXpY4qZXHxsMYGV7NMoymbxZClKOZdPVej27k
- RUj+EQHi+E1NsWrhcLftSFbUzYcHI68dhLST5nmIqEyqEEUgEF2HFCJojPZhyQT1EK7cL5
- Mm8gQOUAr2GaSqwWj8O7cc/5HzJHs1+jeV33pQjeMNJX/QS8TRNRjhL0R6Axnfy3OQXLGh
- 4H+S0KaD1BuJVKU41dDLIzxL25ixgd8vTysdoEfwQxGSg25fs+hwE9CzfVHYA5vLqQeDer
- knUg+j0H+qTKU8KS3+WjdrshAxodFEI7sY1+V0UW/YvvECVQgp3ZfkXP2S76JuM7RbVTlh
- Ez/IBPK1vrGaKx7POcylAaowv4wj8G4RdzEfUBEYw++TQn+oHY4rerD+rb3E+9Q9kVL9gy
- DC1XUHVd915YSenh2izw7hngVpf7gmrlMCLihGEqjO2H5fImXdj9wqCLA8ZG5GPrpmTPFz
- vvr2fvaPy2+rVPGxxB+1NaZhqtqBxijNXsOC3w812+IJp9qlbd2S5M+VTnsLNPf2aA/BVL
- mLF79FC8i2j7B+0LvVSfsHMqbg0l1ErS6jMsSvYWGTxTnodDBt+Mt9SwYi1Q
-X-ME-Proxy: <xmx:yBTqakZc0XuXwG7zuZrwlVa6Nam_OVI9LK9xnEaK5T9Qcz5s-qOB9g>
- <xmx:yBTqahaZtRHCS0rtUYImc03c3XVcWHBCD8xJg1KaDjJOiKZFn5HodQ>
- <xmx:yBTqaoVzmU6HFlwpMMVNFU_MUWQEn5OooCkGwnd6zB0QtSDAL3a_HA>
- <xmx:yBTqag2j4MovYOr0TDUKzUCW18ortnVcCUTkUS9Pab-fBgMyRN3grw>
- <xmx:yBTqaqngY6HLRQIpI4kZQb4UsmxDPktCDVxUwnjJbS-To-VjrmREQ3KU>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA for <dev@dpdk.org>; 
- Tue, 3 Nov 2026 12:07:19 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id 59CF340265;
+	Tue,  3 Nov 2026 18:17:43 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTPS id 30321400D6
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 18:17:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1793726261;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=0Bq02msmPWiG2IqHNOKVLx7CFff3EfYBnSgMCVMp4bY=;
+ b=QcCcIVqdK/Ab5eOru6F9ZJWw1nRIZu+2o2tAFWgBG3KQnLSk33qNT7RWRrzMHqf72jf/pn
+ W3l0cuHqOlvStC1hNULBFo4jfgcTMCoPD3dE1gS1RRuJzo5X+Q3ZaRID3u3UOe2YnXF+gb
+ 9uSHSjfZbGx1YxWdLa92jxcZM3U/XNQ=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-255-ZEroA3cENkOdF40zdv_adw-1; Tue,
+ 03 Nov 2026 12:17:39 -0500
+X-MC-Unique: ZEroA3cENkOdF40zdv_adw-1
+X-Mimecast-MFC-AGG-ID: ZEroA3cENkOdF40zdv_adw_1793726258
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 8161E1801A0B; Tue,  3 Nov 2026 17:17:38 +0000 (UTC)
+Received: from dmarchan-thinkpadx1carbongen13.rmtfr.csb
+ (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 2BED31800444; Tue,  3 Nov 2026 17:17:36 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Subject: [PATCH] ipc: increase hotplug devargs limit
-Date: Tue,  3 Nov 2026 18:07:01 +0100
-Message-ID: <20261103170717.1243319-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.55.0
+Cc: rjarry@redhat.com,
+	stephen@networkplumber.org,
+	stable@dpdk.org
+Subject: [PATCH 1/2] net/tap: fix FD leak on netns change
+Date: Tue,  3 Nov 2026 18:17:29 +0100
+Message-ID: <20261103171730.1361878-1-david.marchand@redhat.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: r-dI5Oz56ucAtHAvLLhg2WipiSaQOKCqlcq4BJsxvrM_1793726258
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,69 +65,191 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Derive the hotplug devargs buffer size from the IPC parameter capacity.
-This increases the maximum devargs length in multi-process mode
-from 127 to 247 bytes, excluding the terminating null byte.
+When a tap interface moves to another namespace, tap_netns_change()
+calls tap_lsc_intr_handle_set(dev, 1) to recreate the LSC interrupt
+without first tearing down the old one. The previous LSC netlink
+socket fd is never closed.
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+Defer the full LSC teardown and re-registration to an alarm callback
+which runs in the interrupt thread but outside any active source
+context. The alarm switches to the device's network namespace, tears
+down the old LSC handle, sets up a new one (opening a fresh netlink
+socket in the correct namespace), restores the original namespace,
+and forces carrier state back up.
+
+Extract tap_dev_ns_switch/tap_dev_ns_restore helpers to share the
+namespace switch logic between tap_netns_change and the alarm.
+
+Fixes: aae3a38e9e03 ("net/tap: detect namespace change")
+Cc: stable@dpdk.org
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- lib/eal/common/eal_common_dev.c | 2 +-
- lib/eal/common/hotplug_mp.h     | 8 +++++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/net/tap/rte_eth_tap.c | 100 ++++++++++++++++++++++------------
+ 1 file changed, 65 insertions(+), 35 deletions(-)
 
-diff --git a/lib/eal/common/eal_common_dev.c b/lib/eal/common/eal_common_dev.c
-index f42a8d2349..febb584313 100644
---- a/lib/eal/common/eal_common_dev.c
-+++ b/lib/eal/common/eal_common_dev.c
-@@ -276,7 +276,7 @@ rte_dev_probe(const char *devargs)
- 		goto skip_mp_req;
+diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
+index 1d2b71675a..15320c4b7e 100644
+--- a/drivers/net/tap/rte_eth_tap.c
++++ b/drivers/net/tap/rte_eth_tap.c
+@@ -17,6 +17,7 @@
+ #include <rte_ip.h>
+ #include <rte_ethdev.h>
+ #include <rte_errno.h>
++#include <rte_alarm.h>
+ #include <rte_cycles.h>
  
- 	if (strlen(devargs) >= EAL_DEV_MP_DEV_ARGS_MAX_LEN) {
--		EAL_LOG(ERR, "devargs truncated (len %zu, max %d)",
-+		EAL_LOG(ERR, "devargs truncated (len %zu, max %zu)",
- 			strlen(devargs), EAL_DEV_MP_DEV_ARGS_MAX_LEN);
- 		return -E2BIG;
+ #include <assert.h>
+@@ -1796,41 +1797,57 @@ tap_mac_addr_remove(struct rte_eth_dev *dev __rte_unused,
+ 
+ static void tap_dev_intr_handler(void *cb_arg);
+ static int tap_lsc_intr_handle_set(struct rte_eth_dev *dev, int set);
++static void tap_lsc_register_alarm(void *arg);
+ 
++#ifdef TUNGETDEVNETNS
+ static int
+-tap_netns_change(struct rte_eth_dev *dev)
++tap_dev_ns_switch(struct pmd_internals *pmd, int *orig_netns_fd)
+ {
+-	struct pmd_internals *pmd = dev->data->dev_private;
+-#ifdef TUNGETDEVNETNS
+-	int netns_fd, orig_netns_fd, new_nlsk_fd;
++	int netns_fd;
+ 
+ 	netns_fd = ioctl(pmd->ka_fd, TUNGETDEVNETNS);
+-	if (netns_fd < 0) {
+-		TAP_LOG(INFO, "%s: interface deleted", pmd->name);
+-		return 0;
+-	}
+-
+-	/* Interface was moved to another namespace */
+-	pmd->if_index = 0;
++	if (netns_fd < 0)
++		return -1;
+ 
+-	/* Save current namespace */
+-	orig_netns_fd = open("/proc/self/ns/net", O_RDONLY);
+-	if (orig_netns_fd < 0) {
+-		TAP_LOG(ERR, "%s: failed to open original netns: %s",
+-			pmd->name, strerror(errno));
++	*orig_netns_fd = open("/proc/self/ns/net", O_RDONLY);
++	if (*orig_netns_fd < 0) {
+ 		close(netns_fd);
+ 		return -1;
  	}
-diff --git a/lib/eal/common/hotplug_mp.h b/lib/eal/common/hotplug_mp.h
-index 7221284286..bd2f0f296a 100644
---- a/lib/eal/common/hotplug_mp.h
-+++ b/lib/eal/common/hotplug_mp.h
-@@ -5,6 +5,7 @@
- #ifndef _HOTPLUG_MP_H_
- #define _HOTPLUG_MP_H_
  
-+#include "rte_eal.h"
- #include "rte_dev.h"
+-	/* Switch to new namespace */
+ 	if (setns(netns_fd, CLONE_NEWNET) < 0) {
+-		TAP_LOG(ERR, "%s: failed to enter new netns: %s",
+-			pmd->name, strerror(errno));
+ 		close(netns_fd);
+-		close(orig_netns_fd);
++		close(*orig_netns_fd);
+ 		return -1;
+ 	}
  
- #define EAL_DEV_MP_ACTION_REQUEST      "eal_dev_mp_request"
-@@ -12,7 +13,9 @@
- 
- #define EAL_DEV_MP_DEV_NAME_MAX_LEN RTE_DEV_NAME_MAX_LEN
- #define EAL_DEV_MP_BUS_NAME_MAX_LEN 32
--#define EAL_DEV_MP_DEV_ARGS_MAX_LEN 128
-+#define EAL_DEV_MP_DEV_ARGS_MAX_LEN (RTE_MP_MAX_PARAM_LEN \
-+	- sizeof(enum eal_dev_req_type) - sizeof(int))
-+	/* minus t and result from struct eal_dev_mp_req */
- 
- enum eal_dev_req_type {
- 	EAL_DEV_REQ_TYPE_ATTACH,
-@@ -27,6 +30,9 @@ struct eal_dev_mp_req {
- 	int result;
- };
- 
-+static_assert(sizeof(struct eal_dev_mp_req) <= RTE_MP_MAX_PARAM_LEN,
-+	"Hotplug message struct exceeds IPC parameter capacity");
++	close(netns_fd);
++	return 0;
++}
 +
- /**
-  * Register all mp action callbacks for hotplug.
-  *
++static void
++tap_dev_ns_restore(int orig_netns_fd)
++{
++	setns(orig_netns_fd, CLONE_NEWNET);
++	close(orig_netns_fd);
++}
++#endif
++
++static int
++tap_netns_change(struct rte_eth_dev *dev)
++{
++	struct pmd_internals *pmd = dev->data->dev_private;
++#ifdef TUNGETDEVNETNS
++	int orig_netns_fd, new_nlsk_fd;
++
++	if (tap_dev_ns_switch(pmd, &orig_netns_fd) < 0) {
++		TAP_LOG(INFO, "%s: interface deleted", pmd->name);
++		return 0;
++	}
++
++	/* Interface was moved to another namespace */
++	pmd->if_index = 0;
++
+ 	/*
+ 	 * Update ifindex by querying interface name.
+ 	 * The interface now has a new ifindex in the new namespace.
+@@ -1840,22 +1857,10 @@ tap_netns_change(struct rte_eth_dev *dev)
+ 	/* Recreate netlink socket in new namespace */
+ 	new_nlsk_fd = tap_nl_init(0);
+ 
+-	/* Recreate LSC interrupt netlink socket in new namespace */
+-	rte_intr_callback_unregister_pending(pmd->intr_handle, tap_dev_intr_handler, dev, NULL);
+-	if (tap_lsc_intr_handle_set(dev, 1) < 0)
+-		TAP_LOG(WARNING, "%s: failed to recreate LSC interrupt socket",
+-			pmd->name);
++	/* Defer LSC re-registration outside callback context */
++	rte_eal_alarm_set(1, tap_lsc_register_alarm, dev);
+ 
+-	/* Force carrier back after switching netns */
+-	tap_carrier_set(pmd, 1);
+-
+-	/* Switch back to original namespace */
+-	if (setns(orig_netns_fd, CLONE_NEWNET) < 0)
+-		TAP_LOG(ERR, "%s: failed to return to original netns: %s",
+-			pmd->name, strerror(errno));
+-
+-	close(orig_netns_fd);
+-	close(netns_fd);
++	tap_dev_ns_restore(orig_netns_fd);
+ 
+ 	if (pmd->if_index == 0) {
+ 		TAP_LOG(WARNING, "%s: interface moved to another namespace, "
+@@ -1952,6 +1957,7 @@ tap_lsc_intr_handle_set(struct rte_eth_dev *dev, int set)
+ 	}
+ 
+ clean:
++	rte_eal_alarm_cancel(tap_lsc_register_alarm, dev);
+ 	do {
+ 		ret = rte_intr_callback_unregister(pmd->intr_handle,
+ 			tap_dev_intr_handler, dev);
+@@ -1975,6 +1981,30 @@ tap_lsc_intr_handle_set(struct rte_eth_dev *dev, int set)
+ 	return 0;
+ }
+ 
++static void
++tap_lsc_register_alarm(void *arg)
++{
++#ifdef TUNGETDEVNETNS
++	struct rte_eth_dev *dev = arg;
++	struct pmd_internals *pmd = dev->data->dev_private;
++	int orig_netns_fd;
++
++	if (tap_dev_ns_switch(pmd, &orig_netns_fd) < 0)
++		return;
++
++	tap_lsc_intr_handle_set(dev, 0);
++	if (tap_lsc_intr_handle_set(dev, 1) < 0)
++		TAP_LOG(ERR, "%s: failed to register LSC interrupt", pmd->name);
++
++	tap_dev_ns_restore(orig_netns_fd);
++
++	tap_carrier_set(pmd, 1);
++	tap_link_update(dev, 0);
++#else
++	RTE_SET_USED(arg);
++#endif
++}
++
+ static int
+ tap_intr_handle_set(struct rte_eth_dev *dev, int set)
+ {
 -- 
-2.55.0
+2.56.0
 
