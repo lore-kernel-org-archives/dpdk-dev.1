@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA28F606A329
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62785606A326
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=SlDxU9Pt
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=jPDCWRVy
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6E6FF427D7;
-	Tue,  3 Nov 2026 16:10:25 +0100 (CET)
-Received: from mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
- by mails.dpdk.org (Postfix) with ESMTPS id 96E9F427DD
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:10:24 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4A17842E49;
+	Tue,  3 Nov 2026 16:10:31 +0100 (CET)
+Received: from mta1.migadu.com (out-83.mta1.migadu.com [95.215.58.83])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8699542E49
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:10:30 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=r3xpSjrakaurWLLesqiF7HXVZ1ZDzPq8ikWEUDeCuT4=; 
+DKIM-Signature: a=rsa-sha256; bh=NG2aAS68o6zg5BhqBqiPvxM7vlTQ4hc7MhjyClUzGC4=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718624; v=1; x=1794323424;
- b=SlDxU9PtoOcADXY4DCPHy+1ww/h5lSe1QQoDEFGJrZdcA4DnSMBRRYgoNZUvPtaWw87A1AUM
- eOazwxyiaHjGeyk5ArNDC12f14b1+k+Jssx2K5n6bmjluHCKL0fk0sLUaIzjlhvTwQ6ISuLwxtP
- 0UNbCv6pevX7fsgVOn8LJgn4=
+ t=1793718630; v=1; x=1794323430;
+ b=jPDCWRVyjZdHdW6hzPdEoQDF0IwYkrJSXgFvMnPZ7pW59HKb+vQmVWaVrFyYGDBZKfNhK8NA
+ gNPEnOH1iZerlPYVF43nDH6bFB1dmLxrwP87fGkZXqvMpGNYd2B0qxZX4PnbG+NkXBq/kSKKBIh
+ OvqJhw/92TPy9Aktl0T1N4sI=
 X-Envelope-To: dev@dpdk.org
-Received: by mta12.migadu.com with ESMTPS id 461042429aa2378d;
- Tue, 03 Nov 2026 15:10:15 +0000
-X-Mizu-Trace-ID: 461042429aa2378d
+Received: by mta12.migadu.com with ESMTPS id b7ed6e86fd6c27fd;
+ Tue, 03 Nov 2026 15:10:30 +0000
+X-Mizu-Trace-ID: b7ed6e86fd6c27fd
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 104/227] net/ark: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:51:02 +0800
-Message-ID: <20261103145306.487255-105-chengwen.feng@linux.dev>
+Subject: [PATCH 105/227] net/atlantic: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:51:03 +0800
+Message-ID: <20261103145306.487255-106-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,149 +63,115 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/net/ark/ark_ethdev.c    |  4 ++--
- drivers/net/ark/ark_ethdev_rx.c | 14 +++++++-------
- drivers/net/ark/ark_ethdev_rx.h |  2 +-
- drivers/net/ark/ark_ethdev_tx.c | 14 +++++++-------
- drivers/net/ark/ark_ethdev_tx.h |  2 +-
- 5 files changed, 18 insertions(+), 18 deletions(-)
+ drivers/net/atlantic/atl_ethdev.h |  4 ++--
+ drivers/net/atlantic/atl_rxtx.c   | 24 ++++++++++++------------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/ark/ark_ethdev.c b/drivers/net/ark/ark_ethdev.c
-index d6b1abf383..1df54b27b4 100644
---- a/drivers/net/ark/ark_ethdev.c
-+++ b/drivers/net/ark/ark_ethdev.c
-@@ -441,10 +441,10 @@ ark_dev_init(struct rte_eth_dev *dev)
- 		eth_dev->device = &pci_dev->device;
- 		/* Device requires new dev_private data */
- 		eth_dev->data->dev_private =
--			rte_zmalloc_socket(name,
-+			rte_zmalloc_numa(name,
- 					   sizeof(struct ark_adapter),
- 					   RTE_CACHE_LINE_SIZE,
--					   rte_socket_id());
-+					   rte_numa_id());
- 		if (eth_dev->data->dev_private == NULL) {
- 			ARK_PMD_LOG(ERR, "Memory allocation for dev_private failed\n");
- 			goto error;
-diff --git a/drivers/net/ark/ark_ethdev_rx.c b/drivers/net/ark/ark_ethdev_rx.c
-index adba943fa2..4af6f5e40a 100644
---- a/drivers/net/ark/ark_ethdev_rx.c
-+++ b/drivers/net/ark/ark_ethdev_rx.c
-@@ -114,7 +114,7 @@ int
- ark_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 			   uint16_t queue_idx,
- 			   uint16_t nb_desc,
--			   unsigned int socket_id,
-+			   unsigned int numa_id,
- 			   const struct rte_eth_rxconf *rx_conf,
- 			   struct rte_mempool *mb_pool)
+diff --git a/drivers/net/atlantic/atl_ethdev.h b/drivers/net/atlantic/atl_ethdev.h
+index d2f951c146..41bd29652f 100644
+--- a/drivers/net/atlantic/atl_ethdev.h
++++ b/drivers/net/atlantic/atl_ethdev.h
+@@ -58,12 +58,12 @@ void atl_rx_queue_release(struct rte_eth_dev *dev, uint16_t rx_queue_id);
+ void atl_tx_queue_release(struct rte_eth_dev *dev, uint16_t tx_queue_id);
+ 
+ int atl_rx_queue_setup(struct rte_eth_dev *dev, uint16_t rx_queue_id,
+-		uint16_t nb_rx_desc, unsigned int socket_id,
++		uint16_t nb_rx_desc, unsigned int numa_id,
+ 		const struct rte_eth_rxconf *rx_conf,
+ 		struct rte_mempool *mb_pool);
+ 
+ int atl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
+-		uint16_t nb_tx_desc, unsigned int socket_id,
++		uint16_t nb_tx_desc, unsigned int numa_id,
+ 		const struct rte_eth_txconf *tx_conf);
+ 
+ int atl_rx_queue_count(void *rx_queue);
+diff --git a/drivers/net/atlantic/atl_rxtx.c b/drivers/net/atlantic/atl_rxtx.c
+index 8d02b92304..016351e69d 100644
+--- a/drivers/net/atlantic/atl_rxtx.c
++++ b/drivers/net/atlantic/atl_rxtx.c
+@@ -100,7 +100,7 @@ atl_reset_rx_queue(struct atl_rx_queue *rxq)
+ 
+ int
+ atl_rx_queue_setup(struct rte_eth_dev *dev, uint16_t rx_queue_id,
+-		   uint16_t nb_rx_desc, unsigned int socket_id,
++		   uint16_t nb_rx_desc, unsigned int numa_id,
+ 		   const struct rte_eth_rxconf *rx_conf,
+ 		   struct rte_mempool *mb_pool)
  {
-@@ -154,10 +154,10 @@ ark_dev_rx_queue_setup(struct rte_eth_dev *dev,
+@@ -130,8 +130,8 @@ atl_rx_queue_setup(struct rte_eth_dev *dev, uint16_t rx_queue_id,
  	}
  
- 	/* Allocate queue struct */
--	queue = rte_zmalloc_socket("Ark_rxqueue",
-+	queue = rte_zmalloc_numa("Ark_rxqueue",
- 				   sizeof(struct ark_rx_queue),
- 				   64,
--				   socket_id);
-+				   numa_id);
- 	if (queue == 0) {
- 		ARK_PMD_LOG(ERR, "Failed to allocate memory in %s\n", __func__);
+ 	/* allocate memory for the queue structure */
+-	rxq = rte_zmalloc_socket("atlantic Rx queue", sizeof(*rxq),
+-				 RTE_CACHE_LINE_SIZE, socket_id);
++	rxq = rte_zmalloc_numa("atlantic Rx queue", sizeof(*rxq),
++				 RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (rxq == NULL) {
+ 		PMD_INIT_LOG(ERR, "Cannot allocate queue structure");
  		return -ENOMEM;
-@@ -183,16 +183,16 @@ ark_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 	queue->ext_user_data = ark->user_data[dev->data->port_id];
+@@ -152,9 +152,9 @@ atl_rx_queue_setup(struct rte_eth_dev *dev, uint16_t rx_queue_id,
+ 		PMD_DRV_LOG(ERR, "PMD does not support KEEP_CRC offload");
  
- 	queue->reserve_q =
--		rte_zmalloc_socket("Ark_rx_queue mbuf",
-+		rte_zmalloc_numa("Ark_rx_queue mbuf",
- 				   nb_desc * sizeof(struct rte_mbuf *),
- 				   512,
--				   socket_id);
-+				   numa_id);
- 	/* Align buffer to PCIe's boundary size to reduce upstream read request TLPs from FPGA */
- 	queue->paddress_q =
--		rte_zmalloc_socket("Ark_rx_queue paddr",
-+		rte_zmalloc_numa("Ark_rx_queue paddr",
- 				   nb_desc * sizeof(rte_iova_t),
- 				   ARK_PCIE_BOUNDARY,
--				   socket_id);
-+				   numa_id);
+ 	/* allocate memory for the software ring */
+-	rxq->sw_ring = rte_zmalloc_socket("atlantic sw rx ring",
++	rxq->sw_ring = rte_zmalloc_numa("atlantic sw rx ring",
+ 				nb_rx_desc * sizeof(struct atl_rx_entry),
+-				RTE_CACHE_LINE_SIZE, socket_id);
++				RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (rxq->sw_ring == NULL) {
+ 		PMD_INIT_LOG(ERR,
+ 			"Port %d: Cannot allocate software ring for queue %d",
+@@ -171,7 +171,7 @@ atl_rx_queue_setup(struct rte_eth_dev *dev, uint16_t rx_queue_id,
+ 	mz = rte_eth_dma_zone_reserve(dev, "rx hw_ring", rx_queue_id,
+ 				      HW_ATL_B0_MAX_RXD *
+ 					sizeof(struct hw_atl_rxd_s),
+-				      128, socket_id);
++				      128, numa_id);
+ 	if (mz == NULL) {
+ 		PMD_INIT_LOG(ERR,
+ 			"Port %d: Cannot allocate hardware ring for queue %d",
+@@ -223,7 +223,7 @@ atl_reset_tx_queue(struct atl_tx_queue *txq)
  
- 	if (queue->reserve_q == 0 || queue->paddress_q == 0) {
- 		ARK_PMD_LOG(ERR,
-diff --git a/drivers/net/ark/ark_ethdev_rx.h b/drivers/net/ark/ark_ethdev_rx.h
-index 184733640b..0e5d0d5158 100644
---- a/drivers/net/ark/ark_ethdev_rx.h
-+++ b/drivers/net/ark/ark_ethdev_rx.h
-@@ -14,7 +14,7 @@
- int ark_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 			       uint16_t queue_idx,
- 			       uint16_t nb_desc,
--			       unsigned int socket_id,
-+			       unsigned int numa_id,
- 			       const struct rte_eth_rxconf *rx_conf,
- 			       struct rte_mempool *mp);
- int ark_dev_rx_queue_count(void *rx_queue);
-diff --git a/drivers/net/ark/ark_ethdev_tx.c b/drivers/net/ark/ark_ethdev_tx.c
-index 0d6a94b919..5b0375ee56 100644
---- a/drivers/net/ark/ark_ethdev_tx.c
-+++ b/drivers/net/ark/ark_ethdev_tx.c
-@@ -227,7 +227,7 @@ int
- ark_tx_queue_setup(struct rte_eth_dev *dev,
- 		       uint16_t queue_idx,
- 		       uint16_t nb_desc,
--		       unsigned int socket_id,
-+		       unsigned int numa_id,
- 		       const struct rte_eth_txconf *tx_conf __rte_unused)
+ int
+ atl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
+-		   uint16_t nb_tx_desc, unsigned int socket_id,
++		   uint16_t nb_tx_desc, unsigned int numa_id,
+ 		   const struct rte_eth_txconf *tx_conf)
  {
- 	struct ark_adapter *ark = dev->data->dev_private;
-@@ -248,10 +248,10 @@ ark_tx_queue_setup(struct rte_eth_dev *dev,
- 	nb_desc = 2 * nb_desc;
+ 	struct atl_tx_queue *txq;
+@@ -252,8 +252,8 @@ atl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
+ 	}
  
- 	/* Allocate queue struct */
--	queue =	rte_zmalloc_socket("Ark_txqueue",
-+	queue =	rte_zmalloc_numa("Ark_txqueue",
- 				   sizeof(struct ark_tx_queue),
- 				   64,
--				   socket_id);
-+				   numa_id);
- 	if (queue == 0) {
- 		ARK_PMD_LOG(ERR, "Failed to allocate tx "
- 			    "queue memory in %s\n",
-@@ -269,15 +269,15 @@ ark_tx_queue_setup(struct rte_eth_dev *dev,
- 	queue->ext_user_data = ark->user_data[dev->data->port_id];
+ 	/* allocate memory for the queue structure */
+-	txq = rte_zmalloc_socket("atlantic Tx queue", sizeof(*txq),
+-				 RTE_CACHE_LINE_SIZE, socket_id);
++	txq = rte_zmalloc_numa("atlantic Tx queue", sizeof(*txq),
++				 RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (txq == NULL) {
+ 		PMD_INIT_LOG(ERR, "Cannot allocate queue structure");
+ 		return -ENOMEM;
+@@ -267,9 +267,9 @@ atl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
  
- 	queue->meta_q =
--		rte_zmalloc_socket("Ark_txqueue meta",
-+		rte_zmalloc_numa("Ark_txqueue meta",
- 				   nb_desc * sizeof(union ark_tx_meta),
- 				   64,
--				   socket_id);
-+				   numa_id);
- 	queue->bufs =
--		rte_zmalloc_socket("Ark_txqueue bufs",
-+		rte_zmalloc_numa("Ark_txqueue bufs",
- 				   nb_desc * sizeof(struct rte_mbuf *),
- 				   64,
--				   socket_id);
-+				   numa_id);
  
- 	if (queue->meta_q == 0 || queue->bufs == 0) {
- 		ARK_PMD_LOG(ERR, "Failed to allocate "
-diff --git a/drivers/net/ark/ark_ethdev_tx.h b/drivers/net/ark/ark_ethdev_tx.h
-index 2653408de6..099257012b 100644
---- a/drivers/net/ark/ark_ethdev_tx.h
-+++ b/drivers/net/ark/ark_ethdev_tx.h
-@@ -16,7 +16,7 @@ uint16_t ark_xmit_pkts(void *vtxq,
- int ark_tx_queue_setup(struct rte_eth_dev *dev,
- 			   uint16_t queue_idx,
- 			   uint16_t nb_desc,
--			   unsigned int socket_id,
-+			   unsigned int numa_id,
- 			   const struct rte_eth_txconf *tx_conf);
- void ark_tx_queue_release(void *vtx_queue);
- int ark_tx_queue_stop(struct rte_eth_dev *dev, uint16_t queue_id);
+ 	/* allocate memory for the software ring */
+-	txq->sw_ring = rte_zmalloc_socket("atlantic sw tx ring",
++	txq->sw_ring = rte_zmalloc_numa("atlantic sw tx ring",
+ 				nb_tx_desc * sizeof(struct atl_tx_entry),
+-				RTE_CACHE_LINE_SIZE, socket_id);
++				RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (txq->sw_ring == NULL) {
+ 		PMD_INIT_LOG(ERR,
+ 			"Port %d: Cannot allocate software ring for queue %d",
+@@ -285,7 +285,7 @@ atl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
+ 	 */
+ 	mz = rte_eth_dma_zone_reserve(dev, "tx hw_ring", tx_queue_id,
+ 				HW_ATL_B0_MAX_TXD * sizeof(struct hw_atl_txd_s),
+-				128, socket_id);
++				128, numa_id);
+ 	if (mz == NULL) {
+ 		PMD_INIT_LOG(ERR,
+ 			"Port %d: Cannot allocate hardware ring for queue %d",
 -- 
 2.55.0
 
