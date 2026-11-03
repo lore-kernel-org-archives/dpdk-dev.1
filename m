@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F482606A78D
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B519E606A796
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=fYY6IGkI
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=bkOOQB6/
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2EDDF42DCB;
-	Tue,  3 Nov 2026 16:06:10 +0100 (CET)
-Received: from mta1.migadu.com (out-32.mta1.migadu.com [95.215.58.32])
- by mails.dpdk.org (Postfix) with ESMTPS id DA22C4113D
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:06:08 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7A9B042DCB;
+	Tue,  3 Nov 2026 16:06:46 +0100 (CET)
+Received: from mta1.migadu.com (out-91.mta1.migadu.com [95.215.58.91])
+ by mails.dpdk.org (Postfix) with ESMTPS id 703C14113D
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:06:45 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=WHBmiC91DqdrzUa+fvmwZqFa7K+KwY4tHmUkwz05wzk=; 
+DKIM-Signature: a=rsa-sha256; bh=x0axmGJLWaIUUXHm4qR1etQ27KNcTsOkQHOL/Bk72yc=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718368; v=1; x=1794323168;
- b=fYY6IGkI41QctSkILFfqDnU0ykjIbIIOtRhIaErJz2tej7UviKuuBh/V1c4U4tgcvWWEq+pu
- psk/LtN1Dj4PjCeSRCCnpXJWPuP9zdyZAC935DrG+Ko6Fh3PAbJ2/sQkohfUIqtrawLsE5oD+p1
- Bz1WdGmLt2/IyxqCAon2Nmn4=
+ t=1793718405; v=1; x=1794323205;
+ b=bkOOQB6/bsDRFAxfQpDPyZvqGlbBYubpiErohROHv3ShgZFJCdzAVMV5jxYMDGveubeFLN+y
+ 5Fz5umOD+I2t6qa64cTRGmbG/KVjPpWGhJIJuPL1YPcBiYHpw83hg1SzVqcbmUArpQdBv6ql6rt
+ IbfCanqESkMRkrGho23cSGjE=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id e31a9bbd83bd1b64;
- Tue, 03 Nov 2026 15:06:08 +0000
-X-Mizu-Trace-ID: e31a9bbd83bd1b64
+Received: by mta11.migadu.com with ESMTPS id 9e263f5b8ce45210;
+ Tue, 03 Nov 2026 15:06:45 +0000
+X-Mizu-Trace-ID: 9e263f5b8ce45210
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 079/227] crypto/virtio: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:37 +0800
-Message-ID: <20261103145306.487255-80-chengwen.feng@linux.dev>
+Subject: [PATCH 080/227] crypto/zsda: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:50:38 +0800
+Message-ID: <20261103145306.487255-81-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,95 +63,50 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/crypto/virtio/virtio_cryptodev.c | 12 ++++++------
- drivers/crypto/virtio/virtio_cryptodev.h |  2 +-
- drivers/crypto/virtio/virtqueue.c        |  2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/crypto/zsda/zsda_crypto_pmd.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/crypto/virtio/virtio_cryptodev.c b/drivers/crypto/virtio/virtio_cryptodev.c
-index d0fe21947c..9f1df7be50 100644
---- a/drivers/crypto/virtio/virtio_cryptodev.c
-+++ b/drivers/crypto/virtio/virtio_cryptodev.c
-@@ -30,7 +30,7 @@ static void virtio_crypto_dev_stats_reset(struct rte_cryptodev *dev);
- static int virtio_crypto_qp_setup(struct rte_cryptodev *dev,
- 		uint16_t queue_pair_id,
- 		const struct rte_cryptodev_qp_conf *qp_conf,
--		int socket_id);
-+		int numa_id);
- static int virtio_crypto_qp_release(struct rte_cryptodev *dev,
- 		uint16_t queue_pair_id);
- static void virtio_crypto_dev_free_mbufs(struct rte_cryptodev *dev);
-@@ -90,7 +90,7 @@ virtio_crypto_queue_setup(struct rte_cryptodev *dev,
- 		int queue_type,
- 		uint16_t vtpci_queue_idx,
- 		uint16_t nb_desc,
--		int socket_id,
-+		int numa_id,
- 		struct virtqueue **pvq)
- {
- 	char vq_name[VIRTQUEUE_MAX_NAME_SZ];
-@@ -144,7 +144,7 @@ virtio_crypto_queue_setup(struct rte_cryptodev *dev,
- 		vq = hw->vqs[vtpci_queue_idx];
- 	else
- 		vq = virtcrypto_queue_alloc(hw, vtpci_queue_idx, nb_desc,
--				socket_id, vq_name);
-+				numa_id, vq_name);
- 	if (vq == NULL) {
- 		VIRTIO_CRYPTO_INIT_LOG_ERR("Can not allocate virtqueue");
- 		return -ENOMEM;
-@@ -162,7 +162,7 @@ virtio_crypto_queue_setup(struct rte_cryptodev *dev,
- 					nb_desc,
- 					sizeof(struct virtio_crypto_op_cookie),
- 					RTE_CACHE_LINE_SIZE, 0,
--					NULL, NULL, NULL, NULL, socket_id,
-+					NULL, NULL, NULL, NULL, numa_id,
- 					0);
- 		if (!vq->mpool) {
- 			VIRTIO_CRYPTO_DRV_LOG_ERR("Virtio Crypto PMD "
-@@ -298,7 +298,7 @@ virtio_crypto_dev_stats_reset(struct rte_cryptodev *dev)
+diff --git a/drivers/crypto/zsda/zsda_crypto_pmd.c b/drivers/crypto/zsda/zsda_crypto_pmd.c
+index d1cdfcce0b..d080a26891 100644
+--- a/drivers/crypto/zsda/zsda_crypto_pmd.c
++++ b/drivers/crypto/zsda/zsda_crypto_pmd.c
+@@ -115,7 +115,7 @@ zsda_crypto_stats_reset(struct rte_cryptodev *dev)
  static int
- virtio_crypto_qp_setup(struct rte_cryptodev *dev, uint16_t queue_pair_id,
- 		const struct rte_cryptodev_qp_conf *qp_conf,
--		int socket_id)
-+		int numa_id)
+ zsda_qp_setup(struct rte_cryptodev *dev, uint16_t qp_id,
+ 		  const struct rte_cryptodev_qp_conf *qp_conf,
+-		  int socket_id)
++		  int numa_id)
  {
- 	int ret;
- 	struct virtqueue *vq;
-@@ -310,7 +310,7 @@ virtio_crypto_qp_setup(struct rte_cryptodev *dev, uint16_t queue_pair_id,
- 		return 0;
+ 	int ret = ZSDA_SUCCESS;
+ 	struct zsda_qp *qp_new;
+@@ -134,15 +134,15 @@ zsda_qp_setup(struct rte_cryptodev *dev, uint16_t qp_id,
+ 			return ret;
+ 	}
  
- 	ret = virtio_crypto_queue_setup(dev, VTCRYPTO_DATAQ, queue_pair_id,
--			qp_conf->nb_descriptors, socket_id, &vq);
-+			qp_conf->nb_descriptors, numa_id, &vq);
- 	if (ret < 0) {
- 		VIRTIO_CRYPTO_INIT_LOG_ERR(
- 			"virtio crypto data queue initialization failed");
-diff --git a/drivers/crypto/virtio/virtio_cryptodev.h b/drivers/crypto/virtio/virtio_cryptodev.h
-index 075b5ff444..2ca1e77492 100644
---- a/drivers/crypto/virtio/virtio_cryptodev.h
-+++ b/drivers/crypto/virtio/virtio_cryptodev.h
-@@ -63,7 +63,7 @@ int virtio_crypto_queue_setup(struct rte_cryptodev *dev,
- 		int queue_type,
- 		uint16_t vtpci_queue_idx,
- 		uint16_t nb_desc,
--		int socket_id,
-+		int numa_id,
- 		struct virtqueue **pvq);
+-	qp_new = rte_zmalloc_socket("zsda PMD qp metadata", sizeof(*qp_new),
+-				    RTE_CACHE_LINE_SIZE, socket_id);
++	qp_new = rte_zmalloc_numa("zsda PMD qp metadata", sizeof(*qp_new),
++				    RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (qp_new == NULL) {
+ 		ZSDA_LOG(ERR, "Failed to alloc mem for qp struct");
+ 		return -ENOMEM;
+ 	}
  
- void virtio_crypto_queue_release(struct virtqueue *vq);
-diff --git a/drivers/crypto/virtio/virtqueue.c b/drivers/crypto/virtio/virtqueue.c
-index 061aa09dbe..d76e0a0cf5 100644
---- a/drivers/crypto/virtio/virtqueue.c
-+++ b/drivers/crypto/virtio/virtqueue.c
-@@ -190,7 +190,7 @@ virtcrypto_queue_alloc(struct virtio_crypto_hw *hw, uint16_t index, uint16_t num
- 	size = sizeof(*vq) + num * sizeof(struct vq_desc_extra);
- 	size = RTE_ALIGN_CEIL(size, RTE_CACHE_LINE_SIZE);
+ 	task_q_info.nb_des = nb_des;
+-	task_q_info.socket_id = socket_id;
++	task_q_info.numa_id = numa_id;
+ 	task_q_info.qp_id = qp_id;
+ 	task_q_info.rx_cb = zsda_crypto_callback;
  
--	vq = rte_zmalloc_socket(name, size, RTE_CACHE_LINE_SIZE, node);
-+	vq = rte_zmalloc_numa(name, size, RTE_CACHE_LINE_SIZE, node);
- 	if (vq == NULL) {
- 		PMD_INIT_LOG(ERR, "can not allocate vq");
- 		return NULL;
+@@ -315,7 +315,7 @@ zsda_crypto_dev_create(struct zsda_pci_device *zsda_pci_dev)
+ 	crypto_dev_priv->capa_mz = rte_memzone_lookup(capa_memz_name);
+ 	if (crypto_dev_priv->capa_mz == NULL)
+ 		crypto_dev_priv->capa_mz = rte_memzone_reserve(
+-			capa_memz_name, capa_size, rte_socket_id(), 0);
++			capa_memz_name, capa_size, rte_numa_id(), 0);
+ 
+ 	if (crypto_dev_priv->capa_mz == NULL) {
+ 		ZSDA_LOG(ERR, "Failed! crypto_dev_priv->capa_mz");
 -- 
 2.55.0
 
