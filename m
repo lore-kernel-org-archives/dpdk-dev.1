@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAD2606A326
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC91D606A326
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=YTfxC7lX
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=DIUlBfDX
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6F91243276;
-	Tue,  3 Nov 2026 16:25:10 +0100 (CET)
-Received: from mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
- by mails.dpdk.org (Postfix) with ESMTPS id 210CF4325B
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:25:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 24F4B4329C;
+	Tue,  3 Nov 2026 16:25:19 +0100 (CET)
+Received: from mta1.migadu.com (out-197.mta1.migadu.com [95.215.58.197])
+ by mails.dpdk.org (Postfix) with ESMTPS id EEDCB4325B
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:25:17 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=LSu4PzjlrNDJGucyBvs5ag7x0hYD834XKMPHLiJ+WCQ=; 
+DKIM-Signature: a=rsa-sha256; bh=1QAlxbbzm6pKbou+IsOqFXNp+VnnSHWIchqvopbLg9M=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719508; v=1; x=1794324308;
- b=YTfxC7lX0TcwdpX3wQ7Xmrw5c+ibuOkP7tcRKCNuQ1ao+vO9MC7HKWKJDKIzBkM8g+N4+Jhb
- Yql4NwUMiw+P2ks1N6PW/ghDQKLop251E5Z7YpEgsTEXqUHf+zr/3wOOZQ0AGbWPkmEci5ezAXE
- 4cD7AUDQlGuJbSOe1cNpyhWw=
+ t=1793719517; v=1; x=1794324317;
+ b=DIUlBfDXuf0vpN2QNGcbnZP9SdVdZI8M/GimicLu+AGAoavmXwXirLinCi1Xk9541XBIvb6+
+ 0LK0Rut7D1Zeev59OKy07nO8z/ddvbI2KFloDFHpAz21Iypiapql7GyzdCr4K80MsB3dZCIbGVq
+ MnoHAUWIjnkrZE1ivARREAyA=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id d13b7135a0f24f3c;
- Tue, 03 Nov 2026 15:25:08 +0000
-X-Mizu-Trace-ID: d13b7135a0f24f3c
+Received: by mta11.migadu.com with ESMTPS id 6249f6f209946a50;
+ Tue, 03 Nov 2026 15:25:17 +0000
+X-Mizu-Trace-ID: 6249f6f209946a50
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 202/227] examples/l2fwd-macsec: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:40 +0800
-Message-ID: <20261103145306.487255-203-chengwen.feng@linux.dev>
+Subject: [PATCH 203/227] examples/l3fwd: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:52:41 +0800
+Message-ID: <20261103145306.487255-204-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,60 +62,136 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- examples/l2fwd-macsec/main.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ examples/l3fwd/l3fwd_acl.c | 22 +++++++++++-----------
+ examples/l3fwd/l3fwd_em.c  |  4 ++--
+ examples/l3fwd/main.c      |  8 ++++----
+ 3 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/examples/l2fwd-macsec/main.c b/examples/l2fwd-macsec/main.c
-index 33113cb0f5..aee0d8e06b 100644
---- a/examples/l2fwd-macsec/main.c
-+++ b/examples/l2fwd-macsec/main.c
-@@ -1379,7 +1379,7 @@ main(int argc, char **argv)
- 	/* Create the mbuf pool. 8< */
- 	l2fwd_pktmbuf_pool = rte_pktmbuf_pool_create("mbuf_pool", nb_mbufs,
- 		MEMPOOL_CACHE_SIZE, 0, RTE_MBUF_DEFAULT_BUF_SIZE,
--		rte_socket_id());
-+		rte_numa_id());
- 	if (l2fwd_pktmbuf_pool == NULL)
- 		rte_exit(EXIT_FAILURE, "Cannot init mbuf pool\n");
- 	/* >8 End of create the mbuf pool. */
-@@ -1438,7 +1438,7 @@ main(int argc, char **argv)
- 		rxq_conf.offloads = local_port_conf.rxmode.offloads;
- 		/* RX queue setup. 8< */
- 		ret = rte_eth_rx_queue_setup(portid, 0, nb_rxd,
--					     rte_eth_dev_socket_id(portid),
-+					     rte_eth_dev_numa_id(portid),
- 					     &rxq_conf,
- 					     l2fwd_pktmbuf_pool);
- 		if (ret < 0)
-@@ -1451,7 +1451,7 @@ main(int argc, char **argv)
- 		txq_conf = dev_info.default_txconf;
- 		txq_conf.offloads = local_port_conf.txmode.offloads;
- 		ret = rte_eth_tx_queue_setup(portid, 0, nb_txd,
--				rte_eth_dev_socket_id(portid),
-+				rte_eth_dev_numa_id(portid),
- 				&txq_conf);
- 		if (ret < 0)
- 			rte_exit(EXIT_FAILURE, "rte_eth_tx_queue_setup:err=%d, port=%u\n",
-@@ -1459,9 +1459,9 @@ main(int argc, char **argv)
- 		/* >8 End of init one TX queue on each port. */
+diff --git a/examples/l3fwd/l3fwd_acl.c b/examples/l3fwd/l3fwd_acl.c
+index 4ee3411d2a..54aa3dc9ba 100644
+--- a/examples/l3fwd/l3fwd_acl.c
++++ b/examples/l3fwd/l3fwd_acl.c
+@@ -692,7 +692,7 @@ app_acl_init(struct rte_acl_rule *route_base,
+ 			socketid);
  
- 		/* Initialize TX buffers */
--		tx_buffer[portid] = rte_zmalloc_socket("tx_buffer",
-+		tx_buffer[portid] = rte_zmalloc_numa("tx_buffer",
- 				RTE_ETH_TX_BUFFER_SIZE(MAX_PKT_BURST), 0,
--				rte_eth_dev_socket_id(portid));
-+				rte_eth_dev_numa_id(portid));
- 		if (tx_buffer[portid] == NULL)
- 			rte_exit(EXIT_FAILURE, "Cannot allocate buffer for tx on port %u\n",
- 					portid);
-@@ -1514,7 +1514,7 @@ main(int argc, char **argv)
- 							nb_sess, sess_sz,
- 							SESSION_POOL_CACHE_SIZE, 0,
- 							NULL, NULL, NULL, NULL,
--							SOCKET_ID_ANY, 0);
-+							RTE_NUMA_ID_ANY, 0);
- 			if (mcs_port_params[portid].sess_pool == NULL)
- 				rte_exit(EXIT_FAILURE, "Cannot init sess pool\n");
+ 	acl_param.name = name;
+-	acl_param.socket_id = socketid;
++	acl_param.numa_id = socketid;
+ 	acl_param.rule_size = RTE_ACL_RULE_SZ(dim);
+ 	acl_param.max_rule_num = MAX_ACL_RULE_NUM;
+ 
+@@ -935,7 +935,7 @@ dump_ipv6_rules(struct acl6_rule *rule, int num, int extra)
+ 
+ /* Function to setup acl. */
+ void
+-setup_acl(const int socket_id)
++setup_acl(const int numa_id)
+ {
+ 	if (check_acl_config() != 0)
+ 		rte_exit(EXIT_FAILURE, "Failed to get valid ACL options\n");
+@@ -955,24 +955,24 @@ setup_acl(const int socket_id)
+ 	dump_ipv6_rules((struct acl6_rule *)acl_base_ipv6, acl_num_ipv6, 1);
+ 
+ 	/* Check sockets a context should be created on */
+-	if (socket_id >= NB_SOCKETS) {
++	if (numa_id >= NB_SOCKETS) {
+ 		acl_log("Socket %d is out "
+ 			"of range %d\n",
+-			socket_id, NB_SOCKETS);
++			numa_id, NB_SOCKETS);
+ 		acl_free_routes();
+ 		return;
+ 	}
+ 
+-	rte_acl_free(acl_config.acx_ipv4[socket_id]);
+-	rte_acl_free(acl_config.acx_ipv6[socket_id]);
++	rte_acl_free(acl_config.acx_ipv4[numa_id]);
++	rte_acl_free(acl_config.acx_ipv6[numa_id]);
+ 
+-	acl_config.acx_ipv4[socket_id] = app_acl_init(route_base_ipv4,
++	acl_config.acx_ipv4[numa_id] = app_acl_init(route_base_ipv4,
+ 		acl_base_ipv4, route_num_ipv4, acl_num_ipv4,
+-		0, socket_id);
++		0, numa_id);
+ 
+-	acl_config.acx_ipv6[socket_id] = app_acl_init(route_base_ipv6,
++	acl_config.acx_ipv6[numa_id] = app_acl_init(route_base_ipv6,
+ 		acl_base_ipv6, route_num_ipv6, acl_num_ipv6,
+-		1, socket_id);
++		1, numa_id);
+ 
+ #ifdef L3FWDACL_DEBUG
+ 	acl_config.rule_ipv4 = (struct acl4_rule *)acl_base_ipv4;
+@@ -1091,7 +1091,7 @@ acl_main_loop(__rte_unused void *dummy)
+ 	prev_tsc = 0;
+ 	lcore_id = rte_lcore_id();
+ 	qconf = &lcore_conf[lcore_id];
+-	socketid = rte_lcore_to_socket_id(lcore_id);
++	socketid = rte_lcore_to_numa_id(lcore_id);
+ 
+ 	if (qconf->n_rx_queue == 0) {
+ 		RTE_LOG(INFO, L3FWD, "lcore %u has nothing to do\n", lcore_id);
+diff --git a/examples/l3fwd/l3fwd_em.c b/examples/l3fwd/l3fwd_em.c
+index d8748a0edd..730ea29d96 100644
+--- a/examples/l3fwd/l3fwd_em.c
++++ b/examples/l3fwd/l3fwd_em.c
+@@ -991,7 +991,7 @@ setup_hash(const int socketid)
+ 	/* create ipv4 hash */
+ 	snprintf(s, sizeof(s), "ipv4_l3fwd_hash_%d", socketid);
+ 	ipv4_l3fwd_hash_params.name = s;
+-	ipv4_l3fwd_hash_params.socket_id = socketid;
++	ipv4_l3fwd_hash_params.numa_id = socketid;
+ 	ipv4_l3fwd_em_lookup_struct[socketid] =
+ 		rte_hash_create(&ipv4_l3fwd_hash_params);
+ 	if (ipv4_l3fwd_em_lookup_struct[socketid] == NULL)
+@@ -1002,7 +1002,7 @@ setup_hash(const int socketid)
+ 	/* create ipv6 hash */
+ 	snprintf(s, sizeof(s), "ipv6_l3fwd_hash_%d", socketid);
+ 	ipv6_l3fwd_hash_params.name = s;
+-	ipv6_l3fwd_hash_params.socket_id = socketid;
++	ipv6_l3fwd_hash_params.numa_id = socketid;
+ 	ipv6_l3fwd_em_lookup_struct[socketid] =
+ 		rte_hash_create(&ipv6_l3fwd_hash_params);
+ 	if (ipv6_l3fwd_em_lookup_struct[socketid] == NULL)
+diff --git a/examples/l3fwd/main.c b/examples/l3fwd/main.c
+index 9532150a47..1731aa51e2 100644
+--- a/examples/l3fwd/main.c
++++ b/examples/l3fwd/main.c
+@@ -311,7 +311,7 @@ check_lcore_params(void)
+ 			return -1;
+ 		}
+ 
+-		socketid = rte_lcore_to_socket_id(lcore);
++		socketid = rte_lcore_to_numa_id(lcore);
+ 		if (socketid != 0 && numa_on == 0) {
+ 			printf("warning: lcore %u is on socket %d with numa off\n",
+ 				lcore, socketid);
+@@ -1133,7 +1133,7 @@ init_mem(uint16_t portid, unsigned int nb_mbuf)
+ 			continue;
+ 
+ 		if (numa_on)
+-			socketid = rte_lcore_to_socket_id(lcore_id);
++			socketid = rte_lcore_to_numa_id(lcore_id);
+ 		else
+ 			socketid = 0;
+ 
+@@ -1474,7 +1474,7 @@ l3fwd_poll_resource_setup(void)
+ 
+ 			if (numa_on)
+ 				socketid =
+-				(uint8_t)rte_lcore_to_socket_id(lcore_id);
++				(uint8_t)rte_lcore_to_numa_id(lcore_id);
+ 			else
+ 				socketid = 0;
+ 
+@@ -1516,7 +1516,7 @@ l3fwd_poll_resource_setup(void)
+ 
+ 			if (numa_on)
+ 				socketid =
+-				(uint8_t)rte_lcore_to_socket_id(lcore_id);
++				(uint8_t)rte_lcore_to_numa_id(lcore_id);
+ 			else
+ 				socketid = 0;
  
 -- 
 2.55.0
