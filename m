@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1BE606A328
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D24A606A324
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=oAuWUvmj
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=WiecD0sl
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E2D3E432BC;
-	Tue,  3 Nov 2026 16:27:13 +0100 (CET)
-Received: from mta0.migadu.com (out-157.mta0.migadu.com [91.218.175.157])
- by mails.dpdk.org (Postfix) with ESMTPS id E6F21432F6
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:27:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B67AF4330E;
+	Tue,  3 Nov 2026 16:27:23 +0100 (CET)
+Received: from mta0.migadu.com (out-161.mta0.migadu.com [91.218.175.161])
+ by mails.dpdk.org (Postfix) with ESMTPS id DA64C432C8
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:27:22 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=vGDM4okX5w8NMxRmqWx+AqeE3oaAYLQ5DMAdwKBay2E=; 
+DKIM-Signature: a=rsa-sha256; bh=mQ+Imw8+ptC6cGNpaz0FJqLKcufJ6W+V52rJbux8wVc=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719632; v=1; x=1794324432;
- b=oAuWUvmj3Fce75vwPjRMYYID41LDTspm4BPEwPBQJCcOdTBk7+hvZypiThacxH/9NHvm3cPf
- 9AR8vod0XINfuRrUigoK/sNUvLkR4n2uDAKg7Q0HPLT8QiA66nNeITJMm+gp2vCcIwAQ7Cgyi9g
- qVevW1LiCC0xEoyumrrx+/KA=
+ t=1793719642; v=1; x=1794324442;
+ b=WiecD0slL3NR/lU18CvUVQCGIGuywvRtxBAuiwMe3ZXnSRLQLy4RSZ6/kD3oNXJw2JNBXeih
+ 33Yk0TYxcigwmaDtlvpNBdwNHf+GskjdoNovz+qCzmZT/X9yKreGNhTBJUPCTugDJKnBegqO8dL
+ enjeVQ9f09kkkXGdKuNl5Rtc=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id d57361fb3f827665;
- Tue, 03 Nov 2026 15:27:12 +0000
-X-Mizu-Trace-ID: d57361fb3f827665
+Received: by mta12.migadu.com with ESMTPS id 3c02415c497fee8f;
+ Tue, 03 Nov 2026 15:27:22 +0000
+X-Mizu-Trace-ID: 3c02415c497fee8f
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 217/227] examples/skeleton: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:55 +0800
-Message-ID: <20261103145306.487255-218-chengwen.feng@linux.dev>
+Subject: [PATCH 218/227] examples/vhost: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:52:56 +0800
+Message-ID: <20261103145306.487255-219-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,53 +62,40 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- examples/skeleton/basicfwd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ examples/vhost/main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/examples/skeleton/basicfwd.c b/examples/skeleton/basicfwd.c
-index e8c18d5b87..652d0f10c7 100644
---- a/examples/skeleton/basicfwd.c
-+++ b/examples/skeleton/basicfwd.c
-@@ -66,7 +66,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
- 	/* Allocate and set up 1 RX queue per Ethernet port. */
- 	for (q = 0; q < rx_rings; q++) {
- 		retval = rte_eth_rx_queue_setup(port, q, nb_rxd,
--				rte_eth_dev_socket_id(port), NULL, mbuf_pool);
-+				rte_eth_dev_numa_id(port), NULL, mbuf_pool);
- 		if (retval < 0)
- 			return retval;
- 	}
-@@ -76,7 +76,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
- 	/* Allocate and set up 1 TX queue per Ethernet port. */
- 	for (q = 0; q < tx_rings; q++) {
- 		retval = rte_eth_tx_queue_setup(port, q, nb_txd,
--				rte_eth_dev_socket_id(port), &txconf);
-+				rte_eth_dev_numa_id(port), &txconf);
- 		if (retval < 0)
- 			return retval;
- 	}
-@@ -123,9 +123,9 @@ lcore_main(void)
- 	 * for best performance.
+diff --git a/examples/vhost/main.c b/examples/vhost/main.c
+index e7434fd189..898625fd02 100644
+--- a/examples/vhost/main.c
++++ b/examples/vhost/main.c
+@@ -320,7 +320,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
+ 	rxconf->offloads = port_conf.rxmode.offloads;
+ 	for (q = 0; q < rx_rings; q ++) {
+ 		retval = rte_eth_rx_queue_setup(port, q, rx_ring_size,
+-						rte_eth_dev_socket_id(port),
++						rte_eth_dev_numa_id(port),
+ 						rxconf,
+ 						mbuf_pool);
+ 		if (retval < 0) {
+@@ -333,7 +333,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
+ 	txconf->offloads = port_conf.txmode.offloads;
+ 	for (q = 0; q < tx_rings; q ++) {
+ 		retval = rte_eth_tx_queue_setup(port, q, tx_ring_size,
+-						rte_eth_dev_socket_id(port),
++						rte_eth_dev_numa_id(port),
+ 						txconf);
+ 		if (retval < 0) {
+ 			RTE_LOG(ERR, VHOST_PORT,
+@@ -1559,7 +1559,7 @@ main(int argc, char *argv[])
  	 */
- 	RTE_ETH_FOREACH_DEV(port)
--		if (rte_eth_dev_socket_id(port) >= 0 &&
--				rte_eth_dev_socket_id(port) !=
--						(int)rte_socket_id())
-+		if (rte_eth_dev_numa_id(port) >= 0 &&
-+				rte_eth_dev_numa_id(port) !=
-+						(int)rte_numa_id())
- 			printf("WARNING, port %u is on remote NUMA node to "
- 					"polling thread.\n\tPerformance will "
- 					"not be optimal.\n", port);
-@@ -194,7 +194,7 @@ main(int argc, char *argv[])
- 
- 	/* Create and allocate a mempool to hold the mbufs. 8< */
- 	mbuf_pool = rte_pktmbuf_pool_create("MBUF_POOL", NUM_MBUFS * nb_ports,
--		MBUF_CACHE_SIZE, 0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
-+		MBUF_CACHE_SIZE, 0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_numa_id());
- 	/* >8 End of allocating mempool to hold mbuf. */
- 
+ 	mbuf_pool = rte_pktmbuf_pool_create("MBUF_POOL", total_num_mbufs,
+ 					    MBUF_CACHE_SIZE, 0, MBUF_DATA_SIZE,
+-					    rte_socket_id());
++					    rte_numa_id());
  	if (mbuf_pool == NULL)
+ 		rte_exit(EXIT_FAILURE, "Cannot create mbuf pool\n");
+ 
 -- 
 2.55.0
 
