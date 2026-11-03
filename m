@@ -2,46 +2,43 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6876076B8F
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 08:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224CD606A326
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 09:10:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 194DF4028B;
-	Tue,  3 Nov 2026 09:33:32 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id 68CDB40278
- for <dev@dpdk.org>; Tue,  3 Nov 2026 09:33:30 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 1A4744D0BF; Tue,  3 Nov 2026 09:33:30 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/other Bug 2090] dumpcap timestamps incorrect in pcap format
-Date: Tue, 03 Nov 2026 08:33:28 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: other
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: stephen@networkplumber.org
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-2090-3@https.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 58DF14028B;
+	Tue,  3 Nov 2026 10:09:58 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTPS id 4BCCE40278;
+ Tue,  3 Nov 2026 10:09:56 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id CC7EB2350B;
+ Tue,  3 Nov 2026 10:09:55 +0100 (CET)
+Received: from mail pickup service by smartserver.smartsharesystems.com with
+ Microsoft SMTPSVC; Tue, 3 Nov 2026 10:09:51 +0100
+Subject: [PATCH v2] gro: fix packet type comparisons
+Date: Tue, 3 Nov 2026 09:36:18 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65AF0@smartserver.smartshare.dk>
+In-Reply-To: <20261017170221.3139971-1-mb@smartsharesystems.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Thread-Topic: [PATCH v2] gro: fix packet type comparisons
+Thread-Index: Ad1eWUfmKwEhdj4cQVycNxaAGXiYjgNFL0PA
+References: <20261017170221.3139971-1-mb@smartsharesystems.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+Content-class: urn:content-classes:message
+To: <dev@dpdk.org>, "Jiayu Hu" <hujiayu.hu@foxmail.com>, <thomas@monjalon.net>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Cc: <stable@dpdk.org>
+X-GRP-TAN: SMARTSERVER@8C96AEA483334A50A26A944588D39A57
+X-OriginalArrivalTime: 03 Nov 2026 09:09:51.0796 (UTC)
+ FILETIME=[158D0F40:01DD6B73]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,32 +48,116 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2090
-
-            Bug ID: 2090
-           Summary: dumpcap timestamps incorrect in pcap format
-           Product: DPDK
-           Version: unspecified
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: other
-          Assignee: dev@dpdk.org
-          Reporter: stephen@networkplumber.org
-  Target Milestone: ---
-
-If dumpcap is outputing in legacy pcap format it gets the timestamps wrong.
-The file is opened with nanosecond precision timestamps but it writes
-microsecond values. This is confusion because libpcap write packet wants
-nanoseconds in tv_usec field in that case.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+SWRlbnRpZnlpbmcgcGFja2V0IHR5cGVzIHJlcXVpcmVzIG1hc2tpbmcgd2l0aCB0aGUgbWFzaywg
+bm90IHRoZSB2YWx1ZSwNCmJlZm9yZSBjb21wYXJpbmcgdG8gdGhlIHZhbHVlLg0KVGhlIGZhdWx0
+eSBtYWNyb3Mgd2VyZSBjb3JyZWN0ZWQuDQoNCkZ1cnRoZXJtb3JlLCBHUk8gZm9yIFVEUCBpbmdl
+c3RzIElQIGZyYWdtZW50cywgbm90IFVEUCBwYWNrZXRzLCBzbw0KY29tcGFyZSB0byBJUCBmcmFn
+bWVudHMgaW5zdGVhZCBvZiBVRFAgcGFja2V0cy4NClRoZSBzYW1lIGFwcGxpZXMgdG8gR1JPIGZv
+ciBpbm5lciBVRFAgaW4gVlhMQU4gcGFja2V0czsgY29tcGFyZSB0bw0KdG8gaW5uZXIgSVAgZnJh
+Z21lbnRzIGluc3RlYWQgb2YgaW5uZXIgVURQIHBhY2tldHMuDQpUaGlzIHdhcyBub3Qgb2J2aW91
+cyBsb29raW5nIGF0IHRoZSBtYWNyb3MsIHNvIHRoZXkgd2VyZSByZW5hbWVkIHRvDQpyZWZsZWN0
+IHdoYXQgdGhleSBtYXRjaCwgYW5kIGNvbW1lbnRzIHdlcmUgYWRkZWQgdG8gbWVudGlvbiB3aGF0
+IHRoZXkgYXJlDQp1c2VkIGZvci4NCg0KTm90ZToNClRoaXMgYnVnIGhhcyBub3QgYmVlbiBjYXVn
+aHQgZWFybGllciwgcHJvYmFibHkgYmVjYXVzZSB0aGUgZmF1bHR5IGZvcm11bGENCiIoKHB0eXBl
+ICYgUlRFX1BUWVBFX0w0X1VEUCkgPT0gUlRFX1BUWVBFX0w0X1VEUCkiIG1hdGNoZWQgSVAgZnJh
+Z21lbnRzDQpieSBwdXJlIGx1Y2s6DQpSVEVfUFRZUEVfTDRfVURQIGhhcyB0aGUgdmFsdWUgMHgy
+MDAsIGFuZA0KUlRFX1BUWVBFX0w0X0ZSQUcgaGFzIHRoZSB2YWx1ZSAweDMwMCwgc28gdGhlIGZh
+dWx0eSBmb3JtdWxhDQpldmFsdWF0ZXMgYXMgIigoMHgzMDAgJiAweDIwMCkgPT0gMHgyMDApIiwg
+d2hpY2ggaXMgdHJ1ZS4NCg0KSXQgYWxzbyAtIGluY29ycmVjdGx5IC0gbWF0Y2hlZCBvdGhlciBw
+YWNrZXQgdHlwZXMgd2l0aCB0aGUgMHgyMDAgYml0IHNldCwNCmUuZy4gUlRFX1BUWVBFX0w0X0lH
+TVAgKHZhbHVlIDB4NzAwKSwgd2hpY2ggaXQgc2hvdWxkbid0IG1hdGNoLg0KDQpGaXhlczogMGQy
+Y2JlNTliNzE5ICgibGliL2dybzogc3VwcG9ydCBUQ1AvSVB2NCIpDQpGaXhlczogOWUwYjlkMmVj
+MGY0ICgiZ3JvOiBzdXBwb3J0IFZ4TEFOIEdSTyIpDQpGaXhlczogMWNhNWU2NzQwODUyICgiZ3Jv
+OiBzdXBwb3J0IFVEUC9JUHY0IikNCkZpeGVzOiBlMmQ4MTEwNjM2NzMgKCJncm86IHN1cHBvcnQg
+VlhMQU4gVURQL0lQdjQiKQ0KQ2M6IHN0YWJsZUBkcGRrLm9yZw0KDQpTaWduZWQtb2ZmLWJ5OiBN
+b3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KLS0tDQp2MjoNCiogUmVi
+YXNlZC4NCiogVXBkYXRlZCBwYXRjaCBkZXNjcmlwdGlvbiB3aXRoIG1hbnkgbW9yZSBkZXRhaWxz
+Lg0KKiBVRFAgb2ZmbG9hZCB3YW50cyBJUCBmcmFnbWVudHMsIG5vdCBVRFAgcGFja2V0cy4gKFRo
+b21hcycgQUkpDQoqIElubmVyIFVEUCBvZmZsb2FkIG9mIFZYTEFOIHdhbnRzIGlubmVyIElQIGZy
+YWdtZW50cywNCiAgbm90IGlubmVyIFVEUCBwYWNrZXRzLiAoVGhvbWFzJyBBSSkNCiogUmVuYW1l
+ZCB0aGUgbWFjcm9zIHJlZ2FyZGluZyBHUk8gZm9yIFVEUCBhbmQgVlhMQU4gaW5uZXIgVURQLA0K
+ICBhbmQgYWRkZWQgY29tbWVudHMgdG8gdGhlc2UuDQotLS0NCiBsaWIvZ3JvL3J0ZV9ncm8uYyB8
+IDM3ICsrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0NCiAxIGZpbGUgY2hhbmdl
+ZCwgMTggaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9saWIv
+Z3JvL3J0ZV9ncm8uYyBiL2xpYi9ncm8vcnRlX2dyby5jDQppbmRleCA1NzhjYzliODAxLi5mOWQx
+YzVhZDAzIDEwMDY0NA0KLS0tIGEvbGliL2dyby9ydGVfZ3JvLmMNCisrKyBiL2xpYi9ncm8vcnRl
+X2dyby5jDQpAQCAtMzUsMjYgKzM1LDI0IEBAIHN0YXRpYyBncm9fdGJsX3BrdF9jb3VudF9mbiB0
+YmxfcGt0X2NvdW50X2ZuW1JURV9HUk9fVFlQRV9NQVhfTlVNXSA9IHsNCiAJCQlOVUxMfTsNCiAN
+CiAjZGVmaW5lIElTX0lQVjRfVENQX1BLVChwdHlwZSkgKFJURV9FVEhfSVNfSVBWNF9IRFIocHR5
+cGUpICYmIFwNCi0JCSgocHR5cGUgJiBSVEVfUFRZUEVfTDRfVENQKSA9PSBSVEVfUFRZUEVfTDRf
+VENQKSAmJiBcDQotCQkoKHB0eXBlICYgUlRFX1BUWVBFX0w0X0ZSQUcpICE9IFJURV9QVFlQRV9M
+NF9GUkFHKSAmJiBcDQorCQkoKHB0eXBlICYgUlRFX1BUWVBFX0w0X01BU0spID09IFJURV9QVFlQ
+RV9MNF9UQ1ApICYmIFwNCiAJCShSVEVfRVRIX0lTX1RVTk5FTF9QS1QocHR5cGUpID09IDApKQ0K
+IA0KIC8qIEdSTyB3aXRoIGV4dGVuc2lvbiBoZWFkZXJzIGlzIG5vdCBzdXBwb3J0ZWQgKi8NCiAj
+ZGVmaW5lIElTX0lQVjZfVENQX1BLVChwdHlwZSkgKFJURV9FVEhfSVNfSVBWNl9IRFIocHR5cGUp
+ICYmIFwNCi0JCSgocHR5cGUgJiBSVEVfUFRZUEVfTDRfVENQKSA9PSBSVEVfUFRZUEVfTDRfVENQ
+KSAmJiBcDQotCQkoKHB0eXBlICYgUlRFX1BUWVBFX0w0X0ZSQUcpICE9IFJURV9QVFlQRV9MNF9G
+UkFHKSAmJiBcDQorCQkoKHB0eXBlICYgUlRFX1BUWVBFX0w0X01BU0spID09IFJURV9QVFlQRV9M
+NF9UQ1ApICYmIFwNCiAJCShSVEVfRVRIX0lTX1RVTk5FTF9QS1QocHR5cGUpID09IDApKQ0KIA0K
+LSNkZWZpbmUgSVNfSVBWNF9VRFBfUEtUKHB0eXBlKSAoUlRFX0VUSF9JU19JUFY0X0hEUihwdHlw
+ZSkgJiYgXA0KLQkJKChwdHlwZSAmIFJURV9QVFlQRV9MNF9VRFApID09IFJURV9QVFlQRV9MNF9V
+RFApICYmIFwNCisvKiBHUk8gZm9yIFVEUCBpbmdlc3RzIElQIGZyYWdtZW50cyAqLw0KKyNkZWZp
+bmUgSVNfSVBWNF9GUkFHX1BLVChwdHlwZSkgKFJURV9FVEhfSVNfSVBWNF9IRFIocHR5cGUpICYm
+IFwNCisJCSgocHR5cGUgJiBSVEVfUFRZUEVfTDRfTUFTSykgPT0gUlRFX1BUWVBFX0w0X0ZSQUcp
+ICYmIFwNCiAJCShSVEVfRVRIX0lTX1RVTk5FTF9QS1QocHR5cGUpID09IDApKQ0KIA0KICNkZWZp
+bmUgSVNfSVBWNF9WWExBTl9UQ1A0X1BLVChwdHlwZSkgKFJURV9FVEhfSVNfSVBWNF9IRFIocHR5
+cGUpICYmIFwNCi0JCSgocHR5cGUgJiBSVEVfUFRZUEVfTDRfVURQKSA9PSBSVEVfUFRZUEVfTDRf
+VURQKSAmJiBcDQotCQkoKHB0eXBlICYgUlRFX1BUWVBFX0w0X0ZSQUcpICE9IFJURV9QVFlQRV9M
+NF9GUkFHKSAmJiBcDQotCQkoKHB0eXBlICYgUlRFX1BUWVBFX1RVTk5FTF9WWExBTikgPT0gXA0K
+KwkJKChwdHlwZSAmIFJURV9QVFlQRV9MNF9NQVNLKSA9PSBSVEVfUFRZUEVfTDRfVURQKSAmJiBc
+DQorCQkoKHB0eXBlICYgUlRFX1BUWVBFX1RVTk5FTF9NQVNLKSA9PSBcDQogCQkgUlRFX1BUWVBF
+X1RVTk5FTF9WWExBTikgJiYgXA0KLQkJKChwdHlwZSAmIFJURV9QVFlQRV9JTk5FUl9MNF9UQ1Ap
+ID09IFwNCisJCSgocHR5cGUgJiBSVEVfUFRZUEVfSU5ORVJfTDRfTUFTSykgPT0gXA0KIAkJIFJU
+RV9QVFlQRV9JTk5FUl9MNF9UQ1ApICYmIFwNCiAJCSgoKHB0eXBlICYgUlRFX1BUWVBFX0lOTkVS
+X0wzX01BU0spID09IFwNCiAJCSAgUlRFX1BUWVBFX0lOTkVSX0wzX0lQVjQpIHx8IFwNCkBAIC02
+MywxMiArNjEsMTMgQEAgc3RhdGljIGdyb190YmxfcGt0X2NvdW50X2ZuIHRibF9wa3RfY291bnRf
+Zm5bUlRFX0dST19UWVBFX01BWF9OVU1dID0gew0KIAkJICgocHR5cGUgJiBSVEVfUFRZUEVfSU5O
+RVJfTDNfTUFTSykgPT0gXA0KIAkJICBSVEVfUFRZUEVfSU5ORVJfTDNfSVBWNF9FWFRfVU5LTk9X
+TikpKQ0KIA0KLSNkZWZpbmUgSVNfSVBWNF9WWExBTl9VRFA0X1BLVChwdHlwZSkgKFJURV9FVEhf
+SVNfSVBWNF9IRFIocHR5cGUpICYmIFwNCi0JCSgocHR5cGUgJiBSVEVfUFRZUEVfTDRfVURQKSA9
+PSBSVEVfUFRZUEVfTDRfVURQKSAmJiBcDQotCQkoKHB0eXBlICYgUlRFX1BUWVBFX1RVTk5FTF9W
+WExBTikgPT0gXA0KKy8qIEdSTyBmb3IgaW5uZXIgVURQIG9mIFZYTEFOIGluZ2VzdHMgaW5uZXIg
+SVAgZnJhZ21lbnRzICovDQorI2RlZmluZSBJU19JUFY0X1ZYTEFOX0ZSQUc0X1BLVChwdHlwZSkg
+KFJURV9FVEhfSVNfSVBWNF9IRFIocHR5cGUpICYmIFwNCisJCSgocHR5cGUgJiBSVEVfUFRZUEVf
+TDRfTUFTSykgPT0gUlRFX1BUWVBFX0w0X1VEUCkgJiYgXA0KKwkJKChwdHlwZSAmIFJURV9QVFlQ
+RV9UVU5ORUxfTUFTSykgPT0gXA0KIAkJIFJURV9QVFlQRV9UVU5ORUxfVlhMQU4pICYmIFwNCi0J
+CSgocHR5cGUgJiBSVEVfUFRZUEVfSU5ORVJfTDRfVURQKSA9PSBcDQotCQkgUlRFX1BUWVBFX0lO
+TkVSX0w0X1VEUCkgJiYgXA0KKwkJKChwdHlwZSAmIFJURV9QVFlQRV9JTk5FUl9MNF9NQVNLKSA9
+PSBcDQorCQkgUlRFX1BUWVBFX0lOTkVSX0w0X0ZSQUcpICYmIFwNCiAJCSgoKHB0eXBlICYgUlRF
+X1BUWVBFX0lOTkVSX0wzX01BU0spID09IFwNCiAJCSAgUlRFX1BUWVBFX0lOTkVSX0wzX0lQVjQp
+IHx8IFwNCiAJCSAoKHB0eXBlICYgUlRFX1BUWVBFX0lOTkVSX0wzX01BU0spID09IFwNCkBAIC0y
+NzksNyArMjc4LDcgQEAgcnRlX2dyb19yZWFzc2VtYmxlX2J1cnN0KHN0cnVjdCBydGVfbWJ1ZiAq
+KnBrdHMsDQogCQkJCW5iX2FmdGVyX2dyby0tOw0KIAkJCWVsc2UgaWYgKHJldCA8IDApDQogCQkJ
+CXBrdHNbdW5wcm9jZXNzX251bSsrXSA9IHBrdHNbaV07DQotCQl9IGVsc2UgaWYgKElTX0lQVjRf
+VlhMQU5fVURQNF9QS1QocGt0c1tpXS0+cGFja2V0X3R5cGUpICYmDQorCQl9IGVsc2UgaWYgKElT
+X0lQVjRfVlhMQU5fRlJBRzRfUEtUKHBrdHNbaV0tPnBhY2tldF90eXBlKSAmJg0KIAkJCQlkb192
+eGxhbl91ZHBfZ3JvKSB7DQogCQkJcmV0ID0gZ3JvX3Z4bGFuX3VkcDRfcmVhc3NlbWJsZShwa3Rz
+W2ldLA0KIAkJCQkJCQkmdnhsYW5fdWRwX3RibCwgMCk7DQpAQCAtMjk2LDcgKzI5NSw3IEBAIHJ0
+ZV9ncm9fcmVhc3NlbWJsZV9idXJzdChzdHJ1Y3QgcnRlX21idWYgKipwa3RzLA0KIAkJCQluYl9h
+ZnRlcl9ncm8tLTsNCiAJCQllbHNlIGlmIChyZXQgPCAwKQ0KIAkJCQlwa3RzW3VucHJvY2Vzc19u
+dW0rK10gPSBwa3RzW2ldOw0KLQkJfSBlbHNlIGlmIChJU19JUFY0X1VEUF9QS1QocGt0c1tpXS0+
+cGFja2V0X3R5cGUpICYmDQorCQl9IGVsc2UgaWYgKElTX0lQVjRfRlJBR19QS1QocGt0c1tpXS0+
+cGFja2V0X3R5cGUpICYmDQogCQkJCWRvX3VkcDRfZ3JvKSB7DQogCQkJcmV0ID0gZ3JvX3VkcDRf
+cmVhc3NlbWJsZShwa3RzW2ldLCAmdWRwX3RibCwgMCk7DQogCQkJaWYgKHJldCA+IDApDQpAQCAt
+Mzk0LDcgKzM5Myw3IEBAIHJ0ZV9ncm9fcmVhc3NlbWJsZShzdHJ1Y3QgcnRlX21idWYgKipwa3Rz
+LA0KIAkJCWlmIChncm9fdnhsYW5fdGNwNF9yZWFzc2VtYmxlKHBrdHNbaV0sIHZ4bGFuX3RjcF90
+YmwsDQogCQkJCQkJY3VycmVudF90aW1lKSA8IDApDQogCQkJCXBrdHNbdW5wcm9jZXNzX251bSsr
+XSA9IHBrdHNbaV07DQotCQl9IGVsc2UgaWYgKElTX0lQVjRfVlhMQU5fVURQNF9QS1QocGt0c1tp
+XS0+cGFja2V0X3R5cGUpICYmDQorCQl9IGVsc2UgaWYgKElTX0lQVjRfVlhMQU5fRlJBRzRfUEtU
+KHBrdHNbaV0tPnBhY2tldF90eXBlKSAmJg0KIAkJCQlkb192eGxhbl91ZHBfZ3JvKSB7DQogCQkJ
+aWYgKGdyb192eGxhbl91ZHA0X3JlYXNzZW1ibGUocGt0c1tpXSwgdnhsYW5fdWRwX3RibCwNCiAJ
+CQkJCQljdXJyZW50X3RpbWUpIDwgMCkNCkBAIC00MDQsNyArNDAzLDcgQEAgcnRlX2dyb19yZWFz
+c2VtYmxlKHN0cnVjdCBydGVfbWJ1ZiAqKnBrdHMsDQogCQkJaWYgKGdyb190Y3A0X3JlYXNzZW1i
+bGUocGt0c1tpXSwgdGNwX3RibCwNCiAJCQkJCQljdXJyZW50X3RpbWUpIDwgMCkNCiAJCQkJcGt0
+c1t1bnByb2Nlc3NfbnVtKytdID0gcGt0c1tpXTsNCi0JCX0gZWxzZSBpZiAoSVNfSVBWNF9VRFBf
+UEtUKHBrdHNbaV0tPnBhY2tldF90eXBlKSAmJg0KKwkJfSBlbHNlIGlmIChJU19JUFY0X0ZSQUdf
+UEtUKHBrdHNbaV0tPnBhY2tldF90eXBlKSAmJg0KIAkJCQlkb191ZHA0X2dybykgew0KIAkJCWlm
+IChncm9fdWRwNF9yZWFzc2VtYmxlKHBrdHNbaV0sIHVkcF90YmwsDQogCQkJCQkJY3VycmVudF90
+aW1lKSA8IDApDQotLSANCjIuNDMuMA0KDQo=
