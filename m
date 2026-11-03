@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB93E606A7B1
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9847E606A33E
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=RwzFXPva
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=po4KR9gi
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8016C43067;
-	Tue,  3 Nov 2026 16:23:48 +0100 (CET)
-Received: from mta0.migadu.com (out-67.mta0.migadu.com [91.218.175.67])
- by mails.dpdk.org (Postfix) with ESMTPS id DB83642FC1
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:23:47 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6935B42FC1;
+	Tue,  3 Nov 2026 16:23:59 +0100 (CET)
+Received: from mta1.migadu.com (out-106.mta1.migadu.com [95.215.58.106])
+ by mails.dpdk.org (Postfix) with ESMTPS id 3BFA442FC1
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:23:57 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=zQZrnXsbZlMDo6CyN7s19IKYOAidPhNiJFGBV1ej5/c=; 
+DKIM-Signature: a=rsa-sha256; bh=skkMlPsLUndh/uuXe56Eu4s0PoRx5uvPKJctn7sJa0c=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719427; v=1; x=1794324227;
- b=RwzFXPva7aVtDUbM3hRBuYnN+pBnBcpgh32bjvFkiM0fJP2AoAnxtmWm9XvDPL9xu8hjtrrX
- /hjWn8c/ESyMCjJHYR3quvtESNvfLt620brcd7FLT2l06PyByWHwkd0EPe899gBSDgfRhx1Rzls
- SaF/s1pggGTH6O/ywYrleZvo=
+ t=1793719436; v=1; x=1794324236;
+ b=po4KR9giXh2hW5+jPd+7Kwq9OpR6AIMEVGQXO6+m355tc3bjYDmzGQsETTf8hm3OdRgyj0kg
+ rSiqEkFmIy1C7xFofx0o3LnZd1DXWJESwI76AHnhlG0AhIfT9uVoR+DBKDxlcan6aUAgowPnF5q
+ AB84t1hYecelgDhYQAE2S3TE=
 X-Envelope-To: dev@dpdk.org
-Received: by mta12.migadu.com with ESMTPS id 597f203c7a6b588a;
- Tue, 03 Nov 2026 15:23:47 +0000
-X-Mizu-Trace-ID: 597f203c7a6b588a
+Received: by mta10.migadu.com with ESMTPS id 1aed66791f12d19b;
+ Tue, 03 Nov 2026 15:23:56 +0000
+X-Mizu-Trace-ID: 1aed66791f12d19b
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 195/227] examples/ipv4_multicast: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:33 +0800
-Message-ID: <20261103145306.487255-196-chengwen.feng@linux.dev>
+Subject: [PATCH 196/227] examples/l2fwd: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:52:34 +0800
+Message-ID: <20261103145306.487255-197-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,72 +62,52 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- examples/ipv4_multicast/main.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ examples/l2fwd/main.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/examples/ipv4_multicast/main.c b/examples/ipv4_multicast/main.c
-index 1cb621cb8b..4f31cd9d77 100644
---- a/examples/ipv4_multicast/main.c
-+++ b/examples/ipv4_multicast/main.c
-@@ -124,7 +124,7 @@ static struct rte_fbk_hash_params mcast_hash_params = {
- 	.name = "MCAST_HASH",
- 	.entries = 1024,
- 	.entries_per_bucket = 4,
--	.socket_id = 0,
-+	.numa_id = 0,
- 	.hash_func = NULL,
- 	.init_val = 0,
- };
-@@ -560,7 +560,7 @@ init_mcast_hash(void)
- {
- 	uint32_t i;
- 
--	mcast_hash_params.socket_id = rte_socket_id();
-+	mcast_hash_params.numa_id = rte_numa_id();
- 	mcast_hash = rte_fbk_hash_create(&mcast_hash_params);
- 	if (mcast_hash == NULL){
- 		return -1;
-@@ -665,19 +665,19 @@ main(int argc, char **argv)
- 
- 	/* Create the mbuf pools. 8< */
- 	packet_pool = rte_pktmbuf_pool_create("packet_pool", NB_PKT_MBUF, 32,
--		0, PKT_MBUF_DATA_SIZE, rte_socket_id());
-+		0, PKT_MBUF_DATA_SIZE, rte_numa_id());
- 
- 	if (packet_pool == NULL)
- 		rte_exit(EXIT_FAILURE, "Cannot init packet mbuf pool\n");
- 
- 	header_pool = rte_pktmbuf_pool_create("header_pool", NB_HDR_MBUF, 32,
--		0, HDR_MBUF_DATA_SIZE, rte_socket_id());
-+		0, HDR_MBUF_DATA_SIZE, rte_numa_id());
- 
- 	if (header_pool == NULL)
- 		rte_exit(EXIT_FAILURE, "Cannot init header mbuf pool\n");
- 
- 	clone_pool = rte_pktmbuf_pool_create("clone_pool", NB_CLONE_MBUF, 32,
--		0, 0, rte_socket_id());
-+		0, 0, rte_numa_id());
- 
- 	if (clone_pool == NULL)
- 		rte_exit(EXIT_FAILURE, "Cannot init clone mbuf pool\n");
-@@ -764,7 +764,7 @@ main(int argc, char **argv)
- 		rxq_conf = dev_info.default_rxconf;
+diff --git a/examples/l2fwd/main.c b/examples/l2fwd/main.c
+index 851816423f..7a0a63241a 100644
+--- a/examples/l2fwd/main.c
++++ b/examples/l2fwd/main.c
+@@ -766,7 +766,7 @@ main(int argc, char **argv)
+ 	/* Create the mbuf pool. 8< */
+ 	l2fwd_pktmbuf_pool = rte_pktmbuf_pool_create("mbuf_pool", nb_mbufs,
+ 		MEMPOOL_CACHE_SIZE, 0, RTE_MBUF_DEFAULT_BUF_SIZE,
+-		rte_socket_id());
++		rte_numa_id());
+ 	if (l2fwd_pktmbuf_pool == NULL)
+ 		rte_exit(EXIT_FAILURE, "Cannot init mbuf pool\n");
+ 	/* >8 End of create the mbuf pool. */
+@@ -825,7 +825,7 @@ main(int argc, char **argv)
  		rxq_conf.offloads = local_port_conf.rxmode.offloads;
- 		ret = rte_eth_rx_queue_setup(portid, queueid, nb_rxd,
+ 		/* RX queue setup. 8< */
+ 		ret = rte_eth_rx_queue_setup(portid, 0, nb_rxd,
 -					     rte_eth_dev_socket_id(portid),
 +					     rte_eth_dev_numa_id(portid),
  					     &rxq_conf,
- 					     packet_pool);
+ 					     l2fwd_pktmbuf_pool);
  		if (ret < 0)
-@@ -783,7 +783,7 @@ main(int argc, char **argv)
- 			txconf = &dev_info.default_txconf;
- 			txconf->offloads = local_port_conf.txmode.offloads;
- 			ret = rte_eth_tx_queue_setup(portid, queueid, nb_txd,
--						     rte_lcore_to_socket_id(lcore_id), txconf);
-+						     rte_lcore_to_numa_id(lcore_id), txconf);
- 			if (ret < 0)
- 				rte_exit(EXIT_FAILURE, "rte_eth_tx_queue_setup: err=%d, "
- 					  "port=%d\n", ret, portid);
+@@ -838,7 +838,7 @@ main(int argc, char **argv)
+ 		txq_conf = dev_info.default_txconf;
+ 		txq_conf.offloads = local_port_conf.txmode.offloads;
+ 		ret = rte_eth_tx_queue_setup(portid, 0, nb_txd,
+-				rte_eth_dev_socket_id(portid),
++				rte_eth_dev_numa_id(portid),
+ 				&txq_conf);
+ 		if (ret < 0)
+ 			rte_exit(EXIT_FAILURE, "rte_eth_tx_queue_setup:err=%d, port=%u\n",
+@@ -846,9 +846,9 @@ main(int argc, char **argv)
+ 		/* >8 End of init one TX queue on each port. */
+ 
+ 		/* Initialize TX buffers */
+-		tx_buffer[portid] = rte_zmalloc_socket("tx_buffer",
++		tx_buffer[portid] = rte_zmalloc_numa("tx_buffer",
+ 				RTE_ETH_TX_BUFFER_SIZE(MAX_PKT_BURST), 0,
+-				rte_eth_dev_socket_id(portid));
++				rte_eth_dev_numa_id(portid));
+ 		if (tx_buffer[portid] == NULL)
+ 			rte_exit(EXIT_FAILURE, "Cannot allocate buffer for tx on port %u\n",
+ 					portid);
 -- 
 2.55.0
 
