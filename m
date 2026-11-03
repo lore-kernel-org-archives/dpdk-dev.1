@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0829C606B25C
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB98606FCC0
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=U/Pa805N
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=Y8r0jxXt
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EB0FF4279D;
-	Tue,  3 Nov 2026 16:08:41 +0100 (CET)
-Received: from mta0.migadu.com (out-137.mta0.migadu.com [91.218.175.137])
- by mails.dpdk.org (Postfix) with ESMTPS id 5510D40616
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:08:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0CB35427B2;
+	Tue,  3 Nov 2026 16:08:48 +0100 (CET)
+Received: from mta0.migadu.com (out-142.mta0.migadu.com [91.218.175.142])
+ by mails.dpdk.org (Postfix) with ESMTPS id 60557410FC
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:08:46 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=XFKTrTcxvmQ0mnT72D27oy6Tnflr/NuAPGuT0LP/iTY=; 
+DKIM-Signature: a=rsa-sha256; bh=dlJepQyOZHVkwKFfSpPeZhlJWOeJpXJx/OsxA05/5H0=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718520; v=1; x=1794323320;
- b=U/Pa805Nb0meiHqU8JF/YZsJ3lp6WCjyMHKSXlQKlJKstvDkTdWqgR3vIFL0j9A6v2QJm1Hz
- eSCpoY2r4uWX+9aQSVn8OG1yWJaCnzl6lOjQ8bNNbWo7u1LFM/i8pCIoj1Jka5PWJyKJB/mKil4
- 4tDHjOKWmG2jYA9XiehyO0nk=
+ t=1793718526; v=1; x=1794323326;
+ b=Y8r0jxXtJVbHqDg0KTPxxuY1/c8cK2VHUr8Wc7AjtRstYziexny/ie7EBPcw7Hi2aXRs6PGl
+ zHkrBD1VucwR8W5E4cnB/CmSmaZgwDV8hIYF4MgT3WOkVljuY876nQUYiZTqaQU3p8BR+0ftbIl
+ zIU6mf9vxz0cbFbBjRL6V7KY=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id b38debda63f33bb6;
- Tue, 03 Nov 2026 15:08:40 +0000
-X-Mizu-Trace-ID: b38debda63f33bb6
+Received: by mta12.migadu.com with ESMTPS id 5052af2fd5f22e6d;
+ Tue, 03 Nov 2026 15:08:46 +0000
+X-Mizu-Trace-ID: 5052af2fd5f22e6d
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 096/227] event/opdl: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:54 +0800
-Message-ID: <20261103145306.487255-97-chengwen.feng@linux.dev>
+Subject: [PATCH 097/227] event/skeleton: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:50:55 +0800
+Message-ID: <20261103145306.487255-98-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,129 +63,66 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/event/opdl/opdl_evdev.c | 16 ++++++++--------
- drivers/event/opdl/opdl_ring.c  |  6 +++---
- drivers/event/opdl/opdl_ring.h  |  2 +-
- drivers/event/opdl/opdl_test.c  |  2 +-
- 4 files changed, 13 insertions(+), 13 deletions(-)
+ drivers/event/skeleton/skeleton_eventdev.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/event/opdl/opdl_evdev.c b/drivers/event/opdl/opdl_evdev.c
-index 44a648a11a..d5396fda4f 100644
---- a/drivers/event/opdl/opdl_evdev.c
-+++ b/drivers/event/opdl/opdl_evdev.c
-@@ -581,9 +581,9 @@ opdl_close(struct rte_eventdev *dev)
+diff --git a/drivers/event/skeleton/skeleton_eventdev.c b/drivers/event/skeleton/skeleton_eventdev.c
+index 9eccf61cad..0893fac541 100644
+--- a/drivers/event/skeleton/skeleton_eventdev.c
++++ b/drivers/event/skeleton/skeleton_eventdev.c
+@@ -220,7 +220,7 @@ skeleton_eventdev_port_setup(struct rte_eventdev *dev, uint8_t port_id,
+ 	}
+ 
+ 	/* Allocate event port memory */
+-	sp = rte_zmalloc_socket("eventdev port",
++	sp = rte_zmalloc_numa("eventdev port",
+ 			sizeof(struct skeleton_port), RTE_CACHE_LINE_SIZE,
+ 			dev->data->numa_id);
+ 	if (sp == NULL) {
+@@ -351,7 +351,7 @@ skeleton_eventdev_init(struct rte_eventdev *eventdev)
+ 			pci_dev->addr.domain, pci_dev->addr.bus,
+ 			pci_dev->addr.devid, pci_dev->addr.function);
+ 
+-	PMD_DRV_LOG(INFO, "dev_id=%d socket_id=%d (%x:%x)",
++	PMD_DRV_LOG(INFO, "dev_id=%d numa_id=%d (%x:%x)",
+ 		eventdev->data->dev_id, eventdev->data->numa_id,
+ 		skel->vendor_id, skel->device_id);
+ 
+@@ -401,12 +401,12 @@ RTE_PMD_REGISTER_PCI_TABLE(event_skeleton_pci, pci_id_skeleton_map);
+ /* VDEV based event device */
+ 
  static int
- assign_numa_node(const char *key __rte_unused, const char *value, void *opaque)
+-skeleton_eventdev_create(const char *name, int socket_id, struct rte_vdev_device *vdev)
++skeleton_eventdev_create(const char *name, int numa_id, struct rte_vdev_device *vdev)
  {
--	int *socket_id = opaque;
--	*socket_id = atoi(value);
--	if (*socket_id >= RTE_MAX_NUMA_NODES)
-+	int *numa_id = opaque;
-+	*numa_id = atoi(value);
-+	if (*numa_id >= RTE_MAX_NUMA_NODES)
- 		return -1;
- 	return 0;
+ 	struct rte_eventdev *eventdev;
+ 
+ 	eventdev = rte_event_pmd_vdev_init(name,
+-			sizeof(struct skeleton_eventdev), socket_id, vdev);
++			sizeof(struct skeleton_eventdev), numa_id, vdev);
+ 	if (eventdev == NULL) {
+ 		PMD_DRV_ERR("Failed to create eventdev vdev %s", name);
+ 		goto fail;
+@@ -428,8 +428,8 @@ skeleton_eventdev_probe(struct rte_vdev_device *vdev)
+ 	const char *name;
+ 
+ 	name = rte_vdev_device_name(vdev);
+-	PMD_DRV_LOG(INFO, "Initializing %s on NUMA node %d", name, rte_socket_id());
+-	return skeleton_eventdev_create(name, rte_socket_id(), vdev);
++	PMD_DRV_LOG(INFO, "Initializing %s on NUMA node %d", name, rte_numa_id());
++	return skeleton_eventdev_create(name, rte_numa_id(), vdev);
  }
-@@ -647,7 +647,7 @@ opdl_probe(struct rte_vdev_device *vdev)
- 	const char *params;
- 	struct rte_eventdev *dev;
- 	struct opdl_evdev *opdl;
--	int socket_id = rte_socket_id();
-+	int numa_id = rte_numa_id();
- 	int do_validation = 0;
- 	int do_test = 0;
- 	int str_len;
-@@ -664,7 +664,7 @@ opdl_probe(struct rte_vdev_device *vdev)
- 					name);
- 		} else {
- 			int ret = rte_kvargs_process(kvlist, NUMA_NODE_ARG,
--					assign_numa_node, &socket_id);
-+					assign_numa_node, &numa_id);
- 			if (ret != 0) {
- 				PMD_DRV_LOG(ERR,
- 						"%s: Error parsing numa node parameter",
-@@ -698,7 +698,7 @@ opdl_probe(struct rte_vdev_device *vdev)
- 		}
- 	}
- 	dev = rte_event_pmd_vdev_init(name,
--			sizeof(struct opdl_evdev), socket_id, vdev);
-+			sizeof(struct opdl_evdev), numa_id, vdev);
  
- 	if (dev == NULL) {
- 		PMD_DRV_LOG(ERR, "eventdev vdev init() failed");
-@@ -710,7 +710,7 @@ opdl_probe(struct rte_vdev_device *vdev)
- 			  " , self_test:[%s]",
- 		      dev->data->dev_id,
- 		      name,
--		      socket_id,
-+		      numa_id,
- 		      (do_validation ? "true" : "false"),
- 			  (do_test ? "true" : "false"));
+ static int
+@@ -438,7 +438,7 @@ skeleton_eventdev_remove(struct rte_vdev_device *vdev)
+ 	const char *name;
  
-@@ -726,7 +726,7 @@ opdl_probe(struct rte_vdev_device *vdev)
+ 	name = rte_vdev_device_name(vdev);
+-	PMD_DRV_LOG(INFO, "Closing %s on NUMA node %d", name, rte_socket_id());
++	PMD_DRV_LOG(INFO, "Closing %s on NUMA node %d", name, rte_numa_id());
  
- 	opdl = dev->data->dev_private;
- 	opdl->data = dev->data;
--	opdl->socket = socket_id;
-+	opdl->socket = numa_id;
- 	opdl->do_validation = do_validation;
- 	opdl->do_test = do_test;
- 	str_len = strlen(name);
-diff --git a/drivers/event/opdl/opdl_ring.c b/drivers/event/opdl/opdl_ring.c
-index 60991c4b03..d1e8cdb048 100644
---- a/drivers/event/opdl/opdl_ring.c
-+++ b/drivers/event/opdl/opdl_ring.c
-@@ -805,13 +805,13 @@ init_stage(struct opdl_ring *t, struct opdl_stage *s, bool threadsafe,
- 	s->shared.stage = s;
- 
- 	/* Alloc memory for deps */
--	s->dep_tracking = rte_zmalloc_socket(LIB_NAME,
-+	s->dep_tracking = rte_zmalloc_numa(LIB_NAME,
- 			t->max_num_stages * sizeof(enum dep_type),
- 			0, t->socket);
- 	if (s->dep_tracking == NULL)
- 		return -ENOMEM;
- 
--	s->deps = rte_zmalloc_socket(LIB_NAME,
-+	s->deps = rte_zmalloc_numa(LIB_NAME,
- 			t->max_num_stages * sizeof(struct shared_state *),
- 			0, t->socket);
- 	if (s->deps == NULL) {
-@@ -923,7 +923,7 @@ opdl_ring_create(const char *name, uint32_t num_slots, uint32_t slot_size,
- 	}
- 
- 	/* Alloc memory for stages */
--	st = rte_zmalloc_socket(LIB_NAME,
-+	st = rte_zmalloc_numa(LIB_NAME,
- 		max_num_stages * sizeof(struct opdl_stage),
- 		RTE_CACHE_LINE_SIZE, socket);
- 	if (st == NULL)
-diff --git a/drivers/event/opdl/opdl_ring.h b/drivers/event/opdl/opdl_ring.h
-index 14ababe0bb..c055dd4f7d 100644
---- a/drivers/event/opdl/opdl_ring.h
-+++ b/drivers/event/opdl/opdl_ring.h
-@@ -69,7 +69,7 @@ struct opdl_stage;
-  * @param max_num_stages
-  *   Maximum number of stages.
-  * @param socket
-- *   The NUMA socket (or SOCKET_ID_ANY) to allocate the memory used for this
-+ *   The NUMA socket (or RTE_NUMA_ID_ANY) to allocate the memory used for this
-  *   opdl_ring instance.
-  * @param threadsafe
-  *   Whether to support multiple threads inputting to the opdl_ring or not.
-diff --git a/drivers/event/opdl/opdl_test.c b/drivers/event/opdl/opdl_test.c
-index 9b0c4db5ce..daa07f52e2 100644
---- a/drivers/event/opdl/opdl_test.c
-+++ b/drivers/event/opdl/opdl_test.c
-@@ -1017,7 +1017,7 @@ opdl_selftest(void)
- 				32 /*MBUF_CACHE_SIZE*/,
- 				0,
- 				512, /* use very small mbufs */
--				rte_socket_id());
-+				rte_numa_id());
- 		if (!eventdev_func_mempool) {
- 			PMD_DRV_LOG(ERR, "ERROR creating mempool");
- 			free(t);
+ 	return rte_event_pmd_vdev_uninit(name);
+ }
 -- 
 2.55.0
 
