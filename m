@@ -2,20 +2,20 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE80606A324
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 08:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896DA606EE84
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 08:30:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 01E5E4028B;
-	Tue,  3 Nov 2026 09:26:52 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2552E4028B;
+	Tue,  3 Nov 2026 09:30:47 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id AA68540278
- for <dev@dpdk.org>; Tue,  3 Nov 2026 09:26:50 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 415FD40278
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 09:30:46 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 4785F4C225; Tue,  3 Nov 2026 09:26:50 +0100 (CET)
+ id C3EDB4D0B1; Tue,  3 Nov 2026 09:30:45 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/other Bug 2088] dumpcap time duration issues
-Date: Tue, 03 Nov 2026 08:26:46 +0000
+Subject: [DPDK/other Bug 2089] dumpcap packet count overrun
+Date: Tue, 03 Nov 2026 08:30:43 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -23,7 +23,7 @@ X-Bugzilla-Product: DPDK
 X-Bugzilla-Component: other
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
+X-Bugzilla-Severity: minor
 X-Bugzilla-Who: stephen@networkplumber.org
 X-Bugzilla-Status: UNCONFIRMED
 X-Bugzilla-Resolution: 
@@ -34,7 +34,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-2088-3@https.bugs.dpdk.org/>
+Message-ID: <bug-2089-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -56,31 +56,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2088
+https://bugs.dpdk.org/show_bug.cgi?id=3D2089
 
-            Bug ID: 2088
-           Summary: dumpcap time duration issues
+            Bug ID: 2089
+           Summary: dumpcap packet count overrun
            Product: DPDK
            Version: unspecified
           Hardware: All
                 OS: All
             Status: UNCONFIRMED
-          Severity: normal
+          Severity: minor
           Priority: Normal
          Component: other
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-The dumpcap duration option which captures for a time interval has several
-bugs.
-- although it takes fractions of seconds as option, everything is truncated=
- to
-seconds. I.e duration of 1.2 becomes 1 second, and .5 becomes 0 (infinite)
+If dumpcap is asked to capture a number of packets it will overrun up to the
+burst size. For example, if asked to capture 10 packets, it will often retu=
+rn
+more (up to 32) under load.
 
-- the comparison with time for completion has off by one bug so that a capt=
-ure
-for 10 seconds actually captures 11 seconds.
+The fix is to adjust ring dequeue burst as needed.
 
 --=20
 You are receiving this mail because:
