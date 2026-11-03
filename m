@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9CB606B259
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B00606BA00
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=sXdzyTkH
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=j6jrGvuy
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B523B41141;
-	Tue,  3 Nov 2026 16:03:25 +0100 (CET)
-Received: from mta0.migadu.com (out-190.mta0.migadu.com [91.218.175.190])
- by mails.dpdk.org (Postfix) with ESMTPS id 44B3F4113D
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:03:24 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C504842788;
+	Tue,  3 Nov 2026 16:03:33 +0100 (CET)
+Received: from mta0.migadu.com (out-198.mta0.migadu.com [91.218.175.198])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8151A4113D
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:03:32 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=vmJoDiwsvGkTmH3xwuxv+vHkB5MpzpRiumrY8L1ebps=; 
+DKIM-Signature: a=rsa-sha256; bh=GOW2cTsKR3/AX5X0gAKXbDUKqFV1DuF2vAgsvVXtVBc=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718203; v=1; x=1794323003;
- b=sXdzyTkHPd+aRIP1uBOBsHsC3Ok7xlCSwRlilcbxMszKfqXbh9sATVArxCUVb46nCI3bM4zq
- yJ07c6pavW0pNz/7nTdwgCMBWmyqmdgq/HIt1P6Kk8cNDZ7erdYNNWNzeQJ+VUD6/gAWyQqiwUl
- U28ZP+gEywx1PUS+HNaowMBM=
+ t=1793718212; v=1; x=1794323012;
+ b=j6jrGvuyRarW++JzMUVOmUZFV3nA3sTZkmWuZ8pRm0EPhC8iIK2yceyl1di1luw+0dC/hITL
+ Z7AAxNIwJ1TjwjC++VW0zWhryQWanarK19Q25+xiLh8OQfRS6amr9dXcErEtwp/vm9TunxLO3sT
+ z5wDrmCnu4hE/OzIN1aSZT94=
 X-Envelope-To: dev@dpdk.org
-Received: by mta12.migadu.com with ESMTPS id 1761e73ffcaf115e;
- Tue, 03 Nov 2026 15:03:23 +0000
-X-Mizu-Trace-ID: 1761e73ffcaf115e
+Received: by mta10.migadu.com with ESMTPS id 4d9e5e1ea7b1e855;
+ Tue, 03 Nov 2026 15:03:32 +0000
+X-Mizu-Trace-ID: 4d9e5e1ea7b1e855
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 060/227] compress/zlib: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:18 +0800
-Message-ID: <20261103145306.487255-61-chengwen.feng@linux.dev>
+Subject: [PATCH 061/227] compress/zsda: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:50:19 +0800
+Message-ID: <20261103145306.487255-62-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,73 +63,50 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/compress/zlib/zlib_pmd.c     |  2 +-
- drivers/compress/zlib/zlib_pmd_ops.c | 12 ++++++------
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/compress/zsda/zsda_comp_pmd.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/compress/zlib/zlib_pmd.c b/drivers/compress/zlib/zlib_pmd.c
-index ed3905484c..6943367b6f 100644
---- a/drivers/compress/zlib/zlib_pmd.c
-+++ b/drivers/compress/zlib/zlib_pmd.c
-@@ -535,7 +535,7 @@ zlib_probe(struct rte_vdev_device *vdev)
- {
- 	struct rte_compressdev_pmd_init_params init_params = {
- 		"",
--		rte_socket_id()
-+		rte_numa_id()
- 	};
- 	const char *name;
- 	const char *input_args;
-diff --git a/drivers/compress/zlib/zlib_pmd_ops.c b/drivers/compress/zlib/zlib_pmd_ops.c
-index fb9cec8488..e240db25f4 100644
---- a/drivers/compress/zlib/zlib_pmd_ops.c
-+++ b/drivers/compress/zlib/zlib_pmd_ops.c
-@@ -155,7 +155,7 @@ zlib_pmd_qp_set_unique_name(struct rte_compressdev *dev,
- /** Create a ring to place process packets on */
- static struct rte_ring *
- zlib_pmd_qp_create_processed_pkts_ring(struct zlib_qp *qp,
--		unsigned int ring_size, int socket_id)
-+		unsigned int ring_size, int numa_id)
- {
- 	struct rte_ring *r = qp->processed_pkts;
+diff --git a/drivers/compress/zsda/zsda_comp_pmd.c b/drivers/compress/zsda/zsda_comp_pmd.c
+index 6d857be2f0..057e7178e2 100644
+--- a/drivers/compress/zsda/zsda_comp_pmd.c
++++ b/drivers/compress/zsda/zsda_comp_pmd.c
+@@ -227,7 +227,7 @@ zsda_private_xform_free(struct rte_compressdev *dev __rte_unused,
  
-@@ -171,14 +171,14 @@ zlib_pmd_qp_create_processed_pkts_ring(struct zlib_qp *qp,
- 		return NULL;
- 	}
- 
--	return rte_ring_create(qp->name, ring_size, socket_id,
-+	return rte_ring_create(qp->name, ring_size, numa_id,
- 						RING_F_EXACT_SZ);
- }
- 
- /** Setup a queue pair */
  static int
- zlib_pmd_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+ zsda_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
 -		uint32_t max_inflight_ops, int socket_id)
 +		uint32_t max_inflight_ops, int numa_id)
  {
- 	struct zlib_qp *qp = NULL;
+ 	int ret = ZSDA_SUCCESS;
+ 	struct zsda_qp *qp_new;
+@@ -247,15 +247,15 @@ zsda_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+ 			return ret;
+ 	}
  
-@@ -187,8 +187,8 @@ zlib_pmd_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
- 		zlib_pmd_qp_release(dev, qp_id);
+-	qp_new = rte_zmalloc_socket("zsda PMD qp metadata", sizeof(*qp_new),
+-				    RTE_CACHE_LINE_SIZE, socket_id);
++	qp_new = rte_zmalloc_numa("zsda PMD qp metadata", sizeof(*qp_new),
++				    RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (qp_new == NULL) {
+ 		ZSDA_LOG(ERR, "Failed! qp_new is NULL");
+ 		return -ENOMEM;
+ 	}
  
- 	/* Allocate the queue pair data structure. */
--	qp = rte_zmalloc_socket("ZLIB PMD Queue Pair", sizeof(*qp),
--					RTE_CACHE_LINE_SIZE, socket_id);
-+	qp = rte_zmalloc_numa("ZLIB PMD Queue Pair", sizeof(*qp),
-+					RTE_CACHE_LINE_SIZE, numa_id);
- 	if (qp == NULL)
- 		return (-ENOMEM);
+ 	task_q_info.nb_des = nb_des;
+-	task_q_info.socket_id = socket_id;
++	task_q_info.numa_id = numa_id;
+ 	task_q_info.qp_id = qp_id;
+ 	task_q_info.rx_cb = zsda_comp_callback;
  
-@@ -199,7 +199,7 @@ zlib_pmd_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
- 		goto qp_setup_cleanup;
+@@ -377,7 +377,7 @@ zsda_comp_dev_create(struct zsda_pci_device *zsda_pci_dev)
+ 	comp_dev->capa_mz = rte_memzone_lookup(capa_memz_name);
+ 	if (comp_dev->capa_mz == NULL)
+ 		comp_dev->capa_mz = rte_memzone_reserve(
+-			capa_memz_name, capa_size, rte_socket_id(), 0);
++			capa_memz_name, capa_size, rte_numa_id(), 0);
  
- 	qp->processed_pkts = zlib_pmd_qp_create_processed_pkts_ring(qp,
--			max_inflight_ops, socket_id);
-+			max_inflight_ops, numa_id);
- 	if (qp->processed_pkts == NULL)
- 		goto qp_setup_cleanup;
- 
+ 	if (comp_dev->capa_mz == NULL) {
+ 		ZSDA_LOG(DEBUG, "Failed! comp_dev->capa_mz is NULL");
 -- 
 2.55.0
 
