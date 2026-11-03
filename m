@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6640606A329
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E741606A329
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=wCZL0WY6
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=dkfG+qfs
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E966427C0;
-	Tue,  3 Nov 2026 16:00:45 +0100 (CET)
-Received: from mta1.migadu.com (out-161.mta1.migadu.com [95.215.58.161])
- by mails.dpdk.org (Postfix) with ESMTPS id BE3F64013F
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:00:44 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 511C8427D0;
+	Tue,  3 Nov 2026 16:00:54 +0100 (CET)
+Received: from mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+ by mails.dpdk.org (Postfix) with ESMTPS id 65C81427C1
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:00:52 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=77i2/ijqTVQ8WrbsuzHfUpW0EYIrs5V0ZhGBLB6M9zQ=; 
+DKIM-Signature: a=rsa-sha256; bh=e8FW0qJx7P5oBdq7ovpBSVD+EuGxX9o5zJ00MJ4tyBk=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718044; v=1; x=1794322844;
- b=wCZL0WY6AguLmgsCfWmheT0VU5huW8RHqOxeQuIWQee7MEVtF1zv7DBANoKKxw0FE4OdHVQI
- fCkoGCg/bgpB/BFM8Q18v/M86GWg09AEsioC+DONTTXOAvEwfIx/6JUeIhjdP7g+MRYRPyhiu1E
- m4TcDLD6F+0wpntwU2C+FzWc=
+ t=1793718051; v=1; x=1794322851;
+ b=dkfG+qfsk1OPSW+05kXlkV3BtnZHg4/vMnecmlERGaVwWSWJNCgfDDs0lXJ7PztGsdA7h/2y
+ s2XL3x5Fuou5IrJ+b9Osv0NFzy6PUQrYzn0eQ63mR4MnRpZ8ZkmdcDbs8tcAdQICCC6ZfPureVX
+ RXL9AQVqR1YcY2iyjIm4o2YE=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id 1dc34fd986663e81;
- Tue, 03 Nov 2026 15:00:44 +0000
-X-Mizu-Trace-ID: 1dc34fd986663e81
+Received: by mta11.migadu.com with ESMTPS id 64454f343b8f0899;
+ Tue, 03 Nov 2026 15:00:51 +0000
+X-Mizu-Trace-ID: 64454f343b8f0899
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 045/227] bus/dpaa: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:03 +0800
-Message-ID: <20261103145306.487255-46-chengwen.feng@linux.dev>
+Subject: [PATCH 046/227] bus/fslmc: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:50:04 +0800
+Message-ID: <20261103145306.487255-47-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,22 +63,22 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/bus/dpaa/dpaa_bus.c | 2 +-
+ drivers/bus/fslmc/fslmc_bus.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index cbbeb927fe..c29086b783 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -216,7 +216,7 @@ dpaa_create_device_list(void)
- 			goto cleanup;
- 		}
+diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
+index e40fe59c7c..ac41993796 100644
+--- a/drivers/bus/fslmc/fslmc_bus.c
++++ b/drivers/bus/fslmc/fslmc_bus.c
+@@ -251,7 +251,7 @@ scan_one_fslmc_device(char *dev_name)
+ 		return -ENOMEM;
+ 	}
  
--		dev->device.numa_node = SOCKET_ID_ANY;
-+		dev->device.numa_node = RTE_NUMA_ID_ANY;
+-	dev->device.numa_node = SOCKET_ID_ANY;
++	dev->device.numa_node = RTE_NUMA_ID_ANY;
+ 	dev->dev_type = dev_type;
  
- 		cfg = &dpaa_netcfg->port_cfg[i];
- 		fman_intf = cfg->fman_if;
+ 	if (sscanf(dev_id, "%hu", &dev->object_id) != 1) {
 -- 
 2.55.0
 
