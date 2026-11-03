@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE85606A7BA
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA34C606A795
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=rqyr0FCO
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=L6imGFgl
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4143442EE4;
-	Tue,  3 Nov 2026 16:16:13 +0100 (CET)
-Received: from mta1.migadu.com (out-206.mta1.migadu.com [95.215.58.206])
- by mails.dpdk.org (Postfix) with ESMTPS id C1A0E427C7
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:16:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2AE0C42EC8;
+	Tue,  3 Nov 2026 16:16:26 +0100 (CET)
+Received: from mta1.migadu.com (out-217.mta1.migadu.com [95.215.58.217])
+ by mails.dpdk.org (Postfix) with ESMTPS id 078E5427C7
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:16:25 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=e4Wtv1vRr49D5zf4nn0pI4ryrWTXFXbEMYhnK4e8sY0=; 
+DKIM-Signature: a=rsa-sha256; bh=IBos/QmBwem3rOOc4HkKsiVJ7QrvJq1mmWtZkpzINzQ=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718971; v=1; x=1794323771;
- b=rqyr0FCO4TXsA7oTPx4FGuG4rHyWPKGbWzTDbJJpBbhWoeoFDYiE6awFq5jKT7YnoLkIVMse
- c5nnpR+cL6ic7psIh9kZXATQ7EOuTdEih8F/sI8W7Nnw+2WC5DXW0HoCZR++G7wUihShnhGaKdi
- d0JIoYuhcGPTNCyG6VA9qS5M=
+ t=1793718984; v=1; x=1794323784;
+ b=L6imGFgl4eNdRaQlMlRd0GvrzMowsPFzKjGUGIjbep2cOkNc40shmdsN4kDvMwNBWGqO1KKl
+ CzSCGyxFPIdNIJbpCJw9eY2uJGwGPX01b36tMGDgyJBsKQ2Ck1KR4G6Tv6yPraZ0S3ia9rCE6uP
+ 0Fb3axeMWdfppRaMlTG/S5dk=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id 727c00f634a85978;
- Tue, 03 Nov 2026 15:16:11 +0000
-X-Mizu-Trace-ID: 727c00f634a85978
+Received: by mta10.migadu.com with ESMTPS id 57a44f8f36aafd23;
+ Tue, 03 Nov 2026 15:16:24 +0000
+X-Mizu-Trace-ID: 57a44f8f36aafd23
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 147/227] net/softnic: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:51:45 +0800
-Message-ID: <20261103145306.487255-148-chengwen.feng@linux.dev>
+Subject: [PATCH 148/227] net/sxe2: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:51:46 +0800
+Message-ID: <20261103145306.487255-149-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,54 +63,192 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/net/softnic/rte_eth_softnic.c        | 6 +++---
- drivers/net/softnic/rte_eth_softnic_thread.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev_repr.c |  2 +-
+ drivers/net/sxe2/sxe2_mp.c          |  2 +-
+ drivers/net/sxe2/sxe2_rx.c          | 16 ++++++++--------
+ drivers/net/sxe2/sxe2_rx.h          |  2 +-
+ drivers/net/sxe2/sxe2_tx.c          | 16 ++++++++--------
+ drivers/net/sxe2/sxe2_tx.h          |  2 +-
+ 6 files changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/softnic/rte_eth_softnic.c b/drivers/net/softnic/rte_eth_softnic.c
-index 868e194509..857c70da4a 100644
---- a/drivers/net/softnic/rte_eth_softnic.c
-+++ b/drivers/net/softnic/rte_eth_softnic.c
-@@ -79,7 +79,7 @@ static int
- pmd_rx_queue_setup(struct rte_eth_dev *dev,
- 	uint16_t rx_queue_id,
- 	uint16_t nb_rx_desc,
--	unsigned int socket_id __rte_unused,
-+	unsigned int numa_id __rte_unused,
- 	const struct rte_eth_rxconf *rx_conf __rte_unused,
- 	struct rte_mempool *mb_pool __rte_unused)
- {
-@@ -107,7 +107,7 @@ static int
- pmd_tx_queue_setup(struct rte_eth_dev *dev,
- 	uint16_t tx_queue_id,
- 	uint16_t nb_tx_desc,
--	unsigned int socket_id __rte_unused,
-+	unsigned int numa_id __rte_unused,
- 	const struct rte_eth_txconf *tx_conf __rte_unused)
- {
- 	char name[NAME_SIZE];
-@@ -254,7 +254,7 @@ pmd_init(struct pmd_params *params)
- 	struct pmd_internals *p;
- 	int status;
+diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
+index cee37d5d8e..5be8d45301 100644
+--- a/drivers/net/sxe2/sxe2_ethdev_repr.c
++++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
+@@ -560,7 +560,7 @@ int32_t sxe2_switchdev_repr_devs_init(struct sxe2_adapter *adapter,
+ 			goto l_release_port;
+ 		}
+ 		eth_dev->data->numa_node = adapter->dev_info.dev_data->numa_node;
+-		eth_dev->data->dev_private = rte_zmalloc_socket(name,
++		eth_dev->data->dev_private = rte_zmalloc_numa(name,
+ 			sizeof(struct sxe2_adapter),
+ 			RTE_CACHE_LINE_SIZE,
+ 			eth_dev->data->numa_node);
+diff --git a/drivers/net/sxe2/sxe2_mp.c b/drivers/net/sxe2/sxe2_mp.c
+index be103322ad..715c86d8db 100644
+--- a/drivers/net/sxe2/sxe2_mp.c
++++ b/drivers/net/sxe2/sxe2_mp.c
+@@ -135,7 +135,7 @@ sxe2_mp_init_primary(__rte_unused struct rte_eth_dev *dev)
+ 	if (sxe2_mp_mz == NULL) {
+ 		sxe2_mp_mz = rte_memzone_reserve(SXE2_MP_MZ_NAME,
+ 				sizeof(struct sxe2_mp_shared_data),
+-				rte_socket_id(), 0);
++				rte_numa_id(), 0);
+ 		if (sxe2_mp_mz == NULL && rte_errno != EEXIST) {
+ 			PMD_LOG_ERR(DRV, "Failed to reserve memzone %s, error: %d",
+ 					SXE2_MP_MZ_NAME, -rte_errno);
+diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
+index 3830c676d7..f17e446c23 100644
+--- a/drivers/net/sxe2/sxe2_rx.c
++++ b/drivers/net/sxe2/sxe2_rx.c
+@@ -189,7 +189,7 @@ void __rte_cold sxe2_all_rxqs_release(struct rte_eth_dev *dev)
+ }
  
--	p = rte_zmalloc_socket(params->name,
-+	p = rte_zmalloc_numa(params->name,
- 		sizeof(struct pmd_internals),
- 		0,
- 		params->cpu_id);
-diff --git a/drivers/net/softnic/rte_eth_softnic_thread.c b/drivers/net/softnic/rte_eth_softnic_thread.c
-index a6d47c8b33..f45b63f481 100644
---- a/drivers/net/softnic/rte_eth_softnic_thread.c
-+++ b/drivers/net/softnic/rte_eth_softnic_thread.c
-@@ -41,7 +41,7 @@ softnic_thread_init(struct pmd_internals *softnic)
- 		struct rte_ring *msgq_req, *msgq_rsp;
- 		struct softnic_thread *t = &softnic->thread[i];
- 		struct softnic_thread_data *t_data = &softnic->thread_data[i];
--		uint32_t cpu_id = rte_lcore_to_socket_id(i);
-+		uint32_t cpu_id = rte_lcore_to_numa_id(i);
+ static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, uint16_t queue_idx,
+-		uint16_t ring_depth, uint32_t socket_id)
++		uint16_t ring_depth, uint32_t numa_id)
+ {
+ 	struct sxe2_rx_queue *rxq;
+ 	const struct rte_memzone *tz;
+@@ -200,8 +200,8 @@ static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, uint16
+ 		dev->data->rx_queues[queue_idx] = NULL;
+ 	}
  
- 		/* MSGQs */
- 		snprintf(ring_name, sizeof(ring_name), "%s-TH%u-REQ",
+-	rxq = rte_zmalloc_socket("rx_queue", sizeof(*rxq),
+-				 RTE_CACHE_LINE_SIZE, socket_id);
++	rxq = rte_zmalloc_numa("rx_queue", sizeof(*rxq),
++				 RTE_CACHE_LINE_SIZE, numa_id);
+ 
+ 	if (rxq == NULL) {
+ 		PMD_LOG_ERR(RX, "rx queue[%d] alloc failed", queue_idx);
+@@ -211,9 +211,9 @@ static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, uint16
+ 	rxq->ring_depth = ring_depth;
+ 	len = rxq->ring_depth + SXE2_RX_PKTS_BURST_BATCH_NUM;
+ 
+-	rxq->buffer_ring = rte_zmalloc_socket("rx_buffer_ring",
++	rxq->buffer_ring = rte_zmalloc_numa("rx_buffer_ring",
+ 					  sizeof(struct rte_mbuf *) * len,
+-					  RTE_CACHE_LINE_SIZE, socket_id);
++					  RTE_CACHE_LINE_SIZE, numa_id);
+ 
+ 	if (!rxq->buffer_ring) {
+ 		PMD_LOG_ERR(RX, "Rxq malloc mbuf mem failed");
+@@ -223,7 +223,7 @@ static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, uint16
+ 	}
+ 
+ 	tz = rte_eth_dma_zone_reserve(dev, "rx_dma", queue_idx,
+-					SXE2_RX_RING_SIZE, SXE2_DESC_ADDR_ALIGN, socket_id);
++					SXE2_RX_RING_SIZE, SXE2_DESC_ADDR_ALIGN, numa_id);
+ 	if (tz == NULL) {
+ 		PMD_LOG_ERR(RX, "Rxq malloc desc mem failed");
+ 		rte_free(rxq->buffer_ring);
+@@ -243,7 +243,7 @@ static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, uint16
+ }
+ 
+ int32_t __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
+-			uint16_t queue_idx, uint16_t nb_desc, uint32_t socket_id,
++			uint16_t queue_idx, uint16_t nb_desc, uint32_t numa_id,
+ 			const struct rte_eth_rxconf *rx_conf,
+ 			struct rte_mempool *mp)
+ {
+@@ -299,7 +299,7 @@ int32_t __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
+ 		goto l_end;
+ 	}
+ 
+-	rxq = sxe2_rx_queue_alloc(dev, queue_idx, nb_desc, socket_id);
++	rxq = sxe2_rx_queue_alloc(dev, queue_idx, nb_desc, numa_id);
+ 	if (rxq == NULL) {
+ 		PMD_LOG_ERR(RX, "rx queue[%d] resource alloc failed", queue_idx);
+ 		ret = -ENOMEM;
+diff --git a/drivers/net/sxe2/sxe2_rx.h b/drivers/net/sxe2/sxe2_rx.h
+index c2582bc571..2fa7d189a1 100644
+--- a/drivers/net/sxe2/sxe2_rx.h
++++ b/drivers/net/sxe2/sxe2_rx.h
+@@ -8,7 +8,7 @@
+ #include "sxe2_queue.h"
+ 
+ int32_t __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
+-				uint16_t queue_idx, uint16_t nb_desc, uint32_t socket_id,
++				uint16_t queue_idx, uint16_t nb_desc, uint32_t numa_id,
+ 				const struct rte_eth_rxconf *rx_conf,
+ 				struct rte_mempool *mp);
+ 
+diff --git a/drivers/net/sxe2/sxe2_tx.c b/drivers/net/sxe2/sxe2_tx.c
+index 94a6e9afc7..a05e94effe 100644
+--- a/drivers/net/sxe2/sxe2_tx.c
++++ b/drivers/net/sxe2/sxe2_tx.c
+@@ -258,7 +258,7 @@ void __rte_cold sxe2_all_txqs_release(struct rte_eth_dev *dev)
+ 
+ static struct sxe2_tx_queue
+ *sxe2_tx_queue_alloc(struct rte_eth_dev *dev, uint16_t queue_idx,
+-		uint16_t ring_depth, uint32_t socket_id)
++		uint16_t ring_depth, uint32_t numa_id)
+ {
+ 	struct sxe2_tx_queue *txq;
+ 	const struct rte_memzone *tz;
+@@ -268,8 +268,8 @@ static struct sxe2_tx_queue
+ 		dev->data->tx_queues[queue_idx] = NULL;
+ 	}
+ 
+-	txq = rte_zmalloc_socket("tx_queue", sizeof(struct sxe2_tx_queue),
+-			RTE_CACHE_LINE_SIZE, socket_id);
++	txq = rte_zmalloc_numa("tx_queue", sizeof(struct sxe2_tx_queue),
++			RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (txq == NULL) {
+ 		PMD_LOG_ERR(TX, "tx queue:%d alloc failed", queue_idx);
+ 		goto l_end;
+@@ -277,7 +277,7 @@ static struct sxe2_tx_queue
+ 
+ 	tz = rte_eth_dma_zone_reserve(dev, "tx_dma", queue_idx,
+ 			sizeof(union sxe2_tx_data_desc) * SXE2_MAX_RING_DESC,
+-			SXE2_DESC_ADDR_ALIGN, socket_id);
++			SXE2_DESC_ADDR_ALIGN, numa_id);
+ 	if (tz == NULL) {
+ 		PMD_LOG_ERR(TX, "tx desc ring alloc failed, queue_id:%d", queue_idx);
+ 		rte_free(txq);
+@@ -285,9 +285,9 @@ static struct sxe2_tx_queue
+ 		goto l_end;
+ 	}
+ 
+-	txq->buffer_ring = rte_zmalloc_socket("tx_buffer_ring",
++	txq->buffer_ring = rte_zmalloc_numa("tx_buffer_ring",
+ 		sizeof(struct sxe2_tx_buffer) * ring_depth,
+-		RTE_CACHE_LINE_SIZE, socket_id);
++		RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (txq->buffer_ring == NULL) {
+ 		PMD_LOG_ERR(TX, "tx buffer alloc failed, queue_id:%d", queue_idx);
+ 		rte_memzone_free(tz);
+@@ -305,7 +305,7 @@ static struct sxe2_tx_queue
+ }
+ 
+ int32_t __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
+-		uint16_t queue_idx, uint16_t nb_desc, uint32_t socket_id,
++		uint16_t queue_idx, uint16_t nb_desc, uint32_t numa_id,
+ 		const struct rte_eth_txconf *tx_conf)
+ {
+ 	int32_t ret = 0;
+@@ -329,7 +329,7 @@ int32_t __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
+ 		goto end;
+ 	}
+ 
+-	txq = sxe2_tx_queue_alloc(dev, queue_idx, nb_desc, socket_id);
++	txq = sxe2_tx_queue_alloc(dev, queue_idx, nb_desc, numa_id);
+ 	if (txq == NULL) {
+ 		PMD_LOG_ERR(TX, "failed to alloc sxe2vf tx queue:%u resource", queue_idx);
+ 		ret = -ENOMEM;
+diff --git a/drivers/net/sxe2/sxe2_tx.h b/drivers/net/sxe2/sxe2_tx.h
+index bc5ff1c2bc..37e3a00d6f 100644
+--- a/drivers/net/sxe2/sxe2_tx.h
++++ b/drivers/net/sxe2/sxe2_tx.h
+@@ -20,7 +20,7 @@ void sxe2_tx_queue_mbufs_release(struct sxe2_tx_queue *txq);
+ int32_t __rte_cold sxe2_tx_queue_stop(struct rte_eth_dev *dev, uint16_t queue_id);
+ 
+ int32_t __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
+-		uint16_t queue_idx, uint16_t nb_desc, uint32_t socket_id,
++		uint16_t queue_idx, uint16_t nb_desc, uint32_t numa_id,
+ 		const struct rte_eth_txconf *tx_conf);
+ 
+ void __rte_cold sxe2_tx_queue_release(struct rte_eth_dev *dev, uint16_t queue_idx);
 -- 
 2.55.0
 
