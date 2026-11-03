@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AFB606EEB7
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764A7606B26A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=ucwfWwRb
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=KSQua75D
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F90D4281D;
-	Tue,  3 Nov 2026 16:01:56 +0100 (CET)
-Received: from mta1.migadu.com (out-12.mta1.migadu.com [95.215.58.12])
- by mails.dpdk.org (Postfix) with ESMTPS id 7C75B4281D
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:01:54 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 36C56427DA;
+	Tue,  3 Nov 2026 16:02:21 +0100 (CET)
+Received: from mta1.migadu.com (out-44.mta1.migadu.com [95.215.58.44])
+ by mails.dpdk.org (Postfix) with ESMTPS id BB8834013F
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:02:19 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=wt+c6ol7kbx+3phnPGAVX4ngzztTirPdvRPUVF7VWSQ=; 
+DKIM-Signature: a=rsa-sha256; bh=++bAzizo+g++Uw7y3oy07d8tvSVNM+LZAjE/u/UYMbg=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718114; v=1; x=1794322914;
- b=ucwfWwRbuJnwEgj5lQT3fM+1c2EAfvcB3Jiuro5/DcgIIgi/BG8pTEY5F4wS5XcuJlS0xtgU
- AepRuu58BZzNSoZjwaJJ7RhZyXQS+WwY3151If3pscIo+LknNkzqXVgN30IB/xymZIEKXqsXiqw
- f/au3TBlZSPlBOv5iwLqJh3A=
+ t=1793718137; v=1; x=1794322937;
+ b=KSQua75DXaAYdX3tlg1JJ66rsjGjLk4ejQdFGeiJo9sW2tOI42GbhCHT8H1ScpI2C1ZGIpYx
+ 94hwLPiKEFBOAVOQ0Wtb7/oHWaxSDzVUw0x6XR5tSEkTj/p4siOwScnNNWmSdmaqrM+lq1CS5aF
+ 6RJKM1m7GHXprFF5Oe6piz0c=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id 71186dcd5de6c4c6;
- Tue, 03 Nov 2026 15:01:54 +0000
-X-Mizu-Trace-ID: 71186dcd5de6c4c6
+Received: by mta12.migadu.com with ESMTPS id 965bb8337781a9d7;
+ Tue, 03 Nov 2026 15:02:17 +0000
+X-Mizu-Trace-ID: 965bb8337781a9d7
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 055/227] compress/isal: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:13 +0800
-Message-ID: <20261103145306.487255-56-chengwen.feng@linux.dev>
+Subject: [PATCH 056/227] compress/mlx5: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:50:14 +0800
+Message-ID: <20261103145306.487255-57-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,113 +63,87 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/compress/isal/isal_compress_pmd.c     |  4 ++--
- drivers/compress/isal/isal_compress_pmd_ops.c | 24 +++++++++----------
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/compress/mlx5/mlx5_compress.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/compress/isal/isal_compress_pmd.c b/drivers/compress/isal/isal_compress_pmd.c
-index 0e783243a8..f021720a38 100644
---- a/drivers/compress/isal/isal_compress_pmd.c
-+++ b/drivers/compress/isal/isal_compress_pmd.c
-@@ -725,7 +725,7 @@ compdev_isal_probe(struct rte_vdev_device *dev)
- {
- 	struct rte_compressdev_pmd_init_params init_params = {
- 		"",
--		rte_socket_id(),
-+		rte_numa_id(),
- 	};
- 	const char *name, *args;
- 	int retval;
-@@ -753,5 +753,5 @@ static struct rte_vdev_driver compdev_isal_pmd_drv = {
+diff --git a/drivers/compress/mlx5/mlx5_compress.c b/drivers/compress/mlx5/mlx5_compress.c
+index d122715672..0c64c2f97a 100644
+--- a/drivers/compress/mlx5/mlx5_compress.c
++++ b/drivers/compress/mlx5/mlx5_compress.c
+@@ -57,7 +57,7 @@ struct mlx5_compress_qp {
+ 	uint16_t pi;
+ 	uint16_t ci;
+ 	struct mlx5_mr_ctrl mr_ctrl;
+-	int socket_id;
++	int numa_id;
+ 	struct mlx5_devx_cq cq;
+ 	struct mlx5_devx_qp qp;
+ 	struct mlx5_pmd_mr opaque_mr;
+@@ -150,7 +150,7 @@ mlx5_compress_init_qp(struct mlx5_compress_qp *qp)
  
- RTE_PMD_REGISTER_VDEV(COMPDEV_NAME_ISAL_PMD, compdev_isal_pmd_drv);
- RTE_PMD_REGISTER_PARAM_STRING(COMPDEV_NAME_ISAL_PMD,
--	"socket_id=<int>");
-+	"numa_id=<int>");
- RTE_LOG_REGISTER_DEFAULT(isal_logtype_driver, INFO);
-diff --git a/drivers/compress/isal/isal_compress_pmd_ops.c b/drivers/compress/isal/isal_compress_pmd_ops.c
-index be32a4c998..67cf060801 100644
---- a/drivers/compress/isal/isal_compress_pmd_ops.c
-+++ b/drivers/compress/isal/isal_compress_pmd_ops.c
-@@ -192,7 +192,7 @@ isal_comp_pmd_qp_release(struct rte_compressdev *dev, uint16_t qp_id)
- /** Create a ring to place process packets on */
- static struct rte_ring *
- isal_comp_pmd_qp_create_processed_pkts_ring(struct isal_comp_qp *qp,
--		unsigned int ring_size, int socket_id)
-+		unsigned int ring_size, int numa_id)
- {
- 	struct rte_ring *r;
- 
-@@ -212,7 +212,7 @@ isal_comp_pmd_qp_create_processed_pkts_ring(struct isal_comp_qp *qp,
- 		return NULL;
- 	}
- 
--	return rte_ring_create(qp->name, ring_size, socket_id,
-+	return rte_ring_create(qp->name, ring_size, numa_id,
- 			RING_F_SP_ENQ | RING_F_SC_DEQ);
- }
- 
-@@ -234,7 +234,7 @@ struct isal_comp_qp *qp)
- /* Setup a queue pair */
  static int
- isal_comp_pmd_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
--		uint32_t max_inflight_ops, int socket_id)
-+		uint32_t max_inflight_ops, int numa_id)
+ mlx5_compress_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+-		       uint32_t max_inflight_ops, int socket_id)
++		       uint32_t max_inflight_ops, int numa_id)
  {
- 	struct isal_comp_qp *qp = NULL;
- 	int retval;
-@@ -244,34 +244,34 @@ isal_comp_pmd_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
- 		isal_comp_pmd_qp_release(dev, qp_id);
+ 	struct mlx5_compress_priv *priv = dev->data->dev_private;
+ 	struct mlx5_hca_attr *attr = &priv->cdev->config.hca_attr;
+@@ -170,8 +170,8 @@ mlx5_compress_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
  
- 	/* Allocate the queue pair data structure. */
--	qp = rte_zmalloc_socket("Isa-l compression PMD Queue Pair", sizeof(*qp),
--					RTE_CACHE_LINE_SIZE, socket_id);
-+	qp = rte_zmalloc_numa("Isa-l compression PMD Queue Pair", sizeof(*qp),
-+					RTE_CACHE_LINE_SIZE, numa_id);
+ 	alloc_size = RTE_ALIGN(alloc_size, RTE_CACHE_LINE_SIZE);
+ 	alloc_size += sizeof(struct rte_comp_op *) * (1u << log_ops_n);
+-	qp = rte_zmalloc_socket(__func__, alloc_size, RTE_CACHE_LINE_SIZE,
+-				socket_id);
++	qp = rte_zmalloc_numa(__func__, alloc_size, RTE_CACHE_LINE_SIZE,
++				numa_id);
  	if (qp == NULL) {
- 		ISAL_PMD_LOG(ERR, "Failed to allocate queue pair memory");
- 		return (-ENOMEM);
+ 		DRV_LOG(ERR, "Failed to allocate qp memory.");
+ 		rte_errno = ENOMEM;
+@@ -194,7 +194,7 @@ mlx5_compress_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+ 		goto err;
  	}
- 
- 	/* Initialize memory for compression stream structure */
--	qp->stream = rte_zmalloc_socket("Isa-l compression stream ",
-+	qp->stream = rte_zmalloc_numa("Isa-l compression stream ",
- 			sizeof(struct isal_zstream),  RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (qp->stream == NULL) {
- 		ISAL_PMD_LOG(ERR, "Failed to allocate compression stream memory");
- 		goto qp_setup_cleanup;
+ 	qp->entries_n = 1 << log_ops_n;
+-	qp->socket_id = socket_id;
++	qp->numa_id = numa_id;
+ 	qp->qp_id = qp_id;
+ 	qp->priv = priv;
+ 	qp->ops = (struct rte_comp_op **)RTE_ALIGN((uintptr_t)(qp + 1),
+@@ -208,7 +208,7 @@ mlx5_compress_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+ 		goto err;
  	}
- 	/* Initialize memory for compression level buffer */
--	qp->stream->level_buf = rte_zmalloc_socket("Isa-l compression lev_buf",
-+	qp->stream->level_buf = rte_zmalloc_numa("Isa-l compression lev_buf",
- 			ISAL_DEF_LVL3_DEFAULT, RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (qp->stream->level_buf == NULL) {
- 		ISAL_PMD_LOG(ERR, "Failed to allocate compression level_buf memory");
- 		goto qp_setup_cleanup;
- 	}
- 
- 	/* Initialize memory for decompression state structure */
--	qp->state = rte_zmalloc_socket("Isa-l decompression state",
-+	qp->state = rte_zmalloc_numa("Isa-l decompression state",
- 			sizeof(struct inflate_state), RTE_CACHE_LINE_SIZE,
--			socket_id);
-+			numa_id);
- 	if (qp->state == NULL) {
- 		ISAL_PMD_LOG(ERR, "Failed to allocate decompression state memory");
- 		goto qp_setup_cleanup;
-@@ -288,7 +288,7 @@ isal_comp_pmd_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
- 	}
- 
- 	qp->processed_pkts = isal_comp_pmd_qp_create_processed_pkts_ring(qp,
--			max_inflight_ops, socket_id);
-+			max_inflight_ops, numa_id);
- 	if (qp->processed_pkts == NULL) {
- 		ISAL_PMD_LOG(ERR, "Failed to create unique name for isal "
- 				"compression device");
+ 	ret = mlx5_devx_cq_create(priv->cdev->ctx, &qp->cq, log_ops_n, &cq_attr,
+-				  socket_id);
++				  numa_id);
+ 	if (ret != 0) {
+ 		DRV_LOG(ERR, "Failed to create CQ.");
+ 		goto err;
+@@ -223,7 +223,7 @@ mlx5_compress_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+ 		      attr->decomp_deflate_v1_en || attr->decomp_deflate_v2_en;
+ 	ret = mlx5_devx_qp_create(priv->cdev->ctx, &qp->qp,
+ 					qp_attr.num_of_send_wqbbs *
+-					MLX5_WQE_SIZE, &qp_attr, socket_id);
++					MLX5_WQE_SIZE, &qp_attr, numa_id);
+ 	if (ret != 0) {
+ 		DRV_LOG(ERR, "Failed to create QP.");
+ 		goto err;
+@@ -368,7 +368,7 @@ mlx5_compress_xform_create(struct rte_compressdev *dev,
+ 	ret = mlx5_compress_xform_validate(xform, &priv->cdev->config.hca_attr);
+ 	if (ret < 0)
+ 		return ret;
+-	xfrm = rte_zmalloc_socket(__func__, sizeof(*xfrm), 0,
++	xfrm = rte_zmalloc_numa(__func__, sizeof(*xfrm), 0,
+ 						    priv->dev_config.numa_id);
+ 	if (xfrm == NULL)
+ 		return -ENOMEM;
+@@ -828,7 +828,7 @@ mlx5_compress_dev_probe(struct mlx5_common_device *cdev,
+ 	struct mlx5_compress_devarg_params devarg_prms = {0};
+ 	struct rte_compressdev_pmd_init_params init_params = {
+ 		.name = "",
+-		.socket_id = cdev->dev->numa_node,
++		.numa_id = cdev->dev->numa_node,
+ 	};
+ 	const char *ibdev_name = mlx5_os_get_ctx_device_name(cdev->ctx);
+ 	uint32_t crc32_opaq_offset;
 -- 
 2.55.0
 
