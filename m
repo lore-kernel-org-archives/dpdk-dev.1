@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA34C606A795
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F28606A795
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=L6imGFgl
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=GMp86TtT
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2AE0C42EC8;
-	Tue,  3 Nov 2026 16:16:26 +0100 (CET)
-Received: from mta1.migadu.com (out-217.mta1.migadu.com [95.215.58.217])
- by mails.dpdk.org (Postfix) with ESMTPS id 078E5427C7
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:16:25 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1497B42EE2;
+	Tue,  3 Nov 2026 16:16:32 +0100 (CET)
+Received: from mta1.migadu.com (out-224.mta1.migadu.com [95.215.58.224])
+ by mails.dpdk.org (Postfix) with ESMTPS id E90F042EF1
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:16:30 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=IBos/QmBwem3rOOc4HkKsiVJ7QrvJq1mmWtZkpzINzQ=; 
+DKIM-Signature: a=rsa-sha256; bh=0YCBJjnzW2tG6AhNVSZYm94wf0pdHyhjV4C9xe7q+GQ=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718984; v=1; x=1794323784;
- b=L6imGFgl4eNdRaQlMlRd0GvrzMowsPFzKjGUGIjbep2cOkNc40shmdsN4kDvMwNBWGqO1KKl
- CzSCGyxFPIdNIJbpCJw9eY2uJGwGPX01b36tMGDgyJBsKQ2Ck1KR4G6Tv6yPraZ0S3ia9rCE6uP
- 0Fb3axeMWdfppRaMlTG/S5dk=
+ t=1793718990; v=1; x=1794323790;
+ b=GMp86TtTBZKO7rshfN89RmluHgKo7UetL5wh29KwmWLz02U1jJFvARDfaSiqPE1lhsTIEBXJ
+ sj3qUTbfE3GR4n8QDZTgnTmd5SoFIBEW7fihGNMJZE6g49R2YStkiPorioTQLrZlK5iIdsU299O
+ 1iJy2U1rzI6lN+61dUX4USZk=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id 57a44f8f36aafd23;
- Tue, 03 Nov 2026 15:16:24 +0000
-X-Mizu-Trace-ID: 57a44f8f36aafd23
+Received: by mta11.migadu.com with ESMTPS id d8c69a37ebaef0b6;
+ Tue, 03 Nov 2026 15:16:30 +0000
+X-Mizu-Trace-ID: d8c69a37ebaef0b6
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 148/227] net/sxe2: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:51:46 +0800
-Message-ID: <20261103145306.487255-149-chengwen.feng@linux.dev>
+Subject: [PATCH 149/227] net/tap: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:51:47 +0800
+Message-ID: <20261103145306.487255-150-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,192 +63,99 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/net/sxe2/sxe2_ethdev_repr.c |  2 +-
- drivers/net/sxe2/sxe2_mp.c          |  2 +-
- drivers/net/sxe2/sxe2_rx.c          | 16 ++++++++--------
- drivers/net/sxe2/sxe2_rx.h          |  2 +-
- drivers/net/sxe2/sxe2_tx.c          | 16 ++++++++--------
- drivers/net/sxe2/sxe2_tx.h          |  2 +-
- 6 files changed, 20 insertions(+), 20 deletions(-)
+ drivers/net/tap/rte_eth_tap.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
-index cee37d5d8e..5be8d45301 100644
---- a/drivers/net/sxe2/sxe2_ethdev_repr.c
-+++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
-@@ -560,7 +560,7 @@ int32_t sxe2_switchdev_repr_devs_init(struct sxe2_adapter *adapter,
- 			goto l_release_port;
- 		}
- 		eth_dev->data->numa_node = adapter->dev_info.dev_data->numa_node;
--		eth_dev->data->dev_private = rte_zmalloc_socket(name,
-+		eth_dev->data->dev_private = rte_zmalloc_numa(name,
- 			sizeof(struct sxe2_adapter),
- 			RTE_CACHE_LINE_SIZE,
- 			eth_dev->data->numa_node);
-diff --git a/drivers/net/sxe2/sxe2_mp.c b/drivers/net/sxe2/sxe2_mp.c
-index be103322ad..715c86d8db 100644
---- a/drivers/net/sxe2/sxe2_mp.c
-+++ b/drivers/net/sxe2/sxe2_mp.c
-@@ -135,7 +135,7 @@ sxe2_mp_init_primary(__rte_unused struct rte_eth_dev *dev)
- 	if (sxe2_mp_mz == NULL) {
- 		sxe2_mp_mz = rte_memzone_reserve(SXE2_MP_MZ_NAME,
- 				sizeof(struct sxe2_mp_shared_data),
--				rte_socket_id(), 0);
-+				rte_numa_id(), 0);
- 		if (sxe2_mp_mz == NULL && rte_errno != EEXIST) {
- 			PMD_LOG_ERR(DRV, "Failed to reserve memzone %s, error: %d",
- 					SXE2_MP_MZ_NAME, -rte_errno);
-diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
-index 3830c676d7..f17e446c23 100644
---- a/drivers/net/sxe2/sxe2_rx.c
-+++ b/drivers/net/sxe2/sxe2_rx.c
-@@ -189,7 +189,7 @@ void __rte_cold sxe2_all_rxqs_release(struct rte_eth_dev *dev)
- }
+diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
+index 1d2b71675a..c6a998cbd5 100644
+--- a/drivers/net/tap/rte_eth_tap.c
++++ b/drivers/net/tap/rte_eth_tap.c
+@@ -1155,7 +1155,7 @@ tap_dev_close(struct rte_eth_dev *dev)
  
- static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, uint16_t queue_idx,
--		uint16_t ring_depth, uint32_t socket_id)
-+		uint16_t ring_depth, uint32_t numa_id)
+ 	internals = dev->data->dev_private;
+ 	TAP_LOG(DEBUG, "Closing %s Ethernet device on numa %u",
+-		tuntap_types[internals->type], rte_socket_id());
++		tuntap_types[internals->type], rte_numa_id());
+ 
+ 	rte_intr_instance_free(internals->intr_handle);
+ 
+@@ -1503,7 +1503,7 @@ tap_gso_ctx_setup(struct rte_gso_ctx *gso_ctx, struct rte_eth_dev *dev)
+ 		pmd->gso_ctx_mp = rte_pktmbuf_pool_create(pool_name,
+ 			TAP_GSO_MBUFS_NUM, TAP_GSO_MBUF_CACHE_SIZE, 0,
+ 			RTE_PKTMBUF_HEADROOM + TAP_GSO_MBUF_SEG_SIZE,
+-			SOCKET_ID_ANY);
++			RTE_NUMA_ID_ANY);
+ 		if (!pmd->gso_ctx_mp) {
+ 			TAP_LOG(ERR,
+ 				"%s: failed to create mbuf pool for device %s",
+@@ -1569,7 +1569,7 @@ static int
+ tap_rx_queue_setup(struct rte_eth_dev *dev,
+ 		   uint16_t rx_queue_id,
+ 		   uint16_t nb_rx_desc __rte_unused,
+-		   unsigned int socket_id,
++		   unsigned int numa_id,
+ 		   const struct rte_eth_rxconf *rx_conf __rte_unused,
+ 		   struct rte_mempool *mp)
  {
- 	struct sxe2_rx_queue *rxq;
- 	const struct rte_memzone *tz;
-@@ -200,8 +200,8 @@ static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, uint16
- 		dev->data->rx_queues[queue_idx] = NULL;
+@@ -1619,9 +1619,9 @@ tap_rx_queue_setup(struct rte_eth_dev *dev,
+ 			dev->device->name, dev->data->mtu, max_rx_segs);
  	}
  
--	rxq = rte_zmalloc_socket("rx_queue", sizeof(*rxq),
+-	rxq = rte_zmalloc_socket(dev->device->name,
++	rxq = rte_zmalloc_numa(dev->device->name,
+ 				 sizeof(*rxq) + (max_rx_segs + 1) * sizeof(struct iovec),
 -				 RTE_CACHE_LINE_SIZE, socket_id);
-+	rxq = rte_zmalloc_numa("rx_queue", sizeof(*rxq),
 +				 RTE_CACHE_LINE_SIZE, numa_id);
- 
- 	if (rxq == NULL) {
- 		PMD_LOG_ERR(RX, "rx queue[%d] alloc failed", queue_idx);
-@@ -211,9 +211,9 @@ static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, uint16
- 	rxq->ring_depth = ring_depth;
- 	len = rxq->ring_depth + SXE2_RX_PKTS_BURST_BATCH_NUM;
- 
--	rxq->buffer_ring = rte_zmalloc_socket("rx_buffer_ring",
-+	rxq->buffer_ring = rte_zmalloc_numa("rx_buffer_ring",
- 					  sizeof(struct rte_mbuf *) * len,
--					  RTE_CACHE_LINE_SIZE, socket_id);
-+					  RTE_CACHE_LINE_SIZE, numa_id);
- 
- 	if (!rxq->buffer_ring) {
- 		PMD_LOG_ERR(RX, "Rxq malloc mbuf mem failed");
-@@ -223,7 +223,7 @@ static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, uint16
- 	}
- 
- 	tz = rte_eth_dma_zone_reserve(dev, "rx_dma", queue_idx,
--					SXE2_RX_RING_SIZE, SXE2_DESC_ADDR_ALIGN, socket_id);
-+					SXE2_RX_RING_SIZE, SXE2_DESC_ADDR_ALIGN, numa_id);
- 	if (tz == NULL) {
- 		PMD_LOG_ERR(RX, "Rxq malloc desc mem failed");
- 		rte_free(rxq->buffer_ring);
-@@ -243,7 +243,7 @@ static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, uint16
- }
- 
- int32_t __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
--			uint16_t queue_idx, uint16_t nb_desc, uint32_t socket_id,
-+			uint16_t queue_idx, uint16_t nb_desc, uint32_t numa_id,
- 			const struct rte_eth_rxconf *rx_conf,
- 			struct rte_mempool *mp)
+ 	if (!rxq) {
+ 		TAP_LOG(ERR,
+ 			"%s: Couldn't allocate rx queue structure",
+@@ -1687,7 +1687,7 @@ static int
+ tap_tx_queue_setup(struct rte_eth_dev *dev,
+ 		   uint16_t tx_queue_id,
+ 		   uint16_t nb_tx_desc __rte_unused,
+-		   unsigned int socket_id,
++		   unsigned int numa_id,
+ 		   const struct rte_eth_txconf *tx_conf)
  {
-@@ -299,7 +299,7 @@ int32_t __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
- 		goto l_end;
- 	}
+ 	struct pmd_internals *internals = dev->data->dev_private;
+@@ -1699,8 +1699,8 @@ tap_tx_queue_setup(struct rte_eth_dev *dev,
+ 	if (tx_queue_id >= dev->data->nb_tx_queues)
+ 		return -1;
  
--	rxq = sxe2_rx_queue_alloc(dev, queue_idx, nb_desc, socket_id);
-+	rxq = sxe2_rx_queue_alloc(dev, queue_idx, nb_desc, numa_id);
- 	if (rxq == NULL) {
- 		PMD_LOG_ERR(RX, "rx queue[%d] resource alloc failed", queue_idx);
- 		ret = -ENOMEM;
-diff --git a/drivers/net/sxe2/sxe2_rx.h b/drivers/net/sxe2/sxe2_rx.h
-index c2582bc571..2fa7d189a1 100644
---- a/drivers/net/sxe2/sxe2_rx.h
-+++ b/drivers/net/sxe2/sxe2_rx.h
-@@ -8,7 +8,7 @@
- #include "sxe2_queue.h"
- 
- int32_t __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
--				uint16_t queue_idx, uint16_t nb_desc, uint32_t socket_id,
-+				uint16_t queue_idx, uint16_t nb_desc, uint32_t numa_id,
- 				const struct rte_eth_rxconf *rx_conf,
- 				struct rte_mempool *mp);
- 
-diff --git a/drivers/net/sxe2/sxe2_tx.c b/drivers/net/sxe2/sxe2_tx.c
-index 94a6e9afc7..a05e94effe 100644
---- a/drivers/net/sxe2/sxe2_tx.c
-+++ b/drivers/net/sxe2/sxe2_tx.c
-@@ -258,7 +258,7 @@ void __rte_cold sxe2_all_txqs_release(struct rte_eth_dev *dev)
- 
- static struct sxe2_tx_queue
- *sxe2_tx_queue_alloc(struct rte_eth_dev *dev, uint16_t queue_idx,
--		uint16_t ring_depth, uint32_t socket_id)
-+		uint16_t ring_depth, uint32_t numa_id)
+-	txq = rte_zmalloc_socket(dev->device->name, sizeof(*txq),
+-				 RTE_CACHE_LINE_SIZE, socket_id);
++	txq = rte_zmalloc_numa(dev->device->name, sizeof(*txq),
++				 RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (!txq) {
+ 		TAP_LOG(ERR,
+ 			"%s: Couldn't allocate tx queue structure",
+@@ -2150,7 +2150,7 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
+ 		   const char *remote_iface, struct rte_ether_addr *mac_addr,
+ 		   enum rte_tuntap_type type, bool persist)
  {
- 	struct sxe2_tx_queue *txq;
- 	const struct rte_memzone *tz;
-@@ -268,8 +268,8 @@ static struct sxe2_tx_queue
- 		dev->data->tx_queues[queue_idx] = NULL;
- 	}
+-	int numa_node = rte_socket_id();
++	int numa_node = rte_numa_id();
+ 	struct rte_eth_dev *dev;
+ 	struct pmd_internals *pmd;
+ 	struct pmd_process_private *process_private;
+@@ -2158,7 +2158,7 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
+ 	struct rte_eth_dev_data *data;
+ 	int i;
  
--	txq = rte_zmalloc_socket("tx_queue", sizeof(struct sxe2_tx_queue),
--			RTE_CACHE_LINE_SIZE, socket_id);
-+	txq = rte_zmalloc_numa("tx_queue", sizeof(struct sxe2_tx_queue),
-+			RTE_CACHE_LINE_SIZE, numa_id);
- 	if (txq == NULL) {
- 		PMD_LOG_ERR(TX, "tx queue:%d alloc failed", queue_idx);
- 		goto l_end;
-@@ -277,7 +277,7 @@ static struct sxe2_tx_queue
+-	TAP_LOG(DEBUG, "%s device on numa %u", tuntap_name, rte_socket_id());
++	TAP_LOG(DEBUG, "%s device on numa %u", tuntap_name, rte_numa_id());
  
- 	tz = rte_eth_dma_zone_reserve(dev, "tx_dma", queue_idx,
- 			sizeof(union sxe2_tx_data_desc) * SXE2_MAX_RING_DESC,
--			SXE2_DESC_ADDR_ALIGN, socket_id);
-+			SXE2_DESC_ADDR_ALIGN, numa_id);
- 	if (tz == NULL) {
- 		PMD_LOG_ERR(TX, "tx desc ring alloc failed, queue_id:%d", queue_idx);
- 		rte_free(txq);
-@@ -285,9 +285,9 @@ static struct sxe2_tx_queue
- 		goto l_end;
- 	}
+ 	dev = rte_eth_vdev_allocate(vdev, sizeof(*pmd));
+ 	if (!dev) {
+@@ -2198,7 +2198,7 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
+ 	data->numa_node = numa_node;
  
--	txq->buffer_ring = rte_zmalloc_socket("tx_buffer_ring",
-+	txq->buffer_ring = rte_zmalloc_numa("tx_buffer_ring",
- 		sizeof(struct sxe2_tx_buffer) * ring_depth,
--		RTE_CACHE_LINE_SIZE, socket_id);
-+		RTE_CACHE_LINE_SIZE, numa_id);
- 	if (txq->buffer_ring == NULL) {
- 		PMD_LOG_ERR(TX, "tx buffer alloc failed, queue_id:%d", queue_idx);
- 		rte_memzone_free(tz);
-@@ -305,7 +305,7 @@ static struct sxe2_tx_queue
- }
- 
- int32_t __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
--		uint16_t queue_idx, uint16_t nb_desc, uint32_t socket_id,
-+		uint16_t queue_idx, uint16_t nb_desc, uint32_t numa_id,
- 		const struct rte_eth_txconf *tx_conf)
- {
- 	int32_t ret = 0;
-@@ -329,7 +329,7 @@ int32_t __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
- 		goto end;
- 	}
- 
--	txq = sxe2_tx_queue_alloc(dev, queue_idx, nb_desc, socket_id);
-+	txq = sxe2_tx_queue_alloc(dev, queue_idx, nb_desc, numa_id);
- 	if (txq == NULL) {
- 		PMD_LOG_ERR(TX, "failed to alloc sxe2vf tx queue:%u resource", queue_idx);
- 		ret = -ENOMEM;
-diff --git a/drivers/net/sxe2/sxe2_tx.h b/drivers/net/sxe2/sxe2_tx.h
-index bc5ff1c2bc..37e3a00d6f 100644
---- a/drivers/net/sxe2/sxe2_tx.h
-+++ b/drivers/net/sxe2/sxe2_tx.h
-@@ -20,7 +20,7 @@ void sxe2_tx_queue_mbufs_release(struct sxe2_tx_queue *txq);
- int32_t __rte_cold sxe2_tx_queue_stop(struct rte_eth_dev *dev, uint16_t queue_id);
- 
- int32_t __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
--		uint16_t queue_idx, uint16_t nb_desc, uint32_t socket_id,
-+		uint16_t queue_idx, uint16_t nb_desc, uint32_t numa_id,
- 		const struct rte_eth_txconf *tx_conf);
- 
- void __rte_cold sxe2_tx_queue_release(struct rte_eth_dev *dev, uint16_t queue_idx);
+ 	data->dev_link = pmd_link;
+-	data->mac_addrs = rte_calloc_socket(rte_vdev_device_name(vdev),
++	data->mac_addrs = rte_calloc_numa(rte_vdev_device_name(vdev),
+ 					    TAP_MAX_MAC_ADDRS,
+ 					    sizeof(*data->mac_addrs),
+ 					    0, numa_node);
 -- 
 2.55.0
 
