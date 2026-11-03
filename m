@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D1F606A327
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D8F606A327
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=JmNtsvaF
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=vmLvo9N6
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C2BF9432EC;
-	Tue,  3 Nov 2026 16:26:51 +0100 (CET)
-Received: from mta0.migadu.com (out-145.mta0.migadu.com [91.218.175.145])
- by mails.dpdk.org (Postfix) with ESMTPS id AFEEF432EC
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:26:50 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AB206432EA;
+	Tue,  3 Nov 2026 16:26:56 +0100 (CET)
+Received: from mta0.migadu.com (out-148.mta0.migadu.com [91.218.175.148])
+ by mails.dpdk.org (Postfix) with ESMTPS id 7F667432EA
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:26:55 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=n+lgpa+UOH/kh/Fxp1IZwnIsx57csp/T9c4HW4xTcA4=; 
+DKIM-Signature: a=rsa-sha256; bh=C0CI9HJY9YoNtlVjDNLiFn2j15M+YxDtgX4LBFz0FTU=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719610; v=1; x=1794324410;
- b=JmNtsvaF8ZKvqilP5JzuxNHl30Ubta7cdZFuJa7BM8+a/SzBN6nTmFWEChi8S0+sEXVnNbCr
- NYF08vtqqa2fR3620v8TqMmZmTsAUpE0ZV1QrRL9tp2PvWWAeCBDhr/9iUX9zPtEX/WWxD2E2kY
- t9FtyzGreaqZqUTRFJBxgLKA=
+ t=1793719615; v=1; x=1794324415;
+ b=vmLvo9N6U5THERxX5RoVsGMv44dVu6JPK2qMgx42U3IFcec1Wi9us2nXPdBapd2vS09SkniM
+ S8KYZ5ACXGpcUpU8mgVrtxA5Jb4T/rLd7b/GBkZWfgQ9mTX6efCdBnpgJcnRN7/WZllAQf+mjfF
+ 3ElBKgs+xSlUoI2OSxORtFBk=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id 0b2a94dbf85f33c5;
- Tue, 03 Nov 2026 15:26:50 +0000
-X-Mizu-Trace-ID: 0b2a94dbf85f33c5
+Received: by mta12.migadu.com with ESMTPS id ec903c9db2f2829e;
+ Tue, 03 Nov 2026 15:26:55 +0000
+X-Mizu-Trace-ID: ec903c9db2f2829e
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 214/227] examples/qos_sched: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:52 +0800
-Message-ID: <20261103145306.487255-215-chengwen.feng@linux.dev>
+Subject: [PATCH 215/227] examples/rxtx_callbacks: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:52:53 +0800
+Message-ID: <20261103145306.487255-216-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,64 +62,52 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- examples/qos_sched/args.c | 4 ++--
- examples/qos_sched/init.c | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ examples/rxtx_callbacks/main.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/examples/qos_sched/args.c b/examples/qos_sched/args.c
-index 04e2a0e03c..739cc5dab9 100644
---- a/examples/qos_sched/args.c
-+++ b/examples/qos_sched/args.c
-@@ -394,8 +394,8 @@ app_parse_args(int argc, char **argv)
- 					qos_conf[i].wt_core);
- 			return -1;
- 		}
--		uint32_t rx_sock = rte_lcore_to_socket_id(qos_conf[i].rx_core);
--		uint32_t wt_sock = rte_lcore_to_socket_id(qos_conf[i].wt_core);
-+		uint32_t rx_sock = rte_lcore_to_numa_id(qos_conf[i].rx_core);
-+		uint32_t wt_sock = rte_lcore_to_numa_id(qos_conf[i].wt_core);
- 		if (rx_sock != wt_sock) {
- 			RTE_LOG(ERR, APP, "pfc %u: RX and WT must be on the same socket\n", i + 1);
- 			return -1;
-diff --git a/examples/qos_sched/init.c b/examples/qos_sched/init.c
-index 9f4b2e0082..40dece4146 100644
---- a/examples/qos_sched/init.c
-+++ b/examples/qos_sched/init.c
-@@ -127,7 +127,7 @@ app_init_port(uint16_t portid, struct rte_mempool *mp)
- 	fflush(stdout);
- 	rx_conf.offloads = local_port_conf.rxmode.offloads;
- 	ret = rte_eth_rx_queue_setup(portid, 0, (uint16_t)ring_conf.rx_size,
--		rte_eth_dev_socket_id(portid), &rx_conf, mp);
-+		rte_eth_dev_numa_id(portid), &rx_conf, mp);
- 	if (ret < 0)
- 		rte_exit(EXIT_FAILURE,
- 			 "rte_eth_tx_queue_setup: err=%d, port=%u\n",
-@@ -137,7 +137,7 @@ app_init_port(uint16_t portid, struct rte_mempool *mp)
- 	fflush(stdout);
- 	tx_conf.offloads = local_port_conf.txmode.offloads;
- 	ret = rte_eth_tx_queue_setup(portid, 0,
--		(uint16_t)ring_conf.tx_size, rte_eth_dev_socket_id(portid), &tx_conf);
-+		(uint16_t)ring_conf.tx_size, rte_eth_dev_numa_id(portid), &tx_conf);
- 	if (ret < 0)
- 		rte_exit(EXIT_FAILURE,
- 			 "rte_eth_tx_queue_setup: err=%d, port=%u queue=%d\n",
-@@ -333,7 +333,7 @@ int app_init(void)
+diff --git a/examples/rxtx_callbacks/main.c b/examples/rxtx_callbacks/main.c
+index 4682921285..02c5c69cd7 100644
+--- a/examples/rxtx_callbacks/main.c
++++ b/examples/rxtx_callbacks/main.c
+@@ -173,7 +173,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
  
- 	/* Initialize each active flow */
- 	for(i = 0; i < nb_pfc; i++) {
--		uint32_t socket = rte_lcore_to_socket_id(qos_conf[i].rx_core);
-+		uint32_t socket = rte_lcore_to_numa_id(qos_conf[i].rx_core);
- 		struct rte_ring *ring;
- 		struct rte_eth_link link;
- 		int retry_count = 100, retry_delay = 100; /* try every 100ms for 10 sec */
-@@ -360,7 +360,7 @@ int app_init(void)
- 		qos_conf[i].mbuf_pool = rte_pktmbuf_pool_create(pool_name,
- 			mp_size, burst_conf.rx_burst * 4, 0,
- 			RTE_MBUF_DEFAULT_BUF_SIZE,
--			rte_eth_dev_socket_id(qos_conf[i].rx_port));
-+			rte_eth_dev_numa_id(qos_conf[i].rx_port));
- 		if (qos_conf[i].mbuf_pool == NULL)
- 			rte_exit(EXIT_FAILURE, "Cannot init mbuf pool for socket %u\n", i);
+ 	for (q = 0; q < rx_rings; q++) {
+ 		retval = rte_eth_rx_queue_setup(port, q, nb_rxd,
+-			rte_eth_dev_socket_id(port), &rxconf, mbuf_pool);
++			rte_eth_dev_numa_id(port), &rxconf, mbuf_pool);
+ 		if (retval < 0)
+ 			return retval;
+ 	}
+@@ -182,7 +182,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
+ 	txconf.offloads = port_conf.txmode.offloads;
+ 	for (q = 0; q < tx_rings; q++) {
+ 		retval = rte_eth_tx_queue_setup(port, q, nb_txd,
+-				rte_eth_dev_socket_id(port), &txconf);
++				rte_eth_dev_numa_id(port), &txconf);
+ 		if (retval < 0)
+ 			return retval;
+ 	}
+@@ -250,9 +250,9 @@ lcore_main(void)
+ 	uint16_t port;
+ 
+ 	RTE_ETH_FOREACH_DEV(port)
+-		if (rte_eth_dev_socket_id(port) >= 0 &&
+-				rte_eth_dev_socket_id(port) !=
+-						(int)rte_socket_id())
++		if (rte_eth_dev_numa_id(port) >= 0 &&
++				rte_eth_dev_numa_id(port) !=
++						(int)rte_numa_id())
+ 			printf("WARNING, port %u is on remote NUMA node to "
+ 					"polling thread.\n\tPerformance will "
+ 					"not be optimal.\n", port);
+@@ -322,7 +322,7 @@ main(int argc, char *argv[])
+ 
+ 	mbuf_pool = rte_pktmbuf_pool_create("MBUF_POOL",
+ 		NUM_MBUFS * nb_ports, MBUF_CACHE_SIZE, 0,
+-		RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
++		RTE_MBUF_DEFAULT_BUF_SIZE, rte_numa_id());
+ 	if (mbuf_pool == NULL)
+ 		rte_exit(EXIT_FAILURE, "Cannot create mbuf pool\n");
  
 -- 
 2.55.0
