@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACD660A6F6A
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC416606FCF5
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=vofiFXUZ
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=GQ5rmta7
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BAB9D410FC;
-	Tue,  3 Nov 2026 16:01:32 +0100 (CET)
-Received: from mta1.migadu.com (out-230.mta1.migadu.com [95.215.58.230])
- by mails.dpdk.org (Postfix) with ESMTPS id A504F410EA
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:01:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id ADD23427DD;
+	Tue,  3 Nov 2026 16:01:38 +0100 (CET)
+Received: from mta1.migadu.com (out-239.mta1.migadu.com [95.215.58.239])
+ by mails.dpdk.org (Postfix) with ESMTPS id 220F8427BE
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:01:37 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=bYqbT3LMPSf7jyxELflfvvYXAmLekEIMpQI0HU6jxfs=; 
+DKIM-Signature: a=rsa-sha256; bh=pvb/LTkRoUaxfDDQCoWp+/7EngRnaogLe9jv6gXZ5R8=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718091; v=1; x=1794322891;
- b=vofiFXUZRdroK2oyqbzsItsZjeil0XJf1dSFVtUMXlEhDnVIwgo+S+qp4kNCX6QXqPnQ3uhf
- UlX/VJPhnt6Y6wgXTYCMREpKUmUskYvWcLQ8Pm7YtSWvJJtrSLzlZ2ztYWOG6/a2tJ9vazdxC4w
- iRhawTdlrDiFEv6N28CTymfQ=
+ t=1793718096; v=1; x=1794322896;
+ b=GQ5rmta717aCiW1d+lDZR0qYhsFt2HZsxLI1eRnFLFWzT6QONjzCdb7tyllncGsPXLR3hNIt
+ tJb5YIC3h4zxeSqcfwrwpgEouxrZQRQ4XAkNr3Mi5A0LyECi3chr4LnBVWQlVyu4ebWFRyFaSY3
+ 5tYof6nYvLZ2L1QgOoYR4op8=
 X-Envelope-To: dev@dpdk.org
-Received: by mta12.migadu.com with ESMTPS id ffe24dfd34a5839e;
- Tue, 03 Nov 2026 15:01:31 +0000
-X-Mizu-Trace-ID: ffe24dfd34a5839e
+Received: by mta10.migadu.com with ESMTPS id a1270d1ca80ce786;
+ Tue, 03 Nov 2026 15:01:36 +0000
+X-Mizu-Trace-ID: a1270d1ca80ce786
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 051/227] bus/vmbus: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:09 +0800
-Message-ID: <20261103145306.487255-52-chengwen.feng@linux.dev>
+Subject: [PATCH 052/227] common/cnxk: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:50:10 +0800
+Message-ID: <20261103145306.487255-53-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,50 +63,36 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/bus/vmbus/linux/vmbus_bus.c | 2 +-
- drivers/bus/vmbus/vmbus_channel.c   | 2 +-
- drivers/bus/vmbus/vmbus_common.c    | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/common/cnxk/roc_platform.c | 2 +-
+ drivers/common/cnxk/roc_platform.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bus/vmbus/linux/vmbus_bus.c b/drivers/bus/vmbus/linux/vmbus_bus.c
-index 779ea50b92..86276eb564 100644
---- a/drivers/bus/vmbus/linux/vmbus_bus.c
-+++ b/drivers/bus/vmbus/linux/vmbus_bus.c
-@@ -330,7 +330,7 @@ vmbus_scan_one(const char *name)
- 
- 	dev->device.devargs = rte_bus_find_devargs(&rte_vmbus_bus, dev->name);
- 
--	dev->device.numa_node = SOCKET_ID_ANY;
-+	dev->device.numa_node = RTE_NUMA_ID_ANY;
- 	if (vmbus_use_numa(dev)) {
- 		/* get numa node (if present) */
- 		snprintf(filename, sizeof(filename), "%s/numa_node",
-diff --git a/drivers/bus/vmbus/vmbus_channel.c b/drivers/bus/vmbus/vmbus_channel.c
-index 90ba3d1ef6..d25db272b3 100644
---- a/drivers/bus/vmbus/vmbus_channel.c
-+++ b/drivers/bus/vmbus/vmbus_channel.c
-@@ -345,7 +345,7 @@ int vmbus_chan_create(const struct rte_vmbus_device *device,
- 	struct vmbus_channel *chan;
- 	int err;
- 
--	chan = rte_zmalloc_socket("VMBUS", sizeof(*chan), RTE_CACHE_LINE_SIZE,
-+	chan = rte_zmalloc_numa("VMBUS", sizeof(*chan), RTE_CACHE_LINE_SIZE,
- 				  device->device.numa_node);
- 	if (!chan)
- 		return -ENOMEM;
-diff --git a/drivers/bus/vmbus/vmbus_common.c b/drivers/bus/vmbus/vmbus_common.c
-index 4c64856abb..755e47fc91 100644
---- a/drivers/bus/vmbus/vmbus_common.c
-+++ b/drivers/bus/vmbus/vmbus_common.c
-@@ -104,7 +104,7 @@ vmbus_probe_device(struct rte_driver *drv, struct rte_device *dev)
- 	if (ret != 0)
- 		goto free_intr;
- 
--	if (vmbus_dev->device.numa_node < 0 && rte_socket_count() > 1)
-+	if (vmbus_dev->device.numa_node < 0 && rte_numa_count() > 1)
- 		VMBUS_LOG(INFO, "Device %s is not NUMA-aware", guid);
- 
- 	/* call the driver probe() function */
+diff --git a/drivers/common/cnxk/roc_platform.c b/drivers/common/cnxk/roc_platform.c
+index 59d662fab4..7d3b9518d7 100644
+--- a/drivers/common/cnxk/roc_platform.c
++++ b/drivers/common/cnxk/roc_platform.c
+@@ -305,7 +305,7 @@ roc_plt_init(void)
+ 		if (mz == NULL) {
+ 			mz = rte_memzone_reserve(PLT_MODEL_MZ_NAME,
+ 						 sizeof(struct roc_model),
+-						 SOCKET_ID_ANY, 0);
++						 RTE_NUMA_ID_ANY, 0);
+ 			if (mz == NULL) {
+ 				plt_err("Failed to reserve mem for roc_model");
+ 				return -ENOMEM;
+diff --git a/drivers/common/cnxk/roc_platform.h b/drivers/common/cnxk/roc_platform.h
+index 70937e8b3a..4003794b8f 100644
+--- a/drivers/common/cnxk/roc_platform.h
++++ b/drivers/common/cnxk/roc_platform.h
+@@ -406,7 +406,7 @@ plt_lmt_region_reserve_aligned(const char *name, size_t len, uint32_t align)
+ 	/* To ensure returned memory is physically contiguous, bounding
+ 	 * the start and end address in 2M range.
+ 	 */
+-	return rte_memzone_reserve_bounded(name, len, SOCKET_ID_ANY,
++	return rte_memzone_reserve_bounded(name, len, RTE_NUMA_ID_ANY,
+ 					   RTE_MEMZONE_IOVA_CONTIG,
+ 					   align, RTE_PGSIZE_2M);
+ }
 -- 
 2.55.0
 
