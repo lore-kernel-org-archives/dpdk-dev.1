@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22867606A7AB
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771D5606A7B8
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=Cjkv90He
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=D78Cmxsb
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ED40E42EA3;
-	Tue,  3 Nov 2026 16:13:39 +0100 (CET)
-Received: from mta0.migadu.com (out-28.mta0.migadu.com [91.218.175.28])
- by mails.dpdk.org (Postfix) with ESMTPS id A303942EA3
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:13:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C3B6042EAF;
+	Tue,  3 Nov 2026 16:13:44 +0100 (CET)
+Received: from mta1.migadu.com (out-39.mta1.migadu.com [95.215.58.39])
+ by mails.dpdk.org (Postfix) with ESMTPS id 60E9B42E88
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:13:43 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=mFVluVPZuosx7K/+N2/0ei29u+fJjCsnQg2pZmfFpB4=; 
+DKIM-Signature: a=rsa-sha256; bh=nIGJze2EExJREcQK3/z3fsb/OIXuzrYhlwod90zI6t4=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718817; v=1; x=1794323617;
- b=Cjkv90HeEUJxgrG82YKBWJ9/FES2SN72ZggRwLDifH2pifzqXu0fo0IvTDsFJhVU3sI4kSik
- YN3JroyVpTf5gbyfjVB2gTtKEKxhNM5BkeTPS+f3ImtJbUqS0edz+nFzer1iY4rZnOyex9gVM9+
- c5RBUm5VNvPu2HIg1lbaXsw8=
+ t=1793718822; v=1; x=1794323622;
+ b=D78CmxsbnMyyXhru1Cz9VVbFAzlPZhdoh2X5JlRRjCPiCLbFWrI05ylSJPO3VzbZBWQw+650
+ kEO9y5mry5G4iY5Qmufa9UOCz2Zr/4HWa8muDYqojJWOay9F9AEphc2DTuHa8yxnbhC9hv3xzgv
+ FyJt+Jaq9RBNp91QND99NqC8=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id 7c3eb264cd09d40c;
- Tue, 03 Nov 2026 15:13:37 +0000
-X-Mizu-Trace-ID: 7c3eb264cd09d40c
+Received: by mta12.migadu.com with ESMTPS id 9f8275030a282e9b;
+ Tue, 03 Nov 2026 15:13:42 +0000
+X-Mizu-Trace-ID: 9f8275030a282e9b
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 129/227] net/mvneta: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:51:27 +0800
-Message-ID: <20261103145306.487255-130-chengwen.feng@linux.dev>
+Subject: [PATCH 130/227] net/mvpp2: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:51:28 +0800
+Message-ID: <20261103145306.487255-131-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,28 +63,18 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/net/mvneta/mvneta_ethdev.c | 2 +-
- drivers/net/mvneta/mvneta_rxtx.c   | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/mvpp2/mrvl_ethdev.c | 6 +++---
+ drivers/net/mvpp2/mrvl_flow.c   | 8 ++++----
+ drivers/net/mvpp2/mrvl_mtr.c    | 4 ++--
+ drivers/net/mvpp2/mrvl_qos.c    | 4 ++--
+ drivers/net/mvpp2/mrvl_tm.c     | 6 +++---
+ 5 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/mvneta/mvneta_ethdev.c b/drivers/net/mvneta/mvneta_ethdev.c
-index 975d3da81e..a58a5df6d9 100644
---- a/drivers/net/mvneta/mvneta_ethdev.c
-+++ b/drivers/net/mvneta/mvneta_ethdev.c
-@@ -814,7 +814,7 @@ mvneta_eth_dev_create(struct rte_vdev_device *vdev, const char *name)
- 	if (!eth_dev)
- 		return -ENOMEM;
- 
--	priv = rte_zmalloc_socket(name, sizeof(*priv), 0, rte_socket_id());
-+	priv = rte_zmalloc_numa(name, sizeof(*priv), 0, rte_numa_id());
- 	if (!priv) {
- 		ret = -ENOMEM;
- 		goto out_free;
-diff --git a/drivers/net/mvneta/mvneta_rxtx.c b/drivers/net/mvneta/mvneta_rxtx.c
-index 952e982275..e46050bd76 100644
---- a/drivers/net/mvneta/mvneta_rxtx.c
-+++ b/drivers/net/mvneta/mvneta_rxtx.c
-@@ -731,7 +731,7 @@ mvneta_rx_queue_setup(struct rte_eth_dev *dev, uint16_t idx, uint16_t desc,
+diff --git a/drivers/net/mvpp2/mrvl_ethdev.c b/drivers/net/mvpp2/mrvl_ethdev.c
+index 9be3e5a92d..695031ca6c 100644
+--- a/drivers/net/mvpp2/mrvl_ethdev.c
++++ b/drivers/net/mvpp2/mrvl_ethdev.c
+@@ -2021,7 +2021,7 @@ mrvl_rx_queue_setup(struct rte_eth_dev *dev, uint16_t idx, uint16_t desc,
  		dev->data->rx_queues[idx] = NULL;
  	}
  
@@ -93,7 +83,7 @@ index 952e982275..e46050bd76 100644
  	if (!rxq)
  		return -ENOMEM;
  
-@@ -780,7 +780,7 @@ mvneta_tx_queue_setup(struct rte_eth_dev *dev, uint16_t idx, uint16_t desc,
+@@ -2124,7 +2124,7 @@ mrvl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t idx, uint16_t desc,
  		dev->data->tx_queues[idx] = NULL;
  	}
  
@@ -102,6 +92,107 @@ index 952e982275..e46050bd76 100644
  	if (!txq)
  		return -ENOMEM;
  
+@@ -3060,7 +3060,7 @@ mrvl_priv_create(const char *dev_name)
+ 	uint16_t max_frame_size;
+ 	int ret, bpool_bit;
+ 
+-	priv = rte_zmalloc_socket(dev_name, sizeof(*priv), 0, rte_socket_id());
++	priv = rte_zmalloc_numa(dev_name, sizeof(*priv), 0, rte_numa_id());
+ 	if (!priv)
+ 		return NULL;
+ 
+diff --git a/drivers/net/mvpp2/mrvl_flow.c b/drivers/net/mvpp2/mrvl_flow.c
+index 9932e28edc..14b691eaf4 100644
+--- a/drivers/net/mvpp2/mrvl_flow.c
++++ b/drivers/net/mvpp2/mrvl_flow.c
+@@ -35,13 +35,13 @@
+ static int
+ mrvl_alloc_key_mask(struct pp2_cls_rule_key_field *field)
+ {
+-	unsigned int id = rte_socket_id();
++	unsigned int id = rte_numa_id();
+ 
+-	field->key = rte_zmalloc_socket(NULL, MRVL_CLS_STR_SIZE_MAX, 0, id);
++	field->key = rte_zmalloc_numa(NULL, MRVL_CLS_STR_SIZE_MAX, 0, id);
+ 	if (!field->key)
+ 		goto out;
+ 
+-	field->mask = rte_zmalloc_socket(NULL, MRVL_CLS_STR_SIZE_MAX, 0, id);
++	field->mask = rte_zmalloc_numa(NULL, MRVL_CLS_STR_SIZE_MAX, 0, id);
+ 	if (!field->mask)
+ 		goto out_mask;
+ 
+@@ -1721,7 +1721,7 @@ mrvl_flow_create(struct rte_eth_dev *dev,
+ 		return NULL;
+ 	}
+ 
+-	flow = rte_zmalloc_socket(NULL, sizeof(*flow), 0, rte_socket_id());
++	flow = rte_zmalloc_numa(NULL, sizeof(*flow), 0, rte_numa_id());
+ 	if (!flow)
+ 		return NULL;
+ 
+diff --git a/drivers/net/mvpp2/mrvl_mtr.c b/drivers/net/mvpp2/mrvl_mtr.c
+index c07ac95ddc..f8ca04118b 100644
+--- a/drivers/net/mvpp2/mrvl_mtr.c
++++ b/drivers/net/mvpp2/mrvl_mtr.c
+@@ -100,7 +100,7 @@ mrvl_meter_profile_add(struct rte_eth_dev *dev, uint32_t meter_profile_id,
+ 					  RTE_MTR_ERROR_TYPE_METER_PROFILE_ID,
+ 					  NULL, "Profile id already exists\n");
+ 
+-	prof = rte_zmalloc_socket(NULL, sizeof(*prof), 0, rte_socket_id());
++	prof = rte_zmalloc_numa(NULL, sizeof(*prof), 0, rte_numa_id());
+ 	if (!prof)
+ 		return -rte_mtr_error_set(error, ENOMEM,
+ 					  RTE_MTR_ERROR_TYPE_UNSPECIFIED,
+@@ -347,7 +347,7 @@ mrvl_create(struct rte_eth_dev *dev, uint32_t mtr_id,
+ 					  RTE_MTR_ERROR_TYPE_MTR_ID, NULL,
+ 					  "Meter id already exists\n");
+ 
+-	mtr = rte_zmalloc_socket(NULL, sizeof(*mtr), 0, rte_socket_id());
++	mtr = rte_zmalloc_numa(NULL, sizeof(*mtr), 0, rte_numa_id());
+ 	if (!mtr)
+ 		return -rte_mtr_error_set(error, ENOMEM,
+ 					  RTE_MTR_ERROR_TYPE_UNSPECIFIED,
+diff --git a/drivers/net/mvpp2/mrvl_qos.c b/drivers/net/mvpp2/mrvl_qos.c
+index e298da2724..d53a5c8d65 100644
+--- a/drivers/net/mvpp2/mrvl_qos.c
++++ b/drivers/net/mvpp2/mrvl_qos.c
+@@ -936,9 +936,9 @@ setup_tc(struct pp2_ppio_tc_params *param, uint8_t inqs,
+ 	param->pools[0][1] = dummy_pool[bpool->pp2_id];
+ 	param->default_color = color;
+ 
+-	inq_params = rte_zmalloc_socket("inq_params",
++	inq_params = rte_zmalloc_numa("inq_params",
+ 		inqs * sizeof(*inq_params),
+-		0, rte_socket_id());
++		0, rte_numa_id());
+ 	if (!inq_params)
+ 		return -ENOMEM;
+ 
+diff --git a/drivers/net/mvpp2/mrvl_tm.c b/drivers/net/mvpp2/mrvl_tm.c
+index c5046490ae..09d349a794 100644
+--- a/drivers/net/mvpp2/mrvl_tm.c
++++ b/drivers/net/mvpp2/mrvl_tm.c
+@@ -429,8 +429,8 @@ mrvl_shaper_profile_add(struct rte_eth_dev *dev, uint32_t shaper_profile_id,
+ 					 RTE_TM_ERROR_TYPE_SHAPER_PROFILE_ID,
+ 					 NULL, "Profile id already exists\n");
+ 
+-	profile = rte_zmalloc_socket(NULL, sizeof(*profile), 0,
+-				     rte_socket_id());
++	profile = rte_zmalloc_numa(NULL, sizeof(*profile), 0,
++				     rte_numa_id());
+ 	if (!profile)
+ 		return -rte_tm_error_set(error, ENOMEM,
+ 					 RTE_TM_ERROR_TYPE_UNSPECIFIED,
+@@ -657,7 +657,7 @@ mrvl_node_add(struct rte_eth_dev *dev, uint32_t node_id,
+ 					 RTE_TM_ERROR_TYPE_NODE_ID,
+ 					 NULL, "Node id already exists\n");
+ 
+-	node = rte_zmalloc_socket(NULL, sizeof(*node), 0, rte_socket_id());
++	node = rte_zmalloc_numa(NULL, sizeof(*node), 0, rte_numa_id());
+ 	if (!node)
+ 		return -rte_tm_error_set(error, ENOMEM,
+ 					 RTE_TM_ERROR_TYPE_UNSPECIFIED,
 -- 
 2.55.0
 
