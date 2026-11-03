@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839B1606A7AA
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F297606A326
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=bKGbKNrE
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=bOkUt36p
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4CA8143278;
-	Tue,  3 Nov 2026 16:24:54 +0100 (CET)
-Received: from mta0.migadu.com (out-98.mta0.migadu.com [91.218.175.98])
- by mails.dpdk.org (Postfix) with ESMTPS id CAD9942E9A
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:24:52 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 68C2643285;
+	Tue,  3 Nov 2026 16:25:05 +0100 (CET)
+Received: from mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+ by mails.dpdk.org (Postfix) with ESMTPS id A3DAF4326A
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:25:03 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=USbSGHsqiP8zH/mnaFifYgY4mSZE47BGc9NcZMaEy4A=; 
+DKIM-Signature: a=rsa-sha256; bh=Al9AMivSZvfjhF1AkE5+iCfkxYCDSmZvVOgdVS9CsXs=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719492; v=1; x=1794324292;
- b=bKGbKNrEQlT1SyzUxC3hZHVFdjS29CO95GxKfy1DCKXCYbnU5e2ok3T1Qfy0vrH05wQp21Y8
- 2ZChUzjYF/bDV/07Na7Ey9jOotmOcawsApU9G6trVPyRLjCKvZUR234U5pzOKHoniHT+yqECjWV
- NIiHqf2kjKZCE8UzyPaakHkE=
+ t=1793719503; v=1; x=1794324303;
+ b=bOkUt36pHCSx7ZbBnlOd/0ikq0qXG+Z/wZTljpLkcL1biScPfWCwb6OjY7TyokHWJMLoL9RF
+ ibUD0XktHVg4eXi0VM5p3XS5VML4V9GXqt1pqM75TBciye/E3a1kW+o2NV8bwUs3milD/IZqIX+
+ lgwm0kl2bHWGPeNEAhfTHsPg=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id 4075d8cee6052fad;
- Tue, 03 Nov 2026 15:24:52 +0000
-X-Mizu-Trace-ID: 4075d8cee6052fad
+Received: by mta12.migadu.com with ESMTPS id 43e43adf54a4b674;
+ Tue, 03 Nov 2026 15:25:02 +0000
+X-Mizu-Trace-ID: 43e43adf54a4b674
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 200/227] examples/l2fwd-jobstats: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:38 +0800
-Message-ID: <20261103145306.487255-201-chengwen.feng@linux.dev>
+Subject: [PATCH 201/227] examples/l2fwd-keepalive: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:52:39 +0800
+Message-ID: <20261103145306.487255-202-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,42 +62,42 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- examples/l2fwd-jobstats/main.c | 10 +++++-----
+ examples/l2fwd-keepalive/main.c | 10 +++++-----
  1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/examples/l2fwd-jobstats/main.c b/examples/l2fwd-jobstats/main.c
-index f654831897..0f5117f587 100644
---- a/examples/l2fwd-jobstats/main.c
-+++ b/examples/l2fwd-jobstats/main.c
-@@ -781,7 +781,7 @@ main(int argc, char **argv)
- 	/* Create the mbuf pool. 8< */
- 	l2fwd_pktmbuf_pool =
- 		rte_pktmbuf_pool_create("mbuf_pool", NB_MBUF, 32,
--			0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
-+			0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_numa_id());
+diff --git a/examples/l2fwd-keepalive/main.c b/examples/l2fwd-keepalive/main.c
+index 889274ddae..e6865ae541 100644
+--- a/examples/l2fwd-keepalive/main.c
++++ b/examples/l2fwd-keepalive/main.c
+@@ -560,7 +560,7 @@ main(int argc, char **argv)
+ 
+ 	l2fwd_pktmbuf_pool = rte_pktmbuf_pool_create("mbuf_pool",
+ 		total_nb_mbufs,	32, 0, RTE_MBUF_DEFAULT_BUF_SIZE,
+-		rte_socket_id());
++		rte_numa_id());
  	if (l2fwd_pktmbuf_pool == NULL)
  		rte_exit(EXIT_FAILURE, "Cannot init mbuf pool\n");
- 	/* >8 End of creation of mbuf pool. */
-@@ -897,7 +897,7 @@ main(int argc, char **argv)
+ 
+@@ -670,7 +670,7 @@ main(int argc, char **argv)
+ 		rxq_conf = dev_info.default_rxconf;
  		rxq_conf.offloads = local_port_conf.rxmode.offloads;
- 		/* RX queue initialization. 8< */
  		ret = rte_eth_rx_queue_setup(portid, 0, nb_rxd,
 -					     rte_eth_dev_socket_id(portid),
 +					     rte_eth_dev_numa_id(portid),
  					     &rxq_conf,
  					     l2fwd_pktmbuf_pool);
  		if (ret < 0)
-@@ -910,7 +910,7 @@ main(int argc, char **argv)
+@@ -683,7 +683,7 @@ main(int argc, char **argv)
+ 		txq_conf = dev_info.default_txconf;
  		txq_conf.offloads = local_port_conf.txmode.offloads;
- 		fflush(stdout);
  		ret = rte_eth_tx_queue_setup(portid, 0, nb_txd,
 -				rte_eth_dev_socket_id(portid),
 +				rte_eth_dev_numa_id(portid),
  				&txq_conf);
  		if (ret < 0)
  			rte_exit(EXIT_FAILURE,
-@@ -919,9 +919,9 @@ main(int argc, char **argv)
- 		/* >8 End of init one TX queue on each port. */
+@@ -691,9 +691,9 @@ main(int argc, char **argv)
+ 				ret, portid);
  
  		/* Initialize TX buffers */
 -		tx_buffer[portid] = rte_zmalloc_socket("tx_buffer",
@@ -107,7 +107,7 @@ index f654831897..0f5117f587 100644
 +				rte_eth_dev_numa_id(portid));
  		if (tx_buffer[portid] == NULL)
  			rte_exit(EXIT_FAILURE, "Cannot allocate buffer for tx on port %u\n",
- 					portid);
+ 						portid);
 -- 
 2.55.0
 
