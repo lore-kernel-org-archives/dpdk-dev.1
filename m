@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889C6606A324
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD46606A326
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=ssBLAJ/3
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=b1XiOyvg
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E896643320;
-	Tue,  3 Nov 2026 16:28:12 +0100 (CET)
-Received: from mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
- by mails.dpdk.org (Postfix) with ESMTPS id B4F0742EBC
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:28:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CF63243326;
+	Tue,  3 Nov 2026 16:28:17 +0100 (CET)
+Received: from mta0.migadu.com (out-191.mta0.migadu.com [91.218.175.191])
+ by mails.dpdk.org (Postfix) with ESMTPS id 5BB7542EBC
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:28:16 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=yTRMcxJp9rSDR50+qjhVJqgnLN2qzQO+LTbEBVmEh1o=; 
+DKIM-Signature: a=rsa-sha256; bh=PEmm0MrnBdbV55rivggyzdnlVBTuHs/2aCdH1WDsVFg=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719690; v=1; x=1794324490;
- b=ssBLAJ/3VkA5/hLzBioMAPcuH41bhxs0rpvX7mtOAEoZlJXh4PNAsFQmAeGCpXiahCGFATHH
- pdiylKLEUptQmu0o7003j3BUV7iNfj9x/4QS6wN4p6BMnLqwtWQj6Abq+eiQlf6Mjg3bM7gkwb0
- RX050BWCs35bW+7g4tMZpOXU=
+ t=1793719696; v=1; x=1794324496;
+ b=b1XiOyvgyJxfYVPNBh/vO6u8lhS8pT3/3a/OWnmF7MV0YplkambSWPZeTL1hM1woC7gwQV+a
+ zDbUDM8dbNR8HIxA1xbhNrz+C+a0dLLLmKm8V4ho9oKegAguNWJS93fVScNRr1Y+mN4BGppc1Ge
+ KpPb2mPXQWEcioGqkse0clX8=
 X-Envelope-To: dev@dpdk.org
-Received: by mta12.migadu.com with ESMTPS id 3f7af9a1276bc21a;
- Tue, 03 Nov 2026 15:28:10 +0000
-X-Mizu-Trace-ID: 3f7af9a1276bc21a
+Received: by mta12.migadu.com with ESMTPS id 3e37a9a4ddcbefc5;
+ Tue, 03 Nov 2026 15:28:15 +0000
+X-Mizu-Trace-ID: 3e37a9a4ddcbefc5
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 221/227] examples/vmdq: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:59 +0800
-Message-ID: <20261103145306.487255-222-chengwen.feng@linux.dev>
+Subject: [PATCH 222/227] examples/vmdq_dcb: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:53:00 +0800
+Message-ID: <20261103145306.487255-223-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,32 +62,32 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- examples/vmdq/main.c | 6 +++---
+ examples/vmdq_dcb/main.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/examples/vmdq/main.c b/examples/vmdq/main.c
-index 63ac44deba..1a852cae95 100644
---- a/examples/vmdq/main.c
-+++ b/examples/vmdq/main.c
-@@ -280,7 +280,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
- 	txconf->offloads = port_conf.txmode.offloads;
- 	for (q = 0; q < rxRings; q++) {
+diff --git a/examples/vmdq_dcb/main.c b/examples/vmdq_dcb/main.c
+index 563b4f9ce1..a41362984e 100644
+--- a/examples/vmdq_dcb/main.c
++++ b/examples/vmdq_dcb/main.c
+@@ -303,7 +303,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
+ 
+ 	for (q = 0; q < num_queues; q++) {
  		retval = rte_eth_rx_queue_setup(port, q, rxRingSize,
 -					rte_eth_dev_socket_id(port),
 +					rte_eth_dev_numa_id(port),
- 					rxconf,
+ 					NULL,
  					mbuf_pool);
  		if (retval < 0) {
-@@ -291,7 +291,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
- 
- 	for (q = 0; q < txRings; q++) {
+@@ -316,7 +316,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
+ 	txq_conf.offloads = port_conf.txmode.offloads;
+ 	for (q = 0; q < num_queues; q++) {
  		retval = rte_eth_tx_queue_setup(port, q, txRingSize,
 -					rte_eth_dev_socket_id(port),
 +					rte_eth_dev_numa_id(port),
- 					txconf);
+ 					&txq_conf);
  		if (retval < 0) {
- 			printf("initialise tx queue %d failed\n", q);
-@@ -653,7 +653,7 @@ main(int argc, char *argv[])
+ 			printf("initialize tx queue %d failed\n", q);
+@@ -687,7 +687,7 @@ main(int argc, char *argv[])
  
  	mbuf_pool = rte_pktmbuf_pool_create("MBUF_POOL",
  		NUM_MBUFS_PER_PORT * nb_ports, MBUF_CACHE_SIZE,
