@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2854606D816
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E22606C84C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=Sa1Y65ej
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=LxpG23qj
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7AB904161A;
-	Tue,  3 Nov 2026 15:58:02 +0100 (CET)
-Received: from mta0.migadu.com (out-48.mta0.migadu.com [91.218.175.48])
- by mails.dpdk.org (Postfix) with ESMTPS id 26FF5410FC
- for <dev@dpdk.org>; Tue,  3 Nov 2026 15:58:01 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3056E4279D;
+	Tue,  3 Nov 2026 15:58:09 +0100 (CET)
+Received: from mta0.migadu.com (out-51.mta0.migadu.com [91.218.175.51])
+ by mails.dpdk.org (Postfix) with ESMTPS id A02FC410FC
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 15:58:08 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=T43z/+UQj2QvX72PqTCCFaUHWkgN0mIFHfGtLqYzPTU=; 
+DKIM-Signature: a=rsa-sha256; bh=nEfUmUEq3AMFUFHEJjMxB/3wytyylMvxaWgVpNLJwdw=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793717881; v=1; x=1794322681;
- b=Sa1Y65ej3QUyrm7oqJqJo4sJHsWVSYuXZ2Puxcf0Z9m+pu24Iwvn2Q92AedaDR1X7Le1QtCH
- EpQPoMjfbcYzKn7xO3DYOqiC22BhBCqTxcGjfEhYq4Eidba0OHXYxyujNrQQiNl8ccFsoc2mL8h
- WXyivOoekNuvHLXCcTaGvH9s=
+ t=1793717888; v=1; x=1794322688;
+ b=LxpG23qjBXT/sSg2EUJEuS+RjFqq0Iy/2dtThnoYXNVtor8VeO6o27qKJaiMXR0HMW4zkvew
+ Xqpgxtjd4r1MmSH3qhDrh8ZKpf86cyk3wauXkJ9SD7KNYfQDbEE/aqFOzVcbNSR2iSCisN1rvs6
+ MCebRm2nA5xN172GcJc3gh1M=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id b5272ef250f58d32;
- Tue, 03 Nov 2026 14:58:00 +0000
-X-Mizu-Trace-ID: b5272ef250f58d32
+Received: by mta12.migadu.com with ESMTPS id 26917f9237ef281e;
+ Tue, 03 Nov 2026 14:58:08 +0000
+X-Mizu-Trace-ID: 26917f9237ef281e
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 032/227] pdump: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:49:50 +0800
-Message-ID: <20261103145306.487255-33-chengwen.feng@linux.dev>
+Subject: [PATCH 033/227] pdcp: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:49:51 +0800
+Message-ID: <20261103145306.487255-34-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,22 +63,24 @@ rte_zmalloc_numa(), rte_numa_id() and RTE_NUMA_ID_ANY.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- lib/pdump/rte_pdump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/pdcp/rte_pdcp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
-index ac94efe7ff..10d195e39a 100644
---- a/lib/pdump/rte_pdump.c
-+++ b/lib/pdump/rte_pdump.c
-@@ -636,7 +636,7 @@ rte_pdump_init(void)
- 			return -1;
+diff --git a/lib/pdcp/rte_pdcp.c b/lib/pdcp/rte_pdcp.c
+index d21df8ab43..21c77296d2 100644
+--- a/lib/pdcp/rte_pdcp.c
++++ b/lib/pdcp/rte_pdcp.c
+@@ -145,8 +145,8 @@ rte_pdcp_entity_establish(const struct rte_pdcp_entity_conf *conf)
+ 		return NULL;
+ 	}
  
- 		mz = rte_memzone_reserve(MZ_RTE_PDUMP_STATS, sizeof(*pdump_stats),
--					 SOCKET_ID_ANY, 0);
-+					 RTE_NUMA_ID_ANY, 0);
- 		if (mz == NULL) {
- 			PDUMP_LOG_LINE(ERR, "cannot allocate pdump statistics");
- 			rte_mp_action_unregister(PDUMP_MP);
+-	entity = rte_zmalloc_socket("pdcp_entity", entity_layout.total_size, RTE_CACHE_LINE_SIZE,
+-				    SOCKET_ID_ANY);
++	entity = rte_zmalloc_numa("pdcp_entity", entity_layout.total_size, RTE_CACHE_LINE_SIZE,
++				    RTE_NUMA_ID_ANY);
+ 	if (entity == NULL) {
+ 		rte_errno = ENOMEM;
+ 		return NULL;
 -- 
 2.55.0
 
