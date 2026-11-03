@@ -2,57 +2,59 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC85606A324
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 07:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B92606A324
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 07:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=h-partners.com header.i=@h-partners.com header.a=rsa-sha256 header.s=dkim header.b=ppG/bAd9
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=OqzmtL1Y
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 551C54028B;
-	Tue,  3 Nov 2026 08:35:52 +0100 (CET)
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
- [113.46.200.223])
- by mails.dpdk.org (Postfix) with ESMTPS id 4D26740278
- for <dev@dpdk.org>; Tue,  3 Nov 2026 08:35:50 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=mApthuH8GQe1n0uKIxKT3m6/LS6fZDmR9jUcqehSv30=;
- b=ppG/bAd90Wk9KobbDQ+GzVCkYWX6javY0s4AH5rfKIIXquGu9fu5fxgAXavhgjbY2AySUzHlT
- Djf2kjkPoit9VDBz/K0XVFVHZ4E1FrCoTtLH+V6sWmTPXBnsBidVDBfDYhcoiur2/aV/KT7nZVR
- YSz0sQiLx8OVIvShgzQpGSQ=
-Received: from mail.maildlp.com (unknown [172.19.163.163])
- by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4jJgN163qDzmV6r;
- Tue,  3 Nov 2026 15:35:29 +0800 (CST)
-Received: from dggpemr100003.china.huawei.com (unknown [7.185.36.150])
- by mail.maildlp.com (Postfix) with ESMTPS id DC4024058D;
- Tue,  3 Nov 2026 15:35:39 +0800 (CST)
-Received: from [10.67.121.46] (10.67.121.46) by dggpemr100003.china.huawei.com
- (7.185.36.150) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Tue, 3 Nov
- 2026 15:35:38 +0800
-Message-ID: <8d86f620-a641-48d0-839b-1b04710139ae@h-partners.com>
-Date: Tue, 3 Nov 2026 15:35:37 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id ADF7C4028B;
+	Tue,  3 Nov 2026 08:59:43 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTPS id D4DB940278
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 08:59:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1793692780;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=eyqPIQJzmAvxYIEf/ZUmm6IB9DidfPzaHoLVE4SluEU=;
+ b=OqzmtL1YtFm9J2EFxRxTRl5eDVs7V2vOvib87DfdwKqwE2sEV+oT1wJBePPPIcLqG/GWif
+ aptKsgeIkymTJCjOZhmzfyckmCxut+OJfpmLRFx035HflwOWJM+aW2qNmwvY4xFlozYVzN
+ gKgBOlizGSzK0zigaXTdQjYq/P1aFNY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-678-oIwuSBu3OKm2nrZzHoaoFg-1; Tue,
+ 03 Nov 2026 02:59:39 -0500
+X-MC-Unique: oIwuSBu3OKm2nrZzHoaoFg-1
+X-Mimecast-MFC-AGG-ID: oIwuSBu3OKm2nrZzHoaoFg_1793692779
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 920481800611; Tue,  3 Nov 2026 07:59:38 +0000 (UTC)
+Received: from dmarchan-thinkpadx1carbongen13.rmtfr.csb
+ (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 3B9B0180029C; Tue,  3 Nov 2026 07:59:36 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: maxime.coquelin@redhat.com,
+	thomas@monjalon.net
+Subject: [PATCH] devtools: check uAPI headers inclusions
+Date: Tue,  3 Nov 2026 08:59:33 +0100
+Message-ID: <20261103075933.1005684-1-david.marchand@redhat.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] common/mlx5: fix high SMMU TLB miss with mempool
- alignment
-To: yangxingui <yangxingui@huawei.com>, <viacheslavo@nvidia.com>,
- <david.marchand@redhat.com>, <dsosnowski@nvidia.com>, <bingz@nvidia.com>,
- <orika@nvidia.com>, <suanmingm@nvidia.com>
-CC: <dev@dpdk.org>, <stephen@networkplumber.org>, <thomas@monjalon.net>,
- <dmitry.kozliuk@gmail.com>, <david.marchand@redhat.com>,
- <fengchengwen@huawei.com>, <liuyonglong@huawei.com>,
- <kangfenglong@huawei.com>, yangshuaisong <yangshuaisong@h-partners.com>
-References: <20260811085231.2260761-1-yangxingui@huawei.com>
- <4a35e332-d89e-af61-03bb-3b72f3f230c7@huawei.com>
- <c0e9bea1-5fd5-4bed-be68-1d639ccb694c@h-partners.com>
-Content-Language: en-GB
-From: Shuaisong Yang <yangshuaisong@h-partners.com>
-In-Reply-To: <c0e9bea1-5fd5-4bed-be68-1d639ccb694c@h-partners.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: ZxoMs4CFZPTL_8LX4yDx0d0ThpHbVMYO7PASUHk1BBw_1793692779
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemr100003.china.huawei.com (7.185.36.150)
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,211 +64,64 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=4.0.1
+	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-> Hi Slava,
->
-> Gentle ping on this patch, following up on the earlier pings from
-> Sep 11 and Oct 27.
->
-> In the v1 discussion you mentioned the patch mostly looked good to
-> you and gave three suggestions — all of them are incorporated in v2
-> (see the changelog):
-> https://patches.dpdk.org/project/dpdk/patch/20260811085231.2260761-1-yangxingui@huawei.com/
->
-> Our replies to your v1 comments, including the root cause analysis
-> (reg_end == hugepage_end causing the alignment to be skipped), are
-> here:
-> https://patches.dpdk.org/project/dpdk/patch/20260612071434.2722918-1-yangxingui@huawei.com/
->
-> The patch fixes a ~30% performance regression with CX7 under SMMU
-> (intra-NUMA pinning on Kunpeng SoC). It has been pending for about
-> three months — we'd really appreciate your final review. Happy to
-> dig further into why the hugepage placement differs between pinning
-> configurations, or provide more test data, if that helps.
->
-> Thanks!
-> Shuaisong & Xingui
+Imported Linux kernel uAPI headers must be included before any other
+header to avoid a system-installed header being read instead.
 
-On 2026/10/27 19:32, Shuaisong Yang wrote:
-> Hi mlx5 team, just a gentle ping on this patch when you have a moment. Thanks!
-> 
-> On 2026/9/11 14:33, yangxingui wrote:
->> Kindly ping for review...
->>
->> On 2026/8/11 16:52, Xingui Yang wrote:
->>> From: Shuaisong Yang <yangshuaisong@h-partners.com>
->>>
->>> On Kunpeng SoC with mlx CX7, dpdk-l3fwd with intra-NUMA core pinning
->>> under SMMU nonstrict/strict mode shows about 30% performance degradation
->>> compared to cross-NUMA pinning. With SMMU disabled or passthrough mode,
->>> intra-NUMA performs as expected (slightly better than cross-NUMA).
->>>
->>> CX7 in NUMA1
->>> NUMA node0 CPU(s):    0-39
->>> NUMA node1 CPU(s):    40-79
->>>
->>> intra-NUMA:
->>> dpdk-l3fwd -l 40-55 -n 4 -a 0000:17:00.1,mprq_en=1 -- -p 0x1 -P \
->>>     --config='(0,0,40),(0,1,41),(0,2,42),(0,3,43),(0,4,44),\
->>>               (0,5,45),(0,6,46),(0,7,47),(0,8,48),(0,9,49),\
->>>               (0,10,50),(0,11,51),(0,12,52),(0,13,53),\
->>>               (0,14,54),(0,15,55)' \
->>>     --rx-queue-size=4096 --tx-queue-size=4096 --rx-burst=64
->>>
->>> cross-NUMA:
->>> dpdk-l3fwd -l 11-26 -n 4 -a 0000:17:00.1,mprq_en=1 -- -p 0x1 -P \
->>>     --config='(0,0,11),(0,1,12),(0,2,13),(0,3,14),(0,4,15),\
->>>               (0,5,16),(0,6,17),(0,7,18),(0,8,19),(0,9,20),\
->>>               (0,10,21),(0,11,22),(0,12,23),(0,13,24),\
->>>               (0,14,25),(0,15,26)' \
->>>     --rx-queue-size=4096 --tx-queue-size=4096 --rx-burst=64
->>>
->>> The root cause is that under SMMU enabled mode, the mempool allocated
->>> for intra-NUMA pinning is aligned to system page size instead of
->>> hugepage size, while cross-NUMA pinning correctly uses hugepage size
->>> alignment. This causes high TLB miss rates under SMMU.
->>>
->>> Align all memory ranges to hugepage boundaries during mempool
->>> registration to ensure hugepage_sz alignment, thereby reducing TLB
->>> misses and fixing the intra-NUMA performance degradation.
->>>
->>> Fixes: 690b2a88c2f7 ("common/mlx5: add mempool registration facilities")
->>> Cc: stable@dpdk.org
->>>
->>> Signed-off-by: Shuaisong Yang <yangshuaisong@h-partners.com>
->>> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
->>> ---
->>> v2:
->>> - Address review comments from Slava:
->>>    - Call rte_mem_virt2memseg_list() in a single point inside the loop.
->>>    - Skip the alignment block when hugepage_sz equals rte_mem_page_size(),
->>>      since mlx5_mempool_get_chunks() has already done the alignment.
->>>    - Skip the alignment for external memory with early goto, since ranges
->>>      are already aligned to the correct page size.
->>> ---
->>>   .mailmap                             |  1 +
->>>   drivers/common/mlx5/mlx5_common_mr.c | 72 +++++++++++++++++++---------
->>>   2 files changed, 51 insertions(+), 22 deletions(-)
->>>
->>> diff --git a/.mailmap b/.mailmap
->>> index fcb3d1bb3f..c8ba648d3c 100644
->>> --- a/.mailmap
->>> +++ b/.mailmap
->>> @@ -1999,3 +1999,4 @@ Zongyu Wu <wuzongyu1@huawei.com>
->>>   Zorik Machulsky <zorik@amazon.com>
->>>   Zyta Szpak <zyta@marvell.com> <zr@semihalf.com>
->>>   Zyta Szpak <zyta@marvell.com> <zyta.szpak@semihalf.com>
->>> +Shuaisong Yang <yangshuaisong@h-partners.com>
->>> diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5/mlx5_common_mr.c
->>> index aa2d5e88a4..f9e1ec7468 100644
->>> --- a/drivers/common/mlx5/mlx5_common_mr.c
->>> +++ b/drivers/common/mlx5/mlx5_common_mr.c
->>> @@ -1524,7 +1524,11 @@ mlx5_get_mempool_ranges(struct rte_mempool *mp, bool is_extmem,
->>>    * @param[in] is_extmem
->>>    *   Whether the pool is contains only external pinned buffers.
->>>    * @param[out] out
->>> - *   Receives memory ranges to register, aligned to the system page size.
->>> + *   Receives memory ranges to register. For non-external memory, ranges
->>> + *   are aligned to the hugepage size if all ranges are on hugepages
->>> + *   of the same size, otherwise aligned to the system page size.
->>> + *   For external memory, ranges are kept as returned by
->>> + *   mlx5_get_mempool_ranges() (already aligned to the page size).
->>>    *   The caller must release them with free().
->>>    * @param[out] out_n
->>>    *   Receives the number of @p out items.
->>> @@ -1541,7 +1545,8 @@ mlx5_mempool_reg_analyze(struct rte_mempool *mp, bool is_extmem,
->>>   {
->>>       struct mlx5_range *ranges = NULL;
->>>       unsigned int i, ranges_n = 0;
->>> -    struct rte_memseg_list *msl;
->>> +    bool same_hugepage_sz = true;
->>> +    uint64_t hugepage_sz = 0;
->>>         if (mlx5_get_mempool_ranges(mp, is_extmem, &ranges, &ranges_n) < 0) {
->>>           DRV_LOG(ERR, "Cannot get address ranges for mempool %s",
->>> @@ -1550,34 +1555,57 @@ mlx5_mempool_reg_analyze(struct rte_mempool *mp, bool is_extmem,
->>>       }
->>>       /* Check if the hugepage of the pool can be shared. */
->>>       *share_hugepage = false;
->>> -    msl = rte_mem_virt2memseg_list((void *)ranges[0].start);
->>> -    if (msl != NULL) {
->>> -        uint64_t hugepage_sz = 0;
->>> +    if (is_extmem)
->>> +        goto out;
->>> +    /* Check that all ranges are on pages of the same size. */
->>> +    for (i = 0; i < ranges_n; i++) {
->>> +        struct rte_memseg_list *range_msl =
->>> +            rte_mem_virt2memseg_list((void *)ranges[i].start);
->>> +
->>> +        if (range_msl == NULL) {
->>> +            same_hugepage_sz = false;
->>> +            break;
->>> +        }
->>> +        if (hugepage_sz == 0) {
->>> +            hugepage_sz = range_msl->page_sz;
->>> +        } else if (range_msl->page_sz != hugepage_sz) {
->>> +            same_hugepage_sz = false;
->>> +            break;
->>> +        }
->>> +    }
->>> +    /*
->>> +     * Align ranges to the hugepage boundaries and merge adjacent ones.
->>> +     * If the entire pool fits in a single hugepage, the MR for this
->>> +     * hugepage can be shared across mempools.
->>> +     */
->>> +    if (same_hugepage_sz && hugepage_sz > rte_mem_page_size()) {
->>> +        unsigned int orig_ranges_n = ranges_n;
->>>   -        /* Check that all ranges are on pages of the same size. */
->>>           for (i = 0; i < ranges_n; i++) {
->>> -            if (hugepage_sz != 0 && hugepage_sz != msl->page_sz)
->>> -                break;
->>> -            hugepage_sz = msl->page_sz;
->>> +            ranges[i].start = RTE_ALIGN_FLOOR(ranges[i].start,
->>> +                              hugepage_sz);
->>> +            ranges[i].end = RTE_ALIGN_CEIL(ranges[i].end,
->>> +                            hugepage_sz);
->>>           }
->>> -        if (i == ranges_n) {
->>> -            /*
->>> -             * If the entire pool is within one hugepage,
->>> -             * combine all ranges into one of the hugepage size.
->>> -             */
->>> -            uintptr_t reg_start = ranges[0].start;
->>> -            uintptr_t reg_end = ranges[ranges_n - 1].end;
->>> -            uintptr_t hugepage_start =
->>> -                RTE_ALIGN_FLOOR(reg_start, hugepage_sz);
->>> -            uintptr_t hugepage_end = hugepage_start + hugepage_sz;
->>> -            if (reg_end < hugepage_end) {
->>> -                ranges[0].start = hugepage_start;
->>> +        ranges_n = 1;
->>> +        for (i = 1; i < orig_ranges_n; i++) {
->>> +            if (ranges[ranges_n - 1].end >= ranges[i].start)
->>> +                ranges[ranges_n - 1].end =
->>> +                    RTE_MAX(ranges[ranges_n - 1].end,
->>> +                        ranges[i].end);
->>> +            else
->>> +                ranges[ranges_n++] = ranges[i];
->>> +        }
->>> +        if (ranges_n == 1) {
->>> +            uintptr_t hugepage_end = ranges[0].start + hugepage_sz;
->>> +
->>> +            if (ranges[0].end <= hugepage_end) {
->>>                   ranges[0].end = hugepage_end;
->>> -                ranges_n = 1;
->>>                   *share_hugepage = true;
->>>               }
->>>           }
->>>       }
->>> +out:
->>>       *out = ranges;
->>>       *out_n = ranges_n;
->>>       return 0;
->>>
-> 
+Add a check that runs after every operation to catch files where
+Linux uapi includes are preceded by other includes.
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ devtools/linux-uapi.sh | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/devtools/linux-uapi.sh b/devtools/linux-uapi.sh
+index 3f804685aa..d03b43a0aa 100755
+--- a/devtools/linux-uapi.sh
++++ b/devtools/linux-uapi.sh
+@@ -138,6 +138,29 @@ check_header()
+ 	return 0
+ }
+ 
++check_include_order()
++{
++	local errors=0
++
++	$quiet || echo "Checking uapi/linux inclusion order"
++	for filename in $(git grep -l '#include <uapi/linux/' ':!devtools/linux-uapi.sh' \
++			':!doc/guides/contributing/linux_uapi.rst' ':!kernel/linux/uapi/'); do
++		last_uapi=$(grep -n '#include <uapi/linux/' "$filename" | tail -1 | cut -d: -f1)
++		first_other=$(grep -n '^#include' "$filename" | grep -v 'uapi/linux/' |
++			head -1 | cut -d: -f1)
++		if [ -z "$first_other" ] || [ "$first_other" -gt "$last_uapi" ]; then
++			continue;
++		fi
++		$quiet || echo "$filename: uapi headers must be included before other headers"
++		errors=$((errors + 1))
++	done
++	if [ $errors -ne 0 ] || ! $quiet; then
++		echo "$errors error(s) found in uapi inclusion order"
++	fi
++
++	return $errors
++}
++
+ check_all()
+ {
+ 	local errors=0
+@@ -192,3 +215,5 @@ if $check_headers; then
+ else
+ 	update_all
+ fi
++
++check_include_order
+-- 
+2.56.0
 
