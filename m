@@ -2,44 +2,41 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68598606A324
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=yandex.ru header.i=@yandex.ru header.a=rsa-sha256 header.s=mail header.b=vsu+258c
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83619606A324
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:12:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D22574042F;
-	Tue,  3 Nov 2026 15:07:29 +0100 (CET)
-Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net
- [31.44.14.18]) by mails.dpdk.org (Postfix) with ESMTPS id 1DE7B402DE
- for <dev@dpdk.org>; Tue,  3 Nov 2026 15:07:28 +0100 (CET)
-Received: from mail-nwsmtp-smtp-production-main-63
- (mail-nwsmtp-smtp-production-main-63.yp-c.yandex.net)
- by forward502d.mail.yandex.net (postfix) with ESMTPS id E817EC0331;
- Tue, 03 Nov 2026 17:07:26 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-63 with ESMTPSA id
- L7M34ITdXuQ0-B0giaCwa; Tue, 03 Nov 2026 17:07:26 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1793714846; bh=GnX1DEJ6y8QejqLyH4o1tsiov3/2aiMoSdnJJR301DQ=;
- h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
- b=vsu+258c5f5gM3jN0FPQig7KYL5z2uOG8rNP5ZJiToDcwm/55vN9g1BGeKBhIjPuC
- 6qkWQ24GoNZdKncvsKROJGHCwX9DK9ntBbGNp9HXp53PuMFn106CKfnwUxs/im/VID
- usR3dNSOlDRf13z2eU000cVASkG7adUlEFjVkmXc=
-Authentication-Results: mail-nwsmtp-smtp-production-main-63;
- dkim=pass header.i=@yandex.ru
-From: Roman Khromenok <roma55592@yandex.ru>
-To: dev@dpdk.org
-Cc: thomas@monjalon.net, reshma.pattan@intel.com, stephen@networkplumber.org
-Subject: Re: [PATCH v2 0/2] app/procinfo: decode module EEPROM
-Date: Tue,  3 Nov 2026 16:07:18 +0200
-Message-ID: <20261103140718.485324-1-roma55592@yandex.ru>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261029182033.1738436-1-roma55592@yandex.ru>
-References: <e6d262613a145c7e850a526b03070bad38c40a92.1791609796.git.roma55592@yandex.ru>
- <20261029182033.1738436-1-roma55592@yandex.ru>
+	by mails.dpdk.org (Postfix) with ESMTP id 0C8E24042F;
+	Tue,  3 Nov 2026 15:12:20 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTPS id 17250402DE;
+ Tue,  3 Nov 2026 15:12:18 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BB40E207E3;
+ Tue,  3 Nov 2026 15:12:17 +0100 (CET)
+Subject: RE: [PATCH v1 2/3] mempool: skip unpopulated pools in walk and dump
+Date: Tue, 3 Nov 2026 15:12:15 +0100
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65AF5@smartserver.smartshare.dk>
+In-Reply-To: <20261103011107.3658840-3-rsanford2@gmail.com>
+Content-class: urn:content-classes:message
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v1 2/3] mempool: skip unpopulated pools in walk and dump
+Thread-Index: Ad1rMDroHvnIAS3cTkOQIL9Zhz9KkQAaxcxw
+References: <20261103011107.3658840-1-rsanford2@gmail.com>
+ <20261103011107.3658840-3-rsanford2@gmail.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Robert Sanford" <rsanford2@gmail.com>,
+	<dev@dpdk.org>
+Cc: <andrew.rybchenko@oktetlabs.ru>, <olivier.matz@6wind.com>,
+ "Robert Sanford" <rsanford@akamai.com>, <stable@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,28 +46,128 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=no
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Hello Thomas,
+> From: Robert Sanford <rsanford@akamai.com>
+>=20
+> rte_mempool_create_empty() adds a mempool to the mempool list before
+> the mempool has a store. The store is allocated, and
+> RTE_MEMPOOL_F_POOL_CREATED is set, by the first populate call. In
+> between, rte_mempool_walk() passes the mempool to its callback, and
+> rte_mempool_list_dump() calls rte_mempool_dump() on it, which reads
+> the number of objects in the store. With the ring driver this
+> dereferences a NULL ring, and the process crashes.
+>=20
+> Skip mempools that do not have RTE_MEMPOOL_F_POOL_CREATED set in
+> rte_mempool_walk() and rte_mempool_list_dump(), and document it.
 
-A gentle reminder about patch 1/2 of this series:
+NAK to rte_mempool_walk() skipping unpopulated pools. The effect is too =
+broad.
 
-    app/procinfo: fix module EEPROM dump of multiple ports
+The correct solution is for the relevant callback functions to check =
+RTE_MEMPOOL_F_POOL_CREATED, if it needs to access the mempool driver.
 
-It is a self-contained fix with the Fixes: tag and Cc: stable,
-independent of the transceiver library series, so it could go
-to 26.11 as is. Without it, --show-module-eeprom stops at the
-first port without a module.
+Instead, please fix rte_mempool_dump(FILE *f, struct rte_mempool *mp) to =
+not dump the parts accessing the mempool driver when =
+RTE_MEMPOOL_F_POOL_CREATED is not set. We want to know that the mempool =
+exists, and partial information is much better than no information.
 
-Patch 2/2 depends on the transceiver library (series 39866,
-deferred to 27.03), so this series cannot be applied as a whole
-before the release, and only 1/2 is intended for 26.11.
+> The
+> populating thread sets the flag without holding a lock, so add a
+> release fence before setting it and an acquire fence after checking
+> it. A walker that sees the flag then also sees the store.
+>=20
+> rte_mempool_lookup() is unchanged. It does not access the store, and
+> callers may look up a mempool that is not populated yet.
+>=20
+> Fixes: 449c49b93a6b ("mempool: support handler operations")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Robert Sanford <rsanford@akamai.com>
+> ---
+>  lib/mempool/rte_mempool.c | 20 +++++++++++++++++++-
+>  lib/mempool/rte_mempool.h |  3 +++
+>  2 files changed, 22 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
+> index d9f339a3c2..7c4d4697c7 100644
+> --- a/lib/mempool/rte_mempool.c
+> +++ b/lib/mempool/rte_mempool.c
+> @@ -304,6 +304,12 @@ mempool_ops_alloc_once(struct rte_mempool *mp)
+>  		ret =3D rte_mempool_ops_alloc(mp);
+>  		if (ret !=3D 0)
+>  			return ret;
+> +		/*
+> +		 * rte_mempool_walk() and rte_mempool_list_dump() access
+> the
+> +		 * store of pools with this flag set. Make the store
+> visible
+> +		 * before the flag.
+> +		 */
+> +		rte_atomic_thread_fence(rte_memory_order_release);
+>  		mp->flags |=3D RTE_MEMPOOL_F_POOL_CREATED;
+>  	}
+>  	return 0;
+> @@ -1412,6 +1418,11 @@ rte_mempool_list_dump(FILE *f)
+>=20
+>  	TAILQ_FOREACH(te, mempool_list, next) {
+>  		mp =3D (struct rte_mempool *) te->data;
+> +		/* skip mempools that are not populated yet */
+> +		if ((mp->flags & RTE_MEMPOOL_F_POOL_CREATED) =3D=3D 0)
+> +			continue;
+> +		/* pairs with the release fence in mempool_ops_alloc_once()
+> */
+> +		rte_atomic_thread_fence(rte_memory_order_acquire);
+>  		rte_mempool_dump(f, mp);
+>  	}
+>=20
+> @@ -1460,7 +1471,14 @@ void rte_mempool_walk(void (*func)(struct
+> rte_mempool *, void *),
+>  	rte_mcfg_mempool_read_lock();
+>=20
+>  	RTE_TAILQ_FOREACH_SAFE(te, mempool_list, next, tmp_te) {
+> -		(*func)((struct rte_mempool *) te->data, arg);
+> +		struct rte_mempool *mp =3D (struct rte_mempool *) te->data;
+> +
+> +		/* skip mempools that are not populated yet */
+> +		if ((mp->flags & RTE_MEMPOOL_F_POOL_CREATED) =3D=3D 0)
+> +			continue;
+> +		/* pairs with the release fence in mempool_ops_alloc_once()
+> */
+> +		rte_atomic_thread_fence(rte_memory_order_acquire);
+> +		(*func)(mp, arg);
+>  	}
+>=20
+>  	rte_mcfg_mempool_read_unlock();
+> diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
+> index bd58d8a9d5..7782768a2d 100644
+> --- a/lib/mempool/rte_mempool.h
+> +++ b/lib/mempool/rte_mempool.h
+> @@ -1907,6 +1907,8 @@ static inline void *rte_mempool_get_priv(struct
+> rte_mempool *mp)
+>  /**
+>   * Dump the status of all mempools on the console
+>   *
+> + * Mempools that are not populated yet are skipped.
+> + *
+>   * @param f
+>   *   A pointer to a file for output
+>   */
+> @@ -1949,6 +1951,7 @@ uint32_t rte_mempool_calc_obj_size(uint32_t
+> elt_size, uint32_t flags,
+>   *
+>   * The mempool list is locked while the iterator function runs, so =
+the
+>   * iterator function must not create or free a mempool.
+> + * Mempools that are not populated yet are skipped.
+>   *
+>   * @param func
+>   *   Iterator function
+> --
+> 2.34.1
 
-Thanks,
-Roman
