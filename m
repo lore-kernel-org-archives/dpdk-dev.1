@@ -2,75 +2,75 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1572606A324
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 01:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06CC606A324
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 01:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=cRJrl79j
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=GDFecWsU
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B26FF410D5;
-	Tue,  3 Nov 2026 02:11:16 +0100 (CET)
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com
- [209.85.222.173])
- by mails.dpdk.org (Postfix) with ESMTPS id B5B36402E3
- for <dev@dpdk.org>; Tue,  3 Nov 2026 02:11:15 +0100 (CET)
-Received: by mail-qk1-f173.google.com with SMTP id
- af79cd13be357-93f3c89594cso245327685a.2
- for <dev@dpdk.org>; Mon, 02 Nov 2026 17:11:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D9964410E8;
+	Tue,  3 Nov 2026 02:11:17 +0100 (CET)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
+ [209.85.222.175])
+ by mails.dpdk.org (Postfix) with ESMTPS id 0C1C0410E3
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 02:11:17 +0100 (CET)
+Received: by mail-qk1-f175.google.com with SMTP id
+ af79cd13be357-945ae2daa66so185718885a.0
+ for <dev@dpdk.org>; Mon, 02 Nov 2026 17:11:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1793668274; x=1794273074; darn=dpdk.org;
+ d=gmail.com; s=20260707; t=1793668276; x=1794273076; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=SrBPtDpysUDMeJ7n/gEhG2LKB89TzW2nIXaml7i6M8w=;
- b=cRJrl79jw1DO9Z9SCK6aC75+pA6Qs9V3c+f4ESdLaweSlkxoatrnRCWKvTcjnrvBV2
- GNXQKuu2H7Ipd/MxuFXXMbTMklqhj7Xxj9Wd96XJygy6eV9509dbL8NggvMECl4UaMSU
- 3/ITlhBzP6NGVYul84FgE5m6LLuM5gcqXnH6ertCTMFPrzknUhEhQV8HwUxjxC6peW49
- PFLmCN0LzmeMs/kd5gwv1/FYcCBzishSbHrca7ylVGPeA1u11nVi6a7Rc0gVa+VuTMMD
- ioF60se+uGxaek/m77dq/wZW4Nmb6he4RyFjRJy4rj7D/D5seORdmWUodRId+bQ03CEU
- L7KQ==
+ bh=COCwQbPOkfIfYnSfaRCGPgt5h/Kz4rjf2Z59WwGtPXA=;
+ b=GDFecWsU25F4xw3oisTWZZJhs+BnujjecylpT/047KbGxc/P33vzbIcz+KXMzq0GH9
+ iHAQlRGWb/7RFdO+dGQn4U/uZG+pMu+RToxatjgS4TwqOMNAGgwFUo2g4Wl+e4nXFm1h
+ 5cxWlicFylPIJEos6hMNtynBhLldCcuCwF0Ci4FZ3EgSpUWRaT3Vu26lxRrK0ZDmHpya
+ +I15OR+rLTAt6h0cz+UPgREG8LSvvSaccJabrIZilPXCGu9Y+cGl6DVirw0zD4541dq/
+ cqK6K4qCAvQBA7LY9HU/gsghbUFKdYUB+zLowURCsMVzF7M2aTIoe78N+j7EFF1WwLsl
+ qHWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793668274; x=1794273074;
+ d=1e100.net; s=20260707; t=1793668276; x=1794273076;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=SrBPtDpysUDMeJ7n/gEhG2LKB89TzW2nIXaml7i6M8w=;
- b=lHDnRweXLwRftBSa0n+gJo8D3bdn6Ttpux+o7zbHTX0LLW67Wy74zsNKOkZ9vIerLy
- brHysu9yGhMw6DE0065+kkVxQEiJS1PLldKGARFOl0uUDJ0xYvlB0K7Qppi9Bfz7cPWP
- tG6Y5iv0d5iK+SLDJTyjhnstRilHcBfowotxCCOa0IBjPV/Rp/N/PEGaxt+OV7Eh8+bM
- 8jMaWlbWThNuktA+5gxaISeIuiMnQSS+SqRmuR8pmhrYI3zvEH455mF/HazW8VSEHFsz
- KjzVco+w85q0z6KCeFpcC4Ei3fEVxgmkERv9ln1BD3IedD5HSgR6yyETD5UiYnVx6tKT
- 7zYQ==
-X-Gm-Message-State: AFq9FYLpKAx5iXjuBEWWIjCL1FZ68NAgg3c99nE+VGLlPdVL+zafiROm
- 7HpGjky8dsPjCy8pinPUzFAHFNGwPspyOSEt7riL6Ke6OiyRqRbNRsVjC/G++a0i
-X-Gm-Gg: AYBFou0IKkIGt+mifWLK+lmjuBepiFENGzvXK26iep5UiMwVZGIkyoJKMznyx3pnWKC
- eVx5Pf/8LHgofAn1/dc3RqgBWyppWx00bUSk84i3C+w2UM1RxJScd4s0Zlo2waB+kU6H6bnm4nw
- kx0G5T0mngwBfmAduwF0yrvTBwqEX/Y1QQfj+CEDJngNBmKBOlV2LZUj/cL47HFl6HHMk6WTk1M
- vFdrRTLUYQCKztGgS+DcOpqI7JGeeD6S3CPdvhnH6phzqCUCwhCkjbKYiXvZmDD1lEmCF1J8HNt
- HaUvgGknplqDF9paN9dQMHyeailHeFZHQFiqf7jMBJ2DOc0kqaxUMKQD2X+mrmLSDxANEuwjFSA
- VvMnv69HBVrfTN+yGrJOpoM+zxt6uNBKw5HAc4ruCtlZZBx/CONSyTQE8dW8WMeCBWiROPlfzCv
- KUatSJr2Cr+wD3DB/0L3A9WPfyNhulE0Nhn4/7iidiGxG/rJEefV3pGw6fRvLdQ04f5AKroy6qQ
- 8NfkrKcMibT1jdiM3B1O8yqQ5eJGd/drTw2cUkq4GjsTa2/XL+wl31q2IIl04ZLcEBl2dW5U+t4
- /qfJ4nB50LfWDs0vj6VEtqC6M/ZaGHKlNcQ8HGKKDzxxdlS7kaW4xm1k5YfoZJR6HAPTOyYjrYd
- TXR18dhWhxdvHxfR0xH9JSvHCApvVVH9+xMthACP4QrZ9TP4FgW8X3U6wRKuRiESddkI6os5t8d
- DW
-X-Received: by 2002:a05:620a:3708:b0:93f:d27:c89e with SMTP id
- af79cd13be357-9442175c185mr2021864185a.75.1793668274514; 
- Mon, 02 Nov 2026 17:11:14 -0800 (PST)
+ bh=COCwQbPOkfIfYnSfaRCGPgt5h/Kz4rjf2Z59WwGtPXA=;
+ b=rktd3i3DuCRxI5SHq1VQpG/cgEh+UcY7+s5H3+2av1AimsOsuBMn+deIx9Zo2sA4BF
+ lQkG0i80o7SdDeoENr6w6UQjmsJPJH4566hYqfZ1PKrTQ5jcVTNOtHa45HHvTfGmBUfG
+ 0ttRtDTc1+rc+NAkM5RJXqdu7J/HPN/RTuvfy1Nk0fqmcUFGazj0R2IAnwUP3FSBrO+t
+ cQdIiYfaVGWdgJrx80GhbXu5j/zTVwj2i0jD+J2LDsIYmx6mPt1QbMIRI7OeRwL87cXy
+ OzuVPVTB1UM7LDMGrGLhjysUI+zmv4OzxIk5gBpvuPZc3eM3OoOaIkwKOnHWuqHjDtkj
+ QCWQ==
+X-Gm-Message-State: AFq9FYLDkgTA2mr7BETEvnHrEEO3+/qrgYyPrHzvtRMrl3n/AKRXiBD3
+ jCXd1EikbvEfc0Sj15MRYiIcAAsXs6AUtnOZS9nQPawwx8MIYb41tySpddKz7WbU
+X-Gm-Gg: AYBFou35MRuzrs1ntWbYdXM5KVNHdq3SBE+9L8oQ098CyAy4VxTUDCTTMJ0eR1RBCLA
+ rdtGS7RNvjG0KK+MT14+Ov/pGhpjtH7B4giZ2ES0imFos2/EVECCEYyXCdDEaholKp4v/LSaXcH
+ yRf88C/8dUD6mbmnFPytIEXdktUi3U8OOht6y4s1M9S+vaTkoSIxCowyRpGDDnQTCWFIA3peWnf
+ RHXM0uBC/sao7Vqm9duhjt21tpJSfD713/W4klVMehlMbi2gGaLXUlZ7yb6el8yBoYNnMfd/iLU
+ DatdZg6+dQ0OIag91B/zE/8/8V5SUQbKUCflOP6UJwGIJOzM00NVlmiNjHMuPX4XawNTIDSiq84
+ JEXTV3Cy1jn8OoEIDRoHFTSwNyeYj6FIsb3IBpcm6zzgf6hZNwnnW4rkh/7YOoldPepqTc/fezA
+ zjTUyD9jP3dIpX584oGT6YpGOJqY14wr5OXBsdC2V/T7/nsjv3s1HIaz+YonEfpLvb3/ysGRlab
+ 71IxcqOfAn7tpK9fo/RwW8dDa8A3j+9mFLXqK5D776608iq1JXs0UK+hgk4DkALNrgHAvK0RQsj
+ zGPaojwoWnVnnQVdGMiP0yoJreicSrODyb5dtNqbqPg+bs+IpBU1i7/5mBCNP1H/fwwUPHNAkJr
+ W/koayFbudmZ2RtpYqNsFLv3Pe+aA2jVB3HDz7z12WX8VOE2305vuvmOfU9q0iCveSUsyLZioXF
+ T7
+X-Received: by 2002:a05:620a:8007:b0:93e:9792:fd47 with SMTP id
+ af79cd13be357-94421585e39mr1689124285a.4.1793668275588; 
+ Mon, 02 Nov 2026 17:11:15 -0800 (PST)
 Received: from bos-lhvwah.bos01.corp.akamai.com
  (g2001-4878-8037-0700-526b-8dff-fef6-cfbf.deploy.static.akamaitechnologies.com.
  [2001:4878:8037:700:526b:8dff:fef6:cfbf])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91ca7e2749asm103788266d6.1.2026.11.02.17.11.13
+ 6a1803df08f44-91ca7e2749asm103788266d6.1.2026.11.02.17.11.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Nov 2026 17:11:13 -0800 (PST)
+ Mon, 02 Nov 2026 17:11:14 -0800 (PST)
 From: Robert Sanford <rsanford2@gmail.com>
 To: dev@dpdk.org
 Cc: andrew.rybchenko@oktetlabs.ru, mb@smartsharesystems.com,
  olivier.matz@6wind.com, Robert Sanford <rsanford@akamai.com>,
  stable@dpdk.org
-Subject: [PATCH v1 1/3] mempool: fix race between list walk and free
-Date: Mon,  2 Nov 2026 20:11:05 -0500
-Message-Id: <20261103011107.3658840-2-rsanford2@gmail.com>
+Subject: [PATCH v1 2/3] mempool: skip unpopulated pools in walk and dump
+Date: Mon,  2 Nov 2026 20:11:06 -0500
+Message-Id: <20261103011107.3658840-3-rsanford2@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261103011107.3658840-1-rsanford2@gmail.com>
 References: <20261103011107.3658840-1-rsanford2@gmail.com>
@@ -96,71 +96,98 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Robert Sanford <rsanford@akamai.com>
 
-rte_mempool_walk(), rte_mempool_lookup() and rte_mempool_list_dump()
-traverse the mempool list holding only the mempool list lock.
-rte_mempool_create_empty() inserts into the list holding both the
-mempool list lock and the tailq lock, but rte_mempool_free() unlinks
-and frees the list entry holding only the tailq lock. So a mempool can
-be unlinked and freed, together with its list entry, while another
-thread is walking the list. The walker then reads freed memory. Since
-freed heap memory is zeroed, the walk callback is passed a NULL
-mempool, or rte_mempool_lookup() compares the name of one, and the
-process crashes.
+rte_mempool_create_empty() adds a mempool to the mempool list before
+the mempool has a store. The store is allocated, and
+RTE_MEMPOOL_F_POOL_CREATED is set, by the first populate call. In
+between, rte_mempool_walk() passes the mempool to its callback, and
+rte_mempool_list_dump() calls rte_mempool_dump() on it, which reads
+the number of objects in the store. With the ring driver this
+dereferences a NULL ring, and the process crashes.
 
-Take the mempool list lock in rte_mempool_free() as well, in the same
-order as rte_mempool_create_empty(). As a result, a rte_mempool_walk()
-callback must not free a mempool, as it already could not create one.
-Document this.
+Skip mempools that do not have RTE_MEMPOOL_F_POOL_CREATED set in
+rte_mempool_walk() and rte_mempool_list_dump(), and document it. The
+populating thread sets the flag without holding a lock, so add a
+release fence before setting it and an acquire fence after checking
+it. A walker that sees the flag then also sees the store.
 
-Fixes: a3791ff0a3f8 ("mempool: introduce a function to free a pool")
+rte_mempool_lookup() is unchanged. It does not access the store, and
+callers may look up a mempool that is not populated yet.
+
+Fixes: 449c49b93a6b ("mempool: support handler operations")
 Cc: stable@dpdk.org
 
 Signed-off-by: Robert Sanford <rsanford@akamai.com>
 ---
- lib/mempool/rte_mempool.c | 8 ++++++++
- lib/mempool/rte_mempool.h | 3 +++
- 2 files changed, 11 insertions(+)
+ lib/mempool/rte_mempool.c | 20 +++++++++++++++++++-
+ lib/mempool/rte_mempool.h |  3 +++
+ 2 files changed, 22 insertions(+), 1 deletion(-)
 
 diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index 069aabaa70..d9f339a3c2 100644
+index d9f339a3c2..7c4d4697c7 100644
 --- a/lib/mempool/rte_mempool.c
 +++ b/lib/mempool/rte_mempool.c
-@@ -729,6 +729,13 @@ rte_mempool_free(struct rte_mempool *mp)
- 		return;
- 
- 	mempool_list = RTE_TAILQ_CAST(rte_mempool_tailq.head, rte_mempool_list);
-+	/*
-+	 * Take the mempool list lock as well, like rte_mempool_create_empty(),
-+	 * so that the entry is not unlinked and freed while
-+	 * rte_mempool_walk(), rte_mempool_lookup() or rte_mempool_list_dump()
-+	 * is traversing the list.
-+	 */
-+	rte_mcfg_mempool_write_lock();
- 	rte_mcfg_tailq_write_lock();
- 	/* find out tailq entry */
- 	TAILQ_FOREACH(te, mempool_list, next) {
-@@ -741,6 +748,7 @@ rte_mempool_free(struct rte_mempool *mp)
- 		rte_free(te);
+@@ -304,6 +304,12 @@ mempool_ops_alloc_once(struct rte_mempool *mp)
+ 		ret = rte_mempool_ops_alloc(mp);
+ 		if (ret != 0)
+ 			return ret;
++		/*
++		 * rte_mempool_walk() and rte_mempool_list_dump() access the
++		 * store of pools with this flag set. Make the store visible
++		 * before the flag.
++		 */
++		rte_atomic_thread_fence(rte_memory_order_release);
+ 		mp->flags |= RTE_MEMPOOL_F_POOL_CREATED;
  	}
- 	rte_mcfg_tailq_write_unlock();
-+	rte_mcfg_mempool_write_unlock();
+ 	return 0;
+@@ -1412,6 +1418,11 @@ rte_mempool_list_dump(FILE *f)
  
- 	mempool_event_callback_invoke(RTE_MEMPOOL_EVENT_DESTROY, mp);
- 	rte_mempool_trace_free(mp);
+ 	TAILQ_FOREACH(te, mempool_list, next) {
+ 		mp = (struct rte_mempool *) te->data;
++		/* skip mempools that are not populated yet */
++		if ((mp->flags & RTE_MEMPOOL_F_POOL_CREATED) == 0)
++			continue;
++		/* pairs with the release fence in mempool_ops_alloc_once() */
++		rte_atomic_thread_fence(rte_memory_order_acquire);
+ 		rte_mempool_dump(f, mp);
+ 	}
+ 
+@@ -1460,7 +1471,14 @@ void rte_mempool_walk(void (*func)(struct rte_mempool *, void *),
+ 	rte_mcfg_mempool_read_lock();
+ 
+ 	RTE_TAILQ_FOREACH_SAFE(te, mempool_list, next, tmp_te) {
+-		(*func)((struct rte_mempool *) te->data, arg);
++		struct rte_mempool *mp = (struct rte_mempool *) te->data;
++
++		/* skip mempools that are not populated yet */
++		if ((mp->flags & RTE_MEMPOOL_F_POOL_CREATED) == 0)
++			continue;
++		/* pairs with the release fence in mempool_ops_alloc_once() */
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		(*func)(mp, arg);
+ 	}
+ 
+ 	rte_mcfg_mempool_read_unlock();
 diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index b34cd893b1..bd58d8a9d5 100644
+index bd58d8a9d5..7782768a2d 100644
 --- a/lib/mempool/rte_mempool.h
 +++ b/lib/mempool/rte_mempool.h
-@@ -1947,6 +1947,9 @@ uint32_t rte_mempool_calc_obj_size(uint32_t elt_size, uint32_t flags,
+@@ -1907,6 +1907,8 @@ static inline void *rte_mempool_get_priv(struct rte_mempool *mp)
  /**
-  * Walk list of all memory pools
+  * Dump the status of all mempools on the console
   *
-+ * The mempool list is locked while the iterator function runs, so the
-+ * iterator function must not create or free a mempool.
++ * Mempools that are not populated yet are skipped.
 + *
+  * @param f
+  *   A pointer to a file for output
+  */
+@@ -1949,6 +1951,7 @@ uint32_t rte_mempool_calc_obj_size(uint32_t elt_size, uint32_t flags,
+  *
+  * The mempool list is locked while the iterator function runs, so the
+  * iterator function must not create or free a mempool.
++ * Mempools that are not populated yet are skipped.
+  *
   * @param func
   *   Iterator function
-  * @param arg
 -- 
 2.34.1
 
