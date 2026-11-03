@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEAD606B261
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B753B606BA0B
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=cL9qs0gm
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=eZlwYIs8
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A08B6427DB;
-	Tue,  3 Nov 2026 16:09:07 +0100 (CET)
-Received: from mta1.migadu.com (out-247.mta1.migadu.com [95.215.58.247])
- by mails.dpdk.org (Postfix) with ESMTPS id A0D004279D
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:09:06 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7CB0F4279D;
+	Tue,  3 Nov 2026 16:09:44 +0100 (CET)
+Received: from mta0.migadu.com (out-165.mta0.migadu.com [91.218.175.165])
+ by mails.dpdk.org (Postfix) with ESMTPS id 3463440616
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:09:43 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=rkmfeZIV1QWKvwUuhyKIbFYDR72itsbIy0/2KCtkSMs=; 
+DKIM-Signature: a=rsa-sha256; bh=vyyJDJUKaMtvQTBaPzONS0c9WLXTRnIk4czdtClYBWY=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718546; v=1; x=1794323346;
- b=cL9qs0gmo8u7JXs5tlaO/cnxl1xZvzEBUagvr76Elwj9BkNZNQb9JheP5KcIjBjz4p2x9Nsv
- VDaCzdOcLe527khWadK3HWk+Q1cR9xGty97HwYXZyPU2kmDJ8hViJo6sTxEvO5b1guDRrwjYqwR
- I7XKkR3CTtL74bw1ZtmkhzDw=
+ t=1793718583; v=1; x=1794323383;
+ b=eZlwYIs86nO00fNF9wiv0/n3ZI5FUzvkKUMX0UaWLIRFpjVL5bx5Vl1p6/V10Z3bzEPLsO16
+ msYOgK3JCAlHBf3OtsbkrRK5pJ+Ooudun2g1Df2B74L9/yRdMJ5kty8Z/nR4nyHPSpW4oDgk4jX
+ uGikc9pt4mMwn5ATU9cN43J0=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id ce0389705380a205;
- Tue, 03 Nov 2026 15:09:06 +0000
-X-Mizu-Trace-ID: ce0389705380a205
+Received: by mta10.migadu.com with ESMTPS id 9ac29ae0ca867192;
+ Tue, 03 Nov 2026 15:09:42 +0000
+X-Mizu-Trace-ID: 9ac29ae0ca867192
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 099/227] mempool/bucket: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:57 +0800
-Message-ID: <20261103145306.487255-100-chengwen.feng@linux.dev>
+Subject: [PATCH 100/227] mempool/cnxk: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:50:58 +0800
+Message-ID: <20261103145306.487255-101-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,31 +63,36 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/mempool/bucket/rte_mempool_bucket.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mempool/cnxk/cn10k_mempool_ops.c | 2 +-
+ drivers/mempool/cnxk/cnxk_mempool.c      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mempool/bucket/rte_mempool_bucket.c b/drivers/mempool/bucket/rte_mempool_bucket.c
-index d3f626e064..a94e76bc13 100644
---- a/drivers/mempool/bucket/rte_mempool_bucket.c
-+++ b/drivers/mempool/bucket/rte_mempool_bucket.c
-@@ -63,7 +63,7 @@ bucket_stack_create(const struct rte_mempool *mp, unsigned int n_elts)
- {
- 	struct bucket_stack *stack;
+diff --git a/drivers/mempool/cnxk/cn10k_mempool_ops.c b/drivers/mempool/cnxk/cn10k_mempool_ops.c
+index 09f900a850..472144da8b 100644
+--- a/drivers/mempool/cnxk/cn10k_mempool_ops.c
++++ b/drivers/mempool/cnxk/cn10k_mempool_ops.c
+@@ -47,7 +47,7 @@ batch_op_data_table_create(void)
+ 			sz = maxpools * sizeof(struct batch_op_data *);
  
--	stack = rte_zmalloc_socket("bucket_stack",
-+	stack = rte_zmalloc_numa("bucket_stack",
- 				   sizeof(struct bucket_stack) +
- 				   n_elts * sizeof(void *),
- 				   RTE_CACHE_LINE_SIZE,
-@@ -465,7 +465,7 @@ bucket_alloc(struct rte_mempool *mp)
- 	if (rc < 0)
- 		return rc;
+ 			mz = rte_memzone_reserve_aligned(
+-				BATCH_OP_DATA_TABLE_MZ_NAME, sz, SOCKET_ID_ANY,
++				BATCH_OP_DATA_TABLE_MZ_NAME, sz, RTE_NUMA_ID_ANY,
+ 				0, ROC_ALIGN);
+ 		}
+ 		if (mz == NULL) {
+diff --git a/drivers/mempool/cnxk/cnxk_mempool.c b/drivers/mempool/cnxk/cnxk_mempool.c
+index 6939fccff4..8a6a1b8c4c 100644
+--- a/drivers/mempool/cnxk/cnxk_mempool.c
++++ b/drivers/mempool/cnxk/cnxk_mempool.c
+@@ -108,7 +108,7 @@ npa_init(struct rte_pci_device *pci_dev)
+ 	int rc = -ENOMEM;
  
--	bd = rte_zmalloc_socket("bucket_pool", sizeof(*bd),
-+	bd = rte_zmalloc_numa("bucket_pool", sizeof(*bd),
- 				RTE_CACHE_LINE_SIZE, mp->numa_id);
- 	if (bd == NULL) {
- 		rc = -ENOMEM;
+ 	mz = rte_memzone_reserve_aligned(npa_dev_to_name(pci_dev, name),
+-					 sizeof(*dev), SOCKET_ID_ANY, 0,
++					 sizeof(*dev), RTE_NUMA_ID_ANY, 0,
+ 					 RTE_CACHE_LINE_SIZE);
+ 	if (mz == NULL)
+ 		goto error;
 -- 
 2.55.0
 
