@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DE5606B258
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295F5606B26C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=JBtzqlfv
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=KARJuutV
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 16F4A427CE;
-	Tue,  3 Nov 2026 16:02:24 +0100 (CET)
-Received: from mta1.migadu.com (out-51.mta1.migadu.com [95.215.58.51])
- by mails.dpdk.org (Postfix) with ESMTPS id 397C2427E5
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:02:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E595E42D35;
+	Tue,  3 Nov 2026 16:02:35 +0100 (CET)
+Received: from mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+ by mails.dpdk.org (Postfix) with ESMTPS id 386B942D26
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:02:35 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=6mfOl6R79QYDDeITNE6ierL9rpNStkS4NoePLYuXGdo=; 
+DKIM-Signature: a=rsa-sha256; bh=I+bfHTwpEK6RMH4zHvsTooETHYBH7FfbuCbQmnHgl2k=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718142; v=1; x=1794322942;
- b=JBtzqlfvxbS7TWp2W/Q7VFa917Eh432202AQQU54pQLcrgApfVl9PqmkPTRiHEE+onWxSeBS
- UlyaVgDNi7nodly9+ECGYF89SnLGCo9vMLVqKiNsINuDX2xaL+dpWyM6ILnspL9l9RVvfMBbD+y
- OUgCUMuS4+JiaOWoQe+oYcOg=
+ t=1793718154; v=1; x=1794322954;
+ b=KARJuutV6y7hSbqecRbM98Q4Pn1IUumf0b6aC7+un39PywkR8dchgKsLX8y0La7Gtc7oMw40
+ iPxgPnaexbsayyJOq4dBN7xJllzcW6azhPd/C9EbYosYgEeTn9IAqoQ4eKaOJXzR9veJWgBdZHr
+ uQ8C0aH/QPMFFLHN5qky7/ys=
 X-Envelope-To: dev@dpdk.org
-Received: by mta12.migadu.com with ESMTPS id 2155d21c1122b9b2;
- Tue, 03 Nov 2026 15:02:22 +0000
-X-Mizu-Trace-ID: 2155d21c1122b9b2
+Received: by mta12.migadu.com with ESMTPS id fb8e181f79bb9f09;
+ Tue, 03 Nov 2026 15:02:34 +0000
+X-Mizu-Trace-ID: fb8e181f79bb9f09
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 057/227] compress/nitrox: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:15 +0800
-Message-ID: <20261103145306.487255-58-chengwen.feng@linux.dev>
+Subject: [PATCH 058/227] compress/octeontx: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:50:16 +0800
+Message-ID: <20261103145306.487255-59-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,138 +63,86 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/compress/nitrox/nitrox_comp.c        | 14 +++++++-------
- drivers/compress/nitrox/nitrox_comp_reqmgr.c | 14 +++++++-------
- drivers/compress/nitrox/nitrox_comp_reqmgr.h |  2 +-
- 3 files changed, 15 insertions(+), 15 deletions(-)
+ drivers/compress/octeontx/otx_zip_pmd.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/compress/nitrox/nitrox_comp.c b/drivers/compress/nitrox/nitrox_comp.c
-index 56a90a35c5..d6a7ae1629 100644
---- a/drivers/compress/nitrox/nitrox_comp.c
-+++ b/drivers/compress/nitrox/nitrox_comp.c
-@@ -153,7 +153,7 @@ static void nitrox_comp_dev_info_get(struct rte_compressdev *dev,
+diff --git a/drivers/compress/octeontx/otx_zip_pmd.c b/drivers/compress/octeontx/otx_zip_pmd.c
+index 74e3e942ad..a70e9ddfa5 100644
+--- a/drivers/compress/octeontx/otx_zip_pmd.c
++++ b/drivers/compress/octeontx/otx_zip_pmd.c
+@@ -225,7 +225,7 @@ zip_pmd_config(struct rte_compressdev *dev,
+ 			NULL,
+ 			NULL,
+ 			NULL,
+-			SOCKET_ID_ANY,
++			RTE_NUMA_ID_ANY,
+ 			0);
  
- static int nitrox_comp_queue_pair_setup(struct rte_compressdev *dev,
- 					uint16_t qp_id,
--					uint32_t max_inflight_ops, int socket_id)
-+					uint32_t max_inflight_ops, int numa_id)
+ 	if (zip_buf_mp == NULL) {
+@@ -246,7 +246,7 @@ zip_pmd_config(struct rte_compressdev *dev,
+ 			NULL,
+ 			NULL,
+ 			NULL,
+-			SOCKET_ID_ANY,
++			RTE_NUMA_ID_ANY,
+ 			MEMPOOL_F_NO_SPREAD);
+ 
+ 	if (zip_sg_mp == NULL) {
+@@ -356,7 +356,7 @@ zip_pmd_qp_release(struct rte_compressdev *dev, uint16_t qp_id)
+ /** Create a ring to place process packets on */
+ static struct rte_ring *
+ zip_pmd_qp_create_processed_pkts_ring(struct zipvf_qp *qp,
+-		unsigned int ring_size, int socket_id)
++		unsigned int ring_size, int numa_id)
  {
- 	struct nitrox_comp_device *comp_dev = dev->data->dev_private;
- 	struct nitrox_device *ndev = comp_dev->ndev;
-@@ -173,9 +173,9 @@ static int nitrox_comp_queue_pair_setup(struct rte_compressdev *dev,
- 			return err;
+ 	struct rte_ring *r;
+ 
+@@ -373,14 +373,14 @@ zip_pmd_qp_create_processed_pkts_ring(struct zipvf_qp *qp,
+ 		return NULL;
  	}
  
--	qp = rte_zmalloc_socket("nitrox PMD qp", sizeof(*qp),
-+	qp = rte_zmalloc_numa("nitrox PMD qp", sizeof(*qp),
- 				RTE_CACHE_LINE_SIZE,
--				socket_id);
-+				numa_id);
- 	if (!qp) {
- 		NITROX_LOG_LINE(ERR, "Failed to allocate nitrox qp");
- 		return -ENOMEM;
-@@ -185,12 +185,12 @@ static int nitrox_comp_queue_pair_setup(struct rte_compressdev *dev,
- 	qp->qno = qp_id;
- 	err = nitrox_qp_setup(qp, ndev->bar_addr, dev->data->name,
- 			      max_inflight_ops, ZIP_INSTR_SIZE,
--			      socket_id);
-+			      numa_id);
- 	if (unlikely(err))
- 		goto qp_setup_err;
+-	return rte_ring_create(qp->name, ring_size, socket_id,
++	return rte_ring_create(qp->name, ring_size, numa_id,
+ 						RING_F_EXACT_SZ);
+ }
  
- 	qp->sr_mp = nitrox_comp_req_pool_create(dev, qp->count, qp_id,
--						socket_id);
-+						numa_id);
- 	if (unlikely(!qp->sr_mp))
- 		goto req_pool_err;
- 
-@@ -410,7 +410,7 @@ static int nitrox_comp_stream_create(struct rte_compressdev *dev,
- 		nxform->window_size = NITROX_DEFAULT_DEFLATE_SEARCH_DEPTH;
- 	}
- 
--	nxform->history_window = rte_zmalloc_socket(NULL, nxform->window_size,
-+	nxform->history_window = rte_zmalloc_numa(NULL, nxform->window_size,
- 					8, comp_dev->xform_pool->numa_id);
- 	if (unlikely(nxform->history_window == NULL)) {
- 		err = -ENOMEM;
-@@ -420,7 +420,7 @@ static int nitrox_comp_stream_create(struct rte_compressdev *dev,
- 	if (xform->type == RTE_COMP_COMPRESS)
- 		return 0;
- 
--	nxform->context = rte_zmalloc_socket(NULL,
-+	nxform->context = rte_zmalloc_numa(NULL,
- 					NITROX_DECOMP_CTX_SIZE, 8,
- 					comp_dev->xform_pool->numa_id);
- 	if (unlikely(nxform->context == NULL)) {
-diff --git a/drivers/compress/nitrox/nitrox_comp_reqmgr.c b/drivers/compress/nitrox/nitrox_comp_reqmgr.c
-index 42358cd14f..e8689d608b 100644
---- a/drivers/compress/nitrox/nitrox_comp_reqmgr.c
-+++ b/drivers/compress/nitrox/nitrox_comp_reqmgr.c
-@@ -523,7 +523,7 @@ static int handle_zero_length_compression(struct nitrox_softreq *sr,
- static int create_sglist_from_mbuf(struct nitrox_sgtable *sgtbl,
- 				   struct rte_mbuf *mbuf, uint32_t off,
- 				   uint32_t datalen, uint8_t extra_segs,
--				   int socket_id)
-+				   int numa_id)
+ /** Setup a queue pair */
+ static int
+ zip_pmd_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+-		uint32_t max_inflight_ops, int socket_id)
++		uint32_t max_inflight_ops, int numa_id)
  {
- 	struct rte_mbuf *m;
- 	union nitrox_zip_zptr *sgl;
-@@ -555,9 +555,9 @@ static int create_sglist_from_mbuf(struct nitrox_sgtable *sgtbl,
+ 	struct zipvf_qp *qp = NULL;
+ 	struct zip_vf *vf;
+@@ -406,8 +406,8 @@ zip_pmd_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
+ 		 dev->data->dev_id, qp_id);
  
- 		NITROX_LOG_LINE(INFO, "Mbuf has more segs %d than allocated %d",
- 			   nb_segs, sgtbl->nb_sgls);
--		sgl = rte_realloc_socket(sgtbl->sgl,
-+		sgl = rte_realloc_numa(sgtbl->sgl,
- 					 sizeof(*sgtbl->sgl) * nb_segs,
--					 8, socket_id);
-+					 8, numa_id);
- 		if (unlikely(!sgl)) {
- 			NITROX_LOG_LINE(ERR, "Failed to expand sglist memory");
- 			return -ENOMEM;
-@@ -1159,10 +1159,10 @@ static void req_pool_obj_init(struct rte_mempool *mp, void *arg, void *obj,
- 	RTE_SET_USED(mp);
- 	RTE_SET_USED(obj_idx);
- 	sr = obj;
--	sr->src.sgl = rte_zmalloc_socket(NULL,
-+	sr->src.sgl = rte_zmalloc_numa(NULL,
- 				sizeof(*sr->src.sgl) * NITROX_ZIP_SGL_COUNT,
- 				8, mp->numa_id);
--	sr->dst.sgl = rte_zmalloc_socket(NULL,
-+	sr->dst.sgl = rte_zmalloc_numa(NULL,
- 				sizeof(*sr->dst.sgl) * NITROX_ZIP_SGL_COUNT,
- 				8, mp->numa_id);
- 	if (sr->src.sgl == NULL || sr->dst.sgl == NULL) {
-@@ -1178,7 +1178,7 @@ static void req_pool_obj_init(struct rte_mempool *mp, void *arg, void *obj,
+ 	/* Allocate the queue pair data structure. */
+-	qp = rte_zmalloc_socket(name, sizeof(*qp),
+-				RTE_CACHE_LINE_SIZE, socket_id);
++	qp = rte_zmalloc_numa(name, sizeof(*qp),
++				RTE_CACHE_LINE_SIZE, numa_id);
+ 	if (qp == NULL) {
+ 		rte_free(name);
+ 		return (-ENOMEM);
+@@ -417,7 +417,7 @@ zip_pmd_qp_setup(struct rte_compressdev *dev, uint16_t qp_id,
  
- struct rte_mempool *
- nitrox_comp_req_pool_create(struct rte_compressdev *dev, uint32_t nobjs,
--			   uint16_t qp_id, int socket_id)
-+			   uint16_t qp_id, int numa_id)
- {
- 	char softreq_pool_name[RTE_RING_NAMESIZE];
- 	struct rte_mempool *mp;
-@@ -1190,7 +1190,7 @@ nitrox_comp_req_pool_create(struct rte_compressdev *dev, uint32_t nobjs,
- 				RTE_ALIGN_MUL_CEIL(nobjs, 64),
- 				sizeof(struct nitrox_softreq),
- 				64, 0, NULL, NULL, req_pool_obj_init, &err,
--				socket_id, 0);
-+				numa_id, 0);
- 	if (unlikely(!mp))
- 		NITROX_LOG_LINE(ERR, "Failed to create req pool, qid %d, err %d",
- 			   qp_id, rte_errno);
-diff --git a/drivers/compress/nitrox/nitrox_comp_reqmgr.h b/drivers/compress/nitrox/nitrox_comp_reqmgr.h
-index f0cd1eb8fd..d544acb25f 100644
---- a/drivers/compress/nitrox/nitrox_comp_reqmgr.h
-+++ b/drivers/compress/nitrox/nitrox_comp_reqmgr.h
-@@ -52,7 +52,7 @@ int nitrox_check_comp_req(struct nitrox_softreq *sr, struct rte_comp_op **op);
- void *nitrox_comp_instr_addr(struct nitrox_softreq *sr);
- struct rte_mempool *nitrox_comp_req_pool_create(struct rte_compressdev *cdev,
- 					       uint32_t nobjs, uint16_t qp_id,
--					       int socket_id);
-+					       int numa_id);
- void nitrox_comp_req_pool_free(struct rte_mempool *mp);
+ 	/* Create completion queue up to max_inflight_ops */
+ 	qp->processed_pkts = zip_pmd_qp_create_processed_pkts_ring(qp,
+-						max_inflight_ops, socket_id);
++						max_inflight_ops, numa_id);
+ 	if (qp->processed_pkts == NULL)
+ 		goto qp_setup_cleanup;
  
- #endif /* _NITROX_COMP_REQMGR_H_ */
+@@ -629,7 +629,7 @@ zip_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
+ 	struct rte_compressdev *compressdev;
+ 	struct rte_compressdev_pmd_init_params init_params = {
+ 		"",
+-		rte_socket_id(),
++		rte_numa_id(),
+ 	};
+ 
+ 	ZIP_PMD_INFO("vendor_id=0x%x device_id=0x%x",
 -- 
 2.55.0
 
