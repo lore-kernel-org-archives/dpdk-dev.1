@@ -2,37 +2,38 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD5E606A324
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2DF606A326
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=lWmnqG82
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=WrR7oIi1
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B4800432AA;
-	Tue,  3 Nov 2026 16:25:42 +0100 (CET)
-Received: from mta1.migadu.com (out-218.mta1.migadu.com [95.215.58.218])
- by mails.dpdk.org (Postfix) with ESMTPS id B636943291
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:25:41 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B564143293;
+	Tue,  3 Nov 2026 16:25:52 +0100 (CET)
+Received: from mta0.migadu.com (out-117.mta0.migadu.com [91.218.175.117])
+ by mails.dpdk.org (Postfix) with ESMTPS id 64C01432A8
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:25:51 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=9eSmKTYNLjqtw1czfWQUQPGLlyW/5iKUFWQmsxPNkCI=; 
+DKIM-Signature: a=rsa-sha256; bh=kDeZNyCxc3tgc4tjfkQog6Cf2EJZjof96tN4isySwrw=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719541; v=1; x=1794324341;
- b=lWmnqG82l083QJ8ZV570G6iNhQlwnqyokyQ067WB+3JsM5w15xfLC6YXZ8Ao1b3N17jbidXC
- muE98wX0f9gGTsfKNIvFw1fI42Kh0W5lzYCrKsVwBdSTOeIrzYCdjNv3IvxqRPKP7pG/yhQpFD8
- KOvVkV3R0EgWoOH9g6our4N8=
+ t=1793719551; v=1; x=1794324351;
+ b=WrR7oIi1ecW9HjDIhOsV6ooPa395cS9c7uPwgeLEtXD6mxyXuvfibv9x+EtTxfOfNMYVOyTG
+ pLLDGi+xFEDYOqzlv7oVFymbHfGXh/DBGAzSNN7CXGOALAm6Uvi9r+lv0hkPRldJ78IPtqZUncz
+ hOGYq8EVKH/CHGDw10wK5hoE=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id 4479c552e7c087c0;
- Tue, 03 Nov 2026 15:25:41 +0000
-X-Mizu-Trace-ID: 4479c552e7c087c0
+Received: by mta10.migadu.com with ESMTPS id 27bfceaf61611a7f;
+ Tue, 03 Nov 2026 15:25:51 +0000
+X-Mizu-Trace-ID: 27bfceaf61611a7f
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 205/227] examples/l3fwd-power: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:43 +0800
-Message-ID: <20261103145306.487255-206-chengwen.feng@linux.dev>
+Subject: [PATCH 206/227] examples/link_status_interrupt: use NUMA node
+ terminology
+Date: Tue,  3 Nov 2026 22:52:44 +0800
+Message-ID: <20261103145306.487255-207-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,88 +63,52 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- examples/l3fwd-power/main.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ examples/link_status_interrupt/main.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
-index 5b4cb9f210..4017722122 100644
---- a/examples/l3fwd-power/main.c
-+++ b/examples/l3fwd-power/main.c
-@@ -1414,7 +1414,7 @@ check_lcore_params(void)
- 							"mask\n", lcore);
- 			return -1;
- 		}
--		socketid = rte_lcore_to_socket_id(lcore);
-+		socketid = rte_lcore_to_numa_id(lcore);
- 		if (socketid != 0 && numa_on == 0) {
- 			printf("warning: lcore %u is on socket %d with numa "
- 						"off\n", lcore, socketid);
-@@ -1944,7 +1944,7 @@ setup_hash(int socketid)
- 	/* create ipv4 hash */
- 	snprintf(s, sizeof(s), "ipv4_l3fwd_hash_%d", socketid);
- 	ipv4_l3fwd_hash_params.name = s;
--	ipv4_l3fwd_hash_params.socket_id = socketid;
-+	ipv4_l3fwd_hash_params.numa_id = socketid;
- 	ipv4_l3fwd_lookup_struct[socketid] =
- 		rte_hash_create(&ipv4_l3fwd_hash_params);
- 	if (ipv4_l3fwd_lookup_struct[socketid] == NULL)
-@@ -1954,7 +1954,7 @@ setup_hash(int socketid)
- 	/* create ipv6 hash */
- 	snprintf(s, sizeof(s), "ipv6_l3fwd_hash_%d", socketid);
- 	ipv6_l3fwd_hash_params.name = s;
--	ipv6_l3fwd_hash_params.socket_id = socketid;
-+	ipv6_l3fwd_hash_params.numa_id = socketid;
- 	ipv6_l3fwd_lookup_struct[socketid] =
- 		rte_hash_create(&ipv6_l3fwd_hash_params);
- 	if (ipv6_l3fwd_lookup_struct[socketid] == NULL)
-@@ -2046,7 +2046,7 @@ init_mem(unsigned nb_mbuf)
- 			continue;
+diff --git a/examples/link_status_interrupt/main.c b/examples/link_status_interrupt/main.c
+index b5fac31400..64657c6e10 100644
+--- a/examples/link_status_interrupt/main.c
++++ b/examples/link_status_interrupt/main.c
+@@ -553,7 +553,7 @@ main(int argc, char **argv)
+ 	/* create the mbuf pool */
+ 	lsi_pktmbuf_pool =
+ 		rte_pktmbuf_pool_create("mbuf_pool", NB_MBUF, 32, 0,
+-			RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
++			RTE_MBUF_DEFAULT_BUF_SIZE, rte_numa_id());
+ 	if (lsi_pktmbuf_pool == NULL)
+ 		rte_panic("Cannot init mbuf pool\n");
  
- 		if (numa_on)
--			socketid = rte_lcore_to_socket_id(lcore_id);
-+			socketid = rte_lcore_to_numa_id(lcore_id);
- 		else
- 			socketid = 0;
+@@ -673,7 +673,7 @@ main(int argc, char **argv)
+ 		rxq_conf.offloads = local_port_conf.rxmode.offloads;
+ 		/* RX queue initialization. 8< */
+ 		ret = rte_eth_rx_queue_setup(portid, 0, nb_rxd,
+-					     rte_eth_dev_socket_id(portid),
++					     rte_eth_dev_numa_id(portid),
+ 					     &rxq_conf,
+ 					     lsi_pktmbuf_pool);
+ 		if (ret < 0)
+@@ -686,7 +686,7 @@ main(int argc, char **argv)
+ 		txq_conf = dev_info.default_txconf;
+ 		txq_conf.offloads = local_port_conf.txmode.offloads;
+ 		ret = rte_eth_tx_queue_setup(portid, 0, nb_txd,
+-				rte_eth_dev_socket_id(portid),
++				rte_eth_dev_numa_id(portid),
+ 				&txq_conf);
+ 		if (ret < 0)
+ 			rte_exit(EXIT_FAILURE, "rte_eth_tx_queue_setup: err=%d,port=%u\n",
+@@ -694,9 +694,9 @@ main(int argc, char **argv)
+ 		/* >8 End of init one TX queue. */
  
-@@ -2738,9 +2738,9 @@ main(int argc, char **argv)
- 
- 			/* Initialize TX buffers */
- 			qconf = &lcore_conf[lcore_id];
--			qconf->tx_buffer[portid] = rte_zmalloc_socket("tx_buffer",
-+			qconf->tx_buffer[portid] = rte_zmalloc_numa("tx_buffer",
+ 		/* Initialize TX buffers */
+-		tx_buffer[portid] = rte_zmalloc_socket("tx_buffer",
++		tx_buffer[portid] = rte_zmalloc_numa("tx_buffer",
  				RTE_ETH_TX_BUFFER_SIZE(MAX_PKT_BURST), 0,
 -				rte_eth_dev_socket_id(portid));
 +				rte_eth_dev_numa_id(portid));
- 			if (qconf->tx_buffer[portid] == NULL)
- 				rte_exit(EXIT_FAILURE, "Can't allocate tx buffer for port %u\n",
- 						 portid);
-@@ -2759,7 +2759,7 @@ main(int argc, char **argv)
- 
- 			if (numa_on)
- 				socketid = \
--				(uint8_t)rte_lcore_to_socket_id(lcore_id);
-+				(uint8_t)rte_lcore_to_numa_id(lcore_id);
- 			else
- 				socketid = 0;
- 
-@@ -2811,7 +2811,7 @@ main(int argc, char **argv)
- 
- 			if (numa_on)
- 				socketid = \
--				(uint8_t)rte_lcore_to_socket_id(lcore_id);
-+				(uint8_t)rte_lcore_to_numa_id(lcore_id);
- 			else
- 				socketid = 0;
- 
-@@ -2918,7 +2918,7 @@ main(int argc, char **argv)
- 		unsigned int i;
- 
- 		/* Init metrics library */
--		rte_metrics_init(rte_socket_id());
-+		rte_metrics_init(rte_numa_id());
- 		/** Register stats with metrics library */
- 		for (i = 0; i < NUM_TELSTATS; i++)
- 			ptr_strings[i] = telstats_strings[i].name;
+ 		if (tx_buffer[portid] == NULL)
+ 			rte_exit(EXIT_FAILURE, "Cannot allocate buffer for tx on port %u\n",
+ 					(unsigned) portid);
 -- 
 2.55.0
 
