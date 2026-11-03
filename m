@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09243606B272
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0829C606B25C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=U76XpQCl
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=U/Pa805N
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 25CD6427A0;
-	Tue,  3 Nov 2026 16:08:29 +0100 (CET)
-Received: from mta1.migadu.com (out-209.mta1.migadu.com [95.215.58.209])
- by mails.dpdk.org (Postfix) with ESMTPS id A3E3040616
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:08:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EB0FF4279D;
+	Tue,  3 Nov 2026 16:08:41 +0100 (CET)
+Received: from mta0.migadu.com (out-137.mta0.migadu.com [91.218.175.137])
+ by mails.dpdk.org (Postfix) with ESMTPS id 5510D40616
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:08:40 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=A9TgHR+c34jSgwzwgVNkO8xqdxztSEQDvMPH/QI1wX4=; 
+DKIM-Signature: a=rsa-sha256; bh=XFKTrTcxvmQ0mnT72D27oy6Tnflr/NuAPGuT0LP/iTY=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718507; v=1; x=1794323307;
- b=U76XpQClXWhPite2LqDm8xzqfWnK2wzWoUT9tBM7Av0s05XZWyn7FBbQtDR5uJUMy+V5Fyx5
- +5Grev4yf+yPnFrWX5LkETCZ6nkSioDR1iSyIeZ2LnrRNvHG7zK+vKZac7LGDH15lVS1Qm83aEC
- ArB3wQRz+1okxkeOvxsexIeU=
+ t=1793718520; v=1; x=1794323320;
+ b=U/Pa805Nb0meiHqU8JF/YZsJ3lp6WCjyMHKSXlQKlJKstvDkTdWqgR3vIFL0j9A6v2QJm1Hz
+ eSCpoY2r4uWX+9aQSVn8OG1yWJaCnzl6lOjQ8bNNbWo7u1LFM/i8pCIoj1Jka5PWJyKJB/mKil4
+ 4tDHjOKWmG2jYA9XiehyO0nk=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id 6067fbdd4f100610;
- Tue, 03 Nov 2026 15:08:27 +0000
-X-Mizu-Trace-ID: 6067fbdd4f100610
+Received: by mta11.migadu.com with ESMTPS id b38debda63f33bb6;
+ Tue, 03 Nov 2026 15:08:40 +0000
+X-Mizu-Trace-ID: b38debda63f33bb6
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 095/227] event/octeontx: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:53 +0800
-Message-ID: <20261103145306.487255-96-chengwen.feng@linux.dev>
+Subject: [PATCH 096/227] event/opdl: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:50:54 +0800
+Message-ID: <20261103145306.487255-97-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,73 +63,129 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/event/octeontx/ssovf_evdev.c          | 4 ++--
- drivers/event/octeontx/ssovf_evdev_selftest.c | 2 +-
- drivers/event/octeontx/ssovf_worker.c         | 2 +-
- drivers/event/octeontx/timvf_evdev.c          | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/event/opdl/opdl_evdev.c | 16 ++++++++--------
+ drivers/event/opdl/opdl_ring.c  |  6 +++---
+ drivers/event/opdl/opdl_ring.h  |  2 +-
+ drivers/event/opdl/opdl_test.c  |  2 +-
+ 4 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/event/octeontx/ssovf_evdev.c b/drivers/event/octeontx/ssovf_evdev.c
-index 1e5818569b..ba9e92fd99 100644
---- a/drivers/event/octeontx/ssovf_evdev.c
-+++ b/drivers/event/octeontx/ssovf_evdev.c
-@@ -254,7 +254,7 @@ ssovf_port_setup(struct rte_eventdev *dev, uint8_t port_id,
- 	}
- 
- 	/* Allocate event port memory */
--	ws = rte_zmalloc_socket("eventdev ssows",
-+	ws = rte_zmalloc_numa("eventdev ssows",
- 			sizeof(struct ssows), RTE_CACHE_LINE_SIZE,
- 			dev->data->numa_id);
- 	if (ws == NULL) {
-@@ -893,7 +893,7 @@ ssovf_vdev_probe(struct rte_vdev_device *vdev)
- 	}
- 
- 	eventdev = rte_event_pmd_vdev_init(name, sizeof(struct ssovf_evdev),
--				rte_socket_id(), vdev);
-+				rte_numa_id(), vdev);
- 	if (eventdev == NULL) {
- 		ssovf_log_err("Failed to create eventdev vdev %s", name);
- 		return -ENOMEM;
-diff --git a/drivers/event/octeontx/ssovf_evdev_selftest.c b/drivers/event/octeontx/ssovf_evdev_selftest.c
-index df8e710b57..45ff890780 100644
---- a/drivers/event/octeontx/ssovf_evdev_selftest.c
-+++ b/drivers/event/octeontx/ssovf_evdev_selftest.c
-@@ -159,7 +159,7 @@ _eventdev_setup(int mode)
- 					0 /*MBUF_CACHE_SIZE*/,
- 					0,
- 					512, /* Use very small mbufs */
--					rte_socket_id());
-+					rte_numa_id());
- 	if (!eventdev_test_mempool) {
- 		ssovf_log_dbg("ERROR creating mempool");
+diff --git a/drivers/event/opdl/opdl_evdev.c b/drivers/event/opdl/opdl_evdev.c
+index 44a648a11a..d5396fda4f 100644
+--- a/drivers/event/opdl/opdl_evdev.c
++++ b/drivers/event/opdl/opdl_evdev.c
+@@ -581,9 +581,9 @@ opdl_close(struct rte_eventdev *dev)
+ static int
+ assign_numa_node(const char *key __rte_unused, const char *value, void *opaque)
+ {
+-	int *socket_id = opaque;
+-	*socket_id = atoi(value);
+-	if (*socket_id >= RTE_MAX_NUMA_NODES)
++	int *numa_id = opaque;
++	*numa_id = atoi(value);
++	if (*numa_id >= RTE_MAX_NUMA_NODES)
  		return -1;
-diff --git a/drivers/event/octeontx/ssovf_worker.c b/drivers/event/octeontx/ssovf_worker.c
-index f3c6a0da5c..fe7031b6c5 100644
---- a/drivers/event/octeontx/ssovf_worker.c
-+++ b/drivers/event/octeontx/ssovf_worker.c
-@@ -463,7 +463,7 @@ octeontx_fastpath_lookup_mem_get(void)
+ 	return 0;
+ }
+@@ -647,7 +647,7 @@ opdl_probe(struct rte_vdev_device *vdev)
+ 	const char *params;
+ 	struct rte_eventdev *dev;
+ 	struct opdl_evdev *opdl;
+-	int socket_id = rte_socket_id();
++	int numa_id = rte_numa_id();
+ 	int do_validation = 0;
+ 	int do_test = 0;
+ 	int str_len;
+@@ -664,7 +664,7 @@ opdl_probe(struct rte_vdev_device *vdev)
+ 					name);
+ 		} else {
+ 			int ret = rte_kvargs_process(kvlist, NUMA_NODE_ARG,
+-					assign_numa_node, &socket_id);
++					assign_numa_node, &numa_id);
+ 			if (ret != 0) {
+ 				PMD_DRV_LOG(ERR,
+ 						"%s: Error parsing numa node parameter",
+@@ -698,7 +698,7 @@ opdl_probe(struct rte_vdev_device *vdev)
+ 		}
+ 	}
+ 	dev = rte_event_pmd_vdev_init(name,
+-			sizeof(struct opdl_evdev), socket_id, vdev);
++			sizeof(struct opdl_evdev), numa_id, vdev);
  
- 	/* Request for the first time */
- 	mz = rte_memzone_reserve_aligned(name, LOOKUP_ARRAY_SZ,
--					 SOCKET_ID_ANY, 0, OCCTX_ALIGN);
-+					 RTE_NUMA_ID_ANY, 0, OCCTX_ALIGN);
- 	if (mz != NULL) {
- 		mem = mz->addr;
- 		/* Form the rx ol_flags based on errcode */
-diff --git a/drivers/event/octeontx/timvf_evdev.c b/drivers/event/octeontx/timvf_evdev.c
-index b404b1db61..5eaf580c7f 100644
---- a/drivers/event/octeontx/timvf_evdev.c
-+++ b/drivers/event/octeontx/timvf_evdev.c
-@@ -323,7 +323,7 @@ timvf_ring_create(struct rte_event_timer_adapter *adptr)
- 	snprintf(pool_name, sizeof(pool_name), "timvf_chunk_pool%d",
- 			timr->tim_ring_id);
- 	timr->chunk_pool = (void *)rte_mempool_create_empty(pool_name,
--			timr->nb_chunks, TIM_CHUNK_SIZE, 0, 0, rte_socket_id(),
-+			timr->nb_chunks, TIM_CHUNK_SIZE, 0, 0, rte_numa_id(),
- 			mp_flags);
+ 	if (dev == NULL) {
+ 		PMD_DRV_LOG(ERR, "eventdev vdev init() failed");
+@@ -710,7 +710,7 @@ opdl_probe(struct rte_vdev_device *vdev)
+ 			  " , self_test:[%s]",
+ 		      dev->data->dev_id,
+ 		      name,
+-		      socket_id,
++		      numa_id,
+ 		      (do_validation ? "true" : "false"),
+ 			  (do_test ? "true" : "false"));
  
- 	if (!timr->chunk_pool) {
+@@ -726,7 +726,7 @@ opdl_probe(struct rte_vdev_device *vdev)
+ 
+ 	opdl = dev->data->dev_private;
+ 	opdl->data = dev->data;
+-	opdl->socket = socket_id;
++	opdl->socket = numa_id;
+ 	opdl->do_validation = do_validation;
+ 	opdl->do_test = do_test;
+ 	str_len = strlen(name);
+diff --git a/drivers/event/opdl/opdl_ring.c b/drivers/event/opdl/opdl_ring.c
+index 60991c4b03..d1e8cdb048 100644
+--- a/drivers/event/opdl/opdl_ring.c
++++ b/drivers/event/opdl/opdl_ring.c
+@@ -805,13 +805,13 @@ init_stage(struct opdl_ring *t, struct opdl_stage *s, bool threadsafe,
+ 	s->shared.stage = s;
+ 
+ 	/* Alloc memory for deps */
+-	s->dep_tracking = rte_zmalloc_socket(LIB_NAME,
++	s->dep_tracking = rte_zmalloc_numa(LIB_NAME,
+ 			t->max_num_stages * sizeof(enum dep_type),
+ 			0, t->socket);
+ 	if (s->dep_tracking == NULL)
+ 		return -ENOMEM;
+ 
+-	s->deps = rte_zmalloc_socket(LIB_NAME,
++	s->deps = rte_zmalloc_numa(LIB_NAME,
+ 			t->max_num_stages * sizeof(struct shared_state *),
+ 			0, t->socket);
+ 	if (s->deps == NULL) {
+@@ -923,7 +923,7 @@ opdl_ring_create(const char *name, uint32_t num_slots, uint32_t slot_size,
+ 	}
+ 
+ 	/* Alloc memory for stages */
+-	st = rte_zmalloc_socket(LIB_NAME,
++	st = rte_zmalloc_numa(LIB_NAME,
+ 		max_num_stages * sizeof(struct opdl_stage),
+ 		RTE_CACHE_LINE_SIZE, socket);
+ 	if (st == NULL)
+diff --git a/drivers/event/opdl/opdl_ring.h b/drivers/event/opdl/opdl_ring.h
+index 14ababe0bb..c055dd4f7d 100644
+--- a/drivers/event/opdl/opdl_ring.h
++++ b/drivers/event/opdl/opdl_ring.h
+@@ -69,7 +69,7 @@ struct opdl_stage;
+  * @param max_num_stages
+  *   Maximum number of stages.
+  * @param socket
+- *   The NUMA socket (or SOCKET_ID_ANY) to allocate the memory used for this
++ *   The NUMA socket (or RTE_NUMA_ID_ANY) to allocate the memory used for this
+  *   opdl_ring instance.
+  * @param threadsafe
+  *   Whether to support multiple threads inputting to the opdl_ring or not.
+diff --git a/drivers/event/opdl/opdl_test.c b/drivers/event/opdl/opdl_test.c
+index 9b0c4db5ce..daa07f52e2 100644
+--- a/drivers/event/opdl/opdl_test.c
++++ b/drivers/event/opdl/opdl_test.c
+@@ -1017,7 +1017,7 @@ opdl_selftest(void)
+ 				32 /*MBUF_CACHE_SIZE*/,
+ 				0,
+ 				512, /* use very small mbufs */
+-				rte_socket_id());
++				rte_numa_id());
+ 		if (!eventdev_func_mempool) {
+ 			PMD_DRV_LOG(ERR, "ERROR creating mempool");
+ 			free(t);
 -- 
 2.55.0
 
