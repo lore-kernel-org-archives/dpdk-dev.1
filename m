@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFD3606A7A0
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08914606A7A0
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=GVwAHco8
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=H7pJXJwO
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A13EC43003;
-	Tue,  3 Nov 2026 16:22:51 +0100 (CET)
-Received: from mta1.migadu.com (out-47.mta1.migadu.com [95.215.58.47])
- by mails.dpdk.org (Postfix) with ESMTPS id 47A6A42FC7
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:22:50 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D912343009;
+	Tue,  3 Nov 2026 16:23:01 +0100 (CET)
+Received: from mta0.migadu.com (out-41.mta0.migadu.com [91.218.175.41])
+ by mails.dpdk.org (Postfix) with ESMTPS id 99D2343007
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:23:00 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=WNepZzo8L/ivD3jSsifK3QR0NLmYpEmvyYFlT8x7wbU=; 
+DKIM-Signature: a=rsa-sha256; bh=kNa6IF1TEqwKFyL+O2UerH23TWGn5+XXX8j9VPmGf2Q=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719369; v=1; x=1794324169;
- b=GVwAHco8x4Ub/i3O6A174rG+tkJT8muSjuGpjjjcRtxn3n+Olfig3KWB++O3ZcjjuolrhGn8
- 5UwZYRNA1CAek83yUdvbbSHQyKV+/0ChJcsPkNjrR6I3qERCE2tX4oNu2ut9I7xi4B/L8jYQc/0
- EzybmBWY8sxi1e8x0YIRyAiE=
+ t=1793719380; v=1; x=1794324180;
+ b=H7pJXJwOJikhknmhVcEr8eR8S956muhuh9i7g/ZxMrgx/ou+F/fEUZGteh7Dsg49gKIpikB2
+ FS8s5VU+HohWa+Zm9YkBxXw3oc3UGiJY4BtbdvpyO1H07T5ezLEVj1B7Kxl22dAlQ4q5qBYNUuH
+ Gx0LKeX7zdYJvM1LO/dNZaLQ=
 X-Envelope-To: dev@dpdk.org
-Received: by mta11.migadu.com with ESMTPS id 3c69b9d622432f20;
- Tue, 03 Nov 2026 15:22:49 +0000
-X-Mizu-Trace-ID: 3c69b9d622432f20
+Received: by mta11.migadu.com with ESMTPS id 246343ebb3842b8d;
+ Tue, 03 Nov 2026 15:23:00 +0000
+X-Mizu-Trace-ID: 246343ebb3842b8d
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 188/227] examples/ethtool: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:52:26 +0800
-Message-ID: <20261103145306.487255-189-chengwen.feng@linux.dev>
+Subject: [PATCH 189/227] examples/eventdev_pipeline: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:52:27 +0800
+Message-ID: <20261103145306.487255-190-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -62,59 +62,72 @@ NUMA node terminology, and switch calls to the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- examples/ethtool/ethtool-app/main.c | 6 +++---
- examples/ethtool/lib/rte_ethtool.c  | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ examples/eventdev_pipeline/pipeline_worker_generic.c | 6 +++---
+ examples/eventdev_pipeline/pipeline_worker_tx.c      | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/examples/ethtool/ethtool-app/main.c b/examples/ethtool/ethtool-app/main.c
-index ddd256cd7b..bd87e5430d 100644
---- a/examples/ethtool/ethtool-app/main.c
-+++ b/examples/ethtool/ethtool-app/main.c
-@@ -118,7 +118,7 @@ static void setup_ports(struct app_config *ptr_cfg, int cnt_ports)
- 			size_pktpool, PKTPOOL_CACHE,
- 			0,
- 			RTE_MBUF_DEFAULT_BUF_SIZE,
--			rte_socket_id()
-+			rte_numa_id()
- 			);
- 		if (ptr_port->pkt_pool == NULL)
- 			rte_exit(EXIT_FAILURE,
-@@ -140,14 +140,14 @@ static void setup_ports(struct app_config *ptr_cfg, int cnt_ports)
+diff --git a/examples/eventdev_pipeline/pipeline_worker_generic.c b/examples/eventdev_pipeline/pipeline_worker_generic.c
+index 77d9d91043..47669bf66c 100644
+--- a/examples/eventdev_pipeline/pipeline_worker_generic.c
++++ b/examples/eventdev_pipeline/pipeline_worker_generic.c
+@@ -357,7 +357,7 @@ port_init(uint8_t port, struct rte_mempool *mbuf_pool)
+ 	/* Allocate and set up 1 RX queue per Ethernet port. */
+ 	for (q = 0; q < rx_rings; q++) {
+ 		retval = rte_eth_rx_queue_setup(port, q, rx_ring_size,
+-				rte_eth_dev_socket_id(port), &rx_conf,
++				rte_eth_dev_numa_id(port), &rx_conf,
+ 				mbuf_pool);
+ 		if (retval < 0)
+ 			return retval;
+@@ -368,7 +368,7 @@ port_init(uint8_t port, struct rte_mempool *mbuf_pool)
+ 	/* Allocate and set up 1 TX queue per Ethernet port. */
+ 	for (q = 0; q < tx_rings; q++) {
+ 		retval = rte_eth_tx_queue_setup(port, q, tx_ring_size,
+-				rte_eth_dev_socket_id(port), &txconf);
++				rte_eth_dev_numa_id(port), &txconf);
+ 		if (retval < 0)
+ 			return retval;
+ 	}
+@@ -407,7 +407,7 @@ init_ports(uint16_t num_ports)
+ 			/* cache_size */ 512,
+ 			/* priv_size*/ 0,
+ 			/* data_room_size */ RTE_MBUF_DEFAULT_BUF_SIZE,
+-			rte_socket_id());
++			rte_numa_id());
  
- 		if (rte_eth_rx_queue_setup(
- 			    idx_port, 0, nb_rxd,
--			    rte_eth_dev_socket_id(idx_port), NULL,
-+			    rte_eth_dev_numa_id(idx_port), NULL,
- 			    ptr_port->pkt_pool) < 0)
- 			rte_exit(EXIT_FAILURE,
- 				 "rte_eth_rx_queue_setup failed"
- 				);
- 		if (rte_eth_tx_queue_setup(
- 			    idx_port, 0, nb_txd,
--			    rte_eth_dev_socket_id(idx_port), NULL) < 0)
-+			    rte_eth_dev_numa_id(idx_port), NULL) < 0)
- 			rte_exit(EXIT_FAILURE,
- 				 "rte_eth_tx_queue_setup failed"
- 				);
-diff --git a/examples/ethtool/lib/rte_ethtool.c b/examples/ethtool/lib/rte_ethtool.c
-index 0b88a27e7d..b3edbc71ad 100644
---- a/examples/ethtool/lib/rte_ethtool.c
-+++ b/examples/ethtool/lib/rte_ethtool.c
-@@ -444,12 +444,12 @@ rte_ethtool_set_ringparam(uint16_t port_id,
- 		return stat;
+ 	RTE_ETH_FOREACH_DEV(portid)
+ 		if (port_init(portid, mp) != 0)
+diff --git a/examples/eventdev_pipeline/pipeline_worker_tx.c b/examples/eventdev_pipeline/pipeline_worker_tx.c
+index 174976a1b5..fae9481f56 100644
+--- a/examples/eventdev_pipeline/pipeline_worker_tx.c
++++ b/examples/eventdev_pipeline/pipeline_worker_tx.c
+@@ -702,7 +702,7 @@ port_init(uint8_t port, struct rte_mempool *mbuf_pool)
+ 	/* Allocate and set up 1 RX queue per Ethernet port. */
+ 	for (q = 0; q < rx_rings; q++) {
+ 		retval = rte_eth_rx_queue_setup(port, q, rx_ring_size,
+-				rte_eth_dev_socket_id(port), &rx_conf,
++				rte_eth_dev_numa_id(port), &rx_conf,
+ 				mbuf_pool);
+ 		if (retval < 0)
+ 			return retval;
+@@ -713,7 +713,7 @@ port_init(uint8_t port, struct rte_mempool *mbuf_pool)
+ 	/* Allocate and set up 1 TX queue per Ethernet port. */
+ 	for (q = 0; q < tx_rings; q++) {
+ 		retval = rte_eth_tx_queue_setup(port, q, tx_ring_size,
+-				rte_eth_dev_socket_id(port), &txconf);
++				rte_eth_dev_numa_id(port), &txconf);
+ 		if (retval < 0)
+ 			return retval;
+ 	}
+@@ -752,7 +752,7 @@ init_ports(uint16_t num_ports)
+ 			/* cache_size */ 512,
+ 			/* priv_size*/ 0,
+ 			/* data_room_size */ RTE_MBUF_DEFAULT_BUF_SIZE,
+-			rte_socket_id());
++			rte_numa_id());
  
- 	stat = rte_eth_tx_queue_setup(port_id, 0, ring_param->tx_pending,
--		rte_eth_dev_socket_id(port_id), NULL);
-+		rte_eth_dev_numa_id(port_id), NULL);
- 	if (stat != 0)
- 		return stat;
- 
- 	stat = rte_eth_rx_queue_setup(port_id, 0, ring_param->rx_pending,
--		rte_eth_dev_socket_id(port_id), NULL, rx_qinfo.mp);
-+		rte_eth_dev_numa_id(port_id), NULL, rx_qinfo.mp);
- 	if (stat != 0)
- 		return stat;
- 
+ 	RTE_ETH_FOREACH_DEV(portid)
+ 		if (port_init(portid, mp) != 0)
 -- 
 2.55.0
 
