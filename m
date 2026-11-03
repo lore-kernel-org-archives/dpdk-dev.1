@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6834E606A7B8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A838606B240
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=uR/u/GAD
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=K77F6SS0
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 51D7542E7E;
-	Tue,  3 Nov 2026 16:18:23 +0100 (CET)
-Received: from mta1.migadu.com (out-59.mta1.migadu.com [95.215.58.59])
- by mails.dpdk.org (Postfix) with ESMTPS id C4669427E0
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:18:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2BFB042F25;
+	Tue,  3 Nov 2026 16:18:31 +0100 (CET)
+Received: from mta1.migadu.com (out-68.mta1.migadu.com [95.215.58.68])
+ by mails.dpdk.org (Postfix) with ESMTPS id 727604060F
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:18:29 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=uryErjYljC+oEODnoJI+VrQf5N3u5b6BalTTiurf5hM=; 
+DKIM-Signature: a=rsa-sha256; bh=i7CqcLZwOxWuKnpJMnuN6kLY6TkUa3grPi7g3p/yXGg=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793719101; v=1; x=1794323901;
- b=uR/u/GAD+WdB+vEp4K7DcpIvxGWe9xLcuvW63lRhMe0NhzCAdAJ3HxbkONRi4e+EJsVReOb9
- J/WcwkHZjG+izRby1lYfhhSlACnqUTkFmt29+HOLEYmGu9rM1AtUoaaN2vVuNpiOom1pnOJci6j
- wGe2owPGdlHdK+oHMa10XD10=
+ t=1793719109; v=1; x=1794323909;
+ b=K77F6SS0AHw80GdxH1FLBKTzTm3s97V5otcSQpKsFjzhcjywOZG9vOddgI9PqTF1Dp9tprPf
+ Uc/fuWBZgGJ+jv/v8vnB3QOZWkc4Dn6Dm7IBi0NghDEv1kxklRxsz5kEl+ayiBERxoTDwkucsWe
+ LRAYwjlMue88RviQ9WJwlC14=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id c0cbc888749d9a09;
- Tue, 03 Nov 2026 15:18:21 +0000
-X-Mizu-Trace-ID: c0cbc888749d9a09
+Received: by mta11.migadu.com with ESMTPS id ef3497769b289744;
+ Tue, 03 Nov 2026 15:18:28 +0000
+X-Mizu-Trace-ID: ef3497769b289744
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 160/227] raw/dpaa2_cmdif: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:51:58 +0800
-Message-ID: <20261103145306.487255-161-chengwen.feng@linux.dev>
+Subject: [PATCH 161/227] raw/gdtc: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:51:59 +0800
+Message-ID: <20261103145306.487255-162-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,51 +63,38 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/raw/dpaa2_cmdif/dpaa2_cmdif.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/raw/gdtc/gdtc_rawdev.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/raw/dpaa2_cmdif/dpaa2_cmdif.c b/drivers/raw/dpaa2_cmdif/dpaa2_cmdif.c
-index 34a3c4f6af..fd3b3145c2 100644
---- a/drivers/raw/dpaa2_cmdif/dpaa2_cmdif.c
-+++ b/drivers/raw/dpaa2_cmdif/dpaa2_cmdif.c
-@@ -195,14 +195,14 @@ static const struct rte_rawdev_ops dpaa2_cmdif_ops = {
- static int
- dpaa2_cmdif_create(const char *name,
- 		   struct rte_vdev_device *vdev,
--		   int socket_id)
-+		   int numa_id)
- {
- 	struct rte_rawdev *rawdev;
- 	struct dpaa2_dpci_dev *cidev;
+diff --git a/drivers/raw/gdtc/gdtc_rawdev.c b/drivers/raw/gdtc/gdtc_rawdev.c
+index ee83a67bad..83ffa024ae 100644
+--- a/drivers/raw/gdtc/gdtc_rawdev.c
++++ b/drivers/raw/gdtc/gdtc_rawdev.c
+@@ -697,7 +697,7 @@ zxdh_gdma_queue_init(struct rte_rawdev *dev, uint16_t queue_id)
+ 	/* Init ring */
+ 	snprintf(name, RTE_MEMZONE_NAMESIZE, "gdma_vq%d_ring", queue_id);
+ 	size = ZXDH_GDMA_RING_SIZE * sizeof(struct zxdh_gdma_buff_desc);
+-	mz = rte_memzone_reserve_aligned(name, size, rte_socket_id(),
++	mz = rte_memzone_reserve_aligned(name, size, rte_numa_id(),
+ 			RTE_MEMZONE_IOVA_CONTIG, size);
+ 	if (mz == NULL) {
+ 		if (rte_errno == EEXIST)
+@@ -843,13 +843,13 @@ zxdh_gdma_rawdev_probe(struct rte_pci_driver *pci_drv __rte_unused,
+ 			pci_dev->name, pci_dev->mem_resource[0].phys_addr,
+ 			pci_dev->mem_resource[0].addr);
  
- 	/* Allocate device structure */
- 	rawdev = rte_rawdev_pmd_allocate(name, sizeof(struct dpaa2_dpci_dev),
--					 socket_id);
-+					 numa_id);
- 	if (!rawdev) {
- 		DPAA2_CMDIF_ERR("Unable to allocate rawdevice");
- 		return -EINVAL;
-@@ -258,9 +258,9 @@ dpaa2_cmdif_probe(struct rte_vdev_device *vdev)
+-	dev = rte_rawdev_pmd_allocate(dev_name, sizeof(struct zxdh_gdma_rawdev), rte_socket_id());
++	dev = rte_rawdev_pmd_allocate(dev_name, sizeof(struct zxdh_gdma_rawdev), rte_numa_id());
+ 	if (dev == NULL) {
+ 		ZXDH_PMD_LOG(ERR, "Unable to allocate gdma rawdev");
+ 		goto err_out;
+ 	}
+ 	ZXDH_PMD_LOG(INFO, "Init %s on NUMA node %d, dev_id is %d",
+-			dev_name, rte_socket_id(), dev->dev_id);
++			dev_name, rte_numa_id(), dev->dev_id);
  
- 	name = rte_vdev_device_name(vdev);
- 
--	DPAA2_CMDIF_INFO("Init %s on NUMA node %d", name, rte_socket_id());
-+	DPAA2_CMDIF_INFO("Init %s on NUMA node %d", name, rte_numa_id());
- 
--	ret = dpaa2_cmdif_create(name, vdev, rte_socket_id());
-+	ret = dpaa2_cmdif_create(name, vdev, rte_numa_id());
- 
- 	return ret;
- }
-@@ -275,7 +275,7 @@ dpaa2_cmdif_remove(struct rte_vdev_device *vdev)
- 	if (name == NULL)
- 		return -1;
- 
--	DPAA2_CMDIF_INFO("Closing %s on NUMA node %d", name, rte_socket_id());
-+	DPAA2_CMDIF_INFO("Closing %s on NUMA node %d", name, rte_numa_id());
- 
- 	ret = dpaa2_cmdif_destroy(name);
- 
+ 	dev->dev_ops = &zxdh_gdma_rawdev_ops;
+ 	dev->device = &pci_dev->device;
 -- 
 2.55.0
 
