@@ -2,92 +2,80 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB56606EE9C
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Nov 2026 19:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2E1606A324
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 00:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=jzPq+RWM
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Gj8vXuu5
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BEEE140612;
-	Mon,  2 Nov 2026 20:40:24 +0100 (CET)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com
- [209.85.218.46])
- by mails.dpdk.org (Postfix) with ESMTPS id 63D2B402E3
- for <dev@dpdk.org>; Mon,  2 Nov 2026 20:40:23 +0100 (CET)
-Received: by mail-ej1-f46.google.com with SMTP id
- a640c23a62f3a-c46bd7a7345so694764466b.0
- for <dev@dpdk.org>; Mon, 02 Nov 2026 11:40:23 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793648423; cv=none;
- d=google.com; s=arc-20260327;
- b=rp8CZ2g5yRDYTZi9LwrIO7VhnMreR6t9ZUkOHdp9/Ds3lT/YQTiw72xhSCLFjnahmn
- Id83lhC8xuudr1zCkmn53iW01uW8nikXmJLQKSYRwkipizBafH/tHwE7qa4HYe/R1P/R
- /CeugMnv/3eR3YYSrZ4+A+xbuUHYsAThmoSNwxMzHq9NosdmqeqSkb5BTQt+Uc2+fiif
- lG/bDgRCrPFT3JY3//y2X+1y2poeH40Fr1fKy0lKI4ekUdbKqh5U5cbrHItqMU9Nl4C+
- hXtcYWmWuKfOBYSIJ3pLqknLC0IeuKS47QKg36gUwoqbXXyliiVpWhzeaXgbuN2ksmY6
- 6BXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=m07lNSTcCMd6eQItQuezFT/i7ULG++/QuaR7iVDVpxs=;
- fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
- b=Y0y4csLeLLNBg5EeHTT7Mvf8wcanicYnxQDbQc7h7yfz5gdmnQg1rqF8AFqUZ7O5Rp
- Q5GpaCoweNop0Wn+WNFkOZ+BTkn3yWMeHSPYPZ8HfEsOFjTccVdOPWOnNj4oVYAcgszX
- tzaV8Zh2ixBxAU7lNeNVfRRXTyEsYSVvTU3q4NuHXNgkZLGHMMD9+UHLY6QH2e9LrWNJ
- t4/VCrPhOs45nj3qSdk0gMB+ovlo/qL1iUzeuSnCasjnfW62uEuYRphi/24IDMV6JRIX
- Mez0JrpvgPisDlFQH8JYPv7fUk6cSnMrJRBzf+C+k0/HShMbn/SdiHCPr5Kyo0ysn/8Y
- FhnQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id B11B8402E3;
+	Tue,  3 Nov 2026 01:49:39 +0100 (CET)
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
+ [209.85.219.43])
+ by mails.dpdk.org (Postfix) with ESMTPS id 923584028B
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 01:49:38 +0100 (CET)
+Received: by mail-qv1-f43.google.com with SMTP id
+ 6a1803df08f44-91c7a706b1fso2497636d6.1
+ for <dev@dpdk.org>; Mon, 02 Nov 2026 16:49:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20260707; t=1793648423; x=1794253223; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=m07lNSTcCMd6eQItQuezFT/i7ULG++/QuaR7iVDVpxs=;
- b=jzPq+RWM+KVd+8QMrQBwi5wG9q776i99x2V/jssbGFjvsUXGRqhxTPkLRyiWZhckvF
- c0FuJhCEhf/LZFKSY9XFp6OpzZ+tOWrpU8+cS2xWxO+743CbqzbRcLLlRT2164Yv9sTp
- qOaNCsxsFKUq+81LI176ePqZ2XDRXTcNiKE72BRrnTUeB4MLEnIlmeUccv1ywDa/GdHD
- 0WAohjCD8b0/rAKRb/VXYreGjJcz/ktf6p4TRu+3IGSAsJq/woSkj17Y8NcJSP74CQ4w
- cXhugHCC3q4b0Ai6jdAnkxWKEvKEr+88YYKinjK/V9C416ac5wsy13Kq6jcNCaRyXqW4
- iZCw==
+ d=gmail.com; s=20260707; t=1793666977; x=1794271777; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=S8cfXilHCEdAliYXijIAcoHktPICmRVdBXoVzNmS8vs=;
+ b=Gj8vXuu5Fp463EOo3hzbGLdWskduRd9fPh36tqlnfmPeF1QR4BfLtC0B2KzqCKSyin
+ 6SMh9W01aOCcMRi9/YAfFf9wxcA++kAeP3fnK2f4b4ZGBKc4Z9DcL7q5vqMow2j6Iedq
+ jxo7+BLWf4qbd22J4yKqA1ZgSFiWWl74s9N4jjUnr1sUPk5hCwTirhnPmC4zVtFW/Bpl
+ YfWQ6FBsr8KavKwjOC+kzzNhLvqNp/3pRDfQrUQVZL76fHjcmlXotlAiU222pN1iHrW6
+ fnoqtq+3y0J1CYcCSolsKZT5jQRx76I5knu2SxZAnTMfkquvlWqAx6KGnsDHDdhPLM6x
+ wP6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793648423; x=1794253223;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=m07lNSTcCMd6eQItQuezFT/i7ULG++/QuaR7iVDVpxs=;
- b=HbkFFER0wwpsTi2iKwV3kdNsk691d9ByOx0nxOTh4oj/AiTJUwX9IqmvGcTdxFlB4f
- fA9UtMMHPAMZfqaE6TWG7cwBK7pc0yazI9WIpqg5RmiODo03ixRLyk8Syph9G9tmOvA+
- nOt8WGYPjY08A1++I5qVkuuy7paLCGtzNtZhxoYZg07HwONL7twZfdDjr0V/A9UFIuEs
- wYfGSP8B2FyP2o8WvyGVHb+BL8nC3ourYVxT/vQBlyvqCc6+xIGwAyDRLDs/plCyicv0
- 20S1acf7AkmLJZVWoM2IKXeb1Fm+BuNHg9HsFP9NC8NhgLouXoufiH46LUKoZQLQK670
- SywQ==
-X-Gm-Message-State: APuU4Z8oy3mosPrURZqILMfuS4dR40Yy+5ysuyLTp5RH7cnaGslygz+m
- L30NgELPzOgDMQ6O+ik8WwxufMVTnStEHGKAQnr3vPGE3aKY3ep8/0QJ84507mG6tFj2QLLfJgV
- 6PMhcKL584F6Na/wVFTMqrXLmcGF0ZTm8F3f9UrUl6iclYt/IidR2hzGw
-X-Gm-Gg: AYBFou0w/09xlq7OxJbfRT0inIoq6f25izP6FF7ltfa0M81T1zpS/HdmHuOQlJSSSZJ
- GsZWIDqLTodugz3kB7RvUBd6WCMHacwjTMYdH9f2OkN7nYFBnga5GhI5A3DnzBADDcsh3jXjRHx
- z9BQoTaSkOczgeQkOuywtdbfQOlLisP0uCvBTzvELHe7tnDhnyLdtOF5MEpt/yIQ47NEjXAdRTo
- AqOMSzXFqaFzbbiqLy88pIuZvyzBySJhsv1ZF7NR8NITc2lFXsKiSkThndonoVlpRSu1KYKmF7b
- DpjESsFUQHHX5hmIDsS8wOzbXLndZHuA2bL/vPLprEhLbTpsE3yD1ECQlCSrAaNzxmZnzaHEQRn
- eXYYbRoQHF2auvITJEcMJq59xZwLblX/4Y+EsdeD3HTrzYX0FYg==
-X-Received: by 2002:a17:907:a08c:b0:c2e:616b:6763 with SMTP id
- a640c23a62f3a-c4ca795564dmr950254766b.3.1793648420896; Mon, 02 Nov 2026
- 11:40:20 -0800 (PST)
+ d=1e100.net; s=20260707; t=1793666977; x=1794271777;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=S8cfXilHCEdAliYXijIAcoHktPICmRVdBXoVzNmS8vs=;
+ b=e+3IjEaJw7j+EC6CrPWijBiuHMYBnec7SoLWBFVpgcIZM9orbc0mLt2LwbWyPDIsXg
+ EAj22a/l3FpMqHPtFUTWSFMRss/z2ASnljBojXN6xAJ7N02+ZDZWme/+PUNyALDULy1p
+ t/2S4Z8w4tegwS8vh/3lKkDnQawZh96qSyiav1Az6ooZMoih6keOuRmux8haGSeQJ4Au
+ DV8GNMtE4AIE/MAUPgjsVP53eqhxh2cuDJ69FtUufk92lLre1vK7mVrYdojc7Q3HXWrZ
+ INB2XZaUN1pW6DQg6e+0pbE9GJGUybxAyKzHUjGJQmK0rL6fccIleh9/+fAFYursA8p9
+ H+KQ==
+X-Gm-Message-State: APuU4Z/xfNQwXXrEwCccGWiB9TjIwO6c6k5Ej6zeH57jUsv0Z4muu9Re
+ QRguICYf79WoSAZWog8s6KU5SRn5KrLe3jGLBd4gO3b94Ei3X8eATMCTZi+8lQ==
+X-Gm-Gg: AYBFou1tirw6rjLzxSg/lcC+qO55GVQKkQcDMtckcWbm+BiOYzvsgQsrKelPPoDtMhy
+ 90L3PhkZvPwbit0y8WrXPLn1x4XHzK9MEUbH0lj1xJZlS5XyjSsA1VQkRyWpyqgOOuT5/79OmCG
+ tQv/ZyRZeilaj2Nd7pNQbc6HMlRA1XT8GpORj20K0oWTHS/2GInj+IaGcqJjoVK0e9wz3uC7xew
+ xU6go6Dn7+git3n4IGhNgkuK8B/je0Olto2a16ffK8/KTJvRDaBpKVUdPIm0pskfLCrFu8JiGfN
+ Afo+GyVOphqoM+moibfdMnhp78MNor3Aw9N+McA7FenttZT7QH+YXFXbEN38xzFaUZ4iC278ZCb
+ TOpowXLgtHS1B+LLd8NkR2u/1ptceNPbu+BWHWOKimDysaOT36BjQ1o9W82uHTw1RhX1BcP3xuX
+ O/gRkac3H63r0JvDv99Z9q+flBOBHDLCHTvuv33enM2dfODap9EJMJltezS0OuLOyiP074a8joh
+ h0ZE+fBXPc65ZMPD6yn5w4iX/BK6JcPXqqq1XtpXJ35WnQXRkdrNxnJAagBsCU6dzVKyxfYA+Ev
+ K1weQqgj2/Y3GW9W3/CrUGquxSUxArOWgdno0A3k+N7G06bokWPI4Zu1OeoH/WRi9yf/GY0+p2B
+ oGLpWbo2BhEQPLOdZZcxOMJ4TzkEyeW64MOniDvO40vH0GrqkiJMcAPnqZbf7JC/N37kuaU0laq
+ zm
+X-Received: by 2002:a05:6214:4a90:b0:917:a7a5:af08 with SMTP id
+ 6a1803df08f44-91c907427c1mr227060156d6.25.1793666977298; 
+ Mon, 02 Nov 2026 16:49:37 -0800 (PST)
+Received: from bos-lhvwah.bos01.corp.akamai.com
+ (g2001-4878-8037-0700-526b-8dff-fef6-cfbf.deploy.static.akamaitechnologies.com.
+ [2001:4878:8037:700:526b:8dff:fef6:cfbf])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-91ca7f3db1asm106463006d6.16.2026.11.02.16.49.35
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 02 Nov 2026 16:49:36 -0800 (PST)
+From: Robert Sanford <rsanford2@gmail.com>
+To: dev@dpdk.org
+Cc: vladimir.medvedkin@intel.com, Robert Sanford <rsanford@akamai.com>,
+ stable@dpdk.org
+Subject: [PATCH v3] fib6: fix overflow of tbl8 indexes
+Date: Mon,  2 Nov 2026 19:49:03 -0500
+Message-Id: <20261103004903.3616661-1-rsanford2@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <5f260c1a-3f03-4e7d-aa38-15b8d6cdaeff@intel.com>
+References: <5f260c1a-3f03-4e7d-aa38-15b8d6cdaeff@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261030184304.508282-1-joshwash@google.com>
- <20261102084559.1e58036c@stephen-xps.local>
-In-Reply-To: <20261102084559.1e58036c@stephen-xps.local>
-From: Joshua Washington <joshwash@google.com>
-Date: Mon, 2 Nov 2026 11:40:09 -0800
-X-Gm-Features: AclHuK9_tN4tLwQq0b8GjFnsDF6c0m3PVw_wnzYZlqVAabA9tPLsCX65gZERX9M
-Message-ID: <CALuQH+U7sCUJvDs3dvX9hu0vFtGDXBQf12F=VJ8WTRUnOmmw2Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] net/gve: TSO descriptor count fixes for GVE DQO
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,122 +85,160 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Sun, Nov 1, 2026 at 11:46=E2=80=AFPM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Fri, 30 Oct 2026 11:42:59 -0700
-> Joshua Washington <joshwash@google.com> wrote:
->
-> > https://inbox.dpdk.org/dev/20250707231812.1937260-7-joshwash@google.com=
-/
-> > introduced descriptor limit checks for TSO packets in DPDK.
-> > Unfortunately, a couple of bugs have been found in the implementation.
-> >
-> > This patch series introduces fixes for those bugs while correcting the
-> > overly restrictive behavior recently introduced mandating that all
-> > headers be in the same buffer.
-> >
-> > The final patch in the series introduces tx_pkt_prepare as an option to
-> > ensure that there is a way to get a clear signal of when packets violat=
-e
-> > hardware limitations. Before a recently introduced patch, the GVE
-> > behavior was to stop transmitting at the first invalid packet, which
-> > would allow the application to do any necessary linearization or packet
-> > modification before attempting to transmit again. It turns out that tha=
-t
-> > behavior is considered incorrect, so offer tx_pkt_prepare as an
-> > alternative.
-> >
-> > Depends-on: series-39707 ("net/gve: fix DQO Tx queue stalls")
->
-> You dont need Fixes for anything that changed during 26.11 development
-> window. Only for changes that need backports.
+From: Robert Sanford <rsanford@akamai.com>
 
-Which patch(es) does this refer to? I think some of these patches are
-fixing previous fixes. For those patches, should I just base the fix
-on the same patch that the original fix was addressing? Otherwise,
-they could be applied to next-net, but not as fixes, which would
-prevent backporting.
+The trie keeps the index of an entry in the tbl8 array, the tbl8 group
+number times 256 plus one address byte, in 32-bit variables in several
+places. This breaks large tables in two steps.
 
->
-> AI review also mentioned.
->
-> Review: [PATCH v2 0/4] net/gve: DQO TSO validation fixes
->
-> Applied to next-net (339c992f25) with no conflicts. Each commit
-> builds with -Dwerror=3Dtrue.
->
-> Patches 1/4 and 4/4 look correct. The seg_offset change in 1/4
-> matches the descriptor layout: the first seg_remain bytes close out
-> the open segment, and only the rest is divided by tso_segsz.
->
->
-> Patch 2/4: net/gve: account for multi-mbuf headers when validating TSO
->
-> Warning: stale comment in gve_tx_validate_pkt_limits().
->
-> The data_len < headlen check is gone, but the comment above it
-> still says the headers must be "contained in the first segment".
-> Update it:
->
->         /* TSO headers may span up to GVE_TX_MAX_HEADER_DESCS_TSO
->          * buffers; the payload must not be empty.
->          */
->
->
-> Patch 3/4: net/gve: introduce Tx packet preparation for DQO format
->
-> Warning: tx_prepare rejects every TSO packet whose headers span
-> mbufs, which makes the relaxation in 2/4 unreachable for apps that
-> call rte_eth_tx_prepare().
->
-> GVE_TX_CKSUM_OFFLOAD_MASK_DQO includes RTE_MBUF_F_TX_TCP_SEG through
-> GVE_TX_CKSUM_OFFLOAD_MASK, so "csum && tso" is just "tso". Every TSO
-> packet therefore goes through rte_net_intel_cksum_prepare(), and
-> that returns -ENOTSUP when
->
->         rte_pktmbuf_data_len(m) < l2_len + l3_len + l4_len
->
-> The commit message says "in this case" as if some TSO packets skip
-> the call. None do. Pick one of these:
->
->  - State it plainly: TSO packets that go through tx_prepare must
->    have all headers in the first segment. Split headers are only
->    accepted from apps that call tx_burst directly. Then drop the
->    dead csum variable:
->
->         if (tso) {
->                 err =3D rte_net_intel_cksum_prepare(tx_pkt);
->                 if (err !=3D 0) {
->                         rte_errno =3D -err;
->                         return i;
->                 }
->         }
->
->  - Or seed the pseudo-header for split headers too: read the
->    L3/L4 headers with rte_pktmbuf_read() and write the TCP checksum
->    field into whichever segment holds it.
+In build_common_root(), the index returned by get_idx() was stored in
+an int. Once the tbl8 group number reaches 2^23, the value goes negative
+and is sign-extended when converted to the uint64_t index passed to
+get_tbl_p_by_idx(), which yields a bogus table pointer. With random /128
+routes and 4-byte next hops, adding routes crashes with SIGSEGV in
+install_to_dp() after about 640,000 routes.
 
-I will drop patch 2, since the driver requires checksum offloading for
-TSO packets.
+From tbl8 group 2^24 on, the index no longer fits in 32 bits:
+get_idx() computes it in 64 bits but returns a uint32_t, and
+get_tbl_val_by_idx() and get_tbl_pos() take a uint32_t. The truncated
+index points 2^24 groups too low, so routes are written into the wrong
+tbl8 group and the add still returns 0. In a test with 1,360,000 random
+/128 routes (17.6M tbl8 groups), every route added after tbl8 group 2^24
+was allocated returned the default next hop on lookup, and deleting all
+routes left 853,337 tbl8 groups allocated.
 
+Use uint64_t for the tbl8 entry indexes in get_idx(),
+build_common_root(), install_to_dp(), get_tbl_val_by_idx(),
+get_tbl_pos() and get_psd_idx(). Keep a separate signed tbl8_idx for
+the tbl8_alloc() result, which is negative on error, and cast it to
+uint64_t before shifting it left, in build_common_root() and in
+write_edge(). The shift was done in int, which can overflow before the
+result is widened.
 
->
-> Info: this adds a tx_pkt_prepare op and tags it Cc: stable. That is
-> a new driver op, not a bug fix. Stable maintainers may want it
-> dropped from the backport, or want the commit message to say why
-> existing apps need it.
+The tbl8 group number itself stays an int, as returned by tbl8_alloc().
+trie_create() already limits num_tbl8 to 2^31 - 1 with 4-byte next
+hops, and to 2^15 - 1 with 2-byte next hops, which cannot reach either
+problem above.
 
+With this change, the same test passes: every lookup returns the right
+next hop, and no tbl8 group is left after deleting all routes.
 
+Fixes: c3e12e0f0354 ("fib: add dataplane algorithm for IPv6")
+Cc: stable@dpdk.org
 
---
+Signed-off-by: Robert Sanford <rsanford@akamai.com>
+---
+v3:
+- Also widen the indexes in get_idx(), get_tbl_val_by_idx(),
+  get_tbl_pos(), get_psd_idx() and install_to_dp(), so tables with
+  2^24 or more tbl8 groups work too (suggested by Vladimir Medvedkin).
+- Change the title, since the fix now covers more than the sign conversion.
+- Rebase on 26.11-rc2.
+v2: use a 12-character sha in the Fixes tag.
 
-Joshua Washington | Software Engineer | joshwash@google.com | (414) 366-442=
-3
+ lib/fib/trie.c | 23 ++++++++++++-----------
+ lib/fib/trie.h |  8 ++++----
+ 2 files changed, 16 insertions(+), 15 deletions(-)
+
+diff --git a/lib/fib/trie.c b/lib/fib/trie.c
+index 9ede1a5bf7..4346789972 100644
+--- a/lib/fib/trie.c
++++ b/lib/fib/trie.c
+@@ -257,8 +257,8 @@ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
+ }
+ 
+ #define BYTE_SIZE	8
+-static inline uint32_t
+-get_idx(const struct rte_ipv6_addr *ip, uint32_t prev_idx, int bytes, int first_byte)
++static inline uint64_t
++get_idx(const struct rte_ipv6_addr *ip, uint64_t prev_idx, int bytes, int first_byte)
+ {
+ 	int i;
+ 	uint32_t idx = 0;
+@@ -319,7 +319,8 @@ build_common_root(struct rte_trie_tbl *dp, const struct rte_ipv6_addr *ip,
+ 	void *tbl_ptr = NULL;
+ 	uint64_t *cur_tbl;
+ 	uint64_t val;
+-	int i, j, idx, prev_idx = 0;
++	uint64_t idx, prev_idx = 0;
++	int i, j, tbl8_idx;
+ 
+ 	cur_tbl = dp->tbl24;
+ 	for (i = 3, j = 0; i <= common_bytes; i++) {
+@@ -327,12 +328,12 @@ build_common_root(struct rte_trie_tbl *dp, const struct rte_ipv6_addr *ip,
+ 		val = get_tbl_val_by_idx(cur_tbl, idx, dp->nh_sz);
+ 		tbl_ptr = get_tbl_p_by_idx(cur_tbl, idx, dp->nh_sz);
+ 		if ((val & TRIE_EXT_ENT) != TRIE_EXT_ENT) {
+-			idx = tbl8_alloc(dp, val);
+-			if (unlikely(idx < 0))
+-				return idx;
+-			write_to_dp(tbl_ptr, (idx << 1) |
++			tbl8_idx = tbl8_alloc(dp, val);
++			if (unlikely(tbl8_idx < 0))
++				return tbl8_idx;
++			write_to_dp(tbl_ptr, ((uint64_t)tbl8_idx << 1) |
+ 				TRIE_EXT_ENT, dp->nh_sz, 1);
+-			prev_idx = idx;
++			prev_idx = (uint64_t)tbl8_idx;
+ 		} else
+ 			prev_idx = val >> 1;
+ 
+@@ -361,7 +362,7 @@ write_edge(struct rte_trie_tbl *dp, const uint8_t *ip_part, uint64_t next_hop,
+ 			tbl8_idx = tbl8_alloc(dp, val);
+ 			if (tbl8_idx < 0)
+ 				return tbl8_idx;
+-			val = (tbl8_idx << 1)|TRIE_EXT_ENT;
++			val = ((uint64_t)tbl8_idx << 1) | TRIE_EXT_ENT;
+ 		}
+ 		p = get_tbl_p_by_idx(dp->tbl8, (tbl8_idx *
+ 			TRIE_TBL8_GRP_NUM_ENT) + *ip_part, dp->nh_sz);
+@@ -448,8 +449,8 @@ install_to_dp(struct rte_trie_tbl *dp, const struct rte_ipv6_addr *ledge,
+ 	uint8_t first_byte_idx = (common_bytes < 3) ? 0 : common_bytes;
+ 	uint8_t first_idx_len = (common_bytes < 3) ? 3 : 1;
+ 
+-	uint32_t left_idx = get_idx(ledge, 0, first_idx_len, first_byte_idx);
+-	uint32_t right_idx = get_idx(&redge, 0, first_idx_len, first_byte_idx);
++	uint64_t left_idx = get_idx(ledge, 0, first_idx_len, first_byte_idx);
++	uint64_t right_idx = get_idx(&redge, 0, first_idx_len, first_byte_idx);
+ 
+ 	ent = get_tbl_p_by_idx(common_root_tbl, left_idx, dp->nh_sz);
+ 	ret = write_edge(dp, &ledge->a[first_tbl8_byte + !(common_bytes < 3)],
+diff --git a/lib/fib/trie.h b/lib/fib/trie.h
+index c34cc2c057..e0f53e0c47 100644
+--- a/lib/fib/trie.h
++++ b/lib/fib/trie.h
+@@ -80,19 +80,19 @@ lookup_msk(uint8_t nh_sz)
+ }
+ 
+ static inline uint8_t
+-get_psd_idx(uint32_t val, uint8_t nh_sz)
++get_psd_idx(uint64_t val, uint8_t nh_sz)
+ {
+ 	return val & ((1 << (3 - nh_sz)) - 1);
+ }
+ 
+-static inline uint32_t
+-get_tbl_pos(uint32_t val, uint8_t nh_sz)
++static inline uint64_t
++get_tbl_pos(uint64_t val, uint8_t nh_sz)
+ {
+ 	return val >> (3 - nh_sz);
+ }
+ 
+ static inline uint64_t
+-get_tbl_val_by_idx(uint64_t *tbl, uint32_t idx, uint8_t nh_sz)
++get_tbl_val_by_idx(uint64_t *tbl, uint64_t idx, uint8_t nh_sz)
+ {
+ 	return ((tbl[get_tbl_pos(idx, nh_sz)] >> (get_psd_idx(idx, nh_sz) *
+ 		bits_in_nh(nh_sz))) & lookup_msk(nh_sz));
+-- 
+2.34.1
+
