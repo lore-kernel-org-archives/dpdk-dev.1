@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D23606A789
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6CF606B24E
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 14:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=C077f2i2
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=oZG6Ecvu
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B43C1427A2;
-	Tue,  3 Nov 2026 15:57:46 +0100 (CET)
-Received: from mta0.migadu.com (out-39.mta0.migadu.com [91.218.175.39])
- by mails.dpdk.org (Postfix) with ESMTPS id 70A904279D
- for <dev@dpdk.org>; Tue,  3 Nov 2026 15:57:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8DA8C427A6;
+	Tue,  3 Nov 2026 15:57:52 +0100 (CET)
+Received: from mta0.migadu.com (out-43.mta0.migadu.com [91.218.175.43])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8D58041143
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 15:57:51 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=wzh5lCqvmscDYiZAXYJIQValWg1BwuqHIrE7PhHFnko=; 
+DKIM-Signature: a=rsa-sha256; bh=g5APoadwAtRh5UYBPRWO1E22oSsHoXZZC8dc5pQe0NI=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793717865; v=1; x=1794322665;
- b=C077f2i2NF4zIPONea1tgINRoeg4DQSwPKBXyI2Tag3Veh8r/RzrnG/YkkDaS7YmZBa4eWCb
- KquJzB1BoBj8MCQPM5UsxkYkCo+XMivdfdH7aT77Bhfa5i6zmdW4j+YkUTmQW82OpggYILPaChX
- LsrplrWY/DVrRsoZexnNlPdc=
+ t=1793717871; v=1; x=1794322671;
+ b=oZG6EcvuF1X6IngAjTu2BgO6/2wwrdH2goRUkWkTSu/IDb4nDexDh+6sC0Ki3+knIhLnfYGF
+ SdfKTZcWnheESScIIPDvuFX6QrMDSE/XaBU56rhcO+KSwFNlWjGC6VQfiaXfYfx35CpS5rTkNSZ
+ npznCzk3F3zq6rw7MPmDsmmE=
 X-Envelope-To: dev@dpdk.org
-Received: by mta10.migadu.com with ESMTPS id b76e013bc9335084;
- Tue, 03 Nov 2026 14:57:45 +0000
-X-Mizu-Trace-ID: b76e013bc9335084
+Received: by mta11.migadu.com with ESMTPS id 8893a01893a1aaa3;
+ Tue, 03 Nov 2026 14:57:51 +0000
+X-Mizu-Trace-ID: 8893a01893a1aaa3
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 030/227] table: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:49:48 +0800
-Message-ID: <20261103145306.487255-31-chengwen.feng@linux.dev>
+Subject: [PATCH 031/227] rcu: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:49:49 +0800
+Message-ID: <20261103145306.487255-32-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,64 +63,22 @@ rte_zmalloc_numa(), rte_numa_id() and RTE_NUMA_ID_ANY.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- lib/table/rte_swx_table_em.c       | 2 +-
- lib/table/rte_swx_table_learner.c  | 2 +-
- lib/table/rte_swx_table_selector.c | 2 +-
- lib/table/rte_swx_table_wm.c       | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ lib/rcu/rte_rcu_qsbr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/table/rte_swx_table_em.c b/lib/table/rte_swx_table_em.c
-index c408ea6fc3..a0587c831a 100644
---- a/lib/table/rte_swx_table_em.c
-+++ b/lib/table/rte_swx_table_em.c
-@@ -31,7 +31,7 @@ do {                                                                           \
- static void *
- env_malloc(size_t size, size_t alignment, int numa_node)
- {
--	return rte_zmalloc_socket(NULL, size, alignment, numa_node);
-+	return rte_zmalloc_numa(NULL, size, alignment, numa_node);
- }
- 
- static void
-diff --git a/lib/table/rte_swx_table_learner.c b/lib/table/rte_swx_table_learner.c
-index 3680bf26c1..120e38e012 100644
---- a/lib/table/rte_swx_table_learner.c
-+++ b/lib/table/rte_swx_table_learner.c
-@@ -26,7 +26,7 @@
- static void *
- env_calloc(size_t size, size_t alignment, int numa_node)
- {
--	return rte_zmalloc_socket(NULL, size, alignment, numa_node);
-+	return rte_zmalloc_numa(NULL, size, alignment, numa_node);
- }
- 
- static void
-diff --git a/lib/table/rte_swx_table_selector.c b/lib/table/rte_swx_table_selector.c
-index d42f67f157..23aa982dc3 100644
---- a/lib/table/rte_swx_table_selector.c
-+++ b/lib/table/rte_swx_table_selector.c
-@@ -18,7 +18,7 @@
- static void *
- env_calloc(size_t size, size_t alignment, int numa_node)
- {
--	return rte_zmalloc_socket(NULL, size, alignment, numa_node);
-+	return rte_zmalloc_numa(NULL, size, alignment, numa_node);
- }
- 
- static void
-diff --git a/lib/table/rte_swx_table_wm.c b/lib/table/rte_swx_table_wm.c
-index c57738dda3..4293e2fa6f 100644
---- a/lib/table/rte_swx_table_wm.c
-+++ b/lib/table/rte_swx_table_wm.c
-@@ -23,7 +23,7 @@
- static void *
- env_malloc(size_t size, size_t alignment, int numa_node)
- {
--	return rte_zmalloc_socket(NULL, size, alignment, numa_node);
-+	return rte_zmalloc_numa(NULL, size, alignment, numa_node);
- }
- 
- static void
+diff --git a/lib/rcu/rte_rcu_qsbr.c b/lib/rcu/rte_rcu_qsbr.c
+index ac6d464b7f..835c351641 100644
+--- a/lib/rcu/rte_rcu_qsbr.c
++++ b/lib/rcu/rte_rcu_qsbr.c
+@@ -298,7 +298,7 @@ rte_rcu_qsbr_dq_create(const struct rte_rcu_qsbr_dq_parameters *params)
+ 	/* Add token size to ring element size */
+ 	dq->r = rte_ring_create_elem(params->name,
+ 			__RTE_QSBR_TOKEN_SIZE + params->esize,
+-			qs_fifo_size, SOCKET_ID_ANY, flags);
++			qs_fifo_size, RTE_NUMA_ID_ANY, flags);
+ 	if (dq->r == NULL) {
+ 		RCU_LOG(ERR, "defer queue create failed");
+ 		rte_free(dq);
 -- 
 2.55.0
 
