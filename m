@@ -2,37 +2,37 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E925606A33E
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7909D606A33E
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Nov 2026 15:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=vSJDkuQR
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=JPnHNVZk
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4ED8542E37;
-	Tue,  3 Nov 2026 16:07:42 +0100 (CET)
-Received: from mta0.migadu.com (out-97.mta0.migadu.com [91.218.175.97])
- by mails.dpdk.org (Postfix) with ESMTPS id 7C72D42E02
- for <dev@dpdk.org>; Tue,  3 Nov 2026 16:07:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3811642E4E;
+	Tue,  3 Nov 2026 16:07:50 +0100 (CET)
+Received: from mta1.migadu.com (out-161.mta1.migadu.com [95.215.58.161])
+ by mails.dpdk.org (Postfix) with ESMTPS id 98BAE42E02
+ for <dev@dpdk.org>; Tue,  3 Nov 2026 16:07:48 +0100 (CET)
 X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=cH0oaOXjf5xRYWpB8P+wITXaXEXEmJQN7icjHML3DZs=; 
+DKIM-Signature: a=rsa-sha256; bh=hfxhDrUtD89c1Im29lcW0FbhUJkumQ6X3Ii7FHwjjqM=; 
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793718460; v=1; x=1794323260;
- b=vSJDkuQRMa/ILgfxCDX3dgbjY8G9Rv+Up9RIl18pckI8APLoaTokF8xsWx0yb58anr6Sg5U3
- CmN3gg1K/FADMEHg+MxNbNYlpA6i5N7s/mRkLLIsBHuBp7imZafKbBLJMity+Je8n/qLjJ+KV+B
- gIWFgjPn50CDWNX4TdpLdKf0=
+ t=1793718468; v=1; x=1794323268;
+ b=JPnHNVZka495GR1uGISorVQgu8SbW537TQUAp/fB5ymcbMtYAoxUtp3UlB99sFuZhAXqx2jx
+ yk1EjfKB/r7vIpimV4rVJUxAXMdq3fdeHmztsqtK2Ci9kX+aHpkdbPUIpJVqoaTabBn+q5s5kfk
+ O05OB03pN2f3WkuQKHWyhxNo=
 X-Envelope-To: dev@dpdk.org
-Received: by mta12.migadu.com with ESMTPS id 15d52455014fcba5;
- Tue, 03 Nov 2026 15:07:40 +0000
-X-Mizu-Trace-ID: 15d52455014fcba5
+Received: by mta10.migadu.com with ESMTPS id e718b42dfc3a6cfe;
+ Tue, 03 Nov 2026 15:07:48 +0000
+X-Mizu-Trace-ID: e718b42dfc3a6cfe
 X-Migadu-Flow: FLOW_OUT
 From: Chengwen Feng <chengwen.feng@linux.dev>
 To: thomas@monjalon.net,
 	konstantin.v.ananyev@yandex.ru
 Cc: dev@dpdk.org,
 	Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 088/227] dma/odm: use NUMA node terminology
-Date: Tue,  3 Nov 2026 22:50:46 +0800
-Message-ID: <20261103145306.487255-89-chengwen.feng@linux.dev>
+Subject: [PATCH 089/227] dma/skeleton: use NUMA node terminology
+Date: Tue,  3 Nov 2026 22:50:47 +0800
+Message-ID: <20261103145306.487255-90-chengwen.feng@linux.dev>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261103145306.487255-1-chengwen.feng@linux.dev>
 References: <20261103145306.487255-1-chengwen.feng@linux.dev>
@@ -63,31 +63,98 @@ the NUMA-named APIs.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- drivers/dma/odm/odm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/skeleton/skeleton_dmadev.c | 26 +++++++++++++-------------
+ drivers/dma/skeleton/skeleton_dmadev.h |  2 +-
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/dma/odm/odm.c b/drivers/dma/odm/odm.c
-index 0633ce0b4b..cf56f89394 100644
---- a/drivers/dma/odm/odm.c
-+++ b/drivers/dma/odm/odm.c
-@@ -201,7 +201,7 @@ odm_vchan_setup(struct odm_dev *odm, int vchan, const struct rte_dma_vchan_conf
- 	isize = RTE_ALIGN_CEIL(conf->nb_desc * ODM_IRING_ENTRY_SIZE_MAX * 8, 1024);
- 	isize = RTE_MIN(isize, ODM_IRING_MAX_SIZE);
- 	snprintf(name, sizeof(name), "vq%d_iring%d", odm->vfid, vchan);
--	mz = rte_memzone_reserve_aligned(name, isize, SOCKET_ID_ANY, 0, 1024);
-+	mz = rte_memzone_reserve_aligned(name, isize, RTE_NUMA_ID_ANY, 0, 1024);
- 	if (mz == NULL)
+diff --git a/drivers/dma/skeleton/skeleton_dmadev.c b/drivers/dma/skeleton/skeleton_dmadev.c
+index e287802eb9..05f07fe80a 100644
+--- a/drivers/dma/skeleton/skeleton_dmadev.c
++++ b/drivers/dma/skeleton/skeleton_dmadev.c
+@@ -235,24 +235,24 @@ vchan_setup(struct skeldma_hw *hw, int16_t dev_id, uint16_t nb_desc)
+ 	struct rte_ring *completed;
+ 	uint16_t i;
+ 
+-	desc = rte_zmalloc_socket(NULL, nb_desc * sizeof(struct skeldma_desc),
+-				  RTE_CACHE_LINE_SIZE, hw->socket_id);
++	desc = rte_zmalloc_numa(NULL, nb_desc * sizeof(struct skeldma_desc),
++				  RTE_CACHE_LINE_SIZE, hw->numa_id);
+ 	if (desc == NULL) {
+ 		SKELDMA_LOG(ERR, "Malloc dma skeleton desc fail!");
  		return -ENOMEM;
- 	vq->iring_mz = mz;
-@@ -211,7 +211,7 @@ odm_vchan_setup(struct odm_dev *odm, int vchan, const struct rte_dma_vchan_conf
- 	max_nb_desc = (isize / (ODM_IRING_ENTRY_SIZE_MIN * 8));
- 	csize = RTE_ALIGN_CEIL(max_nb_desc * sizeof(union odm_cmpl_ent_s), 1024);
- 	snprintf(name, sizeof(name), "vq%d_cring%d", odm->vfid, vchan);
--	mz = rte_memzone_reserve_aligned(name, csize, SOCKET_ID_ANY, 0, 1024);
-+	mz = rte_memzone_reserve_aligned(name, csize, RTE_NUMA_ID_ANY, 0, 1024);
- 	if (mz == NULL) {
- 		rc = -ENOMEM;
- 		goto iring_free;
+ 	}
+ 
+ 	snprintf(name, RTE_RING_NAMESIZE, "dma_skel_desc_empty_%d", dev_id);
+-	empty = rte_ring_create(name, nb_desc, hw->socket_id,
++	empty = rte_ring_create(name, nb_desc, hw->numa_id,
+ 				RING_F_SP_ENQ | RING_F_SC_DEQ);
+ 	snprintf(name, RTE_RING_NAMESIZE, "dma_skel_desc_pend_%d", dev_id);
+-	pending = rte_ring_create(name, nb_desc, hw->socket_id,
++	pending = rte_ring_create(name, nb_desc, hw->numa_id,
+ 				  RING_F_SP_ENQ | RING_F_SC_DEQ);
+ 	snprintf(name, RTE_RING_NAMESIZE, "dma_skel_desc_run_%d", dev_id);
+-	running = rte_ring_create(name, nb_desc, hw->socket_id,
++	running = rte_ring_create(name, nb_desc, hw->numa_id,
+ 				  RING_F_SP_ENQ | RING_F_SC_DEQ);
+ 	snprintf(name, RTE_RING_NAMESIZE, "dma_skel_desc_comp_%d", dev_id);
+-	completed = rte_ring_create(name, nb_desc, hw->socket_id,
++	completed = rte_ring_create(name, nb_desc, hw->numa_id,
+ 				    RING_F_SP_ENQ | RING_F_SC_DEQ);
+ 	if (empty == NULL || pending == NULL || running == NULL ||
+ 	    completed == NULL) {
+@@ -380,12 +380,12 @@ skeldma_dump(const struct rte_dma_dev *dev, FILE *f)
+ 
+ 	(void)fprintf(f,
+ 		"    lcore_id: %d\n"
+-		"    socket_id: %d\n"
++		"    numa_id: %d\n"
+ 		"    desc_empty_ring_count: %u\n"
+ 		"    desc_pending_ring_count: %u\n"
+ 		"    desc_running_ring_count: %u\n"
+ 		"    desc_completed_ring_count: %u\n",
+-		hw->lcore_id, hw->socket_id,
++		hw->lcore_id, hw->numa_id,
+ 		GET_RING_COUNT(hw->desc_empty),
+ 		GET_RING_COUNT(hw->desc_pending),
+ 		GET_RING_COUNT(hw->desc_running),
+@@ -601,11 +601,11 @@ skeldma_create(const char *name, struct rte_vdev_device *vdev, int lcore_id)
+ {
+ 	struct rte_dma_dev *dev;
+ 	struct skeldma_hw *hw;
+-	int socket_id;
++	int numa_id;
+ 
+-	socket_id = (lcore_id < 0) ? rte_socket_id() :
+-				     rte_lcore_to_socket_id(lcore_id);
+-	dev = rte_dma_pmd_allocate(name, socket_id, sizeof(struct skeldma_hw));
++	numa_id = (lcore_id < 0) ? rte_numa_id() :
++				     rte_lcore_to_numa_id(lcore_id);
++	dev = rte_dma_pmd_allocate(name, numa_id, sizeof(struct skeldma_hw));
+ 	if (dev == NULL) {
+ 		SKELDMA_LOG(ERR, "Unable to allocate dmadev: %s", name);
+ 		return -EINVAL;
+@@ -624,7 +624,7 @@ skeldma_create(const char *name, struct rte_vdev_device *vdev, int lcore_id)
+ 
+ 	hw = dev->data->dev_private;
+ 	hw->lcore_id = lcore_id;
+-	hw->socket_id = socket_id;
++	hw->numa_id = numa_id;
+ 
+ 	dev->state = RTE_DMA_DEV_READY;
+ 
+diff --git a/drivers/dma/skeleton/skeleton_dmadev.h b/drivers/dma/skeleton/skeleton_dmadev.h
+index 0365f64589..2fe0547acb 100644
+--- a/drivers/dma/skeleton/skeleton_dmadev.h
++++ b/drivers/dma/skeleton/skeleton_dmadev.h
+@@ -45,7 +45,7 @@ struct skeldma_desc {
+ 
+ struct skeldma_hw {
+ 	int lcore_id; /* cpuwork task affinity core */
+-	int socket_id;
++	int numa_id;
+ 	rte_thread_t thread; /* cpuwork task thread */
+ 	volatile int exit_flag; /* cpuwork task exit flag */
+ 
 -- 
 2.55.0
 
