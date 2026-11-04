@@ -2,147 +2,103 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E3B606A335
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 16:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CA4606A31B
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 17:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=mKytKweO
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=b73ABo6i;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=xd5955H8
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C22E40299;
-	Wed,  4 Nov 2026 17:57:54 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTPS id 2BA7940281
- for <dev@dpdk.org>; Wed,  4 Nov 2026 17:57:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793811473; x=1825347473;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=bNkIVagq1Rm+mZj9Wq5oJZbk0GeVMOYDteeelscgDO4=;
- b=mKytKweOtktzRXla/7Uo5wkaJjd1qXoEVMSA+kLBZgypzNQwT+VKKI0a
- lMthLRLU3ieb3H5gpf3hzd/1O8Kj1P25FnrpblSk+UG0R3GnNAO+opDa8
- owBlw2gNGRVCHwLaZ5HSYGtxKsuKbgM0OA4g4FFDNb0gH+oIQyZBaHKiq
- akDWzzaVKppaxv/6K/gQ9fGMFeZ8QVbXUj5hWuPcmbx8RcvMHi5DdH72C
- JuoAfpO5s91u9REwO1Xo/M2XWLEzrXTJoqB9BqTprX/AH85skMVOFWzGV
- Uv410BBYvs286Pg2KPzgvmTWNN/2xks8YrcchQ4gnl+6Vav2jSDJf6zXW A==;
-X-CSE-ConnectionGUID: zW9zx543Sky9RvOIcA6Uig==
-X-CSE-MsgGUID: mXeSOcnaT7SN+lwWsL0wQA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2448279"
-X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
-   d="scan'208";a="2448279"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Nov 2026 08:57:51 -0800
-X-CSE-ConnectionGUID: V8GPYfVSRF6fsDo3ztLFtg==
-X-CSE-MsgGUID: xREaHGbARiqWXhFTgd6ZVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
-   d="scan'208";a="6821135"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Nov 2026 08:57:51 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Wed, 4 Nov 2026 08:57:50 -0800
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56 via Frontend Transport; Wed, 4 Nov 2026 08:57:50 -0800
-Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.47) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Wed, 4 Nov 2026 08:57:49 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g6ShOHe3BAFsRXzv/AdMkc+80xODAzdH5mWFQnQKcDIeDainQrduNrsEw0+hwXa0wHws4xK78oIt2KT8h+1KfVvQ85L3S0+dVzQr9R2+ug7JyrcOcg4GEjMLYsBhPN1MohFPlFh7vQJ+aJNfCfql+h74hA51ye/pYDdDXJOjwg8FtAoLnE6pwNw773M6EHak3FLuMmlp6g8NEv9IOD6e5LVPq2ktHd0wJv9UTGEa3kl/FplskfyzrRjGQiO1zsVgEeFqCXEVAfUOjZkTLHCYS1FUsctMUkZEGCisyv8ZLpYPdhWw+TuPrt2vvPhrRrXW7a2Bn+eIahzspB5SnmoW/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MIz9DTWeniAZ7tem0nDH5s9gYkvBpRtTnqRcPJQIw4c=;
- b=Us74UPEGin5UQ+lTu2aws9v/ThkQlerncJu1o1OPG5m9H4pgi0rmFuVve2E0ymxqiVFWzv6rsH86hQYVWcpLI0cH6sq2RqFd3nXlD/JcG8941qKNshuQTie8DcJuEyf9jwtIetPGp5hUt3NEImj08dagBzyovT/3lIoff1LXN6WQvYzc8J01OYrNeFO2XwAyKjb/rSAUDhyytKSRk7jmQPO1KcBiVm5odn/PryOcKXJ9e+b4v0NDZB3oCJeXkinOf9grPUdEsjqY9aXgKi8wninG2BAgRvXfYPlLGeqSbHZg2PVwfWTt4DXYN5LIzSRP3VcODWRAOk0tYtC6AsqdXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by MW4PR11MB6982.namprd11.prod.outlook.com (2603:10b6:303:228::10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Wed, 4 Nov
- 2026 16:55:41 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0592.009; Wed, 4 Nov 2026
- 16:55:40 +0000
-Date: Wed, 4 Nov 2026 16:55:35 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Anurag Mandal <anurag.mandal@intel.com>
-CC: <dev@dpdk.org>, <anatoly.burakov@intel.com>
-Subject: Re: [PATCH v2 0/7] net/ice: fix memory leaks
-Message-ID: <autjh68pEuYrCeiT@bricha3-mobl1.ger.corp.intel.com>
-References: <cover.1793097896.git.anurag.mandal@intel.com>
- <cover.1793605751.git.anurag.mandal@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cover.1793605751.git.anurag.mandal@intel.com>
-X-ClientProxiedBy: DB8P191CA0019.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:130::29) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+	by mails.dpdk.org (Postfix) with ESMTP id F17CC40299;
+	Wed,  4 Nov 2026 18:10:59 +0100 (CET)
+Received: from fout-a3-smtp.messagingengine.com
+ (fout-a3-smtp.messagingengine.com [103.168.172.146])
+ by mails.dpdk.org (Postfix) with ESMTPS id E5E2A40299
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 18:10:58 +0100 (CET)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfout.phl.internal (Postfix) with ESMTP id 13874EC09CF
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 12:10:58 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-05.internal (MEProxy); Wed, 04 Nov 2026 12:10:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to; s=fm3; t=1793812258; x=
+ 1793898658; bh=Ll6bSY7LofJArD2L/AiFNc41T9nsfDnInbxsuYUyCu8=; b=b
+ 73ABo6i7IoHl0mV63VTUT1oMiFEZ8Gpmgq8tyPayGLalBhCWihT3GBeCZgKsHvTp
+ OWtxFBaMZfdZYMWJVi1YjBhUN6yAojf8FiRoJ7yxZPxqLIWXAfhBQkVTxUJATb3b
+ /o9k+vsOaWB8ew1TIvLwYZqAIUU5Fl4c79Th7CKU90Mvx8XqOQ0OPOnnt2ufVamD
+ UOQ4zZl+pcWcgX/6o7L0HrtLnbKxSY9/sqFJvcVFRpe8DbDWsOIwB8+pgDKARzFt
+ THyw8arUGYm6ZsdRzoUZ7ysp+/zBP67otIpOMM3/Kbx4GhM9Lc4t0BEWJILYF+/L
+ zvmaLh+W5TtqZ8USD0JFg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+ :x-me-sender:x-sasl-enc; s=fm3; t=1793812258; x=1793898658; bh=L
+ l6bSY7LofJArD2L/AiFNc41T9nsfDnInbxsuYUyCu8=; b=xd5955H8aWI/kyqrB
+ v+BVV6NPSoNRNOMlAh1RL5eqFr7jULeLP6QJiEPpTXZQAEvwMippgn3603CjN9bq
+ Qm/cMKVeh1aWTQbfApuRb4SLg4WKyyPGpOXo3aDr880qT9k+scfAXTB5ODxD29fM
+ wpwQWN2J1sE77cbjoxu2yHWlBABjg7yOk2dPKWq8pWtMFahdhBrqvw/+FQ+cuH8s
+ Ih/pjCXIrqspEVHAnYN1iISzNijwJv6GzpJQIFPMdTFDNrzmpxcCSy2cAzG7gEjL
+ cMiI9xp34Xgbe8SgV2EsuSGiL0U8J6DhkUTeIYW/xH1vlA/pY8ws8G2fs9b8Cqcl
+ 2PtTQ==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+ repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1793812258; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm3:rsa-sha256:VTTeSTu8db+jqu00P+cvsXO4W0Sh4Fy7zmsmPpRszYWzekx
+ /8WeDXDYPKvRCdKty3XBUYKw4WD3ZnPHONCt3qqi7/SRw5wp97hqUWRgWaq5H3VP
+ X3EnOcItjLwlCL7W11/H9IYS5She/G6HJQXtDYCHUMmVC3tQQ0dvqmzLjN+xr8xL
+ DYm34vz12fMrg29pgJyP59jVCf/cLhaktWZqSwTz+9yqocxUEtNUPLiQs9L4A12P
+ 2yG33bh61VjayriSEd1rc7ewe3s8oA3gChH1dcMEILDtVZkz4unJMza7CpAtzMJ+
+ U6VtNpW6QtHMART1rgJxZik92ez1D7gsJS4AHbQ==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
+ repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
+ action=mi-m=1; hc=11;
+ hn=cc,content-transfer-encoding,date,feedback-id,from,
+ in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:BNuWrv2IAd+w/9jyLT1riKicblsSnpj/0Iujbq8T/7Q=:XmvRE/VWtzJE6gdT6O6rEpQIqZe2NTCTLrqzXVCRsdE=;
+X-ME-Sender: <xms:IGfratj9pragUSJgzeJyjhkNB2SlJpwnCt7pduDweyzI09BZpHPR2w>
+ <xme:IGfras9Deq_cKVIIUYM9Vv-eu0VVhzVEQ1tZyJcODdtMAE1mAbOBo6fD32D8l4lfM
+ IC2_7U_EI_3--qyGrx7RDS71R807ZduK9VGYYRQEiuw5vpWeJLyvdE>
+X-ME-Received: <xmr:IGfrasFP16I5VXSC4p01BhCNddIW1QXNFZh6vyArezwcY1KTLP0JrXZkOu-as4GtV-TzqfjW_yWY4ByskNiMpaqKTtKC>
+X-ME-Proxy-Cause: dmFkZTE/o1NMjsYvjHfKjamtHIY7Jf5z0kirYhGK8Km2p5h98o3VwZNSthDGpbe5fz0vfg
+ TJW7O6ZM727b/kGmsW1kRv+Um4vno2At6NW0LDYvvXXaEkTCmsY0H1k+QFXuNIPB39khWH
+ HZM6JnuJ50EKHVJRJzMei4TgXT4aI1ZB4FsenV7qIK9GtDmWLKn60s9IcUMwj3fFe3sd6r
+ mHypxVGEthrI6LPxg5kcoRnQ76Jb3LLRcmyc9bm3ebzTvuoJDYs98HtuAVU3WGRpeo/GNo
+ gI3wc7NFFBK+tosDTcJa82SOo8bQYldwETx5gQPgro0a0d2lgK2wl9nKkA6uATynrrMOXI
+ ZrxBP55KL9NsV9Ur50vxH3HkhAyVFc/Tr47A9ptYX8ftjd1XTytpY0jzW39d7eaDyOoNcO
+ cCJTd7CcvaUx3n9GaKo/5/bF+qji2kDyUwYbEQM4dqdrGG0c5Fk75s1pFhlJMi75N7j0cR
+ JMtKOk7hWmEjg6m87Br0Y1/2yP28G/FFfaz4zDKPFsLP9B1D7czL6DXPDTE+g6I7SN1Hpm
+ LPV6uSjdRdQn0FgMUo5axpdElqzHppTJmUp3kr2xhEvBqhOmVPI7NSDcom9YujDgnmI4qT
+ GLKx3c607ioY1/I6sk+AmMzoPySK4xsB075Otkjsy3meKSG/2EQPDTL+7PaQ
+X-ME-Proxy: <xmx:IGfranlfDqr1--gBJiuV-Phh0ZDEnakv3MGhH4f8CDuPggHZu4GN1w>
+ <xmx:IGfraoY4tS4BQIGEgd-su86oyroCU8D39ph2DHNjIxqICi3jIVdz2w>
+ <xmx:IGfrakHjKJKfFBxRqFz1RfpLV9Cte4tcL_JCic_YKo-azKF--qwQZg>
+ <xmx:IGfrahL9NR2E_0wwFUA5sgrnU1bECgCGqZKxrQv86jyBRB4-OYPmtw>
+ <xmx:Imfrai6vwbzHopnMumOdryXVG4d6rg6RMCmmiAzMoxNaaMvZz0jMPrX0>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 4 Nov 2026 12:10:55 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: stable@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>,
+ Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ David Marchand <david.marchand@redhat.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v2] ipc: fix multi-process disabling
+Date: Wed,  4 Nov 2026 18:07:57 +0100
+Message-ID: <20261104171044.2236004-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261103170500.1241751-1-thomas@monjalon.net>
+References: <20261103170500.1241751-1-thomas@monjalon.net>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|MW4PR11MB6982:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66ac2d11-3994-40c5-98e9-08df3a947512
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|376014|23010399003|1800799024|6133799003|10067099003|18002099003|22082099003|4143699003|56012099006|11063799006|261022105027099003|261022113327099003|261102123227099003|261028144727099003|261026140227099003|261026121527099003|261021121427099003|261022075727099003;
-X-Microsoft-Antispam-Message-Info: od3CsytUDWFinW4So1VOQScKVSgb2MOubukAWa36+vqekPsgpgcp2g2etHvg3WCvvPdKiF4w2POpVBeW4kP9ZRzphZdzLiK/YPvx3ktYugM4rxEvnXOrhcLwLyzPWnuovuwxmR9G6OI//8IGKZbBD9RWvH/b5L9GF3kGGHqR8BdH21WgiNfDzPdILYIkGLat6CsIWxHznw8aZxDhgQwN1STj3pAKdbmAgexsQtfiwkpETqKQSKvCj0MA3wUuzfLe6A+r4kWR70UXkcm2Npn4UxkDLTvnTGUud3sjDkGRvrW+hds2en6avR9BbRHT/IvAqgXbGuLQr9SzqTI3djPxe5lp1f/OhfOQWstng+XpbHZpIlEmObnCrSeOfTNRcFgYjBkEoUcwR44yQfuHW2aoiAsv1uHenU1KSSPLKP9h3FRortQypnocMPAM0TFRYSwQxaUVx+hUeu1bAJPTvrWjOLmgnGglx0mfXoklQYdPH8yVAXzKJTw7aFf1wSgArDrU7OGuqEwkpY4LADk6/vxkv8581TjX2L8g73QMp34KYVPeok/hdbHjFdtEZ5lY6dclLmSY6Tq5O9xrJkc5tuQkwpOLBe3INWQG9VzwFdwmBH4Mes4ttrlSoJ3+O/EW8ufug6PLmNeKV8bPbJ70mp8CXjfPdoff/MK5Jq/5kroaR5s=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(6133799003)(10067099003)(18002099003)(22082099003)(4143699003)(56012099006)(11063799006)(261022105027099003)(261022113327099003)(261102123227099003)(261028144727099003)(261026140227099003)(261026121527099003)(261021121427099003)(261022075727099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6x3wo+SKF1cJpDTu6RxCr0N0E/FMOn8SsuuZ8gdo/NXq1Fv9XO97bN0vp9B1?=
- =?us-ascii?Q?Vy5sshde7LYJ/ouN1A1cNuQUsk0TK6xXAnV2xXo8uwKYB4P0G1wasxB7H/xi?=
- =?us-ascii?Q?ZNPEs0Wv4lz5zMJbcr3ePgmqcqKz35YkDcTuNO6BG0HjtZPMHxFI0sctZhKT?=
- =?us-ascii?Q?qCgfLQJB9zG9AiL1dShx0MRcKKcm89bEGdvB314FIdl5+GJ73svvwYs//oub?=
- =?us-ascii?Q?sd0F1v/GPMyo8iNUxdv85WIvdThNnatTq1YXas9acBXON7uUVM+/l7pIzwjR?=
- =?us-ascii?Q?QhxezGW9etTW+19W/N6EIOekJh65fRnrSqWi1JOkStQqlVdi3ZlgsiPrchTC?=
- =?us-ascii?Q?XbOKZKerGgkG7Btiuzs0yy4TS7gi6QxIgL20SozHpszHKTWP7zeOJ5/q1NwX?=
- =?us-ascii?Q?zktSY4V7UypaE3ad98EBz/O7Ur/svoJuhv4Jh/OgJhmL1gOMKKepBeqVqR1z?=
- =?us-ascii?Q?GXZsy20NDCT15pezdozfBIzSpMeDda3npW9X07we6qBoJ3YPCfYNIvDEwkO1?=
- =?us-ascii?Q?JJDCxnFmC23989m+6QKnOKJAEMxjs4dCfFVsWG+x3g3yxFeeiGOFV9dGOaN6?=
- =?us-ascii?Q?75PBPT3H6ncJ7xHgkNri/i2e2xh5zs07qfhnBA0KTxjl4bD79tFAqNGt32Wz?=
- =?us-ascii?Q?VYDnawr34kAj87DMhVvedQyk+5I9jRHldgPDpb6ryM2vziiqMkvgQB/p9Xyr?=
- =?us-ascii?Q?8WuiEdp7gx2oKWSVNnXCPmhRKAEsWBq+id0IFtnIrTNHW7TD9Je0z9Gr78Uf?=
- =?us-ascii?Q?ssl5C7f84KgN9qb1wm0GGLPXgXbj3hxhYVhJSsl31GYpa9ngEPzd4lbeZHqK?=
- =?us-ascii?Q?S8B0vOSNUPF5GST6zmEH6d2v8lXSNVmtSrIlMW/FUUSCYgQsTF4FRWKsaVNp?=
- =?us-ascii?Q?Y0DZ8pn0BK79GeoztJVavvbLyo38Hhnx96Xb7eGYTdSCvpk+/hBfva2nD0Hv?=
- =?us-ascii?Q?khPtsUWoNdcDBRjfQE3jGVKCZrDKOA0WcjCArPQIvTMzdoLVQYbPqdM9xUC5?=
- =?us-ascii?Q?BmHT7eJRPEPe2egHLlwfGUzMo/ekJKBANl6LeSZuEyy7Cs8duHJCmnHj/NAh?=
- =?us-ascii?Q?q2GqEu0D29x+ESp/X8pFks1aU40b1xbBblelIkMqvbwi0seJe/+gQujYxAnb?=
- =?us-ascii?Q?uhw5qHBO7mSMrwvOk3KiK+lIenfSuzOo0mGjfeNTULiGN7vdNDd1xTJNPnGS?=
- =?us-ascii?Q?do4qlMKgznz62gwoYINzGZV3UdrOjfZChHXww4JATDQ6DJnCvQeoi7kOBRMo?=
- =?us-ascii?Q?tBdFTordbORzkoAFyM6z47grrMhZZPLaASjWAEJjwSfU9LzvI9YPVz49rPwX?=
- =?us-ascii?Q?dUtCBAgRPaR/MWR72v/bP5tTVvZmHkUxi+FFFlZLOvGKubRYYQ6GNQUw+S5D?=
- =?us-ascii?Q?jJ3NFfIOpMEJ0bnXFEbNu6JzlBkdcjFNvbFSyvzVz48gNzTwTdBWe900DO2T?=
- =?us-ascii?Q?rEP6/r/ckc7dGx87FzV803J1jsSEUhjVMgxjMLPpqvdp8LZricYM4DB1XADF?=
- =?us-ascii?Q?EiWM9bGvIf+M4anXY7JFL1AHdP0J1cNRBJbUQ7vQW24PCi1KpI7zwL4cC45A?=
- =?us-ascii?Q?uYeEQ+UdODhOVlF1hNcOD/YOukjlgPxBhAFH/sOk81/1oRZ/GJ6bznmtb4XH?=
- =?us-ascii?Q?yetfAkgu3tnmvZScgXjPNkN6yHs6GA+Hpi9a4ITynuimwfWdRbde7/634dpe?=
- =?us-ascii?Q?ZxdYu9J7aJS6YPr9laM65mCmBkfYQXRMsIti4xMHHM4nBp7M+so0XeBuF8hW?=
- =?us-ascii?Q?kVAh7y3IOU5sh1dFLuPpN9oCiUe3+xU=3D?=
-X-Exchange-RoutingPolicyChecked: Td/e1rKPCI2vj76PE18nA1tyv68JJxy6n8BH0HcoU8zsAOc/vqDrwyfx0ekwdDFu5sqkmjM2bol9X9u0Okphx5NtkGIwTBB4t+Ptwf3Zty8/n4Dc1UZMTH9pbxMmLb4RdIHG7o8MSlZtdRHTbyEUL/dpmZ0iWNWJZp54vDqDWE3dvL3tAIDWuUT+Wh/b8msyFpVH8J+qrRyHBZv3OBRpEc7LLH2t/UuUypxDZ+qvKYBeT6shB8szy48kwX0duRGAGA+lqGMVZipm2xUGTqn2Id9JQxmMssr+pTZ506oBEUeRLuk95vkxCGLaMWJnF/XWES3yNycsxL87FqUicVKT6Q==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66ac2d11-3994-40c5-98e9-08df3a947512
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 16:55:40.8369 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S2ie0+thvuJ4I4kirxOxzR9HmpEruzsxBqhDjIHMiaBbYsg3adKIGafl/fEPv/gGqviB/eQjdqYeE1vtJIU2cgmzWoE1kP3J4FWDAMnZcW0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6982
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,60 +108,268 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Mon, Nov 02, 2026 at 08:10:30AM +0000, Anurag Mandal wrote:
-> V2-changes:
->  - Addressed Bruce Richardson's review comments.
->  - Added "Cc: stable@dpdk.org" in all patches.
->  - Use ice_deinit_hw() on close instead of open-coding it,
->    which also returns the FD counter block to firmware
->    on Patch-2.
->  - Declare the devarg handler argument as char ** so the
->    filename it points to is char * and can be freed without
->    a cast on Patch-3.
->  - use RTE_CAST_PTR when freeing the filename in ice_dev_init()
->    on Patch-3.
->  - allocate the flow segment on the stack instead of
->    freeing it on Patch-7.
-> 
-> This series fixes memory leaks, and one double free, in the ice PMD.
-> 
-> a. The DDP package copy was freed twice when hardware table
->    initialization failed during probe.
-> 
-> b. The switch filter management structures, the DDP package copy and
->    any remaining VSI contexts were never freed on port close or
->    reset.
-> 
-> c. The DDP filename devarg string leaked on probe failure, and when
->    the devarg was given more than once.
-> 
-> d. The main VSI leaked when probe failed after PF setup.
-> 
-> e. MAC and VLAN filter entries could stay allocated when a VSI was
->    released.
-> 
-> f. A failed flow director setup leaked the FDIR VSI, hash table, hash
->    map and counter pools.
-> 
-> g. The flow segment used to create the ACL profiles leaked on every
->    ACL engine init.
-> 
-> Anurag Mandal (7):
->   net/ice: fix DDP package double free on init failure
->   net/ice: fix resource leaks on port close
->   net/ice: fix DDP filename leak
->   net/ice: fix main VSI leak on init failure
->   net/ice: fix MAC and VLAN filter leak on VSI release
->   net/ice: fix FDIR resource leak on setup failure
->   net/ice: fix ACL profile segment leak
-> 
-Series applied to dpdk-next-net-intel.
-Thanks,
-/Bruce
+IPC and hotplug operations checked --no-shconf incompatible option
+but ignored the multi-process status changed by rte_mp_disable().
+As a result, IPC was still attempted
+and hotplug devargs remained subject to the IPC message size limit
+even when secondary processes could no longer attach.
+
+Change the multi-process status when --no-shconf is used,
+also covering --in-memory,
+so it becomes enough to check this status only.
+
+Allow previously registered IPC actions to be unregistered
+after multi-process has been disabled.
+
+Fixes: 5c307ba2a5b1 ("eal: register non-EAL threads as lcores")
+Fixes: d2fd16c8b003 ("eal: add multiprocess disable API")
+Cc: stable@dpdk.org
+
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
+v2: reverse the logic eal_mp_is_enabled -> eal_mp_is_disabled
+    to map the meaning of the values in enum mp_status
+    (enabled is not unknown)
+---
+ lib/eal/common/eal_common_dev.c  |  8 ++---
+ lib/eal/common/eal_common_mcfg.c |  3 ++
+ lib/eal/common/eal_common_proc.c | 56 ++++++++++++--------------------
+ lib/eal/common/eal_private.h     |  5 +++
+ lib/eal/windows/eal.c            |  6 ++++
+ 5 files changed, 37 insertions(+), 41 deletions(-)
+
+diff --git a/lib/eal/common/eal_common_dev.c b/lib/eal/common/eal_common_dev.c
+index b43b0a4bb3..39d5745142 100644
+--- a/lib/eal/common/eal_common_dev.c
++++ b/lib/eal/common/eal_common_dev.c
+@@ -267,9 +267,7 @@ RTE_EXPORT_SYMBOL(rte_dev_probe)
+ int
+ rte_dev_probe(const char *devargs)
+ {
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+-	bool do_mp = internal_conf->no_shconf == 0;
++	bool do_mp = !eal_mp_is_disabled();
+ 	struct eal_dev_mp_req req;
+ 	struct rte_device *dev;
+ 	int ret;
+@@ -426,9 +424,7 @@ RTE_EXPORT_SYMBOL(rte_dev_remove)
+ int
+ rte_dev_remove(struct rte_device *dev)
+ {
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+-	bool do_mp = internal_conf->no_shconf == 0;
++	bool do_mp = !eal_mp_is_disabled();
+ 	struct eal_dev_mp_req req;
+ 	char *devargs;
+ 	int ret;
+diff --git a/lib/eal/common/eal_common_mcfg.c b/lib/eal/common/eal_common_mcfg.c
+index 84ee3f3959..32f5f50015 100644
+--- a/lib/eal/common/eal_common_mcfg.c
++++ b/lib/eal/common/eal_common_mcfg.c
+@@ -2,6 +2,7 @@
+  * Copyright(c) 2019 Intel Corporation
+  */
+ 
++#include <rte_eal.h>
+ #include <rte_eal_memconfig.h>
+ #include <rte_version.h>
+ 
+@@ -66,6 +67,8 @@ eal_mcfg_update_from_internal(void)
+ 
+ 	mcfg->legacy_mem = internal_conf->legacy_mem;
+ 	mcfg->single_file_segments = internal_conf->single_file_segments;
++	if (internal_conf->no_shconf)
++		rte_mp_disable(); /* multi-process requires shared config */
+ 	/* record current DPDK version */
+ 	mcfg->version = RTE_VERSION;
+ }
+diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
+index 73c6a53013..b70e9189a4 100644
+--- a/lib/eal/common/eal_common_proc.c
++++ b/lib/eal/common/eal_common_proc.c
+@@ -233,14 +233,12 @@ int
+ rte_mp_action_register(const char *name, rte_mp_t action)
+ {
+ 	struct action_entry *entry;
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+ 
+ 	if (validate_action_name(name) != 0)
+ 		return -1;
+ 
+-	if (internal_conf->no_shconf) {
+-		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
++	if (eal_mp_is_disabled()) {
++		EAL_LOG(DEBUG, "Multi-process support is disabled");
+ 		rte_errno = ENOTSUP;
+ 		return -1;
+ 	}
+@@ -270,17 +268,10 @@ void
+ rte_mp_action_unregister(const char *name)
+ {
+ 	struct action_entry *entry;
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+ 
+ 	if (validate_action_name(name) != 0)
+ 		return;
+ 
+-	if (internal_conf->no_shconf) {
+-		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
+-		return;
+-	}
+-
+ 	pthread_mutex_lock(&mp_mutex_action);
+ 	entry = find_action_entry_by_name(name);
+ 	if (entry == NULL) {
+@@ -656,14 +647,9 @@ rte_mp_channel_init(void)
+ {
+ 	char path[UNIX_PATH_MAX];
+ 	int dir_fd;
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+ 
+-	/* in no shared files mode, we do not have secondary processes support,
+-	 * so no need to initialize IPC.
+-	 */
+-	if (internal_conf->no_shconf) {
+-		EAL_LOG(DEBUG, "No shared files mode enabled, IPC will be disabled");
++	if (eal_mp_is_disabled()) {
++		EAL_LOG(DEBUG, "Multi-process support is disabled");
+ 		rte_errno = ENOTSUP;
+ 		return -1;
+ 	}
+@@ -912,14 +898,11 @@ RTE_EXPORT_SYMBOL(rte_mp_sendmsg)
+ int
+ rte_mp_sendmsg(struct rte_mp_msg *msg)
+ {
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+-
+ 	if (check_input(msg) != 0)
+ 		return -1;
+ 
+-	if (internal_conf->no_shconf) {
+-		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
++	if (eal_mp_is_disabled()) {
++		EAL_LOG(DEBUG, "Multi-process support is disabled");
+ 		rte_errno = ENOTSUP;
+ 		return -1;
+ 	}
+@@ -1073,8 +1056,6 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
+ 	DIR *mp_dir;
+ 	struct dirent *ent;
+ 	struct timespec now, end;
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+ 
+ 	EAL_LOG(DEBUG, "request: %s", req->name);
+ 
+@@ -1085,8 +1066,8 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
+ 	if (check_input(req) != 0)
+ 		goto end;
+ 
+-	if (internal_conf->no_shconf) {
+-		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
++	if (eal_mp_is_disabled()) {
++		EAL_LOG(DEBUG, "Multi-process support is disabled");
+ 		rte_errno = ENOTSUP;
+ 		return -1;
+ 	}
+@@ -1182,16 +1163,14 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
+ 	struct timespec now;
+ 	struct timespec *end;
+ 	bool dummy_used = false;
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+ 
+ 	EAL_LOG(DEBUG, "request: %s", req->name);
+ 
+ 	if (check_input(req) != 0)
+ 		return -1;
+ 
+-	if (internal_conf->no_shconf) {
+-		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
++	if (eal_mp_is_disabled()) {
++		EAL_LOG(DEBUG, "Multi-process support is disabled");
+ 		rte_errno = ENOTSUP;
+ 		return -1;
+ 	}
+@@ -1378,8 +1357,6 @@ int
+ rte_mp_reply(struct rte_mp_msg *msg, const char *peer)
+ {
+ 	EAL_LOG(DEBUG, "reply: %s", msg->name);
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+ 
+ 	if (check_input(msg) != 0)
+ 		return -1;
+@@ -1390,8 +1367,8 @@ rte_mp_reply(struct rte_mp_msg *msg, const char *peer)
+ 		return -1;
+ 	}
+ 
+-	if (internal_conf->no_shconf) {
+-		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
++	if (eal_mp_is_disabled()) {
++		EAL_LOG(DEBUG, "Multi-process support is disabled");
+ 		return 0;
+ 	}
+ 
+@@ -1438,3 +1415,12 @@ __rte_mp_enable(void)
+ {
+ 	return set_mp_status(MP_STATUS_ENABLED);
+ }
++
++bool
++eal_mp_is_disabled(void)
++{
++	struct rte_mem_config *mcfg = rte_eal_get_configuration()->mem_config;
++
++	return rte_atomic_load_explicit(&mcfg->mp_status,
++			rte_memory_order_relaxed) == MP_STATUS_DISABLED;
++}
+diff --git a/lib/eal/common/eal_private.h b/lib/eal/common/eal_private.h
+index 8905464f64..60441ac0f2 100644
+--- a/lib/eal/common/eal_private.h
++++ b/lib/eal/common/eal_private.h
+@@ -741,6 +741,11 @@ eal_rand_init(void);
+  */
+ bool __rte_mp_enable(void);
+ 
++/**
++ * Check whether multi-process is disabled.
++ */
++bool eal_mp_is_disabled(void);
++
+ /**
+  * Init per-lcore info in current thread.
+  *
+diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
+index cac8faa53d..7309986910 100644
+--- a/lib/eal/windows/eal.c
++++ b/lib/eal/windows/eal.c
+@@ -81,6 +81,12 @@ rte_mp_disable(void)
+ 	return true;
+ }
+ 
++bool
++eal_mp_is_disabled(void)
++{
++	return true;
++}
++
+ static int
+ sync_func(void *arg __rte_unused)
+ {
+-- 
+2.55.0
+
