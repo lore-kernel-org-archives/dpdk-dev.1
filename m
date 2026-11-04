@@ -2,78 +2,50 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AFD606A31B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 12:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6B3606A32C
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 12:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=FROeW7BA
+	dkim=pass (1024-bit key, unprotected) header.d=h-partners.com header.i=@h-partners.com header.a=rsa-sha256 header.s=dkim header.b=W1jl3GUr
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A5B0D40281;
-	Wed,  4 Nov 2026 13:29:54 +0100 (CET)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com
- [209.85.218.52])
- by mails.dpdk.org (Postfix) with ESMTPS id B12E44025A
- for <dev@dpdk.org>; Wed,  4 Nov 2026 13:29:53 +0100 (CET)
-Received: by mail-ej1-f52.google.com with SMTP id
- a640c23a62f3a-c2e8c710847so106472766b.0
- for <dev@dpdk.org>; Wed, 04 Nov 2026 04:29:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793795393;
- x=1794400193; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=v0Sl84cumDKQGsOxUve0vrW6lNApPdA26tx+YzcH0ns=;
- b=FROeW7BAnEhYGzWhkUl9zCNE8MrIx0NE78n/Dh4RxWuF/6KBBqTslRLTDXm3+PBN8U
- ra/8/zemqikVxDYTlsQDOCU0kGEjRmiF+m/vR/dQW2mtCPFRHq5M3AVN30yRD7pmLPVR
- G844LPZBpq9Px6T94Sxxfa2suv2uUT5Pct00A2PAajSWBLOlRTsinnv+m22CU3YkY5Nf
- iZXlAXNAlQxTn0l9d/3SnI+sTNrbWiPoX7Xqv24hnpzSLV1yTLM5ALbe8d2DjIlshHJ8
- AUjld0YOFTN5DnBs9GbnpTCx/sZif+DKMC+MFZZhmWw6gUK+BsYfkO6Fy9MSIa89OodG
- +GuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793795393; x=1794400193;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=v0Sl84cumDKQGsOxUve0vrW6lNApPdA26tx+YzcH0ns=;
- b=LMJhbuUe8vKVV4d61buENpTWTRLjLlgTEZqfDVQlUZFcVrD2hjY16A+6sR54hXsRGT
- qJtZTlysCX9YLCR0ZFW7dUea6VPFiyy2WO0tABep9cZuQISgKOSMidB+yCi2+litYBjK
- RFOsWnspC0N672gJPJTjjIzwhZuQ4cDrqVrMXumM/NeSaHOrU2zbVHOlyVa2uLJgDsJ4
- az0hRcIDKLbEHcQrLNJmSGfIYFDNTcv89CBP/p9f9+HSN5EKLcvDHX3BJxMnbpTFuXUP
- f8JTlaoZeNWX6PVBfZHmeea9L96Dj6UAd4KBU4XbTWWEI0HjBCyRvs/PsmKRD5m8+MDK
- tdXg==
-X-Gm-Message-State: APuU4Z+KpIg4z6aP4ZTtNOUHbByOxLSUfsdy2uEDHrlOGDLtE+zvisjC
- KbwnbbGMlp76bB9Hn7mUKONoGPDP1Bg+SWwm3lcRUvvXVPhagnK4RrCcZL7elkaYBoQ=
-X-Gm-Gg: AYBFou2mVNXkPDcgDdsX6RT+9umBZtNpBIt8HtPYplDaDzFUVp+HTNd3k4PCU+EVlR5
- OJFzVCg8VYVczH369IeXUUZXjv5q302XDBuc8GMMdQeaO9vugfbHJYFKwsXHgrUctS725awcjoP
- sXqRYnlt9Bx8QxQSSxroFyhrqZ62pCnQmrh8c5ChYkRat2rHPKRsYLi5Ttim1uPQWRVANn/Q0DB
- 5MBiMZYHgq1Un17PuliiSRRrWy1LbS36X/wTbKBu4zQph6Q7xemRC/98wSDbC0v/SHKGd08+ozO
- XJp291lbx0kIzYzQAbimMFZbJG2U2C8QxMgwOuzNUwY5ZoXeNYljllPyrtDy3ZUpROWuea/TCGh
- MQKZiyEuZvQeUCYb8NvVWu6Vw4VCwIm9QRT2bU9/S6K1Lvfi3NnPXAEYjpusdMofMJKWoaRjraF
- mBcdJ2lD5Uq3Jwhjhrmj5q14oySXn6k+0jexevrCpZXUu4tCCL0OX0ssvErNjn+ZD3urIBW9WJ/
- VzLARwonz9tMfaRHhNUkFJ8t3Hc0zenbqSx2uimDAZrueNNLsloAVvzuC8kG/BYjVxO7Ofs/InE
- e1pgycVN5p0C59kO3jCJEwtCLrubGUX5RFHnDpA+lCRJkC4FOGJEiDROvn4DGahiPx5O4x5FxF5
- 5PeAIaYM+0NCUIC6R17Ndf0GQp9+YQuU4pQup
-X-Received: by 2002:a17:907:3e22:b0:c40:5ee3:8698 with SMTP id
- a640c23a62f3a-c4ca7a9ec9fmr1416008366b.31.1793795393021; 
- Wed, 04 Nov 2026 04:29:53 -0800 (PST)
-Received: from stephen-xps.local (93.224-78-194.adsl-static.isp.belgacom.be.
- [194.78.224.93]) by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-c4d0e48d3acsm62394866b.71.2026.11.04.04.29.52
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 04 Nov 2026 04:29:52 -0800 (PST)
-Date: Wed, 4 Nov 2026 13:29:49 +0100
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Aman Singh <aman.deep.singh@intel.com>
-Subject: Re: [PATCH] app/test-pmd: add explicit parameter for fixed link speeds
-Message-ID: <20261104132949.4957efe6@stephen-xps.local>
-In-Reply-To: <20261103155033.3740814-1-bruce.richardson@intel.com>
-References: <20261103155033.3740814-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 96CAA40281;
+	Wed,  4 Nov 2026 13:40:48 +0100 (CET)
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
+ [113.46.200.217])
+ by mails.dpdk.org (Postfix) with ESMTPS id 770624025A;
+ Wed,  4 Nov 2026 13:40:46 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=YynSg1AUrzOprr/iE1Ss9kcythZ30/nQw2L1mLVNQdY=;
+ b=W1jl3GUrm/NGMutDhn31jo08rLeAeWtb7+Q7qiFBPT4/kELtBLiRol/Z43fkJXBGa9roLg0qv
+ NWc6eajJQNa+vKbF8XV8SH3aGq+Rk9BqX/qCr5Dtqy1+ylztbWtiPMR2a+K+8dXSB9/KorY/LST
+ w2HbBJdCLs/VjkgwO4hB5hY=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+ by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4jKQ5C2Ks2zcb0K;
+ Wed,  4 Nov 2026 20:40:15 +0800 (CST)
+Received: from dggpemr100003.china.huawei.com (unknown [7.185.36.150])
+ by mail.maildlp.com (Postfix) with ESMTPS id 5443440538;
+ Wed,  4 Nov 2026 20:40:42 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
+ dggpemr100003.china.huawei.com (7.185.36.150) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Wed, 4 Nov 2026 20:40:41 +0800
+From: Shuaisong Yang <yangshuaisong@h-partners.com>
+To: Xingui Yang <yangxingui@huawei.com>, Chengwen Feng
+ <fengchengwen@huawei.com>, Hao Chen <chenh@yusur.tech>, "Min Hu (Connor)"
+ <humin29@huawei.com>, "Wei Hu (Xavier)" <xavier.huwei@huawei.com>, Chunsong
+ Feng <fengchunsong@huawei.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, <yangshuaisong@h-partners.com>,
+ <liuyonglong@huawei.com>
+Subject: [PATCH] net/hns3: fix hard-coded default value of UMV space
+Date: Wed, 4 Nov 2026 20:40:33 +0800
+Message-ID: <20261104124033.3373452-1-yangshuaisong@h-partners.com>
+X-Mailer: git-send-email 2.33.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemr100003.china.huawei.com (7.185.36.150)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,125 +55,141 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Tue,  3 Nov 2026 15:50:33 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+Currently, the driver obtains the PF's UMV (unicast MAC VLAN) table
+space from the board configuration, and falls back to the hard-coded
+default value HNS3_DEFAULT_UMV_SPACE_PER_PF (384 = 3072 / 8) when
+the firmware reports an empty umv_space field.
 
-> When a particular speed was specified for a port in testpmd, the flags
-> passed to the underlying API call always included the
-> RTE_ETH_LINK_SPEED_FIXED flag. This flag is not a mandatory part of the
-> bitmap when setting speeds, and is used to disable autonegotiation.
-> It's possible to have a link report only a single speed while
-> still have negotiation enabled, so testpmd needs to be extended to
-> support setting a speed both with and without the flag.
-> 
-> This patch does so by adding an optional "fixed" keyword after the speed
-> specified by the user. The presence or absense of the keyword adjusts
-> the presence or absense of the FIXED speed bit in the ethdev
-> configuration structure "rte_eth_conf.link_speeds" bitmap.
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
+The hard-coded value is only accurate for chips with a 3072-entry UMV
+table. On chips whose total UMV table size is smaller than 3072, every
+PF still requests 384 entries: the first initialized PF occupies the
+whole table while the others get nothing, which makes adding unicast
+MAC or VLAN entries fail on those ports.
 
-In general it looked ok to me. But I would like testpmd and ethtool have same syntax
-to follow the principle of "least surprise" for users.
+Fix this by obtaining the UMV size from the device specifications
+command, whose umv_size field is the default value allocated by the
+firmware policy. The requested size is determined at allocation time
+in hns3_init_umv_space(), in the following priority:
+  1. pf->cfg_umv_size, the user specified value from the board
+     configuration
+  2. pf->def_umv_size, the default value reported by the firmware
+  3. the hard-coded default, as the last fallback for old firmware
 
-The AI review with its issues and that encouragement was:
+Fixes: d51867db65 ("net/hns3: add initialization")
+Cc: stable@dpdk.org
 
-Review: [PATCH] app/test-pmd: add explicit parameter for fixed link
-speeds (patchwork 172601)
+Signed-off-by: Shuaisong Yang <yangshuaisong@h-partners.com>
+---
+ drivers/net/hns3/hns3_cmd.h    |  6 ++++--
+ drivers/net/hns3/hns3_common.c |  1 +
+ drivers/net/hns3/hns3_ethdev.c | 19 ++++++++++++-------
+ drivers/net/hns3/hns3_ethdev.h |  3 ++-
+ 4 files changed, 19 insertions(+), 10 deletions(-)
 
-Applies to main (26.11-rc2), builds with -Dwerror=true.
+diff --git a/drivers/net/hns3/hns3_cmd.h b/drivers/net/hns3/hns3_cmd.h
+index 2a2ec155ea..473c4f1ec4 100644
+--- a/drivers/net/hns3/hns3_cmd.h
++++ b/drivers/net/hns3/hns3_cmd.h
+@@ -1008,9 +1008,11 @@ struct hns3_dev_specs_0_cmd {
+ };
+ 
+ struct hns3_dev_specs_1_cmd {
+-	uint8_t rsv0[12];
++	uint8_t rsv0[8];
++	uint16_t umv_size;
++	uint8_t rsv1[2];
+ 	uint8_t min_tx_pkt_len;
+-	uint8_t rsv1[11];
++	uint8_t rsv2[11];
+ };
+ 
+ struct hns3_query_rpu_cmd {
+diff --git a/drivers/net/hns3/hns3_common.c b/drivers/net/hns3/hns3_common.c
+index 5e6fbd1f97..a2384ca6c9 100644
+--- a/drivers/net/hns3/hns3_common.c
++++ b/drivers/net/hns3/hns3_common.c
+@@ -997,6 +997,7 @@ hns3_parse_dev_specifications(struct hns3_hw *hw, struct hns3_cmd_desc *desc)
+ 		return;
+ 
+ 	hw->max_tm_rate = rte_le_to_cpu_32(req0->max_tm_rate);
++	hns->pf.def_umv_size = rte_le_to_cpu_16(req1->umv_size);
+ }
+ 
+ static int
+diff --git a/drivers/net/hns3/hns3_ethdev.c b/drivers/net/hns3/hns3_ethdev.c
+index 8a898422b1..e45e0d2b16 100644
+--- a/drivers/net/hns3/hns3_ethdev.c
++++ b/drivers/net/hns3/hns3_ethdev.c
+@@ -1330,19 +1330,26 @@ hns3_init_umv_space(struct hns3_hw *hw)
+ 	struct hns3_adapter *hns = HNS3_DEV_HW_TO_ADAPTER(hw);
+ 	struct hns3_pf *pf = &hns->pf;
+ 	uint16_t allocated_size = 0;
++	uint16_t wanted_umv_size;
+ 	int ret;
+ 
+-	ret = hns3_set_umv_space(hw, pf->wanted_umv_size, &allocated_size,
++	wanted_umv_size = pf->cfg_umv_size;
++	if (wanted_umv_size == 0)
++		wanted_umv_size = pf->def_umv_size;
++	if (wanted_umv_size == 0)
++		wanted_umv_size = HNS3_DEFAULT_UMV_SPACE_PER_PF;
++
++	ret = hns3_set_umv_space(hw, wanted_umv_size, &allocated_size,
+ 				 true);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (allocated_size < pf->wanted_umv_size)
++	if (allocated_size < wanted_umv_size)
+ 		PMD_INIT_LOG(WARNING, "Alloc umv space failed, want %u, get %u",
+-			     pf->wanted_umv_size, allocated_size);
++			     wanted_umv_size, allocated_size);
+ 
+ 	pf->max_umv_size = (!!allocated_size) ? allocated_size :
+-						pf->wanted_umv_size;
++						wanted_umv_size;
+ 	pf->used_umv_size = 0;
+ 	return 0;
+ }
+@@ -2560,8 +2567,6 @@ hns3_parse_cfg(struct hns3_cfg *cfg, struct hns3_cmd_desc *desc)
+ 	cfg->umv_space = hns3_get_field(rte_le_to_cpu_32(req->param[1]),
+ 					HNS3_CFG_UMV_TBL_SPACE_M,
+ 					HNS3_CFG_UMV_TBL_SPACE_S);
+-	if (!cfg->umv_space)
+-		cfg->umv_space = HNS3_DEFAULT_UMV_SPACE_PER_PF;
+ 
+ 	ext_rss_size_max = hns3_get_field(rte_le_to_cpu_32(req->param[2]),
+ 					       HNS3_CFG_EXT_RSS_SIZE_M,
+@@ -2792,7 +2797,7 @@ hns3_get_board_configuration(struct hns3_hw *hw)
+ 	hns3_set_bit(hw->dcb_info.hw_tc_map, 0, 1);
+ 	pf->tx_sch_mode = HNS3_FLAG_TC_BASE_SCH_MODE;
+ 
+-	pf->wanted_umv_size = cfg.umv_space;
++	pf->cfg_umv_size = cfg.umv_space;
+ 
+ 	return ret;
+ }
+diff --git a/drivers/net/hns3/hns3_ethdev.h b/drivers/net/hns3/hns3_ethdev.h
+index fb1a3795cf..4df83e88eb 100644
+--- a/drivers/net/hns3/hns3_ethdev.h
++++ b/drivers/net/hns3/hns3_ethdev.h
+@@ -841,7 +841,8 @@ struct hns3_pf {
+ 	bool support_fc_autoneg;       /* support FC autonegotiate */
+ 	bool support_multi_tc_pause;
+ 
+-	uint16_t wanted_umv_size;
++	uint16_t cfg_umv_size;
++	uint16_t def_umv_size;
+ 	uint16_t max_umv_size;
+ 	uint16_t used_umv_size;
+ 
+-- 
+2.33.0
 
-Warning (should fix)
---------------------
-
-1. Syntax should follow ethtool rather than invent "fixed".
-
-   ethtool has autoneg as a separate on/off setting:
-
-     ethtool -s eth0 speed 10000 duplex full autoneg off
-
-   With autoneg on, a given speed/duplex limits what gets advertised
-   (the kernel's ethnl_auto_linkmodes()). That is the same as this
-   patch's default, so the semantics are right; only the keyword and
-   its position need to change:
-
-     port config (port_id|all) speed (...|auto) duplex (half|full|auto)
-         [autoneg (on|off)]
-
-   autoneg off   -> set RTE_ETH_LINK_SPEED_FIXED
-   autoneg on    -> clear it
-   absent        -> leave autoneg alone. ethtool keeps the current
-                    setting, so keep the FIXED bit already in
-                    ports[pid].dev_conf.link_speeds. The default
-                    dev_conf is autoneg, so a fresh port behaves as
-                    posted.
-   speed auto + autoneg off -> error, as now.
-
-   Putting the optional tokens last leaves the existing
-   "speed N duplex D" prefix alone. Users who know ethtool can guess
-   it. Untested sketch for the all-ports case:
-
-     struct cmd_config_speed_all {
-     	...
-     	cmdline_fixed_string_t item3;	/* "autoneg" */
-     	cmdline_fixed_string_t value3;	/* "on#off" */
-     };
-
-     static cmdline_parse_token_string_t cmd_config_speed_all_item3 =
-     	TOKEN_STRING_INITIALIZER(struct cmd_config_speed_all, item3,
-     				 "autoneg");
-     static cmdline_parse_token_string_t cmd_config_speed_all_value3 =
-     	TOKEN_STRING_INITIALIZER(struct cmd_config_speed_all, value3,
-     				 "on#off");
-
-   The second cmdline_parse_inst_t still needs the two extra tokens.
-   In the handler, res->item3[0] == '\0' means autoneg was not given.
-   The cmdline library zeroes the result buffer, so the
-   ".data = &cmd_config_speed_all_fixed" self-reference used as a flag
-   can go. Same for the per-port instance.
-
-2. Default behaviour of an existing command changes silently.
-
-   Before this patch "port config 0 speed 10000 duplex full" set
-   RTE_ETH_LINK_SPEED_FIXED. After it, the same command leaves autoneg
-   enabled and advertises only 10G. Existing scripts and test plans
-   (DTS, vendor validation) keep parsing but now do something
-   different. Whether the user sees a difference depends on the PMD.
-
-   The new default is correct (it matches ethtool), but the release
-   note puts it under New Features. Give the behaviour change its own
-   sentence, e.g.:
-
-     Speed settings no longer disable autonegotiation by default;
-     add ``autoneg off`` to force the speed.
-
-3. --eth-link-speed is now inconsistent with the runtime command.
-
-   parse_link_speed() in parameters.c still starts from
-   RTE_ETH_LINK_SPEED_FIXED, and run_app.rst calls it "a forced link
-   speed". So the startup option forces the speed and the runtime
-   command no longer does. Either add a matching option (e.g.
-   --eth-link-autoneg=on|off), or at minimum document it in the speed
-   command section:
-
-     The ``--eth-link-speed`` command line option always disables
-     autonegotiation.
-
-Info (consider)
----------------
-
-4. testpmd_funcs.rst: the patch leaves three blank lines before
-   "port config - queues/descriptors"; one is enough. "Support for
-   these settings depends on the driver and hardware." adds nothing
-   and can go.
-
-5. Commit message: "absense" (twice) -> "absence"; "still have
-   negotiation enabled" -> "still have autonegotiation enabled".
