@@ -2,55 +2,146 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C032606D804
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 15:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68179606A31B
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 15:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=nUTtTFVk
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=YfnspEQy
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F8FD40B9E;
-	Wed,  4 Nov 2026 16:15:43 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTPS id B179640B8F
- for <dev@dpdk.org>; Wed,  4 Nov 2026 16:15:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 85CBD40299;
+	Wed,  4 Nov 2026 16:55:50 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTPS id 102BC40281
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 16:55:48 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793805341; x=1825341341;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=YK+K+49NwrbqYw2EDStDuKhneIMuQLNKkKLoAZ1ixqA=;
- b=nUTtTFVkRtQTe0Gb4bkvP6ii7bpDGuiSzosk7qAY/lhTYBj/GgUYCtP+
- ki8a0OxNpgbfnvWHufUaJCkv9aMFEbDawpw8g41Zjgq1ewgeSkDJ5nYEf
- U8BSFNPrg/HYZfmsP2pMKxy49Lfmkm3eXadOt+1seg5hkzuIfrzMSy8kg
- jPmEcOxxS6Ei37wAYb51BLQ/TLy9Y552wnQaLMFs1Zo8moB2XrIq2xT1M
- 2Jd9kW0I/kK/NeZHU8epjljHtpzQTAOP5kM7bRl+dwdKKdginlitpvABE
- K6lp1GBv/Hzel233SXcVPk6iJTeMKoNPR+sCmdYwjNvtJKxqCq5jzi/qk A==;
-X-CSE-ConnectionGUID: dOSMRbc/RoK34rPr6536iQ==
-X-CSE-MsgGUID: 8456ttQ9Q9qF24+HM7pu5A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11955"; a="2437345"
+ t=1793807750; x=1825343750;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=2KuAGRMfH8SA4kjxYKdvrYvyqfJ3+an4pCZkW462ExM=;
+ b=YfnspEQyFHbGbhDbn3wDo6Jh6M6jucr4Q2BP0mAQvKjz13QlUfl1U8ew
+ iuipEucDreEmWvDk2ZC/IYmUumShcDvhFdQoalw2H10LVTe2Q7AI0ILP7
+ MZPZG2SSe29pk+cDXc2UB8qvlzKP+NyQ4JawkBydMu3tPLoz1tphyh+Xo
+ zY7NrFSpIwvC8hkj7ydh73aSpfr/loY6l6DsG9cG3OTu4K9OHea2+R6Wf
+ TcVXzHPpQ+uPGrJ+iaHqx9P2RTT4X+99WicKIEvGOZdIqng8qs86DCzS1
+ l1QLMm9YVeEUz/xgUdKj5/gv4kir15DVwid5Ls43GGJnlKycwlgoQmwcv Q==;
+X-CSE-ConnectionGUID: ryoJAodBS0GA0E0zxLFLbQ==
+X-CSE-MsgGUID: 8j0IkGjdQUGEdh7cwnG4Dg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2442891"
 X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
-   d="scan'208";a="2437345"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Nov 2026 07:15:39 -0800
-X-CSE-ConnectionGUID: bhculXQpQRC6ZbFqn9uD3Q==
-X-CSE-MsgGUID: NRJie79BRFW9N4khdNCDAA==
+   d="scan'208";a="2442891"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Nov 2026 07:55:46 -0800
+X-CSE-ConnectionGUID: eFfRk9xeTa21z53eTZuZdA==
+X-CSE-MsgGUID: FpyFJnTdS3a4uhBHc3x4aQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
-   d="scan'208";a="7093776"
-Received: from silpixa00401385.ir.intel.com ([10.20.227.220])
- by fmviesa006.fm.intel.com with ESMTP; 04 Nov 2026 07:15:37 -0800
+   d="scan'208";a="6616958"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Nov 2026 07:55:45 -0800
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Wed, 4 Nov 2026 07:55:44 -0800
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56 via Frontend Transport; Wed, 4 Nov 2026 07:55:44 -0800
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.55) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Wed, 4 Nov 2026 07:55:44 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r8L12llCvORu0SgsFtyKZUNp7aJAwyLIGtADC5fLMuIf/kOwUzwGzDhhKBRG26xHseiIfyoQ/Z2q1obhQ9k+M2qgKt1FSWw3uIkPGrxnB+CdqxTOOJUaTTSWVuLeOgOIhnyl3nRsr3j7kRDRAA9fF+PVxYOblwwTcWl3rddx3DZ0wMri6fN1HVZidk6MeTEOQL2U6So1VftQl6HuO/d5gBRRvErvAt7tSX1trG9khQRJeENXEgWHgOhOS9METn1P+4eXjVy5BFJm4THquJYsHKi5La9sDn/q7wfbhsTvERlyff2mCQB3DljYfa/dscL+c8hVcCmZ+xwlBxsyXyDtiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UeSudMQ+iO2Rb9oxEWe17QoCZbKlnXTK+vu7sMcYJkY=;
+ b=glhPYEeunJHsySa3xMsK17If0R7EPiqiLu6/hyq94iA6Nn5dyP7FM31VcDxGdX8+vZFxTif7IeyoWF4db5+Brk0J8BJtlRxySc8qhZAYKWppUapmqvp0NnXv3V3YGMjY7H2YiOJrZtLlTt2A/1TuMUGjnnRk3B7w7zSi1qrKZ0+D5YffYWhvzFw+gOvSlcNj9vO9Wo4YkHhGsRzL1uY6dEVvuR939mxe/KG0WJJ9PzWXk9OOuO3uRIYNvTjbrm+dYeDAaWjZkFxwX1mz5PSqVBZ1qLjs7PBV0fvfQKwEHNYAFl1vp4//8R44V2pTxDPzMUqcWhSphQyU59PCXIySgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by SAWPR11MB9546.namprd11.prod.outlook.com (2603:10b6:806:4e4::6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Wed, 4 Nov
+ 2026 15:55:41 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0592.009; Wed, 4 Nov 2026
+ 15:55:39 +0000
+Date: Wed, 4 Nov 2026 15:55:32 +0000
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 3/3] app/test: add unit tests for nic_uio BDF parsing fns
-Date: Wed,  4 Nov 2026 15:15:24 +0000
-Message-ID: <20261104151524.3990486-4-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261104151524.3990486-1-bruce.richardson@intel.com>
-References: <20261104151524.3990486-1-bruce.richardson@intel.com>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v1 1/1] net/ixgbe: fix EEPROM read callback check
+Message-ID: <autVdP_VONKSa5D_@bricha3-mobl1.ger.corp.intel.com>
+References: <1877a0177de01bc832f96c8fe99f05fea7370bf1.1793354493.git.anatoly.burakov@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1877a0177de01bc832f96c8fe99f05fea7370bf1.1793354493.git.anatoly.burakov@intel.com>
+X-ClientProxiedBy: DU7P250CA0027.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:10:54f::22) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|SAWPR11MB9546:EE_
+X-MS-Office365-Filtering-Correlation-Id: ad5650bb-a659-47fe-38cb-08df3a8c1241
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|366016|1800799024|376014|261021123027099003|261021121427099003|261009223027099003|11063799006|18002099003|22082099003|261102123227099003|10067099003|56012099006;
+X-Microsoft-Antispam-Message-Info: gJEo4M2qfhw6vslpOT93Swnz9rJ7oDsYpDdVOShtgPRkepM49bbV1CU5F0qhQ3Z6/jUE7L12K+RtPEbyi6DUxBYNdTDaWJzyq2q7wsti9PAgiSg2SojxG0S7b2iJMWNoNlwtXYYMDvPGPSVRLkA+7USMVgijIFnp8cc4DaevX3CSD15dAVMZ3+aNv1Rd3llbAbYfALAv/s4J9h1AaIA3miRVC7Zshe1E0xxeoYrrMZZZQjv/shVXjrtrzpUdf0GS3N7GBtUX72VuQMbRiWBzgMWZwyDutXw6Rk5wK8jw4vVVaDeYLI/7sLxv7M3q+qtlp17nBFFKyH35PfcSVmstpfAV83YR/08ahuzmQzWk8ETByy/En0ayz9NopoKKUcdOy+mClmCi5dKJOexKSVlHva3j/62usg61jifCAPpNgu2IZWA2ddoXw21N9Obc5oT9ULilucDOV0OOcALEKNaWsB3IncBCuTTaPfbxCEGj61T7AvWbwrgG2DJLxiDsFAbR0rp5UZQ3FfXDSfpAttjeJv1shu39TjdlfajQWP8Owh0aSDwx6yI7eG04xW7Mfj4b665QsehRGGd0GjOonz0vMKIWY+yi2CR/GtMWyIGZVuPT8zus1coE3HatLKSJSZaUbBlKXSA8D032xl4im2Ch931msTRFcNwtWlDHE8wlXRw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(261021123027099003)(261021121427099003)(261009223027099003)(11063799006)(18002099003)(22082099003)(261102123227099003)(10067099003)(56012099006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?K6kE707dQmR/ORDco+jvzWFH7m11w1LswS98EW92yGbscVpyejsbMpijZGnT?=
+ =?us-ascii?Q?y7B7nKzH4tTKIWgWQV9v9JZB76mVZbjt2/y1Q3ENou9AG24BRq9+JHuxUxt4?=
+ =?us-ascii?Q?1T3aF20xjS/qiTwvLKjZs5cgDG0K/Rmcx78XG+1VR/Bq10Lgl7zmwitTBcxS?=
+ =?us-ascii?Q?wfcurFSOXfbAnBHybxQ1XZGs3vGAqTw9BuAqCrv/OO7/dog1NVGw5ZRAefWn?=
+ =?us-ascii?Q?GC/qw6E7EF0M4XIkT0iqhILlV8Oaiwx7E6m5f3FLzayECRlc6yKC7faTh2EC?=
+ =?us-ascii?Q?iykYOFN36KKXenzU1x/KnT2Gu2fVSzOhpZ4NsS1eGG2zesJQEk/y1ik0maMB?=
+ =?us-ascii?Q?R3CEYbgrlxrBBX5pu9jm+TDfkE17HjW1wMwfOsn/XWrUeWYr8pGcUh9BxjS/?=
+ =?us-ascii?Q?ETBFHpXkkPrvO/v/ivW+YaaCflYZ1sEdlmOmjjoZfAo4qBHClP2mZjLBJ2w6?=
+ =?us-ascii?Q?cPV3xcbXvc3P+DlyivkqedjSt7PHsuGU2+PdfjWe36hxTtpkED3Fz7hALqyI?=
+ =?us-ascii?Q?Ggr/p61qpI0mTyNsjhGZdIIWQpqfueKV4dYO4Ti7ZgdBaHf+lANpdWHQ3MHH?=
+ =?us-ascii?Q?fb5ENyal2DfXOuuSajmNLcJLsSdSaAljGGj2jtsok681bjFUIG8sksTp1lMU?=
+ =?us-ascii?Q?6kPIWbSJKeG8DJP/XHECTb2se+qkFasNfHwhEZFSKmbsrRZLCr8YTjDqJZcZ?=
+ =?us-ascii?Q?icQaMeyGIAzltDnVjP7l1ZLzM7RkjlI23xUlo4vOxG7C2Ag3QRER1mVroLx2?=
+ =?us-ascii?Q?OcJYYUfWf0V1Jalt8UgLlUCOfMpequdPeFxMYCxFPqZBM/4/O5HN+w0Wmgnv?=
+ =?us-ascii?Q?0g0yll7bv6xiQLu4w9tfHAYGc1cTNKkmgoRfD9oT+UYh6w1r+af2khZmaqPh?=
+ =?us-ascii?Q?Usl8Hm8MAPb3TYjwx+1smuVYHczHFM8tTcsvkhpaP+B0ASPkX+/IPbRTB5bi?=
+ =?us-ascii?Q?/mJjtJCyfNRN8qkXaSIsrO/L7QXWk91/9nqUvFSneXPr84L1AqGPzW19Ln/f?=
+ =?us-ascii?Q?ojeR9Vzj14Rellt8rAQAGhmKKrVLjhgBJjnQAM8vzWLcADPZ6wDBJ9sTGnej?=
+ =?us-ascii?Q?yiTvqsGjIbGVAJHfdtRn7rttGd6ZPUEQUz2sX+x3uSR50viNCCJATeZMx/10?=
+ =?us-ascii?Q?sNoJS1SbnhDvosqQDWF+EBBPACFamp/bx1AG/15XCj+s+FdEGvyPIVnIHzJD?=
+ =?us-ascii?Q?/U+Kvaych+qGGrs38NfdhD5RTNi2/8A7ylRKPMRkoIM97Dsr0Jq1pRspECmD?=
+ =?us-ascii?Q?Fb5lTB5KIe5OrW8XzuYAUqC6s+wRqreNFnhfRXbvxzmqpzW7kzFBkmgFZpkO?=
+ =?us-ascii?Q?k2+p5J64FIVVvG+tm03WqZUQiEfTwjn6WmScyrBJwG0xxX2nWxMdwXWVPeT/?=
+ =?us-ascii?Q?eg6XCTrmK06krFDgtlwaTsCwRTRIz4ThJX4Ozsg9P9pzjwcH0TcK/HUW+nus?=
+ =?us-ascii?Q?8dKW6hzADg9YsySLxalzCjNXXzTEk7OkHYKMGH1rW3cU4L9ewBYSGCL0y+44?=
+ =?us-ascii?Q?Ex71XyYWMebVbrnEjqTkqxn4w1kDGYBzLzZQcLHy+aiUDCWYC7YV6P8xTPtH?=
+ =?us-ascii?Q?xMyLzrcYrjj4f65/emeVsXJLCsFJPAo2GzDXUiZ+WsgwlJgt2NhV5awkUIIw?=
+ =?us-ascii?Q?YLQ01vJ7nfsPlGc2Qei8FzO8VXLwBnumTSh630VBEr89ccB9sEZtN1+imyXD?=
+ =?us-ascii?Q?AxZ3LrDTdDNeETmV3eLZTcW69AbYT7zBL9xr40OUBpfxJ3n7eqm0wbuzGx/e?=
+ =?us-ascii?Q?iPzYI/26ezCwMxJorAugQ41igmVGz0U=3D?=
+X-Exchange-RoutingPolicyChecked: WtFHx/aPaDcq7UO+JRHw2bcTXg8rD+N6EuCKMNdiWI3YBCeXi6c0yQBnsM39aNfiHZ29lWMlNNJnkBA6z0dPv7Cv46JYsH65SZaVkaOI90hdYUKK1p0eS5I5/NqsiLDT/nisvi/kjk1qJwmUUjHtNGf2m7JtHcfnwJzfQIh+ahxIB2SxCLHhmgk1OVf21czyw0l40lQagsgLMqRraAsM4D8KKrnG+d7DgaeOHI3FdBYfHngc87PkdMQkYuv2hjz1c+5X9og54jZM3KUN+Wwi14wIYr+fk8gnsBFXa45Nasx0RXb7ndxj0Xvam937PBt1IcWjjz8+O8aAl0hlQw7L6A==
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad5650bb-a659-47fe-38cb-08df3a8c1241
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 15:55:38.8840 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lXRHUrS0UDGJiva+Zi71g0tmrsGoieQ5N4MeKX5j+xrT1vsBGDYxHz+zOkoVrBl40D5KXfoAoZzv8So8jNQ6LUjTlkNZ9usn6vt6mBNkghs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SAWPR11MB9546
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,484 +151,28 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Move the BDF parsing functions from nic_uio into a separate header which
-allows us to unit test them as independent functions, verifying that
-both BSD and Linux format PCI addresses are supported.
+On Fri, Oct 30, 2026 at 10:02:00AM +0000, Anatoly Burakov wrote:
+> The NULL check added for the E610 EEPROM write path was placed in the
+> EEPROM read handler, so a missing write callback rejects reads while the
+> write handler still dereferences it. Check the read callback in the read
+> handler and move the write callback check to the write handler.
+> 
+> Fixes: 04c3e44b4aee ("net/ixgbe: fix null dereference on EEPROM write for E610")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> ---
+>  drivers/net/intel/ixgbe/ixgbe_ethdev.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- app/test/meson.build               |   1 +
- app/test/test_kmod_pci_bdf.c       | 142 +++++++++++++++++++++++++++++
- kernel/freebsd/nic_uio/meson.build |   2 +-
- kernel/freebsd/nic_uio/nic_uio.c   | 112 +----------------------
- kernel/freebsd/nic_uio/pci_bdf.h   | 129 ++++++++++++++++++++++++++
- 5 files changed, 277 insertions(+), 109 deletions(-)
- create mode 100644 app/test/test_kmod_pci_bdf.c
- create mode 100644 kernel/freebsd/nic_uio/pci_bdf.h
-
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 51abeeb732..a5d4716650 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -104,6 +104,7 @@ source_file_deps = {
-     'test_ipsec.c': ['bus_vdev', 'net', 'cryptodev', 'ipsec', 'security'],
-     'test_ipsec_perf.c': ['net', 'ipsec'],
-     'test_ipsec_sad.c': ['ipsec'],
-+    'test_kmod_pci_bdf.c': [],
-     'test_kvargs.c': ['kvargs'],
-     'test_latencystats.c': ['ethdev', 'latencystats', 'metrics'] + sample_packet_forward_deps,
-     'test_lcore_var.c': [],
-diff --git a/app/test/test_kmod_pci_bdf.c b/app/test/test_kmod_pci_bdf.c
-new file mode 100644
-index 0000000000..41d5c9e442
---- /dev/null
-+++ b/app/test/test_kmod_pci_bdf.c
-@@ -0,0 +1,142 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Intel Corporation
-+ */
-+
-+#include <rte_common.h>
-+
-+#include "../../kernel/freebsd/nic_uio/pci_bdf.h"
-+#include "test.h"
-+
-+static int
-+test_kmod_pci_bdf_valid(void)
-+{
-+	static const struct {
-+		const char *address;
-+		struct pci_bdf expected;
-+	} cases[] = {
-+		{"0:0:0", {0, 0, 0, 0}},
-+		{"42:0:0", {0, 42, 0, 0}},
-+		{"177:31:7", {0, 177, 31, 7}},
-+		{"255:31:7", {0, 255, 31, 7}},
-+		{"pci0:0:0:0", {0, 0, 0, 0}},
-+		{"pci1:177:31:7", {1, 177, 31, 7}},
-+		{"pci65535:255:31:7", {65535, 255, 31, 7}},
-+		{"00:00.0", {0, 0, 0, 0}},
-+		{"42:00.0", {0, 0x42, 0, 0}},
-+		{"ff:1f.7", {0, 255, 31, 7}},
-+		{"FF:1F.7", {0, 255, 31, 7}},
-+		{"0000:00:00.0", {0, 0, 0, 0}},
-+		{"0000:98:00.1", {0, 0x98, 0, 1}},
-+		{"0001:b1:1f.7", {1, 0xb1, 31, 7}},
-+		{"aBcD:Ab:0F.3", {0xabcd, 0xab, 15, 3}},
-+		{"ffff:ff:1f.7", {65535, 255, 31, 7}},
-+	};
-+
-+	for (size_t i = 0; i < RTE_DIM(cases); i++) {
-+		struct pci_bdf actual = {UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX};
-+		const struct pci_bdf *expected = &cases[i].expected;
-+		const char *address = cases[i].address;
-+
-+		TEST_ASSERT_SUCCESS(pci_bdf_parse(address, &actual),
-+				"Rejected valid address '%s'", address);
-+		TEST_ASSERT_EQUAL(actual.domain, expected->domain,
-+				"Incorrect domain for '%s'", address);
-+		TEST_ASSERT_EQUAL(actual.bus, expected->bus,
-+				"Incorrect bus for '%s'", address);
-+		TEST_ASSERT_EQUAL(actual.devid, expected->devid,
-+				"Incorrect device for '%s'", address);
-+		TEST_ASSERT_EQUAL(actual.function, expected->function,
-+				"Incorrect function for '%s'", address);
-+	}
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_kmod_pci_bdf_invalid(void)
-+{
-+	static const char * const cases[] = {
-+		"",
-+		"0",
-+		"0:0",
-+		":0:00",
-+		"42::0",
-+		"42:0:",
-+		"42:0:0:0",
-+		"42:0:0,43:0:0",
-+		"pci",
-+		"pci:42:0:0",
-+		"pci0::0:0",
-+		"pci0:42::0",
-+		"pci0:42:0:",
-+		"pci0:42:0:0:0",
-+		"+42:0:0",
-+		"-0:0:0",
-+		"42:+0:0",
-+		"42:0:-0",
-+		"pci+1:42:0:0",
-+		"pci-0:42:0:0",
-+		" 42:0:0",
-+		"42: 0:0",
-+		"42:0:0 ",
-+		"42:0:0\n",
-+		"42:0:0junk",
-+		"pci0:af:0:0",
-+		"af:0:0",
-+		"0x42:0:0",
-+		"256:0:0",
-+		"0:32:0",
-+		"0:0:8",
-+		"pci65536:0:0:0",
-+		"65578:0:0",
-+		"pci65536:42:0:0",
-+		"99999999999999999999999999999999999999:0:0",
-+		"0000:42:0:0",
-+		"pci0:42:00.0",
-+		"0000:152:00.0",
-+		"0000:42:000.0",
-+		"0000:42:00.000",
-+		"00000:42:00.0",
-+		"0:42:00.0",
-+		"42:0.0",
-+		"42:00.",
-+		"42.00:0",
-+		"42.00.0",
-+		"0000:gg:00.0",
-+		"0000:00:20.0",
-+		"0000:00:00.8",
-+		"0000:00:00.f",
-+		"0000:00:00.0junk",
-+		"\xff:00.0",
-+	};
-+	const struct pci_bdf sentinel = {1, 2, 3, 4};
-+
-+	for (size_t i = 0; i < RTE_DIM(cases); i++) {
-+		struct pci_bdf actual = sentinel;
-+		const char *address = cases[i];
-+
-+		TEST_ASSERT_EQUAL(pci_bdf_parse(address, &actual), EINVAL,
-+				"Did not reject invalid address '%s' with EINVAL", address);
-+		TEST_ASSERT(actual.domain == sentinel.domain && actual.bus == sentinel.bus &&
-+				actual.devid == sentinel.devid &&
-+				actual.function == sentinel.function,
-+				"Modified output for invalid address '%s'", address);
-+	}
-+	return TEST_SUCCESS;
-+}
-+
-+static struct unit_test_suite kmod_pci_bdf_testsuite = {
-+	.suite_name = "Kernel module PCI BDF parsing",
-+	.unit_test_cases = {
-+		TEST_CASE(test_kmod_pci_bdf_valid),
-+		TEST_CASE(test_kmod_pci_bdf_invalid),
-+		TEST_CASES_END(),
-+	},
-+};
-+
-+static int
-+test_kmod_pci_bdf(void)
-+{
-+	return unit_test_suite_runner(&kmod_pci_bdf_testsuite);
-+}
-+
-+REGISTER_FAST_TEST(kmod_pci_bdf_autotest, NOHUGE_OK, ASAN_OK, test_kmod_pci_bdf);
-diff --git a/kernel/freebsd/nic_uio/meson.build b/kernel/freebsd/nic_uio/meson.build
-index 4bdaf96944..f10a8a7913 100644
---- a/kernel/freebsd/nic_uio/meson.build
-+++ b/kernel/freebsd/nic_uio/meson.build
-@@ -1,4 +1,4 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2017 Intel Corporation
- 
--sources = files('nic_uio.c')
-+sources = files('nic_uio.c', 'pci_bdf.h')
-diff --git a/kernel/freebsd/nic_uio/nic_uio.c b/kernel/freebsd/nic_uio/nic_uio.c
-index 7260a2a2f6..92865e296d 100644
---- a/kernel/freebsd/nic_uio/nic_uio.c
-+++ b/kernel/freebsd/nic_uio/nic_uio.c
-@@ -9,7 +9,6 @@ __FBSDID("$FreeBSD$");
- #include <sys/kernel.h> /* types used in module initialization */
- #include <sys/conf.h> /* cdevsw struct */
- #include <sys/bus.h> /* structs, prototypes for pci bus stuff and DEVMETHOD */
--#include <sys/ctype.h>
- #include <sys/rman.h>
- #include <sys/systm.h>
- #include <sys/lock.h>
-@@ -25,6 +24,8 @@ __FBSDID("$FreeBSD$");
- #include <vm/vm_page.h>
- #include <vm/vm_pager.h>
- 
-+/* the PCI BDF parsing functions are kept separate so we can unit test them from userspace */
-+#include "pci_bdf.h"
- 
- #define MAX_BARS (PCIR_MAX_BAR_0 + 1)
- 
-@@ -73,111 +74,6 @@ struct device {
-     int dev;
- };
- 
--struct pci_bdf {
--	uint32_t domain;
--	uint32_t bus;
--	uint32_t devid;
--	uint32_t function;
--};
--
--
--static int
--nic_uio_parse_bdf_linux(const char *token, const size_t token_len, unsigned long *values)
--{
--	static const char *long_fmt = "FFFF:FF:FF.F";
--	static const char *short_fmt = "FF:FF.F";
--	const char *fmt = NULL;
--	int bus_ofs = 0;
--
--	if (token_len == strlen(long_fmt))
--		fmt = long_fmt;
--	else if (token_len == strlen(short_fmt))
--		fmt = short_fmt;
--	else
--		return EINVAL;
--
--	/* validate the token against the expected format */
--	for (size_t i = 0; i < token_len; i++)
--		if (fmt[i] == 'F') {
--			if (!isxdigit(token[i]))
--				return EINVAL;
--		} else if (token[i] != fmt[i])
--			return EINVAL;
--
--	if (fmt == long_fmt) {
--		values[0] = strtoul(token, NULL, 16);
--		bus_ofs = 5;
--	}
--	values[1] = strtoul(token + bus_ofs, NULL, 16);
--	values[2] = strtoul(token + bus_ofs + 3, NULL, 16);
--	values[3] = strtoul(token + bus_ofs + 6, NULL, 16);
--	return 0;
--}
--
--static int
--nic_uio_parse_bdf_bsd(const char *token, const size_t token_len, unsigned long *values)
--{
--	char *endptr;
--
--	/* skip the "pci" prefix if present */
--	if (strncmp(token, "pci", 3) == 0) {
--		token += 3;
--		if (!isdigit(*token))
--			return EINVAL;
--
--		values[0] = strtoul(token, &endptr, 10);
--		if (*endptr != ':' || !isdigit(*(endptr + 1)))
--			return EINVAL;
--		token = endptr + 1;
--	} else if (!isdigit(*token))
--		return EINVAL;
--
--	/* parse bus */
--	values[1] = strtoul(token, &endptr, 10);
--	if (*endptr != ':' || !isdigit(*(endptr + 1)))
--		return EINVAL;
--	token = endptr + 1;
--	/* parse device */
--	values[2] = strtoul(token, &endptr, 10);
--	if (*endptr != ':' || !isdigit(*(endptr + 1)))
--		return EINVAL;
--	token = endptr + 1;
--	/* parse function */
--	values[3] = strtoul(token, &endptr, 10);
--	if (*endptr != '\0')
--		return EINVAL;
--
--	return 0;
--}
--
--static int
--nic_uio_parse_bdf(char *token, struct pci_bdf *bdf)
--{
--	static const unsigned long bdf_field_limits[4] = {UINT16_MAX, 255, 31, 7};
--	const size_t token_len = strlen(token);
--	unsigned long values[4] = {0};
--
--	if (token_len < 5)
--		return EINVAL;
--
--	/* linux uses '.' for final separator */
--	int ret = token[token_len - 2] == '.' ?
--			nic_uio_parse_bdf_linux(token, token_len, values) :
--			nic_uio_parse_bdf_bsd(token, token_len, values);
--	if (ret != 0)
--		return ret;
--
--	for (int i = 0; i < 4; i++)
--		if (values[i] > bdf_field_limits[i])
--			return EINVAL;
--
--	bdf->domain = values[0];
--	bdf->bus = values[1];
--	bdf->devid = values[2];
--	bdf->function = values[3];
--	return 0;
--}
--
- DEFINE_CLASS_0(nic_uio, nic_uio_driver, nic_uio_methods, sizeof(struct nic_uio_softc));
- 
- #if __FreeBSD_version < 1400000
-@@ -278,7 +174,7 @@ nic_uio_probe (device_t dev)
- 		struct pci_bdf bdf;
- 
- 		token = strsep(&remaining, ",");
--		if (nic_uio_parse_bdf(token, &bdf) != 0) {
-+		if (pci_bdf_parse(token, &bdf) != 0) {
- 			device_printf(dev, "Invalid PCI address in hw.nic_uio.bdfs\n");
- 			return ENXIO;
- 		}
-@@ -365,7 +261,7 @@ nic_uio_load(void)
- 	printf("nic_uio: hw.nic_uio.bdfs = '%s'\n", bdf_str);
- 	while (remaining != NULL && remaining[0] != '\0') {
- 		token = strsep(&remaining, ",");
--		if (count == nitems(bdfs) || nic_uio_parse_bdf(token, &bdfs[count]) != 0 ||
-+		if (count == nitems(bdfs) || pci_bdf_parse(token, &bdfs[count]) != 0 ||
- 				(remaining != NULL && remaining[0] == '\0')) {
- 			printf("nic_uio: invalid PCI address list in hw.nic_uio.bdfs\n");
- 			return EINVAL;
-diff --git a/kernel/freebsd/nic_uio/pci_bdf.h b/kernel/freebsd/nic_uio/pci_bdf.h
-new file mode 100644
-index 0000000000..8115c0f435
---- /dev/null
-+++ b/kernel/freebsd/nic_uio/pci_bdf.h
-@@ -0,0 +1,129 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Intel Corporation
-+ */
-+
-+#ifndef _PCI_BDF_H_
-+#define _PCI_BDF_H_
-+
-+#ifdef _KERNEL
-+#include <sys/param.h>
-+#include <sys/ctype.h>
-+#include <sys/errno.h>
-+#include <sys/systm.h>
-+#else
-+#include <ctype.h>
-+#include <errno.h>
-+#include <stdint.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#endif
-+
-+struct pci_bdf {
-+	uint32_t domain;
-+	uint32_t bus;
-+	uint32_t devid;
-+	uint32_t function;
-+};
-+
-+static inline int
-+pci_bdf_parse_linux(const char *token, const size_t token_len, unsigned long *values)
-+{
-+	static const char *long_fmt = "FFFF:FF:FF.F";
-+	static const char *short_fmt = "FF:FF.F";
-+	const char *fmt = NULL;
-+	int bus_ofs = 0;
-+
-+	if (token_len == strlen(long_fmt))
-+		fmt = long_fmt;
-+	else if (token_len == strlen(short_fmt))
-+		fmt = short_fmt;
-+	else
-+		return EINVAL;
-+
-+	/* validate the token against the expected format */
-+	for (size_t i = 0; i < token_len; i++)
-+		if (fmt[i] == 'F') {
-+			if (!isxdigit((unsigned char)token[i]))
-+				return EINVAL;
-+		} else if (token[i] != fmt[i])
-+			return EINVAL;
-+
-+	if (fmt == long_fmt) {
-+		values[0] = strtoul(token, NULL, 16);
-+		bus_ofs = 5;
-+	}
-+	values[1] = strtoul(token + bus_ofs, NULL, 16);
-+	values[2] = strtoul(token + bus_ofs + 3, NULL, 16);
-+	values[3] = strtoul(token + bus_ofs + 6, NULL, 16);
-+	return 0;
-+}
-+
-+static inline int
-+pci_bdf_parse_bsd(const char *token, unsigned long *values)
-+{
-+	char *endptr;
-+
-+	/* skip the "pci" prefix if present */
-+	if (strncmp(token, "pci", 3) == 0) {
-+		token += 3;
-+		if (!isdigit((unsigned char)*token))
-+			return EINVAL;
-+
-+		values[0] = strtoul(token, &endptr, 10);
-+		if (*endptr != ':' || !isdigit((unsigned char)*(endptr + 1)))
-+			return EINVAL;
-+		token = endptr + 1;
-+	} else if (!isdigit((unsigned char)*token))
-+		return EINVAL;
-+
-+	/* parse bus */
-+	values[1] = strtoul(token, &endptr, 10);
-+	if (*endptr != ':' || !isdigit((unsigned char)*(endptr + 1)))
-+		return EINVAL;
-+	token = endptr + 1;
-+	/* parse device */
-+	values[2] = strtoul(token, &endptr, 10);
-+	if (*endptr != ':' || !isdigit((unsigned char)*(endptr + 1)))
-+		return EINVAL;
-+	token = endptr + 1;
-+	/* parse function */
-+	values[3] = strtoul(token, &endptr, 10);
-+	if (*endptr != '\0')
-+		return EINVAL;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Parse a hexadecimal DPDK or decimal FreeBSD PCI address.
-+ * Return zero on success or EINVAL on failure, leaving bdf unchanged on failure.
-+ */
-+static inline int
-+pci_bdf_parse(const char *token, struct pci_bdf *bdf)
-+{
-+	static const unsigned long bdf_field_limits[4] = {UINT16_MAX, 255, 31, 7};
-+	const size_t token_len = strlen(token);
-+	unsigned long values[4] = {0};
-+
-+	if (token_len < 5)
-+		return EINVAL;
-+
-+	/* linux uses '.' for final separator */
-+	int ret = token[token_len - 2] == '.' ?
-+			pci_bdf_parse_linux(token, token_len, values) :
-+			pci_bdf_parse_bsd(token, values);
-+	if (ret != 0)
-+		return ret;
-+
-+	for (int i = 0; i < 4; i++)
-+		if (values[i] > bdf_field_limits[i])
-+			return EINVAL;
-+
-+	bdf->domain = values[0];
-+	bdf->bus = values[1];
-+	bdf->devid = values[2];
-+	bdf->function = values[3];
-+	return 0;
-+}
-+
-+#endif /* _PCI_BDF_H_ */
--- 
-2.55.0
-
+Applied to dpdk-next-net-intel.
+/Bruce
