@@ -2,131 +2,147 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D05606A32F
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 09:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AE0606A328
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 09:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=PgIdOJct
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=bCaExJEp
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B95F54026E;
-	Wed,  4 Nov 2026 10:38:59 +0100 (CET)
-Received: from PH7PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11010014.outbound.protection.outlook.com [52.101.201.14])
- by mails.dpdk.org (Postfix) with ESMTPS id D32AB40151
- for <dev@dpdk.org>; Wed,  4 Nov 2026 10:38:57 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 10D694026E;
+	Wed,  4 Nov 2026 10:41:37 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTPS id 3D0D540151
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 10:41:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1793785295; x=1825321295;
+ h=from:to:cc:subject:date:message-id:mime-version;
+ bh=w9Y4mpKwYaJAJGsIu2AUCDmosA338c/4FUU+2fc5lRI=;
+ b=bCaExJEpaYY5MJDoiW20+MPqHf3CZhgmWJuXbDhoC8wkDYAAfJrdNXSM
+ cWwlR0lKeEJJpFdAasZjhpKS8EQBfw3hSOMCXhYJlodW+Ccp1ZsZ8IioV
+ OJ0B13iYhdN7aAzBFkQwglylhhkZ5DyxMZekTwGaT6fUbCH0W1plV57AQ
+ P4bmnoH4MZhCR1+n68P+rToi0jKXxvfUn2FOY1rvPcIshxnABfd0TaK+Q
+ IPuc9S6iFvnIHcK83ha5N0wG/LI9J8vXh8O64aV4TqG5xWQWCxjI/bFMp
+ bb9GMREQ8HxVDpc42WK+2Z7Xan3mGcHpOhwX3y5treD91bIu8Ycnv2+je A==;
+X-CSE-ConnectionGUID: XCUq9MjCSFmjqySjenQmyA==
+X-CSE-MsgGUID: Uvi3GAxkSUu/Wj+esMR4fw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11955"; a="2432099"
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; d="scan'208,217";a="2432099"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Nov 2026 01:41:33 -0800
+X-CSE-ConnectionGUID: myt+5K7pR7OhuPpz00j6fQ==
+X-CSE-MsgGUID: eT2ntHjzTaynmC1nubZrLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; d="scan'208,217";a="6577565"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Nov 2026 01:41:33 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Wed, 4 Nov 2026 01:41:33 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56 via Frontend Transport; Wed, 4 Nov 2026 01:41:33 -0800
+Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.33) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Wed, 4 Nov 2026 01:41:32 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T0bcI3tUMxgRG9lyEWjwnqFgwViYiH6moliapIPccisjyLKPMUBJSQ56jvhVdpxkVSktZ+xHS4qrwogHaPH4UoSX2CZ2K9b1uWFIuXv2l6U9HUY6Og9IrchrUr5EDuRY/rk3urehEAICaq/7vrIa43WB26QExy/cjT2F6HINv8W7Gy9ReUS7cDwuiRcQ+Ns5mmZI39Wy/voEKPSHCzcQQSqdb1tpburUlR5WKqguW11OGoGLFL9rORqiFUudMk5yH6SXBwJT2w4ODQSXX3sOCF9y4+SlPOvhnkduhhE81oIjF/M+jUiuQlLBfxxlO5fVRhqu9muhJqZl04vLGsBnjA==
+ b=wDhuin98Rz6us19TXZH7oxLndvKBs9j6JqgFNvZ7scH/n+EN5RDfXK/d5LobHWxwPjZt9gcgDD+svkT9rHZMhQgTxZUGMDFQW8qUeXoUYm5/uMRzC3aE8lVug76/Q7Y/ygVKLqrikIaDaMe84ajsPYPG/Pkjp3Ba024NSCPjKrj648G+99LmTKiVHmcKKqBUsSnkXC2vlKtYmPHgH/adyih9ovzP0CIfhZznWRdK94MqCzp861VHFEcW//3eupsdmKua2+N2IWSb0Xm3TDvcfuBaDvRmOq9y+BD8ALwekNcYd5cP/eBOHwHjO2CGLar4Id3HHE7fhLQW63meDgLnBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YZbfw1HCJEYTb0S0lrkw/rEUCbAjP5dyO3jXhYDfBpo=;
- b=Fmgm03WmN1VQi0NYmucHHBdzbwtYiGEU1RoruuxQERUlzFc7ujmaHA0nwyCjZugd5WBqLMp63T5N4sM8eclN9Rj2fbAABcXq7VGrm5uUom6ihdJSyDkmukCZ0zgGLgh5zn9MnDmCCvjhy2QM80vr2p41yzfr8LC1SU8bWLSfy1GhkxkcZ3wIOUvX3UAMRMHLH3TImLeQkkzpBz5g9REkGhxTNNUXGIBkykwHtzyQabDwuzCIMBSgnPKOj9IWYvl1JZpvuasxkypZsh7kjfLnWD/wETLf1AJPFkOT42Xw2r1r01+TkM0TI02Cc8gfQBgSN/qOFLW0XgeXxTDBSX015A==
+ bh=/VC8V4UaRiUWevoR8LgQUytHVytXR7DkQJE/ZB5YFIo=;
+ b=G1q2lAXAMIdIscDs6BaYPH33QeD7DULXjBreMvj+YA8jLx5AzBn4rk5Tsy1GnT7RND9VD+Vw5AtcyuIFV0Eu37haXYiOlZNWaMjHhjLJLjUlbM3TOwG6iWTdruzWxfphOxtcAhcpNmxcCxuWWJ0eFc0Ym+NytwE8LfT9YPrdMx4CcyuQ+J5eIsYKsU4ZA6pzRZjdSCZbZYsrKoe8/pNCTuu+YI1pfeVdIvOEiy72njmTtnzMEh9O31iiMNSLKwyuxKrj8SsB7Y7QvO6YmUbU102C/hkdXLa+rojtueMzhEZHY5AunRs610rrGzBRYKFfeVVne0sD/Idh74bwV0OI7A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YZbfw1HCJEYTb0S0lrkw/rEUCbAjP5dyO3jXhYDfBpo=;
- b=PgIdOJctgCA3FTctN/X3188T+UKRs5AAYkK43LZ0ocMC7K449bqIBbRAfyx6oCccZin3hHK7fJuBSAzyvLC1TnkXyMvAyMhUhYP9SYFEl/DvaCEtczBL+ccBhNHJbEtwTJgb8RrwaobCsxfUFzA1qyZcG7XU3knGCr+bASlWonaDQjdIStsHCHOO/nH6TylOxo/tJovlNW+nV0VmutslHN3w5E1Z4P2c4f0AQXWg0ZY1+IxD+tODxdQ/jBnZs7aXC0TOcb/Is0wGTCwdPahj+yV6sRtX5yI2AjWIO5Vh9WTjXK4wz4ensPchRMtITCIHXuV9PlFSmjUKjGm73xBVoA==
-Received: from DM4PR12MB6087.namprd12.prod.outlook.com (2603:10b6:8:b1::12) by
- SA3PR12MB834210.namprd12.prod.outlook.com (2603:10b6:806:517::14)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Wed, 4 Nov
- 2026 09:38:54 +0000
-Received: from DM4PR12MB6087.namprd12.prod.outlook.com
- ([fe80::3359:f44d:6814:3ec3]) by DM4PR12MB6087.namprd12.prod.outlook.com
- ([fe80::3359:f44d:6814:3ec3%6]) with mapi id 15.21.0569.011; Wed, 4 Nov 2026
- 09:38:54 +0000
-From: Slava Ovsiienko <viacheslavo@nvidia.com>
-To: Shuaisong Yang <yangshuaisong@h-partners.com>, yangxingui
- <yangxingui@huawei.com>, "david.marchand@redhat.com"
- <david.marchand@redhat.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>, Bing
- Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "stephen@networkplumber.org"
- <stephen@networkplumber.org>, "NBU-Contact-Thomas Monjalon (EXTERNAL)"
- <thomas@monjalon.net>, "dmitry.kozliuk@gmail.com" <dmitry.kozliuk@gmail.com>, 
- "fengchengwen@huawei.com" <fengchengwen@huawei.com>, "liuyonglong@huawei.com"
- <liuyonglong@huawei.com>, "kangfenglong@huawei.com" <kangfenglong@huawei.com>
-Subject: Re: [PATCH v2] common/mlx5: fix high SMMU TLB miss with mempool
- alignment
-Thread-Topic: [PATCH v2] common/mlx5: fix high SMMU TLB miss with mempool
- alignment
-Thread-Index: AQHdKW7Gp3MFokYrzUGXye3+38cAPbbJHCuAgEietYCACr4YgIABskU4
-Date: Wed, 4 Nov 2026 09:38:53 +0000
-Message-ID: <DM4PR12MB6087DF53A89ED26EAF9F5E75DF682@DM4PR12MB6087.namprd12.prod.outlook.com>
-References: <20260811085231.2260761-1-yangxingui@huawei.com>
- <4a35e332-d89e-af61-03bb-3b72f3f230c7@huawei.com>
- <c0e9bea1-5fd5-4bed-be68-1d639ccb694c@h-partners.com>
- <8d86f620-a641-48d0-839b-1b04710139ae@h-partners.com>
-In-Reply-To: <8d86f620-a641-48d0-839b-1b04710139ae@h-partners.com>
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DS3PR11MB9646.namprd11.prod.outlook.com (2603:10b6:8:38f::18)
+ by DS4PR11MB895587.namprd11.prod.outlook.com (2603:10b6:8:53d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.8; Wed, 4 Nov 2026
+ 09:41:25 +0000
+Received: from DS3PR11MB9646.namprd11.prod.outlook.com
+ ([fe80::d32a:8f92:25b:9bcd]) by DS3PR11MB9646.namprd11.prod.outlook.com
+ ([fe80::d32a:8f92:25b:9bcd%5]) with mapi id 15.21.0592.007; Wed, 4 Nov 2026
+ 09:41:25 +0000
+From: "Mcnamara, John" <john.mcnamara@intel.com>
+To: "dev@dpdk.org" <dev@dpdk.org>
+CC: Thomas Monjalon <thomas@monjalon.net>, David Marchand
+ <david.marchand@redhat.com>
+Subject: DPDK Release Status Meeting 2026-11-03
+Thread-Topic: DPDK Release Status Meeting 2026-11-03
+Thread-Index: AQHdbEBVwtTCCOFZPEygbLR3/Z+A4w==
+Date: Wed, 4 Nov 2026 09:41:25 +0000
+Message-ID: <DS3PR11MB9646972DBCB11F6858A6B0DCFC682@DS3PR11MB9646.namprd11.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 msip_labels: 
-composetype: reply
 authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
+ header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR12MB6087:EE_|SA3PR12MB834210:EE_
-x-ms-office365-filtering-correlation-id: ebdc71d3-5153-4b92-176f-08df3a5770e2
-x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+x-ms-traffictypediagnostic: DS3PR11MB9646:EE_|DS4PR11MB895587:EE_
+x-ms-office365-filtering-correlation-id: a3b0ac1e-1f32-4a37-cdad-08df3a57cb4f
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|23010399003|1800799024|366016|7416014|376014|38070700021|261022113327099003|261021121427099003|4143699003|11063799006|261021123027099003|56012099006|261026121527099003|261009221727099003|261009220027099003|261009223327099003|261009223027099003|261028144727099003|261022075727099003|261022105027099003|261009221227099003|261026140227099003|10067099003|16056099006|20046099003|261102123227099003|18002099003|22082099003|6133799003|13003099007|8096899003;
-x-microsoft-antispam-message-info: leyfpzqHy9CFJPQfm1oPKXaHNFSnU6B78NMiSk6LDYZkIQHHP4QtvXrjPhh33fAR6r41MJHjL8dfTruxPbJ/81vZXPSZAtMqe7Tq2OJonXvNOkc7JFqtE19VYhcMoJ+KmQOAgWzL6zM+t5uVPSYKr8/iMdoG+s4ex/CDyu0WbtUjTVtmlFZcJPJ74E5uSvEjW/+cYF20nAs68gh4R+7HSvbMT9iOIJHy4zLWx7GUIkLOrmPpoDrAHyzFtmwLMwgi+L7uKkrGXAHBqsPc4QuKor6RitJ5lPLOfxhFko9xCF8cIZy7HqaVIe3L+dOOLcc1DhjFIdstQN80xI85VCXKLwl1WtrH7zptvVx4uIiFv5Fpt5GwT4UBvIYT4QQZ7UBnlYDJOHHVZhHoyOCfM0PxRVoHi6J3AQakh8RcuErm7X7QO9XirCXGXNa96wWDiYh+NakRSSihP9V+dh4JBmA7BXzy6/uYgOm4WxAZU0fZyljzkWCi0V9pmTcpdeIxPSsVsPja2L+pLKa9Xbxj+79feHseQLQJ5vDTgciOB788S07eJk+R9PRMqlmMYg2Q3TKbLfWkVVjQ1gMMgw0MXu2O+jd4m9OmCWC7fF3x/tfLA0FlJnPMDCDws0c/iUgjuscJ+8YmSrX9oEXdKAgKdWGOeXWQ1Vq17W9u513IbW+0w4142YtRJxJnLkhDz2fvAJWYcNoh2ng6rH6shs6EpcyjZfSwZ95FpTBPUvixjkGJyEw=
+ ARA:13230040|376014|23010399003|1800799024|366016|10067099003|18002099003|8096899003|38070700021|56012099006|11063799006|261026140227099003|261028144727099003|261026121527099003|261022105027099003|261009223027099003;
+x-microsoft-antispam-message-info: 9DGrdovGZtmTrm5iyveNEqBiuH9G7Tv4ZEdQIgjzD1lMXs4RydyK5wQvODh0VJeHKVVjpW/Sb9+EROXJ80uxMRXTYMFkixNpo6qskkEm3oHwnTtjlv1bO2xa2KO2Tcp2PIGtgYZUbsSajHJQPJSgh6WT8p1kfs1RjSzzOOKqnoXwPZ6uywt+VIJ8eVfn0XKa6AhvJCSM4hUIyNLQSto2RWs/NrvKNDsm48RyClh71SrES5W1BwVdN/grjuL1ZQPbpB8Uj9O4V43Ak3AoxFz1L6gIIji1SC3VN4uB5OinLo8LLl9crmUfw3ucr01HFx3wK97F3HMID4GixDC/Mc4BqwwePRYeQJRnuH2ZHEt9+NYaAtzvY0bjF5aLup4WXlRpYtmLt5PIBuz9ruq3O0fH8vW2cDUwnd83X9OTSIvFHEbBQwiw1cJUAjyjPMUG9CZpKPBIb6Flj9qxufTVTj3iqf/60c1hcVLOqzxDfIIL+gBcN54Eyr7TQ1/vLXMrpggOtgWqzJvRfWceHl+YYwu36+IbS3ohuvdBnV1Ma9e3Om5G1bhGQkWf5vQ8F8zIRuQop7VtLG6xhLo22tKMUwlR/Vvm2FJhdtZmeO6XE1dhnmPjhsKtE9vTE+UtHMBrrqdUQiNIcD7HvCPpi6w0mcOuE3vixRAs8YX5biWxCqWXuGA=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR12MB6087.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(1800799024)(366016)(7416014)(376014)(38070700021)(261022113327099003)(261021121427099003)(4143699003)(11063799006)(261021123027099003)(56012099006)(261026121527099003)(261009221727099003)(261009220027099003)(261009223327099003)(261009223027099003)(261028144727099003)(261022075727099003)(261022105027099003)(261009221227099003)(261026140227099003)(10067099003)(16056099006)(20046099003)(261102123227099003)(18002099003)(22082099003)(6133799003)(13003099007)(8096899003);
+ IPV:NLI; SFV:NSPM; H:DS3PR11MB9646.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(23010399003)(1800799024)(366016)(10067099003)(18002099003)(8096899003)(38070700021)(56012099006)(11063799006)(261026140227099003)(261028144727099003)(261026121527099003)(261022105027099003)(261009223027099003);
  DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?Windows-1252?Q?N41zJnKzdafMNwDmvUrCnPsuqM9aBSAex7UFg9RSUcHsZnlHaE23evLw?=
- =?Windows-1252?Q?4tq3Z8uzC3jr176AhL+kDcq0g/zFZ3OKHZ2s7QbaC+VyrJPPbmPEKAmA?=
- =?Windows-1252?Q?H/w1MFeW47a8FapRuGiTHA1rxAdGjDdGLpt8EXSpHID7CunfA2E6RetT?=
- =?Windows-1252?Q?4br+8dmVZD2QcLF7VK1dQ5Yfs7QJ1hIxZeA/93GjJRn0i07yJ/A9UKJb?=
- =?Windows-1252?Q?HAO9tlAYyjvAD2RDZPiUoigxcOisvGr4XdUeW8LrmTCfqEua5ropXe5B?=
- =?Windows-1252?Q?4tWl05K0NL1DnS1h3CWZ8dougyupighq/QDAtg/5j0BcyDoPrm1npwJu?=
- =?Windows-1252?Q?hhVRLQIZbGVmRORFvDEs1cPfxoly4t8+TJ0s097N2nZVi08LkwfwsN45?=
- =?Windows-1252?Q?wqWGVAjuEyHIC41lwwwZH18D9qhHDH/miqT/tTiIP4QZfSKNoT6zm1FK?=
- =?Windows-1252?Q?d32aQ+vDAu37F7xNXMa3ViJiw5JlGuve0e7QirVoArqPG9L2vOspm9m0?=
- =?Windows-1252?Q?j5W1IQhzOq8oTvwkxCzYVWEBzlqfmh9FFRoFVcCbDOFoTbEuXSftvPkq?=
- =?Windows-1252?Q?AbSzlXz07w40fhDNgZQtyT143D5B4DKu4u5AsaBiDzrTUG95UFmzGVax?=
- =?Windows-1252?Q?KJ0Yph9GhX0dquh+/kuorztd15V7RkOAZkpEy1JTWWFwfoBecEqXOO7H?=
- =?Windows-1252?Q?bMm+0FHvQ/lN6Ir5F8OGXpISuAzRnaQVGubO4yb5ZE6s8RmNmdloYW5Q?=
- =?Windows-1252?Q?vvLuL5QuTcdgW4ZPQULArt9AEJXy/z5ZEAeWs0zsc3RCNUlFqcRP9a06?=
- =?Windows-1252?Q?7WcqnAakkjFLUoBjHLSGU6KujgiO50hnH/r9ewqgpKsFTGnGk3AC1oh2?=
- =?Windows-1252?Q?1QE8l6zV6hbG8yEnc4tykPptpGCWSDC9qNaEqGWW6dl0EILoH9yG/oNW?=
- =?Windows-1252?Q?IQqOmSYmr88S1YQdePYzJCeQYK1x+V+1PFCBeskPYoXxttRT+jeFzUsw?=
- =?Windows-1252?Q?xXrohl1xiVzvpyJnp2KF6ALezRTOy59rgJ5MoEdk6rh1ra+h9EdzsPNt?=
- =?Windows-1252?Q?HwtBRCFKzSoPbb/a85dcxRAX6iBzKJLUTX/BWFZcR3qzkAvPNRXKxyV6?=
- =?Windows-1252?Q?mJ6wTWFAhFAX02XXSmegJ+4ZxlLX2MulXy/HrJBfHak37w5t7iQ8bnM8?=
- =?Windows-1252?Q?ylVEcUjgWr8Q64031RGR7iKq9FC4U76OOCupoy8Ntg1bYxzzhpuYORXG?=
- =?Windows-1252?Q?CSdIVyOLER/g+crQlwBkcRfq2BN0y0sdZNqq44jRs1HSYBNKB8bGQvls?=
- =?Windows-1252?Q?AnW5ibJS69Sdxixyq3xN3fvQ6LRUupDGAGfCZz4B9KJXpAJE1rrKLliR?=
- =?Windows-1252?Q?JdH5srBdGLdnf/zaIeMpXSpE6QtK86M14XRXsVgB11dWC2r7WiI747W6?=
- =?Windows-1252?Q?hRPWwpF1j80nw0gKDDtIyBU+BnshS3H/rtNYcQdvRMUlFkxKcAz9NpGb?=
- =?Windows-1252?Q?x9SrJW2PT9Amz7hHHXzmKvP0w5JKMMa5X75RJH/L0XBn/iGuhoGRNqtx?=
- =?Windows-1252?Q?QKnaVGmFAsfoBFKIk0aJd5EnuKLYjvC8TzlyaveQFEA7Tq8QX3jFsHGD?=
- =?Windows-1252?Q?C9J24QPvQjMCDC+vRmoKIa+Mw+SGP6HcxAH6Tt2wM2rusYqVMCgDd2Eo?=
- =?Windows-1252?Q?r0s79WgAvhZseSPihRzX+2oyZkQBtkoIWFPF4MmhIcswC3xK1Fz3GDaP?=
- =?Windows-1252?Q?DW19q7Nf5e534cqFY0fBCGDRaU6YVj69zkyDNpng/pJxk09ajIAdjnc7?=
- =?Windows-1252?Q?NtiJ4q2Fcmm8GwK5kxeMpRCv96WwfkAALC4Prp0qW5C3GTc3?=
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?4HMiGzu+Ei8rLcV3v0Hl1HhpN3C+Db0VkRQuuc36QjrC8rQ4Uyn0N1d6jv?=
+ =?iso-8859-1?Q?Y9sNJBP9D+pDIiDRZmL7G0WVOu9Mx2iEu4DZWUoWUqSnHG27rBCHB+Kiko?=
+ =?iso-8859-1?Q?vJQz2aL2FbZ/5Z7bl8hlXVLZJlhOfPF5sKH5yRbDj/+dFs/qmoCZI7hoBd?=
+ =?iso-8859-1?Q?cuFCNtipyRfgSNBlwvg1NvDiDamUajGj6qZCcDNBfpgsF53nVpaRXNHgbX?=
+ =?iso-8859-1?Q?xrwq5rMJQTPrf+29AcdcSKI7YYpJN7Ve16ZYA4GXX2AD1baYKaQIXwMXmC?=
+ =?iso-8859-1?Q?iXFsGaf2Tw6QKC8OwrOXU/hngafAvtaDWB9t+pGlLqFpD3aI9WyhBGBhkT?=
+ =?iso-8859-1?Q?uJ3S/C/JSmEzEbvi18OvaIOc1pNUHTiKpFM+0A+lbTzjtsVR0tfhdF+Zwi?=
+ =?iso-8859-1?Q?n+71sopRxectwAtRB6abuydZfIi+n/iwKVEYj28NhTMWQTUJ1GmP2s1xRt?=
+ =?iso-8859-1?Q?enYXRQGn7woPpwV74luTNGCdtKFt+scmTvSiXOopxLipbtF0oe/Fv76lxF?=
+ =?iso-8859-1?Q?BtTtWPHNCgZrO0SjH+P3Zt1LZRTZTa2IyddaebYbRXKxAuoNPJuMMnEi6r?=
+ =?iso-8859-1?Q?1I6UBZivoiR2Nl4B96ecD4utXy/EfK4GM5m7+v2iXksC9NqaCFY9wvjnRD?=
+ =?iso-8859-1?Q?O0F2B4Dpv7K+DZgaQ7b1yZwYqce818g2eX1ZfSBT3LK7ElWumPaqXn7Nsk?=
+ =?iso-8859-1?Q?gWNuSpdPiPvNdCbBYm0CUElDco/roxHeEqP2eLqTtn0kwo/vdFc+KsKbv1?=
+ =?iso-8859-1?Q?q840cbgqs/a5q0dDdVGqzbIKlUhSDxtoj1Vh9W2AzubQ9aD3fqUS/IlRWN?=
+ =?iso-8859-1?Q?x80GMq/mSoeTT+mzo0L5gemMZh17BuuLkvQkUff44GuwGbyAEk8rCZOdmU?=
+ =?iso-8859-1?Q?ii0VCS+vtbUM4O8M2ssZ6nX7B7n8/F6HhUkFx2uUxR5+7SCkMjDR1ewbzB?=
+ =?iso-8859-1?Q?nPloY6dU43CmCg9yIqrPrriRZ7WvN7vpT6xJKoYmyHoj+vDyLpCg3a8Fyh?=
+ =?iso-8859-1?Q?4hcaSZKl1rLdqLLacVjdF+aw4w5YFV/Ya/PwxDZjwGNELVzaEE375w6D3M?=
+ =?iso-8859-1?Q?MSUUv2WBiPO1hiWdQXKbjSusmGgl0/pAs3HEoCPbiydpuGFWoeETbcoTRq?=
+ =?iso-8859-1?Q?pG+iy0q5Rxn7aeSf9QaMenzMc1SZUEBCuCeWkT00Ygm8N/u0gHWInGfUvF?=
+ =?iso-8859-1?Q?M5nDp21pJQHKdUG4NerYFYBb7QPlbCmiMlaV49M5dnSQlnbdA+FnbJnBwY?=
+ =?iso-8859-1?Q?VBiMky5CQnEjMWEUkkPEdEQm1WYhCYSNUAIiBRi5Y7UoeNMpJG3adEOuij?=
+ =?iso-8859-1?Q?TyEzsIbeHS2BKDEpKo6vTCHJd/qVKJEzZ/o9eXJFJFA2h8ayXlbZl/Cgk1?=
+ =?iso-8859-1?Q?FDcHR1rdhtN3VGa9APnwJB2nc3xIt7tz1G0yPrrTMEgvyS2E2ti/8inRW3?=
+ =?iso-8859-1?Q?VuMfxWSg3SggEVGqzzzAGx/ktMy41XtqQEDVN7k/eG2L+UmvIcrjnkaTNU?=
+ =?iso-8859-1?Q?USA0md5xXyJvWdv6QulPQSNbgJ36jTWsE/Xf43xYrWeaL69SKXj5MXU+hk?=
+ =?iso-8859-1?Q?Q3O9lYnGeZck3Gw7aawH2e5L9aBWpklXhUcoQ/cUYJuU/yWS+4of3H1VqU?=
+ =?iso-8859-1?Q?B4UkvOnniTMQQxbuCnCWC33BT+9N3yCgs4pQPXoSHUU5Du44UexNNndUrL?=
+ =?iso-8859-1?Q?NSWmokjwKOzjSvh8Vv6Ng9RfSXy/L98byf6Ic0I95Gt3D8Yj1MXnmhP/Lk?=
+ =?iso-8859-1?Q?rQrOOgEJIH72DI4H+9IFSloebyLC+4oJRqedUlm/K3Yi632mV2nXZpIxD5?=
+ =?iso-8859-1?Q?aXoAtKRHHg=3D=3D?=
 Content-Type: multipart/alternative;
- boundary="_000_DM4PR12MB6087DF53A89ED26EAF9F5E75DF682DM4PR12MB6087namp_"
+ boundary="_000_DS3PR11MB9646972DBCB11F6858A6B0DCFC682DS3PR11MB9646namp_"
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
+X-Exchange-RoutingPolicyChecked: EXfpDggVTUPHn9nMtcAMrBu2ALkngzXJsz3IuUM7qgD22aTLJSXQYxV6D3s8fw10+ngIaBBBzvFczIQ1grLxD9Ogzq5IW0bSmjptzLhIGd/aFBQtPQXh5EOSvHmmkuPhCt10SJv8cRGh1EcJqoTzso4E4UvmLn7gOH017KE7KJVsPffZJ1laGFWgDegm900o4KDEuI8T9xVydJ2c2r5unNfkvMI8QPFwRSjs+Cyy3pJtklPL8kxWWd+WQvDeXL8vUuP/BmR6Fi8f3udnRrg860F4JMGC/nuABn258dBZyCF6A1tPx6NPWLqQd6j8dkBqRLMC3YiijcXn/GmPOeLHBA==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6087.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebdc71d3-5153-4b92-176f-08df3a5770e2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2026 09:38:54.0050 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: DS3PR11MB9646.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3b0ac1e-1f32-4a37-cdad-08df3a57cb4f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2026 09:41:25.6534 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2Du/48oPHkNZoE6bRoBNULY2rLGo2q7Ztl3K9YcBSw5Fnpj3mCJaXWKDxOU5SVBhkNUtdGliSOFdfNmd+5DVGg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB834210
+X-MS-Exchange-CrossTenant-userprincipalname: uPDzRJbhX/dW3sxKnGKC9mzrBr05qJQTHzi6KZjbT0GFcGUOmSMTKOyFkyVAapwQOc0hkI3Ek6P25BhFYfEdUA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR11MB895587
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -136,736 +152,588 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	HTML_MESSAGE,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+	HTML_MESSAGE,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
---_000_DM4PR12MB6087DF53A89ED26EAF9F5E75DF682DM4PR12MB6087namp_
-Content-Type: text/plain; charset="Windows-1252"
+--_000_DS3PR11MB9646972DBCB11F6858A6B0DCFC682DS3PR11MB9646namp_
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
-Hi, Shuaisong
+Release status meeting minutes 2026-11-03
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-Thank youm for the v2, sorry for the review delay.
-The patch mostly  looks good to me.
+Agenda:
+- Release Dates
+- Subtrees
+- Roadmaps
+- LTS
+- Defects
+- Opens
 
-My concern is this:
+Participants:
+- ARM
+- Broadcom
+- Debian
+- Intel
+- Marvell
+- Nvidia
+- Red Hat
 
->>if (is_extmem)
->> +        goto out;
+Release Dates
+-------------
 
-It changes the existing behavior for the external memory.
-Before there was combining all the ranges within the single hugepage for th=
-e external memory also.
-With the patch applied it is not anymore.
+The following are the proposed working dates for 26.11:
 
-For the regular memory - we can accept your proposal.
-For the external memory - we should keep existing behavior, not skip combin=
-ing within a single huge page.
-I would also elaborate this approach and combine the ranges within the next=
- huge pages (if any), but
-not combine the huge page itself (for the external memory).
+| Date             | Milestone        | Description                     |
+|------------------|------------------|---------------------------------|
+| 31 August 2026   | RFC/v1 patches   | Proposal deadline               |
+| 16 October 2026  | 26.11-rc1        | API freeze                      |
+| 02 November 2026 | 26.11-rc2        | PMD features freeze             |
+| 10 November 2026 | 26.11-rc3        | Builtin apps features freeze    |
+| 18 November 2026 | 26.11-rc4        | Documentation ready             |
+| 25 November 2026 | 26.11.0          | Release                         |
 
-With best regards,
-Slava
-
-
-________________________________
-From: Shuaisong Yang <yangshuaisong@h-partners.com>
-Sent: Tuesday, November 3, 2026 9:35 AM
-To: yangxingui <yangxingui@huawei.com>; Slava Ovsiienko <viacheslavo@nvidia=
-.com>; david.marchand@redhat.com <david.marchand@redhat.com>; Dariusz Sosno=
-wski <dsosnowski@nvidia.com>; Bing Zhao <bingz@nvidia.com>; Ori Kam <orika@=
-nvidia.com>; Suanming Mou <suanmingm@nvidia.com>
-Cc: dev@dpdk.org <dev@dpdk.org>; stephen@networkplumber.org <stephen@networ=
-kplumber.org>; NBU-Contact-Thomas Monjalon (EXTERNAL) <thomas@monjalon.net>=
-; dmitry.kozliuk@gmail.com <dmitry.kozliuk@gmail.com>; david.marchand@redha=
-t.com <david.marchand@redhat.com>; fengchengwen@huawei.com <fengchengwen@hu=
-awei.com>; liuyonglong@huawei.com <liuyonglong@huawei.com>; kangfenglong@hu=
-awei.com <kangfenglong@huawei.com>; yangshuaisong <yangshuaisong@h-partners=
-.com>
-Subject: Re: [PATCH v2] common/mlx5: fix high SMMU TLB miss with mempool al=
-ignment
-
-> Hi Slava,
->
-> Gentle ping on this patch, following up on the earlier pings from
-> Sep 11 and Oct 27.
->
-> In the v1 discussion you mentioned the patch mostly looked good to
-> you and gave three suggestions =97 all of them are incorporated in v2
-> (see the changelog):
-> https://patches.dpdk.org/project/dpdk/patch/20260811085231.2260761-1-yang=
-xingui@huawei.com/
->
-> Our replies to your v1 comments, including the root cause analysis
-> (reg_end =3D=3D hugepage_end causing the alignment to be skipped), are
-> here:
-> https://patches.dpdk.org/project/dpdk/patch/20260612071434.2722918-1-yang=
-xingui@huawei.com/
->
-> The patch fixes a ~30% performance regression with CX7 under SMMU
-> (intra-NUMA pinning on Kunpeng SoC). It has been pending for about
-> three months =97 we'd really appreciate your final review. Happy to
-> dig further into why the hugepage placement differs between pinning
-> configurations, or provide more test data, if that helps.
->
-> Thanks!
-> Shuaisong & Xingui
-
-On 2026/10/27 19:32, Shuaisong Yang wrote:
-> Hi mlx5 team, just a gentle ping on this patch when you have a moment. Th=
-anks!
->
-> On 2026/9/11 14:33, yangxingui wrote:
->> Kindly ping for review...
->>
->> On 2026/8/11 16:52, Xingui Yang wrote:
->>> From: Shuaisong Yang <yangshuaisong@h-partners.com>
->>>
->>> On Kunpeng SoC with mlx CX7, dpdk-l3fwd with intra-NUMA core pinning
->>> under SMMU nonstrict/strict mode shows about 30% performance degradatio=
-n
->>> compared to cross-NUMA pinning. With SMMU disabled or passthrough mode,
->>> intra-NUMA performs as expected (slightly better than cross-NUMA).
->>>
->>> CX7 in NUMA1
->>> NUMA node0 CPU(s):    0-39
->>> NUMA node1 CPU(s):    40-79
->>>
->>> intra-NUMA:
->>> dpdk-l3fwd -l 40-55 -n 4 -a 0000:17:00.1,mprq_en=3D1 -- -p 0x1 -P \
->>>     --config=3D'(0,0,40),(0,1,41),(0,2,42),(0,3,43),(0,4,44),\
->>>               (0,5,45),(0,6,46),(0,7,47),(0,8,48),(0,9,49),\
->>>               (0,10,50),(0,11,51),(0,12,52),(0,13,53),\
->>>               (0,14,54),(0,15,55)' \
->>>     --rx-queue-size=3D4096 --tx-queue-size=3D4096 --rx-burst=3D64
->>>
->>> cross-NUMA:
->>> dpdk-l3fwd -l 11-26 -n 4 -a 0000:17:00.1,mprq_en=3D1 -- -p 0x1 -P \
->>>     --config=3D'(0,0,11),(0,1,12),(0,2,13),(0,3,14),(0,4,15),\
->>>               (0,5,16),(0,6,17),(0,7,18),(0,8,19),(0,9,20),\
->>>               (0,10,21),(0,11,22),(0,12,23),(0,13,24),\
->>>               (0,14,25),(0,15,26)' \
->>>     --rx-queue-size=3D4096 --tx-queue-size=3D4096 --rx-burst=3D64
->>>
->>> The root cause is that under SMMU enabled mode, the mempool allocated
->>> for intra-NUMA pinning is aligned to system page size instead of
->>> hugepage size, while cross-NUMA pinning correctly uses hugepage size
->>> alignment. This causes high TLB miss rates under SMMU.
->>>
->>> Align all memory ranges to hugepage boundaries during mempool
->>> registration to ensure hugepage_sz alignment, thereby reducing TLB
->>> misses and fixing the intra-NUMA performance degradation.
->>>
->>> Fixes: 690b2a88c2f7 ("common/mlx5: add mempool registration facilities"=
-)
->>> Cc: stable@dpdk.org
->>>
->>> Signed-off-by: Shuaisong Yang <yangshuaisong@h-partners.com>
->>> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
->>> ---
->>> v2:
->>> - Address review comments from Slava:
->>>    - Call rte_mem_virt2memseg_list() in a single point inside the loop.
->>>    - Skip the alignment block when hugepage_sz equals rte_mem_page_size=
-(),
->>>      since mlx5_mempool_get_chunks() has already done the alignment.
->>>    - Skip the alignment for external memory with early goto, since rang=
-es
->>>      are already aligned to the correct page size.
->>> ---
->>>   .mailmap                             |  1 +
->>>   drivers/common/mlx5/mlx5_common_mr.c | 72 +++++++++++++++++++--------=
--
->>>   2 files changed, 51 insertions(+), 22 deletions(-)
->>>
->>> diff --git a/.mailmap b/.mailmap
->>> index fcb3d1bb3f..c8ba648d3c 100644
->>> --- a/.mailmap
->>> +++ b/.mailmap
->>> @@ -1999,3 +1999,4 @@ Zongyu Wu <wuzongyu1@huawei.com>
->>>   Zorik Machulsky <zorik@amazon.com>
->>>   Zyta Szpak <zyta@marvell.com> <zr@semihalf.com>
->>>   Zyta Szpak <zyta@marvell.com> <zyta.szpak@semihalf.com>
->>> +Shuaisong Yang <yangshuaisong@h-partners.com>
->>> diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5=
-/mlx5_common_mr.c
->>> index aa2d5e88a4..f9e1ec7468 100644
->>> --- a/drivers/common/mlx5/mlx5_common_mr.c
->>> +++ b/drivers/common/mlx5/mlx5_common_mr.c
->>> @@ -1524,7 +1524,11 @@ mlx5_get_mempool_ranges(struct rte_mempool *mp, =
-bool is_extmem,
->>>    * @param[in] is_extmem
->>>    *   Whether the pool is contains only external pinned buffers.
->>>    * @param[out] out
->>> - *   Receives memory ranges to register, aligned to the system page si=
-ze.
->>> + *   Receives memory ranges to register. For non-external memory, rang=
-es
->>> + *   are aligned to the hugepage size if all ranges are on hugepages
->>> + *   of the same size, otherwise aligned to the system page size.
->>> + *   For external memory, ranges are kept as returned by
->>> + *   mlx5_get_mempool_ranges() (already aligned to the page size).
->>>    *   The caller must release them with free().
->>>    * @param[out] out_n
->>>    *   Receives the number of @p out items.
->>> @@ -1541,7 +1545,8 @@ mlx5_mempool_reg_analyze(struct rte_mempool *mp, =
-bool is_extmem,
->>>   {
->>>       struct mlx5_range *ranges =3D NULL;
->>>       unsigned int i, ranges_n =3D 0;
->>> -    struct rte_memseg_list *msl;
->>> +    bool same_hugepage_sz =3D true;
->>> +    uint64_t hugepage_sz =3D 0;
->>>         if (mlx5_get_mempool_ranges(mp, is_extmem, &ranges, &ranges_n) =
-< 0) {
->>>           DRV_LOG(ERR, "Cannot get address ranges for mempool %s",
->>> @@ -1550,34 +1555,57 @@ mlx5_mempool_reg_analyze(struct rte_mempool *mp=
-, bool is_extmem,
->>>       }
->>>       /* Check if the hugepage of the pool can be shared. */
->>>       *share_hugepage =3D false;
->>> -    msl =3D rte_mem_virt2memseg_list((void *)ranges[0].start);
->>> -    if (msl !=3D NULL) {
->>> -        uint64_t hugepage_sz =3D 0;
->>> +    if (is_extmem)
->>> +        goto out;
->>> +    /* Check that all ranges are on pages of the same size. */
->>> +    for (i =3D 0; i < ranges_n; i++) {
->>> +        struct rte_memseg_list *range_msl =3D
->>> +            rte_mem_virt2memseg_list((void *)ranges[i].start);
->>> +
->>> +        if (range_msl =3D=3D NULL) {
->>> +            same_hugepage_sz =3D false;
->>> +            break;
->>> +        }
->>> +        if (hugepage_sz =3D=3D 0) {
->>> +            hugepage_sz =3D range_msl->page_sz;
->>> +        } else if (range_msl->page_sz !=3D hugepage_sz) {
->>> +            same_hugepage_sz =3D false;
->>> +            break;
->>> +        }
->>> +    }
->>> +    /*
->>> +     * Align ranges to the hugepage boundaries and merge adjacent ones=
-.
->>> +     * If the entire pool fits in a single hugepage, the MR for this
->>> +     * hugepage can be shared across mempools.
->>> +     */
->>> +    if (same_hugepage_sz && hugepage_sz > rte_mem_page_size()) {
->>> +        unsigned int orig_ranges_n =3D ranges_n;
->>>   -        /* Check that all ranges are on pages of the same size. */
->>>           for (i =3D 0; i < ranges_n; i++) {
->>> -            if (hugepage_sz !=3D 0 && hugepage_sz !=3D msl->page_sz)
->>> -                break;
->>> -            hugepage_sz =3D msl->page_sz;
->>> +            ranges[i].start =3D RTE_ALIGN_FLOOR(ranges[i].start,
->>> +                              hugepage_sz);
->>> +            ranges[i].end =3D RTE_ALIGN_CEIL(ranges[i].end,
->>> +                            hugepage_sz);
->>>           }
->>> -        if (i =3D=3D ranges_n) {
->>> -            /*
->>> -             * If the entire pool is within one hugepage,
->>> -             * combine all ranges into one of the hugepage size.
->>> -             */
->>> -            uintptr_t reg_start =3D ranges[0].start;
->>> -            uintptr_t reg_end =3D ranges[ranges_n - 1].end;
->>> -            uintptr_t hugepage_start =3D
->>> -                RTE_ALIGN_FLOOR(reg_start, hugepage_sz);
->>> -            uintptr_t hugepage_end =3D hugepage_start + hugepage_sz;
->>> -            if (reg_end < hugepage_end) {
->>> -                ranges[0].start =3D hugepage_start;
->>> +        ranges_n =3D 1;
->>> +        for (i =3D 1; i < orig_ranges_n; i++) {
->>> +            if (ranges[ranges_n - 1].end >=3D ranges[i].start)
->>> +                ranges[ranges_n - 1].end =3D
->>> +                    RTE_MAX(ranges[ranges_n - 1].end,
->>> +                        ranges[i].end);
->>> +            else
->>> +                ranges[ranges_n++] =3D ranges[i];
->>> +        }
->>> +        if (ranges_n =3D=3D 1) {
->>> +            uintptr_t hugepage_end =3D ranges[0].start + hugepage_sz;
->>> +
->>> +            if (ranges[0].end <=3D hugepage_end) {
->>>                   ranges[0].end =3D hugepage_end;
->>> -                ranges_n =3D 1;
->>>                   *share_hugepage =3D true;
->>>               }
->>>           }
->>>       }
->>> +out:
->>>       *out =3D ranges;
->>>       *out_n =3D ranges_n;
->>>       return 0;
->>>
->
+See https://core.dpdk.org/roadmap/
 
 
---_000_DM4PR12MB6087DF53A89ED26EAF9F5E75DF682DM4PR12MB6087namp_
-Content-Type: text/html; charset="Windows-1252"
+Subtrees
+--------
+
+- next-net
+  - No update.
+
+- next-net-intel
+  - Merged for RC2.
+  - 15 patches in review/waiting.
+
+- next-net-mlx
+  - Merged for RC2.
+  - 10 patches in review/waiting.
+
+- next-broadcom
+  - Merged for RC2.
+  - 5 patches in review.
+
+- next-net-mvl
+  - Merged for RC2.
+  - 10 patches in review/waiting.
+
+- next-eventdev
+  - No update.
+
+- next-virtio
+  - Merged for RC2.
+
+- next-crypto
+  - IPSecMB patches to merge.
+
+- next-dts
+  - Patches merged to RC2.
+  - Merging/reviewing other patches.
+
+- main
+  - RC2 released 2026-11-02.
+  - Regression in libtap
+  - Looking at warnings in interrupts.
+  - Working on ethdev multi-queue checks.
+  - New but late patch for 1.6Tbps support
+
+
+Other
+-----
+  - None.
+
+LTS
+---
+
+See also: https://core.dpdk.org/roadmap/#stable
+
+LTS versions ongoing/released:
+
+- 25.11.4 - Available.
+- 24.11.8 - Available.
+- 23.11.8 - Available.
+
+Older releases:
+- 20.11.10 - Will only be updated with CVE and critical fixes.
+- 19.11.14 - Will only be updated with CVE and critical fixes.
+
+- Distros
+  - Debian 13 contains DPDK v24.11
+  - Ubuntu 25.04 contains DPDK v24.11
+  - Ubuntu 24.04 LTS contains DPDK v23.11
+  - RHEL 9 contains DPDK 24.11
+
+Defects
+-------
+
+- Bugzilla links, 'Bugs',  added for hosted projects
+  - https://www.dpdk.org/hosted-projects/
+
+
+
+DPDK Release Status Meetings
+----------------------------
+
+The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
+the
+status of the main tree and sub-trees, and for project managers to track
+progress or milestone dates.
+
+The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
+.jit.si/DPDK
+
+You don't need an invite to join the meeting but if you want a calendar rem=
+inder just
+send an email to "John McNamara <john.mcnamara@intel.com>" for the invite.
+
+
+--_000_DS3PR11MB9646972DBCB11F6858A6B0DCFC682DS3PR11MB9646namp_
+Content-Type: text/html; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
 <html>
 <head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DWindows-1=
-252">
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
 <style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
 ttom:0;} </style>
 </head>
 <body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Hi, Shuaisong</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Release status meeting minutes 2026-11-03</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
 <br>
 </div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Thank youm for the v2, sorry for the review delay.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-The patch mostly&nbsp; looks good to me.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Agenda:</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Release Dates</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Subtrees</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Roadmaps</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- LTS</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Defects</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Opens</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
 <br>
 </div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-My concern is this:</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Participants:</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- ARM</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Broadcom</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Debian</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Intel</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Marvell</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Nvidia</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Red Hat</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
 <br>
 </div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-&gt;&gt;if (is_extmem)<br>
-&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; goto out;</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Release Dates</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+-------------</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
 <br>
 </div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-It changes the existing behavior for the external memory.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Before there was combining all the ranges within the single hugepage for th=
-e external memory also.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-With the patch applied it is not anymore.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+The following are the proposed working dates for 26.11:</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
 <br>
 </div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-For the regular memory - we can accept your proposal.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-For the external memory - we should keep existing behavior, not skip combin=
-ing within a single huge page.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-I would also elaborate this approach and combine the ranges within the next=
- huge pages (if any), but</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-not combine the huge page itself (for the external memory).</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| Date &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Milestone &nbsp; &nbsp; =
+&nbsp; &nbsp;| Description &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;=
+ &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+|------------------|------------------|---------------------------------|</=
+div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 31 August 2026 &nbsp; | RFC/v1 patches &nbsp; | Proposal deadline &nbsp; =
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 16 October 2026 &nbsp;| 26.11-rc1 &nbsp; &nbsp; &nbsp; &nbsp;| API freeze=
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbs=
+p;|</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 02 November 2026 | 26.11-rc2 &nbsp; &nbsp; &nbsp; &nbsp;| PMD features fr=
+eeze &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 10 November 2026 | 26.11-rc3 &nbsp; &nbsp; &nbsp; &nbsp;| Builtin apps fe=
+atures freeze &nbsp; &nbsp;|</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 18 November 2026 | 26.11-rc4 &nbsp; &nbsp; &nbsp; &nbsp;| Documentation r=
+eady &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+| 25 November 2026 | 26.11.0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Release &n=
+bsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =
+&nbsp; |</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
 <br>
 </div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+See https://core.dpdk.org/roadmap/</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Subtrees</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+--------</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net-intel</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Merged for RC2.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 15 patches in review/waiting.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net-mlx</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Merged for RC2.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 10 patches in review/waiting.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-broadcom</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Merged for RC2.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 5 patches in review.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net-mvl</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Merged for RC2.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 10 patches in review/waiting.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-eventdev</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-virtio</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Merged for RC2.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-crypto</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - IPSecMB patches to merge.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- next-dts</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Patches merged to RC2.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Merging/reviewing other patches.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- main</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - RC2 released 2026-11-02.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Regression in libtap</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Looking at warnings in interrupts.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Working on ethdev multi-queue checks.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - New but late patch for 1.6Tbps support</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Other</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+-----</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - None.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+LTS</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+---</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+See also: https://core.dpdk.org/roadmap/#stable</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+LTS versions ongoing/released:</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- 25.11.4 - Available.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- 24.11.8 - Available.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- 23.11.8 - Available.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Older releases:</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- 20.11.10 - Will only be updated with CVE and critical fixes.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- 19.11.14 - Will only be updated with CVE and critical fixes.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Distros</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Debian 13 contains DPDK v24.11</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Ubuntu 25.04 contains DPDK v24.11</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Ubuntu 24.04 LTS contains DPDK v23.11</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - RHEL 9 contains DPDK 24.11</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+Defects</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+-------</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+- Bugzilla links, 'Bugs', &nbsp;added for hosted projects</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - https://www.dpdk.org/hosted-projects/</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+DPDK Release Status Meetings</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+----------------------------</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
+the</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+status of the main tree and sub-trees, and for project managers to track</d=
+iv>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+progress or milestone dates.</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
+.jit.si/DPDK</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+You don't need an invite to join the meeting but if you want a calendar rem=
+inder just</div>
+<div class=3D"elementToProof" style=3D"font-family: &quot;Courier New&quot;=
+, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
+send an email to &quot;John McNamara &lt;john.mcnamara@intel.com&gt;&quot; =
+for the invite.</div>
 <div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
 nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
 olor: rgb(0, 0, 0);">
-With best regards,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Slava</div>
-<div><br>
-</div>
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<hr style=3D"display: inline-block; width: 98%;">
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<b>From:</b> Shuaisong Yang &lt;yangshuaisong@h-partners.com&gt;<br>
-<b>Sent:</b> Tuesday, November 3, 2026 9:35 AM<br>
-<b>To:</b> yangxingui &lt;yangxingui@huawei.com&gt;; Slava Ovsiienko &lt;vi=
-acheslavo@nvidia.com&gt;; david.marchand@redhat.com &lt;david.marchand@redh=
-at.com&gt;; Dariusz Sosnowski &lt;dsosnowski@nvidia.com&gt;; Bing Zhao &lt;=
-bingz@nvidia.com&gt;; Ori Kam &lt;orika@nvidia.com&gt;; Suanming Mou
- &lt;suanmingm@nvidia.com&gt;<br>
-<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;; stephen@networkplumber.org &l=
-t;stephen@networkplumber.org&gt;; NBU-Contact-Thomas Monjalon (EXTERNAL) &l=
-t;thomas@monjalon.net&gt;; dmitry.kozliuk@gmail.com &lt;dmitry.kozliuk@gmai=
-l.com&gt;; david.marchand@redhat.com &lt;david.marchand@redhat.com&gt;;
- fengchengwen@huawei.com &lt;fengchengwen@huawei.com&gt;; liuyonglong@huawe=
-i.com &lt;liuyonglong@huawei.com&gt;; kangfenglong@huawei.com &lt;kangfengl=
-ong@huawei.com&gt;; yangshuaisong &lt;yangshuaisong@h-partners.com&gt;<br>
-<b>Subject:</b> Re: [PATCH v2] common/mlx5: fix high SMMU TLB miss with mem=
-pool alignment
-</div>
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-size: 11pt;">&gt; Hi Slava,<br>
-&gt;<br>
-&gt; Gentle ping on this patch, following up on the earlier pings from<br>
-&gt; Sep 11 and Oct 27.<br>
-&gt;<br>
-&gt; In the v1 discussion you mentioned the patch mostly looked good to<br>
-&gt; you and gave three suggestions =97 all of them are incorporated in v2<=
-br>
-&gt; (see the changelog):<br>
-&gt; <a href=3D"https://patches.dpdk.org/project/dpdk/patch/20260811085231.=
-2260761-1-yangxingui@huawei.com/" id=3D"OWAe7ac1763-f872-6bc4-4c32-04f9f3cb=
-249a" class=3D"OWAAutoLink" data-auth=3D"NotApplicable">
-https://patches.dpdk.org/project/dpdk/patch/20260811085231.2260761-1-yangxi=
-ngui@huawei.com/</a><br>
-&gt;<br>
-&gt; Our replies to your v1 comments, including the root cause analysis<br>
-&gt; (reg_end =3D=3D hugepage_end causing the alignment to be skipped), are=
-<br>
-&gt; here:<br>
-&gt; <a href=3D"https://patches.dpdk.org/project/dpdk/patch/20260612071434.=
-2722918-1-yangxingui@huawei.com/" id=3D"OWAca175ee0-03cc-ed7f-d78f-1b29e60e=
-ecee" class=3D"OWAAutoLink" data-auth=3D"NotApplicable">
-https://patches.dpdk.org/project/dpdk/patch/20260612071434.2722918-1-yangxi=
-ngui@huawei.com/</a><br>
-&gt;<br>
-&gt; The patch fixes a ~30% performance regression with CX7 under SMMU<br>
-&gt; (intra-NUMA pinning on Kunpeng SoC). It has been pending for about<br>
-&gt; three months =97 we'd really appreciate your final review. Happy to<br=
->
-&gt; dig further into why the hugepage placement differs between pinning<br=
->
-&gt; configurations, or provide more test data, if that helps.<br>
-&gt;<br>
-&gt; Thanks!<br>
-&gt; Shuaisong &amp; Xingui<br>
-<br>
-On 2026/10/27 19:32, Shuaisong Yang wrote:<br>
-&gt; Hi mlx5 team, just a gentle ping on this patch when you have a moment.=
- Thanks!<br>
-&gt;<br>
-&gt; On 2026/9/11 14:33, yangxingui wrote:<br>
-&gt;&gt; Kindly ping for review...<br>
-&gt;&gt;<br>
-&gt;&gt; On 2026/8/11 16:52, Xingui Yang wrote:<br>
-&gt;&gt;&gt; From: Shuaisong Yang &lt;yangshuaisong@h-partners.com&gt;<br>
-&gt;&gt;&gt;<br>
-&gt;&gt;&gt; On Kunpeng SoC with mlx CX7, dpdk-l3fwd with intra-NUMA core p=
-inning<br>
-&gt;&gt;&gt; under SMMU nonstrict/strict mode shows about 30% performance d=
-egradation<br>
-&gt;&gt;&gt; compared to cross-NUMA pinning. With SMMU disabled or passthro=
-ugh mode,<br>
-&gt;&gt;&gt; intra-NUMA performs as expected (slightly better than cross-NU=
-MA).<br>
-&gt;&gt;&gt;<br>
-&gt;&gt;&gt; CX7 in NUMA1<br>
-&gt;&gt;&gt; NUMA node0 CPU(s):&nbsp;&nbsp;&nbsp; 0-39<br>
-&gt;&gt;&gt; NUMA node1 CPU(s):&nbsp;&nbsp;&nbsp; 40-79<br>
-&gt;&gt;&gt;<br>
-&gt;&gt;&gt; intra-NUMA:<br>
-&gt;&gt;&gt; dpdk-l3fwd -l 40-55 -n 4 -a 0000:17:00.1,mprq_en=3D1 -- -p 0x1=
- -P \<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp; --config=3D'(0,0,40),(0,1,41),(0,2,42),(0,3=
-,43),(0,4,44),\<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; (0,5,45),(0,6,46),(0,7,47),(0,8,48),(0,9,49),\<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; (0,10,50),(0,11,51),(0,12,52),(0,13,53),\<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; (0,14,54),(0,15,55)' \<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp; --rx-queue-size=3D4096 --tx-queue-size=3D40=
-96 --rx-burst=3D64<br>
-&gt;&gt;&gt;<br>
-&gt;&gt;&gt; cross-NUMA:<br>
-&gt;&gt;&gt; dpdk-l3fwd -l 11-26 -n 4 -a 0000:17:00.1,mprq_en=3D1 -- -p 0x1=
- -P \<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp; --config=3D'(0,0,11),(0,1,12),(0,2,13),(0,3=
-,14),(0,4,15),\<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; (0,5,16),(0,6,17),(0,7,18),(0,8,19),(0,9,20),\<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; (0,10,21),(0,11,22),(0,12,23),(0,13,24),\<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; (0,14,25),(0,15,26)' \<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp; --rx-queue-size=3D4096 --tx-queue-size=3D40=
-96 --rx-burst=3D64<br>
-&gt;&gt;&gt;<br>
-&gt;&gt;&gt; The root cause is that under SMMU enabled mode, the mempool al=
-located<br>
-&gt;&gt;&gt; for intra-NUMA pinning is aligned to system page size instead =
-of<br>
-&gt;&gt;&gt; hugepage size, while cross-NUMA pinning correctly uses hugepag=
-e size<br>
-&gt;&gt;&gt; alignment. This causes high TLB miss rates under SMMU.<br>
-&gt;&gt;&gt;<br>
-&gt;&gt;&gt; Align all memory ranges to hugepage boundaries during mempool<=
-br>
-&gt;&gt;&gt; registration to ensure hugepage_sz alignment, thereby reducing=
- TLB<br>
-&gt;&gt;&gt; misses and fixing the intra-NUMA performance degradation.<br>
-&gt;&gt;&gt;<br>
-&gt;&gt;&gt; Fixes: 690b2a88c2f7 (&quot;common/mlx5: add mempool registrati=
-on facilities&quot;)<br>
-&gt;&gt;&gt; Cc: stable@dpdk.org<br>
-&gt;&gt;&gt;<br>
-&gt;&gt;&gt; Signed-off-by: Shuaisong Yang &lt;yangshuaisong@h-partners.com=
-&gt;<br>
-&gt;&gt;&gt; Signed-off-by: Xingui Yang &lt;yangxingui@huawei.com&gt;<br>
-&gt;&gt;&gt; ---<br>
-&gt;&gt;&gt; v2:<br>
-&gt;&gt;&gt; - Address review comments from Slava:<br>
-&gt;&gt;&gt; &nbsp;&nbsp; - Call rte_mem_virt2memseg_list() in a single poi=
-nt inside the loop.<br>
-&gt;&gt;&gt; &nbsp;&nbsp; - Skip the alignment block when hugepage_sz equal=
-s rte_mem_page_size(),<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp; since mlx5_mempool_get_chunks() has a=
-lready done the alignment.<br>
-&gt;&gt;&gt; &nbsp;&nbsp; - Skip the alignment for external memory with ear=
-ly goto, since ranges<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp; are already aligned to the correct pa=
-ge size.<br>
-&gt;&gt;&gt; ---<br>
-&gt;&gt;&gt; &nbsp; .mailmap&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp; 1 +<br>
-&gt;&gt;&gt; &nbsp; drivers/common/mlx5/mlx5_common_mr.c | 72 +++++++++++++=
-++++++---------<br>
-&gt;&gt;&gt; &nbsp; 2 files changed, 51 insertions(+), 22 deletions(-)<br>
-&gt;&gt;&gt;<br>
-&gt;&gt;&gt; diff --git a/.mailmap b/.mailmap<br>
-&gt;&gt;&gt; index fcb3d1bb3f..c8ba648d3c 100644<br>
-&gt;&gt;&gt; --- a/.mailmap<br>
-&gt;&gt;&gt; +++ b/.mailmap<br>
-&gt;&gt;&gt; @@ -1999,3 +1999,4 @@ Zongyu Wu &lt;wuzongyu1@huawei.com&gt;<b=
-r>
-&gt;&gt;&gt; &nbsp; Zorik Machulsky &lt;zorik@amazon.com&gt;<br>
-&gt;&gt;&gt; &nbsp; Zyta Szpak &lt;zyta@marvell.com&gt; &lt;zr@semihalf.com=
-&gt;<br>
-&gt;&gt;&gt; &nbsp; Zyta Szpak &lt;zyta@marvell.com&gt; &lt;zyta.szpak@semi=
-half.com&gt;<br>
-&gt;&gt;&gt; +Shuaisong Yang &lt;yangshuaisong@h-partners.com&gt;<br>
-&gt;&gt;&gt; diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/co=
-mmon/mlx5/mlx5_common_mr.c<br>
-&gt;&gt;&gt; index aa2d5e88a4..f9e1ec7468 100644<br>
-&gt;&gt;&gt; --- a/drivers/common/mlx5/mlx5_common_mr.c<br>
-&gt;&gt;&gt; +++ b/drivers/common/mlx5/mlx5_common_mr.c<br>
-&gt;&gt;&gt; @@ -1524,7 +1524,11 @@ mlx5_get_mempool_ranges(struct rte_memp=
-ool *mp, bool is_extmem,<br>
-&gt;&gt;&gt; &nbsp;&nbsp; * @param[in] is_extmem<br>
-&gt;&gt;&gt; &nbsp;&nbsp; *&nbsp;&nbsp; Whether the pool is contains only e=
-xternal pinned buffers.<br>
-&gt;&gt;&gt; &nbsp;&nbsp; * @param[out] out<br>
-&gt;&gt;&gt; - *&nbsp;&nbsp; Receives memory ranges to register, aligned to=
- the system page size.<br>
-&gt;&gt;&gt; + *&nbsp;&nbsp; Receives memory ranges to register. For non-ex=
-ternal memory, ranges<br>
-&gt;&gt;&gt; + *&nbsp;&nbsp; are aligned to the hugepage size if all ranges=
- are on hugepages<br>
-&gt;&gt;&gt; + *&nbsp;&nbsp; of the same size, otherwise aligned to the sys=
-tem page size.<br>
-&gt;&gt;&gt; + *&nbsp;&nbsp; For external memory, ranges are kept as return=
-ed by<br>
-&gt;&gt;&gt; + *&nbsp;&nbsp; mlx5_get_mempool_ranges() (already aligned to =
-the page size).<br>
-&gt;&gt;&gt; &nbsp;&nbsp; *&nbsp;&nbsp; The caller must release them with f=
-ree().<br>
-&gt;&gt;&gt; &nbsp;&nbsp; * @param[out] out_n<br>
-&gt;&gt;&gt; &nbsp;&nbsp; *&nbsp;&nbsp; Receives the number of @p out items=
-.<br>
-&gt;&gt;&gt; @@ -1541,7 +1545,8 @@ mlx5_mempool_reg_analyze(struct rte_memp=
-ool *mp, bool is_extmem,<br>
-&gt;&gt;&gt; &nbsp; {<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct mlx5_range *ranges =3D N=
-ULL;<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unsigned int i, ranges_n =3D 0;=
-<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp; struct rte_memseg_list *msl;<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp; bool same_hugepage_sz =3D true;<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp; uint64_t hugepage_sz =3D 0;<br>
-&gt;&gt;&gt; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (mlx5_get_mempool_ran=
-ges(mp, is_extmem, &amp;ranges, &amp;ranges_n) &lt; 0) {<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DRV_LOG=
-(ERR, &quot;Cannot get address ranges for mempool %s&quot;,<br>
-&gt;&gt;&gt; @@ -1550,34 +1555,57 @@ mlx5_mempool_reg_analyze(struct rte_me=
-mpool *mp, bool is_extmem,<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Check if the hugepage of the=
- pool can be shared. */<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *share_hugepage =3D false;<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp; msl =3D rte_mem_virt2memseg_list((void *)r=
-anges[0].start);<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp; if (msl !=3D NULL) {<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; uint64_t hugepage_=
-sz =3D 0;<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp; if (is_extmem)<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; goto out;<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp; /* Check that all ranges are on pages of t=
-he same size. */<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp; for (i =3D 0; i &lt; ranges_n; i++) {<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct rte_memseg_=
-list *range_msl =3D<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; rte_mem_virt2memseg_list((void *)ranges[i].start);<br>
-&gt;&gt;&gt; +<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (range_msl =3D=
-=3D NULL) {<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; same_hugepage_sz =3D false;<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; break;<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (hugepage_sz =
-=3D=3D 0) {<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; hugepage_sz =3D range_msl-&gt;page_sz;<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else if (range_m=
-sl-&gt;page_sz !=3D hugepage_sz) {<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; same_hugepage_sz =3D false;<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; break;<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp; }<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp; /*<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp; * Align ranges to the hugepage bound=
-aries and merge adjacent ones.<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp; * If the entire pool fits in a singl=
-e hugepage, the MR for this<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp; * hugepage can be shared across memp=
-ools.<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp; */<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp; if (same_hugepage_sz &amp;&amp; hugepage_s=
-z &gt; rte_mem_page_size()) {<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unsigned int orig_=
-ranges_n =3D ranges_n;<br>
-&gt;&gt;&gt; &nbsp; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Check th=
-at all ranges are on pages of the same size. */<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (i =
-=3D 0; i &lt; ranges_n; i++) {<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; if (hugepage_sz !=3D 0 &amp;&amp; hugepage_sz !=3D msl-&gt;page_sz)<b=
-r>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break;<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; hugepage_sz =3D msl-&gt;page_sz;<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; ranges[i].start =3D RTE_ALIGN_FLOOR(ranges[i].start,<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hugepage_sz);<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; ranges[i].end =3D RTE_ALIGN_CEIL(ranges[i].end,<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp; hugepage_sz);<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (i =3D=3D range=
-s_n) {<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; /*<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp; * If the entire pool is within one hugepage,<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp; * combine all ranges into one of the hugepage size.<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp; */<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; uintptr_t reg_start =3D ranges[0].start;<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; uintptr_t reg_end =3D ranges[ranges_n - 1].end;<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; uintptr_t hugepage_start =3D<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_ALIGN_FLOOR(reg_start, hugepage_sz);<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; uintptr_t hugepage_end =3D hugepage_start + hugepage_sz;<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; if (reg_end &lt; hugepage_end) {<br>
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ranges[0].start =3D hugepage_start;<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ranges_n =3D 1;<br=
->
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (i =3D 1; i &l=
-t; orig_ranges_n; i++) {<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; if (ranges[ranges_n - 1].end &gt;=3D ranges[i].start)<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ranges[ranges_n - 1].end =3D<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_MAX(ranges[ranges=
-_n - 1].end,<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p; ranges[i].end);<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; else<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ranges[ranges_n++] =3D ranges[i];<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (ranges_n =3D=
-=3D 1) {<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; uintptr_t hugepage_end =3D ranges[0].start + hugepage_sz;<br>
-&gt;&gt;&gt; +<br>
-&gt;&gt;&gt; +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; if (ranges[0].end &lt;=3D hugepage_end) {<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ranges[0].end =3D hugepage_end;<br=
->
-&gt;&gt;&gt; -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ranges_n =3D 1;<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *share_hugepage =3D true;<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; }<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&gt;&gt;&gt; +out:<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *out =3D ranges;<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; *out_n =3D ranges_n;<br>
-&gt;&gt;&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;<br>
-&gt;&gt;&gt;<br>
-&gt;<br>
 <br>
 </div>
 </body>
 </html>
 
---_000_DM4PR12MB6087DF53A89ED26EAF9F5E75DF682DM4PR12MB6087namp_--
+--_000_DS3PR11MB9646972DBCB11F6858A6B0DCFC682DS3PR11MB9646namp_--
