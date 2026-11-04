@@ -2,47 +2,50 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB7B606A31B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 02:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFA3606A326
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 02:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=3I4/MlUp
+	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=zt3LUNfy
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20EB340281;
-	Wed,  4 Nov 2026 03:05:16 +0100 (CET)
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com
- [113.46.200.221])
- by mails.dpdk.org (Postfix) with ESMTPS id EFE5F4026E;
- Wed,  4 Nov 2026 03:05:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9476E40281;
+	Wed,  4 Nov 2026 03:08:58 +0100 (CET)
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
+ [113.46.200.223])
+ by mails.dpdk.org (Postfix) with ESMTPS id CE92F4026E
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 03:08:56 +0100 (CET)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=NUCZZf7Spx4msoitZJ58RMAm3pODzc65bboM6vy9j8c=;
- b=3I4/MlUpGkWNYCR2HfLAaBwzbkynefun3t5+itCPHgWvWdOkIIJFQZ1DngrNW4NPYfe78tTYv
- Lk39NahPjlmOCUXBSVuxB7Php3+cRrfKvi7qrgOeFLsl7/AHQNSK+CaCVjgfkD0PLHFGNM+x5/a
- QuKz16I51Ve2OzzmrLcrMQs=
-Received: from mail.maildlp.com (unknown [172.19.163.104])
- by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4jK80J2FxkzRhV0;
- Wed,  4 Nov 2026 10:05:04 +0800 (CST)
+ bh=oCkrqQLbcp8jgvS3FLct9k+tRRgE4jK3xa8BVvaDbeo=;
+ b=zt3LUNfyrXoIH2xrjpx8S0C/RRM/X8TpNuCqRhN0V0ABeB01JbGmpYBZzjCMrQaiMaqSjeaTt
+ wMxPvTKNDgBFY1nvU5hhp31XoxAcOQqnVN6hM1bAEeraHZ7764yv1RjWW0G45pgEd7jgUiO8ekD
+ UNdOJ8fkHDy4T34oKyZkyp8=
+Received: from mail.maildlp.com (unknown [172.19.163.200])
+ by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4jK84V2PVRzmVZw;
+ Wed,  4 Nov 2026 10:08:42 +0800 (CST)
 Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id 5F4B14056E;
- Wed,  4 Nov 2026 10:05:10 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id D82464055B;
+ Wed,  4 Nov 2026 10:08:52 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Wed, 4 Nov 2026 10:05:09 +0800
-Message-ID: <fe4620be-0f0b-4061-b25f-9e1ac26f7390@huawei.com>
-Date: Wed, 4 Nov 2026 10:05:08 +0800
+ 15.2.2562.45; Wed, 4 Nov 2026 10:08:52 +0800
+Message-ID: <714a77be-ce37-4ebe-8cb5-96fbc6cdffe9@huawei.com>
+Date: Wed, 4 Nov 2026 10:08:51 +0800
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 000/227] use NUMA node terminology across the tree
-To: Aaron Conole <aconole@redhat.com>, Chengwen Feng <chengwen.feng@linux.dev>
-CC: <thomas@monjalon.net>, <konstantin.v.ananyev@yandex.ru>, <dev@dpdk.org>,
- <ci@dpdk.org>
-References: <20261103145306.487255-1-chengwen.feng@linux.dev>
- <f7t7bitkhzf.fsf@aconole-thinkpadt14gen4.rmtusnh.csb>
-Content-Language: en-US
+Subject: Re: [PATCH v3] examples/l3fwd: dynamic NUMA-aware alloc lcore_conf
 From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <f7t7bitkhzf.fsf@aconole-thinkpadt14gen4.rmtusnh.csb>
+To: Thomas Monjalon <thomas@monjalon.net>, Konstantin Ananyev
+ <konstantin.v.ananyev@yandex.ru>
+CC: <stephen@networkplumber.org>, <dev@dpdk.org>
+References: <20260623032301.17570-1-fengchengwen@huawei.com>
+ <xvTXknUbSMSD_Fg-tQD_aw@monjalon.net>
+ <4687e093-ac82-4ac7-aac5-838be6c52433@huawei.com>
+ <ksiekRtOSqOSIIkKFdXdAw@monjalon.net>
+ <cf705046-36bd-4b38-bc56-6106bbba335b@huawei.com>
+Content-Language: en-US
+In-Reply-To: <cf705046-36bd-4b38-bc56-6106bbba335b@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
@@ -63,48 +66,57 @@ X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On 11/4/2026 12:16 AM, Aaron Conole wrote:
-> Chengwen Feng <chengwen.feng@linux.dev> writes:
-> 
->> From: Chengwen Feng <fengchengwen@huawei.com>
+On 11/2/2026 12:13 PM, fengchengwen wrote:
+> On 11/1/2026 10:26 PM, Thomas Monjalon wrote:
+>> 31/10/2026 02:37, fengchengwen:
+>>> On 10/30/2026 8:59 PM, Thomas Monjalon wrote:
+>>>> 30/10/2026 11:52, Konstantin Ananyev:
+>>>>>> BTW: SOCKET_ID_ANY seemed need redefined as RTE_SOCKET_ID_ANY, If there is no
+>>>>>>       objection, I will make the changes in the next independent patch.
+>>>>>
+>>>>> Yep, that's probably a good thing to do, and probably 26.11 is a good 
+>>>>> time to do that.
+>>>>> BTW, I think it was discussed before, but I can't remember why we didn't 
+>>>>> fix it so far.
+>>>>
+>>>> 1/ We should not break this API easily as it is used a lot.
+>>>> If we do the change we need to keep the compat alias for some time.
+>>>>
+>>>> 2/ The term SOCKET is used in many places instead of NUMA.
+>>>> There is a confusion between CPU and memory which deserves to be fixed.
+>>>>
+>>>
+>>> My plan is a 3-patch series:
+>>> 1. Add RTE_SOCKET_ID_ANY and deprecation documentation.
+>>> 2. Replace all in-tree SOCKET_ID_ANY with RTE_SOCKET_ID_ANY.
+>>> 3. Mark SOCKET_ID_ANY with RTE_DEPRECATED after in-tree migration completes,
+>>>    so warnings only hit out-of-tree users while DPDK itself builds cleanly.
+>>>
+>>> I will avoid the bigger "socket -> NUMA node" terminology refactor in this series.
+>>> That would be a massive semantic change with large churn, better handled via separate
+>>> RFC later.
+>>>
+>>> If this plan looks acceptable, I will start the implementation.
 >>
->> The DPDK tree conflates CPU sockets with NUMA memory nodes: public
->> APIs, structure fields and macros are named after "socket" although
->> they actually identify a NUMA node (e.g. rte_socket_id(), the
->> socket_id field of rte_memzone, SOCKET_ID_ANY). This naming misleads
->> application developers and pollutes vendor code that targets NUMA
->> topologies.
->>
->> This series renames the terminology tree-wide:
+>> My doubt is that while introducing a new API,
+>> it may be better to apply it in correct places with correct definition,
+>> avoiding mixing CPU and memory.
 > 
-> Do not do this again.
-> 
-> I have set the robot from considering patches from you for the next 227
-> hours.  One for each hour that a patch-by-patch test would take.  Do not
-> repost this series again and expect the github robot to run for it.
-> Please work with existing maintainers to come up with a plan for each
-> area rename.
-> 
-> CI resources are shared, and in the case of the github robot, they are
-> shared among OVS, OVN, and DPDK.  Additionally, a 227 patch series is
-> completely unreviewable, and completely inconsiderate of reviewers time.
-> Anything above 15 patches is, truly - who can keep that much details in
-> mind.
+> OK, I will try to implement it (avoiding mixing CPU and memory)
 
-Thanks for your feedback. This 227-patch set exposes the full scope of
-the NUMA terminology cleanup, as a starting point for discussion and
-planning. The scope is indeed large, and this rework direction was
-previously discussed with Thomas and Konstantin.
+I have sent out the full patch series for the tree-wide NUMA terminology
+refactor as we briefly discussed. The overall modification scope is
+quite large, touching many areas across DPDK.
 
-Could you please lift the robot block for this posting?
-I will wait for community consensus before splitting the changes into
-proper batches for subsequent review.
-
-I apologize for the heavy load imposed on shared CI resources.
+I understand this brings substantial code churn and API compatibility
+concerns. I would appreciate hearing feedback and guidance from the
+community on how we should proceed.
 
 Regards,
 Chengwen
 
 > 
+>>
+>>
 > 
 
