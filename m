@@ -2,102 +2,148 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304C3606A31B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 16:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD707606A326
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 16:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=NYyKDiX2;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=sb4ka8Q/
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Fel8T2S0
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A807040A79;
-	Wed,  4 Nov 2026 17:07:06 +0100 (CET)
-Received: from fhigh-a3-smtp.messagingengine.com
- (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTPS id 5A2FC40299
- for <dev@dpdk.org>; Wed,  4 Nov 2026 17:07:05 +0100 (CET)
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 461E11400191
- for <dev@dpdk.org>; Wed,  4 Nov 2026 11:07:04 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-08.internal (MEProxy); Wed, 04 Nov 2026 11:07:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1793808424;
- x=1793894824; bh=xr2TvRy1Zq55+iK0CCdJdDmDuk9/FH4/a/dORMdKGMI=; b=
- NYyKDiX2e0TPdb7qadoV7y/7x++H8QJT2BFoFAQEN96UR6Zfhy1Ic9w0BS+1tc4X
- S+5f++vlgN7aP5S5yBRvtrwyujKhsTXOmNA0CH1pqcPbFI6GMou3hVrq2qZMlnnz
- eYp4JU3iF3JsJJ7kGl1hE9/n0vpYKBmkto1Yrh3gpaS8TTlrR5cYpHxp5vxnwXBg
- fYVSxlTaSGpgrMr9h11CGU1bp+u2YzlLqLhdQditoLuJVK2vuHPWgnmRCBHTXM30
- QMWuwgbLfNmwuCzdNfFYalvSucdxFJt/+k0nyqnBvQA4tqEuFULAQsWqzR24GlhV
- txbYh5VllJDFeauDQUXj+g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1793808424; x=
- 1793894824; bh=xr2TvRy1Zq55+iK0CCdJdDmDuk9/FH4/a/dORMdKGMI=; b=s
- b4ka8Q/AMCSdjmx+C9t22qH59c0c/U0OcvLosLjH2y1jjjRoZusAXKdjlmzTq2TH
- slYUHSKinwxbWBFfxRn53I3ONuo42sjwrpiJukuh6bhxoqm1aVrSFaHLHBSM1S1P
- Xgn4MUFOUdU66XLEg+3L5XnrR26V8Ca92iRLEkFvTgRrGjjpiFrFSumRH/I92VV2
- 4/Hl4ngX6CgFda6j+hmCLNEQlay+6f5sPyWqulInGIxhnTKqfeLfafEmVSvuWvmy
- /jgBM3An/lgrKfyJBJbQNYn2LZa4amuqzEK4c7dUVWvVbSU9cbz8VR3jqeP5/sVn
- BmgVXYnCxQZBImeTdkdLg==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1793808424; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:yMCSJosMFpCMtznfP9d+nhpC8n2FgmV/w/QLmd3LIy0A1an
- Sne56w4FhL9LVAobKWqjudYIZv0TnaigRFO+o+cHLseX/b8DlydRrRumwF+MKB+y
- p6Lwo4tBbKmngOggbyMfv60obOf23eWAyJqcZyJBzcMyueMnK5F+ZvgVJHhJDRhP
- NOv/ek7F/dkqnJmfS7LoQooCiUleGSv1RsTmzkPhWiRnMZtx5BYIVzbcoYKYPntL
- YC5N8zuYWgMLapTlCJ4ugqDA9ekqVfOHqgIAuhzUrLo/Q0uzv+NCIccpFKy9uHJL
- /SQ9gc8nKC2OkehkDP+sNb/8PYDlscSrqQ3doDA==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:r1zhAoViIhmmXKLn6JgsT2duqeLi4OrypknhFvi8Epw=:3djkAxSEOq5xJyzXdf6uWphcqw2jgyM3WFIn5Ygfa6o=;
-X-ME-Sender: <xms:J1jrarBqvvmqjkbFWwpK69JXhQywqDX_4pf6NwDjSLc-zpsHRwDvqw>
- <xme:J1jraqfmKWi9gZft0aR5Y1hatHBI0zSDdvGLhs7g3t28vsxnO6q8LCHJagiojrPCh
- XZCPg1lpe8XynmCjwBqdlqQj7FM3Va0mk_ASs-ZHsBZIGjsp-2qNA>
-X-ME-Received: <xmr:J1jraiKHPskZs58kdpuTuQ_R86SlDfNHlZlMT1cf3udag7Am0I7kFz1EYR8IeyykGLqNLuP-5gqLp1Dqk20AM9w>
-X-ME-Proxy-Cause: dmFkZTGcDaCfaJAhqBrEdOzXkt6Q/xm2FgzECBHvRleVs2mUnSG53qySNXPmGmTt//r3tQ
- nQbpLTvzSlRuPj9uaweyWIvz3yuA1EcH0KbVuAQ8qKq5Ewh8KJndXPzu++6YUnhqQWhiz7
- MBuUNyXxA64AIBIJ85mDvHt9ucYMXQ9F6dX7/4a39OPepKkSbqQVWk/oT1JqYxZS2tSlTu
- +eHcYHqNPObOtWShqW5w/72tCWyCdnwYgppbeT8VezB1uNKL6J94knu8qXiI97dILqkWuK
- 8sCRiKbhmIFRCGzmrFh1CjfgiOw/8HAVTJgXgjVvaW/d5o0RUBtLHv0LATRpzjTepL+ALC
- tBRhNLGP0driIam6D6su4pr/nV4Foq3dSJlFDsOVMXB7/XY1tYx093S7dhpX0wtbAp3BdL
- 8USojLuVCeiNRtWFyXSCixa4Kr+vs8OfBZSsm14k0Fq7Ft/lFQLa3wZbPSMT+YDA+WYn0L
- peWB6rZhVBjuZNFfXqsCVqgSdjH3f7HxWSkc96VzcR9z0v6DFwg3ArB5TZ5P6/pU9gtt08
- ZJhjYCSi1GOtd6juFZT1DaJ4WUpJQFagP7KH5BKfqnWvq09QT2A2wU+YYVMf1LWgkkBThq
- Vlm3+uGS96wiTSgDPp5D2qdPXGZ8VBa9v2MPfX0vphWo70VoesdIjQ7PSXnQ
-X-ME-Proxy: <xmx:J1jrat1W0ePvL0EmuqusKYRKs322pEpgpsVadJkse9u0YUFuKwIbew>
- <xmx:J1jrasjkqxbXgCF9b4yGtKG9jtAnuv87RC8oRhxcm1tLoToWiI2tuA>
- <xmx:J1jrauWICVMzE2wDb9a3MLpQS2EsSJx_Y_WIT3DhSHruRiJKgJeqQg>
- <xmx:J1jrarXWnhsR-zDODBV0oZM2l6MgsQn3s6LeSlpWXlUjKC0IjhICqQ>
- <xmx:KFjrakVQ-9r1YtzS0LAon43_AQnjUMH-f4nBbrRNKvA2OEZ3EWR_9BLX>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Nov 2026 11:07:02 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
-Cc: dev@dpdk.org, Jakub Grajciar <jgrajcia@cisco.com>,
- Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- David Marchand <david.marchand@redhat.com>
-Subject: Re: [PATCH] net/memif: fix race between interrupt thread and stop
-Date: Wed, 04 Nov 2026 17:07:00 +0100
-Message-ID: <eY-Q6aGOSBGpqOvPieWp8g@monjalon.net>
-In-Reply-To: <20261030102218.3489371-1-sriram.yagnaraman@ericsson.com>
-References: <20261029100329.3cb8fa14@phoenix.local>
- <20261030102218.3489371-1-sriram.yagnaraman@ericsson.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3210E40299;
+	Wed,  4 Nov 2026 17:26:29 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTPS id B355140281;
+ Wed,  4 Nov 2026 17:26:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1793809587; x=1825345587;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=dje/fR4eTAnRTQ205P6MIJGapdBAI8OvomiZKBBiqD4=;
+ b=Fel8T2S0ACHnS2B0cXGOu7M3aHaDGUkcUwoGoBGKm6pdJHSHcDwaRCS3
+ WaY25FqNfcslKWQFvdjdtLXLg7DUTizwHY6FqoHF86N9fX+pQWVx/uqyj
+ c8ZvMEBzXbvGFU1pSC5VzteKu3+QA996LWKBfKLeBvTeHhF9lXqhOMIFs
+ /pDoVo3jYUHEviIMpqYemHg6Njr03YMj9i+QI7bfcbGexcp9aU2xT2FA5
+ fYAZ8RYl0FkoMkTkbfoeYmuo2aswkbhLeucYD3BvC6RVzuUxJXOMU/9Ul
+ wHMlXqH9WJMFUy6wIkWR6AIDaLQ5f5IrmqR6wUKmfehQqsDtxgyeUJFF7 w==;
+X-CSE-ConnectionGUID: MGEVY+52QN+7MlGCSgXz5g==
+X-CSE-MsgGUID: /YQL4L7TR+mcUrsW6E/Mig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2608689"
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
+   d="scan'208";a="2608689"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Nov 2026 08:26:22 -0800
+X-CSE-ConnectionGUID: nCPbhrn2R3aiIBO0eRjhug==
+X-CSE-MsgGUID: O08QMysLS8yyywb4mVaBTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
+   d="scan'208";a="7108048"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Nov 2026 08:26:22 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Wed, 4 Nov 2026 08:26:21 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56 via Frontend Transport; Wed, 4 Nov 2026 08:26:21 -0800
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.19) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Wed, 4 Nov 2026 08:26:21 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J/puVnIp14cKWtc7qA+GP0Hhpc/+9AjdTtK8hRIWtKzocj2nU8L7kpdExjYWcfi+UyJZjiG2Cfral9fcdY0SjznD7tWmQRO6ATW03Sk1bep3v1+EAiFaztbJ+Zq+L92adPgYATXeyHgje5qvZqlj5102Yfnb5zaghRrl9NKVhROOz1psXMw2I7tzdRhlLcli9UZAR2zjUBg/Nn/1JUOQeKrHCyza+9JWJsqPz9p6jh6yLKF9qYuD/ZatMZVf3y0sTe+DirJWWg5pLk1CAfSh8hev/1IkQ0Osflc1zV3yZyVyBR0Dk0A21GS0t8FKltth0RX20UNHmJ0o20ay0JceqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yPkd8A7vd/MA++vvEQviKQv4EZtXVj27YZpDQMkKi2Q=;
+ b=Go2UgxkMObaR9lRFQP9Y4t6H2yxngOewiqrg1xybv1GH4o6+J6As1xCTrxaHaQcDhgmZ9+g8zertW585E7dogP1zQqvsr/hRGhE1oAfCOohVuOYGd7gCN7jqtL1JnNSpPuzPgelkZ5jcOZoU7OmLBmwYzj50zbRMe/SAMCOnqEcW4S1gTSHkjgXvUWgCd0KOfzkgWZdJzsPtct2fJr8u3HH0Kw+fB4B9qdZ4aPNkge7EZTxAhpyTn9rRk+9NUAqwKKE3vvUoj4/qOLp59trb5DEenYfj09wgjWQsAuGKxNDWmTWjEH+NQlz/bEOH7a9ExSXHexoFqyAnt9lxN2/tcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by CH3PR11MB7323.namprd11.prod.outlook.com (2603:10b6:610:152::6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.8; Wed, 4 Nov 2026
+ 16:25:44 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0592.009; Wed, 4 Nov 2026
+ 16:25:40 +0000
+Date: Wed, 4 Nov 2026 16:25:35 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Kevin Bowling <kevin.bowling@kev009.com>
+CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Vladimir Medvedkin
+ <vladimir.medvedkin@intel.com>, Soumyadeep Hore <soumyadeep.hore@intel.com>,
+ <stable@dpdk.org>
+Subject: Re: [PATCH] net/iavf: fix AdminQ polling after interrupt setup failure
+Message-ID: <autcfx5ozj07yiuK@bricha3-mobl1.ger.corp.intel.com>
+References: <20261101232140.94324-1-kevin.bowling@kev009.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20261101232140.94324-1-kevin.bowling@kev009.com>
+X-ClientProxiedBy: DB9PR02CA0005.eurprd02.prod.outlook.com
+ (2603:10a6:10:1d9::10) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|CH3PR11MB7323:EE_
+X-MS-Office365-Filtering-Correlation-Id: e10b8508-c93d-4a53-d975-08df3a9043e1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|1800799024|23010399003|376014|261021135927099003|261028144727099003|11063799006|56012099006|261022105027099003|261026121527099003|261022075727099003|261102123227099003|261021121427099003|261026140227099003|10067099003|3023799007|18002099003|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info: 7TKquuT+JxsVMNxDtq0KF2Frb4BSvDMpI12C4Yop1w0xus8ByEpy2/6y29QN7qN3CCgSwc5b3atbzDZHLsbljCJCQwrm06dT+PfIB6EFYMSX01y74wRjBf9RlrmFqdEAER9h1PIgUMXb/PuvDBjrBB7r+hc1kFUQ+hXL8Gnuz1mI8DtVZjfIjcWCMndiLaYqhL2KKeVoLup1mroL9WkYettFy6g9yGJNuno/Qsf2F14Bv2PSFDSQXpq7n7fZBJANHiR0niEeq5ZgTP4k7ka+ReEyd1cAlYQazjaA9fskWSlwvzzGqlfTUOEwuSKbCjOizvXiGmuM/xIwVSCI6RuukLj8cjppfm6+cSwOTc9Q2oTqxCX2EgpEC4P0k2uZLULFWh07JXJjreoT5DWvP2pqhvM2HbbWzXHpxjyx47HyJFgPbzCBn404UeMkPzSRGsd4rnJRlP2Yz7mi1kXg952HD124zUKDHS8r4Xes8Ciz1vWvSjEEkUcgmP039MXL0bc9Vsje+B5nIiRecHx5+cIqNBNfv2WUGrXfY2LBOLy+04zvTuFrqUVxxuxV5usyn7E2rcQnKZk1H2iLJuHSoo8ZJ1CihLwEmwBJ6Noal3djx2lfavhPiuw6/o5NshhJBn/yUKRcOR00RAsSRYOzZXwNZk/NnZrpWNJJYBiKiyLdbLI=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(261021135927099003)(261028144727099003)(11063799006)(56012099006)(261022105027099003)(261026121527099003)(261022075727099003)(261102123227099003)(261021121427099003)(261026140227099003)(10067099003)(3023799007)(18002099003)(22082099003)(6133799003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?zDbxGewnBLy/H4NKLhXlOy1bvTJb6dBwSn3JK2F8xT15hS6xil8qL6ZFNYpQ?=
+ =?us-ascii?Q?jHNMCRR7UA6Qz9DMAeUEM47HiU1ooMAaKj90SklB+vHxm0YrOTFRMx5I3Yrm?=
+ =?us-ascii?Q?1GH/OGz5ptxcmc8YO/xXpmjWCAdr7Th45gJP+3YHEj6RrlnPIziEnqW4B9Gx?=
+ =?us-ascii?Q?PGMEaQmuJLtykjL6mdXOMdDRnYBxTNz1r+R7LhTcrgHUJBnh1fmh0lRbrGbB?=
+ =?us-ascii?Q?V7TDC8p4S5mEMZQC1It9n/V0RpWR8OcEFvrhxtz1ssi8ujZ9xQl+VOx9LIl1?=
+ =?us-ascii?Q?ZAUfpEv8mtRnOeoe+cON2y7TO/cr90NGHIfhznCe/vjDB54tF9VYE2KrtXhG?=
+ =?us-ascii?Q?lsrB2xorSXmRzhs1KxsblMfjHyTJ7UCfEtV7/SC4IpWMEsk4UkQNXsNNMlsX?=
+ =?us-ascii?Q?JQbpoldhCeHhgy7lSXokq0ZlVPWBvEft/9wqb4GyrjVWZP1iEZydYlbGxJd4?=
+ =?us-ascii?Q?1LZu20KBaM8EwypkyDRn35WFyDAdMXoSXl1KZXtzJ03HGdW31mRE96Dehn6M?=
+ =?us-ascii?Q?lHQGVaSk1py00Dn+TPFDCRtcMDGE1JFtWlPBxUDrhAOdT1kDf6FgeWe/yqBm?=
+ =?us-ascii?Q?R6vAWrguEh5qLT/eWoOnKdQQfegjl5lIsr6c2JX/3RK6NgKZOrI2M3Ri9i4d?=
+ =?us-ascii?Q?KEk/fjwSq6cciDmvP0xWgd+q/q7F7Dd7OCc3OL6RoAlsy3//K1iLtSOFAWuB?=
+ =?us-ascii?Q?BEX5xlvLdycrizFyXDy+6wMygOCCRDXh7IJMmgzsF93RBlCtMkLyI8PD+YB4?=
+ =?us-ascii?Q?mMYh99ddSX6Rej+I91sqkEaL01Ul1hBxZSrTj4lY+zWJeRJEnHqCkpivJmQU?=
+ =?us-ascii?Q?C1lcaTWbBUgP9KmQwrFGPQ7nBkLMkWZwD2cW9vl7QFZ6Cf8QiqSill0mF6dC?=
+ =?us-ascii?Q?oY6xs7CYVvUxLs029okLdwF6W56B2aiVIsyGkRP9nkxUBS2dLVgibHpVVRwB?=
+ =?us-ascii?Q?apAfN9uB13ur00SeTNWeOnh5tgV7gdDTOZM3KNNE98cVl/sqJ1hOjKlnoYpD?=
+ =?us-ascii?Q?USJnBRCFgb4Kap0YF/wl3Gqw2K2ZIZgm6tkcSqEPkaVD0WO8gbAzix8Exeow?=
+ =?us-ascii?Q?v1pl3GG8F5Lf7eMfOr0Ktmn/PzpHZDRLHV6bUoqrQ41cIVLFT+jV0Tp+oNVs?=
+ =?us-ascii?Q?TgmWjvFVx2CnQ1LpSrobLFXD7ES4BaoAXlHgWmsQHEiWgBSSFiY9BMUA4Twm?=
+ =?us-ascii?Q?zZ1KVy2bvcJEYsipiE7OK75mq6yATBkz19WvMjuh+2soZh7UQupeUbqCGDNu?=
+ =?us-ascii?Q?57GfOWFwV4z57DjLBpJT4Fom4HK2+LUIzDeCGeyZHmZInUlQswYRwrR7jYTn?=
+ =?us-ascii?Q?XLq9ecTUAvLqWLmouqsKiT5pbGL40cL3SuLqlpEMH1htpChK/84AvhDGP3Dl?=
+ =?us-ascii?Q?b1PFBRPXej9Ix7tDoYKFLSMJ3HVh43IwAMB07qRxkHBhLW39pGjoHt3cljvi?=
+ =?us-ascii?Q?cdHrojnCrj5BRK7jSDl58mnyjWOMpTRBetqiShf7IRZti8N3EmpcPvvkK3Cx?=
+ =?us-ascii?Q?aAio3Z4kZfST5ZJtE1F/USsp+ewv4HOIXftdpOOALm50IYJLLTeMpDpx33ZR?=
+ =?us-ascii?Q?QvzJ2eqZBAoeKnL5J56JcQfFPhS1mPvnEnFPPbTqJU7Bo8SdImEZ/vyvYUPk?=
+ =?us-ascii?Q?pM5B4vFiFwtoGmaVN6Kz0JBVLbf5/dUfHsf5O8rRLxwu662LuBCYzLn2fRix?=
+ =?us-ascii?Q?rQrqyerutCOl3MJnW+GjFlWx07no7f7hZU+G+qWx7o8o1I1zCHw8m16BWOue?=
+ =?us-ascii?Q?dXJJSnuRgPg9vxxKfPblIPqzc3M8n9o=3D?=
+X-Exchange-RoutingPolicyChecked: T9V4yOz4nEz7SdCs6gL9qpHWYNzGAq+Nid/JQ9qkT/2uoyGURHWphTKb+MCjoqji+ACkKzIylFcvNd1OjnsBjowZtgj+cKnGo6hK2J4VXwnXeSxfMByrc/N1QfREy20KXmk8M74QjClbQIepm/YbEB2z42B9Rr3w1CchlJ2Hf0FdaNTZcNFz9KNQKizl0zOMC0kdPpk+HYq0IPpkp0OEZEiDU3KWsiwKX51x8VVscc3NP9RGriSvEMzOdisa+WkQBkZ0kn1BOUCiliiXoyd8dCy6zXcOxhgkbEbz/o2Rpr/EesPEtzCTlynltkrsvRmxMh7D2HGCKKQzpUltlCswlw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: e10b8508-c93d-4a53-d975-08df3a9043e1
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 16:25:40.0799 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MJQUjjY+dRtoLEjb1s5r1ebDXlHxzY9AIdLsONpMYv6rWdJpKs7cLsGXlK+AOMLuAbTXt6p3MSggQ/H/rk2IJ1zgOheMGXBV+pEW+CCdn70=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7323
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -107,47 +153,37 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Hello,
-
-30/10/2026 11:22, Sriram Yagnaraman:
-> The control-channel callback runs on the interrupt thread and calls
-> memif_disconnect() when the peer hangs up. Nothing ordered this against
-> an application thread stopping and closing the same port. When the peer
-> of a loopback pair is stopped first, the callback can still be running
-> memif_disconnect() while the port is closed and released, and then
-> dereferences dev->data which is NULL. Seen as a SIGSEGV on the interrupt
-> thread during memif_pmd_autotest teardown.
+On Sun, Nov 01, 2026 at 04:21:40PM -0700, Kevin Bowling wrote:
+> The device alarm skips AdminQ processing when the PF advertises WB_ON_ITR.
+> However, this capability does not guarantee that interrupt registration
+> succeeds. FreeBSD nic_uio cannot register device interrupts, so the VF
+> still needs alarm polling. Without it, commands such as RSS configuration
+> and statistics queries time out and device configuration fails.
 > 
-> Detach the control channel in memif_cc_detach(), called without cc_lock:
+> Record whether AdminQ uses alarm polling instead of deriving that choice
+> from the PF capability. Initialize polling on each device initialization
+> and disable it only after interrupt registration and enablement succeed.
+> If enablement fails, unregister the callback before retaining polling.
+> Keep the shared PHC alarm and unconditional alarm cancellation unchanged.
 > 
->   - take pmd->cc under cc_lock so only one caller owns it;
->   - on the interrupt thread (the callback itself) defer the free to the
->     pending-unregister callback, as before;
->   - on an application thread wait for a running callback with
->     rte_intr_callback_unregister_sync() so the device stays valid until
->     it returns, then free.
+> Validated the backport to 25.11.4 on FreeBSD with an E810 ice PF: the stock
+> PMD failed configuration in three trials, while the correction passed 45
+> queue restarts, 42 full device resets and 6,432 exactly received frames.
 > 
-> memif_intr_handler() no longer disconnects a device that has already
-> dropped this channel: it stops polling the fd and returns, letting the
-> waiting application thread free the channel. Once memif_cc_detach()
-> returns the handler cannot run for the device, so the queue and region
-> teardown no longer needs cc_lock.
+> Fixes: 388f0b348065 ("net/iavf: reuse device alarm for PHC sync")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Kevin Bowling <kevin.bowling@kev009.com>
+> ---
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-It seems the teardown is too much complex.
-We can probably make something simpler with a re-design.
-I'm not sure about applying this big fix on top of a fragile design.
-I'm aware it may be a big task.
-Tell us if you think the teardown can be better fixed easily.
-
-Otherwise I suggest disabling the memif autotest
-from the fast tests series which runs in CI.
-What do you think?
-
-
+Applied to next-net-intel,
+Thanks,
+/Bruce
