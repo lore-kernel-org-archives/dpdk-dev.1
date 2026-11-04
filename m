@@ -2,42 +2,42 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C443B606A31B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 11:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86825606A330
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 11:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=E+b2KuQS
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=Lm+OuLIG
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00CC3427BB;
-	Wed,  4 Nov 2026 12:21:00 +0100 (CET)
-Received: from BL0PR03CU003.outbound.protection.outlook.com
- (mail-eastusazon11012005.outbound.protection.outlook.com [52.101.53.5])
- by mails.dpdk.org (Postfix) with ESMTPS id 1EB0140A84
- for <dev@dpdk.org>; Wed,  4 Nov 2026 12:20:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3C4AC40616;
+	Wed,  4 Nov 2026 12:22:48 +0100 (CET)
+Received: from CH4PR04CU002.outbound.protection.outlook.com
+ (mail-northcentralusazon11013009.outbound.protection.outlook.com
+ [40.107.201.9]) by mails.dpdk.org (Postfix) with ESMTPS id C72404060F
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 12:22:46 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g4wOWB4XevZEiBINSnv5k0dMe5wOGE48/2hYiTHVfwOZ+kwcP/wAbFk2oGlBHerzJ1y342xzMYN/x9jXFI9l7LJOXk6Ce+4NYK1eQuMnFNUHdZdXs51FNsubrPLm75yiwco9lhkZjgFa/RPoWiWRSSpYBHzlqK6m8xnEmxDvGYnjFu5SSRnNrKDyBvepzSsIjhUfOcm6tjG4HVJmzlUauxrOjSQXxmk+BcZY0E24icfTpHFJ9tFcvWu7otQfV/PcrItO7P1HvmJ3g1QcQmTV5eva68MyOM83CgfnqR14+z5kSr+nL43Ie8q1HzMO4pksVU1jk30HMRW0yqxq3lc8tg==
+ b=Cl4qpAX9ZyOwWSW3uZOZAAsWzby6TUCdn5P7Bb/TNFq+7lmA3JynmjfYjR2VtRNJQNBbveLK1zbyO/6i903rJ3vmXn+PdFPnRkBdFt3i+MadmlTbn8ZYnJNMeVSIk5SKtQiqowXABsMLXoBrDFYvLhsi/GRUswLZ4P2vzYEvkpn2tHXD+P4oCZIePG0OSKCtW8wJ4AdzcXhly80e1Hu0BierO5+1X0NrGQwxi2MyVnbtelXK0W5bbO3v/ZBBc4slfajAwS788tlNYK1nSgX0YXUmjBnai3wramZhpYV87aapPjrqWZYVOsD71CKh+rcK5+kW+07qIXVdc4HGp6UJ1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nJO1vhS8AZH6p8w2wdSP8jA8IH5qZbHkMR9MatCrNtI=;
- b=YWE4aNMd/78v80XJWpNO9RakKLp+9cFkXeqKaHbrnwCfdsI+rD7MQc0KbdsjVpJcmq18vQHsecFafChOFwpwVD5Ejygp8rlxFOwKuBodK+ghDfYgugFG/w7N+4VTtFx0vH7TjbUUdTAc7uB8/PY0dfQyeeU8dF9XaSaqUyzW8NvbsAI1dg/1ebXkoc0lZvVrr42NnMfa8h3omS301HDLFwmcDfvDmmNjIsv8yfusD1+y8reUOVbMD8woGWnS+eXB8t62nPtGO1OFDpO/Yyz1CeWqAOY0eCLwhqaBOlGSBv20kshJSqxIoZCUuYzE4Lz9uGW9jN+riRGR+voqHTGKvA==
+ bh=0uRPip9szR6uen6qFcykq8mtPXKI3Y7J34qq6o0pDYw=;
+ b=CV59vWtQvujJTa1QtWtCkKt0dXZtcytmyskYwbp0aN38RtErOAflvCySoV4wfbmnbQWKm5VGzuy3dOvHVJ0aO0HQ9gMmheM6diVaDCNr1/FrLCS6HQ5KS9k1EgcwTZKaUzPGlz9PJOU6KAkdoAxCbJO9khqIMHF7xbmy6A/3E//DHf7NvKVfkNG12oi9MmkakGb1xIwdBtHkua9eigFCGu7CmdEgmoCIj13QhCH8isJGDqaDpDt8V7G4AHiq26rbzNi53CDZf+ZioJ6/LAWQrFvBgPHMeXU0zvRJZDHdNSCbnT7EA2YtTuSH1oYtnnPTGxf1uHTSyisy2NvcoYCWWA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nJO1vhS8AZH6p8w2wdSP8jA8IH5qZbHkMR9MatCrNtI=;
- b=E+b2KuQS+bWMj8PdO7dKVDMfz+cZF/mmYe0L1wZXS9IbgveP/PMlYQ5qcnHwK6DHLafqqiyWvyqNWfgfpShcglMYX/dyvEOZRU/HhsoxeGF5s/vjR6/St44Fg6B9Hd7U4BLwWB16f3iwneJmVdNck2/wbYp4uo9DetAWI2ZROnE=
-Received: from CH5P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:1ef::7)
- by SA1PR12MB6846.namprd12.prod.outlook.com (2603:10b6:806:25d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.8; Wed, 4 Nov 2026
- 11:20:55 +0000
-Received: from BN3PEPF00022BC8.namprd05.prod.outlook.com
- (2603:10b6:610:1ef:cafe::8d) by CH5P220CA0001.outlook.office365.com
- (2603:10b6:610:1ef::7) with Microsoft SMTP Server (version=TLS1_3,
+ bh=0uRPip9szR6uen6qFcykq8mtPXKI3Y7J34qq6o0pDYw=;
+ b=Lm+OuLIGvN4uf2DNrNDq1Wxe5UZLfzxenatmq85Sx2XsTMZWIlEHQSosnjjFGGa/4k8oRPcsmMDlqrsYZVmwVwwVYHWsUZ8ldd9yYrmNlBgDxVVlTxAEGw67H4FvyRluF30bWnrzekS1R98jceI5tuqrM/fxMMUTW5W28xKhOfU=
+Received: from CH0PR03CA0427.namprd03.prod.outlook.com (2603:10b6:610:10e::30)
+ by PH0PR12MB5648.namprd12.prod.outlook.com (2603:10b6:510:14b::7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.9; Wed, 4 Nov 2026
+ 11:20:40 +0000
+Received: from BN3PEPF00022BC4.namprd05.prod.outlook.com
+ (2603:10b6:610:10e:cafe::16) by CH0PR03CA0427.outlook.office365.com
+ (2603:10b6:610:10e::30) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.10 via Frontend Transport; Wed, 4
- Nov 2026 11:20:55 +0000
+ Nov 2026 11:20:38 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 165.204.84.17) smtp.mailfrom=amd.com;
  dkim=none (message not signed)
@@ -46,56 +46,56 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- BN3PEPF00022BC8.mail.protection.outlook.com (10.167.248.214) with Microsoft
+ BN3PEPF00022BC4.mail.protection.outlook.com (10.167.248.216) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.592.5 via Frontend Transport; Wed, 4 Nov 2026 11:20:55 +0000
+ 15.21.592.5 via Frontend Transport; Wed, 4 Nov 2026 11:20:38 +0000
 Received: from cae-QUARTZ.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.53; Wed, 4 Nov
- 2026 05:20:52 -0600
+ 2026 05:20:33 -0600
 From: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
 To: <dev@dpdk.org>
 CC: <jingjing.wu@intel.com>, <thomas@monjalon.net>,
  <selwin.sebastian@amd.com>, <bhagyada.modali@amd.com>,
  <bruce.richardson@intel.com>, <david.marchand@redhat.com>,
  <stephen@networkplumber.org>
-Subject: [PATCH 13/13] raw/ntb: remove unused AMD register definitions
-Date: Wed, 4 Nov 2026 16:50:01 +0530
-Message-ID: <20261104112001.661769-14-raghavendra.ningoji@amd.com>
+Subject: [PATCH 06/13] raw/ntb: fix AMD processor names
+Date: Wed, 4 Nov 2026 16:49:54 +0530
+Message-ID: <20261104112001.661769-7-raghavendra.ningoji@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
 References: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF00022BC8:EE_|SA1PR12MB6846:EE_
-X-MS-Office365-Filtering-Correlation-Id: 328d6429-8049-4418-ec14-08df3a65b1a8
+X-MS-TrafficTypeDiagnostic: BN3PEPF00022BC4:EE_|PH0PR12MB5648:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9b45bb3c-32ce-4f57-dff8-08df3a65a789
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700016|376014|82310400026|23010399003|1800799024|10067099003|18002099003|22082099003|56012099006|11063799006|261026121527099003|261009223027099003|261021123027099003;
-X-Microsoft-Antispam-Message-Info: YdDUK0DT5fjH7V4v6Q+n3YNhHDkh+rhH1zVOqc4Ts8qVZ67qpZ39BkY4bNYm+afpy3JluJROrNY8ECEnzJjt29JSc8wrp/9gtVGrSRkYMi8+2oxVjLNRV5UKIJW9syzabHmy9WW7XmwQEbJSEFjbndrzddHVaXyH1H5/q9LDSQRC1nR359kqT1EfZeqcvfCmd1pbBNlRBkoc/hTbT1RKuUqhz7Wkmf3E8QgRjNxDgS9fHnn6beAIuJSx6FStmoZQkDWhVwGLp7tryVu2UUAqx8wR2iwt92O5fFAW1FtNfyO7CjZTxqPKpchlF9L9H+9gABVIvc1Qp+yCw4SrVcUm1wFjBZaMyKP725hfECigMteVFOFCfSOuZQl98yW6twx6nI8Ai8orza9Obj+FwNxunlKLwZLT/N1jbEYDauQCbFLm9l/BKIKW+MId+1coj48kFMGwxHpI6em+v15qhLbJLBvkBhzi6DaWDRCV0lNmrrXlq+P4FL/BphRNkKblbhLkekFkaXNkYRz+cBoTgPInJaaDlLKHrDj9N+rqqGfPw9nLwpc5J0U87RQLkhSLn272OougnQGy3GJ5Sobzv2VUGj1Gnn5ycu623exR5pnKByFEmwpM3cn/V7Kf/QCtNWITHvCD/YPE6wjE2apjtM7GT8ecoJFs1rUsXEaeO+g8p5MYgVfQXX6JoegcNXH+J78Pwk2qnkouj3rgJkaAXHCEAA==
+ ARA:13230040|23010399003|376014|1800799024|36860700016|82310400026|11063799006|56012099006|261021123027099003|261021121427099003|261009223027099003|261102123227099003|261026121527099003|10067099003|22082099003|18002099003|6133799003|3023799007;
+X-Microsoft-Antispam-Message-Info: n0Tx+IKD2i4OuvIxO4YTF2kyBkMhGzU3Lmo6HBX6C8I5WUBufXSHG1J3GlJC+Wb4EcNYKis2yxNTLfomovGHC30SI0XmEZUPdxdH4198qVJJDVeT9cXfgtJDOAKUjIdLJzmesfRbT5u8CET8V/L9q8k2EUe794Y2hj8AysQeppDLkW6j2049IEsz5l6hA+00f+sezO3HAD6I1/FyZ/YLdwEHHvrfEi8/AeEJ7YLRxVebufb2Vkh5KUIpUVzz/aJv0MXwU1Fm8Of9mKeFtg2KMmXIHwhw/kXWpXt9hWFgls7tINWJS0rzx4Cr5jeizA9AOISN5bDsSav5zjd4qAyakynoUSa15BDVBYT3xuZBwW+8Tox2hnyfNj4FSAbKo4a3j0hL4ieP4X0mXbfVNgCAqaTChwZn2eqp0lelnAvT/c9pvGw15XNdo10vdd63skPYR5mUVpXwCO0j7sK2sIxvwv/luZCMLJ/Wq2HCjNxGIOjspr1Vg2+9MhyDMsYkJFFVMiow8W94Tts21G7s9O1VrWqG3Mta4OPwrRQw1kZ/rZ4z72uMGf47oFK67Ydo/G2eYKEPNBqM7Ax2E+BW3KE8NMXOnTHQdXJZuJBMilULPqEiKFK8WqMpbvc5qqyS3rkxIt51neqRUd02+FdRBzjXJyCVoLCazIm5WSu+X03wnRn9eaFvbyhRsFRSdZNGmqxjCj3ZMVLbCAz/pHOT2sZwQw==
 X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(36860700016)(376014)(82310400026)(23010399003)(1800799024)(10067099003)(18002099003)(22082099003)(56012099006)(11063799006)(261026121527099003)(261009223027099003)(261021123027099003);
+ SFS:(13230040)(23010399003)(376014)(1800799024)(36860700016)(82310400026)(11063799006)(56012099006)(261021123027099003)(261021121427099003)(261009223027099003)(261102123227099003)(261026121527099003)(10067099003)(22082099003)(18002099003)(6133799003)(3023799007);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: W0+8RBGPnIOQhCytiPieQ6sm9vo02utJwxTNIFm+15QTRVvsLeuosQTEct+MO1TUck4i7jIVOfB2Ojk2ngxUUTBJZXM/Rudm6aXNtMe+TgGULeXGse/7MZ0G7WtvWbsXvGi5C9Ntu7P6qqOW8kuERUogbbLeWZ8SLwHQwfis/1eqyij7n4EOaZ5DYQAiGzIOFyaSPj038+G4yEOZpAqCGoqz1/8JmOKFQPR3Iceb0i23rOV+G7ZrrhVHKieCH2WVyDcbNnnnQChA47jps7SEmbyvSzsQ+WSx8AJIfdMZ2S/WQDp+uhPwqiONcyyxA3AvNS8ctuioJdRen57exhQNKQ4udn9EimGZ1B6q0Ukcee+u3c6LApPxF1Chds7aAhwHZyjkhnWZgOhIoW+pZSWjjSmHHZKmhu0aBqN1oKcff7KmNEPMI02aoX5wBxacZK18
+X-MS-Exchange-AntiSpam-MessageData-0: S1ccVsTsBpyqVX+e39ka2ySLvBrmQ3+zgrIuMYlmuaC9YMAUc15EEnTUJgZZsTUhEhkXiVFQKlTl8uPIP/yNQf4rMGCt/4bKwqeA+Z5Gi8L2QwVSK92+fOlPN0Au0Szzwq4fnMwCS8bWNxpMIFUIddgOXk790dKOa5vEKQoJNoqlTHpAi8rSejZoL9b4GTWU7z0shiP51LHILCX3JKgFeiE6Jc5sOiYGy2BXPnY8759t1zkEV6gpFrLSwej9yGCjN/H0VbFfu+CoN456v8k+u5c3V3zh1RKtZhJqf+8c3gNp3VXQnMr1UCNa99xZR+J7jnFUAN14qIcL4x/U0TGF0SeYT3AfYL5tllN+qsNFeRgdqmx9nJfCeV0qwFLMu9jukyCBZ01cjIDwqtuUYxpwUkOmzuXzDR6e+CssOc/Spb5gSEY/XppPP2ctbxQKgzHn
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 11:20:55.6210 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 328d6429-8049-4418-ec14-08df3a65b1a8
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 11:20:38.6418 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b45bb3c-32ce-4f57-dff8-08df3a65a789
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
  Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN3PEPF00022BC8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BN3PEPF00022BC4.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6846
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5648
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -112,33 +112,68 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The scratchpad mutex and doorbell flush mode registers are not used
-by the driver.
+Refer to the AMD processors integrating the NTB endpoints by their
+EPYC Embedded 9004/9005/8004 series numbers rather than code names.
+
+Fixes: d6dc5a7f8b06 ("raw/ntb: support AMD NTB")
 
 Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
 ---
- drivers/raw/ntb/ntb_hw_amd.h | 2 --
- 1 file changed, 2 deletions(-)
+ doc/guides/rawdevs/ntb.rst             | 4 ++--
+ doc/guides/rel_notes/release_26_11.rst | 4 ++--
+ drivers/raw/ntb/ntb_hw_amd.h           | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/doc/guides/rawdevs/ntb.rst b/doc/guides/rawdevs/ntb.rst
+index 99474745d6..37328cd9e6 100644
+--- a/doc/guides/rawdevs/ntb.rst
++++ b/doc/guides/rawdevs/ntb.rst
+@@ -41,7 +41,7 @@ AMD EPYC Embedded NTB
+ ---------------------
+ 
+ The driver also supports the NTB endpoints integrated in AMD EPYC Embedded
+-"Turin", "Genoa" and "Siena" processors.
++9004/9005/8004 processors.
+ These use a primary/secondary topology rather than the Intel back-to-back topology:
+ one endpoint is enumerated as the primary (device ID ``0x14c0``) and
+ the other as the secondary (device ID ``0x14c3``).
+@@ -179,7 +179,7 @@ Limitation
+ 
+ This PMD is supported on:
+ 
+-- AMD EPYC Embedded "Turin", "Genoa" and "Siena" processors.
++- AMD EPYC Embedded 9004/9005/8004 processors.
+ - 4th Generation Intel® Xeon® Scalable Processors.
+ - 3rd Generation Intel® Xeon® Scalable Processors.
+ - 2nd Generation Intel® Xeon® Scalable Processors.
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 8ca8379cc6..6c76c60139 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -306,8 +306,8 @@ New Features
+ 
+ * **Added AMD NTB support to the NTB rawdev driver.**
+ 
+-  Added support for the NTB endpoints integrated in AMD EPYC Embedded "Turin", "Genoa"
+-  and "Siena" processors to the ``raw/ntb`` driver.
++  Added support for the NTB endpoints integrated in AMD EPYC Embedded
++  9004/9005/8004 processors to the ``raw/ntb`` driver.
+   The NTB rawdev framework was generalized to support multiple vendors,
+   with AMD-specific hardware access, a primary/secondary topology
+   and a packed scratchpad handshake.
 diff --git a/drivers/raw/ntb/ntb_hw_amd.h b/drivers/raw/ntb/ntb_hw_amd.h
-index 8fffa24348..eec2041ad2 100644
+index 48f0db1ad4..b03aed7d08 100644
 --- a/drivers/raw/ntb/ntb_hw_amd.h
 +++ b/drivers/raw/ntb/ntb_hw_amd.h
-@@ -25,14 +25,12 @@
+@@ -7,7 +7,7 @@
  
- /* Primary-side MMIO register offsets (BAR0), spec Table 1. */
- #define AMD_CNTL_OFFSET			0x200	/* Link Control. */
--#define AMD_SPADMUTEX_OFFSET		0x20C	/* Scratchpad mutex. */
- #define AMD_SPAD_OFFSET			0x210	/* Scratchpad registers. */
- #define AMD_SIDEINFO_OFFSET		0x408	/* Link Status (PSIDE_INFO). */
- #define AMD_BAR23_LIMIT_OFFSET		0x418	/* MW BAR23 size. */
- #define AMD_BAR45_LIMIT_OFFSET		0x420	/* MW BAR45 size. */
- #define AMD_BAR23_XLAT_OFFSET		0x438	/* MW BAR23 translation. */
- #define AMD_BAR45_XLAT_OFFSET		0x440	/* MW BAR45 translation. */
--#define AMD_DBFM_OFFSET			0x450	/* Doorbell flush mode. */
- #define AMD_DBREQ_OFFSET		0x454	/* Doorbell request. */
- #define AMD_DBMASK_OFFSET		0x45C	/* Doorbell mask. */
- #define AMD_DBSTAT_OFFSET		0x460	/* Doorbell status. */
+ #include <stdint.h>
+ 
+-/* NTB vendor and device IDs (EPYC Embedded Turin/Genoa/Siena). */
++/* NTB vendor and device IDs (EPYC Embedded 9004/9005/8004). */
+ #define NTB_AMD_VENDOR_ID		0x1022
+ #define NTB_AMD_DEV_ID_PRI		0x14c0	/* Primary NTB endpoint. */
+ #define NTB_AMD_DEV_ID_SEC		0x14c3	/* Secondary NTB endpoint. */
 -- 
 2.34.1
 
