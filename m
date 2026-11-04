@@ -2,47 +2,52 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36619606A31B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 08:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70429606A31B
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 08:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=D1NhN3+R
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA4964026E;
-	Wed,  4 Nov 2026 09:04:14 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id C0F9740151
- for <dev@dpdk.org>; Wed,  4 Nov 2026 09:04:12 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id A75274D0F9; Wed,  4 Nov 2026 09:04:12 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2092] net/pcap: filename truncation in secondary
- process
-Date: Wed, 04 Nov 2026 08:04:11 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 26.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: stephen@networkplumber.org
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-2092-3@https.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id C1CDF4026E;
+	Wed,  4 Nov 2026 09:53:08 +0100 (CET)
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
+ [113.46.200.217])
+ by mails.dpdk.org (Postfix) with ESMTPS id 111EB40151
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 09:53:06 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=r50bIS5AMHXlgQPRQO5UPFq9oGaS/YE4ab7aPXKlGY4=;
+ b=D1NhN3+R1q9LABhi1iyPcqu4KC8VRXEQ+KvAHIfUPkECHZeiD/vuCgl8JOfyfo34UxXE+69qY
+ EVcy5dVNLWg5MfA0usyz6ftyG/0EVI3jFIVhqXgCIy5MiZ/58hlp8xAEjmptI9V0OnA6fxA+1eK
+ aMucrRb7DQbZTsNscwC8SJA=
+Received: from mail.maildlp.com (unknown [172.19.163.0])
+ by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4jKK2W0KbRzcZy0;
+ Wed,  4 Nov 2026 16:52:35 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+ by mail.maildlp.com (Postfix) with ESMTPS id BB52040561;
+ Wed,  4 Nov 2026 16:53:01 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Wed, 4 Nov 2026 16:53:01 +0800
+Message-ID: <6f636a89-88f7-44c7-b87c-b55075bcff6c@huawei.com>
+Date: Wed, 4 Nov 2026 16:53:00 +0800
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 001/227] eal: add NUMA-aware APIs
+To: Stephen Hemminger <stephen@networkplumber.org>, Chengwen Feng
+ <chengwen.feng@linux.dev>
+CC: <thomas@monjalon.net>, <konstantin.v.ananyev@yandex.ru>, <dev@dpdk.org>
+References: <20261103145306.487255-1-chengwen.feng@linux.dev>
+ <20261103145306.487255-2-chengwen.feng@linux.dev>
+ <20261104083332.54b44fd0@stephen-xps.local>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20261104083332.54b44fd0@stephen-xps.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,83 +57,47 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2092
+On 11/4/2026 3:33 PM, Stephen Hemminger wrote:
+> On Tue,  3 Nov 2026 22:49:19 +0800
+> Chengwen Feng <chengwen.feng@linux.dev> wrote:
+> 
+>> From: Chengwen Feng <fengchengwen@huawei.com>
+>>
+>> DPDK has long used socket_id terminology for NUMA allocation,
+>> which conflates CPU sockets with NUMA memory nodes.
+>>
+>> Add NUMA-named APIs while keeping the legacy socket-named ones
+>> as functional aliases (to be deprecated once the in-tree
+>> migration completes):
+>>
+>> - rte_numa_id(), rte_numa_count(), rte_numa_id_by_idx()
+>> - rte_lcore_to_numa_id()
+>> - rte_cpu_numa_id() (renamed from experimental rte_cpu_socket_id())
+>> - rte_malloc_numa(), rte_zmalloc_numa(), rte_calloc_numa(),
+>>   rte_realloc_numa()
+>> - rte_malloc_get_numa_stats() and struct rte_malloc_numa_stats
+>> - rte_malloc_heap_get_numa_id(), rte_malloc_heap_numa_is_external()
+>> - RTE_NUMA_ID_ANY constant (legacy SOCKET_ID_ANY kept as alias)
+>>
+>> Convert EAL internals, comments, log messages and telemetry keys
+>> to the NUMA node terminology, and update the EAL programmer guide
+>> accordingly.
+>>
+>> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+> 
+> Getting rid of socket as terminology looks like a good thing.
+> One important step would to make sure DPDK usage matches other libraries
+> like libnuma.  It would be good to avoid NIH as much as possible
 
-            Bug ID: 2092
-           Summary: net/pcap: filename truncation in secondary process
-           Product: DPDK
-           Version: 26.11
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: stephen@networkplumber.org
-  Target Milestone: ---
+Thanks for your feedback. I agree that aligning with libnuma conventions
+is important and will help avoid NIH patterns.
 
-Summary: net/pcap is truncating silently and breaks secondary
-The paths need to be larger and variable length
-
-Longer worded AI version.
-
-Component: drivers/net/pcap
-Version: 26.11-rc2 (a13c105)
-
-Description:
-The vdev bus multi-process sync passes only the device name to a
-secondary, not its arguments. To work around this, the pcap PMD
-stores a copy of the devargs string in dev_private, which is
-shared with secondaries:
-
-    struct pmd_internals {
-        ...
-        char devargs[ETH_PCAP_ARG_MAXLEN];   /* 64 */
-
-    strlcpy((*internals)->devargs, rte_vdev_device_args(vdev),
-            ETH_PCAP_ARG_MAXLEN);
-
-When a secondary probes, it parses internal->devargs and opens
-its own pcap handles from that copy. The limit applies to the
-whole argument string, not to each file name, so it is easy to
-hit with one long path or with several short arguments.
-
-The primary works normally because it parses the full string.
-Only secondaries see the truncated copy, so the problem stays
-hidden until something like dpdk-dumpcap, dpdk-pdump or
-dpdk-proc-info attaches.
-
-Effects in the secondary:
- - rx_pcap/tx_pcap open fails on the truncated path, so the
-   attach fails.
- - Arguments after the cut point (snaplen, infinite_rx, ...)
-   are dropped or mis-parsed.
- - If the cut lands on a path that exists, the secondary opens
-   the wrong file. For tx_pcap, pcap_dump_open() creates or
-   truncates that file.
-
-Steps to reproduce:
- dpdk-testpmd --vdev 'net_pcap0,rx_pcap=3D<path, devargs 64+ bytes>' \
-     -- -i
- dpdk-dumpcap -i net_pcap0 -w /tmp/x.pcapng
-
-Works when the same file is under a short path, e.g. /tmp/a.pcap.
-
-Expected: the secondary sees the same arguments as the primary.
-Actual: the secondary probes with a truncated devargs string.
-
-Suggested fix:
-Copy the devargs with rte_strdup() so the full string sits in
-shared memory, keep a pointer to it in pmd_internals, and free
-it on close. Or at least fail the primary probe when the
-string will not fit, instead of truncating silently.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+I will check the semantics and naming of these new NUMA APIs against
+libnuma, and adjust where needed to follow existing Linux NUMA practice.
