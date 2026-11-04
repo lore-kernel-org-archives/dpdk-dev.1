@@ -2,101 +2,80 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF549606A329
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 11:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B62606A326
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 11:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=qNSUkyds
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=U8zpDLs/
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 091D040616;
-	Wed,  4 Nov 2026 12:26:39 +0100 (CET)
-Received: from BN8PR05CU002.outbound.protection.outlook.com
- (mail-eastus2azon11011047.outbound.protection.outlook.com [52.101.57.47])
- by mails.dpdk.org (Postfix) with ESMTPS id 5E6374060F
- for <dev@dpdk.org>; Wed,  4 Nov 2026 12:26:37 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZgLcHmDn+l2zquf1zsrxtV2L7oYT9J0IdoRN2iYl/Gv+700hQOY8W897K4mpn6/txi5cUPbQpxlCmdvNz6zcRWxctcZhC5ClmCRWvTP8YhSc+1U3wi+/I/Iqi7pDXEaXgIgFB+KwrOKrVbZ8YSilbypsXqwTehJtFcVSxoArIK1JQfDQmY9hjzKzR3rksnuYDRKpIAYVXVJjacmDtx8MKZW/gwqwmzoeUISJIpPEpRgCyFQSwOFlfiGM53KkLCEvBlMcgAitsLaX6zhlSnB+u2ey1yeQKsfuhW5zDG16gZq2zyUjLJ3E8ivPhxxXoR7x8YKeTaoxSXl3w0agsHh/sg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y4SpD91nBkmlZwEzwXwVUq232VxOsWIA9HK+0Tb78Bw=;
- b=axpi5rBOseYNSLRZgy0ffkW6WElZL5Yy0yV0qEIg24NSaE0i1jXlbd/e5mLsNRg/XYLRq2HtGsj+SDygxMiV0JuujRfHduMCw09V9JwGfsPX2/rYoHL+bzrfK3eTcC9DbBiKBN2jXFTKXB98qR3Dfn7W5ZQavq9QOUYi+XqNOLidLNt28wtXFtmtUpKmxznC5oqEcQK8LcHm4JomhuAEWCx3JPg353fR4YVIFh/zHSSEfRo52oO+iQG2Ihb2WDt3GXjyAK2N0iJdXU1VbOd3RWxGxbPfecAxIe+3PuHeSXXWqPFsjXczKnDLFRsNBtGuJ9zPv6OQBqlAgeZTjjNScg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y4SpD91nBkmlZwEzwXwVUq232VxOsWIA9HK+0Tb78Bw=;
- b=qNSUkyds7R5DuKEG34ZH3PuxxXjp+ttTCOF687Ellv6be8uQ7f85QxQUS+5Z5k00yAsZBGDDwnNFnjEiWWyPLCkcPtLi0s7RXxq73h5PpzetmvTY2OqA5LRgQJpX9AdCba3XFMRywKp5LTW/G1iqwUrwqvYej84+QMpsIcGAMk0=
-Received: from BN9PR03CA0922.namprd03.prod.outlook.com (2603:10b6:408:107::27)
- by DM6PR12MB4188.namprd12.prod.outlook.com (2603:10b6:5:215::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.11; Wed, 4 Nov
- 2026 11:26:33 +0000
-Received: from BN7PEPF00000092.namprd03.prod.outlook.com
- (2603:10b6:408:107:cafe::7) by BN9PR03CA0922.outlook.office365.com
- (2603:10b6:408:107::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.569.12 via Frontend Transport; Wed, 4
- Nov 2026 11:26:33 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 165.204.84.17) smtp.mailfrom=amd.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BN7PEPF00000092.mail.protection.outlook.com (10.167.245.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.592.5 via Frontend Transport; Wed, 4 Nov 2026 11:26:33 +0000
-Received: from cae-QUARTZ.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.53; Wed, 4 Nov
- 2026 05:26:30 -0600
-From: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>, "Bruce
- Richardson" <bruce.richardson@intel.com>, Jingjing Wu
- <jingjing.wu@intel.com>, Selwin Sebastian <Selwin.Sebastian@amd.com>,
- Bhagyada Modali <bhagyada.modali@amd.com>, Thomas Monjalon
- <thomas@monjalon.net>
-Subject: Re: [PATCH 0/4] raw/ntb: AMD NTB support
-Date: Wed, 4 Nov 2026 16:56:12 +0530
-Message-ID: <20261104112612.664234-1-raghavendra.ningoji@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAJFAV8w21JOt7c5p3XA6-nLNb1BcCAWM9DBP3mj2BfkyE6rx6g@mail.gmail.com>
-References: <CAJFAV8w21JOt7c5p3XA6-nLNb1BcCAWM9DBP3mj2BfkyE6rx6g@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1D4E540616;
+	Wed,  4 Nov 2026 12:29:28 +0100 (CET)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com
+ [209.85.208.50])
+ by mails.dpdk.org (Postfix) with ESMTPS id 351F84025A
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 12:29:26 +0100 (CET)
+Received: by mail-ed1-f50.google.com with SMTP id
+ 4fb4d7f45d1cf-6af9a9451daso892036a12.0
+ for <dev@dpdk.org>; Wed, 04 Nov 2026 03:29:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793791766;
+ x=1794396566; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=qUUc1Rq6V+Nuqw9SuQgAXy7lBvk8u3lZ9Q00V4S9FX4=;
+ b=U8zpDLs/DPiD6j4cJx2CbRJMV08h0lkojWhaweDZ/8XjQ1BTbwI7AznAt8DZk4PWJn
+ NXstoh21DpGyAX2LxkmfYnVsfKCzdBjS7G3Y5CILQ9dENx1TZjgbfW/54osIIIt1Ou/m
+ OKX55la3yd7uX+QNAYIsrA66ChKUTWh/YZONLmFQ1C0I4nRuoYmBwXPv+9xr9w4nwY2A
+ Zq7tqOaBp8oydYEkyEwmeibDK+fBFona7xyqj366N6WeCZICQoW0/BZsJS6bBeUoJVuj
+ tTcFGJxK3KwOlYyrzkrBpngOxcnETD+lC5okwoo8rfYj0pkxYNgr8Rp8pxWFo4Q+0boV
+ AE4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793791766; x=1794396566;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=qUUc1Rq6V+Nuqw9SuQgAXy7lBvk8u3lZ9Q00V4S9FX4=;
+ b=lLHl8qZZdjCRYNOIaPTGWFj+lF+5Rq+NVPmmUQudJW3E+JyMQFmLkK1ruMYaxQ/bx8
+ AIToK6wT2ppA4urkQWq2VLtXOlCyLWB5E3Ct1CQ38G3UORMs1hYpnOFs8iFqJuWHK2zn
+ y8Pj4cfiuJyXb8MB5Gr/JZm60q9VeQGgJAeTH3SoCjSiDPLeUOVEwbjbATOkAubDw+N6
+ AK6TbX5Pti0bHOtQ2w3YSJFH9xZfCbSeyDBRBhrG2KVw2jq+QjKjjVOiWky6n7f5djOE
+ I25JrrQg1A4kcxsiVZx1Kqx+/qUPJMCbzVqhd0gy7j7Di82F6g7tZFDR0pi/Aw3uuedt
+ 2sSg==
+X-Gm-Message-State: APuU4Z/RlBMYnT/LCVfse8JLGyj1vG9g0MheCwU8xpPKGEegVGluRA6b
+ 6ue4Q8/1CdVD2XloZ970RTYYU/E37YFbh6+pmDnSTsu8fWmUtSixS1oA7KHDncapY/HJZ3p7TSX
+ t4Eq6mt4=
+X-Gm-Gg: AYBFou2ebe3Cr4fBDaUktrZ1msjTIq3lHDHucUpC9cSd+VqkBIBuSIdMPV5az14f+7d
+ HQMknOcMaUcME+TeWDDWzamjsPqSIi6Q5rwtshRoDSUgidzhv53QGbgUOVzR1RUWQQTfzFFT4as
+ tdrVasen/QHzyE6CaPGHDyWSuTS4wa2cL4CNRxhniG76O6SY9489MpPZeRRbeI8uaWtphEySlKc
+ w3peW9Tpbc5VQWZIuUnsV5Ew1srJev9L2ZPu48XORSDE3j9TFoNPNQaUtHKbNzpmLo4vsl8ZwLG
+ Ma/gmSZAzQTsPQhFfIlPQiQpZPTXcNK1AZEfvpgGlRx0y5WHI55riDQ4mQpqncmvCjrF/Bh1vAq
+ Oc9RJWqHXqzW3atkp6fE8Cd0+KJEQRtnvmvCQb2EfSfG3X3LQKCYU4y3xmTlMcF3vUqKUCXa7iC
+ XLFQ5zYXROHLTbZue54KuCySYxbGBZxhlHqEbro3n5KxGUdZ0GDH4AQsHl1qVZwViEWtA3YkfoZ
+ 3Wt1BgsG3shL0RgHDq1lW5hJsvKfQIyB/ScnNwHqQkaDCLxkfnVkau4SQrgzQml0sF5j+3Xr7Of
+ K60mL8a7TBtoYSaI07e9oYPQpl7Wjjn8rTb7ypUOpIjyNrfS1UCGiCy3O99oPTZIJhU3WZdAETJ
+ j8tMdMeoCBvAebQ==
+X-Received: by 2002:a17:906:99c4:b0:c2a:34fe:ea4d with SMTP id
+ a640c23a62f3a-c4ca7a72f91mr1324043766b.25.1793791765516; 
+ Wed, 04 Nov 2026 03:29:25 -0800 (PST)
+Received: from stephen-xps.local (93.224-78-194.adsl-static.isp.belgacom.be.
+ [194.78.224.93]) by smtp.gmail.com with ESMTPSA id
+ a640c23a62f3a-c4d0e4657f6sm59825866b.50.2026.11.04.03.29.25
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 04 Nov 2026 03:29:25 -0800 (PST)
+Date: Wed, 4 Nov 2026 12:29:19 +0100
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Gagandeep Singh <g.singh@nxp.com>
+Cc: dev@dpdk.org, hemant.agrawal@nxp.com
+Subject: Re: [PATCH v3 0/4] DPAA driver changes
+Message-ID: <20261104122919.1642e887@stephen-xps.local>
+In-Reply-To: <20261103093601.3736486-1-g.singh@nxp.com>
+References: <20261030044318.1892998-1-g.singh@nxp.com>
+ <20261103093601.3736486-1-g.singh@nxp.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN7PEPF00000092:EE_|DM6PR12MB4188:EE_
-X-MS-Office365-Filtering-Correlation-Id: a6d3ac04-c7d4-462b-aeb3-08df3a667ada
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|82310400026|36860700016|23010399003|1800799024|10067099003|18002099003|22082099003|261102123227099003|261021123027099003|11063799006|56012099006|261022105027099003|261026140227099003|261009223027099003|261028144727099003|261026121527099003|261021121427099003;
-X-Microsoft-Antispam-Message-Info: i3cB3FfroyAAi5y+sdthXZUnCNxQgwQnUqmn00+R51j7BGOu+7pkAr4HoMTMznaId19EOUnO1FkfJQ479a5V9CLa4emwW5VyN409+YuX3CYXHYsZGxAbgQ8VjnDL7AwlrZXjgxmm+nK/JpBOc2RB4qg72TkOPtP1XGDZRs/RCGXrfq3oHsKuiKCyKPPl24cN2OOUZU9szJId50Whed7ZFrjlPJ1dWYdwL5BHtHbWqg8K+EvbO2fCPjjSn6ZxkOaiy6ozUHbooXJu6zpsU5ZKXXiIFQME9UULmXZbLlcvdI8uLjRl+xbbA4wqe2WXV0Jg5Fk/hcnXMNVIpqkD26QFLzJot/Hu1LvKRz2o1O+elcijAWQtDRMIdO9WVhM5HEOPeaQbp220vauTiUBwvaZK+9icCld74V0KlHfGR+7PLNY8tVbSzb/2mjLFQ26JirgrTs0zhNsZHiEN0hS9HLdOSe3wWBnFNL+cyq+RGJ6wwQZiLnls202s5TFf5LyS1pDKfN/PjaNDPH28/WdjqKFSnUxK/CbSgCklCA72QKWB8W5FPjetXJxSOINOs0lzFODRtJx7XXklShXh5pqmpQxSDBl2P72NtL386dJQT+6aqdIud9kkcisu+cFTJZUyASoUi73a17y2M1R2T1yBg+NahmJdQnt45+y7GaZdIKB+9TuZ59ZQCFokgpjcLFgC7xq7QF92otkj1fmPiN/iYSZP+Q==
-X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(376014)(82310400026)(36860700016)(23010399003)(1800799024)(10067099003)(18002099003)(22082099003)(261102123227099003)(261021123027099003)(11063799006)(56012099006)(261022105027099003)(261026140227099003)(261009223027099003)(261028144727099003)(261026121527099003)(261021121427099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: p/tKeUQziWJNRzcon3rYqHNaLy6VT8NSKYOgqpQIVjk0EZorhPxkgLxC/BbZmQIpJMxttjQEKlf2F8wbv/M8IDWWn6QNjZ6Dunr/D7NhqBaP7QhThm5qReehqTTPJ4Sz9Ci3iQQFZ9duauPohpFt6eUACKGBFGopfw3nHuz7o7TODQKTLI3GWgytk66yqcSZZs5ENfzA4HDY7K7xvzbG/6jRqcB1wt9NYNToB6UAkH2VJuAmYbIca1WmivBKhPXdYGT3K3lzmyTQAHSinWA/lC35afNJvkkXsb/wqI1LXIywP9mB0wKPa92iP93xUDgteZXim/PrnHqmPjJ1uLEV0B8jBnIPmqHXXSkZqBeIOAh9NFp5RI5Y5boXuCr0yoaYU27/2G5MeWPFO5Mf01Ml6tyJSrUh7rAP6JJl/0HXAhHX14rHbgohiaafB/h9FP0T
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 11:26:33.1704 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6d3ac04-c7d4-462b-aeb3-08df3a667ada
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
- Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN7PEPF00000092.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4188
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -106,60 +85,143 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Hi David, Stephen,
+On Tue,  3 Nov 2026 15:05:57 +0530
+Gagandeep Singh <g.singh@nxp.com> wrote:
 
-Thanks for the review. All the warnings were confirmed, except the
-memory window size check, see below. The fixes are sent as a separate
-series: "[PATCH 00/13] raw/ntb: post-merge fixes".
+> V3-Changes:
+>  - Updated rte_pmd_dpaa_oldev.h APIs as per DPDK compliance.
+>  - Added missing release not for OH port support.
+>  - Fixed dump_netcfg issue.
+>  - Added an API to release FQID.
+>  - moved the fman.h changes to first patch.
+>  
+> V2-changes:
+>  - Fixed most of the AI comments.
+>  - added new patch:
+>    fix out-of-bounds read of mac_idx
+>  - removed drv_oldev, updated comments and notes.
+>  - fixes FQ shutdown
+>  - removed unwanted checks, updated open, updated snprintf.
+>  - updated commit messages.
+> 
+> V1:
+>  - Adding OH port support.
+>  - Updates in shared ethernet code.
+>  - Congestion related code cleanup.
+> 
+> Gagandeep Singh (2):
+>   bus/dpaa: fix out-of-bounds read of mac_idx array
+>   drivers: add offline (O/H) port device support
+> 
+> Hemant Agrawal (1):
+>   net/dpaa: support non fmX-macY type of shared Ethernet name
+> 
+> Jun Yang (1):
+>   drivers: add DPAA cgrid cleanup support
+> 
+>  doc/api/doxy-api-index.md                |   1 +
+>  doc/guides/nics/dpaa.rst                 |  36 +
+>  doc/guides/rel_notes/release_26_11.rst   |  10 +
+>  drivers/bus/dpaa/base/fman/fman.c        |  19 +
+>  drivers/bus/dpaa/base/qbman/qman.c       |  61 ++
+>  drivers/bus/dpaa/bus_dpaa_driver.h       |   4 +-
+>  drivers/bus/dpaa/dpaa_bus.c              |  68 +-
+>  drivers/bus/dpaa/dpaa_bus_base_symbols.c |   2 +
+>  drivers/bus/dpaa/include/fman.h          |   6 +-
+>  drivers/bus/dpaa/include/fsl_qman.h      |  28 +
+>  drivers/net/dpaa/dpaa_ethdev.c           | 235 +++++-
+>  drivers/net/dpaa/dpaa_ethdev.h           |  12 +
+>  drivers/net/dpaa/dpaa_flow.c             |   5 +-
+>  drivers/net/dpaa/dpaa_oldev.c            | 938 +++++++++++++++++++++++
+>  drivers/net/dpaa/meson.build             |  11 +-
+>  drivers/net/dpaa/rte_pmd_dpaa_oldev.h    | 198 +++++
+>  16 files changed, 1603 insertions(+), 31 deletions(-)
+>  create mode 100644 drivers/net/dpaa/dpaa_oldev.c
+>  create mode 100644 drivers/net/dpaa/rte_pmd_dpaa_oldev.h
+> 
 
-- rte_pmd_ntb_get_mem_align() trusting any rawdev id: fixed, the device
-  must be valid and use the NTB ops, and an out of range mw_id now
-  returns 0 (patch 1).
+Still see AI reported errors
 
-- peer_used_mws overflowing peer_mw_base[]: fixed for both AMD and
-  Intel (the Intel scratchpad value was also truncated) (patch 2).
+Review of [PATCH v3 0/4] DPAA offline port, shared MAC, cgrid cleanup
 
-- ioremap range check off by one: fixed for both vendors (patch 3).
+Applied to next-net for-main (3b51e2e2f0). Each commit builds with
+-Dwerror=true.
 
-- mw_size never freed: fixed, together with peer_mw_base which was
-  also leaked on each start/stop cycle (patch 4).
+Series
+------
 
-- Doorbell interrupts with vfio-pci: earlier verified with uio and going forward
-  vfio-pci support added.The handler is now registered on each
-  doorbell eventfd; with it, the DB1/DB2 exchange on stop completes
-  (patch 5). This also affected Intel with vfio-pci.
+The rte_pmd_dpaa_ol_* functions now take a port_id, but it is only
+used to look up which fd the ioctl goes to. The classification and LGW
+payloads carry nothing from the port, and the kernel module consumes
+them. My earlier objection stands: this is configuration API for the
+out-of-tree cdx driver and does not belong in DPDK.
 
-- Hardware events never delivered, and the switch on a bitmask: the
-  AMD hardware event handling is removed, together with the
-  handle_hw_event op and the unused definitions, and ntb.rst now says
-  hardware events are not handled (patch 7). It can be added back
-  properly later, with the event vectors and INTMASK wired up.
 
-- Rx EOP guard leaking the partial chain: fixed as a separate patch
-  for stable. A packet is only taken once all its descriptors are
-  published by the peer, and its refill mbufs are allocated before it
-  is consumed, so the ring indexes only move for complete packets
-  (patch 8). While there, I found that the Rx mbuf handed to the
-  application stayed referenced in the software ring and was freed
-  again on device stop (patch 9).
+Patch 2/4 drivers: add offline (O/H) port device support
+--------------------------------------------------------
 
-- ABI changes note, examples Makefile, unused defines and the IOVA
-  as VA note for large windows: done (patches 10-13).
+Error
 
-- Window size check in amd_ntb_peer_mw_validate(): not added. The AMD
-  handshake already uses all the scratchpad registers of a side (the
-  last two being reserved for applications), so passing the sizes would
-  require changing the handshake layout. On the other hand,
-  amd_ntb_mw_set_trans() programs the window limit register with the
-  local memzone length, so the hardware already bounds what the peer
-  can reach.
+dpaa_oldev_init() opens /dev/cdx_ctrl through check_fd() in
+dpaa_ol_tx_queue_init(). If a later step fails, for example the
+mac_addrs allocation, the free_rx path does not close the fd:
 
-Thanks,
-Raghavendra
+	free_rx:
+		dpaa_oldev_queues_release(dpaa_intf);
+		return ret;
+
+dpaa_ol_probe() then calls rte_eth_dev_release_port(), which frees
+dev_private and ol_fd with it. Close it on the error path:
+
+	free_rx:
+		dpaa_oldev_queues_release(dpaa_intf);
+		if (dpaa_intf->ol_fd >= 0) {
+			close(dpaa_intf->ol_fd);
+			dpaa_intf->ol_fd = -1;
+		}
+		return ret;
+
+Warning
+
+dpaa_oldev_queues_release() sends ASK_CTRL_RESET_DPDK_INFO and releases
+the FQIDs only if that succeeds. It does this even when
+ASK_CTRL_SET_DPDK_INFO was never issued: on the probe error path, and
+on close of a port that was never started. In those cases the kernel
+never had the FQIDs, so there is nothing to reset. If /dev/cdx_ctrl is
+missing, probe fails in dpaa_ol_tx_queue_init(), the reset fails with
+-ENODEV, and the Rx FQID allocated with QMAN_FQ_FLAG_DYNAMIC_FQID
+leaks on every attempt. Track whether the kernel holds the FQIDs:
+
+	/* dpaa_ol_set_fq_info(), after ask_set_fq_info() succeeds */
+	dpaa_intf->ol_fq_info_set = true;
+
+	/* dpaa_oldev_queues_release() */
+	release_fqids = true;
+	if (dpaa_intf->ol_fq_info_set) {
+		if (ask_reset_fq_info(dpaa_intf, &fq_info) != 0)
+			release_fqids = false;
+		else
+			dpaa_intf->ol_fq_info_set = false;
+	}
+
+Info
+
+v3 replaced the atomic ask_fd with a plain dpaa_intf->ol_fd, but kept
+the double-checked lock in check_fd(). The unlocked read of ol_fd now
+races with the locked write if control calls can be concurrent. If they
+cannot, the mutex is not needed. The fd is always opened during probe
+by dpaa_ol_tx_queue_init(), so open it once in dpaa_oldev_init() and
+drop fd_init_lock and the lazy open.
+
+dpaa_ol_set_fq_info() copies bh_port_name with rte_memcpy(); this is
+control path, use memcpy().
+
+The blank line added after "/* Rx Statistics Counter */" in struct
+dpaa_if_stats is unrelated.
