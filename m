@@ -2,103 +2,158 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CA4606A31B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 17:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA93760700E7
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 17:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=b73ABo6i;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=xd5955H8
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ChMv03rI
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F17CC40299;
-	Wed,  4 Nov 2026 18:10:59 +0100 (CET)
-Received: from fout-a3-smtp.messagingengine.com
- (fout-a3-smtp.messagingengine.com [103.168.172.146])
- by mails.dpdk.org (Postfix) with ESMTPS id E5E2A40299
- for <dev@dpdk.org>; Wed,  4 Nov 2026 18:10:58 +0100 (CET)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.phl.internal (Postfix) with ESMTP id 13874EC09CF
- for <dev@dpdk.org>; Wed,  4 Nov 2026 12:10:58 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-05.internal (MEProxy); Wed, 04 Nov 2026 12:10:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm3; t=1793812258; x=
- 1793898658; bh=Ll6bSY7LofJArD2L/AiFNc41T9nsfDnInbxsuYUyCu8=; b=b
- 73ABo6i7IoHl0mV63VTUT1oMiFEZ8Gpmgq8tyPayGLalBhCWihT3GBeCZgKsHvTp
- OWtxFBaMZfdZYMWJVi1YjBhUN6yAojf8FiRoJ7yxZPxqLIWXAfhBQkVTxUJATb3b
- /o9k+vsOaWB8ew1TIvLwYZqAIUU5Fl4c79Th7CKU90Mvx8XqOQ0OPOnnt2ufVamD
- UOQ4zZl+pcWcgX/6o7L0HrtLnbKxSY9/sqFJvcVFRpe8DbDWsOIwB8+pgDKARzFt
- THyw8arUGYm6ZsdRzoUZ7ysp+/zBP67otIpOMM3/Kbx4GhM9Lc4t0BEWJILYF+/L
- zvmaLh+W5TtqZ8USD0JFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm3; t=1793812258; x=1793898658; bh=L
- l6bSY7LofJArD2L/AiFNc41T9nsfDnInbxsuYUyCu8=; b=xd5955H8aWI/kyqrB
- v+BVV6NPSoNRNOMlAh1RL5eqFr7jULeLP6QJiEPpTXZQAEvwMippgn3603CjN9bq
- Qm/cMKVeh1aWTQbfApuRb4SLg4WKyyPGpOXo3aDr880qT9k+scfAXTB5ODxD29fM
- wpwQWN2J1sE77cbjoxu2yHWlBABjg7yOk2dPKWq8pWtMFahdhBrqvw/+FQ+cuH8s
- Ih/pjCXIrqspEVHAnYN1iISzNijwJv6GzpJQIFPMdTFDNrzmpxcCSy2cAzG7gEjL
- cMiI9xp34Xgbe8SgV2EsuSGiL0U8J6DhkUTeIYW/xH1vlA/pY8ws8G2fs9b8Cqcl
- 2PtTQ==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1793812258; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:VTTeSTu8db+jqu00P+cvsXO4W0Sh4Fy7zmsmPpRszYWzekx
- /8WeDXDYPKvRCdKty3XBUYKw4WD3ZnPHONCt3qqi7/SRw5wp97hqUWRgWaq5H3VP
- X3EnOcItjLwlCL7W11/H9IYS5She/G6HJQXtDYCHUMmVC3tQQ0dvqmzLjN+xr8xL
- DYm34vz12fMrg29pgJyP59jVCf/cLhaktWZqSwTz+9yqocxUEtNUPLiQs9L4A12P
- 2yG33bh61VjayriSEd1rc7ewe3s8oA3gChH1dcMEILDtVZkz4unJMza7CpAtzMJ+
- U6VtNpW6QtHMART1rgJxZik92ez1D7gsJS4AHbQ==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-08;
- repo=github.com/dkim2wg/interop; date=2026-10-28; sw=lmtpprox;
- action=mi-m=1; hc=11;
- hn=cc,content-transfer-encoding,date,feedback-id,from,
- in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:BNuWrv2IAd+w/9jyLT1riKicblsSnpj/0Iujbq8T/7Q=:XmvRE/VWtzJE6gdT6O6rEpQIqZe2NTCTLrqzXVCRsdE=;
-X-ME-Sender: <xms:IGfratj9pragUSJgzeJyjhkNB2SlJpwnCt7pduDweyzI09BZpHPR2w>
- <xme:IGfras9Deq_cKVIIUYM9Vv-eu0VVhzVEQ1tZyJcODdtMAE1mAbOBo6fD32D8l4lfM
- IC2_7U_EI_3--qyGrx7RDS71R807ZduK9VGYYRQEiuw5vpWeJLyvdE>
-X-ME-Received: <xmr:IGfrasFP16I5VXSC4p01BhCNddIW1QXNFZh6vyArezwcY1KTLP0JrXZkOu-as4GtV-TzqfjW_yWY4ByskNiMpaqKTtKC>
-X-ME-Proxy-Cause: dmFkZTE/o1NMjsYvjHfKjamtHIY7Jf5z0kirYhGK8Km2p5h98o3VwZNSthDGpbe5fz0vfg
- TJW7O6ZM727b/kGmsW1kRv+Um4vno2At6NW0LDYvvXXaEkTCmsY0H1k+QFXuNIPB39khWH
- HZM6JnuJ50EKHVJRJzMei4TgXT4aI1ZB4FsenV7qIK9GtDmWLKn60s9IcUMwj3fFe3sd6r
- mHypxVGEthrI6LPxg5kcoRnQ76Jb3LLRcmyc9bm3ebzTvuoJDYs98HtuAVU3WGRpeo/GNo
- gI3wc7NFFBK+tosDTcJa82SOo8bQYldwETx5gQPgro0a0d2lgK2wl9nKkA6uATynrrMOXI
- ZrxBP55KL9NsV9Ur50vxH3HkhAyVFc/Tr47A9ptYX8ftjd1XTytpY0jzW39d7eaDyOoNcO
- cCJTd7CcvaUx3n9GaKo/5/bF+qji2kDyUwYbEQM4dqdrGG0c5Fk75s1pFhlJMi75N7j0cR
- JMtKOk7hWmEjg6m87Br0Y1/2yP28G/FFfaz4zDKPFsLP9B1D7czL6DXPDTE+g6I7SN1Hpm
- LPV6uSjdRdQn0FgMUo5axpdElqzHppTJmUp3kr2xhEvBqhOmVPI7NSDcom9YujDgnmI4qT
- GLKx3c607ioY1/I6sk+AmMzoPySK4xsB075Otkjsy3meKSG/2EQPDTL+7PaQ
-X-ME-Proxy: <xmx:IGfranlfDqr1--gBJiuV-Phh0ZDEnakv3MGhH4f8CDuPggHZu4GN1w>
- <xmx:IGfraoY4tS4BQIGEgd-su86oyroCU8D39ph2DHNjIxqICi3jIVdz2w>
- <xmx:IGfrakHjKJKfFBxRqFz1RfpLV9Cte4tcL_JCic_YKo-azKF--qwQZg>
- <xmx:IGfrahL9NR2E_0wwFUA5sgrnU1bECgCGqZKxrQv86jyBRB4-OYPmtw>
- <xmx:Imfrai6vwbzHopnMumOdryXVG4d6rg6RMCmmiAzMoxNaaMvZz0jMPrX0>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Nov 2026 12:10:55 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: stable@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>,
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- David Marchand <david.marchand@redhat.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v2] ipc: fix multi-process disabling
-Date: Wed,  4 Nov 2026 18:07:57 +0100
-Message-ID: <20261104171044.2236004-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261103170500.1241751-1-thomas@monjalon.net>
-References: <20261103170500.1241751-1-thomas@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id 7330C40299;
+	Wed,  4 Nov 2026 18:31:33 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTPS id 2946540281;
+ Wed,  4 Nov 2026 18:31:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1793813492; x=1825349492;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=I7ZbEKYnhlO0Kh00lL8eBbgWU7lco8qoS7JX7tFlftM=;
+ b=ChMv03rIzMllmXcJuXBMlflqJr2tUNHH9aGLUDzxrhRAGW0T+CfBxD1B
+ SyeI+5FJuPPZPPzBNYqjIkXiMJQeF9jk9GJ/z3qafYGJoyQ4500D4NtX4
+ arRAuoUiPfo4dGKtcq3LLdab4NUiG8yqMgMVb1ufJJ2JNHPP88e9KknrL
+ q2sUUdyY/LVZAh8Y63Qcxvz2bJkp8zg9XJszyMWc6WRYDXcwxZyC8YTdm
+ sVkuYWCi0+6DFzXjPUeqVWer6f3p2FxQZ1cqGx6DfvKgPx5rvgoKwkXRX
+ eEXsuATPkWKiyTKCiM+zv6MfdNbeifrbJMIUX0AiVB2jeC3VoUf1UFGi1 Q==;
+X-CSE-ConnectionGUID: Sk9pCE01RRGs4pSSAVHIcQ==
+X-CSE-MsgGUID: v3rp4mWfShmPAnFhJiNFsA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2477805"
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
+   d="scan'208";a="2477805"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Nov 2026 09:31:30 -0800
+X-CSE-ConnectionGUID: 9rRMc+fPQwqxPDeTfeG7Zg==
+X-CSE-MsgGUID: +Hb+VS02RCybzdxfM9SfCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
+   d="scan'208";a="6602615"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Nov 2026 09:31:30 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Wed, 4 Nov 2026 09:31:28 -0800
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56 via Frontend Transport; Wed, 4 Nov 2026 09:31:28 -0800
+Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.24) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Wed, 4 Nov 2026 09:31:28 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CXlKYSCOj6CvRB1DlBazj53ZCQT0AxqYbnxnNXzQVDrWKVFXLrmVfnV7BaNENE7AtP7wRThmVvp/KkEhZTntERE/J1NWl1ZOOQwSf9Gc1Sfi7T9vnFXE/4Yf4MtWwTw1jmbMdRE62SU7zHry8bnj3ZzaFSXWf+/G8ssT5gbRR6ROEE46O6R93ipSjqEY57U2RGbwsGbBmMR0RfPa3rB2ylqhe43W8gnhjtycceEzoae87B/zM+t2eTfgtJQON1doX7Z16rthAe7FDZemomhLQgTYMzbuxsnS7Fp6MXDj7c+zraBanNMfrgKGZzgIksJXwZg+Y9mz6RznEiqnlFZ5bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d9V3iCC4RWcfAAeqinieU1RoHVc+cEixAVULnPDUIRc=;
+ b=jFl0EcWk+Ph2XHrKY+kifLTd260MdskoS9m+hAw5xh+8uPFJjM2TJJVlsU11TufQQYfrGwb229GHxwqukMVH95xs8/CyHi+jy453wSnBmbOOKvv3hE2P061eVuWPWVDKXGk1YswUJPyCgxrDN0vF4pBNEzYg0d6csCcYpfz6mEASltgsInlIIceJ9snrHiof+fb3KdZybqdOkdI+kman/avXoAKWZmk7igYd6OJsy98DJ6ntIJm5hyVG65dlaAPBeCF6L6UdpGyJYnr5nZ1GbPQ1Kdv5AGkzXEJcMkO7w5D1307nWKqZFj+VqqKnl6OdQCVmifWw07QP8pogRGELDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA5PPF16790251B.namprd11.prod.outlook.com
+ (2603:10b6:80f:fc04::b04) by CY8PR11MB7313.namprd11.prod.outlook.com
+ (2603:10b6:930:9c::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.8; Wed, 4 Nov 2026
+ 17:31:26 +0000
+Received: from SA5PPF16790251B.namprd11.prod.outlook.com
+ ([fe80::f936:a75:41d4:c567]) by SA5PPF16790251B.namprd11.prod.outlook.com
+ ([fe80::f936:a75:41d4:c567%3]) with mapi id 15.21.0592.007; Wed, 4 Nov 2026
+ 17:31:25 +0000
+Message-ID: <269bfee7-b433-46cc-ae46-b121481495c3@intel.com>
+Date: Wed, 4 Nov 2026 17:31:21 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma/idxd: remove experimental on whole driver
+To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
+CC: <stable@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Conor Walsh
+ <conor.walsh@intel.com>
+References: <20261008154351.387445-1-bruce.richardson@intel.com>
+Content-Language: en-US
+From: "Laatz, Kevin" <kevin.laatz@intel.com>
+In-Reply-To: <20261008154351.387445-1-bruce.richardson@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DUZPR01CA0248.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b5::21) To SA5PPF16790251B.namprd11.prod.outlook.com
+ (2603:10b6:80f:fc04::b04)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA5PPF16790251B:EE_|CY8PR11MB7313:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b000e64-83d5-4cf0-129a-08df3a997363
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|366016|23010399003|1800799024|261028144727099003|261026140227099003|261022105027099003|261102123227099003|261021121427099003|261021123027099003|11063799006|56012099006|10067099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: +vQLw+/AkgvlP2UVqO4shSeckITlWxS7pRwEDoTPdPMdgvH4HCABrTXrrMPudyY6pXI/mt8zLSEPA4caomrr+iWq1y9Uossq2VefRidwl6esNaYeaMQbXP88ERaarmM0A/+AZA0FK5fYODT7nTVRir9+SFeqztbDzRbXeXF2ZSeSY9Y37l75zhnLfljfp2EcPJx5jZXFoWBE6MGgqaUGk1dw+LxiJTb4gpcTLHLiX54PIa53JyQ2wBxusvwFVSegA6HFd/JwNkdIqEFm7H2aOKUn45sS0eMpnlY02teZHn3d73y8+FAjkg6nWjLxBCvJMraHhIRHbbZsSFapQFbZe3CJ9t+71o9wc3jNLlE1vhadcHd+SseKmlv4Mm8wbk54btaGkoDkXj2nTIFd6kgzjm2J/hMIzl7VwGcJC7Vm3/Nj6vKlZOhXFgeA91rwcD8qqTKZxQENlEinarw4Ohq3pPB4WQ8W42/f94i13eVnwLQXH41gF3Fe0ttdBrqeZpjU0vf7GXPQ2lxoB+3Y/uWheSuoLm0K+RdTnSxHCElhsa98/s5982e8yT2wbVsr9ThKPhwBjDJtYe3py5KtQP8AfnidP8qXTH5EAdu3F+CIMDh01q2egjxabkSxFKUI9fOn+j8/PX7BNvMiWYf81AnQ9NgTzpr/jrKskMWz4qBPKHk=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SA5PPF16790251B.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(261028144727099003)(261026140227099003)(261022105027099003)(261102123227099003)(261021121427099003)(261021123027099003)(11063799006)(56012099006)(10067099003)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cEZzN09UbEdlbGVidkxORkJMcitqSmpZdDFTVlp5QlZvWllZVGUwRk5HTkVk?=
+ =?utf-8?B?SnZKZm5ZSVVQS29ta0RSN3FFVkhFVWhjT1JUTzhwSjFsVWhjdm1ZbUZ2eHls?=
+ =?utf-8?B?elNkRjNHVzV5Y2lwelFSZm5qc1ZGMkEySEdkSzh2eVp1NmRGNjNrTS9sLzFU?=
+ =?utf-8?B?NUZaTU96QXhlc1BUNTBHZi9mWEJhY3grVDlRZDBPMmZLeEVMcTZaSG0rZXB1?=
+ =?utf-8?B?RHU2bkhiWUdRYmNXT1psblh4OWdqSG40YllxM0MxRFFBTndWUGIzRDZZaElz?=
+ =?utf-8?B?aDRHUlYyL2FQQnlHZUN0N3d1NlowNUorZE5KbzZadzNFRUpWL3k5clBzanQv?=
+ =?utf-8?B?T2RvWEsyWEhiWm1lODRCRDFWblNKYnNET0psQkd6dWRTSEpobHZtUm95dW5M?=
+ =?utf-8?B?RWtiNjJBRU9yTTAxWFAxcFQ2WU1VaUdsdjNSaWNtOWZVYUozY3RMRXBVazk2?=
+ =?utf-8?B?RFhGcWxreWoxMGYyekdCcWcra2tGU0NKbWpCZHVxRDE4NjA3WVZGb0ZHcHFh?=
+ =?utf-8?B?UG8xeXgweDFoOFBOUkp6MHJweFJQRVk5Q2VtR0txK0k3dzB3VTlzWHBjSnJB?=
+ =?utf-8?B?MTlPOWpCREk1WkMwaDc3bkhLeEVSU3o0ZlZuQ2dKYnlXQTRjbkpFcTJyRzhK?=
+ =?utf-8?B?dUQ1R0xSaGxmT0JVdUI5bkJWRFpEOG9aTjR6d1AveWRkalJ1RjhjVEZiaGx1?=
+ =?utf-8?B?UFd6NFJuS0VTT1pWeUIwSDNuR05Uc0V2eW9nQ3RnQUVrWlVqRmpPVkluQnBo?=
+ =?utf-8?B?azNXMElNYmVIL0N6cVg1Rm1JVFY3OVkzaDM2NHZNUDVIRldoNFQwcnAyS2N0?=
+ =?utf-8?B?QmVwVzJGUXBKcVV0SUdBS1RXczJIcUNBbkNFTUl1T2dxQkFpcGEvYTNrMWJi?=
+ =?utf-8?B?cnJ6WHdRaU91cW9iZlNtVTh5UjZscWtYY3lCSWljelVkNjNaYlU4SlVLWC81?=
+ =?utf-8?B?NGlUTDNEMC9GR2JHTjFHdFNlSmozM3IyM3JPY25LYVF6TS84a3BoajJPc29z?=
+ =?utf-8?B?U3crZ1llY3pOR1RLSmxiSFZ5NFpSMm5XbDJOa0JYdTZzc2FNNEkvTnRCUkdZ?=
+ =?utf-8?B?LzA3YnZ2NFpERmJEVjZvN055cEZkMmk2Z3VZOUcyUmYwellWaUlleC9MQ0ky?=
+ =?utf-8?B?NmNTcmdnQTRDM1ZuaGJpb0V6TjNjcXBwalRkOTNHNzJRQURpbGVhQTVZSlpO?=
+ =?utf-8?B?Y05tclVVRDhJSURqdUg5cVlxZHl1dHZxUUp3L0s1b1NhZmpjSko5czV0L0dP?=
+ =?utf-8?B?T05ZWnEyS0krY0ZBZkZkclZHektkVlVqN1Rid2NMZXdvd2pDYWZXK25sci8r?=
+ =?utf-8?B?VnlTdjRneDRmL3ZHL0JsUHBKdW1iYTR5bmVPMFVCWnZIMlhob0NvRGZFQXVD?=
+ =?utf-8?B?OEZrSzgzRVpJWEpnRmt4VFZybUNjZHIzQmhMak1SV3JOYlkxemVwN3N1Yklq?=
+ =?utf-8?B?bnFuMUlwSGwwVjZQWTBmRGRoSldCeVNpR2ZITjViMnVHZ1Z5bVpOVVdvUk9B?=
+ =?utf-8?B?aDFCdmY2VDZ3S1NTdHgxRHc4M1l0SDlENG1XcDBKR1ZKb0ZZVkpwbE5DZ0Y4?=
+ =?utf-8?B?MjJaeVpnSUhxT3JTK0ZKSlR4dDRsZWFhVHY1SThJRjdoa3VtdnBZNVIxYnlT?=
+ =?utf-8?B?TDE3OFd2TkVwUllyQVlmTmFMYnBpTXhiMEZTMURMYllJdHNocXpZMU1SN2JB?=
+ =?utf-8?B?UlY1NEpaZWpsRnpPNGdCdU9NaFN6ZldsSFFGNk1IZ0tvTEZiOHlWMkw2UUtT?=
+ =?utf-8?B?WnIrOHhJS29DV0x0Tm9NRWM4MmVtU3U5YnJ6bjRNQy9NY3hkZXlkTURrbitV?=
+ =?utf-8?B?UmFBZmJqRXBDWFZ3MU9sZU1YUVBhVE5VUGVuZU8vZDhPWVo5YlNYUDhpUFBZ?=
+ =?utf-8?B?UlpwdktsemdBd3g0UWNUVHFNeG1xNVh4d3VtNlByZlpKekJuWTVZc3NzcWlI?=
+ =?utf-8?B?bU1QUmw5VVUxYUxFVUF3bWlPOG1HNi9QUUQzSnJuSHhLb0Z0bzlpMXRsTGJ3?=
+ =?utf-8?B?bWhzYm15NzRZNkZmN2g1T0tTSVVZMWxVM0tFNjYwSE9xZjNpc2JmWUg1SW94?=
+ =?utf-8?B?NkptQzUyeFNNalVTOExKR1g0Q2o4TE1yVmtQZUJVUlZ2ZWFjbUhTU2l4NzJ1?=
+ =?utf-8?B?OWV3bm1JS3pkdHlvbGZIOW8xTlVPZXdVTCtORmkzb2xBLzM1ZmsyQmlJYVQ3?=
+ =?utf-8?B?VUVEVnNnb04zVXQ4U0h0WmhienVCQkhCc1gzR1RCWkp6eEt3cEdPejB3YWh4?=
+ =?utf-8?B?NHp1UWx5UVFuRHpqaUlYcE5YSzdzQ0trTmlVN05xSVRnTXdWL3A1bHhORnB2?=
+ =?utf-8?B?cFdoWUtEZ3hkeUFhTXYrMFUxY2hlYllBYkwvS3dvUzNTenBsRlhCZz09?=
+X-Exchange-RoutingPolicyChecked: YG16fCXAWLlAFdGrX+vY/8lRMPUlQUflIhBMyHOUu6slHiFVr066n/+YzD1S1p2884e/ea8ueomAmRQkSquO9uJXAZ9mcRd+iRHV14bFN8efRtYkV4JqZTYZBsfDrq4PH6LesHscoZObIKe0qNfmCbhP82ILnCvB883uVIAMzBOxQuMpdPDlTlYr7W449L1KVN8ELvrxkoyt+DAby6xrqxnZJPj4HXkeN9QCukhII2vj34mwue8dNFR/J1XkBXDIJuogPCD2co6GgWkf2La0XJo0R8vpVgY60LIwTzKgj2V+6sesEzl9HU6rye1QpRNITxwgLB6EjCMdxyJmr4lrAQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b000e64-83d5-4cf0-129a-08df3a997363
+X-MS-Exchange-CrossTenant-AuthSource: SA5PPF16790251B.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 17:31:25.1379 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 80zw+G6IUE/L2swBiot89Z+hEM+joojCu7GSrxyQxm/F6Axzc+dQNByWLu9ap312gV5mPE0NUm3+vSDy2lwqXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7313
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -108,268 +163,31 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-IPC and hotplug operations checked --no-shconf incompatible option
-but ignored the multi-process status changed by rte_mp_disable().
-As a result, IPC was still attempted
-and hotplug devargs remained subject to the IPC message size limit
-even when secondary processes could no longer attach.
-
-Change the multi-process status when --no-shconf is used,
-also covering --in-memory,
-so it becomes enough to check this status only.
-
-Allow previously registered IPC actions to be unregistered
-after multi-process has been disabled.
-
-Fixes: 5c307ba2a5b1 ("eal: register non-EAL threads as lcores")
-Fixes: d2fd16c8b003 ("eal: add multiprocess disable API")
-Cc: stable@dpdk.org
-
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
-v2: reverse the logic eal_mp_is_enabled -> eal_mp_is_disabled
-    to map the meaning of the values in enum mp_status
-    (enabled is not unknown)
----
- lib/eal/common/eal_common_dev.c  |  8 ++---
- lib/eal/common/eal_common_mcfg.c |  3 ++
- lib/eal/common/eal_common_proc.c | 56 ++++++++++++--------------------
- lib/eal/common/eal_private.h     |  5 +++
- lib/eal/windows/eal.c            |  6 ++++
- 5 files changed, 37 insertions(+), 41 deletions(-)
-
-diff --git a/lib/eal/common/eal_common_dev.c b/lib/eal/common/eal_common_dev.c
-index b43b0a4bb3..39d5745142 100644
---- a/lib/eal/common/eal_common_dev.c
-+++ b/lib/eal/common/eal_common_dev.c
-@@ -267,9 +267,7 @@ RTE_EXPORT_SYMBOL(rte_dev_probe)
- int
- rte_dev_probe(const char *devargs)
- {
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
--	bool do_mp = internal_conf->no_shconf == 0;
-+	bool do_mp = !eal_mp_is_disabled();
- 	struct eal_dev_mp_req req;
- 	struct rte_device *dev;
- 	int ret;
-@@ -426,9 +424,7 @@ RTE_EXPORT_SYMBOL(rte_dev_remove)
- int
- rte_dev_remove(struct rte_device *dev)
- {
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
--	bool do_mp = internal_conf->no_shconf == 0;
-+	bool do_mp = !eal_mp_is_disabled();
- 	struct eal_dev_mp_req req;
- 	char *devargs;
- 	int ret;
-diff --git a/lib/eal/common/eal_common_mcfg.c b/lib/eal/common/eal_common_mcfg.c
-index 84ee3f3959..32f5f50015 100644
---- a/lib/eal/common/eal_common_mcfg.c
-+++ b/lib/eal/common/eal_common_mcfg.c
-@@ -2,6 +2,7 @@
-  * Copyright(c) 2019 Intel Corporation
-  */
- 
-+#include <rte_eal.h>
- #include <rte_eal_memconfig.h>
- #include <rte_version.h>
- 
-@@ -66,6 +67,8 @@ eal_mcfg_update_from_internal(void)
- 
- 	mcfg->legacy_mem = internal_conf->legacy_mem;
- 	mcfg->single_file_segments = internal_conf->single_file_segments;
-+	if (internal_conf->no_shconf)
-+		rte_mp_disable(); /* multi-process requires shared config */
- 	/* record current DPDK version */
- 	mcfg->version = RTE_VERSION;
- }
-diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
-index 73c6a53013..b70e9189a4 100644
---- a/lib/eal/common/eal_common_proc.c
-+++ b/lib/eal/common/eal_common_proc.c
-@@ -233,14 +233,12 @@ int
- rte_mp_action_register(const char *name, rte_mp_t action)
- {
- 	struct action_entry *entry;
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
- 
- 	if (validate_action_name(name) != 0)
- 		return -1;
- 
--	if (internal_conf->no_shconf) {
--		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
-+	if (eal_mp_is_disabled()) {
-+		EAL_LOG(DEBUG, "Multi-process support is disabled");
- 		rte_errno = ENOTSUP;
- 		return -1;
- 	}
-@@ -270,17 +268,10 @@ void
- rte_mp_action_unregister(const char *name)
- {
- 	struct action_entry *entry;
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
- 
- 	if (validate_action_name(name) != 0)
- 		return;
- 
--	if (internal_conf->no_shconf) {
--		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
--		return;
--	}
--
- 	pthread_mutex_lock(&mp_mutex_action);
- 	entry = find_action_entry_by_name(name);
- 	if (entry == NULL) {
-@@ -656,14 +647,9 @@ rte_mp_channel_init(void)
- {
- 	char path[UNIX_PATH_MAX];
- 	int dir_fd;
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
- 
--	/* in no shared files mode, we do not have secondary processes support,
--	 * so no need to initialize IPC.
--	 */
--	if (internal_conf->no_shconf) {
--		EAL_LOG(DEBUG, "No shared files mode enabled, IPC will be disabled");
-+	if (eal_mp_is_disabled()) {
-+		EAL_LOG(DEBUG, "Multi-process support is disabled");
- 		rte_errno = ENOTSUP;
- 		return -1;
- 	}
-@@ -912,14 +898,11 @@ RTE_EXPORT_SYMBOL(rte_mp_sendmsg)
- int
- rte_mp_sendmsg(struct rte_mp_msg *msg)
- {
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
--
- 	if (check_input(msg) != 0)
- 		return -1;
- 
--	if (internal_conf->no_shconf) {
--		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
-+	if (eal_mp_is_disabled()) {
-+		EAL_LOG(DEBUG, "Multi-process support is disabled");
- 		rte_errno = ENOTSUP;
- 		return -1;
- 	}
-@@ -1073,8 +1056,6 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
- 	DIR *mp_dir;
- 	struct dirent *ent;
- 	struct timespec now, end;
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
- 
- 	EAL_LOG(DEBUG, "request: %s", req->name);
- 
-@@ -1085,8 +1066,8 @@ rte_mp_request_sync(struct rte_mp_msg *req, struct rte_mp_reply *reply,
- 	if (check_input(req) != 0)
- 		goto end;
- 
--	if (internal_conf->no_shconf) {
--		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
-+	if (eal_mp_is_disabled()) {
-+		EAL_LOG(DEBUG, "Multi-process support is disabled");
- 		rte_errno = ENOTSUP;
- 		return -1;
- 	}
-@@ -1182,16 +1163,14 @@ rte_mp_request_async(struct rte_mp_msg *req, const struct timespec *ts,
- 	struct timespec now;
- 	struct timespec *end;
- 	bool dummy_used = false;
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
- 
- 	EAL_LOG(DEBUG, "request: %s", req->name);
- 
- 	if (check_input(req) != 0)
- 		return -1;
- 
--	if (internal_conf->no_shconf) {
--		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
-+	if (eal_mp_is_disabled()) {
-+		EAL_LOG(DEBUG, "Multi-process support is disabled");
- 		rte_errno = ENOTSUP;
- 		return -1;
- 	}
-@@ -1378,8 +1357,6 @@ int
- rte_mp_reply(struct rte_mp_msg *msg, const char *peer)
- {
- 	EAL_LOG(DEBUG, "reply: %s", msg->name);
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
- 
- 	if (check_input(msg) != 0)
- 		return -1;
-@@ -1390,8 +1367,8 @@ rte_mp_reply(struct rte_mp_msg *msg, const char *peer)
- 		return -1;
- 	}
- 
--	if (internal_conf->no_shconf) {
--		EAL_LOG(DEBUG, "No shared files mode enabled, IPC is disabled");
-+	if (eal_mp_is_disabled()) {
-+		EAL_LOG(DEBUG, "Multi-process support is disabled");
- 		return 0;
- 	}
- 
-@@ -1438,3 +1415,12 @@ __rte_mp_enable(void)
- {
- 	return set_mp_status(MP_STATUS_ENABLED);
- }
-+
-+bool
-+eal_mp_is_disabled(void)
-+{
-+	struct rte_mem_config *mcfg = rte_eal_get_configuration()->mem_config;
-+
-+	return rte_atomic_load_explicit(&mcfg->mp_status,
-+			rte_memory_order_relaxed) == MP_STATUS_DISABLED;
-+}
-diff --git a/lib/eal/common/eal_private.h b/lib/eal/common/eal_private.h
-index 8905464f64..60441ac0f2 100644
---- a/lib/eal/common/eal_private.h
-+++ b/lib/eal/common/eal_private.h
-@@ -741,6 +741,11 @@ eal_rand_init(void);
-  */
- bool __rte_mp_enable(void);
- 
-+/**
-+ * Check whether multi-process is disabled.
-+ */
-+bool eal_mp_is_disabled(void);
-+
- /**
-  * Init per-lcore info in current thread.
-  *
-diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
-index cac8faa53d..7309986910 100644
---- a/lib/eal/windows/eal.c
-+++ b/lib/eal/windows/eal.c
-@@ -81,6 +81,12 @@ rte_mp_disable(void)
- 	return true;
- }
- 
-+bool
-+eal_mp_is_disabled(void)
-+{
-+	return true;
-+}
-+
- static int
- sync_func(void *arg __rte_unused)
- {
--- 
-2.55.0
-
+On 10/8/2026 4:43 PM, Bruce Richardson wrote:
+> The idxd DMA driver was marked as experimental in MAINTAINERS file.
+> Remove this designation as it's been stable for a long time now.
+>
+> Fixes: e33ad06eaeeb ("dma/idxd: add skeleton for VFIO based DSA device")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
+>
+> Putting the fixline as the original start of the driver implementation,
+> since there is no good commit point to use to identify the stabilization
+> of the driver. Since this change should be good to backport to all
+> currently supported LTS releases, the orignal addition of the driver
+> works fine as a commit being fixed.
+> ---
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+Acked-by: Kevin Laatz <kevin.laatz@intel.com>
