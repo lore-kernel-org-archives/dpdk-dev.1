@@ -2,76 +2,74 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3128606A31B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 12:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AFD606A31B
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 12:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=R5jnoXwP
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=FROeW7BA
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6E73040281;
-	Wed,  4 Nov 2026 13:25:04 +0100 (CET)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com
- [209.85.208.46])
- by mails.dpdk.org (Postfix) with ESMTPS id 047F44025A
- for <dev@dpdk.org>; Wed,  4 Nov 2026 13:25:03 +0100 (CET)
-Received: by mail-ed1-f46.google.com with SMTP id
- 4fb4d7f45d1cf-6b1f31c63ebso2530893a12.0
- for <dev@dpdk.org>; Wed, 04 Nov 2026 04:25:03 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A5B0D40281;
+	Wed,  4 Nov 2026 13:29:54 +0100 (CET)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com
+ [209.85.218.52])
+ by mails.dpdk.org (Postfix) with ESMTPS id B12E44025A
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 13:29:53 +0100 (CET)
+Received: by mail-ej1-f52.google.com with SMTP id
+ a640c23a62f3a-c2e8c710847so106472766b.0
+ for <dev@dpdk.org>; Wed, 04 Nov 2026 04:29:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793795102;
- x=1794399902; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793795393;
+ x=1794400193; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=haPt5kA1Fc6RNsxI+Cj8RS48s/w11vjGz2xFOO1QM1c=;
- b=R5jnoXwPbcU0DN4j9jRZM1wkZXV86ZFV0vQKWdLupaPWVQEQ0DpM+cfYNiJfzwf0NQ
- 7opJnJbzbGxMxtNLaWnAP8ZEAhqkIAP771Q2SRLBy/SF88i+pnGSNwttHy42Y4lmkMw0
- epaFtREQT7Orzza/35kaUX8/b93dh7dL00e5h2D/5IV5pWaR0Gngg8HtbyBMbtTng1o2
- 6Shh8msAQi3SEUDfLcCAfs+XbVBRJXnnxrOWWDFXYd1/vNXI8/Qs32RoCgYp7zdWBb+Q
- gUapa4sk5wI7K95jgiy3VoIjse4kLr2LfigXkM7Oe81A68fUXE3Xl5a0+bCuEh7j14K6
- /FZw==
+ bh=v0Sl84cumDKQGsOxUve0vrW6lNApPdA26tx+YzcH0ns=;
+ b=FROeW7BAnEhYGzWhkUl9zCNE8MrIx0NE78n/Dh4RxWuF/6KBBqTslRLTDXm3+PBN8U
+ ra/8/zemqikVxDYTlsQDOCU0kGEjRmiF+m/vR/dQW2mtCPFRHq5M3AVN30yRD7pmLPVR
+ G844LPZBpq9Px6T94Sxxfa2suv2uUT5Pct00A2PAajSWBLOlRTsinnv+m22CU3YkY5Nf
+ iZXlAXNAlQxTn0l9d/3SnI+sTNrbWiPoX7Xqv24hnpzSLV1yTLM5ALbe8d2DjIlshHJ8
+ AUjld0YOFTN5DnBs9GbnpTCx/sZif+DKMC+MFZZhmWw6gUK+BsYfkO6Fy9MSIa89OodG
+ +GuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793795102; x=1794399902;
+ d=1e100.net; s=20260707; t=1793795393; x=1794400193;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=haPt5kA1Fc6RNsxI+Cj8RS48s/w11vjGz2xFOO1QM1c=;
- b=cExTNtCNCCoCtQ9ArFmriHInqRy89JmeJYlHYOs+MLrA6ZheHGv0FpNouRQs9+j1IK
- LOIbd7n3oAgSkoLzsMAIn9PxEURus7wJcdxqI06mUDh1OXFOsuh/IdCJIjpQ+c6A0A2e
- gV3qmIEpwWvzxOr+MCdFK5K1qRrg8u7YQxL3nPONSDlriK+T7PX/LIvTDnEE88i8CcEP
- ROP9jNY4ziNtZ8l5FgSifp3V3QxzzMSgl1FAGkyp0sAnDJYe7lDOW46jQPmWZU8OAaB9
- G/DhAER0E4rjEd3fBEw4vTs4mtu+dwNt349RSox7zR0Omk62E7QSQfaRpCVXLqR8C7RP
- dOtQ==
-X-Gm-Message-State: APuU4Z+U7BwvSl6iSW8XJsZB9mpxKQtLg621C4LNCNfm+/H7KX2AJH38
- V0v1rhO4XF83HBQmW2s4RDJFAosAAaWvkcxZ8lAC88/vJGzYFfp+Ew86pxQa1gIGH4M=
-X-Gm-Gg: AYBFou0DExhGl4COEcwPJQpE2+xWil1qhvLBxxP0SW3AS8uHZa+FijfS4R0Y/cIt3TR
- HX1JVbh9IHXu82E4iYp4hNJNuZ4LHt+H8/dxoObdcv/8+ZaAINwpTT5hQg/aElwfDMzFQrazV/c
- /zoGI5ljAF2R3ZcOxvOYo5Lrt99oLFKgIONKXwc+KO8Ax49SJYeJPeIlj+2SHQ9uJtfCqFH2BGb
- WhjKe2VIsYu7/hQrLK4xC3LKGTsU33wCSCnfK0ChHjfdyjiSCRdz2Kzj9k4vrk3VRr9cNRM+4tI
- Ne97t4Pf2ovFlk9fdS640Zc1k9mYc9DFNAF6RG8Po5QDE7HdSCVsOtYwCscc5L1Wlv+xJ+aS6Zb
- +VfrkPelPprRi4EMFB+UhfbNrYWraSm3V+kaPEcXS1Oefiq9aw7Sg6QxLJAlRyCzJOUkylGeeTP
- vvSD3Xo/bQvSe0a+SVbjOaCtEM8Ta38u0xK6SsAR68FIXYToS8bmW0g0F4YrwJjGRNYRQsFmxKj
- Xdv/dRZ6j/kYGZRyF/LWkCSA62rrqHzQrhj1j/xpK8P1pDmP69SMVpj30xZG6lU5Y/iWSPwi8uW
- 4PQj4mhdMJyFLcFW1GUsu7xxJi6JVQg2QS8dQhJmWGMdivg//Qr1ZExcvfG2TTtSffXyh4Ga2uV
- E5P+7u5ougaOvVi0=
-X-Received: by 2002:a05:6402:a251:20b0:6b4:8b1e:2866 with SMTP id
- 4fb4d7f45d1cf-6b4b0c0d79fmr10782263a12.16.1793795102422; 
- Wed, 04 Nov 2026 04:25:02 -0800 (PST)
+ bh=v0Sl84cumDKQGsOxUve0vrW6lNApPdA26tx+YzcH0ns=;
+ b=LMJhbuUe8vKVV4d61buENpTWTRLjLlgTEZqfDVQlUZFcVrD2hjY16A+6sR54hXsRGT
+ qJtZTlysCX9YLCR0ZFW7dUea6VPFiyy2WO0tABep9cZuQISgKOSMidB+yCi2+litYBjK
+ RFOsWnspC0N672gJPJTjjIzwhZuQ4cDrqVrMXumM/NeSaHOrU2zbVHOlyVa2uLJgDsJ4
+ az0hRcIDKLbEHcQrLNJmSGfIYFDNTcv89CBP/p9f9+HSN5EKLcvDHX3BJxMnbpTFuXUP
+ f8JTlaoZeNWX6PVBfZHmeea9L96Dj6UAd4KBU4XbTWWEI0HjBCyRvs/PsmKRD5m8+MDK
+ tdXg==
+X-Gm-Message-State: APuU4Z+KpIg4z6aP4ZTtNOUHbByOxLSUfsdy2uEDHrlOGDLtE+zvisjC
+ KbwnbbGMlp76bB9Hn7mUKONoGPDP1Bg+SWwm3lcRUvvXVPhagnK4RrCcZL7elkaYBoQ=
+X-Gm-Gg: AYBFou2mVNXkPDcgDdsX6RT+9umBZtNpBIt8HtPYplDaDzFUVp+HTNd3k4PCU+EVlR5
+ OJFzVCg8VYVczH369IeXUUZXjv5q302XDBuc8GMMdQeaO9vugfbHJYFKwsXHgrUctS725awcjoP
+ sXqRYnlt9Bx8QxQSSxroFyhrqZ62pCnQmrh8c5ChYkRat2rHPKRsYLi5Ttim1uPQWRVANn/Q0DB
+ 5MBiMZYHgq1Un17PuliiSRRrWy1LbS36X/wTbKBu4zQph6Q7xemRC/98wSDbC0v/SHKGd08+ozO
+ XJp291lbx0kIzYzQAbimMFZbJG2U2C8QxMgwOuzNUwY5ZoXeNYljllPyrtDy3ZUpROWuea/TCGh
+ MQKZiyEuZvQeUCYb8NvVWu6Vw4VCwIm9QRT2bU9/S6K1Lvfi3NnPXAEYjpusdMofMJKWoaRjraF
+ mBcdJ2lD5Uq3Jwhjhrmj5q14oySXn6k+0jexevrCpZXUu4tCCL0OX0ssvErNjn+ZD3urIBW9WJ/
+ VzLARwonz9tMfaRHhNUkFJ8t3Hc0zenbqSx2uimDAZrueNNLsloAVvzuC8kG/BYjVxO7Ofs/InE
+ e1pgycVN5p0C59kO3jCJEwtCLrubGUX5RFHnDpA+lCRJkC4FOGJEiDROvn4DGahiPx5O4x5FxF5
+ 5PeAIaYM+0NCUIC6R17Ndf0GQp9+YQuU4pQup
+X-Received: by 2002:a17:907:3e22:b0:c40:5ee3:8698 with SMTP id
+ a640c23a62f3a-c4ca7a9ec9fmr1416008366b.31.1793795393021; 
+ Wed, 04 Nov 2026 04:29:53 -0800 (PST)
 Received: from stephen-xps.local (93.224-78-194.adsl-static.isp.belgacom.be.
  [194.78.224.93]) by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-6b55ac46445sm680850a12.13.2026.11.04.04.25.01
+ a640c23a62f3a-c4d0e48d3acsm62394866b.71.2026.11.04.04.29.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 04 Nov 2026 04:25:01 -0800 (PST)
-Date: Wed, 4 Nov 2026 13:24:57 +0100
+ Wed, 04 Nov 2026 04:29:52 -0800 (PST)
+Date: Wed, 4 Nov 2026 13:29:49 +0100
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
-Cc: <dev@dpdk.org>, <jingjing.wu@intel.com>, <thomas@monjalon.net>,
- <selwin.sebastian@amd.com>, <bhagyada.modali@amd.com>,
- <bruce.richardson@intel.com>, <david.marchand@redhat.com>
-Subject: Re: [PATCH 00/13] raw/ntb: post-merge fixes
-Message-ID: <20261104132457.78d41700@stephen-xps.local>
-In-Reply-To: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
-References: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Aman Singh <aman.deep.singh@intel.com>
+Subject: Re: [PATCH] app/test-pmd: add explicit parameter for fixed link speeds
+Message-ID: <20261104132949.4957efe6@stephen-xps.local>
+In-Reply-To: <20261103155033.3740814-1-bruce.richardson@intel.com>
+References: <20261103155033.3740814-1-bruce.richardson@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -86,151 +84,124 @@ List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Wed, 4 Nov 2026 16:49:48 +0530
-Raghavendra Ningoji <raghavendra.ningoji@amd.com> wrote:
+On Tue,  3 Nov 2026 15:50:33 +0000
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-> This series addresses the post-merge review of the AMD NTB support
-> by Stephen. Some of the issues also exist in the Intel code and in
-> released versions; those patches are tagged for stable.
+> When a particular speed was specified for a port in testpmd, the flags
+> passed to the underlying API call always included the
+> RTE_ETH_LINK_SPEED_FIXED flag. This flag is not a mandatory part of the
+> bitmap when setting speeds, and is used to disable autonegotiation.
+> It's possible to have a link report only a single speed while
+> still have negotiation enabled, so testpmd needs to be extended to
+> support setting a speed both with and without the flag.
 > 
-> - Patches 1-4 fix the type confusion in rte_pmd_ntb_get_mem_align(),
->   the unbounded peer memory window count, the off-by-one in the
->   address remapping and the memory window leaks.
+> This patch does so by adding an optional "fixed" keyword after the speed
+> specified by the user. The presence or absense of the keyword adjusts
+> the presence or absense of the FIXED speed bit in the ethdev
+> configuration structure "rte_eth_conf.link_speeds" bitmap.
 > 
-> - Patch 5 fixes the doorbell interrupts with vfio-pci: only MSI-X
->   vector 0 (DB0) was serviced, so the DB1/DB2 exchange of dev_stop
->   never completed and the stop waited for its 1s timeout.
-> 
-> - Patch 7 removes the AMD hardware event handling, which could not run
->   as wired, and documents that hardware events are not handled.
-> 
-> - Patches 8-9 fix the Rx path: a partially consumed packet was leaked
->   and desynchronized the ring, and an mbuf owned by the application
->   could be freed again on device stop.
-> 
-> - The other patches are documentation and cleanup.
-> 
-> The peer memory window size check suggested for the AMD handshake is
-> not added: all the AMD scratchpads are in use, and the window limit
-> register programmed with the local memzone length already bounds what
-> the peer can reach.
-> 
-> Tested with vfio-pci on two AMD EPYC Embedded hosts: handshake,
-> file transfer, and stop/quit with DB1/DB2 exchange.
-> 
-> Raghavendra Ningoji (13):
->   raw/ntb: fix device check in memory alignment query
->   raw/ntb: fix peer memory window count check
->   raw/ntb: fix memory window bound in address remapping
->   raw/ntb: fix memory leaks
->   raw/ntb: fix doorbell interrupts with VFIO MSI-X
->   raw/ntb: fix AMD processor names
->   raw/ntb: remove AMD hardware event handling
->   raw/ntb: fix Rx of incomplete packets
->   raw/ntb: fix double free of Rx mbufs on stop
->   examples/ntb: fix raw/ntb library linking
->   doc: add NTB device info change to ABI section
->   doc: add IOVA requirement for NTB
->   raw/ntb: remove unused AMD register definitions
-> 
->  doc/guides/rawdevs/ntb.rst             |  12 ++-
->  doc/guides/rel_notes/release_26_11.rst |   6 +-
->  drivers/raw/ntb/ntb.c                  | 136 ++++++++++++++++++++-----
->  drivers/raw/ntb/ntb.h                  |   7 +-
->  drivers/raw/ntb/ntb_hw_amd.c           |  54 ++--------
->  drivers/raw/ntb/ntb_hw_amd.h           |  25 +----
->  drivers/raw/ntb/ntb_hw_intel.c         |   9 +-
->  examples/ntb/Makefile                  |   3 +-
->  8 files changed, 149 insertions(+), 103 deletions(-)
-> 
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
 
-Lots of AI reported issues here:
+In general it looked ok to me. But I would like testpmd and ethtool have same syntax
+to follow the principle of "least surprise" for users.
 
-Subject: Re: [PATCH 00/13] raw/ntb: post-merge fixes
+The AI review with its issues and that encouragement was:
 
-Series applies to main (26.11-rc2) and builds at every commit with
--Dwerror=true (raw/ntb + examples/ntb).
+Review: [PATCH] app/test-pmd: add explicit parameter for fixed link
+speeds (patchwork 172601)
 
-Patch 04/13 raw/ntb: fix memory leaks
+Applies to main (26.11-rc2), builds with -Dwerror=true.
 
-Warning: mw_size is freed in dev_close, but rte_rawdev_close() does not
-detach the device; it stays attached and its ops remain reachable.
+Warning (should fix)
+--------------------
 
-  +	rte_free(hw->mw_size);
-  +	hw->mw_size = NULL;
+1. Syntax should follow ethtool rather than invent "fixed".
 
-After close, rte_pmd_ntb_get_mem_align() passes the new checks from
-patch 1 (attached, dev_ops == &ntb_ops, mw_id < mw_cnt) and on Intel
-calls intel_ntb_get_mem_align(), which does
+   ethtool has autoneg as a separate on/off setting:
 
-	return hw->mw_size[mw_id];
+     ethtool -s eth0 speed 10000 duplex full autoneg off
 
-i.e. a NULL dereference. A configure after close does the same in
-intel_ntb_dev_handshake() (hw->mw_size[i]), and ntb_dev_info_get()
-now hands the application mw_cnt = 2 with mw_size = NULL; ntb_fwd
-indexes ntb_info.mw_size[0] unconditionally.
+   With autoneg on, a given speed/duplex limits what gets advertised
+   (the kernel's ethnl_auto_linkmodes()). That is the same as this
+   patch's default, so the semantics are right; only the keyword and
+   its position need to change:
 
-Both vendors have a fixed count of 2 windows (XEON_MW_COUNT,
-AMD_MW_COUNT), so drop the allocation and embed the array in
-struct ntb_hw. It then lives exactly as long as dev_private, the
-info->mw_size pointer stays valid, and the leak goes away with no
-free at all:
+     port config (port_id|all) speed (...|auto) duplex (half|full|auto)
+         [autoneg (on|off)]
 
-	#define NTB_MAX_MW	2
-	...
-	uint64_t mw_size[NTB_MAX_MW];
+   autoneg off   -> set RTE_ETH_LINK_SPEED_FIXED
+   autoneg on    -> clear it
+   absent        -> leave autoneg alone. ethtool keeps the current
+                    setting, so keep the FIXED bit already in
+                    ports[pid].dev_conf.link_speeds. The default
+                    dev_conf is autoneg, so a fresh port behaves as
+                    posted.
+   speed auto + autoneg off -> error, as now.
 
-with RTE_BUILD_BUG_ON(XEON_MW_COUNT > NTB_MAX_MW) (and AMD) in the
-vendor init, and the rte_zmalloc()/NULL check removed there.
+   Putting the optional tokens last leaves the existing
+   "speed N duplex D" prefix alone. Users who know ethtool can guess
+   it. Untested sketch for the all-ports case:
 
-Patch 05/13 raw/ntb: fix doorbell interrupts with VFIO MSI-X
+     struct cmd_config_speed_all {
+     	...
+     	cmdline_fixed_string_t item3;	/* "autoneg" */
+     	cmdline_fixed_string_t value3;	/* "on#off" */
+     };
 
-Warning: db_intr_handles is an array of process-private pointers
-(handles come from rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE))
-used only by the control path. No reason to put it in hugepage memory.
+     static cmdline_parse_token_string_t cmd_config_speed_all_item3 =
+     	TOKEN_STRING_INITIALIZER(struct cmd_config_speed_all, item3,
+     				 "autoneg");
+     static cmdline_parse_token_string_t cmd_config_speed_all_value3 =
+     	TOKEN_STRING_INITIALIZER(struct cmd_config_speed_all, value3,
+     				 "on#off");
 
-  +	hw->db_intr_handles = rte_zmalloc("ntb_db_intr",
-  +				nb_efd * sizeof(*hw->db_intr_handles), 0);
+   The second cmdline_parse_inst_t still needs the two extra tokens.
+   In the handler, res->item3[0] == '\0' means autoneg was not given.
+   The cmdline library zeroes the result buffer, so the
+   ".data = &cmd_config_speed_all_fixed" self-reference used as a flag
+   can go. Same for the per-port instance.
 
-Use calloc(nb_efd, sizeof(*hw->db_intr_handles)) and free() in
-ntb_db_intr_unregister().
+2. Default behaviour of an existing command changes silently.
 
-Info (pre-existing, not introduced by this patch): peer_dev_up is a
-plain uint8_t written by the interrupt thread (DB1/DB2 handlers,
-"hw->peer_dev_up = 0;") and polled by ntb_dev_stop():
+   Before this patch "port config 0 speed 10000 duplex full" set
+   RTE_ETH_LINK_SPEED_FIXED. After it, the same command leaves autoneg
+   enabled and advertises only 10G. Existing scripts and test plans
+   (DTS, vendor validation) keep parsing but now do something
+   different. Whether the user sees a difference depends on the PMD.
 
-	while (hw->peer_dev_up && time_out) {
+   The new default is correct (it matches ethtool), but the release
+   note puts it under New Features. Give the behaviour change its own
+   sentence, e.g.:
 
-Now that DB2 is actually delivered, this loop is the normal stop path
-rather than the timeout. It only works because rte_delay_us() is an
-opaque call. Should be rte_atomic_store_explicit()/load with
-release/acquire, as a separate patch.
+     Speed settings no longer disable autonegotiation by default;
+     add ``autoneg off`` to force the speed.
 
-Patch 08/13 raw/ntb: fix Rx of incomplete packets
+3. --eth-link-speed is now inconsistent with the runtime command.
 
-Info (pre-existing, not introduced by this patch): the new on-stack
+   parse_link_speed() in parameters.c still starts from
+   RTE_ETH_LINK_SPEED_FIXED, and run_app.rst calls it "a forced link
+   speed". So the startup option forces the speed and the runtime
+   command no longer does. Either add a matching option (e.g.
+   --eth-link-autoneg=on|off), or at minimum document it in the speed
+   command section:
 
-  +	struct rte_mbuf *new_mbufs[NTB_MAX_DESC_SIZE];
+     The ``--eth-link-speed`` command line option always disables
+     autonegotiation.
 
-like the existing rx_desc[], is only bounded because nb_rx_desc is
-assumed <= NTB_MAX_DESC_SIZE. ntb_rxq_setup() takes
-"rxq->nb_rx_desc = rxq_conf->nb_desc;" without checking that, or that
-it is a power of two (the ring indexes use & (nb_rx_desc - 1)); only
-the ntb_fwd example range-checks it. The same function also leaks rxq
-when rx_mp is NULL. Worth a separate fix:
+Info (consider)
+---------------
 
-	if (rxq_conf->rx_mp == NULL ||
-	    rxq_conf->nb_desc < NTB_MIN_DESC_SIZE ||
-	    rxq_conf->nb_desc > NTB_MAX_DESC_SIZE ||
-	    !rte_is_power_of_2(rxq_conf->nb_desc))
-		return -EINVAL;
+4. testpmd_funcs.rst: the patch leaves three blank lines before
+   "port config - queues/descriptors"; one is enough. "Support for
+   these settings depends on the driver and hardware." adds nothing
+   and can go.
 
-placed before the rte_zmalloc_socket().
-
-Review-Result: WARNING
+5. Commit message: "absense" (twice) -> "absence"; "still have
+   negotiation enabled" -> "still have autonegotiation enabled".
