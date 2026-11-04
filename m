@@ -2,54 +2,85 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFA3606A326
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 02:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42540606A328
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 07:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=zt3LUNfy
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=hQ8YdB07
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9476E40281;
-	Wed,  4 Nov 2026 03:08:58 +0100 (CET)
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
- [113.46.200.223])
- by mails.dpdk.org (Postfix) with ESMTPS id CE92F4026E
- for <dev@dpdk.org>; Wed,  4 Nov 2026 03:08:56 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=oCkrqQLbcp8jgvS3FLct9k+tRRgE4jK3xa8BVvaDbeo=;
- b=zt3LUNfyrXoIH2xrjpx8S0C/RRM/X8TpNuCqRhN0V0ABeB01JbGmpYBZzjCMrQaiMaqSjeaTt
- wMxPvTKNDgBFY1nvU5hhp31XoxAcOQqnVN6hM1bAEeraHZ7764yv1RjWW0G45pgEd7jgUiO8ekD
- UNdOJ8fkHDy4T34oKyZkyp8=
-Received: from mail.maildlp.com (unknown [172.19.163.200])
- by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4jK84V2PVRzmVZw;
- Wed,  4 Nov 2026 10:08:42 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id D82464055B;
- Wed,  4 Nov 2026 10:08:52 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Wed, 4 Nov 2026 10:08:52 +0800
-Message-ID: <714a77be-ce37-4ebe-8cb5-96fbc6cdffe9@huawei.com>
-Date: Wed, 4 Nov 2026 10:08:51 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id AFC444026E;
+	Wed,  4 Nov 2026 08:29:32 +0100 (CET)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com
+ [209.85.218.45])
+ by mails.dpdk.org (Postfix) with ESMTPS id 5034040151
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 08:29:30 +0100 (CET)
+Received: by mail-ej1-f45.google.com with SMTP id
+ a640c23a62f3a-c4203bbb1e9so60649666b.3
+ for <dev@dpdk.org>; Tue, 03 Nov 2026 23:29:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793777369;
+ x=1794382169; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=yQLe8cs4yilxDF8X+Q6aJx+WRBDHNhihoNHFUTdiFBc=;
+ b=hQ8YdB076lsv+Rgg0biCu2pbw4xocgyyiyN2Z28HLU1VwssiXJqrkX7fI7o/PCE04h
+ pjyYuPC6lRknYreIXH/Ynj9dvSFfBmDy/3FmzIccJvMJGi50SWOlP9jOkr7aF5O1CasS
+ EeOvaw7ZT7BUffZy6HUbz7i3uK1hPrqNpEUGeom/yL02P8tymolKFC5QHGI5A+41Cf0G
+ Ro0MtcQqxZBg2prcq8JDRiSRC0kbnHVQnYxTnlh+idBIdWjzhVgSzpntFjvBISXABe9D
+ qcQhM+PktImMDm8y8eZQPL/85RnLiCFBtWgiEiS3zaU7+NZV/1rA0JtIgXbRmPU4Hvca
+ KnRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793777369; x=1794382169;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=yQLe8cs4yilxDF8X+Q6aJx+WRBDHNhihoNHFUTdiFBc=;
+ b=xvUDfHNTisv32iQjdX56Blbt5AqAhJi8xF+l92vwqhYpu7hT2iHSTNQz2SVeGJYDBZ
+ 8ZftCj/sJ755DOSeSvDafJazpbE/8B4VT6l9j5cdqbJfL4QJIYe6KwO5GUGLgoAqLzO6
+ B7Zq2BObOplqr8c152t5OlxGRYIK95igJTiaK1IPYteDYNW4gCat175B6XZk/l4wjROf
+ 9hnYnus+2A3kO88kO+Y2nJ8O1JdQjF6fzydG3IlE2NTnhUyOMX3gzYxHWK7NMrQvd0bT
+ UPqc+F9Y1M6c6wMY+IU75ZRjEGTDrUACHc3/cPawS+CE6unguHjLuW81FqDpi8EFsX6M
+ xisA==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBxc7OIZwlSZvTsy2+2KeBQ5hUYX0Ps1H+RgAwWtvdK/z1s/hph8y8VgJm3ZbaSNSrysDIY=@dpdk.org
+X-Gm-Message-State: APuU4Z+/TWD/qpnBnTBRp14kbMUhuRq3D2g6pp4c57l3Hh5yZlPeAjGN
+ v6J1ACXuQCcQ3xLAcJmBrnTFLzTODHbAjmfmFw2I7ZnMX8Hk24vwc+IAJcZTwCWQsWA=
+X-Gm-Gg: AYBFou03e7CzY10iGaEETnU11YjO5Wh7mmILKLqwov4309NUciRjAspYIL3Rs8/05ta
+ ETJmx7loSUeRe9c5ojzMGENp32w10tZ0LwY4rsP9qm+wKeY7tUOReTGMuMh6Kmv9ilTGr928rxz
+ Ahkf5WTsNg5ghwLnkRUcxS/J849Q28qzBk/MDc5ncbGlYyY+hcDyircmZetBhRm/nF2uKSzf9mB
+ +bvJGVjJskITInXsF8hGt1CqNJ00cHH24NSR+/Cjc9bzllrVXFmyQj7ArlqAGhEsV0kjO4kO390
+ nepT3N/FBW3u3deisBbuzvB0g42p83QNoeCwV+OFJhf7N+M9k+yh0TT5cMmU9Vkjm26SDg1dxFS
+ Gj3OdrlH/HjEfaYQ/D3KfPIpgYfiqa4icJyE1tgahiL4IoIIJ6Ku+VNDu2FQex5jM85Wah7CCpx
+ 8hHEozG+DKljIXfKrF2NmyMTm7cRNAOkfbDKCu0FaOvHu95ps1pigfgMs3t0BFaeL52Un3CeWtX
+ YxoiqXIMHfUVXJcVOtpaFjEKIkEq7biIurdJfs/RAyH7MwzwM9TuywcERn4TBlyCPW6PWondr2l
+ T2WjQQc0J7Xagd7W1Nh8PG6DfH9/8fyusSM4Usg26YpExfRgVTFlLEhgdlOwgo/I6Z3ZKQyuw4h
+ BkgfutxYmOy9N5RI=
+X-Received: by 2002:a17:907:c5ce:b0:c29:63f2:99bb with SMTP id
+ a640c23a62f3a-c4ca7acf3a8mr1403607466b.47.1793777369428; 
+ Tue, 03 Nov 2026 23:29:29 -0800 (PST)
+Received: from stephen-xps.local (93.224-78-194.adsl-static.isp.belgacom.be.
+ [194.78.224.93]) by smtp.gmail.com with ESMTPSA id
+ a640c23a62f3a-c4d0e46622asm41672066b.52.2026.11.03.23.29.28
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 03 Nov 2026 23:29:29 -0800 (PST)
+Date: Wed, 4 Nov 2026 08:29:26 +0100
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Cc: Slava Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan
+ Azrad <matan@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [PATCH v2 0/2] net/mlx5: improvements to link status handling
+Message-ID: <20261104082926.47f4ff38@stephen-xps.local>
+In-Reply-To: <PH0PR12MB7077AFBC1E81E2E489F6CAE1A4692@PH0PR12MB7077.namprd12.prod.outlook.com>
+References: <20261026160400.1290443-1-dsosnowski@nvidia.com>
+ <20261030172843.2304296-1-dsosnowski@nvidia.com>
+ <20261102090744.06c8be14@stephen-xps.local>
+ <PH0PR12MB7077AFBC1E81E2E489F6CAE1A4692@PH0PR12MB7077.namprd12.prod.outlook.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] examples/l3fwd: dynamic NUMA-aware alloc lcore_conf
-From: fengchengwen <fengchengwen@huawei.com>
-To: Thomas Monjalon <thomas@monjalon.net>, Konstantin Ananyev
- <konstantin.v.ananyev@yandex.ru>
-CC: <stephen@networkplumber.org>, <dev@dpdk.org>
-References: <20260623032301.17570-1-fengchengwen@huawei.com>
- <xvTXknUbSMSD_Fg-tQD_aw@monjalon.net>
- <4687e093-ac82-4ac7-aac5-838be6c52433@huawei.com>
- <ksiekRtOSqOSIIkKFdXdAw@monjalon.net>
- <cf705046-36bd-4b38-bc56-6106bbba335b@huawei.com>
-Content-Language: en-US
-In-Reply-To: <cf705046-36bd-4b38-bc56-6106bbba335b@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemo500009.china.huawei.com (7.202.194.199)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,64 +90,70 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On 11/2/2026 12:13 PM, fengchengwen wrote:
-> On 11/1/2026 10:26 PM, Thomas Monjalon wrote:
->> 31/10/2026 02:37, fengchengwen:
->>> On 10/30/2026 8:59 PM, Thomas Monjalon wrote:
->>>> 30/10/2026 11:52, Konstantin Ananyev:
->>>>>> BTW: SOCKET_ID_ANY seemed need redefined as RTE_SOCKET_ID_ANY, If there is no
->>>>>>       objection, I will make the changes in the next independent patch.
->>>>>
->>>>> Yep, that's probably a good thing to do, and probably 26.11 is a good 
->>>>> time to do that.
->>>>> BTW, I think it was discussed before, but I can't remember why we didn't 
->>>>> fix it so far.
->>>>
->>>> 1/ We should not break this API easily as it is used a lot.
->>>> If we do the change we need to keep the compat alias for some time.
->>>>
->>>> 2/ The term SOCKET is used in many places instead of NUMA.
->>>> There is a confusion between CPU and memory which deserves to be fixed.
->>>>
->>>
->>> My plan is a 3-patch series:
->>> 1. Add RTE_SOCKET_ID_ANY and deprecation documentation.
->>> 2. Replace all in-tree SOCKET_ID_ANY with RTE_SOCKET_ID_ANY.
->>> 3. Mark SOCKET_ID_ANY with RTE_DEPRECATED after in-tree migration completes,
->>>    so warnings only hit out-of-tree users while DPDK itself builds cleanly.
->>>
->>> I will avoid the bigger "socket -> NUMA node" terminology refactor in this series.
->>> That would be a massive semantic change with large churn, better handled via separate
->>> RFC later.
->>>
->>> If this plan looks acceptable, I will start the implementation.
->>
->> My doubt is that while introducing a new API,
->> it may be better to apply it in correct places with correct definition,
->> avoiding mixing CPU and memory.
+On Tue, 3 Nov 2026 11:04:39 +0000
+Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
+
+> > -----Original Message-----
+> > From: Stephen Hemminger <stephen@networkplumber.org>
+> > Sent: Monday, November 2, 2026 9:08 AM
+> > To: Dariusz Sosnowski <dsosnowski@nvidia.com>
+> > Cc: Slava Ovsiienko <viacheslavo@nvidia.com>; Bing Zhao
+> > <bingz@nvidia.com>; Ori Kam <orika@nvidia.com>; Suanming Mou
+> > <suanmingm@nvidia.com>; Matan Azrad <matan@nvidia.com>;
+> > dev@dpdk.org
+> > Subject: Re: [PATCH v2 0/2] net/mlx5: improvements to link status handling
+> > 
+> > On Fri, 30 Oct 2026 18:28:41 +0100
+> > Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
+> >   
+> > > This series is a result of splitting patch:
+> > > https://patches.dpdk.org/project/dpdk/patch/20261026160400.1290443-1-  
+> > d  
+> > > sosnowski@nvidia.com/
+> > >
+> > > Patch 1 - Fix for mlx5 link update function to query current link
+> > > carrier status, bypassing the delay introduced by linkwatch in Linux kernel.
+> > >
+> > > Patch 2 - Move to link status polling, in place of relying on netlink
+> > > events which can be delayed by linkwatch for up to 1s.  
+> > 
+> > Instead of polling is there a way to get the lsc directly from devx or ibv on
+> > mlx5? That would work around the issue and avoid the overhead.  
 > 
-> OK, I will try to implement it (avoiding mixing CPU and memory)
-
-I have sent out the full patch series for the tree-wide NUMA terminology
-refactor as we briefly discussed. The overall modification scope is
-quite large, touching many areas across DPDK.
-
-I understand this brings substantial code churn and API compatibility
-concerns. I would appreciate hearing feedback and guidance from the
-community on how we should proceed.
-
-Regards,
-Chengwen
-
+> From DevX, unfortunately no.
 > 
->>
->>
+> In ibv there are 2 options:
 > 
+> - IBV_EVENT_PORT_ACTIVE/ERR - generated on up/down respectively;
+>   On ethernet devices, these are generated from netdev carrier state, so they are
+>   subjected to the same linkwatch delay.
+> 
+> - IBV_EVENT_DEVICE_SPEED_CHANGE - generated on up and down;
+>   Is generated immediately on FW event reception.
+>   It is available from Linux kernel v7.0 and rdma-core v62.0.
+> 
+> IBV_EVENT_DEVICE_SPEED_CHANGE would be ideal here,
+> but there's no good way to discover whether currently running kernel supports it.
+> 
+> Theoretically, this event was added alongside ibv_query_port_speed() IB verb.
+> Following logic could be implemented (for DPDK compiled with recent rdma-core)
+> 
+> - Call ibv_query_port_speed()
+> - If error:
+>     - start listening on device speed change async event
+>     - on event: query link status of DPDK ports on that device
+> - else if ENOTSUP:
+>     - start link status poll loop
+> 
+> > 
+> > Long term, it would be good if kernel had sysctl to set linkwatch per interface
+> > but it doesn't  
 
+I have a patch to allow link watch timeout to be set via netlink or sysfs.
+But needs more testing. In future, mlx5 could detect and configure that.
