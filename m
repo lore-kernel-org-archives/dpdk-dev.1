@@ -2,86 +2,87 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B519606A31B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 10:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F81606A31B
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 10:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=N/U8HOib
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=KZ/m9exf
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 656D04028F;
-	Wed,  4 Nov 2026 11:31:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 220F640281;
+	Wed,  4 Nov 2026 11:31:42 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTPS id 9992840151
- for <dev@dpdk.org>; Wed,  4 Nov 2026 11:31:29 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id EE7124025A
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 11:31:40 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1793788288;
+ s=mimecast20190719; t=1793788300;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=j1E7bMmBaR7eLJpYB0gW78EJAkiV0F4AJaTM6uHVvK4=;
- b=N/U8HOibL2UdjpresJyZUUcmQcJjfl2iXpdRgGquiH+lixFeWv923rZkxTKdCALUi/HYQG
- wFck0UNJiB1pHlrAOggeYA2umpNedYdfRIvixpRj2SSJfz2leO/csWt/akzx1UFweTmgn4
- edTeK4udrQk59Jv9Hb8uZdLSKb6aa/A=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=5z4oBr2Z4IlL3rZQ6t3KMHiKMqeac9zaZ2ebRmnrONU=;
+ b=KZ/m9exf1yQl8jK3l89Ufj9VXWbAM125mfJl9dT9E9mU0SOAlqV94/SVmh+5RgaGE38hmV
+ 0luoPfblwxgU7skluQG+F/wEi5UZTcdoZCQLHMpOO8bTlIP5qVi4Qh42eeOEccUo8BH/FU
+ eUekca0/IuduOiHv11pDb73uqcV+nls=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-208-RHTHm72WPjOlOGnZta7rYQ-1; Wed, 04 Nov 2026 05:31:25 -0500
-X-MC-Unique: RHTHm72WPjOlOGnZta7rYQ-1
-X-Mimecast-MFC-AGG-ID: RHTHm72WPjOlOGnZta7rYQ_1793788284
-Received: by mail-wr1-f70.google.com with SMTP id
- ffacd0b85a97d-4901562b819so482064f8f.3
- for <dev@dpdk.org>; Wed, 04 Nov 2026 02:31:25 -0800 (PST)
+ us-mta-288-3JXNZ-CVP0Oq8vXbU4gUSw-1; Wed, 04 Nov 2026 05:31:38 -0500
+X-MC-Unique: 3JXNZ-CVP0Oq8vXbU4gUSw-1
+X-Mimecast-MFC-AGG-ID: 3JXNZ-CVP0Oq8vXbU4gUSw_1793788298
+Received: by mail-wr1-f71.google.com with SMTP id
+ ffacd0b85a97d-48dea677afcso230286f8f.1
+ for <dev@dpdk.org>; Wed, 04 Nov 2026 02:31:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793788284; x=1794393084;
+ d=1e100.net; s=20260707; t=1793788298; x=1794393098;
  h=in-reply-to:references:user-agent:subject:to:from:cc:message-id
  :date:content-type:content-transfer-encoding:mime-version:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=j1E7bMmBaR7eLJpYB0gW78EJAkiV0F4AJaTM6uHVvK4=;
- b=iTxFckaGhdQlK5P3Pf6ej6PCvi04238GfebG3sJ6wQEWpMavnDOSH+TeK5cjnJqkiF
- Fe5pmB+jqcwi4FfGQtahtKD8TaDb7jEowDXn/K0uOdhVB1JrX7BMTCyDIJnT1zCqoEqA
- BSe0C5w1zGwUSSmc8CuaMXXBqyURi3f7/4tC0mr3/sjwQrtobc0DJgV8+kAovlDxGNPq
- gY/B4BK6Wcw+NBFsw2zy+HHl8zi/FsSRIOL1KSelCRBBYC1Otr2ee/V+0n7k64FS9o9u
- +RAOWMvkBn0dMFsxYZFt2M0JIv6dKvRxImJWLzRmUVGv22ZrmFgB1JAvsWen/IRvreb0
- SdAw==
+ bh=5z4oBr2Z4IlL3rZQ6t3KMHiKMqeac9zaZ2ebRmnrONU=;
+ b=O5DNWPH+Oq5MWPfh5EX4f8XXojfzW1XtgdooOkB81wyYLAV8PBXn10qP1gNPIlup6C
+ tc1s/TUCOUamHtEguO9sOcmhME5XAh6ps3ZubqwlMUwCCE1Vpkg/FjhkOQswerKEAY56
+ 4DP/tQ0pcDW7PJXvGl+ulcuSdOrMJmabezRUU6fNX9mELz5Apazawx97BLW5pqksDZAV
+ kTt7zFPZ/uonvFlp0xfTpkeA83x0sBETJuPSD/0l5ese59JVomfiCn+fRMH3CWKMwl0a
+ 0A8P715p7SfcXtVmy7hw/xhJbiEZgk3mBusciLpBfD2eIyNyTPSMbnmePYJ1BVUvne25
+ 6dDg==
 X-Forwarded-Encrypted: i=1;
- AKwUvBy7w4F8Ez4ynv9U0zla3mT+NI3XsGuBpuspbjpB8N21AdE+Uxe+xheoFLT+q0KElcnIXq4=@dpdk.org
-X-Gm-Message-State: APuU4Z9wIoHw8T0HQ+3uH7njcjuhRa3EZAXdh+nXlI5vYPkryBpa8+xB
- 99IadFabBQBv2wpw+Y9aFgNMPBz4HyP2BDngeFMKilLo+StVol6vECIOMVkXc0dTlei8mv88LBa
- hZh+DJ9JAsW7RxVfsJUAKSZ1h5pdqOssahJhUsIbMHlE0
-X-Gm-Gg: AYBFou3qAu7HJCHHhWiUo26w/HKewF8ENhAK2WN5Zpnb0oIKO+j03EWV1RYpcl8pfqS
- YlgkWPLZoaRznAZTufVQ5SqQ3UmYqMGp4anqbWfbc4yjaJDA+fVmEUiBfrdvW4yAGbX5iMHGn+8
- RWwxdR2BwfWJ31DDZ5ERciZKvwBb4GvKPK5cRj75NSGaIczSONl3MmQZBm96dVrH0jJEb92VoYe
- stN6n6B7xUbk8obkj5vRvZ/8hMRPjtIECQAiIXfgTaBUSm/16r4F2LmU/dJClAuqfDYTVjIz0Q2
- AqWHJLlBJB7wEg5czkHucwUm7rip0U4LrDd1fo4C/fQYRx4xVK8h5NuBHWyaojQUN31kw19T2Bs
- 4roVs419XFg6InVvHe/P2FQr1cJHzrxIC/El9WXm1qgp+mJvg71EXC70s1sdKV6vwfLudsPP0/D
- O7Uq+AVM/lDaAjkeB7bWnlG3BazvGmTAg=
-X-Received: by 2002:a05:6000:4212:b0:48e:60ed:b012 with SMTP id
- ffacd0b85a97d-48e6e4f69c7mr36056118f8f.57.1793788284292; 
- Wed, 04 Nov 2026 02:31:24 -0800 (PST)
-X-Received: by 2002:a05:6000:4212:b0:48e:60ed:b012 with SMTP id
- ffacd0b85a97d-48e6e4f69c7mr36056084f8f.57.1793788283814; 
- Wed, 04 Nov 2026 02:31:23 -0800 (PST)
+ AKwUvBzTCABAP53hGw134Tl1WW2GNPC1eC0Rf03cRE3X1jH+quGavJYlKPW4FNujyX7a7BuTHtg=@dpdk.org
+X-Gm-Message-State: APuU4Z8bEnT820uQ7xAlUD5BzZH7uKt8hXHIVaziO+ZBQkTRRrngGhDP
+ 2s8+id7t9/dPWOSHyif+RlMHLrVQ9Y+9E6q29RQczR29rrNowC0CI3GYVhwBuJnVDhbHxT8EwoV
+ Hl9UCGRvcxn6ibSyC0pW22RBwSi9f39cr+WvP7j6ECr0O
+X-Gm-Gg: AYBFou2whspXvz6mjwylaP0Zhal1GW87EprEUXrNoNggDfXN7VCAreDMue4CyO/uVH3
+ GynytKKZaY31TRzFR6w4MbzEm9dQcWlUt/UsDsh0E6VbbdM7zvf6F2tc1W+sDVpvquTQh5OHK91
+ eDA4DeFGyvFksDcVPyX7xtPPs6xWpHn4huM2M5FOkSvJy87/oOlUQyekezce/fExqYoK6+tnl3j
+ t0PEXcBot/BBZMEiMPzMEQyHec5pcJsxr/82M32UtfNuM4mhnuxwZmifYfqTxGqv3jAmXcEWKFf
+ MV6wNcxFQ7Q3xblQX0vryEF02uXNcScZql2LLxBkjym0yef543EVR9HlTRkjun6tyfVPL7mBWPe
+ kJJHJFTBMldS0bkdaiH9Tk5SLPEBzga4zV0yu9eRpZoVwAFieAl3PcmgHenpVoYN5hvxv+WJhT/
+ oyeEPdRXcQAQEKxTTXJ+HNKVmltKNLppg=
+X-Received: by 2002:a05:6000:1843:b0:48f:c595:d51 with SMTP id
+ ffacd0b85a97d-48fc5950db8mr4540660f8f.14.1793788297654; 
+ Wed, 04 Nov 2026 02:31:37 -0800 (PST)
+X-Received: by 2002:a05:6000:1843:b0:48f:c595:d51 with SMTP id
+ ffacd0b85a97d-48fc5950db8mr4540605f8f.14.1793788297141; 
+ Wed, 04 Nov 2026 02:31:37 -0800 (PST)
 Received: from localhost (2a01cb00021ec000b06e6b63494bd4c5.ipv6.abo.wanadoo.fr.
  [2a01:cb00:21e:c000:b06e:6b63:494b:d4c5])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-48fec8d8748sm3121260f8f.16.2026.11.04.02.31.23
+ ffacd0b85a97d-48fec8d8748sm3122488f8f.16.2026.11.04.02.31.36
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Wed, 04 Nov 2026 02:31:23 -0800 (PST)
+ Wed, 04 Nov 2026 02:31:36 -0800 (PST)
 X-Archived-By: <archiver.kernel.org>
 Mime-Version: 1.0
-Date: Wed, 04 Nov 2026 11:31:22 +0100
-Message-Id: <DMMCVKXKF47Q.3IQ4WAJ5COPQQ@redhat.com>
-Cc: <stephen@networkplumber.org>, <stable@dpdk.org>
+Date: Wed, 04 Nov 2026 11:31:36 +0100
+Message-Id: <DMMCVR2T4H14.1K8EVYFZCCHLN@redhat.com>
+Cc: <stephen@networkplumber.org>
 From: "Robin Jarry" <rjarry@redhat.com>
 To: "David Marchand" <david.marchand@redhat.com>, <dev@dpdk.org>
-Subject: Re: [PATCH 1/2] net/tap: fix FD leak on netns change
+Subject: Re: [PATCH 2/2] net/tap: fix use after free on interrupt handle
 User-Agent: aerc/0.22.0-38-gda2e3af216c4
 References: <20261103171730.1361878-1-david.marchand@redhat.com>
-In-Reply-To: <20261103171730.1361878-1-david.marchand@redhat.com>
+ <20261103171730.1361878-2-david.marchand@redhat.com>
+In-Reply-To: <20261103171730.1361878-2-david.marchand@redhat.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: gDtki5MLEkGXy_JQP_Pk1pJTw3tUdbn128F6zt6ecaw_1793788284
+X-Mimecast-MFC-PROC-ID: CemWGCDXj3qTMhbzLL6Mzhye-gAWv9yrrtmbCY67RBk_1793788298
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -102,23 +103,11 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
 David Marchand, Nov 03, 2026 at 18:17:
-> When a tap interface moves to another namespace, tap_netns_change()
-> calls tap_lsc_intr_handle_set(dev, 1) to recreate the LSC interrupt
-> without first tearing down the old one. The previous LSC netlink
-> socket fd is never closed.
+> This driver was not unregistering its interrupt callbacks when closing
+> the port, which now means use after free after the interrupt handle
+> is not duplicated anymore by the interrupt thread.
 >
-> Defer the full LSC teardown and re-registration to an alarm callback
-> which runs in the interrupt thread but outside any active source
-> context. The alarm switches to the device's network namespace, tears
-> down the old LSC handle, sets up a new one (opening a fresh netlink
-> socket in the correct namespace), restores the original namespace,
-> and forces carrier state back up.
->
-> Extract tap_dev_ns_switch/tap_dev_ns_restore helpers to share the
-> namespace switch logic between tap_netns_change and the alarm.
->
-> Fixes: aae3a38e9e03 ("net/tap: detect namespace change")
-> Cc: stable@dpdk.org
+> Fixes: c663018eb7f3 ("interrupts: do not duplicate interrupt handles")
 >
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
 > ---
