@@ -2,48 +2,80 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CBBC606A31B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 12:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3128606A31B
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 12:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=dx4SvSuA
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=R5jnoXwP
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2FA2040281;
-	Wed,  4 Nov 2026 13:24:25 +0100 (CET)
-Received: from mta0.migadu.com (out-118.mta0.migadu.com [91.218.175.118])
- by mails.dpdk.org (Postfix) with ESMTPS id B8F7E4025A
- for <dev@dpdk.org>; Wed,  4 Nov 2026 13:24:23 +0100 (CET)
-X-Envelope-To: dev@dpdk.org
-DKIM-Signature: a=rsa-sha256; bh=BhprX/jk5AEEIGl+HdnehjDI4Ez92wj2xmUkzwwViGM=; 
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793795063; v=1; x=1794399863;
- b=dx4SvSuAL5o0zmxRSvDUKHvGnKoGKCgGWeqBsVFC2ymwu1dXWFRJXMkqYI050q3IvUrLBb46
- QW7gDaSjudPvjTo+KGdeXAbHWdm2jotH2SKZLF816U8RJKhQc8BVZsRcv8nW1J3jn6g83PjFn7S
- xbTe7beecPfILtdrpuDmaiCg=
-X-Envelope-To: dev@dpdk.org
-Received: by smtp.migadu.com with ESMTPS id c2383d9cdc1fe1b3;
- Wed, 04 Nov 2026 12:24:23 +0000
-X-Mizu-Trace-ID: c2383d9cdc1fe1b3
-X-Migadu-Flow: FLOW_OUT
+	by mails.dpdk.org (Postfix) with ESMTP id 6E73040281;
+	Wed,  4 Nov 2026 13:25:04 +0100 (CET)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com
+ [209.85.208.46])
+ by mails.dpdk.org (Postfix) with ESMTPS id 047F44025A
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 13:25:03 +0100 (CET)
+Received: by mail-ed1-f46.google.com with SMTP id
+ 4fb4d7f45d1cf-6b1f31c63ebso2530893a12.0
+ for <dev@dpdk.org>; Wed, 04 Nov 2026 04:25:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793795102;
+ x=1794399902; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=haPt5kA1Fc6RNsxI+Cj8RS48s/w11vjGz2xFOO1QM1c=;
+ b=R5jnoXwPbcU0DN4j9jRZM1wkZXV86ZFV0vQKWdLupaPWVQEQ0DpM+cfYNiJfzwf0NQ
+ 7opJnJbzbGxMxtNLaWnAP8ZEAhqkIAP771Q2SRLBy/SF88i+pnGSNwttHy42Y4lmkMw0
+ epaFtREQT7Orzza/35kaUX8/b93dh7dL00e5h2D/5IV5pWaR0Gngg8HtbyBMbtTng1o2
+ 6Shh8msAQi3SEUDfLcCAfs+XbVBRJXnnxrOWWDFXYd1/vNXI8/Qs32RoCgYp7zdWBb+Q
+ gUapa4sk5wI7K95jgiy3VoIjse4kLr2LfigXkM7Oe81A68fUXE3Xl5a0+bCuEh7j14K6
+ /FZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793795102; x=1794399902;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=haPt5kA1Fc6RNsxI+Cj8RS48s/w11vjGz2xFOO1QM1c=;
+ b=cExTNtCNCCoCtQ9ArFmriHInqRy89JmeJYlHYOs+MLrA6ZheHGv0FpNouRQs9+j1IK
+ LOIbd7n3oAgSkoLzsMAIn9PxEURus7wJcdxqI06mUDh1OXFOsuh/IdCJIjpQ+c6A0A2e
+ gV3qmIEpwWvzxOr+MCdFK5K1qRrg8u7YQxL3nPONSDlriK+T7PX/LIvTDnEE88i8CcEP
+ ROP9jNY4ziNtZ8l5FgSifp3V3QxzzMSgl1FAGkyp0sAnDJYe7lDOW46jQPmWZU8OAaB9
+ G/DhAER0E4rjEd3fBEw4vTs4mtu+dwNt349RSox7zR0Omk62E7QSQfaRpCVXLqR8C7RP
+ dOtQ==
+X-Gm-Message-State: APuU4Z+U7BwvSl6iSW8XJsZB9mpxKQtLg621C4LNCNfm+/H7KX2AJH38
+ V0v1rhO4XF83HBQmW2s4RDJFAosAAaWvkcxZ8lAC88/vJGzYFfp+Ew86pxQa1gIGH4M=
+X-Gm-Gg: AYBFou0DExhGl4COEcwPJQpE2+xWil1qhvLBxxP0SW3AS8uHZa+FijfS4R0Y/cIt3TR
+ HX1JVbh9IHXu82E4iYp4hNJNuZ4LHt+H8/dxoObdcv/8+ZaAINwpTT5hQg/aElwfDMzFQrazV/c
+ /zoGI5ljAF2R3ZcOxvOYo5Lrt99oLFKgIONKXwc+KO8Ax49SJYeJPeIlj+2SHQ9uJtfCqFH2BGb
+ WhjKe2VIsYu7/hQrLK4xC3LKGTsU33wCSCnfK0ChHjfdyjiSCRdz2Kzj9k4vrk3VRr9cNRM+4tI
+ Ne97t4Pf2ovFlk9fdS640Zc1k9mYc9DFNAF6RG8Po5QDE7HdSCVsOtYwCscc5L1Wlv+xJ+aS6Zb
+ +VfrkPelPprRi4EMFB+UhfbNrYWraSm3V+kaPEcXS1Oefiq9aw7Sg6QxLJAlRyCzJOUkylGeeTP
+ vvSD3Xo/bQvSe0a+SVbjOaCtEM8Ta38u0xK6SsAR68FIXYToS8bmW0g0F4YrwJjGRNYRQsFmxKj
+ Xdv/dRZ6j/kYGZRyF/LWkCSA62rrqHzQrhj1j/xpK8P1pDmP69SMVpj30xZG6lU5Y/iWSPwi8uW
+ 4PQj4mhdMJyFLcFW1GUsu7xxJi6JVQg2QS8dQhJmWGMdivg//Qr1ZExcvfG2TTtSffXyh4Ga2uV
+ E5P+7u5ougaOvVi0=
+X-Received: by 2002:a05:6402:a251:20b0:6b4:8b1e:2866 with SMTP id
+ 4fb4d7f45d1cf-6b4b0c0d79fmr10782263a12.16.1793795102422; 
+ Wed, 04 Nov 2026 04:25:02 -0800 (PST)
+Received: from stephen-xps.local (93.224-78-194.adsl-static.isp.belgacom.be.
+ [194.78.224.93]) by smtp.gmail.com with ESMTPSA id
+ 4fb4d7f45d1cf-6b55ac46445sm680850a12.13.2026.11.04.04.25.01
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 04 Nov 2026 04:25:01 -0800 (PST)
+Date: Wed, 4 Nov 2026 13:24:57 +0100
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
+Cc: <dev@dpdk.org>, <jingjing.wu@intel.com>, <thomas@monjalon.net>,
+ <selwin.sebastian@amd.com>, <bhagyada.modali@amd.com>,
+ <bruce.richardson@intel.com>, <david.marchand@redhat.com>
+Subject: Re: [PATCH 00/13] raw/ntb: post-merge fixes
+Message-ID: <20261104132457.78d41700@stephen-xps.local>
+In-Reply-To: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
+References: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 04 Nov 2026 12:24:22 +0000
-Content-Type: multipart/alternative;
- boundary="616e1a39-f6b3-4595-bf4c-79f449f424c4-1"
-From: chengwen.feng@linux.dev
-Message-ID: <d1d59364e8121f9eff7e4327fae083eaf11d19f3@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH 000/227] use NUMA node terminology across the tree
-To: "Thomas Monjalon" <thomas@monjalon.net>, "fengchengwen"
- <fengchengwen@huawei.com>
-Cc: "David Marchand" <david.marchand@redhat.com>, "Stephen Hemminger"
- <stephen@networkplumber.org>, konstantin.v.ananyev@yandex.ru,
- dev@dpdk.org, "Aaron Conole" <aconole@redhat.com>
-In-Reply-To: <DxcOTN1IQyaIHHadU1FREg@monjalon.net>
-References: <20261103145306.487255-1-chengwen.feng@linux.dev>
- <7add359d-c77c-42ed-8e92-d5d496b8bcb4@huawei.com>
- <CAJFAV8w0rALL5A7BoewJRcEqY-=ZGyMONTTFbgo_OSuf3k7S+A@mail.gmail.com>
- <DxcOTN1IQyaIHHadU1FREg@monjalon.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,126 +85,152 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-0.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
---616e1a39-f6b3-4595-bf4c-79f449f424c4-1
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+On Wed, 4 Nov 2026 16:49:48 +0530
+Raghavendra Ningoji <raghavendra.ningoji@amd.com> wrote:
 
-November 4, 2026 at 7:40 PM, "Thomas Monjalon" <thomas@monjalon.net mailt=
-o:thomas@monjalon.net?to=3D%22Thomas%20Monjalon%22%20%3Cthomas%40monjalon=
-.net%3E > wrote:
+> This series addresses the post-merge review of the AMD NTB support
+> by Stephen. Some of the issues also exist in the Intel code and in
+> released versions; those patches are tagged for stable.
+> 
+> - Patches 1-4 fix the type confusion in rte_pmd_ntb_get_mem_align(),
+>   the unbounded peer memory window count, the off-by-one in the
+>   address remapping and the memory window leaks.
+> 
+> - Patch 5 fixes the doorbell interrupts with vfio-pci: only MSI-X
+>   vector 0 (DB0) was serviced, so the DB1/DB2 exchange of dev_stop
+>   never completed and the stop waited for its 1s timeout.
+> 
+> - Patch 7 removes the AMD hardware event handling, which could not run
+>   as wired, and documents that hardware events are not handled.
+> 
+> - Patches 8-9 fix the Rx path: a partially consumed packet was leaked
+>   and desynchronized the ring, and an mbuf owned by the application
+>   could be freed again on device stop.
+> 
+> - The other patches are documentation and cleanup.
+> 
+> The peer memory window size check suggested for the AMD handshake is
+> not added: all the AMD scratchpads are in use, and the window limit
+> register programmed with the local memzone length already bounds what
+> the peer can reach.
+> 
+> Tested with vfio-pci on two AMD EPYC Embedded hosts: handshake,
+> file transfer, and stop/quit with DB1/DB2 exchange.
+> 
+> Raghavendra Ningoji (13):
+>   raw/ntb: fix device check in memory alignment query
+>   raw/ntb: fix peer memory window count check
+>   raw/ntb: fix memory window bound in address remapping
+>   raw/ntb: fix memory leaks
+>   raw/ntb: fix doorbell interrupts with VFIO MSI-X
+>   raw/ntb: fix AMD processor names
+>   raw/ntb: remove AMD hardware event handling
+>   raw/ntb: fix Rx of incomplete packets
+>   raw/ntb: fix double free of Rx mbufs on stop
+>   examples/ntb: fix raw/ntb library linking
+>   doc: add NTB device info change to ABI section
+>   doc: add IOVA requirement for NTB
+>   raw/ntb: remove unused AMD register definitions
+> 
+>  doc/guides/rawdevs/ntb.rst             |  12 ++-
+>  doc/guides/rel_notes/release_26_11.rst |   6 +-
+>  drivers/raw/ntb/ntb.c                  | 136 ++++++++++++++++++++-----
+>  drivers/raw/ntb/ntb.h                  |   7 +-
+>  drivers/raw/ntb/ntb_hw_amd.c           |  54 ++--------
+>  drivers/raw/ntb/ntb_hw_amd.h           |  25 +----
+>  drivers/raw/ntb/ntb_hw_intel.c         |   9 +-
+>  examples/ntb/Makefile                  |   3 +-
+>  8 files changed, 149 insertions(+), 103 deletions(-)
+> 
 
->=20
->=2004/11/2026 10:29, David Marchand:
->=20
->=20>=20
->=20> On Wed, 4 Nov 2026 at 09:56, fengchengwen <fengchengwen@huawei.com>=
- wrote:
-> >  On 11/4/2026 3:34 PM, Stephen Hemminger wrote:
-> >  >> From: Chengwen Feng <fengchengwen@huawei.com>
-> >  >> 905 files changed, 6113 insertions(+), 5439 deletions(-)
-> >  >
-> >  > Maybe a single coccinelle script would help here? Rather than tryi=
-ng to look
-> >  > at so many patches.
-> >=20
->=20>  A coccinelle script is a helpful idea. I will try to prepare one.
-> >=20=20
->=20>  Well, maybe.
-> >  But never a 200+ patches series again.
-> >=20=20
->=20>  Putting aside the way it was submitted, it seems this change is on=
-ly
-> >  cosmetic, and it was not announced in a *previous* deprecation notic=
-e.
-> >=20=20
->=20>  Why do we need this change?
-> >  Why now, in this release?
-> >=20
->=20I assume it is not for 26.11.
-> Chengwen wanted to fix the namespace of SOCKET_ID_ANY, adding RTE_.
-> And I told him that we should avoid changing this API 2 times
-> when we will want to fix the terminology
-> around CPU socket and NUMA memory domain.
-> I think we should do both at once.
-> That's why we see this big change.
->=20
->=20BUT
->=20
->=20It would be more efficient for such a change to discuss it first.
-> Then once we agree on the names and usage,
-> we should make it in a way it can be reproduced, maintained
-> and ease future backport of patches containing the new terminology.
-> A coccinelle script looks appropriate.
-> And of course, the patch series should not have so many patches,
-> it does not make sense.
-> A mechanical change should come in one patch.
-> If the series deserves several different mechanical changes,
-> few patches should be sent for them, not hundreds.
->=20
-Thanks=20Thomas for explaining the background of this change.
+Lots of AI reported issues here:
 
-This series was AI-generated following the one commit per moduleconventio=
-n
- to support per-subsystem review, with the expectationthat these commits
-would be squashed before merge.
+Subject: Re: [PATCH 00/13] raw/ntb: post-merge fixes
 
-I understand this split imposed heavy CI load now, and I will adjustthe p=
-atch
-organisation in the next version.
+Series applies to main (26.11-rc2) and builds at every commit with
+-Dwerror=true (raw/ntb + examples/ntb).
 
-Moving forward, I will prepare a coccinelle script for the mechanicalconv=
-ersion
-and follow the deprecation process before formal submission.
---616e1a39-f6b3-4595-bf4c-79f449f424c4-1
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Patch 04/13 raw/ntb: fix memory leaks
 
-<!DOCTYPE html><html><head><meta http-equiv=3D"Content-Type" content=3D"t=
-ext/html; charset=3Dutf-8"></head><body><div>November 4, 2026 at 7:40 PM,=
- "Thomas Monjalon" &lt;<a href=3D"mailto:thomas@monjalon.net?to=3D%22Thom=
-as%20Monjalon%22%20%3Cthomas%40monjalon.net%3E" tabindex=3D"-1" target=3D=
-"_blank">thomas@monjalon.net</a>&gt; wrote:</div><blockquote>04/11/2026 1=
-0:29, David Marchand:<br><blockquote>On Wed, 4 Nov 2026 at 09:56, fengche=
-ngwen &lt;fengchengwen@huawei.com&gt; wrote:<br> On 11/4/2026 3:34 PM, St=
-ephen Hemminger wrote:<br> &gt;&gt; From: Chengwen Feng &lt;fengchengwen@=
-huawei.com&gt;<br> &gt;&gt;  905 files changed, 6113 insertions(+), 5439 =
-deletions(-)<br> &gt;<br> &gt; Maybe a single coccinelle script would hel=
-p here? Rather than trying to look<br> &gt; at so many patches.<br><br> A=
- coccinelle script is a helpful idea. I will try to prepare one.<br> <br>=
- Well, maybe.<br> But never a 200+ patches series again.<br> <br> Putting=
- aside the way it was submitted, it seems this change is only<br> cosmeti=
-c, and it was not announced in a *previous* deprecation notice.<br> <br> =
-Why do we need this change?<br> Why now, in this release?</blockquote><br=
->I assume it is not for 26.11.<br>Chengwen wanted to fix the namespace of=
- SOCKET_ID_ANY, adding RTE_.<br>And I told him that we should avoid chang=
-ing this API 2 times<br>when we will want to fix the terminology<br>aroun=
-d CPU socket and NUMA memory domain.<br>I think we should do both at once=
-.<br>That's why we see this big change.<br><br>BUT<br><br>It would be mor=
-e efficient for such a change to discuss it first.<br>Then once we agree =
-on the names and usage,<br>we should make it in a way it can be reproduce=
-d, maintained<br>and ease future backport of patches containing the new t=
-erminology.<br>A coccinelle script looks appropriate.<br>And of course, t=
-he patch series should not have so many patches,<br>it does not make sens=
-e.<br>A mechanical change should come in one patch.<br>If the series dese=
-rves several different mechanical changes,<br>few patches should be sent =
-for them, not hundreds.<br><br></blockquote><div><br></div><div>Thanks Th=
-omas for explaining the background of this change.</div><div><br></div><d=
-iv>This series was AI-generated following the one commit per module
-convention</div><div> to support per-subsystem review, with the expectati=
-on
-that these commits</div><div>would be squashed before merge.</div><div><b=
-r></div><div>I understand this split imposed heavy CI load now, and I wil=
-l adjust
-the patch</div><div>organisation in the next version.</div><div><br></div=
-><div>Moving forward, I will prepare a coccinelle script for the mechanic=
-al
-conversion</div><div>and follow the deprecation process before formal sub=
-mission.</div><div><br></div></body></html>
---616e1a39-f6b3-4595-bf4c-79f449f424c4-1--
+Warning: mw_size is freed in dev_close, but rte_rawdev_close() does not
+detach the device; it stays attached and its ops remain reachable.
+
+  +	rte_free(hw->mw_size);
+  +	hw->mw_size = NULL;
+
+After close, rte_pmd_ntb_get_mem_align() passes the new checks from
+patch 1 (attached, dev_ops == &ntb_ops, mw_id < mw_cnt) and on Intel
+calls intel_ntb_get_mem_align(), which does
+
+	return hw->mw_size[mw_id];
+
+i.e. a NULL dereference. A configure after close does the same in
+intel_ntb_dev_handshake() (hw->mw_size[i]), and ntb_dev_info_get()
+now hands the application mw_cnt = 2 with mw_size = NULL; ntb_fwd
+indexes ntb_info.mw_size[0] unconditionally.
+
+Both vendors have a fixed count of 2 windows (XEON_MW_COUNT,
+AMD_MW_COUNT), so drop the allocation and embed the array in
+struct ntb_hw. It then lives exactly as long as dev_private, the
+info->mw_size pointer stays valid, and the leak goes away with no
+free at all:
+
+	#define NTB_MAX_MW	2
+	...
+	uint64_t mw_size[NTB_MAX_MW];
+
+with RTE_BUILD_BUG_ON(XEON_MW_COUNT > NTB_MAX_MW) (and AMD) in the
+vendor init, and the rte_zmalloc()/NULL check removed there.
+
+Patch 05/13 raw/ntb: fix doorbell interrupts with VFIO MSI-X
+
+Warning: db_intr_handles is an array of process-private pointers
+(handles come from rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE))
+used only by the control path. No reason to put it in hugepage memory.
+
+  +	hw->db_intr_handles = rte_zmalloc("ntb_db_intr",
+  +				nb_efd * sizeof(*hw->db_intr_handles), 0);
+
+Use calloc(nb_efd, sizeof(*hw->db_intr_handles)) and free() in
+ntb_db_intr_unregister().
+
+Info (pre-existing, not introduced by this patch): peer_dev_up is a
+plain uint8_t written by the interrupt thread (DB1/DB2 handlers,
+"hw->peer_dev_up = 0;") and polled by ntb_dev_stop():
+
+	while (hw->peer_dev_up && time_out) {
+
+Now that DB2 is actually delivered, this loop is the normal stop path
+rather than the timeout. It only works because rte_delay_us() is an
+opaque call. Should be rte_atomic_store_explicit()/load with
+release/acquire, as a separate patch.
+
+Patch 08/13 raw/ntb: fix Rx of incomplete packets
+
+Info (pre-existing, not introduced by this patch): the new on-stack
+
+  +	struct rte_mbuf *new_mbufs[NTB_MAX_DESC_SIZE];
+
+like the existing rx_desc[], is only bounded because nb_rx_desc is
+assumed <= NTB_MAX_DESC_SIZE. ntb_rxq_setup() takes
+"rxq->nb_rx_desc = rxq_conf->nb_desc;" without checking that, or that
+it is a power of two (the ring indexes use & (nb_rx_desc - 1)); only
+the ntb_fwd example range-checks it. The same function also leaks rxq
+when rx_mp is NULL. Worth a separate fix:
+
+	if (rxq_conf->rx_mp == NULL ||
+	    rxq_conf->nb_desc < NTB_MIN_DESC_SIZE ||
+	    rxq_conf->nb_desc > NTB_MAX_DESC_SIZE ||
+	    !rte_is_power_of_2(rxq_conf->nb_desc))
+		return -EINVAL;
+
+placed before the rte_zmalloc_socket().
+
+Review-Result: WARNING
