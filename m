@@ -2,42 +2,42 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86825606A330
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 11:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF549606A329
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Nov 2026 11:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=Lm+OuLIG
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=qNSUkyds
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3C4AC40616;
-	Wed,  4 Nov 2026 12:22:48 +0100 (CET)
-Received: from CH4PR04CU002.outbound.protection.outlook.com
- (mail-northcentralusazon11013009.outbound.protection.outlook.com
- [40.107.201.9]) by mails.dpdk.org (Postfix) with ESMTPS id C72404060F
- for <dev@dpdk.org>; Wed,  4 Nov 2026 12:22:46 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 091D040616;
+	Wed,  4 Nov 2026 12:26:39 +0100 (CET)
+Received: from BN8PR05CU002.outbound.protection.outlook.com
+ (mail-eastus2azon11011047.outbound.protection.outlook.com [52.101.57.47])
+ by mails.dpdk.org (Postfix) with ESMTPS id 5E6374060F
+ for <dev@dpdk.org>; Wed,  4 Nov 2026 12:26:37 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Cl4qpAX9ZyOwWSW3uZOZAAsWzby6TUCdn5P7Bb/TNFq+7lmA3JynmjfYjR2VtRNJQNBbveLK1zbyO/6i903rJ3vmXn+PdFPnRkBdFt3i+MadmlTbn8ZYnJNMeVSIk5SKtQiqowXABsMLXoBrDFYvLhsi/GRUswLZ4P2vzYEvkpn2tHXD+P4oCZIePG0OSKCtW8wJ4AdzcXhly80e1Hu0BierO5+1X0NrGQwxi2MyVnbtelXK0W5bbO3v/ZBBc4slfajAwS788tlNYK1nSgX0YXUmjBnai3wramZhpYV87aapPjrqWZYVOsD71CKh+rcK5+kW+07qIXVdc4HGp6UJ1g==
+ b=ZgLcHmDn+l2zquf1zsrxtV2L7oYT9J0IdoRN2iYl/Gv+700hQOY8W897K4mpn6/txi5cUPbQpxlCmdvNz6zcRWxctcZhC5ClmCRWvTP8YhSc+1U3wi+/I/Iqi7pDXEaXgIgFB+KwrOKrVbZ8YSilbypsXqwTehJtFcVSxoArIK1JQfDQmY9hjzKzR3rksnuYDRKpIAYVXVJjacmDtx8MKZW/gwqwmzoeUISJIpPEpRgCyFQSwOFlfiGM53KkLCEvBlMcgAitsLaX6zhlSnB+u2ey1yeQKsfuhW5zDG16gZq2zyUjLJ3E8ivPhxxXoR7x8YKeTaoxSXl3w0agsHh/sg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0uRPip9szR6uen6qFcykq8mtPXKI3Y7J34qq6o0pDYw=;
- b=CV59vWtQvujJTa1QtWtCkKt0dXZtcytmyskYwbp0aN38RtErOAflvCySoV4wfbmnbQWKm5VGzuy3dOvHVJ0aO0HQ9gMmheM6diVaDCNr1/FrLCS6HQ5KS9k1EgcwTZKaUzPGlz9PJOU6KAkdoAxCbJO9khqIMHF7xbmy6A/3E//DHf7NvKVfkNG12oi9MmkakGb1xIwdBtHkua9eigFCGu7CmdEgmoCIj13QhCH8isJGDqaDpDt8V7G4AHiq26rbzNi53CDZf+ZioJ6/LAWQrFvBgPHMeXU0zvRJZDHdNSCbnT7EA2YtTuSH1oYtnnPTGxf1uHTSyisy2NvcoYCWWA==
+ bh=Y4SpD91nBkmlZwEzwXwVUq232VxOsWIA9HK+0Tb78Bw=;
+ b=axpi5rBOseYNSLRZgy0ffkW6WElZL5Yy0yV0qEIg24NSaE0i1jXlbd/e5mLsNRg/XYLRq2HtGsj+SDygxMiV0JuujRfHduMCw09V9JwGfsPX2/rYoHL+bzrfK3eTcC9DbBiKBN2jXFTKXB98qR3Dfn7W5ZQavq9QOUYi+XqNOLidLNt28wtXFtmtUpKmxznC5oqEcQK8LcHm4JomhuAEWCx3JPg353fR4YVIFh/zHSSEfRo52oO+iQG2Ihb2WDt3GXjyAK2N0iJdXU1VbOd3RWxGxbPfecAxIe+3PuHeSXXWqPFsjXczKnDLFRsNBtGuJ9zPv6OQBqlAgeZTjjNScg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0uRPip9szR6uen6qFcykq8mtPXKI3Y7J34qq6o0pDYw=;
- b=Lm+OuLIGvN4uf2DNrNDq1Wxe5UZLfzxenatmq85Sx2XsTMZWIlEHQSosnjjFGGa/4k8oRPcsmMDlqrsYZVmwVwwVYHWsUZ8ldd9yYrmNlBgDxVVlTxAEGw67H4FvyRluF30bWnrzekS1R98jceI5tuqrM/fxMMUTW5W28xKhOfU=
-Received: from CH0PR03CA0427.namprd03.prod.outlook.com (2603:10b6:610:10e::30)
- by PH0PR12MB5648.namprd12.prod.outlook.com (2603:10b6:510:14b::7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.9; Wed, 4 Nov 2026
- 11:20:40 +0000
-Received: from BN3PEPF00022BC4.namprd05.prod.outlook.com
- (2603:10b6:610:10e:cafe::16) by CH0PR03CA0427.outlook.office365.com
- (2603:10b6:610:10e::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.10 via Frontend Transport; Wed, 4
- Nov 2026 11:20:38 +0000
+ bh=Y4SpD91nBkmlZwEzwXwVUq232VxOsWIA9HK+0Tb78Bw=;
+ b=qNSUkyds7R5DuKEG34ZH3PuxxXjp+ttTCOF687Ellv6be8uQ7f85QxQUS+5Z5k00yAsZBGDDwnNFnjEiWWyPLCkcPtLi0s7RXxq73h5PpzetmvTY2OqA5LRgQJpX9AdCba3XFMRywKp5LTW/G1iqwUrwqvYej84+QMpsIcGAMk0=
+Received: from BN9PR03CA0922.namprd03.prod.outlook.com (2603:10b6:408:107::27)
+ by DM6PR12MB4188.namprd12.prod.outlook.com (2603:10b6:5:215::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.11; Wed, 4 Nov
+ 2026 11:26:33 +0000
+Received: from BN7PEPF00000092.namprd03.prod.outlook.com
+ (2603:10b6:408:107:cafe::7) by BN9PR03CA0922.outlook.office365.com
+ (2603:10b6:408:107::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.569.12 via Frontend Transport; Wed, 4
+ Nov 2026 11:26:33 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 165.204.84.17) smtp.mailfrom=amd.com;
  dkim=none (message not signed)
@@ -46,56 +46,57 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- BN3PEPF00022BC4.mail.protection.outlook.com (10.167.248.216) with Microsoft
+ BN7PEPF00000092.mail.protection.outlook.com (10.167.245.70) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.592.5 via Frontend Transport; Wed, 4 Nov 2026 11:20:38 +0000
+ 15.21.592.5 via Frontend Transport; Wed, 4 Nov 2026 11:26:33 +0000
 Received: from cae-QUARTZ.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.53; Wed, 4 Nov
- 2026 05:20:33 -0600
+ 2026 05:26:30 -0600
 From: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
-To: <dev@dpdk.org>
-CC: <jingjing.wu@intel.com>, <thomas@monjalon.net>,
- <selwin.sebastian@amd.com>, <bhagyada.modali@amd.com>,
- <bruce.richardson@intel.com>, <david.marchand@redhat.com>,
- <stephen@networkplumber.org>
-Subject: [PATCH 06/13] raw/ntb: fix AMD processor names
-Date: Wed, 4 Nov 2026 16:49:54 +0530
-Message-ID: <20261104112001.661769-7-raghavendra.ningoji@amd.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>, "Bruce
+ Richardson" <bruce.richardson@intel.com>, Jingjing Wu
+ <jingjing.wu@intel.com>, Selwin Sebastian <Selwin.Sebastian@amd.com>,
+ Bhagyada Modali <bhagyada.modali@amd.com>, Thomas Monjalon
+ <thomas@monjalon.net>
+Subject: Re: [PATCH 0/4] raw/ntb: AMD NTB support
+Date: Wed, 4 Nov 2026 16:56:12 +0530
+Message-ID: <20261104112612.664234-1-raghavendra.ningoji@amd.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
-References: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
+In-Reply-To: <CAJFAV8w21JOt7c5p3XA6-nLNb1BcCAWM9DBP3mj2BfkyE6rx6g@mail.gmail.com>
+References: <CAJFAV8w21JOt7c5p3XA6-nLNb1BcCAWM9DBP3mj2BfkyE6rx6g@mail.gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF00022BC4:EE_|PH0PR12MB5648:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b45bb3c-32ce-4f57-dff8-08df3a65a789
+X-MS-TrafficTypeDiagnostic: BN7PEPF00000092:EE_|DM6PR12MB4188:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6d3ac04-c7d4-462b-aeb3-08df3a667ada
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|376014|1800799024|36860700016|82310400026|11063799006|56012099006|261021123027099003|261021121427099003|261009223027099003|261102123227099003|261026121527099003|10067099003|22082099003|18002099003|6133799003|3023799007;
-X-Microsoft-Antispam-Message-Info: n0Tx+IKD2i4OuvIxO4YTF2kyBkMhGzU3Lmo6HBX6C8I5WUBufXSHG1J3GlJC+Wb4EcNYKis2yxNTLfomovGHC30SI0XmEZUPdxdH4198qVJJDVeT9cXfgtJDOAKUjIdLJzmesfRbT5u8CET8V/L9q8k2EUe794Y2hj8AysQeppDLkW6j2049IEsz5l6hA+00f+sezO3HAD6I1/FyZ/YLdwEHHvrfEi8/AeEJ7YLRxVebufb2Vkh5KUIpUVzz/aJv0MXwU1Fm8Of9mKeFtg2KMmXIHwhw/kXWpXt9hWFgls7tINWJS0rzx4Cr5jeizA9AOISN5bDsSav5zjd4qAyakynoUSa15BDVBYT3xuZBwW+8Tox2hnyfNj4FSAbKo4a3j0hL4ieP4X0mXbfVNgCAqaTChwZn2eqp0lelnAvT/c9pvGw15XNdo10vdd63skPYR5mUVpXwCO0j7sK2sIxvwv/luZCMLJ/Wq2HCjNxGIOjspr1Vg2+9MhyDMsYkJFFVMiow8W94Tts21G7s9O1VrWqG3Mta4OPwrRQw1kZ/rZ4z72uMGf47oFK67Ydo/G2eYKEPNBqM7Ax2E+BW3KE8NMXOnTHQdXJZuJBMilULPqEiKFK8WqMpbvc5qqyS3rkxIt51neqRUd02+FdRBzjXJyCVoLCazIm5WSu+X03wnRn9eaFvbyhRsFRSdZNGmqxjCj3ZMVLbCAz/pHOT2sZwQw==
+ ARA:13230040|376014|82310400026|36860700016|23010399003|1800799024|10067099003|18002099003|22082099003|261102123227099003|261021123027099003|11063799006|56012099006|261022105027099003|261026140227099003|261009223027099003|261028144727099003|261026121527099003|261021121427099003;
+X-Microsoft-Antispam-Message-Info: i3cB3FfroyAAi5y+sdthXZUnCNxQgwQnUqmn00+R51j7BGOu+7pkAr4HoMTMznaId19EOUnO1FkfJQ479a5V9CLa4emwW5VyN409+YuX3CYXHYsZGxAbgQ8VjnDL7AwlrZXjgxmm+nK/JpBOc2RB4qg72TkOPtP1XGDZRs/RCGXrfq3oHsKuiKCyKPPl24cN2OOUZU9szJId50Whed7ZFrjlPJ1dWYdwL5BHtHbWqg8K+EvbO2fCPjjSn6ZxkOaiy6ozUHbooXJu6zpsU5ZKXXiIFQME9UULmXZbLlcvdI8uLjRl+xbbA4wqe2WXV0Jg5Fk/hcnXMNVIpqkD26QFLzJot/Hu1LvKRz2o1O+elcijAWQtDRMIdO9WVhM5HEOPeaQbp220vauTiUBwvaZK+9icCld74V0KlHfGR+7PLNY8tVbSzb/2mjLFQ26JirgrTs0zhNsZHiEN0hS9HLdOSe3wWBnFNL+cyq+RGJ6wwQZiLnls202s5TFf5LyS1pDKfN/PjaNDPH28/WdjqKFSnUxK/CbSgCklCA72QKWB8W5FPjetXJxSOINOs0lzFODRtJx7XXklShXh5pqmpQxSDBl2P72NtL386dJQT+6aqdIud9kkcisu+cFTJZUyASoUi73a17y2M1R2T1yBg+NahmJdQnt45+y7GaZdIKB+9TuZ59ZQCFokgpjcLFgC7xq7QF92otkj1fmPiN/iYSZP+Q==
 X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(1800799024)(36860700016)(82310400026)(11063799006)(56012099006)(261021123027099003)(261021121427099003)(261009223027099003)(261102123227099003)(261026121527099003)(10067099003)(22082099003)(18002099003)(6133799003)(3023799007);
+ SFS:(13230040)(376014)(82310400026)(36860700016)(23010399003)(1800799024)(10067099003)(18002099003)(22082099003)(261102123227099003)(261021123027099003)(11063799006)(56012099006)(261022105027099003)(261026140227099003)(261009223027099003)(261028144727099003)(261026121527099003)(261021121427099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: S1ccVsTsBpyqVX+e39ka2ySLvBrmQ3+zgrIuMYlmuaC9YMAUc15EEnTUJgZZsTUhEhkXiVFQKlTl8uPIP/yNQf4rMGCt/4bKwqeA+Z5Gi8L2QwVSK92+fOlPN0Au0Szzwq4fnMwCS8bWNxpMIFUIddgOXk790dKOa5vEKQoJNoqlTHpAi8rSejZoL9b4GTWU7z0shiP51LHILCX3JKgFeiE6Jc5sOiYGy2BXPnY8759t1zkEV6gpFrLSwej9yGCjN/H0VbFfu+CoN456v8k+u5c3V3zh1RKtZhJqf+8c3gNp3VXQnMr1UCNa99xZR+J7jnFUAN14qIcL4x/U0TGF0SeYT3AfYL5tllN+qsNFeRgdqmx9nJfCeV0qwFLMu9jukyCBZ01cjIDwqtuUYxpwUkOmzuXzDR6e+CssOc/Spb5gSEY/XppPP2ctbxQKgzHn
+X-MS-Exchange-AntiSpam-MessageData-0: p/tKeUQziWJNRzcon3rYqHNaLy6VT8NSKYOgqpQIVjk0EZorhPxkgLxC/BbZmQIpJMxttjQEKlf2F8wbv/M8IDWWn6QNjZ6Dunr/D7NhqBaP7QhThm5qReehqTTPJ4Sz9Ci3iQQFZ9duauPohpFt6eUACKGBFGopfw3nHuz7o7TODQKTLI3GWgytk66yqcSZZs5ENfzA4HDY7K7xvzbG/6jRqcB1wt9NYNToB6UAkH2VJuAmYbIca1WmivBKhPXdYGT3K3lzmyTQAHSinWA/lC35afNJvkkXsb/wqI1LXIywP9mB0wKPa92iP93xUDgteZXim/PrnHqmPjJ1uLEV0B8jBnIPmqHXXSkZqBeIOAh9NFp5RI5Y5boXuCr0yoaYU27/2G5MeWPFO5Mf01Ml6tyJSrUh7rAP6JJl/0HXAhHX14rHbgohiaafB/h9FP0T
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 11:20:38.6418 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b45bb3c-32ce-4f57-dff8-08df3a65a789
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 11:26:33.1704 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6d3ac04-c7d4-462b-aeb3-08df3a667ada
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
  Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN3PEPF00022BC4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BN7PEPF00000092.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5648
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4188
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -105,75 +106,60 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Refer to the AMD processors integrating the NTB endpoints by their
-EPYC Embedded 9004/9005/8004 series numbers rather than code names.
+Hi David, Stephen,
 
-Fixes: d6dc5a7f8b06 ("raw/ntb: support AMD NTB")
+Thanks for the review. All the warnings were confirmed, except the
+memory window size check, see below. The fixes are sent as a separate
+series: "[PATCH 00/13] raw/ntb: post-merge fixes".
 
-Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
----
- doc/guides/rawdevs/ntb.rst             | 4 ++--
- doc/guides/rel_notes/release_26_11.rst | 4 ++--
- drivers/raw/ntb/ntb_hw_amd.h           | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+- rte_pmd_ntb_get_mem_align() trusting any rawdev id: fixed, the device
+  must be valid and use the NTB ops, and an out of range mw_id now
+  returns 0 (patch 1).
 
-diff --git a/doc/guides/rawdevs/ntb.rst b/doc/guides/rawdevs/ntb.rst
-index 99474745d6..37328cd9e6 100644
---- a/doc/guides/rawdevs/ntb.rst
-+++ b/doc/guides/rawdevs/ntb.rst
-@@ -41,7 +41,7 @@ AMD EPYC Embedded NTB
- ---------------------
- 
- The driver also supports the NTB endpoints integrated in AMD EPYC Embedded
--"Turin", "Genoa" and "Siena" processors.
-+9004/9005/8004 processors.
- These use a primary/secondary topology rather than the Intel back-to-back topology:
- one endpoint is enumerated as the primary (device ID ``0x14c0``) and
- the other as the secondary (device ID ``0x14c3``).
-@@ -179,7 +179,7 @@ Limitation
- 
- This PMD is supported on:
- 
--- AMD EPYC Embedded "Turin", "Genoa" and "Siena" processors.
-+- AMD EPYC Embedded 9004/9005/8004 processors.
- - 4th Generation Intel® Xeon® Scalable Processors.
- - 3rd Generation Intel® Xeon® Scalable Processors.
- - 2nd Generation Intel® Xeon® Scalable Processors.
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 8ca8379cc6..6c76c60139 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -306,8 +306,8 @@ New Features
- 
- * **Added AMD NTB support to the NTB rawdev driver.**
- 
--  Added support for the NTB endpoints integrated in AMD EPYC Embedded "Turin", "Genoa"
--  and "Siena" processors to the ``raw/ntb`` driver.
-+  Added support for the NTB endpoints integrated in AMD EPYC Embedded
-+  9004/9005/8004 processors to the ``raw/ntb`` driver.
-   The NTB rawdev framework was generalized to support multiple vendors,
-   with AMD-specific hardware access, a primary/secondary topology
-   and a packed scratchpad handshake.
-diff --git a/drivers/raw/ntb/ntb_hw_amd.h b/drivers/raw/ntb/ntb_hw_amd.h
-index 48f0db1ad4..b03aed7d08 100644
---- a/drivers/raw/ntb/ntb_hw_amd.h
-+++ b/drivers/raw/ntb/ntb_hw_amd.h
-@@ -7,7 +7,7 @@
- 
- #include <stdint.h>
- 
--/* NTB vendor and device IDs (EPYC Embedded Turin/Genoa/Siena). */
-+/* NTB vendor and device IDs (EPYC Embedded 9004/9005/8004). */
- #define NTB_AMD_VENDOR_ID		0x1022
- #define NTB_AMD_DEV_ID_PRI		0x14c0	/* Primary NTB endpoint. */
- #define NTB_AMD_DEV_ID_SEC		0x14c3	/* Secondary NTB endpoint. */
--- 
-2.34.1
+- peer_used_mws overflowing peer_mw_base[]: fixed for both AMD and
+  Intel (the Intel scratchpad value was also truncated) (patch 2).
 
+- ioremap range check off by one: fixed for both vendors (patch 3).
+
+- mw_size never freed: fixed, together with peer_mw_base which was
+  also leaked on each start/stop cycle (patch 4).
+
+- Doorbell interrupts with vfio-pci: earlier verified with uio and going forward
+  vfio-pci support added.The handler is now registered on each
+  doorbell eventfd; with it, the DB1/DB2 exchange on stop completes
+  (patch 5). This also affected Intel with vfio-pci.
+
+- Hardware events never delivered, and the switch on a bitmask: the
+  AMD hardware event handling is removed, together with the
+  handle_hw_event op and the unused definitions, and ntb.rst now says
+  hardware events are not handled (patch 7). It can be added back
+  properly later, with the event vectors and INTMASK wired up.
+
+- Rx EOP guard leaking the partial chain: fixed as a separate patch
+  for stable. A packet is only taken once all its descriptors are
+  published by the peer, and its refill mbufs are allocated before it
+  is consumed, so the ring indexes only move for complete packets
+  (patch 8). While there, I found that the Rx mbuf handed to the
+  application stayed referenced in the software ring and was freed
+  again on device stop (patch 9).
+
+- ABI changes note, examples Makefile, unused defines and the IOVA
+  as VA note for large windows: done (patches 10-13).
+
+- Window size check in amd_ntb_peer_mw_validate(): not added. The AMD
+  handshake already uses all the scratchpad registers of a side (the
+  last two being reserved for applications), so passing the sizes would
+  require changing the handshake layout. On the other hand,
+  amd_ntb_mw_set_trans() programs the window limit register with the
+  local memzone length, so the hardware already bounds what the peer
+  can reach.
+
+Thanks,
+Raghavendra
