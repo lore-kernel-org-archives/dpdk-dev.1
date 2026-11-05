@@ -2,84 +2,84 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCE2606A326
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 20:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF283606A33A
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 20:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=Dk0YuPRe
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=PNpv5ugO
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 435E1427BB;
-	Thu,  5 Nov 2026 21:06:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 43D8D427D8;
+	Thu,  5 Nov 2026 21:07:16 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTPS id 45055427B6
- for <dev@dpdk.org>; Thu,  5 Nov 2026 21:06:11 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTPS id 3D6CF427BB
+ for <dev@dpdk.org>; Thu,  5 Nov 2026 21:07:15 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1793909170;
+ s=mimecast20190719; t=1793909234;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=HPb5/QUGNBzNaZt2Sqv/M7u6oPjwZkhma3K5KcHr4GE=;
- b=Dk0YuPRe2eGbjdpqeR/eoW/DuSZuxOQf2kp2VY9waXFwHVwIrcv6OcDBhmtuuQ0exMXqxC
- IdJBGcmCI9g2IDPMIjwCx7yUqloVXQlWemCvGW695pV/0ddnI8QVXQxHrRGLb2f1YZWeyS
- ipeLdShjrJjlihNAQb1jllSAm5vlJMU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=UMVFaMSBsh+8kmjv3PRnIMaQhdS9scIZfTRJPqaItz4=;
+ b=PNpv5ugObAF98oeiWG529bFXhpbXAiszcHf1y9wcX8CKinjmvvWjvKAclk8wNVqKHeCGI+
+ fKEmu0VYu4f/z9gHnjPKZ3an+S5sLWHo1mruay3zWRlqfQmys/N27OBEVpcXNgfoAApSOh
+ 4LQhBtBWWUkiISr1foL38p1wnHjrY5c=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-595-EqQRmKjdPQCQ6GPyEdi1Zg-1; Thu, 05 Nov 2026 15:06:07 -0500
-X-MC-Unique: EqQRmKjdPQCQ6GPyEdi1Zg-1
-X-Mimecast-MFC-AGG-ID: EqQRmKjdPQCQ6GPyEdi1Zg_1793909166
-Received: by mail-wm1-f71.google.com with SMTP id
- 5b1f17b1804b1-4a009f82bedso19065645e9.0
- for <dev@dpdk.org>; Thu, 05 Nov 2026 12:06:06 -0800 (PST)
+ us-mta-204-7kGv-ytGMwKRD7fkwQjlmQ-1; Thu, 05 Nov 2026 15:07:10 -0500
+X-MC-Unique: 7kGv-ytGMwKRD7fkwQjlmQ-1
+X-Mimecast-MFC-AGG-ID: 7kGv-ytGMwKRD7fkwQjlmQ_1793909229
+Received: by mail-wr1-f71.google.com with SMTP id
+ ffacd0b85a97d-4903fc8537aso1487245f8f.0
+ for <dev@dpdk.org>; Thu, 05 Nov 2026 12:07:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793909166; x=1794513966;
+ d=1e100.net; s=20260707; t=1793909229; x=1794514029;
  h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
  :content-language:references:cc:to:subject:user-agent:mime-version
  :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=HPb5/QUGNBzNaZt2Sqv/M7u6oPjwZkhma3K5KcHr4GE=;
- b=pegbbZVSmucdWThP2C2+6kUpErbUEXJSiYf00JFU8JoSDEMMYw3hfq/xuAsekbn1QH
- ohwFifyAT7/8aga/mUAgvjvRMEeiioWf5a7mIEP4xW/yHw65a0gGrn+/wyjKDGV2/xtt
- zMcSgUn977xS12oiOy8eDGWZihEwRcdl4n2uwoOPeiwaSUrZDO/dT17K/umpvmPY30qw
- fUsm/AI4HKBKHcd/qn63hNBN76j940HIOnvSrrIqV9ORVBhpVeQNLbHNZcpOtEgpqPX7
- b59vwNmYDA/4O5EWPJ8g/aCbAkZfSe6As7q/7po4LA5FOa3TeDJCJ4tqn0c8xF3iZR4/
- s1Vg==
+ bh=UMVFaMSBsh+8kmjv3PRnIMaQhdS9scIZfTRJPqaItz4=;
+ b=z3bfZ1aXG39at671kKbuYiBeAQQMrhjuHiCI/nhoEcsrthoaVfd8Vu6rVUeGgZT6Ls
+ nKasTwrOWWpfrn5EHW6V2PUTes1F+ruM973f95fzU4Mjn9j0bAZGmcBqeAR9j7pXLxkx
+ Xt7zwxQMoyNwFhhWuKAAmATKXG0rfCeCfj0flFuB6KVon4i+aAR9OkkcQpM0GvLzm6Qk
+ 7cGzKiikZC0ymEdFEPxleIIB0PNuIS255xwoeGfenGJecQLM2ag6cmJjWrjadfiFjvf/
+ ZR62y0/jLQotozw1YTl8PhyT+d3L0o5JYORraLr6s6vTlzzy68NhD5/hIfinTsfuhXcw
+ Qehw==
 X-Forwarded-Encrypted: i=1;
- AKwUvBxRT6+vKlktCsbw3MIYI3t27VATPsZqgW/JI+/I3RGEtyIrsyCPGW9ndzBqPT2Ui3yEodQ=@dpdk.org
-X-Gm-Message-State: APuU4Z86j/VG2DOMdNgDN2afUcLFTUwXUxyHB/wsp8CzlBb89qD+E137
- FyzFYdYuO+3yIqjPsjI61E2cUuBAI9RXEaOM14xXfc2GB3GCLqcu9COcePWft1DXohhRJawC0Oi
- 5nScDzX5E5nr/3C55XGpFfbtp3EKLJMESj88846M9+d4Q
-X-Gm-Gg: AYBFou1i5xsK7KmojMfb3zs2Fobjtrx9pYLladZV000PyNsBAyKaGG9rdBjpmYb+7DG
- IvHSyN83BOmYBeYeBT1tAbttk0Zym1HQVT74Hi4TUXGDoiQowHKKN3p7DjR/F9BP0BCrGSJogKn
- hSgMn6/SzlnUTUIP99QrnHOFbZQk/v92m1kXxRbhNmB4MIkkjBVNyghEq/G+Oshay9hKtlBdY7A
- ViIhE0Mm+LWuhb1kRUQBMbXOoPznBrHG1legiTjRjqWoQJPoZkxJmfD1yVtBV4Mc6KA2PzPC4qH
- Wc5PTCtzdAHnQV9QmfEOguBFIKUP6IlCFGSjmCRZ8gWbhtIo/RqJB8gVivJTElWJXzPhlpIwQVm
- 9sQ2HfezbiZjDn/mwJEeaCiO/FXOacuZ6unsZIT+XsVij22kVIlQTtr2vhk0dR1p3DAaDEnT730
- q9/wfpLnCeLPW8JqzdO+uFZKA4g240Sm/9Kk3S6tDGqdIuuKq0AtcmM/ZIzdek3WnZxD6nDH0KL
- Ph2F3mMjDCtZL6JRTwTkwJlLyBLAb0WCF+dWYC6EbZUE+MFRvH9GTpVpeRm2Aa3+Zl71Lex+Q==
-X-Received: by 2002:a05:600c:310e:b0:4af:9cae:df63 with SMTP id
- 5b1f17b1804b1-4b6dfbac4c3mr3457195e9.31.1793909165771; 
- Thu, 05 Nov 2026 12:06:05 -0800 (PST)
-X-Received: by 2002:a05:600c:310e:b0:4af:9cae:df63 with SMTP id
- 5b1f17b1804b1-4b6dfbac4c3mr3456965e9.31.1793909165362; 
- Thu, 05 Nov 2026 12:06:05 -0800 (PST)
+ AKwUvBxpLoVF5WtWs57TS74ZrOFoKZDuc4qSrPXF8Y2lSNMuzB9hgtF5KfVF8P4Z88ClfnFA+Pc=@dpdk.org
+X-Gm-Message-State: APuU4Z/Q5XUX+KUyvkZi1sAQJuifjR38xncE0IhYgaDsZgELe3ol0mWi
+ ZDlgcG8i70Ze1Abz6AsiU48sy5Ih+5LOOt+iPKeTlm9/FoGUI+cpxwg1fvKZQODBDl3l3MKMr58
+ L9wTHJ1wpY7nf2WUuDkkNYUMW25NGThRilj6MRnFxxxP9
+X-Gm-Gg: AYBFou3AJwp1ooFzeLIliDb2bEAvFzVp0caXH6xGGb998ML1O8i4vSZRDuNyt4CDhjP
+ 2ABmcHyOttsEZrjpgRCOft5kKvDxj+nZpT29xnVLFi/a5gXoOPTAmm+aM3tSKEmi/XNzTvXLLOM
+ ugOiG82U9300E+Y8RmLIKcQz0Rw6U1pOce7Rkv2HHofWy8kyNSsSUMxXU3axrt9bor8FGJDTAuU
+ AS3AyIHYMZ0N4MGBE5rMrKGoaMbDWxFUGv65LjFR00ACu2hQ2i1alu9+puYokse1jJL6NK3v1vS
+ Kg8FbFsMCxy5J7yOzqmnM4cJ9+cT4en8W3VE7DFeyyMwEQWi0DaNQGY3elFxVmL2eo0z5Z6G7x0
+ RbzaYKMNxzI4/MUXkpx14/GOaUuwyBujE0fLghiqFtkk8GelFdYE2Xkg9AOZf6UKtB2ZP03lFB2
+ aitZEAPrUlgdkU/It/UbWSc4chvr4JaY192yt7O8rbTQQNVUr2VeV4WOGS1HTb4OCuoj3XDQqES
+ BcCvV1QENRsYwJNB/vefgpZreum6LTxs/puRStXpfFghJmOnzG2Lw/XGxbus+LlKwCzpfSZAg==
+X-Received: by 2002:a05:600c:4fc9:b0:4a2:d99:3171 with SMTP id
+ 5b1f17b1804b1-4b6e017053fmr3160495e9.23.1793909228886; 
+ Thu, 05 Nov 2026 12:07:08 -0800 (PST)
+X-Received: by 2002:a05:600c:4fc9:b0:4a2:d99:3171 with SMTP id
+ 5b1f17b1804b1-4b6e017053fmr3160155e9.23.1793909228443; 
+ Thu, 05 Nov 2026 12:07:08 -0800 (PST)
 Received: from [10.50.0.132] (82-66-145-51.subs.proxad.net. [82.66.145.51])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4b57317cae5sm132655525e9.12.2026.11.05.12.06.03
+ 5b1f17b1804b1-4b6df5eab6esm4477625e9.1.2026.11.05.12.07.06
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 05 Nov 2026 12:06:04 -0800 (PST)
-Message-ID: <8b492ff4-3aec-447f-8870-90f553c29b59@redhat.com>
-Date: Thu, 5 Nov 2026 21:06:03 +0100
+ Thu, 05 Nov 2026 12:07:07 -0800 (PST)
+Message-ID: <91c80bb3-a158-4a33-9a0e-9561b10dcfca@redhat.com>
+Date: Thu, 5 Nov 2026 21:07:06 +0100
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/5] bbdev: fix status error for ops dump
+Subject: Re: [PATCH v1 2/5] baseband/acc: fix queue depth computation error
 To: Hernan Vargas <hernan.vargas@intel.com>, dev@dpdk.org,
  gakhil@marvell.com, trix@redhat.com
 Cc: nicolas.chautru@intel.com, qi.z.zhang@intel.com, stable@dpdk.org
 References: <20261103172902.4152956-1-hernan.vargas@intel.com>
- <20261103172902.4152956-2-hernan.vargas@intel.com>
+ <20261103172902.4152956-3-hernan.vargas@intel.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -124,9 +124,9 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20261103172902.4152956-2-hernan.vargas@intel.com>
+In-Reply-To: <20261103172902.4152956-3-hernan.vargas@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: fmhBEHhqBwZgPGieiCwyK7xpLpbDs0m7FDpqC4L3vKI_1793909166
+X-Mimecast-MFC-PROC-ID: t-4wmw7KvrJhZtRhAR1EriXFYvJtynNOQXKyog4RUn0_1793909229
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -150,23 +150,21 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 
 On 11/3/26 6:28 PM, Hernan Vargas wrote:
-> The error log being reported by rte_bbdev_enqueue_status_str is
-> displayed even without an actual error. The function may be called for
-> such index (notably for queue dump) for valid reasons.
+> Fix to the computation of available dequeue size.
+> Protects notably for possible negative scenarios when dequeuing
+> descriptors.
 >
-> Fixes: 4f08028c5e24 ("bbdev: expose queue related warning and status")
+> Fixes: e640f6cdfa84 ("baseband/acc200: add LDPC processing")
 > Cc: stable@dpdk.org
 >
 > Signed-off-by: Hernan Vargas <hernan.vargas@intel.com>
 > ---
->   lib/bbdev/rte_bbdev.c | 1 -
->   1 file changed, 1 deletion(-)
->
+>   drivers/baseband/acc/acc_common.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 >
 
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
 Thanks,
-
 Maxime
 
