@@ -2,84 +2,84 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A6E606A326
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 20:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E291606D812
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 20:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=cBMh5w/a
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=NS/QwoYS
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8054640E01;
-	Thu,  5 Nov 2026 21:10:02 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7CDD9427E2;
+	Thu,  5 Nov 2026 21:10:28 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTPS id C4CB640DD5
- for <dev@dpdk.org>; Thu,  5 Nov 2026 21:10:00 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTPS id E110540E01
+ for <dev@dpdk.org>; Thu,  5 Nov 2026 21:10:26 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1793909400;
+ s=mimecast20190719; t=1793909425;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=spFE7u9uked1cgYFLak/ML9tmR2gLoruKWyGWePHczc=;
- b=cBMh5w/aXOi7HfUJjqewql4neUAei7V+kHHRw44ptjcFZ+pSNX64uYznk4F9SKRwiSUOjD
- GciYpqxOHdgDDCmEawc1yZ4XbZuOG8582F14H1fEJUMiv8vC5jHWspLkuhsW88j8JUQDYb
- pO6cfiqQPXu+s1b9scqLDVdEHBj9JHs=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=VSDuuTaD5ksX5mBvw6a9HnkUP6eBomGy62t+4ae32ac=;
+ b=NS/QwoYS8+2VtHeTiu5y+9YtX5Fz2LCMkSuFn9OxqrxyZN/TdCK5/YCim2SlS8xzxAKNl/
+ IyU3M71tryz35V+an6cSntkGjnsle7yrF7OcLYwHhGnNBCPqw6W/l2QAw8pJx5H63WcwWE
+ t6JY+D3rtX6zYPCL9dLaC66rxZh3Faw=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-652-sJ09IZSZMrCee0Fmkef2JA-1; Thu, 05 Nov 2026 15:09:58 -0500
-X-MC-Unique: sJ09IZSZMrCee0Fmkef2JA-1
-X-Mimecast-MFC-AGG-ID: sJ09IZSZMrCee0Fmkef2JA_1793909398
-Received: by mail-wm1-f71.google.com with SMTP id
- 5b1f17b1804b1-4a35db2d6b3so17814115e9.3
- for <dev@dpdk.org>; Thu, 05 Nov 2026 12:09:58 -0800 (PST)
+ us-mta-623-IzrtDm6UMu2ENxw4gcFQfg-1; Thu, 05 Nov 2026 15:10:24 -0500
+X-MC-Unique: IzrtDm6UMu2ENxw4gcFQfg-1
+X-Mimecast-MFC-AGG-ID: IzrtDm6UMu2ENxw4gcFQfg_1793909423
+Received: by mail-wr1-f69.google.com with SMTP id
+ ffacd0b85a97d-48fcb657f32so1630641f8f.2
+ for <dev@dpdk.org>; Thu, 05 Nov 2026 12:10:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793909397; x=1794514197;
+ d=1e100.net; s=20260707; t=1793909423; x=1794514223;
  h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
  :content-language:references:cc:to:subject:user-agent:mime-version
  :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=spFE7u9uked1cgYFLak/ML9tmR2gLoruKWyGWePHczc=;
- b=DbVf9N5DZ96UG60QwTljiq/Y9DsOvLqQouFAX34iP2HwWN4DW2wiVULEO8H9CSK6fU
- aNZ/KmAVHYG886InAKu2m7hKpNykWYcOaOq6/LN2R2Z3XyxojaNr5CQUAy/i6zz7CNkK
- pkZdL21UJcaeMpc60IRd86SqunfJKYWyyI2/7g/Kt5UPQBlncGhx7TsLMQvweIZDAsPz
- pCTCI6gS93b8gPU6P8WzKxmrTZPEIbudXWDeaMNGnuSxYf1KfUMZTFrfyk3AAVAsr942
- JM/il2S0bEDWloK5oS38sr/7cFm2BnBLdZ5xC1vyjI3NK1LMYh/pGJFUDsDJfcKlROrf
- kw0w==
+ bh=VSDuuTaD5ksX5mBvw6a9HnkUP6eBomGy62t+4ae32ac=;
+ b=SnGtJxKcb8IgYoqLWoEN7y97VAjy8HyebGPLRZH367fIxFbmaO8cvXfy5HltZUFVHB
+ /C+QiNnI/NK2wI7cgx4C3ENQwzZFN+qJ3K1ACuLNWEG0XL9S9AnLNnV2ZcBAkmCivW1/
+ uceEIJ5FDFYxliiExsq8iwVZ7wuuFH/Y2cDlPf2GaL/3iW8E7mhB4I73gr3u3YkxuANe
+ kp5mR7/8kKELhjeqHPyqWOsllcjX1fF4KsnRy0EplkeoesLQ7EtGqHXC2ynU6YC+r7ty
+ nc2yCZnUm2O98xd1a9ZGUWgRgqJTRyGT1VGOkorb/jNLHvFyvEDPcORxw9E7mDi8NAkA
+ rpaQ==
 X-Forwarded-Encrypted: i=1;
- AKwUvBzl+cgFrH7KXLTuiJbOGUf7OXd2kbMFq8LP+4xfafvEY2pxFFqfpFSuqo8nm0Ew/LaMb1Q=@dpdk.org
-X-Gm-Message-State: APuU4Z8B/Xil+QCT8wP3tVSmY3If+qed/QJEG3ySV2GjxGRrGnFvual6
- v/kh4Jwxhx6XvRzvwvEVhPVSoebMIfeKyylKLhnynh7EZA6NbxOFStOMtEp4o3znQ6WPRNIrQt+
- 6bDN1RgTwC4ChpBbVM9xtHgnwOKw2nZVoKMgdV5qJ5/kZ
-X-Gm-Gg: AYBFou3UBwbsvCx79ekrf1Rgw+2fSRBuB4s5MgnHbyCmQJDMQPhz5RIASTKW9g8iiqy
- SW/NrloPy5ZuLUDl3SEOwhVkiSBjqsPokvZZ1kW3B4MTBqDYTZ6f33lsMU1cw/mHpXArldCMsrj
- KZiNgbiY9wTKPccqMHwcbY1BV3mGgWWNprUxSY6CUOjkN8KHUtSVoLwUnwVYGsfHulo/gnvBmY5
- jNLPMdG2e5UyJ7w1hgOXr75H1Dq9Q1FsQFJuAdVAHDJtFZYiCYNrN+nMZOW/nt7FePr0UAoDo1D
- aW2LuT8wmZZKyeKxB6QCvpjsgVZ8MXbqlenuYCXQNIYdXcjY8ZeQUUuyZQYbr2MOOVqL1O0Xqx0
- IO1HXfulr7b7fkuwf8O+7vZNMJXXbETJ6RUCDrzxYrt+tOq0AQ4xH98JbhR2batTeOjbhI+F04b
- GVSjS9gqByLas1ow20pY4aXZRrA77kJ6uFQw7t3tV+m4Sr5sbJvwaCysvXGh1Lm6xsU1p/0TP6D
- O9kmRF84BNdphnmYgTbInfpuKCo0OQ0GCKWNNu+8OxjE/iO+g4Z51aTemOF8w+L6hWV+ZeVWg==
-X-Received: by 2002:a05:600c:c8a:b0:4a1:f7f4:7cf2 with SMTP id
- 5b1f17b1804b1-4b6df6df796mr3363015e9.17.1793909397562; 
- Thu, 05 Nov 2026 12:09:57 -0800 (PST)
-X-Received: by 2002:a05:600c:c8a:b0:4a1:f7f4:7cf2 with SMTP id
- 5b1f17b1804b1-4b6df6df796mr3362675e9.17.1793909397069; 
- Thu, 05 Nov 2026 12:09:57 -0800 (PST)
+ AKwUvByWWxsXlHGMhRLX3ALNXbnEbIEq9fXjNDu8nCD4LNI5JPOJbM6NJZVwiMx2kCA/ooL34QU=@dpdk.org
+X-Gm-Message-State: APuU4Z97Xjci/HwtyY/pYfGl21tto7NscHUcrqJsejKRmymo3Gp84fHh
+ lV63ajH7bL9VuUKWIaGL8nSjhZM0kwuzpNfSjQScF+BTPNYgNzvJyAlA1XqbNJ0PFxt3nKe6/oY
+ uQzpS8WqFqYusTWKV4r6uVUlA0picWwwP63lSvsSohwYLrUBJ1lAi
+X-Gm-Gg: AYBFou3Qqd1mhqbDAJ6YPddApQ2qZLQqcn/E7uMfxN+uCCIf/hPgY8FxaJfEw55Lapt
+ 8+Z7ZtVWP23VdX/PJhHdPwPjEunVo0OA46OdxQZX5l+tHCeZaLrfsJhmNsxYXL5R9pYJ7QAJ3Vk
+ xtOBN3bzmc71SYGDPbPOgw5AJ/AdtD6DbaPXm7oSJQ+aOjPWntANDS+0RGyWEaT1uMm23inlzl2
+ skpBlovl/G8456df20KrajC5trekHxb4OPRVHSO3evzqolcEzddpAxs/7vNNlwN0UmZY407+R49
+ BSwtKgq0UICBA0/500J3vHueFoxbBUz1zUyZNMxeftRq39v4N59xVWRlOA9T2vIT9ftKdoVViU0
+ IDRLxb6bQgCDpsJl3UK8aHbnkFRiNOZwzwaUHjs4QxeZRdYzatumKt1/YNJA0b8SZ7aJiSbC4Z9
+ LtUt++qtnWA+DHlUJrPFhw8bg5qfeWUOPOxyFV+JF7L6o9AG/I63nj6o6bIvJBQrN7SDXmL+7b5
+ nzNmk1eLv5ccKDjP1H3F5JrTAihCr0E8s3UNWf+EKxWPS9zCC24KYONt+nk9Rt5JmhSnlbh2w==
+X-Received: by 2002:a05:600c:314f:b0:4a2:a9:ed5a with SMTP id
+ 5b1f17b1804b1-4b6dddeea72mr3826865e9.8.1793909423328; 
+ Thu, 05 Nov 2026 12:10:23 -0800 (PST)
+X-Received: by 2002:a05:600c:314f:b0:4a2:a9:ed5a with SMTP id
+ 5b1f17b1804b1-4b6dddeea72mr3826555e9.8.1793909422976; 
+ Thu, 05 Nov 2026 12:10:22 -0800 (PST)
 Received: from [10.50.0.132] (82-66-145-51.subs.proxad.net. [82.66.145.51])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4b452cd020csm162325185e9.4.2026.11.05.12.09.55
+ 5b1f17b1804b1-4b6e2028d9bsm6967895e9.9.2026.11.05.12.10.21
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 05 Nov 2026 12:09:56 -0800 (PST)
-Message-ID: <1e32b4a5-8967-4e11-8b6f-bf600fafac19@redhat.com>
-Date: Thu, 5 Nov 2026 21:09:55 +0100
+ Thu, 05 Nov 2026 12:10:22 -0800 (PST)
+Message-ID: <83ce5246-dcc5-4c06-a048-17f3caef3b4f@redhat.com>
+Date: Thu, 5 Nov 2026 21:10:21 +0100
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/5] baseband/acc: fix ring interrupt handler err path
+Subject: Re: [PATCH v1 5/5] baseband/acc: fix bug when alternating TB mode
 To: Hernan Vargas <hernan.vargas@intel.com>, dev@dpdk.org,
  gakhil@marvell.com, trix@redhat.com
 Cc: nicolas.chautru@intel.com, qi.z.zhang@intel.com, stable@dpdk.org
 References: <20261103172902.4152956-1-hernan.vargas@intel.com>
- <20261103172902.4152956-5-hernan.vargas@intel.com>
+ <20261103172902.4152956-6-hernan.vargas@intel.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -124,9 +124,9 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20261103172902.4152956-5-hernan.vargas@intel.com>
+In-Reply-To: <20261103172902.4152956-6-hernan.vargas@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: asLRHiFLZj7AQoCsnqXpJmQeLS7OIFqQRZJd7AejN00_1793909398
+X-Mimecast-MFC-PROC-ID: e34gIkbCr01Frc5-stH5QIOpvmptQDAHQDmNykJz7BU_1793909423
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -150,22 +150,16 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 
 On 11/3/26 6:29 PM, Hernan Vargas wrote:
-> When get_queue_id_from_ring_info() fails to match a queue index
-> (returning UINT16_MAX), an early return skipped clearing the ring
-> entry and advancing the head pointer. This left the valid bit set,
-> causing the same malformed entry to be reprocessed on every
-> subsequent interrupt, blocking all further ring processing.
+> Part of the FCW needs to be explicit set to zero when alternating
+> between TB mode.
 >
-> Replace the return with break so the entry is consumed and the
-> loop continues normally. Fix applies to both PF and VF paths.
->
-> Fixes: 3cabc8eaf524 ("baseband/acc200: support interrupt")
+> Fixes: 32e8b7ea35dd ("baseband/acc100: refactor to segregate common code")
 > Cc: stable@dpdk.org
 >
 > Signed-off-by: Hernan Vargas <hernan.vargas@intel.com>
 > ---
->   drivers/baseband/acc/rte_vrb_pmd.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>   drivers/baseband/acc/acc_common.h | 3 +++
+>   1 file changed, 3 insertions(+)
 >
 >
 
