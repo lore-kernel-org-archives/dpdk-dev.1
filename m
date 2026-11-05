@@ -2,102 +2,79 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7339B606A31B
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 08:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40D4606A31B
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 08:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=FNq9Egl6
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=IHZ2l/WM
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A60440296;
-	Thu,  5 Nov 2026 09:25:54 +0100 (CET)
-Received: from PH0PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11011012.outbound.protection.outlook.com [40.107.208.12])
- by mails.dpdk.org (Postfix) with ESMTPS id 0578E40281
- for <dev@dpdk.org>; Thu,  5 Nov 2026 09:25:52 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ruLo2cRqVAxCjJXQk04TlZOpaaMdxpJGbN0P5NMC7gS3RPnq/HqCaEbapfwVi46mNVcca/g0q/UJvU/xrx5uNYroqPh1bD2dp+OCsK548BshQmiNu8U/Y/yDf4wz8djFnfo/aXtxWjJEKhPCyAbrNwwtMoTW9kozQ8ZfFgPagsx3iunXQQUuUz1BHjajWK1EX751sVc6plo1PLHRJCPlY1vuqaYIALsoXK6gdDdcgUwWOBdvR8+/xf/LAbei5oGP4pa3ORvGeOFF/J8q4jzM3+0U+NUPTLYq7Mdro76MDP2is7NslVEJihc4EwKKiJlIcQbMFRYQWWOMv4LILgBUEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0BhzYI68ScumVBR9UFCGRAfDdyG22ilsI9qdgssduqM=;
- b=j+GXsqOox57vRidPOW+b+6X/W6JL3eWyR7FMhx/HSyQiVq0e9vInA2ZAZpLKikLEvLWpD58jxyoCT8+kbkJxLiu+RjemeeV9o2EFqI/F3nfHqr8hUvhcf8z2mG2KdwSbyOFeL4H0aEqodK7g+6p1T60HqvGqnKgRqwWXFlOc5GVnxy9cVDmorlwmKfS7cBzgrjmseIgc4h5dmOWymUfPYoElOf73j2FP7U1kBJP7TjElYuhNtqpyP2YMLhG3WbYLZwggCyqPoSpFLNX1koQ2GoKTJPWpq98DZy2D2rOd6QKtRxSvEFxTgcKg0nkiJo10TuqRcJ8nI357jXC1rebHUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0BhzYI68ScumVBR9UFCGRAfDdyG22ilsI9qdgssduqM=;
- b=FNq9Egl68sYNZ1RqCAySLHdhiLiXCw+UdJRf/7URxek7rVCXWdTq4dueHf2QRRJkF9/TQijoAE6rpsz4kNAKIIbvvqi4OwLIrJQoEbG+pcRe7L8Fs8Ezh4sNhhzzlcptQDbEj6Yn656OWW7AhWALv2BbcxR79ivONhIXB2nBkBA8od0AdJQ89ggjBqKwW7MnPEOOH6NgNRkm8XjFCCDJRy+Zgn9bhfqA/KXMuTLb2QjSFkNfCNHfJ0Ekl3K4sUhMEM2fbKBAj8a5fgs1IL2mgrCw7Hs+MIl+KOLuHEmH8KrcFdU5OI1owJ2BEMbRUkhZgNlVkOqKGOiYTZOYZIxAXA==
-Received: from BN9PR03CA0957.namprd03.prod.outlook.com (2603:10b6:408:108::32)
- by DM6PR12MB4388.namprd12.prod.outlook.com (2603:10b6:5:2a9::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Thu, 5 Nov
- 2026 08:25:47 +0000
-Received: from IA0PEPF0000003A.namprd03.prod.outlook.com
- (2603:10b6:408:108:cafe::31) by BN9PR03CA0957.outlook.office365.com
- (2603:10b6:408:108::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.8 via Frontend Transport; Thu, 5
- Nov 2026 08:25:47 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- IA0PEPF0000003A.mail.protection.outlook.com (10.167.249.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.592.5 via Frontend Transport; Thu, 5 Nov 2026 08:25:46 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Thu, 5 Nov
- 2026 00:25:31 -0800
-Received: from nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Thu, 5 Nov
- 2026 00:25:29 -0800
-From: Raslan Darawsheh <rasland@nvidia.com>
-To: Maayan Kashani <mkashani@nvidia.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH] net/mlx5: fix HWS sample action table leak on quit
-Date: Thu, 5 Nov 2026 10:25:18 +0200
-Message-ID: <20261105082520.41804-1-rasland@nvidia.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260816081525.166446-1-mkashani@nvidia.com>
-References: <20260816081525.166446-1-mkashani@nvidia.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0B60440296;
+	Thu,  5 Nov 2026 09:32:58 +0100 (CET)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com
+ [209.85.208.53])
+ by mails.dpdk.org (Postfix) with ESMTPS id 04BF640281
+ for <dev@dpdk.org>; Thu,  5 Nov 2026 09:32:55 +0100 (CET)
+Received: by mail-ed1-f53.google.com with SMTP id
+ 4fb4d7f45d1cf-6b4bd3d98bfso1805488a12.1
+ for <dev@dpdk.org>; Thu, 05 Nov 2026 00:32:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1793867575;
+ x=1794472375; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=N3rADq4P8HZk1vlMGIUMHcvXV/RXM0SH1KsRS2c1SuM=;
+ b=IHZ2l/WMQufPotcAGgOOdT50Gd2vzm0AxUvBmQvHA3y8BAVyoxairBQB/ixkw4D3RS
+ +QvzTsIds1VVUS+CuguHtIVyl8cbeHK3LlIaVKs9GTHyQXQsknTfzlLCAK7ojx2uz4uj
+ Bv7guGuPFxC+lvlahWwyAtBJtqy+ALuBmSjQ1HYh37kc41Le0CJO99Mg7V4vtAMzcPHZ
+ 6xZoYhgFcbJmiggBNPMlwzG9p+cWWUwINHCa4ULz2W2/cgD7YPtWokrOq2oylxHBEsW0
+ yUTh/+6D02rVqoV7Bf6utcZHd69dadAI4mzfl1CHJGAYB72EiuG1rw9UQvtiE5FO01gT
+ 8hhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1793867575; x=1794472375;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=N3rADq4P8HZk1vlMGIUMHcvXV/RXM0SH1KsRS2c1SuM=;
+ b=k6mc2r2DzE9GVzIy3oVMvbSVDo1HceuK2LGcT/6k+o/p/NsRLNYJXsCKXPNAjIRoXM
+ FpCJAJvl9x4tC3/s7moES9uwTrTe4yDr1EOxvwZywy4an8Vdq1b+gZDdY5hBkJgzZoL7
+ 0uOVdj55jh3VufsF6MUlJqDhmxlKwCHEmxG+zbU1nzWBZV6lIV6pWWNfWT46z8ibZ3C2
+ ZBYZLmmDwx6x4a2sDtW9zFWmCCTQtpC+B2D/1R1i2cDEBrE+8zroQgGt5ugty5DWTzHA
+ PLecxJ8LXb10fFgvAJKiGLl4YPKSH/GfvDLEo05KFCy6vktGCq7hIWs67GKvd0wWwa2O
+ LXEA==
+X-Gm-Message-State: APuU4Z+FLKFMGbUD6fd83CFfSQZfEe1NwaJgwSv/MYhAuxAsmKfbhri+
+ 16JOYeBFg1UGAVkxT2SYcbjraZmGogIb1ovtzxcD+1SQ5lOmNrTAAoF3t+JntcdB7tM=
+X-Gm-Gg: AYBFou3m9QbiowE7lSZ1qB6/Iy+jtMRiYvraAPQRxlOOBR1RrE89+0SuAziV1TZ9oOZ
+ 245hArisIUQb2uRQvuK1UBm7hIF1GFOtFvdyxVVBiRZwHS9ePzSnoPPJ3bTqH3V536+PeiFe19H
+ 3uKEuyx9gzlBYCN+Gr7g25NNsM4COGEbtLvidxtsd/Tr5N9N5PhX8F3WO2Auo37VDWP5OhWlD3h
+ N/2qXTlYiXrmcNm4lVZhr0bqi4dSiyOREJmd0VjAW/79kXA7g50Jnubb3MmIKg3xMS3g9fmtANj
+ QYjMJrHZX0iZt6404oMbyKmaL6Bmi4rO9TjkNf5c0iyBJtSb2tDxgGJPuizgxb70IRxE9PkN8hx
+ MDM5YbUHPjMZCRY9FvIHH344xRc87UeJGbnlxYgIeAtWe5N7WXs47Hnzdvpx2QCrLfZJciLkDhY
+ Njtas6gPbJ2/vtnmkq7/rPrzt4/dlm6wvg8jNl0l7NzsRL/d1hUbnZ0TRCwHqgz1gZxLkVe28rN
+ nZJARW448Xa61G6Qc6ByyeLKfdSDKk4vtpVluHa1g4yzZMTcZaQIK4E/5jvkiDEG4w2zMugOP4f
+ 1kIym7SYYU0a6CZIBmEX2zS5qV34eItJoufrRHH/Lod2D0ul9oWGlFMsptpelNIePmXkLEIIhvA
+ b8cvaQ1eMUAgHO6hA
+X-Received: by 2002:a05:6402:13cb:b0:6b3:f692:985c with SMTP id
+ 4fb4d7f45d1cf-6b515507eaamr9721087a12.44.1793867575374; 
+ Thu, 05 Nov 2026 00:32:55 -0800 (PST)
+Received: from stephen-xps.local (93.224-78-194.adsl-static.isp.belgacom.be.
+ [194.78.224.93]) by smtp.gmail.com with ESMTPSA id
+ 4fb4d7f45d1cf-6b57e26b0ffsm445943a12.32.2026.11.05.00.32.54
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 05 Nov 2026 00:32:54 -0800 (PST)
+Date: Thu, 5 Nov 2026 09:32:52 +0100
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, sriram.yagnaraman@ericsson.com, jgrajcia@cisco.com,
+ thomas@monjalon.net
+Subject: Re: [PATCH] net/memif: fix use after free on listener socket close
+Message-ID: <20261105093252.59fcdf28@stephen-xps.local>
+In-Reply-To: <20261104164153.1674329-1-david.marchand@redhat.com>
+References: <20261104164153.1674329-1-david.marchand@redhat.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PEPF0000003A:EE_|DM6PR12MB4388:EE_
-X-MS-Office365-Filtering-Correlation-Id: 744b24e3-fbb9-4aac-5f8c-08df3b16645a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|376014|1800799024|82310400026|36860700016|11063799006|56012099006|18002099003|10067099003|22082099003;
-X-Microsoft-Antispam-Message-Info: It96s96t+Xwp6Oj+aGtk6Sn44JKRg5+v81AZAPGbnn8XcBYT62sGJuv/FE99Z3hhwBLnF2bvs195VcD/UH+KQZdigAxFjQx2QrcgQn9WiqB/78uGKylYYge2UdTjk+11O0tnLmBko6FUWUR/vsfi3QrFm6bvcg9ixv/Z/bOtAweZs94UkKSP+1Ammz9izgq+Nh3BMEY0Zs/WrQeCJwEiVAHdkGHIA6QcTJ8nSHnF3qc0lrRBhLV7sJ7aazk5nJgYTj2GMCNEQpvLYOnmDIMqmWx/jpEbQqVs9V2oIAgp3RqNbh0riPuMN0o2Zn+laRoMjR+SZzQd8D8t+KHPG6vVRBurYBy+PQ/9ECenEdwunks0QFmETg+qORsEmsC+XHOWni+4h/TNKiVYqKASN6xLZdDaducTcsMHnm5hb5YFhpeOjkjRtaZumku9nng1ijWG0tg8BgzZaLX6SsAjCexOgrgn1OWACUxByz2PI+GcNIPFUL2xpFWrGZAMrUVKI4Pno2cm7CseCEDVNn86SfvKI7upQkuOGBKgnyfGuWzJSFimEbHbLPtkBZJa0aKeBhp1BbmNYeJEEtmv24VQTE16pca4Eitt6udE6n448B4urnofh8EWAIGwUY2H9gp+bRqdRDdw0OssyYw0YDg3+qoqIZfdgkIjoZPr6XLPo7jQ0XR8LlRWZdj8QIWf+CJEUbFwZMp+MguUgx4MmkwkzrWEfA==
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(1800799024)(82310400026)(36860700016)(11063799006)(56012099006)(18002099003)(10067099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: oz3YBzayDsLzelaTxwXvTwb2XmBS+Cb63wXyOfVEraCydwki5jr8j9Itu59KUOhci3kkUVLUtL/PTaLsDk1PBjTFxRMbVnMb7SCCGmCvBrJAUZhHcP/OZz0VBXDvbPcFY/IU2wsIFZ7UGQr7OTwQxXEeq2b0lsYy2IWHw5psGOdhaCPS6Uh+jKqs0DFeTtqrenIM1oV7HDXKkNOVNx5yIL/nd1phsBaKu/mhmfZ38w5kRpiX3RAtR5ZLSYUvawC++lKeutVWaRi33FK/efD7yoSd8t+2BeX9i+yx8Z2jmDzOa+aB6KC/kN6Un0cpQU0W5zzHtvHpVtkrUh3FjfyeB9UQWRGYcmEQA2zT0XfppmhbAELh1frkg8qnnaOs7+8wnsaoZjOMfehuSVCf4FymKGuWx5XZ4nX/Gnld7dnzFt2/dZxhjGWlro+Zcr1n6otW
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2026 08:25:46.5897 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 744b24e3-fbb9-4aac-5f8c-08df3b16645a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: IA0PEPF0000003A.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4388
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -107,14 +84,68 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Patch applied to next-net-mlx.
+On Wed,  4 Nov 2026 17:41:53 +0100
+David Marchand <david.marchand@redhat.com> wrote:
 
-Thanks,
-Raslan Darawsheh
+> memif_socket_remove_device() calls rte_intr_callback_unregister() on
+> the listener socket interrupt handle. If memif_listener_handler() is
+> active at that point, the unregister returns -EAGAIN and the code
+> proceeds to close and free the handle while the handler is still
+> running.
+> 
+> Use rte_intr_callback_unregister_sync() which retries until the
+> handler completes.
+> 
+> Fixes: 7281511c2cfa ("net/memif: fix some interrupt FD leaks")
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
+
+Manually run AI review likes the patch but sees related pre-existing problem
+
+Subject: Re: [PATCH] net/memif: fix use after free on listener socket close
+
+On Wed,  4 Nov 2026 17:41:53 +0100
+David Marchand <david.marchand@redhat.com> wrote:
+
+> memif_socket_remove_device() calls rte_intr_callback_unregister() on
+> the listener socket interrupt handle. If memif_listener_handler() is
+> active at that point, the unregister returns -EAGAIN and the code
+> proceeds to close and free the handle while the handler is still
+> running.
+
+The fix is correct. memif_socket_remove_device() is only reached from
+memif_dev_close() in the primary, never from an interrupt callback,
+so the _sync variant cannot spin on its own callback.
+
+Info:
+
+The same pattern is left in memif_socket_create_or_reuse(), on the
+rte_hash_add_key_data() failure path. The listener callback was just
+registered, so a client connecting in that window hits the same race.
+Worth converting in the same patch:
+
+	if (socket->listener) {
+-		rte_intr_callback_unregister(socket->intr_handle,
+-			memif_listener_handler, socket);
++		rte_intr_callback_unregister_sync(socket->intr_handle,
++			memif_listener_handler, socket);
+		rte_intr_fd_close(socket->intr_handle);
+
+Separate, pre-existing issue (not for this patch): control channels
+accepted by memif_listener_handler() hold cc->socket but are not
+tracked by the socket until memif_msg_receive_init() binds them to a
+device. If the last device is closed while a client is between accept
+and INIT, the socket is freed and the later INIT walks
+cc->socket->dev_queue on freed memory. memif_socket_remove_device()
+needs to disconnect pending control channels (or the socket needs a
+list of them) before rte_free(socket).
+
+Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
