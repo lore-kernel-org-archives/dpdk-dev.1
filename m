@@ -2,84 +2,84 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BEC606A332
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 20:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A6E606A326
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 20:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=REdXAa2H
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=cBMh5w/a
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6E97140E01;
-	Thu,  5 Nov 2026 21:08:35 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8054640E01;
+	Thu,  5 Nov 2026 21:10:02 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTPS id 80DCA40DD5
- for <dev@dpdk.org>; Thu,  5 Nov 2026 21:08:33 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id C4CB640DD5
+ for <dev@dpdk.org>; Thu,  5 Nov 2026 21:10:00 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1793909312;
+ s=mimecast20190719; t=1793909400;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=QcHU2Wijf+Hl0Ef2HEnabt2yOJJtllYwVUZMgTfMRc0=;
- b=REdXAa2HI2ZAvz6PGlHs2oCyHUZsNOIt0IoEKmJG0N8NAZcSJ+Q/WcZyAhPLOIQhXFcKqY
- /2Q+jO5X/LWOqjWhJoTZYH42mD5aeF/3/IbW87rZEgYboHliqvjE9FKeyT7BlrPymwfrmx
- 2BlyGRQlPQuLADPey2mXgykgwLMRASA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=spFE7u9uked1cgYFLak/ML9tmR2gLoruKWyGWePHczc=;
+ b=cBMh5w/aXOi7HfUJjqewql4neUAei7V+kHHRw44ptjcFZ+pSNX64uYznk4F9SKRwiSUOjD
+ GciYpqxOHdgDDCmEawc1yZ4XbZuOG8582F14H1fEJUMiv8vC5jHWspLkuhsW88j8JUQDYb
+ pO6cfiqQPXu+s1b9scqLDVdEHBj9JHs=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-588-L8_CL-Z1MASVG0bjH866Qg-1; Thu, 05 Nov 2026 15:08:31 -0500
-X-MC-Unique: L8_CL-Z1MASVG0bjH866Qg-1
-X-Mimecast-MFC-AGG-ID: L8_CL-Z1MASVG0bjH866Qg_1793909310
-Received: by mail-wm1-f70.google.com with SMTP id
- 5b1f17b1804b1-4a1e489f97fso30596095e9.0
- for <dev@dpdk.org>; Thu, 05 Nov 2026 12:08:31 -0800 (PST)
+ us-mta-652-sJ09IZSZMrCee0Fmkef2JA-1; Thu, 05 Nov 2026 15:09:58 -0500
+X-MC-Unique: sJ09IZSZMrCee0Fmkef2JA-1
+X-Mimecast-MFC-AGG-ID: sJ09IZSZMrCee0Fmkef2JA_1793909398
+Received: by mail-wm1-f71.google.com with SMTP id
+ 5b1f17b1804b1-4a35db2d6b3so17814115e9.3
+ for <dev@dpdk.org>; Thu, 05 Nov 2026 12:09:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793909310; x=1794514110;
+ d=1e100.net; s=20260707; t=1793909397; x=1794514197;
  h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
  :content-language:references:cc:to:subject:user-agent:mime-version
  :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=QcHU2Wijf+Hl0Ef2HEnabt2yOJJtllYwVUZMgTfMRc0=;
- b=vUzKBF8Y0mnw6BfuOBgeNJJXVfvNEzUAxnfFwVpZWO1WC+CzeYRKnEDPtRYaGr4I6Z
- 9D/nY36wA3QC5ryIgOcuIMJGZuQ+EJsOWffgt9Mm71IbGdv3R/7zskLQks+OQ9uiXBFN
- qD2JexI/3+9VWDNhXnMZlDYf7ikyEahlItg32cqkcDYjcrIzWbnQ6QJBWu+hTJrX8iHL
- E7AXyMc6x3yQ1aM1mURMH9ZiYNijhOqmNbi+q2445BSpYXe/kafRGEIJK5Kt0zskRYus
- Ak0rWVAVsVgRAc49/eAbymZO1nrd+TWB0duH6vpPmFzEct18tunI7JNR1Myptej7QWAM
- o1BA==
+ bh=spFE7u9uked1cgYFLak/ML9tmR2gLoruKWyGWePHczc=;
+ b=DbVf9N5DZ96UG60QwTljiq/Y9DsOvLqQouFAX34iP2HwWN4DW2wiVULEO8H9CSK6fU
+ aNZ/KmAVHYG886InAKu2m7hKpNykWYcOaOq6/LN2R2Z3XyxojaNr5CQUAy/i6zz7CNkK
+ pkZdL21UJcaeMpc60IRd86SqunfJKYWyyI2/7g/Kt5UPQBlncGhx7TsLMQvweIZDAsPz
+ pCTCI6gS93b8gPU6P8WzKxmrTZPEIbudXWDeaMNGnuSxYf1KfUMZTFrfyk3AAVAsr942
+ JM/il2S0bEDWloK5oS38sr/7cFm2BnBLdZ5xC1vyjI3NK1LMYh/pGJFUDsDJfcKlROrf
+ kw0w==
 X-Forwarded-Encrypted: i=1;
- AKwUvBw65GlMvLrYWg3EXC3+O7qfDSkLhKNWKq0/vbkmzE+n/SRj71eeMu/elvzJqc1G1s8Ib34=@dpdk.org
-X-Gm-Message-State: APuU4Z+mSAXx3jeU4NEaLFo4A1OFk2Mgq2xXXJXCueHpui9Gs6CTj+G6
- FksmhdcpfwWXNqbO9NqwiUokcFg1anmwVAO1rpBwbGJ1NI4jUnAyFW4JXoQL640tB75TArBtH69
- Rx3R07447VUeRoZJTEhgdhNYMr05orAYNM4wsg88a/Kui
-X-Gm-Gg: AYBFou0JyvXrKKvuNMtaSsyneln67nDjBNpqiKptkWisvzCIs9/Zor1sWvrq10G50l2
- NnkKua7ohoFmu3i/SfsxSbCOJJ6jdLi1fMtzCigUpHN8jcYzCk8nWnK52hfJAt0nmUsU8lWoq6c
- aMdz/dYmtKfWs4wvjEIUgpxhqw/SS7uWDOU6YC56WqsKigQaIxiQoL2diJx3c8z6bsF56UWfpc9
- u9xAmmTWS1nVIteQqR0qelHtN9iWiliNsyiudxfi7eity1cDDuOIwapRNyCH52EB6q0m6D4H0Xj
- 48KT11LjxqMH3YENkHVTkK5TmryTmLjEft67YWTJ9lMQUhEq6NcVJDpTVBmm9160GTSCVxuQ+4u
- smgiwF4JQy9wP6tzRmaJhRLWmgDDLMbzOBVUg1EjEBeSA4je21qbg1iYwXdz520KkrYUMxABLVa
- IY79lb9zLxst2IplGvU8ZbdKQwLgD2gpARliXXBcqtxSXYjOwFKDXb8h6mxSedCfHzFYfKKcdTE
- fZRfQKkRXaYrB+Fzaqndp3kGR/PxFzHb2Xw4Cu6cvV2h2RpO6wVKPNa6AFUTobdZ8ITMiSNag==
-X-Received: by 2002:a05:600c:6387:b0:4a7:9025:5c3b with SMTP id
- 5b1f17b1804b1-4b6de1c6450mr3735315e9.19.1793909310088; 
- Thu, 05 Nov 2026 12:08:30 -0800 (PST)
-X-Received: by 2002:a05:600c:6387:b0:4a7:9025:5c3b with SMTP id
- 5b1f17b1804b1-4b6de1c6450mr3734985e9.19.1793909309664; 
- Thu, 05 Nov 2026 12:08:29 -0800 (PST)
+ AKwUvBzl+cgFrH7KXLTuiJbOGUf7OXd2kbMFq8LP+4xfafvEY2pxFFqfpFSuqo8nm0Ew/LaMb1Q=@dpdk.org
+X-Gm-Message-State: APuU4Z8B/Xil+QCT8wP3tVSmY3If+qed/QJEG3ySV2GjxGRrGnFvual6
+ v/kh4Jwxhx6XvRzvwvEVhPVSoebMIfeKyylKLhnynh7EZA6NbxOFStOMtEp4o3znQ6WPRNIrQt+
+ 6bDN1RgTwC4ChpBbVM9xtHgnwOKw2nZVoKMgdV5qJ5/kZ
+X-Gm-Gg: AYBFou3UBwbsvCx79ekrf1Rgw+2fSRBuB4s5MgnHbyCmQJDMQPhz5RIASTKW9g8iiqy
+ SW/NrloPy5ZuLUDl3SEOwhVkiSBjqsPokvZZ1kW3B4MTBqDYTZ6f33lsMU1cw/mHpXArldCMsrj
+ KZiNgbiY9wTKPccqMHwcbY1BV3mGgWWNprUxSY6CUOjkN8KHUtSVoLwUnwVYGsfHulo/gnvBmY5
+ jNLPMdG2e5UyJ7w1hgOXr75H1Dq9Q1FsQFJuAdVAHDJtFZYiCYNrN+nMZOW/nt7FePr0UAoDo1D
+ aW2LuT8wmZZKyeKxB6QCvpjsgVZ8MXbqlenuYCXQNIYdXcjY8ZeQUUuyZQYbr2MOOVqL1O0Xqx0
+ IO1HXfulr7b7fkuwf8O+7vZNMJXXbETJ6RUCDrzxYrt+tOq0AQ4xH98JbhR2batTeOjbhI+F04b
+ GVSjS9gqByLas1ow20pY4aXZRrA77kJ6uFQw7t3tV+m4Sr5sbJvwaCysvXGh1Lm6xsU1p/0TP6D
+ O9kmRF84BNdphnmYgTbInfpuKCo0OQ0GCKWNNu+8OxjE/iO+g4Z51aTemOF8w+L6hWV+ZeVWg==
+X-Received: by 2002:a05:600c:c8a:b0:4a1:f7f4:7cf2 with SMTP id
+ 5b1f17b1804b1-4b6df6df796mr3363015e9.17.1793909397562; 
+ Thu, 05 Nov 2026 12:09:57 -0800 (PST)
+X-Received: by 2002:a05:600c:c8a:b0:4a1:f7f4:7cf2 with SMTP id
+ 5b1f17b1804b1-4b6df6df796mr3362675e9.17.1793909397069; 
+ Thu, 05 Nov 2026 12:09:57 -0800 (PST)
 Received: from [10.50.0.132] (82-66-145-51.subs.proxad.net. [82.66.145.51])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-48fed45d2bbsm12189270f8f.33.2026.11.05.12.08.28
+ 5b1f17b1804b1-4b452cd020csm162325185e9.4.2026.11.05.12.09.55
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 05 Nov 2026 12:08:28 -0800 (PST)
-Message-ID: <2066bbb8-4ba2-4594-94d5-d2f7d09aae03@redhat.com>
-Date: Thu, 5 Nov 2026 21:08:28 +0100
+ Thu, 05 Nov 2026 12:09:56 -0800 (PST)
+Message-ID: <1e32b4a5-8967-4e11-8b6f-bf600fafac19@redhat.com>
+Date: Thu, 5 Nov 2026 21:09:55 +0100
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/5] baseband/acc: fix PF2VF Bug for FFT window probing
+Subject: Re: [PATCH v1 4/5] baseband/acc: fix ring interrupt handler err path
 To: Hernan Vargas <hernan.vargas@intel.com>, dev@dpdk.org,
  gakhil@marvell.com, trix@redhat.com
 Cc: nicolas.chautru@intel.com, qi.z.zhang@intel.com, stable@dpdk.org
 References: <20261103172902.4152956-1-hernan.vargas@intel.com>
- <20261103172902.4152956-4-hernan.vargas@intel.com>
+ <20261103172902.4152956-5-hernan.vargas@intel.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -124,9 +124,9 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20261103172902.4152956-4-hernan.vargas@intel.com>
+In-Reply-To: <20261103172902.4152956-5-hernan.vargas@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: WSiwEMTz-91lpynkAv1bnEeW4PD29wO3X-KZhkzwosQ_1793909310
+X-Mimecast-MFC-PROC-ID: asLRHiFLZj7AQoCsnqXpJmQeLS7OIFqQRZJd7AejN00_1793909398
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -150,18 +150,22 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 
 On 11/3/26 6:29 PM, Hernan Vargas wrote:
-> Update of the PF2VF comms between bbdev and pf_bb_config to make sure
-> all FFT windows can be read.
-> So far only the first window was actually used and functional.
-> No system impact. Affects VRB1 and VRB2.
+> When get_queue_id_from_ring_info() fails to match a queue index
+> (returning UINT16_MAX), an early return skipped clearing the ring
+> entry and advancing the head pointer. This left the valid bit set,
+> causing the same malformed entry to be reprocessed on every
+> subsequent interrupt, blocking all further ring processing.
 >
-> Fixes: 0d39ed91c161 ("baseband/acc: add FFT window width in VRB")
+> Replace the return with break so the entry is consumed and the
+> loop continues normally. Fix applies to both PF and VF paths.
+>
+> Fixes: 3cabc8eaf524 ("baseband/acc200: support interrupt")
 > Cc: stable@dpdk.org
 >
 > Signed-off-by: Hernan Vargas <hernan.vargas@intel.com>
 > ---
->   drivers/baseband/acc/rte_vrb_pmd.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/baseband/acc/rte_vrb_pmd.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 >
 >
 
