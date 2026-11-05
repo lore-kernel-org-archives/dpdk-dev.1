@@ -2,71 +2,72 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A952606A31B
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 20:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A14C606A31B
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 20:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=NPOkc3OL
+	dkim=pass (1024-bit key, unprotected) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=OUbU0fQl
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA12440E01;
-	Thu,  5 Nov 2026 21:05:02 +0100 (CET)
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com
- [209.85.219.46])
- by mails.dpdk.org (Postfix) with ESMTPS id 0C8ED40DD5
- for <dev@dpdk.org>; Thu,  5 Nov 2026 21:05:01 +0100 (CET)
-Received: by mail-qv1-f46.google.com with SMTP id
- 6a1803df08f44-91c9cfd8b1bso26201166d6.1
- for <dev@dpdk.org>; Thu, 05 Nov 2026 12:05:00 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 62BB0427BB;
+	Thu,  5 Nov 2026 21:05:04 +0100 (CET)
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
+ [209.85.219.54])
+ by mails.dpdk.org (Postfix) with ESMTPS id 58691427B6
+ for <dev@dpdk.org>; Thu,  5 Nov 2026 21:05:03 +0100 (CET)
+Received: by mail-qv1-f54.google.com with SMTP id
+ 6a1803df08f44-91c76540d0bso23408336d6.0
+ for <dev@dpdk.org>; Thu, 05 Nov 2026 12:05:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1793909100; x=1794513900; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1793909102; x=1794513902; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=sPhtDUUbmCSUnQUGr1tIXWU1an5RyqXcS3JUgylQfo8=;
- b=NPOkc3OL78OuREczB1X2BTG5b6iNvEg/FP4QnC0iAaBnP3qSXF9RT8D0BIf7+cxawF
- pWXBqz0q24XHjE3rVzXOsenU3Cqx2HJs2TQlsknkkYQD44yP0uulHEReed22dPQUMpb8
- jPs3Pv6BO4r0NhJcRMQjeFymu9zcwW4Qcu+1M=
+ bh=ftZ++o89wtZ6QsZ7vB3gLQzeXdigrY5aMHJ6MzAA5X0=;
+ b=OUbU0fQl31mMG3J2hh8NUxYwrj/zAxN79tCNSRtJ8aVQFd1T9SHOCNuM49lU4ImgSN
+ deer5/4QJH25fWTd5X64tXS2tDa65zN5HT8cAmEY9pBAorcw5yuUVTQtg/4eAxfccRDS
+ 0cL+0YTVTPzJgCy4D2v05Zr/rBFaXSeV+4ypg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793909100; x=1794513900;
+ d=1e100.net; s=20260707; t=1793909102; x=1794513902;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=sPhtDUUbmCSUnQUGr1tIXWU1an5RyqXcS3JUgylQfo8=;
- b=u261WC6kdM+dFz0ICI3qlPALbenWwXrCt8obVBuie8T942GVgvw9or4p33ekCxiGk+
- XKZSqAhI2lhEKuqZSsIXhq2QUHP06teS52DARjEplRr2SZWx5aA5xHb557eGkg+9Kgch
- x5QIAf5o58W2pGZuImd1YRiVCPFjZPW74DbO5wC1xitBpsQAfYEwvAk14HuRlTqIMwnQ
- yzVQyMzQFbaHds5y2D9dwvF0lWXCwdPqAwzEi+tFXqoVZYHqjJx21QoqNKmsDNtLSb49
- sztwESGbInZA26SzjKwrsT8w0KdGC6NGm0mmUEhH5vlOLNvm7Ml9TeaOIt7CSS42QoPR
- ZjbA==
-X-Gm-Message-State: APuU4Z+HK2aalRjZe9UMHw42NAlSnc6KqlSCPPXSQ5Ufm/YPjZEmyFK9
- IPaWM8Vj7yPaWl+ksQHTvNVLbJSe911t8dBpoJx1o18q9x/2VXTKISDBi5FFt+sXVAY=
-X-Gm-Gg: AYBFou0DeanCs8dxXthc8CvZWebhUbslx4lqcu9wan1cbds5HqVKvRK3tmeSbw67VOr
- 2xWaPo8VPer+uD+V09blE6+6+FF1JpNs9i7ap98owidlcNsiJ/+lGF0VT0V5nnx3LYKDDCZ2GRX
- xqz1M+tNDB5D2d/x1hlHEnZrQUulALbbtMlN10C9YUwwFtsKLPnnc8W5IOAKN8O5RBDN5l03L5e
- cJ+TOFlGW308sxNmt17kmd1v8XFv5VD1MsNQcRTO8OlvsCFm1yginfeq6EI+ay1M/pPzwoOglYH
- 59ulhLhBonT1pgt650OlOxda37ge05jUHooqpDEemBRh6/QuwWNmErmSLLt6bup51leDFSsvCUT
- jbJyqlGnR8BkDPkULnw8Z1IiHnqRrnU/2EG80KekRHgW+V94YmtFkyHxULPG+RZzQC3fnfIUqFv
- S/vPNdVGfH3znzW6LX6ZkIfH+pR9ftkgGjjEgFm3pfMAXk8k6bDl89mBZ1iWJAp/1/c/hITWCIi
- qgzBoHpQoCMgUZ7ErrkZ1nGonDnWNsNi5WlfsaU3Ha+8xmGVseVbtSIzKNEXpN4IgDUPulapny9
- yN6Ewny6p+R6k4fj0ircB6XiTSFjZWolbog9N11digF8nkOGkn/zRnwbkJ0gJjh1iGjooQ==
-X-Received: by 2002:a05:6214:590b:b0:91c:7c53:152d with SMTP id
- 6a1803df08f44-91ea970cf80mr604666d6.29.1793909099570; 
- Thu, 05 Nov 2026 12:04:59 -0800 (PST)
+ bh=ftZ++o89wtZ6QsZ7vB3gLQzeXdigrY5aMHJ6MzAA5X0=;
+ b=oWCXgLkkXH0xD9ByZwlpLW4Chv23nvd6UclXZOsLlF5kk63cMr96bBtp+CBOXgJhsD
+ hYKhkQaGXoDWL42i9BaBcQEb2YDQutRjkWK5FK1MnFjG4txBYslCL7Go77Z+C7yd7bsM
+ DYjcbjSXPp0yTAehydLFvLJ4shn+lhWNgDSWMdagR4azVe1jbgWfmpxQbKr0z8wRyF0b
+ stM/Eor8R3Sl8Sn6gzegAbSC6a+4xZVjWfIcm8cUv4U84NSKUdiDPfIo0VE0OMadYS4N
+ pbguRsq1s0Aa4TJ2XfjcILLT4gWjmJLKHIlza54I2VeGpA3w1EFr1Bk+YZsnpMahSgmi
+ 455g==
+X-Gm-Message-State: APuU4Z8WeNFhcDg0T6+XxSj4KwTrfy2nTTbLBTJ+Up9YgWmu3zqp6WQM
+ mOalw9KQUdfA4X1DuIJ49j0zSaINWpL1hsZl7XgD4eoRwRxFVA/Y1I16sOpqz0mCWOc=
+X-Gm-Gg: AYBFou3p5QLtn+ids+LBgTaO54+HFWYT9wW2mDsinZe9ZZozcq1TE2zsoioE0AajIR0
+ cz1TenDH2MkqODewVIE+nRLdlu7I7IB3oprj8h/ieMmoZTdKmI2iPd6hICfMYVGNSHJrxJPmwCE
+ v2kCtP1NZvSMV9/Ma0JulwlaADbVVZX/Gc9FQsiTob7ARJJfeRCC+IUR6jB2bZNCtZGWeausk+w
+ n4I6r1GylRihfUq+jSlaw5bbUcNQCH8qqhq6A19kkeeyusV6RuuXfEFo8kt64SxQY2XpN70I+KC
+ xJ3HojBMTm4xW2DOoacRJFZaLn9bl+Lo54Mu8fWOkSupe7DDqVRNo997OQYJFsvzqWbbMr2GXB8
+ UHC99/B3lG/tXum7YDf00WdfVfzyjXtSnLX55ftHhLI2pEV2QApYZwTHWt0YyovsNV+jUT8SNqa
+ GAoJVGb8q+KLznhXMI3MlaGLQNPVpju4fTNtlNrMOEMKdqHvANV7UKW4uNFVnNowy6bhEP0F/2P
+ JLFD4p+XhfrxHuiUyAaCxcEPffR71TBGtwv/RBsU3a1HKN75WEZW7A0Ya1VayypCWFTfRUPcK5/
+ zxjU6w/DQBEREyL7DOJ9bn4GgdxNZKlBdBJdYxycGPM9giE4jMO27wX+0+amL5H+vDVm3Q==
+X-Received: by 2002:a05:6214:3981:b0:917:8a83:a15c with SMTP id
+ 6a1803df08f44-91ea971f9c6mr739136d6.34.1793909101893; 
+ Thu, 05 Nov 2026 12:05:01 -0800 (PST)
 Received: from X1-Gen-9.iol.unh.edu ([2606:4100:3880:1271:52c6:dd10:2790:6507])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91ea6a71bfesm3544646d6.25.2026.11.05.12.04.58
+ 6a1803df08f44-91ea6a71bfesm3544646d6.25.2026.11.05.12.05.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 05 Nov 2026 12:04:59 -0800 (PST)
+ Thu, 05 Nov 2026 12:05:01 -0800 (PST)
 From: Dillon Ladd <dladd@iol.unh.edu>
 To: patrickrobb1997@gmail.com,
 	luca.vizzarro@arm.com
 Cc: dev@dpdk.org, knimoji@iol.unh.edu, abailey@iol.unh.edu,
  Dillon Ladd <dladd@iol.unh.edu>
-Subject: [PATCH v2 1/2] dts: add eventdev API
-Date: Thu,  5 Nov 2026 15:04:11 -0500
-Message-ID: <20261105200413.513618-1-dladd@iol.unh.edu>
+Subject: [PATCH v2 2/2] dts: add eventdev pipeline performance test suite
+Date: Thu,  5 Nov 2026 15:04:12 -0500
+Message-ID: <20261105200413.513618-2-dladd@iol.unh.edu>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261105174137.498850-1-dladd@iol.unh.edu>
+In-Reply-To: <20261105200413.513618-1-dladd@iol.unh.edu>
 References: <20261105174137.498850-1-dladd@iol.unh.edu>
+ <20261105200413.513618-1-dladd@iol.unh.edu>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -86,187 +87,170 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Add an API for the dpdk-test-eventdev application, run as a
-blocking app with the topology's Ethernet ports as event
-producers. Only the event_sw virtual device is currently supported, with
-its scheduler on a dedicated service core. Eventdev testing existed on old-dts but not new-dts. This API was written so the eventdev performance testsuite from old dts can be ported over.
+Add a test suite measuring eventdev pipeline forwarding
+performance across frame sizes against expected baselines.
+
+Each run sets the scheduled type list, frame size and
+expected MPPS, with a configurable delta tolerance.
+
+Ported from the old DTS, as the current DTS has no eventdev
+testing coverage.
 
 Signed-off-by: Dillon Ladd <dladd@iol.unh.edu>
 ---
- dts/api/eventdev/__init__.py | 95 ++++++++++++++++++++++++++++++++++++
- dts/api/eventdev/config.py   | 41 ++++++++++++++++
- dts/api/params/types.py      | 11 +++++
- 3 files changed, 147 insertions(+)
- create mode 100644 dts/api/eventdev/__init__.py
- create mode 100644 dts/api/eventdev/config.py
+ dts/tests/TestSuite_eventdev_pipeline_perf.py | 143 ++++++++++++++++++
+ 1 file changed, 143 insertions(+)
+ create mode 100644 dts/tests/TestSuite_eventdev_pipeline_perf.py
 
-diff --git a/dts/api/eventdev/__init__.py b/dts/api/eventdev/__init__.py
+diff --git a/dts/tests/TestSuite_eventdev_pipeline_perf.py b/dts/tests/TestSuite_eventdev_pipeline_perf.py
 new file mode 100644
-index 0000000000..202ddcb77c
+index 0000000000..9efcea3770
 --- /dev/null
-+++ b/dts/api/eventdev/__init__.py
-@@ -0,0 +1,95 @@
++++ b/dts/tests/TestSuite_eventdev_pipeline_perf.py
+@@ -0,0 +1,143 @@
 +# SPDX-License-Identifier: BSD-3-Clause
 +# Copyright(c) 2026 University of New Hampshire
 +
-+"""dpdk-test-eventdev application.
++"""Eventdev pipeline performance test suite.
 +
-+Typical usage example in a TestSuite::
-+
-+    with Eventdev(num_workers=2, stlist="a"):
-+        stats = assess_performance_by_packet(packet=packet, duration=5)
++This suite measures the packet rate forwarded through the DPDK event device pipeline using the
++dpdk-test-eventdev application. For each set of parameters in the test config, which consist of a
++scheduled type list, a frame size and the expected MPPS, a performance traffic generator sends
++traffic through the pipeline. The measured MPPS is compared against the expected baseline.
 +"""
 +
-+from typing import TYPE_CHECKING
++import time
 +
-+from typing_extensions import Self, Unpack
++from scapy.layers.inet import IP
++from scapy.layers.l2 import Ether
++from scapy.packet import Raw
 +
-+from api.context import get_ctx
-+from api.eventdev.config import EventdevParams
-+from api.exception import (
-+    InteractiveCommandExecutionError,
-+    SkippedTestException,
++from api.capabilities import (
++    LinkTopology,
++    requires_link_topology,
 +)
-+from api.params import Params
-+from api.testbed_model.cpu import LogicalCoreCount, LogicalCoreList
-+from api.testbed_model.virtual_device import VirtualDevice
-+from framework.remote_session.blocking_app import BlockingApp
-+from framework.remote_session.dpdk_shell import compute_eal_params
-+
-+if TYPE_CHECKING:
-+    from api.params.types import EventdevParamsDict
++from api.eventdev import Eventdev
++from api.packet import assess_performance_by_packet
++from api.test import verify, write_performance_json
++from api.test_suite import BaseConfig, TestSuite, perf_test, perf_suite
 +
 +
-+class Eventdev(BlockingApp[EventdevParams]):
-+    """Blocking dpdk-test-eventdev application.
++class Config(BaseConfig):
++    """Performance test metrics.
 +
 +    Attributes:
-+        _app_params: app parameters to pass to dpdk-test-eventdev application
++        test: The eventdev test to run.
++        num_workers: The number of worker cores.
++        pool_size: The size of the mbuf mempool.
++        test_parameters: The scheduled type list, frame size and expected MPPS of each test run.
++        delta_tolerance: The allowed tolerance below a given baseline.
++        link_up_delay: The time in seconds to wait for the links to come up.
 +    """
 +
-+    _app_params: EventdevParams
++    test: str = "pipeline_queue"
++    num_workers: int = 1
++    pool_size: int = 16384
++    test_parameters: list[dict[str, int | float | str]] = [
++        {"stlist": "a", "frame_size": 64, "expected_mpps": 1.00},
++        {"stlist": "a", "frame_size": 128, "expected_mpps": 1.00},
++        {"stlist": "a", "frame_size": 256, "expected_mpps": 1.00},
++        {"stlist": "a", "frame_size": 512, "expected_mpps": 1.00},
++        {"stlist": "a", "frame_size": 1024, "expected_mpps": 1.00},
++        {"stlist": "a", "frame_size": 1518, "expected_mpps": 1.00},
++    ]
++    delta_tolerance: float = 0.05
++    link_up_delay: int = 5
 +
-+    def __init__(self, num_workers: int = 1, **app_params: Unpack["EventdevParamsDict"]) -> None:
-+        """Initialize the eventdev application.
++@perf_suite
++@requires_link_topology(LinkTopology.TWO_LINKS)
++class TestEventdevPipelinePerf(TestSuite):
++    """Eventdev pipeline performance test suite."""
++
++    config: Config
++
++    def _transmit(self, frame_size: int, repetitions: int = 1) -> float:
++        """Send packets of the given size and measure the average Rx rate.
 +
 +        Args:
-+            num_workers: number of worker cores to run the application with.
-+            app_params: The application parameters as keyword arguments.
-+
-+        Raises:
-+            ValueError: if the build environment is `None`
-+            SkippedTestException: if there are not enough cores on one socket
-+        """
-+        ctx = get_ctx()
-+        dpdk = ctx.dpdk.build
-+        if dpdk is None:
-+            raise ValueError("No DPDK build environment exists.")
-+        self._app_path = dpdk.get_app("test-eventdev")
-+
-+        # One main lcore, one service lcore for the software event scheduler, and the workers.
-+        num_lcores = num_workers + 2
-+        try:
-+            lcores = ctx.dpdk.filter_lcores(
-+                LogicalCoreCount(cores_per_socket=num_lcores), ctx.local.ascending_cores
-+            )
-+        except ValueError as e:
-+            raise SkippedTestException(
-+                f"dpdk-test-eventdev needs {num_lcores} cores on one socket: {e}"
-+            )
-+
-+        main, service, *workers = lcores
-+        app_params.setdefault("other_eal_param", Params.from_str(f"-S {service.lcore}"))
-+        app_params.setdefault("vdevs", [VirtualDevice("event_sw0")])
-+        app_params.setdefault("lcore_list", LogicalCoreList(lcores))
-+        app_params.setdefault("wlcores", str(LogicalCoreList(workers)))
-+        app_params.setdefault("prod_type_ethdev", True)
-+        params = EventdevParams(**app_params)
-+        compute_eal_params(params)
-+        self._num_eth_ports = len(params.allowed_ports or [])
-+        super().__init__(ctx.sut_node, self._app_path, app_params=params, privileged=True)
-+
-+    def __enter__(self) -> Self:
-+        """Start the application and wait until ready.
-+
-+        Raises:
-+            InteractiveCommandExecutionError: If there is an error starting the application.
++            frame_size: The size of the frames to send.
++            repetitions: The number of times to send traffic.
 +
 +        Returns:
-+            The started application.
++            The average Rx rate in MPPS.
 +        """
-+        last_port = self._num_eth_ports - 1
-+        try:
-+            return self.wait_until_ready(
-+                f"Port[{last_port}] using Tx adapter[{last_port}] Configured\x1b[0m"
++        assert repetitions > 0, "Invalid number of repetitions given."
++        # Build packet with dummy values, and account for the 14B and 20B Ether and IP headers.
++        packet = (
++            Ether(src="52:00:00:00:00:00")
++            / IP(src="1.2.3.4", dst="192.18.1.0")
++            / Raw(load="x" * (frame_size - 14 - 20))
++        )
++
++        rx_avg = 0.0
++        for _ in range(repetitions):
++            stats = assess_performance_by_packet(packet=packet, duration=5)
++            rx_avg += stats.rx_pps
++        return rx_avg / (repetitions * 1_000_000)
++
++    def _produce_stats_table(self, test_parameters: list[dict[str, int | float | str]]) -> None:
++        """Print the results table and write the results to the performance JSON.
++
++        Args:
++            test_parameters: The test parameters, including the measured MPPS.
++        """
++        header = f"{'Stlist':>8} | {'Frame Size':>12} | {'Real MPPS':>12} | {'Expected MPPS':>14}"
++        print("-" * len(header))
++        print(header)
++        print("-" * len(header))
++        for params in test_parameters:
++            print(f"{params['stlist']:>8} | {params['frame_size']:>12} | ", end="")
++            print(f"{params['measured_mpps']:>12} | {params['expected_mpps']:>14}")
++            print("-" * len(header))
++
++        write_performance_json({"results": test_parameters})
++
++    @perf_test
++    def eventdev_pipeline_perf(self) -> None:
++        """Eventdev pipeline performance test.
++
++        Steps:
++            * Launch dpdk-test-eventdev with the software event device and an Ethernet device as
++              the producer.
++            * Send traffic at each configured frame size.
++
++        Verify:
++            * Measured MPPS is within the delta tolerance of the expected MPPS.
++        """
++        for params in self.config.test_parameters:
++            with Eventdev(
++                test=self.config.test,
++                num_workers=self.config.num_workers,
++                stlist=str(params["stlist"]),
++                pool_sz=self.config.pool_size,
++            ):
++                time.sleep(self.config.link_up_delay)
++                params["measured_mpps"] = round(
++                    self._transmit(int(params["frame_size"]), repetitions=5), 3
++                )
++            params["performance_delta"] = round(
++                (float(params["measured_mpps"]) - float(params["expected_mpps"]))
++                / float(params["expected_mpps"]),
++                3,
 +            )
-+        except InteractiveCommandExecutionError as e:
-+            raise e
-diff --git a/dts/api/eventdev/config.py b/dts/api/eventdev/config.py
-new file mode 100644
-index 0000000000..acdbc88743
---- /dev/null
-+++ b/dts/api/eventdev/config.py
-@@ -0,0 +1,41 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 University of New Hampshire
++            params["pass"] = float(params["performance_delta"]) >= -self.config.delta_tolerance
 +
-+"""Module containing types and parameter classes for the dpdk-test-eventdev application."""
++        self._produce_stats_table(self.config.test_parameters)
 +
-+from dataclasses import dataclass, field
-+
-+from api.params import Params, Switch
-+from api.params.eal import EalParams
-+
-+
-+@dataclass(slots=True, kw_only=True)
-+class EventdevParams(EalParams):
-+    """Parameters for the dpdk-test-eventdev application.
-+
-+    Attributes:
-+        test: Name of the test to run.
-+        wlcores: List of worker lcores.
-+        stlist: List of scheduled types of the pipeline stages.
-+        pool_sz: Size of the mbuf mempool.
-+        nb_eth_queues: Number of Ethernet Rx queues.
-+        prod_type_ethdev: Use an Ethernet device as the event producer.
-+    """
-+
-+    test: str = field(default="pipeline_queue", metadata=Params.long("test"))
-+    wlcores: str | None = field(default=None, metadata=Params.long("wlcores"))
-+    stlist: str | None = field(default=None, metadata=Params.long("stlist"))
-+    pool_sz: int | None = field(default=None, metadata=Params.long("pool_sz"))
-+    nb_eth_queues: int | None = field(default=None, metadata=Params.long("nb_eth_queues"))
-+    prod_type_ethdev: Switch = field(default=None, metadata=Params.long("prod_type_ethdev"))
-+
-+    def __str__(self) -> str:
-+        """Convert the parameters to a command line string.
-+
-+        Returns:
-+            The command line arguments, with underscored option names as the application expects.
-+        """
-+        params = Params.__str__(self)
-+        for name in ("pool_sz", "nb_eth_queues", "prod_type_ethdev"):
-+            params = params.replace(f"--{name.replace('_', '-')}", f"--{name}")
-+        return params
-diff --git a/dts/api/params/types.py b/dts/api/params/types.py
-index c4b718eebe..1ba7e9bf52 100644
---- a/dts/api/params/types.py
-+++ b/dts/api/params/types.py
-@@ -203,3 +203,14 @@ class TestPmdParamsDict(EalParamsDict, total=False):
-     mempool_allocation_mode: SimpleMempoolAllocationMode | AnonMempoolAllocationMode | None
-     record_core_cycles: Switch
-     record_burst_status: Switch
-+
-+
-+class EventdevParamsDict(EalParamsDict, total=False):
-+    """:class:`TypedDict` equivalent of :class:`~.eventdev.config.EventdevParams`."""
-+
-+    test: str
-+    wlcores: str | None
-+    stlist: str | None
-+    pool_sz: int | None
-+    nb_eth_queues: int | None
-+    prod_type_ethdev: Switch
++        for params in self.config.test_parameters:
++            verify(
++                params["pass"] is True,
++                f"""Packets forwarded is less than {(1 - self.config.delta_tolerance) * 100}%
++                of the expected baseline.
++                Stlist = {params["stlist"]}
++                Frame size = {params["frame_size"]}
++                Measured MPPS = {params["measured_mpps"]}
++                Expected MPPS = {params["expected_mpps"]}""",
++            )
 -- 
 2.53.0
 
