@@ -2,77 +2,97 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF003606A31B
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 14:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5B3606A31B
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 15:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=cJhYDIKv
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=pi41pJ7r
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 661D640E20;
-	Thu,  5 Nov 2026 15:46:19 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTPS id C0B5840E20
- for <dev@dpdk.org>; Thu,  5 Nov 2026 15:46:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1793889976;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=WIoMViBV9YVRiH7dgmJSiozRhVBT2ykUI3nZm2hkYvU=;
- b=cJhYDIKvGYGUSmhhQ8VApx1kF3BlaSge7heb6mkc7kSYZBTdS2kYnyKd5szbKdiYvGvJ30
- MVw1QC9E50EZhZP+z27/wh5dmfkTGitoSJp7Pql10LQ2k30CDoO13HvQZcpnWG8LiPsw6p
- 9JzwHNbhW9uNujPNyHGYFUBzkKKjOeo=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-537-q85mf9PAO9qFFhwgv46ApQ-1; Thu, 05 Nov 2026 09:46:12 -0500
-X-MC-Unique: q85mf9PAO9qFFhwgv46ApQ-1
-X-Mimecast-MFC-AGG-ID: q85mf9PAO9qFFhwgv46ApQ_1793889971
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-3acb2e2030fso12418381fa.0
- for <dev@dpdk.org>; Thu, 05 Nov 2026 06:46:12 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 07A154060F;
+	Thu,  5 Nov 2026 16:04:01 +0100 (CET)
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com
+ [74.125.224.47])
+ by mails.dpdk.org (Postfix) with ESMTPS id 1CB1F402DB
+ for <dev@dpdk.org>; Thu,  5 Nov 2026 16:03:59 +0100 (CET)
+Received: by mail-yx1-f47.google.com with SMTP id
+ 956f58d0204a3-679965fb848so2331426d50.1
+ for <dev@dpdk.org>; Thu, 05 Nov 2026 07:03:59 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793891038; cv=none;
+ d=google.com; s=arc-20260327;
+ b=IwQPQxGFBzBIO/Ia8sJbQdOlYARslAHTY4KXufOs4H3p28gSEe2UNWGKEX6z5DaN5c
+ EXRW+T+iXJFZoA/skelTOdRwngoksDkI1PSBI0k25p6BPFfMh0vqEmtzQuVHuZbfNfO7
+ cS5SRSVgmZIliGD5IBdPBL3zAWBCuJPSdlsD3r2cDCV/Aru6d6jpKypUZPFhq1FZ1mWz
+ vgB7oaJbF9jH0Dru8KlRn9AVtGR6sf5uBwINrn18dAoOoVDeGIVrAaZFtcORwvC/y774
+ U7106hLCcU695lfa4Zy+W4GYprDGvp5DwqFPSRgXBBcE74fNVwyHAvMkAWbruPfREHK/
+ /a9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=N518aOUX84oMs5+dRMWDQdNLoNwl+0wl+RnDu0acR6c=;
+ fh=oBzMBBXUrXJu8DCdXy429mcmyPngsflSehz1sgIePJU=;
+ b=dYRAUWwHuiYQQEwz0A1PDVu4ma9Ve5VRRu7C2gV0ZAKA1V9ecmUSrrMSLOW3K2ZQVH
+ JBdFrEZ7VoiJIJ/XprYjnPBB7jy02mV9/3daeeC2B8NmsvpFHxiLB/l0vDCQu0oqRBPs
+ KJf8DFBXlAX9gqY2vj+nKVljw3FgPA+Ov5UiohKhKAIKMvOzXmofVAYCxy2bDJG0kSbB
+ AIgk4O8pnO97/hJkeU1kliIyFRyZEyw1RCiTwXO0eNUPNXNxO61XDqz5nh6LTWGnZsVb
+ El4Pxec0zVcFdh06nYR40Nm0sGrOOn0wIf08vk6IHEJ2d+9jO8R8mi85xl7gAmcbQRSm
+ MKxw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1793891038; x=1794495838; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=N518aOUX84oMs5+dRMWDQdNLoNwl+0wl+RnDu0acR6c=;
+ b=pi41pJ7rLCe22i1MVPQ1HxjIAiq47zBF+8Gt5aG2aNwXTM5jUtrUEWxW2Sn4gdZHyl
+ sBt9uyxI57V6bUM2smtFMDUqiISV9DkstZb4RGhWVkWDdbMh1DjrqD84Yt+oQQvlTuEc
+ kht4sJ7Az/i2Gur8TrFNLSZvpZrUxB9q3bW1GDOz7Z7p4kA8HqmmzSTDaIzWYqSejX9u
+ smXsDEndL4KPVjCN1g4TJA+PMtP9Tcuh2xa13blSDhCKBntYOrjMxNPWFzEqr9A5G1B/
+ CPsXMOLs0VrS0WPQNqj2jnp7bx6hrLdiNSkf7xe1fo8yfsPRu2pp/0lnUtxLgN2wqZYA
+ TZCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1793889971; x=1794494771;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=WIoMViBV9YVRiH7dgmJSiozRhVBT2ykUI3nZm2hkYvU=;
- b=gGgc2tz4aR/PCjFwsc/78D5NetjdRnzgHRqJGIoccgllLxp8HkRhNwWWS9UuyhagmF
- p0F91ZWtIs7iKQUYylwkk9M9d6J+Qb3yMf2Eu5n9cUMOIwpSdqTHwAUzdgLLBYH+qBtQ
- mTcMk5EAtzpxhS6FQ2YIEUPukuh63EN74TEc0fXfLtcKF6osd275kZTvjFzmPe3um9MJ
- qbpne9CLgRzlBJSo+v/auXHhGibwxmiql0eh2YcOeZaEA8sE9XKDGUet4aqJqyqqDozP
- Q/vDAJ+tYGk7KnNeDSukpRCEycliiPq50+JaZ6fsoPb62oV7JBsNd0lfIVoajw+PZGy1
- axhw==
-X-Gm-Message-State: APuU4Z9vxLrFW0Zi0FrwGAO1+b1tb0HE5X53KbP2uG9eEExDepDfAneb
- Uh9OHiiHUP+d9rGsnaibZqZZFrEjuw2CFPR1tT5Aj8zSoFb8U6839dQNWMJlxlS8065itZSeAh8
- FFNpVzYmVZgHaLTbUnydbCdRVxLPblZIRWBnWQ+LCXQmNY5Y6mUpXczdxsj8Z+SyhCmefrzIboE
- gEeVrwq9+TN3lDaG9+1BY=
-X-Gm-Gg: AYBFou0ocDTyooE/iQb5AT53zM3PsI9/AOAkc8em5w/4nMFRWQt/aUI1l/1PjXbCHCb
- 3Z7KRAMFqS9TXyhgqeX1I7PBYzjLvwmU5XAHy2sDEcZ+qqDku+363GA6d1Izq+HBeB/uViI/kDG
- C87QBvR3f28tbfhqet8yKUc6zisBWM5cF+rupptpv3To38bXOSR57xbNKvSH2KURf5rqPjhp+W0
- 3idy0bPafXO/rJBd2+fyFeFutSrLRfy/Zp7A0szJdZ4fEmp
-X-Received: by 2002:a2e:be8a:0:b0:3ab:4412:354b with SMTP id
- 38308e7fff4ca-3acb7968255mr49302651fa.1.1793889970408; 
- Thu, 05 Nov 2026 06:46:10 -0800 (PST)
-X-Received: by 2002:a2e:be8a:0:b0:3ab:4412:354b with SMTP id
- 38308e7fff4ca-3acb7968255mr49302551fa.1.1793889969869; Thu, 05 Nov 2026
- 06:46:09 -0800 (PST)
+ d=1e100.net; s=20260707; t=1793891038; x=1794495838;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=N518aOUX84oMs5+dRMWDQdNLoNwl+0wl+RnDu0acR6c=;
+ b=eLyrS+g/tYmwSMjh0VBLGYsTP+oEzeccXDjweUrbsJbPoR6Mh2fufI+UoRRv+d7v9u
+ GY9zrFNoThnlALhVmNMcyxzHuD8tKjGUZDZ41C73uduLUPypahsmTgSLjLKbTzgbi1ix
+ 4t7LiiDJ/THj1GBwdb+mbSOYldSohPZ/hF80EKD1MjDGj7gnFbC2q0ZDmLnZ+KnpiS7d
+ TBcusqp7olblraQDvakjJwN+s7jnGAcrGYZ5Ve+bhWQxfDrzYIYbSLxEmI+bmDOEW+uP
+ jNl7gvqY7qvZ9uXVdZ8CDvzTAaZKaQw4INpGa2SqrF+3DdZVnmLF2yg8mCijuv1ulAlE
+ Plrw==
+X-Gm-Message-State: APuU4Z9fpmJwd6XXzBriFEMSOiC3pbpkfVUXOsWCKjFfMfkk0LaCXcrW
+ CxYWLenVKcKWxHJg7ntE+wMk9Ojt5S2PiMMBhAEMB9vKZT1O+Rwpp43Fe3yKGyoooIAsZexk7J7
+ g6k1X35todMKpcdC8mbKc/+IvDSkBBZw=
+X-Gm-Gg: AYBFou0ATsGQrunRv4iBDmBTltajvGvSqTLEDdnwOUssda6GTqBieZt9HDLVFfF5IA/
+ xg7ylNYtguMyFzz806hnsPhRuCA7HzOWnyWleTXTw275yrR8XuSlY8IqsH7/67p+ypuwYvOpXBg
+ 7QwjAIMtz6YKWJ0nd6NQBNv0B4GSl4pJX5m07EVCsZXx09AvbszeyLf86/Ve1H7CpXeJu316cl2
+ FBIJ3gbglgRf/LjP2YR3YYd5Dq100zFF6Qow44vcXa+bjGg+lFRpaYlgCUtAEzqC6i9Um7KkeO+
+ vlR+8ecLcuHQRo9fwxgWSWpXP0lY1rTwOsi2yxdclgEPIZC8HH4xFMP3ghGtObUQD6VHIzfKEs+
+ sMJPjpYVJjaRuSMgAKDbgaFYWMEWkFMFnKprYaR95e/3IYm0/QbJGyoa/jM/6rnQEbKUyRDlA8U
+ gN1w8N3Nhzc8EhdSrncN9fvN8QOWIwzIIQXHndSw5m8KoOgEPgmNQPVHTnVODv5JRexryNSmxbK
+ A==
+X-Received: by 2002:a05:690e:128b:b0:67b:f3f7:c1d1 with SMTP id
+ 956f58d0204a3-67bf3f7d036mr2339963d50.21.1793891037712; Thu, 05 Nov 2026
+ 07:03:57 -0800 (PST)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261103171730.1361878-1-david.marchand@redhat.com>
- <20261104132133.638ba480@stephen-xps.local>
-In-Reply-To: <20261104132133.638ba480@stephen-xps.local>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 5 Nov 2026 15:45:58 +0100
-X-Gm-Features: AclHuK8aC3132wcLVGar35JH1D87AFJlsp1D6IxfOyQII0eavwytxf0lQXfYruw
-Message-ID: <CAJFAV8x7LeDYhji4558PB+Qu8yaigwOe=W90jKNu53kCt9moRQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] net/tap: fix FD leak on netns change
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, rjarry@redhat.com, stable@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 7PWLioLgwfg-KEIOQpEZg1T_HMy9C4xwn-IQZ_tzdBk_1793889971
-X-Mimecast-Originator: redhat.com
+References: <20261030055006.947575-1-nkishor@marvell.com>
+In-Reply-To: <20261030055006.947575-1-nkishor@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Thu, 5 Nov 2026 20:33:31 +0530
+X-Gm-Features: AclHuK_lP9Wkiwmt9pk6MxGPssuej3JCVGzjXwFJ83U2q7EvKv9ycxgvwDh1PIs
+Message-ID: <CALBAE1MTf9odxLW9=+CfEUB9OJAuJMAhSTzG81NMNZ06L8fc3A@mail.gmail.com>
+Subject: Re: [PATCH] common/cnxk: fix uninitialized pointers in NPA context
+ dump
+To: Nawal Kishor <nkishor@marvell.com>
+Cc: dev@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
+ jerinj@marvell.com, asekhar@marvell.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,142 +102,53 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Wed, 4 Nov 2026 at 13:21, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
+On Fri, Oct 30, 2026 at 11:38=E2=80=AFAM Nawal Kishor <nkishor@marvell.com>=
+ wrote:
 >
-> On Tue,  3 Nov 2026 18:17:29 +0100
-> David Marchand <david.marchand@redhat.com> wrote:
+> In roc_npa_ctx_dump(), rsp and rsp_cn20k are only set through
+> mbox_process_msg() in separate branches, while the dump code that reads
+> them selects the pointer in a different branch. The compiler cannot
+> prove that the pointer being read was set, and warns about a possibly
+> uninitialized variable.
 >
-> > When a tap interface moves to another namespace, tap_netns_change()
-> > calls tap_lsc_intr_handle_set(dev, 1) to recreate the LSC interrupt
-> > without first tearing down the old one. The previous LSC netlink
-> > socket fd is never closed.
-> >
-> > Defer the full LSC teardown and re-registration to an alarm callback
-> > which runs in the interrupt thread but outside any active source
-> > context. The alarm switches to the device's network namespace, tears
-> > down the old LSC handle, sets up a new one (opening a fresh netlink
-> > socket in the correct namespace), restores the original namespace,
-> > and forces carrier state back up.
-> >
-> > Extract tap_dev_ns_switch/tap_dev_ns_restore helpers to share the
-> > namespace switch logic between tap_netns_change and the alarm.
-> >
-> > Fixes: aae3a38e9e03 ("net/tap: detect namespace change")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Initialize both pointers to NULL.
 >
+> Fixes: a7cc84c6e9e5 ("common/cnxk: support HALO in NPA")
 >
-> Saw some AI review issues:
->
-> Review: net/tap: fix FD leak on netns change (2 patches)
->
-> Series applies to main (26.11-rc2) and builds with -Dwerror=true at
-> each commit. Fixes: tags are correct: aae3a38e9e03 is in v25.11, so
-> Cc: stable on 1/2 is right; c663018eb7f3 is 26.11 only, so 2/2 needs
-> none.
->
-> Deferring the LSC re-registration to an alarm is the right approach.
-> The alarm runs in the interrupt thread with no source active, so
-> rte_intr_callback_unregister() completes, and the self-cancel in
-> clean: returns EINPROGRESS instead of spinning.
->
->
-> [PATCH 1/2] net/tap: fix FD leak on netns change
->
-> Warning: setns()/open() failure now reported as "interface deleted"
->
-> tap_dev_ns_switch() returns -1 for three different cases: no netns
-> (interface gone), open("/proc/self/ns/net") failure, and setns()
-> failure (e.g. EPERM without CAP_SYS_ADMIN). tap_netns_change() treats
-> all of them as deletion, logs at INFO and returns 0. Before the patch
-> the last two logged ERR with strerror(errno) and returned -1. Keep the
-> logging in the helper:
->
->         *orig_netns_fd = open("/proc/self/ns/net", O_RDONLY);
->         if (*orig_netns_fd < 0) {
->                 TAP_LOG(ERR, "%s: failed to open original netns: %s",
->                         pmd->name, strerror(errno));
->                 close(netns_fd);
->                 return -1;
->         }
->
->         if (setns(netns_fd, CLONE_NEWNET) < 0) {
->                 TAP_LOG(ERR, "%s: failed to enter new netns: %s",
->                         pmd->name, strerror(errno));
->                 ...
->
-> and return -ENOENT (no log) for the TUNGETDEVNETNS failure so the
-> caller can tell deletion from error.
-
-Regardless of the error, we are in an inconsistent state and the
-caller can not recover.
-I will add back some logs in the helper, but returning a different
-error code is pointless.
+> Signed-off-by: Nawal Kishor <nkishor@marvell.com>
 
 
-> Warning: tap_dev_ns_restore() ignores setns() failure
+Applied to dpdk-next-net-mrvl/for-main. Thanks
+> ---
+>  drivers/common/cnxk/roc_npa_debug.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> The old code logged ERR when switching back failed. Now it is silent,
-> and if it fails the interrupt thread stays in the device's netns. Every
-> later netlink socket opened from that thread (next LSC re-register,
-> alarms) lands in the wrong namespace. Keep the error:
+> diff --git a/drivers/common/cnxk/roc_npa_debug.c b/drivers/common/cnxk/ro=
+c_npa_debug.c
+> index f978be9642..e2b50ae1c3 100644
+> --- a/drivers/common/cnxk/roc_npa_debug.c
+> +++ b/drivers/common/cnxk/roc_npa_debug.c
+> @@ -249,9 +249,9 @@ npa_cn20k_aura_dump(__io struct npa_cn20k_aura_s *aur=
+a)
+>  int
+>  roc_npa_ctx_dump(void)
+>  {
+> +       struct npa_cn20k_aq_enq_rsp *rsp_cn20k =3D NULL;
+>         struct npa_cn20k_aq_enq_req *aq_cn20k;
+> -       struct npa_cn20k_aq_enq_rsp *rsp_cn20k;
+> -       struct npa_aq_enq_rsp *rsp;
+> +       struct npa_aq_enq_rsp *rsp =3D NULL;
+>         struct npa_aq_enq_req *aq;
+>         struct mbox *mbox;
+>         struct npa_lf *lf;
+> --
+> 2.48.1
 >
->         static void
->         tap_dev_ns_restore(struct pmd_internals *pmd, int orig_netns_fd)
->         {
->                 if (setns(orig_netns_fd, CLONE_NEWNET) < 0)
->                         TAP_LOG(ERR, "%s: failed to return to original netns: %s",
->                                 pmd->name, strerror(errno));
->                 close(orig_netns_fd);
->         }
-> Info: rte_eal_alarm_set() return value unchecked
->
-> If it fails the LSC socket stays in the old namespace and no further
-> link events arrive, with nothing in the log.
->
->         if (rte_eal_alarm_set(1, tap_lsc_register_alarm, dev) < 0)
->                 TAP_LOG(ERR, "%s: failed to schedule LSC re-registration",
->                         pmd->name);
-
-Original code was light on the logging side.
-I will add some error logs.
-
-
-> Info: concurrent dev_stop window
-> clean: cancels the alarm before the -EAGAIN retry loop. If dev_stop
-> runs while tap_dev_intr_handler is active, the handler can arm the
-> alarm after the cancel. In practice the alarm fires during the 100 ms
-> rte_delay_ms() and the retry unregisters what it installed, but if the
-> alarm runs as the stop thread wakes, both threads operate on
-> pmd->intr_handle fd at once. Worth a comment, or a second
-> rte_eal_alarm_cancel() before the do/while retry.
-
-Well, that looks like a real issue.
-Fixed.
-
-
-> [PATCH 2/2] net/tap: fix use after free on interrupt handle
->
-> Info: commit message does not mention the fd < 0 early return
->
-> The new check in clean: is needed because close after stop now reaches
-> the unregister loop with fd == -1, where rte_intr_callback_unregister()
-> returns -EINVAL and logs "Unregistering with invalid input parameter"
-> plus the driver's "intr callback unregister failed". Add a sentence
-> saying so.
-
-This added check is actually misplaced and belongs to first patch.
-
-
--- 
-David Marchand
-
