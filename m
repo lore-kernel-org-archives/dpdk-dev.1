@@ -2,107 +2,128 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D297606A31B
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 11:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BC6606A31B
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 11:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ericsson.com header.i=@ericsson.com header.a=rsa-sha256 header.s=selector2 header.b=iV/LjOsK
+	dkim=pass (2048-bit key, unprotected) header.d=ericsson.com header.i=@ericsson.com header.a=rsa-sha256 header.s=selector2 header.b=GnR5vKk7
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6E9364060F;
-	Thu,  5 Nov 2026 12:21:04 +0100 (CET)
-Received: from DU2PR03CU002.outbound.protection.outlook.com
- (mail-northeuropeazon11011068.outbound.protection.outlook.com [52.101.65.68])
- by mails.dpdk.org (Postfix) with ESMTPS id 41A6840296;
- Thu,  5 Nov 2026 12:21:03 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 976FB4060F;
+	Thu,  5 Nov 2026 12:23:14 +0100 (CET)
+Received: from OSPPR02CU001.outbound.protection.outlook.com
+ (mail-norwayeastazon11013024.outbound.protection.outlook.com [40.107.159.24])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8892940296;
+ Thu,  5 Nov 2026 12:23:13 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qBiMrLryG02sguNrewyZ62da6l0ChDb0tGCOAt+rNb+2eUGsgjcbAIDTaSusExePC/KvhsHW21Qfmod6xjx+gxwBpCmPlXfKU8hdxyZRGwy4uyOQDJGNReC9ZfpgFRISyircJscDsEP+zI2huRH+B6LRrsr5Ov88zbds5K1LkQm4JIh5r5tmetFYu6UAaeOvz6GsrJCKMXm7oOqD6K8sB3vq+wuFRjNHIgZdY8+1Xjk4H5KmW9N9gvGwQImgvqEqx0tZVJ0H3pVR/K3CJ7HsW7gOoilpZlW5OKRjZWrkO5QzJbGDD4/jEqlI0lyexr/ucasm/ocgIJPAvhydjYz3gA==
+ b=w7Din4g1rrP9qVdxMQz59gPFoddsTmSHb09Wl6tfnXWgp0PIgQ0Zii08jlrLg+SUy0iEY/64u+CHT3QHSfeiwI0iNfdaVdiOwwYHUO1s6r/yeiW0nhQ4YWwtu4kOJdUs13CLhdllqx9ykH7Dch0BHfoCp4LROjWYaaEURpLpzQCWvDJ6WR6GovhcysrcTINIjZ2mgsM5qGZvfAjOSoC11fQ247Yz+jg6++0VZ/lUkk8U5JzZAphnjQxl+tesIwiMyV2iGtEg5Waln5nEuiwpxF//0XA+oTH6H27x596sEy21YH2rrggTCaCpanL6ax7QLQs8yN0ji270+Z9aTOITAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kF2/RHKfszTiqWdoX0snut5q0JyJr79RoXp6cut8ox4=;
- b=dDJcG/ehRtVp+VCLrunHTYf9eSjQvwBfTJMD1eifVt6yv6kGIZnGRsEnWAPwQycfzp9nEOhJjJT9CVE9x+rg+KKPJ4m30l0x5wNl2voFVC6f8hT24gws2+F2b8Y3EZmhRBBSsDwjYLfEk66QseeE6Azf5HeZQqXd8IuaEx6CYNiORzVplO9CRXKOXl3FAgV2DgpmOvqEISUlkJ46UXO/hBrNzTtXpNpIf6YzdCo/c9iH3xoIqJrLVr2Sjju3QmZTOJ5xSjZuiqtguPgdzc09cXZ9nwI2KqrNn113+O2m9ioVrh6VejXYnUMkvRcPx5alYIiiI+1K1uUBTZsY0TU/Pg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.176.1.74) smtp.rcpttodomain=cisco.com smtp.mailfrom=ericsson.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
- dkim=none (message not signed); arc=none (0)
+ bh=07pV6EJ/MpA+Nqr7DoXzMIvdkNf9MiNfgagDaNA3kTE=;
+ b=t8A+kNEMeSOvymxLWXK+rrxXPel0ibfTYkRhR7ctFl2x9UupKAiRiEZr4mHrE+kp5/dUToDcwMG8/KN226xn0Hggiu9O3TMF1fWFd9GWmPxz/JJWaARYQolFkmmmnDXnCgCr5+XDX8K4yrt7BJct4o9tJX3PpypS90VQYLRVUC2mRUdx+dBUzHC5D2yHKvfsNm6fIQQjkOAjP7RBB+x09ghymqIoTdLnmO1Y1WOoh8kRcAJXrGP6/mjudsntqlHGReoXKr9l5TvkBaGdg8+lMbzjB5jeDxhWeF0zmXKkLd+b4Me7VhaSBvlj3dt2FLsxQPV3abqChYKMSP3Wj5bvLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ericsson.com; dmarc=pass action=none header.from=ericsson.com;
+ dkim=pass header.d=ericsson.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kF2/RHKfszTiqWdoX0snut5q0JyJr79RoXp6cut8ox4=;
- b=iV/LjOsKSuUpb/tGYO4fygnlWtobTcgmKX42HhpUEhoiBj42+ZbqxdmNcINwLkvQz5QpjKFB+9ps6IbRX5SwKQelS1AaBR72DY5kPYCD2sGEjGpbQWyC2gp09L8C3BAXdVLEhzaZQr2FA0HKgGYa3VJl3IEMZ8T6et8VoQo9uPOobQ2LNcoit6dZSTXJLXlgANUl/K737bQybaFzHDj0Cg8LzXHV2CaVId6eqZqRIdi8bIyL4lyTiG6w9XjhfoebwFGCzRYmEewqIjAG1eoc4GzPg52TSSQF9ktHT8D/Mi3hfPw2Bb5M80vNb22RCHhiich2MfvHCslq1rqa+xIXyw==
-Received: from DU7PR01CA0009.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:50f::27) by BESPR07MB10713.eurprd07.prod.outlook.com
- (2603:10a6:b10:e8::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.9; Thu, 5 Nov 2026
- 11:20:59 +0000
-Received: from DU2PEPF00028D09.eurprd03.prod.outlook.com
- (2603:10a6:10:50f:cafe::6) by DU7PR01CA0009.outlook.office365.com
- (2603:10a6:10:50f::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.10 via Frontend Transport; Thu, 5
- Nov 2026 11:20:58 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 192.176.1.74)
- smtp.mailfrom=ericsson.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ericsson.com;
-Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
- 192.176.1.74 as permitted sender)
- receiver=protection.outlook.com; 
- client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
-Received: from oa.msg.ericsson.com (192.176.1.74) by
- DU2PEPF00028D09.mail.protection.outlook.com (10.167.242.169) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.592.5 via Frontend Transport; Thu, 5 Nov 2026 11:20:58 +0000
-Received: from seliius19697.seli.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.63) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Thu, 5 Nov 2026 12:20:28 +0100
-Received: from seliiuvd10563.seli.gic.ericsson.se
- (seliiuvd10563.seli.gic.ericsson.se [10.120.141.220])
- by seliius19697.seli.gic.ericsson.se (Postfix) with ESMTP id 3EE184020B41;
- Thu,  5 Nov 2026 12:20:27 +0100 (CET)
-Received: by seliiuvd10563.seli.gic.ericsson.se (Postfix, from userid 93258)
- id 066EC609B43A; Thu,  5 Nov 2026 12:20:27 +0100 (CET)
+ bh=07pV6EJ/MpA+Nqr7DoXzMIvdkNf9MiNfgagDaNA3kTE=;
+ b=GnR5vKk7B8mO49O4DEaeuMZ/fkOLG9dMLaeliDvkzkFKVHUbYnrqURZbMoo/SpgjW6Sx8+RH7TM5wtmNaiosBxPfyBoyrLCRaQ2TGt27W1Yt/z//T14yJeyz2cIlzz0VP0okh+EPWRak+yyBE+YxQAfdM66sB801GTV3rq6EeI4JEp6tMolO/NAx1Jhw3Mx1EAJ9nMRAfv1rY9RZtjXTEd0ncguWX3NU8e3nWa1uZU8Yhzq/zTkRmCEHrPlgGCsypgl1a5QIUilhUNti12tvLezzDCbZEUlatH+KZAeoPGlsVuGaq+qTRfLMwqgft4h2YYZJTNr/f/ZnVZQ+f66dKg==
+Received: from PA4PR07MB7280.eurprd07.prod.outlook.com (2603:10a6:102:f6::14)
+ by VI1PR07MB6270.eurprd07.prod.outlook.com (2603:10a6:800:139::22)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Thu, 5 Nov
+ 2026 11:23:11 +0000
+Received: from PA4PR07MB7280.eurprd07.prod.outlook.com
+ ([fe80::e42d:d4f5:1b1a:68e8]) by PA4PR07MB7280.eurprd07.prod.outlook.com
+ ([fe80::e42d:d4f5:1b1a:68e8%3]) with mapi id 15.21.0569.011; Thu, 5 Nov 2026
+ 11:23:11 +0000
 From: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
-To: <dev@dpdk.org>, Jakub Grajciar <jgrajcia@cisco.com>
-CC: Stephen Hemminger <stephen@networkplumber.org>, David Marchand
- <david.marchand@redhat.com>, Thomas Monjalon <thomas@monjalon.net>,
- <stable@dpdk.org>, Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
-Subject: [PATCH v2] net/memif: redesign control channel teardown
-Date: Thu, 5 Nov 2026 12:20:26 +0100
-Message-ID: <20261105112026.432015-1-sriram.yagnaraman@ericsson.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <20261030102218.3489371-1-sriram.yagnaraman@ericsson.com>
-References: <20261030102218.3489371-1-sriram.yagnaraman@ericsson.com>
+To: Thomas Monjalon <thomas@monjalon.net>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Jakub Grajciar <jgrajcia@cisco.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, "stable@dpdk.org"
+ <stable@dpdk.org>, David Marchand <david.marchand@redhat.com>
+Subject: RE: [PATCH] net/memif: fix race between interrupt thread and stop
+Thread-Topic: [PATCH] net/memif: fix race between interrupt thread and stop
+Thread-Index: AQHdaFiOAsXZQzgcvEymvb0680UP27ceHFoAgAFCllA=
+Date: Thu, 5 Nov 2026 11:23:11 +0000
+Message-ID: <PA4PR07MB7280A13D4D4F52BD476CF4D590772@PA4PR07MB7280.eurprd07.prod.outlook.com>
+References: <20261029100329.3cb8fa14@phoenix.local>
+ <20261030102218.3489371-1-sriram.yagnaraman@ericsson.com>
+ <eY-Q6aGOSBGpqOvPieWp8g@monjalon.net>
+In-Reply-To: <eY-Q6aGOSBGpqOvPieWp8g@monjalon.net>
+Accept-Language: sv-SE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ericsson.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PA4PR07MB7280:EE_|VI1PR07MB6270:EE_
+x-ms-office365-filtering-correlation-id: 52bd86b9-43e5-41fd-18ed-08df3b2f2cdd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|1800799024|366016|23010399003|376014|18002099003|22082099003|10067099003|38070700021|4143699003|56012099006|11063799006|5023799004|261021121427099003|261026121527099003|261026140227099003|261102123227099003|261028144727099003|261022075727099003|261022105027099003|261009223027099003;
+x-microsoft-antispam-message-info: wyIwQJMg8+n4nNsPML4ormoewN9ZSXKGGRqaDHGRhGJ3SlB9TTAwUsViQtqz7NB+or3K8Sa3owLLpaXhRuG4ykPfhIx3t6HxGhHFY8850DPF2npTwF8MGIg9SgeJ1WSEMLPiK0g/9G6ILopNY2ABttnvMA+iajZQiELEa6XpCO+AMJoVzNQELy9IoWSIu2opiASOAU6iS8hbJdrVCeg/2IDbMbTzrQBlYaosCupp9k/Giq4V1tEe/mELlf5dOT17o/+JpxCEINMsSLJvAnt4nkhzqm4EQ4VxU8I9NasWQD+6dDn58m+PRYHRnorEQKobuLfZVId8KivPf49ryen7fl4G7zUnKxmba8dMycUX45Hsywmt/BGIGe/LhmDaBl0JBEEbkWq4QtQiQyl77UIDP3VqSK+nc2jHL7iF58n9aaFqcF9+2lmna9R/HKUZZIoZJgsJieMCW4QxdQzAD3mx/HzUYFav5WXDydL62Tcaq+7ZtOa76gIOZ0mxL8ufM2I2BMaTWy4bw+jcycK4mQvCujZtely2BFgCuf0crTomxqMicn6na97ARe26wv62NZw2STMZlLZhzpAVCIeXIY8Kaoh9Ke5a6OhcaGX+P9mb/zmusG/KkbfB92B5llW89v77yTcfbPwAs8Bp/MdLQD9L4bNAr/H+JysK8xOosOxzRIk=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PA4PR07MB7280.eurprd07.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(18002099003)(22082099003)(10067099003)(38070700021)(4143699003)(56012099006)(11063799006)(5023799004)(261021121427099003)(261026121527099003)(261026140227099003)(261102123227099003)(261028144727099003)(261022075727099003)(261022105027099003)(261009223027099003);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TE1WeGxYcVBsRjVSakE4WXRocndJMTVQamdXVjFBUTBCT3h5dzlyakgyeGc2?=
+ =?utf-8?B?YlpQWDl1czFua242a0lLNXRxMkF1ZHpsbk1DNk8zd0ZQY1NrQVljOE1FZjFq?=
+ =?utf-8?B?QzRKOVpoRXFRaFNPMlk4T0IrMFBxY2p2dkJoUFB2cStBY1ZnVDF0dGVEOVc0?=
+ =?utf-8?B?ZG9SQW9lUllwTDdQMEdnVU1YaVdlSXhuSlhxNDZybnpmUmE2T0crT1kxQk9T?=
+ =?utf-8?B?QnR0OW5nbnVkT0hLNndybVJBWkxtK0VFSFpxdENscktUb2xoSHRkQ3U3VCtx?=
+ =?utf-8?B?NTRHU2pnTEJiZHF6RExRRlNTNnBTQVI0Y3p1MUowK3hYSUFqUDVhazBvejQv?=
+ =?utf-8?B?SzhzZGhnUlhnUUZBSmczcWFya0dQL1QwVmhLWVlTaEo2TkNBdGxoRHFGTldq?=
+ =?utf-8?B?bW5QSFRyMWJsMFV4dFdteEJOOWxjT1ZEWVZDclF2Q3JjZGM2b2FaWkZSRWJ4?=
+ =?utf-8?B?MWVaNGFYVEQrWDhVQ2ZUc3JHVTlveU9OTXZDQ001bm40SkJUL3ZRZkc2OUNl?=
+ =?utf-8?B?RWV2QUpGUGhZSzNSRERJQ2tJckNic09UcVNYY2JEckhKNk53aW8xbFR3ckJz?=
+ =?utf-8?B?d2F3Y1JwREozYzR3K3hKY09FSldpb0xVT2IrMS9McVNYWk5oQWlOd0JPL2xp?=
+ =?utf-8?B?bmxFb2gyR09aQkhtdTNXMjJqYTFNWnZDdmlCLytqRjdhNDdRR2RtOU83S1pN?=
+ =?utf-8?B?Zklvc1FlL0hUK1dQbUdRait3QnlieEJ6VjlaVmtkVmpjT1B1dkNwcWNxNnNP?=
+ =?utf-8?B?dUVzOStrL3p5NnNqT29OdE0zMlJZeVpKeU51TEhTQ1FFSGtIanFSMzlYa2gx?=
+ =?utf-8?B?RXl6dUhOQnZiUVVrYmwxSzk0Z0dhUkFsczdBRDB4bGRxbFhUNk4xdTNXa0Ny?=
+ =?utf-8?B?clJZbzZDNjdUeHUwMzBrV3Y4SWVXamZkZGpvVjlUSVRPOEdVNURobHR2cngz?=
+ =?utf-8?B?YVBGRkhWMzNmeGQ1U3Q1dmtkbzVBVnJJT3M1VjhHWVYrTkQ5a1pHZVF3Uk4y?=
+ =?utf-8?B?VlJJUlJoNm41aG5PYjBjMEkrd2lqdjlmbWJmTEQreEZreHFmd3hBMjJKb2gz?=
+ =?utf-8?B?ZVV2NkxPcTFhbHVVSlhYN0ZZUHd2NUxaZWpMZGdlMVJYVTE5ajhwdVpFUjRv?=
+ =?utf-8?B?V3IzMmVVUlFraSs4VDFEOTdxVlBiT3gwSDNnLzRsRGkzeHhjckFzbVc5dVU3?=
+ =?utf-8?B?TlBNOWUwMklDRms5MTVyUzBKRzcvTmVuc3g5dnpTTXJYa0RLdjdZVVF0cVR2?=
+ =?utf-8?B?cHJlOUtGNG9jTlF1MmxJazNkWFQ4ZmJlV0ExNHRpUFA1L09LUVQrdDZQL3Ji?=
+ =?utf-8?B?NE9xMHJITXBQMTdYYzZHd3hEY0N6a2dvRG1xTFE5L3o2L2xwOVp4TElrcE5W?=
+ =?utf-8?B?WHdWTUtuNXFGK1hYbEIyclpXNEtWOU1mZzdsZmc1WWg4N0c0Y2NmY3FScU83?=
+ =?utf-8?B?eFJqRiswVDJKTnVPUTBQQnFNSU5VZSttbmh2M2ZGM1RMUnhqKzBWRS9qNjVh?=
+ =?utf-8?B?OUdpdk1Bam9mamZzdWwyVElWTDZIZ3h5R05vQmpxWHR3YkNnMnVSTGUyV1kv?=
+ =?utf-8?B?R2Z6VmtNT3dUZFNMWVp3T0NDSndPWDJSTHBxZEVwV3NWT0FUTXVuRVBsY2U4?=
+ =?utf-8?B?Qm5INHNBdzhGQkFSRlBRQlkrQ29ZZWQ0TGdMN1hmSnlheGRVdTVid2dzR3Qw?=
+ =?utf-8?B?VExzaGhWUTEyZTZrZ2hKVzdIeGFLd2M2UUVSS29KbXgxMndpQnF3RFJMZXpS?=
+ =?utf-8?B?RER4ZlFlN244bXRHSVlVT3hFTnhOTDNKeStzTFJHOWI2NjZRdVZyQ204by85?=
+ =?utf-8?B?SEkrc3V3UGxsSURzYVpXN0pWejBQRXY4Rk1QYitHWHZ4OFQzMFRJKzVVMlF6?=
+ =?utf-8?B?SEZFcTdzTWh5YlFMWnorUlFkdVppdTFiR2FTaXB5QWZWZkQxQUcvOExoTm5s?=
+ =?utf-8?B?cVhoWjRRdHRaRDNGNjdFd2x1Yi9rOEVIcE5ra3NZQzFsSDVVMVNGRTl1RUVU?=
+ =?utf-8?B?Y2JFOTdtMU1pUjBYa3E5aXk3QzF2VkVzb2NMbTdFYjBGNDN6RWI0cjdoSHVJ?=
+ =?utf-8?B?LzdCVFZrWVZyT2lZOWEyYnE5aHUrT3I0L01pbDNBRjVsaGJJRCtSa2M5N1Ey?=
+ =?utf-8?B?M0NwMEtQZk1WQWxCOFVnbGs1dXN5QWI1ZDJqNWtZZEllRUhvNFlodXlMUjJl?=
+ =?utf-8?B?Slppb0t4RkpFdHdOMEV0Qjd4MjFoQ21pS1JNRy9sbExWeFMyUEtiRGIrVHRC?=
+ =?utf-8?B?SGRxYnU0MzFYK2JoMFJIYWNQbm1yRkhkQ1JCcmw0Q2dWNTJCYXlBQncvZmtO?=
+ =?utf-8?B?aDVBSGRaeEViU2hIM1pyZWpud2hPZllxdHZlTG5RNTZSRjd3OU1tTk5IR0t2?=
+ =?utf-8?Q?pDEWXvBxTJBnJbe0=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PEPF00028D09:EE_|BESPR07MB10713:EE_
-X-MS-Office365-Filtering-Correlation-Id: 020e7f2b-268a-40a5-b15f-08df3b2eddf2
-X-SMTP-Server: smtp-central.internal.ericsson.com
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|23010399003|1800799024|36860700016|82310400026|5023799004|11063799006|56012099006|261021123027099003|261022105027099003|261102123227099003|261028144727099003|261021121427099003|261022075727099003|261026121527099003|261026140227099003|261009223027099003|10067099003|18002099003|22082099003|6133799003;
-X-Microsoft-Antispam-Message-Info: 3Mfx1wQy1TyWMXOacqb4fWLxpLNkxE4SQxjeXtBr+RVAUQhVmFDKEEoadaCpiXnKPQ6uaaiqxPL1b9Vi8sp3Gk7MdKkCTTftCJBdrIhoLEMmjJYzMxlOYKqSs7Kuda3UoTjQMCxaw3EDGzAXklnsvbfQnqBlneAvUJw9hbTpviwCA5nDgNf/JrI8w2n41oAh5oE4MUVpvqpta6N9ATKZCe05YL3kNyN2Rm3mnPla86r/pmpmy6XrLkxYStWckFZ0DiprvH1v+8AUI5E6jQ2fsWtA/pDRX+c8oAa3M2/UK9GhnZbTIy70cf7pFFSut424UNU8g4khyNcg6A6cnUFy4Hext7g+69DxVF9qjSp2NzqLx4sSRUw0xoiJtKJy58h4SrsskuimOnTxPv0oT9JrvbvHZE9AEUvTXH+u9SByEl6qWLyikaQeqHJ1zl6RBMdkMz/6gKU6A1lpOx4YpyBkhfM0cvoBTDpEw6OfwDkEtPB9qW4v4W2Cvb/dsF22Xjz/zUVWOt+YdOCoRCth0az73e7MtbTOd/hbvXFwFl7jT1ePeQZPmdm8b6FvbZ2vOfQkz/ymnhc+rDpnWKiEokYzn3zMCSJJRAuWJCT1ErZlrlyFkMbvbXPMx9e1UTZtqKHpo8yo37yY8jmr0CRB1Q7THfYNMU3Op+soQ4Zadp5L+OQUpPQ+7zQipo3kM55XCRLMBnvwwk+i/OB64Dv1z1dpFg==
-X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
- CAT:NONE;
- SFS:(13230040)(376014)(23010399003)(1800799024)(36860700016)(82310400026)(5023799004)(11063799006)(56012099006)(261021123027099003)(261022105027099003)(261102123227099003)(261028144727099003)(261021121427099003)(261022075727099003)(261026121527099003)(261026140227099003)(261009223027099003)(10067099003)(18002099003)(22082099003)(6133799003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: XW86FUvJGDuBekokYGhCkF3zDlJ0WCherLOI5w1SpILnrra/OdrBW0sUPu6DDfKpEj32i15RnFYyExutylA4RdNxpvKuTl8uaZJWhefw0loyBqfCS9ow4kT/3kFMGYOANzAiNI5QLysvjoyZQzrjqSDKiRu6HnubU1NLIAf9mx9LrO3+uhNYNpdSIHD/Vfa3cQCco9araYT/cI8VZLPvZgiuTmRfS26DwS07NoARNgJmJ/equRmmyjUiJvagIhMEh16iBHQn1LBqqylhYDxCFRZuch27tWFtMdBHvMS+vHZhwmjziAeH6k9Ww+pjoQqGwAplfBDhSjGwkYG7dIYKzr4mbF3RJzZUjjG5xOa9iSpWfYUC22zE0cshUNCS8c+iOgCNwlWukQrSFiOrXu8QnWdJz9DWrGYkF2qX5Uv37aOzB0fgeURmS31Ek+g3OhMS
 X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2026 11:20:58.7256 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 020e7f2b-268a-40a5-b15f-08df3b2eddf2
-X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
- Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: DU2PEPF00028D09.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BESPR07MB10713
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR07MB7280.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52bd86b9-43e5-41fd-18ed-08df3b2f2cdd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2026 11:23:11.1916 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: daUw7V6suxJfpwYbX+1FIHWkLdw0HIVf6f0P4yBtsOpuQrMVuAnRkHhwv+70yR58RxkSSMjeBx47Xp3rBeHafczSnuZ19jfKuKBD1vpMLRA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB6270
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -112,275 +133,55 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The control channel can be torn down from two threads: the EAL interrupt
-thread (memif_intr_handler on peer disconnect/error) and an application
-thread (dev_stop/dev_close -> memif_disconnect). Both race to unregister
-the callback and free the channel, which memif_pmd_autotest SIGSEGVs on
-during EAL teardown (seen on amd64 and arm64).
-
-Rework teardown around a single owner:
-
-  - memif_disconnect() clears pmd->cc under cc_lock; whoever clears it
-    owns the free.
-  - Device teardown (link down, flags, queue eventfds, regions) moves to
-    memif_disconnect_queues(), run by whichever thread owns the
-    disconnect, so flag/link state is left consistent for reconnect.
-  - memif_cc_release() frees the channel: unregister_pending() on the
-    interrupt thread (deferred free, drops the fd from epoll after
-    dispatch), unregister_sync() on an application thread.
-  - memif_intr_handler() self-unregisters on disconnect so the EOF
-    (level-triggered) socket fd cannot re-fire (no livelock).
-
-Reported-by: Stephen Hemminger <stephen@networkplumber.org>
-Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
----
-v2:
-  - Redesign rather than extend v1. v1's approach (detach + handler
-    ownership re-check that returns without unregistering) could
-    livelock: the EOF control socket is level-triggered, so the handler
-    re-fires continuously and starves the application thread waiting in
-    unregister_sync(). v2 makes the handler always self-unregister via
-    unregister_pending(), removing the fd from epoll so it cannot
-    re-fire.
-  - Split device-level teardown (link/flags/queues/regions) into
-    memif_disconnect_queues() so the handler-owned disconnect leaves the
-    same consistent state as memif_disconnect(); fixes a reconnect
-    regression seen while developing the single-owner model.
-  - Addresses the "teardown too complex" feedback by giving the channel
-    a single owner (whoever clears pmd->cc) instead of splitting the
-    free across two threads.
----
- drivers/net/memif/memif_socket.c | 179 ++++++++++++++++++++++---------
- 1 file changed, 126 insertions(+), 53 deletions(-)
-
-diff --git a/drivers/net/memif/memif_socket.c b/drivers/net/memif/memif_socket.c
-index 971964133c..77d3044681 100644
---- a/drivers/net/memif/memif_socket.c
-+++ b/drivers/net/memif/memif_socket.c
-@@ -590,67 +590,23 @@ memif_intr_unregister_handler(const struct rte_intr_handle *intr_handle, void *a
- 	rte_free(cc);
- }
- 
--void
--memif_disconnect(struct rte_eth_dev *dev)
-+/*
-+ * Device-level teardown: mark the link down, close the per-queue interrupt
-+ * eventfds and release the shared-memory regions. Idempotent and independent
-+ * of the control channel, so it is safe to run from whichever thread owns the
-+ * disconnect.
-+ */
-+static void
-+memif_disconnect_queues(struct rte_eth_dev *dev)
- {
- 	struct pmd_internals *pmd = dev->data->dev_private;
--	struct memif_msg_queue_elt *elt, *next;
- 	struct memif_queue *mq;
--	struct rte_intr_handle *ih;
- 	int i;
--	int ret;
- 
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
- 	pmd->flags &= ~ETH_MEMIF_FLAG_CONNECTING;
- 	pmd->flags &= ~ETH_MEMIF_FLAG_CONNECTED;
- 
--	rte_spinlock_lock(&pmd->cc_lock);
--	if (pmd->cc != NULL) {
--		/* Clear control message queue (except disconnect message if any). */
--		for (elt = TAILQ_FIRST(&pmd->cc->msg_queue); elt != NULL; elt = next) {
--			next = TAILQ_NEXT(elt, next);
--			if (elt->msg.type != MEMIF_MSG_TYPE_DISCONNECT) {
--				TAILQ_REMOVE(&pmd->cc->msg_queue, elt, next);
--				rte_free(elt);
--			}
--		}
--		/* send disconnect message (if there is any in queue) */
--		memif_msg_send_from_queue(pmd->cc);
--
--		/* at this point, there should be no more messages in queue */
--		if (TAILQ_FIRST(&pmd->cc->msg_queue) != NULL) {
--			MIF_LOG(WARNING,
--				"Unexpected message(s) in message queue.");
--		}
--
--		ih = pmd->cc->intr_handle;
--		if (rte_intr_fd_get(ih) >= 0) {
--			ret = rte_intr_callback_unregister(ih,
--							memif_intr_handler,
--							pmd->cc);
--			/*
--			 * If callback is active (disconnecting based on
--			 * received control message).
--			 */
--			if (ret == -EAGAIN) {
--				ret = rte_intr_callback_unregister_pending(ih,
--							memif_intr_handler,
--							pmd->cc,
--							memif_intr_unregister_handler);
--			} else if (ret > 0) {
--				rte_intr_fd_close(ih);
--				rte_intr_instance_free(ih);
--				rte_free(pmd->cc);
--			}
--			pmd->cc = NULL;
--			if (ret <= 0)
--				MIF_LOG(WARNING,
--					"Failed to unregister control channel callback.");
--		}
--	}
--	rte_spinlock_unlock(&pmd->cc_lock);
--
--	/* unconfig interrupts */
- 	for (i = 0; i < pmd->cfg.num_c2s_rings; i++) {
- 		if (pmd->role == MEMIF_ROLE_CLIENT) {
- 			if (dev->data->tx_queues != NULL)
-@@ -697,6 +653,88 @@ memif_disconnect(struct rte_eth_dev *dev)
- 		(pmd->role == MEMIF_ROLE_SERVER) ? "server" : "client");
- }
- 
-+/*
-+ * Release a control channel and free it. Exactly one thread must do this
-+ * per channel: the caller that cleared pmd->cc under cc_lock owns the free.
-+ *
-+ * On the interrupt thread the running callback cannot be waited for (it may
-+ * be us), so the free is deferred to the pending-unregister callback, which
-+ * EAL runs - and which removes the fd from the epoll set - once the current
-+ * dispatch finishes. The handler therefore never returns leaving its own fd
-+ * registered and hot, so it cannot re-fire on a half-torn-down channel.
-+ *
-+ * On an application thread the handler (if any) is waited out and the channel
-+ * freed directly.
-+ */
-+static void
-+memif_cc_release(struct memif_control_channel *cc)
-+{
-+	struct rte_intr_handle *ih = cc->intr_handle;
-+	int ret;
-+
-+	if (rte_intr_fd_get(ih) < 0) {
-+		/* Never registered; free directly. */
-+		memif_intr_unregister_handler(ih, cc);
-+		return;
-+	}
-+
-+	if (rte_thread_is_intr()) {
-+		ret = rte_intr_callback_unregister_pending(ih,
-+				memif_intr_handler, cc,
-+				memif_intr_unregister_handler);
-+		if (ret < 0)
-+			MIF_LOG(WARNING,
-+				"Failed to defer control channel callback unregister.");
-+	} else {
-+		ret = rte_intr_callback_unregister_sync(ih,
-+				memif_intr_handler, cc);
-+		if (ret > 0 || ret == -ENOENT)
-+			memif_intr_unregister_handler(ih, cc);
-+		else
-+			MIF_LOG(WARNING,
-+				"Failed to unregister control channel callback.");
-+	}
-+}
-+
-+void
-+memif_disconnect(struct rte_eth_dev *dev)
-+{
-+	struct pmd_internals *pmd = dev->data->dev_private;
-+	struct memif_msg_queue_elt *elt, *next;
-+	struct memif_control_channel *cc;
-+
-+	/*
-+	 * Detach the control channel: whoever clears pmd->cc under the lock
-+	 * becomes the single owner of the free. If it is already NULL another
-+	 * thread (the interrupt handler, or a concurrent disconnect) has taken
-+	 * ownership and will release it; we only do the device-level teardown.
-+	 */
-+	rte_spinlock_lock(&pmd->cc_lock);
-+	cc = pmd->cc;
-+	pmd->cc = NULL;
-+	if (cc != NULL) {
-+		/* Clear control message queue (except disconnect message if any). */
-+		for (elt = TAILQ_FIRST(&cc->msg_queue); elt != NULL; elt = next) {
-+			next = TAILQ_NEXT(elt, next);
-+			if (elt->msg.type != MEMIF_MSG_TYPE_DISCONNECT) {
-+				TAILQ_REMOVE(&cc->msg_queue, elt, next);
-+				rte_free(elt);
-+			}
-+		}
-+		/* send disconnect message (if there is any in queue) */
-+		memif_msg_send_from_queue(cc);
-+		/* at this point, there should be no more messages in queue */
-+		if (TAILQ_FIRST(&cc->msg_queue) != NULL)
-+			MIF_LOG(WARNING, "Unexpected message(s) in message queue.");
-+	}
-+	rte_spinlock_unlock(&pmd->cc_lock);
-+
-+	if (cc != NULL)
-+		memif_cc_release(cc);
-+
-+	memif_disconnect_queues(dev);
-+}
-+
- static int
- memif_msg_receive(struct memif_control_channel *cc)
- {
-@@ -868,6 +906,8 @@ static void
- memif_intr_handler(void *arg)
- {
- 	struct memif_control_channel *cc = arg;
-+	struct pmd_internals *pmd;
-+	bool owned;
- 	int ret;
- 
- 	ret = memif_msg_receive(cc);
-@@ -898,7 +938,40 @@ memif_intr_handler(void *arg)
- 		MIF_LOG(WARNING, "eth dev not allocated");
- 		return;
- 	}
--	memif_disconnect(cc->dev);
-+
-+	/*
-+	 * Self-unregister first. rte_intr_callback_unregister_pending() marks
-+	 * this callback for deletion once the current dispatch returns, which
-+	 * removes the fd from the epoll set. This is essential: the control
-+	 * socket is at EOF and level-triggered, so without removing it the
-+	 * handler would be re-dispatched forever (livelock) and starve any
-+	 * application thread waiting in rte_intr_callback_unregister_sync().
-+	 *
-+	 * Ownership of the free is decided under cc_lock: whoever clears
-+	 * pmd->cc frees the channel.
-+	 *   - If this handler wins, it passes memif_intr_unregister_handler as
-+	 *     the pending-unregister callback so EAL frees the channel after
-+	 *     the dispatch, and it runs the device teardown.
-+	 *   - If an application thread already cleared pmd->cc, it owns the
-+	 *     free (it waits for us via unregister_sync, then frees); this
-+	 *     handler passes a NULL unregister callback and does nothing else.
-+	 */
-+	pmd = cc->dev->data->dev_private;
-+	rte_spinlock_lock(&pmd->cc_lock);
-+	owned = (pmd->cc == cc);
-+	if (owned)
-+		pmd->cc = NULL;
-+	rte_spinlock_unlock(&pmd->cc_lock);
-+
-+	ret = rte_intr_callback_unregister_pending(cc->intr_handle,
-+			memif_intr_handler, cc,
-+			owned ? memif_intr_unregister_handler : NULL);
-+	if (ret < 0)
-+		MIF_LOG(WARNING,
-+			"Failed to defer control channel callback unregister.");
-+
-+	if (owned)
-+		memif_disconnect_queues(cc->dev);
- }
- 
- static void
--- 
-2.43.7
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogVGhvbWFzIE1vbmphbG9u
+IDx0aG9tYXNAbW9uamFsb24ubmV0Pg0KPiBTZW50OiBXZWRuZXNkYXksIDQgTm92ZW1iZXIgMjAy
+NiAxNzowNw0KPiBUbzogU3JpcmFtIFlhZ25hcmFtYW4gPHNyaXJhbS55YWduYXJhbWFuQGVyaWNz
+c29uLmNvbT4NCj4gQ2M6IGRldkBkcGRrLm9yZzsgSmFrdWIgR3JhamNpYXIgPGpncmFqY2lhQGNp
+c2NvLmNvbT47IFN0ZXBoZW4gSGVtbWluZ2VyDQo+IDxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9y
+Zz47IHN0YWJsZUBkcGRrLm9yZzsgRGF2aWQgTWFyY2hhbmQNCj4gPGRhdmlkLm1hcmNoYW5kQHJl
+ZGhhdC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIG5ldC9tZW1pZjogZml4IHJhY2UgYmV0
+d2VlbiBpbnRlcnJ1cHQgdGhyZWFkIGFuZCBzdG9wDQo+IA0KPiBIZWxsbywNCj4gDQo+IDMwLzEw
+LzIwMjYgMTE6MjIsIFNyaXJhbSBZYWduYXJhbWFuOg0KPiA+IFRoZSBjb250cm9sLWNoYW5uZWwg
+Y2FsbGJhY2sgcnVucyBvbiB0aGUgaW50ZXJydXB0IHRocmVhZCBhbmQgY2FsbHMNCj4gPiBtZW1p
+Zl9kaXNjb25uZWN0KCkgd2hlbiB0aGUgcGVlciBoYW5ncyB1cC4gTm90aGluZyBvcmRlcmVkIHRo
+aXMNCj4gPiBhZ2FpbnN0IGFuIGFwcGxpY2F0aW9uIHRocmVhZCBzdG9wcGluZyBhbmQgY2xvc2lu
+ZyB0aGUgc2FtZSBwb3J0LiBXaGVuDQo+ID4gdGhlIHBlZXIgb2YgYSBsb29wYmFjayBwYWlyIGlz
+IHN0b3BwZWQgZmlyc3QsIHRoZSBjYWxsYmFjayBjYW4gc3RpbGwNCj4gPiBiZSBydW5uaW5nDQo+
+ID4gbWVtaWZfZGlzY29ubmVjdCgpIHdoaWxlIHRoZSBwb3J0IGlzIGNsb3NlZCBhbmQgcmVsZWFz
+ZWQsIGFuZCB0aGVuDQo+ID4gZGVyZWZlcmVuY2VzIGRldi0+ZGF0YSB3aGljaCBpcyBOVUxMLiBT
+ZWVuIGFzIGEgU0lHU0VHViBvbiB0aGUNCj4gPiBpbnRlcnJ1cHQgdGhyZWFkIGR1cmluZyBtZW1p
+Zl9wbWRfYXV0b3Rlc3QgdGVhcmRvd24uDQo+ID4NCj4gPiBEZXRhY2ggdGhlIGNvbnRyb2wgY2hh
+bm5lbCBpbiBtZW1pZl9jY19kZXRhY2goKSwgY2FsbGVkIHdpdGhvdXQgY2NfbG9jazoNCj4gPg0K
+PiA+ICAgLSB0YWtlIHBtZC0+Y2MgdW5kZXIgY2NfbG9jayBzbyBvbmx5IG9uZSBjYWxsZXIgb3du
+cyBpdDsNCj4gPiAgIC0gb24gdGhlIGludGVycnVwdCB0aHJlYWQgKHRoZSBjYWxsYmFjayBpdHNl
+bGYpIGRlZmVyIHRoZSBmcmVlIHRvIHRoZQ0KPiA+ICAgICBwZW5kaW5nLXVucmVnaXN0ZXIgY2Fs
+bGJhY2ssIGFzIGJlZm9yZTsNCj4gPiAgIC0gb24gYW4gYXBwbGljYXRpb24gdGhyZWFkIHdhaXQg
+Zm9yIGEgcnVubmluZyBjYWxsYmFjayB3aXRoDQo+ID4gICAgIHJ0ZV9pbnRyX2NhbGxiYWNrX3Vu
+cmVnaXN0ZXJfc3luYygpIHNvIHRoZSBkZXZpY2Ugc3RheXMgdmFsaWQgdW50aWwNCj4gPiAgICAg
+aXQgcmV0dXJucywgdGhlbiBmcmVlLg0KPiA+DQo+ID4gbWVtaWZfaW50cl9oYW5kbGVyKCkgbm8g
+bG9uZ2VyIGRpc2Nvbm5lY3RzIGEgZGV2aWNlIHRoYXQgaGFzIGFscmVhZHkNCj4gPiBkcm9wcGVk
+IHRoaXMgY2hhbm5lbDogaXQgc3RvcHMgcG9sbGluZyB0aGUgZmQgYW5kIHJldHVybnMsIGxldHRp
+bmcgdGhlDQo+ID4gd2FpdGluZyBhcHBsaWNhdGlvbiB0aHJlYWQgZnJlZSB0aGUgY2hhbm5lbC4g
+T25jZSBtZW1pZl9jY19kZXRhY2goKQ0KPiA+IHJldHVybnMgdGhlIGhhbmRsZXIgY2Fubm90IHJ1
+biBmb3IgdGhlIGRldmljZSwgc28gdGhlIHF1ZXVlIGFuZCByZWdpb24NCj4gPiB0ZWFyZG93biBu
+byBsb25nZXIgbmVlZHMgY2NfbG9jay4NCj4gDQo+IEl0IHNlZW1zIHRoZSB0ZWFyZG93biBpcyB0
+b28gbXVjaCBjb21wbGV4Lg0KPiBXZSBjYW4gcHJvYmFibHkgbWFrZSBzb21ldGhpbmcgc2ltcGxl
+ciB3aXRoIGEgcmUtZGVzaWduLg0KPiBJJ20gbm90IHN1cmUgYWJvdXQgYXBwbHlpbmcgdGhpcyBi
+aWcgZml4IG9uIHRvcCBvZiBhIGZyYWdpbGUgZGVzaWduLg0KPiBJJ20gYXdhcmUgaXQgbWF5IGJl
+IGEgYmlnIHRhc2suDQo+IFRlbGwgdXMgaWYgeW91IHRoaW5rIHRoZSB0ZWFyZG93biBjYW4gYmUg
+YmV0dGVyIGZpeGVkIGVhc2lseS4NCj4gDQo+IE90aGVyd2lzZSBJIHN1Z2dlc3QgZGlzYWJsaW5n
+IHRoZSBtZW1pZiBhdXRvdGVzdCBmcm9tIHRoZSBmYXN0IHRlc3RzIHNlcmllcw0KPiB3aGljaCBy
+dW5zIGluIENJLg0KPiBXaGF0IGRvIHlvdSB0aGluaz8NCj4gDQoNCkkgYWdyZWUsIGEgcmVkZXNp
+Z24gaXMgd2FycmFudGVkLiBGb3Igbm93LCBJIGRpZCwgd2hhdCBJIHRoaW5rLCBpcyBhIGJldHRl
+ciBmaXg6IGh0dHBzOi8vcGF0Y2hlcy5kcGRrLm9yZy9wcm9qZWN0L2RwZGsvcGF0Y2gvMjAyNjEx
+MDUxMTIwMjYuNDMyMDE1LTEtc3JpcmFtLnlhZ25hcmFtYW5AZXJpY3Nzb24uY29tLw0KSWYgd2Ug
+Y29uY2x1ZGUgdGhhdCBldmVuIHRoYXQgaXMgdG9vIGNvbXBsZXgsIHdlIGNhbiBkaXNhYmxlIHRo
+ZSBtZW1pZiBhdXRvdGVzdCBmb3Igbm93LCBJIGNhbiBzZW5kIGFuIFJGQyBmb3IgYSBzbGlnaHRs
+eSBiaWdnZXIgcmVkZXNpZ24gbGF0ZXIuDQo=
