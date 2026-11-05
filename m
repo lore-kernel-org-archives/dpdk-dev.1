@@ -2,50 +2,50 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E212606EE88
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 09:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76D0606EE99
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Nov 2026 09:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=LGqEluaL
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=U2DIE2rt
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A973C40E26;
-	Thu,  5 Nov 2026 10:53:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9587140F1A;
+	Thu,  5 Nov 2026 10:53:11 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTPS id B0774402F2;
- Thu,  5 Nov 2026 10:53:08 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id E0CF5402F2;
+ Thu,  5 Nov 2026 10:53:09 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793872389; x=1825408389;
+ t=1793872391; x=1825408391;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=cwt10HOyf8Ysrc2eqlBk/mMVprQYbDULh+uOu0QpN84=;
- b=LGqEluaLCWJKp5KFdGKKePPVJmKW4XZI5ZSDgdFthKDrkuPEUrQZFCCO
- C9R0YD6H+zP7lpin7TZgMdGVxZBMmGkJ/qSARHrLZIytu3HZ7WqvhmlfR
- xZCsNkWtE8wh8GLR7GUzu8LcQ+PFYmbqj2RH8zR3JyNjSLUT+imUMdStf
- sfxkoSk/UY5cmWpwiUu2829xoPJ8mU2/FlrbtMWpVuxpWJwFg11U8RkvJ
- gN1Yle81gPIBgqxMqVWIy2NwZ3KSGA75a6/u88P9oYv/TwqFjRZl5qBVD
- 31T90hMqIACf75Sf6Qx9J2h5NNdeN5LLAtftGpstZMJSc7/VnUn0Nutjg w==;
-X-CSE-ConnectionGUID: 5DOgQW/xTg+rTTiY3xN7cQ==
-X-CSE-MsgGUID: Ih1zV1a1Roi0h7/foUrlVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2683966"
+ bh=8CgmCBctyO+7CavH0+p2JxoMEmhYIl6/m5PjEU+DR18=;
+ b=U2DIE2rt4904ldTC1QZhv9x55D3JgRuTwXBblwsil2NFT0Yk2mXKLXbx
+ +ECUdYt9IwNa9cD1KP1yzbdGArVOc/PEFJMSmPLWxoSRPcUIhQQNpCita
+ tGkLI4LC3YaFXVw8fHE8ABwDbjdrO02PlOr5l2oSweY/qFp5mnduLnoNZ
+ K52lE0c+s6dQRK0VGY0t8Vyb2ebbdIx9zuMjdg7O6Z0nSp7d2OsTpDboC
+ +T9L/Irq9hacJrpcm88qJwjeNfaSo4aCIX2amgsCTmr8CclGZPY10oCla
+ rWBGpfmO8MLZOX7gMxNzt9EbDjuz67DObujtzIygpBy18yuA7CTrQbSva w==;
+X-CSE-ConnectionGUID: VQ276x+5SP6v2//j0Esxng==
+X-CSE-MsgGUID: k4ErO22fRLqJaMn98kSyUA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2683967"
 X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="2683966"
+   d="scan'208";a="2683967"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Nov 2026 01:53:07 -0800
-X-CSE-ConnectionGUID: ruGFtijlRUGQXehz3fXJAw==
-X-CSE-MsgGUID: D7ieKO0LRk+JUs3kxBbguw==
+ 05 Nov 2026 01:53:10 -0800
+X-CSE-ConnectionGUID: /YbJ8TpkRKWj9tcY6eighw==
+X-CSE-MsgGUID: veeAWvz6QXeoGRAABLMs+Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="7034282"
+   d="scan'208";a="7034291"
 Received: from pae.iind.intel.com (HELO PAE-35.iind.intel.com) ([10.49.105.82])
- by orviesa006.jf.intel.com with ESMTP; 05 Nov 2026 01:53:05 -0800
+ by orviesa006.jf.intel.com with ESMTP; 05 Nov 2026 01:53:08 -0800
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
  Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
-Subject: [PATCH 3/8] net/ice: fix DCF queue config buffer leak
-Date: Thu,  5 Nov 2026 09:47:20 +0000
-Message-Id: <8ccf28d179a10baa09fe9c3f04cb836b08afd069.1793871697.git.anurag.mandal@intel.com>
+Subject: [PATCH 4/8] net/ice: fix DCF QoS buffer leak on commit
+Date: Thu,  5 Nov 2026 09:47:21 +0000
+Message-Id: <60f664e30d258546613eb746fb81f67e897a852c.1793871697.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1793871697.git.anurag.mandal@intel.com>
 References: <cover.1793871697.git.anurag.mandal@intel.com>
@@ -68,42 +68,33 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-ice_dcf_configure_queues() returns -EINVAL without
-freeing the virtchnl message it allocated when the
-required Rx descriptor ID (RXDID) is not supported,
-so the message leaks on each failed port start.
+ice_dcf_hierarchy_commit() frees its temporary VF
+and TC bandwidth buffers only on the error path,
+so every successful commit still leaks them.
 
-Free it before return.
+Free them on success as well.
 
-Fixes: 4b0d391f0eab ("net/ice: add queue config in DCF")
-Fixes: f3fddc93de16 ("net/ice: fix build with 16-byte Rx descriptor in DCF")
+Fixes: efd5d15a886b ("net/ice: fix memory leak in DCF QoS bandwidth config")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 ---
- drivers/net/intel/ice/ice_dcf.c | 2 ++
+ drivers/net/intel/ice/ice_dcf_sched.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/intel/ice/ice_dcf.c b/drivers/net/intel/ice/ice_dcf.c
-index d87655c11d..09fcf6454f 100644
---- a/drivers/net/intel/ice/ice_dcf.c
-+++ b/drivers/net/intel/ice/ice_dcf.c
-@@ -1232,6 +1232,7 @@ ice_dcf_configure_queues(struct ice_dcf_hw *hw)
- 				    "Queue[%d]", vc_qp->rxq.rxdid, i);
- 		} else {
- 			PMD_DRV_LOG(ERR, "RXDID 16 is not supported");
-+			rte_free(vc_config);
- 			return -EINVAL;
- 		}
- #else
-@@ -1244,6 +1245,7 @@ ice_dcf_configure_queues(struct ice_dcf_hw *hw)
- 					"Queue[%d]", vc_qp->rxq.rxdid, i);
- 		} else {
- 			PMD_DRV_LOG(ERR, "RXDID == 0 is not supported");
-+			rte_free(vc_config);
- 			return -EINVAL;
- 		}
- #endif
+diff --git a/drivers/net/intel/ice/ice_dcf_sched.c b/drivers/net/intel/ice/ice_dcf_sched.c
+index 84342241aa..de28019c5b 100644
+--- a/drivers/net/intel/ice/ice_dcf_sched.c
++++ b/drivers/net/intel/ice/ice_dcf_sched.c
+@@ -849,6 +849,8 @@ static int ice_dcf_hierarchy_commit(struct rte_eth_dev *dev,
+ 		   ICE_NONDMA_TO_NONDMA);
+ 
+ 	hw->tm_conf.committed = true;
++	free(vf_bw);
++	free(tc_bw);
+ 	return ret_val;
+ 
+ fail_clear:
 -- 
 2.25.1
 
