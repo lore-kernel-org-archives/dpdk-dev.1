@@ -2,42 +2,42 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9189D606A33A
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Nov 2026 05:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7725606A338
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Nov 2026 05:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=vXD98HCn
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=X+Cwzb8k
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AE0C64029B;
-	Fri,  6 Nov 2026 06:51:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 680C440DD2;
+	Fri,  6 Nov 2026 06:51:13 +0100 (CET)
 Received: from PH7PR06CU001.outbound.protection.outlook.com
  (mail-westus3azon11010026.outbound.protection.outlook.com [52.101.201.26])
- by mails.dpdk.org (Postfix) with ESMTPS id D9A0D4026D
- for <dev@dpdk.org>; Fri,  6 Nov 2026 06:51:10 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 478D240297
+ for <dev@dpdk.org>; Fri,  6 Nov 2026 06:51:11 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JF6HelOK+IHg1CNKh+TZ+T42fz5lOQaJG+iOmw4ZZVgs6bMJC54Ma9RsYAeTUaf5f+ZlnKwDB1q2JOpxqsV3JDQj63dvuJm/em4bFF0V0LT9/hFvmAmizDpJt76If/Qq52Ewg27oDC+JnnjaJVRcqfY2tGWkDxTBq9AJiR30Tdv5KMPtdv47+H0TUDgAQyJOG58snuiW+Qs+RPmw7r/4uct0YUEE5satlPfMliR63M4dg0Rmo6qeIFGwE2/WI0rwiLOEVN9WwM4DrMoaXfCLnzfC0m0mfdqJjl1KP/Jarr8qgvLBd0OhC3SoFhWkIbuIf/NnQ4FLqq5TSpQD5JlVHw==
+ b=N9B9OQ29AU13DcVaBtEwuyt21bmZKMhlk+7rzwonkgZJ9YzhS8TkjZhGsNYA3xzmNRAviN2+HPHYkd/6mdVEs3xyNHHQi+P4VauK0x+7sFjNo0uvrP7NAhoacZg8Ikjesvn9RV4ciHeltq1qF5Lu4GIh9yZaU8oqyZeoG5u3sIhfmWaLFThamENyBMQZJmM9cn3Dm/fv1UJJg9JLHvgBduV7ClsG/97xYVHTD0LF/UKsLzDVVit837UBbuJKW4isDS1B1pa19B/pubx7b3x4HWnOitbZ5SCmym7rCSZEEAq1g6+nHM3R8M9HK0JwVQL/lXPurkrRhRrt3rX+Dw/Xjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Etjr28aPwuFhG0KmKQ/57+wOGtXE91I2KJjIxlQHbg8=;
- b=s/jvnHnjdL0/sRP6wHQzguvgk6M+0JfsBF/Oyl1jb7Msh96O/C3HhvD1zUHNzQ+Y7+v0mi4cipq1uzq/bKJ42l0nakxxhi2tzXITS5w4zRf3njFgjd3EPqYAi1HLBzUh8wxSQiV2KBJNEkHnrvpRvKyT/qfz9cmhNH9N9UFMMvtz7+eabrLp/mXZt2inqQ6xou7RRc9D0o61w/3M9GzzayLnFw9O6w3Ycw9WxPndquosnwHbUSCgbUrj9V45oearo8bY44uit01BbBjCYEd+ZHylENR9SV2jD1cz824As4dSFoEey2h+SudRF9yV4f0LIu2NnaWA0ygfHChHT8p+6A==
+ bh=WL6goXrnkYXF1gn3edNOaT+3xPG8u6dQDoqp/aihN5o=;
+ b=vqRiWsrId8xclAywn40a/gP7++0/DwEaudyqxKRyICkLMwqE7LdN76fLyJX9eZ6mb7h2ztDhwrw9bruKAv6DGuLD58/wTIi/2mHLhzwQHceoTg+g+QUpKJJhQbvXH44VD3r0pyu2ap1KCsFtF6NWn8iLtzAda1F/R0z7guW1kFo1RnIfFDsQyY2kLLxHru3R64jqEKx+794eySq1ClgfA3oECYmpsZKEOrXp3aui0yPlD+gAjnX1vB/MYZ/oYc0X1BJMJMA80j2MDXItAmFpwW302YDj66O7ONDyRyIqmZEJ8UGHGOFuynJYoYQpTdigfVKMfvr8UPyLoonUAtbDuQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Etjr28aPwuFhG0KmKQ/57+wOGtXE91I2KJjIxlQHbg8=;
- b=vXD98HCnS16yCLYbnZ80qc1E5HmoTFV+peqwFB1eItpoxze8mSUELskYicOOnBPJIaxNPpg2NEWAirBDmJf4A3aN4PXwk0Cv9xVqbZDwvP0QBGqAybIA2PGpc/LalfQ80uX5Mdbx/7NU3THmia0Gk6tKAYAIiOj9kUZmeveNtGg=
+ bh=WL6goXrnkYXF1gn3edNOaT+3xPG8u6dQDoqp/aihN5o=;
+ b=X+Cwzb8kfbvtgt+9BB4s8KimJzJtIWzn0FAzNM/dwimhXAuudYoBTQInDS2ADCBqDJiKJz0YxueAJayoxRkgJ/F0ZikSqUp/9hI8vnNv0KD8VTmJBrxNkAkCnRIS7OTHDHduxJRIUnZKsVqGdVxwRSGzf6gNGub8kurbtyaowLg=
 Received: from PH5P220CA0008.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:34a::6)
  by CH1PR12MB9623.namprd12.prod.outlook.com (2603:10b6:610:2b3::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Fri, 6 Nov
- 2026 05:51:02 +0000
+ 2026 05:51:03 +0000
 Received: from CY4PEPF000392D9.namprd03.prod.outlook.com
- (2603:10b6:510:34a:cafe::8f) by PH5P220CA0008.outlook.office365.com
+ (2603:10b6:510:34a:cafe::15) by PH5P220CA0008.outlook.office365.com
  (2603:10b6:510:34a::6) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.11 via Frontend Transport; Fri, 6
- Nov 2026 05:51:02 +0000
+ Nov 2026 05:51:03 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 165.204.84.17) smtp.mailfrom=amd.com;
  dkim=none (message not signed)
@@ -48,19 +48,19 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from satlexmb07.amd.com (165.204.84.17) by
  CY4PEPF000392D9.mail.protection.outlook.com (10.167.247.119) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.4 via Frontend Transport; Fri, 6 Nov 2026 05:51:01 +0000
+ 15.21.615.4 via Frontend Transport; Fri, 6 Nov 2026 05:51:03 +0000
 Received: from cae-QUARTZ.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.53; Thu, 5 Nov
- 2026 23:50:58 -0600
+ 2026 23:51:01 -0600
 From: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
 To: <dev@dpdk.org>
 CC: <david.marchand@redhat.com>, <stephen@networkplumber.org>,
  <jingjing.wu@intel.com>, <bhagyada.modali@amd.com>,
  <Selwin.Sebastian@amd.com>, <bruce.richardson@intel.com>
-Subject: [PATCH v2 00/15] raw/ntb: post-merge fixes
-Date: Fri, 6 Nov 2026 11:20:30 +0530
-Message-ID: <20261106055045.720805-1-raghavendra.ningoji@amd.com>
+Subject: [PATCH v2 01/15] raw/ntb: fix device check in memory alignment query
+Date: Fri, 6 Nov 2026 11:20:31 +0530
+Message-ID: <20261106055045.720805-2-raghavendra.ningoji@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
 References: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
@@ -73,21 +73,21 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: CY4PEPF000392D9:EE_|CH1PR12MB9623:EE_
-X-MS-Office365-Filtering-Correlation-Id: a71c78a7-91e2-4d0a-3ea0-08df3bc9f062
+X-MS-Office365-Filtering-Correlation-Id: 55cbd44e-e351-44ba-63a1-08df3bc9f16e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|82310400026|23010399003|36860700016|22082099003|10067099003|18002099003|56012099006|261009223027099003|261021123027099003|261102123227099003|261021121427099003|261026121527099003|261022105027099003|11063799006|261026140227099003|261028144727099003;
-X-Microsoft-Antispam-Message-Info: DZ9hGLpsGQwHXunuXq85EfwLz+lmLLavVObSULKEZxWp1SRTlPkYoP9gAPbjqMvUP056IfXMYyvqQPmdBO9qfLVmn7GmUtncxE2gxur6JBJLX78YCQ69eGNqRc5qL1U7FsBm1hzPFCeH9whS2KjKNlZNR8JkBQKcIr3YBG8yBgLXCKswPcYRB2Pcozto2gexnW/iWPuXCbexVPvkX5Ty5Qvow7JSQ3JfiHudmha0gkUeaH5wNe4bYP1f8Y9+tBpEhckqnGi/1d78kUKMAGmKwBiNW8dHTIfEzGz0baXJ1eAYn4yzzgQyv4fAU4+snjQ4W62t1LXXnXovsEZ+5QbaH43yfreJPqiloBRgRnkQH+6IlrzR7oXVzWNgBgKJ5aC8/xJYwwQupjYvNsEfVeuwEaJ+UR7JSnlZWKj3VyVtl/2K2tRefjP/0yJkub65SHcRiLYCr3/9ea7bXPh+yBdcYG7w3077tGPU+Qq2/byZtrSuIxPt3ISKdkSwGrG+TyV3BNuM5LosRnM2qhg7m2mA27X2yK7YL8gF480HVT/raIr+ta2myLyhAxoqHAmntJmW8GoD54x38KxYQ82X6XqTEi9pUyyiigcJzWiF487SmDNrlx4XDG3xmvbb2wtoLZ35/PNaY21ddCZV9HQ/nJcTOK5XOjnZLi3KxR0OwTxq0clTkpWYgKIUCiUpKleZDPE3
+ ARA:13230040|376014|1800799024|82310400026|23010399003|36860700016|22082099003|10067099003|18002099003|56012099006|261009223027099003|261021123027099003|261102123227099003|261021121427099003|261026121527099003|11063799006;
+X-Microsoft-Antispam-Message-Info: HuuoXwRSgBWlmrb7n9uTATYnBjTkDDAUA+aQHoPXWKLLrgVgvsHGGx8WaP65OT2R0T3XujpXTLviEeTNzK1OSRQR/1SdjMfPHbJ+eWq6zSoRS26h4FnKeryTOeKzb1SGeRleUrIf6qlhm4DNpRAQVoItJ29cK7w0DKyjFBPIVFNyy1nXNvsI+r3JV2IsEdEETveR2xroeVM34ZEo09bfvL4LSPeMqk8mf6Xa9dON9S4eU8UZGIUPBax3kTb7TDFpV8KNQOCiPbo2M8TDJCtnifutQTS0aApBy+48b1lE6SwXo7D1xK8QGRivkBoxfDFdskxR4rtRY28w9KarEVg8QRWpZ4zMSn9zIAcNK7eSQx9/H2YPoVW8pSU86i6EfKm9Zijgtg/zYCb5pkh0n3/Bc46mfHs4PaU7Qs8Ga5zUmXhWGx1ITF+RhXtox/7ckvtkT3Pn2uG5jhfZ+xdQ4aKSM458wQECDAim1YJamoJ3Xq5W4YNZ2xrigIacF9euweW5ERHRGixRKE4ZNQrY8Guxv//b7xSzjbmmyQvZSkAX65B2xR9YIf4uQ95maMQ3c+nL2jxcyS8Oifg+17AWmPY7pADc6Eis6GtFY79EC3UY3yTXKPsyJe0+swFasA07vERa+u3y4XO1qE/eS2Do2fom9YCnSnBGtPBFgLpJC+tWEXZ5RrSs6xOavLkgwQeD3MxgiixRA0bqvLblJFmcXps9AQ==
 X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(82310400026)(23010399003)(36860700016)(22082099003)(10067099003)(18002099003)(56012099006)(261009223027099003)(261021123027099003)(261102123227099003)(261021121427099003)(261026121527099003)(261022105027099003)(11063799006)(261026140227099003)(261028144727099003);
+ SFS:(13230040)(376014)(1800799024)(82310400026)(23010399003)(36860700016)(22082099003)(10067099003)(18002099003)(56012099006)(261009223027099003)(261021123027099003)(261102123227099003)(261021121427099003)(261026121527099003)(11063799006);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: yZAjgQM/FdhTvPRHs/3AltxCSNlm5m5thnldIkFo2zLWieWBP3IId5rb2eqT7IvMhA6FYQGSIXQ1GZWqkBEpTw0SE0NTikTOpjdzjBsnXtiIQiHk1DwcSbOdcx7Qc7avlgkCBOcr5WkU8Q6luGyHc31s3X16wEc25ayzeDFMpfU1VRZua2NzUA2qxZCmDP/VFOSgu9txafOl+yy03atCv78Dw6rmh5W7Y0PfrHG0a6dr5PXWb5aD/W2BsEYOD4i8IfzGBe+cxVCtKkxd1o9TkdIoaHULQWEiIFRIdIbU+NiHAc+gPQsYBk0ZWweZ6T/LPvt10pu9F4iEJx6SuHKmHpfn/iSl3zMoDhY+NLXMiE0QnCBtdfvlwdNaF6Gh/nOnGD/y7OwLhwA+jaARsmCyV4NlH8MWm+oJTLPp+peQCp7yZka6ksTjXMJqsYDhlBDb
+X-MS-Exchange-AntiSpam-MessageData-0: 2aY37SAcZTHsUki4JaEqTJTKXSGh5VBsSWfP8rIQ0+/JGkHYm3T1RuD5kHdfv/5fIgEIaJzY5vlpJiGV4PxPdhP3uXpO1A9m6W6MHRrbaPFzTF0CypY2dgtipDof0VHaLPsP2I5krPwKqhdwTvp/g+T9HK9ADXsXsxU2HjFxCsRxxRTKwWBPQPbPE5tnQhT264+/Nct+i9Cwl0FRCwgmDhJnIGprmusHiB+RySVIM8nQyrsLs9qjmX4ON7b/bXle1kIfveGCQwSrxkKVj/HVAwY4i1TxM8Emdkn72MxK30UyaQK6NxHq86uQK6f89uPZd0QWP0gIbp5BGig0e++9YIWw1BYd5vC+fhtzsIdH5T61GC2yBN15coOdq+UVyDEm1R/n/xBB/RajdjArxrzCh5vAmJvVLw/vA+qHUaS69u1KxDIKQHIwxdO0t8j6XW3n
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2026 05:51:01.6484 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a71c78a7-91e2-4d0a-3ea0-08df3bc9f062
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2026 05:51:03.4066 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55cbd44e-e351-44ba-63a1-08df3bc9f16e
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
  Helo=[satlexmb07.amd.com]
@@ -104,84 +104,62 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-This series addresses the post-merge review of the AMD NTB support
-by Stephen. Some of the issues also exist in the Intel code and in
-released versions; those patches are tagged for stable.
+rte_pmd_ntb_get_mem_align() only checked the device index range and
+the presence of private data before casting it to struct ntb_hw.
+Passing the id of a detached slot or of a rawdev from another driver
+would then call through a garbage ops pointer.
 
-- Patches 1-4 fix the type confusion in rte_pmd_ntb_get_mem_align(),
-  the unbounded peer memory window count, the off-by-one in the
-  address remapping and the memory window leaks.
+Check that the device is attached and is driven by this PMD.
 
-- Patch 5 fixes the doorbell interrupts with vfio-pci: only MSI-X
-  vector 0 (DB0) was serviced, so the DB1/DB2 exchange of dev_stop
-  never completed and the stop waited for its 1s timeout.
+Also return 0 for an out of range memory window index, as documented,
+instead of a cache line size.
 
-- Patch 7 removes the AMD hardware event handling, which could not run
-  as wired, and documents that hardware events are not handled.
+Fixes: 5ce50c234ad1 ("raw/ntb: generalize framework for multiple vendors")
 
-- Patches 8-9 fix the Rx path: a partially consumed packet was leaked
-  and desynchronized the ring, and an mbuf owned by the application
-  could be freed again on device stop.
-
-- Patches 14-15 fix the peer device status accesses between the
-  interrupt thread and the stop/data paths, and the missing checks at
-  queue setup.
-
-- The other patches are documentation and cleanup.
-
-The peer memory window size check suggested for the AMD handshake is
-not added: all the AMD scratchpads are in use, and the window limit
-register programmed with the local memzone length already bounds what
-the peer can reach.
-
-Tested with vfio-pci on two AMD EPYC Embedded hosts: handshake,
-file transfer, and stop/quit with DB1/DB2 exchange.
-
+Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
 ---
-Changes since v1:
-- Patch 4: embed the memory window size array in struct ntb_hw instead
-  of freeing it on close, as the device stays attached after close and
-  mw_size could then be dereferenced as NULL.
-- Patch 5: allocate the doorbell interrupt handle array with calloc(),
-  as it only holds process-private pointers.
-- Added patch 14 for the peer device status atomic accesses.
-- Added patch 15 for the queue setup checks, also covering the Tx side
-  (unchecked nb_desc, and queue leak on invalid tx_free_thresh).
+ drivers/raw/ntb/ntb.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Raghavendra Ningoji (15):
-  raw/ntb: fix device check in memory alignment query
-  raw/ntb: fix peer memory window count check
-  raw/ntb: fix memory window bound in address remapping
-  raw/ntb: fix memory leaks
-  raw/ntb: fix doorbell interrupts with VFIO MSI-X
-  raw/ntb: fix AMD processor names
-  raw/ntb: remove AMD hardware event handling
-  raw/ntb: fix Rx of incomplete packets
-  raw/ntb: fix double free of Rx mbufs on stop
-  examples/ntb: fix raw/ntb library linking
-  doc: add NTB device info change to ABI section
-  doc: add IOVA requirement for NTB
-  raw/ntb: remove unused AMD register definitions
-  raw/ntb: fix peer device status access
-  raw/ntb: fix queue setup checks
-
- doc/guides/rawdevs/ntb.rst             |  12 +-
- doc/guides/rel_notes/release_26_11.rst |   6 +-
- drivers/raw/ntb/ntb.c                  | 212 +++++++++++++++++++------
- drivers/raw/ntb/ntb.h                  |  17 +-
- drivers/raw/ntb/ntb_hw_amd.c           |  60 ++-----
- drivers/raw/ntb/ntb_hw_amd.h           |  25 +--
- drivers/raw/ntb/ntb_hw_intel.c         |  17 +-
- examples/ntb/Makefile                  |   3 +-
- 8 files changed, 210 insertions(+), 142 deletions(-)
-
+diff --git a/drivers/raw/ntb/ntb.c b/drivers/raw/ntb/ntb.c
+index fe10782ecf..e42af0b9c5 100644
+--- a/drivers/raw/ntb/ntb.c
++++ b/drivers/raw/ntb/ntb.c
+@@ -33,6 +33,8 @@ static const struct rte_pci_id pci_id_ntb_map[] = {
+ 	{ .vendor_id = 0, /* sentinel */ },
+ };
+ 
++static const struct rte_rawdev_ops ntb_ops;
++
+ /* Align with enum ntb_xstats_idx */
+ static struct rte_rawdev_xstats_name ntb_xstats_names[] = {
+ 	{"Tx-packets"},
+@@ -722,15 +724,15 @@ rte_pmd_ntb_get_mem_align(uint16_t dev_id, uint32_t mw_id, uint64_t mw_len)
+ 	struct rte_rawdev *dev;
+ 	struct ntb_hw *hw;
+ 
+-	if (dev_id >= RTE_RAWDEV_MAX_DEVS)
++	if (dev_id >= RTE_RAWDEV_MAX_DEVS || !rte_rawdev_pmd_is_valid_dev(dev_id))
+ 		return 0;
+ 	dev = rte_rawdev_pmd_get_dev(dev_id);
+-	if (dev->dev_private == NULL)
++	if (dev->dev_ops != &ntb_ops)
+ 		return 0;
+ 
+ 	hw = dev->dev_private;
+ 	if (mw_id >= hw->mw_cnt)
+-		return RTE_CACHE_LINE_SIZE;
++		return 0;
+ 
+ 	return (*hw->ntb_ops->mem_align)(dev, mw_id, mw_len);
+ }
 -- 
 2.34.1
 
