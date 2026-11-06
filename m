@@ -2,53 +2,55 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1FB606A920
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Nov 2026 09:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A291606A920
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Nov 2026 09:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=MwB+6K43
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=TNttF/Ep
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 14F94402B8;
-	Fri,  6 Nov 2026 10:40:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CB43D42D28;
+	Fri,  6 Nov 2026 10:40:28 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTPS id 167014026A
- for <dev@dpdk.org>; Fri,  6 Nov 2026 10:40:24 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id C65F94026A;
+ Fri,  6 Nov 2026 10:40:25 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1793958025; x=1825494025;
+ t=1793958026; x=1825494026;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=qOMwI1FHzsjV9A1NgjyHNi+FFB7LjeUcXYU2yEF1X/k=;
- b=MwB+6K43HtJbtbGS+r3z8xQd3MZZBNUK3KBRuN2apJJsLWwpqTDgzLTv
- S3D6cKbs6Bh77TDcV7PzypyYwHCSaI1Z0I7o0e6+AMpKwebeiXUvpAFbb
- 1egnKWPd7MEV8rwuiTA9ZbLvB1kRoRJNzCi4nWi4sUa/WcQYmqzpLvkLK
- NX5BW3164ga518pTF1z6elnyQcZxNYwCzHdcRGACyjuUrXh4uXQa6g2u9
- n6WeAKZ2j1Ij89fDJ8KLYjAFs8T4PjNiljlTp8h13VUdeQAwiMWFu/gBF
- 7wMFHvdQwUrutq9M/bCN2DSmTcosGSfxAFsiOkplKUxcc5zURVI5HCTmd g==;
-X-CSE-ConnectionGUID: 15z1uqzpRYGhKyPP9fvbjw==
-X-CSE-MsgGUID: 0yNZfOAdRRmlNzTXEZecrw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2808505"
+ bh=buie4AUDWolwbrareSFKS38WVzHr4LJZeqUrg5lTRBM=;
+ b=TNttF/Ep9DtHBVLCKejvVsz9YZ9t5qoTghWPAKqTTtuS8tqV/S3Dv0wU
+ 3c4CNTXvMXF3LSM4L8kJYaVaAEuQOsI1Ici6GQkKqHhSu7wm/OtDX82tW
+ rkZChg5xLMKJ+T5LpQhUZlUA+cJ9MvAKhQXTbaXgG+lwm/N8aXd6yXPFP
+ Rn9+0dPPZBYfrUD/OzWGSLwYMQgjHBohgAp5QWhgItV55Z/1gEh1nmCPn
+ spotk3S6zRBACivrJAoxSgPMJRBAMONAkuYMfwPr2+vpLM8xttvx46oDE
+ LrTuxbSxicF+UQyTSXzPw4LS/vpfFBi+mgXbTHPQfEe1YgctOfrilplPA A==;
+X-CSE-ConnectionGUID: JL3lIOxURD2PYS9hklZT2w==
+X-CSE-MsgGUID: EIp7LOa4RviUKEongskKPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2808506"
 X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="2808505"
+   d="scan'208";a="2808506"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Nov 2026 01:40:23 -0800
-X-CSE-ConnectionGUID: gZt8Urf6Qb203qXMGTqhZQ==
-X-CSE-MsgGUID: 7zxRfR9aSr6H0H0M9zAZgw==
+ 06 Nov 2026 01:40:24 -0800
+X-CSE-ConnectionGUID: spZTyhbIRDqv6ylxANqDAg==
+X-CSE-MsgGUID: 7bLHTyq3QbywZQm/aJB8Rw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="7287075"
+   d="scan'208";a="7287082"
 Received: from silpixa00401177.ir.intel.com (HELO vm-icx177..)
  ([10.20.224.214])
- by orviesa002.jf.intel.com with ESMTP; 06 Nov 2026 01:40:22 -0800
+ by orviesa002.jf.intel.com with ESMTP; 06 Nov 2026 01:40:23 -0800
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH v4 0/4] iavf reset path fixes
-Date: Fri,  6 Nov 2026 09:40:08 +0000
-Message-ID: <20261106094014.28784-1-ciara.loftus@intel.com>
+Cc: Ciara Loftus <ciara.loftus@intel.com>, stable@dpdk.org,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v4 1/4] net/iavf: fix crash in Tx drain on PF reset
+Date: Fri,  6 Nov 2026 09:40:09 +0000
+Message-ID: <20261106094014.28784-2-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261105123237.12279-1-ciara.loftus@intel.com>
+In-Reply-To: <20261106094014.28784-1-ciara.loftus@intel.com>
 References: <20261105123237.12279-1-ciara.loftus@intel.com>
+ <20261106094014.28784-1-ciara.loftus@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -61,31 +63,54 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Four fixes related to the reset path in iavf.
+The Tx cleanup helpers check the DD bit of the descriptor at the next
+RS boundary and assume software has already posted it. The burst path
+guarantees this by only cleaning up when nb_tx_free drops below
+tx_free_thresh, but iavf_dev_tx_drain() called the helpers on any
+non-empty queue.
 
-v4 ( patch 3):
-* Remove overly defensive check after reset callback
-* Added a log on event post failure
+With fewer than tx_rs_thresh descriptors outstanding, that descriptor
+still held the DESC_DONE value set by reset_tx_queue(), so the helpers
+treated the block as complete and freed NULL (or already freed) mbufs,
+crashing on PF reset.
 
-Ciara Loftus (4):
-  net/iavf: fix crash in Tx drain on PF reset
-  net/iavf: fix event handler leak on init failure
-  net/iavf: fix watchdog clearing reset state during recovery
-  net/iavf: fix watchdog enable racing disable
+Only clean up a queue once a full RS block is outstanding.
 
- drivers/net/intel/iavf/iavf.h        |   7 +-
- drivers/net/intel/iavf/iavf_ethdev.c |  74 +++++++++--------
- drivers/net/intel/iavf/iavf_rxtx.c   |   8 +-
- drivers/net/intel/iavf/iavf_vchnl.c  | 117 +++++++++++++++++----------
- 4 files changed, 125 insertions(+), 81 deletions(-)
+Fixes: 30e1aab01bae ("net/iavf: drain in-flight Tx before reset")
+Cc: stable@dpdk.org
 
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ drivers/net/intel/iavf/iavf_rxtx.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index 84b931e78a..8c84991b86 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -4098,11 +4098,9 @@ iavf_dev_tx_drain(struct rte_eth_dev *dev)
+ 				RTE_ETH_QUEUE_STATE_STARTED)
+ 				continue;
+ 
+-			/*
+-			 * nb_tx_free == nb_tx_desc - 1 means the ring is
+-			 * empty (one descriptor is always reserved).
+-			 */
+-			if (txq->nb_tx_free >= txq->nb_tx_desc - 1)
++			/* Only clean up once a full RS block is outstanding. */
++			if ((uint16_t)(txq->nb_tx_desc - 1 - txq->nb_tx_free) <
++			    txq->tx_rs_thresh)
+ 				continue;
+ 
+ 			any_pending = true;
 -- 
 2.43.0
 
