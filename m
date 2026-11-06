@@ -2,42 +2,42 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0FC606A326
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Nov 2026 05:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24D5606A326
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Nov 2026 05:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=4n1hcMyF
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=GINcnRW4
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4C7BD427E1;
-	Fri,  6 Nov 2026 06:51:15 +0100 (CET)
-Received: from CO1PR03CU002.outbound.protection.outlook.com
- (mail-westus2azon11010038.outbound.protection.outlook.com [52.101.46.38])
- by mails.dpdk.org (Postfix) with ESMTPS id 54A574026D;
- Fri,  6 Nov 2026 06:51:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E208B40E18;
+	Fri,  6 Nov 2026 06:51:16 +0100 (CET)
+Received: from BL2PR02CU003.outbound.protection.outlook.com
+ (mail-eastusazon11011045.outbound.protection.outlook.com [52.101.52.45])
+ by mails.dpdk.org (Postfix) with ESMTPS id 0776A427DC;
+ Fri,  6 Nov 2026 06:51:15 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DNgS2MXrxIS1UlwEEQe4Zlzz2UK4HZ9tiR85G8o/fKyDoFbszMIqHr4dTnM171Y02lj6PbqjFnEVHAGDpNKye+qYI7rAdhTNv6rkqvVFlc4H3SrIX6S46lMe7T9AQQtDQUgjOpZ3h7yg/IvBrhAUZaBPE0N3DBj+pyld4hObyiROzkHzG4YRi5De4LJqO8s/oSWxdKHsdPYOmS4YkzfXBDqE8EPbgFMb5kcTg+f/Pxqlnk9b4haV/q9uoRKL600a12U2EmlBhsYcKESfkzmKPs5bMILqNuQwQeBueEmJb1EDMH9Ze4IZnaBUgi89U7KsAqArhD8r7ih0sxJXQ29ZDg==
+ b=i0wBqM4Diq7us4MnQVebOSjFqFTG5VA1rs3Jj39I+xjLhoinek/UNxn7bFQiGfq3dL9yuWTb9XFmDD6jwHXrB5Hui3aED+67nCjoRcRX6Dd0+jfV8+ac43bEtpQwEkZp62yVrCCDatawyfYa9Gahs+p18FTcs7NcaT9SZyWMKzGBb6E3y9Ob/HJB2UmYH9vbns7BRKA3pI2wYovuv1Poh0/J3ARfCtbFxHxHK8BPA4PVRxGm2L7JSq5kYN0ubVL6ffBBU+DuRoh+C0KVMWQDUa28P9MWyM+8oV0W9QAESxc97yOEFXzfpUaNlc7EoHWzeqXunlN8vlp3ES9GgRSNbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6iMquFWjx1vzBNUKmXoneOtgG9u+yT5ENDA+Yp/odiE=;
- b=T6Q7RYfSsELOBcH3Jz4uTxJM7ajqdSxoWgPmHAwZER7wyQ7YkFR6PHOSK/z+Gc9P7SdJJZcFamgW7i2RGpRtwLG5mO/6EEunI+vy/4lSg8gNzaIX5NrOAMggN3IylzDrvbENAHqW/mrN1UO85z9owCNLQ4MiBowsT9xdetTQXxZa+2IQo5ribOJ0W30DzwKgpRaxG3jV+TUEqTpRinC7y5DXk4uqwOcjGr8fyFNsTxTyh2/pgPSpei3qXS+2redxUHEYXVZqop/fvD2P7xwoNpbkflsggx7lfnaiQ5hNHvgsJD9XeVpDn9jF9W657RgNEMkiJ0cHR3M1NhsmDjBEdg==
+ bh=YysTIHWvkpIVHf7Cz1DkYRpM7si3D90qfas9h6AqxJk=;
+ b=nvmqUe/0/oXVNrIEGQgM1V5zxRsrdOt31qtN/v0kw0ja3z0NSsnXmlhinCr5z8DfY0aJO5KHI37VAaAUl6XTwiL087KLdcQylsfybYd7axIwEhA65yeJ23lNufJ/aDFObtVXEFUaU4Sy9xfPU66ex0EtXTvRttH2oG6hGTzOJEb1oB52BIuGdCFiyjiPlDuHPNMHv11ebD3hGuBCMf7T9k3duihOKgFfHCQBsQwYIhJZeX0dvXK7VtNXtb8kjN2dFrAalirSirXnHs3wgs0qRPXYg7y09cJgYan04rwLcRSc8CNun7Et0qmTqrNxp10+cjyWlBykBZ4RjwQc7QsMfQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6iMquFWjx1vzBNUKmXoneOtgG9u+yT5ENDA+Yp/odiE=;
- b=4n1hcMyFtSZHZDcZzArkW4fMtpR1JZ8KUtSV761cp+ig/L2dxaNMiSQ6Xhas+AiTDBcLN5WKBX1Z1MNM+wF+IXW2Wl4sZPNxX1z0Z6PSt7zI8HtYUzu6m0MCTW5AvhzR1sVrR6QUeZoKSomcEc5LgBu68abwJUso30n0qF+IMc0=
-Received: from PH5P220CA0012.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:34a::9)
- by SN7PR12MB8172.namprd12.prod.outlook.com (2603:10b6:806:352::20) with
+ bh=YysTIHWvkpIVHf7Cz1DkYRpM7si3D90qfas9h6AqxJk=;
+ b=GINcnRW4d9JbmH+XUP4o/WxjTSYivsusuI3LFbNgs7BCrSufaWcyTzZewOqSdpLc+ji9y3MNj5d8q6QlxKteg+AEPZgvnFuoBsQyhDdg1ZMy88YMFgHL4mGA94T43L/SW1TbspA3RZD4vVrL1V3VNv3GfcUsQ9o0Zig7kDJEra0=
+Received: from PH5P220CA0006.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:34a::7)
+ by CH1PPF68E8581EB.namprd12.prod.outlook.com (2603:10b6:61f:fc00::611) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Fri, 6 Nov
- 2026 05:51:07 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Fri, 6 Nov
+ 2026 05:51:09 +0000
 Received: from CY4PEPF000392D9.namprd03.prod.outlook.com
- (2603:10b6:510:34a:cafe::52) by PH5P220CA0012.outlook.office365.com
- (2603:10b6:510:34a::9) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10b6:510:34a:cafe::3d) by PH5P220CA0006.outlook.office365.com
+ (2603:10b6:510:34a::7) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.10 via Frontend Transport; Fri, 6
- Nov 2026 05:51:06 +0000
+ Nov 2026 05:51:09 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 165.204.84.17) smtp.mailfrom=amd.com;
  dkim=none (message not signed)
@@ -48,19 +48,19 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from satlexmb07.amd.com (165.204.84.17) by
  CY4PEPF000392D9.mail.protection.outlook.com (10.167.247.119) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.4 via Frontend Transport; Fri, 6 Nov 2026 05:51:06 +0000
+ 15.21.615.4 via Frontend Transport; Fri, 6 Nov 2026 05:51:08 +0000
 Received: from cae-QUARTZ.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.53; Thu, 5 Nov
- 2026 23:51:03 -0600
+ 2026 23:51:06 -0600
 From: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
 To: <dev@dpdk.org>
 CC: <david.marchand@redhat.com>, <stephen@networkplumber.org>,
  <jingjing.wu@intel.com>, <bhagyada.modali@amd.com>,
  <Selwin.Sebastian@amd.com>, <bruce.richardson@intel.com>, <stable@dpdk.org>
-Subject: [PATCH v2 02/15] raw/ntb: fix peer memory window count check
-Date: Fri, 6 Nov 2026 11:20:32 +0530
-Message-ID: <20261106055045.720805-3-raghavendra.ningoji@amd.com>
+Subject: [PATCH v2 03/15] raw/ntb: fix memory window bound in address remapping
+Date: Fri, 6 Nov 2026 11:20:33 +0530
+Message-ID: <20261106055045.720805-4-raghavendra.ningoji@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
 References: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
@@ -72,29 +72,29 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF000392D9:EE_|SN7PR12MB8172:EE_
-X-MS-Office365-Filtering-Correlation-Id: 29e11fb7-d9a1-43ba-129b-08df3bc9f365
+X-MS-TrafficTypeDiagnostic: CY4PEPF000392D9:EE_|CH1PPF68E8581EB:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02699aa9-92ac-47ff-5653-08df3bc9f4ba
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|36860700016|82310400026|376014|1800799024|261022075727099003|261021121427099003|261026121527099003|261009223027099003|261021123027099003|261102123227099003|11063799006|10067099003|22082099003|56012099006|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info: 6fCpV/2mi8a1YipssHBIIbyfRKwZX/Ce9/TtTPB6tXNY/YtGgeitCn7DMHoAPmZDioHx7KcCf+4//SXYM3pEVUFJrzBvBKqpBQdXCzreY4ddjKpYoWD8qrx7TVzGMTRV9CLPAP9oEOLnPiTrtzacoelj+C7WkqFKHjL5l6nAYOPTnJOFnDmmzTt/MIzClu73xJAOug/kl9MZS2iWAqayt8+TBF+xN9HEQCxtWBsVfLPErzTfBHudi7wrmSaUWxJoAB/9gM36BvGCksXVbGGuxXM51chfgn6EdKXKte/srb9KlpqiGUyLg8zCdn8KKTxp/REMPBNNvafkR2eKKo+6ZkpyH3ZkvVu2aORwWL9ypjE9+QXMdUXsQlH94TcHWFeZK8gCVWyLnnyixbcqn5f5CWkiCYKGphasTGO1AaGQeISstkeh0HiYZZ/iVm84wDt/jufbzA+GHvFj8AN0Jg+1CYqvjUqYTTutnKqYjzTWrUyG7SgJEHdB9OmmzllBDj/uDK6Lp2dvwy9F/DM+G8xZ+m9sMTl7paLJ2TPNsaKlZSOTy1NL9IgJnlQDh3a1qkZS5gB4QrdBfKI6jKgUsS1rke03RJH/VLIgFB5wKNyiaBU1Jk+IfuCtWC1V7yoylYTx/JN2eAk/JYcpIs5+L9jBofxcUZWg+yGJTPL/bzkQ70G0o2P9bMBqgbev6LYzTAEbZwjJCyHmDT7G8JmvQuZ7pw==
+ ARA:13230040|376014|1800799024|23010399003|36860700016|82310400026|11063799006|261009223027099003|261026121527099003|261021121427099003|56012099006|261021123027099003|10067099003|18002099003|261102123227099003|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info: wfOKdNEdSdiqyorjUaBJvtlPNyD8OX5vU1X0huODb4u+sB3aIAtIzo8bpKVLAFVljjvzuktybpM8zWTl67WVsGFqnXJ7/qnrxu43U0Ol3Ab/wmhUHj1+BOyJswfl742yAssefzlS7zs0G9sVPqtuXwc1Vn8OatBxhQc93TUtE8jFaVZaElpUBtL1tVnDDnSfqeLwRLjhnsjGcWnmG+d+3P5f5Akrmt2hjaxnATR+/VdWhQqJ8pb/WWdnyFNc2vux84uPyPr0PXTqq1teU5swfjFJgbWLaZRKLat2LOlYGiL9wA3iSMyZExGqZSDVZcDETsV8UgHNkSpNU/y67Mbrj/Cj1Jk0ZLcde8NBnn2Wyl/4qpMTSS3u997hwXP6O5CBa9lAZ/4OaMsHzHeLYF9rqBe0qgGuX2Op2XEj3lwtVQ7EJFyy41h3KO3k7BgNFIvZLylRRPNi/P1/G5lUWF2JXeowitXqQVWc4AbMN/IxlBIPsrzr41Lhl8KIetaDZd6kwTwJHYRHYcW3X/XpMav4Bfr5b8hS70uFYJnai/AO7Z66uv4UJFpvSjIiEXu1ijs2BTpQuxH5Qn47Ks5OxuTVlBPUMc0jBZq5pisJBKAwvklmSlNcBIw1f+3rGvi99W1RIaJf/D2+fQUCjOKL76KVBulifXNjkG7xqOr9vBpJ2o0/Mic/BOtC/DH+m/e2LuUZMhntOyZ50xmgYurlRs3SxA==
 X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(23010399003)(36860700016)(82310400026)(376014)(1800799024)(261022075727099003)(261021121427099003)(261026121527099003)(261009223027099003)(261021123027099003)(261102123227099003)(11063799006)(10067099003)(22082099003)(56012099006)(18002099003)(6133799003);
+ SFS:(13230040)(376014)(1800799024)(23010399003)(36860700016)(82310400026)(11063799006)(261009223027099003)(261026121527099003)(261021121427099003)(56012099006)(261021123027099003)(10067099003)(18002099003)(261102123227099003)(22082099003)(6133799003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: wCHGvW9qMk+OO1OBBPT/sjNZsTA05XMzGc6hgzlSlyhKATr1torcS+VMgSnYBSDgvFdhyHWmMvZZF8aupxQkrs16d9IiGQk4D5Zk3xG1KQimQOB+OIzJtOkE1rBegirPUpxX2G0JB+64cngWc6UKFFJdVvMurg/jep47aXIuBMFNr/gNL1/bo9Z4DGNguoiB133877jXVS1t/sfUSz1k+p2pKYKYK0FA1uJfmX0wnQ+CP0799xo4mV6tNAdnt5HDz/5r4CXzdt/Q2gbCj+f/NrXOKSZmlN3h2JtIoNgs1XDYmmzntjcIFA2BDXdbJamspmwbZoDColW3f5W/Q3aeF3KIiOByZa6dsmX9yWkBFTEpdBe2RvjXmzR2h8irja83hUygGkl2ab7rqFp8mdStjbIIji8uirrMCMOFZJ61DFLZwsKPzkRQSxQ8letDeFO2
+X-MS-Exchange-AntiSpam-MessageData-0: 1IA4TCHYcsW+l8nwoF/k0GA25tbvge/C5R+qv9htttAJa/aeMal/Gfw9X5WFqaiwcqUJj9UnXImyf9r3490Czuf/JyZOgyheIyYQElHXGYe+3i3ddOn+ITE8pNnVIC/myPrLey0GKnA1RblA2WkWEWptY0sHB9ChSA6MrfJOR/gS0PpACuymb07U5MiqpI7FzIwKaMurpv35VO7ezFuRwFBdDi5wI0OCVHNFs37cDWWRNl5NkTSbgpSp/WgLOyPaIBBx5+TIsdeGhaCns2HnlVKOZMLv+AcfVpzau6WprI2vi8fhw+wVDv24mCZFY65KKKnMqM9ZOaS7gZuSKQ6gC11aL2fj0wZ3p5QP0WACHeZwhcEsxPiZDPtJ1ytHjumnFVEttAxhNGwJwIKb2yJt9x3GIpVXdIvKZCJFCLZPY2SvhJ6tA1bdISIt9oLm3jC2
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2026 05:51:06.6977 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29e11fb7-d9a1-43ba-129b-08df3bc9f365
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2026 05:51:08.9393 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02699aa9-92ac-47ff-5653-08df3bc9f4ba
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
  Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF000392D9.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8172
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF68E8581EB
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,73 +111,48 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The number of memory windows used by the peer is read from a
-scratchpad register written by the peer, and is then used as the loop
-bound to fill peer_mw_base[], which is allocated with mw_cnt entries.
-A peer advertising more windows (bug, version mismatch, or a stale
-scratchpad) makes the driver write past the end of this array.
-On Intel, the 32-bit register value was also silently truncated into
-the 8-bit peer_used_mws field.
+When translating a peer address into the local mapping of a memory
+window, the end of the window was included in the accepted range,
+so an address one byte past the window was mapped.
 
-Reject a peer configuration using more windows than the local device
-has.
+Exclude the end of the window.
 
-Fixes: c39d1e082a4b ("raw/ntb: setup queues")
+Fixes: 11b5c7daf019 ("raw/ntb: add enqueue and dequeue functions")
 Fixes: d6dc5a7f8b06 ("raw/ntb: support AMD NTB")
 Cc: stable@dpdk.org
 
 Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
 ---
- drivers/raw/ntb/ntb_hw_amd.c   | 10 ++++++++--
- drivers/raw/ntb/ntb_hw_intel.c |  7 ++++++-
- 2 files changed, 14 insertions(+), 3 deletions(-)
+ drivers/raw/ntb/ntb_hw_amd.c   | 2 +-
+ drivers/raw/ntb/ntb_hw_intel.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/raw/ntb/ntb_hw_amd.c b/drivers/raw/ntb/ntb_hw_amd.c
-index ab78675218..dba5b03671 100644
+index dba5b03671..64075501c2 100644
 --- a/drivers/raw/ntb/ntb_hw_amd.c
 +++ b/drivers/raw/ntb/ntb_hw_amd.c
-@@ -502,7 +502,7 @@ static int
- amd_ntb_read_peer_config(const struct rte_rawdev *dev)
- {
- 	struct ntb_hw *ntb = dev->dev_private;
--	uint32_t info, peer_qps, peer_qsz, lo, hi;
-+	uint32_t info, peer_qps, peer_qsz, peer_used_mws, lo, hi;
- 	int i;
+@@ -166,7 +166,7 @@ amd_ntb_ioremap(const struct rte_rawdev *dev, uint64_t addr)
  
- 	info = amd_ntb_spad_read(dev, AMD_SPAD_CNT_INFO, 0);
-@@ -520,7 +520,13 @@ amd_ntb_read_peer_config(const struct rte_rawdev *dev)
- 		return -EINVAL;
- 	}
- 
--	ntb->peer_used_mws = (info >> 16) & 0xff;
-+	peer_used_mws = (info >> 16) & 0xff;
-+	if (peer_used_mws > ntb->mw_cnt) {
-+		NTB_LOG(ERR, "Peer used mws %u > mw cnt %u.", peer_used_mws, ntb->mw_cnt);
-+		return -EINVAL;
-+	}
-+	ntb->peer_used_mws = peer_used_mws;
-+
  	for (i = 0; i < ntb->peer_used_mws; i++) {
- 		lo = amd_ntb_spad_read(dev, AMD_SPAD_MW0_BA_L + 2 * i, 0);
- 		hi = amd_ntb_spad_read(dev, AMD_SPAD_MW0_BA_H + 2 * i, 0);
+ 		if (addr >= ntb->peer_mw_base[i] &&
+-				addr <= ntb->peer_mw_base[i] + ntb->mw_size[i]) {
++				addr < ntb->peer_mw_base[i] + ntb->mw_size[i]) {
+ 			base = amd_ntb_get_peer_mw_addr(dev, i);
+ 			mapped = (void *)(size_t)(addr - ntb->peer_mw_base[i] + (size_t)base);
+ 			break;
 diff --git a/drivers/raw/ntb/ntb_hw_intel.c b/drivers/raw/ntb/ntb_hw_intel.c
-index 1b784055ca..78fce9ffac 100644
+index 78fce9ffac..47d5d39339 100644
 --- a/drivers/raw/ntb/ntb_hw_intel.c
 +++ b/drivers/raw/ntb/ntb_hw_intel.c
-@@ -724,7 +724,12 @@ intel_ntb_read_peer_config(const struct rte_rawdev *dev)
- 		return -EINVAL;
- 	}
- 
--	hw->peer_used_mws = intel_ntb_spad_read(dev, SPAD_USED_MWS, 0);
-+	peer_val = intel_ntb_spad_read(dev, SPAD_USED_MWS, 0);
-+	if (peer_val > hw->mw_cnt) {
-+		NTB_LOG(ERR, "Peer used mws %u > mw cnt %u.", peer_val, hw->mw_cnt);
-+		return -EINVAL;
-+	}
-+	hw->peer_used_mws = peer_val;
+@@ -312,7 +312,7 @@ intel_ntb_ioremap(const struct rte_rawdev *dev, uint64_t addr)
  
  	for (i = 0; i < hw->peer_used_mws; i++) {
- 		peer_base_h = intel_ntb_spad_read(dev, SPAD_MW0_BA_H + 2 * i, 0);
+ 		if (addr >= hw->peer_mw_base[i] &&
+-		    addr <= hw->peer_mw_base[i] + hw->mw_size[i]) {
++		    addr < hw->peer_mw_base[i] + hw->mw_size[i]) {
+ 			base = intel_ntb_get_peer_mw_addr(dev, i);
+ 			mapped = (void *)(size_t)(addr - hw->peer_mw_base[i] +
+ 				 (size_t)base);
 -- 
 2.34.1
 
