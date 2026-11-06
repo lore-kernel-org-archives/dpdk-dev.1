@@ -2,42 +2,43 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD122606A326
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Nov 2026 05:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590E5606A328
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Nov 2026 05:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=joVWOQL/
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=B1UcNxZB
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17C4742DA1;
-	Fri,  6 Nov 2026 06:51:26 +0100 (CET)
-Received: from SN4PR2101CU001.outbound.protection.outlook.com
- (mail-southcentralusazon11012048.outbound.protection.outlook.com
- [40.93.195.48]) by mails.dpdk.org (Postfix) with ESMTPS id 1F05442DA1
- for <dev@dpdk.org>; Fri,  6 Nov 2026 06:51:25 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0235142D0B;
+	Fri,  6 Nov 2026 06:51:31 +0100 (CET)
+Received: from SN4PR0501CU005.outbound.protection.outlook.com
+ (mail-southcentralusazon11011041.outbound.protection.outlook.com
+ [40.93.194.41])
+ by mails.dpdk.org (Postfix) with ESMTPS id BAB8942DA6;
+ Fri,  6 Nov 2026 06:51:28 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ku+8579UdxQK8Df4pKdnJOKJlWvqNj+QNeEIZTS+pcPCFbxpP+/I61WT1KJMPmUII4t6/gNulj6g4kRICEpwG7fYSwRh9VzIdplLCYV05sobviP7y+KuyUQMQ4ebmMj9+BM6yhkjdidrnqO6m8F+lYXDLGPA61k3f2G2FMjLfJsP5rOhUWeKWUziPcUVXJH5ATDRyfj0NJ3s28C7u4SqMHvuauzOR21I7A5NJ/IFveJ3OD1z8fEdtfaxCLPTL4C0dwR+OIa5JsZrVj1T6bPRkMbfQtt0PPWEIlF1O8Q8q88tdNC1WaFxMbXDhyaKtAcA1W6baZyPDIntRzvY8NgjLA==
+ b=g0Fh23SyyF+KeHUVRF3wSayJLbvM3TU5Lf7COXZtIfwddsWvUYu9lKPxHxfDMPafnktGKyyZv9+5Eu/gXhFZ8SWbA/9fKjargmyIoewf8yHNubIjelctjBCFvslhEjeWQbTb80UAUAcX69EQ1MWWvyhBpoBLG7t150x5QYw6tMIvqQDAJh03nPoG1aFZmGbpX6FNGVMqDHChLHIfzqz7LDelyKxOtgZ7vgs4uFv8p78PrX1tePZaxyOyCHyYuKticcioAi3+Ix0OTWibGIFLCZXl5YLl6axzia4KQF0/sFsHRbWkoz9a5+QrqLsp18PDbXE40he0Sj8i+0Es2wHJcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=86HgpkhCDEpkuttsQqRwdAkQ7k89Fzp7pPl2qV2etN4=;
- b=jQDLCQd8JoVFwc4GnxOfc4QmcJCwpCojbOwbAxKFcxyg9YzkoZIJhrIvARJ78/2NVlVzax6cmojhW91Jr9UTerrxH2qHjCaWsTkCg4JHauxgrcd1WPBmu0AtZSgAskdPy0UdCXH6YWXOzXrAhGLsRh0A2yTrj4+9JFnTm9Ge3W2IfddfaHGpTa+0L6l2kA1i+Q9+10raq8IjWF2MXE6kt3K2ZtZOfcFdnYYNdYcUO8rJblcnE5qwZMZOfE+9LQNWNKzUFQOZbdwWMmq+L5ZJQzaOdEkxCOijT8VuoXZ1hkbGUL1uPWX1sSVDiztVlcIxv9U3tYyQEaGDUwUWOQbP/w==
+ bh=oIVCb5Y5kHv5tnUvNDkbkLtDFrM485HjPEC4KWlIOLU=;
+ b=tWbEfa3aeegRjES1dYBgulWTieKLaSyS8Qrny+k3pKxvcL12+c2ZQexSkQxWCnfIMDsokOWP/SfBfh66HrygQhhGVzRFoYXqm3JuNjBrVOpqP+9jkvNrXNJpgUzVIlQUs8bqQ+MPQZ1sj6M9ZT5hyzWHbv2P6dEO/iL6qi8zZA5gZGFZsO4NdrLJIB3XdVacnOHvtosbBrCjTBCiaDLi+ZpBwWgwvuEA2+IBKW7rZUGH9mqHDFHX1B8ybes9ykdHM1+o6iNJi3dz3lM3J60yLj9G2JZtl3gLxdSym30j47r5fv5ev5kDf1w8kG/AWoEbhB6HbnI0FDtNNIf4NBAJLA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=86HgpkhCDEpkuttsQqRwdAkQ7k89Fzp7pPl2qV2etN4=;
- b=joVWOQL/6cr0FK0TT2z0kI7UV7onPCqj8g5Et+eINPZQKYJ7nmzfvxfgXs57CUtnhGNXGr99qkFZU+lQpx8GAPU55OXweGFv+3gw3Q1Ir7GjKzW8OYzQIEcmj533WxP73vS7+ilflqsSvleO/buQiHwV0/2GplkocNoIgkVVKXY=
-Received: from DSSP221CA0003.NAMP221.PROD.OUTLOOK.COM (2603:10b6:8:3d5::15) by
- EAYPR12MB999179.namprd12.prod.outlook.com (2603:10b6:303:2bf::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Fri, 6 Nov
- 2026 05:51:20 +0000
-Received: from CY4PEPF000392D6.namprd03.prod.outlook.com
- (2603:10b6:8:3d5:cafe::57) by DSSP221CA0003.outlook.office365.com
- (2603:10b6:8:3d5::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.10 via Frontend Transport; Fri, 6
- Nov 2026 05:51:19 +0000
+ bh=oIVCb5Y5kHv5tnUvNDkbkLtDFrM485HjPEC4KWlIOLU=;
+ b=B1UcNxZBmZrFhoaBMRCcP3i93bTHLjqAbm82YwTW8JW2wAH4nLLQY1eKifftu9groVtxnIhhN0wfgtIdoNFGhpra0QVPsGYJAXd4i4dmyqBbColr8uQd4nEkK1KrKQPNgfWm/swT+K6P5jIFCiUZ933d7TM4o6bEqFKcVhJus8o=
+Received: from CYXPR02CA0069.namprd02.prod.outlook.com (2603:10b6:930:cd::14)
+ by PH7PR12MB6933.namprd12.prod.outlook.com (2603:10b6:510:1b7::19)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Fri, 6 Nov
+ 2026 05:51:22 +0000
+Received: from CY4PEPF000392DA.namprd03.prod.outlook.com
+ (2603:10b6:930:cd:cafe::8) by CYXPR02CA0069.outlook.office365.com
+ (2603:10b6:930:cd::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.11 via Frontend Transport; Fri, 6
+ Nov 2026 05:51:21 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 165.204.84.17) smtp.mailfrom=amd.com;
  dkim=none (message not signed)
@@ -46,21 +47,21 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- CY4PEPF000392D6.mail.protection.outlook.com (10.167.247.116) with Microsoft
+ CY4PEPF000392DA.mail.protection.outlook.com (10.167.247.120) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.4 via Frontend Transport; Fri, 6 Nov 2026 05:51:19 +0000
+ 15.21.615.4 via Frontend Transport; Fri, 6 Nov 2026 05:51:21 +0000
 Received: from cae-QUARTZ.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.53; Thu, 5 Nov
- 2026 23:51:16 -0600
+ 2026 23:51:19 -0600
 From: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
 To: <dev@dpdk.org>
 CC: <david.marchand@redhat.com>, <stephen@networkplumber.org>,
  <jingjing.wu@intel.com>, <bhagyada.modali@amd.com>,
- <Selwin.Sebastian@amd.com>, <bruce.richardson@intel.com>
-Subject: [PATCH v2 07/15] raw/ntb: remove AMD hardware event handling
-Date: Fri, 6 Nov 2026 11:20:37 +0530
-Message-ID: <20261106055045.720805-8-raghavendra.ningoji@amd.com>
+ <Selwin.Sebastian@amd.com>, <bruce.richardson@intel.com>, <stable@dpdk.org>
+Subject: [PATCH v2 08/15] raw/ntb: fix Rx of incomplete packets
+Date: Fri, 6 Nov 2026 11:20:38 +0530
+Message-ID: <20261106055045.720805-9-raghavendra.ningoji@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
 References: <20261104112001.661769-1-raghavendra.ningoji@amd.com>
@@ -72,29 +73,29 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF000392D6:EE_|EAYPR12MB999179:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b89ff4b-6edd-49a6-b0b4-08df3bc9fadc
+X-MS-TrafficTypeDiagnostic: CY4PEPF000392DA:EE_|PH7PR12MB6933:EE_
+X-MS-Office365-Filtering-Correlation-Id: e08256b4-a76e-458d-30fa-08df3bc9fc75
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700016|376014|23010399003|1800799024|10067099003|22082099003|6133799003|18002099003|56012099006|11063799006|5023799004|261009223027099003|261021121427099003|261021123027099003|261102123227099003|261026121527099003;
-X-Microsoft-Antispam-Message-Info: yxDKI1IgQIgyV7uXGXKSBtw3flJg/QM4Rh8df0JY8p0JviHWhhtwzv1LLIqg9a22TpqMWE0P4hQnCcXQfgj6xpD1ZTXXwdBLCO5e4djKtopzDmTrBPTXQXEQt2O2Opq2nhqqaFIXP2lC7U57nVytPFErT205g85EZH6+erTRa4fCf3uky2/lXdqvdOKwp0zRQqX1lP2aYCrYuBgyGJUGgeccLNBlD28hn6rKipSDXFvKcT4yeB5Ms/rzLHd2c3H47SHVvATeoCIswRERjo6Su0iUSsRZlEqYzVRNNcksiTDDgenm51MIeDD0ylFhxVOOpFo+3GOMa+jMimGDHwZlc8TQXemxtSVVFKBMVM0/OCjk+V+xlwvfF7guS1EZ/2aZGJCeF58ucDuGyQyiAhgoQnReHqr3HyuhTTj1LKo6WmJUurKeJ6WbZWJrBghnSwAymG+kyruRHoXoW0uA8bXQGVNrDnF9c07P/W4Rvfka7SwPdUbabm12ZUzfAe/pN5wJh+rCSUDaB+bm1iP+Aj1ZKn/YNsQIVk3/aioHEqQINjMJAwnWhyUunjihMGcWofmIgG4ITFyhRCsbkvc3TqzYJ+balKRI1POFm/A3h/3Gwkw4QlXIUVsZYkmTYZZp5kZueG1MFtWbOz271CsrO0YjbqntAjbEuGhFSYdKXEyUj/Kwx8QhQEXle4JeZhxnuzdB6MLX5fDit4JT0Vb5Apv3Iw==
+ ARA:13230040|1800799024|23010399003|376014|36860700016|82310400026|261021123027099003|11063799006|261026140227099003|261009223027099003|261028144727099003|261021121427099003|261026121527099003|56012099006|261022105027099003|10067099003|18002099003|261102123227099003|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info: Kh+i8DzzZbZvyB7f9SMDzdxlX6HlNvCdQtr1LYUsgv/VoplY16XMNa9GqQT/PZL0UXnkLP3PmYvVnuhk6FsvV45LshyhlJDL1pMU6X2f8Kns0LwxGhW/5p3GYl9c9spwiyL/Zy1E4XMENA9eTkX28eh4tPgMm9LiLmBhKv2zLWlGO2WRQBKcZ5hOjC2CyiilCRbI2TSh71bw84uFHeX6ACaB6o//BQHnLrD5G/4ln9tXkrtJsXQ/9nfbidtGjDpjavge1GOM90sk8M002/aeW6gIEfMKE9TdPEW56C+1SkV5agDkE6KF4nzH5gTI0DyqowXTna40qMsWjWWHos8iW7kWA4MYL+7qj68QFEPcY7tAep1tMp6ym5dNGOxCEMWUYjGXXih0Ipre8qRF+dHFhekzT0KtLu/skyezk1rEJIM0MsfnDzlanwdvH2aFlBe8lj5GuusxoR4R4G/t4SxiUIO2nn/iLAWJr2cNzPhp0OSOeQG/Nim/ezDQfygtyI2gFGFaWNi9aZmjq8PKqRniM4md2eiqnPH4jrSwPyC5wepw42kwOlBKAP6pBS4XTTAJQ66voSeBaLGojXmnzioYaBdbYJq7Dfdja71VyCPaoIqqmdAO3Q5hh11Btl1cIWK2HasM4OtljNtoBzEwQSQk8R56+TgVj5s3+v1rzbx4rzO9NWmmgfBlFpTzrw/C+W3m0FrQtp6J7CYzA8dCcDchjQ==
 X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(82310400026)(36860700016)(376014)(23010399003)(1800799024)(10067099003)(22082099003)(6133799003)(18002099003)(56012099006)(11063799006)(5023799004)(261009223027099003)(261021121427099003)(261021123027099003)(261102123227099003)(261026121527099003);
+ SFS:(13230040)(1800799024)(23010399003)(376014)(36860700016)(82310400026)(261021123027099003)(11063799006)(261026140227099003)(261009223027099003)(261028144727099003)(261021121427099003)(261026121527099003)(56012099006)(261022105027099003)(10067099003)(18002099003)(261102123227099003)(22082099003)(6133799003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: /KymXKQ6pwR1W7GwEJO+fkoQVUSKUJxFcO09MAYIcZmHvs0lwDQ1dRSRSoRg86inWf5sw6Rk5o7inyCb1gulVGZ3rZhYSWEA0vGKBSHBH7UDCjIQyXoGEWoK30f1G34/F54kdNoVUyg1DtnMhT32WQAiPR5M/n0TwBlNieLcAw320gTTVycxltyvx8kLy3OW7uG5mCQhPj0hJkr7+BbUF+Ivo36wL0KdCoUb7BP0OhYr9ItGIQs7txUJDvez2jcpgJFRtz/kTndTONUE1JTs9vXIUjblxOTVqznBQeQWBhGw3y1Rxhcngx8x5V/HR5OcjZfcIvLqHHfbBP7miOBv863VrLweQHD1kFa3io5yds47GRUkTLnJcfqs47SGof+hfonU24qlGR+JHuEIM64m0bDe6q3rtsv2gvi3K7+7/mLMF3bAFQUk32myFI14Dq6e
+X-MS-Exchange-AntiSpam-MessageData-0: voyCevdR7yiylZTt54uzQq4aVGyaqGy/ei9ywFevzzgdniSZHWFMFys4xllZxtG8je5M1y3+eAl/qWeZWqvoQu/hzuGXseVy8E7GkNBBIfiNSPzY8EDrR5vOkBEWOdU83mmxA77vwUROgNWXJ1+Q6dfE932KzN5clEce4+mkP+dh7sTIAuFSLjsWCjhHAGji5ud0BrADTrakkqFdRak96P+iWrn00YMZntuXOoIaT956TtjhY3WjMBVemptgKQUX9gxLapM1LmtBoIRnGFN0L4ijAxWmRPQPMmEGhVWD2CSchZBfub7FUiNlhONikel5sUMax2514jtlHJ/bvijyX4AHz6wdxztnXR5D1hoyDrIwBo6G3z2EMG/IdX73HYZDjpKKIfHPfGEx2nzOMLTHcL7z7Ttna4NnCS5qXF0vgjaE0zknWUUPiPlH7KDZ3j7C
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2026 05:51:19.2246 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b89ff4b-6edd-49a6-b0b4-08df3bc9fadc
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2026 05:51:21.9017 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e08256b4-a76e-458d-30fa-08df3bc9fc75
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
  Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF000392D6.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF000392DA.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: EAYPR12MB999179
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6933
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,189 +112,108 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The AMD hardware event handler could never run: the event interrupts
-were never unmasked, their MSI-X vectors were never enabled and the
-handler was only reached when no known doorbell was pending.
-It also mishandled several simultaneous events and never cleared
-the interrupt status.
+When a packet had no EOP descriptor among the ones walked, or when a
+refill mbuf could not be allocated in the middle of a packet, the Rx
+burst stopped with the packet partially consumed: the ring indexes had
+moved, but the mbuf chain was neither returned nor freed, and the
+refilled descriptors were not published to the peer if no packet had
+been completed before.
 
-Remove it, together with the now unused vendor operation and
-register definitions, and document that hardware events are not
-handled.
+The EOP guard also bounded the walk on the ring size rather than on
+the descriptors actually published by the peer.
 
-Fixes: d6dc5a7f8b06 ("raw/ntb: support AMD NTB")
+Only take a packet once all of its descriptors have been published,
+and allocate its refill mbufs before consuming it, so that the ring
+indexes are only advanced for complete packets.
+
+Fixes: 11b5c7daf019 ("raw/ntb: add enqueue and dequeue functions")
+Fixes: 5ce50c234ad1 ("raw/ntb: generalize framework for multiple vendors")
+Cc: stable@dpdk.org
 
 Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
 ---
- doc/guides/rawdevs/ntb.rst   |  4 ++++
- drivers/raw/ntb/ntb.c        |  4 ----
- drivers/raw/ntb/ntb.h        |  3 ---
- drivers/raw/ntb/ntb_hw_amd.c | 42 +-----------------------------------
- drivers/raw/ntb/ntb_hw_amd.h | 21 ------------------
- 5 files changed, 5 insertions(+), 69 deletions(-)
+ drivers/raw/ntb/ntb.c | 39 +++++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
-diff --git a/doc/guides/rawdevs/ntb.rst b/doc/guides/rawdevs/ntb.rst
-index 37328cd9e6..c4ad2f05c4 100644
---- a/doc/guides/rawdevs/ntb.rst
-+++ b/doc/guides/rawdevs/ntb.rst
-@@ -53,6 +53,10 @@ The AMD NTB hardware exposes two memory windows (BAR23 and BAR45),
- The scratchpad bank is split into two disjoint 8-register sets, one owned by each side,
- so the driver uses a packed handshake layout that fits within 8 registers.
- 
-+The AMD NTB hardware events (link up/down, peer reset, power state changes)
-+are not handled: a peer going away is only detected through the doorbell
-+handshake done when the peer device is stopped.
-+
- The AMD NTB uses an outbound translation window:
- a write to a memory window offset is forwarded to ``(base | offset)`` in the peer's memory
- rather than ``(base + offset)``.
 diff --git a/drivers/raw/ntb/ntb.c b/drivers/raw/ntb/ntb.c
-index bde17c3c86..bface8d497 100644
+index bface8d497..eb562052d8 100644
 --- a/drivers/raw/ntb/ntb.c
 +++ b/drivers/raw/ntb/ntb.c
-@@ -120,10 +120,6 @@ ntb_dev_intr_handler(void *param)
+@@ -650,13 +650,14 @@ ntb_dequeue_bufs(struct rte_rawdev *dev,
+ 	struct ntb_rx_queue *rxq = hw->rx_queues[(size_t)context];
+ 	struct ntb_rx_entry *sw_ring = rxq->sw_ring;
+ 	struct ntb_desc rx_desc[NTB_MAX_DESC_SIZE];
+-	struct rte_mbuf *first, *rxm_t;
++	struct rte_mbuf *new_mbufs[NTB_MAX_DESC_SIZE];
++	struct rte_mbuf *first = NULL, *rxm_t;
+ 	struct rte_mbuf *prev = NULL;
+ 	volatile struct ntb_used *rx_item;
+ 	uint16_t nb_mbufs = 0;
+ 	uint16_t nb_rx = 0;
+ 	uint64_t bytes = 0;
+-	uint16_t off, last_avail, used_cnt, used_nb;
++	uint16_t off, last_avail, used_cnt, used_nb, nb_segs;
+ 	int i;
  
- 	/* Clear other received doorbells. */
- 	(*hw->ntb_ops->db_clear)(dev, db_bits);
+ 	if (unlikely(dev->started == 0 || hw->peer_dev_up == 0)) {
+@@ -673,13 +674,24 @@ ntb_dequeue_bufs(struct rte_rawdev *dev,
+ 	used_nb = (used_cnt - rxq->last_used) & (rxq->nb_rx_desc - 1);
+ 	count = RTE_MIN(count, used_nb);
+ 	for (nb_rx = 0; nb_rx < count; nb_rx++) {
+-		i = 0;
+-		while (true) {
+-			if (unlikely(nb_mbufs >= rxq->nb_rx_desc)) {
+-				NTB_LOG(ERR, "Malformed rx stream (no EOP); "
+-					"aborting to avoid desc overflow.");
++		/* Only take a packet once the peer has published all of it. */
++		for (nb_segs = 1; ; nb_segs++) {
++			if (nb_segs > used_nb)
+ 				goto end_of_rx;
+-			}
++			rx_item = rxq->rx_used_ring + ((rxq->last_used + nb_segs - 1) &
++						       (rxq->nb_rx_desc - 1));
++			if (rx_item->flags & NTB_FLAG_EOP)
++				break;
++		}
++
++		/* Get the refill mbufs first so a packet is never partially consumed. */
++		if (unlikely(rte_mbuf_raw_alloc_bulk(rxq->mpool, new_mbufs, nb_segs))) {
++			NTB_LOG(ERR, "recv alloc mbuf failed.");
++			goto end_of_rx;
++		}
++		used_nb -= nb_segs;
++
++		for (i = 0; i < nb_segs; i++) {
+ 			rx_item = rxq->rx_used_ring + rxq->last_used;
+ 			rxm_t = sw_ring[rxq->last_used].mbuf;
+ 			rxm_t->data_len = rx_item->len;
+@@ -701,15 +713,9 @@ ntb_dequeue_bufs(struct rte_rawdev *dev,
+ 			rxq->last_used = (rxq->last_used + 1) &
+ 					 (rxq->nb_rx_desc - 1);
+ 
+-			/* alloc new mbuf */
+-			rxm_t = rte_mbuf_raw_alloc(rxq->mpool);
+-			if (unlikely(rxm_t == NULL)) {
+-				NTB_LOG(ERR, "recv alloc mbuf failed.");
+-				goto end_of_rx;
+-			}
++			rxm_t = new_mbufs[i];
+ 			rxm_t->port = rxq->port_id;
+ 			sw_ring[rxq->last_avail].mbuf = rxm_t;
+-			i++;
+ 
+ 			/* fill new desc */
+ 			rx_desc[nb_mbufs].addr =
+@@ -718,9 +724,6 @@ ntb_dequeue_bufs(struct rte_rawdev *dev,
+ 						  RTE_PKTMBUF_HEADROOM;
+ 			rxq->last_avail = (rxq->last_avail + 1) &
+ 					  (rxq->nb_rx_desc - 1);
 -
--	/* Let the vendor process any hardware-specific events. */
--	if (hw->ntb_ops->handle_hw_event != NULL)
--		(*hw->ntb_ops->handle_hw_event)(dev);
- }
- 
- static void
-diff --git a/drivers/raw/ntb/ntb.h b/drivers/raw/ntb/ntb.h
-index f867f0323d..f9f5bceede 100644
---- a/drivers/raw/ntb/ntb.h
-+++ b/drivers/raw/ntb/ntb.h
-@@ -105,8 +105,6 @@ enum ntb_spad_idx {
-  * @link_cleanup: Tear down the local scratchpad/translation state so the
-  * peer can no longer reach local memory.
-  * @mem_align: Base-address alignment required for a memory window memzone of a given length.
-- * @handle_hw_event: Optional. Process vendor-specific hardware events from
-- * the common interrupt handler. May be NULL.
-  */
- struct ntb_dev_ops {
- 	int (*ntb_dev_init)(const struct rte_rawdev *dev);
-@@ -129,7 +127,6 @@ struct ntb_dev_ops {
- 	int (*read_peer_config)(const struct rte_rawdev *dev);
- 	void (*link_cleanup)(const struct rte_rawdev *dev);
- 	uint64_t (*mem_align)(const struct rte_rawdev *dev, uint32_t mw_id, uint64_t mw_len);
--	void (*handle_hw_event)(const struct rte_rawdev *dev);
- };
- 
- struct ntb_desc {
-diff --git a/drivers/raw/ntb/ntb_hw_amd.c b/drivers/raw/ntb/ntb_hw_amd.c
-index 9b274bc6b9..abb923b384 100644
---- a/drivers/raw/ntb/ntb_hw_amd.c
-+++ b/drivers/raw/ntb/ntb_hw_amd.c
-@@ -441,7 +441,7 @@ static int
- amd_ntb_vector_bind(const struct rte_rawdev *dev __rte_unused, uint8_t intr __rte_unused,
- 		uint8_t msix __rte_unused)
- {
--	/* Each doorbell/event maps to its MSI-X vector by default. */
-+	/* Each doorbell maps to its MSI-X vector by default. */
- 	return 0;
- }
- 
-@@ -565,45 +565,6 @@ amd_ntb_link_cleanup(const struct rte_rawdev *dev)
- 		amd_ntb_mw_set_trans(dev, i, 0, 0);
- }
- 
--/* Handle link/power-management events and acknowledge the SMU. Invoked from
-- * the common interrupt handler when no inter-device doorbell is pending.
-- */
--static void
--amd_ntb_handle_hw_event(const struct rte_rawdev *dev)
--{
--	struct ntb_hw *ntb = dev->dev_private;
--	uint32_t event, ack;
--
--	event = rte_read32((char *)ntb->hw_addr + AMD_INTSTAT_OFFSET);
--	event &= AMD_EVENT_INTMASK;
--	if (event == 0)
--		return;
--
--	switch (event) {
--	case AMD_PEER_FLUSH_EVENT:
--		NTB_LOG(INFO, "Peer flush event.");
--		break;
--	case AMD_PEER_D0_EVENT:
--		ack = rte_read32((char *)ntb->hw_addr + AMD_PMESTAT_OFFSET);
--		if (ack & 0x1)
--			NTB_LOG(INFO, "D0 wakeup completed for NTB.");
--		/* fall through to ack the SMU */
--		/* Falls through. */
--	case AMD_PEER_RESET_EVENT:
--	case AMD_LINK_DOWN_EVENT:
--	case AMD_PEER_D3_EVENT:
--	case AMD_PEER_PMETO_EVENT:
--	case AMD_LINK_UP_EVENT:
--		ack = rte_read32((char *)ntb->hw_addr + AMD_SMUACK_OFFSET);
--		ack |= event;
--		rte_write32(ack, (char *)ntb->hw_addr + AMD_SMUACK_OFFSET);
--		break;
--	default:
--		NTB_LOG(ERR, "Unknown interrupt event 0x%" PRIx32, event);
--		break;
--	}
--}
--
- static uint64_t
- amd_ntb_get_mem_align(const struct rte_rawdev *dev __rte_unused, uint32_t mw_id __rte_unused,
- 		uint64_t mw_len)
-@@ -630,5 +591,4 @@ const struct ntb_dev_ops amd_ntb_ops = {
- 	.read_peer_config	= amd_ntb_read_peer_config,
- 	.link_cleanup		= amd_ntb_link_cleanup,
- 	.mem_align		= amd_ntb_get_mem_align,
--	.handle_hw_event	= amd_ntb_handle_hw_event,
- };
-diff --git a/drivers/raw/ntb/ntb_hw_amd.h b/drivers/raw/ntb/ntb_hw_amd.h
-index b03aed7d08..8fffa24348 100644
---- a/drivers/raw/ntb/ntb_hw_amd.h
-+++ b/drivers/raw/ntb/ntb_hw_amd.h
-@@ -16,7 +16,6 @@
- #define AMD_MW_COUNT			2
- #define AMD_DB_COUNT			16
- #define AMD_SPAD_COUNT			16
--#define AMD_MSIX_VECTOR_COUNT		24
- 
- /* Peer register window: peer register = primary offset + 0x400. */
- #define AMD_PEER_OFFSET			0x400
-@@ -37,10 +36,6 @@
- #define AMD_DBREQ_OFFSET		0x454	/* Doorbell request. */
- #define AMD_DBMASK_OFFSET		0x45C	/* Doorbell mask. */
- #define AMD_DBSTAT_OFFSET		0x460	/* Doorbell status. */
--#define AMD_INTMASK_OFFSET		0x470	/* Interrupt mask. */
--#define AMD_INTSTAT_OFFSET		0x474	/* Interrupt status. */
--#define AMD_PMESTAT_OFFSET		0x480	/* PME status. */
--#define AMD_SMUACK_OFFSET		0x4A0	/* SMU control (PSMU_ACK). */
- 
- /* Link Status Register (0x408) bits, spec Table 5. */
- #define AMD_SIDE_MASK			(1 << 0) /* 0: primary, 1: secondary. */
-@@ -50,22 +45,6 @@
- #define AMD_SMM_REG_CTL			(1 << 20)
- #define AMD_PMM_REG_CTL			(1 << 21)
- 
--/* Interrupt Status/Mask event bits, spec Table 7. */
--#define AMD_PEER_FLUSH_EVENT		(1 << 0)
--#define AMD_PEER_RESET_EVENT		(1 << 1)
--#define AMD_PEER_D3_EVENT		(1 << 2)
--#define AMD_PEER_PMETO_EVENT		(1 << 3)
--#define AMD_PEER_D0_EVENT		(1 << 4)
--#define AMD_LINK_UP_EVENT		(1 << 5)
--#define AMD_LINK_DOWN_EVENT		(1 << 6)
--#define AMD_EVENT_INTMASK		(AMD_PEER_FLUSH_EVENT | \
--					 AMD_PEER_RESET_EVENT | \
--					 AMD_PEER_D3_EVENT | \
--					 AMD_PEER_PMETO_EVENT | \
--					 AMD_PEER_D0_EVENT | \
--					 AMD_LINK_UP_EVENT | \
--					 AMD_LINK_DOWN_EVENT)
--
- /* PCIe link status decoding (link speed/width). */
- #define AMD_LNK_STA_SPEED_MASK		0x000f
- #define AMD_LNK_STA_WIDTH_MASK		0x03f0
+-			if (rx_item->flags & NTB_FLAG_EOP)
+-				break;
+ 		}
+ 		/* update stats */
+ 		bytes += first->pkt_len;
 -- 
 2.34.1
 
