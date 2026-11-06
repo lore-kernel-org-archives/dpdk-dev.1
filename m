@@ -2,81 +2,100 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68716606A329
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Nov 2026 10:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06467606EE8A
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Nov 2026 11:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=cisco.com header.i=@cisco.com header.a=rsa-sha256 header.s=iport01 header.b=lrFspWps
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=w5/y1IGF;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=diOpeFiz
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B8FFE402D1;
-	Fri,  6 Nov 2026 11:55:55 +0100 (CET)
-Received: from aer-iport-6.cisco.com (aer-iport-6.cisco.com [173.38.203.68])
- by mails.dpdk.org (Postfix) with ESMTPS id A16D44026A
- for <dev@dpdk.org>; Fri,  6 Nov 2026 10:25:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cisco.com; i=@cisco.com; l=3524; q=dns/txt;
- s=iport01; t=1793957116; x=1795166716;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=wd71omOdXERchwn0PGhxTf3gFDmCPZU7KtNmlf3Uvck=;
- b=lrFspWpsHzHOQb8CqEhxoPN+HalN17pqEkyaxf7oHwMO26q4Auw6mEhh
- a5f+FxmMF9vD1pzIiOdkglGQRwh0pTVkcQmjlzfCgsq+3+cihQVkFMM3d
- +pmzAXft3yP/rLrB4LDLGXwFoMZe6peynoNp9rj+6O1pDdExxQRJsefwn
- jBaL3Kqy0zehxLXZGlbSmoST6Hy00nRz75cFlT0CfsPneWwbR9PNhMFBc
- HjOtyeJe3wBCN3VVAqT83oLBJ0a9HoW42btbHw/GSwoH/YO8DRrpP0Ir1
- VXMnR7L+3dlFXnoYsYTHajJeByFLSfbzftEJJ9lDhVFb0tmKxuRj+z9WY A==;
-X-CSE-ConnectionGUID: k5fSvZImSuGnXMS8/BiekQ==
-X-CSE-MsgGUID: aREmW3ryQXO13oMQfIDjVA==
-X-IPAS-Result: =?us-ascii?q?A0BBAgBlm+1q/9JK/pBaglmCV4FVQ0mWS4tokjyBJANXD?=
- =?us-ascii?q?wEBAQ9RBAEBhQWOHwImNAkOAQIEAwIDAQEBAQEBAQEBAQEBCgEBBQEBAQIBB?=
- =?us-ascii?q?wWBDhOGXJAVKwsBRoEBPBODAoI7AzcDvDmBeTOBAYR+2EwNcoFoAQsUAYE4i?=
- =?us-ascii?q?D+FJIVzJxuBSUSBFYNpgh+IagSDLpBFhnlIgR4DWSwBVRMNCgsHBYFoAzUSK?=
- =?us-ascii?q?hVuMh2BIz4XgQcbBgWBHYEegRKBB12BKyhdASGBCIF2AoJRggACAUlBDgdFU?=
- =?us-ascii?q?wklQxJHJCIIEgkBExosCoEaNTwJJj8VDGQIAxoFQAIfCAINDHQ5EDAeJC8FH?=
- =?us-ascii?q?CY+GwovGA1IESw3FRkEPm4Hkj2DEQEBgQ6BQwhMASyTSweyCk1xhCqbYoV8G?=
- =?us-ascii?q?jOXYZMPAZkIkhSSR4RpgWg8OYEgMxoIGxWDIlMZD918RjI9AgcCBw4DC5NmA?=
- =?us-ascii?q?QE?=
-IronPort-Data: A9a23:/pXjjqugJNSJJ/i8U0xPoUxZOefnVANfMUV32f8akzHdYApBsoF/q
- tZmKTvUbqmLamSgethzb4u19R4OuZ+Am943SwFsrC9nESoTgMeUXt7xwmUckM+xwmwvaGo9s
- q3yv/GZdJhcokf0/0nrb/656yYsjclkf5KkYMbcICd9WAR4fykojBNnioYRj5Vh6TSDK1vlV
- eja/YuFZzdJ5xYuajhKsvvb9Us21BjPkGpwUmIWNKgjUGD2zxH5PLpHTYmtIn3xRJVjH+LSb
- 47r0LGj82rFyAwmA9Wjn6yTWhVirmn6ZFXmZtJ+AsBOszAazsAA+v9T2Mk0NS+7vw60c+VZk
- 72hg3AfpTABZcUgkMxFO/VR/roX0aduoNcrKlDn2SCfItGvn3bEm51T4E8K0YIw+bt5On981
- PkjNR8LXjW416Wcwb+4c7w57igjBJGD0II3s3x6iDWcBvE8TNWbEuPB5MRT23E7gcUm8fT2P
- pZFL2AyMFKfP1sVYw9/5JEWxI9EglH9bzpcrF+JjaE2+GPUigd21dABNfKIK4TXFZwPzi50o
- ErPxUn8PUoAJeWv7mPe9VeViM7jnx3SDdd6+LqQs6QCbEeo7mAeFjUaTVe45/6jhSaWUchCI
- EFS4CslraEo+FesSPH8WQG1pDiPuRt0ZjZLO+Q38kSJj6HT+QvcXjlCRT9aY9tgv8gzLdA36
- mK0cxrSLWQHmNWopbi1r994cRva1fApEFI/
-IronPort-HdrOrdr: A9a23:/XvXvaFBP3bGJcFBpLqE3MeALOsnbusQ8zAXPo5KJSC9Ffbo9f
- xG88506faZslwssRIb6LO90cu7IE80nKQdieIs1NyZMzUO1lHEEGgb1+vf6gylPTHi/ehA0q
- olWa1/BNrsSWVet6/BkWyF+xJK+qjhzEhu7t2uq0tQcQ==
-X-Talos-CUID: 9a23:RCQRAWwl25+xukEWy2kJBgUXR84ebE/8yUzNDEmILF05D5eURFyprfY=
-X-Talos-MUID: 9a23:SpXYPwglUn2HoGK5/CTfocMpPf1F5pv1ElE0obJf4M6hDCJRFzWjpWHi
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.27,197,1787011200"; d="scan'208";a="59058128"
-Received: from aer-l-core-09.cisco.com ([144.254.74.210])
- by aer-iport-6.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 06 Nov 2026 09:25:15 +0000
-Received: from localhost (unknown [10.189.100.82])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest
- SHA256) (No client certificate requested)
- by aer-l-core-09.cisco.com (Postfix) with ESMTPS id 9CE4D1800011D;
- Fri,  6 Nov 2026 09:25:15 +0000 (GMT)
-From: Jerome Tollet <jtollet@cisco.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 26345402D1;
+	Fri,  6 Nov 2026 12:17:54 +0100 (CET)
+Received: from fout-a5-smtp.messagingengine.com
+ (fout-a5-smtp.messagingengine.com [103.168.172.148])
+ by mails.dpdk.org (Postfix) with ESMTPS id A9706402B8
+ for <dev@dpdk.org>; Fri,  6 Nov 2026 12:17:52 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.phl.internal (Postfix) with ESMTP id B0C9AEC018B
+ for <dev@dpdk.org>; Fri,  6 Nov 2026 06:17:51 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Fri, 06 Nov 2026 06:17:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1793963871;
+ x=1794050271; bh=zfEvQahE3K9DgVf1hpZUWpejpAQbti6fRPScZe/f1DM=; b=
+ w5/y1IGFK6VhqXOvBrcZ6gOdqRKufQi3GMj/PmK4gH2ncy7w3PvoOJ3i+hzA+XVu
+ gv97m6FyEzfy22+aTWrlpozE1zE/kivuAm/gZvbpjBj1omSsICdzyZeyrZZwCRCO
+ d0FHxP8euLp3q/+Nu5GGuyeW8bOlz3LtzX2Ip4iVuU2Nzdo7AlmVlexjtM3OOgPm
+ QdZALAU+OEflm7BcmWz+V9Z75P4/lRWx1SP1v3juaiZgSYDN5RCGlQkWGMAAbFHk
+ Bg7YoHEI9YpFuSuufsLZ0GkWaR7UJ8PluH/JQGki1ZCE2ezqMmvq7rUt8C4dvVDl
+ m6+lJG7tt6G16C02QMZybQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1793963871; x=
+ 1794050271; bh=zfEvQahE3K9DgVf1hpZUWpejpAQbti6fRPScZe/f1DM=; b=d
+ iOpeFizwJZo42/Z5h5KinAaL92N5JJm+pa6Intr8E8puPPYi6bMyaYfRQ5Qi27Lo
+ qSy0tpVnK1fP8wELDHa69pX1j+PYlEf07N/kHNa3NB6/qY1EyfCaAfrVN0N/PnHq
+ 9+ZW+0OwIr9RaD6hphEBDqQ1Ao3r83C4PAvYZvSWpDhMWZtwdmgnWR+qrPQ8i/hn
+ FwRhbg5FE9eA5ThoYB4kAXmfFJDFdm5O4PkvQGzVUQof71fUTqlKX+dS4yOOZp0Q
+ A2RABRBsd5Dh2kmg08OfKMwvbPOz7/n0uJeWnhuwKSss0ikFT53GC9zptq6IPyJg
+ jtJmoISbYkUb9Hldu0IjQ==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1793963871; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm3:rsa-sha256:TYu6/kOH3UNHBdVQQ4bo4+LUyGbku8P6FB4ILAWzJgHaFcO
+ uvu7kRBsmWIFB1g82eUFF6Or7reynWhrcayDS6z+S3dU+M0CCawUW0yHhA5LtJXB
+ Qh8YglYWy1txGY8TCjb7MjhxPiLV+1X5zOjMh3gANzU3QN1xCLoferDOPs0mdGmQ
+ ZafNfTvDZOB/uZPmAUaFuWKzODU7lzqI6dHm/Qh9Qz2SPWEWVH/RRVVNDqsoJT+N
+ ZniEAVkk2r9n1fZJDSDPnTHcFdAy1U+ZHU+j2roqAHGUvxo/6HRdbnxs8jwvkERo
+ t89r9KpoM1IuYA/fjs/qB5qgfQqIBC1gPxzgNlQ==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:JPAJL/mpp4bqLayrA70gX06XbnkswEQKjaExBOrmd28=:kGVhz3MvF1vwxVF2MJmp235nuY/qgZxXfhl3KerbXvQ=;
+X-ME-Sender: <xms:X7ftahoTATLvk6Ts5IxF4QMrNaZ_sLEadl-lS1l7y5Dmy4bL-EyTyQ>
+ <xme:X7ftav9qQSuHThcslHXBZ3WULUfwqunqAGV2tBE5mqzz96IHwaJuEoXIR3D-Bfw3P
+ wTxoI4ShOWfqRmuciz-6C5PQsZT126qV6OxrEqcbZSXS-4uh4Ah8BI>
+X-ME-Received: <xmr:X7ftag-yDgXqqC2TIaWaclHeWMmc-H718LnXrjhk5OWNSer2o8mcvQGMDfyH0dn1ktzFOvx6-8I80k8mo3kgqdM>
+X-ME-Proxy-Cause: dmFkZTGFJGy0hUx//7pniaptOJk4PoMC9/5OUkXODXw3cZYHgiUzY2VRS9mBSIXCNGmG+v
+ 8SYKLVQ5eudPOxrw01P4l9JLmYX8GCgNkWr1WMp5e7/VvBDEM8OIweGzv+zA16ToJcQ1u9
+ 5unv2LBGc1jkCx+z2QJgwLOvL8eJBCl78O5aE+tWJy1fsIw76Te2TBGhF757y74ovd1F56
+ DHhkUwb5FRBc4FzartODSFND8vYj3uzRRwlz3GTKMWz7SOBH+RaQa+X8KnxnipCgAmcjez
+ aE29wvUByh39H8LjrKby5Vt5SvERH17/eD+RYzBn7tQPwJPwh4zNgLcbt38KVgB++zXPWZ
+ p/Q8igxGB63XpeF/nHv4PKlhSTni7A/4wJhZAgr1tS7eLGV8jfVxoXvEt4Pg6n43WGxK/w
+ moI3tE4dWHl1IUqC0ksOlNX1zrPVs7tlDiwT7N9vQzwwvTOaU/ROKtkNZPzMjGVuTEhs0w
+ V8naw2hpIhExIwZ3sRStbL9kt6Q0lsWNByZ8XJJjbUV5aVM9YoTRAew2QmF0pyb7B0clRi
+ j6dGHQN3pWUdBVI3Df0J3VW3cwfoE+6rwNFBk4bxsh2fjUQNzGinxQGdO6UO/1q+7RjneJ
+ RI+lfUUSDhuKhRdWqbpLoe7v7GHj2Sb1WgUruMr6exrUqYcye0w1LuOlk1VQ
+X-ME-Proxy: <xmx:X7ftauvpolsY6cBsYnz6PHAy43QjgfaX_n1_CymRFWubOCcYYq3YqA>
+ <xmx:X7ftajqxcwXuox0mdFS3CGAQQ3q169-Xa5-v-gsje5zleb_Mm4jV4g>
+ <xmx:X7ftarnazhiwov_gtp0YGookqODaOoImV_Rse3DuUiRoe_KJqYLFTw>
+ <xmx:X7ftanzU52JNNIYUCqkZpRHgOPmbqvZYeCHRC5Z-au8rHXagVrvPCw>
+ <xmx:X7ftaicTnZqCVXYl9vsLecZ6IrqpMxH32OKN90RhN3dKNpo4vVyPn_Ni>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 6 Nov 2026 06:17:51 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: David Marchand <david.marchand@redhat.com>
 Cc: dev@dpdk.org
-Subject: [PATCH] net/intel/common: track all RS buckets used by a Tx packet
-Date: Fri,  6 Nov 2026 10:25:14 +0100
-Message-ID: <20261106092514.76289-1-jtollet@cisco.com>
-X-Mailer: git-send-email 2.56.0
+Subject: Re: [PATCH] ipc: increase hotplug devargs limit
+Date: Fri, 06 Nov 2026 12:17:49 +0100
+Message-ID: <qp7MH_QfRzaHgjOqw40uCA@monjalon.net>
+In-Reply-To: <CAJFAV8yi5jPC-S=-ByFn80eEgnccWH5T1n6UeLug7fSATJJeKQ@mail.gmail.com>
+References: <20261103170717.1243319-1-thomas@monjalon.net>
+ <CAJFAV8yi5jPC-S=-ByFn80eEgnccWH5T1n6UeLug7fSATJJeKQ@mail.gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Outbound-Client-TLS: ANONYMOUS; unknown [10.189.100.82]; TLSv1.3;
- TLS_AES_256_GCM_SHA384; 256
-X-Outbound-SMTP-Client: 10.189.100.82, [10.189.100.82]
-X-Outbound-Node: aer-l-core-09.cisco.com
-X-Mailman-Approved-At: Fri, 06 Nov 2026 11:55:54 +0100
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,93 +105,93 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-A TSO packet can use more descriptors than tx_rs_thresh. The scalar Tx
-path records the completion descriptor only for the bucket containing
-the packet's first descriptor. If the packet fills the next bucket,
-that bucket has no completion entry. Cleanup then stops reclaiming
-descriptors and the Tx ring stalls.
+06/11/2026 10:58, David Marchand:
+> On Tue, 3 Nov 2026 at 18:07, Thomas Monjalon <thomas@monjalon.net> wrote:
+> >
+> > Derive the hotplug devargs buffer size from the IPC parameter capacity.
+> > This increases the maximum devargs length in multi-process mode
+> > from 127 to 247 bytes, excluding the terminating null byte.
+> >
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> > ---
+> >  lib/eal/common/eal_common_dev.c | 2 +-
+> >  lib/eal/common/hotplug_mp.h     | 8 +++++++-
+> >  2 files changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/lib/eal/common/eal_common_dev.c b/lib/eal/common/eal_common_dev.c
+> > index f42a8d2349..febb584313 100644
+> > --- a/lib/eal/common/eal_common_dev.c
+> > +++ b/lib/eal/common/eal_common_dev.c
+> > @@ -276,7 +276,7 @@ rte_dev_probe(const char *devargs)
+> >                 goto skip_mp_req;
+> >
+> >         if (strlen(devargs) >= EAL_DEV_MP_DEV_ARGS_MAX_LEN) {
+> > -               EAL_LOG(ERR, "devargs truncated (len %zu, max %d)",
+> > +               EAL_LOG(ERR, "devargs truncated (len %zu, max %zu)",
+> >                         strlen(devargs), EAL_DEV_MP_DEV_ARGS_MAX_LEN);
+> >                 return -E2BIG;
+> >         }
+> > diff --git a/lib/eal/common/hotplug_mp.h b/lib/eal/common/hotplug_mp.h
+> > index 7221284286..bd2f0f296a 100644
+> > --- a/lib/eal/common/hotplug_mp.h
+> > +++ b/lib/eal/common/hotplug_mp.h
+> > @@ -5,6 +5,7 @@
+> >  #ifndef _HOTPLUG_MP_H_
+> >  #define _HOTPLUG_MP_H_
+> >
+> > +#include "rte_eal.h"
+> >  #include "rte_dev.h"
+> >
+> >  #define EAL_DEV_MP_ACTION_REQUEST      "eal_dev_mp_request"
+> > @@ -12,7 +13,9 @@
+> >
+> >  #define EAL_DEV_MP_DEV_NAME_MAX_LEN RTE_DEV_NAME_MAX_LEN
+> >  #define EAL_DEV_MP_BUS_NAME_MAX_LEN 32
+> > -#define EAL_DEV_MP_DEV_ARGS_MAX_LEN 128
+> > +#define EAL_DEV_MP_DEV_ARGS_MAX_LEN (RTE_MP_MAX_PARAM_LEN \
+> > +       - sizeof(enum eal_dev_req_type) - sizeof(int))
+> > +       /* minus t and result from struct eal_dev_mp_req */
+> >
+> >  enum eal_dev_req_type {
+> >         EAL_DEV_REQ_TYPE_ATTACH,
+> > @@ -27,6 +30,9 @@ struct eal_dev_mp_req {
+> >         int result;
+> >  };
+> >
+> > +static_assert(sizeof(struct eal_dev_mp_req) <= RTE_MP_MAX_PARAM_LEN,
+> > +       "Hotplug message struct exceeds IPC parameter capacity");
+> > +
+> 
+> A bit ugly to list those fields, even with the assert.
+> 
+> No strong opinion, just listing an alternative.
+> 
+> The idea is to switch to a flexible array for devargs.
+> 
+>  struct eal_dev_mp_req {
+>      enum eal_dev_req_type t;
+> -    char devargs[EAL_DEV_MP_DEV_ARGS_MAX_LEN];
+>      int result;
+> +    char devargs[];
+>  };
+> 
+> +#define EAL_DEV_MP_DEV_ARGS_MAX_LEN \
+> +    (RTE_MP_MAX_PARAM_LEN - sizeof(struct eal_dev_mp_req))
+> 
+> 
+> This requires an update of
+> eal_dev_hotplug_request_to_primary/eal_dev_hotplug_request_to_secondary
+> so they manipulate a rte_mp_msg object.
+> A bonus side effect is that it avoids copies on stack for the message,
+> as the caller already provides the message buffer.
 
-Record the packet's last descriptor for every bucket it crosses, and
-wrap the bucket index at the end of the ring.
+Yes it looks better.
 
-On E810 PF (ice) and VF (iavf) with 2K buffers and tx_rs_thresh=32,
-65K GSO NVMe/TCP traffic reproduced the stall. With this change,
-4K and 128K CRC tests passed with TSO enabled on both.
-
-A standalone DPDK iavf reproducer, with no VPP, sends a 31-descriptor
-TSO packet followed by a 33-descriptor TSO packet. Both pass
-rte_eth_tx_prepare(). The original PMD leaves rs_last_id[1] pointing
-to descriptor 0 and stalls after 991 further packets. With this fix,
-it records descriptor 63 and transmits all 2048 further packets.
-
-Fixes: 8f4396b9f63c ("net/intel: use separate array for desc status tracking")
-Cc: stable@dpdk.org
-Signed-off-by: Jerome Tollet <jtollet@cisco.com>
----
- .mailmap                             |  1 +
- drivers/net/intel/common/tx_scalar.h | 23 +++++++++++++----------
- 2 files changed, 14 insertions(+), 10 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index 754dd9e760..ff75ec12a2 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -752,6 +752,7 @@ Jerin Jacob <jerinj@marvell.com> <jerin.jacob@caviumnetworks.com>
- Jerin Jacob <jerinj@marvell.com> <jerinjacobk@gmail.com>
- Jeroen de Borst <jeroendb@google.com>
- Jerome Jutteau <jerome.jutteau@outscale.com>
-+Jerome Tollet <jtollet@cisco.com>
- Jerry Hao OS <jerryhao@os.amperecomputing.com>
- Jerry Lilijun <jerry.lilijun@huawei.com>
- Jerry Zhang <jerry.zhang@intel.com>
-diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
-index 7368d3abc9..c328f8d56b 100644
---- a/drivers/net/intel/common/tx_scalar.h
-+++ b/drivers/net/intel/common/tx_scalar.h
-@@ -614,22 +614,25 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
- end_pkt:
- 		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
- 
--		/* Check if packet crosses into a new RS threshold bucket.
--		 * The RS bit is set on the last descriptor when we move from one bucket to another.
--		 * For example, with tx_rs_thresh=32 and a 5-descriptor packet using slots 30-34:
--		 *   - pkt_rs_idx = 30 >> 5 = 0 (started in bucket 0)
--		 *   - tx_last = 34, so 35 >> 5 = 1 (next packet is in bucket 1)
--		 *   - Since 0 != 1, set RS bit on descriptor 34, and record rs_last_id[0] = 34
-+		/* A packet may consume more than one RS threshold bucket. The
-+		 * last descriptor reports completion for every bucket crossed by
-+		 * that packet, including buckets with no packet start.
- 		 */
--		uint16_t next_rs_idx = ((tx_last + 1) >> txq->log2_rs_thresh);
-+		const uint16_t nb_rs_buckets = txq->nb_tx_desc >> txq->log2_rs_thresh;
-+		uint16_t next_rs_idx = (tx_last + 1) >> txq->log2_rs_thresh;
-+		uint16_t rs_idx = pkt_rs_idx;
- 
-+		if (next_rs_idx == nb_rs_buckets)
-+			next_rs_idx = 0;
- 		if (next_rs_idx != pkt_rs_idx) {
--			/* Packet crossed into a new bucket - set RS bit on last descriptor */
- 			txd->cmd_type_offset_bsz |=
- 					rte_cpu_to_le_64(CI_TX_DESC_CMD_RS << CI_TXD_QW1_CMD_S);
- 
--			/* Record the last descriptor ID for the bucket we're leaving */
--			txq->rs_last_id[pkt_rs_idx] = tx_last;
-+			do {
-+				txq->rs_last_id[rs_idx] = tx_last;
-+				if (++rs_idx == nb_rs_buckets)
-+					rs_idx = 0;
-+			} while (rs_idx != next_rs_idx);
- 		}
- 
- 		if (ts_fns != NULL)
--- 
-2.56.0
 
