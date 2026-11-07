@@ -2,51 +2,76 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88F7606A32D
-	for <dpdk-dev@archiver.kernel.org>; Sat,  7 Nov 2026 03:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476F2606A326
+	for <dpdk-dev@archiver.kernel.org>; Sat,  7 Nov 2026 05:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=marvell.com header.i=@marvell.com header.a=rsa-sha256 header.s=pfpt0220 header.b=L4FKGDlh
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D8CB42E8E;
-	Sat,  7 Nov 2026 04:16:11 +0100 (CET)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
- by mails.dpdk.org (Postfix) with ESMTPS id CBE2D42E63;
- Sat,  7 Nov 2026 04:16:08 +0100 (CET)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mxct.zte.com.cn (FangMail) with ESMTPS id 4jM1Qr6tYNz55y2H;
- Sat, 07 Nov 2026 11:16:04 +0800 (CST)
-Received: from szxlzmapp02.zte.com.cn ([10.5.231.79])
- by mse-fl1.zte.com.cn with SMTP id 6A73FnP7019073;
- Sat, 7 Nov 2026 11:15:49 +0800 (+08)
- (envelope-from wang.junlong1@zte.com.cn)
-Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Sat, 7 Nov 2026 11:15:50 +0800
-X-Zmail-TransId: 3e816aee97e602a-ce9cb
-X-Zmail-LocalSMTP: 1
-X-Zmail-RealSender: wang.junlong1@zte.com.cn
-From: Junlong Wang <wang.junlong1@zte.com.cn>
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org, Junlong Wang <wang.junlong1@zte.com.cn>, stable@dpdk.org
-Subject: [PATCH v1 7/8] net/zxdh: check full 16-bit module id of received
- messages
-Date: Sat,  7 Nov 2026 11:04:47 +0800
-Message-ID: <20261107030448.2891345-8-wang.junlong1@zte.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261107030448.2891345-1-wang.junlong1@zte.com.cn>
-References: <20261107030448.2891345-1-wang.junlong1@zte.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 8D2664042E;
+	Sat,  7 Nov 2026 06:11:56 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTPS id 26BB3402F0
+ for <dev@dpdk.org>; Sat,  7 Nov 2026 06:11:55 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 6A72DRGM972482 for <dev@dpdk.org>; Fri, 6 Nov 2026 21:11:53 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=m2ybX7jruKqOCEAy2Y26x2e
+ cnJZC88s5NjqCeacmc/g=; b=L4FKGDlhraGAS3gysDPl7sW+iNAqwUeyeWHrryy
+ ump1ryGuho8lRL3GEFP7optcx+WMXnfPsOBBCCi38yIsJyYK6RGPjyBnDLAtaVCm
+ K/PEKv34tjzx6EpzhN23R/XQi8ysWJtkC+KHEittcCZkJyheNGv3BMlX5OM7OGkj
+ +LEFppHuBmdDIjd3wLoG6k+8UBs9lvIQd/OFLajUB8QYlgTLyKVHGkS3xcZe8hGc
+ EhSVIxvJOsr2+d6873CUNoJ9csjq1Ufbb2udd+1lDvoedseIKghmc4P4g5HGJO9A
+ MOLH4xzeyAmD73VQ10SyvqDPW1mbt+YrfD2tGZyA1jqqXMg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4hs3qunv32-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Fri, 06 Nov 2026 21:11:53 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 6 Nov 2026 21:11:53 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Fri, 6 Nov 2026 21:11:53 -0800
+Received: from LYYJYPGKF4.marvell.com (unknown [10.28.161.76])
+ by maili.marvell.com (Postfix) with ESMTP id 414D35B6966;
+ Fri,  6 Nov 2026 21:11:50 -0800 (PST)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>, "Shijith
+ Thotton" <sthotton@marvell.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH] event/cnxk: fix new-event burst enqueue with LMTST
+Date: Sat, 7 Nov 2026 10:41:38 +0530
+Message-ID: <20261107051139.37923-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.50.1
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL: mse-fl1.zte.com.cn 6A73FnP7019073
-X-TLS: YES
-X-ENVELOPE-SENDER: wang.junlong1@zte.com.cn
-X-SOURCE-IP: 10.5.228.132 unknown Sat, 07 Nov 2026 11:16:04 +0800
-X-CLEAN: YES
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AEE97F4.000/4jM1Qr6tYNz55y2H
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=FJqOVOos c=1 sm=1 tr=0 ts=6aeeb319 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=OzZod3_BVdjU1s48K54A:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA3MDAyMCBTYWx0ZWRfX0SzNZTFgbd25
+ i4QsH6I6nqj5FPGy/082tEoglvl8DoxAblfwrPgp22ZLSmqV9xA+U7OAYIaIFzVYw0oXJYkiAn3
+ pB+s7ws2+nPGLM3XjPX7csH09rhbIZg=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA3MDAyMCBTYWx0ZWRfXx+XzNMNBtrQ1
+ ioZ5C2Up+ks75uStWjwPK/z52VktLIjwJHinNooZLRvKBKvj0zRQOi2W2S66HSkG6OCU3NHht5t
+ TtBTYcRjQxGufClFjyxFpjYrK2zFUR87q5SN8nsamdt8NN+bWOcSRK/9SAMdMCSCj3P7eDDDWZI
+ Ip5mMc0uaq6HdVQttDRBV0TJ/CSmSFfnpm6RtSuMlioXLFfAC4+Sqzx+eDFFD3ToDzEHRnt7hNE
+ 79lqxpgX/w5x0CdG5PrrIguwu3IekFyfbyRKxwc3cOi6z9O1BgXg83+/L7g0T0s1bsM8kMqDqHR
+ f/W30brMVe2gzVPeJOSX0wVp1SqFP8nzR/jQDBwtWj8RCcrtlws20lZ/h7VZFMAXltbFPZGSGf+
+ WaQLSwoH92dErWrtv7i6pCZi3F32acevXlPyR/AJmB/Jvi7TZxVtN9uHP4OCyDI6JKyyYwJNoDm
+ eqN9VX4Vha/HoesYa5g==
+X-Proofpoint-GUID: MaZ4ivDgYrhBvsYCXZVWYAdeHr8r9pss
+X-Proofpoint-ORIG-GUID: MaZ4ivDgYrhBvsYCXZVWYAdeHr8r9pss
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-07_01,2026-11-06_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,144 +81,84 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
+Add an I/O write barrier after LMTST submissions in the new-event
+helper so the stores are ordered before the next iteration.
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
+Enqueue small bursts, below one LMT line of entries, event by event
+instead of using the LMTST path.
 
+Fixes: c3320d21b475 ("event/cnxk: use LMTST for enqueue new burst")
+Fixes: b08b193bceab ("event/cnxk: add CN20K SSO enqueue fast path")
 
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+---
+ drivers/event/cnxk/cn10k_worker.c | 9 +++++++++
+ drivers/event/cnxk/cn20k_worker.c | 9 +++++++++
+ 2 files changed, 18 insertions(+)
 
-
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-VGhlIGhlYWRlciBjaGVjayBvZiBhIHJlY2VpdmVkIEJBUiBjaGFubmVsIG1lc3NhZ2UgY29waWVz
-IHRoZSAxNi1iaXQNCm1vZHVsZV9pZCBmaWVsZCBpbnRvIGEgdWludDhfdCBsb2NhbCBiZWZvcmUg
-Y29tcGFyaW5nIGl0IHdpdGggdGhlDQpoYW5kbGVyIHRhYmxlIHNpemUsIGFuZCB0aGUgY2FsbGVy
-cyB0aGVuIGluZGV4DQp6eGRoX21zZ19yZWN2X2Z1bmNfdGJsW10gd2l0aCB0aGUgZnVsbCB1bnRy
-dW5jYXRlZCB2YWx1ZS4gQW55DQptb2R1bGVfaWQgd2hvc2UgbG93IGJ5dGUgaXMgYmVsb3cgWlhE
-SF9CQVJfTVNHX01PRFVMRV9OVU0gcGFzc2VzIHRoZQ0KY2hlY2ssIHNvIGEgc2VuZGVyIGNhbiBz
-ZWxlY3QgYW1vbmcgYWJvdXQgMjUsNTAwIHNsb3RzIHBhc3QgdGhlDQoxMDAtZW50cnkgdGFibGUs
-IGFuZCBhIHN5bmNocm9ub3VzIG1lc3NhZ2UgbWFrZXMgdGhlIFBGIGNhbGwgd2hhdGV2ZXINCndv
-cmQgaXQgZmluZHMgdGhlcmUuIFdpdGggdGhlIGRlZmF1bHQgZ2NjIGJ1aWxkIHRoZSByZWFjaGFi
-bGUgc2xvdHMNCmluc2lkZSBnX3NlcWlkX3JpbmcgaG9sZCBzbWFsbCBpbnRlZ2VycyBzZXQgYXQg
-aW5pdCwgc28gb25lIGZvcmdlZA0KbWVzc2FnZSBmcm9tIGEgVkYganVtcHMgdG8gYSBsb3cgYWRk
-cmVzcyBhbmQga2lsbHMgdGhlIFBGIHByb2Nlc3MuDQoNCldpZGVuIHRoZSBsb2NhbCB0byB1aW50
-MTZfdCBhbmQgZHJvcCB0aGUgKHVpbnQ4X3QpIGNhc3Qgc28gdGhlIGNoZWNrDQpjb21wYXJlcyB0
-aGUgc2FtZSB2YWx1ZSB0aGUgY2FsbGVycyB1c2UgYXMgdGhlIGluZGV4LiBUaGlzIGlzIHRoZQ0K
-b25seSBwbGFjZSBhIHJlY2VpdmVkIG1vZHVsZV9pZCBpcyB2YWxpZGF0ZWQ7IHRoZSBzZW5kIHNp
-ZGUgYWxyZWFkeQ0KY29tcGFyZXMgdGhlIGZ1bGwgdmFsdWUuIFZhbGlkIGlkcyAwLTk5IGFyZSB1
-bmFmZmVjdGVkLg0KDQpGaXhlczogMzYzMGFjOGJkODFmICgibmV0L3p4ZGg6IGNvbmZpZ3VyZSBp
-bnRlcnJ1cHQiKQ0KQ2M6IHN0YWJsZUBkcGRrLm9yZw0KDQpTaWduZWQtb2ZmLWJ5OiBKdW5sb25n
-IFdhbmcgPHdhbmcuanVubG9uZzFAenRlLmNvbS5jbj4NCi0tLQ0KIGRyaXZlcnMvbmV0L3p4ZGgv
-enhkaF9tc2cuYyB8IDQgKystLQ0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIg
-ZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMg
-Yi9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMNCmluZGV4IDk1YjJmNWE2MGIuLjc3YjhkZjJm
-MTIgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMNCisrKyBiL2RyaXZl
-cnMvbmV0L3p4ZGgvenhkaF9tc2cuYw0KQEAgLTk2MCw3ICs5NjAsNyBAQCBzdGF0aWMgdWludDE2
-X3QNCiB6eGRoX2Jhcl9jaGFuX21zZ19oZWFkZXJfY2hlY2soc3RydWN0IHp4ZGhfYmFyX21zZ19o
-ZWFkZXIgKm1zZ19oZWFkZXIpDQogew0KIAl1aW50MTZfdCBsZW4gPSAwOw0KLQl1aW50OF90IG1v
-ZHVsZV9pZCA9IDA7DQorCXVpbnQxNl90IG1vZHVsZV9pZCA9IDA7DQogDQogCWlmIChtc2dfaGVh
-ZGVyLT52YWxpZCAhPSBaWERIX0JBUl9NU0dfQ0hBTl9VU0VEKSB7DQogCQlQTURfTVNHX0xPRyhF
-UlIsICJyZWN2IGhlYWRlciBFUlI6IHZhbGlkIGxhYmVsIGlzIG5vdCB1c2VkIik7DQpAQCAtOTY4
-LDcgKzk2OCw3IEBAIHp4ZGhfYmFyX2NoYW5fbXNnX2hlYWRlcl9jaGVjayhzdHJ1Y3QgenhkaF9i
-YXJfbXNnX2hlYWRlciAqbXNnX2hlYWRlcikNCiAJfQ0KIAltb2R1bGVfaWQgPSBtc2dfaGVhZGVy
-LT5tb2R1bGVfaWQ7DQogDQotCWlmIChtb2R1bGVfaWQgPj0gKHVpbnQ4X3QpWlhESF9CQVJfTVNH
-X01PRFVMRV9OVU0pIHsNCisJaWYgKG1vZHVsZV9pZCA+PSBaWERIX0JBUl9NU0dfTU9EVUxFX05V
-TSkgew0KIAkJUE1EX01TR19MT0coRVJSLCAicmVjdiBoZWFkZXIgRVJSOiBpbnZhbGlkIG1vZHVs
-ZV9pZDogJXUiLCBtb2R1bGVfaWQpOw0KIAkJcmV0dXJuIFpYREhfQkFSX01TR19FUlJfTU9EVUxF
-Ow0KIAl9DQotLSANCjIuMjcuMA==
-
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-VGhlJm5ic3A7aGVhZGVyJm5ic3A7Y2hlY2smbmJzcDtvZiZuYnNwO2EmbmJzcDtyZWNlaXZlZCZu
-YnNwO0JBUiZuYnNwO2NoYW5uZWwmbmJzcDttZXNzYWdlJm5ic3A7Y29waWVzJm5ic3A7dGhlJm5i
-c3A7MTYtYml0PGJyIC8+bW9kdWxlX2lkJm5ic3A7ZmllbGQmbmJzcDtpbnRvJm5ic3A7YSZuYnNw
-O3VpbnQ4X3QmbmJzcDtsb2NhbCZuYnNwO2JlZm9yZSZuYnNwO2NvbXBhcmluZyZuYnNwO2l0Jm5i
-c3A7d2l0aCZuYnNwO3RoZTxiciAvPmhhbmRsZXImbmJzcDt0YWJsZSZuYnNwO3NpemUsJm5ic3A7
-YW5kJm5ic3A7dGhlJm5ic3A7Y2FsbGVycyZuYnNwO3RoZW4mbmJzcDtpbmRleDxiciAvPnp4ZGhf
-bXNnX3JlY3ZfZnVuY190YmxbXSZuYnNwO3dpdGgmbmJzcDt0aGUmbmJzcDtmdWxsJm5ic3A7dW50
-cnVuY2F0ZWQmbmJzcDt2YWx1ZS4mbmJzcDtBbnk8YnIgLz5tb2R1bGVfaWQmbmJzcDt3aG9zZSZu
-YnNwO2xvdyZuYnNwO2J5dGUmbmJzcDtpcyZuYnNwO2JlbG93Jm5ic3A7WlhESF9CQVJfTVNHX01P
-RFVMRV9OVU0mbmJzcDtwYXNzZXMmbmJzcDt0aGU8YnIgLz5jaGVjaywmbmJzcDtzbyZuYnNwO2Em
-bmJzcDtzZW5kZXImbmJzcDtjYW4mbmJzcDtzZWxlY3QmbmJzcDthbW9uZyZuYnNwO2Fib3V0Jm5i
-c3A7MjUsNTAwJm5ic3A7c2xvdHMmbmJzcDtwYXN0Jm5ic3A7dGhlPGJyIC8+MTAwLWVudHJ5Jm5i
-c3A7dGFibGUsJm5ic3A7YW5kJm5ic3A7YSZuYnNwO3N5bmNocm9ub3VzJm5ic3A7bWVzc2FnZSZu
-YnNwO21ha2VzJm5ic3A7dGhlJm5ic3A7UEYmbmJzcDtjYWxsJm5ic3A7d2hhdGV2ZXI8YnIgLz53
-b3JkJm5ic3A7aXQmbmJzcDtmaW5kcyZuYnNwO3RoZXJlLiZuYnNwO1dpdGgmbmJzcDt0aGUmbmJz
-cDtkZWZhdWx0Jm5ic3A7Z2NjJm5ic3A7YnVpbGQmbmJzcDt0aGUmbmJzcDtyZWFjaGFibGUmbmJz
-cDtzbG90czxiciAvPmluc2lkZSZuYnNwO2dfc2VxaWRfcmluZyZuYnNwO2hvbGQmbmJzcDtzbWFs
-bCZuYnNwO2ludGVnZXJzJm5ic3A7c2V0Jm5ic3A7YXQmbmJzcDtpbml0LCZuYnNwO3NvJm5ic3A7
-b25lJm5ic3A7Zm9yZ2VkPGJyIC8+bWVzc2FnZSZuYnNwO2Zyb20mbmJzcDthJm5ic3A7VkYmbmJz
-cDtqdW1wcyZuYnNwO3RvJm5ic3A7YSZuYnNwO2xvdyZuYnNwO2FkZHJlc3MmbmJzcDthbmQmbmJz
-cDtraWxscyZuYnNwO3RoZSZuYnNwO1BGJm5ic3A7cHJvY2Vzcy48YnIgLz4NPGJyIC8+V2lkZW4m
-bmJzcDt0aGUmbmJzcDtsb2NhbCZuYnNwO3RvJm5ic3A7dWludDE2X3QmbmJzcDthbmQmbmJzcDtk
-cm9wJm5ic3A7dGhlJm5ic3A7KHVpbnQ4X3QpJm5ic3A7Y2FzdCZuYnNwO3NvJm5ic3A7dGhlJm5i
-c3A7Y2hlY2s8YnIgLz5jb21wYXJlcyZuYnNwO3RoZSZuYnNwO3NhbWUmbmJzcDt2YWx1ZSZuYnNw
-O3RoZSZuYnNwO2NhbGxlcnMmbmJzcDt1c2UmbmJzcDthcyZuYnNwO3RoZSZuYnNwO2luZGV4LiZu
-YnNwO1RoaXMmbmJzcDtpcyZuYnNwO3RoZTxiciAvPm9ubHkmbmJzcDtwbGFjZSZuYnNwO2EmbmJz
-cDtyZWNlaXZlZCZuYnNwO21vZHVsZV9pZCZuYnNwO2lzJm5ic3A7dmFsaWRhdGVkOyZuYnNwO3Ro
-ZSZuYnNwO3NlbmQmbmJzcDtzaWRlJm5ic3A7YWxyZWFkeTxiciAvPmNvbXBhcmVzJm5ic3A7dGhl
-Jm5ic3A7ZnVsbCZuYnNwO3ZhbHVlLiZuYnNwO1ZhbGlkJm5ic3A7aWRzJm5ic3A7MC05OSZuYnNw
-O2FyZSZuYnNwO3VuYWZmZWN0ZWQuPGJyIC8+DTxiciAvPkZpeGVzOiZuYnNwOzM2MzBhYzhiZDgx
-ZiZuYnNwOygmcXVvdDtuZXQvenhkaDombmJzcDtjb25maWd1cmUmbmJzcDtpbnRlcnJ1cHQmcXVv
-dDspPGJyIC8+Q2M6Jm5ic3A7c3RhYmxlQGRwZGsub3JnPGJyIC8+DTxiciAvPlNpZ25lZC1vZmYt
-Ynk6Jm5ic3A7SnVubG9uZyZuYnNwO1dhbmcmbmJzcDsmbHQ7d2FuZy5qdW5sb25nMUB6dGUuY29t
-LmNuJmd0Ow08YnIgLz4tLS08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMm
-bmJzcDt8Jm5ic3A7NCZuYnNwOysrLS08YnIgLz4mbmJzcDsxJm5ic3A7ZmlsZSZuYnNwO2NoYW5n
-ZWQsJm5ic3A7MiZuYnNwO2luc2VydGlvbnMoKyksJm5ic3A7MiZuYnNwO2RlbGV0aW9ucygtKTxi
-ciAvPg08YnIgLz5kaWZmJm5ic3A7LS1naXQmbmJzcDthL2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9t
-c2cuYyZuYnNwO2IvZHJpdmVycy9uZXQvenhkaC96eGRoX21zZy5jPGJyIC8+aW5kZXgmbmJzcDs5
-NWIyZjVhNjBiLi43N2I4ZGYyZjEyJm5ic3A7MTAwNjQ0PGJyIC8+LS0tJm5ic3A7YS9kcml2ZXJz
-L25ldC96eGRoL3p4ZGhfbXNnLmM8YnIgLz4rKysmbmJzcDtiL2RyaXZlcnMvbmV0L3p4ZGgvenhk
-aF9tc2cuYzxiciAvPkBAJm5ic3A7LTk2MCw3Jm5ic3A7Kzk2MCw3Jm5ic3A7QEAmbmJzcDtzdGF0
-aWMmbmJzcDt1aW50MTZfdDxiciAvPiZuYnNwO3p4ZGhfYmFyX2NoYW5fbXNnX2hlYWRlcl9jaGVj
-ayhzdHJ1Y3QmbmJzcDt6eGRoX2Jhcl9tc2dfaGVhZGVyJm5ic3A7Km1zZ19oZWFkZXIpPGJyIC8+
-Jm5ic3A7ezxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQxNl90Jm5ic3A7
-bGVuJm5ic3A7PSZuYnNwOzA7PGJyIC8+LSZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQ4X3Qm
-bmJzcDttb2R1bGVfaWQmbmJzcDs9Jm5ic3A7MDs8YnIgLz4rJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7dWludDE2X3QmbmJzcDttb2R1bGVfaWQmbmJzcDs9Jm5ic3A7MDs8YnIgLz4mbmJzcDsNPGJy
-IC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7aWYmbmJzcDsobXNnX2hlYWRlci0mZ3Q7
-dmFsaWQmbmJzcDshPSZuYnNwO1pYREhfQkFSX01TR19DSEFOX1VTRUQpJm5ic3A7ezxiciAvPiZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO1BNRF9N
-U0dfTE9HKEVSUiwmbmJzcDsmcXVvdDtyZWN2Jm5ic3A7aGVhZGVyJm5ic3A7RVJSOiZuYnNwO3Zh
-bGlkJm5ic3A7bGFiZWwmbmJzcDtpcyZuYnNwO25vdCZuYnNwO3VzZWQmcXVvdDspOzxiciAvPkBA
-Jm5ic3A7LTk2OCw3Jm5ic3A7Kzk2OCw3Jm5ic3A7QEAmbmJzcDt6eGRoX2Jhcl9jaGFuX21zZ19o
-ZWFkZXJfY2hlY2soc3RydWN0Jm5ic3A7enhkaF9iYXJfbXNnX2hlYWRlciZuYnNwOyptc2dfaGVh
-ZGVyKTxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO308YnIgLz4mbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDttb2R1bGVfaWQmbmJzcDs9Jm5ic3A7bXNnX2hlYWRlci0mZ3Q7
-bW9kdWxlX2lkOzxiciAvPiZuYnNwOw08YnIgLz4tJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7aWYm
-bmJzcDsobW9kdWxlX2lkJm5ic3A7Jmd0Oz0mbmJzcDsodWludDhfdClaWERIX0JBUl9NU0dfTU9E
-VUxFX05VTSkmbmJzcDt7PGJyIC8+KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO2lmJm5ic3A7KG1v
-ZHVsZV9pZCZuYnNwOyZndDs9Jm5ic3A7WlhESF9CQVJfTVNHX01PRFVMRV9OVU0pJm5ic3A7ezxi
-ciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-O1BNRF9NU0dfTE9HKEVSUiwmbmJzcDsmcXVvdDtyZWN2Jm5ic3A7aGVhZGVyJm5ic3A7RVJSOiZu
-YnNwO2ludmFsaWQmbmJzcDttb2R1bGVfaWQ6Jm5ic3A7JXUmcXVvdDssJm5ic3A7bW9kdWxlX2lk
-KTs8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDtyZXR1cm4mbmJzcDtaWERIX0JBUl9NU0dfRVJSX01PRFVMRTs8YnIgLz4mbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDt9PGJyIC8+LS0mbmJzcDsNPGJyIC8+Mi4yNy4wPGJyIC8+
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
+diff --git a/drivers/event/cnxk/cn10k_worker.c b/drivers/event/cnxk/cn10k_worker.c
+index f33c3a561a88..a8ddbc5d8bfb 100644
+--- a/drivers/event/cnxk/cn10k_worker.c
++++ b/drivers/event/cnxk/cn10k_worker.c
+@@ -350,6 +350,8 @@ cn10k_sso_hws_new_event_lmtst(struct cn10k_sso_hws *ws, uint8_t queue_id,
+ 		roc_lmt_submit_steorl(wdata[1], pa[1]);
+ 	}
+ 
++	rte_io_wmb();
++
+ 	left -= (sz0 + sz1);
+ 	if (left)
+ 		goto again;
+@@ -395,6 +397,13 @@ cn10k_sso_hws_enq_new_burst(void *port, const struct rte_event ev[],
+ 	uint8_t queue_id;
+ 	int32_t space;
+ 
++	if (nb_events < BIT(ROC_SSO_AW_PER_LMT_LINE_LOG2)) {
++		for (idx = 0; idx < nb_events; idx++)
++			if (!cn10k_sso_hws_new_event(ws, &ev[idx]))
++				break;
++		return idx;
++	}
++
+ 	/* Do a common back-pressure check and return */
+ 	space = sso_read_xaq_space(ws) - ws->xae_waes;
+ 	if (space <= 0)
+diff --git a/drivers/event/cnxk/cn20k_worker.c b/drivers/event/cnxk/cn20k_worker.c
+index 8c1df3dbafc1..c15e3cd46ae7 100644
+--- a/drivers/event/cnxk/cn20k_worker.c
++++ b/drivers/event/cnxk/cn20k_worker.c
+@@ -308,6 +308,8 @@ cn20k_sso_hws_new_event_lmtst(struct cn20k_sso_hws *ws, uint8_t queue_id,
+ 		roc_lmt_submit_steorl(wdata[1], pa[1]);
+ 	}
+ 
++	rte_io_wmb();
++
+ 	left -= (sz0 + sz1);
+ 	if (left)
+ 		goto again;
+@@ -350,6 +352,13 @@ cn20k_sso_hws_enq_new_burst(void *port, const struct rte_event ev[], uint16_t nb
+ 	uint8_t queue_id;
+ 	int32_t space;
+ 
++	if (nb_events < BIT(ROC_SSO_AW_PER_LMT_LINE_LOG2)) {
++		for (idx = 0; idx < nb_events; idx++)
++			if (!cn20k_sso_hws_new_event(ws, &ev[idx]))
++				break;
++		return idx;
++	}
++
+ 	/* Do a common back-pressure check and return */
+ 	space = sso_read_xaq_space(ws) - ws->xae_waes;
+ 	if (space <= 0)
+-- 
+2.50.1 (Apple Git-155)
 
