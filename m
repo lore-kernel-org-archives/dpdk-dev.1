@@ -2,50 +2,50 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F61606A326
-	for <dpdk-dev@archiver.kernel.org>; Sat,  7 Nov 2026 23:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B19606A326
+	for <dpdk-dev@archiver.kernel.org>; Sat,  7 Nov 2026 23:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=c7FmAl+x
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Nv4Pu3eZ
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C827D40EAB;
-	Sun,  8 Nov 2026 00:57:41 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 978DE40ED2;
+	Sun,  8 Nov 2026 00:57:43 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTPS id 25B3B40E24;
- Sun,  8 Nov 2026 00:57:39 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 03FA840ED2;
+ Sun,  8 Nov 2026 00:57:41 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1794095860; x=1825631860;
+ t=1794095863; x=1825631863;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=0tqyWSFpZwBNFxEdPjjoaJsapz3fIgpHAGlePTMh1A0=;
- b=c7FmAl+xHiwOHOgbvQ3YtKZ4UMBfsYAffFWzCqrOmS+vgyBx2AuGAwek
- 3Ecprpykal29eccLcOGvaPAaWtMp/4I9SQqahLFzxWYOsTVTxGHbIZCp4
- ZD+UxTt83EsW1gVcMXpf7yCnpHSBfGcS+6PAsYGiOdjCJd6+w1+iaTO14
- 5YxVlkzSioyzYVAkeYlZCsHqqjiM47Gg3G9iEiRhC2SttFq830OwTJTCR
- O5yIWNIXWWdP2PDwnumgp44VzcrUBTuxxWXkIloB9YR8S5ShjgcpBXeJ3
- 87VP7iHdqrHwQWtUqN9o7cGXJXtW9Gij60eqF1mB5JVABap+22tpD/Qkx A==;
-X-CSE-ConnectionGUID: Ns7svnY+RdCzbjGGLdJh6g==
-X-CSE-MsgGUID: r04kLTsRTjqq/zd4iwkeAg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11959"; a="2885097"
+ bh=WLN9Xkr+fjx2oSoE2lnjD2FS3oBL2oR0tU6EgFFHNpY=;
+ b=Nv4Pu3eZxO8wdxdHWOPLJqKeGXmGl83LGJ5XsdQmy933DVCAWksqeL9j
+ qtsuVvq6ap7JZTkXMZ/saF47LBXq2BTPGG8E8VHjegN6PJBL4COZBRATn
+ j3cM84CIWw1T3JWUAGsblU8jjnhpX8Jrowxb+oWkztwvIPffEbMBo0Md7
+ V47e5ITCuraL7+XpEMu1MFtmFJI2wtMPc4+g+KvLAo4eHc2CfEA4bTiw1
+ 5nPTfN/QRu++zhFychFCoSAEYCBoK7wnnvTtNYR9E2VKPfSdDNiVVIO6v
+ TrTZExMH9P8kNOErkJLhmzsPfQmZBhkl0lQRluAAMbVGylYVpBHW2ocqJ A==;
+X-CSE-ConnectionGUID: OqGST1VMS1Oj9dv77ZpsYA==
+X-CSE-MsgGUID: cyw/b6uyRuqCjjWjWZEBfQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11959"; a="2885099"
 X-IronPort-AV: E=Sophos;i="6.27,200,1787036400"; 
-   d="scan'208";a="2885097"
+   d="scan'208";a="2885099"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Nov 2026 15:57:39 -0800
-X-CSE-ConnectionGUID: LL1NJabgR2uaaVuR0QvvEQ==
-X-CSE-MsgGUID: yFZUyJIERb2woNVL+XDeBg==
+ 07 Nov 2026 15:57:42 -0800
+X-CSE-ConnectionGUID: Tz+dJjQsTBq1eXgFv75/VQ==
+X-CSE-MsgGUID: xd08H2BSSZ2wbdnAX7SdDQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,200,1787036400"; 
-   d="scan'208";a="7464664"
+   d="scan'208";a="7464682"
 Received: from pae.iind.intel.com (HELO PAE-35.iind.intel.com) ([10.49.105.82])
- by orviesa005.jf.intel.com with ESMTP; 07 Nov 2026 15:57:38 -0800
+ by orviesa005.jf.intel.com with ESMTP; 07 Nov 2026 15:57:40 -0800
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
  Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
-Subject: [PATCH v2 7/8] net/ice: fix DCF representor info leak on close
-Date: Sat,  7 Nov 2026 23:52:17 +0000
-Message-Id: <729e11d10701946ba661f1974c3ea72a90df2d7e.1794094943.git.anurag.mandal@intel.com>
+Subject: [PATCH v2 8/8] net/ice: fix DCF port leak on probe failure
+Date: Sat,  7 Nov 2026 23:52:18 +0000
+Message-Id: <f7452dc3ec78c252cf98b9d8c02e94004688ff06.1794094943.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1794094943.git.anurag.mandal@intel.com>
 References: <cover.1794094943.git.anurag.mandal@intel.com>
@@ -68,74 +68,88 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The representor info array is only freed by ice_dcf_dev_uninit(),
-which runs on device removal.
-Closing the DCF port with rte_eth_dev_close() releases the port
-without freeing it.
+When representors are requested, eth_ice_dcf_pci_probe() creates
+the DCF port before handling them.
+If a later step fails, such as an unsupported representor type,
+an invalid VF ID or a failed representor creation, the probe
+returns an error but leaves the DCF port and any representors
+already created in place.
+As the probe failed, the PCI bus also unmaps the device, so
+these ports are leaked and cannot be closed safely.
 
-Free it in ice_dcf_dev_close().
-ice_dcf_dev_reset() needs the info to survive, as init notifies
-the representors again, so move the rest of close into
-ice_dcf_dev_teardown() and call that from reset instead.
+Check the representor type before creating the DCF port, and
+on later failures destroy the representors created so far and
+remove the DCF port.
 
-Fixes: c7e1a1a3bfeb ("net/ice: refactor DCF VLAN handling")
+Fixes: 5674465a32c8 ("net/ice: add DCF VLAN handling")
+Fixes: d654167641bf ("ethdev: introduce representor type")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/ice/ice_dcf_ethdev.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ drivers/net/intel/ice/ice_dcf_ethdev.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/net/intel/ice/ice_dcf_ethdev.c b/drivers/net/intel/ice/ice_dcf_ethdev.c
-index c78b290b0d..26c22265eb 100644
+index 26c22265eb..b4e81433ba 100644
 --- a/drivers/net/intel/ice/ice_dcf_ethdev.c
 +++ b/drivers/net/intel/ice/ice_dcf_ethdev.c
-@@ -1660,20 +1660,28 @@ ice_dcf_init_repr_info(struct ice_dcf_adapter *dcf_adapter)
- 	return 0;
- }
+@@ -2060,13 +2060,14 @@ eth_ice_dcf_pci_probe(__rte_unused struct rte_pci_driver *pci_drv,
+ 	if (ret < 0)
+ 		return ret;
  
--static int
--ice_dcf_dev_close(struct rte_eth_dev *dev)
-+static void
-+ice_dcf_dev_teardown(struct rte_eth_dev *dev)
- {
- 	struct ice_dcf_adapter *adapter = dev->data->dev_private;
- 
--	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
--		return 0;
--
- 	ice_dcf_vf_repr_notify_all(adapter, false);
- 	(void)ice_dcf_dev_stop(dev);
- 
- 	ice_free_queues(dev);
- 	ice_dcf_uninit_parent_adapter(dev);
- 	ice_dcf_uninit_hw(dev, &adapter->real_hw);
-+}
++	if (eth_da.nb_representor_ports && eth_da.type != RTE_ETH_REPRESENTOR_VF)
++		return -ENOTSUP;
 +
-+static int
-+ice_dcf_dev_close(struct rte_eth_dev *dev)
-+{
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return 0;
-+
-+	ice_dcf_dev_teardown(dev);
-+	/* representor info survives ice_dcf_dev_reset, so only release it here */
-+	ice_dcf_free_repr_info(dev->data->dev_private);
+ 	ret = rte_eth_dev_pci_generic_probe(pci_dev,
+ 					    sizeof(struct ice_dcf_adapter),
+ 					    ice_dcf_dev_init);
+ 	if (ret || !eth_da.nb_representor_ports)
+ 		return ret;
+-	if (eth_da.type != RTE_ETH_REPRESENTOR_VF)
+-		return -ENOTSUP;
  
- 	return 0;
- }
-@@ -1861,9 +1869,8 @@ ice_dcf_dev_reset(struct rte_eth_dev *dev)
- 		ice_dcf_reset_hw(dev, hw);
+ 	dcf_ethdev = rte_eth_dev_allocated(pci_dev->device.name);
+ 	if (dcf_ethdev == NULL)
+@@ -2075,14 +2076,14 @@ eth_ice_dcf_pci_probe(__rte_unused struct rte_pci_driver *pci_drv,
+ 	dcf_adapter = dcf_ethdev->data->dev_private;
+ 	ret = ice_dcf_init_repr_info(dcf_adapter);
+ 	if (ret)
+-		return ret;
++		goto err_remove_dcf;
+ 
+ 	if (eth_da.nb_representor_ports > dcf_adapter->real_hw.num_vfs ||
+ 	    eth_da.nb_representor_ports >= RTE_MAX_ETHPORTS) {
+ 		PMD_DRV_LOG(ERR, "the number of port representors is too large: %u",
+ 			    eth_da.nb_representor_ports);
+-		ice_dcf_free_repr_info(dcf_adapter);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_remove_dcf;
  	}
  
--	ret = ice_dcf_dev_close(dev);
--	if (ret)
--		return ret;
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
-+		ice_dcf_dev_teardown(dev);
+ 	dcf_vsi_id = dcf_adapter->real_hw.vsi_id | VIRTCHNL_DCF_VF_VSI_VALID;
+@@ -2133,6 +2134,20 @@ eth_ice_dcf_pci_probe(__rte_unused struct rte_pci_driver *pci_drv,
+ 		dcf_adapter->num_reprs++;
+ 	}
  
- 	ret = ice_dcf_dev_init(dev);
++	if (ret == 0)
++		return 0;
++
++	for (i = 0; i < dcf_adapter->real_hw.num_vfs; i++) {
++		struct rte_eth_dev *vf_rep_eth_dev =
++			dcf_adapter->repr_infos[i].vf_rep_eth_dev;
++
++		if (vf_rep_eth_dev != NULL)
++			rte_eth_dev_destroy(vf_rep_eth_dev, ice_dcf_vf_repr_uninit);
++	}
++
++err_remove_dcf:
++	rte_eth_dev_pci_generic_remove(pci_dev, ice_dcf_dev_uninit);
++
+ 	return ret;
+ }
  
 -- 
 2.25.1
