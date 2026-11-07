@@ -2,81 +2,90 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BCF606D82B
-	for <dpdk-dev@archiver.kernel.org>; Sat,  7 Nov 2026 22:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1F0606A326
+	for <dpdk-dev@archiver.kernel.org>; Sat,  7 Nov 2026 23:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=KR4uazSB
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Wm3F4gLr
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0E46E402F0;
-	Sat,  7 Nov 2026 23:19:21 +0100 (CET)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43])
- by mails.dpdk.org (Postfix) with ESMTPS id 7D0264003C
- for <dev@dpdk.org>; Sat,  7 Nov 2026 23:19:19 +0100 (CET)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-4a1b07c3c5fso456445e9.1
- for <dev@dpdk.org>; Sat, 07 Nov 2026 14:19:19 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 959A340264;
+	Sun,  8 Nov 2026 00:14:21 +0100 (CET)
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com
+ [209.85.167.177])
+ by mails.dpdk.org (Postfix) with ESMTPS id C475940264
+ for <dev@dpdk.org>; Sun,  8 Nov 2026 00:14:20 +0100 (CET)
+Received: by mail-oi1-f177.google.com with SMTP id
+ 5614622812f47-53c156ba662so29867b6e.1
+ for <dev@dpdk.org>; Sat, 07 Nov 2026 15:14:20 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794093259; cv=none;
+ d=google.com; s=arc-20260327;
+ b=bCh0V/ORvlMSaWvV7hSVJ1hJotm4Mvgqn00ctxV6YSuJz4/t9RMR+SyStFSmgcBLF7
+ O5wpUL6wLURQ50YyE1hceaw5kK/ErnN8idh/CQRxOe2ozGT0YHhPZpwg40sxO5A4v4LR
+ PF+nI1ArfZpFYqdCMaCxyLaqOc8gDUwzXFqIGxiI5emMVWoVR3UJcV28MBs6aADUSaU2
+ NErg4U0ocY8dUAMQb/VDyzVQ8tJXNzzUiTj5QshIcI9ccUWguTkwbKsoXbR6X0Oi4sjI
+ 9FWish+ANVk8tY8mmdcrq/JhP9lW7hvLtIumlPxU1xd/YkTWD8X9JrIorR2BO4f5Lqv/
+ 27tw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=Nic9zburoFE64P1fv+gABc1NvxcoB1MwCC2R1Eyj55U=;
+ fh=dzvl2T+HpsPJIPL4vrJcSXkWj+SVEfihkBzHhwADOS0=;
+ b=e6Ha1JKEZkjbRXOPft0cKwJIyMT/g5/J4/4WKpNEyKMPF1N6I8c+cgWly/tOfFqWTT
+ uXxA0aFKOk3AHkjxqqrcif01SFlMPAembnGrfT+zu4rvFX91H7GML92DPt9J96rxy927
+ 5XwVHkKuQKjjLxPgc4xv5RBzjI4c6Po091ZoLmqB7vF2NNHhs0dmcP1TCkPkzT/jBgco
+ M01tIBcuZOzYetC4JjK7qkZLq0FsNsfNMCGKqJ7ovQhkqnGg/OAx2fclF124421T2c5U
+ 4uxfcRponAhxhGz/YXrORSASjzxfwtwTGiYRBNcph3V1itzyDKit7rQCNNuConpO9ZQf
+ kGFA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794089959; x=1794694759; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=v9Loas9k3QYaRsjlwf5jvRL4rpm4b9j1cyqUng6MePg=;
- b=KR4uazSBpO5WGEtalaLa+dc9bmFD9+hH63yJ1LpPfYoxUfbgK121HTyEZSkCsk4BwB
- aTnO6WKrv9DMR0a5KCRQIDlJo1hvVelkvfC1RZYHursdBtweJxNjQp8JL4/5+VT/gci6
- 5KR7NEfa+G12PivOGG1oRivKOQRD+u0uLhBQldJhi59xBLUC/Aws4XljSa5sarHBq2wX
- Z97e1MEg2EfOl2EdSIufPqsL0jeOGG1fAE/pjsVQ5M7LE9PyqbrisuBoEtVU5YeKs4Dk
- XXa6/AI3uF0HRh4eBU1JBu7L8xvmaRdJ7HqZYmZLE1jc61BDD9bDTJrEW65Ijbzibfao
- Wg4A==
+ d=gmail.com; s=20260707; t=1794093259; x=1794698059; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=Nic9zburoFE64P1fv+gABc1NvxcoB1MwCC2R1Eyj55U=;
+ b=Wm3F4gLriQAL5D1vWWWPAt44BkQ+kbEXHnGvlgtt5bk4uIHkLp1eaxaHSiQCxgui+N
+ etMeVSInbjvZOn94P3aeUYv4Eqo2wml9lh1HVeVk4OPiuGDWvSAOPegQDVOW3O7F1Wu4
+ SA9xY+JAa190YRF48duJK2ai7/JcXd3gyfpterqKqIbAk64gmoecSQkOlum0pSlfUA5G
+ Rp0V3UGZdR+Yg18E/e2ytcDCDKuqSL5u6CGe7b88TJIS4PwD2MojQe5WzhoGwGIQtfdE
+ m3uYmS1Woluh/Wo3EAMnMzIu52oJmthdtKSzBatYEuw0Oqgx/9pzRyheyNwYtJ8PrHhM
+ mYHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794089959; x=1794694759;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=v9Loas9k3QYaRsjlwf5jvRL4rpm4b9j1cyqUng6MePg=;
- b=qYPoZJqje6r44WezCJqPxaHVjhdUVxt74t3opLlllQ0AhHMwith2MEBnn8ZOzpw8JS
- nJy//pcd0DN35fnUaerLqPUZemm1TXRmdmlQbcAMstHOVHAi5DIGp1bSbKxFpbJu+OuS
- pmmVWbyBAoajKG01Mc/+pi74Ws3AQi5vPOVpOKD2Rt/BUArPiFRINcPzQI9rJTQ2Duw1
- cLuw3SkyxlayCje4sIvMeN04lc7atggUoGardJQ/FuGOtU0yH+yrGZ9MINdiTA7wU+sA
- VCSDZixJTyM/0+qLTD2Kn6ANTOoi5yrNs9ekSuTeST3cnwpdX95J5QtQl4Y9UqaikeQ8
- U9/A==
-X-Forwarded-Encrypted: i=1;
- AKwUvBwcgki/9UREq0TBbQx0sWzRSqoO6Byd0U2SZltuCdrVszFIpDkSZGq5dXcnnHEVal7a824=@dpdk.org
-X-Gm-Message-State: APuU4Z/9fpuxSMSlmt796JlRRQpTWo0hPseJF5dGavmgdQph0GXJfbYm
- xjFOw2bbiCpw5INcFrrKPpPpj/c5pcYg0q+tOCg/FHcBmBXevCETDkSR
-X-Gm-Gg: AYBFou3/CaNNXtddyDoO7PVDF5zbfoRg+e8kdR3Dvk6kWdEQNqBHuyMAM31oUY9+PKi
- Yf5KOuwMBTuYutEF5xkUqlovcWr7PUpi7//NW9GPACuRtrm/rQIKh6uXme4ls7FtUDN1MjI9y/n
- uzhGNGplOEsBpvEp/dAH3XamVG1DySjct3sRlP2PTnUN5Hs199ZuAdjwFPGOp3UJ+7S1TokMyIS
- 6w30FNYZJIxrEhOd/BiFBCUS3/i0XpwBxvF4WKl0k/kgpiv7cYKQF/zdh+BnBmhM2ODXFmiwvc9
- bEbqQyYcOShetUxM6iaJzbuAlD3nQxEQY2d7hu7XznGCWNt+X4vbW8b1DxC2i4NkzjhSW/362b4
- MHBQVBYR7G7Bfn6yFuvZkgmX2rXFZFSK3KEzsj05aR1yvdVgTypvYwxATrdlnHXHw28aJje+r1B
- C81wYkLMNY9iGxw4C60qCcCGbtoJ6uo6XjXqgDBsDh5MuYZZHku6CiX61Bet/3WTS5ROR+TeSuG
- FjKeQgmLWArvOzTCtHqxanY1JG/cVMA9NrPwUhQBWLZ5N4UCqWcQ3kmkVEv//aZFJ17FuSXbAIp
- zGm43JyX2DG+IeNWak/sEVSkhC3kah5yZ3TPH8/JktOehEFT/GYyU9oM/IzfV+icUpQ0QN/ItmT
- /w8hl4j4Qw2kJCehaJZeGrCX/2qLSVoiSKSEJQ+sIkjTjPUKaxHum+A==
-X-Received: by 2002:a05:600c:6092:b0:4a1:f625:2108 with SMTP id
- 5b1f17b1804b1-4b963c8722emr1732865e9.33.1794089958723; 
- Sat, 07 Nov 2026 14:19:18 -0800 (PST)
-Received: from localhost.localdomain
- ([2a02:2f07:7010:6500:f3ca:cc4f:cbe2:3b75])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4b90f1117fasm12123105e9.13.2026.11.07.14.19.17
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 07 Nov 2026 14:19:18 -0800 (PST)
-From: Andrei-Niculae Petre <p31andrei@gmail.com>
-To: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Sean Morrissey <sean.morrissey@intel.com>, dev@dpdk.org, stable@dpdk.org,
- Andrei-Niculae Petre <p31andrei@gmail.com>
-Subject: [PATCH v3] examples/l3fwd: fix compilation when DP debug on
-Date: Sun,  8 Nov 2026 00:17:07 +0200
-Message-Id: <20261107221707.20990-1-p31andrei@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20260414025137.91776-1-p31andrei@gmail.com>
-References: <20260414025137.91776-1-p31andrei@gmail.com>
+ d=1e100.net; s=20260707; t=1794093259; x=1794698059;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=Nic9zburoFE64P1fv+gABc1NvxcoB1MwCC2R1Eyj55U=;
+ b=h7SrHNK2ctZjqfOi7LLzj4yQVtAEyqQyseWr+ofzdPYM+dpEmsmTjtZ/LShxEhE4kc
+ 5UJ2t4BfszVS5ibV8t/2GaUvT44AnkJBXOpNlvmgyYljHjCDAx3vbteLwUV54nBiUb8C
+ slETf1oi3q15XZJRnZpXBDJGy3oyYB6DPXKDrvLJ1PBVLM19scZbmyMNJQUb7k1X9P6Y
+ I6+WktMH6/RC7l1s1+XLpr3yaAYIWT3tdJ6gJ8b81y1Bu3gAZ+uyTHtsMobFMh7Jpsub
+ 2+KSe6dK6GoVf/JSkhDex2WajYoeIPf4bYD7HBG4LeWmq2hl7GjiqUCi8KqlkloNKgP7
+ H2ow==
+X-Gm-Message-State: APuU4Z9IezRQBbin8fyfBVxThRZF0lI8/kEjEFm+vR6CW5HPyBsY4RSP
+ NkT7XZXp+sgpC2+AfZqL2cEw0WK3YCRwFDbq4IlplgxYPyPIbUPJ5dfmnYvQgdTZ6IwtTlldm2B
+ aBFV427uD38vj3k3Y9Cpo6c3pPkxcmWQ=
+X-Gm-Gg: AYBFou28MQsR0TAe8HrgY3v7WNry7BozircCyUbbU/79a4PszVRWCXrt5eERwHxijET
+ VW3yX+JPctV2Jirybr6Te3TZwRctiKqhryviXeHVgjyei5kM4IDd5Lj4mqN2PKRETQ8gEDBKAwl
+ RHgLJjBQFnEkfelMtSkVlzJLZAwFyU60Wk5NoXRfeQlxw/LXgsaMML7zpovUKUEya9n9y0yEHPP
+ cUIysFu3EXzAYNmdrDoQndxEadLAXq3q64ZpBohRDgNIa0A5A1GmdYdrx0VJOgA7+1ibny6/It3
+ hRu6C8nUqqyTgPSHgqEwROpNVuvu2STooxR16zPVVD2259MY+bzeRgfluWxS5WNLkzlIX0oLO6v
+ Sj6YAYBr5L+/xY3Kfq98WpLWsGKkcHJBHdtiNcETViMKX3in1u3sZfHTnPm3cVaRXEZqzhg==
+X-Received: by 2002:a05:6808:23c7:b0:4fb:bfc2:1a64 with SMTP id
+ 5614622812f47-5681472ecabmr89375b6e.31.1794093259364; Sat, 07 Nov 2026
+ 15:14:19 -0800 (PST)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261105071710.3640765-1-mkashani@nvidia.com>
+In-Reply-To: <20261105071710.3640765-1-mkashani@nvidia.com>
+From: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+Date: Sun, 8 Nov 2026 02:14:08 +0300
+X-Gm-Features: AclHuK9rdcgKeF1wGK8UeqkyZLpO-C3IukvDYf58vHc9rAlEgDVfpUZdvo5BDXs
+Message-ID: <CAEYuUWCMbJU-N5CJRycsjKPYDf+n_chKy-6AH3J+irPJBjtS4w@mail.gmail.com>
+Subject: Re: [PATCH] eal/linux: fix dirty flag for reused hugepages in legacy
+ mem
+To: Maayan Kashani <mkashani@nvidia.com>
+Cc: dev@dpdk.org, anatoly.burakov@intel.com, stable@dpdk.org, 
+ Thomas Monjalon <thomas@monjalon.net>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,167 +95,17 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Update l3fwd example app to fix compilation when building dpdk with
-RTE_LOG_DP_LEVEL=RTE_LOG_DEBUG in config/rte_config.h .
-Move l3fwd_acl.h include above all #ifdef L3FWDACL_DEBUG checks,
-as previously one ifdef would evaluate to false all the time (as
-header include was added too late).
+Acked-by: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
 
-Adapt maintainers line from previous examples/l3fwd-acl (removed in
-6de0ea50e9b9) to examples/l3fwd/l3fwd_acl* after l3fwd-acl app
-unification into l3fwd. In 6de0ea50e9b9, a line with maintainer
-expertise was removed.
-
-Own testing of the l3fwd example:
-1. It now compiles with "#define RTE_LOG_DP_LEVEL RTE_LOG_DEBUG" in
-   config/rte_config.h. See Bugzilla ID 1318 comments for full error
-   seen before this patch.
-2. I ran the l3fwd app with IPv4/IPv6 ACL rules to see the prints (when
-   RTE_LOG_DP_LEVEL RTE_LOG_DEBUG is set) in the application around ACL
-   work as expected. See extract below (I added \ to format to 72chars):
-
-// dump_acl4_rule extract:
-Packet Src:192.168.1.100 Dst:192.168.1.101 Src port:2048,Dst port:1846 \
-hit ACL 1 - 192.168.1.100/24 0.0.0.0/0 0 : 65535 0 : 65535 0x0/0x0 \
-0xffffffff-0x1ffffffe-0xf0000001
-
-// dump_acl6_rule extract:
-Packet Src2001:db8:1::100
-Dst2001:db8:1::101
-Src port:32768,Dst port:21005 hit ACL 0 - \
-2001:0db8:0001:0000:0000:0000:0000:0000/64 \
-0000:0000:0000:0000:0000:0000:0000:0000/0 0 : 65535 0 : 65535 \
-0x0/0x0 0xffffffff-0x1fffffff-0xf0000000
-
-Bugzilla ID: 1318
-Fixes: 6de0ea50e9b9 ("examples/l3fwd: merge l3fwd-acl example")
-Cc: stable@dpdk.org
-Cc: sean.morrissey@intel.com
-
-Signed-off-by: Andrei-Niculae Petre <p31andrei@gmail.com>
----
-v3
-* Drop l3_forward.rst addition from MAINTAINERS to avoid overmatching.
-v2
-* Rebase from latest main
-* Shrink/simplify patch by not making print_one_ipv*_rule static
-* Test l3fwd app with acl rules and add to description
----
- .mailmap                   |  1 +
- MAINTAINERS                |  1 +
- examples/l3fwd/l3fwd_acl.c | 23 ++++++++++++-----------
- 3 files changed, 14 insertions(+), 11 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index 754dd9e760..844deef539 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -115,6 +115,7 @@ Andre Richter <andre.o.richter@gmail.com>
- Andrea Arcangeli <aarcange@redhat.com>
- Andrea Grandi <andrea.grandi@intel.com>
- Andrea Panattoni <apanatto@redhat.com>
-+Andrei-Niculae Petre <p31andrei@gmail.com> <andrei.petre@keysight.com>
- Andrew Bailey <abailey@iol.unh.edu>
- Andrew Boyer <andrew.boyer@amd.com> <aboyer@pensando.io>
- Andrew Harvey <agh@cisco.com>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1d865ffd46..386338a00a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1757,6 +1757,7 @@ F: lib/acl/
- F: doc/guides/prog_guide/packet_classif_access_ctrl.rst
- F: app/test-acl/
- F: app/test/test_acl.*
-+F: examples/l3fwd/l3fwd_acl*
- 
- EFD
- M: Yipeng Wang <yipeng1.wang@intel.com>
-diff --git a/examples/l3fwd/l3fwd_acl.c b/examples/l3fwd/l3fwd_acl.c
-index 4ee3411d2a..6f39923140 100644
---- a/examples/l3fwd/l3fwd_acl.c
-+++ b/examples/l3fwd/l3fwd_acl.c
-@@ -239,6 +239,9 @@ enum {
- RTE_ACL_RULE_DEF(acl4_rule, RTE_DIM(ipv4_defs));
- RTE_ACL_RULE_DEF(acl6_rule, RTE_DIM(ipv6_defs));
- 
-+/* Must be included before any L3FWDACL_DEBUG define check. */
-+#include "l3fwd_acl.h"
-+
- static struct {
- 	struct rte_acl_ctx *acx_ipv4[NB_SOCKETS];
- 	struct rte_acl_ctx *acx_ipv6[NB_SOCKETS];
-@@ -255,8 +258,6 @@ static struct rte_acl_rule *acl_base_ipv4, *route_base_ipv4,
- static unsigned int acl_num_ipv4, route_num_ipv4,
- 		acl_num_ipv6, route_num_ipv6;
- 
--#include "l3fwd_acl.h"
--
- #include "l3fwd_acl_scalar.h"
- 
- /*
-@@ -859,17 +860,17 @@ print_one_ipv6_rule(struct acl6_rule *rule, int extra)
- 
- #ifdef L3FWDACL_DEBUG
- static inline void
--dump_acl4_rule(struct rte_mbuf *m, uint32_t sig)
-+dump_acl4_rule(const struct rte_mbuf *m, uint32_t sig)
- {
--	char abuf[INET6_ADDRSTRLEN];
-+	char abuf[INET_ADDRSTRLEN];
- 	uint32_t offset = sig & ~ACL_DENY_SIGNATURE;
- 	struct rte_ipv4_hdr *ipv4_hdr =
- 		rte_pktmbuf_mtod_offset(m, struct rte_ipv4_hdr *,
- 					sizeof(struct rte_ether_hdr));
- 
--	printf("Packet Src:%s ", inet_ntop(AF_INET, ipv4_hdr->src_addr,
-+	printf("Packet Src:%s ", inet_ntop(AF_INET, &ipv4_hdr->src_addr,
- 		abuf, sizeof(abuf)));
--	printf("Dst:%s ", inet_ntop(AF_INET, ipv4_hdr->dst_addr,
-+	printf("Dst:%s ", inet_ntop(AF_INET, &ipv4_hdr->dst_addr,
- 		abuf, sizeof(abuf)));
- 
- 	printf("Src port:%hu,Dst port:%hu ",
-@@ -883,7 +884,7 @@ dump_acl4_rule(struct rte_mbuf *m, uint32_t sig)
- }
- 
- static inline void
--dump_acl6_rule(struct rte_mbuf *m, uint32_t sig)
-+dump_acl6_rule(const struct rte_mbuf *m, uint32_t sig)
- {
- 	char abuf[INET6_ADDRSTRLEN];
- 	uint32_t offset = sig & ~ACL_DENY_SIGNATURE;
-@@ -892,10 +893,10 @@ dump_acl6_rule(struct rte_mbuf *m, uint32_t sig)
- 					sizeof(struct rte_ether_hdr));
- 
- 	printf("Packet Src");
--	printf("%s", inet_ntop(AF_INET6, ipv6_hdr->src_addr,
-+	printf("%s", inet_ntop(AF_INET6, &ipv6_hdr->src_addr,
- 		abuf, sizeof(abuf)));
- 	printf("\nDst");
--	printf("%s", inet_ntop(AF_INET6, ipv6_hdr->dst_addr,
-+	printf("%s", inet_ntop(AF_INET6, &ipv6_hdr->dst_addr,
- 		abuf, sizeof(abuf)));
- 
- 	printf("\nSrc port:%hu,Dst port:%hu ",
-@@ -988,8 +989,8 @@ dump_denied_pkt(const struct rte_mbuf *pkt, uint32_t res)
- 	if ((res & ACL_DENY_SIGNATURE) != 0) {
- 		if (RTE_ETH_IS_IPV4_HDR(pkt->packet_type))
- 			dump_acl4_rule(pkt, res);
--		else if (RTE_ETH_IS_IPV6_HDR(pkt[i]->packet_type))
--			dump_acl6_rule(pkt[i], res[i]);
-+		else if (RTE_ETH_IS_IPV6_HDR(pkt->packet_type))
-+			dump_acl6_rule(pkt, res);
- 	}
- #else
- 	RTE_SET_USED(pkt);
--- 
-2.39.5
-
+> Why a reused page is dirty is documented on unlink_existing.
+The mechanism is also described in
+doc/guides/prog_guide/env_abstraction_layer.rst.
+I'm a bit worried that the comment and the guide will run out of sync
+eventually.
