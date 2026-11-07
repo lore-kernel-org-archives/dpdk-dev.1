@@ -2,50 +2,50 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DCF606A326
-	for <dpdk-dev@archiver.kernel.org>; Sat,  7 Nov 2026 23:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F61606A326
+	for <dpdk-dev@archiver.kernel.org>; Sat,  7 Nov 2026 23:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=OdLQ+ok/
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=c7FmAl+x
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B223E40E7C;
-	Sun,  8 Nov 2026 00:57:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C827D40EAB;
+	Sun,  8 Nov 2026 00:57:41 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTPS id 5A22840609;
- Sun,  8 Nov 2026 00:57:36 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 25B3B40E24;
+ Sun,  8 Nov 2026 00:57:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1794095857; x=1825631857;
+ t=1794095860; x=1825631860;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=lImcZFU2xJKhe0PlmF6ucSGPARFWPUuhshs/UrQhnr4=;
- b=OdLQ+ok/QzbpJHwSObkZeHTrbUnfscIScR+UY4wsOjMRv/Iy1UZJMwGT
- 7lzhhSQrgFdzLyX6IUR45FhYvGOVN3Fi31GHyikahCTtTSOuMEcDMVZl8
- zJccH/+16+q2QtmsKvAaikm9CdYSSDK4zSIGwweky6ih6oNs0UAunF/U3
- qLL4FzziPEmvnYH+6/pbBDvpPWCtEzTqYO9BH2y8Lqb8wtxAuhunSsj5+
- jp+VGua/BAFEdDSNC89BkYAV9tXmqFRRLkgLEGiSVm3yDA+glSjBiZXVg
- SywY6dM28LiM9rRnfAc507jKYv7luPt4sXWBL8p4lReyl2v7JdGSh+25e g==;
-X-CSE-ConnectionGUID: +U/HhnItTW6XpsIMiGpo3w==
-X-CSE-MsgGUID: ePIlpc9LQyGP5Cvj2WeLDw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11959"; a="2885093"
+ bh=0tqyWSFpZwBNFxEdPjjoaJsapz3fIgpHAGlePTMh1A0=;
+ b=c7FmAl+xHiwOHOgbvQ3YtKZ4UMBfsYAffFWzCqrOmS+vgyBx2AuGAwek
+ 3Ecprpykal29eccLcOGvaPAaWtMp/4I9SQqahLFzxWYOsTVTxGHbIZCp4
+ ZD+UxTt83EsW1gVcMXpf7yCnpHSBfGcS+6PAsYGiOdjCJd6+w1+iaTO14
+ 5YxVlkzSioyzYVAkeYlZCsHqqjiM47Gg3G9iEiRhC2SttFq830OwTJTCR
+ O5yIWNIXWWdP2PDwnumgp44VzcrUBTuxxWXkIloB9YR8S5ShjgcpBXeJ3
+ 87VP7iHdqrHwQWtUqN9o7cGXJXtW9Gij60eqF1mB5JVABap+22tpD/Qkx A==;
+X-CSE-ConnectionGUID: Ns7svnY+RdCzbjGGLdJh6g==
+X-CSE-MsgGUID: r04kLTsRTjqq/zd4iwkeAg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11959"; a="2885097"
 X-IronPort-AV: E=Sophos;i="6.27,200,1787036400"; 
-   d="scan'208";a="2885093"
+   d="scan'208";a="2885097"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Nov 2026 15:57:37 -0800
-X-CSE-ConnectionGUID: dTEKwWdaQHmgBMIHUSV21g==
-X-CSE-MsgGUID: cXQFGAYtTomrSMGYZIbJCA==
+ 07 Nov 2026 15:57:39 -0800
+X-CSE-ConnectionGUID: LL1NJabgR2uaaVuR0QvvEQ==
+X-CSE-MsgGUID: yFZUyJIERb2woNVL+XDeBg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,200,1787036400"; 
-   d="scan'208";a="7464653"
+   d="scan'208";a="7464664"
 Received: from pae.iind.intel.com (HELO PAE-35.iind.intel.com) ([10.49.105.82])
- by orviesa005.jf.intel.com with ESMTP; 07 Nov 2026 15:57:35 -0800
+ by orviesa005.jf.intel.com with ESMTP; 07 Nov 2026 15:57:38 -0800
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
  Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
-Subject: [PATCH v2 6/8] net/ice: fix DCF TM config leak on close
-Date: Sat,  7 Nov 2026 23:52:16 +0000
-Message-Id: <eb70a5f5872afb65b2b2fdb65a14a6935d0b9507.1794094943.git.anurag.mandal@intel.com>
+Subject: [PATCH v2 7/8] net/ice: fix DCF representor info leak on close
+Date: Sat,  7 Nov 2026 23:52:17 +0000
+Message-Id: <729e11d10701946ba661f1974c3ea72a90df2d7e.1794094943.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1794094943.git.anurag.mandal@intel.com>
 References: <cover.1794094943.git.anurag.mandal@intel.com>
@@ -68,44 +68,75 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-ice_dcf_uninit_hw() releases the TM nodes and shaper profiles only
-when the hierarchy gets committed.
-If the application adds nodes or profiles but never commits them,
-or the commit fails without clearing them, they leak on close and
-reset.
+The representor info array is only freed by ice_dcf_dev_uninit(),
+which runs on device removal.
+Closing the DCF port with rte_eth_dev_close() releases the port
+without freeing it.
 
-Only clearing the bandwidth needs a committed hierarchy,
-so releasing the TM config whenever QoS is supported.
+Free it in ice_dcf_dev_close().
+ice_dcf_dev_reset() needs the info to survive, as init notifies
+the representors again, so move the rest of close into
+ice_dcf_dev_teardown() and call that from reset instead.
 
-Fixes: 775a25a372f5 ("net/ice: clear QoS bandwidth on DCF close")
+Fixes: c7e1a1a3bfeb ("net/ice: refactor DCF VLAN handling")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/ice/ice_dcf.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/intel/ice/ice_dcf_ethdev.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_dcf.c b/drivers/net/intel/ice/ice_dcf.c
-index 4bc3c07d81..ad5f9ef78e 100644
---- a/drivers/net/intel/ice/ice_dcf.c
-+++ b/drivers/net/intel/ice/ice_dcf.c
-@@ -886,11 +886,11 @@ ice_dcf_uninit_hw(struct rte_eth_dev *eth_dev, struct ice_dcf_hw *hw)
- 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
- 	uint16_t i;
+diff --git a/drivers/net/intel/ice/ice_dcf_ethdev.c b/drivers/net/intel/ice/ice_dcf_ethdev.c
+index c78b290b0d..26c22265eb 100644
+--- a/drivers/net/intel/ice/ice_dcf_ethdev.c
++++ b/drivers/net/intel/ice/ice_dcf_ethdev.c
+@@ -1660,20 +1660,28 @@ ice_dcf_init_repr_info(struct ice_dcf_adapter *dcf_adapter)
+ 	return 0;
+ }
  
--	if (hw->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_QOS)
--		if (hw->tm_conf.committed) {
-+	if (hw->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_QOS) {
-+		if (hw->tm_conf.committed)
- 			ice_dcf_clear_bw(hw);
--			ice_dcf_tm_conf_uninit(eth_dev);
--		}
-+		ice_dcf_tm_conf_uninit(eth_dev);
-+	}
+-static int
+-ice_dcf_dev_close(struct rte_eth_dev *dev)
++static void
++ice_dcf_dev_teardown(struct rte_eth_dev *dev)
+ {
+ 	struct ice_dcf_adapter *adapter = dev->data->dev_private;
  
- 	ice_dcf_disable_irq0(hw);
- 	rte_intr_disable(intr_handle);
+-	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
+-		return 0;
+-
+ 	ice_dcf_vf_repr_notify_all(adapter, false);
+ 	(void)ice_dcf_dev_stop(dev);
+ 
+ 	ice_free_queues(dev);
+ 	ice_dcf_uninit_parent_adapter(dev);
+ 	ice_dcf_uninit_hw(dev, &adapter->real_hw);
++}
++
++static int
++ice_dcf_dev_close(struct rte_eth_dev *dev)
++{
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return 0;
++
++	ice_dcf_dev_teardown(dev);
++	/* representor info survives ice_dcf_dev_reset, so only release it here */
++	ice_dcf_free_repr_info(dev->data->dev_private);
+ 
+ 	return 0;
+ }
+@@ -1861,9 +1869,8 @@ ice_dcf_dev_reset(struct rte_eth_dev *dev)
+ 		ice_dcf_reset_hw(dev, hw);
+ 	}
+ 
+-	ret = ice_dcf_dev_close(dev);
+-	if (ret)
+-		return ret;
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
++		ice_dcf_dev_teardown(dev);
+ 
+ 	ret = ice_dcf_dev_init(dev);
+ 
 -- 
 2.25.1
 
