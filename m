@@ -2,74 +2,73 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249AF606A31C
-	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Nov 2026 16:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAF0606A31C
+	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Nov 2026 16:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=fAVismz/
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=gwMrMb/Z
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7B59F402AD;
-	Sun,  8 Nov 2026 17:40:56 +0100 (CET)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
- [209.85.215.175])
- by mails.dpdk.org (Postfix) with ESMTPS id 2350E40264
- for <dev@dpdk.org>; Sun,  8 Nov 2026 17:40:55 +0100 (CET)
-Received: by mail-pg1-f175.google.com with SMTP id
- 41be03b00d2f7-cdb684859cbso80174a12.1
- for <dev@dpdk.org>; Sun, 08 Nov 2026 08:40:55 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E2E5C40278;
+	Sun,  8 Nov 2026 17:58:24 +0100 (CET)
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
+ [209.85.216.50])
+ by mails.dpdk.org (Postfix) with ESMTPS id C816D40264
+ for <dev@dpdk.org>; Sun,  8 Nov 2026 17:58:23 +0100 (CET)
+Received: by mail-pj1-f50.google.com with SMTP id
+ 98e67ed59e1d1-3b0e0e65adbso69167a91.3
+ for <dev@dpdk.org>; Sun, 08 Nov 2026 08:58:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794156053;
- x=1794760853; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794157102;
+ x=1794761902; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=uAtmA5KZDSVVqy8sQtgKTtXRvXXfxnMpW/UfFCfCHtk=;
- b=fAVismz/jxFxJpkDwfRn56rkB0VVWjKZMrGMAW3ufwrNzf7goyO/eLq6aovd/GycgJ
- 4G8fqrOl/oaryi2pK85bJPewAAgjToK2AViegOQQKyxDDOuT2gvUOljWQPAadbukVYl7
- oROi/sgmYTSWc8gEzSQkSR2FD47Q1sMNqzxCgQoCBKKJKv2Aw6rXwy1UqwzU3rTf+vGT
- HdPUOgS1VttAtM7ZQiT7bPjTWAygtSDQmUTbCYwpT0NO6dbBk0JULWLMEcWVFcD+dGUm
- 19I3m6KRgRxtd3TSAAYqwfjpLDVTQ5egdSDkJasrVJjhztV0UK/oasaCwqfJ10FpXQrc
- bgGA==
+ bh=mDRfKXom6leUuXIdDQjZQzuAOsBfhH4qM+lpio5OBJo=;
+ b=gwMrMb/ZfVntZA3kFVAKsQNNENrVoXBVL3nxFE4OvrshvpYECbwYF64Bcl1/TxgEHY
+ 6XrVSKl82jyyQFAX0SXKagWY+hA+2zALjSQtzXjc2pZ7s0/NILOaintSu0Z984zymxTl
+ jh7O2g9y7G7KEBEJY6bP+K5l2z7NAE/4sTNFuUQcdbmlI7Uc8jYwXoIgfHPDB+TZwVH+
+ tXMC5oNyMmSrmXMjKzUmUaSOhwidNQ5TDfzTPAZLpQJyYeKECqShD7qaq9sUdYBTZZtj
+ aoTrfR/t5as9kbkzNkfzQx93m+te8Jo865f7MWaBdjjnCe/1VCGeHa3qtKGskIBIvnAe
+ zCxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794156053; x=1794760853;
+ d=1e100.net; s=20260707; t=1794157102; x=1794761902;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=uAtmA5KZDSVVqy8sQtgKTtXRvXXfxnMpW/UfFCfCHtk=;
- b=od790IPf1xZu9tEqlEGcyjL2OcrfuB9nEiKHdGBGV2N8HZBBch/Z4DUS0QQOrSzONZ
- 4ZoOaDQk20TSZH6vsw0/2Tzi/TFXgI+eKQVgFvoRjOadVM6R7hzje0CULFZKezYbKGM2
- ZqXob4E4rfT4G2+K0pFL9yoJJYF2VIWQOWoNWqIzSwCuEjJTFhxDhQ3ImCT60uecscIS
- UNi7FYFyRZ0DcA1B6FWgpBvTLWZ4Gau3hcCaYiiG+d3rg3a/MxdF769E+S2BSysp+2MQ
- fkPf0j/OxOsKSSdOwF2wIiyUov5Prz2TldL6ZTxA3NOOlkFlsEQpkeyxE5+4kymuIWqZ
- XWjA==
-X-Gm-Message-State: APuU4Z/MRLgUKbHTvcuOAnN7iD4/+13XZmUeweRkwhJeGZMLDSh/B0oB
- zk86nlD4WEWTL21JJgjtHlumwJBt/07LU4ae1eyCiek4GTvUKYSgPaU150hQ83vrh+o=
-X-Gm-Gg: AYBFou2dt3qYOnb9T0vQNgYqf+UK64WhgSilSLYFfvxTznFc4Lzjjq8n7Lwkg1Xf/3Z
- wi/qlRcprGXVpQT0/kNYaxX3FWYW/C6U7w/qy2wSMFpJJnd5AwRUdPmU01ab+AFXM9AIySy8Xia
- pNj4Z2/e1+h6+bRmXBQrmM0wHkgytIV+wJiswF+24351QkN2ushbDKtrOKRgGHKv0wB1z3jYI3I
- MewOTnVeq9UClb0VXeCzbk8thLE+B3+p0fUnCjuYKGJH/ONv6G1IUQpzXRdMW49v/0nmjsO7ntb
- C61TJ7wYVHl8V3/ll+crWgBAtKBMYmwmpoF8/K7jMXOjLk+I7sAT5qtnjQgu6Am7ocsSMT3w3Wq
- f1UMIcBiGl9MRV7eH0i+MlINBMmJU0iNaH4Oxnlky/tSDg14yBabSR8/mZ/rQ0WdFWHoDZtJA8w
- iatSJKIiGqC4wt3ajIIhAIAvDL9bAfYtUkgPYP1hmiyLD1ed2EuVrZ9E4CQLVIpjrEbIlAzjXcF
- gAELhZfL+HwG+CmRAR0iRHXWnu8EIVawkWqe6f1YSXwCiI0LFVSE1jKo2Vg44s0bXgZIDuuFbMB
- TOxCP7Vft5QCX3UIkGTrPdMgGKp6U3LTTUqirBH20GT5OqblPlSGnntE/0YntJFinV3+UA==
-X-Received: by 2002:a17:90b:57cd:b0:39e:6a80:b799 with SMTP id
- 98e67ed59e1d1-3b12d3dce75mr1701654a91.41.1794156053406; 
- Sun, 08 Nov 2026 08:40:53 -0800 (PST)
+ bh=mDRfKXom6leUuXIdDQjZQzuAOsBfhH4qM+lpio5OBJo=;
+ b=WEKBnMjnEnDQ7V+SA7AeWF3baKHokry2DrEEA4GWuXK2pfarqCTpuzIxHAhZ6/V1y5
+ 1K4/BZQthnJ/802/d8GXnaaXFtE4m0cyedSWgYk+woIzDONdJU0Af/gh652Lqhf24krv
+ 78brOd4sqlPV2CLTOARZZboQ1JIQg39x2Fa4JqphQVLe5twpAK+ee9OzYcgcTL9XJmda
+ IOOcaQ6nBVZ5EjuJT2OhWI2tmtZWeRZbjVofcvilPePpYtKt0PmkZm1HdXp+CDaMMW9i
+ qfu131Q0KGZCx0Njo8O26FL8TWNxl8V4iFXUWyAHBAPO3HxrH/QkztftummSGyOWWYVu
+ 5YJQ==
+X-Gm-Message-State: APuU4Z+cKZm2lNmB6c56oPTQTqn40tAsUaeoKuvBiFTwzKIx42k0LNNF
+ MronfTMOGFqnRIMDpj/nKLHeHJlL/2vUroZMxbWUOgrLOZKY0/RyfG4b3eMTYxYQols=
+X-Gm-Gg: AYBFou12LPF8f6Gn7G101rbqPy0TeOZBwsOW5OcOnEQecf1Kc4u8txi5J1/TmogQbs3
+ 6kTdf9GzflbrxOxFE0IDFoVcDSudGX4a/NJtjLu7HDCxjM+5dPeya3lCzX+MzElw7J29csxJO+n
+ 85i03Q3q1YtPhFv+BlGlpAX0kR3cQh2/K8JShSKzk0llAqu0/Z3ZoP9iJDYZ83LDw3o+SbsvlZk
+ z4Ho8X5h38mpln0L/J6teU5TNlQpeXHhpkmzXJWECUG4zZrGYKPt+OYvEfar8ED6YEXgncAZ3un
+ Au5+tS5BVkiGJ4OHxY+lBW+aBP4H9yRwmvI/LcNQCqF8IupNlICe+enrfewQ1xTbg8vmJmG8TyV
+ UQiWc6ndJAR2XlJl78fqnKqhRa9Usv8wPqa/Xx6YXyIOKYezbH2m5Jq9DaVEdooYLnftDA/qehG
+ Z1Jq+NS4RjCdLqiLTDhMLnUmpeR8Yevc97xG1aRAYY/Nbkf5YFiEV2FTGNfDDDE+53UjmjvbewZ
+ zZFTnWVQI8Bo0cgFrOZq2MQL5e5l6UD+gRnqjP2+1BqLIpngNhJ5e5R+bJMs6sThEemJwoDHTn8
+ r78d9nDD+rDjaYbljitGHUqp8N+iuL95GIjAnH40X7q4WsPdvyNaRccG3gmR3+vzHOdOaw==
+X-Received: by 2002:a17:90b:4a4f:b0:3ae:a531:4e73 with SMTP id
+ 98e67ed59e1d1-3b12d105bd9mr1670903a91.7.1794157101960; 
+ Sun, 08 Nov 2026 08:58:21 -0800 (PST)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b127fad1d3sm3485199a91.11.2026.11.08.08.40.52
+ 98e67ed59e1d1-3b127970954sm3625404a91.15.2026.11.08.08.58.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 08 Nov 2026 08:40:53 -0800 (PST)
-Date: Sun, 8 Nov 2026 08:40:51 -0800
+ Sun, 08 Nov 2026 08:58:21 -0800 (PST)
+Date: Sun, 8 Nov 2026 08:58:19 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Zhang Tengfei <zhtfdev@gmail.com>
-Cc: dev@dpdk.org, jiawenwu@trustnetic.com, zaiyuwang@trustnetic.com,
- stable@dpdk.org
-Subject: Re: [PATCH] net/txgbe: keep flow rules per port
-Message-ID: <20261108084051.66ebbf3e@phoenix.local>
-In-Reply-To: <20261108160021.31789-1-zhtfdev@gmail.com>
-References: <20261108160021.31789-1-zhtfdev@gmail.com>
+To: Junlong Wang <wang.junlong1@zte.com.cn>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v1 0/8] net/zxdh: fix some issues reported by OSS scanner
+Message-ID: <20261108085819.2e297093@phoenix.local>
+In-Reply-To: <20261107030448.2891345-1-wang.junlong1@zte.com.cn>
+References: <20261107030448.2891345-1-wang.junlong1@zte.com.cn>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -83,68 +82,103 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Mon,  9 Nov 2026 00:00:21 +0800
-Zhang Tengfei <zhtfdev@gmail.com> wrote:
+On Sat,  7 Nov 2026 11:04:40 +0800
+Junlong Wang <wang.junlong1@zte.com.cn> wrote:
 
-> rte_flow rules for every txgbe port were stored in file-scope lists.
-> Flushing or closing one port freed the rte_flow handles of the others
-> while their hardware rules stayed programmed, and probing another port
-> reinitialized the lists. The same lists are used by the PF and VF flow
-> operations.
+> v1:
+>   This series fixes issues in the zxdh PF/VF mailbox handling that were
+>   found by a code scan of the driver, reported to us by the DPDK
+>   community. All of them are on the PF receive path, where fields of a
+>   message written by a VF into the shared BAR window are trusted more
+>   than they should be, plus two ordinary local bugs the scan found on
+>   the way:
 > 
-> Keep one flow list in struct txgbe_adapter. A port disables flow
-> director only when its own FDIR rule count reaches zero.
+> - The dispatcher hands msg_head vport/pcieid to the handlers without
+>   comparing them with the sender, so a request can be aimed at any
+>   port (patch 3).
+> - The header module_id is checked as 8-bit but indexes a table as
+>   16-bit, and the async ack msg_id indexes the 256-entry seqid table
+>   without a bound check; both are out-of-bounds accesses up to a
+>   function call through a wild pointer (patches 7, 8).
+> - The receive buffer is allocated with the sender-declared length but
+>   accessed as a full struct, corrupting the heap; and the async
+>   no-ack exit leaks the buffer, allowing a guest to exhaust the PF
+>   heap (patches 5, 6).
+> - An uninitialised DTB entry is freed on a flow query error path,
+>   and an uninitialised multicast delete flag makes the PF delete the
+>   multicast entries of every port whenever one port leaves a group,
+>   with no attacker involved; the latter is a v25.11 regression
+>   (patches 2, 4).
+> - A VLAN id above 4095 from a VF message turns into an out-of-range
+>   ERAM row index (patch 1).
 > 
-> Fixes: 5c2352b9ece6 ("net/txgbe: support creating consistent filter")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
-> ---
+>   The sender check of patch 3 was verified on hardware; it stops at
+>   binding the request to a VF of the PF, a VF forging the identity of a
+>   sibling VF of the same PF is left to device-side protection that is
+>   planned. Each patch has been checked to apply on the current main
+>   branch.
 
-I didn't look at all the details but seems to be good idea.
-AI liked it but found some related overlap
 
-Subject: Re: [PATCH] net/txgbe: keep flow rules per port
+Overall looks good. Running AI scan locally had a couple of things
+you probably should look at
 
-Moving the flow list into struct txgbe_adapter is the right fix, and
-checking that the handle belongs to the port before touching hardware
-in txgbe_flow_destroy() closes a real cross-port bug. Applies to
-v26.11-rc2, builds with -Dwerror=true. Fixes: tag is correct, the
-global lists came in with 5c2352b9ece6.
+Subject: Re: [PATCH v1 0/8] net/zxdh: PF mailbox hardening fixes
 
-Warning
+Applied to main (v26.11-rc2), each commit builds with -Dwerror=true.
+Fixes: tags check out against history; all are in 24.11..25.11, so
+Cc: stable is correct. sizeof(struct zxdh_msg_info) ==
+ZXDH_BAR_MSG_PAYLOAD_MAX_LEN (2036) confirmed with a static assert,
+so the premise of 6/8 holds.
 
-The new fdir_info->n_flows counter duplicates state the driver already
-keeps per port. Every FDIR rte_flow rule, PF and VF, goes through
-txgbe_insert_fdir_filter() which adds a node to fdir_info->fdir_list,
-and the delete paths remove it via txgbe_remove_fdir_filter().
-txgbe_clear_all_fdir_filter() and txgbe_fdir_filter_uninit() empty
-that list as well. Duplicate adds are rejected (-EINVAL), so the list
-length equals n_flows in all paths.
+One real problem: 8/8 is missing the hunk that is its main fix.
 
-Drop n_flows and test the existing list instead:
 
-	if (!ret) {
-		rte_free(fdir_rule_ptr);
-		if (TAILQ_EMPTY(&fdir_info->fdir_list)) {
-			memset(&fdir_info->mask, 0,
-			       sizeof(struct txgbe_hw_fdir_mask));
-			...
+[PATCH v1 8/8] net/zxdh: check msg id before indexing the seqid table
 
-That removes the field, the two increments in txgbe_flow_create(),
-the reset in txgbe_filterlist_flush() and txgbe_fdir_filter_init(),
-and the "if (n_flows > 0)" guard which only hides an accounting bug
-if one ever exists. Smaller diff for the stable backport too.
+Error: the commit message says the check is added to
+zxdh_bar_msg_ack_async_msg_proc() and that the reply-path check is
+only hardening, but the diff (5 insertions, one hunk) touches only
+zxdh_bar_chan_sync_msg_reps_get(). After the series the VF-reachable
+path is unchanged:
 
-Info
+  static void
+  zxdh_bar_msg_ack_async_msg_proc(struct zxdh_bar_msg_header *msg_header,
+          uint8_t *receiver_buff)
+  {
+      struct zxdh_seqid_item *reps_info =
+          &g_seqid_ring.reps_info_tbl[msg_header->msg_id];
 
-After removing the TAILQ_ENTRY members, txgbe_ntuple_filter_ele and
-the other *_ele structs are single-member wrappers. Fine to leave for
-a stable fix; a later cleanup could store the filter structs directly.
+zxdh_bar_irq_recv() still reaches this with a VF-written msg_id for
+any async ack, and the free_id path then calls
+zxdh_bar_chan_msgid_free() with the same unchecked index. Add the
+check before the pointer is formed:
+
+  static void
+  zxdh_bar_msg_ack_async_msg_proc(struct zxdh_bar_msg_header *msg_header,
+          uint8_t *receiver_buff)
+  {
+      struct zxdh_seqid_item *reps_info;
+
+      if (msg_header->msg_id >= ZXDH_BAR_SEQID_NUM_MAX) {
+          PMD_MSG_LOG(ERR, "msg_id %u is invalid", msg_header->msg_id);
+          return;
+      }
+      reps_info = &g_seqid_ring.reps_info_tbl[msg_header->msg_id];
+
+Looks like the hunk was dropped when the series was rebased onto 5/8,
+which rewrote the caller.
+
+
+[PATCH v1 4/8] net/zxdh: initialise multicast delete flag
+
+Info: the paragraph about what the compiler does at -O1 and above is
+a claim about codegen for undefined behaviour, not something the fix
+depends on. Drop it and just say del_flag is read uninitialized when
+the group loop breaks early, so the entry can be deleted while other
+members remain.
