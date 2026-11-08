@@ -2,113 +2,101 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C294606A31A
-	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Nov 2026 04:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CDD606A31C
+	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Nov 2026 08:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=aj4paxjF
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=OZN1SXMd
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7452A40264;
-	Sun,  8 Nov 2026 05:22:19 +0100 (CET)
-Received: from SA9PR02CU001.outbound.protection.outlook.com
- (mail-southcentralusazon11013062.outbound.protection.outlook.com
- [40.93.196.62]) by mails.dpdk.org (Postfix) with ESMTPS id 979964003C
- for <dev@dpdk.org>; Sun,  8 Nov 2026 05:22:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id DEB8540264;
+	Sun,  8 Nov 2026 09:38:14 +0100 (CET)
+Received: from DM1PR04CU001.outbound.protection.outlook.com
+ (mail-centralusazon11010011.outbound.protection.outlook.com [52.101.61.11])
+ by mails.dpdk.org (Postfix) with ESMTPS id 2D29F4003C;
+ Sun,  8 Nov 2026 09:38:13 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e2nagiuYZJHXA5XxrgYLPBiboOUb+T0EqzTjmeNHUcSAxE8mID1C9PXgzeReSQ/b1/cmJtLKYsQevN4jri5/4ex59QBijpb/SFMvCJe9hVFdEo9rHf+lRji0es6nWCCOq3iiU/frM3nEZ0uwLpyjdWgmrMsIY4hHdUYbTvvPzikQOgheD7QkSC8aYvXBvlikgEYGzy+bjg61D0jio0uj4BGr+tdOtwTd0jpKP+7R8oGnClZ2sf/498ytncFfLdTpbEGg5mKmgX2QbF2ZYfQjfawd4tv23Juc3zKE33XsN2iyx6hIEnRWBdIgNujjbVn4lNtDZfqscdSI9cmD33UPmQ==
+ b=PwrElTnmMr2y5P8Gc4wy9E7ehkuYeq8ajAc75cVHxE/fIgBBBeRtNeeE7tQZQZwVALOqMjowDPS+tbApuLBHtNtjRnO1l181yjSSuGmMx3mcjwuJ/5XwliHDWKrXuD3HYZ+lHOCR2drrerBafrhQ5f1mI6CPc+RFH/4vng5jGJtxtlvlwbo/sZL1A9mfRpYVIa4HwmS2Y3YxNosW3MI1LDRpD2NTNO80YLREbCsmtDmONvcN8TrG7MykGocoklh4B13hHqpRrZi/akUnEmAX1LuvdCGlARDkDMH+xP5dA68fk57lQFQ/dXK6wN5NyNUDohbV6bJ6j9fitpmcUQFjLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cAlFoABBaPevXAHpzji5OYm6YZxuJ+OLfJ/mo3czKu8=;
- b=IAztAmTutiLSOTeuoqMgUPlz5i+Uti2sKr3pMgYgShKb+NfGvmTZQEa4KtOfUzkUeInufQLPZ8IU+5eX7+k+d7kuvV1tlwXlDVc0G+CGVeCmpI9Jfnd8l1hai9mEing+XLJKJE3/x/o5+IkeOZBssRj989BaPAh6VBHC2JbE6M0G0986oAyZTPsECCekV9gIhYEaArX64UF+yWvB7DyAWpgFBzXvg9erVvR4XxFBVUdPPE0yhOZhtSeoW0IqVR4ToebKEValU5koT58uvOXgo8+MJvgluRVM8P/XTha3l6vrla6sBko0NtuZA5BbdB9dKMYIKaU/eKj2qt2d8Va7iQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=OaMpJLHi0q9SqSO5YdOJfSBmZVQ4I5T8xX90u0HJNw4=;
+ b=ZBQlU6ZE1uVf5NFD+Z/5ojS27X/LOJqOjwp1XxKyawV+1CY88aMixnIx0fX9kAsg6fI0DcBB0+jh97HsK2cNjDyduBgLKYZ0xXlX0HGTEEKWxIpCYPdgsiKNdUayVdsQz6TUIGGTlzY5qYeJD5+fn00rHwrMSZ+b+5AjHmyiwgKA6I69Tr/iA01QcueyPZOzBDIkBjrT9Y5x7ZJ/9q+Lxav0LjJ4sNoUqSHyYQIxKwLGMvNGXlgzmjc4/ozX56kttv6oh7Efqn6dvglJHKadcSnO9u3XKtCa5a5tiShHl0vWoUCfYg63J5gDhhPE0C4PyRvTjLWnxZ9pBDxDTAG6tA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cAlFoABBaPevXAHpzji5OYm6YZxuJ+OLfJ/mo3czKu8=;
- b=aj4paxjFJkFCLTGUcVVWbQXaHhQq1S3ivqcNNWptpgOwVdHFYoGOwLOJLCU9CX7hjZSDshKdN72sm4XitDouRfO3mBg7dNhId6+ilbiaSW7+A/zV+YrbEskaHgaLYKv4zcBLv8r3+MBRNrlCTZUMkcbrcofGEh3RFq0K/DjTi0yUfqfm+zE9ONSQ96F/CFOQBvbSsMUxkFvjbzoqQf7x0/NamU+qFkMd1uwOe4HXkvKohuBoOKfwPYqsCYNxrIEuq0IfIqM/N9UezASwHC2xOM7j3KTC21JGdhdhVgT4dkxXDFU8RjJ4TveRPEaicp7tXsyKStm3VN5li9UCfL/pjg==
-Received: from BN9PR12MB5338.namprd12.prod.outlook.com (2603:10b6:408:103::23)
- by CY1PR12MB9651.namprd12.prod.outlook.com (2603:10b6:930:104::8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.11; Sun, 8 Nov
- 2026 04:22:12 +0000
-Received: from BN9PR12MB5338.namprd12.prod.outlook.com
- ([fe80::7b66:315e:f851:8ddb]) by BN9PR12MB5338.namprd12.prod.outlook.com
- ([fe80::7b66:315e:f851:8ddb%6]) with mapi id 15.21.0592.010; Sun, 8 Nov 2026
- 04:22:11 +0000
-From: Bing Zhao <bingz@nvidia.com>
-To: Rayane Boussanni <rboussanni@gmail.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: Raslan Darawsheh <rasland@nvidia.com>
-Subject: RE: [PATCH] net/mlx5: add hardware query for basic stats
-Thread-Topic: [PATCH] net/mlx5: add hardware query for basic stats
-Thread-Index: AQHczfIdLN47lz3X1kiv0fw9AoU0drck1QLw
-Date: Sun, 8 Nov 2026 04:22:11 +0000
-Message-ID: <BN9PR12MB53387D0E8952B83DF7D18270D0742@BN9PR12MB5338.namprd12.prod.outlook.com>
-References: <20260416224011.14862-1-rboussanni@gmail.com>
-In-Reply-To: <20260416224011.14862-1-rboussanni@gmail.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR12MB5338:EE_|CY1PR12MB9651:EE_
-x-ms-office365-filtering-correlation-id: 48b99540-2904-4fc7-5ac5-08df3d4fdc29
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|376014|23010399003|1800799024|38070700021|260925021911599003|260925022911599003|260925021311599003|261026140227099003|11063799006|261022075727099003|261022105027099003|56012099006|261009223027099003|261021121427099003|261021135927099003|261021123027099003|261102123227099003|261026121527099003|261028144727099003|18002099003|22082099003|6133799003|10067099003;
-x-microsoft-antispam-message-info: xnxg8FpBskk9F1a3xr77x8j6tjNEWcrDnzHwiY/L3ROvj5Lpcn7H54ogLNEmW7XodsF0vPTdi6suS5RoPbcEXjYVroUJDIlA+JxV0IClArL964BNcMVGgPTp8AvPYWul3TeUs+pcbn+SIhJ7Ul7fWdtN4NKQLCONZm9aaG4mKbT7LVXjTffPuVu9bbtbOh8CO+YJqEYFxov665SZpNbxKbH2NE49L72vyr3+aB1yl6p1SBzJ+MsHP3giIthFQQnpSoMdwJUXnmjAlDscqq2NwhiyKjDnlS9B9+aVvywWYlX+Jo+yNoGmNuKLedXh5Mm+hJ2YMPLtuAKVy2s1oiCQvLiEpxeztybAMGTvCj1HDD6Xb9AwvcRy+yfTKLubRWyuzaeT5TSg9ea3ULGLrWd4Z1wJS8xi3GiPNTLE03uCG7HmkzQyvHn6VYOsI5fY3HpW2A3VDISC5cIUVWYJ6aKCMna//NZh+gs0tyuDo1D/jaCCNG0Ea1bLv2ZM0HRo0b27GlXBLZ5aMLGybd6U0d5O6+eW+4vJfk4lje42tG7AbJ7H0eedcFEpGtKoD8hi2pRQAwMxKwWVfJ2dQYgfGUTRz/MIdeHmjx0evx2PeQhuhSviTTNLQd4PuQ5tHSnGTmNuAoBDSsn7S1jMdKHUi5kHvp2l/oxMUngqwjiBNmww1DoHjrFM5fuo/WKpQ6fDgXYmWR6YGE6pYCNZUsbwi9oV3eu4w/61Qlf/eF7H4XCxH0Y=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BN9PR12MB5338.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(38070700021)(260925021911599003)(260925022911599003)(260925021311599003)(261026140227099003)(11063799006)(261022075727099003)(261022105027099003)(56012099006)(261009223027099003)(261021121427099003)(261021135927099003)(261021123027099003)(261102123227099003)(261026121527099003)(261028144727099003)(18002099003)(22082099003)(6133799003)(10067099003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Sb0LTx8LpN5Dc8TL4My0dBjp4Nh2l9acmTIr+PUPXpsCfxTwIO6OU57kFxQj?=
- =?us-ascii?Q?U1uDwDuzI2O2mXB21SRJZ2HKkOaJfJFGEGBiAHSeIZT/Iqrclb/D3BqXDLi0?=
- =?us-ascii?Q?hqdzve/TKKFyzqIRLXUxwZG1JydQM7JxT1DX9DkQ1m0ZHdx0Ix5gyHdP4xYO?=
- =?us-ascii?Q?9sSiwUkLmtgk5mQJtGdIYJyLXY0nVNZ0/vOSFZwBLv/W3djVEUUbaoaBsJ7T?=
- =?us-ascii?Q?iQorp13MGAauBh0Re7/ZQse+aK2htIkaaaWQ/QaBo3PrPlohc/ePyFFLHX+1?=
- =?us-ascii?Q?eP5DO/EPdp1vecxMDP9kVAKhw3tdmr6Us5ebw1ARxD4V79QBzLlhzYIEtJKK?=
- =?us-ascii?Q?FKHrOP7NWT3cF69NUl30gDHwy3TpB3DfIqvOtiMD2A8tkn2uuZawyuT5RmOL?=
- =?us-ascii?Q?1eqJugERcZYH/shs/ifbLy2ah+wUYr48dxeIKscgfIN72IB8GcPjIe19FGYi?=
- =?us-ascii?Q?0BmViA0pJmi4QTdJBUzPgfis8qjGAIOqLX4PtU30tRCO1FyioVmFq1ZcEUnB?=
- =?us-ascii?Q?KeTlQWeptwzYN0DA/oyu6UgEAsT/qUnyFp2CPSd2EXHwHmX+nBjMYIUcIaN1?=
- =?us-ascii?Q?hfU+cSjgSlNr2vx2nZRgLfQi27p2/qpxvjRX5yww2zv0JGcLd2t+u3Z61atZ?=
- =?us-ascii?Q?18kd5QRoiugdYKexhpSGtWGK7+nXSpRWDLf8L2eFCMpueuJQwrLtfIuhpUXd?=
- =?us-ascii?Q?zUjwe6jWrZ1FCQ1Jh9idwagMXJVZT/r6dOPK1Y1rIMmNoIvUNiRomnM7yyhm?=
- =?us-ascii?Q?wTdzMODMCPeqxvP0Dgc+GFiXI/iWmN8XFLGZ7sQ/vTsVwDIOeoOUmvfYgBh6?=
- =?us-ascii?Q?ZmZo+SMWNi+A3PXh/I/PY1eTiB6KyVDuSZN2Rwk+h5V8RG24BMahYG8jhmgH?=
- =?us-ascii?Q?0m/2ewU5DTJFUwGTXJPrmWdoZ4gcAoBlqTME/A60SYXMzsd/7P/WTfzk4nIY?=
- =?us-ascii?Q?UKWP5ksM99GKYsRSA3AfxDOprQ6GhPzvH/hseg8Lrnyt5I+z/RqyESCfDauo?=
- =?us-ascii?Q?8aOaLS6pMQwQyFmWxi8bL5KfQLVGA5FlJwlSAI2X/xhjZAqpv/8RIeWyZgvj?=
- =?us-ascii?Q?vaAvZ4KcL37/BMBEseLv53lblVFfb28jgRwKDrmihfzupF5Rx5SQ0W0AUI6x?=
- =?us-ascii?Q?BF01D20gBM49z5doaf1baesDAPfNZZZU/vzXVabRY2OjcEoFMFJt+aRAKgCz?=
- =?us-ascii?Q?QNkS2nu4QTCO0KiKj5vuc2IVVojB+wBUfOe1GUYm+O/EfORcxM7zxcHMaitR?=
- =?us-ascii?Q?U612zck5ztpaONnb+IbHif/P5kc64t+lkMSwgDHyxN4rB9rggX3ViSjnUXpY?=
- =?us-ascii?Q?/yyFxi5gANTbma0/wEpSPX1cNlbmePd/CCTXk2h6TUKGRov3plhtd6j3ImYP?=
- =?us-ascii?Q?V8ENL0uxnK+RaEf/uUKvPcrAmDbz6zDtI9dcpXSXQ2We8Hvosk0wEz1HJgE8?=
- =?us-ascii?Q?ZqWlEtvEbO5SaVFqJ+l/awP3C+sAnvoz7ymDT9pdnsyuyQCSVhQ1FNn0cDqV?=
- =?us-ascii?Q?LqitIFNTdCXAJjVKLF7l5kK6eIMgWcIhiP6q0aQv8bxbS3iOb+e8jQZzYMzw?=
- =?us-ascii?Q?1Vt87m4HKEBCu8TrjpGJvuca2utVDe2ERh6k4yZkiJJBPXXGJ32Y10Sm6X0c?=
- =?us-ascii?Q?jt8uKn/+Rv6hikchNLrM9RI804dnUI3zzwoWqRpRvO4t7S6yWI6Lc3k7uPtc?=
- =?us-ascii?Q?wViQY3IzfdKC6lSagNWTQQYQAl8wwuQ8+5aEujxE5cPNEIW+?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ bh=OaMpJLHi0q9SqSO5YdOJfSBmZVQ4I5T8xX90u0HJNw4=;
+ b=OZN1SXMdVF+cFSqp6jTcRDr7bZlqEQcizRCzh0Hbgob+hudZ6pgAQi4k5EzPFyRW/pk/Wtp43x56vSmQxNvNxn1IUeMCAGo+iSHK8xubZaT9F5lc0CWts97W821NjFFpvYeRsMIajqCp900AwDGgCKKuGQEeNM0RJz62tx8bbC0uUcPjYUAI2A9IAefMDBxKoc9aPVg14umzbWKIDywak1bSwpecWWbBXT6UM++eDWYrTxpq6vFvxgZFzYO8yso9XKi999DYqnc+HlHGR5sXxjcOKA4kYWXDVFbbkM7bcTrSZbXfgA9uVeL9RwcoI4WV4E7gmT3QToiiNHJmYh13XA==
+Received: from CH2PR17CA0018.namprd17.prod.outlook.com (2603:10b6:610:53::28)
+ by DS0PR12MB7899.namprd12.prod.outlook.com (2603:10b6:8:149::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Sun, 8 Nov
+ 2026 08:38:00 +0000
+Received: from CH01EPF000BE944.namprd02.prod.outlook.com
+ (2603:10b6:610:53:cafe::3e) by CH2PR17CA0018.outlook.office365.com
+ (2603:10b6:610:53::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.11 via Frontend Transport; Sun, 8
+ Nov 2026 08:38:00 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH01EPF000BE944.mail.protection.outlook.com (10.167.244.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.615.4 via Frontend Transport; Sun, 8 Nov 2026 08:38:00 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Sun, 8 Nov
+ 2026 00:37:43 -0800
+Received: from nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Sun, 8 Nov
+ 2026 00:37:41 -0800
+From: Itai Sharoni <isharoni@nvidia.com>
+To: <dev@dpdk.org>
+CC: <stable@dpdk.org>, <dsosnowski@nvidia.com>, <viacheslavo@nvidia.com>,
+ <bingz@nvidia.com>, <rasland@nvidia.com>
+Subject: [PATCH] net/mlx5: reject unsupported layers before GRE and NVGRE
+Date: Sun, 8 Nov 2026 10:37:21 +0200
+Message-ID: <20261108083721.3390082-1-isharoni@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH01EPF000BE944:EE_|DS0PR12MB7899:EE_
+X-MS-Office365-Filtering-Correlation-Id: ae7f6a96-6ee7-4935-7ceb-08df3d7398a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|36860700016|376014|23010399003|1800799024|10067099003|18002099003|3023799007|56012099006|11063799006|261026140227099003|261021121427099003|261028144727099003|261009223027099003|261022105027099003|261102123227099003|261022075727099003|261026121527099003;
+X-Microsoft-Antispam-Message-Info: 4CwNnOgdbiqeRNgz3w5S9xVsgCh79ScfDPz9qGdfjlrHon9/VHCHUJhbv9e61oggjYMG3H1jM4aUMlMjHel3mPeUNVfZAbVlsfUKaUfUYKyfPkOP7aOd10LLYOZ4hSv7XadTk6xhUaBTWHjoRG8kX/mdoqv3bDPITHp0druLAwiFp7Zw8LMoykeoD5WUUb/B/0o2F4nyt/b/sJX+Ma6wMZEynY/Yq/imUwS5mHbfdodtI1/abgb0t8k56Z56bdjmFDjRB/NqSeDCX+1dXcm+k7THWAzHCbt5zGAh4CgrJqNnqGY0tRD1DrrMBYoO7ZXxbcvU3jiC0gKzG4bzFQGBEEt6eUz7eiUyIEH9JYvUOtr56qtX6aLsVrFF9LoDqfOjpUclg5lTd0z0mlfU1O0V2fTYnk7HarINXHHoI4mUc0Kr4biL++D6P6Z9x9jn25DJrF0uuaeCEjEHkBPpSGq1SsHVjDeim6v1Kpi0kNkwTg999t9cAztW+Gb1YT+YI31SB3uh1R0dY/txMoUrbuuMehaQvKqekZyCKIDqOBfjrzE7/c2f7v0losfaN9G6yEIdFI1q4SbkgBVesFHRIKHKBjuJ3VH5VKmnHBvnkzM8gAbCTQ9win6ZLJF0B7aaeOTwEwVUZCQf8IMhJI4MU360Zsqz/eriqfybLIgfDAN04lqur41oVV5Cufddw9DX30q+oepQYBG4P6zPA9MIqrNMFw==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(36860700016)(376014)(23010399003)(1800799024)(10067099003)(18002099003)(3023799007)(56012099006)(11063799006)(261026140227099003)(261021121427099003)(261028144727099003)(261009223027099003)(261022105027099003)(261102123227099003)(261022075727099003)(261026121527099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: raisVFQtrhcu8IxMsMxBhuZOQRETAyCcL3Temk8fAfK2LK2P/QyipS5Q+GsRKYku06wYp8uGpoIX+3ThKx69Q80yogVaKFULFJd6Yd1XCWIUj2XU4syQ66TEt8e6aWtJ0pnqYSbK+x5tKg0HEfWIE+rDlOzZobUWKD1O9a2c+QUD7SpQo5VwYo4ZEnbVojM/7P2BopqmgV91yYWkNtvpu4OtUP/zr18LwZLb28SjXzEmZdpL0/Z1OKQ3fzK74T2ZeFG+jPWDyZMSbKGnP/Cx+nmpc0J/0EyFizPUtXw3QiXy1L7SgEJAvBvmNI9NWbdkXxq72JGayE39IGOelCMtLHHXFeEmcr8sCuJ1gkIjIgEVBZWRYa+bGQLhvSEa5h2x/ks/4hknRvBtqPjn1nc2KBX/1DdCU/jlPqetXl35o5LCfqCuEWd+VSCkQFiZo/5f
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5338.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48b99540-2904-4fc7-5ac5-08df3d4fdc29
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2026 04:22:11.4988 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: k++bpuxC1NrxSxERa3ViAe5olRy1yXC1C1x/IheVWgy8IuCF7OOt1/kc1YOW4NSqQiya5O/4FIMM0FahrICbCw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9651
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2026 08:38:00.0063 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae7f6a96-6ee7-4935-7ceb-08df3d7398a6
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CH01EPF000BE944.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7899
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -118,182 +106,80 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Hi Rayane,
+Flow patterns such as eth / ipv4 / udp / nvgre were accepted
+silently because mlx5_flow_validate_item_gre and
+mlx5_flow_validate_item_nvgre did not check which layers precede
+the GRE item.
 
-Thanks for working on this. Unfortunately the patch cannot be accepted in i=
-ts current form. Please see the comments below.
+During translation the GRE handler overwrites the ip_protocol
+field from UDP (17) to GRE (47), so the resulting firmware rule
+matches plain NVGRE packets instead. This misleads users into
+believing they created a UDP+NVGRE rule when the UDP item is
+silently discarded. The same applies to TCP, ICMP, ICMPv6 and ESP.
 
-> -----Original Message-----
-> From: Rayane Boussanni <rboussanni@gmail.com>
-> Sent: Friday, April 17, 2026 6:40 AM
-> To: dev@dpdk.org
-> Cc: Raslan Darawsheh <rasland@nvidia.com>; Rayane Boussanni
-> <rboussanni@gmail.com>
-> Subject: [PATCH] net/mlx5: add hardware query for basic stats
->=20
-> External email: Use caution opening links or attachments
->=20
->=20
-> When MLX5_PMD_SOFT_COUNTERS is not defined, the basic dev statistics
-> (rte_eth_stats) previously fell back to returning zeroed values for all
-> packet and byte metrics.
->=20
-> This patch resolves the FIXMEs in mlx5_stats_get and mlx5_stats_reset by
-> falling back to the target's dev counters map. It utilizes
-> mlx5_os_read_dev_counters to retrieve the bulk arrays from the hardware
-> and strategically filters them against the xstats_ctrl index to summarize
-> the basic opackets, obytes, ipackets, ibytes, oerrors, and ierrors withou=
-t
-> duplicating the context-switch overhead.
->=20
-> Signed-off-by: Rayane Boussanni <rboussanni@gmail.com>
-> ---
->  drivers/net/mlx5/mlx5_stats.c | 57 +++++++++++++++++++++++++++++++++--
->  1 file changed, 55 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/mlx5/mlx5_stats.c b/drivers/net/mlx5/mlx5_stats.=
-c
-> index 5cd3e303cc..198f231559 100644
-> --- a/drivers/net/mlx5/mlx5_stats.c
-> +++ b/drivers/net/mlx5/mlx5_stats.c
-> @@ -280,7 +280,46 @@ mlx5_stats_get(struct rte_eth_dev *dev, struct
-> rte_eth_stats *stats,
->                 tmp.imissed =3D stats_ctrl->imissed;
->         }
->  #ifndef MLX5_PMD_SOFT_COUNTERS
-> -       /* FIXME: retrieve and add hardware counters. */
-> +       {
-> +               uint64_t counters[MLX5_MAX_XSTATS];
-   1. The new code is never compiled. drivers/net/mlx5/mlx5_defs.h
-      defines MLX5_PMD_SOFT_COUNTERS to 1 whenever it is not already
-      defined, so both new #ifndef blocks are always excluded. Neither
-      -DMLX5_PMD_SOFT_COUNTERS=3D0 nor -UMLX5_PMD_SOFT_COUNTERS changes
-      this, so the patch has no effect in any supported build.
-=20
-      A supported way to select hardware counters is needed first.
-      Note also that the non-soft-counter configuration already fails
-      with -Werror, because of the unused "ntcp" variables in
-      mlx5_tx_packet_multi_tso() and mlx5_tx_burst_tso() in mlx5_tx.h.
-      That is not caused by your patch, but it shows this mode is not
-      currently built or tested.
+GRE-in-UDP (RFC 8086) is a valid encapsulation that mlx5 does not
+support, so reject an outer UDP item with ENOTSUP. GRE cannot be
+carried over TCP, ICMP or ICMPv6, and cannot be matched inside an
+encrypted ESP payload, so reject those with EINVAL.
 
-> +               struct mlx5_xstats_ctrl *xstats_ctrl =3D &priv->xstats_ct=
-rl;
-> +               bool bond_master =3D (priv->master && priv->pf_bond >=3D =
-0);
-> +
-> +               ret =3D mlx5_os_read_dev_counters(dev, bond_master,
-> counters);
-> +               if (ret) {
-> +                       DRV_LOG(WARNING, "port %u unable to read device
-> counters",
-> +                               dev->data->port_id);
-> +                       return ret;
-> +               }
-> +               for (i =3D 0; i !=3D xstats_ctrl->mlx5_stats_n; ++i) {
-> +                       const char *name =3D xstats_ctrl->info[i].dpdk_na=
-me;
-> +                       uint64_t val =3D (counters[i] -
-> + xstats_ctrl->base[i]);
+The checks are unconditional so they cover both the DV and HWS
+steering paths.
 
-   2. mlx5_stats_reset() overwrites the xstats baselines but does not
-      reset xstats_ctrl->hw_stats[], which mlx5_xstats_get() uses for
-      32-bit wrap tracking of device counters. After a basic stats
-      reset with unchanged hardware counters, rx_out_of_buffer is
-      reported as 4294967296. Please either perform a complete,
-      consistent reset (as in mlx5_xstats_reset()) or keep separate
-      baselines for the basic statistics.
+Fixes: f4b901a46aec ("net/mlx5: add flow GRE item")
+Fixes: ea81c1b816f7 ("net/mlx5: fix NVGRE matching")
+Cc: stable@dpdk.org
 
-> +
-> +                       if (!strcmp(name, "rx_unicast_packets") ||
-> +                           !strcmp(name, "rx_multicast_packets") ||
-> +                           !strcmp(name, "rx_broadcast_packets"))
-> +                               tmp.ipackets +=3D val;
-> +                       else if (!strcmp(name, "rx_unicast_bytes") ||
-> +                                !strcmp(name, "rx_multicast_bytes") ||
-> +                                !strcmp(name, "rx_broadcast_bytes"))
-> +                               tmp.ibytes +=3D val;
-> +                       else if (!strcmp(name, "tx_unicast_packets") ||
-> +                                !strcmp(name, "tx_multicast_packets") ||
-> +                                !strcmp(name, "tx_broadcast_packets"))
-> +                               tmp.opackets +=3D val;
-> +                       else if (!strcmp(name, "tx_unicast_bytes") ||
-> +                                !strcmp(name, "tx_multicast_bytes") ||
-> +                                !strcmp(name, "tx_broadcast_bytes"))
-> +                               tmp.obytes +=3D val;
-> +                       else if (!strcmp(name, "rx_wqe_errors") ||
-> +                                !strcmp(name, "rx_phy_crc_errors") ||
-> +                                !strcmp(name,
-> "rx_phy_in_range_len_errors") ||
-> +                                !strcmp(name, "rx_phy_symbol_errors"))
-> +                               tmp.ierrors +=3D val;
-> +                       else if (!strcmp(name, "tx_phy_errors"))
-> +                               tmp.oerrors +=3D val;
-> +               }
-> +       }
->  #endif
->         *stats =3D tmp;
->         return 0;
-> @@ -319,7 +358,21 @@ mlx5_stats_reset(struct rte_eth_dev *dev)
->         mlx5_os_read_dev_stat(priv, "out_of_buffer", &stats_ctrl-
-> >imissed_base);
->         stats_ctrl->imissed =3D 0;
->  #ifndef MLX5_PMD_SOFT_COUNTERS
-> -       /* FIXME: reset hardware counters. */
-> +       {
-> +               uint64_t counters[MLX5_MAX_XSTATS];
-> +               struct mlx5_xstats_ctrl *xstats_ctrl =3D &priv->xstats_ct=
-rl;
-> +               bool bond_master =3D (priv->master && priv->pf_bond >=3D =
-0);
-> +               int ret;
-> +
-> +               ret =3D mlx5_os_read_dev_counters(dev, bond_master,
-> counters);
-> +               if (ret) {
-> +                       DRV_LOG(WARNING, "port %u unable to read device
-> counters",
-> +                               dev->data->port_id);
-> +                       return ret;
-> +               }
+Signed-off-by: Itai Sharoni <isharoni@nvidia.com>
+Acked-by: Bing Zhao <bingz@nvidia.com>
+---
+ drivers/net/mlx5/mlx5_flow.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-   3. On Windows, mlx5_os_read_dev_counters() always returns -ENOTSUP.
-      Once this path is enabled, rte_eth_stats_get() and
-      rte_eth_stats_reset() would fail completely there, instead of
-      still returning the statistics that are available today. An
-      unsupported backend should be handled gracefully.
-
-> +               for (i =3D 0; i !=3D xstats_ctrl->mlx5_stats_n; ++i)
-> +                       xstats_ctrl->base[i] =3D counters[i];
-> +       }
->  #endif
-
-   4. This changes what the basic statistics mean. The vport counters
-      also include traffic received or sent by the Linux kernel
-      (bifurcated driver), while doc/guides/nics/mlx5.rst says the
-      basic Rx/Tx statistics count only packets handled by the PMD.
-      If this is intended, the documentation must be updated and the
-      change in behaviour explained in the commit message.
-=20
-   My AI tool checked this by compiling mlx5_stats.c in both the default
-   configuration and with the hardware branch forced on, and by running
-   the patched get/reset callbacks in a small harness with the device
-   reads stubbed out. I did not run it on hardware.
-=20
-   For a v2, I'd suggest agreeing first on how hardware basic statistics
-   should be selected, then addressing the points above. Please include
-   the documentation update and test results on Linux (including
-   bonding) and Windows.
-
->=20
->         return 0;
-> --
-> 2.34.1
+diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
+index 37654918b5..f20214857f 100644
+--- a/drivers/net/mlx5/mlx5_flow.c
++++ b/drivers/net/mlx5/mlx5_flow.c
+@@ -3519,6 +3519,16 @@ mlx5_flow_validate_item_gre(const struct rte_eth_dev *dev,
+ 					  RTE_FLOW_ERROR_TYPE_ITEM, item,
+ 					  "multiple tunnel layers not"
+ 					  " supported");
++	if (item_flags & MLX5_FLOW_LAYER_OUTER_L4_UDP)
++		return rte_flow_error_set(error, ENOTSUP,
++					  RTE_FLOW_ERROR_TYPE_ITEM, item,
++					  "GRE over UDP is not supported");
++	if (item_flags & (MLX5_FLOW_LAYER_OUTER_L4_TCP |
++			  MLX5_FLOW_LAYER_ICMP | MLX5_FLOW_LAYER_ICMP6 |
++			  MLX5_FLOW_ITEM_ESP))
++		return rte_flow_error_set(error, EINVAL,
++					  RTE_FLOW_ERROR_TYPE_ITEM, item,
++					  "GRE cannot follow TCP, ICMP or ESP layer");
+ 	if (!mlx5_hws_active(dev)) {
+ 		if (!(item_flags & MLX5_FLOW_LAYER_OUTER_L3))
+ 			return rte_flow_error_set(error, ENOTSUP,
+@@ -3894,6 +3904,16 @@ mlx5_flow_validate_item_nvgre(const struct rte_eth_dev *dev,
+ 					  RTE_FLOW_ERROR_TYPE_ITEM, item,
+ 					  "multiple tunnel layers not"
+ 					  " supported");
++	if (item_flags & MLX5_FLOW_LAYER_OUTER_L4_UDP)
++		return rte_flow_error_set(error, ENOTSUP,
++					  RTE_FLOW_ERROR_TYPE_ITEM, item,
++					  "NVGRE over UDP is not supported");
++	if (item_flags & (MLX5_FLOW_LAYER_OUTER_L4_TCP |
++			  MLX5_FLOW_LAYER_ICMP | MLX5_FLOW_LAYER_ICMP6 |
++			  MLX5_FLOW_ITEM_ESP))
++		return rte_flow_error_set(error, EINVAL,
++					  RTE_FLOW_ERROR_TYPE_ITEM, item,
++					  "NVGRE cannot follow TCP, ICMP or ESP layer");
+ 	if (!mlx5_hws_active(dev)) {
+ 		if (!(item_flags & MLX5_FLOW_LAYER_OUTER_L3))
+ 			return rte_flow_error_set(error, ENOTSUP,
+-- 
+2.43.0
 
