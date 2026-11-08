@@ -2,87 +2,47 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F190E606A31C
-	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Nov 2026 17:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=JFPQWIZs
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D8B606A31C
+	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Nov 2026 18:39:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA4F6402DC;
-	Sun,  8 Nov 2026 18:11:01 +0100 (CET)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
- [209.85.216.50])
- by mails.dpdk.org (Postfix) with ESMTPS id 4AC7A40264
- for <dev@dpdk.org>; Sun,  8 Nov 2026 18:11:00 +0100 (CET)
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-3ac91ac8924so86609a91.1
- for <dev@dpdk.org>; Sun, 08 Nov 2026 09:11:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794157858;
- x=1794762658; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=SoF/z1u1OgmQxupfqlwPNIiEEHF48dRQBpFok/q2jpI=;
- b=JFPQWIZsadu98mR02ASAeFqUlDDeTIIK0/5K/xm0yJh0vptUCHZ7lRwD5STn//FxCq
- Ov8qlIBqplKG9h2hwZphEenlbYrCLeZTLWoBxVtJMKfgGY9zpH2+8IxSvD0oOB1xqNGv
- 20tgMFa8E0jA1cthWGUIoz7ja4mseUN057grNxekscu1xwa/XA9xEQP/bSeDCHAYj3tA
- AlyvAgZ/O9RKhpH5PtSZ6ziTtt1CNrXkYJH70yYP0ywG/gxXlKLMpfJS8hkWi7EYteYr
- FsD7jhpDl2WYigR/YSijry1bFZyp9PM/ATeTZ5gIuMLDtehNyQQxsD72r6zRc3DU9HVw
- EuuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794157858; x=1794762658;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=SoF/z1u1OgmQxupfqlwPNIiEEHF48dRQBpFok/q2jpI=;
- b=GYlWmgNvavg1gLbpjdyZs+6FCGN0xp65rSQMuTwPmz1OR1cCBLnOkWE89RMmw5OWwn
- tMnlMVo1jdotyTSLXnFX57l4I0skWNQ6NEfBWNIpkUFDjHFV/wGCdh5woignEXLNg5Yy
- 0oS2C7sw4bRMrRIpS+2Ytb2AkGxy/HeIiRFjrR9Ssvx1U3KzSSH9qOjv3vZ18/NCtfk1
- pZ0OgSB3gjWMjMtJ2UtRPXOOVDKrPzQnRpqZR1fP5U+xN/A8gflZtuzO3kUTVrY6mkfw
- gBtJpqDUQ8NNSpFAll1nggk+PUsR1iWB5B6J0F9zHqf09G7PLmxG6ghY/TkewbPpsXZP
- ipFw==
-X-Forwarded-Encrypted: i=1;
- AL+hErErRn+ByIQTpmS5rUzdsAF9C8o0Rcs1gyc1fmmI6n5e0xHBFKE6NGstdV7fXK6YpINJEPk=@dpdk.org
-X-Gm-Message-State: APuU4Z80ej246T3R1+kk4Rr+NHMqDYOp+0JhqZqkimtIZG4BHjTz3sR7
- McTD9dXn85TFvx/Rt/FQcvHZLlSxFq2bqX13KpNFjOW/cfG/3BBZbRrV94H9dtNRgSs=
-X-Gm-Gg: AYBFou01IFlbed2Y+Ar3RSEUmgz+ucaukUN8eQekovI/FjHQ3isnNsNOB21lM8rMCpI
- AJiYPPGwZ1N+NGSZY3am1mUiyve47iByBJAwv7Mt5v37aG+yLg1a+Tjg1Yahbk3Gmvqmrxe2Eos
- FKRAq9uAJeGeAsaptRD3N+s+1IPU0619jy8n/8f4bxC0JMjHTqew9iMEIVbjGelVktH5YtKwec3
- wEb/n3omx4Sd3CecKuSdpISbbMKBiz+bSdlYeqi/tItWOsK//jOYztS+V6SGLHobR4/lIj7EIrm
- NhD0u2Fje5fkKgYthAD/NuZULhUHxv4Learqon/Gu135xQlwa/Sfubs2+t8yY/B212T7DQChdTD
- 2DBbov4fx8qoHs6C+Db2k68OQJPks4AO5XcYPu2RhRGn5Rb5WKhN4Mt7IcYHGv3FGdZKzY7zpr/
- MPl4FklBqZsPi6qL/kicq8sTdpr2aSCZOsj1XUieLTl02QCrWewsrJci5/P15Yi7tHHnMCZFMUd
- nLZQxAXq2tAF9W2GnbXlShLhqApCpfAkcbOwauDdBKp0DWmcHY3I25yUwIh+fIpdAL/4Sv4wsY/
- mp6V2bumCqW7gj//grpm7RB3Qtce8yvtW9Hcgco0gXCwp2ENnUXNtLH/BNsHjS9fn9G69uxAdhZ
- NJKj1yMhsUovSCiQ=
-X-Received: by 2002:a17:90b:224e:b0:3a7:82ef:bcdd with SMTP id
- 98e67ed59e1d1-3b12d340af3mr1604452a91.41.1794157858250; 
- Sun, 08 Nov 2026 09:10:58 -0800 (PST)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b127fad1d3sm3564718a91.11.2026.11.08.09.10.57
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 08 Nov 2026 09:10:58 -0800 (PST)
-Date: Sun, 8 Nov 2026 09:10:56 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Jerin Jacob <jerinjacobk@gmail.com>
-Cc: Pravin Pathak <pravinpathakdev@gmail.com>,
- mattias.ronnblom@ericcson.com, dev@dpdk.org, jerinj@marvell.com,
- mike.ximing.chen@intel.com, bruce.richardson@intel.com,
- thomas@monjalon.net, david.marchand@redhat.com, nipun.gupta@amd.com,
- chenbox@nvidia.com, tirthendu.sarkar@intel.com, Pravin Pathak
- <pravin.pathak.dev@gmail.com>
-Subject: Re: [PATCH v1 0/8] event/slb: introducing software load balancer
- eventdev PMD
-Message-ID: <20261108091056.7f303a82@phoenix.local>
-In-Reply-To: <CALBAE1NduwOw_4wfYt088jhwmR_nxuApepuyYYus+P-=3L=cOw@mail.gmail.com>
-References: <20261107013011.2443138-1-pravinpathakdev@gmail.com>
- <CALBAE1NduwOw_4wfYt088jhwmR_nxuApepuyYYus+P-=3L=cOw@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6BB4240278;
+	Sun,  8 Nov 2026 19:39:28 +0100 (CET)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+ by mails.dpdk.org (Postfix) with ESMTPS id A439440265
+ for <dev@dpdk.org>; Sun,  8 Nov 2026 19:39:26 +0100 (CET)
+Received: from ar (unknown [42.86.133.94])
+ by APP-01 (Coremail) with SMTP id qwCowAD3I_7XwfBqxnKQAA--.31967S2;
+ Mon, 09 Nov 2026 02:39:20 +0800 (CST)
+From: Sun Yuechi <sunyuechi@iscas.ac.cn>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Sun Yuechi <sunyuechi@iscas.ac.cn>,
+ Daniel Gregory <daniel.gregory@bytedance.com>
+Subject: [PATCH v2] eal/riscv: add support for zawrs extension
+Date: Sun,  8 Nov 2026 10:39:19 -0800
+Message-ID: <890bc1ae8c469d644e529a42924ed463bb606df4.1794162421.git.sunyuechi@iscas.ac.cn>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20240502144149.66446-1-daniel.gregory@bytedance.com>
+References: <20240502144149.66446-1-daniel.gregory@bytedance.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: qwCowAD3I_7XwfBqxnKQAA--.31967S2
+X-Coremail-Antispam: 1UD129KBjvJXoWfJF4ruw1ktFyrtr4DAw4Utwb_yoWDCFW3pF
+ Z3Kr1ftws2qrn7G397tr109rWrAw4vga1UJryfZrW09wnxCrnIyrs8Ka4akFykJFs5Z3sI
+ krWF9ryY9anrZrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUyG14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+ 6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+ 1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+ 7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
+ 1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0E
+ wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+ 80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
+ I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
+ k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
+ xVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbrMaUUUUUU==
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAEFAmrwkB5DhQAAsY
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -92,280 +52,308 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Sat, 7 Nov 2026 12:59:18 +0530
-Jerin Jacob <jerinjacobk@gmail.com> wrote:
+The Zawrs extension adds a pair of instructions that stall a core until
+a memory location is written to. This patch uses one of them to
+implement RISC-V specific versions of the rte_wait_until_equal_*
+functions. This is potentially more energy efficient than the default
+implementation that uses rte_pause/Zihintpause.
 
-> > Design Overview
-> > ---------------
-> > `event_slb` is a distributed (`RTE_EVENT_DEV_CAP_DISTRIBUTED_SCHED`),
-> > maintenance-free (`RTE_EVENT_DEV_CAP_MAINTENANCE_FREE`) software eventdev
-> > PMD that supports Atomic, Ordered, Parallel, and Single-Link queues:  
-> 
-> @mattias.ronnblom@ericcson.com  - drivers/event/dsw/
-> @liangma@liangbit.com - drivers/event/opdl/
-> NO MAINTAINER for drivers/event/sw/
-> 
-> Hi Pravin,
-> Creating new flavours. of evendev SW drivers is a maintenance burden,
-> If this is close to DSW then please introduce mode in DSW driver and
-> have function pointer switches for fastpath,
-> Also claim should be backed by performance test values. Use
-> testeventdev test cases and share the numbers to prove one way or
-> another.
+The technique works as follows:
 
-I ran AI review with Fable and the current AGENTS guidelines.
-Short answer: it agrees with Jerin
+* Check the value with a plain load first and return immediately if it
+  already matches, as the generic implementation does
+* Otherwise create a reservation set containing the address we want to
+  wait on using an atomic load (lr.dw)
+* Call wrs.nto - this blocks until the reservation set is invalidated by
+  someone else writing to that address
+* Execution can also resume arbitrarily, so we still need to check
+  whether a change occurred and loop if not
 
-Review: [PATCH v1 0/8] event/slb: introducing software load balancer
-eventdev PMD
+Due to RISC-V atomics only supporting naturally aligned word (32 bit)
+and double word (64 bit) loads, I've used pointer rounding and bit
+shifting to implement waiting on 16-bit values.
 
-Applied cleanly on 26.11-rc2 (a13c105). Builds per-commit with
--Dwerror=true; bisect is clean. Line numbers below are in the
-post-apply tree.
+The code is enabled at build time when the target ISA string contains
+the Zawrs extension, detected through the compiler's __riscv_zawrs
+architecture test macro, e.g. -Dcpu_instruction_set=rv64gcv_zawrs.
 
-Cover / series-level
---------------------
+This is based on an earlier RFC by Daniel Gregory.
 
-Jerin's question (new PMD vs. a DSW mode) is the right one, and the
-code supports it. The credit pool (slb_port_acquire_credits,
-slb_port_return_credits, credits_on_loan, the max_inflight formula
-in slb_configure, the RTE_VERIFY on pending_releases), the log
-macros, and all of slb_xstats.c are DSW code with the prefix
-changed; the comment at slb_evdev.h:30 is verbatim dsw_evdev.h:62.
-What is new is the queue-side scheduling: atomic queues use a main
-MP/SC ring plus per-port SP/SC rings filled by whichever port finds
-its ring empty, under a per-queue spinlock; ordered queues use the
-ring slot index as the sequence number into a per-queue reorder
-buffer, drained under a second per-queue spinlock. Both are
-serialised per queue, so "distributed" means "whichever core takes
-the lock", and the atomic refill does an O(SLB_ATOMIC_FLOWS)+O(ring)
-scan on every migration trigger. The scaling claim needs
-testeventdev numbers against sw and dsw, as Jerin asked.
+Signed-off-by: Daniel Gregory <daniel.gregory@bytedance.com>
+Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
+---
+v2:
+* rebased on main
+* use build-time detection via __riscv_zawrs instead of a manual meson flag
+* change memorder parameter type from int to rte_memory_order
+* fix inverted alignment assert in RTE_WAIT_UNTIL_MASKED
+* make the size in RTE_WAIT_UNTIL_MASKED a compile-time constant
+* add a plain load before taking the reservation
+* add release notes and cross-build documentation
 
-Patches 7 and 8 are fix-ups to patches 1-6 (patch 8 also deletes
-code added by patch 6). Squash them; the bullet-list commit messages
-describe the diff, not the change.
+ config/riscv/meson.build                      |   9 +
+ .../linux_gsg/cross_build_dpdk_for_riscv.rst  |  26 +++
+ doc/guides/rel_notes/release_26_11.rst        |   8 +
+ lib/eal/riscv/include/rte_pause.h             | 159 ++++++++++++++++++
+ 4 files changed, 202 insertions(+)
 
-The cover letter says the self-test covers priority, backpressure,
-and multi-core atomic migration. slb_selftest.c is single-threaded,
-4 ports, no priorities, no backpressure, and never triggers a
-migration. None of the concurrency paths below are exercised.
+diff --git a/config/riscv/meson.build b/config/riscv/meson.build
+index 7f3e3301bb..5370aeac9e 100644
+--- a/config/riscv/meson.build
++++ b/config/riscv/meson.build
+@@ -153,6 +153,15 @@ if (riscv_extension_macros and
+     endif
+ endif
+ 
++# detect Zawrs (wait-on-reservation-set) extension, used by rte_wait_until_equal_*
++# to stall the hart until the polled memory location is written instead of spinning
++if (riscv_extension_macros and
++        (cc.get_define('__riscv_zawrs', args: machine_args) != ''))
++    message('Compiling with the Zawrs extension')
++    machine_args += ['-DRTE_RISCV_FEATURE_ZAWRS']
++    dpdk_flags += [['RTE_RISCV_FEATURE_ZAWRS', 1],]
++endif
++
+ # apply flags
+ foreach flag: dpdk_flags
+     if flag.length() > 0
+diff --git a/doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst b/doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst
+index bcba12a604..c7be173b9e 100644
+--- a/doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst
++++ b/doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst
+@@ -115,3 +115,29 @@ Currently the following targets are supported:
+ To add a new target support, ``config/riscv/meson.build`` has to be modified by
+ adding a new vendor/architecture id and a corresponding cross-file has to be
+ added to ``config/riscv`` directory.
++
++
++Optional ISA extensions
++-----------------------
++
++Some optimisations are enabled at build time when the target ISA string
++includes the extension.
++The build looks at the per-extension macros the compiler defines when
++``__riscv_arch_test`` is available, such as ``__riscv_zawrs``:
++
++``v``
++   Vector implementations (``RTE_RISCV_FEATURE_V``).
++
++``zawrs``
++   ``rte_wait_until_equal_*`` stall the hart with ``wrs.nto``
++   instead of spinning (``RTE_RISCV_FEATURE_ZAWRS``).
++
++Pass the full ISA string to enable them.
++For native builds use ``-Dcpu_instruction_set``::
++
++   meson setup build -Dcpu_instruction_set=rv64gcv_zawrs
++
++For cross builds, set ``cpu`` in the cross-file instead::
++
++   [host_machine]
++   cpu = 'rv64gcv_zawrs'
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 8ca8379cc6..4cce0b478a 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -68,6 +68,14 @@ New Features
+   and use pointer arithmetic instead of integer casts to enable compiler optimizations.
+   See API changes below.
+ 
++* **Added RISC-V Zawrs support for wait-until-equal helpers.**
++
++  On RISC-V targets built with the Zawrs extension in the ISA string
++  (for example ``-Dcpu_instruction_set=rv64gcv_zawrs``),
++  ``rte_wait_until_equal_*`` and ``RTE_WAIT_UNTIL_MASKED`` now stall the hart
++  with ``wrs.nto`` until the polled address is written instead of spinning
++  on ``pause``.
++
+ * **Added API to get CPU socket ID.**
+ 
+   Added the experimental ``rte_cpu_socket_id()`` function
+diff --git a/lib/eal/riscv/include/rte_pause.h b/lib/eal/riscv/include/rte_pause.h
+index 3f473cd8db..99d7f46711 100644
+--- a/lib/eal/riscv/include/rte_pause.h
++++ b/lib/eal/riscv/include/rte_pause.h
+@@ -7,6 +7,14 @@
+ #ifndef RTE_PAUSE_RISCV_H
+ #define RTE_PAUSE_RISCV_H
+ 
++#include <rte_config.h>
++
++#ifdef RTE_RISCV_FEATURE_ZAWRS
++#define RTE_WAIT_UNTIL_EQUAL_ARCH_DEFINED
++#endif
++
++#include <rte_debug.h>
++
+ #include "rte_atomic.h"
+ 
+ #include "generic/rte_pause.h"
+@@ -24,6 +32,157 @@ static inline void rte_pause(void)
+ 	asm volatile(".int 0x0100000F" : : : "memory");
+ }
+ 
++#ifdef RTE_RISCV_FEATURE_ZAWRS
++
++/*
++ * Atomic load from an address, it returns either a sign-extended word or
++ * doubleword and creates a 'reservation set' containing the read memory
++ * location. When someone else writes to the reservation set, it is invalidated,
++ * causing any stalled WRS instructions to resume.
++ *
++ * Address needs to be naturally aligned.
++ */
++#define __RTE_RISCV_LR_32(src, dst, memorder) do {                \
++	if ((memorder) == rte_memory_order_relaxed) {             \
++		asm volatile("lr.w %0, (%1)"                      \
++				: "=r" (dst)                      \
++				: "r" (src)                       \
++				: "memory");                      \
++	} else {                                                  \
++		asm volatile("lr.w.aq %0, (%1)"                   \
++				: "=r" (dst)                      \
++				: "r" (src)                       \
++				: "memory");                      \
++	} } while (0)
++#define __RTE_RISCV_LR_64(src, dst, memorder) do {                \
++	if ((memorder) == rte_memory_order_relaxed) {             \
++		asm volatile("lr.d %0, (%1)"                      \
++				: "=r" (dst)                      \
++				: "r" (src)                       \
++				: "memory");                      \
++	} else {                                                  \
++		asm volatile("lr.d.aq %0, (%1)"                   \
++				: "=r" (dst)                      \
++				: "r" (src)                       \
++				: "memory");                      \
++	} } while (0)
++
++/*
++ * There's not a RISC-V atomic load primitive for halfwords, so cast up to a
++ * _naturally aligned_ word and extract the halfword we want
++ */
++#define __RTE_RISCV_LR_16(src, dst, memorder) do {                      \
++	uint32_t word;                                                  \
++	__RTE_RISCV_LR_32(((uintptr_t)(src) & (~3)), word, (memorder)); \
++	if ((size_t)(src) & 3)                                          \
++		(dst) = (typeof(dst))(word >> 16);                      \
++	else                                                            \
++		(dst) = (typeof(dst))(word & 0xFFFF);                   \
++} while (0)
++
++#define __RTE_RISCV_LR(src, dst, memorder, size) {                \
++	RTE_BUILD_BUG_ON(size != 16 && size != 32 && size != 64); \
++	if (size == 16)                                           \
++		__RTE_RISCV_LR_16(src, dst, memorder);            \
++	else if (size == 32)                                      \
++		__RTE_RISCV_LR_32(src, dst, memorder);            \
++	else if (size == 64)                                      \
++		__RTE_RISCV_LR_64(src, dst, memorder);            \
++}
++
++/*
++ * Wait-on-Reservation-Set extension instruction, it stalls execution until the
++ * reservation set is invalidated or an interrupt is observed.
++ * A loop is likely still needed as it may stop stalling arbitrarily.
++ */
++#define __RTE_RISCV_WRS_NTO() { asm volatile("wrs.nto" : : : "memory"); }
++
++static inline void
++rte_wait_until_equal_16(volatile uint16_t *addr, uint16_t expected,
++		rte_memory_order memorder)
++{
++	uint16_t value;
++
++	RTE_ASSERT(memorder == rte_memory_order_acquire ||
++		memorder == rte_memory_order_relaxed);
++	RTE_ASSERT(((size_t)addr & 1) == 0);
++
++	/* fast path: a plain load is cheaper than taking a reservation */
++	if (rte_atomic_load_explicit((volatile __rte_atomic uint16_t *)addr,
++			memorder) == expected)
++		return;
++
++	__RTE_RISCV_LR_16(addr, value, memorder);
++	while (value != expected) {
++		__RTE_RISCV_WRS_NTO();
++		__RTE_RISCV_LR_16(addr, value, memorder);
++	}
++}
++
++static inline void
++rte_wait_until_equal_32(volatile uint32_t *addr, uint32_t expected,
++		rte_memory_order memorder)
++{
++	uint32_t value;
++
++	RTE_ASSERT(memorder == rte_memory_order_acquire ||
++		memorder == rte_memory_order_relaxed);
++	RTE_ASSERT(((size_t)addr & 3) == 0);
++
++	/* fast path: a plain load is cheaper than taking a reservation */
++	if (rte_atomic_load_explicit((volatile __rte_atomic uint32_t *)addr,
++			memorder) == expected)
++		return;
++
++	__RTE_RISCV_LR_32(addr, value, memorder);
++	while (value != expected) {
++		__RTE_RISCV_WRS_NTO();
++		__RTE_RISCV_LR_32(addr, value, memorder);
++	}
++}
++
++static inline void
++rte_wait_until_equal_64(volatile uint64_t *addr, uint64_t expected,
++		rte_memory_order memorder)
++{
++	uint64_t value;
++
++	RTE_ASSERT(memorder == rte_memory_order_acquire ||
++		memorder == rte_memory_order_relaxed);
++	RTE_ASSERT(((size_t)addr & 7) == 0);
++
++	/* fast path: a plain load is cheaper than taking a reservation */
++	if (rte_atomic_load_explicit((volatile __rte_atomic uint64_t *)addr,
++			memorder) == expected)
++		return;
++
++	__RTE_RISCV_LR_64(addr, value, memorder);
++	while (value != expected) {
++		__RTE_RISCV_WRS_NTO();
++		__RTE_RISCV_LR_64(addr, value, memorder);
++	}
++}
++
++#define RTE_WAIT_UNTIL_MASKED(addr, mask, cond, expected, memorder) do { \
++	RTE_BUILD_BUG_ON(!__builtin_constant_p(memorder));               \
++	RTE_BUILD_BUG_ON(memorder != rte_memory_order_acquire &&         \
++		memorder != rte_memory_order_relaxed);                   \
++	RTE_ASSERT(((size_t)(addr) & (sizeof(*(addr)) - 1)) == 0);       \
++	enum { size = sizeof(*(addr)) << 3 };                            \
++	typeof(*(addr)) expected_value = (expected);                     \
++	typeof(*(addr)) value;                                           \
++	if ((rte_atomic_load_explicit((addr), (memorder)) & (mask))      \
++			cond expected_value)                             \
++		break;                                                   \
++	__RTE_RISCV_LR((addr), value, memorder, size);                   \
++	while (!((value & (mask)) cond expected_value)) {                \
++		__RTE_RISCV_WRS_NTO();                                   \
++		__RTE_RISCV_LR((addr), value, memorder, size);           \
++	}                                                                \
++} while (0)
++
++#endif /* RTE_RISCV_FEATURE_ZAWRS */
++
+ #ifdef __cplusplus
+ }
+ #endif
+-- 
+2.56.0
 
-No release notes. Patch 6 says it adds a 26.11 entry and patch 7
-says it edits it; neither touches doc/guides/rel_notes/. A new
-driver after rc2 is 27.03 material anyway.
-
-Patch 1: introduce software load balancer PMD
----------------------------------------------
-
-Error:
-
-- slb_evdev.c:781, slb_dump(): NULL dereference.
-      uint32_t count = rte_event_ring_count(q->q_ring);
-  The loop runs i < slb->num_queues, which is set by configure, but
-  q_ring is NULL for any queue not yet set up. rte_event_dev_dump()
-  after configure and before queue_setup segfaults. Guard with
-  if (q->q_ring == NULL) continue;  (same loop at :782).
-
-- slb_evdev.c:197, slb_queue_setup(): double free. q_ring is
-  assigned before the atomic/ordered allocations:
-      queue->q_ring = ring;
-  and the failure paths at :212 and :239 do
-      rte_event_ring_free(ring);
-      return -ENOMEM;
-  leaving queue->q_ring dangling. The next slb_queue_release()
-  (close, or re-setup) frees it again. Set queue->q_ring = NULL on
-  those paths, or assign q_ring only after all allocations succeed.
-
-Warning:
-
-- slb_evdev.c:167, slb_queue_setup() on an already-linked queue
-  frees q_ring and any per_port_rings via slb_queue_release(), but
-  the linked ports' q_entries[][].dq_ring (set at :374) and
-  single_linked_ring (:319) still point at the freed rings. The
-  API allows queue_setup on a stopped device without unlinking
-  first, so the next dequeue is a use-after-free. Either return
-  -EBUSY when serving_ports_mask != 0, or re-resolve the entries.
-
-- slb_event.c:661, new_event_threshold is compared against
-  credits_on_loan, which includes every port's idle cache:
-      if (unlikely(rte_atomic_load_explicit(&slb->credits_on_loan,
-                                            rte_memory_order_relaxed) >
-                   source_port->new_event_threshold))
-              return 0;
-  This is the DSW check, but patch 7 raises SLB_MIN_CREDIT_LOAN to
-  256 (DSW: 64), so a port that only dequeues and releases holds
-  256..511 credits forever (slb_port_return_credits keeps
-  SLB_PORT_MIN_CREDITS). With K terminating ports the floor on
-  credits_on_loan is 256*K regardless of events in flight. The
-  default threshold from slb_port_def_conf is min(4096,
-  nb_events_limit): nb_events_limit=1024 with 4 consumer ports, or
-  the default with 16 workers, rejects every NEW enqueue once the
-  caches fill, and nothing ever lowers them. Either go back to the
-  DSW quantum, or let the port use its own cache before applying
-  the global check (acquire first, check the pool only when
-  borrowing).
-
-Info:
-
-- slb_configure() logs its -EINVAL causes with SLB_LOG_DP_LINE(INFO,
-  ...). Control path; use SLB_LOG_LINE(ERR, ...).
-
-- drivers/event/meson.build:18: 'slb' added after 'sw'; list is
-  alphabetical.
-
-Patch 2: add support for ordered queues
----------------------------------------
-
-Error:
-
-- slb_event.c:993 / :1021, reorder slot reuse. The sequence number
-  is the ring slot:
-      *start_slot = cons_head & r->r.mask;
-      h->seq_slot = (start_slot + j) & ring_mask;
-  but the ring slot is freed at dequeue (__rte_ring_update_tail,
-  :998) while the reorder slot is freed only when slb_reorder_drain
-  passes it. The two are only in step if the producer can never
-  advance r.size positions while a slot is outstanding. Credits do
-  not guarantee that: RELEASE returns the credit immediately
-  (slb_event.c:673, and :1139 for implicit release) even though the
-  slot stays RELEASED until drained. So: worker A dequeues slot S
-  and is slow; drain stops at S; other workers dequeue and release
-  (or implicit-release) r.size more events, all returning credits;
-  the producer wraps to slot S; worker B dequeues the new event with
-  seq_slot S. B's forward writes reorder_buffer[S] and drain
-  delivers it past A's event; when A then forwards, its event lands
-  in a slot drain has already passed and is delivered r.size events
-  late, and if A releases while B's event is still READY the state
-  is overwritten and B's event is lost with its credit. For
-  max_inflight=4096 r.size is 8192, i.e. one stalled worker plus a
-  few ms of traffic. Fix: hold the credit for an ordered event
-  until its slot is drained (return it in slb_reorder_drain when a
-  RELEASED slot is reclaimed, and skip ordered releases in the
-  :673/:1139 returns). Then occupied slots + ring entries <=
-  max_inflight < r.size and the ring cannot wrap onto a live slot.
-
-- slb_event.c:114, lost wakeup in slb_reorder_drain():
-      if (!rte_spinlock_trylock(&queue->reorder_lock))
-              return;
-  The holder exits when it reads EMPTY at drain_idx (:125). A second
-  port that marks that very slot READY and then fails the trylock
-  returns too. The slot stays READY until some later forward or
-  release on the same ordered queue happens to call drain; nothing
-  in the dequeue path does. At the end of a burst the last events
-  are stranded in the reorder buffer. Re-check after unlock:
-      rte_spinlock_unlock(&queue->reorder_lock);
-      rte_atomic_thread_fence(rte_memory_order_seq_cst);
-      if (rte_atomic_load_explicit(&buf[drain_idx].state,
-                                   rte_memory_order_acquire) !=
-          SLB_REORDER_EMPTY)
-              goto retry;   /* back to the trylock */
-
-Warning:
-
-- slb_event.c:987-998, slb_ordered_ring_dequeue_burst() calls
-  __rte_ring_move_cons_head(), __rte_ring_dequeue_elems() and
-  __rte_ring_update_tail() directly. No other driver uses the ring
-  private API; it is not a stable contract. If the slot index is
-  the design, add an exported helper to lib/ring (or
-  rte_event_ring) that returns the consumer head, in its own patch.
-  Same for slb_event.c:198, which assumes the data array follows
-  struct rte_ring at (r + 1).
-
-Patch 3: add support for atomic queues
---------------------------------------
-
-Warning:
-
-- slb_event.c:826, :845, :1172 write q_returned from the consuming
-  port with a plain increment:
-      orig_q->atomic_state->port_stats[ep].q_returned++;
-  and slb_event.c:406 (patch 4) reads it from whichever core holds
-  the refill lock, with a plain load, to decide the flow mapping
-  can be switched. Single writer, but cross-core and load-bearing
-  (the enq==ret test is what makes migration order-preserving).
-  Make q_returned RTE_ATOMIC(uint64_t), store with
-  rte_memory_order_release, load with rte_memory_order_acquire so
-  the application's last access to the flow on the old port is
-  ordered before the new port can see events for it.
-
-Info:
-
-- slb_event.c:166:
-      return (flow_id * 2654435761U) & SLB_ATOMIC_FLOWS_MASK;
-  The multiplier is odd, so the low 11 bits of the product are a
-  permutation of the low 11 bits of flow_id; flow_id and
-  flow_id+2048 always collide. Fibonacci hashing takes the high
-  bits: (flow_id * 2654435761U) >> (32 - 11).
-
-- slb_history_entry.flow_id is written at slb_event.c:1024 and
-  never read.
-
-Patch 4: add dynamic flow migration for atomic queues
------------------------------------------------------
-
-Warning:
-
-- struct slb_port fields is_loaded (slb_evdev.h:146),
-  last_migrated_time, flow_migrations, migrations_in,
-  migrations_out (:164-167) are per port but written under the
-  refill_lock of whichever atomic queue is migrating
-  (slb_event.c:269, :327-328, :337-339, :343, :420) and read by
-  every other atomic queue's refill (:249, :290, :364). Two atomic
-  queues sharing ports race on them: lost increments, and both
-  queues can pick the same port as migration source. Either make
-  them per (queue, port) inside slb_atomic_state (port_stats is
-  already there), or make them atomic. is_loaded also sits in the
-  port's hot cacheline next to inflight_credits and history_head,
-  so a remote refill write bounces that line under the owning
-  core.
-
-Info:
-
-- The hold buffer is per queue, not per port. Once one linked port
-  stops draining, SLB_HOLD_BUFFER_SIZE - 3*128 held events later
-  slb_atomic_refill returns at :501 without touching the main ring
-  and every other port on that queue starves. Worth stating in the
-  Limitations section of slb.rst.
-
-Patch 5: add extended statistics and diagnostics
-------------------------------------------------
-
-Warning:
-
-- slb_xstats.c:105 exposes port_%u_queue_%u_dequeued from
-  slb_port.queue_dequeued[], which nothing increments. Either count
-  it in slb_port_dequeue() or drop the stat.
-
-Info:
-
-- Leftovers: slb_port.total_dequeues, enqueue_calls (printed by
-  slb_dump, never incremented), credits_drained (only ever cleared),
-  flow_migrations (incremented, never read); SLB_MAX_FLOWS_BITS and
-  SLB_MAX_FLOWS_MASK unused.
-
-Patch 6: add self-test and documentation
-----------------------------------------
-
-Warning:
-
-- doc/guides/eventdevs/features/slb.ini:14 has
-  runtime_port_link = Y but slb_info_get() does not set
-  RTE_EVENT_DEV_CAP_RUNTIME_PORT_LINK. Patch 7 says it removed this
-  from the feature matrix; it removed it from the .rst only.
-
-- slb.rst (as of patch 7) says "link up to eight queues per port at
-  each priority"; SLB_PORT_MAX_Q_MAP_PER_PRIO is SLB_MAX_QUEUES
-  (64).
-
-- Self-test does not use TEST_ASSERT / unit_test_suite_runner and
-  never runs more than one lcore. At minimum add a multi-core
-  ordered test with one deliberately slow worker and an atomic test
-  that forces a migration (SLB_MIGRATION_LOAD_THRESHOLD is 16 full
-  per-port rings); both of the Errors above would show up.
