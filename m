@@ -2,76 +2,74 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6D6606A31C
-	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Nov 2026 16:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249AF606A31C
+	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Nov 2026 16:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=ePP5UZNa
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=fAVismz/
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 277114013F;
-	Sun,  8 Nov 2026 17:22:17 +0100 (CET)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
- [209.85.216.47])
- by mails.dpdk.org (Postfix) with ESMTPS id 1F5FD4003C
- for <dev@dpdk.org>; Sun,  8 Nov 2026 17:22:15 +0100 (CET)
-Received: by mail-pj1-f47.google.com with SMTP id
- 98e67ed59e1d1-3b12cb3c37bso63448a91.2
- for <dev@dpdk.org>; Sun, 08 Nov 2026 08:22:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7B59F402AD;
+	Sun,  8 Nov 2026 17:40:56 +0100 (CET)
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
+ [209.85.215.175])
+ by mails.dpdk.org (Postfix) with ESMTPS id 2350E40264
+ for <dev@dpdk.org>; Sun,  8 Nov 2026 17:40:55 +0100 (CET)
+Received: by mail-pg1-f175.google.com with SMTP id
+ 41be03b00d2f7-cdb684859cbso80174a12.1
+ for <dev@dpdk.org>; Sun, 08 Nov 2026 08:40:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794154933;
- x=1794759733; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794156053;
+ x=1794760853; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=NYhjYqQglmdVcuwyMo+mKLuJxzXDYPXA3pu3+fTPIIE=;
- b=ePP5UZNadjsSANt701+tjFKDkZnrv/xVKE8QVeF+8dqy/EaBIZXnoRXSyA9+fO0byO
- TWzor4OVedlk1cR3O18GIwxRXqy6R9OOCxhCcNVr+o/wuVebLiGhffNeP+NjASPpIRMY
- mbeaRS6eujMbJbK7tEVFX+Qjkd8HXwU0S/3xe/+/bERGIWHEC2j4J0ijejd4FFGBxyzy
- AfeDQUd7djo8ln6wS9cmAKUXHulYqxtKU58g7M1Bxad53SMv6MdV1UFm8o8O+EZvGvd2
- 0GbCXB9zGnjiSY1VDwAdPA+Fz68OX9iY5gio6tVqfZ9w+lnwR78+qZYMDoR/o40YBMqF
- 6/Hg==
+ bh=uAtmA5KZDSVVqy8sQtgKTtXRvXXfxnMpW/UfFCfCHtk=;
+ b=fAVismz/jxFxJpkDwfRn56rkB0VVWjKZMrGMAW3ufwrNzf7goyO/eLq6aovd/GycgJ
+ 4G8fqrOl/oaryi2pK85bJPewAAgjToK2AViegOQQKyxDDOuT2gvUOljWQPAadbukVYl7
+ oROi/sgmYTSWc8gEzSQkSR2FD47Q1sMNqzxCgQoCBKKJKv2Aw6rXwy1UqwzU3rTf+vGT
+ HdPUOgS1VttAtM7ZQiT7bPjTWAygtSDQmUTbCYwpT0NO6dbBk0JULWLMEcWVFcD+dGUm
+ 19I3m6KRgRxtd3TSAAYqwfjpLDVTQ5egdSDkJasrVJjhztV0UK/oasaCwqfJ10FpXQrc
+ bgGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794154933; x=1794759733;
+ d=1e100.net; s=20260707; t=1794156053; x=1794760853;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=NYhjYqQglmdVcuwyMo+mKLuJxzXDYPXA3pu3+fTPIIE=;
- b=oJR8ZI6UbMHecnK7MTAzZ9+H0UcmNG3o72rEm1Njha8fCtECJj8B9rV6RE0Npu9I7j
- Gr1Rew7i9FMt9lpr46rVtbWlBRAFuhNdmfBO5a3S7KIqGL8zb5KwQJlo1vIu+4Z8PpfN
- MO2r0+ASdYTVyUNXk++9hnVmHcQ8t3T11c5dW1jWiKOWaYXDqQ4B1+FT1sCiCcPzT5Dc
- GZBAIoWCcoHcPeSmLXLz5iIScgySA6wTY/dXv5H9xfBwb7T/Brm3rHkQn6ni/dyKgQ7E
- TDR/ugw//J5XBF+cV5iJ22cQr2QkE7DIk47bxce10vvsp7mo6wrSCHW1TIWWfcP+h0Ax
- WEBA==
-X-Gm-Message-State: APuU4Z+2Z0pqDauOcrcrB4rsBLadKjqgZrOucHUkLImSx8z3Id4fC+oC
- Vt6/lf7Tq3tDU4z6LEMldEoTgSYtxt6UqppLk/w6VVo3W7dfgr4Tuis5Ylrk8u9Lda0=
-X-Gm-Gg: AYBFou28YZMA1flLKHYMgpVHOn1xfQKcnhNZANc0Mjd5eWE1z0cZZedy4oil4Kj1uFd
- MrYo9h6LFOeWNiAOGL8JGmE/hQIBKLSu8HQcCVGgjQxS7OgsBBEkk8i1jU5CUFijlt4dRl6Y2dt
- iYt2Qfg1/XDA+T0Sy0THQlimkYVijGf9yFvYUsh6qPqOFQdtM3is0HsMD9fcjYsFGvlx0nNMSAN
- /EKU+goeDkXBJ3QVYFyOQTz3Mvv8o6MPnKVgU1tW6ERMF34J/H4sZv9vFgVeDO96zboiNm6qBFm
- ZfZssUnRoXsnkRpDHIAGs0FGGzsO2L7QV/JUODDsk3vVKQWZoQI061qIBMQAwLT5tN+w1gmf19h
- /kuZ1M9ySJkoCKpXhwH8bMVrTD32PX9fDOWA6mLEF/OlQHMGdl96vf12AN2CCEzUZAQw6TXLs3G
- xtLTprk66G3BddXKizGGIYFK4GsTB9lhy9AdTtFFaX/TEyAgd6s9csOzEB9U3Fu8/Cb2B8wD5kE
- kPU5qjNSZRFz71MubaOREjefMEhOQze+tabEzK3KoJShqHhjkAoxJDCbB4S1NWXmwaAYrDxYpmM
- OhlqqWQdDK4u4G9zRbcVo9pK4zI/qLQqKLDq2bl69b+pvGmMZcNY9gpK1TkFQPwbLc809w==
-X-Received: by 2002:a17:90b:3c0a:b0:3ac:fe93:a731 with SMTP id
- 98e67ed59e1d1-3b12d4b1908mr1386253a91.56.1794154933415; 
- Sun, 08 Nov 2026 08:22:13 -0800 (PST)
+ bh=uAtmA5KZDSVVqy8sQtgKTtXRvXXfxnMpW/UfFCfCHtk=;
+ b=od790IPf1xZu9tEqlEGcyjL2OcrfuB9nEiKHdGBGV2N8HZBBch/Z4DUS0QQOrSzONZ
+ 4ZoOaDQk20TSZH6vsw0/2Tzi/TFXgI+eKQVgFvoRjOadVM6R7hzje0CULFZKezYbKGM2
+ ZqXob4E4rfT4G2+K0pFL9yoJJYF2VIWQOWoNWqIzSwCuEjJTFhxDhQ3ImCT60uecscIS
+ UNi7FYFyRZ0DcA1B6FWgpBvTLWZ4Gau3hcCaYiiG+d3rg3a/MxdF769E+S2BSysp+2MQ
+ fkPf0j/OxOsKSSdOwF2wIiyUov5Prz2TldL6ZTxA3NOOlkFlsEQpkeyxE5+4kymuIWqZ
+ XWjA==
+X-Gm-Message-State: APuU4Z/MRLgUKbHTvcuOAnN7iD4/+13XZmUeweRkwhJeGZMLDSh/B0oB
+ zk86nlD4WEWTL21JJgjtHlumwJBt/07LU4ae1eyCiek4GTvUKYSgPaU150hQ83vrh+o=
+X-Gm-Gg: AYBFou2dt3qYOnb9T0vQNgYqf+UK64WhgSilSLYFfvxTznFc4Lzjjq8n7Lwkg1Xf/3Z
+ wi/qlRcprGXVpQT0/kNYaxX3FWYW/C6U7w/qy2wSMFpJJnd5AwRUdPmU01ab+AFXM9AIySy8Xia
+ pNj4Z2/e1+h6+bRmXBQrmM0wHkgytIV+wJiswF+24351QkN2ushbDKtrOKRgGHKv0wB1z3jYI3I
+ MewOTnVeq9UClb0VXeCzbk8thLE+B3+p0fUnCjuYKGJH/ONv6G1IUQpzXRdMW49v/0nmjsO7ntb
+ C61TJ7wYVHl8V3/ll+crWgBAtKBMYmwmpoF8/K7jMXOjLk+I7sAT5qtnjQgu6Am7ocsSMT3w3Wq
+ f1UMIcBiGl9MRV7eH0i+MlINBMmJU0iNaH4Oxnlky/tSDg14yBabSR8/mZ/rQ0WdFWHoDZtJA8w
+ iatSJKIiGqC4wt3ajIIhAIAvDL9bAfYtUkgPYP1hmiyLD1ed2EuVrZ9E4CQLVIpjrEbIlAzjXcF
+ gAELhZfL+HwG+CmRAR0iRHXWnu8EIVawkWqe6f1YSXwCiI0LFVSE1jKo2Vg44s0bXgZIDuuFbMB
+ TOxCP7Vft5QCX3UIkGTrPdMgGKp6U3LTTUqirBH20GT5OqblPlSGnntE/0YntJFinV3+UA==
+X-Received: by 2002:a17:90b:57cd:b0:39e:6a80:b799 with SMTP id
+ 98e67ed59e1d1-3b12d3dce75mr1701654a91.41.1794156053406; 
+ Sun, 08 Nov 2026 08:40:53 -0800 (PST)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b1058d2faesm7847145a91.14.2026.11.08.08.22.12
+ 98e67ed59e1d1-3b127fad1d3sm3485199a91.11.2026.11.08.08.40.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 08 Nov 2026 08:22:13 -0800 (PST)
-Date: Sun, 8 Nov 2026 08:22:11 -0800
+ Sun, 08 Nov 2026 08:40:53 -0800 (PST)
+Date: Sun, 8 Nov 2026 08:40:51 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Frank Dressler <frank@dressler.pro>
-Cc: dev@dpdk.org, thomas@monjalon.net, david.marchand@redhat.com,
- ktraynor@redhat.com, Bing Zhao <bingz@nvidia.com>
-Subject: Re: [PATCH] net/af_packet: fix build with old kernel headers
-Message-ID: <20261108082211.1f190f4b@phoenix.local>
-In-Reply-To: <0374e022-3c41-4a6b-9464-7f879ef02ce1@dressler.pro>
-References: <20261106142756.241131-1-bingz@nvidia.com>
- <dd205eb8-4741-452e-8490-16d157e1bb1e@dressler.pro>
- <0374e022-3c41-4a6b-9464-7f879ef02ce1@dressler.pro>
+To: Zhang Tengfei <zhtfdev@gmail.com>
+Cc: dev@dpdk.org, jiawenwu@trustnetic.com, zaiyuwang@trustnetic.com,
+ stable@dpdk.org
+Subject: Re: [PATCH] net/txgbe: keep flow rules per port
+Message-ID: <20261108084051.66ebbf3e@phoenix.local>
+In-Reply-To: <20261108160021.31789-1-zhtfdev@gmail.com>
+References: <20261108160021.31789-1-zhtfdev@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -86,150 +84,67 @@ List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Sat, 7 Nov 2026 11:11:54 +0000
-Frank Dressler <frank@dressler.pro> wrote:
+On Mon,  9 Nov 2026 00:00:21 +0800
+Zhang Tengfei <zhtfdev@gmail.com> wrote:
 
-> On 11/6/26 14:27, Bing Zhao wrote:
+> rte_flow rules for every txgbe port were stored in file-scope lists.
+> Flushing or closing one port freed the rte_flow handles of the others
+> while their hardware rules stayed programmed, and probing another port
+> reinitialized the lists. The same lists are used by the PF and VF flow
+> operations.
 > 
->  > The PACKET_IGNORE_OUTGOING socket option is used unconditionally,
->  > but it was only added to the uapi headers in Linux 4.20. The build
->  > fails on distributions shipping older kernel headers, like RHEL 8
->  > (kernel-headers-4.18.0-193.el8, gcc 8.5.0):  
+> Keep one flow list in struct txgbe_adapter. A port disables flow
+> director only when its own FDIR rule count reaches zero.
 > 
-> On 11/6/26 16:06, Frank Dressler wrote:
->  > If RHEL 8 uses Linux 4.18, [...]
->  > If DPDK needs to stay compatible with RHEL 8, [...]  
+> Fixes: 5c2352b9ece6 ("net/txgbe: support creating consistent filter")
+> Cc: stable@dpdk.org
 > 
-> Short version: RHEL itself does't seem to ship any DPDK that is too
-> new for its kernel. The RHEL 8 compatibility requirement may instead
-> come from NVIDIA's DOCA, which ships DPDK 26.03 on RHEL 8. If so, the
-> question is whether upstream DPDK should support that combination, or
-> whether it is better handled on the DOCA side. Details below.
-> 
-> Bing Zhao, is that the use case behind the patch?
-> 
-> Details:
-> I read too much into Bing Zhao's statement that the new code does not
-> build with the RHEL 8 kernel. That statement is true.I incorrectly
-> assumed RHEL itself ships a DPDK version that is too new for its
-> kernel, which is not the case.
+> Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
+> ---
 
-The important parts that were missed here.
- - flag should not be accepted if underlying kernel does not support it.
- - failure should be at compile time not runtime.
+I didn't look at all the details but seems to be good idea.
+AI liked it but found some related overlap
 
-Either remove this part:
+Subject: Re: [PATCH] net/txgbe: keep flow rules per port
 
-diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index 44f82c0309..ecd4a9801e 100644
---- a/drivers/net/af_packet/rte_eth_af_packet.c
-+++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -32,11 +32,6 @@
- #include <unistd.h>
- #include <poll.h>
- 
--/* Added in Linux 6.2. Older kernels ignore it. */
--#ifndef PACKET_FANOUT_FLAG_IGNORE_OUTGOING
--#define PACKET_FANOUT_FLAG_IGNORE_OUTGOING 0x4000
--#endif
--
- #define ETH_AF_PACKET_IFACE_ARG                "iface"
- #define ETH_AF_PACKET_NUM_Q_ARG                "qpairs"
- #define ETH_AF_PACKET_BLOCKSIZE_ARG    "blocksz"
+Moving the flow list into struct txgbe_adapter is the right fix, and
+checking that the handle belongs to the port before touching hardware
+in txgbe_flow_destroy() closes a real cross-port bug. Applies to
+v26.11-rc2, builds with -Dwerror=true. Fixes: tag is correct, the
+global lists came in with 5c2352b9ece6.
 
+Warning
 
-Or add a bunch of #ifdef like this.
+The new fdir_info->n_flows counter duplicates state the driver already
+keeps per port. Every FDIR rte_flow rule, PF and VF, goes through
+txgbe_insert_fdir_filter() which adds a node to fdir_info->fdir_list,
+and the delete paths remove it via txgbe_remove_fdir_filter().
+txgbe_clear_all_fdir_filter() and txgbe_fdir_filter_uninit() empty
+that list as well. Duplicate adds are rejected (-EINVAL), so the list
+length equals n_flows in all paths.
 
-diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index 44f82c0309..6ffdfd8524 100644
---- a/drivers/net/af_packet/rte_eth_af_packet.c
-+++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -32,11 +32,6 @@
- #include <unistd.h>
- #include <poll.h>
- 
--/* Added in Linux 6.2. Older kernels ignore it. */
--#ifndef PACKET_FANOUT_FLAG_IGNORE_OUTGOING
--#define PACKET_FANOUT_FLAG_IGNORE_OUTGOING 0x4000
--#endif
--
- #define ETH_AF_PACKET_IFACE_ARG		"iface"
- #define ETH_AF_PACKET_NUM_Q_ARG		"qpairs"
- #define ETH_AF_PACKET_BLOCKSIZE_ARG	"blocksz"
-@@ -44,7 +39,10 @@
- #define ETH_AF_PACKET_FRAMECOUNT_ARG	"framecnt"
- #define ETH_AF_PACKET_QDISC_BYPASS_ARG	"qdisc_bypass"
- #define ETH_AF_PACKET_FANOUT_MODE_ARG	"fanout_mode"
--#define ETH_AF_PACKET_IGNORE_OUTGOING_ARG	"ignore_outgoing"
-+
-+#ifdef PACKET_FANOUT_FLAG_IGNORE_OUTGOING
-+#define ETH_AF_PACKET_IGNORE_OUTGOING_ARG "ignore_outgoing"
-+#endif
- 
- #define DFLT_FRAME_SIZE		(1 << 11)
- #define DFLT_FRAME_COUNT	(1 << 9)
-@@ -110,7 +108,9 @@ static const char *valid_arguments[] = {
- 	ETH_AF_PACKET_FRAMECOUNT_ARG,
- 	ETH_AF_PACKET_QDISC_BYPASS_ARG,
- 	ETH_AF_PACKET_FANOUT_MODE_ARG,
-+#ifdef ETH_AF_PACKET_IGNORE_OUTGOING_ARG
- 	ETH_AF_PACKET_IGNORE_OUTGOING_ARG,
-+#endif
- 	NULL
- };
- 
-@@ -1002,6 +1002,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
- 		goto error;
- 	}
- 
-+#ifdef PACKET_FANOUT_FLAG_IGNORE_OUTGOING
- 	/*
- 	 * Set the flag opportunistically if multiple queues are requested.
- 	 * It takes effect from Linux 6.2. Older kernels ignore it and the
-@@ -1009,6 +1010,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
- 	 */
- 	if (ignore_outgoing != 0 && nb_queues > 1)
- 		fanout_arg |= PACKET_FANOUT_FLAG_IGNORE_OUTGOING << 16;
-+#endif
- 
- 	for (q = 0; q < nb_queues; q++) {
- 		/* Open an AF_PACKET socket for this queue... */
-@@ -1053,6 +1055,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
- #endif
- 		}
- 
-+#ifdef PACKET_IGNORE_OUTGOING
- 		if (ignore_outgoing != 0 && nb_queues == 1) {
- 			rc = setsockopt(qsockfd, SOL_PACKET, PACKET_IGNORE_OUTGOING,
- 					&ignore_outgoing, sizeof(ignore_outgoing));
-@@ -1064,6 +1067,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
- 				goto error;
- 			}
- 		}
-+#endif
- 
- 		rc = setsockopt(qsockfd, SOL_PACKET, PACKET_RX_RING, req, sizeof(*req));
- 		if (rc == -1) {
-@@ -1314,11 +1318,14 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 			fanout_mode = pair->value;
- 			continue;
- 		}
-+
-+#ifdef ETH_AF_PACKET_IGNORE_OUTGOING_ARG
- 		if (strstr(pair->key, ETH_AF_PACKET_IGNORE_OUTGOING_ARG) != NULL) {
- 			if (parse_uint(pair->key, pair->value, &ignore_outgoing, 1) < 0)
- 				return -1;
- 			continue;
- 		}
-+#endif
- 	}
- 
- 	if (framesize > blocksize) {
+Drop n_flows and test the existing list instead:
 
+	if (!ret) {
+		rte_free(fdir_rule_ptr);
+		if (TAILQ_EMPTY(&fdir_info->fdir_list)) {
+			memset(&fdir_info->mask, 0,
+			       sizeof(struct txgbe_hw_fdir_mask));
+			...
 
+That removes the field, the two increments in txgbe_flow_create(),
+the reset in txgbe_filterlist_flush() and txgbe_fdir_filter_init(),
+and the "if (n_flows > 0)" guard which only hides an accounting bug
+if one ever exists. Smaller diff for the stable backport too.
+
+Info
+
+After removing the TAILQ_ENTRY members, txgbe_ntuple_filter_ele and
+the other *_ele structs are single-member wrappers. Fine to leave for
+a stable fix; a later cleanup could store the filter structs directly.
