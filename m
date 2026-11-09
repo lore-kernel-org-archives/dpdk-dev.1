@@ -2,54 +2,47 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FC1606A321
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 15:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=enuks5pL
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5102D606A321
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 15:43:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 845C9406B6;
-	Mon,  9 Nov 2026 16:35:15 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTPS id 4A4314028F;
- Mon,  9 Nov 2026 16:35:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1794238514; x=1825774514;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=DsDb5BKJO5F5guCEs/JLC3JD5UxkqUgHo332mS2g3Qo=;
- b=enuks5pLJb/Ck/21TMyHQCKpB+np0q9f2wjHuOnQ3yntKKV0SnxCd0XM
- f4rrF3c9sMfBJXMEzCIjRL4mNjlGmPlDDQO/1U5UjvelpRmL8UMcKz6Al
- 31kUDoEQIYtwFUDJIz24pKdxThlyVcQLedju8FuoTieT1ogOf7BKouCQP
- 1WpHpZnmfV5GGlvseSzlWJhybDf26sJUvr3EVHWdSQrbN0GZMXAic4Jls
- 20Lo/jaqnKNH/e1uAs/H7IyqpXNZvkSPj1UST9/3UsYXwM0uZHjd24m3d
- oL0k2SCexRdRXV6v/ZTfYtppcb4+WBjilZi+/zXuyfdE7Gq7rnQGp0tPh A==;
-X-CSE-ConnectionGUID: u5Pz7F72RnW34TTcxb1yyA==
-X-CSE-MsgGUID: u203D8FsTQunXqT0aN1grA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="2862115"
-X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
-   d="scan'208";a="2862115"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Nov 2026 07:35:11 -0800
-X-CSE-ConnectionGUID: Z4Ntl3sPQA2p2UaLpC7NZg==
-X-CSE-MsgGUID: T1WQrz6DTzy1rvMRAeviiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
-   d="scan'208";a="7921125"
-Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by orviesa002.jf.intel.com with ESMTP; 09 Nov 2026 07:35:10 -0800
-From: Ciara Loftus <ciara.loftus@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 711B5406B6;
+	Mon,  9 Nov 2026 16:43:12 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTPS id B2ABD4028F
+ for <dev@dpdk.org>; Mon,  9 Nov 2026 16:43:10 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 9CB254D392; Mon,  9 Nov 2026 16:43:10 +0100 (CET)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH] net/ice: fix ACL entry limit on devices with 8 ports
-Date: Mon,  9 Nov 2026 15:32:45 +0000
-Message-ID: <20261109153245.53360-1-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.43.0
+Subject: [DPDK/ethdev Bug 2100] net/ice: ice_get_module_eeprom() silently
+ returns zeroed data when all I2C read retries fail
+Date: Mon, 09 Nov 2026 15:43:09 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: marcel@telka.sk
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-2100-3@https.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,77 +52,113 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Currently, the ACL table depth is halved on devices with more than 4
-PFs, but the driver still assumes 256 entries are available. The base
-code reserves only 50% of the scenario for the NORMAL priority band,
-so on an 8-port device adding the 129th rule fails and the flow silently
-falls back to the switch engine.
+https://bugs.dpdk.org/show_bug.cgi?id=3D2100
 
-Fix it by deriving the entry limit from the configured depth so the
-driver rejects rules beyond the NORMAL band with an explicit error.
+            Bug ID: 2100
+           Summary: net/ice: ice_get_module_eeprom() silently returns
+                    zeroed data when all I2C read retries fail
+           Product: DPDK
+           Version: unspecified
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: marcel@telka.sk
+  Target Milestone: ---
 
-Fixes: 17a8fc206178 ("net/ice: fix initialization with 8 ports")
-Cc: stable@dpdk.org
+https://github.com/DPDK/dpdk/blob/a13c1053360ee26bbacca9f883d3f3cb83a0f366/=
+drivers/net/intel/ice/ice_ethdev.c#L6742-L6767
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
----
- drivers/net/intel/ice/ice_acl_filter.c | 9 ++++++---
- drivers/net/intel/ice/ice_ethdev.h     | 1 +
- 2 files changed, 7 insertions(+), 3 deletions(-)
+for (j =3D 0; j < I2C_BUSY_TRY_TIMES; j++) {
+        status =3D ice_aq_sff_eeprom(hw, 0, addr, offset,
+                                   page, !is_sfp, value,
+                                   SFF_READ_BLOCK_SIZE,
+                                   0, NULL);
+        PMD_DRV_LOG(DEBUG, "SFF %02X %02X %02X %X =3D "
+                "%02X%02X%02X%02X."
+                "%02X%02X%02X%02X (%X)",
+                addr, offset, page, is_sfp,
+                value[0], value[1],
+                value[2], value[3],
+                value[4], value[5],
+                value[6], value[7],
+                status);
+        if (status) {
+                usleep_range(I2C_USLEEP_MIN_TIME,
+                             I2C_USLEEP_MAX_TIME);
+                memset(value, 0, SFF_READ_BLOCK_SIZE);
+                continue;
+        }
+        break;
+}
 
-diff --git a/drivers/net/intel/ice/ice_acl_filter.c b/drivers/net/intel/ice/ice_acl_filter.c
-index 94c9ea89fdc..0f913126ded 100644
---- a/drivers/net/intel/ice/ice_acl_filter.c
-+++ b/drivers/net/intel/ice/ice_acl_filter.c
-@@ -134,6 +134,9 @@ ice_acl_setup(struct ice_pf *pf)
- 	if (err)
- 		return err;
- 
-+	/* Only the NORMAL priority band (50% of the scenario) is used. */
-+	pf->acl.max_entries = params.depth / 2;
-+
- 	return 0;
- }
- 
-@@ -449,7 +452,7 @@ ice_acl_hw_set_conf(struct ice_pf *pf, struct ice_fdir_fltr *input,
- 	/* For IPV4_OTHER type, should add entry for all types.
- 	 * For IPV4_UDP/TCP/SCTP type, only add entry for each.
- 	 */
--	if (slot_id < MAX_ACL_NORMAL_ENTRIES) {
-+	if (slot_id < pf->acl.max_entries) {
- 		entry_id = ((uint64_t)flow_type << 32) | slot_id;
- 		ret = ice_flow_add_entry(hw, blk, flow_type,
- 					 entry_id, pf->main_vsi->idx,
-@@ -463,8 +466,8 @@ ice_acl_hw_set_conf(struct ice_pf *pf, struct ice_fdir_fltr *input,
- 		rule->entry_id[entry_idx] = entry_id;
- 		pf->acl.hw_entry_id[slot_id] = hw_entry;
- 	} else {
--		PMD_DRV_LOG(ERR, "Exceed the maximum entry number(%d)"
--			    " HW supported!", MAX_ACL_NORMAL_ENTRIES);
-+		PMD_DRV_LOG(ERR, "Exceed the maximum entry number(%u)"
-+			    " HW supported!", pf->acl.max_entries);
- 		rte_bitmap_set(pf->acl.slots, slot_id);
- 		return -1;
- 	}
-diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index 945e765c2c2..7a3d164143b 100644
---- a/drivers/net/intel/ice/ice_ethdev.h
-+++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -498,6 +498,7 @@ struct ice_acl_conf {
-  */
- struct ice_acl_info {
- 	struct rte_bitmap *slots;
-+	uint16_t max_entries;
- 	uint64_t hw_entry_id[MAX_ACL_NORMAL_ENTRIES];
- };
- 
--- 
-2.43.0
+/* Make sure we have enough room for the new block */
+if ((i + SFF_READ_BLOCK_SIZE) <=3D info->length)
+        memcpy(data + i, value, SFF_READ_BLOCK_SIZE);
 
+Two separate problems in this retry loop's failure handling:
+
+1. Zeroed data accepted as a successful read. status is never checked
+after the loop exits. If all I2C_BUSY_TRY_TIMES (4) attempts fail, value
+has been memset to zero by the last failed attempt, and that zeroed
+block is still unconditionally copied into the output buffer as if
+valid. The function falls through to return 0 (success) regardless.
+A persistent I2C/admin-queue failure for any single 8-byte block -- the
+comment directly above this code acknowledges I2C bus contention with
+NIC link management is "normal" -- is therefore silently reported as a
+successful read, with that block's bytes coming back all-zero,
+indistinguishable from genuine zero-valued EEPROM content.
+
+2. Debug log prints unread data as if it were the read result.
+PMD_DRV_LOG fires unconditionally right after the ice_aq_sff_eeprom()
+call, before the if (status) check and before the failure-path
+memset(value, 0, ...). So on a failed attempt, the log line prints
+value alongside the (correctly) failed status -- but value at that
+point holds stale data: leftover from the previous block's last
+successful read on a block's first failed attempt, or zeros from the
+prior attempt's own memset on any subsequent retry of that same block.
+Either way, it's never the result of the failed call being logged,
+which can mislead debugging by making a failed read look like a
+plausible real value.
+
+Suggested fix:
+
+bool block_ok =3D false;
+for (j =3D 0; j < I2C_BUSY_TRY_TIMES; j++) {
+    status =3D ice_aq_sff_eeprom(...);
+    if (status) {
+        PMD_DRV_LOG(DEBUG, "SFF %02X %02X %02X %X read failed (%X)",
+                    addr, offset, page, is_sfp, status);
+        usleep_range(...);
+        memset(value, 0, SFF_READ_BLOCK_SIZE);
+        continue;
+    }=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20
+    PMD_DRV_LOG(DEBUG, "SFF %02X %02X %02X %X =3D "
+        "%02X%02X%02X%02X.%02X%02X%02X%02X",
+        addr, offset, page, is_sfp,
+        value[0], value[1], value[2], value[3],
+        value[4], value[5], value[6], value[7]);
+    block_ok =3D true;
+    break;
+}=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20
+if (!block_ok)
+    return -EIO;
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
