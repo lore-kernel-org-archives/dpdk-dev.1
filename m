@@ -2,104 +2,95 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBBE606EE83
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 13:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C21606A322
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 14:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=FnPm6ri8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XxzqTGnD
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 34C634028F;
-	Mon,  9 Nov 2026 14:37:47 +0100 (CET)
-Received: from CY3PR05CU001.outbound.protection.outlook.com
- (mail-westcentralusazon11013018.outbound.protection.outlook.com
- [40.93.201.18]) by mails.dpdk.org (Postfix) with ESMTPS id 5A4654026E
- for <dev@dpdk.org>; Mon,  9 Nov 2026 14:37:45 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Bn5CZEEQW/dfQWY+CCEuHf3K/llQMRF7K+SsoxyN89xOsU59HO4lSZz3fLYWkpXNwVgo012Q5383D0CA83FsW3QUjqtVygj7M9oRco5tYvprx5wxZOtOehj9E7m975Erv/WZD8NhXmcuH7ee4OS6frNqA+R4SKLwRx3Dt5L3SA8Gsv2zX+D5N7l/kl6cDyHj+Y03bzXERH9OzyzJitbL+c9D8J0Hwfy27Pk16Vmtt7Bfpq+T+FFYyYXrmkEZblNgBaFX2wZHvqpYe2Bc2IiVQmYDaAuT5vWdjGOPzwohS9ymWWtT0kSkPAT4ePNWpxD4N0knJWX/o17PVTJ9JoNphQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zEB9aYXD/BdKUpxte1VOdfgg5bLhEzaxIZ7uzNPRcgU=;
- b=deP2tZgpgYYzehmAD3Y9/CBPsGAwQPSkTmn7trA3I571c+QpimH36wKH2lEh5Z0HcGXUHUx6H+IDCwhnBW/S5+WtFSf7bC89q0rbk6qKKF3y4cZ1p0iTHyrsDfnsajLQqNWcRIQfgtRFSLoglBEoGWqZ+ayKMK9x8f3UN/SbB+BO/YAUUlioK+aKaJe5YO5HCezn539B19FItXaOxpGeQOMEeY2UrWecSj6qOMXcN06SmHQP3JRsri0xSYlUVitbLVlCjl8AEq1067U8PfJ7oyUgeNJGHyUrwkeDFbDJ9+eTos2hw3kQ0j/NnxN26pDSa5US/7CFfl0FDXbsHXmhAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zEB9aYXD/BdKUpxte1VOdfgg5bLhEzaxIZ7uzNPRcgU=;
- b=FnPm6ri8WQ3ILZxNrTGhT4RugznbdyTZJ5/Gm8MdDulddgtOZv+UvjVGE4PQQLJ/JIIa8ctQJAaW030rAiWTwlWRcn2eRXxwxV9PDjEK9nfav/rsD80LXohWHkuFbddEATuYRpqZkBG3JRiLLkenOHx7VMnKIn6RLYfa4cDmfHoOUOJPnu/ZxtYtgzStO9o5fuSUX5eRDtCkG5db5iwZ39akqcQK8l5tsx3AjKJtYZumTNexxaliNYr5/Zm/xih8FZdwL5bXwIvc6qmIEQ545mZ6nJJr4d85nmRRqAaP55fv4iqd+6/OdgzwqwKhytOG/Dq/Z9meeeRvHUtM5uX0wA==
-Received: from PH7PR02CA0029.namprd02.prod.outlook.com (2603:10b6:510:33d::6)
- by LV8PR12MB9181.namprd12.prod.outlook.com (2603:10b6:408:18d::13)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.13; Mon, 9 Nov
- 2026 13:35:39 +0000
-Received: from BY1PEPF00026956.namprd05.prod.outlook.com
- (2603:10b6:510:33d:cafe::10) by PH7PR02CA0029.outlook.office365.com
- (2603:10b6:510:33d::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.13 via Frontend Transport; Mon, 9
- Nov 2026 13:35:37 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BY1PEPF00026956.mail.protection.outlook.com (10.167.244.164) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.4 via Frontend Transport; Mon, 9 Nov 2026 13:35:37 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 9 Nov
- 2026 05:35:21 -0800
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Mon, 9 Nov 2026 05:35:21 -0800
-Received: from nvidia.com (10.127.8.11) by mail.nvidia.com (10.126.190.181)
- with Microsoft SMTP Server id 15.2.2562.56 via Frontend Transport; Mon, 9 Nov
- 2026 05:35:19 -0800
-From: Maayan Kashani <mkashani@nvidia.com>
-To: <dev@dpdk.org>
-CC: <rasland@nvidia.com>, <dsosnowski@nvidia.com>, <viacheslavo@nvidia.com>,
- <bingz@nvidia.com>, <orika@nvidia.com>, <suanmingm@nvidia.com>,
- <matan@nvidia.com>, Maayan Kashani <mkashani@nvidia.com>
-Subject: [PATCH] doc: add root table encap and decap limitation in mlx5 guide
-Date: Mon, 9 Nov 2026 15:35:18 +0200
-Message-ID: <20261109133518.4042113-1-mkashani@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+	by mails.dpdk.org (Postfix) with ESMTP id 8510F4026E;
+	Mon,  9 Nov 2026 15:15:39 +0100 (CET)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com
+ [209.85.128.170])
+ by mails.dpdk.org (Postfix) with ESMTPS id 73D824025A
+ for <dev@dpdk.org>; Mon,  9 Nov 2026 15:15:37 +0100 (CET)
+Received: by mail-yw1-f170.google.com with SMTP id
+ 00721157ae682-8b300713befso6323667b3.1
+ for <dev@dpdk.org>; Mon, 09 Nov 2026 06:15:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794233736; cv=none;
+ d=google.com; s=arc-20260327;
+ b=kAPC2uHv8Y1Watkokwxwz8Xwaot88wDDJFrjnDH2QHd7Kr7KDloE53fEoHU+4OKX7j
+ CVz+v490Hgu8S0mHCRCgw6TU1JongD8GR2uib3YQ0X/f+OspRJBYR92CyV3AZOBcy35c
+ D0gX18M0iNAmTQgVm72JVLhgtzpPcuzMleWe0uK2eq8Mg2/AczWJXHz43E+PRKAIP7eQ
+ y//wbxRad70KSbb6QbQlCSlPNyv0o3sW3sqFEy6qw+N47eel3iXs1mcXeT4auPM2S/MF
+ 5xjnB4pq9kb3CEn+nXJ2Z+pFBhgp2oauQfbTzSpvYZrM7f9kuB2/NYe2X6qtM9uTzEpq
+ OxCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=yOyRZjNOAwJYnyaD+N0AMwWPRWTQXiW9T2zs//nAUi8=;
+ fh=H2JmReDWbs6nSOBFm0L8vgBZ73MRnb61PIpZGjSMkTI=;
+ b=gqVZ2nT/QsXJnpH5CBI3dS0hMZLbgMlG2P/s7FqJpLFYz7he1XbnbLILQZQUslHGHp
+ bqAxbDwRDeG6kHGhGAEyi2S7G5nC3/PU54V/wkYfnUlhkIFsNm/pERCEO9LogJ6FvVJX
+ qAfHrHdLM27aldvc7Jhzng1N0Lts8b8Ggekf+DHHxAPvGmw25+sjfzKLb4/2q2naCH1U
+ /C/IJfiTyvgji+7Tzvpm/JVeL/duer+gLqObc3UB7LhEmay0ITQVvnwufmVJsAr9ULI+
+ JddckDiBTPplmkNNP5pURH16Bw3EdgAfKDku/LouS9rnGJfC31hcDlpJnYnKzdkPK2Ef
+ JDGw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1794233736; x=1794838536; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=yOyRZjNOAwJYnyaD+N0AMwWPRWTQXiW9T2zs//nAUi8=;
+ b=XxzqTGnDqDiZ9VjTNrf6E0JfsHBGp7GpccY2IQ48tcVH/xscVNeaUDdKP/FsS0dV9i
+ 8jENm5TUw0KVDNboCbfPl5PRBbu9dIG7nOX1qMxDAluvSFFcsO8RAbhXxBjKPofnocv1
+ EVvFdezNqvgylp9CZbU0frUhqMo1ECnNRffLxpuSZmkBkfK6EwIerANwkBX0OBMTdpKV
+ i15fRGiBcfezn3xPSdjNqu39IlcDW+w+YW8pQgjQcGZyPC3s3WxpavjRStv6deXBK88o
+ 6ECYGss5oXpt4ff+bC/JaBcoy3hTh08BJePIeT19kj1v5vF0PTVlldyPs0CZ3+wYEnui
+ 2Hdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1794233736; x=1794838536;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=yOyRZjNOAwJYnyaD+N0AMwWPRWTQXiW9T2zs//nAUi8=;
+ b=aCgdQnXgGpifY1zREKX39oedZ+oI3SQbIMs1jCjEQQpdByAEbl4cob6+9vfrHn/cPE
+ +5Wm6aOqoXhRhaLJwA5CjJalY3dimE5oFHxRtsiiv6SexyMkaz6GS4J7rdNg4R2TTlXL
+ 1sOFTkcXRyBk1EuaZ1P2e/gXuub6gVNNMCxkOw5616XraOX1DcTzR8mnr+dZmeM0crjB
+ orfHhnm9kMN2937Sd6qyIeIsHPpgSF4FvaEkvpL0ahXLaeFKlEB7M7r4mg6vU61LDZ1r
+ xR0v8jFduU8zmw1k2Ip+a1wnDcBOsRpzQtuRx0vZ41GhpStxuBiEQbrPNq9wVqTDSUBE
+ GrfQ==
+X-Forwarded-Encrypted: i=1;
+ AL+hErHvvfPj1UvoZ5qWGXNh13FaJ/HcDuW2qYJboCa61R/j3+ILUHX5Jp+WnNGNhJ/FTfEtKdc=@dpdk.org
+X-Gm-Message-State: APuU4Z9K+v9ZL7kjN3ve+OXDvxicTZqsCVY1lVAbvDqAwUQYv5ZmMUAR
+ GpQEKl0NtUosCAHciS29F2PMEPJgN49znVRxjsjJ1DmDkvMpBRwQXK4m5r0fYipfVTPitBaI6aW
+ xG+Lfp9qx3aH8htTCuQWyxQ3K9UqPpIM=
+X-Gm-Gg: AYBFou0HX9+b/KhS9U4i7GxjlgaVC/3lAPPSjXHHKjziOl+yIe/tC3sVFXyo/kYHIgQ
+ Goe8yiz3DdW8EDF/1DTwO32jGfEvib/V6Kc05ZI1U005yLVa7eBShd+tjC2fbkUbAKRRNgV3RmH
+ yWPpgG5jXSkp1+YrJ6dK1KWH/DxZEdINEaQ1PjTLPfZ0x4ch8KFNU64fkKHEDcK4vwBUMlFfBe5
+ OVHpzhSyejpC8HIj24FZv7SFRfJK0OMoek4ES3mUpmYrSCj5FuyZ1gkQ3DTRDpBbOUjOmI8eE9p
+ WePrlruPrYdNB90dK1NVwTtBAoPPRq5eFS4dsDziDXUrFEIgnfWMRbhPVPdnncx8k9W35x3fG7h
+ FfAjsCMOe5yXpSXOb3AlvjM3lmOjaCKtUS8LvF8R50cSs6YHiVyyOq8rudR/TdgplsNXsFyj7gt
+ GZM7fu5NBDfpIiwnekMeSyV3q374u+O9sy/Vtr8cRlAQ2gbhLiTxBPyF6AjiFlcu9lD9KZCn9FO
+ A==
+X-Received: by 2002:a05:690c:dc4:b0:8a8:7e5a:dc2f with SMTP id
+ 00721157ae682-8b36c9c1baamr25376747b3.12.1794233736221; Mon, 09 Nov 2026
+ 06:15:36 -0800 (PST)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF00026956:EE_|LV8PR12MB9181:EE_
-X-MS-Office365-Filtering-Correlation-Id: 60765e72-e0cc-45e6-143d-08df3e6656ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|376014|1800799024|82310400026|36860700016|11063799006|261021121427099003|56012099006|261021135927099003|261026121527099003|261102123227099003|10067099003|18002099003;
-X-Microsoft-Antispam-Message-Info: HfwcQmSm6VuNTN+eqkdv8+pMUZPcXiAaLlMBX09x2xV3UJYbpRnBrz2rhD4JzwKjPTdVQClWEpCyfzfxUIbrw/rmeJ6jl4evFxU5RAZ9dKCBQp3QuTNkYqIcucsbElq6oDciuQ+poaLfU7N6omUmxdVAgUj+0BQyjZqcRfVK8QQif0VU9QbgRrdX2U7w/H5TSFCWnv98gMdmUEQA9PhvV5JVPyliO1G89vRO2auQ6pUNB/GkHoEc/o25itYXuKUsQOgvxfmiMLn7PqjRc1dOnLGVtA/HO1RrYQ3TLUrcwpFCfCnagqkb6/ghFIVWUC5gdZHIAAHEYJvoGgBCUytaRtzGYnN473PvvGUYGcgd2sVkWchtmbwgWnKRRaf4axkXC7qZ9s0Nk5mNbmOeKyPylzvYk6lSJLk6GF1TQ0jww0a7ZVm2Sk/bhB7WqkPi7JDWXeatnSyG3U5Yi9OH6ro4Eng9UPaJ5asgSqMYBq+2mpLEy8/mpFYdHWqVLGrlAVZpncO4ntbAtN0d6MJLpbuE2uFFuiA5YHI95O42eTakPqH2WFDJPOoqBxIsMCL7HwQq0E1mKx1bAqdVudp7xPi98P4mRZbkrWW8K3ccl44g1qAclDh7wh+rDz1KhD69Z5NKk0posWSJaO/dt3oK9DCIrxSNN+019GNt9Yjybi5H6+n0dYvD2XaA3CzVJtWOS/2gsOQJCIaFmlC/V8kam/i24Q==
-X-Forefront-Antispam-Report: CIP:216.228.118.232; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc7edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(1800799024)(82310400026)(36860700016)(11063799006)(261021121427099003)(56012099006)(261021135927099003)(261026121527099003)(261102123227099003)(10067099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: Mp/TzZ8LzVjl5MLtTzOVO8uZqX2IwbWudBaioxWS/ECtBc/08j3EkyvYFXqcBNWr8ETWb445omxMf85EoJVPfHiVBXXPGzEVC7zinoK3HuDbppu7CfSSfORHdiwNpC2Eut0eFTjpksjqSj/QCkTYaQxCWDDbbU1uc55InJH1rYPdTQ2Uje7aLwSEJsA+YbYOFJrjr6XtBKRh6OmtxV5tGtfxd+8JMtUiHKeUTzGA/X7TB13nnWnQSeoPUlYflM8WyaYY4J0EXf7xDYA/iwsmGdTc5a4+DuCi09ACPKSg57cvWPNgtCTKu2UXFJvuBKCeHZhib2FXHvzphw0zZlDnLZ/CHpwySqqtzItyxmcuOc3EcLyj9QrN8FI782qrSVgb/Jp7r0AgGiECuTrURnplbhWdxWnXzTHvqvKcyxmOsv8pp6AN84nKc8WXCtV/wPhI
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 13:35:37.5697 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60765e72-e0cc-45e6-143d-08df3e6656ee
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.118.232];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BY1PEPF00026956.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9181
+References: <20261107051139.37923-1-pbhagavatula@marvell.com>
+In-Reply-To: <20261107051139.37923-1-pbhagavatula@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Mon, 9 Nov 2026 19:45:09 +0530
+X-Gm-Features: AclHuK-QxbOcM20lWUOra0EUmOyowPQYo7LzAqHQNSLk5YRrTDN6W4yf35m1Q9I
+Message-ID: <CALBAE1NhORNXiS=MH66eXbMRKcqQbpC+GO8OMug50rYGNk-u+A@mail.gmail.com>
+Subject: Re: [PATCH] event/cnxk: fix new-event burst enqueue with LMTST
+To: pbhagavatula@marvell.com
+Cc: jerinj@marvell.com, Shijith Thotton <sthotton@marvell.com>, dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -109,39 +100,97 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-With HW steering, tunnel encapsulation on the root table is supported
-only on egress, and tunnel decapsulation only on ingress. This matches
-the root packet-reformat validation in the kernel.
+On Sat, Nov 7, 2026 at 10:48=E2=80=AFAM <pbhagavatula@marvell.com> wrote:
+>
+> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+>
+> Add an I/O write barrier after LMTST submissions in the new-event
+> helper so the stores are ordered before the next iteration.
+>
+> Enqueue small bursts, below one LMT line of entries, event by event
+> instead of using the LMTST path.
+>
+> Fixes: c3320d21b475 ("event/cnxk: use LMTST for enqueue new burst")
+> Fixes: b08b193bceab ("event/cnxk: add CN20K SSO enqueue fast path")
+>
+> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
----
- doc/guides/nics/mlx5.rst | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
-index 86fe747c166..45efa76bcfe 100644
---- a/doc/guides/nics/mlx5.rst
-+++ b/doc/guides/nics/mlx5.rst
-@@ -3048,6 +3048,11 @@ Limitations
- 
- #. The decapsulation is always done up to the outermost tunnel detected by the HW.
- 
-+#. With :ref:`HW steering <mlx5_hws>`, on the HW root table:
-+
-+   - Encapsulating traffic into an L2 or L3 tunnel is supported only on egress.
-+   - Decapsulating an L2 or L3 tunnel is supported only on ingress.
-+
- 
- .. _mlx5_modify:
- 
--- 
-2.25.1
+Applied to dpdk-next-eventdev/for-main. Thanks
 
+> ---
+>  drivers/event/cnxk/cn10k_worker.c | 9 +++++++++
+>  drivers/event/cnxk/cn20k_worker.c | 9 +++++++++
+>  2 files changed, 18 insertions(+)
+>
+> diff --git a/drivers/event/cnxk/cn10k_worker.c b/drivers/event/cnxk/cn10k=
+_worker.c
+> index f33c3a561a88..a8ddbc5d8bfb 100644
+> --- a/drivers/event/cnxk/cn10k_worker.c
+> +++ b/drivers/event/cnxk/cn10k_worker.c
+> @@ -350,6 +350,8 @@ cn10k_sso_hws_new_event_lmtst(struct cn10k_sso_hws *w=
+s, uint8_t queue_id,
+>                 roc_lmt_submit_steorl(wdata[1], pa[1]);
+>         }
+>
+> +       rte_io_wmb();
+> +
+>         left -=3D (sz0 + sz1);
+>         if (left)
+>                 goto again;
+> @@ -395,6 +397,13 @@ cn10k_sso_hws_enq_new_burst(void *port, const struct=
+ rte_event ev[],
+>         uint8_t queue_id;
+>         int32_t space;
+>
+> +       if (nb_events < BIT(ROC_SSO_AW_PER_LMT_LINE_LOG2)) {
+> +               for (idx =3D 0; idx < nb_events; idx++)
+> +                       if (!cn10k_sso_hws_new_event(ws, &ev[idx]))
+> +                               break;
+> +               return idx;
+> +       }
+> +
+>         /* Do a common back-pressure check and return */
+>         space =3D sso_read_xaq_space(ws) - ws->xae_waes;
+>         if (space <=3D 0)
+> diff --git a/drivers/event/cnxk/cn20k_worker.c b/drivers/event/cnxk/cn20k=
+_worker.c
+> index 8c1df3dbafc1..c15e3cd46ae7 100644
+> --- a/drivers/event/cnxk/cn20k_worker.c
+> +++ b/drivers/event/cnxk/cn20k_worker.c
+> @@ -308,6 +308,8 @@ cn20k_sso_hws_new_event_lmtst(struct cn20k_sso_hws *w=
+s, uint8_t queue_id,
+>                 roc_lmt_submit_steorl(wdata[1], pa[1]);
+>         }
+>
+> +       rte_io_wmb();
+> +
+>         left -=3D (sz0 + sz1);
+>         if (left)
+>                 goto again;
+> @@ -350,6 +352,13 @@ cn20k_sso_hws_enq_new_burst(void *port, const struct=
+ rte_event ev[], uint16_t nb
+>         uint8_t queue_id;
+>         int32_t space;
+>
+> +       if (nb_events < BIT(ROC_SSO_AW_PER_LMT_LINE_LOG2)) {
+> +               for (idx =3D 0; idx < nb_events; idx++)
+> +                       if (!cn20k_sso_hws_new_event(ws, &ev[idx]))
+> +                               break;
+> +               return idx;
+> +       }
+> +
+>         /* Do a common back-pressure check and return */
+>         space =3D sso_read_xaq_space(ws) - ws->xae_waes;
+>         if (space <=3D 0)
+> --
+> 2.50.1 (Apple Git-155)
+>
