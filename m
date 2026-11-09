@@ -2,105 +2,55 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB378606A33E
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 15:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0812D606A321
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 15:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=f8nHMlmo
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kQE7stvq
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A233840278;
-	Mon,  9 Nov 2026 16:48:17 +0100 (CET)
-Received: from PH7PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11010049.outbound.protection.outlook.com [52.101.201.49])
- by mails.dpdk.org (Postfix) with ESMTPS id 25F0740270
- for <dev@dpdk.org>; Mon,  9 Nov 2026 16:48:16 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GL1mZNLypp7qR3ZpHhKtuRpPg8KPf+q+YbRLJuh7qe9VA75m6LRoTtikbtJB3UVBauWoAQwGo0lRM9gBmmSuSTVq0LVfxV7IOuJ9/jUQgh+GLdUwS9YX/hi/knQSMHBeng4MU7SKUinGFBXLxTqGy57VozzggbDKzjC9oREHHRcYD4Q1P9qTvlWH0ml7qblCy3WgvJkfsTHlWEyvkJj6n4Su/VBx58GOGRDl/5YGTatlarORbPps1YomV9UpGnE2VqPT3CZSCfgkp1n1gxrZ8yRVk5AeaRy+dYPjooPEOKFWy2VQUWnYzo/zh4bQoiA2wXmqYFFHLaZ7q8BBwWpPCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xJV90YPPqiGnvXLd/DWIsvzf1Nt4T7EmCpDZnQVEdRE=;
- b=Yp22ABbV8Jm4oM07/paoMZpWE4r3D3etHDkXaRNnO+H8GJQLzAIckABCFkpMlw9ZsOOvjk/ZSXCrccOdUyGpWAWoIYC0+sHaJG6N7yMs7eh7Wk5dCwEpNB5o7IH3xIZAxkSshdQ2l0Kgy2zQncMVfqjvHMUGLpsdRuL6pfd9xuX2yv2mcdFwl+OvA8rh5ziJ9jRP1Tj4FgZgt3KF1kLvUb8/X54YjlKDyGyI4uhRc9S0epeZjuLErc7HwhI5GUfBknmd2VzEB879MaJzs4y9kGakxB+wUyYfxbcjzpayrduuMNi3BQh6/ktLFDPt7FkaSWb6vSSLNAlyEzJC3Y7DgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xJV90YPPqiGnvXLd/DWIsvzf1Nt4T7EmCpDZnQVEdRE=;
- b=f8nHMlmohB0qiqgVexgGR9M6ZPHjJe49Hr5bAtBqy5wL32illgPI7pvFwfc150Ik3OffB13jNYWy5KBzGwUbPIMNv1ap/6pSZRVKrBmIZ1uoqNntQ7O6JoW+sp+yfFX+4JjzGHCFWr48+MEl7kNHkLZcSkMgz/OFXL02mKMeKfj+KSZBRF8B2HFC3Tc8uUWQzWYcoXY4N3Mn7bzRVSyW0+jby+5D1X/6+m5UGtYvtcdrDLuC5RBWsy0KarqLaFV0O9hC0AhA8o0m66zPsz19P+DTlZuJU/QcS5sXaKClDkFCBIrz8L0IhvndVV4BVHMEx/SZ0hW+QcohwW1evZBHWA==
-Received: from SJ0PR05CA0206.namprd05.prod.outlook.com (2603:10b6:a03:330::31)
- by MW5PR12MB5621.namprd12.prod.outlook.com (2603:10b6:303:193::12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.13; Mon, 9 Nov
- 2026 15:48:10 +0000
-Received: from SJ5PEPF00000205.namprd05.prod.outlook.com
- (2603:10b6:a03:330:cafe::74) by SJ0PR05CA0206.outlook.office365.com
- (2603:10b6:a03:330::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.7 via Frontend Transport; Mon, 9
- Nov 2026 15:48:09 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ5PEPF00000205.mail.protection.outlook.com (10.167.244.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.4 via Frontend Transport; Mon, 9 Nov 2026 15:48:08 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 9 Nov
- 2026 07:47:47 -0800
-Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 9 Nov
- 2026 07:47:44 -0800
-From: Bing Zhao <bingz@nvidia.com>
-To: <dev@dpdk.org>
-CC: Stephen Hemminger <stephen@networkplumber.org>, Frank Dressler
- <frank@dressler.pro>, Thomas Monjalon <thomas@monjalon.net>, David Marchand
- <david.marchand@redhat.com>, Kevin Traynor <ktraynor@redhat.com>
-Subject: [PATCH v2] net/af_packet: fix build with old kernel headers
-Date: Mon, 9 Nov 2026 17:47:30 +0200
-Message-ID: <20261109154730.146345-1-bingz@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261106142756.241131-1-bingz@nvidia.com>
-References: <20261106142756.241131-1-bingz@nvidia.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3B6D740278;
+	Mon,  9 Nov 2026 16:59:45 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTPS id B31C140270
+ for <dev@dpdk.org>; Mon,  9 Nov 2026 16:59:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1794239983; x=1825775983;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=HMbeJhY9IMzVtBCZelIfyLZD21Dwrr9q3CeWc/drYEU=;
+ b=kQE7stvqyQSHpORoCgf+66BUXQgJnKrqD80YaLhCA+n+Hu62kM/fAJYx
+ jHuemVGkB0jRwzUTpKMkLK0LmsSn7Oa21obiwvFgzl+Qn9qsC1tZZl+R/
+ ib4o4iWhusVHpeLTNpu2zc3rmcnlo0iLE/C+wInArY5FpNvHszefBLT6w
+ UpnCFPdjPmVUxwxTZRnKPwiODLiEQKrT5RKTxSshOVOOSoCIayOWFcGxf
+ MkaJ4SR8ur747z8SYc2vp0C3pDy7SMzmwDS+3KiodZD9adeSa2NeS3LyD
+ 9yKdj15lJmj4X5T9T6JKVh/4O6a/Tj5OcdwqS5Lyh3xTPv5JRLeyNzpmd Q==;
+X-CSE-ConnectionGUID: 2FobGkBCTImO7OMfBjSzvQ==
+X-CSE-MsgGUID: /OATU4MpQCqWSafXD17DRw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="2953790"
+X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
+   d="scan'208";a="2953790"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Nov 2026 07:59:41 -0800
+X-CSE-ConnectionGUID: e8tYCreWTtewAYu5P2JvIw==
+X-CSE-MsgGUID: 8uYPPL1PSL+d/+ROfq54LQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
+   d="scan'208";a="7907209"
+Received: from silpixa00401385.ir.intel.com ([10.20.227.220])
+ by fmviesa004.fm.intel.com with ESMTP; 09 Nov 2026 07:59:40 -0800
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: stephen@networkplumber.org, Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2] app/testpmd: add explicit link autonegotiation control
+Date: Mon,  9 Nov 2026 15:59:35 +0000
+Message-ID: <20261109155935.1054994-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261103155033.3740814-1-bruce.richardson@intel.com>
+References: <20261103155033.3740814-1-bruce.richardson@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF00000205:EE_|MW5PR12MB5621:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6d85389-ee5e-4665-d671-08df3e78da22
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|23010399003|82310400026|36860700016|11063799006|261021121427099003|56012099006|261021135927099003|261022105027099003|261009223027099003|261026140227099003|261026121527099003|261028144727099003|261102123227099003|18002099003|22082099003|10067099003;
-X-Microsoft-Antispam-Message-Info: /cVbmfyjHlzwqJCT0zrriKc8hctX9DaG88BA6Do4GhOtGC5DlB6XdGXmvjg9rCMgn1tJurIAQzPn7R+SQBgwnjKAz1CvECES5oV4FLs4D3JU2h52SMZkhrKDVwdSDLIalbDOZAGGcf16hQT5rizS8UzYMewGDbrQ3xgzzUUr74HjsxBVDLrjCTW3vSKb1Zn7CyRLDGQhwRz/Nl/g5XVyUhFtaKM6peZCWqmlzokIpyjzLIbwx7V/BGcdXOInLDz8WExSiulZXyA84SZ2dnWSqi3569RDGp4tEHhXH+xCCpQ59OoHyOMi6W0YgpUYDCSBRMizUyH9xITBmvjoBqsp6EJFnj56bFN7sKXZtZYmReLN9EVYU1e6k2wEzzCNoGtBjA6rCb+BUMXix3iCTRTcTXUcgvXwebFAKROfzU+dHlCOAPvfN9D9NJog+3dXhoT89+tff5fQ+xnAyBCJ0sWA0qQM9UNGOsbMPSUa0qHXL4b+R3Vj0x08rblfrE1Tj409j4jtAxIDWspYxTUfwHf+fx+YMJkniP99NBFXNdtHVgISyqIWpoZiTJY2A2+tyqh0TDtcchd8rev8WWMp7/QXMsIyQa8q7cd+6+pX4o1iJbs7O2JAp7RhcT7N00MckwnR0XaijJj0yI5KSOdwI3JhMl8BztjYqnpHcNXzADsk/ZArcDHgUMzSKwkmnYUuOKwRGJZllmd4bFLmyyVqohDM/g==
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(23010399003)(82310400026)(36860700016)(11063799006)(261021121427099003)(56012099006)(261021135927099003)(261022105027099003)(261009223027099003)(261026140227099003)(261026121527099003)(261028144727099003)(261102123227099003)(18002099003)(22082099003)(10067099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: J33mGStf10+4UqelhM0DIedFvjVAZY/pqRJvpmgpIZ4Su78mT4TZmEQc+JQpWz+dI19R921YMhjCRN16Cb96MqGXuhA9BU4iixsH/SUMz+TK7ZvbuCgZMjIpWetaIqhHv3/ynNbszJA1D76s1T6IzfCYZHUqnYDCQXjiZ1fQXZSPrdi1imGtXQCu2XzPwf8ky8XoHQ0b0a9+wpBwPEIZOs5mTGI+NmzofZrePjceyLSnOaM3mnLEBTJSCl2pCYsUaMBwvuYyKtLSIl7m+JVmhu2reii2MhSd3RsR2ADVXAogDUrTCEDlKvp6iYSHxR28rsjxL8iZ4f0XblackYFf2jmoDprcG+MM3B1Zg76smotjWWkUX0SBM6xUlQqTsf81d0mXYXSwVdUlfrBRwHC2BNeINLeYgGK29RvnwqkdyP2F0Lo8T8I4yR4qy5mPkBrg
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 15:48:08.6228 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6d85389-ee5e-4665-d671-08df3e78da22
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF00000205.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5621
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -117,63 +67,264 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The PACKET_IGNORE_OUTGOING socket option is used unconditionally,
-but it was only added to the uapi headers in Linux 4.20. The build
-fails on distributions shipping older kernel headers, like RHEL 8
-(kernel-headers 4.18.0):
+When a particular speed was specified for a port in testpmd, the flags
+passed to the underlying API call always included the
+RTE_ETH_LINK_SPEED_FIXED flag. This flag is not a mandatory part of the
+bitmap when setting speeds, and is used to disable autonegotiation.
+It's possible to have a link report only a single speed while
+still have negotiation enabled, so testpmd needs to be extended to
+support setting a speed both with and without the flag.
 
-  rte_eth_af_packet.c:1057:41: error: 'PACKET_IGNORE_OUTGOING'
-    undeclared (first use in this function)
+This patch does so by adding optional "autoneg on|off" setting after
+speed and duplex settings specified by the user. This new option adjusts
+the presence or absence of the FIXED speed bit in the ethdev
+configuration structure "rte_eth_conf.link_speeds" bitmap. For backward
+compatibility, the default value is "autoneg off" for fixed speeds if
+not specified, meaning that the RTE_ETH_LINK_SPEED_FIXED flag is set on
+the speed value by default.
 
-DPDK requires Linux 5.4, so the driver does not need to support older
-kernels. Check for the symbol at configure time and skip the driver
-when the headers lack it, instead of failing the whole build.
-
-Fixes: 3db7aa7868b2 ("net/af_packet: use kernel to filter single-queue Rx")
-
-Signed-off-by: Bing Zhao <bingz@nvidia.com>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
-v2:
-- Drop the fallback define and the runtime fallback to PMD filtering.
-- Skip the driver in meson when linux/if_packet.h lacks the symbol,
-  so the problem is reported at build time (Stephen).
+V2:
+* changed syntax to more closely match that of ethtool, adding
+  autoneg on|off at the end of the command.
+* increased compatibility by ensuring that when no autoneg value is
+  specified, a numeric speed sets the fixed flag (autoneg off), while an
+  "auto" speed keeps autoneg on.
+---
+ app/test-pmd/cmdline.c                      | 90 +++++++++++++++++++--
+ doc/guides/rel_notes/release_26_11.rst      |  6 ++
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst |  8 +-
+ 3 files changed, 95 insertions(+), 9 deletions(-)
 
- doc/guides/nics/af_packet.rst     | 2 ++
- drivers/net/af_packet/meson.build | 8 ++++++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/doc/guides/nics/af_packet.rst b/doc/guides/nics/af_packet.rst
-index 6282f1e18b..44da26854d 100644
---- a/doc/guides/nics/af_packet.rst
-+++ b/doc/guides/nics/af_packet.rst
-@@ -72,6 +72,8 @@ Prerequisites
- This is a Linux-specific PMD, thus the following prerequisites apply:
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index 51078a2a73..676ed18aca 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -726,8 +726,8 @@ static void cmd_help_long_parsed(void *parsed_result,
+ 			"port config (port_id|all)"
+ 			" speed (10|100|1000|2500|5000|10000|25000|40000|50000|"
+ 			"100000|200000|400000|800000|auto)"
+-			" duplex (half|full|auto)\n"
+-			"    Set speed and duplex for all ports or port_id\n\n"
++			" duplex (half|full|auto) [autoneg (on|off)]\n"
++			"    Set speed and duplex; optionally enable or disable link autonegotiation\n\n"
  
- *  A Linux Kernel;
-+*  Kernel headers defining ``PACKET_IGNORE_OUTGOING`` (Linux 4.20 or later),
-+   otherwise the PMD is not built;
- *  A Kernel bound interface to attach to (e.g. a tap interface).
+ 			"port config (port_id|all) loopback (mode)\n"
+ 			"    Set loopback mode for all ports or port_id\n\n"
+@@ -1395,10 +1395,21 @@ struct cmd_config_speed_all {
+ 	cmdline_fixed_string_t item2;
+ 	cmdline_fixed_string_t value1;
+ 	cmdline_fixed_string_t value2;
++	cmdline_fixed_string_t autoneg;
++	cmdline_fixed_string_t autoneg_value;
+ };
  
- Set up an af_packet interface
-diff --git a/drivers/net/af_packet/meson.build b/drivers/net/af_packet/meson.build
-index f45e4491d4..ce4737010a 100644
---- a/drivers/net/af_packet/meson.build
-+++ b/drivers/net/af_packet/meson.build
-@@ -4,6 +4,14 @@
- if not is_linux
-     build = false
-     reason = 'only supported on Linux'
-+    subdir_done()
- endif
++static uint32_t
++link_speed_fixed_bit(const char *speed, const char *autoneg)
++{
++	if (autoneg == NULL)
++		return strcmp(speed, "auto") == 0 ? 0 : RTE_ETH_LINK_SPEED_FIXED;
 +
-+if not cc.has_header_symbol('linux/if_packet.h', 'PACKET_IGNORE_OUTGOING')
-+    build = false
-+    reason = 'missing symbol "PACKET_IGNORE_OUTGOING" in "linux/if_packet.h"'
-+    subdir_done()
-+endif
++	return strcmp(autoneg, "off") == 0 ? RTE_ETH_LINK_SPEED_FIXED : 0;
++}
 +
- sources = files('rte_eth_af_packet.c')
- require_iova_in_mbuf = false
+ static int
+-parse_and_check_speed_duplex(char *speedstr, char *duplexstr, uint32_t *speed)
++parse_and_check_speed_duplex(char *speedstr, char *duplexstr, bool fixed, uint32_t *speed)
+ {
+ 
+ 	int duplex;
+@@ -1455,8 +1466,13 @@ parse_and_check_speed_duplex(char *speedstr, char *duplexstr, uint32_t *speed)
+ 		}
+ 	}
+ 
+-	if (*speed != RTE_ETH_LINK_SPEED_AUTONEG)
++	if (fixed) {
++		if (*speed == RTE_ETH_LINK_SPEED_AUTONEG) {
++			fprintf(stderr, "A fixed link requires a specific speed\n");
++			return -1;
++		}
+ 		*speed |= RTE_ETH_LINK_SPEED_FIXED;
++	}
+ 
+ 	return 0;
+ }
+@@ -1464,9 +1480,11 @@ parse_and_check_speed_duplex(char *speedstr, char *duplexstr, uint32_t *speed)
+ static void
+ cmd_config_speed_all_parsed(void *parsed_result,
+ 			__rte_unused struct cmdline *cl,
+-			__rte_unused void *data)
++			void *data)
+ {
+ 	struct cmd_config_speed_all *res = parsed_result;
++	/* data is used to identify command variant with/without explicit autoneg setting */
++	const char *autoneg = data != NULL ? res->autoneg_value : NULL;
+ 	uint32_t link_speed;
+ 	portid_t pid;
+ 
+@@ -1476,7 +1494,7 @@ cmd_config_speed_all_parsed(void *parsed_result,
+ 	}
+ 
+ 	if (parse_and_check_speed_duplex(res->value1, res->value2,
+-			&link_speed) < 0)
++			link_speed_fixed_bit(res->value1, autoneg) != 0, &link_speed) < 0)
+ 		return;
+ 
+ 	RTE_ETH_FOREACH_DEV(pid) {
+@@ -1504,6 +1522,10 @@ static cmdline_parse_token_string_t cmd_config_speed_all_item2 =
+ static cmdline_parse_token_string_t cmd_config_speed_all_value2 =
+ 	TOKEN_STRING_INITIALIZER(struct cmd_config_speed_all, value2,
+ 						"half#full#auto");
++static cmdline_parse_token_string_t cmd_config_speed_all_autoneg_token =
++	TOKEN_STRING_INITIALIZER(struct cmd_config_speed_all, autoneg, "autoneg");
++static cmdline_parse_token_string_t cmd_config_speed_all_autoneg_value =
++	TOKEN_STRING_INITIALIZER(struct cmd_config_speed_all, autoneg_value, "on#off");
+ 
+ static cmdline_parse_inst_t cmd_config_speed_all = {
+ 	.f = cmd_config_speed_all_parsed,
+@@ -1524,6 +1546,27 @@ static cmdline_parse_inst_t cmd_config_speed_all = {
+ 	},
+ };
+ 
++static cmdline_parse_inst_t cmd_config_speed_all_autoneg = {
++	.f = cmd_config_speed_all_parsed,
++	.data = &cmd_config_speed_all_autoneg,
++	.help_str = "port config all speed "
++		"10|100|1000|2500|5000|10000|25000|40000|50000|"
++		"100000|200000|400000|800000|auto "
++		"duplex half|full|auto autoneg on|off",
++	.tokens = {
++		(void *)&cmd_config_speed_all_port,
++		(void *)&cmd_config_speed_all_keyword,
++		(void *)&cmd_config_speed_all_all,
++		(void *)&cmd_config_speed_all_item1,
++		(void *)&cmd_config_speed_all_value1,
++		(void *)&cmd_config_speed_all_item2,
++		(void *)&cmd_config_speed_all_value2,
++		(void *)&cmd_config_speed_all_autoneg_token,
++		(void *)&cmd_config_speed_all_autoneg_value,
++		NULL,
++	},
++};
++
+ /* *** configure speed for specific port *** */
+ struct cmd_config_speed_specific {
+ 	cmdline_fixed_string_t port;
+@@ -1533,14 +1576,18 @@ struct cmd_config_speed_specific {
+ 	cmdline_fixed_string_t item2;
+ 	cmdline_fixed_string_t value1;
+ 	cmdline_fixed_string_t value2;
++	cmdline_fixed_string_t autoneg;
++	cmdline_fixed_string_t autoneg_value;
+ };
+ 
+ static void
+ cmd_config_speed_specific_parsed(void *parsed_result,
+ 				__rte_unused struct cmdline *cl,
+-				__rte_unused void *data)
++				void *data)
+ {
+ 	struct cmd_config_speed_specific *res = parsed_result;
++	/* data is used to identify command variant with/without explicit autoneg setting */
++	const char *autoneg = data != NULL ? res->autoneg_value : NULL;
+ 	uint32_t link_speed;
+ 
+ 	if (port_id_is_invalid(res->id, ENABLED_WARN))
+@@ -1552,7 +1599,7 @@ cmd_config_speed_specific_parsed(void *parsed_result,
+ 	}
+ 
+ 	if (parse_and_check_speed_duplex(res->value1, res->value2,
+-			&link_speed) < 0)
++			link_speed_fixed_bit(res->value1, autoneg) != 0, &link_speed) < 0)
+ 		return;
+ 
+ 	ports[res->id].dev_conf.link_speeds = link_speed;
+@@ -1582,6 +1629,10 @@ static cmdline_parse_token_string_t cmd_config_speed_specific_item2 =
+ static cmdline_parse_token_string_t cmd_config_speed_specific_value2 =
+ 	TOKEN_STRING_INITIALIZER(struct cmd_config_speed_specific, value2,
+ 							"half#full#auto");
++static cmdline_parse_token_string_t cmd_config_speed_specific_autoneg_token =
++	TOKEN_STRING_INITIALIZER(struct cmd_config_speed_specific, autoneg, "autoneg");
++static cmdline_parse_token_string_t cmd_config_speed_specific_autoneg_value =
++	TOKEN_STRING_INITIALIZER(struct cmd_config_speed_specific, autoneg_value, "on#off");
+ 
+ static cmdline_parse_inst_t cmd_config_speed_specific = {
+ 	.f = cmd_config_speed_specific_parsed,
+@@ -1602,6 +1653,27 @@ static cmdline_parse_inst_t cmd_config_speed_specific = {
+ 	},
+ };
+ 
++static cmdline_parse_inst_t cmd_config_speed_specific_autoneg = {
++	.f = cmd_config_speed_specific_parsed,
++	.data = &cmd_config_speed_specific_autoneg,
++	.help_str = "port config <port_id> speed "
++		"10|100|1000|2500|5000|10000|25000|40000|50000|"
++		"100000|200000|400000|800000|auto "
++		"duplex half|full|auto autoneg on|off",
++	.tokens = {
++		(void *)&cmd_config_speed_specific_port,
++		(void *)&cmd_config_speed_specific_keyword,
++		(void *)&cmd_config_speed_specific_id,
++		(void *)&cmd_config_speed_specific_item1,
++		(void *)&cmd_config_speed_specific_value1,
++		(void *)&cmd_config_speed_specific_item2,
++		(void *)&cmd_config_speed_specific_value2,
++		(void *)&cmd_config_speed_specific_autoneg_token,
++		(void *)&cmd_config_speed_specific_autoneg_value,
++		NULL,
++	},
++};
++
+ static int
+ parse_speed_lanes_cfg(portid_t pid, uint32_t lanes)
+ {
+@@ -14357,7 +14429,9 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
+ 	&cmd_operate_detach_device,
+ 	&cmd_set_port_setup_on,
+ 	&cmd_config_speed_all,
++	&cmd_config_speed_all_autoneg,
+ 	&cmd_config_speed_specific,
++	&cmd_config_speed_specific_autoneg,
+ 	&cmd_config_speed_lanes_all,
+ 	&cmd_config_speed_lanes_specific,
+ 	&cmd_show_speed_lanes,
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 8ca8379cc6..29fccf09e3 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -340,6 +340,12 @@ New Features
+   Added ``dpdk-validate-bpf`` tool to pre-validate eBPF programs
+   for compatibility with the ``lib/bpf`` execution context.
+ 
++* **Added explicit link autonegotiation control in testpmd.**
++
++  Added an optional ``autoneg on|off`` setting after ``duplex`` in the port speed configuration command.
++  For compatibility with older behavior, if unspecified,
++  auto-negotiation is disabled by default for numeric speeds, and enabled for "auto" speed selection.
++
+ 
+ Removed Items
+ -------------
+diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+index a967bbef76..6bac4d2763 100644
+--- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
++++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+@@ -2167,7 +2167,13 @@ port config - speed
+ Set the speed and duplex mode for all ports or a specific port::
+ 
+    testpmd> port config (port_id|all) speed (10|100|1000|2500|5000|10000|25000|40000|50000|100000|200000|400000|800000|auto) \
+-            duplex (half|full|auto)
++            duplex (half|full|auto) [autoneg (on|off)]
++
++With ``autoneg on``, the selected speed is advertised with link autonegotiation enabled.
++With ``autoneg off``, link autonegotiation is disabled and the selected speed is forced.
++If ``autoneg`` parameter is omitted for a numeric speed, link autonegotiation is disabled.
++The ``auto`` speed advertises all supported speeds and enables link autonegotiation if ``autoneg`` is omitted.
++NOTE: Combining ``auto`` speed with ``autoneg off`` is an error.
+ 
+ port config - queues/descriptors
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -- 
-2.34.1
+2.55.0
 
