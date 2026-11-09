@@ -2,74 +2,76 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3BE606A31C
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 17:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5B3606A321
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 17:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=ae2b7xwU
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=pt26ZIJT
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 249D64028F;
-	Mon,  9 Nov 2026 18:25:20 +0100 (CET)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
- [209.85.214.172])
- by mails.dpdk.org (Postfix) with ESMTPS id 09AFC40270
- for <dev@dpdk.org>; Mon,  9 Nov 2026 18:25:17 +0100 (CET)
-Received: by mail-pl1-f172.google.com with SMTP id
- d9443c01a7336-2e95bd1c14cso10120245ad.2
- for <dev@dpdk.org>; Mon, 09 Nov 2026 09:25:17 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E0CB84028F;
+	Mon,  9 Nov 2026 18:30:09 +0100 (CET)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTPS id 92AD840270
+ for <dev@dpdk.org>; Mon,  9 Nov 2026 18:30:08 +0100 (CET)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-2e9d1114320so8726965ad.3
+ for <dev@dpdk.org>; Mon, 09 Nov 2026 09:30:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794245116;
- x=1794849916; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794245407;
+ x=1794850207; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=ZZ+IVczwUlFNpxwTdRosRRlDJoCaRUmRq7R17RDMupo=;
- b=ae2b7xwU9feHyWPnfSIPFRDdm4pfYItnuVgFWRIi2DPjPCX3eAby3MXRgiBE//yqk+
- EGxvcgdZbMLC8soO5ZPO1SN/4BOuktW7v7DFp2l3eEd5JFrcHh+jl+/eH5v+W503q7pS
- Pcg/2NRkxeAA1gIDy8Nl8GWxx8RXK5AQwO7UqhZiM2qm0049w8OdlNaVTae0OeN0t1P8
- 5rgHDsrxFfOK90nYAdl7t0TmDh7liqWtj+BecHcXv+vNSgvOWPmzbW1FH5u5/neOryh5
- Kgz1LarobQ01Qno/YZvAjDo8WRtOARh5jEoIV40e4Ly+KWaLZDdRx0RnIvnGq3DyJTZW
- Pdyw==
+ bh=+Gut61P2X6xFkrMVnymAI1nTOnnVvlvyOqV+kFwzkCg=;
+ b=pt26ZIJTls7SA/M08yGKXBbUBxwCLe8YVPZMZSIojTfeEcKqhkZdiaDhnf6rx9h8Xy
+ /kORutAAJll/k9aOeZ8E+/f+blD9rJf+P/njv0MfgTkQB+e5EHuVv+eSpdbXtFmBF4QM
+ aoU9q+Y10bV6HRbHmoXRRoJ1C4vE4Deeet89nlz7uWUu1YNFKfS2xoCnNZkydrDMb8OQ
+ KgLJtH/Xo1Yy/Jhk3DlNvSck3qrWM94a6K9OzCaBxeDvyEh8YDYLspSfuX7f0/or8LjE
+ U0UVssmU93ehtHVY+M7K8L6Q8O/E9JxEsGjWAHRfmaRnEKBt21h7iBU4QgNFPBIzYfxi
+ H2hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794245116; x=1794849916;
+ d=1e100.net; s=20260707; t=1794245407; x=1794850207;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=ZZ+IVczwUlFNpxwTdRosRRlDJoCaRUmRq7R17RDMupo=;
- b=A8jzPPytU9+S1xatwAxiDBqp60z09HfKqhJCjnpIZUiKc49NnEiV1Y6gfx5qSFuZNX
- sRmWWVLQtj7WykFSp9K5UlMh8SeYRXWNfYCuv7dq23dVFwLlulD+IStuh93K1K7VljMI
- eaQlOMTQE0ZimXVpTHq4QJatj0JPS4nspiXgdx2hLljpB+Ve9f3/+GIwEknilhrA+Y8E
- t+YJdgabpaBAIsARaTp/DslYeMVwh6Ro/aZiHPADoM0VKaPACrGnQxLPNDwPpymUyxx3
- /3OkphfeHKFx7Nh/c+P+iwPkWlswAfsyVAQIMgvncPErQrRZ8Y5MI6xMzXwOmmepUCS5
- ZQQg==
-X-Gm-Message-State: APuU4Z9VQ2j3wgJcy9hvej05Tfo2FN1lehKNCVlznn/wtHcnQ3fzt7wQ
- 0Hye/QReASaJJmuDCdq7UvDXPqw45H/f6jLsL9pv7pW2bmdFh4A79FzIvxfEiW8F51E=
-X-Gm-Gg: AYBFou1QmqazXvTlSlxotM37LRLPKBGTqlpWWsAGIwQ+1gIDfVI2p3niGXXFis/44p6
- DC8wljCxqG6dNegi96/n8ZxZKhCF9EoeYcVRyt0lk2/CYNOaAJhohBVssSCqUzgHh7auci6JOPm
- Mt5J21/6t1QbLPSaUm1Z4E50J+KJCD0rilL4i53WiFm4dZ5ZTPsYoexkHSZ09IwOVFsOlpGW669
- 21vCOdatdeB15L/FbdfxvEwrWDoUUAwgWOFrEWaGib5NpICqIUk3xdblLbIuTeSxDNtzHZZzwGg
- 4A2g6wINl9rcqjny1cCbq4KoU76+ZhZg/lutUydIMr71K6K7UOuyzRqHwn/hVIJDL9dR4zfZoKg
- +0+9q+8z/4UIQMyQRGrekF2OZWtWwKQ+5pYIMK7PLEriSYQLWkGfkrPtdMRZjeb2vxhyLcWm4r+
- lOXyzA30SLbSOkvIq0XphWfMX8edpCNgJ9gu19OKAtz7leD5c67bJOvsyoiPg59svKn5rEPLLw5
- gd/XDf6WU9+8ImMaKokiQHVIpJrV758utOQvX2FEbsnsixxs2nBH/2gtj5Dze6qmC+V6Yt8XxKd
- BYjFFepRChVHjTc2cqA96J6a0lKsiPzelzXuf1W7RwuKKWfdjjyR/QoqhsX/M98rDONVXkEn
-X-Received: by 2002:a17:903:228e:b0:2ed:472:b9d6 with SMTP id
- d9443c01a7336-2ed833ee6d6mr53746755ad.2.1794245116057; 
- Mon, 09 Nov 2026 09:25:16 -0800 (PST)
+ bh=+Gut61P2X6xFkrMVnymAI1nTOnnVvlvyOqV+kFwzkCg=;
+ b=as4LwIGLNNSauEJzVhB6BHuL/Z/9lRq1EeBT+k67/DeKLIXhECaDSX3lQDzXw+Byej
+ lIWfOf99gtMrJMTTNidrgdvKmxeYpzR53JR+AopFO4/rfl6Y47M3SbKbjvjt+BbIdlZR
+ 5creR7jC9HY6S6k1sp1plti5KFoCQ+BxtsL5QtBfBYg7L4pS8IQcRDAUsNTY+JSKjkb1
+ Eo5r6GBt7gTylq89++pfXvWHZZa+faLvm+UkE3zk7+8KbVkRRyIriP7F9uBs0QlWDJ8e
+ B4vLp/10hAAIBig7ZuZ+5xXDzxGOt52YW0ku8MrSzaKqythGn8EPMtnHBq1ZdXqoJ6ia
+ 57nA==
+X-Gm-Message-State: APuU4Z8R/dj7QfcA4S9nzEL8TsFViP92kyfWetyC7JH76Gr0xWzOON7d
+ 1zvO/EnefV/R3pcmFDcGmL5U+UYYoDfN4bj4/PcuxQY5+xt64wIpPabrtwRSTgwjmxvE0LMrLIH
+ g+CTGGH0=
+X-Gm-Gg: AYBFou2LiYG58poYCHvvOZDup/0jCZh4Sl5lWvdqdrC+z6YEmBRt7EINygDOEbVjwVD
+ 3w2/WFoV5/L5P5noo08WaGrPjvrpyiocx8eeAcBIsKJh3rmk9Be6ryzLqw9Gw6rkDLeN8r9EG4e
+ FP01PnPzqEfhqfA6Gz1DLjngLEecpAilYQ1CZHMhqj3QQJXNaw0Jehb4Eght24V5/ZQH6wrMCpE
+ RdzVfW0L2eAenkmfHPgyI/zQBwy6Hu6yoBEbB3Wq79Xi+rF+X1o5Z9muOZI+WCtBxY8FOAs+2Ec
+ G6ea78tYtNTrmGhpOjmD9J/qB4OEYS69m3sCqzzM93yDB/Ug6iVh78BKGzf8gZVpKxAFq68g0yi
+ tjNvxIGhvlpfwOWsbfRF4XSu/+FSgohQbogebJJDbA0PJ83HUgc0p8hU7UD7Ws6YjBFPxIgO1gu
+ 3TH+yvCxJ1+DAtcOyO1S7QNvX5bLC7RfGHgg6TacenWLz+RaVR1XsEiAiBpp79pykG8raZ7vVZJ
+ nDk01C1npAMgac7iG7wl+raD4HiJpYV8Mg/dTudmvkRzENP3jLcYzAfAlDa4BUXYB11+mD6SQIt
+ vap1iLGfQFvospJ2UkO5pGwywyNPlF2oo7TOtR7pldLTqIMUNGRDSS0UIQCQ8SunXcb3ZPYy
+X-Received: by 2002:a17:90b:3b4a:b0:3ac:3588:b548 with SMTP id
+ 98e67ed59e1d1-3b166f69f40mr289444a91.13.1794245406915; 
+ Mon, 09 Nov 2026 09:30:06 -0800 (PST)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2edb6e1006asm532325ad.72.2026.11.09.09.25.15
+ d9443c01a7336-2edb6a43768sm721685ad.6.2026.11.09.09.30.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Nov 2026 09:25:15 -0800 (PST)
-Date: Mon, 9 Nov 2026 09:25:13 -0800
+ Mon, 09 Nov 2026 09:30:06 -0800 (PST)
+Date: Mon, 9 Nov 2026 09:30:04 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: "Subhransu S. Prusty" <subhransu.sekhar.prusty@altera.com>
-Cc: dev@dpdk.org, ferruh.yigit@intel.com, rtice@cisco.com,
- cheryl.bansal@altera.com, nanditha.jayarajan@altera.com
-Subject: Re: [RFC 0/4] net/mcdma: add Altera MCDMA poll mode driver
-Message-ID: <20261109092513.59d8b647@phoenix.local>
-In-Reply-To: <20261109160926.800828-1-subhransu.sekhar.prusty@altera.com>
-References: <20261109160926.800828-1-subhransu.sekhar.prusty@altera.com>
+To: Jiacheng Ye <yejiacheng4@h-partners.com>
+Cc: dev@dpdk.org, Feifei Wang <wangfeifei40@huawei.com>, Thomas Monjalon
+ <thomas@monjalon.net>, Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: Re: [PATCH v6 00/28] net/hinic3: add PMD features and fixes
+Message-ID: <20261109093004.49d1914b@phoenix.local>
+In-Reply-To: <20261109162033.1144-1-yejiacheng4@h-partners.com>
+References: <20261030144733.2120-1-yejiacheng4@h-partners.com>
+ <20261109162033.1144-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -83,458 +85,268 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Tue, 10 Nov 2026 00:09:22 +0800
-"Subhransu S. Prusty" <subhransu.sekhar.prusty@altera.com> wrote:
+On Tue, 10 Nov 2026 00:20:04 +0800
+Jiacheng Ye <yejiacheng4@h-partners.com> wrote:
 
-> This RFC series introduces a poll mode driver for Altera Multi-Channel
-> Direct Memory Access (MCDMA) PCI devices. The driver exposes
-> host-to-device and device-to-host descriptor queues as standard DPDK
-> Ethernet ports for custom FPGA datapaths.
+> This series fixes offload capability advertisement, cmdq/compact CQE
+> configuration, and several defects found during review, and adds NIC
+> type identification, FEC, CIR drop statistics, VF LAG/link state, COS
+> mask/map, mbox recording, RSS hash configuration, compact CQE Rx/Tx
+> paths, TSO segment expansion, Tx burst mode reporting, queue statistics,
+> pseudo-header checksum, per-tile cmdq ops, SP560 NIC support, and device
+> kvargs tunables.
 > 
-> While the MCDMA IP supports multiple PFs and VFs per PF, this RFC
-> implements single PF with multiple VFs; each function exposes multiple
-> Rx/Tx queue pairs backed by H2D/D2H descriptor rings and per-queue
-> QCSR.
+> Changes in v6:
+> - Rebase on current main and address the v5 review comments.
+> - 0003/0005: correct the Fixes: tags, drop the Cc: stable request for
+>   fixes to code that has never been in a stable release, and remove the
+>   dead null check in the vport enable fix.
+> - 0006: clear the stale hardware consumer index on Rx queue reset.
+> - 0009: reject a packet whose first segment is shorter than the
+>   pseudo-header, narrow the shared-mbuf check to the L4/TSO flags,
+>   compare the tunnel type as a whole enum, and compute the outer and inner
+>   pseudo-header checksums.
+> - 0010: arm the SP230 per-queue vectors when Rx interrupts are disabled,
+>   so vfio masks them after the first assertion, and keep the
+>   coalescing-only fallback for igb_uio/uio_pci_generic.
+> - 0011: advertise OUTER_UDP_CKSUM now that the outer UDP pseudo-header is
+>   written in the software prepare step. Drop the stale QinQ features.ini
+>   entry and unused QINQ mbuf flag.
+> - 0012: select the CIR drop counters by NIC type in calc_num, get_names
+>   and get.
+> - 0013: report the needed capability count for a short array, mask
+>   AUTO out of the reported capabilities, keep the GET-side firmware
+>   NOT_SET to AUTO mapping, and reject unknown firmware values.
+> - 0014: take the PCI device from the ethdev in priv_dump so a secondary
+>   process does not dereference a stale pointer.
+> - 0016: keep a separate admin-down flag so a PF link up event cannot
+>   override dev_set_link_down().
+> - 0018: cache RSS enablement per queue and clear rss_type when RSS is
+>   disabled.
+> - 0019: reject outer IPv6 with an inner L3, and stop setting the VLAN
+>   flag mask in the TCAM keys.
+> - 0021: document that the coalescing tunables only take effect with
+>   HW compact CQE.
+> - 0022: report the combined compact-CQE checksum error as an unknown
+>   result instead of blaming the IP or the L4 layer, and keep the ptype
+>   table in sync with the advertised ptype set.
+> - 0023: reject a queue depth that differs from the first queue instead
+>   of coercing it, reset the expected depth in dev_configure() and
+>   dev_stop(), validate it in dev_start(), and mark Tx queues stopped in
+>   dev_stop().
+> - 0024: reject TSO packets that need more SGEs than the ring can hold,
+>   reject a tso_segsz that does not fit the 14-bit MSS field, and report
+>   nb_seg_max/nb_mtu_seg_max.
+> - 0025: clear queue_info in the scalar burst for compact WQEs like
+>   hinic3_master, clear the per-packet offload state, guard the prefetch
+>   against an empty burst, and remove the per-packet data path logs.
+>   Per-packet unsupported-type messages are lowered to DEBUG.
+>   Tunnel packets are accepted by type instead of by feature bit;
+>   VXLAN_GPE TSO and IPIP TSO on SP620 stay rejected.
+>   SP230 does not get the software pseudo-header writes because its
+>   hardware derives the inner checksums and TSO headers itself.
+> - 0027: report the Tx burst mode of the function that is installed.
 > 
-> User guide reference:
-> https://docs.altera.com/r/docs/683821/25.3.1/multi-channel-dma-ip-for-pci-express-user-guide/before-you-begin
+> Changes in v5:
+> - Register hinic3_prep_pkts() in the pseudo-header checksum patch instead
+>   of the compact CQE Rx patch.
+> - Mention only SP620 in that commit message.
+> - Document the RQ CEQ EN bit and the INTR field for SW compact CQE.
+> - Drop the per-packet ERR log for a zero tso_segsz.
+> - Keep log and error messages on a single line.
+> - Check the non-TSO packet length before the early SGE-count return.
+> - Scale the coalescing parameters by their unit in the log.
+> - Clear the stale Rx hardware CI write-back memory on queue reset.
 > 
-> The series is split for review as follows:
->  1. Core driver skeleton, queue management, documentation, and features
->     matrix, excluding datapath bursts, debug dumps, and PIO APIs.
->  2. Rx and Tx packet burst handlers.
->  3. Experimental PIO BAR access APIs.
->  4. Experimental QCSR inspection and dump APIs.
+> Changes in v4:
+> - Reordered the queue-depth, TSO and pseudo-header patches to keep the
+>   series bisectable; sized the copy pool from the Tx queue depth, kept the
+>   copy chain consistent and rejected a zero tso_segsz.
+> - Fixed the pseudo-header L4 protocol and dropped the IPv6 extension-header
+>   walk; split the SP230 MSI-X handling; validated the VXLAN-GPE mask and
+>   the device kvargs.
 > 
-> Functional testing was performed on Linux with vfio-pci, using DPDK
-> pktgen on a single PF and VF configuration. The attached user logic
-> was adapted as needed for validation.
+> Changes in v3:
+> - Moved the TCAM leak fix into its own patch; set the burst pointers and
+>   tx_pkt_prepare for secondary processes; zeroed the RQ/SQ contexts.
+> - Fixed the Tx burst return count and prefetch guard; validated kvargs;
+>   reset the queue depths in dev_configure(); reported FEC per speed;
+>   routed priv_dump through fprintf(); derived the pseudo-header protocol
+>   from the offload flags.
 > 
-> We would appreciate feedback on the ethdev design, the experimental
-> PIO APIs, and PF/VF devargs.
+> Changes in v2:
+> - Added the five bug fixes (SP230 VF ID, ethertype double removal, VXLAN
+>   VNI mask, vport NULL deref, secondary ops); split the NIC type
+>   identification; added hinic3.rst/features.ini.
+> - Dropped the unused devargs and Tx/Rx spin loops; corrected the
+>   GENEVE/VXLAN-GPE/SP620 IP-in-IP rule handling.
+> 
+> Changes in v1:
+> - Initial posting.
+> 
+> Every commit builds with -Dwerror=true.
+> 
+> Jiacheng Ye (28):
+>   net/hinic3: fix SP230 VF PCI device ID
+>   net/hinic3: fix double removal in ethertype flow destroy
+>   net/hinic3: fix TCAM index leak on ethertype flow set
+>   net/hinic3: fix VXLAN VNI spec and mask write
+>   net/hinic3: fix vport enable null dereference
+>   net/hinic3: clear stale Rx hardware CI on queue reset
+>   net/hinic3: attach ethdev and set ops in secondary process
+>   net/hinic3: add NIC type identification
+>   net/hinic3: fix pseudo-header checksum calculation
+>   net/hinic3: add SP230 Rx queue interrupt handling
+>   net/hinic3: fix offload and cmdq/compact CQE config
+>   net/hinic3: add CIR drop statistics and VF LAG support
+>   net/hinic3: add FEC mode get/set and capability support
+>   net/hinic3: add mbox message recording and debug dump
+>   net/hinic3: add COS mask and COS map support
+>   net/hinic3: add VF link state and promiscuous support
+>   net/hinic3: convert cmdq ops to static global variables
+>   net/hinic3: update RSS hash type configuration
+>   net/hinic3: refactor flow rule parsing
+>   net/hinic3: add SP560 NIC type identification and handling
+>   net/hinic3: add device kvargs parameters support
+>   net/hinic3: add compact CQE Rx path and ptype table
+>   net/hinic3: ensure queue depth and state consistency
+>   net/hinic3: expand TSO from 127 to 255 segments
+>   net/hinic3: split Tx burst function for compact CQE support
+>   net/hinic3: add SP230 VF software statistics
+>   net/hinic3: add Tx burst mode get
+>   net/hinic3: expose Tx queue copied-mbuf statistics
+> 
+>  .mailmap                                      |    1 +
+>  doc/guides/nics/features/hinic3.ini           |    5 +-
+>  doc/guides/nics/hinic3.rst                    |   27 +-
+>  doc/guides/rel_notes/release_26_11.rst        |   13 +
+>  drivers/net/hinic3/base/hinic3_cmd.h          |    2 +
+>  drivers/net/hinic3/base/hinic3_csr.h          |    6 +-
+>  drivers/net/hinic3/base/hinic3_eqs.c          |   64 +-
+>  drivers/net/hinic3/base/hinic3_eqs.h          |    9 +-
+>  drivers/net/hinic3/base/hinic3_hw_cfg.c       |    2 +
+>  drivers/net/hinic3/base/hinic3_hw_cfg.h       |    8 +-
+>  drivers/net/hinic3/base/hinic3_hw_comm.c      |    9 +-
+>  drivers/net/hinic3/base/hinic3_hwdev.h        |    3 +-
+>  drivers/net/hinic3/base/hinic3_hwif.c         |    4 +-
+>  drivers/net/hinic3/base/hinic3_mbox.c         |   45 +
+>  drivers/net/hinic3/base/hinic3_mbox.h         |   19 +
+>  drivers/net/hinic3/base/hinic3_nic_cfg.c      |  201 ++-
+>  drivers/net/hinic3/base/hinic3_nic_cfg.h      |  105 +-
+>  drivers/net/hinic3/base/hinic3_nic_event.c    |   71 +-
+>  drivers/net/hinic3/hinic3_ethdev.c            |  904 ++++++++++++--
+>  drivers/net/hinic3/hinic3_ethdev.h            |   58 +-
+>  drivers/net/hinic3/hinic3_fdir.c              |   51 +-
+>  drivers/net/hinic3/hinic3_fdir.h              |    8 +-
+>  drivers/net/hinic3/hinic3_flow.c              |  590 ++++++---
+>  drivers/net/hinic3/hinic3_flow.h              |  196 ---
+>  drivers/net/hinic3/hinic3_nic_io.c            |  184 +--
+>  drivers/net/hinic3/hinic3_nic_io.h            |   98 ++
+>  drivers/net/hinic3/hinic3_rx.c                |  633 ++++++++--
+>  drivers/net/hinic3/hinic3_rx.h                |  206 ++--
+>  drivers/net/hinic3/hinic3_tx.c                | 1098 +++++++++++++----
+>  drivers/net/hinic3/hinic3_tx.h                |   53 +-
+>  .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    |   65 +-
+>  .../net/hinic3/htn_adapt/hinic3_htn_cmdq.h    |    6 +-
+>  .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    |   76 +-
+>  .../net/hinic3/stn_adapt/hinic3_stn_cmdq.h    |    6 +-
+>  34 files changed, 3641 insertions(+), 1185 deletions(-)
+>  delete mode 100644 drivers/net/hinic3/hinic3_flow.h
+> 
 
-Lots of feedback from AI review. Mostly it needs to be tested with testpmd
-before review consideration. And you are too late for 26.11
+AI review feedback. This was followon to earlier review and I fed in
+your response as well. I see two warnings that still need to be
+addressed.
 
-Review: [RFC 0/4] net/mcdma: add Altera MCDMA poll mode driver
-
-Applied on 26.11-rc2, builds clean with -Dwerror at each commit.
-Post-apply sources read, not just diffs.
-
-Series-level
-------------
-
-Target release. 26.11 is at rc2; a new driver lands in 27.03.
-RTE_EXPORT_EXPERIMENTAL_SYMBOL(..., 26.11) in patches 3/4 should say
-27.03, and the series needs a release notes entry in the 27.03 file.
-
-PCI ID and PF/VF model (you asked about devargs). The ID table is
-vendor 0x1172, device 0x0000, i.e. the Altera default IDs. Any
-Altera design left at default IDs will probe as MCDMA. Whether a
-function is PF or VF is decided by the presence of pf_index=, and a
-VF needs parent_pf_idx= to find its channel count. The usual way to
-do this in DPDK is distinct device IDs for PF and VF (and a real
-device ID for the MCDMA IP); then is_pf comes from the match entry
-and both devargs go away. A VF probed with no devargs at all
-currently fails (see patch 1).
-
-PMD-specific API (you asked about it). Patch 4 reimplements what
-ethdev already has: eth_dev_ops.get_reg / rte_eth_dev_get_reg_info_ext()
-gives named register dumps that testpmd and dpdk-proc-info already
-consume. Implement .get_reg and drop rte_pmd_mcdma_qcsr_read/dump.
-Patch 3 (PIO) has no generic equivalent, see notes there.
-
-testpmd. mcdma.rst says the driver has not been tested with testpmd.
-It should be before a non-RFC submission; it will exercise close,
-stop, mtu set and secondary process paths that pktgen does not.
+-----------------------------------------------------------------
 
 
-Patch 1/4: net/mcdma: add Altera MCDMA poll mode driver skeleton
-----------------------------------------------------------------
+Subject: Re: [PATCH v6 00/28] net/hinic3: fixes and new features
 
-Errors
+Applies to main and every commit builds with -Dwerror=true. The three
+v5 errors are fixed: stale rss_type, the IPv6-outer IP-in-IP rule, and
+the 255-segment TSO stall. So are most of the v5 warnings.
 
-1. No .dev_close in mcdma_ethdev_ops. rte_eth_dev_close() returns
-   -ENOTSUP, so queues are never released; on remove,
-   mcdma_eth_dev_uninit() only frees mac_addrs:
+On your hinic3.ini question: no new rows are needed. features.rst
+maps OUTER_IPV4_CKSUM to "Inner L3 checksum" and OUTER_UDP_CKSUM to
+"Inner L4 checksum" (the names are confusing). hinic3.ini already
+lists both, so v6 is correct as is. I was wrong to ask for "Outer"
+rows in v5.
 
-	static int mcdma_eth_dev_uninit(struct rte_eth_dev *dev)
-	{
-		rte_free(dev->data->mac_addrs);
 
-   Every queue's memzone, sw_ring and struct mcdma_queue leak, and
-   the HW queues stay enabled. Add:
+Warnings
+========
 
-	static int mcdma_dev_close(struct rte_eth_dev *dev)
-	{
-		uint16_t i;
+[PATCH 10/28] net/hinic3: add SP230 Rx queue interrupt handling
 
-		if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-			return 0;
-		for (i = 0; i < dev->data->nb_rx_queues; i++)
-			mcdma_dev_rx_queue_release(dev, i);
-		for (i = 0; i < dev->data->nb_tx_queues; i++)
-			mcdma_dev_tx_queue_release(dev, i);
-		return 0;
+The new rationale is wrong. vfio-pci auto-masks INTx only. For MSI-X
+its handler signals the eventfd and returns, so nothing masks the
+vector after it fires. The fall-through also makes things worse,
+because it runs the full Rx interrupt setup:
+
+		/* Fall through to the per-queue MSI-X setup. */
+	...
+		rxq->dp_intr_en = 1;
+
+dp_intr_en = 1 clears intr_disable in the RQ context
+(hinic3_nic_io.c), so with intr_conf.rxq == 0 the queues now raise
+interrupts that nobody waits on. The host still takes every one of
+them.
+
+To keep the vectors quiet, program coalescing and then disable each
+vector, as hinic3_disable_queue_intr() already does:
+
+	for (i = 0; i < dev->data->nb_rx_queues; i++) {
+		uint16_t vec = i + HINIC3_RX_VEC_START;
+
+		err = hinic3_init_rxq_msix_attr(nic_dev->hwdev, vec);
+		if (err)
+			return err;
+		hinic3_set_msix_state(nic_dev->hwdev, vec,
+				      HINIC3_MSIX_DISABLE);
 	}
+	return 0;
 
-   and have uninit call it. rte_eth_dev_release_port() already frees
-   mac_addrs, so uninit need not.
+This works with any interrupt backend: no eventfds, no intr_vec, and
+dp_intr_en stays 0. Fix the commit message to match.
 
-2. MTU read from dev_conf after configure:
 
-	static uint16_t
-	mcdma_dev_mtu_get(const struct rte_eth_dev *dev)
-	{
-		if (dev->data->dev_conf.rxmode.mtu != 0)
-			return dev->data->dev_conf.rxmode.mtu;
+[PATCH 16/28] net/hinic3: add VF link state and promiscuous support
 
-   rxmode.mtu is the request consumed by configure; after that
-   dev->data->mtu is authoritative and rte_eth_dev_set_mtu() only
-   updates dev->data->mtu. mtu_set() works around this by writing
-   dev->data->dev_conf.rxmode.mtu = mtu itself (line 744), which a
-   PMD must not do. Delete mcdma_dev_mtu_get() and the rxmode.mtu
-   store; use dev->data->mtu everywhere (ethdev initialises it to
-   RTE_ETHER_MTU, so no fallback is needed).
+admin_down survives stop/start, but dev_start enables the vport
+unconditionally:
 
-3. Rx queue stop cannot succeed on an idle queue, and the release
-   path frees buffers the HW still owns.
+	err = hinic3_set_vport_enable(nic_dev->hwdev, true);
 
-	static int mcdma_wait_queue_drain(struct mcdma_queue *q)
-	{
-		for (retry = 0; retry < MCDMA_CNT_HEAD_MOVE; retry++) {
-			rte_rmb();
-			if (q->cons_didx == q->prod_didx)
-				return 0;
+So after set_link_down, stop and start, the vport passes traffic while
+hinic3_vf_link_status() reports the link down. On the PF, the next
+link-up event leaves the vport disabled. Either clear admin_down in
+dev_start, or skip the vport enable there while it is set.
 
-   For D2H, cons_didx only advances when packets arrive, so with
-   buffers posted and no traffic this spins 1 s and returns
-   -ETIMEDOUT. mcdma_quiesce_queue() returns before disabling or
-   resetting the queue, rx_queue_stop() returns the error with the
-   queue still STARTED, and dev_stop() fails. In
-   mcdma_dev_queue_release_common() the failure is only logged and
-   execution continues:
+admin_down is also set before hinic3_set_vport_enable() is called and
+is not restored when that call fails. Set it after the call succeeds.
 
-			mcdma_sw_ring_free_inflight(q);
-		...
-		mcdma_dev_descq_disable(q);
-
-   so mbufs are freed while the queue is still enabled, then the
-   queue is disabled. Fix: disable (Q_CTRL=0) and reset the queue
-   first, then reclaim freed..prod unconditionally; only H2D needs
-   a bounded drain wait before that, and it should fall through to
-   disable+reset on timeout rather than return.
-
-4. No secondary-process handling while mcdma.ini claims
-   "Multiprocess aware = Y". mcdma_eth_dev_init() runs the same
-   code in every process:
-
-	priv->dev = dev;
-	...
-	ret = mcmda_parse_args(priv, pci_dev);
-	...
-	dev->data->mac_addrs = rte_zmalloc("mcdma", ...);
-
-   A secondary overwrites the shared priv->dev with its own local
-   rte_eth_dev pointer (dereferenced later by the primary in
-   descq_free/queue_init), reprograms the VF weight CSRs, and
-   replaces the shared mac_addrs pointer (leaking the primary's).
-   Either add the standard early return for RTE_PROC_SECONDARY
-   after setting burst pointers, or change the .ini to N. Also
-   drop the dead `dev->data->dev_private = priv;`.
-
-5. dpdk-devbind.py entry does not match the device the driver
-   binds:
-
-	+  {'Class': '06', 'Vendor': '8086', 'Device': '1172'},  # Altera FPGA
-
-   The driver matches vendor 0x1172 device 0x0000; here 0x1172 is in
-   the Device field with Intel's vendor ID, and class 06 is a bridge.
-   Should be {'Class': <device class>, 'Vendor': '1172', 'Device':
-   '0000'} (or the real device ID, see cover).
-
-Warnings
-
-6. BAR 0 is used before it is checked:
-
-	priv->bar_base = pci_dev->mem_resource[MCDMA_CONFIG_BAR].addr;
-	ret = mcmda_parse_args(priv, pci_dev);   /* writes VF weight CSRs */
-	...
-	PMD_DRV_LOG(INFO, "MCDMA RTL VERSION : 0x%x",
-		    mcdma_dmacsr_reg_readl(priv->bar_base, MCDMA_CSR_VER_NUM));
-
-   Return -ENODEV if mem_resource[0].addr == NULL (as is done for the
-   PIO BAR).
-
-7. Devargs handling is inverted:
-
-	if (!devargs)
-		return -EINVAL;
-	kvlist = rte_kvargs_parse(devargs->args, mcdma_kvargs_keys);
-	if (!kvlist)
-		return 0;
-
-   A device probed without -a (no devargs) fails probe; a device with
-   a malformed or unknown key (rte_kvargs_parse() returns NULL) is
-   accepted silently. Swap: no devargs is the VF default, NULL kvlist
-   is -EINVAL.
-
-8. ip_num_chan is taken from a 16-bit register field and never
-   bounded, but drives the QCSR address:
-
-	uint32_t qcsr_offset = (dir == MCDMA_DIR_H2D) ?
-			       (MCDMA_QCSR_H2D_OFFSET + (q_id * MCDMA_QCSR_SIZE)) :
-			       (q_id * MCDMA_QCSR_SIZE);
-
-   For q_id >= 2048 a D2H queue's QCSR lands in the H2D region.
-   MCDMA_MAX_CHAN_PER_FUNC (512) and MCDMA_QCSR_NUM_MAX_PER_DIR
-   (2048) exist but are unused; clamp ip_num_chan to
-   MCDMA_MAX_CHAN_PER_FUNC in dev_init.
-
-9. Writeback target is a 16-bit field in the middle of the hot
-   software state:
-
-		volatile uint16_t freed_cons_didx;
-		uint16_t prod_didx;
-		volatile uint16_t cons_didx;
-		uint16_t submitted_didx;
-	...
-	cons_idx = rte_mem_virt2iova((const void *)(uintptr_t)&q->cons_didx);
-
-   Q_HEAD_POINTER / Q_COMPLETED_POINTER are 32-bit registers (error
-   flag in bit 24). If the IP writes back the 32-bit register image,
-   submitted_didx is clobbered on every completion. Independent of
-   width, DMA writes into the same cache line as prod_didx and the
-   stats cause ping-pong with the lcore polling the queue. Give the
-   writeback its own cache-line-aligned uint32_t (or a slot in the
-   descriptor memzone) and read the 16-bit index from it. The
-   volatile on freed_cons_didx (SW-only) is noise.
-
-10. Whole-IP reset from dev_configure():
-
-	if (mcdma_dev->is_pf && !mcdma_dev->pf_idx) {
-		mcdma_dmacsr_reg_writel(mcdma_dev->bar_base,
-					MCDMA_CSR_SW_RESET, 0x1);
-		rte_delay_ms(MCDMA_SW_RESET_DELAY_MS);
-
-   dev_configure can be called repeatedly (every reconfigure), it
-   blocks 1 s, and MCDMA_CSR_SW_RESET resets every function's queues,
-   including VFs owned by other processes or VMs. Do this once at
-   probe, or not at all; configure is not the place.
-
-11. MMIO accessors reinvent rte_io.h and then pay for full fences:
-
-	static inline uint32_t mcdma_reg_readl(volatile void *addr)
-	{
-		return *(volatile uint32_t *)addr;
-	}
-	...
-	rte_wmb();
-	mcdma_qcsr_reg_writel(q->qcsr, MCDMA_QCSR_Q_TAIL_POINTER, hw_tail);
-
-   Use rte_read32()/rte_write32()/rte_read64()/rte_write64(); they
-   carry the required rte_io_*mb() (a compiler barrier on x86) and
-   the explicit rte_wmb()/rte_rmb() (sfence/lfence on x86, in every
-   burst) go away. Same for mcdma_pio_reg_read64/write64.
-
-12. Const and namespace:
-
-	size_t config_csr_offsets[MCDMA_MAX_CONFIGS] = {
-	static struct rte_pci_id mcdma_pci_id_tbl[] = {
-	static struct eth_dev_ops mcdma_ethdev_ops = {
-
-   config_csr_offsets is an unprefixed exported global (static
-   linking clash); make all three `static const`.
-
-13. Debug output at ERR level in rx_queue_setup:
-
-	if (mb_pool)
-		PMD_DRV_LOG_DBG(ERR,
-				"qid: %u, mbuf_avail_count = %u, mbuf_in_use_count = %u",
-
-   MCDMA_LOG_ENABLE is hard-wired to 1 so this prints at ERR on every
-   queue setup. Drop it, or use DEBUG level with plain PMD_DRV_LOG
-   and remove the PMD_DRV_LOG_DBG/MCDMA_LOG_ENABLE pair.
-
-14. mtu_set on a started queue updates rxq->rx_seg_len but
-    Q_PAYLOAD_COUNT is only written from mcdma_dev_queue_init():
-
-	mcdma_qcsr_reg_writel(q->qcsr, MCDMA_QCSR_Q_PAYLOAD_COUNT, payload);
-
-    If that register bounds the D2H transfer, a larger MTU set at
-    runtime is not applied until the queue is restarted. Either
-    reprogram it in mtu_set or return -EBUSY when any Rx queue is
-    started.
-
-15. didx numbering is inconsistent with its own comments:
-
-	/* 16 bits - Monotonic index and IP requires it to start from 1 */
-	uint16_t didx;
-	...
-	#define MCDMA_DIDX_NEXT(cur, num_descs) \
-		((uint16_t)((((uint16_t)(cur) + 1) % (num_descs))))
-
-    MCDMA_DIDX_NEXT yields 0..num_descs-1, so after num_descs
-    descriptors the didx (and the tail pointer written to HW) is 0,
-    which the comments and mcdma_hw_didx_to_ring() treat as "none".
-    The unused mcdma_hw_didx_nudge() and MCDMA_RING_TO_HW_DIDX()
-    implement 1..num_descs. One of the two schemes is wrong; pick
-    one, document it, delete the other.
-
-16. dev_info inconsistency:
-
-	dev_info->max_rx_pktlen = MCDMA_MAX_RX_FRAME_LEN;   /* 0x1FFFFF */
-	dev_info->max_mtu = MCDMA_MAX_MTU;                  /* 65535 */
-
-    max_rx_pktlen should be max_mtu + MCDMA_RX_ETH_OVERHEAD.
-
-17. Documentation does not match code:
-    - mcdma.ini: "Runtime Rx queue setup" / "Runtime Tx queue setup"
-      are not feature keys; default.ini has "Runtime queue setup".
-      "Extended stats" is missing although xstats_get is implemented.
-      "Multiprocess aware = Y" (see 4).
-    - mcdma.rst: build option is -Denable_drivers=net/altera/mcdma,
-      not net/mcdma; says xstats are not implemented (they are);
-      says SOF/EOF are tracked in an mbuf dynamic field (nothing in
-      the code does; MCDMA_DESC_SOF/EOF are unused).
-    - index.rst: mcdma inserted after memif; alphabetical is before.
 
 Info
+====
 
-18. (uint32_t)log2(q->num_descs) uses libm on an integer power of
-    two; rte_log2_u32(q->num_descs).
+[PATCH 11/28] The Fixes: tags sit in the middle of the body, before
+the hinic3.ini paragraph. Move that paragraph above the tags so they
+are trailers again.
 
-19. mac_addrs is left all-zero. Use rte_eth_random_addr() as the
-    other DMA/virtual PMDs do; RTE_ETH_DEV_NOLIVE_MAC_ADDR does
-    nothing without a mac_addr_set op.
+[PATCH 15/28] "Fixes: 9204b6b7bb" needs the 12-character hash:
+9204b6b7bb1a.
 
-20. mcdma_qcsr_read_ptr_errors() returns the state of two sticky
-    bits (0..2) and stats_get adds it to ierrors/oerrors on each
-    call, so the "counter" is a gauge that never clears.
-
-21. vf_weight_parse_handler(): uint8_t weight_val = atoi(token)
-    truncates (257 -> 1 passes the range check); use strtoul.
-    Function name mcmda_parse_args() is a typo.
-
-22. mcdma_dev_descq_free() looks the memzone up by name; keep the
-    memzone pointer in struct mcdma_queue instead. q->qbuf_dma can
-    be qzone->iova.
-
-23. Leftovers, all unused: MCDMA_QCSR_Q(), MCDMA_MAX_PYLD_CNT,
-    MCDMA_MAX_VF_PER_PF, MCDMA_IFC_DATA_WIDTH, MCDMA_MAX_CHAN,
-    MCDMA_PREV_IDX, MCDMA_RING_AVAIL_COUNT, mcdma_queue_cons_ring(),
-    mcdma_qcsr_reg_updatel(), mcdma_pio_reg_readl/writel(),
-    priv->bam (assigned, never read), RTE_PCI_DEV_ID_DECL_XNIC
-    macro defined inside the initialiser.
-
-
-Patch 2/4: net/mcdma: add Rx and Tx packet burst paths
-------------------------------------------------------
-
-Errors
-
-1. Heap allocation on every rx_burst:
-
-	repl = rte_malloc_socket(NULL, q->burst_size * sizeof(*repl), 0,
-				 q->socket_id);
-	...
-	rte_free(repl);
-
-   rte_malloc takes the heap lock and this runs on every poll that
-   refills. burst_size is fixed at MCDMA_MAX_BURST (32):
-
-	struct rte_mbuf *repl[MCDMA_MAX_BURST];
-
-Warnings
-
-2. rte_mempool_avail_count() per poll:
-
-	mb_avail = rte_mempool_avail_count(q->mb_pool);
-
-   It walks every lcore cache (O(RTE_MAX_LCORE)) and is documented
-   as not for the datapath. Just call rte_pktmbuf_alloc_bulk() (which
-   also replaces the get_bulk + per-mbuf rte_pktmbuf_reset loop) and
-   handle failure.
-
-3. ERR log in the Rx hot path on mbuf exhaustion:
-
-		q->rx_nombuf += batch;
-		PMD_DRV_LOG(ERR, "No MBUFS, queue id = %u, nb_avail = %u, batch: %u, "
-
-   Pool exhaustion is a steady state under load; this is a log
-   storm. The counter is enough; if a message is wanted use
-   RTE_LOG_DP_LINE.
-
-4. Rx mbufs never get m->port:
-
-	mb->pkt_len = d->rx_pyld_cnt;
-	rte_pktmbuf_data_len(mb) = d->rx_pyld_cnt;
-
-   Add mb->port = q->ethdev->data->port_id (cache port_id in the
-   queue rather than chasing ethdev).
-
-Info
-
-5. The "nudge" branch in mcdma_descq_queue_submit() is unreachable:
-   both callers only submit when prod_didx != submitted_didx, and
-   ring_avail() reserves a slot so a full wrap cannot make them
-   equal. Remove it (and the `volatile uint16_t qhead` local, and
-   the 100000-iteration busy loop without delay).
-
-6. mcdma_desc_slots_for_segs()/mcdma_desc_segs_for_slots() read
-   d->link from the descriptor ring to locate link slots. Link slots
-   are at (idx & 127) == 127 by construction; compute instead of
-   touching DMA memory.
-
-7. Write-only fields: q->processed_cur, q->ring_avail,
-   q->ring_to_submit, q->complete. Remove.
-
-8. In mcdma_descq_queue_prepare(): the seg_len > MCDMA_IP_MAX_FRAME_LEN
-   clamp is dead (data_len is uint16_t); `if (mb->nb_segs == 0) break;`
-   returns short on a corrupt mbuf, which the caller will resend
-   forever. Drop both.
-
-
-Patch 3/4: net/mcdma: add experimental PIO access APIs
-------------------------------------------------------
-
-Info
-
-1. Each 64-bit access does rte_eth_dev_is_valid_port() + strcmp on
-   the driver name + bounds check. An application polling user-logic
-   registers will not want that per access. Consider instead a
-   one-time rte_pmd_mcdma_pio_bar_get(port_id, void **addr, size_t
-   *len) and let the caller use rte_read64/rte_write64, or at least
-   add 32-bit variants; most AVMM user logic is 32-bit.
-
-2. MCDMA_PIO_BAR is hard-wired to BAR 2 while the BAM BAR is a
-   devarg. Either both configurable or both fixed.
-
-3. Symbol version 26.11 -> 27.03 (see cover).
-
-
-Patch 4/4: net/mcdma: add experimental QCSR dump APIs
------------------------------------------------------
-
-Warnings
-
-1. Replace rte_pmd_mcdma_qcsr_read()/dump() with eth_dev_ops.get_reg.
-   rte_eth_dev_get_reg_info_ext() supports a filter string and
-   register names, so "show port <n> regs" in testpmd and
-   dpdk-proc-info give the same dump with no PMD-specific header.
-   The SW indices (prod/cons/freed/submitted) can be exposed as
-   pseudo-registers or dropped; exposing struct mcdma_queue internals
-   through an installed header (struct rte_pmd_mcdma_qcsr) ties ABI
-   to driver internals.
-
-Info
-
-2. mcdma_qcsr_regs_read() reads the SW indices unsynchronised with
-   the polling lcore; fine for a debug dump, but the rte_rmb() there
-   buys nothing.
+[PATCH 18/28] rxq->rss_en only follows rss_state.
+hinic3_rss_hash_update() with rss_hf == 0 on a port with RSS enabled
+sets rss_type to 0 but leaves rss_state at ENABLE. The compact CQE
+path then keeps setting RTE_MBUF_F_RX_RSS_HASH. v5 avoided this by
+testing rss_type.val. Either reject rss_hf == 0 there, or include
+rss_type.val != 0 when setting rss_en.
