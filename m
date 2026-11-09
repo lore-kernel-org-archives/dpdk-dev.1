@@ -2,99 +2,86 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9C6606A323
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 14:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCE2606A333
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 14:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ci9Q86oc
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=0vi82ZU6
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBD404027B;
-	Mon,  9 Nov 2026 15:42:05 +0100 (CET)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com
- [209.85.128.182])
- by mails.dpdk.org (Postfix) with ESMTPS id 7E6E64026E
- for <dev@dpdk.org>; Mon,  9 Nov 2026 15:42:04 +0100 (CET)
-Received: by mail-yw1-f182.google.com with SMTP id
- 00721157ae682-8b335ef6441so6931697b3.3
- for <dev@dpdk.org>; Mon, 09 Nov 2026 06:42:04 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794235323; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 2AC4F40687;
+	Mon,  9 Nov 2026 15:45:17 +0100 (CET)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com
+ [209.85.128.173])
+ by mails.dpdk.org (Postfix) with ESMTPS id BF61C4026E
+ for <dev@dpdk.org>; Mon,  9 Nov 2026 15:45:15 +0100 (CET)
+Received: by mail-yw1-f173.google.com with SMTP id
+ 00721157ae682-8b3541bb1a2so3981917b3.1
+ for <dev@dpdk.org>; Mon, 09 Nov 2026 06:45:15 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794235514; cv=none;
  d=google.com; s=arc-20260327;
- b=YfPJ7lSX7fK7AKgdHF7x+aCRLroF7PkyEKkPxm18/Twjlm4aGzmB9GS+LbSmQjNOC+
- nvx/evOvKYqWLpQ7xlr+q2Wkk8gJC1z+7v/AOKYzB1VbLaOfvjyaxgI+hscd3KINyHpE
- Pm1OKncCLNIdQOOWR+xKWbcbXkSEhJsvaPs+t6kuvylny/m508L9AJWikvkNZfKOw9WU
- NLb97CHVCxUp92YDLSSD170tuZkjcPZUa152JdL1xCXNZ8r3s0ONp+pujPkPPrPNyNXs
- L4spqU1xX4y1wdmCro4uLU8l7FbgBOrlpbh5zeP8fBiYXTiS0Hpfx0JMaUXzc7JPXItX
- 16Og==
+ b=MFkBDE0H8Ru61UAFFcDQhZZHc98E9GCx7nkpEphIrBaX6W16AHjGjO2eEyE5l/e+mh
+ F3aXFS6q3PyIVCDTJOCZM7OAkgkDrVfK9orh9nBe697JPs1zYQQcxUMauMb+yCXgWTE9
+ C/4Chp1kJkXgOcYDwQDTvCDxN2wcIx22uo6xjGLNN/UGjoS4DkcbRe4rM1Be5xVWdUwl
+ uP/XX0KODxZN/2ngHuiDV2V8qmZbGzm5DdnHEp5BG24fw5yKo3xkCmzkQthmjLGhDWQc
+ be72knv8amLbW0xSbLi4apHgLUEoJ812tRuREIiDV17lI51Sfk7q8ao4F3b1BS0T1XVA
+ +WSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=lex3EOtzofQ7NZ834gwvgzP/Qh0/pnglOPrG27yRFEQ=;
- fh=5Zv1g1HlBzy5S1rrP1xcRRdvtz+qWG84K0zX8nLc5ag=;
- b=kRrUFaGagv0mt8XtI2+adUNeWM7cnB29htQUcwDdVK343KshO8UZSc7g8bRFHBbV8O
- zSWLHWjoX5jXNq0jn0kb3fEVnr2BgrKBxqx35JdKgtBbXudEy6w3j2qGIARfoJOu9roq
- /IGb0yhn3H2x6loh0fa03UmgkT5LCCOSM+Qn+jZTCwowzXAmc+lyAeB/K0SHctae1Zwv
- +Cqw5s5Bz0LmXoMpZ8nEY+qM9K6bN96MEGAAx9+wJpd4hnBzfuW2UKmeg4mucXOiojKg
- Zwm93ytTcug0/DtkCcQGfr2TCDoLvF4KB9iAyhYvbyqSL3Appgjmbv4zGScBLGqDmblO
- +S5Q==; darn=dpdk.org
+ h=content-transfer-encoding:to:subject:message-id:date:from
+ :mime-version:dkim-signature;
+ bh=UBULBrozOkOLCijEprKueayu4blgnsEGv7IihJwQqLE=;
+ fh=rF8499T70Wjtq6pcdRS4mm/+DGVNGyRNMbBBgt2YJw0=;
+ b=pR+mVBLHEq4P8H5oRo6a+PNd8ML8rUkqnQIdM02qvt/0JVlyvcuGuzoEiq3BMcbw+5
+ eHvZpbeJBcRBz14b3SXJppDwDlpbRZkq9QKsgq8AgJ+aEfYczEh8TtgmDjVSLea9Yjbl
+ 9VTZrGdidPoaxNUaXsQ94D641A5vkb/b0ufJy/cFuUdC79AgJO1TJYxl7Li00Oew/SfF
+ i6kLGWcD5IaL6TJK1dzNncnNqY2wfogEXwcPRaJyKEzL8knb6EvsRvu4JNqsPwZgtUWM
+ tIAcX1dxNH2xy1eO224LcqLCRZ6zVa2Si4SX2n6zOgzvvMNeRni56CMFqHdvkvzMBvdi
+ WN8A==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794235323; x=1794840123; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=lex3EOtzofQ7NZ834gwvgzP/Qh0/pnglOPrG27yRFEQ=;
- b=ci9Q86ocIjMSRPBvZRhK8AT2vMRkYo0PRqR5ARFOEZWYhVUQwJnJWjIsuVxVH8hd5h
- WsMGQOuIwxd3Lo3/dLHEGJjA6Bk7sTtjEpEGS6UVv9mlu27lGGe6NEu+JTCI4mveecAD
- cdX0TLzRlMvmpp7yF7B3gO/mxwWMwKzzMuhv/z6RDgLh/5OUTmpcu8VgltqkuQrGQns+
- 7uqy3+kAFQLOlA7O6t1V0hrduntXy9wysxNEzY0yth2B1CWQzwT+A8/ft2R5Pys6saby
- WJqmucXDA/mIWrGcST4v+jNgGSKikPrKtVNHmfKydl10MOd5aOYHjyD32jbXc9JEcPwV
- 4M4w==
+ d=gmail.com; s=20260707; t=1794235514; x=1794840314; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:to:subject:message-id:date
+ :from:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=UBULBrozOkOLCijEprKueayu4blgnsEGv7IihJwQqLE=;
+ b=0vi82ZU6XUvaKZfTGTE+lQKmZz/2xom7E4GB/SnMqaaVENXFkOgCPoHAK58MXp6r+g
+ 6ruyaWJYyGWqh2CBaLc5S2ovOfJ/ahkfbUK6myGOY5u1q7BnY7zZA242xJxCtxFayrxH
+ AV9eV3re0LS7dLLaR2WaHk1oeH2AoH8ZER9kbnq4BNVVsgDsM2RzHtF3+b2i2PL7jWHj
+ x1YGE6MzJWyaiouOmaGbeEOg0KDCcE3xpDw9b45gnimM0VOv7m4jdDGyb6kOXrj47vc2
+ jWq1TzVwS+sbY0N9/DzEuIZ7sAUNhIPo2RlUpd5F0zF3hBPHFISVYj3iKbRqWQbjx3G/
+ nkLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794235323; x=1794840123;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=lex3EOtzofQ7NZ834gwvgzP/Qh0/pnglOPrG27yRFEQ=;
- b=OskCCB3x+8lsSAxxYTtGXmzOlkWKLwBFh4mEe0lkaqy9BDyWRLQAdUFfylclaRG8se
- 2aJAweXqQE20x5Jf8Ma5if3RAygfvvgQ/XFJXbp0CYtkAwWgq43+yy5lotfCNWZlD6bL
- 6AVmpIuyjE7FXV1S+x+SOZuZLRrDBDgG96ZqFXUW0vcXlwnSPtwlk5xY9n6zJz/TJSia
- eQcA6alyD5npDakGdPOaDNos0LxhmY4vfYh6SP/OzPJqXVnZfDDAfnR7RAqiScmxiBdj
- 9TWhaaPgN+BaQEmH3+k8oHD0oosb1l364HqMWuAKt0U1lus6HTIp0UD4b7zna7Q3RPQN
- kMew==
-X-Forwarded-Encrypted: i=1;
- AL+hErGZfebtsi476GQtmL43pG6Xdus7YEGVTUZTd29RQvoTjk6Hy2eMNKHeI08EnYpn1eI7XhY=@dpdk.org
-X-Gm-Message-State: APuU4Z8GE9ZzOwnml5RJtYovzHpFjEU+3XCAkaS5wuilJxuq2gecbJqU
- L7lWcUnLhuUewcIhfT8m+IdfwLB0E77WOjIjgAY6md7JZh/hcyMcBIeJxzCQvJ6jXyJG25ChEUA
- PbSfrtmDVo6OWi8MhqQTvhKY8bo3Q4is=
-X-Gm-Gg: AYBFou0dWDmM2xx2CWHbDLv0x1sbYZGfhVfSCneOlLx75/8yGRnfafGFPBartRbIF27
- or7tLuSlZ4KkRPOQA4mSS0q/n125tPThyyMOx1Rzu2yFtPLY5R8CwiSkadK2X1nH+CB/Y2bUG4+
- ks0sJ00mpe4d2ViWj9rodXXt6eisDsVpVHXJCwrpqBX/8uQ213vi+uTRClRDNxfQ2PFN0z8yKzF
- pvHpg6TWug9sjC4Wpll5voQ2fJnY4plLx1Vg3bj2jQpQA1PzI3ti+KjEPXXBoI+rgZWqO3jZfWC
- QeCkcTtvzf4Y0jX7HGzY3WcxwgXsLwUCz5Nsh8nI+kyB8T4oDrPKNIcl2jW5DS+sPMrbfwsNyYA
- G5necqiuqPFUkcAU7Dw9RVqJHuNEbC7aWlqsYG1Essv3ghUS4PqtLKkC705rpjlI7wZrnWKQduy
- PTgrC+V+SG/Y9HPDpcf2SC5AmfDQ4YJxVFMBK0AP0bDn29UZBfyYwZM5De/cucDVgW+XWyzmmro
- pAmi66q9SMHkPIyG+XhyJc=
-X-Received: by 2002:a05:690c:83:b0:8b1:85ca:9a4 with SMTP id
- 00721157ae682-8b36caeb106mr22546667b3.35.1794235323360; Mon, 09 Nov 2026
- 06:42:03 -0800 (PST)
+ d=1e100.net; s=20260707; t=1794235514; x=1794840314;
+ h=content-transfer-encoding:content-type:to:subject:message-id:date
+ :from:mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=UBULBrozOkOLCijEprKueayu4blgnsEGv7IihJwQqLE=;
+ b=dufDb6kAEao4tx1X7D+qos6P6tCNAHWsIui7bA7s7I8y0e09CQ+unE75wROVUMi1Bl
+ ZF/enhVtgAg2tt1vfQCv9l/Gql6pv4IQoVPysVOr4EYo9HcTp7avmpRNiFBHqCEFjiuK
+ zi2Epqeg8M1BiopfuDRbyxHEsxZNUyCew2UMUSW/VDk1vE8S1umurvv0SlQsY/Mnht6F
+ kXxm0Xj1DQpaehHpjOT+R7r4jeW7D7Fh0YAWxlzGF3DirMsXkFDFP/KS14uZuzgOhmEZ
+ L4hu5lVZN76y6/34C2IVMjacYY5TdRhTy8cIbRekq1RTYaG6dUJTtn/WUbchFZJUSra2
+ PtVg==
+X-Gm-Message-State: APuU4Z8wX1EHie4TwByehhotlcmY/8oKSZQVYTHNRQiMKoqjUOVmDY0T
+ xXx+apj2ThctHf4BkwJ4ZEaQJWwUc4m56fYIas7OE87IaTMdblRwMS2lTzwfzudJKkPSOh2XiAW
+ HJOwFHOcEmBOyZ73HNhKSJJ9yTZyUeQ4WdtFlmuI=
+X-Gm-Gg: AYBFou2fM9mOjBz47XHW80JypYO6UZCY8SaPvSzrziU6O0RTyMqHMbRQJSvIVHfdeFN
+ 7xC4Wo6YXDBnNUMpv7/drqKXE4NfxqMP5uQNyhs1zFqyEwetJxYDCy+waAYbDe2bHOHZ8kkRqmx
+ idokF+6NaLdBs1A2O0BI8HePATg1Jh000KiXyl5Rb/OKsAWddnKMo9cZVWhSqa/oIQUqD+UpRdt
+ a/LJXG14X4ENyw2OzKM/LrLtn+LUtA9fZ01c2hMSEpv3QeqRal3l/38tTHkh/SIBWlvmfLS+j99
+ dBY95EmTspzmOqJWDi6SEQkX+7gtw5KeRjNtD7uORY7PF9Wuiz8MV1Ez+g/v4KwFJYQ4bRuDYx0
+ tVmPq5Oyyhpn5GoRHuagqKiupnH8K9hVuLv4bXPA4pvddKUb+CgvUhlblDejwSvXDVu2gI5PrWp
+ EgykwlLwnH/R2XJfckydBaD913kaZENOci5b7tsJbWyscXFQx2Go+hVF2f6SyHpvOWfKQfbZ0sj
+ A==
+X-Received: by 2002:a05:690c:800e:20b0:8b3:4a7a:599d with SMTP id
+ 00721157ae682-8b36cbab0f2mr16810797b3.86.1794235514316; Mon, 09 Nov 2026
+ 06:45:14 -0800 (PST)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261030051726.898902-1-nkishor@marvell.com>
- <CAOaVG17Zkb+0Tn7VxF8SuGpoULYU_W64vC=KnLM7YCXGGq3+Pg@mail.gmail.com>
- <CALBAE1MQFnyqc5oo+4qM330pFtUVnKVQLZgNdP-_AhTuuYSFXA@mail.gmail.com>
- <20261106092339.064ce3eb@stephen-xps.local>
-In-Reply-To: <20261106092339.064ce3eb@stephen-xps.local>
 From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Mon, 9 Nov 2026 20:11:36 +0530
-X-Gm-Features: AclHuK8WWg-sP_bofB6HLZuSIfpDE24On-KYH9RN_tVy-i_SnqunYhfE3QhbAo4
-Message-ID: <CALBAE1MoghyOHinHymtfPRjVkdODNFCgWcHR9gnTd8Lo8yOYuA@mail.gmail.com>
-Subject: Re: [PATCH] mempool/cnxk: fix halo enable devarg parsing
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Nawal Kishor <nkishor@marvell.com>, dev <dev@dpdk.org>, 
- Ashwin Sekhar T K <asekhar@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>, 
- Jerin Jacob <jerinj@marvell.com>, Thomas Monjalon <thomas@monjalon.net>
+Date: Mon, 9 Nov 2026 20:14:47 +0530
+X-Gm-Features: AclHuK_lbD7KRcynU_90mzaicAt0dFrM4cSCamX7Zm8nXfxvWhmSn2dt_KXCmz0
+Message-ID: <CALBAE1OoMsYbseYU-J77xO1dmDC0jc2wV0qg_hPOwAV-wv2BRw@mail.gmail.com>
+Subject: Minutes of Technical Board Meeting - Sep 2 2026
+To: dpdk-dev <dev@dpdk.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -113,23 +100,48 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Fri, Nov 6, 2026 at 1:53=E2=80=AFPM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Thu, 5 Nov 2026 22:25:26 +0530
-> Jerin Jacob <jerinjacobk@gmail.com> wrote:
->
-> > On Fri, Oct 30, 2026 at 10:13=E2=80=AFPM Stephen Hemminger
-> > <stephen@networkplumber.org> wrote:
-> > >
-> > > one more reason to have common code for boolean flags. there is a big=
-ish series to do that
-> >
-> > Is your series merged? Stephen, Can I make this patch as Superseded?
->
-> Not merged, because series was so large and 26.11 was so big.
->
-> https://inbox.dpdk.org/dev/20260914054912.755403-1-stephen@networkplumber=
-.org/
+MINUTES OF TECHNICAL BOARD MEETING
+Date: Sep 2 2026
 
-Since it won't be merged for 26.11. I  am taking this FIX for now.
+MEMBERS ATTENDING
+
+Jerin (Chair)
+Bruce
+Thomas
+Stephen
+Maxime
+Konstantin
+Morten Br=C3=B8rup
+
+NOTE: The technical board meets every second Wednesday at
+https://meet.jit.si/DPDK at 3 pm UTC. Meetings are public, and DPDK
+community members are welcome to attend.
+
+# CRA INFORMATION
+- Nathan sent clearer CRA information to both boards, and Bruce
+confirmed it answered earlier questions.
+- Nathan contacted a Linux Foundation SME, who could not join. If
+clarification is still needed, Nathan will follow up by call or email.
+
+# NEXT-YEAR SUMMIT
+- Still tentative. Vienna is preferred, with Brussels as an alternative.
+- Thomas proposed a Belgium event alongside FOSDEM in late January or
+early February. Board members see benefits, but timing is very tight.
+- Fallback option is a May event in Vienna or Brussels.
+- Nathan will meet next week with Thomas, Ian, Tim, Ben, and the
+events team to assess feasibility. The events team is checking venues
+and costs for early February.
+- No decision yet.
+
+# HOST VULNERABILITY REPORTS
+- David and Maxime are nearly done and will notify reporters soon.
+- All known vulnerabilities are tracked in Bugzilla. Thomas will add
+Jerin to the CC list so he can close tickets for fixed vulnerabilities
+for cnxk drivers.
+
+# MEMIF MAINTAINER
+- The project needs a new maintainer. Ericsson has not followed up.
+- Stephen will contact the original maintainer and Ericsson.
+
+# QUORUM, VOTES, AND CLOSE
+- No votes were taken, since quorum was not established.
