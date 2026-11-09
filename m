@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C036606A31C
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 16:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBE8606A321
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 16:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=elRppFNo
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=N7prEg4U
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CDF5C410DC;
-	Mon,  9 Nov 2026 17:21:10 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
- by mails.dpdk.org (Postfix) with ESMTPS id 5CECE40A84
- for <dev@dpdk.org>; Mon,  9 Nov 2026 17:20:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B44C0410F1;
+	Mon,  9 Nov 2026 17:21:11 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.5])
+ by mails.dpdk.org (Postfix) with ESMTPS id D40F54028F;
+ Mon,  9 Nov 2026 17:20:58 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=3gdf7Te/YQgMOqdPdfjyDOt9V+ZJ8/M4RydU6OpAb1Y=;
- b=elRppFNowWAPtVWJIUz+RMucMnqgwDcWGHJeEI4B5eEsmEbK2UaxB2gLunfXIQ
- 73WLAcmqZakkEBHm5OczINSENwkTbXM1Grk3Qm0s0tGR2jiMdJwUPWcESNpQSI2X
- d0wA496gyak9TAcV6VpTOoxno7jVNBhTjemd693nL84z4=
+ MIME-Version; bh=D8in/RHuFxufktoF1kXaQdZ5z3BILzTgTaeD3qqyzeE=;
+ b=N7prEg4UJp0/kVOw4IepMYI96XAMUE1uQnxi8xb2H0BiXJyJMgfTKQs7aFVKQq
+ jCd0Pz4nEpqlf6yM2p1R9PC4lFvjHaYVFeIYZacH9SOqAOsy8W94q4HOOTn7hPjn
+ RyhprPDIMPkdfdH/fT1gCRlSckgBrQSGE3DmJgdXPbUMo=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v6 18/28] net/hinic3: update RSS hash type configuration
-Date: Tue, 10 Nov 2026 00:20:22 +0800
-Message-ID: <20261109162033.1144-19-yejiacheng4@h-partners.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
+Subject: [PATCH v6 09/28] net/hinic3: fix pseudo-header checksum calculation
+Date: Tue, 10 Nov 2026 00:20:13 +0800
+Message-ID: <20261109162033.1144-10-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261109162033.1144-1-yejiacheng4@h-partners.com>
 References: <20261030144733.2120-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261030144733.2120-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgDHX3Hg8vFqjqUoBQ--.4058S20
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKF4rJr47ZFyxAr1fXw4rAFb_yoWfWw1fpa
- yUGFW7JrWDJrWfXwn8Ja17C3W5Zws7A3yIga4xJa4F9Fs8Zr18Aa4jyayUZrs09rWxA3W2
- vay8Zwn8K3WYvrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07ULzV8UUUUU=
+X-CM-TRANSID: Ac8vCgDHX3Hg8vFqjqUoBQ--.4058S11
+X-Coremail-Antispam: 1Uf129KBjvAXoW3tw47AF1DCF13Aw48GF1Dtrb_yoW8Jr4DXo
+ WSqr4fZr1Iqr1rJry0grWqvF4qq3s0qrW5Can0gw47tay3ur1UKwnxG34fJayUXw1kAF12
+ ya42qFnayrWUJw47n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU2WlkDUUUU
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNwkOGGrx8ukPTgAA3p
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNwUNF2rx8uUPQQAA3q
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,242 +56,331 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The aggregated compact CQE enables RSS by default but does not expose
-a readable RSS hash flags field. To keep the same behavior as the
-normal CQE, derive the mbuf RSS flags from the software-configured
-RSS hash capabilities (rss_hf) instead.
+SP620 hardware requires the driver to precompute the L4
+pseudo-header checksum for TCP/UDP checksum and TSO offload; without it
+the offloaded checksum is wrong. Compute the inner/outer pseudo-header
+checksum in the Tx prepare path, deriving the L4 protocol from the
+offload flags, and register it as the device's Tx prepare callback.
 
-nic_dev->rss_type is never cleared when RSS is disabled, and the fast
-path reads it through nic_dev for every packet. After a stop and
-reconfigure without RSS (mq_mode NONE or a single queue), the compact
-CQE path still sets RTE_MBUF_F_RX_RSS_HASH with a stale hash. Cache the
-RSS state in struct hinic3_rxq at queue start, clear it on queue stop
-and reset, and clear rss_type.val on the paths that disable RSS.
+The pseudo-header checksum is written into the packet headers, so only
+reject shared or indirect mbufs when the requested offload actually
+writes to the packet, that is L4 checksum, TSO or outer UDP checksum.
+VLAN insertion and IP checksum alone rewrite nothing, and failing those
+broke flooding of cloned mbufs. Reject packets whose headers are not
+contained in the first segment instead of writing past it.
 
-ipv6_ext and tcp_ipv6_ext are supported by every tile, so set them
-directly from rss_hf rather than gating them on the HTN cmdq flag.
-Also save the configured rss_type in software state and propagate the
-error when setting the RSS type fails.
+Compare the tunnel type as a whole enum value rather than testing single
+bits, so that other tunnel types such as GTP are not mistaken for
+IP-in-IP.
+
+Fixes: 7608f0367d5a ("net/hinic3: add basic ethdev operations")
+Cc: stable@dpdk.org
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/rel_notes/release_26_11.rst   |  1 +
- drivers/net/hinic3/base/hinic3_nic_cfg.h | 21 ++++++++++++--------
- drivers/net/hinic3/hinic3_ethdev.c       | 25 +++++++++++-------------
- drivers/net/hinic3/hinic3_ethdev.h       |  2 ++
- drivers/net/hinic3/hinic3_rx.c           | 24 ++++++++++++++---------
- drivers/net/hinic3/hinic3_rx.h           |  1 +
- 6 files changed, 43 insertions(+), 31 deletions(-)
+ drivers/net/hinic3/hinic3_ethdev.c |   1 +
+ drivers/net/hinic3/hinic3_ethdev.h |   1 +
+ drivers/net/hinic3/hinic3_tx.c     | 217 ++++++++++++++++++++++++++---
+ drivers/net/hinic3/hinic3_tx.h     |   1 +
+ 4 files changed, 204 insertions(+), 16 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index bbe363b8ae..e13a54d7b3 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -168,6 +168,7 @@ New Features
-   * Added CIR drop statistics and VF link aggregation (LAG) support.
-   * Added FEC mode get and set support.
-   * Added Class of Service (COS) mask and map support.
-+  * Updated RSS hash type configuration.
-   * Added mailbox message counter reporting through the device private dump API.
- 
- * **Updated Intel iavf driver.**
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-index b5d7ce07a1..8c48f6d8a9 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.h
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-@@ -72,14 +72,19 @@
- 	HINIC3_SUPPORT_FEATURE(dev, IPXIP_OFFLOAD)
- 
- struct hinic3_rss_type {
--	uint8_t tcp_ipv6_ext;
--	uint8_t ipv6_ext;
--	uint8_t tcp_ipv6;
--	uint8_t ipv6;
--	uint8_t tcp_ipv4;
--	uint8_t ipv4;
--	uint8_t udp_ipv6;
--	uint8_t udp_ipv4;
-+	union {
-+		struct {
-+			uint8_t tcp_ipv6_ext;
-+			uint8_t ipv6_ext;
-+			uint8_t tcp_ipv6;
-+			uint8_t ipv6;
-+			uint8_t tcp_ipv4;
-+			uint8_t ipv4;
-+			uint8_t udp_ipv6;
-+			uint8_t udp_ipv4;
-+		};
-+		uint64_t val;
-+	};
- };
- 
- enum hinic3_rss_hash_type {
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 208e9c9632..d82aa07912 100644
+index 69b7a23d6a..391967dbe4 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -1030,6 +1030,7 @@ hinic3_reset_rx_queue(struct rte_eth_dev *dev)
- 		rxq->prod_idx = 0;
- 		rxq->delta = rxq->q_depth;
- 		rxq->next_to_update = 0;
-+		rxq->rss_en = 0;
+@@ -3670,6 +3670,7 @@ hinic3_dev_init(struct rte_eth_dev *eth_dev)
  
- 		/*
- 		 * Hardware does not clear the CI write-back memory on reset, so
-@@ -1816,6 +1817,7 @@ hinic3_remove_rxtx_configure(struct rte_eth_dev *dev)
- 		hinic3_rss_cfg(nic_dev->hwdev, HINIC3_RSS_DISABLE, 0, prio_tc);
- 		hinic3_rss_template_free(nic_dev->hwdev);
- 		nic_dev->rss_state = HINIC3_RSS_DISABLE;
-+		nic_dev->rss_type.val = 0;
- 	}
- }
+ 	eth_dev->rx_pkt_burst = hinic3_recv_pkts;
+ 	eth_dev->tx_pkt_burst = hinic3_xmit_pkts;
++	eth_dev->tx_pkt_prepare = hinic3_prep_pkts;
  
-@@ -2748,20 +2750,17 @@ hinic3_rss_hash_update(struct rte_eth_dev *dev,
- 	rss_type.tcp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP) ? 1 : 0;
- 	rss_type.udp_ipv4 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP) ? 1 : 0;
- 	rss_type.udp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP) ? 1 : 0;
--
--	if (nic_dev->feature_cap & NIC_F_HTN_CMDQ) {
--		rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
--		rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
--	} else {
--		rss_type.ipv6_ext = 0;
--		rss_type.tcp_ipv6_ext = 0;
--	}
-+	rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
-+	rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
- 
- 	err = hinic3_set_rss_type(nic_dev->hwdev, rss_type);
--	if (err)
-+	if (err) {
- 		PMD_DRV_LOG(ERR, "Set RSS type failed");
-+		return err;
-+	}
- 
--	return err;
-+	nic_dev->rss_type = rss_type;
-+	return 0;
- }
- 
- /**
-@@ -2816,10 +2815,8 @@ hinic3_rss_conf_get(struct rte_eth_dev *dev, struct rte_eth_rss_conf *rss_conf)
- 	rss_conf->rss_hf |= rss_type.tcp_ipv6 ? RTE_ETH_RSS_NONFRAG_IPV6_TCP : 0;
- 	rss_conf->rss_hf |= rss_type.udp_ipv4 ? RTE_ETH_RSS_NONFRAG_IPV4_UDP : 0;
- 	rss_conf->rss_hf |= rss_type.udp_ipv6 ? RTE_ETH_RSS_NONFRAG_IPV6_UDP : 0;
--	if (nic_dev->feature_cap & NIC_F_HTN_CMDQ) {
--		rss_conf->rss_hf |= rss_type.ipv6_ext ? RTE_ETH_RSS_IPV6_EX : 0;
--		rss_conf->rss_hf |= rss_type.tcp_ipv6_ext ? RTE_ETH_RSS_IPV6_TCP_EX : 0;
--	}
-+	rss_conf->rss_hf |= rss_type.ipv6_ext ? RTE_ETH_RSS_IPV6_EX : 0;
-+	rss_conf->rss_hf |= rss_type.tcp_ipv6_ext ? RTE_ETH_RSS_IPV6_TCP_EX : 0;
- 
- 	return 0;
+ 	return hinic3_func_init(eth_dev);
  }
 diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index 84f9b2db0e..13c9c69e7f 100644
+index c46fcfcbec..8bbab2ad53 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.h
 +++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -9,6 +9,7 @@
- #include <rte_ethdev_core.h>
+@@ -41,6 +41,7 @@
+ #define HINIC3_PKT_TX_OUTER_IP_CKSUM	RTE_MBUF_F_TX_OUTER_IP_CKSUM
+ #define HINIC3_PKT_TX_OUTER_UDP_CKSUM	RTE_MBUF_F_TX_OUTER_UDP_CKSUM
+ #define HINIC3_PKT_TX_OUTER_IPV6	RTE_MBUF_F_TX_OUTER_IPV6
++#define HINIC3_PKT_TX_OUTER_IPV4	RTE_MBUF_F_TX_OUTER_IPV4
+ #define HINIC3_PKT_RX_LRO		RTE_MBUF_F_RX_LRO
+ #define HINIC3_PKT_TX_L4_NO_CKSUM	RTE_MBUF_F_TX_L4_NO_CKSUM
  
- #include "hinic3_fdir.h"
-+#include "base/hinic3_nic_cfg.h"
- 
- #define HINIC3_PMD_DRV_VERSION "B106"
- 
-@@ -130,6 +131,7 @@ struct hinic3_nic_dev {
- 	uint16_t num_rss; /**< Number of RSS queues. */
- 
- 	uint32_t rx_mode;
-+	struct hinic3_rss_type rss_type;
- 	uint8_t rx_queue_list[HINIC3_MAX_QUEUE_NUM];
- 	rte_spinlock_t queue_list_lock;
- 
-diff --git a/drivers/net/hinic3/hinic3_rx.c b/drivers/net/hinic3/hinic3_rx.c
-index ed753ba4ec..e7dd0edb52 100644
---- a/drivers/net/hinic3/hinic3_rx.c
-+++ b/drivers/net/hinic3/hinic3_rx.c
-@@ -437,17 +437,15 @@ hinic3_init_rss_type(struct hinic3_nic_dev *nic_dev,
- 	rss_type.tcp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP) ? 1 : 0;
- 	rss_type.udp_ipv4 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP) ? 1 : 0;
- 	rss_type.udp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP) ? 1 : 0;
--
--	if (nic_dev->feature_cap & NIC_F_HTN_CMDQ) {
--		rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
--		rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
--	} else {
--		rss_type.ipv6_ext = 0;
--		rss_type.tcp_ipv6_ext = 0;
--	}
-+	rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
-+	rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
- 
- 	err = hinic3_set_rss_type(nic_dev->hwdev, rss_type);
--	return err;
-+	if (err)
-+		return err;
-+
-+	nic_dev->rss_type = rss_type;
-+	return 0;
+diff --git a/drivers/net/hinic3/hinic3_tx.c b/drivers/net/hinic3/hinic3_tx.c
+index 6b2bffb14e..ca84118b27 100644
+--- a/drivers/net/hinic3/hinic3_tx.c
++++ b/drivers/net/hinic3/hinic3_tx.c
+@@ -285,6 +285,28 @@ hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt)
+ 	return hinic3_xmit_mbuf_cleanup(tx_queue, try_free_cnt);
  }
  
- int
-@@ -502,6 +500,8 @@ hinic3_update_rss_config(struct rte_eth_dev *dev,
++static uint16_t
++hinic3_ipv6_phdr_cksum(const struct rte_ipv6_hdr *ipv6_hdr, uint16_t l3_len,
++		       uint8_t proto, uint64_t ol_flags)
++{
++	uint32_t sum;
++	rte_be32_t l4_len;
++	rte_be32_t l4_proto;
++
++	l4_proto = rte_cpu_to_be_32(proto);
++	if (ol_flags & HINIC3_PKT_TX_TCP_SEG)
++		l4_len = 0;
++	else
++		l4_len = rte_cpu_to_be_16(rte_be_to_cpu_16(ipv6_hdr->payload_len) -
++					  l3_len + sizeof(*ipv6_hdr));
++
++	sum = __rte_raw_cksum(ipv6_hdr->src_addr.a,
++			      sizeof(ipv6_hdr->src_addr.a) + sizeof(ipv6_hdr->dst_addr.a), 0);
++	sum = __rte_raw_cksum(&l4_len, sizeof(l4_len), sum);
++	sum = __rte_raw_cksum(&l4_proto, sizeof(l4_proto), sum);
++
++	return __rte_raw_cksum_reduce(sum);
++}
+ /**
+  * Prepare the data packet to be sent and calculate the internal L3 offset.
+  *
+@@ -297,19 +319,111 @@ hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt)
+  * @return
+  * 0 as success, -EINVAL as failure.
+  */
+-static int
+-hinic3_tx_offload_pkt_prepare(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
+-			      uint16_t *inner_l3_offset)
++static inline uint16_t
++hinic3_calculate_l4_cksum(struct rte_mbuf *mbuf, uint16_t inner_l3_offset,
++			  uint16_t l3_len, uint8_t l4_proto)
++{
++	struct rte_ipv4_hdr *ipv4_hdr;
++	struct rte_ipv6_hdr *ipv6_hdr;
++	uint64_t ol_flags = mbuf->ol_flags;
++
++	if (ol_flags & HINIC3_PKT_TX_IPV4) {
++		ipv4_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv4_hdr *,
++						   inner_l3_offset);
++
++		if (ol_flags & HINIC3_PKT_TX_IP_CKSUM)
++			ipv4_hdr->hdr_checksum = 0;
++
++		return rte_ipv4_phdr_cksum(ipv4_hdr, ol_flags);
++	}
++
++	ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv6_hdr *,
++					   inner_l3_offset);
++
++	return hinic3_ipv6_phdr_cksum(ipv6_hdr, l3_len, l4_proto, ol_flags);
++}
++
++static inline void hinic3_calculate_outer_udp_checksum(struct rte_mbuf *mbuf,
++						       uint16_t outer_l3_offset)
++{
++	struct rte_ipv4_hdr *ipv4_hdr;
++	struct rte_ipv6_hdr *ipv6_hdr;
++	struct rte_udp_hdr *udp_hdr;
++	uint64_t ol_flags = mbuf->ol_flags;
++
++	if (ol_flags & HINIC3_PKT_TX_OUTER_IPV4) {
++		ipv4_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv4_hdr *, outer_l3_offset);
++		if (ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM)
++			ipv4_hdr->hdr_checksum = 0;
++		udp_hdr = (struct rte_udp_hdr *)((char *)ipv4_hdr + mbuf->outer_l3_len);
++		udp_hdr->dgram_cksum = rte_ipv4_phdr_cksum(ipv4_hdr, ol_flags);
++	} else if (ol_flags & HINIC3_PKT_TX_OUTER_IPV6) {
++		ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv6_hdr *, outer_l3_offset);
++		udp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_udp_hdr *,
++						  (outer_l3_offset + mbuf->outer_l3_len));
++		udp_hdr->dgram_cksum = hinic3_ipv6_phdr_cksum(ipv6_hdr, mbuf->outer_l3_len,
++							      IPPROTO_UDP, ol_flags);
++	}
++}
++
++static inline void hinic3_calculate_outer_phdr_checksum(struct rte_mbuf *mbuf,
++							uint16_t outer_l3_offset)
++{
++	uint64_t ol_flags = mbuf->ol_flags;
++
++	if (ol_flags & HINIC3_PKT_TX_OUTER_UDP_CKSUM)
++		hinic3_calculate_outer_udp_checksum(mbuf, outer_l3_offset);
++}
++
++static inline void hinic3_calculate_phdr_checksum(struct rte_mbuf *mbuf,
++						  uint16_t inner_l3_offset)
+ {
+ 	uint64_t ol_flags = mbuf->ol_flags;
++	struct rte_tcp_hdr *tcp_hdr;
++	struct rte_udp_hdr *udp_hdr;
++	uint16_t l3_len = mbuf->l3_len;
++	uint16_t l4_offset;
++
++	l4_offset = inner_l3_offset + l3_len;
++
++	switch (ol_flags & HINIC3_PKT_TX_L4_MASK) {
++	case HINIC3_PKT_TX_UDP_CKSUM:
++		udp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_udp_hdr *, l4_offset);
++		udp_hdr->dgram_cksum = hinic3_calculate_l4_cksum(mbuf, inner_l3_offset,
++								 l3_len, IPPROTO_UDP);
++		break;
++	case HINIC3_PKT_TX_TCP_CKSUM:
++		tcp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_tcp_hdr *, l4_offset);
++		tcp_hdr->cksum = hinic3_calculate_l4_cksum(mbuf, inner_l3_offset,
++							   l3_len, IPPROTO_TCP);
++		break;
++	case HINIC3_PKT_TX_SCTP_CKSUM:
++		/* Sctp csum no need to calculate pseudo-header */
++		break;
++	default:
++		if (ol_flags & HINIC3_PKT_TX_TCP_SEG) {
++			tcp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_tcp_hdr *, l4_offset);
++			tcp_hdr->cksum = hinic3_calculate_l4_cksum(mbuf, inner_l3_offset,
++								   l3_len, IPPROTO_TCP);
++		}
++		break;
++	}
++}
+ 
+-	if ((ol_flags & HINIC3_PKT_TX_TUNNEL_MASK)) {
+-		if (!(((ol_flags & HINIC3_PKT_TX_TUNNEL_VXLAN) &&
+-				HINIC3_SUPPORT_VXLAN_OFFLOAD(nic_dev)) ||
+-		      ((ol_flags & HINIC3_PKT_TX_TUNNEL_GENEVE) &&
+-				HINIC3_SUPPORT_GENEVE_OFFLOAD(nic_dev)) ||
+-		      ((ol_flags & HINIC3_PKT_TX_TUNNEL_IPIP) &&
+-				HINIC3_SUPPORT_IPXIP_OFFLOAD(nic_dev))))
++static int
++hinic3_get_inner_l3_offset(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
++			   uint16_t *inner_l3_offset)
++{
++	uint64_t ol_flags = mbuf->ol_flags;
++	uint64_t tunnel_type = ol_flags & HINIC3_PKT_TX_TUNNEL_MASK;
++
++	if (tunnel_type) {
++		if (!((tunnel_type == HINIC3_PKT_TX_TUNNEL_VXLAN &&
++		       HINIC3_SUPPORT_VXLAN_OFFLOAD(nic_dev)) ||
++		      (tunnel_type == HINIC3_PKT_TX_TUNNEL_GENEVE &&
++		       HINIC3_SUPPORT_GENEVE_OFFLOAD(nic_dev)) ||
++		      (tunnel_type == HINIC3_PKT_TX_TUNNEL_IPIP &&
++		       HINIC3_SUPPORT_IPXIP_OFFLOAD(nic_dev))))
+ 			return -EINVAL;
+ 	}
+ 
+@@ -318,13 +432,28 @@ hinic3_tx_offload_pkt_prepare(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *m
+ 		return -EINVAL;
+ #endif
+ 	/* Support tunnel. */
+-	if ((ol_flags & HINIC3_PKT_TX_TUNNEL_MASK)) {
+-		if ((ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM) ||
+-		    (ol_flags & HINIC3_PKT_TX_OUTER_IPV6) ||
+-		    (ol_flags & HINIC3_PKT_TX_TCP_SEG)) {
++	if (tunnel_type) {
++		/*
++		 * For IPv6-in-IPv6 packets, ol_flags cannot be used to determine
++		 * whether the delivered port offload value contains UDP and IP
++		 * hardware offload flags, so it is impossible to determine how
++		 * l2_len is populated. Here, the property that l2_len is 0 for
++		 * IP-in-IP is used to distinguish population modes. If
++		 * mbuf->l2_len == 0, the upper layer has enabled UDP and IP
++		 * hardware offload flags; the inner L3 offset is then
++		 * outer_l2_len + outer_l3_len.
++		 */
++		if (tunnel_type == HINIC3_PKT_TX_TUNNEL_IPIP) {
++			if (mbuf->l2_len == 0)
++				*inner_l3_offset = mbuf->outer_l2_len + mbuf->outer_l3_len;
++			else
++				*inner_l3_offset = mbuf->l2_len;
++		} else if ((ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM) ||
++			   (ol_flags & HINIC3_PKT_TX_OUTER_UDP_CKSUM) ||
++			   (ol_flags & HINIC3_PKT_TX_TCP_SEG)) {
+ 			/*
+ 			 * For this senmatic, l2_len of mbuf means
+-			 * len(out_udp + vxlan + in_eth).
++			 * len(out_udp + vxlan/geneve + in_eth).
+ 			 */
+ 			*inner_l3_offset = mbuf->l2_len + mbuf->outer_l2_len +
+ 					   mbuf->outer_l3_len;
+@@ -343,6 +472,62 @@ hinic3_tx_offload_pkt_prepare(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *m
  	return 0;
+ }
  
- init_rss_fail:
-+	nic_dev->rss_type.val = 0;
 +
- 	if (hinic3_rss_template_free(nic_dev->hwdev))
- 		PMD_DRV_LOG(WARNING, "Free rss template failed");
- 
-@@ -701,6 +701,8 @@ hinic3_stop_rq(struct rte_eth_dev *eth_dev, struct hinic3_rxq *rxq)
- 	uint32_t head_ci, head_done;
- 	int err;
- 
-+	rxq->rss_en = 0;
++uint16_t
++hinic3_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++{
++	struct hinic3_txq *txq = tx_queue;
++	struct hinic3_nic_dev *nic_dev = txq->nic_dev;
++	struct rte_mbuf *mbuf;
++	uint16_t inner_l3_offset;
++	int ret;
++	int i;
 +
- 	/* Disable rxq intr. */
- 	hinic3_dev_rx_queue_intr_disable(eth_dev, rxq->q_id);
- 
-@@ -779,6 +781,8 @@ hinic3_start_rq(struct rte_eth_dev *eth_dev, struct hinic3_rxq *rxq)
- 	struct hinic3_nic_dev *nic_dev = rxq->nic_dev;
- 	int err = 0;
- 
-+	rxq->rss_en = (nic_dev->rss_state == HINIC3_RSS_ENABLE);
++	for (i = 0; i != nb_pkts; i++) {
++		mbuf = tx_pkts[i];
 +
- 	/* Lock dev queue switch.  */
- 	rte_spinlock_lock(&nic_dev->queue_list_lock);
- 	hinic3_add_rq_to_rx_queue_list(nic_dev, rxq->q_id);
-@@ -933,6 +937,7 @@ hinic3_start_all_rqs(struct rte_eth_dev *eth_dev)
++		if (!(mbuf->ol_flags & HINIC3_TX_OFFLOAD_MASK))
++			continue;
++
++		ret = hinic3_get_inner_l3_offset(nic_dev, mbuf, &inner_l3_offset);
++		if (unlikely(ret)) {
++			rte_errno = -ret;
++			return i;
++		}
++
++		if (!HINIC3_IS_SP230_NIC(nic_dev)) {
++			/*
++			 * The pseudo-header checksum is written back into the
++			 * packet's L3/L4 header, which would corrupt data still
++			 * referenced by another consumer for a shared or indirect
++			 * mbuf, so fail those packets instead. Only L4 checksum,
++			 * TSO and outer UDP checksum write into the packet.
++			 */
++			if (unlikely((mbuf->ol_flags & (HINIC3_PKT_TX_L4_MASK |
++							HINIC3_PKT_TX_TCP_SEG |
++							HINIC3_PKT_TX_OUTER_UDP_CKSUM)) &&
++				     (rte_mbuf_refcnt_read(mbuf) > 1 ||
++				      RTE_MBUF_CLONED(mbuf)))) {
++				rte_errno = EINVAL;
++				return i;
++			}
++
++			/* The headers must be contiguous in the first segment. */
++			if (unlikely(rte_pktmbuf_data_len(mbuf) <
++				     inner_l3_offset + mbuf->l3_len + mbuf->l4_len)) {
++				rte_errno = ENOTSUP;
++				return i;
++			}
++
++			/* Process the outer and inner pseudo-header checksums. */
++			hinic3_calculate_outer_phdr_checksum(mbuf, mbuf->outer_l2_len);
++			hinic3_calculate_phdr_checksum(mbuf, inner_l3_offset);
++		}
++	}
++
++	return i;
++}
++
+ void
+ hinic3_tx_set_normal_task_offload(struct hinic3_wqe_info *wqe_info,
+ 				  struct hinic3_sq_wqe_combo *wqe_combo)
+@@ -622,7 +807,7 @@ hinic3_get_tx_offload(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
+ 	}
  
- 	for (i = 0; i < nic_dev->num_rqs; i++) {
- 		rxq = eth_dev->data->rx_queues[i];
-+		rxq->rss_en = (nic_dev->rss_state == HINIC3_RSS_ENABLE);
- 		hinic3_add_rq_to_rx_queue_list(nic_dev, rxq->q_id);
- 		err = hinic3_rearm_rxq_mbuf(rxq);
- 		if (err) {
-@@ -1056,6 +1061,7 @@ hinic3_rx_get_compact_cqe_info(struct hinic3_rxq *rxq, volatile struct hinic3_rq
- 	cqe_info->pkt_len = HINIC3_RQ_COMPACT_CQE_STATUS_GET(dw0, PKT_LEN);
- 	cqe_info->ts_flag = HINIC3_RQ_COMPACT_CQE_STATUS_GET(dw0, TS_FLAG);
- 	cqe_info->ptype = HINIC3_RQ_COMPACT_CQE_STATUS_GET(dw0, PTYPE);
-+	cqe_info->rss_type = rxq->rss_en;
- 	cqe_info->rss_hash_value = dw1;
+ 	wqe_info->offload = 1;
+-	err = hinic3_tx_offload_pkt_prepare(nic_dev, mbuf, &inner_l3_offset);
++	err = hinic3_get_inner_l3_offset(nic_dev, mbuf, &inner_l3_offset);
+ 	if (err)
+ 		return err;
  
- 	if (cqe_info->cqe_len == HINIC3_RQ_COMPACT_CQE_16BYTE) {
-diff --git a/drivers/net/hinic3/hinic3_rx.h b/drivers/net/hinic3/hinic3_rx.h
-index 129c2b4a59..075aa0bfd9 100644
---- a/drivers/net/hinic3/hinic3_rx.h
-+++ b/drivers/net/hinic3/hinic3_rx.h
-@@ -358,6 +358,7 @@ struct __rte_cache_aligned hinic3_rxq {
- 	rte_iova_t cqe_start_paddr;
- 	void *cqe_start_vaddr;
- 	uint8_t dp_intr_en;
-+	uint8_t rss_en; /**< RSS was enabled when this queue was started. */
- 	uint16_t msix_entry_idx;
- 
- 	bool rx_deferred_start; /* don't start this queue in dev start */
+diff --git a/drivers/net/hinic3/hinic3_tx.h b/drivers/net/hinic3/hinic3_tx.h
+index e0ed9908ad..3b1580dd3a 100644
+--- a/drivers/net/hinic3/hinic3_tx.h
++++ b/drivers/net/hinic3/hinic3_tx.h
+@@ -394,6 +394,7 @@ void hinic3_flush_txqs(struct hinic3_nic_dev *nic_dev);
+ void hinic3_free_txq_mbufs(struct hinic3_txq *txq);
+ void hinic3_free_all_txq_mbufs(struct hinic3_nic_dev *nic_dev);
+ uint16_t hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
++uint16_t hinic3_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
+ int hinic3_stop_sq(struct hinic3_txq *txq);
+ int hinic3_start_all_sqs(struct rte_eth_dev *eth_dev);
+ int hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt);
 -- 
 2.33.0
 
