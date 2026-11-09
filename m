@@ -2,94 +2,77 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F958606A321
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 11:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8ED7606A321
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 12:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=0D0mQtqg
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=It9nqb5X
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8689F4060C;
-	Mon,  9 Nov 2026 12:30:37 +0100 (CET)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com
- [209.85.218.53])
- by mails.dpdk.org (Postfix) with ESMTPS id C18134026E
- for <dev@dpdk.org>; Mon,  9 Nov 2026 12:30:35 +0100 (CET)
-Received: by mail-ej1-f53.google.com with SMTP id
- a640c23a62f3a-c4d30639709so84505566b.0
- for <dev@dpdk.org>; Mon, 09 Nov 2026 03:30:35 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794223835; cv=none;
- d=google.com; s=arc-20260327;
- b=o2GkYOMJzCTLtjQVLg/Kbm9TsILpD+ICAO+6FRLYYS/Gnn9K6PU1cjMlf/4SjKwoCv
- L2wAd8F0dUuhy4U7ZsoGLTeslPhx/yVbl/9nEvqJOzLgru8h6/W6bf2kDaWbZBSf9xzD
- ji46q+BJd58NZNa6tE2077StcMzQlgZr2lxe6vSeAXFXViQYdqS3scHiL+qPt7JKn4Zt
- WUDgwy+abj9HW9HJk7jmsGGbg/5PCb9kjjlUzNGwgEMxo4nqUICf3RXahl3idv2Fu9dq
- ryor4akYzQFIjOwgTuJxqHoy3aYs/VVKHytlj5EOxt7GAd7SKTCLhQPdNyGJmJaD/abD
- iNVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=xDnxbq0H4C2WD6JU4Lc8zRHgRM3KpHJ58zapSZMXr8g=;
- fh=bGVAofP4FC01qK+u5OEyDpNTDnC4HExYtYWQOQStGkg=;
- b=nPhChbfehe2zk49qX/+vEX1erfofxIxYk886XrXLZ0M7e7jQttvUEUy//V0yyFQaPX
- DTVdBiuTFG0SKiMPjHeTQgqo919vk56iWl6TnaPldV9voBVNQC8vNLE2saEYvmWh3POj
- sQWoETeS0TQkyqjo7PsSMYeB9wwGblsIa7X9FHbgFdaJVK0Um04b7lAayQ6XmkBUNEP9
- aFrVdUCS7fBByi6796ftJ6kCmVf0vJ+zbskKtY4hDXa3m2sZqKCjnSUS3lHCfgxuHvl9
- 2TUXOehCdYlyx2e8RxEKzjagj8829h8QsUvQvElNfUjY14PVbSFCacU1RySrBf5gpvIF
- bPzw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 029024026E;
+	Mon,  9 Nov 2026 13:52:07 +0100 (CET)
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com
+ [209.85.215.182])
+ by mails.dpdk.org (Postfix) with ESMTPS id 1A41B40151
+ for <dev@dpdk.org>; Mon,  9 Nov 2026 13:52:05 +0100 (CET)
+Received: by mail-pg1-f182.google.com with SMTP id
+ 41be03b00d2f7-cc147d86bebso381184a12.0
+ for <dev@dpdk.org>; Mon, 09 Nov 2026 04:52:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794223835; x=1794828635; darn=dpdk.org;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=xDnxbq0H4C2WD6JU4Lc8zRHgRM3KpHJ58zapSZMXr8g=;
- b=0D0mQtqgIxgzp75Prn3l4CiYdP6Ci6ttTBhiIrN6xt3zNeDFrZZ05M909y2dPr73lP
- 83Vj1e3DzRL8pChO5wUhYYTN6YFbUqI7sbP9yNpQ8K+iuIiYlNVgRHA1Xb6Q6tqcS09s
- F1ztTnEtvgMALOlIIIOuPsOHe4P5szra5lCmqXD+f5Mj2x/+5bO+0WIPnQ46CJkf3Rpo
- nCmSYMBOdyMD8oD7gkWAiR9HIpO4mNT6UqzSiSlwoNWD9Uudr1U/xqts8y1mIHelmJ6R
- f/XrzbUMmhV5dTr4ZEdsO4Dq8nMOg2f2fevrJUjaYwt7SJ+5AoX4j9DpXlSQ96zR7fqF
- 7rHA==
+ d=gmail.com; s=20260707; t=1794228723; x=1794833523; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=IRztP/EzshW4wUCovCkvkJGIMEhNIK5aA319xQFpzqs=;
+ b=It9nqb5XM8n3TlOcq0wnNSB8ifCKqmMBVgrJNBvUqDS2D/qMWvldH24QBlmBAApTnL
+ Dg05Q8vqEg2/6ylDrIwI4/0Acp+fSB9kq0S2KSrKf41bHR8AWvWRN+arM4lX/Iq9YDYz
+ ZjrUijmII/+pAzOwwRUh3S7+hxoON2ApTdOdApTLqL/QhvT75inhMItePeOwyKULv5ik
+ uEnbdDtNPkoDeNK5671GvQB+IhLNOQ+NzQuSLWEyYlf2y1h453VE9FV5wz/x2gCYzdz1
+ RfP3LDcu5/lHAzCJahumVgYfDQVu1qrYJNPS9JUqTIr7LSUCeDRfBmzlRaZD9UR2rHoJ
+ 9Aqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794223835; x=1794828635;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=xDnxbq0H4C2WD6JU4Lc8zRHgRM3KpHJ58zapSZMXr8g=;
- b=TXcfrxUBIRZYNq02kgF3nOG3eznUUwdRn2rtgO0vDM1MEO2QIQzSm1kkaq9c+IszA7
- 9x1fRGpK76SoQjO3+N8sjfxs7HeO+XsRDz3WK2xmVP6DehaqDNwP3KAE3iYtt9C1bXxU
- MhTTvgwhXPULbhTN8Dnj3sPn3shKxNz3faxgXM0/FSuXDsUPD0zhjxlPHT+IksTJlx17
- U2EYNohsspsW3JMiuYdDdNq3ry4WjlY1sAdBfAacNj2jjOgQuzEkCTi39fIv1MyiXDFF
- nI7gLR51dAw4dhAWfpW5UTzzhwW8VU5selhec/Mp5Vp795B6klPClJ0SVvAfsjVHAfO0
- Vgig==
-X-Forwarded-Encrypted: i=1;
- AL+hErEcT+Q6viB//gdxge4rQc5DBZlmSEYG02rQO5lBMB8kJvsQH5CUm7gkfU8MZ6Vogtjdovw=@dpdk.org
-X-Gm-Message-State: APuU4Z+HvozJIYEUvAji1EIsAWeGTZ/EOw5LCIFxQWHOrmSp6oU2zqBm
- p0X5bRfO+JUde6v39ADbojiEVgiMw2U4T2a2E8B8zJu/Gtk0Ttq88q3J19wcvVp99CGqhF7SUNB
- /vb2LThAAVWTjCJgQXOS5HytNm7p8DMA=
-X-Gm-Gg: AYBFou2UqRBZ1QJRiND8dTceZ3zkVA/9noyojCKyehWXCRZo0emlmDINMRHux1L5STh
- GU9hfYiLYxfi/i8H9kH8PnMUokWgSkPPyf4HcqTOY2eqt/WwQXWA2OBchl0WWVf3pKBGnDnlwNA
- O5VrPlKA7ok5huo2LDcsksPLghWAD+Qkpvwm6IkvkPprb2rEKHiuT5XiVUbvW8XNn0/dajbdueT
- nJ8mNvG92dZ0coOgdRTC/oejz2JvgQy6DvBvkPn7GOhBejesE2M8pOgwbzV7zA63QngEklh4uXY
- IimNM+oS7w+Ni44cb0+z+dDhKrQRgshQwy+GJDgly2eTtgY3PI2RYlnzOCVi2fOCUMjZvvuvyAq
- 9vHbMtUhHRKZWb/+FPwjtrKcy4UMCI67FJIE=
-X-Received: by 2002:a17:906:d54b:b0:c26:1649:47ad with SMTP id
- a640c23a62f3a-c4d6db77906mr237607766b.35.1794223835090; Mon, 09 Nov 2026
- 03:30:35 -0800 (PST)
+ d=1e100.net; s=20260707; t=1794228723; x=1794833523;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=IRztP/EzshW4wUCovCkvkJGIMEhNIK5aA319xQFpzqs=;
+ b=RznM7glmJN703qMf9JqhcYsrq9Kf/kiXeS8bnN/t+NzlA9khXR5l8R6aQslME6UX/f
+ nWpNBre01NXr2SXLDSTyaptV+JYANIFf30N7W84Biv91GKGwTU+C0mlABzfrkPh3i0/y
+ lo2nkOHqY1dkQnYi/vrWhbeN5/2foTHOVVBx6ZMIYJpIVTs87EB/8GVZOXUr8cb759M/
+ aTysZ5Si3s/CUjy2dT4QmXADv2GMPKYJ3xA4lWjtXENYk1Lsua9Q7/m35GiIz3SUuu25
+ tQ3df/hn6QJ7l2I1+biaoxBmNuJl8AaPlUXZaTvrYb3qr7aWJqShTC0Bvsj6HKMay1Xs
+ GPTA==
+X-Gm-Message-State: APuU4Z/G0D3NeTQvqj1xBVi8GCfZEDQMEOYws/m87aIbxE04kG3RGtzz
+ iS4XrxkCvIkq7OmJwQIpPQpkbZujHBlFA8F2OnvGjqEJcn44CNxHHp4soOeAFA==
+X-Gm-Gg: AYBFou3KpM+szmD5YE4pBwnzYVJUq+l7x66Jw7AQfIX2OpgG4fPRs180z5zBvRwfzXQ
+ 7/PKPJnal2gp3tqLSVesGq2L1y6DYvaczHDOUhZmgfjUGo6N59fdMR18gl4fipDUu/UInGI9smH
+ C+BvF4ETuTQCeqxYidBdPoyMjJvkuqYmDkY6XH6fBaVy8XVUta46fk88FWyN0vIov09vuvDuMG3
+ QRPIc+JXqoW+UpV2P6n3iwVIpe6fQ7p9jXfVxdAo5qQP3Vhxrzd8uLX7ny0lwyeq1SsfKC4+ZmH
+ SSVot1rya5+CV/O5uydgYP76FDHiGwsyrSvsKYmZ1ITkovR2FG+zMPFrYnwpnY35ilMVIONTA0o
+ 2Weq6qE3XgfY6QMo1AtXY8Hb7NRUEuL9C6gjgutuTP79Vs3ShsjTwZyr6LEJKJ8rSbTqq5KKNXf
+ zhSN4muH1G2amv89hQr06cN7AZVNSNub5XUf5MCWzfESRDdFQC4/UqCzAbW0Hsxsc2dXJrBl4ZT
+ BCgCZKFQIn99nOucq/CPZXZYu8LU805Ne54ayjWydxhuGvPN/qrtcwM6Cc+qOdMDylVk58RtFfG
+ 8WoGzmMSIXnxcBosEBoC3iQTCQCf+oXG9YhAXA==
+X-Received: by 2002:a17:902:fc8d:b0:2e6:e9a:eb48 with SMTP id
+ d9443c01a7336-2ed837c25demr25314675ad.41.1794228723159; 
+ Mon, 09 Nov 2026 04:52:03 -0800 (PST)
+Received: from OptiPlex (mail.forbuysw.info. [66.175.223.235])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2ed815e72acsm10816335ad.13.2026.11.09.04.51.57
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 09 Nov 2026 04:52:02 -0800 (PST)
+From: Zhang Tengfei <zhtfdev@gmail.com>
+To: dev@dpdk.org
+Cc: jiawenwu@trustnetic.com, zaiyuwang@trustnetic.com,
+ stephen@networkplumber.org, Zhang Tengfei <zhtfdev@gmail.com>,
+ stable@dpdk.org
+Subject: [PATCH v2] net/txgbe: keep flow rules per port
+Date: Mon,  9 Nov 2026 20:51:49 +0800
+Message-ID: <20261109125149.16218-1-zhtfdev@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261108160021.31789-1-zhtfdev@gmail.com>
+References: <20261108160021.31789-1-zhtfdev@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261108120358.1408920-1-16567adigashreesh@gmail.com>
- <663fa8ff-4bd2-4782-be7e-c03311ca639d@yandex.ru>
-In-Reply-To: <663fa8ff-4bd2-4782-be7e-c03311ca639d@yandex.ru>
-From: Shreesh Adiga <16567adigashreesh@gmail.com>
-Date: Mon, 9 Nov 2026 17:00:22 +0530
-X-Gm-Features: AclHuK-DgS-rfcDEVGwpQkXcYVT1olY7mA7OnwzyrO_rb84zsSzpuIoboQ_g9Ro
-Message-ID: <CA+-x59bP6e7vwd9tVcVoha9yCbrqLKFN6nd9KDFFh8V9ixQ99A@mail.gmail.com>
-Subject: Re: [PATCH] net/crc: use static constants for SSE42 PCLMULQDQ
- parameters
-To: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-Cc: Bruce Richardson <bruce.richardson@intel.com>, 
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Jasvinder Singh <jasvinder.singh@intel.com>, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000569a03065fd64adc"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,438 +82,499 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FROM_STARTS_WITH_NUMS,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
---000000000000569a03065fd64adc
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+rte_flow rules for every txgbe port were stored in file-scope lists.
+Flushing or closing one port freed the rte_flow handles of the others
+while their hardware rules stayed programmed, and probing another port
+reinitialized the lists. The same lists are used by the PF and VF flow
+operations.
 
-On Mon, Nov 9, 2026 at 3:40=E2=80=AFPM Konstantin Ananyev <
-konstantin.v.ananyev@yandex.ru> wrote:
+Keep one flow list in struct txgbe_adapter. A port disables flow
+director only when its own FDIR filter list is empty.
 
->
-> > Replace the __m128i members in the PCLMULQDQ CRC context with aligned
-> > uint64_t arrays to allow portable compile-time initialization.
-> >
-> > Move CRC16-CCITT and CRC32-ETH folding constants into static const
-> context
-> > structures in their respective handlers, removing the runtime
-> > initialization previously performed by rte_net_crc_sse42_init and avoid=
-s
-> > the extra data segment static variables which were being populated.
-> >
-> > Load the constants into SIMD registers using aligned loads when
-> performing
-> > CRC calculations. This was done transparently previously when the
-> > __m128i values were assigned, now there is explicit SIMD load done.
->
-> It is not clear why(how) new code is better then what we have right now.
-> Can you probably provide a bit more details?
->
->
-Previously this file was maintaining static variables in data segment
-namely:
-static alignas(16) struct crc_pclmulqdq_ctx crc32_eth_pclmulqdq;
-static alignas(16) struct crc_pclmulqdq_ctx crc16_ccitt_pclmulqdq;
+Fixes: 5c2352b9ece6 ("net/txgbe: support creating consistent filter")
+Cc: stable@dpdk.org
 
-These were populated in the init function with the same calculated fold
-constants.
-The constants already are present in the rodata section in the binary.
-Hence the init is doing extra work in copying it over to the
-static crc_pclmulqdq_ctx
-structures which is redundant.
+Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
+---
+v2:
+* Drop n_flows. A successful delete already updates the per-port FDIR
+  filter list, so test that list instead.
 
-This patch avoids this extra copy during init and modifies the SIMD routine=
-s
-to directly read the constants from rodata memory. Thus the data segment
-memory usage is
-reduced by getting rid of the static variables (128 bytes). There should be
-no
-performance impact by this change (minus the init work done previously).
+ drivers/net/txgbe/txgbe_ethdev.c    |   4 +-
+ drivers/net/txgbe/txgbe_ethdev.h    |   8 +-
+ drivers/net/txgbe/txgbe_ethdev_vf.c |   4 +-
+ drivers/net/txgbe/txgbe_flow.c      | 180 +++++++---------------------
+ 4 files changed, 53 insertions(+), 143 deletions(-)
 
-
-
-> >
-> > Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
-> > ---
-> >   lib/net/net_crc_sse.c | 68 ++++++++++++++----------------------------=
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index 9dbdbfa309..81f685722e 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -902,7 +902,7 @@ eth_txgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
+ 	txgbe_l2_tn_filter_init(eth_dev);
+ 
+ 	/* initialize flow filter lists */
+-	txgbe_filterlist_init();
++	txgbe_filterlist_init(eth_dev);
+ 
+ 	/* initialize bandwidth configuration info */
+ 	memset(bw_conf, 0, sizeof(struct txgbe_bw_conf));
+@@ -2352,7 +2352,7 @@ txgbe_dev_close(struct rte_eth_dev *dev)
+ 	txgbe_ntuple_filter_uninit(dev);
+ 
+ 	/* clear all the filters list */
+-	txgbe_filterlist_flush();
++	txgbe_filterlist_flush(dev);
+ 
+ 	/* Remove all Traffic Manager configuration */
+ 	txgbe_tm_conf_uninit(dev);
+diff --git a/drivers/net/txgbe/txgbe_ethdev.h b/drivers/net/txgbe/txgbe_ethdev.h
+index 28dfa1bc5e..d3e42f0756 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.h
++++ b/drivers/net/txgbe/txgbe_ethdev.h
+@@ -337,6 +337,9 @@ struct txgbe_tm_conf {
+ 	bool committed;
+ };
+ 
++struct txgbe_flow_mem;
++TAILQ_HEAD(txgbe_flow_mem_list, txgbe_flow_mem);
++
+ /*
+  * Structure to store private data for each driver instance (for each port).
+  */
+@@ -352,6 +355,7 @@ struct txgbe_adapter {
+ 	struct txgbe_vf_info        *vfdata;
+ 	struct txgbe_uta_info       uta_info;
+ 	struct txgbe_filter_info    filter;
++	struct txgbe_flow_mem_list  flow_list;
+ 	struct txgbe_l2_tn_info     l2_tn;
+ 	struct txgbe_bw_conf        bw_conf;
+ #ifdef RTE_LIB_SECURITY
+@@ -542,8 +546,8 @@ txgbe_dev_l2_tunnel_filter_add(struct rte_eth_dev *dev,
+ int
+ txgbe_dev_l2_tunnel_filter_del(struct rte_eth_dev *dev,
+ 			       struct txgbe_l2_tunnel_conf *l2_tunnel);
+-void txgbe_filterlist_init(void);
+-void txgbe_filterlist_flush(void);
++void txgbe_filterlist_init(struct rte_eth_dev *dev);
++void txgbe_filterlist_flush(struct rte_eth_dev *dev);
+ int txgbe_fdir_filter_init(struct rte_eth_dev *eth_dev);
+ int txgbe_fdir_filter_uninit(struct rte_eth_dev *eth_dev);
+ 
+diff --git a/drivers/net/txgbe/txgbe_ethdev_vf.c b/drivers/net/txgbe/txgbe_ethdev_vf.c
+index 3cf33a8bd6..a66897a4fb 100644
+--- a/drivers/net/txgbe/txgbe_ethdev_vf.c
++++ b/drivers/net/txgbe/txgbe_ethdev_vf.c
+@@ -390,7 +390,7 @@ eth_txgbevf_dev_init(struct rte_eth_dev *eth_dev)
+ 	TAILQ_INIT(&filter_info->fivetuple_list);
+ 
+ 	/* initialize flow filter lists */
+-	txgbe_filterlist_init();
++	txgbe_filterlist_init(eth_dev);
+ 
+ 	PMD_INIT_LOG(DEBUG, "port %d vendorID=0x%x deviceID=0x%x mac.type=%s",
+ 		     eth_dev->data->port_id, pci_dev->id.vendor_id,
+@@ -882,7 +882,7 @@ txgbevf_dev_close(struct rte_eth_dev *dev)
+ 	txgbe_ntuple_filter_uninit(dev);
+ 
+ 	/* clear all the filters list */
+-	txgbe_filterlist_flush();
++	txgbe_filterlist_flush(dev);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/net/txgbe/txgbe_flow.c b/drivers/net/txgbe/txgbe_flow.c
+index 7016fb29d2..64128dfc27 100644
+--- a/drivers/net/txgbe/txgbe_flow.c
++++ b/drivers/net/txgbe/txgbe_flow.c
+@@ -18,32 +18,26 @@
+ 
+ /* ntuple filter list structure */
+ struct txgbe_ntuple_filter_ele {
+-	TAILQ_ENTRY(txgbe_ntuple_filter_ele) entries;
+ 	struct rte_eth_ntuple_filter filter_info;
+ };
+ /* ethertype filter list structure */
+ struct txgbe_ethertype_filter_ele {
+-	TAILQ_ENTRY(txgbe_ethertype_filter_ele) entries;
+ 	struct rte_eth_ethertype_filter filter_info;
+ };
+ /* syn filter list structure */
+ struct txgbe_eth_syn_filter_ele {
+-	TAILQ_ENTRY(txgbe_eth_syn_filter_ele) entries;
+ 	struct rte_eth_syn_filter filter_info;
+ };
+ /* fdir filter list structure */
+ struct txgbe_fdir_rule_ele {
+-	TAILQ_ENTRY(txgbe_fdir_rule_ele) entries;
+ 	struct txgbe_fdir_rule filter_info;
+ };
+ /* l2_tunnel filter list structure */
+ struct txgbe_eth_l2_tunnel_conf_ele {
+-	TAILQ_ENTRY(txgbe_eth_l2_tunnel_conf_ele) entries;
+ 	struct txgbe_l2_tunnel_conf filter_info;
+ };
+ /* rss filter list structure */
+ struct txgbe_rss_conf_ele {
+-	TAILQ_ENTRY(txgbe_rss_conf_ele) entries;
+ 	struct txgbe_rte_flow_rss_conf filter_info;
+ };
+ /* txgbe_flow memory list structure */
+@@ -52,22 +46,6 @@ struct txgbe_flow_mem {
+ 	struct rte_flow *flow;
+ };
+ 
+-TAILQ_HEAD(txgbe_ntuple_filter_list, txgbe_ntuple_filter_ele);
+-TAILQ_HEAD(txgbe_ethertype_filter_list, txgbe_ethertype_filter_ele);
+-TAILQ_HEAD(txgbe_syn_filter_list, txgbe_eth_syn_filter_ele);
+-TAILQ_HEAD(txgbe_fdir_rule_filter_list, txgbe_fdir_rule_ele);
+-TAILQ_HEAD(txgbe_l2_tunnel_filter_list, txgbe_eth_l2_tunnel_conf_ele);
+-TAILQ_HEAD(txgbe_rss_filter_list, txgbe_rss_conf_ele);
+-TAILQ_HEAD(txgbe_flow_mem_list, txgbe_flow_mem);
 -
-> >   1 file changed, 22 insertions(+), 46 deletions(-)
-> >
-> > diff --git a/lib/net/net_crc_sse.c b/lib/net/net_crc_sse.c
-> > index e30f8544fc..4361e35e39 100644
-> > --- a/lib/net/net_crc_sse.c
-> > +++ b/lib/net/net_crc_sse.c
-> > @@ -12,15 +12,13 @@
-> >   #include "net_crc.h"
-> >
-> >   /** PCLMULQDQ CRC computation context structure */
-> > -struct crc_pclmulqdq_ctx {
-> > -     __m128i rk1_rk2;
-> > -     __m128i rk3_rk4;
-> > -     __m128i rk5_rk6;
-> > -     __m128i rk7_rk8;
-> > +struct __rte_aligned(XMM_SIZE) crc_pclmulqdq_ctx {
-> > +     uint64_t rk1_rk2[2];
-> > +     uint64_t rk3_rk4[2];
-> > +     uint64_t rk5_rk6[2];
-> > +     uint64_t rk7_rk8[2];
-> >   };
-> >
-> > -static alignas(16) struct crc_pclmulqdq_ctx crc32_eth_pclmulqdq;
-> > -static alignas(16) struct crc_pclmulqdq_ctx crc16_ccitt_pclmulqdq;
-> >   /**
-> >    * @brief Performs one folding round
-> >    *
-> > @@ -162,7 +160,7 @@ crc32_eth_calc_pclmulqdq(
-> >               fold3 =3D _mm_loadu_si128((const __m128i *)(data + 32));
-> >               fold4 =3D _mm_loadu_si128((const __m128i *)(data + 48));
-> >               fold1 =3D _mm_xor_si128(fold1, temp);
-> > -             k =3D params->rk1_rk2;
-> > +             k =3D _mm_load_si128((const __m128i *)params->rk1_rk2);
-> >
-> >               for (n =3D 64; (n + 64) <=3D data_len; n +=3D 64) {
-> >                       temp1 =3D _mm_loadu_si128((const __m128i *)&data[=
-n]);
-> > @@ -175,7 +173,7 @@ crc32_eth_calc_pclmulqdq(
-> >                       fold4 =3D crcr32_folding_round(temp4, k, fold4);
-> >               }
-> >
-> > -             k =3D params->rk3_rk4;
-> > +             k =3D _mm_load_si128((const __m128i *)params->rk3_rk4);
-> >               fold1 =3D crcr32_folding_round(fold2, k, fold1);
-> >               fold1 =3D crcr32_folding_round(fold3, k, fold1);
-> >               fold =3D crcr32_folding_round(fold4, k, fold1);
-> > @@ -205,7 +203,7 @@ crc32_eth_calc_pclmulqdq(
-> >       fold =3D _mm_xor_si128(fold, temp);
-> >
-> >       /** Single folding loop - the last 16 bytes is processed
-> separately */
-> > -     k =3D params->rk3_rk4;
-> > +     k =3D _mm_load_si128((const __m128i *)params->rk3_rk4);
-> >       n =3D 16;
-> >
-> >   single_fold_loop:
-> > @@ -235,11 +233,11 @@ crc32_eth_calc_pclmulqdq(
-> >
-> >       /** Reduction 128 -> 32 Assumes: fold holds 128bit folded data */
-> >   reduction_128_64:
-> > -     k =3D params->rk5_rk6;
-> > +     k =3D _mm_load_si128((const __m128i *)params->rk5_rk6);
-> >       fold =3D crcr32_reduce_128_to_64(fold, k);
-> >
-> >   barret_reduction:
-> > -     k =3D params->rk7_rk8;
-> > +     k =3D _mm_load_si128((const __m128i *)params->rk7_rk8);
-> >       n =3D crcr32_reduce_64_to_32(fold, k);
-> >
-> >       return n;
-> > @@ -248,45 +246,17 @@ crc32_eth_calc_pclmulqdq(
-> >   void
-> >   rte_net_crc_sse42_init(void)
-> >   {
-> > -     uint64_t k1, k2, k3, k4, k5, k6;
-> > -     uint64_t p =3D 0, q =3D 0;
-> > -
-> > -     /** Initialize CRC16 data */
-> > -     k1 =3D 0x14ff2LLU;
-> > -     k2 =3D 0x19a3cLLU;
-> > -     k3 =3D 0x189aeLLU;
-> > -     k4 =3D 0x8e10LLU;
-> > -     k5 =3D 0x189aeLLU;
-> > -     k6 =3D 0x114aaLLU;
-> > -     q =3D  0x11c581910LLU;
-> > -     p =3D  0x10811LLU;
-> > -
-> > -     /** Save the params in context structure */
-> > -     crc16_ccitt_pclmulqdq.rk1_rk2 =3D _mm_set_epi64x(k2, k1);
-> > -     crc16_ccitt_pclmulqdq.rk3_rk4 =3D _mm_set_epi64x(k4, k3);
-> > -     crc16_ccitt_pclmulqdq.rk5_rk6 =3D _mm_set_epi64x(k6, k5);
-> > -     crc16_ccitt_pclmulqdq.rk7_rk8 =3D _mm_set_epi64x(p, q);
-> > -
-> > -     /** Initialize CRC32 data */
-> > -     k1 =3D 0x1c6e41596LLU;
-> > -     k2 =3D 0x154442bd4LLU;
-> > -     k3 =3D 0xccaa009eLLU;
-> > -     k4 =3D 0x1751997d0LLU;
-> > -     k5 =3D 0xccaa009eLLU;
-> > -     k6 =3D 0x163cd6124LLU;
-> > -     q =3D  0x1f7011640LLU;
-> > -     p =3D  0x1db710641LLU;
-> > -
-> > -     /** Save the params in context structure */
-> > -     crc32_eth_pclmulqdq.rk1_rk2 =3D _mm_set_epi64x(k2, k1);
-> > -     crc32_eth_pclmulqdq.rk3_rk4 =3D _mm_set_epi64x(k4, k3);
-> > -     crc32_eth_pclmulqdq.rk5_rk6 =3D _mm_set_epi64x(k6, k5);
-> > -     crc32_eth_pclmulqdq.rk7_rk8 =3D _mm_set_epi64x(p, q);
-> >   }
-> >
-> >   uint32_t
-> >   rte_crc16_ccitt_sse42_handler(const uint8_t *data, uint32_t data_len)
-> >   {
-> > +     static const struct crc_pclmulqdq_ctx crc16_ccitt_pclmulqdq =3D {
-> > +             .rk1_rk2 =3D { 0x14ff2LLU, 0x19a3cLLU },
-> > +             .rk3_rk4 =3D { 0x189aeLLU, 0x8e10LLU },
-> > +             .rk5_rk6 =3D { 0x189aeLLU, 0x114aaLLU },
-> > +             .rk7_rk8 =3D { 0x11c581910LLU, 0x10811LLU },
-> > +     };
-> >       /** return 16-bit CRC value */
-> >       return (uint16_t)~crc32_eth_calc_pclmulqdq(data,
-> >               data_len,
-> > @@ -297,6 +267,12 @@ rte_crc16_ccitt_sse42_handler(const uint8_t *data,
-> uint32_t data_len)
-> >   uint32_t
-> >   rte_crc32_eth_sse42_handler(const uint8_t *data, uint32_t data_len)
-> >   {
-> > +     static const struct crc_pclmulqdq_ctx crc32_eth_pclmulqdq =3D {
-> > +             .rk1_rk2 =3D { 0x1c6e41596LLU, 0x154442bd4LLU },
-> > +             .rk3_rk4 =3D { 0xccaa009eLLU, 0x1751997d0LLU },
-> > +             .rk5_rk6 =3D { 0xccaa009eLLU, 0x163cd6124LLU },
-> > +             .rk7_rk8 =3D { 0x1f7011640LLU, 0x1db710641LLU },
-> > +     };
-> >       return ~crc32_eth_calc_pclmulqdq(data,
-> >               data_len,
-> >               0xffffffffUL,
->
->
+-static struct txgbe_ntuple_filter_list filter_ntuple_list;
+-static struct txgbe_ethertype_filter_list filter_ethertype_list;
+-static struct txgbe_syn_filter_list filter_syn_list;
+-static struct txgbe_fdir_rule_filter_list filter_fdir_list;
+-static struct txgbe_l2_tunnel_filter_list filter_l2_tunnel_list;
+-static struct txgbe_rss_filter_list filter_rss_list;
+-static struct txgbe_flow_mem_list txgbe_flow_list;
+-
+ /**
+  * Endless loop will never happen with below assumption
+  * 1. there is at least one no-void item(END)
+@@ -3112,75 +3090,25 @@ txgbe_clear_rss_filter(struct rte_eth_dev *dev)
+ }
+ 
+ void
+-txgbe_filterlist_init(void)
++txgbe_filterlist_init(struct rte_eth_dev *dev)
+ {
+-	TAILQ_INIT(&filter_ntuple_list);
+-	TAILQ_INIT(&filter_ethertype_list);
+-	TAILQ_INIT(&filter_syn_list);
+-	TAILQ_INIT(&filter_fdir_list);
+-	TAILQ_INIT(&filter_l2_tunnel_list);
+-	TAILQ_INIT(&filter_rss_list);
+-	TAILQ_INIT(&txgbe_flow_list);
++	struct txgbe_adapter *adapter = TXGBE_DEV_ADAPTER(dev);
++
++	TAILQ_INIT(&adapter->flow_list);
+ }
+ 
+ void
+-txgbe_filterlist_flush(void)
++txgbe_filterlist_flush(struct rte_eth_dev *dev)
+ {
+-	struct txgbe_ntuple_filter_ele *ntuple_filter_ptr;
+-	struct txgbe_ethertype_filter_ele *ethertype_filter_ptr;
+-	struct txgbe_eth_syn_filter_ele *syn_filter_ptr;
+-	struct txgbe_eth_l2_tunnel_conf_ele *l2_tn_filter_ptr;
+-	struct txgbe_fdir_rule_ele *fdir_rule_ptr;
++	struct txgbe_adapter *adapter = TXGBE_DEV_ADAPTER(dev);
+ 	struct txgbe_flow_mem *txgbe_flow_mem_ptr;
+-	struct txgbe_rss_conf_ele *rss_filter_ptr;
+ 
+-	while ((ntuple_filter_ptr = TAILQ_FIRST(&filter_ntuple_list))) {
+-		TAILQ_REMOVE(&filter_ntuple_list,
+-				 ntuple_filter_ptr,
+-				 entries);
+-		rte_free(ntuple_filter_ptr);
+-	}
+-
+-	while ((ethertype_filter_ptr = TAILQ_FIRST(&filter_ethertype_list))) {
+-		TAILQ_REMOVE(&filter_ethertype_list,
+-				 ethertype_filter_ptr,
+-				 entries);
+-		rte_free(ethertype_filter_ptr);
+-	}
++	while ((txgbe_flow_mem_ptr = TAILQ_FIRST(&adapter->flow_list))) {
++		struct rte_flow *flow = txgbe_flow_mem_ptr->flow;
+ 
+-	while ((syn_filter_ptr = TAILQ_FIRST(&filter_syn_list))) {
+-		TAILQ_REMOVE(&filter_syn_list,
+-				 syn_filter_ptr,
+-				 entries);
+-		rte_free(syn_filter_ptr);
+-	}
+-
+-	while ((l2_tn_filter_ptr = TAILQ_FIRST(&filter_l2_tunnel_list))) {
+-		TAILQ_REMOVE(&filter_l2_tunnel_list,
+-				 l2_tn_filter_ptr,
+-				 entries);
+-		rte_free(l2_tn_filter_ptr);
+-	}
+-
+-	while ((fdir_rule_ptr = TAILQ_FIRST(&filter_fdir_list))) {
+-		TAILQ_REMOVE(&filter_fdir_list,
+-				 fdir_rule_ptr,
+-				 entries);
+-		rte_free(fdir_rule_ptr);
+-	}
+-
+-	while ((rss_filter_ptr = TAILQ_FIRST(&filter_rss_list))) {
+-		TAILQ_REMOVE(&filter_rss_list,
+-				 rss_filter_ptr,
+-				 entries);
+-		rte_free(rss_filter_ptr);
+-	}
+-
+-	while ((txgbe_flow_mem_ptr = TAILQ_FIRST(&txgbe_flow_list))) {
+-		TAILQ_REMOVE(&txgbe_flow_list,
+-				 txgbe_flow_mem_ptr,
+-				 entries);
+-		rte_free(txgbe_flow_mem_ptr->flow);
++		TAILQ_REMOVE(&adapter->flow_list, txgbe_flow_mem_ptr, entries);
++		rte_free(flow->rule);
++		rte_free(flow);
+ 		rte_free(txgbe_flow_mem_ptr);
+ 	}
+ }
+@@ -3215,6 +3143,7 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 	struct txgbe_fdir_rule_ele *fdir_rule_ptr = NULL;
+ 	struct txgbe_rss_conf_ele *rss_filter_ptr;
+ 	struct txgbe_flow_mem *txgbe_flow_mem_ptr;
++	struct txgbe_adapter *adapter = TXGBE_DEV_ADAPTER(dev);
+ 	struct txgbe_filter_info *filter_info = TXGBE_DEV_FILTER(dev);
+ 	uint8_t first_mask = FALSE;
+ 	bool fdir_configured = false;
+@@ -3232,8 +3161,7 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 		return NULL;
+ 	}
+ 	txgbe_flow_mem_ptr->flow = flow;
+-	TAILQ_INSERT_TAIL(&txgbe_flow_list,
+-				txgbe_flow_mem_ptr, entries);
++	TAILQ_INSERT_TAIL(&adapter->flow_list, txgbe_flow_mem_ptr, entries);
+ 
+ 	memset(&ntuple_filter, 0, sizeof(struct rte_eth_ntuple_filter));
+ 	ret = txgbe_parse_ntuple_filter(dev, attr, pattern,
+@@ -3261,8 +3189,6 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 				goto next;
+ 			goto out;
+ 		}
+-		TAILQ_INSERT_TAIL(&filter_ntuple_list,
+-			ntuple_filter_ptr, entries);
+ 		flow->rule = ntuple_filter_ptr;
+ 		flow->filter_type = RTE_ETH_FILTER_NTUPLE;
+ 		return flow;
+@@ -3287,8 +3213,6 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 			rte_free(ethertype_filter_ptr);
+ 			goto out;
+ 		}
+-		TAILQ_INSERT_TAIL(&filter_ethertype_list,
+-			ethertype_filter_ptr, entries);
+ 		flow->rule = ethertype_filter_ptr;
+ 		flow->filter_type = RTE_ETH_FILTER_ETHERTYPE;
+ 		return flow;
+@@ -3311,8 +3235,6 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 			rte_free(syn_filter_ptr);
+ 			goto out;
+ 		}
+-		TAILQ_INSERT_TAIL(&filter_syn_list,
+-			syn_filter_ptr, entries);
+ 		flow->rule = syn_filter_ptr;
+ 		flow->filter_type = RTE_ETH_FILTER_SYN;
+ 		return flow;
+@@ -3339,8 +3261,6 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 			}
+ 
+ 			fdir_rule_ptr->filter_info = fdir_rule;
+-			TAILQ_INSERT_TAIL(&filter_fdir_list,
+-					  fdir_rule_ptr, entries);
+ 			flow->rule = fdir_rule_ptr;
+ 			flow->filter_type = RTE_ETH_FILTER_FDIR;
+ 			return flow;
+@@ -3426,8 +3346,6 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 			goto fdir_out;
+ 
+ 		fdir_rule_ptr->filter_info = fdir_rule;
+-		TAILQ_INSERT_TAIL(&filter_fdir_list,
+-			fdir_rule_ptr, entries);
+ 		flow->rule = fdir_rule_ptr;
+ 		flow->filter_type = RTE_ETH_FILTER_FDIR;
+ 
+@@ -3451,8 +3369,6 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 			rte_free(l2_tn_filter_ptr);
+ 			goto out;
+ 		}
+-		TAILQ_INSERT_TAIL(&filter_l2_tunnel_list,
+-			l2_tn_filter_ptr, entries);
+ 		flow->rule = l2_tn_filter_ptr;
+ 		flow->filter_type = RTE_ETH_FILTER_L2_TUNNEL;
+ 		return flow;
+@@ -3476,8 +3392,6 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 		}
+ 		txgbe_rss_conf_init(&rss_filter_ptr->filter_info,
+ 				    &rss_conf.conf);
+-		TAILQ_INSERT_TAIL(&filter_rss_list,
+-			rss_filter_ptr, entries);
+ 		flow->rule = rss_filter_ptr;
+ 		flow->filter_type = RTE_ETH_FILTER_HASH;
+ 		return flow;
+@@ -3492,8 +3406,7 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 		fdir_conf->mode = RTE_FDIR_MODE_NONE;
+ 	}
+ out:
+-	TAILQ_REMOVE(&txgbe_flow_list,
+-		txgbe_flow_mem_ptr, entries);
++	TAILQ_REMOVE(&adapter->flow_list, txgbe_flow_mem_ptr, entries);
+ 	rte_flow_error_set(error, -ret,
+ 			   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+ 			   "Failed to create flow.");
+@@ -3567,7 +3480,7 @@ txgbe_flow_destroy(struct rte_eth_dev *dev,
+ {
+ 	int ret = 0;
+ 	struct rte_flow *pmd_flow = flow;
+-	enum rte_filter_type filter_type = pmd_flow->filter_type;
++	enum rte_filter_type filter_type;
+ 	struct rte_eth_ntuple_filter ntuple_filter;
+ 	struct rte_eth_ethertype_filter ethertype_filter;
+ 	struct rte_eth_syn_filter syn_filter;
+@@ -3579,10 +3492,25 @@ txgbe_flow_destroy(struct rte_eth_dev *dev,
+ 	struct txgbe_eth_l2_tunnel_conf_ele *l2_tn_filter_ptr;
+ 	struct txgbe_fdir_rule_ele *fdir_rule_ptr;
+ 	struct txgbe_flow_mem *txgbe_flow_mem_ptr;
++	struct txgbe_adapter *adapter = TXGBE_DEV_ADAPTER(dev);
+ 	struct txgbe_hw_fdir_info *fdir_info = TXGBE_DEV_FDIR(dev);
+ 	struct rte_eth_fdir_conf *fdir_conf = TXGBE_DEV_FDIR_CONF(dev);
+ 	struct txgbe_rss_conf_ele *rss_filter_ptr;
+ 
++	/*
++	 * Confirm the handle is on this port before changing hardware.
++	 * A flow created on another port must not be removed here.
++	 */
++	TAILQ_FOREACH(txgbe_flow_mem_ptr, &adapter->flow_list, entries) {
++		if (txgbe_flow_mem_ptr->flow == pmd_flow)
++			break;
++	}
++	if (txgbe_flow_mem_ptr == NULL)
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++				"Flow not found for this port");
++
++	filter_type = pmd_flow->filter_type;
+ 	switch (filter_type) {
+ 	case RTE_ETH_FILTER_NTUPLE:
+ 		ntuple_filter_ptr = (struct txgbe_ntuple_filter_ele *)
+@@ -3591,11 +3519,8 @@ txgbe_flow_destroy(struct rte_eth_dev *dev,
+ 			&ntuple_filter_ptr->filter_info,
+ 			sizeof(struct rte_eth_ntuple_filter));
+ 		ret = txgbe_add_del_ntuple_filter(dev, &ntuple_filter, FALSE);
+-		if (!ret) {
+-			TAILQ_REMOVE(&filter_ntuple_list,
+-			ntuple_filter_ptr, entries);
++		if (!ret)
+ 			rte_free(ntuple_filter_ptr);
+-		}
+ 		break;
+ 	case RTE_ETH_FILTER_ETHERTYPE:
+ 		ethertype_filter_ptr = (struct txgbe_ethertype_filter_ele *)
+@@ -3605,11 +3530,8 @@ txgbe_flow_destroy(struct rte_eth_dev *dev,
+ 			sizeof(struct rte_eth_ethertype_filter));
+ 		ret = txgbe_add_del_ethertype_filter(dev,
+ 				&ethertype_filter, FALSE);
+-		if (!ret) {
+-			TAILQ_REMOVE(&filter_ethertype_list,
+-				ethertype_filter_ptr, entries);
++		if (!ret)
+ 			rte_free(ethertype_filter_ptr);
+-		}
+ 		break;
+ 	case RTE_ETH_FILTER_SYN:
+ 		syn_filter_ptr = (struct txgbe_eth_syn_filter_ele *)
+@@ -3618,11 +3540,8 @@ txgbe_flow_destroy(struct rte_eth_dev *dev,
+ 			&syn_filter_ptr->filter_info,
+ 			sizeof(struct rte_eth_syn_filter));
+ 		ret = txgbe_syn_filter_set(dev, &syn_filter, FALSE);
+-		if (!ret) {
+-			TAILQ_REMOVE(&filter_syn_list,
+-				syn_filter_ptr, entries);
++		if (!ret)
+ 			rte_free(syn_filter_ptr);
+-		}
+ 		break;
+ 	case RTE_ETH_FILTER_FDIR:
+ 		fdir_rule_ptr = (struct txgbe_fdir_rule_ele *)pmd_flow->rule;
+@@ -3630,14 +3549,14 @@ txgbe_flow_destroy(struct rte_eth_dev *dev,
+ 			&fdir_rule_ptr->filter_info,
+ 			sizeof(struct txgbe_fdir_rule));
+ 		if (txgbe_is_pf(TXGBE_DEV_HW(dev)))
+-			ret = txgbe_fdir_filter_program(dev, &fdir_rule, TRUE, FALSE);
++			ret = txgbe_fdir_filter_program(dev, &fdir_rule,
++							TRUE, FALSE);
+ 		else
+-			ret = txgbevf_fdir_filter_program(dev, &fdir_rule, TRUE);
++			ret = txgbevf_fdir_filter_program(dev, &fdir_rule,
++							  TRUE);
+ 		if (!ret) {
+-			TAILQ_REMOVE(&filter_fdir_list,
+-				fdir_rule_ptr, entries);
+ 			rte_free(fdir_rule_ptr);
+-			if (TAILQ_EMPTY(&filter_fdir_list)) {
++			if (TAILQ_EMPTY(&fdir_info->fdir_list)) {
+ 				memset(&fdir_info->mask, 0,
+ 					sizeof(struct txgbe_hw_fdir_mask));
+ 				fdir_info->mask_added = false;
+@@ -3656,22 +3575,16 @@ txgbe_flow_destroy(struct rte_eth_dev *dev,
+ 		rte_memcpy(&l2_tn_filter, &l2_tn_filter_ptr->filter_info,
+ 			sizeof(struct txgbe_l2_tunnel_conf));
+ 		ret = txgbe_dev_l2_tunnel_filter_del(dev, &l2_tn_filter);
+-		if (!ret) {
+-			TAILQ_REMOVE(&filter_l2_tunnel_list,
+-				l2_tn_filter_ptr, entries);
++		if (!ret)
+ 			rte_free(l2_tn_filter_ptr);
+-		}
+ 		break;
+ 	case RTE_ETH_FILTER_HASH:
+ 		rss_filter_ptr = (struct txgbe_rss_conf_ele *)
+ 				pmd_flow->rule;
+ 		ret = txgbe_config_rss_filter(dev,
+ 					&rss_filter_ptr->filter_info, FALSE);
+-		if (!ret) {
+-			TAILQ_REMOVE(&filter_rss_list,
+-				rss_filter_ptr, entries);
++		if (!ret)
+ 			rte_free(rss_filter_ptr);
+-		}
+ 		break;
+ 	default:
+ 		PMD_DRV_LOG(WARNING, "Filter type (%d) not supported",
+@@ -3687,15 +3600,8 @@ txgbe_flow_destroy(struct rte_eth_dev *dev,
+ 		return ret;
+ 	}
+ 
+-	TAILQ_FOREACH(txgbe_flow_mem_ptr, &txgbe_flow_list, entries) {
+-		if (txgbe_flow_mem_ptr->flow == pmd_flow)
+-			break;
+-	}
+-	if (txgbe_flow_mem_ptr != NULL) {
+-		TAILQ_REMOVE(&txgbe_flow_list,
+-			txgbe_flow_mem_ptr, entries);
+-		rte_free(txgbe_flow_mem_ptr);
+-	}
++	TAILQ_REMOVE(&adapter->flow_list, txgbe_flow_mem_ptr, entries);
++	rte_free(txgbe_flow_mem_ptr);
+ 	rte_free(flow);
+ 
+ 	return ret;
+@@ -3733,7 +3639,7 @@ txgbe_flow_flush(struct rte_eth_dev *dev,
+ 	txgbe_clear_rss_filter(dev);
+ 
+ out:
+-	txgbe_filterlist_flush();
++	txgbe_filterlist_flush(dev);
+ 
+ 	return 0;
+ }
+-- 
+2.53.0
 
---000000000000569a03065fd64adc
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=
-=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Nov 9, 2026 =
-at 3:40=E2=80=AFPM Konstantin Ananyev &lt;<a href=3D"mailto:konstantin.v.an=
-anyev@yandex.ru" target=3D"_blank">konstantin.v.ananyev@yandex.ru</a>&gt; w=
-rote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0p=
-x 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><br>
-&gt; Replace the __m128i members in the PCLMULQDQ CRC context with aligned<=
-br>
-&gt; uint64_t arrays to allow portable compile-time initialization.<br>
-&gt;<br>
-&gt; Move CRC16-CCITT and CRC32-ETH folding constants into static const con=
-text<br>
-&gt; structures in their respective handlers, removing the runtime<br>
-&gt; initialization previously performed by rte_net_crc_sse42_init and avoi=
-ds<br>
-&gt; the extra data segment static variables which were being populated.<br=
->
-&gt;<br>
-&gt; Load the constants into SIMD registers using aligned loads when perfor=
-ming<br>
-&gt; CRC calculations. This was done transparently previously when the<br>
-&gt; __m128i values were assigned, now there is explicit SIMD load done.<br=
->
-<br>
-It is not clear why(how) new code is better then what we have right now.<br=
->
-Can you probably provide a bit more details?<br>
-<br></blockquote><div><br></div><div>Previously this file was maintaining s=
-tatic variables in data segment namely:</div><div>static alignas(16) struct=
- crc_pclmulqdq_ctx crc32_eth_pclmulqdq;</div><div>static alignas(16) struct=
- crc_pclmulqdq_ctx crc16_ccitt_pclmulqdq;</div><div><br></div><div>These we=
-re populated in the init function with the same calculated fold constants.<=
-/div><div>The constants already are present in the rodata section in the bi=
-nary.</div><div>Hence the init is doing extra work in copying it over to th=
-e static=C2=A0crc_pclmulqdq_ctx</div><div>structures which is=C2=A0redundan=
-t.</div><div><br></div><div>This patch avoids this extra copy during init a=
-nd modifies the SIMD routines</div><div>to directly read the constants from=
- rodata memory. Thus the data segment memory usage is=C2=A0</div><div>reduc=
-ed by getting rid of the static variables (128 bytes). There should be no</=
-div><div>performance impact by this change (minus the init work done previo=
-usly).</div><div><br></div><div>=C2=A0</div><blockquote class=3D"gmail_quot=
-e" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204)=
-;padding-left:1ex">
-&gt;<br>
-&gt; Signed-off-by: Shreesh Adiga &lt;<a href=3D"mailto:16567adigashreesh@g=
-mail.com" target=3D"_blank">16567adigashreesh@gmail.com</a>&gt;<br>
-&gt; ---<br>
-&gt;=C2=A0 =C2=A0lib/net/net_crc_sse.c | 68 ++++++++++++++-----------------=
-------------<br>
-&gt;=C2=A0 =C2=A01 file changed, 22 insertions(+), 46 deletions(-)<br>
-&gt;<br>
-&gt; diff --git a/lib/net/net_crc_sse.c b/lib/net/net_crc_sse.c<br>
-&gt; index e30f8544fc..4361e35e39 100644<br>
-&gt; --- a/lib/net/net_crc_sse.c<br>
-&gt; +++ b/lib/net/net_crc_sse.c<br>
-&gt; @@ -12,15 +12,13 @@<br>
-&gt;=C2=A0 =C2=A0#include &quot;net_crc.h&quot;<br>
-&gt;=C2=A0 =C2=A0<br>
-&gt;=C2=A0 =C2=A0/** PCLMULQDQ CRC computation context structure */<br>
-&gt; -struct crc_pclmulqdq_ctx {<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0__m128i rk1_rk2;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0__m128i rk3_rk4;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0__m128i rk5_rk6;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0__m128i rk7_rk8;<br>
-&gt; +struct __rte_aligned(XMM_SIZE) crc_pclmulqdq_ctx {<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0uint64_t rk1_rk2[2];<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0uint64_t rk3_rk4[2];<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0uint64_t rk5_rk6[2];<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0uint64_t rk7_rk8[2];<br>
-&gt;=C2=A0 =C2=A0};<br>
-&gt;=C2=A0 =C2=A0<br>
-&gt; -static alignas(16) struct crc_pclmulqdq_ctx crc32_eth_pclmulqdq;<br>
-&gt; -static alignas(16) struct crc_pclmulqdq_ctx crc16_ccitt_pclmulqdq;<br=
->
-&gt;=C2=A0 =C2=A0/**<br>
-&gt;=C2=A0 =C2=A0 * @brief Performs one folding round<br>
-&gt;=C2=A0 =C2=A0 *<br>
-&gt; @@ -162,7 +160,7 @@ crc32_eth_calc_pclmulqdq(<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fold3 =3D _mm_lo=
-adu_si128((const __m128i *)(data + 32));<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fold4 =3D _mm_lo=
-adu_si128((const __m128i *)(data + 48));<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fold1 =3D _mm_xo=
-r_si128(fold1, temp);<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0k =3D params-&gt;rk1_=
-rk2;<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0k =3D _mm_load_si128(=
-(const __m128i *)params-&gt;rk1_rk2);<br>
-&gt;=C2=A0 =C2=A0<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0for (n =3D 64; (=
-n + 64) &lt;=3D data_len; n +=3D 64) {<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0temp1 =3D _mm_loadu_si128((const __m128i *)&amp;data[n]);<br>
-&gt; @@ -175,7 +173,7 @@ crc32_eth_calc_pclmulqdq(<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0fold4 =3D crcr32_folding_round(temp4, k, fold4);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt;=C2=A0 =C2=A0<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0k =3D params-&gt;rk3_=
-rk4;<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0k =3D _mm_load_si128(=
-(const __m128i *)params-&gt;rk3_rk4);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fold1 =3D crcr32=
-_folding_round(fold2, k, fold1);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fold1 =3D crcr32=
-_folding_round(fold3, k, fold1);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fold =3D crcr32_=
-folding_round(fold4, k, fold1);<br>
-&gt; @@ -205,7 +203,7 @@ crc32_eth_calc_pclmulqdq(<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0fold =3D _mm_xor_si128(fold, temp);<br>
-&gt;=C2=A0 =C2=A0<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0/** Single folding loop - the last 16 bytes =
-is processed separately */<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k =3D params-&gt;rk3_rk4;<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0k =3D _mm_load_si128((const __m128i *)params-&gt;=
-rk3_rk4);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0n =3D 16;<br>
-&gt;=C2=A0 =C2=A0<br>
-&gt;=C2=A0 =C2=A0single_fold_loop:<br>
-&gt; @@ -235,11 +233,11 @@ crc32_eth_calc_pclmulqdq(<br>
-&gt;=C2=A0 =C2=A0<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0/** Reduction 128 -&gt; 32 Assumes: fold hol=
-ds 128bit folded data */<br>
-&gt;=C2=A0 =C2=A0reduction_128_64:<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k =3D params-&gt;rk5_rk6;<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0k =3D _mm_load_si128((const __m128i *)params-&gt;=
-rk5_rk6);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0fold =3D crcr32_reduce_128_to_64(fold, k);<b=
-r>
-&gt;=C2=A0 =C2=A0<br>
-&gt;=C2=A0 =C2=A0barret_reduction:<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k =3D params-&gt;rk7_rk8;<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0k =3D _mm_load_si128((const __m128i *)params-&gt;=
-rk7_rk8);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0n =3D crcr32_reduce_64_to_32(fold, k);<br>
-&gt;=C2=A0 =C2=A0<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return n;<br>
-&gt; @@ -248,45 +246,17 @@ crc32_eth_calc_pclmulqdq(<br>
-&gt;=C2=A0 =C2=A0void<br>
-&gt;=C2=A0 =C2=A0rte_net_crc_sse42_init(void)<br>
-&gt;=C2=A0 =C2=A0{<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0uint64_t k1, k2, k3, k4, k5, k6;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0uint64_t p =3D 0, q =3D 0;<br>
-&gt; -<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0/** Initialize CRC16 data */<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k1 =3D 0x14ff2LLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k2 =3D 0x19a3cLLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k3 =3D 0x189aeLLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k4 =3D 0x8e10LLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k5 =3D 0x189aeLLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k6 =3D 0x114aaLLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0q =3D=C2=A0 0x11c581910LLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0p =3D=C2=A0 0x10811LLU;<br>
-&gt; -<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0/** Save the params in context structure */<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0crc16_ccitt_pclmulqdq.rk1_rk2 =3D _mm_set_epi64x(=
-k2, k1);<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0crc16_ccitt_pclmulqdq.rk3_rk4 =3D _mm_set_epi64x(=
-k4, k3);<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0crc16_ccitt_pclmulqdq.rk5_rk6 =3D _mm_set_epi64x(=
-k6, k5);<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0crc16_ccitt_pclmulqdq.rk7_rk8 =3D _mm_set_epi64x(=
-p, q);<br>
-&gt; -<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0/** Initialize CRC32 data */<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k1 =3D 0x1c6e41596LLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k2 =3D 0x154442bd4LLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k3 =3D 0xccaa009eLLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k4 =3D 0x1751997d0LLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k5 =3D 0xccaa009eLLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0k6 =3D 0x163cd6124LLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0q =3D=C2=A0 0x1f7011640LLU;<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0p =3D=C2=A0 0x1db710641LLU;<br>
-&gt; -<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0/** Save the params in context structure */<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0crc32_eth_pclmulqdq.rk1_rk2 =3D _mm_set_epi64x(k2=
-, k1);<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0crc32_eth_pclmulqdq.rk3_rk4 =3D _mm_set_epi64x(k4=
-, k3);<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0crc32_eth_pclmulqdq.rk5_rk6 =3D _mm_set_epi64x(k6=
-, k5);<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0crc32_eth_pclmulqdq.rk7_rk8 =3D _mm_set_epi64x(p,=
- q);<br>
-&gt;=C2=A0 =C2=A0}<br>
-&gt;=C2=A0 =C2=A0<br>
-&gt;=C2=A0 =C2=A0uint32_t<br>
-&gt;=C2=A0 =C2=A0rte_crc16_ccitt_sse42_handler(const uint8_t *data, uint32_=
-t data_len)<br>
-&gt;=C2=A0 =C2=A0{<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0static const struct crc_pclmulqdq_ctx crc16_ccitt=
-_pclmulqdq =3D {<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.rk1_rk2 =3D { 0x14ff=
-2LLU, 0x19a3cLLU },<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.rk3_rk4 =3D { 0x189a=
-eLLU, 0x8e10LLU },<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.rk5_rk6 =3D { 0x189a=
-eLLU, 0x114aaLLU },<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.rk7_rk8 =3D { 0x11c5=
-81910LLU, 0x10811LLU },<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0};<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0/** return 16-bit CRC value */<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return (uint16_t)~crc32_eth_calc_pclmulqdq(d=
-ata,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0data_len,<br>
-&gt; @@ -297,6 +267,12 @@ rte_crc16_ccitt_sse42_handler(const uint8_t *data=
-, uint32_t data_len)<br>
-&gt;=C2=A0 =C2=A0uint32_t<br>
-&gt;=C2=A0 =C2=A0rte_crc32_eth_sse42_handler(const uint8_t *data, uint32_t =
-data_len)<br>
-&gt;=C2=A0 =C2=A0{<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0static const struct crc_pclmulqdq_ctx crc32_eth_p=
-clmulqdq =3D {<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.rk1_rk2 =3D { 0x1c6e=
-41596LLU, 0x154442bd4LLU },<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.rk3_rk4 =3D { 0xccaa=
-009eLLU, 0x1751997d0LLU },<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.rk5_rk6 =3D { 0xccaa=
-009eLLU, 0x163cd6124LLU },<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.rk7_rk8 =3D { 0x1f70=
-11640LLU, 0x1db710641LLU },<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0};<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return ~crc32_eth_calc_pclmulqdq(data,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0data_len,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00xffffffffUL,<br=
->
-<br>
-</blockquote></div></div>
-</div>
-
---000000000000569a03065fd64adc--
