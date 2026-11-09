@@ -2,81 +2,75 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A065606A31C
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 21:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A46606A326
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 22:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=OLFAtIds
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=RDg7VCpN
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B7B4940DFD;
-	Mon,  9 Nov 2026 22:32:21 +0100 (CET)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
- [209.85.214.173])
- by mails.dpdk.org (Postfix) with ESMTPS id 509FD40285
- for <dev@dpdk.org>; Mon,  9 Nov 2026 22:32:20 +0100 (CET)
-Received: by mail-pl1-f173.google.com with SMTP id
- d9443c01a7336-2e9d1114320so10663645ad.3
- for <dev@dpdk.org>; Mon, 09 Nov 2026 13:32:20 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 90FA740285;
+	Mon,  9 Nov 2026 23:01:28 +0100 (CET)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTPS id EC37F40283
+ for <dev@dpdk.org>; Mon,  9 Nov 2026 23:01:25 +0100 (CET)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-2e9eb579c0eso7744455ad.3
+ for <dev@dpdk.org>; Mon, 09 Nov 2026 14:01:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794259938;
- x=1794864738; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794261684;
+ x=1794866484; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=YYnjuYrKp7FETEwOE2qWkL4GlIjrexshz5ziNjbC3bM=;
- b=OLFAtIdsa5Meu7WK4Rv41hT/QtI7DrfD6wsIKVmWNJM+zC8N7tr9huIhM776Df4cr8
- rB4VSHqkcO7CB4sivgGu3XeMTDE0QmUTdlKOuvEWq3VpwAfpMigsJ9n6C/wITIeElo2W
- 7AsAqyTfEItqzEMv/AUBnw9C2cnBrlZe4x5HGPIJ2rJB6Pl/rgcz0+u3OBpwzScgN0hK
- wNpbrWLN8Ta06rK5WNumOVJEjYXkhRRvvUD0+D+z2cKNuKmwzNT/IaMeixOU7ZymYeeW
- LpIhKryXnyGdfAsmTESf0V5KU3FB5Czh2UNiZlAz65p87/Cz0kCwevkNFbxtxkAtWszx
- wteQ==
+ bh=mHaiECguxytDkoOGAR0Zb+oHwGbNE9yLbO37PaSzMxM=;
+ b=RDg7VCpNBP0c6al6+mE2RoPS51M+zLkud0r9uvS/OQTFKLybIuNdBt10Z96bXzjN9Q
+ 3VTcKKe24PGs8dZoVCqX3h0Kgjf1gT3/sMi0VtSqtrUwg+qJGnoBLFrjL9IUhz7kqUEk
+ iATbZdybmhGCO+TzsHpqA4G7hDV45fc/zMZuGGQTzbsM9GMrX7RZJjbu3VYZH+BBys+9
+ c6OJTzeUJSSIOZVTKlQDe862aFRciBMJ2bjpsmOu+RTp/k1F5Kq3hcPmVvtlpeb7UKYn
+ eX4mfl0MlEB2pp9Jd7I7UJgaQa/Fd1dAIwPk6kGi8iDKbyoKKajVrRDu2c0EZYAF21kn
+ 1Mfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794259938; x=1794864738;
+ d=1e100.net; s=20260707; t=1794261684; x=1794866484;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=YYnjuYrKp7FETEwOE2qWkL4GlIjrexshz5ziNjbC3bM=;
- b=go4U6YVmG3KlZ0tuEW1zpEHwH03gd7QQtLZIrfE5yLmY2UZ8vSfUrKN7NzKrE6TW3R
- EZVZXqOt9zIM9LKhlQ/4Ai3wtyS5F3kL2TDBkzgxr6+Y/CdLxk9vJlLleQvNNKPBNH5f
- /vFqiQ8/vxUE0VFEKz/ro5kLHoYars5Yr3jJQochtJvl8IW6+zpIHFKB44YBCSesNLyZ
- mu7lhdF9n474wveolHMgjON2C9vErZuYFRoq9cFiFaroDUfpJ3Hi9tzK3cHMa7j4U2tc
- mSNJbZiHufuL0j92NvfVDPpz/pF1XvzMEHN+o1tXtD2BJ8Zbpgi+nl/+Dq0OuMiq0uzc
- vYQQ==
+ bh=mHaiECguxytDkoOGAR0Zb+oHwGbNE9yLbO37PaSzMxM=;
+ b=CFo4BWXfmXrAk75H/Tp0ZQGiWEu/f4iGLLZ82WhjJ/wXN7T1/Pc3A4X/KJj2kVR2wo
+ OAshPSPg9r/4C6ESr/TkkNBS0lSOyrn7s3PHqqHijhUW9s5xpKGTdzMK8EIR8/dgb/bO
+ yXY/JkIrtNMhX2d9GOG7OyCZUXAxh9KmiCflnWEnSEvt02FTThnmXfLtAouG1Jee+sWA
+ iCJkGT6SZZ9jszXwozGbAk8QpDkbyCbnqC0CiqwlG2CNvFwCTKFBIstGiCZOiEEuccyQ
+ Cpc5O8ZQvgYNAX1zaJVRYKd+Vn2nVhu5lA7ZpmfgF/ItuXBEVKkl/S1n1TbjSnPosgNM
+ zxPg==
 X-Forwarded-Encrypted: i=1;
- AL+hErHgk+dWzz/IuYviSskc7/eGRvHz48cGBc5oHugVbRlchxfdn6E/W2KloSw73lXT+5T4pzU=@dpdk.org
-X-Gm-Message-State: APuU4Z+OU/Ogs7DbqoyOeu4bSgcRqVSk3Mnm4B/qYaUdNd9oDHMm4gS/
- BnfKT34Zy2aq0ZaRjOyv2s9XnvKG9oEdw7tt7DKAH9kYq3AAwRFfAdHZC6aQ9d91O0g=
-X-Gm-Gg: AYBFou39J0D0dSFMKe+yYH+Unse0iaVgEqKKoBpLMA9cEfVkcWVpv/dzj6dlf80N5fH
- 7fMnB5hYojeCm4ihRB8aJ3VKXlUA6GY94rj+eFoBcVwTohvFXdljo7pQYJBkPFnQXk4FfXSOSsf
- 35N5twZmUDIRzNk+6+e/chA4hZNOzhHZa9sAohskzqwCpspznO5c0MlHqAOOTiNkj73VASvjw5R
- kLOZ6WIIPkGKtHL/YhiZbtLSj6wIErYBG5tZld4WP9AGTg8hPGxfBzlLV22q1rRBGUds0rdFXJF
- O7+b28BNTldY2L+eIxa6SbcSTna45hUyY3YYDz/0c+ldG4LoED1H+VKQX3IqaVb6Oc6+XkVp3be
- n95sdBoYnowvqMkSG6nfMzEHkvyJ+DLQze7DUNKzMiNgYYiotY29Dbsoj4C1RRFih3s+qa8TNgj
- ygJiQo71inoxbEsMmKy17dRSRA6zFlEtcG+JP9XNBtkIw9DqhEvRcMCnNH4T8OMTzZ2IaRZJq19
- rAISBhG8sLLP9+GmKFth1A1Igib8zs8T7+tH1u9GZjG/BuOMQBPm5t3/ntWxJDUITp5I3AhcJYa
- PwpMbemA9EYCxo+qZcB+PafgVoDf1QY9jHgVlKhjkvxzJXjF9fKt42EhK2zZG18RKqMDlQ==
-X-Received: by 2002:a17:903:1a2d:b0:2ed:1cf0:4cdf with SMTP id
- d9443c01a7336-2edb928a514mr3507725ad.60.1794259938523; 
- Mon, 09 Nov 2026 13:32:18 -0800 (PST)
+ AL+hErGWES5WgIQSPtCLp3jxvELYLPn2f0yLdCsyddzkfU+eW8MBcJVS2kCWXZcYdEOuzRqisms=@dpdk.org
+X-Gm-Message-State: APuU4Z8Z4zNc29T3pFvIAz4zZ8CbyYGLSkSCz0RLwznU2BOC90YrK6xH
+ 1N7ZBev/oEzhWcqmJ+vtsnA+N/6s09Un90a6nH5Jk+aeScsXhIvx5vh2ieARtuc10L0=
+X-Gm-Gg: AYBFou2bLdCGoBJH/ek39jKapMDJ0jhAdTpgZG8Hw8CmaLGCr8j9u2Ua0aITiD1TcF5
+ QxCVaLeECwWrZPM0L+4e1Olj2S8c4F3AosyMFNLUjUEYJvHev4+cfZGHrk3dzgAH1rRenFCxvlh
+ Bpwx3JjPuuG3YvGsQ383ySeX1k5N64YxNiGl1F78Ehgh2Y3Pey1C3a9G3oXVO8yq+lG3OZ6F6hF
+ CKdHBhQrEjdNUvO6D16zYkVwcwj8IYdtg3QR4pR/hcj9PqG4lVp9nNpnubD/H08J8/vvKGw5HgN
+ cbdRA7FaY54wO03YUm2GgDVTWF1tYgRyOpKQb9fOiCgSK+AEeqxrAY3ch4OaKwgFFe5+fX7CD+8
+ 7l4uhoJ6TzHCPhu3TrW4uXdKSDi79BPSr5brFVLdL2a47Ge1boEnajX+0McUaQl8ECAtHrUih4m
+ 7LU9JCy71y1iW8J4qUGNosrvzqCyHggzMP+JzCLz8Kd0L9n1+Vu7P8XkBmhsDgXUv7MHABbRRA6
+ tdkjacODfshMIY5igjeO0/H/CdFWbuqhZFyYrM4VXoUEKqt+LkC7r3BktxibymMFgCHHinY/1Z8
+ /s+1j4fH1GqvY/IfB76WkylTjCcyI8BZnXUoZxzXUnEwkDUosaN7w6Iqql3IDPFTn3QhNw==
+X-Received: by 2002:a17:903:2c5:b0:2e9:3dd0:c7d with SMTP id
+ d9443c01a7336-2edb9204fd5mr4838415ad.20.1794261679039; 
+ Mon, 09 Nov 2026 14:01:19 -0800 (PST)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2edb6d7eafbsm2050005ad.36.2026.11.09.13.32.17
+ d9443c01a7336-2edb6a412acsm2246035ad.4.2026.11.09.14.01.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Nov 2026 13:32:17 -0800 (PST)
-Date: Mon, 9 Nov 2026 10:41:33 -0800
+ Mon, 09 Nov 2026 14:01:18 -0800 (PST)
+Date: Mon, 9 Nov 2026 14:01:16 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: chengwen.feng@linux.dev
-Cc: "Shuaisong Yang" <yangshuaisong@h-partners.com>, "Xingui Yang"
- <yangxingui@huawei.com>, "Chengwen Feng" <fengchengwen@huawei.com>, "Hao
- Chen" <chenh@yusur.tech>, "Min Hu (Connor)" <humin29@huawei.com>, "Wei Hu
- (Xavier)" <xavier.huwei@huawei.com>, "Chunsong  Feng"
- <fengchunsong@huawei.com>, "Ferruh Yigit" <ferruh.yigit@amd.com>,
- dev@dpdk.org, stable@dpdk.org, liuyonglong@huawei.com
-Subject: Re: [PATCH] net/hns3: fix hard-coded default value of UMV space
-Message-ID: <20261109104133.58a16f41@phoenix.local>
-In-Reply-To: <6b58c0ca561cad60abb0f7105b15e16989b80068@linux.dev>
-References: <20261104124033.3373452-1-yangshuaisong@h-partners.com>
- <6b58c0ca561cad60abb0f7105b15e16989b80068@linux.dev>
+To: Chengwen Feng <fengchengwen@huawei.com>
+Cc: <thomas@monjalon.net>, <dev@dpdk.org>
+Subject: Re: [PATCH] ethdev/telemetry: fix hide_zero parameter being reset
+Message-ID: <20261109140116.366c0760@phoenix.local>
+In-Reply-To: <20261030034157.49080-1-fengchengwen@huawei.com>
+References: <20261030034157.49080-1-fengchengwen@huawei.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -97,10 +91,23 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Wed, 04 Nov 2026 13:04:37 +0000
-chengwen.feng@linux.dev wrote:
+On Fri, 30 Oct 2026 11:41:57 +0800
+Chengwen Feng <fengchengwen@huawei.com> wrote:
 
-> Acked-by: Chengwen Feng <fengchengwen@huawei.com mailto:fengchengwen@huawei.com >
+> When the "hide_zero" parameter is parsed successfully in the ethdev
+> telemetry regs command, the else branch unconditionally resets
+> hide_zero back to false, discarding the parsed value. As a result the
+> hide_zero option is silently ignored.
 > 
+> Remove the unnecessary reset so the parsed hide_zero value is retained
+> and passed to eth_dev_get_port_regs().
+> 
+> Fixes: ba4d57bd849d ("ethdev: support hide zero in registers telemetry")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+> ---
 
-Mail address got garbled in your Acked-by. Fixed during merge
+Applied to next-net.
+Note: this all gets a lot cleaner if/when the kvargs helpers get merged
+https://patchwork.dpdk.org/project/dpdk/patch/20260930224340.58580-3-stephen@networkplumber.org/
