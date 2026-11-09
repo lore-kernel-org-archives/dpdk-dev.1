@@ -2,95 +2,82 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C21606A322
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 14:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F57B606A323
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Nov 2026 14:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XxzqTGnD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lAjH09k9
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8510F4026E;
-	Mon,  9 Nov 2026 15:15:39 +0100 (CET)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com
- [209.85.128.170])
- by mails.dpdk.org (Postfix) with ESMTPS id 73D824025A
- for <dev@dpdk.org>; Mon,  9 Nov 2026 15:15:37 +0100 (CET)
-Received: by mail-yw1-f170.google.com with SMTP id
- 00721157ae682-8b300713befso6323667b3.1
- for <dev@dpdk.org>; Mon, 09 Nov 2026 06:15:37 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794233736; cv=none;
- d=google.com; s=arc-20260327;
- b=kAPC2uHv8Y1Watkokwxwz8Xwaot88wDDJFrjnDH2QHd7Kr7KDloE53fEoHU+4OKX7j
- CVz+v490Hgu8S0mHCRCgw6TU1JongD8GR2uib3YQ0X/f+OspRJBYR92CyV3AZOBcy35c
- D0gX18M0iNAmTQgVm72JVLhgtzpPcuzMleWe0uK2eq8Mg2/AczWJXHz43E+PRKAIP7eQ
- y//wbxRad70KSbb6QbQlCSlPNyv0o3sW3sqFEy6qw+N47eel3iXs1mcXeT4auPM2S/MF
- 5xjnB4pq9kb3CEn+nXJ2Z+pFBhgp2oauQfbTzSpvYZrM7f9kuB2/NYe2X6qtM9uTzEpq
- OxCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=yOyRZjNOAwJYnyaD+N0AMwWPRWTQXiW9T2zs//nAUi8=;
- fh=H2JmReDWbs6nSOBFm0L8vgBZ73MRnb61PIpZGjSMkTI=;
- b=gqVZ2nT/QsXJnpH5CBI3dS0hMZLbgMlG2P/s7FqJpLFYz7he1XbnbLILQZQUslHGHp
- bqAxbDwRDeG6kHGhGAEyi2S7G5nC3/PU54V/wkYfnUlhkIFsNm/pERCEO9LogJ6FvVJX
- qAfHrHdLM27aldvc7Jhzng1N0Lts8b8Ggekf+DHHxAPvGmw25+sjfzKLb4/2q2naCH1U
- /C/IJfiTyvgji+7Tzvpm/JVeL/duer+gLqObc3UB7LhEmay0ITQVvnwufmVJsAr9ULI+
- JddckDiBTPplmkNNP5pURH16Bw3EdgAfKDku/LouS9rnGJfC31hcDlpJnYnKzdkPK2Ef
- JDGw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 4B80F4026E;
+	Mon,  9 Nov 2026 15:41:20 +0100 (CET)
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
+ [209.85.219.43])
+ by mails.dpdk.org (Postfix) with ESMTPS id 609E24025A
+ for <dev@dpdk.org>; Mon,  9 Nov 2026 15:41:18 +0100 (CET)
+Received: by mail-qv1-f43.google.com with SMTP id
+ 6a1803df08f44-91eb53957cbso13255826d6.3
+ for <dev@dpdk.org>; Mon, 09 Nov 2026 06:41:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794233736; x=1794838536; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+ d=gmail.com; s=20260707; t=1794235277; x=1794840077; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=yOyRZjNOAwJYnyaD+N0AMwWPRWTQXiW9T2zs//nAUi8=;
- b=XxzqTGnDqDiZ9VjTNrf6E0JfsHBGp7GpccY2IQ48tcVH/xscVNeaUDdKP/FsS0dV9i
- 8jENm5TUw0KVDNboCbfPl5PRBbu9dIG7nOX1qMxDAluvSFFcsO8RAbhXxBjKPofnocv1
- EVvFdezNqvgylp9CZbU0frUhqMo1ECnNRffLxpuSZmkBkfK6EwIerANwkBX0OBMTdpKV
- i15fRGiBcfezn3xPSdjNqu39IlcDW+w+YW8pQgjQcGZyPC3s3WxpavjRStv6deXBK88o
- 6ECYGss5oXpt4ff+bC/JaBcoy3hTh08BJePIeT19kj1v5vF0PTVlldyPs0CZ3+wYEnui
- 2Hdg==
+ bh=4vYKPE7e/nozYBfCKcKVFmKxTOQiQtozhdwKVk8dEaE=;
+ b=lAjH09k9zLsdap85O6SYgUMGac8gjyGjx4ZCOhVP1s2kzmPpPmavIn5DGRllhYvw4i
+ ziKt/0HKElY0I94p8nf/GyYvLlh5GS1AXxlDV/73sC9k9BcaIMKSWIcm1yqWyzC3yPN5
+ SkD7X/fmEiwAfryINKwIFgNM4t/zIt+vPcD+HHusbCHnOj7SkNyyB3MthJ6BPyOk51LX
+ oS2n5L51JJJLMl1ecMwOsekI3Y9bfaUok9lmvng4GBZahh33sh6w7pTIS7m/xR31Wqac
+ t7qaSDPJrbtHZNPzPQGu4S5aeEDXWHy4EVhIr9ymeft42b5HmT7beiox1sVMWadLUA7p
+ +DlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794233736; x=1794838536;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
+ d=1e100.net; s=20260707; t=1794235277; x=1794840077;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=yOyRZjNOAwJYnyaD+N0AMwWPRWTQXiW9T2zs//nAUi8=;
- b=aCgdQnXgGpifY1zREKX39oedZ+oI3SQbIMs1jCjEQQpdByAEbl4cob6+9vfrHn/cPE
- +5Wm6aOqoXhRhaLJwA5CjJalY3dimE5oFHxRtsiiv6SexyMkaz6GS4J7rdNg4R2TTlXL
- 1sOFTkcXRyBk1EuaZ1P2e/gXuub6gVNNMCxkOw5616XraOX1DcTzR8mnr+dZmeM0crjB
- orfHhnm9kMN2937Sd6qyIeIsHPpgSF4FvaEkvpL0ahXLaeFKlEB7M7r4mg6vU61LDZ1r
- xR0v8jFduU8zmw1k2Ip+a1wnDcBOsRpzQtuRx0vZ41GhpStxuBiEQbrPNq9wVqTDSUBE
- GrfQ==
-X-Forwarded-Encrypted: i=1;
- AL+hErHvvfPj1UvoZ5qWGXNh13FaJ/HcDuW2qYJboCa61R/j3+ILUHX5Jp+WnNGNhJ/FTfEtKdc=@dpdk.org
-X-Gm-Message-State: APuU4Z9K+v9ZL7kjN3ve+OXDvxicTZqsCVY1lVAbvDqAwUQYv5ZmMUAR
- GpQEKl0NtUosCAHciS29F2PMEPJgN49znVRxjsjJ1DmDkvMpBRwQXK4m5r0fYipfVTPitBaI6aW
- xG+Lfp9qx3aH8htTCuQWyxQ3K9UqPpIM=
-X-Gm-Gg: AYBFou0HX9+b/KhS9U4i7GxjlgaVC/3lAPPSjXHHKjziOl+yIe/tC3sVFXyo/kYHIgQ
- Goe8yiz3DdW8EDF/1DTwO32jGfEvib/V6Kc05ZI1U005yLVa7eBShd+tjC2fbkUbAKRRNgV3RmH
- yWPpgG5jXSkp1+YrJ6dK1KWH/DxZEdINEaQ1PjTLPfZ0x4ch8KFNU64fkKHEDcK4vwBUMlFfBe5
- OVHpzhSyejpC8HIj24FZv7SFRfJK0OMoek4ES3mUpmYrSCj5FuyZ1gkQ3DTRDpBbOUjOmI8eE9p
- WePrlruPrYdNB90dK1NVwTtBAoPPRq5eFS4dsDziDXUrFEIgnfWMRbhPVPdnncx8k9W35x3fG7h
- FfAjsCMOe5yXpSXOb3AlvjM3lmOjaCKtUS8LvF8R50cSs6YHiVyyOq8rudR/TdgplsNXsFyj7gt
- GZM7fu5NBDfpIiwnekMeSyV3q374u+O9sy/Vtr8cRlAQ2gbhLiTxBPyF6AjiFlcu9lD9KZCn9FO
- A==
-X-Received: by 2002:a05:690c:dc4:b0:8a8:7e5a:dc2f with SMTP id
- 00721157ae682-8b36c9c1baamr25376747b3.12.1794233736221; Mon, 09 Nov 2026
- 06:15:36 -0800 (PST)
+ bh=4vYKPE7e/nozYBfCKcKVFmKxTOQiQtozhdwKVk8dEaE=;
+ b=kSqPrj4W3j94JNQdfXMjhcisY0Nc4/slJNmc86ziLuzCMG+de/YJddOcIZHo9a6FK1
+ kdEU9XNJz6F7r9KJ964SEyLyVeDLb3FgZEg3Z6v2bPVYRhMK94vV8BDOt3Ss0GeW5r2t
+ 7u7yF0nr5FKy5wy/PxoUdFXH4rlEEwEAfbwURc+Vhdx409IL23+e0uf72QSq5zdo5HDf
+ ODGIXFsBTCSxGS51EsrZ6NVNdy71l7XZ+VhvxQwchUrEC2H7054UkacVCDdj6yZWKCjk
+ In9idCEdXjPXDLlCgoBXM+esZylb9TPsHhi5tBdGlGsTFnbVbAo5PDAYV2F2o1PM9X4G
+ lpQw==
+X-Gm-Message-State: APuU4Z9RALDhN6Rj66xjQf25EhRgpXU/oQkXXBPmb2L1NDcLgk7CzCyT
+ UItNzjZ/7SfQFJdRHNElend0CX5Hb5rV/xxmmR0LmV6LiwGkqiFkhiRQnAkzjja9
+X-Gm-Gg: AYBFou1u5CbmPk5cXoi+07j8nhWsiP508YlJtM4d0n0iA3pk7L2WCMw4G3QVaJNnoa3
+ 1T1D1eMvXOjixM1pCBl2NIqP5ro5BxQOh7gKXyWqScJhfCmFXn/mmokMmV2rRZNl/ndILT4Op2B
+ IkdTQYdmDNIdLmAm8K2gCJem+CBBiD9xlnC5ucVKfgAOKB1oYbFqc83+WAalzNf5tfVJ+ksdOOP
+ mxDdjvXJDMxz0mABQ6GdDtA8627FMMtAQRQRUG/kPZ81lxk6d3tK30KwZKOBQxjnzXlSP2w3wM+
+ Bym7Ar7am93XlJsQAb+MJiLOLg7QBNKjcGBAYI69zBbCrOtyIedFQU+vLUpbnU62WryySwnsCaV
+ KseQ4j2CG7szh/5BHMfaDEuRaEYgPLTKa2eTYpsQSRBcUwubvuCLGldgiIiNP5fYyQg4KiLlJu5
+ 9d7kiDiDF1M/qIO815AhWVisgMPCQb0hTW0I+ftCIDLe81QTI8oNnn4vTqbeTw/u7kmuccCqvAy
+ KznQbNGZ3dk6qDu6ufu5br3f9bG5l4x/2JIzm8i51D9Npf7rsZmPy5BqrGxkpDQKpAJsniC0AxM
+ rzVg4L8YqcEslRHyYMGkdF+bLRFH2w+Pdfoi/xYtb/B9NtsGIMXCxktiYwgOeKL/bvmjzPu6SIu
+ ixZ7nlD+efzUJ8h3eGMxzhs9CCVlVU4XlWScDn6+2yi5RFt2HlvjH3+xqYhpeUoR6ah/sT9nf+C
+ s=
+X-Received: by 2002:a05:6214:f27:b0:91e:887f:8bf1 with SMTP id
+ 6a1803df08f44-91ed248b8d4mr60639706d6.33.1794235277060; 
+ Mon, 09 Nov 2026 06:41:17 -0800 (PST)
+Received: from bos-lhvwah.bos01.corp.akamai.com
+ (g2001-4878-8037-0700-526b-8dff-fef6-cfbf.deploy.static.akamaitechnologies.com.
+ [2001:4878:8037:700:526b:8dff:fef6:cfbf])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-91eceed448dsm43579846d6.45.2026.11.09.06.41.15
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 09 Nov 2026 06:41:15 -0800 (PST)
+From: Robert Sanford <rsanford2@gmail.com>
+To: dev@dpdk.org
+Cc: andrew.rybchenko@oktetlabs.ru, mb@smartsharesystems.com,
+ olivier.matz@6wind.com, Robert Sanford <rsanford@akamai.com>
+Subject: [PATCH v3 0/3] mempool: fix races between list walk and create/free
+Date: Mon,  9 Nov 2026 09:40:51 -0500
+Message-Id: <20261109144054.3784583-1-rsanford2@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261103173543.130142-1-rsanford2@gmail.com>
+References: <20261103173543.130142-1-rsanford2@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261107051139.37923-1-pbhagavatula@marvell.com>
-In-Reply-To: <20261107051139.37923-1-pbhagavatula@marvell.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Mon, 9 Nov 2026 19:45:09 +0530
-X-Gm-Features: AclHuK-QxbOcM20lWUOra0EUmOyowPQYo7LzAqHQNSLk5YRrTDN6W4yf35m1Q9I
-Message-ID: <CALBAE1NhORNXiS=MH66eXbMRKcqQbpC+GO8OMug50rYGNk-u+A@mail.gmail.com>
-Subject: Re: [PATCH] event/cnxk: fix new-event burst enqueue with LMTST
-To: pbhagavatula@marvell.com
-Cc: jerinj@marvell.com, Shijith Thotton <sthotton@marvell.com>, dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -100,97 +87,75 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Sat, Nov 7, 2026 at 10:48=E2=80=AFAM <pbhagavatula@marvell.com> wrote:
->
-> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
->
-> Add an I/O write barrier after LMTST submissions in the new-event
-> helper so the stores are ordered before the next iteration.
->
-> Enqueue small bursts, below one LMT line of entries, event by event
-> instead of using the LMTST path.
->
-> Fixes: c3320d21b475 ("event/cnxk: use LMTST for enqueue new burst")
-> Fixes: b08b193bceab ("event/cnxk: add CN20K SSO enqueue fast path")
->
-> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+From: Robert Sanford <rsanford@akamai.com>
 
+A thread walking the mempool list with rte_mempool_walk(),
+rte_mempool_lookup() or rte_mempool_list_dump() can crash while other
+threads create and free mempools. We hit this in production, in a
+process that walks the mempools while other threads create and free
+them.
 
-Applied to dpdk-next-eventdev/for-main. Thanks
+There are two races:
 
-> ---
->  drivers/event/cnxk/cn10k_worker.c | 9 +++++++++
->  drivers/event/cnxk/cn20k_worker.c | 9 +++++++++
->  2 files changed, 18 insertions(+)
->
-> diff --git a/drivers/event/cnxk/cn10k_worker.c b/drivers/event/cnxk/cn10k=
-_worker.c
-> index f33c3a561a88..a8ddbc5d8bfb 100644
-> --- a/drivers/event/cnxk/cn10k_worker.c
-> +++ b/drivers/event/cnxk/cn10k_worker.c
-> @@ -350,6 +350,8 @@ cn10k_sso_hws_new_event_lmtst(struct cn10k_sso_hws *w=
-s, uint8_t queue_id,
->                 roc_lmt_submit_steorl(wdata[1], pa[1]);
->         }
->
-> +       rte_io_wmb();
-> +
->         left -=3D (sz0 + sz1);
->         if (left)
->                 goto again;
-> @@ -395,6 +397,13 @@ cn10k_sso_hws_enq_new_burst(void *port, const struct=
- rte_event ev[],
->         uint8_t queue_id;
->         int32_t space;
->
-> +       if (nb_events < BIT(ROC_SSO_AW_PER_LMT_LINE_LOG2)) {
-> +               for (idx =3D 0; idx < nb_events; idx++)
-> +                       if (!cn10k_sso_hws_new_event(ws, &ev[idx]))
-> +                               break;
-> +               return idx;
-> +       }
-> +
->         /* Do a common back-pressure check and return */
->         space =3D sso_read_xaq_space(ws) - ws->xae_waes;
->         if (space <=3D 0)
-> diff --git a/drivers/event/cnxk/cn20k_worker.c b/drivers/event/cnxk/cn20k=
-_worker.c
-> index 8c1df3dbafc1..c15e3cd46ae7 100644
-> --- a/drivers/event/cnxk/cn20k_worker.c
-> +++ b/drivers/event/cnxk/cn20k_worker.c
-> @@ -308,6 +308,8 @@ cn20k_sso_hws_new_event_lmtst(struct cn20k_sso_hws *w=
-s, uint8_t queue_id,
->                 roc_lmt_submit_steorl(wdata[1], pa[1]);
->         }
->
-> +       rte_io_wmb();
-> +
->         left -=3D (sz0 + sz1);
->         if (left)
->                 goto again;
-> @@ -350,6 +352,13 @@ cn20k_sso_hws_enq_new_burst(void *port, const struct=
- rte_event ev[], uint16_t nb
->         uint8_t queue_id;
->         int32_t space;
->
-> +       if (nb_events < BIT(ROC_SSO_AW_PER_LMT_LINE_LOG2)) {
-> +               for (idx =3D 0; idx < nb_events; idx++)
-> +                       if (!cn20k_sso_hws_new_event(ws, &ev[idx]))
-> +                               break;
-> +               return idx;
-> +       }
-> +
->         /* Do a common back-pressure check and return */
->         space =3D sso_read_xaq_space(ws) - ws->xae_waes;
->         if (space <=3D 0)
-> --
-> 2.50.1 (Apple Git-155)
->
+- rte_mempool_free() unlinks and frees the list entry without the
+  mempool list lock that the walkers hold, so a walker can reach a
+  freed entry or mempool. Patch 1 takes the lock in rte_mempool_free(),
+  as rte_mempool_create_empty() already does. A rte_mempool_walk()
+  callback can therefore no longer free a mempool; this is documented.
+
+- A mempool is on the list before its store exists, but
+  rte_mempool_dump() queries the mempool driver, which reads the store.
+  So rte_mempool_list_dump() and the telemetry /mempool/info handler
+  crash on such a mempool. Patch 2 adds rte_mempool_is_created(),
+  makes them report the mempool without querying the driver until it
+  returns true, and documents that rte_mempool_walk() callbacks must
+  check it before querying the driver.
+
+Patch 3 adds a test to mempool_autotest. On x86 with 4 or 8 lcores,
+it crashed in all 20 runs without patch 1, without patch 2, or
+without both, and passed in all 20 runs with both patches.
+
+v3:
+- Patch 2, as suggested by Morten Brørup: the helper that tests
+  RTE_MEMPOOL_F_POOL_CREATED is now the public function
+  rte_mempool_is_created(), and the rte_mempool_walk() documentation
+  refers to it instead of the flag. Release note added. Acked-by added.
+- Patch 3: the walk callback uses rte_mempool_is_created().
+- Patch 1: unchanged.
+
+v2:
+- Patch 2 reworked as suggested by Morten Brørup: rte_mempool_walk()
+  no longer skips mempools that are not populated yet. Instead,
+  rte_mempool_dump() and the telemetry callback report them without
+  querying the mempool driver, and the rte_mempool_walk() documentation
+  asks callbacks to check RTE_MEMPOOL_F_POOL_CREATED. The flag is now
+  set and tested with release/acquire atomics instead of plain accesses
+  with fences. New title.
+- Patch 3: the walk callback dumps every mempool, and checks the flag
+  before querying the driver. The test waits 100 us instead of 10 us
+  before populating, so that it still finds unpopulated mempools
+  reliably.
+- Patch 1: unchanged, Reviewed-by added.
+
+Robert Sanford (3):
+  mempool: fix race between list walk and free
+  mempool: fix dump of unpopulated pool
+  test/mempool: add list walk race test
+
+ app/test/test_mempool.c                | 144 +++++++++++++++++++++++++
+ doc/guides/rel_notes/release_26_11.rst |   7 ++
+ lib/mempool/rte_mempool.c              |  45 +++++++-
+ lib/mempool/rte_mempool.h              |  29 +++++
+ 4 files changed, 221 insertions(+), 4 deletions(-)
+
+-- 
+2.34.1
+
