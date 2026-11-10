@@ -2,78 +2,105 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884A5606A31C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 13:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7923A606A321
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 13:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=dBOu+lSD
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=QbjqB2ke;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=RbTMFprF
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9099D40E30;
-	Tue, 10 Nov 2026 14:40:55 +0100 (CET)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com
- [209.85.221.51])
- by mails.dpdk.org (Postfix) with ESMTPS id DE76B4027C
- for <dev@dpdk.org>; Tue, 10 Nov 2026 10:42:45 +0100 (CET)
-Received: by mail-wr1-f51.google.com with SMTP id
- ffacd0b85a97d-48e46e449e8so1190088f8f.3
- for <dev@dpdk.org>; Tue, 10 Nov 2026 01:42:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794303765; x=1794908565; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=7QD4JsPE7nmErzaF5tHl0tKvc0A6dv/Iif1Hcw1LOxY=;
- b=dBOu+lSD4c1s8n3SYDoeO0oh6FvXc/AneXBmCqYv8V3TXVxeY65/gzMG1xl3agTTd+
- 9rrMZEdbjWckUKkPbsh//0hUeiP6bRONoxPHPv5Ncyt1amSGVJ47FKjbNEGp3eQBATuu
- 6x8PgZaruRwmB5ut17H1au1VaYMuiiHqMzhTL1KLmxdtkcgUhansfOZSsEbUgn/Bf8q8
- wbvYgSOhKpjuyUOLY3cim3jwLBsbdrnGwZzetYYQfp/Z8ZmbvJ7NRCgYJzaIMqXLISRy
- zAsCZt12Y07yuXJbhSLWtUmyE+2cdDrE1AteU1jfUyC+VP7+RbYBLNeXbcoHckN9qfR2
- FMDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794303765; x=1794908565;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=7QD4JsPE7nmErzaF5tHl0tKvc0A6dv/Iif1Hcw1LOxY=;
- b=xe5TmwmaOv4xFjCc/qAdzXUBXYP7jzapALCkIrwL0zH6CkWblRzv0NXusKjaX4i0Yg
- GKONUySb8rSbWa/kW5cTYBwy+hoq28VbQPNVD7iT1W3aOH1qoEYk7CVIJ04K7wZC05JN
- BG/1WuoLaSFX1cOgUNtbiEUyV+Ddep+83wjausr/NcmhEvMSN+m4iaU63I3NmpAAzoJF
- Hg5Ch2qc3R7NCTxN12rYZ2r6pTxDOfNO91YPsfRxJAl+q+yAoTAyMEbP0u9OnM7BM6Pv
- pojD39219ss+VXLWL/+IJZWmiN3d0kkgegQK00aFxqffqBEIkNSn0XDK5K700cZbfsfP
- 6MQA==
-X-Gm-Message-State: APuU4Z87dLpCZAigan/BnKyqmLto52q75zAnQuBd8A16xFJFMZy50txH
- 1mokyhIpi+WYSry0PMdwISAqRQgmukYJbeVfC1U2aCa6d7LIMq1VxAu51705ZBaY
-X-Gm-Gg: AYBFou0FgGu1X35ZEoHGuOliPpZzyJ4f4t46fCGyvNJV5sJ71LQiF4kG9urOwBiEZ/B
- Y1XUa6FOLqwljFTLxBAaypcfF8zoNUv2Cco/hMTWOzrFw7THsohf4q4EVXJDYw4gxcjdcur0U7b
- Rg0k4utCXJi5BlsXxY1GV1rZ1EcRslDU+xaIjzBPrUsbet59NtB3EnHDUQ4DjyluJTldrN3xUyd
- D2amP6W/Jk+ntG/MoTNykuiESZAYL51EcAMktMGHQRB2K3NBcRaT7cMCs1LL+YqqHL3MBDIg7ar
- ttmM3YuQR1196JOMkgYOucW+SZ/cRvCxNYx2b/J2IKgtATh6XLhlaKuUD/mFdXv5O4ewZz/74JC
- r05yw88stYUytsTi3xtsEQmErm86ze0f0JP4n609DiNa8Al1M9Lbo5s42DFCiPU3qu+QwnAFlyD
- yM0KkCssCq7wDxndR47Dm4Dq5XCRN/75JWGGidJjOT5MhAXwe5r60YWy4flkC/xKmZKwOT/p0O/
- YlCaFnkKStVlgUsnvi34t4MTIc2CkHQUbOxAncPUutNzBRJCC4g243ZU5hBUUhJeklZ/2+Z2HjM
- 1EEx4fIy1zSXMaNcnXqFj2MAkIAEdYVDC701E7J4ZdpkrbbZqCrfukbaOVh+QHr+/GML3r0KzBs
- dFPtvAHzkY9ouoOEAResVR23M2xGBfpyDMPWetPFtVahm3Ps=
-X-Received: by 2002:a05:600c:474c:b0:4a1:acaa:9d4c with SMTP id
- 5b1f17b1804b1-4ba0234f937mr33682535e9.25.1794303765161; 
- Tue, 10 Nov 2026 01:42:45 -0800 (PST)
-Received: from center.jhjvjihww5qejoy14qwv1cc4td.frax.internal.cloudapp.net
- ([131.189.143.225]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4983585923bsm4227849f8f.11.2026.11.10.01.42.43
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Nov 2026 01:42:44 -0800 (PST)
-From: Orgad Shaneh <orgads@gmail.com>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>,
- Long Li <longli@kernel.org>, Aditya Garg <gargaditya@microsoft.com>
-Subject: [PATCH] net/mana: do not block Rx interrupt calls during a reset
-Date: Tue, 10 Nov 2026 09:42:43 +0000
-Message-ID: <20261110094243.151321-1-orgads@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261109142127.7a54ee80@phoenix.local>
-References: <20261109142127.7a54ee80@phoenix.local>
+	by mails.dpdk.org (Postfix) with ESMTP id E39D840285;
+	Tue, 10 Nov 2026 14:56:27 +0100 (CET)
+Received: from fhigh-b1-smtp.messagingengine.com
+ (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+ by mails.dpdk.org (Postfix) with ESMTPS id 57F6A40281
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 14:56:26 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 3C6A17A024E
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 08:56:25 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Tue, 10 Nov 2026 08:56:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1794318984;
+ x=1794405384; bh=gY6L1sZ71i/JB5w1AP8ihonuZ/ZtNYSeHUGx9Caqd/o=; b=
+ QbjqB2kegfkZoMFwoK2JolCFlAPDdFo8LKhzsUICQe8+zppvwlr5/iCOgNE3Mlja
+ EJynGasep/K7H3k/OkFICp5lScQBasiaMpNL406XM7VsvZQBCKX84NEt0Vohqha1
+ e4Axfh51kU+m86cWKf/DopSHtA9ekxWyAyu0lzCg6AiOO/C5VZbGY0T8V1MgIObi
+ Obj2fzb9Yy5kZnWV7mS0ml1DogwfRoi7HjBOeRgfV49/9l3gbXJ9LB/tMJzBAgdH
+ GZdsBWktgkRpr/N6/7XzrDCkmi96fjvYFi0yu+oPzRDHbiBL24IZWnxFqUv6YkXv
+ kENSpbftPz/bbU0Xs3z8Pw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794318984; x=
+ 1794405384; bh=gY6L1sZ71i/JB5w1AP8ihonuZ/ZtNYSeHUGx9Caqd/o=; b=R
+ bTMFprF+57O0Q9+LamppOYjYlfWP4QHCFflgUqpAosCA+jBN0SRFoTTg5YJWha6s
+ IL5gYZfmE44SildZj1veAI2A7VcK84LPok8GqY7sYVpo4qyca4PFYx0HgtwmKXem
+ IWo5S/+iw16WqtZwXOwIKhCEuM+bMxPTpnKHhEV4MSsWX6i0i25FUe6JoxqshayK
+ ysVubbhuEMLa4hzS7Z4yl/+rFHrbzBfH078d/ssXOi9BPbVvTggMQxy4cEndsI3q
+ HygPFrvAL5U62xUEV7Cb3FpcdEYJskg7Owe4TfETd07K+77mrZ43Al/PGOx9yj/R
+ yQ4BZ754EkYQscHdzW28g==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1794318984; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm3:rsa-sha256:Ce61qWmiW04Csltku/wcaRvWvi/kAn+mRICofQ3Fk4HYC7q
+ OEQdO8hoIPzmVzgSN5LtJhTglmXAHd66puwzAUCbD5iOGqdJ3MVQqJxwf9YyhENX
+ Vd06qb57AMtl/i2jCfCkMRBPP61vuwhN8ytqYdlVwEl/Jw4TFCNjt2amzhFdvnpn
+ 3wY4aD4dYpGBlMMOmUSMCs2efDdc8+TXK9qgsvHDYh1aQrEfEXbsMUShrQ3REoCp
+ OEpFRyCrYuQS0PWIeG05IfLdNsPrYQ5zCWtGYI28WDC+qM/RjMNdGQeO8hC/SYLf
+ QkUdNV988DE5NT+VQPm6KZiFmWgYxfk/qi1ff7Q==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:azyaG5OajNoh29F0137xiIx9E5kkIutDNQzbHzZ0Pqs=:VR16RhNQw5yNRgjG1+ONJ/L4wrgPjbkdbKbAVYUQpjY=;
+X-ME-Sender: <xms:iCLzakbieFiz1l1Ht4pCc6wXVY3tQGONwQmlN32kuhBsNiFt-goy1g>
+ <xme:iCLzaqVaeyIDH22zSIc1s_p6Ox-H4H_SeP8UgZmU12ZYNtxjLFuGgOGhNb0is98F5
+ r-_JVR5jfNAC1G82PxANQzjq1KxMk8ziknyVU4OEV9Mowno0pNaeyTZ>
+X-ME-Received: <xmr:iCLzat9MGjavsMz249OrC_0hqHSuXgb7UqVn793WV09CHRqC_FpR9XlZo_6PzzrKbsc4oxOgWoQXVRF1unAA18s>
+X-ME-Proxy-Cause: dmFkZTFF88O+5Fv/9Iynqgn173ZtA+N2KGlE301EciKbJLp9MIwjDAGmKXoN+qv4I9lFYC
+ U90TTrgewHhyGhe/by2dp6XsSEJfV96Zk7+KWvTwdP70jA+2muEvqwtntmMEc39siRsV7B
+ NUR1HVqvHPw/wOYOMPNvZJRE6NCG4FfL0bBG9GUh0NzQikCaqN884tjYr1fAVrYGRhJCE9
+ 7ehn7IrMH3kRBwIWlieBvBahi4PXTlT3CooUyA6tA6RjGi1WqQEBQsyekhrppPbKp1IiEm
+ SF41M4wGs59GVhFqktiYEYJvIy0YA9hJYvYcnRJiBcuQL5hHA/C3slptykwfy0TYLNkUTS
+ lmg3V4Qiw53rSJKyx6YFblmZhsg081PFDyG71Zy8E3JMBzjRrFkAqVh6DzDyhXy2mZw14t
+ wcwNwwLDe2eqi6IpOGAnD8M5Der8JRfUTDppzp4C4Vb65ZroWH8zR5jIBmFN+Jn5iWVXvF
+ 4brZu+VFn6R7vpPab+ToM3gHl9ew/PtMZSUgLHF4BdTXOz1WXNWxHyOGcdq5YbU1JGB4LX
+ E9+60BTAWd7/Mn8A0CglhL2mplkpeitvoZ1OaHzBO5iQ9IgbBUpjnTMHmgo5rTFamimaee
+ WNN9gl0fS3SxNZB5NWgtlYHSTk7vG4hMMtsA4szUg35gESTeGIZZGkng7N9A
+X-ME-Proxy: <xmx:iCLzaj8Zpeg9YqM309Zz7ewI2RtnRrmJ2KS9tUInqx77_N1c5br8nA>
+ <xmx:iCLzatQ1Ujb73Beis5jy8Ru2SzHaPzhsj1ljxHI6GMXptCWI7QnmRg>
+ <xmx:iCLzanfRfAMD7oacuLInoaKBre03beFS6gcg5ziYRs3GkglRkxRKfg>
+ <xmx:iCLzahDuvjNVaoQdDaVY75eoB_akxwUw7BhbcMtpDafXWaPvXJwyIw>
+ <xmx:iCLzatICUpifHUj4hxDzvKrjMpI8buWC2dDLvUcgq2WjNs7YKHpU45WR>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 10 Nov 2026 08:56:23 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Bing Zhao <bingz@nvidia.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Frank Dressler <frank@dressler.pro>
+Cc: dev@dpdk.org, David Marchand <david.marchand@redhat.com>,
+ Kevin Traynor <ktraynor@redhat.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: Re: [PATCH v2] net/af_packet: fix build with old kernel headers
+Date: Tue, 10 Nov 2026 14:56:21 +0100
+Message-ID: <zmh4QzPKQvWlZHerQoYLhg@monjalon.net>
+In-Reply-To: <be84046c-8071-4fee-aea0-234b772cc91a@dressler.pro>
+References: <20261106142756.241131-1-bingz@nvidia.com>
+ <O1P4UruZSlqFOdl0F9QGXA@monjalon.net>
+ <be84046c-8071-4fee-aea0-234b772cc91a@dressler.pro>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Tue, 10 Nov 2026 14:40:54 +0100
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,78 +110,73 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Rx interrupt enable and disable wait for reset_ops_lock and then
-return -EBUSY if a reset is in progress. The reset thread holds that
-lock across the teardown (mana_dev_stop(), the RESET_ENTER request
-to secondary processes, mana_dev_close()) and across the re-probe,
-and each request to the secondaries may take up to
-MANA_MP_REQ_TIMEOUT_SEC. An lcore that calls rx_intr_enable or
-rx_intr_disable during one of those steps blocks for that long,
-only to get -EBUSY.
+10/11/2026 13:52, Frank Dressler:
+> On 11/10/26 10:39, Thomas Monjalon wrote:
+> > 09/11/2026 18:47, Stephen Hemminger:
+> >> On Mon, 9 Nov 2026 17:47:30 +0200
+> >> Bing Zhao <bingz@nvidia.com> wrote:
+> >>
+> >>> The PACKET_IGNORE_OUTGOING socket option is used unconditionally,
+> >>> but it was only added to the uapi headers in Linux 4.20. The build
+> >>> fails on distributions shipping older kernel headers, like RHEL 8
+> >>> (kernel-headers 4.18.0):
+> >>>
+> >>>    rte_eth_af_packet.c:1057:41: error: 'PACKET_IGNORE_OUTGOING'
+> >>>      undeclared (first use in this function)
+> >>>
+> >>> DPDK requires Linux 5.4, so the driver does not need to support older
+> >>> kernels. Check for the symbol at configure time and skip the driver
+> >>> when the headers lack it, instead of failing the whole build.
+> >>>
+> >>> Fixes: 3db7aa7868b2 ("net/af_packet: use kernel to filter single-queue Rx")
+> >>>
+> >>> Signed-off-by: Bing Zhao <bingz@nvidia.com>
+> >>> ---
+> >>
+> >> No. DPDK should just fail build on older kernels.
+> >> Since current DPDK is not tested with those releases, anyone doing that is
+> >> working outside the tested environment and has to fix it themselves.
+> > 
+> > We used to support some old RHEL versions.
+> > Remind that the RHEL kernel is full of backports,
+> > it is not exactly the same as an really old kernel.
+> > I think this solution disabling a driver is acceptable.
+> 
+> But does RHEL itself actually have a problem? I could not find an 
+> incompatible DPDK being shipped by them. DOCA ships unsupported DPDK.
+> 
+> If it is RHEL, Redhat could add `-Ddisable_drivers=net/af_packet`. If it 
+> is DOCA, NVIDIA could just add `-Ddisable_drivers=net/af_packet`. DOCA 
+> already only ships a limited set of PMDs in their bundled DPDK.
 
-Retry the trylock while the device is active, and return -EBUSY as
-soon as it is not. Outside a reset the lock is held only by another
-queue's doorbell write or event read, so the wait stays short; once
-a reset has started, the caller returns at once.
+I don't know why you insist on DOCA, it is not an upstream concern,
+and was not mentioned in this thread except by you.
 
-Suggested-by: Wei Hu <weh@microsoft.com>
-Signed-off-by: Orgad Shaneh <orgads@gmail.com>
----
-Applies on next-net for-main, on top of efa36b47334d ("net/mana: fix
-Rx interrupt enable failing on lock contention"). Squash it into that
-commit if you prefer.
+> Or is this change more intended for third-parties cloning and building 
+> DPDK 26.11 on RHEL 8?
 
-Follow-up to Wei's review and the AI review note:
-https://inbox.dpdk.org/dev/20261109142127.7a54ee80@phoenix.local/
+Yes my concern is to allow building a new DPDK easily.
+But I am still waiting for a confirmation from our Red Hat friend
+that RHEL 8 is still a target.
 
-Builds with meson -Dwerror=true (gcc 14, rdma-core 56). With no reset
-in progress the calls take the lock and run the same code as before,
-so the Azure results in efa36b47334d still apply. A MANA reset cannot
-be triggered on demand on Azure, so the reset path is untested.
+> If RHEL 8 must be supported, the documented requirements would need to 
+> change then to say that features of Kernel 5.4 may be used but the code 
+> must still build without error on RHEL 8, or something like that.
 
-The burst_state gate stays a possible follow-up for main.
+Yes that's something we had in the past.
+This has been removed last year:
 
- drivers/net/mana/mana.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+"Compatibility for recent distribution kernels will be kept, notably RHEL/CentOS 7."
 
-diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
-index f624cde6b9..eea9dac253 100644
---- a/drivers/net/mana/mana.c
-+++ b/drivers/net/mana/mana.c
-@@ -451,14 +451,21 @@ mana_reset_trylock(struct mana_priv *priv)
- }
- 
- /*
-- * Like mana_reset_trylock(), but wait for the lock. Used by Rx interrupt
-- * enable/disable, which every queue calls on each sleep and wakeup: they
-- * must not fail just because another queue holds the lock for a moment.
-+ * Like mana_reset_trylock(), but wait while another queue holds the lock.
-+ * Used by Rx interrupt enable/disable, which every queue calls on each
-+ * sleep and wakeup: they must not fail just because another queue holds
-+ * the lock for a moment. Once a reset has started, fail at once instead
-+ * of waiting for its teardown or re-probe step.
-  */
- static int
- mana_reset_lock(struct mana_priv *priv)
- {
--	pthread_mutex_lock(&priv->reset_ops_lock);
-+	while (pthread_mutex_trylock(&priv->reset_ops_lock)) {
-+		if (rte_atomic_load_explicit(&priv->dev_state,
-+		    rte_memory_order_relaxed) != MANA_DEV_ACTIVE)
-+			return -EBUSY;
-+		rte_pause();
-+	}
- 
- 	if (rte_atomic_load_explicit(&priv->dev_state,
- 	    rte_memory_order_acquire) != MANA_DEV_ACTIVE) {
--- 
-2.52.0
+Does it mean we don't care about RHEL 8 users?
+
+If that's what we decide, I'm fine with it.
+
 
