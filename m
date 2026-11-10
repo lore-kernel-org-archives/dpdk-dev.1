@@ -2,73 +2,72 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B10606A31C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 02:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE3D606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 02:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=F6EGso2Y
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=U/5VX/2V
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 79B06402E4;
-	Tue, 10 Nov 2026 03:04:09 +0100 (CET)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
- [209.85.216.47])
- by mails.dpdk.org (Postfix) with ESMTPS id 922CA4027C
- for <dev@dpdk.org>; Tue, 10 Nov 2026 03:04:08 +0100 (CET)
-Received: by mail-pj1-f47.google.com with SMTP id
- 98e67ed59e1d1-3ada4c06b7bso799242a91.2
- for <dev@dpdk.org>; Mon, 09 Nov 2026 18:04:08 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D284440283;
+	Tue, 10 Nov 2026 03:04:43 +0100 (CET)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
+ [209.85.216.43])
+ by mails.dpdk.org (Postfix) with ESMTPS id 1FB584027C
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 03:04:43 +0100 (CET)
+Received: by mail-pj1-f43.google.com with SMTP id
+ 98e67ed59e1d1-3b0bbdeae06so930589a91.1
+ for <dev@dpdk.org>; Mon, 09 Nov 2026 18:04:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794276247;
- x=1794881047; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794276281;
+ x=1794881081; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=07E7z+deuIGAtZxocoEmpy930ZaJe1gdf1fBKrN6tIQ=;
- b=F6EGso2Ycp3K4fmDO7WlY9RyTTOiZz1g5fpa70YQPGTtMWBGVQ1Ub9z9ad0tUnMd3k
- MzkPCIS8K4MvbolxIdLvYo6ixp4JNH6ATpe+1ivoMndIQZ4/RLiRlUKOEx9Y3quY4KsZ
- FxvsDWhmOIu4cx7rsWJF8pVU6qhnhJbKDMmONU35Mih8pQ4HgtyqXf73vYEgD9DpAtW6
- 28d+Vw5OSPb2eRMI/JdYAEia3jbtkQgzqY8KNmaqNQ/YpMgFYtsDOrztS+Ml5O8QJZ6A
- tO1rm11jXBYmP+RBjdIAr9mPg1ytU32eqeHq58d5eA5vRJg6fdA/IxEjDBr4iwoqWy/A
- oxQg==
+ bh=Ifk+L3avkV8V8rXWnxNa6G+6E4T9V899mEY24oZu0yo=;
+ b=U/5VX/2VpiDNZGcLzQ0cXT2PZ5KnpyU1wzOAmfV3Ma2wMbw8/aFEwEJE1Er75jXSaj
+ eIuCvGz2wOoq/4HakLbIPg8SJcpmhsYrB6oYIbi1UJjhrhnxhmlqRhjx6yCsWlllLsFt
+ 8LfRoCg4Am5qjAIZik4wQDUE/9bjMvNrxnsBDcD47r4uUpl0b0jx/gOXYEmDgpjPJrVE
+ 82Tyy8KldEHFdQabs6/cxsAjuoT4OkPKvm4liuFlw37Nwyoqa8m/xq55szAloHyoSiq0
+ G0moqQJlWxcxui8WxYHmCMsTVYHmYm97+MPSJR23qrEgNMKnhvbayyaoxGpQMo3I4AZ3
+ NbWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794276247; x=1794881047;
+ d=1e100.net; s=20260707; t=1794276281; x=1794881081;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=07E7z+deuIGAtZxocoEmpy930ZaJe1gdf1fBKrN6tIQ=;
- b=BH6sqfnw71lg3nGij2zWePvONvucr6c+Kssta5U6aYZCYLShk6XlfDbjSXAFXZx9u4
- NMvldpCTfWOlPKCESOuzQsfQf8JaJjFVQlxbpmxi8cFAgZvP3gmVx2aFXxXXIey6MDoi
- iTT5yr7GsREmGW+9Ad49yE3ajMhH6S/uHgsUAXPu2WcKRzRRhdHyX8PuEy03gg4J1PR4
- TXxBKN8DCPXju64Ukb8emckiN/P/6DkuKvAjMw/eDULYq6l2a1RZ/wiJiQJwvSGjQrpO
- FSbFfEVgl+vofzxA4lWLlxu8ES/XXaUQ+ExjTl346Kcsklra33XBNNNXYqIt9eOoFSqd
- BFIg==
-X-Gm-Message-State: APuU4Z/qjoUxITV2tX7vOXyrOrWh8or4sQAmncc9YU+PfNlJKfYnNToV
- OSHK7r7TcLuLT9U2Xlqranx0YwuzjqQZ1+XSp+uSW6Ra8iRhw6pM2rGUeEUBaFyH3J4lotqDPzA
- I68sPQSg=
-X-Gm-Gg: AYBFou08hdyr0ixoflKl0uVXlSuhu742ZQyqG1H0wtXkxyC7HRJ9qP43kCQVowpXR8U
- v4wREVIOtvze+gBC2jgGGkaRQij1MR4J9hrOnzQLfCFKJvK3TDp5KBXL6anyAZT6EOmGjAxT1UF
- tn3LFXnFkr5QaimEXfjdG646p27n7o8PrNWSfEWtsLavyouEClcsk5qPv2T6v/iaZ8wtHXHbb5f
- J/lw4tFgRatxM21TMt2KsQK1vAPhVajBTW9PTV45tsROb1L0rkocYFjrbQrpPcp0ygs+K1osT2y
- 6PbuDfo4ObKOKRzLSg6LeSYwFCcToVdZmzGL5yAlAJlcpwXePl48c2lYDgOtqTOQ2gAi48fnfsP
- EbqiEEFrp3LzQTpBLxfDuytJ+y7YIvJI1ZrHdbNFk82n3j2f7/WYOO8jYz9u8h/ZPFaWDEkc1oa
- FQmadaRcCU4cU/3iWNjBzA52GBHMkUr8Kkm7OeFPrFFFwQqogJKkqfGmXZ4KU7W7q80GLiGpl6z
- Z8GaZ9Dc8um3CDbKt4zH2A+sGVeUn1fZWDqI2zcn+5sAUGTvbCZCMyi9j32eLOB5MlHRrXrjpfy
- nwDfc6uxVkWqY7YyG4X17rnOjlMnNNjPh4KzwGAZJVVmf+snQ/FlojQc6posI7tFyrbzBkIeze7
- AFgYv33oVLvM+Zg==
-X-Received: by 2002:a17:90b:3ec5:b0:39e:59a0:46b5 with SMTP id
- 98e67ed59e1d1-3b166cae968mr1683644a91.24.1794276246882; 
- Mon, 09 Nov 2026 18:04:06 -0800 (PST)
+ bh=Ifk+L3avkV8V8rXWnxNa6G+6E4T9V899mEY24oZu0yo=;
+ b=0io+5nRrlWOIAs6c22k0HXpNnuook52cIoMVybvNEbccKrSsNBu73lnixT1Ws8lyoX
+ KJdheUr95jXZHzg6+pcUiHEO+xxAxveGVK0Qh3VC2JvOHVwUwaxCnRRZ+Zwdn4spCO3n
+ h6YOYMBHCN5N53OGDtz6Fsu57XTPPQn6BeXM8Gh00artOFZr6wlcx6E3z9PelHg4WBno
+ qoJgMS7NUdlWBg3444C16/IKZIfAYqe8VY0I+U7V8MOsRdKPWgrpLQIr7p2hnpjuetN3
+ Wagmx2OWlP3RhsvuzCj0F5JkjfMjZbJRou8FOt8GMsZ3o0/kD/PB1NlwBjwpOiRG98N0
+ OrLQ==
+X-Gm-Message-State: APuU4Z8shCdWjO41Us9rb8ArMaUhYsW45vTleGlNhngAcKukJjysMV/P
+ WhcidaMXjRScwG4iTUhdRNQJ83XRaJkhpnziS2q9Wodpdq8cIly2plzVr5hrLWtqlW2Vbamu+JI
+ mu7ep
+X-Gm-Gg: AYBFou38Wd3rnsS/Uo2pI4eDitwoX+6Wv7tynqnSkvK5Fg3lxTairg6ADhCmGyXH03n
+ 8KJQa9xSgg33QNUSLQklUJaTasFA3qykF1sw/v/KzNZwCR3bkJNu60j2yMMdFBjKweGep83DBt4
+ OAAZBgzo6o0FpB291ep0TUJ5YR86lYxLQhtFFUsHglAcfU4V74mbqZIDIFqe/5JWBW2eoaKVBKO
+ lmaFgcJxdtaK5ODjmzE8MThF7w4rcWwzswVc97XQwpsAZ8sHQUvvQS+p5bKtkpGdHcFeWcHM+vs
+ VAndA6T1/LWrgfL6ePlXbMZedfscyxWty7ONJiJnLx1X55PnEIYj7pJPFfk9Uw8axFD0JqW+P4K
+ QYL1EbbQSbMZY0bUFkla1GkP+/HSX0wEfnUKe1/akh2oAE3M5yxK9NuNMFoZQknrl7T7KN7YM7c
+ fnr+9cePAF0xfDmzk9AHvyBtTkqEYSBkHLsQTv/Iiseu4qhP8mC/9VdaxtzMbgfaZsbhWIObW+c
+ 8YUQgICp3lH3qkLxpHSow2joUFjf2maQ+W0fdpJHJfSNm4o0kexBwcUYvrl6DMMtE5GTgUcLGfn
+ wd4ULlsAnO1jLXm7BPZ2iemGAQd92LWeIERNVume4YLMq3gJm4F7ex74ns1qzTHQ53Wg
+X-Received: by 2002:a17:90b:3148:b0:3a0:516d:9f88 with SMTP id
+ 98e67ed59e1d1-3b166cc877amr1393514a91.26.1794276281562; 
+ Mon, 09 Nov 2026 18:04:41 -0800 (PST)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b16775d010sm1737343a91.16.2026.11.09.18.04.06
+ 98e67ed59e1d1-3b16774309bsm1729408a91.14.2026.11.09.18.04.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Nov 2026 18:04:06 -0800 (PST)
+ Mon, 09 Nov 2026 18:04:40 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
- Michal Jastrzebski <michalx.k.jastrzebski@intel.com>
-Subject: [PATCH] examples/qos_sched: fix build with LTO
-Date: Mon,  9 Nov 2026 18:04:03 -0800
-Message-ID: <20261110020403.419111-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Eimear Morrissey <eimear.morrissey@huawei.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH] test: fix soring build with LTO
+Date: Mon,  9 Nov 2026 18:04:37 -0800
+Message-ID: <20261110020438.420106-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
@@ -89,34 +88,42 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-rte_cfgfile_section_num_entries() returns -1 on error, which is used
-unchecked as a VLA size. With LTO gcc inlines the library call, sees
-the -1 path and fails with -Wvla-larger-than.
+With LTO, gcc inlines rte_soring_acquirx_bulk() into
+test_soring_stages(). The element copy switches on the runtime
+r->esize, so the 16-byte copy path stays live and gcc reports
+-Wstringop-overflow writing into the 32 x uint32_t stack arrays.
+That path is never taken since the ring is created with 4 byte
+elements and metadata.
 
-Return error if the entry count is negative.
+The diagnostic is emitted by lto1 at link time, so it cannot be
+silenced from lib/ring. Disable it for the dpdk-test link only when
+LTO is enabled with gcc; non-LTO builds are unchanged.
 
-Fixes: db935d0171dd ("examples/qos_sched: use librte_cfgfile")
-Cc: stable@dpdk.org
+Bugzilla ID: 2101
+Fixes: 70581c355d69 ("test/ring: add unit tests for soring API")
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- examples/qos_sched/cfg_file.c | 3 +++
- 1 file changed, 3 insertions(+)
+ app/test/meson.build | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/examples/qos_sched/cfg_file.c b/examples/qos_sched/cfg_file.c
-index 3ca06c2ff9..e73d9f7cdd 100644
---- a/examples/qos_sched/cfg_file.c
-+++ b/examples/qos_sched/cfg_file.c
-@@ -438,6 +438,9 @@ cfg_load_subport(struct rte_cfgfile *cfg)
- 			}
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 2f1cd817cd..d16ca9f287 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -277,6 +277,12 @@ extra_flags = [
+         '-fno-strict-aliasing',
+ ]
  
- 			int n_entries = rte_cfgfile_section_num_entries(cfg, sec_name);
-+			if (n_entries < 0)
-+				return -1;
++# LTO inlines soring acquire into the test, gcc then flags the
++# unreachable 16-byte element copy path (false positive).
++if get_option('b_lto') and cc.get_id() == 'gcc'
++	ldflags += '-Wno-stringop-overflow'
++endif
 +
- 			struct rte_cfgfile_entry entries[n_entries];
- 
- 			rte_cfgfile_section_entries(cfg, sec_name, entries, n_entries);
+ foreach arg: extra_flags
+     if cc.has_argument(arg)
+         cflags += arg
 -- 
 2.53.0
 
