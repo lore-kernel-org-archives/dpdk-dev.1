@@ -2,47 +2,44 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC83D606A334
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 12:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89315606A336
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 12:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=XEVr6whM
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BB4F40285;
-	Tue, 10 Nov 2026 13:33:05 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id 61A2D40281
- for <dev@dpdk.org>; Tue, 10 Nov 2026 13:33:04 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 4F5E74D5D2; Tue, 10 Nov 2026 13:33:04 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2102] net/ice: ice_get_module_eeprom() can read the
- wrong page when a block straddles a 256-byte boundary
-Date: Tue, 10 Nov 2026 12:33:04 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: marcel@telka.sk
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-2102-3@https.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 31A0040285;
+	Tue, 10 Nov 2026 13:50:15 +0100 (CET)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id C42E840281
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 13:50:13 +0100 (CET)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1491A14BF;
+ Tue, 10 Nov 2026 04:50:10 -0800 (PST)
+Received: from [10.57.17.170] (unknown [10.57.17.170])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33FA33F85F;
+ Tue, 10 Nov 2026 04:50:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+ t=1794315013; bh=k5NKiSyhhbwJ5sq6Usll/XDPyi487PYTDAIjn8Hm3/M=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=XEVr6whM/XPNLD9GWhAwfoh3SHZon47IpYtG8UANW6OMtWd4XsamOaMToMNjczcti
+ JEbUostUIPRkRhu4uO8b8mdEbof8UbORUwQyKf0x3pei9ZAxKfMAHTt13HCYUaW2vU
+ cx8RdUC2UgrHUMVT4KmQfLgULU3Eq+bkLM8SyidA=
+Message-ID: <9e507b8c-b106-4177-8ce2-e09fc630e4d4@arm.com>
+Date: Tue, 10 Nov 2026 12:50:10 +0000
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dts: add pvp multi paths vhost performance
+ testsuite
+To: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>, patrickrobb1997@gmail.com
+Cc: dev@dpdk.org, dladd@iol.unh.edu, abailey@iol.unh.edu, lylavoie@iol.unh.edu
+References: <20261008191139.1094155-1-knimoji@iol.unh.edu>
+ <20261103220218.902765-1-knimoji@iol.unh.edu>
+Content-Language: en-GB
+From: Luca Vizzarro <Luca.Vizzarro@arm.com>
+In-Reply-To: <20261103220218.902765-1-knimoji@iol.unh.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,186 +49,366 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2102
+On 03/11/2026 22:02, Koushik Bhargav Nimoji wrote:
+> diff --git a/dts/api/testbed_model/virtual_device.py b/dts/api/testbed_model/virtual_device.py
+> index 1a4794e695..8ac9a625f5 100644
+> --- a/dts/api/testbed_model/virtual_device.py
+> +++ b/dts/api/testbed_model/virtual_device.py
+> @@ -6,6 +6,8 @@
+>   Alongside support for physical hardware, DPDK can create various virtual devices.
+>   """
+>   
+> +from api.context import get_ctx
+> +
+>   
+>   class VirtualDevice:
+>       """Base class for virtual devices used by DPDK.
+> @@ -27,3 +29,9 @@ def __init__(self, name: str) -> None:
+>       def __str__(self) -> str:
+>           """This corresponds to the name used for DPDK devices."""
+>           return self.name
+> +
+> +
+> +def clean_up_vhost() -> None:
+> +    """Deletes stale vhost-user Unix domain socket files."""
+> +    ctx = get_ctx()
+> +    ctx.sut_node.main_session.send_command("rm -rf /tmp/vhost-net*", privileged=True)
+I welcome this change but send_command is still something that should be 
+called by the relevant OSSession class. In theory main_session can be a 
+session for a host of any OS, be Linux, FreeBSD, Windows etc. Therefore 
+the changes should be OS-independent.
 
-            Bug ID: 2102
-           Summary: net/ice: ice_get_module_eeprom() can read the wrong
-                    page when a block straddles a 256-byte boundary
-           Product: DPDK
-           Version: unspecified
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: marcel@telka.sk
-  Target Milestone: ---
+I've reviewed the usage better and the test suite shouldn't be able to 
+arbitrarily create files out of arbitrary paths. We have the class 
+Artifact to help abstract the remote filesystem away. On remote session 
+this also takes care of cleanup.
 
-https://github.com/DPDK/dpdk/blob/a13c1053360ee26bbacca9f883d3f3cb83a0f366/=
-drivers/net/intel/ice/ice_ethdev.c#L6683-L6772
+Instead of introducing this change which has no real ownership in the 
+framework and api packages, I'd suggest letting the test suite create 
+the vhost-net using the Artifact class instead.
+> diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurations/tests_config.example.yaml
+> index ce67385b0b..36a0e7c2f1 100644
+> --- a/dts/configurations/tests_config.example.yaml
+> +++ b/dts/configurations/tests_config.example.yaml
+> @@ -18,6 +18,30 @@ hello_world:
+>   #       num_descriptors: 1024
+>   #       expected_mpps: 1.0
+>   #   delta_tolerance: 0.05
+> +# pvp_multi_paths_vhost_single_core_perf:
+> +#   test_parameters: # Add frame size / descriptor count combinations as needed
+> +#     - frame_size: 64
+> +#       num_descriptors: 512
+> +#       expected_mpps: 1.0 # Set millions of packets per second according to your devices expected throughput for this given frame size / descriptor count
+> +#     - frame_size: 64
+> +#       num_descriptors: 1024
+> +#       expected_mpps: 1.0
+> +#     - frame_size: 512
+> +#       num_descriptors: 1024
+> +#       expected_mpps: 1.0
+> +#   delta_tolerance: 0.05
+> +# pvp_multi_paths_virtio_single_core_perf:
+> +#   test_parameters: # Add frame size / descriptor count combinations as needed
+> +#     - frame_size: 64
+> +#       num_descriptors: 512
+> +#       expected_mpps: 1.0 # Set millions of packets per second according to your devices expected throughput for this given frame size / descriptor count
+> +#     - frame_size: 64
+> +#       num_descriptors: 1024
+> +#       expected_mpps: 1.0
+> +#     - frame_size: 512
+> +#       num_descriptors: 1024
+> +#       expected_mpps: 1.0
+> +#   delta_tolerance: 0.05
+>   # pmd_rss:
+>   #   NUM_QUEUES: 4
+>   #   ACTUAL_KEY_SIZE: 52
+> diff --git a/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_perf.py b/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_perf.py
+> new file mode 100644
+> index 0000000000..269fad1782
+> --- /dev/null
+> +++ b/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_perf.py
+> @@ -0,0 +1,523 @@
+> +# SPDX-License-Identifier: BSD-3-Clause
+> +# Copyright(c) 2026 University of New Hampshire
+> +
+> +"""Vhost-user single-core forwarding performance test suite.
+> +
+> +This suite measures the packet forwarding performance of DPDK's vhost-user PMD running on a
+> +single CPU core in a Physical-Virtual-Physical (PVP) topology. Performance is evaluated across
+> +multiple virtio-user backend options, including packed versus split ring formats, in-order packet
+> +processing, mergeable buffers, and SIMD vectorization. Test cases are parameterized using
+> +combinations of frame sizes, descriptor ring sizes, and target MPPS baselines specified in the
+> +test configuration. High-speed traffic is injected from an external generator through SUT physical
+> +interfaces, routed through Vhost and Virtio loops, and returned to the generator to measure
+> +aggregate MPPS.
+> +"""
+> +
+> +from typing import TypedDict, cast
+> +
+> +from scapy.layers.inet import IP
+> +from scapy.layers.l2 import Ether
+> +from scapy.packet import Raw
+> +from typing_extensions import NotRequired
+> +
+> +from api.capabilities import (
+> +    LinkTopology,
+> +    requires_link_topology,
+> +)
+> +from api.packet import assess_performance_by_packet
+> +from api.params.eal import VirtualDevice
+> +from api.params.types import LogicalCoreList, RSSSetting, TestPmdParamsDict
+> +from api.test import get_current_test_case_name, verify, write_performance_json
+> +from api.test_suite import BaseConfig, TestSuite, perf_suite, perf_test
+> +from api.testbed_model.virtual_device import clean_up_vhost
+> +from api.testpmd import TestPmd
+> +from api.testpmd.config import (
+> +    Params,
+> +    PortTopology,
+> +    RXRingParams,
+> +    SimpleForwardingModes,
+> +    TXRingParams,
+> +)
+> +
+> +
+> +class TestParameter(TypedDict):
+> +    """Performance test metrics."""
+> +
+> +    frame_size: int
+> +    num_descriptors: int
+> +    expected_mpps: float
+> +    performance_delta: NotRequired[float | None]
+> +    measured_mpps: NotRequired[float | None]
+> +    passing: NotRequired[float | None]
+I've noticed that this kind of configuration is ubiquitous across 
+performance test suites. I'd propose to abstract the Config and this 
+away as a generic PerfSuiteConfig and re-use it accordingly. In that 
+case you can move away from using a TypedDict and use a Pydantic 
+BaseConfig instead which will allow you to use more powerful constructs.
 
-for (i =3D 0; i < info->length; i +=3D SFF_READ_BLOCK_SIZE) {
-    offset =3D i + info->offset;
-    page =3D 0;
+You won't need to use NotRequired – which I am assuming makes doing `| 
+None` redundant, in that case. Moreover the fields should be documented 
+appropriately similarly to what was done in the config package.> +
+> +
+> +class Config(BaseConfig):
+> +    """Test configuration for pvp_multi_paths_vhost_single_core_perf test suite."""
+> +
+> +    test_parameters: list[TestParameter] = [
+> +        {
+> +            "frame_size": 64,
+> +            "num_descriptors": 1024,
+> +            "expected_mpps": 1.00,
+> +            "performance_delta": None,
+> +            "measured_mpps": None,
+> +            "passing": None,
+> +        },
+> +        {
+> +            "frame_size": 128,
+> +            "num_descriptors": 1024,
+> +            "expected_mpps": 1.00,
+> +            "performance_delta": None,
+> +            "measured_mpps": None,
+> +            "passing": None,
+> +        },
+> +        {
+> +            "frame_size": 256,
+> +            "num_descriptors": 1024,
+> +            "expected_mpps": 1.00,
+> +            "performance_delta": None,
+> +            "measured_mpps": None,
+> +            "passing": None,
+> +        },
+> +        {
+> +            "frame_size": 512,
+> +            "num_descriptors": 1024,
+> +            "expected_mpps": 1.00,
+> +            "performance_delta": None,
+> +            "measured_mpps": None,
+> +            "passing": None,
+> +        },
+> +        {
+> +            "frame_size": 1024,
+> +            "num_descriptors": 1024,
+> +            "expected_mpps": 1.00,
+> +            "performance_delta": None,
+> +            "measured_mpps": None,
+> +            "passing": None,
+> +        },
+> +        {
+> +            "frame_size": 1518,
+> +            "num_descriptors": 1024,
+> +            "expected_mpps": 1.00,
+> +            "performance_delta": None,
+> +            "measured_mpps": None,
+> +            "passing": None,
+> +        },
+> +    ]
+> +    delta_tolerance: float = 0.05
+So all of the above could be a common Config class that can be re-used 
+across perf test suites.> +
+> +
+> +@perf_suite
+> +@requires_link_topology(LinkTopology.TWO_LINKS)
+> +class TestPvpMultiPathsVhostSingleCorePerf(TestSuite):
+> +    """pvp multi paths vhost single core performance test suite."""
+> +
+> +    config: Config
+> +
+> +    def set_up_test_case(self) -> None:
+> +        """Delete stale vhost-user Unix domain socket files."""
+> +        clean_up_vhost()
+> +
+> +    def _transmit(
+> +        self, vhost: TestPmd, virtio: TestPmd, frame_size: int, repetitions: int = 1
+> +    ) -> float:
+> +        """Transmit packets using testpmd instances and compute average MPPS.
+> +
+> +        Args:
+> +            vhost: the running vhost testpmd shell.
+> +            virtio: the running virtio testpmd shell.
+> +            frame_size: The size of the frame to transmit.
+> +            repetitions: The number of times to rerun the transmission.
+> +
+> +        Returns:
+> +            The MPPS (millions of packets per second) forwarded by the SUT.
+> +        """
+> +        assert repetitions > 0, "Invalid number of repetitions given, must be greater than 0."
+> +        # Build packet with dummy values, and account for the 14B and 20B Ether and IP headers
+> +        packet = (
+> +            Ether(src="52:00:00:00:00:00")
+> +            / IP(src="1.2.3.4", dst="192.18.1.0")
+> +            / Raw(load="x" * (frame_size - 14 - 20))
+> +        )
+> +
+> +        vhost.start()
+> +        virtio.start()
+> +        rx_avg = 0.0
+> +
+> +        for _ in range(repetitions):
+> +            # Transmit for 5 seconds.
+> +            stats = assess_performance_by_packet(packet=packet, duration=5)
+> +            rx_avg += stats.rx_pps
+> +        return rx_avg / (repetitions * 1_000_000)
+> +
+> +    def _create_and_transmit(
+> +        self,
+> +        ring_format: int,
+> +        in_order: int,
+> +        buffers: int,
+> +        vectorized: int,
+> +        extra_args: TestPmdParamsDict,
+> +    ) -> None:
+> +        """Create testpmd instances with specified params and send traffic.
+> +
+> +        Args:
+> +            ring_format: selects the virtio queue descriptor layout.
+> +            in_order: toggles in-order packet processing.
+> +            buffers: enables mergeable rx buffers.
+> +            vectorized: enables SIMD vectorized rx/tx data paths.
+> +            extra_args: extra/generic TestPmd arguments.
+> +        """
+> +        sut_dpdk_driver = self._ctx.sut_node.config.ports[0].os_driver_for_dpdk
+Here you should be able to do:
 
-    /* Check if we need to access the other memory page */
-    if (is_sfp) {
-        if (offset >=3D ICE_MODULE_SFF_8079_LEN) {
-            offset -=3D ICE_MODULE_SFF_8079_LEN;
-            addr =3D ICE_I2C_EEPROM_DEV_ADDR2;
-        }=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-    } else {=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-        while (offset >=3D ICE_MODULE_SFF_8436_LEN) {
-            offset -=3D ICE_MODULE_SFF_8436_LEN / 2;
-            page++;
-        }=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-    }=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20
-    ...
-    status =3D ice_aq_sff_eeprom(hw, 0, addr, offset, page, !is_sfp, value,
-                               SFF_READ_BLOCK_SIZE, 0, NULL);
-    ...
-    if ((i + SFF_READ_BLOCK_SIZE) <=3D info->length)
-        memcpy(data + i, value, SFF_READ_BLOCK_SIZE);
-}=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
+   vhost_iface = Artifact("sut", "vhost-net", save_local_copy=False)> + 
+       vhost_user_vdev = 
+VirtualDevice("net_vhost0,iface=/tmp/vhost-net,queues=1")
+   VirtualDevice(f"net_vhost0,iface={vhost_iface.path},queues=1")
 
-The page/address switch is computed once per 8-byte block, from that
-block's starting offset only. Nothing checks whether offset +
-SFF_READ_BLOCK_SIZE actually stays within the same page/address before
-issuing the read, so a block that starts just below a boundary is
-still issued as a single read against that one address/page -- the
-bytes before the boundary come back correct, but the trailing bytes
-past it are read from whatever happens to sit at that same local
-offset on the wrong side, and that wrong data is copied into the
-caller's buffer along with the rest.
+etc.
+> +        virtio_user_vdev = VirtualDevice(
+> +            "net_virtio_user0,"
+> +            "mac=00:11:22:33:44:10,"
+> +            "path=/tmp/vhost-net,"
+> +            "queues=1,"
+> +            f"packed_vq={ring_format},"
+> +            f"mrg_rxbuf={buffers},"
+> +            f"in_order={in_order},"
+> +            f"vectorized={vectorized}"
+> +        )
+> +
+> +        for params in self.config.test_parameters:
+> +            frame_size = params.get("frame_size")
+> +            num_descriptors = params.get("num_descriptors") or 1024
+> +            expected_mpps = params.get("expected_mpps") or 1.00
+Wouldn't using the default field more appropriate here? What if the 
+param is 0? Thinking of:
 
-1. SFP (is_sfp branch): A0h/A2h straddle, and past A2h's own end.
-A call with info->offset=3D253, info->length=3D8 has its one block at
-offset=3D253, which is < 256 so it's read entirely from A0h, bytes
-253-260 -- but bytes 256-260 actually belong to A2h. That wrong data
-is copied to the caller.
-The same kind of gap exists at A2h's own end: info->offset=3D505,
-info->length=3D8 computes offset=3D505-256=3D249 on A2h, reading local
-A2h bytes 249-256 -- byte 256 is past A2h's own 256-byte range.
+   num_descriptors = params.get("num_descriptors", 1024)
+   expected_mpps = params.get("expected_mpps", 1.00)> +
+> +            default_args: TestPmdParamsDict = {
+> +                "tx_ring": TXRingParams(descriptors=int(num_descriptors)),
+> +                "rx_ring": RXRingParams(descriptors=int(num_descriptors)),
+> +            }
+> +
+> +            if sut_dpdk_driver == "mlx5_core":
+> +                default_args["burst"] = 64
+> +                default_args["mbcache"] = 512
+> +            elif sut_dpdk_driver == "i40e":
+> +                default_args["rx_queues"] = 1
+> +                default_args["tx_queues"] = 1
+> +
+> +            vhost_params: TestPmdParamsDict = {
+> +                "prefix": "vhost",
+> +                "allowed_ports": [],
+> +                "memory_channels": 4,
+> +                "port_topology": PortTopology.chained,
+> +                "vdevs": [vhost_user_vdev],
+> +                "lcore_list": LogicalCoreList([1, 2]),
+> +                "nb_cores": 1,
+> +                **default_args,
+> +            }
+> +
+> +            virtio_params: TestPmdParamsDict = {
+> +                "prefix": "virtio",
+> +                "no_pci": True,
+> +                "memory_channels": 4,
+> +                "allowed_ports": [],
+> +                "vdevs": [virtio_user_vdev],
+> +                "lcore_list": LogicalCoreList([3, 4, 5]),
+> +                "nb_cores": 2,
+> +                **extra_args,
+> +                **default_args,
+> +            }
+> +
+> +            with (
+> +                TestPmd(**vhost_params) as vhost,
+> +                TestPmd(**virtio_params) as virtio,
+> +            ):
+> +                vhost.set_forward_mode(SimpleForwardingModes.mac)
+> +                virtio.set_forward_mode(SimpleForwardingModes.io)
+> +                vhost.set_portlist([0, 2, 1])
+> +
+> +                assert expected_mpps > 0, "Invalid expected mpps, must be greater than 0."
 
-2. QSFP (else branch): wrong page for the straddling tail bytes.
-A call with info->offset=3D250, info->length=3D8 has its one block at
-offset=3D250, page=3D0 (since 250 < 256), reading bytes 250-257 -- but
-bytes 256-257 belong to the next page. That wrong data is copied to
-the caller. The same gap recurs at every subsequent page boundary.
+Is this assertion a check for a test suite bug or an actual testing 
+detail? If the latter then verify should be used here.
 
-Likely consequence in all cases (not empirically tested): wrong byte=20=20=
-=20=20=20=20=20=20=20=20=20=20
-values returned to the caller under a fully successful status, for
-any read whose block happens to straddle one of these boundaries.=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20
-
-What happens for an offset far past any valid range differs between=20=20=
-=20=20=20=20=20=20=20=20=20=20=20
-the two branches:
-- SFP: info->offset=3D600 computes offset=3D600-256=3D344 (only one
-  subtraction, no loop) and addr=3DA2h. 344 (0x158) fails the=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-  mem_addr & 0xff00 check in ice_aq_sff_eeprom() below, so this case
-  at least returns an error (ICE_ERR_PARAM) instead of silently
-  reading garbage.
-- QSFP: the while loop keeps subtracting 128 and incrementing page
-  for as long as offset >=3D 256, with no upper bound on page. There is
-  no equivalent range check on page anywhere -- the result of asking
-  for a page number the module doesn't implement is undefined from
-  the driver's side and would depend on the module's own hardware
-  behavior.=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-
-https://github.com/DPDK/dpdk/blob/a13c1053360ee26bbacca9f883d3f3cb83a0f366/=
-drivers/net/intel/ice/base/ice_common.c#L4350-L4379
-
-int=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20
-ice_aq_sff_eeprom(struct ice_hw *hw, u16 lport, u8 bus_addr,=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-                  u16 mem_addr, u8 page, u8 set_page, u8 *data, u8 length,
-                  bool write, struct ice_sq_cd *cd)
-{=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-    ...=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20
-    if (!data || (mem_addr & 0xff00))=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20
-        return ICE_ERR_PARAM;
-    ...
-}=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-
-ice_aq_sff_eeprom() validates the starting mem_addr but never checks
-mem_addr + length against the page boundary, and never validates page
-at all.
-
-Suggested fix:=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-
-Hardening ice_aq_sff_eeprom() to also reject mem_addr + length >=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20
-0xff would catch some out-of-range cases earlier, but that alone is
-not a fix and must not be the only change: ice_get_module_eeprom()
-always requests a fixed SFF_READ_BLOCK_SIZE (8) bytes regardless of
-how much of that block the caller actually needs, so a legitimate
-small request (e.g. offset=3D250, length=3D4) would start failing outright
-once such a check is added, even though it never needed the
-straddling bytes in the first place.
-
-The required fix belongs in ice_get_module_eeprom() itself. A single
-I2C/admin-queue transaction cannot cross either boundary correctly in
-the first place -- SFP's A0h and A2h are distinct I2C device=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-addresses, and QSFP's pages reuse the same address range with
-different contents depending on which page was last selected, so a
-straddling block was never going to be satisfiable as one read
-regardless of any driver change. The fix is to check whether offset +
-SFF_READ_BLOCK_SIZE crosses the relevant boundary and, if so, split
-that iteration into two correctly-addressed sub-reads (switching
-device address for SFP, or writing the new page-select value for
-QSFP) instead of issuing one read spanning both. Each individual read
-should also be sized to min(SFF_READ_BLOCK_SIZE, info->length - i)
-rather than always requesting a full fixed 8 bytes, so a small
-trailing request doesn't over-read into the next page for data nobody
-asked for.
-
-With that in place, adding the mem_addr + length check to
-ice_aq_sff_eeprom() becomes reasonable defense-in-depth against any
-other/future caller of that function, but it is not a substitute for
-the ice_get_module_eeprom() fix above.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+> +
+> +                measured_mpps = round(
+> +                    self._transmit(vhost, virtio, int(frame_size), repetitions=5), 3
+> +                )
+> +
+> +                performance_delta = round(
+> +                    (float(measured_mpps) - float(expected_mpps)) / float(expected_mpps),
+> +                    3,
+> +                )
+> +
+> +                params["measured_mpps"] = measured_mpps
+> +                params["performance_delta"] = performance_delta
+> +                params["passing"] = float(performance_delta) >= -self.config.delta_tolerance
+> +
+> +        self._produce_stats_table(self.config.test_parameters)
+> +        for params in self.config.test_parameters:
+> +            verify(
+> +                params["passing"] is True,
+> +                f"""Packets forwarded is less than {(1 - self.config.delta_tolerance) * 100}%
+> +                of the expected baseline.
+> +                Measured MPPS = {params["measured_mpps"]}
+> +                Expected MPPS = {params["expected_mpps"]}""",
+> +            )
