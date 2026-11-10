@@ -2,74 +2,75 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE14606A802
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 16:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C86606A320
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 17:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=lbK6iFZL
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=iQYMj7j0
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9583640281;
-	Tue, 10 Nov 2026 17:59:45 +0100 (CET)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com
- [209.85.210.182])
- by mails.dpdk.org (Postfix) with ESMTPS id 0BD2C4026C
- for <dev@dpdk.org>; Tue, 10 Nov 2026 17:59:44 +0100 (CET)
-Received: by mail-pf1-f182.google.com with SMTP id
- d2e1a72fcca58-8b6399ebb41so2010752b3a.0
- for <dev@dpdk.org>; Tue, 10 Nov 2026 08:59:43 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2EE5240281;
+	Tue, 10 Nov 2026 18:24:29 +0100 (CET)
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com
+ [209.85.216.44])
+ by mails.dpdk.org (Postfix) with ESMTPS id EAAF04026C
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 18:24:27 +0100 (CET)
+Received: by mail-pj1-f44.google.com with SMTP id
+ 98e67ed59e1d1-3ae6b4c669fso1477509a91.0
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 09:24:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794329982;
- x=1794934782; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794331466;
+ x=1794936266; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=eRCTrJr5SI6cx+S5SsqxU+rquQ7HAdI2pwypDQNSfvk=;
- b=lbK6iFZLxgq2hVFq3LIPWGUeJCrBBrh6On1evfcZSba6Jo+JplaCPcBr2jifUOJ4L8
- UMbDsTK4A6UxRCx7b8wKKYmq5AMrA/1IFE2jkAiWZpDKc+87y5B4Ym3j+bfuc5RV8lNZ
- J7Tqwv14OYf84sQeYhYuE7p9TnQKteLdrW4vggAbHyjnNzI6RHWV3T29xhbyvlX2QUxK
- 2Qr46GQwwIIz3J1gc4JHxGaUQvUuXKAz8/pOuudWqv8vEeV97RQ4srUxnN1+yIZfZU+h
- 0xhnbBy+6Jzepq9R0sKqRrNIiLwnPpNBSQCGEQN4GRCgsBZ4m/8o9ugQ3vf/ZoBYqPFf
- EUWw==
+ bh=iyG3tDQV4mT6iqOradTD7CrdppnBmD6kvponybt5EfY=;
+ b=iQYMj7j0VieK2pNJhMRPXKk+DmhffvoWRH8GNSdWrq+eIUgSst5Pb81vW4Q1PJRgxv
+ 3Voz/uH7iGyeNBgziNA3fiwobtBr9upIRVZiLnPdYg57VHMyhV1qTYmQQX7N8Rtrjk5K
+ yDEk653pjsQlf2Zrn2klRLl2y04bz6HKUnHBer/IPY5OJFd4TetP+D2nK11/hjnN3c8p
+ xgkir6xcMQ4cNE5sak/Yb51viFWdxt3Uktzqv0Fd5D7zHEX/jzihJlEXenD256GI+sCH
+ e9MVFT9/Sgjy0dVJYFtN17LRHwqXan7ka+50bVJkaf7w7/3XqoAHC7bvE2Euma1xdPWP
+ xCvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794329982; x=1794934782;
+ d=1e100.net; s=20260707; t=1794331466; x=1794936266;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=eRCTrJr5SI6cx+S5SsqxU+rquQ7HAdI2pwypDQNSfvk=;
- b=cxnYkHKqljI9vOdMJ/Egou6vxZ8/5sARxnft/e6xDUvYTR0tfjm9uyKO24F0fDGO7i
- nuGvCs827r5X+Se8HzkoRCPKhr4QpAEB+E8H/kihVhmfbyAOZJv1ZKJB3YRfbEGITYx5
- Tz1W4t6Bq1U2LHEzVkPacqLmkSyTY793btgIcx1SyH/tyMJ8UwJ0sk9+JjroeiMlYMnV
- iN9GkSD9Z9gzS0A0cTMxZIW/y7DzTG7sWWuUNbWuFL5QdeB9PoMl3HULXnT5nOvOfiEh
- G/Z2QIRT8Ikxj4+7vL3kLgafEYrqZ4HsTfI3ukLQMRHFQr21ar9vh/O5z8Mk0n5fXuSz
- d1/Q==
-X-Gm-Message-State: APuU4Z8BBDD8VQB5XQ9KvvjtmOM/8uNgHqE5Pt4NvG7eGF0Y+xorRVTj
- F8MGo3zIQW6YWC+4Of9kcuIL2nSX1OYchKsCLvCKtZNg8suO1mHsJQdvw3e5R26i9Hw=
-X-Gm-Gg: AYBFou3KhyCeqL7A2MrpMAbxeslona9M3Ey9r5mK1PAfcrChax6MKSBG/s9QDFo8De6
- L6hpkF2+JRuknYD664c+BJHMhHQpWB7KmDbQrvESQEhi8zUDXd6CjGLsFM/kEZD9gsF+Fk66iDp
- p5UlAyZ2Nzg+6FvjqPWqDH5qoyOQLfBLvUTYgPMK+TBoU5sRMcykcWT1WfLVTF2oWeldS+Tz6qH
- Xc6x4Z+jlS1g67MUGsp6AFRzzSVkdkULJPft4va49SfjpBTIb0a4liNjA6mRPlARdRcU0tvSZT3
- gFj0ZsEQ4OQEpWhabn0xD+qAsIQgc4QDov8AtD/7H1/CGDKYnrehB0jsa0v2r4O2LoPK88ZnISb
- gx5sFYXVcfEr07qc16xm/uidUU63M4VKoxChIsXbvcrJyE8f2BKmx2t0iHOwYBiRcoD91PkFDOH
- 9BO8i51Jg8OOTQiNQ4KpcF1suhVrl+lc3+4dYIeDgRsKY/K/JweG1JZuHaDpV18zwymO8xWVV8h
- OimVxRxM69nMhJcvFrK1t8fMVgLKdjkrHYiIR7BP6DD2OPp9TEVfcmmtXN9vXf/of8EaixFxFnj
- 8XR0JNLTJ0nfmR+42PWDmyV9khLTzbhqRjiLsB/jaQSss7xmAduRTHiuZlelPDydDFCkGvI=
-X-Received: by 2002:a05:6a00:4503:b0:8b1:e8dc:c899 with SMTP id
- d2e1a72fcca58-8ba85618e20mr3154664b3a.6.1794329982257; 
- Tue, 10 Nov 2026 08:59:42 -0800 (PST)
+ bh=iyG3tDQV4mT6iqOradTD7CrdppnBmD6kvponybt5EfY=;
+ b=HGfeDrBFcmdHDXk7ZsYg1dl7sdnlVSOS9rcawGjSmCNiqYkmF/awjIuyM0lw+tbcGm
+ QfYquURnlsrOzyBO8yJNQWY00fKG0ECOsK5bjlqKnqdlxMnhLRhBuy75TibX7rahiCsO
+ BMIxKjYsB3Du/uL8f/zBYIyHdWaK9A0X4b1U9VawZ8Wp+FX7l6kPJKGE45brocwM1BE2
+ PJ5kvu/mv/aLsdWW1O8fsqe0fLA7iofUzwwiAuwITHxsq1UMUlzxGpck16mZC8f/QFEz
+ KNsgjdJeZo9PUMgfTsTqyU2PcudfV2om8oFjaYc2sF9IkbM4x+kr0e0qkqKdrLR9bI1U
+ aETQ==
+X-Gm-Message-State: APuU4Z/ehVPzUzjiWMxlD2b0INNFmLnmhjdoC+ALr9JoXAqB/2Mt0JfP
+ s04m/+heTm7N8nLVyeju5IYM0WPnfR/knxa0lFjcrr/CWMDNLyU4JBXbiVK++tD7qN4/l6RwTpx
+ zzVtp
+X-Gm-Gg: AYBFou1HVHgmdB2qDOJhyy8RD+QO8mlgROKGZiedteJ4EumZSs3XvidycmYGMbhzQhg
+ IE368MS4e9rEcuwol+i1DYkg/movmjmCyLqyPPs4FeVkmpbTPsSBjhLUUyXalniGWoEykdR/oSu
+ IcTfFAhta8ubA56LZbZM9Nj6iTKWDxRX4qh36wRMsk4TbCzKy1RfzMsvt8Y3Ht7O4CAYzfmfubB
+ N6geSE32IHJ+GmfH94y0YhM45nWxZoIEUclWrQv6gyMEGI3zDKLInRwsp3mx6o1l1LedZJMzBSn
+ 7lcq7FA0+2MGTgkCRzBStMm9Stq7yzrr6YVgdqnVK9yWrxoScpOJb3y0JUS5RUbSTKltEZ9rdeb
+ j/hVHPrOW3COt/fQ4k0xc4NmbqpuNObnTAZMbweczcZQt+1YdG+1g2YDPJpy0vRLTZWMucV6DO0
+ LxbzLiPcBGruyDfIsA7hw+R+WVKbm/PRpk+TDK3zS4m3BkcLyKM+Yq2i0dvfRlIHDalaBs7XCzk
+ AN1cr2F8z3nPvvoAe3NbeJ62cgCLEyhLbO1M/eh1hzqYdBYOwqdQ7aOBlOnZ5RfIOIT0qd5NY8h
+ 1I7mwmOQtiqQp+8mLgJqQGPIMuuMXRx848ivQk07U1/6M3b0x+oFSb8dLdW24iAurJ2Rz70=
+X-Received: by 2002:a17:90b:2ec7:b0:3a6:d850:bf16 with SMTP id
+ 98e67ed59e1d1-3b1679a3218mr2128624a91.23.1794331465720; 
+ Tue, 10 Nov 2026 09:24:25 -0800 (PST)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8baa7de3680sm1174224b3a.4.2026.11.10.08.59.41
+ 98e67ed59e1d1-3b17db319bdsm533855a91.6.2026.11.10.09.24.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Nov 2026 08:59:42 -0800 (PST)
-Date: Tue, 10 Nov 2026 08:59:39 -0800
+ Tue, 10 Nov 2026 09:24:25 -0800 (PST)
+Date: Tue, 10 Nov 2026 09:24:21 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v3] app/testpmd: add explicit link autonegotiation control
-Message-ID: <20261110085819.3318e22e@phoenix.local>
-In-Reply-To: <20261110121658.1536152-1-bruce.richardson@intel.com>
-References: <20261103155033.3740814-1-bruce.richardson@intel.com>
- <20261110121658.1536152-1-bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>, Jakub Grajciar
+ <jgrajcia@cisco.com>
+Subject: Re: [PATCH] test: remove memif from fast tests
+Message-ID: <20261110092421.31670618@phoenix.local>
+In-Reply-To: <20261110162154.2623734-1-stephen@networkplumber.org>
+References: <20261110162154.2623734-1-stephen@networkplumber.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -83,33 +84,35 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Tue, 10 Nov 2026 12:16:57 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+On Tue, 10 Nov 2026 08:21:54 -0800
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> When a particular speed was specified for a port in testpmd, the flags
-> passed to the underlying API call always included the
-> RTE_ETH_LINK_SPEED_FIXED flag. This flag is not a mandatory part of the
-> bitmap when setting speeds, and is used to disable autonegotiation.
-> It's possible to have a link report only a single speed while
-> still have negotiation enabled, so testpmd needs to be extended to
-> support setting a speed both with and without the flag.
+> The memif test is exposing races in existing driver that are
+> resulting in CI failures. For now, exile this test from the
+> normal fast test set.
 > 
-> This patch does so by adding optional "autoneg on|off" setting after
-> speed and duplex settings specified by the user. This new option adjusts
-> the presence or absence of the FIXED speed bit in the ethdev
-> configuration structure "rte_eth_conf.link_speeds" bitmap. For backward
-> compatibility, the default value is "autoneg off" for fixed speeds if
-> not specified, meaning that the RTE_ETH_LINK_SPEED_FIXED flag is set on
-> the speed value by default.
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 > ---
+>  app/test/test_pmd_memif.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/app/test/test_pmd_memif.c b/app/test/test_pmd_memif.c
+> index 840ba4bf96..9bab43adb0 100644
+> --- a/app/test/test_pmd_memif.c
+> +++ b/app/test/test_pmd_memif.c
+> @@ -761,4 +761,5 @@ test_pmd_memif(void)
+>  
+>  #endif /* RTE_EXEC_ENV_LINUX */
+>  
+> -REGISTER_FAST_TEST(memif_pmd_autotest, NOHUGE_OK, ASAN_OK, test_pmd_memif);
+> +/* registering as fast test deferred until driver is fixed. */
+> +REGISTER_ATTIC_TEST(memif_pmd_autotest, test_pmd_memif);
 
-Applied to next-net and resolved merge conflict and minor docbook whitespace
+Applied to next-net
