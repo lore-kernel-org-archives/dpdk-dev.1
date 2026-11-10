@@ -2,54 +2,44 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF86606A336
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 14:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91600606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 14:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=BAiGKsCd
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=hJTP/Eni
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD1EC40E64;
-	Tue, 10 Nov 2026 15:29:01 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTPS id 1889340281;
- Tue, 10 Nov 2026 15:28:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1794320940; x=1825856940;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=1f2bRTzeS6DONWUuJ7xqee6rtr9dV+vN04BUqhL4IHY=;
- b=BAiGKsCdVHn68CZmJXzmALHBbe08V+RqjIOmskiHHjusDx0z30MbQhxz
- VuPUBYvPqUZlOyCBj/ez/ZZIQXRDx0fQg6f4aVVq5bMr9+tBOsFe4kjWJ
- EMJuIMyq9TJUts3SVuNx3EoFFP9o1gyW70z24qThKgbtSISH8fOU9AVzr
- I5xzrTI8jhwuviNyOSt0L0HREgoWhPAevpzBJ1wD9iR942q+ssBZchqfi
- tcMr+F2A+H2iz+pwTt1NYsjIY0yNOiOwT99BgozI44YBZC0lGSNtJTxyh
- 7uiaIiQfcHEJIdjvPJFdc9FQo4HQdXTT8yE8ae4xMqGwLWvoqsThlf+mv A==;
-X-CSE-ConnectionGUID: +kkGK8eNRSaBLid46eodUw==
-X-CSE-MsgGUID: YcYloSLyQOWONy0mnS0bBQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="2966603"
-X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
-   d="scan'208";a="2966603"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Nov 2026 06:28:52 -0800
-X-CSE-ConnectionGUID: TWOWCfXpRFGa60SlICWU8Q==
-X-CSE-MsgGUID: XMRHueVvS8mrF5CP7ZIHQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
-   d="scan'208";a="8034246"
-Received: from pae-31.iind.intel.com ([10.49.105.68])
- by orviesa005.jf.intel.com with ESMTP; 10 Nov 2026 06:28:51 -0800
-From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, stable@dpdk.org,
- Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-Subject: [PATCH] doc: fix igb NIC speed
-Date: Tue, 10 Nov 2026 21:31:03 +0000
-Message-Id: <20261110213103.151490-1-sandeep.penigalapati@intel.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id E817640285;
+	Tue, 10 Nov 2026 15:32:43 +0100 (CET)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 8B1A840281
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 15:32:42 +0100 (CET)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBE481477;
+ Tue, 10 Nov 2026 06:32:38 -0800 (PST)
+Received: from [10.57.17.170] (unknown [10.57.17.170])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9BEA3F632;
+ Tue, 10 Nov 2026 06:32:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+ t=1794321161; bh=X8928lKEU99dJkPBxIcT8QvVR3csk8B/V+v5FKTMuEE=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=hJTP/EniMRzQ2r+E6FRCII+0SaOnCN/HSGfjpRdDpM1NPXEytSDw4y2PZZb20I7w4
+ wJwrERchPoq6CfQ4QZpNAXmeBoRkuNS0z4hUVAPtbkq3WJ38Ln51h4zkLc7RtYsy63
+ K3j6oEINyBM18+ruBYiuKFzm1VvIEM2T6HE455Kg=
+Message-ID: <970e3674-a306-4478-99c3-e095d4434154@arm.com>
+Date: Tue, 10 Nov 2026 14:32:39 +0000
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] dts: add ipgre test suite
+To: Andrew Bailey <abailey@iol.unh.edu>, dev@dpdk.org,
+ patrickrobb1997@gmail.com, dladd@iol.unh.edu
+Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu
+References: <20260327180232.443820-1-abailey@iol.unh.edu>
+ <20261019194841.890257-1-abailey@iol.unh.edu>
+Content-Language: en-GB
+From: Luca Vizzarro <Luca.Vizzarro@arm.com>
+In-Reply-To: <20261019194841.890257-1-abailey@iol.unh.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,41 +49,16 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	DATE_IN_FUTURE_06_12,DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The listed 82576 and 82580 controllers are 1GbE, not 10GbE.
+Hi Andrew,
 
-Fixes: d2bc8f4d45d7 ("doc: add igb guide")
-Cc: stable@dpdk.org
+looks good. Was just missing the latest addition of @func_suite. Fixed 
+and accepted.
 
-Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
----
- doc/guides/nics/igb.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/doc/guides/nics/igb.rst b/doc/guides/nics/igb.rst
-index 3f7a4156ff..9bf0b67919 100644
---- a/doc/guides/nics/igb.rst
-+++ b/doc/guides/nics/igb.rst
-@@ -10,9 +10,9 @@ support for Intel 1GbE nics.
- Supported Chipsets and NICs
- ---------------------------
- 
--- Intel 82576EB 10 Gigabit Ethernet Controller
--- Intel 82580EB 10 Gigabit Ethernet Controller
--- Intel 82580DB 10 Gigabit Ethernet Controller
-+- Intel 82576EB Gigabit Ethernet Controller
-+- Intel 82580EB Gigabit Ethernet Controller
-+- Intel 82580DB Gigabit Ethernet Controller
- - Intel Ethernet Controller I210
- - Intel Ethernet Controller I350
- 
--- 
-2.34.1
-
+Luca
