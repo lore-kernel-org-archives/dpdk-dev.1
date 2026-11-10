@@ -2,79 +2,85 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FE1606A325
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 14:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1AB606A320
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 14:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=VUll6HJH
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=fVpTYdcr
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8CFD440285;
-	Tue, 10 Nov 2026 15:47:18 +0100 (CET)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTPS id 2C31440281
- for <dev@dpdk.org>; Tue, 10 Nov 2026 15:47:17 +0100 (CET)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-2e985106c0cso15944985ad.2
- for <dev@dpdk.org>; Tue, 10 Nov 2026 06:47:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794322035;
- x=1794926835; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=v9ZKdE3p5syySoti185vqG9Qj92rmcSGfD42DJV0Xys=;
- b=VUll6HJHlLn//nSJZ6OL70+SvlUN3gsP5cCVsCpa699fDCoTwVeOXISRoWq93LRMfM
- tBRxepUGpdyuWZxiM1jV+bfZsxPJ/FjpxS+W1sQIEhHezSGZVO9X/dk5BUHG+e7/L9wM
- zN+IcvSSK9DHxA7sqaDYg8fWOZj0fOZ+AQS1SPxMBcr+9FkuVEi10q1UVAf5xI4qz+pz
- ule1OPgKl21SGl16rNoGyl1v952ygjbvXdd5smC07VF7H388QXYQhoSwsbYz1VTPxXNE
- 3R/QQ3t5Lbig49b9s7VGXgARuaumROwmmtiWpqOL/iVsI5SOWqosD5tT5I4VIhiFlaRv
- pYqA==
+	by mails.dpdk.org (Postfix) with ESMTP id BAC0740E64;
+	Tue, 10 Nov 2026 15:58:21 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTPS id 4F70E40285
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 15:58:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1794322699;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=XPlpTWWgd++halKDo1j5FGSSkSkZuVwtKbDrCHUJJOk=;
+ b=fVpTYdcrpt1K0p4b1gz9IEeeyqYawuq67wXDtpiwXhBtYfvsgUiXKwbvddTqFCKadB/nlh
+ x3D/Nm2FBmeHLUajXu8FLbdvFyzOGSvWbcsYrCWpLYgamgEKTbrGfm8ovb+I1mrhSSDk64
+ b0GNFJmxWzzgn+GmXqsYnJ/wtPCR5Ko=
+Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com
+ [74.125.82.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-306-vefL6_qTPc2-KZVbzN-rWg-1; Tue, 10 Nov 2026 09:58:17 -0500
+X-MC-Unique: vefL6_qTPc2-KZVbzN-rWg-1
+X-Mimecast-MFC-AGG-ID: vefL6_qTPc2-KZVbzN-rWg_1794322697
+Received: by mail-dy1-f198.google.com with SMTP id
+ 5a478bee46e88-375f0fd31f4so570830eec.0
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 06:58:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794322035; x=1794926835;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ d=1e100.net; s=20260707; t=1794322696; x=1794927496;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=v9ZKdE3p5syySoti185vqG9Qj92rmcSGfD42DJV0Xys=;
- b=xw50qYfSsKYyEH9RhFRangtGXZNmwfwlXYTTr2MLuQgJoLAy1Hur/bqQCZh4xkUgou
- zKKPRi0ie4AzFDvS7Odo+7Mw0egIXukmnMwweu01vzk10mEqO5zMMCk89Jl4zgLiNItK
- ZV/uqzujpNajwPLd+a9Og5JbHmUnwbirt3YBEoa8ZGo49cO3ZQjFv15CJ2asJHHwjfUV
- r6FQJyOQFsRP4qx2WvxqNIAr3UCfJIhCYZuHvw77tD5V074ptG5W+R6lvG3Mo4zXIS4b
- Z3E+FFevk7BfTDYMnbaPT4Y9alKmfM16PQE/duM8xEE7AspFnJdZo2agBvYh2c4QNSaf
- UqGQ==
-X-Gm-Message-State: APuU4Z8piDnGqLPeQLNaGYaH5cQC9/OdizQ0p6O1a9HHLfOkxftNTpoP
- mQ7q/KyFnRuJM7iDamJcSPzGBDGQVWlTMmdlrzNd5TukkKdWiYmGePl6sM9rWh11UBE=
-X-Gm-Gg: AYBFou2k+izvPzGtEowFnagf/UUtNmQZnV5rl6g2b0Uiek/85gdH4LKlDC1xs/QL2Q7
- S4YVxNBoQWXG54atzKG99Oxccp6ijnXgTnRVYXca+UAZQhVdCSWoCIyCGJFLzaSMzCWOr71DnOL
- 8Sfl0P/gsWVa/3xWZIT2gJ49a4aVHJn4MukuA9xWm0f5npj/f+X8m/fjMMuP49XIWeHbhadlhHt
- 3HkRmPPr3YHDcOzvooi0LGWbmzmQmsURmz5Fvbrqu/joTr6UTMOoMscgbyiUlfx/M2wzXsNE3hD
- MNzvfEXpUDM8NuCQkwT+K/STYuxFXmRlQb5uNV9y37VL4RBt+8nn33O9LpSjIXlJLurFHuXT2qs
- kJSIu5mBgnTPqt7CHB7oicQGmYnKi3kVr4vwV6yhs5F5OD1p4vTpBM6XeEUsBpKrnMXctkXr+Dm
- LSkOWbuhRe/xfipJxJ/hcyiifs2FLdxTUcNKXehz8YXq8DiLG7cxiOa/zBrE/i2nukQws/c8Mit
- jV8KqBv+hUiVJn4/WESi6zfQI57HssVY3YnUfGYoIeZTkEwiTG5zFLytyuwpen0QJwg1QDm6wEq
- feboiuuklJp8ZC5U9Kh9kfMs4ee6g7+uohgnfy5i4rjht8dhr4GcJ5H4hyh3BSsiKkgvh68=
-X-Received: by 2002:a17:902:e944:b0:2ed:630:40a4 with SMTP id
- d9443c01a7336-2edb91f5535mr29717775ad.11.1794322035392; 
- Tue, 10 Nov 2026 06:47:15 -0800 (PST)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2edb6d9efd6sm9944345ad.50.2026.11.10.06.47.14
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Nov 2026 06:47:15 -0800 (PST)
-Date: Tue, 10 Nov 2026 06:47:12 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Orgad Shaneh <orgads@gmail.com>
-Cc: dev@dpdk.org, Wei Hu <weh@microsoft.com>, Long Li <longli@kernel.org>,
- Aditya Garg <gargaditya@microsoft.com>
-Subject: Re: [PATCH] net/mana: do not block Rx interrupt calls during a reset
-Message-ID: <20261110064712.6b1a3eb7@phoenix.local>
-In-Reply-To: <20261110094243.151321-1-orgads@gmail.com>
-References: <20261109142127.7a54ee80@phoenix.local>
- <20261110094243.151321-1-orgads@gmail.com>
+ bh=XPlpTWWgd++halKDo1j5FGSSkSkZuVwtKbDrCHUJJOk=;
+ b=jtt/LrAGLIAWtN5Ohjd+gx8ziyZ+cS3v6kd0ZF/cBa1XJBb0PPssj0ai0m1lLuRgVA
+ TK9md+qSpcCYUI5ahsdUdumrbxwnkUvyQRVWf8gfIoEINvFoelsZWlHM01So1E/ExSOX
+ NeFPAkoy/Ac5NMtB/XUIlUjUXA9s/GtonEj1mClh6zVRt3bU5I9CxnvYViz7MGoUGd7z
+ u93n7jbkCOhGzO4pmU9LuMWRLRXepE4ohxnt+P9m57RnEdqfXPRcU9mXlMQvyE0nGrwE
+ 83ytdn8tyXXPglQLzdQCN9HOkKBrkzUpvjkq8tpYeGDr0cT4T1P2BRul1UOUTkDGp5tc
+ +Crw==
+X-Forwarded-Encrypted: i=1;
+ AL+hErHz/mum/gaymcKV4H8cTPFJvtdmIDyPTPUmwJoE4rGAVByx/Jf1LcnGTZvYR/qg6CVBIlA=@dpdk.org
+X-Gm-Message-State: APuU4Z9zHlmPK53zDTwMNGtjoZZPqzbhYtADviRbEi+GdtGtFI5hp5wv
+ II9WaNEukisYJrA5cC8NHMdvWMaFLRvSpOktQDe/mh1DwAiVAqUpufef67+phehT1WecRUFQMpI
+ p9q+MNZQa95b/+KQKrQagvZ7GUo5fAexjhfzDh/dPGTgAKjGEIfdwjAldPcQ2Xtvmp+19AFdeKQ
+ HH9svIO5FZt9I0EyiTS5A=
+X-Gm-Gg: AYBFou2pkyd9WRthqLs1SO96gXFQbr4ZbEql6DwsKacdad0+aKPx4rLgvzo3TWPpGWu
+ SzTsNr6m2OwZY0J5DKizTEQRz2oEim9tHifw8x8NP/A/2sUC8XZN0CEg4iiOMezNMHzObQTzEWH
+ 7mP9x8rHbLCeGiO8xgh6jj08zx5rOZq9FDHQO71Qs6DUUJO23h1A0MW/vBsD4eMud3eBoXc+75V
+ RuI9u2G++8Vqqsk/9ATxqRtdENMEnj1y9PcAOiWgLM5MmwyVcdr7zQzE1johefLv3/jOlBxiZAC
+ M/ITT64jxmKQnvUjS6GwUIs8kk3QndHTpM7Fgt7EnJI=
+X-Received: by 2002:a05:7022:5f19:b0:144:eaa7:2763 with SMTP id
+ a92af1059eb24-1b3b60001f1mr3655096c88.16.1794322696290; 
+ Tue, 10 Nov 2026 06:58:16 -0800 (PST)
+X-Received: by 2002:a05:7022:5f19:b0:144:eaa7:2763 with SMTP id
+ a92af1059eb24-1b3b60001f1mr3655063c88.16.1794322695676; Tue, 10 Nov 2026
+ 06:58:15 -0800 (PST)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20261025081639.2746665-1-mkashani@nvidia.com>
+In-Reply-To: <20261025081639.2746665-1-mkashani@nvidia.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Date: Tue, 10 Nov 2026 15:58:04 +0100
+X-Gm-Features: AclHuK_zMO3CGdPm9T7sO79PC_IbD2JW2AJ5hj-oStxjliKRNM-J-OS9LOvLN8s
+Message-ID: <CAO55csz_1mrKh_RN7ppPESS7YkvSORVzAAiTzrT7-EqLP8dmHw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] vdpa/mlx5: fix RSS flow leak on steering update
+ failure
+To: Maayan Kashani <mkashani@nvidia.com>
+Cc: Matan Azrad <matan@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, dev@dpdk.org, 
+ Dariusz Sosnowski <dsosnowski@nvidia.com>, stable@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: myCOYE8dIh1NI9IyUbYcBPpCqnebE692LgwRMC6MBU0_1794322697
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,93 +90,48 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Tue, 10 Nov 2026 09:42:43 +0000
-Orgad Shaneh <orgads@gmail.com> wrote:
-
-> Rx interrupt enable and disable wait for reset_ops_lock and then
-> return -EBUSY if a reset is in progress. The reset thread holds that
-> lock across the teardown (mana_dev_stop(), the RESET_ENTER request
-> to secondary processes, mana_dev_close()) and across the re-probe,
-> and each request to the secondaries may take up to
-> MANA_MP_REQ_TIMEOUT_SEC. An lcore that calls rx_intr_enable or
-> rx_intr_disable during one of those steps blocks for that long,
-> only to get -EBUSY.
-> 
-> Retry the trylock while the device is active, and return -EBUSY as
-> soon as it is not. Outside a reset the lock is held only by another
-> queue's doorbell write or event read, so the wait stays short; once
-> a reset has started, the caller returns at once.
-> 
-> Suggested-by: Wei Hu <weh@microsoft.com>
-> Signed-off-by: Orgad Shaneh <orgads@gmail.com>
+On Sun, Oct 25, 2026 at 9:17=E2=80=AFAM Maayan Kashani <mkashani@nvidia.com=
+> wrote:
+>
+> mlx5_vdpa_steer_update() calls mlx5_vdpa_rss_flows_create() which, on
+> failure, leaves behind any RSS steering objects (matcher, TIR, TIR
+> action, flow) it managed to create before the error, relying on the
+> caller to release them.
+>
+> mlx5_vdpa_steer_setup() honors that contract by calling
+> mlx5_vdpa_steer_unset() on its error path, but mlx5_vdpa_virtq_enable()
+> only logs a warning and continues when mlx5_vdpa_steer_update() fails.
+> As a result, every failed steering update triggered from the virtq
+> enable/disable path leaks the partially created software-steering
+> objects. Over many reconfiguration cycles this exhausts the kernel
+> software-steering (DR) resources and later probes fail with
+> "Failed to create Rx domain".
+>
+> Free the partial RSS flows in mlx5_vdpa_steer_update() itself so that
+> all callers are covered regardless of how they handle the return value.
+> mlx5_vdpa_rss_flows_destroy() checks each object for NULL, so the
+> subsequent steer_unset() on the steer_setup() error path stays a safe
+> no-op.
+>
+> Fixes: 9f09b1ca15c5 ("vdpa/mlx5: recreate a virtq becoming enabled")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+> Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 > ---
+>  drivers/vdpa/mlx5/mlx5_vdpa_steer.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
 
-More detailed AI review of this.
+Applied to next-virtio/for-next-net.
 
-Subject: Re: [PATCH] net/mana: do not block Rx interrupt calls during a reset
+Thanks,
+Maxime
 
-The reset-path logic is right. mana_intr_handler() stores
-MANA_DEV_RESET_ENTER under reset_ops_lock before the reset thread
-starts, the state stays non-ACTIVE through teardown (RESET_ENTER) and
-re-probe (RESET_EXIT), and ACTIVE is only stored at the end of
-re-probe with the lock still held. The relaxed load in the loop is
-only a hint; the acquire load after the lock is taken is the one that
-matters. The PCI remove path stores RESET_FAILED, which also ends the
-spin.
-
-Warning
-
-The commit message and the new comment say that outside a reset the
-lock is held only by another queue's doorbell write or event read.
-That is not true. mana_dev_stop_lock() and mana_dev_close_lock() take
-reset_ops_lock with dev_state still MANA_DEV_ACTIVE and hold it
-across mana_dev_stop(), which calls
-mana_mp_req_on_rxtx(dev, MANA_MP_REQ_STOP_RXTX). That request can
-wait MANA_MP_REQ_TIMEOUT_SEC (5 s). dev_state does not change, so an
-lcore in rx_intr_enable/disable now busy-spins with rte_pause() for up
-to 5 s, where before it slept in pthread_mutex_lock(). The control
-ops that use mana_reset_trylock() also hold the lock from a
-control thread that can be preempted.
-
-rte_pause() is only a CPU hint ("pause" on x86). It gives pipeline
-resources to the SMT sibling, not the CPU to another thread. If the
-lock holder is preempted on the same CPU (a control thread or a
-secondary's thread sharing the lcore's core), the spinner keeps the
-CPU until its time slice runs out, and the holder cannot release the
-lock until then. Yield instead:
-
-	while (pthread_mutex_trylock(&priv->reset_ops_lock)) {
-		if (rte_atomic_load_explicit(&priv->dev_state,
-		    rte_memory_order_relaxed) != MANA_DEV_ACTIVE)
-			return -EBUSY;
-		sched_yield();
-	}
-
-Use sched_yield() rather than pthread_yield(), which is a GNU
-extension deprecated since glibc 2.34.
-
-Calling rx_intr_* concurrently with dev_stop is an application bug.
-But the wait is not "short", and the commit message should not say it
-is. Either fix the wording:
-
-  Outside a reset the lock is held by another queue's Rx interrupt
-  call or by a control operation. The data path must already be
-  stopped before dev_stop/dev_close, so the wait is short in a correct
-  application.
-
-and the same in the comment above mana_reset_lock(). Or stop the
-queues from contending with each other in the first place. The only
-reason rx_intr takes the device-wide lock is to exclude teardown.
-A process-shared pthread_rwlock_t would do that without the spin:
-rx_intr takes the read lock with tryrdlock and returns -EBUSY on
-failure, and control ops and the reset thread take the write lock.
-Queues never block each other, and a writer of any kind fails the
-call immediately. That fits better with the burst_state follow-up
-for main than with this patch, so the wording fix is enough here.
