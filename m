@@ -2,77 +2,75 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B88606A31C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 14:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FE1606A325
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 14:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=qlkUiY7O
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=VUll6HJH
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 41CC640296;
-	Tue, 10 Nov 2026 15:36:57 +0100 (CET)
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com
- [209.85.210.179])
- by mails.dpdk.org (Postfix) with ESMTPS id 90E8740E64
- for <dev@dpdk.org>; Tue, 10 Nov 2026 15:36:55 +0100 (CET)
-Received: by mail-pf1-f179.google.com with SMTP id
- d2e1a72fcca58-89d6bd67045so1135228b3a.0
- for <dev@dpdk.org>; Tue, 10 Nov 2026 06:36:55 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8CFD440285;
+	Tue, 10 Nov 2026 15:47:18 +0100 (CET)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTPS id 2C31440281
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 15:47:17 +0100 (CET)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-2e985106c0cso15944985ad.2
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 06:47:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794321414;
- x=1794926214; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794322035;
+ x=1794926835; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=dkSDb9PiOcUPvyBW5GGkY0DYVVAt7Iti0U9fU0x3uTc=;
- b=qlkUiY7OOvStyxP8g5PA7q8wPpWMnMb+O+KLiItm96ycM1bnLEnio5zk7glD5HI8v2
- uc+QpUteC48CJhxGG6PUePfbPl3wCQOlKDULcMViFhVVcUVOPiahQH9V7HaGoW+QR2O8
- dUDcJN9hlJkvCLxVF815MF+NU6wuwHTzVaoCBfyfco4I9KxgHtauD9LmWlyrWst9vA81
- K20ncyzEv73vmytAlulB8CVgki9c0ufSTFvR8x6Vd9iKFvq4hXCHfBhXznYCsjjsUJWE
- aK6kUAP2xulfSPVlygoKX5Zcw/72ydvihaR6hWEwoS2dWQEp5p/bIgPArUBtHvK14utE
- ZG9w==
+ bh=v9ZKdE3p5syySoti185vqG9Qj92rmcSGfD42DJV0Xys=;
+ b=VUll6HJHlLn//nSJZ6OL70+SvlUN3gsP5cCVsCpa699fDCoTwVeOXISRoWq93LRMfM
+ tBRxepUGpdyuWZxiM1jV+bfZsxPJ/FjpxS+W1sQIEhHezSGZVO9X/dk5BUHG+e7/L9wM
+ zN+IcvSSK9DHxA7sqaDYg8fWOZj0fOZ+AQS1SPxMBcr+9FkuVEi10q1UVAf5xI4qz+pz
+ ule1OPgKl21SGl16rNoGyl1v952ygjbvXdd5smC07VF7H388QXYQhoSwsbYz1VTPxXNE
+ 3R/QQ3t5Lbig49b9s7VGXgARuaumROwmmtiWpqOL/iVsI5SOWqosD5tT5I4VIhiFlaRv
+ pYqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794321414; x=1794926214;
+ d=1e100.net; s=20260707; t=1794322035; x=1794926835;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=dkSDb9PiOcUPvyBW5GGkY0DYVVAt7Iti0U9fU0x3uTc=;
- b=nHlVmzHVX0MhN3oni8bNc3b2IvZaWt/j/bYZZEyQ52Pup4PAJufQAxcQw3A35NiLdP
- UFu51K2WsLXAzefcngt7XUH/WhWkvSwDwbNT+NSj93EiWmZ6STZP6jQuhYBcfXXjONoM
- 0is1cIqUPp0uLUV8jV2BvFk1DJxp3xNR8hP8Ni+Anb5o6I4cdvwkph7D2T4HtdbX8U1P
- yG9fw/JEBVas0nBEuFsJJLgNSnKNWd7c1oXFzvEIfzYm+OvCUODN+K/o36fRg9f6hhJQ
- DtWR4nO7VGW1v/FFVBgc1yjosbjmXGa444Ut6knRFC+YE5Qx/awVDbD0nyCgjZ5fkPMM
- zLxQ==
-X-Gm-Message-State: APuU4Z+/lfTq29fxeBHCGuKD0xJuiex5GMeUAIZYNGclhrYktHc28HUk
- fa/N+9olrfAUX+4fgp7XKGh6urzJembss8KXWLr/YePDNJnLBdZEbsIviwZaaDqDfjk=
-X-Gm-Gg: AYBFou0Vj9WG7hTfdyEV+x3ttxQus8Z6Rybytn8JhH84wMEzjrCCo7S225Boim61IgA
- BwgwigV/AuaKbo4jgj+3FxB51BH2j3xH3GepjqmTHmJpYcKREJjOKZU6gdczuR1ODPfvlyTj0jD
- Zc5AKwPpW4hso06A0RaIUzFFLI0sVnix1BqCqRurz4aTtdiZCiMJzj2yCSinaS8WkQSjxUi+2CF
- TH8FyCGAAy1hEc9oK5HSEveTht0YaWgaIhnyeECMr2jrh/MXbcLGqNOrzLTPV2CbGANKU9K9UoG
- C7l9pCMJiqHtrm2R0bA/z9eB8gDzqRRkOB92SPZt6COiPN3bfjaPhj+DPOqFpWfmSH0ceeC0Z5v
- 2N0DPKGmNnhx6Ps0KNh1WPFKFehpSYMPdYxlA8iXgnpiVHDTYxh7ZLl5fxYXVF4oZ2+d6Jgi2ND
- c0JGm3ZYvEsdfQT02U9sSNNZFveA59Eq6fIX4SQ+wYA4CeTFl/J8yqIFevlBpRXA4KfLXPjjW7Z
- aHURLDSxg7fS9uzSyXnvA8O+YmXfrR5hu0G8rQhCwrf/ElEvwpF6oloLg8zKAqTfLG76J7EicG/
- Mk/AkG5uvNXHltF9ZiOZz7JysZA3dBVHRjqQcO+bKSQZ+o4xIKYRYJPs2HcqngIXCQ205QY=
-X-Received: by 2002:a05:6a00:12d4:b0:89f:2b65:2a1 with SMTP id
- d2e1a72fcca58-8ba934c905amr2109205b3a.8.1794321413911; 
- Tue, 10 Nov 2026 06:36:53 -0800 (PST)
+ bh=v9ZKdE3p5syySoti185vqG9Qj92rmcSGfD42DJV0Xys=;
+ b=xw50qYfSsKYyEH9RhFRangtGXZNmwfwlXYTTr2MLuQgJoLAy1Hur/bqQCZh4xkUgou
+ zKKPRi0ie4AzFDvS7Odo+7Mw0egIXukmnMwweu01vzk10mEqO5zMMCk89Jl4zgLiNItK
+ ZV/uqzujpNajwPLd+a9Og5JbHmUnwbirt3YBEoa8ZGo49cO3ZQjFv15CJ2asJHHwjfUV
+ r6FQJyOQFsRP4qx2WvxqNIAr3UCfJIhCYZuHvw77tD5V074ptG5W+R6lvG3Mo4zXIS4b
+ Z3E+FFevk7BfTDYMnbaPT4Y9alKmfM16PQE/duM8xEE7AspFnJdZo2agBvYh2c4QNSaf
+ UqGQ==
+X-Gm-Message-State: APuU4Z8piDnGqLPeQLNaGYaH5cQC9/OdizQ0p6O1a9HHLfOkxftNTpoP
+ mQ7q/KyFnRuJM7iDamJcSPzGBDGQVWlTMmdlrzNd5TukkKdWiYmGePl6sM9rWh11UBE=
+X-Gm-Gg: AYBFou2k+izvPzGtEowFnagf/UUtNmQZnV5rl6g2b0Uiek/85gdH4LKlDC1xs/QL2Q7
+ S4YVxNBoQWXG54atzKG99Oxccp6ijnXgTnRVYXca+UAZQhVdCSWoCIyCGJFLzaSMzCWOr71DnOL
+ 8Sfl0P/gsWVa/3xWZIT2gJ49a4aVHJn4MukuA9xWm0f5npj/f+X8m/fjMMuP49XIWeHbhadlhHt
+ 3HkRmPPr3YHDcOzvooi0LGWbmzmQmsURmz5Fvbrqu/joTr6UTMOoMscgbyiUlfx/M2wzXsNE3hD
+ MNzvfEXpUDM8NuCQkwT+K/STYuxFXmRlQb5uNV9y37VL4RBt+8nn33O9LpSjIXlJLurFHuXT2qs
+ kJSIu5mBgnTPqt7CHB7oicQGmYnKi3kVr4vwV6yhs5F5OD1p4vTpBM6XeEUsBpKrnMXctkXr+Dm
+ LSkOWbuhRe/xfipJxJ/hcyiifs2FLdxTUcNKXehz8YXq8DiLG7cxiOa/zBrE/i2nukQws/c8Mit
+ jV8KqBv+hUiVJn4/WESi6zfQI57HssVY3YnUfGYoIeZTkEwiTG5zFLytyuwpen0QJwg1QDm6wEq
+ feboiuuklJp8ZC5U9Kh9kfMs4ee6g7+uohgnfy5i4rjht8dhr4GcJ5H4hyh3BSsiKkgvh68=
+X-Received: by 2002:a17:902:e944:b0:2ed:630:40a4 with SMTP id
+ d9443c01a7336-2edb91f5535mr29717775ad.11.1794322035392; 
+ Tue, 10 Nov 2026 06:47:15 -0800 (PST)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8baaac46b20sm972054b3a.30.2026.11.10.06.36.53
+ d9443c01a7336-2edb6d9efd6sm9944345ad.50.2026.11.10.06.47.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Nov 2026 06:36:53 -0800 (PST)
-Date: Tue, 10 Nov 2026 06:36:50 -0800
+ Tue, 10 Nov 2026 06:47:15 -0800 (PST)
+Date: Tue, 10 Nov 2026 06:47:12 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>, Jakub
- Grajciar <jgrajcia@cisco.com>, Thomas Monjalon <thomas@monjalon.net>
-Subject: Re: [PATCH v2] net/memif: fix use after free on listener socket close
-Message-ID: <20261110063650.38e0ab72@phoenix.local>
-In-Reply-To: <CAJFAV8w0gWA+jJmTcFOeJTi1S+j5+rSq9Ltn+aWn59yJu0Oy5g@mail.gmail.com>
-References: <20261104164153.1674329-1-david.marchand@redhat.com>
- <20261106145730.2561787-1-david.marchand@redhat.com>
- <20261109141354.23e03f2c@phoenix.local>
- <CAJFAV8w0gWA+jJmTcFOeJTi1S+j5+rSq9Ltn+aWn59yJu0Oy5g@mail.gmail.com>
+To: Orgad Shaneh <orgads@gmail.com>
+Cc: dev@dpdk.org, Wei Hu <weh@microsoft.com>, Long Li <longli@kernel.org>,
+ Aditya Garg <gargaditya@microsoft.com>
+Subject: Re: [PATCH] net/mana: do not block Rx interrupt calls during a reset
+Message-ID: <20261110064712.6b1a3eb7@phoenix.local>
+In-Reply-To: <20261110094243.151321-1-orgads@gmail.com>
+References: <20261109142127.7a54ee80@phoenix.local>
+ <20261110094243.151321-1-orgads@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -93,41 +91,86 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Tue, 10 Nov 2026 08:43:28 +0100
-David Marchand <david.marchand@redhat.com> wrote:
+On Tue, 10 Nov 2026 09:42:43 +0000
+Orgad Shaneh <orgads@gmail.com> wrote:
 
-> On Mon, 9 Nov 2026 at 23:14, Stephen Hemminger
-> <stephen@networkplumber.org> wrote:
-> >
-> > On Fri,  6 Nov 2026 15:57:29 +0100
-> > David Marchand <david.marchand@redhat.com> wrote:
-> >  
-> > > memif_socket_remove_device() calls rte_intr_callback_unregister() on
-> > > the listener socket interrupt handle. If memif_listener_handler() is
-> > > active at that point, the unregister returns -EAGAIN and the code
-> > > proceeds to close and free the handle while the handler is still
-> > > running.
-> > >
-> > > Use rte_intr_callback_unregister_sync() which retries until the
-> > > handler completes.
-> > >
-> > > Fixes: 7281511c2cfa ("net/memif: fix some interrupt FD leaks")
-> > >
-> > > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > > Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
-> > > ---
-> > > Changes since v1:
-> > > - added missing _sync in other call,  
-> >
-> >
-> > Applied to next-net but dropped the Fixes line since that commit
-> > is after the last release. Fixes is not necessary during the merge
-> > cycle.  
+> Rx interrupt enable and disable wait for reset_ops_lock and then
+> return -EBUSY if a reset is in progress. The reset thread holds that
+> lock across the teardown (mana_dev_stop(), the RESET_ENTER request
+> to secondary processes, mana_dev_close()) and across the re-probe,
+> and each request to the secondaries may take up to
+> MANA_MP_REQ_TIMEOUT_SEC. An lcore that calls rx_intr_enable or
+> rx_intr_disable during one of those steps blocks for that long,
+> only to get -EBUSY.
 > 
-> I disagree.
+> Retry the trylock while the device is active, and return -EBUSY as
+> soon as it is not. Outside a reset the lock is held only by another
+> queue's doorbell write or event read, so the wait stays short; once
+> a reset has started, the caller returns at once.
 > 
-> Fixes: tag are not *only* for backport purpose.
-> Those tags also give useful information when looking back in git
-> history, to understand why change X is done.
+> Suggested-by: Wei Hu <weh@microsoft.com>
+> Signed-off-by: Orgad Shaneh <orgads@gmail.com>
+> ---
 
-Makes sense, just don't cc stable
+More detailed AI review of this.
+
+Subject: Re: [PATCH] net/mana: do not block Rx interrupt calls during a reset
+
+The reset-path logic is right. mana_intr_handler() stores
+MANA_DEV_RESET_ENTER under reset_ops_lock before the reset thread
+starts, the state stays non-ACTIVE through teardown (RESET_ENTER) and
+re-probe (RESET_EXIT), and ACTIVE is only stored at the end of
+re-probe with the lock still held. The relaxed load in the loop is
+only a hint; the acquire load after the lock is taken is the one that
+matters. The PCI remove path stores RESET_FAILED, which also ends the
+spin.
+
+Warning
+
+The commit message and the new comment say that outside a reset the
+lock is held only by another queue's doorbell write or event read.
+That is not true. mana_dev_stop_lock() and mana_dev_close_lock() take
+reset_ops_lock with dev_state still MANA_DEV_ACTIVE and hold it
+across mana_dev_stop(), which calls
+mana_mp_req_on_rxtx(dev, MANA_MP_REQ_STOP_RXTX). That request can
+wait MANA_MP_REQ_TIMEOUT_SEC (5 s). dev_state does not change, so an
+lcore in rx_intr_enable/disable now busy-spins with rte_pause() for up
+to 5 s, where before it slept in pthread_mutex_lock(). The control
+ops that use mana_reset_trylock() also hold the lock from a
+control thread that can be preempted.
+
+rte_pause() is only a CPU hint ("pause" on x86). It gives pipeline
+resources to the SMT sibling, not the CPU to another thread. If the
+lock holder is preempted on the same CPU (a control thread or a
+secondary's thread sharing the lcore's core), the spinner keeps the
+CPU until its time slice runs out, and the holder cannot release the
+lock until then. Yield instead:
+
+	while (pthread_mutex_trylock(&priv->reset_ops_lock)) {
+		if (rte_atomic_load_explicit(&priv->dev_state,
+		    rte_memory_order_relaxed) != MANA_DEV_ACTIVE)
+			return -EBUSY;
+		sched_yield();
+	}
+
+Use sched_yield() rather than pthread_yield(), which is a GNU
+extension deprecated since glibc 2.34.
+
+Calling rx_intr_* concurrently with dev_stop is an application bug.
+But the wait is not "short", and the commit message should not say it
+is. Either fix the wording:
+
+  Outside a reset the lock is held by another queue's Rx interrupt
+  call or by a control operation. The data path must already be
+  stopped before dev_stop/dev_close, so the wait is short in a correct
+  application.
+
+and the same in the comment above mana_reset_lock(). Or stop the
+queues from contending with each other in the first place. The only
+reason rx_intr takes the device-wide lock is to exclude teardown.
+A process-shared pthread_rwlock_t would do that without the spin:
+rx_intr takes the read lock with tryrdlock and returns -EBUSY on
+failure, and control ops and the reset thread take the write lock.
+Queues never block each other, and a writer of any kind fails the
+call immediately. That fits better with the burst_state follow-up
+for main than with this patch, so the wording fix is enough here.
