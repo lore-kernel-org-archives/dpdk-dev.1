@@ -2,74 +2,74 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D56A606A320
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 20:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3172606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 20:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=F/1msVh+
+	dkim=pass (1024-bit key) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=MQNvw3bW
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59C3740285;
-	Tue, 10 Nov 2026 21:10:17 +0100 (CET)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com
- [209.85.219.53])
- by mails.dpdk.org (Postfix) with ESMTPS id 6433540281
- for <dev@dpdk.org>; Tue, 10 Nov 2026 21:10:16 +0100 (CET)
-Received: by mail-qv1-f53.google.com with SMTP id
- 6a1803df08f44-91ea3f6a506so20388446d6.0
- for <dev@dpdk.org>; Tue, 10 Nov 2026 12:10:16 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7A14D41060;
+	Tue, 10 Nov 2026 21:10:19 +0100 (CET)
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
+ [209.85.219.50])
+ by mails.dpdk.org (Postfix) with ESMTPS id 32C2540EE1
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 21:10:18 +0100 (CET)
+Received: by mail-qv1-f50.google.com with SMTP id
+ 6a1803df08f44-91c6ce60697so30192196d6.3
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 12:10:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1794341415; x=1794946215; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1794341417; x=1794946217; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=qE4cqJ+QXosansUCC22yGOV+nSC01dHhCiYC+Gb2ZZs=;
- b=F/1msVh+D+QI9jcCWJVKDUqruq9zk9Nw6VkYZAhHGCS9j5g9m04vscElINnQ+BTzpl
- LUXtlEiW0Hw1Yk8vcy+T0fT4sPpGYThjStDV4vpa1IiRm+/RGhQJavz1FsTTNXYhzPyX
- h+o8Um3KoovA30eosHZHQb70mMEFAR0HN2wqs=
+ bh=/mQPaXK7apn9xBJ5KcpI+syK8IqGBI5j0Jb3iXNjF10=;
+ b=MQNvw3bW+/2Thg5GRhUyxMk+foWyHWroNX5DSI9ubs2+UTT4zMKrfTjh0oEyE1X11m
+ VvlpjIhzjLD6kwDJbr7Em3EG+CGAmYWdFgHcImnNFDwfIJvMbgiojBk7oy8/drvfoT2y
+ J/PTK5jAcddz/U3HVeO54AAkfzW4STzKE6jis=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794341415; x=1794946215;
+ d=1e100.net; s=20260707; t=1794341417; x=1794946217;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=qE4cqJ+QXosansUCC22yGOV+nSC01dHhCiYC+Gb2ZZs=;
- b=MheYHYwhDbzxDbS8YYN/9ZbE/zImp4oqJavaiOTBXcdhTDGu0NcZX+6ysGkLekPP/G
- KlwFKGR2a7TBN8j8bnF7RWMlje01Wblxzn/VygeBV8b6kex7QbuqYMyHc7x1RmIjkQ7s
- CwduwLN/qDPVIM16cvWS+QUygbsqur2sDFQudlTL/O21s3+e6L82B5+nQMTWdHnzvzvU
- OYYoeCqxdfu3gSm1skI0fsDaMOEg6c56kSWCyGHPRTNem1nr/skvVeg+/99AcBhYgumy
- Qr/PQQc4lH7b1chv3MVvaDtWrzxioMqZ4KMKLm0y+2y8s8WmvyYJ8Tu2RwWxEROavuK7
- ZkNg==
-X-Gm-Message-State: APuU4Z9NuZkwtuNzfG7ne4KisZdJXAVcE//LCuBw6rAOyBaEj3MDmePj
- H170Jdi45d+dkhRmykcDeqwUsI8CjeCmcR8AWyvfoIGoG7AsTqIX0aW7GLufVYZX9V1EXeTnsT3
- nX8xp
-X-Gm-Gg: AYBFou2YjH8xt+QRlNNuBA3oDE4sawXc1qC4aaB3mICxDPutLQmiwoXCCt1OnlDIOcs
- PBt5pG7ZabgkVD0urNuUAfEYenADwz97T5J0EA3pGrkuYPoWGBIfHa+Y7rnxtNDT0hz99rWOmSD
- 9iw190/lBDTWiIv7dJWd9NUI1shbX816pZfDavugkeV96VW9ts3XCOin3qAiur4v9BuK8XQXeRS
- falTk0qc/3Io+p2vA0YfxwJidt7u4fhUofL5O9SG/iGh1EAjZhvL2lUchxVG6YHQ4aHAxwHCVFN
- 0g5UVWsNKm0BjbjoDjFiI5NPSJ8+KZ2LUViPNGsYwUFxkpct3oxnCMOrODcYuwGGGfmPeC0Cd7F
- wMHQtAvdg1S6Dz3hg/x/0GLO2LtqRIn3nm4X29XAPPHY5pF4H3Qdqf0nkIzU0Ce8+tI1zuPd/Uq
- ZqqZb8qwkknSY3DDSsd76I0Fxh667TBMrbH5H34DjUb6zz4YWeZTY+u89kVnOwJ94HWqnAWWWhW
- uvy8c/n8mXw2QfChiiEFbqjwtDmOsMWzSkM/39CEIO5xKfbliFq2sTXwhx37hMBOw+e+cmq+cVS
- LD+RX+P+EaB/OYSG7uENVdzBBoPlqJ7i3nnZxMpKci2Dk+ff1W6+8LwUVheFdinMXum5YiN02UI
- OtrxpPdX+xd/LGVC/vihPeBT+oFLL9C6Aa7u/wapzzC3zAxBnIh6mdFlA1HhX1YpkM7q0wXC3TB
- dgXRF4tJcvdOlg60EXCK4DKjg=
-X-Received: by 2002:a05:6214:4801:b0:91e:b83a:10ba with SMTP id
- 6a1803df08f44-91f040e8433mr7148486d6.25.1794341414879; 
- Tue, 10 Nov 2026 12:10:14 -0800 (PST)
+ bh=/mQPaXK7apn9xBJ5KcpI+syK8IqGBI5j0Jb3iXNjF10=;
+ b=BwjgeddqB4i2LZ8opmjbCgwVd42iKnBEb9GpXaq+bn2FdqcF3vhPGK0Jm/tRf0LKXY
+ 0LZdHbAUPkeu7s67LdX5aAlTVm0j2IzNH7UWojM8gMQWcsZlkeIBjwoK5xegLEDb/HIM
+ NoElBfA6ix92t8UqnUrWO4ionaoUvmDFqJeVPd1ftJ9HNua24cXAsTDiw66FP0Ag/W3l
+ aga3BWnlf23xgx8SWauL7Alrdy5pxAb7CRb4DDNRpvZu36BE8ZexNLAr9Zyi/ixFG4MV
+ vuEyFA7IScxhSuvbteV8Yb+c9UAR5YfzkLlvP87umzNF2RhOwspuHGS9Oi+TrhH9Coha
+ z5hg==
+X-Gm-Message-State: APuU4Z/4uXrfXn2fBECNcCpx8S0dEXIgP548yuEo+Yan6h4QvpdkuUUY
+ SED4lfyXa5ofZnvFdGe3mWhSB4iomhiNs3/rfn+W8wDoWVlyaF6tByWSBIuiLGE9Z08=
+X-Gm-Gg: AYBFou1WVbGZNi/r9g8Qgf2CGFIaFmhw4VAMvRmBpAxT2xq6UjE+Gu5TbhHJYJRZBxv
+ aFB2pIPv/ZqzJ76w7oNQQgtnu57IMLxki/FOE1mjLAbdTbozCg2GuWd51iF0GD+LP91pU/k52u7
+ WUPMVYS2qu4TneUtzA2rD75tOBOAdtd4E7T/0bx5kfRjrDrOu6TR2IoEcaQE7mwzWKQp0IZp0PU
+ 9Ts2W6+mhCT0Ju4IzMkCpO1HmnuzQ85bJGfX2xHkQToz/S7J/b4IrJWZF67C31H3ZY292xd8fov
+ 84BxtMWoWFbJxUXKaLYWUaJ7scdT3Y9NEXtC6DIVYl/hRe2dPNYJHBE7Mp3BzF3Vk4Vu0pL8hME
+ +OgaPgFXVeVjQik5Rfmf66sBdZgPMSJ1tH1WdgX5NbR9zsHF2NdqLMBMJR00ktTaP3r2Vnfrj3h
+ NC8yijsvekWjLKFZg+XiA9dH36XQluvlzOrh3ZUbPguIDVGroUw/O6KWjz4IP4875QfopgPfczT
+ aYwUQaY1iSjnt0DMlqloqxfMikIQXWViqLiJBtzCkow1XZHtkTf0JpAGXzilX47HyRfPNlRHkTR
+ VoC93H8p0k9fjOesWplG0dzvVHN2arKdCjswWd9mbLSqVdr+v5YOkD7GdbTW5Ju+ygcm8pDQ7+R
+ DX892u61QPjd9nu3wZafjnNlgvtyTPjU0ib+HULWZHypiA1eAYZboC1pDW5FCJl8RGirnGdYSQL
+ reXG3eSDbqLwku5dEczLtFqr4=
+X-Received: by 2002:a05:6214:2488:b0:91e:9ece:72f3 with SMTP id
+ 6a1803df08f44-91f0410fc54mr6958966d6.37.1794341416803; 
+ Tue, 10 Nov 2026 12:10:16 -0800 (PST)
 Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:79a6:f2bd:f6a:842d])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91ef0502dc9sm29370486d6.29.2026.11.10.12.10.14
+ 6a1803df08f44-91ef0502dc9sm29370486d6.29.2026.11.10.12.10.16
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Nov 2026 12:10:14 -0800 (PST)
+ Tue, 10 Nov 2026 12:10:16 -0800 (PST)
 From: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
 To: luca.vizzarro@arm.com,
 	patrickrobb1997@gmail.com
 Cc: dev@dpdk.org, dladd@iol.unh.edu, abailey@iol.unh.edu, lylavoie@iol.unh.edu,
  Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
-Subject: [PATCH v5 1/2] dts: add pvp multi paths vhost performance testsuite
-Date: Tue, 10 Nov 2026 15:10:10 -0500
-Message-ID: <20261110201011.1374679-1-knimoji@iol.unh.edu>
+Subject: [PATCH v5 2/2] dts: add pvp multi paths virtio performance testsuite
+Date: Tue, 10 Nov 2026 15:10:11 -0500
+Message-ID: <20261110201011.1374679-2-knimoji@iol.unh.edu>
 X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261008191139.1094155-1-knimoji@iol.unh.edu>
+In-Reply-To: <20261110201011.1374679-1-knimoji@iol.unh.edu>
 References: <20261008191139.1094155-1-knimoji@iol.unh.edu>
+ <20261110201011.1374679-1-knimoji@iol.unh.edu>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -89,11 +89,12 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-This patch adds the pvp multi paths vhost single core forward
+This patch adds the pvp multi paths virtio single core forward
 performance testsuite, which launches testpmd using the vhost
-and virtio virtual devices with one and two cores respectively,
-and tests the vhost single core throughput performance.
+and virtio virtual devices with two and one core respectively,
+and tests the virtio single core throughputperformance.
 
+Depends-on: series-39456 ("dts: add pvp multi paths vhost performance")
 Signed-off-by: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
 ---
 v4:
@@ -103,111 +104,63 @@ v5:
     *Removed vhost socket file deletion logic and created a
      performance-specific test suite configuration
 ---
- ...pvp_multi_paths_vhost_single_core_perf.rst |   8 +
- dts/api/testpmd/config.py                     |  14 +
- dts/configurations/tests_config.example.yaml  |  24 +
- ..._pvp_multi_paths_vhost_single_core_perf.py | 464 ++++++++++++++++++
- 4 files changed, 510 insertions(+)
- create mode 100644 doc/api/dts/tests.TestSuite_pvp_multi_paths_vhost_single_core_perf.rst
- create mode 100644 dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_perf.py
+ ...vp_multi_paths_virtio_single_core_perf.rst |   8 +
+ dts/api/test_suite.py                         |   4 +-
+ ...pvp_multi_paths_virtio_single_core_perf.py | 426 ++++++++++++++++++
+ 3 files changed, 436 insertions(+), 2 deletions(-)
+ create mode 100644 doc/api/dts/tests.TestSuite_pvp_multi_paths_virtio_single_core_perf.rst
+ create mode 100644 dts/tests/TestSuite_pvp_multi_paths_virtio_single_core_perf.py
 
-diff --git a/doc/api/dts/tests.TestSuite_pvp_multi_paths_vhost_single_core_perf.rst b/doc/api/dts/tests.TestSuite_pvp_multi_paths_vhost_single_core_perf.rst
+diff --git a/doc/api/dts/tests.TestSuite_pvp_multi_paths_virtio_single_core_perf.rst b/doc/api/dts/tests.TestSuite_pvp_multi_paths_virtio_single_core_perf.rst
 new file mode 100644
-index 0000000000..4fcc6b6c91
+index 0000000000..853d04ad40
 --- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_pvp_multi_paths_vhost_single_core_perf.rst
++++ b/doc/api/dts/tests.TestSuite_pvp_multi_paths_virtio_single_core_perf.rst
 @@ -0,0 +1,8 @@
 +.. SPDX-License-Identifier: BSD-3-Clause
 +
-+pvp_multi_paths_vhost_single_core_perf Test Suite
-+=================================================
++pvp_multi_paths_virtio_single_core_perf Test Suite
++==================================================
 +
-+.. automodule:: tests.TestSuite_pvp_multi_paths_vhost_single_core_perf
++.. automodule:: tests.TestSuite_pvp_multi_paths_virtio_single_core_perf
 +   :members:
 +   :show-inheritance:
-diff --git a/dts/api/testpmd/config.py b/dts/api/testpmd/config.py
-index c72c1b2c90..9459cd83bb 100644
---- a/dts/api/testpmd/config.py
-+++ b/dts/api/testpmd/config.py
-@@ -13,6 +13,8 @@
- from pathlib import PurePath
- from typing import Literal, NamedTuple
+diff --git a/dts/api/test_suite.py b/dts/api/test_suite.py
+index 8a96a5cbad..e4d7abe6ff 100644
+--- a/dts/api/test_suite.py
++++ b/dts/api/test_suite.py
+@@ -107,10 +107,10 @@ def make_decorator(
+         determine the type of test suite.
  
-+from pydantic import BaseModel, ConfigDict
-+
- from api.params import (
-     Params,
-     Switch,
-@@ -618,3 +620,15 @@ class TestPmdParams(EalParams):
-     )
-     record_core_cycles: Switch = None
-     record_burst_status: Switch = None
-+
-+
-+class PerfSuiteConfig(BaseModel):
-+    """Generic performance test suite parameters."""
-+
-+    model_config = ConfigDict(strict=True, extra="forbid", frozen=False, from_attributes=True)
-+    frame_size: int
-+    num_descriptors: int
-+    expected_mpps: float
-+    performance_delta: float | None = None
-+    measured_mpps: float | None = None
-+    passing: float | None = None
-diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurations/tests_config.example.yaml
-index e20edc0855..98710a5192 100644
---- a/dts/configurations/tests_config.example.yaml
-+++ b/dts/configurations/tests_config.example.yaml
-@@ -35,6 +35,30 @@ hello_world:
- #   test_duration: 5 # See `Optional Fields`
- #   test_repetitions: 5 # See `Optional Fields`
- #   delta_tolerance: 0.05
-+# pvp_multi_paths_vhost_single_core_perf:
-+#   test_parameters: # Add frame size / descriptor count combinations as needed
-+#     - frame_size: 64
-+#       num_descriptors: 512
-+#       expected_mpps: 1.0 # Set millions of packets per second according to your devices expected throughput for this given frame size / descriptor count
-+#     - frame_size: 64
-+#       num_descriptors: 1024
-+#       expected_mpps: 1.0
-+#     - frame_size: 512
-+#       num_descriptors: 1024
-+#       expected_mpps: 1.0
-+#   delta_tolerance: 0.05
-+# pvp_multi_paths_virtio_single_core_perf:
-+#   test_parameters: # Add frame size / descriptor count combinations as needed
-+#     - frame_size: 64
-+#       num_descriptors: 512
-+#       expected_mpps: 1.0 # Set millions of packets per second according to your devices expected throughput for this given frame size / descriptor count
-+#     - frame_size: 64
-+#       num_descriptors: 1024
-+#       expected_mpps: 1.0
-+#     - frame_size: 512
-+#       num_descriptors: 1024
-+#       expected_mpps: 1.0
-+#   delta_tolerance: 0.05
+         Args:
+-            test_suite_type: A functional, performance, or cryptodev test suite.
++            test_suite_type: A functional or performance test suite.
  
- # pmd_rss:
- #   NUM_QUEUES: 4
-diff --git a/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_perf.py b/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_perf.py
+         Returns:
+-            The decorator of a functional, performance, or cryptodev test suite.
++            The decorator of a functional or performance test suite.
+         """
+ 
+         def _decorator(test_suite_cls: TestSuiteClassType) -> TestSuiteClassType:
+diff --git a/dts/tests/TestSuite_pvp_multi_paths_virtio_single_core_perf.py b/dts/tests/TestSuite_pvp_multi_paths_virtio_single_core_perf.py
 new file mode 100644
-index 0000000000..f8d2fcd69a
+index 0000000000..b509a14ee3
 --- /dev/null
-+++ b/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_perf.py
-@@ -0,0 +1,464 @@
++++ b/dts/tests/TestSuite_pvp_multi_paths_virtio_single_core_perf.py
+@@ -0,0 +1,426 @@
 +# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 University of New Hampshire
++# Copyright(c) 2025 University of New Hampshire
 +
-+"""Vhost-user single-core forwarding performance test suite.
++"""Virtio-user single-core forwarding performance test suite.
 +
-+This suite measures the packet forwarding performance of DPDK's vhost-user PMD running on a
-+single CPU core in a Physical-Virtual-Physical (PVP) topology. Performance is evaluated across
-+multiple virtio-user backend options, including packed versus split ring formats, in-order packet
-+processing, mergeable buffers, and SIMD vectorization. Test cases are parameterized using
-+combinations of frame sizes, descriptor ring sizes, and target MPPS baselines specified in the
-+test configuration. High-speed traffic is injected from an external generator through SUT physical
-+interfaces, routed through Vhost and Virtio loops, and returned to the generator to measure
-+aggregate MPPS.
++This suite measures the packet forwarding throughput of DPDK's virtio-user PMD running on a
++single CPU core. Performance is evaluated across multiple virtio path implementations, including
++packed versus split rings, in-order delivery, mergeable buffers, and SIMD vectorization.
++Test cases are parameterized using combinations of frame sizes, RX/TX descriptor ring counts,
++and target MPPS baselines specified in the test configuration. High-speed traffic is injected
++from an external generator through the physical host ports into the virtio-user instance,
++looped back, and returned to the generator. The aggregate MPPS processed by the single virtio
++core is verified against configured expected performance baselines to determine the test result.
 +"""
 +
 +from typing import cast
@@ -221,13 +174,12 @@ index 0000000000..f8d2fcd69a
 +    requires_link_topology,
 +)
 +from api.packet import assess_performance_by_packet
-+from api.params.eal import VirtualDevice
++from api.params.eal import Params, VirtualDevice
 +from api.params.types import LogicalCoreList, RSSSetting, TestPmdParamsDict
 +from api.test import get_current_test_case_name, verify, write_performance_json
 +from api.test_suite import BaseConfig, TestSuite, perf_suite, perf_test
 +from api.testpmd import TestPmd
 +from api.testpmd.config import (
-+    Params,
 +    PerfSuiteConfig,
 +    PortTopology,
 +    RXRingParams,
@@ -252,8 +204,8 @@ index 0000000000..f8d2fcd69a
 +
 +@perf_suite
 +@requires_link_topology(LinkTopology.TWO_LINKS)
-+class TestPvpMultiPathsVhostSingleCorePerf(TestSuite):
-+    """pvp multi paths vhost single core performance test suite."""
++class TestPvpMultiPathsVirtioSingleCorePerf(TestSuite):
++    """pvp multi paths virtio single core performance test suite."""
 +
 +    config: Config
 +
@@ -296,6 +248,7 @@ index 0000000000..f8d2fcd69a
 +        buffers: int,
 +        vectorized: int,
 +        extra_args: TestPmdParamsDict,
++        queues: int = 1,
 +    ) -> None:
 +        """Create testpmd instances with specified params and send traffic.
 +
@@ -305,14 +258,15 @@ index 0000000000..f8d2fcd69a
 +            buffers: enables mergeable rx buffers.
 +            vectorized: enables SIMD vectorized rx/tx data paths.
 +            extra_args: extra/generic TestPmd arguments.
++            queues: number of rx/tx queues allocated to virtio device.
 +        """
 +        sut_dpdk_driver = self._ctx.sut_node.config.ports[0].os_driver_for_dpdk
-+        vhost_user_vdev = VirtualDevice("net_vhost0,iface=/tmp/vhost-net,queues=1")
++        vhost_user_vdev = VirtualDevice(f"net_vhost0,iface=/tmp/vhost-net,queues={queues}")
 +        virtio_user_vdev = VirtualDevice(
 +            "net_virtio_user0,"
 +            "mac=00:11:22:33:44:10,"
 +            "path=/tmp/vhost-net,"
-+            "queues=1,"
++            f"queues={queues},"
 +            f"packed_vq={ring_format},"
 +            f"mrg_rxbuf={buffers},"
 +            f"in_order={in_order},"
@@ -342,8 +296,8 @@ index 0000000000..f8d2fcd69a
 +                "memory_channels": 4,
 +                "port_topology": PortTopology.chained,
 +                "vdevs": [vhost_user_vdev],
-+                "lcore_list": LogicalCoreList([1, 2]),
-+                "nb_cores": 1,
++                "lcore_list": LogicalCoreList([1, 2, 3]),
++                "nb_cores": 2,
 +                **default_args,
 +            }
 +
@@ -353,8 +307,8 @@ index 0000000000..f8d2fcd69a
 +                "memory_channels": 4,
 +                "allowed_ports": [],
 +                "vdevs": [virtio_user_vdev],
-+                "lcore_list": LogicalCoreList([3, 4, 5]),
-+                "nb_cores": 2,
++                "lcore_list": LogicalCoreList([4, 5]),
++                "nb_cores": 1,
 +                **extra_args,
 +                **default_args,
 +            }
@@ -363,14 +317,16 @@ index 0000000000..f8d2fcd69a
 +                TestPmd(**vhost_params) as vhost,
 +                TestPmd(**virtio_params) as virtio,
 +            ):
-+                vhost.set_forward_mode(SimpleForwardingModes.mac)
-+                virtio.set_forward_mode(SimpleForwardingModes.io)
++                vhost.set_forward_mode(SimpleForwardingModes.io)
++                virtio.set_forward_mode(SimpleForwardingModes.mac)
 +                vhost.set_portlist([0, 2, 1])
 +
-+                verify(expected_mpps > 0, "Invalid expected mpps, must be greater than 0.")
++                assert expected_mpps > 0, "Invalid expected mpps, must be greater than 0."
++
 +                measured_mpps = round(
 +                    self._transmit(vhost, virtio, int(frame_size), repetitions=5), 3
 +                )
++
 +                performance_delta = round(
 +                    (float(measured_mpps) - float(expected_mpps)) / float(expected_mpps),
 +                    3,
@@ -429,11 +385,7 @@ index 0000000000..f8d2fcd69a
 +            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
 +        }
 +        self._create_and_transmit(
-+            ring_format=1,
-+            buffers=1,
-+            in_order=0,
-+            vectorized=0,
-+            extra_args=extra_args,
++            ring_format=1, buffers=1, in_order=0, vectorized=0, extra_args=extra_args
 +        )
 +
 +    @perf_test
@@ -455,11 +407,7 @@ index 0000000000..f8d2fcd69a
 +            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
 +        }
 +        self._create_and_transmit(
-+            ring_format=1,
-+            buffers=0,
-+            in_order=0,
-+            vectorized=0,
-+            extra_args=extra_args,
++            ring_format=1, buffers=0, in_order=0, vectorized=0, extra_args=extra_args
 +        )
 +
 +    @perf_test
@@ -481,11 +429,7 @@ index 0000000000..f8d2fcd69a
 +            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
 +        }
 +        self._create_and_transmit(
-+            ring_format=0,
-+            buffers=1,
-+            in_order=1,
-+            vectorized=0,
-+            extra_args=extra_args,
++            ring_format=0, buffers=1, in_order=1, vectorized=0, extra_args=extra_args
 +        )
 +
 +    @perf_test
@@ -507,11 +451,7 @@ index 0000000000..f8d2fcd69a
 +            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
 +        }
 +        self._create_and_transmit(
-+            ring_format=0,
-+            buffers=0,
-+            in_order=1,
-+            vectorized=0,
-+            extra_args=extra_args,
++            ring_format=0, buffers=0, in_order=1, vectorized=0, extra_args=extra_args
 +        )
 +
 +    @perf_test
@@ -533,11 +473,7 @@ index 0000000000..f8d2fcd69a
 +            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
 +        }
 +        self._create_and_transmit(
-+            ring_format=0,
-+            buffers=1,
-+            in_order=0,
-+            vectorized=0,
-+            extra_args=extra_args,
++            ring_format=0, buffers=1, in_order=0, vectorized=0, extra_args=extra_args
 +        )
 +
 +    @perf_test
@@ -554,16 +490,11 @@ index 0000000000..f8d2fcd69a
 +            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
 +        """
 +        extra_args: TestPmdParamsDict = {
-+            "tx_offloads": 0,
 +            "enable_hw_vlan_strip": True,
 +            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
 +        }
 +        self._create_and_transmit(
-+            ring_format=0,
-+            buffers=0,
-+            in_order=0,
-+            vectorized=1,
-+            extra_args=extra_args,
++            ring_format=0, buffers=0, in_order=0, vectorized=1, extra_args=extra_args
 +        )
 +
 +    @perf_test
@@ -579,13 +510,7 @@ index 0000000000..f8d2fcd69a
 +        Verify:
 +            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
 +        """
-+        self._create_and_transmit(
-+            ring_format=0,
-+            buffers=0,
-+            in_order=0,
-+            vectorized=1,
-+            extra_args={},
-+        )
++        self._create_and_transmit(ring_format=0, buffers=0, in_order=0, vectorized=1, extra_args={})
 +
 +    @perf_test
 +    def test_perf_vhost_single_core_virtio11_inorder_mergeable(self) -> None:
@@ -606,11 +531,7 @@ index 0000000000..f8d2fcd69a
 +            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
 +        }
 +        self._create_and_transmit(
-+            ring_format=1,
-+            buffers=1,
-+            in_order=1,
-+            vectorized=0,
-+            extra_args=extra_args,
++            ring_format=1, buffers=1, in_order=1, vectorized=0, extra_args=extra_args
 +        )
 +
 +    @perf_test
@@ -626,13 +547,11 @@ index 0000000000..f8d2fcd69a
 +        Verify:
 +            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
 +        """
-+        extra_args: TestPmdParamsDict = {"rss": cast(RSSSetting, RSSSetting.SetIPOnly())}
++        extra_args: TestPmdParamsDict = {
++            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
++        }
 +        self._create_and_transmit(
-+            ring_format=1,
-+            buffers=0,
-+            in_order=1,
-+            vectorized=0,
-+            extra_args=extra_args,
++            ring_format=1, buffers=0, in_order=1, vectorized=0, extra_args=extra_args
 +        )
 +
 +    @perf_test
@@ -653,11 +572,7 @@ index 0000000000..f8d2fcd69a
 +            "other_eal_param": Params.from_str("--force-max-simd-bitwidth=512"),
 +        }
 +        self._create_and_transmit(
-+            ring_format=1,
-+            buffers=0,
-+            in_order=1,
-+            vectorized=1,
-+            extra_args=extra_args,
++            ring_format=1, buffers=0, in_order=1, vectorized=1, extra_args=extra_args, queues=2
 +        )
 -- 
 2.56.0
