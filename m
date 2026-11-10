@@ -2,51 +2,50 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B9E606A325
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 12:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C730A606A32A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 12:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ftzF9FA8
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=PgGC9Ys3
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0ED3540E41;
-	Tue, 10 Nov 2026 13:00:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0861640E4B;
+	Tue, 10 Nov 2026 13:00:24 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTPS id E8E994027C
- for <dev@dpdk.org>; Tue, 10 Nov 2026 13:00:20 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 9F16F4027C
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 13:00:21 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1794312022; x=1825848022;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=s3VxHMDnbleHHd2Ff+Da3KOK0cWnXE1jnuZ93ynwdGM=;
- b=ftzF9FA8N5aKruDRd90BpqYGM7PXyw8Xj2cwY/pRNIBlXfTXEdx7tYID
- oHeupZzJNc8a1syIW52FO8FlqLU2aIGmQtulEMBYNit6CcXYFapnmPp5J
- h+xU/203jJ0DspokvdXs0ExeVjZuRGjzwKtPaOixcTEU3YuEmZ3WJnivP
- omsP6LFSjLGhedihqqootP/9+9RJswAJL95ImxjAHYGgxMOIp/cvP3PSQ
- 8cBO9SN3B3DD9+5kJJZWKgji8d2zoTJ+0fhHFHN7FPZDRC3ljE/qq3i/2
- h1M/R+w6yTcBtuOOV8a1+pG+1eAgG/iZPrfwv7i7gefo/n4QOV1YsTMaC A==;
-X-CSE-ConnectionGUID: uraFmFruS66IVVff/XrbxA==
-X-CSE-MsgGUID: n2/vagnIRXqLvATXyufsPg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="2953494"
+ bh=heUF1ctc52QcgXVK3W3copfmrLx1ns6QoFxnoBgJg4k=;
+ b=PgGC9Ys3lYoglg99GkG/vsxOsVRTXEmtP00K89EfQcdthKon29KmFRQu
+ xRa0pcJR6rW5o4N3C16xlaKgA0dII3dJgefIHC8D0MDdDatWJo22ONpgM
+ R8cW2itK08U1uiGayRUY3RvOtyhyCXC6W1f7Yh1h2weB4CQJ8RrRJHvEH
+ W/o0qdX/OseZy+5N+EKKcyvqmf584RpcCDJFs8PCgxAwlPEDfo7yHD+Re
+ 9YjJaggfrRStFkvZ3d33gdQEVXseWmvf19hLUu3NlLh/gXXQnX61QhLsH
+ xybCT/bXyDDoT5a1KDgEl5txjcJbn+d95MrvubUa4dlYG+/htwqLrrmYu w==;
+X-CSE-ConnectionGUID: AuxAVqmYQIeIuG6F80/bXQ==
+X-CSE-MsgGUID: RcVRsqaBRceSoIIAIQ/Gmw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="2953496"
 X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
-   d="scan'208";a="2953494"
+   d="scan'208";a="2953496"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Nov 2026 04:00:20 -0800
-X-CSE-ConnectionGUID: CrkcXNJ+TEOaNc/cN4BdTQ==
-X-CSE-MsgGUID: x9e6dOMNSGCiUw+XVulnEQ==
+ 10 Nov 2026 04:00:22 -0800
+X-CSE-ConnectionGUID: 6eqd1vXGQZeEKHtpAN/Ozw==
+X-CSE-MsgGUID: Dt46WaChRuGq8rJP0o5T4Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
-   d="scan'208";a="8279512"
+   d="scan'208";a="8279517"
 Received: from silpixa00401749.ir.intel.com ([10.20.224.233])
- by fmviesa002.fm.intel.com with ESMTP; 10 Nov 2026 04:00:19 -0800
+ by fmviesa002.fm.intel.com with ESMTP; 10 Nov 2026 04:00:20 -0800
 From: Radu Nicolau <radu.nicolau@intel.com>
 To: dev@dpdk.org
-Cc: Radu Nicolau <radu.nicolau@intel.com>, Kai Ji <kai.ji@intel.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: [PATCH v6 2/4] crypto/ipsec_mb: add support for 256-NxA4/5/6
- algorithms
-Date: Tue, 10 Nov 2026 12:00:12 +0000
-Message-ID: <20261110120015.2937289-2-radu.nicolau@intel.com>
+Cc: Radu Nicolau <radu.nicolau@intel.com>,
+	Kai Ji <kai.ji@intel.com>
+Subject: [PATCH v6 3/4] crypto/ipsec_mb: add support for ML-KEM and ML-DSA
+Date: Tue, 10 Nov 2026 12:00:13 +0000
+Message-ID: <20261110120015.2937289-3-radu.nicolau@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20261110120015.2937289-1-radu.nicolau@intel.com>
 References: <20261110120015.2937289-1-radu.nicolau@intel.com>
@@ -69,695 +68,727 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Add support for
+Enable basic support for asymmetric crypto operations.
+Add support for ML-KEM and ML-DSA algorithms.
 
-NEA4, NIA4, NCA4: Snow 5G confidentiality, integrity and AEAD modes
-NEA5, NIA5, NCA5: AES 256 confidentiality, integrity and AEAD modes
-NEA6, NIA6, NCA6: ZUC 256 confidentiality, integrity and AEAD modes
-
-IPsec MB library version 3.0 is required for the above algorithms.
+IPsecMB release 3.0 and newer required.
 
 Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
 Acked-by: Kai Ji <kai.ji@intel.com>
-Acked-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
 ---
- doc/guides/cryptodevs/aesni_mb.rst          |   9 +
- doc/guides/cryptodevs/features/aesni_mb.ini |   9 +
- doc/guides/rel_notes/release_26_11.rst      |   5 +
- drivers/crypto/ipsec_mb/pmd_aesni_mb.c      | 226 +++++++++++++++++-
- drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h | 241 ++++++++++++++++++++
- 5 files changed, 486 insertions(+), 4 deletions(-)
+ doc/guides/cryptodevs/aesni_mb.rst          |   6 +
+ doc/guides/cryptodevs/features/aesni_mb.ini |   3 +
+ doc/guides/rel_notes/release_26_11.rst      |   3 +
+ drivers/crypto/ipsec_mb/ipsec_mb_ops.c      |  49 +++
+ drivers/crypto/ipsec_mb/ipsec_mb_private.h  |  20 ++
+ drivers/crypto/ipsec_mb/pmd_aesni_mb.c      | 372 +++++++++++++++++++-
+ drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h |  86 ++++-
+ 7 files changed, 523 insertions(+), 16 deletions(-)
 
 diff --git a/doc/guides/cryptodevs/aesni_mb.rst b/doc/guides/cryptodevs/aesni_mb.rst
-index 519f965731..d851a0f53a 100644
+index d851a0f53a..5ec440ac1b 100644
 --- a/doc/guides/cryptodevs/aesni_mb.rst
 +++ b/doc/guides/cryptodevs/aesni_mb.rst
-@@ -39,6 +39,9 @@ Cipher algorithms:
- * RTE_CRYPTO_CIPHER_SM4_CBC
- * RTE_CRYPTO_CIPHER_SM4_ECB
- * RTE_CRYPTO_CIPHER_SM4_CTR
-+* RTE_CRYPTO_CIPHER_SNOW5G_NEA4
-+* RTE_CRYPTO_CIPHER_AES_NEA5
-+* RTE_CRYPTO_CIPHER_ZUC_NEA6
+@@ -88,6 +88,12 @@ AEAD algorithms:
+ * RTE_CRYPTO_AEAD_AES_NCA5
+ * RTE_CRYPTO_AEAD_ZUC_NCA6
  
- Hash algorithms:
- 
-@@ -71,6 +74,9 @@ Hash algorithms:
- * RTE_CRYPTO_AUTH_SHA3_512 HMAC
- * RTE_CRYPTO_AUTH_SHAKE_128
- * RTE_CRYPTO_AUTH_SHAKE_256
-+* RTE_CRYPTO_AUTH_SNOW5G_NIA4
-+* RTE_CRYPTO_AUTH_AES_NIA5
-+* RTE_CRYPTO_AUTH_ZUC_NIA6
- 
- AEAD algorithms:
- 
-@@ -78,6 +84,9 @@ AEAD algorithms:
- * RTE_CRYPTO_AEAD_AES_GCM
- * RTE_CRYPTO_AEAD_CHACHA20_POLY1305
- * RTE_CRYPTO_AEAD_SM4_GCM
-+* RTE_CRYPTO_AEAD_SNOW5G_NCA4
-+* RTE_CRYPTO_AEAD_AES_NCA5
-+* RTE_CRYPTO_AEAD_ZUC_NCA6
- 
++PQC Asymmetric Crypto algorithms
++
++* RTE_CRYPTO_ASYM_XFORM_ML_KEM
++* RTE_CRYPTO_ASYM_XFORM_ML_DSA
++
++
  Protocol offloads:
  
+ * RTE_SECURITY_PROTOCOL_DOCSIS
 diff --git a/doc/guides/cryptodevs/features/aesni_mb.ini b/doc/guides/cryptodevs/features/aesni_mb.ini
-index d27b96eb2d..ad7f5048d2 100644
+index ad7f5048d2..33696a5d65 100644
 --- a/doc/guides/cryptodevs/features/aesni_mb.ini
 +++ b/doc/guides/cryptodevs/features/aesni_mb.ini
-@@ -45,6 +45,9 @@ KASUMI F8      = Y
- SM4 CBC        = Y
- SM4 ECB        = Y
- SM4 CTR        = Y
-+SNOW5G NEA4    = Y
-+AES NEA5       = Y
-+ZUC-256 NEA6   = Y
+@@ -21,6 +21,7 @@ CPU crypto             = Y
+ Symmetric sessionless  = Y
+ Non-Byte aligned data  = N
+ Digest encrypted       = Y
++Asymmetric crypto      = Y
  
  ;
- ; Supported authentication algorithms of the 'aesni_mb' crypto driver.
-@@ -79,6 +82,9 @@ SHA3_512     = Y
- SHA3_512 HMAC = Y
- SHAKE_128    = Y
- SHAKE_256    = Y
-+SNOW5G NIA4     = Y
-+AES NIA5        = Y
-+ZUC-256 NIA6    = Y
- 
- ;
- ; Supported AEAD algorithms of the 'aesni_mb' crypto driver.
-@@ -91,6 +97,9 @@ AES GCM (192)     = Y
- AES GCM (256)     = Y
- CHACHA20-POLY1305 = Y
- SM4 GCM           = Y
-+SNOW5G NCA4       = Y
-+AES NCA5          = Y
-+ZUC-256 NCA6      = Y
- 
- ;
+ ; Supported crypto algorithms of the 'aesni_mb' crypto driver.
+@@ -105,6 +106,8 @@ ZUC-256 NCA6      = Y
  ; Supported Asymmetric algorithms of the 'aesni_mb' crypto driver.
+ ;
+ [Asymmetric]
++ML-KEM = Y
++ML-DSA = Y
+ 
+ ;
+ ; Supported Operating systems of the 'aesni_mb' crypto driver.
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 58c30ad173..d5c9c5b7f0 100644
+index d5c9c5b7f0..f7710c3c43 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -27,8 +27,13 @@ New Features
- * **Updated AESNI_MB crypto driver.**
- 
-   * Added support for version 3.0 of IPsec MB Library.
-+  * Added support for the following wireless algorithms:
-+       - NEA4, NIA4, NCA4: Snow 5G confidentiality, integrity and AEAD modes.
-+       - NEA5, NIA5, NCA5: AES 256 confidentiality, integrity and AEAD modes.
-+       - NEA6, NIA6, NCA6: ZUC 256 confidentiality, integrity and AEAD modes.
+@@ -31,6 +31,9 @@ New Features
+        - NEA4, NIA4, NCA4: Snow 5G confidentiality, integrity and AEAD modes.
+        - NEA5, NIA5, NCA5: AES 256 confidentiality, integrity and AEAD modes.
+        - NEA6, NIA6, NCA6: ZUC 256 confidentiality, integrity and AEAD modes.
++  * Added support for the following PQC asymmetric algorithms:
++       - ML-KEM: Module-Lattice-Based Key-Encapsulation Mechanism.
++       - ML-DSA: Module-Lattice-Based Digital Signature Algorithm.
  
  .. This section should contain new features added in this release.
-+
-    Sample format:
  
-    * **Add a title in the past tense with a full stop.**
+diff --git a/drivers/crypto/ipsec_mb/ipsec_mb_ops.c b/drivers/crypto/ipsec_mb/ipsec_mb_ops.c
+index 50ee140ccd..41976b3ac9 100644
+--- a/drivers/crypto/ipsec_mb/ipsec_mb_ops.c
++++ b/drivers/crypto/ipsec_mb/ipsec_mb_ops.c
+@@ -453,3 +453,52 @@ void
+ ipsec_mb_sym_session_clear(struct rte_cryptodev *dev __rte_unused,
+ 		struct rte_cryptodev_sym_session *sess __rte_unused)
+ {}
++
++/** Configure pmd specific multi-buffer asym session from a crypto xform chain */
++int
++ipsec_mb_asym_session_configure(
++	struct rte_cryptodev *dev, struct rte_crypto_asym_xform *xform,
++	struct rte_cryptodev_asym_session *sess)
++{
++	struct ipsec_mb_dev_private *internals = dev->data->dev_private;
++	struct ipsec_mb_internals *pmd_data =
++		&ipsec_mb_pmds[internals->pmd_type];
++	struct ipsec_mb_qp *qp = dev->data->queue_pairs[0];
++	IMB_MGR *mb_mgr = NULL;
++	int ret = 0;
++
++	if (qp != NULL)
++		mb_mgr = qp->mb_mgr;
++
++	if (!mb_mgr)
++		return -ENOMEM;
++
++	if (unlikely(sess == NULL)) {
++		IPSEC_MB_LOG(ERR, "invalid session struct");
++		if (qp == NULL)
++			free_mb_mgr(mb_mgr);
++		return -EINVAL;
++	}
++
++	ret = (*pmd_data->asym_session_configure)(mb_mgr,
++			CRYPTODEV_GET_ASYM_SESS_PRIV(sess), xform);
++	if (ret != 0) {
++		IPSEC_MB_LOG(ERR, "failed configure asym session parameters");
++		return ret;
++	}
++
++	pmd_data->asym_session_created = true;
++	return 0;
++}
++
++/** Clear the asym session memory */
++void
++ipsec_mb_asym_session_clear(struct rte_cryptodev *dev __rte_unused,
++		struct rte_cryptodev_asym_session *sess)
++{
++	struct ipsec_mb_dev_private *internals = dev->data->dev_private;
++	struct ipsec_mb_internals *pmd_data =
++		&ipsec_mb_pmds[internals->pmd_type];
++
++	(*pmd_data->asym_session_clear)(CRYPTODEV_GET_ASYM_SESS_PRIV(sess));
++}
+diff --git a/drivers/crypto/ipsec_mb/ipsec_mb_private.h b/drivers/crypto/ipsec_mb/ipsec_mb_private.h
+index fc7d6f5f06..5509dc21f3 100644
+--- a/drivers/crypto/ipsec_mb/ipsec_mb_private.h
++++ b/drivers/crypto/ipsec_mb/ipsec_mb_private.h
+@@ -356,6 +356,12 @@ typedef int (*ipsec_mb_session_configure_t)(IMB_MGR *mbr_mgr,
+ 		void *session_private,
+ 		const struct rte_crypto_sym_xform *xform);
+ 
++typedef int (*ipsec_mb_asym_session_configure_t)(IMB_MGR *mbr_mgr,
++		void *session_private,
++		const struct rte_crypto_asym_xform *xform);
++
++typedef void (*ipsec_mb_asym_session_clear_t)(void *session_private);
++
+ /** Configure internals PMD type specific data */
+ typedef int (*ipsec_mb_dev_configure_t)(struct rte_cryptodev *dev);
+ 
+@@ -366,6 +372,9 @@ struct ipsec_mb_internals {
+ 	ipsec_mb_dev_configure_t dev_config;
+ 	ipsec_mb_queue_pair_configure_t queue_pair_configure;
+ 	ipsec_mb_session_configure_t session_configure;
++	ipsec_mb_asym_session_configure_t asym_session_configure;
++	ipsec_mb_asym_session_clear_t asym_session_clear;
++	bool asym_session_created;
+ 	const struct rte_cryptodev_capabilities *caps;
+ 	struct rte_cryptodev_ops *ops;
+ 	struct rte_security_ops *security_ops;
+@@ -423,11 +432,22 @@ int ipsec_mb_sym_session_configure(
+ 	struct rte_crypto_sym_xform *xform,
+ 	struct rte_cryptodev_sym_session *sess);
+ 
++/** Configure an aesni multi-buffer asym session from a crypto xform chain */
++int ipsec_mb_asym_session_configure(
++	struct rte_cryptodev *dev,
++	struct rte_crypto_asym_xform *xform,
++	struct rte_cryptodev_asym_session *sess);
++
+ /** Clear the memory of session so it does not leave key material behind */
+ void
+ ipsec_mb_sym_session_clear(struct rte_cryptodev *dev,
+ 				struct rte_cryptodev_sym_session *sess);
+ 
++/** Clear the asym session memory */
++void
++ipsec_mb_asym_session_clear(struct rte_cryptodev *dev,
++				struct rte_cryptodev_asym_session *sess);
++
+ /** Get session from op. If sessionless create a session */
+ static __rte_always_inline void *
+ ipsec_mb_get_session_private(struct ipsec_mb_qp *qp, struct rte_crypto_op *op)
 diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-index f8ae3cd64a..81d921be83 100644
+index 81d921be83..ac0a48572d 100644
 --- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
 +++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-@@ -18,11 +18,16 @@ struct aesni_mb_op_buf_data {
- static inline int
- is_aead_algo(IMB_HASH_ALG hash_alg, IMB_CIPHER_MODE cipher_mode)
- {
--	return (hash_alg == IMB_AUTH_CHACHA20_POLY1305 ||
--		hash_alg == IMB_AUTH_AES_CCM ||
--		cipher_mode == IMB_CIPHER_GCM
-+	return (hash_alg == IMB_AUTH_CHACHA20_POLY1305
-+		|| hash_alg == IMB_AUTH_AES_CCM
-+		|| cipher_mode == IMB_CIPHER_GCM
- #if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
- 		|| cipher_mode == IMB_CIPHER_SM4_GCM
-+#endif
-+#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
-+		|| cipher_mode == IMB_CIPHER_SNOW5G_NCA4
-+		|| cipher_mode == IMB_CIPHER_AES_NCA5
-+		|| cipher_mode == IMB_CIPHER_ZUC_NCA6
- #endif
- 		);
+@@ -930,7 +930,7 @@ aesni_mb_set_session_aead_parameters(IMB_MGR *mb_mgr,
  }
-@@ -223,6 +228,36 @@ aesni_mb_set_session_auth_parameters(IMB_MGR *mb_mgr,
- 		return 0;
- 	}
+ 
+ /** Configure a aesni multi-buffer session from a crypto xform chain */
+-int
++static int
+ aesni_mb_session_configure(IMB_MGR *mb_mgr,
+ 		void *priv_sess,
+ 		const struct rte_crypto_sym_xform *xform)
+@@ -1021,6 +1021,97 @@ aesni_mb_session_configure(IMB_MGR *mb_mgr,
+ 	return 0;
+ }
  
 +#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
-+	if (xform->auth.algo == RTE_CRYPTO_AUTH_SNOW5G_NIA4) {
-+		sess->template_job.hash_alg = IMB_AUTH_SNOW5G_NIA4;
-+		sess->template_job.auth_tag_output_len_in_bytes =
-+			sess->auth.req_digest_len;
-+		memcpy(sess->auth.snow5g_auth_key, xform->auth.key.data,
-+			xform->auth.key.length);
-+		sess->template_job.u.NIA._key = sess->auth.snow5g_auth_key;
-+		return 0;
-+	} else if (xform->auth.algo == RTE_CRYPTO_AUTH_AES_NIA5) {
-+		sess->template_job.hash_alg = IMB_AUTH_AES_NIA5;
-+		sess->template_job.auth_tag_output_len_in_bytes =
-+			sess->auth.req_digest_len;
-+		IMB_AES_KEYEXP_256(mb_mgr, xform->auth.key.data,
-+			sess->cipher.expanded_nia5_keys.encode,
-+			sess->cipher.expanded_nia5_keys.decode);
-+		sess->template_job.u.NIA._key =
-+			(uint8_t *)sess->cipher.expanded_nia5_keys.encode;
-+		return 0;
-+	} else if (xform->auth.algo == RTE_CRYPTO_AUTH_ZUC_NIA6) {
-+		sess->template_job.hash_alg = IMB_AUTH_ZUC_NIA6;
-+		sess->template_job.auth_tag_output_len_in_bytes =
-+			sess->auth.req_digest_len;
-+		memcpy(sess->auth.zuc_auth_key, xform->auth.key.data,
-+			xform->auth.key.length);
-+		sess->template_job.u.NIA._key = sess->auth.zuc_auth_key;
-+		return 0;
++/** Configure a aesni multi-buffer asym session from a crypto xform chain */
++static int
++aesni_mb_asym_session_configure(IMB_MGR *mb_mgr,
++		void *priv_sess,
++		const struct rte_crypto_asym_xform *xform)
++{
++	(void)mb_mgr;
++	struct aesni_mb_session *sess = (struct aesni_mb_session *) priv_sess;
++	int ret = 0;
++
++	sess->asym.xform_type = xform->xform_type;
++
++	switch (sess->asym.xform_type) {
++	case RTE_CRYPTO_ASYM_XFORM_ML_KEM:
++	{
++		switch (xform->mlkem.type) {
++		case RTE_CRYPTO_ML_KEM_512:
++			sess->asym.ml_kem.alg = IMB_ML_KEM_512;
++			break;
++		case RTE_CRYPTO_ML_KEM_768:
++			sess->asym.ml_kem.alg = IMB_ML_KEM_768;
++			break;
++		case RTE_CRYPTO_ML_KEM_1024:
++			sess->asym.ml_kem.alg = IMB_ML_KEM_1024;
++			break;
++		default:
++			ret = -ENOTSUP;
++			IPSEC_MB_LOG(ERR, "Unsupported type");
++			return ret;
++		}
++		ret = imb_ml_kem_new(mb_mgr, sess->asym.ml_kem.alg, &sess->asym.ml_kem.ctx);
++		if (ret) {
++			IPSEC_MB_LOG(ERR, "Failed to create ML KEM session");
++			return ret;
++		}
++		IMB_ML_KEM_KEYGEN_PARAMS_INIT(&sess->asym.ml_kem.keygen_params);
++		IMB_ML_KEM_ENCAP_PARAMS_INIT(&sess->asym.ml_kem.encap_params);
 +	}
++	break;
++	case RTE_CRYPTO_ASYM_XFORM_ML_DSA:
++	{
++		switch (xform->mldsa.type) {
++		case RTE_CRYPTO_ML_DSA_44:
++			sess->asym.ml_dsa.alg = IMB_ML_DSA_44;
++			break;
++		case RTE_CRYPTO_ML_DSA_65:
++			sess->asym.ml_dsa.alg = IMB_ML_DSA_65;
++			break;
++		case RTE_CRYPTO_ML_DSA_87:
++			sess->asym.ml_dsa.alg = IMB_ML_DSA_87;
++			break;
++		default:
++			ret = -ENOTSUP;
++			IPSEC_MB_LOG(ERR, "Unsupported type");
++			return ret;
++		}
++		ret = imb_ml_dsa_new(mb_mgr, sess->asym.ml_dsa.alg, &sess->asym.ml_dsa.ctx);
++		if (ret) {
++			IPSEC_MB_LOG(ERR, "Failed to create ML DSA session");
++			return ret;
++		}
++		IMB_ML_DSA_KEYGEN_PARAMS_INIT(&sess->asym.ml_dsa.keygen_params);
++		IMB_ML_DSA_SIGN_PARAMS_INIT(&sess->asym.ml_dsa.sign_params);
++		IMB_ML_DSA_VERIFY_PARAMS_INIT(&sess->asym.ml_dsa.verify_params);
++	}
++	break;
++	default:
++		ret = -ENOTSUP;
++		IPSEC_MB_LOG(ERR, "Unsupported algorithm");
++		return ret;
++	};
++
++	return ret;
++}
++
++static void
++aesni_mb_asym_session_clear(void *priv_sess)
++{
++	struct aesni_mb_session *sess = (struct aesni_mb_session *) priv_sess;
++	if (sess->asym.xform_type == RTE_CRYPTO_ASYM_XFORM_ML_KEM) {
++		imb_ml_kem_free(sess->asym.ml_kem.ctx);
++		sess->asym.ml_kem.ctx = NULL;
++	} else if (sess->asym.xform_type == RTE_CRYPTO_ASYM_XFORM_ML_DSA) {
++		imb_ml_dsa_free(sess->asym.ml_dsa.ctx);
++		sess->asym.ml_dsa.ctx = NULL;
++	}
++}
++
 +#endif
 +
- 	switch (xform->auth.algo) {
- 	case RTE_CRYPTO_AUTH_MD5_HMAC:
- 		sess->template_job.hash_alg = IMB_AUTH_MD5;
-@@ -396,6 +431,10 @@ aesni_mb_set_session_cipher_parameters(IMB_MGR *mb_mgr,
- #if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
- 	uint8_t is_sm4 = 0;
- #endif
-+#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
-+	uint8_t is_nxan = 0;
-+	uint8_t is_nxan_exp_key = 0;
-+#endif
+ /** Check DOCSIS security session configuration is valid */
+ static int
+ check_docsis_sec_session(struct rte_security_session_conf *conf)
+@@ -2454,7 +2545,237 @@ set_job_null_op(IMB_JOB *job, struct rte_crypto_op *op)
+ 	return job;
+ }
  
- 	if (xform == NULL) {
- 		sess->template_job.cipher_mode = IMB_CIPHER_NULL;
-@@ -481,6 +520,21 @@ aesni_mb_set_session_cipher_parameters(IMB_MGR *mb_mgr,
- 		sess->template_job.cipher_mode = IMB_CIPHER_SM4_CNTR;
- 		is_sm4 = 1;
- 		break;
+-uint16_t
++#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
++static inline size_t aesni_mb_ml_kem_ek_sz(const IMB_ML_KEM_ALG alg)
++{
++		switch (alg) {
++		case IMB_ML_KEM_512:
++				return IMB_ML_KEM_512_PUBKEY_BYTES;
++		case IMB_ML_KEM_768:
++				return IMB_ML_KEM_768_PUBKEY_BYTES;
++		case IMB_ML_KEM_1024:
++				return IMB_ML_KEM_1024_PUBKEY_BYTES;
++		}
++		return 0;
++}
++static inline size_t aesni_mb_ml_kem_dk_sz(const IMB_ML_KEM_ALG alg)
++{
++		switch (alg) {
++		case IMB_ML_KEM_512:
++				return IMB_ML_KEM_512_PRIVKEY_BYTES;
++		case IMB_ML_KEM_768:
++				return IMB_ML_KEM_768_PRIVKEY_BYTES;
++		case IMB_ML_KEM_1024:
++				return IMB_ML_KEM_1024_PRIVKEY_BYTES;
++		}
++		return 0;
++}
++static inline size_t aesni_mb_ml_kem_ct_sz(const IMB_ML_KEM_ALG alg)
++{
++		switch (alg) {
++		case IMB_ML_KEM_512:
++				return IMB_ML_KEM_512_CIPHERTEXT_BYTES;
++		case IMB_ML_KEM_768:
++				return IMB_ML_KEM_768_CIPHERTEXT_BYTES;
++		case IMB_ML_KEM_1024:
++				return IMB_ML_KEM_1024_CIPHERTEXT_BYTES;
++		}
++		return 0;
++}
++static inline size_t aesni_mb_ml_dsa_pk_sz(const IMB_ML_DSA_ALG alg)
++{
++		switch (alg) {
++		case IMB_ML_DSA_44:
++				return IMB_ML_DSA_44_PUBKEY_BYTES;
++		case IMB_ML_DSA_65:
++				return IMB_ML_DSA_65_PUBKEY_BYTES;
++		case IMB_ML_DSA_87:
++				return IMB_ML_DSA_87_PUBKEY_BYTES;
++		}
++		return 0;
++}
++static inline size_t aesni_mb_ml_dsa_sk_sz(const IMB_ML_DSA_ALG alg)
++{
++		switch (alg) {
++		case IMB_ML_DSA_44:
++				return IMB_ML_DSA_44_PRIVKEY_BYTES;
++		case IMB_ML_DSA_65:
++				return IMB_ML_DSA_65_PRIVKEY_BYTES;
++		case IMB_ML_DSA_87:
++				return IMB_ML_DSA_87_PRIVKEY_BYTES;
++		}
++		return 0;
++}
++static inline size_t aesni_mb_ml_dsa_sig_sz(const IMB_ML_DSA_ALG alg)
++{
++		switch (alg) {
++		case IMB_ML_DSA_44:
++				return IMB_ML_DSA_44_SIG_BYTES;
++		case IMB_ML_DSA_65:
++				return IMB_ML_DSA_65_SIG_BYTES;
++		case IMB_ML_DSA_87:
++				return IMB_ML_DSA_87_SIG_BYTES;
++		}
++		return 0;
++}
++
++static void
++aesni_mb_asym_process(struct rte_crypto_op *op)
++{
++	struct rte_crypto_asym_op *aop = op->asym;
++	struct aesni_mb_session *sess =
++		CRYPTODEV_GET_ASYM_SESS_PRIV(aop->session);
++	op->status = RTE_CRYPTO_OP_STATUS_NOT_PROCESSED;
++	int rc = 0;
++
++	switch (sess->asym.xform_type) {
++	case RTE_CRYPTO_ASYM_XFORM_ML_KEM:
++	{
++		struct rte_crypto_ml_kem_op *mlkem = &aop->mlkem;
++		switch (mlkem->op) {
++		case RTE_CRYPTO_ML_KEM_OP_KEYGEN:
++		{
++			uint8_t seed_d_z[64];
++			struct rte_crypto_ml_kem_keygen_op *keygen = &mlkem->keygen;
++			memcpy(seed_d_z,      keygen->d.data, 32);
++			memcpy(&seed_d_z[32], keygen->z.data, 32);
++			sess->asym.ml_kem.keygen_params.seed_d_z = seed_d_z;
++			sess->asym.ml_kem.keygen_params.seed_d_z_len = 64;
++			keygen->ek.length = aesni_mb_ml_kem_ek_sz(sess->asym.ml_kem.alg);
++			keygen->dk.length = aesni_mb_ml_kem_dk_sz(sess->asym.ml_kem.alg);
++			rc = imb_ml_kem_keypair(sess->asym.ml_kem.ctx,
++				keygen->ek.data, keygen->ek.length,
++				keygen->dk.data, keygen->dk.length,
++				&sess->asym.ml_kem.keygen_params);
++		}
++			break;
++		case RTE_CRYPTO_ML_KEM_OP_ENCAP:
++		{
++			struct rte_crypto_ml_kem_encap_op *encap = &mlkem->encap;
++			sess->asym.ml_kem.encap_params.m_32 = encap->message.data;
++			sess->asym.ml_kem.encap_params.m_len = encap->message.length;
++			encap->ek.length = aesni_mb_ml_kem_ek_sz(sess->asym.ml_kem.alg);
++			encap->cipher.length = aesni_mb_ml_kem_ct_sz(sess->asym.ml_kem.alg);
++			rc = imb_ml_kem_set_pubkey(sess->asym.ml_kem.ctx,
++				encap->ek.data, encap->ek.length);
++			if (rc == 0)
++				rc = imb_ml_kem_encap(sess->asym.ml_kem.ctx,
++					encap->cipher.data, encap->cipher.length,
++					encap->sk.data, encap->sk.length,
++					&sess->asym.ml_kem.encap_params);
++		}
++			break;
++		case RTE_CRYPTO_ML_KEM_OP_DECAP:
++		{
++			struct rte_crypto_ml_kem_decap_op *decap = &mlkem->decap;
++			decap->dk.length = aesni_mb_ml_kem_dk_sz(sess->asym.ml_kem.alg);
++			decap->cipher.length = aesni_mb_ml_kem_ct_sz(sess->asym.ml_kem.alg);
++			rc = imb_ml_kem_set_privkey(sess->asym.ml_kem.ctx,
++				decap->dk.data, decap->dk.length);
++			if (rc == 0)
++				rc = imb_ml_kem_decap(sess->asym.ml_kem.ctx,
++					decap->sk.data, decap->sk.length,
++					decap->cipher.data, decap->cipher.length,
++					NULL);
++		}
++			break;
++		default:
++			op->status = RTE_CRYPTO_OP_STATUS_INVALID_ARGS;
++			break;
++		};
++	}
++	break;
++	case RTE_CRYPTO_ASYM_XFORM_ML_DSA:
++	{
++		struct rte_crypto_ml_dsa_op *mldsa = &aop->mldsa;
++		switch (mldsa->op) {
++		case RTE_CRYPTO_ML_DSA_OP_KEYGEN:
++		{
++			struct rte_crypto_ml_dsa_keygen_op *keygen = &mldsa->keygen;
++			sess->asym.ml_dsa.keygen_params.xi_32 = keygen->seed.data;
++			sess->asym.ml_dsa.keygen_params.xi_len = keygen->seed.length;
++			keygen->pubkey.length =
++				aesni_mb_ml_dsa_pk_sz(sess->asym.ml_dsa.alg);
++			keygen->privkey.length =
++				aesni_mb_ml_dsa_sk_sz(sess->asym.ml_dsa.alg);
++			rc = imb_ml_dsa_keypair(sess->asym.ml_dsa.ctx,
++				keygen->pubkey.data, keygen->pubkey.length,
++				keygen->privkey.data, keygen->privkey.length,
++				&sess->asym.ml_dsa.keygen_params);
++		}
++		break;
++		case RTE_CRYPTO_ML_DSA_OP_SIGN:
++		{
++			struct rte_crypto_ml_dsa_siggen_op *siggen = &mldsa->siggen;
++			void *md;
++			size_t md_len;
++			sess->asym.ml_dsa.sign_params.ctx = siggen->ctx.data;
++			sess->asym.ml_dsa.sign_params.ctx_len = siggen->ctx.length;
++			sess->asym.ml_dsa.sign_params.rnd_32 = siggen->seed.data;
++			sess->asym.ml_dsa.sign_params.rnd_len = siggen->seed.length;
++			if (siggen->mu.length) {
++				md = siggen->mu.data;
++				md_len = siggen->mu.length;
++				sess->asym.ml_dsa.sign_params.msg_is_mu = 1;
++			} else {
++				md = siggen->message.data;
++				md_len = siggen->message.length;
++				sess->asym.ml_dsa.sign_params.msg_is_mu = 0;
++			}
++			rc = imb_ml_dsa_set_privkey(sess->asym.ml_dsa.ctx,
++				siggen->privkey.data, siggen->privkey.length);
++			if (rc == 0)
++				rc = imb_ml_dsa_sign(sess->asym.ml_dsa.ctx,
++					siggen->sign.data, &siggen->sign.length,
++					md, md_len, &sess->asym.ml_dsa.sign_params);
++		}
++		break;
++		case RTE_CRYPTO_ML_DSA_OP_VERIFY:
++		{
++			struct rte_crypto_ml_dsa_sigver_op *sigver = &mldsa->sigver;
++			void *md;
++			size_t md_len;
++			sess->asym.ml_dsa.verify_params.ctx = sigver->ctx.data;
++			sess->asym.ml_dsa.verify_params.ctx_len = sigver->ctx.length;
++			if (sigver->mu.length) {
++				md = sigver->mu.data;
++				md_len = sigver->mu.length;
++				sess->asym.ml_dsa.verify_params.msg_is_mu = 1;
++			} else {
++				md = sigver->message.data;
++				md_len = sigver->message.length;
++				sess->asym.ml_dsa.verify_params.msg_is_mu = 0;
++			}
++			rc = imb_ml_dsa_set_pubkey(sess->asym.ml_dsa.ctx,
++				sigver->pubkey.data, sigver->pubkey.length);
++			if (rc == 0)
++				rc = imb_ml_dsa_verify(sess->asym.ml_dsa.ctx,
++					md, md_len, sigver->sign.data, sigver->sign.length,
++					&sess->asym.ml_dsa.verify_params);
++		}
++		break;
++		default:
++			op->status = RTE_CRYPTO_OP_STATUS_INVALID_ARGS;
++			break;
++		};
++
++	}
++	break;
++	default:
++		op->status = RTE_CRYPTO_OP_STATUS_ERROR;
++		break;
++	}
++	if (op->status == RTE_CRYPTO_OP_STATUS_NOT_PROCESSED)
++		op->status = (rc == 0) ? RTE_CRYPTO_OP_STATUS_SUCCESS :
++			RTE_CRYPTO_OP_STATUS_ERROR;
++#ifdef RTE_LIBRTE_PMD_AESNI_MB_DEBUG
++	if (rc)
++		IPSEC_MB_LOG(ERR, "%s", imb_get_strerror(rc));
 +#endif
-+#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
-+	case RTE_CRYPTO_CIPHER_SNOW5G_NEA4:
-+		sess->template_job.cipher_mode = IMB_CIPHER_SNOW5G_NEA4;
-+		is_nxan = 1;
-+		break;
-+	case RTE_CRYPTO_CIPHER_AES_NEA5:
-+		sess->template_job.cipher_mode = IMB_CIPHER_AES_NEA5;
-+		is_nxan = 1;
-+		is_nxan_exp_key = 1;
-+		break;
-+	case RTE_CRYPTO_CIPHER_ZUC_NEA6:
-+		sess->template_job.cipher_mode = IMB_CIPHER_ZUC_NEA6;
-+		is_nxan = 1;
-+		break;
- #endif
- 	default:
- 		IPSEC_MB_LOG(ERR, "Unsupported cipher mode parameter");
-@@ -627,6 +681,29 @@ aesni_mb_set_session_cipher_parameters(IMB_MGR *mb_mgr,
- 				sess->cipher.expanded_sm4_keys.decode);
- 		sess->template_job.enc_keys = sess->cipher.expanded_sm4_keys.encode;
- 		sess->template_job.dec_keys = sess->cipher.expanded_sm4_keys.decode;
++}
 +#endif
++
++static uint16_t
+ aesni_mb_dequeue_burst(void *queue_pair, struct rte_crypto_op **ops,
+ 		uint16_t nb_ops)
+ {
+@@ -2519,8 +2840,38 @@ aesni_mb_dequeue_burst(void *queue_pair, struct rte_crypto_op **ops,
+ 		 * the IMB_MGR can use that pointer again in next
+ 		 * get_next calls.
+ 		 */
 +#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
-+	} else if (is_nxan) {
-+		if (xform->cipher.key.length != 32) {
-+			IPSEC_MB_LOG(ERR, "Invalid cipher key length");
-+			return -EINVAL;
++		{
++			struct ipsec_mb_internals *pmd_data =
++				&ipsec_mb_pmds[qp->pmd_type];
++			/* If there is at least one asym session created process
++			 * the asym ops here and copy the sym ops to deqd_ops array
++			 */
++			if (pmd_data->asym_session_created) {
++				struct rte_crypto_op *tmp_dq[IMB_MAX_BURST_SIZE];
++				uint16_t sym_cnt = 0;
++				nb_submit_ops = rte_ring_dequeue_burst(qp->ingress_queue,
++								(void **)tmp_dq, n, NULL);
++				for (i = 0; i < nb_submit_ops; i++) {
++					if (tmp_dq[i]->type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC) {
++						aesni_mb_asym_process(tmp_dq[i]);
++						ops[processed_jobs++] = tmp_dq[i];
++					} else {
++						deqd_ops[sym_cnt++] = tmp_dq[i];
++					}
++				}
++				/* What remains are only symmetric ops. */
++				nb_submit_ops = sym_cnt;
++			} else {
++				/* No asym session created, all ops are sym*/
++				nb_submit_ops = rte_ring_dequeue_burst(qp->ingress_queue,
++								(void **)deqd_ops, n, NULL);
++			}
 +		}
-+		if (xform->cipher.iv.length != 16) {
-+			IPSEC_MB_LOG(ERR, "Invalid cipher IV length");
-+			return -EINVAL;
-+		}
-+		sess->template_job.key_len_in_bytes = 32;
-+		if (is_nxan_exp_key) {
-+			IMB_AES_KEYEXP_256(mb_mgr, xform->cipher.key.data,
-+					sess->cipher.expanded_nea5_keys.encode,
-+					sess->cipher.expanded_nea5_keys.decode);
-+			sess->template_job.enc_keys = sess->cipher.expanded_nea5_keys.encode;
-+			sess->template_job.dec_keys = sess->cipher.expanded_nea5_keys.decode;
-+		} else {
-+			memcpy(sess->cipher.nxa_cipher_key, xform->cipher.key.data, 32);
-+			sess->template_job.enc_keys = sess->cipher.nxa_cipher_key;
-+			sess->template_job.dec_keys = sess->cipher.nxa_cipher_key;
-+		}
- #endif
- 	} else {
- 		if (xform->cipher.key.length != 8) {
-@@ -782,6 +859,67 @@ aesni_mb_set_session_aead_parameters(IMB_MGR *mb_mgr,
- 		sess->template_job.enc_keys = &sess->cipher.gcm_key;
- 		sess->template_job.dec_keys = &sess->cipher.gcm_key;
- 		break;
-+#endif
-+#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
-+	case RTE_CRYPTO_AEAD_SNOW5G_NCA4:
-+		sess->template_job.cipher_mode = IMB_CIPHER_SNOW5G_NCA4;
-+		sess->template_job.hash_alg = IMB_AUTH_SNOW5G_NCA4;
-+		sess->template_job.u.NCA.aad_len_in_bytes = xform->aead.aad_length;
-+		if (xform->aead.key.length != 32) {
-+			IPSEC_MB_LOG(ERR, "Invalid key length");
-+			return -EINVAL;
-+		}
-+		sess->template_job.key_len_in_bytes = 32;
-+		memcpy(sess->cipher.nxa_cipher_key, xform->aead.key.data, 32);
-+		sess->template_job.enc_keys = sess->cipher.nxa_cipher_key;
-+		sess->template_job.dec_keys = sess->cipher.nxa_cipher_key;
-+		/* digest size must be between 4 and 16 */
-+		if (sess->auth.req_digest_len < 4 ||
-+				sess->auth.req_digest_len > 16) {
-+			IPSEC_MB_LOG(ERR, "Invalid digest size");
-+			return -EINVAL;
-+		}
-+		break;
-+	case RTE_CRYPTO_AEAD_AES_NCA5:
-+		sess->template_job.cipher_mode = IMB_CIPHER_AES_NCA5;
-+		sess->template_job.hash_alg = IMB_AUTH_AES_NCA5;
-+		sess->template_job.u.NCA.aad_len_in_bytes = xform->aead.aad_length;
-+		if (xform->aead.key.length != 32) {
-+			IPSEC_MB_LOG(ERR, "Invalid key length");
-+			return -EINVAL;
-+		}
-+		sess->template_job.key_len_in_bytes = 32;
-+		IMB_AES_KEYEXP_256(mb_mgr, xform->aead.key.data,
-+			sess->cipher.expanded_aes_keys.encode,
-+			sess->cipher.expanded_aes_keys.decode);
-+		sess->template_job.enc_keys = sess->cipher.expanded_aes_keys.encode;
-+		sess->template_job.dec_keys = sess->cipher.expanded_aes_keys.decode;
-+		/* digest size must be between 4 and 16 */
-+		if (sess->auth.req_digest_len < 4 ||
-+				sess->auth.req_digest_len > 16) {
-+			IPSEC_MB_LOG(ERR, "Invalid digest size");
-+			return -EINVAL;
-+		}
-+		break;
-+	case RTE_CRYPTO_AEAD_ZUC_NCA6:
-+		sess->template_job.cipher_mode = IMB_CIPHER_ZUC_NCA6;
-+		sess->template_job.hash_alg = IMB_AUTH_ZUC_NCA6;
-+		sess->template_job.u.NCA.aad_len_in_bytes = xform->aead.aad_length;
-+		if (xform->aead.key.length != 32) {
-+			IPSEC_MB_LOG(ERR, "Invalid key length");
-+			return -EINVAL;
-+		}
-+		sess->template_job.key_len_in_bytes = 32;
-+		memcpy(sess->cipher.nxa_cipher_key, xform->aead.key.data, 32);
-+		sess->template_job.enc_keys = sess->cipher.nxa_cipher_key;
-+		sess->template_job.dec_keys = sess->cipher.nxa_cipher_key;
-+		/* digest size must be between 4 and 16 */
-+		if (sess->auth.req_digest_len < 4 ||
-+				sess->auth.req_digest_len > 16) {
-+			IPSEC_MB_LOG(ERR, "Invalid digest size");
-+			return -EINVAL;
-+		}
-+		break;
- #endif
- 	default:
- 		IPSEC_MB_LOG(ERR, "Unsupported aead mode parameter");
-@@ -1113,6 +1251,18 @@ set_cpu_mb_job_params(IMB_JOB *job, struct aesni_mb_session *session,
- 		job->u.GCM.aad = aad->va;
- 		break;
- #endif
-+#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
-+	case IMB_AUTH_SNOW5G_NCA4:
-+	case IMB_AUTH_AES_NCA5:
-+	case IMB_AUTH_ZUC_NCA6:
-+		job->u.NCA.aad = aad->va;
-+		break;
-+	case IMB_AUTH_SNOW5G_NIA4:
-+	case IMB_AUTH_AES_NIA5:
-+	case IMB_AUTH_ZUC_NIA6:
-+		job->u.NIA._iv = iv->va;
-+		break;
-+#endif
- 
- 	default:
- 		break;
-@@ -1287,8 +1437,17 @@ handle_sgl_linear(IMB_JOB *job, struct rte_crypto_op *op, uint32_t dst_offset,
- 	job->dst = linear_buf + dst_offset;
- 	job->user_data2 = linear_buf;
- 
-+#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
- 	if (job->hash_alg == IMB_AUTH_AES_GMAC)
- 		job->u.GCM.aad = linear_buf;
-+	else if (job->hash_alg == IMB_AUTH_SNOW5G_NCA4 ||
-+			 job->hash_alg == IMB_AUTH_AES_NCA5 ||
-+			 job->hash_alg == IMB_AUTH_ZUC_NCA6)
-+		job->u.NCA.aad = linear_buf;
 +#else
-+	if (job->hash_alg == IMB_AUTH_AES_GMAC)
-+		job->u.GCM.aad = linear_buf;
+ 		nb_submit_ops = rte_ring_dequeue_burst(qp->ingress_queue,
+ 						(void **)deqd_ops, n, NULL);
 +#endif
+ 		for (i = 0; i < nb_submit_ops; i++) {
+ 			job = jobs[i];
+ 			op = deqd_ops[i];
+@@ -2650,7 +3001,7 @@ verify_sync_dgst(struct rte_crypto_sym_vec *vec,
+ 	return k;
+ }
  
- 	if (session->auth.operation == RTE_CRYPTO_AUTH_OP_VERIFY)
- 		job->auth_tag_output = linear_buf + lb_offset;
-@@ -1674,6 +1833,20 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- 		job->u.GCM.aad = op->sym->aead.aad.data;
- 		break;
- #endif
-+#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
-+	case IMB_AUTH_SNOW5G_NCA4:
-+	case IMB_AUTH_AES_NCA5:
-+	case IMB_AUTH_ZUC_NCA6:
-+		job->u.NCA.aad = op->sym->aead.aad.data;
-+		break;
-+	case IMB_AUTH_SNOW5G_NIA4:
-+	case IMB_AUTH_AES_NIA5:
-+	case IMB_AUTH_ZUC_NIA6:
-+		job->u.NIA._iv = rte_crypto_op_ctod_offset(op, uint8_t *,
-+			session->auth_iv.offset);
-+		break;
-+#endif
-+
- 	default:
- 		break;
- 	}
-@@ -1693,7 +1866,10 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- #else
- 	if (cipher_mode == IMB_CIPHER_ZUC_EEA3 ||
- 		cipher_mode == IMB_CIPHER_SNOW3G_UEA2 ||
--		cipher_mode == IMB_CIPHER_KASUMI_UEA1)
-+		cipher_mode == IMB_CIPHER_KASUMI_UEA1 ||
-+		cipher_mode == IMB_CIPHER_SNOW5G_NEA4 ||
-+		cipher_mode == IMB_CIPHER_AES_NEA5 ||
-+		cipher_mode == IMB_CIPHER_ZUC_NEA6)
- 		m_offset >>= 3;
- #endif
+-uint32_t
++static uint32_t
+ aesni_mb_process_bulk(struct rte_cryptodev *dev __rte_unused,
+ 	struct rte_cryptodev_sym_session *sess, union rte_crypto_sym_ofs sofs,
+ 	struct rte_crypto_sym_vec *vec)
+@@ -2737,7 +3088,12 @@ struct rte_cryptodev_ops aesni_mb_pmd_ops = {
  
-@@ -1831,6 +2007,29 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- 				session->iv.offset);
- 		break;
- #endif
+ 	.sym_session_get_size = ipsec_mb_sym_session_get_size,
+ 	.sym_session_configure = ipsec_mb_sym_session_configure,
+-	.sym_session_clear = ipsec_mb_sym_session_clear
++	.sym_session_clear = ipsec_mb_sym_session_clear,
 +#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
-+	case IMB_AUTH_SNOW5G_NCA4:
-+	case IMB_AUTH_AES_NCA5:
-+	case IMB_AUTH_ZUC_NCA6:
-+		job->hash_start_src_offset_in_bytes =
-+				op->sym->aead.data.offset;
-+		job->msg_len_to_hash_in_bytes =
-+				op->sym->aead.data.length;
-+		job->cipher_start_src_offset_in_bytes =
-+			op->sym->aead.data.offset;
-+		job->msg_len_to_cipher_in_bytes = op->sym->aead.data.length;
-+		job->iv = rte_crypto_op_ctod_offset(op, uint8_t *,
-+			session->iv.offset);
-+		break;
-+	case IMB_AUTH_SNOW5G_NIA4:
-+	case IMB_AUTH_AES_NIA5:
-+	case IMB_AUTH_ZUC_NIA6:
-+		job->hash_start_src_offset_in_bytes =
-+				op->sym->auth.data.offset >> 3;
-+		job->msg_len_to_hash_in_bytes =
-+				op->sym->auth.data.length >> 3;
-+		break;
++	.asym_session_get_size = ipsec_mb_sym_session_get_size,
++	.asym_session_configure = ipsec_mb_asym_session_configure,
++	.asym_session_clear = ipsec_mb_asym_session_clear,
 +#endif
+ };
  
- 	default:
- 		job->hash_start_src_offset_in_bytes = auth_start_offset(
-@@ -1888,6 +2087,25 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- 	case IMB_CIPHER_SM4_GCM:
- 		job->msg_len_to_cipher_in_bytes = op->sym->aead.data.length;
- 		break;
-+#endif
-+#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
-+	case IMB_CIPHER_SNOW5G_NEA4:
-+	case IMB_CIPHER_AES_NEA5:
-+	case IMB_CIPHER_ZUC_NEA6:
-+		job->cipher_start_src_offset_in_bytes =
-+					op->sym->cipher.data.offset >> 3;
-+		job->msg_len_to_cipher_in_bytes =
-+					op->sym->cipher.data.length >> 3;
-+		job->iv = rte_crypto_op_ctod_offset(op, uint8_t *,
-+			session->iv.offset);
-+		break;
-+	case IMB_CIPHER_SNOW5G_NCA4:
-+	case IMB_CIPHER_AES_NCA5:
-+	case IMB_CIPHER_ZUC_NCA6:
-+		job->cipher_start_src_offset_in_bytes =
-+			op->sym->aead.data.offset;
-+		job->msg_len_to_cipher_in_bytes = op->sym->aead.data.length;
-+		break;
+ /**
+@@ -2863,7 +3219,11 @@ RTE_INIT(ipsec_mb_register_aesni_mb)
+ 			RTE_CRYPTODEV_FF_OOP_LB_IN_LB_OUT |
+ 			RTE_CRYPTODEV_FF_SYM_CPU_CRYPTO |
+ #if IMB_VERSION(3, 0, 0) > IMB_VERSION_NUM
++			/* removed in 3.0 */
+ 			RTE_CRYPTODEV_FF_NON_BYTE_ALIGNED_DATA |
++#else
++			/* added in 3.0 */
++			RTE_CRYPTODEV_FF_ASYMMETRIC_CRYPTO |
  #endif
- 	default:
- 		job->cipher_start_src_offset_in_bytes =
+ 			RTE_CRYPTODEV_FF_SYM_SESSIONLESS |
+ 			RTE_CRYPTODEV_FF_IN_PLACE_SGL |
+@@ -2880,5 +3240,9 @@ RTE_INIT(ipsec_mb_register_aesni_mb)
+ 	aesni_mb_data->security_ops = &aesni_mb_pmd_sec_ops;
+ 	aesni_mb_data->dev_config = aesni_mb_configure_dev;
+ 	aesni_mb_data->session_configure = aesni_mb_session_configure;
++#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
++	aesni_mb_data->asym_session_configure = aesni_mb_asym_session_configure;
++	aesni_mb_data->asym_session_clear = aesni_mb_asym_session_clear;
++#endif
+ 	aesni_mb_data->session_priv_size = sizeof(struct aesni_mb_session);
+ }
 diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
-index 6451d91edd..f8bf630794 100644
+index f8bf630794..50794379c0 100644
 --- a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
 +++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
-@@ -1103,6 +1103,233 @@ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
+@@ -28,18 +28,6 @@
+ #define IMB_AUTH_ZUC256_EIA3 IMB_AUTH_ZUC256_EIA3_BITLEN
+ #endif
+ 
+-int
+-aesni_mb_session_configure(IMB_MGR * m __rte_unused, void *priv_sess,
+-		const struct rte_crypto_sym_xform *xform);
+-
+-uint16_t
+-aesni_mb_dequeue_burst(void *queue_pair, struct rte_crypto_op **ops,
+-		uint16_t nb_ops);
+-
+-uint32_t
+-aesni_mb_process_bulk(struct rte_cryptodev *dev __rte_unused,
+-	struct rte_cryptodev_sym_session *sess, union rte_crypto_sym_ofs sofs,
+-	struct rte_crypto_sym_vec *vec);
+ 
+ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
+ 	{	/* MD5 HMAC */
+@@ -1330,6 +1318,60 @@ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
  			}, }
  		}, }
  	},
-+#endif
-+#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
-+	{	/*  256-NEA4 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER,
-+			{.cipher = {
-+				.algo = RTE_CRYPTO_CIPHER_SNOW5G_NEA4,
-+				.block_size = 8,
-+				.key_size = {
-+					.min = 32,
-+					.max = 32,
-+					.increment = 0
-+				},
-+				.iv_size = {
-+					.min = 16,
-+					.max = 16,
-+					.increment = 0
++	{
++		/* ML-KEM */
++		.op = RTE_CRYPTO_OP_TYPE_ASYMMETRIC,
++		.asym = {
++			.xform_capa = {
++				.xform_type = RTE_CRYPTO_ASYM_XFORM_ML_KEM,
++				.op_types =
++				((1 << RTE_CRYPTO_ML_KEM_OP_KEYGEN) |
++				 (1 << RTE_CRYPTO_ML_KEM_OP_ENCAP) |
++				 (1 << RTE_CRYPTO_ML_KEM_OP_DECAP)),
++				.mlkem_capa = {
++					[RTE_CRYPTO_ML_KEM_OP_KEYGEN] =
++						(1 << RTE_CRYPTO_ML_KEM_512) |
++						(1 << RTE_CRYPTO_ML_KEM_768) |
++						(1 << RTE_CRYPTO_ML_KEM_1024),
++					[RTE_CRYPTO_ML_KEM_OP_ENCAP] =
++						(1 << RTE_CRYPTO_ML_KEM_512) |
++						(1 << RTE_CRYPTO_ML_KEM_768) |
++						(1 << RTE_CRYPTO_ML_KEM_1024),
++					[RTE_CRYPTO_ML_KEM_OP_DECAP] =
++						(1 << RTE_CRYPTO_ML_KEM_512) |
++						(1 << RTE_CRYPTO_ML_KEM_768) |
++						(1 << RTE_CRYPTO_ML_KEM_1024)
 +				}
-+			}, }
-+		}, }
++			}
++		}
 +	},
-+	{	/*  256-NEA5 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER,
-+			{.cipher = {
-+				.algo = RTE_CRYPTO_CIPHER_AES_NEA5,
-+				.block_size = 8,
-+				.key_size = {
-+					.min = 32,
-+					.max = 32,
-+					.increment = 0
-+				},
-+				.iv_size = {
-+					.min = 16,
-+					.max = 16,
-+					.increment = 0
++	{
++		/* ML-DSA */
++		.op = RTE_CRYPTO_OP_TYPE_ASYMMETRIC,
++		.asym = {
++			.xform_capa = {
++				.xform_type = RTE_CRYPTO_ASYM_XFORM_ML_DSA,
++				.op_types =
++				((1 << RTE_CRYPTO_ML_DSA_OP_SIGN) |
++				 (1 << RTE_CRYPTO_ML_DSA_OP_KEYGEN) |
++				 (1 << RTE_CRYPTO_ML_DSA_OP_VERIFY)),
++				.mldsa_capa = {
++					[RTE_CRYPTO_ML_DSA_OP_KEYGEN] =
++						(1 << RTE_CRYPTO_ML_DSA_44) |
++						(1 << RTE_CRYPTO_ML_DSA_65) |
++						(1 << RTE_CRYPTO_ML_DSA_87),
++					[RTE_CRYPTO_ML_DSA_OP_SIGN] =
++						(1 << RTE_CRYPTO_ML_DSA_44) |
++						(1 << RTE_CRYPTO_ML_DSA_65) |
++						(1 << RTE_CRYPTO_ML_DSA_87),
++					[RTE_CRYPTO_ML_DSA_OP_VERIFY] =
++						(1 << RTE_CRYPTO_ML_DSA_44) |
++						(1 << RTE_CRYPTO_ML_DSA_65) |
++						(1 << RTE_CRYPTO_ML_DSA_87)
 +				}
-+			}, }
-+		}, }
-+	},
-+	{	/*  256-NEA6 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER,
-+			{.cipher = {
-+				.algo = RTE_CRYPTO_CIPHER_ZUC_NEA6,
-+				.block_size = 8,
-+				.key_size = {
-+					.min = 32,
-+					.max = 32,
-+					.increment = 0
-+				},
-+				.iv_size = {
-+					.min = 16,
-+					.max = 16,
-+					.increment = 0
-+				}
-+			}, }
-+		}, }
-+	},
-+	{	/* 256-NIA4 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
-+			{.auth = {
-+				.algo = RTE_CRYPTO_AUTH_SNOW5G_NIA4,
-+				.block_size = 8,
-+				.key_size = {
-+					.min = 32,
-+					.max = 32,
-+					.increment = 0
-+				},
-+				.digest_size = {
-+					.min = 4,
-+					.max = 16,
-+					.increment = 1
-+				},
-+				.iv_size = {
-+					.min = 16,
-+					.max = 16,
-+					.increment = 0
-+				}
-+			}, }
-+		}, }
-+	},
-+	{	/* 256-NIA5 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
-+			{.auth = {
-+				.algo = RTE_CRYPTO_AUTH_AES_NIA5,
-+				.block_size = 8,
-+				.key_size = {
-+					.min = 32,
-+					.max = 32,
-+					.increment = 0
-+				},
-+				.digest_size = {
-+					.min = 4,
-+					.max = 16,
-+					.increment = 1
-+				},
-+				.iv_size = {
-+					.min = 16,
-+					.max = 16,
-+					.increment = 0
-+				}
-+			}, }
-+		}, }
-+	},
-+	{	/* 256-NIA6 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
-+			{.auth = {
-+				.algo = RTE_CRYPTO_AUTH_ZUC_NIA6,
-+				.block_size = 8,
-+				.key_size = {
-+					.min = 32,
-+					.max = 32,
-+					.increment = 0
-+				},
-+				.digest_size = {
-+					.min = 4,
-+					.max = 16,
-+					.increment = 1
-+				},
-+				.iv_size = {
-+					.min = 16,
-+					.max = 16,
-+					.increment = 0
-+				}
-+			}, }
-+		}, }
-+	},
-+	{	/* 256-NCA4 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AEAD,
-+			{.aead = {
-+				.algo = RTE_CRYPTO_AEAD_SNOW5G_NCA4,
-+				.block_size = 8,
-+				.key_size = {
-+					.min = 32,
-+					.max = 32,
-+					.increment = 0
-+				},
-+				.digest_size = {
-+					.min = 4,
-+					.max = 16,
-+					.increment = 1
-+				},
-+				.aad_size = {
-+					.min = 0,
-+					.max = 65535,
-+					.increment = 1
-+				},
-+				.iv_size = {
-+					.min = 16,
-+					.max = 16,
-+					.increment = 0
-+				},
-+			}, }
-+		}, }
-+	},
-+	{	/* 256-NCA5 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AEAD,
-+			{.aead = {
-+				.algo = RTE_CRYPTO_AEAD_AES_NCA5,
-+				.block_size = 8,
-+				.key_size = {
-+					.min = 32,
-+					.max = 32,
-+					.increment = 0
-+				},
-+				.digest_size = {
-+					.min = 4,
-+					.max = 16,
-+					.increment = 1
-+				},
-+				.aad_size = {
-+					.min = 0,
-+					.max = 65535,
-+					.increment = 1
-+				},
-+				.iv_size = {
-+					.min = 16,
-+					.max = 16,
-+					.increment = 0
-+				},
-+			}, }
-+		}, }
-+	},
-+	{	/* 256-NCA6 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AEAD,
-+			{.aead = {
-+				.algo = RTE_CRYPTO_AEAD_ZUC_NCA6,
-+				.block_size = 8,
-+				.key_size = {
-+					.min = 32,
-+					.max = 32,
-+					.increment = 0
-+				},
-+				.digest_size = {
-+					.min = 4,
-+					.max = 16,
-+					.increment = 1
-+				},
-+				.aad_size = {
-+					.min = 0,
-+					.max = 65535,
-+					.increment = 1
-+				},
-+				.iv_size = {
-+					.min = 16,
-+					.max = 16,
-+					.increment = 0
-+				},
-+			}, }
-+		}, }
++			}
++		}
 +	},
  #endif
  	RTE_CRYPTODEV_END_OF_CAPABILITIES_LIST()
  };
-@@ -1308,6 +1535,18 @@ struct __rte_cache_aligned aesni_mb_session {
- 			/* *< Expanded GCM key */
- 			uint8_t zuc_cipher_key[32];
- 			/* *< ZUC cipher key */
-+			uint8_t nxa_cipher_key[32];
-+			/* *< NxA cipher key */
+@@ -1613,6 +1655,26 @@ struct __rte_cache_aligned aesni_mb_session {
+ 		uint16_t req_digest_len;
+ 
+ 	} auth;
++#if IMB_VERSION(3, 0, 0) <= IMB_VERSION_NUM
++	struct {
++		enum rte_crypto_asym_xform_type xform_type;
++		union {
 +			struct {
-+				alignas(16) uint32_t encode[60];
-+				alignas(16) uint32_t decode[60];
-+			} expanded_nia5_keys;
-+			/* *< expanded NIA5 keys */
++				IMB_ML_KEM *ctx;
++				IMB_ML_KEM_ALG alg;
++				IMB_ML_KEM_KEYGEN_PARAMS keygen_params;
++				IMB_ML_KEM_ENCAP_PARAMS encap_params;
++			} ml_kem;
 +			struct {
-+				alignas(16) uint32_t encode[60];
-+				alignas(16) uint32_t decode[60];
-+			} expanded_nea5_keys;
-+			/* *< expanded NEA5 keys */
- 			snow3g_key_schedule_t pKeySched_snow3g_cipher;
- 			/* *< SNOW3G scheduled cipher key */
- 			kasumi_key_sched_t pKeySched_kasumi_cipher;
-@@ -1363,6 +1602,8 @@ struct __rte_cache_aligned aesni_mb_session {
- 			/* *< Expanded XCBC authentication keys */
- 			uint8_t zuc_auth_key[32];
- 			/* *< ZUC authentication key */
-+			uint8_t snow5g_auth_key[32];
-+			/* *< SNOW5G authentication key */
- 			snow3g_key_schedule_t pKeySched_snow3g_auth;
- 			/* *< SNOW3G scheduled authentication key */
- 			kasumi_key_sched_t pKeySched_kasumi_auth;
++				IMB_ML_DSA *ctx;
++				IMB_ML_DSA_ALG alg;
++				IMB_ML_DSA_KEYGEN_PARAMS keygen_params;
++				IMB_ML_DSA_SIGN_PARAMS sign_params;
++				IMB_ML_DSA_VERIFY_PARAMS verify_params;
++			} ml_dsa;
++		};
++	} asym;
++	#endif
+ };
+ 
+ typedef void (*hash_one_block_t)(const void *data, void *digest);
 -- 
 2.52.0
 
