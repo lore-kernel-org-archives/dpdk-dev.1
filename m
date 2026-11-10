@@ -2,102 +2,53 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA4360A260A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 14:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B12606A338
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 14:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=gszBGt43;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=QqXgisAe
+	dkim=pass (2048-bit key, unprotected) header.d=dressler.pro header.i=@dressler.pro header.a=rsa-sha256 header.s=uddkim-202310 header.b=doYat61c
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C989840285;
-	Tue, 10 Nov 2026 15:16:07 +0100 (CET)
-Received: from fout-b7-smtp.messagingengine.com
- (fout-b7-smtp.messagingengine.com [202.12.124.150])
- by mails.dpdk.org (Postfix) with ESMTPS id A286740281
- for <dev@dpdk.org>; Tue, 10 Nov 2026 15:16:05 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.stl.internal (Postfix) with ESMTP id 7CC321D00265
- for <dev@dpdk.org>; Tue, 10 Nov 2026 09:16:04 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Tue, 10 Nov 2026 09:16:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1794320163;
- x=1794406563; bh=O5+oPkPytW3cYgky7WegIVEYsM8O6ZKsdlFeL0wOGwI=; b=
- gszBGt43M4PCZxGQ7B1K+e+IUA67i2RsHupfJ7JEX9dqiAb1uxxtXrnxpPIV1SLZ
- oXOPo6FtIrHGUl2+zek7ZX5vBcrmR8KwrT+8FuF0e0YyskCg+VEhZmdNCcfvY2Ez
- 3ODjhgHvDEvE/PjdKUAf1MqTzi5sRgSOW2bth+6+EiirMh5esN3jBDBulNbhEbte
- G8fsqeIk2YYNP+XXAzcIAufZqZR91ajiTH9uX8cUx/lqnu6ay50pFayWoqTXdrmb
- xQQtBctAPd65NeOf2DqswtNq0nWr8NmNeSfnPpIHGfCOI2ssBf4tAGTb9m1jG9dF
- AI6dmMcar5kONkUUEJYl+g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794320163; x=
- 1794406563; bh=O5+oPkPytW3cYgky7WegIVEYsM8O6ZKsdlFeL0wOGwI=; b=Q
- qXgisAeenymKdDCTLhSRkosp8kvt2L8PKnfpwSyxEAlKIVA6ASbrLh8YbGmtGLZP
- iOIPh6wO9fX5UgbHwte944KYEPgFOSHo5TUX9/yGwpCyEhAQONurAWBaER456a/J
- 881iAbeeNaYdi2uhVh8JbjJTlY6ZOkZ7/XtHoNCa/EOmlxEIBOyhXYAoRS+Nor3j
- QWIPHxOpOT8ZkV3zN9IA6iHh6u/TVptJMz92+76bqulqpCtYIGdoTjZmwlGtYqvU
- TxWmg9jrRy4NFp7tgRYWqSK7rkqDKRrbpT5MDdF+KJFengHdw3rBIFLOaQ3PWca1
- vKlLBjncb7GEJbMn+Sj0w==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
- repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794320163; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:m6eF5ihLr7KYoFNbT0mpBa/BmHkT7mW4+coTXJ2WtkEFGya
- HqPHxblQtHEkvkETxw4uCJs4AfxMgfPMW/wqUoFKXkuD428U/IVLKYYa9yZqiGsm
- rtAQzbk4UOsGMmqQU9c8W0onylZrktj3F0bMkrqoqSt8NflLkHhfttZ18SeMrJOO
- DT0MfiRl2vb0pufmaAz9RmUqR4VBBdHBLJ9jtg6EOHEaP927pkCY7Wi/95ewUTJq
- 5sUk7x2lkjPkbhX6gBZ1U7O9G5MQ74f0mD1fYbxJJRKnuRzQA85mLNybOSLMK9ES
- mKznztOSIaTZIU7SvEb6hQIPeTiHD9480X6vzKg==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
- repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:BRHOdGiuAX5kYwwnw+5bk+S7uI/wlJGHtgQSaxZEmJE=:Hp4nxzNPiNolqJmXOrf0L6m+yitl2Cgq8SogJ20O0Ks=;
-X-ME-Sender: <xms:Iyfzam4oNhihevKs_r-hqVGS__jbRSrZKERkibRuLLLLRLfpY3-MKg>
- <xme:Iyfzao1kxqSOXqPG3pg5jFRxDcNR9R4KOl87mkqpJk9G7oYEasEykNnqXlCXqZEZM
- OPFV4GjyUCl1M5Cp80l9xc0QhDtysD22tR0jr6rFkfstxTgXhLDojQ>
-X-ME-Received: <xmr:IyfzahDGBLVhCyEg61Z_eLIPL8toIAv6DhUySvhIlb3YaZqbj_HJ854sZ1br9-j79cH55FYZTeLD3dLAqGzgmnQ>
-X-ME-Proxy-Cause: dmFkZTGzVU3tPvULvqaQy7IE1HEXASg3Aj14f3hqTo7DOzfjM7PReYZaQN1arlYOnSaYsG
- OCHUeqKuuhsuTN+Nqg9j4G29muRv2T6sYZRdrxgLGFlcrHPXUKXZWoA6btYPXZzjorHb1o
- lsM4CVlaXGJZPPOyuVUUGk487wuKBjPgxNAFfttZHDl9xDXiGeUSkOaOOUy5Wu7Gg7NYqQ
- Fjuq/aUUJD3JIYT4TSUszR+gZmq8Z0C6lP/goyaok5KaNM6WpUq6HPPRKOJ/tX5gzae2y7
- xmAtHLiXzgFGxO4hnY2Y3NQWsfxoCsWsHhS8uj+EDIi6da7u7LzoZcHw1OAN3aJ8kd4cnB
- in08oEYub+2t2/AHUC2WVXcg+8wP6QGdKwn1QIwFwtxSPzaA+yLPQtcyn9z2hF1NUCJw3y
- DQVPQeW3Z2fmglmI1cuoK8JLz5WvuzPXOkIA1TaWRxUNFhH+t178VRatPhpZtW9O4XMbXL
- 8G90Rm2y2D4cQbl/WHkUs0IEr83R552WALUfdBYcX1yZsvT+kjGJJSVjVgdIoSlOMAlvr5
- p//x/L+ICs89LzQvAwuRBOeufuI6vGKg79ruVuniVl+YhG5+hvX9sSZmrkfCGENun/Sh6n
- Bbqdyfk1WPyFCo9eD8BGO4KXX8+TfgGHAv9PV+ZsKEwSjWNzbui/he+qwNfQ
-X-ME-Proxy: <xmx:IyfzajP2K8uosiG0FwdnDOWli6E6HFfR60HJsuXDIHgkvTH_AU5xUg>
- <xmx:IyfzamYAsXqY4_AfSZfkT1L8LVgc1lwr7ZCcscOwDrXyasammUfSXw>
- <xmx:Iyfzais_rvk88zhkQSkt_IWSnPZQjP3FEw8RiScYla4Suvr0Tb37BA>
- <xmx:IyfzaoNWC8iraXem1cEQp1n4JuoqYxqtKDl5onjokMynj4Mfccaorw>
- <xmx:IyfzaoaW22V3pIyjsnWLz1C9repHOI1hQZnGewUEpMPYZ2VEKhoXm_p5>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 Nov 2026 09:16:02 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Harman Kalra <hkalra@marvell.com>
-Cc: jerinj@marvell.com, Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org,
- Pavan Nikhilesh <pbhagavatula@marvell.com>
-Subject: Re: [PATCH v2] config/arm: add Marvell CN20k
-Date: Tue, 10 Nov 2026 15:16:00 +0100
-Message-ID: <i9tqF1fNRBe2oSp9wundkw@monjalon.net>
-In-Reply-To: <20261102160124.64412-1-pbhagavatula@marvell.com>
-References: <20261102155754.63324-1-pbhagavatula@marvell.com>
- <20261102160124.64412-1-pbhagavatula@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4733F40296;
+	Tue, 10 Nov 2026 15:23:15 +0100 (CET)
+Received: from smtp01-ext2.udag.de (smtp01-ext2.udag.de [62.146.106.18])
+ by mails.dpdk.org (Postfix) with ESMTPS id 887C840281
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 15:23:13 +0100 (CET)
+Received: from [192.168.0.40] (unknown [37.228.226.247])
+ by smtp01-ext2.udag.de (Postfix) with ESMTPA id AFBE7E1065;
+ Tue, 10 Nov 2026 15:23:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dressler.pro;
+ s=uddkim-202310; t=1794320592;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=DZZnxww4lxL4zrvORTYRo6h5ZtMcpxz8yU3gAS7LjIQ=;
+ b=doYat61cvsD6Rgt24bisvULw4nBNMSBXbKOIjY1dR525LnJ9XIw+DINF27EulDHJb0o1LH
+ ROX4SXNfChO6AQcn1NhglTkuqqjQ1SaKwY0Ni4ea5VZQnbp6HbPGPVk7UmyUWnapkfmisS
+ GsHD8z1rhYqOWQPD1aw27Ndzosd0yP0/6IycGJvMymHC29gg+ONz9pn1Q+V+gt9LIiqfTv
+ 7ByZzDGYEaoepy5kMDbR5LsTDpxVgfYPoIZKnQYhzsYD/09d9GKpE6BK+ulTNYoYpQMs5U
+ rN2n/U0qM2QHI7kgV5PEGim+yDlN60u/rL5WdQ+NWuTCZV/I92cVE+Y9GdKp1Q==
+Authentication-Results: smtp01-ext2.udag.de;
+ auth=pass smtp.auth=dressler-pro-0001 smtp.mailfrom=frank@dressler.pro
+Message-ID: <1c32bca6-b310-4ac8-a9ec-3312a7b8f364@dressler.pro>
+Date: Tue, 10 Nov 2026 14:23:11 +0000
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net/af_packet: fix build with old kernel headers
+To: Thomas Monjalon <thomas@monjalon.net>, Bing Zhao <bingz@nvidia.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, David Marchand <david.marchand@redhat.com>,
+ Kevin Traynor <ktraynor@redhat.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>
+References: <20261106142756.241131-1-bingz@nvidia.com>
+ <O1P4UruZSlqFOdl0F9QGXA@monjalon.net>
+ <be84046c-8071-4fee-aea0-234b772cc91a@dressler.pro>
+ <zmh4QzPKQvWlZHerQoYLhg@monjalon.net>
+Content-Language: en-US
+From: Frank Dressler <frank@dressler.pro>
+In-Reply-To: <zmh4QzPKQvWlZHerQoYLhg@monjalon.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -107,23 +58,72 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,PDS_PRO_TLD,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-02/11/2026 17:01, pbhagavatula@marvell.com:
-> From: Harman Kalra <hkalra@marvell.com>
+On 11/10/26 13:56, Thomas Monjalon wrote:
+> 10/11/2026 13:52, Frank Dressler:
+>> On 11/10/26 10:39, Thomas Monjalon wrote:
+>>> 09/11/2026 18:47, Stephen Hemminger:
+>>>> On Mon, 9 Nov 2026 17:47:30 +0200
+>>>> Bing Zhao <bingz@nvidia.com> wrote:
+>>>>
+>>>>> The PACKET_IGNORE_OUTGOING socket option is used unconditionally,
+>>>>> but it was only added to the uapi headers in Linux 4.20. The build
+>>>>> fails on distributions shipping older kernel headers, like RHEL 8
+>>>>> (kernel-headers 4.18.0):
+>>>>>
+>>>>>     rte_eth_af_packet.c:1057:41: error: 'PACKET_IGNORE_OUTGOING'
+>>>>>       undeclared (first use in this function)
+>>>>>
+>>>>> DPDK requires Linux 5.4, so the driver does not need to support older
+>>>>> kernels. Check for the symbol at configure time and skip the driver
+>>>>> when the headers lack it, instead of failing the whole build.
+>>>>>
+>>>>> Fixes: 3db7aa7868b2 ("net/af_packet: use kernel to filter single-queue Rx")
+>>>>>
+>>>>> Signed-off-by: Bing Zhao <bingz@nvidia.com>
+>>>>> ---
+>>>>
+>>>> No. DPDK should just fail build on older kernels.
+>>>> Since current DPDK is not tested with those releases, anyone doing that is
+>>>> working outside the tested environment and has to fix it themselves.
+>>>
+>>> We used to support some old RHEL versions.
+>>> Remind that the RHEL kernel is full of backports,
+>>> it is not exactly the same as an really old kernel.
+>>> I think this solution disabling a driver is acceptable.
+>>
+>> But does RHEL itself actually have a problem? I could not find an
+>> incompatible DPDK being shipped by them. DOCA ships unsupported DPDK.
+>>
+>> If it is RHEL, Redhat could add `-Ddisable_drivers=net/af_packet`. If it
+>> is DOCA, NVIDIA could just add `-Ddisable_drivers=net/af_packet`. DOCA
+>> already only ships a limited set of PMDs in their bundled DPDK.
 > 
-> Add config support to cross compile for Marvell CN20k SoC.
-> Marvell CN20k SoC is based on ARM Neoverse N3 cores.
+> I don't know why you insist on DOCA, it is not an upstream concern,
+> and was not mentioned in this thread except by you.
 > 
-> Signed-off-by: Harman Kalra <hkalra@marvell.com>
-> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-Applied after sorting.
+I was just wondering about the use case behind the change, because I did 
+not find it in RHEL since they all seemed to ship with supported DPDK 
+versions. So I thought it could have been DOCA.
 
+> 
+>> If RHEL 8 must be supported, the documented requirements would need to
+>> change then to say that features of Kernel 5.4 may be used but the code
+>> must still build without error on RHEL 8, or something like that.
+> 
+> Yes that's something we had in the past.
+> This has been removed last year:
+> 
+> "Compatibility for recent distribution kernels will be kept, notably RHEL/CentOS 7."
+> 
 
+Thank you, I did not know that.
 
