@@ -2,85 +2,77 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0204460A2616
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 14:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19BB60A3826
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 15:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=T7DVHpk0
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=SqVH2vCX
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C585040E96;
-	Tue, 10 Nov 2026 15:58:58 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTPS id 57FD740285
- for <dev@dpdk.org>; Tue, 10 Nov 2026 15:58:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1794322736;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=lkZb7k5JM4+pVr/taSQzzmToHGjUQjxnvARRBpGtWLc=;
- b=T7DVHpk0qQM2jZB0wxqp4iM+/Qj4PGDLCx8erf05huwqf00lMMdcJmhzB0ulXW4k3W3+QV
- I2JH14bczc23aTUt2J+sb8BWYOndnM3YEAUiFInepq5vPQlgeQE9MY3vx0xKptDtnGQgir
- faLjvxkz857FaNvFh8SffdMfN661L4Y=
-Received: from mail-dl1-f69.google.com (mail-dl1-f69.google.com
- [74.125.82.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-47-lH1oB2t3MI6hPrqNay8cCg-1; Tue, 10 Nov 2026 09:58:54 -0500
-X-MC-Unique: lH1oB2t3MI6hPrqNay8cCg-1
-X-Mimecast-MFC-AGG-ID: lH1oB2t3MI6hPrqNay8cCg_1794322734
-Received: by mail-dl1-f69.google.com with SMTP id
- a92af1059eb24-1b3b5b49cabso1569925c88.0
- for <dev@dpdk.org>; Tue, 10 Nov 2026 06:58:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 30EAB40285;
+	Tue, 10 Nov 2026 16:05:06 +0100 (CET)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
+ [209.85.215.177])
+ by mails.dpdk.org (Postfix) with ESMTPS id CAC7A40281
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 16:05:05 +0100 (CET)
+Received: by mail-pg1-f177.google.com with SMTP id
+ 41be03b00d2f7-cd8ba7c2694so850107a12.1
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 07:05:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794323104;
+ x=1794927904; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=PlFYccxjbku6et8cEbL+3mG/hiWY3dm/kX4DTsehw7E=;
+ b=SqVH2vCX2QQJ9/YG/wKrQSPdSZRRoGJ9iKl4LGa7hymMq3xSElMJnqw0+UrUU1uH1d
+ OZzPEK+PmKkYpSuBWNlwRQDDAWCkyJ0JY97BYd/DLqs88Xe9XJOiQ+6NIY6MuyKrDbdL
+ LSC5Dgk4r+ww8DkcdAvVDyVqLSZ/I5Tgt7B+h5JrZXGojy40dUUjwDJB19WUx1b6BxAn
+ CRhyIt0uF1gGJgZPGqfYFDfRTbla+JKcFCzcdP0Acmy9BpZzm1mBHSlMmYS4VBWmlO5a
+ JGc12Y5lburaWrqFiOiQe5U8xYkV/5qUBz/BetM3SK6F+geQJ8Ef4pfDTirGeRPe3gZ+
+ 2pwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794322733; x=1794927533;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
+ d=1e100.net; s=20260707; t=1794323104; x=1794927904;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=lkZb7k5JM4+pVr/taSQzzmToHGjUQjxnvARRBpGtWLc=;
- b=GRhrC7V62MKDg4CYT2qPxom0ecNGP6IHgmUt8pzjgGhhfoAZRgB9/MWkcvhBw7CZ7D
- 3NG9Mu2osa5TfzOIc59PPn3MiTc6lVYuXbhL7cYKo+e/md0yPNefRr1eptRBzvAf3xJv
- ikYaansC4DCOJVlhaTjHAFfHdVygyrNuMWVnFBYPCabGv3D+MZgoBMlSvKCpF9MMu6Qm
- NVQYSLKLa5ZKvnv2XpeYPCKRu/hlWLXuj4qixMUMrwVn01kFax8JNnhSsL/5/ZTHG0+3
- JHsr1T3TjD22MHH7mfbeBLSE6E8atGSnHpcigaVoalChFOwkEPzje8plV2UIH57geaZQ
- CrbA==
-X-Forwarded-Encrypted: i=1;
- AL+hErGYCImPftpC3W2e/GEP7Y65BXpnnPPvjCSkEJQmNq03wKBdbM65Mt60iz415XymayvbKfg=@dpdk.org
-X-Gm-Message-State: APuU4Z/R1xR831of04VUfK2phmmsnQqkg5pgdo2ewg/KIKV/mCxzGA8g
- OX4U5s8tVmZmd6uangVBamjM4MLHS6R+KJm7esEjh3OpjwSvxIbqIhSMT+/48uPfXsrjWwSsf4P
- zv+GCudCflF1tGxACRVdtyEig6P3S6R19CAqk/qRRRKJJqFRhOHiqmWGFUsiY4SZvEwIQ9JfiIw
- a881LyJiIzqU32ggOjVdk=
-X-Gm-Gg: AYBFou1Mspliqm880KJbA7OTe6vaxWtuOY1Nc//gYW72CCeC1ZCUne3Th3dTUCn4vuW
- 60+BR/ti7PyKPI9c2GtuvAngaMRcUbL0oJsuCeflv3BBYrFFh9RZl34C6duhn4fSG0S6OZcjQWo
- Hs4erozXPtLlhZ5KAQO+8xVrr1hm4AavQRXZPofp644qb0zVVbnPXtazvKFjNmPw0+0sWdQL91n
- 14dU/xytg3FX99cGZtWDi5IrHXJUu7jkWbFL0Vlp3Ad/81CO3N9szQuIugJP+4zql34nr6wzP/V
- kjuRo08vkajOvD4WGLAdAb3+mCi35sL1srcbb4Lh6IM=
-X-Received: by 2002:a05:7022:108c:b0:163:c5eb:d42f with SMTP id
- a92af1059eb24-1b3b5fa2aa1mr3388012c88.5.1794322733382; 
- Tue, 10 Nov 2026 06:58:53 -0800 (PST)
-X-Received: by 2002:a05:7022:108c:b0:163:c5eb:d42f with SMTP id
- a92af1059eb24-1b3b5fa2aa1mr3387984c88.5.1794322732761; Tue, 10 Nov 2026
- 06:58:52 -0800 (PST)
+ bh=PlFYccxjbku6et8cEbL+3mG/hiWY3dm/kX4DTsehw7E=;
+ b=xbvZkL5YCWSmRvbWrEeD5VIqktY0JwsGeQaFYGbniaoIZl1NFh5nkGlUTwjvC3hwIb
+ jjk+mZ7BUU9qRPrUdjumLFeRt/SvIwESeMvrgTP5MwC24hTkPtURLVioFuNSEfGgUKuJ
+ WtqDoMjXfDJM0B1ZmwSsAC8vrcj8FPJ9yCXB0m6mxywYOrFmeA2ZhSqe38XS3uhdlGw8
+ 65FXQVEX1I1D43SqVZGhkhLIQyVmt+/gxZhZc/Se8zkOnCqcNSzokJiv0e2Uov3otONm
+ NTrUOwqo5CbofBaJ3uHuYPdK1Gypou5+TUN2BclrId+waeQSmpBEmDsVCCEkav5d46NN
+ I9Sw==
+X-Gm-Message-State: APuU4Z9uujBgKai4cvQVoYn8dMVcNsknL3owlTPobeVMHVc10DgxLj8r
+ 0+8FnBjkey/Koeid8bzf3owHGPg/hZy1USCwZJ8WEnKVD9+K9NbXw4W8wEXq6PImQxk=
+X-Gm-Gg: AYBFou1aX1RYe4Z7rbFV+NdUkRI4U4ew75JiEUQHtU0cKSiB90xWiYnHwwy6gzUfjBF
+ dhtwx2/KnDqUQEXTtLUtkHoMz4HHwEzjauuYYeVZY/62BLRvNPGpnrL+ij+vWEzMwBrTkh1iVj7
+ 2ZC841UMyNZhl+LZTTLaotqGMsy9WR05F/YuxENUF/b4RO9Q3dBuOQU4sYtuUCA/OKyZNxYomQa
+ /aCrucOls8HK+MztgYCkf4YqO2NFyZEXniV1SFFm/Mo1FfQvjku0c1n3BwXCHiQvwyxscrwxcho
+ r2tXBLOkit2mg2dmJrMRwXFcIP/RlLaQP5rymx3VFg4LQpSu21GTFyQw4ds9CVbr9X2fBsgCDL5
+ n/S63QTomitwJSpz+G99pk/k3/3X1dw2ty042zEZeG9N7pQbSLHTSBcqNGDSMRAZDu4iYFr8eTv
+ n6zbvVp2DtVW/BIjsFobdgVzh1H654iOZnnnfl+Xys5tSGXJLscepUTBEUBbWIlgaWHxWb3G35j
+ xMBHjazciKL7mA8jb4SX5nrX0geVC50f9GosIURz3rOU00jpJ/2n8SYMdlnzQ3FzMFrZxPiglxm
+ GZdGiJB1i+nYpFEDWM+s18vhXe39HWiaHYI7JxwV7FCGMS7IXH05lE4wULqauI7w2MoYwbM=
+X-Received: by 2002:a05:6a21:2d8b:b0:3e2:4bd9:683e with SMTP id
+ adf61e73a8af0-3f190878fb5mr2583830637.73.1794323103946; 
+ Tue, 10 Nov 2026 07:05:03 -0800 (PST)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-8baa506bca4sm1037843b3a.0.2026.11.10.07.05.03
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 10 Nov 2026 07:05:03 -0800 (PST)
+Date: Tue, 10 Nov 2026 07:04:58 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Zhang Tengfei <zhtfdev@gmail.com>
+Cc: dev@dpdk.org, jiawenwu@trustnetic.com, zaiyuwang@trustnetic.com
+Subject: Re: [PATCH] net/txgbe: store flow rules without wrappers
+Message-ID: <20261110070458.0be83f1a@phoenix.local>
+In-Reply-To: <20261110132200.12673-1-zhtfdev@gmail.com>
+References: <20261110132200.12673-1-zhtfdev@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261025081639.2746665-1-mkashani@nvidia.com>
- <20261025081639.2746665-2-mkashani@nvidia.com>
-In-Reply-To: <20261025081639.2746665-2-mkashani@nvidia.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Tue, 10 Nov 2026 15:58:40 +0100
-X-Gm-Features: AclHuK8NszpcC3i1gmRZhzWDU7QmXLKuZJIWTqErKuk8lAdzre2q5czhNgAekFg
-Message-ID: <CAO55csyi7to-sGMUkP=aVQNc_dPxz1vOcgnBVyVkkshAU3i_4Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vdpa/mlx5: fix RQT attributes memory leak
-To: Maayan Kashani <mkashani@nvidia.com>
-Cc: Matan Azrad <matan@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, dev@dpdk.org, 
- Dariusz Sosnowski <dsosnowski@nvidia.com>, stable@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Emj9g9JujVzfJmgxfxL3efoUtUZX5S40OyLu469T4tU_1794322734
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,35 +82,51 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Sun, Oct 25, 2026 at 9:17=E2=80=AFAM Maayan Kashani <mkashani@nvidia.com=
-> wrote:
->
-> mlx5_vdpa_rqt_prepare() allocates RQT attributes with rte_zmalloc() but
-> returns without freeing them when no enabled receive queue is found
-> (k =3D=3D 0). Every steering update that hits this path leaks the
-> allocation.
->
-> Free attr before returning on the no-enabled-RQ path.
->
-> Fixes: 9f09b1ca15c5 ("vdpa/mlx5: recreate a virtq becoming enabled")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-> Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+On Tue, 10 Nov 2026 21:22:00 +0800
+Zhang Tengfei <zhtfdev@gmail.com> wrote:
+
+> The flow rule wrappers each held one filter structure after their
+> list links were removed. Store the filter structure directly in
+> rte_flow. RSS still goes through txgbe_rss_conf_init() so the saved
+> key and queue pointers refer to that stored copy.
+> 
+> Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
 > ---
->  drivers/vdpa/mlx5/mlx5_vdpa_steer.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
+ 
+Looks good, AI review did have some observations to consider for later releases
 
-Applied to next-virtio/for-next-net.
+[PATCH] net/txgbe: store flow rules without wrappers
 
-Thanks,
-Maxime
+Mechanical change; the conversion is correct. Allocation sizes match
+the copied types, every flow->rule consumer is updated, and the RSS
+path still goes through txgbe_rss_conf_init() so conf.key and
+conf.queue point into the stored copy rather than the parse-time
+stack buffer. txgbe_config_rss_filter(..., FALSE) and
+txgbe_action_rss_same() therefore still see valid pointers on
+destroy.
+
+Info
+
+flow->rule is void *, so the casts on the lines being touched in
+txgbe_flow_destroy() are unnecessary. Since those lines are being
+rewritten anyway, plain struct assignment is simpler than
+rte_memcpy() in the control path:
+
+	case RTE_ETH_FILTER_NTUPLE:
+		ntuple_filter_ptr = pmd_flow->rule;
+		ntuple_filter = *ntuple_filter_ptr;
+		ret = txgbe_add_del_ntuple_filter(dev, &ntuple_filter, FALSE);
+
+Same for the ethertype, syn, fdir and l2_tunnel cases.
+
+Not introduced here, but worth a follow-up: these rule copies are
+CPU-only bookkeeping and do not need hugepage memory; malloc()/free()
+would do.
 
