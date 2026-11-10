@@ -2,147 +2,164 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF51960A2608
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 15:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20186606A323
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Nov 2026 16:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=akY9FTVc
+	dkim=pass (1024-bit key, unprotected) header.d=marvell.com header.i=@marvell.com header.a=rsa-sha256 header.s=selector1 header.b=pKN3SZA5
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4506B40285;
-	Tue, 10 Nov 2026 16:53:38 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTPS id EE8E540281
- for <dev@dpdk.org>; Tue, 10 Nov 2026 16:53:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1794326017; x=1825862017;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:mime-version;
- bh=i/PWiwal8wHk9pG6/uACi9UQzysNtvytIBv4tlS/Cc0=;
- b=akY9FTVc6+xoIZ7J9/mfXa+mQTWlqLSLKjIAYlGucTp2ed0ZzbIzWEww
- YLYO0VnZW7SU+LMoe+wpd+4vz8hw6z7iWhHGhLgB3TYCmjDrKvjxL6JEw
- /7nrfE/NvcMnjRdOSmdXhVWU5fvavyKGLtyikNVmSl519ZxV5uIovXRa0
- dqQ41CBRzA9BjTXOtR39BiIEDKdq+J8UgFgGVaxu7Bdzp714ebt/DRdLw
- 45zIAaOwu667Q8M9vZTIm0lkUFCqQ9AwvTQh7LrnNN6hO6+YATqPANkL3
- 9REwtvb90jl85360YNsOKGx/DX1v0EYYLkYNJzLK3fhhJI9/BYaF7Xecj Q==;
-X-CSE-ConnectionGUID: EIuTbcpfRG6dB3JgXQE7zA==
-X-CSE-MsgGUID: kg+XFezXSU2Mzm9P9boTSA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11962"; a="3109173"
-X-IronPort-AV: E=Sophos;i="6.27,206,1787036400"; d="scan'208,217";a="3109173"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Nov 2026 07:53:35 -0800
-X-CSE-ConnectionGUID: 3wbrkQVQRa6JNjkITQYD8Q==
-X-CSE-MsgGUID: aIkLQmWmTU2ky2bOHUqwAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,206,1787036400"; d="scan'208,217";a="8066674"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Nov 2026 07:53:35 -0800
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Tue, 10 Nov 2026 07:53:34 -0800
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56 via Frontend Transport; Tue, 10 Nov 2026 07:53:34 -0800
-Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.14) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Tue, 10 Nov 2026 07:53:34 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id 042DC40285;
+	Tue, 10 Nov 2026 17:09:30 +0100 (CET)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTPS id 17BFF40281
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 17:09:27 +0100 (CET)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 6AAF198h1777800; Tue, 10 Nov 2026 08:09:26 -0800
+Received: from co1pr03cu002.outbound.protection.outlook.com
+ (mail-westus2azon11020088.outbound.protection.outlook.com [52.101.46.88])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4hujfaec3x-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+ Tue, 10 Nov 2026 08:09:22 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=id2+etcuEGYw2X2a3Pc8vh6nIsaOcmFOmNAIsZTD887R1N63yitTtnhRNak7FYUa/CBrnaYPJj88CXE7Elu10riwqexrFk/jHUgsnmM8EjQYsc+UYdIzQE/xM+bmSnar+eIqDEFZWMa4fpy6aVr1jKNnSm99fCdNJphsnOl2iEiHZ+E9Z1Cqip0QhJ8NiMmSIhOb5gWSOsm0OJMoFShGMoBLiRNAMwuahqVYVOro1e380t65tMfELnurUpPLBXAt7qfaa+xtJIbIgCJ3/CkeTrrvVhbVBwubWWlNfSj7Z0jWAZZsazecFii+9iCw5xvP4lkozNgxS+iCo+XV06NUAg==
+ b=BYRu8dT3BqnElLlIFI2BGYvY6NU6h0Nd9Z1Hrbrp9onzZpXbPQo41UwuKvnbE6IMvIUZ8pgiDAx9Ng/5JIoPyx9iqkIjl75ocgjXOBMEDwIHZs+97u2NeDVXCJDDOXNJl73ruOyjhq2drZoFQT+psQsBfmQ6wScOt6wezv6aLMMD27owFExvh9tfMP8gyS4JKMkGT3kTyAhaV0gh4QRA2NxjAjHLZJstqqdSL8PGPbOm3GhqrBHApt7oOEcSnxK1aiQN7nwOPJtNQRCEYP3QOGJ1uHmW02GdKxNQbNVDrS4IB5LnKnscRotG46dhbNX1t5FC6MecfUIIWXzZbEFlRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dXFY5q/cAtifdI9wjiXL8fnTqutE5ERFTx48MYv2rzg=;
- b=w85L8FY87lyioiSKMbmRP976NpSPs0KWQqoB8xVka8kHRV0sFSHT7BB6KppHR1EwrtWq+YvFxqv8ZeLAeNLp5KToEvWJHwTZpWhHZ5qc8ldev/6x735JJbnYRwUIfQjCfiXaPlJertmaKJOdzFHociT3FNwtmHr+GKIZ3NJsE0Vr2+mJ5JhBK9x7NqQi4Pco3XY7fCLw34WUo7bqKd/7LoipLAmx5BTBBJW64rSU61nBH6uvkdFrlJk/T/0WQtKXmCvBmIyCcNa3zQnDgvGAvQZpyU4Q2WOb8VuB+fGQPXbSO25WdfzYBoPuPWhGzFAaS5DE5LDPNTr/aUVenTKoFg==
+ bh=NqSiikEGuCZnyg6uhxbbqVuWcJFQDSruf6F/wepBg9k=;
+ b=kyUod2VcNLCLFIPitIYHQPXfrqkfQEWpmJ9VzX4nZ3RCzdpNTkpwJEOxXDGnGeEP13YkRcsgYn0mvdmnNsuaCoqQIWpWHfoPgRtoOth0BZ9fU5v2eIYkZ+AGLeQo0ELf6A10YOjegLnZUHi+vCRS3JCmlSBrsxD1Z7kgPOsh8jg0Cxz1IyMcGE8bvbKlfT97nzvNyQq5rx4uHCQPd+SBc2DnhhiGUoystF7bMGMul5SNbK7mxLb/rsb1w7SkyngQ7nG4iuiXMpyekpXQ5wziTwjPe3Sj5IHT7vFp7pInfkqAXNE+gqXSyeGOjtJMNkjyPeeKvR//NxWGO3TQOHKEeA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from LV2PR11MB6045.namprd11.prod.outlook.com (2603:10b6:408:17b::20)
- by SA1PR11MB8523.namprd11.prod.outlook.com (2603:10b6:806:3b5::17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.8; Tue, 10 Nov
- 2026 15:50:27 +0000
-Received: from LV2PR11MB6045.namprd11.prod.outlook.com
- ([fe80::1f72:3d49:b6ba:91ae]) by LV2PR11MB6045.namprd11.prod.outlook.com
- ([fe80::1f72:3d49:b6ba:91ae%6]) with mapi id 15.21.0592.012; Tue, 10 Nov 2026
- 15:50:27 +0000
-From: "Ji, Kai" <kai.ji@intel.com>
-To: "Nicolau, Radu" <radu.nicolau@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashishg@marvell.com>
-Subject: Re: [PATCH] compress/qat: add Gen 6 support
-Thread-Topic: [PATCH] compress/qat: add Gen 6 support
-Thread-Index: AQHdcSZfMy8EniFSpEqfVebKPGtqLbcnc/Uh
-Date: Tue, 10 Nov 2026 15:50:27 +0000
-Message-ID: <LV2PR11MB60459B9E8839EE18C6E94FD381722@LV2PR11MB6045.namprd11.prod.outlook.com>
-References: <20261110151529.2966094-1-radu.nicolau@intel.com>
-In-Reply-To: <20261110151529.2966094-1-radu.nicolau@intel.com>
-Accept-Language: en-GB, en-US, en-IE
-Content-Language: en-GB
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NqSiikEGuCZnyg6uhxbbqVuWcJFQDSruf6F/wepBg9k=;
+ b=pKN3SZA5wGn5k9stwKbetdgx2XKysEnqgAK20QSTeL4tUlN/fvsSMmbwzYQ57zYyGxAgdb5Fx/6vKV5vaoipR74Sw/ooPOtngqVEX5YJ/KZ+DA82ov+Gw7W6wg4faUkuzTutEFlqbXBlDueHoveaI02IsI1sdRb0cyBPhu7N8tc=
+Received: from PH3PPFCACDF6938.namprd18.prod.outlook.com
+ (2603:10b6:518:1::cc9) by PH7PR18MB5132.namprd18.prod.outlook.com
+ (2603:10b6:510:15b::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.13; Tue, 10 Nov
+ 2026 16:09:10 +0000
+Received: from PH3PPFCACDF6938.namprd18.prod.outlook.com
+ ([fe80::9cc2:42ff:5132:2cd5]) by PH3PPFCACDF6938.namprd18.prod.outlook.com
+ ([fe80::9cc2:42ff:5132:2cd5%7]) with mapi id 15.21.0592.012; Tue, 10 Nov 2026
+ 16:09:09 +0000
+From: Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>
+To: Mohit Kumar Parjapat <mprajapat@marvell.com>, Thomas Monjalon
+ <thomas@monjalon.net>, Kiran Kumar Kokkilagadda <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Koteswara Rao Kottidi
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, David Marchand
+ <david.marchand@redhat.com>, Anatoly Burakov <anatoly.burakov@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>, Mohit
+ Kumar Parjapat <mprajapat@marvell.com>
+Subject: Re: [PATCH] common/cnxk: use one interrupt handle per vector
+Thread-Topic: [PATCH] common/cnxk: use one interrupt handle per vector
+Thread-Index: AQHdcR4AQM+USiiuhkuo2a/th5Ez2bcneReM
+Date: Tue, 10 Nov 2026 16:09:09 +0000
+Message-ID: <PH3PPFCACDF6938A8985B12377FADE5C220AF722@PH3PPFCACDF6938.namprd18.prod.outlook.com>
+References: <20261110141542.3858558-1-mprajapat@marvell.com>
+In-Reply-To: <20261110141542.3858558-1-mprajapat@marvell.com>
+Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
+x-ms-reactions: allow
 authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
+ header.d=none;dmarc=none action=none header.from=marvell.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV2PR11MB6045:EE_|SA1PR11MB8523:EE_
-x-ms-office365-filtering-correlation-id: 73283f8e-b8fa-4f42-d15d-08df3f42572a
+x-ms-traffictypediagnostic: PH3PPFCACDF6938:EE_|PH7PR18MB5132:EE_
+x-ms-office365-filtering-correlation-id: 64778344-f7b7-4eba-deef-08df3f44f44f
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|23010399003|42112799006|38070700021|260925021911599003|260925022911599003|260925021311599003|11063799006|56012099006|261022113327099003|261021123027099003|261022075727099003|261021121427099003|261022105027099003|261021135927099003|261026121527099003|261028144727099003|10067099003|261102123227099003|261026140227099003|261009223027099003|22082099003|18002099003|6133799003|8096899003;
-x-microsoft-antispam-message-info: /nCKH1DNwlF91/LI+ZbxiJQRn86yywz1/0tAlnWXBhMeiq8Rxsdr9IlD52VnuwgCOlIgzJRgC/0x7bw1aVRYPmNX8PjSS/VJrgLecypHoZjLPSbmoyRD+uiaunIAssV1b0cA4Kpgvoc3d/CRX46F5XNRpdwuJJvppzd0N7UGhwTkGOMQHOjjJq/OZZ/20uKKKrtV25aqab9hRGyV7Xw9cEsV58qKKPysp7d6Jr+WtJjzPKl7MvFR27VR2aDAHnepUDz0XFNhq0ep6JiODhd9UzWgZN9WvKJ24us5vN44QpZD8LDvncDnAbJ9htGaZyY3ytv7NGxRWeWNxmHR0EmDQa5Tl7daGrt/QXYCBXl12u9s2mPLm3i04DWR8D6yOAtyTYR/9aTTnUbLGqNXBaR+14Gu/brxZaDYrsBakgk+zY8sIWXvYdfn5oev2kCx4E7O+4y+GaK+Iy1aPSFKwy8t30msMneqrJvct6ZxtbATF6E4D3AJIYbkzrO7/GAfKwKXUfS2/bhNC/fFHsgH+nt3hJIhF/7PBnqoh8FKYKr1K4gyCEORRXxsVFJlvvaGC26o8XxhkyvviJOTIxHPm7vt0nyr1Y9dVaCMI4xpAx+BOJ89jTeTv8RJw0QhFMbWSJE3iiCFZR1V1Apf9FEf3muMZLgcUBSBb9TtBPrhLPSSNAzM3xy7GB125nhpwyw9/7oMA7PbPjxVsHgKCjy2YRBlxuKm633RCwqDGLUn8VTt1B8=
+ ARA:13230040|366016|1800799024|376014|23010399003|38070700021|261028144727099003|10067099003|261102123227099003|56012099006|11063799006|261021135927099003|261021121427099003|261022105027099003|261022075727099003|261026140227099003|261026121527099003|261021123027099003|261009223027099003|22082099003|18002099003|8096899003;
+x-microsoft-antispam-message-info: UM7vkXzRXnIU+M4YNbNj231NK0sNb+XlMDlF0ts9Cj8peCgp8WAuwQ9a5WuqYUKGmlL+jcqsFS5RBYzpipWAZJHq2PLIH6/ypqUkfnQFqH6Upc9B7nRkwQsMvMqgvwJueFbkjKzil2IVQR/OOJNOwPNhi73LBoaiFgTZ9NKDzbpYBhiWxQhuyJq632L7Fa8CUl0U32vpf/ZSMvZpHmX1cL2cIo19lq4kb+GBJexS4bELr/i9eMBOAtmw8aH13xNYx5D1kYFDvz+hkdzrq5z42MpAye/rZhM/1Or44JDCrnOTHbnnj0dPRMaQd+TnFibiYsTd+CciKmlxDqykVmnNeynYnjVk8IHrmFkKCmaAQp44TD2475Ar59/GgCLRNxL+AOYEpxrUW1Y1M3OZN5u0hl/j9+0uosRyrX70MiOZ41Lc62Hsb5QWu+tGrys8XO37IVzsukiixNGGyQKe1m1gDctAi+42rJEePDx07ZwGwF82uzNM08PtWK1iMuZP8iPvX6wOfh/IP+NREtKgMFplNanIX1ECrhgl4RYB3Siu1QZGIDRqfaDiwh7hx0CfPBHY+lYMLWdejU6OURGaX8bVYcbqVeiq3LSj0AZCMcICHKfMw6oZV4eXhpSPyOsHOo9HlrPmwZFYcGuLPe6P8pMMBSi0emCo6/D4ms/zLKmfPSSqB0/MGoQ56fCLddjnIPmhmFpvbE7CSWVsv2gAc7x/RG/tSfYBK5Ch3eVVYE+vFeM=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:LV2PR11MB6045.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(42112799006)(38070700021)(260925021911599003)(260925022911599003)(260925021311599003)(11063799006)(56012099006)(261022113327099003)(261021123027099003)(261022075727099003)(261021121427099003)(261022105027099003)(261021135927099003)(261026121527099003)(261028144727099003)(10067099003)(261102123227099003)(261026140227099003)(261009223027099003)(22082099003)(18002099003)(6133799003)(8096899003);
- DIR:OUT; SFP:1101; 
+ IPV:NLI; SFV:NSPM; H:PH3PPFCACDF6938.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(38070700021)(261028144727099003)(10067099003)(261102123227099003)(56012099006)(11063799006)(261021135927099003)(261021121427099003)(261022105027099003)(261022075727099003)(261026140227099003)(261026121527099003)(261021123027099003)(261009223027099003)(22082099003)(18002099003)(8096899003);
+ DIR:OUT; SFP:1102; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?w68CO7kS6Vbq67V8EHHJe2/y1ye83CiM+QuyDI1G3rC1OdyF/ofsN1hOOi66?=
- =?us-ascii?Q?q/ax4hO/m1wRlKG43JmYB1QT9k1lSbMWpqmLYD4Mm10PXomcOocaIjXN2HfU?=
- =?us-ascii?Q?Pf5yfHbjeFFY9Amnrklf7oRZ1LSSnh/E9BMqShZbHQdhY1ozwXypri7xHCbT?=
- =?us-ascii?Q?GVi2la6swjR1yoKEmucO/mEqwbOlUIukgmxvrgAv8HcsMZBKtzhGaFtK0EyJ?=
- =?us-ascii?Q?wOp8wgk8YqVg+U9j4ZrEwnkO8zk4p1eyti71MOqy3gCIg9qlSQnEvx3Fl6wI?=
- =?us-ascii?Q?g66hrYZ+xb9mw8mC4Lo51J5iAWGs4DZvqKbF0qRKb1ASkPNO4INh5r9nKFTb?=
- =?us-ascii?Q?wBIr40oW0NlvmPmCxbygCHbth+UtWHi7sM93dZWzpxMu8mAzFjwYbq5av139?=
- =?us-ascii?Q?sg9w0Fzu31Ci7Au1SjVLJgcpfTjdcuuR4jELr2Mld9z3/i5cumJAvhGRKGQ+?=
- =?us-ascii?Q?YCEcmufa7fBxuTNdCSEM5x1HeoCgdBwfMGitTnw4sETDhJHBLlRGmW1coyJ8?=
- =?us-ascii?Q?JvMOzT15prPvaOx493Zx0dSvb9shUlVbq8N/pBjw4DzvmmWd5sNaD/cxA5Qu?=
- =?us-ascii?Q?Xo/iLhyQvgnOFkHpBPWG5xDttguBGK6R2uiES7Pg61JJOEKc/dmm9E9n2TuM?=
- =?us-ascii?Q?0NaTs3hJriX6iNr9GdwCYh9OKKxw+Qard1FHI84nL9Nti1YSNmCBVkZDgwWe?=
- =?us-ascii?Q?ErrEQ3j4f0D7JTtfV4g8jc83rfo0PmyEAQ8VXN0XajYuxVmKnEwmE2hr1RvJ?=
- =?us-ascii?Q?xSeL6RUXnzySsucqHpRc5IxYOuDbL9cgMDViHydUW7nXf39r/UyDslAzEnFr?=
- =?us-ascii?Q?nnksg7UgqKcPwnZThm1lstj8P+5THSGHzWPdW+JLjrv8qTB68/zWXKWzqAdi?=
- =?us-ascii?Q?/cgjSJCDT9aGCqPJeZ9t1O7vMwmN2wxXu47rbC9/tL5judsKVYmrvuHF0eBJ?=
- =?us-ascii?Q?XTGVbanT15h0/I/c47E+XklYPhI+e9nC8tOjjeq7iu8vR7fEL2vdKMLF24fJ?=
- =?us-ascii?Q?r/N15XXxk4M6O5wT0Zb+K6RKNz8BKoHC0cXmHAvUBDtvrraYOS5PPCpp/Mjh?=
- =?us-ascii?Q?IykR3BROCYSND4oLzdizh8vhranE/bOKMNQIAAFcTErNM1EfN51WugWkwiIE?=
- =?us-ascii?Q?I6RUNbIbG185ebJrl14FPYPKuUTgo/oYVkH4uf2U3MdWvhxOBYR6J2TdQOjv?=
- =?us-ascii?Q?6LbWaMJXCL7jTxjYT9WSnVSb3dspOS4WNTQCVgWNLpbWIw8CzsmcvotbuUAv?=
- =?us-ascii?Q?r0gacT3TgG/rWHwFD7a2cosyeUI0Ra8HcXRTtSTuAD+jqEi3ND0WjhWrJEqs?=
- =?us-ascii?Q?omdZ1mMpmLMV6JsnyamfR9g596xUopCxI/4lMlWhLXS6YYWBlB9LtEUJ6JOd?=
- =?us-ascii?Q?OPm1OSeSAi9MBU5nTzvRdLTJjcHGMLbNa3o2tKEqT/7ZnP9/xGL5ARXfy8PR?=
- =?us-ascii?Q?pB8OtEGjk7V01dNaAMVCVJg/iGNtYgZsqlg5Pkz+vt/pQAT/6CivuNQD0j3h?=
- =?us-ascii?Q?TzZquWLZrw8gYsfN/GPn5L/LEb0eabvH6znq2pIHif5uZXdjnB87x/77Y5At?=
- =?us-ascii?Q?BH+7UBBc21kuyhG0RLF5SOQoZ7D4EETXWTm1CbsUK8eDpkrBUKkoO5yZLBzi?=
- =?us-ascii?Q?v0abe8lQXYj0wj10QIxWCy9cXe0aOv7x4JKuFqOP+L/raOOYZJUupzSwwrQU?=
- =?us-ascii?Q?ZcDZxN1T+59QAU0DHImgqOB0hZoG4y4XsjF9j18Sdgt822M8?=
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OEZTK2VvRnUrWDBKUzZ5MXBtM1F1QzE4UDRJTlJXUmw1RTl3UGJtczNyRHZN?=
+ =?utf-8?B?aEFkbkR3TnJBY0NVMWRhdHBqcmU5ZG5QSk9mc2F5Y0p2VkZCUExITTdLRjhW?=
+ =?utf-8?B?VVA4cEpLSDEwWmU0QlVSbTF6eEpaeVVLMXVKTFV3M0ZWYXdCYTZSWXNwQTg4?=
+ =?utf-8?B?Y3dPU1lPNnRFM01WbWxtNGlvZ0c0QjVyS1NjNkUyTlVPbmw1dFhpakd0VzBx?=
+ =?utf-8?B?TzhIclZBWnVYaFRYMHVhbzRQa0ZKRVdLYmpxNjNXWk1YWFNpZThDaURzN0tG?=
+ =?utf-8?B?N1gwbEJJZGxZeXRRRWcwVVQ1aFpTeE50bnZvbTNoOVI5S042dVZuOGVHQ0JY?=
+ =?utf-8?B?eFlKQ21kakpCbE5SSUkyUm5ZUmVSNWhPd2hUTEVreEdEVlMvTjVmVEtWTDJq?=
+ =?utf-8?B?QStSSStBRnVzZmpyT0hESDVXRzQ0T2hIMzFuaURkUUxPM3ZxaCs5TXlMeTBi?=
+ =?utf-8?B?NmNwT0ZidlQ4ZDlKVHQ2aGlwT0dtRDgyWEhEdk80MEZIY244cWZ2QnpXTUwv?=
+ =?utf-8?B?TzRtVXVhaDA5MGI5YkRERVI2QTlHU28zeG80YW8vL0Vxbyt3OGh5VWdxbTRX?=
+ =?utf-8?B?QVFQbXdzZXJoUkNLM0pzV1cyNGN4S1ZTSHVvejBLNEI4T2xGT1lpRkdrZmJy?=
+ =?utf-8?B?S3pJRmdMR0M0SW9qQUlNaFFibjFleWpmWmluUGRkUmNCMm55Y0Q1OUpTUjc3?=
+ =?utf-8?B?MnVpbmg3M3dpOFZUWE16elJtMVVTZUhEOGlpcUhPWE1xa3J2WStMVkFzTXo0?=
+ =?utf-8?B?L3RQWGpkQlBFMlRrR05LZENBeDFUY2RIL0NXSllxMmJEb092aFk4NG5zbi9t?=
+ =?utf-8?B?WThVY3I3VVRUTTgxTGZQLzJCdGg5OXJZVDBhMGd2R3VTbkVhMVNVYkVETXRE?=
+ =?utf-8?B?S2RacXo4TlZkc0JmN0ZXRnNFbzVBbndGSUIzbXg3bWozYm5veDdSUVljV1gx?=
+ =?utf-8?B?Y0tucThjZm5xdVd1V2dVVEFMRjBnVmJ3Tnk5SmRGRGxuSEZKcTVURkI0QlZX?=
+ =?utf-8?B?OWhNb1E0MUwvRzJKRGVlNldlaCtYYUd0eCtaajJSOTFRWGs5SVZnOFhvR1lH?=
+ =?utf-8?B?ZTRNV2xHNWo0MmtORS9sbTJLSWEzSzR3STIwd0xabFFTbjRmZ3NIRWp1NnU4?=
+ =?utf-8?B?cXl0VCszamJmVVBoM1RyRmhrWW5ya0lORDcyVzUybzI0Tzg3S1p0UXF0dE5H?=
+ =?utf-8?B?bU5GLzY0NjlMV1h6WlZyaDBBRUpxc2ZJL25FeXBGTzJEbWxIdjg1ZXZlc2xz?=
+ =?utf-8?B?VGVJSWZyVWJrQTJzSXdHZm5MWGhLaGVRbWpLQ3A2UFVSQmlWcW8xek9DdTZH?=
+ =?utf-8?B?aWlIR1UzakU1T0lBS0p6OGNDZGp6d3dVZTJZVWNWd3JhUE1rZWZtWmFpcUlE?=
+ =?utf-8?B?UllWUElPRW0xZ3Z4YlZFZnN6ZGZVQzk4b0llQlRXdFFlLzNCYzEvMDB1SUlt?=
+ =?utf-8?B?MjlmNi9yZlR5bzlQZ1NkWW5PQnNBbTZUMFN5UnByRllJWjB0cXdRSjM5SjBP?=
+ =?utf-8?B?cUMySzRIbUlLNVJWVU9WTXVaV3JoQUtGRk1lQnRRRWkxNTRjQUxMK1VRSW5y?=
+ =?utf-8?B?MXlBQ1VKSThyT2g1M1VZZFN4SDFOODNRQXNid0F3Tjl5b1RwWlIyMDQ5VGZy?=
+ =?utf-8?B?VG5LUXRYaFpRV0FNVmVya25xd0dDbjNraVhPQ3RjaGFMQU9FRGg1ZXRUN2N2?=
+ =?utf-8?B?NmY3YklCUWZ0T3F6dWN0R3A4SS9QUVlmSHZrN0ZwWWFhZDlKNE84WmYrNWpX?=
+ =?utf-8?B?em1jRXUxcnhiT0hmc1dGaGtUV0VucWh1WHNTcktlTys3eE1Hbnc3b2dDMHNB?=
+ =?utf-8?B?ckx5SXZQdm5SbGVuRHczWWRwd0FmbzdiblA3U0JuTXd5RFNYUmc2ak9oQUNx?=
+ =?utf-8?B?dHBZZEI5ZDFGN3l2S0tBVHZXVzQ4aHZVdk9kRUNWNC9nU3FpL2dSblJYVWNr?=
+ =?utf-8?B?dFIzbHZ3cDU4UEVZUUtabGJxRkpUU0c3WlBYSjV6aVU1Mkh4c0duR1pEc1pG?=
+ =?utf-8?B?QXhtdSthS2MvYXdIOThucDFwdDdnZ0swZnhXZEUxd3ljdWpTaWlqbDl0R0xQ?=
+ =?utf-8?B?UUVYNGl5OCtlaVJlaW41RURkNXdMcmt2RlV6Mko1ekl4dFg4OTlscElDMUZK?=
+ =?utf-8?B?VEF0R1E1RFVaTkpMeWNlQytuekhGZzd6aEVHVEo5RHJyQnNDdXl5QmxSVDZK?=
+ =?utf-8?B?aUV2aHBwNU5HV2orOGNZQ1BaYUpmcFI5VDNjckRRUnR3QlU2MC9Rcm5vSG0v?=
+ =?utf-8?B?czVRcnpNMjl3cTkvdmI2YXBYMGF1Rk1CWFpXR3JZOER5NjB4TzdaNGJiNk4z?=
+ =?utf-8?B?eVlEb2h4bk1nSm1zVzA4WFlMNDd2SWVOdUxWRFgzajNsVGxCZTM3RW9STnE0?=
+ =?utf-8?Q?HmQoLRA7zfPXB42M=3D?=
 Content-Type: multipart/alternative;
- boundary="_000_LV2PR11MB60459B9E8839EE18C6E94FD381722LV2PR11MB6045namp_"
+ boundary="_000_PH3PPFCACDF6938A8985B12377FADE5C220AF722PH3PPFCACDF6938_"
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: eAl1UTIsSZ3zfWh8qMli5RAmEmLyB79G0mmbumX36/8H13yhNoK+q5DUoJnqepTPiF0RU5QADLZoTWfXNkwq/syaKbKXuFO0kLyhVQdeW85GxbGgUriugf5kt8w9cRtZeGTq0XNttgEktaCxcC7xByHRkskRazGAxaWbEbA5CglwyloPtibwHw0+F6pLMX89PfbqiGwZhNf3R6topBIJXI0YWPO8jS+9erVegqKuw7wtPzKFZQVt4IuKe6EsN2t+Sk/CTC5fhgFLsiLnz5HQLh+ECTDqieuEOJRHpwAFKRTQBG6nGuEJJugvQIRE/VgsYnQo16PoN8LP1IrkE1s7uw==
+X-Exchange-RoutingPolicyChecked: dx0xHkEYB9lCPauuKOppLDZ7X38bwDQUeHv8k62lLwvmCLhILX00QBliruuyyMdk+GgGDtHJvrRd5BWVult+2Z6JMbsJst1WuYlY/yJFRfTOWLnv9xhKEy24TTOtBDpjV1jPkDzB64/b0DK30fmPG+2fb9xqT8H9aUgLGq/dDerry4+Ndz33N8Gbnf0ZBSwKUl6MN16Pxb+KKxpP9wg7C/PnYOibOtRa+f42yqNQp1aCzHQ4urrRXqxqkvZhepF9h+py4r7KnJYgKmikYlshZsRp5Lf7ghKT/+wyDd1IkpD3ME4vQ85Llgu7m3NpoBUneM5m8Gp0iE2NQ0JbOR+JkA==
+X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR11MB6045.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73283f8e-b8fa-4f42-d15d-08df3f42572a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2026 15:50:27.2464 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPFCACDF6938.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64778344-f7b7-4eba-deef-08df3f44f44f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2026 16:09:09.8436 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: s29J/fF801I/HFLeEMcixfTwuO78uvVtysMKAdg95R0Rzx+EWf9lh7/hg2CkVY+PPmwJ3Ft2scJXyRgh6eZA7w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8523
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-userprincipalname: isV7I1HE5XtNJTr+FIv85Zw2utSGTpL6Rgfaou6vb+dK9R7nyNHI4PngO9OHdFCdgbTLTyLmc5Ohqtw+EdOJNw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR18MB5132
+X-Authority-Analysis: v=2.4 cv=Ce+dd7rl c=1 sm=1 tr=0 ts=6af341b2 cx=c_pps
+ a=XrAAyJxZ/W28UfFUt0AM7g==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=zJRp6_cAMcgA:10
+ a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=TtqV-g6YmW1Jfm2GSLaY:22 a=M5GUcnROAAAA:8 a=Q-fNiiVtAAAA:8 a=20KFwNOVAAAA:8
+ a=vBLQeB-DAAAA:8 a=pGLkceISAAAA:8 a=NQolgeQzAAAA:8 a=z3WRe0ENAAAA:8
+ a=1tfvOcrvglBLrneRQ_wA:9 a=QEXdDO2ut3YA:10 a=teVXfs1LjjSfuAbhtn0A:9
+ a=ltya7thqIuxZS3DQ:21 a=_W_S_7VecoQA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
+ a=u_ZAi6OwbbHxVo6T9Mhb:22 a=we4VnhAU2_OSqmN109HU:22
+X-Proofpoint-ORIG-GUID: PcQnAGGLF35p1f_-jieh6sF4J3BaGTZw
+X-Proofpoint-GUID: PcQnAGGLF35p1f_-jieh6sF4J3BaGTZw
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEwMDA2NCBTYWx0ZWRfX3wDxrCIZkP6A
+ sPDq5mXTulGuxGzOKRC6Ow7Q2+GrMyIrGAdCYK8zLxJqjNtKhVk2SZrkmxvk0kIeHyCoT5/ui7E
+ EJqpm+wEdcIS3jYIBBTiL2PvlkDc2nI=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEwMDA2NCBTYWx0ZWRfX+ppENaUX2Gq3
+ AzE6RxquoViIGg1Et2ytuPj5hRdj9sjeQg9IxmRr9vBZVArFSv8ybQzh4a8mQuAAu76lRFek/8a
+ PKpcd/+V75IBRSECdWbkmXNz3SaBdtF3K2K2hheA+9EDmQfoDdxnare93l3iG305em71oj0pGc5
+ r9qvLqkM3T++qGHShulZpbRfMx5sELE28hvuz7QFv8m7CEUuleVrZHAu1TmXVt/KfWlxLukR3Yg
+ OHZW+im3V/dDQ/qtbPjWi4l4cWOhTHFmvG3wTCzAZd/S+gqbJ5vhur5ngj8g8ALGCpTk3BMXEBj
+ SSFB0SBAJ1cVCyMrUN9a+tRLFiv4AjZSl3hPdP251ey6sDOn8eJvtnuxkhRSZxAvKptdmtDSXfV
+ lv8mui8vK1cdhlSBOvA8crcZVwp9Gl8V8R8nUNhNe8LAd0jJpqGm/oVxHJy8wEXGbuurjkp3Xe/
+ TVOOejlmHqLEd4KC60g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-10_05,2026-11-06_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,854 +169,500 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	HTML_MESSAGE,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
---_000_LV2PR11MB60459B9E8839EE18C6E94FD381722LV2PR11MB6045namp_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+--_000_PH3PPFCACDF6938A8985B12377FADE5C220AF722PH3PPFCACDF6938_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Acked-by: Kai Ji <kai.ji@intel.com>
+QWNrZWQtYnk6IE5pdGhpbiBEYWJpbHB1cmFtIDxuZGFiaWxwdXJhbUBtYXJ2ZWxsLmNvbT4NCg0K
+LS0NCg0KDQpPbiAxMS8xMC8yNiwgNzo0NeKAr1BNLCAiTW9oaXQgS3VtYXIgUGFyamFwYXQiIDxt
+cHJhamFwYXRAbWFydmVsbC5jb20+IHdyb3RlOg0KDQpBbGwgTVNJLVggdmVjdG9ycyB3ZXJlIHJl
+Z2lzdGVyZWQgb24gcGNpX2Rldi0+aW50cl9oYW5kbGUsIHJld3JpdGluZw0KaXRzIGZkIGJlZm9y
+ZSBlYWNoIHJ0ZV9pbnRyX2NhbGxiYWNrX3JlZ2lzdGVyKCkuIFNpbmNlIEVBTCByZWZlcmVuY2Vz
+DQp0aGUgY2FsbGVyJ3MgaGFuZGxlIGluc3RlYWQgb2YgYSBjb3B5LCBhbGwgdmVjdG9ycyBzaGFy
+ZSBvbmUgaW50ZXJydXB0DQpzb3VyY2Ugd2hvc2UgZmQgaXMgcmVhZCBsaXZlLCBzbyBvbmx5IHRo
+ZSBsYXN0IHZlY3RvciBpcyBwb2xsZWQuDQpNYWlsYm94IHJlcGxpZXMgYXJlIGxvc3QsIHByb2Jl
+IHRpbWVzIG91dCwgYW5kIHRoZSBjbGVhbnVwIHBhdGggbGVhdmVzDQphIGNsb3NlZCBmZCBpbiB0
+aGUgc291cmNlLCBtYWtpbmcgdGhlIGludGVycnVwdCB0aHJlYWQgcGFuaWMgaW4NCmVwb2xsX2N0
+bCgpLg0KDQpSZWdpc3RlciBlYWNoIHZlY3RvciBvbiBpdHMgb3duIGhhbmRsZSwgdHJhY2tlZCBp
+biBhIGxpc3Qgc28gdGhhdA0KdW5yZWdpc3RlciB1c2VzIGFuZCBmcmVlcyB0aGUgc2FtZSBoYW5k
+bGUuIFJlamVjdCBkdXBsaWNhdGUgdmVjdG9yDQpyZWdpc3RyYXRpb24sIGNsb3NlIHRoZSB2ZWN0
+b3IncyBvd24gZXZlbnRmZCBvbiB1bnJlZ2lzdGVyLCBhbmQgdW53aW5kDQphbGwgZXJyb3IgcGF0
+aHMgb2YgcGx0X2lycV9yZWdpc3RlcigpLg0KDQpGaXhlczogYzY2MzAxOGViN2YzICgiaW50ZXJy
+dXB0czogZG8gbm90IGR1cGxpY2F0ZSBpbnRlcnJ1cHQgaGFuZGxlcyIpDQoNClNpZ25lZC1vZmYt
+Ynk6IE1vaGl0IEt1bWFyIFBhcmphcGF0IDxtcHJhamFwYXRAbWFydmVsbC5jb20+DQpTaWduZWQt
+b2ZmLWJ5OiBIYXJtYW4gS2FscmEgPGhrYWxyYUBtYXJ2ZWxsLmNvbT4NCi0tLQ0KIC5tYWlsbWFw
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKw0KIGRyaXZlcnMvY29tbW9uL2NueGsv
+cm9jX3BsYXRmb3JtLmMgfCAxMzQgKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0NCiAyIGZp
+bGVzIGNoYW5nZWQsIDExNSBpbnNlcnRpb25zKCspLCAyMCBkZWxldGlvbnMoLSkNCg0KZGlmZiAt
+LWdpdCBhLy5tYWlsbWFwIGIvLm1haWxtYXANCmluZGV4IDc1NGRkOWU3NjAuLjhjYTUxZjcyZDcg
+MTAwNjQ0DQotLS0gYS8ubWFpbG1hcA0KKysrIGIvLm1haWxtYXANCkBAIC0xMTc1LDYgKzExNzUs
+NyBAQCBNb2hhbW1hZCBJcWJhbCBBaG1hZCA8bWFobWFkQG1hcnZlbGwuY29tPg0KIE1vaGFtbWFk
+IFNodWFiIFNpZGRpcXVlIDxtb2hhbW1hZC1zaHVhYi5zaWRkaXF1ZUBicm9hZGNvbS5jb20+DQog
+TW9oYW1tZWQgR2FtYWwgPG1nYW1hbEByZWRoYXQuY29tPg0KIE1vaGFuZCBBbHJhc2hlZWQgPG1y
+YXNoZWVkQHdpcmVmaWx0ZXIuY29tPg0KK01vaGl0IEt1bWFyIFBhcmphcGF0IDxtcHJhamFwYXRA
+bWFydmVsbC5jb20+DQogTW9oc2luIEthem1pIDxtb2hzaW4ua2F6bWkxNEBnbWFpbC5jb20+DQog
+TW9oc2luIE1hemhhciBTaGFpa2ggPG1vaHNpbm1hemhhcl9zaGFpa2hAdHJlbmRtaWNyby5jb20+
+DQogTW9oc2luIFNoYWlraCA8bW9oc2luc2hhaWtoQG5pb21ldHJpY3MuY29tPg0KZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvY29tbW9uL2NueGsvcm9jX3BsYXRmb3JtLmMgYi9kcml2ZXJzL2NvbW1vbi9j
+bnhrL3JvY19wbGF0Zm9ybS5jDQppbmRleCA1OWQ2NjJmYWI0Li4wYTFiOTYwOTJiIDEwMDY0NA0K
+LS0tIGEvZHJpdmVycy9jb21tb24vY254ay9yb2NfcGxhdGZvcm0uYw0KKysrIGIvZHJpdmVycy9j
+b21tb24vY254ay9yb2NfcGxhdGZvcm0uYw0KQEAgLTE2LDggKzE2LDQ5IEBADQogI2luY2x1ZGUg
+PHN0ZGxpYi5oPg0KICNpbmNsdWRlIDxzeXMvZXZlbnRmZC5oPg0KICNpbmNsdWRlIDxzeXMvaW9j
+dGwuaD4NCisjaW5jbHVkZSA8c3lzL3F1ZXVlLmg+DQogI2luY2x1ZGUgPHVuaXN0ZC5oPg0KDQor
+LyoNCisgKiBFQUwgaW50ZXJydXB0IHNvdXJjZXMgYXJlIGtleWVkIGJ5IGludGVycnVwdCBoYW5k
+bGUgcG9pbnRlciBhbmQgcmVhZCB0aGUNCisgKiBoYW5kbGUgRkQgYXQgZXBvbGwvZGlzcGF0Y2gg
+dGltZSwgc28gZWFjaCBNU0ktWCB2ZWN0b3IgbmVlZHMgaXRzIG93bg0KKyAqIGhhbmRsZSBob2xk
+aW5nIHRoYXQgdmVjdG9yJ3MgZXZlbnRmZC4NCisgKi8NCitzdHJ1Y3QgcGx0X2lycV92ZWMgew0K
+KyAgICAgICBUQUlMUV9FTlRSWShwbHRfaXJxX3ZlYykgbmV4dDsNCisgICAgICAgY29uc3Qgc3Ry
+dWN0IHBsdF9pbnRyX2hhbmRsZSAqZGV2X2hhbmRsZTsNCisgICAgICAgc3RydWN0IHBsdF9pbnRy
+X2hhbmRsZSAqaGFuZGxlOw0KKyAgICAgICBwbHRfaW50cl9jYWxsYmFja19mbiBjYjsNCisgICAg
+ICAgdm9pZCAqZGF0YTsNCisgICAgICAgdW5zaWduZWQgaW50IHZlYzsNCit9Ow0KKw0KK3N0YXRp
+YyBUQUlMUV9IRUFEKCwgcGx0X2lycV92ZWMpIHBsdF9pcnFfdmVjX2xpc3QgPSBUQUlMUV9IRUFE
+X0lOSVRJQUxJWkVSKHBsdF9pcnFfdmVjX2xpc3QpOw0KK3N0YXRpYyBwbHRfc3BpbmxvY2tfdCBw
+bHRfaXJxX3ZlY19sb2NrID0gUlRFX1NQSU5MT0NLX0lOSVRJQUxJWkVSOw0KKw0KK3N0YXRpYyBz
+dHJ1Y3QgcGx0X2lycV92ZWMgKg0KK2lycV92ZWNfZmluZChjb25zdCBzdHJ1Y3QgcGx0X2ludHJf
+aGFuZGxlICpkZXZfaGFuZGxlLCB1bnNpZ25lZCBpbnQgdmVjKQ0KK3sNCisgICAgICAgc3RydWN0
+IHBsdF9pcnFfdmVjICppcnFfdmVjOw0KKw0KKyAgICAgICBUQUlMUV9GT1JFQUNIKGlycV92ZWMs
+ICZwbHRfaXJxX3ZlY19saXN0LCBuZXh0KSB7DQorICAgICAgICAgICAgICAgaWYgKGlycV92ZWMt
+PmRldl9oYW5kbGUgPT0gZGV2X2hhbmRsZSAmJiBpcnFfdmVjLT52ZWMgPT0gdmVjKQ0KKyAgICAg
+ICAgICAgICAgICAgICAgICAgcmV0dXJuIGlycV92ZWM7DQorICAgICAgIH0NCisNCisgICAgICAg
+cmV0dXJuIE5VTEw7DQorfQ0KKw0KK3N0YXRpYyB2b2lkDQoraXJxX3ZlY19mcmVlKHN0cnVjdCBw
+bHRfaXJxX3ZlYyAqaXJxX3ZlYykNCit7DQorICAgICAgIGlmIChpcnFfdmVjLT5oYW5kbGUgIT0g
+TlVMTCkgew0KKyAgICAgICAgICAgICAgIHBsdF9pbnRyX2ZkX2Nsb3NlKGlycV92ZWMtPmhhbmRs
+ZSk7DQorICAgICAgICAgICAgICAgcGx0X2ludHJfaW5zdGFuY2VfZnJlZShpcnFfdmVjLT5oYW5k
+bGUpOw0KKyAgICAgICB9DQorICAgICAgIGZyZWUoaXJxX3ZlYyk7DQorfQ0KKw0KIHN0YXRpYyBp
+bnQNCiBpcnFfZ2V0X2luZm8oc3RydWN0IHBsdF9pbnRyX2hhbmRsZSAqaW50cl9oYW5kbGUpDQog
+ew0KQEAgLTE1MCw3ICsxOTEsNyBAQCBpbnQNCiBwbHRfaXJxX3JlZ2lzdGVyKHN0cnVjdCBwbHRf
+aW50cl9oYW5kbGUgKmludHJfaGFuZGxlLCBwbHRfaW50cl9jYWxsYmFja19mbiBjYiwgdm9pZCAq
+ZGF0YSwNCiAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCB2ZWMpDQogew0KLSAgICAgICBz
+dHJ1Y3QgcGx0X2ludHJfaGFuZGxlICp0bXBfaGFuZGxlOw0KKyAgICAgICBzdHJ1Y3QgcGx0X2ly
+cV92ZWMgKmlycV92ZWM7DQogICAgICAgICB1aW50MzJfdCBuYl9lZmQsIHRtcF9uYl9lZmQ7DQog
+ICAgICAgICBpbnQgcmMsIGZkOw0KDQpAQCAtMTY2LDI1ICsyMDcsNjEgQEAgcGx0X2lycV9yZWdp
+c3RlcihzdHJ1Y3QgcGx0X2ludHJfaGFuZGxlICppbnRyX2hhbmRsZSwgcGx0X2ludHJfY2FsbGJh
+Y2tfZm4gY2IsIHYNCiAgICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQogICAgICAgICB9
+DQoNCi0gICAgICAgdG1wX2hhbmRsZSA9IGludHJfaGFuZGxlOw0KKyAgICAgICBpcnFfdmVjID0g
+Y2FsbG9jKDEsIHNpemVvZigqaXJxX3ZlYykpOw0KKyAgICAgICBpZiAoaXJxX3ZlYyA9PSBOVUxM
+KQ0KKyAgICAgICAgICAgICAgIHJldHVybiAtRU5PTUVNOw0KKyAgICAgICBpcnFfdmVjLT5kZXZf
+aGFuZGxlID0gaW50cl9oYW5kbGU7DQorICAgICAgIGlycV92ZWMtPmNiID0gY2I7DQorICAgICAg
+IGlycV92ZWMtPmRhdGEgPSBkYXRhOw0KKyAgICAgICBpcnFfdmVjLT52ZWMgPSB2ZWM7DQorDQor
+ICAgICAgIGlycV92ZWMtPmhhbmRsZSA9IHBsdF9pbnRyX2luc3RhbmNlX2FsbG9jKFJURV9JTlRS
+X0lOU1RBTkNFX0ZfUFJJVkFURSk7DQorICAgICAgIGlmIChpcnFfdmVjLT5oYW5kbGUgPT0gTlVM
+TCkgew0KKyAgICAgICAgICAgICAgIHJjID0gLUVOT01FTTsNCisgICAgICAgICAgICAgICBnb3Rv
+IGZyZWVfdmVjOw0KKyAgICAgICB9DQorDQogICAgICAgICAvKiBDcmVhdGUgbmV3IGV2ZW50ZmQg
+Zm9yIGludGVycnVwdCB2ZWN0b3IgKi8NCiAgICAgICAgIGZkID0gZXZlbnRmZCgwLCBFRkRfTk9O
+QkxPQ0sgfCBFRkRfQ0xPRVhFQyk7DQotICAgICAgIGlmIChmZCA9PSAtMSkNCi0gICAgICAgICAg
+ICAgICByZXR1cm4gLUVOT0RFVjsNCisgICAgICAgaWYgKGZkID09IC0xKSB7DQorICAgICAgICAg
+ICAgICAgcmMgPSAtRU5PREVWOw0KKyAgICAgICAgICAgICAgIGdvdG8gZnJlZV92ZWM7DQorICAg
+ICAgIH0NCg0KLSAgICAgICBpZiAocGx0X2ludHJfZmRfc2V0KHRtcF9oYW5kbGUsIGZkKSkNCi0g
+ICAgICAgICAgICAgICByZXR1cm4gLWVycm5vOw0KKyAgICAgICBpZiAocGx0X2ludHJfZmRfc2V0
+KGlycV92ZWMtPmhhbmRsZSwgZmQpKSB7DQorICAgICAgICAgICAgICAgY2xvc2UoZmQpOw0KKyAg
+ICAgICAgICAgICAgIHJjID0gLUVJTlZBTDsNCisgICAgICAgICAgICAgICBnb3RvIGZyZWVfdmVj
+Ow0KKyAgICAgICB9DQorDQorICAgICAgIC8qIEVBTCByZWFkcyB0aGUgOCBieXRlIGV2ZW50ZmQg
+Y291bnRlciBvbmx5IGZvciBWRklPIGhhbmRsZSB0eXBlcyAqLw0KKyAgICAgICBpZiAocGx0X2lu
+dHJfdHlwZV9zZXQoaXJxX3ZlYy0+aGFuZGxlLCBwbHRfaW50cl90eXBlX2dldChpbnRyX2hhbmRs
+ZSkpKSB7DQorICAgICAgICAgICAgICAgcmMgPSAtRUlOVkFMOw0KKyAgICAgICAgICAgICAgIGdv
+dG8gZnJlZV92ZWM7DQorICAgICAgIH0NCisNCisgICAgICAgcGx0X3NwaW5sb2NrX2xvY2soJnBs
+dF9pcnFfdmVjX2xvY2spOw0KKyAgICAgICBpZiAoaXJxX3ZlY19maW5kKGludHJfaGFuZGxlLCB2
+ZWMpICE9IE5VTEwpIHsNCisgICAgICAgICAgICAgICBwbHRfc3BpbmxvY2tfdW5sb2NrKCZwbHRf
+aXJxX3ZlY19sb2NrKTsNCisgICAgICAgICAgICAgICBwbHRfZXJyKCJWZWN0b3I6MHgleCBpcnEg
+YWxyZWFkeSByZWdpc3RlcmVkIiwgdmVjKTsNCisgICAgICAgICAgICAgICByYyA9IC1FRVhJU1Q7
+DQorICAgICAgICAgICAgICAgZ290byBmcmVlX3ZlYzsNCisgICAgICAgfQ0KKyAgICAgICBUQUlM
+UV9JTlNFUlRfVEFJTCgmcGx0X2lycV92ZWNfbGlzdCwgaXJxX3ZlYywgbmV4dCk7DQorICAgICAg
+IHBsdF9zcGlubG9ja191bmxvY2soJnBsdF9pcnFfdmVjX2xvY2spOw0KDQogICAgICAgICAvKiBS
+ZWdpc3RlciB2ZWN0b3IgaW50ZXJydXB0IGNhbGxiYWNrICovDQotICAgICAgIHJjID0gcGx0X2lu
+dHJfY2FsbGJhY2tfcmVnaXN0ZXIodG1wX2hhbmRsZSwgY2IsIGRhdGEpOw0KKyAgICAgICByYyA9
+IHBsdF9pbnRyX2NhbGxiYWNrX3JlZ2lzdGVyKGlycV92ZWMtPmhhbmRsZSwgY2IsIGRhdGEpOw0K
+ICAgICAgICAgaWYgKHJjKSB7DQogICAgICAgICAgICAgICAgIHBsdF9lcnIoIkZhaWxlZCB0byBy
+ZWdpc3RlciB2ZWN0b3I6MHgleCBpcnEgY2FsbGJhY2suIiwgdmVjKTsNCi0gICAgICAgICAgICAg
+ICByZXR1cm4gcmM7DQorICAgICAgICAgICAgICAgZ290byByZW1vdmVfdmVjOw0KICAgICAgICAg
+fQ0KDQogICAgICAgICByYyA9IHBsdF9pbnRyX2VmZHNfaW5kZXhfc2V0KGludHJfaGFuZGxlLCB2
+ZWMsIGZkKTsNCi0gICAgICAgaWYgKHJjKQ0KLSAgICAgICAgICAgICAgIHJldHVybiByYzsNCisg
+ICAgICAgaWYgKHJjKSB7DQorICAgICAgICAgICAgICAgcGx0X2ludHJfY2FsbGJhY2tfdW5yZWdp
+c3RlcihpcnFfdmVjLT5oYW5kbGUsIGNiLCBkYXRhKTsNCisgICAgICAgICAgICAgICBnb3RvIHJl
+bW92ZV92ZWM7DQorICAgICAgIH0NCg0KICAgICAgICAgbmJfZWZkID0gKHZlYyA+ICh1aW50MzJf
+dClwbHRfaW50cl9uYl9lZmRfZ2V0KGludHJfaGFuZGxlKSkgPw0KICAgICAgICAgICAgICAgICAg
+ICAgICAgICB2ZWMgOg0KQEAgLTE5OSwxNSArMjc2LDIzIEBAIHBsdF9pcnFfcmVnaXN0ZXIoc3Ry
+dWN0IHBsdF9pbnRyX2hhbmRsZSAqaW50cl9oYW5kbGUsIHBsdF9pbnRyX2NhbGxiYWNrX2ZuIGNi
+LCB2DQoNCiAgICAgICAgIC8qIEVuYWJsZSBNU0lYIHZlY3RvcnMgdG8gVkZJTyAqLw0KICAgICAg
+ICAgcmV0dXJuIGlycV9jb25maWcoaW50cl9oYW5kbGUsIHZlYyk7DQorDQorcmVtb3ZlX3ZlYzoN
+CisgICAgICAgcGx0X3NwaW5sb2NrX2xvY2soJnBsdF9pcnFfdmVjX2xvY2spOw0KKyAgICAgICBU
+QUlMUV9SRU1PVkUoJnBsdF9pcnFfdmVjX2xpc3QsIGlycV92ZWMsIG5leHQpOw0KKyAgICAgICBw
+bHRfc3BpbmxvY2tfdW5sb2NrKCZwbHRfaXJxX3ZlY19sb2NrKTsNCitmcmVlX3ZlYzoNCisgICAg
+ICAgaXJxX3ZlY19mcmVlKGlycV92ZWMpOw0KKyAgICAgICByZXR1cm4gcmM7DQogfQ0KDQogdm9p
+ZA0KIHBsdF9pcnFfdW5yZWdpc3RlcihzdHJ1Y3QgcGx0X2ludHJfaGFuZGxlICppbnRyX2hhbmRs
+ZSwgcGx0X2ludHJfY2FsbGJhY2tfZm4gY2IsIHZvaWQgKmRhdGEsDQogICAgICAgICAgICAgICAg
+ICAgIHVuc2lnbmVkIGludCB2ZWMpDQogew0KLSAgICAgICBzdHJ1Y3QgcGx0X2ludHJfaGFuZGxl
+ICp0bXBfaGFuZGxlOw0KKyAgICAgICBzdHJ1Y3QgcGx0X2lycV92ZWMgKmlycV92ZWM7DQogICAg
+ICAgICB1aW50OF90IHJldHJpZXMgPSA1OyAvKiA1IG1zICovDQotICAgICAgIGludCByYywgZmQ7
+DQorICAgICAgIGludCByYzsNCg0KICAgICAgICAgaWYgKHZlYyA+ICh1aW50MzJfdClwbHRfaW50
+cl9tYXhfaW50cl9nZXQoaW50cl9oYW5kbGUpKSB7DQogICAgICAgICAgICAgICAgIHBsdF9lcnIo
+IkVycm9yIHVucmVnaXN0ZXJpbmcgTVNJLVggaW50ZXJydXB0cyB2ZWM6JWQgPiAlZCIsIHZlYywN
+CkBAIC0yMTUsMTcgKzMwMCwyMyBAQCBwbHRfaXJxX3VucmVnaXN0ZXIoc3RydWN0IHBsdF9pbnRy
+X2hhbmRsZSAqaW50cl9oYW5kbGUsIHBsdF9pbnRyX2NhbGxiYWNrX2ZuIGNiLA0KICAgICAgICAg
+ICAgICAgICByZXR1cm47DQogICAgICAgICB9DQoNCi0gICAgICAgdG1wX2hhbmRsZSA9IGludHJf
+aGFuZGxlOw0KLSAgICAgICBmZCA9IHBsdF9pbnRyX2VmZHNfaW5kZXhfZ2V0KGludHJfaGFuZGxl
+LCB2ZWMpOw0KLSAgICAgICBpZiAoZmQgPT0gLTEpDQorICAgICAgIHBsdF9zcGlubG9ja19sb2Nr
+KCZwbHRfaXJxX3ZlY19sb2NrKTsNCisgICAgICAgaXJxX3ZlYyA9IGlycV92ZWNfZmluZChpbnRy
+X2hhbmRsZSwgdmVjKTsNCisgICAgICAgcGx0X3NwaW5sb2NrX3VubG9jaygmcGx0X2lycV92ZWNf
+bG9jayk7DQorICAgICAgIGlmIChpcnFfdmVjID09IE5VTEwpIHsNCisgICAgICAgICAgICAgICBp
+ZiAocGx0X2ludHJfZWZkc19pbmRleF9nZXQoaW50cl9oYW5kbGUsIHZlYykgIT0gLTEpDQorICAg
+ICAgICAgICAgICAgICAgICAgICBwbHRfZXJyKCJFcnJvciB1bnJlZ2lzdGVyaW5nIE1TSS1YIHZl
+YyAlZCBjYiwgbm90IHJlZ2lzdGVyZWQiLCB2ZWMpOw0KICAgICAgICAgICAgICAgICByZXR1cm47
+DQorICAgICAgIH0NCg0KLSAgICAgICBpZiAocGx0X2ludHJfZmRfc2V0KHRtcF9oYW5kbGUsIGZk
+KSkNCisgICAgICAgaWYgKGlycV92ZWMtPmNiICE9IGNiIHx8IGlycV92ZWMtPmRhdGEgIT0gZGF0
+YSkgew0KKyAgICAgICAgICAgICAgIHBsdF9lcnIoIk1TSS1YIHZlYyAlZCByZWdpc3RlcmVkIHdp
+dGggYSBkaWZmZXJlbnQgY2FsbGJhY2siLCB2ZWMpOw0KICAgICAgICAgICAgICAgICByZXR1cm47
+DQorICAgICAgIH0NCg0KICAgICAgICAgZG8gew0KICAgICAgICAgICAgICAgICAvKiBVbi1yZWdp
+c3RlciBjYWxsYmFjayBmdW5jIGZyb20gcGxhdGZvcm0gbGliICovDQotICAgICAgICAgICAgICAg
+cmMgPSBwbHRfaW50cl9jYWxsYmFja191bnJlZ2lzdGVyKHRtcF9oYW5kbGUsIGNiLCBkYXRhKTsN
+CisgICAgICAgICAgICAgICByYyA9IHBsdF9pbnRyX2NhbGxiYWNrX3VucmVnaXN0ZXIoaXJxX3Zl
+Yy0+aGFuZGxlLCBjYiwgZGF0YSk7DQogICAgICAgICAgICAgICAgIC8qIFJldHJ5IG9ubHkgaWYg
+LUVBR0FJTiAqLw0KICAgICAgICAgICAgICAgICBpZiAocmMgIT0gLUVBR0FJTikNCiAgICAgICAg
+ICAgICAgICAgICAgICAgICBicmVhazsNCkBAIC0yMzgsMTUgKzMyOSwxOCBAQCBwbHRfaXJxX3Vu
+cmVnaXN0ZXIoc3RydWN0IHBsdF9pbnRyX2hhbmRsZSAqaW50cl9oYW5kbGUsIHBsdF9pbnRyX2Nh
+bGxiYWNrX2ZuIGNiLA0KICAgICAgICAgICAgICAgICByZXR1cm47DQogICAgICAgICB9DQoNCisg
+ICAgICAgcGx0X3NwaW5sb2NrX2xvY2soJnBsdF9pcnFfdmVjX2xvY2spOw0KKyAgICAgICBUQUlM
+UV9SRU1PVkUoJnBsdF9pcnFfdmVjX2xpc3QsIGlycV92ZWMsIG5leHQpOw0KKyAgICAgICBwbHRf
+c3BpbmxvY2tfdW5sb2NrKCZwbHRfaXJxX3ZlY19sb2NrKTsNCisNCiAgICAgICAgIHBsdF9iYXNl
+X2RiZygiRGlzYWJsZSB2ZWN0b3I6MHgleCBmb3IgdmZpbyAoZWZkczogJWQsIG1heDolZCkiLCB2
+ZWMsDQogICAgICAgICAgICAgICAgICAgICAgcGx0X2ludHJfbmJfZWZkX2dldChpbnRyX2hhbmRs
+ZSksIHBsdF9pbnRyX21heF9pbnRyX2dldChpbnRyX2hhbmRsZSkpOw0KDQotICAgICAgIGlmIChw
+bHRfaW50cl9lZmRzX2luZGV4X2dldChpbnRyX2hhbmRsZSwgdmVjKSAhPSAtMSkNCi0gICAgICAg
+ICAgICAgICBjbG9zZShwbHRfaW50cl9lZmRzX2luZGV4X2dldChpbnRyX2hhbmRsZSwgdmVjKSk7
+DQogICAgICAgICAvKiBEaXNhYmxlIE1TSVggdmVjdG9ycyBmcm9tIFZGSU8gKi8NCiAgICAgICAg
+IHBsdF9pbnRyX2VmZHNfaW5kZXhfc2V0KGludHJfaGFuZGxlLCB2ZWMsIC0xKTsNCi0NCiAgICAg
+ICAgIGlycV9jb25maWcoaW50cl9oYW5kbGUsIHZlYyk7DQorDQorICAgICAgIGlycV92ZWNfZnJl
+ZShpcnFfdmVjKTsNCiB9DQogI2VuZGlmDQoNCi0tDQoyLjQzLjANCg0K
 
-________________________________
-From: Nicolau, Radu <radu.nicolau@intel.com>
-Sent: 10 November 2026 15:15
-To: dev@dpdk.org <dev@dpdk.org>
-Cc: Nicolau, Radu <radu.nicolau@intel.com>; Ji, Kai <kai.ji@intel.com>; Fan=
- Zhang <fanzhang.oss@gmail.com>; Ashish Gupta <ashishg@marvell.com>
-Subject: [PATCH] compress/qat: add Gen 6 support
+--_000_PH3PPFCACDF6938A8985B12377FADE5C220AF722PH3PPFCACDF6938_
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Add support for Gen 6 QAT compression devices.
+PGh0bWw+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0i
+dGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjwvaGVhZD4NCjxib2R5Pg0KPGRpdiBzdHlsZT0i
+ZGlyZWN0aW9uOiBsdHI7IGZvbnQtZmFtaWx5OiBBcHRvcywgQXJpYWwsIEhlbHZldGljYSwgc2Fu
+cy1zZXJpZjsgZm9udC1zaXplOiAxMnB0OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+DQpBY2tlZC1i
+eTogTml0aGluIERhYmlscHVyYW0gJmx0O25kYWJpbHB1cmFtQG1hcnZlbGwuY29tJmd0OzwvZGl2
+Pg0KPGRpdiBpZD0ibXMtb3V0bG9vay1tb2JpbGUtYm9keS1zZXBhcmF0b3ItbGluZSIgZGlyPSJs
+dHIiPjxicj4NCjwvZGl2Pg0KPGRpdiBpZD0ibXMtb3V0bG9vay1tb2JpbGUtc2lnbmF0dXJlIiBk
+aXI9Imx0ciI+DQo8ZGl2Pi0tJm5ic3A7PC9kaXY+DQo8ZGl2IHN0eWxlPSJkaXJlY3Rpb246IGx0
+cjsiPjxicj4NCjwvZGl2Pg0KPC9kaXY+DQo8ZGl2IHN0eWxlPSJkaXJlY3Rpb246IGx0cjsgZm9u
+dC1mYW1pbHk6IEFwdG9zLCBBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmOyBmb250LXNpemU6
+IDEycHQ7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij4NCjxicj4NCjwvZGl2Pg0KPGRpdiBpZD0ibWFp
+bC1lZGl0b3ItcmVmZXJlbmNlLW1lc3NhZ2UtY29udGFpbmVyIj4NCjxkaXY+T24gMTEvMTAvMjYs
+IDc6NDXigK9QTSwgJnF1b3Q7TW9oaXQgS3VtYXIgUGFyamFwYXQmcXVvdDsgJmx0O21wcmFqYXBh
+dEBtYXJ2ZWxsLmNvbSZndDsgd3JvdGU6PC9kaXY+DQo8YnI+DQo8ZGl2IGlkPSJtYWlsLWVkaXRv
+ci1yZWZlcmVuY2UtbWVzc2FnZS1ib2R5Ij4NCjxkaXYgY2xhc3M9Im1zLW91dGxvb2stbW9iaWxl
+LXJlZmVyZW5jZS1tZXNzYWdlIHNraXBQcm9vZmluZyI+DQo8bWV0YSBuYW1lPSJHZW5lcmF0b3Ii
+IGNvbnRlbnQ9Ik1pY3Jvc29mdCBFeGNoYW5nZSBTZXJ2ZXIiPg0KPC9kaXY+DQo8ZGl2IGNsYXNz
+PSJQbGFpblRleHQiIHN0eWxlPSJmb250LXNpemU6IDExcHQ7Ij5BbGwgTVNJLVggdmVjdG9ycyB3
+ZXJlIHJlZ2lzdGVyZWQgb24gcGNpX2Rldi0mZ3Q7aW50cl9oYW5kbGUsIHJld3JpdGluZzxicj4N
+Cml0cyBmZCBiZWZvcmUgZWFjaCBydGVfaW50cl9jYWxsYmFja19yZWdpc3RlcigpLiBTaW5jZSBF
+QUwgcmVmZXJlbmNlczxicj4NCnRoZSBjYWxsZXIncyBoYW5kbGUgaW5zdGVhZCBvZiBhIGNvcHks
+IGFsbCB2ZWN0b3JzIHNoYXJlIG9uZSBpbnRlcnJ1cHQ8YnI+DQpzb3VyY2Ugd2hvc2UgZmQgaXMg
+cmVhZCBsaXZlLCBzbyBvbmx5IHRoZSBsYXN0IHZlY3RvciBpcyBwb2xsZWQuPGJyPg0KTWFpbGJv
+eCByZXBsaWVzIGFyZSBsb3N0LCBwcm9iZSB0aW1lcyBvdXQsIGFuZCB0aGUgY2xlYW51cCBwYXRo
+IGxlYXZlczxicj4NCmEgY2xvc2VkIGZkIGluIHRoZSBzb3VyY2UsIG1ha2luZyB0aGUgaW50ZXJy
+dXB0IHRocmVhZCBwYW5pYyBpbjxicj4NCmVwb2xsX2N0bCgpLjxicj4NCjxicj4NClJlZ2lzdGVy
+IGVhY2ggdmVjdG9yIG9uIGl0cyBvd24gaGFuZGxlLCB0cmFja2VkIGluIGEgbGlzdCBzbyB0aGF0
+PGJyPg0KdW5yZWdpc3RlciB1c2VzIGFuZCBmcmVlcyB0aGUgc2FtZSBoYW5kbGUuIFJlamVjdCBk
+dXBsaWNhdGUgdmVjdG9yPGJyPg0KcmVnaXN0cmF0aW9uLCBjbG9zZSB0aGUgdmVjdG9yJ3Mgb3du
+IGV2ZW50ZmQgb24gdW5yZWdpc3RlciwgYW5kIHVud2luZDxicj4NCmFsbCBlcnJvciBwYXRocyBv
+ZiBwbHRfaXJxX3JlZ2lzdGVyKCkuPGJyPg0KPGJyPg0KRml4ZXM6IGM2NjMwMThlYjdmMyAoJnF1
+b3Q7aW50ZXJydXB0czogZG8gbm90IGR1cGxpY2F0ZSBpbnRlcnJ1cHQgaGFuZGxlcyZxdW90Oyk8
+YnI+DQo8YnI+DQpTaWduZWQtb2ZmLWJ5OiBNb2hpdCBLdW1hciBQYXJqYXBhdCAmbHQ7bXByYWph
+cGF0QG1hcnZlbGwuY29tJmd0Ozxicj4NClNpZ25lZC1vZmYtYnk6IEhhcm1hbiBLYWxyYSAmbHQ7
+aGthbHJhQG1hcnZlbGwuY29tJmd0Ozxicj4NCi0tLTxicj4NCiZuYnNwOy5tYWlsbWFwJm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHwmbmJzcDsmbmJzcDsgMSArPGJy
+Pg0KJm5ic3A7ZHJpdmVycy9jb21tb24vY254ay9yb2NfcGxhdGZvcm0uYyB8IDEzNCArKysrKysr
+KysrKysrKysrKysrKysrKystLS0tLTxicj4NCiZuYnNwOzIgZmlsZXMgY2hhbmdlZCwgMTE1IGlu
+c2VydGlvbnMoKyksIDIwIGRlbGV0aW9ucygtKTxicj4NCjxicj4NCmRpZmYgLS1naXQgYS8ubWFp
+bG1hcCBiLy5tYWlsbWFwPGJyPg0KaW5kZXggNzU0ZGQ5ZTc2MC4uOGNhNTFmNzJkNyAxMDA2NDQ8
+YnI+DQotLS0gYS8ubWFpbG1hcDxicj4NCisrKyBiLy5tYWlsbWFwPGJyPg0KQEAgLTExNzUsNiAr
+MTE3NSw3IEBAIE1vaGFtbWFkIElxYmFsIEFobWFkICZsdDttYWhtYWRAbWFydmVsbC5jb20mZ3Q7
+PGJyPg0KJm5ic3A7TW9oYW1tYWQgU2h1YWIgU2lkZGlxdWUgJmx0O21vaGFtbWFkLXNodWFiLnNp
+ZGRpcXVlQGJyb2FkY29tLmNvbSZndDs8YnI+DQombmJzcDtNb2hhbW1lZCBHYW1hbCAmbHQ7bWdh
+bWFsQHJlZGhhdC5jb20mZ3Q7PGJyPg0KJm5ic3A7TW9oYW5kIEFscmFzaGVlZCAmbHQ7bXJhc2hl
+ZWRAd2lyZWZpbHRlci5jb20mZ3Q7PGJyPg0KK01vaGl0IEt1bWFyIFBhcmphcGF0ICZsdDttcHJh
+amFwYXRAbWFydmVsbC5jb20mZ3Q7PGJyPg0KJm5ic3A7TW9oc2luIEthem1pICZsdDttb2hzaW4u
+a2F6bWkxNEBnbWFpbC5jb20mZ3Q7PGJyPg0KJm5ic3A7TW9oc2luIE1hemhhciBTaGFpa2ggJmx0
+O21vaHNpbm1hemhhcl9zaGFpa2hAdHJlbmRtaWNyby5jb20mZ3Q7PGJyPg0KJm5ic3A7TW9oc2lu
+IFNoYWlraCAmbHQ7bW9oc2luc2hhaWtoQG5pb21ldHJpY3MuY29tJmd0Ozxicj4NCmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2NvbW1vbi9jbnhrL3JvY19wbGF0Zm9ybS5jIGIvZHJpdmVycy9jb21tb24v
+Y254ay9yb2NfcGxhdGZvcm0uYzxicj4NCmluZGV4IDU5ZDY2MmZhYjQuLjBhMWI5NjA5MmIgMTAw
+NjQ0PGJyPg0KLS0tIGEvZHJpdmVycy9jb21tb24vY254ay9yb2NfcGxhdGZvcm0uYzxicj4NCisr
+KyBiL2RyaXZlcnMvY29tbW9uL2NueGsvcm9jX3BsYXRmb3JtLmM8YnI+DQpAQCAtMTYsOCArMTYs
+NDkgQEA8YnI+DQombmJzcDsjaW5jbHVkZSAmbHQ7c3RkbGliLmgmZ3Q7PGJyPg0KJm5ic3A7I2lu
+Y2x1ZGUgJmx0O3N5cy9ldmVudGZkLmgmZ3Q7PGJyPg0KJm5ic3A7I2luY2x1ZGUgJmx0O3N5cy9p
+b2N0bC5oJmd0Ozxicj4NCisjaW5jbHVkZSAmbHQ7c3lzL3F1ZXVlLmgmZ3Q7PGJyPg0KJm5ic3A7
+I2luY2x1ZGUgJmx0O3VuaXN0ZC5oJmd0Ozxicj4NCiZuYnNwOzxicj4NCisvKjxicj4NCisgKiBF
+QUwgaW50ZXJydXB0IHNvdXJjZXMgYXJlIGtleWVkIGJ5IGludGVycnVwdCBoYW5kbGUgcG9pbnRl
+ciBhbmQgcmVhZCB0aGU8YnI+DQorICogaGFuZGxlIEZEIGF0IGVwb2xsL2Rpc3BhdGNoIHRpbWUs
+IHNvIGVhY2ggTVNJLVggdmVjdG9yIG5lZWRzIGl0cyBvd248YnI+DQorICogaGFuZGxlIGhvbGRp
+bmcgdGhhdCB2ZWN0b3IncyBldmVudGZkLjxicj4NCisgKi88YnI+DQorc3RydWN0IHBsdF9pcnFf
+dmVjIHs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IFRBSUxRX0VO
+VFJZKHBsdF9pcnFfdmVjKSBuZXh0Ozxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsgY29uc3Qgc3RydWN0IHBsdF9pbnRyX2hhbmRsZSAqZGV2X2hhbmRsZTs8YnI+DQor
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHN0cnVjdCBwbHRfaW50cl9oYW5k
+bGUgKmhhbmRsZTs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHBs
+dF9pbnRyX2NhbGxiYWNrX2ZuIGNiOzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsgdm9pZCAqZGF0YTs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7IHVuc2lnbmVkIGludCB2ZWM7PGJyPg0KK307PGJyPg0KKzxicj4NCitzdGF0aWMgVEFJ
+TFFfSEVBRCgsIHBsdF9pcnFfdmVjKSBwbHRfaXJxX3ZlY19saXN0ID0gVEFJTFFfSEVBRF9JTklU
+SUFMSVpFUihwbHRfaXJxX3ZlY19saXN0KTs8YnI+DQorc3RhdGljIHBsdF9zcGlubG9ja190IHBs
+dF9pcnFfdmVjX2xvY2sgPSBSVEVfU1BJTkxPQ0tfSU5JVElBTElaRVI7PGJyPg0KKzxicj4NCitz
+dGF0aWMgc3RydWN0IHBsdF9pcnFfdmVjICo8YnI+DQoraXJxX3ZlY19maW5kKGNvbnN0IHN0cnVj
+dCBwbHRfaW50cl9oYW5kbGUgKmRldl9oYW5kbGUsIHVuc2lnbmVkIGludCB2ZWMpPGJyPg0KK3s8
+YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHN0cnVjdCBwbHRfaXJx
+X3ZlYyAqaXJxX3ZlYzs8YnI+DQorPGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyBUQUlMUV9GT1JFQUNIKGlycV92ZWMsICZhbXA7cGx0X2lycV92ZWNfbGlzdCwgbmV4
+dCkgezxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaWYgKGlycV92ZWMtJmd0O2Rl
+dl9oYW5kbGUgPT0gZGV2X2hhbmRsZSAmYW1wOyZhbXA7IGlycV92ZWMtJmd0O3ZlYyA9PSB2ZWMp
+PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyByZXR1cm4gaXJxX3ZlYzs8YnI+DQorJm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IH08YnI+DQorPGJyPg0KKyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyByZXR1cm4gTlVMTDs8YnI+DQorfTxicj4NCis8YnI+DQor
+c3RhdGljIHZvaWQ8YnI+DQoraXJxX3ZlY19mcmVlKHN0cnVjdCBwbHRfaXJxX3ZlYyAqaXJxX3Zl
+Yyk8YnI+DQorezxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaWYg
+KGlycV92ZWMtJmd0O2hhbmRsZSAhPSBOVUxMKSB7PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyBwbHRfaW50cl9mZF9jbG9zZShpcnFfdmVjLSZndDtoYW5kbGUpOzxicj4NCismbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgcGx0X2ludHJfaW5zdGFuY2VfZnJlZShpcnFfdmVjLSZn
+dDtoYW5kbGUpOzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgfTxi
+cj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgZnJlZShpcnFfdmVjKTs8
+YnI+DQorfTxicj4NCis8YnI+DQombmJzcDtzdGF0aWMgaW50PGJyPg0KJm5ic3A7aXJxX2dldF9p
+bmZvKHN0cnVjdCBwbHRfaW50cl9oYW5kbGUgKmludHJfaGFuZGxlKTxicj4NCiZuYnNwO3s8YnI+
+DQpAQCAtMTUwLDcgKzE5MSw3IEBAIGludDxicj4NCiZuYnNwO3BsdF9pcnFfcmVnaXN0ZXIoc3Ry
+dWN0IHBsdF9pbnRyX2hhbmRsZSAqaW50cl9oYW5kbGUsIHBsdF9pbnRyX2NhbGxiYWNrX2ZuIGNi
+LCB2b2lkICpkYXRhLDxicj4NCiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyB1bnNpZ25lZCBpbnQgdmVjKTxicj4NCiZuYnNwO3s8YnI+DQotJm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHN0cnVjdCBwbHRfaW50cl9oYW5kbGUgKnRtcF9oYW5k
+bGU7PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBzdHJ1Y3QgcGx0
+X2lycV92ZWMgKmlycV92ZWM7PGJyPg0KJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7IHVpbnQzMl90IG5iX2VmZCwgdG1wX25iX2VmZDs8YnI+DQombmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaW50IHJjLCBmZDs8YnI+
+DQombmJzcDs8YnI+DQpAQCAtMTY2LDI1ICsyMDcsNjEgQEAgcGx0X2lycV9yZWdpc3RlcihzdHJ1
+Y3QgcGx0X2ludHJfaGFuZGxlICppbnRyX2hhbmRsZSwgcGx0X2ludHJfY2FsbGJhY2tfZm4gY2Is
+IHY8YnI+DQombmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgcmV0dXJuIC1F
+SU5WQUw7PGJyPg0KJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7IH08YnI+DQombmJzcDs8YnI+DQotJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7IHRtcF9oYW5kbGUgPSBpbnRyX2hhbmRsZTs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7IGlycV92ZWMgPSBjYWxsb2MoMSwgc2l6ZW9mKCppcnFfdmVjKSk7PGJy
+Pg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBpZiAoaXJxX3ZlYyA9PSBO
+VUxMKTxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgcmV0dXJuIC1FTk9NRU07PGJy
+Pg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBpcnFfdmVjLSZndDtkZXZf
+aGFuZGxlID0gaW50cl9oYW5kbGU7PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyBpcnFfdmVjLSZndDtjYiA9IGNiOzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsgaXJxX3ZlYy0mZ3Q7ZGF0YSA9IGRhdGE7PGJyPg0KKyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBpcnFfdmVjLSZndDt2ZWMgPSB2ZWM7PGJyPg0KKzxi
+cj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaXJxX3ZlYy0mZ3Q7aGFu
+ZGxlID0gcGx0X2ludHJfaW5zdGFuY2VfYWxsb2MoUlRFX0lOVFJfSU5TVEFOQ0VfRl9QUklWQVRF
+KTs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGlmIChpcnFfdmVj
+LSZndDtoYW5kbGUgPT0gTlVMTCkgezxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsg
+cmMgPSAtRU5PTUVNOzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgZ290byBmcmVl
+X3ZlYzs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IH08YnI+DQor
+PGJyPg0KJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IC8q
+IENyZWF0ZSBuZXcgZXZlbnRmZCBmb3IgaW50ZXJydXB0IHZlY3RvciAqLzxicj4NCiZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBmZCA9IGV2ZW50ZmQoMCwg
+RUZEX05PTkJMT0NLIHwgRUZEX0NMT0VYRUMpOzxicj4NCi0mbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsgaWYgKGZkID09IC0xKTxicj4NCi0mbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsgcmV0dXJuIC1FTk9ERVY7PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyBpZiAoZmQgPT0gLTEpIHs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+IHJjID0gLUVOT0RFVjs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGdvdG8gZnJl
+ZV92ZWM7PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyB9PGJyPg0K
+Jm5ic3A7PGJyPg0KLSZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBpZiAocGx0
+X2ludHJfZmRfc2V0KHRtcF9oYW5kbGUsIGZkKSk8YnI+DQotJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7IHJldHVybiAtZXJybm87PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyBpZiAocGx0X2ludHJfZmRfc2V0KGlycV92ZWMtJmd0O2hhbmRsZSwgZmQpKSB7PGJy
+Pg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBjbG9zZShmZCk7PGJyPg0KKyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyByYyA9IC1FSU5WQUw7PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyBnb3RvIGZyZWVfdmVjOzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsgfTxicj4NCis8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7IC8qIEVBTCByZWFkcyB0aGUgOCBieXRlIGV2ZW50ZmQgY291bnRlciBvbmx5IGZvciBW
+RklPIGhhbmRsZSB0eXBlcyAqLzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsgaWYgKHBsdF9pbnRyX3R5cGVfc2V0KGlycV92ZWMtJmd0O2hhbmRsZSwgcGx0X2ludHJf
+dHlwZV9nZXQoaW50cl9oYW5kbGUpKSkgezxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsgcmMgPSAtRUlOVkFMOzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgZ290byBm
+cmVlX3ZlYzs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IH08YnI+
+DQorPGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBwbHRfc3Bpbmxv
+Y2tfbG9jaygmYW1wO3BsdF9pcnFfdmVjX2xvY2spOzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsgaWYgKGlycV92ZWNfZmluZChpbnRyX2hhbmRsZSwgdmVjKSAhPSBO
+VUxMKSB7PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBwbHRfc3BpbmxvY2tfdW5s
+b2NrKCZhbXA7cGx0X2lycV92ZWNfbG9jayk7PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyBwbHRfZXJyKCZxdW90O1ZlY3RvcjoweCV4IGlycSBhbHJlYWR5IHJlZ2lzdGVyZWQmcXVv
+dDssIHZlYyk7PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyByYyA9IC1FRVhJU1Q7
+PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBnb3RvIGZyZWVfdmVjOzxicj4NCism
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgfTxicj4NCismbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgVEFJTFFfSU5TRVJUX1RBSUwoJmFtcDtwbHRfaXJxX3Zl
+Y19saXN0LCBpcnFfdmVjLCBuZXh0KTs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7IHBsdF9zcGlubG9ja191bmxvY2soJmFtcDtwbHRfaXJxX3ZlY19sb2NrKTs8YnI+
+DQombmJzcDs8YnI+DQombmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsgLyogUmVnaXN0ZXIgdmVjdG9yIGludGVycnVwdCBjYWxsYmFjayAqLzxicj4NCi0mbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgcmMgPSBwbHRfaW50cl9jYWxsYmFja19y
+ZWdpc3Rlcih0bXBfaGFuZGxlLCBjYiwgZGF0YSk7PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyByYyA9IHBsdF9pbnRyX2NhbGxiYWNrX3JlZ2lzdGVyKGlycV92ZWMt
+Jmd0O2hhbmRsZSwgY2IsIGRhdGEpOzxicj4NCiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyBpZiAocmMpIHs8YnI+DQombmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsgcGx0X2VycigmcXVvdDtGYWlsZWQgdG8gcmVnaXN0ZXIgdmVjdG9y
+OjB4JXggaXJxIGNhbGxiYWNrLiZxdW90OywgdmVjKTs8YnI+DQotJm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7IHJldHVybiByYzs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGdv
+dG8gcmVtb3ZlX3ZlYzs8YnI+DQombmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsgfTxicj4NCiZuYnNwOzxicj4NCiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyByYyA9IHBsdF9pbnRyX2VmZHNfaW5kZXhfc2V0KGludHJf
+aGFuZGxlLCB2ZWMsIGZkKTs8YnI+DQotJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7IGlmIChyYyk8YnI+DQotJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHJldHVybiByYzs8
+YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGlmIChyYykgezxicj4N
+CismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgcGx0X2ludHJfY2FsbGJhY2tfdW5yZWdpc3Rl
+cihpcnFfdmVjLSZndDtoYW5kbGUsIGNiLCBkYXRhKTs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7IGdvdG8gcmVtb3ZlX3ZlYzs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7IH08YnI+DQombmJzcDs8YnI+DQombmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgbmJfZWZkID0gKHZlYyAmZ3Q7ICh1aW50MzJfdClwbHRf
+aW50cl9uYl9lZmRfZ2V0KGludHJfaGFuZGxlKSkgPzxicj4NCiZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyB2ZWMgOjxicj4NCkBAIC0xOTksMTUgKzI3NiwyMyBAQCBwbHRfaXJx
+X3JlZ2lzdGVyKHN0cnVjdCBwbHRfaW50cl9oYW5kbGUgKmludHJfaGFuZGxlLCBwbHRfaW50cl9j
+YWxsYmFja19mbiBjYiwgdjxicj4NCiZuYnNwOzxicj4NCiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyAvKiBFbmFibGUgTVNJWCB2ZWN0b3JzIHRvIFZGSU8g
+Ki88YnI+DQombmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsg
+cmV0dXJuIGlycV9jb25maWcoaW50cl9oYW5kbGUsIHZlYyk7PGJyPg0KKzxicj4NCityZW1vdmVf
+dmVjOjxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgcGx0X3NwaW5s
+b2NrX2xvY2soJmFtcDtwbHRfaXJxX3ZlY19sb2NrKTs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7IFRBSUxRX1JFTU9WRSgmYW1wO3BsdF9pcnFfdmVjX2xpc3QsIGly
+cV92ZWMsIG5leHQpOzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsg
+cGx0X3NwaW5sb2NrX3VubG9jaygmYW1wO3BsdF9pcnFfdmVjX2xvY2spOzxicj4NCitmcmVlX3Zl
+Yzo8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGlycV92ZWNfZnJl
+ZShpcnFfdmVjKTs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHJl
+dHVybiByYzs8YnI+DQombmJzcDt9PGJyPg0KJm5ic3A7PGJyPg0KJm5ic3A7dm9pZDxicj4NCiZu
+YnNwO3BsdF9pcnFfdW5yZWdpc3RlcihzdHJ1Y3QgcGx0X2ludHJfaGFuZGxlICppbnRyX2hhbmRs
+ZSwgcGx0X2ludHJfY2FsbGJhY2tfZm4gY2IsIHZvaWQgKmRhdGEsPGJyPg0KJm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHVuc2lnbmVkIGlu
+dCB2ZWMpPGJyPg0KJm5ic3A7ezxicj4NCi0mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsgc3RydWN0IHBsdF9pbnRyX2hhbmRsZSAqdG1wX2hhbmRsZTs8YnI+DQorJm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHN0cnVjdCBwbHRfaXJxX3ZlYyAqaXJxX3ZlYzs8
+YnI+DQombmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgdWlu
+dDhfdCByZXRyaWVzID0gNTsgLyogNSBtcyAqLzxicj4NCi0mbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsgaW50IHJjLCBmZDs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7IGludCByYzs8YnI+DQombmJzcDs8YnI+DQombmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaWYgKHZlYyAmZ3Q7ICh1aW50MzJfdClwbHRf
+aW50cl9tYXhfaW50cl9nZXQoaW50cl9oYW5kbGUpKSB7PGJyPg0KJm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHBsdF9lcnIoJnF1b3Q7RXJyb3IgdW5yZWdpc3RlcmluZyBN
+U0ktWCBpbnRlcnJ1cHRzIHZlYzolZCAmZ3Q7ICVkJnF1b3Q7LCB2ZWMsPGJyPg0KQEAgLTIxNSwx
+NyArMzAwLDIzIEBAIHBsdF9pcnFfdW5yZWdpc3RlcihzdHJ1Y3QgcGx0X2ludHJfaGFuZGxlICpp
+bnRyX2hhbmRsZSwgcGx0X2ludHJfY2FsbGJhY2tfZm4gY2IsPGJyPg0KJm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHJldHVybjs8YnI+DQombmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgfTxicj4NCiZuYnNwOzxicj4NCi0mbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgdG1wX2hhbmRsZSA9IGludHJfaGFuZGxlOzxi
+cj4NCi0mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgZmQgPSBwbHRfaW50cl9l
+ZmRzX2luZGV4X2dldChpbnRyX2hhbmRsZSwgdmVjKTs8YnI+DQotJm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7IGlmIChmZCA9PSAtMSk8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7IHBsdF9zcGlubG9ja19sb2NrKCZhbXA7cGx0X2lycV92ZWNfbG9j
+ayk7PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBpcnFfdmVjID0g
+aXJxX3ZlY19maW5kKGludHJfaGFuZGxlLCB2ZWMpOzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsgcGx0X3NwaW5sb2NrX3VubG9jaygmYW1wO3BsdF9pcnFfdmVjX2xv
+Y2spOzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaWYgKGlycV92
+ZWMgPT0gTlVMTCkgezxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaWYgKHBsdF9p
+bnRyX2VmZHNfaW5kZXhfZ2V0KGludHJfaGFuZGxlLCB2ZWMpICE9IC0xKTxicj4NCismbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsgcGx0X2VycigmcXVvdDtFcnJvciB1bnJlZ2lzdGVyaW5nIE1TSS1YIHZlYyAl
+ZCBjYiwgbm90IHJlZ2lzdGVyZWQmcXVvdDssIHZlYyk7PGJyPg0KJm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHJldHVybjs8YnI+DQorJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7IH08YnI+DQombmJzcDs8YnI+DQotJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7IGlmIChwbHRfaW50cl9mZF9zZXQodG1wX2hhbmRsZSwgZmQpKTxicj4N
+CismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaWYgKGlycV92ZWMtJmd0O2Ni
+ICE9IGNiIHx8IGlycV92ZWMtJmd0O2RhdGEgIT0gZGF0YSkgezxicj4NCismbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsgcGx0X2VycigmcXVvdDtNU0ktWCB2ZWMgJWQgcmVnaXN0ZXJlZCB3aXRo
+IGEgZGlmZmVyZW50IGNhbGxiYWNrJnF1b3Q7LCB2ZWMpOzxicj4NCiZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyByZXR1cm47PGJyPg0KKyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyB9PGJyPg0KJm5ic3A7PGJyPg0KJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGRvIHs8YnI+DQombmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsgLyogVW4tcmVnaXN0ZXIgY2FsbGJhY2sgZnVuYyBmcm9tIHBs
+YXRmb3JtIGxpYiAqLzxicj4NCi0mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgcmMgPSBwbHRf
+aW50cl9jYWxsYmFja191bnJlZ2lzdGVyKHRtcF9oYW5kbGUsIGNiLCBkYXRhKTs8YnI+DQorJm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHJjID0gcGx0X2ludHJfY2FsbGJhY2tfdW5yZWdpc3Rl
+cihpcnFfdmVjLSZndDtoYW5kbGUsIGNiLCBkYXRhKTs8YnI+DQombmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsgLyogUmV0cnkgb25seSBpZiAtRUFHQUlOICovPGJyPg0KJm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGlmIChyYyAhPSAtRUFHQUlOKTxi
+cj4NCiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBicmVhazs8YnI+DQpAQCAtMjM4LDE1
+ICszMjksMTggQEAgcGx0X2lycV91bnJlZ2lzdGVyKHN0cnVjdCBwbHRfaW50cl9oYW5kbGUgKmlu
+dHJfaGFuZGxlLCBwbHRfaW50cl9jYWxsYmFja19mbiBjYiw8YnI+DQombmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgcmV0dXJuOzxicj4NCiZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyB9PGJyPg0KJm5ic3A7PGJyPg0KKyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBwbHRfc3BpbmxvY2tfbG9jaygmYW1wO3BsdF9p
+cnFfdmVjX2xvY2spOzxicj4NCismbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsg
+VEFJTFFfUkVNT1ZFKCZhbXA7cGx0X2lycV92ZWNfbGlzdCwgaXJxX3ZlYywgbmV4dCk7PGJyPg0K
+KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBwbHRfc3BpbmxvY2tfdW5sb2Nr
+KCZhbXA7cGx0X2lycV92ZWNfbG9jayk7PGJyPg0KKzxicj4NCiZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBwbHRfYmFzZV9kYmcoJnF1b3Q7RGlzYWJsZSB2
+ZWN0b3I6MHgleCBmb3IgdmZpbyAoZWZkczogJWQsIG1heDolZCkmcXVvdDssIHZlYyw8YnI+DQom
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsgcGx0X2ludHJfbmJfZWZkX2dldChpbnRyX2hhbmRsZSksIHBsdF9pbnRyX21h
+eF9pbnRyX2dldChpbnRyX2hhbmRsZSkpOzxicj4NCiZuYnNwOzxicj4NCi0mbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaWYgKHBsdF9pbnRyX2VmZHNfaW5kZXhfZ2V0KGludHJf
+aGFuZGxlLCB2ZWMpICE9IC0xKTxicj4NCi0mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgY2xv
+c2UocGx0X2ludHJfZWZkc19pbmRleF9nZXQoaW50cl9oYW5kbGUsIHZlYykpOzxicj4NCiZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyAvKiBEaXNhYmxlIE1T
+SVggdmVjdG9ycyBmcm9tIFZGSU8gKi88YnI+DQombmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsgcGx0X2ludHJfZWZkc19pbmRleF9zZXQoaW50cl9oYW5kbGUs
+IHZlYywgLTEpOzxicj4NCi08YnI+DQombmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsgaXJxX2NvbmZpZyhpbnRyX2hhbmRsZSwgdmVjKTs8YnI+DQorPGJyPg0K
+KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBpcnFfdmVjX2ZyZWUoaXJxX3Zl
+Yyk7PGJyPg0KJm5ic3A7fTxicj4NCiZuYnNwOyNlbmRpZjxicj4NCiZuYnNwOzxicj4NCi0tPGJy
+Pg0KMi40My4wPGJyPg0KPGJyPg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9ib2R5Pg0KPC9o
+dG1sPg0K
 
-Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
----
- doc/guides/compressdevs/qat_comp.rst         |   1 +
- doc/guides/cryptodevs/qat.rst                |   2 +-
- doc/guides/rel_notes/release_26_11.rst       |   4 +
- drivers/common/qat/meson.build               |   1 +
- drivers/common/qat/qat_adf/icp_qat_fw_comp.h |   5 +
- drivers/compress/qat/dev/qat_comp_pmd_gen6.c | 135 +++++++++++++++++++
- drivers/compress/qat/dev/qat_comp_pmd_gens.h |   8 ++
- drivers/compress/qat/qat_comp.c              |  21 ++-
- 8 files changed, 175 insertions(+), 2 deletions(-)
- create mode 100644 drivers/compress/qat/dev/qat_comp_pmd_gen6.c
-
-diff --git a/doc/guides/compressdevs/qat_comp.rst b/doc/guides/compressdevs=
-/qat_comp.rst
-index 78b1ad9c23..7c6c8e1074 100644
---- a/doc/guides/compressdevs/qat_comp.rst
-+++ b/doc/guides/compressdevs/qat_comp.rst
-@@ -15,6 +15,7 @@ support for the following hardware accelerator devices:
- * ``Intel QuickAssist Technology C3xxx``
- * ``Intel QuickAssist Technology DH895x``
- * ``Intel QuickAssist Technology 300xx``
-+* ``Intel QuickAssist Technology 6xxx``
-
-
- Features
-diff --git a/doc/guides/cryptodevs/qat.rst b/doc/guides/cryptodevs/qat.rst
-index 27713913ae..8c118b3c5f 100644
---- a/doc/guides/cryptodevs/qat.rst
-+++ b/doc/guides/cryptodevs/qat.rst
-@@ -486,7 +486,7 @@ to see the full table)
-    +-----+-----+-----+-----+----------+---------------+---------------+---=
----------+--------+------+--------+--------+
-    | Yes | Yes | Yes | 5   | 420xx    | linux/6.8+    | qat_420xx     | 42=
-0xx      | 4946   | 2    | 4947   | 16     |
-    +-----+-----+-----+-----+----------+---------------+---------------+---=
----------+--------+------+--------+--------+
--   | Yes | Yes | No  | 6   | 6xxx     | linux/6.16+   | qat_6xxx      | 6x=
-xx       | 4948   | 1    | 4949   | 16     |
-+   | Yes | Yes | Yes | 6   | 6xxx     | linux/6.16+   | qat_6xxx      | 6x=
-xx       | 4948   | 1    | 4949   | 16     |
-    +-----+-----+-----+-----+----------+---------------+---------------+---=
----------+--------+------+--------+--------+
-
- * Note: Symmetric mixed crypto algorithms feature on Gen 2 works only with=
- IDZ driver version 4.9.0+
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/=
-release_26_11.rst
-index fdcf155e07..81971ee38a 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -59,6 +59,10 @@ New Features
-
-   * Added support for Gen 6 QAT devices.
-
-+* **Updated Intel QuickAssist Technology (QAT) compression driver.**
-+
-+  * Added support for Gen 6 QAT devices.
-+
-
- Removed Items
- -------------
-diff --git a/drivers/common/qat/meson.build b/drivers/common/qat/meson.buil=
-d
-index db792864a2..c7ad535c69 100644
---- a/drivers/common/qat/meson.build
-+++ b/drivers/common/qat/meson.build
-@@ -123,6 +123,7 @@ if qat_compress
-             'dev/qat_comp_pmd_gen3.c',
-             'dev/qat_comp_pmd_gen4.c',
-             'dev/qat_comp_pmd_gen5.c',
-+            'dev/qat_comp_pmd_gen6.c',
-         ]
-         sources +=3D files(join_paths(qat_compress_relpath, f))
-     endforeach
-diff --git a/drivers/common/qat/qat_adf/icp_qat_fw_comp.h b/drivers/common/=
-qat/qat_adf/icp_qat_fw_comp.h
-index da45cb8f7d..625fdc055f 100644
---- a/drivers/common/qat/qat_adf/icp_qat_fw_comp.h
-+++ b/drivers/common/qat/qat_adf/icp_qat_fw_comp.h
-@@ -20,6 +20,11 @@ enum icp_qat_fw_comp_cmd_id {
-         /**< Delimiter type */
- };
-
-+enum icp_qat_fw_comp_cmd_id_gen6 {
-+       ICP_QAT_GEN6_FW_COMP_CMD_DEFLATE_COMP =3D 1,
-+       ICP_QAT_GEN6_FW_COMP_CMD_DEFLATE_DECOMP =3D 2,
-+};
-+
- /**< Flag usage */
-
- #define ICP_QAT_FW_COMP_STATELESS_SESSION 0
-diff --git a/drivers/compress/qat/dev/qat_comp_pmd_gen6.c b/drivers/compres=
-s/qat/dev/qat_comp_pmd_gen6.c
-new file mode 100644
-index 0000000000..40be10b1ea
---- /dev/null
-+++ b/drivers/compress/qat/dev/qat_comp_pmd_gen6.c
-@@ -0,0 +1,135 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Intel Corporation
-+ */
-+
-+#include <rte_memzone.h>
-+
-+#include "qat_logs.h"
-+#include "qat_comp.h"
-+#include "qat_comp_pmd.h"
-+#include "qat_comp_pmd_gens.h"
-+#include "icp_qat_hw_gen4_comp.h"
-+
-+static const struct rte_compressdev_capabilities
-+qat_gen6_comp_capabilities[] =3D {
-+       {/* COMPRESSION - deflate */
-+        .algo =3D RTE_COMP_ALGO_DEFLATE,
-+        .comp_feature_flags =3D RTE_COMP_FF_MULTI_PKT_CHECKSUM |
-+                               RTE_COMP_FF_CRC32_CHECKSUM |
-+                               RTE_COMP_FF_ADLER32_CHECKSUM |
-+                               RTE_COMP_FF_CRC32_ADLER32_CHECKSUM |
-+                               RTE_COMP_FF_SHAREABLE_PRIV_XFORM |
-+                               RTE_COMP_FF_HUFFMAN_DYNAMIC |
-+                               RTE_COMP_FF_HUFFMAN_FIXED |
-+                               RTE_COMP_FF_OOP_SGL_IN_SGL_OUT |
-+                               RTE_COMP_FF_OOP_SGL_IN_LB_OUT |
-+                               RTE_COMP_FF_OOP_LB_IN_SGL_OUT,
-+        .window_size =3D {.min =3D 15, .max =3D 15, .increment =3D 0} },
-+        RTE_COMP_END_OF_CAPABILITIES_LIST() };
-+
-+static struct rte_compressdev_ops qat_comp_ops_gen6 =3D {
-+
-+       /* Device related operations */
-+       .dev_configure          =3D qat_comp_dev_config_gen4,
-+       .dev_start              =3D qat_comp_dev_start,
-+       .dev_stop               =3D qat_comp_dev_stop,
-+       .dev_close              =3D qat_comp_dev_close,
-+       .dev_infos_get          =3D qat_comp_dev_info_get,
-+
-+       .stats_get              =3D qat_comp_stats_get,
-+       .stats_reset            =3D qat_comp_stats_reset,
-+       .queue_pair_setup       =3D qat_comp_qp_setup,
-+       .queue_pair_release     =3D qat_comp_qp_release,
-+
-+       /* Compression related operations */
-+       .private_xform_create   =3D qat_comp_private_xform_create,
-+       .private_xform_free     =3D qat_comp_private_xform_free,
-+       .stream_create          =3D qat_comp_stream_create,
-+       .stream_free            =3D qat_comp_stream_free
-+};
-+
-+/* GEN6 specific. */
-+int
-+qat_comp_create_templates_gen6(struct qat_comp_xform *qat_xform,
-+                              __rte_unused const struct rte_memzone *inter=
-m_buff_mz,
-+                              const struct rte_comp_xform *xform,
-+                              __rte_unused const struct qat_comp_stream *s=
-tream,
-+                              enum rte_comp_op_type op_type,
-+                              enum qat_device_gen qat_dev_gen)
-+{
-+       struct icp_qat_fw_comp_req *comp_req;
-+       int res;
-+
-+       if (unlikely(qat_xform =3D=3D NULL)) {
-+               QAT_LOG(ERR, "Session was not created for this device");
-+               return -EINVAL;
-+       }
-+
-+       /* Template below carries no stream state, so stateful ops would ru=
-n stateless. */
-+       if (unlikely(op_type =3D=3D RTE_COMP_OP_STATEFUL)) {
-+               QAT_LOG(ERR, "QAT GEN6 PMD does not support stateful operat=
-ions");
-+               return -ENOTSUP;
-+       }
-+
-+       comp_req =3D &qat_xform->qat_comp_req_tmpl;
-+
-+       /* Initialize header */
-+       if (qat_xform->qat_comp_request_type =3D=3D QAT_COMP_REQUEST_FIXED_=
-COMP_STATELESS ||
-+           qat_xform->qat_comp_request_type =3D=3D QAT_COMP_REQUEST_DYNAMI=
-C_COMP_STATELESS)
-+               comp_req->comn_hdr.service_cmd_id =3D ICP_QAT_GEN6_FW_COMP_=
-CMD_DEFLATE_COMP;
-+       else if (qat_xform->qat_comp_request_type =3D=3D QAT_COMP_REQUEST_D=
-ECOMPRESS)
-+               comp_req->comn_hdr.service_cmd_id =3D ICP_QAT_GEN6_FW_COMP_=
-CMD_DEFLATE_DECOMP;
-+
-+       comp_req->comn_hdr.service_type =3D ICP_QAT_FW_COMN_REQ_CPM_FW_COMP=
-;
-+
-+       comp_req->comn_hdr.hdr_flags =3D
-+           ICP_QAT_FW_COMN_HDR_FLAGS_BUILD(ICP_QAT_FW_COMN_REQ_FLAG_SET);
-+
-+       comp_req->comn_hdr.serv_specif_flags =3D 0;
-+
-+       comp_req->comn_hdr.comn_req_flags =3D ICP_QAT_FW_COMN_FLAGS_BUILD(
-+               QAT_COMN_CD_FLD_TYPE_16BYTE_DATA, QAT_COMN_PTR_TYPE_FLAT);
-+
-+       res =3D qat_comp_gen_dev_ops[qat_dev_gen].qat_comp_set_slice_cfg_wo=
-rd(
-+                       qat_xform, xform, op_type,
-+                       comp_req->cd_pars.sl.comp_slice_cfg_word);
-+       if (res !=3D 0)
-+               return res;
-+
-+       comp_req->comp_pars.initial_adler =3D 1;
-+       comp_req->comp_pars.initial_crc32 =3D 0;
-+       comp_req->comp_pars.req_par_flags =3D
-+               (ICP_QAT_FW_COMP_BFINAL << ICP_QAT_FW_COMP_BFINAL_BITPOS);
-+
-+#if RTE_LOG_DP_LEVEL >=3D RTE_LOG_DEBUG
-+       QAT_DP_HEXDUMP_LOG(DEBUG, "qat compression message template:", comp=
-_req,
-+                   sizeof(struct icp_qat_fw_comp_req));
-+#endif
-+       return 0;
-+}
-+
-+static struct qat_comp_capabilities_info
-+qat_comp_cap_get_gen6(struct qat_pci_device *qat_dev __rte_unused)
-+{
-+       struct qat_comp_capabilities_info capa_info =3D {
-+               .data =3D qat_gen6_comp_capabilities,
-+               .size =3D sizeof(qat_gen6_comp_capabilities)
-+       };
-+       return capa_info;
-+}
-+
-+RTE_INIT(qat_comp_pmd_gen6_init)
-+{
-+       qat_comp_gen_dev_ops[QAT_GEN6].compressdev_ops =3D
-+                       &qat_comp_ops_gen6;
-+       qat_comp_gen_dev_ops[QAT_GEN6].qat_comp_get_capabilities =3D
-+                       qat_comp_cap_get_gen6;
-+       qat_comp_gen_dev_ops[QAT_GEN6].qat_comp_get_num_im_bufs_required =
-=3D
-+                       qat_comp_get_num_im_bufs_required_gen4;
-+       qat_comp_gen_dev_ops[QAT_GEN6].qat_comp_get_ram_bank_flags =3D
-+                       qat_comp_get_ram_bank_flags_gen4;
-+       qat_comp_gen_dev_ops[QAT_GEN6].qat_comp_set_slice_cfg_word =3D
-+                       qat_comp_set_slice_cfg_word_gen4;
-+       qat_comp_gen_dev_ops[QAT_GEN6].qat_comp_get_feature_flags =3D
-+                       qat_comp_get_features_gen1;
-+}
-diff --git a/drivers/compress/qat/dev/qat_comp_pmd_gens.h b/drivers/compres=
-s/qat/dev/qat_comp_pmd_gens.h
-index e329fe3e18..6a0b281abd 100644
---- a/drivers/compress/qat/dev/qat_comp_pmd_gens.h
-+++ b/drivers/compress/qat/dev/qat_comp_pmd_gens.h
-@@ -41,4 +41,12 @@ qat_comp_dev_config_gen4(struct rte_compressdev *dev,
-
- extern struct rte_compressdev_ops qat_comp_ops_gen1;
-
-+int
-+qat_comp_create_templates_gen6(struct qat_comp_xform *qat_xform,
-+               const struct rte_memzone *interm_buff_mz,
-+               const struct rte_comp_xform *xform,
-+               const struct qat_comp_stream *stream,
-+               enum rte_comp_op_type op_type,
-+               enum qat_device_gen qat_dev_gen);
-+
- #endif /* _QAT_COMP_PMD_GENS_H_ */
-diff --git a/drivers/compress/qat/qat_comp.c b/drivers/compress/qat/qat_com=
-p.c
-index 559948a46a..35fa513631 100644
---- a/drivers/compress/qat/qat_comp.c
-+++ b/drivers/compress/qat/qat_comp.c
-@@ -18,6 +18,7 @@
- #include "qat_logs.h"
- #include "qat_comp.h"
- #include "qat_comp_pmd.h"
-+#include "dev/qat_comp_pmd_gens.h"
-
- static void
- qat_comp_fallback_to_fixed(struct icp_qat_fw_comp_req *comp_req)
-@@ -814,7 +815,7 @@ qat_comp_create_req_hdr(struct icp_qat_fw_comn_req_hdr =
-*header,
- }
-
- static int
--qat_comp_create_templates(struct qat_comp_xform *qat_xform,
-+qat_comp_create_templates_genx(struct qat_comp_xform *qat_xform,
-                           const struct rte_memzone *interm_buff_mz,
-                           const struct rte_comp_xform *xform,
-                           const struct qat_comp_stream *stream,
-@@ -933,6 +934,24 @@ qat_comp_create_templates(struct qat_comp_xform *qat_x=
-form,
-         return 0;
- }
-
-+static int
-+qat_comp_create_templates(struct qat_comp_xform *qat_xform,
-+                         const struct rte_memzone *interm_buff_mz,
-+                         const struct rte_comp_xform *xform,
-+                         const struct qat_comp_stream *stream,
-+                         enum rte_comp_op_type op_type,
-+                         enum qat_device_gen qat_dev_gen)
-+{
-+       if (qat_dev_gen =3D=3D QAT_GEN6)
-+               return qat_comp_create_templates_gen6(qat_xform,
-+                       interm_buff_mz, xform, stream, op_type,
-+                       qat_dev_gen);
-+
-+       return qat_comp_create_templates_genx(qat_xform,
-+                       interm_buff_mz, xform, stream, op_type,
-+                       qat_dev_gen);
-+}
-+
- /**
-  * Create driver private_xform data.
-  *
---
-2.52.0
-
-
---_000_LV2PR11MB60459B9E8839EE18C6E94FD381722LV2PR11MB6045namp_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"font-family: &quot;IntelOne Text&quo=
-t;; font-size: 10pt; color: rgb(0, 0, 0);">
-Acked-by: Kai Ji &lt;kai.ji@intel.com&gt;</div>
-<div class=3D"elementToProof" style=3D"font-family: &quot;IntelOne Text&quo=
-t;; font-size: 10pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div id=3D"appendonsend"></div>
-<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
-yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Nicolau, Radu &lt;rad=
-u.nicolau@intel.com&gt;<br>
-<b>Sent:</b> 10 November 2026 15:15<br>
-<b>To:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
-<b>Cc:</b> Nicolau, Radu &lt;radu.nicolau@intel.com&gt;; Ji, Kai &lt;kai.ji=
-@intel.com&gt;; Fan Zhang &lt;fanzhang.oss@gmail.com&gt;; Ashish Gupta &lt;=
-ashishg@marvell.com&gt;<br>
-<b>Subject:</b> [PATCH] compress/qat: add Gen 6 support</font>
-<div>&nbsp;</div>
-</div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
-">
-<div class=3D"PlainText">Add support for Gen 6 QAT compression devices.<br>
-<br>
-Signed-off-by: Radu Nicolau &lt;radu.nicolau@intel.com&gt;<br>
----<br>
-&nbsp;doc/guides/compressdevs/qat_comp.rst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp; |&nbsp;&nbsp; 1 +<br>
-&nbsp;doc/guides/cryptodevs/qat.rst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp; 2 +-<br>
-&nbsp;doc/guides/rel_notes/release_26_11.rst&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; |&nbsp;&nbsp; 4 +<br>
-&nbsp;drivers/common/qat/meson.build&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp; 1 +<br>
-&nbsp;drivers/common/qat/qat_adf/icp_qat_fw_comp.h |&nbsp;&nbsp; 5 +<br>
-&nbsp;drivers/compress/qat/dev/qat_comp_pmd_gen6.c | 135 ++++++++++++++++++=
-+<br>
-&nbsp;drivers/compress/qat/dev/qat_comp_pmd_gens.h |&nbsp;&nbsp; 8 ++<br>
-&nbsp;drivers/compress/qat/qat_comp.c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp; 21 ++-<br>
-&nbsp;8 files changed, 175 insertions(+), 2 deletions(-)<br>
-&nbsp;create mode 100644 drivers/compress/qat/dev/qat_comp_pmd_gen6.c<br>
-<br>
-diff --git a/doc/guides/compressdevs/qat_comp.rst b/doc/guides/compressdevs=
-/qat_comp.rst<br>
-index 78b1ad9c23..7c6c8e1074 100644<br>
---- a/doc/guides/compressdevs/qat_comp.rst<br>
-+++ b/doc/guides/compressdevs/qat_comp.rst<br>
-@@ -15,6 +15,7 @@ support for the following hardware accelerator devices:<b=
-r>
-&nbsp;* ``Intel QuickAssist Technology C3xxx``<br>
-&nbsp;* ``Intel QuickAssist Technology DH895x``<br>
-&nbsp;* ``Intel QuickAssist Technology 300xx``<br>
-+* ``Intel QuickAssist Technology 6xxx``<br>
-&nbsp;<br>
-&nbsp;<br>
-&nbsp;Features<br>
-diff --git a/doc/guides/cryptodevs/qat.rst b/doc/guides/cryptodevs/qat.rst<=
-br>
-index 27713913ae..8c118b3c5f 100644<br>
---- a/doc/guides/cryptodevs/qat.rst<br>
-+++ b/doc/guides/cryptodevs/qat.rst<br>
-@@ -486,7 +486,7 @@ to see the full table)<br>
-&nbsp;&nbsp;&nbsp; +-----+-----+-----+-----+----------+---------------+----=
------------+------------+--------+------+--------+--------+<br>
-&nbsp;&nbsp;&nbsp; | Yes | Yes | Yes | 5&nbsp;&nbsp; | 420xx&nbsp;&nbsp;&nb=
-sp; | linux/6.8+&nbsp;&nbsp;&nbsp; | qat_420xx&nbsp;&nbsp;&nbsp;&nbsp; | 42=
-0xx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 4946&nbsp;&nbsp; | 2&nbsp;&nbsp;&nbsp; =
-| 4947&nbsp;&nbsp; | 16&nbsp;&nbsp;&nbsp;&nbsp; |<br>
-&nbsp;&nbsp;&nbsp; +-----+-----+-----+-----+----------+---------------+----=
------------+------------+--------+------+--------+--------+<br>
--&nbsp;&nbsp; | Yes | Yes | No&nbsp; | 6&nbsp;&nbsp; | 6xxx&nbsp;&nbsp;&nbs=
-p;&nbsp; | linux/6.16+&nbsp;&nbsp; | qat_6xxx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
- | 6xxx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 4948&nbsp;&nbsp; | 1&nbsp;&nb=
-sp;&nbsp; | 4949&nbsp;&nbsp; | 16&nbsp;&nbsp;&nbsp;&nbsp; |<br>
-+&nbsp;&nbsp; | Yes | Yes | Yes | 6&nbsp;&nbsp; | 6xxx&nbsp;&nbsp;&nbsp;&nb=
-sp; | linux/6.16+&nbsp;&nbsp; | qat_6xxx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 6x=
-xx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 4948&nbsp;&nbsp; | 1&nbsp;&nbsp;&n=
-bsp; | 4949&nbsp;&nbsp; | 16&nbsp;&nbsp;&nbsp;&nbsp; |<br>
-&nbsp;&nbsp;&nbsp; +-----+-----+-----+-----+----------+---------------+----=
------------+------------+--------+------+--------+--------+<br>
-&nbsp;<br>
-&nbsp;* Note: Symmetric mixed crypto algorithms feature on Gen 2 works only=
- with IDZ driver version 4.9.0+<br>
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/=
-release_26_11.rst<br>
-index fdcf155e07..81971ee38a 100644<br>
---- a/doc/guides/rel_notes/release_26_11.rst<br>
-+++ b/doc/guides/rel_notes/release_26_11.rst<br>
-@@ -59,6 +59,10 @@ New Features<br>
-&nbsp;<br>
-&nbsp;&nbsp; * Added support for Gen 6 QAT devices.<br>
-&nbsp;<br>
-+* **Updated Intel QuickAssist Technology (QAT) compression driver.**<br>
-+<br>
-+&nbsp; * Added support for Gen 6 QAT devices.<br>
-+<br>
-&nbsp;<br>
-&nbsp;Removed Items<br>
-&nbsp;-------------<br>
-diff --git a/drivers/common/qat/meson.build b/drivers/common/qat/meson.buil=
-d<br>
-index db792864a2..c7ad535c69 100644<br>
---- a/drivers/common/qat/meson.build<br>
-+++ b/drivers/common/qat/meson.build<br>
-@@ -123,6 +123,7 @@ if qat_compress<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'd=
-ev/qat_comp_pmd_gen3.c',<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'd=
-ev/qat_comp_pmd_gen4.c',<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'd=
-ev/qat_comp_pmd_gen5.c',<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'dev/qa=
-t_comp_pmd_gen6.c',<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sources +=3D files(join_pa=
-ths(qat_compress_relpath, f))<br>
-&nbsp;&nbsp;&nbsp;&nbsp; endforeach<br>
-diff --git a/drivers/common/qat/qat_adf/icp_qat_fw_comp.h b/drivers/common/=
-qat/qat_adf/icp_qat_fw_comp.h<br>
-index da45cb8f7d..625fdc055f 100644<br>
---- a/drivers/common/qat/qat_adf/icp_qat_fw_comp.h<br>
-+++ b/drivers/common/qat/qat_adf/icp_qat_fw_comp.h<br>
-@@ -20,6 +20,11 @@ enum icp_qat_fw_comp_cmd_id {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**&lt; Delimiter type */<=
-br>
-&nbsp;};<br>
-&nbsp;<br>
-+enum icp_qat_fw_comp_cmd_id_gen6 {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ICP_QAT_GEN6_FW_COMP_CMD_DEFLATE_COMP=
- =3D 1,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ICP_QAT_GEN6_FW_COMP_CMD_DEFLATE_DECO=
-MP =3D 2,<br>
-+};<br>
-+<br>
-&nbsp;/**&lt; Flag usage */<br>
-&nbsp;<br>
-&nbsp;#define ICP_QAT_FW_COMP_STATELESS_SESSION 0<br>
-diff --git a/drivers/compress/qat/dev/qat_comp_pmd_gen6.c b/drivers/compres=
-s/qat/dev/qat_comp_pmd_gen6.c<br>
-new file mode 100644<br>
-index 0000000000..40be10b1ea<br>
---- /dev/null<br>
-+++ b/drivers/compress/qat/dev/qat_comp_pmd_gen6.c<br>
-@@ -0,0 +1,135 @@<br>
-+/* SPDX-License-Identifier: BSD-3-Clause<br>
-+ * Copyright(c) 2026 Intel Corporation<br>
-+ */<br>
-+<br>
-+#include &lt;rte_memzone.h&gt;<br>
-+<br>
-+#include &quot;qat_logs.h&quot;<br>
-+#include &quot;qat_comp.h&quot;<br>
-+#include &quot;qat_comp_pmd.h&quot;<br>
-+#include &quot;qat_comp_pmd_gens.h&quot;<br>
-+#include &quot;icp_qat_hw_gen4_comp.h&quot;<br>
-+<br>
-+static const struct rte_compressdev_capabilities<br>
-+qat_gen6_comp_capabilities[] =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {/* COMPRESSION - deflate */<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .algo =3D RTE_COMP_ALGO_DEFLATE=
-,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .comp_feature_flags =3D RTE_COM=
-P_FF_MULTI_PKT_CHECKSUM |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_COMP_FF_CRC32_CHECKSUM |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_COMP_FF_ADLER32_CHECKSUM |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_COMP_FF_CRC32_ADLER32_CHECKSUM |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_COMP_FF_SHAREABLE_PRIV_XFORM |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_COMP_FF_HUFFMAN_DYNAMIC |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_COMP_FF_HUFFMAN_FIXED |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_COMP_FF_OOP_SGL_IN_SGL_OUT |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_COMP_FF_OOP_SGL_IN_LB_OUT |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_COMP_FF_OOP_LB_IN_SGL_OUT,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .window_size =3D {.min =3D 15, =
-.max =3D 15, .increment =3D 0} },<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_COMP_END_OF_CAPABILITIES_LI=
-ST() };<br>
-+<br>
-+static struct rte_compressdev_ops qat_comp_ops_gen6 =3D {<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Device related operations */<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dev_configure&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D qat_comp_dev_config_gen4,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dev_start&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D qat_comp_dev_start,=
-<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dev_stop&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D qat_comp_dev_s=
-top,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dev_close&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D qat_comp_dev_close,=
-<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dev_infos_get&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D qat_comp_dev_info_get,<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .stats_get&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D qat_comp_stats_get,=
-<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .stats_reset&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D qat_comp_stats_reset,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .queue_pair_setup&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; =3D qat_comp_qp_setup,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .queue_pair_release&nbsp;&nbsp;&nbsp;=
-&nbsp; =3D qat_comp_qp_release,<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Compression related operations */<=
-br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .private_xform_create&nbsp;&nbsp; =3D=
- qat_comp_private_xform_create,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .private_xform_free&nbsp;&nbsp;&nbsp;=
-&nbsp; =3D qat_comp_private_xform_free,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .stream_create&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D qat_comp_stream_create,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .stream_free&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =3D qat_comp_stream_free<br>
-+};<br>
-+<br>
-+/* GEN6 specific. */<br>
-+int<br>
-+qat_comp_create_templates_gen6(struct qat_comp_xform *qat_xform,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp; __rte_unused const struct rte_memzone *interm_buf=
-f_mz,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp; const struct rte_comp_xform *xform,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp; __rte_unused const struct qat_comp_stream *stream=
-,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp; enum rte_comp_op_type op_type,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp; enum qat_device_gen qat_dev_gen)<br>
-+{<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct icp_qat_fw_comp_req *comp_req;=
-<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int res;<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(qat_xform =3D=3D NULL)) =
-{<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; QAT_LOG(ERR, &quot;Session was not created for this device&quot;=
-);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; return -EINVAL;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Template below carries no stream s=
-tate, so stateful ops would run stateless. */<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(op_type =3D=3D RTE_COMP_=
-OP_STATEFUL)) {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; QAT_LOG(ERR, &quot;QAT GEN6 PMD does not support stateful operat=
-ions&quot;);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; return -ENOTSUP;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; comp_req =3D &amp;qat_xform-&gt;qat_c=
-omp_req_tmpl;<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Initialize header */<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (qat_xform-&gt;qat_comp_request_ty=
-pe =3D=3D QAT_COMP_REQUEST_FIXED_COMP_STATELESS ||<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_xform-&gt=
-;qat_comp_request_type =3D=3D QAT_COMP_REQUEST_DYNAMIC_COMP_STATELESS)<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; comp_req-&gt;comn_hdr.service_cmd_id =3D ICP_QAT_GEN6_FW_COMP_CM=
-D_DEFLATE_COMP;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if (qat_xform-&gt;qat_comp_reque=
-st_type =3D=3D QAT_COMP_REQUEST_DECOMPRESS)<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; comp_req-&gt;comn_hdr.service_cmd_id =3D ICP_QAT_GEN6_FW_COMP_CM=
-D_DEFLATE_DECOMP;<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; comp_req-&gt;comn_hdr.service_type =
-=3D ICP_QAT_FW_COMN_REQ_CPM_FW_COMP;<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; comp_req-&gt;comn_hdr.hdr_flags =3D<b=
-r>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ICP_QAT_FW_CO=
-MN_HDR_FLAGS_BUILD(ICP_QAT_FW_COMN_REQ_FLAG_SET);<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; comp_req-&gt;comn_hdr.serv_specif_fla=
-gs =3D 0;<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; comp_req-&gt;comn_hdr.comn_req_flags =
-=3D ICP_QAT_FW_COMN_FLAGS_BUILD(<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; QAT_COMN_CD_FLD_TYPE_16BYTE_DATA, QAT_COMN_PTR_TYPE_FLAT);<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; res =3D qat_comp_gen_dev_ops[qat_dev_=
-gen].qat_comp_set_slice_cfg_word(<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_xform, xform=
-, op_type,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; comp_req-&gt;cd_=
-pars.sl.comp_slice_cfg_word);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (res !=3D 0)<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; return res;<br>
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; comp_req-&gt;comp_pars.initial_adler =
-=3D 1;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; comp_req-&gt;comp_pars.initial_crc32 =
-=3D 0;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; comp_req-&gt;comp_pars.req_par_flags =
-=3D<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; (ICP_QAT_FW_COMP_BFINAL &lt;&lt; ICP_QAT_FW_COMP_BFINAL_BITPOS);=
-<br>
-+<br>
-+#if RTE_LOG_DP_LEVEL &gt;=3D RTE_LOG_DEBUG<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; QAT_DP_HEXDUMP_LOG(DEBUG, &quot;qat c=
-ompression message template:&quot;, comp_req,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sizeof(struct icp_qat_fw_comp_req));<br>
-+#endif<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;<br>
-+}<br>
-+<br>
-+static struct qat_comp_capabilities_info<br>
-+qat_comp_cap_get_gen6(struct qat_pci_device *qat_dev __rte_unused)<br>
-+{<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct qat_comp_capabilities_info cap=
-a_info =3D {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .data =3D qat_gen6_comp_capabilities,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; .size =3D sizeof(qat_gen6_comp_capabilities)<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; };<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return capa_info;<br>
-+}<br>
-+<br>
-+RTE_INIT(qat_comp_pmd_gen6_init)<br>
-+{<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_comp_gen_dev_ops[QAT_GEN6].compre=
-ssdev_ops =3D<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &amp;qat_comp_op=
-s_gen6;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_comp_gen_dev_ops[QAT_GEN6].qat_co=
-mp_get_capabilities =3D<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_comp_cap_get=
-_gen6;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_comp_gen_dev_ops[QAT_GEN6].qat_co=
-mp_get_num_im_bufs_required =3D<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_comp_get_num=
-_im_bufs_required_gen4;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_comp_gen_dev_ops[QAT_GEN6].qat_co=
-mp_get_ram_bank_flags =3D<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_comp_get_ram=
-_bank_flags_gen4;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_comp_gen_dev_ops[QAT_GEN6].qat_co=
-mp_set_slice_cfg_word =3D<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_comp_set_sli=
-ce_cfg_word_gen4;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_comp_gen_dev_ops[QAT_GEN6].qat_co=
-mp_get_feature_flags =3D<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_comp_get_fea=
-tures_gen1;<br>
-+}<br>
-diff --git a/drivers/compress/qat/dev/qat_comp_pmd_gens.h b/drivers/compres=
-s/qat/dev/qat_comp_pmd_gens.h<br>
-index e329fe3e18..6a0b281abd 100644<br>
---- a/drivers/compress/qat/dev/qat_comp_pmd_gens.h<br>
-+++ b/drivers/compress/qat/dev/qat_comp_pmd_gens.h<br>
-@@ -41,4 +41,12 @@ qat_comp_dev_config_gen4(struct rte_compressdev *dev,<br=
->
-&nbsp;<br>
-&nbsp;extern struct rte_compressdev_ops qat_comp_ops_gen1;<br>
-&nbsp;<br>
-+int<br>
-+qat_comp_create_templates_gen6(struct qat_comp_xform *qat_xform,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; const struct rte_memzone *interm_buff_mz,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; const struct rte_comp_xform *xform,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; const struct qat_comp_stream *stream,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; enum rte_comp_op_type op_type,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; enum qat_device_gen qat_dev_gen);<br>
-+<br>
-&nbsp;#endif /* _QAT_COMP_PMD_GENS_H_ */<br>
-diff --git a/drivers/compress/qat/qat_comp.c b/drivers/compress/qat/qat_com=
-p.c<br>
-index 559948a46a..35fa513631 100644<br>
---- a/drivers/compress/qat/qat_comp.c<br>
-+++ b/drivers/compress/qat/qat_comp.c<br>
-@@ -18,6 +18,7 @@<br>
-&nbsp;#include &quot;qat_logs.h&quot;<br>
-&nbsp;#include &quot;qat_comp.h&quot;<br>
-&nbsp;#include &quot;qat_comp_pmd.h&quot;<br>
-+#include &quot;dev/qat_comp_pmd_gens.h&quot;<br>
-&nbsp;<br>
-&nbsp;static void<br>
-&nbsp;qat_comp_fallback_to_fixed(struct icp_qat_fw_comp_req *comp_req)<br>
-@@ -814,7 +815,7 @@ qat_comp_create_req_hdr(struct icp_qat_fw_comn_req_hdr =
-*header,<br>
-&nbsp;}<br>
-&nbsp;<br>
-&nbsp;static int<br>
--qat_comp_create_templates(struct qat_comp_xform *qat_xform,<br>
-+qat_comp_create_templates_genx(struct qat_comp_xform *qat_xform,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp; const struct rte_memzone *interm_buff_mz,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp; const struct rte_comp_xform *xform,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp; const struct qat_comp_stream *stream,<br>
-@@ -933,6 +934,24 @@ qat_comp_create_templates(struct qat_comp_xform *qat_x=
-form,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;<br>
-&nbsp;}<br>
-&nbsp;<br>
-+static int<br>
-+qat_comp_create_templates(struct qat_comp_xform *qat_xform,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cons=
-t struct rte_memzone *interm_buff_mz,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cons=
-t struct rte_comp_xform *xform,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cons=
-t struct qat_comp_stream *stream,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enum=
- rte_comp_op_type op_type,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enum=
- qat_device_gen qat_dev_gen)<br>
-+{<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (qat_dev_gen =3D=3D QAT_GEN6)<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; return qat_comp_create_templates_gen6(qat_xform,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; interm_buff_mz, =
-xform, stream, op_type,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_dev_gen);<br=
->
-+<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return qat_comp_create_templates_genx=
-(qat_xform,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; interm_buff_mz, =
-xform, stream, op_type,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qat_dev_gen);<br=
->
-+}<br>
-+<br>
-&nbsp;/**<br>
-&nbsp; * Create driver private_xform data.<br>
-&nbsp; *<br>
--- <br>
-2.52.0<br>
-<br>
-</div>
-</span></font></div>
-</body>
-</html>
-
---_000_LV2PR11MB60459B9E8839EE18C6E94FD381722LV2PR11MB6045namp_--
+--_000_PH3PPFCACDF6938A8985B12377FADE5C220AF722PH3PPFCACDF6938_--
