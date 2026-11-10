@@ -2,83 +2,78 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E021606A31C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 08:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C72606A321
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 08:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.a=rsa-sha256 header.s=pfpt0220 header.b=ZXrgM6lf
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=hOAgCMcI
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C281B40297;
-	Thu, 12 Nov 2026 09:07:37 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTPS id 4234140281
- for <dev@dpdk.org>; Tue, 10 Nov 2026 15:15:53 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6AABoru63372508; Tue, 10 Nov 2026 06:15:51 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=1r8fLZ1cQOxedwmOg4IeOkx
- kIMSjBXv6tSeKJYn85To=; b=ZXrgM6lfjM8o2kKsJRoRFAHCXr2eQ0B/pFci8R0
- ssEufN3XUjfeiGbY+kajJG2hp/4D5G5axknkRAy8FkJ+3mTkpE3K1go7FBx8V8Nq
- gkj5csgIKzwdbnPNym7h2TR+ZaCFvJ89Wdv3TfP/GvShQmJflDOiEYaW+WMyyzBg
- Gi35UHtebgrr80nz1MfUEHOoEJahBWhuJznrmSbv9XN/oW6TYq+OpJoIL76m7NC0
- VtgaOOm6zDzIAaZ/HddQNh28xhdG2vtUIbJnKJO/D8Ro+dBarqAGGsuzLLQqVmHa
- CuAWD9WOR8GRlgkJmolRFNi7/84YgH7mqarQ6cr4maed3ng==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4hujp6wfba-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 10 Nov 2026 06:15:51 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 10 Nov 2026 06:15:49 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 10 Nov 2026 06:15:49 -0800
-Received: from cavium-ThinkCentre-E73.. (unknown [10.28.37.6])
- by maili.marvell.com (Postfix) with ESMTP id 0B2CC3F706A;
- Tue, 10 Nov 2026 06:15:46 -0800 (PST)
-From: Mohit Kumar Parjapat <mprajapat@marvell.com>
-To: Thomas Monjalon <thomas@monjalon.net>, Nithin Dabilpuram
- <ndabilpuram@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, "Sunil
- Kumar Kori" <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- "Harman Kalra" <hkalra@marvell.com>,
- David Marchand <david.marchand@redhat.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-CC: <dev@dpdk.org>, <jerinj@marvell.com>, Mohit Kumar Parjapat
- <mprajapat@marvell.com>
-Subject: [PATCH] common/cnxk: use one interrupt handle per vector
-Date: Tue, 10 Nov 2026 19:45:35 +0530
-Message-ID: <20261110141542.3858558-1-mprajapat@marvell.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 5C04540E12;
+	Thu, 12 Nov 2026 09:07:38 +0100 (CET)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
+ [209.85.128.50])
+ by mails.dpdk.org (Postfix) with ESMTPS id 02DF540281
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 16:13:25 +0100 (CET)
+Received: by mail-wm1-f50.google.com with SMTP id
+ 5b1f17b1804b1-4a140e7405dso17774535e9.3
+ for <dev@dpdk.org>; Tue, 10 Nov 2026 07:13:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1794323604; x=1794928404; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=4vGJbQAFgrxKDxMAlRBu+QZ/F3hGCGgNU6B+atNn+I8=;
+ b=hOAgCMcIy/rz/DEpLmBrjUx03GbboWZh9BEcnQxHFyew6B3IZbt952Wi8fRw17iiYe
+ ohiWOvOBvM+9IuzLxX+NuWAqF5DcscD4oXKaEFHPpf4/VOXEdOtwF/DSaXkRdqtnfqQ4
+ 0/1gCqcxfxnKO9wZCDjYDn8dCEO7infru8dV54K8MN6qE1F1QptDCx3rw7Bh/UIWaAJw
+ AJiIuRE1AZmvBaxq6jZdfoQk3r47MJy4CfqARqwZ6DHeEvjc8DKvpLJtyXurji64o8UK
+ +zUplzcUrR9fWQ2sLA8uDtz95gDMwTW98yfr/LtJAtmxQAy21hw2N/r5OhglE6IAs6d7
+ Ao0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1794323604; x=1794928404;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=4vGJbQAFgrxKDxMAlRBu+QZ/F3hGCGgNU6B+atNn+I8=;
+ b=DSWJVojWQ08t64by+4a1wRxoaW2JDtwemLa4Xhkq8WF7GWSDR4wuQ/P7A+bLTuOi2B
+ xu4eCrRQo4mFLzqG5pwU/V2bc0CG3u1dTe9lT0l3OUxdMNvcTCrRG36n3RNWqiJKY6ns
+ /IIVpHp2A9t8gH/g0sWUNU2aFIoVTUtehLQvt4BzyXwRx4R7rZ23dISej8DHLtpUTEKx
+ EqWDc42k6AXPPJaGJe70+PslemOfgrdkezhkwV3WhPzKCS3XDfbfwH1oiDMoULBcDu2U
+ /AV/z3y89unV+pIypFXuFaKJ2grcl4iT83zusDWITzcuUR5bqzqPGITOrEw7t0TxU7QE
+ iRuw==
+X-Gm-Message-State: APuU4Z9t/ZkZPTp7c1R6qGwW6OEC8stusHSz5qdIAEPthyGZl/XZdjkT
+ GZMQ5Z4a7fSv07lt/IHg0uBTf0m9ozUlpqWhcTAOIbXGehfq8FgE6rm5Vxlj0afR
+X-Gm-Gg: AYBFou11guLdp/DJXbQqp6FagK5vszvRBZ1aZ/Ivmd3g6jBRFUwZutnGBx6iRA5mkrM
+ vuGLnUldGoZPvAAbJndF3yGfYU9Tnhr+AuOOtfuwwRgc2oixQBJ2Zsx6eHVcTz1vqH6w+E8RPrP
+ dU3L7ruv+psWJccypqJDHM8LwYX8W+MWGl8a2Hev3+31NJg8UYDe1LwgHGQ0k66+oVYZVqXG5Jg
+ zVPE0XgZKtAGrIzDgZOyKNP5ba7ROUdDAQrh3S80ojhy4AKX1sBA6O55Gymn92HxjAu73Gx+NfA
+ zsyC/B3axS40IaPN+/GtOAzyo+MQ7IKkrUhFY1tfD00AwSN7CmvbVEhb8CQnnjGgBHAMf4a96xO
+ p9vmNh0CsMyPaekWJE/stJV7aPNITrTD8ntZ3xjZQ6i4ZAr4oitnAL/JXkAtgDx3JRWoAUeiVlI
+ dmRF7HgdyqZNN7nTYvo1cE10yd/U4AzuQBoKVzGHKeAedpLvovNqPiZM8yyv60L2s6ZzklSXZhj
+ bFraa9r/M9THLFgadO1nY+HNuau2ra5u0ppSxMaO02uy4WL0kGqx/HD3VqwMeFnOXX7YHCWUL4T
+ CAQuXRI92dAkhxaVDTm/mxguqo/crtwpKV0YM/iWpgVS55VxCt2Gy1WOZ6mf9b4wIoTBigl9gn3
+ zYfcrmJ/EdjodVKuMFTI/yPTdZ+O3tfoO3eMvilvnwkVMGFwAneznhQnjArd2kge5cNWg
+X-Received: by 2002:a05:600c:34c7:b0:4a2:133:45e1 with SMTP id
+ 5b1f17b1804b1-4ba0234cccemr47043775e9.24.1794323604356; 
+ Tue, 10 Nov 2026 07:13:24 -0800 (PST)
+Received: from center.jhjvjihww5qejoy14qwv1cc4td.frax.internal.cloudapp.net
+ ([131.189.143.225]) by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-4ba0234a5dcsm70933495e9.2.2026.11.10.07.13.23
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 10 Nov 2026 07:13:23 -0800 (PST)
+From: Orgad Shaneh <orgads@gmail.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>,
+ Long Li <longli@kernel.org>, Aditya Garg <gargaditya@microsoft.com>
+Subject: [PATCH v2] net/mana: do not block Rx interrupt calls during a reset
+Date: Tue, 10 Nov 2026 15:13:22 +0000
+Message-ID: <20261110151322.238955-1-orgads@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261110064712.6b1a3eb7@phoenix.local>
+References: <20261110094243.151321-1-orgads@gmail.com>
+ <20261110064712.6b1a3eb7@phoenix.local>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=d85gWhjE c=1 sm=1 tr=0 ts=6af32717 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=EAYMVhzMl8SCOHhVQcBL:22 a=M5GUcnROAAAA:8 a=Q-fNiiVtAAAA:8 a=20KFwNOVAAAA:8
- a=vBLQeB-DAAAA:8 a=pGLkceISAAAA:8 a=NQolgeQzAAAA:8 a=z3WRe0ENAAAA:8
- a=DuG982J98LIkI8obGPsA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=u_ZAi6OwbbHxVo6T9Mhb:22
- a=we4VnhAU2_OSqmN109HU:22
-X-Proofpoint-ORIG-GUID: I2zGsKlzlOsgGLSKhwRRdxGXQBcck2km
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEwMDA1NiBTYWx0ZWRfX5tdfyKr7fbFk
- v1IAeCB9UEFBI0z4TuOeU8JQcZhHZTBISor+0ftmhKoSw9uNN1MUJrNAwIORa66r1vR8Ypr+66I
- IXBJGK6XB33m1RekHZPt2M05oxBdKIk=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEwMDA1NiBTYWx0ZWRfX+NeYCdkG/ARS
- iHjm0KHtI+St78CInNXJSLKcf38Vu+WnYbAKHQ0cL7nGVajWNwduFJZABrDPJXQQdZZALBR4sIs
- 76eujRdUDekV6ipRm+7BDjhCBY0ldS+d5FW87u2CBupgXCTvWg3B0K6iTFr86yrQYkYe3GO+2J6
- 4nnYNlTKKD/0E5aqH30C3iDgZPE+MxUQD7bIvcqh9OnidMaKwyP9BDPREu2SGl42KH7n3jiEg6M
- LPRh3Y4QuoWNkbboy0G+DhWV3rxkTWSZelUOB0/2/N9suu6LjCA/IHF2k9zx19u4HQ4isz14GMF
- Pnf6kf2xkvIhA08P6JQswydfv2kA3kTMk/XFpgbghsF87myRP/9RB+ZXXODx4HGPAJRmOBhGdDi
- pxuQy1CV6huIS5ncD7APKhpSyvytZBUM1rKv0o3HE3v/17VyGuSzmblnh5OR6Vp6lhXXSK2Rqku
- uFYSkvjG2c8hHDWjOOw==
-X-Proofpoint-GUID: I2zGsKlzlOsgGLSKhwRRdxGXQBcck2km
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-10_04,2026-11-06_01,2025-10-01_01
 X-Mailman-Approved-At: Thu, 12 Nov 2026 09:07:37 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -89,258 +84,94 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-All MSI-X vectors were registered on pci_dev->intr_handle, rewriting
-its fd before each rte_intr_callback_register(). Since EAL references
-the caller's handle instead of a copy, all vectors share one interrupt
-source whose fd is read live, so only the last vector is polled.
-Mailbox replies are lost, probe times out, and the cleanup path leaves
-a closed fd in the source, making the interrupt thread panic in
-epoll_ctl().
+Rx interrupt enable and disable wait for reset_ops_lock and then
+return -EBUSY if a reset is in progress. The reset thread holds that
+lock across the teardown (mana_dev_stop(), the RESET_ENTER request
+to secondary processes, mana_dev_close()) and across the re-probe,
+and each request to the secondaries may take up to
+MANA_MP_REQ_TIMEOUT_SEC. An lcore that calls rx_intr_enable or
+rx_intr_disable during one of those steps blocks for that long,
+only to get -EBUSY.
 
-Register each vector on its own handle, tracked in a list so that
-unregister uses and frees the same handle. Reject duplicate vector
-registration, close the vector's own eventfd on unregister, and unwind
-all error paths of plt_irq_register().
+Retry the trylock while the device is active, yielding the CPU in
+between, and return -EBUSY as soon as it is not. Outside a reset the
+lock is held by another queue's Rx interrupt call or by a control
+operation. The data path must already be stopped before
+dev_stop/dev_close, so the wait is short in a correct application.
 
-Fixes: c663018eb7f3 ("interrupts: do not duplicate interrupt handles")
-
-Signed-off-by: Mohit Kumar Parjapat <mprajapat@marvell.com>
-Signed-off-by: Harman Kalra <hkalra@marvell.com>
+Suggested-by: Wei Hu <weh@microsoft.com>
+Signed-off-by: Orgad Shaneh <orgads@gmail.com>
 ---
- .mailmap                           |   1 +
- drivers/common/cnxk/roc_platform.c | 134 ++++++++++++++++++++++++-----
- 2 files changed, 115 insertions(+), 20 deletions(-)
+v2:
+- Yield with sched_yield() instead of rte_pause(), so a preempted
+  lock holder on the same CPU can run (Stephen).
+- Fix the commit message and comment: outside a reset the lock is
+  also held by control operations, so the wait is short only in an
+  application that stops the data path before dev_stop/dev_close.
 
-diff --git a/.mailmap b/.mailmap
-index 754dd9e760..8ca51f72d7 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1175,6 +1175,7 @@ Mohammad Iqbal Ahmad <mahmad@marvell.com>
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
- Mohammed Gamal <mgamal@redhat.com>
- Mohand Alrasheed <mrasheed@wirefilter.com>
-+Mohit Kumar Parjapat <mprajapat@marvell.com>
- Mohsin Kazmi <mohsin.kazmi14@gmail.com>
- Mohsin Mazhar Shaikh <mohsinmazhar_shaikh@trendmicro.com>
- Mohsin Shaikh <mohsinshaikh@niometrics.com>
-diff --git a/drivers/common/cnxk/roc_platform.c b/drivers/common/cnxk/roc_platform.c
-index 59d662fab4..0a1b96092b 100644
---- a/drivers/common/cnxk/roc_platform.c
-+++ b/drivers/common/cnxk/roc_platform.c
-@@ -16,8 +16,49 @@
- #include <stdlib.h>
- #include <sys/eventfd.h>
- #include <sys/ioctl.h>
-+#include <sys/queue.h>
+Applies on next-net for-main, on top of efa36b47334d ("net/mana: fix
+Rx interrupt enable failing on lock contention"). Squash it into that
+commit if you prefer.
+
+Builds with meson -Dwerror=true (gcc 14, rdma-core 56). A MANA reset
+cannot be triggered on demand on Azure, so the reset path is untested.
+
+The rwlock (tryrdlock in rx_intr, write lock in control ops and the
+reset thread) fits the burst_state follow-up for main; I'll look at
+it there.
+
+ drivers/net/mana/mana.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
+index f624cde6b9..71a3fd20d7 100644
+--- a/drivers/net/mana/mana.c
++++ b/drivers/net/mana/mana.c
+@@ -2,6 +2,7 @@
+  * Copyright 2022 Microsoft Corporation
+  */
+ 
++#include <sched.h>
  #include <unistd.h>
+ #include <dirent.h>
+ #include <fcntl.h>
+@@ -451,14 +452,24 @@ mana_reset_trylock(struct mana_priv *priv)
+ }
  
-+/*
-+ * EAL interrupt sources are keyed by interrupt handle pointer and read the
-+ * handle FD at epoll/dispatch time, so each MSI-X vector needs its own
-+ * handle holding that vector's eventfd.
-+ */
-+struct plt_irq_vec {
-+	TAILQ_ENTRY(plt_irq_vec) next;
-+	const struct plt_intr_handle *dev_handle;
-+	struct plt_intr_handle *handle;
-+	plt_intr_callback_fn cb;
-+	void *data;
-+	unsigned int vec;
-+};
-+
-+static TAILQ_HEAD(, plt_irq_vec) plt_irq_vec_list = TAILQ_HEAD_INITIALIZER(plt_irq_vec_list);
-+static plt_spinlock_t plt_irq_vec_lock = RTE_SPINLOCK_INITIALIZER;
-+
-+static struct plt_irq_vec *
-+irq_vec_find(const struct plt_intr_handle *dev_handle, unsigned int vec)
-+{
-+	struct plt_irq_vec *irq_vec;
-+
-+	TAILQ_FOREACH(irq_vec, &plt_irq_vec_list, next) {
-+		if (irq_vec->dev_handle == dev_handle && irq_vec->vec == vec)
-+			return irq_vec;
-+	}
-+
-+	return NULL;
-+}
-+
-+static void
-+irq_vec_free(struct plt_irq_vec *irq_vec)
-+{
-+	if (irq_vec->handle != NULL) {
-+		plt_intr_fd_close(irq_vec->handle);
-+		plt_intr_instance_free(irq_vec->handle);
-+	}
-+	free(irq_vec);
-+}
-+
+ /*
+- * Like mana_reset_trylock(), but wait for the lock. Used by Rx interrupt
+- * enable/disable, which every queue calls on each sleep and wakeup: they
+- * must not fail just because another queue holds the lock for a moment.
++ * Like mana_reset_trylock(), but wait while the device is active. Used by
++ * Rx interrupt enable/disable, which every queue calls on each sleep and
++ * wakeup: they must not fail just because another queue holds the lock
++ * for a moment. Outside a reset the lock is held by another queue's Rx
++ * interrupt call or by a control operation; the data path must be stopped
++ * before dev_stop/dev_close, so in a correct application the wait is
++ * short. Once a reset has started, fail at once instead of waiting for
++ * its teardown or re-probe step.
+  */
  static int
- irq_get_info(struct plt_intr_handle *intr_handle)
+ mana_reset_lock(struct mana_priv *priv)
  {
-@@ -150,7 +191,7 @@ int
- plt_irq_register(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, void *data,
- 		 unsigned int vec)
- {
--	struct plt_intr_handle *tmp_handle;
-+	struct plt_irq_vec *irq_vec;
- 	uint32_t nb_efd, tmp_nb_efd;
- 	int rc, fd;
- 
-@@ -166,25 +207,61 @@ plt_irq_register(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, v
- 		return -EINVAL;
- 	}
- 
--	tmp_handle = intr_handle;
-+	irq_vec = calloc(1, sizeof(*irq_vec));
-+	if (irq_vec == NULL)
-+		return -ENOMEM;
-+	irq_vec->dev_handle = intr_handle;
-+	irq_vec->cb = cb;
-+	irq_vec->data = data;
-+	irq_vec->vec = vec;
-+
-+	irq_vec->handle = plt_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
-+	if (irq_vec->handle == NULL) {
-+		rc = -ENOMEM;
-+		goto free_vec;
-+	}
-+
- 	/* Create new eventfd for interrupt vector */
- 	fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
--	if (fd == -1)
--		return -ENODEV;
-+	if (fd == -1) {
-+		rc = -ENODEV;
-+		goto free_vec;
+-	pthread_mutex_lock(&priv->reset_ops_lock);
++	while (pthread_mutex_trylock(&priv->reset_ops_lock)) {
++		if (rte_atomic_load_explicit(&priv->dev_state,
++		    rte_memory_order_relaxed) != MANA_DEV_ACTIVE)
++			return -EBUSY;
++		sched_yield();
 +	}
  
--	if (plt_intr_fd_set(tmp_handle, fd))
--		return -errno;
-+	if (plt_intr_fd_set(irq_vec->handle, fd)) {
-+		close(fd);
-+		rc = -EINVAL;
-+		goto free_vec;
-+	}
-+
-+	/* EAL reads the 8 byte eventfd counter only for VFIO handle types */
-+	if (plt_intr_type_set(irq_vec->handle, plt_intr_type_get(intr_handle))) {
-+		rc = -EINVAL;
-+		goto free_vec;
-+	}
-+
-+	plt_spinlock_lock(&plt_irq_vec_lock);
-+	if (irq_vec_find(intr_handle, vec) != NULL) {
-+		plt_spinlock_unlock(&plt_irq_vec_lock);
-+		plt_err("Vector:0x%x irq already registered", vec);
-+		rc = -EEXIST;
-+		goto free_vec;
-+	}
-+	TAILQ_INSERT_TAIL(&plt_irq_vec_list, irq_vec, next);
-+	plt_spinlock_unlock(&plt_irq_vec_lock);
- 
- 	/* Register vector interrupt callback */
--	rc = plt_intr_callback_register(tmp_handle, cb, data);
-+	rc = plt_intr_callback_register(irq_vec->handle, cb, data);
- 	if (rc) {
- 		plt_err("Failed to register vector:0x%x irq callback.", vec);
--		return rc;
-+		goto remove_vec;
- 	}
- 
- 	rc = plt_intr_efds_index_set(intr_handle, vec, fd);
--	if (rc)
--		return rc;
-+	if (rc) {
-+		plt_intr_callback_unregister(irq_vec->handle, cb, data);
-+		goto remove_vec;
-+	}
- 
- 	nb_efd = (vec > (uint32_t)plt_intr_nb_efd_get(intr_handle)) ?
- 			 vec :
-@@ -199,15 +276,23 @@ plt_irq_register(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, v
- 
- 	/* Enable MSIX vectors to VFIO */
- 	return irq_config(intr_handle, vec);
-+
-+remove_vec:
-+	plt_spinlock_lock(&plt_irq_vec_lock);
-+	TAILQ_REMOVE(&plt_irq_vec_list, irq_vec, next);
-+	plt_spinlock_unlock(&plt_irq_vec_lock);
-+free_vec:
-+	irq_vec_free(irq_vec);
-+	return rc;
- }
- 
- void
- plt_irq_unregister(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb, void *data,
- 		   unsigned int vec)
- {
--	struct plt_intr_handle *tmp_handle;
-+	struct plt_irq_vec *irq_vec;
- 	uint8_t retries = 5; /* 5 ms */
--	int rc, fd;
-+	int rc;
- 
- 	if (vec > (uint32_t)plt_intr_max_intr_get(intr_handle)) {
- 		plt_err("Error unregistering MSI-X interrupts vec:%d > %d", vec,
-@@ -215,17 +300,23 @@ plt_irq_unregister(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb,
- 		return;
- 	}
- 
--	tmp_handle = intr_handle;
--	fd = plt_intr_efds_index_get(intr_handle, vec);
--	if (fd == -1)
-+	plt_spinlock_lock(&plt_irq_vec_lock);
-+	irq_vec = irq_vec_find(intr_handle, vec);
-+	plt_spinlock_unlock(&plt_irq_vec_lock);
-+	if (irq_vec == NULL) {
-+		if (plt_intr_efds_index_get(intr_handle, vec) != -1)
-+			plt_err("Error unregistering MSI-X vec %d cb, not registered", vec);
- 		return;
-+	}
- 
--	if (plt_intr_fd_set(tmp_handle, fd))
-+	if (irq_vec->cb != cb || irq_vec->data != data) {
-+		plt_err("MSI-X vec %d registered with a different callback", vec);
- 		return;
-+	}
- 
- 	do {
- 		/* Un-register callback func from platform lib */
--		rc = plt_intr_callback_unregister(tmp_handle, cb, data);
-+		rc = plt_intr_callback_unregister(irq_vec->handle, cb, data);
- 		/* Retry only if -EAGAIN */
- 		if (rc != -EAGAIN)
- 			break;
-@@ -238,15 +329,18 @@ plt_irq_unregister(struct plt_intr_handle *intr_handle, plt_intr_callback_fn cb,
- 		return;
- 	}
- 
-+	plt_spinlock_lock(&plt_irq_vec_lock);
-+	TAILQ_REMOVE(&plt_irq_vec_list, irq_vec, next);
-+	plt_spinlock_unlock(&plt_irq_vec_lock);
-+
- 	plt_base_dbg("Disable vector:0x%x for vfio (efds: %d, max:%d)", vec,
- 		     plt_intr_nb_efd_get(intr_handle), plt_intr_max_intr_get(intr_handle));
- 
--	if (plt_intr_efds_index_get(intr_handle, vec) != -1)
--		close(plt_intr_efds_index_get(intr_handle, vec));
- 	/* Disable MSIX vectors from VFIO */
- 	plt_intr_efds_index_set(intr_handle, vec, -1);
--
- 	irq_config(intr_handle, vec);
-+
-+	irq_vec_free(irq_vec);
- }
- #endif
- 
+ 	if (rte_atomic_load_explicit(&priv->dev_state,
+ 	    rte_memory_order_acquire) != MANA_DEV_ACTIVE) {
 -- 
-2.43.0
+2.52.0
 
