@@ -2,33 +2,33 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FEC606A333
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Nov 2026 15:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0318E606A32A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Nov 2026 15:11:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF3F640297;
-	Wed, 11 Nov 2026 16:10:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AB0C34111C;
+	Wed, 11 Nov 2026 16:11:43 +0100 (CET)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTPS id 29BE64026A;
- Wed, 11 Nov 2026 16:10:30 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id F184E4026A;
+ Wed, 11 Nov 2026 16:11:42 +0100 (CET)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C7D4120547;
- Wed, 11 Nov 2026 16:10:29 +0100 (CET)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 8C65F20547;
+ Wed, 11 Nov 2026 16:11:42 +0100 (CET)
 Content-class: urn:content-classes:message
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Subject: Minutes of Technical Board Meeting, 2026-10-28
+Subject: Minutes of Technical Board Meeting, 2026-11-11
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Wed, 11 Nov 2026 16:10:28 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65B05@smartserver.smartshare.dk>
+Date: Wed, 11 Nov 2026 16:11:40 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65B06@smartserver.smartshare.dk>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: Minutes of Technical Board Meeting, 2026-10-28
-Thread-Index: Ad1nj/0VTjhXJljpSnCkbCKpXnrTDgKXrlxw
+Thread-Topic: Minutes of Technical Board Meeting, 2026-11-11
+Thread-Index: Ad1x7vR3ImrJ7YPAQISNGT6NNKA38g==
 From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
 To: <dev@dpdk.org>
 Cc: <techboard@dpdk.org>
@@ -54,7 +54,7 @@ d=3Dd808f1f6-0a28-4165-929e-5a5bcae7efeb
 Meetings are public, and DPDK community members are welcome to attend.
 Agenda and minutes can be found at =
 http://core.dpdk.org/techboard/minutes
-The next meeting will happen on November 11 and will be chaired by =
+The next meeting will happen on November 25 and will be chaired by =
 Morten Br=F8rup.
 
 This meeting was cancelled due to lack of quorum.
