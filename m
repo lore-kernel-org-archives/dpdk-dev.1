@@ -2,20 +2,21 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9BA606A334
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 17:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEF9606A31C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 17:32:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6149E415D7;
-	Thu, 12 Nov 2026 18:31:03 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 33B50415D7;
+	Thu, 12 Nov 2026 18:32:01 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id 7EA7B40E32
- for <dev@dpdk.org>; Thu, 12 Nov 2026 18:31:02 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 98A5E40E32
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 18:31:59 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 767F14BE8C; Thu, 12 Nov 2026 18:31:02 +0100 (CET)
+ id 937A34D161; Thu, 12 Nov 2026 18:31:59 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/other Bug 2105] pdcp: rte_pktmbuf_prepend() result not checked
-Date: Thu, 12 Nov 2026 17:31:02 +0000
+Subject: [DPDK/other Bug 2106] pipeline: pipeline_spec_free() does not free
+ the spec
+Date: Thu, 12 Nov 2026 17:31:59 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -34,7 +35,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-2105-3@https.bugs.dpdk.org/>
+Message-ID: <bug-2106-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -56,10 +57,10 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2105
+https://bugs.dpdk.org/show_bug.cgi?id=3D2106
 
-            Bug ID: 2105
-           Summary: pdcp: rte_pktmbuf_prepend() result not checked
+            Bug ID: 2106
+           Summary: pipeline: pipeline_spec_free() does not free the spec
            Product: DPDK
            Version: 26.11
           Hardware: All
@@ -72,13 +73,13 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D2105
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Found by building with GCC 16 and -fanalyzer
-
-lib/pdcp/pdcp_process.c:59, :146 and :167 call rte_pktmbuf_prepend(mb, 8) a=
-nd
-write through the result with rte_memcpy(). With less than 8 bytes of headr=
-oom
-the result is NULL and the datapath crashes.
+pipeline_spec_parse() allocates s with calloc
+(lib/pipeline/rte_swx_pipeline_spec.c:2893). pipeline_spec_free() (:2193-22=
+11)
+frees the members and ends with memset(s, 0, sizeof(*s)); it never frees s.
+Both callers (:3494 and rte_swx_pipeline.c:14675) rely on it. The struct le=
+aks
+on every parse.
 
 --=20
 You are receiving this mail because:
