@@ -2,98 +2,96 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2891A60A261D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 21:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE82606A31C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 21:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=uMw6wDBm;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=XmE/nhvX
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=xDlua7eu;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=Fv4sDTKt
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E0BE42DC1;
-	Thu, 12 Nov 2026 22:24:00 +0100 (CET)
-Received: from fout-b3-smtp.messagingengine.com
- (fout-b3-smtp.messagingengine.com [202.12.124.146])
- by mails.dpdk.org (Postfix) with ESMTPS id 3387042D7B
- for <dev@dpdk.org>; Thu, 12 Nov 2026 22:23:59 +0100 (CET)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfout.stl.internal (Postfix) with ESMTP id 371091D00644
- for <dev@dpdk.org>; Thu, 12 Nov 2026 16:23:58 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-10.internal (MEProxy); Thu, 12 Nov 2026 16:23:58 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 474D442DFA;
+	Thu, 12 Nov 2026 22:39:37 +0100 (CET)
+Received: from fhigh-b4-smtp.messagingengine.com
+ (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+ by mails.dpdk.org (Postfix) with ESMTPS id ED5A242DA7
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 22:39:35 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 0BF927A078D
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 16:39:35 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Thu, 12 Nov 2026 16:39:35 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1794518637;
- x=1794605037; bh=FqvH/fbWO/VvA3Xz+N1H9mdJjQStmV6unZXndIsXYRs=; b=
- uMw6wDBmq9/5O7ZbtmzLObNhck8u5gOMo+dX0cffU59TxZ3TumbsDEJS7hViClGy
- 7iWzu0+hTnZfE9vmfX8FpRnLgKCvp64CF1r4XSHakBQFPI0PWu8W0NX/y46ldfH2
- /J/2gtcjGLqMorqXSH4saD0MJUrUUc5gdhWWsURB7vITcrtO1CGNyTFimmeCXpPH
- mYhHlIiGPQSnD8AJd5U+yCruNOjFarHySc5YSrvbPoBn7WZcbNk994nSdrKi+wr0
- MMPddGL5beHRN6sQo9VoJ6ygiXBWIY2J7UgWeTFecwvp87p643gb1Bz6phT97LjW
- JY6q4BiRo2hPl9MTjLevdA==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1794519574;
+ x=1794605974; bh=rO42uxb5Ymjs1HSi3VBeojLtjgwyLuDCXx4hLKpM5l4=; b=
+ xDlua7eu5VB/8LSmXshoELMrJnvlrPZ3pgC3HN3GyggSM02xlcYGpQ5YBl7pXZGy
+ srellpSQPd+SUmaky0s6IyaCT8wITBI5l8moRE794oaQWQbSe7pkJDUFEPPoKXbn
+ d0RWnOTv9Zf8VqAnhRD62VmUfkK77Lwi/MUT3ZJmpGNq9dRtNL8CW321Gxdt4WE6
+ Lk3hYgffDrMkV/YGVx+hMZl6nVkGDSWpq4DOBuPmTQPwbZlQDdDt15nW8HA6AEZ5
+ T2p3Ra1FqoEPpn9yMxFPd8nhYfjBflKNCEAqtX/YY9k25IOKpwH5z9P+lXw2cNp9
+ Yr5/mfdpV3WVu6XRqx/kRw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794518637; x=
- 1794605037; bh=FqvH/fbWO/VvA3Xz+N1H9mdJjQStmV6unZXndIsXYRs=; b=X
- mE/nhvXrMS9xqTww0o8Szp+65S2796zILVEWR1v6cAEeKnxvw/LyKi2kHRhKmoOs
- 0uIVy/MtoC/LiZXjOR23fqK8/OKZ8S8ov+1eTSL+RC+XUWOu7/Q06F3Gg/ANQP5b
- hFd4cVHNe3UjV3s2YxtXrFj72j2iLeuTjyyDHkz/pv7RNaMFDXIEGxYa5ixHPvce
- aLmzZbWSCZ0Oy+0BJr+T4eCdd6et2wsUgU7SyY+UCK+XmbTgczzW+PZla6ALJnl2
- dDPAhtvm5tqA2eONeegn8UFxziOItaUQ3aOifhqj1L2JxaK+YGUvkJTQyNvCYzLi
- zaeZdWzxOBXjTclE5jIAw==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794519574; x=
+ 1794605974; bh=rO42uxb5Ymjs1HSi3VBeojLtjgwyLuDCXx4hLKpM5l4=; b=F
+ v4sDTKt/YKMRAdtlsW+4XJVkjD20RHO8/LBg9CpiEzgCrtS+OQ82IG4Tps/7x93D
+ BtA4mVoK+8y7syaSy4xECUIZOVdJ7krHatW1REydMX8uzGlQMgPk++z15GXQt+Bs
+ 9JVmtciI8F5NpFXCE3mhkYhefZYhSm8YksxfN03uc2AeDYqNLBTfRvIe/R/D/6Hu
+ jv8Yq7imu9/ngax7p2RBw5YAXB6RBsJXxpCzVgn0MA24StPwNqZFOTUiIsY151G0
+ lL1EaCwB4DxGiP/+okjNfnHve1k/hC4+jiwuHxTm/VOVjAjiybtYtK4YIuz87w0O
+ h3eIDZEPdDlfVIH5TdkLA==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794518637; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1794519574; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:ZoeG0XJ3w0VxKfNIf/4hL0FyovdcywsjueZlGRj75em7hw5
- ZulXZuGoR/eBQest89E/yVGiwKnsdIrrOTmoQEZHKwIZjFp6KnFamQInyZIdFRkN
- 0Hr8WlJ4JseU/TA0WI6VTUZFc9NbVVjPQlJrvJtCevIjLrF+Ixv/3UTLs/ErMh13
- 6qDL6Xei+QmbQoSYxlscsLVLvukFnC2lkZfswwb3oLcRmAGfFdQk/JvIO38zE/qm
- 033ceBgW4M/35lXDK09r5kgdHEgmboqKuiLSKKYVCDdhYQweC+DRyfF0yCm58DWz
- 47p69skpr71YsvNArwKw7y3gDJw6DMyFicl5ywg==;
+ s=fm3:rsa-sha256:ldzH6E9qX8MPESgG6D+R9U3PyVryWBSIpz0KrABvhLsMDDO
+ 0QQzBOz5iYIP4HUnNPgpMu7UkOeFnRy+nNDgNE36j4C+n0PuB7tXI/8wjWhs0nUj
+ CLXUqvIW0wMYRGeWOltzad698JTJb4jPyLZcOvuqWm7jnwcTEoc+1W/UeVI5Ik1A
+ NhnbPlCb43qmdXQ7pKIYwUWH8IJBjMh+v2SvUHqJfx0B39pla+pA42Xc9L62FW+K
+ rQMeZ4x6i2Hoa2sdkqWs4KzQIr30TPU7sbm4tQbuTSJ6dKHUM3RsfAexa6nUNKtU
+ QBPC1G/aM/ip+N+MMKz9B0G0sDaVclWfmd+2Kcw==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:ZNTxMPw2VeEWabZHW/xQUee/VEa3bQW2+Y4kChvogOA=:P4NDNgqLGpZK37x0KUAqWk78UYISSpxPvtpgrPZw8Rc=;
-X-ME-Sender: <xms:bS72ahpyFsx5BVMr5xU80qldpTd239LU-5nA-lAvw3_UpQuIB4mdtw>
- <xme:bS72aslKBtDmRXA23mTOduViBUrL8nXS5bC21JCbpCtjIhOg7AYmchc0mbZoYLNbz
- Q0sPpGHK7e5zaXhpW-Xs74DNkBeeD4fx0HOsu265CC5rVDIDB_06l4>
-X-ME-Received: <xmr:bS72apy1Y8-agA6cyL_zcaqdkEc3cl5H-TFw_vTdh830u26wGZH8lP5ZrYppRX37D6yUt_uhJvk0NDXlR3qNKA8>
-X-ME-Proxy-Cause: dmFkZTGJ0gL/VxvTa/t4LONMGzwZvrcmoGM4SiocGUkltSrKGwalDNwHYzo7udYcX9OR+L
- nfZqbnKyoqRZuzkPOcDW6xQxxD9BM+2CYh4mB8D80dbewso+uvqzuod0NTxghD2yUSeJ+8
- r9PbJeuFM4/7ooIyAgrNnyy8PWdRFiTP3YwOI7SVyQ55odWTM+MYXzHdwJM9hs/ANUVGCu
- sAsP4gYAHuiq9BNf8H4XsyumbBmWIScvUf0QT24zeLLmyknWLUMSYvQiQvouCvh0yuEdZ3
- 8V+KBhKbzOcG/2VHhhAkRco7eYsuPgAMU5y+7cyyXWuqFhsobUJyNnhkBO59+6ifV3gpZl
- U0aNGjZm7Dvra6pXN38YKHhba7SBnyO342HUIw4obvZyaM2sWz60RibUPFIhGietTWZx9q
- u31TSy8BnN9/eZI+jPv4QRmb9XQYLeR4IgoJ1Tj/uFVabxEqhz/EUOkFPqkVbrN0wEK0u9
- 5KfUPm1b+8ZN8iZqvxYMS4Ug/WUX5T0ePdqhiL1Xe3nhN2NfefagrcxlDp//gPIuA6OdAu
- TD8G3N1No4RlJkz6qsUQa4d04/VYpz0fj8XJ2MSyOM8h4AIo/IHyxErzUy1ORddiD65aTu
- wj/kBUIDY0kKK4INTMtdw4J20peKBv9y8Yf9KILMdsl3rW4lL2SGahvOXb3A
-X-ME-Proxy: <xmx:bS72as-8340Sbu8G-wa1Mmr6yNXMLf-5ehb79Ckj59mas9AvhG9G4Q>
- <xmx:bS72atK4fEXUn2em2_2sY0g6mMb4ExZnM-b5pTnN19bA1602u9_xfA>
- <xmx:bS72aifNrAWxNkHO0yrDvj0VK12R6oz0ayEtrMIUQMEKnX04y4wxQA>
- <xmx:bS72as8yTgM3eiF1kAi7tQ7ZtGmdhQ7Z0YkwBH6aUXVt-UrOhNSxVA>
- <xmx:bS72amN2kwxgrpGlk4ptEAx84Cq4a8wR6DegBL_8Ar_5fkbv2le2eRMh>
+ h=sha256:oiSyzEv4ffitX90crVQ8JT2SLQKfUnDHkKtd5UTAgm0=:OdpoSJt/1UqP4p/hqom1DHTCSgxLdb4bwqA+49akv/I=;
+X-ME-Sender: <xms:FTL2aue0SiacaHzjgjPNbjHP_YKdAB1Pv2s4RUrGmTc3WPX5P3Hy7g>
+ <xme:FTL2aoUR3I2iML9Xcc6JNpEN80YuFKemF2RQzapMbIJa_YfRO8ZcTGt-04-A99Ywn
+ fPLzjueWbVihGo-NBQk5fOhwpa44y7XQvhayAj2drO1lErLSKePpj0>
+X-ME-Received: <xmr:FTL2anf93wgcR_9tBLRk5v0_bl2XxKWdNk_Y21UJIlgbE1LTc9WD9b9B-avWBE8k3_agirQteQUmx_tfBIDqosY>
+X-ME-Proxy-Cause: dmFkZTEbvU436cHz7CubxkIN0FucjwKTiQAzhieHX7baRTNgeUqojstmaxLXOzVXTanISd
+ iUbrgIYQUlm2fRwd1yzOnEatePH0V3zWH9svN5QOJyP8XZfDxZX6TJmnI9mEbs8CS3hgsx
+ e14ZWt3Gn0McIwxprtKeOEnBmNwZGiCCBO4F/c1P//sik2CF1A+FimOygsgebJ8ltsCz5E
+ jyZ5rHWdJ9YR2k7ztIKUKGc+wBzt7L8lb8kVRV14psOG1hs45CJ1jq9tz14YLChKMEYE/B
+ HDnotcSq0y14m34d7JTD7t5+TFLQNiYE1Ewdw1Io8H6FXnhkoA/bxkGMFtRUHddHH9moa7
+ R+Ph5cpv0oL7UE2Ewv4K6Zom6iMKtmJ2S6QG0BFNmODJm3M+aWMOOdvgmGL09PvQ1qu30Q
+ 39uKlNvPZtSX62zZXkaKsoD5uZ1LKpUQmm8W9Cg2uKtyYTBtgu4OE7raJ22YdyTAlFRqsK
+ fuXh/lm3MBscBLuNaMDxOnvzI7edwDmfomWgGwU9pys24W7F9vg4AdCmu+A27BK5aJGbFE
+ 6hLiNYpzr3KoMXS+0t2JPwLHbeqLKr2/cGBFueS1Gkxh52lAVBpzeihWywLySlDWu30cV7
+ sCK2eMZR8Z1xEMvhZcyHC4kj9vC69UC7luJ4Vsl+a7X8ECQzTZfwpmvFUWRg
+X-ME-Proxy: <xmx:FTL2akOW-kPM19oIXCP6B-KQjBUyQ9KHsTIDMRcjrjPgW7OrJenh8g>
+ <xmx:FTL2alg6YCI8kIVmlhAuZH64FjLRvPl5EBUpXRA7LsU2gd0m_d4a4Q>
+ <xmx:FTL2an31ownag6Vtf42Ejo2LxhcR13g8yEu9C7MsRpJ4ddVvSaSosA>
+ <xmx:FTL2avgJ28uLxuKKZ5RzKEkCd8AD6exe8PoSxrSq25h8aTrHoywblg>
+ <xmx:FjL2alIQB0dg_ifMgiGnJSXDx8VzBle9kNmaJtmUtpI80n7VfPI7-8Ho>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Nov 2026 16:23:56 -0500 (EST)
+ 12 Nov 2026 16:39:33 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Andrei-Niculae Petre <p31andrei@gmail.com>
-Cc: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, dev@dpdk.org,
- Stephen Hemminger <stephen@networkplumber.org>,
- Sean Morrissey <sean.morrissey@intel.com>, stable@dpdk.org
-Subject: Re: [PATCH v3] examples/l3fwd: fix compilation when DP debug on
-Date: Thu, 12 Nov 2026 22:23:54 +0100
-Message-ID: <h2Pe81DMT4Wbag_ICm5Ztg@monjalon.net>
-In-Reply-To: <20261107221707.20990-1-p31andrei@gmail.com>
-References: <20260414025137.91776-1-p31andrei@gmail.com>
- <20261107221707.20990-1-p31andrei@gmail.com>
+Cc: dev@dpdk.org, Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH] examples/l3fwd: sync cli options with documentation
+Date: Thu, 12 Nov 2026 22:39:29 +0100
+Message-ID: <Xt2OnYToTUabxdVNsyR63w@monjalon.net>
+In-Reply-To: <20261109004913.72418-1-p31andrei@gmail.com>
+References: <20261109004913.72418-1-p31andrei@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
@@ -107,58 +105,23 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-07/11/2026 23:17, Andrei-Niculae Petre:
-> Update l3fwd example app to fix compilation when building dpdk with
-> RTE_LOG_DP_LEVEL=RTE_LOG_DEBUG in config/rte_config.h .
-> Move l3fwd_acl.h include above all #ifdef L3FWDACL_DEBUG checks,
-> as previously one ifdef would evaluate to false all the time (as
-> header include was added too late).
-> 
-> Adapt maintainers line from previous examples/l3fwd-acl (removed in
-> 6de0ea50e9b9) to examples/l3fwd/l3fwd_acl* after l3fwd-acl app
-> unification into l3fwd. In 6de0ea50e9b9, a line with maintainer
-> expertise was removed.
+09/11/2026 01:49, Andrei-Niculae Petre:
+> Synchronize options between print_usage() in main.c and the sample app
+> guide documentation (l3_forward.rst).
 
-It is not related to the compilation fix, but OK to add this line.
+Comments from AI:
 
-> 
-> Own testing of the l3fwd example:
-> 1. It now compiles with "#define RTE_LOG_DP_LEVEL RTE_LOG_DEBUG" in
->    config/rte_config.h. See Bugzilla ID 1318 comments for full error
->    seen before this patch.
-> 2. I ran the l3fwd app with IPv4/IPv6 ACL rules to see the prints (when
->    RTE_LOG_DP_LEVEL RTE_LOG_DEBUG is set) in the application around ACL
->    work as expected. See extract below (I added \ to format to 72chars):
-> 
-> // dump_acl4_rule extract:
-> Packet Src:192.168.1.100 Dst:192.168.1.101 Src port:2048,Dst port:1846 \
-> hit ACL 1 - 192.168.1.100/24 0.0.0.0/0 0 : 65535 0 : 65535 0x0/0x0 \
-> 0xffffffff-0x1ffffffe-0xf0000001
-> 
-> // dump_acl6_rule extract:
-> Packet Src2001:db8:1::100
-> Dst2001:db8:1::101
-> Src port:32768,Dst port:21005 hit ACL 0 - \
-> 2001:0db8:0001:0000:0000:0000:0000:0000/64 \
-> 0000:0000:0000:0000:0000:0000:0000:0000/0 0 : 65535 0 : 65535 \
-> 0x0/0x0 0xffffffff-0x1fffffff-0xf0000000
+- The parser explicitly rejects 10 and 100 Mbps,
+  so these examples should be removed.
 
-These testing results are unrelated. Dropped.
-
-> Bugzilla ID: 1318
-> Fixes: 6de0ea50e9b9 ("examples/l3fwd: merge l3fwd-acl example")
-> Cc: stable@dpdk.org
-> Cc: sean.morrissey@intel.com
-> 
-> Signed-off-by: Andrei-Niculae Petre <p31andrei@gmail.com>
-
-Applied, thanks.
+--relax-rx-offload masks unsupported offloads
+but does not enable software validation on all forwarding paths.
 
 
