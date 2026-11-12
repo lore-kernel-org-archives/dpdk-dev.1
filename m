@@ -2,46 +2,63 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48AA606A32D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 09:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC1A606A321
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 10:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.a=rsa-sha256 header.s=mail header.b=iVrHuwtZ
+	dkim=pass (2048-bit key, unprotected) header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=A3wj/pY5
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 99E754029E;
-	Thu, 12 Nov 2026 10:58:21 +0100 (CET)
-Received: from forward504d.mail.yandex.net (forward504d.mail.yandex.net
- [31.44.14.20]) by mails.dpdk.org (Postfix) with ESMTPS id 5240140297;
- Thu, 12 Nov 2026 10:58:20 +0100 (CET)
-Received: from mail-nwsmtp-smtp-production-main-28
- (mail-nwsmtp-smtp-production-main-28.yp-c.yandex.net)
- by forward504d.mail.yandex.net (postfix) with ESMTPS id 5741F100466;
- Thu, 12 Nov 2026 12:58:19 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-28 with ESMTPSA id
- GwQg4eZ1F8c0-cI8ZExWe; Thu, 12 Nov 2026 12:58:18 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1794477498; bh=FleI0MneiFS+5j6WTqS9rCascOvFEFJ8CIg3PehmoH4=;
- h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
- b=iVrHuwtZRkTZ/ATKmJNoBS3z3My8AQwpEknkcpQW8rPpm8SCkkuIFpC7IwjshI35L
- XUpoPQHKMk1EFTeTKftD0svJP5CzrM4pgAwfhGYuS0ZmhhMdCUszozM+7c3huJ/d7A
- LyEZAWFagKHus7w4P51NHSu0pLM2vlMN/EqSgFQM=
-Authentication-Results: mail-nwsmtp-smtp-production-main-28;
- dkim=pass header.i=@yandex.ru
-Message-ID: <e48945f0-9f78-442e-a2df-b9315371851d@yandex.ru>
-Date: Thu, 12 Nov 2026 09:58:16 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 2485D40E15;
+	Thu, 12 Nov 2026 11:38:26 +0100 (CET)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+ by mails.dpdk.org (Postfix) with ESMTPS id 82F6140297;
+ Thu, 12 Nov 2026 11:38:23 +0100 (CET)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mxhk.zte.com.cn (FangMail) with ESMTPS id 4jQH0r5JlFz8Xrkn;
+ Thu, 12 Nov 2026 18:38:20 +0800 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=zte.com.cn;
+ s=z202610; t=1794479900;
+ bh=5nAT0TkrTDh6JUolj3dMrAelxjg0Lkh0Jy4/Ci1mlPQ=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=A3wj/pY506GrQRT6Aq+y9lRVTtfeay8Yfy9DlX+Kv7q2HDdr5aFchYziPASfWxUpT
+ XFdDVgv5HTXaqjJsFKdqXwy13CQWa7Dx1IBBskLTMa5GRRYUfe53VuHeZlAib4dSDG
+ uKrXFMIZuCVipCBTQhdQ+cdSxOZCpbfw+7VNijRr6iBgcxDqG15Ol8vUtansVFp0T8
+ wDp4w7GQRLX7LnMDSoTLGmY35fkDwruObEyOJdXYnAtuQ3/KtKDxw5JHGVNQW7f3hM
+ r/R4lPBtbyqyv6Fxhy9LsQ/Bjx32REwyWhWohDBbF6q29zGb0BIN3F80G3v3AidBBC
+ HXpsek3k18h9Q==
+Received: from szxl2zmapp07.zte.com.cn ([10.1.32.52])
+ by mse-fl1.zte.com.cn with SMTP id 6ACAcDPc094304;
+ Thu, 12 Nov 2026 18:38:13 +0800 (+08)
+ (envelope-from wang.junlong1@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Thu, 12 Nov 2026 18:38:16 +0800
+X-Zmail-TransId: 3e816af5971702c-aa876
+X-Zmail-LocalSMTP: 1
+X-Zmail-RealSender: wang.junlong1@zte.com.cn
+From: Junlong Wang <wang.junlong1@zte.com.cn>
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org, Junlong Wang <wang.junlong1@zte.com.cn>, stable@dpdk.org
+Subject: [PATCH v2 1/8] net/zxdh: reject out-of-range VLAN ID from VF
+Date: Thu, 12 Nov 2026 18:26:43 +0800
+Message-ID: <20261112102650.3162875-2-wang.junlong1@zte.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261112102650.3162875-1-wang.junlong1@zte.com.cn>
+References: <20261107030448.2891345-1-wang.junlong1@zte.com.cn>
+ <20261112102650.3162875-1-wang.junlong1@zte.com.cn>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] acl: reject rules with inverted range
-To: Andrey Mokrushin <a.mokrushin@ideco.ru>, dev@dpdk.org
-Cc: dmitry.kozliuk@gmail.com, stable@dpdk.org
-References: <20261110062341.52126-1-a.mokrushin@ideco.ru>
- <20261111073041.38712-1-a.mokrushin@ideco.ru>
-Content-Language: en-US, ru
-From: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-In-Reply-To: <20261111073041.38712-1-a.mokrushin@ideco.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl1.zte.com.cn 6ACAcDPc094304
+X-TLS: YES
+X-ENVELOPE-SENDER: wang.junlong1@zte.com.cn
+X-SOURCE-IP: 10.5.228.132 unknown Thu, 12 Nov 2026 18:38:20 +0800
+X-CLEAN: YES
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6AF5971C.000/4jQH0r5JlFz8Xrkn
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,176 +68,123 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
 
 
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-> rte_acl_build() doesn't check that for a RANGE field the low bound
-> (value) doesn't exceed the high bound (mask_range). Field types are
-> known only from the rte_acl_config passed to rte_acl_build(), so
-> rte_acl_add_rules() doesn't validate ranges. Such a rule is accepted,
-> and then:
-> - for a 1-byte field the build crashes with a NULL pointer
->    dereference in acl_gen_node();
-> - for a 2-byte field (e.g. port range 80..22) the build succeeds,
->    but the rule matches every value of the field instead of none.
->
-> The check was done only for the legacy ipv4vlan rules
-> (acl_ipv4vlan_check_rule(), now in app/test). Validate RANGE fields
-> of all rules in acl_check_bld_param(), together with the rest of the
-> build parameters, and fail rte_acl_build() with -EINVAL.
-> Add a test case with the generic API.
->
-> Fixes: dc276b5780c2 ("acl: new library")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Andrey Mokrushin <a.mokrushin@ideco.ru>
-> ---
-> v2:
-> - move range validation from acl_build_rules() to acl_check_bld_param()
->    so rules are validated once per rte_acl_build() call (Dmitry Kozlyuk);
-> - reword commit message: field types are known only at build time
->    (Konstantin Ananyev).
->
->   app/test/test_acl.c | 26 ++++++++++++++++++
->   lib/acl/acl_bld.c   | 67 ++++++++++++++++++++++++++++++++++++++++++++-
->   2 files changed, 92 insertions(+), 1 deletion(-)
->
-> diff --git a/app/test/test_acl.c b/app/test/test_acl.c
-> index 5d207c8..47786bc 100644
-> --- a/app/test/test_acl.c
-> +++ b/app/test/test_acl.c
-> @@ -1274,6 +1274,7 @@ test_invalid_rules(void)
->   	int ret;
->   
->   	struct rte_acl_ipv4vlan_rule rule;
-> +	struct acl_ipv4vlan_rule rv;
->   
->   	acx = rte_acl_create(&acl_param);
->   	if (acx == NULL) {
-> @@ -1338,6 +1339,31 @@ test_invalid_rules(void)
->   		goto err;
->   	}
->   
-> +	/* test inverted high/low destination ports added through the
-> +	 * generic API: rte_acl_add_rules() doesn't know the field types,
-> +	 * so the rule has to be rejected by rte_acl_build().
-> +	 */
-> +	rule = acl_rule;
-> +	rule.data.userdata = 1;
-> +	rule.dst_port_low = 0xfff0;
-> +	rule.dst_port_high = 0x0010;
-> +
-> +	acl_ipv4vlan_convert_rule(&rule, &rv);
-> +	ret = rte_acl_add_rules(acx, (struct rte_acl_rule *)&rv, 1);
-> +	if (ret != 0) {
-> +		printf("Line %i: Adding rules to ACL context failed!\n",
-> +			__LINE__);
-> +		goto err;
-> +	}
-> +
-> +	ret = rte_acl_ipv4vlan_build(acx, ipv4_7tuple_layout,
-> +		RTE_ACL_MAX_CATEGORIES);
-> +	if (ret != -EINVAL) {
-> +		printf("Line %i: Building ACL context "
-> +				"should have failed!\n", __LINE__);
-> +		goto err;
-> +	}
-> +
->   	rte_acl_free(acx);
->   
->   	return 0;
-> diff --git a/lib/acl/acl_bld.c b/lib/acl/acl_bld.c
-> index 99d1dbc..534a0e1 100644
-> --- a/lib/acl/acl_bld.c
-> +++ b/lib/acl/acl_bld.c
-> @@ -1548,6 +1548,71 @@ acl_bld(struct acl_build_context *bcx, struct rte_acl_ctx *ctx,
->   	return rc;
->   }
->   
-> +/*
-> + * Check that for all RANGE fields lower bound doesn't exceed upper bound.
-> + */
-> +static int
-> +acl_check_rule_range(const struct rte_acl_config *cfg,
-> +	const struct rte_acl_rule *rule)
-> +{
-> +	uint32_t n;
-> +	uint64_t lo, hi;
-> +	const struct rte_acl_field *fld;
-> +
-> +	for (n = 0; n != cfg->num_fields; n++) {
-> +		if (cfg->defs[n].type != RTE_ACL_FIELD_TYPE_RANGE)
-> +			continue;
-> +
-> +		fld = rule->field + cfg->defs[n].field_index;
-> +		switch (cfg->defs[n].size) {
-> +		case sizeof(uint8_t):
-> +			lo = fld->value.u8;
-> +			hi = fld->mask_range.u8;
-> +			break;
-> +		case sizeof(uint16_t):
-> +			lo = fld->value.u16;
-> +			hi = fld->mask_range.u16;
-> +			break;
-> +		case sizeof(uint32_t):
-> +			lo = fld->value.u32;
-> +			hi = fld->mask_range.u32;
-> +			break;
-> +		default:
-> +			lo = fld->value.u64;
-> +			hi = fld->mask_range.u64;
-> +			break;
-> +		}
-> +
-> +		if (lo > hi)
-> +			return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Check that rules added to the context are valid for the given config.
-> + */
-> +static int
-> +acl_check_rules(const struct rte_acl_ctx *ctx, const struct rte_acl_config *cfg)
-> +{
-> +	uint32_t i;
-> +	const struct rte_acl_rule *rule;
-> +
-> +	for (i = 0; i != ctx->num_rules; i++) {
-> +		rule = (const struct rte_acl_rule *)
-> +			((uintptr_t)ctx->rules + ctx->rule_sz * i);
-> +		if (acl_check_rule_range(cfg, rule) != 0) {
-> +			ACL_LOG(ERR,
-> +			"ACL context: %s, rule[%u] (userdata: %u): low bound exceeds high bound of a range field",
-> +			ctx->name, i, rule->data.userdata);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   /*
->    * Check that parameters for acl_build() are valid.
->    */
-> @@ -1588,7 +1653,7 @@ acl_check_bld_param(struct rte_acl_ctx *ctx, const struct rte_acl_config *cfg)
->   		}
->   	}
->   
-> -	return 0;
-> +	return acl_check_rules(ctx, cfg);
->   }
 
-Acked-by: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
 
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+VGhlIFBGIGhhbmRsZXIgZm9yIGEgVkYncyBaWERIX1ZMQU5fRklMVEVSX0FERC9ERUwgbWVzc2Fn
+ZSBwYXNzZXMgdGhlDQoxNi1iaXQgdmxhbl9pZCBmcm9tIHRoZSBtZXNzYWdlIGJvZHkgdG8genhk
+aF92bGFuX2ZpbHRlcl90YWJsZV9zZXQoKQ0Kd2l0aG91dCBhIHJhbmdlIGNoZWNrLiBBbiBpZCBh
+Ym92ZSA0MDk1IGJlY29tZXMgYSByb3cgaW5kZXggb3V0c2lkZQ0KdGhlIFZMQU4gZmlsdGVyIGdy
+b3VwcyB0aGUgUEYgc2V0cyB1cCBmb3IgdGhlIGZ1bmN0aW9uLCBhbmQgdGhlIE5QDQpsYXllciBi
+ZWxvdyBvbmx5IGNoZWNrcyBpdCBhZ2FpbnN0IHRoZSBlbmQgb2YgdGhlIHdob2xlIEVSQU0sIHNv
+IG9uZQ0KcmVxdWVzdCBmcm9tIGEgZ3Vlc3QgcmVhZHMsIG1vZGlmaWVzIGFuZCB3cml0ZXMgYmFj
+ayB1bnJlbGF0ZWQgdGFibGUNCnJvd3MuDQoNClJlamVjdCBpZHMgYWJvdmUgUlRFX0VUSEVSX01B
+WF9WTEFOX0lEIHdoZXJlIHRoZSB2YWx1ZSBpcyB0YWtlbiBvdXQgb2YNCnRoZSBtZXNzYWdlLiBW
+YWxpZCBpZHMgYmVoYXZlIGFzIGJlZm9yZS4NCg0KRml4ZXM6IGI0Zjk5NmI3ZmNmNiAoIm5ldC96
+eGRoOiBvcHRpbWl6ZSBWTEFOIGZpbHRlciBhbmQgb2ZmbG9hZCIpDQpDYzogc3RhYmxlQGRwZGsu
+b3JnDQoNClNpZ25lZC1vZmYtYnk6IEp1bmxvbmcgV2FuZyA8d2FuZy5qdW5sb25nMUB6dGUuY29t
+LmNuPg0KLS0tDQogZHJpdmVycy9uZXQvenhkaC96eGRoX21zZy5jIHwgNyArKysrKystDQogMSBm
+aWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9uZXQvenhkaC96eGRoX21zZy5jIGIvZHJpdmVycy9uZXQvenhkaC96eGRoX21z
+Zy5jDQppbmRleCA0YjAxZGFmMzdhLi5mMGYwNTIyODE3IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9u
+ZXQvenhkaC96eGRoX21zZy5jDQorKysgYi9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMNCkBA
+IC0xNTUyLDcgKzE1NTIsMTIgQEAgenhkaF92Zl92bGFuX2ZpbHRlcl90YWJsZV9wcm9jZXNzKHN0
+cnVjdCB6eGRoX2h3ICpodywgdWludDE2X3QgdnBvcnQsDQogCXZvaWQgKnJlcGx5X2RhdGFfYWRk
+ciA9IFpYREhfQUREUl9PRihtc2dfcmVwbHlfYm9keSwgcmVzX2luZm8sIHJlcGx5X2RhdGEpOw0K
+IAlpbnQgcmV0ID0gMDsNCiANCi0JcmV0ID0genhkaF92bGFuX2ZpbHRlcl90YWJsZV9zZXQoaHcs
+IHZwb3J0LCB2bGFuX2lkLCBlbmFibGUpOw0KKwlpZiAodmxhbl9pZCA+IFJURV9FVEhFUl9NQVhf
+VkxBTl9JRCkgew0KKwkJUE1EX0RSVl9MT0coRVJSLCAidmxhbiBpZCAlZCBpcyBpbnZhbGlkIiwg
+dmxhbl9pZCk7DQorCQlyZXQgPSAtRUlOVkFMOw0KKwl9IGVsc2Ugew0KKwkJcmV0ID0genhkaF92
+bGFuX2ZpbHRlcl90YWJsZV9zZXQoaHcsIHZwb3J0LCB2bGFuX2lkLCBlbmFibGUpOw0KKwl9DQog
+CWlmIChyZXQpDQogCQlzcHJpbnRmKHN0ciwgInZsYW4gZmlsdGVyIG9wLWNvZGVbJWRdIHZsYW4g
+aWQ6JWQgZmFpbGVkLCBjb2RlOiVkXG4iLA0KIAkJCWVuYWJsZSwgdmxhbl9pZCwgcmV0KTsNCi0t
+IA0KMi4yNy4w
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+VGhlJm5ic3A7UEYmbmJzcDtoYW5kbGVyJm5ic3A7Zm9yJm5ic3A7YSZuYnNwO1ZGJmFwb3M7cyZu
+YnNwO1pYREhfVkxBTl9GSUxURVJfQUREL0RFTCZuYnNwO21lc3NhZ2UmbmJzcDtwYXNzZXMmbmJz
+cDt0aGU8YnIgLz4xNi1iaXQmbmJzcDt2bGFuX2lkJm5ic3A7ZnJvbSZuYnNwO3RoZSZuYnNwO21l
+c3NhZ2UmbmJzcDtib2R5Jm5ic3A7dG8mbmJzcDt6eGRoX3ZsYW5fZmlsdGVyX3RhYmxlX3NldCgp
+PGJyIC8+d2l0aG91dCZuYnNwO2EmbmJzcDtyYW5nZSZuYnNwO2NoZWNrLiZuYnNwO0FuJm5ic3A7
+aWQmbmJzcDthYm92ZSZuYnNwOzQwOTUmbmJzcDtiZWNvbWVzJm5ic3A7YSZuYnNwO3JvdyZuYnNw
+O2luZGV4Jm5ic3A7b3V0c2lkZTxiciAvPnRoZSZuYnNwO1ZMQU4mbmJzcDtmaWx0ZXImbmJzcDtn
+cm91cHMmbmJzcDt0aGUmbmJzcDtQRiZuYnNwO3NldHMmbmJzcDt1cCZuYnNwO2ZvciZuYnNwO3Ro
+ZSZuYnNwO2Z1bmN0aW9uLCZuYnNwO2FuZCZuYnNwO3RoZSZuYnNwO05QPGJyIC8+bGF5ZXImbmJz
+cDtiZWxvdyZuYnNwO29ubHkmbmJzcDtjaGVja3MmbmJzcDtpdCZuYnNwO2FnYWluc3QmbmJzcDt0
+aGUmbmJzcDtlbmQmbmJzcDtvZiZuYnNwO3RoZSZuYnNwO3dob2xlJm5ic3A7RVJBTSwmbmJzcDtz
+byZuYnNwO29uZTxiciAvPnJlcXVlc3QmbmJzcDtmcm9tJm5ic3A7YSZuYnNwO2d1ZXN0Jm5ic3A7
+cmVhZHMsJm5ic3A7bW9kaWZpZXMmbmJzcDthbmQmbmJzcDt3cml0ZXMmbmJzcDtiYWNrJm5ic3A7
+dW5yZWxhdGVkJm5ic3A7dGFibGU8YnIgLz5yb3dzLjxiciAvPg08YnIgLz5SZWplY3QmbmJzcDtp
+ZHMmbmJzcDthYm92ZSZuYnNwO1JURV9FVEhFUl9NQVhfVkxBTl9JRCZuYnNwO3doZXJlJm5ic3A7
+dGhlJm5ic3A7dmFsdWUmbmJzcDtpcyZuYnNwO3Rha2VuJm5ic3A7b3V0Jm5ic3A7b2Y8YnIgLz50
+aGUmbmJzcDttZXNzYWdlLiZuYnNwO1ZhbGlkJm5ic3A7aWRzJm5ic3A7YmVoYXZlJm5ic3A7YXMm
+bmJzcDtiZWZvcmUuPGJyIC8+DTxiciAvPkZpeGVzOiZuYnNwO2I0Zjk5NmI3ZmNmNiZuYnNwOygm
+cXVvdDtuZXQvenhkaDombmJzcDtvcHRpbWl6ZSZuYnNwO1ZMQU4mbmJzcDtmaWx0ZXImbmJzcDth
+bmQmbmJzcDtvZmZsb2FkJnF1b3Q7KTxiciAvPkNjOiZuYnNwO3N0YWJsZUBkcGRrLm9yZzxiciAv
+Pg08YnIgLz5TaWduZWQtb2ZmLWJ5OiZuYnNwO0p1bmxvbmcmbmJzcDtXYW5nJm5ic3A7Jmx0O3dh
+bmcuanVubG9uZzFAenRlLmNvbS5jbiZndDsNPGJyIC8+LS0tPGJyIC8+Jm5ic3A7ZHJpdmVycy9u
+ZXQvenhkaC96eGRoX21zZy5jJm5ic3A7fCZuYnNwOzcmbmJzcDsrKysrKystPGJyIC8+Jm5ic3A7
+MSZuYnNwO2ZpbGUmbmJzcDtjaGFuZ2VkLCZuYnNwOzYmbmJzcDtpbnNlcnRpb25zKCspLCZuYnNw
+OzEmbmJzcDtkZWxldGlvbigtKTxiciAvPg08YnIgLz5kaWZmJm5ic3A7LS1naXQmbmJzcDthL2Ry
+aXZlcnMvbmV0L3p4ZGgvenhkaF9tc2cuYyZuYnNwO2IvZHJpdmVycy9uZXQvenhkaC96eGRoX21z
+Zy5jPGJyIC8+aW5kZXgmbmJzcDs0YjAxZGFmMzdhLi5mMGYwNTIyODE3Jm5ic3A7MTAwNjQ0PGJy
+IC8+LS0tJm5ic3A7YS9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmM8YnIgLz4rKysmbmJzcDti
+L2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9tc2cuYzxiciAvPkBAJm5ic3A7LTE1NTIsNyZuYnNwOysx
+NTUyLDEyJm5ic3A7QEAmbmJzcDt6eGRoX3ZmX3ZsYW5fZmlsdGVyX3RhYmxlX3Byb2Nlc3Moc3Ry
+dWN0Jm5ic3A7enhkaF9odyZuYnNwOypodywmbmJzcDt1aW50MTZfdCZuYnNwO3Zwb3J0LDxiciAv
+PiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3ZvaWQmbmJzcDsqcmVwbHlfZGF0YV9hZGRy
+Jm5ic3A7PSZuYnNwO1pYREhfQUREUl9PRihtc2dfcmVwbHlfYm9keSwmbmJzcDtyZXNfaW5mbywm
+bmJzcDtyZXBseV9kYXRhKTs8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtpbnQm
+bmJzcDtyZXQmbmJzcDs9Jm5ic3A7MDs8YnIgLz4mbmJzcDsNPGJyIC8+LSZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwO3JldCZuYnNwOz0mbmJzcDt6eGRoX3ZsYW5fZmlsdGVyX3RhYmxlX3NldChodywm
+bmJzcDt2cG9ydCwmbmJzcDt2bGFuX2lkLCZuYnNwO2VuYWJsZSk7PGJyIC8+KyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwO2lmJm5ic3A7KHZsYW5faWQmbmJzcDsmZ3Q7Jm5ic3A7UlRFX0VUSEVSX01B
+WF9WTEFOX0lEKSZuYnNwO3s8YnIgLz4rJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7UE1EX0RSVl9MT0coRVJSLCZuYnNwOyZxdW90O3ZsYW4mbmJzcDtpZCZu
+YnNwOyVkJm5ic3A7aXMmbmJzcDtpbnZhbGlkJnF1b3Q7LCZuYnNwO3ZsYW5faWQpOzxiciAvPism
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtyZXQmbmJzcDs9
+Jm5ic3A7LUVJTlZBTDs8YnIgLz4rJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fSZuYnNwO2Vsc2Um
+bmJzcDt7PGJyIC8+KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwO3JldCZuYnNwOz0mbmJzcDt6eGRoX3ZsYW5fZmlsdGVyX3RhYmxlX3NldChodywmbmJzcDt2
+cG9ydCwmbmJzcDt2bGFuX2lkLCZuYnNwO2VuYWJsZSk7PGJyIC8+KyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwO308YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtpZiZuYnNwOyhyZXQp
+PGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7c3ByaW50ZihzdHIsJm5ic3A7JnF1b3Q7dmxhbiZuYnNwO2ZpbHRlciZuYnNwO29wLWNvZGVb
+JWRdJm5ic3A7dmxhbiZuYnNwO2lkOiVkJm5ic3A7ZmFpbGVkLCZuYnNwO2NvZGU6JWRcbiZxdW90
+Oyw8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtlbmFibGUsJm5ic3A7dmxhbl9pZCwmbmJzcDty
+ZXQpOzxiciAvPi0tJm5ic3A7DTxiciAvPjIuMjcuMDxiciAvPg==
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
