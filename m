@@ -2,95 +2,97 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADEB606A8BE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 12:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CBC606A338
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 12:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=DijSDbIB;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=IV/rBDak
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=PCyNfFl3;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=E6vAHmN9
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4263940E36;
-	Thu, 12 Nov 2026 13:46:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AABEC40682;
+	Thu, 12 Nov 2026 13:53:27 +0100 (CET)
 Received: from fout-a4-smtp.messagingengine.com
  (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTPS id D4E5140682
- for <dev@dpdk.org>; Thu, 12 Nov 2026 13:46:03 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id BF154EC01BC
- for <dev@dpdk.org>; Thu, 12 Nov 2026 07:46:02 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Thu, 12 Nov 2026 07:46:02 -0500
+ by mails.dpdk.org (Postfix) with ESMTPS id B0D9A40682
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 13:53:25 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.phl.internal (Postfix) with ESMTP id E5743EC01DF
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 07:53:24 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Thu, 12 Nov 2026 07:53:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1794487562;
- x=1794573962; bh=sz4JwfYr80mQcCEvg0sI2tcvvgUbeHI+bynz7H7lqfI=; b=
- DijSDbIBnXgjKZ2ki1nXYw7TeNqIpDqMg0H+sDdChGKd6lqN0RfBymFkf2SV2v4X
- grdX2gOeMlSU5ULz9WBF2T6qkNFf2gkEoBo19k23O3sZG/ViVMDEUPaaX/yfLraG
- jdWu4n8ItSrWcw9IfT0BcdLTpxBfFbzxizBx5G8TpfVCZ1rGrbL1fz+6FsSDhC/P
- moSVBeXSWhAI4DngALns3U0cDsPB/dbj8AKU/5F6Onj+hegu8kvQHB4Us0yBhcBD
- bVGdE4PMyzE13pKPO8il7O4X8qKYwnU/dNEZqR7tZ+j/ee+n9O/KUB34ZB/fHxny
- FDg40UtrETWXGrmQyqsOxA==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1794488004;
+ x=1794574404; bh=wkC5wKL5kCy/jVSSeuUfcoPfANEoyTX9Z+CelBeCE/g=; b=
+ PCyNfFl3dOaUGqOB5vF8GZxE6YCScLroJk2Zm1kNHVXBhZTiYw/bsmiXzvxUKVT8
+ Vds7tafUXae8wInuTAjVJnqTxaFqJ0ULS7WdBBZx2iM+Z70Jv1i6J/lhittBouPU
+ BET+6kKI+U7LBagNDQ2br1VlkHf8XljSnRNdcWWfavVFWEYBBigm40Ap+U7O2ZyZ
+ UJKvzI5XZWJr/FJpp/av7KJalNVyU8Wu5hFNZV2baji5VG91yWto61F80TiQHjbw
+ n/voTGMaKvMrugnnIdyvmX4DKInVNlwP0WMy3qvTgX8RAHTvCJewYF5w0+0J4A5l
+ nBq+PN7MPfXkUQQ4o0GVvg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794487562; x=
- 1794573962; bh=sz4JwfYr80mQcCEvg0sI2tcvvgUbeHI+bynz7H7lqfI=; b=I
- V/rBDakANkj9ipc8RWIVTvei+t4vFREdqrMeKEK19wOFRsD7dL6LxXUfbys8MQAC
- J0yVAT0PMxbDcfwtFXV4cRgZ6mW7H0u+mlC5mtvqpAfcPQx0/cQLX7WQvzoLhsLK
- 30a68P4usb5x+hHEfPtqdYMtcF+wtgu0H25mF69yK4CDfL5M7h6CUQpWe1YrFdVu
- JqwOQr6t5aKv2au3JIl1+xgHVj7AGpEYOUbXz3EMtQQ3LXdnOt/a/a+ILvIbUwf+
- 9kbYp14JrNmZfIJmxG3MkhVrEyp8IVzyL4usNuCoTeV8fWvtS+/UonZf2jdNjuni
- CgqEGswrNf1c6+oprpktA==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794488004; x=
+ 1794574404; bh=wkC5wKL5kCy/jVSSeuUfcoPfANEoyTX9Z+CelBeCE/g=; b=E
+ 6vAHmN9S/gQLLs7aNAQ0AUUZZ2vMW7ieEkojl9mWYvSUzsjbChv3z4b2RAlo4D7C
+ J93AMrQ6a1JpFHsY6lk6oYQsWBv3ms6jP2u9KH9Dnhav2qJdUoicGv9Yzuh//ekF
+ YWjXL28HJymMJti/nSb4u5xV3wRiNGCxpZ28qPSfk4dzynWI59EpVkp53KPSth3T
+ ufRnkpKTmcCT8yjngb8+Q/4ztQuEDphUL2t9hVaS25SLjlx5Ia9wDmoA0nbM84IL
+ F9TF9T/if1jxcdOYSDtbOgEkBt+CmQyDcAPQRajXaQnfi3/0N2XP1Wok2hRWR+yd
+ hgb2NL8wbYX5ejY4LIjnQ==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794487562; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1794488004; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:0MhIAoXnXshFhLUwjhZiykluGcYOOQpEXIu+J1mO3oNBqdg
- AznAHF8fhhrlaxdfy8IjGvsm0KV4N4F4lvB3hdvaFoll2+3XQLf2vsOfWkkXX3mG
- KV/fTmLE71oiXy4PuG7ObnMzWiQsfYYVe+3QnHRwHiQkQy2YmGKnojPJ+2d+YuER
- QvNepPSDMJnmOh6YBYIQqbgEmYTXaEqVOjMQDIfZx0qgi4nwQjd6d5+DjbomuWbJ
- 81aUtgRhR+PRcefBavNwxWdE5JLVPBr6pK2H9Gk/5aQr1j5JCIhgdV4pBvhP9WPy
- Niu5bJOTdfb368yrkj6XGEGwPa8IutpDeLVyMbQ==;
+ s=fm3:rsa-sha256:GlZR6LqG+CFX8Vy8lclDIglHKLkT/C+4IVPbBGXOM+nUCNo
+ StnoG/joixT+Y+WAzO0g0R6lwU1z9PocTC9Dww3DQRk1p9iIGFnrNHkrLDWIm5Hp
+ vH2m7qyHY+ev9dKIC0vKPH/NezFhFd6ZWlY7H5Q+jtBEOA94Ew7+7BNTydhNDD50
+ 1EiBqMGT8TO7wVCzU+3mbrJJ1QBnE4u/wUGAYk0Bd41gmeCqSl2EEid2fLew9NiM
+ 7s2YOXvHgfFiMyZWmORjIJ/vAca9KdTtY4QXbfMx7UMXNMmQ8mS4eCOK7GYOzW1q
+ ki2Fmvx7IFLfsd6mJZXX4ocVZRKNYWOQVP4n8hg==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:1dzhlFf546UkFRUx6zuRmPOtDqJ/A5r75NtE1dU1qsc=:hiIyg0Jr9ddn37pBvapEjcB+OBAhEXWgvw32pZB6XLg=;
-X-ME-Sender: <xms:CrX1ao08Fqz6298pO76p00NX0KPOu0D8f3B1TPOF14BIuFDt_7S2-g>
- <xme:CrX1ajP3a2KMe6SGwtkPLDZniJgxeFu_sEAJk8ri5RI6ZmxAKCsug2tnhvkhPFtrT
- RkZ2DoZZy4xIafI2dxY2sNOXE9svYaZhgdW9HBUjNoIUBjIy4vDzsc>
-X-ME-Received: <xmr:CrX1ao0c53I6NR9ImeaGkZDXAC3wl6XjcmjIYDpwepPfa6bvuWSjUA3c7eWXi6go07L1T9N2B2hb_5l0d19coKs>
-X-ME-Proxy-Cause: dmFkZTEp5a20HkjQ5u0fTyF/aViCO+L0+fib0yTtMLWwiEC3mXHt60L2Dv3X6JJr/6O9/K
- W2c71Wwil1eQlvuUfp8Ozcm82/Yq80d0NEOk0BTEKs/8k4A1cR/JFVGEKHmBnsGOxVDQXH
- nxhlD0HGtSey3q4AltMaKU0W8HIgPHL/yXsQjxpHx0o8BOYXsGWyiCeMWsHX8/KOMBQd0B
- C8k5zQwbAUbeG51k4GGUw9ZQTmoJ0wnReMI0C9Kjn49ETzAYaItJEj9ULdfnp2Z5B/cd5K
- I/32czuv5r8jeBGc5P2ujpP8NFRyEG8D+dCzO749XA1RcGKDNbU7SajxofJ4LEk/Ir6rH3
- golWF4fETAh45i77IZ2tCrnz7e17kTUAE7GdTwMzKHqa9jKwrT3xLAsLByhcVB4K3vx4mi
- Fru7vVFjuSLeHSXZ3UpLbXyNFqNyqr2QjYi0aOWRwQwRyZ4ghaq+Wwk/zoLNWRt6ts0oNp
- E1GiYIaRqNUED++XjK45+GZ74dfmXFuobaMPChx2FgBZ9xok6EFG1nEZvi/xLrPBHEehHc
- rgCMYo4MU0kpxcCa1eQeIAN7NBLCiylEic88XKlruqZGX9vfnGvhfXwTOhAxCVTLRaLoLJ
- BdaqvpatlIWOy5sGgLVahEiWI4/4DZPCE1ch6DFCrUoghhLLW88hLDRrUDnw
-X-ME-Proxy: <xmx:CrX1aqGWOItcIsbUO-UA4poDsH8xRyqeIKwp5-WVVWcPWGXmj9GwyQ>
- <xmx:CrX1al7WwgYyV4rdUTcnxOFY1Hb1jK6Hb7MTM5VsgHl91F-3hA9tGw>
- <xmx:CrX1agvIVemON5tWQQGzznTstDilmA5ZPZQrzYCdTOiCYK63K8JTYA>
- <xmx:CrX1am5EpQzBeH2xNal6Xc0DXApmpECeUXuB9zALTx7f1_1Q0m5FMg>
- <xmx:CrX1am1Nzbjl7vdwotuMBhm1lWMPCEI8gQtq0KGS4C6yd0PocajuSih3>
+ h=sha256:jALXB7SwvmcLjO/SyLCWAjwC8qYF/8YFb1rKwoI9Vbg=:Kg0mLlfjimYi4hU7jyRRkK3nWXXJA3On4/NyXUpQEgM=;
+X-ME-Sender: <xms:xLb1akfWUfLgN8lVocKBiTq9VFdsGUSjU2ex1qDGIeSEoMb5tgMr7A>
+ <xme:xLb1ahpUZh1oyrrUk5OgMjpF_RPvjiG7pUGiPutgUTd8QzXsPimQFDBGwfje7FBW-
+ Y3B9ckY4h_bv3mP3WjJb25RC0fItSTZV4dkIDogNLpFc2co4KJURw>
+X-ME-Received: <xmr:xLb1apA-BBBLuXznVO-cl3uToKoiqoX6a-Il0BkcU8bUvSQ7WAXUXc_r9jnTKlwA3QgLs560Zy-79avsZQwCnzI>
+X-ME-Proxy-Cause: dmFkZTF+hRXWbGRqePa2C6zVPSkHUAR/EVNTR8+WFjcOG/D7GQZyiAO/5+DQB6QsSQdI5P
+ NwpLchodozfFpQzLxcj1J3bwBnbWXCES0i1/0To+B1sQ/FSB3d2VR7W+oU8aZFgAZ8Azcw
+ 9oAU0eNFB3BsO2yyqdjArFGkSPc5w1DUW9t8ZLNqZAPyTqm4AC9+OGn3yDQt8JjZQdCMmN
+ ydfRYpYrL26jyk5+/8iT0TZ2uhRLGn9I5TmbH0GACjTaKAJzLVAiujtQa2nozNCgaMhmHB
+ vqiwlSblQP/bYKVWQziLGcztX6DU2vaTXetmg2m5ouVZHRkfPYyJHv8PQjoWsVOaLm5ALR
+ dtHtXnHgMYiAxkC3Zl31fr+7dh4VNykV7J76N29kN7TDZdS0wAboGoyiRUq4/zGNf3QBHo
+ baBOu5MLIEQBBIzFwub8mV+eqUbHJfK29ctRCwBPAJFlQIKRaSwv664E7WW3LWYV9wFsNj
+ PPmY45Nqr4F7w9hjA9JxavA6ncV8cWcBSbEIWSfQLIqnUdY9X1qt66806N2F0PVObWdwWg
+ xGHRcca7rSn73Bj+xbG3lQigZkRuippi3ZoeIfPFnwQZZtyp6Bksp+XM93WDbI83Fbsg2v
+ HRQLHGnH2uVJKaZFH8n04qIFD0MzXgF8eYM8vgZvE++7/xBBeiT22wuWLkTQ
+X-ME-Proxy: <xmx:xLb1aubp8ElwHo6lrMfNwjkAh7fbjDIMWGzoAFZBAyhIeR7kcdi8aQ>
+ <xmx:xLb1as7N0qT-OpD3LTHdGRJFddPwO5R7HdfQXUz_SSCPY8DPOCrsEg>
+ <xmx:xLb1avbeMXYYVQwjx1OD-tGpqQem3wfE-Xnxzsk8Ljt_MmpmLPRHqw>
+ <xmx:xLb1arivajXB5HJvt50xKyisF5o3P7Kw9-rQipkNN18hI3xNOuk_Ow>
+ <xmx:xLb1anJQtMq1A6SRTlnje6vDKdyUrXsKdYEptxHm4wgr-pPidolXXtW1>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Nov 2026 07:46:01 -0500 (EST)
+ 12 Nov 2026 07:53:23 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Andrey Mokrushin <a.mokrushin@ideco.ru>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
+ Andrey Mokrushin <a.mokrushin@ideco.ru>
 Cc: dev@dpdk.org, Jiayu Hu <hujiayu.hu@foxmail.com>, stable@dpdk.org
-Subject: Re: [PATCH v2] gro: fix returned packet count after UDP fragment merge
-Date: Thu, 12 Nov 2026 13:45:59 +0100
-Message-ID: <3fxp6cheTkWA4HW6d1qGRQ@monjalon.net>
-In-Reply-To: <20261106080744.138763-1-a.mokrushin@ideco.ru>
-References: <20261106080744.138763-1-a.mokrushin@ideco.ru>
+Subject: Re: [PATCH v2] gro: fix packet type comparisons
+Date: Thu, 12 Nov 2026 13:53:21 +0100
+Message-ID: <VEBke0uyRjOebKwiwZhmoQ@monjalon.net>
+In-Reply-To: <20261109112657.106114-1-a.mokrushin@ideco.ru>
+References: <98CBD80474FA8B44BF855DF32C47DC35F65AF0@smartserver.smartshare.dk>
+ <20261109112657.106114-1-a.mokrushin@ideco.ru>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
@@ -111,32 +113,25 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-06/11/2026 09:07, Andrey Mokrushin:
-> rte_gro_reassemble_burst() decrements nb_after_gro only for packets that
-> are merged while being inserted into the reassembly tables. When the
-> tables are flushed at the end of the burst, gro_udp4_tbl_timeout_flush()
-> and gro_vxlan_udp4_tbl_timeout_flush() call gro_udp4_merge_items(), which
-> merges fragments that became adjacent only after an intermediate fragment
-> arrived. Such merges are not reflected in nb_after_gro, but they are
-> accounted for in the local index i, which after the flush holds the
-> actual number of packets written to pkts[].
+09/11/2026 12:26, Andrey Mokrushin:
+> Hi Morten,
 > 
-> The function returns nb_after_gro regardless. When a flush-time merge
-> happens, the caller is told there are more packets than were actually
-> produced: the surplus pkts[] entries point to mbufs that are already
-> chained into an earlier packet. Freeing the returned burst then frees
-> those mbufs twice and corrupts the mempool, and the surplus entry, whose
-> headers have been stripped by the merge, is handed back to the caller as
-> a standalone packet built from fragment payload.
+> We hit the same issue while fuzzing lib/gro: with both
+> RTE_GRO_IPV4_VXLAN_TCP_IPV4 and RTE_GRO_IPV4_VXLAN_UDP_IPV4 enabled,
+> fragments of inner UDP in VXLAN match IS_IPV4_VXLAN_TCP4_PKT()
+> (RTE_PTYPE_INNER_L4_FRAG includes the RTE_PTYPE_INNER_L4_TCP bit),
+> are rejected by gro_vxlan_tcp4_reassemble(), and never reach the
+> VXLAN UDP path, so they are not merged.
 > 
-> Return the actual packet count i instead. In the path where the flush
-> block is skipped, i equals nb_pkts, which also equals nb_after_gro, so
-> the non-merging case is unchanged.
+> With two fragments of one inner UDP datagram, packet_type taken from
+> rte_net_get_ptype(), rte_gro_reassemble_burst() returns:
+> - without the patch: 2 with both VXLAN types, 1 with VXLAN UDP only;
+> - with the patch: 1 in both cases.
 > 
-> Fixes: 74080d7dcf31 ("gro: support IPv6 for TCP")
-> Cc: stable@dpdk.org
+> Tested on 25.11.2 with a standalone program and our fuzzing corpus
+> for gro/gso, no regressions.
 > 
-> Signed-off-by: Andrey Mokrushin <a.mokrushin@ideco.ru>
+> Tested-by: Andrey Mokrushin <a.mokrushin@ideco.ru>
 
 Applied, thanks.
 
