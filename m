@@ -2,98 +2,95 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5257606A32A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 11:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C93606A321
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 11:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=pNqob2lV;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=3lvE5NYg
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=GVVke8uU;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=LyTv0PW/
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3BCE240E15;
-	Thu, 12 Nov 2026 12:07:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 78277410F1;
+	Thu, 12 Nov 2026 12:10:53 +0100 (CET)
 Received: from fout-a6-smtp.messagingengine.com
  (fout-a6-smtp.messagingengine.com [103.168.172.149])
- by mails.dpdk.org (Postfix) with ESMTPS id 8E96F402A2
- for <dev@dpdk.org>; Thu, 12 Nov 2026 12:07:29 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id 850C8EC00DB
- for <dev@dpdk.org>; Thu, 12 Nov 2026 06:07:28 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Thu, 12 Nov 2026 06:07:28 -0500
+ by mails.dpdk.org (Postfix) with ESMTPS id C9BAC40E15
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 12:10:51 +0100 (CET)
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+ by mailfout.phl.internal (Postfix) with ESMTP id 00917EC0121
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 06:10:51 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-07.internal (MEProxy); Thu, 12 Nov 2026 06:10:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1794481648;
- x=1794568048; bh=uS92RYKt3hz7/3wxTA7NIFm2UkiG1IsVXXg4omcy1c0=; b=
- pNqob2lVeoT7RniL62KjVMLds9TORmzLaqYljJ2ly99sTX6m0hd7sDC9OTQt6w+P
- kdv4Wl6DO6vn6TFPLfcxg6lpm0cKaw5pYZvi2179iGovPxdo2QjK4cOzX8+h3d2h
- 7rCWCO9JiWgpZ4P0OLrnsY07fSStpFB8SdeopT9tQ0vB2tExGSGlyS/6EkxrJ8wz
- G9b9r9DUwGTnzAYRLaNfyP29gynHUjqDDf3BTujPB3eZ60AMfEnwgCL5+QYwt8Fd
- usrWRLnCEfFvQhTbUTlS616qUOKrDyor4f6ruvJtPFq35GRTRDjYIN0Rte/Q/2er
- Y800EiG0V0btfMBXQ7CiMQ==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1794481850;
+ x=1794568250; bh=QDE91pegxCsL4r93vxdEg2/nc2wL4hBIfblaEe8hCy0=; b=
+ GVVke8uUW02HM2rUAFKs+RT5fvlGveYa3ke0DLTvq6lPjIg+hwboCd4u5QOc1odV
+ usK1Hyjlx0vHyeGUSx+swRyzUXfDcUru8PgAMzoabqzGZbA5RMXClHxwkxsQmEZK
+ afXS7rJg3iLYtk9xlF6w2xVkdXJMlNj8Hf/98sy53wbcRxtCOwaTgRVXpE0LEnp/
+ VeciFnJ4zAAXHgBZCof1PlUVGx2nhWqHczP4ZvaFSHJHdcrv0d5DVw3BYq/6hDKG
+ I+QAT/BSxaXcz3A2cK8+kx+wPAjIz1Z77lGXmGQ0PRDgqnJ2z9vHRiPe0/dJ1/Ji
+ ZiY7eLemYZ6ldye8sB84YA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794481648; x=
- 1794568048; bh=uS92RYKt3hz7/3wxTA7NIFm2UkiG1IsVXXg4omcy1c0=; b=3
- lvE5NYgZFu8Cc2rN5hUSJ12hRPKiQ2lQBbPsCrU5CuhPa1oTN1etfvKM2FMIwAP0
- jL3OAbdP4eMxdZ+sX+u/55/fpFe9ah2DhN5HA/ZTjJnxbQ6fF1ir4p8m44/qMy4q
- eesixeSCGUEtnkZ5ASQ5O3LVdcEN/xvk6nRrr6VZLTL1Rn/bfLye1pTX6tVXNjrX
- dNim+NDckvsohadwfBb0ySm6cINLmLXQ7X3pt/V167uPRx02bWD+INoJA9s21Oi8
- LkkcAVIJNT/DFNBtw63sxxEcMy+NYjPtSM07l7WAMFggXndB+B/3KYTK5i4CdK42
- TaDgHtzVRLgexs2nMGSNg==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794481850; x=
+ 1794568250; bh=QDE91pegxCsL4r93vxdEg2/nc2wL4hBIfblaEe8hCy0=; b=L
+ yTv0PW/+l2S/MHrSEzVMD0rxHBGF4+p/EJ4Y3iNkFAg/2Fz6H88XEJYZfSUgWxNW
+ G9xhNGkxQqEed0p2tT/4MPmxBcNiKu66ps4j8ebIdMbsJVSi8Ftivuv06p6X6TfJ
+ cmGBVBSIptLEnII+RSGRAALcwXJ0OoZFtezgjXD8iMUtEWVPbtJ2NAMa116sNXi5
+ ry6LQkiR2xP7TppdxhBxyiZ9BUYzl02MOv45+6SqLAQSRMQWxW7MjH7AtmZwOec6
+ zd2fP3HGIioqN9MclLm4Vh2r+haJre6pj8h1ZzepYkeKQVBHDm04njSFZbRs4lcr
+ Sy1HWuukI9r+VTGBfaaww==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794481648; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1794481850; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:pLwcWqyB/xz2gntyVh7s1Js+Dr+IdZf3eNv2KCgMaXcj3fI
- iXSWF9izFWq+McirTUEj3HEN10C9mscAHNY89FbGSbjCQJ/AkV2Chnys0Ij9WiFF
- 4UREsfBbsywHEkhZrc9aVgRa9KvIOkPAsqQpc3c+8UABr7Mvjj94zRMQvQpEU5tW
- sS1rYqWRjKXOR/ijI/sIQlHmSQrLGUm/10jUouS+9qCfiU56N2P8eTzBvKM0Xy5L
- rdPOQ7edkUiaKMtPb+UC0XJwx4jOr0b7CAD4fFnZMYf9UjDJORxlsn0k/a2d70RB
- 8Zc/XaHVUUfKtFm8kXevY41dvyJR42A7dkp1oDA==;
+ s=fm3:rsa-sha256:iWV9BStRMxbTpAO+h5ZgaemzlsV+GZweFfGsf+SoJlYB/65
+ twBLuJUBWALqm/jx7VWSU5Ekcn+s/LeGGrbgiC4lFCV3aib3x2AEAikmIbd70Egx
+ xXnx4J1TyE+0r5CBZZB0AYjgbIAt2TtsVt8fnCE738qKlaGradoEu3WuAFo91kPZ
+ +BBI/XLgm6MDjQT3Qndgqgtud7lFtWz5QbGEvIlHB/HPRKOKEoTuKK5u4/ANMlZb
+ fuLWuGQQj09HCImdy66IM4kh6xpNvv70sbCSr2UBpCOhPqE8rf2NHA2iBJiDrRCp
+ b1E0FrseyadtI/q/omZFHuolisp+v3qJs3MGGSA==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:YQVoMgTkfrF2TsGZRSE4qrv3U6Dhkmc05EOOSoV5RHo=:A+VztIP80lr2MSAWEHXJXI32B8mmUHnoyIFOjIBmI/Q=;
-X-ME-Sender: <xms:7531arxClMLQh7y3hzXmDuP3-a92PAiZQRsoME--8VhPy_rMrg-2aQ>
- <xme:7531auuf--gXtY1xxOQCh-UsUH7L5DwnJvtFO9dLFlIYZjJUiNaJokmjT4oVJCaTG
- TRsK0yw-uCLGsguMOaWE8BViZ2HwX9BV9IwqzS3N7M38aPUlijMB_M>
-X-ME-Received: <xmr:7531ao1MXwN0q22NEFa8JB1GvtkniiTupbpMBq3pdFbxJ2qTTv6I5qdgZz7yagwO69eIYi3MPdFD7zIskVvbwKs>
-X-ME-Proxy-Cause: dmFkZTEpivuw5klwp9MGKGKIk/7Sjt5/oLvY8R5qWTwrMTCdpCdd7gz4gIhHf8UZqlfYsZ
- JDiUCSCXszz1iD9Lqm8rsrtFzosbGNyDkTiMRqpidqEZWpqBRbHHZhLemhMZFKbiJm98ee
- /THv/kxR5dcCmZJBgvYrowkBfPRa4tkq2QIzBZJJGXFC/nsFJGX4xLHCwe5/4UMCiQaAp3
- ffOD70fjB30MdGV4o4sMM0BWjEqpmbvHddDXYGcQtBQ/QHmtuaOfTshRDk8eXm/MuEopwj
- jWaXibdMlxLFeMSmLextvys12lPJUrI5Ju5GL9UwfE+GldMCOuRb3lxmID95mqcnQHXmkN
- I8aTmSmxfr1MCVGh2quIDjGn9hJzz3D24t3aFzq6h3JwXMT8Q9IVkhlR/uA5qWywSn89wA
- Tqujdv+jRxUSHJbqJGg8ZjoX2rRFS3gwG6onNUOvFf134yILu+BWXQLnnXgmMkcjVc+t5T
- JdV99OG/iXYisGzuizE9TA5LQRSS68Ow59ExRWb64lHB4Df2fA1aCzy5mzEENleeC37scO
- glpr+gi40OuTf3/reZRT69EALK+J1FYf/cRUSbHBaqeo+lszF2/7ut5agJIoOuRiWFMrh9
- i1VGztHdrF2QQHDQwPU+wA7pRDOfEUDB8CAZZIyGpG3NZzdZXRdlGfkKQ6eg
-X-ME-Proxy: <xmx:7531ap8sgwETew0xLAj7FS3cth2p5CVqWUHNLjwwZoZpHyZkk8xFbw>
- <xmx:7531apNslyYfh5PKbq18jTAQGFRTUi0lYbKbitiNKNit9feHIILbcA>
- <xmx:7531atd2KpEohWxOAzPYQMn-5LSRN7V1FB7lm_P5_k3ZEiYuT50iYA>
- <xmx:7531aoWAIyuWuJ3bcyqB2HDR9g53Z1eRhdzeJvLRvGl98zHHaLs4IA>
- <xmx:8J31apdZ2hdpfUFdrLWMwmAqliP6csY_7lWTSHnp5G_-8F7ezRWmEQSV>
+ h=sha256:GW5G8IB1op8Yrt8GQ9jhOZLiYguCf0/+TwVbxz/QmIY=:nHBry+VwVP5JGNNg3dpHkS4sCGjLENdY7bvJXga/P7U=;
+X-ME-Sender: <xms:up71atG1Q2fv3QDf3is_8jzVJRDNuHblbXfVpLPTeGnXKbdInj65DQ>
+ <xme:up71amobckU4fTnGvBjDF5MW-xLcgLua6S1lO1ITa_T3SF-THtL9Z3V_1keCsnM3g
+ aXc6IoLV-rFq9IrZF-ieEjwabyrz9c7qaJ0UQM2_0bLOpUrys7fjfh2>
+X-ME-Received: <xmr:up71auSagyMdz-EUgjI5jQB8QjePAK2Itp8rzzDJMk59bTIUbMPPgGzlhk8obVDRDcJiDiCv6DY77Amvfhn27vM>
+X-ME-Proxy-Cause: dmFkZTGUHKAU45ZbthFq/AgeBv0i2iaCbtJPg/j64uO7vjIe2iT2lxV09fZfHbYfB96H17
+ wsl/B5oIHWhr7B90tKoENY0DdW28YmRzMfJFxODTPI1Sla5fLNNqazQcjVFHXTm2iCdNDq
+ RDjI2//fUfIFPqp3Conp8WMONIcspW6GP40fB2df6LOZCLxzXKvD/RD8DDpR+773okaljl
+ fXmf+hOV4EW2p9S3C4dAQW6XZJYOukcopFI8sc3xO+E4HbbzguJq+yBvnTakg0t99QgJnB
+ c6Op22OCQG87VNdvwah0GnmVlYuwEDePdvb7Dr8MVZ64X2S5tocaUhZvLcFFD5MY2KosfT
+ bm4LsoLcecPeXEB5njk9r7W4IwuA8FYFx1qCauh/1JwDnCS/wWbM9LmjE1TVU5Rz52ovAI
+ U59HmFlUKyJb/JYWjDq+mR6rluuqt29pjrerXOyBDaJJU1eTub0r4hpE10jj73OSKwD9w6
+ UmVUTE6clnfthi2AwNcfnhxRvZmIBbkid/Kvuoo51/5Yv0ojiidFu54FnnNRPApqS23igh
+ pzbK6o8/Rvt59qvXuKgxC5kwXwim/J+HhCAY9qDQgwDDh77Lzr3iQXRF1z5cvc1cXlU8wR
+ jIAZcrv0wKaIo2r/QRYIvKFvgkEO6+kTM75/iDzJkAK66aoMVnHcZUe3Aosw
+X-ME-Proxy: <xmx:up71arPCM5B_VTuReSIRjteS8D16glNvgXsw_iLOtaOBsHUp4L3RHw>
+ <xmx:up71apPAeNIb-_M7jSx5VPmSk3cPTEVCL9t2irO69VV5wt7pJmEaaw>
+ <xmx:up71ajuUvAR0BjTIGYhPGpS7uuA6tyvoXrBBRexbSCwUI7ryhB-mTQ>
+ <xmx:up71arWaPawJzXYZRVGmTisZU3EWkWhww3OxX-rz_JfrlZGbewbT6Q>
+ <xmx:up71agOr-1oz8t4pVEIHUBPGyueeFRyayrdmApr7kYOBXUTDhQZTPMjC>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Nov 2026 06:07:26 -0500 (EST)
+ 12 Nov 2026 06:10:50 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Andrey Mokrushin <a.mokrushin@ideco.ru>
-Cc: dev@dpdk.org, dmitry.kozliuk@gmail.com, stable@dpdk.org,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-Subject: Re: [PATCH v2] acl: reject rules with inverted range
-Date: Thu, 12 Nov 2026 12:07:25 +0100
-Message-ID: <xxhZnR6-TJuwAe3nHkDEXg@monjalon.net>
-In-Reply-To: <e48945f0-9f78-442e-a2df-b9315371851d@yandex.ru>
-References: <20261110062341.52126-1-a.mokrushin@ideco.ru>
- <20261111073041.38712-1-a.mokrushin@ideco.ru>
- <e48945f0-9f78-442e-a2df-b9315371851d@yandex.ru>
+Cc: dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH] net: fix tunnel parsing of non-IP packets
+Date: Thu, 12 Nov 2026 12:10:48 +0100
+Message-ID: <6RD3s_sNTiOQb4LPi95WEQ@monjalon.net>
+In-Reply-To: <20261109133712.152780-1-a.mokrushin@ideco.ru>
+References: <20261109133712.152780-1-a.mokrushin@ideco.ru>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
@@ -114,28 +111,21 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-> > rte_acl_build() doesn't check that for a RANGE field the low bound
-> > (value) doesn't exceed the high bound (mask_range). Field types are
-> > known only from the rte_acl_config passed to rte_acl_build(), so
-> > rte_acl_add_rules() doesn't validate ranges. Such a rule is accepted,
-> > and then:
-> > - for a 1-byte field the build crashes with a NULL pointer
-> >    dereference in acl_gen_node();
-> > - for a 2-byte field (e.g. port range 80..22) the build succeeds,
-> >    but the rule matches every value of the field instead of none.
-> >
-> > The check was done only for the legacy ipv4vlan rules
-> > (acl_ipv4vlan_check_rule(), now in app/test). Validate RANGE fields
-> > of all rules in acl_check_bld_param(), together with the rest of the
-> > build parameters, and fail rte_acl_build() with -EINVAL.
-> > Add a test case with the generic API.
-> >
-> > Fixes: dc276b5780c2 ("acl: new library")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: Andrey Mokrushin <a.mokrushin@ideco.ru>
+09/11/2026 14:37, Andrey Mokrushin:
+> When the EtherType is neither IPv4 nor IPv6, rte_net_get_ptype()
+> skips the L3 parsing but then calls ptype_tunnel_without_udp() with
+> the EtherType still in proto. This function compares proto with IP
+> protocol numbers, so on little-endian EtherType 0x0400 (also an 802.3
+> length field), 0x2900 and 0x2F00 are taken as IPIP, IPv6 and GRE:
+> the packet is reported as an IP tunnel, and the data after the
+> Ethernet header is parsed as the inner packet.
 > 
-> Acked-by: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+> Return after L2 for non-IP packets.
+> 
+> Fixes: d21d855464ff ("net: support GRE in software packet type parser")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Andrey Mokrushin <a.mokrushin@ideco.ru>
 
 Applied, thanks.
 
