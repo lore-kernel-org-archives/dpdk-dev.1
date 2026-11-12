@@ -2,63 +2,102 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF31D606A89E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 10:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5257606A32A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 11:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=riqHGjv1
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=pNqob2lV;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=3lvE5NYg
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17855427AE;
-	Thu, 12 Nov 2026 11:38:40 +0100 (CET)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
- by mails.dpdk.org (Postfix) with ESMTPS id 6AC1A42799;
- Thu, 12 Nov 2026 11:38:36 +0100 (CET)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mxhk.zte.com.cn (FangMail) with ESMTPS id 4jQH164M9Lz5BNS0;
- Thu, 12 Nov 2026 18:38:34 +0800 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=zte.com.cn;
- s=z202610; t=1794479914;
- bh=CX+o4uo2NEzuLnlo0uagmcdygEwq78SFxlzE5GvL4Hc=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=riqHGjv1R+SMMW6R9OU3kO9RIlmYY0bYhQ+46JjF77zBCmx2VlRSKfN73xe3iLNJ1
- 13Ei9hQMWk31NEqT/lRAyPM/Hh1V0K2reXYLJaJq9QFaDRYbi4SIG7yyZZUY5RTM8O
- b3pKdgNmdrsMJbnDukwGJeDNgm3YxDkmBuukOYIo6InqrS50XhNjx3j8cFVAj4xEZX
- BE9P6N1QJTC4bnLJI3Szp4ysZexSziuwCvBtYiZf9ApMysr6gypGJttHBi6lsmilAf
- joH1xgKMgWWrOfXExoSIMcNSGt8IU+QM6xWV1U9h8z8DMfMcr3fMGcwSSP/rm7qva5
- NF+1oU6qhWSOg==
-Received: from szxlzmapp02.zte.com.cn ([10.5.231.79])
- by mse-fl2.zte.com.cn with SMTP id 6ACAcIQj087722;
- Thu, 12 Nov 2026 18:38:18 +0800 (+08)
- (envelope-from wang.junlong1@zte.com.cn)
-Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Thu, 12 Nov 2026 18:38:21 +0800
-X-Zmail-TransId: 3e816af5971c02c-aa8b1
-X-Zmail-LocalSMTP: 1
-X-Zmail-RealSender: wang.junlong1@zte.com.cn
-From: Junlong Wang <wang.junlong1@zte.com.cn>
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org, Junlong Wang <wang.junlong1@zte.com.cn>, stable@dpdk.org
-Subject: [PATCH v2 7/8] net/zxdh: check full 16-bit module id of recv msg
-Date: Thu, 12 Nov 2026 18:26:49 +0800
-Message-ID: <20261112102650.3162875-8-wang.junlong1@zte.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261112102650.3162875-1-wang.junlong1@zte.com.cn>
-References: <20261107030448.2891345-1-wang.junlong1@zte.com.cn>
- <20261112102650.3162875-1-wang.junlong1@zte.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 3BCE240E15;
+	Thu, 12 Nov 2026 12:07:31 +0100 (CET)
+Received: from fout-a6-smtp.messagingengine.com
+ (fout-a6-smtp.messagingengine.com [103.168.172.149])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8E96F402A2
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 12:07:29 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.phl.internal (Postfix) with ESMTP id 850C8EC00DB
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 06:07:28 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Thu, 12 Nov 2026 06:07:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1794481648;
+ x=1794568048; bh=uS92RYKt3hz7/3wxTA7NIFm2UkiG1IsVXXg4omcy1c0=; b=
+ pNqob2lVeoT7RniL62KjVMLds9TORmzLaqYljJ2ly99sTX6m0hd7sDC9OTQt6w+P
+ kdv4Wl6DO6vn6TFPLfcxg6lpm0cKaw5pYZvi2179iGovPxdo2QjK4cOzX8+h3d2h
+ 7rCWCO9JiWgpZ4P0OLrnsY07fSStpFB8SdeopT9tQ0vB2tExGSGlyS/6EkxrJ8wz
+ G9b9r9DUwGTnzAYRLaNfyP29gynHUjqDDf3BTujPB3eZ60AMfEnwgCL5+QYwt8Fd
+ usrWRLnCEfFvQhTbUTlS616qUOKrDyor4f6ruvJtPFq35GRTRDjYIN0Rte/Q/2er
+ Y800EiG0V0btfMBXQ7CiMQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794481648; x=
+ 1794568048; bh=uS92RYKt3hz7/3wxTA7NIFm2UkiG1IsVXXg4omcy1c0=; b=3
+ lvE5NYgZFu8Cc2rN5hUSJ12hRPKiQ2lQBbPsCrU5CuhPa1oTN1etfvKM2FMIwAP0
+ jL3OAbdP4eMxdZ+sX+u/55/fpFe9ah2DhN5HA/ZTjJnxbQ6fF1ir4p8m44/qMy4q
+ eesixeSCGUEtnkZ5ASQ5O3LVdcEN/xvk6nRrr6VZLTL1Rn/bfLye1pTX6tVXNjrX
+ dNim+NDckvsohadwfBb0ySm6cINLmLXQ7X3pt/V167uPRx02bWD+INoJA9s21Oi8
+ LkkcAVIJNT/DFNBtw63sxxEcMy+NYjPtSM07l7WAMFggXndB+B/3KYTK5i4CdK42
+ TaDgHtzVRLgexs2nMGSNg==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1794481648; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm3:rsa-sha256:pLwcWqyB/xz2gntyVh7s1Js+Dr+IdZf3eNv2KCgMaXcj3fI
+ iXSWF9izFWq+McirTUEj3HEN10C9mscAHNY89FbGSbjCQJ/AkV2Chnys0Ij9WiFF
+ 4UREsfBbsywHEkhZrc9aVgRa9KvIOkPAsqQpc3c+8UABr7Mvjj94zRMQvQpEU5tW
+ sS1rYqWRjKXOR/ijI/sIQlHmSQrLGUm/10jUouS+9qCfiU56N2P8eTzBvKM0Xy5L
+ rdPOQ7edkUiaKMtPb+UC0XJwx4jOr0b7CAD4fFnZMYf9UjDJORxlsn0k/a2d70RB
+ 8Zc/XaHVUUfKtFm8kXevY41dvyJR42A7dkp1oDA==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:YQVoMgTkfrF2TsGZRSE4qrv3U6Dhkmc05EOOSoV5RHo=:A+VztIP80lr2MSAWEHXJXI32B8mmUHnoyIFOjIBmI/Q=;
+X-ME-Sender: <xms:7531arxClMLQh7y3hzXmDuP3-a92PAiZQRsoME--8VhPy_rMrg-2aQ>
+ <xme:7531auuf--gXtY1xxOQCh-UsUH7L5DwnJvtFO9dLFlIYZjJUiNaJokmjT4oVJCaTG
+ TRsK0yw-uCLGsguMOaWE8BViZ2HwX9BV9IwqzS3N7M38aPUlijMB_M>
+X-ME-Received: <xmr:7531ao1MXwN0q22NEFa8JB1GvtkniiTupbpMBq3pdFbxJ2qTTv6I5qdgZz7yagwO69eIYi3MPdFD7zIskVvbwKs>
+X-ME-Proxy-Cause: dmFkZTEpivuw5klwp9MGKGKIk/7Sjt5/oLvY8R5qWTwrMTCdpCdd7gz4gIhHf8UZqlfYsZ
+ JDiUCSCXszz1iD9Lqm8rsrtFzosbGNyDkTiMRqpidqEZWpqBRbHHZhLemhMZFKbiJm98ee
+ /THv/kxR5dcCmZJBgvYrowkBfPRa4tkq2QIzBZJJGXFC/nsFJGX4xLHCwe5/4UMCiQaAp3
+ ffOD70fjB30MdGV4o4sMM0BWjEqpmbvHddDXYGcQtBQ/QHmtuaOfTshRDk8eXm/MuEopwj
+ jWaXibdMlxLFeMSmLextvys12lPJUrI5Ju5GL9UwfE+GldMCOuRb3lxmID95mqcnQHXmkN
+ I8aTmSmxfr1MCVGh2quIDjGn9hJzz3D24t3aFzq6h3JwXMT8Q9IVkhlR/uA5qWywSn89wA
+ Tqujdv+jRxUSHJbqJGg8ZjoX2rRFS3gwG6onNUOvFf134yILu+BWXQLnnXgmMkcjVc+t5T
+ JdV99OG/iXYisGzuizE9TA5LQRSS68Ow59ExRWb64lHB4Df2fA1aCzy5mzEENleeC37scO
+ glpr+gi40OuTf3/reZRT69EALK+J1FYf/cRUSbHBaqeo+lszF2/7ut5agJIoOuRiWFMrh9
+ i1VGztHdrF2QQHDQwPU+wA7pRDOfEUDB8CAZZIyGpG3NZzdZXRdlGfkKQ6eg
+X-ME-Proxy: <xmx:7531ap8sgwETew0xLAj7FS3cth2p5CVqWUHNLjwwZoZpHyZkk8xFbw>
+ <xmx:7531apNslyYfh5PKbq18jTAQGFRTUi0lYbKbitiNKNit9feHIILbcA>
+ <xmx:7531atd2KpEohWxOAzPYQMn-5LSRN7V1FB7lm_P5_k3ZEiYuT50iYA>
+ <xmx:7531aoWAIyuWuJ3bcyqB2HDR9g53Z1eRhdzeJvLRvGl98zHHaLs4IA>
+ <xmx:8J31apdZ2hdpfUFdrLWMwmAqliP6csY_7lWTSHnp5G_-8F7ezRWmEQSV>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 Nov 2026 06:07:26 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Andrey Mokrushin <a.mokrushin@ideco.ru>
+Cc: dev@dpdk.org, dmitry.kozliuk@gmail.com, stable@dpdk.org,
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+Subject: Re: [PATCH v2] acl: reject rules with inverted range
+Date: Thu, 12 Nov 2026 12:07:25 +0100
+Message-ID: <xxhZnR6-TJuwAe3nHkDEXg@monjalon.net>
+In-Reply-To: <e48945f0-9f78-442e-a2df-b9315371851d@yandex.ru>
+References: <20261110062341.52126-1-a.mokrushin@ideco.ru>
+ <20261111073041.38712-1-a.mokrushin@ideco.ru>
+ <e48945f0-9f78-442e-a2df-b9315371851d@yandex.ru>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL: mse-fl2.zte.com.cn 6ACAcIQj087722
-X-TLS: YES
-X-ENVELOPE-SENDER: wang.junlong1@zte.com.cn
-X-SOURCE-IP: 10.5.228.133 unknown Thu, 12 Nov 2026 18:38:34 +0800
-X-CLEAN: YES
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AF5972A.000/4jQH164M9Lz5BNS0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,144 +107,36 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
+> > rte_acl_build() doesn't check that for a RANGE field the low bound
+> > (value) doesn't exceed the high bound (mask_range). Field types are
+> > known only from the rte_acl_config passed to rte_acl_build(), so
+> > rte_acl_add_rules() doesn't validate ranges. Such a rule is accepted,
+> > and then:
+> > - for a 1-byte field the build crashes with a NULL pointer
+> >    dereference in acl_gen_node();
+> > - for a 2-byte field (e.g. port range 80..22) the build succeeds,
+> >    but the rule matches every value of the field instead of none.
+> >
+> > The check was done only for the legacy ipv4vlan rules
+> > (acl_ipv4vlan_check_rule(), now in app/test). Validate RANGE fields
+> > of all rules in acl_check_bld_param(), together with the rest of the
+> > build parameters, and fail rte_acl_build() with -EINVAL.
+> > Add a test case with the generic API.
+> >
+> > Fixes: dc276b5780c2 ("acl: new library")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Andrey Mokrushin <a.mokrushin@ideco.ru>
+> 
+> Acked-by: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
 
+Applied, thanks.
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
-
-
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
-
-
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-VGhlIGhlYWRlciBjaGVjayBvZiBhIHJlY2VpdmVkIEJBUiBjaGFubmVsIG1lc3NhZ2UgY29waWVz
-IHRoZSAxNi1iaXQNCm1vZHVsZV9pZCBmaWVsZCBpbnRvIGEgdWludDhfdCBsb2NhbCBiZWZvcmUg
-Y29tcGFyaW5nIGl0IHdpdGggdGhlDQpoYW5kbGVyIHRhYmxlIHNpemUsIGFuZCB0aGUgY2FsbGVy
-cyB0aGVuIGluZGV4DQp6eGRoX21zZ19yZWN2X2Z1bmNfdGJsW10gd2l0aCB0aGUgZnVsbCB1bnRy
-dW5jYXRlZCB2YWx1ZS4gQW55DQptb2R1bGVfaWQgd2hvc2UgbG93IGJ5dGUgaXMgYmVsb3cgWlhE
-SF9CQVJfTVNHX01PRFVMRV9OVU0gcGFzc2VzIHRoZQ0KY2hlY2ssIHNvIGEgc2VuZGVyIGNhbiBz
-ZWxlY3QgYW1vbmcgYWJvdXQgMjUsNTAwIHNsb3RzIHBhc3QgdGhlDQoxMDAtZW50cnkgdGFibGUs
-IGFuZCBhIHN5bmNocm9ub3VzIG1lc3NhZ2UgbWFrZXMgdGhlIFBGIGNhbGwgd2hhdGV2ZXINCndv
-cmQgaXQgZmluZHMgdGhlcmUuIFdpdGggdGhlIGRlZmF1bHQgZ2NjIGJ1aWxkIHRoZSByZWFjaGFi
-bGUgc2xvdHMNCmluc2lkZSBnX3NlcWlkX3JpbmcgaG9sZCBzbWFsbCBpbnRlZ2VycyBzZXQgYXQg
-aW5pdCwgc28gb25lIGZvcmdlZA0KbWVzc2FnZSBmcm9tIGEgVkYganVtcHMgdG8gYSBsb3cgYWRk
-cmVzcyBhbmQga2lsbHMgdGhlIFBGIHByb2Nlc3MuDQoNCldpZGVuIHRoZSBsb2NhbCB0byB1aW50
-MTZfdCBhbmQgZHJvcCB0aGUgKHVpbnQ4X3QpIGNhc3Qgc28gdGhlIGNoZWNrDQpjb21wYXJlcyB0
-aGUgc2FtZSB2YWx1ZSB0aGUgY2FsbGVycyB1c2UgYXMgdGhlIGluZGV4LiBUaGlzIGlzIHRoZQ0K
-b25seSBwbGFjZSBhIHJlY2VpdmVkIG1vZHVsZV9pZCBpcyB2YWxpZGF0ZWQ7IHRoZSBzZW5kIHNp
-ZGUgYWxyZWFkeQ0KY29tcGFyZXMgdGhlIGZ1bGwgdmFsdWUuIFZhbGlkIGlkcyAwLTk5IGFyZSB1
-bmFmZmVjdGVkLg0KDQpGaXhlczogMzYzMGFjOGJkODFmICgibmV0L3p4ZGg6IGNvbmZpZ3VyZSBp
-bnRlcnJ1cHQiKQ0KQ2M6IHN0YWJsZUBkcGRrLm9yZw0KDQpTaWduZWQtb2ZmLWJ5OiBKdW5sb25n
-IFdhbmcgPHdhbmcuanVubG9uZzFAenRlLmNvbS5jbj4NCi0tLQ0KIGRyaXZlcnMvbmV0L3p4ZGgv
-enhkaF9tc2cuYyB8IDQgKystLQ0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIg
-ZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMg
-Yi9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMNCmluZGV4IDk1YjJmNWE2MGIuLjc3YjhkZjJm
-MTIgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMNCisrKyBiL2RyaXZl
-cnMvbmV0L3p4ZGgvenhkaF9tc2cuYw0KQEAgLTk2MCw3ICs5NjAsNyBAQCBzdGF0aWMgdWludDE2
-X3QNCiB6eGRoX2Jhcl9jaGFuX21zZ19oZWFkZXJfY2hlY2soc3RydWN0IHp4ZGhfYmFyX21zZ19o
-ZWFkZXIgKm1zZ19oZWFkZXIpDQogew0KIAl1aW50MTZfdCBsZW4gPSAwOw0KLQl1aW50OF90IG1v
-ZHVsZV9pZCA9IDA7DQorCXVpbnQxNl90IG1vZHVsZV9pZCA9IDA7DQogDQogCWlmIChtc2dfaGVh
-ZGVyLT52YWxpZCAhPSBaWERIX0JBUl9NU0dfQ0hBTl9VU0VEKSB7DQogCQlQTURfTVNHX0xPRyhF
-UlIsICJyZWN2IGhlYWRlciBFUlI6IHZhbGlkIGxhYmVsIGlzIG5vdCB1c2VkIik7DQpAQCAtOTY4
-LDcgKzk2OCw3IEBAIHp4ZGhfYmFyX2NoYW5fbXNnX2hlYWRlcl9jaGVjayhzdHJ1Y3QgenhkaF9i
-YXJfbXNnX2hlYWRlciAqbXNnX2hlYWRlcikNCiAJfQ0KIAltb2R1bGVfaWQgPSBtc2dfaGVhZGVy
-LT5tb2R1bGVfaWQ7DQogDQotCWlmIChtb2R1bGVfaWQgPj0gKHVpbnQ4X3QpWlhESF9CQVJfTVNH
-X01PRFVMRV9OVU0pIHsNCisJaWYgKG1vZHVsZV9pZCA+PSBaWERIX0JBUl9NU0dfTU9EVUxFX05V
-TSkgew0KIAkJUE1EX01TR19MT0coRVJSLCAicmVjdiBoZWFkZXIgRVJSOiBpbnZhbGlkIG1vZHVs
-ZV9pZDogJXUiLCBtb2R1bGVfaWQpOw0KIAkJcmV0dXJuIFpYREhfQkFSX01TR19FUlJfTU9EVUxF
-Ow0KIAl9DQotLSANCjIuMjcuMA==
-
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-VGhlJm5ic3A7aGVhZGVyJm5ic3A7Y2hlY2smbmJzcDtvZiZuYnNwO2EmbmJzcDtyZWNlaXZlZCZu
-YnNwO0JBUiZuYnNwO2NoYW5uZWwmbmJzcDttZXNzYWdlJm5ic3A7Y29waWVzJm5ic3A7dGhlJm5i
-c3A7MTYtYml0PGJyIC8+bW9kdWxlX2lkJm5ic3A7ZmllbGQmbmJzcDtpbnRvJm5ic3A7YSZuYnNw
-O3VpbnQ4X3QmbmJzcDtsb2NhbCZuYnNwO2JlZm9yZSZuYnNwO2NvbXBhcmluZyZuYnNwO2l0Jm5i
-c3A7d2l0aCZuYnNwO3RoZTxiciAvPmhhbmRsZXImbmJzcDt0YWJsZSZuYnNwO3NpemUsJm5ic3A7
-YW5kJm5ic3A7dGhlJm5ic3A7Y2FsbGVycyZuYnNwO3RoZW4mbmJzcDtpbmRleDxiciAvPnp4ZGhf
-bXNnX3JlY3ZfZnVuY190YmxbXSZuYnNwO3dpdGgmbmJzcDt0aGUmbmJzcDtmdWxsJm5ic3A7dW50
-cnVuY2F0ZWQmbmJzcDt2YWx1ZS4mbmJzcDtBbnk8YnIgLz5tb2R1bGVfaWQmbmJzcDt3aG9zZSZu
-YnNwO2xvdyZuYnNwO2J5dGUmbmJzcDtpcyZuYnNwO2JlbG93Jm5ic3A7WlhESF9CQVJfTVNHX01P
-RFVMRV9OVU0mbmJzcDtwYXNzZXMmbmJzcDt0aGU8YnIgLz5jaGVjaywmbmJzcDtzbyZuYnNwO2Em
-bmJzcDtzZW5kZXImbmJzcDtjYW4mbmJzcDtzZWxlY3QmbmJzcDthbW9uZyZuYnNwO2Fib3V0Jm5i
-c3A7MjUsNTAwJm5ic3A7c2xvdHMmbmJzcDtwYXN0Jm5ic3A7dGhlPGJyIC8+MTAwLWVudHJ5Jm5i
-c3A7dGFibGUsJm5ic3A7YW5kJm5ic3A7YSZuYnNwO3N5bmNocm9ub3VzJm5ic3A7bWVzc2FnZSZu
-YnNwO21ha2VzJm5ic3A7dGhlJm5ic3A7UEYmbmJzcDtjYWxsJm5ic3A7d2hhdGV2ZXI8YnIgLz53
-b3JkJm5ic3A7aXQmbmJzcDtmaW5kcyZuYnNwO3RoZXJlLiZuYnNwO1dpdGgmbmJzcDt0aGUmbmJz
-cDtkZWZhdWx0Jm5ic3A7Z2NjJm5ic3A7YnVpbGQmbmJzcDt0aGUmbmJzcDtyZWFjaGFibGUmbmJz
-cDtzbG90czxiciAvPmluc2lkZSZuYnNwO2dfc2VxaWRfcmluZyZuYnNwO2hvbGQmbmJzcDtzbWFs
-bCZuYnNwO2ludGVnZXJzJm5ic3A7c2V0Jm5ic3A7YXQmbmJzcDtpbml0LCZuYnNwO3NvJm5ic3A7
-b25lJm5ic3A7Zm9yZ2VkPGJyIC8+bWVzc2FnZSZuYnNwO2Zyb20mbmJzcDthJm5ic3A7VkYmbmJz
-cDtqdW1wcyZuYnNwO3RvJm5ic3A7YSZuYnNwO2xvdyZuYnNwO2FkZHJlc3MmbmJzcDthbmQmbmJz
-cDtraWxscyZuYnNwO3RoZSZuYnNwO1BGJm5ic3A7cHJvY2Vzcy48YnIgLz4NPGJyIC8+V2lkZW4m
-bmJzcDt0aGUmbmJzcDtsb2NhbCZuYnNwO3RvJm5ic3A7dWludDE2X3QmbmJzcDthbmQmbmJzcDtk
-cm9wJm5ic3A7dGhlJm5ic3A7KHVpbnQ4X3QpJm5ic3A7Y2FzdCZuYnNwO3NvJm5ic3A7dGhlJm5i
-c3A7Y2hlY2s8YnIgLz5jb21wYXJlcyZuYnNwO3RoZSZuYnNwO3NhbWUmbmJzcDt2YWx1ZSZuYnNw
-O3RoZSZuYnNwO2NhbGxlcnMmbmJzcDt1c2UmbmJzcDthcyZuYnNwO3RoZSZuYnNwO2luZGV4LiZu
-YnNwO1RoaXMmbmJzcDtpcyZuYnNwO3RoZTxiciAvPm9ubHkmbmJzcDtwbGFjZSZuYnNwO2EmbmJz
-cDtyZWNlaXZlZCZuYnNwO21vZHVsZV9pZCZuYnNwO2lzJm5ic3A7dmFsaWRhdGVkOyZuYnNwO3Ro
-ZSZuYnNwO3NlbmQmbmJzcDtzaWRlJm5ic3A7YWxyZWFkeTxiciAvPmNvbXBhcmVzJm5ic3A7dGhl
-Jm5ic3A7ZnVsbCZuYnNwO3ZhbHVlLiZuYnNwO1ZhbGlkJm5ic3A7aWRzJm5ic3A7MC05OSZuYnNw
-O2FyZSZuYnNwO3VuYWZmZWN0ZWQuPGJyIC8+DTxiciAvPkZpeGVzOiZuYnNwOzM2MzBhYzhiZDgx
-ZiZuYnNwOygmcXVvdDtuZXQvenhkaDombmJzcDtjb25maWd1cmUmbmJzcDtpbnRlcnJ1cHQmcXVv
-dDspPGJyIC8+Q2M6Jm5ic3A7c3RhYmxlQGRwZGsub3JnPGJyIC8+DTxiciAvPlNpZ25lZC1vZmYt
-Ynk6Jm5ic3A7SnVubG9uZyZuYnNwO1dhbmcmbmJzcDsmbHQ7d2FuZy5qdW5sb25nMUB6dGUuY29t
-LmNuJmd0Ow08YnIgLz4tLS08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMm
-bmJzcDt8Jm5ic3A7NCZuYnNwOysrLS08YnIgLz4mbmJzcDsxJm5ic3A7ZmlsZSZuYnNwO2NoYW5n
-ZWQsJm5ic3A7MiZuYnNwO2luc2VydGlvbnMoKyksJm5ic3A7MiZuYnNwO2RlbGV0aW9ucygtKTxi
-ciAvPg08YnIgLz5kaWZmJm5ic3A7LS1naXQmbmJzcDthL2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9t
-c2cuYyZuYnNwO2IvZHJpdmVycy9uZXQvenhkaC96eGRoX21zZy5jPGJyIC8+aW5kZXgmbmJzcDs5
-NWIyZjVhNjBiLi43N2I4ZGYyZjEyJm5ic3A7MTAwNjQ0PGJyIC8+LS0tJm5ic3A7YS9kcml2ZXJz
-L25ldC96eGRoL3p4ZGhfbXNnLmM8YnIgLz4rKysmbmJzcDtiL2RyaXZlcnMvbmV0L3p4ZGgvenhk
-aF9tc2cuYzxiciAvPkBAJm5ic3A7LTk2MCw3Jm5ic3A7Kzk2MCw3Jm5ic3A7QEAmbmJzcDtzdGF0
-aWMmbmJzcDt1aW50MTZfdDxiciAvPiZuYnNwO3p4ZGhfYmFyX2NoYW5fbXNnX2hlYWRlcl9jaGVj
-ayhzdHJ1Y3QmbmJzcDt6eGRoX2Jhcl9tc2dfaGVhZGVyJm5ic3A7Km1zZ19oZWFkZXIpPGJyIC8+
-Jm5ic3A7ezxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQxNl90Jm5ic3A7
-bGVuJm5ic3A7PSZuYnNwOzA7PGJyIC8+LSZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQ4X3Qm
-bmJzcDttb2R1bGVfaWQmbmJzcDs9Jm5ic3A7MDs8YnIgLz4rJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7dWludDE2X3QmbmJzcDttb2R1bGVfaWQmbmJzcDs9Jm5ic3A7MDs8YnIgLz4mbmJzcDsNPGJy
-IC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7aWYmbmJzcDsobXNnX2hlYWRlci0mZ3Q7
-dmFsaWQmbmJzcDshPSZuYnNwO1pYREhfQkFSX01TR19DSEFOX1VTRUQpJm5ic3A7ezxiciAvPiZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO1BNRF9N
-U0dfTE9HKEVSUiwmbmJzcDsmcXVvdDtyZWN2Jm5ic3A7aGVhZGVyJm5ic3A7RVJSOiZuYnNwO3Zh
-bGlkJm5ic3A7bGFiZWwmbmJzcDtpcyZuYnNwO25vdCZuYnNwO3VzZWQmcXVvdDspOzxiciAvPkBA
-Jm5ic3A7LTk2OCw3Jm5ic3A7Kzk2OCw3Jm5ic3A7QEAmbmJzcDt6eGRoX2Jhcl9jaGFuX21zZ19o
-ZWFkZXJfY2hlY2soc3RydWN0Jm5ic3A7enhkaF9iYXJfbXNnX2hlYWRlciZuYnNwOyptc2dfaGVh
-ZGVyKTxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO308YnIgLz4mbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDttb2R1bGVfaWQmbmJzcDs9Jm5ic3A7bXNnX2hlYWRlci0mZ3Q7
-bW9kdWxlX2lkOzxiciAvPiZuYnNwOw08YnIgLz4tJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7aWYm
-bmJzcDsobW9kdWxlX2lkJm5ic3A7Jmd0Oz0mbmJzcDsodWludDhfdClaWERIX0JBUl9NU0dfTU9E
-VUxFX05VTSkmbmJzcDt7PGJyIC8+KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO2lmJm5ic3A7KG1v
-ZHVsZV9pZCZuYnNwOyZndDs9Jm5ic3A7WlhESF9CQVJfTVNHX01PRFVMRV9OVU0pJm5ic3A7ezxi
-ciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-O1BNRF9NU0dfTE9HKEVSUiwmbmJzcDsmcXVvdDtyZWN2Jm5ic3A7aGVhZGVyJm5ic3A7RVJSOiZu
-YnNwO2ludmFsaWQmbmJzcDttb2R1bGVfaWQ6Jm5ic3A7JXUmcXVvdDssJm5ic3A7bW9kdWxlX2lk
-KTs8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDtyZXR1cm4mbmJzcDtaWERIX0JBUl9NU0dfRVJSX01PRFVMRTs8YnIgLz4mbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDt9PGJyIC8+LS0mbmJzcDsNPGJyIC8+Mi4yNy4wPGJyIC8+
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
 
