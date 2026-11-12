@@ -2,99 +2,98 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714FF606A327
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 16:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268CE606A321
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 16:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=uCzqUr2/;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=iWvFxstU
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=PolQwCyg;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=PbKGIpLW
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A6588415D7;
-	Thu, 12 Nov 2026 17:44:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0C2FD415D7;
+	Thu, 12 Nov 2026 17:54:39 +0100 (CET)
 Received: from fout-a8-smtp.messagingengine.com
  (fout-a8-smtp.messagingengine.com [103.168.172.151])
- by mails.dpdk.org (Postfix) with ESMTPS id 9547C40E32
- for <dev@dpdk.org>; Thu, 12 Nov 2026 17:44:22 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id 8AC2BEC0110
- for <dev@dpdk.org>; Thu, 12 Nov 2026 11:44:21 -0500 (EST)
+ by mails.dpdk.org (Postfix) with ESMTPS id D888840E32
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 17:54:37 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.phl.internal (Postfix) with ESMTP id 17D79EC0067
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 11:54:37 -0500 (EST)
 Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Thu, 12 Nov 2026 11:44:21 -0500
+ by phl-compute-02.internal (MEProxy); Thu, 12 Nov 2026 11:54:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1794501861;
- x=1794588261; bh=tbeSwj4C76x2aVV5rU1stKtYFtLLzLa+rnYlLvJDyEA=; b=
- uCzqUr2/vJ6i2+Vqdrnn25NTpGQ+Uy7A/Pp8YlVm54sFRi7yDl90WPQdPxbZhlG/
- vyB8u4vYIIlkUoVUi+WcFIpXkWAZbW2eZit4x0XRTAYbH2jm+XksFn9DW4LOOAta
- R/zFFdsLLmbcBtrzlc3RJl4mgdhuZs1HzdU/x+xQc/XezTXdiTBHJ5WLglfg2IVW
- EgX7nF0SxJtcFiWzkq/cSevRIUlf0SWdWND77seAprKGujCsQwY0SnxaPU7n4P/R
- 0JAMiWc5Ue5mEDKrmeCipzyOvjXt5mjjPUJdkUot1n8NjYed6Bd3nqoqe2Z/gWGf
- K4QKrZVYUBe6xW9L3YTEyA==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1794502477;
+ x=1794588877; bh=qOtFm1cKo41L48mfprYWWbv2MSwPc/phjQeW8EjSECA=; b=
+ PolQwCyg/DNkIEXrrMBo2jVVmcFUyyNM6drn99z9BASpBcpXbN08nNNOPXorfSzE
+ nyCoG29zwAQfXouRolWOU9wyzQ4DxkqLdbvFl+Wx6tk0+GC3eeh7VeE8lfpgiP18
+ d5wj36z3LLE/PWrmikvw5OQE/9GK+nbtLbHhZX7Ya6LZUmt0UHKADmFLrSsiRhkU
+ Ixd3JfBcwiuoAWhDMkw3PbK2mxq4bsar22Vi744eDq6iZ2iHaWT+7UB0gEV0PdNr
+ rDLWoXQcWd34r47sakdcs1EnjGXRiphdB2SHTy57OX2I3XDUpSDpSDyXbWn4lVIt
+ p/OlQKrohKZMhrICgzjIQQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794501861; x=
- 1794588261; bh=tbeSwj4C76x2aVV5rU1stKtYFtLLzLa+rnYlLvJDyEA=; b=i
- WvFxstUIE+lyttqhF+6EfZLp4CShv6VR2sC62V2J5FRBr39Ha300fO6DcWqcsV0I
- 53z7Xa8KjYpKnWeu364/G96sQw63kzc7SjUmnSlTTxM5/dEIzLBcPB4TbcV+9AHB
- yxWgyqsx7GoyvOT1WmZ+fKf6MYadxxzSeSM5gDEsAE+iNKANw75ISQ8f3lOJsqOr
- kp3h9M06ucles56z7qN1dbRiyg48/HUw0Nr+JnChpt5mqL3BnqIhVXNeMIQaaT4O
- HzAnJDsTDVMM9Pxa0q3jdpwndhiusQPQ//5ZAJeiaz4f0y6OMcpomLTsSxC477S+
- DD1jllS/+lGYqdhG1Ggqw==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794502477; x=
+ 1794588877; bh=qOtFm1cKo41L48mfprYWWbv2MSwPc/phjQeW8EjSECA=; b=P
+ bKGIpLW/gx7QC/Ktt4sZ3MtkeZWyYdsUNsyKFBNFJP2IKjXISUUH2bpOtDHVuSiZ
+ stG0PtKr4QNpQmTCsfbASu6pr4r8qD8Ie4l79lAE2ZJ1UIpEMQm4zh53IS51LU0C
+ v17ieMQ+Ht4QzzgzL1S5ZaUbQjeDlz1oCL6byuvQQuEk5beRin89rhzUavlA2BEP
+ y6MmpP2MM84nXkgmsAkAdjvKAXFI/lCjaky6F7QQ6uoLXFF0hox7u8C712TqVTYM
+ BnbTbhGoJ44CN3z1Icpth5y+jf0IP8Y+pp4KKVUvBG7ZHymzOy+A3IrV9BPnPBXv
+ ARfu8cCc5uooVJqB2PFMg==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794501861; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1794502477; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:NNyxSzCK6p8kj/1n18Yt2yFMsxKJOsELv3xSezJaf1qUa2l
- lemXttkYtMfS0fVH2f16S78+dmClXYogRkmtWK1njXbQ0IeLAssEA11/3LX8jVzn
- ejIFXovaXQwQ6QeSq4LNbw3B4TezpCaFjOmdHppWNLnHvGYO4LrwQfmK5NS2bOhZ
- 6rwdXgoW2cv1+VfL31ex3kclNAFVhpRcn5HIymhPxxU7nnsLVQ5e5s6Mdwv0h8zT
- pVAFY/Fhkv1DDuZGQ5eamktjUAUhFTUDoatBQhVP4wYJeCEX8KPHEycOtf004ykd
- 4gKecdQLwPRbz8Hmsa3QqQ8Lzf0Vl8UYp8SVrkg==;
+ s=fm3:rsa-sha256:JFvpwuNHYfPKlNlK43mFURcoq8N4UI31qovufndESUtVyzE
+ gDwyw6snxP5obup0Xw0jAKrpGEf54R9WuFbBjvrGwsLmgSz6R2Gva8GJgxuWTZcy
+ iti5E4+5MEbLD83e9UjUnomnqL0geK14nvxfyHklGIM2NY8s6oFUIUko/FDGrLDB
+ Xs3O0RXvL1pja6gjIFaU71aQ9V+1+uZkl5tUKadLxU/8szspfxyyCfmcnPmqtxOh
+ WWncGwea45KDd6ptubNnR9wLcHwzcT9r/wzClIv7+z6IvT6RSTBV5O3ws+5Vw/gI
+ skUMhJ4kyf8D4FEoVtFXnJhEGXnNHZ0GuRsANfw==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:Z3l5zsKR82R/UOUNS3WrXuDDhSWeJnuEuvbWbEeU42o=:tbeSwj4C76x2aVV5rU1stKtYFtLLzLa+rnYlLvJDyEA=;
-X-ME-Sender: <xms:5Oz1ai-Ctz6HGSQ-ejWCMaWR7wUYvZz2uxBQy1HMOCt5cOwrj7iw3Q>
- <xme:5Oz1auL1Aqf8HKA00O-m7HYW_jpxE31DV-XYbaThyO0IQSByZTkzoev6mQaAgpiFG
- 8mTMUZUtrEKWiwait3L6ELgZKPQt5Eb3y55lFfHH3nOmKf0MUJ1ig>
-X-ME-Received: <xmr:5Oz1arjQbvWKYMBXpJ0k6EXpwuceD1qnXjrtsrD5rGImZeRTFlpaSh-pVbGctY40PuKiSmNjyOy63EMLWdh3mg8>
-X-ME-Proxy-Cause: dmFkZTG3ES2WJCqkaQSzXYwiv3BaCrZhn49pLiZE4PvtzWkiDCISpOdaS3YGeeKYLaTgLe
- hva4SJNM3+QZJw64oiGzrUGU44n+iLTgLP35K/5YZ2f/48KvnncbE745LIcmFrz+b4J9Md
- xVdqD3UIUMLa/N04U9B1+PrE0J9QX361xfwqV89rqJom4md/4PJLIQPJYn1TqkQ6eidiho
- IHyluuUlJOa5vHB4TTkxPGsMBzngr+09fZw6G+wcARZFVj7Rpei3464WQ+1FNJNuQEK7NA
- jpQrPev5tanbLUd7m6e5QBuCn3uOKwWjWH5gDxZlUdWT4MW285HiO6wn/R16rnTIIQzOts
- NFi373agO7JWFP3IWiL5Yof917p8Zb3Neugi67enETbqnW/REqss2RnKPqwF7c6zsETZ5z
- VoHBXef2YrhTPx3YUUZ3gv/wxedFK0xRTtJOUJteSm/O4/NKoZg915htOnqkkpIF8H0xgY
- BG21Ub9sEr+D3zPV3MZK7McG30YUyKCD9mGX8MnfyuXvu4cNEAD/EYh3kRmOCpigD7+eX4
- Xjx3dx/JjnmpfScUe/rgCLWxqLC3M7nHUdgQXoGuTx3YfHPjPel3i7am7WY8avrFbywG5Q
- 10xUT6oMjbNkHQqjnlzugamfJrtSP5EXr2MdmEnDjWSGZjZbfzzAtn7OY3EQ
-X-ME-Proxy: <xmx:5Oz1au4UgSQSCoIiARx2JGLv-QQBJMKN9lFBSDci-pPOuGmj7tuKKQ>
- <xmx:5Oz1ajZQPtZjuJgaQTHvM93ufiCWV5P88SkKTiOudvdzq8vK7xNsxw>
- <xmx:5Oz1aj7VAYBp2o3LO0uyx6dciHy263NTbEYhRQ6d--E3AyLC-0t1qw>
- <xmx:5Oz1amA8m7TENuWUrSf16rNrmmKmD4smf0_Ok82OpdP4LMIaFO_48Q>
- <xmx:5ez1alnsRG6syQecUZ6KWoqXejudtJh9tvesqdX7bWJyLNiegiWTSz_I>
+ h=sha256:ucKGU0xdTgBYVfB4prqLHmOtoXEhHHY00sQaNEi3To8=:6mSt/EobBYwEMOBXUeUFF/VCTgirnuzPVN4a1FZyTjo=;
+X-ME-Sender: <xms:TO_1apXGYmo-_W5-vw-1rz0PosU_-WnGX3ObMUAYeg_wSEZsNwHrSw>
+ <xme:TO_1ajrLIaTOBLFy8j40QRbyainYS5JbuXjouIMCgisGt4hB8FwlCwEJEQMozbcpK
+ HNHfQgQ-3V4S-Pn0E8qkjRqJjBkr1WOdS5NiaSg8eaE_le8J4l21Q>
+X-ME-Received: <xmr:TO_1alT_S1hGFpTCYbXSy78qDqCKelYWkj5WhAmy6FjDXynRCvqGryD-InRowCmLJIICVwFgo8KtQ-z02k2kDN8>
+X-ME-Proxy-Cause: dmFkZTGnRF+4bRcHL/BJFGiKENMNTINUdy7K/1oZuBip5NquaYJ9q+LRSSZOq45KLtuZO+
+ JIP/hX3cqGi0qDlg3vr2rpq9xdv+eXFtGLaBCPOvoJH1XcUFjsNv3JNkc+HvgEsJ1nZGt0
+ NAySeXehYXbSmnbh4ZgrpNNGUH4UIeHVOz5SaOahitKS7t9CUj2nkCJWK0SPihQ6TcnkqG
+ LKTognfaqalvRdpBsb8z0S1LHE80KonldBUingKkauDwV6ETIaUdmKsGk+xxecAwrTaT26
+ n6+pW94Pw2Fc8YUfIftUV8gyL9s5l8SC2Z+StY5MYwVV3RVNNghuRvqeaLlZ6qLEKOxqod
+ QHxu5du6zqcZaN9POrmc6rE/WRZwvcsErr8U47eBiwrda+g018Vvp5fmcxdjP5mzkISUjz
+ 3zsM+d5yfo6s6IuEZ7mNr1pwG/uU6iMnsyCZfQug5IIr9JMpg2Gehwrq30pZ7kJ/4YF/Rf
+ OpeZ0oGhmUgzYYLYhHivv/fKryr02LIRioHMQ5SrcTiFIO6OA8PmhP1v+nKXMI3OWn0tt/
+ tmvbVI9MD3TLa4781qphIfXgq7q2eLFSnIKCKIQqOA9+t4wbhg0j5UVU6T5qzR+SXrmsVM
+ WnG63C8UBTr+G8cB43Oo0fXwt/m1x5v08BMeTW1Jc7aFVmTaI4O4zuzs5q1w
+X-ME-Proxy: <xmx:TO_1at0pmqchYjDJJclYqOh7854QDgDgvFM5F5Bulr7QMEPBFn0BDQ>
+ <xmx:TO_1ahAfia_uN5nLLCOPU63mUl5dqafI7efAQ5mcTVFApVxyuPqy8w>
+ <xmx:TO_1api38-a5k81zLtB9fT2VYGYVtBX75eJ5hO1KRAQGwWbr4oQaPw>
+ <xmx:TO_1ajNKFoWHha14N-rtzByCVh-_Y1CMUsVJM5YRQOuQyqTQxCKPTw>
+ <xmx:Te_1au39lolnTmBxf9ZAkg4gze2SD3xB2JaJDJ9Wmvmr4iZYYw4B4YWb>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Nov 2026 11:44:20 -0500 (EST)
+ 12 Nov 2026 11:54:35 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Wei Chen <allen.chen@jaguarmicro.com>
-Cc: "Richardson, Bruce" <bruce.richardson@intel.com>, dev@dpdk.org,
- "stable@dpdk.org" <stable@dpdk.org>,
- "Dumitrescu, Cristian" <cristian.dumitrescu@intel.com>
-Subject: Re: [PATCH] cfgfile: fix isspace() undefined behavior
-Date: Thu, 12 Nov 2026 17:44:18 +0100
-Message-ID: <LzMzqxBsRKaqXwDq1o8xZQ@monjalon.net>
-In-Reply-To: <DS0PR11MB7442D693AD4BB9C34800961FEB772@DS0PR11MB7442.namprd11.prod.outlook.com>
-References: <20261022122348.3467-1-allen.chen@jaguarmicro.com>
- <auxNNQ5dWrmHG96_@bricha3-mobl1.ger.corp.intel.com>
- <DS0PR11MB7442D693AD4BB9C34800961FEB772@DS0PR11MB7442.namprd11.prod.outlook.com>
+To: Aarnav JP <ajp@marvell.com>
+Cc: dev@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>, jerinj@marvell.com,
+ ndabilpuram@marvell.com, rbhansali@marvell.com, stable@dpdk.org
+Subject: Re: [PATCH v2] mem: fix fbarray placement colliding with PCI BARs
+Date: Thu, 12 Nov 2026 17:54:34 +0100
+Message-ID: <ddamo9BMSNyciouUA8Rprg@monjalon.net>
+In-Reply-To: <20261027052151.1416368-1-ajp@marvell.com>
+References: <20261023060523.978899-1-ajp@marvell.com>
+ <20261027052151.1416368-1-ajp@marvell.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
@@ -115,24 +114,39 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-> > > The _strip() function passes a char directly to isspace(), which is
-> > > undefined behavior. The ctype functions require an int argument that is
-> > > either an unsigned char value or EOF, but char is signed by default on
-> > > x86 and ARM, so any byte >= 0x80 in the input is promoted to a negative
-> > > int and indexes the ctype table out of bounds.
-> > >
-> > > Such bytes are reachable from a user-provided config file containing
-> > > UTF-8 or other non-ASCII content.
-> > >
-> > > Cast the argument to unsigned char, as is already done in
-> > > app/test-bbdev/test_bbdev_vector.c and elsewhere.
-> > >
-> > > Fixes: eaafbad419bf ("cfgfile: library to interpret config files")
-> > > Cc: stable@dpdk.org
-> > >
-> > > Signed-off-by: Wei Chen <allen.chen@jaguarmicro.com>
-> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-> Acked-by: Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+27/10/2026 06:21, Aarnav JP:
+> Since the VA space of all memseg lists is reserved in one go, it is
+> reserved before the memseg lists are created. The fbarray of each list
+> is allocated from the same VA allocator, so the first fbarray now ends
+> up right after the end of the memseg lists.
+> 
+> On Linux, the PCI bus maps device BARs in the primary process starting
+> at the end of the memseg lists (pci_find_max_end_va()), using it as an
+> address hint. This address is now taken by the fbarray, so the hint is
+> not honored and the kernel places the first BAR elsewhere in the mmap
+> area, among the shared libraries and thread stacks.
+> 
+> With VFIO, secondary processes map BARs at the addresses chosen by the
+> primary process, using MAP_FIXED, which replaces any existing mapping.
+> As the mmap area layout is randomized for each process (ASLR), the BAR
+> can overlap the libraries or stacks of the secondary process, which are
+> then replaced. This intermittently crashes secondary processes during
+> EAL init, for example dpdk-proc-info. On arm64 with 64K pages, this
+> was seen in about one in ten secondary process starts.
+> 
+> Create the memseg lists before reserving the VA space, so that, as
+> before that change, nothing is mapped right after the memseg lists and
+> the BARs can be placed there again. The VA space is still reserved in
+> one go.
+> 
+> Also destroy the memseg lists created so far if a later step fails,
+> since their fbarrays now exist before the VA space is reserved.
+> 
+> Fixes: 3368bc8600e8 ("mem: allocate all VA space in one go")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Aarnav JP <ajp@marvell.com>
+> Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
 Applied, thanks.
 
