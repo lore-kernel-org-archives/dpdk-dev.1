@@ -2,95 +2,95 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CF8606A31C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 21:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAC2606A321
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 21:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=i9RBDB8F;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=eX++YUF2
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=1mgBk7RL;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=zMm5eg5U
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B09642E3A;
-	Thu, 12 Nov 2026 22:56:40 +0100 (CET)
-Received: from fhigh-b4-smtp.messagingengine.com
- (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
- by mails.dpdk.org (Postfix) with ESMTPS id DAA7B42E24
- for <dev@dpdk.org>; Thu, 12 Nov 2026 22:56:38 +0100 (CET)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfhigh.stl.internal (Postfix) with ESMTP id CA5A27A054C
- for <dev@dpdk.org>; Thu, 12 Nov 2026 16:56:37 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-05.internal (MEProxy); Thu, 12 Nov 2026 16:56:37 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 5019E42E4A;
+	Thu, 12 Nov 2026 22:59:29 +0100 (CET)
+Received: from fout-b4-smtp.messagingengine.com
+ (fout-b4-smtp.messagingengine.com [202.12.124.147])
+ by mails.dpdk.org (Postfix) with ESMTPS id 185E042E47
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 22:59:28 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.stl.internal (Postfix) with ESMTP id E60011D0065F
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 16:59:26 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Thu, 12 Nov 2026 16:59:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1794520597;
- x=1794606997; bh=yuK8e43Cj164VAcBw3qqMfA1dgfceaWrYawBZoIBvuc=; b=
- i9RBDB8FRvrA+0jQSVVn2aSeJFldVhoIcwf+sjLDb3tQF35ouxQT4cdSWGAwzYnt
- /iNcR8feYbtVTTakeCfSb5A7+D4yQDp8ZZcJ57d56vNeFbn1y9nYPzg/BoRPFJvh
- pSUpKoQBX7fGvrOv+K5+YwBP+Mvc5/bS+YXu7yPxrLDpj2vxKlq24eKtRuwv/8sd
- SU1DN/Rw1cO2ziScn7MjsHJ6Te5Zuc2MsSJAVy78ow74QZZlKRyvV1ZSy1hzwDOJ
- K71VgbICpmY0U2goaBfDSID4teet3IFvPCAVi4QwERI7ziFTOl5fFraSxYqzpSKP
- kOgHws68aVcyNblftLZs9g==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1794520766;
+ x=1794607166; bh=z4XhJwqF1y2ge8r5bMWJwNEUtIPsVrVXIje2ou0xG1c=; b=
+ 1mgBk7RLtlA+g335ckIhczfpVE1JuscA1VBKYlrhTTtzJpe3cXyXNp608YCS02WO
+ wwu2aqihVd8JqLbKdSyJXIInA+vs/w2WljS7OJ/j5DJ7z0N0vjfnj2lVa56qwIDI
+ JDqSUPaDnYDiWWVL8rxJY6OmUVY/rus3pXbEcffzBwYUSNopUPuqwNm4+p3W+ibE
+ S4Q/oRVcmtHy8LCixZMe9gQtDvIb6OaPfHAN/3pu0+oizCHjUHKHLUxVsg0cAqsT
+ RxlBwI2OIqdF3yUNXxkzeqLQEowRZi2fjS92787bW42eIt26r86hubI+Gb9O4yMD
+ vaL2Sry9jmatFVBea4V5Kw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794520597; x=
- 1794606997; bh=yuK8e43Cj164VAcBw3qqMfA1dgfceaWrYawBZoIBvuc=; b=e
- X++YUF2JZDKSe+iyCjlQpwBgFoTOSnMQojBaTIjswLGwRSSv9nNsufBseUGjZENs
- hxvoaXS0SE7PX1Q1+NkmVeFwj6OJnnIHSpT32zWo99VsUkNM6xmtdad7G2Q8A9j0
- 9s5xZTjnqIdMeoaM5RsbgTwgSX+6my7u7x5eUzZNUAOAAH8SSyjdBrZQrRF9K21n
- krzbAs35O/vaD0rWWWDTy9VzeUu3yvAYv7mgr+0qNnwQK2+AOeEkvBaAbrir15Yk
- vpfPU8Z4PYMofKDHvx0LBggFozYsCxQtDFUBquNQCgWVOYm2eTU1lN7Y1ipvHua4
- ScuBJisCagrWV9d/lODDw==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794520766; x=
+ 1794607166; bh=z4XhJwqF1y2ge8r5bMWJwNEUtIPsVrVXIje2ou0xG1c=; b=z
+ Mm5eg5Uqcma7ptdzMpXCTsYpeUa7mEXIytAwgxke0VbfZKB+oR78ZPGMNvn1y3DI
+ 6DGeblPTHp3b+EczfsXL4zRtb7Tt2HS9ghJXi3rZRiM3r9gi0Vx6pDfqwlTO6tdA
+ rd12vpvXt8CjbaNBA+TS+INr4OeucdHzPvdMRBh7J8gGdKQIPMKTyO7HRsySxNWy
+ W0hcknlwf9gEPIRoVdDx8J3zwYsZ+mHFMCe5Gt7YRJYk1HJ70xUj+j/Kf+DOH2RX
+ 1aHtc6cEZgj/UBQ7va/PapkptZYgmBpCZKpG9k0YWXG+e43t0lBmqFODdCNf/Hvo
+ iAGmgvFQiAf7Eq3+q9zeQ==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794520597; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1794520766; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:BrOqv+aHt/ZzvK4SEPsRpNb+btQx741/CP0YuwE6UT6Zvpi
- 2X0FZqB6LPaGy1wrEzpJ5FGknY0SG1+1EUfQtCsjzCRlggaR8twhUrTdI8RwekvC
- Me6BnWwOfDzzo6XNhk6tz9NZ/Bu6NtLCb9OzLvb75I2zcZVdNbuOgrmJf88kdeNs
- aQvsV4OlCgGz6DH0ouwU4Hak1V/k/r/drgZ6vFTuNHZSKDoRUFn4iyH+LJcSc++R
- Ax8oeqylxawGtUOh/OjT8PVwX83KXgwxVN0kLmD5pJVV/+I8d+f5vwEALwIRmEcD
- kzwmUimS0lsW/Uf1ERS5d1FVK6k1rRDClKfWBeg==;
+ s=fm3:rsa-sha256:Cf0Qs4TVNfDEN0YmFN87PZT+0QT6JHOCYKVZpSS8Co9g0Hv
+ Qd3qycL6NauwwqUUtfJXBLSao82hhxD93H7Ubz2Qqv8rTQ22yCLrSx8xRA0TCvAM
+ rDO2PXMh0RBe2T+3brBliFX+0FRlvOeT0NpfN7Mguge4Lj+DByIzVO67vAn4WliZ
+ 7Q0ytAgTUp4aYgXL9z71XbV6qq4nlmO6ARaEYmi3aN8fCQabU5SPayvsmz38dOWf
+ VDFXmErQdqghhVgBn4VNnE+Y9T3u6dyeM98IabhcV5yEgxk7abmbgX6xfFNKuCtu
+ THvPuJjsWNJ9z2cvHhQyRJ1GqLwByxI0XtNVH9w==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:31QlsqoovCR1njnUreuhYPqx95/D4n1i3XOt5n0CSeY=:QRyG3ZM06kKoiZPUj9ukBSVdMJbizhxPiibpurBa1+0=;
-X-ME-Sender: <xms:FTb2arr9fSTtlOZxDm_SgBKUCSBDZBPFlYn2TEe7WWA6UxW5E5lr1Q>
- <xme:FTb2ap8PqozUojPhGfbjbSTxHF72yKJ9jNLaUSM704sK74KubhdDo0ymo9fitdlWW
- qW9SPTGLeUmfRGUtlvK2TQ1PL1qsXcObRoYCCaxj58nZVRd4evBcpI>
-X-ME-Received: <xmr:FTb2anUzmtIcMnzDnoQLQ6x5X_DZfOzseabNwK3yb46udnhm4d0GyqvF13vlT-K6fAlkV9tuU6mta9KNsxMRTGg>
-X-ME-Proxy-Cause: dmFkZTE3haW+Dw3AeNFOcR/xI2FBwa7M6SWlsIqBD8vRSm5pnteM7bxg32ka+WQTeMTR/9
- fwZqFnT+67esfbhhj33CkiFugMLIjFXOZ9DhjZwQWa48DDbOJU6sGjsj+C4b14HNw2yTBK
- /x1eGX/Jb0KwNZcrLHbR+UCYUd7JcFTTOoHEy21F5eOPeouRPubJu9l2wNqfETohogKo+X
- N3lRty+F5MIfJ5QhVKLY4pxbAGvLUMu5hBS0NS2KPWCXJ1M57V9mhfYpCqMLYxgSLoUUdB
- 2+zzCeDq1BVhEeVkHc4Nk1lPH826vU3PooSAw2bxo3HnuqgW1EUharZgoc2usdySbNOViF
- /1jcsMKkEQ/HESZ/fBuM5D6Ut3lJMuqYamwmWMZoDAF84vz3n7k0OQiL7ud+FxUsAWowIN
- GsSB5u93mID/PgjDzbmTEAVIU0yDkgSeUPAsuY6S//CKUjLsPdNwXZnZ2VoYkF3oxiK+U4
- vQgmaV/2z9g8UWHvKqsbLgsWZmM+clq5ruqv3MJgA8ND9DrbHVUU49G0Qk6JMZYp9MOrxn
- Cwgexc28icyIyKPZlVC4lF+A4E724JWkLTSPKH12EVxZeCFhXBwSS+l9LsbV927d2nG5yf
- DC/rsAAtgFJaMAYSBA1s0WC0kQclVITN0JNhtf0nWJqxoHAzRCcpEC5UkMdw
-X-ME-Proxy: <xmx:FTb2anD-kM1qB5qKwQiWL331mfA8N1kB8lMyTQzGsVomFhvt77JHgw>
- <xmx:FTb2agz-Eq9QH6sp5d4oZ6QdRCOKnbRR3wFLNTJ13Js4ZbDcu8nv8g>
- <xmx:FTb2asB2Lx_XyRm9cyZ-a3NCc790tsfWwlDl9BUIHOpDcmpGF5Fx5g>
- <xmx:FTb2alaLR0_b2UEG5Pm2vCbjMZ-glkCQHl_AMBOg6i1fmuMbH6QNcQ>
- <xmx:FTb2auUI55Fo85BQaUW1MmvNlmeVgLzA30p8Bi2Metl7bFcF-jNTPKTG>
+ h=sha256:ZYGIoJIptEdJoBdO4j2ach4VLgfAWnTiX9pa3Gkur9E=:rDRZdcYBKBlFx6VTzcm2zr7MrRfhj22zp5LvoMR5CmQ=;
+X-ME-Sender: <xms:vjb2avCeETGhQY0VlJFt0_Cl8KokNZ3Z04d7cVPIczMoicSR8TLeLg>
+ <xme:vjb2ap03JPwEozMVm-Ms9JqyM_6KUuOa1sU58uONNar79d3zDVmWnuqTqfvdTREu7
+ n8vLk9fnPZhDcgnqn9miqpP5SYcGzG_zlvf-2nPQiAhG0eBelKFvg>
+X-ME-Received: <xmr:vjb2aptusytBRfHqu_PpZ0w3OJzZBhN72UlxDbxMHTNXbX3rVoodr-qesPhQSIn9lOnIO838Sv0sUxeYLIcQ59o>
+X-ME-Proxy-Cause: dmFkZTFKxW3eUEv+MLR8kb9a94+aXVFclao1+yscFg2GvQcWzDCLTdStV0H/fFMeBNReCq
+ 7FQDgTOdUJf7GELiUYSQeclvzGHTLiz9jhr0Lyg6DY3aavYOkKbslsFx/Ckqc2DbflHldp
+ c77yhKC/n0uzzvEoDjiQkvD0ucitrk9vcvK1ttlzQRfURr+iA8O+XPLBej4rvotPSpF4cR
+ VEF4MrwrWZgzTKM18ysNvSlULlAtLmCXfypRSwPuSVmSvkedBpOT4XzOhPRhZs/gl8yv1A
+ B23t/AUbmuqRMuQQ4Rx5P+3B28YvR3uDeBsusM5S56IL7X+zpdHGKnETSKsp1FhPJ/n5OW
+ niXxTPwgGr7LtBj63FCK4rYc7pTsH53GwAqhoGKaFR8sWeYZP6p/plwMDpAk3A/2tNda6A
+ gIbDLyuMNXGs9SYPoSSeVsFjFJ6c+ty5ANL3LfopXbu2WLU5MVG3YKlj3P2bqGdVE/BwV3
+ uMJkRaYOObbLy+ukzCXJjJ1qzjHV/Kd7h7p8eQBtv5LQPkPzU8xhOCS/gv3MW/aDr6YZQ/
+ 2a8YjfRFJQLWFYw9ZIYa+QssEA5DhCUHuOJyriDML3mWLlkBldvj29NKz2kZHYV0H1sab4
+ aXi4Hmw2BBdWGkMh3miqQySwX1ggxmHGW6yggGXeku9hsY4+tecNT6OImL9w
+X-ME-Proxy: <xmx:vjb2ap5Re-P8fYRKqIKGOammhcATrTlyPIyjl0HFTILGffBWIBPLGA>
+ <xmx:vjb2aqK8-xyjQzl8ygwW4vgRwtlpanoGoH3oETQYDKHHya2G7QYlGw>
+ <xmx:vjb2ap5gy8xGnkxkB1gYOALOCSIDWIFJksebXDTQRuRWIhwcGyAQbA>
+ <xmx:vjb2atySb2vEHlTfomQktFUcnA0R41OI5_xjstLNHqbTxXWa75s63A>
+ <xmx:vjb2atgFdfrd6xoojHffuqMRyRCzUMU3xav2H_tJjXjd1VJi6HagkLXt>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Nov 2026 16:56:36 -0500 (EST)
+ 12 Nov 2026 16:59:25 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Su Sai <spiderdetective.ss@gmail.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
 Cc: dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH] app/test: lpm6 perf autotest fix lpm delete total time
-Date: Thu, 12 Nov 2026 22:56:35 +0100
-Message-ID: <PLCfV-XiTzmgt-HvpFlQPg@monjalon.net>
-In-Reply-To: <20260819022844.58986-1-spiderdetective.ss@gmail.com>
-References: <20260819022844.58986-1-spiderdetective.ss@gmail.com>
+Subject: Re: [PATCH] usertools/dpdk-devbind: fix interface names on FreeBSD
+Date: Thu, 12 Nov 2026 22:59:24 +0100
+Message-ID: <KV1Q9TsPSYKyxN5z5wrVTg@monjalon.net>
+In-Reply-To: <20261103174601.3757534-1-bruce.richardson@intel.com>
+References: <20261103174601.3757534-1-bruce.richardson@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
@@ -111,14 +111,18 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-19/08/2026 04:28, Su Sai:
-> Make total_time from '+='' to '=' when test rte_lpm6_delete
+03/11/2026 18:46, Bruce Richardson:
+> The interface names on BSD were queried from ifconfig on initial device
+> scan. Later calls to get additional details used the non-existent linux
+> paths to query the interface names and so cleared the values. Fix this
+> by ensuring the interface name gets assigned to the extra details on
+> BSD.
 > 
-> Signed-off-by: Su Sai <spiderdetective.ss@gmail.com>
+> Fixes: 06d6605f7906 ("usertools/devbind: add basic FreeBSD support")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Fixes: 5c510e13a9cb ("lpm: add IPv6 support")
-Cc: stable@dpdk.org
-
-Applied, thanks
+Applied, thanks.
 
 
